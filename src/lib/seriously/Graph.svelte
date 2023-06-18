@@ -1,10 +1,26 @@
+<svelte:options immutable = {true} />
+
 <script lang="ts" >
   import Widget from './Widget.svelte';
-  import Idea from './Idea.ts';
-  
-  let root = new Idea('funny guy', 'green', false, 'b')
+  import Idea, { ideas } from './Idea.ts';
 </script>
 
 <div>
-	<Widget idea={root}/>
+  <ul>
+      {#each ideas as idea}
+        <li>
+	        <Widget idea={idea}/>
+        </li>
+      {/each}
+    </ul>
+  <p/>
 </div>
+
+<style>
+  li {
+    line-height: 2.0;
+  }
+  ul {
+    list-style: none;
+  }
+</style>

@@ -1,40 +1,31 @@
+<svelte:options immutable = {true} />
+
 <script lang='ts'>
+  import variables from '../../styles/variables.scss';
   import Idea from './Idea';
-  // import Widget from './Widget.svelte';
-
-  // export let widget = Widget;
-  export let idea = Idea;
-  export let isActive = false;
   export let isReveal = false;
-
-  console.log("idea: ", idea);
+  export let idea = Idea;
 </script>
 
 <slot>
   <button class={ isReveal ? 'reveal' : 'drag' }>
-    { idea.trait }
+    {isReveal ? idea.trait : "-"}
   </button>
 </slot>
 
 <style lang='scss'>
+  .drag {} // these are for drawing the drag dot differently than the reveal dot
+  .reveal {}
+
   button {
-    background-color: yellow;
+    // background-color: idea.color;
     border: 0.1px solid;
     border-radius: 10px;
     height: 20px;
+    width: 20px;
 
     &:hover {
-      background-color: purple;
+      background-color: variables.$globalHighlightColor;
     }
-  }
-
-  .drag {
-    background-color: green;
-    color: white;
-  }
-
-  .reveal {
-    background-color: red;
-    color: white;
   }
 </style>

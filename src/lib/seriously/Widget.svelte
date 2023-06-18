@@ -1,7 +1,9 @@
+<svelte:options immutable = {true} />
+
 <script lang="ts">
-  import Idea from './Idea';
-	import Dot from './Dot.svelte';
 	import Text from './Text.svelte';
+	import Dot  from './Dot.svelte';
+  import Idea from './Idea';
 	export let idea = Idea;
 </script>
 
@@ -11,11 +13,11 @@
 
 <style lang="scss">
 	span {
-		padding: 10px;
+		padding: 5px;
 	}
   span:hover {
-		padding: 9px;
-    border: 1px dashed red;
+		padding: 4px;
+		border: 1px dashed variables.$globalHighlightColor;
 		border-radius: 20px;
   }
 </style>
