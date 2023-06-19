@@ -10,15 +10,12 @@
   }
 </script>
 
-<label>
-  <input type='text' bind:value={idea.title} on:input={handleInput} style = "border-radius: 10px; border: none;"/>
-</label>
+<input type='text' bind:value={idea.title} on:input={handleInput}/>
 
 <style lang='scss'>
   input {
-    min-width: 10px
-  }
-  label {
-    min-width: 10px
+    border: none;
+    border-radius: 10px;
+    // size: value.<length>;
   }
 </style>

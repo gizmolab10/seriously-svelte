@@ -1,3 +1,5 @@
+import { seriouslyGlobals } from "./Globals";
+
 export default class Idea {
   title: string;
   color: string;
@@ -11,7 +13,11 @@ export default class Idea {
     this.trait = trait;
     this.grabbed = grabbed;
     this.parent = null;
-  }; 
+  };
+
+  hoverColor(hovering: boolean) {
+    return (this.grabbed == hovering) ? this.color : seriouslyGlobals.backgroundColor;
+  }
 }
 
 export const ideas = [

@@ -1,31 +1,40 @@
-<svelte:options immutable = {true} />
+<svelte:options immutable={true}/>
 
 <script lang='ts'>
-  import variables from '../../styles/variables.scss';
   import Idea from './Idea';
   export let isReveal = false;
   export let idea = Idea;
+  let isHover = false;
+    // on:click={handleClick()}
+  // function handleClick(event) {
+  //   if (!isReveal) {
+  //     idea.grabbed = !idea.grabbed;
+  //     console.log(idea.grabbed, idea.title);
+  //   }
+  // }
 </script>
 
 <slot>
-  <button class={ isReveal ? 'reveal' : 'drag' }>
+  <button
+    class={ isReveal ? 'reveal' : 'drag' }
+    style='--grabColor: {idea.hoverColor(isReveal)}; --hoverColor: {idea.hoverColor(!isReveal)}'>
     {isReveal ? idea.trait : "-"}
   </button>
 </slot>
 
 <style lang='scss'>
-  .drag {} // these are for drawing the drag dot differently than the reveal dot
   .reveal {}
+  .drag {} // these are for drawing the drag dot differently than the reveal dot
 
   button {
-    // background-color: idea.color;
+    background-color: var(--grabColor);
     border: 0.1px solid;
     border-radius: 10px;
     height: 20px;
     width: 20px;
 
     &:hover {
-      background-color: variables.$globalHighlightColor;
+      background-color: var(--hoverColor);
     }
   }
 </style>
