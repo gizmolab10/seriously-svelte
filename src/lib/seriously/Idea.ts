@@ -1,6 +1,8 @@
 import { seriouslyGlobals } from "./Globals";
+import { v4 as uuid } from 'uuid';
 
 export default class Idea {
+  id: number;
   title: string;
   color: string;
   trait: string;
@@ -8,6 +10,7 @@ export default class Idea {
   parent: Idea | null;
 
   constructor(title = 'Idea', color = 'black', trait = 's', grabbed = false) {
+    this.id = uuid();
     this.title = title;
     this.color = color;
     this.trait = trait;
