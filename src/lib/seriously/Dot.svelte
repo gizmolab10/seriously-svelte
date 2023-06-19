@@ -4,14 +4,6 @@
   import Idea from './Idea';
   export let isReveal = false;
   export let idea = Idea;
-  let isHover = false;
-    // on:click={handleClick()}
-  // function handleClick(event) {
-  //   if (!isReveal) {
-  //     idea.grabbed = !idea.grabbed;
-  //     console.log(idea.grabbed, idea.title);
-  //   }
-  // }
 </script>
 
 <slot>
