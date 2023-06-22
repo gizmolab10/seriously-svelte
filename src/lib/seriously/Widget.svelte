@@ -5,6 +5,8 @@
 	import Dot  from './Dot.svelte';
   import Idea from './Idea';
 	export let idea = Idea;
+
+	// console.log("WIDGET: ", idea);
 </script>
 
 <span>

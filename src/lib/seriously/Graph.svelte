@@ -1,20 +1,55 @@
 <svelte:options immutable = {true} />
 
-<script lang="ts" >
+<script lang="ts">
   import Widget from './Widget.svelte';
-  import Idea, { ideas } from './Idea.ts';
+  import { v4 as uuid } from 'uuid';
+  import { onMount } from 'svelte';
+  import Airtable from 'airtable';
+  import Idea from './Idea.ts';
+  let isLoading = false;
+  let ideas = [];
+
+  const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
+
+  onMount(async () => {
+    isLoading = true;
+    try {
+      const records = await base('Ideas').select().all()
+      for (let record of records) {
+        let idea = new Idea(record.id, record.fields.title, record.fields.color, record.fields.trait);
+        ideas.push(idea);
+        console.log("loop: ", idea)
+      }
+      isLoading = false;
+    } catch (error) {
+      console.error('Error reading Airtable database:', error);
+    }
+  });
+
+  $: {
+    if (ideas.length > 0) {
+      let _ = 0;
+    }
+  }
+
 </script>
 
+{#if isLoading}
+  <p>Loading...</p>
+{:else if ideas.length == 0}
+  <p>No ideas available.</p>
+{:else}
 <div>
   <ul>
-      {#each ideas as idea}
-        <li>
-	        <Widget idea={idea}/>
-        </li>
-      {/each}
-    </ul>
+    {#each ideas as idea}
+      <li>
+        <Widget idea={idea}/>
+      </li>
+    {/each}
+  </ul>
   <p/>
 </div>
+{/if}
 
 <style>
   li {

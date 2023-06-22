@@ -16,6 +16,8 @@
     "vite": "^4.3.2"
   },
   "dependencies": {
+    "@sveltejs/kit": "^1.20.4",
+    "airtable": "^0.12.1",
     "mongodb": "^5.5.0",
     "scss": "^0.2.4",
     "svelte-icons": "^2.1.0",

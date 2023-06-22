@@ -2,15 +2,15 @@ import { seriouslyGlobals } from "./Globals";
 import { v4 as uuid } from 'uuid';
 
 export default class Idea {
-  id: number;
+  id: string;
   title: string;
   color: string;
   trait: string;
   grabbed: boolean;
   parent: Idea | null;
 
-  constructor(title = 'Idea', color = 'black', trait = 's', grabbed = false) {
-    this.id = uuid();
+  constructor(id = uuid().string, title = 'Idea', color = 'black', trait = 's', grabbed = false) {
+    this.id = id;
     this.title = title;
     this.color = color;
     this.trait = trait;
@@ -19,11 +19,6 @@ export default class Idea {
   };
 
   hoverColor(hovering: boolean) {
-    return (this.grabbed == hovering) ? this.color : seriouslyGlobals.backgroundColor;
+    return (this.grabbed != hovering) ? this.color : seriouslyGlobals.backgroundColor;
   }
 }
-
-export const ideas = [
-  new Idea('funny guy', 'green', 'b', true),
-  new Idea('adventuring', 'red', 'c', false)
-]
