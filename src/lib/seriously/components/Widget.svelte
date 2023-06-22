@@ -1,14 +1,12 @@
 <svelte:options immutable = {true} />
 
 <script lang="ts">
-  import Idea from '/src/lib/seriously/data/Idea';
 	import Text from './Text.svelte';
+  import Idea from '../data/Idea';
 	import Dot from './Dot.svelte';
 	export let idea = Idea;
-	let toggle = false;
-  function updateWidget() {
-		toggle = !toggle;
-		console.log('updating colors: ', idea.title, idea.hoverColor(false));
+
+	function updateWidget() {
     var widget = document.getElementById(idea.id)?.style;
     widget?.setProperty('--hoverColor', idea.hoverColor( true));
     widget?.setProperty( '--grabColor', idea.hoverColor(false));
@@ -24,14 +22,9 @@
 	<Dot idea={idea} updateWidget={updateWidget}/> <Text idea={idea}/> <Dot idea={idea} updateWidget={updateWidget} isReveal={true}/>
 </span>
 
-<style lang="scss">
-	#widget {
-		padding: 5px;
-		border-color: var(--grabColor);
-		&:hover {
-			padding: 3px;
-			border: 3px solid;
-			border-color: var(--hoverColor);
-  	}
+<style lang='scss'>
+	.span:hover {
+		padding: 3px;
+		border: 3px dashed var(--hoverColor);
 	}
 </style>

@@ -1,9 +1,9 @@
 <svelte:options immutable = {true} />
 
 <script lang="ts">
-  import Idea from '/src/lib/seriously/data/Idea';
   import Widget from './Widget.svelte';
   import { onMount } from 'svelte';
+  import Idea from '../data/Idea';
   import Airtable from 'airtable';
   let isLoading = false;
   let ideas = [];

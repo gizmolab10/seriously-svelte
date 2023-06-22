@@ -1,7 +1,7 @@
 <svelte:options immutable={true}/>
 
 <script lang='ts'>
-  import Idea from '/src/lib/seriously/data/Idea';
+  import Idea from '../data/Idea';
   export let isReveal = false;
   export let updateWidget;
   export let idea = Idea;
@@ -10,15 +10,15 @@
     if (!isReveal) {
       idea.grabbed = !idea.grabbed;
       updateButtonColors();
-      updateWidget();
+      updateWidget;
     }
   }
 
   function updateButtonColors() {
     var dot = document.getElementById(idea.id)?.style;
-    dot?.setProperty('--hoverColor', idea.hoverColor(!isReveal));
-    dot?.setProperty( '--grabColor', idea.hoverColor( isReveal));
     dot?.setProperty(  '--dotColor', idea.color);
+    dot?.setProperty( '--grabColor', idea.hoverColor( isReveal));
+    dot?.setProperty('--hoverColor', idea.hoverColor(!isReveal));
   }
 </script>
 
@@ -26,9 +26,9 @@
   <button id={idea.id}
     on:click={handleClick}
     class={ isReveal ? 'reveal' : 'drag' }
-    style='--hoverColor: {idea.hoverColor(!isReveal)};
+    style='--dotColor:   {idea.color};
            --grabColor:  {idea.hoverColor( isReveal)};
-           --dotColor:   {idea.color}'>
+           --hoverColor: {idea.hoverColor(!isReveal)}'>
     {isReveal ? idea.trait : "-"}
   </button>
 </slot>
