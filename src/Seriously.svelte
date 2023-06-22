@@ -1,5 +1,5 @@
 <script>
-  import Graph from './lib/seriously/Graph.svelte';
+  import Graph from './lib/seriously/components/Graph.svelte';
 </script>
 
 <Graph/>

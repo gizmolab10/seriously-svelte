@@ -1,9 +1,9 @@
 <svelte:options immutable = {true} />
 
 <script lang="ts">
+  import Idea from '/src/lib/seriously/data/Idea';
 	import Text from './Text.svelte';
 	import Dot  from './Dot.svelte';
-  import Idea from './Idea';
 	export let idea = Idea;
 
 	// console.log("WIDGET: ", idea);

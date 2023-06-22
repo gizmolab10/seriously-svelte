@@ -1,8 +1,8 @@
 <svelte:options immutable = {true} />
 
 <script lang='ts'>
+  import Idea from '/src/lib/seriously/data/Idea';
   import Widget from './Widget.svelte';
-  import Idea from './Idea';
 	export let idea = Idea;
 
   function handleInput(event) {

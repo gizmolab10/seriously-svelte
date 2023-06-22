@@ -1,7 +1,7 @@
 <svelte:options immutable={true}/>
 
 <script lang='ts'>
-  import Idea from './Idea';
+  import Idea from '/src/lib/seriously/data/Idea';
   export let isReveal = false;
   export let idea = Idea;
   function handleClick(event) {
