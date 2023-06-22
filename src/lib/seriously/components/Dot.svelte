@@ -3,25 +3,32 @@
 <script lang='ts'>
   import Idea from '/src/lib/seriously/data/Idea';
   export let isReveal = false;
+  export let updateWidget;
   export let idea = Idea;
+ 
   function handleClick(event) {
     if (!isReveal) {
       idea.grabbed = !idea.grabbed;
       updateButtonColors();
+      updateWidget();
     }
   }
+
   function updateButtonColors() {
     var dot = document.getElementById(idea.id)?.style;
-    dot?.setProperty( '--grabColor', idea.hoverColor( isReveal));
     dot?.setProperty('--hoverColor', idea.hoverColor(!isReveal));
+    dot?.setProperty( '--grabColor', idea.hoverColor( isReveal));
+    dot?.setProperty(  '--dotColor', idea.color);
   }
 </script>
 
 <slot>
   <button id={idea.id}
+    on:click={handleClick}
     class={ isReveal ? 'reveal' : 'drag' }
-    style='--grabColor: {idea.hoverColor(isReveal)}; --hoverColor: {idea.hoverColor(!isReveal)}'
-    on:click={handleClick}>
+    style='--hoverColor: {idea.hoverColor(!isReveal)};
+           --grabColor:  {idea.hoverColor( isReveal)};
+           --dotColor:   {idea.color}'>
     {isReveal ? idea.trait : "-"}
   </button>
 </slot>
@@ -31,13 +38,16 @@
   .drag {} // these are for drawing the drag dot differently than the reveal dot
 
   button {
+    color: var(--hoverColor);
     background-color: var(--grabColor);
+    border-color: var(--dotColor);
     border: 0.1px solid;
     border-radius: 10px;
     height: 20px;
     width: 20px;
 
     &:hover {
+      color: var(--grabColor);
       background-color: var(--hoverColor);
     }
   }

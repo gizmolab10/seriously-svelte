@@ -3,7 +3,6 @@
 <script lang="ts">
   import Idea from '/src/lib/seriously/data/Idea';
   import Widget from './Widget.svelte';
-  import { v4 as uuid } from 'uuid';
   import { onMount } from 'svelte';
   import Airtable from 'airtable';
   let isLoading = false;
@@ -18,7 +17,6 @@
       for (let record of records) {
         let idea = new Idea(record.id, record.fields.title, record.fields.color, record.fields.trait);
         ideas.push(idea);
-        console.log("loop: ", idea)
       }
       isLoading = false;
     } catch (error) {
@@ -53,7 +51,7 @@
 
 <style>
   li {
-    line-height: 2.0;
+    line-height: 2.3;
   }
   ul {
     list-style: none;

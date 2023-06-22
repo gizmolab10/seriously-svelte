@@ -3,7 +3,7 @@ class Globals {
   public highlightColor: string;
 
   constructor() {
-    this.backgroundColor = '#fff9ec';
+    this.backgroundColor = 'white';
     this.highlightColor = '#9e7daa';
   }
 }

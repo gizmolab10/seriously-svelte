@@ -10,12 +10,16 @@
   }
 </script>
 
-<input type='text' bind:value={idea.title} on:input={handleInput}/>
+<input
+  type='text'
+  bind:value={idea.title}
+  on:input={handleInput}
+  style='--textColor: {idea.color}'/>
 
 <style lang='scss'>
   input {
     border: none;
     border-radius: 10px;
-    // size: value.<length>;
+    color: var(--textColor);
   }
 </style>
