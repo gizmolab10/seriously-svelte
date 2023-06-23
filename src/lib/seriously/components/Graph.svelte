@@ -1,45 +1,37 @@
 <svelte:options immutable = {true} />
 
 <script lang="ts">
+  import { SignalAction, signal } from '../data/Signal';
+  import { ideas } from '../managers/Ideas';
   import Widget from './Widget.svelte';
   import { onMount } from 'svelte';
   import Idea from '../data/Idea';
-  import Airtable from 'airtable';
-  let isLoading = false;
-  let ideas = [];
+  let isLoading = true;
 
-  const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
+  signal.connect((action, text, Object) => {
+		if (action == SignalAction.fetch) {
+      isLoading = false;
+		}
+  });
 
   onMount(async () => {
-    isLoading = true;
     try {
-      const records = await base('Ideas').select().all()
-      for (let record of records) {
-        let idea = new Idea(record.id, record.fields.title, record.fields.color, record.fields.trait);
-        ideas.push(idea);
-      }
-      isLoading = false;
+      ideas.fetchAll()
     } catch (error) {
       console.error('Error reading Airtable database:', error);
     }
   });
 
-  $: {
-    if (ideas.length > 0) {
-      let _ = 0;
-    }
-  }
-
 </script>
 
 {#if isLoading}
   <p>Loading...</p>
-{:else if ideas.length == 0}
+{:else if ideas.all.length == 0}
   <p>No ideas available.</p>
 {:else}
 <div>
   <ul>
-    {#each ideas as idea}
+    {#each ideas.all as idea}
       <li>
         <Widget idea={idea}/>
       </li>

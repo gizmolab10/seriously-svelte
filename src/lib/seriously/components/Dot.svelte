@@ -1,7 +1,8 @@
 <svelte:options immutable={true}/>
 
 <script lang='ts'>
-  import { toggleGrab } from '../managers/Selecting';
+  import { SignalAction, dispatchSignal } from "../data/Signal";
+  import { grabOnly } from '../managers/Selecting';
   import Idea from '../data/Idea';
   export let isReveal = false;
   export let updateWidget;
@@ -9,9 +10,9 @@
  
   function handleClick(event) {
     if (!isReveal) {
-      toggleGrab(idea);
+      grabOnly(idea);
       updateButtonColors();
-      updateWidget;
+      dispatchSignal(SignalAction.relayout, 'whoot!');
     }
   }
 

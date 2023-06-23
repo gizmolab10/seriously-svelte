@@ -1,10 +1,17 @@
 <svelte:options immutable = {true} />
 
 <script lang="ts">
+	import { SignalAction, signal } from "../data/Signal";
 	import Text from './Text.svelte';
   import Idea from '../data/Idea';
 	import Dot from './Dot.svelte';
 	export let idea = Idea;
+
+	signal.connect((action, text, Object) => {
+		if (action == SignalAction.relayout) {
+			updateWidget();
+		}
+	});
 
 	function updateWidget() {
     var widget = document.getElementById(idea.id)?.style;

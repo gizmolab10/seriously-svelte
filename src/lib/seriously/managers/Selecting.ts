@@ -14,6 +14,10 @@ export function grab(idea: Idea) {
   selecting.grabbed.push(idea.id);
 }
 
+export function grabOnly(idea: Idea) {
+  selecting.grabbed = [idea.id];
+}
+
 export function ungrab(idea: Idea) {
   const index = selecting.grabbed.indexOf(idea.id);
 

@@ -23,6 +23,7 @@
     "svelte-icons": "^2.1.0",
     "tcs": "^10.0.2",
     "ts-node": "^10.2.1",
+    "typed-signals": "^2.5.0",
     "typescript": "^4.3.5",
     "uuid": "^9.0.0"
   }
