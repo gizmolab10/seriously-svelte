@@ -1,6 +1,7 @@
 <svelte:options immutable={true}/>
 
 <script lang='ts'>
+  import { toggleGrab } from '../managers/Selecting';
   import Idea from '../data/Idea';
   export let isReveal = false;
   export let updateWidget;
@@ -8,7 +9,7 @@
  
   function handleClick(event) {
     if (!isReveal) {
-      idea.grabbed = !idea.grabbed;
+      toggleGrab(idea);
       updateButtonColors();
       updateWidget;
     }

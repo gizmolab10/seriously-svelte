@@ -1,4 +1,5 @@
 import { seriouslyGlobals } from "./Globals";
+import { isGrabbed } from '../managers/Selecting';
 import { v4 as uuid } from 'uuid';
 
 export default class Idea {
@@ -6,19 +7,17 @@ export default class Idea {
   title: string;
   color: string;
   trait: string;
-  grabbed: boolean;
   parent: Idea | null;
 
-  constructor(id = uuid().string, title = 'Idea', color = 'black', trait = 's', grabbed = false) {
+  constructor(id = uuid().string, title = 'Idea', color = 'black', trait = 's') {
     this.id = id;
     this.title = title;
     this.color = color;
     this.trait = trait;
-    this.grabbed = grabbed;
     this.parent = null;
   };
 
   hoverColor(hovering: boolean) {
-    return (this.grabbed != hovering) ? this.color : seriouslyGlobals.backgroundColor;
+    return (isGrabbed(this) != hovering) ? this.color : seriouslyGlobals.backgroundColor;
   }
 }
