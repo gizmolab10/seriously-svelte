@@ -1,18 +1,17 @@
 <svelte:options immutable={true}/>
 
 <script lang='ts'>
-  import { SignalAction, dispatchSignal } from "../data/Signal";
+  import { signalWidgetsNeedUpdate } from "../managers/Signal";
   import { grabOnly } from '../managers/Selecting';
   import Idea from '../data/Idea';
   export let isReveal = false;
-  export let updateWidget;
   export let idea = Idea;
  
   function handleClick(event) {
     if (!isReveal) {
-      grabOnly(idea);
+      grabOnly(idea); // TODO: detect SHIFT key down
       updateButtonColors();
-      dispatchSignal(SignalAction.relayout, 'whoot!');
+      signalWidgetsNeedUpdate('whoot!');
     }
   }
 

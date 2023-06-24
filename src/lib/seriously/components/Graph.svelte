@@ -1,17 +1,15 @@
 <svelte:options immutable = {true} />
 
 <script lang="ts">
-  import { SignalAction, signal } from '../data/Signal';
+  import { fetchCompleted } from '../managers/Signal';
   import { ideas } from '../managers/Ideas';
   import Widget from './Widget.svelte';
   import { onMount } from 'svelte';
   import Idea from '../data/Idea';
   let isLoading = true;
 
-  signal.connect((action, text, Object) => {
-		if (action == SignalAction.fetch) {
-      isLoading = false;
-		}
+  fetchCompleted.connect((text, Object) => {
+		isLoading = false;
   });
 
   onMount(async () => {

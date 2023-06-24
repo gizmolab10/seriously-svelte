@@ -1,4 +1,4 @@
-import { SignalAction, dispatchSignal } from "../data/Signal";
+import { signalFetchCompleted } from "../managers/Signal";
 import Idea from "../data/Idea";
 import Airtable from 'airtable';
 
@@ -19,7 +19,7 @@ export default class Ideas {
         this.addUnique(idea);
       }
 
-      dispatchSignal(SignalAction.fetch, 'whoot!');
+      signalFetchCompleted('got em!');
     } catch (error) {
       console.error('Error reading Airtable database:', error);
     }    
