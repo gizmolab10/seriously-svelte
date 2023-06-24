@@ -3,7 +3,7 @@
 
 <button><slot>Fallback</slot></button>
 
-<style lang="scss">
+<style lang='scss'>
 	button {
 		border: none;
 		background-color: #bf87ec;

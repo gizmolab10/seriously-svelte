@@ -1,4 +1,4 @@
-import { Signal } from "typed-signals";
+import { Signal } from 'typed-signals';
 
 export let fetchCompleted = new Signal<(text: string, object: any) => void>();
 export let updateWidgets = new Signal<(text: string, object: any) => void>();

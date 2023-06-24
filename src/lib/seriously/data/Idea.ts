@@ -1,4 +1,4 @@
-import { seriouslyGlobals } from "./Globals";
+import { seriouslyGlobals } from '../data/Globals';
 import { isGrabbed } from '../managers/Selecting';
 import { v4 as uuid } from 'uuid';
 

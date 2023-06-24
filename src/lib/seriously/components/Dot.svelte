@@ -1,15 +1,20 @@
 <svelte:options immutable={true}/>
 
 <script lang='ts'>
-  import { signalWidgetsNeedUpdate } from "../managers/Signal";
-  import { grabOnly } from '../managers/Selecting';
+  import { signalWidgetsNeedUpdate } from '../common/Signal';
+  import { grabOnly, toggleGrab } from '../managers/Selecting';
   import Idea from '../data/Idea';
   export let isReveal = false;
   export let idea = Idea;
  
   function handleClick(event) {
     if (!isReveal) {
-      grabOnly(idea); // TODO: detect SHIFT key down
+      if (event.shiftKey) {
+        toggleGrab(idea);
+      } else {
+        grabOnly(idea);
+      }
+
       updateButtonColors();
       signalWidgetsNeedUpdate('whoot!');
     }
@@ -30,7 +35,7 @@
     style='--dotColor:   {idea.color};
            --grabColor:  {idea.hoverColor( isReveal)};
            --hoverColor: {idea.hoverColor(!isReveal)}'>
-    {isReveal ? idea.trait : "-"}
+    {isReveal ? idea.trait : '-'}
   </button>
 </slot>
 

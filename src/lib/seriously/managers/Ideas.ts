@@ -1,5 +1,5 @@
-import { signalFetchCompleted } from "../managers/Signal";
-import Idea from "../data/Idea";
+import { signalFetchCompleted } from '../common/Signal';
+import Idea from '../data/Idea';
 import Airtable from 'airtable';
 
 export default class Ideas {

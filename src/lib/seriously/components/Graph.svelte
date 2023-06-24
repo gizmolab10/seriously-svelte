@@ -1,7 +1,7 @@
 <svelte:options immutable = {true} />
 
-<script lang="ts">
-  import { fetchCompleted } from '../managers/Signal';
+<script lang='ts'>
+  import { fetchCompleted } from '../common/Signal';
   import { ideas } from '../managers/Ideas';
   import Widget from './Widget.svelte';
   import { onMount } from 'svelte';
