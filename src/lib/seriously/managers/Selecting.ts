@@ -1,4 +1,4 @@
-import Idea from "../data/Ideas";
+import Idea from "../data/Idea";
 
 export default class Selecting {
   grabbed: string[];
@@ -6,40 +6,45 @@ export default class Selecting {
   constructor() {
     this.grabbed = [];
   }
-}
 
-const selecting = new Selecting();
-
-export function grab(idea: Idea) {
-  selecting.grabbed.push(idea.id);
-}
-
-export function grabOnly(idea: Idea) {
-  selecting.grabbed = [idea.id];
-}
-
-export function ungrab(idea: Idea) {
-  const index = selecting.grabbed.indexOf(idea.id);
-
-  if (index > -1) { // only splice array when item is found
-    selecting.grabbed.splice(index, 1); // 2nd parameter means remove one item only
+  firstGrab(): string | undefined {
+    // console.log('GRAB:', this.grabbed[0]);
+    return (this.grabbed.length == 0) ? undefined : this.grabbed[0];
   }
-}
 
-export function isGrabbed(idea: Idea) {
-  for (let grabbed of selecting.grabbed) {
-    if (grabbed == idea.id) {
-      return true;
+  grab(idea: Idea) {
+    this.grabbed.push(idea.id);
+  }
+
+  grabOnly(idea: Idea) {
+    this.grabbed = [idea.id];
+  }
+
+  ungrab(idea: Idea) {
+    const index = this.grabbed.indexOf(idea.id);
+
+    if (index > -1) { // only splice array when item is found
+      this.grabbed.splice(index, 1); // 2nd parameter means remove one item only
     }
   }
 
-  return false;
-}
+  isGrabbed(idea: Idea) {
+    for (let grabbed of this.grabbed) {
+      if (grabbed == idea.id) {
+        return true;
+      }
+    }
 
-export function toggleGrab(idea: Idea) {
-  if (isGrabbed(idea)) {
-    ungrab(idea);
-  } else {
-    grab(idea);
+    return false;
+  }
+
+  toggleGrab(idea: Idea) {
+    if (this.isGrabbed(idea)) {
+      this.ungrab(idea);
+    } else {
+      this.grab(idea);
+    }
   }
 }
+
+export const selecting = new Selecting();

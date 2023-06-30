@@ -1,10 +1,13 @@
 <svelte:options immutable = {true} />
 
 <script lang='ts'>
-  import { fetchCompleted } from '../common/Signal';
+  import { WorkState, states, setWorkState } from '../managers/States';
+  import { fetchCompleted } from '../managers/Signals';
+  import { selecting } from '../managers/Selecting';
+  import { editingID } from '../managers/Stores';
   import { ideas } from '../managers/Ideas';
-  import Widget from './Widget.svelte';
   import { onMount } from 'svelte';
+  import Widget from './Widget.svelte';
   import Idea from '../data/Idea';
   let isLoading = true;
 
@@ -12,7 +15,26 @@
 		isLoading = false;
   });
 
+  function handleKeyDown(event) {
+    let key = event.key;
+    if (event.type == 'keydown') {
+      let id = selecting.firstGrab();
+      // console.log('GRAPH:', id);
+      switch (event.key) {
+        case 'Enter': $editingID = id;
+        default: break;
+      }
+      if (states.workingState == WorkState.idea) {
+        event.target.blur();
+        setWorkState(WorkState.graph);
+      } else {
+        
+      }
+    }
+  }
+
   onMount(async () => {
+    window.addEventListener('keydown', handleKeyDown);
     try {
       ideas.fetchAll()
     } catch (error) {

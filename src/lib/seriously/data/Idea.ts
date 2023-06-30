@@ -1,5 +1,5 @@
 import { seriouslyGlobals } from '../data/Globals';
-import { isGrabbed } from '../managers/Selecting';
+import { selecting } from '../managers/Selecting';
 import { v4 as uuid } from 'uuid';
 
 export default class Idea {
@@ -17,7 +17,9 @@ export default class Idea {
     this.parent = null;
   };
 
+  get isGrabbed(): boolean { return selecting.isGrabbed(this); }
+
   hoverColor(hovering: boolean) {
-    return (isGrabbed(this) != hovering) ? this.color : seriouslyGlobals.backgroundColor;
+    return (this.isGrabbed != hovering) ? this.color : seriouslyGlobals.backgroundColor;
   }
 }

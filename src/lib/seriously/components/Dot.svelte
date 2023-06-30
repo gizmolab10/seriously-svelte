@@ -1,8 +1,9 @@
 <svelte:options immutable={true}/>
 
 <script lang='ts'>
-  import { signalWidgetsNeedUpdate } from '../common/Signal';
-  import { grabOnly, toggleGrab } from '../managers/Selecting';
+  import { getContext, setContext } from "svelte";
+  import { signalWidgetsNeedUpdate } from '../managers/Signals';
+  import { selecting } from '../managers/Selecting';
   import Idea from '../data/Idea';
   export let isReveal = false;
   export let idea = Idea;
@@ -10,13 +11,14 @@
   function handleClick(event) {
     if (!isReveal) {
       if (event.shiftKey) {
-        toggleGrab(idea);
+        selecting.toggleGrab(idea);
       } else {
-        grabOnly(idea);
+        selecting.grabOnly(idea);
       }
 
       updateButtonColors();
       signalWidgetsNeedUpdate('whoot!');
+      // getContext('Text')
     }
   }
 

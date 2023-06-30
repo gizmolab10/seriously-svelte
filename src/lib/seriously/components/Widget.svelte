@@ -1,7 +1,7 @@
 <svelte:options immutable = {true} />
 
 <script lang='ts'>
-	import { updateWidgets } from '../common/Signal';
+	import { updateWidgets } from '../managers/Signals';
 	import Text from './Text.svelte';
   import Idea from '../data/Idea';
 	import Dot from './Dot.svelte';

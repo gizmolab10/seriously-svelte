@@ -1,4 +1,4 @@
-import { signalFetchCompleted } from '../common/Signal';
+import { signalFetchCompleted } from './Signals';
 import Idea from '../data/Idea';
 import Airtable from 'airtable';
 
