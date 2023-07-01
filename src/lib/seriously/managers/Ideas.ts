@@ -11,7 +11,7 @@ export default class Ideas {
     const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
 
     try {
-      const records = await base('Ideas').select().all()
+      const records = await base('Entities').select().all()
 
       for (let record of records) {
         let idea = new Idea(record.id, record.fields.title, record.fields.color, record.fields.trait);
