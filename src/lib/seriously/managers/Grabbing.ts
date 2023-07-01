@@ -1,6 +1,6 @@
 import Idea from "../data/Idea";
 
-export default class Selecting {
+export default class Grabbing {
   grabbed: string[];
 
   constructor() {
@@ -47,4 +47,4 @@ export default class Selecting {
   }
 }
 
-export const selecting = new Selecting();
+export const grabbing = new Grabbing();

@@ -3,7 +3,7 @@
 <script lang='ts'>
   import { getContext, setContext } from "svelte";
   import { signalWidgetsNeedUpdate } from '../managers/Signals';
-  import { selecting } from '../managers/Selecting';
+  import { grabbing } from '../managers/Grabbing';
   import Idea from '../data/Idea';
   export let isReveal = false;
   export let idea = Idea;
@@ -11,9 +11,9 @@
   function handleClick(event) {
     if (!isReveal) {
       if (event.shiftKey) {
-        selecting.toggleGrab(idea);
+        grabbing.toggleGrab(idea);
       } else {
-        selecting.grabOnly(idea);
+        grabbing.grabOnly(idea);
       }
 
       updateButtonColors();

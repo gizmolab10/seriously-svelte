@@ -3,7 +3,7 @@
 <script lang='ts'>
   import { WorkState, states, setWorkState } from '../managers/States';
   import { fetchCompleted } from '../managers/Signals';
-  import { selecting } from '../managers/Selecting';
+  import { grabbing } from '../managers/Grabbing';
   import { editingID } from '../managers/Stores';
   import { ideas } from '../managers/Ideas';
   import { onMount } from 'svelte';
@@ -18,8 +18,7 @@
   function handleKeyDown(event) {
     let key = event.key;
     if (event.type == 'keydown') {
-      let id = selecting.firstGrab();
-      // console.log('GRAPH:', id);
+      let id = grabbing.firstGrab();
       switch (event.key) {
         case 'Enter': $editingID = id;
         default: break;

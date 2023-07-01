@@ -2,49 +2,62 @@
 
 <script lang='ts'>
   import { states, WorkState, setWorkState } from '../managers/States'
+  import { grabbing } from '../managers/Grabbing';
   import { editingID } from '../managers/Stores';
   import { onMount, onDestroy } from 'svelte';
   import Widget from './Widget.svelte';
   import Idea from '../data/Idea';
 	export let idea = Idea;
+  let input;
 
-  $: if (idea.isGrabbed) {
-    let _ = true;
+  function isEditable(): boolean {
+    return $editingID == idea.id;
   }
   
   const unsubscribe = editingID.subscribe((editing) => {
-    if (editing == idea.id) {
-      console.log('TEXT:', editing);
+    if (isEditable()) {
+      input.focus();
     }
   });
-  
+
   function handleInput(event) {
     idea.title = event.target.value;
   }
 
   function handleFocus(event) {
-    // editor.edit(idea.id); // cause the input object to gain focus, so infinite recursion, BAAAAD!
+    grabbing.grab(idea);
+
+    $editingID = idea.id; // cause the input object to gain focus, so infinite recursion, BAAAAD!
   }
 
-  onDestroy(unsubscribe);
+  function handleKeyDown(event) {
+    if (isEditable) {
+      const COMMAND = event.metaKey;
+      if (event.key == 'Enter') {
+        input.blur();
+      }
 
-  // onMount(async () => {
-  //   console.log(editingID);
-  //   editingID.subscribe(value => {});
-  //     id = value;
-  //     if (value == idea.id) {
-  //       console.log(value);
-  //     }
-  //   }
-  // });
+      console.log('TEXT:', COMMAND);
+    }
+  }
+
+  function handleBlur(event) {
+    $editingID = undefined;
+  }
+
+  addEventListener('keydown', handleKeyDown);
+
+  onDestroy(unsubscribe);
 
 </script>
 
 <input
   type='text'
   id={idea.id}
-  on:input={handleInput}
-  on:focus={handleFocus}
+  bind:this={input}
+  oninput={handleInput}
+  onfocus={handleFocus}
+  onblur={handleBlur}
   bind:value={idea.title}
   style='--textColor: {idea.color}'/>
 
