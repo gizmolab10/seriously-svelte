@@ -5,7 +5,7 @@
   import { fetchCompleted } from '../managers/Signals';
   import { grabbing } from '../managers/Grabbing';
   import { editingID } from '../managers/Stores';
-  import { ideas } from '../managers/Ideas';
+  import { entities } from '../managers/Entities';
   import { onMount } from 'svelte';
   import Widget from './Widget.svelte';
   import Idea from '../data/Idea';
@@ -35,7 +35,7 @@
   onMount(async () => {
     window.addEventListener('keydown', handleKeyDown);
     try {
-      ideas.fetchAll()
+      entities.fetchAll()
     } catch (error) {
       console.error('Error reading Airtable database:', error);
     }
@@ -45,12 +45,12 @@
 
 {#if isLoading}
   <p>Loading...</p>
-{:else if ideas.all.length == 0}
-  <p>No ideas available.</p>
+{:else if entities.all.length == 0}
+  <p>No entities available.</p>
 {:else}
 <div>
   <ul>
-    {#each ideas.all as idea}
+    {#each entities.all as idea}
       <li>
         <Widget idea={idea}/>
       </li>

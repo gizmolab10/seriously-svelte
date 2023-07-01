@@ -2,7 +2,7 @@ import { signalFetchCompleted } from './Signals';
 import Idea from '../data/Idea';
 import Airtable from 'airtable';
 
-export default class Ideas {
+export default class Entities {
   all: Idea[] = [];
 
   constructor() {}
@@ -42,4 +42,4 @@ export default class Ideas {
   }
 }
 
-export let ideas = new Ideas();
+export let entities = new Entities();
