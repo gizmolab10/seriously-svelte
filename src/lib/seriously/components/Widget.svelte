@@ -3,9 +3,9 @@
 <script lang='ts'>
 	import { updateWidgets } from '../managers/Signals';
 	import Text from './Text.svelte';
-  import Idea from '../data/Idea';
+  import Entity from '../data/Entity';
 	import Dot from './Dot.svelte';
-	export let idea = Idea;
+	export let idea = Entity;
 
 	updateWidgets.connect((text, Object) => {
     var widget = document.getElementById(idea.id)?.style;

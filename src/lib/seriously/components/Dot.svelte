@@ -4,9 +4,9 @@
   import { getContext, setContext } from "svelte";
   import { signalWidgetsNeedUpdate } from '../managers/Signals';
   import { grabbing } from '../managers/Grabbing';
-  import Idea from '../data/Idea';
+  import Entity from '../data/Entity';
   export let isReveal = false;
-  export let idea = Idea;
+  export let idea = Entity;
  
   function handleClick(event) {
     if (!isReveal) {

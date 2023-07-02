@@ -8,7 +8,7 @@
   import { entities } from '../managers/Entities';
   import { onMount } from 'svelte';
   import Widget from './Widget.svelte';
-  import Idea from '../data/Idea';
+  import Entity from '../data/Entity';
   let isLoading = true;
 
   fetchCompleted.connect((text, Object) => {

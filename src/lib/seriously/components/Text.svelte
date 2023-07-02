@@ -6,8 +6,8 @@
   import { editingID } from '../managers/Stores';
   import { onMount, onDestroy } from 'svelte';
   import Widget from './Widget.svelte';
-  import Idea from '../data/Idea';
-	export let idea = Idea;
+  import Entity from '../data/Entity';
+	export let idea = Entity;
   let input;
 
   function isEditable(): boolean {
