@@ -4,8 +4,8 @@
   import { WorkState, states, setWorkState } from '../managers/States';
   import { fetchCompleted } from '../managers/Signals';
   import { grabbing } from '../managers/Grabbing';
-  import { editingID } from '../managers/Stores';
   import { entities } from '../managers/Entities';
+  import { editingID } from '../managers/Stores';
   import { onMount } from 'svelte';
   import Widget from './Widget.svelte';
   import Entity from '../data/Entity';
