@@ -52,7 +52,7 @@
   <ul>
     {#each entities.all as idea}
       <li>
-        <Widget idea={idea}/>
+        <Widget entity={idea}/>
       </li>
     {/each}
   </ul>
