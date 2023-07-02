@@ -7,11 +7,11 @@
   import { onMount, onDestroy } from 'svelte';
   import Widget from './Widget.svelte';
   import Entity from '../data/Entity';
-	export let idea = Entity;
+	export let entity = Entity;
   let input;
 
   function isEditable(): boolean {
-    return $editingID == idea.id;
+    return $editingID == entity.id;
   }
   
   const unsubscribe = editingID.subscribe((editing) => {
@@ -21,13 +21,13 @@
   });
 
   function handleInput(event) {
-    idea.title = event.target.value;
+    entity.title = event.target.value;
   }
 
   function handleFocus(event) {
-    grabbing.grab(idea);
+    grabbing.grab(entity);
 
-    $editingID = idea.id; // cause the input object to gain focus, so infinite recursion, BAAAAD!
+    $editingID = entity.id; // cause the input object to gain focus, so infinite recursion, BAAAAD!
   }
 
   function handleKeyDown(event) {
@@ -53,13 +53,13 @@
 
 <input
   type='text'
-  id={idea.id}
+  id={entity.id}
   bind:this={input}
   oninput={handleInput}
   onfocus={handleFocus}
   onblur={handleBlur}
-  bind:value={idea.title}
-  style='--textColor: {idea.color}'/>
+  bind:value={entity.title}
+  style='--textColor: {entity.color}'/>
 
 <style lang='scss'>
   input {

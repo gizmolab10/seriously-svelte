@@ -20,7 +20,7 @@
 				 border: 3px solid var(--grabColor);
 				 --hoverColor: {idea.hoverColor( true)};
          --grabColor:  {idea.hoverColor(false)}'>
-	<Dot idea={idea}/> <Text idea={idea}/> <Dot idea={idea} isReveal={true}/>
+	<Dot entity={idea}/> <Text entity={idea}/> <Dot entity={idea} isReveal={true}/>
 </span>
 
 <style lang='scss'>

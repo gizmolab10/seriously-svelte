@@ -6,14 +6,14 @@
   import { grabbing } from '../managers/Grabbing';
   import Entity from '../data/Entity';
   export let isReveal = false;
-  export let idea = Entity;
+  export let entity = Entity;
  
   function handleClick(event) {
     if (!isReveal) {
       if (event.shiftKey) {
-        grabbing.toggleGrab(idea);
+        grabbing.toggleGrab(entity);
       } else {
-        grabbing.grabOnly(idea);
+        grabbing.grabOnly(entity);
       }
 
       updateButtonColors();
@@ -23,21 +23,21 @@
   }
 
   function updateButtonColors() {
-    var dot = document.getElementById(idea.id)?.style;
-    dot?.setProperty(  '--dotColor', idea.color);
-    dot?.setProperty( '--grabColor', idea.hoverColor( isReveal));
-    dot?.setProperty('--hoverColor', idea.hoverColor(!isReveal));
+    var dot = document.getElementById(entity.id)?.style;
+    dot?.setProperty(  '--dotColor', entity.color);
+    dot?.setProperty( '--grabColor', entity.hoverColor( isReveal));
+    dot?.setProperty('--hoverColor', entity.hoverColor(!isReveal));
   }
 </script>
 
 <slot>
-  <button id={idea.id}
+  <button id={entity.id}
     on:click={handleClick}
     class={ isReveal ? 'reveal' : 'drag' }
-    style='--dotColor:   {idea.color};
-           --grabColor:  {idea.hoverColor( isReveal)};
-           --hoverColor: {idea.hoverColor(!isReveal)}'>
-    {isReveal ? idea.trait : '-'}
+    style='--dotColor:   {entity.color};
+           --grabColor:  {entity.hoverColor( isReveal)};
+           --hoverColor: {entity.hoverColor(!isReveal)}'>
+    {isReveal ? entity.trait : '-'}
   </button>
 </slot>
 
