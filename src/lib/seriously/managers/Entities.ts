@@ -1,4 +1,4 @@
-import { signalFetchCompleted } from './Signals';
+import { signal, SignalKinds } from '../managers/Signals';
 import Entity from '../data/Entity';
 import Airtable from 'airtable';
 
@@ -19,7 +19,7 @@ export default class Entities {
         this.addUnique(entity);
       }
 
-      signalFetchCompleted('got em!');
+      signal([SignalKinds.fetch], null);
     } catch (error) {
       console.error('Error reading Airtable database:', error);
     }    

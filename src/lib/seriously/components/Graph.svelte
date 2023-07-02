@@ -2,7 +2,7 @@
 
 <script lang='ts'>
   import { WorkState, states, setWorkState } from '../managers/States';
-  import { fetchCompleted } from '../managers/Signals';
+	import { handleSignal, SignalKinds } from '../managers/Signals';
   import { grabbing } from '../managers/Grabbing';
   import { entities } from '../managers/Entities';
   import { editingID } from '../managers/Stores';
@@ -11,8 +11,10 @@
   import Entity from '../data/Entity';
   let isLoading = true;
 
-  fetchCompleted.connect((text, Object) => {
-		isLoading = false;
+	handleSignal.connect((kinds) => {
+		if (kinds.includes(SignalKinds.fetch)) {
+  		isLoading = false;
+    }
   });
 
   function handleKeyDown(event) {

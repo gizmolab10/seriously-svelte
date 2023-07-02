@@ -1,8 +1,7 @@
 <svelte:options immutable={true}/>
 
 <script lang='ts'>
-  import { getContext, setContext } from "svelte";
-  import { signalWidgetsNeedUpdate } from '../managers/Signals';
+  import { signal, handleSignal, SignalKinds } from '../managers/Signals';
   import { grabbing } from '../managers/Grabbing';
   import Entity from '../data/Entity';
   export let isReveal = false;
@@ -16,11 +15,16 @@
         grabbing.grabOnly(entity);
       }
 
-      updateButtonColors();
-      signalWidgetsNeedUpdate('whoot!');
-      // getContext('Text')
+      signal([SignalKinds.widget], entity.id);
     }
   }
+
+	handleSignal.connect((kinds, value) => {
+		if (kinds.includes(SignalKinds.dot) && value == entity.id) {
+      console.log(value);
+      updateButtonColors();
+    }
+  });
 
   function updateButtonColors() {
     var dot = document.getElementById(entity.id)?.style;

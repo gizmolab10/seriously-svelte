@@ -10,19 +10,16 @@
 	export let entity = Entity;
   let input;
 
-  function isEditable(): boolean {
-    return $editingID == entity.id;
-  }
+  function isEditable(): boolean { return $editingID == entity.id; }
+  function handleInput(event) { entity.title = event.target.value; }
+  function handleBlur(event) { $editingID = undefined; }
   
   const unsubscribe = editingID.subscribe((editing) => {
     if (isEditable()) {
+      // console.log('TEXT:', entity, input);
       input.focus();
     }
   });
-
-  function handleInput(event) {
-    entity.title = event.target.value;
-  }
 
   function handleFocus(event) {
     grabbing.grab(entity);
@@ -36,19 +33,11 @@
       if (event.key == 'Enter') {
         input.blur();
       }
-
-      console.log('TEXT:', COMMAND);
     }
   }
 
-  function handleBlur(event) {
-    $editingID = undefined;
-  }
-
   addEventListener('keydown', handleKeyDown);
-
   onDestroy(unsubscribe);
-
 </script>
 
 <input

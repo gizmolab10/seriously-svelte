@@ -1,12 +1,10 @@
 import { Signal } from 'typed-signals';
 
-export let fetchCompleted = new Signal<(text: string, object: any) => void>();
-export let updateWidgets = new Signal<(text: string, object: any) => void>();
-
-export function signalFetchCompleted(text: string, object: any = null) {
-  fetchCompleted.emit(text, object);
+export enum SignalKinds {
+  widget = 'w',
+  fetch  = 'f',
+  dot    = 'd'
 }
 
-export function signalWidgetsNeedUpdate(text: string, object: any = null) {
-  updateWidgets.emit(text, object);
-}
+export let handleSignal = new Signal<(kinds: SignalKinds[], value: any) => void>();
+export function signal(kinds: SignalKinds[], value: any) { handleSignal.emit(kinds, value); }

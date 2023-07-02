@@ -1,16 +1,19 @@
 <svelte:options immutable = {true} />
 
 <script lang='ts'>
-	import { updateWidgets } from '../managers/Signals';
+	import { handleSignal, signal, SignalKinds } from '../managers/Signals';
+	import Entity from '../data/Entity';
 	import Text from './Text.svelte';
-  import Entity from '../data/Entity';
 	import Dot from './Dot.svelte';
 	export let entity = Entity;
 
-	updateWidgets.connect((text, Object) => {
-    var widget = document.getElementById(entity.id)?.style;
-    widget?.setProperty('--hoverColor', entity.hoverColor( true));
-    widget?.setProperty( '--grabColor', entity.hoverColor(false));
+	handleSignal.connect((kinds) => {
+		if (kinds.includes(SignalKinds.widget)) {
+			var widget = document.getElementById(entity.id)?.style;
+			widget?.setProperty('--hoverColor', entity.hoverColor( true));
+			widget?.setProperty( '--grabColor', entity.hoverColor(false));
+			signal([SignalKinds.dot]);
+		}
 	});
 </script>
 

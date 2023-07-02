@@ -1,5 +1,6 @@
-import { seriouslyGlobals } from './Globals';
 import { grabbing } from '../managers/Grabbing';
+import { editingID } from '../managers/Stores';
+import { seriouslyGlobals } from './Globals';
 import { v4 as uuid } from 'uuid';
 
 export default class Entity {
@@ -18,6 +19,7 @@ export default class Entity {
   };
 
   get isGrabbed(): boolean { return grabbing.isGrabbed(this); }
+  get isEditable(): boolean { return editingID == this.id; }
 
   hoverColor(hovering: boolean) {
     return (this.isGrabbed != hovering) ? this.color : seriouslyGlobals.backgroundColor;
