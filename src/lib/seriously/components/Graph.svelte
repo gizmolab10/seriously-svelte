@@ -50,9 +50,9 @@
 {:else}
 <div>
   <ul>
-    {#each entities.all as idea}
+    {#each entities.all as entity}
       <li>
-        <Widget entity={idea}/>
+        <Widget entity={entity}/>
       </li>
     {/each}
   </ul>
