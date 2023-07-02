@@ -1,42 +1,50 @@
 <svelte:options immutable = {true} />
 
 <script lang='ts'>
-  import { states, WorkState, setWorkState } from '../managers/States'
   import { grabbing } from '../managers/Grabbing';
   import { editingID } from '../managers/Stores';
   import { onMount, onDestroy } from 'svelte';
   import Widget from './Widget.svelte';
   import Entity from '../data/Entity';
 	export let entity = Entity;
+  let unsubscribe;
   let input;
 
-  function isEditable(): boolean { return $editingID == entity.id; }
   function handleInput(event) { entity.title = event.target.value; }
   function handleBlur(event) { $editingID = undefined; }
   
-  const unsubscribe = editingID.subscribe((editing) => {
-    if (isEditable()) {
-      // console.log('TEXT:', entity, input);
-      input.focus();
-    }
-  });
+  function subscribe() {
+    unsubscribe = editingID.subscribe((editing) => {
+      if ($editingID == entity.id) {
+        setTimeout(() => {
+          input.focus();
+          console.log('EDIT:', entity.title);
+        }, 10);
+      }
+    });
+  }
 
   function handleFocus(event) {
     grabbing.grab(entity);
+    console.log('FOCUS:', entity.title);
 
     $editingID = entity.id; // cause the input object to gain focus, so infinite recursion, BAAAAD!
   }
 
   function handleKeyDown(event) {
-    if (isEditable) {
+    if ($editingID == entity.id) {
       const COMMAND = event.metaKey;
       if (event.key == 'Enter') {
         input.blur();
+        setTimeout(() => {
+          $editingID = undefined;
+          console.log('STOP:', entity.title);
+        }, 20);
       }
     }
   }
 
-  addEventListener('keydown', handleKeyDown);
+  onMount(subscribe);
   onDestroy(unsubscribe);
 </script>
 
@@ -44,6 +52,7 @@
   type='text'
   id={entity.id}
   bind:this={input}
+  onkeydown={handleKeyDown}
   oninput={handleInput}
   onfocus={handleFocus}
   onblur={handleBlur}

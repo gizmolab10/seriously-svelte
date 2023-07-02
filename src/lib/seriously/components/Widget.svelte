@@ -9,9 +9,9 @@
 
 	handleSignal.connect((kinds) => {
 		if (kinds.includes(SignalKinds.widget)) {
-			var widget = document.getElementById(entity.id)?.style;
-			widget?.setProperty('--hoverColor', entity.hoverColor( true));
-			widget?.setProperty( '--grabColor', entity.hoverColor(false));
+			var style = document.getElementById(entity.id)?.style;
+			style?.setProperty('--hoverColor', entity.hoverColor( true));
+			style?.setProperty( '--grabColor', entity.hoverColor(false));
 			signal([SignalKinds.dot]);
 		}
 	});

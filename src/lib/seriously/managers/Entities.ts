@@ -25,18 +25,12 @@ export default class Entities {
     }    
   }
 
-  has(entity: Entity) {
-    for (let one of this.all) {
-      if (one.id == entity.id) {
-        return true;
-      }
-    }
-
-    return false;
+  entityFor(id: string): Entity | null { 
+    return this.all.filter((entity) => entity.id === id)[0];
   }
 
   addUnique(entity: Entity) {
-    if (!this.has(entity)) {
+    if (!this.all.includes(entity)) {
       this.all.push(entity);
     }
   }

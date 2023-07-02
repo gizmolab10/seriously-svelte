@@ -1,7 +1,6 @@
 <svelte:options immutable = {true} />
 
 <script lang='ts'>
-  import { WorkState, states, setWorkState } from '../managers/States';
 	import { handleSignal, SignalKinds } from '../managers/Signals';
   import { grabbing } from '../managers/Grabbing';
   import { entities } from '../managers/Entities';
@@ -17,19 +16,28 @@
     }
   });
 
+  function beginEdit() {
+    let id = grabbing.firstGrab();
+    $editingID = id;
+
+    console.log('BEGIN:', entities.entityFor(id)?.title);
+  }
+
   function handleKeyDown(event) {
-    let key = event.key;
     if (event.type == 'keydown') {
-      let id = grabbing.firstGrab();
-      switch (event.key) {
-        case 'Enter': $editingID = id;
-        default: break;
-      }
-      if (states.workingState == WorkState.idea) {
+      if ($editingID != undefined) {
+        $editingID = undefined
         event.target.blur();
-        setWorkState(WorkState.graph);
       } else {
-        
+        let key = event.key;
+        switch (key) {
+          case 'Enter': 
+            beginEdit();
+            break;
+          default:
+            console.log('IGNORE');
+            break;
+        }
       }
     }
   }
