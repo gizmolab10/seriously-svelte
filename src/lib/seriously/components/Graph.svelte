@@ -2,9 +2,9 @@
 
 <script lang='ts'>
 	import { handleSignal, SignalKinds } from '../managers/Signals';
+  import { editingID } from '../managers/Editing';
   import { grabbing } from '../managers/Grabbing';
   import { entities } from '../managers/Entities';
-  import { editingID } from '../managers/Stores';
   import { edit, Entity } from '../data/Entity';
   import { onMount } from 'svelte';
   import Widget from './Widget.svelte';
@@ -44,7 +44,7 @@
   onMount(async () => {
     window.addEventListener('keydown', handleKeyDown);
     try {
-      entities.fetchAll()
+      entities.readAll()
     } catch (error) {
       console.error('Error reading Airtable database:', error);
     }

@@ -2,8 +2,9 @@
 
 <script lang='ts'>
   import { signal, SignalKinds } from '../managers/Signals';
+  import { editingID } from '../managers/Editing';
   import { grabbing } from '../managers/Grabbing';
-  import { editingID } from '../managers/Stores';
+  import { entities } from '../managers/Entities';
   import { onMount, onDestroy } from 'svelte';
   import Widget from './Widget.svelte';
   import Entity from '../data/Entity';
@@ -22,6 +23,7 @@
           console.log('EDIT:', entity.title);
         } else {
           input.blur();
+          entities.update(entity);
         }
       }, 50);    // fast but long enough to let the store settle down
     });

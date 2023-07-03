@@ -1,7 +1,8 @@
 import { grabbing } from '../managers/Grabbing';
-import { editingID } from '../managers/Stores';
+import { editingID } from '../managers/Editing';
 import { seriouslyGlobals } from './Globals';
 import { v4 as uuid } from 'uuid';
+import Airtable from '../../../../node_modules/airtable/lib/airtable';
 
 export default class Entity {
   id: string;
@@ -18,6 +19,7 @@ export default class Entity {
     this.parent = null;
   };
 
+  get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
   get isGrabbed(): boolean { return grabbing.isGrabbed(this); }
   get isEditable(): boolean { return editingID == this.id; }
   grabOnly() { grabbing.grabOnly(this); }
