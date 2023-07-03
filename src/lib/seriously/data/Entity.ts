@@ -1,8 +1,8 @@
-import { grabbing } from '../managers/Grabbing';
-import { editingID } from '../managers/Editing';
-import { seriouslyGlobals } from './Globals';
-import { v4 as uuid } from 'uuid';
 import Airtable from '../../../../node_modules/airtable/lib/airtable';
+import { grabbing, editingID } from '../common/imports';
+import { seriouslyGlobals } from './Globals';
+import { derived } from 'svelte/store';
+import { v4 as uuid } from 'uuid';
 
 export default class Entity {
   id: string;
@@ -20,11 +20,14 @@ export default class Entity {
   };
 
   get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
+  get isEditing(): boolean { return derived(editingID, ($editingID: string) => $editingID == this.id) }
+  get  grabAttributes(): string { return '3px ' + this.lineAttribute + ' ' + this.hoverColor(false); }
+  get hoverAttributes(): string { return '3px ' + this.lineAttribute + ' ' + this.hoverColor(true); }
+  get lineAttribute(): string { return editingID == this.id ? 'dashed' : 'solid'; }
   get isGrabbed(): boolean { return grabbing.isGrabbed(this); }
-  get isEditable(): boolean { return editingID == this.id; }
   grabOnly() { grabbing.grabOnly(this); }
   
-  hoverColor(hovering: boolean) {
+  hoverColor(hovering: boolean): string {
     return (this.isGrabbed != hovering) ? this.color : seriouslyGlobals.backgroundColor;
   }
 }

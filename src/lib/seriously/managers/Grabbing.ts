@@ -1,5 +1,4 @@
-import {entities} from "./Entities";
-import Entity from "../data/Entity";
+import { Entity, entities } from '../common/imports';
 
 export default class Grabbing {
   grabbed: string[];

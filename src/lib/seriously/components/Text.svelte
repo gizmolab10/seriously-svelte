@@ -1,13 +1,8 @@
 <svelte:options immutable = {true} />
 
 <script lang='ts'>
-  import { signal, SignalKinds } from '../managers/Signals';
-  import { editingID } from '../managers/Editing';
-  import { grabbing } from '../managers/Grabbing';
-  import { entities } from '../managers/Entities';
-  import { onMount, onDestroy } from 'svelte';
+  import { Entity, entities, editingID, onMount, onDestroy, signal, SignalKinds } from '../common/imports.ts';
   import Widget from './Widget.svelte';
-  import Entity from '../data/Entity';
 	export let entity = Entity;
   let unsubscribe;
   let input;
@@ -20,12 +15,14 @@
       setTimeout(() => {     // need to wait for the input element to be fully instantiated
         if ($editingID == entity.id) {
           input.focus();
-          console.log('EDIT:', entity.title);
+          console.log('AUTO EDIT:', entity.lineAttribute, entity.title);
         } else {
           input.blur();
-          entities.update(entity);
+          entities.updateToCloud(entity);
+          console.log('AUTO     :', entity.lineAttribute, entity.title);
         }
-      }, 50);    // fast but long enough to let the store settle down
+        signal([SignalKinds.widget], null); // so widget will show as [un]grabbed
+      }, 50);    // wait long enough to let editingID to update before reading it
     });
   }
 
@@ -33,6 +30,7 @@
     $editingID = entity.id;
     entity.grabOnly();
     signal([SignalKinds.widget], null); // so widget will show as grabbed
+    // console.log('EDIT:', entity.title, entity.lineAttribute);
   }
 
   function handleKeyDown(event) {
@@ -40,7 +38,8 @@
       // const COMMAND = event.metaKey;
       if (event.key == 'Enter') {
         input.blur();
-        console.log('STOP:', entity.title);
+        entities.updateToCloud(entity);
+          console.log('STOP:', entity.title);
         setTimeout(() => { // need to wait so subscribe still matches the editingID
           $editingID = undefined;
         }, 20);

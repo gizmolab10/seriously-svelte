@@ -1,9 +1,7 @@
 <svelte:options immutable={true}/>
 
 <script lang='ts'>
-  import { signal, handleSignal, SignalKinds } from '../managers/Signals';
-  import { grabbing } from '../managers/Grabbing';
-  import Entity from '../data/Entity';
+  import { Entity, grabbing, signal, handleSignal, SignalKinds } from '../common/imports.ts';
   export let isReveal = false;
   export let entity = Entity;
  

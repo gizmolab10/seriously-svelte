@@ -1,5 +1,4 @@
-import { signal, SignalKinds } from '../managers/Signals';
-import Entity from '../data/Entity';
+import { Entity, signal, SignalKinds } from '../common/imports';
 import Airtable from 'airtable';
 
 const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
@@ -17,11 +16,11 @@ export default class Entities {
   }
 
 
-  //////////
-  // CRUD //
-  //////////
+  ///////////////////////////
+  //         CRUD          //
+  ///////////////////////////
 
-  async readAll() {
+  async readAllFromCloud() {
     try {
       const records = await table.select().all()
 
@@ -39,7 +38,7 @@ export default class Entities {
     }    
   }
 
-  async update(entity: Entity) {
+  async updateToCloud(entity: Entity) {
     try {
       table.update(entity.id, entity.fields);
     } catch (error) {
@@ -47,7 +46,7 @@ export default class Entities {
     }
   }
 
-  async create(entity: Entity) {
+  async createInCloud(entity: Entity) {
     try {
       table.create(entity);
     } catch (error) {
@@ -55,7 +54,7 @@ export default class Entities {
     }
   }
 
-  async delete(entity: Entity) {
+  async deleteFromCloud(entity: Entity) {
     try {
       table.delete(entity);
     } catch (error) {

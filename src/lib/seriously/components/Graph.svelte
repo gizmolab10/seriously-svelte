@@ -1,12 +1,7 @@
 <svelte:options immutable = {true} />
 
 <script lang='ts'>
-	import { handleSignal, SignalKinds } from '../managers/Signals';
-  import { editingID } from '../managers/Editing';
-  import { grabbing } from '../managers/Grabbing';
-  import { entities } from '../managers/Entities';
-  import { edit, Entity } from '../data/Entity';
-  import { onMount } from 'svelte';
+  import { entities, grabbing, editingID, onMount, handleSignal, SignalKinds } from '../common/imports.ts';
   import Widget from './Widget.svelte';
   let isLoading = true;
 
@@ -18,7 +13,6 @@
 
   function editFirstGrab() {
     const entity = grabbing.firstGrabbedEntity();
-    console.log('FIRST:', entity);
     $editingID = entity?.id;
 
     // console.log('BEGIN:', entities.entityFor(id)?.title);
@@ -44,7 +38,7 @@
   onMount(async () => {
     window.addEventListener('keydown', handleKeyDown);
     try {
-      entities.readAll()
+      entities.readAllFromCloud()
     } catch (error) {
       console.error('Error reading Airtable database:', error);
     }

@@ -1,4 +1,4 @@
-import './app.css';
+import './styles/app.css';
 import Seriously from "./Seriously.svelte";
 
 const app = new Seriously({

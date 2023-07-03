@@ -1,8 +1,7 @@
 <svelte:options immutable = {true} />
 
 <script lang='ts'>
-	import { handleSignal, signal, SignalKinds } from '../managers/Signals';
-	import Entity from '../data/Entity';
+  import { Entity, signal, handleSignal, SignalKinds } from '../common/imports.ts';
 	import Text from './Text.svelte';
 	import Dot from './Dot.svelte';
 	export let entity = Entity;
@@ -10,8 +9,8 @@
 	handleSignal.connect((kinds) => {
 		if (kinds.includes(SignalKinds.widget)) {
 			var style = document.getElementById(entity.id)?.style;
-			style?.setProperty('--hoverColor', entity.hoverColor( true));
-			style?.setProperty( '--grabColor', entity.hoverColor(false));
+			style?.setProperty('--hoverAttributes', entity.hoverAttributes);
+			style?.setProperty( '--grabAttributes', entity.grabAttributes);
 			signal([SignalKinds.dot]);
 		}
 	});
@@ -20,15 +19,15 @@
 <span id={entity.id}
 	style='padding: 5px;
 				 border-radius: 20px;
-				 border: 3px solid var(--grabColor);
-				 --hoverColor: {entity.hoverColor( true)};
-         --grabColor:  {entity.hoverColor(false)}'>
+				 border: var(--grabAttributes);
+				 --hoverAttributes: {entity.hoverAttributes};
+         --grabAttributes:  {entity.grabAttributes}'>
 	<Dot entity={entity}/> <Text entity={entity}/> <Dot entity={entity} isReveal={true}/>
 </span>
 
 <style lang='scss'>
 	.span:hover {
 		padding: 3px;
-		border: 3px dashed var(--hoverColor);
+		border: var(--hoverAttributes);
 	}
 </style>
