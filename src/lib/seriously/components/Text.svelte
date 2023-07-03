@@ -1,6 +1,7 @@
 <svelte:options immutable = {true} />
 
 <script lang='ts'>
+  import { signal, SignalKinds } from '../managers/Signals';
   import { grabbing } from '../managers/Grabbing';
   import { editingID } from '../managers/Stores';
   import { onMount, onDestroy } from 'svelte';
@@ -15,30 +16,31 @@
   
   function subscribe() {
     unsubscribe = editingID.subscribe((editing) => {
-      if ($editingID == entity.id) {
-        setTimeout(() => {
+      setTimeout(() => {     // need to wait for the input element to be fully instantiated
+        if ($editingID == entity.id) {
           input.focus();
           console.log('EDIT:', entity.title);
-        }, 10);
-      }
+        } else {
+          input.blur();
+        }
+      }, 50);    // fast but long enough to let the store settle down
     });
   }
 
   function handleFocus(event) {
-    grabbing.grab(entity);
-    console.log('FOCUS:', entity.title);
-
-    $editingID = entity.id; // cause the input object to gain focus, so infinite recursion, BAAAAD!
+    $editingID = entity.id;
+    entity.grabOnly();
+    signal([SignalKinds.widget], null); // so widget will show as grabbed
   }
 
   function handleKeyDown(event) {
     if ($editingID == entity.id) {
-      const COMMAND = event.metaKey;
+      // const COMMAND = event.metaKey;
       if (event.key == 'Enter') {
         input.blur();
-        setTimeout(() => {
+        console.log('STOP:', entity.title);
+        setTimeout(() => { // need to wait so subscribe still matches the editingID
           $editingID = undefined;
-          console.log('STOP:', entity.title);
         }, 20);
       }
     }
@@ -52,10 +54,10 @@
   type='text'
   id={entity.id}
   bind:this={input}
-  onkeydown={handleKeyDown}
-  oninput={handleInput}
-  onfocus={handleFocus}
-  onblur={handleBlur}
+  on:blur={handleBlur}
+  on:focus={handleFocus}
+  on:input={handleInput}
+  on:keydown={handleKeyDown}
   bind:value={entity.title}
   style='--textColor: {entity.color}'/>
 

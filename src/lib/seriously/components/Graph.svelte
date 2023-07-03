@@ -5,9 +5,9 @@
   import { grabbing } from '../managers/Grabbing';
   import { entities } from '../managers/Entities';
   import { editingID } from '../managers/Stores';
+  import { edit, Entity } from '../data/Entity';
   import { onMount } from 'svelte';
   import Widget from './Widget.svelte';
-  import Entity from '../data/Entity';
   let isLoading = true;
 
 	handleSignal.connect((kinds) => {
@@ -16,23 +16,22 @@
     }
   });
 
-  function beginEdit() {
-    let id = grabbing.firstGrab();
-    $editingID = id;
+  function editFirstGrab() {
+    const entity = grabbing.firstGrabbedEntity();
+    console.log('FIRST:', entity);
+    $editingID = entity?.id;
 
-    console.log('BEGIN:', entities.entityFor(id)?.title);
+    // console.log('BEGIN:', entities.entityFor(id)?.title);
   }
 
   function handleKeyDown(event) {
+    console.log('GRAPH:', $editingID);
     if (event.type == 'keydown') {
-      if ($editingID != undefined) {
-        $editingID = undefined
-        event.target.blur();
-      } else {
+      if ($editingID == undefined) {
         let key = event.key;
         switch (key) {
           case 'Enter': 
-            beginEdit();
+            editFirstGrab();
             break;
           default:
             console.log('IGNORE');

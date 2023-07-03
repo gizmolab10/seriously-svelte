@@ -20,7 +20,8 @@ export default class Entity {
 
   get isGrabbed(): boolean { return grabbing.isGrabbed(this); }
   get isEditable(): boolean { return editingID == this.id; }
-
+  grabOnly() { grabbing.grabOnly(this); }
+  
   hoverColor(hovering: boolean) {
     return (this.isGrabbed != hovering) ? this.color : seriouslyGlobals.backgroundColor;
   }

@@ -25,7 +25,8 @@ export default class Entities {
     }    
   }
 
-  entityFor(id: string): Entity | null { 
+  entityFor(id: string | undefined): Entity | undefined {
+    if (id == undefined) { return undefined; }
     return this.all.filter((entity) => entity.id === id)[0];
   }
 

@@ -1,4 +1,5 @@
-import Idea from "../data/Idea";
+import {entities} from "./Entities";
+import Entity from "../data/Entity";
 
 export default class Grabbing {
   grabbed: string[];
@@ -8,29 +9,32 @@ export default class Grabbing {
   }
 
   firstGrab(): string | undefined {
-    // console.log('GRAB:', this.grabbed[0]);
     return (this.grabbed.length == 0) ? undefined : this.grabbed[0];
   }
 
-  grab(idea: Idea) {
-    this.grabbed.push(idea.id);
+  firstGrabbedEntity(): Entity | undefined {
+    return entities.entityFor(this.firstGrab())
   }
 
-  grabOnly(idea: Idea) {
-    this.grabbed = [idea.id];
+  grab(entity: Entity) {
+    this.grabbed.push(entity.id);
   }
 
-  ungrab(idea: Idea) {
-    const index = this.grabbed.indexOf(idea.id);
+  grabOnly(entity: Entity) {
+    this.grabbed = [entity.id];
+  }
+
+  ungrab(entity: Entity) {
+    const index = this.grabbed.indexOf(entity.id);
 
     if (index > -1) { // only splice array when item is found
       this.grabbed.splice(index, 1); // 2nd parameter means remove one item only
     }
   }
 
-  isGrabbed(idea: Idea) {
+  isGrabbed(entity: Entity) {
     for (let grabbed of this.grabbed) {
-      if (grabbed == idea.id) {
+      if (grabbed == entity.id) {
         return true;
       }
     }
@@ -38,11 +42,17 @@ export default class Grabbing {
     return false;
   }
 
-  toggleGrab(idea: Idea) {
-    if (this.isGrabbed(idea)) {
-      this.ungrab(idea);
+  toggleGrab(entity: Entity) {
+    if (this.isGrabbed(entity)) {
+      this.ungrab(entity);
     } else {
-      this.grab(idea);
+      this.grab(entity);
+    }
+  }
+
+  debug() {
+    if (this.grabbed.length > 0) {
+      console.log('GRABS:', this.grabbed.map((id) => entities.entityFor(id)?.title));
     }
   }
 }
