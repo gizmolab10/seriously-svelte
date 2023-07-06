@@ -19,7 +19,7 @@
 
 	handleSignal.connect((kinds, value) => {
 		if (kinds.includes(SignalKinds.dot) && value == entity.id) {
-      console.log(value);
+      // console.log(value);
       updateButtonColors();
     }
   });

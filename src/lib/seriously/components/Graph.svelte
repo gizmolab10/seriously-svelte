@@ -19,7 +19,7 @@
   }
 
   function handleKeyDown(event) {
-    console.log('GRAPH:', $editingID);
+    // console.log('GRAPH:', $editingID);
     if (event.type == 'keydown') {
       if ($editingID == undefined) {
         let key = event.key;
@@ -28,7 +28,7 @@
             editFirstGrab();
             break;
           default:
-            console.log('IGNORE');
+            // console.log('IGNORE');
             break;
         }
       }

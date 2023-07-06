@@ -15,11 +15,11 @@
       setTimeout(() => {     // need to wait for the input element to be fully instantiated
         if ($editingID == entity.id) {
           input.focus();
-          console.log('AUTO EDIT:', entity.lineAttribute, entity.title);
+          // console.log('AUTO EDIT:', entity.lineAttribute, entity.title);
         } else {
           input.blur();
           entities.updateToCloud(entity);
-          console.log('AUTO     :', entity.lineAttribute, entity.title);
+          // console.log('AUTO     :', entity.lineAttribute, entity.title);
         }
         signal([SignalKinds.widget], null); // so widget will show as [un]grabbed
       }, 50);    // wait long enough to let editingID to update before reading it
@@ -39,7 +39,7 @@
       if (event.key == 'Enter') {
         input.blur();
         entities.updateToCloud(entity);
-          console.log('STOP:', entity.title);
+        // console.log('STOP:', entity.title);
         setTimeout(() => { // need to wait so subscribe still matches the editingID
           $editingID = undefined;
         }, 20);
