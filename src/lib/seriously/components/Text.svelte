@@ -6,9 +6,6 @@
 	export let entity = Entity;
   let unsubscribe;
   let input;
-
-  function handleInput(event) { entity.title = event.target.value; }
-  function handleBlur(event) { $editingID = undefined; }
   
   function subscribe() {
     unsubscribe = editingID.subscribe((editing) => {
@@ -21,6 +18,7 @@
           entities.updateToCloud(entity);
           // console.log('AUTO     :', entity.lineAttribute, entity.title);
         }
+        // console.log('FOCUS:', entity.borderAttribute, entity.title);
         signal([SignalKinds.widget], null); // so widget will show as [un]grabbed
       }, 50);    // wait long enough to let editingID to update before reading it
     });
@@ -47,6 +45,9 @@
     }
   }
 
+  function handleInput(event) { entity.title = event.target.value; }
+  function handleBlur(event) { $editingID = undefined; }
+  
   onMount(subscribe);
   onDestroy(unsubscribe);
 </script>
@@ -60,7 +61,7 @@
   on:input={handleInput}
   on:keydown={handleKeyDown}
   bind:value={entity.title}
-  style='--textColor: {entity.color}'/>
+  style='--textColor: {entity.color};'/>
 
 <style lang='scss'>
   input {

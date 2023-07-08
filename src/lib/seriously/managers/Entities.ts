@@ -6,7 +6,7 @@ const table = base('Entities');
 
 export default class Entities {
   all: Entity[] = [];
-  errorMessage = 'Error from Entities database:';
+  errorMessage = 'Error from Entities database: ';
 
   constructor() {}
 
@@ -34,7 +34,7 @@ export default class Entities {
 
       signal([SignalKinds.fetch], null);
     } catch (error) {
-      console.error(this.errorMessage, error);
+      alert(this.errorMessage + error);
     }    
   }
 
@@ -42,7 +42,7 @@ export default class Entities {
     try {
       table.update(entity.id, entity.fields);
     } catch (error) {
-      console.error(this.errorMessage, error);
+      alert(this.errorMessage + error);
     }
   }
 
@@ -50,7 +50,7 @@ export default class Entities {
     try {
       table.create(entity);
     } catch (error) {
-      console.error(this.errorMessage, error);
+      alert(this.errorMessage + error);
     }
   }
 
@@ -58,7 +58,7 @@ export default class Entities {
     try {
       table.delete(entity);
     } catch (error) {
-      console.error(this.errorMessage, error);
+      alert(this.errorMessage + error);
     }
   }
 

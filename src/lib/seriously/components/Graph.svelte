@@ -1,7 +1,7 @@
 <svelte:options immutable = {true} />
 
 <script lang='ts'>
-  import { entities, grabbing, editingID, onMount, handleSignal, SignalKinds } from '../common/imports.ts';
+  import { entities, grabbing, editingID, onMount, onDestroy, handleSignal, SignalKinds } from '../common/imports.ts';
   import Widget from './Widget.svelte';
   let isLoading = true;
 
@@ -24,12 +24,8 @@
       if ($editingID == undefined) {
         let key = event.key;
         switch (key) {
-          case 'Enter': 
-            editFirstGrab();
-            break;
-          default:
-            // console.log('IGNORE');
-            break;
+          case 'Enter': editFirstGrab(); break;
+          default: break;
         }
       }
     }
@@ -40,9 +36,13 @@
     try {
       entities.readAllFromCloud()
     } catch (error) {
-      console.error('Error reading Airtable database:', error);
+      alert('Error reading Airtable database: ' + error);
     }
   });
+
+  onDestroy( () => {
+    window.removeEventListener('keydown');
+  })
 
 </script>
 

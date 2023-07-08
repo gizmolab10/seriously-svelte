@@ -11,13 +11,13 @@
 			var style = document.getElementById(entity.id)?.style;
 			style?.setProperty('--hoverAttributes', entity.hoverAttributes);
 			style?.setProperty( '--grabAttributes', entity.grabAttributes);
-			signal([SignalKinds.dot]);
+			signal([SignalKinds.dot], entity.id);
 		}
 	});
 </script>
 
 <span id={entity.id}
-	style='padding: 5px;
+	style='padding: 5px 5px 7px;
 				 border-radius: 20px;
 				 border: var(--grabAttributes);
 				 --hoverAttributes: {entity.hoverAttributes};
@@ -27,7 +27,7 @@
 
 <style lang='scss'>
 	.span:hover {
-		padding: 3px;
+		padding: 3px 3px 5px;
 		border: var(--hoverAttributes);
 	}
 </style>

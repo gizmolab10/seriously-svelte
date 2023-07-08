@@ -20,11 +20,11 @@ export default class Entity {
   };
 
   get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
-  get isEditing(): boolean { return derived(editingID, ($editingID: string) => $editingID == this.id) }
-  get  grabAttributes(): string { return '3px ' + this.lineAttribute + ' ' + this.hoverColor(false); }
-  get hoverAttributes(): string { return '3px ' + this.lineAttribute + ' ' + this.hoverColor(true); }
-  get lineAttribute(): string { return editingID == this.id ? 'dashed' : 'solid'; }
+  get  grabAttributes(): string { return this.borderAttribute + this.hoverColor(false); }
+  get hoverAttributes(): string { return this.borderAttribute + this.hoverColor(true); }
+  get borderAttribute(): string { return editingID === this.id ? 'dashed' : 'solid' + ' 1px '; }
   get isGrabbed(): boolean { return grabbing.isGrabbed(this); }
+  get isEditing(): boolean { return editingID === this.id }
   grabOnly() { grabbing.grabOnly(this); }
   
   hoverColor(hovering: boolean): string {

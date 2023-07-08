@@ -18,17 +18,16 @@
   }
 
 	handleSignal.connect((kinds, value) => {
-		if (kinds.includes(SignalKinds.dot) && value == entity.id) {
-      // console.log(value);
+		if (kinds.includes(SignalKinds.dot)) {
       updateButtonColors();
     }
   });
 
   function updateButtonColors() {
-    var dot = document.getElementById(entity.id)?.style;
-    dot?.setProperty(  '--dotColor', entity.color);
-    dot?.setProperty( '--grabColor', entity.hoverColor( isReveal));
-    dot?.setProperty('--hoverColor', entity.hoverColor(!isReveal));
+    var style = document.getElementById(entity.id)?.style;
+    style?.setProperty(  '--dotColor', entity.color);
+    style?.setProperty( '--grabColor', entity.hoverColor( isReveal));
+    style?.setProperty('--hoverColor', entity.hoverColor(!isReveal));
   }
 </script>
 
