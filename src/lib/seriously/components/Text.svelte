@@ -26,6 +26,7 @@
 
   function handleKeyDown(event) {
     if ($editingID == entity.id) {
+      event.preventDefault();
       if (event.key == 'Enter') {
         input.blur();
         entities.updateToCloud(entity);
@@ -53,6 +54,7 @@
 
 <style lang='scss'>
   input {
+    padding: 0px 5px;
     border: none;
     border-radius: 10px;
     color: var(--textColor);

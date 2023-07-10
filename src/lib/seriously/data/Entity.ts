@@ -25,11 +25,14 @@ export default class Entity {
   };
 
   get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
-  get  grabAttributes(): string { return this.borderAttribute + this.hoverColor(false); }
-  get hoverAttributes(): string { return this.borderAttribute + this.hoverColor(true); }
+  get  grabAttributes(): string { return this.borderAttribute + this.revealColor(false); }
+  get hoverAttributes(): string { return this.borderAttribute + this.revealColor(true); }
   get borderAttribute(): string { return this.isEditing ? 'dashed' : 'solid' + ' 1px '; }
   
-  hoverColor(hovering: boolean): string {
-    return (grabbing.isGrabbed(this) != hovering) ? this.color : seriouslyGlobals.backgroundColor;
+  // TODO: hover and grab are the same color when entity is grabbed
+
+  revealColor(hovering: boolean): string {
+    const flag = grabbing.isGrabbed(this) || this.isEditing;
+    return (flag != hovering) ? this.color : seriouslyGlobals.backgroundColor;
   }
 }

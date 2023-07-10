@@ -17,17 +17,17 @@
 </script>
 
 <span id={entity.id}
-	style='padding: 5px 5px 7px;
-				 border-radius: 20px;
-				 border: var(--grabAttributes);
-				 --hoverAttributes: {entity.hoverAttributes};
-         --grabAttributes:  {entity.grabAttributes}'>
+	style='padding: 5px 5px 7px 5px;
+				border-radius: 20px;
+				border: var(--grabAttributes);
+				--hoverAttributes: {entity.hoverAttributes};
+				--grabAttributes:  {entity.grabAttributes}'>
 	<Dot entity={entity}/> <Text entity={entity}/> <Dot entity={entity} isReveal={true}/>
 </span>
 
 <style lang='scss'>
 	.span:hover {
-		padding: 3px 3px 5px;
+		padding: 3px 3px 5px 4px;
 		border: var(--hoverAttributes);
 	}
 </style>
