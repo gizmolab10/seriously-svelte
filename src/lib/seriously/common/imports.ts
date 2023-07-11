@@ -1,10 +1,10 @@
-  import { signal, handleSignal, SignalKinds } from '../managers/Signals';
   import { tick, onMount, onDestroy, createEventDispatcher } from 'svelte';
-	import { treeBrowser } from '../managers/TreeBrowser';
-	import { treeEditor } from '../managers/TreeEditor';
-	import { editingID } from '../managers/EditState';
-  import { entities } from '../managers/Entities';
-  import { grabbing } from '../managers/Grabbing';
+  import { signal, handleSignal, SignalKinds } from './Signals';
+	import { treeBrowser } from '../edit/TreeBrowser';
+	import { treeEditor } from '../edit/TreeEditor';
+	import { editingID } from '../edit/EditState';
+  import { entities } from '../data/Entities';
+  import { grabbing } from '../edit/Grabbing';
   import Entity from '../data/Entity';
 
   export { Entity, entities, grabbing, 
