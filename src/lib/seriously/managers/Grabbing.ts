@@ -7,6 +7,10 @@ export default class Grabbing {
     this.grabbed = [];
   }
 
+  hasGrab(): boolean {
+    return this.grabbed.length > 0;
+  }
+
   firstGrab(): string | undefined {
     return (this.grabbed.length == 0) ? undefined : this.grabbed[0];
   }
@@ -49,9 +53,9 @@ export default class Grabbing {
     }
   }
 
-  debug() {
+  debug(up: boolean) {
     if (this.grabbed.length > 0) {
-      console.log('GRABS:', this.grabbed.map((id) => entities.entityFor(id)?.title));
+      console.log('GRABS:', up, this.grabbed.map((id) => entities.entityFor(id)?.title));
     }
   }
 }

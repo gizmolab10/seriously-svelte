@@ -1,7 +1,7 @@
 <svelte:options immutable = {true} />
 
-<script lang='ts'>
-  import { entities, grabbing, editingID, onMount, onDestroy, handleSignal, SignalKinds } from '../common/imports.ts';
+<script>
+  import { entities, grabbing, treeBrowser, editingID, onMount, onDestroy, handleSignal, SignalKinds } from '../common/imports.ts';
   import Widget from './Widget.svelte';
   let isLoading = true;
 
@@ -14,19 +14,24 @@
   function editFirstGrab() {
     const entity = grabbing.firstGrabbedEntity();
     $editingID = entity?.id;
-
-    // console.log('BEGIN:', entities.entityFor(id)?.title);
   }
 
   function handleKeyDown(event) {
-    // console.log('GRAPH:', $editingID);
     if (event.type == 'keydown') {
-      if ($editingID == undefined) {
-        let key = event.key;
-        switch (key) {
-          case 'Enter': editFirstGrab(); break;
-          default: break;
-        }
+      let key = event.key;
+      switch (key) {
+        case 'Enter':
+          if ($editingID == undefined) {
+            editFirstGrab(); 
+          }
+          break;
+        case 'ArrowUp':
+          treeBrowser.moveGrabUp(true);
+          break;
+        case 'ArrowDown':
+          treeBrowser.moveGrabUp(false);
+          break;
+        default: break;
       }
     }
   }
@@ -51,19 +56,22 @@
 {:else if entities.all.length == 0}
   <p>No entities available.</p>
 {:else}
-<div>
-  <ul>
-    {#each entities.all as entity}
-      <li>
-        <Widget entity={entity}/>
-      </li>
-    {/each}
-  </ul>
-  <p/>
-</div>
+  <div>
+    <ul>
+      {#each entities.all as entity}
+        <li>
+          <Widget entity={entity}/>
+        </li>
+      {/each}
+    </ul>
+    <p/>
+  </div>
 {/if}
 
 <style>
+  p {
+    font-size: 5em;
+  }
   li {
     line-height: 2.3;
   }
