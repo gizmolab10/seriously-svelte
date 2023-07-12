@@ -12,7 +12,7 @@
   });
 
   function editFirstGrab() {
-    const entity = grabbing.firstGrabbedEntity();
+    const entity = grabbing.firstGrabbedEntity;
     $editingID = entity?.id;
   }
 
@@ -26,10 +26,10 @@
           }
           break;
         case 'ArrowUp':
-          treeBrowser.moveGrabUp(true);
+          treeBrowser.moveGrabUpAndRedraw(true);
           break;
         case 'ArrowDown':
-          treeBrowser.moveGrabUp(false);
+          treeBrowser.moveGrabUpAndRedraw(false);
           break;
         default: break;
       }

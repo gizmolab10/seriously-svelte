@@ -1,4 +1,4 @@
-import { Entity, entities } from '../common/imports';
+import { Entity, entities } from '../common/Imports';
 
 export default class Grabbing {
   grabbed: string[];
@@ -7,16 +7,16 @@ export default class Grabbing {
     this.grabbed = [];
   }
 
-  hasGrab(): boolean {
+  get hasGrab(): boolean {
     return this.grabbed.length > 0;
   }
 
-  firstGrab(): string | undefined {
+  get firstGrab(): string | undefined {
     return (this.grabbed.length == 0) ? undefined : this.grabbed[0];
   }
 
-  firstGrabbedEntity(): Entity | undefined {
-    return entities.entityFor(this.firstGrab())
+  get firstGrabbedEntity(): Entity | undefined {
+    return entities.entityFor(this.firstGrab)
   }
 
   grab(entity: Entity) {
@@ -53,9 +53,9 @@ export default class Grabbing {
     }
   }
 
-  debug(up: boolean) {
+  debug() {
     if (this.grabbed.length > 0) {
-      console.log('GRABS:', up, this.grabbed.map((id) => entities.entityFor(id)?.title));
+      console.log('GRABS:', this.grabbed.map((id) => entities.entityFor(id)?.title));
     }
   }
 }

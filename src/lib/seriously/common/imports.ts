@@ -6,8 +6,9 @@
   import { entities } from '../data/Entities';
   import { grabbing } from '../edit/Grabbing';
   import Entity from '../data/Entity';
+  import './Next';
 
   export { Entity, entities, grabbing, 
-    treeEditor, treeBrowser, editingID, 
+    treeEditor, treeBrowser, editingID,
     tick, onMount, onDestroy, createEventDispatcher, 
     signal, handleSignal, SignalKinds };

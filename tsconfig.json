@@ -8,6 +8,6 @@
     "outDir": "./dist",
     "strictNullChecks": true
   },
-  "include": ["src/**/**/*.ts", "src/**/**/*.tsx"],
+  "include": ["src/lib/seriously/**/*.ts", "src/lib/seriously/**/*.tsx"],
   "exclude": ["node_modules"]
 }

@@ -1,4 +1,4 @@
-import { Entity, signal, SignalKinds } from '../common/imports';
+import { Entity, signal, SignalKinds } from '../common/Imports';
 import Airtable from 'airtable';
 
 const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
@@ -14,7 +14,6 @@ export default class Entities {
     if (id == undefined) { return undefined; }
     return this.all.filter((entity) => entity.id === id)[0];
   }
-
 
   ///////////////////////////
   //         CRUD          //
