@@ -48,7 +48,7 @@
     font-size: 5em;
   }
   li {
-    line-height: 2.3;
+    line-height: 1.5;
   }
   ul {
     list-style: none;

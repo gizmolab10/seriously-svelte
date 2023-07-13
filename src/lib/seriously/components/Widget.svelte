@@ -11,14 +11,14 @@
 			var style = document.getElementById(entity.id)?.style;
 			style?.setProperty('--hoverAttributes', entity.hoverAttributes);
 			style?.setProperty( '--grabAttributes', entity.grabAttributes);
-			signal([SignalKinds.dot], entity.id);
+			signal([SignalKinds.dot], entity.id); // pass signal along to its dots
 		}
 	});
 </script>
 
 <span id={entity.id}
-	style='padding: 5px 5px 7px 5px;
-				border-radius: 20px;
+	style='padding: 0px 8px 2px 0px;
+				border-radius: 16px;
 				border: var(--grabAttributes)'>
 	<Dot entity={entity}/> <EntityEditor entity={entity}/> <Dot entity={entity} isReveal={true}/>
 </span>

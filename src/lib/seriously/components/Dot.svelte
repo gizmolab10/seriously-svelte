@@ -40,7 +40,6 @@
       style='--dotColor: {entity.color};
             --textColor: {entity.revealColor(!isReveal)};
           --buttonColor: {entity.revealColor( isReveal)}'>
-      {isReveal ? grabbing.isGrabbed(entity) ? '+' : entity.trait : '-'}
     </button>
   </slot>
 {/key}
@@ -50,13 +49,19 @@
   .drag {} // these are for drawing the drag dot differently than the reveal dot
 
   button {
+    top: 1px;
+    left: 3px;
+    position: relative;
+    display: relative;
+    align-items: center;
+    justify-content: center;
     color: var(--textColor);
-    background-color: var(--buttonColor);
     border-color: var(--dotColor);
+    background-color: var(--buttonColor);
     border: 1px solid;
-    border-radius: 10px;
-    height: 20px;
-    width: 20px;
+    border-radius: 0.7em;
+    width: 0.7em;
+    height: 1.1em;
 
     &:hover {
       color: var(--buttonColor);
