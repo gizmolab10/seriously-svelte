@@ -24,10 +24,3 @@
 				--grabAttributes:  {entity.grabAttributes}'>
 	<Dot entity={entity}/> <Text entity={entity}/> <Dot entity={entity} isReveal={true}/>
 </span>
-
-<style lang='scss'>
-	.span:hover {
-		padding: 3px 3px 5px 4px;
-		border: var(--hoverAttributes);
-	}
-</style>

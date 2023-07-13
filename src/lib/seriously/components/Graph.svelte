@@ -1,7 +1,7 @@
 <svelte:options immutable = {true} />
 
 <script>
-  import { entities, grabbing, treeBrowser, editingID, onMount, onDestroy, handleSignal, SignalKinds } from '../common/imports.ts';
+  import { entities, grabbing, treeEditor, onMount, onDestroy, signal, handleSignal, SignalKinds } from '../common/imports.ts';
   import Widget from './Widget.svelte';
   let isLoading = true;
 
@@ -11,33 +11,8 @@
     }
   });
 
-  function editFirstGrab() {
-    const entity = grabbing.firstGrabbedEntity;
-    $editingID = entity?.id;
-  }
-
-  function handleKeyDown(event) {
-    if (event.type == 'keydown') {
-      let key = event.key;
-      switch (key) {
-        case 'Enter':
-          if ($editingID == undefined) {
-            editFirstGrab(); 
-          }
-          break;
-        case 'ArrowUp':
-          treeBrowser.moveGrabUpAndRedraw(true);
-          break;
-        case 'ArrowDown':
-          treeBrowser.moveGrabUpAndRedraw(false);
-          break;
-        default: break;
-      }
-    }
-  }
-
   onMount(async () => {
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', treeEditor.handleKeyDown);
     try {
       entities.readAllFromCloud()
     } catch (error) {
@@ -47,7 +22,7 @@
 
   onDestroy( () => {
     window.removeEventListener('keydown');
-  })
+  });
 
 </script>
 
