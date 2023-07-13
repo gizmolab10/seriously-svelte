@@ -33,9 +33,6 @@ export default class Entity {
 
   revealColor = (hovering: boolean): string => {
     const flag = grabbing.isGrabbed(this) || this.isEditing;
-    if (this.isEditing) {
-      console.log(this, flag == hovering);
-    }
     return (flag != hovering) ? this.color : seriouslyGlobals.backgroundColor;
   }
 }

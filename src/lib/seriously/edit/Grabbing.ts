@@ -53,11 +53,6 @@ export default class Grabbing {
     }
   }
 
-  debug() {
-    if (this.grabbed.length > 0) {
-      console.log('GRABS:', this.grabbed.map((id) => entities.entityFor(id)?.title));
-    }
-  }
 }
 
 export const grabbing = new Grabbing();

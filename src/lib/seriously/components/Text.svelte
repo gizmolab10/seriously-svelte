@@ -26,7 +26,6 @@
 
   function handleKeyDown(event) {
     if ($editingID == entity.id) {
-      event.preventDefault();
       if (event.key == 'Enter') {
         input.blur();
         entities.updateToCloud(entity);
