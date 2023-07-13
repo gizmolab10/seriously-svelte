@@ -1,7 +1,7 @@
 <svelte:options immutable = {true} />
 
 <script>
-  import { entities, grabbing, treeEditor, onMount, onDestroy, signal, handleSignal, SignalKinds } from '../common/imports.ts';
+  import { entities, grabbing, graphEditor, onMount, onDestroy, signal, handleSignal, SignalKinds } from '../common/imports.ts';
   import Widget from './Widget.svelte';
   let isLoading = true;
 
@@ -12,7 +12,7 @@
   });
 
   onMount(async () => {
-    window.addEventListener('keydown', treeEditor.handleKeyDown);
+    window.addEventListener('keydown', graphEditor.handleKeyDown);
     try {
       entities.readAllFromCloud()
     } catch (error) {

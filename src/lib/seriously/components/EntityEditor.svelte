@@ -6,24 +6,6 @@
 	export let entity = Entity;
   let input;
   
-  $: {
-    setTimeout(() => {     // wait until the input element is fully instantiated and editingID is settled
-      if ($editingID == entity.id) {
-        input.focus();
-      } else {
-        input.blur();
-        entities.updateToCloud(entity); // TODO: PERFORMANCE only update if dirty
-      };
-      signal([SignalKinds.widget], null); // so widget will show as [un]grabbed
-    }, 50);
-  }
-
-  function handleFocus(event) {
-    $editingID = entity.id;
-    grabbing.grabOnly(entity)
-    signal([SignalKinds.widget], null); // so widget will show as grabbed
-  }
-
   function handleKeyDown(event) {
     if ($editingID == entity.id) {
       if (event.key == 'Enter') {
@@ -34,6 +16,29 @@
         }, 20);
       }
     }
+  }
+
+  $: {  
+    
+    ////////////////////
+    // state mawchine //
+    ////////////////////
+    
+    setTimeout(() => {     // wait until the input element is fully instantiated and editingID is settled
+      if ($editingID == entity.id) {
+        input.focus();
+      } else {
+        input.blur();
+        entities.updateToCloud(entity); // TODO: SERIOUS PERFORMANCE only update if dirty
+      };
+      signal([SignalKinds.widget], null); // so widget will show as [un]grabbed
+    }, 50);
+  }
+
+  function handleFocus(event) {
+    $editingID = entity.id;
+    grabbing.grabOnly(entity)
+    signal([SignalKinds.widget], null); // so widget will show as grabbed
   }
 
   function handleInput(event) { entity.title = event.target.value; }

@@ -1,6 +1,6 @@
   import { tick, onMount, onDestroy, createEventDispatcher } from 'svelte';
   import { signal, handleSignal, SignalKinds } from './Signals';
-	import { treeEditor } from '../edit/TreeEditor';
+	import { graphEditor } from '../edit/GraphEditor';
 	import { editingID } from '../edit/EditState';
   import { entities } from '../data/Entities';
   import { grabbing } from '../edit/Grabbing';
@@ -8,6 +8,6 @@
   import './Next';
 
   export { Entity, entities, grabbing, 
-    treeEditor, editingID,
+    graphEditor, editingID,
     tick, onMount, onDestroy,
     createEventDispatcher, signal, handleSignal, SignalKinds };

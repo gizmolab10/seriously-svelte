@@ -2,7 +2,7 @@
 
 <script lang='ts'>
   import { Entity, signal, handleSignal, SignalKinds } from '../common/imports.ts';
-	import Text from './Text.svelte';
+	import EntityEditor from './EntityEditor.svelte';
 	import Dot from './Dot.svelte';
 	export let entity = Entity;
 
@@ -19,8 +19,6 @@
 <span id={entity.id}
 	style='padding: 5px 5px 7px 5px;
 				border-radius: 20px;
-				border: var(--grabAttributes);
-				--hoverAttributes: {entity.hoverAttributes};
-				--grabAttributes:  {entity.grabAttributes}'>
-	<Dot entity={entity}/> <Text entity={entity}/> <Dot entity={entity} isReveal={true}/>
+				border: var(--grabAttributes)'>
+	<Dot entity={entity}/> <EntityEditor entity={entity}/> <Dot entity={entity} isReveal={true}/>
 </span>

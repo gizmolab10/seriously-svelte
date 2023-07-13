@@ -1,6 +1,6 @@
 import { SignalKinds, entities, editingID, grabbing, signal } from "../common/Imports";
 
-export default class TreeEditor {
+export default class GraphEditor {
 
   handleKeyDown = (event: KeyboardEvent): void => {
     if (event.type == 'keydown') {
@@ -40,4 +40,5 @@ export default class TreeEditor {
 
 }
 
-export const treeEditor = new TreeEditor();
+export const graphEditor = new GraphEditor();
+    
