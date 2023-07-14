@@ -7,7 +7,8 @@ export default class GraphEditor {
       let OPTION = event.altKey;
       let key = event.key;
       switch (key) {
-        case 'Tab': console.log('TAB', key); break;
+        case ' ': this.addChild(); break;
+        case 'Tab': this.addSibling(); break;
         case 'Enter': this.beginEditing(); break;
         case 'ArrowUp': this.moveUpAndRedraw(true, OPTION); break;
         case 'ArrowDown': this.moveUpAndRedraw(false, OPTION); break;
@@ -18,6 +19,10 @@ export default class GraphEditor {
   beginEditing = () => {
     editingID.set(grabbing.firstGrabbedEntity?.id);
   }
+
+  addChild = () => { console.log('CHILD'); }
+
+  addSibling = () => { console.log('SIBLING'); }
 
   moveUpAndRedraw = (up: boolean, relocate: boolean) => {
     if (grabbing.hasGrab) {

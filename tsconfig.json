@@ -6,7 +6,8 @@
     "esModuleInterop": true,
     "jsx": "preserve",
     "outDir": "./dist",
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "moduleResolution": "node"
   },
   "include": ["src/lib/seriously/**/*.ts", "src/lib/seriously/**/*.tsx"],
   "exclude": ["node_modules"]

@@ -1,12 +1,12 @@
-import { Entity, signal, SignalKinds } from '../common/Imports';
+import { Entity, Relationship, signal, SignalKinds } from '../common/Imports';
 import Airtable from 'airtable';
 
 const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
-const table = base('Entities');
+const table = base('Relationships');
 
-export default class Entities {
-  all: Entity[] = [];
-  errorMessage = 'Error from Entities database: ';
+class Relationships {
+  all: Relationship[] = [];
+  errorMessage = 'Error from Relationships database: ';
 
   constructor() {}
 
@@ -24,7 +24,7 @@ export default class Entities {
       const records = await table.select().all()
 
       for (let record of records) {
-        let entity = new Entity(record.id, record.fields.title, record.fields.color, record.fields.trait, record.fields.order);
+        let entity = new Entity(record.id, record.fields.title, record.fields.color, record.fields.trait);
 
         if (!this.all.includes(entity)) {
           this.all.push(entity);
@@ -63,4 +63,4 @@ export default class Entities {
 
 }
 
-export let entities = new Entities();
+export let relationships = new Relationships();
