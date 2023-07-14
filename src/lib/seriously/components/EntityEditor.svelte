@@ -1,19 +1,16 @@
 <svelte:options immutable = {true} />
 
 <script lang='ts'>
-  import { Entity, entities, editingID, grabbing, signal, SignalKinds } from '../common/imports.ts';
+  import { Entity, entities, editingID, grabbing, graphEditor, signal, SignalKinds } from '../common/imports.ts';
   import Widget from './Widget.svelte';
 	export let entity = Entity;
   let input;
   
   function handleKeyDown(event) {
     if ($editingID == entity.id) {
-      if (event.key == 'Enter') {
-        input.blur();
-        entities.updateToCloud(entity);
-        setTimeout(() => { // need to wait so subscribe still matches the editingID
-          $editingID = undefined;
-        }, 20);
+      switch (event.key) {
+        case 'Tab': graphEditor.addSibling(); break;
+        case 'Enter': stopEditing(true);
       }
     }
   }
@@ -28,11 +25,20 @@
       if ($editingID == entity.id) {
         input.focus();
       } else {
-        input.blur();
-        entities.updateToCloud(entity); // TODO: SERIOUS PERFORMANCE only update if dirty
+        stopEditing(false); // false means leave editingID alone so other currently editing widgets continue editing
       };
       signal([SignalKinds.widget], null); // so widget will show as [un]grabbed
     }, 50);
+  }
+
+  function stopEditing(needsStore: boolean) {
+    input.blur();
+    entities.updateToCloud(entity);     // TODO: SERIOUS PERFORMANCE only update if dirty
+    if (needsStore) {
+      setTimeout(() => { // need to wait so id still matches the editingID ... WHY?
+        $editingID = undefined;
+      }, 20);
+    }
   }
 
   function handleFocus(event) {

@@ -8,8 +8,6 @@
  
   function handleClick(event) {
     if (!isReveal) {
-      event.preventDefault();
-
       if (event.shiftKey) {
         grabbing.toggleGrab(entity);
       } else {

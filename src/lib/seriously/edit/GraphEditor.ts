@@ -1,6 +1,17 @@
 import { SignalKinds, entities, editingID, grabbing, signal } from "../common/Imports";
 
 export default class GraphEditor {
+  notEditing: boolean;
+
+  constructor() {
+    this.notEditing = false;
+
+    setTimeout(() => {     // wait until the input element is fully instantiated and editingID is settled
+      editingID.subscribe((id: string) => {
+        this.notEditing = (id == undefined); // executes whenever editingID changes
+      });
+    }, 50);
+  }
 
   handleKeyDown = (event: KeyboardEvent): void => {
     if (event.type == 'keydown') {
@@ -8,16 +19,20 @@ export default class GraphEditor {
       let key = event.key;
       switch (key) {
         case ' ': this.addChild(); break;
-        case 'Tab': this.addSibling(); break;
-        case 'Enter': this.beginEditing(); break;
+        case 'Tab': event.preventDefault(); break; // let EntityEditor handle it
+        case 'Enter': this.beginEditing(event); break;
         case 'ArrowUp': this.moveUpAndRedraw(true, OPTION); break;
         case 'ArrowDown': this.moveUpAndRedraw(false, OPTION); break;
       }
     }
   }
-
-  beginEditing = () => {
-    editingID.set(grabbing.firstGrabbedEntity?.id);
+  beginEditing = (event: KeyboardEvent) => {
+    if (this.notEditing) {
+      console.log('BEGIN');
+      editingID.set(grabbing.firstGrabbedEntity?.id);
+    } else {
+      event.preventDefault();
+    }
   }
 
   addChild = () => { console.log('CHILD'); }

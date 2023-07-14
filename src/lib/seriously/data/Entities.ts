@@ -5,8 +5,8 @@ const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi
 const table = base('Entities');
 
 export default class Entities {
-  all: Entity[] = [];
   errorMessage = 'Error from Entities database: ';
+  all: Entity[] = [];
 
   constructor() {}
 
