@@ -1,9 +1,8 @@
-
 export enum RelationshipKind {
   child = 'c',
 }
 
-export default class Relationship {
+export class Relationship {
   kind: RelationshipKind;
   from: string;
   to: string;

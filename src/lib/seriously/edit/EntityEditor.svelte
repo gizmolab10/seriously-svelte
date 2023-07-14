@@ -2,9 +2,13 @@
 
 <script lang='ts'>
   import { Entity, entities, editingID, grabbing, graphEditor, signal, SignalKinds } from '../common/imports.ts';
-  import Widget from './Widget.svelte';
-	export let entity = Entity;
+  import Widget from '../components/Widget.svelte';
+  export let entity = Entity;
+  let originalTitle = entity.title;
   let input;
+
+  function isDirty() { return originalTitle != entity.title; }
+  function makeClean() { originalTitle = entity.title; }
   
   function handleKeyDown(event) {
     if ($editingID == entity.id) {
@@ -17,9 +21,9 @@
 
   $: {  
     
-    ////////////////////
-    // state mawchine //
-    ////////////////////
+    ///////////////////
+    // state machine //
+    ///////////////////
     
     setTimeout(() => {     // wait until the input element is fully instantiated and editingID is settled
       if ($editingID == entity.id) {
@@ -32,11 +36,14 @@
   }
 
   function stopEditing(needsStore: boolean) {
-    input.blur();
-    entities.updateToCloud(entity);     // TODO: SERIOUS PERFORMANCE only update if dirty
+    input?.blur();
+    if (isDirty()) {
+      makeClean();
+      entities.updateToCloud(entity);
+    }
     if (needsStore) {
-      setTimeout(() => { // need to wait so id still matches the editingID ... WHY?
-        $editingID = undefined;
+      setTimeout(() => { // WHY?
+        $editingID = null;
       }, 20);
     }
   }
@@ -48,7 +55,7 @@
   }
 
   function handleInput(event) { entity.title = event.target.value; }
-  function handleBlur(event) { $editingID = undefined; }
+  function handleBlur(event) { $editingID = null; }
 </script>
 
 <input

@@ -10,8 +10,8 @@ export default class Entities {
 
   constructor() {}
 
-  entityFor(id: string | undefined): Entity | undefined {
-    if (id == undefined) { return undefined; }
+  entityFor(id: string | null): Entity | null {
+    if (id == null) { return null; }
     return this.all.filter((entity) => entity.id === id)[0];
   }
 

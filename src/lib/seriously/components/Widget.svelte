@@ -2,7 +2,7 @@
 
 <script lang='ts'>
   import { Entity, signal, handleSignal, SignalKinds } from '../common/imports.ts';
-	import EntityEditor from './EntityEditor.svelte';
+	import EntityEditor from '../edit/EntityEditor.svelte';
 	import Dot from './Dot.svelte';
 	export let entity = Entity;
 

@@ -11,11 +11,11 @@ export default class Grabbing {
     return this.grabbed.length > 0;
   }
 
-  get firstGrab(): string | undefined {
-    return (this.grabbed.length == 0) ? undefined : this.grabbed[0];
+  get firstGrab(): string | null {
+    return (this.grabbed.length == 0) ? null : this.grabbed[0];
   }
 
-  get firstGrabbedEntity(): Entity | undefined {
+  get firstGrabbedEntity(): Entity | null {
     return entities.entityFor(this.firstGrab)
   }
 

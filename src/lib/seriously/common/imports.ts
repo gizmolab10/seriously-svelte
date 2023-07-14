@@ -1,6 +1,7 @@
   import { tick, onMount, onDestroy, createEventDispatcher } from 'svelte';
   import { signal, handleSignal, SignalKinds } from './Signals';
   import { relationships } from '../data/Relationships';
+  import { Relationship } from '../data/Relationship';
 	import { graphEditor } from '../edit/GraphEditor';
 	import { editingID } from '../edit/EditState';
   import { entities } from '../data/Entities';
@@ -9,7 +10,7 @@
   import Entity from '../data/Entity';
   import './Next';
 
-  export { graphEditor, editingID,
-    tick, onMount, onDestroy,
-    Entity, Relatives, entities, relationships, grabbing, 
+  export { tick, onMount, onDestroy,
+    graphEditor, editingID, grabbing,
+    Entity, entities, Relatives, Relationship, relationships, 
     createEventDispatcher, signal, handleSignal, SignalKinds };

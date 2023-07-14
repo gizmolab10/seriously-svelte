@@ -1,4 +1,5 @@
-import { SignalKinds, entities, editingID, grabbing, signal } from "../common/Imports";
+import { entities, Entity, editingID, grabbing, SignalKinds, signal } from "../common/Imports";
+import Graph from '../components/Graph.svelte';
 
 export default class GraphEditor {
   notEditing: boolean;
@@ -8,7 +9,7 @@ export default class GraphEditor {
 
     setTimeout(() => {     // wait until the input element is fully instantiated and editingID is settled
       editingID.subscribe((id: string) => {
-        this.notEditing = (id == undefined); // executes whenever editingID changes
+        this.notEditing = (id == null); // executes whenever editingID changes
       });
     }, 50);
   }
@@ -28,7 +29,6 @@ export default class GraphEditor {
   }
   beginEditing = (event: KeyboardEvent) => {
     if (this.notEditing) {
-      console.log('BEGIN');
       editingID.set(grabbing.firstGrabbedEntity?.id);
     } else {
       event.preventDefault();
@@ -37,12 +37,19 @@ export default class GraphEditor {
 
   addChild = () => { console.log('CHILD'); }
 
-  addSibling = () => { console.log('SIBLING'); }
+  addSibling = () => {
+    let entity = new Entity('', 'please, enter a title', 'blue', 't', 1.0);
+    grabbing.grabOnly(entity);
+    entities.all.push(entity);
+    editingID.set(entity.id);
+    signal([SignalKinds.graph, SignalKinds.widget], null);
+    // entities.createInCloud(entity);
+  }
 
   moveUpAndRedraw = (up: boolean, relocate: boolean) => {
     if (grabbing.hasGrab) {
       const grab = grabbing.firstGrabbedEntity;
-      if  (grab != undefined) {
+      if  (grab != null) {
         const all = entities.all;
         const index = all.indexOf(grab!);
         const newIndex = index.increment(!up, all.length - 1);
