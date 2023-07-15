@@ -35,7 +35,7 @@ export default class GraphEditor {
 
   beginEditing = (event: KeyboardEvent) => {
     if (this.notEditing) {
-      let id = grabbing.firstGrabbedEntity?.id ?? null;
+      let id = grabbing.firstGrabbedEntity?.entityID ?? null;
       editingID.set(id);
     } else {
       event.preventDefault(); // destroy event
@@ -63,8 +63,8 @@ export default class GraphEditor {
     grabbing.grabOnly(entity);
     entities.all.push(entity);
     await entities.createInCloud(entity);
-    console.log('ADD:', entity.id);
-    editingID.set(entity.id);
+    console.log('ADD:', entity.entityID);
+    editingID.set(entity.entityID);
     this.redrawAll();
   }
 

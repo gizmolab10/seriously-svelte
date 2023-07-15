@@ -39,7 +39,7 @@ class Relationships {
 
   async updateToCloud(entity: Entity) {
     try {
-      table.update(entity.id, entity.fields);
+      table.update(entity.entityID, entity.fields);
     } catch (error) {
       alert(this.errorMessage + error);
     }

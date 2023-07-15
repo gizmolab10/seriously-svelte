@@ -12,7 +12,7 @@ export default class Entities {
 
   entityFor(id: string | null): Entity | null {
     if (id == null) { return null; }
-    return this.all.filter((entity) => entity.id === id)[0];
+    return this.all.filter((entity) => entity.entityID === id)[0];
   }
 
   ///////////////////////////
@@ -31,34 +31,55 @@ export default class Entities {
         }
       }
 
+      this.assureRootExists();
+
       signal([SignalKinds.fetch], null);
     } catch (error) {
-      alert(this.errorMessage + error);
-    }    
+      alert(this.errorMessage + ' (readAllFromCloud) ' + error);
+    }
+  }
+
+  async assureRootExists() {
+    let foo = this.all;
+    console.log('ROOT:', foo);
+    return;
+    var result = null;
+    try {
+
+      result = await table.find('root');
+      // const root = new Entity('root', 'root', 'purple', 'r');
+      // this.all.push(root);
+      // this.createInCloud(root);
+
+    } catch (error) {
+      // alert(this.errorMessage + ' (in assureRootExists) ' + error);
+    } finally {
+      console.log('ROOT:', result);
+    }
   }
 
   async updateToCloud(entity: Entity) {
     try {
-      table.update(entity.id, entity.fields);
+      table.update(entity.entityID, entity.fields);
     } catch (error) {
-      alert(this.errorMessage + error);
+      alert(this.errorMessage + ' (in updateToCloud) ' + error);
     }
   }
 
   async createInCloud(entity: Entity) {
     try {
       const fields = await table.create(entity.fields);
-      entity.id = fields['id']; // need for updateToCloud
+      entity.entityID = fields['id']; // need for updateToCloud
     } catch (error) {
-      alert(this.errorMessage + error);
+      alert(this.errorMessage + ' (in createInCloud) ' + error);
     }
   }
 
   async deleteFromCloud(entity: Entity) {
     try {
-      table.destroy(entity.id);
+      table.destroy(entity.entityID);
     } catch (error) {
-      alert(this.errorMessage + error);
+      alert(this.errorMessage + ' (in deleteFromCloud) ' + error);
     }
   }
 

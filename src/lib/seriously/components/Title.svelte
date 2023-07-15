@@ -11,7 +11,7 @@
   function makeClean() { originalTitle = entity.title; }
   
   function handleKeyDown(event) {
-    if ($editingID == entity.id) {
+    if ($editingID == entity.entityID) {
       switch (event.key) {
         case 'Tab': stopEditing(true); graphEditor.addSiblingAndRedraw(); break;
         case 'Enter': stopEditing(true);
@@ -26,7 +26,7 @@
     ////////////////////////////////
     
     setTimeout(() => {      // wait until the inputRef is bound instantiated and editingID is settled
-      if ($editingID == entity.id) {
+      if ($editingID == entity.entityID) {
         if (document.querySelector('.input') != document.activeElement) {
           inputRef.focus();
           console.log('EDIT:', document.querySelector('.input').value);
@@ -43,7 +43,7 @@
     if (isDirty()) {
       makeClean();
       entities.updateToCloud(entity);
-      console.log('STOP', entity.id, entity.title);
+      console.log('STOP', entity.entityID, entity.title);
     }
     if (clearEditingID) {
       setTimeout(() => { // WHY?
@@ -53,7 +53,7 @@
   }
 
   function handleFocus(event) {
-    $editingID = entity.id;
+    $editingID = entity.entityID;
     grabbing.grabOnly(entity)
     signal([SignalKinds.widget], null); // so widget will show as grabbed
   }
@@ -65,7 +65,7 @@
 <input
   class='input'
   type='text'
-  id={entity.id}
+  id={entity.entityID}
   bind:this={inputRef}
   on:blur={handleBlur}
   on:focus={handleFocus}

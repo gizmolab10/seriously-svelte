@@ -1,7 +1,7 @@
 <svelte:options immutable = {true} />
 
 <script>
-  import { entities, grabbing, graphEditor, onMount, onDestroy, signal, handleSignal, SignalKinds, relationships } from '../common/imports.ts';
+  import { Entity, entities, grabbing, graphEditor, onMount, onDestroy, signal, handleSignal, SignalKinds, relationships } from '../common/imports.ts';
   import Widget from './Widget.svelte';
   let toggledReload = false;
   let isLoading = true;
