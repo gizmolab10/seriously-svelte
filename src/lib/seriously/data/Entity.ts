@@ -1,5 +1,4 @@
-import { Relatives, grabbing, editingID, cloudID } from '../common/Imports';
-import { seriouslyGlobals } from './Globals';
+import { Relatives, grabbing, editingID, cloudID, seriouslyGlobals } from '../common/Imports';
 import Airtable from 'airtable';
 
 export default class Entity {
@@ -11,7 +10,7 @@ export default class Entity {
   relatives: Relatives | null;
   isEditing: boolean;
 
-  constructor(id = cloudID(), title = 'Entity', color = 'black', trait = 's', order = 0) {
+  constructor(id = cloudID(), title = seriouslyGlobals.defaultTitle, color = 'black', trait = 's', order = 0) {
     this.id = id;
     this.title = title;
     this.color = color;
@@ -20,7 +19,7 @@ export default class Entity {
     this.relatives = null;
     this.isEditing = false;
 
-    editingID.subscribe((id: string) => {
+    editingID.subscribe((id: string | null) => {
       this.isEditing = (id == this.id); // executes whenever editingID changes
     });
   };

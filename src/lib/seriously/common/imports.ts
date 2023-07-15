@@ -2,6 +2,7 @@
   import { signal, handleSignal, SignalKinds } from './Signals';
   import { relationships } from '../data/Relationships';
   import { Relationship } from '../data/Relationship';
+  import { seriouslyGlobals } from '../data/Globals';
 	import { graphEditor } from '../edit/GraphEditor';
 	import { editingID } from '../edit/EditState';
   import { entities } from '../data/Entities';
@@ -11,7 +12,7 @@
   import Entity from '../data/Entity';
   import './Next';
 
-  export { tick, onMount, onDestroy, cloudID, swap,
-    graphEditor, editingID, grabbing,
-    Entity, entities, Relatives, Relationship, relationships, 
-    createEventDispatcher, signal, handleSignal, SignalKinds };
+  export { tick, onMount, onDestroy, cloudID, swap, seriouslyGlobals, 
+    createEventDispatcher, signal, handleSignal, SignalKinds,
+    Entity, entities, Relatives, Relationship, relationships,
+    graphEditor, editingID, grabbing };

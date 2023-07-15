@@ -23,8 +23,8 @@ export default class Entities {
     try {
       const records = await table.select().all()
 
-      for (let record of records) {
-        let entity = new Entity(record.id, record.fields.title, record.fields.color, record.fields.trait, record.fields.order);
+      for (const record of records) {
+        const entity = new Entity(record.id, record.fields.title as string, record.fields.color as string, record.fields.trait as string, record.fields.order as number);
 
         if (!this.all.includes(entity)) {
           this.all.push(entity);
@@ -64,4 +64,4 @@ export default class Entities {
 
 }
 
-export let entities = new Entities();
+export const entities = new Entities();

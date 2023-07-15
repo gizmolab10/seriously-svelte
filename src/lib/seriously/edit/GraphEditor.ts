@@ -1,4 +1,4 @@
-import { entities, Entity, editingID, cloudID, swap, grabbing, SignalKinds, signal } from "../common/Imports";
+import { entities, Entity, editingID, cloudID, swap, seriouslyGlobals, grabbing, SignalKinds, signal } from "../common/Imports";
 
 export default class GraphEditor {
   notEditing: boolean;
@@ -7,7 +7,7 @@ export default class GraphEditor {
     this.notEditing = false;
 
     setTimeout(() => {     // wait until the input element is fully instantiated and editingID is settled
-      editingID.subscribe((id: string) => {
+      editingID.subscribe((id: string | null) => {
         this.notEditing = (id == null); // executes whenever editingID changes
       });
     }, 50);
@@ -35,9 +35,10 @@ export default class GraphEditor {
 
   beginEditing = (event: KeyboardEvent) => {
     if (this.notEditing) {
-      editingID.set(grabbing.firstGrabbedEntity?.id);
+      let id = grabbing.firstGrabbedEntity?.id ?? null;
+      editingID.set(id);
     } else {
-      event.preventDefault();
+      event.preventDefault(); // destroy event
     }
   }
 
@@ -47,14 +48,18 @@ export default class GraphEditor {
     const entity = grabbing.firstGrabbedEntity;
     if (entity != null && !entity.isEditing) {
       entities.deleteFromCloud(entity!);
-      const index = entities.all.indexOf(entity!);
+      let index = entities.all.indexOf(entity!);
       entities.all.splice(index, 1);
+      if (index >= entities.all.length) {
+        index = entities.all.length - 1;
+      }
+      grabbing.grabOnly(entities.all[index]);
       this.redrawAll();
     }
   }
 
   async addSiblingAndRedraw() {
-    let entity = new Entity(cloudID(), 'please, enter a title', 'blue', 't', 1.0);
+    let entity = new Entity(cloudID(), seriouslyGlobals.defaultTitle, 'blue', 't', 1.0);
     grabbing.grabOnly(entity);
     entities.all.push(entity);
     await entities.createInCloud(entity);

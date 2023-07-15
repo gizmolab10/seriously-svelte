@@ -63,4 +63,4 @@ class Relationships {
 
 }
 
-export let relationships = new Relationships();
+export const relationships = new Relationships();
