@@ -1,5 +1,4 @@
-import { entities, Entity, editingID, grabbing, SignalKinds, signal } from "../common/Imports";
-import Graph from '../components/Graph.svelte';
+import { entities, cloudID, Entity, editingID, grabbing, SignalKinds, signal } from "../common/Imports";
 
 export default class GraphEditor {
   notEditing: boolean;
@@ -20,7 +19,7 @@ export default class GraphEditor {
       let key = event.key;
       switch (key) {
         case ' ': this.addChild(); break;
-        case 'Tab': event.preventDefault(); break; // let EntityEditor handle it
+        case 'Tab': event.preventDefault(); break; // let Title handle it
         case 'Enter': this.beginEditing(event); break;
         case 'ArrowUp': this.moveUpAndRedraw(true, OPTION); break;
         case 'ArrowDown': this.moveUpAndRedraw(false, OPTION); break;
@@ -37,13 +36,15 @@ export default class GraphEditor {
 
   addChild = () => { console.log('CHILD'); }
 
-  addSibling = () => {
-    let entity = new Entity('', 'please, enter a title', 'blue', 't', 1.0);
+  addSiblingAndRedraw = () => {
+    let id = cloudID();
+    let entity = new Entity(id, 'please, enter a title', 'blue', 't', 1.0);
     grabbing.grabOnly(entity);
     entities.all.push(entity);
     editingID.set(entity.id);
     signal([SignalKinds.graph, SignalKinds.widget], null);
-    // entities.createInCloud(entity);
+    console.log('ADD:', entity.id);
+    entities.createInCloud(entity);
   }
 
   moveUpAndRedraw = (up: boolean, relocate: boolean) => {

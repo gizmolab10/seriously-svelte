@@ -2,7 +2,7 @@
 
 <script lang='ts'>
   import { Entity, signal, handleSignal, SignalKinds } from '../common/imports.ts';
-	import EntityEditor from '../edit/EntityEditor.svelte';
+	import Title from './Title.svelte';
 	import Dot from './Dot.svelte';
 	export let entity = Entity;
 
@@ -20,5 +20,5 @@
 	style='padding: 0px 8px 2px 0px;
 				border-radius: 16px;
 				border: var(--grabAttributes)'>
-	<Dot entity={entity}/> <EntityEditor entity={entity}/> <Dot entity={entity} isReveal={true}/>
+	<Dot entity={entity}/> <Title entity={entity}/> <Dot entity={entity} isReveal={true}/>
 </span>

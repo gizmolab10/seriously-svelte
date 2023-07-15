@@ -1,5 +1,5 @@
 import { Entity, signal, SignalKinds } from '../common/Imports';
-import Airtable from 'airtable';
+import Airtable, {FieldSet} from 'airtable';
 
 const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
 const table = base('Entities');
@@ -47,7 +47,8 @@ export default class Entities {
 
   async createInCloud(entity: Entity) {
     try {
-      table.create(entity);
+      const fields = await table.create(entity.fields);
+      entity.id = fields['id']; // need for updateToCloud
     } catch (error) {
       alert(this.errorMessage + error);
     }

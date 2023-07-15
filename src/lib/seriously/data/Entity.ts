@@ -1,6 +1,5 @@
-import { Relatives, grabbing, editingID } from '../common/Imports';
+import { Relatives, grabbing, editingID, cloudID } from '../common/Imports';
 import { seriouslyGlobals } from './Globals';
-import { v4 as uuid } from 'uuid';
 import Airtable from 'airtable';
 
 export default class Entity {
@@ -12,7 +11,7 @@ export default class Entity {
   relatives: Relatives | null;
   isEditing: boolean;
 
-  constructor(id = uuid().string, title = 'Entity', color = 'black', trait = 's', order = 0) {
+  constructor(id = cloudID(), title = 'Entity', color = 'black', trait = 's', order = 0) {
     this.id = id;
     this.title = title;
     this.color = color;
@@ -26,7 +25,7 @@ export default class Entity {
     });
   };
 
-  get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait, order: this.order }; }
+  get fields(): Airtable.FieldSet { return { id: this.id, title: this.title, color: this.color, trait: this.trait, order: this.order }; }
   get  grabAttributes(): string { return this.borderAttribute + this.revealColor(false); }
   get hoverAttributes(): string { return this.borderAttribute + this.revealColor(true); }
   get borderAttribute(): string { return (this.isEditing ? 'dashed' : 'solid') + ' 1px '; }

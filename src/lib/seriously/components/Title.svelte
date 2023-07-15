@@ -5,7 +5,7 @@
   import Widget from '../components/Widget.svelte';
   export let entity = Entity;
   let originalTitle = entity.title;
-  let input;
+  let inputRef = null;
 
   function isDirty() { return originalTitle != entity.title; }
   function makeClean() { originalTitle = entity.title; }
@@ -13,7 +13,7 @@
   function handleKeyDown(event) {
     if ($editingID == entity.id) {
       switch (event.key) {
-        case 'Tab': graphEditor.addSibling(); break;
+        case 'Tab': stopEditing(true); graphEditor.addSiblingAndRedraw(); break;
         case 'Enter': stopEditing(true);
       }
     }
@@ -21,27 +21,28 @@
 
   $: {  
     
-    ///////////////////
-    // state machine //
-    ///////////////////
+    ////////////////////////////////
+    // title editor state machine //
+    ////////////////////////////////
     
-    setTimeout(() => {     // wait until the input element is fully instantiated and editingID is settled
+    setTimeout(() => {      // wait until the inputRef is bound instantiated and editingID is settled
       if ($editingID == entity.id) {
-        input.focus();
-      } else {
+        inputRef.focus();
+      } else if (isDirty()) {
         stopEditing(false); // false means leave editingID alone so other currently editing widgets continue editing
       };
       signal([SignalKinds.widget], null); // so widget will show as [un]grabbed
-    }, 50);
+    }, 200);
   }
 
-  function stopEditing(needsStore: boolean) {
-    input?.blur();
+  function stopEditing(clearEditingID: boolean) {
+    inputRef?.blur();
     if (isDirty()) {
       makeClean();
       entities.updateToCloud(entity);
+      console.log('STOP', entity.id, entity.title);
     }
-    if (needsStore) {
+    if (clearEditingID) {
       setTimeout(() => { // WHY?
         $editingID = null;
       }, 20);
@@ -61,7 +62,7 @@
 <input
   type='text'
   id={entity.id}
-  bind:this={input}
+  bind:this={inputRef}
   on:blur={handleBlur}
   on:focus={handleFocus}
   on:input={handleInput}

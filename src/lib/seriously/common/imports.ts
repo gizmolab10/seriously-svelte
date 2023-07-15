@@ -6,11 +6,12 @@
 	import { editingID } from '../edit/EditState';
   import { entities } from '../data/Entities';
   import { grabbing } from '../edit/Grabbing';
+  import { cloudID } from './Utilities';
   import Relatives from '../data/Relatives';
   import Entity from '../data/Entity';
   import './Next';
 
-  export { tick, onMount, onDestroy,
+  export { tick, onMount, onDestroy, cloudID,
     graphEditor, editingID, grabbing,
     Entity, entities, Relatives, Relationship, relationships, 
     createEventDispatcher, signal, handleSignal, SignalKinds };
