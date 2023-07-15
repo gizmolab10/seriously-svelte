@@ -49,6 +49,7 @@ export default class Entities {
     try {
       const fields = await table.create(entity.fields);
       entity.id = fields['id']; // need for updateToCloud
+      console.log('CREATE:', entity.id);
     } catch (error) {
       alert(this.errorMessage + error);
     }

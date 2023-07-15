@@ -36,15 +36,15 @@ export default class GraphEditor {
 
   addChild = () => { console.log('CHILD'); }
 
-  addSiblingAndRedraw = () => {
+  async addSiblingAndRedraw() {
     let id = cloudID();
     let entity = new Entity(id, 'please, enter a title', 'blue', 't', 1.0);
     grabbing.grabOnly(entity);
     entities.all.push(entity);
+    await entities.createInCloud(entity);
+    console.log('ADD:', entity.id);
     editingID.set(entity.id);
     signal([SignalKinds.graph, SignalKinds.widget], null);
-    console.log('ADD:', entity.id);
-    entities.createInCloud(entity);
   }
 
   moveUpAndRedraw = (up: boolean, relocate: boolean) => {

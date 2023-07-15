@@ -27,6 +27,7 @@
     
     setTimeout(() => {      // wait until the inputRef is bound instantiated and editingID is settled
       if ($editingID == entity.id) {
+        console.log('EDIT:', entity.title);
         inputRef.focus();
       } else if (isDirty()) {
         stopEditing(false); // false means leave editingID alone so other currently editing widgets continue editing
