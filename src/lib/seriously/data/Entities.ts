@@ -1,4 +1,4 @@
-import { Entity, signal, SignalKinds } from '../common/Imports';
+import { Entity, signal, SignalKinds, seriouslyGlobals } from '../common/Imports';
 import Airtable, {FieldSet} from 'airtable';
 
 const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
@@ -20,7 +20,7 @@ export default class Entities {
   ///////////////////////////
 
   async readAllFromCloud() {
-    const root = new Entity('root', 'root', 'blue', 'r');
+    const root = new Entity('root', seriouslyGlobals.rootTitle, seriouslyGlobals.rootColor, 'r');
     this.all.push(root);
 
     try {
