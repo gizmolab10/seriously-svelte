@@ -8,11 +8,10 @@
   import { entities } from '../data/Entities';
   import { grabbing } from '../edit/Grabbing';
   import { createEntityID, swap } from './Utilities';
-  import Relatives from '../data/Relatives';
   import Entity from '../data/Entity';
   import './Next';
 
   export { tick, onMount, onDestroy, createEntityID, swap, seriouslyGlobals, 
     createEventDispatcher, signal, handleSignal, SignalKinds,
-    Entity, entities, Relatives, Relationship, relationships,
+    Entity, entities, Relationship, relationships,
     graphEditor, editingID, grabbing };

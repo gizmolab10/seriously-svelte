@@ -7,7 +7,8 @@ export default class Entity {
   color: string;
   trait: string;
   order: number;
-  relatives: Relatives | null;
+  parents: [Entity] | null;
+  children: [Entity] | null;
   isEditing: boolean;
 
   constructor(id = createEntityID(), title = seriouslyGlobals.defaultTitle, color = 'black', trait = 's', order = 0) {
@@ -16,7 +17,8 @@ export default class Entity {
     this.color = color;
     this.trait = trait;
     this.order = order;
-    this.relatives = null;
+    this.parents = null;
+    this.children = null;
     this.isEditing = false;
 
     editingID.subscribe((editingID: string | null) => {
