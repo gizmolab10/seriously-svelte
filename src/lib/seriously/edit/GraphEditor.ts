@@ -1,4 +1,4 @@
-import { entities, Entity, editingID, cloudID, swap, seriouslyGlobals, grabbing, SignalKinds, signal } from "../common/Imports";
+import { entities, Entity, editingID, createEntityID, swap, seriouslyGlobals, grabbing, SignalKinds, signal } from "../common/Imports";
 
 export default class GraphEditor {
   notEditing: boolean;
@@ -35,7 +35,7 @@ export default class GraphEditor {
 
   beginEditing = (event: KeyboardEvent) => {
     if (this.notEditing) {
-      let id = grabbing.firstGrabbedEntity?.entityID ?? null;
+      let id = grabbing.firstGrabbedEntity?.id ?? null;
       editingID.set(id);
     } else {
       event.preventDefault(); // destroy event
@@ -59,12 +59,12 @@ export default class GraphEditor {
   }
 
   async addSiblingAndRedraw() {
-    let entity = new Entity(cloudID(), seriouslyGlobals.defaultTitle, 'blue', 't', 1.0);
+    let entity = new Entity(createEntityID(), seriouslyGlobals.defaultTitle, 'blue', 't', 1.0);
     grabbing.grabOnly(entity);
     entities.all.push(entity);
     await entities.createInCloud(entity);
-    console.log('ADD:', entity.entityID);
-    editingID.set(entity.entityID);
+    console.log('ADD:', entity.id);
+    editingID.set(entity.id);
     this.redrawAll();
   }
 

@@ -12,7 +12,7 @@ export default class Entities {
 
   entityFor(id: string | null): Entity | null {
     if (id == null) { return null; }
-    return this.all.filter((entity) => entity.entityID === id)[0];
+    return this.all.filter((entity) => entity.id === id)[0];
   }
 
   ///////////////////////////
@@ -20,6 +20,9 @@ export default class Entities {
   ///////////////////////////
 
   async readAllFromCloud() {
+    const root = new Entity('root', 'root', 'blue', 'r');
+    this.all.push(root);
+
     try {
       const records = await table.select().all()
 
@@ -31,36 +34,15 @@ export default class Entities {
         }
       }
 
-      this.assureRootExists();
-
       signal([SignalKinds.fetch], null);
     } catch (error) {
       alert(this.errorMessage + ' (readAllFromCloud) ' + error);
     }
   }
 
-  async assureRootExists() {
-    let foo = this.all;
-    console.log('ROOT:', foo);
-    return;
-    var result = null;
-    try {
-
-      result = await table.find('root');
-      // const root = new Entity('root', 'root', 'purple', 'r');
-      // this.all.push(root);
-      // this.createInCloud(root);
-
-    } catch (error) {
-      // alert(this.errorMessage + ' (in assureRootExists) ' + error);
-    } finally {
-      console.log('ROOT:', result);
-    }
-  }
-
   async updateToCloud(entity: Entity) {
     try {
-      table.update(entity.entityID, entity.fields);
+      table.update(entity.id, entity.fields);
     } catch (error) {
       alert(this.errorMessage + ' (in updateToCloud) ' + error);
     }
@@ -69,7 +51,7 @@ export default class Entities {
   async createInCloud(entity: Entity) {
     try {
       const fields = await table.create(entity.fields);
-      entity.entityID = fields['id']; // need for updateToCloud
+      entity.id = fields['id']; // need for updateToCloud
     } catch (error) {
       alert(this.errorMessage + ' (in createInCloud) ' + error);
     }
@@ -77,7 +59,7 @@ export default class Entities {
 
   async deleteFromCloud(entity: Entity) {
     try {
-      table.destroy(entity.entityID);
+      table.destroy(entity.id);
     } catch (error) {
       alert(this.errorMessage + ' (in deleteFromCloud) ' + error);
     }

@@ -14,14 +14,14 @@
         grabbing.grabOnly(entity);
       }
 
-      signal([SignalKinds.widget], entity.entityID);
+      signal([SignalKinds.widget], entity.id);
     }
   }
 
 	handleSignal.connect((kinds, value) => {
-		if (kinds.includes(SignalKinds.dot) && value == entity.entityID) {
+		if (kinds.includes(SignalKinds.dot) && value == entity.id) {
       isGrabbed = grabbing.isGrabbed(entity);
-      var style = document.getElementById(entity.entityID)?.style;
+      var style = document.getElementById(entity.id)?.style;
       style?.setProperty(   '--dotColor', entity.color);
       style?.setProperty(  '--textColor', entity.revealColor(!isReveal));
       style?.setProperty('--buttonColor', entity.revealColor( isReveal));
@@ -32,7 +32,7 @@
 
 {#key isGrabbed}
   <slot>
-    <button id={entity.entityID}
+    <button id={entity.id}
       on:click={handleClick}
       class={ isReveal ? 'reveal' : 'drag' }
       style='--dotColor: {entity.color};

@@ -20,15 +20,15 @@ export default class Grabbing {
   }
 
   grab(entity: Entity) {
-    this.grabbed.push(entity.entityID);
+    this.grabbed.push(entity.id);
   }
 
   grabOnly(entity: Entity) {
-    this.grabbed = [entity.entityID];
+    this.grabbed = [entity.id];
   }
 
   ungrab(entity: Entity) {
-    const index = this.grabbed.indexOf(entity.entityID);
+    const index = this.grabbed.indexOf(entity.id);
 
     if (index > -1) { // only splice array when item is found
       this.grabbed.splice(index, 1); // 2nd parameter means remove one item only
@@ -37,7 +37,7 @@ export default class Grabbing {
 
   isGrabbed(entity: Entity) {
     for (let grabbed of this.grabbed) {
-      if (grabbed == entity.entityID) {
+      if (grabbed == entity.id) {
         return true;
       }
     }

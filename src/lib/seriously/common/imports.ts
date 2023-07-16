@@ -7,12 +7,12 @@
 	import { editingID } from '../edit/EditState';
   import { entities } from '../data/Entities';
   import { grabbing } from '../edit/Grabbing';
-  import { cloudID, swap } from './Utilities';
+  import { createEntityID, swap } from './Utilities';
   import Relatives from '../data/Relatives';
   import Entity from '../data/Entity';
   import './Next';
 
-  export { tick, onMount, onDestroy, cloudID, swap, seriouslyGlobals, 
+  export { tick, onMount, onDestroy, createEntityID, swap, seriouslyGlobals, 
     createEventDispatcher, signal, handleSignal, SignalKinds,
     Entity, entities, Relatives, Relationship, relationships,
     graphEditor, editingID, grabbing };

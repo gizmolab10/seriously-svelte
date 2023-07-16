@@ -8,15 +8,15 @@
 
 	handleSignal.connect((kinds) => {
 		if (kinds.includes(SignalKinds.widget)) {
-			var style = document.getElementById(entity.entityID)?.style;
+			var style = document.getElementById(entity.id)?.style;
 			style?.setProperty('--hoverAttributes', entity.hoverAttributes);
 			style?.setProperty( '--grabAttributes', entity.grabAttributes);
-			signal([SignalKinds.dot], entity.entityID); // pass signal along to its dots
+			signal([SignalKinds.dot], entity.id); // pass signal along to its dots
 		}
 	});
 </script>
 
-<span id={entity.entityID}
+<span id={entity.id}
 	style='padding: 0px 8px 2px 0px;
 				border-radius: 16px;
 				border: var(--grabAttributes)'>

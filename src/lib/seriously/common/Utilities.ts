@@ -11,7 +11,7 @@ export function removeAll(item: string, from: string): string {
   return to;
 }
 
-export function cloudID(): string {
+export function createEntityID(): string {
   return 'rec' + removeAll('-', uuid()).slice(10, 24);
 }
 
