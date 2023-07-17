@@ -35,4 +35,16 @@ export default class Thing {
     const flag = grabbing.isGrabbed(this) || this.isEditing;
     return (flag != hovering) ? this.color : seriouslyGlobals.backgroundColor;
   }
+
+  traverse = (apply : (thing: Thing) => boolean ) : Thing | null => {
+    for (let child of this.children) {
+      if (apply(child)) {
+        return child;
+      } else if (child.children.length > 0) {
+        child.traverse(apply);
+      }
+    }
+    return this;
+  }
+
 }

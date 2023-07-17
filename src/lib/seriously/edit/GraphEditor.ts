@@ -46,14 +46,15 @@ export default class GraphEditor {
 
   deleteAndRedraw() {
     const entity = grabbing.firstGrabbedEntity;
-    if (entity != null && !entity.isEditing) {
+    if (entity != null && !entity.isEditing && things.main != null) {
+      const all = things.main?.children;
       things.deleteFromCloud(entity!);
-      let index = things.all.indexOf(entity!);
-      things.all.splice(index, 1);
-      if (index >= things.all.length) {
-        index = things.all.length - 1;
+      let index = all.indexOf(entity!);
+      all.splice(index, 1);
+      if (index >= all.length) {
+        index = all.length - 1;
       }
-      grabbing.grabOnly(things.all[index]);
+      grabbing.grabOnly(all[index]);
       this.redrawAll();
     }
   }
@@ -61,7 +62,7 @@ export default class GraphEditor {
   async addSiblingAndRedraw() {
     let entity = new Thing(createThingID(), seriouslyGlobals.defaultTitle, 'blue', 't', 1.0);
     grabbing.grabOnly(entity);
-    things.all.push(entity);
+    things.main?.children.push(entity);
     await things.createInCloud(entity);
     console.log('ADD:', entity.id);
     editingID.set(entity.id);
@@ -71,13 +72,13 @@ export default class GraphEditor {
   moveUpAndRedraw = (up: boolean, relocate: boolean) => {
     if (grabbing.hasGrab) {
       const grab = grabbing.firstGrabbedEntity;
-      if  (grab != null) {
-        const all = things.all;
+      if  (grab != null && things.main != null) {
+        const all = things.main?.children;
         const index = all.indexOf(grab!);
         const newIndex = index.increment(!up, all.length - 1);
         const newGrab = all[newIndex];
         if (relocate) {
-          swap(index, newIndex, things.all);
+          swap(index, newIndex, all);
           this.redrawAll();
         } else {
           grabbing.grabOnly(newGrab);

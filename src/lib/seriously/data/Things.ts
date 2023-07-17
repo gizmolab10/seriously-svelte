@@ -6,13 +6,13 @@ const table = base('Things');
 
 export default class Things {
   errorMessage = 'Error from Things database: ';
-  all: Thing[] = [];
+  main: Thing | null = null;
 
   constructor() {}
 
   thingFor(id: string | null): Thing | null {
-    if (id == null) { return null; }
-    return this.all.filter((thing) => thing.id === id)[0];
+    if (id == null || this.main == null) { return null; }
+    return this.main!.traverse((thing) => thing.id === id);
   }
 
   ///////////////////////////
@@ -20,8 +20,7 @@ export default class Things {
   ///////////////////////////
 
   async readAllFromCloud() {
-    let main = new Thing('main', seriouslyGlobals.mainThingTitle, seriouslyGlobals.mainThingColor, 'm', 0);
-    this.all.push(main);
+    this.main = new Thing('main', seriouslyGlobals.mainThingTitle, seriouslyGlobals.mainThingColor, 'm', 0);
 
     try {
       const records = await table.select().all()
@@ -29,8 +28,8 @@ export default class Things {
       for (const record of records) {
         const thing = new Thing(record.id, record.fields.title as string, record.fields.color as string, record.fields.trait as string, record.fields.order as number);
 
-        if (!this.all.includes(thing)) {
-          this.all.push(thing);
+        if (!this.main.children.includes(thing)) {
+          this.main.children.push(thing);
         }
       }
 
