@@ -1,4 +1,4 @@
-import { Entity, Relationship, signal, SignalKinds } from '../common/Imports';
+import { Relationship, signal, SignalKinds } from '../common/Imports';
 import Airtable from 'airtable';
 
 const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
@@ -10,9 +10,9 @@ class Relationships {
 
   constructor() {}
 
-  entityFor(id: string | null): Entity | null {
+  entityFor(id: string | null): Relationship | null {
     if (id == null) { return null; }
-    return this.all.filter((entity) => entity.id === id)[0];
+    return this.all.filter((relationship) => relationship.id === id)[0];
   }
 
   ///////////////////////////
@@ -24,10 +24,10 @@ class Relationships {
       const records = await table.select().all()
 
       for (let record of records) {
-        let entity = new Entity(record.id, record.fields.title, record.fields.color, record.fields.trait);
+        let relationship = new Relationship(record.id, record.fields.title, record.fields.color, record.fields.trait);
 
-        if (!this.all.includes(entity)) {
-          this.all.push(entity);
+        if (!this.all.includes(relationship)) {
+          this.all.push(relationship);
         }
       }
 
@@ -37,25 +37,25 @@ class Relationships {
     }    
   }
 
-  async updateToCloud(entity: Entity) {
+  async updateToCloud(relationship: Relationship) {
     try {
-      table.update(entity.id, entity.fields);
+      table.update(relationship.id, relationship.fields);
     } catch (error) {
       alert(this.errorMessage + error);
     }
   }
 
-  async createInCloud(entity: Entity) {
+  async createInCloud(relationship: Relationship) {
     try {
-      table.create(entity);
+      table.create(relationship);
     } catch (error) {
       alert(this.errorMessage + error);
     }
   }
 
-  async deleteFromCloud(entity: Entity) {
+  async deleteFromCloud(thing: Relationship) {
     try {
-      table.delete(entity);
+      table.delete(thing);
     } catch (error) {
       alert(this.errorMessage + error);
     }

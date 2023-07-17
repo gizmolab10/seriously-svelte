@@ -1,17 +1,17 @@
 <svelte:options immutable = {true} />
 
 <script lang='ts'>
-  import { Entity, entities, editingID, grabbing, graphEditor, signal, SignalKinds } from '../common/imports.ts';
+  import { Thing, things, editingID, grabbing, graphEditor, signal, SignalKinds } from '../common/imports.ts';
   import Widget from '../components/Widget.svelte';
-  export let entity = Entity;
-  let originalTitle = entity.title;
+  export let thing = Thing;
+  let originalTitle = thing.title;
   let inputRef = null;
 
-  function isDirty() { return originalTitle != entity.title; }
-  function makeClean() { originalTitle = entity.title; }
+  function isDirty() { return originalTitle != thing.title; }
+  function makeClean() { originalTitle = thing.title; }
   
   function handleKeyDown(event) {
-    if ($editingID == entity.id) {
+    if ($editingID == thing.id) {
       switch (event.key) {
         case 'Tab': stopEditing(true); graphEditor.addSiblingAndRedraw(); break;
         case 'Enter': stopEditing(true);
@@ -26,7 +26,7 @@
     ////////////////////////////////
     
     setTimeout(() => {      // wait until the inputRef is bound instantiated and editingID is settled
-      if ($editingID == entity.id) {
+      if ($editingID == thing.id) {
         if (document.querySelector('.input') != document.activeElement) {
           inputRef.focus();
         }
@@ -41,8 +41,8 @@
     inputRef?.blur();
     if (isDirty()) {
       makeClean();
-      entities.updateToCloud(entity);
-      console.log('STOP', entity.id, entity.title);
+      things.updateToCloud(thing);
+      console.log('STOP', thing.id, thing.title);
     }
     if (clearEditingID) {
       setTimeout(() => { // WHY?
@@ -52,25 +52,25 @@
   }
 
   function handleFocus(event) {
-    $editingID = entity.id;
-    grabbing.grabOnly(entity)
+    $editingID = thing.id;
+    grabbing.grabOnly(thing)
     signal([SignalKinds.widget], null); // so widget will show as grabbed
   }
 
-  function handleInput(event) { entity.title = event.target.value; }
+  function handleInput(event) { thing.title = event.target.value; }
   function handleBlur(event) { $editingID = null; }
 </script>
 
 <input
   type='text'
-  id={entity.id}
+  id={thing.id}
   bind:this={inputRef}
   on:blur={handleBlur}
   on:focus={handleFocus}
   on:input={handleInput}
   on:keydown={handleKeyDown}
-  bind:value={entity.title}
-  style='--textColor: {entity.color};'/>
+  bind:value={thing.title}
+  style='--textColor: {thing.color};'/>
 
 <style lang='scss'>
   input {

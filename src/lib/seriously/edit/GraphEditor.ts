@@ -1,4 +1,4 @@
-import { entities, Entity, editingID, createEntityID, swap, seriouslyGlobals, grabbing, SignalKinds, signal } from "../common/Imports";
+import { things, Thing, editingID, createThingID, swap, seriouslyGlobals, grabbing, SignalKinds, signal } from "../common/Imports";
 
 export default class GraphEditor {
   notEditing: boolean;
@@ -47,22 +47,22 @@ export default class GraphEditor {
   deleteAndRedraw() {
     const entity = grabbing.firstGrabbedEntity;
     if (entity != null && !entity.isEditing) {
-      entities.deleteFromCloud(entity!);
-      let index = entities.all.indexOf(entity!);
-      entities.all.splice(index, 1);
-      if (index >= entities.all.length) {
-        index = entities.all.length - 1;
+      things.deleteFromCloud(entity!);
+      let index = things.all.indexOf(entity!);
+      things.all.splice(index, 1);
+      if (index >= things.all.length) {
+        index = things.all.length - 1;
       }
-      grabbing.grabOnly(entities.all[index]);
+      grabbing.grabOnly(things.all[index]);
       this.redrawAll();
     }
   }
 
   async addSiblingAndRedraw() {
-    let entity = new Entity(createEntityID(), seriouslyGlobals.defaultTitle, 'blue', 't', 1.0);
+    let entity = new Thing(createThingID(), seriouslyGlobals.defaultTitle, 'blue', 't', 1.0);
     grabbing.grabOnly(entity);
-    entities.all.push(entity);
-    await entities.createInCloud(entity);
+    things.all.push(entity);
+    await things.createInCloud(entity);
     console.log('ADD:', entity.id);
     editingID.set(entity.id);
     this.redrawAll();
@@ -72,12 +72,12 @@ export default class GraphEditor {
     if (grabbing.hasGrab) {
       const grab = grabbing.firstGrabbedEntity;
       if  (grab != null) {
-        const all = entities.all;
+        const all = things.all;
         const index = all.indexOf(grab!);
         const newIndex = index.increment(!up, all.length - 1);
         const newGrab = all[newIndex];
         if (relocate) {
-          swap(index, newIndex, entities.all);
+          swap(index, newIndex, things.all);
           this.redrawAll();
         } else {
           grabbing.grabOnly(newGrab);

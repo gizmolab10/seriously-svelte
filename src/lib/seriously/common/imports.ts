@@ -3,15 +3,15 @@
   import { relationships } from '../data/Relationships';
   import { Relationship } from '../data/Relationship';
   import { seriouslyGlobals } from '../data/Globals';
+  import { createThingID, swap } from './Utilities';
 	import { graphEditor } from '../edit/GraphEditor';
 	import { editingID } from '../edit/EditState';
-  import { entities } from '../data/Entities';
   import { grabbing } from '../edit/Grabbing';
-  import { createEntityID, swap } from './Utilities';
-  import Entity from '../data/Entity';
+  import { things } from '../data/Things';
+  import Thing from '../data/Thing';
   import './Next';
 
-  export { tick, onMount, onDestroy, createEntityID, swap, seriouslyGlobals, 
+  export { tick, onMount, onDestroy, createThingID, swap, seriouslyGlobals, 
     createEventDispatcher, signal, handleSignal, SignalKinds,
-    Entity, entities, Relationship, relationships,
+    Thing, things, Relationship, relationships,
     graphEditor, editingID, grabbing };

@@ -1,4 +1,4 @@
-import { Entity, entities } from '../common/Imports';
+import { Thing, things } from '../common/Imports';
 
 export default class Grabbing {
   grabbed: string[];
@@ -15,19 +15,19 @@ export default class Grabbing {
     return (this.grabbed.length == 0) ? null : this.grabbed[0];
   }
 
-  get firstGrabbedEntity(): Entity | null {
-    return entities.entityFor(this.firstGrab)
+  get firstGrabbedEntity(): Thing | null {
+    return things.thingFor(this.firstGrab)
   }
 
-  grab(entity: Entity) {
+  grab(entity: Thing) {
     this.grabbed.push(entity.id);
   }
 
-  grabOnly(entity: Entity) {
+  grabOnly(entity: Thing) {
     this.grabbed = [entity.id];
   }
 
-  ungrab(entity: Entity) {
+  ungrab(entity: Thing) {
     const index = this.grabbed.indexOf(entity.id);
 
     if (index > -1) { // only splice array when item is found
@@ -35,7 +35,7 @@ export default class Grabbing {
     }
   }
 
-  isGrabbed(entity: Entity) {
+  isGrabbed(entity: Thing) {
     for (let grabbed of this.grabbed) {
       if (grabbed == entity.id) {
         return true;
@@ -45,7 +45,7 @@ export default class Grabbing {
     return false;
   }
 
-  toggleGrab(entity: Entity) {
+  toggleGrab(entity: Thing) {
     if (this.isGrabbed(entity)) {
       this.ungrab(entity);
     } else {

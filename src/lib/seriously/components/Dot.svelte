@@ -1,30 +1,30 @@
 <svelte:options immutable={true}/>
 
 <script lang='ts'>
-  import { Entity, grabbing, tick, signal, handleSignal, SignalKinds } from '../common/imports.ts';
+  import { Thing, grabbing, tick, signal, handleSignal, SignalKinds } from '../common/imports.ts';
   export let isReveal = false;
-  export let entity = Entity;
+  export let thing = Thing;
   let isGrabbed = false;
  
   function handleClick(event) {
     if (!isReveal) {
       if (event.shiftKey) {
-        grabbing.toggleGrab(entity);
+        grabbing.toggleGrab(thing);
       } else {
-        grabbing.grabOnly(entity);
+        grabbing.grabOnly(thing);
       }
 
-      signal([SignalKinds.widget], entity.id);
+      signal([SignalKinds.widget], thing.id);
     }
   }
 
 	handleSignal.connect((kinds, value) => {
-		if (kinds.includes(SignalKinds.dot) && value == entity.id) {
-      isGrabbed = grabbing.isGrabbed(entity);
-      var style = document.getElementById(entity.id)?.style;
-      style?.setProperty(   '--dotColor', entity.color);
-      style?.setProperty(  '--textColor', entity.revealColor(!isReveal));
-      style?.setProperty('--buttonColor', entity.revealColor( isReveal));
+		if (kinds.includes(SignalKinds.dot) && value == thing.id) {
+      isGrabbed = grabbing.isGrabbed(thing);
+      var style = document.getElementById(thing.id)?.style;
+      style?.setProperty(   '--dotColor', thing.color);
+      style?.setProperty(  '--textColor', thing.revealColor(!isReveal));
+      style?.setProperty('--buttonColor', thing.revealColor( isReveal));
     }
   })
 
@@ -32,12 +32,12 @@
 
 {#key isGrabbed}
   <slot>
-    <button id={entity.id}
+    <button id={thing.id}
       on:click={handleClick}
       class={ isReveal ? 'reveal' : 'drag' }
-      style='--dotColor: {entity.color};
-            --textColor: {entity.revealColor(!isReveal)};
-          --buttonColor: {entity.revealColor( isReveal)}'>
+      style='--dotColor: {thing.color};
+            --textColor: {thing.revealColor(!isReveal)};
+          --buttonColor: {thing.revealColor( isReveal)}'>
     </button>
   </slot>
 {/key}

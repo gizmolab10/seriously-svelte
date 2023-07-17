@@ -1,24 +1,24 @@
-import { Relatives, grabbing, editingID, createEntityID, seriouslyGlobals } from '../common/Imports';
+import { grabbing, editingID, createThingID, seriouslyGlobals } from '../common/Imports';
 import Airtable from 'airtable';
 
-export default class Entity {
-  id: string;
-  title: string;
-  color: string;
-  trait: string;
-  order: number;
-  parents: [Entity] | null;
-  children: [Entity] | null;
+export default class Thing {
+  public id: string;
+  public title: string;
+  public color: string;
+  public trait: string;
+  public order: number;
+  parents: Array<Thing>;
+  children: Array<Thing>;
   isEditing: boolean;
 
-  constructor(id = createEntityID(), title = seriouslyGlobals.defaultTitle, color = 'black', trait = 's', order = 0) {
+  constructor(id = createThingID(), title = seriouslyGlobals.defaultTitle, color = 'blue', trait = 's', order = 0) {
     this.id = id;
     this.title = title;
     this.color = color;
     this.trait = trait;
     this.order = order;
-    this.parents = null;
-    this.children = null;
+    this.parents = new Array<Thing>();
+    this.children = new Array<Thing>();
     this.isEditing = false;
 
     editingID.subscribe((editingID: string | null) => {

@@ -1,16 +1,16 @@
 <svelte:options immutable = {true} />
 
 <script>
-  import { Entity, entities, grabbing, graphEditor, onMount, onDestroy, signal, handleSignal, SignalKinds, relationships } from '../common/imports.ts';
+  import { things, grabbing, graphEditor, onMount, onDestroy, signal, handleSignal, SignalKinds, relationships } from '../common/imports.ts';
   import Widget from './Widget.svelte';
 
   </script>
 
 <div>
   <ul>
-    {#each entities.all as entity}
+    {#each things.all as thing}
       <li>
-        <Widget entity={entity}/>
+        <Widget thing={thing}/>
       </li>
     {/each}
   </ul>

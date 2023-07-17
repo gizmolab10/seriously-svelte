@@ -1,24 +1,24 @@
 <svelte:options immutable = {true} />
 
 <script lang='ts'>
-  import { Entity, signal, handleSignal, SignalKinds } from '../common/imports.ts';
+  import { Thing, signal, handleSignal, SignalKinds } from '../common/imports.ts';
 	import Title from './Title.svelte';
 	import Dot from './Dot.svelte';
-	export let entity = Entity;
+	export let thing = Thing;
 
 	handleSignal.connect((kinds) => {
 		if (kinds.includes(SignalKinds.widget)) {
-			var style = document.getElementById(entity.id)?.style;
-			style?.setProperty('--hoverAttributes', entity.hoverAttributes);
-			style?.setProperty( '--grabAttributes', entity.grabAttributes);
-			signal([SignalKinds.dot], entity.id); // pass signal along to its dots
+			var style = document.getElementById(thing.id)?.style;
+			style?.setProperty('--hoverAttributes', thing.hoverAttributes);
+			style?.setProperty( '--grabAttributes', thing.grabAttributes);
+			signal([SignalKinds.dot], thing.id); // pass signal along to its dots
 		}
 	});
 </script>
 
-<span id={entity.id}
+<span id={thing.id}
 	style='padding: 0px 8px 2px 0px;
 				border-radius: 16px;
 				border: var(--grabAttributes)'>
-	<Dot entity={entity}/> <Title entity={entity}/> <Dot entity={entity} isReveal={true}/>
+	<Dot thing={thing}/> <Title thing={thing}/> <Dot thing={thing} isReveal={true}/>
 </span>

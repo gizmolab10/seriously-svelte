@@ -1,7 +1,7 @@
 <svelte:options immutable = {true} />
 
 <script>
-  import { Entity, entities, grabbing, graphEditor, onMount, onDestroy, signal, handleSignal, SignalKinds, relationships } from '../common/imports.ts';
+  import { Thing, things, grabbing, graphEditor, onMount, onDestroy, signal, handleSignal, SignalKinds, relationships } from '../common/imports.ts';
   import ChildrenWidgets from './ChildrenWidgets.svelte';
   let toggledReload = false;
   let isLoading = true;
@@ -20,7 +20,7 @@
   onMount(async () => {
     listener = window.addEventListener('keydown', graphEditor.handleKeyDown);
     try {
-      entities.readAllFromCloud()
+      things.readAllFromCloud()
     } catch (error) {
       alert('Error reading Airtable database: ' + error);
     }
@@ -31,8 +31,8 @@
 {#key toggledReload}
   {#if isLoading}
     <p>Loading...</p>
-  {:else if entities.all.length == 0}
-    <p>No entities available.</p>
+  {:else if (things.all.length == 0)}
+    <p>No things available.</p>
   {:else}
     <ChildrenWidgets/>
   {/if}
