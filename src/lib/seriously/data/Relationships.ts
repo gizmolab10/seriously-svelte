@@ -1,4 +1,4 @@
-import { Relationship, signal, SignalKinds } from '../common/Imports';
+import { Relationship, RelationshipKind, createCloudID } from '../common/Imports';
 import Airtable from 'airtable';
 
 const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
@@ -10,28 +10,42 @@ class Relationships {
 
   constructor() {}
 
-  entityFor(id: string | null): Relationship | null {
+  relationshipFrom(id: string | null): Relationship | null {
     if (id == null) { return null; }
-    return this.all.filter((relationship) => relationship.id === id)[0];
+    return this.all.filter((relationship) => relationship.from == id)[0];
+  }
+
+  createAndSaveUniqueRelationship(kind: RelationshipKind, from: string, to: string) {
+    if (this.relationshipFrom(from) == null) {
+      console.log('PARENT:', from);
+      let relationship = new Relationship(createCloudID(), kind, from, to);
+      this.all.push(relationship);
+      this.createInCloud(relationship);
+    }
   }
 
   ///////////////////////////
   //         CRUD          //
   ///////////////////////////
 
-  async readAllFromCloud() {
+  async readAllRelationshipsFromCloud() {
     try {
       const records = await table.select().all()
 
+      console.log(records);
+
       for (let record of records) {
-        let relationship = new Relationship(record.id, record.fields.title, record.fields.color, record.fields.trait);
+        let id = record.fields.id as string;
+        let from = record.fields.from as string;
+        let to = record.fields.to as string;
+        let kind = record.fields.kind as RelationshipKind;
+        let relationship = new Relationship(id, kind, from, to);
 
         if (!this.all.includes(relationship)) {
           this.all.push(relationship);
         }
       }
-
-      signal([SignalKinds.fetch], null);
+      console.log(this.all);
     } catch (error) {
       alert(this.errorMessage + error);
     }    
@@ -47,15 +61,15 @@ class Relationships {
 
   async createInCloud(relationship: Relationship) {
     try {
-      table.create(relationship);
+      table.create(relationship.fields);
     } catch (error) {
       alert(this.errorMessage + error);
     }
   }
 
-  async deleteFromCloud(thing: Relationship) {
+  async deleteFromCloud(relationship: Relationship) {
     try {
-      table.delete(thing);
+      table.destroy(relationship.id);
     } catch (error) {
       alert(this.errorMessage + error);
     }

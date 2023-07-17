@@ -11,7 +11,7 @@ export function removeAll(item: string, from: string): string {
   return to;
 }
 
-export function createThingID(): string {
+export function createCloudID(): string {
   return 'rec' + removeAll('-', uuid()).slice(10, 24);
 }
 
@@ -20,4 +20,12 @@ export function swap<T>(index: number, withIndex: number, within: Array<T>) {
   const withIndexItem = within[withIndex];
   within.splice(index, 1, withIndexItem);
   within.splice(withIndex, 1, indexItem);
+}
+
+export function convertToString(array: Array<string>): string {
+  return array[0];
+}
+
+export function convertToArray(single: string): Array<string> {
+  return [single];
 }

@@ -2,7 +2,6 @@ import { Signal } from 'typed-signals';
 
 export enum SignalKinds {
   widget = 'w',
-  fetch  = 'f',
   graph  = 'g',
   dot    = 'd'
 }

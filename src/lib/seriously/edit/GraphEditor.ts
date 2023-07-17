@@ -1,4 +1,4 @@
-import { things, Thing, editingID, createThingID, swap, seriouslyGlobals, grabbing, SignalKinds, signal } from "../common/Imports";
+import { things, Thing, editingID, createCloudID, swap, seriouslyGlobals, grabbing, SignalKinds, signal } from "../common/Imports";
 
 export default class GraphEditor {
   notEditing: boolean;
@@ -60,7 +60,7 @@ export default class GraphEditor {
   }
 
   async addSiblingAndRedraw() {
-    let entity = new Thing(createThingID(), seriouslyGlobals.defaultTitle, 'blue', 't', 1.0);
+    let entity = new Thing(createCloudID(), seriouslyGlobals.defaultTitle, 'blue', 't', 1.0);
     grabbing.grabOnly(entity);
     things.main?.children.push(entity);
     await things.createInCloud(entity);

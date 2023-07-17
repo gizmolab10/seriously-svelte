@@ -1,16 +1,14 @@
 <svelte:options immutable = {true} />
 
 <script>
-  import { Thing, things, grabbing, graphEditor, onMount, onDestroy, signal, handleSignal, SignalKinds, relationships } from '../common/imports.ts';
+  import { Thing, things, relationships, grabbing, graphEditor, onMount, onDestroy, signal, handleSignal, SignalKinds } from '../common/imports.ts';
   import ChildrenWidgets from './ChildrenWidgets.svelte';
   let toggledReload = false;
   let isLoading = true;
   let listener;
 
   handleSignal.connect((kinds) => {
-		if (kinds.includes(SignalKinds.fetch)) {
-  		isLoading = false;
-    } else if (kinds.includes(SignalKinds.graph)) {
+		if (kinds.includes(SignalKinds.graph)) {
       toggledReload = !toggledReload;
     }
   });
@@ -20,9 +18,15 @@
   onMount(async () => {
     listener = window.addEventListener('keydown', graphEditor.handleKeyDown);
     try {
-      things.readAllFromCloud()
+      await relationships.readAllRelationshipsFromCloud();
     } catch (error) {
-      alert('Error reading Airtable database: ' + error);
+      alert('Error reading Relationships database: ' + error);
+    }
+    try {
+      await things.readAllThingsFromCloud()
+  		isLoading = false;
+    } catch (error) {
+      alert('Error reading Things database: ' + error);
     }
   });
 
@@ -32,7 +36,7 @@
   {#if isLoading}
     <p>Loading...</p>
   {:else if (things.main == null || things.main?.children.length == 0)}
-    <p>No things available.</p>
+    <p>Nothing is available.</p>
   {:else}
     <ChildrenWidgets/>
   {/if}

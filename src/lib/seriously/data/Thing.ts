@@ -1,4 +1,4 @@
-import { grabbing, editingID, createThingID, seriouslyGlobals } from '../common/Imports';
+import { grabbing, editingID, createCloudID, seriouslyGlobals } from '../common/Imports';
 import Airtable from 'airtable';
 
 export default class Thing {
@@ -11,7 +11,7 @@ export default class Thing {
   children: Array<Thing>;
   isEditing: boolean;
 
-  constructor(id = createThingID(), title = seriouslyGlobals.defaultTitle, color = 'blue', trait = 's', order = 0) {
+  constructor(id = createCloudID(), title = seriouslyGlobals.defaultTitle, color = 'blue', trait = 's', order = 0) {
     this.id = id;
     this.title = title;
     this.color = color;

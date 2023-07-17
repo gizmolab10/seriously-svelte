@@ -1,4 +1,4 @@
-import { Thing, signal, SignalKinds, seriouslyGlobals } from '../common/Imports';
+import { Thing, relationships, RelationshipKind, seriouslyGlobals, convertToString } from '../common/Imports';
 import Airtable, {FieldSet} from 'airtable';
 
 const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
@@ -19,23 +19,24 @@ export default class Things {
   //         CRUD          //
   ///////////////////////////
 
-  async readAllFromCloud() {
+  async readAllThingsFromCloud() {
     this.main = new Thing('main', seriouslyGlobals.mainThingTitle, seriouslyGlobals.mainThingColor, 'm', 0);
 
     try {
       const records = await table.select().all()
+      const to = convertToString([this.main.id] as [string]);
 
       for (const record of records) {
         const thing = new Thing(record.id, record.fields.title as string, record.fields.color as string, record.fields.trait as string, record.fields.order as number);
 
         if (!this.main.children.includes(thing)) {
           this.main.children.push(thing);
+          thing.parents.push(this.main);
+          relationships.createAndSaveUniqueRelationship(RelationshipKind.parent, thing.id, to);
         }
       }
-
-      signal([SignalKinds.fetch], null);
     } catch (error) {
-      alert(this.errorMessage + ' (readAllFromCloud) ' + error);
+      alert(this.errorMessage + ' (readAllThingsFromCloud) ' + error);
     }
   }
 
