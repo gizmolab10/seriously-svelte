@@ -36,8 +36,8 @@ class Relationships {
 
       for (let record of records) {
         let id = record.fields.id as string;
-        let from = record.fields.from as string;
         let to = record.fields.to as string;
+        let from = record.fields.from as string;
         let kind = record.fields.kind as RelationshipKind;
         let relationship = new Relationship(id, kind, from, to);
 

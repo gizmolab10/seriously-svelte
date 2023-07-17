@@ -1,4 +1,3 @@
-import {split_css_unit} from 'svelte/internal';
 import { v4 as uuid } from 'uuid';
 
 export function removeAll(item: string, from: string): string {
@@ -22,10 +21,12 @@ export function swap<T>(index: number, withIndex: number, within: Array<T>) {
   within.splice(withIndex, 1, indexItem);
 }
 
+const stringArraySeparator = '[<:>]'
+
 export function convertToString(array: Array<string>): string {
-  return array[0];
+  return array.join(stringArraySeparator);
 }
 
 export function convertToArray(single: string): Array<string> {
-  return [single];
+  return single.split(stringArraySeparator);
 }
