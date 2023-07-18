@@ -1,14 +1,23 @@
 <svelte:options immutable = {true} />
 
 <script>
-  import { things, grabbing, graphEditor, onMount, onDestroy, signal, handleSignal, SignalKinds, relationships } from '../common/imports.ts';
+  import { hereID, things, grabbing, graphEditor, onMount, onDestroy, signal, handleSignal, SignalKinds, relationships } from '../common/imports.ts';
   import Widget from './Widget.svelte';
+  var here = things.root;
 
-  </script>
+  $: {
+    console.log(here?.title);
+    const newHere = things.thingFor($hereID); // executes whenever hereID changes
+    if (newHere != null) {
+      here = newHere;
+    }
+  }
+
+</script>
 
 <div>
   <ul>
-    {#each things.root?.children as thing}
+    {#each here?.children as thing}
       <li>
         <Widget thing={thing}/>
       </li>

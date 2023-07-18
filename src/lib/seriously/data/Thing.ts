@@ -21,8 +21,8 @@ export default class Thing {
     this.children = new Array<Thing>();
     this.isEditing = false;
 
-    editingID.subscribe((editingID: string | null) => {
-      this.isEditing = (editingID == this.id); // executes whenever editingID changes
+    editingID.subscribe((id: string | null) => {
+      this.isEditing = (id == this.id); // executes whenever editingID changes
     });
   };
 

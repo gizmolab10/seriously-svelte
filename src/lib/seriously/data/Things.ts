@@ -20,9 +20,10 @@ export default class Things {
   ///////////////////////////
 
   async readAllThingsFromCloud() {
-    const all: { [key: string]: Thing } = {};
-    this.root = new Thing('root', seriouslyGlobals.rootTitle, seriouslyGlobals.rootColor, 'm', 0);
-    all['root'] = this.root;
+    const rootID = seriouslyGlobals.rootID;
+    const all: { [id: string]: Thing } = {};
+    this.root = new Thing(rootID, seriouslyGlobals.rootTitle, seriouslyGlobals.rootColor, 'm', 0);
+    all[rootID] = this.root;
 
     try {
       const records = await table.select().all()
@@ -36,15 +37,15 @@ export default class Things {
 
       for (const id in all) {
         const relationship = relationships.relationshipWithFrom(id);
-        if (relationship == null) {
-          relationships.createAndSaveUniqueRelationship(RelationshipKind.parent, id, to);
-        } else {
+        if (relationship != null) {
           const parent = all[relationship.to];
           if (parent != null) {
             const child = all[id];
             parent.children.push(child);
             child.parents.push(parent);
           }
+        } else if (id != rootID) {
+          relationships.createAndSaveUniqueRelationship(RelationshipKind.parent, id, to);
         }
       }
 

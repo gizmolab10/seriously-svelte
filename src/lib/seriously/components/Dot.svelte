@@ -1,26 +1,30 @@
 <svelte:options immutable={true}/>
 
 <script lang='ts'>
-  import { Thing, grabbing, tick, signal, handleSignal, SignalKinds } from '../common/imports.ts';
+  import { Thing, hereID, grabbing, tick, signal, handleSignal, SignalKinds } from '../common/imports.ts';
   export let isReveal = false;
   export let thing = Thing;
   let isGrabbed = false;
+  let canExpand = false;
  
   function handleClick(event) {
-    if (!isReveal) {
-      if (event.shiftKey) {
-        grabbing.toggleGrab(thing);
-      } else {
-        grabbing.grabOnly(thing);
+    if (isReveal) {
+      if (canExpand) {
+        $hereID = thing.id;
       }
-
-      signal([SignalKinds.widget], thing.id);
+    } else if (event.shiftKeyb || isGrabbed) {
+      grabbing.toggleGrab(thing);
+    } else {
+      grabbing.grabOnly(thing);
     }
+
+    signal([SignalKinds.widget], thing.id);
   }
 
 	handleSignal.connect((kinds, value) => {
 		if (kinds.includes(SignalKinds.dot) && value == thing.id) {
       isGrabbed = grabbing.isGrabbed(thing);
+      canExpand = thing.children.length > 0;
       var style = document.getElementById(thing.id)?.style;
       style?.setProperty(   '--dotColor', thing.color);
       style?.setProperty(  '--textColor', thing.revealColor(!isReveal));
@@ -38,6 +42,9 @@
       style='--dotColor: {thing.color};
             --textColor: {thing.revealColor(!isReveal)};
           --buttonColor: {thing.revealColor( isReveal)}'>
+          {#if isReveal && canExpand}
+          +
+          {/if}
     </button>
   </slot>
 {/key}
