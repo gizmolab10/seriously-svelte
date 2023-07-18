@@ -1,4 +1,4 @@
-import { Thing, relationships, RelationshipKind, seriouslyGlobals, convertToString } from '../common/Imports';
+import { Thing, relationships, RelationshipKind, seriouslyGlobals, convertArrayToString } from '../common/Imports';
 import Airtable, {FieldSet} from 'airtable';
 
 const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
@@ -6,13 +6,13 @@ const table = base('Things');
 
 export default class Things {
   errorMessage = 'Error from Things database: ';
-  main: Thing | null = null;
+  root: Thing | null = null;
 
   constructor() {}
 
   thingFor(id: string | null): Thing | null {
-    if (id == null || this.main == null) { return null; }
-    return this.main!.traverse((thing) => thing.id === id);
+    if (id == null || this.root == null) { return null; }
+    return this.root.traverse((thing) => thing.id == id);
   }
 
   ///////////////////////////
@@ -20,27 +20,40 @@ export default class Things {
   ///////////////////////////
 
   async readAllThingsFromCloud() {
-    this.main = new Thing('main', seriouslyGlobals.mainThingTitle, seriouslyGlobals.mainThingColor, 'm', 0);
+    const all: { [key: string]: Thing } = {};
+    this.root = new Thing('root', seriouslyGlobals.rootTitle, seriouslyGlobals.rootColor, 'm', 0);
+    all['root'] = this.root;
 
     try {
       const records = await table.select().all()
-      const to = convertToString([this.main.id] as [string]);
+      const to = convertArrayToString([this.root.id]);
 
       for (const record of records) {
-        const thing = new Thing(record.id, record.fields.title as string, record.fields.color as string, record.fields.trait as string, record.fields.order as number);
+        const id = record.id;
+        const thing = new Thing(id, record.fields.title as string, record.fields.color as string, record.fields.trait as string, record.fields.order as number);
+        all[id] = thing;
+      }
 
-        if (!this.main.children.includes(thing)) {
-          this.main.children.push(thing);
-          thing.parents.push(this.main);
-          relationships.createAndSaveUniqueRelationship(RelationshipKind.parent, thing.id, to);
+      for (const id in all) {
+        const relationship = relationships.relationshipWithFrom(id);
+        if (relationship == null) {
+          relationships.createAndSaveUniqueRelationship(RelationshipKind.parent, id, to);
+        } else {
+          const parent = all[relationship.to];
+          if (parent != null) {
+            const child = all[id];
+            parent.children.push(child);
+            child.parents.push(parent);
+          }
         }
       }
+
     } catch (error) {
       alert(this.errorMessage + ' (readAllThingsFromCloud) ' + error);
     }
   }
 
-  async updateToCloud(thing: Thing) {
+  async updateThingInCloud(thing: Thing) {
     try {
       table.update(thing.id, thing.fields);
     } catch (error) {
@@ -48,7 +61,7 @@ export default class Things {
     }
   }
 
-  async createInCloud(thing: Thing) {
+  async createThingInCloud(thing: Thing) {
     try {
       const fields = await table.create(thing.fields);
       thing.id = fields['id']; // need for updateToCloud
@@ -57,7 +70,7 @@ export default class Things {
     }
   }
 
-  async deleteFromCloud(thing: Thing) {
+  async deleteThingFromCloud(thing: Thing) {
     try {
       table.destroy(thing.id);
     } catch (error) {

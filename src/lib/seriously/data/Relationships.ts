@@ -1,4 +1,4 @@
-import { Relationship, RelationshipKind, createCloudID } from '../common/Imports';
+import { things, Thing, Relationship, RelationshipKind, createCloudID } from '../common/Imports';
 import Airtable from 'airtable';
 
 const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
@@ -10,17 +10,24 @@ class Relationships {
 
   constructor() {}
 
-  relationshipFrom(id: string | null): Relationship | null {
+  parentOf(id: string | null): Thing | null {
+    const relationship = this.relationshipWithFrom(id);
+    if (relationship != null) {
+      return things.thingFor(relationship.to);
+    }
+    return null;
+  }
+
+  relationshipWithFrom(id: string | null): Relationship | null {
     if (id == null) { return null; }
     return this.all.filter((relationship) => relationship.from == id)[0];
   }
 
   createAndSaveUniqueRelationship(kind: RelationshipKind, from: string, to: string) {
-    if (this.relationshipFrom(from) == null) {
-      console.log('PARENT:', from);
+    if (this.relationshipWithFrom(from) == null) {
       let relationship = new Relationship(createCloudID(), kind, from, to);
       this.all.push(relationship);
-      this.createInCloud(relationship);
+      this.createRelationshipInCloud(relationship);
     }
   }
 
@@ -31,8 +38,6 @@ class Relationships {
   async readAllRelationshipsFromCloud() {
     try {
       const records = await table.select().all()
-
-      console.log(records);
 
       for (let record of records) {
         let id = record.fields.id as string;
@@ -45,13 +50,12 @@ class Relationships {
           this.all.push(relationship);
         }
       }
-      console.log(this.all);
     } catch (error) {
       alert(this.errorMessage + error);
     }    
   }
 
-  async updateToCloud(relationship: Relationship) {
+  async updateRelationshipToCloud(relationship: Relationship) {
     try {
       table.update(relationship.id, relationship.fields);
     } catch (error) {
@@ -59,7 +63,7 @@ class Relationships {
     }
   }
 
-  async createInCloud(relationship: Relationship) {
+  async createRelationshipInCloud(relationship: Relationship) {
     try {
       table.create(relationship.fields);
     } catch (error) {
@@ -67,7 +71,7 @@ class Relationships {
     }
   }
 
-  async deleteFromCloud(relationship: Relationship) {
+  async deleteRelationshipFromCloud(relationship: Relationship) {
     try {
       table.destroy(relationship.id);
     } catch (error) {

@@ -15,29 +15,29 @@ export default class Grabbing {
     return (this.grabbed.length == 0) ? null : this.grabbed[0];
   }
 
-  get firstGrabbedEntity(): Thing | null {
+  get firstGrabbedThing(): Thing | null {
     return things.thingFor(this.firstGrab)
   }
 
-  grab(entity: Thing) {
-    this.grabbed.push(entity.id);
+  grab(thing: Thing) {
+    this.grabbed.push(thing.id);
   }
 
-  grabOnly(entity: Thing) {
-    this.grabbed = [entity.id];
+  grabOnly(thing: Thing) {
+    this.grabbed = [thing.id];
   }
 
-  ungrab(entity: Thing) {
-    const index = this.grabbed.indexOf(entity.id);
+  ungrab(thing: Thing) {
+    const index = this.grabbed.indexOf(thing.id);
 
     if (index > -1) { // only splice array when item is found
       this.grabbed.splice(index, 1); // 2nd parameter means remove one item only
     }
   }
 
-  isGrabbed(entity: Thing) {
+  isGrabbed(thing: Thing) {
     for (let grabbed of this.grabbed) {
-      if (grabbed == entity.id) {
+      if (grabbed == thing.id) {
         return true;
       }
     }
@@ -45,11 +45,11 @@ export default class Grabbing {
     return false;
   }
 
-  toggleGrab(entity: Thing) {
-    if (this.isGrabbed(entity)) {
-      this.ungrab(entity);
+  toggleGrab(thing: Thing) {
+    if (this.isGrabbed(thing)) {
+      this.ungrab(thing);
     } else {
-      this.grab(entity);
+      this.grab(thing);
     }
   }
 

@@ -36,12 +36,12 @@ export default class Thing {
     return (flag != hovering) ? this.color : seriouslyGlobals.backgroundColor;
   }
 
-  traverse = (apply : (thing: Thing) => boolean ) : Thing | null => {
-    for (let child of this.children) {
-      if (apply(child)) {
-        return child;
-      } else if (child.children.length > 0) {
-        child.traverse(apply);
+  traverse = (applyTo : (thing: Thing) => boolean) : Thing | null => {
+    for (let progeny of this.children) {
+      if (applyTo(progeny)) {
+        return progeny;
+      } else {
+        progeny.traverse(applyTo);
       }
     }
     return this;

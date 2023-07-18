@@ -41,8 +41,7 @@
     inputRef?.blur();
     if (isDirty()) {
       makeClean();
-      things.updateToCloud(thing);
-      console.log('STOP', thing.id, thing.title);
+      things.updateThingInCloud(thing);
     }
     if (clearEditingID) {
       setTimeout(() => { // WHY?

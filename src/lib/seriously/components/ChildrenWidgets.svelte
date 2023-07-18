@@ -8,7 +8,7 @@
 
 <div>
   <ul>
-    {#each things.main?.children as thing}
+    {#each things.root?.children as thing}
       <li>
         <Widget thing={thing}/>
       </li>

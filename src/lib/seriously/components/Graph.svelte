@@ -35,7 +35,7 @@
 {#key toggledReload}
   {#if isLoading}
     <p>Loading...</p>
-  {:else if (things.main == null || things.main?.children.length == 0)}
+  {:else if (things.root == null)}
     <p>Nothing is available.</p>
   {:else}
     <ChildrenWidgets/>

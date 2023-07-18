@@ -23,10 +23,10 @@ export function swap<T>(index: number, withIndex: number, within: Array<T>) {
 
 const stringArraySeparator = '[<:>]'
 
-export function convertToString(array: Array<string>): string {
+export function convertArrayToString(array: Array<string>): string {
   return array.join(stringArraySeparator);
 }
 
-export function convertToArray(single: string): Array<string> {
+export function convertStringToArray(single: string): Array<string> {
   return single.split(stringArraySeparator);
 }
