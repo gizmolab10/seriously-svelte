@@ -30,6 +30,13 @@ export default class Thing {
   get  grabAttributes(): string { return this.borderAttribute + this.revealColor(false); }
   get hoverAttributes(): string { return this.borderAttribute + this.revealColor(true); }
   get borderAttribute(): string { return (this.isEditing ? 'dashed' : 'solid') + ' 1px '; }
+  get firstParent(): Thing { return this.parents[0]; }
+  get firstChild(): Thing { return this.children[0]; }
+
+  addChild(child: Thing) {
+    this.children.push(child);
+    child.parents.push(this);
+  }
   
   revealColor = (hovering: boolean): string => {
     const flag = grabbing.isGrabbed(this) || this.isEditing;

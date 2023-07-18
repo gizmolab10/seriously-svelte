@@ -15,6 +15,7 @@ export default class GraphEditor {
 
   handleKeyDown = (event: KeyboardEvent): void => {
     if (event.type == 'keydown') {
+      const thing = grabbing.firstGrabbedThing;
       let id = grabbing.firstGrab ?? null;
       let OPTION = event.altKey;
       let key = event.key;
@@ -29,9 +30,11 @@ export default class GraphEditor {
           case 'ArrowUp': this.moveUpAndRedraw(true, OPTION); break;
           case 'ArrowDown': this.moveUpAndRedraw(false, OPTION); break;
           case 'ArrowLeft':
-            let parentID = relationships.grandparentOf(id)?.id ?? null;
+            let parentID = thing?.firstParent?.firstParent?.id ?? null;
             if (parentID != null) {
               hereID.set(parentID);
+            } else {
+              console.log('LEFT:', thing?.firstParent);
             }
             break;
           case 'Tab':
@@ -42,7 +45,6 @@ export default class GraphEditor {
             break;
           case 'Delete':
           case 'Backspace':
-            const thing = grabbing.firstGrabbedThing;
             if (thing != null && !thing.isEditing && things.root != null) {
               const all = things.root?.children;
               let index = all.indexOf(thing!);
@@ -77,7 +79,7 @@ export default class GraphEditor {
     if (grabbing.hasGrab) {
       const child = grabbing.firstGrabbedThing;
       if  (child != null && things.root != null) {
-        const parent = child.parents[0];
+        const parent = child.firstParent;
         const all = parent.children;
         const index = all.indexOf(child!);
         const newIndex = index.increment(!up, all.length - 1);

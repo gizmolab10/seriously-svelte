@@ -11,7 +11,7 @@
     if (isReveal) {
       if (canExpand) {
         $hereID = thing.id;
-        grabbing.grabOnly(thing.children[0]);
+        grabbing.grabOnly(thing.firstChild);
       }
     } else if (event.shiftKeyb || isGrabbed) {
       grabbing.toggleGrab(thing);

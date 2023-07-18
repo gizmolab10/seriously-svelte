@@ -41,10 +41,9 @@ export default class Things {
           const parent = all[relationship.to];
           if (parent != null) {
             const child = all[id];
-            parent.children.push(child);
-            child.parents.push(parent);
+            parent.addChild(child);
           }
-        } else if (id != rootID) {
+        } else if (id != rootID) { // do not add parent relationship of root (nonsense)
           relationships.createAndSaveUniqueRelationship(RelationshipKind.parent, id, to);
         }
       }

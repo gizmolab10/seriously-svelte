@@ -1,7 +1,8 @@
 <svelte:options immutable = {true} />
 
 <script>
-  import { Thing, things, relationships, grabbing, graphEditor, onMount, onDestroy, signal, handleSignal, SignalKinds } from '../common/imports.ts';
+  import { Thing, things, relationships, grabbing, graphEditor, onMount, onDestroy, signal, handleSignal, SignalKinds } from '../common/Imports';
+  import Crumbs from './Crumbs.svelte';
   import Children from './Children.svelte';
   let toggledReload = false;
   let isLoading = true;
@@ -38,6 +39,7 @@
   {:else if (things.root == null)}
     <p>Nothing is available.</p>
   {:else}
+    <Crumbs/>
     <Children here={things.root}/>
   {/if}
 {/key}
