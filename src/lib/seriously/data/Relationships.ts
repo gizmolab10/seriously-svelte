@@ -10,10 +10,15 @@ class Relationships {
 
   constructor() {}
 
+  grandparentOf(id: string | null): Thing | null {
+    return this.parentOf(this.parentOf(id)?.id ?? null);
+  }
+
   parentOf(id: string | null): Thing | null {
     const relationship = this.relationshipWithFrom(id);
     if (relationship != null) {
-      return things.thingFor(relationship.to);
+      const parent = things.thingFor(relationship.to);
+      return parent;
     }
     return null;
   }

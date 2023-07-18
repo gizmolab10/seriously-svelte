@@ -1,4 +1,4 @@
-import { things, Thing, editingID, createCloudID, swap, seriouslyGlobals, grabbing, SignalKinds, signal } from "../common/Imports";
+import { things, Thing, hereID, editingID, createCloudID, swap, seriouslyGlobals, grabbing, SignalKinds, signal, relationships } from "../common/Imports";
 
 export default class GraphEditor {
   isEditing: boolean;
@@ -15,6 +15,7 @@ export default class GraphEditor {
 
   handleKeyDown = (event: KeyboardEvent): void => {
     if (event.type == 'keydown') {
+      let id = grabbing.firstGrab ?? null;
       let OPTION = event.altKey;
       let key = event.key;
       if (this.isEditing) {
@@ -27,11 +28,16 @@ export default class GraphEditor {
           case ' ': console.log('CHILD'); break;
           case 'ArrowUp': this.moveUpAndRedraw(true, OPTION); break;
           case 'ArrowDown': this.moveUpAndRedraw(false, OPTION); break;
+          case 'ArrowLeft':
+            let parentID = relationships.grandparentOf(id)?.id ?? null;
+            if (parentID != null) {
+              hereID.set(parentID);
+            }
+            break;
           case 'Tab':
             this.addSiblingAndRedraw(); // Title also makes this call
             break;
           case 'Enter': 
-            let id = grabbing.firstGrab ?? null;
             editingID.set(id);
             break;
           case 'Delete':

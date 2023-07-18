@@ -2,7 +2,7 @@
 
 <script>
   import { Thing, things, relationships, grabbing, graphEditor, onMount, onDestroy, signal, handleSignal, SignalKinds } from '../common/imports.ts';
-  import ChildrenWidgets from './ChildrenWidgets.svelte';
+  import Children from './Children.svelte';
   let toggledReload = false;
   let isLoading = true;
   let listener;
@@ -38,7 +38,7 @@
   {:else if (things.root == null)}
     <p>Nothing is available.</p>
   {:else}
-    <ChildrenWidgets/>
+    <Children here={things.root}/>
   {/if}
 {/key}
 

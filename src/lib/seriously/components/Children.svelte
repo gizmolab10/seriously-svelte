@@ -3,10 +3,9 @@
 <script>
   import { hereID, things, grabbing, graphEditor, onMount, onDestroy, signal, handleSignal, SignalKinds, relationships } from '../common/imports.ts';
   import Widget from './Widget.svelte';
-  var here = things.root;
+  export let here = Thing;
 
   $: {
-    console.log(here?.title);
     const newHere = things.thingFor($hereID); // executes whenever hereID changes
     if (newHere != null) {
       here = newHere;
