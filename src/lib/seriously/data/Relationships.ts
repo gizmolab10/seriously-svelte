@@ -1,4 +1,4 @@
-import { things, Thing, Relationship, RelationshipKind, createCloudID } from '../common/Imports';
+import { Thing, Relationship, RelationshipKind, createCloudID } from '../common/Imports';
 import Airtable from 'airtable';
 
 const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
@@ -10,9 +10,15 @@ class Relationships {
 
   constructor() {}
 
-  relationshipWithFrom(id: string | null): Relationship | null {
+  relationshipsWithFrom(id: string | null): Relationship[] | null {
     if (id == null) { return null; }
-    return this.all.filter((relationship) => relationship.from == id)[0];
+    return this.all.filter((relationship) => relationship.from == id);
+  }
+
+  relationshipWithFrom(id: string | null): Relationship | null {
+    const array = this.relationshipsWithFrom(id);
+    if (array == null) { return null; }
+    return array[0];
   }
 
   createAndSaveUniqueRelationship(kind: RelationshipKind, from: string, to: string) {
@@ -63,11 +69,22 @@ class Relationships {
     }
   }
 
-  async deleteRelationshipFromCloud(relationship: Relationship) {
-    try {
-      table.destroy(relationship.id);
-    } catch (error) {
-      alert(this.errorMessage + error);
+  deleteRelationshipsFromCloudFor(thing: Thing) {
+    const array = relationships.relationshipsWithFrom(thing.id)
+    if (array != null) {
+      for (let relationship of array) {
+        this.deleteRelationshipFromCloud(relationship);
+      }
+    }
+  }
+
+  async deleteRelationshipFromCloud(relationship: Relationship | null) {
+    if (relationship != null) {
+      try {
+        table.destroy(relationship.id);
+      } catch (error) {
+        alert(this.errorMessage + error);
+      }
     }
   }
 

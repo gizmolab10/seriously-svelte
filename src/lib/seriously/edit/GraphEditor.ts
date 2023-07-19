@@ -47,14 +47,17 @@ export default class GraphEditor {
           case 'Backspace':
             if (thing != null && !thing.isEditing && things.root != null) {
               const all = things.root?.children;
-              let index = all.indexOf(thing!);
+              let index = all.indexOf(thing);
               all.splice(index, 1);
               if (index >= all.length) {
                 index = all.length - 1;
               }
-              grabbing.grabOnly(all[index]);
+              if (index >= 0) {
+                grabbing.grabOnly(all[index]);
+              }              
               this.redrawAll();
               things.deleteThingFromCloud(thing!);
+              relationships.deleteRelationshipsFromCloudFor(thing);
             }
             break;
           }
@@ -67,9 +70,10 @@ export default class GraphEditor {
   }
 
   async addSiblingAndRedraw() {
-    let sibling = new Thing(createCloudID(), seriouslyGlobals.defaultTitle, 'blue', 't', 1.0);
+    const grab = grabbing.firstGrabbedThing ?? things.root;
+    const sibling = new Thing(createCloudID(), seriouslyGlobals.defaultTitle, 'blue', 't', 1.0);
     grabbing.grabOnly(sibling);
-    things.root?.children.push(sibling); // use focus, not root, create a relationship
+    grab?.children.push(sibling); // use focus, not root, create a relationship
     editingID.set(sibling.id);
     this.redrawAll();
     await things.createThingInCloud(sibling);

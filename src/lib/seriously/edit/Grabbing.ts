@@ -1,18 +1,21 @@
-import { Thing, things } from '../common/Imports';
+import { Thing, things, grabbed } from '../common/Imports';
 
 export default class Grabbing {
-  grabbed: string[];
+  localGrabbed: Array<string>
 
   constructor() {
-    this.grabbed = [];
+    this.localGrabbed = [];
+    grabbed.subscribe((array) => {
+      this.localGrabbed = array;
+    })
   }
 
   get hasGrab(): boolean {
-    return this.grabbed.length > 0;
+    return this.localGrabbed && this.localGrabbed.length > 0;
   }
 
   get firstGrab(): string | null {
-    return (this.grabbed.length == 0) ? null : this.grabbed[0];
+    return this.hasGrab ? this.localGrabbed[0] : null;
   }
 
   get firstGrabbedThing(): Thing | null {
@@ -20,25 +23,33 @@ export default class Grabbing {
   }
 
   grab(thing: Thing) {
-    this.grabbed.push(thing.id);
+    grabbed.update(array => {
+      array.push(thing.id);
+      return array;
+    });
   }
 
   grabOnly(thing: Thing) {
-    this.grabbed = [thing.id];
+    grabbed.set([thing.id]);
   }
 
   ungrab(thing: Thing) {
-    const index = this.grabbed.indexOf(thing.id);
+    grabbed.update(array => {
+      const index = array.indexOf(thing.id);
 
-    if (index > -1) { // only splice array when item is found
-      this.grabbed.splice(index, 1); // 2nd parameter means remove one item only
-    }
+      if (index > -1) { // only splice array when item is found
+        array.splice(index, 1); // 2nd parameter means remove one item only
+      }
+      return array;
+    });
   }
 
   isGrabbed(thing: Thing) {
-    for (let grabbed of this.grabbed) {
-      if (grabbed == thing.id) {
-        return true;
+    if (this.localGrabbed) {
+      for (let id of this.localGrabbed) {
+        if (id == thing.id) {
+          return true;
+        }
       }
     }
 
