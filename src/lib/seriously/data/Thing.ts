@@ -1,4 +1,4 @@
-import { grabbing, editingID, createCloudID, seriouslyGlobals } from '../common/Imports';
+import { grabbing, editingID, createCloudID, seriouslyGlobals, relationships, things, RelationshipKind } from '../common/Imports';
 import Airtable from 'airtable';
 
 export default class Thing {
@@ -7,8 +7,6 @@ export default class Thing {
   public color: string;
   public trait: string;
   public order: number;
-  parents: Array<Thing>;
-  children: Array<Thing>;
   isEditing: boolean;
 
   constructor(id = createCloudID(), title = seriouslyGlobals.defaultTitle, color = 'blue', trait = 's', order = 0) {
@@ -17,8 +15,6 @@ export default class Thing {
     this.color = color;
     this.trait = trait;
     this.order = order;
-    this.parents = new Array<Thing>();
-    this.children = new Array<Thing>();
     this.isEditing = false;
 
     editingID.subscribe((id: string | null) => {
@@ -33,6 +29,18 @@ export default class Thing {
   get firstParent(): Thing { return this.parents[0]; }
   get firstChild(): Thing { return this.children[0]; }
 
+  get parents(): Array<Thing> { return this.thingsMatching(false); }
+  get children(): Array<Thing> { return this.thingsMatching(true); }
+
+  thingsMatching(to: boolean): Array<Thing> {
+    const array = Array<Thing>()
+    const ids = relationships.IDsOfKind(RelationshipKind.parent, to, this.id);
+    for (const thing of things.thingsFor(ids)) {
+      array.push(thing);
+    }
+    return array;
+  }
+  
   addChild(child: Thing) {
     this.children.push(child);
     child.parents.push(this);

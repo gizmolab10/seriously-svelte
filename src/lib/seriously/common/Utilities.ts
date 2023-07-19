@@ -21,12 +21,12 @@ export function swap<T>(index: number, withIndex: number, within: Array<T>) {
   within.splice(withIndex, 1, indexItem);
 }
 
-const stringArraySeparator = '[<:>]'
+const stringArraySeparator = ' <[:]> '
 
 export function convertArrayToString(array: Array<string>): string {
   return array.join(stringArraySeparator);
 }
 
 export function convertStringToArray(single: string): Array<string> {
-  return single.split(stringArraySeparator);
+  return single.includes(stringArraySeparator) ? single.split(stringArraySeparator) : [single];
 }

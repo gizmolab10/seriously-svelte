@@ -13,7 +13,7 @@ export default class GraphEditor {
     }, 50);
   }
 
-  handleKeyDown = (event: KeyboardEvent): void => {
+  handleKeyDown = async (event: KeyboardEvent): Promise<void> => {
     if (event.type == 'keydown') {
       const thing = grabbing.firstGrabbedThing;
       let id = grabbing.firstGrab ?? null;
@@ -56,8 +56,8 @@ export default class GraphEditor {
                 grabbing.grabOnly(all[index]);
               }              
               this.redrawAll();
-              things.deleteThingFromCloud(thing!);
-              relationships.deleteRelationshipsFromCloudFor(thing);
+              await relationships.deleteRelationshipsFromCloudFor(thing);
+              await things.deleteThingFromCloud(thing);
             }
             break;
           }

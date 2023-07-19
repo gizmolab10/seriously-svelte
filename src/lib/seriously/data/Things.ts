@@ -6,13 +6,24 @@ const table = base('Things');
 
 export default class Things {
   errorMessage = 'Error from Things database: ';
+  thingsByID: { [id: string]: Thing } = {};
   root: Thing | null = null;
 
   constructor() {}
 
   thingFor(id: string | null): Thing | null {
-    if (id == null || this.root == null) { return null; }
-    return this.root.traverse((thing) => thing.id == id);
+    return (id == null || this.root == null) ? null : this.thingsByID[id];
+  }
+
+  thingsFor(ids: [string]): Array<Thing> {
+    const array = Array<Thing>();
+    for (const id of ids) {
+      const thing = this.thingFor(id);
+      if (thing != null) {
+        array.push(thing);
+      }
+    }
+    return array
   }
 
   ///////////////////////////
@@ -21,28 +32,25 @@ export default class Things {
 
   async readAllThingsFromCloud() {
     const rootID = seriouslyGlobals.rootID;
-    const thingsByID: { [id: string]: Thing } = {};
     this.root = new Thing(rootID, seriouslyGlobals.rootTitle, seriouslyGlobals.rootColor, 'm', 0);
 
     try {
       const records = await table.select().all()
-      const to = convertArrayToString([this.root.id]);
+      const parents = convertArrayToString([rootID]); // allow multiple parents ;p
 
       for (const record of records) {
         const id = record.id;
         const thing = new Thing(id, record.fields.title as string, record.fields.color as string, record.fields.trait as string, record.fields.order as number);
-        thingsByID[id] = thing;
+        this.thingsByID[id] = thing;
       }
 
-      for (const id in thingsByID) {
-        const child = thingsByID[id];
-        const relationship = relationships.relationshipWithFrom(id);
-        const parent = thingsByID[relationship?.to ?? 0] ?? this.root; // no id equals 0
-        if (relationship == null) {
-          relationships.createAndSaveUniqueRelationship(RelationshipKind.parent, id, to);
-        }
-        parent?.addChild(child);
+      for (const id in this.thingsByID) {
+        relationships.createAndSaveUniqueRelationshipMaybe(RelationshipKind.parent, id, parents);
       }
+
+      // console.log('ByToID:', relationships.relationshipsByToID[rootID]);
+      // console.log('ROOT:', this.root.children);
+      console.log('ROOT:', relationships.IDsOfKind(RelationshipKind.parent, true, rootID));
 
     } catch (error) {
       alert(this.errorMessage + ' (readAllThingsFromCloud) ' + error);
@@ -60,7 +68,7 @@ export default class Things {
   async createThingInCloud(thing: Thing) {
     try {
       const fields = await table.create(thing.fields);
-      thing.id = fields['id']; // need for updateToCloud
+      thing.id = fields['id']; //  // need for update, delete and thingsByID (to get parent from relationship)
     } catch (error) {
       alert(this.errorMessage + ' (in createInCloud) ' + error);
     }

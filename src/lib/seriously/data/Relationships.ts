@@ -1,31 +1,57 @@
-import { Thing, Relationship, RelationshipKind, createCloudID } from '../common/Imports';
+import { Thing, Relationship, RelationshipKind, createCloudID, con } from '../common/Imports';
 import Airtable from 'airtable';
 
 const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
 const table = base('Relationships');
 
 class Relationships {
-  all: Relationship[] = [];
+  relationshipsByToID: { [id: string]: [Relationship] } = {};
+  relationshipsByFromID: { [id: string]: [Relationship] } = {};
   errorMessage = 'Error from Relationships database: ';
 
   constructor() {}
 
-  relationshipsWithFrom(id: string | null): Relationship[] | null {
-    if (id == null) { return null; }
-    return this.all.filter((relationship) => relationship.from == id);
+  IDsOfKind(kind: RelationshipKind, matchingTo: boolean, id: string): [string] {
+    const dict = matchingTo ? this.relationshipsByToID : this.relationshipsByFromID;
+    const ids = Array<string>();
+    const array = dict[id];
+    if (array != null) {
+      array.map(
+        (relationship) => {
+          if (relationship.kind = kind) {
+            if (matchingTo) {
+              ids.push(relationship.from);
+            } else {
+              for (const id of (relationship.toIDsAsArray)) {
+                ids.push(id);
+              }
+            }
+          }
+        }
+      );
+    }
+    return ids as [string];
   }
 
-  relationshipWithFrom(id: string | null): Relationship | null {
-    const array = this.relationshipsWithFrom(id);
-    if (array == null) { return null; }
-    return array[0];
+  addRelationship(relationship: Relationship) {
+    const froms = this.relationshipsByFromID[relationship.from] ?? [];
+    froms.push(relationship);
+    this.relationshipsByFromID[relationship.from] = froms;
+    for (const to of relationship.toIDsAsArray) {
+      const tos = this.relationshipsByToID[to] ?? [];
+      tos.push(relationship);
+      this.relationshipsByToID[to] = tos;
+    }
   }
 
-  createAndSaveUniqueRelationship(kind: RelationshipKind, from: string, to: string) {
-    if (this.relationshipWithFrom(from) == null) {
+  createAndSaveUniqueRelationshipMaybe(kind: RelationshipKind, from: string, to: string) {
+    const array = this.relationshipsByFromID[from];
+    if (array == null) {
       let relationship = new Relationship(createCloudID(), kind, from, to);
-      this.all.push(relationship);
       this.createRelationshipInCloud(relationship);
+      this.addRelationship(relationship);
+    // } else {
+    //   console.log('CREATE:', array.map((relationship) => relationship.toIDsAsArray))
     }
   }
 
@@ -43,10 +69,7 @@ class Relationships {
         let from = record.fields.from as string;
         let kind = record.fields.kind as RelationshipKind;
         let relationship = new Relationship(id, kind, from, to);
-
-        if (!this.all.includes(relationship)) {
-          this.all.push(relationship);
-        }
+        this.addRelationship(relationship);
       }
     } catch (error) {
       alert(this.errorMessage + error);
@@ -63,17 +86,18 @@ class Relationships {
 
   async createRelationshipInCloud(relationship: Relationship) {
     try {
-      table.create(relationship.fields);
+      const fields = await table.create(relationship.fields);
+      relationship.id = fields['id']; // need for update, delete and relationshipsByFromID
     } catch (error) {
       alert(this.errorMessage + error);
     }
   }
 
-  deleteRelationshipsFromCloudFor(thing: Thing) {
-    const array = relationships.relationshipsWithFrom(thing.id)
+  async deleteRelationshipsFromCloudFor(thing: Thing) {
+    const array = this.relationshipsByFromID[thing.id];
     if (array != null) {
       for (let relationship of array) {
-        this.deleteRelationshipFromCloud(relationship);
+        await this.deleteRelationshipFromCloud(relationship);
       }
     }
   }
@@ -81,7 +105,7 @@ class Relationships {
   async deleteRelationshipFromCloud(relationship: Relationship | null) {
     if (relationship != null) {
       try {
-        table.destroy(relationship.id);
+        await table.destroy(relationship.id);
       } catch (error) {
         alert(this.errorMessage + error);
       }
