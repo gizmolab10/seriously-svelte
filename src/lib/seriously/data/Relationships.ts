@@ -19,13 +19,7 @@ class Relationships {
       array.map(
         (relationship) => {
           if (relationship.kind = kind) {
-            if (matchingTo) {
-              ids.push(relationship.from);
-            } else {
-              for (const id of (relationship.toIDsAsArray)) {
-                ids.push(id);
-              }
-            }
+            ids.push(matchingTo ? relationship.from : relationship.to);
           }
         }
       );
@@ -37,11 +31,9 @@ class Relationships {
     const froms = this.relationshipsByFromID[relationship.from] ?? [];
     froms.push(relationship);
     this.relationshipsByFromID[relationship.from] = froms;
-    for (const to of relationship.toIDsAsArray) {
-      const tos = this.relationshipsByToID[to] ?? [];
-      tos.push(relationship);
-      this.relationshipsByToID[to] = tos;
-    }
+    const tos = this.relationshipsByToID[relationship.to] ?? [];
+    tos.push(relationship);
+    this.relationshipsByToID[relationship.to] = tos;
   }
 
   createAndSaveUniqueRelationshipMaybe(kind: RelationshipKind, from: string, to: string) {

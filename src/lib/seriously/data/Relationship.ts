@@ -15,10 +15,9 @@ export class Relationship {
     this.id = id;
     this.kind = kind;
     this.from = from; // from is child
-    this.to = to; // to is parents
+    this.to = to; // to is parent
   }
 
   get fields(): Airtable.FieldSet { return { id: this.id, kind: this.kind, from: this.from, to: this.to }; }
-  get toIDsAsArray(): Array<string> { return convertStringToArray(this.to); }
   
 }

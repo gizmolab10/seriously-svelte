@@ -1,4 +1,4 @@
-import { Thing, relationships, RelationshipKind, seriouslyGlobals, convertArrayToString } from '../common/Imports';
+import { Thing, relationships, RelationshipKind, seriouslyGlobals } from '../common/Imports';
 import Airtable, {FieldSet} from 'airtable';
 
 const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
@@ -48,7 +48,6 @@ export default class Things {
 
     try {
       const records = await table.select().all()
-      const parents = convertArrayToString([rootID]); // allow multiple parents ;p
 
       for (const record of records) {
         const id = record.id;
@@ -58,7 +57,7 @@ export default class Things {
 
       for (const id in this.thingsByID) {
         if (id != rootID) {
-          relationships.createAndSaveUniqueRelationshipMaybe(RelationshipKind.parent, id, parents);
+          relationships.createAndSaveUniqueRelationshipMaybe(RelationshipKind.parent, id, rootID);
         }
       }
     } catch (error) {
