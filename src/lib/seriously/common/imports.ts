@@ -9,7 +9,7 @@ import { graphEditor } from '../edit/GraphEditor';
 import { grabbing } from '../edit/Grabbing';
 import { things } from '../data/Things';
 import Thing from '../data/Thing';
-import './Numbers';
+import './Extensions';
 
 export { tick, onMount, onDestroy, seriouslyGlobals,
   createEventDispatcher, signal, handleSignal, SignalKinds,

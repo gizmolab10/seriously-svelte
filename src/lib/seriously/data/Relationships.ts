@@ -33,7 +33,7 @@ class Relationships {
     return ids;
   }
 
-  addRelationship(relationship: Relationship) {
+  trackRelationship(relationship: Relationship) {
     const froms = this.relationshipsByFromID[relationship.from] ?? [];
     froms.push(relationship);
     this.relationshipsByFromID[relationship.from] = froms;
@@ -48,8 +48,8 @@ class Relationships {
     const array = this.relationshipsByFromID[from];
     if (array == null) {
       let relationship = new Relationship(createCloudID(), kind, from, to);
+      this.trackRelationship(relationship);
       this.createRelationshipInCloud(relationship);
-      this.addRelationship(relationship);
     }
   }
 
@@ -67,7 +67,7 @@ class Relationships {
         let from = record.fields.from as string;
         let kind = record.fields.kind as RelationshipKind;
         let relationship = new Relationship(id, kind, from, to);
-        this.addRelationship(relationship);
+        this.trackRelationship(relationship);
       }
     } catch (error) {
       alert(this.errorMessage + error);

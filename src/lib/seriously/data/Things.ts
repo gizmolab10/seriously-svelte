@@ -26,6 +26,17 @@ export default class Things {
     return array
   }
 
+  reassignOrdersOf(array: Array<Thing>) {
+    var index = 1;
+    for (const thing of array) {
+      if (thing.order != index) {
+        thing.order = index;
+        thing.isDirty = true;
+      }
+      index += 1;
+    }    
+  }
+
   ///////////////////////////
   //         CRUD          //
   ///////////////////////////
@@ -87,7 +98,7 @@ export default class Things {
 
   async deleteThingFromCloud(thing: Thing) {
     try {
-      table.destroy(thing.id);
+      await table.destroy(thing.id);
     } catch (error) {
       alert(this.errorMessage + ' (in deleteFromCloud) ' + error);
     }

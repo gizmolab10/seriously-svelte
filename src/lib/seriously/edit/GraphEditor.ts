@@ -1,4 +1,4 @@
-import { things, Thing, hereID, editingID, createCloudID, swap, seriouslyGlobals, grabbing, SignalKinds, signal, relationships } from "../common/Imports";
+import { things, Thing, hereID, editingID, createCloudID, swap, seriouslyGlobals, grabbing, SignalKinds, signal, relationships, RelationshipKind } from "../common/Imports";
 
 export default class GraphEditor {
   isEditing: boolean;
@@ -19,6 +19,7 @@ export default class GraphEditor {
       let id = grabbing.firstGrab ?? null;
       let OPTION = event.altKey;
       let key = event.key.toLowerCase();
+      console.log('KEY:', key);
       let SHIFT = (event.key != key || event.shiftKey);
       if (this.isEditing) {
         switch (key) {
@@ -27,11 +28,15 @@ export default class GraphEditor {
         }
       } else {
         switch (key) {
-          case ' ': console.log('CHILD'); break;
-          case 'd': console.log('DUPLICATE'); break;
-          case 'ArrowUp': this.moveUpAndRedraw(true, OPTION); break;
-          case 'ArrowDown': this.moveUpAndRedraw(false, OPTION); break;
-          case 'ArrowLeft':
+          case ' ':
+            console.log('CHILD');
+            break;
+          case 'd':
+            console.log('DUPLICATE');
+            break;
+          case 'arrowup': this.moveUpAndRedraw(true, OPTION); break;
+          case 'arrowdown': this.moveUpAndRedraw(false, OPTION); break;
+          case 'arrowleft':
             let parentID = thing?.firstParent?.firstParent?.id ?? null;
             if (parentID != null) {
               hereID.set(parentID);
@@ -39,14 +44,14 @@ export default class GraphEditor {
               console.log('LEFT:', thing?.firstParent);
             }
             break;
-          case 'Tab':
+          case 'tab':
             this.addSiblingAndRedraw(); // Title also makes this call
             break;
-          case 'Enter': 
+          case 'enter': 
             editingID.set(id);
             break;
-          case 'Delete':
-          case 'Backspace':
+          case 'delete':
+          case 'backspace':
             if (thing != null && !thing.isEditing && things.root != null) {
               const all = things.root?.children;
               let index = all.indexOf(thing);
@@ -57,7 +62,7 @@ export default class GraphEditor {
               if (index >= 0) {
                 grabbing.grabOnly(all[index]);
               }              
-              this.redrawAll();
+              signal([SignalKinds.relayout, SignalKinds.widget], null);
               await relationships.deleteRelationshipsFromCloudFor(thing);
               await things.deleteThingFromCloud(thing);
             }
@@ -67,32 +72,17 @@ export default class GraphEditor {
     }
   }
 
-  redrawAll() {
-    signal([SignalKinds.graph, SignalKinds.widget], null);
-  }
-
   async addSiblingAndRedraw() {
-    const grab = grabbing.firstGrabbedThing ?? things.root;
+    const parentID = grabbing.firstGrabbedThing?.firstParent?.id ?? seriouslyGlobals.rootID;
     const sibling = new Thing(createCloudID(), seriouslyGlobals.defaultTitle, 'blue', 't', 1.0);
     grabbing.grabOnly(sibling);
-    grab?.children.push(sibling); // use focus, not root, create a relationship
     editingID.set(sibling.id);
-    this.redrawAll();
+    await relationships.createAndSaveUniqueRelationshipMaybe(RelationshipKind.parent, sibling.id, parentID);
+    signal([SignalKinds.relayout, SignalKinds.widget], null);
     await things.createThingInCloud(sibling);
   }
 
-  reassignOrdersOf(array: Array<Thing>) {
-    var index = 1;
-    for (const thing of array) {
-      if (thing.order != index) {
-        thing.order = index;
-        thing.isDirty = true;
-      }
-      index += 1;
-    }    
-  }
-
-  moveUpAndRedraw = (up: boolean, relocate: boolean) => {
+  moveUpAndRedraw = async (up: boolean, relocate: boolean) => {
     if (grabbing.hasGrab) {
       const child = grabbing.firstGrabbedThing;
       const siblings = child?.siblings;
@@ -103,9 +93,9 @@ export default class GraphEditor {
           const newGrab = siblings[newIndex];
           if (relocate) {
             swap(index, newIndex, siblings);
-            this.reassignOrdersOf(siblings);
-            this.redrawAll();
-            things.updateThingsInCloud(siblings);
+            things.reassignOrdersOf(siblings);
+            signal([SignalKinds.relayout, SignalKinds.widget], null);
+            await things.updateThingsInCloud(siblings);
           } else {
             grabbing.grabOnly(newGrab);
             signal([SignalKinds.widget], null);
