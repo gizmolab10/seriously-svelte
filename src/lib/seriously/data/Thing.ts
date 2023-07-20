@@ -21,8 +21,8 @@ export default class Thing {
     this.isEditing = false;
     this.isGrabbed = false;
 
-    grabbedIDs.subscribe((array) => {
-      this.isGrabbed = array?.includes(this.id) ?? false;
+    grabbedIDs.subscribe((ids) => {
+      this.isGrabbed = ids?.includes(this.id) ?? false;
     })
 
     editingID.subscribe((id: string | null) => {

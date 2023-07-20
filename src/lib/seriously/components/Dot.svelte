@@ -13,9 +13,7 @@
 
   async function handleClick(event) {
     if (isReveal) {
-      console.log('isReveal');
       if (canExpand) {
-        console.log('expand');
         reassignOrdersOf(thing.children);
         thing.firstChild?.grabOnly();
         $hereID = thing.id;
@@ -23,10 +21,10 @@
       }
     } else if ($hereID != seriouslyGlobals.rootID) {
       thing.moveRightAndRedraw(false, false);
-    } else if (event.shiftKeyb || isGrabbed) {
+    } else if (event.shiftKey || isGrabbed) {
       thing.toggleGrab();
     } else {
-      thing.firstChild?.grabOnly();
+      thing.grabOnly();
     }
 
     signal([SignalKinds.widget], thing.id);
@@ -53,7 +51,7 @@
             --textColor: {thing.revealColor(!isReveal)};
           --buttonColor: {thing.revealColor( isReveal)}'>
           {#if isReveal && canExpand}
-          +
+          >
           {/if}
     </button>
   </slot>

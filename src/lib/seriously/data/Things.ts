@@ -1,4 +1,4 @@
-import { Thing, reassignOrdersOf, relationships, RelationshipKind, seriouslyGlobals } from '../common/GlobalImports';
+import { Thing, reassignOrdersOf, relationships, RelationshipKind, seriouslyGlobals, hereID } from '../common/GlobalImports';
 import Airtable, {FieldSet} from 'airtable';
 
 const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
@@ -53,6 +53,7 @@ export default class Things {
 
       reassignOrdersOf(this.root.children);
       await things.updateThingsInCloud(this.root.children);
+      hereID.set(rootID);
     } catch (error) {
       alert(this.errorMessage + ' (readAllThingsFromCloud) ' + error);
     }
