@@ -18,7 +18,8 @@ export default class GraphEditor {
       const thing = grabbing.firstGrabbedThing;
       let id = grabbing.firstGrab ?? null;
       let OPTION = event.altKey;
-      let key = event.key;
+      let key = event.key.toLowerCase();
+      let SHIFT = (event.key != key || event.shiftKey);
       if (this.isEditing) {
         switch (key) {
           case 'Enter':
@@ -27,6 +28,7 @@ export default class GraphEditor {
       } else {
         switch (key) {
           case ' ': console.log('CHILD'); break;
+          case 'd': console.log('DUPLICATE'); break;
           case 'ArrowUp': this.moveUpAndRedraw(true, OPTION); break;
           case 'ArrowDown': this.moveUpAndRedraw(false, OPTION); break;
           case 'ArrowLeft':
@@ -82,8 +84,10 @@ export default class GraphEditor {
   reassignOrdersOf(array: Array<Thing>) {
     var index = 1;
     for (const thing of array) {
-      thing.order = index;
-      console.log(thing.order, thing.title);
+      if (thing.order != index) {
+        thing.order = index;
+        thing.isDirty = true;
+      }
       index += 1;
     }    
   }

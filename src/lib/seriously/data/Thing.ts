@@ -8,6 +8,7 @@ export default class Thing {
   public trait: string;
   public order: number;
   isEditing: boolean;
+  isDirty: boolean;
 
   constructor(id = createCloudID(), title = seriouslyGlobals.defaultTitle, color = 'blue', trait = 's', order = 0) {
     this.id = id;
@@ -15,6 +16,7 @@ export default class Thing {
     this.color = color;
     this.trait = trait;
     this.order = order;
+    this.isDirty = false;
     this.isEditing = false;
 
     editingID.subscribe((id: string | null) => {
@@ -40,7 +42,6 @@ export default class Thing {
       array.push(thing);
     }
     array.sort((a: Thing, b: Thing) => {
-      console.log(a.order, a.title, b.order, b.title);
       return a.order - b.order
     })
     return array;

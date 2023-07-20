@@ -41,6 +41,7 @@
     inputRef?.blur();
     if (isDirty()) {
       makeClean();
+      thing.isDirty = true;
       things.updateThingInCloud(thing);
     }
     if (clearEditingID) {
@@ -53,7 +54,6 @@
   function handleFocus(event) {
     $editingID = thing.id;
     grabbing.grabOnly(thing)
-    // console.log('FOCUS:', $editingID, thing.title);
     signal([SignalKinds.widget], null); // so widget will show as grabbed
   }
 

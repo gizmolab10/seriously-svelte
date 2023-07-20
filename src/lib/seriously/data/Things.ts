@@ -56,10 +56,13 @@ export default class Things {
   }
 
   async updateThingInCloud(thing: Thing) {
-    try {
-      table.update(thing.id, thing.fields);
-    } catch (error) {
-      alert(this.errorMessage + ' (in updateToCloud) ' + error);
+    if (thing.isDirty) {
+      try {
+        await table.update(thing.id, thing.fields);
+        thing.isDirty = false; // only clear after updaate succeeds
+      } catch (error) {
+        alert(this.errorMessage + ' (in updateToCloud) ' + error);
+      }
     }
   }
 

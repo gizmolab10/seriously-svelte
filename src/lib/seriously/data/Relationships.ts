@@ -1,4 +1,4 @@
-import { Thing, Relationship, RelationshipKind, createCloudID, con } from '../common/Imports';
+import { Thing, Relationship, RelationshipKind, createCloudID } from '../common/Imports';
 import Airtable from 'airtable';
 
 const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
@@ -50,8 +50,6 @@ class Relationships {
       let relationship = new Relationship(createCloudID(), kind, from, to);
       this.createRelationshipInCloud(relationship);
       this.addRelationship(relationship);
-    // } else {
-    //   console.log('CREATE:', array.map((relationship) => relationship.toIDsAsArray))
     }
   }
 
