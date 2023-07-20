@@ -1,20 +1,23 @@
 <svelte:options immutable = {true} />
 
 <script>
-  import { Thing, things, relationships, grabbing, editingID, hereID, swap, reassignOrdersOf, onMount, onDestroy, signal, SignalKinds } from '../common/Imports';
+  import { Thing, things, relationships, grabbedIDs, editingID, hereID, swap, reassignOrdersOf, onMount, onDestroy, signal, SignalKinds } from '../common/GlobalImports';
   import Crumbs from './Crumbs.svelte';
   import Children from './Children.svelte';
   let toggledReload = false;
   let isLoading = true;
+  let hasGrab = false;
   let listener;
 
+  $: { hasGrab = ($grabbedIDs != null && $grabbedIDs.length > 0) }
+
   async function handleKeyDown(event) {
-    if (event.type == 'keydown') {
-      const thing = grabbing.firstGrabbedThing;
-      let id = grabbing.firstGrab ?? null;
+    if (event.type == 'keydown', hasGrab) {
+      let id = $grabbedIDs[0];
+      const thing = things.thingFor(id);
       let OPTION = event.altKey;
       let key = event.key.toLowerCase();
-      console.log('KEY:', key);
+      // console.log('KEY:', key);
       let SHIFT = (event.key != key || event.shiftKey);
       if ($editingID != null) {
         switch (key) {
@@ -31,10 +34,11 @@
             break;
           case 'arrowup': await moveUpAndRedraw(true, OPTION); break;
           case 'arrowdown': await moveUpAndRedraw(false, OPTION); break;
-          case 'arrowright': moveRightAndRedraw(true, OPTION); break;
-          case 'arrowleft': moveRightAndRedraw(false, OPTION); break;
+          case 'arrowright': await thing.moveRightAndRedraw(true, OPTION); break;
+          case 'arrowleft': await thing.moveRightAndRedraw(false, OPTION); break;
           case 'tab':
-            addSiblingAndRedraw(); // Title also makes this call
+            await thing.addSiblingAndRedraw(); // Title also makes this call
+            toggledReload = !toggledReload;
             break;
           case 'enter': 
             editingID.set(id);
@@ -49,7 +53,7 @@
                 index = all.length - 1;
               }
               if (index >= 0) {
-                grabbing.grabOnly(all[index]);
+                all[index].grabOnly();
               }              
               signal([SignalKinds.widget], null);
               toggledReload = !toggledReload;
@@ -62,31 +66,10 @@
     }
   }
 
-  async function addSiblingAndRedraw() {
-    const parentID = grabbing.firstGrabbedThing?.firstParent?.id ?? seriouslyGlobals.rootID;
-    const sibling = new Thing(createCloudID(), seriouslyGlobals.defaultTitle, 'blue', 't', 1.0);
-    grabbing.grabOnly(sibling);
-    editingID.set(sibling.id);
-    await relationships.createAndSaveUniqueRelationshipMaybe(RelationshipKind.parent, sibling.id, parentID);
-    signal([SignalKinds.widget], null);
-    toggledReload = !toggledReload;
-    await things.createThingInCloud(sibling);
-  }
-
-  async function moveRightAndRedraw(right, relocate) {
-    const thing = grabbing.firstGrabbedThing;
-    if (thing != null) {
-      if (relocate) {
-        
-      } else {
-        thing.browseRightAndRedraw(right);
-      }
-    }
-  }
-
   async function moveUpAndRedraw(up, relocate) {
-    if (grabbing.hasGrab) {
-      const child = grabbing.firstGrabbedThing;
+    if (hasGrab) {
+      const id = $grabbedIDs[0];
+      const child = things.thingFor(id);
       const siblings = child?.siblings;
       if (siblings != null) {
         const index = siblings.indexOf(child);
@@ -100,7 +83,7 @@
             toggledReload = !toggledReload;
             await things.updateThingsInCloud(siblings);
           } else {
-            grabbing.grabOnly(newGrab);
+            newGrab.grabOnly();
             signal([SignalKinds.widget], null);
           }
         }

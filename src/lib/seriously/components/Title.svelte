@@ -1,7 +1,7 @@
 <svelte:options immutable = {true} />
 
 <script lang='ts'>
-  import { Thing, things, editingID, grabbing, signal, SignalKinds } from '../common/imports.ts';
+  import { Thing, things, editingID, signal, SignalKinds } from '../common/GlobalImports.ts';
   import Widget from '../components/Widget.svelte';
   export let thing = Thing;
   let originalTitle = thing.title;
@@ -10,10 +10,10 @@
   function isDirty() { return originalTitle != thing.title; }
   function makeClean() { originalTitle = thing.title; }
   
-  function handleKeyDown(event) {
+  async function handleKeyDown(event) {
     if ($editingID == thing.id) {
       switch (event.key) {
-        case 'Tab': stopEditing(true); break; // graphEditor.addSiblingAndRedraw(); break; // TODO: rewire
+        case 'Tab': stopEditing(true); break; await thing.addSiblingAndRedraw(); break;
         case 'Enter': stopEditing(true);
       }
     }
@@ -53,7 +53,7 @@
 
   function handleFocus(event) {
     $editingID = thing.id;
-    grabbing.grabOnly(thing)
+    thing.grabOnly()
     signal([SignalKinds.widget], null); // so widget will show as grabbed
   }
 

@@ -1,14 +1,14 @@
 <svelte:options immutable={true}/>
 
 <script lang='ts'>
-  import { Thing, things, hereID, grabbing, grabbed, reassignOrdersOf, tick, onMount, signal, handleSignal, SignalKinds, seriouslyGlobals } from '../common/imports.ts';
+  import { Thing, things, hereID, grabbedIDs, reassignOrdersOf, tick, onMount, signal, handleSignal, SignalKinds, seriouslyGlobals } from '../common/GlobalImports.ts';
   export let isReveal = false;
   export let thing = Thing;
   let isGrabbed = false;
   let canExpand = thing.children.length > 0;
  
   $: {
-    isGrabbed = $grabbed?.includes(thing.id);
+    isGrabbed = $grabbedIDs?.includes(thing.id);
   }
 
   async function handleClick(event) {
@@ -17,16 +17,16 @@
       if (canExpand) {
         console.log('expand');
         reassignOrdersOf(thing.children);
-        grabbing.grabOnly(thing.firstChild);
+        thing.firstChild?.grabOnly();
         $hereID = thing.id;
         await things.updateThingsInCloud(thing.children);
       }
     } else if ($hereID != seriouslyGlobals.rootID) {
-      thing.browseRightAndRedraw(false);
+      thing.moveRightAndRedraw(false, false);
     } else if (event.shiftKeyb || isGrabbed) {
-      grabbing.toggleGrab(thing);
+      thing.toggleGrab();
     } else {
-      grabbing.grabOnly(thing);
+      thing.firstChild?.grabOnly();
     }
 
     signal([SignalKinds.widget], thing.id);

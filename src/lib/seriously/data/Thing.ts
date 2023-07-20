@@ -1,4 +1,4 @@
-import { grabbing, editingID, hereID, createCloudID, seriouslyGlobals, relationships, things, RelationshipKind, signal, SignalKinds, reassignOrdersOf } from '../common/Imports';
+import { grabbedIDs, editingID, hereID, createCloudID, seriouslyGlobals, relationships, things, RelationshipKind, signal, SignalKinds, reassignOrdersOf } from '../common/GlobalImports';
 import Airtable from 'airtable';
 
 export default class Thing {
@@ -7,6 +7,7 @@ export default class Thing {
   public order: number;
   public color: string;
   public trait: string;
+  isGrabbed: boolean;
   isEditing: boolean;
   isDirty: boolean;
 
@@ -18,6 +19,11 @@ export default class Thing {
     this.trait = trait;
     this.isDirty = false;
     this.isEditing = false;
+    this.isGrabbed = false;
+
+    grabbedIDs.subscribe((array) => {
+      this.isGrabbed = array?.includes(this.id) ?? false;
+    })
 
     editingID.subscribe((id: string | null) => {
       this.isEditing = (id == this.id); // executes whenever editingID changes
@@ -35,6 +41,20 @@ export default class Thing {
   get parents(): Array<Thing> { return this.thingsMatching(false); }
   get children(): Array<Thing> { return this.thingsMatching(true); }
 
+  grabOnly = () => { grabbedIDs.set([this.id]); }
+
+  toggleGrab() {
+    grabbedIDs.update(array => {
+      const index = array.indexOf(this.id);
+      if (!this.isGrabbed) {
+        array.push(this.id);
+      } else if (index > -1) { // only splice array when item is found
+        array.splice(index, 1); // 2nd parameter means remove one item only  
+      }
+      return array;
+    });
+  }
+
   thingsMatching(to: boolean): Array<Thing> {
     const array = Array<Thing>()
     const ids = relationships.IDsOfKind(RelationshipKind.parent, to, this.id);
@@ -48,7 +68,7 @@ export default class Thing {
   }
   
   revealColor = (hovering: boolean): string => {
-    const flag = grabbing.isGrabbed(this) || this.isEditing;
+    const flag = this.isGrabbed || this.isEditing;
     return (flag != hovering) ? this.color : seriouslyGlobals.backgroundColor;
   }
 
@@ -63,15 +83,27 @@ export default class Thing {
     return this;
   }
 
-  browseRightAndRedraw = async (right: boolean) => {
+  addSiblingAndRedraw = async () => {
+    const parentID = this.firstParent?.id ?? seriouslyGlobals.rootID;
+    const sibling = new Thing(createCloudID(), seriouslyGlobals.defaultTitle, 'blue', 't', 1.0);
+    sibling.grabOnly();
+    await relationships.createAndSaveUniqueRelationshipMaybe(RelationshipKind.parent, sibling.id, parentID);
+    signal([SignalKinds.widget], null);
+    editingID.set(sibling.id);
+    await things.createThingInCloud(sibling);
+  }
+
+  moveRightAndRedraw = async (right: boolean, relocate: boolean) => {
     const grandparentID = this.firstParent?.firstParent?.id ?? null;
-    if (right) {
-      grabbing.grabOnly(this.firstChild);
+    if (relocate) {
+
+    } else if (right) {
+      this.firstChild.grabOnly();
       hereID.set(this.id);
       reassignOrdersOf(this.children);
       await things.updateThingsInCloud(this.children);
     } else if (grandparentID != null) {
-      grabbing.grabOnly(this.firstParent);
+      this.firstParent.grabOnly();
       signal([SignalKinds.widget], null); // signal BEFORE setting hereID to avoid blink
       hereID.set(grandparentID);
     }

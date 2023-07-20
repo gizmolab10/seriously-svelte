@@ -1,7 +1,7 @@
 <svelte:options immutable = {true} />
 
 <script lang='ts'>
-  import { Thing, signal, handleSignal, SignalKinds } from '../common/imports.ts';
+  import { Thing, signal, handleSignal, SignalKinds } from '../common/GlobalImports.ts';
 	import Title from './Title.svelte';
 	import Dot from './Dot.svelte';
 	export let thing = Thing;

@@ -1,4 +1,4 @@
-import { Thing, Relationship, RelationshipKind, createCloudID } from '../common/Imports';
+import { Thing, Relationship, RelationshipKind, createCloudID } from '../common/GlobalImports';
 import Airtable from 'airtable';
 
 const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
@@ -36,7 +36,7 @@ class Relationships {
     this.relationshipsByToID[relationship.to] = tos;
   }
 
-  createAndSaveUniqueRelationshipMaybe(kind: RelationshipKind, from: string, to: string) {
+  async createAndSaveUniqueRelationshipMaybe(kind: RelationshipKind, from: string, to: string) {
     const array = this.relationshipsByFromID[from];
     if (array == null) {
       let relationship = new Relationship(createCloudID(), kind, from, to);

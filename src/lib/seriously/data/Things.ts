@@ -1,4 +1,4 @@
-import { Thing, reassignOrdersOf, relationships, RelationshipKind, seriouslyGlobals } from '../common/Imports';
+import { Thing, reassignOrdersOf, relationships, RelationshipKind, seriouslyGlobals } from '../common/GlobalImports';
 import Airtable, {FieldSet} from 'airtable';
 
 const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');

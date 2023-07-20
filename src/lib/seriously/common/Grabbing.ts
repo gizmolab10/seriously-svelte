@@ -1,11 +1,11 @@
-import { Thing, things, grabbed } from './Imports';
+import { Thing, things, grabbedIDs } from './GlobalImports';
 
 export default class Grabbing {
   localGrabbed: Array<string>
 
   constructor() {
     this.localGrabbed = [];
-    grabbed.subscribe((array) => {
+    grabbedIDs.subscribe((array) => {
       this.localGrabbed = array;
     })
   }
@@ -23,18 +23,18 @@ export default class Grabbing {
   }
 
   grab(thing: Thing) {
-    grabbed.update(array => {
+    grabbedIDs.update(array => {
       array.push(thing.id);
       return array;
     });
   }
 
   grabOnly(thing: Thing) {
-    grabbed.set([thing.id]);
+    grabbedIDs.set([thing.id]);
   }
 
   ungrab(thing: Thing) {
-    grabbed.update(array => {
+    grabbedIDs.update(array => {
       const index = array.indexOf(thing.id);
 
       if (index > -1) { // only splice array when item is found

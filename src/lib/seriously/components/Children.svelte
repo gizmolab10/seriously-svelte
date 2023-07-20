@@ -1,7 +1,7 @@
 <svelte:options immutable = {true} />
 
 <script>
-  import { hereID, things, grabbing, onMount, onDestroy, signal, handleSignal, SignalKinds, relationships } from '../common/imports.ts';
+  import { hereID, things, onMount, onDestroy, signal, handleSignal, SignalKinds, relationships } from '../common/GlobalImports.ts';
   import Widget from './Widget.svelte';
   export let here = Thing;
 

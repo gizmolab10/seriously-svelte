@@ -2,4 +2,4 @@ import { writable } from 'svelte/store';
 
 export let editingID = writable<string | null>();
 export let hereID = writable<string | null>();
-export const grabbed = writable<[string]>();
+export let grabbedIDs = writable<[string]>();

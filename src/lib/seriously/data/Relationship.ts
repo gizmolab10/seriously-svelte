@@ -1,4 +1,4 @@
-import { convertStringToArray } from '../common/Imports';
+import { convertStringToArray } from '../common/GlobalImports';
 import Airtable from 'airtable';
 
 export enum RelationshipKind {
