@@ -1,7 +1,7 @@
 <svelte:options immutable = {true} />
 
 <script>
-  import { Thing, things, relationships, grabbing, editingID, onMount, onDestroy, signal, SignalKinds } from '../common/Imports';
+  import { Thing, things, relationships, grabbing, editingID, hereID, swap, reassignOrdersOf, onMount, onDestroy, signal, SignalKinds } from '../common/Imports';
   import Crumbs from './Crumbs.svelte';
   import Children from './Children.svelte';
   let toggledReload = false;
@@ -31,14 +31,8 @@
             break;
           case 'arrowup': await moveUpAndRedraw(true, OPTION); break;
           case 'arrowdown': await moveUpAndRedraw(false, OPTION); break;
-          case 'arrowleft':
-            let parentID = thing?.firstParent?.firstParent?.id ?? null;
-            if (parentID != null) {
-              hereID.set(parentID);
-            } else {
-              console.log('LEFT:', thing?.firstParent);
-            }
-            break;
+          case 'arrowright': moveRightAndRedraw(true, OPTION); break;
+          case 'arrowleft': moveRightAndRedraw(false, OPTION); break;
           case 'tab':
             addSiblingAndRedraw(); // Title also makes this call
             break;
@@ -79,6 +73,17 @@
     await things.createThingInCloud(sibling);
   }
 
+  async function moveRightAndRedraw(right, relocate) {
+    const thing = grabbing.firstGrabbedThing;
+    if (thing != null) {
+      if (relocate) {
+        
+      } else {
+        thing.browseRightAndRedraw(right);
+      }
+    }
+  }
+
   async function moveUpAndRedraw(up, relocate) {
     if (grabbing.hasGrab) {
       const child = grabbing.firstGrabbedThing;
@@ -90,7 +95,7 @@
           const newGrab = siblings[newIndex];
           if (relocate) {
             swap(index, newIndex, siblings);
-            things.reassignOrdersOf(siblings);
+            reassignOrdersOf(siblings);
             signal([SignalKinds.widget], null);
             toggledReload = !toggledReload;
             await things.updateThingsInCloud(siblings);

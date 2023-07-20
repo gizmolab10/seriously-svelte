@@ -1,4 +1,5 @@
 import { v4 as uuid } from 'uuid';
+import Thing from '../data/Thing';
 
 export function removeAll(item: string, from: string): string {
   var to = from;
@@ -15,18 +16,17 @@ export function createCloudID(): string {
 }
 
 export function swap<T>(index: number, withIndex: number, within: Array<T>) {
-  const indexItem = within[index];
-  const withIndexItem = within[withIndex];
-  within.splice(index, 1, withIndexItem);
-  within.splice(withIndex, 1, indexItem);
+  within.splice(index, 1, within[withIndex]);
+  within.splice(withIndex, 1, within[index]);
 }
 
-const stringArraySeparator = ' <[:]> '
-
-export function convertArrayToString(array: Array<string>): string {
-  return array.join(stringArraySeparator);
-}
-
-export function convertStringToArray(single: string): Array<string> {
-  return single.includes(stringArraySeparator) ? single.split(stringArraySeparator) : [single];
-}
+export function reassignOrdersOf(array: Array<Thing>) {
+  for (let index = 0; index < array.length; index++) {
+      const thing = array[index];
+      // alert('' + index + ' : ' + thing.title);
+      if (thing.order != index) {
+        thing.order = index;
+        thing.isDirty = true;
+      }
+    }
+  }

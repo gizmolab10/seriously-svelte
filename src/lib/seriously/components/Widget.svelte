@@ -8,13 +8,14 @@
 
 	handleSignal.connect((kinds) => {
 		if (kinds.includes(SignalKinds.widget)) {
+			signal([SignalKinds.dot], thing.id); // pass signal along to its dots
 			var style = document.getElementById(thing.id)?.style;
 			style?.setProperty('--hoverAttributes', thing.hoverAttributes);
 			style?.setProperty( '--grabAttributes', thing.grabAttributes);
-			signal([SignalKinds.dot], thing.id); // pass signal along to its dots
 		}
 	});
-</script>
+
+	</script>
 
 <span id={thing.id}
 	style='padding: 0px 8px 2px 0px;

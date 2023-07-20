@@ -1,18 +1,28 @@
 <svelte:options immutable={true}/>
 
 <script lang='ts'>
-  import { Thing, hereID, grabbing, tick, signal, handleSignal, SignalKinds } from '../common/imports.ts';
+  import { Thing, things, hereID, grabbing, grabbed, reassignOrdersOf, tick, onMount, signal, handleSignal, SignalKinds, seriouslyGlobals } from '../common/imports.ts';
   export let isReveal = false;
   export let thing = Thing;
   let isGrabbed = false;
-  let canExpand = false;
+  let canExpand = thing.children.length > 0;
  
-  function handleClick(event) {
+  $: {
+    isGrabbed = $grabbed?.includes(thing.id);
+  }
+
+  async function handleClick(event) {
     if (isReveal) {
+      console.log('isReveal');
       if (canExpand) {
-        $hereID = thing.id;
+        console.log('expand');
+        reassignOrdersOf(thing.children);
         grabbing.grabOnly(thing.firstChild);
+        $hereID = thing.id;
+        await things.updateThingsInCloud(thing.children);
       }
+    } else if ($hereID != seriouslyGlobals.rootID) {
+      thing.browseRightAndRedraw(false);
     } else if (event.shiftKeyb || isGrabbed) {
       grabbing.toggleGrab(thing);
     } else {
@@ -24,7 +34,6 @@
 
 	handleSignal.connect((kinds, value) => {
 		if (kinds.includes(SignalKinds.dot) && value == thing.id) {
-      isGrabbed = grabbing.isGrabbed(thing);
       canExpand = thing.children.length > 0;
       var style = document.getElementById(thing.id)?.style;
       style?.setProperty(   '--dotColor', thing.color);

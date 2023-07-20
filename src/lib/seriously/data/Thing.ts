@@ -1,21 +1,21 @@
-import { grabbing, editingID, createCloudID, seriouslyGlobals, relationships, things, RelationshipKind } from '../common/Imports';
+import { grabbing, editingID, hereID, createCloudID, seriouslyGlobals, relationships, things, RelationshipKind, signal, SignalKinds, reassignOrdersOf } from '../common/Imports';
 import Airtable from 'airtable';
 
 export default class Thing {
   public id: string;
   public title: string;
+  public order: number;
   public color: string;
   public trait: string;
-  public order: number;
   isEditing: boolean;
   isDirty: boolean;
 
   constructor(id = createCloudID(), title = seriouslyGlobals.defaultTitle, color = 'blue', trait = 's', order = 0) {
     this.id = id;
     this.title = title;
+    this.order = order;
     this.color = color;
     this.trait = trait;
-    this.order = order;
     this.isDirty = false;
     this.isEditing = false;
 
@@ -24,7 +24,7 @@ export default class Thing {
     });
   };
 
-  get fields(): Airtable.FieldSet { return { id: this.id, title: this.title, color: this.color, trait: this.trait, order: this.order }; }
+  get fields(): Airtable.FieldSet { return { id: this.id, title: this.title, order: this.order, color: this.color, trait: this.trait }; }
   get  grabAttributes(): string { return this.borderAttribute + this.revealColor(false); }
   get hoverAttributes(): string { return this.borderAttribute + this.revealColor(true); }
   get borderAttribute(): string { return (this.isEditing ? 'dashed' : 'solid') + ' 1px '; }
@@ -61,6 +61,20 @@ export default class Thing {
       }
     }
     return this;
+  }
+
+  browseRightAndRedraw = async (right: boolean) => {
+    const grandparentID = this.firstParent?.firstParent?.id ?? null;
+    if (right) {
+      grabbing.grabOnly(this.firstChild);
+      hereID.set(this.id);
+      reassignOrdersOf(this.children);
+      await things.updateThingsInCloud(this.children);
+    } else if (grandparentID != null) {
+      grabbing.grabOnly(this.firstParent);
+      signal([SignalKinds.widget], null); // signal BEFORE setting hereID to avoid blink
+      hereID.set(grandparentID);
+    }
   }
 
 }

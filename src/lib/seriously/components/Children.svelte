@@ -14,16 +14,18 @@
 
 </script>
 
-<div>
-  <ul>
-    {#each here?.children as thing}
-      <li>
-        <Widget thing={thing}/>
-      </li>
-    {/each}
-  </ul>
-  <p/>
-</div>
+{#key here}
+  <div>
+    <ul>
+      {#each here?.children as thing}
+        <li>
+          <Widget thing={thing}/>
+        </li>
+      {/each}
+    </ul>
+    <p/>
+  </div>
+{/key}
 
 <style>
   li {
