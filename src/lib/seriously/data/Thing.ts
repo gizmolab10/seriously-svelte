@@ -22,8 +22,12 @@ export default class Thing {
     this.isGrabbed = false;
 
     grabbedIDs.subscribe((ids) => {
-      this.isGrabbed = ids?.includes(this.id) ?? false;
-    })
+      const newGrabbed =  ids?.includes(this.id) ?? false;
+      if (this.isGrabbed != newGrabbed) {
+        this.isGrabbed = newGrabbed;
+        signal([SignalKinds.dot], null);
+      }
+    });
 
     editingID.subscribe((id: string | null) => {
       this.isEditing = (id == this.id); // executes whenever editingID changes
@@ -46,13 +50,18 @@ export default class Thing {
   toggleGrab() {
     grabbedIDs.update(array => {
       const index = array.indexOf(this.id);
-      if (!this.isGrabbed) {
+      if (index == -1) {
         array.push(this.id);
-      } else if (index > -1) { // only splice array when item is found
+      } else {                  // only splice array when item is found
         array.splice(index, 1); // 2nd parameter means remove one item only  
       }
       return array;
     });
+  }
+
+  revealColor = (hovering: boolean): string => {
+    const flag = this.isGrabbed || this.isEditing;
+    return (flag != hovering) ? this.color : seriouslyGlobals.backgroundColor;
   }
 
   thingsMatching(to: boolean): Array<Thing> {
@@ -67,11 +76,6 @@ export default class Thing {
     return array;
   }
   
-  revealColor = (hovering: boolean): string => {
-    const flag = this.isGrabbed || this.isEditing;
-    return (flag != hovering) ? this.color : seriouslyGlobals.backgroundColor;
-  }
-
   traverse = (applyTo : (thing: Thing) => boolean) : Thing | null => {
     for (let progeny of this.children) {
       if (applyTo(progeny)) {

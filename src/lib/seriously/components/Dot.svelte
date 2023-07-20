@@ -19,10 +19,10 @@
         $hereID = thing.id;
         await things.updateThingsInCloud(thing.children);
       }
-    } else if ($hereID != seriouslyGlobals.rootID) {
-      thing.moveRightAndRedraw(false, false);
     } else if (event.shiftKey || isGrabbed) {
       thing.toggleGrab();
+    } else if ($hereID != seriouslyGlobals.rootID) {
+      thing.moveRightAndRedraw(false, false);
     } else {
       thing.grabOnly();
     }

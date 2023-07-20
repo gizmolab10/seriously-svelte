@@ -74,6 +74,7 @@
 
 <style lang='scss'>
   input {
+    outline-color: 'white';
     padding: 0px 5px;
     border: none;
     border-radius: 10px;
