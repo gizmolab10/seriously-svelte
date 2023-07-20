@@ -28,6 +28,7 @@ export default class Thing {
   get borderAttribute(): string { return (this.isEditing ? 'dashed' : 'solid') + ' 1px '; }
   get firstParent(): Thing { return this.parents[0]; }
   get firstChild(): Thing { return this.children[0]; }
+  get siblings(): Array<Thing> { return this.firstParent?.children ?? []; }
 
   get parents(): Array<Thing> { return this.thingsMatching(false); }
   get children(): Array<Thing> { return this.thingsMatching(true); }
@@ -38,12 +39,11 @@ export default class Thing {
     for (const thing of things.thingsFor(ids)) {
       array.push(thing);
     }
+    array.sort((a: Thing, b: Thing) => {
+      console.log(a.order, a.title, b.order, b.title);
+      return a.order - b.order
+    })
     return array;
-  }
-  
-  addChild(child: Thing) {
-    this.children.push(child);
-    child.parents.push(this);
   }
   
   revealColor = (hovering: boolean): string => {

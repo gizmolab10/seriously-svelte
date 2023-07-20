@@ -15,10 +15,10 @@ export default class Things {
     return (id == null || this.root == null) ? null : this.thingsByID[id];
   }
 
-  thingsFor(ids: [string]): Array<Thing> {
+  thingsFor(ids: Array<string>): Array<Thing> {
     const array = Array<Thing>();
     for (const id of ids) {
-      const thing = this.thingFor(id);
+      const thing = this.thingsByID[id];
       if (thing != null) {
         array.push(thing);
       }
@@ -33,6 +33,7 @@ export default class Things {
   async readAllThingsFromCloud() {
     const rootID = seriouslyGlobals.rootID;
     this.root = new Thing(rootID, seriouslyGlobals.rootTitle, seriouslyGlobals.rootColor, 'm', 0);
+    this.thingsByID[rootID] = this.root;
 
     try {
       const records = await table.select().all()
@@ -45,13 +46,10 @@ export default class Things {
       }
 
       for (const id in this.thingsByID) {
-        relationships.createAndSaveUniqueRelationshipMaybe(RelationshipKind.parent, id, parents);
+        if (id != rootID) {
+          relationships.createAndSaveUniqueRelationshipMaybe(RelationshipKind.parent, id, parents);
+        }
       }
-
-      // console.log('ByToID:', relationships.relationshipsByToID[rootID]);
-      // console.log('ROOT:', this.root.children);
-      console.log('ROOT:', relationships.IDsOfKind(RelationshipKind.parent, true, rootID));
-
     } catch (error) {
       alert(this.errorMessage + ' (readAllThingsFromCloud) ' + error);
     }
@@ -60,6 +58,16 @@ export default class Things {
   async updateThingInCloud(thing: Thing) {
     try {
       table.update(thing.id, thing.fields);
+    } catch (error) {
+      alert(this.errorMessage + ' (in updateToCloud) ' + error);
+    }
+  }
+
+  async updateThingsInCloud(array: Array<Thing>) {
+    try {
+      for (const thing of array) {
+        await table.update(thing.id, thing.fields);
+      }
     } catch (error) {
       alert(this.errorMessage + ' (in updateToCloud) ' + error);
     }

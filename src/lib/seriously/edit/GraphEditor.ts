@@ -79,21 +79,33 @@ export default class GraphEditor {
     await things.createThingInCloud(sibling);
   }
 
+  reassignOrdersOf(array: Array<Thing>) {
+    var index = 1;
+    for (const thing of array) {
+      thing.order = index;
+      console.log(thing.order, thing.title);
+      index += 1;
+    }    
+  }
+
   moveUpAndRedraw = (up: boolean, relocate: boolean) => {
     if (grabbing.hasGrab) {
       const child = grabbing.firstGrabbedThing;
-      if  (child != null && things.root != null) {
-        const parent = child.firstParent;
-        const all = parent.children;
-        const index = all.indexOf(child!);
-        const newIndex = index.increment(!up, all.length - 1);
-        const newGrab = all[newIndex];
-        if (relocate) {
-          swap(index, newIndex, all);
-          this.redrawAll();
-        } else {
-          grabbing.grabOnly(newGrab);
-          signal([SignalKinds.widget], null);
+      const siblings = child?.siblings;
+      if (siblings != null) {
+        const index = siblings.indexOf(child!);
+        const newIndex = index.increment(!up, siblings.length - 1);
+        if (newIndex.between(-1, siblings.length, false)) {
+          const newGrab = siblings[newIndex];
+          if (relocate) {
+            swap(index, newIndex, siblings);
+            this.reassignOrdersOf(siblings);
+            this.redrawAll();
+            things.updateThingsInCloud(siblings);
+          } else {
+            grabbing.grabOnly(newGrab);
+            signal([SignalKinds.widget], null);
+          }
         }
       }
     }

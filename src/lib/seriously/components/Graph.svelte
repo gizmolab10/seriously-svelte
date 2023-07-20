@@ -39,7 +39,6 @@
   {:else if (things.root == null)}
     <p>Nothing is available.</p>
   {:else}
-    <Crumbs/>
     <Children here={things.root}/>
   {/if}
 {/key}

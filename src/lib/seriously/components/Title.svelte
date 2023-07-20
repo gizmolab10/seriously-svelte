@@ -53,7 +53,7 @@
   function handleFocus(event) {
     $editingID = thing.id;
     grabbing.grabOnly(thing)
-    console.log('FOCUS:', $editingID, thing.title);
+    // console.log('FOCUS:', $editingID, thing.title);
     signal([SignalKinds.widget], null); // so widget will show as grabbed
   }
 

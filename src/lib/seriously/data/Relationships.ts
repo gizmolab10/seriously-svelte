@@ -11,7 +11,7 @@ class Relationships {
 
   constructor() {}
 
-  IDsOfKind(kind: RelationshipKind, matchingTo: boolean, id: string): [string] {
+  IDsOfKind(kind: RelationshipKind, matchingTo: boolean, id: string): Array<string> {
     const dict = matchingTo ? this.relationshipsByToID : this.relationshipsByFromID;
     const ids = Array<string>();
     const array = dict[id];
@@ -30,7 +30,7 @@ class Relationships {
         }
       );
     }
-    return ids as [string];
+    return ids;
   }
 
   addRelationship(relationship: Relationship) {
