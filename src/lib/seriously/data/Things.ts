@@ -44,6 +44,7 @@ export default class Things {
   async readAllThingsFromCloud() {
     const rootID = seriouslyGlobals.rootID;
     this.root = new Thing(rootID, seriouslyGlobals.rootTitle, seriouslyGlobals.rootColor, 'm', 0);
+    this.thingsByID = {};
     this.thingsByID[rootID] = this.root;
 
     try {

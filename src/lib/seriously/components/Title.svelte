@@ -1,7 +1,7 @@
 <svelte:options immutable = {true} />
 
 <script lang='ts'>
-  import { Thing, things, editingID, grabbing, graphEditor, signal, SignalKinds } from '../common/imports.ts';
+  import { Thing, things, editingID, grabbing, signal, SignalKinds } from '../common/imports.ts';
   import Widget from '../components/Widget.svelte';
   export let thing = Thing;
   let originalTitle = thing.title;
@@ -13,7 +13,7 @@
   function handleKeyDown(event) {
     if ($editingID == thing.id) {
       switch (event.key) {
-        case 'Tab': stopEditing(true); graphEditor.addSiblingAndRedraw(); break;
+        case 'Tab': stopEditing(true); break; // graphEditor.addSiblingAndRedraw(); break; // TODO: rewire
         case 'Enter': stopEditing(true);
       }
     }

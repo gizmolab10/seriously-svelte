@@ -1,4 +1,4 @@
-import { Thing, things, grabbed } from '../common/Imports';
+import { Thing, things, grabbed } from './Imports';
 
 export default class Grabbing {
   localGrabbed: Array<string>

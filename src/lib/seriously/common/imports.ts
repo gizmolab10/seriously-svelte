@@ -5,8 +5,7 @@ import { signal, handleSignal, SignalKinds } from './Signals';
 import { relationships } from '../data/Relationships';
 import { editingID, hereID, grabbed } from './State';
 import { seriouslyGlobals } from '../data/Globals';
-import { graphEditor } from '../edit/GraphEditor';
-import { grabbing } from '../edit/Grabbing';
+import { grabbing } from './Grabbing';
 import { things } from '../data/Things';
 import Thing from '../data/Thing';
 import './Extensions';
@@ -15,4 +14,4 @@ export { tick, onMount, onDestroy, seriouslyGlobals,
   createEventDispatcher, signal, handleSignal, SignalKinds,
   Thing, things, Relationship, RelationshipKind, relationships,
   createCloudID, swap, convertArrayToString, convertStringToArray,
-  graphEditor, editingID, grabbing, hereID, grabbed };
+  editingID, grabbing, hereID, grabbed };
