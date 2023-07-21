@@ -18,8 +18,12 @@
 	</script>
 
 <span id={thing.id}
-	style='padding: 0px 8px 2px 0px;
+	style='padding: 1px 8px 2px 1px;
 				border-radius: 16px;
 				border: var(--grabAttributes)'>
-	<Dot thing={thing}/> <Title thing={thing}/> <Dot thing={thing} isReveal={true}/>
+	<Dot thing={thing}/>
+	<Title thing={thing}/>
+	{#if thing.children.length > 0}
+	<Dot thing={thing} isReveal={true}/>
+	{/if}
 </span>

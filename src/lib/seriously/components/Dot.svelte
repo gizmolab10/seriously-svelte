@@ -4,12 +4,7 @@
   import { Thing, things, hereID, grabbedIDs, reassignOrdersOf, tick, onMount, signal, handleSignal, SignalKinds, seriouslyGlobals } from '../common/GlobalImports.ts';
   export let isReveal = false;
   export let thing = Thing;
-  let isGrabbed = false;
   let canExpand = thing.children.length > 0;
- 
-  $: {
-    isGrabbed = $grabbedIDs?.includes(thing.id);
-  }
 
   async function handleClick(event) {
     if (isReveal) {
@@ -19,7 +14,7 @@
         $hereID = thing.id;
         await things.updateThingsInCloud(thing.children);
       }
-    } else if (event.shiftKey || isGrabbed) {
+    } else if (event.shiftKey || $grabbedIDs?.includes(thing.id)) {
       thing.toggleGrab();
     } else if ($hereID != seriouslyGlobals.rootID) {
       thing.moveRightAndRedraw(false, false);
@@ -35,24 +30,21 @@
       canExpand = thing.children.length > 0;
       var style = document.getElementById(thing.id)?.style;
       style?.setProperty(   '--dotColor', thing.color);
-      style?.setProperty(  '--textColor', thing.revealColor(!isReveal));
+      style?.setProperty( '--traitColor', thing.revealColor(!isReveal));
       style?.setProperty('--buttonColor', thing.revealColor( isReveal));
     }
   })
 
 </script>
 
-{#key isGrabbed}
+{#key $grabbedIDs?.includes(thing.id)}
   <slot>
     <button id={thing.id}
       on:click={handleClick}
       class={ isReveal ? 'reveal' : 'drag' }
       style='--dotColor: {thing.color};
-            --textColor: {thing.revealColor(!isReveal)};
+           --traitColor: {thing.revealColor(!isReveal)};
           --buttonColor: {thing.revealColor( isReveal)}'>
-          {#if isReveal && canExpand}
-          >
-          {/if}
     </button>
   </slot>
 {/key}
@@ -68,7 +60,7 @@
     display: relative;
     align-items: center;
     justify-content: center;
-    color: var(--textColor);
+    color: var(--traitColor);
     border-color: var(--dotColor);
     background-color: var(--buttonColor);
     border: 1px solid;
@@ -78,7 +70,7 @@
 
     &:hover {
       color: var(--buttonColor);
-      background-color: var(--textColor);
+      background-color: var(--traitColor);
     }
   }
 </style>

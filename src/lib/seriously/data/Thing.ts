@@ -22,11 +22,7 @@ export default class Thing {
     this.isGrabbed = false;
 
     grabbedIDs.subscribe((ids) => {
-      const newGrabbed =  ids?.includes(this.id) ?? false;
-      if (this.isGrabbed != newGrabbed) {
-        this.isGrabbed = newGrabbed;
-        signal([SignalKinds.dot], null);
-      }
+      this.isGrabbed = ids?.includes(this.id) ?? false;
     });
 
     editingID.subscribe((id: string | null) => {
@@ -59,9 +55,9 @@ export default class Thing {
     });
   }
 
-  revealColor = (hovering: boolean): string => {
+  revealColor = (isReveal: boolean): string => {
     const flag = this.isGrabbed || this.isEditing;
-    return (flag != hovering) ? this.color : seriouslyGlobals.backgroundColor;
+    return (flag != isReveal) ? this.color : seriouslyGlobals.backgroundColor;
   }
 
   thingsMatching(to: boolean): Array<Thing> {
