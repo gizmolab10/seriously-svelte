@@ -52,7 +52,7 @@ export default class Things {
       }
 
       reassignOrdersOf(this.root.children);
-      await things.updateThingsInCloud(this.root.children);
+      things.updateThingsInCloud(this.root.children);
       hereID.set(rootID);
     } catch (error) {
       alert(this.errorMessage + ' (readAllThingsFromCloud) ' + error);
