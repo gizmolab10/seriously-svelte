@@ -1,6 +1,13 @@
 import { grabbedIDs, editingID, hereID, createCloudID, seriouslyGlobals, relationships, things, RelationshipKind, signal, SignalKinds, reassignOrdersOf } from '../common/GlobalImports';
 import Airtable from 'airtable';
 
+export enum PrivacyKind {
+  kEveryone = 'e',
+  kInternal = 'i', // requires membership in a group
+  kPersonal = 'p', // requires list of approved visitor
+  kMeOnly   = 'm',
+}
+
 export default class Thing {
   public id: string;
   public title: string;
