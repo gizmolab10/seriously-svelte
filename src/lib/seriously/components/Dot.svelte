@@ -14,9 +14,9 @@
         $hereID = thing.id;
         await things.updateThingsInCloud(thing.children);
       }
-    } else if (event.shiftKey || $grabbedIDs?.includes(thing.id)) {
+    } else if (event.shiftKey) {
       thing.toggleGrab();
-    } else if ($hereID != seriouslyGlobals.rootID) {
+    } else if ($hereID != seriouslyGlobals.rootID && $grabbedIDs?.includes(thing.id)) {
       thing.moveRightAndRedraw(false, false);
     } else {
       thing.grabOnly();
