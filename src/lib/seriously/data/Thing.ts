@@ -1,4 +1,4 @@
-import { things, hereID, grabbedIDs, editingID, swap, createCloudID, seriouslyGlobals, relationships, Relationship, RelationshipKind, signal, SignalKinds, reassignOrdersOf } from '../common/GlobalImports';
+import { things, hereID, grabbedIDs, editingID, moveElementWithin, createCloudID, seriouslyGlobals, relationships, Relationship, RelationshipKind, signal, SignalKinds, reassignOrdersOf } from '../common/GlobalImports';
 import Airtable from 'airtable';
 
 export enum PrivacyKind {
@@ -123,7 +123,9 @@ export default class Thing {
       if (newIndex.between(-1, siblings.length, false)) {
         const newGrab = siblings[newIndex];
         if (relocate) {
-          swap(index, newIndex, siblings);
+          // alert(siblings.map((thing) => { return thing.title }))
+          moveElementWithin(siblings, index, newIndex);
+          // alert(siblings.map((thing) => { return thing.title }))
           reassignOrdersOf(siblings);
           signal([SignalKinds.widget], null);
         } else {

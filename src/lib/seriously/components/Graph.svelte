@@ -1,7 +1,7 @@
 <svelte:options immutable = {true} />
 
 <script>
-  import { Thing, things, relationships, grabbedIDs, editingID, hereID, swap, reassignOrdersOf, onMount, onDestroy, signal, handleSignal, SignalKinds } from '../common/GlobalImports';
+  import { Thing, things, relationships, grabbedIDs, editingID, hereID, reassignOrdersOf, onMount, onDestroy, signal, handleSignal, SignalKinds } from '../common/GlobalImports';
   import Children from './Children.svelte';
   import Crumbs from './Crumbs.svelte';
   function here() { return things.thingForID($hereID) }
