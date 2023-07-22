@@ -104,6 +104,7 @@
   {:else if (here() == null || here()?.children.length == 0)}
     <p>Nothing is available ({here()}).</p>
   {:else}
+    <Crumbs/>
     <Children parent={here()}/>
   {/if}
 {/key}

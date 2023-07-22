@@ -42,13 +42,14 @@ export default class Thing {
   get  grabAttributes(): string { return this.borderAttribute + this.revealColor(false); }
   get hoverAttributes(): string { return this.borderAttribute + this.revealColor(true); }
   get borderAttribute(): string { return (this.isEditing ? 'dashed' : 'solid') + ' 1px '; }
-  get siblings(): Array<Thing> { return this.firstParent?.children ?? []; }
-  get children(): Array<Thing> { return relationships.thingsForID(this.id, true, RelationshipKind.parent); }
-  get parents(): Array<Thing> { return relationships.thingsForID(this.id, false, RelationshipKind.parent); }
-  get firstParent(): Thing { return this.parents[0]; }
-  get firstChild(): Thing { return this.children[0]; }
-  get canExpand(): boolean { return this.children.length > 0; }
+  get children():  Array<Thing> { return relationships.thingsForID(this.id, true, RelationshipKind.parent); }
+  get parents():   Array<Thing> { return relationships.thingsForID(this.id, false, RelationshipKind.parent); }
+  get siblings():  Array<Thing> { return this.firstParent?.children ?? []; }
+  get canExpand():      boolean { return this.hasRelationships(false); }
+  get firstChild():       Thing { return this.children[0]; }
+  get firstParent():      Thing { return this.parents[0]; }
 
+  hasRelationships = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
   grabOnly = () => { grabbedIDs.set([this.id]); }
 
   revealColor = (isReveal: boolean): string => {
@@ -110,10 +111,10 @@ export default class Thing {
 
   browseRight = (right: boolean, grandparentID: string) => {
     const grabID = right ? this.firstChild : this.firstParent;
-    const hereID = right ? this.id : grandparentID;
+    const focusID = right ? this.id : grandparentID;
     grabID.grabOnly();
     signal([SignalKinds.widget], null); // signal BEFORE setting hereID to avoid blink
-    hereID.set(hereID);
+    hereID.set(focusID);
   }
 
   relocateRight = (right: boolean, grandparentID: string) => {
