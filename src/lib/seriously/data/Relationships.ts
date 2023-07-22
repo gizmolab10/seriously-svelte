@@ -110,6 +110,12 @@ class Relationships {
     }
   }
 
+  async createRelationshipAndSaveInCloud(kind: RelationshipKind, from: string, to: string) {
+    if (this.relationshipsMatchingKind(kind, false, from).length == 0) {
+      this.createRelationshipInCloud(this.createRelationship(kind, from, to))
+    }
+  }
+
   async deleteRelationshipsFromCloudFor(thing: Thing) {
     const array = this.allByFromID[thing.id];
     if (array != null) {

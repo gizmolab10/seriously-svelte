@@ -49,37 +49,34 @@ export default class Things {
 
       for (const id in this.thingsByID) {
         if (id != rootID) {
-          relationships.createAndSaveUniqueRelationshipInCloud(RelationshipKind.parent, id, rootID);
+          relationships.createRelationshipAndSaveInCloud(RelationshipKind.parent, id, rootID);
         }
       }
 
-      reassignOrdersOf(this.root.children);
+      reassignOrdersOf(this.root.children); // makes some things dirty
       hereID.set(rootID);
       signal([SignalKinds.relayout], null);
-      things.updateThingsInCloud(this.root.children); // do not await this statement, it takes forever !!!
+      this.updateAllDirtyThingsInCloud(); // do not await this statement, it takes forever !!!
     } catch (error) {
       console.log(this.errorMessage + ' (readAllThingsFromCloud) ' + error);
     }
   }
 
   async updateThingInCloud(thing: Thing) {
-    if (thing.isDirty) {
-      try {
-        await table.update(thing.id, thing.fields);
-        thing.isDirty = false; // if update fails, subsequent update will try again
-      } catch (error) {
-        console.log(this.errorMessage + ' (in updateToCloud) ' + error);
-      }
+    try {
+      await table.update(thing.id, thing.fields);
+      thing.isDirty = false; // if update fails, subsequent update will try again
+    } catch (error) {
+      console.log(this.errorMessage + ' (in updateToCloud) ' + error);
     }
   }
 
-  async updateThingsInCloud(array: Array<Thing>) {
-    try {
-      for (const thing of array) {
-        await table.update(thing.id, thing.fields);
+  async updateAllDirtyThingsInCloud() {
+    const all: Thing[] = Object.values(this.thingsByID);
+    for (const thing of all) {
+      if (thing.isDirty) {
+        await this.updateThingInCloud(thing)
       }
-    } catch (error) {
-      console.log(this.errorMessage + ' (in updateToCloud) ' + error);
     }
   }
 

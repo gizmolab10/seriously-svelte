@@ -11,7 +11,7 @@
         reassignOrdersOf(thing.children);
         thing.firstChild?.grabOnly();
         $hereID = thing.id;
-        await things.updateThingsInCloud(thing.children);
+        await things.updateDirtyThingsInCloud();
       }
     } else if (event.shiftKey) {
       thing.toggleGrab();

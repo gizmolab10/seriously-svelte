@@ -34,10 +34,10 @@
           case ' ': alert('CHILD'); break;
           case 'd': alert('DUPLICATE'); break;
           case 'enter': editingID.set(id); break;
-          case 'arrowup': await moveUpAndRedraw(thing, true, OPTION); break;
-          case 'arrowdown': await moveUpAndRedraw(thing, false, OPTION); break;
-          case 'arrowright': await moveRightAndRedraw(thing, true, OPTION); break;
-          case 'arrowleft': await moveRightAndRedraw(thing, false, OPTION); break;
+          case 'arrowup': await moveUpRedrawAndSaveToClouid(thing, true, OPTION); break;
+          case 'arrowdown': await moveUpRedrawAndSaveToClouid(thing, false, OPTION); break;
+          case 'arrowright': await moveRightRedrawAndSaveToClouid(thing, true, OPTION); break;
+          case 'arrowleft': await moveRightRedrawAndSaveToClouid(thing, false, OPTION); break;
           case 'tab':
             thing.addSiblingAndRedraw(); // Title also makes this call
             toggledReload = !toggledReload;
@@ -65,17 +65,18 @@
     }
   }
 
-  async function moveRightAndRedraw(thing, up, relocate) {
-    thing.moveRightAndRedraw(up, relocate);
+  async function moveRightRedrawAndSaveToClouid(thing, right, relocate) {
+    thing.moveRightAndRedraw(right, relocate);
     await relationships.updateDirtyRelationshipsToCloud()
+    things.updateDirtyThingsInCloud();
   }
 
-  async function moveUpAndRedraw(thing, up, relocate) {
+  async function moveUpRedrawAndSaveToClouid(thing, up, relocate) {
     if (hasGrab) {
       thing.moveUpAndRedraw(up, relocate);
       if (relocate) {
         toggledReload = !toggledReload;
-        await things.updateThingsInCloud(siblings);
+        await things.updateDirtyThingsInCloud();
       }
     }
   }

@@ -101,10 +101,17 @@ export default class Thing {
     const grandparentID = this.firstParent?.firstParent?.id ?? null;
     if (relocate) {
       const id = right? this.nextSibling(false).id : grandparentID;
-      relationships.relationshipsMatchingKind(RelationshipKind.parent, false, this.id).forEach((relationship: Relationship) => {
+      const matches = relationships.relationshipsMatchingKind(RelationshipKind.parent, false, this.id);
+      const newParent = things.thingForID(id);
+      this.isDirty = true;
+      if (newParent != null) {
+        newParent.isDirty = true;
+      }
+      for (let index = 0; index < matches.length; index++) {
+        const relationship = matches[index];
         relationship.to = id;
         relationship.isDirty = true;
-      });
+      };
     } else if (right) {
       this.firstChild.grabOnly();
       hereID.set(this.id);
@@ -113,6 +120,7 @@ export default class Thing {
       signal([SignalKinds.widget], null); // signal BEFORE setting hereID to avoid blink
       hereID.set(grandparentID);
     }
+    signal([SignalKinds.relayout], null);
   }
 
   moveUpAndRedraw = (up: boolean, relocate: boolean) => {
@@ -123,9 +131,7 @@ export default class Thing {
       if (newIndex.between(-1, siblings.length, false)) {
         const newGrab = siblings[newIndex];
         if (relocate) {
-          // alert(siblings.map((thing) => { return thing.title }))
           moveElementWithin(siblings, index, newIndex);
-          // alert(siblings.map((thing) => { return thing.title }))
           reassignOrdersOf(siblings);
           signal([SignalKinds.widget], null);
         } else {

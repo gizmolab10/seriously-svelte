@@ -22,7 +22,6 @@ export function moveElementWithin<T>(array: Array<T>, from: number, to: number) 
   const first = retain ? to : from;
   const second = retain ? from : to;
   const mover = array.splice(first, 1)[0]
-  // alert('destination: ' + second + ' for: ' + (mover as Thing).title);
   array.splice(second, 0, mover);
 }
 
@@ -30,7 +29,6 @@ export function reassignOrdersOf(array: Array<Thing>) {
   for (let index = 0; index < array.length; index++) {
       const thing = array[index];
       if (thing.order != index) {
-        // alert('' + thing.order + ' becomes: ' + index + ' for: ' + thing.title);
         thing.order = index;
         thing.isDirty = true;
       }
