@@ -5,14 +5,14 @@
 
   $: {
     if ($grabbedIDs.length > 0) {
-      let id = $grabbedIDs[0];
+      const id = $grabbedIDs[0];
       let thing = things.thingFor(id);
       ancestors = [];
       while (thing != null) {
         ancestors.push(thing);
         thing = thing.firstParent;
       }
-      ancestors.reverse();
+      ancestors;
     }
   }
 </script>

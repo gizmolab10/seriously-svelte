@@ -4,11 +4,10 @@
   import { Thing, things, hereID, grabbedIDs, reassignOrdersOf, tick, onMount, signal, handleSignal, SignalKinds, seriouslyGlobals } from '../common/GlobalImports.ts';
   export let isReveal = false;
   export let thing = Thing;
-  let canExpand = thing.children.length > 0;
 
   async function handleClick(event) {
     if (isReveal) {
-      if (canExpand) {
+      if (thing.canExpand) {
         reassignOrdersOf(thing.children);
         thing.firstChild?.grabOnly();
         $hereID = thing.id;
@@ -27,7 +26,6 @@
 
 	handleSignal.connect((kinds, value) => {
 		if (kinds.includes(SignalKinds.dot) && value == thing.id) {
-      canExpand = thing.children.length > 0;
       var style = document.getElementById(thing.id)?.style;
       style?.setProperty(   '--dotColor', thing.color);
       style?.setProperty( '--traitColor', thing.revealColor(!isReveal));

@@ -1,4 +1,4 @@
-import { Thing, reassignOrdersOf, relationships, RelationshipKind, seriouslyGlobals, hereID } from '../common/GlobalImports';
+import { Thing, reassignOrdersOf, relationships, RelationshipKind, seriouslyGlobals, hereID, signal, SignalKinds } from '../common/GlobalImports';
 import Airtable, {FieldSet} from 'airtable';
 
 const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
@@ -9,7 +9,9 @@ export default class Things {
   thingsByID: { [id: string]: Thing } = {};
   root: Thing | null = null;
 
-  constructor() {}
+  constructor() {
+    hereID.set(seriouslyGlobals.rootID);
+  }
 
   thingFor(id: string | null): Thing | null {
     return (id == null || this.root == null) ? null : this.thingsByID[id];
@@ -47,26 +49,26 @@ export default class Things {
 
       for (const id in this.thingsByID) {
         if (id != rootID) {
-          await relationships.createAndSaveUniqueRelationshipMaybe(RelationshipKind.parent, id, rootID);
+          relationships.createUniqueRelationshipInCloud(RelationshipKind.parent, id, rootID);
         }
       }
 
       reassignOrdersOf(this.root.children);
-      things.updateThingsInCloud(this.root.children);
       hereID.set(rootID);
+      signal([SignalKinds.relayout], null);
+      things.updateThingsInCloud(this.root.children); // do not await this statement, it takes forever !!!
     } catch (error) {
-      alert(this.errorMessage + ' (readAllThingsFromCloud) ' + error);
+      console.log(this.errorMessage + ' (readAllThingsFromCloud) ' + error);
     }
   }
 
   async updateThingInCloud(thing: Thing) {
     if (thing.isDirty) {
       try {
-        alert(thing.title);
         await table.update(thing.id, thing.fields);
         thing.isDirty = false; // if update fails, subsequent update will try again
       } catch (error) {
-        alert(this.errorMessage + ' (in updateToCloud) ' + error);
+        console.log(this.errorMessage + ' (in updateToCloud) ' + error);
       }
     }
   }
@@ -77,7 +79,7 @@ export default class Things {
         await table.update(thing.id, thing.fields);
       }
     } catch (error) {
-      alert(this.errorMessage + ' (in updateToCloud) ' + error);
+      console.log(this.errorMessage + ' (in updateToCloud) ' + error);
     }
   }
 
@@ -86,7 +88,7 @@ export default class Things {
       const fields = await table.create(thing.fields);
       thing.id = fields['id']; //  // need for update, delete and thingsByID (to get parent from relationship)
     } catch (error) {
-      alert(this.errorMessage + ' (in createInCloud) ' + error);
+      console.log(this.errorMessage + ' (in createInCloud) ' + error);
     }
   }
 
@@ -94,7 +96,7 @@ export default class Things {
     try {
       await table.destroy(thing.id);
     } catch (error) {
-      alert(this.errorMessage + ' (in deleteFromCloud) ' + error);
+      console.log(this.errorMessage + ' (in deleteFromCloud) ' + error);
     }
   }
 

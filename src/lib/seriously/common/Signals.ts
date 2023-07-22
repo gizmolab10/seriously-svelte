@@ -6,5 +6,5 @@ export enum SignalKinds {
   dot      = 'd'  // refresh all the dots, for hover
 }
 
-export let handleSignal = new Signal<(kinds: SignalKinds[], value: any) => void>();
+export const handleSignal = new Signal<(kinds: SignalKinds[], value: any) => void>();
 export function signal(kinds: SignalKinds[], value: any) { handleSignal.emit(kinds, value); }

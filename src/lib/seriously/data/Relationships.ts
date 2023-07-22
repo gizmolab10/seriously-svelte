@@ -1,48 +1,56 @@
-import { Thing, Relationship, RelationshipKind, createCloudID } from '../common/GlobalImports';
+import { Thing, things, Relationship, RelationshipKind, createCloudID } from '../common/GlobalImports';
 import Airtable from 'airtable';
 
 const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
 const table = base('Relationships');
 
 class Relationships {
-  relationshipsByToID: { [id: string]: [Relationship] } = {};
-  relationshipsByFromID: { [id: string]: [Relationship] } = {};
+  all: Array<Relationship> = [];
+  allByToID: { [id: string]: Array<Relationship> } = {};
+  allByFromID: { [id: string]: Array<Relationship> } = {};
   errorMessage = 'Error from Relationships database: ';
 
   constructor() {}
 
-  IDsOfKind(kind: RelationshipKind, matchingTo: boolean, id: string): Array<string> {
-    const dict = matchingTo ? this.relationshipsByToID : this.relationshipsByFromID;
-    const ids = Array<string>();
-    const array = dict[id];
-    if (array != null) {
-      array.map(
-        (relationship) => {
-          if (relationship.kind = kind) {
-            ids.push(matchingTo ? relationship.from : relationship.to);
-          }
+  thingsFor(id: string, matchingTo: boolean): Array<Thing> {
+    const matches = this.relationshipsMatchingKind(RelationshipKind.parent, matchingTo, id);
+    const ids: Array<string> = [];
+    if (Array.isArray(matches)) {
+      for (const relationship of matches) {
+        ids.push(matchingTo ? relationship.from : relationship.to);
+      }
+    }
+    const array = things.thingsFor(ids);
+    if (Array.isArray(array)) {
+      array.sort((a: Thing, b: Thing) => {
+        return a.order - b.order
+      })
+    }
+    return array;
+  }
+
+  relationshipsMatchingKind(kind: RelationshipKind, to: boolean, id: string): Array<Relationship> {
+    const dict = to ? this.allByToID : this.allByFromID;
+    const matches = dict[id] as Array<Relationship>;
+    const array: Array<Relationship> = [];
+    if (Array.isArray(matches)) {
+      for (const relationship of matches) {
+        if (relationship.kind == kind) {
+          array.push(relationship);
         }
-      );
+      }
     }
-    return ids;
+    return array;
   }
-
-  trackRelationship(relationship: Relationship) {
-    const froms = this.relationshipsByFromID[relationship.from] ?? [];
+  
+  remember(relationship: Relationship) {
+    this.all.push(relationship);
+    const froms = this.allByFromID[relationship.from] ?? [];
     froms.push(relationship);
-    this.relationshipsByFromID[relationship.from] = froms;
-    const tos = this.relationshipsByToID[relationship.to] ?? [];
+    this.allByFromID[relationship.from] = froms;
+    const tos = this.allByToID[relationship.to] ?? [];
     tos.push(relationship);
-    this.relationshipsByToID[relationship.to] = tos;
-  }
-
-  async createAndSaveUniqueRelationshipMaybe(kind: RelationshipKind, from: string, to: string) {
-    const array = this.relationshipsByFromID[from];
-    if (array == null) {
-      let relationship = new Relationship(createCloudID(), kind, from, to);
-      this.trackRelationship(relationship);
-      this.createRelationshipInCloud(relationship);
-    }
+    this.allByToID[relationship.to] = tos;
   }
 
   ///////////////////////////
@@ -53,40 +61,60 @@ class Relationships {
     try {
       const records = await table.select().all()
 
-      for (let record of records) {
-        let id = record.fields.id as string;
-        let to = record.fields.to as string;
-        let from = record.fields.from as string;
-        let kind = record.fields.kind as RelationshipKind;
-        let relationship = new Relationship(id, kind, from, to);
-        this.trackRelationship(relationship);
+      for (const record of records) {
+        const id = record.fields.id as string;
+        const to = record.fields.to as string;
+        const from = record.fields.from as string;
+        const kind = record.fields.kind as RelationshipKind;
+        const relationship = new Relationship(id, kind, from, to);
+        this.remember(relationship);
       }
     } catch (error) {
       alert(this.errorMessage + error);
-    }    
+    }
+  }
+
+  async updateDirtyRelationshipsToCloud() {
+    this.all.forEach((relationship) => {
+      if (relationship.isDirty) {
+        try {
+          this.updateRelationshipToCloud(relationship);
+        } catch (error) {
+          alert(this.errorMessage + error);
+        }
+      }
+    });
   }
 
   async updateRelationshipToCloud(relationship: Relationship) {
     try {
       table.update(relationship.id, relationship.fields);
+      relationship.isDirty = false;
     } catch (error) {
       alert(this.errorMessage + error);
     }
   }
 
-  async createRelationshipInCloud(relationship: Relationship) {
-    try {
-      const fields = await table.create(relationship.fields);
-      relationship.id = fields['id']; // need for update, delete and relationshipsByFromID
-    } catch (error) {
-      alert(this.errorMessage + error);
+  async createUniqueRelationshipInCloud(kind: RelationshipKind, from: string, to: string): Relationship {
+    const array = this.allByFromID[from];
+    if (array == null) {
+      const relationship = new Relationship(createCloudID(), kind, from, to);
+      this.remember(relationship);
+      try {
+        const fields = await table.create(relationship.fields);
+        relationship.id = fields['id']; // need for update, delete and relationshipsByFromID
+      } catch (error) {
+        alert(this.errorMessage + error);
+      }
+      return relationship;
     }
+    return array[0];
   }
 
   async deleteRelationshipsFromCloudFor(thing: Thing) {
-    const array = this.relationshipsByFromID[thing.id];
+    const array = this.allByFromID[thing.id];
     if (array != null) {
-      for (let relationship of array) {
+      for (const relationship of array) {
         await this.deleteRelationshipFromCloud(relationship);
       }
     }

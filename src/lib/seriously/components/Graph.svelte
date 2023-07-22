@@ -1,9 +1,10 @@
 <svelte:options immutable = {true} />
 
 <script>
-  import { Thing, things, relationships, grabbedIDs, editingID, hereID, swap, reassignOrdersOf, onMount, onDestroy, signal, SignalKinds } from '../common/GlobalImports';
-  import Crumbs from './Crumbs.svelte';
+  import { Thing, things, relationships, grabbedIDs, editingID, hereID, swap, reassignOrdersOf, onMount, onDestroy, signal, handleSignal, SignalKinds } from '../common/GlobalImports';
   import Children from './Children.svelte';
+  import Crumbs from './Crumbs.svelte';
+  function here() { return things.thingFor($hereID) }
   let toggledReload = false;
   let isLoading = true;
   let hasGrab = false;
@@ -11,14 +12,18 @@
 
   $: { hasGrab = ($grabbedIDs != null && $grabbedIDs.length > 0) }
 
+	handleSignal.connect((kinds, value) => {
+		if (kinds.includes(SignalKinds.relayout)) {
+      toggledReload = !toggledReload;
+    }
+  })
+
   async function handleKeyDown(event) {
     if (event.type == 'keydown', hasGrab) {
-      let id = $grabbedIDs[0];
+      const id = $grabbedIDs[0];
       const thing = things.thingFor(id);
-      let OPTION = event.altKey;
-      let key = event.key.toLowerCase();
-      // console.log('KEY:', key);
-      let SHIFT = (event.key != key || event.shiftKey);
+      const key = event.key.toLowerCase();
+      const OPTION = event.altKey;
       if ($editingID != null) {
         switch (key) {
           case 'Enter':
@@ -26,27 +31,21 @@
         }
       } else {
         switch (key) {
-          case ' ':
-            console.log('CHILD');
-            break;
-          case 'd':
-            console.log('DUPLICATE');
-            break;
-          case 'arrowup': await moveUpAndRedraw(true, OPTION); break;
-          case 'arrowdown': await moveUpAndRedraw(false, OPTION); break;
-          case 'arrowright': await thing.moveRightAndRedraw(true, OPTION); break;
-          case 'arrowleft': await thing.moveRightAndRedraw(false, OPTION); break;
+          case ' ': alert('CHILD'); break;
+          case 'd': alert('DUPLICATE'); break;
+          case 'enter': editingID.set(id); break;
+          case 'arrowup': await moveUpAndRedraw(thing, true, OPTION); break;
+          case 'arrowdown': await moveUpAndRedraw(thing, false, OPTION); break;
+          case 'arrowright': await moveRightAndRedraw(thing, true, OPTION); break;
+          case 'arrowleft': await moveRightAndRedraw(thing, false, OPTION); break;
           case 'tab':
             await thing.addSiblingAndRedraw(); // Title also makes this call
             toggledReload = !toggledReload;
             break;
-          case 'enter': 
-            editingID.set(id);
-            break;
           case 'delete':
           case 'backspace':
-            if (thing != null && !thing.isEditing && things.root != null) {
-              const all = things.root?.children;
+            if (thing != null && !thing.isEditing && here() != null) {
+              const all = here()?.children;
               let index = all.indexOf(thing);
               all.splice(index, 1);
               if (index >= all.length) {
@@ -66,27 +65,17 @@
     }
   }
 
-  async function moveUpAndRedraw(up, relocate) {
+  async function moveRightAndRedraw(thing, up, relocate) {
+    thing.moveRightAndRedraw(up, relocate);
+    await relationships.updateDirtyRelationshipsToCloud()
+  }
+
+  async function moveUpAndRedraw(thing, up, relocate) {
     if (hasGrab) {
-      const id = $grabbedIDs[0];
-      const child = things.thingFor(id);
-      const siblings = child?.siblings;
-      if (siblings != null) {
-        const index = siblings.indexOf(child);
-        const newIndex = index.increment(!up, siblings.length - 1);
-        if (newIndex.between(-1, siblings.length, false)) {
-          const newGrab = siblings[newIndex];
-          if (relocate) {
-            swap(index, newIndex, siblings);
-            reassignOrdersOf(siblings);
-            signal([SignalKinds.widget], null);
-            toggledReload = !toggledReload;
-            await things.updateThingsInCloud(siblings);
-          } else {
-            newGrab.grabOnly();
-            signal([SignalKinds.widget], null);
-          }
-        }
+      thing.moveUpAndRedraw(up, relocate);
+      if (relocate) {
+        toggledReload = !toggledReload;
+        await things.updateThingsInCloud(siblings);
       }
     }
   }
@@ -113,10 +102,10 @@
 {#key toggledReload}
   {#if isLoading}
     <p>Loading...</p>
-  {:else if (things.root == null)}
-    <p>Nothing is available.</p>
+  {:else if (here() == null || here()?.children.length == 0)}
+    <p>Nothing is available ({here()}).</p>
   {:else}
-    <Children here={things.root}/>
+    <Children parent={here()}/>
   {/if}
 {/key}
 
