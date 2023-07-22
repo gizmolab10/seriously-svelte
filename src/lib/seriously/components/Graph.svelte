@@ -4,7 +4,7 @@
   import { Thing, things, relationships, grabbedIDs, editingID, hereID, swap, reassignOrdersOf, onMount, onDestroy, signal, handleSignal, SignalKinds } from '../common/GlobalImports';
   import Children from './Children.svelte';
   import Crumbs from './Crumbs.svelte';
-  function here() { return things.thingFor($hereID) }
+  function here() { return things.thingForID($hereID) }
   let toggledReload = false;
   let isLoading = true;
   let hasGrab = false;
@@ -21,7 +21,7 @@
   async function handleKeyDown(event) {
     if (event.type == 'keydown', hasGrab) {
       const id = $grabbedIDs[0];
-      const thing = things.thingFor(id);
+      const thing = things.thingForID(id);
       const key = event.key.toLowerCase();
       const OPTION = event.altKey;
       if ($editingID != null) {
@@ -39,7 +39,7 @@
           case 'arrowright': await moveRightAndRedraw(thing, true, OPTION); break;
           case 'arrowleft': await moveRightAndRedraw(thing, false, OPTION); break;
           case 'tab':
-            await thing.addSiblingAndRedraw(); // Title also makes this call
+            thing.addSiblingAndRedraw(); // Title also makes this call
             toggledReload = !toggledReload;
             break;
           case 'delete':

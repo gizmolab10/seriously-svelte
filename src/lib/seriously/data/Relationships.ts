@@ -12,21 +12,20 @@ class Relationships {
 
   constructor() {}
 
-  thingsFor(id: string, matchingTo: boolean): Array<Thing> {
-    const matches = this.relationshipsMatchingKind(RelationshipKind.parent, matchingTo, id);
-    const ids: Array<string> = [];
-    if (Array.isArray(matches)) {
-      for (const relationship of matches) {
-        ids.push(matchingTo ? relationship.from : relationship.to);
-      }
-    }
-    const array = things.thingsFor(ids);
-    if (Array.isArray(array)) {
-      array.sort((a: Thing, b: Thing) => {
-        return a.order - b.order
-      })
-    }
-    return array;
+  createRelationship(kind: RelationshipKind, from: string, to: string): Relationship {
+    const relationship = new Relationship(createCloudID(), kind, from, to);
+    this.remember(relationship);
+    return relationship;
+  }
+  
+  remember(relationship: Relationship) {
+    this.all.push(relationship);
+    const froms = this.allByFromID[relationship.from] ?? [];
+    froms.push(relationship);
+    this.allByFromID[relationship.from] = froms;
+    const tos = this.allByToID[relationship.to] ?? [];
+    tos.push(relationship);
+    this.allByToID[relationship.to] = tos;
   }
 
   relationshipsMatchingKind(kind: RelationshipKind, to: boolean, id: string): Array<Relationship> {
@@ -42,15 +41,22 @@ class Relationships {
     }
     return array;
   }
-  
-  remember(relationship: Relationship) {
-    this.all.push(relationship);
-    const froms = this.allByFromID[relationship.from] ?? [];
-    froms.push(relationship);
-    this.allByFromID[relationship.from] = froms;
-    const tos = this.allByToID[relationship.to] ?? [];
-    tos.push(relationship);
-    this.allByToID[relationship.to] = tos;
+
+  thingsForID(id: string, matchingTo: boolean, kind: RelationshipKind): Array<Thing> {
+    const matches = this.relationshipsMatchingKind(kind, matchingTo, id);
+    const ids: Array<string> = [];
+    if (Array.isArray(matches)) {
+      for (const relationship of matches) {
+        ids.push(matchingTo ? relationship.from : relationship.to);
+      }
+    }
+    const array = things.thingsForIDs(ids);
+    if (Array.isArray(array)) {
+      array.sort((a: Thing, b: Thing) => {
+        return a.order - b.order
+      })
+    }
+    return array;
   }
 
   ///////////////////////////
@@ -95,20 +101,13 @@ class Relationships {
     }
   }
 
-  async createUniqueRelationshipInCloud(kind: RelationshipKind, from: string, to: string): Relationship {
-    const array = this.allByFromID[from];
-    if (array == null) {
-      const relationship = new Relationship(createCloudID(), kind, from, to);
-      this.remember(relationship);
-      try {
-        const fields = await table.create(relationship.fields);
-        relationship.id = fields['id']; // need for update, delete and relationshipsByFromID
-      } catch (error) {
-        alert(this.errorMessage + error);
-      }
-      return relationship;
+  async createRelationshipInCloud(relationship: Relationship) {
+    try {
+      const fields = await table.create(relationship.fields);
+      relationship.id = fields['id'];
+    } catch (error) {
+      alert(this.errorMessage + error);
     }
-    return array[0];
   }
 
   async deleteRelationshipsFromCloudFor(thing: Thing) {

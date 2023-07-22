@@ -6,7 +6,7 @@
   $: {
     if ($grabbedIDs.length > 0) {
       const id = $grabbedIDs[0];
-      let thing = things.thingFor(id);
+      let thing = things.thingForID(id);
       ancestors = [];
       while (thing != null) {
         ancestors.push(thing);

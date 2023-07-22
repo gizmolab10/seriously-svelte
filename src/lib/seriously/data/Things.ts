@@ -13,11 +13,11 @@ export default class Things {
     hereID.set(seriouslyGlobals.rootID);
   }
 
-  thingFor(id: string | null): Thing | null {
+  thingForID(id: string | null): Thing | null {
     return (id == null || this.root == null) ? null : this.thingsByID[id];
   }
 
-  thingsFor(ids: Array<string>): Array<Thing> {
+  thingsForIDs(ids: Array<string>): Array<Thing> {
     const array = Array<Thing>();
     for (const id of ids) {
       const thing = this.thingsByID[id];
@@ -49,7 +49,7 @@ export default class Things {
 
       for (const id in this.thingsByID) {
         if (id != rootID) {
-          relationships.createUniqueRelationshipInCloud(RelationshipKind.parent, id, rootID);
+          relationships.createAndSaveUniqueRelationshipInCloud(RelationshipKind.parent, id, rootID);
         }
       }
 

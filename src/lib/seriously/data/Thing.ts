@@ -43,13 +43,18 @@ export default class Thing {
   get hoverAttributes(): string { return this.borderAttribute + this.revealColor(true); }
   get borderAttribute(): string { return (this.isEditing ? 'dashed' : 'solid') + ' 1px '; }
   get siblings(): Array<Thing> { return this.firstParent?.children ?? []; }
-  get children(): Array<Thing> { return relationships.thingsFor(this.id, true); }
-  get parents(): Array<Thing> { return relationships.thingsFor(this.id, false); }
+  get children(): Array<Thing> { return relationships.thingsForID(this.id, true, RelationshipKind.parent); }
+  get parents(): Array<Thing> { return relationships.thingsForID(this.id, false, RelationshipKind.parent); }
   get firstParent(): Thing { return this.parents[0]; }
   get firstChild(): Thing { return this.children[0]; }
   get canExpand(): boolean { return this.children.length > 0; }
 
   grabOnly = () => { grabbedIDs.set([this.id]); }
+
+  revealColor = (isReveal: boolean): string => {
+    const flag = this.isGrabbed || this.isEditing;
+    return (flag != isReveal) ? this.color : seriouslyGlobals.backgroundColor;
+  }
 
   toggleGrab() {
     grabbedIDs.update(array => {
@@ -61,11 +66,6 @@ export default class Thing {
       }
       return array;
     });
-  }
-
-  revealColor = (isReveal: boolean): string => {
-    const flag = this.isGrabbed || this.isEditing;
-    return (flag != isReveal) ? this.color : seriouslyGlobals.backgroundColor;
   }
   
   traverse = (applyTo : (thing: Thing) => boolean) : Thing | null => {
@@ -79,14 +79,15 @@ export default class Thing {
     return this;
   }
 
-  addSiblingAndRedraw = async () => {
+  addSiblingAndRedraw = () => {
     const parentID = this.firstParent?.id ?? seriouslyGlobals.rootID;
     const sibling = new Thing(createCloudID(), seriouslyGlobals.defaultTitle, 'blue', 't', 1.0);
     sibling.grabOnly();
-    await relationships.createUniqueRelationshipInCloud(RelationshipKind.parent, sibling.id, parentID);
+    const relationship = relationships.createRelationship(RelationshipKind.parent, sibling.id, parentID);
     signal([SignalKinds.widget], null);
     editingID.set(sibling.id);
-    await things.createThingInCloud(sibling);
+    relationships.createRelationshipInCloud(relationship);
+    things.createThingInCloud(sibling);
   }
 
   nextSibling = (increment: boolean): Thing => {

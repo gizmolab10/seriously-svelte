@@ -10,10 +10,10 @@
   function isDirty() { return originalTitle != thing.title; }
   function makeClean() { originalTitle = thing.title; }
   
-  async function handleKeyDown(event) {
+  function handleKeyDown(event) {
     if ($editingID == thing.id) {
       switch (event.key) {
-        case 'Tab': stopEditing(true); break; await thing.addSiblingAndRedraw(); break;
+        case 'Tab': stopEditing(true); break; thing.addSiblingAndRedraw(); break;
         case 'Enter': stopEditing(true);
       }
     }
