@@ -100,27 +100,37 @@ export default class Thing {
   moveRightAndRedraw = (right: boolean, relocate: boolean) => {
     const grandparentID = this.firstParent?.firstParent?.id ?? null;
     if (relocate) {
-      const id = right? this.nextSibling(false).id : grandparentID;
-      const matches = relationships.relationshipsMatchingKind(RelationshipKind.parent, false, this.id);
-      const newParent = things.thingForID(id);
-      this.isDirty = true;
-      if (newParent != null) {
-        newParent.isDirty = true;
-      }
-      for (let index = 0; index < matches.length; index++) {
-        const relationship = matches[index];
-        relationship.to = id;
-        relationship.isDirty = true;
-      };
-    } else if (right) {
-      this.firstChild.grabOnly();
-      hereID.set(this.id);
-    } else if (grandparentID != null) {
-      this.firstParent.grabOnly();
-      signal([SignalKinds.widget], null); // signal BEFORE setting hereID to avoid blink
-      hereID.set(grandparentID);
+      this.relocateRight(right, grandparentID);
+    } else {
+      this.browseRight(right, grandparentID);
     }
+    // alert('HORIZONTAL => RELAYOUT');
     signal([SignalKinds.relayout], null);
+  }
+
+  browseRight = (right: boolean, grandparentID: string) => {
+    const grabID = right ? this.firstChild : this.firstParent;
+    const hereID = right ? this.id : grandparentID;
+    grabID.grabOnly();
+    signal([SignalKinds.widget], null); // signal BEFORE setting hereID to avoid blink
+    hereID.set(hereID);
+  }
+
+  relocateRight = (right: boolean, grandparentID: string) => {
+    const id = right ? this.nextSibling(false).id : grandparentID;
+    const matches = relationships.relationshipsMatchingKind(RelationshipKind.parent, false, this.id);
+    const newParent = things.thingForID(id);
+    this.isDirty = true;
+    for (let index = 0; index < matches.length; index++) {
+      const relationship = matches[index];
+      relationship.to = id;
+      relationship.isDirty = true;
+    }
+    if (newParent != null) {
+      newParent.isDirty = true;
+      signal([SignalKinds.widget], null); // signal BEFORE setting hereID to avoid blink
+      hereID.set(id);
+    }
   }
 
   moveUpAndRedraw = (up: boolean, relocate: boolean) => {

@@ -68,7 +68,7 @@ class Relationships {
       const records = await table.select().all()
 
       for (const record of records) {
-        const id = record.fields.id as string;
+        const id = record.id as string;
         const to = record.fields.to as string;
         const from = record.fields.from as string;
         const kind = record.fields.kind as RelationshipKind;
@@ -80,7 +80,7 @@ class Relationships {
     }
   }
 
-  async updateDirtyRelationshipsToCloud() {
+  async updateAllDirtyRelationshipsToCloud() {
     this.all.forEach((relationship) => {
       if (relationship.isDirty) {
         try {

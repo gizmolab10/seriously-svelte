@@ -7,19 +7,17 @@
   function here() { return things.thingForID($hereID) }
   let toggledReload = false;
   let isLoading = true;
-  let hasGrab = false;
   let listener;
-
-  $: { hasGrab = ($grabbedIDs != null && $grabbedIDs.length > 0) }
 
 	handleSignal.connect((kinds, value) => {
 		if (kinds.includes(SignalKinds.relayout)) {
+      // alert('HERE: ' + here()?.title);
       toggledReload = !toggledReload;
     }
   })
 
   async function handleKeyDown(event) {
-    if (event.type == 'keydown', hasGrab) {
+    if (event.type == 'keydown', ($grabbedIDs?.length ?? 0) > 0) {
       const id = $grabbedIDs[0];
       const thing = things.thingForID(id);
       const key = event.key.toLowerCase();
@@ -34,10 +32,10 @@
           case ' ': alert('CHILD'); break;
           case 'd': alert('DUPLICATE'); break;
           case 'enter': editingID.set(id); break;
-          case 'arrowup': await moveUpRedrawAndSaveToClouid(thing, true, OPTION); break;
-          case 'arrowdown': await moveUpRedrawAndSaveToClouid(thing, false, OPTION); break;
-          case 'arrowright': await moveRightRedrawAndSaveToClouid(thing, true, OPTION); break;
-          case 'arrowleft': await moveRightRedrawAndSaveToClouid(thing, false, OPTION); break;
+          case 'arrowup': moveUpRedrawAndSaveToClouid(thing, true, OPTION); break;
+          case 'arrowdown': moveUpRedrawAndSaveToClouid(thing, false, OPTION); break;
+          case 'arrowright': moveRightRedrawAndSaveToClouid(thing, true, OPTION); break;
+          case 'arrowleft': moveRightRedrawAndSaveToClouid(thing, false, OPTION); break;
           case 'tab':
             thing.addSiblingAndRedraw(); // Title also makes this call
             toggledReload = !toggledReload;
@@ -65,19 +63,19 @@
     }
   }
 
-  async function moveRightRedrawAndSaveToClouid(thing, right, relocate) {
+  function moveRightRedrawAndSaveToClouid (thing, right, relocate) {
     thing.moveRightAndRedraw(right, relocate);
-    await relationships.updateDirtyRelationshipsToCloud()
-    things.updateDirtyThingsInCloud();
+    // alert(thing.title + ' parent: ', + thing.firstParent.title ?? ' whoceyortatty?');
+    toggledReload = !toggledReload;
+    relationships.updateAllDirtyRelationshipsToCloud();
+    things.updateAllDirtyThingsInCloud();
   }
 
-  async function moveUpRedrawAndSaveToClouid(thing, up, relocate) {
-    if (hasGrab) {
-      thing.moveUpAndRedraw(up, relocate);
-      if (relocate) {
-        toggledReload = !toggledReload;
-        await things.updateDirtyThingsInCloud();
-      }
+  function moveUpRedrawAndSaveToClouid(thing, up, relocate) {
+    thing.moveUpAndRedraw(up, relocate);
+    if (relocate) {
+      toggledReload = !toggledReload;
+      things.updateAllDirtyThingsInCloud();
     }
   }
 

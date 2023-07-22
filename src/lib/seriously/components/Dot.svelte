@@ -11,7 +11,7 @@
         reassignOrdersOf(thing.children);
         thing.firstChild?.grabOnly();
         $hereID = thing.id;
-        await things.updateDirtyThingsInCloud();
+        await things.updateAllDirtyThingsInCloud();
       }
     } else if (event.shiftKey) {
       thing.toggleGrab();
@@ -21,7 +21,7 @@
       thing.grabOnly();
     }
 
-    signal([SignalKinds.widget], thing.id);
+    signal([SignalKinds.widget, SignalKinds.relayout], thing.id);
   }
 
 	handleSignal.connect((kinds, value) => {

@@ -53,10 +53,10 @@ export default class Things {
         }
       }
 
-      reassignOrdersOf(this.root.children); // makes some things dirty
+      // reassignOrdersOf(this.root.children); // makes some things dirty
       hereID.set(rootID);
       signal([SignalKinds.relayout], null);
-      this.updateAllDirtyThingsInCloud(); // do not await this statement, it takes forever !!!
+      // this.updateAllDirtyThingsInCloud(); // do not await this statement, it takes forever !!!
     } catch (error) {
       console.log(this.errorMessage + ' (readAllThingsFromCloud) ' + error);
     }
