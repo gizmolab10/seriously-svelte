@@ -145,8 +145,8 @@ export default class Thing {
       }
       relationships.refreshLookups();
       this.grabOnly();
-      parent.focus();
       signal([SignalKinds.widget], null); // signal BEFORE setting hereID to avoid blink
+      parent.focus();
     }
   }
 

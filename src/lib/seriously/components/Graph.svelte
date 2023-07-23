@@ -24,16 +24,12 @@
       const key = event.key.toLowerCase();
       const OPTION = event.altKey;
       if ($editingID != null) {
-        switch (key) {
-          case ' ':
-          case 'd':
-          case 'Tab':
-          case 'Enter': return;     // destroy event, Title will handle it
-        }
+        if ([' ', 'd', 'tab', 'enter'].includes(key)) { return; }
       } else {
         switch (key) {
           case ' ': alert('CHILD'); break;
           case 'd': alert('DUPLICATE'); break;
+          case 't': alert('PARENT-CHILD SWAP'); break;
           case 'enter': editingID.set(id); break;
           case 'arrowup': moveUpRedrawAndSaveToClouid(thing, true, OPTION); break;
           case 'arrowdown': moveUpRedrawAndSaveToClouid(thing, false, OPTION); break;
