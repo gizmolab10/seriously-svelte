@@ -49,6 +49,15 @@ export default class Thing {
   get firstChild():       Thing { return this.children[0]; }
   get firstParent():      Thing { return this.parents[0]; }
 
+  get ellipsisTitle(): string {
+    let title = this.title;
+    let length = title.length;
+    if (length > 15) {
+      title = title.slice(0, 6) + '...' + title.slice(length - 6, length);
+    }
+    return title;
+  }
+
   hasRelationships = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
   grabOnly = () => { grabbedIDs.set([this.id]); }
   focus = () => { hereID.set(this.id); }

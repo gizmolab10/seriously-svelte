@@ -1,36 +1,36 @@
 <script lang='ts'>
-  import { Thing, grabbedIDs, signal, SignalKinds, seriouslyGlobals } from '../common/GlobalImports';
+  import { Thing, things, grabbedIDs, signal, SignalKinds, seriouslyGlobals } from '../common/GlobalImports';
   export let thing = Thing;
 
   function handleClick(event) {
     if (thing.id == seriouslyGlobals.rootID) {
+      grabChild();
       thing.focus();
-      goodGrabInThing(thing);
     } else {
       thing.grabOnly();
       thing.firstParent.focus();
     }
-    signal([SignalKinds.relayout], null);
+    signal([SignalKinds.relayout, SignalKinds.widget], null);
   }
 
-  function goodGrabInThing(parent) {
+  function grabChild() {
     const ids = $grabbedIDs;
-    if (ids != null && ids.length > 0) {
-      const id = ids[0];
-      const grab = things.thingForID(id);
-      if (grab.firstParent == parent) {
+    for ( const grab of things.thingsForIDs(ids)) {
+      if (grab.firstParent.firstParent == thing) {
+        grab.firstParent.grabOnly();
         return;
       }
     }
-    parent.firstChild.grabOnly();
+    thing.firstChild.grabOnly();
   }
 
 </script>
 
-<button on:click={handleClick}>{thing.title}</button>
+<button
+  style='border: 1px solid; border-color: {thing.color}; color: {thing.color}; border-radius: 0.5em'
+  on:click={handleClick}>
+  {thing.ellipsisTitle}
+</button>
 
 <style>
-  button {
-    border-color: 'blue';
-  }
 </style>
