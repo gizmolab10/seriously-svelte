@@ -17,6 +17,20 @@ class Relationships {
     this.remember(relationship);
     return relationship;
   }
+
+  clearLookups() {
+    this.all = [];
+    this.allByToID = {};
+    this.allByFromID = {};
+  }
+
+  refreshLookups() {
+    const saved = this.all;
+    this.clearLookups();
+    for (const relationship of saved) {
+      this.remember(relationship);
+    }
+  }
   
   remember(relationship: Relationship) {
     this.all.push(relationship);
@@ -58,6 +72,7 @@ class Relationships {
   ///////////////////////////
 
   async readAllRelationshipsFromCloud() {
+    this.clearLookups();
     try {
       const records = await table.select().all()
 

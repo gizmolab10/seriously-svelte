@@ -25,8 +25,10 @@
       const OPTION = event.altKey;
       if ($editingID != null) {
         switch (key) {
-          case 'Enter':
-          case 'Tab': event.preventDefault();     // destroy event, Title will handle it
+          case ' ':
+          case 'd':
+          case 'Tab':
+          case 'Enter': return;     // destroy event, Title will handle it
         }
       } else {
         switch (key) {

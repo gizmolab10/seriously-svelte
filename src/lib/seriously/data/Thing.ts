@@ -129,7 +129,6 @@ export default class Thing {
     } else {
       this.browseRight(right, grandparent);
     }
-    // alert('HORIZONTAL => RELAYOUT');
     signal([SignalKinds.relayout], null);
   }
 
@@ -144,19 +143,19 @@ export default class Thing {
         relationship.to = parent.id;
         relationship.isDirty = true;
       }
-      // parent
+      relationships.refreshLookups();
       this.grabOnly();
-      signal([SignalKinds.widget], null); // signal BEFORE setting hereID to avoid blink
       parent.focus();
+      signal([SignalKinds.widget], null); // signal BEFORE setting hereID to avoid blink
     }
   }
 
   browseRight = (right: boolean, grandparent: Thing) => {
     const grab = right ? this.firstChild : this.firstParent;
-    const focus = right ? this : grandparent;
+    const here = right ? this : grandparent;
     grab.grabOnly();
     signal([SignalKinds.widget], null); // signal BEFORE setting hereID to avoid blink
-    focus.focus();
+    here.focus();
   }
 
   nextSibling = (increment: boolean): Thing => {
