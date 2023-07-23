@@ -10,7 +10,7 @@
       if (thing.canExpand) {
         reassignOrdersOf(thing.children);
         thing.firstChild?.grabOnly();
-        $hereID = thing.id;
+        thing.focus();
         await things.updateAllDirtyThingsInCloud();
       }
     } else if (event.shiftKey) {
