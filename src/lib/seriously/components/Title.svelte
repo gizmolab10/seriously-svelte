@@ -49,6 +49,7 @@
         $editingID = null;
       }, 20);
     }
+    signal([SignalKinds.crumbs], null);
   }
 
   function handleFocus(event) {

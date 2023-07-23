@@ -25,6 +25,11 @@ export default class Things {
         array.push(thing);
       }
     }
+    if (Array.isArray(array)) {
+      array.sort((a: Thing, b: Thing) => {
+        return a.order - b.order
+      })
+    }
     return array
   }
 
@@ -54,7 +59,8 @@ export default class Things {
       }
 
       // reassignOrdersOf(this.root.children); // makes some things dirty
-      hereID.set(rootID);
+      this.root.focus()
+      this.root.grabOnly()
       signal([SignalKinds.relayout], null);
       // this.updateAllDirtyThingsInCloud(); // do not await this statement, it takes forever !!!
     } catch (error) {

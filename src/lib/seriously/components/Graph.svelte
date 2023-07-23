@@ -4,14 +4,15 @@
   import { Thing, things, relationships, grabbedIDs, editingID, hereID, reassignOrdersOf, onMount, onDestroy, signal, handleSignal, SignalKinds } from '../common/GlobalImports';
   import Children from './Children.svelte';
   import Crumbs from './Crumbs.svelte';
-  function here() { return things.thingForID($hereID) }
   let toggledReload = false;
+  let here = things.root;
   let isLoading = true;
   let listener;
 
 	handleSignal.connect((kinds, value) => {
 		if (kinds.includes(SignalKinds.relayout)) {
-      // alert('HERE: ' + here()?.title);
+      here = things.thingForID($hereID);
+      // alert('HERE: ' + here?.title);
       toggledReload = !toggledReload;
     }
   })
@@ -42,8 +43,8 @@
             break;
           case 'delete':
           case 'backspace':
-            if (thing != null && !thing.isEditing && here() != null) {
-              const all = here()?.children;
+            if (thing != null && !thing.isEditing && here != null) {
+              const all = here?.children;
               let index = all.indexOf(thing);
               all.splice(index, 1);
               if (index >= all.length) {
@@ -101,11 +102,11 @@
 {#key toggledReload}
   {#if isLoading}
     <p>Loading...</p>
-  {:else if (here() == null || here()?.children.length == 0)}
-    <p>Nothing is available ({here()}).</p>
+  {:else if (here == null || !here.hasChildren)}
+    <p>Nothing is available ({here?.title}).</p>
   {:else}
     <Crumbs/>
-    <Children parent={here()}/>
+    <Children parent={here}/>
   {/if}
 {/key}
 

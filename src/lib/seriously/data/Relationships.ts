@@ -50,13 +50,7 @@ class Relationships {
         ids.push(matchingTo ? relationship.from : relationship.to);
       }
     }
-    const array = things.thingsForIDs(ids);
-    if (Array.isArray(array)) {
-      array.sort((a: Thing, b: Thing) => {
-        return a.order - b.order
-      })
-    }
-    return array;
+    return things.thingsForIDs(ids);
   }
 
   ///////////////////////////

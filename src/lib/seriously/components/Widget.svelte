@@ -23,7 +23,7 @@
 				border: var(--grabAttributes)'>
 	<Dot thing={thing}/>
 	<Title thing={thing}/>
-	{#if thing.canExpand}
+	{#if thing.hasChildren}
 		<Dot thing={thing} isReveal={true}/>
 	{/if}
 </span>

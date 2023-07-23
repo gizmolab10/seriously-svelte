@@ -7,7 +7,7 @@
 
   async function handleClick(event) {
     if (isReveal) {
-      if (thing.canExpand) {
+      if (thing.hasChildren) {
         reassignOrdersOf(thing.children);
         thing.firstChild?.grabOnly();
         thing.focus();

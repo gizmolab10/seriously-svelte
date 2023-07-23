@@ -45,22 +45,23 @@ export default class Thing {
   get children():  Array<Thing> { return relationships.thingsForID(this.id, true, RelationshipKind.parent); }
   get parents():   Array<Thing> { return relationships.thingsForID(this.id, false, RelationshipKind.parent); }
   get siblings():  Array<Thing> { return this.firstParent?.children ?? []; }
-  get canExpand():      boolean { return this.hasRelationships(false); }
+  get hasChildren():      boolean { return this.hasRelationships(false); }
   get firstChild():       Thing { return this.children[0]; }
   get firstParent():      Thing { return this.parents[0]; }
 
   get ellipsisTitle(): string {
     let title = this.title;
-    let length = title.length;
-    if (length > 15) {
-      title = title.slice(0, 6) + '...' + title.slice(length - 6, length);
+    const length = title.length;
+    const segment = 7;
+    if (length > segment * 2 + 3) {
+      title = title.slice(0, segment) + ' ... ' + title.slice(length - segment, length);
     }
     return title;
   }
 
   hasRelationships = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
   grabOnly = () => { grabbedIDs.set([this.id]); }
-  focus = () => { hereID.set(this.id); }
+  focus = () => { if (this.hasChildren) { hereID.set(this.id) }; }
 
   revealColor = (isReveal: boolean): string => {
     const flag = this.isGrabbed || this.isEditing;
@@ -95,53 +96,11 @@ export default class Thing {
     const sibling = new Thing(createCloudID(), seriouslyGlobals.defaultTitle, 'blue', 't', 1.0);
     sibling.grabOnly();
     const relationship = relationships.createRelationship(RelationshipKind.parent, sibling.id, parentID);
-    signal([SignalKinds.widget], null);
+    signal([SignalKinds.relayout, SignalKinds.widget], null);
+    alert(sibling.firstParent.title);
     editingID.set(sibling.id);
     relationships.createRelationshipInCloud(relationship);
     things.createThingInCloud(sibling);
-  }
-
-  nextSibling = (increment: boolean): Thing => {
-    const array = this.siblings;
-    const index = array.indexOf(this);
-    const siblingIndex = index.increment(increment, array.length)
-    return array[siblingIndex];
-  }
-
-  moveRightAndRedraw = (right: boolean, relocate: boolean) => {
-    const grandparentID = this.firstParent?.firstParent?.id ?? null;
-    if (relocate) {
-      this.relocateRight(right, grandparentID);
-    } else {
-      this.browseRight(right, grandparentID);
-    }
-    // alert('HORIZONTAL => RELAYOUT');
-    signal([SignalKinds.relayout], null);
-  }
-
-  browseRight = (right: boolean, grandparentID: string) => {
-    const grabID = right ? this.firstChild : this.firstParent;
-    const focusID = right ? this.id : grandparentID;
-    grabID.grabOnly();
-    signal([SignalKinds.widget], null); // signal BEFORE setting hereID to avoid blink
-    hereID.set(focusID);
-  }
-
-  relocateRight = (right: boolean, grandparentID: string) => {
-    const id = right ? this.nextSibling(false).id : grandparentID;
-    const matches = relationships.relationshipsMatchingKind(RelationshipKind.parent, false, this.id);
-    const newParent = things.thingForID(id);
-    this.isDirty = true;
-    for (let index = 0; index < matches.length; index++) {
-      const relationship = matches[index];
-      relationship.to = id;
-      relationship.isDirty = true;
-    }
-    if (newParent != null) {
-      newParent.isDirty = true;
-      signal([SignalKinds.widget], null); // signal BEFORE setting hereID to avoid blink
-      hereID.set(id);
-    }
   }
 
   moveUpAndRedraw = (up: boolean, relocate: boolean) => {
@@ -161,6 +120,53 @@ export default class Thing {
         }
       }
     }
+  }
+
+  moveRightAndRedraw = (right: boolean, relocate: boolean) => {
+    const grandparent = this.firstParent?.firstParent ?? things.root;
+    if (relocate) {
+      this.relocateRight(right, grandparent);
+    } else {
+      this.browseRight(right, grandparent);
+    }
+    // alert('HORIZONTAL => RELAYOUT');
+    signal([SignalKinds.relayout], null);
+  }
+
+  relocateRight = (right: boolean, grandparent: Thing) => {
+    const parent = right ? this.nextSibling(false) : grandparent;
+    if (parent != null) {
+      this.isDirty = true;
+      parent.isDirty = true;
+      const matches = relationships.relationshipsMatchingKind(RelationshipKind.parent, false, this.id);
+      for (let index = 0; index < matches.length; index++) {
+        const relationship = matches[index];
+        relationship.to = parent.id;
+        relationship.isDirty = true;
+      }
+      // parent
+      this.grabOnly();
+      signal([SignalKinds.widget], null); // signal BEFORE setting hereID to avoid blink
+      parent.focus();
+    }
+  }
+
+  browseRight = (right: boolean, grandparent: Thing) => {
+    const grab = right ? this.firstChild : this.firstParent;
+    const focus = right ? this : grandparent;
+    grab.grabOnly();
+    signal([SignalKinds.widget], null); // signal BEFORE setting hereID to avoid blink
+    focus.focus();
+  }
+
+  nextSibling = (increment: boolean): Thing => {
+    const array = this.siblings;
+    const index = array.indexOf(this);
+    let siblingIndex = index.increment(increment, array.length)
+    if (index == 0) {
+      siblingIndex = 1;
+    }
+    return array[siblingIndex];
   }
 
 }
