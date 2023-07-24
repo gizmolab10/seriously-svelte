@@ -13,7 +13,7 @@
   function handleKeyDown(event) {
     if ($editingID == thing.id) {
       switch (event.key) {
-        case 'Tab': stopEditing(true); break; thing.addSiblingAndRedraw(); break;
+        case 'Tab': stopEditing(true); thing.addSiblingAsDuplicateAndRedraw(); break;
         case 'Enter': stopEditing(true);
       }
     }

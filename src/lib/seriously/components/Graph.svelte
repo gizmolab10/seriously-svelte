@@ -23,20 +23,21 @@
       const thing = things.thingForID(id);
       const key = event.key.toLowerCase();
       const OPTION = event.altKey;
+      const SHIFT = event.shiftKey;
       if ($editingID != null) {
         if ([' ', 'd', 'tab', 'enter'].includes(key)) { return; }
       } else {
         switch (key) {
           case ' ': alert('CHILD'); break;
-          case 'd': alert('DUPLICATE'); break;
+          case 'd': thing.addSiblingAsDuplicateAndRedraw(true); break;
           case 't': alert('PARENT-CHILD SWAP'); break;
-          case 'enter': editingID.set(id); break;
-          case 'arrowup': moveUpRedrawAndSaveToClouid(thing, true, OPTION); break;
-          case 'arrowdown': moveUpRedrawAndSaveToClouid(thing, false, OPTION); break;
+          case 'enter': thing.edit(); break;
+          case 'arrowup': moveUpRedrawAndSaveToClouid(true, SHIFT, OPTION); break;
+          case 'arrowdown': moveUpRedrawAndSaveToClouid(false, SHIFT, OPTION); break;
           case 'arrowright': moveRightRedrawAndSaveToClouid(thing, true, OPTION); break;
           case 'arrowleft': moveRightRedrawAndSaveToClouid(thing, false, OPTION); break;
           case 'tab':
-            thing.addSiblingAndRedraw(); // Title also makes this call
+            thing.addSiblingAsDuplicateAndRedraw(); // Title also makes this call
             toggledReload = !toggledReload;
             break;
           case 'delete':
@@ -70,8 +71,20 @@
     things.updateAllDirtyThingsInCloud();
   }
 
-  function moveUpRedrawAndSaveToClouid(thing, up, relocate) {
-    thing.moveUpAndRedraw(up, relocate);
+  function highestGrab(up) {
+    const ids = $grabbedIDs;
+    let grabs = things.thingsForIDs(ids);
+    grabs.sort((a, b) => { return a.order - b.order; });
+    if (up) {
+      return grabs[0];
+    } else {
+      return grabs[grabs.length - 1];
+    }
+  }
+
+  function moveUpRedrawAndSaveToClouid(up, expand, relocate) {
+    const thing = highestGrab(up);
+    thing.moveUpAndRedraw(up, expand, relocate);
     if (relocate) {
       toggledReload = !toggledReload;
       things.updateAllDirtyThingsInCloud();

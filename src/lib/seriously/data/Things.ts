@@ -26,9 +26,7 @@ export default class Things {
       }
     }
     if (Array.isArray(array)) {
-      array.sort((a: Thing, b: Thing) => {
-        return a.order - b.order
-      })
+      array.sort((a: Thing, b: Thing) => { return a.order - b.order })
     }
     return array
   }

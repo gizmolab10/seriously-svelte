@@ -62,6 +62,7 @@ export default class Thing {
   hasRelationships = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
   grabOnly = () => { grabbedIDs.set([this.id]); }
   focus = () => { if (this.hasChildren) { hereID.set(this.id) }; }
+  edit = () => { editingID.set(this.id); }
 
   revealColor = (isReveal: boolean): string => {
     const flag = this.isGrabbed || this.isEditing;
@@ -91,19 +92,31 @@ export default class Thing {
     return this;
   }
 
-  addSiblingAndRedraw = () => {
-    const parentID = this.firstParent?.id ?? seriouslyGlobals.rootID;
-    const sibling = new Thing(createCloudID(), seriouslyGlobals.defaultTitle, 'blue', 't', 1.0);
-    sibling.grabOnly();
-    const relationship = relationships.createRelationship(RelationshipKind.parent, sibling.id, parentID);
-    signal([SignalKinds.relayout, SignalKinds.widget], null);
-    alert(sibling.firstParent.title);
-    editingID.set(sibling.id);
-    relationships.createRelationshipInCloud(relationship);
-    things.createThingInCloud(sibling);
+  copyFrom = (other: Thing) => {
+    this.title = other.title;
+    this.color = other.color;
+    this.trait = other.trait;
+    this.order = other.order;
   }
 
-  moveUpAndRedraw = (up: boolean, relocate: boolean) => {
+  addSiblingAsDuplicateAndRedraw = (asDuplicate = false) => {
+    const parentID = this.firstParent?.id ?? seriouslyGlobals.rootID;
+    const sibling = new Thing(createCloudID(), seriouslyGlobals.defaultTitle, 'blue', 't', 1.0);
+    const relationship = relationships.createRelationship(RelationshipKind.parent, sibling.id, parentID);
+    if (asDuplicate) {
+      sibling.copyFrom(this);
+    }
+    sibling.order = this.order + 0.5;
+    reassignOrdersOf(this.siblings);
+    sibling.grabOnly();
+    signal([SignalKinds.relayout, SignalKinds.widget], null);
+    sibling.edit();
+    things.createThingInCloud(sibling);
+    things.updateAllDirtyThingsInCloud();
+    relationships.createRelationshipInCloud(relationship);
+  }
+
+  moveUpAndRedraw = (up: boolean, expand: boolean, relocate: boolean) => {
     const siblings = this.siblings;
     if (siblings != null) {
       const index = siblings.indexOf(this);
@@ -115,7 +128,11 @@ export default class Thing {
           reassignOrdersOf(siblings);
           signal([SignalKinds.widget], null);
         } else {
-          newGrab.grabOnly();
+          if (expand) {
+            newGrab.toggleGrab()
+          } else {
+            newGrab.grabOnly();
+          }
           signal([SignalKinds.widget], null);
         }
       }
