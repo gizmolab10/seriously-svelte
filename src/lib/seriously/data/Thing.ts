@@ -60,13 +60,22 @@ export default class Thing {
   }
 
   hasRelationships = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
-  grabOnly = () => { grabbedIDs.set([this.id]); }
+  createNewThing = () => { return new Thing(createCloudID(), seriouslyGlobals.defaultTitle, 'blue', 't', 1.0); }
+  addChildAndRedraw = () => { this.addAndSaveChildAndRedraw(this.createNewThing()); }
   focus = () => { if (this.hasChildren) { hereID.set(this.id) }; }
+  grabOnly = () => { grabbedIDs.set([this.id]); }
   edit = () => { editingID.set(this.id); }
 
   revealColor = (isReveal: boolean): string => {
     const flag = this.isGrabbed || this.isEditing;
     return (flag != isReveal) ? this.color : seriouslyGlobals.backgroundColor;
+  }
+
+  copyFrom = (other: Thing) => {
+    this.title = other.title;
+    this.color = other.color;
+    this.trait = other.trait;
+    this.order = other.order;
   }
 
   toggleGrab() {
@@ -92,28 +101,22 @@ export default class Thing {
     return this;
   }
 
-  copyFrom = (other: Thing) => {
-    this.title = other.title;
-    this.color = other.color;
-    this.trait = other.trait;
-    this.order = other.order;
+  duplicateAndRedraw = async () => {
+    const sibling = this.createNewThing();
+    const parent = this.firstParent ?? things.root;
+    sibling.order = this.order + 0.5;
+    sibling.copyFrom(this);
+    parent.addAndSaveChildAndRedraw(sibling)
   }
 
-  addSiblingAsDuplicateAndRedraw = (asDuplicate = false) => {
-    const parentID = this.firstParent?.id ?? seriouslyGlobals.rootID;
-    const sibling = new Thing(createCloudID(), seriouslyGlobals.defaultTitle, 'blue', 't', 1.0);
-    const relationship = relationships.createRelationship(RelationshipKind.parent, sibling.id, parentID);
-    if (asDuplicate) {
-      sibling.copyFrom(this);
-    }
-    sibling.order = this.order + 0.5;
+  addAndSaveChildAndRedraw = async (child: Thing) => {
+    await things.createThingInCloud(child); // need child's id for everything below
+    await relationships.createRelationshipAndSaveInCloud(RelationshipKind.parent, child.id, this.id);
+    child.grabOnly();
+    child.edit();
     reassignOrdersOf(this.siblings);
-    sibling.grabOnly();
-    signal([SignalKinds.relayout, SignalKinds.widget], null);
-    sibling.edit();
-    things.createThingInCloud(sibling);
+    signal([SignalKinds.widget, SignalKinds.crumbs], null);
     things.updateAllDirtyThingsInCloud();
-    relationships.createRelationshipInCloud(relationship);
   }
 
   moveUpAndRedraw = (up: boolean, expand: boolean, relocate: boolean) => {

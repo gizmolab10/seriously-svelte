@@ -9,11 +9,12 @@
   let isLoading = true;
   let listener;
 
+  function redraw() { toggledReload = !toggledReload; }
+
 	handleSignal.connect((kinds, value) => {
 		if (kinds.includes(SignalKinds.relayout)) {
       here = things.thingForID($hereID);
-      // alert('HERE: ' + here?.title);
-      toggledReload = !toggledReload;
+      redraw();
     }
   })
 
@@ -28,34 +29,38 @@
         if ([' ', 'd', 'tab', 'enter'].includes(key)) { return; }
       } else {
         switch (key) {
-          case ' ': alert('CHILD'); break;
-          case 'd': thing.addSiblingAsDuplicateAndRedraw(true); break;
+          case ' ': thing?.addChildAndRedraw(); redraw(); break;
+          case 'd': thing?.duplicateAndRedraw(true); redraw(); break;
           case 't': alert('PARENT-CHILD SWAP'); break;
-          case 'enter': thing.edit(); break;
+          case 'enter': thing?.edit(); break;
           case 'arrowup': moveUpRedrawAndSaveToClouid(true, SHIFT, OPTION); break;
           case 'arrowdown': moveUpRedrawAndSaveToClouid(false, SHIFT, OPTION); break;
           case 'arrowright': moveRightRedrawAndSaveToClouid(thing, true, OPTION); break;
           case 'arrowleft': moveRightRedrawAndSaveToClouid(thing, false, OPTION); break;
           case 'tab':
-            thing.addSiblingAsDuplicateAndRedraw(); // Title also makes this call
-            toggledReload = !toggledReload;
+            thing?.duplicateAndRedraw(); // Title also makes this call
+            redraw();
             break;
           case 'delete':
           case 'backspace':
-            if (thing != null && !thing.isEditing && here != null) {
-              const all = here?.children;
-              let index = all.indexOf(thing);
-              all.splice(index, 1);
-              if (index >= all.length) {
-                index = all.length - 1;
+            const ids = $grabbedIDs;
+            for (const id of ids) {
+              const grab = things.thingForID(id);
+              if (grab != null && !grab.isEditing && here != null) {
+                const all = here?.children;
+                let index = all.indexOf(grab);
+                all.splice(index, 1);
+                if (index >= all.length) {
+                  index = all.length - 1;
+                }
+                if (index >= 0) {
+                  all[index].grabOnly();
+                }              
+                signal([SignalKinds.widget], null);
+                redraw();
+                await things.deleteThingAndUpdateCloud(grab);
+                await relationships.deleteRelationshipsAndUpdateCloudFor(grab);
               }
-              if (index >= 0) {
-                all[index].grabOnly();
-              }              
-              signal([SignalKinds.widget], null);
-              toggledReload = !toggledReload;
-              await relationships.deleteRelationshipsFromCloudFor(thing);
-              await things.deleteThingFromCloud(thing);
             }
             break;
           }
@@ -66,7 +71,7 @@
   function moveRightRedrawAndSaveToClouid (thing, right, relocate) {
     thing.moveRightAndRedraw(right, relocate);
     // alert(thing.title + ' parent: ', + thing.firstParent.title ?? ' whoceyortatty?');
-    toggledReload = !toggledReload;
+    redraw();
     relationships.updateAllDirtyRelationshipsToCloud();
     things.updateAllDirtyThingsInCloud();
   }
@@ -86,7 +91,7 @@
     const thing = highestGrab(up);
     thing.moveUpAndRedraw(up, expand, relocate);
     if (relocate) {
-      toggledReload = !toggledReload;
+      redraw();
       things.updateAllDirtyThingsInCloud();
     }
   }

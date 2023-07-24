@@ -121,20 +121,23 @@ class Relationships {
 
   async createRelationshipAndSaveInCloud(kind: RelationshipKind, from: string, to: string) {
     if (this.relationshipsMatchingKind(kind, false, from).length == 0) {
-      this.createRelationshipInCloud(this.createRelationship(kind, from, to))
+      await this.createRelationshipInCloud(this.createRelationship(kind, from, to))
     }
   }
 
-  async deleteRelationshipsFromCloudFor(thing: Thing) {
+  async deleteRelationshipsAndUpdateCloudFor(thing: Thing) {
     const array = this.allByFromID[thing.id];
     if (array != null) {
       for (const relationship of array) {
         await this.deleteRelationshipFromCloud(relationship);
+        this.all = this.all.filter((item) => item.id !== relationship.id);
       }
+      this.refreshLookups();
     }
+
   }
 
-  async deleteRelationshipFromCloud(relationship: Relationship | null) {
+  private async deleteRelationshipFromCloud(relationship: Relationship | null) {
     if (relationship != null) {
       try {
         await table.destroy(relationship.id);

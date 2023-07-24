@@ -93,7 +93,8 @@ export default class Things {
     }
   }
 
-  async deleteThingFromCloud(thing: Thing) {
+  async deleteThingAndUpdateCloud(thing: Thing) {
+    delete(this.thingsByID[thing.id]);
     try {
       await table.destroy(thing.id);
     } catch (error) {
