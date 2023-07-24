@@ -71,7 +71,7 @@ class Relationships {
   //         CRUD          //
   ///////////////////////////
 
-  async readAllRelationshipsFromCloud() {
+  async readAllRelationships_fromCloud() {
     this.clearLookups();
     try {
       const records = await table.select().all()
@@ -110,7 +110,7 @@ class Relationships {
     }
   }
 
-  async createRelationshipInCloud(relationship: Relationship) {
+  async createRelationship_inCloud(relationship: Relationship) {
     try {
       const fields = await table.create(relationship.fields);
       relationship.id = fields['id'];
@@ -119,17 +119,17 @@ class Relationships {
     }
   }
 
-  async createRelationshipAndSaveInCloud(kind: RelationshipKind, from: string, to: string) {
+  async createRelationship_save_inCloud(kind: RelationshipKind, from: string, to: string) {
     if (this.relationshipsMatchingKind(kind, false, from).length == 0) {
-      await this.createRelationshipInCloud(this.createRelationship(kind, from, to))
+      await this.createRelationship_inCloud(this.createRelationship(kind, from, to))
     }
   }
 
-  async deleteRelationshipsAndUpdateCloudFor(thing: Thing) {
+  async deleteRelationships_updateCloudFor(thing: Thing) {
     const array = this.allByFromID[thing.id];
     if (array != null) {
       for (const relationship of array) {
-        await this.deleteRelationshipFromCloud(relationship);
+        await this.deleteRelationship_fromCloud(relationship);
         this.all = this.all.filter((item) => item.id !== relationship.id);
       }
       this.refreshLookups();
@@ -137,7 +137,7 @@ class Relationships {
 
   }
 
-  private async deleteRelationshipFromCloud(relationship: Relationship | null) {
+  private async deleteRelationship_fromCloud(relationship: Relationship | null) {
     if (relationship != null) {
       try {
         await table.destroy(relationship.id);

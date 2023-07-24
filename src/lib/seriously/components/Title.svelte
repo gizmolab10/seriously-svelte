@@ -13,7 +13,7 @@
   function handleKeyDown(event) {
     if ($editingID == thing.id) {
       switch (event.key) {
-        case 'Tab': stopEditing(true); thing.duplicateAndRedraw(); break;
+        case 'Tab': stopEditing(true); thing.duplicate_refresh(); break;
         case 'Enter': stopEditing(true);
       }
     }
@@ -42,7 +42,7 @@
     if (isDirty()) {
       makeClean();
       thing.isDirty = true;
-      things.updateThingInCloud(thing);
+      things.updateThing_inCloud(thing);
     }
     if (clearEditingID) {
       setTimeout(() => { // WHY?

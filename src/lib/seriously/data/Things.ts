@@ -35,7 +35,7 @@ export default class Things {
   //         CRUD          //
   ///////////////////////////
 
-  async readAllThingsFromCloud() {
+  async readAllThings_fromCloud() {
     const rootID = seriouslyGlobals.rootID;
     this.root = new Thing(rootID, seriouslyGlobals.rootTitle, seriouslyGlobals.rootColor, 'm', 0);
     this.thingsByID = {};
@@ -52,7 +52,7 @@ export default class Things {
 
       for (const id in this.thingsByID) {
         if (id != rootID) {
-          relationships.createRelationshipAndSaveInCloud(RelationshipKind.parent, id, rootID);
+          relationships.createRelationship_save_inCloud(RelationshipKind.parent, id, rootID);
         }
       }
 
@@ -60,13 +60,13 @@ export default class Things {
       this.root.focus()
       this.root.grabOnly()
       signal([SignalKinds.relayout], null);
-      // this.updateAllDirtyThingsInCloud(); // do not await this statement, it takes forever !!!
+      // this.updateAllDirtyThings_inCloud(); // do not await this statement, it takes forever !!!
     } catch (error) {
-      console.log(this.errorMessage + ' (readAllThingsFromCloud) ' + error);
+      console.log(this.errorMessage + ' (readAllThings_fromCloud) ' + error);
     }
   }
 
-  async updateThingInCloud(thing: Thing) {
+  async updateThing_inCloud(thing: Thing) {
     try {
       await table.update(thing.id, thing.fields);
       thing.isDirty = false; // if update fails, subsequent update will try again
@@ -75,30 +75,30 @@ export default class Things {
     }
   }
 
-  async updateAllDirtyThingsInCloud() {
+  async updateAllDirtyThings_inCloud() {
     const all: Thing[] = Object.values(this.thingsByID);
     for (const thing of all) {
       if (thing.isDirty) {
-        await this.updateThingInCloud(thing)
+        await this.updateThing_inCloud(thing)
       }
     }
   }
 
-  async createThingInCloud(thing: Thing) {
+  async createThing_inCloud(thing: Thing) {
     try {
       const fields = await table.create(thing.fields);
       thing.id = fields['id']; //  // need for update, delete and thingsByID (to get parent from relationship)
     } catch (error) {
-      console.log(this.errorMessage + ' (in createInCloud) ' + error);
+      console.log(this.errorMessage + ' (in create_inCloud) ' + error);
     }
   }
 
-  async deleteThingAndUpdateCloud(thing: Thing) {
+  async deleteThing_updateCloud(thing: Thing) {
     delete(this.thingsByID[thing.id]);
     try {
       await table.destroy(thing.id);
     } catch (error) {
-      console.log(this.errorMessage + ' (in deleteFromCloud) ' + error);
+      console.log(this.errorMessage + ' (in delete_fromCloud) ' + error);
     }
   }
 

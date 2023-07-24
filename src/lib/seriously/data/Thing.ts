@@ -61,7 +61,7 @@ export default class Thing {
 
   hasRelationships = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
   createNewThing = () => { return new Thing(createCloudID(), seriouslyGlobals.defaultTitle, 'blue', 't', 1.0); }
-  addChildAndRedraw = () => { this.addAndSaveChildAndRedraw(this.createNewThing()); }
+  addChild_refresh = () => { this.addChild_save_refresh(this.createNewThing()); }
   focus = () => { if (this.hasChildren) { hereID.set(this.id) }; }
   grabOnly = () => { grabbedIDs.set([this.id]); }
   edit = () => { editingID.set(this.id); }
@@ -101,25 +101,25 @@ export default class Thing {
     return this;
   }
 
-  duplicateAndRedraw = async () => {
+  duplicate_refresh = async () => {
     const sibling = this.createNewThing();
     const parent = this.firstParent ?? things.root;
     sibling.order = this.order + 0.5;
     sibling.copyFrom(this);
-    parent.addAndSaveChildAndRedraw(sibling)
+    parent.addChild_save_refresh(sibling)
   }
 
-  addAndSaveChildAndRedraw = async (child: Thing) => {
-    await things.createThingInCloud(child); // need child's id for everything below
-    await relationships.createRelationshipAndSaveInCloud(RelationshipKind.parent, child.id, this.id);
+  addChild_save_refresh = async (child: Thing) => {
+    await things.createThing_inCloud(child); // need child's id for everything below
+    await relationships.createRelationship_save_inCloud(RelationshipKind.parent, child.id, this.id);
     child.grabOnly();
     child.edit();
     reassignOrdersOf(this.siblings);
     signal([SignalKinds.widget, SignalKinds.crumbs], null);
-    things.updateAllDirtyThingsInCloud();
+    things.updateAllDirtyThings_inCloud();
   }
 
-  moveUpAndRedraw = (up: boolean, expand: boolean, relocate: boolean) => {
+  moveUp_refresh = (up: boolean, expand: boolean, relocate: boolean) => {
     const siblings = this.siblings;
     if (siblings != null) {
       const index = siblings.indexOf(this);
@@ -142,7 +142,7 @@ export default class Thing {
     }
   }
 
-  moveRightAndRedraw = (right: boolean, relocate: boolean) => {
+  moveRight_refresh = (right: boolean, relocate: boolean) => {
     const grandparent = this.firstParent?.firstParent ?? things.root;
     if (relocate) {
       this.relocateRight(right, grandparent);

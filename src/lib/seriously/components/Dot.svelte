@@ -11,12 +11,12 @@
         reassignOrdersOf(thing.children);
         thing.firstChild?.grabOnly();
         thing.focus();
-        await things.updateAllDirtyThingsInCloud();
+        await things.updateAllDirtyThings_inCloud();
       }
     } else if (event.shiftKey) {
       thing.toggleGrab();
     } else if ($hereID != seriouslyGlobals.rootID && $grabbedIDs?.includes(thing.id)) {
-      thing.moveRightAndRedraw(false, false);
+      thing.moveRight_refresh(false, false);
     } else {
       thing.grabOnly();
     }
