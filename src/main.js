@@ -1,8 +1,8 @@
 import './styles/app.css';
-import Seriously from "./Seriously.svelte";
+import SeriouslyApp from "./SeriouslyApp.svelte";
 
-const app = new Seriously({
+const app = new SeriouslyApp({
     target: document.getElementById('app')
 })
 
-export default Seriously;
+export default SeriouslyApp;

@@ -1,42 +1,31 @@
 <script lang='ts'>
   import { things, Thing, grabbedIDs, handleSignal, Signals } from '../common/GlobalImports';
   import Crumb from './Crumb.svelte';
-  let ancestors = [things.root];
-  let toggledReload = false;
+  let ancestors;
+  export let grab;
 
-  function redrawCrumbs() { toggledReload = !toggledReload; }
-
-  grabbedIDs.subscribe((ids) => {
-    if (ids?.length > 0) {
-      updateAncestors(ids[0]);
-      redrawCrumbs();
-    }
-  });
-
-	handleSignal.connect((kinds, value) => {
-		if (kinds.includes(Signals.crumbs)) {
-      redrawCrumbs();
-    }
-  })
-
-  function updateAncestors(id) {
-    let thing = things.thingForID(id);
-    ancestors = [];
+  $: {
+  ancestors = [];
+    let thing = grab;
     while (thing != null) {
       ancestors.push(thing);
       thing = thing.firstParent;
     }
     ancestors.reverse();
   }
+  
+	handleSignal.connect((kinds, value) => {
+		if (kinds.includes(Signals.crumbs)) {
+      redrawCrumbs();
+    }
+  })
 
 </script>
 
-{#key toggledReload}
-  <span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span>    <!-- left side margin -->
-  {#each ancestors as thing, index}
-    {#if index > 0}
-      <span>&nbsp; &gt; </span>
-    {/if}
-    <Crumb thing={thing}/>
-  {/each}
-{/key}
+<span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span>    <!-- left side margin -->
+{#each ancestors as thing, index}
+  {#if index > 0}
+    <span>&nbsp; &gt; </span>
+  {/if}
+  <Crumb thing={thing}/>
+{/each}

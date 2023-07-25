@@ -113,7 +113,7 @@ export default class Thing {
     await things.createThing_inCloud(child); // need child's id for everything below
     await relationships.createRelationship_save_inCloud(RelationshipKind.parent, child.id, this.id);
     this.becomeHere();
-    signalMultiple([Signals.crumbs, Signals.relayout]);
+    signal(Signals.crumbs);
     child.grabOnly();
     child.edit();
     signal(Signals.widget);
@@ -149,7 +149,6 @@ export default class Thing {
     } else {
       this.browseRight(right, grandparent);
     }
-    signal(Signals.relayout);
   }
 
   relocateRight = (right: boolean, grandparent: Thing) => {

@@ -19,7 +19,7 @@
       thing.grabOnly();
     }
 
-    signalMultiple([Signals.widget, Signals.relayout], thing.id);
+    signal(Signals.widget, thing.id);
   }
 
 	handleSignal.connect((kinds, value) => {

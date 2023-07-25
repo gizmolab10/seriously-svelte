@@ -1,63 +1,57 @@
 <svelte:options immutable = {true} />
 
 <script>
-  import { Thing, things, relationships, grabbedIDs, editingID, hereID, onMount, onDestroy, signal, handleSignal, Signals as Signals } from '../common/GlobalImports';
+  import { Thing, things, relationships, grabbedIDs, editingID, hereID, onMount, onDestroy, signal, handleSignal, Signals as Signals, seriouslyGlobals } from '../common/GlobalImports';
   import Children from './Children.svelte';
   import Crumbs from './Crumbs.svelte';
-  let toggledReload = false;
-  let here = things.root;
+  export let here;
   let isLoading = true;
   let listener;
 
-	handleSignal.connect((kinds, value) => {
-		if (kinds.includes(Signals.relayout)) {
-      here = things.thingForID($hereID);
-      toggledReload = !toggledReload;
-    }
-  })
-
   async function handleKeyDown(event) {
     if (event.type == 'keydown', ($grabbedIDs?.length ?? 0) > 0) {
-      const id = $grabbedIDs[0];
-      const thing = things.thingForID(id);
+      const grabbedID = $grabbedIDs[0];
+      let thing = things.thingForID(grabbedID);
       const key = event.key.toLowerCase();
       const OPTION = event.altKey;
       const SHIFT = event.shiftKey;
       if ($editingID != null) {
-        if ([' ', 'd', 'tab', 'enter'].includes(key)) { return; }
+        if ([' ', 'd', 'tab', 'enter', 'delete', 'backspace'].includes(key)) { return; }
       } else {
         switch (key) {
           case ' ': thing?.addChild_refresh(); toggledReload = !toggledReload; break;
           case 'd': thing?.duplicate_refresh(true); toggledReload = !toggledReload; break;
           case 't': alert('PARENT-CHILD SWAP'); break;
           case 'enter': thing?.edit(); break;
-          case 'arrowup': moveUp_redrawGraph_saveToClouid(true, SHIFT, OPTION); break;
-          case 'arrowdown': moveUp_redrawGraph_saveToClouid(false, SHIFT, OPTION); break;
-          case 'arrowright': moveRight_redrawGraph_saveToClouid(thing, true, OPTION); break;
-          case 'arrowleft': moveRight_redrawGraph_saveToClouid(thing, false, OPTION); break;
+          case 'arrowup': moveUp_redrawGraph_saveToCloud(true, SHIFT, OPTION); break;
+          case 'arrowdown': moveUp_redrawGraph_saveToCloud(false, SHIFT, OPTION); break;
+          case 'arrowright': moveRight_redrawGraph_saveToCloud(thing, true, OPTION); break;
+          case 'arrowleft': moveRight_redrawGraph_saveToCloud(thing, false, OPTION); break;
           case 'tab':
             thing?.duplicate_refresh(); // Title also makes this call
-            toggledReload = !toggledReload;
             break;
           case 'delete':
           case 'backspace':
             const ids = $grabbedIDs;
             for (const id of ids) {
-              const grab = things.thingForID(id);
-              if (grab != null && !grab.isEditing && here != null) {
-                const all = here?.children;
-                let index = all.indexOf(grab);
+              thing = things.thingForID(id);
+              if (thing != null && !thing.isEditing && here != null) {
+                const all = thing.firstParent?.children;
+                let index = all.indexOf(thing);
                 all.splice(index, 1);
-                if (index >= all.length) {
-                  index = all.length - 1;
+                if (all.length == 0) {
+                  thing.firstParent.firstParent.becomeHere();
+                } else {
+                  if (index >= all.length) {
+                    index = all.length - 1;
+                  }
+                  if (index >= 0) {
+                    all[index].grabOnly();
+                  }              
                 }
-                if (index >= 0) {
-                  all[index].grabOnly();
-                }              
                 signal(Signals.widget);
-                toggledReload = !toggledReload;
-                await things.deleteThing_updateCloud(grab);
-                await relationships.deleteRelationships_updateCloudFor(grab);
+                await things.deleteThing_updateCloud(thing);
+                await relationships.deleteRelationships_updateCloudFor(thing);
               }
             }
             break;
@@ -66,10 +60,9 @@
     }
   }
 
-  function moveRight_redrawGraph_saveToClouid (thing, right, relocate) {
+  function moveRight_redrawGraph_saveToCloud (thing, right, relocate) {
     thing.moveRight_refresh(right, relocate);
     // alert(thing.title + ' parent: ', + thing.firstParent.title ?? ' whoceyortatty?');
-    toggledReload = !toggledReload;
     relationships.updateAllDirtyRelationshipsToCloud();
     things.updateAllDirtyThings_inCloud();
   }
@@ -85,48 +78,18 @@
     }
   }
 
-  function moveUp_redrawGraph_saveToClouid(up, expand, relocate) {
+  function moveUp_redrawGraph_saveToCloud(up, expand, relocate) {
     const thing = highestGrab(up);
     thing.moveUp_refresh(up, expand, relocate);
-    toggledReload = !toggledReload;
     if (relocate) {
       things.updateAllDirtyThings_inCloud();
     }
   }
 
   onDestroy( () => { window.removeEventListener('keydown', listener); });
-
-  onMount(async () => {
-    listener = window.addEventListener('keydown', handleKeyDown);
-    try {
-      await relationships.readAllRelationships_fromCloud();
-    } catch (error) {
-      alert('Error reading Relationships database: ' + error);
-    }
-    try {
-      await things.readAllThings_fromCloud()
-  		isLoading = false;
-    } catch (error) {
-      alert('Error reading Things database: ' + error);
-    }
-  });
+  onMount(async () => { listener = window.addEventListener('keydown', handleKeyDown); });
 
   </script>
 
-{#key toggledReload}
-  {#if isLoading}
-    <p>Loading...</p>
-  {:else if (here == null || !here.hasChildren)}
-    <p>Nothing is available ({here?.title}).</p>
-  {:else}
-    <Crumbs/>
-    <Children parent={here}/>
-  {/if}
-{/key}
-
-<style>
-  p {
-    text-align: center;
-    font-size: 5em;
-  }
-</style>
+<Crumbs grab={things.thingForID($grabbedIDs[0])}/>
+<Children parent={here}/>

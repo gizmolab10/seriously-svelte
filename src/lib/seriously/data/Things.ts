@@ -58,7 +58,6 @@ export default class Things {
 
       this.root.becomeHere()
       this.root.grabOnly()
-      signal(Signals.relayout);
     } catch (error) {
       console.log(this.errorMessage + ' (readAllThings_fromCloud) ' + error);
     }

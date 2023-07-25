@@ -1,7 +1,6 @@
 import { Signal } from 'typed-signals';
 
 export enum Signals {
-  relayout = 'r',
   crumbs   = 'c',
   widget   = 'w', // for widget hover and edit/stop
   dot      = 'd'  // refresh all the dots, for hover

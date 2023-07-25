@@ -80,13 +80,12 @@ class Relationships {
         const id = record.id as string;
         const kind = record.fields.kind as RelationshipKind;
         const froms = record.fields.from as (string[]);
-        const tos = record.fields.to as (string[]) ?? [seriouslyGlobals.rootID]; // relationships that have no to point at root
+        const tos = record.fields.to as (string[]) ?? [seriouslyGlobals.rootID]; // relationships that have no 'to' point at 'root'
         const relationship = new Relationship(id, kind, froms[0], tos[0]);
         this.remember(relationship);
-        console.log(froms[0]);
       }
     } catch (error) {
-      alert(this.errorMessage + error);
+      console.log(this.errorMessage + error);
     }
   }
 
@@ -96,7 +95,7 @@ class Relationships {
         try {
           this.updateRelationshipToCloud(relationship);
         } catch (error) {
-          alert(this.errorMessage + error);
+          console.log(this.errorMessage + error);
         }
       }
     });
@@ -107,23 +106,31 @@ class Relationships {
       table.update(relationship.id, relationship.fields);
       relationship.isDirty = false;
     } catch (error) {
-      alert(this.errorMessage + error);
+      console.log(this.errorMessage + error);
     }
   }
 
-  async createRelationship_inCloud(relationship: Relationship) {
-    try {
-      const fields = await table.create(relationship.fields);
-      relationship.id = fields['id'];
-    } catch (error) {
-      alert(this.errorMessage + error);
+  async createRelationship_inCloud(relationship: Relationship | null) {
+    if (relationship != null && relationship.to != seriouslyGlobals.rootID) {
+      try {
+        const fields = await table.create(relationship.fields);
+        relationship.id = fields['id'];
+      } catch (error) {
+        console.log(this.errorMessage + error);
+      }
     }
+  }
+
+  createUniqueRelationship(kind: RelationshipKind, from: string, to: string) {
+    if (this.relationshipsMatchingKind(kind, false, from).length == 0) {
+      return this.createRelationship(kind, from, to)
+    }
+
+    return null;
   }
 
   async createRelationship_save_inCloud(kind: RelationshipKind, from: string, to: string) {
-    if (this.relationshipsMatchingKind(kind, false, from).length == 0) {
-      await this.createRelationship_inCloud(this.createRelationship(kind, from, to))
-    }
+    await this.createRelationship_inCloud(this.createUniqueRelationship(kind, from, to));
   }
 
   async deleteRelationships_updateCloudFor(thing: Thing) {
@@ -143,7 +150,7 @@ class Relationships {
       try {
         await table.destroy(relationship.id);
       } catch (error) {
-        alert(this.errorMessage + error);
+        console.log(this.errorMessage + error);
       }
     }
   }
