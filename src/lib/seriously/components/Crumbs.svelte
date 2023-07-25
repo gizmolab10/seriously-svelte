@@ -1,5 +1,5 @@
 <script lang='ts'>
-  import { things, Thing, grabbedIDs, handleSignal, SignalKinds } from '../common/GlobalImports';
+  import { things, Thing, grabbedIDs, handleSignal, Signals } from '../common/GlobalImports';
   import Crumb from './Crumb.svelte';
   let ancestors = [things.root];
   let toggledReload = false;
@@ -14,7 +14,7 @@
   });
 
 	handleSignal.connect((kinds, value) => {
-		if (kinds.includes(SignalKinds.crumbs)) {
+		if (kinds.includes(Signals.crumbs)) {
       redrawCrumbs();
     }
   })

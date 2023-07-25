@@ -1,17 +1,15 @@
 <svelte:options immutable={true}/>
 
 <script lang='ts'>
-  import { Thing, things, hereID, grabbedIDs, reassignOrdersOf, tick, onMount, signal, handleSignal, SignalKinds, seriouslyGlobals } from '../common/GlobalImports.ts';
+  import { Thing, things, hereID, grabbedIDs, tick, onMount, signal, signalMultiple, handleSignal, Signals, seriouslyGlobals } from '../common/GlobalImports.ts';
   export let isReveal = false;
   export let thing = Thing;
 
   async function handleClick(event) {
     if (isReveal) {
       if (thing.hasChildren) {
-        reassignOrdersOf(thing.children);
         thing.firstChild?.grabOnly();
         thing.becomeHere();
-        await things.updateAllDirtyThings_inCloud();
       }
     } else if (event.shiftKey) {
       thing.toggleGrab();
@@ -21,11 +19,11 @@
       thing.grabOnly();
     }
 
-    signal([SignalKinds.widget, SignalKinds.relayout], thing.id);
+    signalMultiple([Signals.widget, Signals.relayout], thing.id);
   }
 
 	handleSignal.connect((kinds, value) => {
-		if (kinds.includes(SignalKinds.dot) && value == thing.id) {
+		if (kinds.includes(Signals.dot) && value == thing.id) {
       var style = document.getElementById(thing.id)?.style;
       style?.setProperty(   '--dotColor', thing.color);
       style?.setProperty( '--traitColor', thing.revealColor(!isReveal));

@@ -1,7 +1,7 @@
 <svelte:options immutable = {true} />
 
 <script>
-  import { Thing, things, relationships, grabbedIDs, editingID, hereID, reassignOrdersOf, onMount, onDestroy, signal, handleSignal, SignalKinds } from '../common/GlobalImports';
+  import { Thing, things, relationships, grabbedIDs, editingID, hereID, onMount, onDestroy, signal, handleSignal, Signals as Signals } from '../common/GlobalImports';
   import Children from './Children.svelte';
   import Crumbs from './Crumbs.svelte';
   let toggledReload = false;
@@ -9,12 +9,10 @@
   let isLoading = true;
   let listener;
 
-  function redrawGraph() { toggledReload = !toggledReload; }
-
 	handleSignal.connect((kinds, value) => {
-		if (kinds.includes(SignalKinds.relayout)) {
+		if (kinds.includes(Signals.relayout)) {
       here = things.thingForID($hereID);
-      redrawGraph();
+      toggledReload = !toggledReload;
     }
   })
 
@@ -29,8 +27,8 @@
         if ([' ', 'd', 'tab', 'enter'].includes(key)) { return; }
       } else {
         switch (key) {
-          case ' ': thing?.addChild_refresh(); redrawGraph(); break;
-          case 'd': thing?.duplicate_refresh(true); redrawGraph(); break;
+          case ' ': thing?.addChild_refresh(); toggledReload = !toggledReload; break;
+          case 'd': thing?.duplicate_refresh(true); toggledReload = !toggledReload; break;
           case 't': alert('PARENT-CHILD SWAP'); break;
           case 'enter': thing?.edit(); break;
           case 'arrowup': moveUp_redrawGraph_saveToClouid(true, SHIFT, OPTION); break;
@@ -39,7 +37,7 @@
           case 'arrowleft': moveRight_redrawGraph_saveToClouid(thing, false, OPTION); break;
           case 'tab':
             thing?.duplicate_refresh(); // Title also makes this call
-            redrawGraph();
+            toggledReload = !toggledReload;
             break;
           case 'delete':
           case 'backspace':
@@ -56,8 +54,8 @@
                 if (index >= 0) {
                   all[index].grabOnly();
                 }              
-                signal([SignalKinds.widget], null);
-                redrawGraph();
+                signal(Signals.widget);
+                toggledReload = !toggledReload;
                 await things.deleteThing_updateCloud(grab);
                 await relationships.deleteRelationships_updateCloudFor(grab);
               }
@@ -71,7 +69,7 @@
   function moveRight_redrawGraph_saveToClouid (thing, right, relocate) {
     thing.moveRight_refresh(right, relocate);
     // alert(thing.title + ' parent: ', + thing.firstParent.title ?? ' whoceyortatty?');
-    redrawGraph();
+    toggledReload = !toggledReload;
     relationships.updateAllDirtyRelationshipsToCloud();
     things.updateAllDirtyThings_inCloud();
   }
@@ -90,11 +88,10 @@
   function moveUp_redrawGraph_saveToClouid(up, expand, relocate) {
     const thing = highestGrab(up);
     thing.moveUp_refresh(up, expand, relocate);
+    toggledReload = !toggledReload;
     if (relocate) {
-      redrawGraph();
       things.updateAllDirtyThings_inCloud();
     }
-    redrawGraph();
   }
 
   onDestroy( () => { window.removeEventListener('keydown', listener); });

@@ -1,5 +1,5 @@
 <script lang='ts'>
-  import { Thing, things, grabbedIDs, signal, SignalKinds, seriouslyGlobals } from '../common/GlobalImports';
+  import { Thing, things, grabbedIDs, signal, Signals, seriouslyGlobals } from '../common/GlobalImports';
   export let thing = Thing;
 
   function handleClick(event) {
@@ -10,7 +10,7 @@
       thing.grabOnly();
       thing.firstParent.becomeHere();
     }
-    signal([SignalKinds.relayout, SignalKinds.widget], null);
+    signalMultiple([Signals.relayout, Signals.widget]);
   }
 
   function grabChild() {

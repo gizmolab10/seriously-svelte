@@ -1,7 +1,7 @@
 <svelte:options immutable = {true} />
 
 <script>
-  import { things, onMount, onDestroy, signal, handleSignal, SignalKinds, relationships, Thing } from '../common/GlobalImports.ts';
+  import { things, onMount, onDestroy, signal, handleSignal, Signals, relationships, Thing } from '../common/GlobalImports.ts';
   import Widget from './Widget.svelte';
   export let parent = Thing | null;
 

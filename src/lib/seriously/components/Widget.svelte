@@ -1,14 +1,14 @@
 <svelte:options immutable = {true} />
 
 <script lang='ts'>
-  import { Thing, signal, handleSignal, SignalKinds } from '../common/GlobalImports.ts';
+  import { Thing, signal, handleSignal, Signals } from '../common/GlobalImports.ts';
 	import Title from './Title.svelte';
 	import Dot from './Dot.svelte';
 	export let thing = Thing;
 
 	handleSignal.connect((kinds) => {
-		if (kinds.includes(SignalKinds.widget)) {
-			signal([SignalKinds.dot], thing.id); // pass signal along to its dots
+		if (kinds.includes(Signals.widget)) {
+			signal(Signals.dot, thing.id); // pass signal along to its dots
 			var style = document.getElementById(thing.id)?.style;
 			style?.setProperty('--hoverAttributes', thing.hoverAttributes);
 			style?.setProperty( '--grabAttributes', thing.grabAttributes);

@@ -1,4 +1,4 @@
-import { Thing, reassignOrdersOf, relationships, RelationshipKind, seriouslyGlobals, hereID, signal, SignalKinds } from '../common/GlobalImports';
+import { Thing, relationships, RelationshipKind, seriouslyGlobals, hereID, signal, Signals } from '../common/GlobalImports';
 import Airtable, {FieldSet} from 'airtable';
 
 const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
@@ -56,11 +56,9 @@ export default class Things {
         }
       }
 
-      // reassignOrdersOf(this.root.children); // makes some things dirty
       this.root.becomeHere()
       this.root.grabOnly()
-      signal([SignalKinds.relayout], null);
-      // this.updateAllDirtyThings_inCloud(); // do not await this statement, it takes forever !!!
+      signal(Signals.relayout);
     } catch (error) {
       console.log(this.errorMessage + ' (readAllThings_fromCloud) ' + error);
     }

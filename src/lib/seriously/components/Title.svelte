@@ -1,7 +1,7 @@
 <svelte:options immutable = {true} />
 
 <script lang='ts'>
-  import { Thing, things, editingID, signal, SignalKinds } from '../common/GlobalImports.ts';
+  import { Thing, things, editingID, signal, Signals } from '../common/GlobalImports.ts';
   import Widget from '../components/Widget.svelte';
   export let thing = Thing;
   let originalTitle = thing.title;
@@ -34,7 +34,7 @@
       } else if (isDirty()) {
         stopEditing(false); // false means leave editingID alone so other currently editing widgets continue editing
       };
-      signal([SignalKinds.widget], null); // so widget will show as [un]grabbed
+      signal(Signals.widget); // so widget will show as [un]grabbed
     }, 200);
   }
 
@@ -50,13 +50,13 @@
         $editingID = null;
       }, 20);
     }
-    signal([SignalKinds.crumbs], null);
+    signal(Signals.crumbs);
   }
 
   function handleFocus(event) {
     $editingID = thing.id;
     thing.grabOnly()
-    signal([SignalKinds.widget], null); // so widget will show as grabbed
+    signal(Signals.widget); // so widget will show as grabbed
   }
 
   function handleInput(event) { thing.title = event.target.value; }

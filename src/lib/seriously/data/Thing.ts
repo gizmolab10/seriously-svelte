@@ -1,4 +1,4 @@
-import { things, hereID, grabbedIDs, editingID, moveElementWithin, createCloudID, seriouslyGlobals, relationships, Relationship, RelationshipKind, signal, SignalKinds, reassignOrdersOf } from '../common/GlobalImports';
+import { things, hereID, grabbedIDs, editingID, createCloudID, seriouslyGlobals, relationships, RelationshipKind, signal, signalMultiple, Signals, reassignOrdersOf } from '../common/GlobalImports';
 import Airtable from 'airtable';
 
 export enum PrivacyKind {
@@ -60,7 +60,7 @@ export default class Thing {
   }
 
   hasRelationships = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
-  createNewThing = () => { return new Thing(createCloudID(), seriouslyGlobals.defaultTitle, 'blue', 't', 1.0); }
+  createNewThing = () => { return new Thing(createCloudID(), seriouslyGlobals.defaultTitle, 'blue', 't', -1); }
   addChild_refresh = () => { this.addChild_save_refresh(this.createNewThing()); }
   becomeHere = () => { if (this.hasChildren) { hereID.set(this.id) }; }
   grabOnly = () => { grabbedIDs.set([this.id]); }
@@ -112,10 +112,11 @@ export default class Thing {
   addChild_save_refresh = async (child: Thing) => {
     await things.createThing_inCloud(child); // need child's id for everything below
     await relationships.createRelationship_save_inCloud(RelationshipKind.parent, child.id, this.id);
+    this.becomeHere();
+    signalMultiple([Signals.crumbs, Signals.relayout]);
     child.grabOnly();
     child.edit();
-    reassignOrdersOf(this.siblings);
-    signal([SignalKinds.widget, SignalKinds.crumbs], null);
+    signal(Signals.widget);
     things.updateAllDirtyThings_inCloud();
   }
 
@@ -125,18 +126,17 @@ export default class Thing {
       const index = siblings.indexOf(this);
       const newIndex = index.increment(!up, siblings.length);
       if (newIndex.between(-1, siblings.length, false)) {
-        const newGrab = siblings[newIndex];
         if (relocate) {
-          moveElementWithin(siblings, index, newIndex);
-          reassignOrdersOf(siblings);
-          signal([SignalKinds.widget], null);
+          siblings[index].order = newIndex - 0.5
+          signal(Signals.widget);
         } else {
+          const newGrab = siblings[newIndex];
           if (expand) {
             newGrab.toggleGrab()
           } else {
             newGrab.grabOnly();
           }
-          signal([SignalKinds.widget], null);
+          signal(Signals.widget);
         }
       }
     }
@@ -149,7 +149,7 @@ export default class Thing {
     } else {
       this.browseRight(right, grandparent);
     }
-    signal([SignalKinds.relayout], null);
+    signal(Signals.relayout);
   }
 
   relocateRight = (right: boolean, grandparent: Thing) => {
@@ -165,7 +165,7 @@ export default class Thing {
       }
       relationships.refreshLookups();
       this.grabOnly();
-      signal([SignalKinds.widget], null); // signal BEFORE setting hereID to avoid blink
+      signal(Signals.widget); // signal BEFORE setting hereID to avoid blink
       parent.becomeHere();
     }
   }
@@ -174,7 +174,7 @@ export default class Thing {
     const grab = right ? this.firstChild : this.firstParent;
     const here = right ? this : grandparent;
     grab.grabOnly();
-    signal([SignalKinds.widget], null); // signal BEFORE setting hereID to avoid blink
+    signal(Signals.widget); // signal BEFORE setting hereID to avoid blink
     here.becomeHere();
   }
 
