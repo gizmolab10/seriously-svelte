@@ -32,7 +32,6 @@
 </script>
 
 {#key toggledReload}
-  <p>what?</p>
   <span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span>    <!-- left side margin -->
   {#each ancestors as thing, index}
     {#if index > 0}

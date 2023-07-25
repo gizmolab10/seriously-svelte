@@ -10,7 +10,7 @@
       if (thing.hasChildren) {
         reassignOrdersOf(thing.children);
         thing.firstChild?.grabOnly();
-        thing.focus();
+        thing.becomeHere();
         await things.updateAllDirtyThings_inCloud();
       }
     } else if (event.shiftKey) {

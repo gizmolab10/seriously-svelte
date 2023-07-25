@@ -1,4 +1,4 @@
-import { Thing, things, Relationship, RelationshipKind, createCloudID } from '../common/GlobalImports';
+import { Thing, things, Relationship, RelationshipKind, createCloudID, seriouslyGlobals } from '../common/GlobalImports';
 import Airtable from 'airtable';
 
 const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
@@ -44,7 +44,7 @@ class Relationships {
 
   relationshipsMatchingKind(kind: RelationshipKind, to: boolean, id: string): Array<Relationship> {
     const dict = to ? this.allByToID : this.allByFromID;
-    const matches = dict[id] as Array<Relationship>;
+    const matches = dict[id] as Array<Relationship>; // filter out baaaaad values
     const array: Array<Relationship> = [];
     if (Array.isArray(matches)) {
       for (const relationship of matches) {
@@ -78,11 +78,12 @@ class Relationships {
 
       for (const record of records) {
         const id = record.id as string;
-        const to = record.fields.to as string;
-        const from = record.fields.from as string;
         const kind = record.fields.kind as RelationshipKind;
-        const relationship = new Relationship(id, kind, from, to);
+        const froms = record.fields.from as (string[]);
+        const tos = record.fields.to as (string[]) ?? [seriouslyGlobals.rootID]; // relationships that have no to point at root
+        const relationship = new Relationship(id, kind, froms[0], tos[0]);
         this.remember(relationship);
+        console.log(froms[0]);
       }
     } catch (error) {
       alert(this.errorMessage + error);

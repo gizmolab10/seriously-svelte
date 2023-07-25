@@ -22,6 +22,6 @@ export class Relationship {
     this.isDirty = false;
   }
 
-  get fields(): Airtable.FieldSet { return { id: this.id, kind: this.kind, from: this.from, to: this.to }; }
+  get fields(): Airtable.FieldSet { return { id: this.id, kind: this.kind, from: [this.from], to: [this.to] }; }
   
 }

@@ -62,7 +62,7 @@ export default class Thing {
   hasRelationships = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
   createNewThing = () => { return new Thing(createCloudID(), seriouslyGlobals.defaultTitle, 'blue', 't', 1.0); }
   addChild_refresh = () => { this.addChild_save_refresh(this.createNewThing()); }
-  focus = () => { if (this.hasChildren) { hereID.set(this.id) }; }
+  becomeHere = () => { if (this.hasChildren) { hereID.set(this.id) }; }
   grabOnly = () => { grabbedIDs.set([this.id]); }
   edit = () => { editingID.set(this.id); }
 
@@ -166,7 +166,7 @@ export default class Thing {
       relationships.refreshLookups();
       this.grabOnly();
       signal([SignalKinds.widget], null); // signal BEFORE setting hereID to avoid blink
-      parent.focus();
+      parent.becomeHere();
     }
   }
 
@@ -175,7 +175,7 @@ export default class Thing {
     const here = right ? this : grandparent;
     grab.grabOnly();
     signal([SignalKinds.widget], null); // signal BEFORE setting hereID to avoid blink
-    here.focus();
+    here.becomeHere();
   }
 
   nextSibling = (increment: boolean): Thing => {

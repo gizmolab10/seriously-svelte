@@ -57,7 +57,7 @@ export default class Things {
       }
 
       // reassignOrdersOf(this.root.children); // makes some things dirty
-      this.root.focus()
+      this.root.becomeHere()
       this.root.grabOnly()
       signal([SignalKinds.relayout], null);
       // this.updateAllDirtyThings_inCloud(); // do not await this statement, it takes forever !!!

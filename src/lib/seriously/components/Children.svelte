@@ -13,7 +13,6 @@
   {/each}
 </ul>
 
-
 <style>
   li {
     line-height: 1.5;

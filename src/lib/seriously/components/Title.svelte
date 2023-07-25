@@ -21,14 +21,15 @@
 
   $: {  
     
-    ////////////////////////////////
-    // title editor state machine //
-    ////////////////////////////////
+    ///////////////////////
+    // manage edit state //
+    ///////////////////////
     
     setTimeout(() => {      // wait until the inputRef is bound instantiated and editingID is settled
       if ($editingID == thing.id) {
         if (document.querySelector('.input') != document.activeElement) {
           inputRef.focus();
+          inputRef.select();
         }
       } else if (isDirty()) {
         stopEditing(false); // false means leave editingID alone so other currently editing widgets continue editing
@@ -67,7 +68,7 @@
   id={thing.id}
   bind:this={inputRef}
   on:blur={handleBlur}
-  on:focus={handleFocus}
+  on:becomeHere={handleFocus}
   on:input={handleInput}
   on:keydown={handleKeyDown}
   bind:value={thing.title}

@@ -5,10 +5,10 @@
   function handleClick(event) {
     if (thing.id == seriouslyGlobals.rootID) {
       grabChild();
-      thing.focus();
+      thing.becomeHere();
     } else {
       thing.grabOnly();
-      thing.firstParent.focus();
+      thing.firstParent.becomeHere();
     }
     signal([SignalKinds.relayout, SignalKinds.widget], null);
   }
