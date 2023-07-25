@@ -1,31 +1,34 @@
 <script lang='ts'>
-  import { things, Thing, grabbedIDs, handleSignal, Signals } from '../common/GlobalImports';
+  import { Thing, things, grabbedID } from '../common/GlobalImports';
   import Crumb from './Crumb.svelte';
-  let ancestors;
   export let grab;
+  let ancestors;
+
+  function refreshAncestors() {
+    if (grab != null) {
+      ancestors = [];    // start over with new grab
+      let thing = grab;
+      while (thing != null) {
+        ancestors.push(thing);
+        thing = thing.firstParent;
+      }
+      ancestors.reverse();
+    }
+  }
 
   $: {
-  ancestors = [];
-    let thing = grab;
-    while (thing != null) {
-      ancestors.push(thing);
-      thing = thing.firstParent;
-    }
-    ancestors.reverse();
+    grab = things.thingForID($grabbedID)
+    refreshAncestors();
   }
-  
-	handleSignal.connect((kinds, value) => {
-		if (kinds.includes(Signals.crumbs)) {
-      redrawCrumbs();
-    }
-  })
 
 </script>
 
-<span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span>    <!-- left side margin -->
-{#each ancestors as thing, index}
-  {#if index > 0}
-    <span>&nbsp; &gt; </span>
-  {/if}
-  <Crumb thing={thing}/>
-{/each}
+{#key grab}
+  <span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span>    <!-- left side margin -->
+  {#each ancestors as thing, index}
+    {#if index > 0}
+      <span>&nbsp; &gt; </span>
+    {/if}
+    <Crumb thing={thing}/>
+  {/each}
+{/key}

@@ -8,7 +8,7 @@
   let inputRef = null;
 
   function isDirty() { return originalTitle != thing.title; }
-  function makeClean() { originalTitle = thing.title; }
+  function make_notDirty() { originalTitle = thing.title; }
   
   function handleKeyDown(event) {
     if ($editingID == thing.id) {
@@ -28,6 +28,7 @@
     setTimeout(() => {      // wait until the inputRef is bound instantiated and editingID is settled
       if ($editingID == thing.id) {
         if (document.querySelector('.input') != document.activeElement) {
+          thing.grabOnly();
           inputRef.focus();
           inputRef.select();
         }
@@ -41,8 +42,7 @@
   function stopEditing(clearEditingID: boolean) {
     inputRef?.blur();
     if (isDirty()) {
-      makeClean();
-      thing.isDirty = true;
+      make_notDirty();
       things.updateThing_inCloud(thing);
     }
     if (clearEditingID) {
@@ -50,11 +50,10 @@
         $editingID = null;
       }, 20);
     }
-    signal(Signals.crumbs);
   }
 
   function handleFocus(event) {
-    $editingID = thing.id;
+    thing.edit();
     thing.grabOnly()
     signal(Signals.widget); // so widget will show as grabbed
   }
@@ -68,7 +67,7 @@
   id={thing.id}
   bind:this={inputRef}
   on:blur={handleBlur}
-  on:becomeHere={handleFocus}
+  on:focus={handleFocus}
   on:input={handleInput}
   on:keydown={handleKeyDown}
   bind:value={thing.title}

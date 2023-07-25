@@ -1,7 +1,7 @@
 <svelte:options immutable = {true} />
 
 <script>
-  import { Thing, things, relationships, grabbedIDs, editingID, hereID, onMount, onDestroy, signal, handleSignal, Signals as Signals, seriouslyGlobals } from '../common/GlobalImports';
+  import { Thing, things, relationships, grabbedID, grabbedIDs, editingID, hereID, onMount, onDestroy, signal, handleSignal, Signals as Signals, seriouslyGlobals } from '../common/GlobalImports';
   import Children from './Children.svelte';
   import Crumbs from './Crumbs.svelte';
   export let here;
@@ -9,9 +9,8 @@
   let listener;
 
   async function handleKeyDown(event) {
-    if (event.type == 'keydown', ($grabbedIDs?.length ?? 0) > 0) {
-      const grabbedID = $grabbedIDs[0];
-      let thing = things.thingForID(grabbedID);
+    if (event.type == 'keydown' && event.key != undefined && $grabbedID != null) {
+      let thing = things.thingForID($grabbedID);
       const key = event.key.toLowerCase();
       const OPTION = event.altKey;
       const SHIFT = event.shiftKey;
@@ -62,7 +61,6 @@
 
   function moveRight_redrawGraph_saveToCloud (thing, right, relocate) {
     thing.moveRight_refresh(right, relocate);
-    // alert(thing.title + ' parent: ', + thing.firstParent.title ?? ' whoceyortatty?');
     relationships.updateAllDirtyRelationshipsToCloud();
     things.updateAllDirtyThings_inCloud();
   }
@@ -89,7 +87,7 @@
   onDestroy( () => { window.removeEventListener('keydown', listener); });
   onMount(async () => { listener = window.addEventListener('keydown', handleKeyDown); });
 
-  </script>
+</script>
 
-<Crumbs grab={things.thingForID($grabbedIDs[0])}/>
+<Crumbs grab={things.thingForID($grabbedID)}/>
 <Children parent={here}/>

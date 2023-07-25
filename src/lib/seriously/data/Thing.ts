@@ -1,4 +1,5 @@
-import { things, hereID, grabbedIDs, editingID, createCloudID, seriouslyGlobals, relationships, RelationshipKind, signal, signalMultiple, Signals, reassignOrdersOf } from '../common/GlobalImports';
+import { things, hereID, grabbedID, grabbedIDs, editingID, createCloudID, seriouslyGlobals, relationships, RelationshipKind, signal, signalMultiple, Signals, reassignOrdersOf } from '../common/GlobalImports';
+import { get } from 'svelte/store';
 import Airtable from 'airtable';
 
 export enum PrivacyKind {
@@ -14,7 +15,6 @@ export default class Thing {
   public order: number;
   public color: string;
   public trait: string;
-  isGrabbed: boolean;
   isEditing: boolean;
   isDirty: boolean;
 
@@ -26,11 +26,6 @@ export default class Thing {
     this.trait = trait;
     this.isDirty = false;
     this.isEditing = false;
-    this.isGrabbed = false;
-
-    grabbedIDs.subscribe((ids) => {
-      this.isGrabbed = ids?.includes(this.id) ?? false;
-    });
 
     editingID.subscribe((id: string | null) => {
       this.isEditing = (id == this.id); // executes whenever editingID changes
@@ -45,7 +40,8 @@ export default class Thing {
   get children():  Array<Thing> { return relationships.thingsForID(this.id, true, RelationshipKind.parent); }
   get parents():   Array<Thing> { return relationships.thingsForID(this.id, false, RelationshipKind.parent); }
   get siblings():  Array<Thing> { return this.firstParent?.children ?? []; }
-  get hasChildren():      boolean { return this.hasRelationships(false); }
+  get isGrabbed():      boolean { return get(grabbedIDs).includes(this.id); }
+  get hasChildren():    boolean { return this.hasRelationships(false); }
   get firstChild():       Thing { return this.children[0]; }
   get firstParent():      Thing { return this.parents[0]; }
 
@@ -60,10 +56,12 @@ export default class Thing {
   }
 
   hasRelationships = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
+  pingGrabs = () => { console.log('PING:', this.title); if (!this.isGrabbed) { this.grab(); } else { this.ungrab(); setTimeout(() => { this.grab(); }, 10);; } }
   createNewThing = () => { return new Thing(createCloudID(), seriouslyGlobals.defaultTitle, 'blue', 't', -1); }
   addChild_refresh = () => { this.addChild_save_refresh(this.createNewThing()); }
+  toggleGrab = () => { if (this.isGrabbed) { this.ungrab() } else { this.grab() } }
   becomeHere = () => { if (this.hasChildren) { hereID.set(this.id) }; }
-  grabOnly = () => { grabbedIDs.set([this.id]); }
+  grabOnly = () => { grabbedIDs.set([this.id]); grabbedID.set(this.id); }
   edit = () => { editingID.set(this.id); }
 
   revealColor = (isReveal: boolean): string => {
@@ -78,13 +76,20 @@ export default class Thing {
     this.order = other.order;
   }
 
-  toggleGrab() {
+  grab = () => {
+    grabbedIDs.update(array => {
+      if (array.indexOf(this.id) == -1) {
+        array.push(this.id);  // only add if not already added
+      }
+      return array;
+    });
+  }
+
+  ungrab = () => {
     grabbedIDs.update(array => {
       const index = array.indexOf(this.id);
-      if (index == -1) {
-        array.push(this.id);
-      } else {                  // only splice array when item is found
-        array.splice(index, 1); // 2nd parameter means remove one item only  
+      if (index != -1) {        // only splice array when item is found
+        array.splice(index, 1); // 2nd parameter means remove one item only
       }
       return array;
     });
@@ -113,7 +118,6 @@ export default class Thing {
     await things.createThing_inCloud(child); // need child's id for everything below
     await relationships.createRelationship_save_inCloud(RelationshipKind.parent, child.id, this.id);
     this.becomeHere();
-    signal(Signals.crumbs);
     child.grabOnly();
     child.edit();
     signal(Signals.widget);
@@ -172,7 +176,7 @@ export default class Thing {
   browseRight = (right: boolean, grandparent: Thing) => {
     const grab = right ? this.firstChild : this.firstParent;
     const here = right ? this : grandparent;
-    grab.grabOnly();
+    grab?.grabOnly();
     signal(Signals.widget); // signal BEFORE setting hereID to avoid blink
     here.becomeHere();
   }

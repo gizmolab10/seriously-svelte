@@ -11,7 +11,6 @@
       console.log('Error reading Relationships database: ' + error);
     }
     try {
-      console.log('things');
       await things.readAllThings_fromCloud();
       isLoading = false;
     } catch (error) {

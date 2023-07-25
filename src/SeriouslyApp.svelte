@@ -1,6 +1,5 @@
 <script>
-  import MainFrame from '/src/lib/seriously/components/MainFrame.svelte';
-  // import * as d3 from 'd3';
+  import Panel from '/src/lib/seriously/components/Panel.svelte';
 </script>
 
-<MainFrame/>
+<Panel/>
