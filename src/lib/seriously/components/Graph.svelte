@@ -48,7 +48,7 @@
                     all[index].grabOnly();
                   }              
                 }
-                signal(Signals.widget);
+                signal(Signals.widgets);
                 await things.deleteThing_updateCloud(thing);
                 await relationships.deleteRelationships_updateCloudFor(thing);
               }

@@ -13,14 +13,14 @@ export class Relationship {
   from: string;
   to: string;
   id: string;
-  isDirty: boolean;
+  needsSave: boolean;
 
   constructor(id: string, kind: RelationshipKind, from: string, to: string) {
     this.kind = kind;
     this.from = from; // from is child
     this.to = to; // to is parent
     this.id = id;
-    this.isDirty = false;
+    this.needsSave = false;
   }
 
   get fields(): Airtable.FieldSet {

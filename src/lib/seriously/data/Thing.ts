@@ -1,4 +1,4 @@
-import { things, hereID, grabbedID, grabbedIDs, editingID, createCloudID, seriouslyGlobals, relationships, RelationshipKind, signal, signalMultiple, Signals, reassignOrdersOf } from '../common/GlobalImports';
+import { things, hereID, grabbedID, grabbedIDs, editingID, createCloudID, seriouslyGlobals, relationships, RelationshipKind, signal, signalMultiple, Signals, normalizeOrderOf } from '../common/GlobalImports';
 import { get } from 'svelte/store';
 import Airtable from 'airtable';
 
@@ -16,7 +16,7 @@ export default class Thing {
   public color: string;
   public trait: string;
   isEditing: boolean;
-  isDirty: boolean;
+  needsSave: boolean;
 
   constructor(id = createCloudID(), title = seriouslyGlobals.defaultTitle, color = 'blue', trait = 's', order = 0) {
     this.id = id;
@@ -24,7 +24,7 @@ export default class Thing {
     this.order = order;
     this.color = color;
     this.trait = trait;
-    this.isDirty = false;
+    this.needsSave = false;
     this.isEditing = false;
 
     editingID.subscribe((id: string | null) => {
@@ -56,7 +56,6 @@ export default class Thing {
   }
 
   hasRelationships = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
-  pingGrabs = () => { console.log('PING:', this.title); if (!this.isGrabbed) { this.grab(); } else { this.ungrab(); setTimeout(() => { this.grab(); }, 10);; } }
   createNewThing = () => { return new Thing(createCloudID(), seriouslyGlobals.defaultTitle, 'blue', 't', -1); }
   addChild_refresh = () => { this.addChild_save_refresh(this.createNewThing()); }
   toggleGrab = () => { if (this.isGrabbed) { this.ungrab() } else { this.grab() } }
@@ -77,22 +76,26 @@ export default class Thing {
   }
 
   grab = () => {
-    grabbedIDs.update(array => {
+    grabbedIDs.update((array) => {
       if (array.indexOf(this.id) == -1) {
         array.push(this.id);  // only add if not already added
+        grabbedID.set(this.id);
       }
       return array;
     });
   }
 
   ungrab = () => {
-    grabbedIDs.update(array => {
+    grabbedIDs.update((array) => {
       const index = array.indexOf(this.id);
       if (index != -1) {        // only splice array when item is found
         array.splice(index, 1); // 2nd parameter means remove one item only
       }
       return array;
     });
+    if (get(grabbedID) == this.id) {  // TODO: grab the top most of grabbed siblings
+      grabbedID.update(() => { return null; })
+    }
   }
   
   traverse = (applyTo : (thing: Thing) => boolean) : Thing | null => {
@@ -115,12 +118,12 @@ export default class Thing {
   }
 
   addChild_save_refresh = async (child: Thing) => {
-    await things.createThing_inCloud(child); // need child's id for everything below
+    await things.createThing_inCloud(child); // need child's [valid from cloud] id for everything below
     await relationships.createRelationship_save_inCloud(RelationshipKind.parent, child.id, this.id);
     this.becomeHere();
     child.grabOnly();
     child.edit();
-    signal(Signals.widget);
+    signal(Signals.widgets);
     things.updateAllDirtyThings_inCloud();
   }
 
@@ -132,7 +135,7 @@ export default class Thing {
       if (newIndex.between(-1, siblings.length, false)) {
         if (relocate) {
           siblings[index].order = newIndex - 0.5
-          signal(Signals.widget);
+          normalizeOrderOf(siblings);
         } else {
           const newGrab = siblings[newIndex];
           if (expand) {
@@ -140,8 +143,8 @@ export default class Thing {
           } else {
             newGrab.grabOnly();
           }
-          signal(Signals.widget);
         }
+        signal(Signals.widgets);
       }
     }
   }
@@ -158,18 +161,20 @@ export default class Thing {
   relocateRight = (right: boolean, grandparent: Thing) => {
     const parent = right ? this.nextSibling(false) : grandparent;
     if (parent != null) {
-      this.isDirty = true;
-      parent.isDirty = true;
+      this.needsSave = true;
+      parent.needsSave = true;
       const matches = relationships.relationshipsMatchingKind(RelationshipKind.parent, false, this.id);
       for (let index = 0; index < matches.length; index++) {
         const relationship = matches[index];
         relationship.to = parent.id;
-        relationship.isDirty = true;
+        relationship.needsSave = true;
       }
       relationships.refreshLookups();
-      this.grabOnly();
-      signal(Signals.widget); // signal BEFORE setting hereID to avoid blink
+      signal(Signals.widgets); // signal BEFORE becomeHere to avoid blink
       parent.becomeHere();
+      setTimeout(() => {
+        this.grabOnly();
+      }, 100);
     }
   }
 
@@ -177,7 +182,7 @@ export default class Thing {
     const grab = right ? this.firstChild : this.firstParent;
     const here = right ? this : grandparent;
     grab?.grabOnly();
-    signal(Signals.widget); // signal BEFORE setting hereID to avoid blink
+    signal(Signals.widgets); // signal BEFORE setting hereID to avoid blink
     here.becomeHere();
   }
 

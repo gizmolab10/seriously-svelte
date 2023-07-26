@@ -91,7 +91,7 @@ class Relationships {
 
   async updateAllDirtyRelationshipsToCloud() {
     this.all.forEach((relationship) => {
-      if (relationship.isDirty) {
+      if (relationship.needsSave) {
         try {
           this.updateRelationshipToCloud(relationship);
         } catch (error) {
@@ -104,7 +104,7 @@ class Relationships {
   async updateRelationshipToCloud(relationship: Relationship) {
     try {
       table.update(relationship.id, relationship.fields);
-      relationship.isDirty = false;
+      relationship.needsSave = false;
     } catch (error) {
       console.log(this.errorMessage + error);
     }

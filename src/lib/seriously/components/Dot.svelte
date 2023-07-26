@@ -19,11 +19,11 @@
       thing.grabOnly();
     }
 
-    signal(Signals.widget, thing.id);
+    signal(Signals.widgets, thing.id);
   }
 
 	handleSignal.connect((kinds, value) => {
-		if (kinds.includes(Signals.dot) && value == thing.id) {
+		if (kinds.includes(Signals.dots) && value == thing.id) {
       var style = document.getElementById(thing.id)?.style;
       style?.setProperty(   '--dotColor', thing.color);
       style?.setProperty( '--traitColor', thing.revealColor(!isReveal));

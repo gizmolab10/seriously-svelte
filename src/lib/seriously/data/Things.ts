@@ -66,7 +66,7 @@ export default class Things {
   async updateThing_inCloud(thing: Thing) {
     try {
       await table.update(thing.id, thing.fields);
-      thing.isDirty = false; // if update fails, subsequent update will try again
+      thing.needsSave = false; // if update fails, subsequent update will try again
     } catch (error) {
       console.log(this.errorMessage + ' (in updateToCloud) ' + error);
     }
@@ -75,7 +75,7 @@ export default class Things {
   async updateAllDirtyThings_inCloud() {
     const all: Thing[] = Object.values(this.thingsByID);
     for (const thing of all) {
-      if (thing.isDirty) {
+      if (thing.needsSave) {
         await this.updateThing_inCloud(thing)
       }
     }

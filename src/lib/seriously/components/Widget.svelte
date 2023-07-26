@@ -7,8 +7,8 @@
 	export let thing = Thing;
 
 	handleSignal.connect((kinds) => {
-		if (kinds.includes(Signals.widget)) {
-			signal(Signals.dot, thing.id); // pass signal along to its dots
+		if (kinds.includes(Signals.widgets)) {
+			signal(Signals.dots, thing.id); // pass signal along to its dots
 			var style = document.getElementById(thing.id)?.style;
 			style?.setProperty('--hoverAttributes', thing.hoverAttributes);
 			style?.setProperty( '--grabAttributes', thing.grabAttributes);

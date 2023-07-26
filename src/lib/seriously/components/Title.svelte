@@ -7,7 +7,7 @@
   let originalTitle = thing.title;
   let inputRef = null;
 
-  function isDirty() { return originalTitle != thing.title; }
+  function needsSave() { return originalTitle != thing.title; }
   function make_notDirty() { originalTitle = thing.title; }
   
   function handleKeyDown(event) {
@@ -32,16 +32,16 @@
           inputRef.focus();
           inputRef.select();
         }
-      } else if (isDirty()) {
+      } else if (needsSave()) {
         stopEditing(false); // false means leave editingID alone so other currently editing widgets continue editing
       };
-      signal(Signals.widget); // so widget will show as [un]grabbed
+      signal(Signals.widgets); // so widget will show as [un]grabbed
     }, 200);
   }
 
   function stopEditing(clearEditingID: boolean) {
     inputRef?.blur();
-    if (isDirty()) {
+    if (needsSave()) {
       make_notDirty();
       things.updateThing_inCloud(thing);
     }
@@ -55,7 +55,7 @@
   function handleFocus(event) {
     thing.edit();
     thing.grabOnly()
-    signal(Signals.widget); // so widget will show as grabbed
+    signal(Signals.widgets); // so widget will show as grabbed
   }
 
   function handleInput(event) { thing.title = event.target.value; }

@@ -25,12 +25,12 @@ export function moveElementWithin<T>(array: Array<T>, from: number, to: number) 
   array.splice(second, 0, mover);
 }
 
-export function reassignOrdersOf(array: Array<Thing>) {
+export function normalizeOrderOf(array: Array<Thing>) {
   for (let index = 0; index < array.length; index++) {
       const thing = array[index];
       if (thing.order != index) {
         thing.order = index;
-        thing.isDirty = true;
+        thing.needsSave = true;
       }
     }
   }
