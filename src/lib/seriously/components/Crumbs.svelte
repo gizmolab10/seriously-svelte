@@ -19,6 +19,7 @@
   $: {
     grab = things.thingForID($grabbedID)
     refreshAncestors();
+    console.log('ANCESTORS:', ancestors.length);
   }
 
 </script>

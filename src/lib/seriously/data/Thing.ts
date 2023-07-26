@@ -34,16 +34,16 @@ export default class Thing {
   };
 
   get fields(): Airtable.FieldSet { return { id: this.id, title: this.title, order: this.order, color: this.color, trait: this.trait }; }
-  get  grabAttributes(): string { return this.borderAttribute + this.revealColor(false); }
-  get hoverAttributes(): string { return this.borderAttribute + this.revealColor(true); }
-  get borderAttribute(): string { return (this.isEditing ? 'dashed' : 'solid') + ' 1px '; }
-  get children():  Array<Thing> { return relationships.thingsForID(this.id, true, RelationshipKind.parent); }
-  get parents():   Array<Thing> { return relationships.thingsForID(this.id, false, RelationshipKind.parent); }
-  get siblings():  Array<Thing> { return this.firstParent?.children ?? []; }
-  get isGrabbed():      boolean { return get(grabbedIDs).includes(this.id); }
-  get hasChildren():    boolean { return this.hasRelationships(false); }
-  get firstChild():       Thing { return this.children[0]; }
-  get firstParent():      Thing { return this.parents[0]; }
+  get  grabAttributes():   string { return this.borderAttribute + this.revealColor(false); }
+  get hoverAttributes():   string { return this.borderAttribute + this.revealColor(true); }
+  get borderAttribute():   string { return (this.isEditing ? 'dashed' : 'solid') + ' 1px '; }
+  get children():    Array<Thing> { return relationships.thingsForID(this.id, true, RelationshipKind.parent); }
+  get parents():     Array<Thing> { return relationships.thingsForID(this.id, false, RelationshipKind.parent); }
+  get siblings():    Array<Thing> { return this.firstParent?.children ?? []; }
+  get isGrabbed():        boolean { return get(grabbedIDs).includes(this.id); }
+  get hasChildren():      boolean { return this.hasRelationships(false); }
+  get firstChild():         Thing { return this.children[0]; }
+  get firstParent():        Thing { return this.parents[0]; }
 
   get ellipsisTitle(): string {
     let title = this.title;
@@ -150,40 +150,46 @@ export default class Thing {
   }
 
   moveRight_refresh = (right: boolean, relocate: boolean) => {
-    const grandparent = this.firstParent?.firstParent ?? things.root;
+    const leftGrandparent = this.firstParent?.firstParent ?? things.root;
     if (relocate) {
-      this.relocateRight(right, grandparent);
+      this.relocateRight(right, leftGrandparent);
     } else {
-      this.browseRight(right, grandparent);
+      this.browseRight(right, leftGrandparent);
     }
   }
 
-  relocateRight = (right: boolean, grandparent: Thing) => {
-    const parent = right ? this.nextSibling(false) : grandparent;
+  browseRight = (right: boolean, leftGrandparent: Thing) => {
+    const grab = right ? this.firstChild : this.firstParent;
+    const here = right ? this : leftGrandparent;
+    grab?.grabOnly();
+    signal(Signals.widgets);   // signal BEFORE becomeHere to avoid blink
+    here.becomeHere();
+  }
+
+  relocateRight = (right: boolean, leftGrandparent: Thing) => {
+    const parent = right ? this.nextSibling(false) : leftGrandparent;
     if (parent != null) {
       this.needsSave = true;
       parent.needsSave = true;
-      const matches = relationships.relationshipsMatchingKind(RelationshipKind.parent, false, this.id);
+
+      // alter the 'to' in ALL [?] the matching 'from' relationships
+      // simpler than adjusting children or parents arrays
+      // TODO: also match against the 'to' to the current parent
+      // TODO: pass kind in ... to support editing different kinds of relationships
+      
+      const matches = relationships.relationships_matchingKind(RelationshipKind.parent, false, this.id);
       for (let index = 0; index < matches.length; index++) {
         const relationship = matches[index];
         relationship.to = parent.id;
         relationship.needsSave = true;
       }
-      relationships.refreshLookups();
+      
+      relationships.reconstruct_lookupDictionaries();
+      console.log('RELOCATE');
+      this.grabOnly();
       signal(Signals.widgets); // signal BEFORE becomeHere to avoid blink
       parent.becomeHere();
-      setTimeout(() => {
-        this.grabOnly();
-      }, 100);
     }
-  }
-
-  browseRight = (right: boolean, grandparent: Thing) => {
-    const grab = right ? this.firstChild : this.firstParent;
-    const here = right ? this : grandparent;
-    grab?.grabOnly();
-    signal(Signals.widgets); // signal BEFORE setting hereID to avoid blink
-    here.becomeHere();
   }
 
   nextSibling = (increment: boolean): Thing => {

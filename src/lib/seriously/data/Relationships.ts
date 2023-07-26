@@ -24,7 +24,7 @@ class Relationships {
     this.allByFromID = {};
   }
 
-  refreshLookups() {
+  reconstruct_lookupDictionaries() {
     const saved = this.all;
     this.clearLookups();
     for (const relationship of saved) {
@@ -42,7 +42,7 @@ class Relationships {
     this.allByToID[relationship.to] = tos;
   }
 
-  relationshipsMatchingKind(kind: RelationshipKind, to: boolean, id: string): Array<Relationship> {
+  relationships_matchingKind(kind: RelationshipKind, to: boolean, id: string): Array<Relationship> {
     const dict = to ? this.allByToID : this.allByFromID;
     const matches = dict[id] as Array<Relationship>; // filter out baaaaad values
     const array: Array<Relationship> = [];
@@ -57,7 +57,7 @@ class Relationships {
   }
 
   thingsForID(id: string, matchingTo: boolean, kind: RelationshipKind): Array<Thing> {
-    const matches = this.relationshipsMatchingKind(kind, matchingTo, id);
+    const matches = this.relationships_matchingKind(kind, matchingTo, id);
     const ids: Array<string> = [];
     if (Array.isArray(matches)) {
       for (const relationship of matches) {
@@ -122,7 +122,7 @@ class Relationships {
   }
 
   createUniqueRelationship(kind: RelationshipKind, from: string, to: string) {
-    if (this.relationshipsMatchingKind(kind, false, from).length == 0) {
+    if (this.relationships_matchingKind(kind, false, from).length == 0) {
       return this.createRelationship(kind, from, to)
     }
 
@@ -140,7 +140,7 @@ class Relationships {
         await this.deleteRelationship_fromCloud(relationship);
         this.all = this.all.filter((item) => item.id !== relationship.id);
       }
-      this.refreshLookups();
+      this.reconstruct_lookupDictionaries();
     }
 
   }
