@@ -1,5 +1,3 @@
-<svelte:options immutable = {true} />
-
 <script>
   import { Thing, normalizeOrderOf } from '../common/GlobalImports.ts';
   import Widget from './Widget.svelte';

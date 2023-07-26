@@ -1,5 +1,3 @@
-<svelte:options immutable = {true} />
-
 <script lang='ts'>
   import { Thing, things, editingID, signal, Signals } from '../common/GlobalImports.ts';
   import Widget from '../components/Widget.svelte';

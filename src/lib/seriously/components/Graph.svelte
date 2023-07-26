@@ -1,5 +1,3 @@
-<svelte:options immutable = {true} />
-
 <script>
   import { Thing, things, relationships, grabbedID, grabbedIDs, editingID, hereID, onMount, onDestroy, sortAccordingToOrder, signal, handleSignal, Signals, seriouslyGlobals } from '../common/GlobalImports';
   import Children from './Children.svelte';
@@ -18,8 +16,8 @@
         if ([' ', 'd', 'tab', 'enter', 'delete', 'backspace'].includes(key)) { return; }
       } else {
         switch (key) {
-          case ' ': thing?.addChild_refresh(); toggledReload = !toggledReload; break;
-          case 'd': thing?.duplicate_refresh(true); toggledReload = !toggledReload; break;
+          case ' ': thing?.addChild_refresh(); break;
+          case 'd': thing?.duplicate_refresh(true); break;
           case 't': alert('PARENT-CHILD SWAP'); break;
           case 'enter': thing?.edit(); break;
           case 'arrowup': moveUp_redrawGraph_saveToCloud(true, SHIFT, OPTION); break;

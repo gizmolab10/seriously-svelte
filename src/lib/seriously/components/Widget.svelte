@@ -1,5 +1,3 @@
-<svelte:options immutable = {true} />
-
 <script lang='ts'>
   import { Thing, signal, handleSignal, Signals } from '../common/GlobalImports.ts';
 	import Title from './Title.svelte';
