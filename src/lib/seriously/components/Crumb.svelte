@@ -3,7 +3,7 @@
   export let thing = Thing;
 
   function handleClick(event) {
-    if (thing.id == seriouslyGlobals.rootID) {
+    if (thing == things.root) {
       grabChild();
       thing.becomeHere();
     } else {

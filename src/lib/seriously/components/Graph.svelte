@@ -1,7 +1,7 @@
 <svelte:options immutable = {true} />
 
 <script>
-  import { Thing, things, relationships, grabbedID, grabbedIDs, editingID, hereID, onMount, onDestroy, signal, handleSignal, Signals as Signals, seriouslyGlobals } from '../common/GlobalImports';
+  import { Thing, things, relationships, grabbedID, grabbedIDs, editingID, hereID, onMount, onDestroy, sortAccordingToOrder, signal, handleSignal, Signals, seriouslyGlobals } from '../common/GlobalImports';
   import Children from './Children.svelte';
   import Crumbs from './Crumbs.svelte';
   export let here;
@@ -68,14 +68,14 @@
   function highestGrab(up) {
     const ids = $grabbedIDs;
     let grabs = things.thingsForIDs(ids);
-    grabs.sort((a, b) => { return a.order - b.order; });
+    sortAccordingToOrder(grabs);
     if (up) {
       return grabs[0];
     } else {
       return grabs[grabs.length - 1];
     }
   }
-
+  
   function moveUp_redrawGraph_saveToCloud(up, expand, relocate) {
     const thing = highestGrab(up);
     thing.moveUp_refresh(up, expand, relocate);
@@ -90,4 +90,6 @@
 </script>
 
 <Crumbs grab={things.thingForID($grabbedID)}/>
-<Children parent={here}/>
+{#if here != null}
+  <Children parent={here}/>
+{/if}

@@ -1,9 +1,13 @@
 <svelte:options immutable = {true} />
 
 <script>
-  import { things, onMount, onDestroy, signal, handleSignal, Signals, relationships, Thing } from '../common/GlobalImports.ts';
+  import { Thing, normalizeOrderOf } from '../common/GlobalImports.ts';
   import Widget from './Widget.svelte';
   export let parent = Thing | null;
+
+  $: {
+    normalizeOrderOf(parent.children);
+  }
 
 </script>
 

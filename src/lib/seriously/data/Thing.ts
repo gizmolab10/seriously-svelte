@@ -1,4 +1,4 @@
-import { things, hereID, grabbedID, grabbedIDs, editingID, createCloudID, seriouslyGlobals, relationships, RelationshipKind, signal, signalMultiple, Signals, normalizeOrderOf } from '../common/GlobalImports';
+import { things, hereID, grabbedID, grabbedIDs, editingID, createCloudID, seriouslyGlobals, relationships, RelationshipKind, signal, Signals, normalizeOrderOf } from '../common/GlobalImports';
 import { get } from 'svelte/store';
 import Airtable from 'airtable';
 
@@ -57,10 +57,11 @@ export default class Thing {
 
   hasRelationships = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
   createNewThing = () => { return new Thing(createCloudID(), seriouslyGlobals.defaultTitle, 'blue', 't', -1); }
+  grabOnly = () => { grabbedIDs.set([this.id]); grabbedID.set(null); grabbedID.set(this.id); }
+  pingHere = () => { const saved = get(hereID); hereID.set(null); hereID.set(saved); }
+  toggleGrab = () => { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }
   addChild_refresh = () => { this.addChild_save_refresh(this.createNewThing()); }
-  toggleGrab = () => { if (this.isGrabbed) { this.ungrab() } else { this.grab() } }
   becomeHere = () => { if (this.hasChildren) { hereID.set(this.id) }; }
-  grabOnly = () => { grabbedIDs.set([this.id]); grabbedID.set(this.id); }
   edit = () => { editingID.set(this.id); }
 
   revealColor = (isReveal: boolean): string => {
@@ -134,8 +135,9 @@ export default class Thing {
       const newIndex = index.increment(!up, siblings.length);
       if (newIndex.between(-1, siblings.length, false)) {
         if (relocate) {
-          siblings[index].order = newIndex - 0.5
+          siblings[index].order = newIndex + (0.5 * (up ? -1 : 1))
           normalizeOrderOf(siblings);
+          this.firstParent.pingHere();
         } else {
           const newGrab = siblings[newIndex];
           if (expand) {
@@ -164,6 +166,7 @@ export default class Thing {
     grab?.grabOnly();
     signal(Signals.widgets);   // signal BEFORE becomeHere to avoid blink
     here.becomeHere();
+    // alert('BROWSE: ' + here?.title);
   }
 
   relocateRight = (right: boolean, leftGrandparent: Thing) => {
@@ -185,7 +188,6 @@ export default class Thing {
       }
       
       relationships.reconstruct_lookupDictionaries();
-      console.log('RELOCATE');
       this.grabOnly();
       signal(Signals.widgets); // signal BEFORE becomeHere to avoid blink
       parent.becomeHere();

@@ -1,4 +1,4 @@
-import { Thing, relationships, RelationshipKind, seriouslyGlobals, hereID, signal, Signals } from '../common/GlobalImports';
+import { Thing, relationships, RelationshipKind, seriouslyGlobals, hereID, sortAccordingToOrder } from '../common/GlobalImports';
 import Airtable, {FieldSet} from 'airtable';
 
 const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
@@ -25,10 +25,7 @@ export default class Things {
         array.push(thing);
       }
     }
-    if (Array.isArray(array)) {
-      array.sort((a: Thing, b: Thing) => { return a.order - b.order })
-    }
-    return array
+    return sortAccordingToOrder(array);
   }
 
   ///////////////////////////
@@ -38,7 +35,7 @@ export default class Things {
   async readAllThings_fromCloud() {
     const rootID = seriouslyGlobals.rootID;
     this.root = new Thing(rootID, seriouslyGlobals.rootTitle, seriouslyGlobals.rootColor, 'm', 0);
-    this.thingsByID = {};
+    this.thingsByID = {}; // clear
     this.thingsByID[rootID] = this.root;
 
     try {

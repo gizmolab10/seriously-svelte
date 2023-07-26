@@ -26,11 +26,16 @@ export function moveElementWithin<T>(array: Array<T>, from: number, to: number) 
 }
 
 export function normalizeOrderOf(array: Array<Thing>) {
+  sortAccordingToOrder(array);
   for (let index = 0; index < array.length; index++) {
-      const thing = array[index];
-      if (thing.order != index) {
-        thing.order = index;
-        thing.needsSave = true;
-      }
+    const thing = array[index];
+    if (thing.order != index) {
+      thing.order = index;
+      thing.needsSave = true;
     }
   }
+}
+
+export function sortAccordingToOrder(array: Array<Thing>) {
+  return array.sort( (a: Thing, b: Thing) => { return a.order - b.order; });
+}
