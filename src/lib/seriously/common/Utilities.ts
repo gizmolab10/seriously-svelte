@@ -15,14 +15,8 @@ export function createCloudID(): string {
   return 'rec' + removeAll('-', uuid()).slice(10, 24);
 }
 
-export function moveElementWithin<T>(array: Array<T>, from: number, to: number) {
-  const contiguous = Math.abs(to - from) == 1;
-  const toLessThanFrom = to > from;
-  const retain = toLessThanFrom && contiguous
-  const first = retain ? to : from;
-  const second = retain ? from : to;
-  const mover = array.splice(first, 1)[0]
-  array.splice(second, 0, mover);
+export function sortAccordingToOrder(array: Array<Thing>) {
+  return array.sort( (a: Thing, b: Thing) => { return a.order - b.order; });
 }
 
 export function normalizeOrderOf(array: Array<Thing>) {
@@ -34,8 +28,4 @@ export function normalizeOrderOf(array: Array<Thing>) {
       thing.needsSave = true;
     }
   }
-}
-
-export function sortAccordingToOrder(array: Array<Thing>) {
-  return array.sort( (a: Thing, b: Thing) => { return a.order - b.order; });
 }

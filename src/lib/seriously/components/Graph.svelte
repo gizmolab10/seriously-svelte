@@ -7,52 +7,64 @@
   let listener;
 
   async function handleKeyDown(event) {
-    if (event.type == 'keydown' && event.key != undefined && $grabbedID != null) {
+    if ($grabbedID == null) {
+      alert('no grabs');
+    } else if (event.key == undefined) {
+      alert('no key for ' + event.type);
+    } else if (event.type == 'keydown') {
       let thing = things.thingForID($grabbedID);
       const key = event.key.toLowerCase();
       const OPTION = event.altKey;
       const SHIFT = event.shiftKey;
       if ($editingID != null) {
-        if ([' ', 'd', 'tab', 'enter', 'delete', 'backspace'].includes(key)) { return; }
+        if ([' ', 'd', 't', 'tab', 'enter', 'delete', 'backspace'].includes(key) || key.includes('arrow')) { return; }
       } else {
         switch (key) {
-          case ' ': thing?.addChild_refresh(); break;
-          case 'd': thing?.duplicate_refresh(true); break;
-          case 't': alert('PARENT-CHILD SWAP'); break;
-          case 'enter': thing?.edit(); break;
-          case 'arrowup': moveUp_redrawGraph_saveToCloud(true, SHIFT, OPTION); break;
-          case 'arrowdown': moveUp_redrawGraph_saveToCloud(false, SHIFT, OPTION); break;
+          case ' ':          addChildTo_redrawGraph_saveToCloud(thing); break;
+          case 'd':          thing?.duplicate_refresh(); break;
+          case 't':          alert('PARENT-CHILD SWAP'); break;
+          case 'tab':        addChildTo_redrawGraph_saveToCloud(thing?.firstParent); break; // Title also makes this call
+          case 'enter':      thing?.edit(); break;
+          case 'arrowup':    moveUp_redrawGraph_saveToCloud(true, SHIFT, OPTION); break;
+          case 'arrowdown':  moveUp_redrawGraph_saveToCloud(false, SHIFT, OPTION); break;
           case 'arrowright': moveRight_redrawGraph_saveToCloud(thing, true, OPTION); break;
-          case 'arrowleft': moveRight_redrawGraph_saveToCloud(thing, false, OPTION); break;
-          case 'tab':
-            thing?.duplicate_refresh(); // Title also makes this call
-            break;
+          case 'arrowleft':  moveRight_redrawGraph_saveToCloud(thing, false, OPTION); break;
           case 'delete':
-          case 'backspace':
-            const ids = $grabbedIDs;
-            for (const id of ids) {
-              thing = things.thingForID(id);
-              if (thing != null && !thing.isEditing && here != null) {
-                const all = thing.firstParent?.children;
-                let index = all.indexOf(thing);
-                all.splice(index, 1);
-                if (all.length == 0) {
-                  thing.firstParent.firstParent.becomeHere();
-                } else {
-                  if (index >= all.length) {
-                    index = all.length - 1;
-                  }
-                  if (index >= 0) {
-                    all[index].grabOnly();
-                  }              
-                }
-                signal(Signals.widgets);
-                await things.deleteThing_updateCloud(thing);
-                await relationships.deleteRelationships_updateCloudFor(thing);
-              }
-            }
-            break;
+          case 'backspace':  deleteGrabs_redrawGraph_saveToCloud(); break;
+        }
+      }
+    }
+  }
+
+  function addChildTo_redrawGraph_saveToCloud(parent) {
+    parent.addChild_refresh();
+    parent.pingHere();
+    alert(parent.title);
+  }
+
+  function deleteGrabs_redrawGraph_saveToCloud() {
+    const ids = $grabbedIDs;
+    for (const id of ids) {
+      const grab = things.thingForID(id);
+      if (grab != null && !grab.isEditing && here != null) {
+        const siblings = grab.siblings;
+        let index = siblings.indexOf(grab);
+        siblings.splice(index, 1);
+        if (siblings.length == 0) {
+          grab.firstParent.firstParent.becomeHere();
+          grab.firstParent.grabOnly();
+        } else {
+          if (index >= siblings.length) {
+            index = siblings.length - 1;
           }
+          if (index >= 0) {
+            siblings[index].grabOnly();
+          }
+          here.pingHere();          
+        }
+        signal(Signals.widgets);
+        things.deleteThing_updateCloud(grab);
+        relationships.deleteRelationships_updateCloudFor(grab);
       }
     }
   }

@@ -56,11 +56,11 @@ export default class Thing {
   }
 
   hasRelationships = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
-  createNewThing = () => { return new Thing(createCloudID(), seriouslyGlobals.defaultTitle, 'blue', 't', -1); }
+  createNewThing = (order: number) => { return new Thing(createCloudID(), seriouslyGlobals.defaultTitle, 'blue', 't', order); }
+  addChild_refresh = () => { this.addChild_refresh_saveToCloud(this.createNewThing(-1)); }
   grabOnly = () => { grabbedIDs.set([this.id]); grabbedID.set(null); grabbedID.set(this.id); }
   pingHere = () => { const saved = get(hereID); hereID.set(null); hereID.set(saved); }
   toggleGrab = () => { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }
-  addChild_refresh = () => { this.addChild_save_refresh(this.createNewThing()); }
   becomeHere = () => { if (this.hasChildren) { hereID.set(this.id) }; }
   edit = () => { editingID.set(this.id); }
 
@@ -111,17 +111,16 @@ export default class Thing {
   }
 
   duplicate_refresh = async () => {
-    const sibling = this.createNewThing();
+    const sibling = this.createNewThing(this.order + 0.5);
     const parent = this.firstParent ?? things.root;
-    sibling.order = this.order + 0.5;
     sibling.copyFrom(this);
-    parent.addChild_save_refresh(sibling)
+    parent.addChild_refresh_saveToCloud(sibling)
   }
 
-  addChild_save_refresh = async (child: Thing) => {
-    await things.createThing_inCloud(child); // need child's [valid from cloud] id for everything below
+  addChild_refresh_saveToCloud = async (child: Thing) => {
+    await things.createThing_inCloud(child); // for everything below, need to await child.id fetched from cloud
     await relationships.createRelationship_save_inCloud(RelationshipKind.parent, child.id, this.id);
-    this.becomeHere();
+    this.pingHere();
     child.grabOnly();
     child.edit();
     signal(Signals.widgets);
@@ -135,7 +134,7 @@ export default class Thing {
       const newIndex = index.increment(!up, siblings.length);
       if (newIndex.between(-1, siblings.length, false)) {
         if (relocate) {
-          siblings[index].order = newIndex + (0.5 * (up ? -1 : 1))
+          siblings[index].order = newIndex + (0.1 * (up ? -1 : 1))
           normalizeOrderOf(siblings);
           this.firstParent.pingHere();
         } else {
