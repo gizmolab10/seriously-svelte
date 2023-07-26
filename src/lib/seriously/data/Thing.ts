@@ -132,21 +132,22 @@ export default class Thing {
     if (siblings != null) {
       const index = siblings.indexOf(this);
       const newIndex = index.increment(!up, siblings.length);
-      if (newIndex.between(-1, siblings.length, false)) {
-        if (relocate) {
-          siblings[index].order = newIndex + (0.1 * (up ? -1 : 1))
-          normalizeOrderOf(siblings);
-          this.firstParent.pingHere();
+      if (relocate) {
+        const wrapped = (Math.abs(newIndex - index) != 1);
+        const goose = (wrapped ? -0.1 : 1) * (up ? -1 : 1);
+        const newOrder =  newIndex + goose;
+        siblings[index].order = newOrder;
+        normalizeOrderOf(siblings);
+        this.firstParent.pingHere();
+      } else {
+        const newGrab = siblings[newIndex];
+        if (expand) {
+          newGrab.toggleGrab()
         } else {
-          const newGrab = siblings[newIndex];
-          if (expand) {
-            newGrab.toggleGrab()
-          } else {
-            newGrab.grabOnly();
-          }
+          newGrab.grabOnly();
         }
-        signal(Signals.widgets);
       }
+      signal(Signals.widgets);
     }
   }
 
