@@ -45,14 +45,15 @@ export default class Thing {
   get firstChild():         Thing { return this.children[0]; }
   get firstParent():        Thing { return this.parents[0]; }
 
-  get ellipsisTitle(): string {
-    let title = this.title;
-    const length = title.length;
-    const segment = 7;
-    if (length > segment * 2 + 3) {
-      title = title.slice(0, segment) + ' ... ' + title.slice(length - segment, length);
+  get ancestors(): Array<Thing> {
+    const ancestors = [];
+    let thing: Thing = this;
+    while (thing != null) {
+      ancestors.push(thing);
+      thing = thing.firstParent;
     }
-    return title;
+    ancestors.reverse();
+    return ancestors;
   }
 
   hasRelationships = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
@@ -120,9 +121,9 @@ export default class Thing {
   addChild_refresh_saveToCloud = async (child: Thing) => {
     await things.createThing_inCloud(child); // for everything below, need to await child.id fetched from cloud
     await relationships.createRelationship_save_inCloud(RelationshipKind.parent, child.id, this.id);
-    this.pingHere();
     child.grabOnly();
     child.edit();
+    this.pingHere();
     signal(Signals.widgets);
     things.updateAllDirtyThings_inCloud();
   }
@@ -142,9 +143,9 @@ export default class Thing {
       } else {
         const newGrab = siblings[newIndex];
         if (expand) {
-          newGrab.toggleGrab()
+          newGrab?.toggleGrab()
         } else {
-          newGrab.grabOnly();
+          newGrab?.grabOnly();
         }
       }
       signal(Signals.widgets);
@@ -166,31 +167,37 @@ export default class Thing {
     grab?.grabOnly();
     signal(Signals.widgets);   // signal BEFORE becomeHere to avoid blink
     here.becomeHere();
-    // alert('BROWSE: ' + here?.title);
   }
 
-  relocateRight = (right: boolean, leftGrandparent: Thing) => {
-    const parent = right ? this.nextSibling(false) : leftGrandparent;
-    if (parent != null) {
-      this.needsSave = true;
-      parent.needsSave = true;
+  relocateRight = async (right: boolean, leftGrandparent: Thing) => {
+    const newParent = right ? this.nextSibling(false) : leftGrandparent;
+    if (newParent != null) {
+      this.needsSave = true;     // order will change
+      const movingIoRoot = newParent == things.root;
+      const movingFromRoot = this.firstParent == things.root;
+      const matches = relationships.relationships_matchingKind(RelationshipKind.parent, false, this.id);
 
       // alter the 'to' in ALL [?] the matching 'from' relationships
       // simpler than adjusting children or parents arrays
       // TODO: also match against the 'to' to the current parent
       // TODO: pass kind in ... to support editing different kinds of relationships
-      
-      const matches = relationships.relationships_matchingKind(RelationshipKind.parent, false, this.id);
+
       for (let index = 0; index < matches.length; index++) {
         const relationship = matches[index];
-        relationship.to = parent.id;
-        relationship.needsSave = true;
+        if (movingIoRoot) {                           // relationship in cloud will be wrong on next launch
+          await relationships.deleteRelationship_fromCloud(relationship, true);     // remove it from cloud
+        }
+        relationship.to = newParent.id;
+        relationship.needsSave = true;                // save this new 'to'
+        if (movingFromRoot) {
+          relationships.addRelationship_toCloud(relationship); // it wasn't in the cloud
+        }
       }
-      
+
       relationships.reconstruct_lookupDictionaries();
       this.grabOnly();
-      signal(Signals.widgets); // signal BEFORE becomeHere to avoid blink
-      parent.becomeHere();
+      signal(Signals.widgets);                        // signal BEFORE becomeHere to avoid blink
+      newParent.becomeHere();
     }
   }
 

@@ -34,7 +34,6 @@
   function addChildTo_redrawGraph_saveToCloud(parent) {
     parent.addChild_refresh();
     parent.pingHere();
-    alert(parent.title);
   }
 
   function deleteGrabs_redrawGraph_saveToCloud() {

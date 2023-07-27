@@ -1,5 +1,4 @@
 import Airtable from 'airtable';
-import {seriouslyGlobals} from '../common/Globals';
 
 export enum RelationshipKind {
   appreciates = 'a',

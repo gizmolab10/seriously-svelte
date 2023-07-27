@@ -13,7 +13,7 @@
       }
     } else if (event.shiftKey) {
       thing.toggleGrab();
-    } else if ($hereID != seriouslyGlobals.rootID && $grabbedIDs?.includes(thing.id)) {
+    } else if ($grabbedIDs?.includes(thing.id)) {
       thing.moveRight_refresh(false, false);
     } else {
       thing.grabOnly();

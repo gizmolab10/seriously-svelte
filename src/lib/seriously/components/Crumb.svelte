@@ -4,7 +4,7 @@
 
   function handleClick(event) {
     if (thing == things.root) {
-      grabChild();
+      thing.grabOnly();
       thing.becomeHere();
     } else {
       thing.grabOnly();
@@ -13,23 +13,12 @@
     signal(Signals.widgets);
   }
 
-  function grabChild() {
-    const ids = $grabbedIDs;
-    for ( const grab of things.thingsForIDs(ids)) {
-      if (grab.firstParent.firstParent == thing) {
-        grab.firstParent.grabOnly();
-        return;
-      }
-    }
-    thing.firstChild.grabOnly();
-  }
-
 </script>
 
 <button
   style='border: 1px solid; border-color: {thing.color}; color: {thing.color}; border-radius: 0.5em'
   on:click={handleClick}>
-  {thing.ellipsisTitle}
+  {thing.title.injectElipsisAt(7)}
 </button>
 
 <style>

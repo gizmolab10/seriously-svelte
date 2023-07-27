@@ -92,11 +92,7 @@ class Relationships {
   async updateAllDirtyRelationshipsToCloud() {
     this.all.forEach((relationship) => {
       if (relationship.needsSave) {
-        try {
           this.updateRelationshipToCloud(relationship);
-        } catch (error) {
-          console.log(this.errorMessage + error);
-        }
       }
     });
   }
@@ -106,11 +102,11 @@ class Relationships {
       table.update(relationship.id, relationship.fields);
       relationship.needsSave = false;
     } catch (error) {
-      console.log(this.errorMessage + error);
+      alert(this.errorMessage + error);
     }
   }
 
-  async createRelationship_inCloud(relationship: Relationship | null) {
+  async addRelationship_toCloud(relationship: Relationship | null) {
     if (relationship != null && relationship.to != seriouslyGlobals.rootID) {
       try {
         const fields = await table.create(relationship.fields);
@@ -122,15 +118,20 @@ class Relationships {
   }
 
   createUniqueRelationship(kind: RelationshipKind, from: string, to: string) {
-    if (this.relationships_matchingKind(kind, false, from).length == 0) {
-      return this.createRelationship(kind, from, to)
+    const matches = this.relationships_matchingKind(kind, false, from);
+    if (matches.length == 0) {
+      const relationship = this.createRelationship(kind, from, to);
+      if (to != seriouslyGlobals.rootID) {
+        relationship.needsSave = true;
+      }
+      return relationship;
     }
 
     return null;
   }
 
-  async createRelationship_save_inCloud(kind: RelationshipKind, from: string, to: string) {
-    await this.createRelationship_inCloud(this.createUniqueRelationship(kind, from, to));
+  async createUniqueRelationship_save_inCloud(kind: RelationshipKind, from: string, to: string) {
+    await this.addRelationship_toCloud(this.createUniqueRelationship(kind, from, to));
   }
 
   async deleteRelationships_updateCloudFor(thing: Thing) {
@@ -138,16 +139,17 @@ class Relationships {
     if (array != null) {
       for (const relationship of array) {
         await this.deleteRelationship_fromCloud(relationship);
-        this.all = this.all.filter((item) => item.id !== relationship.id);
       }
       this.reconstruct_lookupDictionaries();
     }
-
   }
 
-  private async deleteRelationship_fromCloud(relationship: Relationship | null) {
+  async deleteRelationship_fromCloud(relationship: Relationship | null, keepInMemory: boolean = false) {
     if (relationship != null) {
       try {
+        if (!keepInMemory) {
+          this.all = this.all.filter((item) => item.id !== relationship.id);
+        }
         await table.destroy(relationship.id);
       } catch (error) {
         console.log(this.errorMessage + error);

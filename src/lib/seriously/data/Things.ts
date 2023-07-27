@@ -49,7 +49,7 @@ export default class Things {
 
       for (const id in this.thingsByID) {
         if (id != rootID) {
-          relationships.createRelationship_save_inCloud(RelationshipKind.parent, id, rootID);
+          relationships.createUniqueRelationship_save_inCloud(RelationshipKind.parent, id, rootID);
         }
       }
 

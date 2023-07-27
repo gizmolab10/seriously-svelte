@@ -4,21 +4,9 @@
   export let grab;
   let ancestors;
 
-  function refreshAncestors() {
-    if (grab != null) {
-      ancestors = [];    // start over with new grab
-      let thing = grab;
-      while (thing != null) {
-        ancestors.push(thing);
-        thing = thing.firstParent;
-      }
-      ancestors.reverse();
-    }
-  }
-
   $: {
-    grab = things.thingForID($grabbedID)
-    refreshAncestors();
+    grab = things.thingForID($grabbedID);   // start over with new grab
+    ancestors = grab.ancestors;
   }
 
 </script>

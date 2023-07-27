@@ -6,8 +6,8 @@
   let isEditing = false;
   let inputRef = null;
 
-  var needsSave = () => { return originalTitle != thing.title; }
-  function markAsSaved() { originalTitle = thing.title; }
+  var hasChanges = () => { return originalTitle != thing.title; }
+  function revertToOriginal() { originalTitle = thing.title; }
   
   function handleKeyDown(event) {
     if ($editingID == thing.id) {
@@ -44,9 +44,9 @@
       }
       isEditing = false;
       inputRef?.blur();
-      if (needsSave) {
-        markAsSaved();
+      if (hasChanges) {
         things.updateThing_inCloud(thing);
+        revertToOriginal();
       }
     }
   }
