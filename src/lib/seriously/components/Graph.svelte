@@ -7,31 +7,26 @@
   let listener;
 
   async function handleKeyDown(event) {
-    if ($grabbedID == null) {
-      alert('no grabs');
-    } else if (event.key == undefined) {
-      alert('no key for ' + event.type);
-    } else if (event.type == 'keydown') {
+    if ($grabbedID == null)     { alert('no grabs'); return; }
+    if (event.key == undefined) { alert('no key for ' + event.type); return; }
+    if ($editingID != null)     { return; }
+    if (event.type == 'keydown') {
       let thing = things.thingForID($grabbedID);
       const key = event.key.toLowerCase();
       const OPTION = event.altKey;
       const SHIFT = event.shiftKey;
-      if ($editingID != null) {
-        if ([' ', 'd', 't', 'tab', 'enter', 'delete', 'backspace'].includes(key) || key.includes('arrow')) { return; }
-      } else {
-        switch (key) {
-          case ' ':          addChildTo_redrawGraph_saveToCloud(thing); break;
-          case 'd':          thing?.duplicate_refresh(); break;
-          case 't':          alert('PARENT-CHILD SWAP'); break;
-          case 'tab':        addChildTo_redrawGraph_saveToCloud(thing?.firstParent); break; // Title also makes this call
-          case 'enter':      thing?.edit(); break;
-          case 'arrowup':    moveUp_redrawGraph_saveToCloud(true, SHIFT, OPTION); break;
-          case 'arrowdown':  moveUp_redrawGraph_saveToCloud(false, SHIFT, OPTION); break;
-          case 'arrowright': moveRight_redrawGraph_saveToCloud(thing, true, OPTION); break;
-          case 'arrowleft':  moveRight_redrawGraph_saveToCloud(thing, false, OPTION); break;
-          case 'delete':
-          case 'backspace':  deleteGrabs_redrawGraph_saveToCloud(); break;
-        }
+      switch (key) {
+        case ' ':          addChildTo_redrawGraph_saveToCloud(thing); break;
+        case 'd':          thing?.duplicate_refresh(); break;
+        case 't':          alert('PARENT-CHILD SWAP'); break;
+        case 'tab':        addChildTo_redrawGraph_saveToCloud(thing?.firstParent); break; // Title also makes this call
+        case 'enter':      thing?.edit(); break;
+        case 'arrowup':    moveUp_redrawGraph_saveToCloud(true, SHIFT, OPTION); break;
+        case 'arrowdown':  moveUp_redrawGraph_saveToCloud(false, SHIFT, OPTION); break;
+        case 'arrowright': moveRight_redrawGraph_saveToCloud(thing, true, OPTION); break;
+        case 'arrowleft':  moveRight_redrawGraph_saveToCloud(thing, false, OPTION); break;
+        case 'delete':
+        case 'backspace':  deleteGrabs_redrawGraph_saveToCloud(); break;
       }
     }
   }

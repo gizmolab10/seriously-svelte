@@ -3,10 +3,11 @@
   import Widget from '../components/Widget.svelte';
   export let thing = Thing;
   let originalTitle = thing.title;
+  let isEditing = false;
   let inputRef = null;
 
-  function needsSave() { return originalTitle != thing.title; }
-  function make_notDirty() { originalTitle = thing.title; }
+  var needsSave = () => { return originalTitle != thing.title; }
+  function markAsSaved() { originalTitle = thing.title; }
   
   function handleKeyDown(event) {
     if ($editingID == thing.id) {
@@ -17,47 +18,50 @@
     }
   }
 
-  $: {  
-    
+  $: {
+
     ///////////////////////
     // manage edit state //
     ///////////////////////
-    
-    setTimeout(() => {      // wait until the inputRef is bound instantiated and editingID is settled
-      if ($editingID == thing.id) {
-        if (document.querySelector('.input') != document.activeElement) {
-          thing.grabOnly();
-          inputRef.focus();
-          inputRef.select();
-        }
-      } else if (needsSave()) {
-        stopEditing(false); // false means leave editingID alone so other currently editing widgets continue editing
-      };
-      signal(Signals.widgets); // so widget will show as [un]grabbed
-    }, 200);
+
+    if ($editingID != thing.id) {
+      stopEditing(false); // false means leave editingID alone so other currently editing widgets continue editing
+    } else if (!isEditing) {
+      isEditing = true;
+      thing.grabOnly();
+      inputRef.focus();
+      inputRef.select();
+    }
+    signal(Signals.widgets); // so widget will show as [un]grabbed
   }
 
   function stopEditing(clearEditingID: boolean) {
-    inputRef?.blur();
-    if (needsSave()) {
-      make_notDirty();
-      things.updateThing_inCloud(thing);
-    }
-    if (clearEditingID) {
-      setTimeout(() => { // WHY?
-        $editingID = null;
-      }, 20);
+    if (isEditing) {
+      if (clearEditingID) {
+        setTimeout(() => {     // eliminate infinite recursion
+          $editingID = null;
+        }, 10);
+      }
+      isEditing = false;
+      inputRef?.blur();
+      if (needsSave) {
+        markAsSaved();
+        things.updateThing_inCloud(thing);
+      }
     }
   }
 
   function handleFocus(event) {
-    thing.edit();
-    thing.grabOnly()
-    signal(Signals.widgets); // so widget will show as grabbed
+    if (!isEditing) {
+      isEditing = true;
+      thing.edit();
+      thing.grabOnly()
+      signal(Signals.widgets); // so widget will show as grabbed
+    }
   }
 
   function handleInput(event) { thing.title = event.target.value; }
-  function handleBlur(event) { $editingID = null; }
+  function handleBlur(event) { stopEditing(true); }
 </script>
 
 <input
