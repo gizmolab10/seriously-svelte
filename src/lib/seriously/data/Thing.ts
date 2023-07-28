@@ -131,24 +131,28 @@ export default class Thing {
   moveUp_refresh = (up: boolean, expand: boolean, relocate: boolean) => {
     const siblings = this.siblings;
     if (siblings != null) {
-      const index = siblings.indexOf(this);
-      const newIndex = index.increment(!up, siblings.length);
-      if (relocate) {
-        const wrapped = (Math.abs(newIndex - index) != 1);
-        const goose = (wrapped ? -0.1 : 1) * (up ? -1 : 1);
-        const newOrder =  newIndex + goose;
-        siblings[index].order = newOrder;
-        normalizeOrderOf(siblings);
-        this.firstParent.pingHere();
+      if (siblings.length == 0) {
+        this.moveRight_refresh(true, false);
       } else {
-        const newGrab = siblings[newIndex];
-        if (expand) {
-          newGrab?.toggleGrab()
+        const index = siblings.indexOf(this);
+        const newIndex = index.increment(!up, siblings.length);
+        if (relocate) {
+          const wrapped = (Math.abs(newIndex - index) != 1);
+          const goose = (wrapped ? -0.1 : 1) * (up ? -1 : 1);
+          const newOrder =  newIndex + goose;
+          siblings[index].order = newOrder;
+          normalizeOrderOf(siblings);
+          this.firstParent.pingHere();
         } else {
-          newGrab?.grabOnly();
+          const newGrab = siblings[newIndex];
+          if (expand) {
+            newGrab?.toggleGrab()
+          } else {
+            newGrab?.grabOnly();
+          }
         }
+        signal(Signals.widgets);
       }
-      signal(Signals.widgets);
     }
   }
 

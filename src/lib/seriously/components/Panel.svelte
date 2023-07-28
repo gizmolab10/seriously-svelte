@@ -29,7 +29,7 @@
 {#if isLoading}
   <p>Loading...</p>
 {:else if !(things.root?.hasChildren ?? false)}
-  <p>Nothing is available ({here?.title}).</p>
+  <p>Nothing is available.</p>
 {:else}
   <Graph here={things.thingForID($hereID)}/>
 {/if}
