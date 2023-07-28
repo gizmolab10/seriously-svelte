@@ -1,4 +1,4 @@
-import { things, hereID, grabbedID, grabbedIDs, editingID, createCloudID, seriouslyGlobals, relationships, RelationshipKind, signal, Signals, normalizeOrderOf } from '../common/GlobalImports';
+import { things, hereID, grabbedID, grabbedIDs, editingID, createCloudID, constants, relationships, RelationshipKind, signal, Signals, normalizeOrderOf } from '../common/GlobalImports';
 import { get } from 'svelte/store';
 import Airtable from 'airtable';
 
@@ -18,7 +18,7 @@ export default class Thing {
   isEditing: boolean;
   needsSave: boolean;
 
-  constructor(id = createCloudID(), title = seriouslyGlobals.defaultTitle, color = 'blue', trait = 's', order = 0) {
+  constructor(id = createCloudID(), title = constants.defaultTitle, color = 'blue', trait = 's', order = 0) {
     this.id = id;
     this.title = title;
     this.order = order;
@@ -57,7 +57,7 @@ export default class Thing {
   }
 
   hasRelationships = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
-  createNewThing = (order: number) => { return new Thing(createCloudID(), seriouslyGlobals.defaultTitle, 'blue', 't', order); }
+  createNewThing = (order: number) => { return new Thing(createCloudID(), constants.defaultTitle, 'blue', 't', order); }
   addChild_refresh = () => { this.addChild_refresh_saveToCloud(this.createNewThing(-1)); }
   grabOnly = () => { grabbedIDs.set([this.id]); grabbedID.set(null); grabbedID.set(this.id); }
   pingHere = () => { const saved = get(hereID); hereID.set(null); hereID.set(saved); }
@@ -67,7 +67,7 @@ export default class Thing {
 
   revealColor = (isReveal: boolean): string => {
     const flag = this.isGrabbed || this.isEditing;
-    return (flag != isReveal) ? this.color : seriouslyGlobals.backgroundColor;
+    return (flag != isReveal) ? this.color : constants.backgroundColor;
   }
 
   copyFrom = (other: Thing) => {
@@ -120,7 +120,7 @@ export default class Thing {
 
   addChild_refresh_saveToCloud = async (child: Thing) => {
     await things.createThing_inCloud(child); // for everything below, need to await child.id fetched from cloud
-    await relationships.createRelationship_save_inCloud(RelationshipKind.parent, child.id, this.id);
+    await relationships.createUniqueRelationship_save_inCloud(RelationshipKind.parent, child.id, this.id);
     child.grabOnly();
     child.edit();
     this.pingHere();
@@ -136,7 +136,7 @@ export default class Thing {
       const index = siblings.indexOf(this);
       const newIndex = index.increment(!up, siblings.length);
       if (relocate) {
-        const wrapped = (Math.abs(newIndex - index) != 1);
+        const wrapped = up ? (index == 0) : (index == siblings.length - 1);
         const goose = (wrapped ? -0.1 : 1) * (up ? -1 : 1);
         const newOrder =  newIndex + goose;
         siblings[index].order = newOrder;

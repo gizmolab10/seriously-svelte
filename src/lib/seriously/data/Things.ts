@@ -1,5 +1,6 @@
-import { Thing, relationships, RelationshipKind, seriouslyGlobals, hereID, sortAccordingToOrder } from '../common/GlobalImports';
+import { Thing, relationships, RelationshipKind, constants, hereID, rootID, sortAccordingToOrder } from '../common/GlobalImports';
 import Airtable, {FieldSet} from 'airtable';
+import { get } from 'svelte/store';
 
 const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
 const table = base('Things');
@@ -10,7 +11,7 @@ export default class Things {
   root: Thing | null = null;
 
   constructor() {
-    hereID.set(seriouslyGlobals.rootID);
+    hereID.set(constants.rootID);
   }
 
   thingForID(id: string | null): Thing | null {
@@ -33,10 +34,10 @@ export default class Things {
   ///////////////////////////
 
   async readAllThings_fromCloud() {
-    const rootID = seriouslyGlobals.rootID;
-    this.root = new Thing(rootID, seriouslyGlobals.rootTitle, seriouslyGlobals.rootColor, 'm', 0);
     this.thingsByID = {}; // clear
-    this.thingsByID[rootID] = this.root;
+    // const rootID = constants.rootID;
+    // this.root = new Thing(rootID, constants.rootTitle, constants.rootColor, 'r', 0);
+    // this.thingsByID[rootID] = this.root;
 
     try {
       const records = await table.select().all()
@@ -45,16 +46,21 @@ export default class Things {
         const id = record.id;
         const thing = new Thing(id, record.fields.title as string, record.fields.color as string, record.fields.trait as string, record.fields.order as number);
         this.thingsByID[id] = thing;
-      }
-
-      for (const id in this.thingsByID) {
-        if (id != rootID) {
-          relationships.createUniqueRelationship_save_inCloud(RelationshipKind.parent, id, rootID);
+        if (thing.trait == '!') {
+          this.root = thing;
+          rootID.set(id);
         }
       }
 
-      this.root.becomeHere()
-      this.root.grabOnly()
+      for (const id in this.thingsByID) {
+        const IDofRoot = get(rootID);
+        if (IDofRoot != null && IDofRoot != id) {
+          relationships.createUniqueRelationship_save_inCloud(RelationshipKind.parent, id, IDofRoot);
+        }
+      }
+
+      this.root?.becomeHere()
+      this.root?.grabOnly()
     } catch (error) {
       console.log(this.errorMessage + ' (readAllThings_fromCloud) ' + error);
     }

@@ -1,5 +1,5 @@
 <script>
-  import { Thing, things, relationships, grabbedID, grabbedIDs, editingID, onMount, onDestroy, sortAccordingToOrder, signal, handleSignal, Signals, seriouslyGlobals } from '../common/GlobalImports';
+  import { Thing, things, relationships, grabbedID, grabbedIDs, editingID, onMount, onDestroy, sortAccordingToOrder, signal, handleSignal, Signals, constants } from '../common/GlobalImports';
   import Children from './Children.svelte';
   import Crumbs from './Crumbs.svelte';
   export let here;

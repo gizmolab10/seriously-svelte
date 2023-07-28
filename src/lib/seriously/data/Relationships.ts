@@ -1,4 +1,4 @@
-import { Thing, things, Relationship, RelationshipKind, createCloudID, seriouslyGlobals } from '../common/GlobalImports';
+import { Thing, things, Relationship, RelationshipKind, createCloudID, constants } from '../common/GlobalImports';
 import Airtable from 'airtable';
 
 const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
@@ -80,7 +80,7 @@ class Relationships {
         const id = record.id as string;
         const kind = record.fields.kind as RelationshipKind;
         const froms = record.fields.from as (string[]);
-        const tos = record.fields.to as (string[]) ?? [seriouslyGlobals.rootID]; // relationships that have no 'to' point at 'root'
+        const tos = record.fields.to as (string[]) ?? [constants.rootID]; // relationships that have no 'to' point at 'root'
         const relationship = new Relationship(id, kind, froms[0], tos[0]);
         this.remember(relationship);
       }
@@ -107,7 +107,7 @@ class Relationships {
   }
 
   async addRelationship_toCloud(relationship: Relationship | null) {
-    if (relationship != null && relationship.to != seriouslyGlobals.rootID) {
+    if (relationship != null && relationship.to != constants.rootID) {
       try {
         const fields = await table.create(relationship.fields);
         relationship.id = fields['id'];
@@ -121,7 +121,7 @@ class Relationships {
     const matches = this.relationships_matchingKind(kind, false, from);
     if (matches.length == 0) {
       const relationship = this.createRelationship(kind, from, to);
-      if (to != seriouslyGlobals.rootID) {
+      if (to != constants.rootID) {
         relationship.needsSave = true;
       }
       return relationship;

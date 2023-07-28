@@ -6,7 +6,9 @@
 
   $: {
     grab = things.thingForID($grabbedID);   // start over with new grab
-    ancestors = grab.ancestors;
+    if (grab != null) {
+      ancestors = grab.ancestors;
+    }
   }
 
 </script>

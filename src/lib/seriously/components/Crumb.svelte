@@ -1,5 +1,5 @@
 <script lang='ts'>
-  import { Thing, things, grabbedIDs, signal, Signals, seriouslyGlobals } from '../common/GlobalImports';
+  import { Thing, things, grabbedIDs, signal, Signals, constants } from '../common/GlobalImports';
   export let thing = Thing;
 
   function handleClick(event) {
@@ -18,7 +18,7 @@
 <button
   style='border: 1px solid; border-color: {thing.color}; color: {thing.color}; border-radius: 0.5em'
   on:click={handleClick}>
-  {thing.title.injectElipsisAt(7)}
+  {thing.title.injectElipsisAt()}
 </button>
 
 <style>

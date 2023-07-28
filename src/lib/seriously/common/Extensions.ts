@@ -1,7 +1,7 @@
 declare global {
   interface Number {
     increment(increment: boolean, length: number): number;
-    between(a: number, b: number, inclusive: boolean): boolean;
+    isBetween(a: number, b: number, inclusive: boolean): boolean;
   }
   interface String {
     injectElipsisAt(at: number): string;
@@ -9,7 +9,7 @@ declare global {
 }
 
 Object.defineProperty(String.prototype, 'injectElipsisAt', {
-  value: function(at: number): string {
+  value: function(at: number = 7): string {
     let injected = this;
     const length = injected.length;
     if (length > (at * 2) + 3) {
@@ -23,8 +23,8 @@ Object.defineProperty(String.prototype, 'injectElipsisAt', {
 });
 
 Object.defineProperty(Number.prototype, 'increment', {
-  value: function(increment: boolean, length: number): number {
-    var result = this.valueOf() + (increment ? 1 : -1);
+  value: function(increase: boolean, length: number): number {
+    var result = this.valueOf() + (increase ? 1 : -1);
     const max = length - 1;
     if (result > max) {
       result = 0;
@@ -38,7 +38,7 @@ Object.defineProperty(Number.prototype, 'increment', {
   configurable: false // Set configurable to false to prevent redefinition of the property
 });
 
-Object.defineProperty(Number.prototype, 'between', { 
+Object.defineProperty(Number.prototype, 'isBetween', { 
   value: function(a: number, b: number, inclusive: boolean): boolean {
     var min = Math.min(a, b),
       max = Math.max(a, b);
