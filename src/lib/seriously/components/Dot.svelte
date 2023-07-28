@@ -8,13 +8,12 @@
   async function handleClick(event) {
     if (isReveal) {
       if (thing.hasChildren) {
-        thing.firstChild?.grabOnly();
-        thing.becomeHere();
+      thing.browseRight(true);
       }
     } else if (event.shiftKey) {
       thing.toggleGrab();
     } else if ($grabbedIDs?.includes(thing.id)) {
-      thing.moveRight_refresh(false, false);
+      thing.browseRight(false);
     } else {
       thing.grabOnly();
     }

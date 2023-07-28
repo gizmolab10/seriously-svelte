@@ -64,9 +64,11 @@
   }
 
   function moveRight_redrawGraph_saveToCloud (thing, right, relocate) {
-    thing.moveRight_refresh(right, relocate);
-    relationships.updateAllDirtyRelationshipsToCloud();
-    things.updateAllDirtyThings_inCloud();
+    if (relocate) {
+      thing.relocateRight(right);
+    } else {
+      thing.browseRight(right);
+    }
   }
 
   function highestGrab(up) {

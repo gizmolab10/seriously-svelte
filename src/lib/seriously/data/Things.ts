@@ -35,9 +35,6 @@ export default class Things {
 
   async readAllThings_fromCloud() {
     this.thingsByID = {}; // clear
-    // const rootID = constants.rootID;
-    // this.root = new Thing(rootID, constants.rootTitle, constants.rootColor, 'r', 0);
-    // this.thingsByID[rootID] = this.root;
 
     try {
       const records = await table.select().all()
