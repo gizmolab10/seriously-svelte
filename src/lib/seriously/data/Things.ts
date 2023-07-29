@@ -1,4 +1,4 @@
-import { Thing, get, relationships, RelationshipKind, hereID, rootID, sortAccordingToOrder } from '../common/GlobalImports';
+import { Thing, get, relationships, RelationshipKind, hereID, sortAccordingToOrder } from '../common/GlobalImports';
 import Airtable from 'airtable';
 
 const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
@@ -9,12 +9,12 @@ export default class Things {
   thingsByID: { [id: string]: Thing } = {};
   root: Thing | null = null;
 
-  constructor() {
-    hereID.set(get(rootID));
-  }
+  constructor() {}
+
+  get rootID(): (string | null) { return this.root?.id ?? null; };
 
   thingForID(id: string | null): Thing | null {
-    return (id == null || this.root == null) ? null : this.thingsByID[id];
+    return (id == null) ? null : this.thingsByID[id];
   }
 
   thingsForIDs(ids: Array<string>): Array<Thing> {
@@ -44,15 +44,15 @@ export default class Things {
         this.thingsByID[id] = thing;
         if (thing.trait == '!') {
           this.root = thing;
-          rootID.set(id);
+          hereID.set(id);
         }
       }
 
       for (const id in this.thingsByID) {
-        const IDofRoot = get(rootID);
+        const rootID = this.rootID;
         const thing = things.thingForID(id);
-        if (IDofRoot != null && IDofRoot != id && thing != null) {
-          relationships.createUniqueRelationship_save_inCloud(RelationshipKind.parent, id, IDofRoot, -1);
+        if (rootID != null && rootID != id && thing != null) {
+          relationships.createUniqueRelationship_save_inCloud(RelationshipKind.parent, id, rootID, -1);
           const order = relationships.parentRelationshipFor(id)?.order;
           if (thing != null && order != null) {
             thing.order = order;
