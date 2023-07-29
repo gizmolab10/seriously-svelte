@@ -5,7 +5,7 @@
   let ancestors;
 
   $: {
-    grab = things.thingForID($grabbedID);   // start over with new grab
+    grab = things.thing_ID($grabbedID);   // start over with new grab
     if (grab != null) {
       ancestors = grab.ancestors;
     }

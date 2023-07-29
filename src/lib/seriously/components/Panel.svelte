@@ -7,12 +7,12 @@
 
   async function fetchData() {
     try {
-      await relationships.readAllRelationships_fromCloud();
+      await relationships.cloud_relationships_readAll();
     } catch (error) {
       console.log('Error reading Relationships database: ' + error);
     }
     try {
-      await things.readAllThings_fromCloud();
+      await things.cloud_things_readAll();
       isLoading = false;
     } catch (error) {
       console.log('Error reading Things database: ' + error);
@@ -20,7 +20,7 @@
   }
 
   $: {
-    here = things.thingForID($hereID);
+    here = things.thing_ID($hereID);
   }
 
   onMount(async () => {

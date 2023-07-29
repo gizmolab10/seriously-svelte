@@ -5,7 +5,7 @@
 
   $: {
     normalizeOrderOf(parent.children);
-    relationships.updateAllDirtyRelationships_inCloud();
+    relationships.cloud_relationships_saveDirty();
   }
 
 </script>

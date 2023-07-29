@@ -6,40 +6,49 @@
   let isLoading = true;
   let listener;
 
+  onDestroy( () => { window.removeEventListener('keydown', listener); });
+  onMount(async () => { listener = window.addEventListener('keydown', handleKeyDown); });
+
   async function handleKeyDown(event) {
     if ($grabbedID == null)     { alert('no grabs'); return; }
     if (event.key == undefined) { alert('no key for ' + event.type); return; }
     if ($editingID != null)     { return; }
     if (event.type == 'keydown') {
-      let thing = things.thingForID($grabbedID);
+      let thing = things.thing_ID($grabbedID);
       const key = event.key.toLowerCase();
       const OPTION = event.altKey;
       const SHIFT = event.shiftKey;
       switch (key) {
-        case ' ':          addChildTo_redrawGraph_saveToCloud(thing); break;
-        case 'd':          thing?.duplicate_refresh_saveToCloud(); break;
+        case ' ':          thing?.redraw_addchildto(); break;
+        case 'd':          thing?.cloud_duplicate(); break;
         case 't':          alert('PARENT-CHILD SWAP'); break;
-        case 'tab':        addChildTo_redrawGraph_saveToCloud(thing?.firstParent); break; // Title also makes this call
+        case 'tab':        thing?.firstParent.redraw_addchildto(); break; // Title also makes this call
         case 'enter':      thing?.edit(); break;
-        case 'arrowup':    moveUp_redrawGraph_saveToCloud(true, SHIFT, OPTION); break;
-        case 'arrowdown':  moveUp_redrawGraph_saveToCloud(false, SHIFT, OPTION); break;
-        case 'arrowright': moveRight_redrawGraph_saveToCloud(thing, true, OPTION); break;
-        case 'arrowleft':  moveRight_redrawGraph_saveToCloud(thing, false, OPTION); break;
+        case 'arrowup':    cloud_redraw_moveUp(true, SHIFT, OPTION); break;
+        case 'arrowdown':  cloud_redraw_moveUp(false, SHIFT, OPTION); break;
+        case 'arrowright': cloud_redraw_moveRight(thing, true, OPTION); break;
+        case 'arrowleft':  cloud_redraw_moveRight(thing, false, OPTION); break;
         case 'delete':
-        case 'backspace':  deleteGrabs_redrawGraph_saveToCloud(); break;
+        case 'backspace':  cloud_redraw_deletegrabs(); break;
       }
     }
   }
 
-  function addChildTo_redrawGraph_saveToCloud(parent) {
-    parent.addChild_refresh();
-    parent.pingHere();
+  function highestGrab(up) {
+    const ids = $grabbedIDs;
+    let grabs = things.things_IDs(ids);
+    sortAccordingToOrder(grabs);
+    if (up) {
+      return grabs[0];
+    } else {
+      return grabs[grabs.length - 1];
+    }
   }
 
-  function deleteGrabs_redrawGraph_saveToCloud() {
+  function cloud_redraw_deletegrabs() {
     const ids = $grabbedIDs;
     for (const id of ids) {
-      const grab = things.thingForID(id);
+      const grab = things.thing_ID(id);
       if (grab != null && !grab.isEditing && here != null) {
         const siblings = grab.siblings;
         let index = siblings.indexOf(grab);
@@ -57,45 +66,31 @@
           here.pingHere();          
         }
         signal(Signals.widgets);
-        things.deleteThing_updateCloud(grab);
-        relationships.deleteRelationships_updateCloudFor(grab);
+        things.cloud_thing_delete(grab);
+        relationships.cloud_relationships_deleteAll_thing(grab);
       }
     }
   }
 
-  function moveRight_redrawGraph_saveToCloud (thing, right, relocate) {
+  function cloud_redraw_moveRight(thing, right, relocate) {
     if (relocate) {
-      thing.relocateRight(right);
+      thing.cloud_redraw_relocateRight(right);
     } else {
-      thing.browseRight(right);
-    }
-  }
-
-  function highestGrab(up) {
-    const ids = $grabbedIDs;
-    let grabs = things.thingsForIDs(ids);
-    sortAccordingToOrder(grabs);
-    if (up) {
-      return grabs[0];
-    } else {
-      return grabs[grabs.length - 1];
+      thing.redraw_browseRight(right);
     }
   }
   
-  function moveUp_redrawGraph_saveToCloud(up, expand, relocate) {
+  function cloud_redraw_moveUp(up, expand, relocate) {
     const thing = highestGrab(up);
-    thing.moveUp_refresh(up, expand, relocate);
+    thing.redraw_moveup(up, expand, relocate);
     if (relocate) {
-      things.updateAllDirtyThings_inCloud();
+      things.cloud_things_saveDirty();
     }
   }
 
-  onDestroy( () => { window.removeEventListener('keydown', listener); });
-  onMount(async () => { listener = window.addEventListener('keydown', handleKeyDown); });
-
 </script>
 
-<Crumbs grab={things.thingForID($grabbedID)}/>
+<Crumbs grab={things.thing_ID($grabbedID)}/>
 {#if here != null}
   <Children parent={here}/>
 {/if}

@@ -12,7 +12,7 @@
   function handleKeyDown(event) {
     if ($editingID == thing.id) {
       switch (event.key) {
-        case 'Tab': stopEditing(true); thing.duplicate_refresh_saveToCloud(); break;
+        case 'Tab': stopEditing(true); thing.cloud_duplicate(); break;
         case 'Enter': stopEditing(true);
       }
     }
@@ -45,7 +45,7 @@
       isEditing = false;
       inputRef?.blur();
       if (hasChanges) {
-        things.updateThing_inCloud(thing);
+        things.cloud_thing_save(thing);
         revertToOriginal();
       }
     }
