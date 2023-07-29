@@ -1,10 +1,11 @@
 <script>
-  import { Thing, normalizeOrderOf } from '../common/GlobalImports.ts';
+  import { Thing, normalizeOrderOf, relationships } from '../common/GlobalImports.ts';
   import Widget from './Widget.svelte';
   export let parent = Thing | null;
 
   $: {
     normalizeOrderOf(parent.children);
+    relationships.updateAllDirtyRelationshipsToCloud();
   }
 
 </script>

@@ -1,6 +1,5 @@
-import { Thing, relationships, RelationshipKind, constants, hereID, rootID, sortAccordingToOrder } from '../common/GlobalImports';
-import Airtable, {FieldSet} from 'airtable';
-import { get } from 'svelte/store';
+import { Thing, get, relationships, RelationshipKind, hereID, rootID, sortAccordingToOrder } from '../common/GlobalImports';
+import Airtable from 'airtable';
 
 const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
 const table = base('Things');
@@ -11,7 +10,7 @@ export default class Things {
   root: Thing | null = null;
 
   constructor() {
-    hereID.set(constants.rootID);
+    hereID.set(get(rootID));
   }
 
   thingForID(id: string | null): Thing | null {
@@ -41,7 +40,7 @@ export default class Things {
 
       for (const record of records) {
         const id = record.id;
-        const thing = new Thing(id, record.fields.title as string, record.fields.color as string, record.fields.trait as string, record.fields.order as number);
+        const thing = new Thing(id, record.fields.title as string, record.fields.color as string, record.fields.trait as string);
         this.thingsByID[id] = thing;
         if (thing.trait == '!') {
           this.root = thing;
@@ -51,8 +50,13 @@ export default class Things {
 
       for (const id in this.thingsByID) {
         const IDofRoot = get(rootID);
-        if (IDofRoot != null && IDofRoot != id) {
-          relationships.createUniqueRelationship_save_inCloud(RelationshipKind.parent, id, IDofRoot);
+        const thing = things.thingForID(id);
+        if (IDofRoot != null && IDofRoot != id && thing != null) {
+          relationships.createUniqueRelationship_save_inCloud(RelationshipKind.parent, id, IDofRoot, -1);
+          const order = relationships.parentRelationshipFor(id)?.order;
+          if (thing != null && order != null) {
+            thing.order = order;
+          }
         }
       }
 

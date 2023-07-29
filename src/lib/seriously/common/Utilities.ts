@@ -23,8 +23,9 @@ export function normalizeOrderOf(array: Array<Thing>) {
   sortAccordingToOrder(array);
   for (let index = 0; index < array.length; index++) {
     const thing = array[index];
+    // alert('NORM: ' + index + ' => ' + thing.order + ' ' + thing.title);
     if (thing.order != index) {
-      thing.order = index;
+      thing.setOrderTo(index);
       thing.needsSave = true;
     }
   }

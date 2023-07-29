@@ -1,15 +1,17 @@
+import { createCloudID, sortAccordingToOrder, normalizeOrderOf } from './Utilities';
+import { editingID, hereID, rootID, grabbedID, grabbedIDs } from './State';
+import { signalMultiple, signal, handleSignal, Signals } from './Signals';
 import { tick, onMount, onDestroy, createEventDispatcher } from 'svelte';
 import { Relationship, RelationshipKind } from '../data/Relationship';
-import { createCloudID, sortAccordingToOrder, normalizeOrderOf } from './Utilities';
-import { signalMultiple, signal, handleSignal, Signals } from './Signals';
-import { editingID, hereID, rootID, grabbedID, grabbedIDs } from './State';
 import { relationships } from '../data/Relationships';
 import { constants } from './Constants';
 import { things } from '../data/Things';
+import { get } from 'svelte/store';
 import Thing from '../data/Thing';
+import Airtable from 'airtable';
 import './Extensions';
 
-export { tick, onMount, onDestroy, constants,
+export { Airtable, constants, get, tick, onMount, onDestroy,
   editingID, hereID, rootID, grabbedID, grabbedIDs,
   createCloudID, sortAccordingToOrder, normalizeOrderOf,
   Thing, things, Relationship, RelationshipKind, relationships,

@@ -1,4 +1,4 @@
-import { Thing, things, Relationship, RelationshipKind, createCloudID, constants } from '../common/GlobalImports';
+import { get, rootID, Thing, things, Relationship, RelationshipKind, createCloudID, constants } from '../common/GlobalImports';
 import Airtable from 'airtable';
 
 const base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
@@ -42,6 +42,15 @@ class Relationships {
     this.allByToID[relationship.to] = tos;
   }
 
+  parentRelationshipFor(id: string) {
+    const thing = things.thingForID(id);
+    const matches = this.relationships_matchingKind(RelationshipKind.parent, false, id);
+    if (thing != null && matches.length > 0) {
+      return matches[0];
+    }
+    return null;
+  }
+
   relationships_matchingKind(kind: RelationshipKind, to: boolean, id: string): Array<Relationship> {
     const dict = to ? this.allByToID : this.allByFromID;
     const matches = dict[id] as Array<Relationship>; // filter out baaaaad values
@@ -78,10 +87,11 @@ class Relationships {
 
       for (const record of records) {
         const id = record.id as string;
-        const kind = record.fields.kind as RelationshipKind;
+        const order = record.fields.order as number;
         const froms = record.fields.from as (string[]);
-        const tos = record.fields.to as (string[]) ?? [constants.rootID]; // relationships that have no 'to' point at 'root'
-        const relationship = new Relationship(id, kind, froms[0], tos[0]);
+        const kind = record.fields.kind as RelationshipKind;
+        const tos = record.fields.to as (string[]) ?? [get(rootID)]; // relationships that have no 'to' point at 'root'
+        const relationship = new Relationship(id, kind, froms[0], tos[0], order);
         this.remember(relationship);
       }
     } catch (error) {
@@ -107,7 +117,7 @@ class Relationships {
   }
 
   async addRelationship_toCloud(relationship: Relationship | null) {
-    if (relationship != null && relationship.to != constants.rootID) {
+    if (relationship != null && relationship.to != get(rootID)) {
       try {
         const fields = await table.create(relationship.fields);
         relationship.id = fields['id'];
@@ -117,21 +127,18 @@ class Relationships {
     }
   }
 
-  createUniqueRelationship(kind: RelationshipKind, from: string, to: string) {
-    const matches = this.relationships_matchingKind(kind, false, from);
-    if (matches.length == 0) {
+  createUniqueRelationship(kind: RelationshipKind, from: string, to: string, order: number) {
+    if (this.parentRelationshipFor(from) == null) {
       const relationship = this.createRelationship(kind, from, to);
-      if (to != constants.rootID) {
-        relationship.needsSave = true;
-      }
+      relationship.needsSave = true;
       return relationship;
     }
 
     return null;
   }
 
-  async createUniqueRelationship_save_inCloud(kind: RelationshipKind, from: string, to: string) {
-    await this.addRelationship_toCloud(this.createUniqueRelationship(kind, from, to));
+  async createUniqueRelationship_save_inCloud(kind: RelationshipKind, from: string, to: string, order: number) {
+    await this.addRelationship_toCloud(this.createUniqueRelationship(kind, from, to, order));
   }
 
   async deleteRelationships_updateCloudFor(thing: Thing) {

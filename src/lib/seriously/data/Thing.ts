@@ -1,6 +1,4 @@
-import { things, hereID, grabbedID, grabbedIDs, editingID, createCloudID, constants, relationships, RelationshipKind, signal, Signals, normalizeOrderOf } from '../common/GlobalImports';
-import { get } from 'svelte/store';
-import Airtable from 'airtable';
+import { get, things, hereID, grabbedID, grabbedIDs, editingID, Airtable, createCloudID, constants, relationships, RelationshipKind, signal, Signals, normalizeOrderOf } from '../common/GlobalImports';
 
 export enum PrivacyKind {
   kEveryone = 'e',
@@ -10,11 +8,11 @@ export enum PrivacyKind {
 }
 
 export default class Thing {
-  public id: string;
-  public title: string;
-  public order: number;
-  public color: string;
-  public trait: string;
+  id: string;
+  title: string;
+  color: string;
+  trait: string;
+  order: number;
   isEditing: boolean;
   needsSave: boolean;
 
@@ -26,6 +24,7 @@ export default class Thing {
     this.trait = trait;
     this.needsSave = false;
     this.isEditing = false;
+    this.setOrderTo(order); // copy into relationship
 
     editingID.subscribe((id: string | null) => {
       this.isEditing = (id == this.id); // executes whenever editingID changes
@@ -33,7 +32,7 @@ export default class Thing {
 
   };
 
-  get fields(): Airtable.FieldSet { return { id: this.id, title: this.title, order: this.order, color: this.color, trait: this.trait }; }
+  get fields(): Airtable.FieldSet { return { id: this.id, title: this.title, color: this.color, trait: this.trait }; }
   get  grabAttributes():   string { return this.borderAttribute + this.revealColor(false); }
   get hoverAttributes():   string { return this.borderAttribute + this.revealColor(true); }
   get borderAttribute():   string { return (this.isEditing ? 'dashed' : 'solid') + ' 1px '; }
@@ -65,6 +64,17 @@ export default class Thing {
   toggleGrab = () => { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }
   becomeHere = () => { if (this.hasChildren) { hereID.set(this.id) }; }
   edit = () => { editingID.set(this.id); }
+
+  setOrderTo = (newOrder: number) => {
+    if (this.order != newOrder) {
+      this.order = newOrder;
+      const relationship = relationships.parentRelationshipFor(this.id);
+      if (relationship != null) {
+        relationship.order = newOrder;
+        relationship.needsSave = true;
+      }
+    }
+  }
 
   revealColor = (isReveal: boolean): string => {
     const flag = this.isGrabbed || this.isEditing;
@@ -140,7 +150,7 @@ export default class Thing {
         const wrapped = up ? (index == 0) : (index == siblings.length - 1);
         const goose = (wrapped ? -0.1 : 1) * (up ? -1 : 1);
         const newOrder =  newIndex + goose;
-        siblings[index].order = newOrder;
+        siblings[index].setOrderTo(newOrder);
         normalizeOrderOf(siblings);
         this.firstParent.pingHere();
       } else {
