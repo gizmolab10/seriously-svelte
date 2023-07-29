@@ -2,6 +2,7 @@
   import { relationships, things, hereID, onMount } from '../common/GlobalImports'
   import Graph from '/src/lib/seriously/components/Graph.svelte';
   // import GraphD3 from '/src/lib/seriously/components/GraphD3.svelte';
+  let here = things.root;
   let isLoading = true;
 
   async function fetchData() {
@@ -18,6 +19,10 @@
     }
   }
 
+  $: {
+    here = things.thingForID($hereID);
+  }
+
   onMount(async () => {
     await fetchData();
     const root = things.root;
@@ -31,7 +36,7 @@
 {:else if !(things.root?.hasChildren ?? false)}
   <p>Nothing is available.</p>
 {:else}
-  <Graph here={things.thingForID($hereID)}/>
+  <Graph here={here}/>
 {/if}
 
 <style>

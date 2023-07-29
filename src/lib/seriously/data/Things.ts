@@ -52,7 +52,7 @@ export default class Things {
         const rootID = this.rootID;
         const thing = things.thingForID(id);
         if (rootID != null && rootID != id && thing != null) {
-          relationships.createUniqueRelationship_save_inCloud(RelationshipKind.parent, id, rootID, -1);
+          relationships.createUniqueRelationship_saveInCloud(RelationshipKind.parent, id, rootID, -1);
           const order = relationships.parentRelationshipFor(id)?.order;
           if (thing != null && order != null) {
             thing.order = order;

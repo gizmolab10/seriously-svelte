@@ -17,7 +17,7 @@
       const SHIFT = event.shiftKey;
       switch (key) {
         case ' ':          addChildTo_redrawGraph_saveToCloud(thing); break;
-        case 'd':          thing?.duplicate_refresh(); break;
+        case 'd':          thing?.duplicate_refresh_saveToCloud(); break;
         case 't':          alert('PARENT-CHILD SWAP'); break;
         case 'tab':        addChildTo_redrawGraph_saveToCloud(thing?.firstParent); break; // Title also makes this call
         case 'enter':      thing?.edit(); break;

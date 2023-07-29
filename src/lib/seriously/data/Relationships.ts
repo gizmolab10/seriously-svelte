@@ -12,8 +12,8 @@ class Relationships {
 
   constructor() {}
 
-  createRelationship(kind: RelationshipKind, from: string, to: string): Relationship {
-    const relationship = new Relationship(createCloudID(), kind, from, to);
+  createRelationship(kind: RelationshipKind, from: string, to: string, order: number): Relationship {
+    const relationship = new Relationship(createCloudID(), kind, from, to, order);
     this.remember(relationship);
     return relationship;
   }
@@ -99,15 +99,15 @@ class Relationships {
     }
   }
 
-  async updateAllDirtyRelationshipsToCloud() {
+  async updateAllDirtyRelationships_inCloud() {
     this.all.forEach((relationship) => {
       if (relationship.needsSave) {
-          this.updateRelationshipToCloud(relationship);
+          this.updateRelationship_inCloud(relationship);
       }
     });
   }
 
-  async updateRelationshipToCloud(relationship: Relationship) {
+  async updateRelationship_inCloud(relationship: Relationship) {
     try {
       table.update(relationship.id, relationship.fields);
       relationship.needsSave = false;
@@ -116,7 +116,7 @@ class Relationships {
     }
   }
 
-  async addRelationship_toCloud(relationship: Relationship | null) {
+  async saveRelationship_toCloud(relationship: Relationship | null) {
     const rootID = things.rootID;
     if (relationship != null && rootID != null && relationship.to != rootID) {
       try {
@@ -130,7 +130,7 @@ class Relationships {
 
   createUniqueRelationship(kind: RelationshipKind, from: string, to: string, order: number) {
     if (this.parentRelationshipFor(from) == null) {
-      const relationship = this.createRelationship(kind, from, to);
+      const relationship = this.createRelationship(kind, from, to, order);
       relationship.needsSave = true;
       return relationship;
     }
@@ -138,8 +138,8 @@ class Relationships {
     return null;
   }
 
-  async createUniqueRelationship_save_inCloud(kind: RelationshipKind, from: string, to: string, order: number) {
-    await this.addRelationship_toCloud(this.createUniqueRelationship(kind, from, to, order));
+  async createUniqueRelationship_saveInCloud(kind: RelationshipKind, from: string, to: string, order: number) {
+    await this.saveRelationship_toCloud(this.createUniqueRelationship(kind, from, to, order));
   }
 
   async deleteRelationships_updateCloudFor(thing: Thing) {

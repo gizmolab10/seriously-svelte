@@ -16,12 +16,19 @@ export default class Thing {
   isEditing: boolean;
   needsSave: boolean;
 
+  copyFrom = (other: Thing) => {
+    this.title = other.title;
+    this.color = other.color;
+    this.trait = other.trait;
+    this.order = other.order;
+  }
+
   constructor(id = createCloudID(), title = constants.defaultTitle, color = 'blue', trait = 's', order = 0) {
     this.id = id;
     this.title = title;
-    this.order = order;
     this.color = color;
     this.trait = trait;
+    this.order = order;
     this.needsSave = false;
     this.isEditing = false;
     this.setOrderTo(order); // copy into relationship
@@ -81,13 +88,6 @@ export default class Thing {
     return (flag != isReveal) ? this.color : constants.backgroundColor;
   }
 
-  copyFrom = (other: Thing) => {
-    this.title = other.title;
-    this.color = other.color;
-    this.trait = other.trait;
-    this.order = other.order;
-  }
-
   grab = () => {
     grabbedIDs.update((array) => {
       if (array.indexOf(this.id) == -1) {
@@ -122,21 +122,24 @@ export default class Thing {
     return this;
   }
 
-  duplicate_refresh = async () => {
+  duplicate_refresh_saveToCloud = async () => {
     const sibling = this.createNewThing(this.order + 0.5);
     const parent = this.firstParent ?? things.root;
     sibling.copyFrom(this);
+    sibling.order += 0.1
     parent.addChild_refresh_saveToCloud(sibling)
   }
 
   addChild_refresh_saveToCloud = async (child: Thing) => {
     await things.createThing_inCloud(child); // for everything below, need to await child.id fetched from cloud
-    await relationships.createUniqueRelationship_save_inCloud(RelationshipKind.parent, child.id, this.id);
+    await relationships.createUniqueRelationship_saveInCloud(RelationshipKind.parent, child.id, this.id, child.order);
+    normalizeOrderOf(child.siblings);
     this.pingHere();
-    child.edit();
-    child.grabOnly();
+    // child.edit();
+    // child.grabOnly();
     signal(Signals.widgets);
     things.updateAllDirtyThings_inCloud();
+    relationships.updateAllDirtyRelationships_inCloud();
   }
 
   moveUp_refresh = (up: boolean, expand: boolean, relocate: boolean) => {
@@ -194,7 +197,7 @@ export default class Thing {
       this.grabOnly();
       signal(Signals.widgets);                        // signal BEFORE becomeHere to avoid blink
       newParent.becomeHere();
-      relationships.updateAllDirtyRelationshipsToCloud();
+      relationships.updateAllDirtyRelationships_inCloud();
       things.updateAllDirtyThings_inCloud();
     }
   }

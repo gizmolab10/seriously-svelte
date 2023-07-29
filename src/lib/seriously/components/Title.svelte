@@ -12,7 +12,7 @@
   function handleKeyDown(event) {
     if ($editingID == thing.id) {
       switch (event.key) {
-        case 'Tab': stopEditing(true); thing.duplicate_refresh(); break;
+        case 'Tab': stopEditing(true); thing.duplicate_refresh_saveToCloud(); break;
         case 'Enter': stopEditing(true);
       }
     }
