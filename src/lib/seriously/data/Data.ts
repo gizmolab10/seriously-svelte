@@ -1,6 +1,6 @@
 import { Thing, Relationship, RelationshipKind, createCloudID, sortAccordingToOrder } from '../common/GlobalImports';
 
-export default class DataManager {
+export default class Data {
   relationshipsByFromID: { [id: string]: Array<Relationship> } = {};
   relationshipsByToID: { [id: string]: Array<Relationship> } = {};
   thingsByID: { [id: string]: Thing } = {};
@@ -26,6 +26,27 @@ export default class DataManager {
     return sortAccordingToOrder(array);
   }
 
+  things_kind_ID(kind: RelationshipKind, id: string, matchingTo: boolean): Array<Thing> {
+    const matches = this.relationships_kind(kind, matchingTo, id);
+    const ids: Array<string> = [];
+    if (Array.isArray(matches)) {
+      for (const relationship of matches) {
+        ids.push(matchingTo ? relationship.from : relationship.to);
+      }
+    }
+    return this.things_IDs(ids);
+  }
+  
+  relationship_remember(relationship: Relationship) {
+    this.relationships.push(relationship);
+    const froms = this.relationshipsByFromID[relationship.from] ?? [];
+    froms.push(relationship);
+    this.relationshipsByFromID[relationship.from] = froms;
+    const tos = this.relationshipsByToID[relationship.to] ?? [];
+    tos.push(relationship);
+    this.relationshipsByToID[relationship.to] = tos;
+  }
+
   relationships_clearLookups() {
     this.relationships = [];
     this.relationshipsByToID = {};
@@ -36,13 +57,13 @@ export default class DataManager {
     const saved = this.relationships;
     this.relationships_clearLookups();
     for (const relationship of saved) {
-      this.remember(relationship);
+      this.relationship_remember(relationship);
     }
   }
 
   relationship_create(kind: RelationshipKind, from: string, to: string, order: number): Relationship {
     const relationship = new Relationship(createCloudID(), kind, from, to, order);
-    this.remember(relationship);
+    this.relationship_remember(relationship);
     return relationship;
   }
 
@@ -54,16 +75,6 @@ export default class DataManager {
     }
 
     return null;
-  }
-  
-  remember(relationship: Relationship) {
-    this.relationships.push(relationship);
-    const froms = this.relationshipsByFromID[relationship.from] ?? [];
-    froms.push(relationship);
-    this.relationshipsByFromID[relationship.from] = froms;
-    const tos = this.relationshipsByToID[relationship.to] ?? [];
-    tos.push(relationship);
-    this.relationshipsByToID[relationship.to] = tos;
   }
 
   relationship_firstParent_ID(id: string) {
@@ -89,17 +100,6 @@ export default class DataManager {
     return array;
   }
 
-  things_kind_ID(kind: RelationshipKind, id: string, matchingTo: boolean): Array<Thing> {
-    const matches = this.relationships_kind(kind, matchingTo, id);
-    const ids: Array<string> = [];
-    if (Array.isArray(matches)) {
-      for (const relationship of matches) {
-        ids.push(matchingTo ? relationship.from : relationship.to);
-      }
-    }
-    return this.things_IDs(ids);
-  }
-
 }
 
-export const data = new DataManager();
+export const data = new Data();

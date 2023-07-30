@@ -123,7 +123,7 @@ export default class Cloud {
         const froms = record.fields.from as (string[]);
         const kind = record.fields.kind as RelationshipKind;
         const relationship = new Relationship(id, kind, froms[0], tos[0], order);
-        data.remember(relationship);
+        data.relationship_remember(relationship);
       }
     } catch (error) {
       console.log(this.relationships_errorMessage + error);

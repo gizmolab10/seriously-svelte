@@ -25,7 +25,7 @@ export class Relationship {
   }
 
   get fields(): Airtable.FieldSet {
-    return { id: this.id, kind: this.kind, from: [this.from], to: [this.to], order: this.order };
+    return { kind: this.kind, from: [this.from], to: [this.to], order: this.order };
   }
   
 }
