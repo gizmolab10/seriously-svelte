@@ -12,7 +12,7 @@ export function removeAll(item: string, from: string): string {
 }
 
 export function createCloudID(): string {
-  return 'rec' + removeAll('-', uuid()).slice(10, 24);
+  return 'new' + removeAll('-', uuid()).slice(10, 24);
 }
 
 export function sortAccordingToOrder(array: Array<Thing>) {

@@ -1,5 +1,5 @@
 <script>
-  import { Thing, things, relationships, grabbedID, grabbedIDs, editingID, onMount, onDestroy, sortAccordingToOrder, signal, handleSignal, Signals, constants } from '../common/GlobalImports';
+  import { Thing, things, relationships, grabbedID, grabbedIDs, editingID, normalizeOrderOf, onMount, onDestroy, sortAccordingToOrder, signal, handleSignal, Signals, constants } from '../common/GlobalImports';
   import Children from './Children.svelte';
   import Crumbs from './Crumbs.svelte';
   export let here;
@@ -19,17 +19,17 @@
       const OPTION = event.altKey;
       const SHIFT = event.shiftKey;
       switch (key) {
-        case ' ':          thing?.redraw_addchildto(); break;
+        case ' ':          thing?.cloud_redraw_addChildTo(); break;
         case 'd':          thing?.cloud_duplicate(); break;
         case 't':          alert('PARENT-CHILD SWAP'); break;
-        case 'tab':        thing?.firstParent.redraw_addchildto(); break; // Title also makes this call
+        case 'tab':        thing?.firstParent.cloud_redraw_addChildTo(); break; // Title also makes this call
         case 'enter':      thing?.edit(); break;
         case 'arrowup':    cloud_redraw_moveUp(true, SHIFT, OPTION); break;
         case 'arrowdown':  cloud_redraw_moveUp(false, SHIFT, OPTION); break;
         case 'arrowright': cloud_redraw_moveRight(thing, true, OPTION); break;
         case 'arrowleft':  cloud_redraw_moveRight(thing, false, OPTION); break;
         case 'delete':
-        case 'backspace':  cloud_redraw_deletegrabs(); break;
+        case 'backspace':  cloud_redraw_deleteGrabs(); break;
       }
     }
   }
@@ -45,7 +45,7 @@
     }
   }
 
-  function cloud_redraw_deletegrabs() {
+  function cloud_redraw_deleteGrabs() {
     const ids = $grabbedIDs;
     for (const id of ids) {
       const grab = things.thing_ID(id);
@@ -54,7 +54,8 @@
         let index = siblings.indexOf(grab);
         siblings.splice(index, 1);
         if (siblings.length == 0) {
-          grab.firstParent.firstParent.becomeHere();
+          const here = grab.grandparent ?? things.root;
+          here.becomeHere();
           grab.firstParent.grabOnly();
         } else {
           if (index >= siblings.length) {
@@ -65,9 +66,11 @@
           }
           here.pingHere();          
         }
+        normalizeOrderOf(siblings);
         signal(Signals.widgets);
         things.cloud_thing_delete(grab);
-        relationships.cloud_relationships_deleteAll_thing(grab);
+        cloud.things_saveDirty();
+        cloud.relationships_thing_deleteAll(grab);
       }
     }
   }
@@ -84,7 +87,7 @@
     const thing = highestGrab(up);
     thing.redraw_moveup(up, expand, relocate);
     if (relocate) {
-      things.cloud_things_saveDirty();
+      cloud.things_saveDirty();
     }
   }
 

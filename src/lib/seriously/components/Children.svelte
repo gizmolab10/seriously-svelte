@@ -3,11 +3,6 @@
   import Widget from './Widget.svelte';
   export let parent = Thing | null;
 
-  $: {
-    normalizeOrderOf(parent.children);
-    relationships.cloud_relationships_saveDirty();
-  }
-
 </script>
 
 <ul>

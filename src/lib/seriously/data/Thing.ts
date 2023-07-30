@@ -64,11 +64,11 @@ export default class Thing {
   }
 
   hasRelationships = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
-  createNewThing = (order: number) => { return new Thing(createCloudID(), constants.defaultTitle, 'blue', 't', order); }
-  addChild_refresh = () => { this.cloud_addChild(this.createNewThing(-1)); }
+  thing_createAt = (order: number) => { return new Thing(createCloudID(), constants.defaultTitle, 'blue', 't', order); }
   grabOnly = () => { grabbedIDs.set([this.id]); grabbedID.set(null); grabbedID.set(this.id); }
   pingHere = () => { const saved = get(hereID); hereID.set(null); hereID.set(saved); }
   toggleGrab = () => { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }
+  cloud_redraw_createChild = () => { this.cloud_redraw_thing_addAsChild(this.thing_createAt(-1)); }
   becomeHere = () => { if (this.hasChildren) { hereID.set(this.id) }; }
   edit = () => { editingID.set(this.id); }
 
@@ -132,34 +132,6 @@ export default class Thing {
     return this;
   }
 
-  cloud_duplicate = async () => {
-    const sibling = this.createNewThing(this.order + 0.5);
-    const parent = this.firstParent ?? things.root;
-    sibling.copyFrom(this);
-    sibling.order += 0.1
-    parent.cloud_addChild(sibling)
-  }
-
-  cloud_addChild = async (child: Thing) => {
-    const childID = child.id;
-    await things.cloud_thing_insert(child); // for everything below, need to await child.id fetched from cloud
-    await relationships.cloud_relationship_createUnique_insert(RelationshipKind.parent, childID, this.id, child.order);
-    relationships.refreshLookup();
-    alert('CHILDREN (too few)  ' + child.children.length + ' ' + childID + ' ' + child.title);
-    normalizeOrderOf(child.siblings);
-    this.pingHere();
-    // child.edit();
-    // child.grabOnly();
-    signal(Signals.widgets);
-    things.cloud_things_saveDirty();
-    relationships.cloud_relationships_saveDirty();
-  }
-
-  redraw_addchildto = () => {
-    this.addChild_refresh();
-    this.pingHere();
-  }
-
   redraw_moveup = (up: boolean, expand: boolean, relocate: boolean) => {
     const siblings = this.siblings;
     if (siblings == null || siblings.length == 0) {
@@ -194,6 +166,36 @@ export default class Thing {
     here.becomeHere();
   }
 
+  cloud_duplicate = async () => {
+    const sibling = this.thing_createAt(this.order + 0.5);
+    const parent = this.firstParent ?? things.root;
+    sibling.copyFrom(this);
+    sibling.order += 0.1
+    parent.cloud_redraw_thing_addAsChild(sibling)
+  }
+
+  cloud_redraw_thing_addAsChild = async (child: Thing) => {
+    await things.cloud_thing_insert(child); // for everything below, need to await child.id fetched from cloud
+    const childID = child.id;
+    const relationship = relationships.relationship_createUnique(RelationshipKind.parent, childID, this.id, child.order);
+    relationships.refreshLookups();
+    normalizeOrderOf(child.siblings);
+    this.pingHere();
+    child.edit();
+    child.grabOnly();
+    signal(Signals.widgets);
+    cloud.things_saveDirty();
+    // setTimeout(() => {
+    //   relationships.cloud_relationship_insert(relationship);
+    //   cloud.relationships_saveDirty();
+    // }, 5000)
+  }
+
+  cloud_redraw_addChildTo = () => {
+    this.cloud_redraw_createChild();
+    this.pingHere();
+  }
+
   cloud_redraw_relocateRight = async (right: boolean) => {
     const newParent = right ? this.nextSibling(false) : this.grandparent;
     if (newParent != null) {
@@ -211,12 +213,12 @@ export default class Thing {
         relationship.needsSave = true;                // save this new 'to'
       }
 
-      relationships.refreshLookup();
+      relationships.refreshLookups();
       this.grabOnly();
       signal(Signals.widgets);                        // signal BEFORE becomeHere to avoid blink
       newParent.becomeHere();
-      relationships.cloud_relationships_saveDirty();
-      things.cloud_things_saveDirty();
+      cloud.relationships_saveDirty();
+      cloud.things_saveDirty();
     }
   }
 

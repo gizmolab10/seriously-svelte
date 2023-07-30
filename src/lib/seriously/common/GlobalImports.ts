@@ -6,13 +6,13 @@ import { Relationship, RelationshipKind } from '../data/Relationship';
 import { relationships } from '../data/Relationships';
 import { constants } from './Constants';
 import { things } from '../data/Things';
+import { cloud } from '../data/Cloud';
 import { get } from 'svelte/store';
 import Thing from '../data/Thing';
-import Airtable from 'airtable';
 import './Extensions';
 
-export { Airtable, constants, get, tick, onMount, onDestroy,
+export { constants, get, tick, onMount, onDestroy,
   editingID, hereID, grabbedID, grabbedIDs,
   createCloudID, sortAccordingToOrder, normalizeOrderOf,
-  Thing, things, Relationship, RelationshipKind, relationships,
+  cloud, Thing, things, Relationship, RelationshipKind, relationships,
   createEventDispatcher, signalMultiple, signal, handleSignal, Signals };
