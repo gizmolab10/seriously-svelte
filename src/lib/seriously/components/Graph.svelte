@@ -1,5 +1,5 @@
 <script>
-  import { Thing, things, relationships, grabbedID, grabbedIDs, editingID, normalizeOrderOf, onMount, onDestroy, sortAccordingToOrder, signal, handleSignal, Signals, constants } from '../common/GlobalImports';
+  import { Thing, data, cloud, grabbedID, grabbedIDs, editingID, normalizeOrderOf, onMount, onDestroy, sortAccordingToOrder, signal, handleSignal, Signals, constants } from '../common/GlobalImports';
   import Children from './Children.svelte';
   import Crumbs from './Crumbs.svelte';
   export let here;
@@ -14,7 +14,7 @@
     if (event.key == undefined) { alert('no key for ' + event.type); return; }
     if ($editingID != null)     { return; }
     if (event.type == 'keydown') {
-      let thing = things.thing_ID($grabbedID);
+      let thing = data.thing_ID($grabbedID);
       const key = event.key.toLowerCase();
       const OPTION = event.altKey;
       const SHIFT = event.shiftKey;
@@ -36,7 +36,7 @@
 
   function highestGrab(up) {
     const ids = $grabbedIDs;
-    let grabs = things.things_IDs(ids);
+    let grabs = data.things_IDs(ids);
     sortAccordingToOrder(grabs);
     if (up) {
       return grabs[0];
@@ -48,13 +48,13 @@
   function cloud_redraw_deleteGrabs() {
     const ids = $grabbedIDs;
     for (const id of ids) {
-      const grab = things.thing_ID(id);
+      const grab = data.thing_ID(id);
       if (grab != null && !grab.isEditing && here != null) {
         const siblings = grab.siblings;
         let index = siblings.indexOf(grab);
         siblings.splice(index, 1);
         if (siblings.length == 0) {
-          const here = grab.grandparent ?? things.root;
+          const here = grab.grandparent ?? data.root;
           here.becomeHere();
           grab.firstParent.grabOnly();
         } else {
@@ -68,7 +68,7 @@
         }
         normalizeOrderOf(siblings);
         signal(Signals.widgets);
-        things.cloud_thing_delete(grab);
+        cloud.thing_delete(grab);
         cloud.things_saveDirty();
         cloud.relationships_thing_deleteAll(grab);
       }
@@ -93,7 +93,7 @@
 
 </script>
 
-<Crumbs grab={things.thing_ID($grabbedID)}/>
+<Crumbs grab={data.thing_ID($grabbedID)}/>
 {#if here != null}
   <Children parent={here}/>
 {/if}

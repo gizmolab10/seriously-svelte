@@ -1,4 +1,4 @@
-import { Thing, cloud, relationships, RelationshipKind, hereID, sortAccordingToOrder } from '../common/GlobalImports';
+import { Thing, sortAccordingToOrder } from '../common/GlobalImports';
 
 export default class Things {
   thingsByID: { [id: string]: Thing } = {};

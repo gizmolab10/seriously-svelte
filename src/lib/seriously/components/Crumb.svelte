@@ -1,9 +1,9 @@
 <script lang='ts'>
-  import { Thing, things, grabbedIDs, signal, Signals, constants } from '../common/GlobalImports';
+  import { Thing, data, grabbedIDs, signal, Signals, constants } from '../common/GlobalImports';
   export let thing = Thing;
 
   function handleClick(event) {
-    if (thing == things.root) {
+    if (thing == data.root) {
       thing.grabOnly();
       thing.becomeHere();
     } else {

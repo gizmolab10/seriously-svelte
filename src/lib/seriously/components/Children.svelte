@@ -1,5 +1,5 @@
 <script>
-  import { Thing, normalizeOrderOf, relationships } from '../common/GlobalImports.ts';
+  import { Thing, normalizeOrderOf } from '../common/GlobalImports.ts';
   import Widget from './Widget.svelte';
   export let parent = Thing | null;
 

@@ -1,5 +1,5 @@
 <script lang='ts'>
-  import { Thing, things, editingID, signal, Signals } from '../common/GlobalImports.ts';
+  import { Thing, cloud, editingID, signal, Signals } from '../common/GlobalImports.ts';
   import Widget from '../components/Widget.svelte';
   export let thing = Thing;
   let originalTitle = thing.title;
@@ -45,7 +45,7 @@
       isEditing = false;
       inputRef?.blur();
       if (hasChanges) {
-        things.cloud_thing_save(thing);
+        cloud.thing_save(thing);
         revertToOriginal();
       }
     }

@@ -1,18 +1,18 @@
 <script>
-  import { cloud, things, hereID, onMount } from '../common/GlobalImports'
+  import { cloud, data, hereID, onMount } from '../common/GlobalImports'
   import Graph from '/src/lib/seriously/components/Graph.svelte';
   // import GraphD3 from '/src/lib/seriously/components/GraphD3.svelte';
-  let here = things.root;
+  let here = data.root;
   let isLoading = true;
 
   $: {
-    here = things.thing_ID($hereID);
+    here = data.thing_ID($hereID);
   }
 
   onMount(async () => {
     await cloud.readAll(async () => { isLoading = false });
     // await fetchData();
-    const root = things.root;
+    const root = data.root;
     root?.grabOnly();
     root?.becomeHere();    
   })
@@ -20,7 +20,7 @@
 
 {#if isLoading}
   <p>Loading...</p>
-{:else if !(things.root?.hasChildren ?? false)}
+{:else if !(data.root?.hasChildren ?? false)}
   <p>Nothing is available.</p>
 {:else}
   <Graph here={here}/>

@@ -1,4 +1,4 @@
-import { hereID, things, Thing, relationships, Relationship, RelationshipKind } from '../common/GlobalImports';
+import { data, hereID, Thing, Relationship, RelationshipKind } from '../common/GlobalImports';
 import Airtable from 'airtable';
 
 export default class Cloud {
@@ -33,7 +33,7 @@ export default class Cloud {
   /////////////////////////////
 
   async things_readAll() {
-    things.thingsByID = {}; // clear
+    data.thingsByID = {}; // clear
 
     try {
       const records = await this.things_table.select().all()
@@ -41,33 +41,33 @@ export default class Cloud {
       for (const record of records) {
         const id = record.id;
         const thing = new Thing(id, record.fields.title as string, record.fields.color as string, record.fields.trait as string);
-        things.thingsByID[id] = thing;
+        data.thingsByID[id] = thing;
         if (thing.trait == '!') {
-          things.root = thing;
+          data.root = thing;
           hereID.set(id);
         }
       }
 
-      for (const id in things.thingsByID) {
-        const rootID = things.rootID;
-        const thing = things.thing_ID(id);
+      for (const id in data.thingsByID) {
+        const rootID = data.rootID;
+        const thing = data.thing_ID(id);
         if (rootID != null && rootID != id && thing != null) {
-          cloud.cloud_relationship_createUnique_insert(RelationshipKind.parent, id, rootID, -1);
-          const order = relationships.relationship_firstParent_ID(id)?.order;
+          cloud.relationship_createUnique_insert(RelationshipKind.parent, id, rootID, -1);
+          const order = data.relationship_firstParent_ID(id)?.order;
           if (thing != null && order != null) {
             thing.order = order;
           }
         }
       }
 
-      things.root?.becomeHere()
-      things.root?.grabOnly()
+      data.root?.becomeHere()
+      data.root?.grabOnly()
     } catch (error) {
       console.log(this.things_errorMessage + ' (things_readAll) ' + error);
     }
   }
 
-  async cloud_thing_insert(thing: Thing) {
+  async thing_insert(thing: Thing) {
     try {
       
       const fields = await this.things_table.create(thing.fields);
@@ -80,7 +80,7 @@ export default class Cloud {
     }
   }
 
-  async cloud_thing_save(thing: Thing) {
+  async thing_save(thing: Thing) {
     try {
       await this.things_table.update(thing.id, thing.fields);
       thing.needsSave = false; // if update fails, subsequent update will try again
@@ -90,16 +90,16 @@ export default class Cloud {
   }
 
   async things_saveDirty() {
-    const all: Thing[] = Object.values(things.thingsByID);
+    const all: Thing[] = Object.values(data.thingsByID);
     for (const thing of all) {
       if (thing.needsSave) {
-        await this.cloud_thing_save(thing)
+        await this.thing_save(thing)
       }
     }
   }
 
-  async cloud_thing_delete(thing: Thing) {
-    delete(things.thingsByID[thing.id]);
+  async thing_delete(thing: Thing) {
+    delete(data.thingsByID[thing.id]);
     try {
       await this.things_table.destroy(thing.id);
     } catch (error) {
@@ -112,7 +112,7 @@ export default class Cloud {
   ////////////////////////////////////
 
   async relationships_readAll() {
-    relationships.clearLookups();
+    data.relationships_clearLookups();
     try {
       const records = await this.relationships_table.select().all()
 
@@ -123,7 +123,7 @@ export default class Cloud {
         const froms = record.fields.from as (string[]);
         const kind = record.fields.kind as RelationshipKind;
         const relationship = new Relationship(id, kind, froms[0], tos[0], order);
-        relationships.remember(relationship);
+        data.remember(relationship);
       }
     } catch (error) {
       console.log(this.relationships_errorMessage + error);
@@ -131,24 +131,24 @@ export default class Cloud {
   }
 
   async relationships_saveDirty() {
-    relationships.all.forEach((relationship) => {
+    data.relationships.forEach((relationship) => {
       if (relationship.needsSave) {
-          this.cloud_relationship_save(relationship);
+          this.relationship_save(relationship);
       }
     });
   }
 
   async relationships_thing_deleteAll(thing: Thing) {
-    const array = relationships.allByFromID[thing.id];
+    const array = data.relationshipsByFromID[thing.id];
     if (array != null) {
       for (const relationship of array) {
-        await this.cloud_relationship_delete(relationship);
+        await this.relationship_delete(relationship);
       }
-      relationships.refreshLookups();
+      data.relationships_refreshLookups();
     }
   }
 
-  async cloud_relationship_save(relationship: Relationship) {
+  async relationship_save(relationship: Relationship) {
     try {
       this.relationships_table.update(relationship.id, relationship.fields);
       relationship.needsSave = false;
@@ -157,7 +157,7 @@ export default class Cloud {
     }
   }
 
-  async cloud_relationship_insert(relationship: Relationship | null) {
+  async relationship_insert(relationship: Relationship | null) {
     if (relationship != null) {
       try {
         const fields = await this.relationships_table.create(relationship.fields);
@@ -171,16 +171,16 @@ export default class Cloud {
     }
   }
 
-  async cloud_relationship_createUnique_insert(kind: RelationshipKind, from: string, to: string, order: number) {
-    await this.cloud_relationship_insert(relationships.relationship_createUnique(kind, from, to, order));
+  async relationship_createUnique_insert(kind: RelationshipKind, from: string, to: string, order: number) {
+    await this.relationship_insert(data.relationship_createUnique(kind, from, to, order));
   }
 
-  async cloud_relationship_delete(relationship: Relationship | null, keepInMemory: boolean = false) {
+  async relationship_delete(relationship: Relationship | null, keepInMemory: boolean = false) {
     if (relationship != null) {
       try {
         if (!keepInMemory) {
-          relationships.all = relationships.all.filter((item) => item.id !== relationship.id);
-          relationships.refreshLookups();
+          data.relationships = data.relationships.filter((item) => item.id !== relationship.id);
+          data.relationships_refreshLookups();
         }
         await this.relationships_table.destroy(relationship.id);
       } catch (error) {
