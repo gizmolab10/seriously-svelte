@@ -36,30 +36,6 @@ export default class Data {
     }
     return this.things_IDs(ids);
   }
-  
-  relationship_remember(relationship: Relationship) {
-    this.relationships.push(relationship);
-    const froms = this.relationshipsByFromID[relationship.from] ?? [];
-    froms.push(relationship);
-    this.relationshipsByFromID[relationship.from] = froms;
-    const tos = this.relationshipsByToID[relationship.to] ?? [];
-    tos.push(relationship);
-    this.relationshipsByToID[relationship.to] = tos;
-  }
-
-  relationships_clearLookups() {
-    this.relationships = [];
-    this.relationshipsByToID = {};
-    this.relationshipsByFromID = {};
-  }
-
-  relationships_refreshLookups() {
-    const saved = this.relationships;
-    this.relationships_clearLookups();
-    for (const relationship of saved) {
-      this.relationship_remember(relationship);
-    }
-  }
 
   relationship_create(kind: RelationshipKind, from: string, to: string, order: number): Relationship {
     const relationship = new Relationship(createCloudID(), kind, from, to, order);
@@ -76,6 +52,16 @@ export default class Data {
 
     return null;
   }
+  
+  relationship_remember(relationship: Relationship) {
+    this.relationships.push(relationship);
+    const froms = this.relationshipsByFromID[relationship.from] ?? [];
+    froms.push(relationship);
+    this.relationshipsByFromID[relationship.from] = froms;
+    const tos = this.relationshipsByToID[relationship.to] ?? [];
+    tos.push(relationship);
+    this.relationshipsByToID[relationship.to] = tos;
+  }
 
   relationship_firstParent_ID(id: string) {
     const thing = this.thing_ID(id);
@@ -84,6 +70,20 @@ export default class Data {
       return matches[0];
     }
     return null;
+  }
+
+  relationships_clearLookups() {
+    this.relationships = [];
+    this.relationshipsByToID = {};
+    this.relationshipsByFromID = {};
+  }
+
+  relationships_refreshLookups() {
+    const saved = this.relationships;
+    this.relationships_clearLookups();
+    for (const relationship of saved) {
+      this.relationship_remember(relationship);
+    }
   }
 
   relationships_kind(kind: RelationshipKind, to: boolean, id: string): Array<Relationship> {

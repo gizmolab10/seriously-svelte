@@ -3,9 +3,9 @@ import Airtable from 'airtable';
 
 export default class Cloud {
   base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
-  relationships_errorMessage = 'Error from Relationships database: ';
-  things_errorMessage = 'Error from Things database: ';
-  relationships_table = this.base('Relationships');  
+  relationships_errorMessage = 'Error in Relationships: ';
+  relationships_table = this.base('Relationships');
+  things_errorMessage = 'Error in Things: ';
   things_table = this.base('Things');
   
   constructor() {}
@@ -15,24 +15,15 @@ export default class Cloud {
   }
 
   readAll = async (onCompletion: () => any) => {
-    try {
-      await this.relationships_readAll();
-    } catch (error) {
-      console.log('Error reading Relationships database: ' + error);
-    }
-    try {
-      await this.things_readAll();
-      onCompletion();
-    } catch (error) {
-      console.log('Error reading Things database: ' + error);
-    }
+    await this.relationships_readAll();
+    await this.things_readAll(onCompletion);
   }
 
   /////////////////////////////
   //         THINGS          //
   /////////////////////////////
 
-  async things_readAll() {
+  async things_readAll(onCompletion: () => any) {
     data.thingsByID = {}; // clear
 
     try {
@@ -62,8 +53,18 @@ export default class Cloud {
 
       data.root?.becomeHere()
       data.root?.grabOnly()
+      onCompletion();
     } catch (error) {
       console.log(this.things_errorMessage + ' (things_readAll) ' + error);
+    }
+  }
+
+  async things_saveDirty() {
+    const all: Thing[] = Object.values(data.thingsByID);
+    for (const thing of all) {
+      if (thing.needsSave) {
+        await this.thing_save(thing)
+      }
     }
   }
 
@@ -86,15 +87,6 @@ export default class Cloud {
       thing.needsSave = false; // if update fails, subsequent update will try again
     } catch (error) {
       console.log(this.things_errorMessage + ' (in updateToCloud) ' + error);
-    }
-  }
-
-  async things_saveDirty() {
-    const all: Thing[] = Object.values(data.thingsByID);
-    for (const thing of all) {
-      if (thing.needsSave) {
-        await this.thing_save(thing)
-      }
     }
   }
 
