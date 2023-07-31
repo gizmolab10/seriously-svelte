@@ -1,4 +1,4 @@
-import { get, grabbedIDs, hierarchy, editor, Thing, Relationship, RelationshipKind, removeAll, normalizeOrderOf, signal, Signals, constants } from '../common/GlobalImports';
+import { get, grabbedIDs, hierarchy, Thing, Relationship, RelationshipKind, removeAll, normalizeOrderOf, signal, Signals, constants } from '../common/GlobalImports';
 import { v4 as uuid } from 'uuid';
 import Airtable from 'airtable';
 
@@ -26,6 +26,46 @@ export default class Cloud {
   saveAllDirty = () => {
     // this.relationships_saveDirty();
     this.things_saveDirty();
+  }
+
+  ////////////////////////////
+  //         GRABS          //
+  ////////////////////////////
+
+  grabs_redraw_delete() {
+    const ids = get(grabbedIDs);
+    for (const id of ids) {
+      const grabbed = hierarchy.thing_byID(id);
+      if (grabbed != null && !grabbed.isEditing && hierarchy.here != null) {
+        const siblings = grabbed.siblings;
+        let index = siblings.indexOf(grabbed);
+        siblings.splice(index, 1);
+        if (siblings.length == 0) {
+          grabbed.grandparent.becomeHere();
+          grabbed.firstParent.grabOnly();
+        } else {
+          if (index >= siblings.length) {
+            index = siblings.length - 1;
+          }
+          if (index >= 0) {
+            siblings[index].grabOnly();
+          }        
+        }
+        normalizeOrderOf(siblings);
+        signal(Signals.widgets);
+        cloud.thing_delete(grabbed);
+        cloud.things_saveDirty();
+        cloud.relationships_forThing_deleteAll(grabbed);
+      }
+    }
+  }
+  
+  grab_redraw_moveUp(up: boolean, expand: boolean, relocate: boolean) {
+    const grab = hierarchy.highestGrab(up);
+    grab.redraw_moveup(up, expand, relocate);
+    if (relocate) {
+      cloud.things_saveDirty();
+    }
   }
 
   /////////////////////////////
@@ -163,43 +203,7 @@ export default class Cloud {
     if (relocate) {
       this.thing_redraw_relocateRight(thing, right);
     } else {
-      editor.redraw_browseRight(thing, right);
-    }
-  }
-  
-  grab_redraw_moveUp(up: boolean, expand: boolean, relocate: boolean) {
-    const grab = hierarchy.highestGrab(up);
-    editor.redraw_moveup(grab, up, expand, relocate);
-    if (relocate) {
-      cloud.things_saveDirty();
-    }
-  }
-
-  grabs_redraw_delete() {
-    const ids = get(grabbedIDs);
-    for (const id of ids) {
-      const grabbed = hierarchy.thing_byID(id);
-      if (grabbed != null && !grabbed.isEditing && hierarchy.here != null) {
-        const siblings = grabbed.siblings;
-        let index = siblings.indexOf(grabbed);
-        siblings.splice(index, 1);
-        if (siblings.length == 0) {
-          grabbed.grandparent.becomeHere();
-          grabbed.firstParent.grabOnly();
-        } else {
-          if (index >= siblings.length) {
-            index = siblings.length - 1;
-          }
-          if (index >= 0) {
-            siblings[index].grabOnly();
-          }        
-        }
-        normalizeOrderOf(siblings);
-        signal(Signals.widgets);
-        cloud.thing_delete(grabbed);
-        cloud.things_saveDirty();
-        cloud.relationships_forThing_deleteAll(grabbed);
-      }
+      thing.redraw_browseRight(right);
     }
   }
 

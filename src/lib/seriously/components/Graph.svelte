@@ -1,5 +1,5 @@
 <script>
-  import { Thing, hierarchy, editor, cloud, editingID, normalizeOrderOf, Signals, handleSignalOfKind, onMount, onDestroy, constants } from '../common/GlobalImports';
+  import { Thing, hierarchy, cloud, editingID, Signals, handleSignalOfKind, onMount, onDestroy, constants } from '../common/GlobalImports';
   import Children from './Children.svelte';
   import Crumbs from './Crumbs.svelte';
   let listener;

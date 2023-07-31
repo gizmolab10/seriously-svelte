@@ -1,4 +1,4 @@
-import { get, hierarchy, cloud, editor, grabbedID, grabbedIDs, editingID, constants, RelationshipKind, signal, Signals } from '../common/GlobalImports';
+import { get, hierarchy, cloud, normalizeOrderOf, grabbedID, grabbedIDs, editingID, constants, RelationshipKind, signal, Signals } from '../common/GlobalImports';
 import Airtable from 'airtable';
 
 export enum PrivacyKind {
@@ -137,6 +137,40 @@ export default class Thing {
       }
     }
     return this;
+  }
+
+  redraw_moveup = (up: boolean, expand: boolean, relocate: boolean) => {
+    const siblings = this.siblings;
+    if (siblings == null || siblings.length == 0) {
+        this.redraw_browseRight(true);
+    } else {
+      const index = siblings.indexOf(this);
+      const newIndex = index.increment(!up, siblings.length);
+      if (relocate) {
+        const wrapped = up ? (index == 0) : (index == siblings.length - 1);
+        const goose = (wrapped ? -0.1 : 1) * (up ? -1 : 1);
+        const newOrder =  newIndex + goose;
+        siblings[index].setOrderTo(newOrder);
+        normalizeOrderOf(siblings);
+        this.firstParent.becomeHere();
+      } else {
+        const newGrab = siblings[newIndex];
+        if (expand) {
+          newGrab?.toggleGrab()
+        } else {
+          newGrab?.grabOnly();
+        }
+      }
+      signal(Signals.widgets);
+    }
+  }
+
+  redraw_browseRight = (right: boolean) => {
+    const newGrab = right ? this.firstChild : this.firstParent;
+    const newHere = right ? this : this.grandparent;
+    newGrab?.grabOnly();
+    signal(Signals.widgets);   // signal BEFORE becomeHere to avoid blink
+    newHere.becomeHere();
   }
 
 }
