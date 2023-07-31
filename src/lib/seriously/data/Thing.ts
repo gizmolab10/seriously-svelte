@@ -44,8 +44,8 @@ export default class Thing {
   get  grabAttributes():   string { return this.borderAttribute + this.revealColor(false); }
   get hoverAttributes():   string { return this.borderAttribute + this.revealColor(true); }
   get borderAttribute():   string { return (this.isEditing ? 'dashed' : 'solid') + ' 1px '; }
-  get children():    Array<Thing> { return hierarchy.things_kind_ID(RelationshipKind.parent, this.id, true); }
-  get parents():     Array<Thing> { return hierarchy.things_kind_ID(RelationshipKind.parent, this.id, false); }
+  get children():    Array<Thing> { return hierarchy.things_byKind_andID(RelationshipKind.parent, this.id, true); }
+  get parents():     Array<Thing> { return hierarchy.things_byKind_andID(RelationshipKind.parent, this.id, false); }
   get grandparent():        Thing { return this.firstParent?.firstParent ?? hierarchy.root; }
   get siblings():    Array<Thing> { return this.firstParent?.children ?? []; }
   get isGrabbed():        boolean { return get(grabbedIDs).includes(this.id); }
@@ -66,17 +66,17 @@ export default class Thing {
 
   hasRelationships = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
   thing_createAt = (order: number) => { return new Thing(cloud.newCloudID, constants.defaultTitle, 'blue', 't', order); }
+  cloud_redraw_createChild = () => { this.cloud_redraw_addThingAsChild(this.thing_createAt(-1)); }
   grabOnly = () => { grabbedIDs.set([this.id]); grabbedID.set(null); grabbedID.set(this.id); }
   pingHere = () => { const saved = get(hereID); hereID.set(null); hereID.set(saved); }
   toggleGrab = () => { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }
-  cloud_redraw_createChild = () => { this.cloud_redraw_thing_addAsChild(this.thing_createAt(-1)); }
   becomeHere = () => { if (this.hasChildren) { hereID.set(this.id) }; }
   edit = () => { editingID.set(this.id); }
 
   setOrderTo = (newOrder: number) => {
     if (this.order != newOrder) {
       this.order = newOrder;
-      const relationship = hierarchy.relationship_firstParent_ID(this.id);
+      const relationship = hierarchy.relationship_firstParent_byID(this.id);
       if (relationship != null) {
         relationship.order = newOrder;
         relationship.needsSave = true;
@@ -133,6 +133,10 @@ export default class Thing {
     return this;
   }
 
+  /////////////
+  // editing //
+  /////////////
+
   redraw_moveup = (up: boolean, expand: boolean, relocate: boolean) => {
     const siblings = this.siblings;
     if (siblings == null || siblings.length == 0) {
@@ -172,24 +176,21 @@ export default class Thing {
     const parent = this.firstParent ?? hierarchy.root;
     sibling.copyFrom(this);
     sibling.order += 0.1
-    parent.cloud_redraw_thing_addAsChild(sibling)
+    parent.cloud_redraw_addThingAsChild(sibling)
   }
 
-  cloud_redraw_thing_addAsChild = async (child: Thing) => {
+  cloud_redraw_addThingAsChild = async (child: Thing) => {
     await cloud.thing_insert(child); // for everything below, need to await child.id fetched from cloud
     const childID = child.id;
     const relationship = hierarchy.relationship_createUnique(RelationshipKind.parent, childID, this.id, child.order);
     hierarchy.relationships_refreshLookups();
-    normalizeOrderOf(child.siblings);
+    normalizeOrderOf(this.children);
     this.pingHere();
-    child.edit();
-    child.grabOnly();
+    // child.edit(); // TODO: fucking causes app to hang!
+    // child.grabOnly();
     signal(Signals.widgets);
-    cloud.things_saveDirty();
-    // setTimeout(() => {
-    //   relationships.relationship_insert(relationship);
-    //   cloud.relationships_saveDirty();
-    // }, 5000)
+    // await cloud.relationship_insert(relationship);
+    cloud.saveAllDirty();
   }
 
   cloud_redraw_addChildTo = () => {
@@ -201,7 +202,7 @@ export default class Thing {
     const newParent = right ? this.nextSibling(false) : this.grandparent;
     if (newParent != null) {
       this.needsSave = true;     // order will change
-      const matches = hierarchy.relationships_kind(RelationshipKind.parent, false, this.id);
+      const matches = hierarchy.relationships_byKind(RelationshipKind.parent, false, this.id);
 
       // alter the 'to' in ALL [?] the matching 'from' relationships
       // simpler than adjusting children or parents arrays

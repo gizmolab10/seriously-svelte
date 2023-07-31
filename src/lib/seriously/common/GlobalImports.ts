@@ -1,5 +1,5 @@
 import { sortAccordingToOrder, normalizeOrderOf, removeAll } from './Utilities';
-import { signalMultiple, signal, handleSignal, Signals } from './Signals';
+import { signalMultiple, signal, handleSignalOfKind, Signals } from './Signals';
 import { tick, onMount, onDestroy, createEventDispatcher } from 'svelte';
 import { Relationship, RelationshipKind } from '../data/Relationship';
 import { editingID, hereID, grabbedID, grabbedIDs } from './State';
@@ -15,4 +15,4 @@ export { constants, get, tick, onMount, onDestroy,
   editor, editingID, hereID, grabbedID, grabbedIDs,
   sortAccordingToOrder, normalizeOrderOf, removeAll,
   cloud, Thing, Relationship, RelationshipKind, hierarchy,
-  createEventDispatcher, signalMultiple, signal, handleSignal, Signals };
+  createEventDispatcher, signalMultiple, signal, Signals, handleSignalOfKind };

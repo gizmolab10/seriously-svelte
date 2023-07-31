@@ -1,7 +1,7 @@
 <svelte:options immutable={true}/>
 
 <script lang='ts'>
-  import { Thing, grabbedIDs, tick, onMount, signal, signalMultiple, handleSignal, Signals, constants } from '../common/GlobalImports.ts';
+  import { Thing, grabbedIDs, tick, onMount, Signals, signal, handleSignalOfKind, constants } from '../common/GlobalImports.ts';
   export let isReveal = false;
   export let thing = Thing;
 
@@ -21,8 +21,8 @@
     signal(Signals.widgets, thing.id);
   }
 
-	handleSignal.connect((kinds, value) => {
-		if (kinds.includes(Signals.dots) && value == thing.id) {
+  handleSignalOfKind(Signals.dots, (value) => {
+    if (value == thing.id) {
       var style = document.getElementById(thing.id)?.style;
       style?.setProperty(   '--dotColor', thing.color);
       style?.setProperty( '--traitColor', thing.revealColor(!isReveal));

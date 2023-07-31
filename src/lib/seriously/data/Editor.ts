@@ -7,14 +7,14 @@ export default class Editor {
   cloud_redraw_deleteGrabs() {
     const ids = get(grabbedIDs);
     for (const id of ids) {
-      const grab = hierarchy.thing_ID(id);
+      const grab = hierarchy.thing_byID(id);
       if (grab != null && !grab.isEditing && this.here != null) {
         const siblings = grab.siblings;
         let index = siblings.indexOf(grab);
         siblings.splice(index, 1);
         if (siblings.length == 0) {
-          const here = grab.grandparent ?? hierarchy.root;
-          here.becomeHere();
+          const thing = grab.grandparent ?? hierarchy.root;
+          thing.becomeHere();
           grab.firstParent.grabOnly();
         } else {
           if (index >= siblings.length) {
@@ -36,7 +36,7 @@ export default class Editor {
 
   highestGrab(up: boolean) {
     const ids = get(grabbedIDs);
-    let grabs = hierarchy.things_IDs(ids);
+    let grabs = hierarchy.things_byIDs(ids);
     sortAccordingToOrder(grabs);
     if (up) {
       return grabs[0];

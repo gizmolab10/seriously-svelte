@@ -4,9 +4,13 @@
   // import GraphD3 from '/src/lib/seriously/components/GraphD3.svelte';
   let here = hierarchy.root;
   let isLoading = true;
+  let reload = false;
 
   $: {
-    here = hierarchy.thing_ID($hereID);
+    if ($hereID != null) {
+      here = hierarchy.thing_byID($hereID);
+      reload = !reload;
+    }
   }
 
   onMount(async () => {
@@ -15,15 +19,18 @@
     root?.grabOnly();
     root?.becomeHere();    
   })
+// {#key reload}
+// {/key}
+
 </script>
 
-{#if isLoading}
-  <p>Loading...</p>
-{:else if !(hierarchy.root?.hasChildren ?? false)}
-  <p>Nothing is available.</p>
-{:else}
-  <Graph here={here}/>
-{/if}
+  {#if isLoading}
+    <p>Loading...</p>
+  {:else if !(hierarchy.root?.hasChildren ?? false)}
+    <p>Nothing is available.</p>
+  {:else}
+    <Graph here={here}/>
+  {/if}
 
 <style>
   p {

@@ -1,4 +1,9 @@
-import { cloud, Thing, Relationship, RelationshipKind, sortAccordingToOrder } from '../common/GlobalImports';
+import { get, grabbedID, cloud, Thing, Relationship, RelationshipKind, sortAccordingToOrder } from '../common/GlobalImports';
+
+////////////////////////////////////////
+// creation, tracking and destruction //
+//    of things and relationships     //
+////////////////////////////////////////
 
 export default class Hierarchy {
   relationshipsByFromID: { [id: string]: Array<Relationship> } = {};
@@ -10,12 +15,13 @@ export default class Hierarchy {
   constructor() {}
 
   get rootID(): (string | null) { return this.root?.id ?? null; };
+  get grabbedThing(): (Thing | null) { return this.thing_byID(get(grabbedID)) }
 
-  thing_ID(id: string | null): Thing | null {
+  thing_byID(id: string | null): Thing | null {
     return (id == null) ? null : this.thingsByID[id];
   }
 
-  things_IDs(ids: Array<string>): Array<Thing> {
+  things_byIDs(ids: Array<string>): Array<Thing> {
     const array = Array<Thing>();
     for (const id of ids) {
       const thing = this.thingsByID[id];
@@ -26,15 +32,15 @@ export default class Hierarchy {
     return sortAccordingToOrder(array);
   }
 
-  things_kind_ID(kind: RelationshipKind, id: string, matchingTo: boolean): Array<Thing> {
-    const matches = this.relationships_kind(kind, matchingTo, id);
+  things_byKind_andID(kind: RelationshipKind, id: string, matchingTo: boolean): Array<Thing> {
+    const matches = this.relationships_byKind(kind, matchingTo, id);
     const ids: Array<string> = [];
     if (Array.isArray(matches)) {
       for (const relationship of matches) {
         ids.push(matchingTo ? relationship.from : relationship.to);
       }
     }
-    return this.things_IDs(ids);
+    return this.things_byIDs(ids);
   }
 
   relationship_create(kind: RelationshipKind, from: string, to: string, order: number): Relationship {
@@ -44,7 +50,7 @@ export default class Hierarchy {
   }
 
   relationship_createUnique(kind: RelationshipKind, from: string, to: string, order: number) {
-    if (this.relationship_firstParent_ID(from) == null) {
+    if (this.relationship_firstParent_byID(from) == null) {
       const relationship = this.relationship_create(kind, from, to, order);
       relationship.needsSave = true;
       return relationship;
@@ -63,9 +69,9 @@ export default class Hierarchy {
     this.relationshipsByToID[relationship.to] = tos;
   }
 
-  relationship_firstParent_ID(id: string) {
-    const thing = this.thing_ID(id);
-    const matches = this.relationships_kind(RelationshipKind.parent, false, id);
+  relationship_firstParent_byID(id: string) {
+    const thing = this.thing_byID(id);
+    const matches = this.relationships_byKind(RelationshipKind.parent, false, id);
     if (thing != null && matches.length > 0) {
       return matches[0];
     }
@@ -86,7 +92,7 @@ export default class Hierarchy {
     }
   }
 
-  relationships_kind(kind: RelationshipKind, to: boolean, id: string): Array<Relationship> {
+  relationships_byKind(kind: RelationshipKind, to: boolean, id: string): Array<Relationship> {
     const dict = to ? this.relationshipsByToID : this.relationshipsByFromID;
     const matches = dict[id] as Array<Relationship>; // filter out baaaaad values
     const array: Array<Relationship> = [];

@@ -56,7 +56,7 @@
       isEditing = true;
       thing.edit();
       thing.grabOnly()
-      signal(Signals.widgets); // so widget will show as grabbed
+      signal(Signal.widgets); // so widget will show as grabbed
     }
   }
 

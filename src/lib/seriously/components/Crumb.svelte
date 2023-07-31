@@ -10,7 +10,7 @@
       thing.grabOnly();
       thing.firstParent.becomeHere();
     }
-    signal(Signals.widgets);
+    signal(Signal.widgets);
   }
 
 </script>

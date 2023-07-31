@@ -1,16 +1,14 @@
 <script lang='ts'>
-  import { Thing, signal, handleSignal, Signals } from '../common/GlobalImports.ts';
+  import { Thing, Signals, signal, handleSignalOfKind } from '../common/GlobalImports.ts';
 	import Title from './Title.svelte';
 	import Dot from './Dot.svelte';
 	export let thing = Thing;
 
-	handleSignal.connect((kinds) => {
-		if (kinds.includes(Signals.widgets)) {
-			signal(Signals.dots, thing.id); // pass signal along to its dots
-			var style = document.getElementById(thing.id)?.style;
-			style?.setProperty('--hoverAttributes', thing.hoverAttributes);
-			style?.setProperty( '--grabAttributes', thing.grabAttributes);
-		}
+  handleSignalOfKind(Signals.widgets, (value) => {
+		signal(Signals.dots, thing.id); // pass signal along to its dots
+		var style = document.getElementById(thing.id)?.style;
+		style?.setProperty('--hoverAttributes', thing.hoverAttributes);
+		style?.setProperty( '--grabAttributes', thing.grabAttributes);
 	});
 
 	</script>

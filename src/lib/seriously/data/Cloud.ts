@@ -2,6 +2,10 @@ import { hierarchy, hereID, Thing, Relationship, RelationshipKind, removeAll } f
 import { v4 as uuid } from 'uuid';
 import Airtable from 'airtable';
 
+///////////////////////////////////////
+// CRUD for things and relationships //
+///////////////////////////////////////
+
 export default class Cloud {
   base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
   relationships_errorMessage = 'Error in Relationships: ';
@@ -45,10 +49,10 @@ export default class Cloud {
 
       for (const id in hierarchy.thingsByID) {
         const rootID = hierarchy.rootID;
-        const thing = hierarchy.thing_ID(id);
+        const thing = hierarchy.thing_byID(id);
         if (rootID != null && rootID != id && thing != null) {
           cloud.relationship_createUnique_insert(RelationshipKind.parent, id, rootID, -1);
-          const order = hierarchy.relationship_firstParent_ID(id)?.order;
+          const order = hierarchy.relationship_firstParent_byID(id)?.order;
           if (thing != null && order != null) {
             thing.order = order;
           }
