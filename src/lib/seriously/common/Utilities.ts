@@ -1,4 +1,3 @@
-import { v4 as uuid } from 'uuid';
 import Thing from '../data/Thing';
 
 export function removeAll(item: string, from: string): string {
@@ -9,10 +8,6 @@ export function removeAll(item: string, from: string): string {
     to = to.replace(item, '');
   } while (length != to.length)
   return to;
-}
-
-export function createCloudID(): string {
-  return 'new' + removeAll('-', uuid()).slice(10, 24);
 }
 
 export function sortAccordingToOrder(array: Array<Thing>) {

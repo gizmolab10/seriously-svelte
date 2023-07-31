@@ -1,6 +1,6 @@
-import { Thing, Relationship, RelationshipKind, createCloudID, sortAccordingToOrder } from '../common/GlobalImports';
+import { cloud, Thing, Relationship, RelationshipKind, sortAccordingToOrder } from '../common/GlobalImports';
 
-export default class Data {
+export default class Hierarchy {
   relationshipsByFromID: { [id: string]: Array<Relationship> } = {};
   relationshipsByToID: { [id: string]: Array<Relationship> } = {};
   thingsByID: { [id: string]: Thing } = {};
@@ -38,7 +38,7 @@ export default class Data {
   }
 
   relationship_create(kind: RelationshipKind, from: string, to: string, order: number): Relationship {
-    const relationship = new Relationship(createCloudID(), kind, from, to, order);
+    const relationship = new Relationship(cloud.newCloudID, kind, from, to, order);
     this.relationship_remember(relationship);
     return relationship;
   }
@@ -102,4 +102,4 @@ export default class Data {
 
 }
 
-export const data = new Data();
+export const hierarchy = new Hierarchy();

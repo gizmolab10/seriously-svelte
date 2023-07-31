@@ -1,5 +1,5 @@
 <script>
-  import { Thing, data, cloud, grabbedID, grabbedIDs, editingID, normalizeOrderOf, onMount, onDestroy, sortAccordingToOrder, signal, handleSignal, Signals, constants } from '../common/GlobalImports';
+  import { Thing, hierarchy, editor, cloud, grabbedID, grabbedIDs, editingID, normalizeOrderOf, onMount, onDestroy, sortAccordingToOrder, signal, handleSignal, Signals, constants } from '../common/GlobalImports';
   import Children from './Children.svelte';
   import Crumbs from './Crumbs.svelte';
   export let here;
@@ -14,7 +14,8 @@
     if (event.key == undefined) { alert('no key for ' + event.type); return; }
     if ($editingID != null)     { return; }
     if (event.type == 'keydown') {
-      let thing = data.thing_ID($grabbedID);
+      editor.here = here;
+      let thing = hierarchy.thing_ID($grabbedID);
       const key = event.key.toLowerCase();
       const OPTION = event.altKey;
       const SHIFT = event.shiftKey;
@@ -24,76 +25,19 @@
         case 't':          alert('PARENT-CHILD SWAP'); break;
         case 'tab':        thing?.firstParent.cloud_redraw_addChildTo(); break; // Title also makes this call
         case 'enter':      thing?.edit(); break;
-        case 'arrowup':    cloud_redraw_moveUp(true, SHIFT, OPTION); break;
-        case 'arrowdown':  cloud_redraw_moveUp(false, SHIFT, OPTION); break;
-        case 'arrowright': cloud_redraw_moveRight(thing, true, OPTION); break;
-        case 'arrowleft':  cloud_redraw_moveRight(thing, false, OPTION); break;
+        case 'arrowup':    editor.cloud_redraw_moveUp(true, SHIFT, OPTION); break;
+        case 'arrowdown':  editor.cloud_redraw_moveUp(false, SHIFT, OPTION); break;
+        case 'arrowright': editor.cloud_redraw_moveRight(thing, true, OPTION); break;
+        case 'arrowleft':  editor.cloud_redraw_moveRight(thing, false, OPTION); break;
         case 'delete':
-        case 'backspace':  cloud_redraw_deleteGrabs(); break;
+        case 'backspace':  editor.cloud_redraw_deleteGrabs(); break;
       }
-    }
-  }
-
-  function highestGrab(up) {
-    const ids = $grabbedIDs;
-    let grabs = data.things_IDs(ids);
-    sortAccordingToOrder(grabs);
-    if (up) {
-      return grabs[0];
-    } else {
-      return grabs[grabs.length - 1];
-    }
-  }
-
-  function cloud_redraw_deleteGrabs() {
-    const ids = $grabbedIDs;
-    for (const id of ids) {
-      const grab = data.thing_ID(id);
-      if (grab != null && !grab.isEditing && here != null) {
-        const siblings = grab.siblings;
-        let index = siblings.indexOf(grab);
-        siblings.splice(index, 1);
-        if (siblings.length == 0) {
-          const here = grab.grandparent ?? data.root;
-          here.becomeHere();
-          grab.firstParent.grabOnly();
-        } else {
-          if (index >= siblings.length) {
-            index = siblings.length - 1;
-          }
-          if (index >= 0) {
-            siblings[index].grabOnly();
-          }
-          here.pingHere();          
-        }
-        normalizeOrderOf(siblings);
-        signal(Signals.widgets);
-        cloud.thing_delete(grab);
-        cloud.things_saveDirty();
-        cloud.relationships_thing_deleteAll(grab);
-      }
-    }
-  }
-
-  function cloud_redraw_moveRight(thing, right, relocate) {
-    if (relocate) {
-      thing.cloud_redraw_relocateRight(right);
-    } else {
-      thing.redraw_browseRight(right);
-    }
-  }
-  
-  function cloud_redraw_moveUp(up, expand, relocate) {
-    const thing = highestGrab(up);
-    thing.redraw_moveup(up, expand, relocate);
-    if (relocate) {
-      cloud.things_saveDirty();
     }
   }
 
 </script>
 
-<Crumbs grab={data.thing_ID($grabbedID)}/>
+<Crumbs grab={hierarchy.thing_ID($grabbedID)}/>
 {#if here != null}
   <Children parent={here}/>
 {/if}

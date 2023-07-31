@@ -1,4 +1,5 @@
-import { data, hereID, Thing, Relationship, RelationshipKind } from '../common/GlobalImports';
+import { hierarchy, hereID, Thing, Relationship, RelationshipKind, removeAll } from '../common/GlobalImports';
+import { v4 as uuid } from 'uuid';
 import Airtable from 'airtable';
 
 export default class Cloud {
@@ -10,8 +11,11 @@ export default class Cloud {
   
   constructor() {}
 
-  saveDirty = () => {
-    
+  get newCloudID(): string { return 'new' + removeAll('-', uuid()).slice(10, 24); }
+
+  saveAllDirty = () => {
+    this.relationships_saveDirty();
+    this.things_saveDirty();
   }
 
   readAll = async (onCompletion: () => any) => {
@@ -24,7 +28,7 @@ export default class Cloud {
   /////////////////////////////
 
   async things_readAll(onCompletion: () => any) {
-    data.thingsByID = {}; // clear
+    hierarchy.thingsByID = {}; // clear
 
     try {
       const records = await this.things_table.select().all()
@@ -32,27 +36,27 @@ export default class Cloud {
       for (const record of records) {
         const id = record.id;
         const thing = new Thing(id, record.fields.title as string, record.fields.color as string, record.fields.trait as string);
-        data.thingsByID[id] = thing;
+        hierarchy.thingsByID[id] = thing;
         if (thing.trait == '!') {
-          data.root = thing;
+          hierarchy.root = thing;
           hereID.set(id);
         }
       }
 
-      for (const id in data.thingsByID) {
-        const rootID = data.rootID;
-        const thing = data.thing_ID(id);
+      for (const id in hierarchy.thingsByID) {
+        const rootID = hierarchy.rootID;
+        const thing = hierarchy.thing_ID(id);
         if (rootID != null && rootID != id && thing != null) {
           cloud.relationship_createUnique_insert(RelationshipKind.parent, id, rootID, -1);
-          const order = data.relationship_firstParent_ID(id)?.order;
+          const order = hierarchy.relationship_firstParent_ID(id)?.order;
           if (thing != null && order != null) {
             thing.order = order;
           }
         }
       }
 
-      data.root?.becomeHere()
-      data.root?.grabOnly()
+      hierarchy.root?.becomeHere()
+      hierarchy.root?.grabOnly()
       onCompletion();
     } catch (error) {
       console.log(this.things_errorMessage + ' (things_readAll) ' + error);
@@ -60,7 +64,7 @@ export default class Cloud {
   }
 
   async things_saveDirty() {
-    const all: Thing[] = Object.values(data.thingsByID);
+    const all: Thing[] = Object.values(hierarchy.thingsByID);
     for (const thing of all) {
       if (thing.needsSave) {
         await this.thing_save(thing)
@@ -91,7 +95,7 @@ export default class Cloud {
   }
 
   async thing_delete(thing: Thing) {
-    delete(data.thingsByID[thing.id]);
+    delete(hierarchy.thingsByID[thing.id]);
     try {
       await this.things_table.destroy(thing.id);
     } catch (error) {
@@ -104,7 +108,7 @@ export default class Cloud {
   ////////////////////////////////////
 
   async relationships_readAll() {
-    data.relationships_clearLookups();
+    hierarchy.relationships_clearLookups();
     try {
       const records = await this.relationships_table.select().all()
 
@@ -115,7 +119,7 @@ export default class Cloud {
         const froms = record.fields.from as (string[]);
         const kind = record.fields.kind as RelationshipKind;
         const relationship = new Relationship(id, kind, froms[0], tos[0], order);
-        data.relationship_remember(relationship);
+        hierarchy.relationship_remember(relationship);
       }
     } catch (error) {
       console.log(this.relationships_errorMessage + error);
@@ -123,20 +127,20 @@ export default class Cloud {
   }
 
   async relationships_saveDirty() {
-    data.relationships.forEach((relationship) => {
+    hierarchy.relationships.forEach((relationship) => {
       if (relationship.needsSave) {
           this.relationship_save(relationship);
       }
     });
   }
 
-  async relationships_thing_deleteAll(thing: Thing) {
-    const array = data.relationshipsByFromID[thing.id];
+  async relationships_forThing_deleteAll(thing: Thing) {
+    const array = hierarchy.relationshipsByFromID[thing.id];
     if (array != null) {
       for (const relationship of array) {
         await this.relationship_delete(relationship);
       }
-      data.relationships_refreshLookups();
+      hierarchy.relationships_refreshLookups();
     }
   }
 
@@ -164,15 +168,15 @@ export default class Cloud {
   }
 
   async relationship_createUnique_insert(kind: RelationshipKind, from: string, to: string, order: number) {
-    await this.relationship_insert(data.relationship_createUnique(kind, from, to, order));
+    await this.relationship_insert(hierarchy.relationship_createUnique(kind, from, to, order));
   }
 
   async relationship_delete(relationship: Relationship | null, keepInMemory: boolean = false) {
     if (relationship != null) {
       try {
         if (!keepInMemory) {
-          data.relationships = data.relationships.filter((item) => item.id !== relationship.id);
-          data.relationships_refreshLookups();
+          hierarchy.relationships = hierarchy.relationships.filter((item) => item.id !== relationship.id);
+          hierarchy.relationships_refreshLookups();
         }
         await this.relationships_table.destroy(relationship.id);
       } catch (error) {
