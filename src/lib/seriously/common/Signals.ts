@@ -2,7 +2,7 @@ import { Signal } from 'typed-signals';
 
 export enum Signals {
   widgets = 'w', // for widget hover and edit/stop
-  panel   = 'p',
+  graph   = 'g',
   dots    = 'd'  // refresh all the dots, for hover
 }
 

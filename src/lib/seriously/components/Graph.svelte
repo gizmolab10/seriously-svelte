@@ -1,43 +1,47 @@
 <script>
-  import { Thing, hierarchy, editor, cloud, editingID, normalizeOrderOf, onMount, onDestroy, sortAccordingToOrder, constants } from '../common/GlobalImports';
+  import { Thing, hierarchy, editor, cloud, editingID, normalizeOrderOf, Signals, handleSignalOfKind, onMount, onDestroy, constants } from '../common/GlobalImports';
   import Children from './Children.svelte';
   import Crumbs from './Crumbs.svelte';
-  export let here;
   let listener;
-
-  $: { editor.here = here; }
+  let redraw;
 
   onDestroy( () => { window.removeEventListener('keydown', listener); });
   onMount(async () => { listener = window.addEventListener('keydown', handleKeyDown); });
 
   async function handleKeyDown(event) {
     let thing = hierarchy.grabbedThing;
-    if (thing == null)     { alert('no grabs'); return; }
-    if (event.key == undefined) { alert('no key for ' + event.type); return; }
-    if ($editingID != null)     { return; }
+    if (thing == null)           { alert('no grabs'); return; }
+    if (event.key == undefined)  { alert('no key for ' + event.type); return; }
+    if ($editingID != null)      { return; }
     if (event.type == 'keydown') {
       const key = event.key.toLowerCase();
       const OPTION = event.altKey;
       const SHIFT = event.shiftKey;
       switch (key) {
-        case ' ':          thing.cloud_redraw_addChildTo(); break;
-        case 'd':          thing.cloud_duplicate(); break;
+        case ' ':          cloud.thing_redraw_addChildTo(thing); break;
+        case 'd':          cloud.thing_duplicate(thing); break;
         case 't':          alert('PARENT-CHILD SWAP'); break;
-        case 'tab':        thing.firstParent.cloud_redraw_addChildTo(); break; // Title also makes this call
-        case 'enter':      thing.edit(); break;
-        case 'arrowup':    editor.cloud_redraw_moveUp(true, SHIFT, OPTION); break;
-        case 'arrowdown':  editor.cloud_redraw_moveUp(false, SHIFT, OPTION); break;
-        case 'arrowright': editor.cloud_redraw_moveRight(thing, true, OPTION); break;
-        case 'arrowleft':  editor.cloud_redraw_moveRight(thing, false, OPTION); break;
+        case 'tab':        cloud.thing_redraw_addChildTo(thing.firstParent); break; // Title also makes this call
+        case 'enter':      thing.editTitle(); break;
         case 'delete':
-        case 'backspace':  editor.cloud_redraw_deleteGrabs(); break;
+        case 'backspace':  cloud.grabs_redraw_delete(); break;
+        case 'arrowup':    cloud.grab_redraw_moveUp(true, SHIFT, OPTION); break;
+        case 'arrowdown':  cloud.grab_redraw_moveUp(false, SHIFT, OPTION); break;
+        case 'arrowright': cloud.thing_redraw_moveRight(thing, true, OPTION); break;
+        case 'arrowleft':  cloud.thing_redraw_moveRight(thing, false, OPTION); break;
       }
     }
   }
 
+  handleSignalOfKind(Signals.graph, (value) => {
+    redraw = !redraw;
+  });
+
 </script>
 
-<Crumbs grab={hierarchy.grabbedThing}/>
-{#if here != null}
-  <Children parent={here}/>
-{/if}
+{#key redraw}
+  <Crumbs grab={hierarchy.grabbedThing}/>
+  {#if hierarchy.here != null}
+    <Children parent={hierarchy.here}/>
+  {/if}
+{/key}

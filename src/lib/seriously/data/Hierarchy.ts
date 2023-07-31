@@ -1,4 +1,4 @@
-import { get, grabbedID, cloud, Thing, Relationship, RelationshipKind, sortAccordingToOrder } from '../common/GlobalImports';
+import { get, grabbedID, grabbedIDs, cloud, Thing, Relationship, RelationshipKind, sortAccordingToOrder } from '../common/GlobalImports';
 
 ////////////////////////////////////////
 // creation, tracking and destruction //
@@ -11,11 +11,23 @@ export default class Hierarchy {
   thingsByID: { [id: string]: Thing } = {};
   relationships: Array<Relationship> = [];
   root: Thing | null = null;
+  here: Thing | null = null;
 
   constructor() {}
 
   get rootID(): (string | null) { return this.root?.id ?? null; };
   get grabbedThing(): (Thing | null) { return this.thing_byID(get(grabbedID)) }
+
+  highestGrab(up: boolean) {
+    const ids = get(grabbedIDs);
+    let grabs = hierarchy.things_byIDs(ids);
+    sortAccordingToOrder(grabs);
+    if (up) {
+      return grabs[0];
+    } else {
+      return grabs[grabs.length - 1];
+    }
+  }
 
   thing_byID(id: string | null): Thing | null {
     return (id == null) ? null : this.thingsByID[id];

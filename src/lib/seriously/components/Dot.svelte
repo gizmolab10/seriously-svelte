@@ -1,19 +1,19 @@
 <svelte:options immutable={true}/>
 
 <script lang='ts'>
-  import { Thing, grabbedIDs, tick, onMount, Signals, signal, handleSignalOfKind, constants } from '../common/GlobalImports.ts';
+  import { Thing, editor, grabbedIDs, tick, onMount, Signals, signal, handleSignalOfKind, constants } from '../common/GlobalImports.ts';
   export let isReveal = false;
   export let thing = Thing;
 
   async function handleClick(event) {
     if (isReveal) {
       if (thing.hasChildren) {
-      thing.redraw_browseRight(true);
+      editor.redraw_browseRight(thing, true);
       }
     } else if (event.shiftKey) {
       thing.toggleGrab();
     } else if ($grabbedIDs?.includes(thing.id)) {
-      thing.redraw_browseRight(false);
+      editor.redraw_browseRight(thing, false);
     } else {
       thing.grabOnly();
     }

@@ -12,7 +12,7 @@
   function handleKeyDown(event) {
     if ($editingID == thing.id) {
       switch (event.key) {
-        case 'Tab': stopEditing(true); thing.cloud_duplicate(); break;
+        case 'Tab': stopEditing(true); cloud.thing_duplicate(); break;
         case 'Enter': stopEditing(true);
       }
     }
@@ -56,7 +56,7 @@
       isEditing = true;
       thing.edit();
       thing.grabOnly()
-      signal(Signal.widgets); // so widget will show as grabbed
+      signal(Signal.widgets);   // so widget will show as grabbed
     }
   }
 

@@ -1,4 +1,4 @@
-import { get, hierarchy, cloud, hereID, grabbedID, grabbedIDs, editingID, constants, RelationshipKind, signal, Signals, normalizeOrderOf } from '../common/GlobalImports';
+import { get, hierarchy, cloud, editor, grabbedID, grabbedIDs, editingID, constants, RelationshipKind, signal, Signals } from '../common/GlobalImports';
 import Airtable from 'airtable';
 
 export enum PrivacyKind {
@@ -44,14 +44,17 @@ export default class Thing {
   get  grabAttributes():   string { return this.borderAttribute + this.revealColor(false); }
   get hoverAttributes():   string { return this.borderAttribute + this.revealColor(true); }
   get borderAttribute():   string { return (this.isEditing ? 'dashed' : 'solid') + ' 1px '; }
+  get debugTitle():        string { return ' (\"' + this.title + '\") '; }
+
   get children():    Array<Thing> { return hierarchy.things_byKind_andID(RelationshipKind.parent, this.id, true); }
   get parents():     Array<Thing> { return hierarchy.things_byKind_andID(RelationshipKind.parent, this.id, false); }
-  get grandparent():        Thing { return this.firstParent?.firstParent ?? hierarchy.root; }
   get siblings():    Array<Thing> { return this.firstParent?.children ?? []; }
-  get isGrabbed():        boolean { return get(grabbedIDs).includes(this.id); }
-  get hasChildren():      boolean { return this.hasRelationships(false); }
+  get grandparent():        Thing { return this.firstParent?.firstParent ?? hierarchy.root; }
   get firstChild():         Thing { return this.children[0]; }
   get firstParent():        Thing { return this.parents[0]; }
+
+  get isGrabbed():        boolean { return get(grabbedIDs).includes(this.id); }
+  get hasChildren():      boolean { return this.hasRelationships(false); }
 
   get ancestors(): Array<Thing> {
     const ancestors = [];
@@ -65,13 +68,16 @@ export default class Thing {
   }
 
   hasRelationships = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
-  thing_createAt = (order: number) => { return new Thing(cloud.newCloudID, constants.defaultTitle, 'blue', 't', order); }
-  cloud_redraw_createChild = () => { this.cloud_redraw_addThingAsChild(this.thing_createAt(-1)); }
   grabOnly = () => { grabbedIDs.set([this.id]); grabbedID.set(null); grabbedID.set(this.id); }
-  pingHere = () => { const saved = get(hereID); hereID.set(null); hereID.set(saved); }
   toggleGrab = () => { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }
-  becomeHere = () => { if (this.hasChildren) { hereID.set(this.id) }; }
-  edit = () => { editingID.set(this.id); }
+  editTitle = () => { editingID.set(this.id); }
+
+  becomeHere = () => { 
+    if (this.hasChildren) { 
+      hierarchy.here = this; 
+      signal(Signals.graph);
+    };
+  }
 
   setOrderTo = (newOrder: number) => {
     if (this.order != newOrder) {
@@ -131,96 +137,6 @@ export default class Thing {
       }
     }
     return this;
-  }
-
-  /////////////
-  // editing //
-  /////////////
-
-  redraw_moveup = (up: boolean, expand: boolean, relocate: boolean) => {
-    const siblings = this.siblings;
-    if (siblings == null || siblings.length == 0) {
-        this.redraw_browseRight(true);
-    } else {
-      const index = siblings.indexOf(this);
-      const newIndex = index.increment(!up, siblings.length);
-      if (relocate) {
-        const wrapped = up ? (index == 0) : (index == siblings.length - 1);
-        const goose = (wrapped ? -0.1 : 1) * (up ? -1 : 1);
-        const newOrder =  newIndex + goose;
-        siblings[index].setOrderTo(newOrder);
-        normalizeOrderOf(siblings);
-        this.firstParent.pingHere();
-      } else {
-        const newGrab = siblings[newIndex];
-        if (expand) {
-          newGrab?.toggleGrab()
-        } else {
-          newGrab?.grabOnly();
-        }
-      }
-      signal(Signals.widgets);
-    }
-  }
-
-  redraw_browseRight = (right: boolean) => {
-    const grab = right ? this.firstChild : this.firstParent;
-    const here = right ? this : this.grandparent;
-    grab?.grabOnly();
-    signal(Signals.widgets);   // signal BEFORE becomeHere to avoid blink
-    here.becomeHere();
-  }
-
-  cloud_duplicate = async () => {
-    const sibling = this.thing_createAt(this.order + 0.5);
-    const parent = this.firstParent ?? hierarchy.root;
-    sibling.copyFrom(this);
-    sibling.order += 0.1
-    parent.cloud_redraw_addThingAsChild(sibling)
-  }
-
-  cloud_redraw_addThingAsChild = async (child: Thing) => {
-    await cloud.thing_insert(child); // for everything below, need to await child.id fetched from cloud
-    const childID = child.id;
-    const relationship = hierarchy.relationship_createUnique(RelationshipKind.parent, childID, this.id, child.order);
-    hierarchy.relationships_refreshLookups();
-    normalizeOrderOf(this.children);
-    this.pingHere();
-    // child.edit(); // TODO: fucking causes app to hang!
-    // child.grabOnly();
-    signal(Signals.widgets);
-    // await cloud.relationship_insert(relationship);
-    cloud.saveAllDirty();
-  }
-
-  cloud_redraw_addChildTo = () => {
-    this.cloud_redraw_createChild();
-    this.pingHere();
-  }
-
-  cloud_redraw_relocateRight = async (right: boolean) => {
-    const newParent = right ? this.nextSibling(false) : this.grandparent;
-    if (newParent != null) {
-      this.needsSave = true;     // order will change
-      const matches = hierarchy.relationships_byKind(RelationshipKind.parent, false, this.id);
-
-      // alter the 'to' in ALL [?] the matching 'from' relationships
-      // simpler than adjusting children or parents arrays
-      // TODO: also match against the 'to' to the current parent
-      // TODO: pass kind in ... to support editing different kinds of relationships
-
-      for (let index = 0; index < matches.length; index++) {
-        const relationship = matches[index];
-        relationship.to = newParent.id;
-        relationship.needsSave = true;                // save this new 'to'
-      }
-
-      hierarchy.relationships_refreshLookups();
-      this.grabOnly();
-      signal(Signals.widgets);                        // signal BEFORE becomeHere to avoid blink
-      newParent.becomeHere();
-      cloud.saveAllDirty();
-    }
   }
 
 }
