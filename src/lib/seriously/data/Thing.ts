@@ -46,8 +46,8 @@ export default class Thing {
   get borderAttribute():   string { return (this.isEditing ? 'dashed' : 'solid') + ' 1px '; }
   get debugTitle():        string { return ' (\"' + this.title + '\") '; }
 
-  get children():    Array<Thing> { return hierarchy.things_byKind_andID(RelationshipKind.parent, this.id, true); }
-  get parents():     Array<Thing> { return hierarchy.things_byKind_andID(RelationshipKind.parent, this.id, false); }
+  get children():    Array<Thing> { return hierarchy.things_forKind_andID(RelationshipKind.parent, this.id, true); }
+  get parents():     Array<Thing> { return hierarchy.things_forKind_andID(RelationshipKind.parent, this.id, false); }
   get siblings():    Array<Thing> { return this.firstParent?.children ?? []; }
   get grandparent():        Thing { return this.firstParent?.firstParent ?? hierarchy.root; }
   get firstChild():         Thing { return this.children[0]; }

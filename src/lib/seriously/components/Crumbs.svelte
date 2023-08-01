@@ -5,7 +5,7 @@
   let ancestors;
 
   $: {
-    grab = hierarchy.thing_byID($grabbedID);   // start over with new grab
+    grab = hierarchy.thing_forID($grabbedID);   // start over with new grab
     if (grab != null) {
       ancestors = grab.ancestors;
     }

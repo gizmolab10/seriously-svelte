@@ -5,10 +5,12 @@
   let isLoading = true;
 
   onMount(async () => {
-    await cloud.readAll(async () => { isLoading = false });
-    const root = hierarchy.root;
-    root?.grabOnly();
-    root?.becomeHere();    
+    cloud.readAll(async () => { 
+      isLoading = false;
+      const root = hierarchy.root;
+      root?.grabOnly();
+      root?.becomeHere();
+    });    
   })
 
 </script>

@@ -16,11 +16,11 @@ export default class Hierarchy {
   constructor() {}
 
   get rootID(): (string | null) { return this.root?.id ?? null; };
-  get grabbedThing(): (Thing | null) { return this.thing_byID(get(grabbedID)) }
+  get grabbedThing(): (Thing | null) { return this.thing_forID(get(grabbedID)) }
 
   highestGrab(up: boolean) {
     const ids = get(grabbedIDs);
-    let grabs = hierarchy.things_byIDs(ids);
+    let grabs = hierarchy.things_forIDs(ids);
     sortAccordingToOrder(grabs);
     if (up) {
       return grabs[0];
@@ -29,11 +29,11 @@ export default class Hierarchy {
     }
   }
 
-  thing_byID(id: string | null): Thing | null {
+  thing_forID(id: string | null): Thing | null {
     return (id == null) ? null : this.thingsByID[id];
   }
 
-  things_byIDs(ids: Array<string>): Array<Thing> {
+  things_forIDs(ids: Array<string>): Array<Thing> {
     const array = Array<Thing>();
     for (const id of ids) {
       const thing = this.thingsByID[id];
@@ -44,7 +44,7 @@ export default class Hierarchy {
     return sortAccordingToOrder(array);
   }
 
-  things_byKind_andID(kind: RelationshipKind, id: string, matchingTo: boolean): Array<Thing> {
+  things_forKind_andID(kind: RelationshipKind, id: string, matchingTo: boolean): Array<Thing> {
     const matches = this.relationships_byKind(kind, matchingTo, id);
     const ids: Array<string> = [];
     if (Array.isArray(matches)) {
@@ -52,7 +52,7 @@ export default class Hierarchy {
         ids.push(matchingTo ? relationship.from : relationship.to);
       }
     }
-    return this.things_byIDs(ids);
+    return this.things_forIDs(ids);
   }
 
   relationship_create(kind: RelationshipKind, from: string, to: string, order: number): Relationship {
@@ -82,7 +82,7 @@ export default class Hierarchy {
   }
 
   relationship_firstParent_byID(id: string) {
-    const thing = this.thing_byID(id);
+    const thing = this.thing_forID(id);
     const matches = this.relationships_byKind(RelationshipKind.parent, false, id);
     if (thing != null && matches.length > 0) {
       return matches[0];
@@ -100,6 +100,7 @@ export default class Hierarchy {
     const saved = this.relationships;
     this.relationships_clearLookups();
     for (const relationship of saved) {
+      // console.log('REFRESH: ', relationship.description);
       this.relationship_remember(relationship);
     }
   }

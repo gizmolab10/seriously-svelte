@@ -29,8 +29,10 @@
     } else if (!isEditing) {
       isEditing = true;
       thing.grabOnly();
-      inputRef.focus();
-      inputRef.select();
+      setTimeout(() => {
+        inputRef?.focus();
+        inputRef?.select();
+      }, 10);
     }
     signal(Signals.widgets); // so widget will show as [un]grabbed
   }

@@ -2,9 +2,12 @@ import { get, grabbedIDs, hierarchy, Thing, Relationship, RelationshipKind, remo
 import { v4 as uuid } from 'uuid';
 import Airtable from 'airtable';
 
-///////////////////////////////////////
-// CRUD for things and relationships //
-///////////////////////////////////////
+/////////////////////////////////////////
+//                                     //
+//   CRUD for things & relationships   //
+//        + edit order & parent        //
+//                                     //
+/////////////////////////////////////////
 
 export default class Cloud {
   base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
@@ -15,8 +18,8 @@ export default class Cloud {
   
   constructor() {}
 
-  get newCloudID(): string { return 'new' + removeAll('-', uuid()).slice(10, 24); }
-  thing_createAt = (order: number) => { return new Thing(cloud.newCloudID, constants.defaultTitle, 'blue', 't', order); }
+  get newCloudID(): string { return 'rec' + removeAll('-', uuid()).slice(10, 24); } // use last, most-unique bytes of uuid
+  thing_createAt = (order: number) => { return new Thing(this.newCloudID, constants.defaultTitle, 'blue', 't', order); }
 
   readAll = async (onCompletion: () => any) => {
     await this.relationships_readAll();
@@ -24,48 +27,8 @@ export default class Cloud {
   }
 
   saveAllDirty = () => {
-    // this.relationships_saveDirty();
+    this.relationships_saveDirty(); // uncomment me when reference ids work
     this.things_saveDirty();
-  }
-
-  ////////////////////////////
-  //         GRABS          //
-  ////////////////////////////
-
-  grabs_redraw_delete() {
-    const ids = get(grabbedIDs);
-    for (const id of ids) {
-      const grabbed = hierarchy.thing_byID(id);
-      if (grabbed != null && !grabbed.isEditing && hierarchy.here != null) {
-        const siblings = grabbed.siblings;
-        let index = siblings.indexOf(grabbed);
-        siblings.splice(index, 1);
-        if (siblings.length == 0) {
-          grabbed.grandparent.becomeHere();
-          grabbed.firstParent.grabOnly();
-        } else {
-          if (index >= siblings.length) {
-            index = siblings.length - 1;
-          }
-          if (index >= 0) {
-            siblings[index].grabOnly();
-          }        
-        }
-        normalizeOrderOf(siblings);
-        signal(Signals.widgets);
-        cloud.thing_delete(grabbed);
-        cloud.things_saveDirty();
-        cloud.relationships_forThing_deleteAll(grabbed);
-      }
-    }
-  }
-  
-  grab_redraw_moveUp(up: boolean, expand: boolean, relocate: boolean) {
-    const grab = hierarchy.highestGrab(up);
-    grab.redraw_moveup(up, expand, relocate);
-    if (relocate) {
-      cloud.things_saveDirty();
-    }
   }
 
   /////////////////////////////
@@ -89,13 +52,11 @@ export default class Cloud {
 
       for (const id in hierarchy.thingsByID) {
         const rootID = hierarchy.rootID;
-        const thing = hierarchy.thing_byID(id);
+        const thing = hierarchy.thing_forID(id);
         if (thing != null && rootID != null && rootID != id) {
-          hierarchy.relationship_createUnique(RelationshipKind.parent, id, rootID, -1);
-          const order = hierarchy.relationship_firstParent_byID(id)?.order;
-          if (order != null) {
-            thing.order = order;
-          }
+          const order = -1;
+          thing.order = order;
+          cloud.relationship_createUnique_insert(RelationshipKind.parent, id, rootID, order);
         }
       }
 
@@ -116,12 +77,16 @@ export default class Cloud {
     }
   }
 
-  async thing_insert(thing: Thing) {
+  ////////////////////////////
+  //         THING          //
+  ////////////////////////////
+
+  async thing_create(thing: Thing) {
     try {
-      
       const fields = await this.things_table.create(thing.fields);
       const id = fields['id']; //  // need for update, delete and thingsByID (to get parent from relationship)
       thing.id = id;
+      hierarchy.thingsByID[id] = thing;
       await this.things_table.destroy(id);
       await this.things_table.create(thing.fields); // re-insert with corrected id
     } catch (error) {
@@ -156,17 +121,16 @@ export default class Cloud {
   }
 
   thing_redraw_addAsChild = async (child: Thing, parent: Thing) => {
-    await cloud.thing_insert(child); // for everything below, need to await child.id fetched from cloud
+    await this.thing_create(child); // for everything below, need to await child.id fetched from cloud
     const childID = child.id;
-    const relationship = hierarchy.relationship_createUnique(RelationshipKind.parent, childID, parent.id, child.order);
+    cloud.relationship_createUnique_insert(RelationshipKind.parent, childID, parent.id, child.order);
     hierarchy.relationships_refreshLookups();
     normalizeOrderOf(parent.children);
     parent.becomeHere();
-    // child.edit(); // TODO: fucking causes app to hang!
-    // child.grabOnly();
+    child.editTitle(); // TODO: fucking causes app to hang!
+    child.grabOnly();
     signal(Signals.widgets);
-    // await cloud.relationship_insert(relationship);
-    cloud.saveAllDirty();
+    this.saveAllDirty();
   }
 
   thing_redraw_addChildTo = (parent: Thing) => {
@@ -195,7 +159,7 @@ export default class Cloud {
       thing.grabOnly();
       signal(Signals.widgets);                        // signal BEFORE becomeHere to avoid blink
       newParent.becomeHere();
-      cloud.saveAllDirty();
+      this.saveAllDirty();
     }
   }
 
@@ -248,14 +212,19 @@ export default class Cloud {
     }
   }
 
-  async relationship_insert(relationship: Relationship | null) {
+  ///////////////////////////////////
+  //         RELATIONSHIP          //
+  ///////////////////////////////////
+
+  async relationship_insertNew(relationship: Relationship | null) {
     if (relationship != null) {
       try {
-        const fields = await this.relationships_table.create(relationship.fields);
-        const id = fields['id'];
+        const fields = await this.relationships_table.create(relationship.fields);   // insert with temporary id
+        const id = fields['id'];                                                     // grab permanent id
         relationship.id = id;
+        hierarchy.relationships_refreshLookups();
         await this.relationships_table.destroy(id);
-        await this.relationships_table.create(relationship.fields); // re-insert with corrected id
+        await this.relationships_table.create(relationship.fieldsWithID);                  // re-insert with permanent id
       } catch (error) {
         console.log(this.relationships_errorMessage + ' (' + relationship.id + ') ' + error);
       }
@@ -263,7 +232,7 @@ export default class Cloud {
   }
 
   async relationship_createUnique_insert(kind: RelationshipKind, from: string, to: string, order: number) {
-    await this.relationship_insert(hierarchy.relationship_createUnique(kind, from, to, order));
+    await this.relationship_insertNew(hierarchy.relationship_createUnique(kind, from, to, order));
   }
 
   async relationship_save(relationship: Relationship) {
@@ -286,6 +255,46 @@ export default class Cloud {
       } catch (error) {
         console.log(this.relationships_errorMessage + ' (' + relationship.id + ') ' + error);
       }
+    }
+  }
+
+  ////////////////////////////
+  //         GRABS          //
+  ////////////////////////////
+
+  grabs_redraw_delete() {
+    const ids = get(grabbedIDs);
+    for (const id of ids) {
+      const grabbed = hierarchy.thing_forID(id);
+      if (grabbed != null && !grabbed.isEditing && hierarchy.here != null) {
+        const siblings = grabbed.siblings;
+        let index = siblings.indexOf(grabbed);
+        siblings.splice(index, 1);
+        if (siblings.length == 0) {
+          grabbed.grandparent.becomeHere();
+          grabbed.firstParent.grabOnly();
+        } else {
+          if (index >= siblings.length) {
+            index = siblings.length - 1;
+          }
+          if (index >= 0) {
+            siblings[index].grabOnly();
+          }        
+        }
+        normalizeOrderOf(siblings);
+        signal(Signals.widgets);
+        this.thing_delete(grabbed);
+        this.things_saveDirty();
+        this.relationships_forThing_deleteAll(grabbed);
+      }
+    }
+  }
+  
+  grab_redraw_moveUp(up: boolean, expand: boolean, relocate: boolean) {
+    const grab = hierarchy.highestGrab(up);
+    grab.redraw_moveup(up, expand, relocate);
+    if (relocate) {
+      this.things_saveDirty();
     }
   }
 
