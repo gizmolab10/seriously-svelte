@@ -1,4 +1,4 @@
-import { get, grabbedID, grabbedIDs, cloud, Thing, Relationship, RelationshipKind, sortAccordingToOrder } from '../common/GlobalImports';
+import { get, grabbedID, grabbedIDs, cloud, Thing, Relationship, RelationshipKind, sortAccordingToOrder, constants } from '../common/GlobalImports';
 
 ////////////////////////////////////////
 // creation, tracking and destruction //
@@ -17,6 +17,7 @@ export default class Hierarchy {
 
   get rootID(): (string | null) { return this.root?.id ?? null; };
   get grabbedThing(): (Thing | null) { return this.thing_forID(get(grabbedID)) }
+  thing_newAt = (order: number) => { return new Thing(cloud.newCloudID, constants.defaultTitle, 'blue', 't', order); }
 
   highestGrab(up: boolean) {
     const ids = get(grabbedIDs);
@@ -55,15 +56,15 @@ export default class Hierarchy {
     return this.things_forIDs(ids);
   }
 
-  relationship_create(kind: RelationshipKind, from: string, to: string, order: number): Relationship {
+  relationship_new(kind: RelationshipKind, from: string, to: string, order: number): Relationship {
     const relationship = new Relationship(cloud.newCloudID, kind, from, to, order);
     this.relationship_remember(relationship);
     return relationship;
   }
 
-  relationship_createUnique(kind: RelationshipKind, from: string, to: string, order: number) {
+  relationship_newUnique(kind: RelationshipKind, from: string, to: string, order: number) {
     if (this.relationship_firstParent_byID(from) == null) {
-      const relationship = this.relationship_create(kind, from, to, order);
+      const relationship = this.relationship_new(kind, from, to, order);
       relationship.needsSave = true;
       return relationship;
     }

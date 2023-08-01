@@ -20,6 +20,7 @@
       switch (key) {
         case ' ':          cloud.thing_redraw_addChildTo(thing); break;
         case 'd':          cloud.thing_duplicate(thing); break;
+        case 'r':          break; // restart app
         case 't':          alert('PARENT-CHILD SWAP'); break;
         case 'tab':        cloud.thing_redraw_addChildTo(thing.firstParent); break; // Title also makes this call
         case 'delete':

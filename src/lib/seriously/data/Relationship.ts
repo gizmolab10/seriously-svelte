@@ -25,8 +25,7 @@ export class Relationship {
     this.order = order;
   }
 
-  get fields(): Airtable.FieldSet { return { kind: this.kind, from: [this.from], to: [this.to], order: this.order }; }
-  get fieldsWithID(): Airtable.FieldSet { return { id: this.id, kind: this.kind, from: [this.from], to: [this.to], order: this.order }; }
+  get fields(): Airtable.FieldSet { return { id: this.id, kind: this.kind, from: [this.from], to: [this.to], order: this.order }; }
   get description(): string { return hierarchy.thing_forID(this.to)?.title + ' => ' + hierarchy.thing_forID(this.from)?.title; }
   
 

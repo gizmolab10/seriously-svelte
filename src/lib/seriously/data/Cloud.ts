@@ -19,16 +19,15 @@ export default class Cloud {
   constructor() {}
 
   get newCloudID(): string { return 'rec' + removeAll('-', uuid()).slice(10, 24); } // use last, most-unique bytes of uuid
-  thing_createAt = (order: number) => { return new Thing(this.newCloudID, constants.defaultTitle, 'blue', 't', order); }
 
   readAll = async (onCompletion: () => any) => {
     await this.relationships_readAll();
     await this.things_readAll(onCompletion);
   }
 
-  saveAllDirty = () => {
-    this.relationships_saveDirty(); // uncomment me when reference ids work
-    this.things_saveDirty();
+  saveAllDirty = async () => {
+    await this.relationships_saveDirty(); // do this first, in case a relationship points to a dirty thing
+    await this.things_saveDirty();
   }
 
   /////////////////////////////
@@ -56,7 +55,7 @@ export default class Cloud {
         if (thing != null && rootID != null && rootID != id) {
           const order = -1;
           thing.order = order;
-          cloud.relationship_createUnique_insert(RelationshipKind.parent, id, rootID, order);
+          cloud.relationship_insertUnique(RelationshipKind.parent, id, rootID, order);
         }
       }
 
@@ -113,7 +112,7 @@ export default class Cloud {
   }
 
   thing_duplicate = async (thing: Thing) => {
-    const sibling = this.thing_createAt(thing.order + 0.5);
+    const sibling = hierarchy.thing_newAt(thing.order + 0.5);
     const parent = thing.firstParent ?? hierarchy.root;
     sibling.copyFrom(thing);
     sibling.order += 0.1
@@ -122,19 +121,18 @@ export default class Cloud {
 
   thing_redraw_addAsChild = async (child: Thing, parent: Thing) => {
     await this.thing_create(child); // for everything below, need to await child.id fetched from cloud
-    const childID = child.id;
-    cloud.relationship_createUnique_insert(RelationshipKind.parent, childID, parent.id, child.order);
+    await cloud.relationship_insertUnique(RelationshipKind.parent, child.id, parent.id, child.order);
     hierarchy.relationships_refreshLookups();
     normalizeOrderOf(parent.children);
     parent.becomeHere();
     child.editTitle(); // TODO: fucking causes app to hang!
     child.grabOnly();
     signal(Signals.widgets);
-    this.saveAllDirty();
+    await this.saveAllDirty();
   }
 
   thing_redraw_addChildTo = (parent: Thing) => {
-    const child = this.thing_createAt(-1);
+    const child = hierarchy.thing_newAt(-1);
     this.thing_redraw_addAsChild(child, parent);
   }
 
@@ -224,15 +222,15 @@ export default class Cloud {
         relationship.id = id;
         hierarchy.relationships_refreshLookups();
         await this.relationships_table.destroy(id);
-        await this.relationships_table.create(relationship.fieldsWithID);                  // re-insert with permanent id
+        await this.relationships_table.create(relationship.fields);                  // re-insert with permanent id
       } catch (error) {
         console.log(this.relationships_errorMessage + ' (' + relationship.id + ') ' + error);
       }
     }
   }
 
-  async relationship_createUnique_insert(kind: RelationshipKind, from: string, to: string, order: number) {
-    await this.relationship_insertNew(hierarchy.relationship_createUnique(kind, from, to, order));
+  async relationship_insertUnique(kind: RelationshipKind, from: string, to: string, order: number) {
+    await this.relationship_insertNew(hierarchy.relationship_newUnique(kind, from, to, order));
   }
 
   async relationship_save(relationship: Relationship) {
@@ -244,13 +242,11 @@ export default class Cloud {
     }
   }
 
-  async relationship_delete(relationship: Relationship | null, keepInMemory: boolean = false) {
+  async relationship_delete(relationship: Relationship | null) {
     if (relationship != null) {
       try {
-        if (!keepInMemory) {
-          hierarchy.relationships = hierarchy.relationships.filter((item) => item.id !== relationship.id);
-          hierarchy.relationships_refreshLookups();
-        }
+        hierarchy.relationships = hierarchy.relationships.filter((item) => item.id !== relationship.id);
+        hierarchy.relationships_refreshLookups();
         await this.relationships_table.destroy(relationship.id);
       } catch (error) {
         console.log(this.relationships_errorMessage + ' (' + relationship.id + ') ' + error);
