@@ -26,7 +26,7 @@
 
     if ($editingID != thing.id) {
       stopEditing(false); // false means leave editingID alone so other currently editing widgets continue editing
-    } else if (!isEditing) {
+    } else {
       isEditing = true;
       thing.grabOnly();
       setTimeout(() => {
@@ -39,16 +39,16 @@
 
   function stopEditing(clearEditingID: boolean) {
     if (isEditing) {
-      if (clearEditingID) {
-        setTimeout(() => {     // eliminate infinite recursion
-          $editingID = null;
-        }, 10);
-      }
       isEditing = false;
       inputRef?.blur();
       if (hasChanges) {
         cloud.thing_save(thing);
         revertToOriginal();
+      }
+      if (clearEditingID) {
+        setTimeout(() => {     // eliminate infinite recursion
+          $editingID = null;
+        }, 10);
       }
     }
   }
@@ -56,9 +56,9 @@
   function handleFocus(event) {
     if (!isEditing) {
       isEditing = true;
-      thing.edit();
+      thing.editTitle();
       thing.grabOnly()
-      signal(Signal.widgets);   // so widget will show as grabbed
+      signal(Signals.widgets);   // so widget will show as grabbed
     }
   }
 

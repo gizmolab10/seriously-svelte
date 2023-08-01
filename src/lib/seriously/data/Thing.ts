@@ -1,4 +1,5 @@
 import { get, hierarchy, cloud, normalizeOrderOf, grabbedID, grabbedIDs, editingID, constants, RelationshipKind, signal, Signals } from '../common/GlobalImports';
+import Cloudable from './Cloudable';
 import Airtable from 'airtable';
 
 export enum PrivacyKind {
@@ -8,14 +9,13 @@ export enum PrivacyKind {
   kMeOnly   = 'm',
 }
 
-export default class Thing {
+export default class Thing extends Cloudable {
   id: string;
   title: string;
   color: string;
   trait: string;
   order: number;
   isEditing: boolean;
-  needsSave: boolean;
 
   copyFrom = (other: Thing) => {
     this.title = other.title;
@@ -25,12 +25,12 @@ export default class Thing {
   }
 
   constructor(id = cloud.newCloudID, title = constants.defaultTitle, color = 'blue', trait = 's', order = 0) {
+    super();
     this.id = id;
     this.title = title;
     this.color = color;
     this.trait = trait;
     this.order = order;
-    this.needsSave = false;
     this.isEditing = false;
     this.setOrderTo(order); // copy into relationship
 
@@ -40,7 +40,7 @@ export default class Thing {
 
   };
 
-  get fields(): Airtable.FieldSet { return { id: this.id, title: this.title, color: this.color, trait: this.trait }; }
+  get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
   get  grabAttributes():   string { return this.borderAttribute + this.revealColor(false); }
   get hoverAttributes():   string { return this.borderAttribute + this.revealColor(true); }
   get borderAttribute():   string { return (this.isEditing ? 'dashed' : 'solid') + ' 1px '; }

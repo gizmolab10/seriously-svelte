@@ -25,9 +25,9 @@ export default class Cloud {
     await this.things_readAll(onCompletion);
   }
 
-  saveAllDirty = async () => {
-    await this.relationships_saveDirty(); // do this first, in case a relationship points to a dirty thing
-    await this.things_saveDirty();
+  updateAllNeedy = async () => {
+    await this.relationships_updateNeedy(); // do this first, in case a relationship points to a thing that needsDelete
+    await this.things_updateNeedy();
   }
 
   /////////////////////////////
@@ -67,10 +67,12 @@ export default class Cloud {
     }
   }
 
-  async things_saveDirty() {
+  async things_updateNeedy() {
     const all: Thing[] = Object.values(hierarchy.thingsByID);
     for (const thing of all) {
-      if (thing.needsSave) {
+      if (thing.needsDelete) {
+        await this.thing_delete(thing)
+      } else if (thing.needsSave) {
         await this.thing_save(thing)
       }
     }
@@ -86,8 +88,6 @@ export default class Cloud {
       const id = fields['id']; //  // need for update, delete and thingsByID (to get parent from relationship)
       thing.id = id;
       hierarchy.thingsByID[id] = thing;
-      await this.things_table.destroy(id);
-      await this.things_table.create(thing.fields); // re-insert with corrected id
     } catch (error) {
       console.log(this.things_errorMessage + thing.debugTitle + error);
     }
@@ -106,6 +106,7 @@ export default class Cloud {
     delete(hierarchy.thingsByID[thing.id]);
     try {
       await this.things_table.destroy(thing.id);
+      thing.needsDelete = false;
     } catch (error) {
       console.log(this.things_errorMessage + thing.debugTitle + error);
     }
@@ -128,7 +129,7 @@ export default class Cloud {
     child.editTitle(); // TODO: fucking causes app to hang!
     child.grabOnly();
     signal(Signals.widgets);
-    await this.saveAllDirty();
+    await this.updateAllNeedy();
   }
 
   thing_redraw_addChildTo = (parent: Thing) => {
@@ -157,7 +158,7 @@ export default class Cloud {
       thing.grabOnly();
       signal(Signals.widgets);                        // signal BEFORE becomeHere to avoid blink
       newParent.becomeHere();
-      this.saveAllDirty();
+      this.updateAllNeedy();
     }
   }
 
@@ -192,12 +193,14 @@ export default class Cloud {
     }
   }
 
-  async relationships_saveDirty() {
-    hierarchy.relationships.forEach((relationship) => {
-      if (relationship.needsSave) {
-          this.relationship_save(relationship);
+  async relationships_updateNeedy() {
+    for (const relationship of hierarchy.relationships) {
+      if (relationship.needsDelete) {
+          await this.relationship_delete(relationship);
+      } else if (relationship.needsSave) {
+          await this.relationship_save(relationship);
       }
-    });
+    };
   }
 
   async relationships_forThing_deleteAll(thing: Thing) {
@@ -221,8 +224,6 @@ export default class Cloud {
         const id = fields['id'];                                                     // grab permanent id
         relationship.id = id;
         hierarchy.relationships_refreshLookups();
-        await this.relationships_table.destroy(id);
-        await this.relationships_table.create(relationship.fields);                  // re-insert with permanent id
       } catch (error) {
         console.log(this.relationships_errorMessage + ' (' + relationship.id + ') ' + error);
       }
@@ -248,6 +249,7 @@ export default class Cloud {
         hierarchy.relationships = hierarchy.relationships.filter((item) => item.id !== relationship.id);
         hierarchy.relationships_refreshLookups();
         await this.relationships_table.destroy(relationship.id);
+        relationship.needsDelete = false;
       } catch (error) {
         console.log(this.relationships_errorMessage + ' (' + relationship.id + ') ' + error);
       }
@@ -279,9 +281,14 @@ export default class Cloud {
         }
         normalizeOrderOf(siblings);
         signal(Signals.widgets);
-        this.thing_delete(grabbed);
-        this.things_saveDirty();
-        this.relationships_forThing_deleteAll(grabbed);
+        grabbed.needsDelete = true;
+        const array = hierarchy.relationshipsByFromID[grabbed.id];
+        if (array != null) {
+          for (const relationship of array) {
+            relationship.needsDelete = true;
+          }
+        }
+        this.updateAllNeedy();
       }
     }
   }
@@ -290,7 +297,7 @@ export default class Cloud {
     const grab = hierarchy.highestGrab(up);
     grab.redraw_moveup(up, expand, relocate);
     if (relocate) {
-      this.things_saveDirty();
+      this.things_updateNeedy();
     }
   }
 
