@@ -30,7 +30,7 @@ export default class Cloud {
   }
 
   updateAllNeedy = async () => {
-    await this.relationships_updateNeedy(); // do this first, in case a relationship points to a thing that needsDelete
+    await this.relationships_updateNeedy(); // do this first, in case a relationship points to a thing that needs delete
     await this.things_updateNeedy();
   }
 
@@ -53,13 +53,21 @@ export default class Cloud {
         }
       }
 
-      for (const id in hierarchy.thingsByID) {
-        const rootID = hierarchy.rootID;
-        const thing = hierarchy.thing_forID(id);
-        if (thing != null && rootID != null && rootID != id) {
-          const order = -1;
-          thing.order = order;
-          cloud.relationship_insertUnique(RelationshipKind.isAChildOf, id, rootID, order);
+      const rootID = hierarchy.rootID;
+      if (rootID != null) {
+        const order = -1;
+        for (const thing of hierarchy.things) {
+          const id = thing.id;
+          if (id != rootID){
+            let relationship = hierarchy.relationship_parentTo(id);
+            if (relationship != null) {
+              thing.order = relationship.order;
+            } else {
+              thing.order = order;
+              relationship = hierarchy.relationship_new(this.newCloudID, RelationshipKind.isAChildOf, id, rootID, order);
+              this.relationship_insertNew(relationship);
+            }
+          }
         }
       }
 
@@ -72,8 +80,7 @@ export default class Cloud {
   }
 
   async things_updateNeedy() {
-    const all: Thing[] = Object.values(hierarchy.thingsByID);
-    for (const thing of all) {
+    for (const thing of hierarchy.things) {
       if (thing.needsDelete) {
         await this.thing_delete(thing)
       } else if (thing.needsSave) {
@@ -149,7 +156,7 @@ export default class Cloud {
       // TODO: also match against the 'to' to the current parent
       // TODO: pass kind in ... to support editing different kinds of relationships
 
-      const relationship = hierarchy.relationship_ToParent_havingID(thing.id);
+      const relationship = hierarchy.relationship_parentTo(thing.id);
       if (relationship != null) {
         relationship.to = newParent.id;
         thing.setOrderTo(-1);                         // also marks relationship as needsSave

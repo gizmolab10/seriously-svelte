@@ -18,6 +18,7 @@ export default class Hierarchy {
   constructor() {}
 
   get rootID(): (string | null) { return this.root?.id ?? null; };
+  get things(): Array<Thing> { return Object.values(this.thingsByID) };
   get grabbedThing(): (Thing | null) { return this.thing_forID(get(grabbedID)) }
   thing_forID = (id: string | null): Thing | null => { return (id == null) ? null : this.thingsByID[id]; }
   thing_newAt = (order: number) => { return new Thing(cloud.newCloudID, constants.defaultTitle, 'blue', 't', order); }
@@ -67,7 +68,7 @@ export default class Hierarchy {
   }
 
   relationship_newUnique(kind: RelationshipKind, from: string, to: string, order: number) {
-    if (this.relationship_ToParent_havingID(from) == null) {
+    if (this.relationship_parentTo(from) == null) {
       const relationship = this.relationship_new(cloud.newCloudID, kind, from, to, order);
       relationship.needsSave = true;
       return relationship;
@@ -86,7 +87,7 @@ export default class Hierarchy {
     this.relationshipsByToID[relationship.to] = tos;
   }
 
-  relationship_ToParent_havingID(id: string) {
+  relationship_parentTo(id: string) {
     const thing = this.thing_forID(id); // assure id is known
     const matches = this.relationships_byKindToID(RelationshipKind.isAChildOf, false, id);
     if (thing != null && matches.length > 0) {

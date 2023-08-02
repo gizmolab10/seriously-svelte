@@ -83,7 +83,7 @@ export default class Thing extends Cloudable {
   setOrderTo = (newOrder: number) => {
     if (this.order != newOrder) {
       this.order = newOrder;
-      const relationship = hierarchy.relationship_ToParent_havingID(this.id);
+      const relationship = hierarchy.relationship_parentTo(this.id);
       if (relationship != null) {
         relationship.order = newOrder;
         relationship.needsSave = true;
