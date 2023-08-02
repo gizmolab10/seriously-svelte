@@ -6,6 +6,8 @@ import { get, grabbedID, grabbedIDs, cloud, Thing, Relationship, RelationshipKin
 ////////////////////////////////////////
 
 export default class Hierarchy {
+  relationshipKindsByKind: { [kind: string]: RelationshipKind } = {};
+  relationshipKindsByID: { [id: string]: RelationshipKind } = {};
   relationshipsByFromID: { [id: string]: Array<Relationship> } = {};
   relationshipsByToID: { [id: string]: Array<Relationship> } = {};
   thingsByID: { [id: string]: Thing } = {};
@@ -17,7 +19,13 @@ export default class Hierarchy {
 
   get rootID(): (string | null) { return this.root?.id ?? null; };
   get grabbedThing(): (Thing | null) { return this.thing_forID(get(grabbedID)) }
+  thing_forID = (id: string | null): Thing | null => { return (id == null) ? null : this.thingsByID[id]; }
   thing_newAt = (order: number) => { return new Thing(cloud.newCloudID, constants.defaultTitle, 'blue', 't', order); }
+  relationshipKind_new = (id: string, kind: string) => {
+    const newKind = new RelationshipKind(id, kind);
+    this.relationshipKindsByKind[kind] = newKind;
+    this.relationshipKindsByID[id] = newKind;
+  }
 
   highestGrab(up: boolean) {
     const ids = get(grabbedIDs);
@@ -28,10 +36,6 @@ export default class Hierarchy {
     } else {
       return grabs[grabs.length - 1];
     }
-  }
-
-  thing_forID(id: string | null): Thing | null {
-    return (id == null) ? null : this.thingsByID[id];
   }
 
   things_forIDs(ids: Array<string>): Array<Thing> {
@@ -46,7 +50,7 @@ export default class Hierarchy {
   }
 
   things_forKind_andID(kind: RelationshipKind, id: string, matchingTo: boolean): Array<Thing> {
-    const matches = this.relationships_byKind(kind, matchingTo, id);
+    const matches = this.relationships_byKindToID(kind, matchingTo, id);
     const ids: Array<string> = [];
     if (Array.isArray(matches)) {
       for (const relationship of matches) {
@@ -56,14 +60,14 @@ export default class Hierarchy {
     return this.things_forIDs(ids);
   }
 
-  relationship_new(kind: RelationshipKind, from: string, to: string, order: number): Relationship {
-    const relationship = new Relationship(cloud.newCloudID, kind, from, to, order);
+  relationship_new(id: string, kind: RelationshipKind, from: string, to: string, order: number): Relationship {
+    const relationship = new Relationship(id, kind, from, to, order);
     this.relationship_remember(relationship);
     return relationship;
   }
 
   relationship_newUnique(kind: RelationshipKind, from: string, to: string, order: number) {
-    if (this.relationship_firstParent_byID(from) == null) {
+    if (this.relationship_ToParent_havingID(from) == null) {
       const relationship = this.relationship_new(kind, from, to, order);
       relationship.needsSave = true;
       return relationship;
@@ -82,9 +86,9 @@ export default class Hierarchy {
     this.relationshipsByToID[relationship.to] = tos;
   }
 
-  relationship_firstParent_byID(id: string) {
-    const thing = this.thing_forID(id);
-    const matches = this.relationships_byKind(RelationshipKind.parent, false, id);
+  relationship_ToParent_havingID(id: string) {
+    const thing = this.thing_forID(id); // assure id is known
+    const matches = this.relationships_byKindToID(RelationshipKind.childOf, false, id);
     if (thing != null && matches.length > 0) {
       return matches[0];
     }
@@ -106,7 +110,7 @@ export default class Hierarchy {
     }
   }
 
-  relationships_byKind(kind: RelationshipKind, to: boolean, id: string): Array<Relationship> {
+  relationships_byKindToID(kind: RelationshipKind, to: boolean, id: string): Array<Relationship> {
     const dict = to ? this.relationshipsByToID : this.relationshipsByFromID;
     const matches = dict[id] as Array<Relationship>; // filter out baaaaad values
     const array: Array<Relationship> = [];

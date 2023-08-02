@@ -26,7 +26,7 @@
 
     if ($editingID != thing.id) {
       stopEditing(false); // false means leave editingID alone so other currently editing widgets continue editing
-    } else {
+    } else if (!isEditing) {
       isEditing = true;
       thing.grabOnly();
       setTimeout(() => {
@@ -48,7 +48,7 @@
       if (clearEditingID) {
         setTimeout(() => {     // eliminate infinite recursion
           $editingID = null;
-        }, 10);
+        }, 20);
       }
     }
   }

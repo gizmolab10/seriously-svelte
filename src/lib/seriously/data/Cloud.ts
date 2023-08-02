@@ -1,4 +1,5 @@
-import { get, grabbedIDs, hierarchy, Thing, Relationship, RelationshipKind, removeAll, normalizeOrderOf, signal, Signals, constants } from '../common/GlobalImports';
+import { get, grabbedIDs, hierarchy, signal, Signals, removeAll, normalizeOrderOf } from '../common/GlobalImports';
+import { Thing, Relationship, RelationshipKind } from '../common/GlobalImports';
 import { v4 as uuid } from 'uuid';
 import Airtable from 'airtable';
 
@@ -11,6 +12,8 @@ import Airtable from 'airtable';
 
 export default class Cloud {
   base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
+  relationshipKinds_errorMessage = 'Error in RelationshipKinds:';
+  relationshipKinds_table = this.base('RelationshipKinds');
   relationships_errorMessage = 'Error in Relationships:';
   relationships_table = this.base('Relationships');
   things_errorMessage = 'Error in Things:';
@@ -18,9 +21,10 @@ export default class Cloud {
   
   constructor() {}
 
-  get newCloudID(): string { return 'rec' + removeAll('-', uuid()).slice(10, 24); } // use last, most-unique bytes of uuid
+  get newCloudID(): string { return 'NEW' + removeAll('-', uuid()).slice(10, 24); } // use last, most-unique bytes of uuid
 
   readAll = async (onCompletion: () => any) => {
+    await this.relationshipKinds_readAll();
     await this.relationships_readAll();
     await this.things_readAll(onCompletion);
   }
@@ -55,7 +59,7 @@ export default class Cloud {
         if (thing != null && rootID != null && rootID != id) {
           const order = -1;
           thing.order = order;
-          cloud.relationship_insertUnique(RelationshipKind.parent, id, rootID, order);
+          cloud.relationship_insertUnique(RelationshipKind.childOf, id, rootID, order);
         }
       }
 
@@ -103,9 +107,9 @@ export default class Cloud {
   }
 
   thing_delete = async (thing: Thing) => {
-    delete(hierarchy.thingsByID[thing.id]);
     try {
       await this.things_table.destroy(thing.id);
+      delete hierarchy.thingsByID[thing.id];
       thing.needsDelete = false;
     } catch (error) {
       console.log(this.things_errorMessage + thing.debugTitle + error);
@@ -122,7 +126,7 @@ export default class Cloud {
 
   thing_redraw_addAsChild = async (child: Thing, parent: Thing) => {
     await this.thing_create(child); // for everything below, need to await child.id fetched from cloud
-    await cloud.relationship_insertUnique(RelationshipKind.parent, child.id, parent.id, child.order);
+    await cloud.relationship_insertUnique(RelationshipKind.childOf, child.id, parent.id, child.order);
     hierarchy.relationships_refreshLookups();
     normalizeOrderOf(parent.children);
     parent.becomeHere();
@@ -141,7 +145,7 @@ export default class Cloud {
     const newParent = right ? thing.nextSibling(false) : thing.grandparent;
     if (newParent != null) {
       thing.needsSave = true;     // order will change
-      const matches = hierarchy.relationships_byKind(RelationshipKind.parent, false, thing.id);
+      const matches = hierarchy.relationships_byKindToID(RelationshipKind.childOf, false, thing.id);
 
       // alter the 'to' in ALL [?] the matching 'from' relationships
       // simpler than adjusting children or parents arrays
@@ -170,6 +174,25 @@ export default class Cloud {
     }
   }
 
+  /////////////////////////////////////////
+  //         RELATIONSHIP KINDS          //
+  /////////////////////////////////////////
+
+  async relationshipKinds_readAll() {
+    try {
+      const records = await this.relationshipKinds_table.select().all()
+
+      for (const record of records) {
+        const id = record.id as string; // do not yet need this
+        const kind = record.fields.kind as string;
+        hierarchy.relationshipKind_new(id, kind);
+      }
+
+    } catch (error) {
+      console.log(this.relationshipKinds_errorMessage + error);
+    }
+  }
+
   ////////////////////////////////////
   //         RELATIONSHIPS          //
   ////////////////////////////////////
@@ -184,9 +207,9 @@ export default class Cloud {
         const tos = record.fields.to as (string[]);
         const order = record.fields.order as number;
         const froms = record.fields.from as (string[]);
-        const kind = record.fields.kind as RelationshipKind;
-        const relationship = new Relationship(id, kind, froms[0], tos[0], order);
-        hierarchy.relationship_remember(relationship);
+        const kinds = record.fields.kind as (string[]);
+        const kind = hierarchy.relationshipKindsByID[kinds[0]];
+        hierarchy.relationship_new(id, kind, froms[0], tos[0], order);
       }
     } catch (error) {
       console.log(this.relationships_errorMessage + error);

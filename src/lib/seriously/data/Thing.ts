@@ -46,15 +46,16 @@ export default class Thing extends Cloudable {
   get borderAttribute():   string { return (this.isEditing ? 'dashed' : 'solid') + ' 1px '; }
   get debugTitle():        string { return ' (\"' + this.title + '\") '; }
 
-  get children():    Array<Thing> { return hierarchy.things_forKind_andID(RelationshipKind.parent, this.id, true); }
-  get parents():     Array<Thing> { return hierarchy.things_forKind_andID(RelationshipKind.parent, this.id, false); }
+  get children():    Array<Thing> { return hierarchy.things_forKind_andID(RelationshipKind.childOf, this.id, true); }
+  get parents():     Array<Thing> { return hierarchy.things_forKind_andID(RelationshipKind.childOf, this.id, false); }
   get siblings():    Array<Thing> { return this.firstParent?.children ?? []; }
   get grandparent():        Thing { return this.firstParent?.firstParent ?? hierarchy.root; }
+  get lastChild():          Thing { return this.children.slice(-1)[0]; }
   get firstChild():         Thing { return this.children[0]; }
   get firstParent():        Thing { return this.parents[0]; }
 
   get isGrabbed():        boolean { return get(grabbedIDs).includes(this.id); }
-  get hasChildren():      boolean { return this.hasRelationships(false); }
+  get hasChildren():      boolean { return this.hasRelationshipKind(false); }
 
   get ancestors(): Array<Thing> {
     const ancestors = [];
@@ -67,7 +68,7 @@ export default class Thing extends Cloudable {
     return ancestors;
   }
 
-  hasRelationships = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
+  hasRelationshipKind = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
   grabOnly = () => { grabbedIDs.set([this.id]); grabbedID.set(null); grabbedID.set(this.id); }
   toggleGrab = () => { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }
   editTitle = () => { editingID.set(this.id); }
@@ -82,7 +83,7 @@ export default class Thing extends Cloudable {
   setOrderTo = (newOrder: number) => {
     if (this.order != newOrder) {
       this.order = newOrder;
-      const relationship = hierarchy.relationship_firstParent_byID(this.id);
+      const relationship = hierarchy.relationship_ToParent_havingID(this.id);
       if (relationship != null) {
         relationship.order = newOrder;
         relationship.needsSave = true;
@@ -142,7 +143,7 @@ export default class Thing extends Cloudable {
   redraw_moveup = (up: boolean, expand: boolean, relocate: boolean) => {
     const siblings = this.siblings;
     if (siblings == null || siblings.length == 0) {
-        this.redraw_browseRight(true);
+        this.redraw_browseRight(true, up);
     } else {
       const index = siblings.indexOf(this);
       const newIndex = index.increment(!up, siblings.length);
@@ -165,8 +166,8 @@ export default class Thing extends Cloudable {
     }
   }
 
-  redraw_browseRight = (right: boolean) => {
-    const newGrab = right ? this.firstChild : this.firstParent;
+  redraw_browseRight = (right: boolean, up: boolean = true) => {
+    const newGrab = right ? up ? this.lastChild : this.firstChild : this.firstParent;
     const newHere = right ? this : this.grandparent;
     newGrab?.grabOnly();
     signal(Signals.widgets);   // signal BEFORE becomeHere to avoid blink
