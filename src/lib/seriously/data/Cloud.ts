@@ -65,7 +65,7 @@ export default class Cloud {
             } else {
               thing.order = order;
               relationship = hierarchy.relationship_new(this.newCloudID, RelationshipKind.isAChildOf, id, rootID, order);
-              this.relationship_insertNew(relationship);
+              relationship.needsCreate = true;
             }
           }
         }
@@ -83,6 +83,8 @@ export default class Cloud {
     for (const thing of hierarchy.things) {
       if (thing.needsDelete) {
         await this.thing_delete(thing)
+      } else if (thing.needsCreate) {
+        await this.thing_create(thing)
       } else if (thing.needsSave) {
         await this.thing_save(thing)
       }
@@ -98,6 +100,7 @@ export default class Cloud {
       const fields = await this.things_table.create(thing.fields);
       const id = fields['id']; //  // need for update, delete and thingsByID (to get parent from relationship)
       thing.id = id;
+      thing.needsCreate = false;
       hierarchy.thingsByID[id] = thing;
     } catch (error) {
       console.log(this.things_errorMessage + thing.debugTitle + error);
@@ -133,7 +136,8 @@ export default class Cloud {
 
   thing_redraw_addAsChild = async (child: Thing, parent: Thing) => {
     await this.thing_create(child); // for everything below, need to await child.id fetched from cloud
-    await cloud.relationship_insertUnique(RelationshipKind.isAChildOf, child.id, parent.id, child.order);
+    const relationship = hierarchy.relationship_new(this.newCloudID, RelationshipKind.isAChildOf, child.id, parent.id, child.order);
+    relationship.needsCreate = true;
     normalizeOrderOf(parent.children);
     parent.becomeHere();
     child.editTitle(); // TODO: fucking causes app to hang!
@@ -224,6 +228,8 @@ export default class Cloud {
     for (const relationship of hierarchy.relationships) {
       if (relationship.needsDelete) {
           await this.relationship_delete(relationship);
+      } else if (relationship.needsCreate) {
+          await this.relationship_insertNew(relationship);
       } else if (relationship.needsSave) {
           await this.relationship_save(relationship);
       }
@@ -250,15 +256,12 @@ export default class Cloud {
         const fields = await this.relationships_table.create(relationship.fields);   // insert with temporary id
         const id = fields['id'];                                                     // grab permanent id
         relationship.id = id;
+        relationship.needsCreate = false;
         hierarchy.relationships_refreshLookups();
       } catch (error) {
         console.log(this.relationships_errorMessage + ' (' + relationship.id + ') ' + error);
       }
     }
-  }
-
-  async relationship_insertUnique(kind: RelationshipKind, from: string, to: string, order: number) {
-    await this.relationship_insertNew(hierarchy.relationship_newUnique(kind, from, to, order));
   }
 
   async relationship_save(relationship: Relationship) {

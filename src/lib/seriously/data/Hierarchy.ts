@@ -67,16 +67,6 @@ export default class Hierarchy {
     return relationship;
   }
 
-  relationship_newUnique(kind: RelationshipKind, from: string, to: string, order: number) {
-    if (this.relationship_parentTo(from) == null) {
-      const relationship = this.relationship_new(cloud.newCloudID, kind, from, to, order);
-      relationship.needsSave = true;
-      return relationship;
-    }
-
-    return null;
-  }
-  
   relationship_remember(relationship: Relationship) {
     this.relationships.push(relationship);
     const froms = this.relationshipsByFromID[relationship.from] ?? [];
@@ -106,7 +96,6 @@ export default class Hierarchy {
     const saved = this.relationships;
     this.relationships_clearLookups();
     for (const relationship of saved) {
-      // console.log('REFRESH: ', relationship.description);
       this.relationship_remember(relationship);
     }
   }
