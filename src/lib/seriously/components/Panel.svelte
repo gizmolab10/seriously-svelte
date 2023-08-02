@@ -16,7 +16,7 @@
 </script>
 
 {#if isLoading}
-  <p>Welcome to Seriously...</p>
+  <p>Welcome to Seriously :-D</p>
 {:else if !(hierarchy.root?.hasChildren ?? false)}
   <p>Nothing is available.</p>
 {:else}
