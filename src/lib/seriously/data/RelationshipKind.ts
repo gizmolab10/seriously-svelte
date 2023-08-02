@@ -9,6 +9,6 @@ export class RelationshipKind {
     this.kind = kind;
   }
 
-    static get childOf(): RelationshipKind { return hierarchy.relationshipKindsByKind['childOf']; }
+  static get isAChildOf(): RelationshipKind { return hierarchy.relationshipKindsByKind['isAChildOf']; }
 
 }

@@ -68,7 +68,7 @@ export default class Hierarchy {
 
   relationship_newUnique(kind: RelationshipKind, from: string, to: string, order: number) {
     if (this.relationship_ToParent_havingID(from) == null) {
-      const relationship = this.relationship_new(kind, from, to, order);
+      const relationship = this.relationship_new(cloud.newCloudID, kind, from, to, order);
       relationship.needsSave = true;
       return relationship;
     }
@@ -88,7 +88,7 @@ export default class Hierarchy {
 
   relationship_ToParent_havingID(id: string) {
     const thing = this.thing_forID(id); // assure id is known
-    const matches = this.relationships_byKindToID(RelationshipKind.childOf, false, id);
+    const matches = this.relationships_byKindToID(RelationshipKind.isAChildOf, false, id);
     if (thing != null && matches.length > 0) {
       return matches[0];
     }

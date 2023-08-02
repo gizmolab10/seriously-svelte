@@ -19,7 +19,7 @@ export class Relationship extends Cloudable {
     this.order = order;
   }
 
-  get fields(): Airtable.FieldSet { return { kind: [this.kind], from: [this.from], to: [this.to], order: this.order }; }
+  get fields(): Airtable.FieldSet { return { kind: [this.kind.id], from: [this.from], to: [this.to], order: this.order }; }
   get description(): string { return hierarchy.thing_forID(this.to)?.title + ' => ' + hierarchy.thing_forID(this.from)?.title; }
 
 }

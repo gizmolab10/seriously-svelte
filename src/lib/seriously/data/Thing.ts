@@ -46,8 +46,8 @@ export default class Thing extends Cloudable {
   get borderAttribute():   string { return (this.isEditing ? 'dashed' : 'solid') + ' 1px '; }
   get debugTitle():        string { return ' (\"' + this.title + '\") '; }
 
-  get children():    Array<Thing> { return hierarchy.things_forKind_andID(RelationshipKind.childOf, this.id, true); }
-  get parents():     Array<Thing> { return hierarchy.things_forKind_andID(RelationshipKind.childOf, this.id, false); }
+  get children():    Array<Thing> { return hierarchy.things_forKind_andID(RelationshipKind.isAChildOf, this.id, true); }
+  get parents():     Array<Thing> { return hierarchy.things_forKind_andID(RelationshipKind.isAChildOf, this.id, false); }
   get siblings():    Array<Thing> { return this.firstParent?.children ?? []; }
   get grandparent():        Thing { return this.firstParent?.firstParent ?? hierarchy.root; }
   get lastChild():          Thing { return this.children.slice(-1)[0]; }
@@ -166,7 +166,7 @@ export default class Thing extends Cloudable {
     }
   }
 
-  redraw_browseRight = (right: boolean, up: boolean = true) => {
+  redraw_browseRight = (right: boolean, up: boolean = false) => {
     const newGrab = right ? up ? this.lastChild : this.firstChild : this.firstParent;
     const newHere = right ? this : this.grandparent;
     newGrab?.grabOnly();

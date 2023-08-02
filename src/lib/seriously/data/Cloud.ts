@@ -59,7 +59,7 @@ export default class Cloud {
         if (thing != null && rootID != null && rootID != id) {
           const order = -1;
           thing.order = order;
-          cloud.relationship_insertUnique(RelationshipKind.childOf, id, rootID, order);
+          cloud.relationship_insertUnique(RelationshipKind.isAChildOf, id, rootID, order);
         }
       }
 
@@ -126,8 +126,7 @@ export default class Cloud {
 
   thing_redraw_addAsChild = async (child: Thing, parent: Thing) => {
     await this.thing_create(child); // for everything below, need to await child.id fetched from cloud
-    await cloud.relationship_insertUnique(RelationshipKind.childOf, child.id, parent.id, child.order);
-    hierarchy.relationships_refreshLookups();
+    await cloud.relationship_insertUnique(RelationshipKind.isAChildOf, child.id, parent.id, child.order);
     normalizeOrderOf(parent.children);
     parent.becomeHere();
     child.editTitle(); // TODO: fucking causes app to hang!
@@ -144,21 +143,19 @@ export default class Cloud {
   thing_redraw_relocateRight = async (thing: Thing, right: boolean) => {
     const newParent = right ? thing.nextSibling(false) : thing.grandparent;
     if (newParent != null) {
-      thing.needsSave = true;     // order will change
-      const matches = hierarchy.relationships_byKindToID(RelationshipKind.childOf, false, thing.id);
 
       // alter the 'to' in ALL [?] the matching 'from' relationships
       // simpler than adjusting children or parents arrays
       // TODO: also match against the 'to' to the current parent
       // TODO: pass kind in ... to support editing different kinds of relationships
 
-      for (let index = 0; index < matches.length; index++) {
-        const relationship = matches[index];
+      const relationship = hierarchy.relationship_ToParent_havingID(thing.id);
+      if (relationship != null) {
         relationship.to = newParent.id;
-        relationship.needsSave = true;                // save thing new 'to'
+        thing.setOrderTo(-1);                         // also marks relationship as needsSave
       }
 
-      hierarchy.relationships_refreshLookups();
+      normalizeOrderOf(thing.firstParent.children);   // refresh lookups first
       thing.grabOnly();
       signal(Signals.widgets);                        // signal BEFORE becomeHere to avoid blink
       newParent.becomeHere();
@@ -320,7 +317,7 @@ export default class Cloud {
     const grab = hierarchy.highestGrab(up);
     grab.redraw_moveup(up, expand, relocate);
     if (relocate) {
-      this.things_updateNeedy();
+      this.updateAllNeedy();
     }
   }
 
