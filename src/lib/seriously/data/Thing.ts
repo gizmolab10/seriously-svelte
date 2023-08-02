@@ -32,7 +32,6 @@ export default class Thing extends Cloudable {
     this.trait = trait;
     this.order = order;
     this.isEditing = false;
-    this.setOrderTo(order); // copy into relationship
 
     editingID.subscribe((id: string | null) => {
       this.isEditing = (id == this.id); // executes whenever editingID changes
@@ -69,7 +68,7 @@ export default class Thing extends Cloudable {
   }
 
   hasRelationshipKind = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
-  grabOnly = () => { grabbedIDs.set([this.id]); grabbedID.set(null); grabbedID.set(this.id); }
+  grabOnly = () => { grabbedIDs.set([this.id]); grabbedID.set(null); grabbedID.set(this.id); signal(Signals.widgets); }
   toggleGrab = () => { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }
   editTitle = () => { editingID.set(this.id); }
 
@@ -114,6 +113,7 @@ export default class Thing extends Cloudable {
       }
       return array;
     });
+    signal(Signals.widgets);
   }
 
   ungrab = () => {
@@ -127,6 +127,7 @@ export default class Thing extends Cloudable {
     if (get(grabbedID) == this.id) {  // TODO: grab the top most of grabbed siblings
       grabbedID.update(() => { return null; })
     }
+    signal(Signals.widgets);
   }
   
   traverse = (applyTo : (thing: Thing) => boolean) : Thing | null => {
@@ -162,7 +163,6 @@ export default class Thing extends Cloudable {
           newGrab?.grabOnly();
         }
       }
-      signal(Signals.widgets);
     }
   }
 
@@ -170,7 +170,6 @@ export default class Thing extends Cloudable {
     const newGrab = right ? up ? this.lastChild : this.firstChild : this.firstParent;
     const newHere = right ? this : this.grandparent;
     newGrab?.grabOnly();
-    signal(Signals.widgets);   // signal BEFORE becomeHere to avoid blink
     newHere.becomeHere();
   }
 

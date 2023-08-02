@@ -1,4 +1,4 @@
-import { get, grabbedIDs, hierarchy, signal, Signals, removeAll, normalizeOrderOf } from '../common/GlobalImports';
+import { get, grabbedIDs, hierarchy, signal, Signals, removeAll, normalizeOrderOf, signalMultiple } from '../common/GlobalImports';
 import { Thing, Relationship, RelationshipKind } from '../common/GlobalImports';
 import { v4 as uuid } from 'uuid';
 import Airtable from 'airtable';
@@ -142,7 +142,6 @@ export default class Cloud {
     parent.becomeHere();
     child.editTitle(); // TODO: fucking causes app to hang!
     child.grabOnly();
-    signal(Signals.widgets);
     await this.updateAllNeedy();
   }
 
@@ -168,7 +167,6 @@ export default class Cloud {
 
       normalizeOrderOf(thing.firstParent.children);   // refresh lookups first
       thing.grabOnly();
-      signal(Signals.widgets);                        // signal BEFORE becomeHere to avoid blink
       newParent.becomeHere();
       this.updateAllNeedy();
     }
@@ -291,34 +289,33 @@ export default class Cloud {
   ////////////////////////////
 
   grabs_redraw_delete() {
-    const ids = get(grabbedIDs);
-    for (const id of ids) {
-      const grabbed = hierarchy.thing_forID(id);
-      if (grabbed != null && !grabbed.isEditing && hierarchy.here != null) {
-        const siblings = grabbed.siblings;
-        let index = siblings.indexOf(grabbed);
-        siblings.splice(index, 1);
-        if (siblings.length == 0) {
-          grabbed.grandparent.becomeHere();
-          grabbed.firstParent.grabOnly();
-        } else {
-          if (index >= siblings.length) {
-            index = siblings.length - 1;
+    if (hierarchy.here != null) {
+      for (const id of get(grabbedIDs)) {
+        const grabbed = hierarchy.thing_forID(id);
+        if (grabbed != null && !grabbed.isEditing && hierarchy.here != null) {
+          let newGrabbed = grabbed.firstParent;
+          const siblings = grabbed.siblings;
+          let index = siblings.indexOf(grabbed);
+          grabbed.needsDelete = true;
+          siblings.splice(index, 1);
+          if (siblings.length == 0) {
+            grabbed.grandparent.becomeHere();
+          } else {
+            if (index >= siblings.length) {
+              index = siblings.length - 1;
+            }
+            newGrabbed = siblings[index];
+            normalizeOrderOf(grabbed.siblings);
           }
-          if (index >= 0) {
-            siblings[index].grabOnly();
-          }        
-        }
-        normalizeOrderOf(siblings);
-        signal(Signals.widgets);
-        grabbed.needsDelete = true;
-        const array = hierarchy.relationshipsByFromID[grabbed.id];
-        if (array != null) {
-          for (const relationship of array) {
-            relationship.needsDelete = true;
+          const parentRelationships = hierarchy.relationshipsByFromID[grabbed.id];
+          if (parentRelationships != null) {
+            for (const relationship of parentRelationships) {
+              relationship.needsDelete = true;
+            }
           }
+          newGrabbed.grabOnly();
+          this.updateAllNeedy();
         }
-        this.updateAllNeedy();
       }
     }
   }

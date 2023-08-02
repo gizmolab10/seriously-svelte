@@ -34,7 +34,6 @@
         inputRef?.select();
       }, 10);
     }
-    signal(Signals.widgets); // so widget will show as [un]grabbed
   }
 
   function stopEditing(clearEditingID: boolean) {
@@ -58,7 +57,6 @@
       isEditing = true;
       thing.editTitle();
       thing.grabOnly()
-      signal(Signals.widgets);   // so widget will show as grabbed
     }
   }
 

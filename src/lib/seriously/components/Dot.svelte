@@ -17,8 +17,6 @@
     } else {
       thing.grabOnly();
     }
-
-    signal(Signals.widgets, thing.id);
   }
 
   handleSignalOfKind(Signals.dots, (value) => {
