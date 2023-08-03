@@ -2,6 +2,7 @@
   import { cloud, hierarchy, onMount } from '../common/GlobalImports'
   import Panel from './Panel.svelte';
   let isLoading = true;
+  const build = 11
 
   onMount(async () => {
     cloud.readAll(async () => { 
@@ -12,11 +13,11 @@
 </script>
 
 {#if isLoading}
-  <p>Welcome to Seriously (10)</p>
+  <p>Welcome to Seriously</p>
 {:else if !(hierarchy.root?.hasChildren ?? false)}
   <p>Nothing is available.</p>
 {:else}
-  <Panel/>
+  <Panel build={build}/>
 {/if}
 
 <style>

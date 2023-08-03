@@ -14,7 +14,6 @@
 </script>
 
 {#key grab}
-  <span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span>    <!-- left side margin -->
   {#each ancestors as thing, index}
     {#if index > 0}
       <span>&nbsp; &gt; </span>
