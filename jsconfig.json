@@ -28,5 +28,5 @@
    * Use global.d.ts instead of compilerOptions.types
    * to avoid limiting type declarations.
    */
-  "include": ["src/lib/seriously/**/*.js", "src/lib/seriously/**/*.svelte"]
+  "include": ["src/lib/**/*.js", "src/lib/**/*.svelte"]
 }

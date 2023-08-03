@@ -1,26 +1,22 @@
 <script>
   import { cloud, hierarchy, onMount } from '../common/GlobalImports'
-  import Graph from '/src/lib/seriously/components/Graph.svelte';
-  // import GraphD3 from '/src/lib/seriously/components/GraphD3.svelte';
+  import Panel from './Panel.svelte';
   let isLoading = true;
 
   onMount(async () => {
     cloud.readAll(async () => { 
       isLoading = false;
-      const root = hierarchy.root;
-      root?.grabOnly();
-      root?.becomeHere();
     });    
   })
 
 </script>
 
 {#if isLoading}
-  <p>Welcome to Seriously :-D</p>
+  <p>Welcome to Seriously (10)</p>
 {:else if !(hierarchy.root?.hasChildren ?? false)}
   <p>Nothing is available.</p>
 {:else}
-  <Graph/>
+  <Panel/>
 {/if}
 
 <style>

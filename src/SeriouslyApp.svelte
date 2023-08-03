@@ -1,5 +1,5 @@
 <script>
-  import Panel from '/src/lib/seriously/components/Panel.svelte';
+  import Startup from './lib/components/Startup.svelte';
 </script>
 
-<Panel/>
+<Startup/>

@@ -150,6 +150,14 @@ export default class Cloud {
     this.thing_redraw_addAsChild(child, parent);
   }
 
+  thing_redraw_moveRight(thing: Thing, right: boolean, relocate: boolean) {
+    if (relocate) {
+      this.thing_redraw_relocateRight(thing, right);
+    } else {
+      thing.redraw_browseRight(right);
+    }
+  }
+
   thing_redraw_relocateRight = async (thing: Thing, right: boolean) => {
     const newParent = right ? thing.nextSibling(false) : thing.grandparent;
     if (newParent != null) {
@@ -162,21 +170,14 @@ export default class Cloud {
       const relationship = hierarchy.relationship_parentTo(thing.id);
       if (relationship != null) {
         relationship.to = newParent.id;
-        thing.setOrderTo(-1);                         // also marks relationship as needsSave
+        relationship.needsSave = true;
+        thing.setOrderTo(-1);
       }
 
       normalizeOrderOf(thing.firstParent.children);   // refresh lookups first
       thing.grabOnly();
       newParent.becomeHere();
       this.updateAllNeedy();
-    }
-  }
-
-  thing_redraw_moveRight(thing: Thing, right: boolean, relocate: boolean) {
-    if (relocate) {
-      this.thing_redraw_relocateRight(thing, right);
-    } else {
-      thing.redraw_browseRight(right);
     }
   }
 

@@ -1,7 +1,6 @@
 <script>
   import { Thing, hierarchy, cloud, editingID, Signals, handleSignalOfKind, onMount, onDestroy, constants } from '../common/GlobalImports';
   import Children from './Children.svelte';
-  import Crumbs from './Crumbs.svelte';
   let listener;
   let redraw;
 
@@ -34,14 +33,13 @@
     }
   }
 
-  handleSignalOfKind(Signals.graph, (value) => {
+  handleSignalOfKind(Signals.here, (value) => {
     redraw = !redraw;
   });
 
 </script>
 
 {#key redraw}
-  <Crumbs grab={hierarchy.grabbedThing}/>
   {#if hierarchy.here != null}
     <Children parent={hierarchy.here}/>
   {/if}

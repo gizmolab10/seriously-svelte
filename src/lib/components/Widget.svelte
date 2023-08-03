@@ -4,13 +4,13 @@
 	import Dot from './Dot.svelte';
 	export let thing = Thing;
 
-  handleSignalOfKind(Signals.widgets, (value) => {
+  handleSignalOfKind(Signals.grab, (value) => {
 		signal(Signals.dots, thing.id); // pass signal along to its dots
-		setTimeout(() => {
+		setTimeout(() => { // wait for graph signal (elsewhere) to finish, dunno why
 			var style = document.getElementById(thing.id)?.style;
 			style?.setProperty('--hoverAttributes', thing.hoverAttributes);
 			style?.setProperty( '--grabAttributes', thing.grabAttributes);
-		}, 5);
+		}, 1);
 	});
 
 	</script>

@@ -79,7 +79,7 @@ export default class Thing extends Cloudable {
   becomeHere = () => { 
     if (this.hasChildren) { 
       hierarchy.here = this;
-      signal(Signals.graph);
+      signal(Signals.here);
     };
   }
 
@@ -112,7 +112,7 @@ export default class Thing extends Cloudable {
   grabOnly = () => {
     grabbedIDs.set([this.id]);
     grabbedID.set(this.id);
-    signal(Signals.widgets);
+    signal(Signals.grab);
   }
 
   grab = () => {
@@ -123,7 +123,7 @@ export default class Thing extends Cloudable {
       }
       return array;
     });
-    signal(Signals.widgets);
+    signal(Signals.grab);
   }
 
   ungrab = () => {
@@ -137,7 +137,7 @@ export default class Thing extends Cloudable {
     if (get(grabbedID) == this.id) {  // TODO: grab the top most of grabbed siblings
       grabbedID.update(() => { return null; })
     }
-    signal(Signals.widgets);
+    signal(Signals.grab);
   }
   
   traverse = (applyTo : (thing: Thing) => boolean) : Thing | null => {

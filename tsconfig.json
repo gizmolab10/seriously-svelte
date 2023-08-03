@@ -9,6 +9,6 @@
     "strictNullChecks": true,
     "moduleResolution": "node"
   },
-  "include": ["src/lib/seriously/**/*.ts", "src/lib/seriously/**/*.tsx"],
+  "include": ["src/lib/**/*.ts", "src/lib/**/*.tsx"],
   "exclude": ["node_modules"]
 }
