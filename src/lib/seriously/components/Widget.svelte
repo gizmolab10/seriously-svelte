@@ -6,9 +6,11 @@
 
   handleSignalOfKind(Signals.widgets, (value) => {
 		signal(Signals.dots, thing.id); // pass signal along to its dots
-		var style = document.getElementById(thing.id)?.style;
-		style?.setProperty('--hoverAttributes', thing.hoverAttributes);
-		style?.setProperty( '--grabAttributes', thing.grabAttributes);
+		setTimeout(() => {
+			var style = document.getElementById(thing.id)?.style;
+			style?.setProperty('--hoverAttributes', thing.hoverAttributes);
+			style?.setProperty( '--grabAttributes', thing.grabAttributes);
+		}, 5);
 	});
 
 	</script>
