@@ -1,11 +1,11 @@
 <script lang='ts'>
-  import { Thing, hierarchy, grabbedID } from '../common/GlobalImports';
+  import { Thing, hierarchy, lastGrabbedID } from '../common/GlobalImports';
   import Crumb from './Crumb.svelte';
   export let grab;
   let ancestors;
 
   $: {
-    grab = hierarchy.thing_forID($grabbedID);   // start over with new grab
+    grab = hierarchy.thing_forID($lastGrabbedID);   // start over with new grab
     if (grab != null) {
       ancestors = grab.ancestors;
     }

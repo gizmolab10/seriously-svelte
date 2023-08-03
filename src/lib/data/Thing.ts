@@ -1,4 +1,4 @@
-import { get, hierarchy, cloud, normalizeOrderOf, grabbedID, grabbedIDs, editingID, constants, RelationshipKind, signal, Signals } from '../common/GlobalImports';
+import { get, hierarchy, cloud, normalizeOrderOf, lastGrabbedID, grabbedIDs, editingID, constants, RelationshipKind, signal, Signals } from '../common/GlobalImports';
 import Cloudable from './Cloudable';
 import Airtable from 'airtable';
 
@@ -111,7 +111,7 @@ export default class Thing extends Cloudable {
 
   grabOnly = () => {
     grabbedIDs.set([this.id]);
-    grabbedID.set(this.id);
+    lastGrabbedID.set(this.id);
     signal(Signals.grab);
   }
 
@@ -119,7 +119,7 @@ export default class Thing extends Cloudable {
     grabbedIDs.update((array) => {
       if (array.indexOf(this.id) == -1) {
         array.push(this.id);  // only add if not already added
-        grabbedID.set(this.id);
+        lastGrabbedID.set(this.id);
       }
       return array;
     });
@@ -127,15 +127,19 @@ export default class Thing extends Cloudable {
   }
 
   ungrab = () => {
+    let nextGrabbedID: (string | null) = null;
     grabbedIDs.update((array) => {
       const index = array.indexOf(this.id);
       if (index != -1) {        // only splice array when item is found
         array.splice(index, 1); // 2nd parameter means remove one item only
       }
+      nextGrabbedID = array.slice(-1)[0];
       return array;
     });
-    if (get(grabbedID) == this.id) {  // TODO: grab the top most of grabbed siblings
-      grabbedID.update(() => { return null; })
+    if (get(lastGrabbedID) == this.id) {  // TODO: grab the top most of grabbed siblings
+      lastGrabbedID.update(() => {
+        return nextGrabbedID;
+      })
     }
     signal(Signals.grab);
   }

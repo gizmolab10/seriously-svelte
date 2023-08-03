@@ -4,12 +4,14 @@
   let listener;
   let redraw;
 
+
+  handleSignalOfKind(Signals.here, (value) => { redraw = !redraw; });
   onDestroy( () => { window.removeEventListener('keydown', listener); });
   onMount(async () => { listener = window.addEventListener('keydown', handleKeyDown); });
 
   async function handleKeyDown(event) {
-    let thing = hierarchy.grabbedThing;
-    if (thing == null)           { alert('no grabs'); return; }
+    let grab = hierarchy.grabbedThing;
+    if (grab == null)           { alert('no grabs'); return; }
     if (event.key == undefined)  { alert('no key for ' + event.type); return; }
     if ($editingID != null)      { return; } // let Title component consume the events
     if (event.type == 'keydown') {
@@ -17,25 +19,21 @@
       const OPTION = event.altKey;
       const SHIFT = event.shiftKey;
       switch (key) {
-        case ' ':          cloud.thing_redraw_addChildTo(thing); break;
-        case 'd':          cloud.thing_duplicate(thing); break;
+        case ' ':          cloud.thing_redraw_addChildTo(grab); break;
+        case 'd':          cloud.thing_duplicate(grab); break;
         case 'r':          break; // restart app
         case 't':          alert('PARENT-CHILD SWAP'); break;
-        case 'tab':        cloud.thing_redraw_addChildTo(thing.firstParent); break; // Title also makes this call
+        case 'tab':        cloud.thing_redraw_addChildTo(grab.firstParent); break; // Title also makes this call
         case 'delete':
         case 'backspace':  cloud.grabs_redraw_delete(); break;
         case 'arrowup':    cloud.grab_redraw_moveUp(true, SHIFT, OPTION); break;
         case 'arrowdown':  cloud.grab_redraw_moveUp(false, SHIFT, OPTION); break;
-        case 'arrowright': cloud.thing_redraw_moveRight(thing, true, OPTION); break;
-        case 'arrowleft':  cloud.thing_redraw_moveRight(thing, false, OPTION); break;
-        case 'enter':      thing.editTitle(); break;
+        case 'arrowright': cloud.thing_redraw_moveRight(grab, true, OPTION); break;
+        case 'arrowleft':  cloud.thing_redraw_moveRight(grab, false, OPTION); break;
+        case 'enter':      grab.editTitle(); break;
       }
     }
   }
-
-  handleSignalOfKind(Signals.here, (value) => {
-    redraw = !redraw;
-  });
 
 </script>
 
