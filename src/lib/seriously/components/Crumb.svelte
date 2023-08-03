@@ -1,5 +1,5 @@
 <script lang='ts'>
-  import { Thing, hierarchy, grabbedIDs, signal, Signals, constants } from '../common/GlobalImports';
+  import { Thing, hierarchy } from '../common/GlobalImports';
   export let thing = Thing;
 
   function handleClick(event) {
@@ -10,7 +10,6 @@
       thing.grabOnly();
       thing.firstParent.becomeHere();
     }
-    signal(Signal.widgets);
   }
 
 </script>

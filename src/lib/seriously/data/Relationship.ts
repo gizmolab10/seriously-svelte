@@ -1,5 +1,4 @@
-import { RelationshipKind } from '../common/GlobalImports';
-import { hierarchy } from './Hierarchy';
+import { RelationshipKind, hierarchy } from '../common/GlobalImports';
 import Cloudable from './Cloudable';
 import Airtable from 'airtable';
 

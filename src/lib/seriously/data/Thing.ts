@@ -16,6 +16,7 @@ export default class Thing extends Cloudable {
   trait: string;
   order: number;
   isEditing: boolean;
+  isGrabbed: boolean;
 
   copyFrom = (other: Thing) => {
     this.title = other.title;
@@ -32,9 +33,14 @@ export default class Thing extends Cloudable {
     this.trait = trait;
     this.order = order;
     this.isEditing = false;
+    this.isGrabbed = false;
 
     editingID.subscribe((id: string | null) => {
       this.isEditing = (id == this.id); // executes whenever editingID changes
+    });
+
+    grabbedIDs.subscribe((ids: [string] | undefined) => {
+      this.isGrabbed = (ids != undefined) && ids.includes(this.id); // executes whenever editingID changes
     });
 
   };
@@ -53,7 +59,6 @@ export default class Thing extends Cloudable {
   get firstChild():         Thing { return this.children[0]; }
   get firstParent():        Thing { return this.parents[0]; }
 
-  get isGrabbed():        boolean { return get(grabbedIDs).includes(this.id); }
   get hasChildren():      boolean { return this.hasRelationshipKind(false); }
 
   get ancestors(): Array<Thing> {
@@ -68,13 +73,12 @@ export default class Thing extends Cloudable {
   }
 
   hasRelationshipKind = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
-  grabOnly = () => { grabbedIDs.set([this.id]); grabbedID.set(null); grabbedID.set(this.id); signal(Signals.widgets); }
   toggleGrab = () => { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }
   editTitle = () => { editingID.set(this.id); }
-
+  
   becomeHere = () => { 
     if (this.hasChildren) { 
-      hierarchy.here = this; 
+      hierarchy.here = this;
       signal(Signals.graph);
     };
   }
@@ -103,6 +107,12 @@ export default class Thing extends Cloudable {
       siblingIndex = 1;
     }
     return array[siblingIndex];
+  }
+
+  grabOnly = () => {
+    grabbedIDs.set([this.id]);
+    grabbedID.set(this.id);
+    signal(Signals.widgets);
   }
 
   grab = () => {
@@ -169,8 +179,8 @@ export default class Thing extends Cloudable {
   redraw_browseRight = (right: boolean, up: boolean = false) => {
     const newGrab = right ? up ? this.lastChild : this.firstChild : this.firstParent;
     const newHere = right ? this : this.grandparent;
-    newGrab?.grabOnly();
     newHere.becomeHere();
+    newGrab?.grabOnly();
   }
 
 }
