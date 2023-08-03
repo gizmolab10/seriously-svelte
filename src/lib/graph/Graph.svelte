@@ -9,7 +9,7 @@
 
   const signalHandler = handleSignalOfKind(Signals.here, (value) => {
     redraw = !redraw;
-    setTimeout(() => {
+    setTimeout(() => { // give graph's new widgets time to be created
       signal(Signals.grab);
     }, 1);
   });

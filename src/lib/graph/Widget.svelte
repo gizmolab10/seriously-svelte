@@ -8,11 +8,9 @@
 
   const signalHandler = handleSignalOfKind(Signals.grab, (value) => {
 		signal(Signals.dots, thing.id); // pass signal along to its dots
-		setTimeout(() => { // wait for here signal (elsewhere) to finish creating widget
-			var style = document.getElementById(thing.id)?.style;
-			style?.setProperty('--hoverAttributes', thing.hoverAttributes);
-			style?.setProperty( '--grabAttributes', thing.grabAttributes);
-		}, 1);
+		var style = document.getElementById(thing.id)?.style;
+		style?.setProperty('--hoverAttributes', thing.hoverAttributes);
+		style?.setProperty( '--grabAttributes', thing.grabAttributes);
 	});
 
 	</script>

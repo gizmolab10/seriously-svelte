@@ -164,7 +164,7 @@ export default class Thing extends Cloudable {
       const newIndex = index.increment(!up, siblings.length);
       if (relocate) {
         const wrapped = up ? (index == 0) : (index == siblings.length - 1);
-        const goose = (wrapped ? -0.1 : 1) * (up ? -1 : 1);
+        const goose = (wrapped ? -1 : 1) * (up ? -1 : 1);
         const newOrder =  newIndex + goose;
         siblings[index].setOrderTo(newOrder);
         normalizeOrderOf(siblings);

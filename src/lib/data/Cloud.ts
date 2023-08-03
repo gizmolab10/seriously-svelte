@@ -174,7 +174,8 @@ export default class Cloud {
         thing.setOrderTo(-1);
       }
 
-      normalizeOrderOf(thing.firstParent.children);   // refresh lookups first
+      hierarchy.relationships_refreshLookups();
+      normalizeOrderOf(thing.siblings);   // refresh lookups first
       thing.grabOnly();
       newParent.becomeHere();
       this.updateAllNeedy();
