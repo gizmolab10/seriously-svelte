@@ -1,7 +1,7 @@
 <script>
   import { hierarchy } from '../common/GlobalImports'
+  import Graph from '../graph/Graph.svelte';
   import Crumbs from './Crumbs.svelte';
-  import Graph from './Graph.svelte';
   // import GraphD3 from '../aside/GraphD3.svelte';
   export let build;
 

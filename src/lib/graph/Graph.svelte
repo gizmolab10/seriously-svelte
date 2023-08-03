@@ -4,7 +4,6 @@
   let listener;
   let redraw;
 
-
   handleSignalOfKind(Signals.here, (value) => { redraw = !redraw; });
   onDestroy( () => { window.removeEventListener('keydown', listener); });
   onMount(async () => { listener = window.addEventListener('keydown', handleKeyDown); });

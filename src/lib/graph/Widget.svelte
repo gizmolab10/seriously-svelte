@@ -1,5 +1,5 @@
 <script lang='ts'>
-  import { Thing, Signals, signal, handleSignalOfKind } from '../common/GlobalImports.ts';
+  import { Thing, Signals, signal, handleSignalOfKind } from '../common/GlobalImports';
 	import Title from './Title.svelte';
 	import Dot from './Dot.svelte';
 	export let thing = Thing;

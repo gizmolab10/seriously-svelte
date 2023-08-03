@@ -1,5 +1,5 @@
 <script lang='ts'>
-  import { Thing, cloud, editingID, signal, Signals } from '../common/GlobalImports.ts';
+  import { Thing, cloud, editingID, signal, Signals } from '../common/GlobalImports';
   import Widget from '../components/Widget.svelte';
   export let thing = Thing;
   let originalTitle = thing.title;

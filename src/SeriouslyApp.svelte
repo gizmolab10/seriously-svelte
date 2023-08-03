@@ -1,5 +1,5 @@
 <script>
-  import Startup from './lib/components/Startup.svelte';
+  import Startup from './lib/panel/Startup.svelte';
 </script>
 
 <Startup/>
