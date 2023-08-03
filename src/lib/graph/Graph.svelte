@@ -1,16 +1,22 @@
 <script>
-  import { Thing, hierarchy, cloud, editingID, Signals, handleSignalOfKind, onMount, onDestroy, constants } from '../common/GlobalImports';
+  import { Thing, hierarchy, cloud, editingID, signal, Signals, handleSignalOfKind, onMount, onDestroy, constants } from '../common/GlobalImports';
   import Children from './Children.svelte';
   let listener;
   let redraw;
 
-  handleSignalOfKind(Signals.here, (value) => { redraw = !redraw; });
-  onDestroy( () => { window.removeEventListener('keydown', listener); });
+  onDestroy( () => { window.removeEventListener('keydown', listener); signalHandler.disconnect(); });
   onMount(async () => { listener = window.addEventListener('keydown', handleKeyDown); });
+
+  const signalHandler = handleSignalOfKind(Signals.here, (value) => {
+    redraw = !redraw;
+    setTimeout(() => {
+      signal(Signals.grab);
+    }, 1);
+  });
 
   async function handleKeyDown(event) {
     let grab = hierarchy.grabbedThing;
-    if (grab == null)           { alert('no grabs'); return; }
+    if (grab == null)            { alert('no grabs'); return; }
     if (event.key == undefined)  { alert('no key for ' + event.type); return; }
     if ($editingID != null)      { return; } // let Title component consume the events
     if (event.type == 'keydown') {

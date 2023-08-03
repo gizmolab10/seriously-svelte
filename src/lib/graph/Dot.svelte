@@ -1,9 +1,20 @@
 <svelte:options immutable={true}/>
 
 <script lang='ts'>
-  import { Thing, grabbedIDs, tick, onMount, Signals, signal, handleSignalOfKind, constants } from '../common/GlobalImports';
+  import { Thing, grabbedIDs, tick, onDestroy, Signals, signal, handleSignalOfKind, constants } from '../common/GlobalImports';
   export let isReveal = false;
   export let thing = Thing;
+
+	onDestroy( () => { signalHandler.disconnect(); });
+
+  const signalHandler = handleSignalOfKind(Signals.dots, (value) => {
+    if (value == thing.id) {
+      var style = document.getElementById(thing.id)?.style;
+      style?.setProperty(   '--dotColor', thing.color);
+      style?.setProperty( '--traitColor', thing.revealColor(!isReveal));
+      style?.setProperty('--buttonColor', thing.revealColor( isReveal));
+    }
+  })
 
   async function handleClick(event) {
     if (isReveal) {
@@ -18,15 +29,6 @@
       thing.grabOnly();
     }
   }
-
-  handleSignalOfKind(Signals.dots, (value) => {
-    if (value == thing.id) {
-      var style = document.getElementById(thing.id)?.style;
-      style?.setProperty(   '--dotColor', thing.color);
-      style?.setProperty( '--traitColor', thing.revealColor(!isReveal));
-      style?.setProperty('--buttonColor', thing.revealColor( isReveal));
-    }
-  })
 
 </script>
 

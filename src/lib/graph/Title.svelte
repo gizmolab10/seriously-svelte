@@ -1,6 +1,6 @@
 <script lang='ts'>
   import { Thing, cloud, editingID, signal, Signals } from '../common/GlobalImports';
-  import Widget from '../components/Widget.svelte';
+  import Widget from './Widget.svelte';
   export let thing = Thing;
   let originalTitle = thing.title;
   let isEditing = false;

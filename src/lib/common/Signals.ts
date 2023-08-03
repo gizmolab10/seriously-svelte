@@ -2,7 +2,7 @@ import { Signal } from 'typed-signals';
 
 export enum Signals {
   grab = 'g', // for widget hover and edit/stop
-  here = 'h',
+  here = 'h', // for move horizontally
   dots = 'd'  // refresh all the dots, for hover
 }
 
@@ -12,7 +12,7 @@ export function signalMultiple(kinds: Signals[], value: any = null) { handleSign
 
 
 export function handleSignalOfKind(kind: Signals, onSignal: (optionalValue: any | null) => any ) { 
-	handleSignal.connect((kinds, value) => {
+	return handleSignal.connect((kinds, value) => {
 		if (kinds.includes(kind)) {
       onSignal(value);
     }})
