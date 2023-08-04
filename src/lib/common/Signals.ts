@@ -1,9 +1,9 @@
 import { Signal } from 'typed-signals';
 
 export enum Signals {
-  dots = 'd', // refresh all the dots, & for hover
-  grab = 'g', // for widget hover & edit/stop
-  here = 'h', // for move horizontally, or add/delete
+  dots    = 'd', // refresh all the dots, & for hover
+  here    = 'h', // for move horizontally, or add/delete
+  widgets = 'w', // for widget hover & edit/stop
 }
 
 const handleSignal = new Signal<(kinds: Signals[], value: any) => void>();

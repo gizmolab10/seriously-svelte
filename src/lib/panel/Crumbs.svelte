@@ -1,11 +1,11 @@
 <script lang='ts'>
-  import { Thing, hierarchy, grabs, onDestroy, Signals, handleSignalOfKind } from '../common/GlobalImports';
+  import { Thing, grabs, hierarchy, onDestroy, Signals, handleSignalOfKind } from '../common/GlobalImports';
   import Crumb from './Crumb.svelte';
   let ancestors: Array<Thing> = [];
   export let grab;
 
 	onDestroy( () => { signalHandler.disconnect(); });
-  const signalHandler = handleSignalOfKind(Signals.grab, (value) => { handleGrabbedID(grabs.lastGrabbedID); });
+  const signalHandler = handleSignalOfKind(Signals.widgets, (value) => { handleGrabbedID(grabs.lastGrabbedID); });
 
   function handleGrabbedID(id: string) {
     grab = hierarchy.thing_forID(id);   // start over with new grab

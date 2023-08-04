@@ -6,7 +6,7 @@
 
 	onDestroy( () => { signalHandler.disconnect(); });
 
-  const signalHandler = handleSignalOfKind(Signals.grab, (value) => {
+  const signalHandler = handleSignalOfKind(Signals.widgets, (value) => {
 		signal(Signals.dots, thing.id); // pass signal along to its dots
 		var style = document.getElementById(thing.id)?.style;
 		style?.setProperty('--hoverAttributes', thing.hoverAttributes);

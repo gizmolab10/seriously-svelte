@@ -1,4 +1,4 @@
-import { get, grabbedIDs, hierarchy, removeAll, normalizeOrderOf, signal, Signals } from '../common/GlobalImports';
+import { get, grabbedIDs, hierarchy, removeAll, normalizeOrderOf, signal, Signals, grabs } from '../common/GlobalImports';
 import { Thing, Relationship, RelationshipKind } from '../common/GlobalImports';
 import { v4 as uuid } from 'uuid';
 import Airtable from 'airtable';
@@ -116,8 +116,8 @@ export default class Cloud {
 
   thing_delete = async (thing: Thing) => {
     try {
+      delete hierarchy.thingsByID[thing.id]; // do first so UX updates quickly
       await this.things_table.destroy(thing.id);
-      delete hierarchy.thingsByID[thing.id];
       thing.needsDelete = false;
     } catch (error) {
       console.log(this.things_errorMessage + thing.debugTitle + error);
@@ -234,13 +234,12 @@ export default class Cloud {
     };
   }
 
-  async relationships_forThing_deleteAll(thing: Thing) {
+  async relationships_deleteAllForThing(thing: Thing) {
     const array = hierarchy.relationshipsByFromID[thing.id];
     if (array != null) {
       for (const relationship of array) {
         await this.relationship_delete(relationship);
       }
-      hierarchy.relationships_refreshLookups();
     }
   }
 
@@ -275,7 +274,7 @@ export default class Cloud {
     if (relationship != null) {
       try {
         hierarchy.relationships = hierarchy.relationships.filter((item) => item.id !== relationship.id);
-        hierarchy.relationships_refreshLookups();
+        hierarchy.relationships_refreshLookups(); // do first so UX updates quickly
         await this.relationships_table.destroy(relationship.id);
         relationship.needsDelete = false;
       } catch (error) {
@@ -296,7 +295,6 @@ export default class Cloud {
           let newGrabbed = grabbed.firstParent;
           const siblings = grabbed.siblings;
           let index = siblings.indexOf(grabbed);
-          grabbed.needsDelete = true;
           siblings.splice(index, 1);
           if (siblings.length == 0) {
             grabbed.grandparent.becomeHere();
@@ -307,22 +305,21 @@ export default class Cloud {
             newGrabbed = siblings[index];
             normalizeOrderOf(grabbed.siblings);
           }
-          const parentRelationships = hierarchy.relationshipsByFromID[grabbed.id];
-          if (parentRelationships != null) {
-            for (const relationship of parentRelationships) {
-              relationship.needsDelete = true;
-            }
-          }
+          grabbed.traverse((child: Thing) => {
+            this.relationships_deleteAllForThing(child);
+            this.thing_delete(child);
+            return false; // continue the traversal
+          });
+          this.updateAllNeedy();
           signal(Signals.here);
           newGrabbed.grabOnly();
-          this.updateAllNeedy();
         }
       }
     }
   }
   
   grab_redraw_moveUp(up: boolean, expand: boolean, relocate: boolean) {
-    const grab = hierarchy.highestGrab(up);
+    const grab = grabs.highestGrab(up);
     grab.redraw_moveup(up, expand, relocate);
     if (relocate) {
       this.updateAllNeedy();

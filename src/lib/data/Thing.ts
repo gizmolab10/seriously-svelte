@@ -110,11 +110,14 @@ export default class Thing extends Cloudable {
     return array[siblingIndex];
   }
 
+  markNeedsDelete = () => {
+    hierarchy.relationships_allMarkNeedDeleteForThing(this);
+    this.needsDelete = true;
+  }
+
   traverse = (applyTo : (thing: Thing) => boolean) : Thing | null => {
-    for (const progeny of this.children) {
-      if (applyTo(progeny)) {
-        return progeny;
-      } else {
+    if (!applyTo(this)) {
+      for (const progeny of this.children) {
         progeny.traverse(applyTo);
       }
     }

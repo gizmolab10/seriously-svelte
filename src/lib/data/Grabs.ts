@@ -1,4 +1,4 @@
-import { get, Thing, hierarchy, grabbedIDs, signal, Signals } from "../common/GlobalImports";
+import { get, Thing, hierarchy, grabbedIDs, lastUngrabbedID, signal, Signals, sortAccordingToOrder } from "../common/GlobalImports";
 
 export default class Grabs {
 
@@ -6,10 +6,12 @@ export default class Grabs {
 
   get lastGrabbedID(): string { return get(grabbedIDs)?.slice(-1)[0]; }
   get grabbedThing(): (Thing | null) { return hierarchy.thing_forID(this.lastGrabbedID); }
+  toggleGrab = (thing: Thing) => { if (thing.isGrabbed) { this.ungrab(thing); } else { this.grab(thing); } }
 
   grabOnly = (thing: Thing) => {
+    lastUngrabbedID.set(this.lastGrabbedID);
     grabbedIDs.set([thing.id]);
-    signal(Signals.grab);
+    signal(Signals.widgets);
   }
 
   grab = (thing: Thing) => {
@@ -19,10 +21,11 @@ export default class Grabs {
       }
       return array;
     });
-    signal(Signals.grab);
+    signal(Signals.widgets);
   }
 
   ungrab = (thing: Thing) => {
+    lastUngrabbedID.set(this.lastGrabbedID);
     let nextGrabbedID: (string | null) = null;
     grabbedIDs.update((array) => {
       const index = array.indexOf(thing.id);
@@ -32,10 +35,19 @@ export default class Grabs {
       nextGrabbedID = array.slice(-1)[0];
       return array;
     });
-    signal(Signals.grab);
+    signal(Signals.widgets);
   }
-  
-  toggleGrab = (thing: Thing) => { if (thing.isGrabbed) { this.ungrab(thing); } else { this.grab(thing); } }
+
+  highestGrab(up: boolean) {
+    const ids = get(grabbedIDs);
+    let grabs = hierarchy.things_forIDs(ids);
+    sortAccordingToOrder(grabs);
+    if (up) {
+      return grabs[0];
+    } else {
+      return grabs[grabs.length - 1];
+    }
+  }
 
 }
 

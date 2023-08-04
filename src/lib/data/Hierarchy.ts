@@ -27,17 +27,6 @@ export default class Hierarchy {
     this.relationshipKindsByID[id] = newKind;
   }
 
-  highestGrab(up: boolean) {
-    const ids = get(grabbedIDs);
-    let grabs = hierarchy.things_forIDs(ids);
-    sortAccordingToOrder(grabs);
-    if (up) {
-      return grabs[0];
-    } else {
-      return grabs[grabs.length - 1];
-    }
-  }
-
   things_forIDs(ids: Array<string>): Array<Thing> {
     const array = Array<Thing>();
     for (const id of ids) {
@@ -111,6 +100,15 @@ export default class Hierarchy {
       }
     }
     return array;
+  }
+
+  relationships_allMarkNeedDeleteForThing(thing: Thing) {
+    const parentRelationships = hierarchy.relationshipsByFromID[thing.id];
+    if (parentRelationships != null) {
+      for (const relationship of parentRelationships) {
+        relationship.needsDelete = true;
+      }
+    }
   }
 
 }

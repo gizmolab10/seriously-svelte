@@ -10,15 +10,19 @@
   const signalHandler = handleSignalOfKind(Signals.here, (value) => {
     redraw = !redraw;
     setTimeout(() => { // give graph's new widgets time to be created
-      signal(Signals.grab);
+      signal(Signals.widgets);
     }, 1);
   });
 
   async function handleKeyDown(event) {
     let grab = grabs.grabbedThing;
-    if (grab == null)            { alert('no grabs'); return; }
-    if (event.key == undefined)  { alert('no key for ' + event.type); return; }
     if ($editingID != null)      { return; } // let Title component consume the events
+    if (event.key == undefined)  { alert('no key for ' + event.type); return; }
+    if (grab == null) {
+      grab = hierarchy.root;
+      grab.becomeHere();
+      grab?.grabOnly(); // to update crumbs and dots
+    }
     if (event.type == 'keydown') {
       const key = event.key.toLowerCase();
       const OPTION = event.altKey;
