@@ -2,7 +2,7 @@
   import { cloud, hierarchy, onMount } from '../common/GlobalImports'
   import Panel from './Panel.svelte';
   let isLoading = true;
-  const build = 13;
+  const build = 14;
 
   onMount(async () => {
     cloud.readAll(async () => {
@@ -11,7 +11,7 @@
       setTimeout(() => { // give crumbs time to be created after launch
         hierarchy.root?.grabOnly()
       }, 1);
-    });    
+    });
   })
 
 </script>

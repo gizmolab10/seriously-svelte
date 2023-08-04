@@ -18,7 +18,7 @@ export default class Cloud {
   relationships_table = this.base('Relationships');
   things_errorMessage = 'Error in Things:';
   things_table = this.base('Things');
-  
+
   constructor() {}
 
   get newCloudID(): string { return 'NEW' + removeAll('-', uuid()).slice(10, 24); } // use last, most-unique bytes of uuid
@@ -317,7 +317,7 @@ export default class Cloud {
       }
     }
   }
-  
+
   grab_redraw_moveUp(up: boolean, expand: boolean, relocate: boolean) {
     const grab = grabs.highestGrab(up);
     grab.redraw_moveup(up, expand, relocate);

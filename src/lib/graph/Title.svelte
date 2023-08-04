@@ -8,7 +8,7 @@
 
   var hasChanges = () => { return originalTitle != thing.title; }
   function revertToOriginal() { originalTitle = thing.title; }
-  
+
   function handleKeyDown(event) {
     if ($editingID == thing.id) {
       switch (event.key) {

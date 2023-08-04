@@ -76,9 +76,9 @@ export default class Thing extends Cloudable {
   editTitle = () => { editingID.set(this.id); }
   toggleGrab = () => { grabs.toggleGrab(this); }
   grabOnly = () => { grabs.grabOnly(this); }
-  
-  becomeHere = () => { 
-    if (this.hasChildren) { 
+
+  becomeHere = () => {
+    if (this.hasChildren) {
       hierarchy.here = this;
       signal(Signals.here);
     };

@@ -38,7 +38,7 @@ Object.defineProperty(Number.prototype, 'increment', {
   configurable: false // Set configurable to false to prevent redefinition of the property
 });
 
-Object.defineProperty(Number.prototype, 'isBetween', { 
+Object.defineProperty(Number.prototype, 'isBetween', {
   value: function(a: number, b: number, inclusive: boolean): boolean {
     var min = Math.min(a, b),
       max = Math.max(a, b);
