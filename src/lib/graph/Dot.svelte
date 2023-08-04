@@ -1,7 +1,7 @@
 <svelte:options immutable={true}/>
 
 <script lang='ts'>
-  import { Thing, grabbedIDs, tick, onDestroy, Signals, signal, handleSignalOfKind, constants } from '../common/GlobalImports';
+  import { Thing, grabbedIDs, onDestroy, Signals, signal, handleSignalOfKind, constants } from '../common/GlobalImports';
   export let isReveal = false;
   export let thing = Thing;
 

@@ -1,4 +1,4 @@
-import { get, hierarchy, cloud, normalizeOrderOf, lastGrabbedID, grabbedIDs, editingID, constants, RelationshipKind, signal, Signals } from '../common/GlobalImports';
+import { grabs, hierarchy, cloud, normalizeOrderOf, grabbedIDs, editingID, constants, RelationshipKind, signal, Signals } from '../common/GlobalImports';
 import Cloudable from './Cloudable';
 import Airtable from 'airtable';
 
@@ -46,9 +46,11 @@ export default class Thing extends Cloudable {
   };
 
   get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
+  get hasChildren():      boolean { return this.hasRelationshipKind(false); }
+
+  get borderAttribute():   string { return (this.isEditing ? 'dashed' : 'solid') + ' 1px '; }
   get  grabAttributes():   string { return this.borderAttribute + this.revealColor(false); }
   get hoverAttributes():   string { return this.borderAttribute + this.revealColor(true); }
-  get borderAttribute():   string { return (this.isEditing ? 'dashed' : 'solid') + ' 1px '; }
   get debugTitle():        string { return ' (\"' + this.title + '\") '; }
 
   get children():    Array<Thing> { return hierarchy.things_forKind_andID(RelationshipKind.isAChildOf, this.id, true); }
@@ -58,8 +60,6 @@ export default class Thing extends Cloudable {
   get lastChild():          Thing { return this.children.slice(-1)[0]; }
   get firstChild():         Thing { return this.children[0]; }
   get firstParent():        Thing { return this.parents[0]; }
-
-  get hasChildren():      boolean { return this.hasRelationshipKind(false); }
 
   get ancestors(): Array<Thing> {
     const ancestors = [];
@@ -73,8 +73,9 @@ export default class Thing extends Cloudable {
   }
 
   hasRelationshipKind = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
-  toggleGrab = () => { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }
   editTitle = () => { editingID.set(this.id); }
+  toggleGrab = () => { grabs.toggleGrab(this); }
+  grabOnly = () => { grabs.grabOnly(this); }
   
   becomeHere = () => { 
     if (this.hasChildren) { 
@@ -109,41 +110,6 @@ export default class Thing extends Cloudable {
     return array[siblingIndex];
   }
 
-  grabOnly = () => {
-    grabbedIDs.set([this.id]);
-    lastGrabbedID.set(this.id);
-    signal(Signals.grab);
-  }
-
-  grab = () => {
-    grabbedIDs.update((array) => {
-      if (array.indexOf(this.id) == -1) {
-        array.push(this.id);  // only add if not already added
-        lastGrabbedID.set(this.id);
-      }
-      return array;
-    });
-    signal(Signals.grab);
-  }
-
-  ungrab = () => {
-    let nextGrabbedID: (string | null) = null;
-    grabbedIDs.update((array) => {
-      const index = array.indexOf(this.id);
-      if (index != -1) {        // only splice array when item is found
-        array.splice(index, 1); // 2nd parameter means remove one item only
-      }
-      nextGrabbedID = array.slice(-1)[0];
-      return array;
-    });
-    if (get(lastGrabbedID) == this.id) {  // TODO: grab the top most of grabbed siblings
-      lastGrabbedID.update(() => {
-        return nextGrabbedID;
-      })
-    }
-    signal(Signals.grab);
-  }
-  
   traverse = (applyTo : (thing: Thing) => boolean) : Thing | null => {
     for (const progeny of this.children) {
       if (applyTo(progeny)) {

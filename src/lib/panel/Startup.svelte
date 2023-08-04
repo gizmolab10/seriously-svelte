@@ -2,11 +2,15 @@
   import { cloud, hierarchy, onMount } from '../common/GlobalImports'
   import Panel from './Panel.svelte';
   let isLoading = true;
-  const build = 12;
+  const build = 13;
 
   onMount(async () => {
-    cloud.readAll(async () => { 
+    cloud.readAll(async () => {
       isLoading = false;
+      hierarchy.root?.becomeHere()
+      setTimeout(() => { // give crumbs time to be created after launch
+        hierarchy.root?.grabOnly()
+      }, 1);
     });    
   })
 

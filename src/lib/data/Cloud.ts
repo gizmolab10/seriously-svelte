@@ -1,4 +1,4 @@
-import { get, grabbedIDs, hierarchy, removeAll, normalizeOrderOf } from '../common/GlobalImports';
+import { get, grabbedIDs, hierarchy, removeAll, normalizeOrderOf, signal, Signals } from '../common/GlobalImports';
 import { Thing, Relationship, RelationshipKind } from '../common/GlobalImports';
 import { v4 as uuid } from 'uuid';
 import Airtable from 'airtable';
@@ -71,8 +71,6 @@ export default class Cloud {
         }
       }
 
-      hierarchy.root?.becomeHere()
-      hierarchy.root?.grabOnly()
       onCompletion();
     } catch (error) {
       console.log(this.things_errorMessage + ' (things_readAll) ' + error);
@@ -315,6 +313,7 @@ export default class Cloud {
               relationship.needsDelete = true;
             }
           }
+          signal(Signals.here);
           newGrabbed.grabOnly();
           this.updateAllNeedy();
         }

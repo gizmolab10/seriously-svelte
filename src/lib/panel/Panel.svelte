@@ -1,5 +1,5 @@
 <script>
-  import { hierarchy } from '../common/GlobalImports'
+  import { grabs } from '../common/GlobalImports'
   import Graph from '../graph/Graph.svelte';
   import Crumbs from './Crumbs.svelte';
   // import GraphD3 from '../aside/GraphD3.svelte';
@@ -8,7 +8,7 @@
 </script>
 
 <span>build {build} &nbsp;&nbsp;</span>
-<Crumbs grab={hierarchy.grabbedThing}/>
+<Crumbs grab={grabs.grabbedThing}/>
 <Graph/>
 
 <style>

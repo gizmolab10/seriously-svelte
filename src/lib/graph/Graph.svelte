@@ -1,5 +1,5 @@
 <script>
-  import { Thing, hierarchy, cloud, editingID, signal, Signals, handleSignalOfKind, onMount, onDestroy, constants } from '../common/GlobalImports';
+  import { Thing, hierarchy, cloud, grabs, editingID, signal, Signals, handleSignalOfKind, onMount, onDestroy, constants } from '../common/GlobalImports';
   import Children from './Children.svelte';
   let listener;
   let redraw;
@@ -15,7 +15,7 @@
   });
 
   async function handleKeyDown(event) {
-    let grab = hierarchy.grabbedThing;
+    let grab = grabs.grabbedThing;
     if (grab == null)            { alert('no grabs'); return; }
     if (event.key == undefined)  { alert('no key for ' + event.type); return; }
     if ($editingID != null)      { return; } // let Title component consume the events
