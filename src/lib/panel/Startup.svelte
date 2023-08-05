@@ -2,7 +2,7 @@
   import { cloud, hierarchy, onMount } from '../common/GlobalImports'
   import Panel from './Panel.svelte';
   let isLoading = true;
-  const build = 14;
+  const build = 15; // better title look and feel
 
   onMount(async () => {
     cloud.readAll(async () => {

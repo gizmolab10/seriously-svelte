@@ -1,6 +1,6 @@
 <script>
   export let onClose;
-  let size = 15;
+  export let size = 20;
 </script>
 
 <div class="modal-overlay">

@@ -7,6 +7,7 @@
   // import GraphD3 from '../aside/GraphD3.svelte';
   export let build;
   let isHelpOpen = false;
+  let size = 15;
 
   function handleClose() {
     isHelpOpen = false;
@@ -17,17 +18,17 @@
   }
 </script>
 
-{#if isHelpOpen}
-  <Help onClose={handleClose} />
-{/if}
 <span class='left-margin'>
   build {build}
 </span>
 <span>
   <Crumbs grab={grabs.grabbedThing}/>
-  <HelpButton onClick={handleClick}/>
+  <HelpButton size={size} onClick={handleClick}/>
   <Graph/>
 </span>
+{#if isHelpOpen}
+  <Help size={size} onClose={handleClose} />
+{/if}
 
 <style>
   .left-margin {

@@ -1,5 +1,5 @@
 <script>
-  export let size = 15;
+  export let size = 20;
   export let color = '#f1f1f1';
   export let borderColor = '#999999';
   export let textColor = '#999999';

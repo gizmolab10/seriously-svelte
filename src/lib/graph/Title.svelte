@@ -1,13 +1,15 @@
 <script lang='ts'>
-  import { Thing, cloud, editingID, signal, Signals } from '../common/GlobalImports';
+  import { Thing, cloud, editingID, onMount, signal, Signals } from '../common/GlobalImports';
   import Widget from './Widget.svelte';
   export let thing = Thing;
   let originalTitle = thing.title;
   let isEditing = false;
   let inputRef = null;
+  let surround = null;
 
   var hasChanges = () => { return originalTitle != thing.title; }
   function revertToOriginal() { originalTitle = thing.title; }
+  onMount(async () => { updateInputWidth(); });
 
   function handleKeyDown(event) {
     if ($editingID == thing.id) {
@@ -60,10 +62,26 @@
     }
   }
 
+  function updateInputWidth() {
+    if (inputRef && surround) {
+      inputRef.style.width = `${surround.scrollWidth - 5}px`;
+    }
+  }
+
+  function uxpdateInputWidth() {
+    if (inputRef && surround) {
+      surround.textContent = inputValue; // to get the scroll width
+      inputRef.style.width = `${surround.scrollWidth - 100}px`;
+    }
+  }
+
   function handleInput(event) { thing.title = event.target.value; }
-  function handleBlur(event) { stopEditing(true); }
+  function handleBlur(event) { stopEditing(true); updateInputWidth(); }
 </script>
 
+<div class="wrapper" bind:this={surround}>
+  {thing.title}
+</div>
 <input
   type='text'
   id={thing.id}
@@ -72,15 +90,21 @@
   on:focus={handleFocus}
   on:input={handleInput}
   on:keydown={handleKeyDown}
+  on:input={updateInputWidth}
   bind:value={thing.title}
-  style='--textColor: {thing.color};'/>
+  style='color: {thing.color};'/>
 
 <style lang='scss'>
   input {
-    outline-color: 'white';
-    padding: 0px 5px;
     border: none;
+    outline: none;
+    padding: 0px 5px;
     border-radius: 10px;
-    color: var(--textColor);
+    outline-color: 'white';
+  }
+  .wrapper {
+    position: absolute;
+    visibility: hidden;
+    white-space: pre; /* Preserve whitespace to measure accurate width */
   }
 </style>
