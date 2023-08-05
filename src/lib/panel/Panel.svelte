@@ -20,7 +20,7 @@
 {#if isHelpOpen}
   <Help onClose={handleClose} />
 {/if}
-<span class="left-margin">
+<span class='left-margin'>
   build {build}
 </span>
 <span>
