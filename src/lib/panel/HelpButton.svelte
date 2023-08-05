@@ -1,8 +1,8 @@
 <script>
   export let size = 20;
-  export let color = '#f1f1f1';
-  export let borderColor = '#999999';
-  export let textColor = '#999999';
+  export let color = '#ccc';
+  export let borderColor = '#333';
+  export let textColor = '#400';
   export let onClick;
 
   // Event handler for the click event of the button
@@ -27,8 +27,7 @@
     display: inline-block;
     text-align: center;
     font-weight: bold;
-    cursor: pointer;
-    position: relative;'>
+    cursor: help;'>
 </div>
 
 <style>

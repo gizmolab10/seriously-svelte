@@ -62,6 +62,7 @@
     border-radius: 0.7em;
     width: 0.7em;
     height: 1.1em;
+    cursor: pointer;
 
     &:hover {
       color: var(--buttonColor);

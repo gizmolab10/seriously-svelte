@@ -15,8 +15,12 @@
 </script>
 
 <button
-  style='border: 1px solid; border-color: {thing.color}; color: {thing.color}; border-radius: 0.5em'
-  on:click={handleClick}>
+  on:click={handleClick}
+  style='
+    border: 1px solid {thing.color};
+    color: {thing.color};
+    border-radius: 0.5em;
+    cursor: pointer;'>
   {thing.title.injectElipsisAt()}
 </button>
 

@@ -18,23 +18,33 @@
   }
 </script>
 
-<span class='left-margin'>
-  build {build}
-</span>
-<span>
-  <Crumbs grab={grabs.grabbedThing}/>
-  <HelpButton size={size} onClick={handleClick}/>
-  <Graph/>
-</span>
-{#if isHelpOpen}
-  <Help size={size} onClose={handleClose} />
-{/if}
+<div>
+  <span class='left-margin'>
+    build {build}
+  </span>
+  <span>
+    <Crumbs grab={grabs.grabbedThing}/>
+    <Graph/>
+    <HelpButton class='help-button' size={size} onClick={handleClick}/>
+  </span>
+  {#if isHelpOpen}
+    <Help size={size} onClose={handleClose} />
+  {/if}
+</div>
 
 <style>
+  div {
+    cursor: default;
+  }
   .left-margin {
     font-size: .625em;
     color: green;
     width: 75px;
     margin-right: 10px;
+  }
+  .help-button {
+    position: fixed;
+    bottom: 10px;
+    right: 10px; 
   }
 </style>
