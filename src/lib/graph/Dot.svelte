@@ -59,9 +59,9 @@
     border-color: var(--dotColor);
     background-color: var(--buttonColor);
     border: 1px solid;
-    border-radius: 0.7em;
-    width: 0.7em;
-    height: 1.1em;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
     cursor: pointer;
 
     &:hover {

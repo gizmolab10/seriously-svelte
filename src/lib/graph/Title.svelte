@@ -4,8 +4,8 @@
   export let thing = Thing;
   let originalTitle = thing.title;
   let isEditing = false;
-  let inputRef = null;
   let surround = null;
+  let input = null;
 
   var hasChanges = () => { return originalTitle != thing.title; }
   function revertToOriginal() { originalTitle = thing.title; }
@@ -32,8 +32,8 @@
       isEditing = true;
       thing.grabOnly();
       setTimeout(() => {
-        inputRef?.focus();
-        inputRef?.select();
+        input?.focus();
+        input?.select();
       }, 10);
     }
   }
@@ -41,7 +41,7 @@
   function stopEditing(clearEditingID: boolean) {
     if (isEditing) {
       isEditing = false;
-      inputRef?.blur();
+      input?.blur();
       if (hasChanges) {
         cloud.thing_save(thing);
         revertToOriginal();
@@ -63,15 +63,8 @@
   }
 
   function updateInputWidth() {
-    if (inputRef && surround) {
-      inputRef.style.width = `${surround.scrollWidth - 5}px`;
-    }
-  }
-
-  function uxpdateInputWidth() {
-    if (inputRef && surround) {
-      surround.textContent = inputValue; // to get the scroll width
-      inputRef.style.width = `${surround.scrollWidth - 100}px`;
+    if (input && surround) {
+      input.style.width = `${surround.scrollWidth - 5}px`;
     }
   }
 
@@ -85,7 +78,7 @@
 <input
   type='text'
   id={thing.id}
-  bind:this={inputRef}
+  bind:this={input}
   on:blur={handleBlur}
   on:focus={handleFocus}
   on:input={handleInput}
@@ -98,7 +91,7 @@
   input {
     border: none;
     outline: none;
-    padding: 0px 5px;
+    padding: 0px 3px;
     border-radius: 10px;
     outline-color: 'white';
   }
