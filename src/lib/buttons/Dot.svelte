@@ -1,9 +1,8 @@
-<svelte:options immutable={true}/>
-
 <script lang='ts'>
   import { Thing, grabbedIDs, onDestroy, Signals, signal, handleSignalOfKind, constants } from '../common/GlobalImports';
   export let isReveal = false;
   export let thing = Thing;
+  export let size = 15;
 
 	onDestroy( () => { signalHandler.disconnect(); });
 
@@ -37,7 +36,8 @@
     <button id={thing.id}
       on:click={handleClick}
       class={ isReveal ? 'reveal' : 'drag' }
-      style='--dotColor: {thing.color};
+      style='width:{size}px; height:{size}px;
+             --dotColor: {thing.color};
            --traitColor: {thing.revealColor(!isReveal)};
           --buttonColor: {thing.revealColor( isReveal)}'>
     </button>
@@ -60,8 +60,6 @@
     background-color: var(--buttonColor);
     border: 1px solid;
     border-radius: 50%;
-    width: 15px;
-    height: 15px;
     cursor: pointer;
 
     &:hover {

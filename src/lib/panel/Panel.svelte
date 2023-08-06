@@ -1,7 +1,8 @@
 <script>
-  // import GraphD3 from '../aside/GraphD3.svelte';
-  import { grabs } from '../common/GlobalImports'
   import HelpButton from '../buttons/HelpButton.svelte';
+  // import GraphD3 from '../aside/GraphD3.svelte';
+  import Rounded from '../buttons/Rounded.svelte';
+  import { grabs } from '../common/GlobalImports'
   import Graph from '../graph/Graph.svelte';
   import Crumbs from './Crumbs.svelte';
   import Help from './Help.svelte';
@@ -17,9 +18,6 @@
 <div style='cursor: default'> <!-- override vertical bar hovering over text -->
   <span class='left-margin'>
     build {build}
-    <!-- button on:click={handleSVGClick}>
-      <object type="image/svg+xml" data="/triangle.rounded.svg"/>
-    </button -->
   </span>
   <span>
     <Crumbs grab={grabs.grabbedThing}/>
@@ -39,17 +37,4 @@
     margin-right: 10px;
   }
   
-  object {
-    width: 18px;
-    height: 18px;
-    margin-right: 8px;
-  }
-
-  button {
-    fill: none;
-    border: none;
-    position: relative;
-    right: 30px;
-    top: 50px;
-  }
 </style>

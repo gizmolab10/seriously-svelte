@@ -19,9 +19,9 @@
 	style='padding: 1px 8px 2px 1px;
 				border-radius: 16px;
 				border: var(--grabAttributes)'>
-	<Dot thing={thing}/>
+	<Dot thing={thing} size=15/>
 	<Title thing={thing}/>
 	{#if thing.hasChildren}
-		<Dot thing={thing} isReveal={true}/>
+		<Dot thing={thing} size=15 isReveal={true}/>
 	{/if}
 </span>
