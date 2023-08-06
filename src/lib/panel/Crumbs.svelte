@@ -1,6 +1,6 @@
 <script lang='ts'>
   import { Thing, grabs, hierarchy, onDestroy, Signals, handleSignalOfKind } from '../common/GlobalImports';
-  import Crumb from './Crumb.svelte';
+  import Crumb from '../buttons/Crumb.svelte';
   let ancestors: Array<Thing> = [];
   export let grab;
 

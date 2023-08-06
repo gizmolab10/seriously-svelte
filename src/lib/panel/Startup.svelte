@@ -27,6 +27,6 @@
 <style>
   p {
     text-align: center;
-    font-size: 5em;
+    font-size: 3em;
   }
 </style>
