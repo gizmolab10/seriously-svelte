@@ -1,8 +1,7 @@
 <script>
+  import { Direction, grabs } from '../common/GlobalImports'
   import HelpButton from '../buttons/HelpButton.svelte';
   // import GraphD3 from '../aside/GraphD3.svelte';
-  import Rounded from '../buttons/Rounded.svelte';
-  import { grabs } from '../common/GlobalImports'
   import Graph from '../graph/Graph.svelte';
   import Crumbs from './Crumbs.svelte';
   import Help from './Help.svelte';
@@ -11,8 +10,8 @@
   let size = 15;
 
   function handleClose() { isHelpOpen = false; }
-  function handleHelpClick(event) { isHelpOpen = true; }
   function handleSVGClick(event) { alert('hah'); }
+  function handleHelpClick(event) { isHelpOpen = true; }
 </script>
 
 <div style='cursor: default'> <!-- override vertical bar hovering over text -->

@@ -2,7 +2,7 @@
   import { cloud, hierarchy, onMount } from '../common/GlobalImports'
   import Panel from './Panel.svelte';
   let isLoading = true;
-  const build = 15; // better title look and feel
+  const build = 15; // play with svg triangles
 
   onMount(async () => {
     cloud.readAll(async () => {
@@ -14,11 +14,13 @@
     });
   })
 
-</script>
+  function hasNothing() { return !(hierarchy.root?.hasChildren ?? false); }
+
+  </script>
 
 {#if isLoading}
   <p>Welcome to Seriously</p>
-{:else if !(hierarchy.root?.hasChildren ?? false)}
+{:else if hasNothing()}
   <p>Nothing is available.</p>
 {:else}
   <Panel build={build}/>

@@ -1,15 +1,23 @@
-export default class Rounded {
+
+export enum Direction {
+  down = Math.PI/6,
+  right = Math.PI,
+  up = Math.PI/2,
+  left = 0,
+}
+
+export class Rounded {
   startingAngle: number;
   size: number;
   path = '';
 
-  constructor(size: number, startingAngle: number) {
-    this.startingAngle = startingAngle;
+  constructor(size: number, direction: number) {
+    this.startingAngle = direction;
     this.size = size;
     const width = this.size;
     const height = this.size;
-    const offsetX = (width / 2);
-    const offsetY = (height / 2);
+    const offsetX = width / 2;
+    const offsetY = height / 2;
     const insetRatio = 0.35;
     const radius = Math.min(width, height) * insetRatio;
     const oneSixth = Math.PI / 3; // one sixth of a circle

@@ -1,8 +1,14 @@
 <script lang='ts'>
-  import { Thing, grabbedIDs, onDestroy, Signals, signal, handleSignalOfKind, constants } from '../common/GlobalImports';
+  import { Thing, grabbedIDs, onDestroy, Signals, signal, handleSignalOfKind, Rounded, Direction, constants } from '../common/GlobalImports';
   export let isReveal = false;
   export let thing = Thing;
-  export let size = 15;
+  export let size = 20;
+  const top = 4;
+  const rounded = new Rounded(size, Direction.right);
+  const path = rounded.path;
+  let width = 20;
+  let height = 20;
+  const colors = '--dotColor: {thing.color}; --traitColor: {thing.revealColor(!isReveal)}; --buttonColor: {thing.revealColor( isReveal)};';
 
 	onDestroy( () => { signalHandler.disconnect(); });
 
@@ -33,34 +39,38 @@
 
 {#key $grabbedIDs?.includes(thing.id)}
   <slot>
-    <button id={thing.id}
-      on:click={handleClick}
-      class={ isReveal ? 'reveal' : 'drag' }
-      style='width:{size}px; height:{size}px;
-             --dotColor: {thing.color};
-           --traitColor: {thing.revealColor(!isReveal)};
-          --buttonColor: {thing.revealColor( isReveal)}'>
-    </button>
+    {#if isReveal}
+      <svg width='{width}' height='{height}' viewBox='0 -8 {width} {height}'
+        on:click={handleClick}>
+        style={colors}>
+        <path class="button-triangle" d={path} />
+      </svg>
+    {:else}
+      <button id={thing.id}
+        on:click={handleClick}
+        style='width:{size}px; height:{size}px;
+               --dotColor: {thing.color};
+             --traitColor: {thing.revealColor(!isReveal)};
+            --buttonColor: {thing.revealColor( isReveal)}'>
+      </button>
+    {/if}
   </slot>
 {/key}
 
 <style lang='scss'>
-  .reveal {}
-  .drag {} // these are for drawing the drag dot differently than the reveal dot
-
   button {
     top: 1px;
+    border: 1px solid;
+    border-radius: 50%;
+  }
+
+  button, .button-triangle {
     left: 3px;
     position: relative;
-    display: relative;
-    align-items: center;
-    justify-content: center;
+    cursor: pointer;
     color: var(--traitColor);
     border-color: var(--dotColor);
     background-color: var(--buttonColor);
-    border: 1px solid;
-    border-radius: 50%;
-    cursor: pointer;
 
     &:hover {
       color: var(--buttonColor);
