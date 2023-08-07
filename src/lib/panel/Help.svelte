@@ -1,6 +1,17 @@
 <script>
-  export let onClose;
+  import { onMount, onDestroy } from '../common/GlobalImports';
   export let size = 20;
+  export let onClose;
+  let listener;
+
+  onDestroy( () => { window.removeEventListener('keydown', listener); });
+  onMount(async () => { listener = window.addEventListener('keydown', handleKeyDown); });
+  function handleKeyDown(event) {
+    const key = event.key.toLowerCase();
+    switch (key) {
+      case 'escape': onClose(); break;
+    }
+  }
 </script>
 
 <div class="modal-overlay">

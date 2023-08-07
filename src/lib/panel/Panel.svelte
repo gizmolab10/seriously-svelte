@@ -21,7 +21,7 @@
   <span>
     <Crumbs grab={grabs.grabbedThing}/>
     <HelpButton size={size} onClick={handleHelpClick}/>
-    <Graph/>
+    <Graph showHelp={handleHelpClick}/>
   </span>
   {#if isHelpOpen}
     <Help size={size} onClose={handleClose} />

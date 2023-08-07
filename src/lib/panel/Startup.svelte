@@ -2,7 +2,7 @@
   import { cloud, hierarchy, onMount } from '../common/GlobalImports'
   import Panel from './Panel.svelte';
   let isLoading = true;
-  const build = 15; // play with svg triangles
+  const build = 16; // key for showing and hiding help. play with svg triangles
 
   onMount(async () => {
     cloud.readAll(async () => {

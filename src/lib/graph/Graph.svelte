@@ -1,6 +1,7 @@
 <script>
   import { Thing, hierarchy, cloud, grabs, editingID, signal, Signals, handleSignalOfKind, onMount, onDestroy, constants } from '../common/GlobalImports';
   import Children from './Children.svelte';
+  export let showHelp;
   let listener;
   let redraw;
 
@@ -29,6 +30,7 @@
       const SHIFT = event.shiftKey;
       switch (key) {
         case ' ':          cloud.thing_redraw_addChildTo(grab); break;
+        case '?':          showHelp(); break;
         case 'd':          cloud.thing_duplicate(grab); break;
         case 'r':          break; // restart app
         case 't':          alert('PARENT-CHILD SWAP'); break;
