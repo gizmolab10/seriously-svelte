@@ -23,14 +23,14 @@
       line-height: {size}px;'
       on:click={() => onClose()}>×</span>
     <h2>Welcome to Seriously</h2>
-    <p>Seriously is like a menu system, to which you can add new items.</p>
+    <p>Seriously is essentially a hierarchal menu system, to which you can add new items.</p>
     <ul>
     <li>To browse around, click the dots (to right and left of each item) or tap the arrow keys (including up and down). Each item selected is surrounded with a border (and its dots reverse their color).
-    <li>As you browse, buttons above the menu show your location in the menu structure. You can click on them to quickly change your location.
+    <li>As you browse, buttons above the menu show your location in the hierarchy. You can click on them to quickly change your location.
     <li>To edit an existing item, click on its text. You can also select it and tap the 'Enter' key. When you finish editing, tap the 'Enter' key [again] to save your changes.
     <li>The dots on the right side of each menu item browse to the right.
     <li>The dots on the left side are for selecting an item or browsing left.
-    <li>To add an item, tap the SPACE key.
+    <li>To add a child item, select the item to which you want to add a child, and tap the SPACE key.
     <li>To duplicate an existing item (and begin to edit it), select it and tap the 'D' key.
     <li>Please bear in mind that the menu items are my test data. So, when you finish editing things, try to return everything to something close to its original state. Thanks!
     </ul>
