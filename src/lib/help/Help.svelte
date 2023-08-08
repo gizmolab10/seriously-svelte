@@ -24,44 +24,49 @@
     <h2>Welcome to Seriously</h2>
     <p>Seriously is essentially a hierarchal menu system, to which you can add new items.</p>
     <Widget thing={exemplar} style='justify-content: center'/>
-    <ul>
-      <li>Each selected item is surrounded with a border (and its dots reverse their color).
-      <li>Browsing (changing which item is selected):
+    <ul style='list-style-type: circle'>
+      <li>When an item is <b>selected</b>:
         <ul>
-          <li>To browse, tap the arrow keys (including up and down).
-          <li>As you browse, buttons above the menu show your location in the hierarchy. You can click on them to quickly change your location.
+          <li>It is surrounded with a <b>border</b> (and its dots reverse their color).
+          <li>To <b>edit</b> it, click on its text. You can also select it and tap the <i>Enter</i> key. When you finish editing, tap the <i>Enter</i> key [again] to save your changes.
+          <li>to <b>add a child</b> item to it (and begin editing the child), and tap the <i>Space</i> key.
+          <li>To <b>duplicate</b> it item (and begin to edit the duplicate), tap the <i>D</i> key.
+          <li>To <b>delete</b> it, tap the <i>Delete</i> key.
+          <li>To <b>move</b> it, hold the <i>Option</i> key tap an arrow key.
         </ul>
-      <li>Dots:
+      <li><b>Browsing</b> (changing which item is selected):
         <ul>
-          <li>Click the dots (to right and left of each item) to display the items in the child or parent list, respectively.
-          <li>Hold the 'Shift' key as you click to add or remove an item from the set of selected items.
-          <li>The dots on the left side are for selecting an item or browsing left.
-          <li>The dots on the right side (if one is there) of each menu item browse to the right.
+          <li>To <b>browse</b>, tap the arrow keys (including up and down).
+          <li>As you <b>browse</b>, buttons above the menu show your location in the hierarchy. You can click on them to quickly change your location.
         </ul>
-      <li>When an item is selected:
+      <li><b>Dots:</b>
         <ul>
-          <li>To edit it, click on its text. You can also select it and tap the 'Enter' key. When you finish editing, tap the 'Enter' key [again] to save your changes.
-          <li>to add a child item to it, and tap the 'Space' key.
-          <li>To duplicate it item (and begin to edit the duplicate), tap the 'D' key.
-          <li>To delete it, tap the 'Delete' key.
-          <li>To move it, hold the 'Option' key tap an arrow key.
+          <li>Click the dots (to right and left of each item) to <b>display</b> the items in the child [browse right] or parent list [browse left], respectively.
+          <li>Hold the <i>Shift</i> key as you click to <b>add or remove</b> that item from the set of selected items.
+          <li>The dots on the left side are for <b>selecting</b> an item or <b>browsing left</b>.
+          <li>The dots on the right side (if one is there) of each menu item let you <b>browse to the right</b>.
+          <li><b>Hovering</b> over a dot will reverse its color,
         </ul>
-      <li>Please bear in mind that the menu items are my test data. So, when you finish editing things, try to return everything to something close to its original state. Thanks!
+      <li><b>Please,</b> bear in mind that the menu items are my test data. So, when you finish editing things, try to return everything to something close to its original state. <b>Thanks!</b>
     </ul>
   </div>
 </div>
 
 <style>
+  b {
+    color: blue;
+  }
+  i {
+    color: darkred;
+  }
   ul {
     list-style-type: number;
     line-height: 1.2;
   }
-
   li {
     margin-top: 0.2em;
     padding-bottom: 0.3em;
   }
-
   .modal-overlay {
     position: fixed;
     top: 0;
@@ -73,7 +78,6 @@
     justify-content: center;
     align-items: center;
   }
-
   .modal-content {
     background-color: #fff;
     padding: 20px;
@@ -83,7 +87,6 @@
     position: relative;
     font-size: 0.8em;
   }
-
   .close-button {
     display: inline-block;
     text-align: center;

@@ -16,6 +16,7 @@
   })
 
   async function handleClick(event) {
+    if (thing.isExemplar) { return; }
     if (isReveal) {
       if (thing.hasChildren) {
         thing.redraw_browseRight(true);

@@ -8,9 +8,10 @@ export default class Thing extends Cloudable {
   color: string;
   trait: string;
   order: number;
+  titlePadding: number;
   isEditing: boolean;
   isGrabbed: boolean;
-  titlePadding: number;
+  isExemplar: boolean;
 
   copyFrom = (other: Thing) => {
     this.title = other.title;
@@ -28,6 +29,7 @@ export default class Thing extends Cloudable {
     this.order = order;
     this.isEditing = false;
     this.isGrabbed = false;
+    this.isExemplar = false;
     this.titlePadding = 0;
 
     editingID.subscribe((id: string | null) => {
@@ -91,7 +93,7 @@ export default class Thing extends Cloudable {
   }
 
   revealColor = (isReveal: boolean): string => {
-    const flag = this.isGrabbed || this.isEditing;
+    const flag = this.isGrabbed || this.isEditing || this.isExemplar;
     return (flag != isReveal) ? this.color : constants.backgroundColor;
   }
 
