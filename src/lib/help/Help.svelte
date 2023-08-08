@@ -29,7 +29,7 @@
         <ul>
           <li>It is surrounded with a <b>border</b> (and its dots reverse their color).
           <li>To <b>edit</b> it, click on its text. You can also select it and tap the <i>Enter</i> key. When you finish editing, tap the <i>Enter</i> key [again] to save your changes.
-          <li>to <b>add a child</b> item to it (and begin editing the child), and tap the <i>Space</i> key.
+          <li>To <b>add a child</b> item to it (and begin editing the child), and tap the <i>Space</i> key.
           <li>To <b>duplicate</b> it item (and begin to edit the duplicate), tap the <i>D</i> key.
           <li>To <b>delete</b> it, tap the <i>Delete</i> key.
           <li>To <b>move</b> it, hold the <i>Option</i> key tap an arrow key.
@@ -41,7 +41,7 @@
         </ul>
       <li><b>Dots:</b>
         <ul>
-          <li>Click the dots (to right and left of each item) to <b>display</b> the items in the child [browse right] or parent list [browse left], respectively.
+          <li>Click the dots (to right and left of each item) to display the items in the child [<b>browse right</b>] or parent list [<b>browse left</b>], respectively.
           <li>Hold the <i>Shift</i> key as you click to <b>add or remove</b> that item from the set of selected items.
           <li>The dots on the left side are for <b>selecting</b> an item or <b>browsing left</b>.
           <li>The dots on the right side (if one is there) of each menu item let you <b>browse to the right</b>.
@@ -55,6 +55,7 @@
 <style>
   b {
     color: blue;
+    font-weight: normal;
   }
   i {
     color: darkred;
