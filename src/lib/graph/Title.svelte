@@ -1,5 +1,5 @@
 <script lang='ts'>
-  import { Thing, cloud, editingID, onMount, signal, Signals } from '../common/GlobalImports';
+  import { Thing, cloud, editingID, stoppedEditingID, onMount, signal, Signals } from '../common/GlobalImports';
   import Widget from './Widget.svelte';
   export let thing = Thing;
   let originalTitle = thing.title;
@@ -7,15 +7,15 @@
   let surround = null;
   let input = null;
 
+  function revertTitleToOriginal() { originalTitle = thing.title; }
   var hasChanges = () => { return originalTitle != thing.title; }
-  function revertToOriginal() { originalTitle = thing.title; }
   onMount(async () => { updateInputWidth(); });
 
   function handleKeyDown(event) {
     if ($editingID == thing.id) {
       switch (event.key) {
-        case 'Tab': stopEditing(true); cloud.thing_duplicate(); break;
-        case 'Enter': stopEditing(true);
+        case 'Tab': stopAndClearEditing(); cloud.thing_duplicate(); break;
+        case 'Enter': stopAndClearEditing();
       }
     }
   }
@@ -26,8 +26,11 @@
     // manage edit state //
     ///////////////////////
 
-    if ($editingID != thing.id) {
-      stopEditing(false); // false means leave editingID alone so other currently editing widgets continue editing
+    if ($stoppedEditingID == thing.id) {
+      stopEditing();
+      $stoppedEditingID = null;
+    } else if ($editingID != thing.id) {
+      stopEditing();
     } else if (!isEditing) {
       isEditing = true;
       thing.grabOnly();
@@ -38,18 +41,21 @@
     }
   }
 
-  function stopEditing(clearEditingID: boolean) {
+  function stopAndClearEditing() {
+    stopEditing();
+    setTimeout(() => {     // eliminate infinite recursion
+      $editingID = null;
+    }, 20);
+  }
+
+  function stopEditing() {
     if (isEditing) {
+      $stoppedEditingID = $editingID;
       isEditing = false;
       input?.blur();
       if (hasChanges) {
         cloud.thing_save(thing);
-        revertToOriginal();
-      }
-      if (clearEditingID) {
-        setTimeout(() => {     // eliminate infinite recursion
-          $editingID = null;
-        }, 20);
+        revertTitleToOriginal();
       }
     }
   }

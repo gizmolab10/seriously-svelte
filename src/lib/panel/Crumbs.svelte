@@ -5,9 +5,10 @@
   export let grab;
 
 	onDestroy( () => { signalHandler.disconnect(); });
-  const signalHandler = handleSignalOfKind(Signals.widgets, (value) => { handleGrabbedID(grabs.lastGrabbedID); });
+  const signalHandler = handleSignalOfKind(Signals.widgets, (value) => { handleGrabbedID(); });
 
-  function handleGrabbedID(id: string) {
+  function handleGrabbedID() {
+    let id = grabs.lastGrabbedID;
     grab = hierarchy.thing_forID(id);   // start over with new grab
     if (grab != null) {
       ancestors = grab.ancestors;

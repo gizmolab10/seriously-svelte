@@ -12,7 +12,7 @@
 		style?.setProperty( '--color', thing.grabAttributes);
 	});
 
-	</script>
+</script>
 
 <span id={thing.id}
 	style='padding: 1px 8px 2px 1px;

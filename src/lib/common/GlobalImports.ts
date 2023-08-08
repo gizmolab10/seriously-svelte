@@ -1,6 +1,6 @@
+import { editingID, stoppedEditingID, grabbedIDs, lastUngrabbedID } from './State';
 import { signalMultiple, signal, handleSignalOfKind, Signals } from './Signals';
 import { sortAccordingToOrder, normalizeOrderOf, removeAll } from './Utilities';
-import { editingID, grabbedIDs, lastUngrabbedID } from './State';
 import { FatTriangle, Direction } from '../geometry/FatTriangle';
 import { RelationshipKind } from '../data/RelationshipKind';
 import { Relationship } from '../data/Relationship';
@@ -13,9 +13,9 @@ import { get } from 'svelte/store';
 import Thing from '../data/Thing';
 import './Extensions';
 
-export { constants, get, onMount, onDestroy,
-  grabs, editingID, grabbedIDs, lastUngrabbedID,
+export { FatTriangle, Direction,
+  constants, get, onMount, onDestroy,
   sortAccordingToOrder, normalizeOrderOf, removeAll,
   signalMultiple, signal, Signals, handleSignalOfKind ,
   cloud, Thing, Relationship, RelationshipKind, hierarchy,
-  FatTriangle as FatTriangle, Direction };
+  grabs, editingID, stoppedEditingID, grabbedIDs, lastUngrabbedID };
