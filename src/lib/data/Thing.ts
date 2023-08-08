@@ -2,13 +2,6 @@ import { grabs, hierarchy, cloud, normalizeOrderOf, grabbedIDs, editingID, const
 import Cloudable from './Cloudable';
 import Airtable from 'airtable';
 
-export enum PrivacyKind {
-  kEveryone = 'e',
-  kInternal = 'i', // requires membership in a group
-  kPersonal = 'p', // requires list of approved visitor
-  kMeOnly   = 'm',
-}
-
 export default class Thing extends Cloudable {
   id: string;
   title: string;
@@ -17,6 +10,7 @@ export default class Thing extends Cloudable {
   order: number;
   isEditing: boolean;
   isGrabbed: boolean;
+  titlePadding: number;
 
   copyFrom = (other: Thing) => {
     this.title = other.title;
@@ -34,6 +28,7 @@ export default class Thing extends Cloudable {
     this.order = order;
     this.isEditing = false;
     this.isGrabbed = false;
+    this.titlePadding = 0;
 
     editingID.subscribe((id: string | null) => {
       this.isEditing = (id == this.id); // executes whenever editingID changes

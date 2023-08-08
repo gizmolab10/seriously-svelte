@@ -64,7 +64,7 @@
 
   function updateInputWidth() {
     if (input && surround) {
-      input.style.width = `${surround.scrollWidth - 5}px`;
+      input.style.width = `${surround.scrollWidth + thing.titlePadding - 5}px`;
     }
   }
 
@@ -73,7 +73,7 @@
 </script>
 
 <div class="wrapper" bind:this={surround}>
-  {thing.title}
+  {thing.title} &nbsp;
 </div>
 <input
   type='text'
@@ -98,6 +98,6 @@
   .wrapper {
     position: absolute;
     visibility: hidden;
-    white-space: pre; /* Preserve whitespace to measure accurate width */
+    white-space: pre; /* Preserve whitespace to accurately measure the width */
   }
 </style>

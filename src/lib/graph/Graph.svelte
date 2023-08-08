@@ -1,12 +1,11 @@
 <script>
-  import { Thing, hierarchy, cloud, grabs, editingID, signal, Signals, handleSignalOfKind, onMount, onDestroy, constants } from '../common/GlobalImports';
+  import { Thing, hierarchy, cloud, grabs, editingID, signal, Signals, handleSignalOfKind, onDestroy, constants } from '../common/GlobalImports';
   import Children from './Children.svelte';
   export let showHelp;
   let listener;
   let redraw;
 
-  onDestroy( () => { window.removeEventListener('keydown', listener); signalHandler.disconnect(); });
-  onMount(async () => { listener = window.addEventListener('keydown', handleKeyDown); });
+  onDestroy( () => { signalHandler.disconnect(); });
 
   const signalHandler = handleSignalOfKind(Signals.here, (value) => {
     redraw = !redraw;
@@ -48,8 +47,11 @@
 
 </script>
 
+<svelte:document on:keydown={handleKeyDown} />
 {#key redraw}
-  {#if hierarchy.here != null}
-    <Children parent={hierarchy.here}/>
-  {/if}
+  <div style='position: fixed; left=10px'>
+    {#if hierarchy.here != null}
+      <Children parent={hierarchy.here}/>
+    {/if}
+  </div>
 {/key}

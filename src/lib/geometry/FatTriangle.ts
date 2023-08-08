@@ -6,7 +6,7 @@ export enum Direction {
   left = 0,
 }
 
-export class Rounded {
+export class FatTriangle {
   startingAngle: number;
   size: number;
   path = '';

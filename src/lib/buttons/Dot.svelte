@@ -1,5 +1,5 @@
 <script lang='ts'>
-  import { Thing, grabbedIDs, onDestroy, Signals, signal, handleSignalOfKind, constants } from '../common/GlobalImports';
+  import { Thing, grabbedIDs, onDestroy, Signals, handleSignalOfKind } from '../common/GlobalImports';
   export let isReveal = false;
   export let thing = Thing;
   export let size = 15;
@@ -35,7 +35,6 @@
   <slot>
     <button id={thing.id}
       on:click={handleClick}
-      class={ isReveal ? 'reveal' : 'drag' }
       style='width:{size}px; height:{size}px;
              --dotColor: {thing.color};
            --traitColor: {thing.revealColor(!isReveal)};
@@ -45,22 +44,19 @@
 {/key}
 
 <style lang='scss'>
-  .reveal {}
-  .drag {} // these are for drawing the drag dot differently than the reveal dot
-
   button {
     top: 1px;
     left: 3px;
-    position: relative;
+    cursor: pointer;
     display: relative;
+    border: 1px solid;
+    border-radius: 50%;
+    position: relative;
     align-items: center;
     justify-content: center;
     color: var(--traitColor);
     border-color: var(--dotColor);
     background-color: var(--buttonColor);
-    border: 1px solid;
-    border-radius: 50%;
-    cursor: pointer;
 
     &:hover {
       color: var(--buttonColor);

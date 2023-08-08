@@ -1,8 +1,8 @@
 import { signalMultiple, signal, handleSignalOfKind, Signals } from './Signals';
 import { sortAccordingToOrder, normalizeOrderOf, removeAll } from './Utilities';
 import { editingID, grabbedIDs, lastUngrabbedID } from './State';
+import { FatTriangle, Direction } from '../geometry/FatTriangle';
 import { RelationshipKind } from '../data/RelationshipKind';
-import { Rounded, Direction } from '../geometry/Rounded';
 import { Relationship } from '../data/Relationship';
 import { hierarchy } from '../data/Hierarchy';
 import { onMount, onDestroy } from 'svelte';
@@ -18,4 +18,4 @@ export { constants, get, onMount, onDestroy,
   sortAccordingToOrder, normalizeOrderOf, removeAll,
   signalMultiple, signal, Signals, handleSignalOfKind ,
   cloud, Thing, Relationship, RelationshipKind, hierarchy,
-  Rounded, Direction };
+  FatTriangle as FatTriangle, Direction };

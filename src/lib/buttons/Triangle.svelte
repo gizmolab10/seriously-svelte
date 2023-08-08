@@ -1,12 +1,12 @@
 <script>
-  import { onMount, Rounded, Direction } from '../common/GlobalImports';
+  import { onMount, FatTriangle, Direction } from '../common/GlobalImports';
 
   export let size = 18;
   export let width = size;
   export let height = size;
   export let direction = Direction.left;
-  const rounded = new Rounded(size, direction);
-  const path = rounded.path;
+  const fatTriangle = new FatTriangle(size, direction);
+  const path = fatTriangle.path;
 
   // function handleClick() {
   //   alert('Button clicked!');
