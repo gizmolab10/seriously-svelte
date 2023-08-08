@@ -15,12 +15,14 @@ import Airtable from 'airtable';
 
 export default class CRUD {
   base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
-  relationshipKinds_errorMessage = 'Error in RelationshipKinds:';
   relationshipKinds_table = this.base('RelationshipKinds');
-  relationships_errorMessage = 'Error in Relationships:';
   relationships_table = this.base('Relationships');
-  things_errorMessage = 'Error in Things:';
   things_table = this.base('Things');
+  access_table = this.base('Access');
+  users_table = this.base('Users');
+
+  relationships_errorMessage = 'Error in Relationships:';
+  things_errorMessage = 'Error in Things:';
 
   constructor() {}
 
@@ -29,6 +31,8 @@ export default class CRUD {
   readAll = async (onCompletion: () => any) => {
     await this.relationshipKinds_readAll();
     await this.relationships_readAll();
+    await this.access_readAll();
+    await this.users_readAll();
     await this.things_readAll(onCompletion);
   }
 
@@ -127,25 +131,6 @@ export default class CRUD {
     }
   }
 
-  /////////////////////////////////////////
-  //         RELATIONSHIP KINDS          //
-  /////////////////////////////////////////
-
-  async relationshipKinds_readAll() {
-    try {
-      const records = await this.relationshipKinds_table.select().all()
-
-      for (const record of records) {
-        const id = record.id as string; // do not yet need this
-        const kind = record.fields.kind as string;
-        hierarchy.relationshipKind_new(id, kind);
-      }
-
-    } catch (error) {
-      console.log(this.relationshipKinds_errorMessage + error);
-    }
-  }
-
   ////////////////////////////////////
   //         RELATIONSHIPS          //
   ////////////////////////////////////
@@ -218,6 +203,55 @@ export default class CRUD {
       } catch (error) {
         console.log(this.relationships_errorMessage + ' (' + relationship.id + ') ' + error);
       }
+    }
+  }
+
+  /////////////////////////////////////
+  //         ANCILLARY DATA          //
+  /////////////////////////////////////
+
+  async relationshipKinds_readAll() {
+    try {
+      const records = await this.relationshipKinds_table.select().all()
+
+      for (const record of records) {
+        const id = record.id as string; // do not yet need this
+        const kind = record.fields.kind as string;
+        hierarchy.relationshipKind_new(id, kind);
+      }
+
+    } catch (error) {
+      console.log('Error in RelationshipKinds:' + error);
+    }
+  }
+
+  async access_readAll() {
+    try {
+      const records = await this.access_table.select().all()
+
+      for (const record of records) {
+        const id = record.id as string; // do not yet need this
+        const kind = record.fields.kind as string;
+        hierarchy.access_new(id, kind);
+      }
+
+    } catch (error) {
+      console.log('Error in Access:' + error);
+    }
+  }
+
+  async users_readAll() {
+    try {
+      const records = await this.users_table.select().all()
+
+      for (const record of records) {
+        const id = record.id as string; // do not yet need this
+        const kind = record.fields.kind as string;
+        hierarchy.user_new(id, kind);
+      }
+
+    } catch (error) {
+      console.log('Error in Users:' + error);
     }
   }
 

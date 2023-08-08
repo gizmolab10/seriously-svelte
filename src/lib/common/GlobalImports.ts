@@ -10,12 +10,14 @@ import { constants } from './Constants';
 import { cloud } from '../data/Cloud';
 import { grabs } from '../data/Grabs';
 import { get } from 'svelte/store';
+import Access from '../data/Access';
 import Thing from '../data/Thing';
+import User from '../data/User';
 import './Extensions';
 
 export { FatTriangle, Direction,
   constants, get, onMount, onDestroy,
   sortAccordingToOrder, normalizeOrderOf, removeAll,
-  signalMultiple, signal, Signals, handleSignalOfKind ,
-  cloud, Thing, Relationship, RelationshipKind, hierarchy,
-  grabs, editingID, stoppedEditingID, grabbedIDs, lastUngrabbedID };
+  signalMultiple, signal, Signals, handleSignalOfKind,
+  grabs, editingID, stoppedEditingID, grabbedIDs, lastUngrabbedID,
+  cloud, Thing, Relationship, RelationshipKind, hierarchy, Access, User };

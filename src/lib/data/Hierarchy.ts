@@ -1,4 +1,4 @@
-import { get, grabbedIDs, cloud, Thing, Relationship, RelationshipKind, sortAccordingToOrder, constants } from '../common/GlobalImports';
+import { cloud, Thing, Relationship, RelationshipKind, Access, User, sortAccordingToOrder, constants } from '../common/GlobalImports';
 
 ////////////////////////////////////////
 // creation, tracking and destruction //
@@ -10,8 +10,11 @@ export default class Hierarchy {
   relationshipKindsByID: { [id: string]: RelationshipKind } = {};
   relationshipsByFromID: { [id: string]: Array<Relationship> } = {};
   relationshipsByToID: { [id: string]: Array<Relationship> } = {};
+  accessByKind: { [kind: string]: Access } = {};
+  accessByID: { [id: string]: Access } = {};
   thingsByID: { [id: string]: Thing } = {};
   relationships: Array<Relationship> = [];
+  userByID: { [id: string]: User } = {};
   root: Thing | null = null;
   here: Thing | null = null;
 
@@ -21,12 +24,11 @@ export default class Hierarchy {
   get things(): Array<Thing> { return Object.values(this.thingsByID) };
   thing_forID = (id: string | null): Thing | null => { return (id == null) ? null : this.thingsByID[id]; }
   thing_newAt = (order: number) => { return new Thing(cloud.newCloudID, constants.defaultTitle, 'blue', 't', order); }
-  relationshipKind_new = (id: string, kind: string) => {
-    const newKind = new RelationshipKind(id, kind);
-    this.relationshipKindsByKind[kind] = newKind;
-    this.relationshipKindsByID[id] = newKind;
-  }
 
+  /////////////////////////////
+  //         THINGS          //
+  /////////////////////////////
+  
   things_forIDs(ids: Array<string>): Array<Thing> {
     const array = Array<Thing>();
     for (const id of ids) {
@@ -48,6 +50,10 @@ export default class Hierarchy {
     }
     return this.things_forIDs(ids);
   }
+
+  ////////////////////////////////////
+  //         RELATIONSHIPS          //
+  ////////////////////////////////////
 
   relationship_new(id: string, kind: RelationshipKind, from: string, to: string, order: number): Relationship {
     const relationship = new Relationship(id, kind, from, to, order);
@@ -109,6 +115,27 @@ export default class Hierarchy {
         relationship.needsDelete = true;
       }
     }
+  }
+
+  /////////////////////////////////////
+  //         ANCILLARY DATA          //
+  /////////////////////////////////////
+
+  relationshipKind_new = (id: string, kind: string) => {
+    const newKind = new RelationshipKind(id, kind);
+    this.relationshipKindsByKind[kind] = newKind;
+    this.relationshipKindsByID[id] = newKind;
+  }
+
+  access_new = (id: string, kind: string) => {
+    const access = new Access(id, kind);
+    this.accessByKind[kind] = access;
+    this.accessByID[id] = access;
+  }
+
+  user_new = (id: string, name: string, email: string, phone: string) => {
+    const user = new User(id, name, email, phone);
+    this.userByID[id] = user;
   }
 
 }

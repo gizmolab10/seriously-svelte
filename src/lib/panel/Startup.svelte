@@ -2,7 +2,7 @@
   import { cloud, hierarchy, onMount } from '../common/GlobalImports'
   import Panel from './Panel.svelte';
   let isLoading = true;
-  const build = 17; // play with svg triangles
+  const build = 17; // access and users tables, play with svg triangles
 
   onMount(async () => {
     cloud.readAll(async () => {
