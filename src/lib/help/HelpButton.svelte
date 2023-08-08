@@ -1,8 +1,8 @@
 <script>
-  export let size = 20;
-  export let color = '#ccc';
   export let borderColor = '#333';
   export let textColor = '#400';
+  export let color = '#ccc';
+  export let size = 20;
   export let onClick;
 
   // Event handler for the click event of the button
@@ -27,12 +27,5 @@
     display: inline-block;
     text-align: center;
     font-weight: bold;
-    cursor: help;'>
+    cursor: help;'>?
 </div>
-
-<style>
-  div::before {
-    content: "?";
-  }
-</style>
-
