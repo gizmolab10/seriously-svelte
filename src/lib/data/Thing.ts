@@ -149,6 +149,7 @@ export default class Thing extends Cloudable {
   redraw_browseRight = (right: boolean, up: boolean = false) => {
     const newGrab = right ? up ? this.lastChild : this.firstChild : this.firstParent;
     const newHere = right ? this : this.grandparent;
+    editingID.set(null);
     newHere.becomeHere();
     newGrab?.grabOnly();
   }

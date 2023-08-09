@@ -70,7 +70,7 @@
 
   function updateInputWidth() {
     if (input && surround) {
-      input.style.width = `${(surround.scrollWidth * 0.92) + thing.titlePadding - 5}px`;
+      input.style.width = `${(surround.scrollWidth * 0.93) + thing.titlePadding - 5}px`;
     }
   }
 

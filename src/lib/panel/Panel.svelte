@@ -3,18 +3,18 @@
   import HelpButton from '../help/HelpButton.svelte';
   // import GraphD3 from '../aside/GraphD3.svelte';
   import Graph from '../graph/Graph.svelte';
-  import Crumbs from './Crumbs.svelte';
   import Help from '../help/Help.svelte';
+  import Crumbs from './Crumbs.svelte';
   let isHelpOpen = false;
   export let build;
   let size = 15;
 
-  function handleClose() { isHelpOpen = false; }
-  function handleSVGClick(event) { alert('hah'); }
+  function handleHelpClose() { isHelpOpen = false; }
   function handleHelpClick(event) { isHelpOpen = true; }
+
 </script>
 
-<div style='cursor: default'> <!-- override vertical bar hovering over text -->
+<div>
   <span class='left-margin'>
     build {build}
   </span>
@@ -24,11 +24,14 @@
     <Graph showHelp={handleHelpClick}/>
   </span>
   {#if isHelpOpen}
-    <Help size={size} onClose={handleClose} />
+    <Help size={size} onClose={handleHelpClose} />
   {/if}
 </div>
 
 <style>
+  div {
+     cursor: default;
+  }
   .left-margin {
     font-size: .625em;
     color: green;

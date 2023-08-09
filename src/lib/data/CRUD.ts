@@ -4,12 +4,11 @@ import Airtable from 'airtable';
 
 ///////////////////////////////
 //                           //
+//     users                 //
 //     things                //
+//     access                //
 //     relationships         //
 //     relationshipKinds     //
-//                           //
-//     accessKinds           //
-//     & users               //
 //                           //
 ///////////////////////////////
 
