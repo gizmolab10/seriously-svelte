@@ -1,7 +1,7 @@
 <script lang='ts'>
   import { Thing, Signals, signal, handleSignalOfKind, onDestroy } from '../common/GlobalImports';
-	import Dot from '../buttons/Dot.svelte';
 	import Title from './Title.svelte';
+	import Dot from './Dot.svelte';
 	export let thing = Thing;
 
 	onDestroy( () => { signalHandler.disconnect(); });
