@@ -40,7 +40,7 @@
         case 'arrowdown':  cloud.grab_redraw_moveUp(false, SHIFT, OPTION); break;
         case 'arrowright': cloud.thing_redraw_moveRight(grab, true, OPTION); break;
         case 'arrowleft':  cloud.thing_redraw_moveRight(grab, false, OPTION); break;
-        case 'enter':      grab.editTitle(); break;
+        case 'enter':      grab.startEdit(); break;
       }
     }
   }

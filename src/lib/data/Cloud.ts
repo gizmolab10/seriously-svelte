@@ -30,7 +30,7 @@ export default class Cloud extends CRUD {
     relationship.needsCreate = true;
     normalizeOrderOf(parent.children);
     parent.becomeHere();
-    child.editTitle(); // TODO: fucking causes app to hang!
+    child.startEdit(); // TODO: fucking causes app to hang!
     child.grabOnly();
     await this.updateAllNeedy();
   }

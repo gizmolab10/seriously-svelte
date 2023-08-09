@@ -4,7 +4,7 @@
   export let thing = Thing;
   let originalTitle = thing.title;
   let isEditing = false;
-  let surround = null;
+  let wrapper = null;
   let input = null;
 
   function revertTitleToOriginal() { originalTitle = thing.title; }
@@ -63,14 +63,14 @@
   function handleFocus(event) {
     if (!isEditing) {
       isEditing = true;
-      thing.editTitle();
+      thing.startEdit();
       thing.grabOnly()
     }
   }
 
   function updateInputWidth() {
-    if (input && surround) {
-      input.style.width = `${(surround.scrollWidth * 0.93) + thing.titlePadding - 5}px`;
+    if (input && wrapper) { // wrapper only exists to provide its scroll width
+      input.style.width = `${(wrapper.scrollWidth * 0.93) + thing.titlePadding - 5}px`;
     }
   }
 
@@ -78,7 +78,7 @@
   function handleBlur(event) { stopEditing(true); updateInputWidth(); }
 </script>
 
-<div class="wrapper" bind:this={surround}>
+<div class="wrapper" bind:this={wrapper}>
   {thing.title} &nbsp;
 </div>
 <input
