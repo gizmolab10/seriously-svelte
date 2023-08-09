@@ -245,8 +245,7 @@ export default class CRUD {
 
       for (const record of records) {
         const id = record.id as string; // do not yet need this
-        const kind = record.fields.kind as string;
-        hierarchy.user_new(id, kind);
+        hierarchy.user_new(id, record.fields.name as string, record.fields.email as string, record.fields.phone as string);
       }
 
     } catch (error) {

@@ -1,6 +1,6 @@
 <script>
   import Widget from '../graph/Widget.svelte'
-  import { exemplar } from '../data/Exemplar'
+  import { exemplar } from '../objects/Exemplar'
   export let size = 20;
   export let onClose;
   

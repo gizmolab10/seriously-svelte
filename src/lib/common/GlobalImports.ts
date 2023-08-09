@@ -2,17 +2,17 @@ import { editingID, stoppedEditingID, grabbedIDs, lastUngrabbedID } from './Stat
 import { signalMultiple, signal, handleSignalOfKind, Signals } from './Signals';
 import { sortAccordingToOrder, normalizeOrderOf, removeAll } from './Utilities';
 import { FatTriangle, Direction } from '../geometry/FatTriangle';
-import { RelationshipKind } from '../data/RelationshipKind';
-import { Relationship } from '../data/Relationship';
-import { cloudEditor } from '../data/CloudEditor';
-import { hierarchy } from '../data/Hierarchy';
+import { RelationshipKind } from '../objects/RelationshipKind';
+import { Relationship } from '../objects/Relationship';
+import { cloudEditor } from '../managers/CloudEditor';
+import { hierarchy } from '../managers/Hierarchy';
 import { onMount, onDestroy } from 'svelte';
+import { grabs } from '../managers/Grabs';
 import { constants } from './Constants';
-import { grabs } from '../data/Grabs';
+import Access from '../objects/Access';
+import Thing from '../objects/Thing';
 import { get } from 'svelte/store';
-import Access from '../data/Access';
-import Thing from '../data/Thing';
-import User from '../data/User';
+import User from '../objects/User';
 import './Extensions';
 
 export { FatTriangle, Direction,
