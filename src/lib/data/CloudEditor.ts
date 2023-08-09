@@ -2,19 +2,19 @@ import { get, grabbedIDs, hierarchy, normalizeOrderOf, signal, Signals, grabs, e
 import { Thing, RelationshipKind } from '../common/GlobalImports';
 import CRUD from './CRUD';
 
-/////////////////////////////////////////
-//                                     //
-//   edit & persist: order & parent    //
-//                                     //
-/////////////////////////////////////////
+///////////////////////////////////////
+//                                   //
+//   beyond basic CRUD operations    //
+//                                   //
+///////////////////////////////////////
 
-export default class Cloud extends CRUD {
+export default class CloudEditor extends CRUD {
 
   constructor() { super(); }
 
-  ////////////////////////////
-  //         THING          //
-  ////////////////////////////
+  /////////////////////////////
+  //         THINGS          //
+  /////////////////////////////
 
   thing_duplicate = async (thing: Thing) => {
     const sibling = hierarchy.thing_newAt(thing.order + 0.5);
@@ -72,19 +72,6 @@ export default class Cloud extends CRUD {
     }
   }
 
-  ////////////////////////////////////
-  //         RELATIONSHIPS          //
-  ////////////////////////////////////
-
-  async relationships_deleteAllForThing(thing: Thing) {
-    const array = hierarchy.relationshipsByFromID[thing.id];
-    if (array != null) {
-      for (const relationship of array) {
-        await this.relationship_delete(relationship);
-      }
-    }
-  }
-
   ////////////////////////////
   //         GRABS          //
   ////////////////////////////
@@ -128,6 +115,19 @@ export default class Cloud extends CRUD {
     }
   }
 
+  ////////////////////////////////////
+  //         RELATIONSHIPS          //
+  ////////////////////////////////////
+
+  async relationships_deleteAllForThing(thing: Thing) {
+    const array = hierarchy.relationshipsByFromID[thing.id];
+    if (array != null) {
+      for (const relationship of array) {
+        await this.relationship_delete(relationship);
+      }
+    }
+  }
+
 }
 
-export const cloud = new Cloud();
+export const cloudEditor = new CloudEditor();

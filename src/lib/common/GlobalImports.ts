@@ -4,10 +4,10 @@ import { sortAccordingToOrder, normalizeOrderOf, removeAll } from './Utilities';
 import { FatTriangle, Direction } from '../geometry/FatTriangle';
 import { RelationshipKind } from '../data/RelationshipKind';
 import { Relationship } from '../data/Relationship';
+import { cloudEditor } from '../data/CloudEditor';
 import { hierarchy } from '../data/Hierarchy';
 import { onMount, onDestroy } from 'svelte';
 import { constants } from './Constants';
-import { cloud } from '../data/Cloud';
 import { grabs } from '../data/Grabs';
 import { get } from 'svelte/store';
 import Access from '../data/Access';
@@ -20,4 +20,4 @@ export { FatTriangle, Direction,
   sortAccordingToOrder, normalizeOrderOf, removeAll,
   signalMultiple, signal, Signals, handleSignalOfKind,
   grabs, editingID, stoppedEditingID, grabbedIDs, lastUngrabbedID,
-  cloud, Thing, Relationship, RelationshipKind, hierarchy, Access, User };
+  cloudEditor, Thing, Relationship, RelationshipKind, hierarchy, Access, User };

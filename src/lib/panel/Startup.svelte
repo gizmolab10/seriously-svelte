@@ -1,11 +1,11 @@
 <script>
-  import { cloud, hierarchy, onMount } from '../common/GlobalImports'
+  import { cloudEditor, hierarchy, onMount } from '../common/GlobalImports'
   import Panel from './Panel.svelte';
   let isLoading = true;
   const build = 17; // access and users tables, play with svg triangles
 
   onMount(async () => {
-    cloud.readAll(async () => {
+    cloudEditor.readAll(async () => {
       isLoading = false;
       hierarchy.root?.becomeHere()
       setTimeout(() => { // give crumbs time to be created after launch

@@ -1,4 +1,4 @@
-import { get, grabs, hierarchy, cloud, normalizeOrderOf, grabbedIDs, editingID, constants, RelationshipKind, signal, Signals } from '../common/GlobalImports';
+import { grabs, hierarchy, cloudEditor, normalizeOrderOf, grabbedIDs, editingID, constants, RelationshipKind, signal, Signals } from '../common/GlobalImports';
 import Cloudable from './Cloudable';
 import Airtable from 'airtable';
 
@@ -23,7 +23,7 @@ export default class Thing extends Cloudable {
     this.order = other.order;
   }
 
-  constructor(id = cloud.newCloudID, title = constants.defaultTitle, color = 'blue', trait = 's', order = 0) {
+  constructor(id = cloudEditor.newCloudID, title = constants.defaultTitle, color = 'blue', trait = 's', order = 0) {
     super();
     this.id = id;
     this.title = title;

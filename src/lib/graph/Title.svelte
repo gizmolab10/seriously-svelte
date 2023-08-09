@@ -1,5 +1,5 @@
 <script lang='ts'>
-  import { Thing, cloud, editingID, stoppedEditingID, onMount, signal, Signals } from '../common/GlobalImports';
+  import { Thing, cloudEditor, editingID, stoppedEditingID, onMount, signal, Signals } from '../common/GlobalImports';
   import Widget from './Widget.svelte';
   export let thing = Thing;
   let originalTitle = thing.title;
@@ -14,7 +14,7 @@
   function handleKeyDown(event) {
     if ($editingID == thing.id) {
       switch (event.key) {
-        case 'Tab': stopAndClearEditing(); cloud.thing_duplicate(); break;
+        case 'Tab': stopAndClearEditing(); cloudEditor.thing_duplicate(); break;
         case 'Enter': stopAndClearEditing();
       }
     }

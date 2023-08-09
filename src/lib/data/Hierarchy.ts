@@ -1,4 +1,4 @@
-import { cloud, Thing, Relationship, RelationshipKind, Access, User, sortAccordingToOrder, constants } from '../common/GlobalImports';
+import { cloudEditor, Thing, Relationship, RelationshipKind, Access, User, sortAccordingToOrder, constants } from '../common/GlobalImports';
 
 ////////////////////////////////////////
 // creation, tracking and destruction //
@@ -23,7 +23,7 @@ export default class Hierarchy {
   get rootID(): (string | null) { return this.root?.id ?? null; };
   get things(): Array<Thing> { return Object.values(this.thingsByID) };
   thing_forID = (id: string | null): Thing | null => { return (id == null) ? null : this.thingsByID[id]; }
-  thing_newAt = (order: number) => { return new Thing(cloud.newCloudID, constants.defaultTitle, 'blue', 't', order); }
+  thing_newAt = (order: number) => { return new Thing(cloudEditor.newCloudID, constants.defaultTitle, 'blue', 't', order); }
 
   /////////////////////////////
   //         THINGS          //

@@ -1,5 +1,5 @@
 <script>
-  import { Thing, hierarchy, cloud, grabs, editingID, signal, Signals, handleSignalOfKind, onDestroy, constants } from '../common/GlobalImports';
+  import { Thing, hierarchy, cloudEditor, grabs, editingID, signal, Signals, handleSignalOfKind, onDestroy, constants } from '../common/GlobalImports';
   import Children from './Children.svelte';
   export let showHelp;
   let listener;
@@ -28,18 +28,18 @@
       const OPTION = event.altKey;
       const SHIFT = event.shiftKey;
       switch (key) {
-        case ' ':          cloud.thing_redraw_addChildTo(grab); break;
+        case ' ':          cloudEditor.thing_redraw_addChildTo(grab); break;
         case '?':          showHelp(); break;
-        case 'd':          cloud.thing_duplicate(grab); break;
+        case 'd':          cloudEditor.thing_duplicate(grab); break;
         case 'r':          break; // restart app
         case 't':          alert('PARENT-CHILD SWAP'); break;
-        case 'tab':        cloud.thing_redraw_addChildTo(grab.firstParent); break; // Title also makes this call
+        case 'tab':        cloudEditor.thing_redraw_addChildTo(grab.firstParent); break; // Title also makes this call
         case 'delete':
-        case 'backspace':  cloud.grabs_redraw_delete(); break;
-        case 'arrowup':    cloud.grab_redraw_moveUp(true, SHIFT, OPTION); break;
-        case 'arrowdown':  cloud.grab_redraw_moveUp(false, SHIFT, OPTION); break;
-        case 'arrowright': cloud.thing_redraw_moveRight(grab, true, OPTION); break;
-        case 'arrowleft':  cloud.thing_redraw_moveRight(grab, false, OPTION); break;
+        case 'backspace':  cloudEditor.grabs_redraw_delete(); break;
+        case 'arrowup':    cloudEditor.grab_redraw_moveUp(true, SHIFT, OPTION); break;
+        case 'arrowdown':  cloudEditor.grab_redraw_moveUp(false, SHIFT, OPTION); break;
+        case 'arrowright': cloudEditor.thing_redraw_moveRight(grab, true, OPTION); break;
+        case 'arrowleft':  cloudEditor.thing_redraw_moveRight(grab, false, OPTION); break;
         case 'enter':      grab.startEdit(); break;
       }
     }

@@ -1,9 +1,9 @@
-import { Thing, cloud } from '../common/GlobalImports'
+import { Thing, cloudEditor } from '../common/GlobalImports'
 
 class Exemplar extends Thing {
 
   constructor() {
-    super(cloud.newCloudID, 'this is a menu item', 'darkred', 'h', 0);
+    super(cloudEditor.newCloudID, 'this is a menu item', 'darkred', 'h', 0);
     this.titlePadding = 21;
     this.isExemplar = true;
   }
