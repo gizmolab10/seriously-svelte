@@ -1,4 +1,4 @@
-import { grabs, hierarchy, cloud, normalizeOrderOf, grabbedIDs, editingID, constants, RelationshipKind, signal, Signals } from '../common/GlobalImports';
+import { get, grabs, hierarchy, cloud, normalizeOrderOf, grabbedIDs, editingID, constants, RelationshipKind, signal, Signals } from '../common/GlobalImports';
 import Cloudable from './Cloudable';
 import Airtable from 'airtable';
 
@@ -8,10 +8,13 @@ export default class Thing extends Cloudable {
   color: string;
   trait: string;
   order: number;
-  titlePadding: number;
-  isEditing: boolean;
-  isGrabbed: boolean;
-  isExemplar: boolean;
+  titlePadding = 0;
+  isEditing = false;
+  isGrabbed = false;
+  isExemplar = false;
+  grabAttributes = '';
+  hoverAttributes = '';
+  borderAttribute = '';
 
   copyFrom = (other: Thing) => {
     this.title = other.title;
@@ -27,29 +30,43 @@ export default class Thing extends Cloudable {
     this.color = color;
     this.trait = trait;
     this.order = order;
-    this.isEditing = false;
-    this.isGrabbed = false;
-    this.isExemplar = false;
-    this.titlePadding = 0;
 
-    editingID.subscribe((id: string | null) => {
-      this.isEditing = (id == this.id); // executes whenever editingID changes
+    this.updateColorAttributes();
+
+    editingID.subscribe((id: string | null) => { // executes whenever editingID changes
+      const isEditing = (id == this.id);
+      if (this.isEditing != isEditing) {
+        this.isEditing = isEditing;
+        this.updateColorAttributes();
+      }
     });
 
-    grabbedIDs.subscribe((ids: [string] | undefined) => {
-      this.isGrabbed = (ids != undefined) && ids.includes(this.id); // executes whenever editingID changes
+    grabbedIDs.subscribe((ids: [string] | undefined) => { // executes whenever grabbedIDs changes
+      const isGrabbed = (ids != undefined) && ids.includes(this.id);
+      if (this.isGrabbed != isGrabbed) {
+        this.isGrabbed = isGrabbed;
+        this.updateColorAttributes();
+      }
     });
-
   };
+
+  updateColorAttributes = () => {
+    const borderStyle = this.isEditing ? 'dashed' : 'solid';
+    const border = borderStyle + ' 1px ';
+    const grab = border + this.revealColor(false);
+    const hover = border + this.revealColor(true);
+    this.borderAttribute = border;
+    this.grabAttributes = grab;
+    this.hoverAttributes = hover;
+  }
+
+  revealColor = (isReveal: boolean): string => {
+    const flag = this.isGrabbed || this.isEditing || this.isExemplar;
+    return (flag != isReveal) ? this.color : constants.backgroundColor;
+  }
 
   get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
   get hasChildren():      boolean { return this.hasRelationshipKind(false); }
-
-  get borderAttribute():   string { return (this.isEditing ? 'dashed' : 'solid') + ' 1px '; }
-  get  grabAttributes():   string { return this.borderAttribute + this.revealColor(false); }
-  get hoverAttributes():   string { return this.borderAttribute + this.revealColor(true); }
-  get debugTitle():        string { return ' (\"' + this.title + '\") '; }
-
   get children():    Array<Thing> { return hierarchy.things_forKind_andID(RelationshipKind.isAChildOf, this.id, true); }
   get parents():     Array<Thing> { return hierarchy.things_forKind_andID(RelationshipKind.isAChildOf, this.id, false); }
   get siblings():    Array<Thing> { return this.firstParent?.children ?? []; }
@@ -70,7 +87,7 @@ export default class Thing extends Cloudable {
   }
 
   hasRelationshipKind = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
-  editTitle = () => { editingID.set(this.id); }
+  startEdit = () => { editingID.set(this.id); }
   toggleGrab = () => { grabs.toggleGrab(this); }
   grabOnly = () => { grabs.grabOnly(this); }
 
@@ -90,11 +107,6 @@ export default class Thing extends Cloudable {
         relationship.needsSave = true;
       }
     }
-  }
-
-  revealColor = (isReveal: boolean): string => {
-    const flag = this.isGrabbed || this.isEditing || this.isExemplar;
-    return (flag != isReveal) ? this.color : constants.backgroundColor;
   }
 
   nextSibling = (increment: boolean): Thing => {
