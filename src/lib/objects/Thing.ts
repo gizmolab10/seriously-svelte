@@ -87,7 +87,7 @@ export default class Thing extends Cloudable {
   }
 
   hasRelationshipKind = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
-  startEdit = () => { editingID.set(this.id); }
+  startEdit = () => { if (this != hierarchy.root) { editingID.set(this.id); } }
   toggleGrab = () => { grabs.toggleGrab(this); }
   grabOnly = () => { grabs.grabOnly(this); }
 
