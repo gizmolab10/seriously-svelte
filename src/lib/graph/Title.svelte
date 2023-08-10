@@ -53,7 +53,7 @@
       $stoppedEditingID = $editingID;
       isEditing = false;
       input?.blur();
-      if (hasChanges) {
+      if (hasChanges()) {
         cloud.thing_save(thing);
         revertTitleToOriginal();
       }
