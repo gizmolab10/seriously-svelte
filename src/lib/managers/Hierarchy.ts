@@ -1,4 +1,4 @@
-import { cloudEditor, Thing, Relationship, RelationshipKind, Access, User, sortAccordingToOrder, constants } from '../common/GlobalImports';
+import { hereID, cloudEditor, Thing, Relationship, RelationshipKind, Access, User, sortAccordingToOrder, constants } from '../common/GlobalImports';
 import fs from 'fs';
 
 ////////////////////////////////////////
@@ -19,7 +19,11 @@ export default class Hierarchy {
   root: Thing | null = null;
   here: Thing | null = null;
 
-  constructor() {}
+  constructor() {
+    hereID.subscribe((id: string | null) => {
+      this.here = this.thing_forID(id); 
+    })
+  }
 
   get rootID(): (string | null) { return this.root?.id ?? null; };
   get things(): Array<Thing> { return Object.values(this.thingsByID) };

@@ -1,19 +1,28 @@
 <script lang='ts'>
-  import { Thing, grabbedIDs, onDestroy, Signals, handleSignalOfKind } from '../common/GlobalImports';
+  import { Thing, grabbedIDs, onMount } from '../common/GlobalImports';
   export let isReveal = false;
   export let thing = Thing;
+	let isGrabbed = false;
   export let size = 15;
 
-	onDestroy( () => { signalHandler.disconnect(); });
+  onMount( () => { updateColorStyle(); });
 
-  const signalHandler = handleSignalOfKind(Signals.dots, (value) => {
-    if (value == thing.id) {
-      var style = document.getElementById(thing.id)?.style;
+	$: {
+		const grabbed = $grabbedIDs?.includes(thing.id);
+		if (isGrabbed != grabbed) {
+			isGrabbed = grabbed;
+			updateColorStyle();
+		}
+	}
+
+	function updateColorStyle() {
+		thing.updateColorAttributes();
+		const element = document.getElementById(thing.id);
+		var style = element?.style;
       style?.setProperty(   '--dotColor', thing.color);
       style?.setProperty( '--traitColor', thing.revealColor(!isReveal));
       style?.setProperty('--buttonColor', thing.revealColor( isReveal));
-    }
-  })
+	}
 
   async function handleClick(event) {
     if (thing.isExemplar) { return; }

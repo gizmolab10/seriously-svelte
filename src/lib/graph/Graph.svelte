@@ -1,18 +1,18 @@
 <script>
-  import { Thing, hierarchy, cloudEditor, grabs, editingID, signal, Signals, handleSignalOfKind, onDestroy, constants } from '../common/GlobalImports';
+  import { Thing, hierarchy, cloudEditor, grabs, editingID, hereID, constants } from '../common/GlobalImports';
   import Children from './Children.svelte';
   export let showHelp;
+  let here = Thing;
   let listener;
   let redraw;
 
-  onDestroy( () => { signalHandler.disconnect(); });
-
-  const signalHandler = handleSignalOfKind(Signals.here, (value) => {
-    redraw = !redraw;
-    setTimeout(() => { // give graph's new widgets time to be created
-      signal(Signals.widgets);
-    }, 1);
-  });
+	$: {
+    const newHere = hierarchy.thing_forID($hereID);
+    if (newHere != here) {
+      redraw = !redraw;
+    }
+    here = newHere;
+	}
 
   async function handleKeyDown(event) {
     let grab = grabs.grabbedThing;

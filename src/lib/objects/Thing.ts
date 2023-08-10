@@ -1,4 +1,4 @@
-import { grabs, hierarchy, cloudEditor, normalizeOrderOf, grabbedIDs, editingID, constants, RelationshipKind, signal, Signals } from '../common/GlobalImports';
+import { grabs, hierarchy, cloudEditor, normalizeOrderOf, grabbedIDs, editingID, hereID, constants, RelationshipKind, signal, Signals } from '../common/GlobalImports';
 import Cloudable from '../managers/Cloudable';
 import Airtable from 'airtable';
 
@@ -93,8 +93,7 @@ export default class Thing extends Cloudable {
 
   becomeHere = () => {
     if (this.hasChildren) {
-      hierarchy.here = this;
-      signal(Signals.here);
+      hereID.set(this.id);
     };
   }
 

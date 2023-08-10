@@ -1,5 +1,4 @@
-import { editingID, stoppedEditingID, grabbedIDs, lastUngrabbedID } from './State';
-import { signalMultiple, signal, handleSignalOfKind, Signals } from './Signals';
+import { hereID, editingID, stoppedEditingID, grabbedIDs, lastUngrabbedID } from './State';
 import { sortAccordingToOrder, normalizeOrderOf, removeAll } from './Utilities';
 import { FatTriangle, Direction } from '../geometry/FatTriangle';
 import { RelationshipKind } from '../objects/RelationshipKind';
@@ -18,6 +17,5 @@ import './Extensions';
 export { FatTriangle, Direction,
   constants, get, onMount, onDestroy,
   sortAccordingToOrder, normalizeOrderOf, removeAll,
-  signalMultiple, signal, Signals, handleSignalOfKind,
-  grabs, editingID, stoppedEditingID, grabbedIDs, lastUngrabbedID,
+  grabs, hereID, editingID, stoppedEditingID, grabbedIDs, lastUngrabbedID,
   cloudEditor, Thing, Relationship, RelationshipKind, hierarchy, Access, User };

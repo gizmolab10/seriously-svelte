@@ -1,17 +1,35 @@
 import { get, Thing, hierarchy, grabbedIDs, lastUngrabbedID, signal, Signals, sortAccordingToOrder } from "../common/GlobalImports";
 
 export default class Grabs {
+  grabbed: Thing[] | null = null;
 
-  constructor() {}
+  constructor() {
+    grabbedIDs.subscribe((ids: [string] | undefined) => { // executes whenever grabbedIDs changes
+      if (ids != undefined) {
+        this.grabbed = [];
+        for (const id of ids) {
+          const thing = hierarchy.thing_forID(id)
+          if (thing != null) {
+            this.grabbed.push(thing);
+          }
+        }
+      }
+    });
+  };
 
-  get lastGrabbedID(): string { return get(grabbedIDs)?.slice(-1)[0]; }
-  get grabbedThing(): (Thing | null) { return hierarchy.thing_forID(this.lastGrabbedID); }
+  get lastGrabbedID(): string | null { return this.grabbedThing?.id ?? null; }
   toggleGrab = (thing: Thing) => { if (thing.isGrabbed) { this.ungrab(thing); } else { this.grab(thing); } }
+  
+  get grabbedThing(): (Thing | null) {
+    if (this.grabbed != null) {
+      return this.grabbed.slice(-1)[0]
+    }
+    return null;
+  }
 
   grabOnly = (thing: Thing) => {
     lastUngrabbedID.set(this.lastGrabbedID);
     grabbedIDs.set([thing.id]);
-    signal(Signals.widgets);
   }
 
   grab = (thing: Thing) => {
@@ -21,7 +39,6 @@ export default class Grabs {
       }
       return array;
     });
-    signal(Signals.widgets);
   }
 
   ungrab = (thing: Thing) => {
@@ -35,7 +52,6 @@ export default class Grabs {
       nextGrabbedID = array.slice(-1)[0];
       return array;
     });
-    signal(Signals.widgets);
   }
 
   highestGrab(up: boolean) {

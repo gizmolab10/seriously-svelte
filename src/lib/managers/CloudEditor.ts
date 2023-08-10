@@ -100,7 +100,6 @@ export default class CloudEditor extends CRUD {
             return false; // continue the traversal
           });
           this.updateAllNeedy();
-          signal(Signals.here);
           newGrabbed.grabOnly();
         }
       }
