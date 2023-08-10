@@ -59,24 +59,7 @@ export default class CRUD {
         }
       }
 
-      const rootID = hierarchy.rootID;
-      if (rootID != null) {
-        const order = -1;
-        for (const thing of hierarchy.things) {
-          const id = thing.id;
-          if (id != rootID){
-            let relationship = hierarchy.relationship_parentTo(id);
-            if (relationship != null) {
-              thing.order = relationship.order;
-            } else {
-              thing.order = order;
-              relationship = hierarchy.relationship_new(this.newCloudID, RelationshipKind.isAChildOf, id, rootID, order);
-              relationship.needsCreate = true;
-            }
-          }
-        }
-      }
-
+      hierarchy.hierarchy_construct();
       onCompletion();
     } catch (error) {
       console.log(this.things_errorMessage + ' (things_readAll) ' + error);
