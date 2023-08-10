@@ -4,7 +4,7 @@ export default class Grabs {
   grabbed: Thing[] | null = null;
 
   constructor() {
-    grabbedIDs.subscribe((ids: [string] | undefined) => { // executes whenever grabbedIDs changes
+    grabbedIDs.subscribe((ids: string[] | undefined) => { // executes whenever grabbedIDs changes
       if (ids != undefined) {
         this.grabbed = [];
         for (const id of ids) {
@@ -44,14 +44,21 @@ export default class Grabs {
   ungrab = (thing: Thing) => {
     lastUngrabbedID.set(this.lastGrabbedID);
     let nextGrabbedID: (string | null) = null;
+    const rootID = hierarchy.rootID;
     grabbedIDs.update((array) => {
       const index = array.indexOf(thing.id);
       if (index != -1) {        // only splice array when item is found
         array.splice(index, 1); // 2nd parameter means remove one item only
       }
+      if (array.length == 0 && rootID != null) {
+        array.push(rootID);
+      }
       nextGrabbedID = array.slice(-1)[0];
       return array;
     });
+    if (get(grabbedIDs).length == 0) {
+      hierarchy.root?.grabOnly();
+    }
   }
 
   highestGrab(up: boolean) {

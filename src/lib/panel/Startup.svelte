@@ -2,7 +2,7 @@
   import { cloudEditor, hierarchy, onMount } from '../common/GlobalImports'
   import Panel from './Panel.svelte';
   let isLoading = true;
-  const build = 17; // access and users tables, play with svg triangles
+  const build = 18; // eliminate signals, play with svg triangles
 
   onMount(async () => {
     cloudEditor.readAll(async () => {

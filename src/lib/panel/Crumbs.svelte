@@ -5,14 +5,14 @@
   export let grab;
 
 	$: {
-		if (!$grabbedIDs?.includes(grab?.id)) {
+    if (!$grabbedIDs?.includes(grab?.id)) {
       let id = grabs.lastGrabbedID;
       const thing = hierarchy.thing_forID(id);   // start over with new grab
       if (thing != null) {
         grab = thing;
         ancestors = grab.ancestors;
       }
-		}
+    }
 	}
 
 </script>
