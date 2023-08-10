@@ -1,4 +1,5 @@
 import { cloudEditor, Thing, Relationship, RelationshipKind, Access, User, sortAccordingToOrder, constants } from '../common/GlobalImports';
+import fs from 'fs';
 
 ////////////////////////////////////////
 // creation, tracking and destruction //
@@ -25,9 +26,30 @@ export default class Hierarchy {
   thing_forID = (id: string | null): Thing | null => { return (id == null) ? null : this.thingsByID[id]; }
   thing_newAt = (order: number) => { return new Thing(cloudEditor.newCloudID, constants.defaultTitle, 'blue', 't', order); }
 
+  hierarchy_construct() {
+    const rootID = this.rootID;
+    if (rootID != null) {
+      const order = -1;
+      for (const thing of this.things) {
+        const id = thing.id;
+        if (id != rootID){
+          let relationship = this.relationship_parentTo(id);
+          if (relationship != null) {
+            thing.order = relationship.order;
+          } else {
+            thing.order = order;
+            relationship = this.relationship_new(cloudEditor.newCloudID, RelationshipKind.isAChildOf, id, rootID, order);
+            relationship.needsCreate = true;
+          }
+        }
+      }
+    }
+  }
+
   /////////////////////////////
   //         THINGS          //
   /////////////////////////////
+
   
   things_forIDs(ids: Array<string>): Array<Thing> {
     const array = Array<Thing>();
@@ -136,6 +158,17 @@ export default class Hierarchy {
   user_new = (id: string, name: string, email: string, phone: string) => {
     const user = new User(id, name, email, phone);
     this.userByID[id] = user;
+  }
+
+  object_writeToURL(object: any, filePath: string) {
+    const jsonData = JSON.stringify(object, null, 2); // 2 spaces for indentation
+    fs.writeFile(filePath, jsonData, 'utf8', (err) => {
+      if (err) {
+        console.error('Error writing JSON to file:', err);
+      } else {
+        console.log('JSON data has been written to', filePath);
+      }
+    });
   }
 
 }
