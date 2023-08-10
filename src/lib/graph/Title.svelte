@@ -54,7 +54,7 @@
       isEditing = false;
       input?.blur();
       if (hasChanges()) {
-        cloud.thing_save(thing);
+        cloudEditor.thing_save(thing);
         revertTitleToOriginal();
       }
     }
