@@ -1,8 +1,8 @@
-import { getFirestore, collection, getDocs, QueryDocumentSnapshot, DocumentData } from 'firebase/firestore';
-import { Thing, hierarchy } from "../common/GlobalImports";
+import { getFirestore, onSnapshot, collection, getDocs, QueryDocumentSnapshot, DocumentData } from 'firebase/firestore';
+import { Thing, hierarchy, firebaseDocuments } from "../common/GlobalImports";
 import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
-import Cloudable from './Cloudable';
+// import Cloudable from './Cloudable';
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -20,7 +20,7 @@ class Firebase {
     projectId: "seriously-4536d"
   };
 
-  documentSnapshotsByCollectionName: { [id: string]: Array<QueryDocumentSnapshot> } = {};
+  // documentSnapshotsByCollectionName: { [id: string]: Array<QueryDocumentSnapshot> } = {};
   app = initializeApp(this.firebaseConfig);
   analytics = getAnalytics(this.app);
   db = getFirestore(this.app);
@@ -34,6 +34,10 @@ class Firebase {
   fetchDocuments = async (collectionName: string) => {
     try {
       const itemsCollection = collection(this.db, collectionName);
+      onSnapshot(itemsCollection, snapshot => {
+        const updatedItems = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+        firebaseDocuments.set(updatedItems);
+      });
       const querySnapshot = await getDocs(itemsCollection);
       const documentSnapshots = querySnapshot.docs;
       if (documentSnapshots != undefined) {
@@ -45,20 +49,20 @@ class Firebase {
     }
   }
 
-  saveDocument = async (cloudable: Cloudable, collectionName: string) => {
-    const id = cloudable.id;
-    const documentSnapshots = this.documentSnapshotsByCollectionName[collectionName];
-    documentSnapshots.forEach((documentSnapshot) => {
-      if (documentSnapshot.id == id) {
-        const ref = hierarchy.thing_forID(id);
-        documentSnapshot.set(ref as DocumentData);
+  // saveDocument = async (cloudable: Cloudable, collectionName: string) => {
+  //   const id = cloudable.id;
+  //   const documentSnapshots = this.documentSnapshotsByCollectionName[collectionName];
+  //   documentSnapshots.forEach((documentSnapshot) => {
+  //     if (documentSnapshot.id == id) {
+  //       const ref = hierarchy.thing_forID(id);
+  //       documentSnapshot.set(ref as DocumentData);
 
-      }
-    })
-  }
+  //     }
+  //   })
+  // }
 
   async remember(documentSnapshots: QueryDocumentSnapshot[], collectionName: string) {
-    this.documentSnapshotsByCollectionName[collectionName] = documentSnapshots;
+    // this.documentSnapshotsByCollectionName[collectionName] = documentSnapshots;
     for (const documentSnapshot of documentSnapshots) {
       const data = documentSnapshot.data();
       const thing = data as Thing;
