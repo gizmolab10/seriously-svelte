@@ -1,4 +1,5 @@
 import { hereID, cloudEditor, Thing, Relationship, RelationshipKind, Access, User, sortAccordingToOrder, constants } from '../common/GlobalImports';
+import { firebase } from './Firebase';
 import fs from 'fs';
 
 ////////////////////////////////////////
@@ -25,10 +26,24 @@ export default class Hierarchy {
     })
   }
 
+  get hasNothing(): boolean { return this.root == null; }
   get rootID(): (string | null) { return this.root?.id ?? null; };
   get things(): Array<Thing> { return Object.values(this.thingsByID) };
   thing_forID = (id: string | null): Thing | null => { return (id == null) ? null : this.thingsByID[id]; }
   thing_newAt = (order: number) => { return new Thing(cloudEditor.newCloudID, constants.defaultTitle, 'blue', 't', order); }
+  setupFirebase = (onCompletion: () => any) => { firebase.fetchAll(onCompletion); }
+  setup = async (onCompletion: () => any) => { this.setupCRUD(onCompletion); }
+
+  setupCRUD = async (onCompletion: () => any) => {
+    cloudEditor.readAll(async () => {
+      hierarchy.root?.becomeHere()
+      onCompletion();
+      setTimeout(() => { // give crumbs time to be created after launch
+        hierarchy.root?.grabOnly()
+        // hierarchy.object_writeToURL(hierarchy.thingsByID, 'foobeedoo.json'); // vite won't allow this
+      }, 1);
+    });
+  }
 
   hierarchy_construct() {
     const rootID = this.rootID;

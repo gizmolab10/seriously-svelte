@@ -1,5 +1,3 @@
-import { hierarchy } from '../common/GlobalImports';
-
 export default class Access {
   id: string;
   kind: string;

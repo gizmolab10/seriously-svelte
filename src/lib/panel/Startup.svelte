@@ -1,27 +1,14 @@
 <script>
   import { cloudEditor, hierarchy, onMount } from '../common/GlobalImports'
+  onMount(async () => { hierarchy.setup(() => { isLoading = false; }) })
   import Panel from './Panel.svelte';
+  const build = 18; // eliminate signals
   let isLoading = true;
-  const build = 18; // eliminate signals, play with svg triangles
-
-  onMount(async () => {
-    cloudEditor.readAll(async () => {
-      isLoading = false;
-      hierarchy.root?.becomeHere()
-      setTimeout(() => { // give crumbs time to be created after launch
-        hierarchy.root?.grabOnly()
-        // hierarchy.object_writeToURL(hierarchy.thingsByID, 'foobeedoo.json'); // vite won't allow this
-      }, 1);
-    });
-  })
-
-  function hasNothing() { return !(hierarchy.root?.hasChildren ?? false); }
-
-  </script>
+</script>
 
 {#if isLoading}
   <p>Welcome to Seriously</p>
-{:else if hasNothing()}
+{:else if hierarchy.hasNothing}
   <p>Nothing is available.</p>
 {:else}
   <Panel build={build}/>

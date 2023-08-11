@@ -3,7 +3,6 @@ import Cloudable from '../managers/Cloudable';
 import Airtable from 'airtable';
 
 export default class Thing extends Cloudable {
-  id: string;
   title: string;
   color: string;
   trait: string;
@@ -24,8 +23,7 @@ export default class Thing extends Cloudable {
   }
 
   constructor(id = cloudEditor.newCloudID, title = constants.defaultTitle, color = 'blue', trait = 's', order = 0) {
-    super();
-    this.id = id;
+    super(id);
     this.title = title;
     this.color = color;
     this.trait = trait;
