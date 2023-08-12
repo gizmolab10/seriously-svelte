@@ -84,7 +84,6 @@
 </div>
 <input
   type='text'
-  id={thing.id}
   bind:this={input}
   on:blur={handleBlur}
   on:focus={handleFocus}

@@ -1,5 +1,5 @@
 <script>
-  import { Direction, grabs } from '../common/GlobalImports'
+  import { grabs, ViewIDs } from '../common/GlobalImports'
   import { viewID } from '../managers/State';
   import Graph from '../graph/Graph.svelte';
   import Crumbs from './Crumbs.svelte';
@@ -12,14 +12,18 @@
 </script>
 
 <div>
-  <span class='left-margin'> </span>
+  <span class='left-margin'>
+    <Button size={23} onClick={ViewIDs.details}/>
+  </span>
   <span>
     <Crumbs grab={grabs.grabbedThing}/>
-    <Button size={size} onClick={'?'}/>
+    <Button size={size} onClick={ViewIDs.help}/>
     <Graph/>
   </span>
-  {#if $viewID == '?'}
+  {#if $viewID == ViewIDs.help}
     <Help size={size} onClose={handleHelpClose} />
+  {:else if $viewID == ViewIDs.details}
+    wlkenal alkdnlnal alwlkeekrk
   {/if}
 </div>
 

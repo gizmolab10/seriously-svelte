@@ -4,15 +4,8 @@
   import Children from './Children.svelte'
   let here = Thing;
   let listener;
-  let redraw;
 
-	$: {
-    const newHere = hierarchy.thing_forID($hereID);
-    if (newHere != here) {
-      redraw = !redraw;
-    }
-    here = newHere;
-	}
+	$: { here = hierarchy.thing_forID($hereID); }
 
   async function handleKeyDown(event) {
     let grab = grabs.grabbedThing;
@@ -48,10 +41,8 @@
 </script>
 
 <svelte:document on:keydown={handleKeyDown} />
-{#key redraw}
-  <div style='position: fixed; left=10px'>
-    {#if hierarchy.here != null}
-      <Children parent={hierarchy.here}/>
-    {/if}
-  </div>
-{/key}
+<div style='position: fixed; left=10px'>
+  {#if here != null}
+    <Children parent={here}/>
+  {/if}
+</div>

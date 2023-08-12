@@ -1,4 +1,3 @@
-
 export enum Direction {
   down = Math.PI/6,
   right = Math.PI,

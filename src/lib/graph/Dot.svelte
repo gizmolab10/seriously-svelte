@@ -5,6 +5,7 @@
   export let thing = Thing;
 	let isGrabbed = false;
   export let size = 15;
+  let dot = null;
 
   onMount( () => { updateColorStyle(); });
 
@@ -18,8 +19,7 @@
 
 	function updateColorStyle() {
 		thing.updateColorAttributes();
-		const element = document.getElementById(thing.id);
-		var style = element?.style;
+		var style = dot?.style;
       style?.setProperty(   '--dotColor', thing.color);
       style?.setProperty( '--traitColor', thing.revealColor(!isReveal));
       style?.setProperty('--buttonColor', thing.revealColor( isReveal));
@@ -42,17 +42,16 @@
 
 </script>
 
-{#key $grabbedIDs?.includes(thing.id)}
-  <slot>
-    <button id={thing.id}
-      on:click={handleClick}
-      style='width:{size}px; height:{size}px;
-             --dotColor: {thing.color};
-           --traitColor: {thing.revealColor(!isReveal)};
-          --buttonColor: {thing.revealColor( isReveal)}'>
-    </button>
-  </slot>
-{/key}
+<slot>
+  <button
+    bind:this={dot}
+    on:click={handleClick}
+    style='width:{size}px; height:{size}px;
+            --dotColor: {thing.color};
+          --traitColor: {thing.revealColor(!isReveal)};
+        --buttonColor: {thing.revealColor( isReveal)}'>
+  </button>
+</slot>
 
 <style lang='scss'>
   button {

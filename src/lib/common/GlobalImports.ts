@@ -7,15 +7,16 @@ import { Relationship } from '../data/Relationship';
 import { hierarchy } from '../managers/Hierarchy';
 import { onMount, onDestroy } from 'svelte';
 import { grabs } from '../managers/Grabs';
+import { ViewIDs } from './Enumerations';
 import { constants } from './Constants';
 import Access from '../data/Access';
-import Thing from '../data/Thing';
 import { get } from 'svelte/store';
+import Thing from '../data/Thing';
 import User from '../data/User';
 import './Extensions';
 
-export { FatTriangle, Direction,
-  constants, get, onMount, onDestroy,
+export { get, onMount, onDestroy,
+  constants, FatTriangle, Direction, ViewIDs,
   grabs, hierarchy, cloudEditor, persistence,
   sortAccordingToOrder, normalizeOrderOf, removeAll,
   Thing, Relationship, RelationshipKind, Access, User };
