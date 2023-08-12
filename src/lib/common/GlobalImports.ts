@@ -1,9 +1,10 @@
-import { hereID, editingID, stoppedEditingID, grabbedIDs, lastUngrabbedID, firebaseDocuments } from '../data/State';
+import { hereID, editingID, viewID, stoppedEditingID, grabbedIDs, lastUngrabbedID, firebaseDocuments } from '../managers/State';
 import { sortAccordingToOrder, normalizeOrderOf, removeAll } from './Utilities';
 import { FatTriangle, Direction } from '../geometry/FatTriangle';
 import { RelationshipKind } from '../data/RelationshipKind';
-import { Relationship } from '../data/Relationship';
+import { persistence } from '../persistence/Persistence';
 import { cloudEditor } from '../managers/CloudEditor';
+import { Relationship } from '../data/Relationship';
 import { hierarchy } from '../managers/Hierarchy';
 import { onMount, onDestroy } from 'svelte';
 import { grabs } from '../managers/Grabs';
@@ -16,6 +17,7 @@ import './Extensions';
 
 export { FatTriangle, Direction,
   constants, get, onMount, onDestroy,
+  grabs, hierarchy, cloudEditor, persistence,
   sortAccordingToOrder, normalizeOrderOf, removeAll,
-  hierarchy, cloudEditor, Thing, Relationship, RelationshipKind, Access, User,
-  grabs, hereID, editingID, stoppedEditingID, grabbedIDs, lastUngrabbedID, firebaseDocuments };
+  Thing, Relationship, RelationshipKind, Access, User,
+  hereID, editingID, viewID, stoppedEditingID, grabbedIDs, lastUngrabbedID, firebaseDocuments };

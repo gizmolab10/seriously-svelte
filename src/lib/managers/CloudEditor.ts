@@ -1,6 +1,6 @@
 import { get, grabbedIDs, hierarchy, normalizeOrderOf, signal, Signals, grabs } from '../common/GlobalImports';
 import { Thing, RelationshipKind } from '../common/GlobalImports';
-import CRUD from './CRUD';
+import CRUD from '../persistence/CRUD';
 
 ///////////////////////////////////////
 //                                   //

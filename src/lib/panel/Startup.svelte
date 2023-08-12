@@ -1,5 +1,5 @@
 <script>
-  import { cloudEditor, hierarchy, onMount } from '../common/GlobalImports'
+  import { cloudEditor, hierarchy, persistence, onMount } from '../common/GlobalImports'
   const build = 19; // firebase writable store
   import Panel from './Panel.svelte';
   const useCRUD = true;
@@ -11,6 +11,7 @@
       things = hierarchy.things;
       isLoading = false;
     })
+    persistence.test();
   })
 </script>
 

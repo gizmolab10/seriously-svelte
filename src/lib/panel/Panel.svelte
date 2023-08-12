@@ -1,15 +1,13 @@
 <script>
-  import { Direction, grabs } from '../common/GlobalImports'
-  import HelpButton from './HelpButton.svelte';
+  import { Direction, grabs, viewID } from '../common/GlobalImports'
   import Graph from '../graph/Graph.svelte';
   import Crumbs from './Crumbs.svelte';
+  import Button from './Button.svelte';
   import Help from './Help.svelte';
-  let isHelpOpen = false;
   export let build;
   let size = 15;
 
   function handleHelpClose() { isHelpOpen = false; }
-  function handleHelpClick(event) { isHelpOpen = true; }
 
 </script>
 
@@ -19,10 +17,10 @@
   </span>
   <span>
     <Crumbs grab={grabs.grabbedThing}/>
-    <HelpButton size={size} onClick={handleHelpClick}/>
-    <Graph showHelp={handleHelpClick}/>
+    <Button size={size} onClick={'?'}/>
+    <Graph/>
   </span>
-  {#if isHelpOpen}
+  {#if $viewID == '?'}
     <Help size={size} onClose={handleHelpClose} />
   {/if}
 </div>

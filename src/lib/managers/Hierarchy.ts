@@ -1,5 +1,5 @@
 import { hereID, cloudEditor, Thing, Relationship, RelationshipKind, Access, User, sortAccordingToOrder, constants } from '../common/GlobalImports';
-import { firebase } from './Firebase';
+import { firebase } from '../persistence/Firebase';
 import fs from 'fs';
 
 ////////////////////////////////////////

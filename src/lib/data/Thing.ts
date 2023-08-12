@@ -1,5 +1,5 @@
 import { grabs, hierarchy, cloudEditor, normalizeOrderOf, grabbedIDs, editingID, hereID, constants, RelationshipKind, signal, Signals } from '../common/GlobalImports';
-import Cloudable from '../managers/Cloudable';
+import Cloudable from '../persistence/Cloudable';
 import Airtable from 'airtable';
 
 export default class Thing extends Cloudable {

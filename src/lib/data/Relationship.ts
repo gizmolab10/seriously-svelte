@@ -1,5 +1,5 @@
 import { RelationshipKind, hierarchy } from '../common/GlobalImports';
-import Cloudable from '../managers/Cloudable';
+import Cloudable from '../persistence/Cloudable';
 import Airtable from 'airtable';
 
 export class Relationship extends Cloudable {
