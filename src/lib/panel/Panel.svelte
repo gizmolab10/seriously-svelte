@@ -2,6 +2,7 @@
   import { grabs, ViewIDs } from '../common/GlobalImports'
   import { viewID } from '../managers/State';
   import Graph from '../graph/Graph.svelte';
+  import Details from './Details.svelte';
   import Crumbs from './Crumbs.svelte';
   import Button from './Button.svelte';
   import Help from './Help.svelte';
@@ -25,7 +26,7 @@
   {#if $viewID == ViewIDs.help}
     <Help onClose={handleHelpClose} size={size}/>
   {:else if $viewID == ViewIDs.details}
-    wlkenal alkdnlnal alwlkeekrk
+    <Details onClose={handleHelpClose} size={size}/>
   {/if}
 </div>
 
