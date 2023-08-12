@@ -1,5 +1,6 @@
 <script>
-  import { Thing, hierarchy, cloudEditor, grabs, viewID, editingID, hereID, constants } from '../common/GlobalImports';
+  import { Thing, hierarchy, cloudEditor, grabs, constants } from '../common/GlobalImports';
+  import { viewID, editingID, hereID } from '../managers/State';
   import Children from './Children.svelte'
   let here = Thing;
   let listener;

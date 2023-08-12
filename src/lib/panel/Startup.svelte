@@ -1,5 +1,6 @@
 <script>
-  import { cloudEditor, hierarchy, persistence, build, onMount } from '../common/GlobalImports'
+  import { cloudEditor, hierarchy, persistence, onMount } from '../common/GlobalImports'
+  import { build } from '../managers/State';
   import Panel from './Panel.svelte';
   const useCRUD = true;
   let isLoading = true;

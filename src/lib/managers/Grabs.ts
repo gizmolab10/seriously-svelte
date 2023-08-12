@@ -1,4 +1,5 @@
-import { get, Thing, hierarchy, grabbedIDs, sortAccordingToOrder } from "../common/GlobalImports";
+import { get, Thing, hierarchy, sortAccordingToOrder } from "../common/GlobalImports";
+import { grabbedIDs } from './State';
 
 export default class Grabs {
   grabbed: Thing[] | null = null;

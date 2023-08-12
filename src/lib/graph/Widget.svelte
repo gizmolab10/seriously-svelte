@@ -1,5 +1,6 @@
 <script lang='ts'>
-  import { Thing, editingID, grabbedIDs, onMount } from '../common/GlobalImports';
+  import { editingID, grabbedIDs } from '../managers/State';
+  import { Thing, onMount } from '../common/GlobalImports';
 	import Title from './Title.svelte';
 	import Dot from './Dot.svelte';
 	export let thing = Thing;

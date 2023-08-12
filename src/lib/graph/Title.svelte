@@ -1,5 +1,6 @@
 <script lang='ts'>
-  import { Thing, cloudEditor, editingID, stoppedEditingID, onMount, signal, Signals } from '../common/GlobalImports';
+  import { Thing, cloudEditor, onMount } from '../common/GlobalImports';
+  import { editingID, stoppedEditingID } from '../managers/State';
   import Widget from './Widget.svelte';
   export let thing = Thing;
   let originalTitle = thing.title;

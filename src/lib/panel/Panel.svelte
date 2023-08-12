@@ -1,5 +1,6 @@
 <script>
-  import { Direction, grabs, viewID } from '../common/GlobalImports'
+  import { Direction, grabs } from '../common/GlobalImports'
+  import { viewID } from '../managers/State';
   import Graph from '../graph/Graph.svelte';
   import Crumbs from './Crumbs.svelte';
   import Button from './Button.svelte';

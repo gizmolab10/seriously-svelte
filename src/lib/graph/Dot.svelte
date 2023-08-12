@@ -1,5 +1,6 @@
 <script lang='ts'>
-  import { Thing, grabbedIDs, onMount } from '../common/GlobalImports';
+  import { Thing, onMount } from '../common/GlobalImports';
+  import { grabbedIDs } from '../managers/State';
   export let isReveal = false;
   export let thing = Thing;
 	let isGrabbed = false;

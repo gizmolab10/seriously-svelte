@@ -1,6 +1,7 @@
 import { onSnapshot, QueryDocumentSnapshot } from 'firebase/firestore';
 import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
-import { Thing, hierarchy, firebaseDocuments } from "../common/GlobalImports";
+import { Thing, hierarchy } from '../common/GlobalImports';
+import { firebaseDocuments } from '../managers/State'
 import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
 // import Cloudable from './Cloudable';

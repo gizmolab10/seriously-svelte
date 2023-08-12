@@ -1,4 +1,3 @@
-import { build, hereID, viewID, editingID, stoppedEditingID, grabbedIDs, firebaseDocuments } from '../managers/State';
 import { sortAccordingToOrder, normalizeOrderOf, removeAll } from './Utilities';
 import { FatTriangle, Direction } from '../geometry/FatTriangle';
 import { RelationshipKind } from '../data/RelationshipKind';
@@ -19,5 +18,4 @@ export { FatTriangle, Direction,
   constants, get, onMount, onDestroy,
   grabs, hierarchy, cloudEditor, persistence,
   sortAccordingToOrder, normalizeOrderOf, removeAll,
-  Thing, Relationship, RelationshipKind, Access, User,
-  build, hereID, viewID, editingID, stoppedEditingID, grabbedIDs, firebaseDocuments };
+  Thing, Relationship, RelationshipKind, Access, User };
