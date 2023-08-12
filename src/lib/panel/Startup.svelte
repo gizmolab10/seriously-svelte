@@ -1,12 +1,12 @@
 <script>
-  import { cloudEditor, hierarchy, persistence, onMount } from '../common/GlobalImports'
-  const build = 19; // firebase writable store
+  import { cloudEditor, hierarchy, persistence, build, onMount } from '../common/GlobalImports'
   import Panel from './Panel.svelte';
   const useCRUD = true;
   let isLoading = true;
   let things = [];
 
   onMount(async () => {
+    $build = 19;  // firebase writable store
     hierarchy.setup(() => {
       things = hierarchy.things;
       isLoading = false;
@@ -20,7 +20,7 @@
 {:else if hierarchy.hasNothing}
   <p>Nothing is available.</p>
 {:else if useCRUD}
-  <Panel build={build}/>
+  <Panel/>
 {:else}
   Firestore!
   <ul>

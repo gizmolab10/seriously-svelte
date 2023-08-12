@@ -1,4 +1,5 @@
 <script>
+import { viewID } from "../managers/State";
   export let borderColor = '#333';
   export let textColor = '#400';
   export let color = '#ccc';
@@ -7,9 +8,7 @@
 
   // Event handler for the click event of the button
   function handleClick() {
-    if (onClick && typeof onClick === 'function') {
-      onClick();
-    }
+    $viewID = onClick;
   }
 </script>
 
@@ -27,5 +26,5 @@
     display: inline-block;
     text-align: center;
     font-weight: bold;
-    cursor: help;'>?
+    cursor: help;'>{onClick}
 </div>

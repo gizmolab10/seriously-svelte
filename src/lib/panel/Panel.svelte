@@ -4,17 +4,14 @@
   import Crumbs from './Crumbs.svelte';
   import Button from './Button.svelte';
   import Help from './Help.svelte';
-  export let build;
   let size = 15;
 
-  function handleHelpClose() { isHelpOpen = false; }
+  function handleHelpClose() { $viewID = null; }
 
 </script>
 
 <div>
-  <span class='left-margin'>
-    build {build}
-  </span>
+  <span class='left-margin'> </span>
   <span>
     <Crumbs grab={grabs.grabbedThing}/>
     <Button size={size} onClick={'?'}/>

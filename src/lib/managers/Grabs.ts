@@ -1,4 +1,4 @@
-import { get, Thing, hierarchy, grabbedIDs, lastUngrabbedID, signal, Signals, sortAccordingToOrder } from "../common/GlobalImports";
+import { get, Thing, hierarchy, grabbedIDs, sortAccordingToOrder } from "../common/GlobalImports";
 
 export default class Grabs {
   grabbed: Thing[] | null = null;
@@ -28,7 +28,6 @@ export default class Grabs {
   }
 
   grabOnly = (thing: Thing) => {
-    lastUngrabbedID.set(this.lastGrabbedID);
     grabbedIDs.set([thing.id]);
   }
 
@@ -42,7 +41,6 @@ export default class Grabs {
   }
 
   ungrab = (thing: Thing) => {
-    lastUngrabbedID.set(this.lastGrabbedID);
     let nextGrabbedID: (string | null) = null;
     const rootID = hierarchy.rootID;
     grabbedIDs.update((array) => {
