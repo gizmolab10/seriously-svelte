@@ -12,7 +12,6 @@
       things = hierarchy.things;
       isLoading = false;
     })
-    persistence.test();
   })
 </script>
 

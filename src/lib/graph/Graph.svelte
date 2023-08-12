@@ -1,5 +1,5 @@
 <script>
-  import { Thing, hierarchy, cloudEditor, grabs, constants } from '../common/GlobalImports';
+  import { grabs, Thing, ViewIDs, hierarchy, cloudEditor, constants } from '../common/GlobalImports';
   import { viewID, editingID, hereID } from '../managers/State';
   import Children from './Children.svelte'
   let here = Thing;
@@ -22,7 +22,7 @@
       const SHIFT = event.shiftKey;
       switch (key) {
         case ' ':          cloudEditor.thing_redraw_addChildTo(grab); break;
-        case '?':          $viewID = '?'; break;
+        case '?':          $viewID = ViewIDs.help; break;
         case 'd':          cloudEditor.thing_duplicate(grab); break;
         case 'r':          break; // restart app
         case 't':          alert('PARENT-CHILD SWAP'); break;

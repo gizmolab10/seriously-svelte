@@ -1,5 +1,5 @@
 <script lang='ts'>
-  import { Thing, cloudEditor, onMount } from '../common/GlobalImports';
+  import { Thing, cloudEditor, onMount , onDestroy} from '../common/GlobalImports';
   import { editingID, stoppedEditingID } from '../managers/State';
   import Widget from './Widget.svelte';
   export let thing = Thing;
@@ -8,9 +8,12 @@
   let wrapper = null;
   let input = null;
 
-  function revertTitleToOriginal() { originalTitle = thing.title; }
   var hasChanges = () => { return originalTitle != thing.title; }
-  onMount(async () => { updateInputWidth(); });
+  function revertTitleToOriginal() { originalTitle = thing.title; }
+  function handleInput(event) { thing.title = event.target.value; }
+  function handleBlur(event) { stopAndClearEditing(false); updateInputWidth(); }
+  onMount(() => { updateInputWidth(); });
+  onDestroy(() => { thing = null; });
 
   function handleKeyDown(event) {
     if ($editingID == thing.id) {
@@ -42,18 +45,20 @@
     }
   }
 
-  function stopAndClearEditing() {
-    stopEditing();
+  function stopAndClearEditing(invokeBlur: boolean = true) {
+    stopEditing(invokeBlur);
     setTimeout(() => {     // eliminate infinite recursion
       $editingID = null;
     }, 20);
   }
 
-  function stopEditing() {
+  function stopEditing(invokeBlur: boolean = true) {
     if (isEditing) {
       $stoppedEditingID = $editingID;
       isEditing = false;
-      input?.blur();
+      if (invokeBlur) {
+        input?.blur();
+      }
       if (hasChanges()) {
         cloudEditor.thing_save(thing);
         revertTitleToOriginal();
@@ -74,9 +79,6 @@
       input.style.width = `${(wrapper.scrollWidth * 0.93) + thing.titlePadding - 5}px`;
     }
   }
-
-  function handleInput(event) { thing.title = event.target.value; }
-  function handleBlur(event) { stopEditing(true); updateInputWidth(); }
 </script>
 
 <div class="wrapper" bind:this={wrapper}>

@@ -1,15 +1,22 @@
 <script>
-import { viewID } from "../managers/State";
+  import { ViewIDs, onMount } from "../common/GlobalImports";
+  import { viewID } from "../managers/State";
   export let borderColor = '#333';
   export let textColor = '#400';
   export let color = '#ccc';
+  export let openID = '';
   export let size = 20;
-  export let onClick;
+  let hasNoImage = false;
+  function handleClick() { $viewID = openID; }
 
-  // Event handler for the click event of the button
-  function handleClick() {
-    $viewID = onClick;
-  }
+  onMount(() => {
+    switch (openID) {
+      case ViewIDs.help:
+        hasNoImage = true;
+        break;
+    }
+  })
+
 </script>
 
 <div
@@ -26,5 +33,10 @@ import { viewID } from "../managers/State";
     display: inline-block;
     text-align: center;
     font-weight: bold;
-    cursor: help;'>{onClick}
+    cursor: pointer;'>
+    {#if hasNoImage}
+      {openID}
+    {:else}
+      <img src="settings.png" alt="Image" width={size}px height={size}px/>
+    {/if}
 </div>

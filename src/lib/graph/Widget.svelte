@@ -7,6 +7,7 @@
 	let isGrabbed = false;
 	let isEditing = false;
 	let border;
+	let widget;
 
   onMount(async () => {
 		updateBorderStyle();
@@ -15,9 +16,7 @@
 	function updateBorderStyle() {
 		thing.updateColorAttributes();
 		border = thing.grabAttributes;
-		const element = document.getElementById(thing.id);
-		var style = element?.style;
-		style?.setProperty( '--border', border);
+		widget?.style?.setProperty( '--border', border);
 	}
 
 	$: {
@@ -35,7 +34,7 @@
 
 </script>
 
-<span id={thing.id}>
+<span bind:this={widget}>
 	<Dot thing={thing} size=15/>
 	<Title thing={thing}/>
 	{#if thing.hasChildren}

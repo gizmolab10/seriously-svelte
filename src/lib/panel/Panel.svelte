@@ -13,15 +13,17 @@
 
 <div>
   <span class='left-margin'>
-    <Button size={23} onClick={ViewIDs.details}/>
+    <Button openID={ViewIDs.details} size={size} borderColor='white'/>
   </span>
-  <span>
+  <span class='main'>
     <Crumbs grab={grabs.grabbedThing}/>
-    <Button size={size} onClick={ViewIDs.help}/>
-    <Graph/>
+    <Button openID={ViewIDs.help} size={size}/>
   </span>
+  <div class='graph'>
+    <Graph/>
+  </div>
   {#if $viewID == ViewIDs.help}
-    <Help size={size} onClose={handleHelpClose} />
+    <Help onClose={handleHelpClose} size={size}/>
   {:else if $viewID == ViewIDs.details}
     wlkenal alkdnlnal alwlkeekrk
   {/if}
@@ -32,9 +34,16 @@
      cursor: default;
   }
   .left-margin {
-    font-size: .625em;
-    color: green;
+    position: fixed;
+    margin: 1px;
     width: 75px;
-    margin-right: 10px;
+  }
+  .main {
+    position: fixed;
+    left: 32px
+  }
+  .graph {
+    position: fixed;
+    top: 20px
   }
 </style>
