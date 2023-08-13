@@ -1,6 +1,6 @@
 <script>
   import { cloudEditor, hierarchy, ButtonIDs, onMount } from '../common/GlobalImports'
-  import { build, bulk } from '../managers/State';
+  import { build, viewID, bulk } from '../managers/State';
   import Button from './Button.svelte';
   import Panel from './Panel.svelte';
   const useCRUD = true;
@@ -25,7 +25,7 @@
   <Panel/>
 {:else}
   <span>
-    <Button openID={ButtonIDs.details} size=15 borderColor='white'/>
+    <Button image='settings.png' size=15 borderColor='white' onClick={() =>{$viewID = ButtonIDs.details}}/>
   </span>
   <div>
     Firestore {$bulk}!

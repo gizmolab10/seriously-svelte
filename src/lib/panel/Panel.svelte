@@ -14,19 +14,30 @@
 
 <div>
   <span class='left-margin'>
-    <Button openID={ButtonIDs.details} size={size} borderColor='white'/>
+    <Button
+      image='settings.png'
+      size=15
+      borderColor='white'
+      onClick={() =>{$viewID = ButtonIDs.details}}/>
   </span>
   <span class='main'>
     <Crumbs grab={grabs.grabbedThing}/>
-    <Button openID={ButtonIDs.help} size={size}/>
+    <Button
+      onClick={() =>{$viewID = ButtonIDs.help}}
+      label='?'
+      size={size}/>
   </span>
   <div class='graph'>
     <Graph/>
   </div>
   {#if $viewID == ButtonIDs.help}
-    <Help onClose={handleHelpClose} size={size}/>
+    <Help
+      onClose={handleHelpClose}
+      size={size}/>
   {:else if $viewID == ButtonIDs.details}
-    <Details onClose={handleHelpClose} size={size}/>
+    <Details
+      onClose={handleHelpClose}
+      size={size}/>
   {/if}
 </div>
 

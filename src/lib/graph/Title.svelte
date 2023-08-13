@@ -1,9 +1,10 @@
 <script lang='ts'>
-  import { Thing, cloudEditor, onMount , onDestroy} from '../common/GlobalImports';
+  import { Thing, cloudEditor, onDestroy } from '../common/GlobalImports';
   import { editingID, stoppedEditingID } from '../managers/State';
   import Widget from './Widget.svelte';
   export let thing = Thing;
   let originalTitle = thing.title;
+  let currentThing = Thing;
   let isEditing = false;
   let wrapper = null;
   let input = null;
@@ -12,7 +13,6 @@
   function revertTitleToOriginal() { originalTitle = thing.title; }
   function handleInput(event) { thing.title = event.target.value; }
   function handleBlur(event) { stopAndClearEditing(false); updateInputWidth(); }
-  onMount(() => { updateInputWidth(); });
   onDestroy(() => { thing = null; });
 
   function handleKeyDown(event) {
@@ -42,6 +42,12 @@
         input?.focus();
         input?.select();
       }, 10);
+    }
+    if (currentThing != thing) {
+      currentThing = thing;
+      setTimeout(() => {
+        updateInputWidth();
+      }, 1);
     }
   }
 

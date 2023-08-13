@@ -4,30 +4,14 @@
   export let borderColor = '#333';
   export let textColor = '#400';
   export let color = '#ccc';
-  export let openID = null;
+  export let onClick = null;
+  export let label = null;
+  export let image = null;
   export let size = 20;
-  let hasNoImage = false;
-
-  function handleClick() {
-    if (openID) {
-      $viewID = openID;
-    }
-  }
-
-  onMount(() => {
-    if (openID) {
-      switch (openID) {
-        case ButtonIDs.help:
-          hasNoImage = true;
-          break;
-      }
-    }
-  })
-
 </script>
 
 <div
-  on:click={handleClick}
+  on:click={onClick}
   style='
     width: {size}px;
     height: {size}px;
@@ -41,9 +25,9 @@
     text-align: center;
     font-weight: bold;
     cursor: pointer;'>
-    {#if hasNoImage}
-      {openID}
-    {:else}
+    {#if image}
       <img src="settings.png" alt="Image" width={size}px height={size}px/>
+    {:else if label}
+      {label}
     {/if}
 </div>
