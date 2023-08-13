@@ -1,7 +1,5 @@
 export enum ButtonIDs {
-  details = 'd',
-  remote  = 'r',
-  help    = '?',
+  help = '?',
 }
 export enum DBTypes {
   firebase = 'f',

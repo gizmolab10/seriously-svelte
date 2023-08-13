@@ -1,13 +1,21 @@
 <script>
-  import { grabs, DBTypes, ButtonIDs, hierarchy } from '../common/GlobalImports'
-  import { fireBulk, popupViewID, dbType } from '../managers/State';
+  import { grabs, DBTypes, ButtonIDs, hierarchy, persistence } from '../common/GlobalImports'
+  import { dbType, fireBulk, popupViewID, showDetails } from '../managers/State';
   import Graph from '../graph/Graph.svelte';
   import Details from './Details.svelte';
   import Crumbs from './Crumbs.svelte';
   import Button from './Button.svelte';
   import Help from './Help.svelte';
   let size = 15;
-  function handleClick(id) { $popupViewID = ($popupViewID == id) ? null : id; }
+  
+  function handleClick(id) {
+    $popupViewID = ($popupViewID == id) ? null : id;
+  }
+  
+  function handleSettings(event) {
+    $showDetails = !$showDetails;
+    persistence.writeToKey('details', $showDetails);
+  }
 </script>
 
 <div>
@@ -38,8 +46,8 @@
       image='settings.png'
       size=15
       borderColor='white'
-      onClick={() => {handleClick(ButtonIDs.details)}}/>
-    {#if $popupViewID == ButtonIDs.details}
+      onClick={handleSettings}/>
+    {#if $showDetails}
       <Details size={size}/>
     {/if}
   </span>
@@ -58,7 +66,7 @@
     width: 100px;
     margin: 1px;
   }
-  .top, .firebase {
+  .top {
     position: fixed;
     left: 110px;
   }
@@ -66,5 +74,9 @@
     position: fixed;
     left: 70px;
     top: 20px;
+  }
+  .firebase {
+    position: fixed;
+    left: 90px;
   }
 </style>

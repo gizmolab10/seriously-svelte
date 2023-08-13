@@ -13,7 +13,7 @@
     if (event.key == undefined)  { alert('no key for ' + event.type); return; }
     if (grab == null) {
       grab = hierarchy.root;
-      grab.becomeHere();
+      grab?.becomeHere();
       grab?.grabOnly(); // to update crumbs and dots
     }
     if (event.type == 'keydown') {

@@ -1,5 +1,5 @@
 <script>
-  import { ButtonIDs, onMount } from "../common/GlobalImports";
+  import { onMount } from "../common/GlobalImports";
   export let borderColor = '#333';
   export let textColor = '#400';
   export let color = '#ccc';

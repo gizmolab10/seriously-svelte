@@ -1,6 +1,6 @@
 import { get, constants, User, Thing, Access, Relationship, RelationshipKind, DBTypes, cloudEditor, sortAccordingToOrder } from '../common/GlobalImports';
 import { firebase } from '../persistence/Firebase';
-import { hereID, dbType } from './State';
+import { hereID } from './State';
 import fs from 'fs';
 
 ////////////////////////////////////////
@@ -33,12 +33,15 @@ export default class Hierarchy {
   thing_forID = (id: string | null): Thing | null => { return (id == null) ? null : this.thingsByID[id]; }
   thing_newAt = (order: number) => { return new Thing(cloudEditor.newCloudID, constants.defaultTitle, 'blue', 't', order); }
   
-  setup = async (onCompletion: () => any) => {
-    switch (get(dbType)) {
-      case DBTypes.airtable: await this.setupCRUD(onCompletion); break;
-      default:           await firebase.fetchAll(onCompletion); break;
+  setup = (dbType: string, onCompletion: () => any) => {
+    const done = () => {
+      this.hierarchy_construct();
+      onCompletion();
     }
-    this.hierarchy_construct();
+    switch (dbType) {
+      case DBTypes.airtable: this.setupCRUD(done); break;
+      default:               firebase.fetchAll(done); break;
+    }
   }
 
   setupCRUD = async (onCompletion: () => any) => {

@@ -11,8 +11,15 @@
 
   function handleDBType(index) {
     const type = menuItems[index].id;
-    $dbType = type;
     persistence.writeToKey('db', type);
+    if (type != DBTypes.airtable) {
+      $dbType = type; // do this last so components will see the resulting data
+    } else {
+      // TODO: really should restart startup so user sees 'waiting...' or some such
+      hierarchy.setup(type, () => {
+        $dbType = type;
+      });
+    }
   }
   
   function handleKeyDown(event) {

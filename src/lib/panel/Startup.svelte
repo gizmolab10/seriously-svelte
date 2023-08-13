@@ -1,14 +1,15 @@
 <script>
   import { onMount, DBTypes, BulkIDs,  hierarchy, cloudEditor, persistence } from '../common/GlobalImports'
-  import { build, fireBulk, dbType } from '../managers/State';
+  import { build, dbType, fireBulk, showDetails } from '../managers/State';
   import Panel from './Panel.svelte';
   let isLoading = true;
 
   onMount(async () => {
     $dbType = persistence.readFromKey('db') ?? DBTypes.airtable;
+    $showDetails = persistence.readFromKey('details') ?? false;
     $build = 22;  // persist db type, firebase writable store
     $fireBulk = BulkIDs.public;
-    await hierarchy.setup(() => {
+    await hierarchy.setup($dbType, () => {
       isLoading = false;
     })
   })
