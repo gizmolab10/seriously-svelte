@@ -1,6 +1,6 @@
-import { get, constants, User, Thing, Access, Relationship, RelationshipKind, DBTypes, cloudEditor, sortAccordingToOrder } from '../common/GlobalImports';
+import { constants, User, Thing, Access, Relationship, RelationshipKind, DBTypes, cloudEditor, sortAccordingToOrder } from '../common/GlobalImports';
 import { firebase } from '../persistence/Firebase';
-import { hereID } from './State';
+import { hereID, dbType } from './State';
 import fs from 'fs';
 
 ////////////////////////////////////////
@@ -13,6 +13,7 @@ export default class Hierarchy {
   relationshipKindsByID: { [id: string]: RelationshipKind } = {};
   relationshipsByFromID: { [id: string]: Array<Relationship> } = {};
   relationshipsByToID: { [id: string]: Array<Relationship> } = {};
+  statusByType: { [type: string]: boolean } = {};
   accessByKind: { [kind: string]: Access } = {};
   accessByID: { [id: string]: Access } = {};
   thingsByID: { [id: string]: Thing } = {};
@@ -34,13 +35,18 @@ export default class Hierarchy {
   thing_newAt = (order: number) => { return new Thing(cloudEditor.newCloudID, constants.defaultTitle, 'blue', 't', order); }
   
   setup = (dbType: string, onCompletion: () => any) => {
-    const done = () => {
-      this.hierarchy_construct();
+    if (this.statusByType[dbType] == true) {
       onCompletion();
-    }
-    switch (dbType) {
-      case DBTypes.airtable: this.setupCRUD(done); break;
-      default:               firebase.fetchAll(done); break;
+    } else {
+      const done = () => {
+        this.hierarchy_construct();
+        this.statusByType[dbType] = true;
+        onCompletion();
+      }
+      switch (dbType) {
+        case DBTypes.airtable: this.setupCRUD(done); break;
+        default:               firebase.fetchAll(done); break;
+      }
     }
   }
 

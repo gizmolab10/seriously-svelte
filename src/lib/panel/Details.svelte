@@ -1,6 +1,6 @@
 <script>
-  import { build, dbType, fireBulk, popupViewID } from '../managers/State';
   import { DBTypes, hierarchy, onMount, persistence } from '../common/GlobalImports';
+  import { build, dbType, isBusy, fireBulk, popupViewID } from '../managers/State';
   import RadioButtons from './RadioButtons.svelte'
   export let size = 20;
 
@@ -16,8 +16,10 @@
       $dbType = type; // do this last so components will see the resulting data
     } else {
       // TODO: really should restart startup so user sees 'waiting...' or some such
+      $isBusy = true;
       hierarchy.setup(type, () => {
         $dbType = type;
+        $isBusy = false;
       });
     }
   }
