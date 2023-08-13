@@ -8,4 +8,4 @@ export let hereID = writable<string | null>();
 export let grabbedIDs = writable<string[]>();
 export let dbType = writable<string>();
 export let build = writable<number>();
-export let bulk = writable<string>();
+export let fireBulk = writable<string>();

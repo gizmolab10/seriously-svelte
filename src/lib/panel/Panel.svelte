@@ -1,6 +1,6 @@
 <script>
-  import { grabs, DBTypes, ButtonIDs } from '../common/GlobalImports'
-  import { bulk, viewID, dbType } from '../managers/State';
+  import { grabs, DBTypes, ButtonIDs, hierarchy } from '../common/GlobalImports'
+  import { fireBulk, viewID, dbType } from '../managers/State';
   import Graph from '../graph/Graph.svelte';
   import Details from './Details.svelte';
   import Crumbs from './Crumbs.svelte';
@@ -21,7 +21,7 @@
       onClick={() =>{$viewID = ButtonIDs.details}}/>
   </span>
 
-  {#if $dbType = DBTypes.crud}
+  {#if $dbType == DBTypes.crud}
     <span class='top'>
       <Crumbs grab={grabs.grabbedThing}/>
       <Button
@@ -34,9 +34,9 @@
     </div>
   {:else}
     <div id='firebase'>
-      Firestore {$bulk}!
+      &nbsp; &nbsp; &nbsp; Firestore {$fireBulk}!
       <ul>
-        {#each things as thing}
+        {#each hierarchy.things as thing}
           <li>{thing.title}</li>
         {/each}
       </ul>

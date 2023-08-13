@@ -1,16 +1,16 @@
 <script>
-  import { onMount, DBTypes, hierarchy, cloudEditor } from '../common/GlobalImports'
-  import { build, viewID, bulk, dbType } from '../managers/State';
+  import { onMount, DBTypes, BulkIDs,  hierarchy, cloudEditor, persistence } from '../common/GlobalImports'
+  import { build, fireBulk, dbType } from '../managers/State';
   import Button from './Button.svelte';
   import Panel from './Panel.svelte';
   let isLoading = true;
   let things = [];
 
   onMount(async () => {
-    $dbType = DBTypes.crud;
-    $build = 20;  // details, firebase writable store
-    $bulk = 'Jonathan Sand';
-    hierarchy.setup($dbType = DBTypes.crud, () => {
+    $dbType = DBTypes.firebase;
+    $build = 20;  // prepare for details, firebase writable store
+    $fireBulk = BulkIDs.public;
+    await hierarchy.setup(() => {
       things = hierarchy.things;
       isLoading = false;
     })

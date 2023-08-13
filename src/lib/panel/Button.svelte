@@ -1,6 +1,5 @@
 <script>
   import { ButtonIDs, onMount } from "../common/GlobalImports";
-  import { viewID } from "../managers/State";
   export let borderColor = '#333';
   export let textColor = '#400';
   export let color = '#ccc';
@@ -26,7 +25,7 @@
     font-weight: bold;
     cursor: pointer;'>
     {#if image}
-      <img src="settings.png" alt="Image" width={size}px height={size}px/>
+      <img src="{image}" alt="Image" width={size}px height={size}px/>
     {:else if label}
       {label}
     {/if}

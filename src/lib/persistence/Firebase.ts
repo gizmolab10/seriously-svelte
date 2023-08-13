@@ -1,9 +1,9 @@
-import { onSnapshot, QueryDocumentSnapshot } from 'firebase/firestore';
 import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
+import { onSnapshot, QueryDocumentSnapshot } from 'firebase/firestore';
 import { get, Thing, hierarchy } from '../common/GlobalImports';
-import { bulk, firebaseDocuments } from '../managers/State';
 import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
+import { fireBulk } from '../managers/State';
 // import Cloudable from './Cloudable'; // comment this out when writables work
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -35,7 +35,7 @@ class Firebase {
 
   fetchDocuments = async (collectionName: string) => {
     try {
-      const itemsCollection = collection(this.db, collectionName, get(bulk), 'Things');
+      const itemsCollection = collection(this.db, collectionName, get(fireBulk), 'Things');
       // onSnapshot(itemsCollection, snapshot => {
       //   const updatedItems = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
       //   firebaseDocuments.set(updatedItems);
