@@ -4,16 +4,12 @@
   import RadioButtons from './RadioButtons.svelte'
   export let size = 20;
 
-  function handleDBType(type) {
-    $dbType = type;
-    // re-setup
-  }
-
   const menuItems = [
-    { id: DBTypes.firebase, label: 'firebase', func: () => { handleDBType(this.id); } },
-    { id: DBTypes.crud, label: 'crud', func: () => { handleDBType(this.id); } }
+    { id: DBTypes.firebase, label: 'firebase', func: () => { handleDBType(0); } },
+    { id: DBTypes.crud, label: 'crud', func: () => { handleDBType(1); } }
   ];
-  
+
+  function handleDBType(index) { $dbType = menuItems[index].id; }  
   function handleKeyDown(event) {
     const key = event.key.toLowerCase();
     switch (key) {
