@@ -6,7 +6,7 @@
   let isLoading = true;
 
   onMount(async () => {
-    $dbType = DBTypes.firebase;
+    $dbType = DBTypes.crud;
     $build = 20;  // prepare for details, firebase writable store
     $fireBulk = BulkIDs.public;
     await hierarchy.setup(() => {

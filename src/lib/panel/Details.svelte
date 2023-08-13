@@ -1,12 +1,12 @@
 <script>
-  import { build, popupID } from '../managers/State';
-  import Button from './Button.svelte'
+  import { build, popupViewID } from '../managers/State';
+  import PopupMenu from './PopupMenu.svelte'
   export let size = 20;
   
   function handleKeyDown(event) {
     const key = event.key.toLowerCase();
     switch (key) {
-      case 'escape': $popupID = null; break;
+      case 'escape': $popupViewID = null; break;
     }
   }
 </script>
@@ -19,11 +19,11 @@
       height: {size}px;
       font-size: {size - 1}px;;
       line-height: {size}px;'
-      on:click={() => { $popupID = null; }}>
+      on:click={() => { $popupViewID = null; }}>
         ×
       </span>
       <p>build: {$build}</p>
-      <Button popupID=ButtonIDs.crud/>
+      <PopupMenu/>
   </div>
 </div>
 

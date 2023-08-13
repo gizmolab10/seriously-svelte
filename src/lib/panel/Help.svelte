@@ -1,5 +1,5 @@
 <script>
-  import { popupID } from '../managers/State';
+  import { popupViewID } from '../managers/State';
   import Widget from '../graph/Widget.svelte'
   import { exemplar } from '../data/Exemplar'
   export let size = 20;
@@ -7,7 +7,7 @@
   function handleKeyDown(event) {
     const key = event.key.toLowerCase();
     switch (key) {
-      case 'escape': $popupID = null; break;
+      case 'escape': $popupViewID = null; break;
     }
   }
 </script>
@@ -20,7 +20,7 @@
       height: {size}px;
       font-size: {size - 1}px;;
       line-height: {size}px;'
-      on:click={() => { $popupID = null; }}>
+      on:click={() => { $popupViewID = null; }}>
         ×
       </span>
     <h2>Welcome to Seriously</h2>

@@ -17,9 +17,9 @@ Object.defineProperty(String.prototype, 'injectElipsisAt', {
     }
     return injected;
   },
-  enumerable: false, // Set enumerable to false to avoid unintended behavior
-  writable: false, // Set writable to false to prevent the method to be overwritten
-  configurable: false // Set configurable to false to prevent redefinition of the property
+  enumerable: false,
+  writable: false,
+  configurable: false
 });
 
 Object.defineProperty(Number.prototype, 'increment', {
@@ -33,9 +33,9 @@ Object.defineProperty(Number.prototype, 'increment', {
     }
     return result;
   },
-  enumerable: false, // Set enumerable to false to avoid unintended behavior
-  writable: false, // Set writable to false to prevent the method to be overwritten
-  configurable: false // Set configurable to false to prevent redefinition of the property
+  enumerable: false,
+  writable: false,
+  configurable: false
 });
 
 Object.defineProperty(Number.prototype, 'isBetween', {
@@ -45,9 +45,9 @@ Object.defineProperty(Number.prototype, 'isBetween', {
 
     return inclusive ? this >= min && this <= max : this > min && this < max;
   },
-  enumerable: false, // Set enumerable to false to avoid unintended behavior
-  writable: false, // Set writable to false to prevent the method to be overwritten
-  configurable: false // Set configurable to false to prevent redefinition of the property
+  enumerable: false,
+  writable: false,
+  configurable: false
 });
 
 // Object.defineProperty(String.prototype, 'boilerplate', {
