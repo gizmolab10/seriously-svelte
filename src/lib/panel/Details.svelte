@@ -1,7 +1,18 @@
 <script>
-  import { build, popupViewID } from '../managers/State';
-  import PopupMenu from './PopupMenu.svelte'
+  import { build, dbType, fireBulk, popupViewID } from '../managers/State';
+  import { DBTypes, onMount } from '../common/GlobalImports';
+  import RadioButtons from './RadioButtons.svelte'
   export let size = 20;
+
+  function handleDBType(type) {
+    $dbType = type;
+    // re-setup
+  }
+
+  const menuItems = [
+    { id: DBTypes.firebase, label: 'firebase', func: () => { handleDBType(this.id); } },
+    { id: DBTypes.crud, label: 'crud', func: () => { handleDBType(this.id); } }
+  ];
   
   function handleKeyDown(event) {
     const key = event.key.toLowerCase();
@@ -9,7 +20,8 @@
       case 'escape': $popupViewID = null; break;
     }
   }
-</script>
+
+  </script>
 
 <svelte:document on:keydown={handleKeyDown} />
 <div class="modal-overlay">
@@ -23,7 +35,9 @@
         ×
       </span>
       <p>build: {$build}</p>
-      <PopupMenu/>
+      <RadioButtons
+        selectedID={$dbType};
+        menuItems={menuItems}/>
   </div>
 </div>
 
