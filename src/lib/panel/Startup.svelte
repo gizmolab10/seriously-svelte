@@ -3,7 +3,7 @@
   import { build, bulk } from '../managers/State';
   import Button from './Button.svelte';
   import Panel from './Panel.svelte';
-  const useCRUD = false;
+  const useCRUD = true;
   let isLoading = true;
   let things = [];
 
