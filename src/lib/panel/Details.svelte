@@ -1,6 +1,6 @@
 <script>
   import { build, dbType, fireBulk, popupViewID } from '../managers/State';
-  import { DBTypes, onMount, persistence } from '../common/GlobalImports';
+  import { DBTypes, hierarchy, onMount, persistence } from '../common/GlobalImports';
   import RadioButtons from './RadioButtons.svelte'
   export let size = 20;
 
