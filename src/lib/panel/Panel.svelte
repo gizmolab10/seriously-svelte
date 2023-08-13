@@ -1,14 +1,12 @@
 <script>
   import { grabs, DBTypes, ButtonIDs, hierarchy } from '../common/GlobalImports'
-  import { fireBulk, viewID, dbType } from '../managers/State';
+  import { fireBulk, popupID, dbType } from '../managers/State';
   import Graph from '../graph/Graph.svelte';
   import Details from './Details.svelte';
   import Crumbs from './Crumbs.svelte';
   import Button from './Button.svelte';
   import Help from './Help.svelte';
   let size = 15;
-
-  function handleHelpClose() { $viewID = null; }
 
 </script>
 
@@ -18,14 +16,14 @@
       image='settings.png'
       size=15
       borderColor='white'
-      onClick={() =>{$viewID = ButtonIDs.details}}/>
+      onClick={() =>{$popupID = ButtonIDs.details}}/>
   </span>
 
   {#if $dbType == DBTypes.crud}
     <span class='top'>
       <Crumbs grab={grabs.grabbedThing}/>
       <Button
-        onClick={() =>{$viewID = ButtonIDs.help}}
+        onClick={() =>{$popupID = ButtonIDs.help}}
         label='?'
         size={size}/>
     </span>
@@ -43,14 +41,10 @@
     </div>
   {/if}
 
-  {#if $viewID == ButtonIDs.help}
-    <Help
-      onClose={handleHelpClose}
-      size={size}/>
-  {:else if $viewID == ButtonIDs.details}
-    <Details
-      onClose={handleHelpClose}
-      size={size}/>
+  {#if $popupID == ButtonIDs.help}
+    <Help size={size}/>
+  {:else if $popupID == ButtonIDs.details}
+    <Details size={size}/>
   {/if}
 </div>
 

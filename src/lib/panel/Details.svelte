@@ -1,13 +1,12 @@
 <script>
-  import { build } from '../managers/State';
+  import { build, popupID } from '../managers/State';
   import Button from './Button.svelte'
   export let size = 20;
-  export let onClose;
   
   function handleKeyDown(event) {
     const key = event.key.toLowerCase();
     switch (key) {
-      case 'escape': onClose(); break;
+      case 'escape': $popupID = null; break;
     }
   }
 </script>
@@ -20,9 +19,11 @@
       height: {size}px;
       font-size: {size - 1}px;;
       line-height: {size}px;'
-      on:click={() => onClose()}>×</span>
+      on:click={() => { $popupID = null; }}>
+        ×
+      </span>
       <p>build: {$build}</p>
-      <Button viewID=ButtonIDs.crud/>
+      <Button popupID=ButtonIDs.crud/>
   </div>
 </div>
 

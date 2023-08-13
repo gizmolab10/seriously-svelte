@@ -1,13 +1,13 @@
 <script>
+  import { popupID } from '../managers/State';
   import Widget from '../graph/Widget.svelte'
   import { exemplar } from '../data/Exemplar'
   export let size = 20;
-  export let onClose;
   
   function handleKeyDown(event) {
     const key = event.key.toLowerCase();
     switch (key) {
-      case 'escape': onClose(); break;
+      case 'escape': $popupID = null; break;
     }
   }
 </script>
@@ -20,7 +20,9 @@
       height: {size}px;
       font-size: {size - 1}px;;
       line-height: {size}px;'
-      on:click={() => onClose()}>×</span>
+      on:click={() => { $popupID = null; }}>
+        ×
+      </span>
     <h2>Welcome to Seriously</h2>
     <p>Seriously is essentially a hierarchal menu system, to which you can add new items.</p>
     <Widget thing={exemplar} style='justify-content: center'/>

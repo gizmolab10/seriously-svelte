@@ -4,14 +4,12 @@
   import Button from './Button.svelte';
   import Panel from './Panel.svelte';
   let isLoading = true;
-  let things = [];
 
   onMount(async () => {
     $dbType = DBTypes.firebase;
     $build = 20;  // prepare for details, firebase writable store
     $fireBulk = BulkIDs.public;
     await hierarchy.setup(() => {
-      things = hierarchy.things;
       isLoading = false;
     })
   })
