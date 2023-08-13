@@ -3,3 +3,7 @@ export enum ButtonIDs {
   crud    = 'c',
   help    = '?',
 }
+export enum DBTypes {
+  firebase = 'f',
+  crud     = 'c',
+}

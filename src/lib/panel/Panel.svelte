@@ -1,6 +1,6 @@
 <script>
-  import { grabs, ButtonIDs } from '../common/GlobalImports'
-  import { viewID } from '../managers/State';
+  import { grabs, DBTypes, ButtonIDs } from '../common/GlobalImports'
+  import { bulk, viewID, dbType } from '../managers/State';
   import Graph from '../graph/Graph.svelte';
   import Details from './Details.svelte';
   import Crumbs from './Crumbs.svelte';
@@ -20,16 +20,29 @@
       borderColor='white'
       onClick={() =>{$viewID = ButtonIDs.details}}/>
   </span>
-  <span class='main'>
-    <Crumbs grab={grabs.grabbedThing}/>
-    <Button
-      onClick={() =>{$viewID = ButtonIDs.help}}
-      label='?'
-      size={size}/>
-  </span>
-  <div class='graph'>
-    <Graph/>
-  </div>
+
+  {#if $dbType = DBTypes.crud}
+    <span class='top'>
+      <Crumbs grab={grabs.grabbedThing}/>
+      <Button
+        onClick={() =>{$viewID = ButtonIDs.help}}
+        label='?'
+        size={size}/>
+    </span>
+    <div class='graph'>
+      <Graph/>
+    </div>
+  {:else}
+    <div id='firebase'>
+      Firestore {$bulk}!
+      <ul>
+        {#each things as thing}
+          <li>{thing.title}</li>
+        {/each}
+      </ul>
+    </div>
+  {/if}
+
   {#if $viewID == ButtonIDs.help}
     <Help
       onClose={handleHelpClose}
@@ -50,7 +63,7 @@
     margin: 1px;
     width: 75px;
   }
-  .main {
+  .top, .firebase {
     position: fixed;
     left: 53px
   }

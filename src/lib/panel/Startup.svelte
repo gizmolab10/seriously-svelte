@@ -1,16 +1,16 @@
 <script>
-  import { cloudEditor, hierarchy, ButtonIDs, onMount } from '../common/GlobalImports'
-  import { build, viewID, bulk } from '../managers/State';
+  import { onMount, DBTypes, hierarchy, cloudEditor } from '../common/GlobalImports'
+  import { build, viewID, bulk, dbType } from '../managers/State';
   import Button from './Button.svelte';
   import Panel from './Panel.svelte';
-  const useCRUD = true;
   let isLoading = true;
   let things = [];
 
   onMount(async () => {
+    $dbType = DBTypes.crud;
     $build = 20;  // details, firebase writable store
     $bulk = 'Jonathan Sand';
-    hierarchy.setup(useCRUD, () => {
+    hierarchy.setup($dbType = DBTypes.crud, () => {
       things = hierarchy.things;
       isLoading = false;
     })
@@ -21,34 +21,13 @@
   <p>Welcome to Seriously</p>
 {:else if hierarchy.hasNothing}
   <p>Nothing is available.</p>
-{:else if useCRUD}
-  <Panel/>
 {:else}
-  <span>
-    <Button image='settings.png' size=15 borderColor='white' onClick={() =>{$viewID = ButtonIDs.details}}/>
-  </span>
-  <div>
-    Firestore {$bulk}!
-    <ul>
-      {#each things as thing}
-        <li>{thing.title}</li>
-      {/each}
-    </ul>
-  </div>
+  <Panel/>
 {/if}
 
 <style>
   p {
     text-align: center;
     font-size: 3em;
-  }
-  div {
-    position: fixed;
-    left: 53px
-  }
- span {
-    position: fixed;
-    margin: 1px;
-    width: 75px;
   }
 </style>
