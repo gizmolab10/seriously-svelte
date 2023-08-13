@@ -27,12 +27,7 @@
 <style>
   .menu-item {
     display: block;
-    text-decoration: none;
     color: #333;
-    background-color: #f1f1f1;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin: 5px 0;
   }
 
   .menu-item.selected {

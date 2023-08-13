@@ -58,8 +58,6 @@ export default class CRUD {
           hierarchy.root = thing;
         }
       }
-
-      hierarchy.hierarchy_construct();
       onCompletion();
     } catch (error) {
       console.log(this.things_errorMessage + ' (things_readAll) ' + error);

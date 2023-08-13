@@ -1,11 +1,11 @@
 export enum ButtonIDs {
   details = 'd',
-  crud    = 'c',
+  remote  = 'r',
   help    = '?',
 }
 export enum DBTypes {
   firebase = 'f',
-  crud     = 'c',
+  airtable = 'c',
 }
 export enum BulkIDs {
   public = 'Public',

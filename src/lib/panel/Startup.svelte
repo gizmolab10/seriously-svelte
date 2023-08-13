@@ -5,7 +5,7 @@
   let isLoading = true;
 
   onMount(async () => {
-    $dbType = persistence.readFromKey('db') ?? DBTypes.crud;
+    $dbType = persistence.readFromKey('db') ?? DBTypes.airtable;
     $build = 22;  // persist db type, firebase writable store
     $fireBulk = BulkIDs.public;
     await hierarchy.setup(() => {

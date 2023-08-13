@@ -41,7 +41,7 @@
 </script>
 
 <svelte:document on:keydown={handleKeyDown} />
-<div style='position: fixed; left=10px'>
+<div style='position: fixed; left-padding=100px'>
   {#if here != null}
     <Children parent={here}/>
   {/if}

@@ -35,9 +35,10 @@ export default class Hierarchy {
   
   setup = async (onCompletion: () => any) => {
     switch (get(dbType)) {
-      case DBTypes.crud: await this.setupCRUD(onCompletion); break;
+      case DBTypes.airtable: await this.setupCRUD(onCompletion); break;
       default:           await firebase.fetchAll(onCompletion); break;
     }
+    this.hierarchy_construct();
   }
 
   setupCRUD = async (onCompletion: () => any) => {

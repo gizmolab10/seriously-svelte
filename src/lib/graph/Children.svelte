@@ -11,10 +11,6 @@
 </ul>
 
 <style>
-  li {
-    line-height: 1.5;
-  }
-  ul {
-    list-style: none;
-  }
+  ul { list-style: none; }
+  li { line-height: 1.5; }
 </style>

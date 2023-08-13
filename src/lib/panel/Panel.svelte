@@ -11,15 +11,7 @@
 </script>
 
 <div>
-  <span class='left-margin'>
-    <Button
-      image='settings.png'
-      size=15
-      borderColor='white'
-      onClick={() => {handleClick(ButtonIDs.details)}}/>
-  </span>
-
-  {#if $dbType == DBTypes.crud}
+  {#if $dbType == DBTypes.airtable}
     <span class='top'>
       <Crumbs grab={grabs.grabbedThing}/>
       <Button
@@ -31,7 +23,7 @@
       <Graph/>
     </div>
   {:else}
-    <div id='firebase'>
+    <div class='firebase'>
       &nbsp; &nbsp; &nbsp; Firestore {$fireBulk}!
       <ul>
         {#each hierarchy.things as thing}
@@ -41,10 +33,19 @@
     </div>
   {/if}
 
+  <span class='left-margin'>
+    <Button
+      image='settings.png'
+      size=15
+      borderColor='white'
+      onClick={() => {handleClick(ButtonIDs.details)}}/>
+    {#if $popupViewID == ButtonIDs.details}
+      <Details size={size}/>
+    {/if}
+  </span>
+
   {#if $popupViewID == ButtonIDs.help}
     <Help size={size}/>
-  {:else if $popupViewID == ButtonIDs.details}
-    <Details size={size}/>
   {/if}
 </div>
 
@@ -54,15 +55,16 @@
   }
   .left-margin {
     position: fixed;
+    width: 100px;
     margin: 1px;
-    width: 75px;
   }
   .top, .firebase {
     position: fixed;
-    left: 53px
+    left: 110px;
   }
   .graph {
     position: fixed;
-    top: 20px
+    left: 70px;
+    top: 20px;
   }
 </style>
