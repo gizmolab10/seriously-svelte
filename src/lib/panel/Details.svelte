@@ -1,6 +1,6 @@
 <script>
   import { build, dbType, fireBulk, popupViewID } from '../managers/State';
-  import { DBTypes, onMount } from '../common/GlobalImports';
+  import { DBTypes, onMount, persistence } from '../common/GlobalImports';
   import RadioButtons from './RadioButtons.svelte'
   export let size = 20;
 
@@ -9,7 +9,12 @@
     { id: DBTypes.crud, label: 'crud', func: () => { handleDBType(1); } }
   ];
 
-  function handleDBType(index) { $dbType = menuItems[index].id; }  
+  function handleDBType(index) {
+    const type = menuItems[index].id;
+    $dbType = type;
+    persistence.writeToKey('db', type);
+  }
+  
   function handleKeyDown(event) {
     const key = event.key.toLowerCase();
     switch (key) {

@@ -1,13 +1,12 @@
 <script>
   import { onMount, DBTypes, BulkIDs,  hierarchy, cloudEditor, persistence } from '../common/GlobalImports'
   import { build, fireBulk, dbType } from '../managers/State';
-  import Button from './Button.svelte';
   import Panel from './Panel.svelte';
   let isLoading = true;
 
   onMount(async () => {
-    $dbType = DBTypes.crud;
-    $build = 21;  // radio buttons, firebase writable store
+    $dbType = persistence.readFromKey('db') ?? DBTypes.crud;
+    $build = 22;  // persist db type, firebase writable store
     $fireBulk = BulkIDs.public;
     await hierarchy.setup(() => {
       isLoading = false;
