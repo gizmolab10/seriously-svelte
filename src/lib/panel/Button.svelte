@@ -1,19 +1,26 @@
 <script>
-  import { ViewIDs, onMount } from "../common/GlobalImports";
+  import { ButtonIDs, onMount } from "../common/GlobalImports";
   import { viewID } from "../managers/State";
   export let borderColor = '#333';
   export let textColor = '#400';
   export let color = '#ccc';
-  export let openID = '';
+  export let openID = null;
   export let size = 20;
   let hasNoImage = false;
-  function handleClick() { $viewID = openID; }
+
+  function handleClick() {
+    if (openID) {
+      $viewID = openID;
+    }
+  }
 
   onMount(() => {
-    switch (openID) {
-      case ViewIDs.help:
-        hasNoImage = true;
-        break;
+    if (openID) {
+      switch (openID) {
+        case ButtonIDs.help:
+          hasNoImage = true;
+          break;
+      }
     }
   })
 

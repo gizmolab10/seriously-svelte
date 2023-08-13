@@ -1,5 +1,5 @@
 <script>
-  import { grabs, ViewIDs } from '../common/GlobalImports'
+  import { grabs, ButtonIDs } from '../common/GlobalImports'
   import { viewID } from '../managers/State';
   import Graph from '../graph/Graph.svelte';
   import Details from './Details.svelte';
@@ -14,18 +14,18 @@
 
 <div>
   <span class='left-margin'>
-    <Button openID={ViewIDs.details} size={size} borderColor='white'/>
+    <Button openID={ButtonIDs.details} size={size} borderColor='white'/>
   </span>
   <span class='main'>
     <Crumbs grab={grabs.grabbedThing}/>
-    <Button openID={ViewIDs.help} size={size}/>
+    <Button openID={ButtonIDs.help} size={size}/>
   </span>
   <div class='graph'>
     <Graph/>
   </div>
-  {#if $viewID == ViewIDs.help}
+  {#if $viewID == ButtonIDs.help}
     <Help onClose={handleHelpClose} size={size}/>
-  {:else if $viewID == ViewIDs.details}
+  {:else if $viewID == ButtonIDs.details}
     <Details onClose={handleHelpClose} size={size}/>
   {/if}
 </div>
@@ -41,7 +41,7 @@
   }
   .main {
     position: fixed;
-    left: 32px
+    left: 53px
   }
   .graph {
     position: fixed;

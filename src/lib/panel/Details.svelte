@@ -1,5 +1,6 @@
 <script>
   import { build } from '../managers/State';
+  import Button from './Button.svelte'
   export let size = 20;
   export let onClose;
   
@@ -21,6 +22,7 @@
       line-height: {size}px;'
       on:click={() => onClose()}>×</span>
       <p>build: {$build}</p>
+      <Button viewID=ButtonIDs.crud/>
   </div>
 </div>
 

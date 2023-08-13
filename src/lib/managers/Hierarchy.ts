@@ -32,8 +32,14 @@ export default class Hierarchy {
   get things(): Array<Thing> { return Object.values(this.thingsByID) };
   thing_forID = (id: string | null): Thing | null => { return (id == null) ? null : this.thingsByID[id]; }
   thing_newAt = (order: number) => { return new Thing(cloudEditor.newCloudID, constants.defaultTitle, 'blue', 't', order); }
-  setupFirebase = (onCompletion: () => any) => { firebase.fetchAll(onCompletion); }
-  setup = async (onCompletion: () => any) => { this.setupCRUD(onCompletion); }
+  
+  setup = async (useCRUD: boolean, onCompletion: () => any) => {
+    if (useCRUD) {
+      this.setupCRUD(onCompletion);
+    } else {
+      firebase.fetchAll(onCompletion);
+    }
+  }
 
   setupCRUD = async (onCompletion: () => any) => {
     cloudEditor.readAll(async () => {
