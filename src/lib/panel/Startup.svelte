@@ -8,7 +8,7 @@
     $isBusy = true;
     $dbType = persistence.readFromKey('db') ?? DBTypes.airtable;
     $showDetails = persistence.readFromKey('details') ?? false;
-    $build = 22;  // persist db type, firebase writable store
+    $build = 23;  // sync works!!!
     $fireBulk = BulkIDs.public;
     await hierarchy.setup($dbType, () => {
       $isBusy = false;

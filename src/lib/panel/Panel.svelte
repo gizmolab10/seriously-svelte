@@ -1,6 +1,6 @@
 <script>
+  import { dbType, fireBulk, popupViewID, showDetails, firebaseDocuments } from '../managers/State';
   import { grabs, DBTypes, ButtonIDs, hierarchy, persistence } from '../common/GlobalImports'
-  import { dbType, fireBulk, popupViewID, showDetails } from '../managers/State';
   import Graph from '../graph/Graph.svelte';
   import Details from './Details.svelte';
   import Crumbs from './Crumbs.svelte';
@@ -35,7 +35,7 @@
     <div class='firebase'>
       &nbsp; &nbsp; &nbsp; Firestore {$fireBulk}!
       <ul>
-        {#each hierarchy.things as thing}
+        {#each $firebaseDocuments as thing}
           <li>{thing.title}</li>
         {/each}
       </ul>
