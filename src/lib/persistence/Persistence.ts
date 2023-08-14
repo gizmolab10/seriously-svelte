@@ -1,5 +1,5 @@
+import { DBTypes, PersistenceIDs } from '../common/GlobalImports'
 import { dbType, showDetails } from '../managers/State';
-import { DBTypes } from '../common/GlobalImports'
 
 class Persistence {
 
@@ -15,8 +15,8 @@ class Persistence {
   }
   
   setup() {
-    showDetails.set(this.readFromKey('details') ?? false);
-    dbType.set(this.readFromKey('db') ?? DBTypes.airtable);
+    showDetails.set(this.readFromKey(PersistenceIDs.details) ?? false);
+    dbType.set(this.readFromKey(PersistenceIDs.db) ?? DBTypes.airtable);
   }
 
 }

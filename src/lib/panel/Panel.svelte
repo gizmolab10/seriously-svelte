@@ -1,6 +1,6 @@
 <script>
+  import { get, grabs, DBTypes, ButtonIDs, hierarchy, persistence, PersistenceIDs } from '../common/GlobalImports'
   import { dbType, privateBulk, popupViewID, showDetails, firebaseDocuments } from '../managers/State';
-  import { get, grabs, DBTypes, ButtonIDs, hierarchy, persistence } from '../common/GlobalImports'
   import Graph from '../graph/Graph.svelte';
   import Details from './Details.svelte';
   import Crumbs from './Crumbs.svelte';
@@ -14,7 +14,7 @@
   
   function handleSettings(event) {
     $showDetails = !$showDetails;
-    persistence.writeToKey('details', $showDetails);
+    persistence.writeToKey(PersistenceIDs.details, $showDetails);
   }
 </script>
 
