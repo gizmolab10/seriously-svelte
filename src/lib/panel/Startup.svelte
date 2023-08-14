@@ -1,15 +1,14 @@
 <script>
-  import { onMount, DBTypes, BulkIDs,  hierarchy, cloudEditor, persistence } from '../common/GlobalImports'
-  import { build, dbType, isBusy, fireBulk, showDetails } from '../managers/State';
+  import { onMount, BulkIDs,  hierarchy, persistence } from '../common/GlobalImports'
+  import { build, dbType, isBusy, privateBulk } from '../managers/State';
   import Panel from './Panel.svelte';
   let isLoading = true;
 
   onMount(async () => {
     $isBusy = true;
-    $dbType = persistence.readFromKey('db') ?? DBTypes.airtable;
-    $showDetails = persistence.readFromKey('details') ?? false;
     $build = 23;  // sync works!!!
-    $fireBulk = BulkIDs.public;
+    persistence.setup();
+    $privateBulk = BulkIDs.public;
     await hierarchy.setup($dbType, () => {
       $isBusy = false;
     })

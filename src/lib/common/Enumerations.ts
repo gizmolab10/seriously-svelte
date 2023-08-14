@@ -3,7 +3,7 @@ export enum ButtonIDs {
 }
 export enum DBTypes {
   firebase = 'f',
-  airtable = 'c',
+  airtable = 'a',
 }
 export enum BulkIDs {
   public = 'Public',

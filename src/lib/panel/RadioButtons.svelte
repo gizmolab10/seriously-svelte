@@ -1,11 +1,14 @@
 <script>
+  import { onMount } from '../common/GlobalImports';
   export let menuItems;
   export let selectedID = null;
 
-  // Initialize selectedID to the id of the first menuItem
-  $: if (!selectedID && menuItems.length > 0) {
-    selectedID = menuItems[0].id;
-  }
+
+  onMount( () => {
+    if (!selectedID && menuItems.length > 0) {
+      selectedID = menuItems[0].id;   // Initialize selectedID to the id of the first menuItem
+    }
+  });
 
   function handleSelect(id) {
     selectedID = id;
