@@ -38,8 +38,8 @@
   <div class="modal-content">
       <p>build: {$build}</p>
       <RadioButtons
-        selectedID={$dbType};
-        menuItems={menuItems}/>
+        menuItems={menuItems}
+        selectedID={$dbType}/>
   </div>
 </div>
 

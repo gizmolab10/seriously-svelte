@@ -56,6 +56,7 @@
     <Help size={size}/>
   {/if}
 </div>
+<div class="vertical-line"></div>
 
 <style>
   div {
@@ -78,5 +79,13 @@
   .firebase {
     position: fixed;
     left: 90px;
+  }
+  .vertical-line {
+    position: absolute;
+    left: 100px;
+    top: 0;
+    height: 100%;
+    width: 1px;
+    background-color: lightgray;
   }
 </style>
