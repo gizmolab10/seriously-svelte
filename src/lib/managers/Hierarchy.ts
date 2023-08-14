@@ -1,4 +1,4 @@
-import { constants, User, Thing, Access, Relationship, Predicates, DBTypes, cloudEditor, sortAccordingToOrder } from '../common/GlobalImports';
+import { constants, User, Thing, Access, Relationship, Predicate, DBTypes, cloudEditor, sortAccordingToOrder } from '../common/GlobalImports';
 import { firebase } from '../persistence/Firebase';
 import { hereID, dbType } from './State';
 import fs from 'fs';
@@ -9,10 +9,10 @@ import fs from 'fs';
 ////////////////////////////////////////
 
 export default class Hierarchy {
-  PredicatessByKind: { [kind: string]: Predicates } = {};
-  PredicatessByID: { [id: string]: Predicates } = {};
   relationshipsByFromID: { [id: string]: Array<Relationship> } = {};
   relationshipsByToID: { [id: string]: Array<Relationship> } = {};
+  predicatesByKind: { [kind: string]: Predicate } = {};
+  predicatesByID: { [id: string]: Predicate } = {};
   statusByType: { [type: string]: boolean } = {};
   accessByKind: { [kind: string]: Access } = {};
   accessByID: { [id: string]: Access } = {};
@@ -73,7 +73,7 @@ export default class Hierarchy {
             thing.order = relationship.order;
           } else {
             thing.order = order;
-            relationship = this.relationship_new(cloudEditor.newCloudID, Predicates.isAChildOf, id, rootID, order);
+            relationship = this.relationship_new(cloudEditor.newCloudID, Predicate.isAChildOf, id, rootID, order);
             relationship.needsCreate = true;
           }
         }
@@ -97,7 +97,7 @@ export default class Hierarchy {
     return sortAccordingToOrder(array);
   }
 
-  things_forKind_andID(kind: Predicates, id: string, matchingTo: boolean): Array<Thing> {
+  things_forKind_andID(kind: Predicate, id: string, matchingTo: boolean): Array<Thing> {
     const matches = this.relationships_byKindToID(kind, matchingTo, id);
     const ids: Array<string> = [];
     if (Array.isArray(matches)) {
@@ -112,7 +112,7 @@ export default class Hierarchy {
   //         RELATIONSHIPS          //
   ////////////////////////////////////
 
-  relationship_new(id: string, kind: Predicates, from: string, to: string, order: number): Relationship {
+  relationship_new(id: string, kind: Predicate, from: string, to: string, order: number): Relationship {
     const relationship = new Relationship(id, kind, from, to, order);
     this.relationship_remember(relationship);
     return relationship;
@@ -130,7 +130,7 @@ export default class Hierarchy {
 
   relationship_parentTo(id: string) {
     const thing = this.thing_forID(id); // assure id is known
-    const matches = this.relationships_byKindToID(Predicates.isAChildOf, false, id);
+    const matches = this.relationships_byKindToID(Predicate.isAChildOf, false, id);
     if (thing != null && matches.length > 0) {
       return matches[0];
     }
@@ -151,7 +151,7 @@ export default class Hierarchy {
     }
   }
 
-  relationships_byKindToID(kind: Predicates, to: boolean, id: string): Array<Relationship> {
+  relationships_byKindToID(kind: Predicate, to: boolean, id: string): Array<Relationship> {
     const dict = to ? this.relationshipsByToID : this.relationshipsByFromID;
     const matches = dict[id] as Array<Relationship>; // filter out baaaaad values
     const array: Array<Relationship> = [];
@@ -178,10 +178,10 @@ export default class Hierarchy {
   //         ANCILLARY DATA          //
   /////////////////////////////////////
 
-  Predicates_new = (id: string, kind: string) => {
-    const newKind = new Predicates(id, kind);
-    this.PredicatessByKind[kind] = newKind;
-    this.PredicatessByID[id] = newKind;
+  Predicate_new = (id: string, kind: string) => {
+    const newKind = new Predicate(id, kind);
+    this.predicatesByKind[kind] = newKind;
+    this.predicatesByID[id] = newKind;
   }
 
   access_new = (id: string, kind: string) => {

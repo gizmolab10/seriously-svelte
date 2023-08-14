@@ -1,4 +1,4 @@
-import { Thing, Relationship, Predicates, hierarchy, removeAll } from '../common/GlobalImports';
+import { Thing, Relationship, Predicate, hierarchy, removeAll } from '../common/GlobalImports';
 import { v4 as uuid } from 'uuid';
 import Airtable from 'airtable';
 
@@ -8,13 +8,13 @@ import Airtable from 'airtable';
 //     things                //
 //     access                //
 //     relationships         //
-//     Predicatess     //
+//     predicates            //
 //                           //
 ///////////////////////////////
 
 export default class CRUD {
   base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
-  Predicatess_table = this.base('Predicatess');
+  predicates_table = this.base('predicates');
   relationships_table = this.base('Relationships');
   things_table = this.base('Things');
   access_table = this.base('Access');
@@ -28,7 +28,7 @@ export default class CRUD {
   get newCloudID(): string { return 'NEW' + removeAll('-', uuid()).slice(10, 24); } // use last, most-unique bytes of uuid
 
   readAll = async (onCompletion: () => any) => {
-    await this.Predicatess_readAll();
+    await this.predicates_readAll();
     await this.relationships_readAll();
     await this.access_readAll();
     await this.users_readAll();
@@ -126,7 +126,7 @@ export default class CRUD {
         const order = record.fields.order as number;
         const froms = record.fields.from as (string[]);
         const kinds = record.fields.kind as (string[]);
-        const kind = hierarchy.PredicatessByID[kinds[0]];
+        const kind = hierarchy.predicatesByID[kinds[0]];
         hierarchy.relationship_new(id, kind, froms[0], tos[0], order);
       }
     } catch (error) {
@@ -190,18 +190,18 @@ export default class CRUD {
   //         ANCILLARY DATA          //
   /////////////////////////////////////
 
-  async Predicatess_readAll() {
+  async predicates_readAll() {
     try {
-      const records = await this.Predicatess_table.select().all()
+      const records = await this.predicates_table.select().all()
 
       for (const record of records) {
         const id = record.id as string; // do not yet need this
         const kind = record.fields.kind as string;
-        hierarchy.Predicates_new(id, kind);
+        hierarchy.Predicate_new(id, kind);
       }
 
     } catch (error) {
-      console.log('Error in Predicatess:' + error);
+      console.log('Error in predicates:' + error);
     }
   }
 

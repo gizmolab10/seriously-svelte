@@ -1,4 +1,4 @@
-import { get, grabs, Thing, hierarchy, Predicates, normalizeOrderOf } from '../common/GlobalImports';
+import { get, grabs, Thing, hierarchy, Predicate, normalizeOrderOf } from '../common/GlobalImports';
 import { grabbedIDs } from '../managers/State';
 import CRUD from '../persistence/CRUD';
 
@@ -26,7 +26,7 @@ export default class CloudEditor extends CRUD {
 
   thing_redraw_addAsChild = async (child: Thing, parent: Thing) => {
     await this.thing_create(child); // for everything below, need to await child.id fetched from cloud
-    const relationship = hierarchy.relationship_new(this.newCloudID, Predicates.isAChildOf, child.id, parent.id, child.order);
+    const relationship = hierarchy.relationship_new(this.newCloudID, Predicate.isAChildOf, child.id, parent.id, child.order);
     relationship.needsCreate = true;
     normalizeOrderOf(parent.children);
     parent.becomeHere();
