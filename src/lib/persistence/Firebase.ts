@@ -1,5 +1,5 @@
 import { Query, getDocs, collection, onSnapshot, getFirestore, QueryDocumentSnapshot } from 'firebase/firestore';
-import { privateBulk, firebaseDocuments } from '../managers/State';
+import { privateBulk, thingDocuments } from '../managers/State';
 import { get, Thing, hierarchy } from '../common/GlobalImports';
 import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
@@ -21,29 +21,30 @@ class Firebase {
     projectId: "seriously-4536d"
   };
 
-  // documentSnapshotsByCollectionName: { [id: string]: Array<QueryDocumentSnapshot> } = {};
   app = initializeApp(this.firebaseConfig);
   analytics = getAnalytics(this.app);
   db = getFirestore(this.app);
   collectionName = 'Seriously';
 
   fetchAll = async (onCompletion: () => any) => {
-    await firebase.fetchDocuments('Things');
+    await firebase.fetchDocumentsIn('Things', true);
     hierarchy.hierarchy_construct();
     onCompletion();
   }
 
-  fetchDocuments = async (subCollectionName: string) => {
+  fetchDocumentsIn = async (subCollectionName: string, areThings: boolean) => {
     try {
-      const thingsCollection = collection(this.db, this.collectionName, get(privateBulk), subCollectionName);
-      onSnapshot(thingsCollection, snapshot => {
-        const updatedThings = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
-        firebaseDocuments.set(updatedThings);
+      const documentsCollection = collection(this.db, this.collectionName, get(privateBulk), subCollectionName);
+      onSnapshot(documentsCollection, snapshot => {
+        const updatedDocuments = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+        if (areThings) {
+          thingDocuments.set(updatedDocuments);
+        }
       });
-      const querySnapshot = await getDocs(thingsCollection);
+      const querySnapshot = await getDocs(documentsCollection);
       const documentSnapshots = querySnapshot.docs;
-      if (documentSnapshots != undefined) {
-        await this.remember(documentSnapshots, this.collectionName);
+      if (documentSnapshots != undefined && areThings) {
+        await this.rememberThings(documentSnapshots);
       }
       return documentSnapshots;
     } catch (error) {
@@ -51,20 +52,7 @@ class Firebase {
     }
   }
 
-  // saveDocument = async (cloudable: Cloudable, collectionName: string) => {
-  //   const id = cloudable.id;
-  //   const documentSnapshots = this.documentSnapshotsByCollectionName[collectionName];
-  //   documentSnapshots.forEach((documentSnapshot) => {
-  //     if (documentSnapshot.id == id) {
-  //       const ref = hierarchy.thing_forID(id);
-  //       documentSnapshot.set(ref as DocumentData);
-
-  //     }
-  //   })
-  // }
-
-  async remember(documentSnapshots: QueryDocumentSnapshot[], collectionName: string) {
-    // this.documentSnapshotsByCollectionName[collectionName] = documentSnapshots;
+  async rememberThings(documentSnapshots: QueryDocumentSnapshot[]) {
     for (const documentSnapshot of documentSnapshots) {
       const data = documentSnapshot.data();
       const thing = data as Thing;

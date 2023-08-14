@@ -1,6 +1,6 @@
 import { hierarchy } from '../common/GlobalImports';
 
-export class RelationshipKind {
+export class Predicates {
   id: string;
   kind: string;
 
@@ -9,6 +9,6 @@ export class RelationshipKind {
     this.kind = kind;
   }
 
-  static get isAChildOf(): RelationshipKind { return hierarchy.relationshipKindsByKind['isAChildOf']; }
+  static get isAChildOf(): Predicates { return hierarchy.PredicatessByKind['isAChildOf']; }
 
 }

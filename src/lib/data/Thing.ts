@@ -1,4 +1,4 @@
-import { grabs, hierarchy, cloudEditor, normalizeOrderOf, constants, RelationshipKind } from '../common/GlobalImports';
+import { grabs, hierarchy, cloudEditor, normalizeOrderOf, constants, Predicates } from '../common/GlobalImports';
 import { grabbedIDs, editingID, hereID } from '../managers/State';
 import Cloudable from '../persistence/Cloudable';
 import Airtable from 'airtable';
@@ -65,9 +65,9 @@ export default class Thing extends Cloudable {
   }
 
   get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
-  get hasChildren():      boolean { return this.hasRelationshipKind(false); }
-  get children():    Array<Thing> { return hierarchy.things_forKind_andID(RelationshipKind.isAChildOf, this.id, true); }
-  get parents():     Array<Thing> { return hierarchy.things_forKind_andID(RelationshipKind.isAChildOf, this.id, false); }
+  get hasChildren():      boolean { return this.hasPredicates(false); }
+  get children():    Array<Thing> { return hierarchy.things_forKind_andID(Predicates.isAChildOf, this.id, true); }
+  get parents():     Array<Thing> { return hierarchy.things_forKind_andID(Predicates.isAChildOf, this.id, false); }
   get siblings():    Array<Thing> { return this.firstParent?.children ?? []; }
   get grandparent():        Thing { return this.firstParent?.firstParent ?? hierarchy.root; }
   get lastChild():          Thing { return this.children.slice(-1)[0]; }
@@ -85,7 +85,7 @@ export default class Thing extends Cloudable {
     return ancestors;
   }
 
-  hasRelationshipKind = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
+  hasPredicates = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
   startEdit = () => { if (this != hierarchy.root) { editingID.set(this.id); } }
   toggleGrab = () => { grabs.toggleGrab(this); }
   grabOnly = () => { grabs.grabOnly(this); }

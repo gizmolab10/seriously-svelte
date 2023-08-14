@@ -1,4 +1,4 @@
-import { RelationshipKind, hierarchy } from '../common/GlobalImports';
+import { Predicates, hierarchy } from '../common/GlobalImports';
 import Cloudable from '../persistence/Cloudable';
 import Airtable from 'airtable';
 
@@ -6,9 +6,9 @@ export class Relationship extends Cloudable {
   to: string;
   from: string;
   order: number;
-  kind: RelationshipKind;
+  kind: Predicates;
 
-  constructor(id: string, kind: RelationshipKind, from: string, to: string, order = 0) {
+  constructor(id: string, kind: Predicates, from: string, to: string, order = 0) {
     super(id);
     this.to = to; // to is parent
     this.from = from; // from is child

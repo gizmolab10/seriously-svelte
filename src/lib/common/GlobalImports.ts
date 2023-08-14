@@ -1,7 +1,7 @@
 import { log, removeAll, normalizeOrderOf, sortAccordingToOrder } from './Utilities';
 import { DBTypes, BulkIDs, ButtonIDs, PersistenceIDs } from './Enumerations';
 import { FatTriangle, Direction } from '../geometry/FatTriangle';
-import { RelationshipKind } from '../data/RelationshipKind';
+import { Predicates } from '../data/Predicates';
 import { persistence } from '../persistence/Persistence';
 import { cloudEditor } from '../managers/CloudEditor';
 import { Relationship } from '../data/Relationship';
@@ -17,6 +17,6 @@ import './Extensions';
 
 export { get, onMount, onDestroy,
   grabs, hierarchy, cloudEditor, persistence,
-  Thing, Relationship, RelationshipKind, Access, User,
+  Thing, Relationship, Predicates, Access, User,
   log, removeAll, normalizeOrderOf, sortAccordingToOrder,
   constants, FatTriangle, Direction, DBTypes, BulkIDs, ButtonIDs, PersistenceIDs };

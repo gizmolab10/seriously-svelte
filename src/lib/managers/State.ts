@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 
-export let firebaseDocuments = writable<{id:string}[]>();
+export let thingDocuments = writable<{id:string}[]>();
 export let stoppedEditingID  = writable<string | null>();
 export let popupViewID       = writable<string | null>();
 export let editingID         = writable<string | null>();
