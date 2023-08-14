@@ -40,7 +40,7 @@ export default class Thing extends Cloudable {
       }
     });
 
-    grabbedIDs.subscribe((ids: [string] | undefined) => { // executes whenever grabbedIDs changes
+    grabbedIDs.subscribe((ids: string[] | undefined) => { // executes whenever grabbedIDs changes
       const isGrabbed = (ids != undefined) && ids.includes(this.id);
       if (this.isGrabbed != isGrabbed) {
         this.isGrabbed = isGrabbed;

@@ -6,8 +6,9 @@
 	export let thing = Thing;
 	let isGrabbed = false;
 	let isEditing = false;
-	let border;
 	let widget;
+	let border;
+	let hover;
 
   onMount(async () => {
 		updateBorderStyle();
@@ -16,7 +17,7 @@
 	function updateBorderStyle() {
 		thing.updateColorAttributes();
 		border = thing.grabAttributes;
-		widget?.style?.setProperty( '--border', border);
+		hover = thing.hoverAttributes;
 	}
 
 	$: {
@@ -34,7 +35,11 @@
 
 </script>
 
-<span bind:this={widget}>
+<span
+		bind:this={widget}
+		style='border: {border}'
+		on:mouseover={widget.style.border=hover}
+		on:mouseout={widget.style.border=border}>
 	<Dot thing={thing} size=15/>
 	<Title thing={thing}/>
 	{#if thing.hasChildren}
@@ -45,7 +50,6 @@
 <style>
 	span {
 		padding: 1px 8px 2px 1px;
-		border: var(--border);
 		border-radius: 16px;
 	}
 </style>

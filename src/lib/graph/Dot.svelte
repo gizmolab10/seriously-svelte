@@ -3,8 +3,11 @@
   import { grabbedIDs } from '../managers/State';
   export let isReveal = false;
   export let thing = Thing;
-	let isGrabbed = false;
   export let size = 15;
+  let buttonColor = thing.color;
+  let traitColor = thing.color;
+  const dotColor = thing.color;
+	let isGrabbed = false;
   let dot = null;
 
   onMount( () => { updateColorStyle(); });
@@ -17,12 +20,10 @@
 		}
 	}
 
-	function updateColorStyle() {
-		thing.updateColorAttributes();
-		var style = dot?.style;
-      style?.setProperty(   '--dotColor', thing.color);
-      style?.setProperty( '--traitColor', thing.revealColor(!isReveal));
-      style?.setProperty('--buttonColor', thing.revealColor( isReveal));
+  function updateColorStyle() {
+    thing.updateColorAttributes();
+    traitColor = thing.revealColor(isReveal);
+    buttonColor = thing.revealColor(!isReveal);
 	}
 
   async function handleClick(event) {
@@ -47,9 +48,11 @@
     bind:this={dot}
     on:click={handleClick}
     style='width:{size}px; height:{size}px;
-            --dotColor: {thing.color};
-          --traitColor: {thing.revealColor(!isReveal)};
-        --buttonColor: {thing.revealColor( isReveal)}'>
+      border-color: {dotColor};
+      color: {traitColor};
+      background-color: {buttonColor};'
+      on:mouseover={dot.style.backgroundColor=traitColor}
+      on:mouseout={dot.style.backgroundColor=buttonColor}>
   </button>
 </slot>
 
@@ -64,13 +67,5 @@
     position: relative;
     align-items: center;
     justify-content: center;
-    color: var(--traitColor);
-    border-color: var(--dotColor);
-    background-color: var(--buttonColor);
-
-    &:hover {
-      color: var(--buttonColor);
-      background-color: var(--traitColor);
-    }
   }
 </style>
