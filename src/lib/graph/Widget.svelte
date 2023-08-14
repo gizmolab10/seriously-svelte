@@ -17,7 +17,7 @@
 	function updateBorderStyle() {
 		thing.updateColorAttributes();
 		border = thing.grabAttributes;
-		hover = isEditing ? thing.grabAttributes : thing.hoverAttributes;
+		hover = (isEditing || isGrabbed) ? thing.grabAttributes : thing.hoverAttributes;
 	}
 
 	$: {
