@@ -19,6 +19,7 @@
 </script>
 
 <div>
+  <div class="horizontal-line"></div>
   {#if $dbType == DBTypes.airtable}
     <span class='top'>
       <Crumbs grab={grabs.grabbedThing}/>
@@ -51,12 +52,12 @@
       <Details size={size}/>
     {/if}
   </span>
+  <div class="vertical-line"></div>
 
   {#if $popupViewID == ButtonIDs.help}
     <Help size={size}/>
   {/if}
 </div>
-<div class="vertical-line"></div>
 
 <style>
   div {
@@ -79,6 +80,14 @@
   .firebase {
     position: fixed;
     left: 90px;
+  }
+  .horizontal-line {
+    position: absolute;
+    left: -10px;
+    top: 32px;
+    height: 1px;
+    width: 100%;
+    background-color: lightgray;
   }
   .vertical-line {
     position: absolute;
