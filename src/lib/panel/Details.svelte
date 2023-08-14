@@ -10,7 +10,6 @@
   ];
 
   function handleDBTypeAt(index) {
-    debugger;
     const type = menuItems[index].id;
     persistence.writeToKey(PersistenceIDs.db, type);
     if (type == DBTypes.airtable) {

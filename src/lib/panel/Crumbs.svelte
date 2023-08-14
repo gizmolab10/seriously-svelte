@@ -18,9 +18,11 @@
 
 </script>
 
-{#each ancestors as thing, index}
-  {#if index > 0}
-    <span>&nbsp; &gt; </span>
-  {/if}
-  <Crumb thing={thing}/>
-{/each}
+{#if ancestors}
+  {#each ancestors as thing, index}
+    {#if index > 0}
+      <span>&nbsp; &gt; </span>
+    {/if}
+    <Crumb thing={thing}/>
+  {/each}
+{/if}

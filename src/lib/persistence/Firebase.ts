@@ -25,25 +25,25 @@ class Firebase {
   app = initializeApp(this.firebaseConfig);
   analytics = getAnalytics(this.app);
   db = getFirestore(this.app);
-  thingsCollection: Query | null = null;
+  collectionName = 'Seriously';
 
   fetchAll = async (onCompletion: () => any) => {
-    await firebase.fetchDocuments('Seriously');
+    await firebase.fetchDocuments('Things');
     hierarchy.hierarchy_construct();
     onCompletion();
   }
 
-  fetchDocuments = async (collectionName: string) => {
+  fetchDocuments = async (subCollectionName: string) => {
     try {
-      this.thingsCollection = collection(this.db, collectionName, get(privateBulk), 'Things');
-      onSnapshot(this.thingsCollection, snapshot => {
+      const thingsCollection = collection(this.db, this.collectionName, get(privateBulk), subCollectionName);
+      onSnapshot(thingsCollection, snapshot => {
         const updatedThings = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
         firebaseDocuments.set(updatedThings);
       });
-      const querySnapshot = await getDocs(this.thingsCollection);
+      const querySnapshot = await getDocs(thingsCollection);
       const documentSnapshots = querySnapshot.docs;
       if (documentSnapshots != undefined) {
-        await this.remember(documentSnapshots, collectionName);
+        await this.remember(documentSnapshots, this.collectionName);
       }
       return documentSnapshots;
     } catch (error) {

@@ -36,7 +36,7 @@ export default class Hierarchy {
   
   setup = (dbType: string, onCompletion: () => any) => {
     if (this.statusByType[dbType] == true) {
-      onCompletion();
+      onCompletion(); // TODO need to reestablish root?
     } else {
       const done = () => {
         this.hierarchy_construct();

@@ -43,6 +43,6 @@
 <svelte:document on:keydown={handleKeyDown} />
 <div style='position: fixed; left-padding=100px'>
   {#if here != null}
-    <Children parent={here}/>
+    <Children thing={here}/>
   {/if}
 </div>
