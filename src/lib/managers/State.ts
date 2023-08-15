@@ -11,6 +11,6 @@ export const hereID             = writable<string | null>();
 export const grabbedIDs         = writable<string[]>();
 export const showDetails        = writable<boolean>();
 export const isBusy             = writable<boolean>();
-export const privateBulk           = writable<string>();
+export const bulkName           = writable<string>();
 export const dbType             = writable<string>();
 export const build              = writable<number>();

@@ -1,14 +1,14 @@
 <script>
   import { onMount, BulkIDs,  hierarchy, persistence } from '../common/GlobalImports'
-  import { build, dbType, isBusy, privateBulk } from '../managers/State';
+  import { build, dbType, isBusy, bulkName } from '../managers/State';
   import Panel from './Panel.svelte';
   let isLoading = true;
 
   onMount(async () => {
     $isBusy = true;
-    $build = 23;  // sync works!!!
+    $build = 24;  // predicates, too
     persistence.setup();
-    $privateBulk = BulkIDs.public;
+    $bulkName = BulkIDs.public;
     await hierarchy.setup($dbType, () => {
       $isBusy = false;
     })

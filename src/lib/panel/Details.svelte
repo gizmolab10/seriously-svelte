@@ -1,6 +1,6 @@
 <script>
   import { DBTypes, hierarchy, onMount, persistence, PersistenceIDs } from '../common/GlobalImports';
-  import { build, dbType, isBusy, privateBulk, popupViewID } from '../managers/State';
+  import { build, dbType, isBusy, popupViewID } from '../managers/State';
   import RadioButtons from './RadioButtons.svelte'
   export let size = 20;
 

@@ -1,6 +1,6 @@
 import { getDocs, collection, onSnapshot, getFirestore, QueryDocumentSnapshot } from 'firebase/firestore';
+import { bulkName, thingsStore, relationshipsStore } from '../managers/State';
 import { get, Thing, hierarchy, DataKinds } from '../common/GlobalImports';
-import { privateBulk, thingsStore, relationshipsStore } from '../managers/State';
 import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
 // import Cloudable from './Cloudable'; // comment this out when writables work
@@ -37,7 +37,7 @@ class Firebase {
   fetchDocumentsIn = async (dataKind: string, noBulk: boolean = false) => {
     try {
       const areThings = dataKind == DataKinds.things;
-      const documentsCollection = noBulk ? collection(this.db, this.collectionName) : collection(this.db, this.collectionName, get(privateBulk), dataKind);
+      const documentsCollection = noBulk ? collection(this.db, this.collectionName) : collection(this.db, this.collectionName, get(bulkName), dataKind);
       onSnapshot(documentsCollection, snapshot => {
         const documentSnapshots = snapshot.docs
         const documentData = documentSnapshots.map(doc => ({ ...doc.data(), id: doc.id }));

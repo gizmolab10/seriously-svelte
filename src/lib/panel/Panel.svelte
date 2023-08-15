@@ -1,6 +1,6 @@
 <script>
   import { get, grabs, DBTypes, ButtonIDs, hierarchy, persistence, PersistenceIDs, DataKinds } from '../common/GlobalImports'
-  import { dbType, privateBulk, popupViewID, showDetails, thingsStore } from '../managers/State';
+  import { dbType, bulkName, popupViewID, showDetails, thingsStore } from '../managers/State';
   import Graph from '../graph/Graph.svelte';
   import Details from './Details.svelte';
   import Crumbs from './Crumbs.svelte';
@@ -33,7 +33,7 @@
     </div>
   {:else}
     <div class='firebase'>
-      &nbsp; &nbsp; &nbsp; Firebase {$privateBulk}!
+      &nbsp; &nbsp; &nbsp; Firebase {$bulkName}!
       <ul>
         {#each $thingsStore as thing}
           <li>{thing.title}</li>
