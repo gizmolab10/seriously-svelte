@@ -5,8 +5,8 @@
   let isLoading = true;
 
   onMount(async () => {
-    $isBusy = true;
-    $build = 24;  // predicates, too
+    $isBusy = true;   // also used by Details radio buttons
+    $build = 24;      // predicates, too
     persistence.setup();
     $bulkName = BulkIDs.public;
     await hierarchy.setup($dbType, () => {
