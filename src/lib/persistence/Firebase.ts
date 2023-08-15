@@ -21,7 +21,7 @@ class Firebase {
     projectId: "seriously-4536d"
   };
 
-  collectionName = 'Seriously';
+  collectionName = 'Bulks';
   app = initializeApp(this.firebaseConfig);
   analytics = getAnalytics(this.app);
   db = getFirestore(this.app);
