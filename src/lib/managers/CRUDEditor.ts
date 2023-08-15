@@ -1,5 +1,5 @@
 import { get, grabs, Thing, hierarchy, Predicate, normalizeOrderOf } from '../common/GlobalImports';
-import { grabbedIDs } from '../managers/State';
+import { grabbedIDs } from './State';
 import CRUD from '../persistence/CRUD';
 
 ///////////////////////////////////////
@@ -8,7 +8,7 @@ import CRUD from '../persistence/CRUD';
 //                                   //
 ///////////////////////////////////////
 
-export default class CloudEditor extends CRUD {
+export default class CrudEditor extends CRUD {
 
   constructor() { super(); }
 
@@ -129,4 +129,4 @@ export default class CloudEditor extends CRUD {
 
 }
 
-export const cloudEditor = new CloudEditor();
+export const crudEditor = new CrudEditor();

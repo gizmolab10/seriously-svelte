@@ -1,4 +1,4 @@
-import { constants, User, Thing, Access, Relationship, Predicate, DBTypes, cloudEditor, sortAccordingToOrder } from '../common/GlobalImports';
+import { constants, User, Thing, Access, Relationship, Predicate, DBTypes, crudEditor, sortAccordingToOrder } from '../common/GlobalImports';
 import { firebase } from '../persistence/Firebase';
 import { hereID, dbType } from './State';
 import fs from 'fs';
@@ -32,7 +32,7 @@ export default class Hierarchy {
   get rootID(): (string | null) { return this.root?.id ?? null; };
   get things(): Array<Thing> { return Object.values(this.thingsByID) };
   thing_forID = (id: string | null): Thing | null => { return (id == null) ? null : this.thingsByID[id]; }
-  thing_newAt = (order: number) => { return new Thing(cloudEditor.newCloudID, constants.defaultTitle, 'blue', 't', order); }
+  thing_newAt = (order: number) => { return new Thing(crudEditor.newCloudID, constants.defaultTitle, 'blue', 't', order); }
   
   setup = (dbType: string, onCompletion: () => any) => {
     if (this.statusByType[dbType] == true) {
@@ -54,7 +54,7 @@ export default class Hierarchy {
   resetRootFor(dbType: string) {
     if (dbType == DBTypes.airtable) {
       this.thingsByID = {};
-      for (const thing of cloudEditor.things) {
+      for (const thing of crudEditor.things) {
         const id = thing.id;
         this.thingsByID[id] = thing;
         if (thing.trait == '!') {
@@ -66,7 +66,7 @@ export default class Hierarchy {
   }
 
   setupCRUD = async (onCompletion: () => any) => {
-    cloudEditor.readAll(async () => {
+    crudEditor.readAll(async () => {
       hierarchy.root?.becomeHere()
       onCompletion();
       setTimeout(() => { // give crumbs time to be created after launch
@@ -87,7 +87,7 @@ export default class Hierarchy {
             thing.order = relationship.order;
           } else {
             thing.order = order;
-            relationship = this.relationship_new(cloudEditor.newCloudID, Predicate.isAChildOf, id, rootID, order);
+            relationship = this.relationship_new(crudEditor.newCloudID, Predicate.isAChildOf, id, rootID, order);
             relationship.needsCreate = true;
           }
         }

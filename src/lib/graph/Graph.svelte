@@ -1,5 +1,5 @@
 <script>
-  import { grabs, Thing, ButtonIDs, hierarchy, cloudEditor, constants } from '../common/GlobalImports';
+  import { grabs, Thing, ButtonIDs, hierarchy, crudEditor, constants } from '../common/GlobalImports';
   import { popupViewID, editingID, hereID } from '../managers/State';
   import Children from './Children.svelte'
   let here = Thing;
@@ -21,18 +21,18 @@
       const OPTION = event.altKey;
       const SHIFT = event.shiftKey;
       switch (key) {
-        case ' ':          cloudEditor.thing_redraw_addChildTo(grab); break;
+        case ' ':          crudEditor.thing_redraw_addChildTo(grab); break;
         case '?':          $popupViewID = ButtonIDs.help; break;
-        case 'd':          cloudEditor.thing_duplicate(grab); break;
+        case 'd':          crudEditor.thing_duplicate(grab); break;
         case 'r':          break; // restart app
         case 't':          alert('PARENT-CHILD SWAP'); break;
-        case 'tab':        cloudEditor.thing_redraw_addChildTo(grab.firstParent); break; // Title also makes this call
+        case 'tab':        crudEditor.thing_redraw_addChildTo(grab.firstParent); break; // Title also makes this call
         case 'delete':
-        case 'backspace':  cloudEditor.grabs_redraw_delete(); break;
-        case 'arrowup':    cloudEditor.grab_redraw_moveUp(true, SHIFT, OPTION); break;
-        case 'arrowdown':  cloudEditor.grab_redraw_moveUp(false, SHIFT, OPTION); break;
-        case 'arrowright': cloudEditor.thing_redraw_moveRight(grab, true, OPTION); break;
-        case 'arrowleft':  cloudEditor.thing_redraw_moveRight(grab, false, OPTION); break;
+        case 'backspace':  crudEditor.grabs_redraw_delete(); break;
+        case 'arrowup':    crudEditor.grab_redraw_moveUp(true, SHIFT, OPTION); break;
+        case 'arrowdown':  crudEditor.grab_redraw_moveUp(false, SHIFT, OPTION); break;
+        case 'arrowright': crudEditor.thing_redraw_moveRight(grab, true, OPTION); break;
+        case 'arrowleft':  crudEditor.thing_redraw_moveRight(grab, false, OPTION); break;
         case 'enter':      grab.startEdit(); break;
       }
     }
