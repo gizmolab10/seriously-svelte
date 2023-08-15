@@ -1,5 +1,5 @@
 import { log, removeAll, normalizeOrderOf, sortAccordingToOrder } from './Utilities';
-import { DBTypes, BulkIDs, ButtonIDs, PersistenceIDs } from './Enumerations';
+import { DBTypes, BulkIDs, ButtonIDs, DataKinds, PersistenceIDs } from './Enumerations';
 import { FatTriangle, Direction } from '../geometry/FatTriangle';
 import { persistence } from '../persistence/Persistence';
 import { cloudEditor } from '../managers/CloudEditor';
@@ -19,4 +19,4 @@ export { get, onMount, onDestroy,
   grabs, hierarchy, cloudEditor, persistence,
   User, Thing, Access, Predicate, Relationship,
   log, removeAll, normalizeOrderOf, sortAccordingToOrder,
-  constants, FatTriangle, Direction, DBTypes, BulkIDs, ButtonIDs, PersistenceIDs };
+  constants, FatTriangle, Direction, DBTypes, BulkIDs, ButtonIDs, DataKinds, PersistenceIDs };

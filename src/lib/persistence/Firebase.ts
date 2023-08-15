@@ -1,6 +1,6 @@
-import { Query, getDocs, collection, onSnapshot, getFirestore, QueryDocumentSnapshot } from 'firebase/firestore';
-import { privateBulk, thingDocuments } from '../managers/State';
-import { get, Thing, hierarchy } from '../common/GlobalImports';
+import { getDocs, collection, onSnapshot, getFirestore, QueryDocumentSnapshot } from 'firebase/firestore';
+import { get, Thing, hierarchy, DataKinds } from '../common/GlobalImports';
+import { privateBulk, thingsStore, relationshipsStore } from '../managers/State';
 import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
 // import Cloudable from './Cloudable'; // comment this out when writables work
@@ -21,38 +21,46 @@ class Firebase {
     projectId: "seriously-4536d"
   };
 
+  collectionName = 'Seriously';
   app = initializeApp(this.firebaseConfig);
   analytics = getAnalytics(this.app);
   db = getFirestore(this.app);
-  collectionName = 'Seriously';
 
   fetchAll = async (onCompletion: () => any) => {
-    await firebase.fetchDocumentsIn('Things', true);
+    await firebase.fetchDocumentsIn(DataKinds.predicates, true);
+    // await firebase.fetchDocumentsIn(DataKinds.relationships);
+    await firebase.fetchDocumentsIn(DataKinds.things);
     hierarchy.hierarchy_construct();
     onCompletion();
   }
-
-  fetchDocumentsIn = async (subCollectionName: string, areThings: boolean) => {
+    
+  fetchDocumentsIn = async (dataKind: string, noBulk: boolean = false) => {
     try {
-      const documentsCollection = collection(this.db, this.collectionName, get(privateBulk), subCollectionName);
+      const areThings = dataKind == DataKinds.things;
+      const documentsCollection = noBulk ? collection(this.db, this.collectionName) : collection(this.db, this.collectionName, get(privateBulk), dataKind);
       onSnapshot(documentsCollection, snapshot => {
-        const updatedDocuments = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+        const documentSnapshots = snapshot.docs
+        const documentData = documentSnapshots.map(doc => ({ ...doc.data(), id: doc.id }));
         if (areThings) {
-          thingDocuments.set(updatedDocuments);
+          thingsStore.set(documentData);
+          this.rememberThings(documentSnapshots);
+        } else if (dataKind == DataKinds.relationships) {
+          relationshipsStore.set(documentData);
+        } else if (dataKind == DataKinds.predicates) {
+          // store in hierarchy
         }
       });
       const querySnapshot = await getDocs(documentsCollection);
       const documentSnapshots = querySnapshot.docs;
       if (documentSnapshots != undefined && areThings) {
-        await this.rememberThings(documentSnapshots);
+        this.rememberThings(documentSnapshots);
       }
-      return documentSnapshots;
     } catch (error) {
       console.log(error);
     }
   }
 
-  async rememberThings(documentSnapshots: QueryDocumentSnapshot[]) {
+  rememberThings(documentSnapshots: QueryDocumentSnapshot[]) {
     for (const documentSnapshot of documentSnapshots) {
       const data = documentSnapshot.data();
       const thing = data as Thing;

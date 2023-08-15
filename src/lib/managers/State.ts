@@ -1,13 +1,16 @@
+import { QueryDocumentSnapshot } from 'firebase/firestore';
 import { writable } from 'svelte/store';
 
-export let thingDocuments = writable<{id:string}[]>();
-export let stoppedEditingID  = writable<string | null>();
-export let popupViewID       = writable<string | null>();
-export let editingID         = writable<string | null>();
-export let hereID            = writable<string | null>();
-export let grabbedIDs        = writable<string[]>();
-export let showDetails       = writable<boolean>();
-export let isBusy            = writable<boolean>();
-export let privateBulk          = writable<string>();
-export let dbType            = writable<string>();
-export let build             = writable<number>();
+export const thingsStore        = writable<{id:string}[]>();
+export const predicatesStore    = writable<{id:string}[]>();
+export const relationshipsStore = writable<{id:string}[]>();
+export const stoppedEditingID   = writable<string | null>();
+export const popupViewID        = writable<string | null>();
+export const editingID          = writable<string | null>();
+export const hereID             = writable<string | null>();
+export const grabbedIDs         = writable<string[]>();
+export const showDetails        = writable<boolean>();
+export const isBusy             = writable<boolean>();
+export const privateBulk           = writable<string>();
+export const dbType             = writable<string>();
+export const build              = writable<number>();

@@ -1,13 +1,13 @@
 <script>
-  import { get, grabs, DBTypes, ButtonIDs, hierarchy, persistence, PersistenceIDs } from '../common/GlobalImports'
-  import { dbType, privateBulk, popupViewID, showDetails, thingDocuments } from '../managers/State';
+  import { get, grabs, DBTypes, ButtonIDs, hierarchy, persistence, PersistenceIDs, DataKinds } from '../common/GlobalImports'
+  import { dbType, privateBulk, popupViewID, showDetails, thingsStore } from '../managers/State';
   import Graph from '../graph/Graph.svelte';
   import Details from './Details.svelte';
   import Crumbs from './Crumbs.svelte';
   import Button from './Button.svelte';
   import Help from './Help.svelte';
   let size = 15;
-  
+
   function handleClick(id) {
     $popupViewID = ($popupViewID == id) ? null : id;
   }
@@ -33,9 +33,9 @@
     </div>
   {:else}
     <div class='firebase'>
-      &nbsp; &nbsp; &nbsp; Firestore {$privateBulk}!
+      &nbsp; &nbsp; &nbsp; Firebase {$privateBulk}!
       <ul>
-        {#each $thingDocuments as thing}
+        {#each $thingsStore as thing}
           <li>{thing.title}</li>
         {/each}
       </ul>

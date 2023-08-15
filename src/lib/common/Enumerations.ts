@@ -2,8 +2,8 @@ export enum ButtonIDs {
   help = '?',
 }
 export enum DBTypes {
-  firebase = 'f',
-  airtable = 'a',
+  firebase = 'firebase',
+  airtable = 'airtable',
 }
 export enum BulkIDs {
   public = 'Public',
@@ -13,4 +13,8 @@ export enum PersistenceIDs {
   details = 'details',
   db      = 'db',
 }
-
+export enum DataKinds {
+  things        = 'Things',
+  predicates    = 'Predicates',
+  relationships = 'Relationships'
+}
