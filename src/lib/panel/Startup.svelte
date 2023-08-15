@@ -19,7 +19,7 @@
   <p>Welcome to Seriously</p>
   <p>(loading your data now)</p>
 {:else if hierarchy.hasNothing}
-  <p>Nothing is available ($showDetails, $dbType).</p>
+  <p>Nothing is available.</p>
 {:else}
   <Panel/>
 {/if}

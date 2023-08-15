@@ -36,6 +36,7 @@ export default class Hierarchy {
   
   setup = (dbType: string, onCompletion: () => any) => {
     if (this.statusByType[dbType] == true) {
+      this.resetRootFor(dbType);
       onCompletion();
     } else {
       const done = () => {
@@ -45,7 +46,21 @@ export default class Hierarchy {
       }
       switch (dbType) {
         case DBTypes.airtable: this.setupCRUD(done); break;
-        default:               firebase.fetchAll(done); break;
+        default: firebase.fetchAll(done); break;
+      }
+    }
+  }
+
+  resetRootFor(dbType: string) {
+    if (dbType == DBTypes.airtable) {
+      this.thingsByID = {};
+      for (const thing of cloudEditor.things) {
+        const id = thing.id;
+        this.thingsByID[id] = thing;
+        if (thing.trait == '!') {
+          this.root = thing;
+          hereID.set(id);
+        }
       }
     }
   }
@@ -56,7 +71,6 @@ export default class Hierarchy {
       onCompletion();
       setTimeout(() => { // give crumbs time to be created after launch
         hierarchy.root?.grabOnly()
-        // hierarchy.object_writeToURL(hierarchy.thingsByID, 'foobeedoo.json'); // vite won't allow this
       }, 1);
     });
   }
@@ -85,7 +99,6 @@ export default class Hierarchy {
   //         THINGS          //
   /////////////////////////////
 
-  
   things_forIDs(ids: Array<string>): Array<Thing> {
     const array = Array<Thing>();
     for (const id of ids) {
@@ -178,7 +191,7 @@ export default class Hierarchy {
   //         ANCILLARY DATA          //
   /////////////////////////////////////
 
-  Predicate_new = (id: string, kind: string) => {
+  predicate_new = (id: string, kind: string) => {
     const newKind = new Predicate(id, kind);
     this.predicatesByKind[kind] = newKind;
     this.predicatesByID[id] = newKind;

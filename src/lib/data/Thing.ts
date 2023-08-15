@@ -65,6 +65,7 @@ export default class Thing extends Cloudable {
   }
 
   get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
+  get debugTitle():        string { return ' (\"' + this.title + '\") '; }
   get hasChildren():      boolean { return this.hasPredicate(false); }
   get children():    Array<Thing> { return hierarchy.things_forKind_andID(Predicate.isAChildOf, this.id, true); }
   get parents():     Array<Thing> { return hierarchy.things_forKind_andID(Predicate.isAChildOf, this.id, false); }

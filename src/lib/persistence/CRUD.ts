@@ -1,4 +1,4 @@
-import { Thing, Relationship, Predicate, hierarchy, removeAll } from '../common/GlobalImports';
+import { Thing, Relationship, hierarchy, removeAll } from '../common/GlobalImports';
 import { v4 as uuid } from 'uuid';
 import Airtable from 'airtable';
 
@@ -14,11 +14,12 @@ import Airtable from 'airtable';
 
 export default class CRUD {
   base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
-  predicates_table = this.base('predicates');
   relationships_table = this.base('Relationships');
+  predicates_table = this.base('predicates');
   things_table = this.base('Things');
   access_table = this.base('Access');
   users_table = this.base('Users');
+  things: Thing[] = [];
 
   relationships_errorMessage = 'Error in Relationships:';
   things_errorMessage = 'Error in Things:';
@@ -46,6 +47,7 @@ export default class CRUD {
 
   async things_readAll(onCompletion: () => any) {
     hierarchy.thingsByID = {}; // clear
+    this.things =[];
 
     try {
       const records = await this.things_table.select().all()
@@ -54,6 +56,7 @@ export default class CRUD {
         const id = record.id;
         const thing = new Thing(id, record.fields.title as string, record.fields.color as string, record.fields.trait as string);
         hierarchy.thingsByID[id] = thing;
+        this.things.push(thing)
         if (thing.trait == '!') {
           hierarchy.root = thing;
         }
@@ -197,7 +200,7 @@ export default class CRUD {
       for (const record of records) {
         const id = record.id as string; // do not yet need this
         const kind = record.fields.kind as string;
-        hierarchy.Predicate_new(id, kind);
+        hierarchy.predicate_new(id, kind);
       }
 
     } catch (error) {

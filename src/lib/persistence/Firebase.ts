@@ -66,7 +66,6 @@ class Firebase {
       const thing = data as Thing;
       const id = documentSnapshot.id;
       thing.id = id;
-      console.log(id, thing.title);
       hierarchy.thingsByID[id] = thing;
       if (thing.trait == '!') {
         hierarchy.root = thing;
