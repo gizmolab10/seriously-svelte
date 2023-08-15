@@ -9,14 +9,16 @@ import { Predicate } from '../data/Predicate';
 import { onMount, onDestroy } from 'svelte';
 import { grabs } from '../managers/Grabs';
 import { constants } from './Constants';
+import { releases } from './Releases';
 import Access from '../data/Access';
 import { get } from 'svelte/store';
 import Thing from '../data/Thing';
 import User from '../data/User';
 import './Extensions';
 
-export { get, onMount, onDestroy,
+export { constants, releases,
+  get, onMount, onDestroy,
   grabs, hierarchy, crudEditor, persistence,
   User, Thing, Access, Predicate, Relationship,
   log, removeAll, normalizeOrderOf, sortAccordingToOrder,
-  constants, FatTriangle, Direction, DBTypes, BulkIDs, ButtonIDs, DataKinds, PersistenceIDs };
+  FatTriangle, Direction, DBTypes, BulkIDs, ButtonIDs, DataKinds, PersistenceIDs };

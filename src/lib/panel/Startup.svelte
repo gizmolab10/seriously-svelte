@@ -1,12 +1,11 @@
 <script>
-  import { onMount, BulkIDs,  hierarchy, persistence } from '../common/GlobalImports'
+  import { onMount, BulkIDs,  hierarchy, persistence, releases } from '../common/GlobalImports'
   import { build, dbType, isBusy, bulkName, showDetails } from '../managers/State';
   import Panel from './Panel.svelte';
   let isLoading = true;
 
   onMount(async () => {
     $isBusy = true;   // also used by Details radio buttons
-    $build = 24;      // predicates, too
     persistence.setup();
     $bulkName = BulkIDs.public;
     await hierarchy.setup($dbType, () => {
