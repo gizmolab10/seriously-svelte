@@ -16,8 +16,7 @@ class Persistence {
   
   setup() {
     showDetails.set(this.readFromKey(PersistenceIDs.details) ?? false);
-    // dbType.set(this.readFromKey(PersistenceIDs.db) ?? DBTypes.airtable);
-    dbType.set(DBTypes.airtable);
+    dbType.set(this.readFromKey(PersistenceIDs.db) ?? DBTypes.airtable);
     console.log(showDetails, dbType);
   }
 
