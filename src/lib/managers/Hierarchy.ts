@@ -202,9 +202,13 @@ export default class Hierarchy {
   /////////////////////////////////////
 
   predicate_new = (id: string, kind: string) => {
-    const newKind = new Predicate(id, kind);
-    this.predicatesByKind[kind] = newKind;
-    this.predicatesByID[id] = newKind;
+    const predicate = new Predicate(id, kind);
+    this.predicate_remember(predicate)
+  }
+
+  predicate_remember = (predicate: Predicate) => {
+    this.predicatesByKind[predicate.kind] = predicate;
+    this.predicatesByID[predicate.id] = predicate;
   }
 
   access_new = (id: string, kind: string) => {

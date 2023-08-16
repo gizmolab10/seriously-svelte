@@ -1,6 +1,6 @@
 import { getDocs, collection, onSnapshot, getFirestore, QuerySnapshot, QueryDocumentSnapshot } from 'firebase/firestore';
 import { bulkName, thingsArrived, thingsStore, relationshipsStore } from '../managers/State';
-import { get, Thing, hierarchy, DataKinds } from '../common/GlobalImports';
+import { get, Thing, hierarchy, DataKinds, Predicate } from '../common/GlobalImports';
 import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
 
@@ -59,7 +59,15 @@ class Firebase {
     }    
   }
   
-  rememberPredicates() {}
+  rememberPredicates(documentSnapshots: QueryDocumentSnapshot[]) {
+    for (const documentSnapshot of documentSnapshots) {
+      const data = documentSnapshot.data();
+      const predicate = data as Predicate;
+      const id = documentSnapshot.id;
+      predicate.id = id;
+      hierarchy.predicate_remember(predicate);
+    }
+  }
 
   rememberThings(documentSnapshots: QueryDocumentSnapshot[]) {
     for (const documentSnapshot of documentSnapshots) {
