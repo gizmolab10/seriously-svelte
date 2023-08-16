@@ -1,5 +1,5 @@
-import { collection, onSnapshot, getFirestore, QuerySnapshot, QueryDocumentSnapshot } from 'firebase/firestore';
-import { hereID, bulkName, thingsArrived, thingsStore, relationshipsStore } from '../managers/State';
+import { getDocs, collection, onSnapshot, getFirestore, QuerySnapshot, QueryDocumentSnapshot } from 'firebase/firestore';
+import { bulkName, thingsArrived, thingsStore, relationshipsStore } from '../managers/State';
 import { get, Thing, hierarchy, DataKinds } from '../common/GlobalImports';
 import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
@@ -29,15 +29,14 @@ class Firebase {
     await firebase.fetchDocumentsIn(DataKinds.predicates, true);
     // await firebase.fetchDocumentsIn(DataKinds.relationships);
     await firebase.fetchDocumentsIn(DataKinds.things);
-    hierarchy.hierarchy_construct();
     onCompletion();
   }
     
   fetchDocumentsIn = async (dataKind: string, noBulk: boolean = false) => {
     try {
       const documentsCollection = noBulk ? collection(this.db, dataKind) : collection(this.db, this.collectionName, get(bulkName), dataKind);
-      // const querySnapshot = await getDocs(documentsCollection);
-      // this.remember(dataKind, querySnapshot);
+      const querySnapshot = await getDocs(documentsCollection);
+      this.remember(dataKind, querySnapshot);
       onSnapshot(documentsCollection, querySnapshot => { 
         this.remember(dataKind, querySnapshot);
       });
@@ -68,11 +67,9 @@ class Firebase {
       const thing = data as Thing;
       const id = documentSnapshot.id;
       thing.id = id;
-      hierarchy.thingsByID[id] = thing;
-      if (thing.trait == '!') {
-        hierarchy.root = thing;
-      }
+      hierarchy.thing_remember(thing);
     }
+    hierarchy.hierarchy_construct();
     thingsArrived.set(true);
   }
 

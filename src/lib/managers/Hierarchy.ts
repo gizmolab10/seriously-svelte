@@ -1,6 +1,6 @@
 import { constants, User, Thing, Access, Relationship, Predicate, DBTypes, crudEditor, sortAccordingToOrder } from '../common/GlobalImports';
 import { firebase } from '../persistence/Firebase';
-import { hereID, thingsArrived } from './State';
+import { hereID, isBusy, thingsArrived } from './State';
 import fs from 'fs';
 
 ////////////////////////////////////////
@@ -39,10 +39,12 @@ export default class Hierarchy {
       this.resetRootFor(dbType);
       onCompletion();
     } else {
+      isBusy.set(true);    // also used by Details radio buttons
       thingsArrived.set(false);
       const done = () => {
         this.hierarchy_construct();
         this.statusByType[dbType] = true;
+        isBusy.set(false);
         onCompletion();
       }
       switch (dbType) {
@@ -120,6 +122,13 @@ export default class Hierarchy {
       }
     }
     return this.things_forIDs(ids);
+  }
+
+  thing_remember(thing: Thing) {
+    hierarchy.thingsByID[thing.id] = thing;
+    if (thing.trait == '!') {
+      hierarchy.root = thing;
+    }
   }
 
   ////////////////////////////////////

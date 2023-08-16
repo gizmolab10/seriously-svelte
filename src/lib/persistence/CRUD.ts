@@ -56,11 +56,8 @@ export default class CRUD {
       for (const record of records) {
         const id = record.id;
         const thing = new Thing(id, record.fields.title as string, record.fields.color as string, record.fields.trait as string);
-        hierarchy.thingsByID[id] = thing;
+        hierarchy.thing_remember(thing);
         this.things.push(thing)
-        if (thing.trait == '!') {
-          hierarchy.root = thing;
-        }
       }
       thingsArrived.set(true);
       onCompletion();

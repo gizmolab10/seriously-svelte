@@ -12,11 +12,11 @@
   function handleDBTypeAt(index) {
     const type = menuItems[index].id;
     persistence.writeToKey(PersistenceIDs.db, type);
+    $dbType = type;    // tell components to render the [possibly previously] fetched data
     if (type == DBTypes.airtable) {
       $isBusy = true;    // show 'loading ...'
     }
     hierarchy.setup(type, () => {
-      $dbType = type;    // tell components to render the [possibly previously] fetched data
       $isBusy = false;
     });
   }
