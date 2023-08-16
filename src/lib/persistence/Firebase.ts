@@ -1,6 +1,6 @@
-import { getDocs, collection, onSnapshot, getFirestore, QuerySnapshot, QueryDocumentSnapshot } from 'firebase/firestore';
+import { getDocs, collection, onSnapshot, getFirestore, QuerySnapshot } from 'firebase/firestore';
+import { get, Thing, hierarchy, DataKinds, Predicate, Relationship } from '../common/GlobalImports';
 import { bulkName, thingsArrived, thingsStore, relationshipsStore } from '../managers/State';
-import { get, Thing, hierarchy, DataKinds, Predicate } from '../common/GlobalImports';
 import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
 
@@ -29,6 +29,8 @@ class Firebase {
     await firebase.fetchDocumentsIn(DataKinds.predicates, true);
     // await firebase.fetchDocumentsIn(DataKinds.relationships);
     await firebase.fetchDocumentsIn(DataKinds.things);
+    hierarchy.hierarchy_construct();
+    thingsArrived.set(true);
     onCompletion();
   }
     
@@ -50,35 +52,26 @@ class Firebase {
     const documentData = queryDocumentSnapshot.map(doc => ({ ...doc.data(), id: doc.id }));
     if (dataKind == DataKinds.things) {
       thingsStore.set(documentData);
-      this.rememberThings(queryDocumentSnapshot);
     } else if (dataKind == DataKinds.relationships) {
       relationshipsStore.set(documentData);
-    } else if (dataKind == DataKinds.predicates) {
-      console.log('predicates', documentData);
-      // store in hierarchy
-    }    
-  }
-  
-  rememberPredicates(documentSnapshots: QueryDocumentSnapshot[]) {
-    for (const documentSnapshot of documentSnapshots) {
-      const data = documentSnapshot.data();
-      const predicate = data as Predicate;
-      const id = documentSnapshot.id;
-      predicate.id = id;
-      hierarchy.predicate_remember(predicate);
     }
-  }
-
-  rememberThings(documentSnapshots: QueryDocumentSnapshot[]) {
-    for (const documentSnapshot of documentSnapshots) {
+    for (const documentSnapshot of queryDocumentSnapshot) {
       const data = documentSnapshot.data();
-      const thing = data as Thing;
       const id = documentSnapshot.id;
-      thing.id = id;
-      hierarchy.thing_remember(thing);
+      if (dataKind == DataKinds.things) {
+        const thing = data as Thing;
+        thing.id = id;
+        hierarchy.thing_remember(thing);
+      } else if (dataKind == DataKinds.relationships) {
+        const relationship = data as Relationship;
+        relationship.id = id;
+        hierarchy.relationship_remember(relationship);
+      } else if (dataKind == DataKinds.predicates) {
+        const predicate = data as Predicate;
+        predicate.id = id;
+        hierarchy.predicate_remember(predicate);
+      }
     }
-    hierarchy.hierarchy_construct();
-    thingsArrived.set(true);
   }
 
 }
