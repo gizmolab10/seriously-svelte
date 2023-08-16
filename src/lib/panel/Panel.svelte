@@ -1,10 +1,10 @@
 <script>
   import { get, grabs, DBTypes, ButtonIDs, hierarchy, persistence, PersistenceIDs, DataKinds } from '../common/GlobalImports'
   import { dbType, bulkName, popupViewID, showDetails, thingsStore } from '../managers/State';
+  import CircularButton from '../buttons/CircularButton.svelte';
   import Graph from '../graph/Graph.svelte';
   import Details from './Details.svelte';
   import Crumbs from './Crumbs.svelte';
-  import Button from './Button.svelte';
   import Help from './Help.svelte';
   let size = 15;
 
@@ -23,7 +23,7 @@
   {#if $dbType == DBTypes.airtable}
     <span class='top'>
       <Crumbs grab={grabs.grabbedThing}/>
-      <Button
+      <CircularButton
         onClick={() => {handleClick(ButtonIDs.help)}}
         label='?'
         size={size}/>
@@ -43,7 +43,7 @@
   {/if}
 
   <span class='left-margin'>
-    <Button
+    <CircularButton
       image='settings.png'
       size=15
       borderColor='white'

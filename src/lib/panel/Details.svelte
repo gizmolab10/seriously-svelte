@@ -1,7 +1,7 @@
 <script>
   import { DBTypes, hierarchy, onMount, persistence, PersistenceIDs } from '../common/GlobalImports';
   import { build, dbType, isBusy, popupViewID } from '../managers/State';
-  import RadioButtons from './RadioButtons.svelte'
+  import RadioButtons from '../buttons/RadioButtons.svelte'
   export let size = 20;
 
   const menuItems = [
@@ -16,7 +16,7 @@
       $isBusy = true;    // show 'loading ...'
     }
     hierarchy.setup(type, () => {
-      $dbType = type;    // do this last so components will see the resulting data
+      $dbType = type;    // tell components to render the [possibly previously] fetched data
       $isBusy = false;
     });
   }
@@ -26,9 +26,7 @@
 <div class="modal-overlay">
   <div class="modal-content">
       <p>build: {$build}</p>
-      <RadioButtons
-        menuItems={menuItems}
-        selectedID={$dbType}/>
+      <RadioButtons menuItems={menuItems} selectedID={$dbType}/>
   </div>
 </div>
 

@@ -1,5 +1,5 @@
-import { log, removeAll, normalizeOrderOf, sortAccordingToOrder } from './Utilities';
 import { DBTypes, BulkIDs, ButtonIDs, DataKinds, PersistenceIDs } from './Enumerations';
+import { log, removeAll, normalizeOrderOf, sortAccordingToOrder } from './Utilities';
 import { FatTriangle, Direction } from '../geometry/FatTriangle';
 import { persistence } from '../persistence/Persistence';
 import { crudEditor } from '../managers/CRUDEditor';
