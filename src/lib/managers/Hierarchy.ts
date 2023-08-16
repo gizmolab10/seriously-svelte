@@ -1,6 +1,6 @@
 import { constants, User, Thing, Access, Relationship, Predicate, DBTypes, crudEditor, sortAccordingToOrder } from '../common/GlobalImports';
 import { firebase } from '../persistence/Firebase';
-import { hereID, dbType } from './State';
+import { hereID, thingsArrived } from './State';
 import fs from 'fs';
 
 ////////////////////////////////////////
@@ -39,6 +39,7 @@ export default class Hierarchy {
       this.resetRootFor(dbType);
       onCompletion();
     } else {
+      thingsArrived.set(false);
       const done = () => {
         this.hierarchy_construct();
         this.statusByType[dbType] = true;

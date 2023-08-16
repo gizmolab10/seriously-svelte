@@ -1,4 +1,5 @@
 import { Thing, Relationship, hierarchy, removeAll } from '../common/GlobalImports';
+import { thingsArrived } from '../managers/State';
 import { v4 as uuid } from 'uuid';
 import Airtable from 'airtable';
 
@@ -61,6 +62,7 @@ export default class CRUD {
           hierarchy.root = thing;
         }
       }
+      thingsArrived.set(true);
       onCompletion();
     } catch (error) {
       console.log(this.things_errorMessage + ' (things_readAll) ' + error);

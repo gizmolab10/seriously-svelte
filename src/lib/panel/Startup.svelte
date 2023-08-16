@@ -1,6 +1,6 @@
 <script>
-  import { onMount, BulkIDs,  hierarchy, persistence, releases } from '../common/GlobalImports'
-  import { build, dbType, isBusy, bulkName, showDetails } from '../managers/State';
+  import { onMount, BulkIDs,  hierarchy, persistence } from '../common/GlobalImports'
+  import { dbType, isBusy, bulkName, thingsArrived } from '../managers/State';
   import Panel from './Panel.svelte';
   let isLoading = true;
 
@@ -17,7 +17,7 @@
 {#if $isBusy}
   <p>Welcome to Seriously</p>
   <p>(loading your data now)</p>
-{:else if hierarchy.hasNothing}
+{:else if !$thingsArrived}
   <p>Nothing is available.</p>
 {:else}
   <Panel/>

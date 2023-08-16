@@ -1,9 +1,8 @@
-import { getDocs, collection, onSnapshot, getFirestore, QueryDocumentSnapshot } from 'firebase/firestore';
-import { bulkName, thingsStore, relationshipsStore } from '../managers/State';
+import { collection, onSnapshot, getFirestore, QuerySnapshot, QueryDocumentSnapshot } from 'firebase/firestore';
+import { hereID, bulkName, thingsArrived, thingsStore, relationshipsStore } from '../managers/State';
 import { get, Thing, hierarchy, DataKinds } from '../common/GlobalImports';
 import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
-// import Cloudable from './Cloudable'; // comment this out when writables work
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -36,29 +35,32 @@ class Firebase {
     
   fetchDocumentsIn = async (dataKind: string, noBulk: boolean = false) => {
     try {
-      const areThings = dataKind == DataKinds.things;
-      const documentsCollection = noBulk ? collection(this.db, this.collectionName) : collection(this.db, this.collectionName, get(bulkName), dataKind);
-      onSnapshot(documentsCollection, snapshot => {
-        const documentSnapshots = snapshot.docs
-        const documentData = documentSnapshots.map(doc => ({ ...doc.data(), id: doc.id }));
-        if (areThings) {
-          thingsStore.set(documentData);
-          this.rememberThings(documentSnapshots);
-        } else if (dataKind == DataKinds.relationships) {
-          relationshipsStore.set(documentData);
-        } else if (dataKind == DataKinds.predicates) {
-          // store in hierarchy
-        }
+      const documentsCollection = noBulk ? collection(this.db, dataKind) : collection(this.db, this.collectionName, get(bulkName), dataKind);
+      // const querySnapshot = await getDocs(documentsCollection);
+      // this.remember(dataKind, querySnapshot);
+      onSnapshot(documentsCollection, querySnapshot => { 
+        this.remember(dataKind, querySnapshot);
       });
-      const querySnapshot = await getDocs(documentsCollection);
-      const documentSnapshots = querySnapshot.docs;
-      if (documentSnapshots != undefined && areThings) {
-        this.rememberThings(documentSnapshots);
-      }
     } catch (error) {
       console.log(error);
     }
   }
+
+  remember(dataKind: string, documentSnapshots: QuerySnapshot) {
+    const queryDocumentSnapshot = documentSnapshots.docs;
+    const documentData = queryDocumentSnapshot.map(doc => ({ ...doc.data(), id: doc.id }));
+    if (dataKind == DataKinds.things) {
+      thingsStore.set(documentData);
+      this.rememberThings(queryDocumentSnapshot);
+    } else if (dataKind == DataKinds.relationships) {
+      relationshipsStore.set(documentData);
+    } else if (dataKind == DataKinds.predicates) {
+      console.log('predicates', documentData);
+      // store in hierarchy
+    }    
+  }
+  
+  rememberPredicates() {}
 
   rememberThings(documentSnapshots: QueryDocumentSnapshot[]) {
     for (const documentSnapshot of documentSnapshots) {
@@ -71,6 +73,7 @@ class Firebase {
         hierarchy.root = thing;
       }
     }
+    thingsArrived.set(true);
   }
 
 }

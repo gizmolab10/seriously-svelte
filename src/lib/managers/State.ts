@@ -9,6 +9,7 @@ export const popupViewID        = writable<string | null>();
 export const editingID          = writable<string | null>();
 export const hereID             = writable<string | null>();
 export const grabbedIDs         = writable<string[]>();
+export const thingsArrived      = writable<boolean>();
 export const showDetails        = writable<boolean>();
 export const isBusy             = writable<boolean>();
 export const bulkName           = writable<string>();
