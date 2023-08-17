@@ -127,9 +127,9 @@ export default class CRUD {
         const tos = record.fields.to as (string[]);
         const order = record.fields.order as number;
         const froms = record.fields.from as (string[]);
-        const kinds = record.fields.kind as (string[]);
-        const kind = hierarchy.predicatesByID[kinds[0]];
-        hierarchy.relationship_new(id, kind, froms[0], tos[0], order);
+        const predicates = record.fields.predicate as (string[]);
+        const predicate = hierarchy.predicatesByID[predicates[0]];
+        hierarchy.relationship_new(id, predicate, froms[0], tos[0], order);
       }
     } catch (error) {
       console.log(this.relationships_errorMessage + error);

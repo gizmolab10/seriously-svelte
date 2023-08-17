@@ -43,6 +43,7 @@ export default class Hierarchy {
       const done = () => {
         this.hierarchy_construct();
         this.statusByType[dbType] = true;
+        thingsArrived.set(true);
         isBusy.set(false);
         onCompletion();
       }
@@ -116,7 +117,7 @@ export default class Hierarchy {
             thing.order = relationship.order;
           } else {
             thing.order = order;
-            relationship = this.relationship_new(crudEditor.newCloudID, Predicate.isAChildOf, id, rootID, order);
+            relationship = this.relationship_new(crudEditor.newCloudID, Predicate.isAParentOf, rootID, id, order);
             relationship.needsCreate = true;
           }
         }
@@ -139,8 +140,8 @@ export default class Hierarchy {
     return sortAccordingToOrder(array);
   }
 
-  things_forKind_andID(kind: Predicate, id: string, matchingTo: boolean): Array<Thing> {
-    const matches = this.relationships_byKindToID(kind, matchingTo, id);
+  things_forPredicate_andID(predicate: Predicate, id: string, matchingTo: boolean): Array<Thing> {
+    const matches = this.relationships_byKindToID(predicate, matchingTo, id);
     const ids: Array<string> = [];
     if (Array.isArray(matches)) {
       for (const relationship of matches) {
@@ -154,15 +155,15 @@ export default class Hierarchy {
   //         RELATIONSHIPS          //
   ////////////////////////////////////
 
-  relationship_new(id: string, kind: Predicate, from: string, to: string, order: number): Relationship {
-    const relationship = new Relationship(id, kind, from, to, order);
+  relationship_new(id: string, predicate: Predicate, from: string, to: string, order: number): Relationship {
+    const relationship = new Relationship(id, predicate, from, to, order);
     this.relationship_remember(relationship);
     return relationship;
   }
 
   relationship_parentTo(id: string) {
     const thing = this.thing_forID(id); // assure id is known
-    const matches = this.relationships_byKindToID(Predicate.isAChildOf, false, id);
+    const matches = this.relationships_byKindToID(Predicate.isAParentOf, false, id);
     if (thing != null && matches.length > 0) {
       return matches[0];
     }
@@ -183,13 +184,13 @@ export default class Hierarchy {
     }
   }
 
-  relationships_byKindToID(preducate: Predicate, to: boolean, id: string): Array<Relationship> {
+  relationships_byKindToID(predicate: Predicate, to: boolean, id: string): Array<Relationship> {
     const dict = to ? this.relationshipsByToID : this.relationshipsByFromID;
     const matches = dict[id] as Array<Relationship>; // filter out baaaaad values
     const array: Array<Relationship> = [];
     if (Array.isArray(matches)) {
       for (const relationship of matches) {
-        if (relationship.kind == preducate) {
+        if (relationship.predicate == predicate) {
           array.push(relationship);
         }
       }

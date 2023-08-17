@@ -26,7 +26,7 @@ export default class CrudEditor extends CRUD {
 
   thing_redraw_addAsChild = async (child: Thing, parent: Thing) => {
     await this.thing_create(child); // for everything below, need to await child.id fetched from cloud
-    const relationship = hierarchy.relationship_new(this.newCloudID, Predicate.isAChildOf, child.id, parent.id, child.order);
+    const relationship = hierarchy.relationship_new(this.newCloudID, Predicate.isAParentOf, child.id, parent.id, child.order);
     relationship.needsCreate = true;
     normalizeOrderOf(parent.children);
     parent.becomeHere();
@@ -55,7 +55,7 @@ export default class CrudEditor extends CRUD {
       // alter the 'to' in ALL [?] the matching 'from' relationships
       // simpler than adjusting children or parents arrays
       // TODO: also match against the 'to' to the current parent
-      // TODO: pass kind in ... to support editing different kinds of relationships
+      // TODO: pass predicate in ... to support editing different kinds of relationships
 
       const relationship = hierarchy.relationship_parentTo(thing.id);
       if (relationship != null) {

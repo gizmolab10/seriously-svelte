@@ -1,6 +1,6 @@
 import { getDocs, collection, onSnapshot, getFirestore, QuerySnapshot, DocumentData, DocumentReference, QueryDocumentSnapshot } from 'firebase/firestore';
 import { get, Thing, hierarchy, DataKinds, Predicate, Relationship } from '../common/GlobalImports';
-import { bulkName, thingsArrived, thingsStore, relationshipsStore } from '../managers/State';
+import { bulkName, thingsStore, relationshipsStore } from '../managers/State';
 import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
 
@@ -29,8 +29,6 @@ class Firebase {
     await firebase.fetchDocumentsIn(DataKinds.things);
     await firebase.fetchDocumentsIn(DataKinds.predicates, true);
     await firebase.fetchDocumentsIn(DataKinds.relationships); // fetch these LAST, they depend on fetching all of the above
-    hierarchy.hierarchy_construct();
-    thingsArrived.set(true);
     onCompletion();
   }
     
@@ -65,7 +63,7 @@ class Firebase {
         const predicate = new Predicate(id, data.kind);
         hierarchy.predicate_remember(predicate);
       } else if (dataKind == DataKinds.relationships) {
-        hierarchy.relationship_new(id, data.kind.id, data.from.id, data.to.id, data.order);
+        hierarchy.relationship_new(id, data.predicate.id, data.from.id, data.to.id, data.order);
       }
     }
   }

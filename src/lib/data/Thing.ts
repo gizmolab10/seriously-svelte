@@ -67,8 +67,8 @@ export default class Thing extends Cloudable {
   get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
   get debugTitle():        string { return ' (\"' + this.title + '\") '; }
   get hasChildren():      boolean { return this.hasPredicate(false); }
-  get children():    Array<Thing> { return hierarchy.things_forKind_andID(Predicate.isAChildOf, this.id, true); }
-  get parents():     Array<Thing> { return hierarchy.things_forKind_andID(Predicate.isAChildOf, this.id, false); }
+  get children():    Array<Thing> { return hierarchy.things_forPredicate_andID(Predicate.isAParentOf, this.id, false); }
+  get parents():     Array<Thing> { return hierarchy.things_forPredicate_andID(Predicate.isAParentOf, this.id, true); }
   get siblings():    Array<Thing> { return this.firstParent?.children ?? []; }
   get grandparent():        Thing { return this.firstParent?.firstParent ?? hierarchy.root; }
   get lastChild():          Thing { return this.children.slice(-1)[0]; }
@@ -76,14 +76,14 @@ export default class Thing extends Cloudable {
   get firstParent():        Thing { return this.parents[0]; }
 
   get ancestors(): Array<Thing> {
-    const ancestors = [];
+    const array = [];
     let thing: Thing = this;
     while (thing != null) {
-      ancestors.push(thing);
+      array.push(thing);
       thing = thing.firstParent;
     }
-    ancestors.reverse();
-    return ancestors;
+    array.reverse();
+    return array;
   }
 
   hasPredicate = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
