@@ -13,9 +13,9 @@
 
   async function handleKeyDown(event) {
     let grab = grabs.grabbedThing;
-    if ($editingID != null)      { return; } // let Title component consume the events
+    if ($editingID)      { return; } // let Title component consume the events
     if (event.key == undefined)  { alert('no key for ' + event.type); return; }
-    if (grab == null) {
+    if (!grab) {
       grab = hierarchy.root;
       grab?.becomeHere();
       grab?.grabOnly(); // to update crumbs and dots
@@ -46,7 +46,7 @@
 
 <svelte:document on:keydown={handleKeyDown} />
 <div style='position: fixed; left-padding=100px'>
-  {#if here != null}
+  {#if here}
     <Children children={children}/>
   {/if}
 </div>

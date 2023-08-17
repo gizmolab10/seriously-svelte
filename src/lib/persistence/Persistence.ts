@@ -15,7 +15,7 @@ class Persistence {
   }
   
   setup() {
-    // persistence.writeToKey(PersistenceIDs.db, DBTypes.firebase);
+    persistence.writeToKey(PersistenceIDs.db, DBTypes.firebase);
     showDetails.set(this.readFromKey(PersistenceIDs.details) ?? false);
     dbType.set(this.readFromKey(PersistenceIDs.db) ?? DBTypes.firebase); 
   }

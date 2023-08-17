@@ -78,7 +78,7 @@ export default class Thing extends Cloudable {
   get ancestors(): Array<Thing> {
     const array = [];
     let thing: Thing = this;
-    while (thing != null) {
+    while (thing) {
       array.push(thing);
       thing = thing.firstParent;
     }
@@ -101,7 +101,7 @@ export default class Thing extends Cloudable {
     if (this.order != newOrder) {
       this.order = newOrder;
       const relationship = hierarchy.relationship_parentTo(this.id);
-      if (relationship != null) {
+      if (relationship) {
         relationship.order = newOrder;
         relationship.needsSave = true;
       }
@@ -134,7 +134,7 @@ export default class Thing extends Cloudable {
 
   redraw_moveup = (up: boolean, expand: boolean, relocate: boolean) => {
     const siblings = this.siblings;
-    if (siblings == null || siblings.length == 0) {
+    if (!siblings || siblings.length == 0) {
         this.redraw_browseRight(true, up);
     } else {
       const index = siblings.indexOf(this);

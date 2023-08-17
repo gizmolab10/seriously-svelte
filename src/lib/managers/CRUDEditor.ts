@@ -50,7 +50,7 @@ export default class CrudEditor extends CRUD {
 
   thing_redraw_relocateRight = async (thing: Thing, right: boolean) => {
     const newParent = right ? thing.nextSibling(false) : thing.grandparent;
-    if (newParent != null) {
+    if (newParent) {
 
       // alter the 'to' in ALL [?] the matching 'from' relationships
       // simpler than adjusting children or parents arrays
@@ -58,7 +58,7 @@ export default class CrudEditor extends CRUD {
       // TODO: pass predicate in ... to support editing different kinds of relationships
 
       const relationship = hierarchy.relationship_parentTo(thing.id);
-      if (relationship != null) {
+      if (relationship) {
         relationship.to = newParent.id;
         relationship.needsSave = true;
         thing.setOrderTo(-1);
@@ -77,10 +77,10 @@ export default class CrudEditor extends CRUD {
   ////////////////////////////
 
   grabs_redraw_delete() {
-    if (hierarchy.here != null) {
+    if (hierarchy.here) {
       for (const id of get(grabbedIDs)) {
         const grabbed = hierarchy.thing_forID(id);
-        if (grabbed != null && !grabbed.isEditing && hierarchy.here != null) {
+        if (grabbed && !grabbed.isEditing && hierarchy.here) {
           let newGrabbed = grabbed.firstParent;
           const siblings = grabbed.siblings;
           let index = siblings.indexOf(grabbed);
@@ -120,7 +120,7 @@ export default class CrudEditor extends CRUD {
 
   async relationships_deleteAllForThing(thing: Thing) {
     const array = hierarchy.relationshipsByFromID[thing.id];
-    if (array != null) {
+    if (array) {
       for (const relationship of array) {
         await this.relationship_delete(relationship);
       }

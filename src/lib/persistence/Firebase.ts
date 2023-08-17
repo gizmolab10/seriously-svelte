@@ -57,11 +57,9 @@ class Firebase {
       const data = documentSnapshot.data();
       const id = documentSnapshot.id;
       if (dataKind == DataKinds.things) {
-        const thing = new Thing(id, data.title, data.color, data.trait, data.order);
-        hierarchy.thing_remember(thing);
+        hierarchy.thing_new(id, data.title, data.color, data.trait, data.order);
       } else if (dataKind == DataKinds.predicates) {
-        const predicate = new Predicate(id, data.kind);
-        hierarchy.predicate_remember(predicate);
+        hierarchy.predicate_new(id, data.kind);
       } else if (dataKind == DataKinds.relationships) {
         hierarchy.relationship_new(id, data.predicate.id, data.from.id, data.to.id, data.order);
       }

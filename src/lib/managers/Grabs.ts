@@ -10,7 +10,7 @@ export default class Grabs {
         this.grabbed = [];
         for (const id of ids) {
           const thing = hierarchy.thing_forID(id)
-          if (thing != null) {
+          if (thing) {
             this.grabbed.push(thing);
           }
         }
@@ -22,7 +22,7 @@ export default class Grabs {
   toggleGrab = (thing: Thing) => { if (thing.isGrabbed) { this.ungrab(thing); } else { this.grab(thing); } }
   
   get grabbedThing(): (Thing | null) {
-    if (this.grabbed != null) {
+    if (this.grabbed) {
       return this.grabbed.slice(-1)[0]
     }
     return null;
@@ -49,7 +49,7 @@ export default class Grabs {
       if (index != -1) {        // only splice array when item is found
         array.splice(index, 1); // 2nd parameter means remove one item only
       }
-      if (array.length == 0 && rootID != null) {
+      if (array.length == 0 && rootID) {
         array.push(rootID);
       }
       nextGrabbedID = array.slice(-1)[0];

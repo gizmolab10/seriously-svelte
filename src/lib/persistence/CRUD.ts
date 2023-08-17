@@ -153,7 +153,7 @@ export default class CRUD {
   ///////////////////////////////////
 
   async relationship_create(relationship: Relationship | null) {
-    if (relationship != null) {
+    if (relationship) {
       try {
         const fields = await this.relationships_table.create(relationship.fields);   // insert with temporary id
         const id = fields['id'];                                                     // grab permanent id
@@ -176,7 +176,7 @@ export default class CRUD {
   }
 
   async relationship_delete(relationship: Relationship | null) {
-    if (relationship != null) {
+    if (relationship) {
       try {
         hierarchy.relationships = hierarchy.relationships.filter((item) => item.id !== relationship.id);
         hierarchy.relationships_refreshLookups(); // do first so UX updates quickly

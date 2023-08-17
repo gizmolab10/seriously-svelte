@@ -27,10 +27,10 @@ export default class Hierarchy {
     })
   }
 
-  get hasNothing(): boolean { return this.root == null; }
+  get hasNothing(): boolean { return !this.root; }
   get rootID(): (string | null) { return this.root?.id ?? null; };
   get things(): Array<Thing> { return Object.values(this.thingsByID) };
-  thing_forID = (id: string | null): Thing | null => { return (id == null) ? null : this.thingsByID[id]; }
+  thing_forID = (id: string | null): Thing | null => { return (!id) ? null : this.thingsByID[id]; }
   thing_newAt = (order: number) => { return new Thing(crudEditor.newCloudID, constants.defaultTitle, 'blue', 't', order); }
   
   setup = (dbType: string, onCompletion: () => any) => {
@@ -105,7 +105,7 @@ export default class Hierarchy {
 
   hierarchy_construct() {
     const rootID = this.rootID;
-    if (rootID != null) {
+    if (rootID) {
       const order = -1;
       for (const thing of this.things) {
         const id = thing.id;
@@ -113,7 +113,7 @@ export default class Hierarchy {
           hereID.set(id);
         } else {
           let relationship = this.relationship_parentTo(id);
-          if (relationship != null) {
+          if (relationship) {
             thing.order = relationship.order;
           } else {
             thing.order = order;
@@ -129,11 +129,17 @@ export default class Hierarchy {
   //         THINGS          //
   /////////////////////////////
 
+  thing_new(id: string, title: string, color: string, trait: string, order: number): Thing {
+    const thing = new Thing(id, title, color, trait, order);
+    this.thing_remember(thing);
+    return thing;
+  }
+
   things_forIDs(ids: Array<string>): Array<Thing> {
     const array = Array<Thing>();
     for (const id of ids) {
       const thing = this.thingsByID[id];
-      if (thing != null) {
+      if (thing) {
         array.push(thing);
       }
     }
@@ -164,7 +170,7 @@ export default class Hierarchy {
   relationship_parentTo(id: string) {
     const thing = this.thing_forID(id); // assure id is known
     const matches = this.relationships_byKindToID(Predicate.isAParentOf, false, id);
-    if (thing != null && matches.length > 0) {
+    if (thing && matches.length > 0) {
       return matches[0];
     }
     return null;
@@ -200,7 +206,7 @@ export default class Hierarchy {
 
   relationships_allMarkNeedDeleteForThing(thing: Thing) {
     const parentRelationships = hierarchy.relationshipsByFromID[thing.id];
-    if (parentRelationships != null) {
+    if (parentRelationships) {
       for (const relationship of parentRelationships) {
         relationship.needsDelete = true;
       }

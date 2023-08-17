@@ -9,6 +9,8 @@
     { id: DBTypes.airtable, label: 'airtable', func: () => { handleDBTypeAt(1); } }
   ];
 
+  // <RadioButtons menuItems={menuItems} selectedID={$dbType}/>
+
   function handleDBTypeAt(index) {
     const type = menuItems[index].id;
     persistence.writeToKey(PersistenceIDs.db, type);
@@ -26,7 +28,6 @@
 <div class="modal-overlay">
   <div class="modal-content">
       <p>build: {$build}</p>
-      <RadioButtons menuItems={menuItems} selectedID={$dbType}/>
   </div>
 </div>
 
