@@ -1,12 +1,12 @@
 <script>
   import { Thing } from '../common/GlobalImports';
   import Widget from './Widget.svelte';
-  export let thing = Thing | null;
+  export let children = [];
 </script>
 
-{#if thing.children}
+{#if children.length != 0}
   <ul>
-    {#each thing.children as child}
+    {#each children as child}
       <li><Widget thing={child}/></li>
     {/each}
   </ul>

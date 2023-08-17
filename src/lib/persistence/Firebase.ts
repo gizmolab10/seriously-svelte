@@ -1,4 +1,4 @@
-import { getDocs, collection, onSnapshot, getFirestore, QuerySnapshot } from 'firebase/firestore';
+import { getDocs, collection, onSnapshot, getFirestore, QuerySnapshot, DocumentData, DocumentReference, QueryDocumentSnapshot } from 'firebase/firestore';
 import { get, Thing, hierarchy, DataKinds, Predicate, Relationship } from '../common/GlobalImports';
 import { bulkName, thingsArrived, thingsStore, relationshipsStore } from '../managers/State';
 import { getAnalytics } from "firebase/analytics";
@@ -26,9 +26,9 @@ class Firebase {
   db = getFirestore(this.app);
 
   fetchAll = async (onCompletion: () => any) => {
-    await firebase.fetchDocumentsIn(DataKinds.predicates, true);
-    // await firebase.fetchDocumentsIn(DataKinds.relationships);
     await firebase.fetchDocumentsIn(DataKinds.things);
+    await firebase.fetchDocumentsIn(DataKinds.predicates, true);
+    await firebase.fetchDocumentsIn(DataKinds.relationships); // fetch these LAST, they depend on fetching all of the above
     hierarchy.hierarchy_construct();
     thingsArrived.set(true);
     onCompletion();
@@ -59,17 +59,13 @@ class Firebase {
       const data = documentSnapshot.data();
       const id = documentSnapshot.id;
       if (dataKind == DataKinds.things) {
-        const thing = data as Thing;
-        thing.id = id;
+        const thing = new Thing(id, data.title, data.color, data.trait, data.order);
         hierarchy.thing_remember(thing);
-      } else if (dataKind == DataKinds.relationships) {
-        const relationship = data as Relationship;
-        relationship.id = id;
-        hierarchy.relationship_remember(relationship);
       } else if (dataKind == DataKinds.predicates) {
-        const predicate = data as Predicate;
-        predicate.id = id;
+        const predicate = new Predicate(id, data.kind);
         hierarchy.predicate_remember(predicate);
+      } else if (dataKind == DataKinds.relationships) {
+        hierarchy.relationship_new(id, data.kind.id, data.from.id, data.to.id, data.order);
       }
     }
   }

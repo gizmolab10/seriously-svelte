@@ -1,7 +1,7 @@
 <script>
   import { get, grabs, DBTypes, ButtonIDs, hierarchy, persistence, PersistenceIDs, DataKinds } from '../common/GlobalImports'
   import { dbType, bulkName, popupViewID, showDetails, thingsStore, thingsArrived } from '../managers/State';
-  import CircularButton from '../buttons/CircularButton.svelte';
+  import CircularButton from '../kit/CircularButton.svelte';
   import Graph from '../graph/Graph.svelte';
   import Details from './Details.svelte';
   import Crumbs from './Crumbs.svelte';
@@ -19,31 +19,6 @@
 </script>
 
 <div>
-  {#if $thingsArrived}
-    <div class="horizontal-line"></div>
-    {#if $dbType == DBTypes.airtable}
-      <span class='top'>
-        <Crumbs grab={grabs.grabbedThing}/>
-        <CircularButton
-          onClick={() => {handleClick(ButtonIDs.help)}}
-          label='?'
-          size={size}/>
-      </span>
-      <div class='graph'>
-        <Graph/>
-      </div>
-    {:else}
-      <div class='firebase'>
-        &nbsp; &nbsp; &nbsp; Firebase {$bulkName}!
-        <ul>
-          {#each $thingsStore as thing}
-            <li>{thing.title}</li>
-          {/each}
-        </ul>
-      </div>
-    {/if}
-  {/if}
-
   <span class='left-margin'>
     <CircularButton
       image='settings.png'
@@ -55,6 +30,20 @@
     {/if}
   </span>
   <div class="vertical-line"></div>
+
+  {#if $thingsArrived}
+    <div class="horizontal-line"></div>
+      <span class='top'>
+        <Crumbs grab={grabs.grabbedThing}/>
+        <CircularButton
+          onClick={() => {handleClick(ButtonIDs.help)}}
+          label='?'
+          size={size}/>
+      </span>
+      <div class='graph'>
+        <Graph/>
+      </div>
+  {/if}
 
   {#if $popupViewID == ButtonIDs.help}
     <Help size={size}/>

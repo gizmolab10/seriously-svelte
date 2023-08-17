@@ -1,11 +1,15 @@
 <script>
-  import { grabs, Thing, ButtonIDs, hierarchy, crudEditor, constants } from '../common/GlobalImports';
+  import { grabs, Thing, Predicate, ButtonIDs, hierarchy, crudEditor, constants } from '../common/GlobalImports';
   import { popupViewID, editingID, hereID } from '../managers/State';
   import Children from './Children.svelte'
+  export let children = [];
   let here = Thing;
   let listener;
 
-	$: { here = hierarchy.thing_forID($hereID); }
+	$: {
+    const here = hierarchy.thing_forID($hereID);
+    children = here?.children;
+  }
 
   async function handleKeyDown(event) {
     let grab = grabs.grabbedThing;
@@ -43,6 +47,6 @@
 <svelte:document on:keydown={handleKeyDown} />
 <div style='position: fixed; left-padding=100px'>
   {#if here != null}
-    <Children thing={here}/>
+    <Children children={children}/>
   {/if}
 </div>

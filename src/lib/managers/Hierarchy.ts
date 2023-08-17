@@ -1,7 +1,6 @@
 import { constants, User, Thing, Access, Relationship, Predicate, DBTypes, crudEditor, sortAccordingToOrder } from '../common/GlobalImports';
 import { firebase } from '../persistence/Firebase';
 import { hereID, isBusy, thingsArrived } from './State';
-import fs from 'fs';
 
 ////////////////////////////////////////
 // creation, tracking and destruction //
@@ -54,6 +53,41 @@ export default class Hierarchy {
     }
   }
 
+  setupCRUD = async (onCompletion: () => any) => {
+    crudEditor.readAll(async () => {
+      onCompletion();
+      setTimeout(() => { // give crumbs time to be created after launch
+        hierarchy.root?.grabOnly()
+      }, 1);
+    });
+  }
+
+  /////////////////////////////
+  //         MEMORY          //
+  /////////////////////////////
+
+  thing_remember(thing: Thing) {
+    hierarchy.thingsByID[thing.id] = thing;
+    if (thing.trait == '!') {
+      hierarchy.root = thing;
+    }
+  }
+
+  predicate_remember(predicate: Predicate) {
+    this.predicatesByKind[predicate.kind] = predicate;
+    this.predicatesByID[predicate.id] = predicate;
+  }
+
+  relationship_remember(relationship: Relationship) {
+    const froms = this.relationshipsByFromID[relationship.from] ?? [];
+    const tos = this.relationshipsByToID[relationship.to] ?? [];
+    froms.push(relationship);
+    tos.push(relationship);
+    this.relationshipsByFromID[relationship.from] = froms;
+    this.relationshipsByToID[relationship.to] = tos;
+    this.relationships.push(relationship);
+  }
+
   resetRootFor(dbType: string) {
     if (dbType == DBTypes.airtable) {
       this.thingsByID = {};
@@ -68,23 +102,15 @@ export default class Hierarchy {
     }
   }
 
-  setupCRUD = async (onCompletion: () => any) => {
-    crudEditor.readAll(async () => {
-      hierarchy.root?.becomeHere()
-      onCompletion();
-      setTimeout(() => { // give crumbs time to be created after launch
-        hierarchy.root?.grabOnly()
-      }, 1);
-    });
-  }
-
   hierarchy_construct() {
     const rootID = this.rootID;
     if (rootID != null) {
       const order = -1;
       for (const thing of this.things) {
         const id = thing.id;
-        if (id != rootID){
+        if (id == rootID) {
+          hereID.set(id);
+        } else {
           let relationship = this.relationship_parentTo(id);
           if (relationship != null) {
             thing.order = relationship.order;
@@ -124,13 +150,6 @@ export default class Hierarchy {
     return this.things_forIDs(ids);
   }
 
-  thing_remember(thing: Thing) {
-    hierarchy.thingsByID[thing.id] = thing;
-    if (thing.trait == '!') {
-      hierarchy.root = thing;
-    }
-  }
-
   ////////////////////////////////////
   //         RELATIONSHIPS          //
   ////////////////////////////////////
@@ -139,16 +158,6 @@ export default class Hierarchy {
     const relationship = new Relationship(id, kind, from, to, order);
     this.relationship_remember(relationship);
     return relationship;
-  }
-
-  relationship_remember(relationship: Relationship) {
-    this.relationships.push(relationship);
-    const froms = this.relationshipsByFromID[relationship.from] ?? [];
-    froms.push(relationship);
-    this.relationshipsByFromID[relationship.from] = froms;
-    const tos = this.relationshipsByToID[relationship.to] ?? [];
-    tos.push(relationship);
-    this.relationshipsByToID[relationship.to] = tos;
   }
 
   relationship_parentTo(id: string) {
@@ -174,13 +183,13 @@ export default class Hierarchy {
     }
   }
 
-  relationships_byKindToID(kind: Predicate, to: boolean, id: string): Array<Relationship> {
+  relationships_byKindToID(preducate: Predicate, to: boolean, id: string): Array<Relationship> {
     const dict = to ? this.relationshipsByToID : this.relationshipsByFromID;
     const matches = dict[id] as Array<Relationship>; // filter out baaaaad values
     const array: Array<Relationship> = [];
     if (Array.isArray(matches)) {
       for (const relationship of matches) {
-        if (relationship.kind == kind) {
+        if (relationship.kind == preducate) {
           array.push(relationship);
         }
       }
@@ -206,11 +215,6 @@ export default class Hierarchy {
     this.predicate_remember(predicate)
   }
 
-  predicate_remember = (predicate: Predicate) => {
-    this.predicatesByKind[predicate.kind] = predicate;
-    this.predicatesByID[predicate.id] = predicate;
-  }
-
   access_new = (id: string, kind: string) => {
     const access = new Access(id, kind);
     this.accessByKind[kind] = access;
@@ -220,17 +224,6 @@ export default class Hierarchy {
   user_new = (id: string, name: string, email: string, phone: string) => {
     const user = new User(id, name, email, phone);
     this.userByID[id] = user;
-  }
-
-  object_writeToURL(object: any, filePath: string) {
-    const jsonData = JSON.stringify(object, null, 2); // 2 spaces for indentation
-    fs.writeFile(filePath, jsonData, 'utf8', (err) => {
-      if (err) {
-        console.error('Error writing JSON to file:', err);
-      } else {
-        console.log('JSON data has been written to', filePath);
-      }
-    });
   }
 
 }

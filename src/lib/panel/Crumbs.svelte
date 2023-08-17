@@ -1,7 +1,7 @@
 <script lang='ts'>
   import { Thing, grabs, hierarchy } from '../common/GlobalImports';
   import { grabbedIDs } from '../managers/State';
-  import Crumb from '../buttons/Crumb.svelte';
+  import Crumb from '../kit/Crumb.svelte';
   let ancestors: Array<Thing> = [];
   export let grab;
 
