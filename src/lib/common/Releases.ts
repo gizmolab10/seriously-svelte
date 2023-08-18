@@ -3,7 +3,7 @@ class Releases {
   notes: { [id: string]: string } = {};
 
   constructor() {
-    build.set(25);
+    build.set(26);
     this.notes = {
       10 : 'toss seriously folder, pull Startup from Panel',
       11 : 'panel displays build',
@@ -15,6 +15,7 @@ class Releases {
       23 : 'sync works!!!',
       24 : 'bulk name, fetch predicates',
       25 : 'switching between dbs works',
+      26 : 'cloud abstraction layer',
     }
   }
 

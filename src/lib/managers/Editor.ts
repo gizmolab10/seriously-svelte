@@ -1,6 +1,6 @@
 import { get, grabs, Thing, hierarchy, Predicate, normalizeOrderOf } from '../common/GlobalImports';
 import { cloud } from '../persistence/Cloud';
-import { grabbedIDs } from './State';
+import { hereID, grabbedIDs } from './State';
 
 ///////////////////////////////////////
 //                                   //
@@ -9,8 +9,13 @@ import { grabbedIDs } from './State';
 ///////////////////////////////////////
 
 export default class Editor {
+  here: Thing | null = null;
 
-  constructor() {}
+  constructor() {
+    hereID.subscribe((id: string | null) => {
+      this.here = hierarchy.thing_forID(id); 
+    })
+  }
 
   /////////////////////////////
   //         THINGS          //

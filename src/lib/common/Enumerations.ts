@@ -15,6 +15,7 @@ export enum BulkIDs {
 
 export enum PersistenceIDs {
   details = 'details',
+  bulk    = 'bulk',
   db      = 'db',
 }
 

@@ -1,6 +1,6 @@
-import { constants, User, Thing, Access, Relationship, Predicate, DBTypes, editor, sortAccordingToOrder } from '../common/GlobalImports';
-import { hereID, isBusy, thingsArrived } from './State';
+import { constants, User, Thing, Access, Relationship, Predicate, sortAccordingToOrder } from '../common/GlobalImports';
 import { cloud } from '../persistence/Cloud';
+import { hereID } from './State';
 
 ////////////////////////////////////////
 // creation, tracking and destruction //
@@ -12,20 +12,12 @@ export default class Hierarchy {
   relationshipsByToID: { [id: string]: Array<Relationship> } = {};
   predicatesByKind: { [kind: string]: Predicate } = {};
   predicatesByID: { [id: string]: Predicate } = {};
-  statusByType: { [type: string]: boolean } = {};
   accessByKind: { [kind: string]: Access } = {};
   accessByID: { [id: string]: Access } = {};
   thingsByID: { [id: string]: Thing } = {};
   relationships: Array<Relationship> = [];
   userByID: { [id: string]: User } = {};
   root: Thing | null = null;
-  here: Thing | null = null;
-
-  constructor() {
-    hereID.subscribe((id: string | null) => {
-      this.here = this.thing_forID(id); 
-    })
-  }
 
   get hasNothing(): boolean { return !this.root; }
   get rootID(): (string | null) { return this.root?.id ?? null; };
@@ -33,23 +25,6 @@ export default class Hierarchy {
   thing_forID = (id: string | null): Thing | null => { return (!id) ? null : this.thingsByID[id]; }
   thing_newAt = (order: number) => { return new Thing(cloud.newCloudID, constants.defaultTitle, 'blue', 't', order); }
   
-  setup = (dbType: string, onCompletion: () => any) => {
-    if (this.statusByType[dbType] == true) {
-      this.resetRootFor(dbType);
-      onCompletion();
-    } else {
-      isBusy.set(true);    // also used by Details radio buttons
-      thingsArrived.set(false);
-      cloud.setup(dbType, () => {
-        this.hierarchy_construct();
-        this.statusByType[dbType] = true;
-        thingsArrived.set(true);
-        isBusy.set(false);
-        onCompletion();
-      });
-    }
-  }
-
   /////////////////////////////
   //         MEMORY          //
   /////////////////////////////
@@ -76,16 +51,14 @@ export default class Hierarchy {
     this.relationships.push(relationship);
   }
 
-  resetRootFor(dbType: string) {
-    if (dbType == DBTypes.airtable) {
-      this.thingsByID = {};
-      for (const thing of cloud.things) {
-        const id = thing.id;
-        this.thingsByID[id] = thing;
-        if (thing.trait == '!') {
-          this.root = thing;
-          hereID.set(id);
-        }
+  resetRootFrom(things: Array<Thing>) {
+    this.thingsByID = {};
+    for (const thing of things) {
+      const id = thing.id;
+      this.thingsByID[id] = thing;
+      if (thing.trait == '!') {
+        this.root = thing;
+        hereID.set(id);
       }
     }
   }

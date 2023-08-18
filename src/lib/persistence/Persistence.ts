@@ -15,10 +15,9 @@ class Persistence {
   }
   
   setup() {
-    bulkName.set(BulkIDs.public);
-    persistence.writeToKey(PersistenceIDs.db, DBTypes.firebase);
     showDetails.set(this.readFromKey(PersistenceIDs.details) ?? false);
-    dbType.set(this.readFromKey(PersistenceIDs.db) ?? DBTypes.firebase); 
+    bulkName.set(this.readFromKey(PersistenceIDs.bulk) ?? BulkIDs.public);
+    dbType.set(this.readFromKey(PersistenceIDs.db) ?? DBTypes.firebase); // invokes cloud setup, which needs bulk name already set (must be above)
   }
 
 }

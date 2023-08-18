@@ -1,12 +1,12 @@
-////////////////////////////////////////////////
-// abstraction layer: hides CRUD and firebase //
-////////////////////////////////////////////////
-
 import { get, Thing, DBTypes, removeAll, hierarchy, Relationship } from '../common/GlobalImports';
 import { dbType, isBusy, thingsArrived } from '../managers/State';
 import { firebase } from './Firebase';
 import { v4 as uuid } from 'uuid';
 import { crud } from './CRUD';
+
+////////////////////////////////////////////////
+// abstraction layer: hides CRUD and firebase //
+////////////////////////////////////////////////
 
 export default class Cloud {
   hasDataForDBType: { [type: string]: boolean } = {};
@@ -14,13 +14,19 @@ export default class Cloud {
   constructor() {
     dbType.subscribe((type: string) => {
       if (type) {
-        this.setup(type, () => {
-          // this will happen when persistence sets dbType !!! too early?
-          hierarchy.hierarchy_construct();
-          this.hasDataForDBType[type] = true;
-          thingsArrived.set(true);
-          isBusy.set(false);
-        })
+        if (this.hasDataForDBType[type] == true) {
+          this.resetRootFor(type);
+        } else {
+          isBusy.set(true);    // also used by Details radio buttons
+          thingsArrived.set(false);
+          this.setup(type, () => {
+            // this will happen when persistence sets dbType !!! too early?
+            hierarchy.hierarchy_construct();
+            this.hasDataForDBType[type] = true;
+            thingsArrived.set(true);
+            isBusy.set(false);
+          })
+        }
       }
     })
   }
@@ -31,6 +37,12 @@ export default class Cloud {
     switch (dbType) {
       case DBTypes.airtable: crud.setup(onCompletion); break;
       default: firebase.fetchAll(onCompletion); break;
+    }
+  }
+
+  resetRootFor = (dbType: string) => {
+    switch (dbType) {
+      case DBTypes.airtable: hierarchy.resetRootFrom(crud.things); break;
     }
   }
 
