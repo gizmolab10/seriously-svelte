@@ -1,6 +1,5 @@
-import { Thing, Relationship, hierarchy, removeAll } from '../common/GlobalImports';
+import { Thing, Relationship, hierarchy } from '../common/GlobalImports';
 import { thingsArrived } from '../managers/State';
-import { v4 as uuid } from 'uuid';
 import Airtable from 'airtable';
 
 ///////////////////////////////
@@ -27,7 +26,14 @@ export default class CRUD {
 
   constructor() {}
 
-  get newCloudID(): string { return 'NEW' + removeAll('-', uuid()).slice(10, 24); } // use last, most-unique bytes of uuid
+  setup = async (onCompletion: () => any) => {
+    this.readAll(async () => {
+      onCompletion();
+      setTimeout(() => { // give crumbs time to be created after launch
+        hierarchy.root?.grabOnly()
+      }, 1);
+    });
+  }
 
   readAll = async (onCompletion: () => any) => {
     await this.predicates_readAll();
@@ -237,3 +243,5 @@ export default class CRUD {
   }
 
 }
+
+export const crud = new CRUD();

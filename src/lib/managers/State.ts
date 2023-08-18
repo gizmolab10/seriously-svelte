@@ -1,4 +1,3 @@
-import { QueryDocumentSnapshot } from 'firebase/firestore';
 import { writable } from 'svelte/store';
 
 export const thingsStore        = writable<{id:string}[]>();

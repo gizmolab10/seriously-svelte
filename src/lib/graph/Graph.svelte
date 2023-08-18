@@ -1,5 +1,5 @@
 <script>
-  import { grabs, Thing, Predicate, ButtonIDs, hierarchy, crudEditor, constants } from '../common/GlobalImports';
+  import { grabs, Thing, Predicate, ButtonIDs, hierarchy, editor, constants } from '../common/GlobalImports';
   import { popupViewID, editingID, hereID } from '../managers/State';
   import Children from './Children.svelte'
   export let children = [];
@@ -12,7 +12,7 @@
   }
 
   async function handleKeyDown(event) {
-    let grab = grabs.grabbedThing;
+    let grab = grabs.furthestGrab(true);
     if ($editingID)      { return; } // let Title component consume the events
     if (event.key == undefined)  { alert('no key for ' + event.type); return; }
     if (!grab) {
@@ -25,18 +25,18 @@
       const OPTION = event.altKey;
       const SHIFT = event.shiftKey;
       switch (key) {
-        case ' ':          crudEditor.thing_redraw_addChildTo(grab); break;
+        case ' ':          editor.thing_redraw_addChildTo(grab); break;
         case '?':          $popupViewID = ButtonIDs.help; break;
-        case 'd':          crudEditor.thing_duplicate(grab); break;
+        case 'd':          editor.thing_duplicate(grab); break;
         case 'r':          break; // restart app
         case 't':          alert('PARENT-CHILD SWAP'); break;
-        case 'tab':        crudEditor.thing_redraw_addChildTo(grab.firstParent); break; // Title also makes this call
+        case 'tab':        editor.thing_redraw_addChildTo(grab.firstParent); break; // Title also makes this call
         case 'delete':
-        case 'backspace':  crudEditor.grabs_redraw_delete(); break;
-        case 'arrowup':    crudEditor.grab_redraw_moveUp(true, SHIFT, OPTION); break;
-        case 'arrowdown':  crudEditor.grab_redraw_moveUp(false, SHIFT, OPTION); break;
-        case 'arrowright': crudEditor.thing_redraw_moveRight(grab, true, OPTION); break;
-        case 'arrowleft':  crudEditor.thing_redraw_moveRight(grab, false, OPTION); break;
+        case 'backspace':  editor.grabs_redraw_delete(); break;
+        case 'arrowup':    editor.furthestGrab_redraw_moveUp(true, SHIFT, OPTION); break;
+        case 'arrowdown':  editor.furthestGrab_redraw_moveUp(false, SHIFT, OPTION); break;
+        case 'arrowright': editor.thing_redraw_moveRight(grab, true, OPTION); break;
+        case 'arrowleft':  editor.thing_redraw_moveRight(grab, false, OPTION); break;
         case 'enter':      grab.startEdit(); break;
       }
     }

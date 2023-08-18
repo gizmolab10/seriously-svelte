@@ -1,6 +1,6 @@
 import { get, grabs, Thing, hierarchy, Predicate, normalizeOrderOf } from '../common/GlobalImports';
+import { cloud } from '../persistence/Cloud';
 import { grabbedIDs } from './State';
-import CRUD from '../persistence/CRUD';
 
 ///////////////////////////////////////
 //                                   //
@@ -8,9 +8,9 @@ import CRUD from '../persistence/CRUD';
 //                                   //
 ///////////////////////////////////////
 
-export default class CrudEditor extends CRUD {
+export default class Editor {
 
-  constructor() { super(); }
+  constructor() {}
 
   /////////////////////////////
   //         THINGS          //
@@ -25,14 +25,14 @@ export default class CrudEditor extends CRUD {
   }
 
   thing_redraw_addAsChild = async (child: Thing, parent: Thing) => {
-    await this.thing_create(child); // for everything below, need to await child.id fetched from cloud
-    const relationship = hierarchy.relationship_new(this.newCloudID, Predicate.isAParentOf, child.id, parent.id, child.order);
+    await cloud.thing_create(child); // for everything below, need to await child.id fetched from cloud
+    const relationship = hierarchy.relationship_new(cloud.newCloudID, Predicate.isAParentOf, child.id, parent.id, child.order);
     relationship.needsCreate = true;
     normalizeOrderOf(parent.children);
     parent.becomeHere();
     child.startEdit(); // TODO: fucking causes app to hang!
     child.grabOnly();
-    await this.updateAllNeedy();
+    await cloud.updateAllNeedy();
   }
 
   thing_redraw_addChildTo = (parent: Thing) => {
@@ -68,7 +68,7 @@ export default class CrudEditor extends CRUD {
       normalizeOrderOf(thing.siblings);   // refresh lookups first
       thing.grabOnly();
       newParent.becomeHere();
-      this.updateAllNeedy();
+      cloud.updateAllNeedy();
     }
   }
 
@@ -96,21 +96,21 @@ export default class CrudEditor extends CRUD {
           }
           grabbed.traverse((child: Thing) => {
             this.relationships_deleteAllForThing(child);
-            this.thing_delete(child);
+            cloud.thing_delete(child);
             return false; // continue the traversal
           });
-          this.updateAllNeedy();
+          cloud.updateAllNeedy();
           newGrabbed.grabOnly();
         }
       }
     }
   }
 
-  grab_redraw_moveUp(up: boolean, expand: boolean, relocate: boolean) {
-    const grab = grabs.highestGrab(up);
+  furthestGrab_redraw_moveUp(up: boolean, expand: boolean, relocate: boolean) {
+    const grab = grabs.furthestGrab(up);
     grab.redraw_moveup(up, expand, relocate);
     if (relocate) {
-      this.updateAllNeedy();
+      cloud.updateAllNeedy();
     }
   }
 
@@ -122,11 +122,11 @@ export default class CrudEditor extends CRUD {
     const array = hierarchy.relationshipsByFromID[thing.id];
     if (array) {
       for (const relationship of array) {
-        await this.relationship_delete(relationship);
+        await cloud.relationship_delete(relationship);
       }
     }
   }
 
 }
 
-export const crudEditor = new CrudEditor();
+export const editor = new Editor();

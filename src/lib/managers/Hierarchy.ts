@@ -1,6 +1,6 @@
-import { constants, User, Thing, Access, Relationship, Predicate, DBTypes, crudEditor, sortAccordingToOrder } from '../common/GlobalImports';
-import { firebase } from '../persistence/Firebase';
+import { constants, User, Thing, Access, Relationship, Predicate, DBTypes, editor, sortAccordingToOrder } from '../common/GlobalImports';
 import { hereID, isBusy, thingsArrived } from './State';
+import { cloud } from '../persistence/Cloud';
 
 ////////////////////////////////////////
 // creation, tracking and destruction //
@@ -31,7 +31,7 @@ export default class Hierarchy {
   get rootID(): (string | null) { return this.root?.id ?? null; };
   get things(): Array<Thing> { return Object.values(this.thingsByID) };
   thing_forID = (id: string | null): Thing | null => { return (!id) ? null : this.thingsByID[id]; }
-  thing_newAt = (order: number) => { return new Thing(crudEditor.newCloudID, constants.defaultTitle, 'blue', 't', order); }
+  thing_newAt = (order: number) => { return new Thing(cloud.newCloudID, constants.defaultTitle, 'blue', 't', order); }
   
   setup = (dbType: string, onCompletion: () => any) => {
     if (this.statusByType[dbType] == true) {
@@ -40,27 +40,14 @@ export default class Hierarchy {
     } else {
       isBusy.set(true);    // also used by Details radio buttons
       thingsArrived.set(false);
-      const done = () => {
+      cloud.setup(dbType, () => {
         this.hierarchy_construct();
         this.statusByType[dbType] = true;
         thingsArrived.set(true);
         isBusy.set(false);
         onCompletion();
-      }
-      switch (dbType) {
-        case DBTypes.airtable: this.setupCRUD(done); break;
-        default: firebase.fetchAll(done); break;
-      }
+      });
     }
-  }
-
-  setupCRUD = async (onCompletion: () => any) => {
-    crudEditor.readAll(async () => {
-      onCompletion();
-      setTimeout(() => { // give crumbs time to be created after launch
-        hierarchy.root?.grabOnly()
-      }, 1);
-    });
   }
 
   /////////////////////////////
@@ -92,7 +79,7 @@ export default class Hierarchy {
   resetRootFor(dbType: string) {
     if (dbType == DBTypes.airtable) {
       this.thingsByID = {};
-      for (const thing of crudEditor.things) {
+      for (const thing of cloud.things) {
         const id = thing.id;
         this.thingsByID[id] = thing;
         if (thing.trait == '!') {
@@ -117,7 +104,7 @@ export default class Hierarchy {
             thing.order = relationship.order;
           } else {
             thing.order = order;
-            relationship = this.relationship_new(crudEditor.newCloudID, Predicate.isAParentOf, rootID, id, order);
+            relationship = this.relationship_new(cloud.newCloudID, Predicate.isAParentOf, rootID, id, order);
             relationship.needsCreate = true;
           }
         }

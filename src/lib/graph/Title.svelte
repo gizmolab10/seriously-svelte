@@ -1,6 +1,7 @@
 <script lang='ts'>
-  import { Thing, crudEditor, onDestroy } from '../common/GlobalImports';
+  import { Thing, editor, onDestroy } from '../common/GlobalImports';
   import { editingID, stoppedEditingID } from '../managers/State';
+  import { cloud } from '../persistence/Cloud';
   import Widget from './Widget.svelte';
   export let thing = Thing;
   let originalTitle = thing.title;
@@ -18,7 +19,7 @@
   function handleKeyDown(event) {
     if ($editingID == thing.id) {
       switch (event.key) {
-        case 'Tab': stopAndClearEditing(); crudEditor.thing_duplicate(); break;
+        case 'Tab': stopAndClearEditing(); editor.thing_duplicate(); break;
         case 'Enter': stopAndClearEditing();
       }
     }
@@ -66,7 +67,7 @@
         input?.blur();
       }
       if (hasChanges()) {
-        crudEditor.thing_save(thing);
+        cloud.thing_save(thing);
         revertTitleToOriginal();
       }
     }

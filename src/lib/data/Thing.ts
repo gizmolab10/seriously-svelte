@@ -1,6 +1,7 @@
-import { grabs, hierarchy, crudEditor, normalizeOrderOf, constants, Predicate } from '../common/GlobalImports';
+import { grabs, hierarchy, editor, normalizeOrderOf, constants, Predicate } from '../common/GlobalImports';
 import { grabbedIDs, editingID, hereID } from '../managers/State';
 import Cloudable from '../persistence/Cloudable';
+import { cloud } from '../persistence/Cloud';
 import Airtable from 'airtable';
 
 export default class Thing extends Cloudable {
@@ -23,7 +24,7 @@ export default class Thing extends Cloudable {
     this.order = other.order;
   }
 
-  constructor(id = crudEditor.newCloudID, title = constants.defaultTitle, color = 'blue', trait = 's', order = 0) {
+  constructor(id = cloud.newCloudID, title = constants.defaultTitle, color = 'blue', trait = 's', order = 0) {
     super(id);
     this.title = title;
     this.color = color;

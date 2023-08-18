@@ -5,16 +5,17 @@
   let ancestors: Array<Thing> = [];
   export let grab;
 
-  onMount(() => { if (grab) { ancestors = grab.ancestors; }})
-
 	$: {
     if (!$grabbedIDs?.includes(grab?.id) || ancestors.length == 0) {
       let id = grabs.lastGrabbedID;
       const thing = hierarchy.thing_forID(id);   // start over with new grab
       if (thing) {
         grab = thing;
-        ancestors = grab.ancestors;
       }
+    }
+    if (grab) {
+      ancestors = grab.ancestors;
+      // console.log(ancestors);
     }
 	}
 
