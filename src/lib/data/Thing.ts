@@ -1,4 +1,4 @@
-import { grabs, hierarchy, editor, normalizeOrderOf, constants, Predicate } from '../common/GlobalImports';
+import { grabs, hierarchy, normalizeOrderOf, constants, Predicate } from '../common/GlobalImports';
 import { grabbedIDs, editingID, hereID } from '../managers/State';
 import Cloudable from '../persistence/Cloudable';
 import { cloud } from '../persistence/Cloud';
@@ -96,6 +96,16 @@ export default class Thing extends Cloudable {
     if (this.hasChildren) {
       hereID.set(this.id);
     };
+  }
+
+  order_normalizeRecursive = () => {
+    const children = this.children;
+    if (children && children.length > 0) {
+      normalizeOrderOf(children);
+      for (const child of children) {
+        child.order_normalizeRecursive();
+      }
+    }
   }
 
   setOrderTo = (newOrder: number) => {

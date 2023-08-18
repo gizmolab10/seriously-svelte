@@ -15,7 +15,6 @@
     }
     if (grab) {
       ancestors = grab.ancestors;
-      console.log(ancestors);
     }
 	}
 

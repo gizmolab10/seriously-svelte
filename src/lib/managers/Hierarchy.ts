@@ -82,6 +82,7 @@ export default class Hierarchy {
           }
         }
       }
+      this.root?.order_normalizeRecursive()   // setup order values
     }
   }
 

@@ -2,13 +2,11 @@
   import { grabs, Thing, Predicate, ButtonIDs, hierarchy, editor, constants } from '../common/GlobalImports';
   import { popupViewID, editingID, hereID } from '../managers/State';
   import Children from './Children.svelte'
-  export let children = [];
   let here = Thing;
   let listener;
 
 	$: {
-    const here = hierarchy.thing_forID($hereID);
-    children = here?.children;
+    here = hierarchy.thing_forID($hereID);
   }
 
   async function handleKeyDown(event) {
@@ -47,6 +45,6 @@
 <svelte:document on:keydown={handleKeyDown} />
 <div style='position: fixed; left-padding=100px'>
   {#if here}
-    <Children children={children}/>
+    <Children thing={here}/>
   {/if}
 </div>

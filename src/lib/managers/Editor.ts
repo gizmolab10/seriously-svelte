@@ -22,7 +22,7 @@ export default class Editor {
   /////////////////////////////
 
   thing_duplicate = async (thing: Thing) => {
-    const sibling = hierarchy.thing_newAt(thing.order + 0.5);
+    const sibling = hierarchy.thing_newAt(thing.order + 0.1);
     const parent = thing.firstParent ?? hierarchy.root;
     sibling.copyFrom(thing);
     sibling.order += 0.1
@@ -82,10 +82,10 @@ export default class Editor {
   ////////////////////////////
 
   grabs_redraw_delete() {
-    if (hierarchy.here) {
+    if (this.here) {
       for (const id of get(grabbedIDs)) {
         const grabbed = hierarchy.thing_forID(id);
-        if (grabbed && !grabbed.isEditing && hierarchy.here) {
+        if (grabbed && !grabbed.isEditing && this.here) {
           let newGrabbed = grabbed.firstParent;
           const siblings = grabbed.siblings;
           let index = siblings.indexOf(grabbed);
@@ -113,7 +113,7 @@ export default class Editor {
 
   furthestGrab_redraw_moveUp(up: boolean, expand: boolean, relocate: boolean) {
     const grab = grabs.furthestGrab(up);
-    grab.redraw_moveup(up, expand, relocate);
+    grab?.redraw_moveup(up, expand, relocate);
     if (relocate) {
       cloud.updateAllNeedy();
     }

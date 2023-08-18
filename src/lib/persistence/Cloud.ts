@@ -1,4 +1,4 @@
-import { get, Thing, DBTypes, removeAll, hierarchy, Relationship } from '../common/GlobalImports';
+import { get, Thing, DBTypes, removeAll, hierarchy, Relationship, normalizeOrderOf } from '../common/GlobalImports';
 import { dbType, isBusy, thingsArrived } from '../managers/State';
 import { firebase } from './Firebase';
 import { v4 as uuid } from 'uuid';
@@ -22,8 +22,12 @@ export default class Cloud {
           this.setup(type, () => {
             // this will happen when persistence sets dbType !!! too early?
             hierarchy.hierarchy_construct();
+            const root = hierarchy.root;
             this.hasDataForDBType[type] = true;
-            hierarchy.root?.grabOnly()
+            if (root) {
+              normalizeOrderOf(root.children)
+              root.grabOnly()
+            }
             thingsArrived.set(true);
             isBusy.set(false);
           })
