@@ -71,11 +71,11 @@ export default class CRUD {
 
   async things_updateNeedy() {
     for (const thing of hierarchy.things) {
-      if (thing.needsDelete) {
+      if (thing.needsDelete()) {
         await this.thing_delete(thing)
-      } else if (thing.needsCreate) {
+      } else if (thing.needsCreate()) {
         await this.thing_create(thing)
-      } else if (thing.needsSave) {
+      } else if (thing.needsSave()) {
         await this.thing_save(thing)
       }
     }
@@ -90,7 +90,7 @@ export default class CRUD {
       const fields = await this.things_table.create(thing.fields);
       const id = fields['id']; //  // need for update, delete and thingsByID (to get parent from relationship)
       thing.id = id;
-      thing.needsCreate = false;
+      thing.needsCreate(false);
       hierarchy.thingsByID[id] = thing;
     } catch (error) {
       console.log(this.things_errorMessage + thing.debugTitle + error);
@@ -100,7 +100,7 @@ export default class CRUD {
   async thing_save(thing: Thing) {
     try {
       await this.things_table.update(thing.id, thing.fields);
-      thing.needsSave = false; // if update fails, subsequent update will try again
+      thing.needsSave(false); // if update fails, subsequent update will try again
     } catch (error) {
       console.log(this.things_errorMessage + thing.debugTitle + error);
     }
@@ -141,11 +141,11 @@ export default class CRUD {
 
   async relationships_updateNeedy() {
     for (const relationship of hierarchy.relationships) {
-      if (relationship.needsDelete) {
+      if (relationship.needsDelete()) {
           await this.relationship_delete(relationship);
-      } else if (relationship.needsCreate) {
+      } else if (relationship.needsCreate()) {
           await this.relationship_create(relationship);
-      } else if (relationship.needsSave) {
+      } else if (relationship.needsSave()) {
           await this.relationship_save(relationship);
       }
     };
@@ -161,7 +161,7 @@ export default class CRUD {
         const fields = await this.relationships_table.create(relationship.fields);   // insert with temporary id
         const id = fields['id'];                                                     // grab permanent id
         relationship.id = id;
-        relationship.needsCreate = false;
+        relationship.needsCreate(false);
         hierarchy.relationships_refreshLookups();
       } catch (error) {
         console.log(this.relationships_errorMessage + ' (' + relationship.id + ') ' + error);
@@ -172,7 +172,7 @@ export default class CRUD {
   async relationship_save(relationship: Relationship) {
     try {
       this.relationships_table.update(relationship.id, relationship.fields);
-      relationship.needsSave = false;
+      relationship.needsSave(false);
     } catch (error) {
         console.log(this.relationships_errorMessage + ' (' + relationship.id + ') ' + error);
     }

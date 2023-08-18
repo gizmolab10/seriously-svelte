@@ -1,4 +1,4 @@
-import { DBTypes, BulkIDs, ButtonIDs, DataKinds, PersistenceIDs } from './Enumerations';
+import { Needs, DBTypes, BulkIDs, ButtonIDs, DataKinds, PersistenceIDs } from './Enumerations';
 import { log, removeAll, normalizeOrderOf, sortAccordingToOrder } from './Utilities';
 import { FatTriangle, Direction } from '../geometry/FatTriangle';
 import { persistence } from '../persistence/Persistence';
@@ -21,4 +21,4 @@ export { constants, releases,
   grabs, hierarchy, editor, persistence,
   User, Thing, Access, Predicate, Relationship,
   log, removeAll, normalizeOrderOf, sortAccordingToOrder,
-  FatTriangle, Direction, DBTypes, BulkIDs, ButtonIDs, DataKinds, PersistenceIDs };
+  Needs, DBTypes, BulkIDs, ButtonIDs, DataKinds, Direction, FatTriangle, PersistenceIDs };

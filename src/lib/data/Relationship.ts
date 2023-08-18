@@ -1,8 +1,8 @@
 import { Predicate, hierarchy } from '../common/GlobalImports';
-import Cloudable from '../persistence/Cloudable';
+import Needable from './Needable';
 import Airtable from 'airtable';
 
-export class Relationship extends Cloudable {
+export class Relationship extends Needable {
   to: string;
   from: string;
   order: number;

@@ -1,10 +1,10 @@
 import { grabs, hierarchy, normalizeOrderOf, constants, Predicate } from '../common/GlobalImports';
 import { grabbedIDs, editingID, hereID } from '../managers/State';
-import Cloudable from '../persistence/Cloudable';
+import Needable from './Needable';
 import { cloud } from '../persistence/Cloud';
 import Airtable from 'airtable';
 
-export default class Thing extends Cloudable {
+export default class Thing extends Needable {
   title: string;
   color: string;
   trait: string;

@@ -24,3 +24,9 @@ export enum DataKinds {
   predicates    = 'Predicates',
   relationships = 'Relationships'
 }
+
+export enum Needs {
+  create = 1,
+  delete = 2,
+  save   = 4,
+}

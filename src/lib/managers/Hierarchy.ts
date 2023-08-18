@@ -78,7 +78,7 @@ export default class Hierarchy {
           } else {
             thing.order = order;
             relationship = this.relationship_new(cloud.newCloudID, Predicate.isAParentOf, rootID, id, order);
-            relationship.needsCreate = true;
+            relationship.needsCreate(true);
           }
         }
       }
