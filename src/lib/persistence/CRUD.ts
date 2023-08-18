@@ -29,9 +29,6 @@ export default class CRUD {
   setup = async (onCompletion: () => any) => {
     this.readAll(async () => {
       onCompletion();
-      setTimeout(() => { // give crumbs time to be created after launch
-        hierarchy.root?.grabOnly()
-      }, 1);
     });
   }
 

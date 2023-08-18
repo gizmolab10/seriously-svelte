@@ -23,6 +23,7 @@ export default class Cloud {
             // this will happen when persistence sets dbType !!! too early?
             hierarchy.hierarchy_construct();
             this.hasDataForDBType[type] = true;
+            hierarchy.root?.grabOnly()
             thingsArrived.set(true);
             isBusy.set(false);
           })
