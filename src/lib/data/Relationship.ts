@@ -1,22 +1,22 @@
-import { Predicate, hierarchy } from '../common/GlobalImports';
-import Needable from './Needable';
+import { hierarchy } from '../managers/Hierarchy';
+import Needable from '../persistence/Needable';
 import Airtable from 'airtable';
 
 export class Relationship extends Needable {
-  IDTo: string;
-  IDFrom: string;
-  IDPredicate: string;
+  idTo: string;
+  idFrom: string;
+  idPredicate: string;
   order: number;
 
-  constructor(id: string, predicate: string, from: string, to: string, order = 0) {
+  constructor(id: string, idPredicate: string, idFrom: string, idTo: string, order = 0) {
     super(id);
-    this.IDTo = to; // to is child
-    this.IDFrom = from; // from is parent
-    this.IDPredicate = predicate;
+    this.idTo = idTo; // idTo is child
+    this.idFrom = idFrom; // idFrom is parent
+    this.idPredicate = idPredicate;
     this.order = order;
   }
 
-  get fields(): Airtable.FieldSet { return { predicate: [this.IDPredicate], from: [this.IDFrom], to: [this.IDTo], order: this.order }; }
-  get description(): string { return hierarchy.thing_forID(this.IDFrom)?.title + ' => ' + hierarchy.thing_forID(this.IDTo)?.title; }
+  get fields(): Airtable.FieldSet { return { predicate: [this.idPredicate], from: [this.idFrom], to: [this.idTo], order: this.order }; }
+  get description(): string { return hierarchy.thing_forID(this.idFrom)?.title + ' => ' + hierarchy.thing_forID(this.idTo)?.title; }
 
 }

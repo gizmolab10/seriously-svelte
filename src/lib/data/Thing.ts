@@ -1,7 +1,6 @@
-import { grabs, hierarchy, normalizeOrderOf, constants, Predicate } from '../common/GlobalImports';
+import { grabs, cloud, hierarchy, normalizeOrderOf, constants, Predicate } from '../common/GlobalImports';
 import { grabbedIDs, editingID, hereID } from '../managers/State';
-import Needable from './Needable';
-import { cloud } from '../persistence/Cloud';
+import Needable from '../persistence/Needable';
 import Airtable from 'airtable';
 
 export default class Thing extends Needable {
@@ -68,8 +67,8 @@ export default class Thing extends Needable {
   get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
   get debugTitle():        string { return ' (\"' + this.title + '\") '; }
   get hasChildren():      boolean { return this.hasPredicate(false); }
-  get children():    Array<Thing> { return hierarchy.things_forPredicate_andID(Predicate.isAParentOf, this.id, false); }
-  get parents():     Array<Thing> { return hierarchy.things_forPredicate_andID(Predicate.isAParentOf, this.id, true); }
+  get children():    Array<Thing> { return hierarchy.things_byIDPredicateToAndID(Predicate.idIsAParentOf, false, this.id); }
+  get parents():     Array<Thing> { return hierarchy.things_byIDPredicateToAndID(Predicate.idIsAParentOf,  true, this.id); }
   get siblings():    Array<Thing> { return this.firstParent?.children ?? []; }
   get grandparent():        Thing { return this.firstParent?.firstParent ?? hierarchy.root; }
   get lastChild():          Thing { return this.children.slice(-1)[0]; }

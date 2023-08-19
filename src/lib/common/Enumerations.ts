@@ -22,7 +22,7 @@ export enum PersistenceIDs {
 export enum DataKinds {
   things        = 'Things',
   predicates    = 'Predicates',
-  relationships = 'Relationships'
+  relationships = 'Relationships',
 }
 
 export enum Needs {

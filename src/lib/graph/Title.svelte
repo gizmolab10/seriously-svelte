@@ -1,7 +1,6 @@
 <script lang='ts'>
-  import { Thing, editor, onDestroy } from '../common/GlobalImports';
+  import { Thing, cloud, editor, onDestroy } from '../common/GlobalImports';
   import { editingID, stoppedEditingID } from '../managers/State';
-  import { cloud } from '../persistence/Cloud';
   import Widget from './Widget.svelte';
   export let thing = Thing;
   let originalTitle = thing.title;

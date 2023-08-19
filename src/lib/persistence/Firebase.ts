@@ -1,5 +1,5 @@
-import { getDocs, collection, onSnapshot, getFirestore, QuerySnapshot, DocumentReference } from 'firebase/firestore';
-import { get, hierarchy, DataKinds, Thing, Predicate, Relationship } from '../common/GlobalImports';
+import { getDocs, collection, onSnapshot, getFirestore, QuerySnapshot, DocumentData, DocumentReference } from 'firebase/firestore';
+import { get, hierarchy, DataKinds, Thing, Predicate } from '../common/GlobalImports';
 import { bulkName, thingsStore, relationshipsStore } from '../managers/State';
 import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
@@ -61,7 +61,7 @@ class Firebase {
       } else if (dataKind == DataKinds.predicates) {
         hierarchy.predicate_new(id, data.kind);
       } else if (dataKind == DataKinds.relationships) {
-        hierarchy.relationship_new(id, data.predicate.id, data.from.id, data.to.id, data.order);
+        hierarchy.relationship_newUnique(id, data.predicate.id, data.from.id, data.to.id, data.order);
       }
     }
   }
@@ -97,14 +97,10 @@ class Firebase {
           } else {
             const doc = store[targetDocIndex] as FirebaseRelationship;
             if (relationship.needsSave()) {
-              const toRef = doc.to as any;
-              const fromRef = doc.from as any;
-              const predicateRef = doc.predicate as any;
-              const predicate = hierarchy.predicatesByID[relationship.IDPredicate];
-              toRef.update(hierarchy.thing_forID(relationship.IDTo));
-              fromRef.update(hierarchy.thing_forID(relationship.IDFrom));
-              predicateRef.update(predicate);
               doc.order = relationship.order;
+              // await doc.to.update(hierarchy.thing_forID(relationship.idTo));
+              // await doc.from.update(hierarchy.thing_forID(relationship.idFrom));
+              // await doc.predicate.update(hierarchy.predicate_forID(relationship.idPredicate));
             } else if (relationship.needsDelete()) {
 
             }
@@ -120,7 +116,7 @@ export const firebase = new Firebase();
 interface FirebaseRelationship {
   id: string;
   order: number;
-  to: DocumentReference<Thing>;
-  from: DocumentReference<Thing>;
-  predicate: DocumentReference<Predicate>;
+  to: DocumentReference<Thing, DocumentData>;
+  from: DocumentReference<Thing, DocumentData>;
+  predicate: DocumentReference<Predicate, DocumentData>;
 }

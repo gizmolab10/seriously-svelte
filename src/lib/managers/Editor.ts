@@ -1,5 +1,4 @@
-import { get, grabs, Thing, hierarchy, Predicate, normalizeOrderOf } from '../common/GlobalImports';
-import { cloud } from '../persistence/Cloud';
+import { get, grabs, Thing, cloud, hierarchy, Predicate, normalizeOrderOf } from '../common/GlobalImports';
 import { hereID, grabbedIDs } from './State';
 
 ///////////////////////////////////////
@@ -31,7 +30,7 @@ export default class Editor {
 
   thing_redraw_addAsChild = async (child: Thing, parent: Thing) => {
     await cloud.thing_create(child); // for everything below, need to await child.id fetched from cloud
-    const relationship = hierarchy.relationship_new(cloud.newCloudID, Predicate.isAParentOf, child.id, parent.id, child.order);
+    const relationship = hierarchy.relationship_new(cloud.newCloudID, Predicate.idIsAParentOf, child.id, parent.id, child.order);
     relationship.needsCreate(true);
     normalizeOrderOf(parent.children);
     parent.becomeHere();
@@ -64,7 +63,7 @@ export default class Editor {
 
       const relationship = hierarchy.relationship_parentTo(thing.id);
       if (relationship) {
-        relationship.IDTo = newParent.id;
+        relationship.idTo = newParent.id;
         relationship.needsSave(true);
         thing.setOrderTo(-1);
       }

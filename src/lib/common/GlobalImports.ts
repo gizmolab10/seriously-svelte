@@ -5,6 +5,7 @@ import { persistence } from '../persistence/Persistence';
 import { Relationship } from '../data/Relationship';
 import { hierarchy } from '../managers/Hierarchy';
 import { Predicate } from '../data/Predicate';
+import { cloud } from '../persistence/Cloud';
 import { editor } from '../managers/Editor';
 import { onMount, onDestroy } from 'svelte';
 import { grabs } from '../managers/Grabs';
@@ -16,9 +17,9 @@ import Thing from '../data/Thing';
 import User from '../data/User';
 import './Extensions';
 
-export { constants, releases,
-  get, onMount, onDestroy,
-  grabs, hierarchy, editor, persistence,
+export { get, onMount, onDestroy,
+  constants, releases, Direction, FatTriangle,
   User, Thing, Access, Predicate, Relationship,
+  grabs, cloud, hierarchy, editor, persistence,
   log, removeAll, normalizeOrderOf, sortAccordingToOrder,
-  Needs, DBTypes, BulkIDs, ButtonIDs, DataKinds, Direction, FatTriangle, PersistenceIDs };
+  Needs, DBTypes, BulkIDs, ButtonIDs, DataKinds, PersistenceIDs };
