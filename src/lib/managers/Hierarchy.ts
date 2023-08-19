@@ -17,9 +17,9 @@ export default class Hierarchy {
   predicatesByID: { [id: string]: Predicate } = {};
   accessByKind: { [kind: string]: Access } = {};
   accessByID: { [id: string]: Access } = {};
-  thingsByID: ThingsLookup = {};
   relationships: Array<Relationship> = [];
   userByID: { [id: string]: User } = {};
+  thingsByID: ThingsLookup = {};
   root: Thing | null = null;
 
   get hasNothing(): boolean { return !this.root; }
@@ -45,22 +45,16 @@ export default class Hierarchy {
     }
   }
 
-  relationship_rememberByKind(kind: ForOfStatement, relationship: Relationship) {
-    switch (kind) {
-
-    }
+  relationship_rememberByLookup(lookup: RelationshipsLookup, id: string, relationship: Relationship) {
+    let array = lookup[id] ?? [];
+    array.push(relationship);
+    lookup[id] = array;
   }
 
   relationship_remember(relationship: Relationship) {
-    const tos = this.relationshipsByIDTo[relationship.idTo] ?? [];
-    const froms = this.relationshipsByIDFrom[relationship.idFrom] ?? [];
-    const predicates = this.relationshipsByIDPredicate[relationship.idPredicate] ?? [];
-    tos.push(relationship);
-    froms.push(relationship);
-    predicates.push(relationship);
-    this.relationshipsByIDTo[relationship.idTo] = tos;
-    this.relationshipsByIDFrom[relationship.idFrom] = froms;
-    this.relationshipsByIDPredicate[relationship.idPredicate] = predicates;
+    this.relationship_rememberByLookup(this.relationshipsByIDTo, relationship.idTo, relationship);
+    this.relationship_rememberByLookup(this.relationshipsByIDFrom, relationship.idFrom, relationship);
+    this.relationship_rememberByLookup(this.relationshipsByIDPredicate, relationship.idPredicate, relationship);
     this.relationships.push(relationship);
   }
 
@@ -135,21 +129,14 @@ export default class Hierarchy {
   //         RELATIONSHIPS          //
   ////////////////////////////////////
 
+  relationship_uniqueNew(id: string, idPredicate: string, idFrom: string, idTo: string, order: number): Relationship {
+    return this.relationship_parentTo(idTo) ?? this.relationship_new(id, idPredicate, idFrom, idTo, order);
+  }
+
   relationship_new(id: string, idPredicate: string, idFrom: string, idTo: string, order: number): Relationship {
-    if (idTo == 'recBZ4zq7MpGP9D3N') {
-      console.log('hah');
-    }
     const relationship = new Relationship(id, idPredicate, idFrom, idTo, order);
     this.relationship_remember(relationship);
     return relationship;
-  }
-
-  relationship_newUnique(id: string, idPredicate: string, idFrom: string, idTo: string, order: number): Relationship {
-    const matches = this.relationships_byIDPredicateToAndID(Predicate.idIsAParentOf, false, id);
-    if (matches.length > 0) {
-      return matches[0];
-    }
-    return this.relationship_new(id, idPredicate, idFrom, idTo, order);
   }
 
   relationship_parentTo(id: string) {

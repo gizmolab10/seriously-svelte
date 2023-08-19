@@ -61,7 +61,7 @@ class Firebase {
       } else if (dataKind == DataKinds.predicates) {
         hierarchy.predicate_new(id, data.kind);
       } else if (dataKind == DataKinds.relationships) {
-        hierarchy.relationship_newUnique(id, data.predicate.id, data.from.id, data.to.id, data.order);
+        hierarchy.relationship_uniqueNew(id, data.predicate.id, data.from.id, data.to.id, data.order);
       }
     }
   }
