@@ -1,7 +1,6 @@
 import { writable } from 'svelte/store';
 
 export const thingsStore        = writable<{id:string}[]>();
-export const predicatesStore    = writable<{id:string}[]>();
 export const relationshipsStore = writable<{id:string}[]>();
 export const stoppedEditingID   = writable<string | null>();
 export const popupViewID        = writable<string | null>();

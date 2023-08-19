@@ -8,8 +8,9 @@ import { hereID } from './State';
 ////////////////////////////////////////
 
 export default class Hierarchy {
-  relationshipsByFromID: { [id: string]: Array<Relationship> } = {};
-  relationshipsByToID: { [id: string]: Array<Relationship> } = {};
+  relationshipsByIDPredicate: { [id: string]: Array<Relationship> } = {};
+  relationshipsByIDFrom: { [id: string]: Array<Relationship> } = {};
+  relationshipsByIDTo: { [id: string]: Array<Relationship> } = {};
   predicatesByKind: { [kind: string]: Predicate } = {};
   predicatesByID: { [id: string]: Predicate } = {};
   accessByKind: { [kind: string]: Access } = {};
@@ -42,12 +43,15 @@ export default class Hierarchy {
   }
 
   relationship_remember(relationship: Relationship) {
-    const froms = this.relationshipsByFromID[relationship.from] ?? [];
-    const tos = this.relationshipsByToID[relationship.to] ?? [];
-    froms.push(relationship);
+    const tos = this.relationshipsByIDTo[relationship.IDTo] ?? [];
+    const froms = this.relationshipsByIDFrom[relationship.IDFrom] ?? [];
+    const predicates = this.relationshipsByIDPredicate[relationship.IDPredicate] ?? [];
     tos.push(relationship);
-    this.relationshipsByFromID[relationship.from] = froms;
-    this.relationshipsByToID[relationship.to] = tos;
+    froms.push(relationship);
+    predicates.push(relationship);
+    this.relationshipsByIDTo[relationship.IDTo] = tos;
+    this.relationshipsByIDFrom[relationship.IDFrom] = froms;
+    this.relationshipsByIDPredicate[relationship.IDPredicate] = predicates;
     this.relationships.push(relationship);
   }
 
@@ -112,7 +116,7 @@ export default class Hierarchy {
     const ids: Array<string> = [];
     if (Array.isArray(matches)) {
       for (const relationship of matches) {
-        ids.push(matchingTo ? relationship.from : relationship.to);
+        ids.push(matchingTo ? relationship.IDFrom : relationship.IDTo);
       }
     }
     return this.things_forIDs(ids);
@@ -130,7 +134,7 @@ export default class Hierarchy {
 
   relationship_parentTo(id: string) {
     const thing = this.thing_forID(id); // assure id is known
-    const matches = this.relationships_byKindToID(Predicate.isAParentOf, false, id);
+    const matches = this.relationships_byKindToID(Predicate.isAParentOf, true, id);
     if (thing && matches.length > 0) {
       return matches[0];
     }
@@ -139,8 +143,8 @@ export default class Hierarchy {
 
   relationships_clearLookups() {
     this.relationships = [];
-    this.relationshipsByToID = {};
-    this.relationshipsByFromID = {};
+    this.relationshipsByIDTo = {};
+    this.relationshipsByIDFrom = {};
   }
 
   relationships_refreshLookups() {
@@ -152,12 +156,12 @@ export default class Hierarchy {
   }
 
   relationships_byKindToID(predicate: Predicate, to: boolean, id: string): Array<Relationship> {
-    const dict = to ? this.relationshipsByToID : this.relationshipsByFromID;
+    const dict = to ? this.relationshipsByIDTo : this.relationshipsByIDFrom;
     const matches = dict[id] as Array<Relationship>; // filter out baaaaad values
     const array: Array<Relationship> = [];
     if (Array.isArray(matches)) {
       for (const relationship of matches) {
-        if (relationship.predicate == predicate) {
+        if (relationship.IDPredicate == predicate) {
           array.push(relationship);
         }
       }
@@ -166,10 +170,10 @@ export default class Hierarchy {
   }
 
   relationships_allMarkNeedDeleteForThing(thing: Thing) {
-    const parentRelationships = hierarchy.relationshipsByFromID[thing.id];
+    const parentRelationships = hierarchy.relationshipsByIDFrom[thing.id];
     if (parentRelationships) {
       for (const relationship of parentRelationships) {
-        relationship.needsDelete = true;
+        relationship.needsDelete(true);
       }
     }
   }

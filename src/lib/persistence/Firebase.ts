@@ -1,5 +1,5 @@
-import { getDocs, collection, onSnapshot, getFirestore, QuerySnapshot, DocumentData, DocumentReference, QueryDocumentSnapshot } from 'firebase/firestore';
-import { get, Thing, hierarchy, DataKinds, Predicate, Relationship } from '../common/GlobalImports';
+import { getDocs, collection, onSnapshot, getFirestore, QuerySnapshot, DocumentReference } from 'firebase/firestore';
+import { get, hierarchy, DataKinds, Thing, Predicate, Relationship } from '../common/GlobalImports';
 import { bulkName, thingsStore, relationshipsStore } from '../managers/State';
 import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
@@ -25,7 +25,7 @@ class Firebase {
   analytics = getAnalytics(this.app);
   db = getFirestore(this.app);
 
-  fetchAll = async (onCompletion: () => any) => {
+  setup = async (onCompletion: () => any) => {
     await firebase.fetchDocumentsIn(DataKinds.things);
     await firebase.fetchDocumentsIn(DataKinds.predicates, true);
     await firebase.fetchDocumentsIn(DataKinds.relationships); // fetch these LAST, they depend on fetching all of the above
@@ -46,14 +46,14 @@ class Firebase {
   }
 
   remember(dataKind: string, documentSnapshots: QuerySnapshot) {
-    const queryDocumentSnapshot = documentSnapshots.docs;
-    const documentData = queryDocumentSnapshot.map(doc => ({ ...doc.data(), id: doc.id }));
+    const queryDocumentSnapshots = documentSnapshots.docs;
+    const documentData = queryDocumentSnapshots.map(doc => ({ ...doc.data(), id: doc.id }));
     if (dataKind == DataKinds.things) {
       thingsStore.set(documentData);
     } else if (dataKind == DataKinds.relationships) {
       relationshipsStore.set(documentData);
     }
-    for (const documentSnapshot of queryDocumentSnapshot) {
+    for (const documentSnapshot of queryDocumentSnapshots) {
       const data = documentSnapshot.data();
       const id = documentSnapshot.id;
       if (dataKind == DataKinds.things) {
@@ -66,6 +66,61 @@ class Firebase {
     }
   }
 
+  updateAllNeedy = async () => {
+    await this.relationships_updateNeedy(); // do this first, in case a relationship points to a thing that needs delete
+    await this.things_updateNeedy();
+  }
+
+  async things_updateNeedy() {
+    for (const thing of hierarchy.things) {
+      if (thing.needs != 0) {
+        if (thing.needsDelete()) {
+          // await this.thing_delete(thing)
+        } else if (thing.needsCreate()) {
+          // await this.thing_create(thing)
+        } else if (thing.needsSave()) {
+          // await this.thing_save(thing)
+        }
+      }
+    }
+  }
+
+  async relationships_updateNeedy() {
+    let store = get(relationshipsStore);
+    for (const relationship of hierarchy.relationships) {
+      if (relationship.needs != 0) {
+        if (relationship.needsCreate()) {
+        } else {
+          const targetDocIndex = store.findIndex(doc => doc.id === relationship.id);
+          if (targetDocIndex == -1) {
+
+          } else {
+            const doc = store[targetDocIndex] as FirebaseRelationship;
+            if (relationship.needsSave()) {
+              const toRef = doc.to as any;
+              const fromRef = doc.from as any;
+              const predicateRef = doc.predicate as any;
+              const predicate = hierarchy.predicatesByID[relationship.IDPredicate];
+              toRef.update(hierarchy.thing_forID(relationship.IDTo));
+              fromRef.update(hierarchy.thing_forID(relationship.IDFrom));
+              predicateRef.update(predicate);
+              doc.order = relationship.order;
+            } else if (relationship.needsDelete()) {
+
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 export const firebase = new Firebase();
+
+interface FirebaseRelationship {
+  id: string;
+  order: number;
+  to: DocumentReference<Thing>;
+  from: DocumentReference<Thing>;
+  predicate: DocumentReference<Predicate>;
+}

@@ -64,8 +64,8 @@ export default class Editor {
 
       const relationship = hierarchy.relationship_parentTo(thing.id);
       if (relationship) {
-        relationship.to = newParent.id;
-        relationship.needsSave = true;
+        relationship.IDTo = newParent.id;
+        relationship.needsSave(true);
         thing.setOrderTo(-1);
       }
 
@@ -124,7 +124,7 @@ export default class Editor {
   ////////////////////////////////////
 
   async relationships_deleteAllForThing(thing: Thing) {
-    const array = hierarchy.relationshipsByFromID[thing.id];
+    const array = hierarchy.relationshipsByIDFrom[thing.id];
     if (array) {
       for (const relationship of array) {
         await cloud.relationship_delete(relationship);

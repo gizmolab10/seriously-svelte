@@ -41,7 +41,7 @@ export default class Cloud {
   setup = (dbType: string, onCompletion: () => any) => {
     switch (dbType) {
       case DBTypes.airtable: crud.setup(onCompletion); break;
-      default: firebase.fetchAll(onCompletion); break;
+      default: firebase.setup(onCompletion); break;
     }
   }
 
@@ -54,6 +54,7 @@ export default class Cloud {
   updateAllNeedy = async () => { 
     switch (get(dbType)) {
       case DBTypes.airtable: await crud.updateAllNeedy(); break;
+      default: await firebase.updateAllNeedy(); break;
     }
   }
 
@@ -80,6 +81,18 @@ export default class Cloud {
       case DBTypes.airtable: await crud.relationship_delete(relationship); break;
     }
   }
+
+  // callClassMethod<T extends object, K extends keyof T>(
+  //   methodName: K,
+  //   parameter: Parameters<T[K]>[0]
+  // ) {
+  //   switch (T)
+  //   const instance = new className();
+  //   instance[methodName](parameter);
+  // }
+
+  // // Usage
+  // callClassMethod(ExampleClass, 'exampleMethod', 'Hello, World!');
 
 }
 

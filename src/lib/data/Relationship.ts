@@ -3,20 +3,20 @@ import Needable from './Needable';
 import Airtable from 'airtable';
 
 export class Relationship extends Needable {
-  to: string;
-  from: string;
+  IDTo: string;
+  IDFrom: string;
+  IDPredicate: string;
   order: number;
-  predicate: Predicate;
 
-  constructor(id: string, predicate: Predicate, from: string, to: string, order = 0) {
+  constructor(id: string, predicate: string, from: string, to: string, order = 0) {
     super(id);
-    this.to = to; // to is child
-    this.from = from; // from is parent
+    this.IDTo = to; // to is child
+    this.IDFrom = from; // from is parent
+    this.IDPredicate = predicate;
     this.order = order;
-    this.predicate = predicate;
   }
 
-  get fields(): Airtable.FieldSet { return { predicate: [this.predicate.id], from: [this.from], to: [this.to], order: this.order }; }
-  get description(): string { return hierarchy.thing_forID(this.to)?.title + ' => ' + hierarchy.thing_forID(this.from)?.title; }
+  get fields(): Airtable.FieldSet { return { predicate: [this.IDPredicate], from: [this.IDFrom], to: [this.IDTo], order: this.order }; }
+  get description(): string { return hierarchy.thing_forID(this.IDFrom)?.title + ' => ' + hierarchy.thing_forID(this.IDTo)?.title; }
 
 }
