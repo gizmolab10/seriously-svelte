@@ -13,7 +13,7 @@ export enum BulkIDs {
   mine   = 'Jonathan Sand',
 }
 
-export enum PersistenceIDs {
+export enum LocalIDs {
   details = 'details',
   bulk    = 'bulk',
   db      = 'db',

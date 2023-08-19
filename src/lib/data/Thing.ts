@@ -1,4 +1,4 @@
-import { grabs, cloud, hierarchy, normalizeOrderOf, constants, Predicate } from '../common/GlobalImports';
+import { grabs, cloud, hierarchy, normalizeOrderOf, signal, Signals, constants, Predicate } from '../common/GlobalImports';
 import { grabbedIDs, editingID, hereID } from '../managers/State';
 import Needable from '../persistence/Needable';
 import Airtable from 'airtable';
@@ -94,6 +94,7 @@ export default class Thing extends Needable {
   becomeHere = () => {
     if (this.hasChildren) {
       hereID.set(this.id);
+      signal(Signals.childrenOf, this.id);
     };
   }
 
@@ -155,7 +156,7 @@ export default class Thing extends Needable {
         const newOrder =  newIndex + goose;
         siblings[index].setOrderTo(newOrder);
         normalizeOrderOf(siblings);
-        this.firstParent.becomeHere();
+        signal(Signals.childrenOf, this.firstParent.id);
       } else {
         const newGrab = siblings[newIndex];
         if (expand) {

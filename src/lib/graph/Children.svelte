@@ -1,12 +1,20 @@
 <script>
-  import { Thing } from '../common/GlobalImports';
+  import { Thing, Signals, onDestroy, handleSignalOfKind } from '../common/GlobalImports';
   import Widget from './Widget.svelte';
   export let thing = Thing;
+  let children = thing.children;
+	onDestroy( () => {signalHandler.disconnect(); });
+
+  const signalHandler = handleSignalOfKind(Signals.childrenOf, (thingID) => {
+    if (thingID == thing.id) {
+      children = thing.children;
+    }
+  })
 </script>
 
-{#if thing && thing.children && thing.children.length != 0}
+{#if children && children.length != 0}
   <ul>
-    {#each thing.children as child}
+    {#each children as child}
       <li><Widget thing={child}/></li>
     {/each}
   </ul>

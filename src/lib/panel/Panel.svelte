@@ -1,5 +1,5 @@
 <script>
-  import { get, grabs, DBTypes, ButtonIDs, hierarchy, persistence, PersistenceIDs, DataKinds } from '../common/GlobalImports'
+  import { get, grabs, DBTypes, ButtonIDs, hierarchy, persistence, LocalIDs, DataKinds } from '../common/GlobalImports'
   import { dbType, bulkName, popupViewID, showDetails, thingsStore, thingsArrived } from '../managers/State';
   import CircularButton from '../kit/CircularButton.svelte';
   import Graph from '../graph/Graph.svelte';
@@ -14,7 +14,7 @@
   
   function handleSettings(event) {
     $showDetails = !$showDetails;
-    persistence.writeToKey(PersistenceIDs.details, $showDetails);
+    persistence.writeToKey(LocalIDs.details, $showDetails);
   }
 </script>
 

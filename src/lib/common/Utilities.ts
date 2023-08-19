@@ -9,7 +9,7 @@ export function sortAccordingToOrder(array: Array<Thing>) {
 }
 
 export function normalizeOrderOf(array: Array<Thing>) {
-  hierarchy.relationships_refreshLookups(); // order is stored in relationships
+  // hierarchy.relationships_refreshLookups(); // order is stored in relationships
   sortAccordingToOrder(array);
   for (let index = 0; index < array.length; index++) {
     const thing = array[index];

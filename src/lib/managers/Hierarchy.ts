@@ -22,13 +22,38 @@ export default class Hierarchy {
   thingsByID: ThingsLookup = {};
   root: Thing | null = null;
 
+  constructor() {}
+
   get hasNothing(): boolean { return !this.root; }
   get rootID(): (string | null) { return this.root?.id ?? null; };
   get things(): Array<Thing> { return Object.values(this.thingsByID) };
   thing_forID = (id: string | null): Thing | null => { return (!id) ? null : this.thingsByID[id]; }
   predicate_forID = (id: string | null): Predicate | null => { return (!id) ? null : this.predicatesByID[id]; }
   thing_newAt = (order: number) => { return new Thing(cloud.newCloudID, constants.defaultTitle, 'blue', 't', order); }
-  
+
+  hierarchy_construct() {
+    const rootID = this.rootID;
+    if (rootID) {
+      const order = -1;
+      for (const thing of this.things) {
+        const id = thing.id;
+        if (id == rootID) {
+          hereID.set(id);
+        } else {
+          let relationship = this.relationship_parentTo(id);
+          if (relationship) {
+            thing.order = relationship.order;
+          } else {
+            thing.order = order;
+            relationship = this.relationship_new(cloud.newCloudID, Predicate.idIsAParentOf, rootID, id, order);
+            relationship.needsCreate(true);
+          }
+        }
+      }
+      this.root?.order_normalizeRecursive()   // setup order values
+    }
+  }
+
   /////////////////////////////
   //         MEMORY          //
   /////////////////////////////
@@ -67,29 +92,6 @@ export default class Hierarchy {
         this.root = thing;
         hereID.set(id);
       }
-    }
-  }
-
-  hierarchy_construct() {
-    const rootID = this.rootID;
-    if (rootID) {
-      const order = -1;
-      for (const thing of this.things) {
-        const id = thing.id;
-        if (id == rootID) {
-          hereID.set(id);
-        } else {
-          let relationship = this.relationship_parentTo(id);
-          if (relationship) {
-            thing.order = relationship.order;
-          } else {
-            thing.order = order;
-            relationship = this.relationship_new(cloud.newCloudID, Predicate.idIsAParentOf, rootID, id, order);
-            relationship.needsCreate(true);
-          }
-        }
-      }
-      this.root?.order_normalizeRecursive()   // setup order values
     }
   }
 
@@ -140,9 +142,8 @@ export default class Hierarchy {
   }
 
   relationship_parentTo(id: string) {
-    const thing = this.thing_forID(id); // assure id is known
     const matches = this.relationships_byIDPredicateToAndID(Predicate.idIsAParentOf, true, id);
-    if (thing && matches.length > 0) {
+    if (matches.length > 0) {
       return matches[0];
     }
     return null;

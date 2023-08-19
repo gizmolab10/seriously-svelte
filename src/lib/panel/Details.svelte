@@ -1,5 +1,5 @@
 <script>
-  import { DBTypes, hierarchy, onMount, persistence, PersistenceIDs } from '../common/GlobalImports';
+  import { DBTypes, hierarchy, onMount, persistence, LocalIDs } from '../common/GlobalImports';
   import { build, dbType, isBusy, popupViewID } from '../managers/State';
   import RadioButtons from '../kit/RadioButtons.svelte'
   export let size = 20;
@@ -13,7 +13,7 @@
 
   function handleDBTypeAt(index) {
     const type = menuItems[index].id;
-    persistence.writeToKey(PersistenceIDs.db, type);
+    persistence.writeToKey(LocalIDs.db, type);
     $dbType = type;    // tell components to render the [possibly previously] fetched data
     if (type == DBTypes.airtable) {
       $isBusy = true;    // show 'loading ...'
