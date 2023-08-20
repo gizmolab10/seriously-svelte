@@ -72,7 +72,7 @@ export default class Editor {
       normalizeOrderOf(thing.siblings);   // refresh lookups first
       thing.grabOnly();
       newParent.becomeHere();
-      cloud.updateAllNeedy();
+      await cloud.updateAllNeedy();
     }
   }
 
@@ -80,7 +80,7 @@ export default class Editor {
   //         GRABS          //
   ////////////////////////////
 
-  grabs_redraw_delete() {
+  async grabs_redraw_delete() {
     if (this.here) {
       for (const id of get(grabbedIDs)) {
         const grabbed = hierarchy.thing_forID(id);
@@ -103,18 +103,18 @@ export default class Editor {
             cloud.thing_delete(child);
             return false; // continue the traversal
           });
-          cloud.updateAllNeedy();
+          await cloud.updateAllNeedy();
           newGrabbed.grabOnly();
         }
       }
     }
   }
 
-  furthestGrab_redraw_moveUp(up: boolean, expand: boolean, relocate: boolean) {
+  async furthestGrab_redraw_moveUp(up: boolean, expand: boolean, relocate: boolean) {
     const grab = grabs.furthestGrab(up);
     grab?.redraw_moveup(up, expand, relocate);
     if (relocate) {
-      cloud.updateAllNeedy();
+      await cloud.updateAllNeedy();
     }
   }
 

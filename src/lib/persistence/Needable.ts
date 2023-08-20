@@ -2,11 +2,11 @@ import { Needs } from "../common/GlobalImports";
 
 export default class Needable {
   id: string;
-  needs: number;
+  needs: Needs;
 
   constructor(id: string) {
     this.id = id;
-    this.needs = 0;
+    this.needs = Needs.synced;
   }
 
   needsCreate(flag: boolean | null = null) {
@@ -22,8 +22,8 @@ export default class Needable {
   }
 
   needsSave(flag: boolean | null = null) {
-    const was = this.needs & Needs.save;
-    if (flag) { this.needs |= flag ? Needs.save : 0; }
+    const was = this.needs & Needs.update;
+    if (flag) { this.needs |= flag ? Needs.update : 0; }
     return was;
   }
 

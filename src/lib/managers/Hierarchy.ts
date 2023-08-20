@@ -31,7 +31,7 @@ export default class Hierarchy {
   predicate_forID = (id: string | null): Predicate | null => { return (!id) ? null : this.predicatesByID[id]; }
   thing_newAt = (order: number) => { return new Thing(cloud.newCloudID, constants.defaultTitle, 'blue', 't', order); }
 
-  hierarchy_construct() {
+  async hierarchy_construct() {
     const rootID = this.rootID;
     if (rootID) {
       const order = -1;
@@ -51,6 +51,11 @@ export default class Hierarchy {
         }
       }
       this.root?.order_normalizeRecursive()   // setup order values
+      try {
+        await cloud.updateAllNeedy();
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 

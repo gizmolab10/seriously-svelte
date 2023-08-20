@@ -26,7 +26,8 @@ export enum DataKinds {
 }
 
 export enum Needs {
+  synced = 0,
   create = 1,
   delete = 2,
-  save   = 4,
+  update = 4,
 }

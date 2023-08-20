@@ -1,7 +1,7 @@
-import { getDocs, collection, onSnapshot, getFirestore, QuerySnapshot, DocumentData, DocumentReference } from 'firebase/firestore';
-import { get, hierarchy, DataKinds, Thing, Predicate } from '../common/GlobalImports';
-import { bulkName, thingsStore, relationshipsStore } from '../managers/State';
+import { doc, addDoc, getDocs, collection, onSnapshot, getFirestore, QuerySnapshot, DocumentData, DocumentReference, CollectionReference } from 'firebase/firestore';
+import { get, hierarchy, DataKinds, Thing, Predicate, Needs, cloud, Relationship } from '../common/GlobalImports';
 import { getAnalytics } from "firebase/analytics";
+import { bulkName } from '../managers/State';
 import { initializeApp } from "firebase/app";
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -24,6 +24,9 @@ class Firebase {
   app = initializeApp(this.firebaseConfig);
   analytics = getAnalytics(this.app);
   db = getFirestore(this.app);
+  relationshipsCollection: CollectionReference | null = null;
+  predicatesCollection: CollectionReference | null = null;
+  thingsCollection: CollectionReference | null = null;
 
   setup = async (onCompletion: () => any) => {
     await firebase.fetchDocumentsIn(DataKinds.things);
@@ -35,6 +38,13 @@ class Firebase {
   fetchDocumentsIn = async (dataKind: string, noBulk: boolean = false) => {
     try {
       const documentsCollection = noBulk ? collection(this.db, dataKind) : collection(this.db, this.collectionName, get(bulkName), dataKind);
+      if (dataKind == DataKinds.things) {
+        this.thingsCollection = documentsCollection;
+      } else if (dataKind == DataKinds.predicates) {
+        this.predicatesCollection = documentsCollection;
+      } else if (dataKind == DataKinds.relationships) {
+        this.relationshipsCollection = documentsCollection;
+      }
       const querySnapshot = await getDocs(documentsCollection);
       this.remember(dataKind, querySnapshot);
       onSnapshot(documentsCollection, querySnapshot => { 
@@ -48,11 +58,6 @@ class Firebase {
   remember(dataKind: string, documentSnapshots: QuerySnapshot) {
     const queryDocumentSnapshots = documentSnapshots.docs;
     const documentData = queryDocumentSnapshots.map(doc => ({ ...doc.data(), id: doc.id }));
-    if (dataKind == DataKinds.things) {
-      thingsStore.set(documentData);
-    } else if (dataKind == DataKinds.relationships) {
-      relationshipsStore.set(documentData);
-    }
     for (const documentSnapshot of queryDocumentSnapshots) {
       const data = documentSnapshot.data();
       const id = documentSnapshot.id;
@@ -86,25 +91,34 @@ class Firebase {
   }
 
   async relationships_updateNeedy() {
-    let store = get(relationshipsStore);
+    let collection = this.relationshipsCollection;
+    if (collection != null)
     for (const relationship of hierarchy.relationships) {
-      if (relationship.needs != 0) {
+      if (relationship.needs != Needs.synced) {
+        // console.log(relationship.description);
         if (relationship.needsCreate()) {
-        } else {
-          const targetDocIndex = store.findIndex(doc => doc.id === relationship.id);
-          if (targetDocIndex == -1) {
-
-          } else {
-            const doc = store[targetDocIndex] as FirebaseRelationship;
-            if (relationship.needsSave()) {
-              doc.order = relationship.order;
-              // await doc.to.update(hierarchy.thing_forID(relationship.idTo));
-              // await doc.from.update(hierarchy.thing_forID(relationship.idFrom));
-              // await doc.predicate.update(hierarchy.predicate_forID(relationship.idPredicate));
-            } else if (relationship.needsDelete()) {
-
-            }
+          const firebaseRelationship = new FirebaseRelationship(relationship);
+          const jsRelationship = { ...firebaseRelationship };
+          try {
+            await addDoc(collection, jsRelationship);
+          } catch (error) {
+            console.log(error);
           }
+        // } else {
+        //   const targetDocIndex = store.findIndex(doc => doc.id === relationship.id);
+        //   if (targetDocIndex == -1) {
+
+        //   } else {
+        //     const doc = store[targetDocIndex] as FirebaseRelationship;
+        //     if (relationship.needsSave()) {
+        //       doc.order = relationship.order;
+        //       // await doc.to.update(hierarchy.thing_forID(relationship.idTo));
+        //       // await doc.from.update(hierarchy.thing_forID(relationship.idFrom));
+        //       // await doc.predicate.update(hierarchy.predicate_forID(relationship.idPredicate));
+        //     } else if (relationship.needsDelete()) {
+
+        //     }
+        //   }
         }
       }
     }
@@ -113,10 +127,23 @@ class Firebase {
 
 export const firebase = new Firebase();
 
-interface FirebaseRelationship {
+export interface FirebaseRelationship {
   id: string;
   order: number;
   to: DocumentReference<Thing, DocumentData>;
   from: DocumentReference<Thing, DocumentData>;
   predicate: DocumentReference<Predicate, DocumentData>;
+}
+
+export class FirebaseRelationship {
+  constructor(relationship: Relationship) {
+    const things = firebase.thingsCollection;
+    const predicates = firebase.predicatesCollection;
+    if (things && predicates) {
+      this.order = relationship.order;
+      this.to = doc(things, relationship.idTo) as DocumentReference<Thing>;
+      this.from = doc(things, relationship.idFrom) as DocumentReference<Thing>;
+      this.predicate = doc(predicates, relationship.idPredicate) as DocumentReference<Predicate>;
+    }
+  }
 }
