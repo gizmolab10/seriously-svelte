@@ -52,7 +52,7 @@ export default class Hierarchy {
       }
       this.root?.order_normalizeRecursive()   // setup order values
       try {
-        await cloud.handleAllNeedy();
+        await cloud.handleAllNeeds();
       } catch (error) {
         console.log(error);
       }
@@ -63,29 +63,29 @@ export default class Hierarchy {
   //         MEMORY          //
   /////////////////////////////
 
-  predicate_remember(predicate: Predicate) {
+  predicate_register(predicate: Predicate) {
     this.predicatesByKind[predicate.kind] = predicate;
     this.predicatesByID[predicate.id] = predicate;
   }
 
-  thing_remember(thing: Thing) {
+  thing_register(thing: Thing) {
     hierarchy.thingsByID[thing.id] = thing;
     if (thing.trait == '!') {
       hierarchy.root = thing;
     }
   }
 
-  relationship_rememberByLookup(lookup: RelationshipsLookup, idRelationship: string, relationship: Relationship) {
+  relationship_registerByLookup(lookup: RelationshipsLookup, idRelationship: string, relationship: Relationship) {
     let array = lookup[idRelationship] ?? [];
     array.push(relationship);
     lookup[idRelationship] = array;
   }
 
-  relationship_remember(relationship: Relationship) {
+  relationship_register(relationship: Relationship) {
     this.relationships.push(relationship);
-    this.relationship_rememberByLookup(this.relationshipsByIDTo, relationship.idTo, relationship);
-    this.relationship_rememberByLookup(this.relationshipsByIDFrom, relationship.idFrom, relationship);
-    this.relationship_rememberByLookup(this.relationshipsByIDPredicate, relationship.idPredicate, relationship);
+    this.relationship_registerByLookup(this.relationshipsByIDTo, relationship.idTo, relationship);
+    this.relationship_registerByLookup(this.relationshipsByIDFrom, relationship.idFrom, relationship);
+    this.relationship_registerByLookup(this.relationshipsByIDPredicate, relationship.idPredicate, relationship);
   }
 
   resetRootFrom(things: Array<Thing>) {
@@ -104,9 +104,19 @@ export default class Hierarchy {
   //         THINGS          //
   /////////////////////////////
 
+  get needyThings(): Array<Thing> {
+    let needy = new Array<Thing>();
+    for (const thing of this.things) {
+      if (thing.hasNeeds) {
+        needy.push(thing);
+      }
+    }
+    return needy;
+  }
+
   thing_new(id: string, title: string, color: string, trait: string, order: number): Thing {
     const thing = new Thing(id, title, color, trait, order);
-    this.thing_remember(thing);
+    this.thing_register(thing);
     return thing;
   }
 
@@ -136,13 +146,23 @@ export default class Hierarchy {
   //         RELATIONSHIPS          //
   ////////////////////////////////////
 
+  get needyRelationships(): Array<Relationship> {
+    let needy = new Array<Relationship>();
+    for (const relationship of this.relationships) {
+      if (relationship.hasNeeds) {
+        needy.push(relationship);
+      }
+    }
+    return needy;
+  }
+
   relationship_uniqueNew(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number): Relationship {
     return this.relationship_parentTo(idTo) ?? this.relationship_new(idRelationship, idPredicate, idFrom, idTo, order);
   }
 
   relationship_new(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number): Relationship {
     const relationship = new Relationship(idRelationship, idPredicate, idFrom, idTo, order);
-    this.relationship_remember(relationship);
+    this.relationship_register(relationship);
     return relationship;
   }
 
@@ -165,7 +185,7 @@ export default class Hierarchy {
     const saved = this.relationships;
     this.relationships_clearLookups();
     for (const relationship of saved) {
-      this.relationship_remember(relationship);
+      this.relationship_register(relationship);
     }
   }
 
@@ -198,7 +218,7 @@ export default class Hierarchy {
 
   predicate_new = (id: string, kind: string) => {
     const predicate = new Predicate(id, kind);
-    this.predicate_remember(predicate)
+    this.predicate_register(predicate)
   }
 
   access_new = (id: string, kind: string) => {

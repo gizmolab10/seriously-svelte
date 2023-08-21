@@ -51,10 +51,10 @@ export default class Cloud {
     }
   }
 
-  handleAllNeedy = async () => { 
+  handleAllNeeds = async () => { 
     switch (get(dbType)) {
-      case DBTypes.airtable: await crud.handleAllNeedy(); break;
-      default: await firebase.handleAllNeedy(); break;
+      case DBTypes.airtable: await crud.handleAllNeeds(); break;
+      default: await firebase.handleAllNeeds(); break;
     }
   }
 

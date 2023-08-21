@@ -40,7 +40,7 @@ export default class CRUD {
     await this.things_readAll(onCompletion);
   }
 
-  handleAllNeedy = async () => {
+  handleAllNeeds = async () => {
     await this.relationships_handleNeeds(); // do this first, in case a relationship points to a thing that needs delete
     await this.things_handleNeeds();
   }
@@ -59,7 +59,7 @@ export default class CRUD {
       for (const record of records) {
         const id = record.id;
         const thing = new Thing(id, record.fields.title as string, record.fields.color as string, record.fields.trait as string);
-        hierarchy.thing_remember(thing);
+        hierarchy.thing_register(thing);
         this.things.push(thing)
       }
       thingsArrived.set(true);

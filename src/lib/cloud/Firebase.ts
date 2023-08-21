@@ -38,7 +38,7 @@ class Firebase {
   fetchDocumentsIn = async (dataKind: string, noBulk: boolean = false) => {
     try {
       const documentsCollection = noBulk ? collection(this.db, dataKind) : collection(this.db, this.collectionName, get(bulkName), dataKind);
-      this.handleChangesTo(dataKind, documentsCollection);
+      this.handleRemoteChanges(dataKind, documentsCollection);
 
       ////////////////
       // data kinds //
@@ -53,13 +53,13 @@ class Firebase {
       }
 
       const querySnapshot = await getDocs(documentsCollection);
-      this.remember(dataKind, querySnapshot);
+      this.register(dataKind, querySnapshot);
     } catch (error) {
       console.log(error);
     }
   }
 
-  remember(dataKind: string, documentSnapshots: QuerySnapshot) {
+  register(dataKind: string, documentSnapshots: QuerySnapshot) {
     const queryDocumentSnapshots = documentSnapshots.docs;
     for (const documentSnapshot of queryDocumentSnapshots) {
       const data = documentSnapshot.data();
@@ -79,9 +79,9 @@ class Firebase {
     }
   }
 
-  handleChangesTo(dataKind: string, collection: CollectionReference) {
+  handleRemoteChanges(dataKind: string, collection: CollectionReference) {
     onSnapshot(collection, (snapshot) => {
-      snapshot.docChanges().forEach((remoteChange) => {       // convert and remember
+      snapshot.docChanges().forEach((remoteChange) => {       // convert and register
         const doc = remoteChange.doc;
         const data = doc.data();
         const idChange = doc.id;
@@ -120,7 +120,7 @@ class Firebase {
     }
   )};
 
-  handleAllNeedy = async () => {
+  handleAllNeeds = async () => {
     await this.relationships_handleNeeds();    // do this first, in case a relationship points to a thing that needs delete
     await this.things_handleNeeds();
   }
@@ -128,22 +128,21 @@ class Firebase {
   async things_handleNeeds() {
     let collection = this.thingsCollection;
     if (collection != null) {
-      for (const thing of hierarchy.things) {
-        if (thing.needs != 0) {
-            const jsThing = { ...thing };
+      for (const thing of hierarchy.needyThings) {
+        const firebaseThing = new FirebaseThing(thing);
 
-          ////////////////
-          // need kinds //
-          ////////////////
+        ////////////////
+        // need kinds //
+        ////////////////
 
-          if (thing.needsDelete()) {
-            // await this.thing_delete(thing)
-          } else if (thing.needsCreate()) {
-            // await this.thing_create(thing)
-          } else if (thing.needsUpdate()) {
-              const ref = doc(collection, thing.id) as DocumentReference<Thing>;
-              setDoc(ref, jsThing);
-          }
+        if (thing.needsDelete()) {
+          // await this.thing_delete(thing)
+        } else if (thing.needsCreate()) {
+          // await this.thing_create(thing)
+        } else if (thing.needsUpdate()) {
+            const ref = doc(collection, thing.id) as DocumentReference<Thing>;
+            const jsThing = { ...firebaseThing };
+            setDoc(ref, jsThing);
         }
       }
     }
@@ -152,23 +151,21 @@ class Firebase {
   async relationships_handleNeeds() {
     let collection = this.relationshipsCollection;
     if (collection != null) {
-      for (const relationship of hierarchy.relationships) {
+      for (const relationship of hierarchy.needyRelationships) {
         try {
-          if (relationship.hasNeeds) {
-            // console.log(relationship.description);
-            const firebaseRelationship = new FirebaseRelationship(relationship);
-            const jsRelationship = { ...firebaseRelationship };
+          // console.log(relationship.description);
+          const firebaseRelationship = new FirebaseRelationship(relationship);
+          const jsRelationship = { ...firebaseRelationship };
 
-            ////////////////
-            // need kinds //
-            ////////////////
+          ////////////////
+          // need kinds //
+          ////////////////
 
-            if (relationship.needsCreate()) {
-              await addDoc(collection, jsRelationship); // works!
-            } else if (relationship.needsUpdate()) {
-              const ref = doc(collection, relationship.id) as DocumentReference<FirebaseRelationship>;
-              setDoc(ref, jsRelationship);
-            }
+          if (relationship.needsCreate()) {
+            await addDoc(collection, jsRelationship); // works!
+          } else if (relationship.needsUpdate()) {
+            const ref = doc(collection, relationship.id) as DocumentReference<FirebaseRelationship>;
+            setDoc(ref, jsRelationship);
           }
         } catch (error) {
           console.log(error);
@@ -186,6 +183,14 @@ export interface FirebaseThing {
   trait: string;
 }
 
+export class FirebaseThing {
+  constructor(thing: Thing) {
+    this.title = thing.title;
+    this.trait = thing.trait;
+    this.color = thing.color;
+  }
+}
+
 export interface FirebaseRelationship {
   order: number;
   to: DocumentReference<Thing, DocumentData>;
@@ -193,7 +198,7 @@ export interface FirebaseRelationship {
   predicate: DocumentReference<Predicate, DocumentData>;
 }
 
-export class FirebaseRelationship {
+  export class FirebaseRelationship {
   constructor(relationship: Relationship) {
     const things = firebase.thingsCollection;
     const predicates = firebase.predicatesCollection;

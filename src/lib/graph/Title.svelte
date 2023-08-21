@@ -1,5 +1,5 @@
 <script lang='ts'>
-  import { Thing, cloud, editor, onDestroy } from '../common/GlobalImports';
+  import { Thing, cloud, editor, signal, Signals, onDestroy } from '../common/GlobalImports';
   import { editingID, stoppedEditingID } from '../managers/State';
   import Widget from './Widget.svelte';
   export let thing = Thing;
@@ -10,7 +10,6 @@
   let input = null;
 
   var hasChanges = () => { return originalTitle != thing.title; }
-  function revertTitleToOriginal() { originalTitle = thing.title; }
   function handleInput(event) { thing.title = event.target.value; }
   function handleBlur(event) { stopAndClearEditing(false); updateInputWidth(); }
   onDestroy(() => { thing = null; });
@@ -66,8 +65,10 @@
         input?.blur();
       }
       if (hasChanges()) {
-        cloud.thing_save(thing);
-        revertTitleToOriginal();
+        thing.needsUpdate(true);
+        originalTitle = thing.title;    // so hasChanges will be correct
+        signal(Signals.childrenOf, thing.firstParent.id); // for crumbs
+        cloud.handleAllNeeds();
       }
     }
   }

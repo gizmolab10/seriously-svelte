@@ -36,7 +36,7 @@ export default class Editor {
     parent.becomeHere();
     child.startEdit(); // TODO: fucking causes app to hang!
     child.grabOnly();
-    await cloud.handleAllNeedy();
+    await cloud.handleAllNeeds();
   }
 
   thing_redraw_addChildTo = (parent: Thing) => {
@@ -79,7 +79,7 @@ export default class Editor {
       thing.grabOnly();
       newParent.becomeHere();
       signal(Signals.childrenOf, newParent.id);     // so Children component will update
-      await cloud.handleAllNeedy();
+      await cloud.handleAllNeeds();
     }
   }
 
@@ -87,7 +87,7 @@ export default class Editor {
     const grab = grabs.furthestGrab(up);
     grab?.redraw_moveup(up, expand, relocate);
     if (relocate) {
-      await cloud.handleAllNeedy();
+      await cloud.handleAllNeeds();
     }
   }
 
@@ -127,7 +127,7 @@ export default class Editor {
             cloud.thing_delete(child);
             return false; // continue the traversal
           });
-          await cloud.handleAllNeedy();
+          await cloud.handleAllNeeds();
           newGrabbed.grabOnly();
         }
       }
