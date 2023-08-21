@@ -1,9 +1,15 @@
 <script>
-  import { grabs, Thing, Predicate, ButtonIDs, hierarchy, editor, constants } from '../common/GlobalImports';
+  import { grabs, Thing, editor, constants, Signals, onDestroy, Predicate, ButtonIDs, hierarchy, handleSignalOfKind } from '../common/GlobalImports';
   import { popupViewID, editingID, hereID } from '../managers/State';
   import Children from './Children.svelte'
+  let toggleDraw = false;
   let here = Thing;
   let listener;
+	onDestroy( () => {signalHandler.disconnect(); });
+
+  const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
+    toggleDraw = !toggleDraw;
+  })
 
 	$: {
     here = hierarchy.thing_forID($hereID);
@@ -43,7 +49,7 @@
 </script>
 
 <svelte:document on:keydown={handleKeyDown} />
-{#key here}
+{#key toggleDraw, here}
   {#if here}
     <div style='position: fixed; left-padding=100px'>
       <Children thing={here}/>

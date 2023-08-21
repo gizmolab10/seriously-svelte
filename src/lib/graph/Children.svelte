@@ -3,15 +3,12 @@
   import Widget from './Widget.svelte';
   export let thing = Thing;
   let children = thing.children;
-	onDestroy( () => {signalHandler.disconnect(); });
   let toggleDraw = false;
+	onDestroy( () => {signalHandler.disconnect(); });
 
   const signalHandler = handleSignalOfKind(Signals.childrenOf, (thingID) => {
-    const newChildren = thing.children;
-    if (thingID == thing.id && children != newChildren) {
-      children = newChildren;
-      toggleDraw = !toggleDraw;
-    }
+    children = thing.children;
+    toggleDraw = !toggleDraw;
   })
 </script>
 
