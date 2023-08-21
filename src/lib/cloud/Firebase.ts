@@ -1,5 +1,5 @@
-import { doc, addDoc, setDoc, getDoc, getDocs, collection, onSnapshot, getFirestore, QuerySnapshot, DocumentData, DocumentReference, CollectionReference } from 'firebase/firestore';
-import { get, hierarchy, DataKinds, Thing, Predicate, Needs, cloud, Relationship } from '../common/GlobalImports';
+import { doc, addDoc, setDoc, getDocs, collection, onSnapshot, getFirestore, QuerySnapshot, DocumentData, DocumentReference, CollectionReference } from 'firebase/firestore';
+import { get, Thing, signal, Signals, hierarchy, DataKinds, Predicate, Relationship } from '../common/GlobalImports';
 import { getAnalytics } from "firebase/analytics";
 import { bulkName } from '../managers/State';
 import { initializeApp } from "firebase/app";
@@ -84,18 +84,36 @@ class Firebase {
       snapshot.docChanges().forEach((change) => {       // convert and remember
         const doc = change.doc;
         const data = doc.data();
-        const id = doc.id;
+        const idChange = doc.id;
 
-        ////////////////
-        // data kinds //
-        ////////////////
+        ////////////////////
+        //   data kinds   //
+        //  change types  //
+        ////////////////////
 
-        if (change.type === 'added') {
-          if (dataKind == DataKinds.relationships) {
-            hierarchy.relationship_uniqueNew(id, data.predicate.id, data.from.id, data.to.id, data.order);
+        if (dataKind == DataKinds.relationships) {
+          if (change.type === 'added') {
+            hierarchy.relationship_uniqueNew(idChange, data.predicate.id, data.from.id, data.to.id, data.order);
+          } else if (change.type === 'modified') {
+            
+          } else if (change.type === 'removed') {
+
           }
-        } else if (change.type === 'modified') {
-        } else if (change.type === 'removed') {
+        } else if (dataKind == DataKinds.things) {
+          if (change.type === 'added') {
+
+          } else if (change.type === 'modified') {
+            const changedThing = hierarchy.thing_forID(idChange);
+            if (changedThing) {
+              const order = changedThing.order;
+              const thing = change.doc.data() as Thing;
+              changedThing.copyFrom(thing);
+              changedThing.setOrderTo(order);
+              signal(Signals.childrenOf, idChange);
+            }
+          } else if (change.type === 'removed') {
+
+          }
         }
       });
     }
