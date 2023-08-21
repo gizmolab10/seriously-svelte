@@ -114,7 +114,7 @@ export default class Thing extends Needable {
       const relationship = hierarchy.relationship_parentTo(this.id);
       if (relationship) {
         relationship.order = newOrder;
-        relationship.needsSave(true);
+        relationship.needsUpdate(true);
       }
     }
   }

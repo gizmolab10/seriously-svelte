@@ -6,7 +6,19 @@ export default class Needable {
 
   constructor(id: string) {
     this.id = id;
-    this.needs = Needs.synced;
+    this.needs = Needs.none;
+  }
+
+  noNeeds(flag: boolean | null = null)  {
+    const was = this.needs & Needs.none;
+    if (flag) { this.needs |= flag ? Needs.none : 0; }
+    return was;
+  }
+
+  needsRemind(flag: boolean | null = null) {
+    const was = this.needs & Needs.remind;
+    if (flag) { this.needs |= flag ? Needs.remind : 0; }
+    return was;
   }
 
   needsCreate(flag: boolean | null = null) {
@@ -21,7 +33,7 @@ export default class Needable {
     return was;
   }
 
-  needsSave(flag: boolean | null = null) {
+  needsUpdate(flag: boolean | null = null) {
     const was = this.needs & Needs.update;
     if (flag) { this.needs |= flag ? Needs.update : 0; }
     return was;

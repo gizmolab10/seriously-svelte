@@ -64,7 +64,7 @@ export default class Editor {
       const relationship = hierarchy.relationship_parentTo(thing.id);
       if (relationship) {
         relationship.idTo = newParent.id;
-        relationship.needsSave(true);
+        relationship.needsUpdate(true);
         thing.setOrderTo(-1);
       }
 
