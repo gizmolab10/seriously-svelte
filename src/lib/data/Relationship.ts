@@ -1,5 +1,5 @@
 import { hierarchy } from '../managers/Hierarchy';
-import Needable from '../persistence/Needable';
+import Needable from '../cloud/Needable';
 import Airtable from 'airtable';
 
 export class Relationship extends Needable {

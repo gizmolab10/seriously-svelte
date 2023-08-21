@@ -1,6 +1,6 @@
 import { grabs, cloud, hierarchy, normalizeOrderOf, signal, Signals, constants, Predicate } from '../common/GlobalImports';
 import { grabbedIDs, editingID, hereID } from '../managers/State';
-import Needable from '../persistence/Needable';
+import Needable from '../cloud/Needable';
 import Airtable from 'airtable';
 
 export default class Thing extends Needable {
@@ -65,7 +65,7 @@ export default class Thing extends Needable {
   }
 
   get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
-  get debugTitle():        string { return ' (\"' + this.title + '\") '; }
+  get description():       string { return this.id + ' (\" ' + this.title + '\") '; }
   get hasChildren():      boolean { return this.hasPredicate(false); }
   get children():    Array<Thing> { return hierarchy.things_byIDPredicateToAndID(Predicate.idIsAParentOf, false, this.id); }
   get parents():     Array<Thing> { return hierarchy.things_byIDPredicateToAndID(Predicate.idIsAParentOf,  true, this.id); }
@@ -129,7 +129,7 @@ export default class Thing extends Needable {
     return array[siblingIndex];
   }
 
-  markNeedsDelete = () => {
+  markNeedsDelete = () => { // cascade delete from thing to all its relationships
     hierarchy.relationships_allMarkNeedDeleteForThing(this);
     this.needsDelete(true);
   }

@@ -1,4 +1,4 @@
-import { get, grabs, Thing, cloud, hierarchy, Predicate, normalizeOrderOf } from '../common/GlobalImports';
+import { get, grabs, Thing, cloud, signal, Signals, hierarchy, Predicate, normalizeOrderOf } from '../common/GlobalImports';
 import { hereID, grabbedIDs } from './State';
 
 ///////////////////////////////////////
@@ -16,9 +16,9 @@ export default class Editor {
     })
   }
 
-  /////////////////////////////
-  //         THINGS          //
-  /////////////////////////////
+  //////////////////////////
+  //         ADD          //
+  //////////////////////////
 
   thing_duplicate = async (thing: Thing) => {
     const sibling = hierarchy.thing_newAt(thing.order + 0.1);
@@ -36,13 +36,17 @@ export default class Editor {
     parent.becomeHere();
     child.startEdit(); // TODO: fucking causes app to hang!
     child.grabOnly();
-    await cloud.updateAllNeedy();
+    await cloud.handleAllNeedy();
   }
 
   thing_redraw_addChildTo = (parent: Thing) => {
     const child = hierarchy.thing_newAt(-1);
     this.thing_redraw_addAsChild(child, parent);
   }
+
+  ///////////////////////////
+  //         MOVE          //
+  ///////////////////////////
 
   thing_redraw_moveRight(thing: Thing, right: boolean, relocate: boolean) {
     if (relocate) {
@@ -55,6 +59,7 @@ export default class Editor {
   thing_redraw_relocateRight = async (thing: Thing, right: boolean) => {
     const newParent = right ? thing.nextSibling(false) : thing.grandparent;
     if (newParent) {
+      const parent = thing.firstParent;
 
       // alter the 'to' in ALL [?] the matching 'from' relationships
       // simpler than adjusting children or parents arrays
@@ -63,22 +68,41 @@ export default class Editor {
 
       const relationship = hierarchy.relationship_parentTo(thing.id);
       if (relationship) {
-        relationship.idTo = newParent.id;
+        relationship.idFrom = newParent.id;
         relationship.needsUpdate(true);
         thing.setOrderTo(-1);
       }
 
-      hierarchy.relationships_refreshLookups();
-      normalizeOrderOf(thing.siblings);   // refresh lookups first
+      hierarchy.relationships_refreshLookups();     // so children and parent will see the newly relocated things
+      normalizeOrderOf(newParent.children);         // refresh lookups first
+      normalizeOrderOf(parent.children);
       thing.grabOnly();
       newParent.becomeHere();
-      await cloud.updateAllNeedy();
+      signal(Signals.childrenOf, newParent.id);     // so Children component will update
+      await cloud.handleAllNeedy();
     }
   }
 
-  ////////////////////////////
-  //         GRABS          //
-  ////////////////////////////
+  async furthestGrab_redraw_moveUp(up: boolean, expand: boolean, relocate: boolean) {
+    const grab = grabs.furthestGrab(up);
+    grab?.redraw_moveup(up, expand, relocate);
+    if (relocate) {
+      await cloud.handleAllNeedy();
+    }
+  }
+
+  /////////////////////////////
+  //         DELETE          //
+  /////////////////////////////
+
+  async relationships_deleteAllForThing(thing: Thing) {
+    const array = hierarchy.relationshipsByIDFrom[thing.id];
+    if (array) {
+      for (const relationship of array) {
+        await cloud.relationship_delete(relationship);
+      }
+    }
+  }
 
   async grabs_redraw_delete() {
     if (this.here) {
@@ -103,30 +127,9 @@ export default class Editor {
             cloud.thing_delete(child);
             return false; // continue the traversal
           });
-          await cloud.updateAllNeedy();
+          await cloud.handleAllNeedy();
           newGrabbed.grabOnly();
         }
-      }
-    }
-  }
-
-  async furthestGrab_redraw_moveUp(up: boolean, expand: boolean, relocate: boolean) {
-    const grab = grabs.furthestGrab(up);
-    grab?.redraw_moveup(up, expand, relocate);
-    if (relocate) {
-      await cloud.updateAllNeedy();
-    }
-  }
-
-  ////////////////////////////////////
-  //         RELATIONSHIPS          //
-  ////////////////////////////////////
-
-  async relationships_deleteAllForThing(thing: Thing) {
-    const array = hierarchy.relationshipsByIDFrom[thing.id];
-    if (array) {
-      for (const relationship of array) {
-        await cloud.relationship_delete(relationship);
       }
     }
   }

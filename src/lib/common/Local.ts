@@ -1,4 +1,4 @@
-import { DBTypes, BulkIDs, LocalIDs } from '../common/GlobalImports'
+import { DBTypes, BulkIDs, LocalIDs } from './GlobalImports'
 import { dbType, bulkName, showDetails } from '../managers/State';
 
 class Local {

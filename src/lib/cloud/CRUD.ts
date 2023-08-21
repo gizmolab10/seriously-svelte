@@ -40,9 +40,9 @@ export default class CRUD {
     await this.things_readAll(onCompletion);
   }
 
-  updateAllNeedy = async () => {
-    await this.relationships_updateNeedy(); // do this first, in case a relationship points to a thing that needs delete
-    await this.things_updateNeedy();
+  handleAllNeedy = async () => {
+    await this.relationships_handleNeedy(); // do this first, in case a relationship points to a thing that needs delete
+    await this.things_handleNeedy();
   }
 
   /////////////////////////////
@@ -69,7 +69,7 @@ export default class CRUD {
     }
   }
 
-  async things_updateNeedy() {
+  async things_handleNeedy() {
     for (const thing of hierarchy.things) {
       if (thing.needsDelete()) {
         await this.thing_delete(thing)
@@ -93,7 +93,7 @@ export default class CRUD {
       thing.needsCreate(false);
       hierarchy.thingsByID[id] = thing;
     } catch (error) {
-      console.log(this.things_errorMessage + thing.debugTitle + error);
+      console.log(this.things_errorMessage + thing.description + error);
     }
   }
 
@@ -102,7 +102,7 @@ export default class CRUD {
       await this.things_table.update(thing.id, thing.fields);
       thing.needsUpdate(false); // if update fails, subsequent update will try again
     } catch (error) {
-      console.log(this.things_errorMessage + thing.debugTitle + error);
+      console.log(this.things_errorMessage + thing.description + error);
     }
   }
 
@@ -112,7 +112,7 @@ export default class CRUD {
       await this.things_table.destroy(thing.id);
       thing.needsDelete = false;
     } catch (error) {
-      console.log(this.things_errorMessage + thing.debugTitle + error);
+      console.log(this.things_errorMessage + thing.description + error);
     }
   }
 
@@ -138,7 +138,7 @@ export default class CRUD {
     }
   }
 
-  async relationships_updateNeedy() {
+  async relationships_handleNeedy() {
     for (const relationship of hierarchy.relationships) {
       if (relationship.needsDelete()) {
           await this.relationship_delete(relationship);

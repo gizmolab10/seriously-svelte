@@ -27,10 +27,10 @@ export default class Hierarchy {
   get hasNothing(): boolean { return !this.root; }
   get rootID(): (string | null) { return this.root?.id ?? null; };
   get things(): Array<Thing> { return Object.values(this.thingsByID) };
-  thing_forID = (id: string | null): Thing | null => { return (!id) ? null : this.thingsByID[id]; }
-  predicate_forID = (id: string | null): Predicate | null => { return (!id) ? null : this.predicatesByID[id]; }
+  thing_forID = (idThing: string | null): Thing | null => { return (!idThing) ? null : this.thingsByID[idThing]; }
   thing_newAt = (order: number) => { return new Thing(cloud.newCloudID, constants.defaultTitle, 'blue', 't', order); }
-
+  predicate_forID = (idPredicate: string | null): Predicate | null => { return (!idPredicate) ? null : this.predicatesByID[idPredicate]; }
+  
   async hierarchy_construct() {
     const rootID = this.rootID;
     if (rootID) {
@@ -52,7 +52,7 @@ export default class Hierarchy {
       }
       this.root?.order_normalizeRecursive()   // setup order values
       try {
-        await cloud.updateAllNeedy();
+        await cloud.handleAllNeedy();
       } catch (error) {
         console.log(error);
       }
@@ -75,17 +75,17 @@ export default class Hierarchy {
     }
   }
 
-  relationship_rememberByLookup(lookup: RelationshipsLookup, id: string, relationship: Relationship) {
-    let array = lookup[id] ?? [];
+  relationship_rememberByLookup(lookup: RelationshipsLookup, idRelationship: string, relationship: Relationship) {
+    let array = lookup[idRelationship] ?? [];
     array.push(relationship);
-    lookup[id] = array;
+    lookup[idRelationship] = array;
   }
 
   relationship_remember(relationship: Relationship) {
+    this.relationships.push(relationship);
     this.relationship_rememberByLookup(this.relationshipsByIDTo, relationship.idTo, relationship);
     this.relationship_rememberByLookup(this.relationshipsByIDFrom, relationship.idFrom, relationship);
     this.relationship_rememberByLookup(this.relationshipsByIDPredicate, relationship.idPredicate, relationship);
-    this.relationships.push(relationship);
   }
 
   resetRootFrom(things: Array<Thing>) {
@@ -121,8 +121,8 @@ export default class Hierarchy {
     return sortAccordingToOrder(array);
   }
 
-  things_byIDPredicateToAndID(idPredicate: string, to: boolean, id: string): Array<Thing> {
-    const matches = this.relationships_byIDPredicateToAndID(idPredicate, to, id);
+  things_byIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Thing> {
+    const matches = this.relationships_byIDPredicateToAndID(idPredicate, to, idThing);
     const ids: Array<string> = [];
     if (Array.isArray(matches)) {
       for (const relationship of matches) {
@@ -136,18 +136,18 @@ export default class Hierarchy {
   //         RELATIONSHIPS          //
   ////////////////////////////////////
 
-  relationship_uniqueNew(id: string, idPredicate: string, idFrom: string, idTo: string, order: number): Relationship {
-    return this.relationship_parentTo(idTo) ?? this.relationship_new(id, idPredicate, idFrom, idTo, order);
+  relationship_uniqueNew(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number): Relationship {
+    return this.relationship_parentTo(idTo) ?? this.relationship_new(idRelationship, idPredicate, idFrom, idTo, order);
   }
 
-  relationship_new(id: string, idPredicate: string, idFrom: string, idTo: string, order: number): Relationship {
-    const relationship = new Relationship(id, idPredicate, idFrom, idTo, order);
+  relationship_new(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number): Relationship {
+    const relationship = new Relationship(idRelationship, idPredicate, idFrom, idTo, order);
     this.relationship_remember(relationship);
     return relationship;
   }
 
-  relationship_parentTo(id: string) {
-    const matches = this.relationships_byIDPredicateToAndID(Predicate.idIsAParentOf, true, id);
+  relationship_parentTo(idThing: string) {
+    const matches = this.relationships_byIDPredicateToAndID(Predicate.idIsAParentOf, true, idThing);
     if (matches.length > 0) {
       return matches[0];
     }
@@ -158,6 +158,7 @@ export default class Hierarchy {
     this.relationships = [];
     this.relationshipsByIDTo = {};
     this.relationshipsByIDFrom = {};
+    this.relationshipsByIDPredicate = {};
   }
 
   relationships_refreshLookups() {
@@ -168,9 +169,9 @@ export default class Hierarchy {
     }
   }
 
-  relationships_byIDPredicateToAndID(idPredicate: string, to: boolean, id: string): Array<Relationship> {
+  relationships_byIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Relationship> {
     const dict = to ? this.relationshipsByIDTo : this.relationshipsByIDFrom;
-    const matches = dict[id] as Array<Relationship>; // filter out baaaaad values
+    const matches = dict[idThing] as Array<Relationship>; // filter out baaaaad values
     const array: Array<Relationship> = [];
     if (Array.isArray(matches)) {
       for (const relationship of matches) {

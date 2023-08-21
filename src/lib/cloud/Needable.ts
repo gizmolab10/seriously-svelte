@@ -9,6 +9,8 @@ export default class Needable {
     this.needs = Needs.none;
   }
 
+  get hasNeeds() : boolean { return !this.noNeeds() }
+
   noNeeds(flag: boolean | null = null)  {
     const was = this.needs & Needs.none;
     if (flag) { this.needs |= flag ? Needs.none : 0; }

@@ -101,12 +101,12 @@ class Firebase {
     }
   )};
 
-  updateAllNeedy = async () => {
-    await this.relationships_updateNeedy();    // do this first, in case a relationship points to a thing that needs delete
-    await this.things_updateNeedy();
+  handleAllNeedy = async () => {
+    await this.relationships_handleNeedy();    // do this first, in case a relationship points to a thing that needs delete
+    await this.things_handleNeedy();
   }
 
-  async things_updateNeedy() {
+  async things_handleNeedy() {
     for (const thing of hierarchy.things) {
       if (thing.needs != 0) {
 
@@ -125,63 +125,25 @@ class Firebase {
     }
   }
 
-  async copyFrom(relationship: Relationship, to: DocumentReference<Relationship, DocumentData>) {
-    console.log(relationship.description);
-    const docSnapshot = await getDoc(to);
-    if (docSnapshot.exists()) {
-      // Document exists, proceed with modification
-      const documentData = docSnapshot.data();
-      
-      // Modify fields in the documentData
-      documentData.order = relationship.order;
-      
-      // Update the document back to Firestore
-      await updateDoc(docSnapshot, documentData); // Use set() to update the document
-    }
-
-
-
-
-
-  ////////////////////////////////////////////
-  ////////////////////////////////////////////
-  //                                        //
-  //  access order inside relationship ref  //
-  //                                        //
-  ////////////////////////////////////////////
-  ////////////////////////////////////////////
-
-
-
-
-
-    // to.order = relationship.order;
-  }
-
-  async relationships_updateNeedy() {
+  async relationships_handleNeedy() {
     let collection = this.relationshipsCollection;
     if (collection != null)
     for (const relationship of hierarchy.relationships) {
        try {
-        if (!relationship.noNeeds()) {
+        if (relationship.hasNeeds) {
           // console.log(relationship.description);
           const firebaseRelationship = new FirebaseRelationship(relationship);
           const jsRelationship = { ...firebaseRelationship };
+
+          ////////////////
+          // need kinds //
+          ////////////////
+
           if (relationship.needsCreate()) {
             await addDoc(collection, jsRelationship); // works!
           } else if (relationship.needsUpdate()) {
-            // copy from relationship to its corresponding document reference
             const ref = doc(collection, relationship.id) as DocumentReference<FirebaseRelationship>;
             setDoc(ref, jsRelationship);
-            // const refRef = ref.ref as DocumentReference;
-            // refRef.set(relationship);
-            // this.copyFrom(relationship, ref)
-              // await firebaseRelationship.to.update(hierarchy.thing_forID(relationship.idTo));
-              // await firebaseRelationship.from.update(hierarchy.thing_forID(relationship.idFrom));
-              // await firebaseRelationship.predicate.update(hierarchy.predicate_forID(relationship.idPredicate));
-              // } else if (relationship.needsDelete()) {
-
-              // }
           }
         }
       } catch (error) {
