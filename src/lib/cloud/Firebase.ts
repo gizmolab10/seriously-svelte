@@ -1,4 +1,4 @@
-import { doc, addDoc, setDoc, getDocs, collection, onSnapshot, getFirestore, QuerySnapshot, DocumentData, DocumentReference, CollectionReference } from 'firebase/firestore';
+import { doc, addDoc, setDoc, getDoc, getDocs, collection, onSnapshot, getFirestore, QuerySnapshot, DocumentData, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { get, Thing, signal, Signals, hierarchy, DataKinds, Predicate, Relationship } from '../common/GlobalImports';
 import { getAnalytics } from "firebase/analytics";
 import { bulkName } from '../managers/State';
@@ -81,8 +81,8 @@ class Firebase {
 
   handleChangesTo(dataKind: string, collection: CollectionReference) {
     onSnapshot(collection, (snapshot) => {
-      snapshot.docChanges().forEach((change) => {       // convert and remember
-        const doc = change.doc;
+      snapshot.docChanges().forEach((remoteChange) => {       // convert and remember
+        const doc = remoteChange.doc;
         const data = doc.data();
         const idChange = doc.id;
 
@@ -92,26 +92,27 @@ class Firebase {
         ////////////////////
 
         if (dataKind == DataKinds.relationships) {
-          if (change.type === 'added') {
+          if (remoteChange.type === 'added') {
             hierarchy.relationship_uniqueNew(idChange, data.predicate.id, data.from.id, data.to.id, data.order);
-          } else if (change.type === 'modified') {
+          } else if (remoteChange.type === 'modified') {
             
-          } else if (change.type === 'removed') {
+          } else if (remoteChange.type === 'removed') {
 
           }
         } else if (dataKind == DataKinds.things) {
-          if (change.type === 'added') {
+          if (remoteChange.type === 'added') {
 
-          } else if (change.type === 'modified') {
-            const changedThing = hierarchy.thing_forID(idChange);
-            if (changedThing) {
-              const order = changedThing.order;
-              const thing = change.doc.data() as Thing;
-              changedThing.copyFrom(thing);
-              changedThing.setOrderTo(order);
-              signal(Signals.childrenOf, idChange);
+          } else if (remoteChange.type === 'modified') {
+            const thing = hierarchy.thing_forID(idChange);
+            if (thing) {
+              const order = thing.order;
+              const remoteThing = data as Thing;
+              const parentID = thing.firstParent.id;
+              thing.copyFrom(remoteThing);
+              thing.setOrderTo(order);
+              signal(Signals.childrenOf, parentID);
             }
-          } else if (change.type === 'removed') {
+          } else if (remoteChange.type === 'removed') {
 
           }
         }
@@ -120,58 +121,70 @@ class Firebase {
   )};
 
   handleAllNeedy = async () => {
-    await this.relationships_handleNeedy();    // do this first, in case a relationship points to a thing that needs delete
-    await this.things_handleNeedy();
+    await this.relationships_handleNeeds();    // do this first, in case a relationship points to a thing that needs delete
+    await this.things_handleNeeds();
   }
 
-  async things_handleNeedy() {
-    for (const thing of hierarchy.things) {
-      if (thing.needs != 0) {
-
-        ////////////////
-        // need kinds //
-        ////////////////
-
-        if (thing.needsDelete()) {
-          // await this.thing_delete(thing)
-        } else if (thing.needsCreate()) {
-          // await this.thing_create(thing)
-        } else if (thing.needsUpdate()) {
-          // await this.thing_save(thing)
-        }
-      }
-    }
-  }
-
-  async relationships_handleNeedy() {
-    let collection = this.relationshipsCollection;
-    if (collection != null)
-    for (const relationship of hierarchy.relationships) {
-       try {
-        if (relationship.hasNeeds) {
-          // console.log(relationship.description);
-          const firebaseRelationship = new FirebaseRelationship(relationship);
-          const jsRelationship = { ...firebaseRelationship };
+  async things_handleNeeds() {
+    let collection = this.thingsCollection;
+    if (collection != null) {
+      for (const thing of hierarchy.things) {
+        if (thing.needs != 0) {
+            const jsThing = { ...thing };
 
           ////////////////
           // need kinds //
           ////////////////
 
-          if (relationship.needsCreate()) {
-            await addDoc(collection, jsRelationship); // works!
-          } else if (relationship.needsUpdate()) {
-            const ref = doc(collection, relationship.id) as DocumentReference<FirebaseRelationship>;
-            setDoc(ref, jsRelationship);
+          if (thing.needsDelete()) {
+            // await this.thing_delete(thing)
+          } else if (thing.needsCreate()) {
+            // await this.thing_create(thing)
+          } else if (thing.needsUpdate()) {
+              const ref = doc(collection, thing.id) as DocumentReference<Thing>;
+              setDoc(ref, jsThing);
           }
         }
-      } catch (error) {
-        console.log(error);
+      }
+    }
+  }
+
+  async relationships_handleNeeds() {
+    let collection = this.relationshipsCollection;
+    if (collection != null) {
+      for (const relationship of hierarchy.relationships) {
+        try {
+          if (relationship.hasNeeds) {
+            // console.log(relationship.description);
+            const firebaseRelationship = new FirebaseRelationship(relationship);
+            const jsRelationship = { ...firebaseRelationship };
+
+            ////////////////
+            // need kinds //
+            ////////////////
+
+            if (relationship.needsCreate()) {
+              await addDoc(collection, jsRelationship); // works!
+            } else if (relationship.needsUpdate()) {
+              const ref = doc(collection, relationship.id) as DocumentReference<FirebaseRelationship>;
+              setDoc(ref, jsRelationship);
+            }
+          }
+        } catch (error) {
+          console.log(error);
+        }
       }
     }
   }
 }
 
 export const firebase = new Firebase();
+
+export interface FirebaseThing {
+  title: string;
+  color: string;
+  trait: string;
+}
 
 export interface FirebaseRelationship {
   order: number;

@@ -7,13 +7,15 @@
   let listener;
 	onDestroy( () => {signalHandler.disconnect(); });
 
-  const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
-    toggleDraw = !toggleDraw;
-  })
-
 	$: {
     here = hierarchy.thing_forID($hereID);
   }
+
+  const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
+    if (idThing == here.id) {
+      toggleDraw = !toggleDraw;
+    }
+  })
 
   async function handleKeyDown(event) {
     let grab = grabs.furthestGrab(true);

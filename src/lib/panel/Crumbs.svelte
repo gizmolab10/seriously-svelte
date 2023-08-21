@@ -1,9 +1,15 @@
 <script lang='ts'>
-  import { Thing, grabs, onMount, hierarchy } from '../common/GlobalImports';
+  import { Thing, grabs, Signals, onDestroy, hierarchy, handleSignalOfKind } from '../common/GlobalImports';
   import { grabbedIDs } from '../managers/State';
   import Crumb from '../kit/Crumb.svelte';
   let ancestors: Array<Thing> = [];
   export let grab;
+  let toggleDraw = false;
+	onDestroy( () => {signalHandler.disconnect(); });
+
+  const signalHandler = handleSignalOfKind(Signals.childrenOf, (thingID) => {
+    toggleDraw = !toggleDraw;
+  })
 
 	$: {
     if (!$grabbedIDs?.includes(grab?.id) || ancestors.length == 0) {
@@ -20,11 +26,13 @@
 
 </script>
 
-{#if ancestors}
-  {#each ancestors as thing, index}
-    {#if index > 0}
-      <span>&nbsp; &gt; </span>
-    {/if}
-    <Crumb thing={thing}/>
-  {/each}
-{/if}
+{#key toggleDraw}
+  {#if ancestors}
+    {#each ancestors as thing, index}
+      {#if index > 0}
+        <span>&nbsp; &gt; </span>
+      {/if}
+      <Crumb thing={thing}/>
+    {/each}
+  {/if}
+{/key}

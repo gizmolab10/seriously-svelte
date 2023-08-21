@@ -41,8 +41,8 @@ export default class CRUD {
   }
 
   handleAllNeedy = async () => {
-    await this.relationships_handleNeedy(); // do this first, in case a relationship points to a thing that needs delete
-    await this.things_handleNeedy();
+    await this.relationships_handleNeeds(); // do this first, in case a relationship points to a thing that needs delete
+    await this.things_handleNeeds();
   }
 
   /////////////////////////////
@@ -69,7 +69,7 @@ export default class CRUD {
     }
   }
 
-  async things_handleNeedy() {
+  async things_handleNeeds() {
     for (const thing of hierarchy.things) {
       if (thing.needsDelete()) {
         await this.thing_delete(thing)
@@ -138,7 +138,7 @@ export default class CRUD {
     }
   }
 
-  async relationships_handleNeedy() {
+  async relationships_handleNeeds() {
     for (const relationship of hierarchy.relationships) {
       if (relationship.needsDelete()) {
           await this.relationship_delete(relationship);

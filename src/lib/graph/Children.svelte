@@ -7,8 +7,10 @@
 	onDestroy( () => {signalHandler.disconnect(); });
 
   const signalHandler = handleSignalOfKind(Signals.childrenOf, (thingID) => {
-    children = thing.children;
-    toggleDraw = !toggleDraw;
+    if (thingID == thing.id) {
+      children = thing.children;
+      toggleDraw = !toggleDraw;
+    }
   })
 </script>
 
@@ -21,6 +23,7 @@
     </ul>
   {/if}
 {/key}
+
 <style>
   ul { list-style: none; }
   li { line-height: 1.5; }

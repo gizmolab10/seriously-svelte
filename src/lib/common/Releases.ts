@@ -3,7 +3,7 @@ class Releases {
   notes: { [id: string]: string } = {};
 
   constructor() {
-    build.set(27);
+    build.set(28);
     this.notes = {
       10 : 'toss seriously folder, pull Startup from Panel',
       11 : 'panel displays build',
@@ -17,6 +17,7 @@ class Releases {
       25 : 'switching between dbs works',
       26 : 'cloud abstraction layer',
       27 : 'create new relationship in firebase!!!!!!',
+      28 : 'title edits sync',
     }
   }
 
