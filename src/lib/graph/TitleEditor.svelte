@@ -88,19 +88,21 @@
   }
 </script>
 
-<div class="wrapper" bind:this={wrapper}>
-  {thing.title} &nbsp;
-</div>
-<input
-  type='text'
-  bind:this={input}
-  on:blur={handleBlur}
-  on:focus={handleFocus}
-  on:input={handleInput}
-  on:keydown={handleKeyDown}
-  on:input={updateInputWidth}
-  bind:value={thing.title}
-  style='color: {thing.color};'/>
+{#key originalTitle}
+  <div class="wrapper" bind:this={wrapper}>
+    {thing.title} &nbsp;
+  </div>
+  <input
+    type='text'
+    bind:this={input}
+    on:blur={handleBlur}
+    on:focus={handleFocus}
+    on:input={handleInput}
+    on:keydown={handleKeyDown}
+    on:input={updateInputWidth}
+    bind:value={thing.title}
+    style='color: {thing.color};'/>
+{/key}
 
 <style lang='scss'>
   input {

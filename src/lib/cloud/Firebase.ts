@@ -110,7 +110,7 @@ class Firebase {
         } else if (dataKind == DataKinds.things) {
           const thing = hierarchy.thing_forID(idChange);
           if (thing) {
-            const remote = new RemoteThing(thing);
+            const remote = new RemoteThing(data);
             const parentID = thing?.firstParent?.id;
             if (change.type === 'added') {
 
@@ -193,10 +193,11 @@ interface RemoteThing {
 }
 
 class RemoteThing implements RemoteThing {
-  constructor(thing: Thing) {
-    this.title = thing.title;
-    this.trait = thing.trait;
-    this.color = thing.color;
+  constructor(data: DocumentData) {
+    const remote = data as RemoteThing;
+    this.title = remote.title;
+    this.trait = remote.trait;
+    this.color = remote.color;
   }
   copyInto = (thing: Thing) => {
     thing.title = this.title;

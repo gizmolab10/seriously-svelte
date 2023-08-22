@@ -1,7 +1,7 @@
 <script lang='ts'>
   import { editingID, grabbedIDs } from '../managers/State';
   import { Thing, onMount } from '../common/GlobalImports';
-	import Title from './Title.svelte';
+	import TitleEditor from './TitleEditor.svelte';
 	import Dot from './Dot.svelte';
 	export let thing = Thing;
 	let isGrabbed = false;
@@ -42,7 +42,7 @@
 		on:mouseout={widget.style.border=border}>
 	<Dot thing={thing} size=15/>
 	&nbsp; {thing.order + 1}.
-	<Title thing={thing}/>
+	<TitleEditor thing={thing}/>
 	{#if thing.hasChildren}
 		<Dot thing={thing} size=15 isReveal={true}/>
 	{/if}
