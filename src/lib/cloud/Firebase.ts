@@ -99,7 +99,7 @@ class Firebase {
             if (change.type === 'added') {
               hierarchy.relationship_uniqueNew(idChange, remote.predicate.id, remote.from.id, remote.to.id, remote.order);
             } else if (change.type === 'modified') {
-              remote.copyInto(relationship);
+              this.copyRelationship(relationship, remote);
             } else if (change.type === 'removed') {
               delete hierarchy.relationshipByID[idChange];
             }
@@ -116,7 +116,7 @@ class Firebase {
 
             } else if (change.type === 'modified') {
               if (thing) {
-                remote.copyInto(thing);
+                this.copyThing(thing, remote);
               }
             } else if (change.type === 'removed') {
 
@@ -150,7 +150,7 @@ class Firebase {
         } else if (thing.needsUpdate()) {
             const ref = doc(collection, thing.id) as DocumentReference<Thing>;
             const jsThing = { ...remoteThing };
-            setDoc(ref, jsThing);
+            await setDoc(ref, jsThing);
         }
       }
     }
@@ -173,13 +173,28 @@ class Firebase {
             await addDoc(collection, jsRelationship); // works!
           } else if (relationship.needsUpdate()) {
             const ref = doc(collection, relationship.id) as DocumentReference<RemoteRelationship>;
-            setDoc(ref, jsRelationship);
+            await setDoc(ref, jsRelationship);
           }
         } catch (error) {
           console.log(error);
         }
       }
     }
+  }
+
+  copyThing = (thing: Thing, from: RemoteThing) => {
+    thing.title = from.title;
+    thing.trait = from.trait;
+    thing.color = from.color;
+  }
+
+  copyRelationship = (relationship: Relationship, from: RemoteRelationship) => {
+    const order = from.order - 0.1;
+    relationship.idTo = from.to.id;
+    relationship.order = order;
+    relationship.idFrom = from.from.id;
+    relationship.idPredicate = from.predicate.id;
+    hierarchy.thing_forID(relationship.idTo)?.setOrderTo(order);
   }
 }
 
@@ -189,7 +204,6 @@ interface RemoteThing {
   title: string;
   color: string;
   trait: string;
-  copyInto: (thing: Thing) => void;
 }
 
 class RemoteThing implements RemoteThing {
@@ -199,11 +213,6 @@ class RemoteThing implements RemoteThing {
     this.trait = remote.trait;
     this.color = remote.color;
   }
-  copyInto = (thing: Thing) => {
-    thing.title = this.title;
-    thing.trait = this.trait;
-    thing.color = this.color;
-  }
 }
 
 interface RemoteRelationship {
@@ -211,27 +220,24 @@ interface RemoteRelationship {
   to: DocumentReference<Thing, DocumentData>;
   from: DocumentReference<Thing, DocumentData>;
   predicate: DocumentReference<Predicate, DocumentData>;
-  copyInto: (relationship: Relationship) => void;
 }
 
 class RemoteRelationship implements RemoteRelationship {
-  constructor(data: DocumentData) {
-    const remote = data as RemoteRelationship;
+  constructor(data: DocumentData | Relationship) {
     const things = firebase.thingsCollection;
     const predicates = firebase.predicatesCollection;
+    this.order = data.order;
     if (things && predicates) {
-      this.order = remote.order;
-      this.to = doc(things, remote.to.id) as DocumentReference<Thing>;
-      this.from = doc(things, remote.from.id) as DocumentReference<Thing>;
-      this.predicate = doc(predicates, remote.predicate.id) as DocumentReference<Predicate>;
+      if (data instanceof Relationship) {
+        this.to = doc(things, data.idTo) as DocumentReference<Thing>;
+        this.from = doc(things, data.idFrom) as DocumentReference<Thing>;
+        this.predicate = doc(predicates, data.idPredicate) as DocumentReference<Predicate>;
+      } else {
+        const remote = data as RemoteRelationship;
+        this.to = doc(things, remote.to.id) as DocumentReference<Thing>;
+        this.from = doc(things, remote.from.id) as DocumentReference<Thing>;
+        this.predicate = doc(predicates, remote.predicate.id) as DocumentReference<Predicate>;
+      }
     }
-  }
-  copyInto = (relationship: Relationship) => {
-    const order = this.order - 0.1;
-    relationship.idTo = this.to.id;
-    relationship.order = order;
-    relationship.idFrom = this.from.id;
-    relationship.idPredicate = this.predicate.id;
-    hierarchy.thing_forID(relationship.idTo)?.setOrderTo(order);
   }
 }
