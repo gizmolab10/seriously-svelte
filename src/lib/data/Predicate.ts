@@ -9,6 +9,6 @@ export class Predicate {
     this.kind = kind;
   }
 
-  static get idIsAParentOf(): string { return hierarchy.predicatesByKind['isAParentOf'].id; }
+  static get idIsAParentOf(): string { return hierarchy.predicateByKind['isAParentOf']?.id ?? 'dunno'; }
 
 }

@@ -13,8 +13,9 @@ export default class Hierarchy {
   relationshipsByIDPredicate: RelationshipsLookup = {};
   relationshipsByIDFrom: RelationshipsLookup = {};
   relationshipsByIDTo: RelationshipsLookup = {};
-  predicatesByKind: { [kind: string]: Predicate } = {};
-  predicatesByID: { [id: string]: Predicate } = {};
+  relationshipByID: { [id: string]: Relationship } = {};
+  predicateByKind: { [kind: string]: Predicate } = {};
+  predicateByID: { [id: string]: Predicate } = {};
   accessByKind: { [kind: string]: Access } = {};
   accessByID: { [id: string]: Access } = {};
   relationships: Array<Relationship> = [];
@@ -27,9 +28,10 @@ export default class Hierarchy {
   get hasNothing(): boolean { return !this.root; }
   get rootID(): (string | null) { return this.root?.id ?? null; };
   get things(): Array<Thing> { return Object.values(this.thingsByID) };
+  order_normalizeAllRecursive() { this.root?.order_normalizeRecursive(); };
   thing_forID = (idThing: string | null): Thing | null => { return (!idThing) ? null : this.thingsByID[idThing]; }
   thing_newAt = (order: number) => { return new Thing(cloud.newCloudID, constants.defaultTitle, 'blue', 't', order); }
-  predicate_forID = (idPredicate: string | null): Predicate | null => { return (!idPredicate) ? null : this.predicatesByID[idPredicate]; }
+  predicate_forID = (idPredicate: string | null): Predicate | null => { return (!idPredicate) ? null : this.predicateByID[idPredicate]; }
   
   async hierarchy_construct() {
     const rootID = this.rootID;
@@ -50,7 +52,7 @@ export default class Hierarchy {
           }
         }
       }
-      this.root?.order_normalizeRecursive()   // setup order values
+      this.order_normalizeAllRecursive()   // setup order values
       try {
         await cloud.handleAllNeeds();
       } catch (error) {
@@ -64,8 +66,8 @@ export default class Hierarchy {
   /////////////////////////////
 
   predicate_register(predicate: Predicate) {
-    this.predicatesByKind[predicate.kind] = predicate;
-    this.predicatesByID[predicate.id] = predicate;
+    this.predicateByKind[predicate.kind] = predicate;
+    this.predicateByID[predicate.id] = predicate;
   }
 
   thing_register(thing: Thing) {
@@ -83,6 +85,7 @@ export default class Hierarchy {
 
   relationship_register(relationship: Relationship) {
     this.relationships.push(relationship);
+    this.relationshipByID[relationship.id] = relationship;
     this.relationship_registerByLookup(this.relationshipsByIDTo, relationship.idTo, relationship);
     this.relationship_registerByLookup(this.relationshipsByIDFrom, relationship.idFrom, relationship);
     this.relationship_registerByLookup(this.relationshipsByIDPredicate, relationship.idPredicate, relationship);
@@ -176,6 +179,7 @@ export default class Hierarchy {
 
   relationships_clearLookups() {
     this.relationships = [];
+    this.relationshipByID = {};
     this.relationshipsByIDTo = {};
     this.relationshipsByIDFrom = {};
     this.relationshipsByIDPredicate = {};

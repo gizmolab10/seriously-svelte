@@ -16,11 +16,11 @@ export default class Thing extends Needable {
   hoverAttributes = '';
   borderAttribute = '';
 
-  copyFrom = (other: Thing) => {
-    this.title = other.title;
-    this.color = other.color;
-    this.trait = other.trait;
-    this.order = other.order;
+  copyInto = (other: Thing) => {
+    other.title = this.title;
+    other.color = this.color;
+    other.trait = this.trait;
+    other.order = this.order;
   }
 
   constructor(id = cloud.newCloudID, title = constants.defaultTitle, color = 'blue', trait = 's', order = 0) {

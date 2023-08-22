@@ -38,7 +38,6 @@ class Firebase {
   fetchDocumentsIn = async (dataKind: string, noBulk: boolean = false) => {
     try {
       const documentsCollection = noBulk ? collection(this.db, dataKind) : collection(this.db, this.collectionName, get(bulkName), dataKind);
-      this.handleRemoteChanges(dataKind, documentsCollection);
 
       ////////////////
       // data kinds //
@@ -54,6 +53,7 @@ class Firebase {
 
       const querySnapshot = await getDocs(documentsCollection);
       this.register(dataKind, querySnapshot);
+      this.handleRemoteChanges(dataKind, documentsCollection);
     } catch (error) {
       console.log(error);
     }
@@ -81,8 +81,8 @@ class Firebase {
 
   handleRemoteChanges(dataKind: string, collection: CollectionReference) {
     onSnapshot(collection, (snapshot) => {
-      snapshot.docChanges().forEach((remoteChange) => {       // convert and register
-        const doc = remoteChange.doc;
+      snapshot.docChanges().forEach((change) => {       // convert and register
+        const doc = change.doc;
         const data = doc.data();
         const idChange = doc.id;
 
@@ -92,28 +92,36 @@ class Firebase {
         ////////////////////
 
         if (dataKind == DataKinds.relationships) {
-          if (remoteChange.type === 'added') {
-            hierarchy.relationship_uniqueNew(idChange, data.predicate.id, data.from.id, data.to.id, data.order);
-          } else if (remoteChange.type === 'modified') {
-            
-          } else if (remoteChange.type === 'removed') {
-
+          const relationship = hierarchy.relationshipByID[idChange];
+          const remote = new RemoteRelationship(data);
+          if (relationship && remote) {
+            const parentID = relationship?.idFrom;
+            if (change.type === 'added') {
+              hierarchy.relationship_uniqueNew(idChange, remote.predicate.id, remote.from.id, remote.to.id, remote.order);
+            } else if (change.type === 'modified') {
+              remote.copyInto(relationship);
+            } else if (change.type === 'removed') {
+              delete hierarchy.relationshipByID[idChange];
+            }
+            hierarchy.relationships_refreshLookups();
+            hierarchy.order_normalizeAllRecursive();
+            signal(Signals.childrenOf, parentID);
           }
         } else if (dataKind == DataKinds.things) {
-          if (remoteChange.type === 'added') {
+          const thing = hierarchy.thing_forID(idChange);
+          if (thing) {
+            const remote = new RemoteThing(thing);
+            const parentID = thing?.firstParent?.id;
+            if (change.type === 'added') {
 
-          } else if (remoteChange.type === 'modified') {
-            const thing = hierarchy.thing_forID(idChange);
-            if (thing) {
-              const order = thing.order;
-              const remoteThing = data as Thing;
-              const parentID = thing.firstParent.id;
-              thing.copyFrom(remoteThing);
-              thing.setOrderTo(order);
-              signal(Signals.childrenOf, parentID);
+            } else if (change.type === 'modified') {
+              if (thing) {
+                remote.copyInto(thing);
+              }
+            } else if (change.type === 'removed') {
+
             }
-          } else if (remoteChange.type === 'removed') {
-
+            signal(Signals.childrenOf, parentID);
           }
         }
       });
@@ -129,7 +137,7 @@ class Firebase {
     let collection = this.thingsCollection;
     if (collection != null) {
       for (const thing of hierarchy.needyThings) {
-        const firebaseThing = new FirebaseThing(thing);
+        const remoteThing = new RemoteThing(thing);
 
         ////////////////
         // need kinds //
@@ -141,7 +149,7 @@ class Firebase {
           // await this.thing_create(thing)
         } else if (thing.needsUpdate()) {
             const ref = doc(collection, thing.id) as DocumentReference<Thing>;
-            const jsThing = { ...firebaseThing };
+            const jsThing = { ...remoteThing };
             setDoc(ref, jsThing);
         }
       }
@@ -154,8 +162,8 @@ class Firebase {
       for (const relationship of hierarchy.needyRelationships) {
         try {
           // console.log(relationship.description);
-          const firebaseRelationship = new FirebaseRelationship(relationship);
-          const jsRelationship = { ...firebaseRelationship };
+          const remoteRelationship = new RemoteRelationship(relationship);
+          const jsRelationship = { ...remoteRelationship };
 
           ////////////////
           // need kinds //
@@ -164,7 +172,7 @@ class Firebase {
           if (relationship.needsCreate()) {
             await addDoc(collection, jsRelationship); // works!
           } else if (relationship.needsUpdate()) {
-            const ref = doc(collection, relationship.id) as DocumentReference<FirebaseRelationship>;
+            const ref = doc(collection, relationship.id) as DocumentReference<RemoteRelationship>;
             setDoc(ref, jsRelationship);
           }
         } catch (error) {
@@ -177,36 +185,52 @@ class Firebase {
 
 export const firebase = new Firebase();
 
-export interface FirebaseThing {
+interface RemoteThing {
   title: string;
   color: string;
   trait: string;
+  copyInto: (thing: Thing) => void;
 }
 
-export class FirebaseThing {
+class RemoteThing implements RemoteThing {
   constructor(thing: Thing) {
     this.title = thing.title;
     this.trait = thing.trait;
     this.color = thing.color;
   }
+  copyInto = (thing: Thing) => {
+    thing.title = this.title;
+    thing.trait = this.trait;
+    thing.color = this.color;
+  }
 }
 
-export interface FirebaseRelationship {
+interface RemoteRelationship {
   order: number;
   to: DocumentReference<Thing, DocumentData>;
   from: DocumentReference<Thing, DocumentData>;
   predicate: DocumentReference<Predicate, DocumentData>;
+  copyInto: (relationship: Relationship) => void;
 }
 
-  export class FirebaseRelationship {
-  constructor(relationship: Relationship) {
+class RemoteRelationship implements RemoteRelationship {
+  constructor(data: DocumentData) {
+    const remote = data as RemoteRelationship;
     const things = firebase.thingsCollection;
     const predicates = firebase.predicatesCollection;
     if (things && predicates) {
-      this.order = relationship.order;
-      this.to = doc(things, relationship.idTo) as DocumentReference<Thing>;
-      this.from = doc(things, relationship.idFrom) as DocumentReference<Thing>;
-      this.predicate = doc(predicates, relationship.idPredicate) as DocumentReference<Predicate>;
+      this.order = remote.order;
+      this.to = doc(things, remote.to.id) as DocumentReference<Thing>;
+      this.from = doc(things, remote.from.id) as DocumentReference<Thing>;
+      this.predicate = doc(predicates, remote.predicate.id) as DocumentReference<Predicate>;
     }
+  }
+  copyInto = (relationship: Relationship) => {
+    const order = this.order - 0.1;
+    relationship.idTo = this.to.id;
+    relationship.order = order;
+    relationship.idFrom = this.from.id;
+    relationship.idPredicate = this.predicate.id;
+    hierarchy.thing_forID(relationship.idTo)?.setOrderTo(order);
   }
 }

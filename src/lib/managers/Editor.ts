@@ -23,7 +23,7 @@ export default class Editor {
   thing_duplicate = async (thing: Thing) => {
     const sibling = hierarchy.thing_newAt(thing.order + 0.1);
     const parent = thing.firstParent ?? hierarchy.root;
-    sibling.copyFrom(thing);
+    thing.copyInto(sibling);
     sibling.order += 0.1
     this.thing_redraw_addAsChild(sibling, parent);
   }
