@@ -70,7 +70,7 @@ class RemoteFirebase {
         }
         break;
       case DataKinds.relationships:
-        if (data.predicate && data.from && data.to && data.order) {
+        if (data.predicate && data.from && data.to && data.order != null) {
           return true;
         }
         break;

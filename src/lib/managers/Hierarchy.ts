@@ -37,7 +37,6 @@ export default class Hierarchy {
   async hierarchy_construct() {
     const rootID = this.rootID;
     if (rootID) {
-      const order = -1;
       for (const thing of this.things) {
         const id = thing.id;
         if (id == rootID) {
@@ -47,8 +46,7 @@ export default class Hierarchy {
           if (relationship) {
             thing.order = relationship.order;
           } else {
-            thing.order = order;
-            relationship = this.relationship_new_assureNotDuplicated(cloud.newCloudID, Predicate.idIsAParentOf, rootID, id, order, true);
+            relationship = this.relationship_new_assureNotDuplicated(cloud.newCloudID, Predicate.idIsAParentOf, rootID, id, -1, true);
           }
         }
       }
