@@ -50,7 +50,7 @@ export default class RemoteAirtable {
   /////////////////////////////
 
   async things_readAll(onCompletion: () => any) {
-    hierarchy.thingsByID = {}; // clear
+    hierarchy.knownTs_byID = {}; // clear
     this.things =[];
 
     try {
@@ -88,10 +88,10 @@ export default class RemoteAirtable {
   async thing_remoteCreate(thing: Thing) {
     try {
       const fields = await this.things_table.create(thing.fields);
-      const id = fields['id']; //  // need for update, delete and thingsByID (to get parent from relationship)
+      const id = fields['id']; //  // need for update, delete and knownTs_byID (to get parent from relationship)
       thing.id = id;
       thing.needsCreate(false);
-      hierarchy.thingsByID[id] = thing;
+      hierarchy.knownTs_byID[id] = thing;
     } catch (error) {
       console.log(this.things_errorMessage + thing.description + error);
     }
@@ -108,7 +108,7 @@ export default class RemoteAirtable {
 
   thing_remoteDelete = async (thing: Thing) => {
     try {
-      delete hierarchy.thingsByID[thing.id]; // do first so UX updates quickly
+      delete hierarchy.knownTs_byID[thing.id]; // do first so UX updates quickly
       await this.things_table.destroy(thing.id);
       thing.needsDelete(false);
     } catch (error) {
@@ -121,7 +121,7 @@ export default class RemoteAirtable {
   ////////////////////////////////////
 
   async relationships_readAll() {
-    hierarchy.relationships_clearLookups();
+    hierarchy.relationships_clearKnowns();
     try {
       const records = await this.relationships_table.select().all()
 
@@ -139,7 +139,7 @@ export default class RemoteAirtable {
   }
 
   async relationships_handleNeeds() {
-    for (const relationship of hierarchy.relationships) {
+    for (const relationship of hierarchy.knownRs) {
       if (relationship.needsDelete()) {
           await this.relationship_remoteDelete(relationship);
       } else if (relationship.needsCreate()) {
@@ -161,7 +161,7 @@ export default class RemoteAirtable {
         const id = fields['id'];                                                     // grab permanent id
         relationship.id = id;
         relationship.needsCreate(false);
-        hierarchy.relationships_refreshLookups();
+        hierarchy.relationships_refreshKnowns();
       } catch (error) {
         console.log(this.relationships_errorMessage + ' (' + relationship.id + ') ' + error);
       }
@@ -179,8 +179,8 @@ export default class RemoteAirtable {
 
   async relationship_remoteDelete(relationship: Relationship) {
     try {
-      hierarchy.relationships = hierarchy.relationships.filter((item) => item.id !== relationship.id);
-      hierarchy.relationships_refreshLookups(); // do first so UX updates quickly
+      hierarchy.knownRs = hierarchy.knownRs.filter((item) => item.id !== relationship.id);
+      hierarchy.relationships_refreshKnowns(); // do first so UX updates quickly
       await this.relationships_table.destroy(relationship.id);
       relationship.needsDelete(false);
     } catch (error) {

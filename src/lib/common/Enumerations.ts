@@ -20,6 +20,8 @@ export enum LocalIDs {
 }
 
 export enum DataKinds {
+  users         = 'Users',
+  access        = 'Access',
   things        = 'Things',
   predicates    = 'Predicates',
   relationships = 'Relationships',

@@ -1,8 +1,8 @@
 import { User, Thing, cloud, Access, constants, Predicate, Relationship, sortAccordingToOrder } from '../common/GlobalImports';
 import { hereID } from './State';
 
-type ThingsLookup = { [id: string]: Thing }
-type RelationshipsLookup = { [id: string]: Array<Relationship> }
+type ThingsKnown = { [id: string]: Thing }
+type RelationshipsKnown = { [id: string]: Array<Relationship> }
 
 ////////////////////////////////////////
 // creation, tracking and destruction //
@@ -10,17 +10,17 @@ type RelationshipsLookup = { [id: string]: Array<Relationship> }
 ////////////////////////////////////////
 
 export default class Hierarchy {
-  relationshipsByIDPredicate: RelationshipsLookup = {};
-  relationshipsByIDFrom: RelationshipsLookup = {};
-  relationshipsByIDTo: RelationshipsLookup = {};
-  relationshipByID: { [id: string]: Relationship } = {};
-  predicateByKind: { [kind: string]: Predicate } = {};
-  predicateByID: { [id: string]: Predicate } = {};
-  accessByKind: { [kind: string]: Access } = {};
-  accessByID: { [id: string]: Access } = {};
-  relationships: Array<Relationship> = [];
-  userByID: { [id: string]: User } = {};
-  thingsByID: ThingsLookup = {};
+  knownRs: Array<Relationship> = [];
+  knownRs_byIDTo: RelationshipsKnown = {};
+  knownRs_byIDFrom: RelationshipsKnown = {};
+  knownRs_byIDPredicate: RelationshipsKnown = {};
+  knownR_byID: { [id: string]: Relationship } = {};
+  knownP_byKind: { [kind: string]: Predicate } = {};
+  knownA_byKind: { [kind: string]: Access } = {};
+  knownP_byID: { [id: string]: Predicate } = {};
+  knownA_byID: { [id: string]: Access } = {};
+  knownU_byID: { [id: string]: User } = {};
+  knownTs_byID: ThingsKnown = {};
   root: Thing | null = null;
   isConstructed = false;
 
@@ -28,11 +28,11 @@ export default class Hierarchy {
 
   get hasNothing(): boolean { return !this.root; }
   get rootID(): (string | null) { return this.root?.id ?? null; };
-  get things(): Array<Thing> { return Object.values(this.thingsByID) };
+  get things(): Array<Thing> { return Object.values(this.knownTs_byID) };
   order_normalizeAllRecursive() { this.root?.order_normalizeRecursive(); };
-  thing_forID = (idThing: string | null): Thing | null => { return (!idThing) ? null : this.thingsByID[idThing]; }
+  thing_forID = (idThing: string | null): Thing | null => { return (!idThing) ? null : this.knownTs_byID[idThing]; }
   thing_newAt = (order: number) => { return new Thing(cloud.newCloudID, constants.defaultTitle, 'blue', 't', order); }
-  predicate_forID = (idPredicate: string | null): Predicate | null => { return (!idPredicate) ? null : this.predicateByID[idPredicate]; }
+  predicate_forID = (idPredicate: string | null): Predicate | null => { return (!idPredicate) ? null : this.knownP_byID[idPredicate]; }
   
   async hierarchy_construct() {
     const rootID = this.rootID;
@@ -67,36 +67,36 @@ export default class Hierarchy {
   /////////////////////////////
 
   predicate_remember(predicate: Predicate) {
-    this.predicateByKind[predicate.kind] = predicate;
-    this.predicateByID[predicate.id] = predicate;
+    this.knownP_byKind[predicate.kind] = predicate;
+    this.knownP_byID[predicate.id] = predicate;
   }
 
   thing_remember(thing: Thing) {
-    hierarchy.thingsByID[thing.id] = thing;
+    hierarchy.knownTs_byID[thing.id] = thing;
     if (thing.trait == '!') {
       hierarchy.root = thing;
     }
   }
 
-  relationship_rememberByLookup(lookup: RelationshipsLookup, idRelationship: string, relationship: Relationship) {
-    let array = lookup[idRelationship] ?? [];
+  relationship_rememberByKnown(known: RelationshipsKnown, idRelationship: string, relationship: Relationship) {
+    let array = known[idRelationship] ?? [];
     array.push(relationship);
-    lookup[idRelationship] = array;
+    known[idRelationship] = array;
   }
 
   relationship_remember(relationship: Relationship) {
-    this.relationships.push(relationship);
-    this.relationshipByID[relationship.id] = relationship;
-    this.relationship_rememberByLookup(this.relationshipsByIDTo, relationship.idTo, relationship);
-    this.relationship_rememberByLookup(this.relationshipsByIDFrom, relationship.idFrom, relationship);
-    this.relationship_rememberByLookup(this.relationshipsByIDPredicate, relationship.idPredicate, relationship);
+    this.knownRs.push(relationship);
+    this.knownR_byID[relationship.id] = relationship;
+    this.relationship_rememberByKnown(this.knownRs_byIDTo, relationship.idTo, relationship);
+    this.relationship_rememberByKnown(this.knownRs_byIDFrom, relationship.idFrom, relationship);
+    this.relationship_rememberByKnown(this.knownRs_byIDPredicate, relationship.idPredicate, relationship);
   }
 
   resetRootFrom(things: Array<Thing>) {
-    this.thingsByID = {};
+    this.knownTs_byID = {};
     for (const thing of things) {
       const id = thing.id;
-      this.thingsByID[id] = thing;
+      this.knownTs_byID[id] = thing;
       if (thing.trait == '!') {
         this.root = thing;
         hereID.set(id);
@@ -127,7 +127,7 @@ export default class Hierarchy {
   things_forIDs(ids: Array<string>): Array<Thing> {
     const array = Array<Thing>();
     for (const id of ids) {
-      const thing = this.thingsByID[id];
+      const thing = this.knownTs_byID[id];
       if (thing) {
         array.push(thing);
       }
@@ -152,7 +152,7 @@ export default class Hierarchy {
 
   get needyRelationships(): Array<Relationship> {
     let needy = new Array<Relationship>();
-    for (const relationship of this.relationships) {
+    for (const relationship of this.knownRs) {
       if (relationship.hasNeeds) {
         needy.push(relationship);
       }
@@ -184,24 +184,24 @@ export default class Hierarchy {
     return null;
   }
 
-  relationships_clearLookups() {
-    this.relationships = [];
-    this.relationshipByID = {};
-    this.relationshipsByIDTo = {};
-    this.relationshipsByIDFrom = {};
-    this.relationshipsByIDPredicate = {};
+  relationships_clearKnowns() {
+    this.knownRs = [];
+    this.knownR_byID = {};
+    this.knownRs_byIDTo = {};
+    this.knownRs_byIDFrom = {};
+    this.knownRs_byIDPredicate = {};
   }
 
-  relationships_refreshLookups() {
-    const saved = this.relationships;
-    this.relationships_clearLookups();
+  relationships_refreshKnowns() {
+    const saved = this.knownRs;
+    this.relationships_clearKnowns();
     for (const relationship of saved) {
       this.relationship_remember(relationship);
     }
   }
 
   relationships_byIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Relationship> {
-    const dict = to ? this.relationshipsByIDTo : this.relationshipsByIDFrom;
+    const dict = to ? this.knownRs_byIDTo : this.knownRs_byIDFrom;
     const matches = dict[idThing] as Array<Relationship>; // filter out bad values (dunno what this does)
     const array: Array<Relationship> = [];
     if (Array.isArray(matches)) {
@@ -215,7 +215,7 @@ export default class Hierarchy {
   }
 
   relationships_allMarkNeedDeleteForThing(thing: Thing) {
-    const parentRelationships = hierarchy.relationshipsByIDFrom[thing.id];
+    const parentRelationships = hierarchy.knownRs_byIDFrom[thing.id];
     if (parentRelationships) {
       for (const relationship of parentRelationships) {
         relationship.needsDelete(true);
@@ -234,13 +234,13 @@ export default class Hierarchy {
 
   access_new = (id: string, kind: string) => {
     const access = new Access(id, kind);
-    this.accessByKind[kind] = access;
-    this.accessByID[id] = access;
+    this.knownA_byKind[kind] = access;
+    this.knownA_byID[id] = access;
   }
 
   user_new = (id: string, name: string, email: string, phone: string) => {
     const user = new User(id, name, email, phone);
-    this.userByID[id] = user;
+    this.knownU_byID[id] = user;
   }
 
 }

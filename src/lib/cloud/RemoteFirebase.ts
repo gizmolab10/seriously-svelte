@@ -113,7 +113,7 @@ class RemoteFirebase {
             ////////////////////
 
             if (dataKind == DataKinds.relationships) {
-              const relationship = hierarchy.relationshipByID[idChange];
+              const relationship = hierarchy.knownR_byID[idChange];
               const remote = new RemoteRelationship(data);
               if (relationship && remote) {
                 const parentID = relationship?.idFrom;
@@ -122,9 +122,9 @@ class RemoteFirebase {
                 } else if (change.type === 'modified') {
                   this.copyRelationship(relationship, remote);
                 } else if (change.type === 'removed') {
-                  delete hierarchy.relationshipByID[idChange];
+                  delete hierarchy.knownR_byID[idChange];
                 }
-                hierarchy.relationships_refreshLookups();
+                hierarchy.relationships_refreshKnowns();
                 hierarchy.order_normalizeAllRecursive();
                 signal(Signals.childrenOf, parentID);
               }

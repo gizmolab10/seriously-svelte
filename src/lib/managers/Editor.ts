@@ -73,8 +73,8 @@ export default class Editor {
         thing.setOrderTo(-1);
       }
 
-      hierarchy.relationships_refreshLookups();     // so children and parent will see the newly relocated things
-      normalizeOrderOf(newParent.children);         // refresh lookups first
+      hierarchy.relationships_refreshKnowns();     // so children and parent will see the newly relocated things
+      normalizeOrderOf(newParent.children);         // refresh knowns first
       normalizeOrderOf(parent.children);
       thing.grabOnly();
       newParent.becomeHere();
@@ -96,7 +96,7 @@ export default class Editor {
   /////////////////////////////
 
   async relationships_remoteDeleteAllForThing(thing: Thing) {
-    const array = hierarchy.relationshipsByIDFrom[thing.id];
+    const array = hierarchy.knownRs_byIDFrom[thing.id];
     if (array) {
       for (const relationship of array) {
         await cloud.relationship_remoteDelete(relationship);

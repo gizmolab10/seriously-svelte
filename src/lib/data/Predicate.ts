@@ -9,6 +9,6 @@ export class Predicate {
     this.kind = kind;
   }
 
-  static get idIsAParentOf(): string { return hierarchy.predicateByKind['isAParentOf']?.id ?? 'alert: isAParentOf is unrecognized'; }
+  static get idIsAParentOf(): string { return hierarchy.knownP_byKind['isAParentOf']?.id ?? 'alert: isAParentOf is unrecognized'; }
 
 }
