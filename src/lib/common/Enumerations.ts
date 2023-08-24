@@ -30,5 +30,5 @@ export enum Needs {
   create   = 1,
   delete   = 2,
   update   = 4,
-  register = 8,
+  remember = 8,
 }

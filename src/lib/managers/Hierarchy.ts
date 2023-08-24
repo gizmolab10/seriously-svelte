@@ -22,6 +22,7 @@ export default class Hierarchy {
   userByID: { [id: string]: User } = {};
   thingsByID: ThingsLookup = {};
   root: Thing | null = null;
+  isConstructed = false;
 
   constructor() {}
 
@@ -47,12 +48,12 @@ export default class Hierarchy {
             thing.order = relationship.order;
           } else {
             thing.order = order;
-            relationship = this.relationship_new(cloud.newCloudID, Predicate.idIsAParentOf, rootID, id, order);
-            relationship.needsCreate(true);
+            relationship = this.relationship_new_assureNotDuplicated(cloud.newCloudID, Predicate.idIsAParentOf, rootID, id, order, true);
           }
         }
       }
       this.order_normalizeAllRecursive()   // setup order values
+      this.isConstructed = true;
       try {
         await cloud.handleAllNeeds();
       } catch (error) {
@@ -65,30 +66,30 @@ export default class Hierarchy {
   //         MEMORY          //
   /////////////////////////////
 
-  predicate_register(predicate: Predicate) {
+  predicate_remember(predicate: Predicate) {
     this.predicateByKind[predicate.kind] = predicate;
     this.predicateByID[predicate.id] = predicate;
   }
 
-  thing_register(thing: Thing) {
+  thing_remember(thing: Thing) {
     hierarchy.thingsByID[thing.id] = thing;
     if (thing.trait == '!') {
       hierarchy.root = thing;
     }
   }
 
-  relationship_registerByLookup(lookup: RelationshipsLookup, idRelationship: string, relationship: Relationship) {
+  relationship_rememberByLookup(lookup: RelationshipsLookup, idRelationship: string, relationship: Relationship) {
     let array = lookup[idRelationship] ?? [];
     array.push(relationship);
     lookup[idRelationship] = array;
   }
 
-  relationship_register(relationship: Relationship) {
+  relationship_remember(relationship: Relationship) {
     this.relationships.push(relationship);
     this.relationshipByID[relationship.id] = relationship;
-    this.relationship_registerByLookup(this.relationshipsByIDTo, relationship.idTo, relationship);
-    this.relationship_registerByLookup(this.relationshipsByIDFrom, relationship.idFrom, relationship);
-    this.relationship_registerByLookup(this.relationshipsByIDPredicate, relationship.idPredicate, relationship);
+    this.relationship_rememberByLookup(this.relationshipsByIDTo, relationship.idTo, relationship);
+    this.relationship_rememberByLookup(this.relationshipsByIDFrom, relationship.idFrom, relationship);
+    this.relationship_rememberByLookup(this.relationshipsByIDPredicate, relationship.idPredicate, relationship);
   }
 
   resetRootFrom(things: Array<Thing>) {
@@ -119,7 +120,7 @@ export default class Hierarchy {
 
   thing_new(id: string, title: string, color: string, trait: string, order: number): Thing {
     const thing = new Thing(id, title, color, trait, order);
-    this.thing_register(thing);
+    this.thing_remember(thing);
     return thing;
   }
 
@@ -159,13 +160,19 @@ export default class Hierarchy {
     return needy;
   }
 
-  relationship_uniqueNew(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number): Relationship {
-    return this.relationship_parentTo(idTo) ?? this.relationship_new(idRelationship, idPredicate, idFrom, idTo, order);
+  relationship_new_assureNotDuplicated(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, needsRemoteID: boolean = false): Relationship {
+    return this.relationship_parentTo(idTo) ??
+      this.relationship_new(idRelationship, idPredicate, idFrom, idTo, order, needsRemoteID);
   }
 
-  relationship_new(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number): Relationship {
+  relationship_new(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, needsRemoteID: boolean = false): Relationship {
     const relationship = new Relationship(idRelationship, idPredicate, idFrom, idTo, order);
-    this.relationship_register(relationship);
+    if (needsRemoteID) {
+      cloud.relationship_remoteCreate(relationship) // from hierarchy construct
+    } else {
+      relationship.needsUpdate(true); // from snapshot
+    }
+    this.relationship_remember(relationship);
     return relationship;
   }
 
@@ -189,13 +196,13 @@ export default class Hierarchy {
     const saved = this.relationships;
     this.relationships_clearLookups();
     for (const relationship of saved) {
-      this.relationship_register(relationship);
+      this.relationship_remember(relationship);
     }
   }
 
   relationships_byIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Relationship> {
     const dict = to ? this.relationshipsByIDTo : this.relationshipsByIDFrom;
-    const matches = dict[idThing] as Array<Relationship>; // filter out baaaaad values
+    const matches = dict[idThing] as Array<Relationship>; // filter out bad values (dunno what this does)
     const array: Array<Relationship> = [];
     if (Array.isArray(matches)) {
       for (const relationship of matches) {
@@ -222,7 +229,7 @@ export default class Hierarchy {
 
   predicate_new = (id: string, kind: string) => {
     const predicate = new Predicate(id, kind);
-    this.predicate_register(predicate)
+    this.predicate_remember(predicate)
   }
 
   access_new = (id: string, kind: string) => {

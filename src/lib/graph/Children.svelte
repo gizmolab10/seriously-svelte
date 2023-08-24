@@ -7,8 +7,9 @@
 	onDestroy( () => {signalHandler.disconnect(); });
 
   const signalHandler = handleSignalOfKind(Signals.childrenOf, (thingID) => {
-    if (thingID == thing.id) {
-      children = thing.children;
+    const newChildren = thing.children;
+    if (thingID == thing.id || children != newChildren) {
+      children = newChildren;
       toggleDraw = !toggleDraw;
     }
   })

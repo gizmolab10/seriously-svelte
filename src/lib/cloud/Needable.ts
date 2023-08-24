@@ -17,9 +17,9 @@ export default class Needable {
     return was;
   }
 
-  needsRegister(flag: boolean | null = null) {
-    const was = this.needs & Needs.register;
-    if (flag) { this.needs |= (flag ? Needs.register : 0); }
+  needsRemember(flag: boolean | null = null) {
+    const was = this.needs & Needs.remember;
+    if (flag) { this.needs |= (flag ? Needs.remember : 0); }
     return was;
   }
 

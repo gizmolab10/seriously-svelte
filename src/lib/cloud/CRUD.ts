@@ -59,7 +59,7 @@ export default class CRUD {
       for (const record of records) {
         const id = record.id;
         const thing = new Thing(id, record.fields.title as string, record.fields.color as string, record.fields.trait as string);
-        hierarchy.thing_register(thing);
+        hierarchy.thing_remember(thing);
         this.things.push(thing)
       }
       thingsArrived.set(true);
@@ -72,11 +72,11 @@ export default class CRUD {
   async things_handleNeeds() {
     for (const thing of hierarchy.things) {
       if (thing.needsDelete()) {
-        await this.thing_delete(thing)
+        await this.thing_remoteDelete(thing)
       } else if (thing.needsCreate()) {
-        await this.thing_create(thing)
+        await this.thing_remoteCreate(thing)
       } else if (thing.needsUpdate()) {
-        await this.thing_save(thing)
+        await this.thing_remoteUpdate(thing)
       }
     }
   }
@@ -85,7 +85,7 @@ export default class CRUD {
   //         THING          //
   ////////////////////////////
 
-  async thing_create(thing: Thing) {
+  async thing_remoteCreate(thing: Thing) {
     try {
       const fields = await this.things_table.create(thing.fields);
       const id = fields['id']; //  // need for update, delete and thingsByID (to get parent from relationship)
@@ -97,7 +97,7 @@ export default class CRUD {
     }
   }
 
-  async thing_save(thing: Thing) {
+  async thing_remoteUpdate(thing: Thing) {
     try {
       await this.things_table.update(thing.id, thing.fields);
       thing.needsUpdate(false); // if update fails, subsequent update will try again
@@ -106,11 +106,11 @@ export default class CRUD {
     }
   }
 
-  thing_delete = async (thing: Thing) => {
+  thing_remoteDelete = async (thing: Thing) => {
     try {
       delete hierarchy.thingsByID[thing.id]; // do first so UX updates quickly
       await this.things_table.destroy(thing.id);
-      thing.needsDelete = false;
+      thing.needsDelete(false);
     } catch (error) {
       console.log(this.things_errorMessage + thing.description + error);
     }
@@ -141,11 +141,11 @@ export default class CRUD {
   async relationships_handleNeeds() {
     for (const relationship of hierarchy.relationships) {
       if (relationship.needsDelete()) {
-          await this.relationship_delete(relationship);
+          await this.relationship_remoteDelete(relationship);
       } else if (relationship.needsCreate()) {
-          await this.relationship_create(relationship);
+          await this.relationship_remoteCreate(relationship);
       } else if (relationship.needsUpdate()) {
-          await this.relationship_save(relationship);
+          await this.relationship_remoteUpdate(relationship);
       }
     };
   }
@@ -154,7 +154,7 @@ export default class CRUD {
   //         RELATIONSHIP          //
   ///////////////////////////////////
 
-  async relationship_create(relationship: Relationship | null) {
+  async relationship_remoteCreate(relationship: Relationship | null) {
     if (relationship) {
       try {
         const fields = await this.relationships_table.create(relationship.fields);   // insert with temporary id
@@ -168,7 +168,7 @@ export default class CRUD {
     }
   }
 
-  async relationship_save(relationship: Relationship) {
+  async relationship_remoteUpdate(relationship: Relationship) {
     try {
       this.relationships_table.update(relationship.id, relationship.fields);
       relationship.needsUpdate(false);
@@ -177,16 +177,14 @@ export default class CRUD {
     }
   }
 
-  async relationship_delete(relationship: Relationship | null) {
-    if (relationship) {
-      try {
-        hierarchy.relationships = hierarchy.relationships.filter((item) => item.id !== relationship.id);
-        hierarchy.relationships_refreshLookups(); // do first so UX updates quickly
-        await this.relationships_table.destroy(relationship.id);
-        relationship.needsDelete = false;
-      } catch (error) {
-        console.log(this.relationships_errorMessage + ' (' + relationship.id + ') ' + error);
-      }
+  async relationship_remoteDelete(relationship: Relationship) {
+    try {
+      hierarchy.relationships = hierarchy.relationships.filter((item) => item.id !== relationship.id);
+      hierarchy.relationships_refreshLookups(); // do first so UX updates quickly
+      await this.relationships_table.destroy(relationship.id);
+      relationship.needsDelete(false);
+    } catch (error) {
+      console.log(this.relationships_errorMessage + ' (' + relationship.id + ') ' + error);
     }
   }
 

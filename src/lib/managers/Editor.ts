@@ -29,12 +29,12 @@ export default class Editor {
   }
 
   thing_redraw_addAsChild = async (child: Thing, parent: Thing) => {
-    await cloud.thing_create(child); // for everything below, need to await child.id fetched from cloud
-    const relationship = hierarchy.relationship_new(cloud.newCloudID, Predicate.idIsAParentOf, child.id, parent.id, child.order);
+    await cloud.thing_remoteCreate(child); // for everything below, need to await child.id fetched from cloud
+    const relationship = hierarchy.relationship_new(cloud.newCloudID, Predicate.idIsAParentOf, parent.id, child.id, child.order, true);
     relationship.needsCreate(true);
     normalizeOrderOf(parent.children);
     parent.becomeHere();
-    child.startEdit(); // TODO: fucking causes app to hang!
+    // child.startEdit(); // TODO: fucking causes app to hang!
     child.grabOnly();
     await cloud.handleAllNeeds();
   }
@@ -95,16 +95,16 @@ export default class Editor {
   //         DELETE          //
   /////////////////////////////
 
-  async relationships_deleteAllForThing(thing: Thing) {
+  async relationships_remoteDeleteAllForThing(thing: Thing) {
     const array = hierarchy.relationshipsByIDFrom[thing.id];
     if (array) {
       for (const relationship of array) {
-        await cloud.relationship_delete(relationship);
+        await cloud.relationship_remoteDelete(relationship);
       }
     }
   }
 
-  async grabs_redraw_delete() {
+  async grabs_redraw_remoteDelete() {
     if (this.here) {
       for (const id of get(grabbedIDs)) {
         const grabbed = hierarchy.thing_forID(id);
@@ -123,8 +123,8 @@ export default class Editor {
             normalizeOrderOf(grabbed.siblings);
           }
           grabbed.traverse((child: Thing) => {
-            this.relationships_deleteAllForThing(child);
-            cloud.thing_delete(child);
+            this.relationships_remoteDeleteAllForThing(child);
+            cloud.thing_remoteDelete(child);
             return false; // continue the traversal
           });
           await cloud.handleAllNeeds();

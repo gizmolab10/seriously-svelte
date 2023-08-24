@@ -38,7 +38,7 @@
         case 't':          alert('PARENT-CHILD SWAP'); break;
         case 'tab':        editor.thing_redraw_addChildTo(grab.firstParent); break; // Title also makes this call
         case 'delete':
-        case 'backspace':  editor.grabs_redraw_delete(); break;
+        case 'backspace':  editor.grabs_redraw_remoteDelete(); break;
         case 'arrowup':    editor.furthestGrab_redraw_moveUp(true, SHIFT, OPTION); break;
         case 'arrowdown':  editor.furthestGrab_redraw_moveUp(false, SHIFT, OPTION); break;
         case 'arrowright': editor.thing_redraw_moveRight(grab, true, OPTION); break;
