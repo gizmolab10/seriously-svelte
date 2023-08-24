@@ -1,8 +1,8 @@
 import { User, Thing, cloud, Access, constants, Predicate, Relationship, sortAccordingToOrder } from '../common/GlobalImports';
 import { hereID } from './State';
 
-type ThingsKnown = { [id: string]: Thing }
-type RelationshipsKnown = { [id: string]: Array<Relationship> }
+type KnownThings = { [id: string]: Thing }
+type KnownRelationships = { [id: string]: Array<Relationship> }
 
 ////////////////////////////////////////
 // creation, tracking and destruction //
@@ -10,17 +10,17 @@ type RelationshipsKnown = { [id: string]: Array<Relationship> }
 ////////////////////////////////////////
 
 export default class Hierarchy {
+  knownTs_byID: KnownThings = {};
   knownRs: Array<Relationship> = [];
-  knownRs_byIDTo: RelationshipsKnown = {};
-  knownRs_byIDFrom: RelationshipsKnown = {};
-  knownRs_byIDPredicate: RelationshipsKnown = {};
+  knownRs_byIDTo: KnownRelationships = {};
+  knownRs_byIDFrom: KnownRelationships = {};
+  knownRs_byIDPredicate: KnownRelationships = {};
   knownR_byID: { [id: string]: Relationship } = {};
   knownP_byKind: { [kind: string]: Predicate } = {};
   knownA_byKind: { [kind: string]: Access } = {};
   knownP_byID: { [id: string]: Predicate } = {};
   knownA_byID: { [id: string]: Access } = {};
   knownU_byID: { [id: string]: User } = {};
-  knownTs_byID: ThingsKnown = {};
   root: Thing | null = null;
   isConstructed = false;
 
@@ -78,7 +78,7 @@ export default class Hierarchy {
     }
   }
 
-  relationship_rememberByKnown(known: RelationshipsKnown, idRelationship: string, relationship: Relationship) {
+  relationship_rememberByKnown(known: KnownRelationships, idRelationship: string, relationship: Relationship) {
     let array = known[idRelationship] ?? [];
     array.push(relationship);
     known[idRelationship] = array;
