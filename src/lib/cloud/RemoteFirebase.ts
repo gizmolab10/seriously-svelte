@@ -9,7 +9,7 @@ import { initializeApp } from "firebase/app";
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
-class Firebase {
+class RemoteFirebase {
   firebaseConfig = {
     appId: "1:224721814373:web:0c60f394c056ef3decd78c",
     apiKey: "AIzaSyAFy4H3Ej5zfI46fvCJpBfUxmyQco-dx9U",
@@ -286,7 +286,7 @@ class Firebase {
   }
 }
 
-export const firebase = new Firebase();
+export const firebase = new RemoteFirebase();
 
 interface RemoteThing {
   title: string;

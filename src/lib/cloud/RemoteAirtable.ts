@@ -12,7 +12,7 @@ import Airtable from 'airtable';
 //                           //
 ///////////////////////////////
 
-export default class CRUD {
+export default class RemoteAirtable {
   base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
   relationships_table = this.base('Relationships');
   predicates_table = this.base('predicates');
@@ -238,4 +238,4 @@ export default class CRUD {
 
 }
 
-export const crud = new CRUD();
+export const crud = new RemoteAirtable();

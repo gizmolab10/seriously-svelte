@@ -1,8 +1,8 @@
 import { get, Thing, DBTypes, removeAll, hierarchy, Relationship, normalizeOrderOf } from '../common/GlobalImports';
 import { dbType, isBusy, thingsArrived } from '../managers/State';
-import { firebase } from './Firebase';
+import { firebase } from './RemoteFirebase';
 import { v4 as uuid } from 'uuid';
-import { crud } from './CRUD';
+import { crud } from './RemoteAirtable';
 
 ////////////////////////////////////////////////
 // abstraction layer: hides CRUD and firebase //
