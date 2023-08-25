@@ -17,7 +17,7 @@ export class Relationship extends Needable {
   }
 
   get fields(): Airtable.FieldSet { return { predicate: [this.idPredicate], from: [this.idFrom], to: [this.idTo], order: this.order }; }
-  get description(): string { return this.order + ' ' + this.needs + ' ' + this.id + ' '  + hierarchy.thing_forID(this.idFrom)?.title + ' => ' + hierarchy.thing_forID(this.idTo)?.title; }
+  get description(): string { return this.needs + ' ' + this.order + ' ' + this.id + ' '  + hierarchy.thing_forID(this.idFrom)?.title + ' => ' + hierarchy.thing_forID(this.idTo)?.title; }
   get isValid(): boolean {
     if (this.idPredicate && this.idFrom && this.idTo) {
       return true;

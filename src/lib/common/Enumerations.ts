@@ -30,7 +30,7 @@ export enum DataKinds {
 export enum Needs {
   none     = 0,
   create   = 1,
-  delete   = 2,
-  update   = 4,
+  update   = 2,
+  delete   = 4,
   remember = 8,
 }

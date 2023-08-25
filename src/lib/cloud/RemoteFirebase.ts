@@ -106,8 +106,8 @@ class RemoteFirebase {
 
   handleRemoteChanges(dataKind: string, collection: CollectionReference) {
     onSnapshot(collection, (snapshot) => {
-      if (hierarchy.isConstructed) {
-        snapshot.docChanges().forEach((change) => {       // convert and remember
+      if (hierarchy.isConstructed) {                  // ignore side-effects of fetching data generated from server
+        snapshot.docChanges().forEach((change) => {   // convert and remember
           const doc = change.doc;
           const data = doc.data();
           if (RemoteFirebase.isValidOfKind(dataKind, data)) {
@@ -166,7 +166,7 @@ class RemoteFirebase {
     if (collection != null) {
       for (const relationship of hierarchy.needyRelationships) {
         try {
-          // console.log(relationship.description);
+          console.log(relationship.description);
 
           /////////////////////
           //  relationships  //

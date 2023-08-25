@@ -13,31 +13,23 @@ export default class Needable {
 
   noNeeds(flag: boolean | null = null)  {
     const was = this.needs == Needs.none;
-    if (flag) { this.needs = 0; }
+    if (flag != null && !flag) { this.needs = 0; }
     return was;
   }
 
-  needsRemember(flag: boolean | null = null) {
-    const was = this.needs & Needs.remember;
-    if (flag) { this.needs |= (flag ? Needs.remember : 0); }
-    return was;
-  }
+  needsCreate(flag: boolean | null = null) { return this.modifyNeedTo(flag, Needs.create); }
+  needsDelete(flag: boolean | null = null) { return this.modifyNeedTo(flag, Needs.delete); }
+  needsUpdate(flag: boolean | null = null) { return this.modifyNeedTo(flag, Needs.update); }
+  needsRemember(flag: boolean | null = null) { return this.modifyNeedTo(flag, Needs.remember); }
 
-  needsCreate(flag: boolean | null = null) {
-    const was = this.needs & Needs.create;
-    if (flag) { this.needs |= (flag ? Needs.create : 0); }
-    return was;
-  }
-  
-  needsDelete(flag: boolean | null = null) {
-    const was = this.needs & Needs.delete;
-    if (flag) { this.needs |= (flag ? Needs.delete : 0); }
-    return was;
-  }
 
-  needsUpdate(flag: boolean | null = null) {
-    const was = this.needs & Needs.update;
-    if (flag) { this.needs |= (flag ? Needs.update : 0); }
+  // if false, turn it off
+
+  modifyNeedTo(flag: boolean | null = null, bitMask: number) {
+    const was = this.needs & bitMask;
+    if (flag != null) {
+      this.needs = flag ? this.needs | bitMask : this.needs & ~bitMask;  // if flag is true, turn needs on for bitMask
+    }
     return was;
   }
 
