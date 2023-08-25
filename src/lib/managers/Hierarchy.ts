@@ -159,17 +159,17 @@ export default class Hierarchy {
     return needy;
   }
 
-  relationship_new_assureNotDuplicated(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: string = CreationFlag.none): Relationship {
+  relationship_new_assureNotDuplicated(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none): Relationship {
     return this.relationship_parentTo(idTo) ??
       this.relationship_new(idRelationship, idPredicate, idFrom, idTo, order, creationFlag);
   }
 
-  relationship_new(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: string = CreationFlag.none): Relationship {
+  relationship_new(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none): Relationship {
     const relationship = new Relationship(idRelationship, idPredicate, idFrom, idTo, order);
     if (creationFlag == CreationFlag.getRemoteID) {
       cloud.relationship_remoteCreate(relationship) // from hierarchy construct
     } else if (creationFlag != CreationFlag.isFromRemote) {
-      relationship.needsCreate(true); // from snapshot or remember all
+      relationship.needsCreate(true); // from fetch or on snapshot
     }
     this.relationship_remember(relationship);
     return relationship;

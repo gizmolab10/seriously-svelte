@@ -40,7 +40,7 @@ class RemoteFirebase {
     onCompletion();
   }
     
-  fetchDocumentsIn = async (dataKind: string, noBulk: boolean = false) => {
+  fetchDocumentsIn = async (dataKind: DataKind, noBulk: boolean = false) => {
     try {
       const documentsCollection = noBulk ? collection(this.db, dataKind) : collection(this.db, this.collectionName, get(bulkName), dataKind);
 
@@ -62,7 +62,7 @@ class RemoteFirebase {
     }
   }
 
-  static isValidOfKind(dataKind: string, data: DocumentData) {
+  static isValidOfKind(dataKind: DataKind, data: DocumentData) {
     switch (dataKind) {
       case DataKind.things:     
         const thing = data as Thing;   
@@ -85,7 +85,7 @@ class RemoteFirebase {
     return false;
   }
 
-  rememberAllOf(dataKind: string,   querySnapshot: QuerySnapshot) {
+  rememberAllOf(dataKind: DataKind,   querySnapshot: QuerySnapshot) {
     const documentSnapshots = querySnapshot.docs; // ERROR: for relationships, docs is an empty array
     for (const documentSnapshot of documentSnapshots) {
       const data = documentSnapshot.data();
@@ -105,7 +105,7 @@ class RemoteFirebase {
     }
   }
 
-  handleRemoteChanges(dataKind: string, collection: CollectionReference) {
+  handleRemoteChanges(dataKind: DataKind, collection: CollectionReference) {
     onSnapshot(collection, (snapshot) => {
       if (hierarchy.isConstructed) {                  // ignore side-effects of fetching data generated from server
         snapshot.docChanges().forEach((change) => {   // convert and remember
@@ -190,18 +190,22 @@ class RemoteFirebase {
     collection = this.thingsCollection;
     if (collection != null) {
       for (const thing of hierarchy.needyThings) {
+        try {
 
-        //////////////
-        //  things  //
-        //////////////
+          //////////////
+          //  things  //
+          //////////////
 
-        if (thing.needsDelete()) {
-        }
-        if (thing.needsCreate()) {
-          await this.thing_remoteCreate(thing)
-        }
-        if (thing.needsUpdate()) {
-          await this.thing_remoteUpdate(thing)
+          if (thing.needsDelete()) {
+          }
+          if (thing.needsCreate()) {
+            await this.thing_remoteCreate(thing)
+          }
+          if (thing.needsUpdate()) {
+            await this.thing_remoteUpdate(thing)
+          }
+        } catch (error) {
+          this.reportError(error);
         }
       }
     }
