@@ -1,26 +1,26 @@
-import { Needs } from "../common/GlobalImports";
+import { Need } from "../common/GlobalImports";
 
 export default class Needable {
   id: string;
-  needs: Needs;
+  needs: Need;
 
   constructor(id: string) {
     this.id = id;
-    this.needs = Needs.none;
+    this.needs = Need.none;
   }
 
   get hasNeeds() : boolean { return !this.noNeeds() }
 
   noNeeds(flag: boolean | null = null)  {
-    const was = this.needs == Needs.none;
+    const was = this.needs == Need.none;
     if (flag != null && !flag) { this.needs = 0; }
     return was;
   }
 
-  needsCreate(flag: boolean | null = null) { return this.modifyNeedTo(flag, Needs.create); }
-  needsDelete(flag: boolean | null = null) { return this.modifyNeedTo(flag, Needs.delete); }
-  needsUpdate(flag: boolean | null = null) { return this.modifyNeedTo(flag, Needs.update); }
-  needsRemember(flag: boolean | null = null) { return this.modifyNeedTo(flag, Needs.remember); }
+  needsCreate(flag: boolean | null = null) { return this.modifyNeedTo(flag, Need.create); }
+  needsDelete(flag: boolean | null = null) { return this.modifyNeedTo(flag, Need.delete); }
+  needsUpdate(flag: boolean | null = null) { return this.modifyNeedTo(flag, Need.update); }
+  needsRemember(flag: boolean | null = null) { return this.modifyNeedTo(flag, Need.remember); }
 
 
   // if false, turn it off

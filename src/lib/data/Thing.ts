@@ -110,12 +110,14 @@ export default class Thing extends Needable {
 
   setOrderTo = (newOrder: number) => {
     if (this.order != newOrder) {
-      this.order = newOrder;
       const relationship = hierarchy.relationship_parentTo(this.id);
-      if (relationship) {
+      if (relationship && (relationship.order != newOrder)) {
         relationship.order = newOrder;
-        relationship.needsUpdate(true);
+        if (relationship.noNeeds()) {
+          relationship.needsUpdate(true);
+        }
       }
+      this.order = newOrder;    // do this last, for a breakpoint set on 'relationship.order = newOrder'
     }
   }
 

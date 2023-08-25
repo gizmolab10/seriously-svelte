@@ -1,5 +1,5 @@
 <script>
-  import { grabs, Thing, editor, constants, Signals, onDestroy, Predicate, ButtonIDs, hierarchy, handleSignalOfKind } from '../common/GlobalImports';
+  import { grabs, Thing, editor, constants, Signals, onDestroy, Predicate, ButtonID, hierarchy, handleSignalOfKind } from '../common/GlobalImports';
   import { popupViewID, editingID, hereID } from '../managers/State';
   import Children from './Children.svelte'
   let toggleDraw = false;
@@ -32,7 +32,7 @@
       const SHIFT = event.shiftKey;
       switch (key) {
         case ' ':          editor.thing_redraw_addChildTo(grab); break;
-        case '?':          $popupViewID = ButtonIDs.help; break;
+        case '?':          $popupViewID = ButtonID.help; break;
         case 'd':          editor.thing_duplicate(grab); break;
         case 'r':          break; // restart app
         case 't':          alert('PARENT-CHILD SWAP'); break;

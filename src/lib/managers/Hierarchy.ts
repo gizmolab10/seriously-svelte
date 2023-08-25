@@ -1,3 +1,4 @@
+import {CreationFlag} from '../common/Enumerations';
 import { User, Thing, cloud, Access, constants, Predicate, Relationship, sortAccordingToOrder } from '../common/GlobalImports';
 import { hereID } from './State';
 
@@ -45,12 +46,12 @@ export default class Hierarchy {
           let relationship = this.relationship_parentTo(id);
           if (relationship) {
             thing.order = relationship.order;
-          } else {
-            relationship = this.relationship_new_assureNotDuplicated(cloud.newCloudID, Predicate.idIsAParentOf, rootID, id, -1, true);
+          } else { // already determined that we do not need assureNotDuplicated, we do need it's id now
+            relationship = this.relationship_new(cloud.newCloudID, Predicate.idIsAParentOf, rootID, id, -1, CreationFlag.getRemoteID);
           }
         }
       }
-      this.order_normalizeAllRecursive()   // setup order values
+      this.order_normalizeAllRecursive()   // setup order values for all things (and relationships)
       this.isConstructed = true;
       try {
         await cloud.handleAllNeeds();
@@ -158,17 +159,17 @@ export default class Hierarchy {
     return needy;
   }
 
-  relationship_new_assureNotDuplicated(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, needsRemoteID: boolean = false): Relationship {
+  relationship_new_assureNotDuplicated(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: string = CreationFlag.none): Relationship {
     return this.relationship_parentTo(idTo) ??
-      this.relationship_new(idRelationship, idPredicate, idFrom, idTo, order, needsRemoteID);
+      this.relationship_new(idRelationship, idPredicate, idFrom, idTo, order, creationFlag);
   }
 
-  relationship_new(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, needsRemoteID: boolean = false): Relationship {
+  relationship_new(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: string = CreationFlag.none): Relationship {
     const relationship = new Relationship(idRelationship, idPredicate, idFrom, idTo, order);
-    if (needsRemoteID) {
+    if (creationFlag == CreationFlag.getRemoteID) {
       cloud.relationship_remoteCreate(relationship) // from hierarchy construct
-    } else {
-      relationship.needsUpdate(true); // from snapshot
+    } else if (creationFlag != CreationFlag.isFromRemote) {
+      relationship.needsCreate(true); // from snapshot or remember all
     }
     this.relationship_remember(relationship);
     return relationship;

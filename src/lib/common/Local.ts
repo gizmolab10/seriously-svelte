@@ -1,4 +1,4 @@
-import { DBTypes, BulkIDs, LocalIDs } from './GlobalImports'
+import { DBType, BulkID, LocalID } from './GlobalImports'
 import { dbType, bulkName, showDetails } from '../managers/State';
 
 class Local {
@@ -15,9 +15,9 @@ class Local {
   }
   
   setup() {
-    showDetails.set(this.readFromKey(LocalIDs.details) ?? false);
-    bulkName.set(this.readFromKey(LocalIDs.bulk) ?? BulkIDs.public);
-    dbType.set(this.readFromKey(LocalIDs.db) ?? DBTypes.firebase); // invokes cloud setup, which needs bulk name already set (must be above)
+    showDetails.set(this.readFromKey(LocalID.details) ?? false);
+    bulkName.set(this.readFromKey(LocalID.bulk) ?? BulkID.public);
+    dbType.set(this.readFromKey(LocalID.db) ?? DBType.firebase); // invokes cloud setup, which needs bulk name already set (must be above)
   }
 
 }

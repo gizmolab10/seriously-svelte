@@ -25,7 +25,9 @@
       </span>
     <h2>Welcome to Seriously</h2>
     <p>Seriously is essentially a hierarchal menu system, to which you can add new items.</p>
-    <Widget thing={exemplar} style='justify-content: center'/>
+    <ul>
+      <li><Widget thing={exemplar} style='justify-content: center'/>
+    </ul>
     <ul style='list-style-type: circle'>
       <li>When an item is <b>selected</b>:
         <ul>

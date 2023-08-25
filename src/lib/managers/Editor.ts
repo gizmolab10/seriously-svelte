@@ -1,3 +1,4 @@
+import {CreationFlag} from '../common/Enumerations';
 import { get, grabs, Thing, cloud, signal, Signals, hierarchy, Predicate, normalizeOrderOf } from '../common/GlobalImports';
 import { hereID, grabbedIDs } from './State';
 
@@ -30,8 +31,7 @@ export default class Editor {
 
   thing_redraw_addAsChild = async (child: Thing, parent: Thing) => {
     await cloud.thing_remoteCreate(child); // for everything below, need to await child.id fetched from cloud
-    const relationship = hierarchy.relationship_new(cloud.newCloudID, Predicate.idIsAParentOf, parent.id, child.id, child.order, true);
-    relationship.needsCreate(true);
+    hierarchy.relationship_new(cloud.newCloudID, Predicate.idIsAParentOf, parent.id, child.id, child.order, CreationFlag.getRemoteID);
     normalizeOrderOf(parent.children);
     parent.becomeHere();
     // child.startEdit(); // TODO: fucking causes app to hang!

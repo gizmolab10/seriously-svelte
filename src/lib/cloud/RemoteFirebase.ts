@@ -1,8 +1,9 @@
 import { doc, addDoc, setDoc, deleteDoc, getDocs, collection, onSnapshot, getFirestore, QuerySnapshot, DocumentData, DocumentReference, CollectionReference } from 'firebase/firestore';
-import { get, Thing, signal, Signals, hierarchy, DataKinds, Predicate, Relationship } from '../common/GlobalImports';
+import { get, Thing, signal, Signals, hierarchy, DataKind, Predicate, Relationship } from '../common/GlobalImports';
 import { getAnalytics } from "firebase/analytics";
 import { bulkName } from '../managers/State';
 import { initializeApp } from "firebase/app";
+import {CreationFlag} from '../common/Enumerations';
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -33,9 +34,9 @@ class RemoteFirebase {
   }
 
   setup = async (onCompletion: () => any) => {
-    await firebase.fetchDocumentsIn(DataKinds.things);
-    await firebase.fetchDocumentsIn(DataKinds.predicates, true);
-    await firebase.fetchDocumentsIn(DataKinds.relationships); // fetch these LAST, they depend on fetching all of the above
+    await firebase.fetchDocumentsIn(DataKind.things);
+    await firebase.fetchDocumentsIn(DataKind.predicates, true);
+    await firebase.fetchDocumentsIn(DataKind.relationships); // fetch these LAST, they depend on fetching all of the above
     onCompletion();
   }
     
@@ -48,9 +49,9 @@ class RemoteFirebase {
       ////////////////
 
       switch (dataKind) {
-        case DataKinds.things:        this.thingsCollection = documentsCollection; break;
-        case DataKinds.predicates:    this.predicatesCollection = documentsCollection; break;
-        case DataKinds.relationships: this.relationshipsCollection = documentsCollection; break;
+        case DataKind.things:        this.thingsCollection = documentsCollection; break;
+        case DataKind.predicates:    this.predicatesCollection = documentsCollection; break;
+        case DataKind.relationships: this.relationshipsCollection = documentsCollection; break;
       }
 
       const querySnapshot = await getDocs(documentsCollection);
@@ -63,18 +64,18 @@ class RemoteFirebase {
 
   static isValidOfKind(dataKind: string, data: DocumentData) {
     switch (dataKind) {
-      case DataKinds.things:     
+      case DataKind.things:     
         const thing = data as Thing;   
         if (thing.title && thing.color && thing.trait) {
           return true;
         }
         break;
-      case DataKinds.predicates:
+      case DataKind.predicates:
         if (data.kind) {
           return true;
         }
         break;
-      case DataKinds.relationships:
+      case DataKind.relationships:
         const relationship = data as RemoteRelationship;
         if (relationship.predicate && relationship.from && relationship.to && relationship.order != null) {
           return true;
@@ -96,9 +97,9 @@ class RemoteFirebase {
         ////////////////
 
         switch (dataKind) {
-          case DataKinds.things:        hierarchy.thing_new(id, data.title, data.color, data.trait, data.order); break;
-          case DataKinds.predicates:    hierarchy.predicate_new(id, data.kind); break;
-          case DataKinds.relationships: hierarchy.relationship_new(id, data.predicate.id, data.from.id, data.to.id, data.order); break;
+          case DataKind.things:        hierarchy.thing_new(id, data.title, data.color, data.trait, data.order); break;
+          case DataKind.predicates:    hierarchy.predicate_new(id, data.kind); break;
+          case DataKind.relationships: hierarchy.relationship_new_assureNotDuplicated(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
         }
       }
     }
@@ -118,13 +119,13 @@ class RemoteFirebase {
             //  change types  //
             ////////////////////
 
-            if (dataKind == DataKinds.relationships) {
+            if (dataKind == DataKind.relationships) {
               const relationship = hierarchy.knownR_byID[idChange];
               const remote = new RemoteRelationship(data);
               if (relationship && remote) {
                 const parentID = relationship?.idFrom;
                 if (change.type === 'added') {
-                  hierarchy.relationship_new_assureNotDuplicated(idChange, remote.predicate.id, remote.from.id, remote.to.id, remote.order);
+                  hierarchy.relationship_new_assureNotDuplicated(idChange, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote);
                 } else if (change.type === 'modified') {
                   this.copyRelationship(relationship, remote);
                 } else if (change.type === 'removed') {
@@ -134,7 +135,7 @@ class RemoteFirebase {
                 hierarchy.order_normalizeAllRecursive();
                 signal(Signals.childrenOf, parentID);
               }
-            } else if (dataKind == DataKinds.things) {
+            } else if (dataKind == DataKind.things) {
               const thing = hierarchy.thing_forID(idChange);
               if (thing) {
                 const remote = new RemoteThing(data);
@@ -332,7 +333,7 @@ class RemoteRelationship implements RemoteRelationship {
           }
         } else {
           const remote = data as RemoteRelationship;
-          if (RemoteFirebase.isValidOfKind(DataKinds.relationships, data)) {
+          if (RemoteFirebase.isValidOfKind(DataKind.relationships, data)) {
             this.to = doc(things, remote.to.id) as DocumentReference<Thing>;
             this.from = doc(things, remote.from.id) as DocumentReference<Thing>;
             this.predicate = doc(predicates, remote.predicate.id) as DocumentReference<Predicate>;

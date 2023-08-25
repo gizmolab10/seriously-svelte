@@ -18,7 +18,7 @@ class Releases {
       26 : 'cloud abstraction layer',
       27 : 'create new relationship in firebase!!!!!!',
       28 : 'title edits sync',
-      29 : 'relocate things sync'
+      29 : 'relocated things sync'
     }
   }
 

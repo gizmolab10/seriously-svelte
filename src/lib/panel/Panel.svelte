@@ -1,5 +1,5 @@
 <script>
-  import { get, grabs, DBTypes, ButtonIDs, hierarchy, persistence, LocalIDs, DataKinds } from '../common/GlobalImports'
+  import { get, grabs, DBType, ButtonID, hierarchy, persistence, LocalID, DataKind } from '../common/GlobalImports'
   import { dbType, bulkName, popupViewID, showDetails, thingsArrived } from '../managers/State';
   import CircularButton from '../kit/CircularButton.svelte';
   import Graph from '../graph/Graph.svelte';
@@ -14,7 +14,7 @@
   
   function handleSettings(event) {
     $showDetails = !$showDetails;
-    persistence.writeToKey(LocalIDs.details, $showDetails);
+    persistence.writeToKey(LocalID.details, $showDetails);
   }
 </script>
 
@@ -36,7 +36,7 @@
       <span class='top'>
         <Crumbs grab={grabs.grabbedThing}/>
         <CircularButton
-          onClick={() => {handleClick(ButtonIDs.help)}}
+          onClick={() => {handleClick(ButtonID.help)}}
           label='?'
           size={size}/>
       </span>
@@ -45,7 +45,7 @@
       </div>
   {/if}
 
-  {#if $popupViewID == ButtonIDs.help}
+  {#if $popupViewID == ButtonID.help}
     <Help size={size}/>
   {/if}
 </div>

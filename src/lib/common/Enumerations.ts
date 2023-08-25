@@ -1,25 +1,25 @@
-export enum ButtonIDs {
+export enum ButtonID {
   releaseNotes = 'show release notes',
   help         = '?',
 }
 
-export enum DBTypes {
+export enum DBType {
   firebase = 'firebase',
   airtable = 'airtable',
 }
 
-export enum BulkIDs {
+export enum BulkID {
   public = 'Public',
   mine   = 'Jonathan Sand',
 }
 
-export enum LocalIDs {
+export enum LocalID {
   details = 'details',
   bulk    = 'bulk',
   db      = 'db',
 }
 
-export enum DataKinds {
+export enum DataKind {
   users         = 'Users',
   access        = 'Access',
   things        = 'Things',
@@ -27,10 +27,16 @@ export enum DataKinds {
   relationships = 'Relationships',
 }
 
-export enum Needs {
+export enum Need {
   none     = 0,
   create   = 1,
   update   = 2,
   delete   = 4,
   remember = 8,
+}
+
+export enum CreationFlag {
+  none         = '',
+  getRemoteID  = 'get',
+  isFromRemote = 'isFrom'
 }
