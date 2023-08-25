@@ -28,6 +28,10 @@ class RemoteFirebase {
   predicatesCollection: CollectionReference | null = null;
   thingsCollection: CollectionReference | null = null;
 
+  reportError(error: any) {
+    console.log(error);
+  }
+
   setup = async (onCompletion: () => any) => {
     await firebase.fetchDocumentsIn(DataKinds.things);
     await firebase.fetchDocumentsIn(DataKinds.predicates, true);
@@ -53,14 +57,15 @@ class RemoteFirebase {
       this.rememberAllOf(dataKind, querySnapshot);
       this.handleRemoteChanges(dataKind, documentsCollection);
     } catch (error) {
-      console.log(error);
+      this.reportError(error);
     }
   }
 
-  isValidOfKind(dataKind: string, data: DocumentData) {
+  static isValidOfKind(dataKind: string, data: DocumentData) {
     switch (dataKind) {
-      case DataKinds.things:
-        if (data.title && data.color && data.trait) {
+      case DataKinds.things:     
+        const thing = data as Thing;   
+        if (thing.title && thing.color && thing.trait) {
           return true;
         }
         break;
@@ -70,7 +75,8 @@ class RemoteFirebase {
         }
         break;
       case DataKinds.relationships:
-        if (data.predicate && data.from && data.to && data.order != null) {
+        const relationship = data as RemoteRelationship;
+        if (relationship.predicate && relationship.from && relationship.to && relationship.order != null) {
           return true;
         }
         break;
@@ -82,7 +88,7 @@ class RemoteFirebase {
     const documentSnapshots = querySnapshot.docs; // ERROR: for relationships, docs is an empty array
     for (const documentSnapshot of documentSnapshots) {
       const data = documentSnapshot.data();
-      if (this.isValidOfKind(dataKind, data)) {
+      if (RemoteFirebase.isValidOfKind(dataKind, data)) {
         const id = documentSnapshot.id;
 
         ////////////////
@@ -104,7 +110,7 @@ class RemoteFirebase {
         snapshot.docChanges().forEach((change) => {       // convert and remember
           const doc = change.doc;
           const data = doc.data();
-          if (this.isValidOfKind(dataKind, data)) {
+          if (RemoteFirebase.isValidOfKind(dataKind, data)) {
             const idChange = doc.id;
 
             ////////////////////
@@ -175,7 +181,7 @@ class RemoteFirebase {
           } 
           relationship.noNeeds();
         } catch (error) {
-          console.log(error);
+          this.reportError(error);
         }
       }
     }
@@ -284,6 +290,7 @@ class RemoteFirebase {
     relationship.idPredicate = from.predicate.id;
     hierarchy.thing_forID(relationship.idTo)?.setOrderTo(order);
   }
+
 }
 
 export const firebase = new RemoteFirebase();
@@ -316,16 +323,25 @@ class RemoteRelationship implements RemoteRelationship {
     const predicates = firebase.predicatesCollection;
     this.order = data.order;
     if (things && predicates) {
-      if (data instanceof Relationship) {
-        this.to = doc(things, data.idTo) as DocumentReference<Thing>;
-        this.from = doc(things, data.idFrom) as DocumentReference<Thing>;
-        this.predicate = doc(predicates, data.idPredicate) as DocumentReference<Predicate>;
-      } else {
-        const remote = data as RemoteRelationship;
-        this.to = doc(things, remote.to.id) as DocumentReference<Thing>;
-        this.from = doc(things, remote.from.id) as DocumentReference<Thing>;
-        this.predicate = doc(predicates, remote.predicate.id) as DocumentReference<Predicate>;
+      try {
+        if (data instanceof Relationship) {
+          if (data.isValid) {
+            this.to = doc(things, data.idTo) as DocumentReference<Thing>;
+            this.from = doc(things, data.idFrom) as DocumentReference<Thing>;
+            this.predicate = doc(predicates, data.idPredicate) as DocumentReference<Predicate>;
+          }
+        } else {
+          const remote = data as RemoteRelationship;
+          if (RemoteFirebase.isValidOfKind(DataKinds.relationships, data)) {
+            this.to = doc(things, remote.to.id) as DocumentReference<Thing>;
+            this.from = doc(things, remote.from.id) as DocumentReference<Thing>;
+            this.predicate = doc(predicates, remote.predicate.id) as DocumentReference<Predicate>;
+          }
+        }
+      } catch (error) {
+        console.log(error);
       }
     }
   }
+
 }
