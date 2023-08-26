@@ -138,7 +138,7 @@ export default class Thing extends RemoteID {
     return this;
   }
 
-  redraw_moveup = (up: boolean, expand: boolean, relocate: boolean) => {
+  redraw_remoteMoveup = (up: boolean, expand: boolean, relocate: boolean) => {
     const siblings = this.siblings;
     if (!siblings || siblings.length == 0) {
         this.redraw_browseRight(true, up);

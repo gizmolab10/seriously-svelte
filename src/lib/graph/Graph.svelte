@@ -31,18 +31,18 @@
       const OPTION = event.altKey;
       const SHIFT = event.shiftKey;
       switch (key) {
-        case ' ':          editor.thing_redraw_addChildTo(grab); break;
+        case ' ':          editor.thing_redraw_remoteAddChildTo(grab); break;
         case '?':          $popupViewID = ButtonID.help; break;
-        case 'd':          editor.thing_duplicate(grab); break;
+        case 'd':          editor.thing_redraw_remoteDuplicate(grab); break;
         case 'r':          break; // restart app
         case 't':          alert('PARENT-CHILD SWAP'); break;
-        case 'tab':        editor.thing_redraw_addChildTo(grab.firstParent); break; // Title also makes this call
+        case 'tab':        editor.thing_redraw_remoteAddChildTo(grab.firstParent); break; // Title also makes this call
         case 'delete':
         case 'backspace':  editor.grabs_redraw_remoteDelete(); break;
-        case 'arrowup':    editor.furthestGrab_redraw_moveUp(true, SHIFT, OPTION); break;
-        case 'arrowdown':  editor.furthestGrab_redraw_moveUp(false, SHIFT, OPTION); break;
-        case 'arrowright': editor.thing_redraw_moveRight(grab, true, OPTION); break;
-        case 'arrowleft':  editor.thing_redraw_moveRight(grab, false, OPTION); break;
+        case 'arrowup':    editor.furthestGrab_redraw_remoteMoveUp(true, SHIFT, OPTION); break;
+        case 'arrowdown':  editor.furthestGrab_redraw_remoteMoveUp(false, SHIFT, OPTION); break;
+        case 'arrowright': editor.thing_redraw_remoteMoveRight(grab, true, OPTION); break;
+        case 'arrowleft':  editor.thing_redraw_remoteMoveRight(grab, false, OPTION); break;
         case 'enter':      grab.startEdit(); break;
       }
     }

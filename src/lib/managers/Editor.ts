@@ -20,15 +20,15 @@ export default class Editor {
   //         ADD          //
   //////////////////////////
 
-  thing_duplicate = async (thing: Thing) => {
+  thing_redraw_remoteDuplicate = async (thing: Thing) => {
     const sibling = hierarchy.thing_createAt(thing.order + 0.1);
     const parent = thing.firstParent ?? hierarchy.root;
     thing.copyInto(sibling);
     sibling.order += 0.1
-    this.thing_redraw_addAsChild(sibling, parent);
+    this.thing_redraw_remoteAddAsChild(sibling, parent);
   }
 
-  thing_redraw_addAsChild = async (child: Thing, parent: Thing) => {
+  thing_redraw_remoteAddAsChild = async (child: Thing, parent: Thing) => {
     await cloud.thing_remoteCreate(child); // for everything below, need to await child.id fetched from cloud
     const relationship = hierarchy.relationship_create(cloud.newCloudID, Predicate.idIsAParentOf, parent.id, child.id, child.order, CreationFlag.getRemoteID);
     normalizeOrderOf(parent.children);
@@ -40,24 +40,24 @@ export default class Editor {
     }
   }
 
-  thing_redraw_addChildTo = (parent: Thing) => {
+  thing_redraw_remoteAddChildTo = (parent: Thing) => {
     const child = hierarchy.thing_createAt(-1);
-    this.thing_redraw_addAsChild(child, parent);
+    this.thing_redraw_remoteAddAsChild(child, parent);
   }
 
   ///////////////////////////
   //         MOVE          //
   ///////////////////////////
 
-  thing_redraw_moveRight(thing: Thing, right: boolean, relocate: boolean) {
+  thing_redraw_remoteMoveRight(thing: Thing, right: boolean, relocate: boolean) {
     if (relocate) {
-      this.thing_redraw_relocateRight(thing, right);
+      this.thing_redraw_remoteRelocateRight(thing, right);
     } else {
       thing.redraw_browseRight(right);
     }
   }
 
-  thing_redraw_relocateRight = async (thing: Thing, right: boolean) => {
+  thing_redraw_remoteRelocateRight = async (thing: Thing, right: boolean) => {
     const newParent = right ? thing.nextSibling(false) : thing.grandparent;
     if (newParent) {
       const parent = thing.firstParent;
@@ -83,9 +83,9 @@ export default class Editor {
     }
   }
 
-  async furthestGrab_redraw_moveUp(up: boolean, expand: boolean, relocate: boolean) {
+  async furthestGrab_redraw_remoteMoveUp(up: boolean, expand: boolean, relocate: boolean) {
     const grab = grabs.furthestGrab(up);
-    grab?.redraw_moveup(up, expand, relocate);
+    grab?.redraw_remoteMoveup(up, expand, relocate);
   }
 
   /////////////////////////////

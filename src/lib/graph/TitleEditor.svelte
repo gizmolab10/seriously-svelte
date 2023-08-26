@@ -17,7 +17,7 @@
   function handleKeyDown(event) {
     if ($editingID == thing.id) {
       switch (event.key) {
-        case 'Tab': stopAndClearEditing(); editor.thing_duplicate(); break;
+        case 'Tab': stopAndClearEditing(); editor.thing_redraw_remoteDuplicate(); break;
         case 'Enter': stopAndClearEditing();
       }
     }
