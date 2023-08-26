@@ -31,6 +31,7 @@
     <LabelButton
       title='build {$build}'
       onClick={handleReleasesClick}/>
+      <p></p>
     {#if $debug}
       <RadioButtons menuItems={menuItems} selectedID={$dbType}/>
     {:else}

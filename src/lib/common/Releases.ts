@@ -6,7 +6,7 @@ class Releases {
     build.set(30);
     this.notes = {
       10 : 'toss seriously folder, pull Startup from Panel',
-      11 : 'panel displays build',
+      11 : 'panel displays build number',
       12 : 'fixed relocate issues',
       17 : 'better help',
       20 : 'firebase Public things',
@@ -19,7 +19,7 @@ class Releases {
       27 : 'create new relationship in firebase!!!!!!',
       28 : 'title edits sync',
       29 : 'relocated things sync',
-      30 : 'public use airtable db',
+      30 : 'no more duplicate relationships',
     }
   }
 

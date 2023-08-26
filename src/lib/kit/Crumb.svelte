@@ -1,5 +1,5 @@
 <script lang='ts'>
-  import { Thing, hierarchy } from '../common/GlobalImports';
+  import { Thing, hierarchy, desaturateBy } from '../common/GlobalImports';
   export let thing = Thing;
 
   function handleClick(event) {
@@ -20,6 +20,7 @@
     border: 1px solid {thing.color};
     color: {thing.color};
     border-radius: 0.5em;
+    shadow: 2.0px;
     cursor: pointer;'>
   {thing.title.injectElipsisAt()}
 </button>

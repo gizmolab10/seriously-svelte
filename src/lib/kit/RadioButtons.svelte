@@ -35,6 +35,8 @@
 
 <style>
   .menu-item {
+    position: relative;
+    left: -3px;
     display: flex;
     align-items: center;
     padding: 1px;
