@@ -1,9 +1,8 @@
 import { doc, addDoc, setDoc, deleteDoc, getDocs, collection, onSnapshot, getFirestore, QuerySnapshot, DocumentData, DocumentReference, CollectionReference } from 'firebase/firestore';
-import { get, Thing, signal, Signals, hierarchy, DataKind, Predicate, Relationship } from '../common/GlobalImports';
+import { get, Thing, signal, Signals, hierarchy, DataKind, Predicate, Relationship, CreationFlag } from '../common/GlobalImports';
 import { getAnalytics } from "firebase/analytics";
 import { bulkName } from '../managers/State';
 import { initializeApp } from "firebase/app";
-import {CreationFlag} from '../common/Enumerations';
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries

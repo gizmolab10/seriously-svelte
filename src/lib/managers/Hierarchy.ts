@@ -1,5 +1,4 @@
-import {CreationFlag} from '../common/Enumerations';
-import { User, Thing, cloud, Access, constants, Predicate, Relationship, sortAccordingToOrder } from '../common/GlobalImports';
+import { User, Thing, cloud, Access, constants, Predicate, Relationship, CreationFlag, sortAccordingToOrder } from '../common/GlobalImports';
 import { hereID } from './State';
 
 type KnownThings = { [id: string]: Thing }
@@ -51,7 +50,7 @@ export default class Hierarchy {
           }
         }
       }
-      this.order_normalizeAllRecursive()   // setup order values for all things (and relationships)
+      this.order_normalizeAllRecursive()   // setup order values for all things and relationships
       this.isConstructed = true;
       try {
         await cloud.handleAllNeeds();

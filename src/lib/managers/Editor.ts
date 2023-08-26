@@ -1,5 +1,4 @@
-import {CreationFlag} from '../common/Enumerations';
-import { get, grabs, Thing, cloud, signal, Signals, hierarchy, Predicate, normalizeOrderOf } from '../common/GlobalImports';
+import { get, grabs, Thing, cloud, signal, Signals, hierarchy, Predicate, CreationFlag, normalizeOrderOf } from '../common/GlobalImports';
 import { hereID, grabbedIDs } from './State';
 
 ///////////////////////////////////////

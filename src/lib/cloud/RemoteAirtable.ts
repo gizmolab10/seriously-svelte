@@ -1,5 +1,4 @@
-import {CreationFlag} from '../common/Enumerations';
-import { Thing, Relationship, hierarchy } from '../common/GlobalImports';
+import { Thing, hierarchy, Relationship, CreationFlag } from '../common/GlobalImports';
 import { thingsArrived } from '../managers/State';
 import Airtable from 'airtable';
 

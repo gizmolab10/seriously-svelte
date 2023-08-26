@@ -1,4 +1,4 @@
-import { Thing, hierarchy } from './GlobalImports';
+import { Thing } from './GlobalImports';
 
 export function log(target: any, key: string) {
   console.log(`Method \'${key}\' is called on class \'${target.constructor.name}\'`);
@@ -27,4 +27,10 @@ export function removeAll(item: string, from: string): string {
     to = to.replace(item, '');
   } while (length != to.length)
   return to;
+}
+
+export function apply(startStop: (flag: boolean) => void, callback: () => void): void {
+  startStop(true);
+  callback();
+  startStop(false);
 }
