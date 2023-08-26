@@ -12,7 +12,7 @@ export default class Editor {
 
   constructor() {
     hereID.subscribe((id: string | null) => {
-      this.here = hierarchy.thing_forID(id); 
+      this.here = hierarchy.getThing_forID(id); 
     })
   }
 
@@ -21,7 +21,7 @@ export default class Editor {
   //////////////////////////
 
   thing_duplicate = async (thing: Thing) => {
-    const sibling = hierarchy.thing_newAt(thing.order + 0.1);
+    const sibling = hierarchy.getNew_thingAt(thing.order + 0.1);
     const parent = thing.firstParent ?? hierarchy.root;
     thing.copyInto(sibling);
     sibling.order += 0.1
@@ -30,7 +30,7 @@ export default class Editor {
 
   thing_redraw_addAsChild = async (child: Thing, parent: Thing) => {
     await cloud.thing_remoteCreate(child); // for everything below, need to await child.id fetched from cloud
-    hierarchy.relationship_new(cloud.newCloudID, Predicate.idIsAParentOf, parent.id, child.id, child.order, CreationFlag.getRemoteID);
+    hierarchy.getNew_relationship(cloud.newCloudID, Predicate.idIsAParentOf, parent.id, child.id, child.order, CreationFlag.getRemoteID);
     normalizeOrderOf(parent.children);
     parent.becomeHere();
     // child.startEdit(); // TODO: fucking causes app to hang!
@@ -39,7 +39,7 @@ export default class Editor {
   }
 
   thing_redraw_addChildTo = (parent: Thing) => {
-    const child = hierarchy.thing_newAt(-1);
+    const child = hierarchy.getNew_thingAt(-1);
     this.thing_redraw_addAsChild(child, parent);
   }
 
@@ -65,7 +65,7 @@ export default class Editor {
       // TODO: also match against the 'to' to the current parent
       // TODO: pass predicate in ... to support editing different kinds of relationships
 
-      const relationship = hierarchy.relationship_parentTo(thing.id);
+      const relationship = hierarchy.getRelationship_whereParentIDEquals(thing.id);
       if (relationship) {
         relationship.idFrom = newParent.id;
         relationship.needsPushToRemote();
@@ -106,7 +106,7 @@ export default class Editor {
   async grabs_redraw_remoteDelete() {
     if (this.here) {
       for (const id of get(grabbedIDs)) {
-        const grabbed = hierarchy.thing_forID(id);
+        const grabbed = hierarchy.getThing_forID(id);
         if (grabbed && !grabbed.isEditing && this.here) {
           let newGrabbed = grabbed.firstParent;
           const siblings = grabbed.siblings;

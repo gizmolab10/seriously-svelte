@@ -30,9 +30,9 @@ export default class Hierarchy {
   get rootID(): (string | null) { return this.root?.id ?? null; };
   get things(): Array<Thing> { return Object.values(this.knownTs_byID) };
   order_normalizeAllRecursive() { this.root?.order_normalizeRecursive(); };
-  thing_forID = (idThing: string | null): Thing | null => { return (!idThing) ? null : this.knownTs_byID[idThing]; }
-  thing_newAt = (order: number) => { return new Thing(cloud.newCloudID, constants.defaultTitle, 'blue', 't', order); }
-  predicate_forID = (idPredicate: string | null): Predicate | null => { return (!idPredicate) ? null : this.knownP_byID[idPredicate]; }
+  getThing_forID = (idThing: string | null): Thing | null => { return (!idThing) ? null : this.knownTs_byID[idThing]; }
+  getNew_thingAt = (order: number) => { return new Thing(cloud.newCloudID, constants.defaultTitle, 'blue', 't', order, false); }
+  getPredicate_forID = (idPredicate: string | null): Predicate | null => { return (!idPredicate) ? null : this.knownP_byID[idPredicate]; }
   
   async hierarchy_construct() {
     const rootID = this.rootID;
@@ -42,11 +42,11 @@ export default class Hierarchy {
         if (id == rootID) {
           hereID.set(id);
         } else {
-          let relationship = this.relationship_parentTo(id);
+          let relationship = this.getRelationship_whereParentIDEquals(id);
           if (relationship) {
             thing.order = relationship.order;
           } else { // already determined that we do not need assureNotDuplicated, we do need it's id now
-            relationship = this.relationship_new(cloud.newCloudID, Predicate.idIsAParentOf, rootID, id, -1, CreationFlag.getRemoteID);
+            relationship = this.getNew_relationship(cloud.newCloudID, Predicate.idIsAParentOf, rootID, id, -1, CreationFlag.getRemoteID);
           }
         }
       }
@@ -106,7 +106,7 @@ export default class Hierarchy {
   //         THINGS          //
   /////////////////////////////
 
-  get needyThings(): Array<Thing> {
+  get getThings_needy(): Array<Thing> {
     let needy = new Array<Thing>();
     for (const thing of this.things) {
       if (thing.hasNeeds) {
@@ -116,8 +116,8 @@ export default class Hierarchy {
     return needy;
   }
 
-  thing_new(id: string, title: string, color: string, trait: string, order: number): Thing {
-    const thing = new Thing(id, title, color, trait, order);
+  getNew_thing(id: string, title: string, color: string, trait: string, order: number): Thing {
+    const thing = new Thing(id, title, color, trait, order, false);
     this.thing_remember(thing);
     return thing;
   }
@@ -134,7 +134,7 @@ export default class Hierarchy {
   }
 
   things_byIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Thing> {
-    const matches = this.relationships_byIDPredicateToAndID(idPredicate, to, idThing);
+    const matches = this.getRelationships_byIDPredicateToAndID(idPredicate, to, idThing);
     const ids: Array<string> = [];
     if (Array.isArray(matches)) {
       for (const relationship of matches) {
@@ -148,7 +148,7 @@ export default class Hierarchy {
   //         RELATIONSHIPS          //
   ////////////////////////////////////
 
-  get needyRelationships(): Array<Relationship> {
+  get getRelationships_needy(): Array<Relationship> {
     let needy = new Array<Relationship>();
     for (const relationship of this.knownRs) {
       if (relationship.hasNeeds) {
@@ -158,12 +158,12 @@ export default class Hierarchy {
     return needy;
   }
 
-  relationship_new_assureNotDuplicated(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none): Relationship {
-    return this.relationship_parentTo(idTo) ??
-      this.relationship_new(idRelationship, idPredicate, idFrom, idTo, order, creationFlag);
+  getNew_relationship_assureNotDuplicated(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none): Relationship {
+    return this.getRelationship_whereParentIDEquals(idTo) ??
+      this.getNew_relationship(idRelationship, idPredicate, idFrom, idTo, order, creationFlag);
   }
 
-  relationship_new(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none): Relationship {
+  getNew_relationship(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none): Relationship {
     const relationship = new Relationship(idRelationship, idPredicate, idFrom, idTo, order, creationFlag == CreationFlag.isFromRemote);
     if (creationFlag == CreationFlag.getRemoteID) {
       cloud.relationship_remoteCreate(relationship) // from hierarchy construct
@@ -174,8 +174,8 @@ export default class Hierarchy {
     return relationship;
   }
 
-  relationship_parentTo(idThing: string) {
-    const matches = this.relationships_byIDPredicateToAndID(Predicate.idIsAParentOf, true, idThing);
+  getRelationship_whereParentIDEquals(idThing: string) {
+    const matches = this.getRelationships_byIDPredicateToAndID(Predicate.idIsAParentOf, true, idThing);
     if (matches.length > 0) {
       return matches[0];
     }
@@ -198,7 +198,7 @@ export default class Hierarchy {
     }
   }
 
-  relationships_byIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Relationship> {
+  getRelationships_byIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Relationship> {
     const dict = to ? this.knownRs_byIDTo : this.knownRs_byIDFrom;
     const matches = dict[idThing] as Array<Relationship>; // filter out bad values (dunno what this does)
     const array: Array<Relationship> = [];
@@ -225,18 +225,18 @@ export default class Hierarchy {
   //         ANCILLARY DATA          //
   /////////////////////////////////////
 
-  predicate_new = (id: string, kind: string) => {
+  getNew_predicate = (id: string, kind: string) => {
     const predicate = new Predicate(id, kind);
     this.predicate_remember(predicate)
   }
 
-  access_new = (id: string, kind: string) => {
+  getNew_access = (id: string, kind: string) => {
     const access = new Access(id, kind);
     this.knownA_byKind[kind] = access;
     this.knownA_byID[id] = access;
   }
 
-  user_new = (id: string, name: string, email: string, phone: string) => {
+  getNew_user = (id: string, name: string, email: string, phone: string) => {
     const user = new User(id, name, email, phone);
     this.knownU_byID[id] = user;
   }

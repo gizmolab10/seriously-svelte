@@ -131,7 +131,7 @@ export default class RemoteAirtable {
         const order = record.fields.order as number;
         const froms = record.fields.from as (string[]);
         const predicates = record.fields.predicate as (string[]);
-        hierarchy.relationship_new(id, predicates[0], froms[0], tos[0], order, CreationFlag.isFromRemote);
+        hierarchy.getNew_relationship(id, predicates[0], froms[0], tos[0], order, CreationFlag.isFromRemote);
       }
     } catch (error) {
       console.log(this.relationships_errorMessage + error);
@@ -199,7 +199,7 @@ export default class RemoteAirtable {
       for (const record of records) {
         const id = record.id as string; // do not yet need this
         const kind = record.fields.kind as string;
-        hierarchy.predicate_new(id, kind);
+        hierarchy.getNew_predicate(id, kind);
       }
 
     } catch (error) {
@@ -214,7 +214,7 @@ export default class RemoteAirtable {
       for (const record of records) {
         const id = record.id as string; // do not yet need this
         const kind = record.fields.kind as string;
-        hierarchy.access_new(id, kind);
+        hierarchy.getNew_access(id, kind);
       }
 
     } catch (error) {
@@ -228,7 +228,7 @@ export default class RemoteAirtable {
 
       for (const record of records) {
         const id = record.id as string; // do not yet need this
-        hierarchy.user_new(id, record.fields.name as string, record.fields.email as string, record.fields.phone as string);
+        hierarchy.getNew_user(id, record.fields.name as string, record.fields.email as string, record.fields.phone as string);
       }
 
     } catch (error) {

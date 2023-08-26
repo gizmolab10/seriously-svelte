@@ -96,9 +96,9 @@ class RemoteFirebase {
         ////////////////
 
         switch (dataKind) {
-          case DataKind.things:        hierarchy.thing_new(id, data.title, data.color, data.trait, data.order); break;
-          case DataKind.predicates:    hierarchy.predicate_new(id, data.kind); break;
-          case DataKind.relationships: hierarchy.relationship_new_assureNotDuplicated(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
+          case DataKind.things:        hierarchy.getNew_thing(id, data.title, data.color, data.trait, data.order); break;
+          case DataKind.predicates:    hierarchy.getNew_predicate(id, data.kind); break;
+          case DataKind.relationships: hierarchy.getNew_relationship_assureNotDuplicated(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
         }
       }
     }
@@ -124,7 +124,7 @@ class RemoteFirebase {
               if (relationship && remote) {
                 const parentID = relationship?.idFrom;
                 if (change.type === 'added') {
-                  hierarchy.relationship_new_assureNotDuplicated(idChange, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote);
+                  hierarchy.getNew_relationship_assureNotDuplicated(idChange, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote);
                 } else if (change.type === 'modified') {
                   this.copyRelationship(relationship, remote);
                 } else if (change.type === 'removed') {
@@ -135,7 +135,7 @@ class RemoteFirebase {
                 signal(Signals.childrenOf, parentID);
               }
             } else if (dataKind == DataKind.things) {
-              const thing = hierarchy.thing_forID(idChange);
+              const thing = hierarchy.getThing_forID(idChange);
               if (thing) {
                 const remote = new RemoteThing(data);
                 const parentID = thing?.firstParent?.id;
@@ -164,7 +164,7 @@ class RemoteFirebase {
 
     let collection = this.relationshipsCollection;
     if (collection != null) {
-      for (const relationship of hierarchy.needyRelationships) {
+      for (const relationship of hierarchy.getRelationships_needy) {
         try {
           console.log(relationship.description);
 
@@ -188,7 +188,7 @@ class RemoteFirebase {
     
     collection = this.thingsCollection;
     if (collection != null) {
-      for (const thing of hierarchy.needyThings) {
+      for (const thing of hierarchy.getThings_needy) {
         try {
 
           //////////////

@@ -14,7 +14,7 @@
 	$: {
     if (!$grabbedIDs?.includes(grab?.id) || ancestors.length == 0) {
       let id = grabs.lastGrabbedID;
-      const thing = hierarchy.thing_forID(id);   // start over with new grab
+      const thing = hierarchy.getThing_forID(id);   // start over with new grab
       if (thing) {
         grab = thing;
       }

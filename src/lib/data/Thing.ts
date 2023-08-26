@@ -23,8 +23,8 @@ export default class Thing extends Needable {
     other.order = this.order;
   }
 
-  constructor(id = cloud.newCloudID, title = constants.defaultTitle, color = 'blue', trait = 's', order = 0, cameFromRemote: boolean) {
-    super(id, cameFromRemote);
+  constructor(id = cloud.newCloudID, title = constants.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
+    super(id, isRemotelyStored);
     this.title = title;
     this.color = color;
     this.trait = trait;
@@ -110,7 +110,7 @@ export default class Thing extends Needable {
 
   setOrderTo = (newOrder: number) => {
     if (this.order != newOrder) {
-      const relationship = hierarchy.relationship_parentTo(this.id);
+      const relationship = hierarchy.getRelationship_whereParentIDEquals(this.id);
       if (relationship && (relationship.order != newOrder)) {
         relationship.order = newOrder;
         if (relationship.noNeeds()) {

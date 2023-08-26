@@ -3,10 +3,10 @@ import { Need } from "../common/GlobalImports";
 export default class Needable {
   id: string;
   needs = Need.none;
-  cameFromRemote: boolean;
+  isRemotelyStored: boolean;
 
-  constructor(id: string, cameFromRemote: boolean) {
-    this.cameFromRemote = cameFromRemote;
+  constructor(id: string, isRemotelyStored: boolean) {
+    this.isRemotelyStored = isRemotelyStored;
     this.id = id;
   }
 
@@ -16,7 +16,7 @@ export default class Needable {
     const was = this.needs == Need.none;
     if (flag != null && !flag) {
       if (this.needs & Need.create) {
-        this.cameFromRemote = true;
+        this.isRemotelyStored = true;
       }
       this.needs = 0;
     }
@@ -24,7 +24,7 @@ export default class Needable {
   }
 
   needsPushToRemote() {
-    if (this.cameFromRemote) {
+    if (this.isRemotelyStored) {
       this.needsUpdate(true);
     } else {
       this.needsCreate(true)
@@ -42,8 +42,12 @@ export default class Needable {
   modifyNeedTo(flag: boolean | null = null, bitMask: Need) {
     const was = this.needs & bitMask;
     if (flag != null) {
-      if (!flag && bitMask == Need.create) {
-        this.cameFromRemote = true;
+      if (bitMask == Need.create) {
+        if (!flag) {
+          this.isRemotelyStored = true;
+        } else {
+          console.log('needs creating...');
+        }
       }
       this.needs = flag ? this.needs | bitMask : this.needs & ~bitMask;  // if flag is true, turn needs on for bitMask
     }

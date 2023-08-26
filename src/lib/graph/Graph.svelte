@@ -8,7 +8,7 @@
 	onDestroy( () => {signalHandler.disconnect(); });
 
 	$: {
-    here = hierarchy.thing_forID($hereID);
+    here = hierarchy.getThing_forID($hereID);
   }
 
   const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {

@@ -9,7 +9,7 @@ export default class Grabs {
       if (ids != undefined) {
         this.grabbed = [];
         for (const id of ids) {
-          const thing = hierarchy.thing_forID(id)
+          const thing = hierarchy.getThing_forID(id)
           if (thing) {
             this.grabbed.push(thing);
           }
