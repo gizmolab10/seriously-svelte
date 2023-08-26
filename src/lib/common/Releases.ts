@@ -1,6 +1,6 @@
 import { build } from '../managers/State';
 class Releases {
-  notes: { [id: string]: string } = {};
+  notes: { [id: number]: string } = {};
 
   constructor() {
     build.set(30);

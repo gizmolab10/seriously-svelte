@@ -15,7 +15,6 @@ class Local {
   }
   
   setup() {
-    this.writeToKey(LocalID.debug, false);
     // this.writeToKey(LocalID.db, DBType.airtable);
     debug.set(this.readFromKey(LocalID.debug) ?? false);
     showDetails.set(this.readFromKey(LocalID.details) ?? false);

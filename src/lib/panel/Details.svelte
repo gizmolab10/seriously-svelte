@@ -1,7 +1,8 @@
 <script>
-  import { DBType, hierarchy, onMount, local, LocalID } from '../common/GlobalImports';
+  import { DBType, local, LocalID, onMount, ButtonID, hierarchy } from '../common/GlobalImports';
   import { build, debug, dbType, isBusy, popupViewID } from '../managers/State';
   import RadioButtons from '../kit/RadioButtons.svelte'
+  import LabelButton from '../kit/LabelButton.svelte';
   import Label from '../kit/Label.svelte';
   export let size = 20;
 
@@ -10,7 +11,9 @@
     { id: DBType.airtable, label: 'airtable', func: () => { handleDBTypeAt(1); } }
   ];
 
-  // 
+  function handleReleasesClick(event) {
+    $popupViewID = ButtonID.releaseNotes;
+  }
 
   function handleDBTypeAt(index) {
     const type = menuItems[index].id;
@@ -25,12 +28,14 @@
 
 <div class="modal-overlay">
   <div class="modal-content">
-      <p>build: {$build}</p>
-      {#if $debug}
-        <RadioButtons menuItems={menuItems} selectedID={$dbType}/>
-      {:else}
-        <Label title={$dbType}/>
-      {/if}
+    <LabelButton
+      title='build {$build}'
+      onClick={handleReleasesClick}/>
+    {#if $debug}
+      <RadioButtons menuItems={menuItems} selectedID={$dbType}/>
+    {:else}
+      <Label title={$dbType}/>
+    {/if}
   </div>
 </div>
 

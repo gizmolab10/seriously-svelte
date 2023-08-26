@@ -19,7 +19,7 @@
   {#if children && children.length != 0}
     <ul>
       {#each children as child}
-        <li><Widget thing={child}/></li>
+        <li><Widget thing={child}/>
       {/each}
     </ul>
   {/if}
