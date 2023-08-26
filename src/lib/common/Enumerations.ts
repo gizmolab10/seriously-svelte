@@ -15,6 +15,7 @@ export enum BulkID {
 
 export enum LocalID {
   details = 'details',
+  debug   = 'debug',
   bulk    = 'bulk',
   db      = 'db',
 }
