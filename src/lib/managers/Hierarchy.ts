@@ -164,11 +164,11 @@ export default class Hierarchy {
   }
 
   relationship_new(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none): Relationship {
-    const relationship = new Relationship(idRelationship, idPredicate, idFrom, idTo, order);
+    const relationship = new Relationship(idRelationship, idPredicate, idFrom, idTo, order, creationFlag == CreationFlag.isFromRemote);
     if (creationFlag == CreationFlag.getRemoteID) {
       cloud.relationship_remoteCreate(relationship) // from hierarchy construct
     } else if (creationFlag != CreationFlag.isFromRemote) {
-      relationship.needsCreate(true); // from fetch or on snapshot
+      relationship.needsPushToRemote(); // from fetch or on snapshot
     }
     this.relationship_remember(relationship);
     return relationship;

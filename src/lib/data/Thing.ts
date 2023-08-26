@@ -23,8 +23,8 @@ export default class Thing extends Needable {
     other.order = this.order;
   }
 
-  constructor(id = cloud.newCloudID, title = constants.defaultTitle, color = 'blue', trait = 's', order = 0) {
-    super(id);
+  constructor(id = cloud.newCloudID, title = constants.defaultTitle, color = 'blue', trait = 's', order = 0, cameFromRemote: boolean) {
+    super(id, cameFromRemote);
     this.title = title;
     this.color = color;
     this.trait = trait;
@@ -114,7 +114,7 @@ export default class Thing extends Needable {
       if (relationship && (relationship.order != newOrder)) {
         relationship.order = newOrder;
         if (relationship.noNeeds()) {
-          relationship.needsUpdate(true);
+          relationship.needsPushToRemote();
         }
       }
       this.order = newOrder;    // do this last, for a breakpoint set on 'relationship.order = newOrder'

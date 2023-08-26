@@ -20,7 +20,7 @@ export default class Cloud {
           isBusy.set(true);    // also used by Details radio buttons
           thingsArrived.set(false);
           this.setup(type, () => {
-            // this will happen when persistence sets dbType !!! too early?
+            // this will happen when Local sets dbType !!! too early?
             hierarchy.hierarchy_construct();
             const root = hierarchy.root;
             this.hasDataForDBType[type] = true;

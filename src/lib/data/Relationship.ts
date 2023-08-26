@@ -8,8 +8,8 @@ export class Relationship extends Needable {
   idPredicate: string;
   order: number;
 
-  constructor(id: string, idPredicate: string, idFrom: string, idTo: string, order = 0) {
-    super(id);
+  constructor(id: string, idPredicate: string, idFrom: string, idTo: string, order = 0, cameFromRemote: boolean) {
+    super(id, cameFromRemote);
     this.idTo = idTo; // idTo is child
     this.idFrom = idFrom; // idFrom is parent
     this.idPredicate = idPredicate;

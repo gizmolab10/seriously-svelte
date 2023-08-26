@@ -1,11 +1,11 @@
 <script>
-  import { get, onMount, BulkID,  hierarchy, persistence } from '../common/GlobalImports'
+  import { get, onMount, BulkID,  hierarchy, local } from '../common/GlobalImports'
   import { dbType, isBusy, thingsArrived } from '../managers/State';
   import Panel from './Panel.svelte';
   let isLoading = true;
 
   onMount(async () => {
-    persistence.setup();
+    local.setup();
   })
 </script>
 

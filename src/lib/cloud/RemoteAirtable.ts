@@ -58,7 +58,7 @@ export default class RemoteAirtable {
 
       for (const record of records) {
         const id = record.id;
-        const thing = new Thing(id, record.fields.title as string, record.fields.color as string, record.fields.trait as string);
+        const thing = new Thing(id, record.fields.title as string, record.fields.color as string, record.fields.trait as string, -1, true);
         hierarchy.thing_remember(thing);
         this.things.push(thing)
       }
