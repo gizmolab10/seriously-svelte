@@ -21,7 +21,7 @@ export default class Editor {
   //////////////////////////
 
   thing_duplicate = async (thing: Thing) => {
-    const sibling = hierarchy.getNew_thingAt(thing.order + 0.1);
+    const sibling = hierarchy.thing_createAt(thing.order + 0.1);
     const parent = thing.firstParent ?? hierarchy.root;
     thing.copyInto(sibling);
     sibling.order += 0.1
@@ -30,16 +30,18 @@ export default class Editor {
 
   thing_redraw_addAsChild = async (child: Thing, parent: Thing) => {
     await cloud.thing_remoteCreate(child); // for everything below, need to await child.id fetched from cloud
-    hierarchy.getNew_relationship(cloud.newCloudID, Predicate.idIsAParentOf, parent.id, child.id, child.order, CreationFlag.getRemoteID);
+    const relationship = hierarchy.relationship_create(cloud.newCloudID, Predicate.idIsAParentOf, parent.id, child.id, child.order, CreationFlag.getRemoteID);
     normalizeOrderOf(parent.children);
     parent.becomeHere();
     // child.startEdit(); // TODO: fucking causes app to hang!
     child.grabOnly();
-    await cloud.handleAllNeeds();
+    if (!relationship.isRemotelyStored) {  // send relationship if needed
+      cloud.relationship_remoteCreate(relationship);
+    }
   }
 
   thing_redraw_addChildTo = (parent: Thing) => {
-    const child = hierarchy.getNew_thingAt(-1);
+    const child = hierarchy.thing_createAt(-1);
     this.thing_redraw_addAsChild(child, parent);
   }
 
@@ -68,7 +70,7 @@ export default class Editor {
       const relationship = hierarchy.getRelationship_whereParentIDEquals(thing.id);
       if (relationship) {
         relationship.idFrom = newParent.id;
-        relationship.needsPushToRemote();
+        cloud.relationship_remoteUpdate(relationship);
         thing.setOrderTo(-1);
       }
 
@@ -78,16 +80,12 @@ export default class Editor {
       thing.grabOnly();
       newParent.becomeHere();
       signal(Signals.childrenOf, newParent.id);     // so Children component will update
-      await cloud.handleAllNeeds();
     }
   }
 
   async furthestGrab_redraw_moveUp(up: boolean, expand: boolean, relocate: boolean) {
     const grab = grabs.furthestGrab(up);
     grab?.redraw_moveup(up, expand, relocate);
-    if (relocate) {
-      await cloud.handleAllNeeds();
-    }
   }
 
   /////////////////////////////
@@ -126,7 +124,6 @@ export default class Editor {
             cloud.thing_remoteDelete(child);
             return false; // continue the traversal
           });
-          await cloud.handleAllNeeds();
           newGrabbed.grabOnly();
         }
       }

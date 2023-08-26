@@ -1,9 +1,9 @@
-import { grabs, cloud, hierarchy, normalizeOrderOf, signal, Signals, constants, Predicate } from '../common/GlobalImports';
+import { grabs, cloud, hierarchy, normalizeOrderOf, signal, Signals, constants, Predicate, Relationship } from '../common/GlobalImports';
 import { grabbedIDs, editingID, hereID } from '../managers/State';
-import Needable from '../cloud/Needable';
+import RemoteID from '../cloud/RemoteID';
 import Airtable from 'airtable';
 
-export default class Thing extends Needable {
+export default class Thing extends RemoteID {
   title: string;
   color: string;
   trait: string;
@@ -113,9 +113,7 @@ export default class Thing extends Needable {
       const relationship = hierarchy.getRelationship_whereParentIDEquals(this.id);
       if (relationship && (relationship.order != newOrder)) {
         relationship.order = newOrder;
-        if (relationship.noNeeds()) {
-          relationship.needsPushToRemote();
-        }
+        cloud.relationship_pushToRemote(relationship);
       }
       this.order = newOrder;    // do this last, for a breakpoint set on 'relationship.order = newOrder'
     }
@@ -129,11 +127,6 @@ export default class Thing extends Needable {
       siblingIndex = 1;
     }
     return array[siblingIndex];
-  }
-
-  markNeedsDelete = () => { // cascade delete from thing to all its relationships
-    hierarchy.relationships_allMarkNeedDeleteForThing(this);
-    this.needsDelete(true);
   }
 
   traverse = (applyTo : (thing: Thing) => boolean) : Thing | null => {

@@ -40,11 +40,6 @@ export default class RemoteAirtable {
     await this.things_readAll(onCompletion);
   }
 
-  handleAllNeeds = async () => {
-    await this.relationships_handleNeeds(); // do this first, in case a relationship points to a thing that needs delete
-    await this.things_handleNeeds();
-  }
-
   /////////////////////////////
   //         THINGS          //
   /////////////////////////////
@@ -69,17 +64,6 @@ export default class RemoteAirtable {
     }
   }
 
-  async things_handleNeeds() {
-    for (const thing of hierarchy.things) {
-      if (thing.needsDelete()) {
-        await this.thing_remoteDelete(thing)
-      } else if (thing.needsCreate()) {
-        await this.thing_remoteCreate(thing)
-      } else if (thing.needsUpdate()) {
-        await this.thing_remoteUpdate(thing)
-      }
-    }
-  }
 
   ////////////////////////////
   //         THING          //
@@ -90,7 +74,7 @@ export default class RemoteAirtable {
       const fields = await this.things_table.create(thing.fields);
       const id = fields['id']; //  // need for update, delete and knownTs_byID (to get parent from relationship)
       thing.id = id;
-      thing.needsCreate(false);
+      thing.isRemotelyStored = true;
       hierarchy.knownTs_byID[id] = thing;
     } catch (error) {
       console.log(this.things_errorMessage + thing.description + error);
@@ -100,7 +84,6 @@ export default class RemoteAirtable {
   async thing_remoteUpdate(thing: Thing) {
     try {
       await this.things_table.update(thing.id, thing.fields);
-      thing.needsUpdate(false); // if update fails, subsequent update will try again
     } catch (error) {
       console.log(this.things_errorMessage + thing.description + error);
     }
@@ -110,7 +93,6 @@ export default class RemoteAirtable {
     try {
       delete hierarchy.knownTs_byID[thing.id]; // do first so UX updates quickly
       await this.things_table.destroy(thing.id);
-      thing.needsDelete(false);
     } catch (error) {
       console.log(this.things_errorMessage + thing.description + error);
     }
@@ -131,23 +113,11 @@ export default class RemoteAirtable {
         const order = record.fields.order as number;
         const froms = record.fields.from as (string[]);
         const predicates = record.fields.predicate as (string[]);
-        hierarchy.getNew_relationship(id, predicates[0], froms[0], tos[0], order, CreationFlag.isFromRemote);
+        hierarchy.relationship_create(id, predicates[0], froms[0], tos[0], order, CreationFlag.isFromRemote);
       }
     } catch (error) {
       console.log(this.relationships_errorMessage + error);
     }
-  }
-
-  async relationships_handleNeeds() {
-    for (const relationship of hierarchy.knownRs) {
-      if (relationship.needsDelete()) {
-          await this.relationship_remoteDelete(relationship);
-      } else if (relationship.needsCreate()) {
-          await this.relationship_remoteCreate(relationship);
-      } else if (relationship.needsUpdate()) {
-          await this.relationship_remoteUpdate(relationship);
-      }
-    };
   }
 
   ///////////////////////////////////
@@ -160,7 +130,7 @@ export default class RemoteAirtable {
         const fields = await this.relationships_table.create(relationship.fields);   // insert with temporary id
         const id = fields['id'];                                                     // grab permanent id
         relationship.id = id;
-        relationship.needsCreate(false);
+        relationship.isRemotelyStored = true;
         hierarchy.relationships_refreshKnowns();
       } catch (error) {
         console.log(this.relationships_errorMessage + ' (' + relationship.id + ') ' + error);
@@ -171,7 +141,6 @@ export default class RemoteAirtable {
   async relationship_remoteUpdate(relationship: Relationship) {
     try {
       this.relationships_table.update(relationship.id, relationship.fields);
-      relationship.needsUpdate(false);
     } catch (error) {
         console.log(this.relationships_errorMessage + ' (' + relationship.id + ') ' + error);
     }
@@ -182,7 +151,6 @@ export default class RemoteAirtable {
       hierarchy.knownRs = hierarchy.knownRs.filter((item) => item.id !== relationship.id);
       hierarchy.relationships_refreshKnowns(); // do first so UX updates quickly
       await this.relationships_table.destroy(relationship.id);
-      relationship.needsDelete(false);
     } catch (error) {
       console.log(this.relationships_errorMessage + ' (' + relationship.id + ') ' + error);
     }
@@ -199,7 +167,7 @@ export default class RemoteAirtable {
       for (const record of records) {
         const id = record.id as string; // do not yet need this
         const kind = record.fields.kind as string;
-        hierarchy.getNew_predicate(id, kind);
+        hierarchy.predicate_create(id, kind);
       }
 
     } catch (error) {
@@ -214,7 +182,7 @@ export default class RemoteAirtable {
       for (const record of records) {
         const id = record.id as string; // do not yet need this
         const kind = record.fields.kind as string;
-        hierarchy.getNew_access(id, kind);
+        hierarchy.access_create(id, kind);
       }
 
     } catch (error) {
@@ -228,7 +196,7 @@ export default class RemoteAirtable {
 
       for (const record of records) {
         const id = record.id as string; // do not yet need this
-        hierarchy.getNew_user(id, record.fields.name as string, record.fields.email as string, record.fields.phone as string);
+        hierarchy.user_create(id, record.fields.name as string, record.fields.email as string, record.fields.phone as string);
       }
 
     } catch (error) {

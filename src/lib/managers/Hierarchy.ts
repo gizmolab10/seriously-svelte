@@ -31,7 +31,7 @@ export default class Hierarchy {
   get things(): Array<Thing> { return Object.values(this.knownTs_byID) };
   order_normalizeAllRecursive() { this.root?.order_normalizeRecursive(); };
   getThing_forID = (idThing: string | null): Thing | null => { return (!idThing) ? null : this.knownTs_byID[idThing]; }
-  getNew_thingAt = (order: number) => { return new Thing(cloud.newCloudID, constants.defaultTitle, 'blue', 't', order, false); }
+  thing_createAt = (order: number) => { return new Thing(cloud.newCloudID, constants.defaultTitle, 'blue', 't', order, false); }
   getPredicate_forID = (idPredicate: string | null): Predicate | null => { return (!idPredicate) ? null : this.knownP_byID[idPredicate]; }
   
   async hierarchy_construct() {
@@ -46,14 +46,13 @@ export default class Hierarchy {
           if (relationship) {
             thing.order = relationship.order;
           } else { // already determined that we do not need assureNotDuplicated, we do need it's id now
-            relationship = this.getNew_relationship(cloud.newCloudID, Predicate.idIsAParentOf, rootID, id, -1, CreationFlag.getRemoteID);
+            relationship = this.relationship_create(cloud.newCloudID, Predicate.idIsAParentOf, rootID, id, -1, CreationFlag.getRemoteID);
           }
         }
       }
       this.order_normalizeAllRecursive()   // setup order values for all things and relationships
       this.isConstructed = true;
       try {
-        await cloud.handleAllNeeds();
       } catch (error) {
         console.log(error);
       }
@@ -106,17 +105,7 @@ export default class Hierarchy {
   //         THINGS          //
   /////////////////////////////
 
-  get getThings_needy(): Array<Thing> {
-    let needy = new Array<Thing>();
-    for (const thing of this.things) {
-      if (thing.hasNeeds) {
-        needy.push(thing);
-      }
-    }
-    return needy;
-  }
-
-  getNew_thing(id: string, title: string, color: string, trait: string, order: number): Thing {
+  thing_create(id: string, title: string, color: string, trait: string, order: number): Thing {
     const thing = new Thing(id, title, color, trait, order, false);
     this.thing_remember(thing);
     return thing;
@@ -148,28 +137,14 @@ export default class Hierarchy {
   //         RELATIONSHIPS          //
   ////////////////////////////////////
 
-  get getRelationships_needy(): Array<Relationship> {
-    let needy = new Array<Relationship>();
-    for (const relationship of this.knownRs) {
-      if (relationship.hasNeeds) {
-        needy.push(relationship);
-      }
-    }
-    return needy;
-  }
-
-  getNew_relationship_assureNotDuplicated(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none): Relationship {
+  relationship_create_assureNotDuplicated(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none): Relationship {
     return this.getRelationship_whereParentIDEquals(idTo) ??
-      this.getNew_relationship(idRelationship, idPredicate, idFrom, idTo, order, creationFlag);
+      this.relationship_create(idRelationship, idPredicate, idFrom, idTo, order, creationFlag);
   }
 
-  getNew_relationship(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none): Relationship {
+  relationship_create(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none): Relationship {
     const relationship = new Relationship(idRelationship, idPredicate, idFrom, idTo, order, creationFlag == CreationFlag.isFromRemote);
-    if (creationFlag == CreationFlag.getRemoteID) {
-      cloud.relationship_remoteCreate(relationship) // from hierarchy construct
-    } else if (creationFlag != CreationFlag.isFromRemote) {
-      relationship.needsPushToRemote(); // from fetch or on snapshot
-    }
+    cloud.relationship_pushToRemote(relationship);
     this.relationship_remember(relationship);
     return relationship;
   }
@@ -212,31 +187,22 @@ export default class Hierarchy {
     return array;
   }
 
-  relationships_allMarkNeedDeleteForThing(thing: Thing) {
-    const parentRelationships = hierarchy.knownRs_byIDFrom[thing.id];
-    if (parentRelationships) {
-      for (const relationship of parentRelationships) {
-        relationship.needsDelete(true);
-      }
-    }
-  }
-
   /////////////////////////////////////
   //         ANCILLARY DATA          //
   /////////////////////////////////////
 
-  getNew_predicate = (id: string, kind: string) => {
+  predicate_create = (id: string, kind: string) => {
     const predicate = new Predicate(id, kind);
     this.predicate_remember(predicate)
   }
 
-  getNew_access = (id: string, kind: string) => {
+  access_create = (id: string, kind: string) => {
     const access = new Access(id, kind);
     this.knownA_byKind[kind] = access;
     this.knownA_byID[id] = access;
   }
 
-  getNew_user = (id: string, name: string, email: string, phone: string) => {
+  user_create = (id: string, name: string, email: string, phone: string) => {
     const user = new User(id, name, email, phone);
     this.knownU_byID[id] = user;
   }

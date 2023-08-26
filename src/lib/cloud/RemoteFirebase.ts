@@ -96,9 +96,9 @@ class RemoteFirebase {
         ////////////////
 
         switch (dataKind) {
-          case DataKind.things:        hierarchy.getNew_thing(id, data.title, data.color, data.trait, data.order); break;
-          case DataKind.predicates:    hierarchy.getNew_predicate(id, data.kind); break;
-          case DataKind.relationships: hierarchy.getNew_relationship_assureNotDuplicated(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
+          case DataKind.things:        hierarchy.thing_create(id, data.title, data.color, data.trait, data.order); break;
+          case DataKind.predicates:    hierarchy.predicate_create(id, data.kind); break;
+          case DataKind.relationships: hierarchy.relationship_create_assureNotDuplicated(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
         }
       }
     }
@@ -124,7 +124,7 @@ class RemoteFirebase {
               if (relationship && remote) {
                 const parentID = relationship?.idFrom;
                 if (change.type === 'added') {
-                  hierarchy.getNew_relationship_assureNotDuplicated(idChange, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote);
+                  hierarchy.relationship_create_assureNotDuplicated(idChange, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote);
                 } else if (change.type === 'modified') {
                   this.copyRelationship(relationship, remote);
                 } else if (change.type === 'removed') {
@@ -157,59 +157,6 @@ class RemoteFirebase {
     }
   )};
 
-  handleAllNeeds = async () => {
-
-    // do relationships first, in case one points to a thing that needs delete,
-    // so the relationship can be modified without confusing the server
-
-    let collection = this.relationshipsCollection;
-    if (collection != null) {
-      for (const relationship of hierarchy.getRelationships_needy) {
-        try {
-          console.log(relationship.description);
-
-          /////////////////////
-          //  relationships  //
-          /////////////////////
-
-          if (relationship.needsDelete()) {
-
-          } else if (relationship.needsUpdate()) {
-            await this.relationship_remoteUpdate(relationship)
-          } else if (relationship.needsCreate()) {
-            await this.relationship_remoteCreate(relationship);
-          } 
-          relationship.noNeeds();
-        } catch (error) {
-          this.reportError(error);
-        }
-      }
-    }
-    
-    collection = this.thingsCollection;
-    if (collection != null) {
-      for (const thing of hierarchy.getThings_needy) {
-        try {
-
-          //////////////
-          //  things  //
-          //////////////
-
-          if (thing.needsDelete()) {
-          }
-          if (thing.needsCreate()) {
-            await this.thing_remoteCreate(thing)
-          }
-          if (thing.needsUpdate()) {
-            await this.thing_remoteUpdate(thing)
-          }
-        } catch (error) {
-          this.reportError(error);
-        }
-      }
-    }
-  }
-
   ////////////////////////////
   //         THING          //
   ////////////////////////////
@@ -220,8 +167,8 @@ class RemoteFirebase {
       const remoteThing = new RemoteThing(thing);
       const jsThing = { ...remoteThing };
       const ref = await addDoc(collection, jsThing)
+      thing.isRemotelyStored = true;
       thing.id = ref.id;      // so relationship will be correct
-      thing.needsCreate(false);
     }
   }
 
@@ -232,7 +179,6 @@ class RemoteFirebase {
       const remoteThing = new RemoteThing(thing);
       const jsThing = { ...remoteThing };
       await setDoc(ref, jsThing);
-      thing.needsUpdate(false);
     }
   }
 
@@ -241,7 +187,6 @@ class RemoteFirebase {
     if (collection != null) {
       const ref = doc(collection, thing.id) as DocumentReference<Thing>;
       await deleteDoc(ref);
-      thing.needsUpdate(false);
     }
   }
 
@@ -260,9 +205,11 @@ class RemoteFirebase {
     if (collection != null) {
       const remoteRelationship = new RemoteRelationship(relationship);
       const jsRelationship = { ...remoteRelationship };
+      relationship.awaitingCreation = true;
       const ref = await addDoc(collection, jsRelationship); // works!
-      relationship.id = ref.id;      // so relationship will be correct
-      relationship.needsCreate(false);
+      relationship.awaitingCreation = false;
+      relationship.isRemotelyStored = true;
+      relationship.id = ref.id;
     }
   }
 
@@ -273,7 +220,6 @@ class RemoteFirebase {
       const remoteRelationship = new RemoteRelationship(relationship);
       const jsRelationship = { ...remoteRelationship };
       await setDoc(ref, jsRelationship);
-      relationship.needsUpdate(false);
     }
   }
 
@@ -282,7 +228,6 @@ class RemoteFirebase {
     if (collection != null) {
       const ref = doc(collection, relationship.id) as DocumentReference<RemoteRelationship>;
       await deleteDoc(ref);
-      relationship.needsUpdate(false);
     }
   }
 
@@ -292,7 +237,7 @@ class RemoteFirebase {
     relationship.order = order;
     relationship.idFrom = from.from.id;
     relationship.idPredicate = from.predicate.id;
-    hierarchy.thing_forID(relationship.idTo)?.setOrderTo(order);
+    hierarchy.getThing_forID(relationship.idTo)?.setOrderTo(order);
   }
 
 }

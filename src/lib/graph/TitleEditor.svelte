@@ -65,10 +65,9 @@
         input?.blur();
       }
       if (hasChanges()) {
-        thing.needsUpdate(true);
+        cloud.thing_remoteUpdate(thing);
         originalTitle = thing.title;    // so hasChanges will be correct
         signal(Signals.childrenOf, thing.firstParent.id); // for crumbs
-        cloud.handleAllNeeds();
       }
     }
   }

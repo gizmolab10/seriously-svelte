@@ -51,13 +51,6 @@ export default class Cloud {
     }
   }
 
-  handleAllNeeds = async () => { 
-    switch (get(dbType)) {
-      case DBType.airtable: await crud.handleAllNeeds(); break;
-      default: await firebase.handleAllNeeds(); break;
-    }
-  }
-
   thing_remoteCreate = async (thing: Thing) => { 
     switch (get(dbType)) {
       case DBType.airtable: await crud.thing_remoteCreate(thing); break;
@@ -79,6 +72,20 @@ export default class Cloud {
     }
   }
 
+  relationship_remoteCreate = async (relationship: Relationship) => {
+    switch (get(dbType)) {
+      case DBType.airtable: await crud.relationship_remoteCreate(relationship); break;
+      default: await firebase.relationship_remoteCreate(relationship); break;
+    }
+  }
+
+  relationship_remoteUpdate = async (relationship: Relationship) => {
+    switch (get(dbType)) {
+      case DBType.airtable: await crud.relationship_remoteUpdate(relationship); break;
+      default: await firebase.relationship_remoteUpdate(relationship); break;
+    }
+  }
+
   relationship_remoteDelete = async (relationship: Relationship) => {
     switch (get(dbType)) {
       case DBType.airtable: await crud.relationship_remoteDelete(relationship); break;
@@ -86,11 +93,16 @@ export default class Cloud {
     }
   }
 
-  relationship_remoteCreate = async (relationship: Relationship) => {
-    switch (get(dbType)) {
-      case DBType.airtable: await crud.relationship_remoteCreate(relationship); break;
-      default: await firebase.relationship_remoteCreate(relationship); break;
-    }
+  relationship_pushToRemote(relationship: Relationship)  {
+    setTimeout(() => { // pause a bit in case creating is concurrent with a need to update
+      if (!relationship.awaitingCreation) {
+        if (relationship.isRemotelyStored) {
+          cloud.relationship_remoteUpdate(relationship);
+        } else {
+          cloud.relationship_remoteCreate(relationship);
+        }
+      }
+    }, 10);
   }
 
   // callClassMethod<T extends object, K extends keyof T>(
