@@ -6,7 +6,7 @@
   import Graph from '../graph/Graph.svelte';
   import Details from './Details.svelte';
   import Crumbs from './Crumbs.svelte';
-  import Help from './Help.svelte';
+  import Help from '../help/Help.svelte';
   let size = 15;
 
   function handleClick(id) {
