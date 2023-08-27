@@ -96,7 +96,7 @@ class RemoteFirebase {
         ////////////////
 
         switch (dataKind) {
-          case DataKind.things:        hierarchy.rememberThing_create(id, data.title, data.color, data.trait, data.order, true); break;
+          case DataKind.things:        hierarchy.rememberThing_create(id, data.title, data.color, data.trait, -1, true); break;
           case DataKind.predicates:    hierarchy.rememberPredicateCreate(id, data.kind); break;
           case DataKind.relationships: hierarchy.rememberRelationship_remoteCreateNoDuplicate(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
         }
@@ -106,7 +106,7 @@ class RemoteFirebase {
 
   handleRemoteChanges(dataKind: DataKind, collection: CollectionReference) {
     onSnapshot(collection, (snapshot) => {
-      if (!hierarchy.isConstructed) {                 // ignore snapshots caused by data written to server
+      if (hierarchy.isConstructed) {                 // ignore snapshots caused by data written to server
         snapshot.docChanges().forEach((change) => {   // convert and remember
           const doc = change.doc;
           const data = doc.data();

@@ -1,5 +1,5 @@
-import { User, Thing, cloud, Access, constants, Predicate, Relationship, CreationFlag, sortAccordingToOrder } from '../common/GlobalImports';
-import { hereID } from './State';
+import { User, Thing, cloud, Access, constants, Predicate, Relationship, CreationFlag, normalizeOrderOf, sortAccordingToOrder } from '../common/GlobalImports';
+import { hereID, isBusy, thingsArrived } from './State';
 
 type KnownThings = { [id: string]: Thing }
 type KnownRelationships = { [id: string]: Array<Relationship> }
@@ -33,7 +33,7 @@ export default class Hierarchy {
   thing_createAt = (order: number) => { return new Thing(cloud.newCloudID, constants.defaultTitle, 'blue', 't', order, false); }
   getPredicate_forID = (idPredicate: string | null): Predicate | null => { return (!idPredicate) ? null : this.knownP_byID[idPredicate]; }
   
-  async hierarchy_construct() {
+  async hierarchy_construct(type: string) {
     const rootID = this.rootID;
     if (rootID) {
       for (const thing of this.things) {
@@ -50,11 +50,15 @@ export default class Hierarchy {
         }
       }
       this.root?.normalizeOrder_recursive()   // setup order values for all things and relationships
-      this.isConstructed = true;
-      try {
-      } catch (error) {
-        console.log(error);
+      const root = hierarchy.root;
+      cloud.hasDataForDBType[type] = true;
+      if (root) {
+        normalizeOrderOf(root.children)
+        root.grabOnly()
       }
+      thingsArrived.set(true);
+      isBusy.set(false);
+      this.isConstructed = true;
     }
   }
 
@@ -124,7 +128,7 @@ export default class Hierarchy {
   getThings_byIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Thing> {
     const matches = this.getRelationships_byIDPredicateToAndID(idPredicate, to, idThing);
     const ids: Array<string> = [];
-    if (Array.isArray(matches)) {
+    if (Array.isArray(matches) && matches.length > 0) {
       for (const relationship of matches) {
         ids.push(to ? relationship.idFrom : relationship.idTo);
       }
