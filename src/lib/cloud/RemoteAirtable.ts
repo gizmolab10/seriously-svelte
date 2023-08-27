@@ -45,7 +45,7 @@ export default class RemoteAirtable {
   /////////////////////////////
 
   async things_readAll(onCompletion: () => any) {
-    hierarchy.knownTs_byID = {}; // clear
+    hierarchy.knownT_byID = {}; // clear
     this.things =[];
 
     try {
@@ -74,7 +74,7 @@ export default class RemoteAirtable {
       const id = fields['id']; //  // need for update, delete and knownTs_byID (to get parent from relationship)
       thing.id = id;
       thing.isRemotelyStored = true;
-      hierarchy.knownTs_byID[id] = thing;
+      hierarchy.knownT_byID[id] = thing;
     } catch (error) {
       console.log(this.things_errorMessage + thing.description + error);
     }
@@ -90,7 +90,7 @@ export default class RemoteAirtable {
 
   thing_remoteDelete = async (thing: Thing) => {
     try {
-      delete hierarchy.knownTs_byID[thing.id]; // do first so UX updates quickly
+      delete hierarchy.knownT_byID[thing.id]; // do first so UX updates quickly
       await this.things_table.destroy(thing.id);
     } catch (error) {
       console.log(this.things_errorMessage + thing.description + error);
@@ -166,7 +166,7 @@ export default class RemoteAirtable {
       for (const record of records) {
         const id = record.id as string; // do not yet need this
         const kind = record.fields.kind as string;
-        hierarchy.rememberPredicateCreate(id, kind);
+        hierarchy.rememberPredicate_create(id, kind);
       }
 
     } catch (error) {

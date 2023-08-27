@@ -1,4 +1,4 @@
-import { doc, addDoc, setDoc, deleteDoc, getDocs, collection, onSnapshot, getFirestore, QuerySnapshot, DocumentData, DocumentReference, CollectionReference } from 'firebase/firestore';
+import { doc, addDoc, setDoc, deleteDoc, getDocs, collection, onSnapshot, getFirestore, QuerySnapshot, DocumentData, DocumentReference, CollectionReference, DocumentChange } from 'firebase/firestore';
 import { get, Thing, signal, Signals, hierarchy, DataKind, Predicate, Relationship, CreationFlag } from '../common/GlobalImports';
 import { getAnalytics } from "firebase/analytics";
 import { bulkName } from '../managers/State';
@@ -97,7 +97,7 @@ class RemoteFirebase {
 
         switch (dataKind) {
           case DataKind.things:        hierarchy.rememberThing_create(id, data.title, data.color, data.trait, -1, true); break;
-          case DataKind.predicates:    hierarchy.rememberPredicateCreate(id, data.kind); break;
+          case DataKind.predicates:    hierarchy.rememberPredicate_create(id, data.kind); break;
           case DataKind.relationships: hierarchy.rememberRelationship_remoteCreateNoDuplicate(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
         }
       }
@@ -108,52 +108,54 @@ class RemoteFirebase {
     onSnapshot(collection, (snapshot) => {
       if (hierarchy.isConstructed) {                 // ignore snapshots caused by data written to server
         snapshot.docChanges().forEach((change) => {   // convert and remember
-          const doc = change.doc;
-          const data = doc.data();
-          if (RemoteFirebase.isValidOfKind(dataKind, data)) {
-            const idChange = doc.id;
-
-            ////////////////////
-            //   data kinds   //
-            //  change types  //
-            ////////////////////
-
-            if (dataKind == DataKind.relationships) {
-              const relationship = hierarchy.knownR_byID[idChange];
-              const remote = new RemoteRelationship(data);
-              if (relationship && remote) {
-                const parentID = relationship?.idFrom;
-                if (change.type === 'added') {
-                  hierarchy.rememberRelationship_remoteCreateNoDuplicate(idChange, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote);
-                } else if (change.type === 'modified') {
-                  this.copyRelationship(relationship, remote);
-                } else if (change.type === 'removed') {
-                  delete hierarchy.knownR_byID[idChange];
-                }
-                hierarchy.relationships_refreshKnowns();
-                hierarchy.root?.normalizeOrder_recursive();
-                signal(Signals.childrenOf, parentID);
-              }
-            } else if (dataKind == DataKind.things) {
-              const thing = hierarchy.getThing_forID(idChange);
-              const parentID = thing?.firstParent?.id;
-              if (thing && parentID != undefined) {
-                if (change.type === 'added') {
-
-                } else if (change.type === 'modified') {
-                  const remote = new RemoteThing(data);
-                  this.copyThing(thing, remote);
-                } else if (change.type === 'removed') {
-
-                }
-                signal(Signals.childrenOf, parentID);
-              }
-            }
-          }
+          this.handleChange(change, dataKind);
         });
       }
     }
   )};
+
+  async handleChange(change: DocumentChange, dataKind: DataKind) {
+    const doc = change.doc;
+    const data = doc.data();
+    if (RemoteFirebase.isValidOfKind(dataKind, data)) {
+      const idChange = doc.id;
+
+      ////////////////////
+      //   data kinds   //
+      //  change types  //
+      ////////////////////
+      if (dataKind == DataKind.relationships) {
+        const relationship = hierarchy.knownR_byID[idChange];
+        const remote = new RemoteRelationship(data);
+        if (relationship && remote) {
+          const parentID = relationship?.idFrom;
+          if (change.type === 'added') {
+            await hierarchy.rememberRelationship_remoteCreateNoDuplicate(idChange, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote);
+          } else if (change.type === 'modified') {
+            this.extractRemoteRelationship(relationship, remote);
+          } else if (change.type === 'removed') {
+            delete hierarchy.knownR_byID[idChange];
+          }
+          hierarchy.relationships_refreshKnowns();
+          hierarchy.root?.normalizeOrder_recursive();
+          signal(Signals.childrenOf, parentID);
+        }
+      } else if (dataKind == DataKind.things) {
+        const thing = hierarchy.getThing_forID(idChange);
+        const parentID = thing?.firstParent?.id;
+        if (thing && parentID != undefined) {
+          if (change.type === 'added') {
+          } else if (change.type === 'modified') {
+            const remote = new RemoteThing(data);
+            this.copyThing(thing, remote);
+          } else if (change.type === 'removed') {
+            delete hierarchy.knownT_byID[idChange];
+          }
+          signal(Signals.childrenOf, parentID);
+        }
+      }
+    }
+  }
 
   ////////////////////////////
   //         THING          //
@@ -229,7 +231,7 @@ class RemoteFirebase {
     }
   }
 
-  copyRelationship = (relationship: Relationship, from: RemoteRelationship) => {
+  extractRemoteRelationship = (relationship: Relationship, from: RemoteRelationship) => {
     const order = from.order - 0.1;
     relationship.idTo = from.to.id;
     relationship.order = order;

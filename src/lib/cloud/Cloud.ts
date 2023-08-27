@@ -21,7 +21,7 @@ export default class Cloud {
           thingsArrived.set(false);
           this.setup(type, () => {
             // this will happen when Local sets dbType !!! too early?
-            hierarchy.hierarchy_construct();
+            hierarchy.constructHierarchy();
           })
         }
       }

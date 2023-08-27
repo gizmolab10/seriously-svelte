@@ -29,12 +29,14 @@
     <table>
       <tr>
         <th>Release</th>
+        <th>Date</th>
         <th>Note</th>
       </tr>
       {#each notes as [key, value]}
         <tr>
           <td>{key}</td>
-          <td>{value}</td>
+          <td>{value[0]}</td>
+          <td>&nbsp; {value[1]}</td>
         </tr>
       {/each}
     </table>
