@@ -53,8 +53,7 @@ export default class RemoteAirtable {
 
       for (const record of records) {
         const id = record.id;
-        const thing = new Thing(id, record.fields.title as string, record.fields.color as string, record.fields.trait as string, -1, true);
-        hierarchy.thing_remember(thing);
+        const thing = hierarchy.rememberThing_create(id, record.fields.title as string, record.fields.color as string, record.fields.trait as string, -1, true);
         this.things.push(thing)
       }
       thingsArrived.set(true);
@@ -113,7 +112,7 @@ export default class RemoteAirtable {
         const order = record.fields.order as number;
         const froms = record.fields.from as (string[]);
         const predicates = record.fields.predicate as (string[]);
-        hierarchy.relationship_create(id, predicates[0], froms[0], tos[0], order, CreationFlag.isFromRemote);
+        hierarchy.rememberRelationship_remoteCreate(id, predicates[0], froms[0], tos[0], order, CreationFlag.isFromRemote);
       }
     } catch (error) {
       console.log(this.relationships_errorMessage + error);
@@ -167,7 +166,7 @@ export default class RemoteAirtable {
       for (const record of records) {
         const id = record.id as string; // do not yet need this
         const kind = record.fields.kind as string;
-        hierarchy.predicate_create(id, kind);
+        hierarchy.rememberPredicateCreate(id, kind);
       }
 
     } catch (error) {

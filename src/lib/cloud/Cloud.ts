@@ -93,7 +93,7 @@ export default class Cloud {
     }
   }
 
-  relationship_pushToRemote(relationship: Relationship)  {
+  async relationship_remoteWrite(relationship: Relationship)  {
     setTimeout(() => { // pause a bit in case creating is concurrent with a need to update
       if (!relationship.awaitingCreation) {
         if (relationship.isRemotelyStored) {

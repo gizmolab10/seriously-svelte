@@ -96,9 +96,9 @@ class RemoteFirebase {
         ////////////////
 
         switch (dataKind) {
-          case DataKind.things:        hierarchy.thing_create(id, data.title, data.color, data.trait, data.order); break;
-          case DataKind.predicates:    hierarchy.predicate_create(id, data.kind); break;
-          case DataKind.relationships: hierarchy.relationship_create_assureNotDuplicated(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
+          case DataKind.things:        hierarchy.rememberThing_create(id, data.title, data.color, data.trait, data.order, true); break;
+          case DataKind.predicates:    hierarchy.rememberPredicateCreate(id, data.kind); break;
+          case DataKind.relationships: hierarchy.rememberRelationship_remoteCreateNoDuplicate(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
         }
       }
     }
@@ -106,7 +106,7 @@ class RemoteFirebase {
 
   handleRemoteChanges(dataKind: DataKind, collection: CollectionReference) {
     onSnapshot(collection, (snapshot) => {
-      if (hierarchy.isConstructed) {                  // ignore side-effects of fetching data generated from server
+      if (!hierarchy.isConstructed) {                 // ignore snapshots caused by data written to server
         snapshot.docChanges().forEach((change) => {   // convert and remember
           const doc = change.doc;
           const data = doc.data();
@@ -124,27 +124,25 @@ class RemoteFirebase {
               if (relationship && remote) {
                 const parentID = relationship?.idFrom;
                 if (change.type === 'added') {
-                  hierarchy.relationship_create_assureNotDuplicated(idChange, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote);
+                  hierarchy.rememberRelationship_remoteCreateNoDuplicate(idChange, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote);
                 } else if (change.type === 'modified') {
                   this.copyRelationship(relationship, remote);
                 } else if (change.type === 'removed') {
                   delete hierarchy.knownR_byID[idChange];
                 }
                 hierarchy.relationships_refreshKnowns();
-                hierarchy.order_normalizeAllRecursive();
+                hierarchy.root?.normalizeOrder_recursive();
                 signal(Signals.childrenOf, parentID);
               }
             } else if (dataKind == DataKind.things) {
               const thing = hierarchy.getThing_forID(idChange);
-              if (thing) {
-                const remote = new RemoteThing(data);
-                const parentID = thing?.firstParent?.id;
+              const parentID = thing?.firstParent?.id;
+              if (thing && parentID != undefined) {
                 if (change.type === 'added') {
 
                 } else if (change.type === 'modified') {
-                  if (thing) {
-                    this.copyThing(thing, remote);
-                  }
+                  const remote = new RemoteThing(data);
+                  this.copyThing(thing, remote);
                 } else if (change.type === 'removed') {
 
                 }

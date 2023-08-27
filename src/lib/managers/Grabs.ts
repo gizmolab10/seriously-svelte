@@ -63,7 +63,7 @@ export default class Grabs {
   furthestGrab(up: boolean) {
     const ids = get(grabbedIDs);
     if (ids) {
-      let grabs = hierarchy.things_forIDs(ids);
+      let grabs = hierarchy.getThings_forIDs(ids);
       sortAccordingToOrder(grabs);
       if (up) {
         return grabs[0];

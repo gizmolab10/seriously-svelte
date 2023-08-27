@@ -67,8 +67,8 @@ export default class Thing extends RemoteID {
   get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
   get description():       string { return this.id + ' (\" ' + this.title + '\") '; }
   get hasChildren():      boolean { return this.hasPredicate(false); }
-  get children():    Array<Thing> { return hierarchy.things_byIDPredicateToAndID(Predicate.idIsAParentOf, false, this.id); }
-  get parents():     Array<Thing> { return hierarchy.things_byIDPredicateToAndID(Predicate.idIsAParentOf,  true, this.id); }
+  get children():    Array<Thing> { return hierarchy.getThings_byIDPredicateToAndID(Predicate.idIsAParentOf, false, this.id); }
+  get parents():     Array<Thing> { return hierarchy.getThings_byIDPredicateToAndID(Predicate.idIsAParentOf,  true, this.id); }
   get siblings():    Array<Thing> { return this.firstParent?.children ?? []; }
   get grandparent():        Thing { return this.firstParent?.firstParent ?? hierarchy.root; }
   get lastChild():          Thing { return this.children.slice(-1)[0]; }
@@ -98,24 +98,24 @@ export default class Thing extends RemoteID {
     };
   }
 
-  order_normalizeRecursive = () => {
+  normalizeOrder_recursive = () => {
     const children = this.children;
     if (children && children.length > 0) {
       normalizeOrderOf(children);
       for (const child of children) {
-        child.order_normalizeRecursive();
+        child.normalizeOrder_recursive();
       }
     }
   }
 
   setOrderTo = (newOrder: number) => {
     if (this.order != newOrder) {
+      this.order = newOrder;
       const relationship = hierarchy.getRelationship_whereParentIDEquals(this.id);
       if (relationship && (relationship.order != newOrder)) {
         relationship.order = newOrder;
-        cloud.relationship_pushToRemote(relationship);
+        cloud.relationship_remoteWrite(relationship);
       }
-      this.order = newOrder;    // do this last, for a breakpoint set on 'relationship.order = newOrder'
     }
   }
 
