@@ -32,14 +32,14 @@ class RemoteFirebase {
     console.log(error);
   }
 
-  setup = async (onCompletion: () => any) => {
+  async setup(onCompletion: () => any) {
     await firebase.fetchDocumentsIn(DataKind.things);
     await firebase.fetchDocumentsIn(DataKind.predicates, true);
     await firebase.fetchDocumentsIn(DataKind.relationships); // fetch these LAST, they depend on fetching all of the above
     onCompletion();
   }
     
-  fetchDocumentsIn = async (dataKind: DataKind, noBulk: boolean = false) => {
+  async fetchDocumentsIn(dataKind: DataKind, noBulk: boolean = false) {
     try {
       const documentsCollection = noBulk ? collection(this.db, dataKind) : collection(this.db, this.collectionName, get(bulkName), dataKind);
 
@@ -182,7 +182,7 @@ class RemoteFirebase {
     }
   }
 
-  thing_remoteDelete = async (thing: Thing) => {
+  async thing_remoteDelete(thing: Thing) {
     const collection = this.thingsCollection;
     if (collection != null) {
       const ref = doc(collection, thing.id) as DocumentReference<Thing>;

@@ -26,13 +26,13 @@ export default class RemoteAirtable {
 
   constructor() {}
 
-  setup = async (onCompletion: () => any) => {
+  async setup(onCompletion: () => any) {
     this.readAll(async () => {
       onCompletion();
     });
   }
 
-  readAll = async (onCompletion: () => any) => {
+  async readAll(onCompletion: () => any) {
     await this.predicates_readAll();
     await this.relationships_readAll();
     await this.access_readAll();
@@ -88,7 +88,7 @@ export default class RemoteAirtable {
     }
   }
 
-  thing_remoteDelete = async (thing: Thing) => {
+  async thing_remoteDelete(thing: Thing) {
     try {
       delete hierarchy.knownT_byID[thing.id]; // do first so UX updates quickly
       await this.things_table.destroy(thing.id);

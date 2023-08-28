@@ -30,71 +30,71 @@ export default class Cloud {
 
   get newCloudID(): string { return 'NEW' + removeAll('-', uuid()).slice(10, 24); } // use last, most-unique bytes of uuid
 
-  setup = (dbType: string, onCompletion: () => any) => {
+  setup(dbType: string, onCompletion: () => any) {
     switch (dbType) {
       case DBType.airtable: crud.setup(onCompletion); break;
       default: firebase.setup(onCompletion); break;
     }
   }
 
-  resetRootFor = (dbType: string) => {
+  resetRootFor(dbType: string) {
     switch (dbType) {
       case DBType.airtable: hierarchy.resetRootFrom(crud.things); break;
     }
   }
 
-  thing_remoteCreate = async (thing: Thing) => { 
+  async thing_remoteCreate(thing: Thing) { 
     switch (get(dbType)) {
       case DBType.airtable: await crud.thing_remoteCreate(thing); break;
       default: await firebase.thing_remoteCreate(thing);
     }
   }
 
-  thing_remoteUpdate = async (thing: Thing) => {
+  async thing_remoteUpdate(thing: Thing) {
     switch (get(dbType)) {
       case DBType.airtable: await crud.thing_remoteUpdate(thing); break;
       default: await firebase.thing_remoteUpdate(thing); break;
     }
   }
 
-  thing_remoteDelete = async (thing: Thing) => {
+  async thing_remoteDelete(thing: Thing) {
     switch (get(dbType)) {
       case DBType.airtable: await crud.thing_remoteDelete(thing); break;
       default: await firebase.thing_remoteDelete(thing); break;
     }
   }
 
-  relationship_remoteCreate = async (relationship: Relationship) => {
+  async relationship_remoteCreate(relationship: Relationship) {
     switch (get(dbType)) {
       case DBType.airtable: await crud.relationship_remoteCreate(relationship); break;
       default: await firebase.relationship_remoteCreate(relationship); break;
     }
   }
 
-  relationship_remoteUpdate = async (relationship: Relationship) => {
+  async relationship_remoteUpdate(relationship: Relationship) {
     switch (get(dbType)) {
       case DBType.airtable: await crud.relationship_remoteUpdate(relationship); break;
       default: await firebase.relationship_remoteUpdate(relationship); break;
     }
   }
 
-  relationship_remoteDelete = async (relationship: Relationship) => {
+  async relationship_remoteDelete(relationship: Relationship) {
     switch (get(dbType)) {
       case DBType.airtable: await crud.relationship_remoteDelete(relationship); break;
       default: await firebase.relationship_remoteDelete(relationship); break;
     }
   }
 
-  async relationship_remoteWrite(relationship: Relationship)  {
-    setTimeout(() => { // pause a bit in case creating is concurrent with a need to update
+  async relationship_remoteWrite(relationship: Relationship): Promise<void>  {
+    return new Promise(async (resolve) => {
       if (!relationship.awaitingCreation) {
         if (relationship.isRemotelyStored) {
-          cloud.relationship_remoteUpdate(relationship);
+          await cloud.relationship_remoteUpdate(relationship);
         } else {
-          cloud.relationship_remoteCreate(relationship);
+          await cloud.relationship_remoteCreate(relationship);
         }
       }
-    }, 10);
+    })
   }
 
   // callClassMethod<T extends object, K extends keyof T>(
