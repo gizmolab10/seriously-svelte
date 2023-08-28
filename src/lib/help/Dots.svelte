@@ -1,10 +1,16 @@
 <script>
+  import Widget from '../graph/Widget.svelte';
+  import { exemplar } from '../data/Exemplar';
   import TextBox from '../kit/TextBox.svelte';
   export let visible = true;
 </script>
 
 <div>
 <TextBox text='How the <b>Dots</b> work:'/>
+<br>
+    <div class='centered-container'>
+      <Widget thing={exemplar}/>
+    </div>
 <ul class='help-ul'>
   <li class='help-li'>Click the dots (to right and left of each item) to display the items in the child [<b>browse right</b>] or parent list [<b>browse left</b>], respectively.
   <li class='help-li'>Hold the <i>Shift</i> key as you cli class='help-lick to <b>add or remove</b> that item from the set of selected items.

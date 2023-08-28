@@ -24,6 +24,7 @@
     width: 97%;
     border: 1px solid #333;
     border-radius: 7px;
+    color: '#e4f6c9';
     padding: 5px;
     text-align: center;
   }

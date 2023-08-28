@@ -17,15 +17,15 @@
 
 {#key toggleDraw}
   {#if children && children.length != 0}
-    <ul>
+    <ul class='widget-ul'>
       {#each children as child}
-        <li><Widget thing={child}/>
+        <li class='widget-li'><Widget thing={child}/>
       {/each}
     </ul>
   {/if}
 {/key}
 
 <style>
-  ul { list-style: none; }
-  li { line-height: 1.5; }
+  .widget-ul { list-style: none; }
+  .widget-li { line-height: 1.5; }
 </style>

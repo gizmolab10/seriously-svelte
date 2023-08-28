@@ -1,8 +1,6 @@
 <script>
   import { popupViewID } from '../managers/State';
   import HelpButtons from './HelpButtons.svelte';
-  import Widget from '../graph/Widget.svelte';
-  import { exemplar } from '../data/Exemplar';
   import { onMount } from 'svelte';
   let showComponentC = false;
   export let size = 20;
@@ -40,11 +38,8 @@
       </span>
     <h2>Welcome to Seriously</h2>
     <p>Seriously is essentially a hierarchal menu system, to which you can add new items.</p>
-    <div class='centered-container'>
-      <Widget thing={exemplar}/>
-    </div>
     <br><HelpButtons/>
-    <p><b>Please,</b> bear in mind that the menu items are my test data. So, when you finish editing things, try to return everything to something close to its original state. <b>Thanks!</b></p>
+    <p><b>Please</b> bear in mind that the menu items are my test data. So, when you finish editing things, try to return everything to something close to its original state. <b>Thanks!</b></p>
   </div>
 </div>
 
