@@ -2,10 +2,10 @@
   export let title;
 </script>
 
-<label>{title}</label>
+<span>{title}</span>
 
 <style>
-  label {
+  span {
     font-size: 13px;
     color: #333;
   }

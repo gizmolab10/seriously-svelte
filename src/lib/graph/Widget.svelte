@@ -1,6 +1,6 @@
 <script lang='ts'>
+  import { noop, Thing, onMount } from '../common/GlobalImports';
   import { editingID, grabbedIDs } from '../managers/State';
-  import { Thing, onMount } from '../common/GlobalImports';
 	import TitleEditor from './TitleEditor.svelte';
 	import Dot from './Dot.svelte';
 	export let thing = Thing;
@@ -38,6 +38,8 @@
 <span
 		bind:this={widget}
 		style='border: {border}'
+		on:blur={noop()}
+		on:focus={noop()}
 		on:mouseover={widget.style.border=hover}
 		on:mouseout={widget.style.border=border}>
 	<Dot thing={thing} size=15/>

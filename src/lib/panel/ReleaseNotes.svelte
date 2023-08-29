@@ -1,5 +1,5 @@
 <script>
-  import { releases } from '../common/GlobalImports';
+  import { noop, releases } from '../common/GlobalImports';
   import { popupViewID } from '../managers/State';
   import Widget from '../graph/Widget.svelte'
   import { exemplar } from '../data/Exemplar'
@@ -22,6 +22,7 @@
       height: {size}px;
       font-size: {size - 1}px;;
       line-height: {size}px;'
+      on:keypress={noop()}
       on:click={() => { $popupViewID = null; }}>
         ×
       </span>

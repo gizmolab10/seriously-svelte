@@ -26,41 +26,49 @@ export default class RemoteAirtable {
 
   constructor() {}
 
-  async setup(onCompletion: () => any) {
-    this.readAll(async () => {
-      onCompletion();
+  setup(): Promise<void> {
+    return new Promise(async (resolve) => {
+      this.readAll().then(() => {
+        resolve();
+      });
     });
   }
 
-  async readAll(onCompletion: () => any) {
-    await this.predicates_readAll();
-    await this.relationships_readAll();
-    await this.access_readAll();
-    await this.users_readAll();
-    await this.things_readAll(onCompletion);
+  async readAll(): Promise<void> {
+    return new Promise(async (resolve) => {
+      await this.predicates_readAll();
+      await this.relationships_readAll();
+      await this.access_readAll();
+      await this.users_readAll();
+      this.things_readAll().then(() => {
+        resolve();
+      });
+    })
   }
 
   /////////////////////////////
   //         THINGS          //
   /////////////////////////////
 
-  async things_readAll(onCompletion: () => any) {
-    hierarchy.knownT_byID = {}; // clear
-    this.things =[];
+  async things_readAll(): Promise<void> {
+    return new Promise(async (resolve) => {
+      hierarchy.knownT_byID = {}; // clear
+      this.things =[];
 
-    try {
-      const records = await this.things_table.select().all()
+      try {
+        const records = await this.things_table.select().all()
 
-      for (const record of records) {
-        const id = record.id;
-        const thing = hierarchy.rememberThing_create(id, record.fields.title as string, record.fields.color as string, record.fields.trait as string, -1, true);
-        this.things.push(thing)
+        for (const record of records) {
+          const id = record.id;
+          const thing = hierarchy.rememberThing_create(id, record.fields.title as string, record.fields.color as string, record.fields.trait as string, -1, true);
+          this.things.push(thing)
+        }
+        thingsArrived.set(true);
+      } catch (error) {
+        console.log(this.things_errorMessage + ' (things_readAll) ' + error);
       }
-      thingsArrived.set(true);
-      onCompletion();
-    } catch (error) {
-      console.log(this.things_errorMessage + ' (things_readAll) ' + error);
-    }
+      resolve();
+    })
   }
 
 

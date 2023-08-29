@@ -27,7 +27,7 @@
       borderColor='white'
       onClick={handleSettings}/>
     {#if $showDetails}
-      <Details size={size}/>
+      <Details/>
     {/if}
   </span>
   <div class="vertical-line"></div>
@@ -70,10 +70,6 @@
     position: fixed;
     left: 70px;
     top: 20px;
-  }
-  .firebase {
-    position: fixed;
-    left: 90px;
   }
   .horizontal-line {
     position: absolute;

@@ -4,7 +4,6 @@
   import RadioButtons from '../kit/RadioButtons.svelte'
   import LabelButton from '../kit/LabelButton.svelte';
   import Label from '../kit/Label.svelte';
-  export let size = 20;
 
   const menuItems = [
     { id: DBType.firebase, label: 'firebase', func: () => { handleDBTypeAt(0); } },

@@ -1,7 +1,7 @@
 <script>
+  import { noop, onMount } from '../common/GlobalImports';
   import { popupViewID } from '../managers/State';
   import HelpButtons from './HelpButtons.svelte';
-  import { onMount } from 'svelte';
   let showComponentC = false;
   export let size = 20;
   
@@ -33,6 +33,7 @@
       height: {size}px;
       font-size: {size - 1}px;;
       line-height: {size}px;'
+      on:keypress={noop()}
       on:click={() => { $popupViewID = null; }}>
         ×
       </span>

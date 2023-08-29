@@ -44,7 +44,7 @@ export default class Hierarchy {
           if (relationship) {
             thing.order = relationship.order;
           } else { // already determined that we do not need assureNotDuplicated, we do need it's id now
-            await this.rememberRelationship_remoteCreate(cloud.newCloudID, Predicate.idIsAParentOf, rootID, id, -1, CreationFlag.getRemoteID)
+            this.rememberRelationship_remoteCreateNoDuplicate(cloud.newCloudID, Predicate.idIsAParentOf, rootID, id, -1, CreationFlag.getRemoteID)
               .then((newRelationship) => {
                 relationship = newRelationship;
               })
@@ -127,11 +127,11 @@ export default class Hierarchy {
     this.rememberRelationshipByKnown(this.knownRs_byIDPredicate, relationship.idPredicate, relationship);
   }
 
-  async rememberRelationship_remoteCreateNoDuplicate(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none): Promise<Relationship> {
+  rememberRelationship_remoteCreateNoDuplicate(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none): Promise<Relationship> {
     return new Promise(async (resolve) => {
       let relationship = this.getRelationship_whereParentIDEquals(idTo);
       if (relationship == null) {
-        await this.rememberRelationship_remoteCreate(idRelationship, idPredicate, idFrom, idTo, order, creationFlag)
+        this.rememberRelationship_remoteCreate(idRelationship, idPredicate, idFrom, idTo, order, creationFlag)
         .then((relationship) => {
           resolve(relationship);
         })
@@ -139,12 +139,13 @@ export default class Hierarchy {
     })
   }
 
-  async rememberRelationship_remoteCreate(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none): Promise<Relationship> {
+  rememberRelationship_remoteCreate(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none): Promise<Relationship> {
     return new Promise(async (resolve) => {
       const relationship = new Relationship(idRelationship, idPredicate, idFrom, idTo, order, creationFlag == CreationFlag.isFromRemote);
-      await cloud.relationship_remoteWrite(relationship);
-      this.rememberRelationship(relationship);
-      resolve(relationship);
+      cloud.relationship_remoteWrite(relationship).then(() => {
+        this.rememberRelationship(relationship);
+        resolve(relationship);
+      })
     })
   }
 
@@ -205,18 +206,18 @@ export default class Hierarchy {
     this.knownP_byID[predicate.id] = predicate;
   }
 
-  rememberPredicate_create = (id: string, kind: string) => {
+  rememberPredicate_create(id: string, kind: string) {
     const predicate = new Predicate(id, kind);
     this.rememberPredicate(predicate)
   }
 
-  access_create = (id: string, kind: string) => {
+  access_create(id: string, kind: string) {
     const access = new Access(id, kind);
     this.knownA_byKind[kind] = access;
     this.knownA_byID[id] = access;
   }
 
-  user_create = (id: string, name: string, email: string, phone: string) => {
+  user_create(id: string, name: string, email: string, phone: string) {
     const user = new User(id, name, email, phone);
     this.knownU_byID[id] = user;
   }

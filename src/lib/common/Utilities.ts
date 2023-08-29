@@ -1,6 +1,8 @@
 import { Thing } from './GlobalImports';
 import convert from 'color-convert';
 
+export function noop() {}
+
 export function log(target: any, key: string) {
   console.log(`Method \'${key}\' is called on class \'${target.constructor.name}\'`);
 }

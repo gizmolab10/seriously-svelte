@@ -1,5 +1,5 @@
 <script lang='ts'>
-  import { Thing, onMount } from '../common/GlobalImports';
+  import { noop, Thing, onMount } from '../common/GlobalImports';
   import { grabbedIDs } from '../managers/State';
   export let isReveal = false;
   export let thing = Thing;
@@ -46,13 +46,16 @@
 <slot>
   <button
     bind:this={dot}
+		on:blur={noop()}
+		on:focus={noop()}
+    on:keypress={noop()}
     on:click={handleClick}
+    on:mouseover={dot.style.backgroundColor=traitColor}
+    on:mouseout={dot.style.backgroundColor=buttonColor}
     style='width:{size}px; height:{size}px;
       border-color: {dotColor};
       color: {traitColor};
-      background-color: {buttonColor};'
-      on:mouseover={dot.style.backgroundColor=traitColor}
-      on:mouseout={dot.style.backgroundColor=buttonColor}>
+      background-color: {buttonColor};'>
   </button>
 </slot>
 

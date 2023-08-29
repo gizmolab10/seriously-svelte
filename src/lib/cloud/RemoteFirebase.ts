@@ -1,10 +1,9 @@
 import { doc, addDoc, setDoc, deleteDoc, getDocs, collection, onSnapshot, getFirestore, QuerySnapshot, DocumentData, DocumentReference, CollectionReference, DocumentChange } from 'firebase/firestore';
 import { get, Thing, signal, Signals, hierarchy, DataKind, Predicate, Relationship, CreationFlag } from '../common/GlobalImports';
 import { getAnalytics } from "firebase/analytics";
-import { bulkName } from '../managers/State';
 import { initializeApp } from "firebase/app";
+import { bulkName } from '../managers/State';
 
-// TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -32,33 +31,41 @@ class RemoteFirebase {
     console.log(error);
   }
 
-  async setup(onCompletion: () => any) {
-    await firebase.fetchDocumentsIn(DataKind.things);
-    await firebase.fetchDocumentsIn(DataKind.predicates, true);
-    await firebase.fetchDocumentsIn(DataKind.relationships); // fetch these LAST, they depend on fetching all of the above
-    onCompletion();
+  setup(): Promise<void> {
+    return new Promise(async (resolve) => {
+      firebase.fetchDocumentsIn(DataKind.things).then(() => {
+        firebase.fetchDocumentsIn(DataKind.predicates, true).then(() => {
+          firebase.fetchDocumentsIn(DataKind.relationships).then(() => { // fetch these LAST, they depend on fetching all of the above
+            resolve();
+          })
+        })
+      })
+    });
   }
     
-  async fetchDocumentsIn(dataKind: DataKind, noBulk: boolean = false) {
-    try {
-      const documentsCollection = noBulk ? collection(this.db, dataKind) : collection(this.db, this.collectionName, get(bulkName), dataKind);
+  async fetchDocumentsIn(dataKind: DataKind, noBulk: boolean = false): Promise<void> {
+    return new Promise(async (resolve) => {
+      try {
+        const documentsCollection = noBulk ? collection(this.db, dataKind) : collection(this.db, this.collectionName, get(bulkName), dataKind);
 
-      ////////////////
-      // data kinds //
-      ////////////////
+        ////////////////
+        // data kinds //
+        ////////////////
 
-      switch (dataKind) {
-        case DataKind.things:        this.thingsCollection = documentsCollection; break;
-        case DataKind.predicates:    this.predicatesCollection = documentsCollection; break;
-        case DataKind.relationships: this.relationshipsCollection = documentsCollection; break;
+        switch (dataKind) {
+          case DataKind.things:        this.thingsCollection = documentsCollection; break;
+          case DataKind.predicates:    this.predicatesCollection = documentsCollection; break;
+          case DataKind.relationships: this.relationshipsCollection = documentsCollection; break;
+        }
+
+        const querySnapshot = await getDocs(documentsCollection);
+        this.rememberAllOf(dataKind, querySnapshot);
+        this.handleRemoteChanges(dataKind, documentsCollection);
+      } catch (error) {
+        this.reportError(error);
       }
-
-      const querySnapshot = await getDocs(documentsCollection);
-      this.rememberAllOf(dataKind, querySnapshot);
-      this.handleRemoteChanges(dataKind, documentsCollection);
-    } catch (error) {
-      this.reportError(error);
-    }
+      resolve();
+    })
   }
 
   static isValidOfKind(dataKind: DataKind, data: DocumentData) {
@@ -98,7 +105,7 @@ class RemoteFirebase {
         switch (dataKind) {
           case DataKind.things:        hierarchy.rememberThing_create(id, data.title, data.color, data.trait, -1, true); break;
           case DataKind.predicates:    hierarchy.rememberPredicate_create(id, data.kind); break;
-          case DataKind.relationships: hierarchy.rememberRelationship_remoteCreateNoDuplicate(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
+          case DataKind.relationships: hierarchy.rememberRelationship_remoteCreate(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote).then(); break;
         }
       }
     }
@@ -130,7 +137,7 @@ class RemoteFirebase {
         if (relationship && remote) {
           const parentID = relationship?.idFrom;
           if (change.type === 'added') {
-            await hierarchy.rememberRelationship_remoteCreateNoDuplicate(idChange, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote);
+            hierarchy.rememberRelationship_remoteCreateNoDuplicate(idChange, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote).then();
           } else if (change.type === 'modified') {
             this.extractRemoteRelationship(relationship, remote);
           } else if (change.type === 'removed') {

@@ -1,5 +1,5 @@
 <script>
-  import { onMount } from "../common/GlobalImports";
+  import { noop } from "../common/GlobalImports";
   export let borderColor = '#333';
   export let textColor = '#400';
   export let color = '#ccc';
@@ -9,8 +9,9 @@
   export let size = 20;
 </script>
 
-<div
+<span
   on:click={onClick}
+  on:keypress={noop()}
   style='
     width: {size}px;
     height: {size}px;
@@ -25,8 +26,8 @@
     font-weight: bold;
     cursor: pointer;'>
     {#if image}
-      <img src="{image}" alt="Image" width={size}px height={size}px/>
+      <img src="{image}" alt="circular button" width={size}px height={size}px/>
     {:else if label}
       {label}
     {/if}
-</div>
+</span>
