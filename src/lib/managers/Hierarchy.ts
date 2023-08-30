@@ -1,4 +1,4 @@
-import { User, Thing, cloud, Access, constants, Predicate, Relationship, CreationFlag, normalizeOrderOf, sortAccordingToOrder } from '../common/GlobalImports';
+import { User, Thing, cloud, Access, remove, constants, Predicate, Relationship, CreationFlag, normalizeOrderOf, sortAccordingToOrder } from '../common/GlobalImports';
 import { hereID, isBusy, thingsArrived } from './State';
 
 type KnownRelationships = { [id: string]: Array<Relationship> }
@@ -63,17 +63,6 @@ export default class Hierarchy {
     this.isConstructed = true;
   }
 
-  /////////////////////////////
-  //         MEMORY          //
-  /////////////////////////////
-
-  rememberThing(thing: Thing) {
-    hierarchy.knownT_byID[thing.id] = thing;
-    if (thing.trait == '!') {
-      hierarchy.root = thing;
-    }
-  }
-
   resetRootFrom(things: Array<Thing>) {
     this.knownT_byID = {};
     for (const thing of things) {
@@ -84,6 +73,58 @@ export default class Hierarchy {
         hereID.set(id);
       }
     }
+  }
+
+  /////////////////////////////
+  //         MEMORY          //
+  /////////////////////////////
+
+  rememberThing(thing: Thing) {
+    this.knownT_byID[thing.id] = thing;
+    if (thing.trait == '!') {
+      this.root = thing;
+    }
+  }
+
+  forgetThing(thing: Thing) {
+    delete this.knownT_byID[thing.id];
+  }
+
+  async forgetThing_remoteDelete(thing: Thing) {
+    await cloud.thing_remoteDelete(thing);
+    this.forgetThing(thing);
+  }
+
+  rememberRelationship(relationship: Relationship) {
+    if (!this.knownR_byID[relationship.id]) {
+      this.knownRs.push(relationship);
+      this.knownR_byID[relationship.id] = relationship;
+      this.rememberRelationshipByKnown(this.knownRs_byIDTo, relationship.idTo, relationship);
+      this.rememberRelationshipByKnown(this.knownRs_byIDFrom, relationship.idFrom, relationship);
+      this.rememberRelationshipByKnown(this.knownRs_byIDPredicate, relationship.idPredicate, relationship);
+      console.log('remember', relationship.description);
+    }
+  }
+
+  forgetRelationship(relationship: Relationship) {
+    remove<Relationship>(this.knownRs, relationship);
+    delete this.knownR_byID[relationship.id];
+    this.forgetRelationshipByKnown(this.knownRs_byIDTo, relationship.idTo, relationship);
+    this.forgetRelationshipByKnown(this.knownRs_byIDFrom, relationship.idFrom, relationship);
+    this.forgetRelationshipByKnown(this.knownRs_byIDPredicate, relationship.idPredicate, relationship);
+    console.log('forget', relationship.description);
+  }
+
+  forgetRelationshipByKnown(known: KnownRelationships, idRelationship: string, relationship: Relationship) {
+    let array = known[idRelationship] ?? [];
+    remove<Relationship>(array, relationship)
+    known[idRelationship] = array;
+  }
+
+  rememberRelationshipByKnown(known: KnownRelationships, idRelationship: string, relationship: Relationship) {
+    let array = known[idRelationship] ?? [];
+    array.push(relationship);
+    known[idRelationship] = array;
   }
 
   thing_runtimeCreateAt(order: number) {
@@ -116,23 +157,6 @@ export default class Hierarchy {
     }
   }
 
-  rememberRelationshipByKnown(known: KnownRelationships, idRelationship: string, relationship: Relationship) {
-    let array = known[idRelationship] ?? [];
-    array.push(relationship);
-    known[idRelationship] = array;
-  }
-
-  rememberRelationship(relationship: Relationship) {
-    if (!this.knownR_byID[relationship.id]) {
-      this.knownRs.push(relationship);
-      this.knownR_byID[relationship.id] = relationship;
-      this.rememberRelationshipByKnown(this.knownRs_byIDTo, relationship.idTo, relationship);
-      this.rememberRelationshipByKnown(this.knownRs_byIDFrom, relationship.idFrom, relationship);
-      this.rememberRelationshipByKnown(this.knownRs_byIDPredicate, relationship.idPredicate, relationship);
-      console.log('remember', relationship.description);
-    }
-  }
-
   async rememberRelationship_remoteCreateNoDuplicate(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none) {
     return this.getRelationship_whereParentIDEquals(idTo) ?? await this.rememberRelationship_remoteCreate(idRelationship, idPredicate, idFrom, idTo, order, creationFlag);
   }
@@ -143,6 +167,16 @@ export default class Hierarchy {
     this.rememberRelationship(relationship);
     // console.log('create', relationship.description);
     return relationship;
+  }
+
+  async forgetRelationships_remoteDeleteAllForThing(thing: Thing) {
+    const array = this.knownRs_byIDTo[thing.id];
+    if (array) {
+      for (const relationship of array) {
+        await cloud.relationship_remoteDelete(relationship);
+        this.forgetRelationship(relationship);
+      }
+    }
   }
 
   //////////////////////////

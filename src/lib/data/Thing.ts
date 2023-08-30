@@ -129,10 +129,10 @@ export default class Thing extends RemoteID {
     return array[siblingIndex];
   }
 
-  traverse(applyTo : (thing: Thing) => boolean) : Thing | null {
-    if (!applyTo(this)) {
+  async traverse(applyTo: (thing: Thing) => Promise<boolean>) {
+    if (!await applyTo(this)) {
       for (const progeny of this.children) {
-        progeny.traverse(applyTo);
+        await progeny.traverse(applyTo);
       }
     }
     return this;

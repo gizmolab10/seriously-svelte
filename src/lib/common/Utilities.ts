@@ -21,6 +21,12 @@ export function normalizeOrderOf(array: Array<Thing>) {
     }
   }
 }
+export function remove<T>(from: Array<T>, item: T): void {
+  const index = from.findIndex((element: T) => element === item);
+  if (index !== -1) {
+    from.splice(index, 1);
+  }
+}
 
 export function removeAll(item: string, from: string): string {
   var to = from;

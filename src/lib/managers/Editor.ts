@@ -41,7 +41,7 @@ export default class Editor {
     const relationship = await hierarchy.rememberRelationship_remoteCreate(idRelationship, idPredicateIsAParentOf, parent.id, child.id, child.order, CreationFlag.getRemoteID)
     normalizeOrderOf(parent.children);
     parent.becomeHere();
-    child.startEdit(); // TODO: fucking causes app to hang!
+    child.startEdit();
     child.grabOnly();
     await cloud.relationship_remoteWrite(relationship);
   }
@@ -93,21 +93,12 @@ export default class Editor {
   //         DELETE          //
   /////////////////////////////
 
-  async relationships_remoteDeleteAllForThing(thing: Thing) {
-    const array = hierarchy.knownRs_byIDFrom[thing.id];
-    if (array) {
-      for (const relationship of array) {
-        await cloud.relationship_remoteDelete(relationship);
-      }
-    }
-  }
-
   async grabs_redraw_remoteDelete() {
     if (this.here) {
       for (const id of get(grabbedIDs)) {
         const grabbed = hierarchy.getThing_forID(id);
         if (grabbed && !grabbed.isEditing && this.here) {
-          let newGrabbed = grabbed.firstParent;
+          let newGrab = grabbed.firstParent;
           const siblings = grabbed.siblings;
           let index = siblings.indexOf(grabbed);
           siblings.splice(index, 1);
@@ -117,15 +108,16 @@ export default class Editor {
             if (index >= siblings.length) {
               index = siblings.length - 1;
             }
-            newGrabbed = siblings[index];
+            newGrab = siblings[index];
             normalizeOrderOf(grabbed.siblings);
           }
-          grabbed.traverse((child: Thing) => {
-            this.relationships_remoteDeleteAllForThing(child);
-            cloud.thing_remoteDelete(child);
+          await grabbed.traverse(async (child: Thing): Promise<boolean> => {
+            await hierarchy.forgetRelationships_remoteDeleteAllForThing(child);
+            await hierarchy.forgetThing_remoteDelete(child);
             return false; // continue the traversal
           });
-          newGrabbed.grabOnly();
+          newGrab.grabOnly();
+          signal(Signals.childrenOf, newGrab.firstParent.id); 
         }
       }
     }
