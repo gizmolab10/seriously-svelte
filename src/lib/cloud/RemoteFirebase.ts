@@ -1,4 +1,4 @@
-import { doc, addDoc, setDoc, deleteDoc, getDocs, collection, onSnapshot, getFirestore, QuerySnapshot, DocumentData, DocumentReference, CollectionReference, DocumentChange } from 'firebase/firestore';
+import { doc, addDoc, setDoc, deleteDoc, getDocs, collection, onSnapshot, getFirestore, QuerySnapshot, DocumentData, DocumentChange, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { get, Thing, signal, Signals, hierarchy, DataKind, Predicate, Relationship, CreationFlag } from '../common/GlobalImports';
 import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
@@ -31,41 +31,53 @@ class RemoteFirebase {
     console.log(error);
   }
 
-  setup(): Promise<void> {
-    return new Promise(async (resolve) => {
-      firebase.fetchDocumentsIn(DataKind.things).then(() => {
-        firebase.fetchDocumentsIn(DataKind.predicates, true).then(() => {
-          firebase.fetchDocumentsIn(DataKind.relationships).then(() => { // fetch these LAST, they depend on fetching all of the above
-            resolve();
-          })
-        })
-      })
-    });
+  async setup() {
+    await firebase.fetchDocumentsIn(DataKind.things);
+    await firebase.fetchDocumentsIn(DataKind.predicates, true)
+    await firebase.fetchDocumentsIn(DataKind.relationships);
   }
     
-  async fetchDocumentsIn(dataKind: DataKind, noBulk: boolean = false): Promise<void> {
-    return new Promise(async (resolve) => {
-      try {
-        const documentsCollection = noBulk ? collection(this.db, dataKind) : collection(this.db, this.collectionName, get(bulkName), dataKind);
+  async fetchDocumentsIn(dataKind: DataKind, noBulk: boolean = false) {
+    try {
+      const documentsCollection = noBulk ? collection(this.db, dataKind) : collection(this.db, this.collectionName, get(bulkName), dataKind);
 
-        ////////////////
-        // data kinds //
-        ////////////////
+      ////////////////
+      // data kinds //
+      ////////////////
 
-        switch (dataKind) {
-          case DataKind.things:        this.thingsCollection = documentsCollection; break;
-          case DataKind.predicates:    this.predicatesCollection = documentsCollection; break;
-          case DataKind.relationships: this.relationshipsCollection = documentsCollection; break;
-        }
-
-        const querySnapshot = await getDocs(documentsCollection);
-        this.rememberAllOf(dataKind, querySnapshot);
-        this.handleRemoteChanges(dataKind, documentsCollection);
-      } catch (error) {
-        this.reportError(error);
+      switch (dataKind) {
+        case DataKind.things:        this.thingsCollection = documentsCollection; break;
+        case DataKind.predicates:    this.predicatesCollection = documentsCollection; break;
+        case DataKind.relationships: this.relationshipsCollection = documentsCollection; break;
       }
-      resolve();
-    })
+
+      const querySnapshot = await getDocs(documentsCollection);
+      const docs = querySnapshot.docs;
+
+      // console.log('fetched', dataKind, docs.length);
+
+      for (const documentSnapshot of docs) {
+        const data = documentSnapshot.data();
+        const id = documentSnapshot.id;
+
+        console.log('fetched', dataKind, id);
+
+        await this.rememberValidatedDocument(dataKind, id, data);
+      }
+      this.handleRemoteChanges(dataKind, documentsCollection);
+    } catch (error) {
+      this.reportError(error);
+    }
+  }
+
+  async rememberValidatedDocument(dataKind: DataKind, id: string, data: DocumentData) {
+    if (RemoteFirebase.isValidOfKind(dataKind, data)) {
+      switch (dataKind) {
+        case DataKind.things:        hierarchy.rememberThing_runtimeCreate(id, data.title, data.color, data.trait, -1, true); break;
+        case DataKind.predicates:    hierarchy.rememberPredicate_runtimeCreate(id, data.kind); break;
+        case DataKind.relationships: await hierarchy.rememberRelationship_remoteCreateNoDuplicate(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
+      }
+    }
   }
 
   static isValidOfKind(dataKind: DataKind, data: DocumentData) {
@@ -83,32 +95,12 @@ class RemoteFirebase {
         break;
       case DataKind.relationships:
         const relationship = data as RemoteRelationship;
-        if (relationship.predicate && relationship.from && relationship.to && relationship.order != null) {
+        if (relationship.predicate && relationship.from && relationship.to && relationship.order >= 0) {
           return true;
         }
         break;
     }
     return false;
-  }
-
-  rememberAllOf(dataKind: DataKind,   querySnapshot: QuerySnapshot) {
-    const documentSnapshots = querySnapshot.docs; // ERROR: for relationships, docs is an empty array
-    for (const documentSnapshot of documentSnapshots) {
-      const data = documentSnapshot.data();
-      if (RemoteFirebase.isValidOfKind(dataKind, data)) {
-        const id = documentSnapshot.id;
-
-        ////////////////
-        // data kinds //
-        ////////////////
-
-        switch (dataKind) {
-          case DataKind.things:        hierarchy.rememberThing_create(id, data.title, data.color, data.trait, -1, true); break;
-          case DataKind.predicates:    hierarchy.rememberPredicate_create(id, data.kind); break;
-          case DataKind.relationships: hierarchy.rememberRelationship_remoteCreate(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote).then(); break;
-        }
-      }
-    }
   }
 
   handleRemoteChanges(dataKind: DataKind, collection: CollectionReference) {
@@ -135,10 +127,13 @@ class RemoteFirebase {
         const relationship = hierarchy.knownR_byID[idChange];
         const remote = new RemoteRelationship(data);
         if (relationship && remote) {
-          const parentID = relationship?.idFrom;
+          const parentID = relationship.idFrom;
           if (change.type === 'added') {
-            hierarchy.rememberRelationship_remoteCreateNoDuplicate(idChange, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote).then();
+            await hierarchy.rememberRelationship_remoteCreateNoDuplicate(idChange, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote)
           } else if (change.type === 'modified') {
+            if (this.isEqualTo(relationship, remote)) {
+              return;
+            }
             this.extractRemoteRelationship(relationship, remote);
           } else if (change.type === 'removed') {
             delete hierarchy.knownR_byID[idChange];
@@ -150,7 +145,7 @@ class RemoteFirebase {
       } else if (dataKind == DataKind.things) {
         const thing = hierarchy.getThing_forID(idChange);
         const parentID = thing?.firstParent?.id;
-        if (thing && parentID != undefined) {
+        if (thing && parentID) {
           if (change.type === 'added') {
           } else if (change.type === 'modified') {
             const remote = new RemoteThing(data);
@@ -170,7 +165,7 @@ class RemoteFirebase {
 
   async thing_remoteCreate(thing: Thing) {
     const collection = this.thingsCollection;
-    if (collection != null) {
+    if (collection) {
       const remoteThing = new RemoteThing(thing);
       const jsThing = { ...remoteThing };
       const ref = await addDoc(collection, jsThing)
@@ -181,7 +176,7 @@ class RemoteFirebase {
 
   async thing_remoteUpdate(thing: Thing) {
     const collection = this.thingsCollection;
-    if (collection != null) {
+    if (collection) {
       const ref = doc(collection, thing.id) as DocumentReference<Thing>;
       const remoteThing = new RemoteThing(thing);
       const jsThing = { ...remoteThing };
@@ -191,7 +186,7 @@ class RemoteFirebase {
 
   async thing_remoteDelete(thing: Thing) {
     const collection = this.thingsCollection;
-    if (collection != null) {
+    if (collection) {
       const ref = doc(collection, thing.id) as DocumentReference<Thing>;
       await deleteDoc(ref);
     }
@@ -209,7 +204,7 @@ class RemoteFirebase {
 
   async relationship_remoteCreate(relationship: Relationship) {
     const collection = this.relationshipsCollection;
-    if (collection != null) {
+    if (collection) {
       const remoteRelationship = new RemoteRelationship(relationship);
       const jsRelationship = { ...remoteRelationship };
       relationship.awaitingCreation = true;
@@ -222,7 +217,7 @@ class RemoteFirebase {
 
   async relationship_remoteUpdate(relationship: Relationship) {
     const collection = this.relationshipsCollection;
-    if (collection != null) {
+    if (collection) {
       const ref = doc(collection, relationship.id) as DocumentReference<RemoteRelationship>;
       const remoteRelationship = new RemoteRelationship(relationship);
       const jsRelationship = { ...remoteRelationship };
@@ -232,18 +227,25 @@ class RemoteFirebase {
 
   async relationship_remoteDelete(relationship: Relationship) {
     const collection = this.relationshipsCollection;
-    if (collection != null) {
+    if (collection) {
       const ref = doc(collection, relationship.id) as DocumentReference<RemoteRelationship>;
       await deleteDoc(ref);
     }
   }
 
-  extractRemoteRelationship = (relationship: Relationship, from: RemoteRelationship) => {
-    const order = from.order - 0.1;
-    relationship.idTo = from.to.id;
+  isEqualTo(relationship: Relationship, remote: RemoteRelationship) {
+    return relationship.idPredicate == remote.predicate.id &&
+    relationship.idFrom == remote.from.id &&
+    // relationship.order == remote.order && // this changes a lot because remote has duplicates with different values of order
+    relationship.idTo == remote.to.id;
+  }
+
+  extractRemoteRelationship(relationship: Relationship, remote: RemoteRelationship) {
+    const order = remote.order - 0.1;
+    relationship.idTo = remote.to.id;
     relationship.order = order;
-    relationship.idFrom = from.from.id;
-    relationship.idPredicate = from.predicate.id;
+    relationship.idFrom = remote.from.id;
+    relationship.idPredicate = remote.predicate.id;
     hierarchy.getThing_forID(relationship.idTo)?.setOrderTo(order);
   }
 

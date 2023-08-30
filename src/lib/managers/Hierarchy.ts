@@ -29,12 +29,14 @@ export default class Hierarchy {
   get rootID(): (string | null) { return this.root?.id ?? null; };
   get things(): Array<Thing> { return Object.values(this.knownT_byID) };
   getThing_forID = (idThing: string | null): Thing | null => { return (!idThing) ? null : this.knownT_byID[idThing]; }
-  thing_createAt = (order: number) => { return new Thing(cloud.newCloudID, constants.defaultTitle, 'blue', 't', order, false); }
+  thing_runtimeCreateAt = (order: number) => { return new Thing(cloud.newCloudID, constants.defaultTitle, 'blue', 't', order, false); }
   getPredicate_forID = (idPredicate: string | null): Predicate | null => { return (!idPredicate) ? null : this.knownP_byID[idPredicate]; }
   
   async constructHierarchy(type: string) {
     const rootID = this.rootID;
-    if (rootID) {
+    if (this.root == null) {
+      alert('no root!');
+    } else if (rootID) {
       for (const thing of this.things) {
         const id = thing.id;
         if (id == rootID) {
@@ -43,25 +45,23 @@ export default class Hierarchy {
           let relationship = this.getRelationship_whereParentIDEquals(id);
           if (relationship) {
             thing.order = relationship.order;
-          } else { // already determined that we do not need assureNotDuplicated, we do need it's id now
-            this.rememberRelationship_remoteCreateNoDuplicate(cloud.newCloudID, Predicate.idIsAParentOf, rootID, id, -1, CreationFlag.getRemoteID)
-              .then((newRelationship) => {
-                relationship = newRelationship;
-              })
+          } else {
+            const idPredicateIsAParentOf = Predicate.idIsAParentOf;
+            
+            // already determined that WE DO NOT NEED NoDuplicate, we do need it's id now
+
+            await this.rememberRelationship_remoteCreate(cloud.newCloudID, idPredicateIsAParentOf, rootID, id, -1, CreationFlag.getRemoteID)
           }
         }
       }
-      this.root?.normalizeOrder_recursive()   // setup order values for all things and relationships
-      const root = hierarchy.root;
+      this.root.normalizeOrder_recursive()   // setup order values for all things and relationships
       cloud.hasDataForDBType[type] = true;
-      if (root) {
-        normalizeOrderOf(root.children)
-        root.grabOnly()
-      }
-      thingsArrived.set(true);
-      isBusy.set(false);
-      this.isConstructed = true;
+      normalizeOrderOf(this.root.children)
+      this.root.grabOnly()
     }
+    thingsArrived.set(true);
+    isBusy.set(false);
+    this.isConstructed = true;
   }
 
   /////////////////////////////
@@ -87,7 +87,7 @@ export default class Hierarchy {
     }
   }
 
-  rememberThing_create(id: string, title: string, color: string, trait: string, order: number, isRemotelyStored: boolean): Thing {
+  rememberThing_runtimeCreate(id: string, title: string, color: string, trait: string, order: number, isRemotelyStored: boolean): Thing {
     const thing = new Thing(id, title, color, trait, order, isRemotelyStored);
     this.rememberThing(thing);
     return thing;
@@ -125,28 +125,18 @@ export default class Hierarchy {
     this.rememberRelationshipByKnown(this.knownRs_byIDTo, relationship.idTo, relationship);
     this.rememberRelationshipByKnown(this.knownRs_byIDFrom, relationship.idFrom, relationship);
     this.rememberRelationshipByKnown(this.knownRs_byIDPredicate, relationship.idPredicate, relationship);
+    console.log('remember', relationship.description);
   }
 
-  rememberRelationship_remoteCreateNoDuplicate(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none): Promise<Relationship> {
-    return new Promise(async (resolve) => {
-      let relationship = this.getRelationship_whereParentIDEquals(idTo);
-      if (relationship == null) {
-        this.rememberRelationship_remoteCreate(idRelationship, idPredicate, idFrom, idTo, order, creationFlag)
-        .then((relationship) => {
-          resolve(relationship);
-        })
-      }
-    })
+  async rememberRelationship_remoteCreateNoDuplicate(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none) {
+    return this.getRelationship_whereParentIDEquals(idTo) ?? await this.rememberRelationship_remoteCreate(idRelationship, idPredicate, idFrom, idTo, order, creationFlag);
   }
 
-  rememberRelationship_remoteCreate(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none): Promise<Relationship> {
-    return new Promise(async (resolve) => {
-      const relationship = new Relationship(idRelationship, idPredicate, idFrom, idTo, order, creationFlag == CreationFlag.isFromRemote);
-      cloud.relationship_remoteWrite(relationship).then(() => {
-        this.rememberRelationship(relationship);
-        resolve(relationship);
-      })
-    })
+  async rememberRelationship_remoteCreate(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none) {
+    const relationship = new Relationship(idRelationship, idPredicate, idFrom, idTo, order, creationFlag == CreationFlag.isFromRemote);
+    await cloud.relationship_remoteWrite(relationship);
+    this.rememberRelationship(relationship);
+    return relationship;
   }
 
   //////////////////////////
@@ -176,7 +166,8 @@ export default class Hierarchy {
   }
 
   getRelationship_whereParentIDEquals(idThing: string) {
-    const matches = this.getRelationships_byIDPredicateToAndID(Predicate.idIsAParentOf, true, idThing);
+    const idPredicateIsAParentOf = Predicate.idIsAParentOf;
+    const matches = this.getRelationships_byIDPredicateToAndID(idPredicateIsAParentOf, true, idThing);
     if (matches.length > 0) {
       return matches[0];
     }
@@ -206,18 +197,18 @@ export default class Hierarchy {
     this.knownP_byID[predicate.id] = predicate;
   }
 
-  rememberPredicate_create(id: string, kind: string) {
+  rememberPredicate_runtimeCreate(id: string, kind: string) {
     const predicate = new Predicate(id, kind);
     this.rememberPredicate(predicate)
   }
 
-  access_create(id: string, kind: string) {
+  access_runtimeCreate(id: string, kind: string) {
     const access = new Access(id, kind);
     this.knownA_byKind[kind] = access;
     this.knownA_byID[id] = access;
   }
 
-  user_create(id: string, name: string, email: string, phone: string) {
+  user_runtimeCreate(id: string, name: string, email: string, phone: string) {
     const user = new User(id, name, email, phone);
     this.knownU_byID[id] = user;
   }

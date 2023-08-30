@@ -1,6 +1,6 @@
 export default class RemoteID {
   isRemotelyStored: boolean;
-  needsPush = false;
+  needsWrite = false;
   id: string;
 
   constructor(id: string, isRemotelyStored: boolean) {

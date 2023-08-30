@@ -26,49 +26,38 @@ export default class RemoteAirtable {
 
   constructor() {}
 
-  setup(): Promise<void> {
-    return new Promise(async (resolve) => {
-      this.readAll().then(() => {
-        resolve();
-      });
-    });
+  async setup() {
+    await this.readAll();
   }
 
-  async readAll(): Promise<void> {
-    return new Promise(async (resolve) => {
-      await this.predicates_readAll();
-      await this.relationships_readAll();
-      await this.access_readAll();
-      await this.users_readAll();
-      this.things_readAll().then(() => {
-        resolve();
-      });
-    })
+  async readAll() {
+    await this.predicates_readAll();
+    await this.relationships_readAll();
+    await this.access_readAll();
+    await this.users_readAll();
+    this.things_readAll()
   }
 
   /////////////////////////////
   //         THINGS          //
   /////////////////////////////
 
-  async things_readAll(): Promise<void> {
-    return new Promise(async (resolve) => {
-      hierarchy.knownT_byID = {}; // clear
-      this.things =[];
+  async things_readAll() {
+    hierarchy.knownT_byID = {}; // clear
+    this.things =[];
 
-      try {
-        const records = await this.things_table.select().all()
+    try {
+      const records = await this.things_table.select().all()
 
-        for (const record of records) {
-          const id = record.id;
-          const thing = hierarchy.rememberThing_create(id, record.fields.title as string, record.fields.color as string, record.fields.trait as string, -1, true);
-          this.things.push(thing)
-        }
-        thingsArrived.set(true);
-      } catch (error) {
-        console.log(this.things_errorMessage + ' (things_readAll) ' + error);
+      for (const record of records) {
+        const id = record.id;
+        const thing = hierarchy.rememberThing_runtimeCreate(id, record.fields.title as string, record.fields.color as string, record.fields.trait as string, -1, true);
+        this.things.push(thing)
       }
-      resolve();
-    })
+      thingsArrived.set(true);
+    } catch (error) {
+      console.log(this.things_errorMessage + ' (things_readAll) ' + error);
+    }
   }
 
 
@@ -174,7 +163,7 @@ export default class RemoteAirtable {
       for (const record of records) {
         const id = record.id as string; // do not yet need this
         const kind = record.fields.kind as string;
-        hierarchy.rememberPredicate_create(id, kind);
+        hierarchy.rememberPredicate_runtimeCreate(id, kind);
       }
 
     } catch (error) {
@@ -189,7 +178,7 @@ export default class RemoteAirtable {
       for (const record of records) {
         const id = record.id as string; // do not yet need this
         const kind = record.fields.kind as string;
-        hierarchy.access_create(id, kind);
+        hierarchy.access_runtimeCreate(id, kind);
       }
 
     } catch (error) {
@@ -203,7 +192,7 @@ export default class RemoteAirtable {
 
       for (const record of records) {
         const id = record.id as string; // do not yet need this
-        hierarchy.user_create(id, record.fields.name as string, record.fields.email as string, record.fields.phone as string);
+        hierarchy.user_runtimeCreate(id, record.fields.name as string, record.fields.email as string, record.fields.phone as string);
       }
 
     } catch (error) {

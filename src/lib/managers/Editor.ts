@@ -12,7 +12,7 @@ export default class Editor {
 
   constructor() {
     hereID.subscribe((id: string | null) => {
-      this.here = hierarchy.getThing_forID(id); 
+      this.here = hierarchy.getThing_forID(id);
     })
   }
 
@@ -20,28 +20,27 @@ export default class Editor {
   //         ADD          //
   //////////////////////////
 
-  thing_redraw_remoteDuplicate = async (thing: Thing) => {
-    const sibling = hierarchy.thing_createAt(thing.order + 0.1);
+  async thing_redraw_remoteDuplicate(thing: Thing) {
+    const sibling = hierarchy.thing_runtimeCreateAt(thing.order + 0.1);
     const parent = thing.firstParent ?? hierarchy.root;
     thing.copyInto(sibling);
     sibling.order += 0.1
     this.thing_redraw_remoteAddAsChild(sibling, parent);
   }
 
-  thing_redraw_remoteAddAsChild = async (child: Thing, parent: Thing) => {
+  async thing_redraw_remoteAddAsChild(child: Thing, parent: Thing) {
+    const idPredicateIsAParentOf = Predicate.idIsAParentOf;
     await cloud.thing_remoteCreate(child); // for everything below, need to await child.id fetched from cloud
-    await hierarchy.rememberRelationship_remoteCreate(cloud.newCloudID, Predicate.idIsAParentOf, parent.id, child.id, child.order, CreationFlag.getRemoteID)
-      .then((relationship) => {
-        normalizeOrderOf(parent.children);
-        parent.becomeHere();
-        // child.startEdit(); // TODO: fucking causes app to hang!
-        child.grabOnly();
-        cloud.relationship_remoteCreate(relationship);
-      });
+    const relationship = await hierarchy.rememberRelationship_remoteCreate(cloud.newCloudID, idPredicateIsAParentOf, parent.id, child.id, child.order, CreationFlag.getRemoteID)
+    normalizeOrderOf(parent.children);
+    parent.becomeHere();
+    // child.startEdit(); // TODO: fucking causes app to hang!
+    child.grabOnly();
+    cloud.relationship_remoteCreate(relationship);
   }
 
   thing_redraw_remoteAddChildTo = (parent: Thing) => {
-    const child = hierarchy.thing_createAt(-1);
+    const child = hierarchy.thing_runtimeCreateAt(-1);
     this.thing_redraw_remoteAddAsChild(child, parent);
   }
 
@@ -57,7 +56,7 @@ export default class Editor {
     }
   }
 
-  thing_redraw_remoteRelocateRight = async (thing: Thing, right: boolean) => {
+  async thing_redraw_remoteRelocateRight(thing: Thing, right: boolean) {
     const newParent = right ? thing.nextSibling(false) : thing.grandparent;
     if (newParent) {
       const parent = thing.firstParent;

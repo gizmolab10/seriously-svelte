@@ -6,5 +6,4 @@ export default class Access {
     this.id = id;
     this.kind = kind;
   }
-
 }

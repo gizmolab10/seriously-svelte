@@ -19,25 +19,20 @@ export default class Cloud {
         } else {
           isBusy.set(true);    // also used by Details radio buttons
           thingsArrived.set(false);
-          this.setup(type).then(() => {
-            // this will happen when Local sets dbType !!! too early?
+          (async () => {            // this will happen when Local sets dbType !!! too early?
+            switch (type) {
+              case DBType.airtable: await crud.setup(); break;
+              default:              await firebase.setup(); break;
+            };
             hierarchy.constructHierarchy(type);
-          })
+          })();
+          
         }
       }
     })
   }
 
   get newCloudID(): string { return 'NEW' + removeAll('-', uuid()).slice(10, 24); } // use last, most-unique bytes of uuid
-
-  async setup(dbType: string): Promise<void> {
-    return new Promise(async (resolve) => {
-      switch (dbType) {
-        case DBType.airtable: crud.setup().then(() => { resolve() }); break;
-        default: firebase.setup().then(() => { resolve() }); break;
-      }
-    });
-  }
 
   resetRootFor(dbType: string) {
     switch (dbType) {
@@ -87,17 +82,14 @@ export default class Cloud {
     }
   }
 
-  async relationship_remoteWrite(relationship: Relationship): Promise<void>  {
-    return new Promise(async (resolve) => {
-      if (!relationship.awaitingCreation) {
-        if (relationship.isRemotelyStored) {
-          await cloud.relationship_remoteUpdate(relationship);
-        } else {
-          await cloud.relationship_remoteCreate(relationship);
-        }
-        resolve();
+  async relationship_remoteWrite(relationship: Relationship) {
+    if (!relationship.awaitingCreation) {
+      if (relationship.isRemotelyStored) {
+        await cloud.relationship_remoteUpdate(relationship);
+      } else {
+        await cloud.relationship_remoteCreate(relationship);
       }
-    })
+    }
   }
 
   // callClassMethod<T extends object, K extends keyof T>(

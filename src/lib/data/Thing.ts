@@ -1,4 +1,4 @@
-import { grabs, cloud, hierarchy, normalizeOrderOf, signal, Signals, constants, Predicate, Relationship } from '../common/GlobalImports';
+import { grabs, cloud, hierarchy, signal, Signals, constants, Predicate, normalizeOrderOf } from '../common/GlobalImports';
 import { grabbedIDs, editingID, hereID } from '../managers/State';
 import RemoteID from '../cloud/RemoteID';
 import Airtable from 'airtable';
@@ -15,13 +15,6 @@ export default class Thing extends RemoteID {
   grabAttributes = '';
   hoverAttributes = '';
   borderAttribute = '';
-
-  copyInto = (other: Thing) => {
-    other.title = this.title;
-    other.color = this.color;
-    other.trait = this.trait;
-    other.order = this.order;
-  }
 
   constructor(id = cloud.newCloudID, title = constants.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
     super(id, isRemotelyStored);
@@ -49,6 +42,13 @@ export default class Thing extends RemoteID {
     });
   };
 
+  copyInto = (other: Thing) => {
+    other.title = this.title;
+    other.color = this.color;
+    other.trait = this.trait;
+    other.order = this.order;
+  }
+
   updateColorAttributes = () => {
     const borderStyle = this.isEditing ? 'dashed' : 'solid';
     const border = borderStyle + ' 1px ';
@@ -67,8 +67,8 @@ export default class Thing extends RemoteID {
   get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
   get description():       string { return this.id + ' (\" ' + this.title + '\") '; }
   get hasChildren():      boolean { return this.hasPredicate(false); }
-  get children():    Array<Thing> { return hierarchy.getThings_byIDPredicateToAndID(Predicate.idIsAParentOf, false, this.id); }
-  get parents():     Array<Thing> { return hierarchy.getThings_byIDPredicateToAndID(Predicate.idIsAParentOf,  true, this.id); }
+  get children():    Array<Thing> { const id = Predicate.idIsAParentOf; return hierarchy.getThings_byIDPredicateToAndID(id, false, this.id); }
+  get parents():     Array<Thing> { const id = Predicate.idIsAParentOf; return hierarchy.getThings_byIDPredicateToAndID(id,  true, this.id); }
   get siblings():    Array<Thing> { return this.firstParent?.children ?? []; }
   get grandparent():        Thing { return this.firstParent?.firstParent ?? hierarchy.root; }
   get lastChild():          Thing { return this.children.slice(-1)[0]; }
