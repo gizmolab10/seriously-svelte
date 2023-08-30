@@ -109,7 +109,7 @@ export default class RemoteAirtable {
         const order = record.fields.order as number;
         const froms = record.fields.from as (string[]);
         const predicates = record.fields.predicate as (string[]);
-        hierarchy.rememberRelationship_remoteCreate(id, predicates[0], froms[0], tos[0], order, CreationFlag.isFromRemote);
+        await hierarchy.rememberRelationship_remoteCreate(id, predicates[0], froms[0], tos[0], order, CreationFlag.isFromRemote);
       }
     } catch (error) {
       console.log(this.relationships_errorMessage + error);

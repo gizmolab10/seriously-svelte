@@ -20,12 +20,17 @@ export default class Editor {
   //         ADD          //
   //////////////////////////
 
+  async thing_redraw_remoteAddChildTo(parent: Thing) {
+    const child = hierarchy.thing_runtimeCreateAt(-1);
+    await this.thing_redraw_remoteAddAsChild(child, parent);
+  }
+
   async thing_redraw_remoteDuplicate(thing: Thing) {
     const sibling = hierarchy.thing_runtimeCreateAt(thing.order + 0.1);
     const parent = thing.firstParent ?? hierarchy.root;
     thing.copyInto(sibling);
     sibling.order += 0.1
-    this.thing_redraw_remoteAddAsChild(sibling, parent);
+    await this.thing_redraw_remoteAddAsChild(sibling, parent);
   }
 
   async thing_redraw_remoteAddAsChild(child: Thing, parent: Thing) {
@@ -36,21 +41,16 @@ export default class Editor {
     parent.becomeHere();
     // child.startEdit(); // TODO: fucking causes app to hang!
     child.grabOnly();
-    cloud.relationship_remoteCreate(relationship);
-  }
-
-  thing_redraw_remoteAddChildTo = (parent: Thing) => {
-    const child = hierarchy.thing_runtimeCreateAt(-1);
-    this.thing_redraw_remoteAddAsChild(child, parent);
+    // await cloud.relationship_remoteCreate(relationship);
   }
 
   ///////////////////////////
   //         MOVE          //
   ///////////////////////////
 
-  thing_redraw_remoteMoveRight(thing: Thing, right: boolean, relocate: boolean) {
+  async thing_redraw_remoteMoveRight(thing: Thing, right: boolean, relocate: boolean) {
     if (relocate) {
-      this.thing_redraw_remoteRelocateRight(thing, right);
+      await this.thing_redraw_remoteRelocateRight(thing, right);
     } else {
       thing.redraw_browseRight(right);
     }
@@ -69,7 +69,7 @@ export default class Editor {
       const relationship = hierarchy.getRelationship_whereParentIDEquals(thing.id);
       if (relationship) {
         relationship.idFrom = newParent.id;
-        cloud.relationship_remoteUpdate(relationship);
+        await cloud.relationship_remoteUpdate(relationship);
         thing.setOrderTo(-1);
       }
 

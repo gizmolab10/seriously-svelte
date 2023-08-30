@@ -95,7 +95,7 @@ class RemoteFirebase {
         break;
       case DataKind.relationships:
         const relationship = data as RemoteRelationship;
-        if (relationship.predicate && relationship.from && relationship.to && relationship.order >= 0) {
+        if (relationship.predicate && relationship.from && relationship.to) {
           return true;
         }
         break;

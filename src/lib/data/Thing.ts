@@ -42,14 +42,14 @@ export default class Thing extends RemoteID {
     });
   };
 
-  copyInto = (other: Thing) => {
+  copyInto(other: Thing) {
     other.title = this.title;
     other.color = this.color;
     other.trait = this.trait;
     other.order = this.order;
   }
 
-  updateColorAttributes = () => {
+  updateColorAttributes() {
     const borderStyle = this.isEditing ? 'dashed' : 'solid';
     const border = borderStyle + ' 1px ';
     const grab = border + this.revealColor(false);
@@ -59,7 +59,7 @@ export default class Thing extends RemoteID {
     this.hoverAttributes = hover;
   }
 
-  revealColor = (isReveal: boolean): string => {
+  revealColor(isReveal: boolean): string {
     const flag = this.isGrabbed || this.isEditing || this.isExemplar;
     return (flag != isReveal) ? this.color : constants.backgroundColor;
   }
@@ -86,19 +86,19 @@ export default class Thing extends RemoteID {
     return array;
   }
 
-  hasPredicate = (asParents: boolean): boolean => { return asParents ? this.parents.length > 0 : this.children.length > 0 }
-  startEdit = () => { if (this != hierarchy.root) { editingID.set(this.id); } }
-  toggleGrab = () => { grabs.toggleGrab(this); }
-  grabOnly = () => { grabs.grabOnly(this); }
+  hasPredicate(asParents: boolean): boolean { return asParents ? this.parents.length > 0 : this.children.length > 0 }
+  startEdit() { if (this != hierarchy.root) { editingID.set(this.id); } }
+  toggleGrab() { grabs.toggleGrab(this); }
+  grabOnly() { grabs.grabOnly(this); }
 
-  becomeHere = () => {
+  becomeHere() {
     if (this.hasChildren) {
       hereID.set(this.id);
       signal(Signals.childrenOf, this.id);
     };
   }
 
-  normalizeOrder_recursive = () => {
+  normalizeOrder_recursive() {
     const children = this.children;
     if (children && children.length > 0) {
       normalizeOrderOf(children);
@@ -108,18 +108,18 @@ export default class Thing extends RemoteID {
     }
   }
 
-  setOrderTo = (newOrder: number) => {
+  async setOrderTo(newOrder: number) {
     if (this.order != newOrder) {
       this.order = newOrder;
       const relationship = hierarchy.getRelationship_whereParentIDEquals(this.id);
       if (relationship && (relationship.order != newOrder)) {
         relationship.order = newOrder;
-        cloud.relationship_remoteWrite(relationship);
+        await cloud.relationship_remoteWrite(relationship);
       }
     }
   }
 
-  nextSibling = (increment: boolean): Thing => {
+  nextSibling(increment: boolean): Thing {
     const array = this.siblings;
     const index = array.indexOf(this);
     let siblingIndex = index.increment(increment, array.length)
@@ -129,7 +129,7 @@ export default class Thing extends RemoteID {
     return array[siblingIndex];
   }
 
-  traverse = (applyTo : (thing: Thing) => boolean) : Thing | null => {
+  traverse(applyTo : (thing: Thing) => boolean) : Thing | null {
     if (!applyTo(this)) {
       for (const progeny of this.children) {
         progeny.traverse(applyTo);
@@ -138,7 +138,7 @@ export default class Thing extends RemoteID {
     return this;
   }
 
-  redraw_remoteMoveup = (up: boolean, expand: boolean, relocate: boolean) => {
+  redraw_remoteMoveup(up: boolean, expand: boolean, relocate: boolean) {
     const siblings = this.siblings;
     if (!siblings || siblings.length == 0) {
         this.redraw_browseRight(true, up);
@@ -163,7 +163,7 @@ export default class Thing extends RemoteID {
     }
   }
 
-  redraw_browseRight = (right: boolean, up: boolean = false) => {
+  redraw_browseRight(right: boolean, up: boolean = false) {
     const newGrab = right ? up ? this.lastChild : this.firstChild : this.firstParent;
     const newHere = right ? this : this.grandparent;
     editingID.set(null);
