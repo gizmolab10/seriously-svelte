@@ -28,9 +28,8 @@ export default class Hierarchy {
   get hasNothing(): boolean { return !this.root; }
   get rootID(): (string | null) { return this.root?.id ?? null; };
   get things(): Array<Thing> { return Object.values(this.knownT_byID) };
-  getThing_forID = (idThing: string | null): Thing | null => { return (!idThing) ? null : this.knownT_byID[idThing]; }
-  thing_runtimeCreateAt = (order: number) => { return new Thing(cloud.newCloudID, constants.defaultTitle, 'blue', 't', order, false); }
-  getPredicate_forID = (idPredicate: string | null): Predicate | null => { return (!idPredicate) ? null : this.knownP_byID[idPredicate]; }
+  getThing_forID(idThing: string | null): Thing | null { return (!idThing) ? null : this.knownT_byID[idThing]; }
+  getPredicate_forID(idPredicate: string | null): Predicate | null { return (!idPredicate) ? null : this.knownP_byID[idPredicate]; }
   
   async constructHierarchy(type: string) {
     const rootID = this.rootID;
@@ -87,6 +86,10 @@ export default class Hierarchy {
     }
   }
 
+  thing_runtimeCreateAt(order: number) {
+    return this.rememberThing_runtimeCreate(cloud.newCloudID, constants.defaultTitle, 'blue', 't', order, false);
+  }
+
   rememberThing_runtimeCreate(id: string, title: string, color: string, trait: string, order: number, isRemotelyStored: boolean): Thing {
     const thing = new Thing(id, title, color, trait, order, isRemotelyStored);
     this.rememberThing(thing);
@@ -120,12 +123,14 @@ export default class Hierarchy {
   }
 
   rememberRelationship(relationship: Relationship) {
-    this.knownRs.push(relationship);
-    this.knownR_byID[relationship.id] = relationship;
-    this.rememberRelationshipByKnown(this.knownRs_byIDTo, relationship.idTo, relationship);
-    this.rememberRelationshipByKnown(this.knownRs_byIDFrom, relationship.idFrom, relationship);
-    this.rememberRelationshipByKnown(this.knownRs_byIDPredicate, relationship.idPredicate, relationship);
-    console.log('remember', relationship.description);
+    if (!this.knownR_byID[relationship.id]) {
+      this.knownRs.push(relationship);
+      this.knownR_byID[relationship.id] = relationship;
+      this.rememberRelationshipByKnown(this.knownRs_byIDTo, relationship.idTo, relationship);
+      this.rememberRelationshipByKnown(this.knownRs_byIDFrom, relationship.idFrom, relationship);
+      this.rememberRelationshipByKnown(this.knownRs_byIDPredicate, relationship.idPredicate, relationship);
+      console.log('remember', relationship.description);
+    }
   }
 
   async rememberRelationship_remoteCreateNoDuplicate(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none) {
@@ -136,6 +141,7 @@ export default class Hierarchy {
     const relationship = new Relationship(idRelationship, idPredicate, idFrom, idTo, order, creationFlag == CreationFlag.isFromRemote);
     await cloud.relationship_remoteWrite(relationship);
     this.rememberRelationship(relationship);
+    // console.log('create', relationship.description);
     return relationship;
   }
 
@@ -146,7 +152,7 @@ export default class Hierarchy {
   getThings_forIDs(ids: Array<string>): Array<Thing> {
     const array = Array<Thing>();
     for (const id of ids) {
-      const thing = this.knownT_byID[id];
+      const thing = this.getThing_forID(id);
       if (thing) {
         array.push(thing);
       }
@@ -169,7 +175,9 @@ export default class Hierarchy {
     const idPredicateIsAParentOf = Predicate.idIsAParentOf;
     const matches = this.getRelationships_byIDPredicateToAndID(idPredicateIsAParentOf, true, idThing);
     if (matches.length > 0) {
-      return matches[0];
+      const relationship = matches[0];
+      // console.log('known', relationship.description);
+      return relationship;
     }
     return null;
   }

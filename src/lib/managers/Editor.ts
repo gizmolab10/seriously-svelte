@@ -35,13 +35,15 @@ export default class Editor {
 
   async thing_redraw_remoteAddAsChild(child: Thing, parent: Thing) {
     const idPredicateIsAParentOf = Predicate.idIsAParentOf;
+    const idRelationship = cloud.newCloudID;
     await cloud.thing_remoteCreate(child); // for everything below, need to await child.id fetched from cloud
-    const relationship = await hierarchy.rememberRelationship_remoteCreate(cloud.newCloudID, idPredicateIsAParentOf, parent.id, child.id, child.order, CreationFlag.getRemoteID)
+    hierarchy.rememberThing(child);
+    const relationship = await hierarchy.rememberRelationship_remoteCreate(idRelationship, idPredicateIsAParentOf, parent.id, child.id, child.order, CreationFlag.getRemoteID)
     normalizeOrderOf(parent.children);
     parent.becomeHere();
-    // child.startEdit(); // TODO: fucking causes app to hang!
+    child.startEdit(); // TODO: fucking causes app to hang!
     child.grabOnly();
-    // await cloud.relationship_remoteCreate(relationship);
+    await cloud.relationship_remoteWrite(relationship);
   }
 
   ///////////////////////////
