@@ -147,7 +147,7 @@ export default class Thing extends RemoteID {
       const newIndex = index.increment(!up, siblings.length);
       if (relocate) {
         const wrapped = up ? (index == 0) : (index == siblings.length - 1);
-        const goose = (wrapped ? -1 : 1) * (up ? -1 : 1);
+        const goose = (wrapped == up) ? 0.5 : -0.5;
         const newOrder =  newIndex + goose;
         siblings[index].setOrderTo(newOrder);
         normalizeOrderOf(siblings);

@@ -4,7 +4,8 @@ import { hereID, isBusy, thingsArrived } from './State';
 type KnownRelationships = { [id: string]: Array<Relationship> }
 
 ////////////////////////////////////////
-// creation, tracking and destruction //
+//  create, delete, remember, forget  //
+//          realtime, remote          //
 //    of things and relationships     //
 ////////////////////////////////////////
 
