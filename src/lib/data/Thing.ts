@@ -98,27 +98,29 @@ export default class Thing extends RemoteID {
     };
   }
 
-  normalizeOrder_recursive() {
+  normalizeOrder_recursive(remoteWrite: boolean) {
     const children = this.children;
     if (children && children.length > 0) {
-      normalizeOrderOf(children);
+      normalizeOrderOf(children, remoteWrite);
       for (const child of children) {
-        child.normalizeOrder_recursive();
+        child.normalizeOrder_recursive(remoteWrite);
       }
     }
   }
 
-  async setOrderTo(newOrder: number) {
+  async setOrderTo(newOrder: number, remoteWrite: boolean) {
     if (this.order != newOrder) {
       this.order = newOrder;
       const relationship = hierarchy.getRelationship_whereParentIDEquals(this.id);
       if (relationship && (relationship.order != newOrder)) {
         relationship.order = newOrder;
-        setTimeout(() => {
-          (async () => {
-            await cloud.relationship_remoteWrite(relationship);
-          })();
-        }, 100);
+        if (remoteWrite) {
+          setTimeout(() => {
+            (async () => {
+              await cloud.relationship_remoteWrite(relationship);
+            })();
+          }, 100);
+        }
       }
     }
   }
@@ -151,10 +153,10 @@ export default class Thing extends RemoteID {
       const newIndex = index.increment(!up, siblings.length);
       if (relocate) {
         const wrapped = up ? (index == 0) : (index == siblings.length - 1);
-        const goose = (wrapped == up) ? 0.5 : -0.5;
+        const goose = ((wrapped == up) ? 1 : -1) * constants.orderIncrement;
         const newOrder =  newIndex + goose;
-        siblings[index].setOrderTo(newOrder);
-        normalizeOrderOf(siblings);
+        siblings[index].setOrderTo(newOrder, true);
+        normalizeOrderOf(siblings, true);
         signal(Signals.childrenOf, this.firstParent.id);
       } else {
         const newGrab = siblings[newIndex];

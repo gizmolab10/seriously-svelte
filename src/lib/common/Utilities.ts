@@ -11,13 +11,13 @@ export function sortAccordingToOrder(array: Array<Thing>) {
   return array.sort( (a: Thing, b: Thing) => { return a.order - b.order; });
 }
 
-export function normalizeOrderOf(array: Array<Thing>) {
+export function normalizeOrderOf(array: Array<Thing>, remoteWrite: boolean) {
   // hierarchy.relationships_refreshKnowns(); // order is stored in relationships
   sortAccordingToOrder(array);
   for (let index = 0; index < array.length; index++) {
     const thing = array[index];
     if (thing.order != index) {
-      thing.setOrderTo(index);
+      thing.setOrderTo(index, remoteWrite);
     }
   }
 }

@@ -1,4 +1,4 @@
-import { get, grabs, Thing, cloud, signal, Signals, hierarchy, Predicate, CreationFlag, normalizeOrderOf } from '../common/GlobalImports';
+import { get, grabs, Thing, cloud, signal, Signals, constants, hierarchy, Predicate, CreationFlag, normalizeOrderOf } from '../common/GlobalImports';
 import { hereID, grabbedIDs } from './State';
 
 ///////////////////////////////////////
@@ -26,10 +26,10 @@ export default class Editor {
   }
 
   async thing_redraw_remoteDuplicate(thing: Thing) {
-    const sibling = hierarchy.thing_runtimeCreateAt(thing.order + 0.5);
+    const sibling = hierarchy.thing_runtimeCreateAt(thing.order + constants.orderIncrement);
     const parent = thing.firstParent ?? hierarchy.root;
     thing.copyInto(sibling);
-    sibling.order += 0.5
+    sibling.order += constants.orderIncrement
     await this.thing_redraw_remoteAddAsChild(sibling, parent);
   }
 

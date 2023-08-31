@@ -62,6 +62,7 @@ export default class Cloud {
   }
 
   async relationship_remoteCreate(relationship: Relationship) {
+    relationship.updateWriteDate();
     switch (get(dbType)) {
       case DBType.airtable: await crud.relationship_remoteCreate(relationship); break;
       default: await firebase.relationship_remoteCreate(relationship); break;
@@ -69,6 +70,7 @@ export default class Cloud {
   }
 
   async relationship_remoteUpdate(relationship: Relationship) {
+    relationship.updateWriteDate();
     switch (get(dbType)) {
       case DBType.airtable: await crud.relationship_remoteUpdate(relationship); break;
       default: await firebase.relationship_remoteUpdate(relationship); break;
@@ -84,11 +86,10 @@ export default class Cloud {
 
   async relationship_remoteWrite(relationship: Relationship) {
     if (!relationship.awaitingCreation) {
-      relationship.lastWriteDate = new Date();
       if (relationship.isRemotelyStored) {
-        await cloud.relationship_remoteUpdate(relationship);
+        await this.relationship_remoteUpdate(relationship);
       } else {
-        await cloud.relationship_remoteCreate(relationship);
+        await this.relationship_remoteCreate(relationship);
       }
     }
   }

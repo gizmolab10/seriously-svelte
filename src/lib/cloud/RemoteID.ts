@@ -9,9 +9,11 @@ export default class RemoteID {
     this.id = id;
   }
 
-  get wasJustModified(): boolean {
+  updateWriteDate() { this.lastWriteDate = new Date(); }
+  wasModifiedWithinMS(threshold: number): boolean {
     const now = new Date();
     const duration = now.getTime() - this.lastWriteDate.getTime();
-    return duration < 500;
+    return duration < threshold;
   }
+
 }

@@ -54,9 +54,9 @@ export default class Hierarchy {
           }
         }
       }
-      this.root.normalizeOrder_recursive()   // setup order values for all things and relationships
+      this.root.normalizeOrder_recursive(true)   // setup order values for all things and relationships
       cloud.hasDataForDBType[type] = true;
-      normalizeOrderOf(this.root.children)
+      normalizeOrderOf(this.root.children, true)
       this.root.grabOnly()
     }
     thingsArrived.set(true);
@@ -136,6 +136,11 @@ export default class Hierarchy {
     const thing = new Thing(id, title, color, trait, order, isRemotelyStored);
     this.rememberThing(thing);
     return thing;
+  }
+
+  relationships_refreshKnowns_runtimeRenormalize() {
+    this.relationships_refreshKnowns();
+    // this.root?.normalizeOrder_recursive(false);
   }
 
   ////////////////////////////////////

@@ -21,7 +21,7 @@ class Releases {
       29 : ['August 22, 2023', 'synchronize relocated things'],
       30 : ['August 26, 2023', 'clean construction of relationships'],
       31 : ['August 30, 2023', 'add child, duplicate and delete'],
-      32 : ['August 31, 2023', 'tame wild snapshots'],
+      32 : ['August 31, 2023', 'manage order changes in snapshots'],
     }
   }
 

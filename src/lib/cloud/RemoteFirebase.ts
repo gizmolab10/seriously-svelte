@@ -1,5 +1,5 @@
-import { doc, addDoc, setDoc, deleteDoc, getDocs, collection, onSnapshot, getFirestore, QuerySnapshot, DocumentData, DocumentChange, DocumentReference, CollectionReference } from 'firebase/firestore';
-import { get, Thing, signal, Signals, hierarchy, DataKind, Predicate, Relationship, CreationFlag } from '../common/GlobalImports';
+import { doc, addDoc, setDoc, deleteDoc, getDocs, collection, onSnapshot, getFirestore, DocumentData, DocumentChange, DocumentReference, CollectionReference } from 'firebase/firestore';
+import { get, Thing, signal, Signals, constants, DataKind, hierarchy, Predicate, Relationship, CreationFlag } from '../common/GlobalImports';
 import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
 import { bulkName } from '../managers/State';
@@ -126,23 +126,25 @@ class RemoteFirebase {
             case 'added':
               if (!relationship) {
                 await hierarchy.rememberRelationship_remoteCreateNoDuplicate(id, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote);
+                hierarchy.relationships_refreshKnowns_runtimeRenormalize();
               }
               break;
             default:
               if (relationship) {
                 switch (change.type) {
                   case 'modified':
-                    if (relationship.wasJustModified || this.isEqualTo(relationship, remote)) {
-                      return;   // already known and contains no new data
+                    if (relationship.wasModifiedWithinMS(100) || this.isEqualTo(relationship, remote)) {
+                      return;   // already known and contains no new data, or needs to be 'tamed'
                     }
                     this.relationship_extractRemote(relationship, remote);
+                    hierarchy.relationships_refreshKnowns_runtimeRenormalize();
+                    relationship.thingTo_updateOrder(false);
                     break;
                   case 'removed': 
                     delete hierarchy.knownR_byID[id];
+                    hierarchy.relationships_refreshKnowns_runtimeRenormalize();
                     break;
-                }
-                hierarchy.relationships_refreshKnowns();
-                hierarchy.root?.normalizeOrder_recursive();
+                    }
                 signal(Signals.childrenOf, relationship.idFrom);
               }
               break;
@@ -260,12 +262,11 @@ class RemoteFirebase {
   }
 
   relationship_extractRemote(relationship: Relationship, remote: RemoteRelationship) {
-    const order = remote.order - 0.1;
+    const order = remote.order - constants.orderIncrement;
     relationship.idTo = remote.to.id;
     relationship.order = order;
     relationship.idFrom = remote.from.id;
     relationship.idPredicate = remote.predicate.id;
-    hierarchy.getThing_forID(relationship.idTo)?.setOrderTo(order);
     relationship.log('extract');
   }
 

@@ -1,5 +1,5 @@
 <script>
-  import { Thing, Signals, onDestroy, handleSignalOfKind } from '../common/GlobalImports';
+  import { Thing, Signals, onDestroy, normalizeOrderOf, handleSignalOfKind } from '../common/GlobalImports';
   import Widget from './Widget.svelte';
   export let thing = Thing;
   let children = thing.children;
@@ -9,6 +9,7 @@
   const signalHandler = handleSignalOfKind(Signals.childrenOf, (thingID) => {
     const newChildren = thing.children;
     if (thingID == thing.id || children != newChildren) {
+      normalizeOrderOf(newChildren);
       children = newChildren;
       toggleDraw = !toggleDraw;
     }

@@ -43,7 +43,7 @@
 		on:mouseover={widget.style.border=hover}
 		on:mouseout={widget.style.border=border}>
 	<Dot thing={thing} size=15/>
-	<TitleEditor thing={thing}/>
+	&nbsp; {thing.order + 1} <TitleEditor thing={thing}/>
 	{#if thing.hasChildren}
 		<Dot thing={thing} size=15 isReveal={true}/>
 	{/if}
