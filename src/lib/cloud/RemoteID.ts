@@ -12,6 +12,6 @@ export default class RemoteID {
   get wasJustModified(): boolean {
     const now = new Date();
     const duration = now.getTime() - this.lastWriteDate.getTime();
-    return duration < 30000;
+    return duration < 500;
   }
 }

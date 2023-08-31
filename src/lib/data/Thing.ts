@@ -114,7 +114,11 @@ export default class Thing extends RemoteID {
       const relationship = hierarchy.getRelationship_whereParentIDEquals(this.id);
       if (relationship && (relationship.order != newOrder)) {
         relationship.order = newOrder;
-        await cloud.relationship_remoteWrite(relationship);
+        setTimeout(() => {
+          (async () => {
+            await cloud.relationship_remoteWrite(relationship);
+          })
+        }, 100);
       }
     }
   }
