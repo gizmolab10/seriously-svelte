@@ -84,6 +84,7 @@ export default class Cloud {
 
   async relationship_remoteWrite(relationship: Relationship) {
     if (!relationship.awaitingCreation) {
+      relationship.lastWriteDate = new Date();
       if (relationship.isRemotelyStored) {
         await cloud.relationship_remoteUpdate(relationship);
       } else {

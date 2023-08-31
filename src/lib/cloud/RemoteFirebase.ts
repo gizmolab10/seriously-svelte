@@ -132,7 +132,7 @@ class RemoteFirebase {
               if (relationship) {
                 switch (change.type) {
                   case 'modified':
-                    if (this.isEqualTo(relationship, remote)) {
+                    if (relationship.wasJustModified || this.isEqualTo(relationship, remote)) {
                       return;   // already known and contains no new data
                     }
                     this.relationship_extractRemote(relationship, remote);
@@ -266,6 +266,7 @@ class RemoteFirebase {
     relationship.idFrom = remote.from.id;
     relationship.idPredicate = remote.predicate.id;
     hierarchy.getThing_forID(relationship.idTo)?.setOrderTo(order);
+    relationship.log('extract');
   }
 
 }

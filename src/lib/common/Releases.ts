@@ -3,7 +3,7 @@ class Releases {
   notes: { [id: number]: string[] } = {};
 
   constructor() {
-    build.set(31);
+    build.set(32);
     this.notes = {
       10 : ['August 2, 2023', 'refactor Panel into Startup'],
       11 : ['August 8, 2023', 'display build number'],
@@ -21,6 +21,7 @@ class Releases {
       29 : ['August 22, 2023', 'synchronize relocated things'],
       30 : ['August 26, 2023', 'clean construction of relationships'],
       31 : ['August 30, 2023', 'add child, duplicate and delete'],
+      32 : ['August 30, 2023', 'tame out-of-control snapshots'],
     }
   }
 

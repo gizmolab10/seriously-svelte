@@ -103,7 +103,7 @@ export default class Hierarchy {
       this.rememberRelationshipByKnown(this.knownRs_byIDTo, relationship.idTo, relationship);
       this.rememberRelationshipByKnown(this.knownRs_byIDFrom, relationship.idFrom, relationship);
       this.rememberRelationshipByKnown(this.knownRs_byIDPredicate, relationship.idPredicate, relationship);
-      console.log('remember', relationship.description);
+      // console.log('remember', relationship.description);
     }
   }
 

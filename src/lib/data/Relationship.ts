@@ -18,6 +18,7 @@ export class Relationship extends RemoteID {
     this.order = order;
   }
 
+  log(message: string) { console.log(message, this.description); }
   get fields(): Airtable.FieldSet { return { predicate: [this.idPredicate], from: [this.idFrom], to: [this.idTo], order: this.order }; }
   get description(): string { return this.isRemotelyStored + ' ' + this.order + ' ' + this.id + ' '  + hierarchy.getThing_forID(this.idFrom)?.title + ' => ' + hierarchy.getThing_forID(this.idTo)?.title; }
   get isValid(): boolean {
