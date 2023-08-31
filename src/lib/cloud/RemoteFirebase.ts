@@ -119,41 +119,60 @@ class RemoteFirebase {
       ////////////////////
 
       if (dataKind == DataKind.relationships) {
-        const relationship = hierarchy.knownR_byID[id];
         const remote = new RemoteRelationship(data);
-        if (relationship && remote && (change.type == 'removed' || !this.isEqualTo(relationship, remote))) {
-          const parentID = relationship.idFrom;
+        if (remote) {
+          const relationship = hierarchy.knownR_byID[id];
           switch (change.type) {
             case 'added':
-              await hierarchy.rememberRelationship_remoteCreateNoDuplicate(id, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote);
+              if (!relationship) {
+                await hierarchy.rememberRelationship_remoteCreateNoDuplicate(id, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote);
+              }
               break;
-            case 'modified': 
-              this.extractRemoteRelationship(relationship, remote);
-              break;
-            case 'removed': 
-              delete hierarchy.knownR_byID[id];
+            default:
+              if (relationship) {
+                switch (change.type) {
+                  case 'modified':
+                    if (this.isEqualTo(relationship, remote)) {
+                      return;   // already known and contains no new data
+                    }
+                    this.relationship_extractRemote(relationship, remote);
+                    break;
+                  case 'removed': 
+                    delete hierarchy.knownR_byID[id];
+                    break;
+                }
+                hierarchy.relationships_refreshKnowns();
+                hierarchy.root?.normalizeOrder_recursive();
+                signal(Signals.childrenOf, relationship.idFrom);
+              }
               break;
           }
-          hierarchy.relationships_refreshKnowns();
-          hierarchy.root?.normalizeOrder_recursive();
-          signal(Signals.childrenOf, parentID);
         }
       } else if (dataKind == DataKind.things) {
+        const remote = new RemoteThing(data);
         const thing = hierarchy.getThing_forID(id);
-        const parentID = thing?.firstParent?.id;
-        if (thing && parentID) {
+        if (remote) {
           switch (change.type) {
-            case 'added': 
+            case 'added':
+              if (!thing) {
+                hierarchy.rememberThing_runtimeCreate(id, remote.title, remote.color, remote.trait, -1, true);
+              }
               break;
-            case 'modified':
-              const remote = new RemoteThing(data);
-              this.copyThing(thing, remote);
-              break;
-            case 'removed': 
-              delete hierarchy.knownT_byID[id];
+            default:
+              const parentID = thing?.firstParent?.id;
+              if (thing && parentID) {
+                switch (change.type) {
+                  case 'modified':
+                    this.thing_extractRemote(thing, remote);
+                    break;
+                  case 'removed': 
+                    delete hierarchy.knownT_byID[id];
+                    break;
+                }
+                signal(Signals.childrenOf, parentID);
+              }
               break;
           }
-          signal(Signals.childrenOf, parentID);
         }
       }
     }
@@ -192,7 +211,7 @@ class RemoteFirebase {
     }
   }
 
-  copyThing = (thing: Thing, from: RemoteThing) => {
+  thing_extractRemote = (thing: Thing, from: RemoteThing) => {
     thing.title = from.title;
     thing.trait = from.trait;
     thing.color = from.color;
@@ -236,11 +255,11 @@ class RemoteFirebase {
   isEqualTo(relationship: Relationship, remote: RemoteRelationship) {
     return relationship.idPredicate == remote.predicate.id &&
     relationship.idFrom == remote.from.id &&
-    // relationship.order == remote.order && // this changes a lot because remote has duplicates with different values of order
+    relationship.order == remote.order &&
     relationship.idTo == remote.to.id;
   }
 
-  extractRemoteRelationship(relationship: Relationship, remote: RemoteRelationship) {
+  relationship_extractRemote(relationship: Relationship, remote: RemoteRelationship) {
     const order = remote.order - 0.1;
     relationship.idTo = remote.to.id;
     relationship.order = order;
