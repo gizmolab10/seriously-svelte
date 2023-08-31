@@ -1,5 +1,5 @@
-import { User, Thing, cloud, Access, remove, constants, Predicate, Relationship, CreationFlag, normalizeOrderOf, sortAccordingToOrder } from '../common/GlobalImports';
-import { hereID, isBusy, thingsArrived } from './State';
+import { get, User, Thing, cloud, Access, remove, constants, Predicate, Relationship, CreationFlag, normalizeOrderOf, sortAccordingToOrder } from '../common/GlobalImports';
+import { hereID, isBusy, grabbedIDs, thingsArrived } from './State';
 
 type KnownRelationships = { [id: string]: Array<Relationship> }
 
@@ -160,6 +160,23 @@ export default class Hierarchy {
     this.relationships_clearKnowns();
     for (const relationship of saved) {
       this.rememberRelationship(relationship);
+    }
+  }
+
+  relationships_accomodateRelocations(original: Relationship, relationship: Relationship) {
+    const idHere = get(hereID);
+    const ids = get(grabbedIDs);
+    const idChild = relationship.idTo;
+    const idOriginal = original.idFrom;
+    const idParent = relationship.idFrom;
+    const parent = hierarchy.getThing_forID(idParent);
+    const oParent = hierarchy.getThing_forID(idOriginal);
+    if (idOriginal == idHere && idOriginal != idParent && ids.includes(idChild)) {
+      const child = hierarchy.getThing_forID(idChild);
+      child?.grabOnly(); // update crumbs
+      if (oParent && !oParent.hasChildren) {
+        parent?.becomeHere();
+      }
     }
   }
 

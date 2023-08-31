@@ -21,6 +21,7 @@ export function normalizeOrderOf(array: Array<Thing>, remoteWrite: boolean) {
     }
   }
 }
+
 export function remove<T>(from: Array<T>, item: T): void {
   const index = from.findIndex((element: T) => element === item);
   if (index !== -1) {
@@ -42,6 +43,12 @@ export function apply(startStop: (flag: boolean) => void, callback: () => void):
   startStop(true);
   callback();
   startStop(false);
+}
+
+export function copyObject(obj: any) {
+  const copiedObject = Object.create(Object.getPrototypeOf(obj));
+  Object.assign(copiedObject, obj);
+  return copiedObject;
 }
 
 // export function desaturateBy(color: string, desaturateBy: number, brightenBy: number): string {}

@@ -1,8 +1,8 @@
 import { doc, addDoc, setDoc, deleteDoc, getDocs, collection, onSnapshot, getFirestore, DocumentData, DocumentChange, DocumentReference, CollectionReference } from 'firebase/firestore';
-import { get, Thing, signal, Signals, constants, DataKind, hierarchy, Predicate, Relationship, CreationFlag } from '../common/GlobalImports';
+import { get, Thing, signal, Signals, constants, DataKind, hierarchy, copyObject, Predicate, Relationship, CreationFlag } from '../common/GlobalImports';
 import { getAnalytics } from "firebase/analytics";
-import { initializeApp } from "firebase/app";
 import { bulkName } from '../managers/State';
+import { initializeApp } from "firebase/app";
 
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -64,39 +64,6 @@ class RemoteFirebase {
     }
   }
 
-  static isValidOfKind(dataKind: DataKind, data: DocumentData) {
-    switch (dataKind) {
-      case DataKind.things:     
-        const thing = data as Thing;   
-        if (thing.title && thing.color && thing.trait) {
-          return true;
-        }
-        break;
-      case DataKind.predicates:
-        if (data.kind) {
-          return true;
-        }
-        break;
-      case DataKind.relationships:
-        const relationship = data as RemoteRelationship;
-        if (relationship.predicate && relationship.from && relationship.to) {
-          return true;
-        }
-        break;
-    }
-    return false;
-  }
-
-  async rememberValidatedDocument(dataKind: DataKind, id: string, data: DocumentData) {
-    if (RemoteFirebase.isValidOfKind(dataKind, data)) {
-      switch (dataKind) {
-        case DataKind.things:        hierarchy.rememberThing_runtimeCreate(id, data.title, data.color, data.trait, -1, true); break;
-        case DataKind.predicates:    hierarchy.rememberPredicate_runtimeCreate(id, data.kind); break;
-        case DataKind.relationships: await hierarchy.rememberRelationship_remoteCreateNoDuplicate(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
-      }
-    }
-  }
-
   handleRemoteChanges(dataKind: DataKind, collection: CollectionReference) {
     onSnapshot(collection, (snapshot) => {
       if (hierarchy.isConstructed) {                 // ignore snapshots caused by data written to server
@@ -123,6 +90,7 @@ class RemoteFirebase {
           const remote = new RemoteRelationship(data);
           if (remote) {
             const relationship = hierarchy.knownR_byID[id];
+            const original = copyObject(relationship);
             switch (change.type) {
               case 'added':
                 if (!relationship) {
@@ -145,11 +113,12 @@ class RemoteFirebase {
                       delete hierarchy.knownR_byID[id];
                       hierarchy.relationships_refreshKnowns_runtimeRenormalize();
                       break;
-                      }
-                  signal(Signals.childrenOf, relationship.idFrom);
+                  }
                 }
                 break;
             }
+            hierarchy.relationships_accomodateRelocations(original, relationship);
+            signal(Signals.childrenOf, relationship.idFrom);
           }
         } else if (dataKind == DataKind.things) {
           const remote = new RemoteThing(data);
@@ -296,6 +265,43 @@ class RemoteFirebase {
     relationship.idFrom = remote.from.id;
     relationship.idPredicate = remote.predicate.id;
     // relationship.log('extract');
+  }
+
+  /////////////////////////////////
+  //         VALIDATION          //
+  /////////////////////////////////
+
+  static isValidOfKind(dataKind: DataKind, data: DocumentData) {
+    switch (dataKind) {
+      case DataKind.things:     
+        const thing = data as Thing;   
+        if (thing.title && thing.color && thing.trait) {
+          return true;
+        }
+        break;
+      case DataKind.predicates:
+        if (data.kind) {
+          return true;
+        }
+        break;
+      case DataKind.relationships:
+        const relationship = data as RemoteRelationship;
+        if (relationship.predicate && relationship.from && relationship.to) {
+          return true;
+        }
+        break;
+    }
+    return false;
+  }
+
+  async rememberValidatedDocument(dataKind: DataKind, id: string, data: DocumentData) {
+    if (RemoteFirebase.isValidOfKind(dataKind, data)) {
+      switch (dataKind) {
+        case DataKind.things:        hierarchy.rememberThing_runtimeCreate(id, data.title, data.color, data.trait, -1, true); break;
+        case DataKind.predicates:    hierarchy.rememberPredicate_runtimeCreate(id, data.kind); break;
+        case DataKind.relationships: await hierarchy.rememberRelationship_remoteCreateNoDuplicate(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
+      }
+    }
   }
 
 }
