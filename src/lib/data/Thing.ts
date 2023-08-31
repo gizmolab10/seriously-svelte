@@ -117,7 +117,7 @@ export default class Thing extends RemoteID {
         setTimeout(() => {
           (async () => {
             await cloud.relationship_remoteWrite(relationship);
-          })
+          })();
         }, 100);
       }
     }
