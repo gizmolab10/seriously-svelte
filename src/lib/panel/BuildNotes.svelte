@@ -1,10 +1,10 @@
 <script>
-  import { noop, releases } from '../common/GlobalImports';
+  import { noop, builds } from '../common/GlobalImports';
   import { popupViewID } from '../managers/State';
   import Widget from '../graph/Widget.svelte'
   import { exemplar } from '../data/Exemplar'
   export let size = 20;
-  let notes = Object.entries(releases.notes)
+  let notes = Object.entries(builds.notes).reverse().slice(0, 10)
   
   function handleKeyDown(event) {
     const key = event.key.toLowerCase();
@@ -26,10 +26,10 @@
       on:click={() => { $popupViewID = null; }}>
         ×
       </span>
-    <h2>Seriously Release Notes</h2>
+    <h2>Seriously Build Notes (10 most recent)</h2>
     <table>
       <tr>
-        <th>Release</th>
+        <th>Build</th>
         <th>Date</th>
         <th>Note</th>
       </tr>

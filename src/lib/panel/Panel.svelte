@@ -2,7 +2,7 @@
   import { get, grabs, DBType, ButtonID, hierarchy, local, LocalID, DataKind } from '../common/GlobalImports'
   import { dbType, bulkName, popupViewID, showDetails, thingsArrived } from '../managers/State';
   import CircularButton from '../kit/CircularButton.svelte';
-  import ReleaseNotes from './ReleaseNotes.svelte';
+  import BuildNotes from './BuildNotes.svelte';
   import Graph from '../graph/Graph.svelte';
   import Details from './Details.svelte';
   import Crumbs from './Crumbs.svelte';
@@ -48,8 +48,8 @@
 
   {#if $popupViewID == ButtonID.help}
     <Help size={size}/>
-  {:else if $popupViewID == ButtonID.releaseNotes}
-    <ReleaseNotes/>
+  {:else if $popupViewID == ButtonID.buildNotes}
+    <BuildNotes/>
   {/if}
 </div>
 

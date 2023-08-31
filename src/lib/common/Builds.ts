@@ -1,5 +1,5 @@
 import { build } from '../managers/State';
-class Releases {
+class Builds {
   notes: { [id: number]: string[] } = {};
 
   constructor() {
@@ -27,4 +27,4 @@ class Releases {
 
 }
 
-export const releases = new Releases();
+export const builds = new Builds();

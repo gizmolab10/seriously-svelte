@@ -73,7 +73,7 @@ export default class RemoteAirtable {
       thing.isRemotelyStored = true;
       hierarchy.knownT_byID[id] = thing;
     } catch (error) {
-      console.log(this.things_errorMessage + thing.description + error);
+      thing.log(this.things_errorMessage + error);
     }
   }
 
@@ -81,7 +81,7 @@ export default class RemoteAirtable {
     try {
       await this.things_table.update(thing.id, thing.fields);
     } catch (error) {
-      console.log(this.things_errorMessage + thing.description + error);
+      thing.log(this.things_errorMessage + error);
     }
   }
 
@@ -90,7 +90,7 @@ export default class RemoteAirtable {
       delete hierarchy.knownT_byID[thing.id]; // do first so UX updates quickly
       await this.things_table.destroy(thing.id);
     } catch (error) {
-      console.log(this.things_errorMessage + thing.description + error);
+      thing.log(this.things_errorMessage + error);
     }
   }
 
@@ -129,7 +129,7 @@ export default class RemoteAirtable {
         relationship.isRemotelyStored = true;
         hierarchy.relationships_refreshKnowns();
       } catch (error) {
-        console.log(this.relationships_errorMessage + ' (' + relationship.id + ') ' + error);
+        relationship.log(this.relationships_errorMessage + error);
       }
     }
   }
@@ -138,7 +138,7 @@ export default class RemoteAirtable {
     try {
       this.relationships_table.update(relationship.id, relationship.fields);
     } catch (error) {
-        console.log(this.relationships_errorMessage + ' (' + relationship.id + ') ' + error);
+        relationship.log(this.relationships_errorMessage + error);
     }
   }
 
@@ -148,7 +148,7 @@ export default class RemoteAirtable {
       hierarchy.relationships_refreshKnowns(); // do first so UX updates quickly
       await this.relationships_table.destroy(relationship.id);
     } catch (error) {
-      console.log(this.relationships_errorMessage + ' (' + relationship.id + ') ' + error);
+      relationship.log(this.relationships_errorMessage + error);
     }
   }
 
@@ -167,7 +167,7 @@ export default class RemoteAirtable {
       }
 
     } catch (error) {
-      console.log('Error in predicates:' + error);
+      console.log('Error in Predicates:' + error);
     }
   }
 

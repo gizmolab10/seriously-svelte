@@ -1,5 +1,5 @@
 export enum ButtonID {
-  releaseNotes = 'show release notes',
+  buildNotes = 'show build notes',
   help         = '?',
 }
 

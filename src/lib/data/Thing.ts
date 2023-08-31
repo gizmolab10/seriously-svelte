@@ -64,6 +64,7 @@ export default class Thing extends RemoteID {
     return (flag != isReveal) ? this.color : constants.backgroundColor;
   }
 
+  log(message: string)            { console.log(message, this.description); }
   get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
   get description():       string { return this.id + ' (\" ' + this.title + '\") '; }
   get hasChildren():      boolean { return this.hasPredicate(false); }

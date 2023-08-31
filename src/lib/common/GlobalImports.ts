@@ -10,7 +10,7 @@ import { onMount, onDestroy } from 'svelte';
 import { grabs } from '../managers/Grabs';
 import { constants } from './Constants';
 import { cloud } from '../cloud/Cloud';
-import { releases } from './Releases';
+import { builds } from './Builds';
 import Access from '../data/Access';
 import { get } from 'svelte/store';
 import Thing from '../data/Thing';
@@ -21,7 +21,7 @@ import './Extensions';
 export { get, onMount, onDestroy,
   signal, Signals, handleSignalOfKind,
   grabs, cloud, hierarchy, editor, local,
-  constants, releases, Direction, FatTriangle,
+  constants, builds, Direction, FatTriangle,
   User, Thing, Access, Predicate, Relationship,
   DBType, BulkID, ButtonID, DataKind, LocalID, CreationFlag,
   log, noop, apply, remove, removeAll, desaturateBy, normalizeOrderOf, sortAccordingToOrder };

@@ -10,8 +10,8 @@
     { id: DBType.airtable, label: 'airtable', func: () => { handleDBTypeAt(1); } }
   ];
 
-  function handleReleasesClick(event) {
-    $popupViewID = ButtonID.releaseNotes;
+  function handleBuildsClick(event) {
+    $popupViewID = ButtonID.buildNotes;
   }
 
   function handleDBTypeAt(index) {
@@ -29,7 +29,7 @@
   <div class="modal-content">
     <LabelButton
       title='build {$build}'
-      onClick={handleReleasesClick}/>
+      onClick={handleBuildsClick}/>
       <p></p>
     {#if $debug}
       <RadioButtons menuItems={menuItems} selectedID={$dbType}/>

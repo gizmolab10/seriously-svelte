@@ -118,64 +118,68 @@ class RemoteFirebase {
       //  change types  //
       ////////////////////
 
-      if (dataKind == DataKind.relationships) {
-        const remote = new RemoteRelationship(data);
-        if (remote) {
-          const relationship = hierarchy.knownR_byID[id];
-          switch (change.type) {
-            case 'added':
-              if (!relationship) {
-                await hierarchy.rememberRelationship_remoteCreateNoDuplicate(id, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote);
-                hierarchy.relationships_refreshKnowns_runtimeRenormalize();
-              }
-              break;
-            default:
-              if (relationship) {
-                switch (change.type) {
-                  case 'modified':
-                    if (relationship.wasModifiedWithinMS(100) || this.isEqualTo(relationship, remote)) {
-                      return;   // already known and contains no new data, or needs to be 'tamed'
-                    }
-                    this.relationship_extractRemote(relationship, remote);
-                    hierarchy.relationships_refreshKnowns_runtimeRenormalize();
-                    relationship.thingTo_updateOrder(false);
-                    break;
-                  case 'removed': 
-                    delete hierarchy.knownR_byID[id];
-                    hierarchy.relationships_refreshKnowns_runtimeRenormalize();
-                    break;
-                    }
-                signal(Signals.childrenOf, relationship.idFrom);
-              }
-              break;
-          }
-        }
-      } else if (dataKind == DataKind.things) {
-        const remote = new RemoteThing(data);
-        const thing = hierarchy.getThing_forID(id);
-        if (remote) {
-          switch (change.type) {
-            case 'added':
-              if (!thing) {
-                hierarchy.rememberThing_runtimeCreate(id, remote.title, remote.color, remote.trait, -1, true);
-              }
-              break;
-            default:
-              const parentID = thing?.firstParent?.id;
-              if (thing && parentID) {
-                switch (change.type) {
-                  case 'modified':
-                    this.thing_extractRemote(thing, remote);
-                    break;
-                  case 'removed': 
-                    delete hierarchy.knownT_byID[id];
-                    break;
+      try {
+        if (dataKind == DataKind.relationships) {
+          const remote = new RemoteRelationship(data);
+          if (remote) {
+            const relationship = hierarchy.knownR_byID[id];
+            switch (change.type) {
+              case 'added':
+                if (!relationship) {
+                  await hierarchy.rememberRelationship_remoteCreateNoDuplicate(id, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote);
+                  hierarchy.relationships_refreshKnowns_runtimeRenormalize();
                 }
-                signal(Signals.childrenOf, parentID);
-              }
-              break;
+                break;
+              default:
+                if (relationship) {
+                  switch (change.type) {
+                    case 'modified':
+                      if (relationship.wasModifiedWithinMS(100) || this.isEqualTo(relationship, remote)) {
+                        return;   // already known and contains no new data, or needs to be 'tamed'
+                      }
+                      this.relationship_extractRemote(relationship, remote);
+                      hierarchy.relationships_refreshKnowns_runtimeRenormalize();
+                      relationship.thingTo_updateOrder(false);
+                      break;
+                    case 'removed': 
+                      delete hierarchy.knownR_byID[id];
+                      hierarchy.relationships_refreshKnowns_runtimeRenormalize();
+                      break;
+                      }
+                  signal(Signals.childrenOf, relationship.idFrom);
+                }
+                break;
+            }
+          }
+        } else if (dataKind == DataKind.things) {
+          const remote = new RemoteThing(data);
+          const thing = hierarchy.getThing_forID(id);
+          if (remote) {
+            switch (change.type) {
+              case 'added':
+                if (!thing) {
+                  hierarchy.rememberThing_runtimeCreate(id, remote.title, remote.color, remote.trait, -1, true);
+                }
+                break;
+              default:
+                const parentID = thing?.firstParent?.id;
+                if (thing && parentID) {
+                  switch (change.type) {
+                    case 'modified':
+                      this.thing_extractRemote(thing, remote);
+                      break;
+                    case 'removed': 
+                      delete hierarchy.knownT_byID[id];
+                      break;
+                  }
+                  signal(Signals.childrenOf, parentID);
+                }
+                break;
+            }
           }
         }
+      } catch (error) {
+        this.reportError(error);
       }
     }
   }
@@ -189,9 +193,13 @@ class RemoteFirebase {
     if (collection) {
       const remoteThing = new RemoteThing(thing);
       const jsThing = { ...remoteThing };
-      const ref = await addDoc(collection, jsThing)
-      thing.isRemotelyStored = true;
-      thing.id = ref.id;      // so relationship will be correct
+      try {
+        const ref = await addDoc(collection, jsThing)
+        thing.isRemotelyStored = true;
+        thing.id = ref.id;      // so relationship will be correct
+      } catch (error) {
+        this.reportError(error);
+      }
     }
   }
 
@@ -201,15 +209,23 @@ class RemoteFirebase {
       const ref = doc(collection, thing.id) as DocumentReference<Thing>;
       const remoteThing = new RemoteThing(thing);
       const jsThing = { ...remoteThing };
-      await setDoc(ref, jsThing);
+      try {
+        await setDoc(ref, jsThing);
+      } catch (error) {
+        this.reportError(error);
+      }
     }
   }
 
   async thing_remoteDelete(thing: Thing) {
     const collection = this.thingsCollection;
     if (collection) {
-      const ref = doc(collection, thing.id) as DocumentReference<Thing>;
-      await deleteDoc(ref);
+      try {
+        const ref = doc(collection, thing.id) as DocumentReference<Thing>;
+        await deleteDoc(ref);
+      } catch (error) {
+        this.reportError(error);
+      }
     }
   }
 
@@ -229,28 +245,40 @@ class RemoteFirebase {
       const remoteRelationship = new RemoteRelationship(relationship);
       const jsRelationship = { ...remoteRelationship };
       relationship.awaitingCreation = true;
-      const ref = await addDoc(collection, jsRelationship); // works!
-      relationship.awaitingCreation = false;
-      relationship.isRemotelyStored = true;
-      relationship.id = ref.id;
+      try {
+        const ref = await addDoc(collection, jsRelationship); // works!
+        relationship.awaitingCreation = false;
+        relationship.isRemotelyStored = true;
+        relationship.id = ref.id;
+      } catch (error) {
+        this.reportError(error);
+      }
     }
   }
 
   async relationship_remoteUpdate(relationship: Relationship) {
     const collection = this.relationshipsCollection;
     if (collection) {
-      const ref = doc(collection, relationship.id) as DocumentReference<RemoteRelationship>;
-      const remoteRelationship = new RemoteRelationship(relationship);
-      const jsRelationship = { ...remoteRelationship };
-      await setDoc(ref, jsRelationship);
+      try {
+        const ref = doc(collection, relationship.id) as DocumentReference<RemoteRelationship>;
+        const remoteRelationship = new RemoteRelationship(relationship);
+        const jsRelationship = { ...remoteRelationship };
+        await setDoc(ref, jsRelationship);
+      } catch (error) {
+        this.reportError(error);
+      }
     }
   }
 
   async relationship_remoteDelete(relationship: Relationship) {
     const collection = this.relationshipsCollection;
     if (collection) {
-      const ref = doc(collection, relationship.id) as DocumentReference<RemoteRelationship>;
-      await deleteDoc(ref);
+      try {
+        const ref = doc(collection, relationship.id) as DocumentReference<RemoteRelationship>;
+        await deleteDoc(ref);
+      } catch (error) {
+        this.reportError(error);
+      }
     }
   }
 
@@ -267,7 +295,7 @@ class RemoteFirebase {
     relationship.order = order;
     relationship.idFrom = remote.from.id;
     relationship.idPredicate = remote.predicate.id;
-    relationship.log('extract');
+    // relationship.log('extract');
   }
 
 }
@@ -318,7 +346,7 @@ class RemoteRelationship implements RemoteRelationship {
           }
         }
       } catch (error) {
-        console.log(error);
+        firebase.reportError(error);
       }
     }
   }
