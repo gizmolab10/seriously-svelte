@@ -1,8 +1,8 @@
 import { get, Thing, DBType, removeAll, hierarchy, Relationship } from '../common/GlobalImports';
 import { dbType, isBusy, thingsArrived } from '../managers/State';
 import { firebase } from './RemoteFirebase';
-import { v4 as uuid } from 'uuid';
 import { crud } from './RemoteAirtable';
+import { v4 as uuid } from 'uuid';
 
 ////////////////////////////////////////////////
 // abstraction layer: hides CRUD and firebase //
@@ -10,6 +10,7 @@ import { crud } from './RemoteAirtable';
 
 export default class Cloud {
   hasDataForDBType: { [type: string]: boolean } = {};
+  hasCloud = true;
 
   constructor() {
     dbType.subscribe((type: string) => {

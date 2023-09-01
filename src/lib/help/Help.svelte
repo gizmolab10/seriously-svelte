@@ -1,8 +1,7 @@
 <script>
-  import { noop, onMount } from '../common/GlobalImports';
   import { popupViewID } from '../managers/State';
+  import { noop } from '../common/GlobalImports';
   import HelpButtons from './HelpButtons.svelte';
-  let showComponentC = false;
   export let size = 20;
   
   function handleKeyDown(event) {
@@ -11,18 +10,6 @@
       case 'escape': $popupViewID = null; break;
     }
   }
-
-  const toggleComponentC = () => {
-    showComponentC = !showComponentC;
-  };
-
-  let componentC;
-
-  onMount(() => {
-    import('./Dots.svelte').then(module => {
-      componentC = module.default;
-    });
-  });
 </script>
 
 <svelte:document on:keydown={handleKeyDown} />
