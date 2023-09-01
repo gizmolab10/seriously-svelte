@@ -26,12 +26,14 @@ class RemoteFirebase {
   relationshipsCollection: CollectionReference | null = null;
   predicatesCollection: CollectionReference | null = null;
   thingsCollection: CollectionReference | null = null;
+  things: Thing[] = [];
 
   reportError(error: any) {
     console.log(error);
   }
 
   async setup() {
+    this.things =[];
     await firebase.fetchDocumentsIn(DataKind.things);
     await firebase.fetchDocumentsIn(DataKind.predicates, true)
     await firebase.fetchDocumentsIn(DataKind.relationships);
@@ -129,7 +131,7 @@ class RemoteFirebase {
             switch (change.type) {
               case 'added':
                 if (!thing) {
-                  hierarchy.rememberThing_runtimeCreate(id, remote.title, remote.color, remote.trait, -1, true);
+                  this.things.push(hierarchy.rememberThing_runtimeCreate(id, remote.title, remote.color, remote.trait, -1, true));
                 }
                 break;
               default:
@@ -299,7 +301,7 @@ class RemoteFirebase {
   async rememberValidatedDocument(dataKind: DataKind, id: string, data: DocumentData) {
     if (RemoteFirebase.isValidOfKind(dataKind, data)) {
       switch (dataKind) {
-        case DataKind.things:        hierarchy.rememberThing_runtimeCreate(id, data.title, data.color, data.trait, -1, true); break;
+        case DataKind.things:        this.things.push(hierarchy.rememberThing_runtimeCreate(id, data.title, data.color, data.trait, -1, true)); break;
         case DataKind.predicates:    hierarchy.rememberPredicate_runtimeCreate(id, data.kind); break;
         case DataKind.relationships: await hierarchy.rememberRelationship_remoteCreateNoDuplicate(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
       }

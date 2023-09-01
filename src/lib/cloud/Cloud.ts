@@ -38,6 +38,7 @@ export default class Cloud {
   resetRootFor(dbType: string) {
     switch (dbType) {
       case DBType.airtable: hierarchy.resetRootFrom(crud.things); break;
+      case DBType.firebase: hierarchy.resetRootFrom(firebase.things); break;
     }
   }
 

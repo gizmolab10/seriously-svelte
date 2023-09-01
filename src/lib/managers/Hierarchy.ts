@@ -128,7 +128,7 @@ export default class Hierarchy {
     known[idRelationship] = array;
   }
 
-  thing_runtimeCreateAt(order: number) {
+  rememberThing_runtimeCreateAt(order: number) {
     return this.rememberThing_runtimeCreate(cloud.newCloudID, constants.defaultTitle, 'blue', 't', order, false);
   }
 

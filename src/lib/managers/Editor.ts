@@ -21,12 +21,12 @@ export default class Editor {
   //////////////////////////
 
   async thing_redraw_remoteAddChildTo(parent: Thing) {
-    const child = hierarchy.thing_runtimeCreateAt(-1);
+    const child = hierarchy.rememberThing_runtimeCreateAt(-1);
     await this.thing_redraw_remoteAddAsChild(child, parent);
   }
 
   async thing_redraw_remoteDuplicate(thing: Thing) {
-    const sibling = hierarchy.thing_runtimeCreateAt(thing.order + constants.orderIncrement);
+    const sibling = hierarchy.rememberThing_runtimeCreateAt(thing.order + constants.orderIncrement);
     const parent = thing.firstParent ?? hierarchy.root;
     thing.copyInto(sibling);
     sibling.order += constants.orderIncrement
