@@ -8,7 +8,7 @@ import { initializeApp } from "firebase/app";
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
-class DataFirebase {
+class DBFirebase {
   firebaseConfig = {
     appId: "1:224721814373:web:0c60f394c056ef3decd78c",
     apiKey: "AIzaSyAFy4H3Ej5zfI46fvCJpBfUxmyQco-dx9U",
@@ -79,7 +79,7 @@ class DataFirebase {
   async handleChange(change: DocumentChange, dataKind: DataKind) {
     const doc = change.doc;
     const data = doc.data();
-    if (DataFirebase.isValidOfKind(dataKind, data)) {
+    if (DBFirebase.isValidOfKind(dataKind, data)) {
       const id = doc.id;
 
       ////////////////////
@@ -299,7 +299,7 @@ class DataFirebase {
   }
 
   async rememberValidatedDocument(dataKind: DataKind, id: string, data: DocumentData) {
-    if (DataFirebase.isValidOfKind(dataKind, data)) {
+    if (DBFirebase.isValidOfKind(dataKind, data)) {
       switch (dataKind) {
         case DataKind.things:        this.things.push(hierarchy.rememberThing_runtimeCreate(id, data.title, data.color, data.trait, -1, true)); break;
         case DataKind.predicates:    hierarchy.rememberPredicate_runtimeCreate(id, data.kind); break;
@@ -310,7 +310,7 @@ class DataFirebase {
 
 }
 
-export const dataFirebase = new DataFirebase();
+export const dataFirebase = new DBFirebase();
 
 interface RemoteThing {
   title: string;
@@ -349,7 +349,7 @@ class RemoteRelationship implements RemoteRelationship {
           }
         } else {
           const remote = data as RemoteRelationship;
-          if (DataFirebase.isValidOfKind(DataKind.relationships, data)) {
+          if (DBFirebase.isValidOfKind(DataKind.relationships, data)) {
             this.to = doc(things, remote.to.id) as DocumentReference<Thing>;
             this.from = doc(things, remote.from.id) as DocumentReference<Thing>;
             this.predicate = doc(predicates, remote.predicate.id) as DocumentReference<Predicate>;

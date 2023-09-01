@@ -1,9 +1,9 @@
-import { grabs, cloud, hierarchy, signal, Signals, constants, Predicate, normalizeOrderOf } from '../common/GlobalImports';
+import { grabs, db, hierarchy, signal, Signals, constants, Predicate, normalizeOrderOf } from '../common/GlobalImports';
 import { grabbedIDs, editingID, hereID } from '../managers/State';
-import RemoteID from '../database/RemoteID';
+import Base from './Base';
 import Airtable from 'airtable';
 
-export default class Thing extends RemoteID {
+export default class Thing extends Base {
   title: string;
   color: string;
   trait: string;
@@ -16,7 +16,7 @@ export default class Thing extends RemoteID {
   hoverAttributes = '';
   borderAttribute = '';
 
-  constructor(id = cloud.newCloudID, title = constants.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
+  constructor(id = db.newCloudID, title = constants.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
     super(id, isRemotelyStored);
     this.title = title;
     this.color = color;
@@ -118,7 +118,7 @@ export default class Thing extends RemoteID {
         if (remoteWrite) {
           setTimeout(() => {
             (async () => {
-              await cloud.relationship_remoteWrite(relationship);
+              await db.relationship_remoteWrite(relationship);
             })();
           }, 100);
         }
@@ -157,7 +157,7 @@ export default class Thing extends RemoteID {
         const goose = ((wrapped == up) ? 1 : -1) * constants.orderIncrement;
         const newOrder =  newIndex + goose;
         siblings[index].setOrderTo(newOrder, true);
-        normalizeOrderOf(siblings, true);
+        normalizeOrderOf(siblings);
         signal(Signals.childrenOf, this.firstParent.id);
       } else {
         const newGrab = siblings[newIndex];

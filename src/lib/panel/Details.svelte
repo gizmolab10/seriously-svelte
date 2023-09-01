@@ -6,9 +6,9 @@
   import Label from '../kit/Label.svelte';
 
   const menuItems = [
-    { id: DBType.local,     label: 'no database', action: () => { handleDBTypeAt(0); } },
-    { id: DBType.firebase, label: 'firebase',    action: () => { handleDBTypeAt(1); } },
-    { id: DBType.airtable, label: 'airtable',    action: () => { handleDBTypeAt(2); } }
+    { id: DBType.local,    label: 'built in', action: () => { handleDBTypeAt(0); } },
+    { id: DBType.firebase, label: 'firebase', action: () => { handleDBTypeAt(1); } },
+    { id: DBType.airtable, label: 'airtable', action: () => { handleDBTypeAt(2); } }
   ];
 
   function handleBuildsClick(event) {

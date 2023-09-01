@@ -26,13 +26,13 @@
   };
 
   onMount(() => {
-    import('./Items.svelte').then(module => {
+    import('./HelpItems.svelte').then(module => {
       items = module.default;
     });
-    import('./Browse.svelte').then(module => {
+    import('./HelpBrowse.svelte').then(module => {
       browse = module.default;
     });
-    import('./Dots.svelte').then(module => {
+    import('./HelpDots.svelte').then(module => {
       dots = module.default;
     });
   });

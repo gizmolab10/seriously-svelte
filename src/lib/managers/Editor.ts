@@ -1,4 +1,4 @@
-import { get, grabs, Thing, cloud, signal, Signals, constants, hierarchy, Predicate, CreationFlag, normalizeOrderOf } from '../common/GlobalImports';
+import { get, grabs, Thing, db, signal, Signals, constants, hierarchy, Predicate, CreationFlag, normalizeOrderOf } from '../common/GlobalImports';
 import { hereID, grabbedIDs } from './State';
 
 ///////////////////////////////////////
@@ -35,15 +35,15 @@ export default class Editor {
 
   async thing_redraw_remoteAddAsChild(child: Thing, parent: Thing) {
     const idPredicateIsAParentOf = Predicate.idIsAParentOf;
-    const idRelationship = cloud.newCloudID;
-    await cloud.thing_remoteCreate(child); // for everything below, need to await child.id fetched from cloud
+    const idRelationship = db.newCloudID;
+    await db.thing_remoteCreate(child); // for everything below, need to await child.id fetched from db
     hierarchy.rememberThing(child);
     const relationship = await hierarchy.rememberRelationship_remoteCreate(idRelationship, idPredicateIsAParentOf, parent.id, child.id, child.order, CreationFlag.getRemoteID)
     normalizeOrderOf(parent.children);
     parent.becomeHere();
     child.startEdit();
     child.grabOnly();
-    await cloud.relationship_remoteWrite(relationship);
+    await db.relationship_remoteWrite(relationship);
   }
 
   ///////////////////////////
@@ -71,7 +71,7 @@ export default class Editor {
       const relationship = hierarchy.getRelationship_whereParentIDEquals(thing.id);
       if (relationship) {
         relationship.idFrom = newParent.id;
-        await cloud.relationship_remoteUpdate(relationship);
+        await db.relationship_remoteUpdate(relationship);
         thing.setOrderTo(-1);
       }
 

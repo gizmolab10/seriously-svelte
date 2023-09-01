@@ -8,8 +8,8 @@ import { Predicate } from '../data/Predicate';
 import { editor } from '../managers/Editor';
 import { onMount, onDestroy } from 'svelte';
 import { grabs } from '../managers/Grabs';
-import { data } from '../database/Data';
 import { constants } from './Constants';
+import { db } from '../database/DB';
 import Access from '../data/Access';
 import { get } from 'svelte/store';
 import { builds } from './Builds';
@@ -20,7 +20,7 @@ import './Extensions';
 
 export { get, onMount, onDestroy,
   signal, Signals, handleSignalOfKind,
-  grabs, data as cloud, hierarchy, editor, local,
+  grabs, db, hierarchy, editor, local,
   constants, builds, Direction, FatTriangle,
   User, Thing, Access, Predicate, Relationship,
   DBType, BulkID, ButtonID, DataKind, LocalID, CreationFlag,

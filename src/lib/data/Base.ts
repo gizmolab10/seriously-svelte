@@ -1,4 +1,4 @@
-export default class RemoteID {
+export default class Base {
   isRemotelyStored: boolean;
   lastWriteDate = new Date();
   needsWrite = false;

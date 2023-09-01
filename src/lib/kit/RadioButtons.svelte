@@ -22,7 +22,7 @@
 <div class="popup">
   {#each menuItems as menuItem}
     <label class="menu-item">
-      <input
+      <input class='radio'
         type="radio"
         name="menu"
         value={menuItem.id}
@@ -34,12 +34,16 @@
 </div>
 
 <style>
+  .radio {
+    cursor: pointer;
+  }
   .menu-item {
     position: relative;
-    left: -10px;
+    left: -3px;
     display: flex;
     align-items: center;
     padding: 1px;
+    cursor: pointer;
   }
   .label-text {
     position: relative;

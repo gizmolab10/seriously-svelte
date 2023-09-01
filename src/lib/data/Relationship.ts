@@ -1,8 +1,8 @@
 import { hierarchy } from '../managers/Hierarchy';
-import RemoteID from '../database/RemoteID';
+import Base from './Base';
 import Airtable from 'airtable';
 
-export class Relationship extends RemoteID {
+export class Relationship extends Base {
   awaitingCreation: boolean;
   idTo: string;
   idFrom: string;

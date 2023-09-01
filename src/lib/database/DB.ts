@@ -1,14 +1,14 @@
 import { get, Thing, DBType, removeAll, hierarchy, Relationship } from '../common/GlobalImports';
 import { dbType, isBusy, thingsArrived } from '../managers/State';
-import { dataFirebase } from './DataFirebase';
-import { dataAirtable } from './DataAirtable';
+import { dataFirebase } from './DBFirebase';
+import { dataAirtable } from './DBAirtable';
 import { v4 as uuid } from 'uuid';
 
 ////////////////////////////////////////////////
 // abstraction layer: hides CRUD and firebase //
 ////////////////////////////////////////////////
 
-export default class Data {
+export default class DB {
   hasDataForDBType: { [type: string]: boolean } = {};
 
   constructor() {
@@ -97,4 +97,4 @@ export default class Data {
 
 }
 
-export const data = new Data();
+export const db = new DB();
