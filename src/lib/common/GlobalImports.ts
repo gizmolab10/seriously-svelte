@@ -1,5 +1,3 @@
-import { cloud } from '../cloud/Cloud';
-
 import { log, noop, apply, remove, removeAll, copyObject, desaturateBy, normalizeOrderOf, sortAccordingToOrder } from './Utilities';
 import { DBType, BulkID, ButtonID, DataKind, LocalID, CreationFlag } from './Enumerations';
 import { FatTriangle, Direction } from '../geometry/FatTriangle';
@@ -10,6 +8,7 @@ import { Predicate } from '../data/Predicate';
 import { editor } from '../managers/Editor';
 import { onMount, onDestroy } from 'svelte';
 import { grabs } from '../managers/Grabs';
+import { data } from '../database/Data';
 import { constants } from './Constants';
 import Access from '../data/Access';
 import { get } from 'svelte/store';
@@ -21,7 +20,7 @@ import './Extensions';
 
 export { get, onMount, onDestroy,
   signal, Signals, handleSignalOfKind,
-  grabs, cloud, hierarchy, editor, local,
+  grabs, data as cloud, hierarchy, editor, local,
   constants, builds, Direction, FatTriangle,
   User, Thing, Access, Predicate, Relationship,
   DBType, BulkID, ButtonID, DataKind, LocalID, CreationFlag,

@@ -6,7 +6,7 @@
   import Label from '../kit/Label.svelte';
 
   const menuItems = [
-    { id: DBType.noDB,     label: 'no database', action: () => { handleDBTypeAt(0); } },
+    { id: DBType.local,     label: 'no database', action: () => { handleDBTypeAt(0); } },
     { id: DBType.firebase, label: 'firebase',    action: () => { handleDBTypeAt(1); } },
     { id: DBType.airtable, label: 'airtable',    action: () => { handleDBTypeAt(2); } }
   ];
@@ -18,7 +18,7 @@
   function handleDBTypeAt(index) {
     const type = menuItems[index].id;
     local.writeToKey(LocalID.db, type);
-    if (type != DBType.noDB) {
+    if (type != DBType.local) {
       $isBusy = true;    // show 'loading ...'
     }
     $dbType = type;      // tell components to render the [possibly previously] fetched data

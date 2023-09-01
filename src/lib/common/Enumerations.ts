@@ -4,7 +4,7 @@ export enum ButtonID {
 }
 
 export enum DBType {
-  noDB     = 'noDB',
+  local     = 'local',
   firebase = 'firebase',
   airtable = 'airtable',
 }

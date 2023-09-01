@@ -1,5 +1,5 @@
 import { hierarchy } from '../managers/Hierarchy';
-import RemoteID from '../cloud/RemoteID';
+import RemoteID from '../database/RemoteID';
 import Airtable from 'airtable';
 
 export class Relationship extends RemoteID {

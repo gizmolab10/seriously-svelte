@@ -44,7 +44,7 @@
 <span class='right-side'>
   {#if $isBusy}
     <p>Welcome to Seriously</p>
-    {#if $dbType != DBType.noDB}
+    {#if $dbType != DBType.local}
       <p>(loading your data from {$dbType})</p>
     {/if}
   {:else if !$thingsArrived}

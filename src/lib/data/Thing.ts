@@ -1,6 +1,6 @@
 import { grabs, cloud, hierarchy, signal, Signals, constants, Predicate, normalizeOrderOf } from '../common/GlobalImports';
 import { grabbedIDs, editingID, hereID } from '../managers/State';
-import RemoteID from '../cloud/RemoteID';
+import RemoteID from '../database/RemoteID';
 import Airtable from 'airtable';
 
 export default class Thing extends RemoteID {
