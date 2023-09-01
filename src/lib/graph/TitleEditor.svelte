@@ -1,5 +1,5 @@
 <script lang='ts'>
-  import { Thing, db, editor, signal, Signals, onDestroy } from '../common/GlobalImports';
+  import { Thing, dbDispatch, editor, signal, Signals, onDestroy } from '../common/GlobalImports';
   import { editingID, stoppedEditingID } from '../managers/State';
   import Widget from './Widget.svelte';
   export let thing = Thing;
@@ -65,7 +65,7 @@
         input?.blur();
       }
       if (hasChanges()) {
-        db.thing_remoteUpdate(thing);
+        dbDispatch.thing_remoteUpdate(thing);
         originalTitle = thing.title;    // so hasChanges will be correct
         signal(Signals.childrenOf, thing.firstParent.id); // for crumbs
       }

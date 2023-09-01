@@ -4,9 +4,9 @@ export enum ButtonID {
 }
 
 export enum DBType {
-  local    = 'local',
   firebase = 'firebase',
   airtable = 'airtable',
+  local    = 'local',
 }
 
 export enum BulkID {

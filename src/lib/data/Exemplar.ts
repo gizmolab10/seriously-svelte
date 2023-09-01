@@ -1,9 +1,9 @@
-import { Thing, db } from '../common/GlobalImports'
+import { Thing, dbDispatch } from '../common/GlobalImports'
 
 class Exemplar extends Thing {
 
   constructor() {
-    super(db.newCloudID, 'this item is selected', '#5c920c', '?', 0, true);
+    super(dbDispatch.newCloudID, 'this item is selected', '#5c920c', '?', 0, true);
     this.titlePadding = 21;
     this.isExemplar = true;
   }

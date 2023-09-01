@@ -8,7 +8,7 @@ import { v4 as uuid } from 'uuid';
 // abstraction layer: hides CRUD and firebase //
 ////////////////////////////////////////////////
 
-export default class DB {
+export default class DBDispatch {
   hasDataForDBType: { [type: string]: boolean } = {};
 
   constructor() {
@@ -79,7 +79,7 @@ export default class DB {
   }
 
   async relationship_remoteDelete(relationship: Relationship) {
-    switch (get(dbType)) {
+    switch (get(dbDispatchType)) {
       case DBType.airtable: await dataAirtable.relationship_remoteDelete(relationship); break;
       case DBType.firebase: await dataFirebase.relationship_remoteDelete(relationship); break;
     }
@@ -97,4 +97,4 @@ export default class DB {
 
 }
 
-export const db = new DB();
+export const dbDispatch = new DBDispatch();
