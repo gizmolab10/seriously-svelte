@@ -1,7 +1,7 @@
 <script>
   import { onMount } from '../common/GlobalImports';
-  export let menuItems;
   export let selectedID = null;
+  export let menuItems;
 
 
   onMount( () => {
@@ -14,7 +14,7 @@
     selectedID = id;
     const selectedMenuItem = menuItems.find(menuItem => menuItem.id === selectedID);
     if (selectedMenuItem) {
-      selectedMenuItem.func();
+      selectedMenuItem.action();
     }
   }
 </script>
@@ -36,7 +36,7 @@
 <style>
   .menu-item {
     position: relative;
-    left: -3px;
+    left: -10px;
     display: flex;
     align-items: center;
     padding: 1px;

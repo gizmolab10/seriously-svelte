@@ -23,58 +23,60 @@
   })
 </script>
 
-<div>
-  <span class='left-margin'>
-    <CircularButton
-      image='settings.png'
-      borderColor='white'
-      onClick={handleSettings}/>
-    &nbsp;
-    {#if !$isBusy}
-      <CircularButton x=75
-        onClick={() => {handleClick(ButtonID.help)}}
-        label='?'
-        size={size}/>
-    {/if}
-    {#if $showDetails}
-      <Details/>
-    {/if}
-  </span>
-  <div class="vertical-line"></div>
-
-  {#if $thingsArrived}
-    <div class="horizontal-line"></div>
-      <span class='top'>
-        <Crumbs grab={grabs.grabbedThing}/>
-      </span>
-      {#if $isBusy}
-        <p>Welcome to Seriously</p>
-        <p>(loading your data from {get(dbType)})</p>
-      {:else if !$thingsArrived}
-        <p>Nothing is available.</p>
-      {:else}
-        <div class='graph'>
-          <Graph/>
-        </div>
-      {/if}
+<span class='left-side'>
+  <CircularButton
+    image='settings.png'
+    borderColor='white'
+    onClick={handleSettings}/>
+  &nbsp;
+  {#if !$isBusy}
+    <CircularButton x=75
+      onClick={() => {handleClick(ButtonID.help)}}
+      label='?'
+      size={size}/>
   {/if}
-
+  {#if $showDetails}
+    <Details/>
+  {/if}
+</span>
+<span class='vertical-line'></span>
+<span class='horizontal-line'></span>
+<span class='right-side'>
+  {#if $isBusy}
+    <p>Welcome to Seriously</p>
+    {#if $dbType != DBType.noDB}
+      <p>(loading your data from {$dbType})</p>
+    {/if}
+  {:else if !$thingsArrived}
+    <p>Nothing is available.</p>
+  {:else}
+    <span class='top'>
+      <Crumbs grab={grabs.grabbedThing}/>
+    </span>
+    <span class='graph'>
+      <Graph/>
+    </span>
+  {/if}
   {#if $popupViewID == ButtonID.help}
     <Help size={size}/>
   {:else if $popupViewID == ButtonID.buildNotes}
     <BuildNotes/>
   {/if}
-</div>
+</span>
 
 <style>
   p {
     text-align: center;
     font-size: 3em;
   }
-  div {
+  span {
      cursor: default;
   }
-  .left-margin {
+  .right-side {
+    position: fixed;
+    right: 100px;
+  }
+  .left-side {
     position: fixed;
     width: 100px;
     margin: 1px;
@@ -82,6 +84,7 @@
   .top {
     position: fixed;
     left: 110px;
+    top: 6px;
   }
   .graph {
     position: fixed;

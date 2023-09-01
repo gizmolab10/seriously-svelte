@@ -1,4 +1,3 @@
-// import { cloud } from '../cloud/CloudStub';
 import { cloud } from '../cloud/Cloud';
 
 import { log, noop, apply, remove, removeAll, copyObject, desaturateBy, normalizeOrderOf, sortAccordingToOrder } from './Utilities';

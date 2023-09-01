@@ -81,7 +81,7 @@
   }
 
   function updateInputWidth() {
-    if (input && wrapper) { // wrapper only exists to provide its scroll width
+    if (input && wrapper && thing) { // wrapper only exists to provide its scroll width
       input.style.width = `${(wrapper.scrollWidth * 0.93) + thing.titlePadding - 5}px`;
     }
   }

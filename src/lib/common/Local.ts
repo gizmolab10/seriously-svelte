@@ -15,7 +15,7 @@ class Local {
   }
   
   setup() {
-    this.writeToKey(LocalID.db, DBType.firebase);
+    // this.writeToKey(LocalID.db, DBType.firebase);
     debug.set(this.readFromKey(LocalID.debug) ?? false);
     showDetails.set(this.readFromKey(LocalID.details) ?? false);
     bulkName.set(this.readFromKey(LocalID.bulk) ?? BulkID.public);

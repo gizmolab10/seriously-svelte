@@ -6,8 +6,9 @@
   import Label from '../kit/Label.svelte';
 
   const menuItems = [
-    { id: DBType.firebase, label: 'firebase', func: () => { handleDBTypeAt(0); } },
-    { id: DBType.airtable, label: 'airtable', func: () => { handleDBTypeAt(1); } }
+    { id: DBType.noDB,     label: 'no database', action: () => { handleDBTypeAt(0); } },
+    { id: DBType.firebase, label: 'firebase',    action: () => { handleDBTypeAt(1); } },
+    { id: DBType.airtable, label: 'airtable',    action: () => { handleDBTypeAt(2); } }
   ];
 
   function handleBuildsClick(event) {
@@ -17,10 +18,10 @@
   function handleDBTypeAt(index) {
     const type = menuItems[index].id;
     local.writeToKey(LocalID.db, type);
-    if (type == DBType.airtable) {
+    if (type != DBType.noDB) {
       $isBusy = true;    // show 'loading ...'
     }
-    $dbType = type;    // tell components to render the [possibly previously] fetched data
+    $dbType = type;      // tell components to render the [possibly previously] fetched data
   }
 
 </script>
@@ -30,7 +31,7 @@
     <LabelButton
       title='build {$build}'
       onClick={handleBuildsClick}/>
-      <p></p>
+      <br><br>
     {#if $debug}
       <RadioButtons menuItems={menuItems} selectedID={$dbType}/>
     {:else}
@@ -48,7 +49,7 @@
   }
   .modal-content {
     background-color: #fff;
-    padding: 20px;
+    padding: 15px;
     max-width: 500px;
     position: relative;
     font-size: 0.8em;

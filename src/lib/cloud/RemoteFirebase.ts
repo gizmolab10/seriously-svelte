@@ -90,7 +90,7 @@ class RemoteFirebase {
           const remote = new RemoteRelationship(data);
           if (remote) {
             const relationship = hierarchy.knownR_byID[id];
-            const original = copyObject(relationship);
+            const original = !relationship ? null : copyObject(relationship);
             switch (change.type) {
               case 'added':
                 if (!relationship) {
@@ -117,8 +117,10 @@ class RemoteFirebase {
                 }
                 break;
             }
-            hierarchy.relationships_accomodateRelocations(original, relationship);
-            signal(Signals.childrenOf, relationship.idFrom);
+            if (relationship) {
+              hierarchy.relationships_accomodateRelocations(original, relationship);
+              signal(Signals.childrenOf, relationship.idFrom);
+            }
           }
         } else if (dataKind == DataKind.things) {
           const remote = new RemoteThing(data);
