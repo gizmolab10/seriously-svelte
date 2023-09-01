@@ -6,13 +6,20 @@
   export let onClick = null;
   export let label = null;
   export let image = null;
-  export let size = 20;
+  export let size = 15;
+  export let x = 7;
+  export let y = 7;
 </script>
 
 <span
   on:click={onClick}
   on:keypress={noop()}
   style='
+    position: absolute;
+    left: {x}px;
+    top: {y}px;
+    transform: translate(-50%, -50%);
+
     width: {size}px;
     height: {size}px;
     font-size: {size - 1}px;;
@@ -24,10 +31,11 @@
     display: inline-block;
     text-align: center;
     font-weight: bold;
-    cursor: pointer;'>
-    {#if image}
-      <img src="{image}" alt="circular button" width={size}px height={size}px/>
-    {:else if label}
-      {label}
-    {/if}
+    cursor: pointer;
+  '>
+  {#if image}
+    <img src="{image}" alt="circular button" width={size}px height={size}px/>
+  {:else if label}
+    {label}
+  {/if}
 </span>

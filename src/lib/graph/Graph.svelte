@@ -5,11 +5,9 @@
   let toggleDraw = false;
   let here = Thing;
   let listener;
-	onDestroy( () => {signalHandler.disconnect(); });
 
-	$: {
-    here = hierarchy.getThing_forID($hereID);
-  }
+	$: { here = hierarchy.getThing_forID($hereID); }
+	onDestroy( () => {signalHandler.disconnect(); });
 
   const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
     if (idThing == here.id) {
@@ -47,7 +45,6 @@
       }
     }
   }
-
 </script>
 
 <svelte:document on:keydown={handleKeyDown} />

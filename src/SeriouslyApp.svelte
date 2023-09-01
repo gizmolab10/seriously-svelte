@@ -1,5 +1,5 @@
 <script>
-  import Startup from './lib/panel/Startup.svelte';
+  import Panel from './lib/panel/Panel.svelte';
 </script>
 
-<Startup/>
+<Panel/>

@@ -26,7 +26,8 @@
       </span>
     <h2>Welcome to Seriously</h2>
     <p>Seriously is essentially a hierarchal menu system, to which you can add new items.</p>
-    <br><HelpButtons/>
+    <br>
+    <HelpButtons/>
     <p><b>Please</b> bear in mind that the menu items are my test data. So, when you finish editing things, try to return everything to something close to its original state. <b>Thanks!</b></p>
   </div>
 </div>

@@ -1,6 +1,6 @@
 <script>
-  import { get, grabs, DBType, ButtonID, hierarchy, local, LocalID, DataKind } from '../common/GlobalImports'
-  import { dbType, bulkName, popupViewID, showDetails, thingsArrived } from '../managers/State';
+  import { get, grabs, local, DBType, onMount, LocalID, ButtonID, DataKind, hierarchy } from '../common/GlobalImports'
+  import { dbType, isBusy, bulkName, popupViewID, showDetails, thingsArrived } from '../managers/State';
   import CircularButton from '../kit/CircularButton.svelte';
   import BuildNotes from './BuildNotes.svelte';
   import Graph from '../graph/Graph.svelte';
@@ -17,15 +17,25 @@
     $showDetails = !$showDetails;
     local.writeToKey(LocalID.details, $showDetails);
   }
+
+  onMount(async () => {
+    local.setup();
+  })
 </script>
 
 <div>
   <span class='left-margin'>
     <CircularButton
       image='settings.png'
-      size=15
       borderColor='white'
       onClick={handleSettings}/>
+    &nbsp;
+    {#if !$isBusy}
+      <CircularButton x=75
+        onClick={() => {handleClick(ButtonID.help)}}
+        label='?'
+        size={size}/>
+    {/if}
     {#if $showDetails}
       <Details/>
     {/if}
@@ -36,14 +46,17 @@
     <div class="horizontal-line"></div>
       <span class='top'>
         <Crumbs grab={grabs.grabbedThing}/>
-        <CircularButton
-          onClick={() => {handleClick(ButtonID.help)}}
-          label='?'
-          size={size}/>
       </span>
-      <div class='graph'>
-        <Graph/>
-      </div>
+      {#if $isBusy}
+        <p>Welcome to Seriously</p>
+        <p>(loading your data from {get(dbType)})</p>
+      {:else if !$thingsArrived}
+        <p>Nothing is available.</p>
+      {:else}
+        <div class='graph'>
+          <Graph/>
+        </div>
+      {/if}
   {/if}
 
   {#if $popupViewID == ButtonID.help}
@@ -54,6 +67,10 @@
 </div>
 
 <style>
+  p {
+    text-align: center;
+    font-size: 3em;
+  }
   div {
      cursor: default;
   }
