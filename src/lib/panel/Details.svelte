@@ -1,5 +1,5 @@
 <script>
-  import { DBType, local, LocalID, onMount, ButtonID, hierarchy } from '../common/GlobalImports';
+  import { DBType, local, LocalID, onMount, ButtonID, Hierarchy } from '../common/GlobalImports';
   import { build, debug, dbType, isBusy, popupViewID } from '../managers/State';
   import RadioButtons from '../kit/RadioButtons.svelte'
   import LabelButton from '../kit/LabelButton.svelte';

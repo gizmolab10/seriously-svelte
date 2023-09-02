@@ -1,4 +1,4 @@
-import { get, Thing, hierarchy, sortAccordingToOrder } from "../common/GlobalImports";
+import { get, Thing, dbDispatch, sortAccordingToOrder } from "../common/GlobalImports";
 import { grabbedIDs } from './State';
 
 export default class Grabs {
@@ -9,7 +9,7 @@ export default class Grabs {
       if (ids != undefined) {
         this.grabbed = [];
         for (const id of ids) {
-          const thing = hierarchy.getThing_forID(id)
+          const thing = dbDispatch.db.hierarchy.getThing_forID(id)
           if (thing) {
             this.grabbed.push(thing);
           }
@@ -43,7 +43,7 @@ export default class Grabs {
 
   ungrab = (thing: Thing) => {
     let nextGrabbedID: (string | null) = null;
-    const rootID = hierarchy.rootID;
+    const rootID = dbDispatch.db.hierarchy.rootID;
     grabbedIDs.update((array) => {
       const index = array.indexOf(thing.id);
       if (index != -1) {        // only splice array when item is found
@@ -56,14 +56,14 @@ export default class Grabs {
       return array;
     });
     if (get(grabbedIDs).length == 0) {
-      hierarchy.root?.grabOnly();
+      dbDispatch.db.hierarchy.root?.grabOnly();
     }
   }
 
   furthestGrab(up: boolean) {
     const ids = get(grabbedIDs);
     if (ids) {
-      let grabs = hierarchy.getThings_forIDs(ids);
+      let grabs = dbDispatch.db.hierarchy.getThings_forIDs(ids);
       sortAccordingToOrder(grabs);
       if (up) {
         return grabs[0];
@@ -71,7 +71,7 @@ export default class Grabs {
         return grabs[grabs.length - 1];
       }
     }
-    return hierarchy.root;
+    return dbDispatch.db.hierarchy.root;
   }
 
 }

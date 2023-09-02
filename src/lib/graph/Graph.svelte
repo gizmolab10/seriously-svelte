@@ -1,12 +1,12 @@
 <script>
-  import { grabs, Thing, editor, constants, Signals, onDestroy, Predicate, ButtonID, hierarchy, handleSignalOfKind } from '../common/GlobalImports';
+  import { grabs, Thing, editor, constants, Signals, onDestroy, Predicate, ButtonID, dbDispatch, handleSignalOfKind } from '../common/GlobalImports';
   import { popupViewID, editingID, hereID } from '../managers/State';
   import Children from './Children.svelte'
   let toggleDraw = false;
   let here = Thing;
   let listener;
 
-	$: { here = hierarchy.getThing_forID($hereID); }
+	$: { here = dbDispatch.db.hierarchy.getThing_forID($hereID); }
 	onDestroy( () => {signalHandler.disconnect(); });
 
   const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
@@ -20,7 +20,7 @@
     if ($editingID)      { return; } // let Title component consume the events
     if (event.key == undefined)  { alert('no key for ' + event.type); return; }
     if (!grab) {
-      grab = hierarchy.root;
+      grab = dbDispatch.db.hierarchy.root;
       grab?.becomeHere();
       grab?.grabOnly(); // to update crumbs and dots
     }

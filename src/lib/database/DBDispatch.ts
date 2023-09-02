@@ -1,8 +1,9 @@
-import { DBType, hierarchy, Relationship } from '../common/GlobalImports';
+import { DBType, Hierarchy, Relationship } from '../common/GlobalImports';
 import { dbType, isBusy, thingsArrived } from '../managers/State';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
+import { dbLocal } from './DBLocal';
 
 export default class DBDispatch {
   db: DBInterface;
@@ -19,8 +20,9 @@ export default class DBDispatch {
 
   updateForDBType(type: string) {
     switch (type) {
-      case DBType.airtable: this.db = dbAirtable;
-      case DBType.firebase: this.db = dbFirebase;
+      case DBType.airtable: this.db = dbAirtable; break;
+      case DBType.firebase: this.db = dbFirebase; break;
+      case DBType.local:    this.db = dbLocal;    break;
     }
   }
 
@@ -32,7 +34,7 @@ export default class DBDispatch {
       thingsArrived.set(false);
       (async () => {            // this will happen when Local sets dbType !!! too early?
         await this.db.setup();
-        hierarchy.constructHierarchy(type);
+        this.db.hierarchy.constructHierarchy(type);
       })();
     }
   }

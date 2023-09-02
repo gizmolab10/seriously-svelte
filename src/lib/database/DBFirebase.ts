@@ -1,5 +1,5 @@
 import { doc, addDoc, setDoc, deleteDoc, getDocs, collection, onSnapshot, getFirestore, DocumentData, DocumentChange, DocumentReference, CollectionReference } from 'firebase/firestore';
-import { get, Thing, signal, Signals, constants, DataKind, hierarchy, copyObject, Predicate, Relationship, CreationFlag } from '../common/GlobalImports';
+import { get, Thing, signal, Signals, constants, DataKind, Hierarchy, copyObject, Predicate, Relationship, CreationFlag } from '../common/GlobalImports';
 import { getAnalytics } from "firebase/analytics";
 import { bulkName } from '../managers/State';
 import { initializeApp } from "firebase/app";
@@ -27,11 +27,19 @@ class DBFirebase implements DBInterface {
   relationshipsCollection: CollectionReference | null = null;
   predicatesCollection: CollectionReference | null = null;
   thingsCollection: CollectionReference | null = null;
+  _hierarchy: Hierarchy | null = null;
   things: Thing[] = [];
   hasData = false;
 
   reportError(error: any) { console.log(error); }
-  resetRoot() { hierarchy.resetRootFrom(this.things) }
+  resetRoot() { this.hierarchy.resetRootFrom(this.things) }
+
+  get hierarchy(): Hierarchy { 
+    if (this._hierarchy == null) {
+      this._hierarchy = new Hierarchy();
+    }
+    return this._hierarchy!;
+  }
 
   async setup() {
     this.things =[];
@@ -69,7 +77,7 @@ class DBFirebase implements DBInterface {
 
   handleRemoteChanges(dataKind: DataKind, collection: CollectionReference) {
     onSnapshot(collection, (snapshot) => {
-      if (hierarchy.isConstructed) {                 // ignore snapshots caused by data written to server
+      if (this.hierarchy.isConstructed) {                 // ignore snapshots caused by data written to server
         snapshot.docChanges().forEach((change) => {   // convert and remember
           this.handleChange(change, dataKind);
         });
@@ -92,13 +100,13 @@ class DBFirebase implements DBInterface {
         if (dataKind == DataKind.relationships) {
           const remote = new RemoteRelationship(data);
           if (remote) {
-            const relationship = hierarchy.knownR_byID[id];
+            const relationship = this.hierarchy.knownR_byID[id];
             const original = !relationship ? null : copyObject(relationship);
             switch (change.type) {
               case 'added':
                 if (!relationship) {
-                  await hierarchy.rememberRelationship_remoteCreateNoDuplicate(id, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote);
-                  hierarchy.relationships_refreshKnowns_runtimeRenormalize();
+                  await this.hierarchy.rememberRelationship_remoteCreateNoDuplicate(id, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote);
+                  this.hierarchy.relationships_refreshKnowns_runtimeRenormalize();
                 }
                 break;
               default:
@@ -109,30 +117,30 @@ class DBFirebase implements DBInterface {
                         return;   // already known and contains no new data, or needs to be 'tamed'
                       }
                       this.relationship_extractRemote(relationship, remote);
-                      hierarchy.relationships_refreshKnowns_runtimeRenormalize();
+                      this.hierarchy.relationships_refreshKnowns_runtimeRenormalize();
                       relationship.thingTo_updateOrder(false);
                       break;
                     case 'removed': 
-                      delete hierarchy.knownR_byID[id];
-                      hierarchy.relationships_refreshKnowns_runtimeRenormalize();
+                      delete this.hierarchy.knownR_byID[id];
+                      this.hierarchy.relationships_refreshKnowns_runtimeRenormalize();
                       break;
                   }
                 }
                 break;
             }
             if (relationship) {
-              hierarchy.relationships_accomodateRelocations(original, relationship);
+              this.hierarchy.relationships_accomodateRelocations(original, relationship);
               signal(Signals.childrenOf, relationship.idFrom);
             }
           }
         } else if (dataKind == DataKind.things) {
           const remote = new RemoteThing(data);
-          const thing = hierarchy.getThing_forID(id);
+          const thing = this.hierarchy.getThing_forID(id);
           if (remote) {
             switch (change.type) {
               case 'added':
                 if (!thing) {
-                  this.things.push(hierarchy.rememberThing_runtimeCreate(id, remote.title, remote.color, remote.trait, -1, true));
+                  this.things.push(this.hierarchy.rememberThing_runtimeCreate(id, remote.title, remote.color, remote.trait, -1, true));
                 }
                 break;
               default:
@@ -143,7 +151,7 @@ class DBFirebase implements DBInterface {
                       this.thing_extractRemote(thing, remote);
                       break;
                     case 'removed': 
-                      delete hierarchy.knownT_byID[id];
+                      delete this.hierarchy.knownT_byID[id];
                       break;
                   }
                   signal(Signals.childrenOf, parentID);
@@ -302,9 +310,9 @@ class DBFirebase implements DBInterface {
   async rememberValidatedDocument(dataKind: DataKind, id: string, data: DocumentData) {
     if (DBFirebase.isValidOfKind(dataKind, data)) {
       switch (dataKind) {
-        case DataKind.things:        this.things.push(hierarchy.rememberThing_runtimeCreate(id, data.title, data.color, data.trait, -1, true)); break;
-        case DataKind.predicates:    hierarchy.rememberPredicate_runtimeCreate(id, data.kind); break;
-        case DataKind.relationships: await hierarchy.rememberRelationship_remoteCreateNoDuplicate(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
+        case DataKind.things:        this.things.push(this.hierarchy.rememberThing_runtimeCreate(id, data.title, data.color, data.trait, -1, true)); break;
+        case DataKind.predicates:    this.hierarchy.rememberPredicate_runtimeCreate(id, data.kind); break;
+        case DataKind.relationships: await this.hierarchy.rememberRelationship_remoteCreateNoDuplicate(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
       }
     }
   }

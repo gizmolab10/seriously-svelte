@@ -1,4 +1,4 @@
-import { hierarchy } from '../common/GlobalImports';
+import { dbDispatch } from '../common/GlobalImports';
 
 export class Predicate {
   id: string;
@@ -9,6 +9,6 @@ export class Predicate {
     this.kind = kind;
   }
 
-  static get idIsAParentOf(): string { return hierarchy.knownP_byKind['isAParentOf']?.id ?? 'alert: isAParentOf is unrecognized'; }
+  static get idIsAParentOf(): string { return dbDispatch.db.hierarchy.knownP_byKind['isAParentOf']?.id ?? 'alert: isAParentOf is unrecognized'; }
 
 }

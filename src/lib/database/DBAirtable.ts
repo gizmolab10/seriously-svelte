@@ -1,4 +1,4 @@
-import { Thing, hierarchy, Relationship, CreationFlag } from '../common/GlobalImports';
+import { Thing, Hierarchy, Relationship, CreationFlag } from '../common/GlobalImports';
 import { thingsArrived } from '../managers/State';
 import DBInterface from './DBInterface';
 import Airtable from 'airtable';
@@ -20,15 +20,22 @@ export default class DBAirtable implements DBInterface {
   things_table = this.base('Things');
   access_table = this.base('Access');
   users_table = this.base('Users');
+  _hierarchy: Hierarchy | null = null;
   things: Thing[] = [];
   hasData = false;
 
   relationships_errorMessage = 'Error in Relationships:';
   things_errorMessage = 'Error in Things:';
 
-  constructor() {}
   async setup() { await this.readAll(); }
-  resetRoot() { hierarchy.resetRootFrom(this.things) }
+  resetRoot() { this.hierarchy.resetRootFrom(this.things) }
+
+  get hierarchy(): Hierarchy { 
+    if (this._hierarchy == null) {
+      this._hierarchy = new Hierarchy();
+    }
+    return this._hierarchy!;
+  }
 
   async readAll() {
     await this.predicates_readAll();
@@ -43,7 +50,7 @@ export default class DBAirtable implements DBInterface {
   /////////////////////////////
 
   async things_readAll() {
-    hierarchy.knownT_byID = {}; // clear
+    this.hierarchy.knownT_byID = {}; // clear
     this.things =[];
 
     try {
@@ -51,7 +58,7 @@ export default class DBAirtable implements DBInterface {
 
       for (const record of records) {
         const id = record.id;
-        const thing = hierarchy.rememberThing_runtimeCreate(id, record.fields.title as string, record.fields.color as string, record.fields.trait as string, -1, true);
+        const thing = this.hierarchy.rememberThing_runtimeCreate(id, record.fields.title as string, record.fields.color as string, record.fields.trait as string, -1, true);
         this.things.push(thing)
       }
       thingsArrived.set(true);
@@ -71,7 +78,7 @@ export default class DBAirtable implements DBInterface {
       const id = fields['id']; //  // need for update, delete and knownTs_byID (to get parent from relationship)
       thing.id = id;
       thing.isRemotelyStored = true;
-      hierarchy.knownT_byID[id] = thing;
+      this.hierarchy.knownT_byID[id] = thing;
     } catch (error) {
       thing.log(this.things_errorMessage + error);
     }
@@ -87,7 +94,7 @@ export default class DBAirtable implements DBInterface {
 
   async thing_remoteDelete(thing: Thing) {
     try {
-      delete hierarchy.knownT_byID[thing.id]; // do first so UX updates quickly
+      delete this.hierarchy.knownT_byID[thing.id]; // do first so UX updates quickly
       await this.things_table.destroy(thing.id);
     } catch (error) {
       thing.log(this.things_errorMessage + error);
@@ -99,7 +106,7 @@ export default class DBAirtable implements DBInterface {
   ////////////////////////////////////
 
   async relationships_readAll() {
-    hierarchy.relationships_clearKnowns();
+    this.hierarchy.relationships_clearKnowns();
     try {
       const records = await this.relationships_table.select().all()
 
@@ -109,7 +116,7 @@ export default class DBAirtable implements DBInterface {
         const order = record.fields.order as number;
         const froms = record.fields.from as (string[]);
         const predicates = record.fields.predicate as (string[]);
-        await hierarchy.rememberRelationship_remoteCreate(id, predicates[0], froms[0], tos[0], order, CreationFlag.isFromRemote);
+        await this.hierarchy.rememberRelationship_remoteCreate(id, predicates[0], froms[0], tos[0], order, CreationFlag.isFromRemote);
       }
     } catch (error) {
       console.log(this.relationships_errorMessage + error);
@@ -127,7 +134,7 @@ export default class DBAirtable implements DBInterface {
         const id = fields['id'];                                                     // grab permanent id
         relationship.id = id;
         relationship.isRemotelyStored = true;
-        hierarchy.relationships_refreshKnowns();
+        this.hierarchy.relationships_refreshKnowns();
       } catch (error) {
         relationship.log(this.relationships_errorMessage + error);
       }
@@ -144,8 +151,8 @@ export default class DBAirtable implements DBInterface {
 
   async relationship_remoteDelete(relationship: Relationship) {
     try {
-      hierarchy.knownRs = hierarchy.knownRs.filter((item) => item.id !== relationship.id);
-      hierarchy.relationships_refreshKnowns(); // do first so UX updates quickly
+      this.hierarchy.knownRs = this.hierarchy.knownRs.filter((relationship: Relationship) => relationship.id !== relationship.id);
+      this.hierarchy.relationships_refreshKnowns(); // do first so UX updates quickly
       await this.relationships_table.destroy(relationship.id);
     } catch (error) {
       relationship.log(this.relationships_errorMessage + error);
@@ -163,7 +170,7 @@ export default class DBAirtable implements DBInterface {
       for (const record of records) {
         const id = record.id as string; // do not yet need this
         const kind = record.fields.kind as string;
-        hierarchy.rememberPredicate_runtimeCreate(id, kind);
+        this.hierarchy.rememberPredicate_runtimeCreate(id, kind);
       }
 
     } catch (error) {
@@ -178,7 +185,7 @@ export default class DBAirtable implements DBInterface {
       for (const record of records) {
         const id = record.id as string; // do not yet need this
         const kind = record.fields.kind as string;
-        hierarchy.access_runtimeCreate(id, kind);
+        this.hierarchy.access_runtimeCreate(id, kind);
       }
 
     } catch (error) {
@@ -192,7 +199,7 @@ export default class DBAirtable implements DBInterface {
 
       for (const record of records) {
         const id = record.id as string; // do not yet need this
-        hierarchy.user_runtimeCreate(id, record.fields.name as string, record.fields.email as string, record.fields.phone as string);
+        this.hierarchy.user_runtimeCreate(id, record.fields.name as string, record.fields.email as string, record.fields.phone as string);
       }
 
     } catch (error) {

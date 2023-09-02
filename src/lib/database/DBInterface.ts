@@ -1,6 +1,7 @@
-import { Thing, Relationship } from '../common/GlobalImports';
+import { Thing, Hierarchy, Relationship } from '../common/GlobalImports';
 
 export default interface DBInterface {
+  hierarchy: Hierarchy;
   hasData: boolean;
   resetRoot(): void;
   setup(): Promise<void>;

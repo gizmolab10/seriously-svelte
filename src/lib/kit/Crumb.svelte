@@ -1,9 +1,9 @@
 <script lang='ts'>
-  import { Thing, hierarchy, desaturateBy } from '../common/GlobalImports';
+  import { Thing, Hierarchy, desaturateBy } from '../common/GlobalImports';
   export let thing = Thing;
 
   function handleClick(event) {
-    if (thing == hierarchy.root) {
+    if (thing == dbDispatch.db.hierarchy.root) {
       thing.grabOnly();
       thing.becomeHere();
     } else {

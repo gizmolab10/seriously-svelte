@@ -1,4 +1,4 @@
-import { grabs, Basis, dbDispatch, hierarchy, signal, Signals, constants, Predicate, normalizeOrderOf } from '../common/GlobalImports';
+import { grabs, Basis, dbDispatch, Hierarchy, signal, Signals, constants, Predicate, normalizeOrderOf } from '../common/GlobalImports';
 import { grabbedIDs, editingID, hereID } from '../managers/State';
 import Airtable from 'airtable';
 
@@ -67,10 +67,10 @@ export default class Thing extends Basis {
   get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
   get description():       string { return this.id + ' (\" ' + this.title + '\") '; }
   get hasChildren():      boolean { return this.hasPredicate(false); }
-  get children():    Array<Thing> { const id = Predicate.idIsAParentOf; return hierarchy.getThings_byIDPredicateToAndID(id, false, this.id); }
-  get parents():     Array<Thing> { const id = Predicate.idIsAParentOf; return hierarchy.getThings_byIDPredicateToAndID(id,  true, this.id); }
+  get children():    Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id, false, this.id); }
+  get parents():     Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id,  true, this.id); }
   get siblings():    Array<Thing> { return this.firstParent?.children ?? []; }
-  get grandparent():        Thing { return this.firstParent?.firstParent ?? hierarchy.root; }
+  get grandparent():        Thing { return this.firstParent?.firstParent ?? dbDispatch.db.hierarchy.root; }
   get lastChild():          Thing { return this.children.slice(-1)[0]; }
   get firstChild():         Thing { return this.children[0]; }
   get firstParent():        Thing { return this.parents[0]; }
@@ -87,7 +87,7 @@ export default class Thing extends Basis {
   }
 
   hasPredicate(asParents: boolean): boolean { return asParents ? this.parents.length > 0 : this.children.length > 0 }
-  startEdit() { if (this != hierarchy.root) { editingID.set(this.id); } }
+  startEdit() { if (this != dbDispatch.db.hierarchy.root) { editingID.set(this.id); } }
   toggleGrab() { grabs.toggleGrab(this); }
   grabOnly() { grabs.grabOnly(this); }
 
@@ -111,7 +111,7 @@ export default class Thing extends Basis {
   async setOrderTo(newOrder: number, remoteWrite: boolean) {
     if (this.order != newOrder) {
       this.order = newOrder;
-      const relationship = hierarchy.getRelationship_whereParentIDEquals(this.id);
+      const relationship = dbDispatch.db.hierarchy.getRelationship_whereParentIDEquals(this.id);
       if (relationship && (relationship.order != newOrder)) {
         relationship.order = newOrder;
         if (remoteWrite) {

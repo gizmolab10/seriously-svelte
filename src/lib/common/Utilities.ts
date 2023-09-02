@@ -12,7 +12,7 @@ export function sortAccordingToOrder(array: Array<Thing>) {
 }
 
 export function normalizeOrderOf(array: Array<Thing>, remoteWrite: boolean = true) {
-  // hierarchy.relationships_refreshKnowns(); // order is stored in relationships
+  // dbDispatch.db.hierarchy.relationships_refreshKnowns(); // order is stored in relationships
   sortAccordingToOrder(array);
   for (let index = 0; index < array.length; index++) {
     const thing = array[index];

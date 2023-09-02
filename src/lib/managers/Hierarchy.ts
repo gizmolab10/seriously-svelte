@@ -24,8 +24,6 @@ export default class Hierarchy {
   root: Thing | null = null;
   isConstructed = false;
 
-  constructor() {}
-
   get hasNothing(): boolean { return !this.root; }
   get rootID(): (string | null) { return this.root?.id ?? null; };
   get things(): Array<Thing> { return Object.values(this.knownT_byID) };
@@ -169,10 +167,10 @@ export default class Hierarchy {
     const idChild = relationship.idTo;
     const idOriginal = original.idFrom;
     const idParent = relationship.idFrom;
-    const parent = hierarchy.getThing_forID(idParent);
-    const oParent = hierarchy.getThing_forID(idOriginal);
+    const parent = dbDispatch.db.hierarchy.getThing_forID(idParent);
+    const oParent = dbDispatch.db.hierarchy.getThing_forID(idOriginal);
     if (idOriginal == idHere && idOriginal != idParent && ids.includes(idChild)) {
-      const child = hierarchy.getThing_forID(idChild);
+      const child = dbDispatch.db.hierarchy.getThing_forID(idChild);
       child?.grabOnly(); // update crumbs
       if (oParent && !oParent.hasChildren) {
         parent?.becomeHere();
@@ -279,5 +277,3 @@ export default class Hierarchy {
   }
 
 }
-
-export const hierarchy = new Hierarchy();

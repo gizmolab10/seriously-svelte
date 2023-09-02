@@ -1,5 +1,5 @@
 <script>
-  import { get, grabs, local, DBType, onMount, LocalID, ButtonID, DataKind, hierarchy } from '../common/GlobalImports'
+  import { get, grabs, local, DBType, onMount, LocalID, ButtonID, DataKind, Hierarchy } from '../common/GlobalImports'
   import { dbType, isBusy, bulkName, popupViewID, showDetails, thingsArrived } from '../managers/State';
   import CircularButton from '../kit/CircularButton.svelte';
   import BuildNotes from './BuildNotes.svelte';

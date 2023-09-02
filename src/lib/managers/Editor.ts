@@ -1,4 +1,4 @@
-import { get, grabs, Thing, Basis, signal, Signals, constants, hierarchy, Predicate, dbDispatch, CreationFlag, normalizeOrderOf } from '../common/GlobalImports';
+import { get, grabs, Thing, Basis, signal, Signals, constants, Hierarchy, Predicate, dbDispatch, CreationFlag, normalizeOrderOf } from '../common/GlobalImports';
 import { hereID, grabbedIDs } from './State';
 
 ///////////////////////////////////////
@@ -12,7 +12,7 @@ export default class Editor {
 
   constructor() {
     hereID.subscribe((id: string | null) => {
-      this.here = hierarchy.getThing_forID(id);
+      this.here = dbDispatch.db.hierarchy.getThing_forID(id);
     })
   }
 
@@ -21,13 +21,13 @@ export default class Editor {
   //////////////////////////
 
   async thing_redraw_remoteAddChildTo(parent: Thing) {
-    const child = hierarchy.rememberThing_runtimeCreateAt(-1);
+    const child = dbDispatch.db.hierarchy.rememberThing_runtimeCreateAt(-1);
     await this.thing_redraw_remoteAddAsChild(child, parent);
   }
 
   async thing_redraw_remoteDuplicate(thing: Thing) {
-    const sibling = hierarchy.rememberThing_runtimeCreateAt(thing.order + constants.orderIncrement);
-    const parent = thing.firstParent ?? hierarchy.root;
+    const sibling = dbDispatch.db.hierarchy.rememberThing_runtimeCreateAt(thing.order + constants.orderIncrement);
+    const parent = thing.firstParent ?? dbDispatch.db.hierarchy.root;
     thing.copyInto(sibling);
     sibling.order += constants.orderIncrement
     await this.thing_redraw_remoteAddAsChild(sibling, parent);
@@ -37,8 +37,8 @@ export default class Editor {
     const idPredicateIsAParentOf = Predicate.idIsAParentOf;
     const idRelationship = Basis.newID;
     await dbDispatch.db.thing_remoteCreate(child); // for everything below, need to await child.id fetched from dbDispatch
-    hierarchy.rememberThing(child);
-    const relationship = await hierarchy.rememberRelationship_remoteCreate(idRelationship, idPredicateIsAParentOf, parent.id, child.id, child.order, CreationFlag.getRemoteID)
+    dbDispatch.db.hierarchy.rememberThing(child);
+    const relationship = await dbDispatch.db.hierarchy.rememberRelationship_remoteCreate(idRelationship, idPredicateIsAParentOf, parent.id, child.id, child.order, CreationFlag.getRemoteID)
     normalizeOrderOf(parent.children);
     parent.becomeHere();
     child.startEdit();
@@ -68,14 +68,14 @@ export default class Editor {
       // TODO: also match against the 'to' to the current parent
       // TODO: pass predicate in ... to support editing different kinds of relationships
 
-      const relationship = hierarchy.getRelationship_whereParentIDEquals(thing.id);
+      const relationship = dbDispatch.db.hierarchy.getRelationship_whereParentIDEquals(thing.id);
       if (relationship) {
         relationship.idFrom = newParent.id;
         await dbDispatch.db.relationship_remoteUpdate(relationship);
         thing.setOrderTo(-1, true);
       }
 
-      hierarchy.relationships_refreshKnowns();     // so children and parent will see the newly relocated things
+      dbDispatch.db.hierarchy.relationships_refreshKnowns();     // so children and parent will see the newly relocated things
       normalizeOrderOf(newParent.children);         // refresh knowns first
       normalizeOrderOf(parent.children);
       thing.grabOnly();
@@ -96,7 +96,7 @@ export default class Editor {
   async grabs_redraw_remoteDelete() {
     if (this.here) {
       for (const id of get(grabbedIDs)) {
-        const grabbed = hierarchy.getThing_forID(id);
+        const grabbed = dbDispatch.db.hierarchy.getThing_forID(id);
         if (grabbed && !grabbed.isEditing && this.here) {
           let newGrab = grabbed.firstParent;
           const siblings = grabbed.siblings;
@@ -112,8 +112,8 @@ export default class Editor {
             normalizeOrderOf(grabbed.siblings);
           }
           await grabbed.traverse(async (child: Thing): Promise<boolean> => {
-            await hierarchy.forgetRelationships_remoteDeleteAllForThing(child);
-            await hierarchy.forgetThing_remoteDelete(child);
+            await dbDispatch.db.hierarchy.forgetRelationships_remoteDeleteAllForThing(child);
+            await dbDispatch.db.hierarchy.forgetThing_remoteDelete(child);
             return false; // continue the traversal
           });
           newGrab.grabOnly();

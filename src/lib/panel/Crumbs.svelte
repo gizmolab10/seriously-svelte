@@ -1,5 +1,5 @@
 <script lang='ts'>
-  import { Thing, grabs, Signals, onDestroy, hierarchy, handleSignalOfKind } from '../common/GlobalImports';
+  import { Thing, grabs, Signals, onDestroy, dbDispatch, handleSignalOfKind } from '../common/GlobalImports';
   import { grabbedIDs } from '../managers/State';
   import Crumb from '../kit/Crumb.svelte';
   let ancestors: Array<Thing> = [];
@@ -14,7 +14,7 @@
 	$: {
     if (!$grabbedIDs?.includes(grab?.id) || ancestors.length == 0) {
       let id = grabs.lastGrabbedID;
-      const thing = hierarchy.getThing_forID(id);   // start over with new grab
+      const thing = dbDispatch.db.hierarchy.getThing_forID(id);   // start over with new grab
       if (thing) {
         grab = thing;
       }
