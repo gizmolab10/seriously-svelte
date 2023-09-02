@@ -1,8 +1,8 @@
 import { hierarchy } from '../managers/Hierarchy';
-import Base from './Base';
+import Basis from './Basis';
 import Airtable from 'airtable';
 
-export class Relationship extends Base {
+export class Relationship extends Basis {
   awaitingCreation: boolean;
   idTo: string;
   idFrom: string;

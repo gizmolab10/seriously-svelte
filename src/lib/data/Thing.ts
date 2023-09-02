@@ -1,9 +1,8 @@
-import { grabs, dbDispatch, hierarchy, signal, Signals, constants, Predicate, normalizeOrderOf } from '../common/GlobalImports';
+import { grabs, Basis, dbDispatch, hierarchy, signal, Signals, constants, Predicate, normalizeOrderOf } from '../common/GlobalImports';
 import { grabbedIDs, editingID, hereID } from '../managers/State';
-import Base from './Base';
 import Airtable from 'airtable';
 
-export default class Thing extends Base {
+export default class Thing extends Basis {
   title: string;
   color: string;
   trait: string;
@@ -16,7 +15,7 @@ export default class Thing extends Base {
   hoverAttributes = '';
   borderAttribute = '';
 
-  constructor(id = dbDispatch.db.newCloudID, title = constants.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
+  constructor(id = Basis.newID, title = constants.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
     super(id, isRemotelyStored);
     this.title = title;
     this.color = color;
@@ -118,7 +117,7 @@ export default class Thing extends Base {
         if (remoteWrite) {
           setTimeout(() => {
             (async () => {
-              await dbDispatch.db.relationship_remoteWrite(relationship);
+              await dbDispatch.relationship_remoteWrite(relationship);
             })();
           }, 100);
         }

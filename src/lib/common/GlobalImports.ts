@@ -14,6 +14,7 @@ import Access from '../data/Access';
 import { get } from 'svelte/store';
 import { builds } from './Builds';
 import Thing from '../data/Thing';
+import Basis from '../data/Basis';
 import User from '../data/User';
 import { local } from './Local';
 import './Extensions';
@@ -22,6 +23,6 @@ export { get, onMount, onDestroy,
   signal, Signals, handleSignalOfKind,
   constants, builds, Direction, FatTriangle,
   grabs, dbDispatch, hierarchy, editor, local,
-  User, Thing, Access, Predicate, Relationship,
+  User, Basis, Thing, Access, Predicate, Relationship,
   DBType, BulkID, ButtonID, DataKind, LocalID, CreationFlag,
   log, noop, apply, remove, removeAll, copyObject, desaturateBy, normalizeOrderOf, sortAccordingToOrder };

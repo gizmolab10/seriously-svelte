@@ -152,16 +152,6 @@ export default class DBAirtable implements DBInterface {
     }
   }
 
-  async relationship_remoteWrite(relationship: Relationship) {
-    if (!relationship.awaitingCreation) {
-      if (relationship.isRemotelyStored) {
-        await this.relationship_remoteUpdate(relationship);
-      } else {
-        await this.relationship_remoteCreate(relationship);
-      }
-    }
-  }
-
   /////////////////////////////////////
   //         ANCILLARY DATA          //
   /////////////////////////////////////

@@ -256,16 +256,6 @@ class DBFirebase implements DBInterface {
     }
   }
 
-  async relationship_remoteWrite(relationship: Relationship) {
-    if (!relationship.awaitingCreation) {
-      if (relationship.isRemotelyStored) {
-        await this.relationship_remoteUpdate(relationship);
-      } else {
-        await this.relationship_remoteCreate(relationship);
-      }
-    }
-  }
-
   isEqualTo(relationship: Relationship, remote: RemoteRelationship) {
     return relationship.idPredicate == remote.predicate.id &&
     relationship.idFrom == remote.from.id &&
