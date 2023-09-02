@@ -3,12 +3,13 @@ import { get, Thing, signal, Signals, constants, DataKind, hierarchy, copyObject
 import { getAnalytics } from "firebase/analytics";
 import { bulkName } from '../managers/State';
 import { initializeApp } from "firebase/app";
+import DBInterface from './DBInterface';
 
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
-class DBFirebase {
+class DBFirebase implements DBInterface {
   firebaseConfig = {
     appId: "1:224721814373:web:0c60f394c056ef3decd78c",
     apiKey: "AIzaSyAFy4H3Ej5zfI46fvCJpBfUxmyQco-dx9U",
@@ -27,16 +28,16 @@ class DBFirebase {
   predicatesCollection: CollectionReference | null = null;
   thingsCollection: CollectionReference | null = null;
   things: Thing[] = [];
+  hasData = false;
 
-  reportError(error: any) {
-    console.log(error);
-  }
+  reportError(error: any) { console.log(error); }
+  resetRoot() { hierarchy.resetRootFrom(this.things) }
 
   async setup() {
     this.things =[];
-    await dataFirebase.fetchDocumentsIn(DataKind.things);
-    await dataFirebase.fetchDocumentsIn(DataKind.predicates, true)
-    await dataFirebase.fetchDocumentsIn(DataKind.relationships);
+    await this.fetchDocumentsIn(DataKind.things);
+    await this.fetchDocumentsIn(DataKind.predicates, true)
+    await this.fetchDocumentsIn(DataKind.relationships);
   }
     
   async fetchDocumentsIn(dataKind: DataKind, noBulk: boolean = false) {
@@ -255,6 +256,16 @@ class DBFirebase {
     }
   }
 
+  async relationship_remoteWrite(relationship: Relationship) {
+    if (!relationship.awaitingCreation) {
+      if (relationship.isRemotelyStored) {
+        await this.relationship_remoteUpdate(relationship);
+      } else {
+        await this.relationship_remoteCreate(relationship);
+      }
+    }
+  }
+
   isEqualTo(relationship: Relationship, remote: RemoteRelationship) {
     return relationship.idPredicate == remote.predicate.id &&
     relationship.idFrom == remote.from.id &&
@@ -310,7 +321,7 @@ class DBFirebase {
 
 }
 
-export const dataFirebase = new DBFirebase();
+export const dbFirebase = new DBFirebase();
 
 interface RemoteThing {
   title: string;
@@ -336,8 +347,8 @@ interface RemoteRelationship {
 
 class RemoteRelationship implements RemoteRelationship {
   constructor(data: DocumentData | Relationship) {
-    const things = dataFirebase.thingsCollection;
-    const predicates = dataFirebase.predicatesCollection;
+    const things = dbFirebase.thingsCollection;
+    const predicates = dbFirebase.predicatesCollection;
     this.order = data.order;
     if (things && predicates) {
       try {
@@ -356,7 +367,7 @@ class RemoteRelationship implements RemoteRelationship {
           }
         }
       } catch (error) {
-        dataFirebase.reportError(error);
+        dbFirebase.reportError(error);
       }
     }
   }

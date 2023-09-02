@@ -3,7 +3,7 @@ import { Thing, dbDispatch } from '../common/GlobalImports'
 class Exemplar extends Thing {
 
   constructor() {
-    super(dbDispatch.newCloudID, 'this item is selected', '#5c920c', '?', 0, true);
+    super(dbDispatch.db.newCloudID, 'this item is selected', '#5c920c', '?', 0, true);
     this.titlePadding = 21;
     this.isExemplar = true;
   }

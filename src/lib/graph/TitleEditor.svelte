@@ -65,7 +65,7 @@
         input?.blur();
       }
       if (hasChanges()) {
-        dbDispatch.thing_remoteUpdate(thing);
+        dbDispatch.db.thing_remoteUpdate(thing);
         originalTitle = thing.title;    // so hasChanges will be correct
         signal(Signals.childrenOf, thing.firstParent.id); // for crumbs
       }

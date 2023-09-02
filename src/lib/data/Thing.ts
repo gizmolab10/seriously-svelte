@@ -16,7 +16,7 @@ export default class Thing extends Base {
   hoverAttributes = '';
   borderAttribute = '';
 
-  constructor(id = dbDispatch.newCloudID, title = constants.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
+  constructor(id = dbDispatch.db.newCloudID, title = constants.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
     super(id, isRemotelyStored);
     this.title = title;
     this.color = color;
@@ -118,7 +118,7 @@ export default class Thing extends Base {
         if (remoteWrite) {
           setTimeout(() => {
             (async () => {
-              await dbDispatch.relationship_remoteWrite(relationship);
+              await dbDispatch.db.relationship_remoteWrite(relationship);
             })();
           }, 100);
         }

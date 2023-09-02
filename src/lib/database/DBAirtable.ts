@@ -1,5 +1,6 @@
 import { Thing, hierarchy, Relationship, CreationFlag } from '../common/GlobalImports';
 import { thingsArrived } from '../managers/State';
+import DBInterface from './DBInterface';
 import Airtable from 'airtable';
 
 ///////////////////////////////
@@ -12,7 +13,7 @@ import Airtable from 'airtable';
 //                           //
 ///////////////////////////////
 
-export default class DataAirtable {
+export default class DBAirtable implements DBInterface {
   base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
   relationships_table = this.base('Relationships');
   predicates_table = this.base('predicates');
@@ -20,15 +21,14 @@ export default class DataAirtable {
   access_table = this.base('Access');
   users_table = this.base('Users');
   things: Thing[] = [];
+  hasData = false;
 
   relationships_errorMessage = 'Error in Relationships:';
   things_errorMessage = 'Error in Things:';
 
   constructor() {}
-
-  async setup() {
-    await this.readAll();
-  }
+  async setup() { await this.readAll(); }
+  resetRoot() { hierarchy.resetRootFrom(this.things) }
 
   async readAll() {
     await this.predicates_readAll();
@@ -152,6 +152,16 @@ export default class DataAirtable {
     }
   }
 
+  async relationship_remoteWrite(relationship: Relationship) {
+    if (!relationship.awaitingCreation) {
+      if (relationship.isRemotelyStored) {
+        await this.relationship_remoteUpdate(relationship);
+      } else {
+        await this.relationship_remoteCreate(relationship);
+      }
+    }
+  }
+
   /////////////////////////////////////
   //         ANCILLARY DATA          //
   /////////////////////////////////////
@@ -202,4 +212,4 @@ export default class DataAirtable {
 
 }
 
-export const dataAirtable = new DataAirtable();
+export const dbAirtable = new DBAirtable();

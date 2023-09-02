@@ -35,15 +35,15 @@ export default class Editor {
 
   async thing_redraw_remoteAddAsChild(child: Thing, parent: Thing) {
     const idPredicateIsAParentOf = Predicate.idIsAParentOf;
-    const idRelationship = dbDispatch.newCloudID;
-    await dbDispatch.thing_remoteCreate(child); // for everything below, need to await child.id fetched from dbDispatch
+    const idRelationship = dbDispatch.db.newCloudID;
+    await dbDispatch.db.thing_remoteCreate(child); // for everything below, need to await child.id fetched from dbDispatch
     hierarchy.rememberThing(child);
     const relationship = await hierarchy.rememberRelationship_remoteCreate(idRelationship, idPredicateIsAParentOf, parent.id, child.id, child.order, CreationFlag.getRemoteID)
     normalizeOrderOf(parent.children);
     parent.becomeHere();
     child.startEdit();
     child.grabOnly();
-    await dbDispatch.relationship_remoteWrite(relationship);
+    await dbDispatch.db.relationship_remoteWrite(relationship);
   }
 
   ///////////////////////////
@@ -71,7 +71,7 @@ export default class Editor {
       const relationship = hierarchy.getRelationship_whereParentIDEquals(thing.id);
       if (relationship) {
         relationship.idFrom = newParent.id;
-        await dbDispatch.relationship_remoteUpdate(relationship);
+        await dbDispatch.db.relationship_remoteUpdate(relationship);
         thing.setOrderTo(-1, true);
       }
 

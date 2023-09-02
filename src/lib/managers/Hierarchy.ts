@@ -50,12 +50,12 @@ export default class Hierarchy {
             
             // already determined that WE DO NOT NEED NoDuplicate, we do need it's id now
 
-            await this.rememberRelationship_remoteCreate(dbDispatch.newCloudID, idPredicateIsAParentOf, rootID, id, -1, CreationFlag.getRemoteID)
+            await this.rememberRelationship_remoteCreate(dbDispatch.db.newCloudID, idPredicateIsAParentOf, rootID, id, -1, CreationFlag.getRemoteID)
           }
         }
       }
       this.root.normalizeOrder_recursive(true)   // setup order values for all things and relationships
-      dbDispatch.hasDataForDBType[type] = true;
+      dbDispatch.db.hasData = true;
       normalizeOrderOf(this.root.children)
       this.root.grabOnly()
     }
@@ -92,7 +92,7 @@ export default class Hierarchy {
   }
 
   async forgetThing_remoteDelete(thing: Thing) {
-    await dbDispatch.thing_remoteDelete(thing);
+    await dbDispatch.db.thing_remoteDelete(thing);
     this.forgetThing(thing);
   }
 
@@ -129,7 +129,7 @@ export default class Hierarchy {
   }
 
   rememberThing_runtimeCreateAt(order: number) {
-    return this.rememberThing_runtimeCreate(dbDispatch.newCloudID, constants.defaultTitle, 'blue', 't', order, false);
+    return this.rememberThing_runtimeCreate(dbDispatch.db.newCloudID, constants.defaultTitle, 'blue', 't', order, false);
   }
 
   rememberThing_runtimeCreate(id: string, title: string, color: string, trait: string, order: number, isRemotelyStored: boolean): Thing {
@@ -186,7 +186,7 @@ export default class Hierarchy {
 
   async rememberRelationship_remoteCreate(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none) {
     const relationship = new Relationship(idRelationship, idPredicate, idFrom, idTo, order, creationFlag == CreationFlag.isFromRemote);
-    await dbDispatch.relationship_remoteWrite(relationship);
+    await dbDispatch.db.relationship_remoteWrite(relationship);
     this.rememberRelationship(relationship);
     // relationship.log('create');
     return relationship;
@@ -196,7 +196,7 @@ export default class Hierarchy {
     const array = this.knownRs_byIDTo[thing.id];
     if (array) {
       for (const relationship of array) {
-        await dbDispatch.relationship_remoteDelete(relationship);
+        await dbDispatch.db.relationship_remoteDelete(relationship);
         this.forgetRelationship(relationship);
       }
     }
