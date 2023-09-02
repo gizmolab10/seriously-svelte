@@ -1,8 +1,8 @@
-import { grabs, Basis, dbDispatch, Hierarchy, signal, Signals, constants, Predicate, normalizeOrderOf } from '../common/GlobalImports';
+import { grabs, Datum, dbDispatch, Hierarchy, signal, Signals, constants, Predicate, normalizeOrderOf } from '../common/GlobalImports';
 import { grabbedIDs, editingID, hereID } from '../managers/State';
 import Airtable from 'airtable';
 
-export default class Thing extends Basis {
+export default class Thing extends Datum {
   title: string;
   color: string;
   trait: string;
@@ -15,7 +15,7 @@ export default class Thing extends Basis {
   hoverAttributes = '';
   borderAttribute = '';
 
-  constructor(id = Basis.newID, title = constants.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
+  constructor(id = Datum.newID, title = constants.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
     super(id, isRemotelyStored);
     this.title = title;
     this.color = color;

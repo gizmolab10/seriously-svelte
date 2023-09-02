@@ -1,4 +1,4 @@
-import { get, grabs, Thing, Basis, signal, Signals, constants, Hierarchy, Predicate, dbDispatch, CreationFlag, normalizeOrderOf } from '../common/GlobalImports';
+import { get, grabs, Thing, Datum, signal, Signals, constants, Hierarchy, Predicate, dbDispatch, CreationFlag, normalizeOrderOf } from '../common/GlobalImports';
 import { hereID, grabbedIDs } from './State';
 
 ///////////////////////////////////////
@@ -35,7 +35,7 @@ export default class Editor {
 
   async thing_redraw_remoteAddAsChild(child: Thing, parent: Thing) {
     const idPredicateIsAParentOf = Predicate.idIsAParentOf;
-    const idRelationship = Basis.newID;
+    const idRelationship = Datum.newID;
     await dbDispatch.db.thing_remoteCreate(child); // for everything below, need to await child.id fetched from dbDispatch
     dbDispatch.db.hierarchy.rememberThing(child);
     const relationship = await dbDispatch.db.hierarchy.rememberRelationship_remoteCreate(idRelationship, idPredicateIsAParentOf, parent.id, child.id, child.order, CreationFlag.getRemoteID)

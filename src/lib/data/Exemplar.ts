@@ -1,9 +1,9 @@
-import { Thing, Basis } from '../common/GlobalImports'
+import { Thing, Datum } from '../common/GlobalImports'
 
 class Exemplar extends Thing {
 
   constructor() {
-    super(Basis.newID, 'this item is selected', '#5c920c', '?', 0, true);
+    super(Datum.newID, 'this item is selected', '#5c920c', '?', 0, true);
     this.titlePadding = 21;
     this.isExemplar = true;
   }

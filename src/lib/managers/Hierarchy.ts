@@ -1,4 +1,4 @@
-import { get, User, Basis, Thing, Access, remove, constants, Predicate, dbDispatch, Relationship, CreationFlag, normalizeOrderOf, sortAccordingToOrder } from '../common/GlobalImports';
+import { get, User, Datum, Thing, Access, remove, constants, Predicate, dbDispatch, Relationship, CreationFlag, normalizeOrderOf, sortAccordingToOrder } from '../common/GlobalImports';
 import { hereID, isBusy, grabbedIDs, thingsArrived } from './State';
 
 type KnownRelationships = { [id: string]: Array<Relationship> }
@@ -48,7 +48,7 @@ export default class Hierarchy {
             
             // already determined that WE DO NOT NEED NoDuplicate, we do need it's id now
 
-            await this.rememberRelationship_remoteCreate(Basis.newID, idPredicateIsAParentOf, rootID, id, -1, CreationFlag.getRemoteID)
+            await this.rememberRelationship_remoteCreate(Datum.newID, idPredicateIsAParentOf, rootID, id, -1, CreationFlag.getRemoteID)
           }
         }
       }
@@ -127,7 +127,7 @@ export default class Hierarchy {
   }
 
   rememberThing_runtimeCreateAt(order: number) {
-    return this.rememberThing_runtimeCreate(Basis.newID, constants.defaultTitle, 'blue', 't', order, false);
+    return this.rememberThing_runtimeCreate(Datum.newID, constants.defaultTitle, 'blue', 't', order, false);
   }
 
   rememberThing_runtimeCreate(id: string, title: string, color: string, trait: string, order: number, isRemotelyStored: boolean): Thing {
