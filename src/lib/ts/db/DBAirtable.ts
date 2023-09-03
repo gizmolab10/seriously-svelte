@@ -41,7 +41,7 @@ export default class DBAirtable implements DBInterface {
     await this.relationships_readAll();
     await this.access_readAll();
     await this.users_readAll();
-    this.things_readAll()
+    await this.things_readAll()
   }
 
   /////////////////////////////
@@ -53,14 +53,16 @@ export default class DBAirtable implements DBInterface {
     this.things =[];
 
     try {
-      const records = await this.things_table.select().all()
-
-      for (const record of records) {
-        const id = record.id;
-        const thing = this.hierarchy.rememberThing_runtimeCreate(id, record.fields.title as string, record.fields.color as string, record.fields.trait as string, -1, true);
-        this.things.push(thing)
-      }
-      thingsArrived.set(true);
+      const select = this.things_table.select();
+      await select.all().then((records) => {
+        const remoteThings = records;
+        for (const remoteThing of remoteThings) {
+          const id = remoteThing.id;
+          const thing = this.hierarchy.rememberThing_runtimeCreate(id, remoteThing.fields.title as string, remoteThing.fields.color as string, remoteThing.fields.trait as string, -1, true);
+          this.things.push(thing)
+        }
+        thingsArrived.set(true);
+      })
     } catch (error) {
       console.log(this.things_errorMessage + ' (things_readAll) ' + error);
     }
