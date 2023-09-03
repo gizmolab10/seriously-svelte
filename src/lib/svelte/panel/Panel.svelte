@@ -1,12 +1,12 @@
 <script>
-  import { get, grabs, DBType, onMount, LocalID, ButtonID, DataKind, Hierarchy, persistLocal } from '../common/GlobalImports'
-  import { dbType, isBusy, bulkName, popupViewID, showDetails, thingsArrived } from '../managers/State';
+  import { get, grabs, DBType, onMount, LocalID, ButtonID, DataKind, Hierarchy, persistLocal } from '../../typescript/common/GlobalImports'
+  import { dbType, isBusy, bulkName, popupViewID, showDetails, thingsArrived } from '../../typescript/managers/State';
   import CircularButton from '../kit/CircularButton.svelte';
   import BuildNotes from './BuildNotes.svelte';
   import Graph from '../graph/Graph.svelte';
   import Details from './Details.svelte';
-  import Crumbs from './Crumbs.svelte';
   import Help from '../help/Help.svelte';
+  import Crumbs from './Crumbs.svelte';
   let size = 15;
 
   function handleClick(id) {

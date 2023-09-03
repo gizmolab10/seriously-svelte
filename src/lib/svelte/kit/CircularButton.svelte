@@ -1,5 +1,5 @@
 <script>
-  import { noop } from "../common/GlobalImports";
+  import { noop } from "../../typescript/common/GlobalImports";
   export let borderColor = '#333';
   export let textColor = '#400';
   export let color = '#ccc';

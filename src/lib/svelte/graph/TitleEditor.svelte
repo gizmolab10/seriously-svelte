@@ -1,6 +1,6 @@
 <script lang='ts'>
-  import { Thing, dbDispatch, editor, signal, Signals, onDestroy } from '../common/GlobalImports';
-  import { editingID, stoppedEditingID } from '../managers/State';
+  import { Thing, dbDispatch, editor, signal, Signals, onDestroy } from '../../typescript/common/GlobalImports';
+  import { editingID, stoppedEditingID } from '../../typescript/managers/State';
   import Widget from './Widget.svelte';
   export let thing = Thing;
   let originalTitle = thing.title;

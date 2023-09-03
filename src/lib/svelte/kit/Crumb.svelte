@@ -1,5 +1,5 @@
 <script lang='ts'>
-  import { Thing, dbDispatch, desaturateBy } from '../common/GlobalImports';
+  import { Thing, dbDispatch, desaturateBy } from '../../typescript/common/GlobalImports';
   export let thing = Thing;
 
   function handleClick(event) {

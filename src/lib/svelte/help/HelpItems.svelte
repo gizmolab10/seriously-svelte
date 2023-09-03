@@ -19,4 +19,6 @@
   <li class='help-li'>To <b>move</b> it, hold the <i>Option</i> key tap an arrow key.
 </ul>
 
-<style></style>
+<style>
+  @import '../../../styles/Help.css';
+</style>

@@ -1,5 +1,5 @@
 <script>
-  import { onMount } from '../common/GlobalImports';
+  import { onMount } from '../../typescript/common/GlobalImports';
   export let selectedID = null;
   export let menuItems;
 

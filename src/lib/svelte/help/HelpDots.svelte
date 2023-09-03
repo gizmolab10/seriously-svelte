@@ -21,5 +21,5 @@
 </div>
 
 <style>
-  @import './Help.css';
+  @import '../../../styles/Help.css';
 </style>

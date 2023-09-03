@@ -1,6 +1,6 @@
 <script>
-  import { popupViewID } from '../managers/State';
-  import { noop } from '../common/GlobalImports';
+  import { popupViewID } from '../../typescript/managers/State';
+  import { noop } from '../../typescript/common/GlobalImports';
   import HelpButtons from './HelpButtons.svelte';
   export let size = 20;
   
@@ -33,5 +33,5 @@
 </div>
 
 <style>
-  @import './Help.css';
+  @import '../../../styles/Help.css';
 </style>

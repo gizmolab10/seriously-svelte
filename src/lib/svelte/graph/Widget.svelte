@@ -1,6 +1,6 @@
 <script lang='ts'>
-  import { noop, Thing, onMount } from '../common/GlobalImports';
-  import { editingID, grabbedIDs } from '../managers/State';
+  import { noop, Thing, onMount } from '../../typescript/common/GlobalImports';
+  import { editingID, grabbedIDs } from '../../typescript/managers/State';
 	import TitleEditor from './TitleEditor.svelte';
 	import Dot from './Dot.svelte';
 	export let thing = Thing;

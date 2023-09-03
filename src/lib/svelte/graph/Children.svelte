@@ -1,5 +1,5 @@
 <script>
-  import { Thing, Signals, onDestroy, normalizeOrderOf, handleSignalOfKind } from '../common/GlobalImports';
+  import { Thing, Signals, onDestroy, normalizeOrderOf, handleSignalOfKind } from '../../typescript/common/GlobalImports';
   import Widget from './Widget.svelte';
   export let thing = Thing;
   let children = thing.children;

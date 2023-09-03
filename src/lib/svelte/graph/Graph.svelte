@@ -1,6 +1,6 @@
 <script>
-  import { grabs, Thing, editor, constants, Signals, onDestroy, Predicate, ButtonID, dbDispatch, handleSignalOfKind } from '../common/GlobalImports';
-  import { popupViewID, editingID, hereID } from '../managers/State';
+  import { grabs, Thing, editor, constants, Signals, onDestroy, Predicate, ButtonID, dbDispatch, handleSignalOfKind } from '../../typescript/common/GlobalImports';
+  import { popupViewID, editingID, hereID } from '../../typescript/managers/State';
   import Children from './Children.svelte'
   let toggleDraw = false;
   let here = Thing;
