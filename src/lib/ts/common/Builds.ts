@@ -3,7 +3,7 @@ class Builds {
   notes: { [id: number]: string[] } = {};
 
   constructor() {
-    build.set(33);
+    build.set(34);
     this.notes = {
       10 : ['August 2, 2023', 'refactor Panel into Startup'],
       11 : ['August 8, 2023', 'display build number'],
@@ -22,7 +22,8 @@ class Builds {
       30 : ['August 26, 2023', 'clean construction of relationships'],
       31 : ['August 30, 2023', 'add child, duplicate and delete'],
       32 : ['August 31, 2023', 'manage order changes in snapshots'],
-      33 : ['September 3, 2023', 'separate hierarchy for each db'],
+      33 : ['September 2, 2023', 'separate hierarchy for each db'],
+      34 : ['September 3, 2023', 'crumbs update on db switch'],
     }
   }
 
