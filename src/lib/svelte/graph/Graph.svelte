@@ -16,7 +16,7 @@
   })
 
   async function handleKeyDown(event) {
-    let grab = grabs.furthestGrab(true);
+    let grab = dbDispatch.db.hierarchy.grabs.furthestGrab(true);
     if ($editingID)      { return; } // let Title component consume the events
     if (event.key == undefined)  { alert('no key for ' + event.type); return; }
     if (!grab) {

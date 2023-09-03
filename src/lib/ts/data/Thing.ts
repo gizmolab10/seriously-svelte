@@ -88,8 +88,8 @@ export default class Thing extends Datum {
 
   hasPredicate(asParents: boolean): boolean { return asParents ? this.parents.length > 0 : this.children.length > 0 }
   startEdit() { if (this != dbDispatch.db.hierarchy.root) { editingID.set(this.id); } }
-  toggleGrab() { grabs.toggleGrab(this); }
-  grabOnly() { grabs.grabOnly(this); }
+  toggleGrab() { dbDispatch.db.hierarchy.grabs.toggleGrab(this); }
+  grabOnly() { dbDispatch.db.hierarchy.grabs.grabOnly(this); }
 
   becomeHere() {
     if (this.hasChildren) {

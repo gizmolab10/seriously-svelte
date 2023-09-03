@@ -51,7 +51,7 @@
     <p>Nothing is available.</p>
   {:else}
     <span class='top'>
-      <Crumbs grab={grabs.grabbedThing}/>
+      <Crumbs grab={dbDispatch.db.hierarchy.grabs.grabbedThing}/>
     </span>
     <span class='graph'>
       <Graph/>

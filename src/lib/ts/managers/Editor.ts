@@ -85,7 +85,7 @@ export default class Editor {
   }
 
   async furthestGrab_redraw_remoteMoveUp(up: boolean, expand: boolean, relocate: boolean) {
-    const grab = grabs.furthestGrab(up);
+    const grab = dbDispatch.db.hierarchy.grabs.furthestGrab(up);
     grab?.redraw_remoteMoveup(up, expand, relocate);
   }
 

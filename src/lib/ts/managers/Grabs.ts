@@ -68,12 +68,10 @@ export default class Grabs {
       if (up) {
         return grabs[0];
       } else {
-        return grabs[grabs.length - 1];
+        return grabs[dbDispatch.db.hierarchy.grabs.length - 1];
       }
     }
     return dbDispatch.db.hierarchy.root;
   }
 
 }
-
-export const grabs = new Grabs();

@@ -13,7 +13,7 @@
 
 	$: {
     if (!$grabbedIDs?.includes(grab?.id) || ancestors.length == 0) {
-      let id = grabs.lastGrabbedID;
+      let id = dbDispatch.db.hierarchy.grabs.lastGrabbedID;
       const thing = dbDispatch.db.hierarchy.getThing_forID(id);   // start over with new grab
       if (thing) {
         grab = thing;

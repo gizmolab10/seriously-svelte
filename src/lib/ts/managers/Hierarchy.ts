@@ -1,4 +1,4 @@
-import { get, User, Datum, Thing, Access, remove, constants, Predicate, dbDispatch, Relationship, CreationFlag, normalizeOrderOf, sortAccordingToOrder } from '../common/GlobalImports';
+import { get, User, Datum, Thing, Grabs, Access, remove, constants, Predicate, dbDispatch, Relationship, CreationFlag, normalizeOrderOf, sortAccordingToOrder } from '../common/GlobalImports';
 import { hereID, isBusy, grabbedIDs, thingsArrived } from './State';
 
 type KnownRelationships = { [id: string]: Array<Relationship> }
@@ -23,7 +23,9 @@ export default class Hierarchy {
   knownRs: Array<Relationship> = [];
   root: Thing | null = null;
   isConstructed = false;
+  grabs: Grabs;
 
+  constructor() { this.grabs = new Grabs(); }
   get hasNothing(): boolean { return !this.root; }
   get rootID(): (string | null) { return this.root?.id ?? null; };
   get things(): Array<Thing> { return Object.values(this.knownT_byID) };
