@@ -1,4 +1,4 @@
-import { DBType, Hierarchy, Relationship } from '../common/GlobalImports';
+import { get, DBType, signal, Signals, Relationship } from '../common/GlobalImports';
 import { dbType, isBusy, thingsArrived } from '../managers/State';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
@@ -28,11 +28,15 @@ export default class DBDispatch {
 
   updateHierarchy(type: string) {
     if (this.db.hasData) {
-      this.db.resetRoot();
+      console.log(get(isBusy));
+      isBusy.set(false);
+      this.db.hierarchy.root?.becomeHere();
     } else {
-      isBusy.set(true);         // also used by Details radio buttons
-      thingsArrived.set(false);
-      (async () => {            // this will happen when Local sets dbType !!! too early?
+      if (type != DBType.local) {
+        isBusy.set(true);         // also used by Details when changing dbType
+        thingsArrived.set(false);
+      }
+      (async () => {              // this will happen when Local sets dbType !!! too early?
         await this.db.setup();
         this.db.hierarchy.constructHierarchy(type);
       })();

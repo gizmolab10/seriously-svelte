@@ -10,7 +10,7 @@
 	onDestroy( () => {signalHandler.disconnect(); });
 
   const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
-    if (idThing == here.id) {
+    if (here && idThing == here.id) {
       toggleDraw = !toggleDraw;
     }
   })

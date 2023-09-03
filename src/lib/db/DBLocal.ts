@@ -1,4 +1,4 @@
-import { Thing, Hierarchy, Relationship } from '../common/GlobalImports';
+import { Datum, Thing, Hierarchy, Relationship } from '../common/GlobalImports';
 import DBInterface from './DBInterface';
 
 export default class DBLocal implements DBInterface {
@@ -12,8 +12,17 @@ export default class DBLocal implements DBInterface {
     return this._hierarchy!;
   }
 
-  resetRoot() {};
-  async setup() {};
+  async setup() {
+    const h = this.hierarchy;
+    const rootID = Datum.newID;
+    const childID = Datum.newID;
+    const predicateID = Datum.newID;
+    h.rememberThing_runtimeCreate(rootID, 'seriously', 'blue', '!', -1, true);
+    h.rememberThing_runtimeCreate(childID, 'child', 'red', 'c', 0, true);
+    h.rememberPredicate_runtimeCreate(predicateID, 'isAParentOf');
+    h.rememberRelationship_runtimeCreate(Datum.newID, predicateID, rootID, childID, 0);
+  };
+
   async thing_remoteCreate(thing: Thing) {};
   async thing_remoteUpdate(thing: Thing) {};
   async thing_remoteDelete(thing: Thing) {};

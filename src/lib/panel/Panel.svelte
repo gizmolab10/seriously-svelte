@@ -1,5 +1,5 @@
 <script>
-  import { get, grabs, local, DBType, onMount, LocalID, ButtonID, DataKind, Hierarchy } from '../common/GlobalImports'
+  import { get, grabs, DBType, onMount, LocalID, ButtonID, DataKind, Hierarchy, persistLocal } from '../common/GlobalImports'
   import { dbType, isBusy, bulkName, popupViewID, showDetails, thingsArrived } from '../managers/State';
   import CircularButton from '../kit/CircularButton.svelte';
   import BuildNotes from './BuildNotes.svelte';
@@ -15,11 +15,11 @@
   
   function handleSettings(event) {
     $showDetails = !$showDetails;
-    local.writeToKey(LocalID.details, $showDetails);
+    persistLocal.writeToKey(LocalID.details, $showDetails);
   }
 
   onMount(async () => {
-    local.setup();
+    persistLocal.setup();
   })
 </script>
 

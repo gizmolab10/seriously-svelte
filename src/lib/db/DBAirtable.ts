@@ -28,7 +28,6 @@ export default class DBAirtable implements DBInterface {
   things_errorMessage = 'Error in Things:';
 
   async setup() { await this.readAll(); }
-  resetRoot() { this.hierarchy.resetRootFrom(this.things) }
 
   get hierarchy(): Hierarchy { 
     if (this._hierarchy == null) {

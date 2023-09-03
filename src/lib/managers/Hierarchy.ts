@@ -32,9 +32,7 @@ export default class Hierarchy {
   
   async constructHierarchy(type: string) {
     const rootID = this.rootID;
-    if (this.root == null) {
-      alert('no root!');
-    } else if (rootID) {
+    if (this.root && rootID) {
       for (const thing of this.things) {
         const id = thing.id;
         if (id == rootID) {
@@ -60,18 +58,6 @@ export default class Hierarchy {
     thingsArrived.set(true);
     isBusy.set(false);
     this.isConstructed = true;
-  }
-
-  resetRootFrom(things: Array<Thing>) {
-    this.knownT_byID = {};
-    for (const thing of things) {
-      const id = thing.id;
-      this.knownT_byID[id] = thing;
-      if (thing.trait == '!') {
-        this.root = thing;
-        hereID.set(id);
-      }
-    }
   }
 
   /////////////////////////////
@@ -178,16 +164,20 @@ export default class Hierarchy {
     }
   }
 
-  async rememberRelationship_remoteCreateNoDuplicate(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none) {
-    return this.getRelationship_whereParentIDEquals(idTo) ?? await this.rememberRelationship_remoteCreate(idRelationship, idPredicate, idFrom, idTo, order, creationFlag);
+  rememberRelationship_runtimeCreate(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none) {
+    const relationship = new Relationship(idRelationship, idPredicate, idFrom, idTo, order, creationFlag == CreationFlag.isFromRemote);
+    this.rememberRelationship(relationship);
+    return relationship;
   }
 
   async rememberRelationship_remoteCreate(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none) {
-    const relationship = new Relationship(idRelationship, idPredicate, idFrom, idTo, order, creationFlag == CreationFlag.isFromRemote);
+    const relationship = this.rememberRelationship_runtimeCreate(idRelationship, idPredicate, idFrom, idTo, order, creationFlag);
     await dbDispatch.relationship_remoteWrite(relationship);
-    this.rememberRelationship(relationship);
-    // relationship.log('create');
     return relationship;
+  }
+
+  async rememberRelationship_remoteCreateNoDuplicate(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none) {
+    return this.getRelationship_whereParentIDEquals(idTo) ?? await this.rememberRelationship_remoteCreate(idRelationship, idPredicate, idFrom, idTo, order, creationFlag);
   }
 
   async forgetRelationships_remoteDeleteAllForThing(thing: Thing) {

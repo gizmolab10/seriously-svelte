@@ -1,14 +1,16 @@
 <script lang='ts'>
-  import { Thing, Hierarchy, desaturateBy } from '../common/GlobalImports';
+  import { Thing, dbDispatch, desaturateBy } from '../common/GlobalImports';
   export let thing = Thing;
 
   function handleClick(event) {
-    if (thing == dbDispatch.db.hierarchy.root) {
-      thing.grabOnly();
-      thing.becomeHere();
-    } else {
-      thing.grabOnly();
-      thing.firstParent.becomeHere();
+    if (dbDispatch.db.hasData) {
+      if (thing == dbDispatch.db.hierarchy.root) {
+        thing.grabOnly();
+        thing.becomeHere();
+      } else {
+        thing.grabOnly();
+        thing.firstParent.becomeHere();
+      }
     }
   }
 

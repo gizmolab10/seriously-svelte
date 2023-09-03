@@ -32,7 +32,6 @@ class DBFirebase implements DBInterface {
   hasData = false;
 
   reportError(error: any) { console.log(error); }
-  resetRoot() { this.hierarchy.resetRootFrom(this.things) }
 
   get hierarchy(): Hierarchy { 
     if (this._hierarchy == null) {

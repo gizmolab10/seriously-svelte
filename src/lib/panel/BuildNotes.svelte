@@ -1,8 +1,6 @@
 <script>
   import { noop, builds } from '../common/GlobalImports';
   import { popupViewID } from '../managers/State';
-  import Widget from '../graph/Widget.svelte'
-  import { exemplar } from '../data/Exemplar'
   export let size = 20;
   let notes = Object.entries(builds.notes).reverse().slice(0, 10)
   

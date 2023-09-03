@@ -1,7 +1,7 @@
 import { debug, dbType, bulkName, showDetails } from '../managers/State';
 import { DBType, BulkID, LocalID } from './GlobalImports'
 
-class Local {
+class PersistLocal {
 
   constructor() {}
 
@@ -24,4 +24,4 @@ class Local {
 
 }
 
-export const local = new Local();
+export const persistLocal = new PersistLocal();

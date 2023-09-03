@@ -1,5 +1,5 @@
 <script>
-  import { DBType, local, LocalID, onMount, ButtonID, Hierarchy } from '../common/GlobalImports';
+  import { DBType, LocalID, onMount, ButtonID, Hierarchy, dbDispatch, persistLocal } from '../common/GlobalImports';
   import { build, debug, dbType, isBusy, popupViewID } from '../managers/State';
   import RadioButtons from '../kit/RadioButtons.svelte'
   import LabelButton from '../kit/LabelButton.svelte';
@@ -17,8 +17,8 @@
 
   function handleDBTypeAt(index) {
     const type = menuItems[index].id;
-    local.writeToKey(LocalID.db, type);
-    if (type != DBType.local) {
+    persistLocal.writeToKey(LocalID.db, type);
+    if (type != DBType.local && !dbDispatch.db.hasData) {
       $isBusy = true;    // show 'loading ...'
     }
     $dbType = type;      // tell components to render the [possibly previously] fetched data

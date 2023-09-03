@@ -3,6 +3,7 @@ import { DBType, BulkID, ButtonID, DataKind, LocalID, CreationFlag } from './Enu
 import { FatTriangle, Direction } from '../geometry/FatTriangle';
 import { signal, Signals, handleSignalOfKind } from './Signals';
 import { Relationship } from '../data/Relationship';
+import { persistLocal } from './PersistLocal';
 import { dbDispatch } from '../db/DBDispatch';
 import Hierarchy from '../managers/Hierarchy';
 import { Predicate } from '../data/Predicate';
@@ -16,13 +17,12 @@ import { builds } from './Builds';
 import Thing from '../data/Thing';
 import Datum from '../data/Datum';
 import User from '../data/User';
-import { local } from './Local';
 import './Extensions';
 
 export { get, onMount, onDestroy,
   signal, Signals, handleSignalOfKind,
   constants, builds, Direction, FatTriangle,
-  grabs, local, editor, Hierarchy, dbDispatch,
+  grabs, persistLocal, editor, Hierarchy, dbDispatch,
   User, Datum, Thing, Access, Predicate, Relationship,
   DBType, BulkID, ButtonID, DataKind, LocalID, CreationFlag,
   log, noop, apply, remove, removeAll, copyObject, desaturateBy, normalizeOrderOf, sortAccordingToOrder };

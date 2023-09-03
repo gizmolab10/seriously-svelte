@@ -1,6 +1,6 @@
-import { hierarchy } from '../managers/Hierarchy';
-import Datum from './Datum';
+import { dbDispatch } from '../common/GlobalImports';
 import Airtable from 'airtable';
+import Datum from './Datum';
 
 export class Relationship extends Datum {
   awaitingCreation: boolean;
