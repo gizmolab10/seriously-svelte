@@ -1,15 +1,13 @@
 <script>
+  import { exemplar } from '../../ts/data/Exemplar';
   import Widget from '../graph/Widget.svelte';
-  import { exemplar } from '../data/Exemplar';
-  import TextBox from '../kit/TextBox.svelte';
   export let visible = true;
 </script>
 
-<TextBox text='When an item is <b>selected</b>:'/>
 <br>
-  <div class='centered-container'>
-    <Widget thing={exemplar}/>
-  </div>
+<div class='centered-container'>
+  <Widget thing={exemplar}/>
+</div>
 <ul class='help-ul'>
   <li class='help-li'>It is surrounded with a <b>border</b> (and its dots reverse their color).
   <li class='help-li'>To <b>edit</b> it, click on its text (try it on the item above). You can also select it and tap the <i>Enter</i> key. When you finish editing, tap the <i>Enter</i> key [again] to save your changes.

@@ -26,12 +26,20 @@
       </span>
     <h2>Welcome to Seriously</h2>
     <p>Seriously is essentially a hierarchal menu system, to which you can add new items.</p>
-    <br>
     <HelpButtons/>
+    <span class='horizontal-line'></span>
     <p><b>Please</b> bear in mind that the menu items are my test data. So, when you finish editing things, try to return everything to something close to its original state. <b>Thanks!</b></p>
   </div>
 </div>
 
 <style>
   @import '../../../styles/Help.css';
+  .horizontal-line {
+    position: absolute;
+    left: 10px;
+    top: 130px;
+    height: 1px;
+    width: 96%;
+    background-color: lightgray;
+  }
 </style>
