@@ -1,5 +1,5 @@
 <script lang='ts'>
-  import { Thing, grabs, Signals, onDestroy, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
+  import { Thing, Grabs, Signals, onDestroy, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
   import { grabbedIDs } from '../../ts/managers/State';
   import Crumb from '../kit/Crumb.svelte';
   let ancestors: Array<Thing> = [];

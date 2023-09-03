@@ -1,5 +1,5 @@
 <script>
-  import { get, grabs, DBType, onMount, LocalID, ButtonID, DataKind, Hierarchy, persistLocal } from '../../ts/common/GlobalImports'
+  import { get, Grabs, DBType, onMount, LocalID, ButtonID, DataKind, Hierarchy, dbDispatch, persistLocal } from '../../ts/common/GlobalImports'
   import { dbType, isBusy, bulkName, popupViewID, showDetails, thingsArrived } from '../../ts/managers/State';
   import CircularButton from '../kit/CircularButton.svelte';
   import BuildNotes from './BuildNotes.svelte';
@@ -41,7 +41,7 @@
 </span>
 <span class='vertical-line'></span>
 <span class='horizontal-line'></span>
-<span class='right-side'>
+<div class='right-side'>
   {#if $isBusy}
     <p>Welcome to Seriously</p>
     {#if $dbType != DBType.local}
@@ -62,7 +62,7 @@
   {:else if $popupViewID == ButtonID.buildNotes}
     <BuildNotes/>
   {/if}
-</span>
+</div>
 
 <style>
   p {
@@ -74,7 +74,7 @@
   }
   .right-side {
     position: fixed;
-    right: 100px;
+    left: 20%;
   }
   .left-side {
     position: fixed;

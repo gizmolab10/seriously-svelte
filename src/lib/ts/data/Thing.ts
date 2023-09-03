@@ -1,4 +1,4 @@
-import { grabs, Datum, dbDispatch, signal, Signals, constants, Predicate, normalizeOrderOf } from '../common/GlobalImports';
+import { Grabs, Datum, dbDispatch, signal, Signals, constants, Predicate, normalizeOrderOf } from '../common/GlobalImports';
 import { grabbedIDs, editingID, hereID } from '../managers/State';
 import Airtable from 'airtable';
 

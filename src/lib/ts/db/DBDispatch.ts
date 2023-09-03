@@ -1,5 +1,5 @@
-import { get, DBType, signal, Signals, Relationship } from '../common/GlobalImports';
 import { dbType, isBusy, grabbedIDs, thingsArrived } from '../managers/State';
+import { get, DBType, Relationship } from '../common/GlobalImports';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';

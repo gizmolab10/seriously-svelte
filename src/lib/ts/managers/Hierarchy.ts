@@ -21,16 +21,31 @@ export default class Hierarchy {
   knownRs_byIDFrom: KnownRelationships = {};
   knownRs_byIDTo: KnownRelationships = {};
   knownRs: Array<Relationship> = [];
+  _grabs: Grabs | null = null;
   root: Thing | null = null;
+  here: Thing | null = null;
   isConstructed = false;
-  grabs: Grabs;
 
-  constructor() { this.grabs = new Grabs(); }
+  constructor() {
+    hereID.subscribe((id: string | null) => {
+      if (dbDispatch.db.hasData) {
+        this.here = dbDispatch.db.hierarchy.getThing_forID(id);
+      }
+    })
+  }
+
   get hasNothing(): boolean { return !this.root; }
   get rootID(): (string | null) { return this.root?.id ?? null; };
   get things(): Array<Thing> { return Object.values(this.knownT_byID) };
   getThing_forID(idThing: string | null): Thing | null { return (!idThing) ? null : this.knownT_byID[idThing]; }
   getPredicate_forID(idPredicate: string | null): Predicate | null { return (!idPredicate) ? null : this.knownP_byID[idPredicate]; }
+
+  get grabs(): Grabs { 
+    if (this._grabs == null) {
+      this._grabs = new Grabs();
+    }
+    return this._grabs!;
+  }
   
   async constructHierarchy(type: string) {
     const rootID = this.rootID;
@@ -267,5 +282,4 @@ export default class Hierarchy {
     const user = new User(id, name, email, phone);
     this.knownU_byID[id] = user;
   }
-
 }

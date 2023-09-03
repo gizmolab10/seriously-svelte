@@ -7,12 +7,12 @@ export default class Grabs {
 
   constructor() {
     grabbedIDs.subscribe((ids: string[] | undefined) => { // executes whenever grabbedIDs changes
-      if (ids != undefined) {
+      if (ids && dbDispatch.db.hasData) {
         this.grabbed = [];
         for (const id of ids) {
           const thing = dbDispatch.db.hierarchy.getThing_forID(id)
           if (thing) {
-            this.grabbed.push(thing);
+            this.grabbed.push(thing);            
           }
         }
       }
@@ -68,11 +68,13 @@ export default class Grabs {
       sortAccordingToOrder(grabs);
       if (up) {
         return grabs[0];
-      } else {
-        return grabs[dbDispatch.db.hierarchy.grabs.length - 1];
+      } else if (dbDispatch.db.hierarchy.grabs.grabbed) {
+        return grabs[dbDispatch.db.hierarchy.grabs.grabbed.length - 1];
       }
     }
     return dbDispatch.db.hierarchy.root;
   }
 
 }
+
+export const grabs = new Grabs();

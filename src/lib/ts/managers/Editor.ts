@@ -1,5 +1,5 @@
-import { get, grabs, Thing, Datum, signal, Signals, constants, Hierarchy, Predicate, dbDispatch, CreationFlag, normalizeOrderOf } from '../common/GlobalImports';
-import { hereID, grabbedIDs } from './State';
+import { get, Thing, Datum, signal, Signals, constants, Predicate, dbDispatch, CreationFlag, normalizeOrderOf } from '../common/GlobalImports';
+import { grabbedIDs } from './State';
 
 ///////////////////////////////////////
 //                                   //
@@ -8,13 +8,6 @@ import { hereID, grabbedIDs } from './State';
 ///////////////////////////////////////
 
 export default class Editor {
-  here: Thing | null = null;
-
-  constructor() {
-    hereID.subscribe((id: string | null) => {
-      this.here = dbDispatch.db.hierarchy.getThing_forID(id);
-    })
-  }
 
   //////////////////////////
   //         ADD          //
@@ -94,10 +87,10 @@ export default class Editor {
   /////////////////////////////
 
   async grabs_redraw_remoteDelete() {
-    if (this.here) {
+    if (dbDispatch.db.hierarchy.here) {
       for (const id of get(grabbedIDs)) {
         const grabbed = dbDispatch.db.hierarchy.getThing_forID(id);
-        if (grabbed && !grabbed.isEditing && this.here) {
+        if (grabbed && !grabbed.isEditing) {
           let newGrab = grabbed.firstParent;
           const siblings = grabbed.siblings;
           let index = siblings.indexOf(grabbed);

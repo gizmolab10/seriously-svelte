@@ -1,5 +1,5 @@
 <script>
-  import { grabs, Thing, editor, constants, Signals, onDestroy, Predicate, ButtonID, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
+  import { Thing, editor, constants, Signals, onDestroy, Predicate, ButtonID, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
   import { popupViewID, editingID, hereID } from '../../ts/managers/State';
   import Children from './Children.svelte'
   let toggleDraw = false;
