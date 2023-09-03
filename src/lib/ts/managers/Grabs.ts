@@ -3,6 +3,7 @@ import { grabbedIDs } from './State';
 
 export default class Grabs {
   grabbed: Thing[] | null = null;
+  cachedGrabbedIDs: Array<string> = [];
 
   constructor() {
     grabbedIDs.subscribe((ids: string[] | undefined) => { // executes whenever grabbedIDs changes

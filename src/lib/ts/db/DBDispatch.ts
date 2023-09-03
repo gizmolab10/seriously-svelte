@@ -1,5 +1,5 @@
 import { get, DBType, signal, Signals, Relationship } from '../common/GlobalImports';
-import { dbType, isBusy, thingsArrived } from '../managers/State';
+import { dbType, isBusy, grabbedIDs, thingsArrived } from '../managers/State';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
@@ -12,6 +12,7 @@ export default class DBDispatch {
     this.db = dbFirebase;
     dbType.subscribe((type: string) => {
       if (type) {
+        this.db.hierarchy.grabs.cachedGrabbedIDs = get(grabbedIDs);
         this.updateForDBType(type);
         this.updateHierarchy(type);
       }
@@ -28,8 +29,7 @@ export default class DBDispatch {
 
   updateHierarchy(type: string) {
     if (this.db.hasData) {
-      console.log(get(isBusy));
-      isBusy.set(false);
+      grabbedIDs.set(this.db.hierarchy.grabs.cachedGrabbedIDs);
       this.db.hierarchy.root?.becomeHere();
     } else {
       if (type != DBType.local) {
