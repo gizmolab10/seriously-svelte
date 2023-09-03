@@ -1,6 +1,6 @@
 <script>
-  import { get, grabs, DBType, onMount, LocalID, ButtonID, DataKind, Hierarchy, persistLocal } from '../../typescript/common/GlobalImports'
-  import { dbType, isBusy, bulkName, popupViewID, showDetails, thingsArrived } from '../../typescript/managers/State';
+  import { get, grabs, DBType, onMount, LocalID, ButtonID, DataKind, Hierarchy, persistLocal } from '../../ts/common/GlobalImports'
+  import { dbType, isBusy, bulkName, popupViewID, showDetails, thingsArrived } from '../../ts/managers/State';
   import CircularButton from '../kit/CircularButton.svelte';
   import BuildNotes from './BuildNotes.svelte';
   import Graph from '../graph/Graph.svelte';

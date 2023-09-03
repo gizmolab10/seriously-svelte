@@ -1,6 +1,6 @@
 <script>
-  import { DBType, LocalID, onMount, ButtonID, Hierarchy, dbDispatch, persistLocal } from '../../typescript/common/GlobalImports';
-  import { build, debug, dbType, isBusy, popupViewID } from '../../typescript/managers/State';
+  import { DBType, LocalID, onMount, ButtonID, Hierarchy, dbDispatch, persistLocal } from '../../ts/common/GlobalImports';
+  import { build, debug, dbType, isBusy, popupViewID } from '../../ts/managers/State';
   import RadioButtons from '../kit/RadioButtons.svelte'
   import LabelButton from '../kit/LabelButton.svelte';
   import Label from '../kit/Label.svelte';

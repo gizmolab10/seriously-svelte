@@ -1,6 +1,6 @@
 <script lang='ts'>
-  import { noop, Thing, onMount } from '../../typescript/common/GlobalImports';
-  import { grabbedIDs } from '../../typescript/managers/State';
+  import { noop, Thing, onMount } from '../../ts/common/GlobalImports';
+  import { grabbedIDs } from '../../ts/managers/State';
   export let isReveal = false;
   export let thing = Thing;
   export let size = 15;
