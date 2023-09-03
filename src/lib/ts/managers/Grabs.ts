@@ -1,12 +1,12 @@
 import { get, Thing, dbDispatch, sortAccordingToOrder } from "../common/GlobalImports";
-import { grabbedIDs } from './State';
+import { idsGrabbed } from './State';
 
 export default class Grabs {
   grabbed: Thing[] | null = null;
   cachedGrabbedIDs: Array<string> = [];
 
   constructor() {
-    grabbedIDs.subscribe((ids: string[] | undefined) => { // executes whenever grabbedIDs changes
+    idsGrabbed.subscribe((ids: string[] | undefined) => { // executes whenever idsGrabbed changes
       if (ids && dbDispatch.db.hasData) {
         this.grabbed = [];
         for (const id of ids) {
@@ -30,11 +30,11 @@ export default class Grabs {
   }
 
   grabOnly = (thing: Thing) => {
-    grabbedIDs.set([thing.id]);
+    idsGrabbed.set([thing.id]);
   }
 
   grab = (thing: Thing) => {
-    grabbedIDs.update((array) => {
+    idsGrabbed.update((array) => {
       if (array.indexOf(thing.id) == -1) {
         array.push(thing.id);  // only add if not already added
       }
@@ -44,8 +44,8 @@ export default class Grabs {
 
   ungrab = (thing: Thing) => {
     let nextGrabbedID: (string | null) = null;
-    const rootID = dbDispatch.db.hierarchy.rootID;
-    grabbedIDs.update((array) => {
+    const rootID = dbDispatch.db.hierarchy.idRoot;
+    idsGrabbed.update((array) => {
       const index = array.indexOf(thing.id);
       if (index != -1) {        // only splice array when item is found
         array.splice(index, 1); // 2nd parameter means remove one item only
@@ -56,13 +56,13 @@ export default class Grabs {
       nextGrabbedID = array.slice(-1)[0];
       return array;
     });
-    if (get(grabbedIDs).length == 0) {
+    if (get(idsGrabbed).length == 0) {
       dbDispatch.db.hierarchy.root?.grabOnly();
     }
   }
 
   furthestGrab(up: boolean) {
-    const ids = get(grabbedIDs);
+    const ids = get(idsGrabbed);
     if (ids) {
       let grabs = dbDispatch.db.hierarchy.getThings_forIDs(ids);
       sortAccordingToOrder(grabs);

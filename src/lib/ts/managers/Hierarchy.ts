@@ -1,5 +1,5 @@
 import { get, User, Datum, Thing, Grabs, Access, remove, constants, Predicate, dbDispatch, Relationship, CreationFlag, normalizeOrderOf, sortAccordingToOrder } from '../common/GlobalImports';
-import { hereID, isBusy, grabbedIDs, thingsArrived } from './State';
+import { idHere, isBusy, idsGrabbed, thingsArrived } from './State';
 
 type KnownRelationships = { [id: string]: Array<Relationship> }
 
@@ -27,18 +27,19 @@ export default class Hierarchy {
   isConstructed = false;
 
   constructor() {
-    hereID.subscribe((id: string | null) => {
+    idHere.subscribe((id: string | null) => {
       if (dbDispatch.db.hasData) {
-        this.here = dbDispatch.db.hierarchy.getThing_forID(id);
+        this.here = this.getThing_forID(id);
       }
     })
   }
 
   get hasNothing(): boolean { return !this.root; }
-  get rootID(): (string | null) { return this.root?.id ?? null; };
+  get idRoot(): (string | null) { return this.root?.id ?? null; };
   get things(): Array<Thing> { return Object.values(this.knownT_byID) };
   getThing_forID(idThing: string | null): Thing | null { return (!idThing) ? null : this.knownT_byID[idThing]; }
   getPredicate_forID(idPredicate: string | null): Predicate | null { return (!idPredicate) ? null : this.knownP_byID[idPredicate]; }
+  restoreHere() { const newHere = this.here ?? this.root; newHere?.becomeHere(); }
 
   get grabs(): Grabs { 
     if (this._grabs == null) {
@@ -48,14 +49,14 @@ export default class Hierarchy {
   }
   
   async constructHierarchy(type: string) {
-    const rootID = this.rootID;
-    if (this.root && rootID) {
+    const idRoot = this.idRoot;
+    if (this.root && idRoot) {
       for (const thing of this.things) {
-        const id = thing.id;
-        if (id == rootID) {
-          hereID.set(id);
+        const idThing = thing.id;
+        if (idThing == idRoot) {
+          idHere.set(idThing);
         } else {
-          let relationship = this.getRelationship_whereParentIDEquals(id);
+          let relationship = this.getRelationship_whereParentIDEquals(idThing);
           if (relationship) {
             thing.order = relationship.order;
           } else {
@@ -63,7 +64,7 @@ export default class Hierarchy {
             
             // already determined that WE DO NOT NEED NoDuplicate, we do need it's id now
 
-            await this.rememberRelationship_remoteCreate(Datum.newID, idPredicateIsAParentOf, rootID, id, -1, CreationFlag.getRemoteID)
+            await this.rememberRelationship_remoteCreate(Datum.newID, idPredicateIsAParentOf, idRoot, idThing, -1, CreationFlag.getRemoteID)
           }
         }
       }
@@ -165,15 +166,14 @@ export default class Hierarchy {
   }
 
   relationships_accomodateRelocations(original: Relationship, relationship: Relationship) {
-    const idHere = get(hereID);
-    const ids = get(grabbedIDs);
     const idChild = relationship.idTo;
     const idOriginal = original.idFrom;
     const idParent = relationship.idFrom;
-    const parent = dbDispatch.db.hierarchy.getThing_forID(idParent);
-    const oParent = dbDispatch.db.hierarchy.getThing_forID(idOriginal);
-    if (idOriginal == idHere && idOriginal != idParent && ids.includes(idChild)) {
-      const child = dbDispatch.db.hierarchy.getThing_forID(idChild);
+    const parent = this.getThing_forID(idParent);
+    const oParent = this.getThing_forID(idOriginal);
+    const childIsGrabbed = get(idsGrabbed).includes(idChild);
+    if (idOriginal == get(idHere) && idOriginal != idParent && childIsGrabbed) {
+      const child = this.getThing_forID(idChild);
       child?.grabOnly(); // update crumbs
       if (oParent && !oParent.hasChildren) {
         parent?.becomeHere();
@@ -272,10 +272,10 @@ export default class Hierarchy {
     this.rememberPredicate(predicate)
   }
 
-  access_runtimeCreate(id: string, kind: string) {
-    const access = new Access(id, kind);
+  access_runtimeCreate(idAccess: string, kind: string) {
+    const access = new Access(idAccess, kind);
     this.knownA_byKind[kind] = access;
-    this.knownA_byID[id] = access;
+    this.knownA_byID[idAccess] = access;
   }
 
   user_runtimeCreate(id: string, name: string, email: string, phone: string) {

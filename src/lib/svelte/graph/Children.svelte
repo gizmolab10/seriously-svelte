@@ -6,9 +6,9 @@
   let toggleDraw = false;
 	onDestroy( () => {signalHandler.disconnect(); });
 
-  const signalHandler = handleSignalOfKind(Signals.childrenOf, (thingID) => {
+  const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
     const newChildren = thing.children;
-    if (thingID == thing.id || children != newChildren) {
+    if (idThing == thing.id || children != newChildren) {
       normalizeOrderOf(newChildren);
       children = newChildren;
       toggleDraw = !toggleDraw;

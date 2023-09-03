@@ -28,7 +28,6 @@ class DBFirebase implements DBInterface {
   predicatesCollection: CollectionReference | null = null;
   thingsCollection: CollectionReference | null = null;
   _hierarchy: Hierarchy | null = null;
-  things: Thing[] = [];
   hasData = false;
 
   reportError(error: any) { console.log(error); }
@@ -41,7 +40,6 @@ class DBFirebase implements DBInterface {
   }
 
   async setup() {
-    this.things =[];
     await this.fetchDocumentsIn(DataKind.things);
     await this.fetchDocumentsIn(DataKind.predicates, true)
     await this.fetchDocumentsIn(DataKind.relationships);
@@ -139,7 +137,7 @@ class DBFirebase implements DBInterface {
             switch (change.type) {
               case 'added':
                 if (!thing) {
-                  this.things.push(this.hierarchy.rememberThing_runtimeCreate(id, remote.title, remote.color, remote.trait, -1, true));
+                  this.hierarchy.rememberThing_runtimeCreate(id, remote.title, remote.color, remote.trait, -1, true);
                 }
                 break;
               default:
@@ -309,13 +307,12 @@ class DBFirebase implements DBInterface {
   async rememberValidatedDocument(dataKind: DataKind, id: string, data: DocumentData) {
     if (DBFirebase.isValidOfKind(dataKind, data)) {
       switch (dataKind) {
-        case DataKind.things:        this.things.push(this.hierarchy.rememberThing_runtimeCreate(id, data.title, data.color, data.trait, -1, true)); break;
+        case DataKind.things:        this.hierarchy.rememberThing_runtimeCreate(id, data.title, data.color, data.trait, -1, true); break;
         case DataKind.predicates:    this.hierarchy.rememberPredicate_runtimeCreate(id, data.kind); break;
         case DataKind.relationships: await this.hierarchy.rememberRelationship_remoteCreateNoDuplicate(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
       }
     }
   }
-
 }
 
 export const dbFirebase = new DBFirebase();

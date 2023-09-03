@@ -1,12 +1,12 @@
 <script>
-  import { Thing, editor, constants, Signals, onDestroy, Predicate, ButtonID, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
-  import { popupViewID, editingID, hereID } from '../../ts/managers/State';
+  import { Thing, editor, Signals, onDestroy, Predicate, ButtonID, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
+  import { popupViewID, idEditing, idHere } from '../../ts/managers/State';
   import Children from './Children.svelte'
   let toggleDraw = false;
   let here = Thing;
   let listener;
 
-	$: { here = dbDispatch.db.hierarchy.getThing_forID($hereID); }
+	$: { here = dbDispatch.db.hierarchy.getThing_forID($idHere); }
 	onDestroy( () => {signalHandler.disconnect(); });
 
   const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
@@ -17,7 +17,7 @@
 
   async function handleKeyDown(event) {
     let grab = dbDispatch.db.hierarchy.grabs.furthestGrab(true);
-    if ($editingID)      { return; } // let Title component consume the events
+    if ($idEditing)      { return; } // let Title component consume the events
     if (event.key == undefined)  { alert('no key for ' + event.type); return; }
     if (!grab) {
       grab = dbDispatch.db.hierarchy.root;

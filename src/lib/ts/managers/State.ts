@@ -1,10 +1,10 @@
 import { writable } from 'svelte/store';
 
-export const stoppedEditingID   = writable<string | null>();
+export const stoppedIDEditing   = writable<string | null>();
 export const popupViewID        = writable<string | null>();
-export const editingID          = writable<string | null>();
-export const hereID             = writable<string | null>();
-export const grabbedIDs         = writable<string[]>();
+export const idEditing          = writable<string | null>();
+export const idHere             = writable<string | null>();
+export const idsGrabbed         = writable<string[]>();
 export const thingsArrived      = writable<boolean>();
 export const showDetails        = writable<boolean>();
 export const isBusy             = writable<boolean>();

@@ -1,18 +1,18 @@
 <script>
   import { onMount } from '../../ts/common/GlobalImports';
-  export let selectedID = null;
+  export let idSelected = null;
   export let menuItems;
 
 
   onMount( () => {
-    if (!selectedID && menuItems.length > 0) {
-      selectedID = menuItems[0].id;   // Initialize selectedID to the id of the first menuItem
+    if (!idSelected && menuItems.length > 0) {
+      idSelected = menuItems[0].id;   // Initialize idSelected to the id of the first menuItem
     }
   });
 
   function handleSelect(id) {
-    selectedID = id;
-    const selectedMenuItem = menuItems.find(menuItem => menuItem.id === selectedID);
+    idSelected = id;
+    const selectedMenuItem = menuItems.find(menuItem => menuItem.id === idSelected);
     if (selectedMenuItem) {
       selectedMenuItem.action();
     }
@@ -27,7 +27,7 @@
         name="menu"
         value={menuItem.id}
         on:change={ () => handleSelect(menuItem.id) }
-        bind:group={selectedID}/>
+        bind:group={idSelected}/>
       <span class="label-text">{menuItem.label}</span>
     </label>
   {/each}

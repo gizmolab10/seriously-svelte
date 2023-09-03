@@ -1,6 +1,6 @@
 <script lang='ts'>
   import { Thing, dbDispatch, editor, signal, Signals, onDestroy } from '../../ts/common/GlobalImports';
-  import { editingID, stoppedEditingID } from '../../ts/managers/State';
+  import { idEditing, stoppedIDEditing } from '../../ts/managers/State';
   import Widget from './Widget.svelte';
   export let thing = Thing;
   let originalTitle = thing.title;
@@ -15,7 +15,7 @@
   onDestroy(() => { thing = null; });
 
   function handleKeyDown(event) {
-    if ($editingID == thing.id) {
+    if ($idEditing == thing.id) {
       switch (event.key) {
         case 'Tab': stopAndClearEditing(); editor.thing_redraw_remoteDuplicate(); break;
         case 'Enter': stopAndClearEditing();
@@ -29,10 +29,10 @@
     // manage edit state //
     ///////////////////////
 
-    if ($stoppedEditingID == thing.id) {
+    if ($stoppedIDEditing == thing.id) {
       stopEditing();
-      $stoppedEditingID = null;
-    } else if ($editingID != thing.id) {
+      $stoppedIDEditing = null;
+    } else if ($idEditing != thing.id) {
       stopEditing();
     } else if (!isEditing) {
       isEditing = true;
@@ -53,13 +53,13 @@
   function stopAndClearEditing(invokeBlur: boolean = true) {
     stopEditing(invokeBlur);
     setTimeout(() => {     // eliminate infinite recursion
-      $editingID = null;
+      $idEditing = null;
     }, 20);
   }
 
   function stopEditing(invokeBlur: boolean = true) {
     if (isEditing) {
-      $stoppedEditingID = $editingID;
+      $stoppedIDEditing = $idEditing;
       isEditing = false;
       if (invokeBlur) {
         input?.blur();

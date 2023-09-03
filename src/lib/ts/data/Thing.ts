@@ -1,5 +1,5 @@
 import { Grabs, Datum, dbDispatch, signal, Signals, constants, Predicate, normalizeOrderOf } from '../common/GlobalImports';
-import { grabbedIDs, editingID, hereID } from '../managers/State';
+import { idsGrabbed, idEditing, idHere } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -24,7 +24,7 @@ export default class Thing extends Datum {
 
     this.updateColorAttributes();
 
-    editingID.subscribe((id: string | null) => { // executes whenever editingID changes
+    idEditing.subscribe((id: string | null) => { // executes whenever idEditing changes
       const isEditing = (id == this.id);
       if (this.isEditing != isEditing) {
         this.isEditing = isEditing;
@@ -32,7 +32,7 @@ export default class Thing extends Datum {
       }
     });
 
-    grabbedIDs.subscribe((ids: string[] | undefined) => { // executes whenever grabbedIDs changes
+    idsGrabbed.subscribe((ids: string[] | undefined) => { // executes whenever idsGrabbed changes
       const isGrabbed = (ids != undefined) && ids.includes(this.id);
       if (this.isGrabbed != isGrabbed) {
         this.isGrabbed = isGrabbed;
@@ -87,13 +87,13 @@ export default class Thing extends Datum {
   }
 
   hasPredicate(asParents: boolean): boolean { return asParents ? this.parents.length > 0 : this.children.length > 0 }
-  startEdit() { if (this != dbDispatch.db.hierarchy.root) { editingID.set(this.id); } }
+  startEdit() { if (this != dbDispatch.db.hierarchy.root) { idEditing.set(this.id); } }
   toggleGrab() { dbDispatch.db.hierarchy.grabs.toggleGrab(this); }
   grabOnly() { dbDispatch.db.hierarchy.grabs.grabOnly(this); }
 
   becomeHere() {
     if (this.hasChildren) {
-      hereID.set(this.id);
+      idHere.set(this.id);
       signal(Signals.childrenOf, this.id);
     };
   }
@@ -172,7 +172,7 @@ export default class Thing extends Datum {
   redraw_browseRight(right: boolean, up: boolean = false) {
     const newGrab = right ? up ? this.lastChild : this.firstChild : this.firstParent;
     const newHere = right ? this : this.grandparent;
-    editingID.set(null);
+    idEditing.set(null);
     newHere.becomeHere();
     newGrab?.grabOnly();
   }

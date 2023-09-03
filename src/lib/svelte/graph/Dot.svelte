@@ -1,6 +1,6 @@
 <script lang='ts'>
   import { noop, Thing, onMount } from '../../ts/common/GlobalImports';
-  import { grabbedIDs } from '../../ts/managers/State';
+  import { idsGrabbed } from '../../ts/managers/State';
   export let isReveal = false;
   export let thing = Thing;
   export let size = 15;
@@ -13,7 +13,7 @@
   onMount( () => { updateColorStyle(); });
 
 	$: {
-		const grabbed = $grabbedIDs?.includes(thing.id);
+		const grabbed = $idsGrabbed?.includes(thing.id);
 		if (isGrabbed != grabbed) {
 			isGrabbed = grabbed;
 			updateColorStyle();
@@ -34,7 +34,7 @@
       }
     } else if (event.shiftKey) {
       thing.toggleGrab();
-    } else if ($grabbedIDs?.includes(thing.id)) {
+    } else if ($idsGrabbed?.includes(thing.id)) {
       thing.redraw_browseRight(false);
     } else {
       thing.grabOnly();

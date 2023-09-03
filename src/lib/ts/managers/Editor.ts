@@ -1,5 +1,5 @@
 import { get, Thing, Datum, signal, Signals, constants, Predicate, dbDispatch, CreationFlag, normalizeOrderOf } from '../common/GlobalImports';
-import { grabbedIDs } from './State';
+import { idsGrabbed } from './State';
 
 ///////////////////////////////////////
 //                                   //
@@ -88,7 +88,7 @@ export default class Editor {
 
   async grabs_redraw_remoteDelete() {
     if (dbDispatch.db.hierarchy.here) {
-      for (const id of get(grabbedIDs)) {
+      for (const id of get(idsGrabbed)) {
         const grabbed = dbDispatch.db.hierarchy.getThing_forID(id);
         if (grabbed && !grabbed.isEditing) {
           let newGrab = grabbed.firstParent;

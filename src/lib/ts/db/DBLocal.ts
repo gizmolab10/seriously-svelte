@@ -14,13 +14,13 @@ export default class DBLocal implements DBInterface {
 
   async setup() {
     const h = this.hierarchy;
-    const rootID = Datum.newID;
-    const childID = Datum.newID;
-    const predicateID = Datum.newID;
-    h.rememberThing_runtimeCreate(rootID, 'seriously', 'blue', '!', -1, true);
-    h.rememberThing_runtimeCreate(childID, 'child', 'red', 'c', 0, true);
-    h.rememberPredicate_runtimeCreate(predicateID, 'isAParentOf');
-    h.rememberRelationship_runtimeCreate(Datum.newID, predicateID, rootID, childID, 0);
+    const idRoot = Datum.newID;
+    const idChild = Datum.newID;
+    const idPredicate = Datum.newID;
+    h.rememberThing_runtimeCreate(idRoot, 'seriously', 'blue', '!', -1, true);
+    h.rememberThing_runtimeCreate(idChild, 'child', 'red', 'c', 0, true);
+    h.rememberPredicate_runtimeCreate(idPredicate, 'isAParentOf');
+    h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idRoot, idChild, 0);
   };
 
   async thing_remoteCreate(thing: Thing) {};
