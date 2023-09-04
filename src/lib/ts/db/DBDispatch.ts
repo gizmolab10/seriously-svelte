@@ -9,7 +9,7 @@ export default class DBDispatch {
   db: DBInterface;
 
   constructor() {
-    this.db = dbAirtable;
+    this.db = dbFirebase;
     dbType.subscribe((type: string) => {
       if (type) {
         idHere.set(null);
