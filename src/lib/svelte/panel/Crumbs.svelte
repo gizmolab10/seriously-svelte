@@ -3,15 +3,20 @@
   import { idsGrabbed } from '../../ts/managers/State';
   import Crumb from '../kit/Crumb.svelte';
   let ancestors: Array<Thing> = [];
-  export let grab;
   let toggleDraw = false;
+  export let grab;
+
   onDestroy( () => {signalHandler.disconnect(); });
   const signalHandler = handleSignalOfKind(Signals.childrenOf, (thingID) => { toggleDraw = !toggleDraw; })
 
   $: {
+
+    // BUG: after db change idsGrabbed contains prior db's things' ids
+
     if (!$idsGrabbed?.includes(grab?.id) || ancestors.length == 0) {
-      let id = dbDispatch.db.hierarchy.grabs.last_idGrabbed;
-      const thing = dbDispatch.db.hierarchy.getThing_forID(id);   // start over with new grab
+      const h = dbDispatch.db.hierarchy;
+      let id = h.grabs.last_idGrabbed;
+      const thing = h.getThing_forID(id);   // start over with new grab
       if (thing) {
         grab = thing;
       }

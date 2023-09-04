@@ -1,4 +1,4 @@
-import { Grabs, Datum, dbDispatch, signal, Signals, constants, Predicate, normalizeOrderOf } from '../common/GlobalImports';
+import { DBType, Datum, dbDispatch, signal, Signals, constants, Predicate, normalizeOrderOf } from '../common/GlobalImports';
 import { idsGrabbed, idEditing, idHere } from '../managers/State';
 import Airtable from 'airtable';
 
@@ -14,6 +14,7 @@ export default class Thing extends Datum {
   grabAttributes = '';
   hoverAttributes = '';
   borderAttribute = '';
+  dbType: string;
 
   constructor(id = Datum.newID, title = constants.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
     super(id, isRemotelyStored);
@@ -21,6 +22,7 @@ export default class Thing extends Datum {
     this.color = color;
     this.trait = trait;
     this.order = order;
+    this.dbType = dbDispatch.db.dbType;
 
     this.updateColorAttributes();
 

@@ -17,10 +17,10 @@
 
   function handleDBTypeAt(index) {
     const type = menuItems[index].id;
-    persistLocal.writeToKey(LocalID.db, type);
     const db = dbDispatch.dbForType(type);
+    persistLocal.writeToKey(LocalID.db, type);
     if (type != DBType.local && !db.hasData) {
-      $isBusy = true;    // show 'loading ...'
+      $isBusy = true;    // set this before changing $dbType so panel will show 'loading ...'
     }
     $dbType = type;      // tell components to render the [possibly previously] fetched data
   }

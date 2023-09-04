@@ -49,16 +49,8 @@ export default class Hierarchy {
     if (here == null) {
       const grab = this.grabs.last_thingGrabbed;
       here = grab?.firstParent ?? this.root;
-      const type = this.db.dbType;
-      const isFirebase = type == DBType.firebase;
       if (!grab) {
-        if (isFirebase) {
-          console.log('no here, no grab');
-        }
         return
-      }
-      if (isFirebase) {
-        console.log('restoring here in', type, 'from grab: \'', grab?.title, '\' grab ids:', get(idsGrabbed), this.grabs.cached_titlesGrabbed, here?.title);
       }
     }
     here?.becomeHere();

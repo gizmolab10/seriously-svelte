@@ -1,4 +1,4 @@
-import { get, Thing, Hierarchy, dbDispatch, sortAccordingToOrder } from "../common/GlobalImports";
+import { get, Thing, Hierarchy, sortAccordingToOrder } from "../common/GlobalImports";
 import { idsGrabbed } from './State';
 
 export default class Grabs {
@@ -19,14 +19,16 @@ export default class Grabs {
       // it belongs in the previous db
       // should not be stored in new db
 
-      if (ids && dbDispatch.db.hasData) {
-        this.updateCache_idsGrabbed(ids);
+      if (ids && this.hierarchy.db.hasData) {
         this.grabbed = [];
         for (const id of ids) {
           const thing = this.hierarchy.getThing_forID(id)
           if (thing) {
             this.grabbed.push(thing);            
           }
+        }
+        if (this.grabbed.length > 0) { // check if any grabbed id is valid for this db
+          this.updateCache_idsGrabbed(ids);
         }
       }
     });
@@ -42,12 +44,8 @@ export default class Grabs {
   toggleGrab = (thing: Thing) => { if (thing.isGrabbed) { this.ungrab(thing); } else { this.grab(thing); } }
 
   updateCache_idsGrabbed(ids: Array<string> | null = null) {
-    const type = dbDispatch.db.dbType;
     const cache = ids ?? get(idsGrabbed);
     this.cached_idsGrabbed = cache;
-    if (cache.length > 0) {
-      console.log('cache grabs in', type, cache, this.cached_titlesGrabbed);
-    }
   }
 
   get last_idGrabbed(): string | null {

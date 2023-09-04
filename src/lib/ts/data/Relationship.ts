@@ -8,6 +8,7 @@ export class Relationship extends Datum {
   idFrom: string;
   idPredicate: string;
   order: number;
+  dbType: string;
 
   constructor(id: string, idPredicate: string, idFrom: string, idTo: string, order = 0, isRemotelyStored: boolean) {
     super(id, isRemotelyStored);
@@ -16,6 +17,7 @@ export class Relationship extends Datum {
     this.idFrom = idFrom; // idFrom is parent
     this.idPredicate = idPredicate;
     this.order = order;
+    this.dbType = dbDispatch.db.dbType;
   }
 
   log(message: string) { console.log(message, this.description); }

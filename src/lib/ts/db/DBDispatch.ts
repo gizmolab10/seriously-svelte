@@ -12,10 +12,9 @@ export default class DBDispatch {
     this.db = dbFirebase;
     dbType.subscribe((type: string) => {
       if (type) {
-        const grabs = this.db.hierarchy.grabs
-        const grab = grabs.last_thingGrabbed;
+        const grab = this.db.hierarchy.grabs.last_thingGrabbed;
         const wasType = this.db.dbType;
-        console.log('switching db from', wasType, 'and grab is: \'', grab?.title, '\' grab ids:', get(idsGrabbed), grabs.cached_titlesGrabbed);
+        console.log(wasType, 'switching db to', type, 'and grab is: \'', grab?.title, '\' grab ids:', get(idsGrabbed), this.db.hierarchy.grabs.cached_titlesGrabbed);
         idHere.set(null);
         idsGrabbed.set([]);
         this.updateDBForType(type);
@@ -38,6 +37,9 @@ export default class DBDispatch {
     const h = this.db.hierarchy;
     if (this.db.hasData) {
       idHere.set(h.cached_idHere);
+
+      // BUG: after db change cache is wrong
+
       idsGrabbed.set(h.grabs.cached_idsGrabbed);
       h.restoreHere();
     } else {
