@@ -9,16 +9,6 @@ export default class Grabs {
   constructor(hierarchy: Hierarchy) {
     this.hierarchy = hierarchy;
     idsGrabbed.subscribe((ids: string[] | undefined) => { // executes whenever idsGrabbed changes
-
-      // called when $dbType changes in Details
-      // needs to stash idsGrabbed and idHere
-      // in dbType subscribe, in dbDispatch
-      // after db is set by updateDBForType
-      // during construct hierarchy
-      // with old/confusing value
-      // it belongs in the previous db
-      // should not be stored in new db
-
       if (ids && this.hierarchy.db.hasData) {
         this.grabbed = [];
         for (const id of ids) {

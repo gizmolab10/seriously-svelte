@@ -10,9 +10,6 @@
   const signalHandler = handleSignalOfKind(Signals.childrenOf, (thingID) => { toggleDraw = !toggleDraw; })
 
   $: {
-
-    // BUG: after db change idsGrabbed contains prior db's things' ids
-
     if (!$idsGrabbed?.includes(grab?.id) || ancestors.length == 0) {
       const h = dbDispatch.db.hierarchy;
       let id = h.grabs.last_idGrabbed;

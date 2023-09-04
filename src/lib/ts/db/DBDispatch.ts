@@ -37,9 +37,6 @@ export default class DBDispatch {
     const h = this.db.hierarchy;
     if (this.db.hasData) {
       idHere.set(h.cached_idHere);
-
-      // BUG: after db change cache is wrong
-
       idsGrabbed.set(h.grabs.cached_idsGrabbed);
       h.restoreHere();
     } else {
