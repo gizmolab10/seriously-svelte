@@ -1,5 +1,5 @@
 import { dbType, isBusy, idsGrabbed, thingsArrived, idHere } from '../managers/State';
-import { get, DBType, Relationship } from '../common/GlobalImports';
+import { DBType, Relationship } from '../common/GlobalImports';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
@@ -9,7 +9,7 @@ export default class DBDispatch {
   db: DBInterface;
 
   constructor() {
-    this.db = dbFirebase;
+    this.db = dbAirtable;
     dbType.subscribe((type: string) => {
       if (type) {
         idHere.set(null);

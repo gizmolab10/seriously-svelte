@@ -15,7 +15,7 @@ class PersistLocal {
   }
   
   setup() {
-    // this.writeToKey(LocalID.db, DBType.airtable);
+    this.writeToKey(LocalID.db, DBType.airtable);
     debug.set(this.readFromKey(LocalID.debug) ?? false);
     showDetails.set(this.readFromKey(LocalID.details) ?? false);
     bulkName.set(this.readFromKey(LocalID.bulk) ?? BulkID.public);
