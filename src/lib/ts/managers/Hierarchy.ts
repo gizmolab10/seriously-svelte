@@ -1,5 +1,6 @@
-import { get, User, Datum, Thing, Grabs, Access, remove, constants, Predicate, dbDispatch, Relationship, CreationFlag, normalizeOrderOf, sortAccordingToOrder } from '../common/GlobalImports';
+import { get, User, Datum, Thing, Grabs, DBType, Access, remove, constants, Predicate, dbDispatch, Relationship, CreationFlag, normalizeOrderOf, sortAccordingToOrder } from '../common/GlobalImports';
 import { idHere, isBusy, idsGrabbed, thingsArrived } from './State';
+import DBInterface from '../db/DBInterface';
 
 type KnownRelationships = { [id: string]: Array<Relationship> }
 
@@ -21,14 +22,17 @@ export default class Hierarchy {
   knownRs_byIDFrom: KnownRelationships = {};
   knownRs_byIDTo: KnownRelationships = {};
   knownRs: Array<Relationship> = [];
+  cached_idHere: string | null = null;
   _grabs: Grabs | null = null;
   root: Thing | null = null;
   here: Thing | null = null;
   isConstructed = false;
+  db: DBInterface;
 
-  constructor() {
+  constructor(db: DBInterface) {
+    this.db = db;
     idHere.subscribe((id: string | null) => {
-      if (dbDispatch.db.hasData) {
+      if (this.db.hasData) {
         this.here = this.getThing_forID(id);
       }
     })
@@ -39,11 +43,30 @@ export default class Hierarchy {
   get things(): Array<Thing> { return Object.values(this.knownT_byID) };
   getThing_forID(idThing: string | null): Thing | null { return (!idThing) ? null : this.knownT_byID[idThing]; }
   getPredicate_forID(idPredicate: string | null): Predicate | null { return (!idPredicate) ? null : this.knownP_byID[idPredicate]; }
-  restoreHere() { const newHere = this.here ?? this.root; newHere?.becomeHere(); }
+
+  restoreHere() {
+    let here = this.getThing_forID(get(idHere));
+    if (here == null) {
+      const grab = this.grabs.last_thingGrabbed;
+      here = grab?.firstParent ?? this.root;
+      const type = this.db.dbType;
+      const isFirebase = type == DBType.firebase;
+      if (!grab) {
+        if (isFirebase) {
+          console.log('no here, no grab');
+        }
+        return
+      }
+      if (isFirebase) {
+        console.log('restoring here in', type, 'from grab: \'', grab?.title, '\' grab ids:', get(idsGrabbed), this.grabs.cached_titlesGrabbed, here?.title);
+      }
+    }
+    here?.becomeHere();
+  }
 
   get grabs(): Grabs { 
     if (this._grabs == null) {
-      this._grabs = new Grabs();
+      this._grabs = new Grabs(this);
     }
     return this._grabs!;
   }
@@ -69,7 +92,7 @@ export default class Hierarchy {
         }
       }
       this.root.normalizeOrder_recursive(true)   // setup order values for all things and relationships
-      dbDispatch.db.hasData = true;
+      this.db.hasData = true;
       normalizeOrderOf(this.root.children)
       this.root.grabOnly()
     }
@@ -94,7 +117,7 @@ export default class Hierarchy {
   }
 
   async forgetThing_remoteDelete(thing: Thing) {
-    await dbDispatch.db.thing_remoteDelete(thing);
+    await this.db.thing_remoteDelete(thing);
     this.forgetThing(thing);
   }
 
@@ -201,7 +224,7 @@ export default class Hierarchy {
     const array = this.knownRs_byIDTo[thing.id];
     if (array) {
       for (const relationship of array) {
-        await dbDispatch.db.relationship_remoteDelete(relationship);
+        await this.db.relationship_remoteDelete(relationship);
         this.forgetRelationship(relationship);
       }
     }

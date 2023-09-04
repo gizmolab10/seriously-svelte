@@ -1,16 +1,29 @@
-import { get, Thing, dbDispatch, sortAccordingToOrder } from "../common/GlobalImports";
+import { get, Thing, Hierarchy, dbDispatch, sortAccordingToOrder } from "../common/GlobalImports";
 import { idsGrabbed } from './State';
 
 export default class Grabs {
+  hierarchy: Hierarchy;
   grabbed: Thing[] | null = null;
-  cachedGrabbedIDs: Array<string> = [];
+  cached_idsGrabbed: Array<string> = [];
 
-  constructor() {
+  constructor(hierarchy: Hierarchy) {
+    this.hierarchy = hierarchy;
     idsGrabbed.subscribe((ids: string[] | undefined) => { // executes whenever idsGrabbed changes
+
+      // called when $dbType changes in Details
+      // needs to stash idsGrabbed and idHere
+      // in dbType subscribe, in dbDispatch
+      // after db is set by updateDBForType
+      // during construct hierarchy
+      // with old/confusing value
+      // it belongs in the previous db
+      // should not be stored in new db
+
       if (ids && dbDispatch.db.hasData) {
+        this.updateCache_idsGrabbed(ids);
         this.grabbed = [];
         for (const id of ids) {
-          const thing = dbDispatch.db.hierarchy.getThing_forID(id)
+          const thing = this.hierarchy.getThing_forID(id)
           if (thing) {
             this.grabbed.push(thing);            
           }
@@ -19,18 +32,35 @@ export default class Grabs {
     });
   };
 
-  get lastGrabbedID(): string | null { return this.grabbedThing?.id ?? null; }
+  get cached_titlesGrabbed(): Array<string> {
+    const things = this.hierarchy.getThings_forIDs(this.cached_idsGrabbed)
+    const titles = things.map((thing) => { return thing.title; });
+    return titles;
+  }
+
+  get last_thingGrabbed(): (Thing | null) { return this.hierarchy.getThing_forID(this.last_idGrabbed); }
   toggleGrab = (thing: Thing) => { if (thing.isGrabbed) { this.ungrab(thing); } else { this.grab(thing); } }
-  
-  get grabbedThing(): (Thing | null) {
-    if (this.grabbed) {
-      return this.grabbed.slice(-1)[0]
+
+  updateCache_idsGrabbed(ids: Array<string> | null = null) {
+    const type = dbDispatch.db.dbType;
+    const cache = ids ?? get(idsGrabbed);
+    this.cached_idsGrabbed = cache;
+    if (cache.length > 0) {
+      console.log('cache grabs in', type, cache, this.cached_titlesGrabbed);
+    }
+  }
+
+  get last_idGrabbed(): string | null {
+    if (this.cached_idsGrabbed) {
+      return this.cached_idsGrabbed.slice(-1)[0]
     }
     return null;
   }
 
   grabOnly = (thing: Thing) => {
-    idsGrabbed.set([thing.id]);
+    const ids = [thing.id]
+    idsGrabbed.set(ids);
+    this.updateCache_idsGrabbed(ids);
   }
 
   grab = (thing: Thing) => {
@@ -40,11 +70,12 @@ export default class Grabs {
       }
       return array;
     });
+    this.updateCache_idsGrabbed();
   }
 
   ungrab = (thing: Thing) => {
     let nextGrabbedID: (string | null) = null;
-    const rootID = dbDispatch.db.hierarchy.idRoot;
+    const rootID = this.hierarchy.idRoot;
     idsGrabbed.update((array) => {
       const index = array.indexOf(thing.id);
       if (index != -1) {        // only splice array when item is found
@@ -56,25 +87,25 @@ export default class Grabs {
       nextGrabbedID = array.slice(-1)[0];
       return array;
     });
-    if (get(idsGrabbed).length == 0) {
-      dbDispatch.db.hierarchy.root?.grabOnly();
+    const ids = get(idsGrabbed);
+    this.updateCache_idsGrabbed(ids);
+    if (ids.length == 0) {
+      this.hierarchy.root?.grabOnly();
     }
   }
 
   furthestGrab(up: boolean) {
     const ids = get(idsGrabbed);
     if (ids) {
-      let grabs = dbDispatch.db.hierarchy.getThings_forIDs(ids);
+      let grabs = this.hierarchy.getThings_forIDs(ids);
       sortAccordingToOrder(grabs);
       if (up) {
         return grabs[0];
-      } else if (dbDispatch.db.hierarchy.grabs.grabbed) {
-        return grabs[dbDispatch.db.hierarchy.grabs.grabbed.length - 1];
+      } else if (this.hierarchy.grabs.grabbed) {
+        return grabs[this.hierarchy.grabs.grabbed.length - 1];
       }
     }
-    return dbDispatch.db.hierarchy.root;
+    return this.hierarchy.root;
   }
 
 }
-
-export const grabs = new Grabs();

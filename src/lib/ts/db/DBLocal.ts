@@ -1,13 +1,14 @@
-import { Datum, Thing, Hierarchy, Relationship } from '../common/GlobalImports';
+import { Datum, Thing, DBType, Hierarchy, Relationship } from '../common/GlobalImports';
 import DBInterface from './DBInterface';
 
 export default class DBLocal implements DBInterface {
-  hasData = false;
   _hierarchy: Hierarchy | null = null;
+  dbType = DBType.local;
+  hasData = false;
 
   get hierarchy(): Hierarchy { 
     if (this._hierarchy == null) {
-      this._hierarchy = new Hierarchy();
+      this._hierarchy = new Hierarchy(this);
     }
     return this._hierarchy!;
   }
@@ -15,12 +16,18 @@ export default class DBLocal implements DBInterface {
   async setup() {
     const h = this.hierarchy;
     const idRoot = Datum.newID;
-    const idChild = Datum.newID;
+    const idFirst = Datum.newID;
+    const idSecond = Datum.newID;
+    const idThird = Datum.newID;
     const idPredicate = Datum.newID;
     h.rememberThing_runtimeCreate(idRoot, 'seriously', 'blue', '!', -1, true);
-    h.rememberThing_runtimeCreate(idChild, 'child', 'red', 'c', 0, true);
+    h.rememberThing_runtimeCreate(idFirst, 'first', 'red', 'c', 0, true);
+    h.rememberThing_runtimeCreate(idSecond, 'second', 'purple', 'c', 0, true);
+    h.rememberThing_runtimeCreate(idThird, 'third', 'orange', 'c', 0, true);
     h.rememberPredicate_runtimeCreate(idPredicate, 'isAParentOf');
-    h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idRoot, idChild, 0);
+    h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idRoot, idFirst, 0);
+    h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idFirst, idSecond, 0);
+    h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idSecond, idThird, 0);
   };
 
   async thing_remoteCreate(thing: Thing) {};

@@ -1,4 +1,4 @@
-import { dbType, isBusy, idsGrabbed, thingsArrived } from '../managers/State';
+import { dbType, isBusy, idsGrabbed, thingsArrived, idHere } from '../managers/State';
 import { get, DBType, Relationship } from '../common/GlobalImports';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
@@ -12,25 +12,34 @@ export default class DBDispatch {
     this.db = dbFirebase;
     dbType.subscribe((type: string) => {
       if (type) {
-        this.db.hierarchy.grabs.cachedGrabbedIDs = get(idsGrabbed);
-        this.updateForDBType(type);
+        const grabs = this.db.hierarchy.grabs
+        const grab = grabs.last_thingGrabbed;
+        const wasType = this.db.dbType;
+        console.log('switching db from', wasType, 'and grab is: \'', grab?.title, '\' grab ids:', get(idsGrabbed), grabs.cached_titlesGrabbed);
+        idHere.set(null);
+        idsGrabbed.set([]);
+        this.updateDBForType(type);
         this.updateHierarchy(type);
       }
     })
   }
 
-  updateForDBType(type: string) {
+  updateDBForType(type: string) { this.db = this.dbForType(type); }
+
+  dbForType(type: string): DBInterface {
     switch (type) {
-      case DBType.airtable: this.db = dbAirtable; break;
-      case DBType.firebase: this.db = dbFirebase; break;
-      case DBType.local:    this.db = dbLocal;    break;
+      case DBType.airtable: return dbAirtable;
+      case DBType.firebase: return dbFirebase;
+      default:              return dbLocal;
     }
   }
 
   updateHierarchy(type: string) {
+    const h = this.db.hierarchy;
     if (this.db.hasData) {
-      idsGrabbed.set(this.db.hierarchy.grabs.cachedGrabbedIDs);
-      this.db.hierarchy.restoreHere();
+      idHere.set(h.cached_idHere);
+      idsGrabbed.set(h.grabs.cached_idsGrabbed);
+      h.restoreHere();
     } else {
       if (type != DBType.local) {
         isBusy.set(true);         // also used by Details when changing dbType
@@ -38,7 +47,7 @@ export default class DBDispatch {
       }
       (async () => {              // this will happen when Local sets dbType !!! too early?
         await this.db.setup();
-        this.db.hierarchy.constructHierarchy(type);
+        h.constructHierarchy(type);
       })();
     }
   }

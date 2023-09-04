@@ -5,15 +5,12 @@
   let ancestors: Array<Thing> = [];
   export let grab;
   let toggleDraw = false;
-	onDestroy( () => {signalHandler.disconnect(); });
+  onDestroy( () => {signalHandler.disconnect(); });
+  const signalHandler = handleSignalOfKind(Signals.childrenOf, (thingID) => { toggleDraw = !toggleDraw; })
 
-  const signalHandler = handleSignalOfKind(Signals.childrenOf, (thingID) => {
-    toggleDraw = !toggleDraw;
-  })
-
-	$: {
+  $: {
     if (!$idsGrabbed?.includes(grab?.id) || ancestors.length == 0) {
-      let id = dbDispatch.db.hierarchy.grabs.lastGrabbedID;
+      let id = dbDispatch.db.hierarchy.grabs.last_idGrabbed;
       const thing = dbDispatch.db.hierarchy.getThing_forID(id);   // start over with new grab
       if (thing) {
         grab = thing;
@@ -22,8 +19,7 @@
     if (grab) {
       ancestors = grab.ancestors;
     }
-	}
-
+  }
 </script>
 
 {#key toggleDraw}

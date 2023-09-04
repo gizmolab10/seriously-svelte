@@ -4,11 +4,10 @@
 
   function handleClick(event) {
     if (dbDispatch.db.hasData) {
+      thing.grabOnly();
       if (thing == dbDispatch.db.hierarchy.root) {
-        thing.grabOnly();
         thing.becomeHere();
       } else {
-        thing.grabOnly();
         thing.firstParent.becomeHere();
       }
     }

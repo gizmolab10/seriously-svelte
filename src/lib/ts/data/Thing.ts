@@ -93,8 +93,10 @@ export default class Thing extends Datum {
 
   becomeHere() {
     if (this.hasChildren) {
-      idHere.set(this.id);
-      signal(Signals.childrenOf, this.id);
+      const id = this.id;
+      idHere.set(id);
+      dbDispatch.db.hierarchy.cached_idHere = id;
+      signal(Signals.childrenOf, id);
     };
   }
 

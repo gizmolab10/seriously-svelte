@@ -1,4 +1,4 @@
-import { Thing, Hierarchy, Relationship, CreationFlag } from '../common/GlobalImports';
+import { Thing, DBType, Hierarchy, Relationship, CreationFlag } from '../common/GlobalImports';
 import { thingsArrived } from '../managers/State';
 import DBInterface from './DBInterface';
 import Airtable from 'airtable';
@@ -21,6 +21,7 @@ export default class DBAirtable implements DBInterface {
   access_table = this.base('Access');
   users_table = this.base('Users');
   _hierarchy: Hierarchy | null = null;
+  dbType = DBType.airtable;
   things: Thing[] = [];
   hasData = false;
 
@@ -31,7 +32,7 @@ export default class DBAirtable implements DBInterface {
 
   get hierarchy(): Hierarchy { 
     if (this._hierarchy == null) {
-      this._hierarchy = new Hierarchy();
+      this._hierarchy = new Hierarchy(this);
     }
     return this._hierarchy!;
   }

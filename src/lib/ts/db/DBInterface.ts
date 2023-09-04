@@ -3,6 +3,7 @@ import { Thing, Hierarchy, Relationship } from '../common/GlobalImports';
 export default interface DBInterface {
   hierarchy: Hierarchy;
   hasData: boolean;
+  dbType: string;
   setup(): Promise<void>;
   thing_remoteCreate(thing: Thing): Promise<void>;
   thing_remoteUpdate(thing: Thing): Promise<void>;

@@ -1,5 +1,7 @@
-import { doc, addDoc, setDoc, deleteDoc, getDocs, collection, onSnapshot, getFirestore, DocumentData, DocumentChange, DocumentReference, CollectionReference } from 'firebase/firestore';
-import { get, Thing, signal, Signals, constants, DataKind, Hierarchy, copyObject, Predicate, Relationship, CreationFlag } from '../common/GlobalImports';
+import { doc, addDoc, setDoc, deleteDoc, getDocs, collection, onSnapshot, getFirestore } from 'firebase/firestore';
+import { DocumentData, DocumentChange, DocumentReference, CollectionReference } from 'firebase/firestore';
+import { Hierarchy, copyObject, Predicate, Relationship, CreationFlag } from '../common/GlobalImports';
+import { get, Thing, DBType, signal, Signals, constants, DataKind } from '../common/GlobalImports';
 import { getAnalytics } from "firebase/analytics";
 import { bulkName } from '../managers/State';
 import { initializeApp } from "firebase/app";
@@ -28,13 +30,14 @@ class DBFirebase implements DBInterface {
   predicatesCollection: CollectionReference | null = null;
   thingsCollection: CollectionReference | null = null;
   _hierarchy: Hierarchy | null = null;
+  dbType = DBType.firebase;
   hasData = false;
 
   reportError(error: any) { console.log(error); }
 
   get hierarchy(): Hierarchy { 
     if (this._hierarchy == null) {
-      this._hierarchy = new Hierarchy();
+      this._hierarchy = new Hierarchy(this);
     }
     return this._hierarchy!;
   }
