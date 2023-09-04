@@ -12,9 +12,6 @@ export default class DBDispatch {
     this.db = dbFirebase;
     dbType.subscribe((type: string) => {
       if (type) {
-        const grab = this.db.hierarchy.grabs.last_thingGrabbed;
-        const wasType = this.db.dbType;
-        console.log(wasType, 'switching db to', type, 'and grab is: \'', grab?.title, '\' grab ids:', get(idsGrabbed), this.db.hierarchy.grabs.cached_titlesGrabbed);
         idHere.set(null);
         idsGrabbed.set([]);
         this.updateDBForType(type);

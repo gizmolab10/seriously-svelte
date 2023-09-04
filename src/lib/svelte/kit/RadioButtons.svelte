@@ -12,21 +12,27 @@
 
   function handleSelect(id) {
     idSelected = id;
+    console.log('radio', id);
     const selectedMenuItem = menuItems.find(menuItem => menuItem.id === idSelected);
     if (selectedMenuItem) {
       selectedMenuItem.action();
     }
   }
+  
+  function handleKeyDown(event) { event.preventDefault(); return false; }
 </script>
 
-<div class="popup">
+<div class='popup'>
   {#each menuItems as menuItem}
-    <label class="menu-item">
+    <label class="menu-item"
+      style='on:keydown={handleKeyDown}'>
       <input class='radio'
-        type="radio"
-        name="menu"
+        name='menu'
+        type='radio'
+        style='outline: none'
+        on:keydown={handleKeyDown}
         value={menuItem.id}
-        on:change={ () => handleSelect(menuItem.id) }
+        on:change={() => handleSelect(menuItem.id) }
         bind:group={idSelected}/>
       <span class="label-text">{menuItem.label}</span>
     </label>
