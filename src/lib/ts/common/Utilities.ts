@@ -1,5 +1,6 @@
 import { Thing } from './GlobalImports';
 import convert from 'color-convert';
+import os from 'os';
 
 export function noop() {}
 
@@ -49,6 +50,11 @@ export function copyObject(obj: any) {
   const copiedObject = Object.create(Object.getPrototypeOf(obj));
   Object.assign(copiedObject, obj);
   return copiedObject;
+}
+
+export function isServerLocal(): boolean {
+  const hostname = window.location.hostname;
+  return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "0.0.0.0";
 }
 
 // export function desaturateBy(color: string, desaturateBy: number, brightenBy: number): string {}

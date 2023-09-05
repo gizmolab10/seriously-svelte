@@ -1,5 +1,5 @@
 import { debug, dbType, idHere, bulkName, showDetails, idsGrabbed } from '../managers/State';
-import { get, DBType, BulkID, PersistID, dbDispatch } from './GlobalImports'
+import { get, DBType, BulkID, PersistID, dbDispatch, isServerLocal } from './GlobalImports'
 
 class PersistLocal {
   okayToWrite = false;
@@ -36,7 +36,6 @@ class PersistLocal {
     if (values) {
       values[1] = values[1].split(this.idSeparator);
     }
-    console.log('read', values);
     return values;
   }
 
@@ -45,16 +44,15 @@ class PersistLocal {
   }
 
   writeToKeys(aKey: string, aValue: any, bKey: string, bValues: Array<any>) {
-    console.log('write', aValue, bValues);
     if (aValue && bValues.length > 0) {
       this.writeToKey(aKey + this.separator + bKey, aValue + this.separator + bValues.join(this.idSeparator));
     }
   }
 
   setup() {
-    localStorage.clear();
+    // localStorage.clear();
     this.writeToKey(PersistID.db, DBType.firebase);
-    debug.set(this.readFromKey(PersistID.debug) ?? false);
+    debug.set(this.readFromKey(PersistID.debug) ?? isServerLocal());
     showDetails.set(this.readFromKey(PersistID.details) ?? false);
     bulkName.set(this.readFromKey(PersistID.bulk) ?? BulkID.public);
     dbType.set(this.readFromKey(PersistID.db) ?? DBType.firebase); // invokes cloud setup, which needs bulk name already set (must be above)
