@@ -1,5 +1,5 @@
 import { dbType, isBusy, idsGrabbed, thingsArrived, idHere } from '../managers/State';
-import { DBType, PersistID, Relationship, persistLocal } from '../common/GlobalImports';
+import { DBType, Relationship, persistLocal } from '../common/GlobalImports';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
@@ -10,6 +10,7 @@ export default class DBDispatch {
 
   constructor() {
     this.db = dbFirebase;
+    persistLocal.okayToWrite = true;
     dbType.subscribe((type: string) => {
       if (type) {
         idHere.set(null);
@@ -33,9 +34,7 @@ export default class DBDispatch {
   updateHierarchy(type: string) {
     const h = this.db.hierarchy;
     if (this.db.hasData) {
-      idHere.set(h.cached_idHere);
-      idsGrabbed.set(persistLocal.readFromKey(PersistID.grab) ?? null);
-      idsGrabbed.set(h.grabs.cached_idsGrabbed);
+      persistLocal.setupDBFor(type, this.db.hierarchy.idRoot!);
       h.restoreHere();
     } else {
       if (type != DBType.local) {

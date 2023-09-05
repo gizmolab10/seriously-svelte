@@ -18,8 +18,8 @@
     persistLocal.writeToKey(PersistID.details, $showDetails);
   }
 
-  onMount(async () => {
-    persistLocal.setup();
+onMount(async () => {
+  persistLocal.setup();
   })
 </script>
 

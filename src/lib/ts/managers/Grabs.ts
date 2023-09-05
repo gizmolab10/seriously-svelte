@@ -1,10 +1,9 @@
-import { get, Thing, PersistID, Hierarchy, sortAccordingToOrder, persistLocal } from "../common/GlobalImports";
+import { get, Thing, Hierarchy, sortAccordingToOrder } from "../common/GlobalImports";
 import { idsGrabbed } from './State';
 
 export default class Grabs {
   hierarchy: Hierarchy;
   grabbed: Thing[] | null = null;
-  cached_idsGrabbed: Array<string> = [];
 
   constructor(hierarchy: Hierarchy) {
     this.hierarchy = hierarchy;
@@ -17,30 +16,17 @@ export default class Grabs {
             this.grabbed.push(thing);            
           }
         }
-        if (this.grabbed.length > 0) { // check if any grabbed id is valid for this db
-          this.updateCache_idsGrabbed(ids);
-        }
       }
     });
   };
 
-  get cached_titlesGrabbed(): Array<string> {
-    const things = this.hierarchy.getThings_forIDs(this.cached_idsGrabbed)
-    const titles = things.map((thing) => { return thing.title; });
-    return titles;
-  }
-
   get last_thingGrabbed(): (Thing | null) { return this.hierarchy.getThing_forID(this.last_idGrabbed); }
   toggleGrab = (thing: Thing) => { if (thing.isGrabbed) { this.ungrab(thing); } else { this.grab(thing); } }
 
-  updateCache_idsGrabbed(ids: Array<string> | null = null) {
-    const cache = ids ?? get(idsGrabbed);
-    this.cached_idsGrabbed = cache;
-  }
-
   get last_idGrabbed(): string | null {
-    if (this.cached_idsGrabbed) {
-      return this.cached_idsGrabbed.slice(-1)[0]
+    const ids = get(idsGrabbed);
+    if (ids) {
+      return ids.slice(-1)[0]
     }
     return null;
   }
@@ -48,7 +34,6 @@ export default class Grabs {
   grabOnly = (thing: Thing) => {
     const ids = [thing.id]
     idsGrabbed.set(ids);
-    this.updateCache_idsGrabbed(ids);
   }
 
   grab = (thing: Thing) => {
@@ -58,7 +43,6 @@ export default class Grabs {
       }
       return array;
     });
-    this.updateCache_idsGrabbed();
   }
 
   ungrab = (thing: Thing) => {
@@ -76,7 +60,6 @@ export default class Grabs {
       return array;
     });
     const ids = get(idsGrabbed);
-    this.updateCache_idsGrabbed(ids);
     if (ids.length == 0) {
       this.hierarchy.root?.grabOnly();
     }

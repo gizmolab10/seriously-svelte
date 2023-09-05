@@ -1,5 +1,5 @@
 import { get, User, Datum, Thing, Grabs, Access, remove, constants, Predicate, dbDispatch, Relationship } from '../common/GlobalImports';
-import { PersistID, persistLocal, CreationFlag, normalizeOrderOf, sortAccordingToOrder } from '../common/GlobalImports';
+import { persistLocal, CreationFlag, normalizeOrderOf, sortAccordingToOrder } from '../common/GlobalImports';
 import { idHere, isBusy, idsGrabbed, thingsArrived } from './State';
 import DBInterface from '../db/DBInterface';
 
@@ -23,7 +23,6 @@ export default class Hierarchy {
   knownRs_byIDFrom: KnownRelationships = {};
   knownRs_byIDTo: KnownRelationships = {};
   knownRs: Array<Relationship> = [];
-  cached_idHere: string | null = null;
   _grabs: Grabs | null = null;
   root: Thing | null = null;
   here: Thing | null = null;
@@ -85,30 +84,11 @@ export default class Hierarchy {
       this.root.normalizeOrder_recursive(true)   // setup order values for all things and relationships
       this.db.hasData = true;
       normalizeOrderOf(this.root.children)
-      this.setupGrabs()
-      this.setupHere(idRoot)
+      persistLocal.setupDBFor(type, idRoot);
     }
     thingsArrived.set(true);
     isBusy.set(false);
     this.isConstructed = true;
-  }
-
-  setupHere(idRoot: string) {
-      const persistedIDHere = persistLocal.readFromKey(PersistID.here);
-      if (persistedIDHere) {
-        idHere.set(persistedIDHere);
-      } else {
-        idHere.set(idRoot);
-      }
-  }
-
-  setupGrabs() {
-    const grabs = this.grabs;
-    const ids = grabs.cached_idsGrabbed;
-    idsGrabbed.set(ids);
-    if (ids.length == 0) {
-      this.root?.grabOnly();
-    }
   }
 
   /////////////////////////////
@@ -138,7 +118,6 @@ export default class Hierarchy {
       this.rememberRelationshipByKnown(this.knownRs_byIDTo, relationship.idTo, relationship);
       this.rememberRelationshipByKnown(this.knownRs_byIDFrom, relationship.idFrom, relationship);
       this.rememberRelationshipByKnown(this.knownRs_byIDPredicate, relationship.idPredicate, relationship);
-      // relationship.log('remember');
     }
   }
 

@@ -98,7 +98,6 @@ export default class Thing extends Datum {
       const id = this.id;
       idHere.set(id);
       persistLocal.writeToKey(PersistID.here, id);
-      dbDispatch.db.hierarchy.cached_idHere = id;
       signal(Signals.childrenOf, id);
     };
   }

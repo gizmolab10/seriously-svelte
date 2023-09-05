@@ -15,11 +15,11 @@ export default class DBLocal implements DBInterface {
 
   async setup() {
     const h = this.hierarchy;
-    const idRoot = Datum.newID;
-    const idFirst = Datum.newID;
-    const idSecond = Datum.newID;
-    const idThird = Datum.newID;
-    const idPredicate = Datum.newID;
+    const idRoot = 'local1';
+    const idFirst = 'local2';
+    const idSecond = 'local3';
+    const idThird = 'local4';
+    const idPredicate = 'local5';
     h.rememberThing_runtimeCreate(idRoot, 'seriously', 'blue', '!', -1, true);
     h.rememberThing_runtimeCreate(idFirst, 'first', 'red', 'c', 0, true);
     h.rememberThing_runtimeCreate(idSecond, 'second', 'purple', 'c', 0, true);
