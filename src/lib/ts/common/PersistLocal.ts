@@ -52,9 +52,9 @@ class PersistLocal {
   }
 
   setup() {
-    // localStorage.clear();
-    // this.writeToKey(PersistID.db, DBType.firebase);
-    debug.set(this.readFromKey(PersistID.debug) ?? true);
+    localStorage.clear();
+    this.writeToKey(PersistID.db, DBType.firebase);
+    debug.set(this.readFromKey(PersistID.debug) ?? false);
     showDetails.set(this.readFromKey(PersistID.details) ?? false);
     bulkName.set(this.readFromKey(PersistID.bulk) ?? BulkID.public);
     dbType.set(this.readFromKey(PersistID.db) ?? DBType.firebase); // invokes cloud setup, which needs bulk name already set (must be above)
