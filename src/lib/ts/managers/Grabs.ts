@@ -1,4 +1,4 @@
-import { get, Thing, Hierarchy, sortAccordingToOrder } from "../common/GlobalImports";
+import { get, Thing, PersistID, Hierarchy, sortAccordingToOrder, persistLocal } from "../common/GlobalImports";
 import { idsGrabbed } from './State';
 
 export default class Grabs {

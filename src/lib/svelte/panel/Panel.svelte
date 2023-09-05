@@ -1,11 +1,11 @@
 <script>
-  import { get, Grabs, DBType, onMount, LocalID, ButtonID, DataKind, Hierarchy, dbDispatch, persistLocal } from '../../ts/common/GlobalImports'
+  import { get, Grabs, DBType, onMount, PersistID, ButtonID, DataKind, Hierarchy, dbDispatch, persistLocal } from '../../ts/common/GlobalImports'
   import { dbType, isBusy, bulkName, popupViewID, showDetails, thingsArrived } from '../../ts/managers/State';
   import CircularButton from '../kit/CircularButton.svelte';
   import BuildNotes from './BuildNotes.svelte';
   import Graph from '../graph/Graph.svelte';
-  import Details from './Details.svelte';
   import Help from '../help/Help.svelte';
+  import Details from './Details.svelte';
   import Crumbs from './Crumbs.svelte';
   let size = 15;
 
@@ -15,7 +15,7 @@
   
   function handleSettings(event) {
     $showDetails = !$showDetails;
-    persistLocal.writeToKey(LocalID.details, $showDetails);
+    persistLocal.writeToKey(PersistID.details, $showDetails);
   }
 
   onMount(async () => {

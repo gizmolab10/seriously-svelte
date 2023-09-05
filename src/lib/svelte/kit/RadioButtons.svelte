@@ -12,7 +12,6 @@
 
   function handleSelect(id) {
     idSelected = id;
-    console.log('radio', id);
     const selectedMenuItem = menuItems.find(menuItem => menuItem.id === idSelected);
     if (selectedMenuItem) {
       selectedMenuItem.action();

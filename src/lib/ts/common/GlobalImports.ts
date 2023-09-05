@@ -1,5 +1,5 @@
 import { log, noop, apply, remove, removeAll, copyObject, desaturateBy, normalizeOrderOf, sortAccordingToOrder } from './Utilities';
-import { DBType, BulkID, ButtonID, DataKind, LocalID, CreationFlag } from './Enumerations';
+import { DBType, BulkID, ButtonID, DataKind, PersistID, CreationFlag } from './Enumerations';
 import { FatTriangle, Direction } from '../geometry/FatTriangle';
 import { signal, Signals, handleSignalOfKind } from './Signals';
 import { Relationship } from '../data/Relationship';
@@ -24,5 +24,5 @@ export { get, onMount, onDestroy,
   constants, builds, Direction, FatTriangle,
   Grabs, persistLocal, editor, Hierarchy, dbDispatch,
   User, Datum, Thing, Access, Predicate, Relationship,
-  DBType, BulkID, ButtonID, DataKind, LocalID, CreationFlag,
+  DBType, BulkID, ButtonID, DataKind, PersistID, CreationFlag,
   log, noop, apply, remove, removeAll, copyObject, desaturateBy, normalizeOrderOf, sortAccordingToOrder };

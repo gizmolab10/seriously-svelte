@@ -14,10 +14,12 @@ export enum BulkID {
   mine   = 'Jonathan Sand',
 }
 
-export enum LocalID {
+export enum PersistID {
   details = 'details',
   debug   = 'debug',
   bulk    = 'bulk',
+  here    = 'here',
+  grab    = 'grab',
   db      = 'db',
 }
 

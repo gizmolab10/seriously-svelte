@@ -1,5 +1,5 @@
 import { dbType, isBusy, idsGrabbed, thingsArrived, idHere } from '../managers/State';
-import { DBType, Relationship } from '../common/GlobalImports';
+import { DBType, PersistID, Relationship, persistLocal } from '../common/GlobalImports';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
@@ -34,6 +34,7 @@ export default class DBDispatch {
     const h = this.db.hierarchy;
     if (this.db.hasData) {
       idHere.set(h.cached_idHere);
+      idsGrabbed.set(persistLocal.readFromKey(PersistID.grab) ?? null);
       idsGrabbed.set(h.grabs.cached_idsGrabbed);
       h.restoreHere();
     } else {

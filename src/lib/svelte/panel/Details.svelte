@@ -1,5 +1,5 @@
 <script>
-  import { DBType, LocalID, onMount, ButtonID, Hierarchy, dbDispatch, persistLocal } from '../../ts/common/GlobalImports';
+  import { DBType, PersistID, onMount, ButtonID, Hierarchy, dbDispatch, persistLocal } from '../../ts/common/GlobalImports';
   import { build, debug, dbType, isBusy, popupViewID } from '../../ts/managers/State';
   import RadioButtons from '../kit/RadioButtons.svelte'
   import LabelButton from '../kit/LabelButton.svelte';
@@ -18,7 +18,7 @@
   function handleDBTypeAt(index) {
     const type = menuItems[index].id;
     const db = dbDispatch.dbForType(type);
-    persistLocal.writeToKey(LocalID.db, type);
+    persistLocal.writeToKey(PersistID.db, type);
     if (type != DBType.local && !db.hasData) {
       $isBusy = true;    // set this before changing $dbType so panel will show 'loading ...'
     }

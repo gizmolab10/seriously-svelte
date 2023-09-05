@@ -1,4 +1,5 @@
-import { get, User, Datum, Thing, Grabs, DBType, Access, remove, constants, Predicate, dbDispatch, Relationship, CreationFlag, normalizeOrderOf, sortAccordingToOrder } from '../common/GlobalImports';
+import { get, User, Datum, Thing, Grabs, Access, remove, constants, Predicate, dbDispatch, Relationship } from '../common/GlobalImports';
+import { PersistID, persistLocal, CreationFlag, normalizeOrderOf, sortAccordingToOrder } from '../common/GlobalImports';
 import { idHere, isBusy, idsGrabbed, thingsArrived } from './State';
 import DBInterface from '../db/DBInterface';
 
@@ -69,7 +70,12 @@ export default class Hierarchy {
       for (const thing of this.things) {
         const idThing = thing.id;
         if (idThing == idRoot) {
-          idHere.set(idThing);
+          const savedIDHere = persistLocal.readFromKey(PersistID.here);
+          if (savedIDHere) {
+            idHere.set(savedIDHere);
+          } else {
+            idHere.set(idThing);
+          }
         } else {
           let relationship = this.getRelationship_whereParentIDEquals(idThing);
           if (relationship) {

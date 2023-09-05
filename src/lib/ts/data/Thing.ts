@@ -1,4 +1,4 @@
-import { DBType, Datum, dbDispatch, signal, Signals, constants, Predicate, normalizeOrderOf } from '../common/GlobalImports';
+import { Datum, dbDispatch, signal, Signals, constants, Predicate, persistLocal, PersistID, normalizeOrderOf } from '../common/GlobalImports';
 import { idsGrabbed, idEditing, idHere } from '../managers/State';
 import Airtable from 'airtable';
 
@@ -97,6 +97,7 @@ export default class Thing extends Datum {
     if (this.hasChildren) {
       const id = this.id;
       idHere.set(id);
+      persistLocal.writeToKey(PersistID.here, id);
       dbDispatch.db.hierarchy.cached_idHere = id;
       signal(Signals.childrenOf, id);
     };

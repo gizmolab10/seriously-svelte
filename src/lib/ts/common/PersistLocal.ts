@@ -1,5 +1,5 @@
 import { debug, dbType, bulkName, showDetails } from '../managers/State';
-import { DBType, BulkID, LocalID } from './GlobalImports'
+import { DBType, BulkID, PersistID } from './GlobalImports'
 
 class PersistLocal {
 
@@ -15,11 +15,11 @@ class PersistLocal {
   }
   
   setup() {
-    this.writeToKey(LocalID.db, DBType.firebase);
-    debug.set(this.readFromKey(LocalID.debug) ?? false);
-    showDetails.set(this.readFromKey(LocalID.details) ?? false);
-    bulkName.set(this.readFromKey(LocalID.bulk) ?? BulkID.public);
-    dbType.set(this.readFromKey(LocalID.db) ?? DBType.firebase); // invokes cloud setup, which needs bulk name already set (must be above)
+    // this.writeToKey(PersistID.db, DBType.firebase);
+    debug.set(this.readFromKey(PersistID.debug) ?? false);
+    showDetails.set(this.readFromKey(PersistID.details) ?? false);
+    bulkName.set(this.readFromKey(PersistID.bulk) ?? BulkID.public);
+    dbType.set(this.readFromKey(PersistID.db) ?? DBType.firebase); // invokes cloud setup, which needs bulk name already set (must be above)
   }
 
 }
