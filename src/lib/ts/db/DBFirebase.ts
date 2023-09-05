@@ -81,6 +81,7 @@ class DBFirebase implements DBInterface {
         snapshot.docChanges().forEach((change) => {   // convert and remember
           this.handleChange(change, dataKind);
         });
+        signal(Signals.childrenOf, null);
       }
     }
   )};
@@ -130,7 +131,6 @@ class DBFirebase implements DBInterface {
             }
             if (relationship) {
               this.hierarchy.relationships_accomodateRelocations(original, relationship);
-              signal(Signals.childrenOf, relationship.idFrom);
             }
           }
         } else if (dataKind == DataKind.things) {

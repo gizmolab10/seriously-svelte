@@ -69,14 +69,7 @@ export default class Hierarchy {
     if (this.root && idRoot) {
       for (const thing of this.things) {
         const idThing = thing.id;
-        if (idThing == idRoot) {
-          const savedIDHere = persistLocal.readFromKey(PersistID.here);
-          if (savedIDHere) {
-            idHere.set(savedIDHere);
-          } else {
-            idHere.set(idThing);
-          }
-        } else {
+        if (idThing != idRoot) {
           let relationship = this.getRelationship_whereParentIDEquals(idThing);
           if (relationship) {
             thing.order = relationship.order;
@@ -92,11 +85,30 @@ export default class Hierarchy {
       this.root.normalizeOrder_recursive(true)   // setup order values for all things and relationships
       this.db.hasData = true;
       normalizeOrderOf(this.root.children)
-      this.root.grabOnly()
+      this.setupGrabs()
+      this.setupHere(idRoot)
     }
     thingsArrived.set(true);
     isBusy.set(false);
     this.isConstructed = true;
+  }
+
+  setupHere(idRoot: string) {
+      const persistedIDHere = persistLocal.readFromKey(PersistID.here);
+      if (persistedIDHere) {
+        idHere.set(persistedIDHere);
+      } else {
+        idHere.set(idRoot);
+      }
+  }
+
+  setupGrabs() {
+    const grabs = this.grabs;
+    const ids = grabs.cached_idsGrabbed;
+    idsGrabbed.set(ids);
+    if (ids.length == 0) {
+      this.root?.grabOnly();
+    }
   }
 
   /////////////////////////////
