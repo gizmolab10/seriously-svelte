@@ -49,7 +49,7 @@ export class FatTriangle {
     this.path = `M${start.x},${start.y},${data.map(d => `C${d.controlOne.x},${d.controlOne.y} ${d.controlTwo.x},${d.controlTwo.y} ${d.end.x},${d.end.y}`).join('')}Z`;
   }
 
-  rotatePoint = (point: {x:number, y:number}, angle: number) => {
+  rotatePoint(point: {x:number, y:number}, angle: number) {
     const cos = Math.cos(angle);
     const sin = Math.sin(angle);
     return {

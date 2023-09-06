@@ -1,9 +1,10 @@
 <script>
-  import { Thing, Signals, onDestroy, normalizeOrderOf, handleSignalOfKind } from '../../ts/common/GlobalImports';
+  import { Rect, Size, Point, Thing, Signals, onDestroy, normalizeOrderOf, handleSignalOfKind } from '../../ts/common/GlobalImports';
   import Widget from './Widget.svelte';
+  import Line from './Line.svelte';
   export let thing = Thing;
-  let children = thing.children;
   let toggleDraw = false;
+  let children = thing.children;
 	onDestroy( () => {signalHandler.disconnect(); });
 
   const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
@@ -14,6 +15,7 @@
       toggleDraw = !toggleDraw;
     }
   })
+  // <Line curveUp={false} rect={new Rect(new Point(20, 20), new Size(50, 20))}/>
 </script>
 
 {#key toggleDraw}

@@ -2,6 +2,7 @@ import { log, noop, apply, remove, removeAll, copyObject, desaturateBy, isServer
 import { DBType, BulkID, ButtonID, DataKind, PersistID, CreationFlag } from './Enumerations';
 import { FatTriangle, Direction } from '../geometry/FatTriangle';
 import { signal, Signals, handleSignalOfKind } from './Signals';
+import { Point, Size, Rect } from '../geometry/Geometry';
 import { Relationship } from '../data/Relationship';
 import { persistLocal } from './PersistLocal';
 import { dbDispatch } from '../db/DBDispatch';
@@ -19,10 +20,12 @@ import Datum from '../data/Datum';
 import User from '../data/User';
 import './Extensions';
 
-export { get, onMount, onDestroy,
+export { constants, builds,
+  get, onMount, onDestroy,
   signal, Signals, handleSignalOfKind,
-  constants, builds, Direction, FatTriangle,
+  Point, Size, Rect, FatTriangle, Direction,
   Grabs, persistLocal, editor, Hierarchy, dbDispatch,
   User, Datum, Thing, Access, Predicate, Relationship,
+  isServerLocal, normalizeOrderOf, sortAccordingToOrder,
   DBType, BulkID, ButtonID, DataKind, PersistID, CreationFlag,
-  log, noop, apply, remove, removeAll, copyObject, desaturateBy, isServerLocal, normalizeOrderOf, sortAccordingToOrder };
+  log, noop, apply, remove, removeAll, copyObject, desaturateBy };
