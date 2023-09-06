@@ -1,5 +1,5 @@
 <script>
-  import { Rect, Size, Point, Thing, Signals, onDestroy, normalizeOrderOf, handleSignalOfKind } from '../../ts/common/GlobalImports';
+  import { Rect, Size, Point, Thing, Signals, onDestroy, LineCurveType, normalizeOrderOf, handleSignalOfKind } from '../../ts/common/GlobalImports';
   import Widget from './Widget.svelte';
   import Line from './Line.svelte';
   export let thing = Thing;
@@ -15,7 +15,7 @@
       toggleDraw = !toggleDraw;
     }
   })
-  // <Line curveUp={false} rect={new Rect(new Point(20, 20), new Size(50, 20))}/>
+  // <Line curveType={LineCurveType.down} rect={new Rect(new Point(20, 20), new Size(50, 20))}/>
 </script>
 
 {#key toggleDraw}

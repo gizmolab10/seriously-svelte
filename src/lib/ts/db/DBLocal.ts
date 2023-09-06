@@ -19,13 +19,16 @@ export default class DBLocal implements DBInterface {
     const idFirst = 'local2';
     const idSecond = 'local3';
     const idThird = 'local4';
+    const idSibling = 'local6';
     const idPredicate = 'local5';
     h.rememberThing_runtimeCreate(idRoot, 'seriously', 'blue', '!', -1, true);
     h.rememberThing_runtimeCreate(idFirst, 'first', 'red', 'c', 0, true);
+    h.rememberThing_runtimeCreate(idSibling, 'sibling', 'green', 'c', 0, true);
     h.rememberThing_runtimeCreate(idSecond, 'second', 'purple', 'c', 0, true);
     h.rememberThing_runtimeCreate(idThird, 'third', 'orange', 'c', 0, true);
     h.rememberPredicate_runtimeCreate(idPredicate, 'isAParentOf');
     h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idRoot, idFirst, 0);
+    h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idRoot, idSibling, 0);
     h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idFirst, idSecond, 0);
     h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idSecond, idThird, 0);
   };

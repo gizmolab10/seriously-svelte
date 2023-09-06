@@ -36,3 +36,9 @@ export enum CreationFlag {
   getRemoteID  = 'get',
   isFromRemote = 'isFrom'
 }
+
+export enum LineCurveType {
+  up,
+  down,
+  flat,
+}
