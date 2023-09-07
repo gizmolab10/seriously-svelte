@@ -53,4 +53,6 @@
 {/key}
 
 <style>
+  .widget-ul { list-style: none; }
+  .widget-li { line-height: 1.5; }
 </style>
