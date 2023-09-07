@@ -1,3 +1,9 @@
+export enum LineCurveType {
+  up,
+  down,
+  flat,
+}
+
 export class Point {
   x: number;
   y: number;
@@ -35,3 +41,12 @@ export class Rect {
   get lowerLeft():  Point { return this.origin.add(new Point(0, this.size.height)); };
   get upperRight(): Point { return this.origin.add(new Point(this.size.width, 0)); };
 }
+
+export class LineRect {
+  lineType: LineCurveType;
+  rect: Rect;
+  constructor(lineType: LineCurveType, rect: Rect) {
+    this.lineType = lineType;
+    this.rect = rect;
+  }
+};

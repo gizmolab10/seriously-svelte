@@ -1,5 +1,19 @@
 import { debug, dbType, idHere, bulkName, showDetails, idsGrabbed } from '../managers/State';
-import { get, DBType, BulkID, PersistID, dbDispatch, isServerLocal } from './GlobalImports'
+import { get, DBType, dbDispatch, isServerLocal } from './GlobalImports'
+
+export enum BulkID {
+  public = 'Public',
+  mine   = 'Jonathan Sand',
+}
+
+export enum PersistID {
+  details = 'details',
+  debug   = 'debug',
+  bulk    = 'bulk',
+  here    = 'here',
+  grab    = 'grab',
+  db      = 'db',
+}
 
 class PersistLocal {
   okayToWrite = false;
@@ -7,14 +21,6 @@ class PersistLocal {
   separator = '|';
 
   constructor() {
-    // dbType.subscribe((type: string) => {
-    //   if (this.okayToWrite) {
-    //     const here = dbDispatch.db.hierarchy.here;
-    //     if (type) {
-    //       this.writeToKeys(PersistID.db, here?.id, type, get(idsGrabbed) ?? []);
-    //     }
-    //   }
-    // });
     idsGrabbed.subscribe((ids: Array<string>) => {
       if (this.okayToWrite) {
         const here = dbDispatch.db.hierarchy.here;

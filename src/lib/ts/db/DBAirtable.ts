@@ -1,4 +1,4 @@
-import { Thing, DBType, Hierarchy, Relationship, CreationFlag } from '../common/GlobalImports';
+import { Thing, DBType, DataKind, Hierarchy, Relationship, CreationFlag } from '../common/GlobalImports';
 import { thingsArrived } from '../managers/State';
 import DBInterface from './DBInterface';
 import Airtable from 'airtable';
@@ -15,11 +15,11 @@ import Airtable from 'airtable';
 
 export default class DBAirtable implements DBInterface {
   base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
-  relationships_table = this.base('Relationships');
-  predicates_table = this.base('predicates');
-  things_table = this.base('Things');
-  access_table = this.base('Access');
-  users_table = this.base('Users');
+  relationships_table = this.base(DataKind.relationships);
+  predicates_table = this.base(DataKind.predicates);
+  things_table = this.base(DataKind.things);
+  access_table = this.base(DataKind.access);
+  users_table = this.base(DataKind.users);
   _hierarchy: Hierarchy | null = null;
   dbType = DBType.airtable;
   things: Thing[] = [];

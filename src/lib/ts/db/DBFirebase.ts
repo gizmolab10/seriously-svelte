@@ -1,17 +1,16 @@
+import { get, Thing, DBType, DataKind, signal, Signals, constants, Hierarchy, copyObject, Predicate, Relationship, CreationFlag } from '../common/GlobalImports';
 import { doc, addDoc, setDoc, deleteDoc, getDocs, collection, onSnapshot, getFirestore } from 'firebase/firestore';
 import { DocumentData, DocumentChange, DocumentReference, CollectionReference } from 'firebase/firestore';
-import { Hierarchy, copyObject, Predicate, Relationship, CreationFlag } from '../common/GlobalImports';
-import { get, Thing, DBType, signal, Signals, constants, DataKind } from '../common/GlobalImports';
 import { getAnalytics } from "firebase/analytics";
-import { bulkName } from '../managers/State';
 import { initializeApp } from "firebase/app";
+import { bulkName } from '../managers/State';
 import DBInterface from './DBInterface';
 
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
-class DBFirebase implements DBInterface {
+export default class DBFirebase implements DBInterface {
   firebaseConfig = {
     appId: "1:224721814373:web:0c60f394c056ef3decd78c",
     apiKey: "AIzaSyAFy4H3Ej5zfI46fvCJpBfUxmyQco-dx9U",
@@ -22,16 +21,16 @@ class DBFirebase implements DBInterface {
     projectId: "seriously-4536d"
   };
 
+  hasData = false;
+  dbType = DBType.firebase;
   collectionName = 'Bulks';
   app = initializeApp(this.firebaseConfig);
   analytics = getAnalytics(this.app);
   db = getFirestore(this.app);
-  relationshipsCollection: CollectionReference | null = null;
-  predicatesCollection: CollectionReference | null = null;
-  thingsCollection: CollectionReference | null = null;
   _hierarchy: Hierarchy | null = null;
-  dbType = DBType.firebase;
-  hasData = false;
+  thingsCollection: CollectionReference | null = null;
+  predicatesCollection: CollectionReference | null = null;
+  relationshipsCollection: CollectionReference | null = null;
 
   reportError(error: any) { console.log(error); }
 

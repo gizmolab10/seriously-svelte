@@ -1,11 +1,17 @@
 <script>
-  import { Rect, Size, Point, Thing, Signals, onDestroy, LineCurveType, normalizeOrderOf, handleSignalOfKind } from '../../ts/common/GlobalImports';
+  import { Rect, Size, Point, Thing, Signals, Layout, onDestroy, LineCurveType, normalizeOrderOf, handleSignalOfKind } from '../../ts/common/GlobalImports';
   import Widget from './Widget.svelte';
   import Line from './Line.svelte';
   export let thing = Thing;
+  export let origin = Point;
+  let layout = Layout;
   let toggleDraw = false;
   let children = thing.children;
 	onDestroy( () => {signalHandler.disconnect(); });
+
+  $: {
+    layout = new Layout(thing, origin);
+  }
 
   const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
     const newChildren = thing.children;
