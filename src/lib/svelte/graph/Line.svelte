@@ -10,8 +10,8 @@
   let   path = '';
   $: {
     let flag = 0;
-    let  start = new Point()
-    let extent = new Point()
+    let  start = new Point();
+    let extent = new Point();
     switch (curveType) {
       case LineCurveType.down:
         start  = rect.origin;
@@ -19,10 +19,13 @@
         break;
       case LineCurveType.up:
         flag = 1;
-        start  = rect.lowerLeft;
-        extent = rect.upperRight;
+        start  = rect.bottomLeft;
+        extent = rect.topRight;
         break;
-      case LineCurveType.flat: break
+      case LineCurveType.flat:
+        start  = rect.centerLeft;
+        extent = rect.centerRight;
+        break
     }
     path   = 'M' + start.description +'A' + rect.size.description + ',0,0,' + flag + ',' + extent.description;
   }

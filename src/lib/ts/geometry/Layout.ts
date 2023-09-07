@@ -16,17 +16,20 @@ export default class Layout {
   get lineRects(): Array<LineRect> {
     const quantity = this.thing.children.length;
     let rects = Array<LineRect>();
+    const size = new Size(30, 25);
+    let origin = this.origin;
     let index = 0;
     while (index < quantity) {
-      const delta = (quantity / 2) - index;
+      const delta = Math.floor(quantity / 2) - index;
       if (delta < 0) {
-        rects.push(new LineRect(LineCurveType.up, new Rect()));
+        rects.push(new LineRect(LineCurveType.up, new Rect(origin, size)));
       } else if (delta > 0) {
-        rects.push(new LineRect(LineCurveType.down, new Rect()));
+        rects.push(new LineRect(LineCurveType.down, new Rect(origin, size)));
       } else {
-        rects.push(new LineRect(LineCurveType.flat, new Rect()));
+        rects.push(new LineRect(LineCurveType.flat, new Rect(origin, new Size(30, 0))));
       }
       index += 1;
+      origin.y += size.height;
     }
     return rects;
   }

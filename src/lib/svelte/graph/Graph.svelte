@@ -1,13 +1,17 @@
 <script>
-  import { Thing, editor, Signals, onDestroy, Predicate, ButtonID, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
+  import { Rect, Size, Point, Thing, Layout, editor, Signals, onDestroy, Predicate, ButtonID, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
   import { popupViewID, idEditing, idHere } from '../../ts/managers/State';
   import Children from './Children.svelte'
+  let origin= new Point(50, 0);
   let toggleDraw = false;
   let here = Thing;
   let listener;
 
-	$: { here = dbDispatch.db.hierarchy.getThing_forID($idHere); }
-	onDestroy( () => {signalHandler.disconnect(); });
+	$: {
+    here = dbDispatch.db.hierarchy.getThing_forID($idHere);
+  }
+
+  onDestroy( () => {signalHandler.disconnect(); });
 
   const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
     if (here && idThing == here.id) {
@@ -51,7 +55,7 @@
 {#key toggleDraw, here}
   {#if here}
     <div style='position: fixed; left-padding=100px'>
-      <Children thing={here}/>
+      <Children thing={here} origin={origin}/>
     </div>
   {/if}
 {/key}

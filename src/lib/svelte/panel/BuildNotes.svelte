@@ -2,7 +2,7 @@
   import { noop, builds } from '../../ts/common/GlobalImports';
   import { popupViewID } from '../../ts/managers/State';
   export let size = 20;
-  let notes = Object.entries(builds.notes).reverse().slice(0, 10)
+  let notes = Object.entries(builds.notes).slice(0, 10)
   
   function handleKeyDown(event) {
     const key = event.key.toLowerCase();

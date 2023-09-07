@@ -1,16 +1,26 @@
-<script>
-  import { Rect, Size, Point, Thing, Signals, Layout, onDestroy, LineCurveType, normalizeOrderOf, handleSignalOfKind } from '../../ts/common/GlobalImports';
+<script lang=ts>
+  import { Rect, Size, Point, Thing, Signals, Layout, onMount, onDestroy, LineRect, LineCurveType, normalizeOrderOf, handleSignalOfKind } from '../../ts/common/GlobalImports';
+  import { debug } from '../../ts/managers/State';
   import Widget from './Widget.svelte';
   import Line from './Line.svelte';
-  export let thing = Thing;
-  export let origin = Point;
-  let layout = Layout;
+  export let origin: Point;
+  export let thing: Thing;
+
   let toggleDraw = false;
   let children = thing.children;
+  let lineRects: Array<LineRect> = [];
+  onMount(() => { updateLineRects(); });
 	onDestroy( () => {signalHandler.disconnect(); });
+  function lineRectAt(index: number): LineRect { return lineRects[index]; }
+  function childRectAt(index: number): Rect { return lineRectAt(index).rect; }
+  function lineTypeAt(index: number): number { return lineRectAt(index).lineType; }
 
-  $: {
-    layout = new Layout(thing, origin);
+  function updateLineRects() {
+    const layout = new Layout(thing, origin);
+    const array = layout.lineRects;
+    if (array) {
+      lineRects = array;
+    }
   }
 
   const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
@@ -18,23 +28,29 @@
     if (idThing == thing.id || children != newChildren) {
       normalizeOrderOf(newChildren);
       children = newChildren;
+      updateLineRects();
       toggleDraw = !toggleDraw;
     }
   })
-  // <Line curveType={LineCurveType.down} rect={new Rect(new Point(20, 20), new Size(50, 20))}/>
+
 </script>
 
 {#key toggleDraw}
-  {#if children && children.length != 0}
-    <ul class='widget-ul'>
-      {#each children as child}
-        <li class='widget-li'><Widget thing={child}/>
+  {#if children && children.length != 0 && lineRects.length == children.length}
+    {#if $debug}
+      {#each children as child, index}
+        <Line curveType={lineTypeAt(index)} rect={childRectAt(index)}/>
+        <Widget thing={child}/>
       {/each}
-    </ul>
+    {:else}
+      <ul class='widget-ul'>
+        {#each children as child}
+          <li class='widget-li'><Widget thing={child}/>
+        {/each}
+      </ul>
+    {/if}
   {/if}
 {/key}
 
 <style>
-  .widget-ul { list-style: none; }
-  .widget-li { line-height: 1.5; }
 </style>

@@ -1,7 +1,7 @@
 export enum LineCurveType {
-  up,
-  down,
-  flat,
+  up = 'up',
+  down = 'down',
+  flat = 'flat',
 }
 
 export class Point {
@@ -12,8 +12,8 @@ export class Point {
     this.y = y;
   }
   get description(): string { return this.x + ',' + this.y; }
-  add(point: Point) { return new Point(this.x + point.x, this.y + point.y); }
-  addSize(size: Size) { return new Point(this.x + size.width, this.y + size.height); }
+  offsetBy(point: Point) { return new Point(this.x + point.x, this.y + point.y); }
+  offsetBySize(size: Size) { return new Point(this.x + size.width, this.y + size.height); }
 }
 
 export class Size {
@@ -23,10 +23,10 @@ export class Size {
     this.width = width;
     this.height = height;
   }
-  get description(): string  { return this.width + ',' + this.height; }
-  add(size: Size)            { return new Point(this.width + size.width, this.height + size.height); }
-  dividedBy(divisor: number) { return new Size(this.width / divisor, this.height / divisor) }
-  get dividedInHalf()        { return this.dividedBy(2); }
+  get dividedInHalf():        Size { return this.dividedBy(2); }
+  get description():        string { return this.width + ',' + this.height; }
+  dividedBy(divisor: number): Size { return new Size(this.width / divisor, this.height / divisor) }
+  expandedBy(size: Size):     Size { return new Size(this.width + size.width, this.height + size.height); }
 }
 
 export class Rect {
@@ -36,16 +36,21 @@ export class Rect {
     this.origin = origin;
     this.size = size;
   }
-  get extent():     Point { return this.origin.addSize(this.size); }
-  get center():     Point { return this.origin.addSize(this.size.dividedInHalf); }
-  get lowerLeft():  Point { return this.origin.add(new Point(0, this.size.height)); };
-  get upperRight(): Point { return this.origin.add(new Point(this.size.width, 0)); };
+  get description(): string { return '(' + this.origin.description + '),(' + this.size.description + ')'; }
+  get extent():       Point { return this.origin.offsetBySize(this.size); } // lower right
+  get center():       Point { return this.origin.offsetBySize(this.size.dividedInHalf); }
+  get topRight():     Point { return this.origin.offsetBy(new Point(this.extent.x, this.origin.y)); };
+  get bottomLeft():   Point { return this.origin.offsetBy(new Point(this.origin.x, this.extent.y)); };
+  get centerLeft():   Point { return this.origin.offsetBy(new Point(this.origin.x, this.center.y)); };
+  get centerRight():  Point { return this.origin.offsetBy(new Point(this.extent.x, this.center.y)); };
+  get centerTop():    Point { return this.origin.offsetBy(new Point(this.center.x, this.origin.y)); };
+  get centerBottom(): Point { return this.origin.offsetBy(new Point(this.center.x, this.extent.y)); };
 }
 
 export class LineRect {
-  lineType: LineCurveType;
+  lineType: string;
   rect: Rect;
-  constructor(lineType: LineCurveType, rect: Rect) {
+  constructor(lineType: string, rect: Rect) {
     this.lineType = lineType;
     this.rect = rect;
   }
