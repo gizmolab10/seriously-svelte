@@ -40,7 +40,7 @@
     {#if $debug}
       {#each children as child, index}
         <Line curveType={lineTypeAt(index)} rect={childRectAt(index)}/>
-        <Widget thing={child}/>
+        <Widget thing={child} origin={childRectAt(index).extent}/>
       {/each}
     {:else}
       <ul class='widget-ul'>

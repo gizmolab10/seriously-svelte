@@ -10,29 +10,29 @@
   let   path = '';
   $: {
     let flag = 0;
-    let  start = new Point();
+    let origin = new Point();
     let extent = new Point();
     switch (curveType) {
       case LineCurveType.down:
-        start  = rect.origin;
+        origin = rect.origin;
         extent = rect.extent;
         break;
       case LineCurveType.up:
         flag = 1;
-        start  = rect.bottomLeft;
+        origin = rect.bottomLeft;
         extent = rect.topRight;
         break;
       case LineCurveType.flat:
-        start  = rect.centerLeft;
+        origin = rect.centerLeft;
         extent = rect.centerRight;
         break
     }
-    path   = 'M' + start.description +'A' + rect.size.description + ',0,0,' + flag + ',' + extent.description;
+    path   = 'M' + origin.description +'A' + rect.size.description + ',0,0,' + flag + ',' + extent.description;
+		console.log('origin:', origin.verbose, 'extent:', extent.verbose, 'path:', path);
   }
 </script>
 
-<svg width='200' height='200'>
-  <!-- Draw the upper right quadrant of an ellipse -->
+<svg width='200' height='200' style='position: absolute'>
   <path d={path} stroke='black' fill='none' />
 </svg>
 

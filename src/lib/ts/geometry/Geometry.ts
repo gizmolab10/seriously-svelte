@@ -12,8 +12,9 @@ export class Point {
     this.y = y;
   }
   get description(): string { return this.x + ',' + this.y; }
-  offsetBy(point: Point) { return new Point(this.x + point.x, this.y + point.y); }
-  offsetBySize(size: Size) { return new Point(this.x + size.width, this.y + size.height); }
+  get verbose():     string { return '(' + this.description + ')'; }
+  offsetBy(point: Point)    { return new Point(this.x + point.x, this.y + point.y); }
+  offsetBySize(size: Size)  { return new Point(this.x + size.width, this.y + size.height); }
 }
 
 export class Size {
@@ -24,6 +25,7 @@ export class Size {
     this.height = height;
   }
   get dividedInHalf():        Size { return this.dividedBy(2); }
+  get verbose():            string { return '(' + this.description + ')'; }
   get description():        string { return this.width + ',' + this.height; }
   dividedBy(divisor: number): Size { return new Size(this.width / divisor, this.height / divisor) }
   expandedBy(size: Size):     Size { return new Size(this.width + size.width, this.height + size.height); }

@@ -5,7 +5,7 @@ export enum Direction {
   left = 0,
 }
 
-export class FatTriangle {
+export class FatTrianglePath {
   startingAngle: number;
   size: number;
   path = '';
@@ -34,7 +34,7 @@ export class FatTriangle {
       data.push({
         controlOne: this.rotatePoint(outer, preceder),
         controlTwo: this.rotatePoint(outer, follower),
-        end: this.rotatePoint(inner, angle),
+        end:        this.rotatePoint(inner, angle),
       });
       index += 1;
     }

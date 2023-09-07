@@ -1,6 +1,6 @@
 import { log, noop, apply, remove, removeAll, copyObject, desaturateBy, isServerLocal, normalizeOrderOf, sortAccordingToOrder } from './Utilities';
 import { Point, Size, Rect, LineCurveType } from '../geometry/Geometry';
-import { FatTriangle, Direction } from '../geometry/FatTriangle';
+import { FatTrianglePath, Direction } from '../geometry/FatTrianglePath';
 import { signal, Signals, handleSignalOfKind } from './Signals';
 import { PersistID, persistLocal } from './PersistLocal';
 import { ButtonID, CreationFlag } from './Enumerations';
@@ -27,7 +27,7 @@ export { constants, builds,
   get, onMount, onDestroy,
   Point, Size, Rect, LineCurveType,
   signal, Signals, handleSignalOfKind,
-  FatTriangle, Direction, Layout, LineRect,
+  FatTrianglePath, Direction, Layout, LineRect,
   Grabs, persistLocal, editor, Hierarchy, dbDispatch,
   User, Datum, Thing, Access, Predicate, Relationship,
   DBType, DataKind, ButtonID, PersistID, CreationFlag,
