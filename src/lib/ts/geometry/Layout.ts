@@ -1,4 +1,4 @@
-import { Rect, Size, Point, Thing, LineRect, LineCurveType } from '../common/GlobalImports';
+import { Rect, Size, Point, Thing, LineRect, LineCurveType, get } from '../common/GlobalImports';
 
 export default class Layout {
   origin = new Point();
@@ -13,25 +13,36 @@ export default class Layout {
     return new Size();
   }
 
+  getDirection(delta: number, isFlat: Boolean) {
+    if (delta == 0 && isFlat) {
+      return LineCurveType.flat;
+    } else if (delta > 0) {
+      return LineCurveType.up;
+    } else {
+      return LineCurveType.down;
+    }
+  }
+
   get lineRects(): Array<LineRect> {
-    const quantity = this.thing.children.length;
-    const threshold = Math.floor(quantity / 2);
-    const hasAFlat = threshold != quantity / 2;
     let rects = Array<LineRect>();
-    const size = new Size(30, 12.);
-    let origin = this.origin;
-    let index = 0;
-    while (index < quantity) {
-      const delta = threshold - index;
-      if (delta == 0 && hasAFlat) {
-        rects.push(new LineRect(LineCurveType.flat, new Rect(origin, new Size(30, 0))));
-      } else if (delta > 0) {
-        rects.push(new LineRect(LineCurveType.down, new Rect(origin, size)));
-      } else {
-        rects.push(new LineRect(LineCurveType.up, new Rect(origin, size)));
+    const quantity = this.thing.children.length;
+    if (quantity > 0) {
+      const threshold = Math.floor(quantity / 2);
+      const isFlat = threshold != quantity / 2;
+      const size = new Size(30, 14);
+      let origin = this.origin;
+      let index = 0;
+      while (index < quantity) {
+        const delta = threshold - index;
+        const direction = this.getDirection(delta, isFlat);
+        const isCurved = direction != LineCurveType.flat;
+        const lineSize = isCurved ? size : new Size(30, 0);
+        const rect = new Rect(origin, lineSize);
+        rects.push(new LineRect(direction, rect));
+        console.log('LAYOUT rect:', rect.description, 'direction:', direction, 'index:', index);
+        index += 1;
+        origin.y += size.height;
       }
-      index += 1;
-      origin.y += size.height;
     }
     return rects;
   }

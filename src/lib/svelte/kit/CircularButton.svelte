@@ -6,7 +6,7 @@
   export let onClick = null;
   export let label = null;
   export let image = null;
-  export let size = 15;
+  export let size = 14;
   export let x = 7;
   export let y = 7;
 </script>

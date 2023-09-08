@@ -51,7 +51,7 @@
   }
   .modal-content {
     background-color: #fff;
-    padding: 15px;
+    padding: 14px;
     max-width: 500px;
     position: relative;
     font-size: 0.8em;

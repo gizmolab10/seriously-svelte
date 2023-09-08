@@ -3,7 +3,6 @@
   import { idEditing, idsGrabbed } from '../../ts/managers/State';
 	import TitleEditor from './TitleEditor.svelte';
 	import Dot from './Dot.svelte';
-	export let origin = new Point();
 	export let thing = Thing;
 	let isGrabbed = false;
 	let isEditing = false;
@@ -13,7 +12,6 @@
 
   onMount(async () => {
 		updateBorderStyle();
-		console.log('origin:', origin.verbose, thing.title);
 	});
 
 	function updateBorderStyle() {

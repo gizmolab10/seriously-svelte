@@ -3,7 +3,7 @@
   import { idsGrabbed } from '../../ts/managers/State';
   export let isReveal = false;
   export let thing = Thing;
-  export let size = 15;
+  export let size = 14;
   let buttonColor = thing.color;
   let traitColor = thing.color;
   const dotColor = thing.color;

@@ -5,7 +5,7 @@
   /////////////////////////////////////////////////////
 
   import { Rect, Size, Point, LineCurveType } from '../../ts/common/GlobalImports';
-  export let curveType: number = LineCurveType.up;
+  export let curveType: string = LineCurveType.up;
   export let rect = new Rect();
   let   path = '';
   $: {
@@ -28,14 +28,15 @@
         break
     }
     path   = 'M' + origin.description +'A' + rect.size.description + ',0,0,' + flag + ',' + extent.description;
-		console.log('origin:', origin.verbose, 'extent:', extent.verbose, 'path:', path);
+		console.log('LINE origin:', origin.verbose, 'extent:', extent.verbose, 'path:', path, 'type:', curveType);
   }
 </script>
 
-<svg width='200' height='200' style='position: absolute'>
-  <path d={path} stroke='black' fill='none' />
-</svg>
-
+<span style='position: absolute'>
+  <svg width='200' height='200' style='position: absolute'>
+    <path d={path} stroke='black' fill='none' />
+  </svg>
+</span>
 
 <style lang='scss'>
 </style>

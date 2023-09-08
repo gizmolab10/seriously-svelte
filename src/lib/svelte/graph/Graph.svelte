@@ -7,10 +7,7 @@
   let here = Thing;
   let listener;
 
-	$: {
-    here = dbDispatch.db.hierarchy.getThing_forID($idHere);
-  }
-
+	$: { here = dbDispatch.db.hierarchy.getThing_forID($idHere); }
   onDestroy( () => {signalHandler.disconnect(); });
 
   const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {

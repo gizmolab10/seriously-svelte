@@ -7,7 +7,7 @@
   import Help from '../help/Help.svelte';
   import Details from './Details.svelte';
   import Crumbs from './Crumbs.svelte';
-  let size = 15;
+  let size = 14;
 
   function handleClick(id) {
     $popupViewID = ($popupViewID == id) ? null : id;
