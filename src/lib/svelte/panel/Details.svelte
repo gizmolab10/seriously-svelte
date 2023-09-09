@@ -15,6 +15,10 @@
     $popupViewID = ButtonID.buildNotes;
   }
 
+  function handleDebugClick(event) {
+    $debug = !$debug;
+  }
+
   function handleDBTypeAt(index) {
     const type = menuItems[index].id;
     const db = dbDispatch.dbForType(type);
@@ -33,7 +37,11 @@
     <LabelButton
       title='build {$build}'
       onClick={handleBuildsClick}/>
-      <br><br>
+    <br><br>
+    <LabelButton
+      title='debug'
+      onClick={handleDebugClick}/>
+    <br><br>
     {#if $debug}
       <RadioButtons menuItems={menuItems} idSelected={$dbType}/>
     {:else}
