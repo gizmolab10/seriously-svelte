@@ -39,7 +39,7 @@
       onClick={handleBuildsClick}/>
     <br><br>
     <LabelButton
-      title='debug'
+      title={$debug ? 'debug' : '!'}
       onClick={handleDebugClick}/>
     <br><br>
     {#if $debug}
