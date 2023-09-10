@@ -39,9 +39,9 @@
 
 </script>
 
-<span
+<div
 		bind:this={widget}
-		style='border: {border}'
+		style='border: {border} position: absolute; left: {origin.x}px; top: {origin.y}px'
 		on:blur={noop()}
 		on:focus={noop()}
 		on:mouseover={widget.style.border=hover}
@@ -51,10 +51,10 @@
 	{#if thing.hasChildren}
 		<Dot thing={thing} size=15 isReveal={true}/>
 	{/if}
-</span>
+</div>
 
 <style>
-	span {
+	div {
 		padding: 1px 8px 2px 1px;
 		border-radius: 16px;
 	}

@@ -29,7 +29,7 @@ export default class Layout {
     if (quantity > 0) {
       const threshold = Math.floor(quantity / 2);
       const isFlat = threshold != quantity / 2;
-      const size = new Size(30, 14);
+      const size = new Size(30, 10);
       let origin = this.origin;
       let index = 0;
       while (index < quantity) {
@@ -43,7 +43,7 @@ export default class Layout {
 
         rects.push(new LineRect(direction, rect));
         index += 1;
-        origin.y += size.height;
+        origin.y += 20;
       }
     }
     return rects;

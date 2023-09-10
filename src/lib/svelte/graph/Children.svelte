@@ -42,7 +42,7 @@
       {#each children as child, index}
         <span style="position: absolute; left: {lineRectAt(index).origin.x}px; top: {lineRectAt(index).origin.y}px;">
           <Line curveType={lineTypeAt(index)} rect={lineRectAt(index)}/>
-          <Widget thing={child}/>
+          <Widget thing={child} origin={lineRectAt(index).origin}/>
         </span>
       {/each}
     {:else}
