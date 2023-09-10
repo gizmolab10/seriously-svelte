@@ -1,8 +1,8 @@
 <script>
   import { Rect, Size, Point, Thing, Layout, editor, Signals, onDestroy, Predicate, ButtonID, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
   import { popupViewID, idEditing, idHere } from '../../ts/managers/State';
-  import Children from './Children.svelte'
-  let origin= new Point(50, 0);
+  import Children from './Children.svelte';
+  let point = new Point(33, 25);
   let toggleDraw = false;
   let here = Thing;
   let listener;
@@ -12,6 +12,7 @@
 
   const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
     if (here && idThing == here.id) {
+      point = new Point(33, 25);
       toggleDraw = !toggleDraw;
     }
   })
@@ -52,7 +53,7 @@
 {#key toggleDraw, here}
   {#if here}
     <div style='position: fixed; left-padding=100px'>
-      <Children thing={here} origin={origin}/>
+      <Children thing={here} origin={point}/>
     </div>
   {/if}
 {/key}

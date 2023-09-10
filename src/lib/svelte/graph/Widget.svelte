@@ -1,8 +1,9 @@
 <script lang='ts'>
   import { noop, Thing, Point, onMount } from '../../ts/common/GlobalImports';
-  import { idEditing, idsGrabbed } from '../../ts/managers/State';
+  import { debug, idEditing, idsGrabbed } from '../../ts/managers/State';
 	import TitleEditor from './TitleEditor.svelte';
 	import Dot from './Dot.svelte';
+	export let origin = Point;
 	export let thing = Thing;
 	let isGrabbed = false;
 	let isEditing = false;
@@ -32,8 +33,9 @@
 			updateBorderStyle();
 		}
 	}
-
-	// &nbsp; {thing.order + 1} // for <TitleEditor/>
+	// {#if !$debug}
+	// 	&nbsp; {thing.order + 1}
+	// {/if}
 
 </script>
 

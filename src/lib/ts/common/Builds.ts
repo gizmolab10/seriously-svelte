@@ -5,7 +5,7 @@ class Builds {
   constructor() {
     build.set(35);
     this.notes = {
-      35 : ['September 8, 2023', 'begin bubble.io plugin work'],
+      35 : ['September 8, 2023', 'begin work on bubble.io plugin and svg'],
       34 : ['September 3, 2023', 'crumbs update on db switch'],
       33 : ['September 2, 2023', 'separate hierarchy for each db'],
       32 : ['August 31, 2023', 'manage order changes in snapshots'],

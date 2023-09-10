@@ -12,10 +12,10 @@
   onMount(() => { updateLineRects(); });
 	onDestroy( () => {signalHandler.disconnect(); });
   function lineRectAt(index: number): LineRect { return lineRects[index]; }
-  function childRectAt(index: number): Rect { return lineRectAt(index).rect; }
   function lineTypeAt(index: number): number { return lineRectAt(index).lineType; }
 
   function updateLineRects() {
+    console.log('CHILDREN', origin.verbose);
     const layout = new Layout(thing, origin);
     const array = layout.lineRects;
     if (array) {
@@ -38,9 +38,12 @@
 {#key toggleDraw}
   {#if children && children.length != 0 && lineRects.length == children.length}
     {#if $debug}
+      <p> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {lineRects.map(obj => obj.description).join(' ... ')}</p>
       {#each children as child, index}
-        <Line curveType={lineTypeAt(index)} rect={childRectAt(index)}/>
-        <Widget thing={child} --position='absolute' --left={childRectAt(index).extent.x} --top={childRectAt(index).extent.y}/>
+        <span style="position: absolute; left: {lineRectAt(index).origin.x}px; top: {lineRectAt(index).origin.y}px;">
+          <Line curveType={lineTypeAt(index)} rect={lineRectAt(index)}/>
+          <Widget thing={child}/>
+        </span>
       {/each}
     {:else}
       <ul class='widget-ul'>

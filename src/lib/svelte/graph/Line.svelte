@@ -7,16 +7,14 @@
   import { Rect, Size, Point, LineCurveType } from '../../ts/common/GlobalImports';
   export let curveType: string = LineCurveType.up;
   export let rect = new Rect();
-  let   path = '';
+  let viewBox = new Rect();
+  let origin = rect.origin;
+  let extent = rect.extent;
+  let size = new Size();
+  let path = '';
   $: {
     let flag = 0;
-    let origin = new Point();
-    let extent = new Point();
     switch (curveType) {
-      case LineCurveType.down:
-        origin = rect.origin;
-        extent = rect.extent;
-        break;
       case LineCurveType.up:
         flag = 1;
         origin = rect.bottomLeft;
@@ -27,16 +25,18 @@
         extent = rect.centerRight;
         break
     }
-    path   = 'M' + origin.description +'A' + rect.size.description + ',0,0,' + flag + ',' + extent.description;
-		console.log('LINE origin:', origin.verbose, 'extent:', extent.verbose, 'path:', path, 'type:', curveType);
+    size = extent.distanceTo(origin).asSize;
+    viewBox = new Rect(origin, size);
+    path = 'M' + origin.description +'A' + rect.size.description + ',0,0,' + flag + ',' + extent.description;
+		console.log('LINE:', rect.description, 'o:', origin.verbose, 'e:', extent.verbose, curveType, 'p:', path);
   }
+  //  style='viewBox: {viewBox.pxDescription}'
 </script>
 
-<span style='position: absolute'>
-  <svg width='200' height='200' style='position: absolute'>
-    <path d={path} stroke='black' fill='none' />
-  </svg>
-</span>
+<svg>
+  <rect x={origin.x} y={origin.y} width={size.width} height={size.height} stroke=green fill=white/>
+  <path d={path} stroke='black' fill='none' />
+</svg>
 
 <style lang='scss'>
 </style>

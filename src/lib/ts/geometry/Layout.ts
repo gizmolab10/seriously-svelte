@@ -38,8 +38,10 @@ export default class Layout {
         const isCurved = direction != LineCurveType.flat;
         const lineSize = isCurved ? size : new Size(30, 0);
         const rect = new Rect(origin, lineSize);
+
+        console.log('LAYOUT PUSH:', rect.description, direction, index);
+
         rects.push(new LineRect(direction, rect));
-        console.log('LAYOUT rect:', rect.description, 'direction:', direction, 'index:', index);
         index += 1;
         origin.y += size.height;
       }
