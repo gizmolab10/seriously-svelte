@@ -28,7 +28,7 @@
   {#if ancestors}
     {#each ancestors as thing, index}
       {#if index > 0}
-        <div>&nbsp; &gt; </div>
+        &nbsp; &gt; 
       {/if}
       <Crumb thing={thing}/>
     {/each}

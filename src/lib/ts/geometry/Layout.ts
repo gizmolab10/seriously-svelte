@@ -24,10 +24,21 @@ export default class Layout {
       while (index < quantity) {
         const direction = this.getDirection(threshold - index, hasAFlat);
         const lineOrigen = origin.copy;
+        let height = -this.height;
+        switch (direction) {
+          case LineCurveType.flat:
+            lineOrigen.y += this.height;
+            height = 0;
+            break;
+          case LineCurveType.down:
+            lineOrigen.y += this.height;
+            height = this.height;
+            break;
+        }
         if (direction != LineCurveType.up) {
           lineOrigen.y += this.height;
         }
-        const size = new Size(30, (direction == LineCurveType.flat) ? 0 : this.height);
+        const size = new Size(30, height);
         const rect = new Rect(lineOrigen, size);
 
         console.log('LAYOUT PUSH:', rect.description, direction, index);

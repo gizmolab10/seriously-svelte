@@ -51,11 +51,11 @@ export class Rect {
   get extent():         Point { return this.origin.offsetBySize(this.size); }   // bottom right
   get center():         Point { return this.origin.offsetBySize(this.size.dividedInHalf); }
   get topRight():       Point { return new Point(this.extent.x, this.origin.y); };
-  get centerRight():    Point { return new Point(this.extent.x, this.center.y); };
-  get centerLeft():     Point { return new Point(this.origin.x, this.center.y); };
   get bottomLeft():     Point { return new Point(this.origin.x, this.extent.y); };
-  get topCenter():      Point { return new Point(this.center.x, this.origin.y); };
-  get bottomCenter():   Point { return new Point(this.center.x, this.extent.y); };
+  get centerLeft():     Point { return new Point(this.origin.x, this.center.y); };
+  get centerRight():    Point { return new Point(this.extent.x, this.center.y); };
+  get centerBottom():   Point { return new Point(this.center.x, this.extent.y); };
+  get centerTop():      Point { return new Point(this.center.x, this.origin.y); };
 }
 
 export class LineRect extends Rect {

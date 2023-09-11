@@ -62,7 +62,7 @@ export default class Thing extends Datum {
 
   revealColor(isReveal: boolean): string {
     const flag = this.isGrabbed || this.isEditing || this.isExemplar;
-    return (flag != isReveal) ? this.color : constants.backgroundColor;
+    return (flag != isReveal) ? this.color : 'clear';
   }
 
   log(message: string)            { console.log(message, this.description); }

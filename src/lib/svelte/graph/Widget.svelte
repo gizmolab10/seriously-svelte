@@ -13,6 +13,7 @@
 
   onMount(async () => {
 		updateBorderStyle();
+		console.log('WIDGET:', origin.verbose);
 	});
 
 	function updateBorderStyle() {
@@ -33,15 +34,12 @@
 			updateBorderStyle();
 		}
 	}
-	// {#if !$debug}
-	// 	&nbsp; {thing.order + 1}
-	// {/if}
 
 </script>
 
 <div
 	bind:this={widget}
-	style='border: {border} position: absolute; left: {origin.x}px; top: {origin.y}px'
+	style='border: {border}; left: {origin.x + 35}px; top: {origin.y + 28}px; width: 200px'
 	on:blur={noop()}
 	on:focus={noop()}
 	on:mouseover={widget.style.border=hover}
@@ -55,6 +53,7 @@
 
 <style>
 	div {
+		position: absolute;
 		padding: 1px 8px 2px 1px;
 		border-radius: 16px;
 	}

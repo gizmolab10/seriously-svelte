@@ -15,12 +15,9 @@
   function lineTypeAt(index: number): number { return lineRectAt(index).lineType; }
 
   function updateLineRects() {
+    lineRects = new Layout(thing, origin).lineRects ?? [];
     console.log('CHILDREN', origin.verbose);
-    const layout = new Layout(thing, origin);
-    const array = layout.lineRects;
-    if (array) {
-      lineRects = array;
-    }
+    console.log('CHILDREN', description());
   }
 
   const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
@@ -33,6 +30,17 @@
     }
   })
 
+  function description() {
+    let strings: Array<string> = [];
+    for (const lineRect of lineRects) {
+      strings.push(lineRect.origin.verbose);
+      strings.push(lineRect.extent.verbose);
+      strings.push(lineRect.size.verbose);
+    }
+    return strings.join(', ');
+  }
+
+  // <p> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {lineRects.map(obj => obj.description).join(' ... ')}</p>
   // <div style="position: absolute; left: {lineRectAt(index).origin.x}px; top: {lineRectAt(index).origin.y}px;">
   // </div>
 
@@ -41,10 +49,9 @@
 {#key toggleDraw}
   {#if children && children.length != 0 && lineRects.length == children.length}
     {#if $debug}
-      <p> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {lineRects.map(obj => obj.description).join(' ... ')}</p>
       {#each children as child, index}
-        <Line curveType={lineTypeAt(index)} rect={lineRectAt(index)}/>
-        <Widget thing={child} origin={lineRectAt(index).origin}/>
+        <Line color={child.color} curveType={lineTypeAt(index)} rect={lineRectAt(index)}/>
+        <Widget thing={child} origin={lineRectAt(index).extent}/>
       {/each}
     {:else}
       <ul class='widget-ul'>
