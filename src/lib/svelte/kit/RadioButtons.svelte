@@ -33,7 +33,7 @@
         value={menuItem.id}
         on:change={() => handleSelect(menuItem.id) }
         bind:group={idSelected}/>
-      <span class="label-text">{menuItem.label}</span>
+      <div class="label-text">{menuItem.label}</div>
     </label>
   {/each}
 </div>

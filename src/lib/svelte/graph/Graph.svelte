@@ -47,13 +47,14 @@
       }
     }
   }
+
+  // <div style='position: fixed; left-padding=100px'>
+  // </div>
 </script>
 
 <svelte:document on:keydown={handleKeyDown} />
 {#key toggleDraw, here}
   {#if here}
-    <div style='position: fixed; left-padding=100px'>
-      <Children thing={here} origin={point}/>
-    </div>
+    <Children thing={here} origin={point}/>
   {/if}
 {/key}

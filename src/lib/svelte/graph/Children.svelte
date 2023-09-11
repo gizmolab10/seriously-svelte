@@ -33,6 +33,9 @@
     }
   })
 
+  // <div style="position: absolute; left: {lineRectAt(index).origin.x}px; top: {lineRectAt(index).origin.y}px;">
+  // </div>
+
 </script>
 
 {#key toggleDraw}
@@ -40,10 +43,8 @@
     {#if $debug}
       <p> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {lineRects.map(obj => obj.description).join(' ... ')}</p>
       {#each children as child, index}
-        <span style="position: absolute; left: {lineRectAt(index).origin.x}px; top: {lineRectAt(index).origin.y}px;">
-          <Line curveType={lineTypeAt(index)} rect={lineRectAt(index)}/>
-          <Widget thing={child} origin={lineRectAt(index).origin}/>
-        </span>
+        <Line curveType={lineTypeAt(index)} rect={lineRectAt(index)}/>
+        <Widget thing={child} origin={lineRectAt(index).origin}/>
       {/each}
     {:else}
       <ul class='widget-ul'>

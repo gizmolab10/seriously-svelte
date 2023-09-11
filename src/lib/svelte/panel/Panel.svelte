@@ -23,7 +23,7 @@ onMount(async () => {
   })
 </script>
 
-<span class='left-side'>
+<div class='left-side'>
   <CircularButton
     image='settings.png'
     borderColor='white'
@@ -38,9 +38,9 @@ onMount(async () => {
   {#if $showDetails}
     <Details/>
   {/if}
-</span>
-<span class='vertical-line'></span>
-<span class='horizontal-line'></span>
+</div>
+<div class='vertical-line'></div>
+<div class='horizontal-line'></div>
 <div class='right-side'>
   {#if $isBusy}
     <p>Welcome to Seriously</p>
@@ -50,12 +50,12 @@ onMount(async () => {
   {:else if !$thingsArrived}
     <p>Nothing is available.</p>
   {:else}
-    <span class='top'>
+    <div class='top'>
       <Crumbs grab={dbDispatch.db.hierarchy.grabs.grabbedThing}/>
-    </span>
-    <span class='graph'>
+    </div>
+    <div class='graph'>
       <Graph/>
-    </span>
+    </div>
   {/if}
   {#if $popupViewID == ButtonID.help}
     <Help size={size}/>
@@ -69,7 +69,7 @@ onMount(async () => {
     text-align: center;
     font-size: 3em;
   }
-  span {
+  div {
      cursor: default;
   }
   .right-side {

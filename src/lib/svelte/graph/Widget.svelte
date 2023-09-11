@@ -40,12 +40,12 @@
 </script>
 
 <div
-		bind:this={widget}
-		style='border: {border} position: absolute; left: {origin.x}px; top: {origin.y}px'
-		on:blur={noop()}
-		on:focus={noop()}
-		on:mouseover={widget.style.border=hover}
-		on:mouseout={widget.style.border=border}>
+	bind:this={widget}
+	style='border: {border} position: absolute; left: {origin.x}px; top: {origin.y}px'
+	on:blur={noop()}
+	on:focus={noop()}
+	on:mouseover={widget.style.border=hover}
+	on:mouseout={widget.style.border=border}>
 	<Dot thing={thing} size=15/>
 	<TitleEditor thing={thing}/>
 	{#if thing.hasChildren}

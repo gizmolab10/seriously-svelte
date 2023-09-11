@@ -11,7 +11,7 @@
   export let y = 7;
 </script>
 
-<span
+<div
   on:click={onClick}
   on:keypress={noop()}
   style='
@@ -38,4 +38,4 @@
   {:else if label}
     {label}
   {/if}
-</span>
+</div>

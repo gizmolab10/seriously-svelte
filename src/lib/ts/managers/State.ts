@@ -11,4 +11,5 @@ export const isBusy             = writable<boolean>();
 export const debug              = writable<boolean>();
 export const bulkName           = writable<string>();
 export const dbType             = writable<string>();
+export const height             = writable<number>();
 export const build              = writable<number>();

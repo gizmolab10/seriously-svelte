@@ -15,7 +15,7 @@
 <svelte:document on:keydown={handleKeyDown} />
 <div class="modal-overlay">
   <div class="modal-content">
-    <span class="close-button" style='
+    <div class="close-button" style='
       width: {size}px;
       height: {size}px;
       font-size: {size - 1}px;;
@@ -23,7 +23,7 @@
       on:keypress={noop()}
       on:click={() => { $popupViewID = null; }}>
         ×
-      </span>
+      </div>
     <h2>Seriously Build Notes (10 most recent)</h2>
     <table>
       <tr>
