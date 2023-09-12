@@ -1,4 +1,4 @@
-import { debug, dbType, idHere, bulkName, showDetails, idsGrabbed, height } from '../managers/State';
+import { debug, dbType, idHere, lineGap, bulkName, showDetails, idsGrabbed, lineStretch } from '../managers/State';
 import { get, DBType, dbDispatch, isServerLocal } from './GlobalImports'
 
 export enum BulkID {
@@ -59,10 +59,9 @@ class PersistLocal {
   setup() {
     // localStorage.clear();
     const isLocal = isServerLocal();
-    if (!isLocal) {
-      this.writeToKey(PersistID.db, DBType.firebase);
-    }
-    height.set(this.readFromKey(PersistID.height) ?? 20);
+    this.writeToKey(PersistID.debug, true);
+    lineGap.set(this.readFromKey(PersistID.height) ?? 24);
+    lineStretch.set(this.readFromKey(PersistID.height) ?? 40);
     debug.set(this.readFromKey(PersistID.debug) ?? isLocal);
     showDetails.set(this.readFromKey(PersistID.details) ?? false);
     bulkName.set(this.readFromKey(PersistID.bulk) ?? BulkID.public);

@@ -1,5 +1,5 @@
 class Constants {
-  public orderIncrement: number
+  public orderIncrement: number;
   public backgroundColor: string;
   public highlightColor: string;
   public defaultTitle: string;

@@ -27,13 +27,13 @@
     size = extent.distanceTo(origin).asSize;
     viewBox = new Rect(origin, size);
     path = 'M' + origin.description +'A' + rect.size.description + ',0,0,' + flag + ',' + extent.description;
-		console.log('LINE:', rect.description, 'o:', origin.verbose, 'e:', extent.verbose, curveType, 'p:', path);
+		// console.log('LINE:', rect.description, 'o:', origin.verbose, 'e:', extent.verbose, curveType, 'p:', path);
   }
   //  style='viewBox: {viewBox.pxDescription}'
   // <rect x={0} y={origin.y} width={size.width} height={size.height} stroke=green fill=white/>
 </script>
 
-<svg style='position: absolute; left: {origin.x}px; top: {origin.y}px'>
+<svg style='position: absolute; top: {origin.y}px; left: {origin.x}px;'>
   <path d={path} stroke={color} fill='none' />
 </svg>
 
