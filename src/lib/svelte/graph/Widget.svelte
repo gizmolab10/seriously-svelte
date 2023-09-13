@@ -1,10 +1,12 @@
 <script lang='ts'>
+  import { debug, widgetGap, idEditing, idsGrabbed } from '../../ts/managers/State';
   import { noop, Thing, Point, onMount } from '../../ts/common/GlobalImports';
-  import { debug, idEditing, idsGrabbed } from '../../ts/managers/State';
 	import TitleEditor from './TitleEditor.svelte';
 	import Dot from './Dot.svelte';
 	export let origin = Point;
 	export let thing = Thing;
+	let widgetOrigin =  new Point();
+	let offset = new Point(21, 0);
 	let isGrabbed = false;
 	let isEditing = false;
 	let widget;
@@ -13,8 +15,14 @@
 
   onMount(async () => {
 		updateBorderStyle();
+		updateOrigin();
 		// console.log('WIDGET:', origin.verbose);
 	});
+
+	function updateOrigin() {
+		offset.y = 24 + thing.children.length / 4 * $widgetGap;
+		widgetOrigin = origin.offsetBy(offset);
+	};
 
 	function updateBorderStyle() {
 		thing.updateColorAttributes();
@@ -34,12 +42,18 @@
 			updateBorderStyle();
 		}
 	}
+	// {#if !$debug}
+	// 	&nbsp; {thing.order + 1}
+	// {/if}
+	// {#if thing.isGrabbed}
+	// 	&nbsp; {thing.order + 1}
+	// {/if}
 
 </script>
 
 <div
 	bind:this={widget}
-	style='position: absolute; top: {origin.y + 27}px; left: {origin.x + 21}px; width: 200px; border: {border};'
+	style='position: absolute; top: {widgetOrigin.y}px; left: {widgetOrigin.x}px; width: 250px; height: 23px; border: {border};'
 	on:blur={noop()}
 	on:focus={noop()}
 	on:mouseover={widget.style.border=hover}

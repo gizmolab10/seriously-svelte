@@ -1,6 +1,6 @@
 <script lang=ts>
   import { Rect, Size, Point, Thing, Signals, Layout, onMount, onDestroy, LineRect, LineCurveType, normalizeOrderOf, handleSignalOfKind } from '../../ts/common/GlobalImports';
-  import { debug, lineGap } from '../../ts/managers/State';
+  import { debug, widgetGap } from '../../ts/managers/State';
   import Widget from './Widget.svelte';
   import Line from './Line.svelte';
   export let origin: Point;
@@ -15,9 +15,7 @@
   function lineTypeAt(index: number): number { return lineRectAt(index).lineType; }
 
   function updateLineRects() {
-    const half = children.length / 2;
-    const threshold = Math.floor(half);
-    const yOffset = $lineGap * threshold;
+    const yOffset = $widgetGap * children.length / 4;
     const childrenOrigin = origin.offsetBy(new Point(0, yOffset));
     lineRects = new Layout(thing, childrenOrigin).lineRects ?? [];
     // console.log('CHILDREN', origin.verbose);

@@ -1,4 +1,4 @@
-import { debug, dbType, idHere, lineGap, bulkName, showDetails, idsGrabbed, lineStretch } from '../managers/State';
+import { debug, dbType, idHere, widgetGap, bulkName, showDetails, idsGrabbed, lineStretch } from '../managers/State';
 import { get, DBType, dbDispatch, isServerLocal } from './GlobalImports'
 
 export enum BulkID {
@@ -7,12 +7,13 @@ export enum BulkID {
 }
 
 export enum PersistID {
+  lineStretch = 'lineStretch',
   details = 'details',
-  height  = 'height',
   debug   = 'debug',
   bulk    = 'bulk',
   here    = 'here',
   grab    = 'grab',
+  gap     = 'gap',
   db      = 'db',
 }
 
@@ -60,8 +61,9 @@ class PersistLocal {
     // localStorage.clear();
     const isLocal = isServerLocal();
     this.writeToKey(PersistID.debug, true);
-    lineGap.set(this.readFromKey(PersistID.height) ?? 24);
-    lineStretch.set(this.readFromKey(PersistID.height) ?? 40);
+    this.writeToKey(PersistID.gap, 30);
+    widgetGap.set(this.readFromKey(PersistID.gap) ?? 30);
+    lineStretch.set(this.readFromKey(PersistID.lineStretch) ?? 40);
     debug.set(this.readFromKey(PersistID.debug) ?? isLocal);
     showDetails.set(this.readFromKey(PersistID.details) ?? false);
     bulkName.set(this.readFromKey(PersistID.bulk) ?? BulkID.public);

@@ -15,25 +15,25 @@ export default class DBLocal implements DBInterface {
 
   async setup() {
     const h = this.hierarchy;
-    const idRoot = 'local1';
-    const idFirst = 'local2';
-    const idSecond = 'local3';
-    const idThird = 'local4';
-    const idSibling = 'local6';
-    const idAnother = 'local7';
-    const idPredicate = 'local5';
+    const idPredicate = 'localP';
+    const idRoot = 'localRoot';
+    const idA = 'localA';
+    const idB = 'localB';
+    const idC = 'localC';
+    const idD = 'localD';
+    const idE = 'localE';
     h.rememberThing_runtimeCreate(idRoot, 'seriously', 'blue', '!', -1, true);
-    h.rememberThing_runtimeCreate(idFirst, 'first', 'red', '1', 0, true);
-    h.rememberThing_runtimeCreate(idSibling, 'sibling', 'green', 'a', 0, true);
-    h.rememberThing_runtimeCreate(idAnother, 'another', 'orchid', 'a', 0, true);
-    h.rememberThing_runtimeCreate(idSecond, 'second', 'purple', '2', 0, true);
-    h.rememberThing_runtimeCreate(idThird, 'third', 'orange', '3', 0, true);
+    h.rememberThing_runtimeCreate(idA, 'first', 'red', '1', 0, true);
+    h.rememberThing_runtimeCreate(idB, 'sibling', 'green', 'a', 0, true);
+    h.rememberThing_runtimeCreate(idC, 'really very, very, very, very long, long, long title', 'orchid', 'a', 0, true);
+    h.rememberThing_runtimeCreate(idD, 'second', 'purple', '2', 0, true);
+    h.rememberThing_runtimeCreate(idE, 'third', 'orange', '3', 0, true);
     h.rememberPredicate_runtimeCreate(idPredicate, 'isAParentOf');
-    h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idRoot, idFirst, 0);
-    h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idRoot, idSibling, 0);
-    h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idRoot, idAnother, 0);
-    h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idFirst, idSecond, 0);
-    h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idSecond, idThird, 0);
+    h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idRoot, idA, 0);
+    h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idRoot, idB, 0);
+    h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idRoot, idC, 0);
+    h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idA, idD, 0);
+    h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idA, idE, 0);
   };
 
   async thing_remoteCreate(thing: Thing) {};

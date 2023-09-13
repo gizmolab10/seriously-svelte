@@ -11,6 +11,6 @@ export const thingsArrived      = writable<boolean>();
 export const showDetails        = writable<boolean>();
 export const isBusy             = writable<boolean>();
 export const debug              = writable<boolean>();
-export const lineGap            = writable<number>();
+export const widgetGap          = writable<number>();
 export const lineStretch        = writable<number>();
 export const build              = writable<number>();

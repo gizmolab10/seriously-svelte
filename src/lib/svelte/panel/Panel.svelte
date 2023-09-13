@@ -90,6 +90,8 @@ onMount(async () => {
     position: fixed;
     left: 70px;
     top: 20px;
+    height: 500px;
+    width: 400px;
   }
   .horizontal-line {
     position: absolute;

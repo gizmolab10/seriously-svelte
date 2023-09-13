@@ -88,9 +88,9 @@
 </script>
 
 {#key originalTitle}
-  <div class="wrapper" bind:this={wrapper}>
+  <span class="wrapper" bind:this={wrapper} contenteditable='true'>
     {thing.title} &nbsp;
-  </div>
+  </span>
   <input
     type='text'
     bind:this={input}
