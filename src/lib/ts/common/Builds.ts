@@ -3,8 +3,9 @@ class Builds {
   notes: { [id: number]: string[] } = {};
 
   constructor() {
-    build.set(36);
+    build.set(37);
     this.notes = {
+      37 : ['September 16, 2023', 'position widgets correctly at ends of curves'],
       36 : ['September 12, 2023', 'draw curves, switch public to show them'],
       35 : ['September 8, 2023', 'begin work on bubble.io plugin and svg'],
       34 : ['September 3, 2023', 'crumbs update on db switch'],

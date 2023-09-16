@@ -5,8 +5,6 @@
 	import Dot from './Dot.svelte';
 	export let origin = Point;
 	export let thing = Thing;
-	let widgetOrigin =  new Point();
-	let offset = new Point(21, 0);
 	let isGrabbed = false;
 	let isEditing = false;
 	let widget;
@@ -15,14 +13,8 @@
 
   onMount(async () => {
 		updateBorderStyle();
-		updateOrigin();
 		// console.log('WIDGET:', origin.verbose);
 	});
-
-	function updateOrigin() {
-		offset.y = 24 + thing.children.length / 4 * $widgetGap;
-		widgetOrigin = origin.offsetBy(offset);
-	};
 
 	function updateBorderStyle() {
 		thing.updateColorAttributes();
@@ -53,7 +45,7 @@
 
 <div
 	bind:this={widget}
-	style='position: absolute; top: {widgetOrigin.y}px; left: {widgetOrigin.x}px; height: 23px; border: {border};'
+	style='position: absolute; top: {origin.y}px; left: {origin.x}px; height: 23px; border: {border};'
 	on:blur={noop()}
 	on:focus={noop()}
 	on:mouseover={widget.style.border=hover}

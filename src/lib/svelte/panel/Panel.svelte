@@ -18,10 +18,13 @@
     persistLocal.writeToKey(PersistID.details, $showDetails);
   }
 
-onMount(async () => {
-  persistLocal.setup();
+  onMount(async () => {
+    persistLocal.setup();
   })
-</script>
+
+  // border: 1px solid yellow; /* yellow or white */
+
+  </script>
 
 <div class='left-side'>
   <CircularButton
@@ -92,7 +95,6 @@ onMount(async () => {
     top: 33px;
     height: 500px;
     width: 600px;
-    border: 1px solid yellow; /* yellow or white */
   }
   .horizontal-line {
     position: absolute;
