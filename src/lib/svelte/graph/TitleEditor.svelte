@@ -109,6 +109,8 @@
     outline: none;
     padding: 0px 3px;
     border-radius: 10px;
+    position: relative;
+    top: 3px;
     outline-color: 'white';
   }
   .wrapper {

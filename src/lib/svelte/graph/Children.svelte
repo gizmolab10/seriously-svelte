@@ -3,7 +3,7 @@
   import { debug, widgetGap } from '../../ts/managers/State';
   import Widget from './Widget.svelte';
   import Line from './Line.svelte';
-	let offset = new Point(-4, -11);
+	let offset = new Point(-5, -14);
   export let origin: Point;
   export let thing: Thing;
 
@@ -53,8 +53,6 @@
 {#key toggleDraw}
   {#if children && children.length != 0 && lineRects.length == children.length}
     {#if $debug}
-      <div class='svg'>
-      </div>
       {#each children as child, index}
         <Line color={child.color} curveType={lineTypeAt(index)} rect={lineRectAt(index)}/>
         <Widget thing={child} origin={lineRectAt(index).extent.offsetBy(offset)}/>
@@ -72,9 +70,4 @@
 <style>
   .widget-ul { list-style: none; }
   .widget-li { line-height: 1.5; }
-  .svg {
-    position: absolute;
-    height: 200px;
-    width: 100px;
-  }
 </style>

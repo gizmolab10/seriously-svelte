@@ -37,15 +37,12 @@
 	// {#if !$debug}
 	// 	&nbsp; {thing.order + 1}
 	// {/if}
-	// {#if thing.isGrabbed}
-	// 	&nbsp; {thing.order + 1}
-	// {/if}
 
 </script>
 
 <div
 	bind:this={widget}
-	style='position: absolute; top: {origin.y}px; left: {origin.x}px; height: 23px; border: {border};'
+	style='position: absolute; top: {origin.y}px; left: {origin.x}px; border: {border};'
 	on:blur={noop()}
 	on:focus={noop()}
 	on:mouseover={widget.style.border=hover}
@@ -59,6 +56,7 @@
 
 <style>
 	div {
+		height: 24px;
 		white-space: nowrap;
 		padding: 1px 8px 2px 1px;
 		border-radius: 16px;

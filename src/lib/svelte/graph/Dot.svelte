@@ -61,8 +61,8 @@
 
 <style lang='scss'>
   button {
-    top: 1px;
-    left: 3px;
+    top: 4px;
+    left: 4px;
     cursor: pointer;
     display: relative;
     border: 1px solid;
