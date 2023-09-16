@@ -88,10 +88,11 @@ onMount(async () => {
   }
   .graph {
     position: fixed;
-    left: 70px;
-    top: 20px;
+    left: 101px;
+    top: 33px;
     height: 500px;
-    width: 400px;
+    width: 600px;
+    border: 1px solid yellow; /* yellow or white */
   }
   .horizontal-line {
     position: absolute;

@@ -15,7 +15,7 @@
   function lineTypeAt(index: number): number { return lineRectAt(index).lineType; }
 
   function updateLineRects() {
-    const yOffset = $widgetGap * children.length / 4;
+    const yOffset = ($widgetGap * children.length / 2) - 20;
     const childrenOrigin = origin.offsetBy(new Point(0, yOffset));
     lineRects = new Layout(thing, childrenOrigin).lineRects ?? [];
     // console.log('CHILDREN', origin.verbose);
@@ -51,6 +51,8 @@
 {#key toggleDraw}
   {#if children && children.length != 0 && lineRects.length == children.length}
     {#if $debug}
+      <div class='svg'>
+      </div>
       {#each children as child, index}
         <Line color={child.color} curveType={lineTypeAt(index)} rect={lineRectAt(index)}/>
         <Widget thing={child} origin={lineRectAt(index).extent}/>
@@ -68,4 +70,10 @@
 <style>
   .widget-ul { list-style: none; }
   .widget-li { line-height: 1.5; }
+  .svg {
+    position: absolute;
+    height: 200px;
+    width: 100px;
+    border: 1px solid yellow; /* red or white */
+  }
 </style>

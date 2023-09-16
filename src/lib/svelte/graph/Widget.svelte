@@ -53,7 +53,7 @@
 
 <div
 	bind:this={widget}
-	style='position: absolute; top: {widgetOrigin.y}px; left: {widgetOrigin.x}px; width: 250px; height: 23px; border: {border};'
+	style='position: absolute; top: {widgetOrigin.y}px; left: {widgetOrigin.x}px; height: 23px; border: {border};'
 	on:blur={noop()}
 	on:focus={noop()}
 	on:mouseover={widget.style.border=hover}
@@ -67,6 +67,7 @@
 
 <style>
 	div {
+		white-space: nowrap;
 		padding: 1px 8px 2px 1px;
 		border-radius: 16px;
 	}

@@ -29,12 +29,13 @@
     path = 'M' + origin.description +'A' + rect.size.description + ',0,0,' + flag + ',' + extent.description;
 		// console.log('LINE:', rect.description, 'o:', origin.verbose, 'e:', extent.verbose, curveType, 'p:', path);
   }
-  //  style='viewBox: {viewBox.pxDescription}'
   // <rect x={0} y={origin.y} width={size.width} height={size.height} stroke=green fill=white/>
+  // <rect x={origin.x} y={origin.y} width={size.width} height={size.height} stroke=green fill=white/>
+
 </script>
 
-<svg style='position: absolute; top: {origin.y}px; left: {origin.x}px;'>
-  <path d={path} stroke={color} fill='none' />
+<svg width='100' height='200' viewbox='0 0 100 200' style='position: absolute;'>
+  <path d={path} stroke={color} fill='none'/>
 </svg>
 
 <style lang='scss'>
