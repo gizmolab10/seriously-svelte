@@ -34,6 +34,7 @@ export default class Layout {
 						height = this.widgetGap * delta;
 						break;
 				}
+				lineOrigin.x = 0;
 				lineOrigin.y += this.widgetGap;
 				const size = new Size(get(lineStretch), height);
 				const rect = new Rect(lineOrigin, size);

@@ -34,7 +34,7 @@
 
 </script>
 
-<svg width='100' height='200' viewbox='0 0 100 200' style='position: absolute;'>
+<svg width='40' height='200' viewbox='0 0 40 200' style='position: absolute; left: 25px;'>
 	<path d={path} stroke={color} fill='none'/>
 </svg>
 
