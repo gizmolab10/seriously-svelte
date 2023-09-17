@@ -43,27 +43,14 @@
     return strings.join(', ');
   }
 
-  // <p> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {lineRects.map(obj => obj.description).join(' ... ')}</p>
-  // <div style="position: absolute; left: {lineRectAt(index).origin.x}px; top: {lineRectAt(index).origin.y}px;">
-  // </div>
-  // border: 1px solid orange; /* orange or white */
-
 </script>
 
 {#key toggleDraw}
   {#if children && children.length != 0 && lineRects.length == children.length}
-    {#if $debug}
-      {#each children as child, index}
-        <Line color={child.color} curveType={lineTypeAt(index)} rect={lineRectAt(index)}/>
-        <Widget thing={child} origin={lineRectAt(index).extent.offsetBy(offset)}/>
-      {/each}
-    {:else}
-      <ul class='widget-ul'>
-        {#each children as child}
-          <li class='widget-li'><Widget thing={child}/>
-        {/each}
-      </ul>
-    {/if}
+    {#each children as child, index}
+      <Widget thing={child} origin={lineRectAt(index).extent.offsetBy(offset)}/>
+      <Line color={child.color} curveType={lineTypeAt(index)} rect={lineRectAt(index)}/>
+    {/each}
   {/if}
 {/key}
 

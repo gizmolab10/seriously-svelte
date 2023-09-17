@@ -13,13 +13,13 @@
 
 	onMount(async () => {
 		updateBorderStyle();
-		// console.log('WIDGET:', origin.verbose);
 	});
 
 	function updateBorderStyle() {
 		thing.updateColorAttributes();
 		border = thing.grabAttributes;
 		hover = (isEditing || isGrabbed) ? thing.grabAttributes : thing.hoverAttributes;
+		console.log('WIDGET:', border, thing.title);
 	}
 
 	$: {

@@ -1,4 +1,4 @@
-import { Datum, signal, Signals, constants, Predicate, dbDispatch, PersistID, persistLocal, normalizeOrderOf, Point } from '../common/GlobalImports';
+import { Datum, signal, Signals, constants, Predicate, dbDispatch, PersistID, persistLocal, normalizeOrderOf } from '../common/GlobalImports';
 import { idsGrabbed, idEditing, idHere } from '../managers/State';
 import Airtable from 'airtable';
 
@@ -62,7 +62,7 @@ export default class Thing extends Datum {
 
 	revealColor(isReveal: boolean): string {
 		const flag = this.isGrabbed || this.isEditing || this.isExemplar;
-		return (flag != isReveal) ? this.color : 'clear';
+		return (flag != isReveal) ? this.color : constants.backgroundColor;
 	}
 
 	log(message: string)						{ console.log(message, this.description); }
