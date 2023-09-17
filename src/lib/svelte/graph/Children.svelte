@@ -3,7 +3,7 @@
   import { debug, widgetGap } from '../../ts/managers/State';
   import Widget from './Widget.svelte';
   import Line from './Line.svelte';
-	let offset = new Point(20, -14);
+	let offset = new Point(19, -14);
   export let origin: Point;
   export let thing: Thing;
 

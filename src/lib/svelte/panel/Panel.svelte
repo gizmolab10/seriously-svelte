@@ -9,26 +9,19 @@
 	import Crumbs from './Crumbs.svelte';
 	let size = 14;
 
-	function handleClick(id) {
-		$popupViewID = ($popupViewID == id) ? null : id;
-	}
+	onMount(async () => { persistLocal.setup(); })
+	function handleClick(id) { $popupViewID = ($popupViewID == id) ? null : id; }
 	
 	function handleSettings(event) {
 		$showDetails = !$showDetails;
 		persistLocal.writeToKey(PersistID.details, $showDetails);
 	}
 
-	onMount(async () => {
-		persistLocal.setup();
-	})
-
-	// border: 1px solid yellow; /* yellow or white */
-
-	</script>
+</script>
 
 <div class='left-side'>
 	<CircularButton
-		image='settings.png'
+		image='settings.svg'
 		borderColor='white'
 		onClick={handleSettings}/>
 	&nbsp;
