@@ -1,6 +1,6 @@
 <script lang='ts'>
-  import { debug, widgetGap, idEditing, idsGrabbed } from '../../ts/managers/State';
-  import { noop, Thing, Point, onMount } from '../../ts/common/GlobalImports';
+	import { debug, widgetGap, idEditing, idsGrabbed } from '../../ts/managers/State';
+	import { noop, Thing, Point, onMount } from '../../ts/common/GlobalImports';
 	import TitleEditor from './TitleEditor.svelte';
 	import Dot from './Dot.svelte';
 	export let origin = Point;
@@ -11,7 +11,7 @@
 	let border;
 	let hover;
 
-  onMount(async () => {
+	onMount(async () => {
 		updateBorderStyle();
 		// console.log('WIDGET:', origin.verbose);
 	});
@@ -58,7 +58,7 @@
 	div {
 		height: 24px;
 		white-space: nowrap;
-		padding: 1px 8px 2px 1px;
+		padding: 1px 10px 2px 1px;
 		border-radius: 16px;
 	}
 </style>

@@ -24,12 +24,12 @@ import User from '../data/User';
 import './Extensions';
 
 export { constants, builds,
-  get, onMount, onDestroy,
-  Point, Size, Rect, LineCurveType,
-  signal, Signals, handleSignalOfKind,
-  FatTrianglePath, Direction, Layout, LineRect,
-  Grabs, persistLocal, editor, Hierarchy, dbDispatch,
-  User, Datum, Thing, Access, Predicate, Relationship,
-  DBType, DataKind, ButtonID, PersistID, CreationFlag,
-  isServerLocal, normalizeOrderOf, sortAccordingToOrder,
-  log, noop, apply, remove, removeAll, copyObject, desaturateBy };
+	get, onMount, onDestroy,
+	Point, Size, Rect, LineCurveType,
+	signal, Signals, handleSignalOfKind,
+	FatTrianglePath, Direction, Layout, LineRect,
+	Grabs, persistLocal, editor, Hierarchy, dbDispatch,
+	User, Datum, Thing, Access, Predicate, Relationship,
+	DBType, DataKind, ButtonID, PersistID, CreationFlag,
+	isServerLocal, normalizeOrderOf, sortAccordingToOrder,
+	log, noop, apply, remove, removeAll, copyObject, desaturateBy };
