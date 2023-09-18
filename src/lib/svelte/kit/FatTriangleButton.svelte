@@ -1,13 +1,19 @@
 <script>
-	import { constants, FatTrianglePath } from "../../ts/common/GlobalImports";
-  const triangle = new FatTrianglePath(18, 0);
+	import { editor, constants, dbDispatch, FatTrianglePath } from "../../ts/common/GlobalImports";
+  import { idHere } from '../../ts/managers/State';
+	const triangle = new FatTrianglePath(18, 0);
   export let origin = new Point(15, 20);
   const path = triangle.path;
   export let color = 'red';
-  // console.log(path);
+  
+	function handleClick(event) {
+		const grab = dbDispatch.db.hierarchy.grabs.furthestGrab(true);
+    editor.thing_redraw_remoteMoveRight(grab, false, false);
+  }
+
 </script>
 
-<button class='svg-button'>
+<button class='svg-button' on:click={handleClick}>
   <svg width='20' height='20' viewbox='0 0 20 20' style='position: absolute; left: {origin.x}px; top: {origin.y}px;'>
     <path d={path} stroke={color} fill={constants.backgroundColor}/>
   </svg>
