@@ -1,4 +1,4 @@
-import { debug, dbType, idHere, widgetGap, bulkName, showDetails, idsGrabbed, lineStretch } from '../managers/State';
+import { debug, dbType, idHere, widgetHeight, bulkName, showDetails, idsGrabbed, lineStretch } from '../managers/State';
 import { get, DBType, dbDispatch, isServerLocal } from './GlobalImports'
 
 export enum BulkID {
@@ -62,7 +62,7 @@ class PersistLocal {
 		const isLocal = isServerLocal();
 		this.writeToKey(PersistID.debug, true);
 		this.writeToKey(PersistID.gap, 30);
-		widgetGap.set(this.readFromKey(PersistID.gap) ?? 30);
+		widgetHeight.set(this.readFromKey(PersistID.gap) ?? 30);
 		lineStretch.set(this.readFromKey(PersistID.lineStretch) ?? 40);
 		debug.set(this.readFromKey(PersistID.debug) ?? isLocal);
 		showDetails.set(this.readFromKey(PersistID.details) ?? false);

@@ -1,6 +1,6 @@
 <script lang=ts>
   import { Rect, Size, Point, Thing, Signals, Layout, onMount, onDestroy, LineRect, LineCurveType, normalizeOrderOf, handleSignalOfKind } from '../../ts/common/GlobalImports';
-  import { debug, widgetGap } from '../../ts/managers/State';
+  import { debug, widgetHeight } from '../../ts/managers/State';
   import Widget from './Widget.svelte';
   import Line from './Line.svelte';
   export let lineRects: Array<LineRect> = [];
@@ -11,6 +11,11 @@
 	onDestroy( () => {signalHandler.disconnect(); });
   function lineRectAt(index: number): LineRect { return lineRects[index]; }
   function lineTypeAt(index: number): number { return lineRectAt(index).lineType; }
+
+  function drawnSize(): Size {
+    const height = $widgetHeight;
+    return new Size(100, children.length * height);
+  }
 
   const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
     const newChildren = thing.children;
@@ -31,8 +36,3 @@
     {/each}
   {/if}
 {/key}
-
-<style>
-  .widget-ul { list-style: none; }
-  .widget-li { line-height: 1.5; }
-</style>

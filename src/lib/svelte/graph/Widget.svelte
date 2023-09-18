@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { debug, widgetGap, idEditing, idsGrabbed } from '../../ts/managers/State';
+	import { debug, idEditing, idsGrabbed } from '../../ts/managers/State';
 	import { noop, Thing, Point, onMount } from '../../ts/common/GlobalImports';
 	import TitleEditor from './TitleEditor.svelte';
 	import Dot from './Dot.svelte';

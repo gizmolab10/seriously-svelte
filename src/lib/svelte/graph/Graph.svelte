@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { Rect, Size, Point, Thing, Layout, editor, Signals, onMount, onDestroy, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
-	import { idHere, widgetGap, idEditing, popupViewID } from '../../ts/managers/State';
+	import { idHere, widgetHeight, idEditing, popupViewID } from '../../ts/managers/State';
 	import FatTriangleButton from '../kit/FatTriangleButton.svelte';
 	import Children from './Children.svelte';
 	let childrenOrigin = new Point();
@@ -26,7 +26,7 @@
 	}
 
   function updateLineRects() {
-    const yOffset = ($widgetGap * here.children.length / 2) - 20;
+    const yOffset = ($widgetHeight * here.children.length / 2) - 20;
     childrenOrigin = origin.offsetBy(new Point(0, yOffset));
     lineRects = new Layout().lineRects(here, childrenOrigin) ?? [];
     // console.log('CHILDREN', origin.verbose);

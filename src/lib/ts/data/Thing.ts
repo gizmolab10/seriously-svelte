@@ -67,14 +67,14 @@ export default class Thing extends Datum {
 
 	log(message: string)						{ console.log(message, this.description); }
 	get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
-	get description():			string { return this.id + ' (\" ' + this.title + '\") '; }
+	get description():			 string { return this.id + ' (\" ' + this.title + '\") '; }
 	get hasChildren():			boolean { return this.hasPredicate(false); }
-	get children():		Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id, false, this.id); }
-	get parents():		Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id,	true, this.id); }
-	get siblings():		Array<Thing> { return this.firstParent?.children ?? []; }
+	get children():		 Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id, false, this.id); }
+	get parents():		 Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id,	true, this.id); }
+	get siblings():		 Array<Thing> { return this.firstParent?.children ?? []; }
 	get grandparent():				Thing { return this.firstParent?.firstParent ?? dbDispatch.db.hierarchy.root; }
 	get lastChild():					Thing { return this.children.slice(-1)[0]; }
-	get firstChild():				Thing { return this.children[0]; }
+	get firstChild():					Thing { return this.children[0]; }
 	get firstParent():				Thing { return this.parents[0]; }
 
 	ancestors(thresholdWidth: number): Array<Thing> {

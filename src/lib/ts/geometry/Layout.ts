@@ -1,11 +1,11 @@
 import { get, Rect, Size, Point, Thing, constants, LineRect, LineCurveType } from '../common/GlobalImports';
-import { widgetGap, lineStretch } from '../managers/State'
+import { widgetHeight, lineStretch } from '../managers/State'
 
 export default class Layout {
-	widgetGap: number;
+	widgetHeight: number;
 
 	constructor(thing: Thing, origin: Point) {
-		this.widgetGap = get(widgetGap);
+		this.widgetHeight = get(widgetHeight);
 	}
 
 	lineRects(thing: Thing, origin: Point): Array<LineRect> {
@@ -20,17 +20,17 @@ export default class Layout {
 				const delta = index - half + 0.5;
 				const direction = this.getDirection(threshold - index, hasAFlat);
 				const lineOrigin = origin.copy;
-				let height = this.widgetGap * delta;
+				let height = this.widgetHeight * delta;
 				switch (direction) {
 					case LineCurveType.flat:
 						height = 0;
 						break;
 					case LineCurveType.up:
-						height = this.widgetGap * delta;
+						height = this.widgetHeight * delta;
 						break;
 				}
 				lineOrigin.x = 0;
-				lineOrigin.y += this.widgetGap;
+				lineOrigin.y += this.widgetHeight;
 				const size = new Size(get(lineStretch), height);
 				const rect = new Rect(lineOrigin, size);
 
