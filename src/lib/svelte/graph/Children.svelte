@@ -3,6 +3,7 @@
   import { debug, widgetGap } from '../../ts/managers/State';
   import Widget from './Widget.svelte';
   import Line from './Line.svelte';
+  export let lineRects: Array<LineRect> = [];
 	let offset = new Point(19, -14);
   let childrenOrigin = new Point();
   export let origin: Point;
@@ -10,7 +11,6 @@
 
   let toggleDraw = false;
   let children = thing.children;
-  let lineRects: Array<LineRect> = [];
   onMount(() => { updateLineRects(); });
 	onDestroy( () => {signalHandler.disconnect(); });
   function lineRectAt(index: number): LineRect { return lineRects[index]; }
