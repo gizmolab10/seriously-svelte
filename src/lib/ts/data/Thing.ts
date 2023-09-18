@@ -1,4 +1,4 @@
-import { Datum, signal, Signals, constants, Predicate, dbDispatch, PersistID, persistLocal, normalizeOrderOf } from '../common/GlobalImports';
+import { Datum, signal, Signals, constants, Predicate, PersistID, dbDispatch, getWidthOf, persistLocal, normalizeOrderOf } from '../common/GlobalImports';
 import { idsGrabbed, idEditing, idHere } from '../managers/State';
 import Airtable from 'airtable';
 
@@ -77,10 +77,16 @@ export default class Thing extends Datum {
 	get firstChild():				Thing { return this.children[0]; }
 	get firstParent():				Thing { return this.parents[0]; }
 
-	get ancestors(): Array<Thing> {
-		const array = [];
+	ancestors(thresholdWidth: number): Array<Thing> {
 		let thing: Thing = this;
+		let totalWidth = 0;
+		const array = [];
 		while (thing) {
+			const width = getWidthOf(thing.title) + 5;  // 5 for the '>' separator
+			if (totalWidth + width > thresholdWidth) {
+				break;
+			}
+			totalWidth += width;
 			array.push(thing);
 			thing = thing.firstParent;
 		}

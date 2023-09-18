@@ -1,4 +1,4 @@
-import { log, noop, apply, remove, removeAll, copyObject, desaturateBy, isServerLocal, normalizeOrderOf, sortAccordingToOrder } from './Utilities';
+import { log, noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, isServerLocal, normalizeOrderOf, sortAccordingToOrder } from './Utilities';
 import { Point, Size, Rect, LineCurveType } from '../geometry/Geometry';
 import { FatTrianglePath, Direction } from '../geometry/FatTrianglePath';
 import { signal, Signals, handleSignalOfKind } from './Signals';
@@ -32,4 +32,4 @@ export { constants, builds,
 	User, Datum, Thing, Access, Predicate, Relationship,
 	DBType, DataKind, ButtonID, PersistID, CreationFlag,
 	isServerLocal, normalizeOrderOf, sortAccordingToOrder,
-	log, noop, apply, remove, removeAll, copyObject, desaturateBy };
+	log, noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy };
