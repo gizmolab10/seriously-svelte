@@ -4,52 +4,29 @@
   import Widget from './Widget.svelte';
   import Line from './Line.svelte';
   export let lineRects: Array<LineRect> = [];
-	let offset = new Point(19, -14);
-  let childrenOrigin = new Point();
-  export let origin: Point;
   export let thing: Thing;
 
   let toggleDraw = false;
   let children = thing.children;
-  onMount(() => { updateLineRects(); });
 	onDestroy( () => {signalHandler.disconnect(); });
   function lineRectAt(index: number): LineRect { return lineRects[index]; }
   function lineTypeAt(index: number): number { return lineRectAt(index).lineType; }
-
-  function updateLineRects() {
-    const yOffset = ($widgetGap * children.length / 2) - 20;
-    childrenOrigin = origin.offsetBy(new Point(0, yOffset));
-    lineRects = new Layout().lineRects(thing, childrenOrigin) ?? [];
-    // console.log('CHILDREN', origin.verbose);
-    // console.log('CHILDREN', description());
-  }
 
   const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
     const newChildren = thing.children;
     if (idThing == thing.id || children != newChildren) {
       normalizeOrderOf(newChildren);
       children = newChildren;
-      updateLineRects();
       toggleDraw = !toggleDraw;
     }
   })
-
-  function description() {
-    let strings: Array<string> = [];
-    for (const lineRect of lineRects) {
-      strings.push(lineRect.origin.verbose);
-      strings.push(lineRect.extent.verbose);
-      strings.push(lineRect.size.verbose);
-    }
-    return strings.join(', ');
-  }
 
 </script>
 
 {#key toggleDraw}
   {#if children && children.length != 0 && lineRects.length == children.length}
     {#each children as child, index}
-      <Widget thing={child} origin={lineRectAt(index).extent.offsetBy(offset)}/>
+      <Widget thing={child} origin={lineRectAt(index).extent.offsetBy(new Point(19, -14))}/>
       <Line color={child.color} curveType={lineTypeAt(index)} rect={lineRectAt(index)}/>
     {/each}
   {/if}

@@ -4,7 +4,7 @@
   export let origin = new Point(15, 20);
   const path = triangle.path;
   export let color = 'red';
-  console.log(path);
+  // console.log(path);
 </script>
 
 <button class='svg-button'>

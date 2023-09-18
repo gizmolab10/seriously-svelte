@@ -19,7 +19,7 @@
 		thing.updateColorAttributes();
 		border = thing.grabAttributes;
 		hover = (isEditing || isGrabbed) ? thing.grabAttributes : thing.hoverAttributes;
-		console.log('WIDGET:', border, thing.title);
+		// console.log('WIDGET:', border, thing.title);
 	}
 
 	$: {

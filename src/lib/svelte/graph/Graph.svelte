@@ -1,23 +1,47 @@
-<script>
-	import { Rect, Size, Point, Thing, Layout, editor, Signals, onDestroy, Predicate, ButtonID, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
-	import { popupViewID, idEditing, idHere } from '../../ts/managers/State';
+<script lang='ts'>
+	import { Rect, Size, Point, Thing, Layout, editor, Signals, onMount, onDestroy, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
+	import { idHere, widgetGap, idEditing, popupViewID } from '../../ts/managers/State';
 	import FatTriangleButton from '../kit/FatTriangleButton.svelte';
 	import Children from './Children.svelte';
 	let childrenOrigin = new Point();
-	let point = new Point(25, -10);
+	let origin = new Point(25, -10);
+  let lineRects: LineRect[] = [];
 	let toggleDraw = false;
 	let here = Thing;
-	let listener;
-
-	$: { here = dbDispatch.db.hierarchy.getThing_forID($idHere); }
-	onDestroy( () => {signalHandler.disconnect(); });
 
 	const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
 		if (here && idThing == here.id) {
-			point = new Point(25, -10);
+			origin = new Point(25, -10);
+			updateLineRects();
 			toggleDraw = !toggleDraw;
 		}
-	})
+	});
+
+	onDestroy( () => { signalHandler.disconnect(); });
+	onMount( () => { updateLineRects(); });
+	
+	$: {
+		here = dbDispatch.db.hierarchy.getThing_forID($idHere);
+		updateLineRects();
+	}
+
+  function updateLineRects() {
+    const yOffset = ($widgetGap * here.children.length / 2) - 20;
+    childrenOrigin = origin.offsetBy(new Point(0, yOffset));
+    lineRects = new Layout().lineRects(here, childrenOrigin) ?? [];
+    // console.log('CHILDREN', origin.verbose);
+    // console.log('CHILDREN', description());
+  }
+
+  function description() {
+    let strings: Array<string> = [];
+    for (const lineRect of lineRects) {
+      strings.push(lineRect.origin.verbose);
+      strings.push(lineRect.extent.verbose);
+      strings.push(lineRect.size.verbose);
+    }
+    return strings.join(', ');
+  }
 
 	async function handleKeyDown(event) {
 		let grab = dbDispatch.db.hierarchy.grabs.furthestGrab(true);
@@ -57,7 +81,7 @@
 <svelte:document on:keydown={handleKeyDown} />
 {#key toggleDraw, here}
 	{#if here}
-		<Children thing={here} origin={point}/>
+		<Children thing={here} lineRects={lineRects}/>
 		<FatTriangleButton color={here.color} origin={childrenOrigin.offsetBy(new Point(-8, 21))}/>
 	{/if}
 {/key}
