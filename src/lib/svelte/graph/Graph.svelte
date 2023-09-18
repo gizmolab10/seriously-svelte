@@ -1,7 +1,9 @@
 <script>
 	import { Rect, Size, Point, Thing, Layout, editor, Signals, onDestroy, Predicate, ButtonID, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
 	import { popupViewID, idEditing, idHere } from '../../ts/managers/State';
+	import FatTriangleButton from '../kit/FatTriangleButton.svelte';
 	import Children from './Children.svelte';
+	let childrenOrigin = new Point();
 	let point = new Point(25, -10);
 	let toggleDraw = false;
 	let here = Thing;
@@ -57,4 +59,5 @@
 	{#if here}
 		<Children thing={here} origin={point}/>
 	{/if}
+  <FatTriangleButton color={here.color} origin={childrenOrigin.offsetBy(new Point(-8, 21))}/>
 {/key}

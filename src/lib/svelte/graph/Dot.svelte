@@ -34,8 +34,6 @@
 			}
 		} else if (event.shiftKey) {
 			thing.toggleGrab();
-		} else if ($idsGrabbed?.includes(thing.id)) {
-			thing.redraw_browseRight(false);
 		} else {
 			thing.grabOnly();
 		}
@@ -43,21 +41,19 @@
 
 </script>
 
-<slot>
-	<button
-		bind:this={dot}
-		on:blur={noop()}
-		on:focus={noop()}
-		on:keypress={noop()}
-		on:click={handleClick}
-		on:mouseover={dot.style.backgroundColor=traitColor}
-		on:mouseout={dot.style.backgroundColor=buttonColor}
-		style='width:{size}px; height:{size}px;
-			border-color: {dotColor};
-			color: {traitColor};
-			background-color: {buttonColor};'>
-	</button>
-</slot>
+<button
+  bind:this={dot}
+  on:blur={noop()}
+  on:focus={noop()}
+  on:keypress={noop()}
+  on:click={handleClick}
+  on:mouseover={dot.style.backgroundColor=traitColor}
+  on:mouseout={dot.style.backgroundColor=buttonColor}
+  style='width:{size}px; height:{size}px;
+    border-color: {dotColor};
+    color: {traitColor};
+    background-color: {buttonColor};'>
+</button>
 
 <style lang='scss'>
 	button {

@@ -13,6 +13,7 @@
 	let viewBox = new Rect();
 	let size = new Size();
 	let path = '';
+
 	$: {
 		let flag = 0;
 		switch (curveType) {
@@ -27,10 +28,7 @@
 		size = extent.distanceTo(origin).asSize;
 		viewBox = new Rect(origin, size);
 		path = 'M' + origin.description +'A' + rect.size.description + ',0,0,' + flag + ',' + extent.description;
-		// console.log('LINE:', rect.description, 'o:', origin.verbose, 'e:', extent.verbose, curveType, 'p:', path);
 	}
-	// <rect x={0} y={origin.y} width={size.width} height={size.height} stroke=green fill=white/>
-	// <rect x={origin.x} y={origin.y} width={size.width} height={size.height} stroke=green fill=white/>
 
 </script>
 

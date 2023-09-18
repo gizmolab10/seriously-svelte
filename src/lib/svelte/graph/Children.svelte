@@ -4,6 +4,7 @@
   import Widget from './Widget.svelte';
   import Line from './Line.svelte';
 	let offset = new Point(19, -14);
+  let childrenOrigin = new Point();
   export let origin: Point;
   export let thing: Thing;
 
@@ -17,8 +18,8 @@
 
   function updateLineRects() {
     const yOffset = ($widgetGap * children.length / 2) - 20;
-    const childrenOrigin = origin.offsetBy(new Point(0, yOffset));
-    lineRects = new Layout(thing, childrenOrigin).lineRects ?? [];
+    childrenOrigin = origin.offsetBy(new Point(0, yOffset));
+    lineRects = new Layout().lineRects(thing, childrenOrigin) ?? [];
     // console.log('CHILDREN', origin.verbose);
     // console.log('CHILDREN', description());
   }

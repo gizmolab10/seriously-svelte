@@ -2,24 +2,19 @@ import { get, Rect, Size, Point, Thing, constants, LineRect, LineCurveType } fro
 import { widgetGap, lineStretch } from '../managers/State'
 
 export default class Layout {
-	origin = new Point();
 	widgetGap: number;
-	thing: Thing;
 
 	constructor(thing: Thing, origin: Point) {
-		this.origin = origin;
-		this.thing = thing;
 		this.widgetGap = get(widgetGap);
 	}
 
-	get lineRects(): Array<LineRect> {
+	lineRects(thing: Thing, origin: Point): Array<LineRect> {
 		let rects = Array<LineRect>();
-		const quantity = this.thing.children.length;
+		const quantity = thing.children.length;
 		if (quantity > 0) {
 			const half = quantity / 2;
 			const threshold = Math.floor(half);
 			const hasAFlat = threshold != half; // true only if 'quantity' is odd
-			let origin = this.origin;
 			let index = 0;
 			while (index < quantity) {
 				const delta = index - half + 0.5;
