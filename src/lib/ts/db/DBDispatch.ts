@@ -42,10 +42,13 @@ export default class DBDispatch {
 				thingsArrived.set(false);
 			}
 			(async () => {							// this will happen when Local sets dbType !!! too early?
+				dbLoadTime.set(null);
 				const startTime = new Date().getTime();
 				await this.db.setupDB();
 				h.constructHierarchy(type);
-				const loadTime = (new Date().getTime()) - startTime;
+				const duration = Math.trunc(((new Date().getTime()) - startTime) / 100) / 10;
+				const places = (duration == Math.trunc(duration)) ? 0 : 1;
+				const loadTime = (((new Date().getTime()) - startTime) / 1000).toFixed(places);
 				this.db.loadTime = loadTime;
 				dbLoadTime.set(loadTime);
 			})();

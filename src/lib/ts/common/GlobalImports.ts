@@ -1,4 +1,4 @@
-import { log, noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, isServerLocal, normalizeOrderOf, sortAccordingToOrder } from './Utilities';
+import { log, noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, isServerLocal, getBrowserType, normalizeOrderOf, sortAccordingToOrder } from './Utilities';
 import { FatTrianglePath, Direction } from '../geometry/FatTrianglePath';
 import { Point, Size, Rect, LineCurveType } from '../geometry/Geometry';
 import { ButtonID, BrowserType, CreationFlag } from './Enumerations';
@@ -23,13 +23,15 @@ import Datum from '../data/Datum';
 import User from '../data/User';
 import './Extensions';
 
-export { constants, builds,
+export {
+	constants, builds,
 	get, onMount, onDestroy,
 	Point, Size, Rect, LineCurveType,
 	signal, Signals, handleSignalOfKind,
 	FatTrianglePath, Direction, Layout, LineRect,
 	Grabs, persistLocal, editor, Hierarchy, dbDispatch,
 	User, Datum, Thing, Access, Predicate, Relationship,
-	isServerLocal, normalizeOrderOf, sortAccordingToOrder,
 	DBType, DataKind, ButtonID, PersistID, BrowserType, CreationFlag,
-	log, noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy };
+	isServerLocal, getBrowserType, normalizeOrderOf, sortAccordingToOrder,
+	log, noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy,
+};

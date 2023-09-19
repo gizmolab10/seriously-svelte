@@ -16,7 +16,7 @@ export enum DataKind {
 
 export default interface DBInterface {
 	dbType: string;
-	loadTime: number;
+	loadTime: string;
 	hasData: boolean;
 	hierarchy: Hierarchy;
 	setupDB(): Promise<void>;

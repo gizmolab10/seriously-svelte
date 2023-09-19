@@ -21,7 +21,7 @@ export default class DBFirebase implements DBInterface {
 		projectId: "seriously-4536d"
 	};
 
-	loadTime = 0;
+	loadTime = null;
 	hasData = false;
 	dbType = DBType.firebase;
 	collectionName = 'Bulks';

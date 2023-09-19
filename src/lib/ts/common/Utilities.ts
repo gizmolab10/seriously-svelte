@@ -91,13 +91,13 @@ export function getBrowserType(): BrowserType {
 
     switch (true) {
         case /msie (\d+)/i.test(userAgent) ||
-						/trident\/.*; rv:(\d+)/i.test(userAgent):			return BrowserType.explorer;
-        case /(chrome|crios)\/(\d+)/i.test(userAgent):		return BrowserType.chrome;
-        case /firefox\/(\d+)/i.test(userAgent):						return BrowserType.firefox;
-				case /opr\/(\d+)/i.test(userAgent):								return BrowserType.opera;
-        case /orion\/(\d+)/i.test(userAgent):							return BrowserType.orion;
-        case /safari\/(\d+)/i.test(userAgent):						return BrowserType.safari;
-        default:																					return BrowserType.unknown
+						/trident\/.*; rv:(\d+)/i.test(userAgent):		return BrowserType.explorer;
+        case /(chrome|crios)\/(\d+)/i.test(userAgent):	return BrowserType.chrome;
+        case /firefox\/(\d+)/i.test(userAgent):					return BrowserType.firefox;
+				case /opr\/(\d+)/i.test(userAgent):							return BrowserType.opera;
+        case /orion\/(\d+)/i.test(userAgent):						return BrowserType.orion;
+        case /safari\/(\d+)/i.test(userAgent):					return BrowserType.safari;
+        default:																				return BrowserType.unknown
     }
 }
 

@@ -1,4 +1,4 @@
-import { dbType, idHere, widgetHeight, bulkName, showDetails, idsGrabbed, lineStretch } from '../managers/State';
+import { dbType, idHere, widgetHeight, bulkName, showDetails, idsGrabbed, lineStretch, dbLoadTime } from '../managers/State';
 import { get, DBType, dbDispatch } from './GlobalImports'
 
 export enum BulkID {
@@ -59,10 +59,10 @@ class PersistLocal {
 	setup() {
 		// localStorage.clear();
 		// const isLocal = isServerLocal();
-		this.writeToKey(PersistID.gap, 30);
+		dbLoadTime.set(null);
 		widgetHeight.set(this.readFromKey(PersistID.gap) ?? 30);
-		lineStretch.set(this.readFromKey(PersistID.lineStretch) ?? 40);
 		showDetails.set(this.readFromKey(PersistID.details) ?? false);
+		lineStretch.set(this.readFromKey(PersistID.lineStretch) ?? 40);
 		bulkName.set(this.readFromKey(PersistID.bulk) ?? BulkID.public);
 		dbType.set(this.readFromKey(PersistID.db) ?? DBType.firebase); // invokes cloud setup, which needs bulk name already set (must be above)
 	}

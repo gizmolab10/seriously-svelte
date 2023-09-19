@@ -34,9 +34,13 @@
 			title='build {$build}'
 			onClick={handleBuildsClick}/>
 		<br><br>
-		<Label title={'load: ' + $dbLoadTime + ' ms'}/>
-		<br>
 		<RadioButtons menuItems={menuItems} idSelected={$dbType}/>
+		<br>
+		{#if $dbLoadTime}
+			<Label title={'fetched: ' + $dbLoadTime + ' sec'}/>
+		{:else}
+			<br>
+		{/if}
 	</div>
 </div>
 
