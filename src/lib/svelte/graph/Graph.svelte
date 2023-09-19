@@ -82,6 +82,6 @@
 {#key toggleDraw, here}
 	{#if here}
 		<Children thing={here} lineRects={lineRects}/>
-		<FatTriangleButton color={here.color} origin={childrenOrigin.offsetBy(new Point(-8, 21))}/>
+		<FatTriangleButton here={here} origin={childrenOrigin.offsetBy(new Point(-8, 21))}/>
 	{/if}
 {/key}

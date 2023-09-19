@@ -32,7 +32,7 @@
 			if (thing.hasChildren) {
 				thing.redraw_browseRight(true);
 			}
-		} else if (event.shiftKey) {
+		} else if (event.shiftKey || isGrabbed) {
 			thing.toggleGrab();
 		} else {
 			thing.grabOnly();

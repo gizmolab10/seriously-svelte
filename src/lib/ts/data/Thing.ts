@@ -1,5 +1,5 @@
-import { Datum, signal, Signals, constants, Predicate, PersistID, dbDispatch, getWidthOf, persistLocal, normalizeOrderOf } from '../common/GlobalImports';
-import { idsGrabbed, idEditing, idHere } from '../managers/State';
+import { get, Size, Datum, signal, Signals, constants, Predicate, PersistID, dbDispatch, getWidthOf, persistLocal, normalizeOrderOf } from '../common/GlobalImports';
+import { idHere, idEditing, idsGrabbed, widgetHeight } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -16,7 +16,7 @@ export default class Thing extends Datum {
 	trait: string;
 	order: number;
 
-	constructor(id = Datum.newID, title = constants.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
+	constructor(id: string = Datum.newID, title = constants.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
 		super(id, isRemotelyStored);
 		this.dbType = dbDispatch.db.dbType;
 		this.title = title;
@@ -66,9 +66,11 @@ export default class Thing extends Datum {
 	}
 
 	log(message: string)						{ console.log(message, this.description); }
-	get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
-	get description():			 string { return this.id + ' (\" ' + this.title + '\") '; }
+	get titleWidth():				 number { return getWidthOf(this.title) }
 	get hasChildren():			boolean { return this.hasPredicate(false); }
+	get description():			 string { return this.id + ' (\" ' + this.title + '\") '; }
+	get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
+  get childrenSize():				 Size { return new Size(this.childrenWidth, this.children.length * get(widgetHeight)); }
 	get children():		 Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id, false, this.id); }
 	get parents():		 Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id,	true, this.id); }
 	get siblings():		 Array<Thing> { return this.firstParent?.children ?? []; }
@@ -77,12 +79,25 @@ export default class Thing extends Datum {
 	get firstChild():					Thing { return this.children[0]; }
 	get firstParent():				Thing { return this.parents[0]; }
 
+	get childrenWidth():		 number {
+		let maximum = 0;
+		if (this.children && this.children.length > 0) {
+			for (const child of this.children) {
+				const width = child.titleWidth;
+				if (width > maximum) {
+					maximum = width;
+				}
+			}
+		}
+		return maximum;
+	}
+
 	ancestors(thresholdWidth: number): Array<Thing> {
 		let thing: Thing = this;
 		let totalWidth = 0;
 		const array = [];
 		while (thing) {
-			const width = getWidthOf(thing.title) + 5;  // 5 for the '>' separator
+			const width = thing.titleWidth + 5;				// 5 for the '>' separator
 			if (totalWidth + width > thresholdWidth) {
 				break;
 			}
