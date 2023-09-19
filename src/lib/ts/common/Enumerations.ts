@@ -8,3 +8,13 @@ export enum CreationFlag {
 	getRemoteID	= 'get',
 	isFromRemote = 'isFrom'
 }
+
+export enum BrowserType  {
+	unknown = 'unknown',
+	explorer = 'explorer',
+	firefox = 'firefox',
+	chrome = 'chrome',
+	safari = 'safari',
+	opera = 'opera',
+	orion = 'orion',
+}

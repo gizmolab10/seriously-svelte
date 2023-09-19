@@ -1,5 +1,5 @@
-import { debug, dbType, idHere, widgetHeight, bulkName, showDetails, idsGrabbed, lineStretch } from '../managers/State';
-import { get, DBType, dbDispatch, isServerLocal } from './GlobalImports'
+import { dbType, idHere, widgetHeight, bulkName, showDetails, idsGrabbed, lineStretch } from '../managers/State';
+import { get, DBType, dbDispatch } from './GlobalImports'
 
 export enum BulkID {
 	public = 'Public',
@@ -8,13 +8,12 @@ export enum BulkID {
 
 export enum PersistID {
 	lineStretch = 'lineStretch',
-	details = 'details',
-	debug	= 'debug',
-	bulk		= 'bulk',
-	here		= 'here',
-	grab		= 'grab',
-	gap		= 'gap',
-	db			= 'db',
+	details			= 'details',
+	bulk				= 'bulk',
+	here				= 'here',
+	grab				= 'grab',
+	gap					= 'gap',
+	db					= 'db',
 }
 
 class PersistLocal {
@@ -59,12 +58,10 @@ class PersistLocal {
 
 	setup() {
 		// localStorage.clear();
-		const isLocal = isServerLocal();
-		this.writeToKey(PersistID.debug, true);
+		// const isLocal = isServerLocal();
 		this.writeToKey(PersistID.gap, 30);
 		widgetHeight.set(this.readFromKey(PersistID.gap) ?? 30);
 		lineStretch.set(this.readFromKey(PersistID.lineStretch) ?? 40);
-		debug.set(this.readFromKey(PersistID.debug) ?? isLocal);
 		showDetails.set(this.readFromKey(PersistID.details) ?? false);
 		bulkName.set(this.readFromKey(PersistID.bulk) ?? BulkID.public);
 		dbType.set(this.readFromKey(PersistID.db) ?? DBType.firebase); // invokes cloud setup, which needs bulk name already set (must be above)

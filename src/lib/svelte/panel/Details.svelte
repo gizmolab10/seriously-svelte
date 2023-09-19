@@ -1,13 +1,12 @@
 <script>
 	import { DBType, PersistID, onMount, ButtonID, Hierarchy, dbDispatch, persistLocal } from '../../ts/common/GlobalImports';
-	import { build, debug, dbType, isBusy, popupViewID } from '../../ts/managers/State';
+	import { build, dbType, isBusy, dbLoadTime, popupViewID } from '../../ts/managers/State';
 	import RadioButtons from '../kit/RadioButtons.svelte'
 	import LabelButton from '../kit/LabelButton.svelte';
 	import Label from '../kit/Label.svelte';
-	let db = null;
 
 	const menuItems = [
-		{ id: DBType.local,		label: 'built in', action: () => { handleDBTypeAt(0); } },
+		{ id: DBType.local,		 label: 'built in', action: () => { handleDBTypeAt(0); } },
 		{ id: DBType.firebase, label: 'firebase', action: () => { handleDBTypeAt(1); } },
 		{ id: DBType.airtable, label: 'airtable', action: () => { handleDBTypeAt(2); } }
 	];
@@ -18,8 +17,8 @@
 
 	function handleDBTypeAt(index) {
 		const type = menuItems[index].id;
-		db = dbDispatch.dbForType(type);
-		// console.log('db', type);
+		const db = dbDispatch.dbForType(type);
+		$dbLoadTime = db.loadTime;
 		persistLocal.writeToKey(PersistID.db, type);
 		if (type != DBType.local && !db.hasData) {
 			$isBusy = true;		// set this before changing $dbType so panel will show 'loading ...'
@@ -29,23 +28,17 @@
 
 </script>
 
-{#key db}
 <div class="modal-overlay">
 	<div class="modal-content">
 		<LabelButton
 			title='build {$build}'
 			onClick={handleBuildsClick}/>
 		<br><br>
-		<Label title={'load: ' + dbDispatch.db.loadTime + ' ms'}/>
+		<Label title={'load: ' + $dbLoadTime + ' ms'}/>
 		<br>
-		{#if $debug}
-			<RadioButtons menuItems={menuItems} idSelected={$dbType}/>
-		{:else}
-			<Label title={$dbType}/>
-		{/if}
+		<RadioButtons menuItems={menuItems} idSelected={$dbType}/>
 	</div>
 </div>
-{/key}
 
 <style>
 	.modal-overlay {

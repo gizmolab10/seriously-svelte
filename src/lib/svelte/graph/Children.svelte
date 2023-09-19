@@ -1,6 +1,6 @@
 <script lang=ts>
 	import { Rect, Size, Point, Thing, Signals, Layout, onMount, onDestroy, LineRect, LineCurveType, normalizeOrderOf, handleSignalOfKind } from '../../ts/common/GlobalImports';
-	import { debug, widgetHeight } from '../../ts/managers/State';
+	import { widgetHeight } from '../../ts/managers/State';
 	import Widget from './Widget.svelte';
 	import Line from './Line.svelte';
 	export let lineRects: Array<LineRect> = [];

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { debug, idEditing, idsGrabbed } from '../../ts/managers/State';
+	import { idEditing, idsGrabbed } from '../../ts/managers/State';
 	import { noop, Thing, Point, onMount } from '../../ts/common/GlobalImports';
 	import TitleEditor from './TitleEditor.svelte';
 	import Dot from './Dot.svelte';
@@ -24,19 +24,13 @@
 
 	$: {
 		const editing = (thing.id == $idEditing);
-		if (isEditing != editing) {
-			isEditing = editing;
-			updateBorderStyle();
-		}
 		const grabbed = $idsGrabbed?.includes(thing.id);
-		if (isGrabbed != grabbed) {
+		if (isEditing != editing || isGrabbed != grabbed) {
+			isEditing = editing;
 			isGrabbed = grabbed;
 			updateBorderStyle();
 		}
 	}
-	// {#if !$debug}
-	// 	&nbsp; {thing.order + 1}
-	// {/if}
 
 </script>
 

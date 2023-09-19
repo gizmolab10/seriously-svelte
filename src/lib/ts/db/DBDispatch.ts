@@ -1,4 +1,4 @@
-import { dbType, isBusy, idsGrabbed, thingsArrived, idHere } from '../managers/State';
+import { dbType, isBusy, idHere, idsGrabbed, dbLoadTime, thingsArrived } from '../managers/State';
 import { DBType, Relationship, persistLocal } from '../common/GlobalImports';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
@@ -45,7 +45,9 @@ export default class DBDispatch {
 				const startTime = new Date().getTime();
 				await this.db.setupDB();
 				h.constructHierarchy(type);
-				this.db.loadTime = (new Date().getTime()) - startTime;
+				const loadTime = (new Date().getTime()) - startTime;
+				this.db.loadTime = loadTime;
+				dbLoadTime.set(loadTime);
 			})();
 		}
 	}

@@ -1,6 +1,5 @@
-import { Thing } from './GlobalImports';
+import { Thing, BrowserType } from './GlobalImports';
 import convert from 'color-convert';
-import os from 'os';
 
 export function noop() {}
 
@@ -57,6 +56,14 @@ export function isServerLocal(): boolean {
 	return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "0.0.0.0";
 }
 
+export function getFontOf(element: HTMLElement): string {
+		const computedStyle: CSSStyleDeclaration = window.getComputedStyle(element);
+		const fontFamily: string = computedStyle.fontFamily;
+		const fontSize: string = computedStyle.fontSize;
+		
+		return `${fontSize} ${fontFamily}`;
+}
+
 export function getWidthOf(s: string, font: string = '16px Arial'): number {
 		const element: HTMLElement = document.createElement('span');
 		element.textContent = s;
@@ -79,12 +86,19 @@ export function getWidthOf(s: string, font: string = '16px Arial'): number {
 		return width;
 }
 
-export function getFontOf(element: HTMLElement): string {
-		const computedStyle: CSSStyleDeclaration = window.getComputedStyle(element);
-		const fontFamily: string = computedStyle.fontFamily;
-		const fontSize: string = computedStyle.fontSize;
-		
-		return `${fontSize} ${fontFamily}`;
+export function getBrowserType(): BrowserType {
+    const userAgent: string = navigator.userAgent;
+
+    switch (true) {
+        case /msie (\d+)/i.test(userAgent) ||
+						/trident\/.*; rv:(\d+)/i.test(userAgent):			return BrowserType.explorer;
+        case /(chrome|crios)\/(\d+)/i.test(userAgent):		return BrowserType.chrome;
+        case /firefox\/(\d+)/i.test(userAgent):						return BrowserType.firefox;
+				case /opr\/(\d+)/i.test(userAgent):								return BrowserType.opera;
+        case /orion\/(\d+)/i.test(userAgent):							return BrowserType.orion;
+        case /safari\/(\d+)/i.test(userAgent):						return BrowserType.safari;
+        default:																					return BrowserType.unknown
+    }
 }
 
 // export function desaturateBy(color: string, desaturateBy: number, brightenBy: number): string {}
