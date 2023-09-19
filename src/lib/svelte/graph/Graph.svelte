@@ -5,7 +5,7 @@
 	import Children from './Children.svelte';
 	let childrenOrigin = new Point();
 	let origin = new Point(25, -10);
-  let lineRects: LineRect[] = [];
+	let lineRects: LineRect[] = [];
 	let toggleDraw = false;
 	let here = Thing;
 
@@ -25,23 +25,25 @@
 		updateLineRects();
 	}
 
-  function updateLineRects() {
-    const yOffset = ($widgetHeight * here.children.length / 2) - 20;
-    childrenOrigin = origin.offsetBy(new Point(0, yOffset));
-    lineRects = new Layout().lineRects(here, childrenOrigin) ?? [];
-    // console.log('CHILDREN', origin.verbose);
-    // console.log('CHILDREN', description());
-  }
+	function updateLineRects() {
+		if (here) {
+			const yOffset = ($widgetHeight * here.children.length / 2) - 20;
+			childrenOrigin = origin.offsetBy(new Point(0, yOffset));
+			lineRects = new Layout().lineRects(here, childrenOrigin) ?? [];
+			// console.log('CHILDREN', origin.verbose);
+			// console.log('CHILDREN', description());
+		}
+	}
 
-  function description() {
-    let strings: Array<string> = [];
-    for (const lineRect of lineRects) {
-      strings.push(lineRect.origin.verbose);
-      strings.push(lineRect.extent.verbose);
-      strings.push(lineRect.size.verbose);
-    }
-    return strings.join(', ');
-  }
+	function description() {
+		let strings: Array<string> = [];
+		for (const lineRect of lineRects) {
+			strings.push(lineRect.origin.verbose);
+			strings.push(lineRect.extent.verbose);
+			strings.push(lineRect.size.verbose);
+		}
+		return strings.join(', ');
+	}
 
 	async function handleKeyDown(event) {
 		let grab = dbDispatch.db.hierarchy.grabs.furthestGrab(true);

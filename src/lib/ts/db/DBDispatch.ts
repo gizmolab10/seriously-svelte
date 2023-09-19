@@ -42,8 +42,10 @@ export default class DBDispatch {
 				thingsArrived.set(false);
 			}
 			(async () => {							// this will happen when Local sets dbType !!! too early?
-				await this.db.setup();
+				const startTime = new Date().getTime();
+				await this.db.setupDB();
 				h.constructHierarchy(type);
+				this.db.loadTime = (new Date().getTime()) - startTime;
 			})();
 		}
 	}

@@ -5,6 +5,7 @@ export default class DBLocal implements DBInterface {
 	_hierarchy: Hierarchy | null = null;
 	dbType = DBType.local;
 	hasData = false;
+	loadTime = 0;
 
 	get hierarchy(): Hierarchy { 
 		if (this._hierarchy == null) {
@@ -13,7 +14,7 @@ export default class DBLocal implements DBInterface {
 		return this._hierarchy!;
 	}
 
-	async setup() {
+	async setupDB() {
 		const h = this.hierarchy;
 		const idPredicate = 'localP';
 		const idRoot = 'localRoot';

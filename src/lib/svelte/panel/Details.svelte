@@ -4,6 +4,7 @@
 	import RadioButtons from '../kit/RadioButtons.svelte'
 	import LabelButton from '../kit/LabelButton.svelte';
 	import Label from '../kit/Label.svelte';
+	let db = null;
 
 	const menuItems = [
 		{ id: DBType.local,		label: 'built in', action: () => { handleDBTypeAt(0); } },
@@ -15,13 +16,9 @@
 		$popupViewID = ButtonID.buildNotes;
 	}
 
-	function handleDebugClick(event) {
-		$debug = !$debug;
-	}
-
 	function handleDBTypeAt(index) {
 		const type = menuItems[index].id;
-		const db = dbDispatch.dbForType(type);
+		db = dbDispatch.dbForType(type);
 		// console.log('db', type);
 		persistLocal.writeToKey(PersistID.db, type);
 		if (type != DBType.local && !db.hasData) {
@@ -32,16 +29,15 @@
 
 </script>
 
+{#key db}
 <div class="modal-overlay">
 	<div class="modal-content">
 		<LabelButton
 			title='build {$build}'
 			onClick={handleBuildsClick}/>
 		<br><br>
-		<LabelButton
-			title={$debug ? 'debug' : '!'}
-			onClick={handleDebugClick}/>
-		<br><br>
+		<Label title={'load: ' + dbDispatch.db.loadTime + ' ms'}/>
+		<br>
 		{#if $debug}
 			<RadioButtons menuItems={menuItems} idSelected={$dbType}/>
 		{:else}
@@ -49,6 +45,7 @@
 		{/if}
 	</div>
 </div>
+{/key}
 
 <style>
 	.modal-overlay {

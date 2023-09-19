@@ -70,7 +70,7 @@ export default class Thing extends Datum {
 	get hasChildren():			boolean { return this.hasPredicate(false); }
 	get description():			 string { return this.id + ' (\" ' + this.title + '\") '; }
 	get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
-  get childrenSize():				 Size { return new Size(this.childrenWidth, this.children.length * get(widgetHeight)); }
+	get childrenSize():				 Size { return new Size(this.childrenWidth, this.children.length * get(widgetHeight)); }
 	get children():		 Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id, false, this.id); }
 	get parents():		 Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id,	true, this.id); }
 	get siblings():		 Array<Thing> { return this.firstParent?.children ?? []; }

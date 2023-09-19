@@ -89,7 +89,7 @@
 
 {#key originalTitle}
 	<span class="wrapper" bind:this={wrapper} contenteditable='true'>
-		{thing.title} &nbsp;        <!-- extra space so text is not clipped -->
+		{thing.title} &nbsp;				<!-- extra space so text is not clipped -->
 	</span>
 	<input
 		type='text'

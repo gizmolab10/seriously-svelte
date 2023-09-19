@@ -21,6 +21,7 @@ export default class DBFirebase implements DBInterface {
 		projectId: "seriously-4536d"
 	};
 
+	loadTime = 0;
 	hasData = false;
 	dbType = DBType.firebase;
 	collectionName = 'Bulks';
@@ -41,7 +42,7 @@ export default class DBFirebase implements DBInterface {
 		return this._hierarchy!;
 	}
 
-	async setup() {
+	async setupDB() {
 		await this.fetchDocumentsIn(DataKind.things);
 		await this.fetchDocumentsIn(DataKind.predicates, true)
 		await this.fetchDocumentsIn(DataKind.relationships);

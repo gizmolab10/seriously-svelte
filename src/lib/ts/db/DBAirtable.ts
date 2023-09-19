@@ -24,11 +24,10 @@ export default class DBAirtable implements DBInterface {
 	dbType = DBType.airtable;
 	things: Thing[] = [];
 	hasData = false;
+	loadTime = 0;
 
 	relationships_errorMessage = 'Error in Relationships:';
 	things_errorMessage = 'Error in Things:';
-
-	async setup() { await this.readAll(); }
 
 	get hierarchy(): Hierarchy { 
 		if (this._hierarchy == null) {
@@ -37,7 +36,7 @@ export default class DBAirtable implements DBInterface {
 		return this._hierarchy!;
 	}
 
-	async readAll() {
+	async setupDB() {
 		await this.predicates_readAll();
 		await this.relationships_readAll();
 		await this.access_readAll();

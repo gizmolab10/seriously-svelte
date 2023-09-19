@@ -58,33 +58,33 @@ export function isServerLocal(): boolean {
 }
 
 export function getWidthOf(s: string, font: string = '16px Arial'): number {
-    const element: HTMLElement = document.createElement('span');
-    element.textContent = s;
-    
-    // Apply font styling (you can extend this to other styles if needed)
-    element.style.font = font;
+		const element: HTMLElement = document.createElement('span');
+		element.textContent = s;
+		
+		// Apply font styling (you can extend this to other styles if needed)
+		element.style.font = font;
 
-    // Position element off-screen
-    element.style.position = 'absolute';
-    element.style.left = '-9999px';
-    
-    document.body.appendChild(element);
+		// Position element off-screen
+		element.style.position = 'absolute';
+		element.style.left = '-9999px';
+		
+		document.body.appendChild(element);
 
-    // Measure width
-    const width: number = element.offsetWidth;
+		// Measure width
+		const width: number = element.offsetWidth;
 
-    // Cleanup
-    document.body.removeChild(element);
+		// Cleanup
+		document.body.removeChild(element);
 
-    return width;
+		return width;
 }
 
 export function getFontOf(element: HTMLElement): string {
-    const computedStyle: CSSStyleDeclaration = window.getComputedStyle(element);
-    const fontFamily: string = computedStyle.fontFamily;
-    const fontSize: string = computedStyle.fontSize;
-    
-    return `${fontSize} ${fontFamily}`;
+		const computedStyle: CSSStyleDeclaration = window.getComputedStyle(element);
+		const fontFamily: string = computedStyle.fontFamily;
+		const fontSize: string = computedStyle.fontSize;
+		
+		return `${fontSize} ${fontFamily}`;
 }
 
 // export function desaturateBy(color: string, desaturateBy: number, brightenBy: number): string {}
