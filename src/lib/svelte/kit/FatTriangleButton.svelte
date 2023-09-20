@@ -45,7 +45,6 @@
 		position: absolute;
 		border: none;
 		background: none;
-		padding: 0;
 		border-radius: 50%;
 		display: inline-block; /* or block */
 		width: 30px;	 /* Match SVG viewbox width */

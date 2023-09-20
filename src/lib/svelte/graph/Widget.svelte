@@ -5,11 +5,13 @@
 	import Dot from './Dot.svelte';
 	export let origin = Point;
 	export let thing = Thing;
-	let background = '';
 	let isGrabbed = false;
 	let isEditing = false;
+	let background = '';
+	let padding = '';
+	let border = '';
+	let delta = 0;
 	let widget;
-	let border;
 	let hover;
 
 	onMount(async () => {
@@ -18,9 +20,10 @@
 
 	function updateBorderStyle() {
 		thing.updateColorAttributes();
-		border = thing.grabAttributes;
-		background =  isGrabbed ? 'background-color: ' + constants.backgroundColor : '';
 		hover = (isEditing || isGrabbed) ? thing.grabAttributes : thing.hoverAttributes;
+		background =  isGrabbed ? 'background-color: ' + constants.backgroundColor : '';
+		border = isGrabbed ? 'border: ' + thing.grabAttributes : '';
+		delta = isGrabbed ? 0 : 1;
 	}
 
 	$: {
@@ -38,16 +41,16 @@
 <div
 	bind:this={widget}
 	style='z-index: {ZIndex.highlights};
-		top: {origin.y}px;
-		left: {origin.x}px;
+		top: {origin.y + delta}px;
+		left: {origin.x+ delta}px;
 		position: absolute;
-		border: {border};
-		{background};'
+		{background};
+		{border};'
 	on:blur={noop()}
 	on:focus={noop()}
 	on:mouseover={widget.style.border=hover}
 	on:mouseout={widget.style.border=border}>
-	<Dot thing={thing} size=15/>
+	<Dot thing={thing} size=15/>&nbsp;
 	<TitleEditor thing={thing}/>
 	{#if thing.hasChildren}
 		<Dot thing={thing} size=15 isReveal={true}/>

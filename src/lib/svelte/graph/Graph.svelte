@@ -28,10 +28,10 @@
 
 	function updateLineRects() {
 		if (here) {
-			const yOffset = ($widgetHeight * here.children.length / 2) - 20;
-			childrenOrigin = origin.offsetBy(new Point(0, yOffset));
+			const yOffset = ($widgetHeight * here.children.length / 2) - 19;
+			childrenOrigin = origin.offsetBy(new Point(1, yOffset));
 			lineRects = new Layout().lineRects(here, childrenOrigin) ?? [];
-			triangleOrigin = childrenOrigin.offsetBy(new Point(-8, 21));
+			triangleOrigin = childrenOrigin.offsetBy(new Point(-7, 22));
 		}
 	}
 
@@ -85,13 +85,12 @@
 	{#if here}
 		<Children thing={here} lineRects={lineRects}/>
 		{#if here.isGrabbed}
-			<svg width='28' height='28'
-				style='z-index: {ZIndex.text};
+			<svg width='30' height='30'
+				style='z-index: {ZIndex.highlights};
 					position: absolute;
-					left: {triangleOrigin.x - 6};
-					top: {triangleOrigin.y - 6};
-					background-color: {constants.backgroundColor}'>
-				<circle cx='14' cy='14' r='14' stroke='blue' fill='none' />
+					left: {triangleOrigin.x - 7};
+					top: {triangleOrigin.y - 7};'>
+				<circle cx='15' cy='15' r='14' stroke='blue' fill={constants.backgroundColor} />
 			</svg>
 		{/if}
 		<FatTriangleButton here={here} origin={triangleOrigin}/>
