@@ -32,7 +32,7 @@
 
 </script>
 
-<svg width='40' height='200' viewbox='0 0 40 200' style='position: absolute; left: 25px;'>
+<svg width='40' height={window.innerHeight} style='position: absolute; left: 25px;'>
 	<path d={path} stroke={color} fill='none'/>
 </svg>
 

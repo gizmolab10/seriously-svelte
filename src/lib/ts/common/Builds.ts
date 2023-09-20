@@ -3,8 +3,9 @@ class Builds {
 	notes: { [id: number]: string[] } = {};
 
 	constructor() {
-		build.set(38);
+		build.set(39);
 		this.notes = {
+			39 : ['September 19, 2023', 'highlight grabbed root, eliminate line clipping'],
 			38 : ['September 18, 2023', 'add fat triangle for focus, click it to go left'],
 			37 : ['September 16, 2023', 'position widgets correctly at ends of curves'],
 			36 : ['September 12, 2023', 'draw curves, switch public to show them'],
