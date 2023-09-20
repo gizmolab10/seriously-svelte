@@ -7,7 +7,7 @@
 	import Help from '../help/Help.svelte';
 	import Details from './Details.svelte';
 	import Crumbs from './Crumbs.svelte';
-	document.title = 'Seriously (α, ' + getBrowserType() + ', ' + (isServerLocal ? 'local' : 'remote') + ')';
+	document.title = 'Seriously (α, ' + getBrowserType() + ', ' + (isServerLocal() ? 'local' : 'remote') + ')';
 	let size = 14;
 
 	onMount(async () => { persistLocal.setup(); })
