@@ -22,8 +22,8 @@
 
 	function updateColorStyle() {
 		thing.updateColorAttributes();
-		traitColor = thing.revealColor(isReveal);
-		buttonColor = thing.revealColor(!isReveal);
+		traitColor = thing.revealColor(!isReveal);
+		buttonColor = thing.revealColor(isReveal);
 	}
 
 	async function handleClick(event) {

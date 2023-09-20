@@ -68,6 +68,7 @@ export default class Thing extends Datum {
 	log(message: string)						{ console.log(message, this.description); }
 	get titleWidth():				 number { return getWidthOf(this.title) }
 	get hasChildren():			boolean { return this.hasPredicate(false); }
+	get isRoot():						boolean { return this == dbDispatch.db.hierarchy.root; }
 	get description():			 string { return this.id + ' (\" ' + this.title + '\") '; }
 	get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get childrenSize():				 Size { return new Size(this.childrenWidth, this.children.length * get(widgetHeight)); }

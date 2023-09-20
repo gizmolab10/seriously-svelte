@@ -7,38 +7,47 @@
 	const path = triangle.path;
 	export let here = Thing;
 	let fat = null;
+	let border = here.grabAttributes;
 	
-	function mouseOver(event) { fillColor = here.revealColor(true); }
-	function mouseout(event) { fillColor = here.revealColor(false); }
+	$: { updateColors(false); }
+	function mouseOver(event) { updateColors(true); }
+	function mouseout(event) { updateColors(false); }
 
 	function handleClick(event) {
 		const grab = dbDispatch.db.hierarchy.grabs.furthestGrab(true);
 		editor.thing_redraw_remoteMoveRight(grab, false, false);
 	}
 
+	function updateColors(isFilled) {
+		fillColor = here.revealColor(isFilled);
+		border = here.grabAttributes;
+	}
+
 </script>
 
 <button class='svg-button'
-	on:click={handleClick}>
-	<svg width='20'
-		height='20'
-		bind:this={fat}
-		viewbox='0 0 20 20'
+	bind:this={fat}
+	on:click={handleClick}
+	style='border: {border}; left: {origin.x - 6}px; top: {origin.y - 6}px;'>
+	<svg width='40'
+		height='40'
+		viewbox='0 0 40 40'
 		on:mouseout={mouseout}
 		on:mouseover={mouseOver}
-		style='position: absolute; left: {origin.x}px; top: {origin.y}px;'>
+		style='position: absolute; left: 5px; top: 5px;'>
 		<path d={path} stroke={here.color} fill={fillColor}/>
 	</svg>
 </button>
 
 <style>
 	.svg-button {
+		position: absolute;
 		background: none;
-		border: none;
 		padding: 0;
+		border-radius: 50%;
 		display: inline-block; /* or block */
-		width: 15px;	 /* Match SVG viewbox width */
-		height: 15px;	/* Match SVG viewbox height */
+		width: 30px;	 /* Match SVG viewbox width */
+		height: 30px;	/* Match SVG viewbox height */
 		cursor: pointer;
 		outline: none; /* Optional: Remove focus outline, but only if you provide another focus style */
 	}
