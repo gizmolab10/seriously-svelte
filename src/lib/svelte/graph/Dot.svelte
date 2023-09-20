@@ -1,9 +1,11 @@
 <script lang='ts'>
-	import { noop, Thing, onMount } from '../../ts/common/GlobalImports';
+	import { noop, Thing, onMount, constants, BrowserType, getBrowserType } from '../../ts/common/GlobalImports';
 	import { idsGrabbed } from '../../ts/managers/State';
 	export let isReveal = false;
 	export let thing = Thing;
 	export let size = 14;
+	let placement = 'left: 5px; top: 4px;'
+	const browserType = getBrowserType();
 	let buttonColor = thing.color;
 	let traitColor = thing.color;
 	const dotColor = thing.color;
@@ -17,6 +19,10 @@
 		if (isGrabbed != grabbed) {
 			isGrabbed = grabbed;
 			updateColorStyle();
+		}
+		
+		if (browserType != BrowserType.chrome) {
+			placement = 'top: 2px; left: 5px;'
 		}
 	}
 
@@ -49,16 +55,15 @@
 	on:click={handleClick}
 	on:mouseover={dot.style.backgroundColor=traitColor}
 	on:mouseout={dot.style.backgroundColor=buttonColor}
-	style='width:{size}px; height:{size}px;
+	style='width:{size}px; height:{size}px; z-index: {constants.baseZIndex + 40};
 		border-color: {dotColor};
 		color: {traitColor};
+		{placement}
 		background-color: {buttonColor};'>
 </button>
 
 <style lang='scss'>
 	button {
-		top: 4px;
-		left: 4px;
 		cursor: pointer;
 		display: relative;
 		border: 1px solid;

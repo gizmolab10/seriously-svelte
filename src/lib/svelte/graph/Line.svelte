@@ -4,7 +4,7 @@
 	//	draw a line in rect, curving up, down or flat	//
 	/////////////////////////////////////////////////////
 
-	import { Rect, Size, Point, LineCurveType } from '../../ts/common/GlobalImports';
+	import { Rect, Size, Point, constants, LineCurveType } from '../../ts/common/GlobalImports';
 	export let curveType: string = LineCurveType.up;
 	export let rect = new Rect();
 	export let color = 'black';
@@ -32,7 +32,11 @@
 
 </script>
 
-<svg width='40' height={window.innerHeight} style='position: absolute; left: 25px;'>
+<svg width='40'
+	height={window.innerHeight} 
+	style='position: absolute;
+		left: 25px;
+		z-index: {constants.baseZIndex + 20};'>
 	<path d={path} stroke={color} fill='none'/>
 </svg>
 

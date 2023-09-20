@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { Thing, dbDispatch, editor, signal, Signals, onDestroy } from '../../ts/common/GlobalImports';
+	import { Thing, editor, signal, Signals, constants, onDestroy, dbDispatch } from '../../ts/common/GlobalImports';
 	import { idEditing, stoppedIDEditing } from '../../ts/managers/State';
 	import Widget from './Widget.svelte';
 	export let thing = Thing;
@@ -89,7 +89,7 @@
 
 {#key originalTitle}
 	<span class="wrapper" bind:this={wrapper} contenteditable='true'>
-		{thing.title} &nbsp;				<!-- extra space so text is not clipped -->
+		{thing.title} &nbsp;				<!-- extra spaces so text is not clipped -->
 	</span>
 	<input
 		type='text'
@@ -100,7 +100,7 @@
 		on:keydown={handleKeyDown}
 		on:input={updateInputWidth}
 		bind:value={thing.title}
-		style='color: {thing.color};'/>
+		style='color: {thing.color}; z-index:{ constants.baseZIndex + 30};'/>
 {/key}
 
 <style lang='scss'>

@@ -31,7 +31,7 @@
 {#key toggleDraw}
 	{#if children && children.length != 0 && lineRects.length == children.length}
 		{#each children as child, index}
-			<Widget thing={child} origin={lineRectAt(index).extent.offsetBy(new Point(19, -14))}/>
+			<Widget thing={child} origin={lineRectAt(index).extent.offsetBy(new Point(18, -14))}/>
 			<Line color={child.color} curveType={lineTypeAt(index)} rect={lineRectAt(index)}/>
 		{/each}
 	{/if}

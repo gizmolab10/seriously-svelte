@@ -1,6 +1,6 @@
 <script lang='ts'>
+	import { noop, Thing, Point, onMount, constants } from '../../ts/common/GlobalImports';
 	import { idEditing, idsGrabbed } from '../../ts/managers/State';
-	import { noop, Thing, Point, onMount } from '../../ts/common/GlobalImports';
 	import TitleEditor from './TitleEditor.svelte';
 	import Dot from './Dot.svelte';
 	export let origin = Point;
@@ -36,7 +36,11 @@
 
 <div
 	bind:this={widget}
-	style='position: absolute; top: {origin.y}px; left: {origin.x}px; border: {border};'
+	style='z-index: {constants.baseZIndex + 10};
+		border: {border};
+		top: {origin.y}px;
+		left: {origin.x}px;
+		position: absolute;'
 	on:blur={noop()}
 	on:focus={noop()}
 	on:mouseover={widget.style.border=hover}

@@ -7,9 +7,8 @@
 	const path = triangle.path;
 	export let here = Thing;
 	let fat = null;
-	let border = here.grabAttributes;
 	
-	$: { updateColors(false); }
+	$: { updateColors(false)}
 	function mouseOver(event) { updateColors(true); }
 	function mouseout(event) { updateColors(false); }
 
@@ -20,7 +19,6 @@
 
 	function updateColors(isFilled) {
 		fillColor = here.revealColor(isFilled);
-		border = here.grabAttributes;
 	}
 
 </script>
@@ -28,13 +26,16 @@
 <button class='svg-button'
 	bind:this={fat}
 	on:click={handleClick}
-	style='border: {border}; left: {origin.x - 6}px; top: {origin.y - 6}px;'>
+	style='
+		top: {origin.y - 6}px;
+		left: {origin.x - 6}px;
+	'>
 	<svg width='40'
 		height='40'
 		viewbox='0 0 40 40'
 		on:mouseout={mouseout}
 		on:mouseover={mouseOver}
-		style='position: absolute; left: 5px; top: 5px;'>
+		style='position: absolute; left: 5px; top: 5px; z-index: {constants.baseZIndex + 40};'>
 		<path d={path} stroke={here.color} fill={fillColor}/>
 	</svg>
 </button>
@@ -42,6 +43,7 @@
 <style>
 	.svg-button {
 		position: absolute;
+		border: none;
 		background: none;
 		padding: 0;
 		border-radius: 50%;
