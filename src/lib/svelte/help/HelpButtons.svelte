@@ -38,13 +38,13 @@
 	};
 
 	onMount(() => {
-		import('./HelpItems.svelte').then(module => {
+		import('/src/lib/svelte/help/HelpItems.svelte').then(module => {
 			items = module.default;
 		});
-		import('./HelpBrowse.svelte').then(module => {
+		import('/src/lib/svelte/help/HelpBrowse.svelte').then(module => {
 			browse = module.default;
 		});
-		import('./HelpDots.svelte').then(module => {
+		import('/src/lib/svelte/help/HelpDots.svelte').then(module => {
 			dots = module.default;
 		});
 		updateTitles();
