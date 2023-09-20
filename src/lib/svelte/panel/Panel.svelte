@@ -1,5 +1,5 @@
 <script>
-	import { get, Grabs, DBType, onMount, PersistID, ButtonID, Hierarchy, dbDispatch, persistLocal } from '../../ts/common/GlobalImports'
+	import { get, Grabs, DBType, onMount, PersistID, ButtonID, Hierarchy, dbDispatch, persistLocal, getBrowserType, isServerLocal } from '../../ts/common/GlobalImports'
 	import { dbType, isBusy, bulkName, popupViewID, showDetails, thingsArrived } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import BuildNotes from './BuildNotes.svelte';
@@ -7,6 +7,7 @@
 	import Help from '../help/Help.svelte';
 	import Details from './Details.svelte';
 	import Crumbs from './Crumbs.svelte';
+	document.title = 'Seriously (α, ' + getBrowserType() + ', ' + (isServerLocal ? 'local' : 'remote') + ')';
 	let size = 14;
 
 	onMount(async () => { persistLocal.setup(); })
