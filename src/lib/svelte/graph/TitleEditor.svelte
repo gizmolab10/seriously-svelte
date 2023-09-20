@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { Thing, editor, signal, Signals, constants, onDestroy, dbDispatch } from '../../ts/common/GlobalImports';
+	import { Thing, editor, signal, Signals, ZIndex, onDestroy, dbDispatch } from '../../ts/common/GlobalImports';
 	import { idEditing, stoppedIDEditing } from '../../ts/managers/State';
 	import Widget from './Widget.svelte';
 	export let thing = Thing;
@@ -100,7 +100,7 @@
 		on:keydown={handleKeyDown}
 		on:input={updateInputWidth}
 		bind:value={thing.title}
-		style='color: {thing.color}; z-index:{ constants.baseZIndex + 30};'/>
+		style='color: {thing.color}; z-index:{ ZIndex.text};'/>
 {/key}
 
 <style lang='scss'>

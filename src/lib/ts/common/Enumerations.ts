@@ -18,3 +18,19 @@ export enum BrowserType  {
 	opera = 'opera',
 	orion = 'orion',
 }
+
+export enum LineCurveType {
+	up = 'up',
+	down = 'down',
+	flat = 'flat',
+}
+
+const baseZIndex = 10000;
+
+export enum ZIndex {
+	base			 = baseZIndex,
+	lines			 = baseZIndex + 10,
+	highlights = baseZIndex + 20,
+	dots			 = baseZIndex + 30,
+	text			 = baseZIndex + 40,
+}

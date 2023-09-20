@@ -1,12 +1,10 @@
 class Constants {
-	public baseZIndex: number;
 	public orderIncrement: number;
 	public backgroundColor: string;
 	public highlightColor: string;
 	public defaultTitle: string;
 
 	constructor() {
-		this.baseZIndex = 10000;
 		this.orderIncrement = 0.5;
 		this.backgroundColor = 'white';
 		this.highlightColor = '#9e7daa';

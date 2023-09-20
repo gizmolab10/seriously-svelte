@@ -1,9 +1,3 @@
-export enum LineCurveType {
-	up = 'up',
-	down = 'down',
-	flat = 'flat',
-}
-
 export class Point {
 	x: number;
 	y: number;

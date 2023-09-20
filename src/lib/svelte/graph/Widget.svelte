@@ -1,10 +1,11 @@
 <script lang='ts'>
-	import { noop, Thing, Point, onMount, constants } from '../../ts/common/GlobalImports';
+	import { noop, Thing, Point, onMount, ZIndex, constants } from '../../ts/common/GlobalImports';
 	import { idEditing, idsGrabbed } from '../../ts/managers/State';
 	import TitleEditor from './TitleEditor.svelte';
 	import Dot from './Dot.svelte';
 	export let origin = Point;
 	export let thing = Thing;
+	let background = '';
 	let isGrabbed = false;
 	let isEditing = false;
 	let widget;
@@ -18,8 +19,8 @@
 	function updateBorderStyle() {
 		thing.updateColorAttributes();
 		border = thing.grabAttributes;
+		background =  isGrabbed ? 'background-color: ' + constants.backgroundColor : '';
 		hover = (isEditing || isGrabbed) ? thing.grabAttributes : thing.hoverAttributes;
-		// console.log('WIDGET:', border, thing.title);
 	}
 
 	$: {
@@ -36,11 +37,12 @@
 
 <div
 	bind:this={widget}
-	style='z-index: {constants.baseZIndex + 10};
-		border: {border};
+	style='z-index: {ZIndex.highlights};
 		top: {origin.y}px;
 		left: {origin.x}px;
-		position: absolute;'
+		position: absolute;
+		border: {border};
+		{background};'
 	on:blur={noop()}
 	on:focus={noop()}
 	on:mouseover={widget.style.border=hover}

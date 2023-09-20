@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { Rect, Size, Point, Thing, Layout, editor, Signals, onMount, constants, onDestroy, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
+	import { Rect, Size, Point, Thing, ZIndex, Layout, editor, Signals, onMount, constants, onDestroy, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
 	import { idHere, widgetHeight, idEditing, popupViewID } from '../../ts/managers/State';
 	import FatTriangleButton from '../kit/FatTriangleButton.svelte';
 	import Children from './Children.svelte';
@@ -86,7 +86,7 @@
 		<Children thing={here} lineRects={lineRects}/>
 		{#if here.isGrabbed}
 			<svg width='28' height='28'
-				style='z-index: {constants.baseZIndex + 40};
+				style='z-index: {ZIndex.text};
 					position: absolute;
 					left: {triangleOrigin.x - 6};
 					top: {triangleOrigin.y - 6};

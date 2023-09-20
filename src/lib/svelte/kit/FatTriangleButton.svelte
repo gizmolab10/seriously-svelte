@@ -1,5 +1,5 @@
 <script>
-	import { editor, constants, dbDispatch, FatTrianglePath, Thing } from "../../ts/common/GlobalImports";
+	import { editor, ZIndex, constants, dbDispatch, FatTrianglePath, Thing } from "../../ts/common/GlobalImports";
 	import { idHere } from '../../ts/managers/State';
 	const triangle = new FatTrianglePath(18, 0);
 	let fillColor = constants.backgroundColor;
@@ -35,7 +35,7 @@
 		viewbox='0 0 40 40'
 		on:mouseout={mouseout}
 		on:mouseover={mouseOver}
-		style='position: absolute; left: 5px; top: 5px; z-index: {constants.baseZIndex + 40};'>
+		style='position: absolute; left: 5px; top: 5px; z-index: {ZIndex.text};'>
 		<path d={path} stroke={here.color} fill={fillColor}/>
 	</svg>
 </button>
