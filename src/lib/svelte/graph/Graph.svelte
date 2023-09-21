@@ -7,28 +7,29 @@
 	let triangleOrigin = new Point();
 	let origin = new Point(25, -10);
 	let lineRects: LineRect[] = [];
-	let toggleDraw = false;
 	let isGrabbed = false;
 	let here = Thing;
+
+	onMount( () => { updateLineRects(); });
+
+	onDestroy( () => {
+		lineRects = [];
+		signalHandler.disconnect();
+	});
 
 	const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
 		if (here && idThing == here.id) {
 			origin = new Point(25, -10);
 			updateLineRects();
-			toggleDraw = !toggleDraw;
 		}
 	});
-
-	onDestroy( () => { signalHandler.disconnect(); });
-	onMount( () => { updateLineRects(); });
 	
 	$: {
 		here = dbDispatch.db.hierarchy.getThing_forID($idHere);
 		updateLineRects();
 		let grabbed = $idsGrabbed.includes(here.id);
-		if (isGrabbed != grabbed) {
+		if (grabbed != isGrabbed) {
 			isGrabbed = grabbed;
-			toggleDraw = !toggleDraw;
 		}
 	}
 
@@ -36,8 +37,8 @@
 		if (here) {
 			const yOffset = ($widgetHeight * here.children.length / 2) - 19;
 			childrenOrigin = origin.offsetBy(new Point(1, yOffset));
-			lineRects = new Layout().lineRects(here, childrenOrigin) ?? [];
 			triangleOrigin = childrenOrigin.offsetBy(new Point(-7, 22));
+			lineRects = new Layout().lineRects(here, childrenOrigin) ?? [];
 		}
 	}
 
@@ -85,18 +86,16 @@
 </script>
 
 <svelte:document on:keydown={handleKeyDown} />
-{#key toggleDraw, here}
-	{#if here}
-		<Children thing={here} lineRects={lineRects}/>
-		{#if isGrabbed}
-			<svg width='30' height='30'
-				style='z-index: {ZIndex.highlights};
-					position: absolute;
-					left: {triangleOrigin.x - 7};
-					top: {triangleOrigin.y - 7};'>
-				<circle cx='15' cy='15' r='14' stroke='blue' fill={constants.backgroundColor} />
-			</svg>
-		{/if}
-		<FatTriangleButton here={here} origin={triangleOrigin}/>
+{#if here}
+	<Children thing={here} lineRects={lineRects}/>
+	{#if isGrabbed}
+		<svg width='30' height='30'
+			style='z-index: {ZIndex.highlights};
+				position: absolute;
+				left: {triangleOrigin.x - 7};
+				top: {triangleOrigin.y - 7};'>
+			<circle cx='15' cy='15' r='14' stroke='blue' fill={constants.backgroundColor} />
+		</svg>
 	{/if}
-{/key}
+	<FatTriangleButton here={here} origin={triangleOrigin}/>
+{/if}

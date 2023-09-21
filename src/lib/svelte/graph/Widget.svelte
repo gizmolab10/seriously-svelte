@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { noop, Thing, Point, onMount, ZIndex, constants } from '../../ts/common/GlobalImports';
+	import { noop, Thing, Point, ZIndex, onMount, onDestroy, constants } from '../../ts/common/GlobalImports';
 	import { idEditing, idsGrabbed } from '../../ts/managers/State';
 	import TitleEditor from './TitleEditor.svelte';
 	import Dot from './Dot.svelte';
@@ -15,15 +15,21 @@
 	let widget;
 	let hover;
 
-	onMount(async () => {
-		isGrabbed = thing.isGrabbed || thing.isExemplar;
+	onMount(() => {
+		const id = thing.id;
+		isGrabbed = $idsGrabbed?.includes(id) || thing.isExemplar;
+		isEditing = (thing.id == $idEditing);
 		updateBorderStyle();
 	});
 
+	onDestroy(() => {
+		console.log('destroy widget:', thing.title);
+	});
+
 	function mouseOver(event) {
+		isHovering = true;
 		updateBorderStyle();
 		widget.style.border=hover;
-		isHovering = true; 
 	}
 
 	function mouseOut(event) {
@@ -33,7 +39,7 @@
 	}
 
 	function updateBorderStyle() {
-		const hasBorder = isGrabbed || isHovering;
+		const hasBorder = isGrabbed || isHovering || isEditing;
 		thing.updateColorAttributes();
 		delta = hasBorder ? 0 : 1;
 		border = hasBorder ? 'border: ' + thing.grabAttributes : '';
@@ -42,13 +48,52 @@
 	}
 
 	$: {
-		const editing = (thing.id == $idEditing);
-		const grabbed = $idsGrabbed?.includes(thing.id) || thing.isExemplar;
-		if (isEditing != editing || isGrabbed != grabbed) {
+		const id = thing.id;
+		const editing = (id == $idEditing);
+		const grabbed = $idsGrabbed?.includes(id) || thing.isExemplar;
+		const change = needsChange(editing, grabbed);
+		if (change) {
 			isEditing = editing;
 			isGrabbed = grabbed;
 			updateBorderStyle();
+			// setTimeout(() => {
+			// 	console.log(needsChange(editing, grabbed));
+			// }, 1);
 		}
+	}
+
+	function needsChange(editing, grabbed) {
+		if (editing == null) {
+			return false
+		}
+		if (editing == undefined) {
+			return false
+		}
+		if (grabbed == null) {
+			return false
+		}
+		if (grabbed == undefined) {
+			return false
+		}
+		if (isEditing == null) {
+			return true
+		}
+		if (isEditing == undefined) {
+			return true
+		}
+		if (isGrabbed == null) {
+			return true
+		}
+		if (isGrabbed == undefined) {
+			return true
+		}
+		if (isEditing != editing) {
+			return true
+		}
+		if (isGrabbed != grabbed) {
+			return true
+		}
+		return false;
 	}
 
 </script>

@@ -18,12 +18,14 @@
 	}
 
 	const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
-		const newChildren = thing.children;
-		if (idThing == thing.id || children != newChildren) {
-			normalizeOrderOf(newChildren);
-			children = newChildren;
-			toggleDraw = !toggleDraw;
-		}
+		setTimeout(() => { // delay until all other handlers for this signal are done
+			const newChildren = thing.children;
+			if (idThing == thing.id || children != newChildren) {
+				normalizeOrderOf(newChildren);
+				children = newChildren;
+				toggleDraw = !toggleDraw;
+			}
+		}, 1);
 	})
 
 </script>

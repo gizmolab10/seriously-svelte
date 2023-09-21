@@ -111,9 +111,14 @@ export default class Thing extends Datum {
 	}
 
 	hasPredicate(asParents: boolean): boolean { return asParents ? this.parents.length > 0 : this.children.length > 0 }
-	startEdit() { if (this != dbDispatch.db.hierarchy.root) { idEditing.set(this.id); } }
 	toggleGrab() { dbDispatch.db.hierarchy.grabs.toggleGrab(this); }
 	grabOnly() { dbDispatch.db.hierarchy.grabs.grabOnly(this); }
+
+	startEdit() {
+		if (this != dbDispatch.db.hierarchy.root) {
+			idEditing.set(this.id);
+		}
+	}
 
 	becomeHere() {
 		if (this.hasChildren) {
