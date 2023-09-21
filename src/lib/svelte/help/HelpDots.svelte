@@ -11,7 +11,7 @@
 <div>
 	<br>
 	<div class='centered-container'>
-		<Widget thing={exemplar}/>
+		<Widget thing={exemplar}/><br>
 	</div>
 	<ul class='help-ul'>
 		<li class='help-li'>Click the dots (to right and left of each item) to display the items in the child [<b>browse right</b>] or parent list [<b>browse left</b>], respectively.

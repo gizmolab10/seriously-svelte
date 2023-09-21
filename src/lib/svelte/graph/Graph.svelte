@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { Rect, Size, Point, Thing, ZIndex, Layout, editor, Signals, onMount, constants, onDestroy, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
-	import { idHere, widgetHeight, idEditing, popupViewID } from '../../ts/managers/State';
+	import { idHere, idsGrabbed, idEditing, widgetHeight, popupViewID } from '../../ts/managers/State';
 	import FatTriangleButton from '../kit/FatTriangleButton.svelte';
 	import Children from './Children.svelte';
 	let childrenOrigin = new Point();
@@ -8,6 +8,7 @@
 	let origin = new Point(25, -10);
 	let lineRects: LineRect[] = [];
 	let toggleDraw = false;
+	let isGrabbed = false;
 	let here = Thing;
 
 	const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
@@ -24,6 +25,11 @@
 	$: {
 		here = dbDispatch.db.hierarchy.getThing_forID($idHere);
 		updateLineRects();
+		let grabbed = $idsGrabbed.includes(here.id);
+		if (isGrabbed != grabbed) {
+			isGrabbed = grabbed;
+			toggleDraw = !toggleDraw;
+		}
 	}
 
 	function updateLineRects() {
@@ -76,15 +82,13 @@
 		}
 	}
 
-	// <div style='position: fixed; left-padding=100px'>
-	// </div>
 </script>
 
 <svelte:document on:keydown={handleKeyDown} />
 {#key toggleDraw, here}
 	{#if here}
 		<Children thing={here} lineRects={lineRects}/>
-		{#if here.isGrabbed}
+		{#if isGrabbed}
 			<svg width='30' height='30'
 				style='z-index: {ZIndex.highlights};
 					position: absolute;

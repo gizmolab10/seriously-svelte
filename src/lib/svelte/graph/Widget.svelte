@@ -5,6 +5,7 @@
 	import Dot from './Dot.svelte';
 	export let origin = Point;
 	export let thing = Thing;
+	let isHovering = false;
 	let isGrabbed = false;
 	let isEditing = false;
 	let background = '';
@@ -15,20 +16,34 @@
 	let hover;
 
 	onMount(async () => {
+		isGrabbed = thing.isGrabbed || thing.isExemplar;
 		updateBorderStyle();
 	});
 
+	function mouseOver(event) {
+		updateBorderStyle();
+		widget.style.border=hover;
+		isHovering = true; 
+	}
+
+	function mouseOut(event) {
+		isHovering = false; 
+		updateBorderStyle();
+		widget.style.border=border;
+	}
+
 	function updateBorderStyle() {
+		const hasBorder = isGrabbed || isHovering;
 		thing.updateColorAttributes();
+		delta = hasBorder ? 0 : 1;
+		border = hasBorder ? 'border: ' + thing.grabAttributes : '';
+		background =  hasBorder ? 'background-color: ' + constants.backgroundColor : '';
 		hover = (isEditing || isGrabbed) ? thing.grabAttributes : thing.hoverAttributes;
-		background =  isGrabbed ? 'background-color: ' + constants.backgroundColor : '';
-		border = isGrabbed ? 'border: ' + thing.grabAttributes : '';
-		delta = isGrabbed ? 0 : 1;
 	}
 
 	$: {
 		const editing = (thing.id == $idEditing);
-		const grabbed = $idsGrabbed?.includes(thing.id);
+		const grabbed = $idsGrabbed?.includes(thing.id) || thing.isExemplar;
 		if (isEditing != editing || isGrabbed != grabbed) {
 			isEditing = editing;
 			isGrabbed = grabbed;
@@ -43,13 +58,13 @@
 	style='z-index: {ZIndex.highlights};
 		top: {origin.y + delta}px;
 		left: {origin.x+ delta}px;
-		position: absolute;
+		padding: {thing.isExemplar ? 1 : 0}px 10px {thing.isExemplar ? 0 : 1}px 1px;
 		{background};
 		{border};'
 	on:blur={noop()}
 	on:focus={noop()}
-	on:mouseover={widget.style.border=hover}
-	on:mouseout={widget.style.border=border}>
+	on:mouseover={mouseOver}
+	on:mouseout={mouseOut}>
 	<Dot thing={thing} size=15/>&nbsp;
 	<TitleEditor thing={thing}/>
 	{#if thing.hasChildren}
@@ -60,8 +75,8 @@
 <style>
 	div {
 		height: 24px;
+		position: absolute;
 		white-space: nowrap;
-		padding: 1px 10px 2px 1px;
 		border-radius: 16px;
 	}
 </style>

@@ -19,7 +19,6 @@
 		left: {x}px;
 		top: {y}px;
 		transform: translate(-50%, -50%);
-
 		width: {size}px;
 		height: {size}px;
 		font-size: {size - 1}px;;

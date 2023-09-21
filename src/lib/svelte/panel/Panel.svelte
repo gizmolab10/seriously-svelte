@@ -50,7 +50,9 @@
 		<div class='top'>
 			<Crumbs grab={dbDispatch.db.hierarchy.grabs.grabbedThing}/>
 		</div>
-		<div class='graph'>
+		<div class='graph' on:click={() => {
+				$popupViewID = null;
+			}}>
 			<Graph/>
 		</div>
 	{/if}

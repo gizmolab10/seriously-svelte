@@ -6,7 +6,7 @@
 
 <br>
 <div class='centered-container'>
-	<Widget thing={exemplar}/>
+	<Widget thing={exemplar}/><br>
 </div>
 <ul class='help-ul'>
 	<li class='help-li'>It is surrounded with a <b>border</b> (and its dots reverse their color).
