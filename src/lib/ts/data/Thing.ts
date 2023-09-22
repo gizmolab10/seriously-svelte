@@ -61,15 +61,15 @@ export default class Thing extends Datum {
 	}
 
 	revealColor(isReveal: boolean): string {
-		const flag = this.isGrabbed || this.isEditing || this.isExemplar;
-		return (flag != isReveal) ? this.color : constants.backgroundColor;
+		return (this.showBorder != isReveal) ? this.color : constants.backgroundColor;
 	}
 
 	log(message: string)						{ console.log(message, this.description); }
+	get description():			 string { return this.id + ' (\" ' + this.title + '\") '; }
 	get titleWidth():				 number { return getWidthOf(this.title) }
 	get hasChildren():			boolean { return this.hasPredicate(false); }
 	get isRoot():						boolean { return this == dbDispatch.db.hierarchy.root; }
-	get description():			 string { return this.id + ' (\" ' + this.title + '\") '; }
+	get showBorder():				boolean { return this.isGrabbed || this.isEditing || this.isExemplar; }
 	get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get childrenSize():				 Size { return new Size(this.childrenWidth, this.children.length * get(widgetHeight)); }
 	get children():		 Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id, false, this.id); }

@@ -5,7 +5,6 @@
 	import Dot from './Dot.svelte';
 	export let origin = Point;
 	export let thing = Thing;
-	let isHovering = false;
 	let isGrabbed = false;
 	let isEditing = false;
 	let background = '';
@@ -13,7 +12,6 @@
 	let border = '';
 	let delta = 0;
 	let widget;
-	let hover;
 
 	onMount(() => {
 		const id = thing.id;
@@ -22,78 +20,24 @@
 		updateBorderStyle();
 	});
 
-	onDestroy(() => {
-		console.log('destroy widget:', thing.title);
-	});
-
-	function mouseOver(event) {
-		isHovering = true;
-		updateBorderStyle();
-		widget.style.border=hover;
-	}
-
-	function mouseOut(event) {
-		isHovering = false; 
-		updateBorderStyle();
-		widget.style.border=border;
-	}
-
 	function updateBorderStyle() {
-		const hasBorder = isGrabbed || isHovering || isEditing;
+		const showBorder = isEditing || isGrabbed;
 		thing.updateColorAttributes();
-		delta = hasBorder ? 0 : 1;
-		border = hasBorder ? 'border: ' + thing.grabAttributes : '';
-		background =  hasBorder ? 'background-color: ' + constants.backgroundColor : '';
-		hover = (isEditing || isGrabbed) ? thing.grabAttributes : thing.hoverAttributes;
+		delta = showBorder ? 0 : 1;
+		border = showBorder ? 'border: ' + thing.grabAttributes : '';
+		background =  showBorder ? 'background-color: ' + constants.backgroundColor : '';
 	}
 
 	$: {
 		const id = thing.id;
 		const editing = (id == $idEditing);
 		const grabbed = $idsGrabbed?.includes(id) || thing.isExemplar;
-		const change = needsChange(editing, grabbed);
+		const change = (isEditing != editing || isGrabbed != grabbed);
 		if (change) {
 			isEditing = editing;
 			isGrabbed = grabbed;
 			updateBorderStyle();
-			// setTimeout(() => {
-			// 	console.log(needsChange(editing, grabbed));
-			// }, 1);
 		}
-	}
-
-	function needsChange(editing, grabbed) {
-		if (editing == null) {
-			return false
-		}
-		if (editing == undefined) {
-			return false
-		}
-		if (grabbed == null) {
-			return false
-		}
-		if (grabbed == undefined) {
-			return false
-		}
-		if (isEditing == null) {
-			return true
-		}
-		if (isEditing == undefined) {
-			return true
-		}
-		if (isGrabbed == null) {
-			return true
-		}
-		if (isGrabbed == undefined) {
-			return true
-		}
-		if (isEditing != editing) {
-			return true
-		}
-		if (isGrabbed != grabbed) {
-			return true
-		}
-		return false;
 	}
 
 </script>
@@ -105,11 +49,7 @@
 		left: {origin.x+ delta}px;
 		padding: {thing.isExemplar ? 1 : 0}px 10px {thing.isExemplar ? 0 : 1}px 1px;
 		{background};
-		{border};'
-	on:blur={noop()}
-	on:focus={noop()}
-	on:mouseover={mouseOver}
-	on:mouseout={mouseOut}>
+		{border};'>
 	<Dot thing={thing} size=15/>&nbsp;
 	<TitleEditor thing={thing}/>
 	{#if thing.hasChildren}

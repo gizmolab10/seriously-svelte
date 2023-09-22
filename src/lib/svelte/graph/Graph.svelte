@@ -7,6 +7,7 @@
 	let triangleOrigin = new Point();
 	let origin = new Point(25, -10);
 	let lineRects: LineRect[] = [];
+	let isHovering = false;
 	let isGrabbed = false;
 	let here = Thing;
 
