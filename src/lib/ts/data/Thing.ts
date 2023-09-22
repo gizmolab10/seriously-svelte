@@ -1,5 +1,5 @@
 import { get, Size, Datum, signal, Signals, constants, Predicate, PersistID, dbDispatch, getWidthOf, persistLocal, normalizeOrderOf } from '../common/GlobalImports';
-import { idHere, idEditing, idsGrabbed, widgetHeight } from '../managers/State';
+import { idHere, idEditing, idsGrabbed, widgetHeightGap } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -71,7 +71,7 @@ export default class Thing extends Datum {
 	get isRoot():						boolean { return this == dbDispatch.db.hierarchy.root; }
 	get showBorder():				boolean { return this.isGrabbed || this.isEditing || this.isExemplar; }
 	get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
-	get childrenSize():				 Size { return new Size(this.childrenWidth, this.children.length * get(widgetHeight)); }
+	get childrenSize():				 Size { return new Size(this.childrenWidth, this.children.length * get(widgetHeightGap)); }
 	get children():		 Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id, false, this.id); }
 	get parents():		 Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id,	true, this.id); }
 	get siblings():		 Array<Thing> { return this.firstParent?.children ?? []; }
@@ -113,6 +113,8 @@ export default class Thing extends Datum {
 	hasPredicate(asParents: boolean): boolean { return asParents ? this.parents.length > 0 : this.children.length > 0 }
 	toggleGrab() { dbDispatch.db.hierarchy.grabs.toggleGrab(this); }
 	grabOnly() { dbDispatch.db.hierarchy.grabs.grabOnly(this); }
+	collapse() {}
+	expand() {}
 
 	startEdit() {
 		if (this != dbDispatch.db.hierarchy.root) {

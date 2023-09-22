@@ -50,10 +50,10 @@
 		padding: {thing.isExemplar ? 1 : 0}px 10px {thing.isExemplar ? 0 : 1}px 1px;
 		{background};
 		{border};'>
-	<Dot thing={thing} size=15/>&nbsp;
+	<Dot thing={thing}/>&nbsp;
 	<TitleEditor thing={thing}/>
 	{#if thing.hasChildren}
-		<Dot thing={thing} size=15 isReveal={true}/>
+		<Dot thing={thing} isReveal={true}/>
 	{/if}
 </div>
 

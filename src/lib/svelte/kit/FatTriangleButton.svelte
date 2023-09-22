@@ -1,14 +1,14 @@
 <script>
 	import { editor, ZIndex, constants, dbDispatch, FatTrianglePath, Thing } from "../../ts/common/GlobalImports";
-	import { idHere } from '../../ts/managers/State';
-	const triangle = new FatTrianglePath(18, 0);
+	import { idHere, dotDiameter } from '../../ts/managers/State';
+	const triangle = new FatTrianglePath($dotDiameter + 2, 0);
 	let fillColor = constants.backgroundColor;
-	export let origin = new Point(15, 20);
+	export let origin = new Point($dotDiameter, 20);
 	const path = triangle.path;
 	export let here = Thing;
 	let fat = null;
 	
-	$: { updateColors(false)}
+	$: { updateColors(false) }
 	function mouseOver(event) { updateColors(true); }
 	function mouseout(event) { updateColors(false); }
 
@@ -35,7 +35,7 @@
 		viewbox='0 0 40 40'
 		on:mouseout={mouseout}
 		on:mouseover={mouseOver}
-		style='position: absolute; left: 5px; top: 5px; z-index: {ZIndex.text};'>
+		style='position: absolute; left: 5px; top: 6px; z-index: {ZIndex.text};'>
 		<path d={path} stroke={here.color} fill={fillColor}/>
 	</svg>
 </button>

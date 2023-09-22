@@ -1,6 +1,6 @@
 <script lang=ts>
 	import { Rect, Size, Point, Thing, Signals, Layout, onMount, onDestroy, LineRect, LineCurveType, normalizeOrderOf, handleSignalOfKind } from '../../ts/common/GlobalImports';
-	import { widgetHeight } from '../../ts/managers/State';
+	import { widgetHeightGap } from '../../ts/managers/State';
 	import Widget from './Widget.svelte';
 	import Line from './Line.svelte';
 	export let lineRects: Array<LineRect> = [];
@@ -13,7 +13,7 @@
 	function lineTypeAt(index: number): number { return lineRectAt(index).lineType; }
 
 	function drawnSize(): Size {
-		const height = $widgetHeight;
+		const height = $widgetHeightGap;
 		return new Size(100, children.length * height);
 	}
 

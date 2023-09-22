@@ -1,11 +1,11 @@
 import { get, Rect, Size, Point, Thing, constants, LineRect, LineCurveType } from '../common/GlobalImports';
-import { widgetHeight, lineStretch } from '../managers/State'
+import { widgetHeightGap, lineStretch } from '../managers/State'
 
 export default class Layout {
 	widgetHeight: number;
 
 	constructor(thing: Thing, origin: Point) {
-		this.widgetHeight = get(widgetHeight);
+		this.widgetHeight = get(widgetHeightGap);
 	}
 
 	lineRects(thing: Thing, origin: Point): Array<LineRect> {

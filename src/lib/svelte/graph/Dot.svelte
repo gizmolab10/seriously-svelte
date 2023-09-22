@@ -1,9 +1,8 @@
 <script lang='ts'>
 	import { noop, Thing, onMount, ZIndex, BrowserType, getBrowserType } from '../../ts/common/GlobalImports';
-	import { idsGrabbed } from '../../ts/managers/State';
+	import { idsGrabbed, dotDiameter } from '../../ts/managers/State';
 	export let isReveal = false;
 	export let thing = Thing;
-	export let size = 14;
 	let placement = 'left: 5px; top: 4px;'
 	const browserType = getBrowserType();
 	let buttonColor = thing.color;
@@ -55,21 +54,19 @@
 	on:click={handleClick}
 	on:mouseover={dot.style.backgroundColor=traitColor}
 	on:mouseout={dot.style.backgroundColor=buttonColor}
-	style='width:{size}px; height:{size}px; z-index: {ZIndex.text};
+	style='width:{$dotDiameter}px; height:{$dotDiameter}px; z-index: {ZIndex.text};
+		background-color: {buttonColor};
 		border-color: {dotColor};
 		color: {traitColor};
-		{placement}
-		background-color: {buttonColor};'>
+		{placement}'>
 </button>
 
 <style lang='scss'>
 	button {
+		min-width: 1px;
 		cursor: pointer;
-		display: relative;
 		border: 1px solid;
 		border-radius: 50%;
 		position: relative;
-		align-items: center;
-		justify-content: center;
 	}
 </style>

@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { Rect, Size, Point, Thing, ZIndex, Layout, editor, Signals, onMount, constants, onDestroy, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
-	import { idHere, idsGrabbed, idEditing, widgetHeight, popupViewID } from '../../ts/managers/State';
+	import { idHere, idsGrabbed, idEditing, widgetHeightGap, popupViewID } from '../../ts/managers/State';
 	import FatTriangleButton from '../kit/FatTriangleButton.svelte';
 	import Children from './Children.svelte';
 	let childrenOrigin = new Point();
@@ -36,7 +36,7 @@
 
 	function updateLineRects() {
 		if (here) {
-			const yOffset = ($widgetHeight * here.children.length / 2) - 19;
+			const yOffset = ($widgetHeightGap * here.children.length / 2) - 19;
 			childrenOrigin = origin.offsetBy(new Point(1, yOffset));
 			triangleOrigin = childrenOrigin.offsetBy(new Point(-7, 22));
 			lineRects = new Layout().lineRects(here, childrenOrigin) ?? [];
