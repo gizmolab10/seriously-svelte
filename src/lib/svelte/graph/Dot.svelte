@@ -33,8 +33,9 @@
 
 	async function handleClick(event) {
 		if (thing.isExemplar) { return; }
-		if (isReveal) {
-			if (thing.hasChildren) {
+		if (isReveal && thing.hasChildren) {
+			thing.toggleCollapse();
+			if (!thing.isCollapsed) {
 				thing.redraw_browseRight(true);
 			}
 		} else if (event.shiftKey || isGrabbed) {

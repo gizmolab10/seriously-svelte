@@ -1,12 +1,11 @@
 import { writable } from 'svelte/store';
-import Collapse from "../data/Collapse";
 
 export const stoppedIDEditing	= writable<string | null>();
 export const popupViewID			= writable<string | null>();
 export const idEditing				= writable<string | null>();
 export const idHere						= writable<string | null>();
 export const dbLoadTime 			= writable<string | null>();
-export const collapsed				= writable<Collapse[]>();
+export const collapsed				= writable<string[]>();
 export const idsGrabbed				= writable<string[]>();
 export const thingsArrived		= writable<boolean>();
 export const showDetails			= writable<boolean>();

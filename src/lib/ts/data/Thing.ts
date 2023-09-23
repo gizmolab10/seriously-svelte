@@ -1,5 +1,5 @@
-import { get, Size, Datum, signal, Signals, constants, Predicate, PersistID, dbDispatch, getWidthOf, persistLocal, normalizeOrderOf } from '../common/GlobalImports';
-import { idHere, idEditing, idsGrabbed, widgetHeightGap } from '../managers/State';
+import { get, Size, Datum, signal, Signals, constants, Predicate, PersistID, dbDispatch, getWidthOf, Relationship, persistLocal, normalizeOrderOf } from '../common/GlobalImports';
+import { idHere, idEditing, collapsed, idsGrabbed, widgetHeightGap } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -70,6 +70,7 @@ export default class Thing extends Datum {
 	get hasChildren():			boolean { return this.hasPredicate(false); }
 	get isRoot():						boolean { return this == dbDispatch.db.hierarchy.root; }
 	get showBorder():				boolean { return this.isGrabbed || this.isEditing || this.isExemplar; }
+	get isCollapsed():			boolean { return get(collapsed).includes(this.parentRelationshipID); }
 	get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get childrenSize():				 Size { return new Size(this.childrenWidth, this.children.length * get(widgetHeightGap)); }
 	get children():		 Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id, false, this.id); }
@@ -79,6 +80,10 @@ export default class Thing extends Datum {
 	get lastChild():					Thing { return this.children.slice(-1)[0]; }
 	get firstChild():					Thing { return this.children[0]; }
 	get firstParent():				Thing { return this.parents[0]; }
+
+	get parentRelationshipID(): string {
+		return dbDispatch.db.hierarchy.getRelationship_whereParentIDEquals(this.id)?.id ?? '';
+	}
 
 	get childrenWidth():		 number {
 		let maximum = 0;
@@ -91,6 +96,45 @@ export default class Thing extends Datum {
 			}
 		}
 		return maximum;
+	}
+
+	toggleCollapse() {
+		if (this.isCollapsed) {
+			this.expand();
+		} else {
+			this.collapse();
+		}
+	}
+
+	collapse() {
+		const relationship = dbDispatch.db.hierarchy.getRelationship_whereParentIDEquals(this.id);
+		if (relationship) {
+			collapsed.update((array) => {
+				if (array.indexOf(relationship.id) == -1) {
+					array.push(relationship.id);	// only add if not already added
+				}
+				return array;
+			});
+		}
+	}
+
+	expand() {
+		const relationship = dbDispatch.db.hierarchy.getRelationship_whereParentIDEquals(this.id);
+		if (relationship) {
+			collapsed.update((array) => {
+				const index = array.indexOf(relationship.id);
+				if (index != -1) {				// only splice array when item is found
+					array.splice(index, 1); // 2nd parameter means remove one item only
+				}
+				return array;
+			});
+		}
+	}
+
+	startEdit() {
+		if (this != dbDispatch.db.hierarchy.root) {
+			idEditing.set(this.id);
+		}
 	}
 
 	ancestors(thresholdWidth: number): Array<Thing> {
@@ -113,14 +157,6 @@ export default class Thing extends Datum {
 	hasPredicate(asParents: boolean): boolean { return asParents ? this.parents.length > 0 : this.children.length > 0 }
 	toggleGrab() { dbDispatch.db.hierarchy.grabs.toggleGrab(this); }
 	grabOnly() { dbDispatch.db.hierarchy.grabs.grabOnly(this); }
-	collapse() {}
-	expand() {}
-
-	startEdit() {
-		if (this != dbDispatch.db.hierarchy.root) {
-			idEditing.set(this.id);
-		}
-	}
 
 	becomeHere() {
 		if (this.hasChildren) {
