@@ -35,9 +35,9 @@
 		if (thing.isExemplar) { return; }
 		if (isReveal && thing.hasChildren) {
 			thing.toggleCollapse();
-			if (!thing.isCollapsed) {
+			// if (!thing.isCollapsed) {
 				thing.redraw_browseRight(true);
-			}
+			// }
 		} else if (event.shiftKey || isGrabbed) {
 			thing.toggleGrab();
 		} else {

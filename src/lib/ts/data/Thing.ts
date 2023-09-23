@@ -1,4 +1,4 @@
-import { get, Size, Datum, signal, Signals, constants, Predicate, PersistID, dbDispatch, getWidthOf, Relationship, persistLocal, normalizeOrderOf } from '../common/GlobalImports';
+import { get, Size, Datum, signal, Signals, constants, Predicate, PersistID, dbDispatch, getWidthOf, persistLocal, normalizeOrderOf } from '../common/GlobalImports';
 import { idHere, idEditing, collapsed, idsGrabbed, widgetHeightGap } from '../managers/State';
 import Airtable from 'airtable';
 
@@ -115,6 +115,7 @@ export default class Thing extends Datum {
 				}
 				return array;
 			});
+			persistLocal.writeToKey(PersistID.collapsed, get(collapsed));
 		}
 	}
 
@@ -128,6 +129,7 @@ export default class Thing extends Datum {
 				}
 				return array;
 			});
+			persistLocal.writeToKey(PersistID.collapsed, get(collapsed));
 		}
 	}
 
