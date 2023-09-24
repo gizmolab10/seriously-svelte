@@ -1,6 +1,6 @@
 <script>
 	import { get, Grabs, DBType, onMount, PersistID, ButtonID, Hierarchy, dbDispatch, persistLocal, getBrowserType, isServerLocal } from '../../ts/common/GlobalImports'
-	import { dbType, isBusy, bulkName, popupViewID, showDetails, thingsArrived } from '../../ts/managers/State';
+	import { dbType, isBusy, idHere, bulkName, popupViewID, showDetails, thingsArrived } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import Graph from '../graph/Graph.svelte';
@@ -48,7 +48,7 @@
 		<p>Nothing is available.</p>
 	{:else}
 		<div class='top'>
-			<Crumbs grab={dbDispatch.db.hierarchy.grabs.grabbedThing}/>
+			<Crumbs here={dbDispatch.db.hierarchy.getThing_forID($idHere)}/>
 		</div>
 		<div class='graph' on:click={() => {
 				$popupViewID = null;
