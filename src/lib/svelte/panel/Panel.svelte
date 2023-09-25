@@ -1,5 +1,5 @@
 <script>
-	import { get, Grabs, DBType, onMount, PersistID, ButtonID, Hierarchy, dbDispatch, persistLocal, getBrowserType, isServerLocal } from '../../ts/common/GlobalImports'
+	import { get, noop, Grabs, DBType, onMount, PersistID, ButtonID, Hierarchy, dbDispatch, persistLocal, getBrowserType, isServerLocal } from '../../ts/common/GlobalImports'
 	import { dbType, isBusy, idHere, bulkName, popupViewID, showDetails, thingsArrived } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import BuildNotes from './BuildNotes.svelte';
@@ -50,7 +50,11 @@
 		<div class='top'>
 			<Crumbs here={dbDispatch.db.hierarchy.getThing_forID($idHere)}/>
 		</div>
-		<div class='graph' on:click={() => {
+		<div class='graph'
+			on:keyup={noop()}
+			on:keydown={noop()}
+			on:keypress={noop()}
+			on:click={() => {
 				$popupViewID = null;
 			}}>
 			<Graph/>
