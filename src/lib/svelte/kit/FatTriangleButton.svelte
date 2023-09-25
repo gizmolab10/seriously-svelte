@@ -1,5 +1,5 @@
 <script>
-	import { editor, ZIndex, constants, dbDispatch, FatTrianglePath, Thing } from "../../ts/common/GlobalImports";
+	import { noop, editor, ZIndex, constants, dbDispatch, FatTrianglePath, Thing } from "../../ts/common/GlobalImports";
 	import { idHere, dotDiameter } from '../../ts/managers/State';
 	const triangle = new FatTrianglePath($dotDiameter + 2, 0);
 	let fillColor = constants.backgroundColor;
@@ -25,6 +25,8 @@
 
 <button class='svg-button'
 	bind:this={fat}
+	on:blur={noop()}
+	on:focus={noop()}
 	on:click={handleClick}
 	style='
 		top: {origin.y - 6}px;

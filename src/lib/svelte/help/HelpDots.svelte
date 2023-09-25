@@ -1,7 +1,6 @@
 <script>
 	import { exemplar } from '../../ts/data/Exemplar';
 	import Widget from '../graph/Widget.svelte';
-	export let visible = true;
 
 	export function title(isSelected) {
 		return isSelected ? 'How the <b>Dots</b> work' : 'Dots';

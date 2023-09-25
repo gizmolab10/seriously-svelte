@@ -33,11 +33,13 @@
 
 	async function handleClick(event) {
 		if (thing.isExemplar) { return; }
-		if (isReveal && thing.hasChildren) {
-			thing.toggleCollapse();
-			// if (!thing.isCollapsed) {
-				thing.redraw_browseRight(true);
-			// }
+		if (isReveal) {
+			if (thing.hasChildren) {
+				thing.toggleCollapse();
+				if (!thing.isCollapsed) {
+					thing.redraw_browseRight(true);
+				}
+			}
 		} else if (event.shiftKey || isGrabbed) {
 			thing.toggleGrab();
 		} else {
