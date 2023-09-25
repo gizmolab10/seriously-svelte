@@ -25,8 +25,6 @@
 
 <button class='svg-button'
 	bind:this={fat}
-	on:blur={noop()}
-	on:focus={noop()}
 	on:click={handleClick}
 	style='
 		top: {origin.y - 6}px;
@@ -35,6 +33,8 @@
 	<svg width='40'
 		height='40'
 		viewbox='0 0 40 40'
+		on:blur={noop()}
+		on:focus={noop()}
 		on:mouseout={mouseout}
 		on:mouseover={mouseOver}
 		style='position: absolute; left: 5px; top: 6px; z-index: {ZIndex.text};'>
