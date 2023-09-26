@@ -37,7 +37,7 @@
 		<RadioButtons menuItems={menuItems} idSelected={$dbType}/>
 		<br>
 		{#if $dbLoadTime}
-			<Label title={'fetched: ' + $dbLoadTime + ' sec'}/>
+			<Label title={'loaded in ' + $dbLoadTime + ' s'}/>
 		{:else}
 			<br>
 		{/if}

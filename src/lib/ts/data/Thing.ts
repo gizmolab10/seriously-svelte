@@ -1,5 +1,5 @@
 import { get, Size, Datum, signal, Signals, constants, Predicate, PersistID, dbDispatch, getWidthOf, persistLocal, normalizeOrderOf } from '../common/GlobalImports';
-import { idHere, idEditing, collapsed, idsGrabbed, widgetHeightGap } from '../managers/State';
+import { idHere, idEditing, expanded, idsGrabbed, lineGap } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -43,6 +43,68 @@ export default class Thing extends Datum {
 		});
 	};
 
+	get childrenSize():		   Size { return new Size(this.titleWidth, this.childrenHeight); }
+	get description():		 string { return this.id + ' (\" ' + this.title + '\") '; }
+	get titleWidth():		 number { return getWidthOf(this.title) }
+	get hasChildren():		boolean { return this.hasPredicate(false); }
+	get isRoot():			boolean { return this == dbDispatch.db.hierarchy.root; }
+	get showBorder():		boolean { return this.isGrabbed || this.isEditing || this.isExemplar; }
+	get isExpanded():		boolean { return this.isRoot || get(expanded).includes(this.parentRelationshipID); }
+	get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
+	get children():	   Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id, false, this.id); }
+	get parents():	   Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id,	true, this.id); }
+	get siblings():	   Array<Thing> { return this.firstParent?.children ?? []; }
+	get grandparent():		  Thing { return this.firstParent?.firstParent ?? dbDispatch.db.hierarchy.root; }
+	get lastChild():		  Thing { return this.children.slice(-1)[0]; }
+	get firstChild():		  Thing { return this.children[0]; }
+	get firstParent():		  Thing { return this.parents[0]; }
+
+	get parentRelationshipID(): string { // WRONG
+		return dbDispatch.db.hierarchy.getRelationship_whereIDEqualsTo(this.id, true)?.id ?? '';
+	}
+
+
+	get childrenHeight(): number {
+
+		//////////////////////////////////////////////
+		//											//
+		//	  this's widget gives the height or		//
+		//	   this has children & is expanded		//
+		//   add each child's childSize's height	//
+		//											//
+		//////////////////////////////////////////////
+		
+		let height = get(lineGap)		// default row height
+		if (this.hasChildren && this.isExpanded) {
+			for (const child of this.children) {
+				height += child.childrenHeight;
+			}
+		}
+		return height;
+	}
+
+	log(message: string) { console.log(message, this.description); }
+	persistExpanded()	 { persistLocal.writeToKey(PersistID.expanded, get(expanded)); }
+	toggleGrab()		 { dbDispatch.db.hierarchy.grabs.toggleGrab(this); }
+	grabOnly()			 { dbDispatch.db.hierarchy.grabs.grabOnly(this); }
+	toggleExpand()		 { this.setExpanded(!this.isExpanded) }
+	collapse()			 { this.setExpanded(false); }
+	expand()			 { this.setExpanded(true); }
+
+	hasPredicate(asParents: boolean): boolean {
+		return asParents ? this.parents.length > 0 : this.children.length > 0
+	}
+
+	revealColor(isReveal: boolean): string {
+		return (this.showBorder != isReveal) ? this.color : constants.backgroundColor;
+	}
+
+	startEdit() {
+		if (this != dbDispatch.db.hierarchy.root) {
+			idEditing.set(this.id);
+		}
+	}
+
 	copyInto(other: Thing) {
 		other.title = this.title;
 		other.color = this.color;
@@ -53,89 +115,30 @@ export default class Thing extends Datum {
 	updateColorAttributes() {
 		const borderStyle = this.isEditing ? 'dashed' : 'solid';
 		const border = borderStyle + ' 1px ';
-		const grab = border + this.revealColor(false);
 		const hover = border + this.revealColor(true);
+		const grab = border + this.revealColor(false);
 		this.borderAttribute = border;
-		this.grabAttributes = grab;
 		this.hoverAttributes = hover;
+		this.grabAttributes = grab;
 	}
-
-	revealColor(isReveal: boolean): string {
-		return (this.showBorder != isReveal) ? this.color : constants.backgroundColor;
-	}
-
-	log(message: string)						{ console.log(message, this.description); }
-	get description():			 string { return this.id + ' (\" ' + this.title + '\") '; }
-	get titleWidth():				 number { return getWidthOf(this.title) }
-	get hasChildren():			boolean { return this.hasPredicate(false); }
-	get isRoot():						boolean { return this == dbDispatch.db.hierarchy.root; }
-	get showBorder():				boolean { return this.isGrabbed || this.isEditing || this.isExemplar; }
-	get isCollapsed():			boolean { return get(collapsed).includes(this.parentRelationshipID); }
-	get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
-	get childrenSize():				 Size { return new Size(this.childrenWidth, this.children.length * get(widgetHeightGap)); }
-	get children():		 Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id, false, this.id); }
-	get parents():		 Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id,	true, this.id); }
-	get siblings():		 Array<Thing> { return this.firstParent?.children ?? []; }
-	get grandparent():				Thing { return this.firstParent?.firstParent ?? dbDispatch.db.hierarchy.root; }
-	get lastChild():					Thing { return this.children.slice(-1)[0]; }
-	get firstChild():					Thing { return this.children[0]; }
-	get firstParent():				Thing { return this.parents[0]; }
-
-	get parentRelationshipID(): string {
-		return dbDispatch.db.hierarchy.getRelationship_whereParentIDEquals(this.id)?.id ?? '';
-	}
-
-	get childrenWidth():		 number {
-		let maximum = 0;
-		if (this.children && this.children.length > 0) {
-			for (const child of this.children) {
-				const width = child.titleWidth;
-				if (width > maximum) {
-					maximum = width;
-				}
-			}
-		}
-		return maximum;
-	}
-
-	toggleCollapse() {
-		if (this.isCollapsed) {
-			this.expand();
-		} else {
-			this.collapse();
-		}
-	}
-
-	collapse() {
-		const relationship = dbDispatch.db.hierarchy.getRelationship_whereParentIDEquals(this.id);
+	
+	setExpanded(expand: boolean) {
+		const relationship = dbDispatch.db.hierarchy.getRelationship_whereIDEqualsTo(this.id);
 		if (relationship) {
-			collapsed.update((array) => {
-				if (array.indexOf(relationship.id) == -1) {
-					array.push(relationship.id);	// only add if not already added
+			expanded.update((array) => {
+				if (expand) {
+					if (array.indexOf(relationship.id) == -1) {
+						array.push(relationship.id);	// only add if not already added
+					}
+				} else {
+					const index = array.indexOf(relationship.id);
+					if (index != -1) {					// only splice array when item is found
+						array.splice(index, 1);			// 2nd parameter means 'remove one item only'
+					}
 				}
 				return array;
 			});
-			persistLocal.writeToKey(PersistID.collapsed, get(collapsed));
-		}
-	}
-
-	expand() {
-		const relationship = dbDispatch.db.hierarchy.getRelationship_whereParentIDEquals(this.id);
-		if (relationship) {
-			collapsed.update((array) => {
-				const index = array.indexOf(relationship.id);
-				if (index != -1) {				// only splice array when item is found
-					array.splice(index, 1); // 2nd parameter means remove one item only
-				}
-				return array;
-			});
-			persistLocal.writeToKey(PersistID.collapsed, get(collapsed));
-		}
-	}
-
-	startEdit() {
-		if (this != dbDispatch.db.hierarchy.root) {
-			idEditing.set(this.id);
+			this.persistExpanded();
 		}
 	}
 
@@ -155,10 +158,6 @@ export default class Thing extends Datum {
 		array.reverse();
 		return array;
 	}
-
-	hasPredicate(asParents: boolean): boolean { return asParents ? this.parents.length > 0 : this.children.length > 0 }
-	toggleGrab() { dbDispatch.db.hierarchy.grabs.toggleGrab(this); }
-	grabOnly() { dbDispatch.db.hierarchy.grabs.grabOnly(this); }
 
 	becomeHere() {
 		if (this.hasChildren) {
@@ -182,7 +181,7 @@ export default class Thing extends Datum {
 	async setOrderTo(newOrder: number, remoteWrite: boolean) {
 		if (this.order != newOrder) {
 			this.order = newOrder;
-			const relationship = dbDispatch.db.hierarchy.getRelationship_whereParentIDEquals(this.id);
+			const relationship = dbDispatch.db.hierarchy.getRelationship_whereIDEqualsTo(this.id);
 			if (relationship && (relationship.order != newOrder)) {
 				relationship.order = newOrder;
 				if (remoteWrite) {
@@ -240,9 +239,13 @@ export default class Thing extends Datum {
 		}
 	}
 
-	redraw_browseRight(right: boolean, up: boolean = false) {
-		const newGrab = right ? up ? this.lastChild : this.firstChild : this.firstParent;
+	redraw_browseRight(right: boolean, toTop: boolean = false) {
+		const newGrab = right ? toTop ? this.lastChild : this.firstChild : this.firstParent;
 		const newHere = right ? this : this.grandparent;
+		if (!right) {
+			this.firstParent.collapse();
+		}
+		newHere.expand();
 		idEditing.set(null);
 		newHere.becomeHere();
 		newGrab?.grabOnly();

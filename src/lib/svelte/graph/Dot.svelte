@@ -35,8 +35,8 @@
 		if (thing.isExemplar) { return; }
 		if (isReveal) {
 			if (thing.hasChildren) {
-				thing.toggleCollapse();
-				if (!thing.isCollapsed) {
+				thing.toggleExpand();
+				if (!thing.isExpanded) {
 					thing.redraw_browseRight(true);
 				}
 			}

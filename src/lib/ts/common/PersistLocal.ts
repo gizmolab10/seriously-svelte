@@ -1,4 +1,4 @@
-import { dbType, idHere, bulkName, collapsed, idsGrabbed, showDetails, lineStretch, dbLoadTime, dotDiameter, widgetHeightGap } from '../managers/State';
+import { dbType, idHere, bulkName, expanded, idsGrabbed, showDetails, lineStretch, dbLoadTime, dotDiameter, lineGap } from '../managers/State';
 import { get, DBType, dbDispatch } from './GlobalImports'
 
 export enum BulkID {
@@ -8,7 +8,7 @@ export enum BulkID {
 
 export enum PersistID {
 	lineStretch = 'stretch',
-	collapsed		= 'collapsed',
+	expanded		= 'expanded',
 	details			= 'details',
 	bulk				= 'bulk',
 	here				= 'here',
@@ -63,8 +63,8 @@ class PersistLocal {
 		// const isLocal = isServerLocal();
 		dbLoadTime.set(null);
 		dotDiameter.set(this.readFromKey(PersistID.dot) ?? 14);
-		widgetHeightGap.set(this.readFromKey(PersistID.gap) ?? 30);
-		collapsed.set(this.readFromKey(PersistID.collapsed) ?? []);
+		lineGap.set(this.readFromKey(PersistID.gap) ?? 30);
+		expanded.set(this.readFromKey(PersistID.expanded) ?? []);
 		showDetails.set(this.readFromKey(PersistID.details) ?? false);
 		lineStretch.set(this.readFromKey(PersistID.lineStretch) ?? 40);
 		bulkName.set(this.readFromKey(PersistID.bulk) ?? BulkID.public);

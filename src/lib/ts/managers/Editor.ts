@@ -61,7 +61,7 @@ export default class Editor {
 			// TODO: also match against the 'to' to the current parent
 			// TODO: pass predicate in ... to support editing different kinds of relationships
 
-			const relationship = dbDispatch.db.hierarchy.getRelationship_whereParentIDEquals(thing.id);
+			const relationship = dbDispatch.db.hierarchy.getRelationship_whereIDEqualsTo(thing.id);
 			if (relationship) {
 				relationship.idFrom = newParent.id;
 				await dbDispatch.db.relationship_remoteUpdate(relationship);

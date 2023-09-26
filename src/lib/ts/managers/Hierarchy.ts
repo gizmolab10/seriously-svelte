@@ -29,6 +29,12 @@ export default class Hierarchy {
 	isConstructed = false;
 	db: DBInterface;
 
+	get hasNothing(): boolean { return !this.root; }
+	get idRoot(): (string | null) { return this.root?.id ?? null; };
+	get things(): Array<Thing> { return Object.values(this.knownT_byID) };
+	getThing_forID(idThing: string | null): Thing | null { return (!idThing) ? null : this.knownT_byID[idThing]; }
+	getPredicate_forID(idPredicate: string | null): Predicate | null { return (!idPredicate) ? null : this.knownP_byID[idPredicate]; }
+
 	constructor(db: DBInterface) {
 		this.db = db;
 		idHere.subscribe((id: string | null) => {
@@ -37,31 +43,6 @@ export default class Hierarchy {
 			}
 		})
 	}
-
-	get hasNothing(): boolean { return !this.root; }
-	get idRoot(): (string | null) { return this.root?.id ?? null; };
-	get things(): Array<Thing> { return Object.values(this.knownT_byID) };
-	getThing_forID(idThing: string | null): Thing | null { return (!idThing) ? null : this.knownT_byID[idThing]; }
-	getPredicate_forID(idPredicate: string | null): Predicate | null { return (!idPredicate) ? null : this.knownP_byID[idPredicate]; }
-
-	restoreHere() {
-		let here = this.getThing_forID(get(idHere));
-		if (here == null) {
-			const grab = this.grabs.last_thingGrabbed;
-			here = grab?.firstParent ?? this.root;
-			if (!grab) {
-				return
-			}
-		}
-		here?.becomeHere();
-	}
-
-	get grabs(): Grabs { 
-		if (this._grabs == null) {
-			this._grabs = new Grabs(this);
-		}
-		return this._grabs!;
-	}
 	
 	async constructHierarchy(type: string) {
 		const idRoot = this.idRoot;
@@ -69,7 +50,7 @@ export default class Hierarchy {
 			for (const thing of this.things) {
 				const idThing = thing.id;
 				if (idThing != idRoot) {
-					let relationship = this.getRelationship_whereParentIDEquals(idThing);
+					let relationship = this.getRelationship_whereIDEqualsTo(idThing);
 					if (relationship) {
 						thing.order = relationship.order;
 					} else {
@@ -91,9 +72,28 @@ export default class Hierarchy {
 		this.isConstructed = true;
 	}
 
-	/////////////////////////////
-	//				MEMORY					//
-	/////////////////////////////
+	restoreHere() {
+		let here = this.getThing_forID(get(idHere));
+		if (here == null) {
+			const grab = this.grabs.last_thingGrabbed;
+			here = grab?.firstParent ?? this.root;
+			if (!here) {
+				return
+			}
+		}
+		here?.becomeHere();
+	}
+
+	get grabs(): Grabs { 
+		if (this._grabs == null) {
+			this._grabs = new Grabs(this);
+		}
+		return this._grabs!;
+	}
+
+	//////////////////////////////
+	//			MEMORY			//
+	//////////////////////////////
 
 	rememberThing(thing: Thing) {
 		this.knownT_byID[thing.id] = thing;
@@ -158,7 +158,7 @@ export default class Hierarchy {
 	}
 
 	////////////////////////////////////
-	//				RELATIONSHIPS					//
+	//		   RELATIONSHIPS		  //
 	////////////////////////////////////
 
 	relationships_clearKnowns() {
@@ -206,7 +206,7 @@ export default class Hierarchy {
 	}
 
 	async rememberRelationship_remoteCreateNoDuplicate(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none) {
-		return this.getRelationship_whereParentIDEquals(idTo) ?? await this.rememberRelationship_remoteCreate(idRelationship, idPredicate, idFrom, idTo, order, creationFlag);
+		return this.getRelationship_whereIDEqualsTo(idTo) ?? await this.rememberRelationship_remoteCreate(idRelationship, idPredicate, idFrom, idTo, order, creationFlag);
 	}
 
 	async forgetRelationships_remoteDeleteAllForThing(thing: Thing) {
@@ -220,7 +220,7 @@ export default class Hierarchy {
 	}
 
 	//////////////////////////
-	//				GET					//
+	//			GET			//
 	//////////////////////////
 
 	getThings_forIDs(ids: Array<string>): Array<Thing> {
@@ -245,15 +245,15 @@ export default class Hierarchy {
 		return this.getThings_forIDs(ids);
 	}
 
-	getRelationship_whereParentIDEquals(idThing: string) {
+	getRelationship_whereIDEqualsTo(idThing: string, to: boolean = true) {
 		const idPredicateIsAParentOf = Predicate.idIsAParentOf;
-		const matches = this.getRelationships_byIDPredicateToAndID(idPredicateIsAParentOf, true, idThing);
+		const matches = this.getRelationships_byIDPredicateToAndID(idPredicateIsAParentOf, to, idThing);
 		if (matches.length > 0) {
 			const relationship = matches[0];
 			// relationship.log('known');
 			return relationship;
 		}
-		return null;
+		return null;		
 	}
 
 	getRelationships_byIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Relationship> {
@@ -270,9 +270,9 @@ export default class Hierarchy {
 		return array;
 	}
 
-	/////////////////////////////////////
-	//				ANCILLARY DATA					//
-	/////////////////////////////////////
+	//////////////////////////////////////
+	//			ANCILLARY DATA			//
+	//////////////////////////////////////
 
 	rememberPredicate(predicate: Predicate) {
 		this.knownP_byKind[predicate.kind] = predicate;
