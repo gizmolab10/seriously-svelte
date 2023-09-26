@@ -81,6 +81,7 @@ export default class Hierarchy {
 				return
 			}
 		}
+		here?.expand()
 		here?.becomeHere();
 	}
 

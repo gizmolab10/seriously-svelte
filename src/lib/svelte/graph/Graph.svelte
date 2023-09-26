@@ -47,7 +47,7 @@
 			childrenOrigin = origin.offsetBy(new Point(1, height / 2));
 			triangleOrigin = childrenOrigin.offsetBy(new Point(-7,  -7.5));
 			lineRects = new Layout().lineRects(here, height, childrenOrigin) ?? [];
-			console.log('LINES height:', height, here.isExpanded ? 'expanded:' :  'collapsed:', here.title);
+			// console.log('LINES height:', height, here.isExpanded ? 'expanded:' :  'collapsed:', here.title);
 		}
 	}
 
@@ -67,6 +67,7 @@
 		if (event.key == undefined)	{ alert('no key for ' + event.type); return; }
 		if (!grab) {
 			grab = dbDispatch.db.hierarchy.root;
+			grab?.expand();
 			grab?.becomeHere();
 			grab?.grabOnly(); // to update crumbs and dots
 		}
