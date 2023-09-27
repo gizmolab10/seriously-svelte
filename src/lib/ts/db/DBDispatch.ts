@@ -25,9 +25,9 @@ export default class DBDispatch {
 
 	dbForType(type: string): DBInterface {
 		switch (type) {
-			case DBType.airtable:	return dbAirtable;
+			case DBType.airtable: return dbAirtable;
 			case DBType.firebase: return dbFirebase;
-			default:							return dbLocal;
+			default:			  return dbLocal;
 		}
 	}
 

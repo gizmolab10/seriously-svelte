@@ -67,6 +67,7 @@ export default class Hierarchy {
 			normalizeOrderOf(this.root.children)
 			persistLocal.setupDBFor(type, idRoot);
 		}
+		this.restoreHere();
 		thingsArrived.set(true);
 		isBusy.set(false);
 		this.isConstructed = true;
@@ -81,7 +82,6 @@ export default class Hierarchy {
 				return
 			}
 		}
-		here?.expand()
 		here?.becomeHere();
 	}
 

@@ -5,7 +5,7 @@ export default class DBLocal implements DBInterface {
 	_hierarchy: Hierarchy | null = null;
 	dbType = DBType.local;
 	hasData = false;
-	loadTime = 0;
+	loadTime = null;
 
 	get hierarchy(): Hierarchy { 
 		if (this._hierarchy == null) {

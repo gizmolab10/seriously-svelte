@@ -163,6 +163,7 @@ export default class Thing extends Datum {
 		if (this.hasChildren) {
 			const id = this.id;
 			idHere.set(id);
+			this.expand();
 			persistLocal.writeToKey(PersistID.here, id);
 			signal(Signals.childrenOf, id);
 		};
@@ -245,7 +246,6 @@ export default class Thing extends Datum {
 		if (!right) {
 			this.firstParent.collapse();
 		}
-		newHere.expand();
 		idEditing.set(null);
 		newHere.becomeHere();
 		newGrab?.grabOnly();

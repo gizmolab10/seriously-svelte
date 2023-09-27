@@ -16,9 +16,9 @@ export enum DataKind {
 
 export default interface DBInterface {
 	dbType: string;
-	loadTime: string;
 	hasData: boolean;
 	hierarchy: Hierarchy;
+	loadTime: string | null;
 	setupDB(): Promise<void>;
 	thing_remoteCreate(thing: Thing): Promise<void>;
 	thing_remoteUpdate(thing: Thing): Promise<void>;

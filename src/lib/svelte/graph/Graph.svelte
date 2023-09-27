@@ -45,7 +45,7 @@
 		} else {
 			const height = here.childrenHeight;
 			childrenOrigin = origin.offsetBy(new Point(1, height / 2));
-			triangleOrigin = childrenOrigin.offsetBy(new Point(-7,  -7.5));
+			triangleOrigin = childrenOrigin.offsetBy(new Point(-7,  -8));
 			lineRects = new Layout().lineRects(here, height, childrenOrigin) ?? [];
 			// console.log('LINES height:', height, here.isExpanded ? 'expanded:' :  'collapsed:', here.title);
 		}
@@ -62,14 +62,13 @@
 	}
 
 	async function handleKeyDown(event) {
-		let grab = dbDispatch.db.hierarchy.grabs.furthestGrab(true);
+		const grab = dbDispatch.db.hierarchy.grabs.furthestGrab(true);
 		if ($idEditing)			{ return; } // let Title component consume the events
 		if (event.key == undefined)	{ alert('no key for ' + event.type); return; }
 		if (!grab) {
-			grab = dbDispatch.db.hierarchy.root;
-			grab?.expand();
-			grab?.becomeHere();
-			grab?.grabOnly(); // to update crumbs and dots
+			const root = dbDispatch.db.hierarchy.root;
+			root?.becomeHere();
+			root?.grabOnly(); // to update crumbs and dots
 		}
 		if (event.type == 'keydown') {
 			const key = event.key.toLowerCase();

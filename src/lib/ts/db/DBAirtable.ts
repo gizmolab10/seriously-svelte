@@ -24,7 +24,7 @@ export default class DBAirtable implements DBInterface {
 	dbType = DBType.airtable;
 	things: Thing[] = [];
 	hasData = false;
-	loadTime = 0;
+	loadTime = null;
 
 	relationships_errorMessage = 'Error in Relationships:';
 	things_errorMessage = 'Error in Things:';
@@ -146,7 +146,7 @@ export default class DBAirtable implements DBInterface {
 		try {
 			this.relationships_table.update(relationship.id, relationship.fields);
 		} catch (error) {
-				relationship.log(this.relationships_errorMessage + error);
+			relationship.log(this.relationships_errorMessage + error);
 		}
 	}
 
