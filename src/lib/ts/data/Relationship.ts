@@ -2,7 +2,7 @@ import { dbDispatch } from '../common/GlobalImports';
 import Airtable from 'airtable';
 import Datum from './Datum';
 
-export class Relationship extends Datum {
+export default class Relationship extends Datum {
 	awaitingCreation: boolean;
 	idTo: string;
 	idFrom: string;

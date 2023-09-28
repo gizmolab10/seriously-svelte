@@ -5,11 +5,11 @@ import DBInterface from '../db/DBInterface';
 
 type KnownRelationships = { [id: string]: Array<Relationship> }
 
-////////////////////////////////////////
+//////////////////////////////////////////
 //	create, delete, remember, forget	//
-//					realtime, remote					//
+//			realtime, remote			//
 //		of things and relationships		//
-////////////////////////////////////////
+//////////////////////////////////////////
 
 export default class Hierarchy {
 	knownU_byID: { [id: string]: User } = {};
@@ -78,9 +78,6 @@ export default class Hierarchy {
 		if (here == null) {
 			const grab = this.grabs.last_thingGrabbed;
 			here = grab?.firstParent ?? this.root;
-			if (!here) {
-				return
-			}
 		}
 		here?.becomeHere();
 	}

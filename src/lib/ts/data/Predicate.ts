@@ -1,6 +1,6 @@
 import { dbDispatch } from '../common/GlobalImports';
 
-export class Predicate {
+export default class Predicate {
 	id: string;
 	kind: string;
 

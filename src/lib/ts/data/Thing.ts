@@ -240,14 +240,19 @@ export default class Thing extends Datum {
 		}
 	}
 
-	redraw_browseRight(right: boolean, toTop: boolean = false) {
+	redraw_browseRight(right: boolean, toTop: boolean = false, moveHere: boolean = false) {
 		const newGrab = right ? toTop ? this.lastChild : this.firstChild : this.firstParent;
-		const newHere = right ? this : this.grandparent;
 		if (!right) {
 			this.firstParent.collapse();
+		} else if (this.hasChildren) {
+			this.expand();
+			signal(Signals.childrenOf, null);			// tell graph to update line rects
+		}
+		if (moveHere || !right) {
+			const newHere = right ? this : this.grandparent;
+			newHere.becomeHere();
 		}
 		idEditing.set(null);
-		newHere.becomeHere();
 		newGrab?.grabOnly();
 	}
 
