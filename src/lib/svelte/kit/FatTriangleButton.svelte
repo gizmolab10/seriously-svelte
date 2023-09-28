@@ -5,8 +5,8 @@
 	let fillColor = constants.backgroundColor;
 	export let origin = new Point($dotDiameter, 20);
 	const path = triangle.path;
-	export let here = Thing;
-	let fat = null;
+	let button = null;
+	export let here;
 	
 	$: { updateColors(false) }
 	function mouseOver(event) { updateColors(true); }
@@ -24,7 +24,7 @@
 </script>
 
 <button class='svg-button'
-	bind:this={fat}
+	bind:this={button}
 	on:click={handleClick}
 	style='
 		top: {origin.y - 6}px;

@@ -1,64 +1,40 @@
 <script lang='ts'>
-	import { Rect, Size, Point, Thing, ZIndex, Layout, editor, Signals, onMount, constants, onDestroy, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
+	import { Rect, Size, Point, Thing, ZIndex, Layout, editor, Signals, onMount, constants, onDestroy } from '../../ts/common/GlobalImports';
+	import { Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
 	import { idHere, idsGrabbed, idEditing, lineGap, popupViewID } from '../../ts/managers/State';
 	import FatTriangleButton from '../kit/FatTriangleButton.svelte';
 	import Children from './Children.svelte';
-	const defaultOrigin = new Point(25, 0); // TODO: center of screen minus children size width over two
-	let childrenOrigin = new Point();
 	let triangleOrigin = new Point();
-	let lineRects: LineRect[] = [];
-	let origin = defaultOrigin;
-	let isHovering = false;
 	let isGrabbed = false;
-	let here = Thing;
+	let here;
 
-	onMount( () => { updateLineRects(); });
-
-	onDestroy( () => {
-		lineRects = [];
-		signalHandler.disconnect();
-	});
+	onDestroy( () => { signalHandler.disconnect(); });
+	
+	function updateTriangleOrigin() {
+		if (here) {
+			const originOffset = new Point(19, -2);					// TODO: center of screen minus children size width over two
+			const origin = new Point(0, here.childrenHeight / 2);
+			triangleOrigin = origin.offsetBy(originOffset);
+		}
+	}
 
 	const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
-		if (here && idThing == here.id) {
-			origin = defaultOrigin;
-			updateLineRects();
+		if (here && (idThing == null || idThing == here.id)) {
+			updateTriangleOrigin();
 		}
 	});
 	
 	$: {
-		here = dbDispatch.db.hierarchy.getThing_forID($idHere);
-		updateLineRects();
+		if (here == null || here.id != $idHere) {			
+			here = dbDispatch.db.hierarchy.getThing_forID($idHere);
+			updateTriangleOrigin();
+		}
 		if (here) { // can sometimes be null !!!!!! ????????
 			let grabbed = $idsGrabbed.includes(here.id);
 			if (grabbed != isGrabbed) {
 				isGrabbed = grabbed;
 			}
 		}
-	}
-
-	function updateLineRects() {
-		if (!here) {
-			childrenOrigin = new Point();
-			triangleOrigin = new Point();
-			lineRects = [];
-		} else {
-			const height = here.childrenHeight;
-			childrenOrigin = origin.offsetBy(new Point(1, height / 2));
-			triangleOrigin = childrenOrigin.offsetBy(new Point(-7,  -8));
-			lineRects = new Layout().lineRects(here, height, childrenOrigin) ?? [];
-			// console.log('LINES height:', height, here.isExpanded ? 'expanded:' :  'collapsed:', here.title);
-		}
-	}
-
-	function description() {
-		let strings: Array<string> = [];
-		for (const lineRect of lineRects) {
-			strings.push(lineRect.origin.verbose);
-			strings.push(lineRect.extent.verbose);
-			strings.push(lineRect.size.verbose);
-		}
-		return strings.join(', ');
 	}
 
 	async function handleKeyDown(event) {
@@ -96,15 +72,15 @@
 
 <svelte:document on:keydown={handleKeyDown} />
 {#if here}
-	<Children thing={here} lineRects={lineRects}/>
+	<Children thing={here}/>
 	{#if isGrabbed}
 		<svg width='30' height='30'
 			style='z-index: {ZIndex.highlights};
 				position: absolute;
 				left: {triangleOrigin.x - 8};
-				top: {triangleOrigin.y - 7};'>
-			<circle cx='15' cy='15' r='14' stroke='blue' fill={constants.backgroundColor} />
+				top: {triangleOrigin.y - 17};'>
+			<circle cx='15' cy='15' r='14' stroke='blue' fill={constants.backgroundColor}/>
 		</svg>
 	{/if}
-	<FatTriangleButton here={here} origin={triangleOrigin}/>
+	<FatTriangleButton here={here} origin={triangleOrigin.offsetBy(new Point(0, -10))}/>
 {/if}

@@ -2,46 +2,53 @@ import { get, Rect, Size, Point, Thing, LineRect, LineCurveType } from '../commo
 import { lineGap, lineStretch } from '../managers/State'
 
 export default class Layout {
-	lineRects(thing: Thing, childrenHeight: number, origin: Point): Array<LineRect> {
-		let rects = Array<LineRect>();
-		const quantity = thing.children.length;
-		if (quantity > 0) {
-			const gapY = get(lineGap);
-			const half = quantity / 2;
-			const offsetX = get(lineStretch);
-			const threshold = Math.floor(half);
-			const hasAFlat = threshold != half; // true if 'quantity' is odd
-			let offsetY = gapY - childrenHeight / 2;
-			let index = 0;
-			while (index < quantity) {
-				const direction = this.getDirection(threshold - index, hasAFlat);
-				const childrenSize = this.adjustSizeFor(thing.children[index].childrenSize, direction, hasAFlat);
-				const isFlat = direction == LineCurveType.flat;
-				const isUp = direction == LineCurveType.up;
-				const childHeight = isFlat ? 0 : childrenSize.height * (isUp ? -1 : 1);
-				const size = new Size(offsetX, offsetY);
-				const rect = new Rect(new Point(0, origin.y), size);
-				
-				// console.log('LAYOUT line end y:', offsetY, 'childHeight:', childHeight, direction, index);
-				
-				offsetY += Math.max(childrenSize.height, gapY);
-				rects.push(new LineRect(direction, rect));
-				index += 1;
+	lineRects: Array<LineRect>;
+	origin: Point;
+	here: Thing;
+
+    constructor(here: Thing, defaultOrigin: Point) {
+	    this.origin = defaultOrigin;
+        this.lineRects = [];
+        this.here = here;
+		if (this.here) {
+			const childrenHeight = this.here.childrenHeight;
+			const halfChildrenHeight = childrenHeight / 2;
+			const children = this.here.children;
+			const quantity = children.length;
+			// the following uses the above values
+			if (quantity > 0) {
+				const gapY = get(lineGap);
+				const half = quantity / 2;
+				const sizeX = get(lineStretch);
+				const threshold = Math.floor(half);
+				const hasAFlat = threshold != half;				// true if 'quantity' is odd
+				const commonOrigin = new Point(0, this.origin.y);	// assumes 'left' assigned by Children component ???
+				let sizeY = gapY - halfChildrenHeight;
+				let index = 0;
+				while (index < quantity) {
+					const direction = this.getDirection(threshold - index, hasAFlat);
+					const childrenHeight = this.adjustSizeFor(children[index].childrenSize.height, direction, hasAFlat);
+					const rect = new Rect(commonOrigin, new Size(sizeX, sizeY));
+					
+					// const isFlat = direction == LineCurveType.flat;
+					// const isUp = direction == LineCurveType.up;
+					// const childHeight = isFlat ? 0 : childrenSize.height * (isUp ? -1 : 1);
+					// console.log('LAYOUT line end y:', sizeY, 'childHeight:', childHeight, direction, index);
+					
+					sizeY += Math.max(childrenHeight, gapY);
+					this.lineRects.push(new LineRect(direction, rect));
+					index += 1;
+				}
 			}
+
+			// console.log('LINES height:', height, here.isExpanded ? 'expanded:' :  'collapsed:', here.title);
 		}
-		return rects;
 	}
 
-	adjustSizeFor(size: Size, direction: LineCurveType, hasAFlat: boolean) {
-		const gap = get(lineGap) / 2;
-		let height = 0
-		if (!hasAFlat) {
-			switch (direction) {
-				case LineCurveType.down: height =  gap;
-				case LineCurveType.up:   height = -gap;
-			}
-		}
-		return size.expandedBy(new Size(0, height));
+	adjustSizeFor(height: number, direction: LineCurveType, hasAFlat: boolean) {
+		const halfGap = get(lineGap) / 2;
+		const offsetY = (direction == LineCurveType.down) ? halfGap : (direction == LineCurveType.up) ? -halfGap : 0;
+		return offsetY + height;
 	}
 
 	getDirection(delta: number, isFlat: Boolean) {
@@ -52,9 +59,5 @@ export default class Layout {
 		} else {
 			return LineCurveType.down;
 		}
-	}
-
-	get drawnSize(): Size {
-		return new Size();
 	}
 }

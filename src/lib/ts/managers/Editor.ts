@@ -69,11 +69,11 @@ export default class Editor {
 			}
 
 			dbDispatch.db.hierarchy.relationships_refreshKnowns();		// so children and parent will see the newly relocated things
-			normalizeOrderOf(newParent.children);				// refresh knowns first
+			normalizeOrderOf(newParent.children);						// refresh knowns first
 			normalizeOrderOf(parent.children);
 			thing.grabOnly();
 			newParent.becomeHere();
-			signal(Signals.childrenOf, newParent.id);		// so Children component will update
+			signal(Signals.childrenOf, newParent.id);					// so Children component will update
 		}
 	}
 

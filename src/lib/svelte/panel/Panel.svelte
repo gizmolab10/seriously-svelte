@@ -7,11 +7,14 @@
 	import Help from '../help/Help.svelte';
 	import Details from './Details.svelte';
 	import Crumbs from './Crumbs.svelte';
-	document.title = 'Seriously (α, ' + getBrowserType() + ', ' + (isServerLocal() ? 'local' : 'remote') + ')';
 	let size = 14;
-
-	onMount(async () => { persistLocal.setup(); })
+	
 	function handleClick(id) { $popupViewID = ($popupViewID == id) ? null : id; }
+
+	onMount(async () => {
+		persistLocal.setup();
+		document.title = 'Seriously ('+ (isServerLocal() ? 'local' : 'remote') + ', ' + getBrowserType()  + ', α)';
+	})
 	
 	function handleSettings(event) {
 		$showDetails = !$showDetails;
@@ -54,9 +57,7 @@
 			on:keyup={noop()}
 			on:keydown={noop()}
 			on:keypress={noop()}
-			on:click={() => {
-				$popupViewID = null;
-			}}>
+			on:click={() => { $popupViewID = null; }}>
 			<Graph/>
 		</div>
 	{/if}
