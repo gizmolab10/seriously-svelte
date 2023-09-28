@@ -3,37 +3,37 @@
 	let dotsTitle = '';
 	let browseTitle = '';
 	let itemsTitle = '';
-	let showItems = true;
-	let showBrowse = false;
-	let showDots = false;
+	let showingItems = true;
+	let showingBrowse = false;
+	let showingDots = false;
 	let dots;
 	let items;
 	let browse;
 
 	const updateTitles = () => {
-		dotsTitle = showDots ? 'How the <b>Dots</b> work' : 'Dots';
-		browseTitle = showBrowse ? '<b>Browsing</b> (changing which item is selected)' : 'Browsing';
-		itemsTitle = showItems ? 'When an item is <b>selected</b>' : 'Selection';
+		dotsTitle = showingDots ? 'How the <b>Dots</b> work' : 'Dots';
+		browseTitle = showingBrowse ? '<b>Browsing</b> (changing which item is selected)' : 'Browsing';
+		itemsTitle = showingItems ? 'When an item is <b>selected</b>' : 'Selection';
 	}	
 
-	const toggleItems = () => {
-		showItems = !showItems;
-		showBrowse = false;
-		showDots = false;
+	const showItems = () => {
+		showingItems = true;
+		showingBrowse = false;
+		showingDots = false;
 		updateTitles();
 	};
 
-	const toggleBrowse = () => {
-		showItems = false;
-		showBrowse = !showBrowse;
-		showDots = false;
+	const showBrowse = () => {
+		showingItems = false;
+		showingBrowse = true;
+		showingDots = false;
 		updateTitles();
 	};
 
-	const toggleDots = () => {
-		showItems = false;
-		showBrowse = false;
-		showDots = !showDots;
+	const showDots = () => {
+		showingItems = false;
+		showingBrowse = false;
+		showingDots = true;
 		updateTitles();
 	};
 
@@ -52,17 +52,17 @@
 </script>
 
 <div class='buttons-container'>
-	<button class:selected={showItems} on:click={toggleItems}>{@html itemsTitle}</button>
-	<button class:selected={showBrowse} on:click={toggleBrowse}>{@html browseTitle}</button>
-	<button class:selected={showDots} on:click={toggleDots}>{@html dotsTitle}</button>
+	<button class:selected={showingItems} on:click={showItems}>{@html itemsTitle}</button>
+	<button class:selected={showingBrowse} on:click={showBrowse}>{@html browseTitle}</button>
+	<button class:selected={showingDots} on:click={showDots}>{@html dotsTitle}</button>
 </div>
-{#if showItems && items}
+{#if showingItems && items}
 	<svelte:component this={items} />
 {/if}
-{#if showBrowse && browse}
+{#if showingBrowse && browse}
 	<svelte:component this={browse} />
 {/if}
-{#if showDots && dots}
+{#if showingDots && dots}
 	<svelte:component this={dots} />
 {/if}
 
@@ -79,7 +79,7 @@
 	}
 	.buttons-container {
 		display: flex;
-		gap: 10px;
+		gap: 15px;
 		margin-top: 20px;
 		margin-bottom: 20px;
 		justify-content: center;

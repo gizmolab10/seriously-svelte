@@ -25,7 +25,7 @@
 				×
 			</div>
 		<h2>Welcome to Seriously</h2>
-		<p>Seriously is essentially a hierarchal menu system, to which you can add new items.</p>
+		<p>The Seriously <b>graph</b> is essentially a hierarchal menu system, to which you can <b>add</b> new items, and within which you can easily <b>browse</b> and <b>focus</b>.</p>
 		<HelpButtons/>
 		<div class='horizontal-line'></div>
 		<p><b>Please</b> bear in mind that the menu items are my test data. So, when you finish editing things, try to return everything to something close to its original state. <b>Thanks!</b></p>
@@ -37,7 +37,7 @@
 	.horizontal-line {
 		position: absolute;
 		left: 10px;
-		top: 130px;
+		top: 145px;
 		height: 1px;
 		width: 96%;
 		background-color: lightgray;

@@ -256,7 +256,7 @@ export default class Thing extends Datum {
 	redraw_browseRight(right: boolean, toTop: boolean = false, moveHere: boolean = false) {
 		const newGrab = right ? toTop ? this.lastChild : this.firstChild : this.firstParent;
 		if (!right) {
-			this.firstParent.collapse();
+			this.firstParent?.collapse();
 		} else if (this.hasChildren) {
 			this.expand();
 			signal(Signals.childrenOf, null);			// tell graph to update line rects
