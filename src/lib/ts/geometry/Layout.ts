@@ -3,39 +3,34 @@ import { lineGap, lineStretch } from '../managers/State'
 
 export default class Layout {
 	lineRects: Array<LineRect>;
-	origin: Point;
 	here: Thing;
 
-    constructor(here: Thing, defaultOrigin: Point) {
-	    this.origin = defaultOrigin;
+    constructor(here: Thing, origin: Point) {
         this.lineRects = [];
         this.here = here;
 		if (this.here) {
-			const childrenHeight = this.here.childrenHeight;
-			const halfChildrenHeight = childrenHeight / 2;
 			const children = this.here.children;
 			const quantity = children.length;
-			// the following uses the above values
 			if (quantity > 0) {
-				const gapY = get(lineGap);
 				const half = quantity / 2;
+				const gapY = get(lineGap);
 				const sizeX = get(lineStretch);
 				const threshold = Math.floor(half);
 				const hasAFlat = threshold != half;					// true if 'quantity' is odd
-				const commonOrigin = new Point(0, this.origin.y);	// TODO: assumes 'left' assigned by Children component ???
+				const commonOrigin = new Point(0, origin.y);	// TODO: assumes 'left' assigned by Children component ???
+				const childrenHeight = this.here.childrenHeight;
+				const halfChildrenHeight = childrenHeight / 2;
 				let sizeY = gapY - halfChildrenHeight;
 				let index = 0;
 				while (index < quantity) {
+					const child = children[index];
 					const direction = this.getDirection(threshold - index, hasAFlat);
-					const childrenHeight = this.adjustSizeFor(children[index].childrenSize.height, direction, hasAFlat);
+					const chilHeight = this.adjustSizeFor(child.childrenSize.height, direction, hasAFlat);
 					const rect = new Rect(commonOrigin, new Size(sizeX, sizeY));
 					
-					// const isFlat = direction == LineCurveType.flat;
-					// const isUp = direction == LineCurveType.up;
-					// const childHeight = isFlat ? 0 : childrenSize.height * (isUp ? -1 : 1);
-					// console.log('LAYOUT line end y:', sizeY, 'childHeight:', childHeight, direction, index);
+					// console.log('LAYOUT x:', origin.x, ' y:', sizeY, direction, index, child.title);
 					
-					sizeY += Math.max(childrenHeight, gapY);
+					sizeY += Math.max(chilHeight, gapY);
 					this.lineRects.push(new LineRect(direction, rect));
 					index += 1;
 				}

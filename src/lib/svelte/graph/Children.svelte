@@ -6,8 +6,8 @@
 	import Line from './Line.svelte';
 	const widgetOffset = new Point(10, -14);	// TODO: WHY is this needed, where does this value come from?
 	let lineRects: Array<LineRect> = [];
-	export let thing: Thing;
 	export let originX = 200;
+	export let thing: Thing;
 
 	let toggleDraw = false;
 	let children = thing.children;
@@ -30,8 +30,8 @@
 
 	function layoutChildren() {
 		if (thing) {
-			const height = (thing.childrenHeight / 2) - 4;
-			const origin = new Point(originX, height);	// TODO: center of screen minus children size width over two
+			const height = (thing.childrenHeight / 2) - 4;	// TODO: why 4?
+			const origin = new Point(originX, height);		// TODO: center of screen minus children size width over two
 			lineRects = new Layout(thing, origin).lineRects;
 		}
 	}
@@ -54,7 +54,7 @@
 			<Widget thing={child} origin={lineRectAt(index).extent.offsetBy(widgetOffset)}/>
 			<Line color={child.color} curveType={curveTypeAt(index)} rect={lineRectAt(index)}/>
 			{#if child.hasChildren && child.isExpanded}
-				<Children thing={child} originX=100/>
+				<Children thing={child} originX=50/>
 			{/if}
 		{/each}
 	{/if}
