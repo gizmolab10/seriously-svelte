@@ -6,7 +6,6 @@
 	export let thing: Thing;
 	let lineRects: Array<LineRect> = [];
 	const widgetOffset = new Point(10, -14);	// TODO: WHY is this needed, where does this value come from?
-	const defaultOrigin = new Point(25, 56);	// TODO: center of screen minus children size width over two
 
 	let toggleDraw = false;
 	let children = thing.children;
@@ -29,7 +28,9 @@
 
 	function layout() {
 		if (thing) {
-			lineRects = new Layout(thing, defaultOrigin).lineRects;
+			const height = (thing.childrenHeight / 2) - 4;
+			const origin = new Point(25, height);	// TODO: center of screen minus children size width over two
+			lineRects = new Layout(thing, origin).lineRects;
 		}
 	}
 

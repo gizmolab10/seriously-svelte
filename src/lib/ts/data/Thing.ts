@@ -63,14 +63,27 @@ export default class Thing extends Datum {
 		return dbDispatch.db.hierarchy.getRelationship_whereIDEqualsTo(this.id, true)?.id ?? '';
 	}
 
+	get hasGrandChildren(): boolean {
+		if (this.hasChildren) {
+			for (const child of this.children) {
+				if (child.hasChildren) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 	get childrenHeight(): number {
 
 		//////////////////////////////////////////////
 		//											//
-		//	  this's widget gives the height or		//
+		//		  lineGap gives the height			//
+		//											//
+		//					OR						//
+		//											//
 		//	   this has children & is expanded		//
-		//   add each child's childSize's height	//
+		//	 so, add each child's childrenHeight	//
 		//											//
 		//////////////////////////////////////////////
 		

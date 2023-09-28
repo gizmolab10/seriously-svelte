@@ -21,8 +21,8 @@ export default class Layout {
 				const half = quantity / 2;
 				const sizeX = get(lineStretch);
 				const threshold = Math.floor(half);
-				const hasAFlat = threshold != half;				// true if 'quantity' is odd
-				const commonOrigin = new Point(0, this.origin.y);	// assumes 'left' assigned by Children component ???
+				const hasAFlat = threshold != half;					// true if 'quantity' is odd
+				const commonOrigin = new Point(0, this.origin.y);	// TODO: assumes 'left' assigned by Children component ???
 				let sizeY = gapY - halfChildrenHeight;
 				let index = 0;
 				while (index < quantity) {
