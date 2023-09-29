@@ -253,7 +253,7 @@ export default class Thing extends Datum {
 		}
 	}
 
-	redraw_browseRight(right: boolean, extreme: boolean, toTop: boolean = false, moveHere: boolean = false) {
+	redraw_browseRight(right: boolean, generational: boolean, extreme: boolean, toTop: boolean = false, moveHere: boolean = false) {
 		const newGrab = right ? toTop ? this.lastChild : this.firstChild : this.firstParent;
 		if (!right) {
 			this.firstParent?.collapse();
@@ -261,7 +261,7 @@ export default class Thing extends Datum {
 			this.expand();
 			signal(Signals.childrenOf, null);			// tell graph to update line rects
 		}
-		if (moveHere || !right) {
+		if (moveHere || (!right && this.id == get(idHere))) {
 			const newHere = right ? this : this.grandparent;
 			newHere.becomeHere();
 		}

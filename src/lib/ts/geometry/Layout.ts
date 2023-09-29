@@ -23,6 +23,9 @@ export default class Layout {
 					const child = children[index];
 					const direction = this.getDirection(threshold - index, hasAFlat);
 					const chilHeight = this.adjustSizeFor(child.childrenSize.height, direction, hasAFlat);
+					if (child.hasChildren) {
+						sizeY += chilHeight / 2;
+					}
 					const rect = new Rect(origin, new Size(sizeX, sizeY));
 					
 					// console.log('LAYOUT x:', origin.x, ' y:', sizeY, direction, index, child.title);

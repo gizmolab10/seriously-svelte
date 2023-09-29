@@ -1,17 +1,17 @@
 import { get, Thing, Datum, signal, Signals, constants, Predicate, dbDispatch, CreationFlag, normalizeOrderOf } from '../common/GlobalImports';
 import { idsGrabbed } from './State';
 
-///////////////////////////////////////
-//																	//
-//	beyond basic CRUD operations		//
-//																	//
-///////////////////////////////////////
+//////////////////////////////////////
+//									//
+//	 beyond basic CRUD operations	//
+//									//
+//////////////////////////////////////
 
 export default class Editor {
 
-	//////////////////////////
-	//				ADD					//
-	//////////////////////////
+	//////////////////
+	//		ADD		//
+	//////////////////
 
 	async thing_redraw_remoteAddChildTo(parent: Thing) {
 		const child = dbDispatch.db.hierarchy.rememberThing_runtimeCreateAt(-1);
@@ -39,15 +39,15 @@ export default class Editor {
 		await dbDispatch.relationship_remoteWrite(relationship);
 	}
 
-	///////////////////////////
-	//				MOVE					//
-	///////////////////////////
+	////////////////////
+	//		MOVE	  //
+	////////////////////
 
-	async thing_redraw_remoteMoveRight(thing: Thing, right: boolean, relocate: boolean, extreme: boolean) {
+	async thing_redraw_remoteMoveRight(thing: Thing, right: boolean, generational: boolean, relocate: boolean, extreme: boolean) {
 		if (relocate) {
 			await this.thing_redraw_remoteRelocateRight(thing, right, extreme);
 		} else {
-			thing.redraw_browseRight(right, extreme);
+			thing.redraw_browseRight(right, generational, extreme);
 		}
 	}
 
@@ -82,9 +82,9 @@ export default class Editor {
 		grab?.redraw_remoteMoveup(up, expand, relocate, extreme);
 	}
 
-	/////////////////////////////
-	//				DELETE					//
-	/////////////////////////////
+	//////////////////////
+	//		DELETE		//
+	//////////////////////
 
 	async grabs_redraw_remoteDelete() {
 		if (dbDispatch.db.hierarchy.here) {

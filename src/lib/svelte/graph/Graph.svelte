@@ -62,8 +62,8 @@
 				case 'backspace':	await editor.grabs_redraw_remoteDelete(); break;
 				case 'arrowup':		await editor.furthestGrab_redraw_remoteMoveUp(true, SHIFT, OPTION, COMMAND); break;
 				case 'arrowdown':	await editor.furthestGrab_redraw_remoteMoveUp(false, SHIFT, OPTION, COMMAND); break;
-				case 'arrowright':	await editor.thing_redraw_remoteMoveRight(grab, true, OPTION, COMMAND); break;
-				case 'arrowleft':	await editor.thing_redraw_remoteMoveRight(grab, false, OPTION, COMMAND); break;
+				case 'arrowright':	await editor.thing_redraw_remoteMoveRight(grab, true, SHIFT, OPTION, COMMAND); break;
+				case 'arrowleft':	await editor.thing_redraw_remoteMoveRight(grab, false, SHIFT, OPTION, COMMAND); break;
 				case 'enter':		grab.startEdit(); break;
 			}
 		}
