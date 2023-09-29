@@ -1,12 +1,12 @@
 <script lang=ts>
 	import { Rect, Size, Point, Thing, Signals, Layout, onMount, onDestroy, LineRect, LineCurveType, normalizeOrderOf, handleSignalOfKind } from '../../ts/common/GlobalImports';
-	import { lineGap } from '../../ts/managers/State';
+	import { lineGap, lineStretch } from '../../ts/managers/State';
 	import Children from './Children.svelte';
 	import Widget from './Widget.svelte';
 	import Line from './Line.svelte';
 	const widgetOffset = new Point(10, -14);	// TODO: WHY is this needed, where does this value come from?
 	let lineRects: Array<LineRect> = [];
-	export let originX = 200;
+	export let originX: number = 0;
 	export let thing: Thing;
 
 	let toggleDraw = false;
@@ -54,7 +54,7 @@
 			<Widget thing={child} origin={lineRectAt(index).extent.offsetBy(widgetOffset)}/>
 			<Line color={child.color} curveType={curveTypeAt(index)} rect={lineRectAt(index)}/>
 			{#if child.hasChildren && child.isExpanded}
-				<Children thing={child} originX=50/>
+				<Children thing={child} originX={child.titleWidth + $lineStretch + 29}/>
 			{/if}
 		{/each}
 	{/if}

@@ -5,14 +5,14 @@ export class Point {
 		this.x = x;
 		this.y = y;
 	}
-	get copy():			  Point { return new Point(this.x, this.y); }
-	get description():	 string { return this.x + ',' + this.y; }
-	get asSize():		   Size { return new Size(this.x, this.y); }
-	get pxDescription(): string { return this.x + 'px ' + this.y + 'px'; }
-	get verbose():		 string { return '(' + this.x + ', ' + this.y + ')'; }
-	offsetBy(point: Point)		{ return new Point(this.x + point.x, this.y + point.y); }
-	offsetBySize(size: Size)	{ return new Point(this.x + size.width, this.y + size.height); }
-	distanceTo(point: Point)	{ return new Point(Math.abs(point.x - this.x), Math.abs(point.y - this.y)) }
+	get description():		 string { return this.x + ',' + this.y; }
+	get pxDescription():	 string { return this.x + 'px ' + this.y + 'px'; }
+	get verbose():			 string { return '(' + this.x + ', ' + this.y + ')'; }
+	get asSize():			   Size { return new Size(this.x, this.y); }
+	get copy():				  Point { return new Point(this.x, this.y); }
+	offsetBy(point: Point):	  Point	{ return new Point(this.x + point.x, this.y + point.y); }
+	offsetBySize(size: Size): Point	{ return new Point(this.x + size.width, this.y + size.height); }
+	distanceTo(point: Point): Point	{ return new Point(Math.abs(point.x - this.x), Math.abs(point.y - this.y)) }
 }
 
 export class Size {
@@ -22,12 +22,12 @@ export class Size {
 		this.width = width;
 		this.height = height;
 	}
-	get copy():					Size { return new Size(this.width, this.height); }
+	get verbose():			  string { return '(' + this.width + ', ' + this.height + ')'; }
+	get pxDescription():	  string { return this.width + 'px ' + this.height + 'px'; }
+	get description():		  string { return this.width + ',' + this.height; }
 	get asPoint():			   Point { return new Point(this.width, this.height); }
 	get dividedInHalf():		Size { return this.dividedBy(2); }
-	get description():		  string { return this.width + ',' + this.height; }
-	get pxDescription():	  string { return this.width + 'px ' + this.height + 'px'; }
-	get verbose():			  string { return '(' + this.width + ', ' + this.height + ')'; }
+	get copy():					Size { return new Size(this.width, this.height); }
 	dividedBy(divisor: number): Size { return new Size(this.width / divisor, this.height / divisor) }
 	expandedBy(size: Size):		Size { return new Size(this.width + size.width, this.height + size.height); }
 	unionWith(size: Size):		Size { return new Size(Math.max(this.width, size.width), Math.max(this.height, size.height)); }
@@ -40,11 +40,11 @@ export class Rect {
 		this.origin = origin;
 		this.size = size;
 	}
-	get copy():			   Rect { return new Rect(this.origin.copy, this.size.copy); }
-	get description():	 string { return this.origin.verbose + ', ' + this.size.verbose; }
 	get pxDescription(): string { return this.origin.pxDescription + ' ' + this.size.pxDescription; }
-	get extent():		  Point { return this.origin.offsetBySize(this.size); }	// bottom right
+	get description():	 string { return this.origin.verbose + ', ' + this.size.verbose; }
+	get copy():			   Rect { return new Rect(this.origin.copy, this.size.copy); }
 	get center():		  Point { return this.origin.offsetBySize(this.size.dividedInHalf); }
+	get extent():		  Point { return this.origin.offsetBySize(this.size); }	// bottom right
 	get topRight():		  Point { return new Point(this.extent.x, this.origin.y); };
 	get bottomLeft():	  Point { return new Point(this.origin.x, this.extent.y); };
 	get centerLeft():	  Point { return new Point(this.origin.x, this.center.y); };

@@ -3,22 +3,19 @@ import { lineGap, lineStretch } from '../managers/State'
 
 export default class Layout {
 	lineRects: Array<LineRect>;
-	here: Thing;
 
     constructor(here: Thing, origin: Point) {
         this.lineRects = [];
-        this.here = here;
-		if (this.here) {
-			const children = this.here.children;
+		if (here) {
+			const children = here.children;
 			const quantity = children.length;
 			if (quantity > 0) {
 				const half = quantity / 2;
 				const gapY = get(lineGap);
 				const sizeX = get(lineStretch);
 				const threshold = Math.floor(half);
-				const hasAFlat = threshold != half;					// true if 'quantity' is odd
-				const commonOrigin = new Point(0, origin.y);	// TODO: assumes 'left' assigned by Children component ???
-				const childrenHeight = this.here.childrenHeight;
+				const hasAFlat = threshold != half;
+				const childrenHeight = here.childrenHeight;
 				const halfChildrenHeight = childrenHeight / 2;
 				let sizeY = gapY - halfChildrenHeight;
 				let index = 0;
@@ -26,7 +23,7 @@ export default class Layout {
 					const child = children[index];
 					const direction = this.getDirection(threshold - index, hasAFlat);
 					const chilHeight = this.adjustSizeFor(child.childrenSize.height, direction, hasAFlat);
-					const rect = new Rect(commonOrigin, new Size(sizeX, sizeY));
+					const rect = new Rect(origin, new Size(sizeX, sizeY));
 					
 					// console.log('LAYOUT x:', origin.x, ' y:', sizeY, direction, index, child.title);
 					
