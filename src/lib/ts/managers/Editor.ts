@@ -43,15 +43,15 @@ export default class Editor {
 	//				MOVE					//
 	///////////////////////////
 
-	async thing_redraw_remoteMoveRight(thing: Thing, right: boolean, relocate: boolean) {
+	async thing_redraw_remoteMoveRight(thing: Thing, right: boolean, relocate: boolean, extreme: boolean) {
 		if (relocate) {
-			await this.thing_redraw_remoteRelocateRight(thing, right);
+			await this.thing_redraw_remoteRelocateRight(thing, right, extreme);
 		} else {
-			thing.redraw_browseRight(right);
+			thing.redraw_browseRight(right, extreme);
 		}
 	}
 
-	async thing_redraw_remoteRelocateRight(thing: Thing, right: boolean) {
+	async thing_redraw_remoteRelocateRight(thing: Thing, right: boolean, extreme: boolean) {
 		const newParent = right ? thing.nextSibling(false) : thing.grandparent;
 		if (newParent) {
 			const parent = thing.firstParent;
@@ -77,9 +77,9 @@ export default class Editor {
 		}
 	}
 
-	async furthestGrab_redraw_remoteMoveUp(up: boolean, expand: boolean, relocate: boolean) {
+	async furthestGrab_redraw_remoteMoveUp(up: boolean, expand: boolean, relocate: boolean, extreme: boolean) {
 		const grab = dbDispatch.db.hierarchy.grabs.furthestGrab(up);
-		grab?.redraw_remoteMoveup(up, expand, relocate);
+		grab?.redraw_remoteMoveup(up, expand, relocate, extreme);
 	}
 
 	/////////////////////////////

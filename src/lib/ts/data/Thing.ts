@@ -228,10 +228,10 @@ export default class Thing extends Datum {
 		return this;
 	}
 
-	redraw_remoteMoveup(up: boolean, expand: boolean, relocate: boolean) {
+	redraw_remoteMoveup(up: boolean, expand: boolean, relocate: boolean, extreme: boolean) {
 		const siblings = this.siblings;
 		if (!siblings || siblings.length == 0) {
-				this.redraw_browseRight(true, up);
+				this.redraw_browseRight(true, extreme, up);
 		} else {
 			const index = siblings.indexOf(this);
 			const newIndex = index.increment(!up, siblings.length);
@@ -253,7 +253,7 @@ export default class Thing extends Datum {
 		}
 	}
 
-	redraw_browseRight(right: boolean, toTop: boolean = false, moveHere: boolean = false) {
+	redraw_browseRight(right: boolean, extreme: boolean, toTop: boolean = false, moveHere: boolean = false) {
 		const newGrab = right ? toTop ? this.lastChild : this.firstChild : this.firstParent;
 		if (!right) {
 			this.firstParent?.collapse();
