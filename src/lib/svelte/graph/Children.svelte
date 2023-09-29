@@ -30,7 +30,7 @@
 
 	function layoutChildren() {
 		if (thing) {
-			const height = (thing.childrenHeight / 2) - 4;	// TODO: why 4?
+			const height = (thing.visibleProgenyHeight / 2) - 4;	// TODO: why 4?
 			const origin = new Point(originX, height);		// TODO: center of screen minus children size width over two
 			lineRects = new Layout(thing, origin).lineRects;
 		}
@@ -54,7 +54,7 @@
 			<Widget thing={child} origin={lineRectAt(index).extent.offsetBy(widgetOffset)}/>
 			<Line color={child.color} curveType={curveTypeAt(index)} rect={lineRectAt(index)}/>
 			{#if child.hasChildren && child.isExpanded}
-				<Children thing={child} originX={child.titleWidth + $lineStretch + 29}/>
+				<Children thing={child} originX={child.titleWidth + $lineStretch + originX + 9}/>
 			{/if}
 		{/each}
 	{/if}

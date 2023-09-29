@@ -4,10 +4,10 @@ import { lineGap, lineStretch } from '../managers/State'
 export default class Layout {
 	lineRects: Array<LineRect>;
 
-    constructor(here: Thing, origin: Point) {
+    constructor(parent: Thing, origin: Point) {
         this.lineRects = [];
-		if (here) {
-			const children = here.children;
+		if (parent) {
+			const children = parent.children;
 			const quantity = children.length;
 			if (quantity > 0) {
 				const half = quantity / 2;
@@ -15,35 +15,34 @@ export default class Layout {
 				const sizeX = get(lineStretch);
 				const threshold = Math.floor(half);
 				const hasAFlat = threshold != half;
-				const childrenHeight = here.childrenHeight;
-				const halfChildrenHeight = childrenHeight / 2;
-				let sizeY = gapY - halfChildrenHeight;
+				const childrenHeight = parent.visibleProgenyHeight;
+				let sizeY = gapY - (childrenHeight / 2); // start out negative and grow positive
 				let index = 0;
 				while (index < quantity) {
 					const child = children[index];
 					const direction = this.getDirection(threshold - index, hasAFlat);
-					const chilHeight = this.adjustSizeFor(child.childrenSize.height, direction, hasAFlat);
-					if (child.hasChildren) {
-						sizeY += chilHeight / 2;
+					const adjustY = this.heightAdjustement(direction);
+					const childHeight = child.visibleProgenyHeight + adjustY;
+					if ((child.children.length > 1) && child.isExpanded) {
+						sizeY += childHeight / 2;
 					}
 					const rect = new Rect(origin, new Size(sizeX, sizeY));
 					
-					// console.log('LAYOUT x:', origin.x, ' y:', sizeY, direction, index, child.title);
+					console.log('LAYOUT x:', origin.x, ' y:', sizeY, 'h:', childHeight, direction, index, child.title);
 					
-					sizeY += Math.max(chilHeight, gapY);
+					sizeY += Math.max(childHeight, gapY);
 					this.lineRects.push(new LineRect(direction, rect));
 					index += 1;
 				}
-			}
 
-			// console.log('LINES height:', height, here.isExpanded ? 'expanded:' :  'collapsed:', here.title);
+				console.log('LINES h:', childrenHeight, parent.isExpanded ? 'expanded:' : 'collapsed:', parent.title);
+			}
 		}
 	}
 
-	adjustSizeFor(height: number, direction: LineCurveType, hasAFlat: boolean) {
+	heightAdjustement(direction: LineCurveType) {
 		const halfGap = get(lineGap) / 2;
-		const offsetY = (direction == LineCurveType.down) ? halfGap : (direction == LineCurveType.up) ? -halfGap : 0;
-		return offsetY + height;
+		return (direction == LineCurveType.down) ? halfGap : (direction == LineCurveType.up) ? -halfGap : 0;
 	}
 
 	getDirection(delta: number, isFlat: Boolean) {

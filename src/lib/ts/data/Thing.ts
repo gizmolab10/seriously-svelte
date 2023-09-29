@@ -43,7 +43,6 @@ export default class Thing extends Datum {
 		});
 	};
 
-	get childrenSize():		   Size { return new Size(this.titleWidth, this.childrenHeight); }
 	get description():		 string { return this.id + ' (\" ' + this.title + '\") '; }
 	get titleWidth():		 number { return getWidthOf(this.title) }
 	get hasChildren():		boolean { return this.hasPredicate(false); }
@@ -72,28 +71,6 @@ export default class Thing extends Datum {
 			}
 		}
 		return false;
-	}
-
-	get childrenHeight(): number {
-
-		//////////////////////////////////////////////
-		//											//
-		//		  lineGap gives the height			//
-		//											//
-		//					OR						//
-		//											//
-		//	   this has children & is expanded		//
-		//	 so, add each child's childrenHeight	//
-		//											//
-		//////////////////////////////////////////////
-		
-		let height = get(lineGap)		// default row height
-		if (this.hasChildren && this.isExpanded) {
-			for (const child of this.children) {
-				height += child.childrenHeight;
-			}
-		}
-		return height;
 	}
 
 	log(message: string) { console.log(message, this.description); }
@@ -228,6 +205,29 @@ export default class Thing extends Datum {
 		return this;
 	}
 
+	get visibleProgenyHeight(): number {
+
+		//////////////////////////////////////////////////
+		//												//
+		//			lineGap gives the height			//
+		//												//
+		//					   OR						//
+		//												//
+		//		 this has children & is expanded		//
+		//	so, add each child's visibleProgenyHeight	//
+		//												//
+		//////////////////////////////////////////////////
+		
+		let height = get(lineGap);		// default row height
+		if (this.hasChildren && this.isExpanded) {
+			height = 0;
+			for (const child of this.children) {
+				height += child.visibleProgenyHeight;
+			}
+		}
+		return height;
+	}
+
 	redraw_remoteMoveup(up: boolean, expand: boolean, relocate: boolean, extreme: boolean) {
 		const siblings = this.siblings;
 		if (!siblings || siblings.length == 0) {
@@ -254,10 +254,21 @@ export default class Thing extends Datum {
 	}
 
 	redraw_browseRight(right: boolean, generational: boolean, extreme: boolean, toTop: boolean = false, moveHere: boolean = false) {
-		const newGrab = right ? toTop ? this.lastChild : this.firstChild : this.firstParent;
+		let newGrab: Thing | null = right ? toTop ? this.lastChild : this.firstChild : this.firstParent;
 		if (!right) {
-			this.firstParent?.collapse();
+			if (generational) {
+				if (this.isExpanded) {
+					this.collapse();
+					newGrab = null;
+				} else {
+					this.firstParent?.collapse();
+				}
+				signal(Signals.childrenOf, null);			// tell graph to update line rects
+			}
 		} else if (this.hasChildren) {
+			if (generational) {
+				newGrab = null;
+			}
 			this.expand();
 			signal(Signals.childrenOf, null);			// tell graph to update line rects
 		}

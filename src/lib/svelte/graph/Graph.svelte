@@ -12,9 +12,7 @@
 	
 	function updateTriangleOrigin() {
 		if (here) {
-			const originOffset = new Point(19, -2);					// TODO: center of screen minus children size width over two
-			const origin = new Point(0, here.childrenHeight / 2);
-			triangleOrigin = origin.offsetBy(originOffset);
+			triangleOrigin = new Point(19, (here.visibleProgenyHeight / 2) - 2);
 		}
 	}
 
@@ -79,9 +77,9 @@
 			style='z-index: {ZIndex.highlights};
 				position: absolute;
 				left: {triangleOrigin.x - 8};
-				top: {triangleOrigin.y - 17};'>
+				top: {triangleOrigin.y - 12};'>
 			<circle cx='15' cy='15' r='14' stroke='blue' fill={constants.backgroundColor}/>
 		</svg>
 	{/if}
-	<FatTriangleButton here={here} origin={triangleOrigin.offsetBy(new Point(0, -10))}/>
+	<FatTriangleButton here={here} origin={triangleOrigin.offsetBy(new Point(0, -5))}/>
 {/if}
