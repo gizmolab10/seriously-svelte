@@ -8,7 +8,7 @@
 	let button = null;
 	export let here;
 	
-	$: { updateColors(false) }
+	$: { updateColors(true) }
 	function mouseOver(event) { updateColors(true); }
 	function mouseout(event) { updateColors(false); }
 

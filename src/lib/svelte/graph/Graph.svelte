@@ -12,7 +12,7 @@
 	
 	function updateTriangleOrigin() {
 		if (here) {
-			triangleOrigin = new Point(19, (here.halfVisibleProgenyHeight) - 2);
+			triangleOrigin = new Point(19, (here.halfVisibleProgenyHeight) + 7);
 		}
 	}
 
@@ -78,9 +78,9 @@
 			style='z-index: {ZIndex.highlights};
 				position: absolute;
 				left: {triangleOrigin.x - 8};
-				top: {triangleOrigin.y - 12};'>
+				top: {triangleOrigin.y - 26};'>
 			<circle cx='15' cy='15' r='14' stroke='blue' fill={constants.backgroundColor}/>
 		</svg>
 	{/if}
-	<FatTriangleButton here={here} origin={triangleOrigin.offsetBy(new Point(0, -5))}/>
+	<FatTriangleButton here={here} origin={triangleOrigin.offsetBy(new Point(0, -19))}/>
 {/if}

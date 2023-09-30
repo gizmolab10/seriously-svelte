@@ -16,21 +16,18 @@ export default class Layout {
 				const threshold = Math.floor(half);
 				const hasAFlat = threshold != half;
 				const visibleProgenyHeight = parent.visibleProgenyHeight;
-				let sizeY = gapY - (visibleProgenyHeight / 2); // start out negative and grow positive
+				let sizeY = (gapY - visibleProgenyHeight) / 2; // start out negative and grow positive
 				let index = 0;
 				while (index < quantity) {
 					const child = children[index];
 					const direction = this.getDirection(threshold - index, hasAFlat);
-					const adjustY = this.heightAdjustement(direction);
-					const childVisibleProgenyHeight = child.visibleProgenyHeight; // + adjustY;
+					const childVisibleProgenyHeight = child.visibleProgenyHeight;
 					if ((child.children.length > 1) && child.isExpanded) {
 						sizeY += childVisibleProgenyHeight / 2;
 					}
 					const rect = new Rect(origin, new Size(sizeX, sizeY));
 					
-					if (sizeY > 15) {
-						console.log('LAYOUT x:', origin.x, ' y:', sizeY, 'h:', childVisibleProgenyHeight, direction, index, child.title);
-					}
+					console.log('LAYOUT o:', origin.y, ' y:', sizeY, 'h:', childVisibleProgenyHeight, direction, index, child.title);
 					
 					sizeY += Math.max(childVisibleProgenyHeight, gapY);
 					this.lineRects.push(new LineRect(direction, rect));
@@ -40,11 +37,6 @@ export default class Layout {
 				// console.log('LINES h:', childrenHeight, parent.isExpanded ? 'expanded:' : 'collapsed:', parent.title);
 			}
 		}
-	}
-
-	heightAdjustement(direction: LineCurveType) {
-		const halfGap = get(lineGap) / 2;
-		return (direction == LineCurveType.down) ? halfGap : (direction == LineCurveType.up) ? -halfGap : 0;
 	}
 
 	getDirection(delta: number, isFlat: Boolean) {

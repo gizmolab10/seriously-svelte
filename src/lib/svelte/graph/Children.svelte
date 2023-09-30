@@ -37,7 +37,7 @@
 
 	function originFor(child: Thing, index: number): Point {
 		const offsetX = child.titleWidth + $lineStretch + 9;
-		const offsetY = lineRectAt(index).origin.y - (child.halfVisibleProgenyHeight);
+		const offsetY = lineRectAt(index).origin.y - child.halfVisibleProgenyHeight + 4;
 		return origin.offsetBy(new Point(offsetX, offsetY));
 	}
 	
