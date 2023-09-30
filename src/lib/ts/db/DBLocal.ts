@@ -34,7 +34,7 @@ export default class DBLocal implements DBInterface {
 		h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idRoot, idB, 0);
 		h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idRoot, idC, 0);
 		h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idA, idD, 0);
-		h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idA, idE, 0);
+		h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idB, idE, 0);
 	};
 
 	async thing_remoteCreate(thing: Thing) {};

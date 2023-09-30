@@ -6,7 +6,7 @@
 	import Line from './Line.svelte';
 	const widgetOffset = new Point(10, -14);	// TODO: WHY is this needed, where does this value come from?
 	let lineRects: Array<LineRect> = [];
-	export let originX: number = 0;
+	export let origin = new Point();
 	export let thing: Thing;
 
 	let toggleDraw = false;
@@ -30,12 +30,17 @@
 
 	function layoutChildren() {
 		if (thing) {
-			const height = (thing.visibleProgenyHeight / 2) - 4;	// TODO: why 4?
-			const origin = new Point(originX, height);		// TODO: center of screen minus children size width over two
-			lineRects = new Layout(thing, origin).lineRects;
+			const height = (thing.halfVisibleProgenyHeight) - 4;	// TODO: why 4?
+			lineRects = new Layout(thing, origin.offsetBy(new Point(0, height))).lineRects;
 		}
 	}
 
+	function originFor(child: Thing, index: number): Point {
+		const offsetX = child.titleWidth + $lineStretch + 9;
+		const offsetY = lineRectAt(index).origin.y - (child.halfVisibleProgenyHeight);
+		return origin.offsetBy(new Point(offsetX, offsetY));
+	}
+	
 	function description() {
 		let strings: Array<string> = [];
 		for (const lineRect of lineRects) {
@@ -54,7 +59,7 @@
 			<Widget thing={child} origin={lineRectAt(index).extent.offsetBy(widgetOffset)}/>
 			<Line color={child.color} curveType={curveTypeAt(index)} rect={lineRectAt(index)}/>
 			{#if child.hasChildren && child.isExpanded}
-				<Children thing={child} originX={child.titleWidth + $lineStretch + originX + 9}/>
+				<Children thing={child} origin={originFor(child, index)}/>
 			{/if}
 		{/each}
 	{/if}

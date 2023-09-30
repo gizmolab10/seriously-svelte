@@ -43,20 +43,21 @@ export default class Thing extends Datum {
 		});
 	};
 
-	get description():		 string { return this.id + ' (\" ' + this.title + '\") '; }
-	get titleWidth():		 number { return getWidthOf(this.title) }
-	get hasChildren():		boolean { return this.hasPredicate(false); }
-	get isRoot():			boolean { return this == dbDispatch.db.hierarchy.root; }
-	get showBorder():		boolean { return this.isGrabbed || this.isEditing || this.isExemplar; }
-	get isExpanded():		boolean { return this.isRoot || get(expanded).includes(this.parentRelationshipID); }
-	get fields(): Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
-	get children():	   Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id, false, this.id); }
-	get parents():	   Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id,	true, this.id); }
-	get siblings():	   Array<Thing> { return this.firstParent?.children ?? []; }
-	get grandparent():		  Thing { return this.firstParent?.firstParent ?? dbDispatch.db.hierarchy.root; }
-	get lastChild():		  Thing { return this.children.slice(-1)[0]; }
-	get firstChild():		  Thing { return this.children[0]; }
-	get firstParent():		  Thing { return this.parents[0]; }
+	get description():				string { return this.id + ' (\" ' + this.title + '\") '; }
+	get titleWidth():				number { return getWidthOf(this.title) }
+	get halfVisibleProgenyHeight(): number { return this.visibleProgenyHeight / 2; }
+	get hasChildren():			   boolean { return this.hasPredicate(false); }
+	get isRoot():				   boolean { return this == dbDispatch.db.hierarchy.root; }
+	get showBorder():			   boolean { return this.isGrabbed || this.isEditing || this.isExemplar; }
+	get isExpanded():			   boolean { return this.isRoot || get(expanded).includes(this.parentRelationshipID); }
+	get fields():		 Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
+	get children():			  Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id, false, this.id); }
+	get parents():			  Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id,	true, this.id); }
+	get siblings():			  Array<Thing> { return this.firstParent?.children ?? []; }
+	get grandparent():				 Thing { return this.firstParent?.firstParent ?? dbDispatch.db.hierarchy.root; }
+	get lastChild():				 Thing { return this.children.slice(-1)[0]; }
+	get firstChild():				 Thing { return this.children[0]; }
+	get firstParent():				 Thing { return this.parents[0]; }
 
 	get parentRelationshipID(): string { // WRONG
 		return dbDispatch.db.hierarchy.getRelationship_whereIDEqualsTo(this.id, true)?.id ?? '';
@@ -71,6 +72,29 @@ export default class Thing extends Datum {
 			}
 		}
 		return false;
+	}
+
+	get visibleProgenyHeight(): number {
+
+		//////////////////////////////////////////////////
+		//												//
+		//			lineGap gives the height			//
+		//												//
+		//					   OR						//
+		//												//
+		//		 this has children & is expanded		//
+		//	so, add each child's visibleProgenyHeight	//
+		//												//
+		//////////////////////////////////////////////////
+		
+		let height = get(lineGap);		// default row height
+		if (this.hasChildren && this.isExpanded) {
+			height = 0;
+			for (const child of this.children) {
+				height += child.visibleProgenyHeight;
+			}
+		}
+		return height;
 	}
 
 	log(message: string) { console.log(message, this.description); }
@@ -203,29 +227,6 @@ export default class Thing extends Datum {
 			}
 		}
 		return this;
-	}
-
-	get visibleProgenyHeight(): number {
-
-		//////////////////////////////////////////////////
-		//												//
-		//			lineGap gives the height			//
-		//												//
-		//					   OR						//
-		//												//
-		//		 this has children & is expanded		//
-		//	so, add each child's visibleProgenyHeight	//
-		//												//
-		//////////////////////////////////////////////////
-		
-		let height = get(lineGap);		// default row height
-		if (this.hasChildren && this.isExpanded) {
-			height = 0;
-			for (const child of this.children) {
-				height += child.visibleProgenyHeight;
-			}
-		}
-		return height;
 	}
 
 	redraw_remoteMoveup(up: boolean, expand: boolean, relocate: boolean, extreme: boolean) {

@@ -15,27 +15,29 @@ export default class Layout {
 				const sizeX = get(lineStretch);
 				const threshold = Math.floor(half);
 				const hasAFlat = threshold != half;
-				const childrenHeight = parent.visibleProgenyHeight;
-				let sizeY = gapY - (childrenHeight / 2); // start out negative and grow positive
+				const visibleProgenyHeight = parent.visibleProgenyHeight;
+				let sizeY = gapY - (visibleProgenyHeight / 2); // start out negative and grow positive
 				let index = 0;
 				while (index < quantity) {
 					const child = children[index];
 					const direction = this.getDirection(threshold - index, hasAFlat);
 					const adjustY = this.heightAdjustement(direction);
-					const childHeight = child.visibleProgenyHeight + adjustY;
+					const childVisibleProgenyHeight = child.visibleProgenyHeight; // + adjustY;
 					if ((child.children.length > 1) && child.isExpanded) {
-						sizeY += childHeight / 2;
+						sizeY += childVisibleProgenyHeight / 2;
 					}
 					const rect = new Rect(origin, new Size(sizeX, sizeY));
 					
-					console.log('LAYOUT x:', origin.x, ' y:', sizeY, 'h:', childHeight, direction, index, child.title);
+					if (sizeY > 15) {
+						console.log('LAYOUT x:', origin.x, ' y:', sizeY, 'h:', childVisibleProgenyHeight, direction, index, child.title);
+					}
 					
-					sizeY += Math.max(childHeight, gapY);
+					sizeY += Math.max(childVisibleProgenyHeight, gapY);
 					this.lineRects.push(new LineRect(direction, rect));
 					index += 1;
 				}
 
-				console.log('LINES h:', childrenHeight, parent.isExpanded ? 'expanded:' : 'collapsed:', parent.title);
+				// console.log('LINES h:', childrenHeight, parent.isExpanded ? 'expanded:' : 'collapsed:', parent.title);
 			}
 		}
 	}

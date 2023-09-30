@@ -32,7 +32,7 @@
 
 </script>
 
-<svg width='400'
+<svg width='100%'
 	height={window.innerHeight} 
 	style='position: absolute;
 		left: 25px;

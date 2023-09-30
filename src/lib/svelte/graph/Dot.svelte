@@ -36,9 +36,7 @@
 		if (isReveal) {
 			if (thing.hasChildren) {
 				thing.toggleExpand();
-				if (!thing.isExpanded) {
-					thing.redraw_browseRight(true);
-				}
+				thing.redraw_browseRight(!thing.isExpanded, event.shiftKey, event.metaKey);
 			}
 		} else if (event.shiftKey || isGrabbed) {
 			thing.toggleGrab();

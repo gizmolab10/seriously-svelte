@@ -12,7 +12,7 @@
 	
 	function updateTriangleOrigin() {
 		if (here) {
-			triangleOrigin = new Point(19, (here.visibleProgenyHeight / 2) - 2);
+			triangleOrigin = new Point(19, (here.halfVisibleProgenyHeight) - 2);
 		}
 	}
 
@@ -51,6 +51,7 @@
 			const SHIFT = event.shiftKey;
 			switch (key) {
 				case ' ':			await editor.thing_redraw_remoteAddChildTo(grab); break;
+				case '/':			grab?.becomeHere(); break;
 				case '?':			$popupViewID = ButtonID.help; break;
 				case 'd':			await editor.thing_redraw_remoteDuplicate(grab); break;
 				case 'r':			break; // restart app
@@ -71,7 +72,7 @@
 
 <svelte:document on:keydown={handleKeyDown} />
 {#if here}
-	<Children thing={here} originX={0}/>
+	<Children thing={here} origin={new Point()}/>
 	{#if isGrabbed}
 		<svg width='30' height='30'
 			style='z-index: {ZIndex.highlights};
