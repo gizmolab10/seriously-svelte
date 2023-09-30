@@ -72,15 +72,15 @@
 
 <svelte:document on:keydown={handleKeyDown} />
 {#if here}
-	<Children thing={here} origin={new Point()}/>
+	<Children thing={here} origin={new Point(0, 4)}/>
 	{#if isGrabbed}
 		<svg width='30' height='30'
 			style='z-index: {ZIndex.highlights};
 				position: absolute;
 				left: {triangleOrigin.x - 8};
-				top: {triangleOrigin.y - 26};'>
+				top: {triangleOrigin.y - 22};'>
 			<circle cx='15' cy='15' r='14' stroke='blue' fill={constants.backgroundColor}/>
 		</svg>
 	{/if}
-	<FatTriangleButton here={here} origin={triangleOrigin.offsetBy(new Point(0, -19))}/>
+	<FatTriangleButton here={here} origin={triangleOrigin.offsetByY(-15)}/>
 {/if}

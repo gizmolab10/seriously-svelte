@@ -10,6 +10,8 @@ export class Point {
 	get verbose():			 string { return '(' + this.x + ', ' + this.y + ')'; }
 	get asSize():			   Size { return new Size(this.x, this.y); }
 	get copy():				  Point { return new Point(this.x, this.y); }
+	offsetByX(x: number):	  Point	{ return new Point(this.x + x, this.y); }
+	offsetByY(y: number):	  Point	{ return new Point(this.x, this.y + y); }
 	offsetBy(point: Point):	  Point	{ return new Point(this.x + point.x, this.y + point.y); }
 	offsetBySize(size: Size): Point	{ return new Point(this.x + size.width, this.y + size.height); }
 	distanceTo(point: Point): Point	{ return new Point(Math.abs(point.x - this.x), Math.abs(point.y - this.y)) }

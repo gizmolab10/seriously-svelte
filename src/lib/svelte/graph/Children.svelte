@@ -31,13 +31,14 @@
 	function layoutChildren() {
 		if (thing) {
 			const height = (thing.halfVisibleProgenyHeight) - 4;	// TODO: why 4?
-			lineRects = new Layout(thing, origin.offsetBy(new Point(0, height))).lineRects;
+			const childOrigin = origin.offsetByY(height);
+			lineRects = new Layout(thing, childOrigin).lineRects;
 		}
 	}
 
-	function originFor(child: Thing, index: number): Point {
+	function originForChild(child: Thing, index: number): Point {
 		const offsetX = child.titleWidth + $lineStretch + 9;
-		const offsetY = lineRectAt(index).origin.y - child.halfVisibleProgenyHeight + 4;
+		const offsetY = lineRectAt(index).origin.y - child.halfVisibleProgenyHeight - 67;
 		return origin.offsetBy(new Point(offsetX, offsetY));
 	}
 	
@@ -59,7 +60,7 @@
 			<Widget thing={child} origin={lineRectAt(index).extent.offsetBy(widgetOffset)}/>
 			<Line color={child.color} curveType={curveTypeAt(index)} rect={lineRectAt(index)}/>
 			{#if child.hasChildren && child.isExpanded}
-				<Children thing={child} origin={originFor(child, index)}/>
+				<Children thing={child} origin={originForChild(child, index)}/>
 			{/if}
 		{/each}
 	{/if}

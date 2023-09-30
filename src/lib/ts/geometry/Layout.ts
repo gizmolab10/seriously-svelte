@@ -21,7 +21,7 @@ export default class Layout {
 				while (index < quantity) {
 					const child = children[index];
 					const direction = this.getDirection(threshold - index, hasAFlat);
-					const childVisibleProgenyHeight = child.visibleProgenyHeight;
+					const childVisibleProgenyHeight = child.visibleProgenyHeight / 2;
 					if ((child.children.length > 1) && child.isExpanded) {
 						sizeY += childVisibleProgenyHeight / 2;
 					}
