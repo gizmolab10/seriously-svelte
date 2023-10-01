@@ -1,6 +1,6 @@
 <script lang=ts>
 	import { Rect, Size, Point, Thing, Signals, Layout, onMount, onDestroy, LineRect, LineCurveType, normalizeOrderOf, handleSignalOfKind } from '../../ts/common/GlobalImports';
-	import { lineGap, lineStretch } from '../../ts/managers/State';
+	import { lineGap, lineStretch, graphOffsetY } from '../../ts/managers/State';
 	import Children from './Children.svelte';
 	import Widget from './Widget.svelte';
 	import Line from './Line.svelte';

@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { Rect, Size, Point, Thing, ZIndex, Layout, editor, Signals, onMount, constants, onDestroy } from '../../ts/common/GlobalImports';
 	import { Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
-	import { idHere, idsGrabbed, idEditing, lineGap, popupViewID } from '../../ts/managers/State';
+	import { idHere, lineGap, idEditing, idsGrabbed, popupViewID, graphOffsetY } from '../../ts/managers/State';
 	import FatTriangleButton from '../kit/FatTriangleButton.svelte';
 	import Children from './Children.svelte';
 	let triangleOrigin = new Point();
@@ -10,22 +10,23 @@
 
 	onDestroy( () => { signalHandler.disconnect(); });
 	
-	function updateTriangleOrigin() {
+	function updateOrigin() {
 		if (here) {
 			triangleOrigin = new Point(19, (here.halfVisibleProgenyHeight) + 7);
+			$graphOffsetY = 30;
 		}
 	}
 
 	const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
 		if (here && (idThing == null || idThing == here.id)) {
-			updateTriangleOrigin();
+			updateOrigin();
 		}
 	});
 	
 	$: {
 		if (here == null || here.id != $idHere) {			
 			here = dbDispatch.db.hierarchy.getThing_forID($idHere);
-			updateTriangleOrigin();
+			updateOrigin();
 		}
 		if (here) { // can sometimes be null !!!!!! ????????
 			let grabbed = $idsGrabbed.includes(here.id);
@@ -72,15 +73,15 @@
 
 <svelte:document on:keydown={handleKeyDown} />
 {#if here}
-	<Children thing={here} origin={new Point(0, 4)}/>
+	<Children thing={here} origin={new Point(0, $graphOffsetY + 4)}/>
 	{#if isGrabbed}
 		<svg width='30' height='30'
 			style='z-index: {ZIndex.highlights};
 				position: absolute;
 				left: {triangleOrigin.x - 8};
-				top: {triangleOrigin.y - 22};'>
+				top: {triangleOrigin.y + $graphOffsetY - 22};'>
 			<circle cx='15' cy='15' r='14' stroke='blue' fill={constants.backgroundColor}/>
 		</svg>
 	{/if}
-	<FatTriangleButton here={here} origin={triangleOrigin.offsetByY(-15)}/>
+	<FatTriangleButton here={here} origin={triangleOrigin.offsetByY($graphOffsetY - 15)}/>
 {/if}

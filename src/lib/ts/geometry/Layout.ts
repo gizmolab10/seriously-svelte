@@ -12,24 +12,25 @@ export default class Layout {
 			if (quantity > 0) {
 				const half = quantity / 2;
 				const gapY = get(lineGap);
+				const halfGapY = gapY / 2;
 				const sizeX = get(lineStretch);
 				const threshold = Math.floor(half);
 				const hasAFlat = threshold != half;
-				const visibleProgenyHeight = parent.visibleProgenyHeight;
-				let sizeY = (gapY - visibleProgenyHeight) / 2; // start out negative and grow positive
+				const halfVisibleProgenyHeight = parent.halfVisibleProgenyHeight;
+				let sizeY = (gapY - halfVisibleProgenyHeight) / 2; // start out negative and grow positive
 				let index = 0;
 				while (index < quantity) {
 					const child = children[index];
 					const direction = this.getDirection(threshold - index, hasAFlat);
-					const childVisibleProgenyHeight = child.visibleProgenyHeight / 2;
+					const childHalfVisibleProgenyHeight = child.halfVisibleProgenyHeight;
 					if ((child.children.length > 1) && child.isExpanded) {
-						sizeY += childVisibleProgenyHeight / 2;
+						sizeY += childHalfVisibleProgenyHeight - halfGapY;
 					}
 					const rect = new Rect(origin, new Size(sizeX, sizeY));
 					
-					console.log('LAYOUT o:', origin.y, ' y:', sizeY, 'h:', childVisibleProgenyHeight, direction, index, child.title);
+					console.log('LAYOUT o.y:', origin.y, ' s.y:', sizeY, 'h:', childHalfVisibleProgenyHeight, direction, index, child.title);
 					
-					sizeY += Math.max(childVisibleProgenyHeight, gapY);
+					sizeY += Math.max(childHalfVisibleProgenyHeight, gapY);
 					this.lineRects.push(new LineRect(direction, rect));
 					index += 1;
 				}

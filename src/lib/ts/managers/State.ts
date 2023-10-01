@@ -12,6 +12,7 @@ export const showDetails		= writable<boolean>();
 export const isBusy				= writable<boolean>();
 export const bulkName			= writable<string>();
 export const dbType				= writable<string>();
+export const graphOffsetY		= writable<number>();
 export const dotDiameter		= writable<number>();
 export const lineStretch		= writable<number>();
 export const lineGap			= writable<number>();
