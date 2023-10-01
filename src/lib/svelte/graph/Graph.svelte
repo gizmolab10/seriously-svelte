@@ -13,7 +13,7 @@
 	function updateOrigin() {
 		if (here) {
 			triangleOrigin = new Point(19, (here.halfVisibleProgenyHeight) + 7);
-			$graphOffsetY = 30;
+			$graphOffsetY = 0;
 		}
 	}
 

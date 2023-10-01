@@ -16,21 +16,21 @@ export default class Layout {
 				const sizeX = get(lineStretch);
 				const threshold = Math.floor(half);
 				const hasAFlat = threshold != half;
-				const halfVisibleProgenyHeight = parent.halfVisibleProgenyHeight;
-				let sizeY = (gapY - halfVisibleProgenyHeight) / 2; // start out negative and grow positive
+				const visibleProgenyHeight = parent.visibleProgenyHeight;
+				const initialSizeY = (gapY - visibleProgenyHeight) / 2; // start out negative and grow positive
+
 				let index = 0;
+				let sumOfSiblingsAbove = 0;
 				while (index < quantity) {
 					const child = children[index];
 					const direction = this.getDirection(threshold - index, hasAFlat);
 					const childHalfVisibleProgenyHeight = child.halfVisibleProgenyHeight;
-					if ((child.children.length > 1) && child.isExpanded) {
-						sizeY += childHalfVisibleProgenyHeight - halfGapY;
-					}
-					const rect = new Rect(origin, new Size(sizeX, sizeY));
+					const sizeY = initialSizeY + sumOfSiblingsAbove + childHalfVisibleProgenyHeight;
+					const rect = new Rect(origin, new Size(sizeX, sizeY - halfGapY));
 					
 					console.log('LAYOUT o.y:', origin.y, ' s.y:', sizeY, 'h:', childHalfVisibleProgenyHeight, direction, index, child.title);
 					
-					sizeY += Math.max(childHalfVisibleProgenyHeight, gapY);
+					sumOfSiblingsAbove += child.visibleProgenyHeight;
 					this.lineRects.push(new LineRect(direction, rect));
 					index += 1;
 				}

@@ -4,13 +4,14 @@
 	import Children from './Children.svelte';
 	import Widget from './Widget.svelte';
 	import Line from './Line.svelte';
-	const widgetOffset = new Point(10, -14);	// TODO: WHY is this needed, where does this value come from?
-	let lineRects: Array<LineRect> = [];
 	export let origin = new Point();
 	export let thing: Thing;
 
+	const widgetOffset = new Point(10, -14);	// TODO: WHY is this needed, where does this value come from?
+	let lineRects: Array<LineRect> = [];
 	let toggleDraw = false;
 	let children = thing.children;
+
 	onMount( () => { layoutChildren(); });
 	onDestroy( () => { signalHandler.disconnect(); });
 	function lineRectAt(index: number): LineRect { return lineRects[index]; }
@@ -36,9 +37,13 @@
 		}
 	}
 
+	function getOffsetY(index: number) {
+	}
+
 	function originForChild(child: Thing, index: number): Point {
+		const rect = lineRectAt(index);
+		const offsetY = rect.extent.y + - child.halfVisibleProgenyHeight;
 		const offsetX = child.titleWidth + $lineStretch + 9;
-		const offsetY = lineRectAt(index).origin.y - child.halfVisibleProgenyHeight - 67;
 		return origin.offsetBy(new Point(offsetX, offsetY));
 	}
 	
