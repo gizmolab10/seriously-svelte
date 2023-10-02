@@ -37,9 +37,6 @@
 		}
 	}
 
-	function getOffsetY(index: number) {
-	}
-
 	function originForChild(child: Thing, index: number): Point {
 		const rect = lineRectAt(index);
 		const offsetY = rect.extent.y + - child.halfVisibleProgenyHeight;

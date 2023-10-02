@@ -257,7 +257,9 @@ export default class Thing extends Datum {
 	redraw_browseRight(right: boolean, generational: boolean, extreme: boolean, toTop: boolean = false, moveHere: boolean = false) {
 		let newGrab: Thing | null = right ? toTop ? this.lastChild : this.firstChild : this.firstParent;
 		if (!right) {
-			if (generational) {
+			if (extreme) {
+				dbDispatch.db.hierarchy.root?.becomeHere();	// tells graph to update line rects
+			} else if (generational) {
 				if (this.isExpanded) {
 					this.collapse();
 					newGrab = null;

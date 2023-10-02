@@ -3,11 +3,36 @@ import { idsGrabbed } from './State';
 
 //////////////////////////////////////
 //									//
-//	 beyond basic CRUD operations	//
+//	 		handle key events		//
+//	 and compound CRUD operations	//
 //									//
 //////////////////////////////////////
 
 export default class Editor {
+
+	async handleKeyDown(event: KeyboardEvent) {
+		const grab = dbDispatch.db.hierarchy.grabs.furthestGrab(true);
+		if (event.type == 'keydown') {
+			const RELOCATE = event.altKey;
+			const GENERATIONAL = event.shiftKey;
+			const EXTREME = GENERATIONAL && RELOCATE;
+			if (grab) {
+				switch (event.key.toLowerCase()) {
+					case 'delete':
+					case ' ':			await this.thing_redraw_remoteAddChildTo(grab); break;
+					case 'd':			await this.thing_redraw_remoteDuplicate(grab); break;
+					case 'tab':			await this.thing_redraw_remoteAddChildTo(grab.firstParent); break; // Title also makes this call
+					case 'arrowright':	await this.thing_redraw_remoteMoveRight(grab, true, GENERATIONAL, RELOCATE, EXTREME); break;
+					case 'arrowleft':	await this.thing_redraw_remoteMoveRight(grab, false, GENERATIONAL, RELOCATE, EXTREME); break;
+				}
+			}
+			switch (event.key.toLowerCase()) {
+				case 'backspace':	await this.grabs_redraw_remoteDelete(); break;
+				case 'arrowup':		await this.furthestGrab_redraw_remoteMoveUp(true, GENERATIONAL, RELOCATE, EXTREME); break;
+				case 'arrowdown':	await this.furthestGrab_redraw_remoteMoveUp(false, GENERATIONAL, RELOCATE, EXTREME); break;
+			}
+		}
+	}
 
 	//////////////////
 	//		ADD		//

@@ -37,34 +37,23 @@
 	}
 
 	async function handleKeyDown(event) {
-		const grab = dbDispatch.db.hierarchy.grabs.furthestGrab(true);
+		let grab = dbDispatch.db.hierarchy.grabs.furthestGrab(true);
 		if ($idEditing)			{ return; } // let Title component consume the events
 		if (event.key == undefined)	{ alert('no key for ' + event.type); return; }
 		if (!grab) {
 			const root = dbDispatch.db.hierarchy.root;
 			root?.becomeHere();
 			root?.grabOnly(); // to update crumbs and dots
+			grab = root;
 		}
 		if (event.type == 'keydown') {
-			const key = event.key.toLowerCase();
-			const COMMAND = event.metaKey;
-			const OPTION = event.altKey;
-			const SHIFT = event.shiftKey;
-			switch (key) {
-				case ' ':			await editor.thing_redraw_remoteAddChildTo(grab); break;
-				case '/':			grab?.becomeHere(); break;
-				case '?':			$popupViewID = ButtonID.help; break;
-				case 'd':			await editor.thing_redraw_remoteDuplicate(grab); break;
-				case 'r':			break; // restart app
-				case 't':			alert('PARENT-CHILD SWAP'); break;
-				case 'tab':			await editor.thing_redraw_remoteAddChildTo(grab.firstParent); break; // Title also makes this call
-				case 'delete':
-				case 'backspace':	await editor.grabs_redraw_remoteDelete(); break;
-				case 'arrowup':		await editor.furthestGrab_redraw_remoteMoveUp(true, SHIFT, OPTION, COMMAND); break;
-				case 'arrowdown':	await editor.furthestGrab_redraw_remoteMoveUp(false, SHIFT, OPTION, COMMAND); break;
-				case 'arrowright':	await editor.thing_redraw_remoteMoveRight(grab, true, SHIFT, OPTION, COMMAND); break;
-				case 'arrowleft':	await editor.thing_redraw_remoteMoveRight(grab, false, SHIFT, OPTION, COMMAND); break;
-				case 'enter':		grab.startEdit(); break;
+			switch (event.key.toLowerCase()) {
+				case '/':		grab?.becomeHere(); break;
+				case 'enter':	grab?.startEdit(); break;
+				case '?':		$popupViewID = ButtonID.help; break;
+				case 'r':		break; // restart app
+				case 't':		alert('PARENT-CHILD SWAP'); break;
+				default:		await editor.handleKeyDown(event); break;
 			}
 		}
 	}

@@ -28,14 +28,14 @@ export default class Layout {
 					const sizeY = initialSizeY + sumOfSiblingsAbove + childHalfVisibleProgenyHeight;
 					const rect = new Rect(origin, new Size(sizeX, sizeY - halfGapY));
 					
-					console.log('LAYOUT o.y:', origin.y, ' s.y:', sizeY, 'h:', childHalfVisibleProgenyHeight, direction, index, child.title);
+					// console.log('LINE o.y:', origin.y, ' s.y:', sizeY, 'h:', childHalfVisibleProgenyHeight, direction, index, child.title);
 					
 					sumOfSiblingsAbove += child.visibleProgenyHeight;
 					this.lineRects.push(new LineRect(direction, rect));
 					index += 1;
 				}
 
-				// console.log('LINES h:', childrenHeight, parent.isExpanded ? 'expanded:' : 'collapsed:', parent.title);
+				console.log('LAYOUT', origin.x, parent.title);
 			}
 		}
 	}
