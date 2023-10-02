@@ -5,26 +5,14 @@
 	import LabelButton from '../kit/LabelButton.svelte';
 	import Label from '../kit/Label.svelte';
 
+	function handleBuildsClick(event) { $popupViewID = ButtonID.buildNotes; }
+	function handleDBTypeAt(index) { dbDispatch.changeDBTo(menuItems[index].id); }
+
 	const menuItems = [
-		{ id: DBType.local,		 label: 'built in', action: () => { handleDBTypeAt(0); } },
+		{ id: DBType.local,	   label: 'built in', action: () => { handleDBTypeAt(0); } },
 		{ id: DBType.firebase, label: 'firebase', action: () => { handleDBTypeAt(1); } },
 		{ id: DBType.airtable, label: 'airtable', action: () => { handleDBTypeAt(2); } }
 	];
-
-	function handleBuildsClick(event) {
-		$popupViewID = ButtonID.buildNotes;
-	}
-
-	function handleDBTypeAt(index) {
-		const type = menuItems[index].id;
-		const db = dbDispatch.dbForType(type);
-		$dbLoadTime = db.loadTime;
-		persistLocal.writeToKey(PersistID.db, type);
-		if (type != DBType.local && !db.hasData) {
-			$isBusy = true;		// set this before changing $dbType so panel will show 'loading ...'
-		}
-		$dbType = type;			// tell components to render the [possibly previously] fetched data
-	}
 
 </script>
 

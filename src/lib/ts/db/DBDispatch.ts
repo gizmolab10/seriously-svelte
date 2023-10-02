@@ -1,5 +1,5 @@
 import { dbType, isBusy, idHere, idsGrabbed, dbLoadTime, thingsArrived } from '../managers/State';
-import { DBType, Relationship, persistLocal } from '../common/GlobalImports';
+import { DBType, PersistID, Relationship, persistLocal } from '../common/GlobalImports';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
@@ -7,6 +7,8 @@ import { dbLocal } from './DBLocal';
 
 export default class DBDispatch {
 	db: DBInterface;
+	updateDBForType(type: string) { this.db = this.dbForType(type); }
+	nextDB(forward: boolean) { this.changeDBTo(this.getNextDB(forward)); }
 
 	constructor() {
 		this.db = dbFirebase;
@@ -21,7 +23,21 @@ export default class DBDispatch {
 		})
 	}
 
-	updateDBForType(type: string) { this.db = this.dbForType(type); }
+	getNextDB(forward: boolean): DBType {
+		if (forward) {
+			switch (this.db.dbType) {
+				case DBType.airtable: return DBType.local;
+				case DBType.local:	  return DBType.firebase;
+				default:			  return DBType.airtable;
+			}
+		} else {
+			switch (this.db.dbType) {
+				case DBType.airtable: return DBType.firebase;
+				case DBType.local:	  return DBType.airtable;
+				default:			  return DBType.local;
+			}
+		}		
+	}
 
 	dbForType(type: string): DBInterface {
 		switch (type) {
@@ -29,6 +45,16 @@ export default class DBDispatch {
 			case DBType.firebase: return dbFirebase;
 			default:			  return dbLocal;
 		}
+	}
+
+	changeDBTo(newDBType: DBType) {
+		const db = dbDispatch.dbForType(newDBType);
+		dbLoadTime.set(db.loadTime);
+		persistLocal.writeToKey(PersistID.db, newDBType);
+		if (newDBType != DBType.local && !db.hasData) {
+			isBusy.set(true);		// set this before changing $dbType so panel will show 'loading ...'
+		}
+		dbType.set(newDBType);			// tell components to render the [possibly previously] fetched data
 	}
 
 	updateHierarchy(type: string) {

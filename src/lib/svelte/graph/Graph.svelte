@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { Rect, Size, Point, Thing, ZIndex, Layout, editor, Signals, onMount, constants, onDestroy } from '../../ts/common/GlobalImports';
-	import { Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
+	import { Rect, Size, Point, Thing, ZIndex, Layout, editor, Signals, onMount, onDestroy } from '../../ts/common/GlobalImports';
+	import { constants, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
 	import { idHere, lineGap, idEditing, idsGrabbed, popupViewID, graphOffsetY } from '../../ts/managers/State';
 	import FatTriangleButton from '../kit/FatTriangleButton.svelte';
 	import Children from './Children.svelte';
@@ -48,11 +48,13 @@
 		}
 		if (event.type == 'keydown') {
 			switch (event.key.toLowerCase()) {
-				case '/':		grab?.becomeHere(); break;
-				case 'enter':	grab?.startEdit(); break;
-				case '?':		$popupViewID = ButtonID.help; break;
 				case 'r':		break; // restart app
+				case 'enter':	grab?.startEdit(); break;
+				case '/':		grab?.becomeHere(); break;
+				case ']':		dbDispatch.nextDB(true); break;
+				case '[':		dbDispatch.nextDB(false); break;
 				case 't':		alert('PARENT-CHILD SWAP'); break;
+				case '?':		$popupViewID = ButtonID.help; break;
 				default:		await editor.handleKeyDown(event); break;
 			}
 		}
