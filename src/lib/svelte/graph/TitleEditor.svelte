@@ -53,7 +53,9 @@
 	function stopAndClearEditing(invokeBlur: boolean = true) {
 		stopEditing(invokeBlur);
 		setTimeout(() => {		// eliminate infinite recursion
-			$idEditing = null;
+			if ($idEditing == thing.id) {				
+				$idEditing = null;
+			}
 		}, 20);
 	}
 
@@ -75,8 +77,8 @@
 	function handleFocus(event) {
 		if (!isEditing) {
 			isEditing = true;
-			thing.startEdit();
 			thing.grabOnly()
+			thing.startEdit();
 		}
 	}
 

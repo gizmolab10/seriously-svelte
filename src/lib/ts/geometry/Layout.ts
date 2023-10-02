@@ -35,7 +35,7 @@ export default class Layout {
 					index += 1;
 				}
 
-				console.log('LAYOUT', origin.x, parent.title);
+				// console.log('LAYOUT', origin.x, parent.title);
 			}
 		}
 	}
