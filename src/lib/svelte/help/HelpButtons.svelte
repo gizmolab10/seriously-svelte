@@ -15,7 +15,7 @@
 
 	const updateTitles = () => {
 		dotsTitle = showingDots ? 'How the <b>Dots</b> work' : 'Dots';
-		browseTitle = showingBrowse ? '<b>Browsing</b> (changing which item is selected)' : 'Browse';
+		browseTitle = showingBrowse ? '<b>Browsing</b> (changing which item is <b>selected</b>)' : 'Browse';
 		selectionTitle = showingSelection ? 'When a item is <b>selected</b>' : 'Select';
 		focusTitle = showingFocus ? 'Changing the <b>Focus</b>' : 'Focus';
 	}
