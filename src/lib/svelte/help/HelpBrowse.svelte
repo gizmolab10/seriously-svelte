@@ -3,10 +3,11 @@
 
 <div>
 	<ul class='help-ul'>
-		<li class='help-li'>To <b>browse</b>, tap the arrow keys (including up and down).
-		<li class='help-li'>Hold the <i>Shift</i> key down to expand or collapse the selected item.
+		<li class='help-li'>To <b>browse</b>, tap the arrow keys (including up and down). This will change which item is <b>selected</b>.
+		<li class='help-li'><b>Browsing</b> to the right will reveal the <b>selected</b> item's children and <b>select</b> the top one.
+		<li class='help-li'><b>Browsing</b> to the left will change the <b>focus</b> to the item's parent.
+		<li class='help-li'>Hold the <i>Shift</i> key down to reveal or hide the <b>selected</b> item's children.
 		<li class='help-li'>Hold the <i>Option</i> and <i>Left Arrow</i> keys down to <b>browse</b> all the way to the leff.
-		<li class='help-li'>As you <b>browse</b> left or right, buttons above the graph show your location in the hierarchy. You can click on them to quickly change your location.
 	</ul>
 </div>
 
