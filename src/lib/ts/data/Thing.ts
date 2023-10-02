@@ -202,7 +202,7 @@ export default class Thing extends Datum {
 				if (remoteWrite) {
 					setTimeout(() => {
 						(async () => {
-							await dbDispatch.relationship_remoteWrite(relationship);
+							await relationship.remoteWrite();
 						})();
 					}, 100);
 				}

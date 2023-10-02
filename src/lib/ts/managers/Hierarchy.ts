@@ -199,7 +199,7 @@ export default class Hierarchy {
 
 	async rememberRelationship_remoteCreate(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none) {
 		const relationship = this.rememberRelationship_runtimeCreate(idRelationship, idPredicate, idFrom, idTo, order, creationFlag);
-		await dbDispatch.relationship_remoteWrite(relationship);
+		await relationship.remoteWrite();
 		return relationship;
 	}
 

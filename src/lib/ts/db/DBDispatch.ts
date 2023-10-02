@@ -23,22 +23,6 @@ export default class DBDispatch {
 		})
 	}
 
-	getNextDB(forward: boolean): DBType {
-		if (forward) {
-			switch (this.db.dbType) {
-				case DBType.airtable: return DBType.local;
-				case DBType.local:	  return DBType.firebase;
-				default:			  return DBType.airtable;
-			}
-		} else {
-			switch (this.db.dbType) {
-				case DBType.airtable: return DBType.firebase;
-				case DBType.local:	  return DBType.airtable;
-				default:			  return DBType.local;
-			}
-		}		
-	}
-
 	dbForType(type: string): DBInterface {
 		switch (type) {
 			case DBType.airtable: return dbAirtable;
@@ -55,6 +39,22 @@ export default class DBDispatch {
 			isBusy.set(true);		// set this before changing $dbType so panel will show 'loading ...'
 		}
 		dbType.set(newDBType);			// tell components to render the [possibly previously] fetched data
+	}
+
+	getNextDB(forward: boolean): DBType {
+		if (forward) {
+			switch (this.db.dbType) {
+				case DBType.airtable: return DBType.local;
+				case DBType.local:	  return DBType.firebase;
+				default:			  return DBType.airtable;
+			}
+		} else {
+			switch (this.db.dbType) {
+				case DBType.airtable: return DBType.firebase;
+				case DBType.local:	  return DBType.airtable;
+				default:			  return DBType.local;
+			}
+		}		
 	}
 
 	updateHierarchy(type: string) {
@@ -81,15 +81,6 @@ export default class DBDispatch {
 		}
 	}
 
-	async relationship_remoteWrite(relationship: Relationship) {
-		if (!relationship.awaitingCreation) {
-			if (relationship.isRemotelyStored) {
-				await this.db.relationship_remoteUpdate(relationship);
-			} else {
-				await this.db.relationship_remoteCreate(relationship);
-			}
-		}
-	}
 }
 
 export const dbDispatch = new DBDispatch();

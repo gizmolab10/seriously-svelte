@@ -48,14 +48,14 @@
 		}
 		if (event.type == 'keydown') {
 			switch (event.key.toLowerCase()) {
-				case 'r':		break; // restart app
-				case 'enter':	grab?.startEdit(); break;
-				case '/':		grab?.becomeHere(); break;
-				case ']':		dbDispatch.nextDB(true); break;
-				case '[':		dbDispatch.nextDB(false); break;
-				case 't':		alert('PARENT-CHILD SWAP'); break;
-				case '?':		$popupViewID = ButtonID.help; break;
-				default:		await editor.handleKeyDown(event); break;
+				case 'r':	  break; // restart app
+				case 'enter': grab?.startEdit(); break;
+				case '/':	  grab?.becomeHere(); break;
+				case 't':	  alert('PARENT-CHILD SWAP'); break;
+				case '?':	  $popupViewID = ButtonID.help; break;
+				case ']':
+				case '[':	  dbDispatch.nextDB(key == ']'); break;
+				default:	  await editor.handleKeyDown(event); break; // editor-specific key values
 			}
 		}
 	}

@@ -31,4 +31,14 @@ export default class Relationship extends Datum {
 		return false;
 	}
 
+	async remoteWrite() {
+		if (!this.awaitingCreation) {
+			if (this.isRemotelyStored) {
+				await dbDispatch.db.relationship_remoteUpdate(this);
+			} else {
+				await dbDispatch.db.relationship_remoteCreate(this);
+			}
+		}
+	}
+
 }

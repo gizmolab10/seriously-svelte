@@ -61,7 +61,7 @@ export default class Editor {
 		parent.becomeHere();
 		child.startEdit();
 		child.grabOnly();
-		await dbDispatch.relationship_remoteWrite(relationship);
+		await relationship.remoteWrite();
 	}
 
 	////////////////////
