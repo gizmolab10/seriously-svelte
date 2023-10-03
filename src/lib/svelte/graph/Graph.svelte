@@ -47,7 +47,8 @@
 			grab = root;
 		}
 		if (event.type == 'keydown') {
-			switch (event.key.toLowerCase()) {
+			const key = event.key.toLowerCase();
+			switch (key) {
 				case 'r':	  break; // restart app
 				case 'enter': grab?.startEdit(); break;
 				case '/':	  grab?.becomeHere(); break;

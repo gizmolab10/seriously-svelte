@@ -36,7 +36,10 @@
 		if (isReveal) {
 			if (thing.hasChildren) {
 				thing.toggleExpand();
-				thing.redraw_browseRight(!thing.isExpanded, event.shiftKey, event.metaKey);
+				const OPTION = event.altKey;
+				const SHIFT = event.shiftKey;
+				const EXTREME = SHIFT && OPTION;
+				thing.redraw_browseRight(!thing.isExpanded, SHIFT, EXTREME);
 			}
 		} else if (event.shiftKey || isGrabbed) {
 			thing.toggleGrab();

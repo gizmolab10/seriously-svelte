@@ -1,7 +1,6 @@
 import { get, Thing, DBType, DataKind, signal, Signals, constants, Hierarchy, copyObject, Predicate, Relationship, CreationFlag } from '../common/GlobalImports';
 import { doc, addDoc, setDoc, deleteDoc, getDocs, collection, onSnapshot, getFirestore } from 'firebase/firestore';
 import { DocumentData, DocumentChange, DocumentReference, CollectionReference } from 'firebase/firestore';
-import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
 import { bulkName } from '../managers/State';
 import DBInterface from './DBInterface';
@@ -26,7 +25,6 @@ export default class DBFirebase implements DBInterface {
 	dbType = DBType.firebase;
 	collectionName = 'Bulks';
 	app = initializeApp(this.firebaseConfig);
-	analytics = getAnalytics(this.app);
 	db = getFirestore(this.app);
 	_hierarchy: Hierarchy | null = null;
 	thingsCollection: CollectionReference | null = null;

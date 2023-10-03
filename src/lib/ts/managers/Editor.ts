@@ -13,23 +13,23 @@ export default class Editor {
 	async handleKeyDown(event: KeyboardEvent) {
 		const grab = dbDispatch.db.hierarchy.grabs.furthestGrab(true);
 		if (event.type == 'keydown') {
-			const RELOCATE = event.altKey;
-			const GENERATIONAL = event.shiftKey;
-			const EXTREME = GENERATIONAL && RELOCATE;
+			const OPTION = event.altKey;
+			const SHIFT = event.shiftKey;
+			const EXTREME = SHIFT && OPTION;
 			if (grab) {
 				switch (event.key.toLowerCase()) {
 					case 'delete':
 					case ' ':			await this.thing_redraw_remoteAddChildTo(grab); break;
 					case 'd':			await this.thing_redraw_remoteDuplicate(grab); break;
 					case 'tab':			await this.thing_redraw_remoteAddChildTo(grab.firstParent); break; // Title also makes this call
-					case 'arrowright':	await this.thing_redraw_remoteMoveRight(grab, true, GENERATIONAL, RELOCATE, EXTREME); break;
-					case 'arrowleft':	await this.thing_redraw_remoteMoveRight(grab, false, GENERATIONAL, RELOCATE, EXTREME); break;
+					case 'arrowright':	await this.thing_redraw_remoteMoveRight(grab, true, SHIFT, OPTION, EXTREME); break;
+					case 'arrowleft':	await this.thing_redraw_remoteMoveRight(grab, false, SHIFT, OPTION, EXTREME); break;
 				}
 			}
 			switch (event.key.toLowerCase()) {
 				case 'backspace':	await this.grabs_redraw_remoteDelete(); break;
-				case 'arrowup':		await this.furthestGrab_redraw_remoteMoveUp(true, GENERATIONAL, RELOCATE, EXTREME); break;
-				case 'arrowdown':	await this.furthestGrab_redraw_remoteMoveUp(false, GENERATIONAL, RELOCATE, EXTREME); break;
+				case 'arrowup':		await this.furthestGrab_redraw_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
+				case 'arrowdown':	await this.furthestGrab_redraw_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
 			}
 		}
 	}
@@ -68,16 +68,16 @@ export default class Editor {
 	//		MOVE	  //
 	////////////////////
 
-	async thing_redraw_remoteMoveRight(thing: Thing, right: boolean, generational: boolean, relocate: boolean, extreme: boolean) {
-		if (relocate) {
-			await this.thing_redraw_remoteRelocateRight(thing, right, extreme);
+	async thing_redraw_remoteMoveRight(thing: Thing, RIGHT: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
+		if (OPTION) {
+			await this.thing_redraw_remoteRelocateRight(thing, RIGHT, EXTREME);
 		} else {
-			thing.redraw_browseRight(right, generational, extreme);
+			thing.redraw_browseRight(RIGHT, SHIFT, EXTREME);
 		}
 	}
 
-	async thing_redraw_remoteRelocateRight(thing: Thing, right: boolean, extreme: boolean) {
-		const newParent = right ? thing.nextSibling(false) : thing.grandparent;
+	async thing_redraw_remoteRelocateRight(thing: Thing, RIGHT: boolean, EXTREME: boolean) {
+		const newParent = RIGHT ? thing.nextSibling(false) : thing.grandparent;
 		if (newParent) {
 			const parent = thing.firstParent;
 
@@ -102,9 +102,9 @@ export default class Editor {
 		}
 	}
 
-	async furthestGrab_redraw_remoteMoveUp(up: boolean, expand: boolean, relocate: boolean, extreme: boolean) {
+	async furthestGrab_redraw_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const grab = dbDispatch.db.hierarchy.grabs.furthestGrab(up);
-		grab?.redraw_remoteMoveup(up, expand, relocate, extreme);
+		grab?.redraw_remoteMoveup(up, SHIFT, OPTION, EXTREME);
 	}
 
 	//////////////////////

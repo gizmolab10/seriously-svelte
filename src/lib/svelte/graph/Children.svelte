@@ -1,5 +1,5 @@
 <script lang=ts>
-	import { Rect, Size, Point, Thing, Signals, Layout, onMount, onDestroy, LineRect, LineCurveType, normalizeOrderOf, handleSignalOfKind } from '../../ts/common/GlobalImports';
+	import { noop, Rect, Size, Point, Thing, Signals, Layout, onMount, onDestroy, LineRect, LineCurveType, normalizeOrderOf, handleSignalOfKind } from '../../ts/common/GlobalImports';
 	import { lineGap, lineStretch, graphOffsetY } from '../../ts/managers/State';
 	import Children from './Children.svelte';
 	import Widget from './Widget.svelte';
@@ -38,8 +38,11 @@
 	}
 
 	function originForChild(child: Thing, index: number): Point {
+		if (child.title == 'Al is my voodoo dood') {
+			noop();
+		}
 		const rect = lineRectAt(index);
-		const offsetY = rect.extent.y + - child.halfVisibleProgenyHeight;
+		const offsetY = rect.extent.y - child.halfVisibleProgenyHeight;
 		const offsetX = child.titleWidth + $lineStretch + 9;
 		return origin.offsetBy(new Point(offsetX, offsetY));
 	}

@@ -229,14 +229,14 @@ export default class Thing extends Datum {
 		return this;
 	}
 
-	redraw_remoteMoveup(up: boolean, expand: boolean, relocate: boolean, extreme: boolean) {
+	redraw_remoteMoveup(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const siblings = this.siblings;
 		if (!siblings || siblings.length == 0) {
-				this.redraw_browseRight(true, extreme, up);
+				this.redraw_browseRight(true, EXTREME, up);
 		} else {
 			const index = siblings.indexOf(this);
 			const newIndex = index.increment(!up, siblings.length);
-			if (relocate) {
+			if (OPTION) {
 				const wrapped = up ? (index == 0) : (index == siblings.length - 1);
 				const goose = ((wrapped == up) ? 1 : -1) * constants.orderIncrement;
 				const newOrder =	newIndex + goose;
@@ -245,7 +245,7 @@ export default class Thing extends Datum {
 				signal(Signals.childrenOf, this.firstParent.id);
 			} else {
 				const newGrab = siblings[newIndex];
-				if (expand) {
+				if (SHIFT) {
 					newGrab?.toggleGrab()
 				} else {
 					newGrab?.grabOnly();
@@ -254,29 +254,30 @@ export default class Thing extends Datum {
 		}
 	}
 
-	redraw_browseRight(right: boolean, generational: boolean, extreme: boolean, toTop: boolean = false, moveHere: boolean = false) {
-		let newGrab: Thing | null = right ? toTop ? this.lastChild : this.firstChild : this.firstParent;
-		if (!right) {
-			if (extreme) {
+	redraw_browseRight(RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, toTop: boolean = false, moveHere: boolean = false) {
+		let newGrab: Thing | null = RIGHT ? toTop ? this.lastChild : this.firstChild : this.firstParent;
+		if (!RIGHT) {
+			if (EXTREME) {
 				dbDispatch.db.hierarchy.root?.becomeHere();	// tells graph to update line rects
-			} else if (generational) {
+			} else if (SHIFT) {
 				if (this.isExpanded) {
 					this.collapse();
 					newGrab = null;
-				} else {
-					this.firstParent?.collapse();
+					signal(Signals.childrenOf, null);			// tell graph to update line rects
 				}
+			} else {
+				this.firstParent?.collapse();
 				signal(Signals.childrenOf, null);			// tell graph to update line rects
 			}
 		} else if (this.hasChildren) {
-			if (generational) {
+			if (SHIFT) {
 				newGrab = null;
 			}
 			this.expand();
 			signal(Signals.childrenOf, null);			// tell graph to update line rects
 		}
-		if (moveHere || (!right && this.id == get(idHere))) {
-			const newHere = right ? this : this.grandparent;
+		const newHere = RIGHT ? this : this.grandparent;
+		if (moveHere || (!RIGHT && !newHere.isExpanded && this.id == get(idHere))) {
 			newHere.becomeHere();
 		}
 		idEditing.set(null);
