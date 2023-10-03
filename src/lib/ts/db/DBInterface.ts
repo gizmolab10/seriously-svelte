@@ -3,15 +3,15 @@ import { Thing, Hierarchy, Relationship } from '../common/GlobalImports';
 export enum DBType {
 	airtable = 'airtable',
 	firebase = 'firebase',
-	local		= 'local',
+	local	 = 'local',
 }
 
 export enum DataKind {
-	users				= 'Users',
-	access				= 'Access',
-	things				= 'Things',
-	predicates		= 'Predicates',
 	relationships = 'Relationships',
+	predicates	  = 'Predicates',
+	things		  = 'Things',
+	access		  = 'Access',
+	users		  = 'Users',
 }
 
 export default interface DBInterface {

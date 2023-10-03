@@ -308,8 +308,8 @@ export default class DBFirebase implements DBInterface {
 	async rememberValidatedDocument(dataKind: DataKind, id: string, data: DocumentData) {
 		if (DBFirebase.isValidOfKind(dataKind, data)) {
 			switch (dataKind) {
-				case DataKind.things:					this.hierarchy.rememberThing_runtimeCreate(id, data.title, data.color, data.trait, -1, true); break;
-				case DataKind.predicates:			this.hierarchy.rememberPredicate_runtimeCreate(id, data.kind); break;
+				case DataKind.things:			this.hierarchy.rememberThing_runtimeCreate(id, data.title, data.color, data.trait, -1, true); break;
+				case DataKind.predicates:		this.hierarchy.rememberPredicate_runtimeCreate(id, data.kind); break;
 				case DataKind.relationships:	await this.hierarchy.rememberRelationship_remoteCreateNoDuplicate(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
 			}
 		}

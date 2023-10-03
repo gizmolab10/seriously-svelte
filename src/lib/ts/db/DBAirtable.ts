@@ -3,18 +3,20 @@ import { thingsArrived } from '../managers/State';
 import DBInterface from './DBInterface';
 import Airtable from 'airtable';
 
-///////////////////////////////
-//													//
-//		users								//
-//		things								//
-//		access								//
-//		relationships				//
-//		predicates						//
-//													//
-///////////////////////////////
+//////////////////////////////
+//							//
+//		users				//
+//		things				//
+//		access				//
+//		relationships		//
+//		predicates			//
+//							//
+//////////////////////////////
 
 export default class DBAirtable implements DBInterface {
-	base = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
+	basePublic = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
+	baseCatalist = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('apphGUCbYIEJLvRrR');
+	base = this.baseCatalist;
 	relationships_table = this.base(DataKind.relationships);
 	predicates_table = this.base(DataKind.predicates);
 	things_table = this.base(DataKind.things);
@@ -22,9 +24,10 @@ export default class DBAirtable implements DBInterface {
 	users_table = this.base(DataKind.users);
 	_hierarchy: Hierarchy | null = null;
 	dbType = DBType.airtable;
-	things: Thing[] = [];
 	hasData = false;
 	loadTime = null;
+	//apphGUCbYIEJLvRrR/tblX6p54PWDNivXTV/viwNcWhtiMJSqXthF
+	//appq1IjzmiRdlZi3H/tblkGEeKXY5U4YcyL/viwGBm0IG8ie4CFvn
 
 	relationships_errorMessage = 'Error in Relationships:';
 	things_errorMessage = 'Error in Things:';
@@ -37,20 +40,20 @@ export default class DBAirtable implements DBInterface {
 	}
 
 	async setupDB() {
+		await this.things_readAll()
 		await this.predicates_readAll();
 		await this.relationships_readAll();
 		await this.access_readAll();
 		await this.users_readAll();
-		await this.things_readAll()
 	}
 
-	/////////////////////////////
-	//				THINGS					//
-	/////////////////////////////
+	//////////////////////////////
+	//			THINGS			//
+	//////////////////////////////
 
 	async things_readAll() {
-		this.hierarchy.knownT_byID = {}; // clear
-		this.things =[];
+		this.hierarchy.knownTs = []; // clear
+		this.hierarchy.knownT_byID = {};
 
 		try {
 			const select = this.things_table.select();
@@ -58,8 +61,10 @@ export default class DBAirtable implements DBInterface {
 				const remoteThings = records;
 				for (const remoteThing of remoteThings) {
 					const id = remoteThing.id;
-					const thing = this.hierarchy.rememberThing_runtimeCreate(id, remoteThing.fields.title as string, remoteThing.fields.color as string, remoteThing.fields.trait as string, -1, true);
-					this.things.push(thing)
+					if (remoteThing.fields.trait == '!') {
+						console.log('root');
+					}
+					this.hierarchy.rememberThing_runtimeCreate(id, remoteThing.fields.title as string, remoteThing.fields.color as string, remoteThing.fields.trait as string, -1, true);
 				}
 				thingsArrived.set(true);
 			})
@@ -70,7 +75,7 @@ export default class DBAirtable implements DBInterface {
 
 
 	////////////////////////////
-	//				THING					//
+	//			THING		  //
 	////////////////////////////
 
 	async thing_remoteCreate(thing: Thing) {
@@ -102,9 +107,9 @@ export default class DBAirtable implements DBInterface {
 		}
 	}
 
-	////////////////////////////////////
-	//				RELATIONSHIPS					//
-	////////////////////////////////////
+	//////////////////////////////////////
+	//			RELATIONSHIPS			//
+	//////////////////////////////////////
 
 	async relationships_readAll() {
 		this.hierarchy.relationships_clearKnowns();
@@ -117,16 +122,16 @@ export default class DBAirtable implements DBInterface {
 				const order = record.fields.order as number;
 				const froms = record.fields.from as (string[]);
 				const predicates = record.fields.predicate as (string[]);
-				await this.hierarchy.rememberRelationship_remoteCreate(id, predicates[0], froms[0], tos[0], order, CreationFlag.isFromRemote);
+				this.hierarchy.rememberRelationship_runtimeCreate(id, predicates[0], froms[0], tos[0], order, CreationFlag.isFromRemote);
 			}
 		} catch (error) {
 			console.log(this.relationships_errorMessage + error);
 		}
 	}
 
-	///////////////////////////////////
-	//				RELATIONSHIP					//
-	///////////////////////////////////
+	//////////////////////////////////////
+	//			 RELATIONSHIP			//
+	//////////////////////////////////////
 
 	async relationship_remoteCreate(relationship: Relationship | null) {
 		if (relationship) {
@@ -160,9 +165,9 @@ export default class DBAirtable implements DBInterface {
 		}
 	}
 
-	/////////////////////////////////////
-	//				ANCILLARY DATA					//
-	/////////////////////////////////////
+	//////////////////////////////////////
+	//			ANCILLARY DATA			//
+	//////////////////////////////////////
 
 	async predicates_readAll() {
 		try {

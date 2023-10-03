@@ -23,6 +23,7 @@ export default class Hierarchy {
 	knownRs_byIDFrom: KnownRelationships = {};
 	knownRs_byIDTo: KnownRelationships = {};
 	knownRs: Array<Relationship> = [];
+	knownTs: Thing[] = [];
 	_grabs: Grabs | null = null;
 	root: Thing | null = null;
 	here: Thing | null = null;
@@ -95,6 +96,7 @@ export default class Hierarchy {
 
 	rememberThing(thing: Thing) {
 		this.knownT_byID[thing.id] = thing;
+		this.knownTs.push(thing);
 		if (thing.trait == '!') {
 			this.root = thing;
 		}
