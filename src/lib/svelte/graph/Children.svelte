@@ -42,9 +42,9 @@
 			noop();
 		}
 		const rect = lineRectAt(index);
-		const offsetY = rect.extent.y - child.halfVisibleProgenyHeight;
 		const offsetX = child.titleWidth + $lineStretch + 9;
-		return origin.offsetBy(new Point(offsetX, offsetY));
+		const y = rect.extent.y - child.halfVisibleProgenyHeight + 4;
+		return new Point(origin.x + offsetX, y);
 	}
 	
 	function description() {

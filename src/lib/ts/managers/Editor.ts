@@ -11,25 +11,34 @@ import { idsGrabbed } from './State';
 export default class Editor {
 
 	async handleKeyDown(event: KeyboardEvent) {
-		const grab = dbDispatch.db.hierarchy.grabs.furthestGrab(true);
+		let grab = dbDispatch.db.hierarchy.grabs.furthestGrab(true);
 		if (event.type == 'keydown') {
 			const OPTION = event.altKey;
 			const SHIFT = event.shiftKey;
 			const EXTREME = SHIFT && OPTION;
+			const key = event.key.toLowerCase();
+			if (!grab) {
+				const root = dbDispatch.db.hierarchy.root;
+				root?.becomeHere();
+				root?.grabOnly(); // to update crumbs and dots
+				grab = root;
+			}
 			if (grab) {
-				switch (event.key.toLowerCase()) {
+				switch (key) {
 					case 'delete':
 					case ' ':			await this.thing_redraw_remoteAddChildTo(grab); break;
 					case 'd':			await this.thing_redraw_remoteDuplicate(grab); break;
-					case 'tab':			await this.thing_redraw_remoteAddChildTo(grab.firstParent); break; // Title also makes this call
+					case 'tab':			await this.thing_redraw_remoteAddChildTo(grab.firstParent); break; // Title editor also makes this call
 					case 'arrowright':	await this.thing_redraw_remoteMoveRight(grab, true, SHIFT, OPTION, EXTREME); break;
 					case 'arrowleft':	await this.thing_redraw_remoteMoveRight(grab, false, SHIFT, OPTION, EXTREME); break;
+					case 'enter':		grab.startEdit(); break;
+					case '/':			grab.becomeHere(); break;
 				}
 			}
-			switch (event.key.toLowerCase()) {
-				case 'backspace':	await this.grabs_redraw_remoteDelete(); break;
-				case 'arrowup':		await this.furthestGrab_redraw_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
-				case 'arrowdown':	await this.furthestGrab_redraw_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
+			switch (key) {
+				case 'backspace':		await this.grabs_redraw_remoteDelete(); break;
+				case 'arrowup':			await this.furthestGrab_redraw_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
+				case 'arrowdown':		await this.furthestGrab_redraw_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
 			}
 		}
 	}

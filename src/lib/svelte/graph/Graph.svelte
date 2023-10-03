@@ -37,21 +37,12 @@
 	}
 
 	async function handleKeyDown(event) {
-		let grab = dbDispatch.db.hierarchy.grabs.furthestGrab(true);
 		if ($idEditing)			{ return; } // let Title component consume the events
 		if (event.key == undefined)	{ alert('no key for ' + event.type); return; }
-		if (!grab) {
-			const root = dbDispatch.db.hierarchy.root;
-			root?.becomeHere();
-			root?.grabOnly(); // to update crumbs and dots
-			grab = root;
-		}
 		if (event.type == 'keydown') {
 			const key = event.key.toLowerCase();
 			switch (key) {
 				case 'r':	  break; // restart app
-				case 'enter': grab?.startEdit(); break;
-				case '/':	  grab?.becomeHere(); break;
 				case 't':	  alert('PARENT-CHILD SWAP'); break;
 				case '?':	  $popupViewID = ButtonID.help; break;
 				case ']':
