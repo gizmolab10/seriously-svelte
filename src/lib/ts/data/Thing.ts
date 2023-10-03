@@ -266,7 +266,7 @@ export default class Thing extends Datum {
 					signal(Signals.childrenOf, null);			// tell graph to update line rects
 				}
 			} else {
-				this.firstParent?.collapse();
+				this.firstParent?.expand();
 				signal(Signals.childrenOf, null);			// tell graph to update line rects
 			}
 		} else if (this.hasChildren) {
@@ -277,7 +277,8 @@ export default class Thing extends Datum {
 			signal(Signals.childrenOf, null);			// tell graph to update line rects
 		}
 		const newHere = RIGHT ? this : this.grandparent;
-		if (moveHere || (!RIGHT && !newHere.isExpanded && this.id == get(idHere))) {
+		const shouldBecomeHere = !newHere.isExpanded || newHere.id == dbDispatch.db.hierarchy.idRoot;
+		if (moveHere || (!RIGHT && shouldBecomeHere)) { // && this.id == get(idHere)
 			newHere.becomeHere();
 		}
 		idEditing.set(null);
