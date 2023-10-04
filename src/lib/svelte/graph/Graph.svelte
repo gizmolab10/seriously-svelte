@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { Rect, Size, Point, Thing, ZIndex, Layout, editor, Signals, onMount, onDestroy } from '../../ts/common/GlobalImports';
 	import { constants, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
-	import { idHere, lineGap, idEditing, idsGrabbed, popupViewID, graphOffsetY } from '../../ts/managers/State';
+	import { idHere, lineGap, idEditing, idsGrabbed, popupViewID, graphOrigin, graphOffsetY } from '../../ts/managers/State';
 	import FatTriangleButton from '../kit/FatTriangleButton.svelte';
 	import Children from './Children.svelte';
 	let triangleOrigin = new Point();

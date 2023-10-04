@@ -1,5 +1,5 @@
-import { dbType, idHere, bulkName, expanded, idsGrabbed, showDetails, lineStretch, dbLoadTime, dotDiameter, lineGap } from '../managers/State';
-import { get, DBType, dbDispatch } from './GlobalImports'
+import { dbType, bulkName, expanded, graphOrigin, showDetails, lineStretch, dbLoadTime, dotDiameter, lineGap } from '../managers/State';
+import { DBType, Point } from './GlobalImports'
 
 export enum BulkID {
 	public = 'Public',
@@ -8,31 +8,33 @@ export enum BulkID {
 
 export enum PersistID {
 	lineStretch = 'stretch',
-	expanded		= 'expanded',
-	details			= 'details',
-	bulk				= 'bulk',
-	here				= 'here',
-	grab				= 'grab',
-	gap					= 'gap',
-	dot					= 'dot',
-	db					= 'db',
+	expanded	= 'expanded',
+	details		= 'details',
+	origin		= 'origin',
+	bulk		= 'bulk',
+	here		= 'here',
+	grab		= 'grab',
+	gap			= 'gap',
+	dot			= 'dot',
+	db			= 'db',
 }
 
 class PersistLocal {
-	okayToWrite = false;
 	idSeparator = ':';
 	separator = '|';
 
-	constructor() {
-		idsGrabbed.subscribe((ids: Array<string>) => {
-			if (this.okayToWrite) {
-				const here = dbDispatch.db.hierarchy.here;
-				if (ids && here) {
-					const type = dbDispatch.db.dbType;
-					this.writeToKeys(PersistID.db, here?.id, type, get(idsGrabbed))
-				}
-			}
-		});
+	setup() {
+		// localStorage.clear();
+		// const isLocal = isServerLocal();
+		dbLoadTime.set(null);
+		lineGap. set(this.readFromKey(PersistID.gap) ?? 30);
+		dotDiameter.set(this.readFromKey(PersistID.dot) ?? 14);
+		expanded.set(this.readFromKey(PersistID.expanded) ?? []);
+		showDetails.set(this.readFromKey(PersistID.details) ?? false);
+		lineStretch.set(this.readFromKey(PersistID.lineStretch) ?? 40);
+		bulkName.set(this.readFromKey(PersistID.bulk) ?? BulkID.public);
+		graphOrigin.set(this.readFromKey(PersistID.origin) ?? new Point());
+		dbType.set(this.readFromKey(PersistID.db) ?? DBType.firebase); // invokes cloud setup, which needs bulk name already set (must be above)
 	}
 
 	readFromKey(aKey: string): any | null {
@@ -55,32 +57,6 @@ class PersistLocal {
 	writeToKeys(aKey: string, aValue: any, bKey: string, bValues: Array<any>) {
 		if (aValue && bValues.length > 0) {
 			this.writeToKey(aKey + this.separator + bKey, aValue + this.separator + bValues.join(this.idSeparator));
-		}
-	}
-
-	setup() {
-		// localStorage.clear();
-		// const isLocal = isServerLocal();
-		dbLoadTime.set(null);
-		dotDiameter.set(this.readFromKey(PersistID.dot) ?? 14);
-		lineGap.set(this.readFromKey(PersistID.gap) ?? 30);
-		expanded.set(this.readFromKey(PersistID.expanded) ?? []);
-		showDetails.set(this.readFromKey(PersistID.details) ?? false);
-		lineStretch.set(this.readFromKey(PersistID.lineStretch) ?? 40);
-		bulkName.set(this.readFromKey(PersistID.bulk) ?? BulkID.public);
-		dbType.set(this.readFromKey(PersistID.db) ?? DBType.firebase); // invokes cloud setup, which needs bulk name already set (must be above)
-	}
-
-	setupDBFor(type: string, defaultIDHere: string) {
-		const dbValues = this.readFromKeys(PersistID.db, type);
-		if (dbValues == null) {
-			idHere.set(defaultIDHere);
-			idsGrabbed.set([defaultIDHere]);
-		} else {
-			this.okayToWrite = false;
-			idHere.set(dbValues[0]);
-			idsGrabbed.set(dbValues[1]);
-			this.okayToWrite = true;
 		}
 	}
 

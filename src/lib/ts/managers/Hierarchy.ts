@@ -66,7 +66,7 @@ export default class Hierarchy {
 			this.root.normalizeOrder_recursive(true)	// setup order values for all things and relationships
 			this.db.hasData = true;
 			normalizeOrderOf(this.root.children)
-			persistLocal.setupDBFor(type, idRoot);
+			dbDispatch.setupDBFor(type, idRoot);
 		}
 		this.restoreHere();
 		thingsArrived.set(true);

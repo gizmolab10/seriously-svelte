@@ -1,5 +1,5 @@
 import { dbType, isBusy, idHere, idsGrabbed, dbLoadTime, thingsArrived } from '../managers/State';
-import { DBType, PersistID, Relationship, persistLocal } from '../common/GlobalImports';
+import { DBType, PersistID, persistLocal } from '../common/GlobalImports';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
@@ -7,12 +7,13 @@ import { dbLocal } from './DBLocal';
 
 export default class DBDispatch {
 	db: DBInterface;
+	okayToWrite = false;
 	updateDBForType(type: string) { this.db = this.dbForType(type); }
 	nextDB(forward: boolean) { this.changeDBTo(this.getNextDB(forward)); }
 
 	constructor() {
 		this.db = dbFirebase;
-		persistLocal.okayToWrite = true;
+		this.okayToWrite = true;
 		dbType.subscribe((type: string) => {
 			if (type) {
 				idHere.set(null);
@@ -21,6 +22,17 @@ export default class DBDispatch {
 				this.updateHierarchy(type);
 			}
 		})
+		setTimeout(() => {
+			idsGrabbed.subscribe((ids: Array<string>) => {
+				if (this.okayToWrite) {
+					const here = this.db.hierarchy.here;
+					if (ids && here) {
+						const type = this.db.dbType;
+						persistLocal.writeToKeys(PersistID.db, here?.id, type, get(idsGrabbed))
+					}
+				}
+			});
+		}, 1);
 	}
 
 	dbForType(type: string): DBInterface {
@@ -32,7 +44,7 @@ export default class DBDispatch {
 	}
 
 	changeDBTo(newDBType: DBType) {
-		const db = dbDispatch.dbForType(newDBType);
+		const db = this.dbForType(newDBType);
 		dbLoadTime.set(db.loadTime);
 		persistLocal.writeToKey(PersistID.db, newDBType);
 		if (newDBType != DBType.local && !db.hasData) {
@@ -60,7 +72,7 @@ export default class DBDispatch {
 	updateHierarchy(type: string) {
 		const h = this.db.hierarchy;
 		if (this.db.hasData) {
-			persistLocal.setupDBFor(type, this.db.hierarchy.idRoot!);
+			this.setupDBFor(type, this.db.hierarchy.idRoot!);
 			h.restoreHere();
 		} else {
 			if (type != DBType.local) {
@@ -78,6 +90,19 @@ export default class DBDispatch {
 				this.db.loadTime = loadTime;
 				dbLoadTime.set(loadTime);
 			})();
+		}
+	}
+
+	setupDBFor(type: string, defaultIDHere: string) {
+		const dbValues = persistLocal.readFromKeys(PersistID.db, type);
+		if (dbValues == null) {
+			idHere.set(defaultIDHere);
+			idsGrabbed.set([defaultIDHere]);
+		} else {
+			this.okayToWrite = false;
+			idHere.set(dbValues[0]);
+			idsGrabbed.set(dbValues[1]);
+			this.okayToWrite = true;
 		}
 	}
 

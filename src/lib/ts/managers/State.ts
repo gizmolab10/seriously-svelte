@@ -1,4 +1,5 @@
 import { writable } from 'svelte/store';
+import { Point } from '../geometry/Geometry';
 
 export const stoppedIDEditing	= writable<string | null>();
 export const popupViewID		= writable<string | null>();
@@ -12,6 +13,7 @@ export const showDetails		= writable<boolean>();
 export const isBusy				= writable<boolean>();
 export const bulkName			= writable<string>();
 export const dbType				= writable<string>();
+export const graphOrigin		= writable<Point>();
 export const graphOffsetY		= writable<number>();
 export const dotDiameter		= writable<number>();
 export const lineStretch		= writable<number>();
