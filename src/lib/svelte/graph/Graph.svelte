@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { Rect, Size, Point, Thing, ZIndex, Layout, editor, Signals, onMount, onDestroy } from '../../ts/common/GlobalImports';
+	import { Rect, Size, Point, Geometry, Thing, ZIndex, Layout, editor, Signals, onMount, onDestroy } from '../../ts/common/GlobalImports';
 	import { constants, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
-	import { idHere, lineGap, idEditing, idsGrabbed, popupViewID, graphOrigin, graphOffsetY } from '../../ts/managers/State';
+	import { idHere, lineGap, idEditing, idsGrabbed, popupViewID, graphOrigin } from '../../ts/managers/State';
 	import FatTriangleButton from '../kit/FatTriangleButton.svelte';
 	import Children from './Children.svelte';
 	let triangleOrigin = new Point();
@@ -13,7 +13,6 @@
 	function updateOrigin() {
 		if (here) {
 			triangleOrigin = new Point(19, (here.halfVisibleProgenyHeight) + 7);
-			$graphOffsetY = 0;
 		}
 	}
 
@@ -56,15 +55,15 @@
 
 <svelte:document on:keydown={handleKeyDown} />
 {#if here}
-	<Children thing={here} origin={new Point(0, $graphOffsetY + 4)}/>
+	<Children thing={here} origin={new Point(0, $graphOrigin.y + 4)}/>
 	{#if isGrabbed}
 		<svg width='30' height='30'
 			style='z-index: {ZIndex.highlights};
 				position: absolute;
 				left: {triangleOrigin.x - 8};
-				top: {triangleOrigin.y + $graphOffsetY - 22};'>
+				top: {triangleOrigin.y + $graphOrigin.y - 22};'>
 			<circle cx='15' cy='15' r='14' stroke='blue' fill={constants.backgroundColor}/>
 		</svg>
 	{/if}
-	<FatTriangleButton here={here} origin={triangleOrigin.offsetByY($graphOffsetY - 15)}/>
+	<FatTriangleButton here={here} origin={triangleOrigin.offsetByY($graphOrigin.y - 15)}/>
 {/if}

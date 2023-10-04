@@ -54,6 +54,11 @@
 			<Crumbs here={dbDispatch.db.hierarchy.getThing_forID($idHere)}/>
 		</div>
 		<div class='graph'
+			style='
+				left: 101px;
+				top: 33px;
+				height: 500px;
+				width: 600px;'
 			on:keyup={noop()}
 			on:keydown={noop()}
 			on:keypress={noop()}
@@ -92,10 +97,6 @@
 	}
 	.graph {
 		position: fixed;
-		left: 101px;
-		top: 33px;
-		height: 500px;
-		width: 600px;
 	}
 	.horizontal-line {
 		position: absolute;

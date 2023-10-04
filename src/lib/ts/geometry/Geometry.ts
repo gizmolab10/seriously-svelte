@@ -1,3 +1,10 @@
+export class Geometry {
+	get graphCenter(): Point { return this.windowCenter; }
+	get windowCenter(): Point { return new Point(window.innerWidth, window.innerHeight).dividedInHalf; }
+}
+
+export const geometry = new Geometry();
+
 export class Point {
 	x: number;
 	y: number;
@@ -5,16 +12,18 @@ export class Point {
 		this.x = x;
 		this.y = y;
 	}
-	get description():		 string { return this.x + ',' + this.y; }
-	get pxDescription():	 string { return this.x + 'px ' + this.y + 'px'; }
-	get verbose():			 string { return '(' + this.x + ', ' + this.y + ')'; }
-	get asSize():			   Size { return new Size(this.x, this.y); }
-	get copy():				  Point { return new Point(this.x, this.y); }
-	offsetByX(x: number):	  Point	{ return new Point(this.x + x, this.y); }
-	offsetByY(y: number):	  Point	{ return new Point(this.x, this.y + y); }
-	offsetBy(point: Point):	  Point	{ return new Point(this.x + point.x, this.y + point.y); }
-	offsetBySize(size: Size): Point	{ return new Point(this.x + size.width, this.y + size.height); }
-	distanceTo(point: Point): Point	{ return new Point(Math.abs(point.x - this.x), Math.abs(point.y - this.y)) }
+	get verbose():			   string { return '(' + this.x + ', ' + this.y + ')'; }
+	get description():		   string { return this.x + ',' + this.y; }
+	get pixelVerbose():		   string { return this.x + 'px ' + this.y + 'px'; }
+	get dividedInHalf():		Point { return this.dividedBy(2); }
+	get asSize():				 Size { return new Size(this.x, this.y); }
+	get copy():					Point { return new Point(this.x, this.y); }
+	offsetByX(x: number):		Point { return new Point(this.x + x, this.y); }
+	offsetByY(y: number):		Point { return new Point(this.x, this.y + y); }
+	offsetBy(point: Point):		Point { return new Point(this.x + point.x, this.y + point.y); }
+	offsetBySize(size: Size):	Point { return new Point(this.x + size.width, this.y + size.height); }
+	distanceTo(point: Point):	Point { return new Point(Math.abs(point.x - this.x), Math.abs(point.y - this.y)) }
+	dividedBy(divisor: number): Point { return new Point(this.x / divisor, this.y / divisor) }
 }
 
 export class Size {
@@ -25,7 +34,7 @@ export class Size {
 		this.height = height;
 	}
 	get verbose():			  string { return '(' + this.width + ', ' + this.height + ')'; }
-	get pxDescription():	  string { return this.width + 'px ' + this.height + 'px'; }
+	get pixelVerbose():		  string { return this.width + 'px ' + this.height + 'px'; }
 	get description():		  string { return this.width + ',' + this.height; }
 	get asPoint():			   Point { return new Point(this.width, this.height); }
 	get dividedInHalf():		Size { return this.dividedBy(2); }
@@ -42,17 +51,17 @@ export class Rect {
 		this.origin = origin;
 		this.size = size;
 	}
-	get pxDescription(): string { return this.origin.pxDescription + ' ' + this.size.pxDescription; }
-	get description():	 string { return this.origin.verbose + ', ' + this.size.verbose; }
-	get copy():			   Rect { return new Rect(this.origin.copy, this.size.copy); }
-	get center():		  Point { return this.origin.offsetBySize(this.size.dividedInHalf); }
-	get extent():		  Point { return this.origin.offsetBySize(this.size); }	// bottom right
-	get topRight():		  Point { return new Point(this.extent.x, this.origin.y); };
-	get bottomLeft():	  Point { return new Point(this.origin.x, this.extent.y); };
-	get centerLeft():	  Point { return new Point(this.origin.x, this.center.y); };
-	get centerRight():	  Point { return new Point(this.extent.x, this.center.y); };
-	get centerBottom():	  Point { return new Point(this.center.x, this.extent.y); };
-	get centerTop():	  Point { return new Point(this.center.x, this.origin.y); };
+	get pixelVerbose():	string { return this.origin.pixelVerbose + ' ' + this.size.pixelVerbose; }
+	get description():	string { return this.origin.verbose + ', ' + this.size.verbose; }
+	get center():		 Point { return this.origin.offsetBySize(this.size.dividedInHalf); }
+	get extent():		 Point { return this.origin.offsetBySize(this.size); }	// bottom right
+	get topRight():		 Point { return new Point(this.extent.x, this.origin.y); };
+	get bottomLeft():	 Point { return new Point(this.origin.x, this.extent.y); };
+	get centerLeft():	 Point { return new Point(this.origin.x, this.center.y); };
+	get centerRight():	 Point { return new Point(this.extent.x, this.center.y); };
+	get centerBottom():	 Point { return new Point(this.center.x, this.extent.y); };
+	get centerTop():	 Point { return new Point(this.center.x, this.origin.y); };
+	get copy():			  Rect { return new Rect(this.origin.copy, this.size.copy); }
 }
 
 export class LineRect extends Rect {

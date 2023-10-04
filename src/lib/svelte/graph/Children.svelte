@@ -1,6 +1,6 @@
 <script lang=ts>
 	import { noop, Rect, Size, Point, Thing, Signals, Layout, onMount, onDestroy, LineRect, LineCurveType, normalizeOrderOf, handleSignalOfKind } from '../../ts/common/GlobalImports';
-	import { lineGap, lineStretch } from '../../ts/managers/State';
+	import { lineGap, graphOrigin, lineStretch } from '../../ts/managers/State';
 	import Children from './Children.svelte';
 	import Widget from './Widget.svelte';
 	import Line from './Line.svelte';
@@ -18,7 +18,7 @@
 	function curveTypeAt(index: number): number { return lineRectAt(index).curveType; }
 	
 	const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
-		setTimeout(() => { // delay until all other handlers for this signal are done
+		setTimeout(() => { // delay until all other handlers for this signal are done TODO: WHY?
 			const newChildren = thing.children;
 			if (idThing == thing.id || children != newChildren) {
 				normalizeOrderOf(newChildren);
