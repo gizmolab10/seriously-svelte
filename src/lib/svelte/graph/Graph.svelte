@@ -1,10 +1,11 @@
 <script lang='ts'>
-	import { Rect, Size, Point, Geometry, Thing, ZIndex, Layout, editor, Signals, onMount, onDestroy } from '../../ts/common/GlobalImports';
+	import { noop, Rect, Size, Point, geometry, Thing, ZIndex, Layout, editor, Signals, onMount, onDestroy } from '../../ts/common/GlobalImports';
 	import { constants, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
 	import { idHere, lineGap, idEditing, idsGrabbed, popupViewID, graphOrigin } from '../../ts/managers/State';
 	import FatTriangleButton from '../kit/FatTriangleButton.svelte';
 	import Children from './Children.svelte';
 	let triangleOrigin = new Point();
+	let childrenOrigin = new Point();
 	let isGrabbed = false;
 	let here;
 
@@ -12,7 +13,12 @@
 	
 	function updateOrigin() {
 		if (here) {
-			triangleOrigin = new Point(19, (here.halfVisibleProgenyHeight) + 7);
+			const mysteryTriangleOffset = new Point(40, 7);
+			const mysteryChildrenOffset = new Point(-18, -3);
+			const progenyOffset = here.halfVisibleProgenySize.asPoint.multipliedBy(-1);
+			triangleOrigin = geometry.graphCenter.offsetBy(progenyOffset).offsetBy(mysteryTriangleOffset);
+			childrenOrigin = triangleOrigin.offsetByY(-here.halfVisibleProgenyHeight).offsetBy(mysteryChildrenOffset);
+			noop();
 		}
 	}
 
@@ -41,12 +47,12 @@
 		if (event.type == 'keydown') {
 			const key = event.key.toLowerCase();
 			switch (key) {
-				case 'r':	  break; // restart app
-				case 't':	  alert('PARENT-CHILD SWAP'); break;
-				case '?':	  $popupViewID = ButtonID.help; break;
+				case 'r': break; // restart app
+				case 't': alert('PARENT-CHILD SWAP'); break;
+				case '?': $popupViewID = ButtonID.help; break;
 				case ']':
-				case '[':	  dbDispatch.nextDB(key == ']'); break;
-				default:	  await editor.handleKeyDown(event); break; // editor-specific key values
+				case '[': dbDispatch.nextDB(key == ']'); break;
+				default:  await editor.handleKeyDown(event); break; // editor-specific key values
 			}
 		}
 	}
@@ -55,7 +61,7 @@
 
 <svelte:document on:keydown={handleKeyDown} />
 {#if here}
-	<Children thing={here} origin={new Point(0, $graphOrigin.y + 4)}/>
+	<Children thing={here} origin={childrenOrigin}/>
 	{#if isGrabbed}
 		<svg width='30' height='30'
 			style='z-index: {ZIndex.highlights};

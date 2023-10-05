@@ -1,6 +1,6 @@
 import { log, noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, isServerLocal, getBrowserType, normalizeOrderOf, sortAccordingToOrder } from './Utilities';
 import { ZIndex, ButtonID, BrowserType, CreationFlag, LineCurveType } from './Enumerations';
-import { Point, Size, Rect, LineRect, Geometry } from '../geometry/Geometry';
+import { Point, Size, Rect, LineRect, geometry } from '../geometry/Geometry';
 import { FatTrianglePath, Direction } from '../geometry/FatTrianglePath';
 import { signal, Signals, handleSignalOfKind } from './Signals';
 import { PersistID, persistLocal } from './PersistLocal';
@@ -33,7 +33,7 @@ export {
 	signal, Signals, handleSignalOfKind,
 	ZIndex, ButtonID, BrowserType, CreationFlag,
 	User, Datum, Thing, Access, Predicate, Relationship,
-	Point, Size, Rect, Layout, Geometry, LineRect, LineCurveType,
+	Point, Size, Rect, Layout, geometry, LineRect, LineCurveType,
 	isServerLocal, getBrowserType, normalizeOrderOf, sortAccordingToOrder,
 	log, noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy,
 };

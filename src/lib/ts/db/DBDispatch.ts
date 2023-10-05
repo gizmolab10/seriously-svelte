@@ -1,5 +1,5 @@
 import { dbType, isBusy, idHere, idsGrabbed, dbLoadTime, thingsArrived } from '../managers/State';
-import { DBType, PersistID, persistLocal } from '../common/GlobalImports';
+import { get, DBType, PersistID, persistLocal } from '../common/GlobalImports';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
@@ -27,8 +27,7 @@ export default class DBDispatch {
 				if (this.okayToWrite) {
 					const here = this.db.hierarchy.here;
 					if (ids && here) {
-						const type = this.db.dbType;
-						persistLocal.writeToKeys(PersistID.db, here?.id, type, get(idsGrabbed))
+						persistLocal.writeToKeys(PersistID.db, here.id, this.db.dbType, get(idsGrabbed))
 					}
 				}
 			});

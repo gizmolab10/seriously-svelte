@@ -1,5 +1,5 @@
 import { get, Size, Datum, signal, Signals, constants, Predicate, PersistID, dbDispatch, getWidthOf, persistLocal, normalizeOrderOf } from '../common/GlobalImports';
-import { idHere, idEditing, expanded, idsGrabbed, lineGap } from '../managers/State';
+import { idHere, idEditing, expanded, idsGrabbed, lineGap, lineStretch } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -45,6 +45,8 @@ export default class Thing extends Datum {
 
 	get description():				string { return this.id + ' (\" ' + this.title + '\") '; }
 	get titleWidth():				number { return getWidthOf(this.title) }
+	get visibleProgenySize():		  Size { return new Size(this.visibleProgenyWidth, this.visibleProgenyHeight); }
+	get halfVisibleProgenySize():	  Size { return this.visibleProgenySize.dividedInHalf; }
 	get halfVisibleProgenyHeight(): number { return this.visibleProgenyHeight / 2; }
 	get hasChildren():			   boolean { return this.hasPredicate(false); }
 	get isRoot():				   boolean { return this == dbDispatch.db.hierarchy.root; }
@@ -72,6 +74,21 @@ export default class Thing extends Datum {
 			}
 		}
 		return false;
+	}
+
+	get visibleProgenyWidth(): number {
+		let width = this.titleWidth;		// default row height
+		if (this.hasChildren && this.isExpanded) {
+			let progenyWidth = 0;
+			for (const child of this.children) {
+				let childProgenyWidth = child.visibleProgenyWidth;
+				if (childProgenyWidth > progenyWidth) {
+					progenyWidth = childProgenyWidth;
+				}
+			}
+			width += progenyWidth + get(lineStretch);
+		}
+		return width;
 	}
 
 	get visibleProgenyHeight(): number {

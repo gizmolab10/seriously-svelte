@@ -1,6 +1,10 @@
 export class Geometry {
-	get graphCenter(): Point { return this.windowCenter; }
-	get windowCenter(): Point { return new Point(window.innerWidth, window.innerHeight).dividedInHalf; }
+
+	get graphRect(): Rect { return new Rect(new Point(101, 33), this.windowSize); }
+	get graphCenter(): Point { return this.windowCenter.offsetBy(this.graphRect.origin.multipliedBy(-1)); }
+	get windowSize(): Size { return new Size(window.innerWidth, window.innerHeight); }
+	get windowCenter(): Point { return this.windowSize.asPoint.dividedInHalf; }
+
 }
 
 export const geometry = new Geometry();
@@ -12,18 +16,18 @@ export class Point {
 		this.x = x;
 		this.y = y;
 	}
-	get verbose():			   string { return '(' + this.x + ', ' + this.y + ')'; }
-	get description():		   string { return this.x + ',' + this.y; }
-	get pixelVerbose():		   string { return this.x + 'px ' + this.y + 'px'; }
-	get dividedInHalf():		Point { return this.dividedBy(2); }
-	get asSize():				 Size { return new Size(this.x, this.y); }
-	get copy():					Point { return new Point(this.x, this.y); }
-	offsetByX(x: number):		Point { return new Point(this.x + x, this.y); }
-	offsetByY(y: number):		Point { return new Point(this.x, this.y + y); }
-	offsetBy(point: Point):		Point { return new Point(this.x + point.x, this.y + point.y); }
-	offsetBySize(size: Size):	Point { return new Point(this.x + size.width, this.y + size.height); }
-	distanceTo(point: Point):	Point { return new Point(Math.abs(point.x - this.x), Math.abs(point.y - this.y)) }
-	dividedBy(divisor: number): Point { return new Point(this.x / divisor, this.y / divisor) }
+	get verbose():			 		 string { return '(' + this.x + ', ' + this.y + ')'; }
+	get description():		 		 string { return this.x + ',' + this.y; }
+	get pixelVerbose():				 string { return this.x + 'px ' + this.y + 'px'; }
+	get dividedInHalf():			  Point { return this.multipliedBy(1/2); }
+	get asSize():					   Size { return new Size(this.x, this.y); }
+	get copy():						  Point { return new Point(this.x, this.y); }
+	offsetByX(x: number):			  Point { return new Point(this.x + x, this.y); }
+	offsetByY(y: number):			  Point { return new Point(this.x, this.y + y); }
+	offsetBy(point: Point):			  Point { return new Point(this.x + point.x, this.y + point.y); }
+	offsetBySize(size: Size):		  Point { return new Point(this.x + size.width, this.y + size.height); }
+	distanceTo(point: Point):		  Point { return new Point(Math.abs(point.x - this.x), Math.abs(point.y - this.y)) }
+	multipliedBy(multiplier: number): Point { return new Point(this.x * multiplier, this.y * multiplier) }
 }
 
 export class Size {
@@ -33,15 +37,15 @@ export class Size {
 		this.width = width;
 		this.height = height;
 	}
-	get verbose():			  string { return '(' + this.width + ', ' + this.height + ')'; }
-	get pixelVerbose():		  string { return this.width + 'px ' + this.height + 'px'; }
-	get description():		  string { return this.width + ',' + this.height; }
-	get asPoint():			   Point { return new Point(this.width, this.height); }
-	get dividedInHalf():		Size { return this.dividedBy(2); }
-	get copy():					Size { return new Size(this.width, this.height); }
-	dividedBy(divisor: number): Size { return new Size(this.width / divisor, this.height / divisor) }
-	expandedBy(size: Size):		Size { return new Size(this.width + size.width, this.height + size.height); }
-	unionWith(size: Size):		Size { return new Size(Math.max(this.width, size.width), Math.max(this.height, size.height)); }
+	get verbose():					string { return '(' + this.width + ', ' + this.height + ')'; }
+	get pixelVerbose():				string { return this.width + 'px ' + this.height + 'px'; }
+	get description():				string { return this.width + ',' + this.height; }
+	get asPoint():			   		 Point { return new Point(this.width, this.height); }
+	get dividedInHalf():			  Size { return this.multipliedBy(1/2); }
+	get copy():						  Size { return new Size(this.width, this.height); }
+	multipliedBy(multiplier: number): Size { return new Size(this.width * multiplier, this.height * multiplier) }
+	expandedBy(size: Size):			  Size { return new Size(this.width + size.width, this.height + size.height); }
+	unionWith(size: Size):			  Size { return new Size(Math.max(this.width, size.width), Math.max(this.height, size.height)); }
 }
 
 export class Rect {

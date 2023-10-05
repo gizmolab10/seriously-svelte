@@ -1,5 +1,5 @@
 <script>
-	import { get, noop, Grabs, DBType, onMount, PersistID, ButtonID, Hierarchy, dbDispatch, persistLocal, getBrowserType, isServerLocal } from '../../ts/common/GlobalImports'
+	import { get, noop, Grabs, DBType, onMount, geometry, PersistID, ButtonID, Hierarchy, dbDispatch, persistLocal, getBrowserType, isServerLocal } from '../../ts/common/GlobalImports'
 	import { dbType, isBusy, idHere, bulkName, popupViewID, showDetails, thingsArrived } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import BuildNotes from './BuildNotes.svelte';
@@ -55,10 +55,10 @@
 		</div>
 		<div class='graph'
 			style='
-				left: 101px;
-				top: 33px;
-				height: 500px;
-				width: 600px;'
+				top: {geometry.graphRect.origin.y}px;
+				left: {geometry.graphRect.origin.x}px;
+				width: {geometry.graphRect.size.width}px;
+				height: {geometry.graphRect.size.height}px;'
 			on:keyup={noop()}
 			on:keydown={noop()}
 			on:keypress={noop()}
