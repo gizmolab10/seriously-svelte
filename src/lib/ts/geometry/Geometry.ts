@@ -1,13 +1,5 @@
-export class Geometry {
-
-	get graphRect(): Rect { return new Rect(new Point(101, 33), this.windowSize); }
-	get graphCenter(): Point { return this.windowCenter.offsetBy(this.graphRect.origin.multipliedBy(-1)); }
-	get windowSize(): Size { return new Size(window.innerWidth, window.innerHeight); }
-	get windowCenter(): Point { return this.windowSize.asPoint.dividedInHalf; }
-
-}
-
-export const geometry = new Geometry();
+import { graphRect, windowSize } from "../managers/State";
+import { get } from "../common/GlobalImports";
 
 export class Point {
 	x: number;
@@ -74,4 +66,12 @@ export class LineRect extends Rect {
 		super(rect.origin.copy, rect.size.copy);
 		this.curveType = curveType;
 	}
+};
+
+export function updateGraphRect() {
+	const grephOrigin = new Point(40, 33);
+	const newWindowSize = new Size(window.innerWidth, window.innerHeight);
+	const graphSize = newWindowSize.expandedBy(grephOrigin.asSize.multipliedBy(-1));
+	windowSize.set(newWindowSize);	// used by Crumbs
+	graphRect.set(new Rect(grephOrigin, graphSize));
 };

@@ -1,19 +1,23 @@
 <script>
-	import { get, noop, Grabs, DBType, onMount, geometry, PersistID, ButtonID, Hierarchy, dbDispatch, persistLocal, getBrowserType, isServerLocal } from '../../ts/common/GlobalImports'
-	import { dbType, isBusy, idHere, bulkName, popupViewID, showDetails, thingsArrived } from '../../ts/managers/State';
+	import { dbType, isBusy, idHere, bulkName, graphRect, popupViewID, showDetails, thingsArrived } from '../../ts/managers/State';
+	import { get, noop, Rect, Point, Grabs, DBType, onMount, PersistID, ButtonID, Hierarchy } from '../../ts/common/GlobalImports'
+	import { dbDispatch, persistLocal, getBrowserType, isServerLocal, updateGraphRect } from '../../ts/common/GlobalImports'
 	import CircularButton from '../kit/CircularButton.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import Graph from '../graph/Graph.svelte';
 	import Help from '../help/Help.svelte';
 	import Details from './Details.svelte';
 	import Crumbs from './Crumbs.svelte';
+	let toggleDraw = false;
 	let size = 14;
 	
 	function handleClick(id) { $popupViewID = ($popupViewID == id) ? null : id; }
+	window.addEventListener('resize', (event) => { updateGraphRect(); toggleDraw = !toggleDraw; });
 
 	onMount(async () => {
-		persistLocal.setup();
 		document.title = 'Seriously ('+ (isServerLocal() ? 'local' : 'remote') + ', ' + getBrowserType()  + ', α)';
+		updateGraphRect();
+		persistLocal.setup();
 	})
 	
 	function handleSettings(event) {
@@ -53,18 +57,20 @@
 		<div class='top'>
 			<Crumbs here={dbDispatch.db.hierarchy.getThing_forID($idHere)}/>
 		</div>
-		<div class='graph'
-			style='
-				top: {geometry.graphRect.origin.y}px;
-				left: {geometry.graphRect.origin.x}px;
-				width: {geometry.graphRect.size.width}px;
-				height: {geometry.graphRect.size.height}px;'
-			on:keyup={noop()}
-			on:keydown={noop()}
-			on:keypress={noop()}
-			on:click={() => { $popupViewID = null; }}>
-			<Graph/>
-		</div>
+		{#key toggleDraw}
+			<div class='graph'
+				style='
+					top: {$graphRect.origin.y}px;
+					left: {$graphRect.origin.x}px;
+					width: {$graphRect.size.width}px;
+					height: {$graphRect.size.height}px;'
+				on:keyup={noop()}
+				on:keydown={noop()}
+				on:keypress={noop()}
+				on:click={() => { $popupViewID = null; }}>
+				<Graph/>
+			</div>
+		{/key}
 	{/if}
 	{#if $popupViewID == ButtonID.help}
 		<Help size={size}/>

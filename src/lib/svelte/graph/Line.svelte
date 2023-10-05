@@ -5,7 +5,7 @@
 	/////////////////////////////////////////////////////
 
 	import { Rect, Size, Point, ZIndex, LineCurveType } from '../../ts/common/GlobalImports';
-	import { graphOrigin } from '../../ts/managers/State'
+	import { grephOffset } from '../../ts/managers/State'
 	export let curveType: string = LineCurveType.up;
 	export let rect = new Rect();
 	export let color = 'black';
@@ -27,7 +27,7 @@
 				break
 		}
 		size = extent.distanceTo(origin).asSize;
-		viewBox = new Rect(origin.offsetByY($graphOrigin.y), size);
+		viewBox = new Rect(origin.offsetByY($grephOffset.y), size);
 		path = 'M' + origin.description +'A' + rect.size.description + ',0,0,' + flag + ',' + extent.description;
 	}
 

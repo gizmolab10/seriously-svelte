@@ -1,6 +1,6 @@
 <script lang=ts>
 	import { noop, Rect, Size, Point, Thing, Signals, Layout, onMount, onDestroy, LineRect, LineCurveType, normalizeOrderOf, handleSignalOfKind } from '../../ts/common/GlobalImports';
-	import { lineGap, graphOrigin, lineStretch } from '../../ts/managers/State';
+	import { lineGap, lineStretch } from '../../ts/managers/State';
 	import Children from './Children.svelte';
 	import Widget from './Widget.svelte';
 	import Line from './Line.svelte';
@@ -31,7 +31,7 @@
 
 	function layoutChildren() {
 		if (thing) {
-			const height = (thing.halfVisibleProgenyHeight) - 4;	// TODO: why 4?
+			const height = (thing.halfVisibleProgenyHeight) - 4;		// TODO: why 4?
 			const childOrigin = origin.offsetByY(height);
 			lineRects = new Layout(thing, childOrigin).lineRects;
 		}
@@ -43,7 +43,7 @@
 		}
 		const rect = lineRectAt(index);
 		const offsetX = child.titleWidth + $lineStretch + 9;
-		const y = rect.extent.y - child.halfVisibleProgenyHeight + 4;
+		const y = rect.extent.y - child.halfVisibleProgenyHeight + 4;	// TODO: why 4?
 		return new Point(origin.x + offsetX, y);
 	}
 	

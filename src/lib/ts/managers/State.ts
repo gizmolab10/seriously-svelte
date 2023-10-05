@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import { Point } from '../geometry/Geometry';
+import { Size, Rect, Point } from '../geometry/Geometry';
 
 export const stoppedIDEditing	= writable<string | null>();
 export const popupViewID		= writable<string | null>();
@@ -17,4 +17,6 @@ export const dotDiameter		= writable<number>();
 export const lineStretch		= writable<number>();
 export const lineGap			= writable<number>();
 export const build				= writable<number>();
-export const graphOrigin		= writable<Point>();
+export const grephOffset		= writable<Point>();
+export const graphRect  		= writable<Rect>();
+export const windowSize  		= writable<Size>();
