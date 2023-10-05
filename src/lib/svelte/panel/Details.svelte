@@ -36,7 +36,7 @@
 	.modal-overlay {
 		position: fixed;
 		left: 0;
-		height: 100%;
+		height: 40%;
 		justify-content: center;
 	}
 	.modal-content {

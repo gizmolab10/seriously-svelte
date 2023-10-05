@@ -7,10 +7,10 @@
 	export let origin = new Point();
 	export let thing: Thing;
 
-	const widgetOffset = new Point(10, -14);	// TODO: WHY is this needed, where does this value come from?
+	const mysteryWidgetOffset = new Point(10, -14);	// TODO: WHY is this needed, where does this value come from?
 	let lineRects: Array<LineRect> = [];
-	let toggleDraw = false;
 	let children = thing.children;
+	let toggleDraw = false;
 
 	onMount( () => { layoutChildren(); });
 	onDestroy( () => { signalHandler.disconnect(); });
@@ -38,9 +38,6 @@
 	}
 
 	function originForChild(child: Thing, index: number): Point {
-		if (child.title == 'Al is my voodoo dood') {
-			noop();
-		}
 		const rect = lineRectAt(index);
 		const offsetX = child.titleWidth + $lineStretch + 9;
 		const y = rect.extent.y - child.halfVisibleProgenyHeight + 4;	// TODO: why 4?
@@ -62,7 +59,7 @@
 {#key toggleDraw}
 	{#if children && children.length != 0 && lineRects.length == children.length}
 		{#each children as child, index}
-			<Widget thing={child} origin={lineRectAt(index).extent.offsetBy(widgetOffset)}/>
+			<Widget thing={child} origin={lineRectAt(index).extent.offsetBy(mysteryWidgetOffset)}/>
 			<Line color={child.color} curveType={curveTypeAt(index)} rect={lineRectAt(index)}/>
 			{#if child.hasChildren && child.isExpanded}
 				<Children thing={child} origin={originForChild(child, index)}/>
