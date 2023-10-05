@@ -1,4 +1,4 @@
-import { dbType, bulkName, expanded, grephOffset, showDetails, lineStretch, dbLoadTime, dotDiameter, lineGap } from '../managers/State';
+import { dbType, bulkName, expanded, graphOffset, showDetails, lineStretch, dbLoadTime, dotDiameter, lineGap } from '../managers/State';
 import { DBType, Point } from './GlobalImports'
 
 export enum BulkID {
@@ -33,7 +33,7 @@ class PersistLocal {
 		showDetails.set(this.readFromKey(PersistID.details) ?? false);
 		lineStretch.set(this.readFromKey(PersistID.lineStretch) ?? 40);
 		bulkName.set(this.readFromKey(PersistID.bulk) ?? BulkID.public);
-		grephOffset.set(this.readFromKey(PersistID.origin) ?? new Point());
+		graphOffset.set(this.readFromKey(PersistID.origin) ?? new Point());
 		dbType.set(this.readFromKey(PersistID.db) ?? DBType.firebase); // invokes cloud setup, which needs bulk name already set (must be above)
 	}
 

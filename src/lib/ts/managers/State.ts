@@ -17,6 +17,6 @@ export const dotDiameter		= writable<number>();
 export const lineStretch		= writable<number>();
 export const lineGap			= writable<number>();
 export const build				= writable<number>();
-export const grephOffset		= writable<Point>();
+export const graphOffset		= writable<Point>();
 export const graphRect  		= writable<Rect>();
 export const windowSize  		= writable<Size>();
