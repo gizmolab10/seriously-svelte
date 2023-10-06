@@ -115,7 +115,7 @@ export default class Thing extends Datum {
 	}
 
 	log(message: string) { console.log(message, this.description); }
-	persistExpanded()	 { persistLocal.writeToKey(PersistID.expanded, get(expanded)); }
+	persistExpanded()	 { persistLocal.writeToKey(PersistID.expanded + dbDispatch.db.dbType, get(expanded)); }
 	toggleGrab()		 { dbDispatch.db.hierarchy.grabs.toggleGrab(this); }
 	grabOnly()			 { dbDispatch.db.hierarchy.grabs.grabOnly(this); }
 	toggleExpand()		 { this.setExpanded(!this.isExpanded) }

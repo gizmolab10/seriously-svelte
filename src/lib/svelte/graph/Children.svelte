@@ -39,7 +39,7 @@
 
 	function originForChild(child: Thing, index: number): Point {
 		const rect = lineRectAt(index);
-		const offsetX = child.titleWidth + $lineStretch + 9;
+		const offsetX = child.titleWidth + $lineStretch + 29;
 		const y = rect.extent.y - child.halfVisibleProgenyHeight + 4;	// TODO: why 4?
 		return new Point(origin.x + offsetX, y);
 	}

@@ -35,7 +35,7 @@
 			const mysteryChildrenOffset = new Point(-18, -48);
 			const drawnSize = here.visibleProgenySize;
 			const gCenter = new Rect($graphRect.origin, $graphRect.size).center;
-			const tOffset = drawnSize.asPoint.multipliedBy(-1/2).offsetBy(new Point(-50, 10));
+			const tOffset = drawnSize.asPoint.multipliedBy(-1/2).offsetBy(new Point(0, 10));
 			const tOrigin = gCenter.offsetBy($graphOffset).offsetBy(tOffset);
 			const cOrigin = tOrigin.offsetBy(mysteryChildrenOffset);
 			triangleOrigin = tOrigin;

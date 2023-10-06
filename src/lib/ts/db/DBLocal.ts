@@ -14,15 +14,17 @@ export default class DBLocal implements DBInterface {
 		return this._hierarchy!;
 	}
 
+	localName(suffix: string) { return 'local' + suffix; }
+
 	async setupDB() {
 		const h = this.hierarchy;
-		const idPredicate = 'localP';
-		const idRoot = 'localRoot';
-		const idA = 'localA';
-		const idB = 'localB';
-		const idC = 'localC';
-		const idD = 'localD';
-		const idE = 'localE';
+		const idPredicate = this.localName('P');
+		const idRoot = this.localName('Root');
+		const idA = this.localName('A');
+		const idB = this.localName('B');
+		const idC = this.localName('C');
+		const idD = this.localName('D');
+		const idE = this.localName('E');
 		h.rememberThing_runtimeCreate(idRoot, 'seriously', 'blue', '!', -1, true);
 		h.rememberThing_runtimeCreate(idA, 'first', 'red', '1', 0, true);
 		h.rememberThing_runtimeCreate(idB, 'sibling', 'green', 'a', 0, true);
@@ -30,11 +32,11 @@ export default class DBLocal implements DBInterface {
 		h.rememberThing_runtimeCreate(idD, 'second', 'purple', '2', 0, true);
 		h.rememberThing_runtimeCreate(idE, 'third', 'orange', '3', 0, true);
 		h.rememberPredicate_runtimeCreate(idPredicate, 'isAParentOf');
-		h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idRoot, idA, 0);
-		h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idRoot, idB, 0);
-		h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idRoot, idC, 0);
-		h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idA, idD, 0);
-		h.rememberRelationship_runtimeCreate(Datum.newID, idPredicate, idB, idE, 0);
+		h.rememberRelationship_runtimeCreate(this.localName('Ar'), idPredicate, idRoot, idA, 0);
+		h.rememberRelationship_runtimeCreate(this.localName('Br'), idPredicate, idRoot, idB, 0);
+		h.rememberRelationship_runtimeCreate(this.localName('Cr'), idPredicate, idRoot, idC, 0);
+		h.rememberRelationship_runtimeCreate(this.localName('Dr'), idPredicate, idA, idD, 0);
+		h.rememberRelationship_runtimeCreate(this.localName('Er'), idPredicate, idA, idE, 0);
 	};
 
 	async thing_remoteCreate(thing: Thing) {};

@@ -1,5 +1,5 @@
-import { dbType, bulkName, expanded, graphOffset, showDetails, lineStretch, dbLoadTime, dotDiameter, lineGap } from '../managers/State';
-import { DBType, Point } from './GlobalImports'
+import { dbType, lineGap, bulkName, expanded, graphOffset, showDetails, lineStretch, dbLoadTime, dotDiameter } from '../managers/State';
+import { Point, DBType, dbDispatch } from './GlobalImports'
 
 export enum BulkID {
 	public = 'Public',
@@ -29,16 +29,16 @@ class PersistLocal {
 		dbLoadTime.set(null);
 		lineGap. set(this.readFromKey(PersistID.gap) ?? 30);
 		dotDiameter.set(this.readFromKey(PersistID.dot) ?? 14);
-		expanded.set(this.readFromKey(PersistID.expanded) ?? []);
 		showDetails.set(this.readFromKey(PersistID.details) ?? false);
+		dbType.set(this.readFromKey(PersistID.db) ?? DBType.firebase); // invokes cloud setup, which needs bulk name already set (must be above)
 		lineStretch.set(this.readFromKey(PersistID.lineStretch) ?? 40);
 		bulkName.set(this.readFromKey(PersistID.bulk) ?? BulkID.public);
 		graphOffset.set(this.readFromKey(PersistID.origin) ?? new Point());
-		dbType.set(this.readFromKey(PersistID.db) ?? DBType.firebase); // invokes cloud setup, which needs bulk name already set (must be above)
+		expanded.set(this.readFromKey(PersistID.expanded + dbDispatch.db.dbType) ?? []); // must be after dbType is set
 	}
 
-	readFromKey(aKey: string): any | null {
-		const storedValue = localStorage.getItem(aKey);
+	readFromKey(key: string): any | null {
+		const storedValue = localStorage.getItem(key);
 		return storedValue ? JSON.parse(storedValue) : null;
 	}
 
@@ -50,8 +50,8 @@ class PersistLocal {
 		return values;
 	}
 
-	writeToKey(aKey: string, value: any) {
-		localStorage.setItem(aKey, JSON.stringify(value));
+	writeToKey(key: string, value: any) {
+		localStorage.setItem(key, JSON.stringify(value));
 	}
 
 	writeToKeys(aKey: string, aValue: any, bKey: string, bValues: Array<any>) {

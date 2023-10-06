@@ -15,19 +15,17 @@ export default class Layout {
 				const gapY = get(lineGap);
 				const halfGapY = gapY / 2;
 				const sizeX = get(lineStretch);
-				const threshold = Math.floor(half);
-				const hasAFlat = threshold != half;
 				const visibleProgenyHeight = parent.visibleProgenyHeight;
-				const initialSizeY = (gapY - visibleProgenyHeight) / 2; // start out negative and grow positive
+				const initialSizeY = -visibleProgenyHeight / 2; // start out negative and grow positive
 
 				let index = 0;
 				let sumOfSiblingsAbove = 0;
 				while (index < quantity) {
 					const child = children[index];
-					const direction = this.getDirection(threshold - index, hasAFlat);
 					const childHalfVisibleProgenyHeight = child.halfVisibleProgenyHeight;
 					const sizeY = initialSizeY + sumOfSiblingsAbove + childHalfVisibleProgenyHeight;
-					const rect = new Rect(origin, new Size(sizeX, sizeY - halfGapY));
+					const direction = this.getDirection(sizeY);
+					const rect = new Rect(origin, new Size(sizeX, sizeY));
 					
 					// console.log('LINE r.e.y:', rect.extent.y, ' o.y:', origin.y, ' s.y:', sizeY, 'h:', childHalfVisibleProgenyHeight, direction, index, child.title);
 					
@@ -41,10 +39,10 @@ export default class Layout {
 		}
 	}
 
-	getDirection(delta: number, isFlat: Boolean) {
-		if (delta == 0 && isFlat) {
+	getDirection(delta: number) {
+		if (delta == 0) {
 			return LineCurveType.flat;
-		} else if (delta > 0) {
+		} else if (delta < 0) {
 			return LineCurveType.up;
 		} else {
 			return LineCurveType.down;
