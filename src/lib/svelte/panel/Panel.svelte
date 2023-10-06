@@ -17,7 +17,7 @@
 	onMount(async () => {
 		document.title = 'Seriously ('+ (isServerLocal() ? 'local' : 'remote') + ', ' + getBrowserType()  + ', α)';
 		updateGraphRect();
-		persistLocal.setup();
+		persistLocal.start();
 	})
 	
 	function handleSettings(event) {

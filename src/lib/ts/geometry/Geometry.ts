@@ -69,9 +69,10 @@ export class LineRect extends Rect {
 };
 
 export function updateGraphRect() {
-	const grephOrigin = new Point(40, 33);
+	const graphOrigin = new Point(101, 33);						// height of top, width of left
+	const sizeShrink = graphOrigin.asSize.multipliedBy(-1);
 	const newWindowSize = new Size(window.innerWidth, window.innerHeight);
-	const graphSize = newWindowSize.expandedBy(grephOrigin.asSize.multipliedBy(-1));
-	windowSize.set(newWindowSize);	// used by Crumbs
-	graphRect.set(new Rect(grephOrigin, graphSize));
+	const graphSize = newWindowSize.expandedBy(sizeShrink);		// remove top and left
+	windowSize.set(newWindowSize);								// used by Crumbs
+	graphRect.set(new Rect(graphOrigin, graphSize));			// used by Panel and Graph
 };

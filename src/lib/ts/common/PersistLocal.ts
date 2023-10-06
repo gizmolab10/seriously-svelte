@@ -23,7 +23,7 @@ class PersistLocal {
 	idSeparator = ':';
 	separator = '|';
 
-	setup() {
+	start() {
 		// localStorage.clear();
 		// const isLocal = isServerLocal();
 		dbLoadTime.set(null);
