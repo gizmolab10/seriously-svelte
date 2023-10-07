@@ -28,9 +28,9 @@ export enum LineCurveType {
 const baseZIndex = 10000;
 
 export enum ZIndex {
-	base			 = baseZIndex,
-	lines			 = baseZIndex + 10,
-	highlights = baseZIndex + 20,
-	dots			 = baseZIndex + 30,
-	text			 = baseZIndex + 40,
+	base		= baseZIndex,
+	lines		= baseZIndex + 10,
+	highlights	= baseZIndex + 20,
+	text		= baseZIndex + 30,
+	dots		= baseZIndex + 40,
 }

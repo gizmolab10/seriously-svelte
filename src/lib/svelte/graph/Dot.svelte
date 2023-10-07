@@ -58,11 +58,13 @@
 	on:click={handleClick}
 	on:mouseover={dot.style.backgroundColor=traitColor}
 	on:mouseout={dot.style.backgroundColor=buttonColor}
-	style='width:{$dotDiameter}px; height:{$dotDiameter}px; z-index: {ZIndex.text};
+	style='{placement}
+		width:{$dotDiameter}px;
+		height:{$dotDiameter}px;
+		z-index: {ZIndex.text};
 		background-color: {buttonColor};
 		border-color: {dotColor};
-		color: {traitColor};
-		{placement}'>
+		color: {traitColor};'>
 </button>
 
 <style lang='scss'>

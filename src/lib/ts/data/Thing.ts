@@ -274,17 +274,16 @@ export default class Thing extends Datum {
 
 	redraw_browseRight(RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, toTop: boolean = false, moveHere: boolean = false) {
 		let newGrab: Thing | null = RIGHT ? toTop ? this.lastChild : this.firstChild : this.firstParent;
+		const isExpanded = this.isExpanded;
 		if (!RIGHT) {
 			if (EXTREME) {
 				dbDispatch.db.hierarchy.root?.becomeHere();	// tells graph to update line rects
-			} else if (SHIFT) {
-				if (this.isExpanded) {
-					this.collapse();
-					newGrab = null;
-					signal(Signals.childrenOf, null);			// tell graph to update line rects
-				}
+			} else if (isExpanded) {
+				this.collapse();
+				newGrab = null;
+				signal(Signals.childrenOf, null);			// tell graph to update line rects
 			} else {
-				this.firstParent?.expand();
+				this.expand();
 				signal(Signals.childrenOf, null);			// tell graph to update line rects
 			}
 		} else if (this.hasChildren) {
