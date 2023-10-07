@@ -11,19 +11,15 @@ export default class Layout {
 			const children = parent.children;
 			const quantity = children.length;
 			if (quantity > 0) {
-				const half = quantity / 2;
-				const gapY = get(lineGap);
-				const halfGapY = gapY / 2;
 				const sizeX = get(lineStretch);
-				const visibleProgenyHeight = parent.visibleProgenyHeight;
-				const initialSizeY = -visibleProgenyHeight / 2; // start out negative and grow positive
+				const initialOffsetY = -parent.halfVisibleProgenyHeight; // start out negative and grow positive
 
 				let index = 0;
 				let sumOfSiblingsAbove = 0;
 				while (index < quantity) {
 					const child = children[index];
 					const childHalfVisibleProgenyHeight = child.halfVisibleProgenyHeight;
-					const sizeY = initialSizeY + sumOfSiblingsAbove + childHalfVisibleProgenyHeight;
+					const sizeY = childHalfVisibleProgenyHeight + initialOffsetY + sumOfSiblingsAbove;
 					const direction = this.getDirection(sizeY);
 					const rect = new Rect(origin, new Size(sizeX, sizeY));
 					
@@ -42,7 +38,8 @@ export default class Layout {
 	getDirection(delta: number) {
 		if (delta == 0) {
 			return LineCurveType.flat;
-		} else if (delta < 0) {
+		} else if (delta <
+			 0) {
 			return LineCurveType.up;
 		} else {
 			return LineCurveType.down;

@@ -47,6 +47,7 @@ export default class Thing extends Datum {
 	get titleWidth():				number { return getWidthOf(this.title) }
 	get visibleProgenySize():		  Size { return new Size(this.visibleProgenyWidth, this.visibleProgenyHeight); }
 	get halfVisibleProgenySize():	  Size { return this.visibleProgenySize.dividedInHalf; }
+	get halfVisibleProgenyWidth():  number { return this.visibleProgenyWidth / 2; }
 	get halfVisibleProgenyHeight(): number { return this.visibleProgenyHeight / 2; }
 	get hasChildren():			   boolean { return this.hasPredicate(false); }
 	get isRoot():				   boolean { return this == dbDispatch.db.hierarchy.root; }

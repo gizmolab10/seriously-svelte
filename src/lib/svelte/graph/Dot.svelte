@@ -35,7 +35,7 @@
 		if (thing.isExemplar) { return; }
 		if (isReveal) {
 			if (thing.hasChildren) {
-				thing.toggleExpand();
+				// thing.toggleExpand();
 				const OPTION = event.altKey;
 				const SHIFT = event.shiftKey;
 				const EXTREME = SHIFT && OPTION;

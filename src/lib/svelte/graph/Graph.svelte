@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { noop, Rect, Size, Point, Thing, ZIndex, Layout, editor, Signals, onMount, onDestroy, PersistID, persistLocal } from '../../ts/common/GlobalImports';
-	import { constants, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
 	import { idHere, lineGap, idEditing, idsGrabbed, graphRect, windowSize, graphOffset, popupViewID } from '../../ts/managers/State';
+	import { constants, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
 	import FatTriangleButton from '../kit/FatTriangleButton.svelte';
 	import Children from './Children.svelte';
 	let triangleOrigin = new Point();
@@ -13,40 +13,37 @@
 
 	const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
 		if (here && (idThing == null || idThing == here.id)) {
-			updateOrigin();
+			updateOrigins();
 		}
 	});
 
 	window.addEventListener('wheel', (event: WheelEvent) => {
 		const offset = $graphOffset;
-		const delta = new Point(event.deltaX, event.deltaY);
-		const newOffset = new Point(offset.x, offset.y).offsetBy(delta.multipliedBy(-1));
+		const delta = new Point(-event.deltaX, -event.deltaY);
+		const newOffset = new Point(offset.x, offset.y).offsetBy(delta);
 		setGraphOffset(newOffset);
 	});
 
 	function setGraphOffset(origin: Point) {
-		$graphOffset = origin;
 		persistLocal.writeToKey(PersistID.origin, origin);
-		updateOrigin();
+		$graphOffset = origin;
+		updateOrigins();
 	}
 
-	function updateOrigin() {
+	function updateOrigins() {
 		if (here) {
-			const mysteryChildrenOffset = new Point(-18, -48);
-			const drawnSize = here.visibleProgenySize;
-			const gCenter = new Rect($graphRect.origin, $graphRect.size).center;
-			const tOffset = drawnSize.asPoint.multipliedBy(-1/2).offsetBy(new Point(0, 10));
-			const tOrigin = gCenter.offsetBy($graphOffset).offsetBy(tOffset);
-			const cOrigin = tOrigin.offsetBy(mysteryChildrenOffset);
-			triangleOrigin = tOrigin;
-			childrenOrigin = cOrigin;
+			const gCenter = $graphRect.center.offsetBy($graphOffset);		// user-determined center
+			const tOffset = here.halfVisibleProgenySize.asPoint.multipliedBy(-1);
+			const tOrigin = gCenter.offsetBy(tOffset);
+			triangleOrigin = gCenter.offsetBy(new Point(-here.visibleProgenyWidth * 0.69, -20));
+			childrenOrigin = triangleOrigin.offsetBy(new Point(-18, tOffset.y - 6));
 		}
 	}
 	
 	$: {
 		if (here == null || here.id != $idHere) {			
 			here = dbDispatch.db.hierarchy.getThing_forID($idHere);
-			updateOrigin();
+			updateOrigins();
 		}
 		if (here) { // can sometimes be null !!!!!! ????????
 			let grabbed = $idsGrabbed.includes(here.id);
@@ -60,11 +57,9 @@
 		if ($idEditing)			{ return; } // let Title component consume the events
 		if (event.key == undefined)	{ alert('no key for ' + event.type); return; }
 		if (event.type == 'keydown') {
-			const key = event.key.toLowerCase();
+			const key = event.key;
 			switch (key) {
 				case 'c': setGraphOffset(new Point()); break;
-				case 'r': break; // restart app
-				case 't': alert('PARENT-CHILD SWAP'); break;
 				case '?': $popupViewID = ButtonID.help; break;
 				case ']':
 				case '[': dbDispatch.nextDB(key == ']'); break;
