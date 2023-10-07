@@ -9,7 +9,6 @@ export default class Thing extends Datum {
 	isExemplar = false;
 	isEditing = false;
 	isGrabbed = false;
-	titlePadding = 0;
 	dbType: string;
 	title: string;
 	color: string;
@@ -129,8 +128,7 @@ export default class Thing extends Datum {
 	}
 
 	revealColor(isReveal: boolean): string {
-		return 'transparent';
-		// return (this.showBorder != isReveal) ? this.color : constants.backgroundColor;
+		return (this.showBorder != isReveal) ? this.color : constants.backgroundColor;
 	}
 
 	startEdit() {

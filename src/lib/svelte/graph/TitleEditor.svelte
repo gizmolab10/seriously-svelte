@@ -84,15 +84,16 @@
 
 	function updateInputWidth() {
 		if (input && wrapper && thing) { // wrapper only exists to provide its scroll width
-			input.style.width = `${(wrapper.scrollWidth * 0.93) + thing.titlePadding - 5}px`;
+			const width = wrapper.scrollWidth;
+			input.style.width = `${width - 6}px`;
 		}
 	}
 </script>
 
 {#key originalTitle}
-	<span class="wrapper" bind:this={wrapper} contenteditable='true'
+	<span class="wrapper" bind:this={wrapper}
 		style='font-size: {$titleFontSize}px; font-family: {$titleFontFamily};'>
-		{thing.title} &nbsp;				<!-- extra spaces so text is not clipped -->
+		{thing.title}
 	</span>
 	<input
 		type='text'
@@ -115,15 +116,15 @@
 	input {
 		border: none;
 		outline: none;
-		padding: 0px 3px;
-		border-radius: 10px;
+		padding: 0px 0px 0px 6px;
 		position: relative;
-		top: 3px;
+		top: 4px;
 		outline-color: 'white';
 	}
 	.wrapper {
 		position: absolute;
 		visibility: hidden;
+		padding: 0px 0px 0px 6px;
 		white-space: pre; /* Preserve whitespace to accurately measure the width */
 	}
 </style>

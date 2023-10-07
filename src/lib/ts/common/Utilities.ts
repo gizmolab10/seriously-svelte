@@ -65,13 +65,13 @@ export function getFontOf(element: HTMLElement): string {
 		return `${fontSize} ${fontFamily}`;
 }
 
-export function getWidthOf(s: string, font: string = ''): number {
+export function getWidthOf(s: string): number {
 		const element: HTMLElement = document.createElement('span');
 		element.textContent = s;
-		const fontStyle = get(titleFontSize) + 'px ' +get(titleFontFamily)
+		const fontStyle = get(titleFontSize) + 'px ' + get(titleFontFamily)
 		
 		// Apply font styling (you can extend this to other styles if needed)
-		element.style.font = font;
+		element.style.font = fontStyle;
 
 		// Position element off-screen
 		element.style.position = 'absolute';
