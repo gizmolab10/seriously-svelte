@@ -1,5 +1,5 @@
 import { get, Size, Datum, signal, Signals, constants, Predicate, PersistID, dbDispatch, getWidthOf, persistLocal, normalizeOrderOf } from '../common/GlobalImports';
-import { idHere, idEditing, expanded, idsGrabbed, lineGap, lineStretch } from '../managers/State';
+import { idHere, idEditing, expanded, idsGrabbed, lineGap, lineStretch, dotDiameter } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -78,7 +78,8 @@ export default class Thing extends Datum {
 	}
 
 	get visibleProgenyWidth(): number {
-		let width = this.titleWidth;		// default row height
+		const dotWidth = get(dotDiameter);
+		let width = this.titleWidth + dotWidth + 18;
 		if (this.hasChildren && this.isExpanded) {
 			let progenyWidth = 0;
 			for (const child of this.children) {
@@ -128,7 +129,8 @@ export default class Thing extends Datum {
 	}
 
 	revealColor(isReveal: boolean): string {
-		return (this.showBorder != isReveal) ? this.color : constants.backgroundColor;
+		return 'transparent';
+		// return (this.showBorder != isReveal) ? this.color : constants.backgroundColor;
 	}
 
 	startEdit() {

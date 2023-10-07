@@ -5,8 +5,8 @@ import { lineGap, lineStretch } from '../managers/State'
 export default class Layout {
 	lineRects: Array<LineRect>;
 
-    constructor(parent: Thing, origin: Point) {
-        this.lineRects = [];
+	constructor(parent: Thing, origin: Point) {
+		this.lineRects = [];
 		if (parent) {
 			const children = parent.children;
 			const quantity = children.length;

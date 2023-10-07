@@ -1,6 +1,6 @@
 <script lang=ts>
 	import { noop, Rect, Size, Point, Thing, Signals, Layout, onMount, onDestroy, LineRect, LineCurveType, normalizeOrderOf, handleSignalOfKind } from '../../ts/common/GlobalImports';
-	import { lineGap, lineStretch } from '../../ts/managers/State';
+	import { lineGap, lineStretch, dotDiameter } from '../../ts/managers/State';
 	import Children from './Children.svelte';
 	import Widget from './Widget.svelte';
 	import Line from './Line.svelte';
@@ -38,9 +38,10 @@
 	}
 
 	function originForGrandchildren(child: Thing, index: number): Point {
+		const more = 14;									// TODO: WHY 14? perhaps it accounts for title margin
 		const rect = lineRectAt(index);
-		const x = origin.x + child.titleWidth + $lineStretch + 29;		// TODO: why 29?
-		const y = rect.extent.y - child.halfVisibleProgenyHeight;	// TODO: why 4?
+		const x = origin.x + child.titleWidth + $dotDiameter + $lineStretch + more;
+		const y = rect.extent.y - child.halfVisibleProgenyHeight;
 		return new Point(x, y);
 	}
 	

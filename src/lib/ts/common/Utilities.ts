@@ -1,4 +1,5 @@
-import { Thing, BrowserType } from './GlobalImports';
+import { titleFontSize, titleFontFamily } from '../managers/State';
+import { get, Thing, BrowserType } from './GlobalImports';
 import convert from 'color-convert';
 
 export function noop() {}
@@ -64,16 +65,17 @@ export function getFontOf(element: HTMLElement): string {
 		return `${fontSize} ${fontFamily}`;
 }
 
-export function getWidthOf(s: string, font: string = '16px Arial'): number {
+export function getWidthOf(s: string, font: string = ''): number {
 		const element: HTMLElement = document.createElement('span');
 		element.textContent = s;
+		const fontStyle = get(titleFontSize) + 'px ' +get(titleFontFamily)
 		
 		// Apply font styling (you can extend this to other styles if needed)
 		element.style.font = font;
 
 		// Position element off-screen
 		element.style.position = 'absolute';
-		element.style.left = '-9999px';
+		element.style.left = '-9999px'; // offscreen
 		
 		document.body.appendChild(element);
 
@@ -87,18 +89,18 @@ export function getWidthOf(s: string, font: string = '16px Arial'): number {
 }
 
 export function getBrowserType(): BrowserType {
-    const userAgent: string = navigator.userAgent;
+	const userAgent: string = navigator.userAgent;
 
-    switch (true) {
-        case /msie (\d+)/i.test(userAgent) ||
+	switch (true) {
+		case /msie (\d+)/i.test(userAgent) ||
 						/trident\/.*; rv:(\d+)/i.test(userAgent):		return BrowserType.explorer;
-        case /(chrome|crios)\/(\d+)/i.test(userAgent):	return BrowserType.chrome;
-        case /firefox\/(\d+)/i.test(userAgent):					return BrowserType.firefox;
+		case /(chrome|crios)\/(\d+)/i.test(userAgent):	return BrowserType.chrome;
+		case /firefox\/(\d+)/i.test(userAgent):					return BrowserType.firefox;
 				case /opr\/(\d+)/i.test(userAgent):							return BrowserType.opera;
-        case /orion\/(\d+)/i.test(userAgent):						return BrowserType.orion;
-        case /safari\/(\d+)/i.test(userAgent):					return BrowserType.safari;
-        default:																				return BrowserType.unknown
-    }
+		case /orion\/(\d+)/i.test(userAgent):						return BrowserType.orion;
+		case /safari\/(\d+)/i.test(userAgent):					return BrowserType.safari;
+		default:																				return BrowserType.unknown
+	}
 }
 
 // export function desaturateBy(color: string, desaturateBy: number, brightenBy: number): string {}

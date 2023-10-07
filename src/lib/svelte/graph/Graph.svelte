@@ -36,7 +36,7 @@
 			const tOffset = here.halfVisibleProgenySize.asPoint.multipliedBy(-1);
 			const tOrigin = gCenter.offsetBy(tOffset);
 			triangleOrigin = gCenter.offsetBy(new Point(-here.visibleProgenyWidth * 0.69, -20));
-			childrenOrigin = triangleOrigin.offsetBy(new Point(-18, tOffset.y - 6));
+			childrenOrigin = triangleOrigin.offsetBy(new Point(-18, tOffset.y - 7));
 		}
 	}
 	

@@ -25,7 +25,7 @@
 		thing.updateColorAttributes();
 		delta = showBorder ? 0 : 1;
 		border = showBorder ? 'border: ' + thing.grabAttributes : '';
-		background =  showBorder ? 'background-color: ' + constants.backgroundColor : '';
+		background = showBorder ? 'background-color: ' + constants.backgroundColor : '';
 	}
 
 	$: {

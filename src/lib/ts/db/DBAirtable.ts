@@ -61,9 +61,6 @@ export default class DBAirtable implements DBInterface {
 				const remoteThings = records;
 				for (const remoteThing of remoteThings) {
 					const id = remoteThing.id;
-					if (remoteThing.fields.trait == '!') {
-						console.log('root');
-					}
 					this.hierarchy.rememberThing_runtimeCreate(id, remoteThing.fields.title as string, remoteThing.fields.color as string, remoteThing.fields.trait as string, -1, true);
 				}
 				thingsArrived.set(true);
