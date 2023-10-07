@@ -3,8 +3,9 @@ class Builds {
 	notes: { [id: number]: string[] } = {};
 
 	constructor() {
-		build.set(44);
+		build.set(45);
 		this.notes = {
+			45 : ['October 7, 2023', 'children origins are perfect'],
 			44 : ['October 5, 2023', 'scrolling works'],
 			43 : ['October 3, 2023', 'fetch Catalist data, HAH!'],
 			41 : ['October 3, 2023', 'almost perfectly laid out graph'],
