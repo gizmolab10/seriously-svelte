@@ -142,8 +142,8 @@ export default class Hierarchy {
 		known[idRelationship] = array;
 	}
 
-	rememberThing_runtimeCreateAt(order: number) {
-		return this.rememberThing_runtimeCreate(Datum.newID, constants.defaultTitle, 'blue', 't', order, false);
+	rememberThing_runtimeCreateAt(order: number, color: string) {
+		return this.rememberThing_runtimeCreate(Datum.newID, constants.defaultTitle, color, '', order, false);
 	}
 
 	rememberThing_runtimeCreate(id: string, title: string, color: string, trait: string, order: number, isRemotelyStored: boolean): Thing {

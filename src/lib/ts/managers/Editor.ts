@@ -25,7 +25,6 @@ export default class Editor {
 			}
 			if (grab) {
 				switch (key) {
-					case 'delete':
 					case ' ':			await this.thing_redraw_remoteAddChildTo(grab); break;
 					case 'd':			await this.thing_redraw_remoteDuplicate(grab); break;
 					case 'tab':			await this.thing_redraw_remoteAddChildTo(grab.firstParent); break; // Title editor also makes this call
@@ -36,6 +35,7 @@ export default class Editor {
 				}
 			}
 			switch (key) {
+				case 'delete':
 				case 'backspace':		await this.grabs_redraw_remoteDelete(); break;
 				case 'arrowup':			await this.furthestGrab_redraw_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
 				case 'arrowdown':		await this.furthestGrab_redraw_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
@@ -48,15 +48,14 @@ export default class Editor {
 	//////////////////
 
 	async thing_redraw_remoteAddChildTo(parent: Thing) {
-		const child = dbDispatch.db.hierarchy.rememberThing_runtimeCreateAt(-1);
+		const child = dbDispatch.db.hierarchy.rememberThing_runtimeCreateAt(-1, parent.color);
 		await this.thing_redraw_remoteAddAsChild(child, parent);
 	}
 
 	async thing_redraw_remoteDuplicate(thing: Thing) {
-		const sibling = dbDispatch.db.hierarchy.rememberThing_runtimeCreateAt(thing.order + constants.orderIncrement);
+		const sibling = dbDispatch.db.hierarchy.rememberThing_runtimeCreateAt(thing.order + constants.orderIncrement, thing.color);
 		const parent = thing.firstParent ?? dbDispatch.db.hierarchy.root;
-		thing.copyInto(sibling);
-		sibling.order += constants.orderIncrement
+		sibling.title = thing.title;
 		await this.thing_redraw_remoteAddAsChild(sibling, parent);
 	}
 
@@ -67,9 +66,9 @@ export default class Editor {
 		dbDispatch.db.hierarchy.rememberThing(child);
 		const relationship = await dbDispatch.db.hierarchy.rememberRelationship_remoteCreate(idRelationship, idPredicateIsAParentOf, parent.id, child.id, child.order, CreationFlag.getRemoteID)
 		normalizeOrderOf(parent.children);
-		parent.becomeHere();
 		child.startEdit();
 		child.grabOnly();
+		signal(Signals.childrenOf, null);
 		await relationship.remoteWrite();
 	}
 
@@ -147,9 +146,9 @@ export default class Editor {
 						return false; // continue the traversal
 					});
 					newGrab.grabOnly();
-					signal(Signals.childrenOf, newGrab.firstParent.id); 
 				}
 			}
+			signal(Signals.childrenOf);
 		}
 	}
 

@@ -80,7 +80,7 @@
 					position: absolute;
 					left: {triangleOrigin.x - 8};
 					top: {triangleOrigin.y - 22};'>
-				<circle cx='15' cy='15' r='14' stroke='blue' fill={constants.backgroundColor}/>
+				<circle cx='15' cy='15' r='14' stroke={here.color} fill={constants.backgroundColor}/>
 			</svg>
 		{/if}
 		<FatTriangleButton here={here} origin={triangleOrigin.offsetByY(-15)}/>

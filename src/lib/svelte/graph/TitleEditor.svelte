@@ -17,9 +17,10 @@
 	function handleKeyDown(event) {
 		if ($idEditing == thing.id) {
 			switch (event.key) {	
-				case 'Tab': 	stopAndClearEditing(); editor.thing_redraw_remoteDuplicate(); break;
+				case 'Tab':	  stopAndClearEditing(); editor.thing_redraw_remoteAddChildTo(thing.firstParent); break;
 				case 'Enter': stopAndClearEditing();
 			}
+			event.preventDefault();
 		}
 	}
 
@@ -88,7 +89,8 @@
 			input.style.width = `${width - 6}px`;
 		}
 	}
-</script>
+
+	</script>
 
 {#key originalTitle}
 	<span class="wrapper" bind:this={wrapper}

@@ -7,17 +7,16 @@ export enum BulkID {
 }
 
 export enum PersistID {
-	lineStretch = 'stretch',
+	lineStretch = 'lineStretch',
+	dotDiameter	= 'dotDiameter',
 	expanded	= 'expanded',
 	fontSize	= 'fontSize',
 	details		= 'details',
 	origin		= 'origin',
 	bulk		= 'bulk',
 	here		= 'here',
-	grab		= 'grab',
 	font		= 'font',
 	gap			= 'gap',
-	dot			= 'dot',
 	db			= 'db',
 }
 
@@ -30,9 +29,9 @@ class PersistLocal {
 		// const isLocal = isServerLocal();
 		dbLoadTime.set(null);
 		lineGap. set(this.readFromKey(PersistID.gap) ?? 30);
-		dotDiameter.set(this.readFromKey(PersistID.dot) ?? 14);
 		showDetails.set(this.readFromKey(PersistID.details) ?? false);
 		dbType.set(this.readFromKey(PersistID.db) ?? DBType.firebase); // invokes cloud setup, which needs bulk name already set (must be above)
+		dotDiameter.set(this.readFromKey(PersistID.dotDiameter) ?? 14);
 		lineStretch.set(this.readFromKey(PersistID.lineStretch) ?? 40);
 		titleFontFamily.set(this.readFromKey(PersistID.font) ?? 'Arial');
 		titleFontSize.set(this.readFromKey(PersistID.fontSize) ?? 14);

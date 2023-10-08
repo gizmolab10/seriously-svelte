@@ -138,13 +138,6 @@ export default class Thing extends Datum {
 		}
 	}
 
-	copyInto(other: Thing) {
-		other.title = this.title;
-		other.color = this.color;
-		other.trait = this.trait;
-		other.order = this.order;
-	}
-
 	updateColorAttributes() {
 		const borderStyle = this.isEditing ? 'dashed' : 'solid';
 		const border = borderStyle + ' 1px ';
@@ -275,19 +268,20 @@ export default class Thing extends Datum {
 
 	redraw_browseRight(RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, toTop: boolean = false, moveHere: boolean = false) {
 		let newGrab: Thing | null = RIGHT ? toTop ? this.lastChild : this.firstChild : this.firstParent;
+		const newHere = RIGHT ? this : this.grandparent;
 		const root = dbDispatch.db.hierarchy.root;
 		if (!RIGHT) {
 			if (EXTREME) {
 				root?.becomeHere();	// tells graph to update line rects
 			} else {
-				if (SHIFT) {
+				if (!SHIFT) {
+					newHere.expand();
+				} else {
 					if (this.isExpanded) {
 						newGrab = null;
 						this.collapse();
-						signal(Signals.childrenOf, null);			// tell graph to update line rects
 					} else if (newGrab != root) {
 						newGrab.collapse();
-						signal(Signals.childrenOf, null);			// tell graph to update line rects
 					} else {
 						newGrab = null;
 					}
@@ -298,15 +292,14 @@ export default class Thing extends Datum {
 				newGrab = null;
 			}
 			this.expand();
-			signal(Signals.childrenOf, null);			// tell graph to update line rects
 		}
-		const newHere = RIGHT ? this : this.grandparent;
-		const shouldBecomeHere = !newHere.isExpanded || newHere.id == dbDispatch.db.hierarchy.idRoot;
-		if (moveHere || (!RIGHT && shouldBecomeHere)) { // && this.id == get(idHere)
+		const shouldBecomeHere = !newHere.isVisible || newHere.isRoot;
+		if (moveHere || (!RIGHT && shouldBecomeHere)) {
 			newHere.becomeHere();
 		}
 		idEditing.set(null);
 		newGrab?.grabOnly();
+		signal(Signals.childrenOf, null);			// tell graph to update line rects
 	}
 
 }
