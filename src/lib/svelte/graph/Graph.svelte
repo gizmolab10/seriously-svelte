@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { noop, Rect, Size, Point, Thing, ZIndex, Layout, editor, Signals, onMount, onDestroy, PersistID, persistLocal } from '../../ts/common/GlobalImports';
+	import { noop, Rect, Size, Point, Thing, ZIndex, editor, Signals, onMount, onDestroy, PersistID, persistLocal } from '../../ts/common/GlobalImports';
 	import { idHere, lineGap, idEditing, idsGrabbed, graphRect, windowSize, graphOffset, popupViewID } from '../../ts/managers/State';
 	import { constants, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
 	import FatTriangleButton from '../kit/FatTriangleButton.svelte';

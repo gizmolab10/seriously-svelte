@@ -25,7 +25,7 @@
 		<RadioButtons menuItems={menuItems} idSelected={$dbType}/>
 		<br>
 		{#if $dbLoadTime}
-			<Label title={'loaded in ' + $dbLoadTime + ' s'}/>
+			<Label title={'fetch in ' + $dbLoadTime + ' s'}/>
 		{:else}
 			<br>
 		{/if}
@@ -36,7 +36,9 @@
 	.modal-overlay {
 		position: fixed;
 		left: 0;
-		height: 40%;
+		top: 31px;
+		height: 100%;
+		width: 100px;
 		justify-content: center;
 	}
 	.modal-content {

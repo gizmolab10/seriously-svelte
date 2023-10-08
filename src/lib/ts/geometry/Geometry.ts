@@ -58,6 +58,8 @@ export class Rect {
 	get centerBottom():	 Point { return new Point(this.center.x, this.extent.y); };
 	get centerTop():	 Point { return new Point(this.center.x, this.origin.y); };
 	get copy():			  Rect { return new Rect(this.origin.copy, this.size.copy); }
+	offsetByX(x: number): Rect { return new Rect(this.origin.offsetByX(x), this.size); }
+	offsetByY(y: number): Rect { return new Rect(this.origin.offsetByY(y), this.size); }
 }
 
 export class LineRect extends Rect {

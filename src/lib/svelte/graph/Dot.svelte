@@ -3,7 +3,7 @@
 	import { idsGrabbed, dotDiameter } from '../../ts/managers/State';
 	export let isReveal = false;
 	export let thing = Thing;
-	let placement = 'left: 5px; top: 4px;'
+	let placement = 'left: 5px; top: 4px;' // tiny browser compensation
 	const browserType = getBrowserType();
 	let buttonColor = thing.color;
 	let traitColor = thing.color;

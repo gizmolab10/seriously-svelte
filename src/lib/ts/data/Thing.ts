@@ -51,6 +51,7 @@ export default class Thing extends Datum {
 	get hasChildren():			   boolean { return this.hasPredicate(false); }
 	get isRoot():				   boolean { return this == dbDispatch.db.hierarchy.root; }
 	get showBorder():			   boolean { return this.isGrabbed || this.isEditing || this.isExemplar; }
+	get isVisible():			   boolean { return this.ancestors(Number.MAX_SAFE_INTEGER).includes(dbDispatch.db.hierarchy.here!); }
 	get isExpanded():			   boolean { return this.isRoot || get(expanded).includes(this.parentRelationshipID); }
 	get fields():		 Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get children():			  Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id, false, this.id); }

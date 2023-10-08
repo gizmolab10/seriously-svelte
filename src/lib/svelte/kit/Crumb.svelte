@@ -25,6 +25,3 @@
 		cursor: pointer;'>
 	{thing.title.injectElipsisAt()}
 </button>
-
-<style>
-</style>

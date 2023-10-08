@@ -36,7 +36,7 @@
 <svg width='100%'
 	height={window.innerHeight} 
 	style='position: absolute;
-		left: 25px;
+		left: 0px;
 		z-index: {ZIndex.lines};'>
 	<path d={path} stroke={color} fill='none'/>
 </svg>

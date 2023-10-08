@@ -98,16 +98,19 @@ export default class Editor {
 			const relationship = dbDispatch.db.hierarchy.getRelationship_whereIDEqualsTo(thing.id);
 			if (relationship) {
 				relationship.idFrom = newParent.id;
+				thing.setOrderTo(parent.order + 0.5, true);
 				await dbDispatch.db.relationship_remoteUpdate(relationship);
-				thing.setOrderTo(-1, true);
 			}
 
 			dbDispatch.db.hierarchy.relationships_refreshKnowns();		// so children and parent will see the newly relocated things
 			normalizeOrderOf(newParent.children);						// refresh knowns first
 			normalizeOrderOf(parent.children);
 			thing.grabOnly();
-			newParent.becomeHere();
-			signal(Signals.childrenOf, newParent.id);					// so Children component will update
+			newParent.expand();
+			if (!newParent.isVisible) {
+				newParent.becomeHere();
+			}
+			signal(Signals.childrenOf);					// so Children component will update
 		}
 	}
 

@@ -7,8 +7,8 @@
 	export let label = null;
 	export let image = null;
 	export let size = 14;
-	export let x = 7;
-	export let y = 7;
+	export let left = 7;
+	export let top = 7;
 </script>
 
 <div
@@ -16,8 +16,8 @@
 	on:keypress={noop()}
 	style='
 		position: absolute;
-		left: {x}px;
-		top: {y}px;
+		left: {left}px;
+		top: {top}px;
 		transform: translate(-50%, -50%);
 		width: {size}px;
 		height: {size}px;

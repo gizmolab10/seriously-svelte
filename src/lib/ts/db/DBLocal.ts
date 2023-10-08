@@ -32,9 +32,9 @@ export default class DBLocal implements DBInterface {
 		h.rememberThing_runtimeCreate(idD, 'second', 'purple', '2', 0, true);
 		h.rememberThing_runtimeCreate(idE, 'third', 'orange', '3', 0, true);
 		h.rememberPredicate_runtimeCreate(idPredicate, 'isAParentOf');
-		h.rememberRelationship_runtimeCreate(this.localName('Ar'), idPredicate, idRoot, idA, 0);
 		h.rememberRelationship_runtimeCreate(this.localName('Br'), idPredicate, idRoot, idB, 0);
 		h.rememberRelationship_runtimeCreate(this.localName('Cr'), idPredicate, idRoot, idC, 0);
+		h.rememberRelationship_runtimeCreate(this.localName('Ar'), idPredicate, idC, idA, 0);
 		h.rememberRelationship_runtimeCreate(this.localName('Dr'), idPredicate, idA, idD, 0);
 		h.rememberRelationship_runtimeCreate(this.localName('Er'), idPredicate, idA, idE, 0);
 	};

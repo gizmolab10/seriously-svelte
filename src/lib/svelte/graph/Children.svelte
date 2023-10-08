@@ -61,7 +61,7 @@
 	{#if children && children.length != 0 && lineRects.length == children.length}
 		{#each children as child, index}
 			<Widget thing={child} origin={lineRectAt(index).extent.offsetBy(mysteryWidgetOffset)}/>
-			<Line color={child.color} curveType={curveTypeAt(index)} rect={lineRectAt(index)}/>
+			<Line color={child.color} curveType={curveTypeAt(index)} rect={lineRectAt(index).offsetByX(25)}/>
 			{#if child.hasChildren && child.isExpanded}
 				<Children thing={child} origin={originForGrandchildren(child, index)}/>
 			{/if}

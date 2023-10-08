@@ -1,7 +1,7 @@
 <script>
+	import { get, noop, Rect, Point, Grabs, DBType, ZIndex, onMount, PersistID, ButtonID, constants } from '../../ts/common/GlobalImports'
+	import { Hierarchy, dbDispatch, persistLocal, getBrowserType, isServerLocal, updateGraphRect } from '../../ts/common/GlobalImports'
 	import { dbType, isBusy, idHere, bulkName, graphRect, popupViewID, showDetails, thingsArrived } from '../../ts/managers/State';
-	import { get, noop, Rect, Point, Grabs, DBType, onMount, PersistID, ButtonID, Hierarchy } from '../../ts/common/GlobalImports'
-	import { dbDispatch, persistLocal, getBrowserType, isServerLocal, updateGraphRect } from '../../ts/common/GlobalImports'
 	import CircularButton from '../kit/CircularButton.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import Graph from '../graph/Graph.svelte';
@@ -27,16 +27,17 @@
 
 </script>
 
-<div class='left-side'>
-	<CircularButton
+<div class='left-side'
+	style='z-index: {ZIndex.details}; background-color: {constants.backgroundColor}'>
+	<CircularButton left=15
 		image='settings.svg'
 		borderColor='white'
 		onClick={handleSettings}/>
 	&nbsp;
 	{#if !$isBusy}
-		<CircularButton x=75
+		<CircularButton left=85
 			onClick={() => {handleClick(ButtonID.help)}}
-			label='?'
+			label='i'
 			size={size}/>
 	{/if}
 	{#if $showDetails}
@@ -44,7 +45,7 @@
 	{/if}
 </div>
 <div class='vertical-line'></div>
-<div class='horizontal-line'></div>
+<div class='horizontal-line' style='z-index: {ZIndex.top}'></div>
 <div class='right-side'>
 	{#if $isBusy}
 		<p>Welcome to Seriously</p>
@@ -89,12 +90,14 @@
 	}
 	.right-side {
 		position: fixed;
-		left: 20%;
+		left: 101px;
 	}
 	.left-side {
 		position: fixed;
+		height: 100%;
 		width: 100px;
 		margin: 1px;
+		left: -1px;
 	}
 	.top {
 		position: fixed;
@@ -115,7 +118,7 @@
 	.vertical-line {
 		position: absolute;
 		left: 100px;
-		top: 0;
+		top: 0px;
 		height: 100%;
 		width: 1px;
 		background-color: lightgray;

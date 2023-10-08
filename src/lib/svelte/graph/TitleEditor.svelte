@@ -106,7 +106,7 @@
 		bind:value={thing.title}
 		style='
 			color: {thing.color};
-			z-index:{ZIndex.text};
+			z-index:{ZIndex.text ?? ''};
 			font-size: {$titleFontSize}px;
 			font-family: {$titleFontFamily};
 		'/>
