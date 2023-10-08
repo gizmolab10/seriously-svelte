@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { noop, Thing, onMount, ZIndex, BrowserType, getBrowserType } from '../../ts/common/GlobalImports';
+	import { noop, Thing, onMount, ZIndex, signal, Signals, BrowserType, getBrowserType } from '../../ts/common/GlobalImports';
 	import { idsGrabbed, dotDiameter } from '../../ts/managers/State';
 	export let isReveal = false;
 	export let thing = Thing;
@@ -27,20 +27,16 @@
 
 	function updateColorStyle() {
 		thing.updateColorAttributes();
-		traitColor = thing.revealColor(!isReveal);
-		buttonColor = thing.revealColor(isReveal);
+		const buttonFlag = (isReveal && (!thing.isExpanded || isGrabbed));
+		traitColor = thing.revealColor(!isReveal || isGrabbed);
+		buttonColor = thing.revealColor(buttonFlag);
 	}
 
 	async function handleClick(event) {
 		if (thing.isExemplar) { return; }
 		if (isReveal) {
-			if (thing.hasChildren) {
-				// thing.toggleExpand();
-				const OPTION = event.altKey;
-				const SHIFT = event.shiftKey;
-				const EXTREME = SHIFT && OPTION;
-				thing.redraw_browseRight(!thing.isExpanded, SHIFT, EXTREME);
-			}
+			thing.toggleExpand();
+			signal(Signals.childrenOf, null);
 		} else if (event.shiftKey || isGrabbed) {
 			thing.toggleGrab();
 		} else {

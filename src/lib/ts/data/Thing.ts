@@ -250,7 +250,7 @@ export default class Thing extends Datum {
 	redraw_remoteMoveup(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const siblings = this.siblings;
 		if (!siblings || siblings.length == 0) {
-				this.redraw_browseRight(true, EXTREME, up);
+			this.redraw_browseRight(true, EXTREME, up);
 		} else {
 			const index = siblings.indexOf(this);
 			const newIndex = index.increment(!up, siblings.length);
@@ -274,17 +274,23 @@ export default class Thing extends Datum {
 
 	redraw_browseRight(RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, toTop: boolean = false, moveHere: boolean = false) {
 		let newGrab: Thing | null = RIGHT ? toTop ? this.lastChild : this.firstChild : this.firstParent;
-		const isExpanded = this.isExpanded;
+		const root = dbDispatch.db.hierarchy.root;
 		if (!RIGHT) {
 			if (EXTREME) {
-				dbDispatch.db.hierarchy.root?.becomeHere();	// tells graph to update line rects
-			} else if (isExpanded) {
-				this.collapse();
-				newGrab = null;
-				signal(Signals.childrenOf, null);			// tell graph to update line rects
+				root?.becomeHere();	// tells graph to update line rects
 			} else {
-				this.expand();
-				signal(Signals.childrenOf, null);			// tell graph to update line rects
+				if (SHIFT) {
+					if (this.isExpanded) {
+						newGrab = null;
+						this.collapse();
+						signal(Signals.childrenOf, null);			// tell graph to update line rects
+					} else if (newGrab != root) {
+						newGrab.collapse();
+						signal(Signals.childrenOf, null);			// tell graph to update line rects
+					} else {
+						newGrab = null;
+					}
+				}
 			}
 		} else if (this.hasChildren) {
 			if (SHIFT) {
