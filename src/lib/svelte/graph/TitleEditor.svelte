@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { Thing, editor, signal, Signals, ZIndex, onDestroy, dbDispatch } from '../../ts/common/GlobalImports';
+	import { Thing, signal, Signals, ZIndex, constants, onDestroy, dbDispatch, graphEditor } from '../../ts/common/GlobalImports';
 	import { idEditing, titleFontSize, titleFontFamily, stoppedIDEditing } from '../../ts/managers/State';
 	import Widget from './Widget.svelte';
 	export let thing = Thing;
@@ -17,7 +17,7 @@
 	function handleKeyDown(event) {
 		if ($idEditing == thing.id) {
 			switch (event.key) {	
-				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); editor.thing_redraw_remoteAddChildTo(thing.firstParent); break;
+				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); graphEditor.thing_redraw_remoteAddChildTo(thing.firstParent); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
 			}
 		}
@@ -29,24 +29,26 @@
 		// manage edit state //
 		///////////////////////
 
-		if ($stoppedIDEditing == thing.id) {
-			stopEditing();
-			$stoppedIDEditing = null;
-		} else if ($idEditing != thing.id) {
-			stopEditing();
-		} else if (!isEditing) {
-			isEditing = true;
-			thing.grabOnly();
-			setTimeout(() => {
-				input?.focus();
-				input?.select();
-			}, 10);
-		}
-		if (currentThing != thing) {
-			currentThing = thing;
-			setTimeout(() => {
-				updateInputWidth();
-			}, 1);
+		if (constants.allowTitleEditing) {
+			if ($stoppedIDEditing == thing.id) {
+				stopEditing();
+				$stoppedIDEditing = null;
+			} else if ($idEditing != thing.id) {
+				stopEditing();
+			} else if (!isEditing) {
+				isEditing = true;
+				thing.grabOnly();
+				setTimeout(() => {
+					input?.focus();
+					input?.select();
+				}, 10);
+			}
+			if (currentThing != thing) {
+				currentThing = thing;
+				setTimeout(() => {
+					updateInputWidth();
+				}, 1);
+			}
 		}
 	}
 
@@ -76,7 +78,9 @@
 	}
 
 	function handleFocus(event) {
-		if (!isEditing) {
+		if (!constants.allowTitleEditing) {
+			input.blur();
+		} else if (!isEditing) {
 			isEditing = true;
 			thing.grabOnly()
 			thing.startEdit();

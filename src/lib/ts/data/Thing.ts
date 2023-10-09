@@ -248,20 +248,20 @@ export default class Thing extends Datum {
 		} else {
 			const index = siblings.indexOf(this);
 			const newIndex = index.increment(!up, siblings.length);
-			if (OPTION) {
-				const wrapped = up ? (index == 0) : (index == siblings.length - 1);
-				const goose = ((wrapped == up) ? 1 : -1) * constants.orderIncrement;
-				const newOrder =	newIndex + goose;
-				siblings[index].setOrderTo(newOrder, true);
-				normalizeOrderOf(siblings);
-				signal(Signals.childrenOf, this.firstParent.id);
-			} else {
+			if (!OPTION) {
 				const newGrab = siblings[newIndex];
 				if (SHIFT) {
 					newGrab?.toggleGrab()
 				} else {
 					newGrab?.grabOnly();
 				}
+			} else if (constants.allowGraphEditing) {
+				const wrapped = up ? (index == 0) : (index == siblings.length - 1);
+				const goose = ((wrapped == up) ? 1 : -1) * constants.orderIncrement;
+				const newOrder =	newIndex + goose;
+				siblings[index].setOrderTo(newOrder, true);
+				normalizeOrderOf(siblings);
+				signal(Signals.childrenOf, this.firstParent.id);
 			}
 		}
 	}

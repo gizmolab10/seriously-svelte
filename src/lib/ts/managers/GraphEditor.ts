@@ -8,7 +8,7 @@ import { idsGrabbed } from './State';
 //									//
 //////////////////////////////////////
 
-export default class Editor {
+export default class GraphEditor {
 
 	async handleKeyDown(event: KeyboardEvent) {
 		let grab = dbDispatch.db.hierarchy.grabs.furthestGrab(true);
@@ -23,20 +23,28 @@ export default class Editor {
 				root?.grabOnly(); // to update crumbs and dots
 				grab = root;
 			}
+			if (constants.allowGraphEditing) {
+				if (grab) {
+					switch (key) {
+						case ' ':			await this.thing_redraw_remoteAddChildTo(grab); break;
+						case 'd':			await this.thing_redraw_remoteDuplicate(grab); break;
+						case 'tab':			await this.thing_redraw_remoteAddChildTo(grab.firstParent); break; // Title editor also makes this call
+						case 'enter':		grab.startEdit(); break;
+					}
+				}
+				switch (key) {
+					case 'delete':
+					case 'backspace':		await this.grabs_redraw_remoteDelete(); break;
+				}
+			}
 			if (grab) {
 				switch (key) {
-					case ' ':			await this.thing_redraw_remoteAddChildTo(grab); break;
-					case 'd':			await this.thing_redraw_remoteDuplicate(grab); break;
-					case 'tab':			await this.thing_redraw_remoteAddChildTo(grab.firstParent); break; // Title editor also makes this call
 					case 'arrowright':	await this.thing_redraw_remoteMoveRight(grab, true, SHIFT, OPTION, EXTREME); break;
 					case 'arrowleft':	await this.thing_redraw_remoteMoveRight(grab, false, SHIFT, OPTION, EXTREME); break;
-					case 'enter':		grab.startEdit(); break;
 					case '/':			grab.becomeHere(); break;
 				}
 			}
 			switch (key) {
-				case 'delete':
-				case 'backspace':		await this.grabs_redraw_remoteDelete(); break;
 				case 'arrowup':			await this.furthestGrab_redraw_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
 				case 'arrowdown':		await this.furthestGrab_redraw_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
 			}
@@ -77,10 +85,10 @@ export default class Editor {
 	////////////////////
 
 	async thing_redraw_remoteMoveRight(thing: Thing, RIGHT: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
-		if (OPTION) {
-			await this.thing_redraw_remoteRelocateRight(thing, RIGHT, EXTREME);
-		} else {
+		if (!OPTION) {
 			thing.redraw_browseRight(RIGHT, SHIFT, EXTREME);
+		} else if (constants.allowGraphEditing) {
+			await this.thing_redraw_remoteRelocateRight(thing, RIGHT, EXTREME);
 		}
 	}
 
@@ -154,4 +162,4 @@ export default class Editor {
 
 }
 
-export const editor = new Editor();
+export const graphEditor = new GraphEditor();

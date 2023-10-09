@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { noop, Rect, Size, Point, Thing, ZIndex, editor, Signals, onMount, onDestroy, PersistID, persistLocal } from '../../ts/common/GlobalImports';
+	import { noop, Rect, Size, Point, Thing, ZIndex, Signals, onMount, onDestroy, graphEditor, PersistID, persistLocal } from '../../ts/common/GlobalImports';
 	import { idHere, lineGap, idEditing, idsGrabbed, graphRect, windowSize, graphOffset, popupViewID } from '../../ts/managers/State';
 	import { constants, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
 	import FatTriangleButton from '../kit/FatTriangleButton.svelte';
@@ -63,7 +63,7 @@
 				case '?': $popupViewID = ButtonID.help; break;
 				case ']':
 				case '[': dbDispatch.nextDB(key == ']'); break;
-				default:  await editor.handleKeyDown(event); break; // editor-specific key values
+				default:  await graphEditor.handleKeyDown(event); break; // editor-specific key values
 			}
 		}
 	}

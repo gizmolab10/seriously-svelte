@@ -1,5 +1,5 @@
 <script>
-	import { noop, editor, ZIndex, constants, dbDispatch, FatTrianglePath, Thing } from "../../ts/common/GlobalImports";
+	import { noop, Thing, ZIndex, constants, dbDispatch, graphEditor, FatTrianglePath } from "../../ts/common/GlobalImports";
 	import { idHere, dotDiameter } from '../../ts/managers/State';
 	const triangle = new FatTrianglePath($dotDiameter + 2, 0);
 	let fillColor = constants.backgroundColor;
@@ -14,7 +14,7 @@
 
 	function handleClick(event) {
 		const grab = dbDispatch.db.hierarchy.grabs.furthestGrab(true);
-		editor.thing_redraw_remoteMoveRight(grab, false, false);
+		graphEditor.thing_redraw_remoteMoveRight(grab, false, false);
 	}
 
 	function updateColors(isFilled) {

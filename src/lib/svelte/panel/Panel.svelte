@@ -15,6 +15,7 @@
 	window.addEventListener('resize', (event) => { updateGraphRect(); toggleDraw = !toggleDraw; });
 
 	onMount(async () => {
+		constants.readQueryStrings();
 		document.title = 'Seriously ('+ (isServerLocal() ? 'local' : 'remote') + ', ' + getBrowserType()  + ', α)';
 		updateGraphRect();
 		persistLocal.start();

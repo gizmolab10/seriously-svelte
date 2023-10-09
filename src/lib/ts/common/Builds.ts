@@ -3,8 +3,9 @@ class Builds {
 	notes: { [id: number]: string[] } = {};
 
 	constructor() {
-		build.set(46);
+		build.set(47);
 		this.notes = {
+			47 : ['October 9, 2023', 'two netlify query strings'],
 			46 : ['October 8, 2023', 'perfect editing and browsing'],
 			45 : ['October 7, 2023', 'children origins are perfect'],
 			44 : ['October 5, 2023', 'scrolling works'],
