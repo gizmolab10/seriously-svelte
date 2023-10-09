@@ -43,12 +43,12 @@
 					input?.select();
 				}, 10);
 			}
-			if (currentThing != thing) {
-				currentThing = thing;
-				setTimeout(() => {
-					updateInputWidth();
-				}, 1);
-			}
+		}
+		if (currentThing != thing) {
+			currentThing = thing;
+			setTimeout(() => {
+				updateInputWidth();
+			}, 1);
 		}
 	}
 
