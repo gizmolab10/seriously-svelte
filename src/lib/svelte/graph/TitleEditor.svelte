@@ -17,10 +17,9 @@
 	function handleKeyDown(event) {
 		if ($idEditing == thing.id) {
 			switch (event.key) {	
-				case 'Tab':	  stopAndClearEditing(); editor.thing_redraw_remoteAddChildTo(thing.firstParent); break;
-				case 'Enter': stopAndClearEditing();
+				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); editor.thing_redraw_remoteAddChildTo(thing.firstParent); break;
+				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
 			}
-			event.preventDefault();
 		}
 	}
 
@@ -54,7 +53,8 @@
 	function stopAndClearEditing(invokeBlur: boolean = true) {
 		stopEditing(invokeBlur);
 		setTimeout(() => {		// eliminate infinite recursion
-			if ($idEditing == thing.id) {				
+			const id = thing?.id;
+			if (id && $idEditing == id) {				
 				$idEditing = null;
 			}
 		}, 20);
