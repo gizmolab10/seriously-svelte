@@ -7,6 +7,7 @@ import { dbLocal } from './DBLocal';
 
 export default class DBDispatch {
 	db: DBInterface;
+	bulkName: string;
 	okayToWrite = false;
 	updateDBForType(type: string) { this.db = this.dbForType(type); }
 	nextDB(forward: boolean) { this.changeDBTo(this.getNextDB(forward)); }
@@ -14,6 +15,7 @@ export default class DBDispatch {
 	constructor() {
 		this.db = dbFirebase;
 		this.okayToWrite = true;
+		this.bulkName = 'public';
 		dbType.subscribe((type: string) => {
 			if (type) {
 				idHere.set(null);
@@ -32,6 +34,12 @@ export default class DBDispatch {
 				}
 			});
 		}, 1);
+	}
+
+	setupDBParameters(params: URLSearchParams) {
+		const db = params.get('db') ?? persistLocal.readFromKey(PersistID.db) ?? DBType.airtable;
+		this.bulkName = params.get('bulk') ?? 'public';
+		dbType.set(db); // invokes cloud setup, which needs bulk name already set (must be above)
 	}
 
 	dbForType(type: string): DBInterface {

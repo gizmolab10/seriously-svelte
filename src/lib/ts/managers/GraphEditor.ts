@@ -24,10 +24,10 @@ export default class GraphEditor {
 				grab = root;
 			}
 			if (constants.allowGraphEditing) {
-				if (grab) {
+				if (grab && constants.allowTitleEditing) {
 					switch (key) {
-						case ' ':			await this.thing_redraw_remoteAddChildTo(grab); break;
 						case 'd':			await this.thing_redraw_remoteDuplicate(grab); break;
+						case ' ':			await this.thing_redraw_remoteAddChildTo(grab); break;
 						case 'tab':			await this.thing_redraw_remoteAddChildTo(grab.firstParent); break; // Title editor also makes this call
 						case 'enter':		grab.startEdit(); break;
 					}

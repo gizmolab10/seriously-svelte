@@ -1,7 +1,7 @@
 <script>
 	import { get, noop, Rect, Point, DBType, ZIndex, onMount, PersistID, ButtonID, constants } from '../../ts/common/GlobalImports'
 	import { Hierarchy, dbDispatch, persistLocal, getBrowserType, isServerLocal, updateGraphRect } from '../../ts/common/GlobalImports'
-	import { dbType, isBusy, idHere, bulkName, graphRect, popupViewID, showDetails, thingsArrived } from '../../ts/managers/State';
+	import { dbType, isBusy, idHere, graphRect, popupViewID, showDetails, thingsArrived } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import Graph from '../graph/Graph.svelte';
@@ -15,10 +15,10 @@
 	window.addEventListener('resize', (event) => { updateGraphRect(); toggleDraw = !toggleDraw; });
 
 	onMount(async () => {
-		constants.readQueryStrings();
 		document.title = 'Seriously ('+ (isServerLocal() ? 'local' : 'remote') + ', ' + getBrowserType()  + ', α)';
 		updateGraphRect();
-		persistLocal.start();
+		persistLocal.restore();
+		constants.setup();
 	})
 	
 	function handleSettings(event) {

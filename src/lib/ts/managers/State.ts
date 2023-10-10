@@ -12,7 +12,6 @@ export const thingsArrived		= writable<boolean>();
 export const showDetails		= writable<boolean>();
 export const isBusy				= writable<boolean>();
 export const dbType				= writable<string>();
-export const bulkName			= writable<string>();
 export const titleFontFamily	= writable<string>();
 export const titleFontSize		= writable<number>();
 export const dotDiameter		= writable<number>();

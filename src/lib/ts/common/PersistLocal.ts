@@ -1,10 +1,5 @@
-import { dbType, lineGap, bulkName, expanded, titleFontSize, titleFontFamily, graphOffset, showDetails, lineStretch, dbLoadTime, dotDiameter } from '../managers/State';
-import { Point, DBType, dbDispatch } from './GlobalImports'
-
-export enum BulkID {
-	public = 'Public',
-	mine	= 'Jonathan Sand',
-}
+import { lineGap, expanded, titleFontSize, titleFontFamily, graphOffset, showDetails, lineStretch, dbLoadTime, dotDiameter } from '../managers/State';
+import { Point, dbDispatch } from './GlobalImports'
 
 export enum PersistID {
 	lineStretch = 'lineStretch',
@@ -13,7 +8,6 @@ export enum PersistID {
 	fontSize	= 'fontSize',
 	details		= 'details',
 	origin		= 'origin',
-	bulk		= 'bulk',
 	here		= 'here',
 	font		= 'font',
 	gap			= 'gap',
@@ -24,18 +18,16 @@ class PersistLocal {
 	idSeparator = ':';
 	separator = '|';
 
-	start() {
+	restore() {
 		// localStorage.clear();
 		// const isLocal = isServerLocal();
 		dbLoadTime.set(null);
 		lineGap. set(this.readFromKey(PersistID.gap) ?? 30);
 		showDetails.set(this.readFromKey(PersistID.details) ?? false);
-		dbType.set(this.readFromKey(PersistID.db) ?? DBType.firebase); // invokes cloud setup, which needs bulk name already set (must be above)
 		dotDiameter.set(this.readFromKey(PersistID.dotDiameter) ?? 14);
 		lineStretch.set(this.readFromKey(PersistID.lineStretch) ?? 40);
 		titleFontFamily.set(this.readFromKey(PersistID.font) ?? 'Arial');
 		titleFontSize.set(this.readFromKey(PersistID.fontSize) ?? 14);
-		bulkName.set(this.readFromKey(PersistID.bulk) ?? BulkID.public);
 		graphOffset.set(this.readFromKey(PersistID.origin) ?? new Point());
 		expanded.set(this.readFromKey(PersistID.expanded + dbDispatch.db.dbType) ?? []); // must be after dbType is set
 	}

@@ -1,24 +1,31 @@
+import { dbDispatch, persistLocal } from '../../ts/common/GlobalImports'
+
 export default class Constants {
+	public allowGraphEditing: boolean;
+	public allowTitleEditing: boolean;
+	public showDetails: boolean;
 	public orderIncrement: number;
 	public backgroundColor: string;
 	public highlightColor: string;
 	public defaultTitle: string;
-	public allowGraphEditing: boolean;
-	public allowTitleEditing: boolean;
-	public showDetails: boolean;
 
-	constructor(allowGraphEditing: boolean, allowTitleEditing: boolean, showDetails: boolean) {
+	constructor() {
 		this.orderIncrement = 0.5;
 		this.backgroundColor = 'white';
 		this.highlightColor = '#9e7daa';
 		this.defaultTitle = 'Please, enter a title';
-		this.allowGraphEditing = allowGraphEditing;
-		this.allowTitleEditing = allowTitleEditing;
-		this.showDetails = showDetails;
+		this.allowGraphEditing = false;
+		this.allowTitleEditing = false;
+		this.showDetails = false;
 	}
 
-	readQueryStrings() {
+	setup() {
 		const params = new URLSearchParams(window.location.search);
+		this.applyQueryStrings(params)
+		dbDispatch.setupDBParameters(params);
+	}
+
+	applyQueryStrings(params: URLSearchParams) {
 		if (params.get('editGraph') === 'allow') {
 			this.allowGraphEditing = true;
 		}
@@ -31,4 +38,4 @@ export default class Constants {
 	}
 }
 
-export let constants = new Constants(false, false, false);
+export let constants = new Constants();

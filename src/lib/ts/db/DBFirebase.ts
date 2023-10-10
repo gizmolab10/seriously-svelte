@@ -1,11 +1,8 @@
-import { get, Thing, DBType, DataKind, signal, Signals, constants, Hierarchy, copyObject, Predicate, Relationship, CreationFlag } from '../common/GlobalImports';
+import { Thing, DBType, DataKind, signal, Signals, constants, Hierarchy, copyObject, Predicate, Relationship, CreationFlag, dbDispatch } from '../common/GlobalImports';
 import { doc, addDoc, setDoc, deleteDoc, getDocs, collection, onSnapshot, getFirestore } from 'firebase/firestore';
 import { DocumentData, DocumentChange, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { initializeApp } from "firebase/app";
-import { bulkName } from '../managers/State';
 import DBInterface from './DBInterface';
-
-// https://firebase.google.com/docs/web/setup#available-libraries
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
@@ -48,7 +45,7 @@ export default class DBFirebase implements DBInterface {
 		
 	async fetchDocumentsIn(dataKind: DataKind, noBulk: boolean = false) {
 		try {
-			const documentsCollection = noBulk ? collection(this.db, dataKind) : collection(this.db, this.collectionName, get(bulkName), dataKind);
+			const documentsCollection = noBulk ? collection(this.db, dataKind) : collection(this.db, this.collectionName, dbDispatch.bulkName, dataKind);
 
 			////////////////
 			// data kinds //
@@ -286,23 +283,25 @@ export default class DBFirebase implements DBInterface {
 		switch (dataKind) {
 			case DataKind.things:		
 				const thing = data as Thing;	
-				if (thing.title && thing.color && thing.trait) {
-					return true;
+				if (!thing.title || !thing.color || !thing.trait && thing.trait != '') {
+					return false;
 				}
 				break;
 			case DataKind.predicates:
-				if (data.kind) {
-					return true;
+				if (!data.kind) {
+					return false;
 				}
 				break;
 			case DataKind.relationships:
 				const relationship = data as RemoteRelationship;
-				if (relationship.predicate && relationship.from && relationship.to) {
-					return true;
+				if (!relationship.predicate || !relationship.from || !relationship.to) {
+					return false;
 				}
 				break;
+			default:
+				return false;
 		}
-		return false;
+		return true;
 	}
 
 	async rememberValidatedDocument(dataKind: DataKind, id: string, data: DocumentData) {

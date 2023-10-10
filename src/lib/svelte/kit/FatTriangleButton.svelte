@@ -14,7 +14,9 @@
 
 	function handleClick(event) {
 		const grab = dbDispatch.db.hierarchy.grabs.furthestGrab(true);
-		graphEditor.thing_redraw_remoteMoveRight(grab, false, false);
+		if (grab) {
+			graphEditor.thing_redraw_remoteMoveRight(grab, false, false);
+		}
 	}
 
 	function updateColors(isFilled) {
