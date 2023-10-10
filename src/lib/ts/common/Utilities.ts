@@ -57,6 +57,16 @@ export function isServerLocal(): boolean {
 	return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "0.0.0.0";
 }
 
+export function convertToObject(instance: any, fields: string[]): object {
+    const o: { [key: string]: any } = {};
+    for (const field of fields) {
+        if (instance.hasOwnProperty(field)) {
+            o[field] = instance[field];
+        }
+    }
+    return o;
+}
+
 export function getFontOf(element: HTMLElement): string {
 		const computedStyle: CSSStyleDeclaration = window.getComputedStyle(element);
 		const fontFamily: string = computedStyle.fontFamily;

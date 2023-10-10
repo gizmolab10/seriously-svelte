@@ -1,4 +1,4 @@
-import { Thing, DBType, DataKind, signal, Signals, constants, Hierarchy, copyObject, Predicate, Relationship, CreationFlag, dbDispatch } from '../common/GlobalImports';
+import { Thing, Datum, DBType, DataKind, signal, Signals, constants, Hierarchy, copyObject, Predicate, dbDispatch, Relationship, CreationFlag, convertToObject } from '../common/GlobalImports';
 import { doc, addDoc, setDoc, deleteDoc, getDocs, collection, onSnapshot, getFirestore } from 'firebase/firestore';
 import { DocumentData, DocumentChange, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { initializeApp } from "firebase/app";
@@ -42,11 +42,28 @@ export default class DBFirebase implements DBInterface {
 		await this.fetchDocumentsIn(DataKind.predicates, true)
 		await this.fetchDocumentsIn(DataKind.relationships);
 	}
+
+	getCollection(dataKind: DataKind, noBulk: boolean = false) {
+		return noBulk ? collection(this.db, dataKind) : collection(this.db, this.collectionName, dbDispatch.bulkName, dataKind);
+	}
 		
 	async fetchDocumentsIn(dataKind: DataKind, noBulk: boolean = false) {
 		try {
-			const documentsCollection = noBulk ? collection(this.db, dataKind) : collection(this.db, this.collectionName, dbDispatch.bulkName, dataKind);
+			const documentsCollection = this.getCollection(dataKind)
+			let querySnapshot = await getDocs(documentsCollection);
+			this.setupRemoteHandler(dataKind, documentsCollection);
 
+			if (!noBulk && querySnapshot.empty) {
+				switch (dataKind) {
+					case DataKind.things:
+						await this.createDefaultThingsIn(documentsCollection);
+						querySnapshot = await getDocs(documentsCollection);
+						break;
+					default:
+						break;
+				}
+			}
+			
 			////////////////
 			// data kinds //
 			////////////////
@@ -57,20 +74,27 @@ export default class DBFirebase implements DBInterface {
 				case DataKind.relationships: this.relationshipsCollection = documentsCollection; break;
 			}
 
-			const querySnapshot = await getDocs(documentsCollection);
 			const docs = querySnapshot.docs;
-			for (const documentSnapshot of docs) {
-				const data = documentSnapshot.data();
-				const id = documentSnapshot.id;
+			for (const docShot of docs) {
+				const id = docShot.id;
+				const data = docShot.data();
 				await this.rememberValidatedDocument(dataKind, id, data);
 			}
-			this.handleRemoteChanges(dataKind, documentsCollection);
 		} catch (error) {
 			this.reportError(error);
 		}
 	}
 
-	handleRemoteChanges(dataKind: DataKind, collection: CollectionReference) {
+	async createDefaultThingsIn(documentsCollection: CollectionReference) {
+		const fields = ['title', 'color', 'trait'];
+		const root = new Thing(Datum.newID, dbDispatch.bulkName, 'coral', '!', 0, false);
+		const thing = new Thing(Datum.newID, 'Click this text to edit it', 'purple', '', 0, false);
+		this.hierarchy.root = root;
+		await addDoc(documentsCollection, convertToObject(thing, fields));
+		await addDoc(documentsCollection, convertToObject(root, fields));
+	}
+
+	setupRemoteHandler(dataKind: DataKind, collection: CollectionReference) {
 		onSnapshot(collection, (snapshot) => {
 			if (this.hierarchy.isConstructed) {								// ignore snapshots caused by data written to server
 				snapshot.docChanges().forEach((change) => {	// convert and remember
@@ -283,7 +307,7 @@ export default class DBFirebase implements DBInterface {
 		switch (dataKind) {
 			case DataKind.things:		
 				const thing = data as Thing;	
-				if (!thing.title || !thing.color || !thing.trait && thing.trait != '') {
+				if (!thing.title && thing.title != '' || !thing.color && thing.color != '' || !thing.trait && thing.trait != '') {
 					return false;
 				}
 				break;
