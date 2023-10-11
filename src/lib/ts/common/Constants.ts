@@ -1,8 +1,9 @@
-import { dbDispatch, persistLocal } from '../../ts/common/GlobalImports'
+import { dbDispatch, isMobileDevice } from '../../ts/common/GlobalImports'
 
 export default class Constants {
 	public allowGraphEditing: boolean;
 	public allowTitleEditing: boolean;
+	public graphIsCentered: boolean;
 	public orderIncrement: number;
 	public backgroundColor: string;
 	public highlightColor: string;
@@ -13,14 +14,16 @@ export default class Constants {
 		this.backgroundColor = 'white';
 		this.highlightColor = '#9e7daa';
 		this.defaultTitle = 'Please, enter a title';
-		this.allowGraphEditing = false;
-		this.allowTitleEditing = false;
+		this.allowGraphEditing = true;
+		this.allowTitleEditing = true;
+		this.graphIsCentered = true;
 	}
 
 	setup() {
 		const params = new URLSearchParams(window.location.search);
+		this.graphIsCentered = !isMobileDevice();
+		dbDispatch.applyQueryStrings(params);
 		this.applyQueryStrings(params)
-		dbDispatch.setupDBParameters(params);
 	}
 
 	applyQueryStrings(params: URLSearchParams) {

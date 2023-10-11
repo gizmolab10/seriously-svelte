@@ -41,10 +41,32 @@ export default class DBFirebase implements DBInterface {
 		await this.fetchDocumentsIn(DataKind.things);
 		await this.fetchDocumentsIn(DataKind.predicates, true)
 		await this.fetchDocumentsIn(DataKind.relationships);
+		await this.fetchAllBulks();
 	}
 
 	getCollection(dataKind: DataKind, noBulk: boolean = false) {
 		return noBulk ? collection(this.db, dataKind) : collection(this.db, this.collectionName, dbDispatch.bulkName, dataKind);
+	}
+		
+	async fetchAllBulks() {
+		if (dbDispatch.bulkName == 'Jonathan Sand') {
+			try {
+				const bulksCollection = collection(this.db, this.collectionName);		// fetch all bulks (documents)
+				let bulkSnapshot = await getDocs(bulksCollection);
+				for (const bulkShot of bulkSnapshot.docs) {
+					const title = bulkShot.id;
+					if (title != dbDispatch.bulkName) {				// create a thing for each bulk
+						this.hierarchy.rememberThing_runtimeCreate(Datum.newID, title, 'red', '', -1, true);
+					}
+				}
+				// create a relationship from that thing to the root of that bulk
+				// do not fetch anything until reveal dot is clicked
+				// when clicked, create a new hierarchy for the fetched data
+				// store the expanded in its own bulk-specific persistent storage
+			} catch (error) {
+				this.reportError(error);
+			}
+		}
 	}
 		
 	async fetchDocumentsIn(dataKind: DataKind, noBulk: boolean = false) {
@@ -53,15 +75,9 @@ export default class DBFirebase implements DBInterface {
 			let querySnapshot = await getDocs(documentsCollection);
 			this.setupRemoteHandler(dataKind, documentsCollection);
 
-			if (!noBulk && querySnapshot.empty) {
-				switch (dataKind) {
-					case DataKind.things:
-						await this.createDefaultThingsIn(documentsCollection);
-						querySnapshot = await getDocs(documentsCollection);
-						break;
-					default:
-						break;
-				}
+			if (querySnapshot.empty && dataKind == DataKind.things) {
+				await this.createDefaultThingsIn(documentsCollection);
+				querySnapshot = await getDocs(documentsCollection);
 			}
 			
 			////////////////
@@ -100,7 +116,7 @@ export default class DBFirebase implements DBInterface {
 				snapshot.docChanges().forEach((change) => {	// convert and remember
 					this.handleChange(change, dataKind);
 				});
-				signal(Signals.childrenOf, null);
+				signal(Signals.childrenOf);
 			}
 		}
 	)};

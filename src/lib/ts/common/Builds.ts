@@ -3,7 +3,6 @@ class Builds {
 	notes: { [id: number]: string[] } = {};
 
 	constructor() {
-		build.set(50);		// TODO: capture this number from notes array's first item
 		this.notes = {
 			50 : ['October 10, 2023', 'eliminate details view, show focus title at top'],
 			49 : ['October 10, 2023', 'create private firebase bulks as needed'],
@@ -40,6 +39,8 @@ class Builds {
 			11 : ['August 8, 2023', 'display build number'],
 			10 : ['August 2, 2023', 'refactor Panel into Startup'],
 		}
+		const keys = Object.keys(this.notes);
+		build.set(Number(keys.slice(-1)));
 	}
 
 }

@@ -57,6 +57,7 @@ export default class GraphEditor {
 
 	async thing_redraw_remoteAddChildTo(parent: Thing) {
 		const child = dbDispatch.db.hierarchy.rememberThing_runtimeCreateAt(-1, parent.color);
+		parent.expand();
 		await this.thing_redraw_remoteAddAsChild(child, parent);
 	}
 
@@ -76,7 +77,7 @@ export default class GraphEditor {
 		normalizeOrderOf(parent.children);
 		child.startEdit();
 		child.grabOnly();
-		signal(Signals.childrenOf, null);
+		signal(Signals.childrenOf);
 		await relationship.remoteWrite();
 	}
 
@@ -137,16 +138,17 @@ export default class GraphEditor {
 				if (grabbed && !grabbed.isEditing) {
 					let newGrab = grabbed.firstParent;
 					const siblings = grabbed.siblings;
+					const grandparent = grabbed.grandparent;
 					let index = siblings.indexOf(grabbed);
 					siblings.splice(index, 1);
-					if (siblings.length == 0) {
-						grabbed.grandparent.becomeHere();
-					} else {
+					if (siblings.length > 0) {
 						if (index >= siblings.length) {
 							index = siblings.length - 1;
 						}
 						newGrab = siblings[index];
 						normalizeOrderOf(grabbed.siblings);
+					} else if (!grandparent.isVisible) {
+						grandparent.becomeHere();
 					}
 					await grabbed.traverse(async (child: Thing): Promise<boolean> => {
 						await dbDispatch.db.hierarchy.forgetRelationships_remoteDeleteAllForThing(child);

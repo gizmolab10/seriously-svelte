@@ -34,9 +34,12 @@
 		if (here) {
 			const gCenter = $graphRect.center.offsetBy($graphOffset);		// user-determined center
 			const tOffset = here.halfVisibleProgenySize.asPoint.multipliedBy(-1);
-			const tOrigin = gCenter.offsetBy(tOffset);
-			triangleOrigin = gCenter.offsetBy(new Point(-here.visibleProgenyWidth * 0.69, -20));
-			childrenOrigin = triangleOrigin.offsetBy(new Point(-18, tOffset.y - 7));
+			let tOrigin = gCenter.offsetBy(new Point(-here.visibleProgenyWidth * 0.69, -20));
+			if (!constants.graphIsCentered) {
+				tOrigin.x = 25;
+			}
+			triangleOrigin = tOrigin;
+			childrenOrigin = tOrigin.offsetBy(new Point(-18, tOffset.y - 7));
 		}
 	}
 	

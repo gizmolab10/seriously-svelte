@@ -36,7 +36,7 @@
 		if (thing.isExemplar) { return; }
 		if (isReveal) {
 			thing.toggleExpand();
-			signal(Signals.childrenOf, null);
+			signal(Signals.childrenOf);
 		} else if (event.shiftKey || isGrabbed) {
 			thing.toggleGrab();
 		} else {

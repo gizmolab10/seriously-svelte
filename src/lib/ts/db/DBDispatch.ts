@@ -36,9 +36,9 @@ export default class DBDispatch {
 		}, 1);
 	}
 
-	setupDBParameters(params: URLSearchParams) {
+	applyQueryStrings(params: URLSearchParams) {
 		const db = params.get('db') ?? persistLocal.readFromKey(PersistID.db) ?? DBType.airtable;
-		this.bulkName = params.get('bulk') ?? 'public';
+		this.bulkName = params.get('name') ?? 'Public';
 		dbType.set(db); // invokes cloud setup, which needs bulk name already set (must be above)
 	}
 
