@@ -3,7 +3,6 @@ import { dbDispatch, persistLocal } from '../../ts/common/GlobalImports'
 export default class Constants {
 	public allowGraphEditing: boolean;
 	public allowTitleEditing: boolean;
-	public showDetails: boolean;
 	public orderIncrement: number;
 	public backgroundColor: string;
 	public highlightColor: string;
@@ -16,7 +15,6 @@ export default class Constants {
 		this.defaultTitle = 'Please, enter a title';
 		this.allowGraphEditing = false;
 		this.allowTitleEditing = false;
-		this.showDetails = false;
 	}
 
 	setup() {
@@ -31,9 +29,6 @@ export default class Constants {
 		}
 		if (params.get('editTitles') === 'allow') {
 			this.allowTitleEditing = true;
-		}
-		if (params.get('details') === 'show') {
-			this.showDetails = true;
 		}
 	}
 }

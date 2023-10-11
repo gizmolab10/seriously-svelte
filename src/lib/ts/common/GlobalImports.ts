@@ -1,4 +1,4 @@
-import { log, noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, isServerLocal, getBrowserType, convertToObject, normalizeOrderOf, sortAccordingToOrder } from './Utilities';
+import { log, noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, isServerLocal, getBrowserType, isMobileDevice, convertToObject, normalizeOrderOf, sortAccordingToOrder } from './Utilities';
 import { ZIndex, ButtonID, BrowserType, CreationFlag, LineCurveType } from './Enumerations';
 import { Point, Size, Rect, LineRect, updateGraphRect } from '../geometry/Geometry';
 import { FatTrianglePath, Direction } from '../geometry/FatTrianglePath';
@@ -35,5 +35,5 @@ export {
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Point, Size, Rect, Layout, LineRect, LineCurveType, updateGraphRect,
 	log, noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy,
-	isServerLocal, getBrowserType, convertToObject, normalizeOrderOf, sortAccordingToOrder,
+	isServerLocal, getBrowserType, isMobileDevice, convertToObject, normalizeOrderOf, sortAccordingToOrder,
 };

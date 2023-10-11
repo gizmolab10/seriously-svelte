@@ -1,16 +1,17 @@
 <script>
-	import { get, noop, Rect, Point, DBType, ZIndex, onMount, PersistID, ButtonID, constants } from '../../ts/common/GlobalImports'
-	import { Hierarchy, dbDispatch, persistLocal, getBrowserType, isServerLocal, updateGraphRect } from '../../ts/common/GlobalImports'
-	import { dbType, isBusy, idHere, graphRect, popupViewID, showDetails, thingsArrived } from '../../ts/managers/State';
+	import { get, noop, Rect, Point, DBType, ZIndex, onMount, PersistID, ButtonID, constants, Hierarchy } from '../../ts/common/GlobalImports'
+	import { dbDispatch, persistLocal, getBrowserType, isMobileDevice, isServerLocal, updateGraphRect } from '../../ts/common/GlobalImports'
+	import { build, dbType, isBusy, idHere, graphRect, popupViewID, thingsArrived } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
+	import LabelButton from '../kit/LabelButton.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import Graph from '../graph/Graph.svelte';
 	import Help from '../help/Help.svelte';
-	import Details from './Details.svelte';
 	import Crumbs from './Crumbs.svelte';
 	let toggleDraw = false;
 	let size = 14;
 	
+	function handleBuildsClick(event) { $popupViewID = ButtonID.buildNotes; }
 	function handleClick(id) { $popupViewID = ($popupViewID == id) ? null : id; }
 	window.addEventListener('resize', (event) => { updateGraphRect(); toggleDraw = !toggleDraw; });
 
@@ -20,31 +21,9 @@
 		persistLocal.restore();
 		constants.setup();
 	})
-	
-	function handleSettings(event) {
-		$showDetails = !$showDetails;
-		persistLocal.writeToKey(PersistID.details, $showDetails);
-	}
 
 </script>
 
-<div class='left-side'
-	style='z-index: {ZIndex.details}; background-color: {constants.backgroundColor}'>
-	<CircularButton left=15
-		image='settings.svg'
-		borderColor='white'
-		onClick={handleSettings}/>
-	&nbsp;
-	{#if !$isBusy}
-		<CircularButton left=85
-			onClick={() => {handleClick(ButtonID.help)}}
-			label='i'
-			size={size}/>
-	{/if}
-	{#if $showDetails}
-		<Details/>
-	{/if}
-</div>
 <div class='vertical-line'></div>
 <div class='horizontal-line' style='z-index: {ZIndex.top}'></div>
 <div class='right-side'>
@@ -56,6 +35,17 @@
 	{:else if !$thingsArrived}
 		<p>Nothing is available.</p>
 	{:else}
+		<div class='left-side'>
+			<div class='build'>
+				<LabelButton
+					title='build {$build}'
+					onClick={handleBuildsClick}/>
+			</div>
+			<CircularButton left=85
+				onClick={() => {handleClick(ButtonID.help)}}
+				label='i'
+				size={size}/>
+		</div>
 		<div class='top'>
 			<Crumbs here={dbDispatch.db.hierarchy.getThing_forID($idHere)}/>
 		</div>
@@ -89,6 +79,11 @@
 	div {
 		cursor: default;
 	}
+	.build {
+		position: fixed;
+		top: 6.5px;
+		left: 10px
+	}
 	.right-side {
 		position: fixed;
 		left: 101px;
@@ -120,7 +115,7 @@
 		position: absolute;
 		left: 100px;
 		top: 0px;
-		height: 100%;
+		height: 35px;
 		width: 1px;
 		background-color: lightgray;
 	}

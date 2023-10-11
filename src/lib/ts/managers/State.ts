@@ -9,7 +9,6 @@ export const dbLoadTime 		= writable<string | null>();
 export const expanded			= writable<string[]>();
 export const idsGrabbed			= writable<string[]>();
 export const thingsArrived		= writable<boolean>();
-export const showDetails		= writable<boolean>();
 export const isBusy				= writable<boolean>();
 export const dbType				= writable<string>();
 export const titleFontFamily	= writable<string>();

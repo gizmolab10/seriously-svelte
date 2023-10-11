@@ -83,7 +83,7 @@ export default class DBDispatch {
 			h.restoreHere();
 		} else {
 			if (type != DBType.local) {
-				isBusy.set(true);				// also used by Details when changing dbType
+				isBusy.set(true);
 				thingsArrived.set(false);
 			}
 			(async () => {							// this will happen when Local sets dbType !!! too early?

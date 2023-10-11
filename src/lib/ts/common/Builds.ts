@@ -3,8 +3,9 @@ class Builds {
 	notes: { [id: number]: string[] } = {};
 
 	constructor() {
-		build.set(49);
+		build.set(50);		// TODO: capture this number from notes array's first item
 		this.notes = {
+			50 : ['October 10, 2023', 'create private firebase bulks as needed'],
 			49 : ['October 10, 2023', 'create private firebase bulks as needed'],
 			48 : ['October 9, 2023', 'private firebase bulks'],
 			47 : ['October 9, 2023', 'two netlify query strings'],

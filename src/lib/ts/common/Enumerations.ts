@@ -33,6 +33,5 @@ export enum ZIndex {
 	highlights	= baseZIndex + 20,
 	text		= baseZIndex + 30,
 	dots		= baseZIndex + 40,
-	details		= baseZIndex + 50,
-	top			= baseZIndex + 60,
+	top			= baseZIndex + 50,
 }
