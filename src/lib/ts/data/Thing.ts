@@ -169,7 +169,7 @@ export default class Thing extends Datum {
 	}
 
 	ancestors(thresholdWidth: number): Array<Thing> {
-		let thing: Thing = this;
+		let thing: Thing = this.firstParent;
 		let totalWidth = 0;
 		const array = [];
 		while (thing) {

@@ -1,5 +1,5 @@
 <script>
-	import { get, noop, Rect, Point, DBType, ZIndex, onMount, PersistID, ButtonID, constants, Hierarchy } from '../../ts/common/GlobalImports'
+	import { get, noop, Rect, Point, DBType, ZIndex, onMount, PersistID, ButtonID, constants, Hierarchy, Thing } from '../../ts/common/GlobalImports'
 	import { dbDispatch, persistLocal, getBrowserType, isMobileDevice, isServerLocal, updateGraphRect } from '../../ts/common/GlobalImports'
 	import { build, dbType, isBusy, idHere, graphRect, popupViewID, thingsArrived } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
@@ -9,6 +9,7 @@
 	import Help from '../help/Help.svelte';
 	import Crumbs from './Crumbs.svelte';
 	let toggleDraw = false;
+	let here = Thing;
 	let size = 14;
 	
 	function handleBuildsClick(event) { $popupViewID = ButtonID.buildNotes; }
@@ -21,6 +22,10 @@
 		persistLocal.restore();
 		constants.setup();
 	})
+
+	$: {
+		here = dbDispatch.db.hierarchy.getThing_forID($idHere);
+	}
 
 </script>
 
@@ -47,7 +52,10 @@
 				size={size}/>
 		</div>
 		<div class='top'>
-			<Crumbs here={dbDispatch.db.hierarchy.getThing_forID($idHere)}/>
+			<Crumbs here={here}/>
+		</div>
+		<div class='title' style='color: {here.color}'>
+			{here.title}
 		</div>
 		{#key toggleDraw}
 			<div class='graph'
@@ -78,6 +86,14 @@
 	}
 	div {
 		cursor: default;
+	}
+	.title {
+		text-align: center;
+		position: fixed;
+		font-size: 2em;
+		width: 100%;
+		left: -1px;
+		top: 40px;
 	}
 	.build {
 		position: fixed;
