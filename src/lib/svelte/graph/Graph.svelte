@@ -18,8 +18,9 @@
 	});
 
 	window.addEventListener('wheel', (event: WheelEvent) => {
+		const deltaX = constants.allowHorizontalScrolling ? -event.deltaX : 0;
+		const delta = new Point(deltaX, -event.deltaY);
 		const offset = $graphOffset;
-		const delta = new Point(-event.deltaX, -event.deltaY);
 		const newOffset = new Point(offset.x, offset.y).offsetBy(delta);
 		setGraphOffset(newOffset);
 	});
