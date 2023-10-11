@@ -124,7 +124,7 @@
 		outline: none;
 		padding: 0px 0px 0px 6px;
 		position: relative;
-		top: 4px;
+		top: 3px;
 		outline-color: 'white';
 	}
 	.wrapper {

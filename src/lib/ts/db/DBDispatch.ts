@@ -15,7 +15,7 @@ export default class DBDispatch {
 	constructor() {
 		this.db = dbFirebase;
 		this.okayToWrite = true;
-		this.bulkName = 'public';
+		this.bulkName = 'Public';
 		dbType.subscribe((type: string) => {
 			if (type) {
 				idHere.set(null);
@@ -37,7 +37,7 @@ export default class DBDispatch {
 	}
 
 	applyQueryStrings(params: URLSearchParams) {
-		const db = params.get('db') ?? persistLocal.readFromKey(PersistID.db) ?? DBType.airtable;
+		const db = params.get('db') ?? persistLocal.readFromKey(PersistID.db) ?? DBType.firebase;
 		this.bulkName = params.get('name') ?? 'Public';
 		dbType.set(db); // invokes cloud setup, which needs bulk name already set (must be above)
 	}

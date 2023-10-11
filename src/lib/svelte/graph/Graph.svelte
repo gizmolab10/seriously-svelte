@@ -82,12 +82,12 @@
 	{#if here}
 		<Children thing={here} origin={childrenOrigin}/>
 		{#if isGrabbed}
-			<svg width='30' height='30'
+			<svg width='28' height='28'
 				style='z-index: {ZIndex.highlights};
 					position: absolute;
-					left: {triangleOrigin.x - 8};
-					top: {triangleOrigin.y - 22};'>
-				<circle cx='15' cy='15' r='14' stroke={here.color} fill={constants.backgroundColor}/>
+					left: {triangleOrigin.x - 7};
+					top: {triangleOrigin.y - 21};'>
+				<circle cx='14' cy='14' r='13' stroke={here.color} fill={constants.backgroundColor}/>
 			</svg>
 		{/if}
 		<FatTriangleButton here={here} origin={triangleOrigin.offsetByY(-15)}/>

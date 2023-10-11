@@ -55,8 +55,9 @@ export default class DBFirebase implements DBInterface {
 				let bulkSnapshot = await getDocs(bulksCollection);
 				for (const bulkShot of bulkSnapshot.docs) {
 					const title = bulkShot.id;
-					if (title != dbDispatch.bulkName) {				// create a thing for each bulk
-						this.hierarchy.rememberThing_runtimeCreate(Datum.newID, title, 'red', '', -1, true);
+					if (title != dbDispatch.bulkName && !this.hierarchy.hasRootWithTitle(title)) {				// create a thing for each bulk
+						const thing = this.hierarchy.rememberThing_runtimeCreate(Datum.newID, title, 'red', 'b', -1, false);
+						await this.thing_remoteCreate(thing);
 					}
 				}
 				// create a relationship from that thing to the root of that bulk
@@ -128,8 +129,8 @@ export default class DBFirebase implements DBInterface {
 			const id = doc.id;
 
 			////////////////////
-			//	data kinds	//
-			//	change types	//
+			//	 data kinds	  //
+			//	change types  //
 			////////////////////
 
 			try {
@@ -201,9 +202,9 @@ export default class DBFirebase implements DBInterface {
 		}
 	}
 
-	////////////////////////////
-	//				THING					//
-	////////////////////////////
+	//////////////////////////////
+	//			 THING			//
+	//////////////////////////////
 
 	async thing_remoteCreate(thing: Thing) {
 		const collection = this.thingsCollection;
@@ -252,9 +253,9 @@ export default class DBFirebase implements DBInterface {
 		thing.color = from.color;
 	}
 
-	///////////////////////////////////
-	//				RELATIONSHIP					//
-	///////////////////////////////////
+	//////////////////////////////////////
+	//			 RELATIONSHIP			//
+	//////////////////////////////////////
 
 	async relationship_remoteCreate(relationship: Relationship) {
 		const collection = this.relationshipsCollection;
@@ -315,9 +316,9 @@ export default class DBFirebase implements DBInterface {
 		// relationship.log('extract');
 	}
 
-	/////////////////////////////////
-	//				VALIDATION					//
-	/////////////////////////////////
+	//////////////////////////////////
+	//			VALIDATION			//
+	//////////////////////////////////
 
 	static isValidOfKind(dataKind: DataKind, data: DocumentData) {
 		switch (dataKind) {

@@ -14,16 +14,17 @@ export enum PersistID {
 }
 
 class PersistLocal {
-	idSeparator = ':';
-	separator = '|';
+	keySeparator = '|';
+	valueSeparator = ':';
 
 	restore() {
 		// localStorage.clear();
 		// const isLocal = isServerLocal();
 		dbLoadTime.set(null);
+		persistLocal.writeToKey(PersistID.lineStretch, 25);
 		lineGap. set(this.readFromKey(PersistID.gap) ?? 30);
 		dotDiameter.set(this.readFromKey(PersistID.dotDiameter) ?? 14);
-		lineStretch.set(this.readFromKey(PersistID.lineStretch) ?? 40);
+		lineStretch.set(this.readFromKey(PersistID.lineStretch) ?? 25);
 		titleFontFamily.set(this.readFromKey(PersistID.font) ?? 'Arial');
 		titleFontSize.set(this.readFromKey(PersistID.fontSize) ?? 14);
 		graphOffset.set(this.readFromKey(PersistID.origin) ?? new Point());
@@ -36,9 +37,9 @@ class PersistLocal {
 	}
 
 	readFromKeys(aKey: string, bKey: string) {
-		let values = this.readFromKey(aKey + this.separator + bKey)?.split(this.separator);
+		let values = this.readFromKey(aKey + this.keySeparator + bKey)?.split(this.keySeparator);
 		if (values) {
-			values[1] = values[1].split(this.idSeparator);
+			values[1] = values[1].split(this.valueSeparator);
 		}
 		return values;
 	}
@@ -49,7 +50,7 @@ class PersistLocal {
 
 	writeToKeys(aKey: string, aValue: any, bKey: string, bValues: Array<any>) {
 		if (aValue && bValues.length > 0) {
-			this.writeToKey(aKey + this.separator + bKey, aValue + this.separator + bValues.join(this.idSeparator));
+			this.writeToKey(aKey + this.keySeparator + bKey, aValue + this.keySeparator + bValues.join(this.valueSeparator));
 		}
 	}
 

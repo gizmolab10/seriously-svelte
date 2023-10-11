@@ -90,6 +90,15 @@ export default class Hierarchy {
 		return this._grabs!;
 	}
 
+	hasRootWithTitle(title: string) {
+		for (const thing of this.knownTs) {
+			if (thing.trait == 'b' && thing.title == title) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	//////////////////////////////
 	//			MEMORY			//
 	//////////////////////////////
