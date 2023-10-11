@@ -18,11 +18,14 @@
 	});
 
 	window.addEventListener('wheel', (event: WheelEvent) => {
-		const deltaX = constants.allowHorizontalScrolling ? -event.deltaX : 0;
-		const delta = new Point(deltaX, -event.deltaY);
-		const offset = $graphOffset;
-		const newOffset = new Point(offset.x, offset.y).offsetBy(delta);
-		setGraphOffset(newOffset);
+		const canScroll = constants.allowHorizontalScrolling;
+		const offsetX = canScroll ? -event.deltaX : 0;
+		const offsetY = -event.deltaY;
+		if (Math.abs(offsetX) > 1 || Math.abs(offsetY) > 1) {
+			const offset = $graphOffset;
+			const newOffset = new Point(offset.x + offsetX, offset.y + offsetY);
+			setGraphOffset(newOffset);
+		}
 	});
 
 	function setGraphOffset(origin: Point) {

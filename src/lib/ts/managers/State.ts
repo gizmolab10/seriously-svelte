@@ -1,5 +1,5 @@
-import { writable } from 'svelte/store';
 import { Size, Rect, Point } from '../geometry/Geometry';
+import { writable } from 'svelte/store';
 
 export const stoppedIDEditing	= writable<string | null>();
 export const popupViewID		= writable<string | null>();
