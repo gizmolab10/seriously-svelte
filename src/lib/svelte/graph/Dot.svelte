@@ -35,9 +35,8 @@
 	async function handleClick(event) {
 		if (thing.isExemplar) { return; }
 		if (isReveal) {
-			if (thing.isBulkAlias) {
-				// test if already fetched
-				// create hierarchy and fetch data
+			if (thing.isBulkAlias && !thing.hasChildren) {
+				thing.redraw_fetchAll_browseRight(false);
 				await dbDispatch.db.fetchAllFrom(thing.title)
 			} else {
 				thing.toggleExpand();

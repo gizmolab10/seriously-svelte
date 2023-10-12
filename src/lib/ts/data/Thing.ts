@@ -242,6 +242,17 @@ export default class Thing extends Datum {
 		return this;
 	}
 
+	async redraw_fetchAll_browseRight(grab: boolean = true) {
+		await dbDispatch.db.fetchAllFrom(this.title)
+		if (this.hasChildren) {
+			if (grab) {
+				this.children[0].grabOnly()
+			}
+			this.expand();
+			signal(Signals.childrenOf);
+		}
+	}
+
 	redraw_remoteMoveup(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const siblings = this.siblings;
 		if (!siblings || siblings.length == 0) {

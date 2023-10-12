@@ -33,6 +33,7 @@ export default class Hierarchy {
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): (string | null) { return this.root?.id ?? null; };
 	get things(): Array<Thing> { return Object.values(this.knownT_byID) };
+	hasRootWithTitle(title: string) { return this.getRootThingWithTitle(title) != null; }
 	getThing_forID(idThing: string | null): Thing | null { return (!idThing) ? null : this.knownT_byID[idThing]; }
 	getPredicate_forID(idPredicate: string | null): Predicate | null { return (!idPredicate) ? null : this.knownP_byID[idPredicate]; }
 
@@ -90,13 +91,14 @@ export default class Hierarchy {
 		return this._grabs!;
 	}
 
-	hasRootWithTitle(title: string) {
+	getRootThingWithTitle(title: string) {
 		for (const thing of this.knownTs) {
-			if (thing.isBulkAlias && thing.title == title) {
-				return true;
+			if  (thing.isBulkAlias && (thing.title == title ||
+				(thing.title == 'Public' && title == 'seriously'))) {	// special case TODO: convert to a auery string
+				return thing;
 			}
 		}
-		return false;
+		return null;
 	}
 
 	//////////////////////////////
@@ -156,7 +158,19 @@ export default class Hierarchy {
 	}
 
 	rememberThing_runtimeCreate(id: string, title: string, color: string, trait: string, order: number, isRemotelyStored: boolean): Thing {
-		const thing = new Thing(id, title, color, trait, order, isRemotelyStored);
+		let thing = this.getRootThingWithTitle(title);
+		if (!thing) {
+			thing = new Thing(id, title, color, trait, order, isRemotelyStored);
+		} else {
+			const relationship = this.getRelationship_whereIDEqualsTo(thing.id);
+			if (relationship) {
+				this.forgetRelationship(relationship);
+				relationship.idTo = id; // so this relatiohship will continue to work
+				this.rememberRelationship(relationship);
+			}
+			this.forgetThing(thing);
+			thing.id = id; // so children relatiohships will work
+		}
 		this.rememberThing(thing);
 		return thing;
 	}

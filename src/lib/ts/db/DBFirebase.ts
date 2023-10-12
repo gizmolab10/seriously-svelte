@@ -47,28 +47,6 @@ export default class DBFirebase implements DBInterface {
 		await this.fetchDocumentsIn(DataKind.predicates);
 		await this.fetchDocumentsIn(DataKind.relationships, bulkName);
 	}
-		
-	async fetchAllBulks() {
-		if (dbDispatch.bulkName == 'Jonathan Sand') {
-			try {
-				const bulksCollection = collection(this.db, this.collectionName);		// fetch all bulks (documents)
-				let bulkSnapshot = await getDocs(bulksCollection);
-				for (const bulkShot of bulkSnapshot.docs) {
-					const title = bulkShot.id;
-					if (title != dbDispatch.bulkName && !this.hierarchy.hasRootWithTitle(title)) {				// create a thing for each bulk
-						const thing = this.hierarchy.rememberThing_runtimeCreate(Datum.newID, title, 'red', '~', -1, false);
-						await this.thing_remoteCreate(thing);
-					}
-				}
-				// create a relationship from that thing to the root of that bulk
-				// do not fetch anything until reveal dot is clicked
-				// when clicked, create a new hierarchy for the fetched data
-				// store the expanded in its own bulk-specific persistent storage
-			} catch (error) {
-				this.reportError(error);
-			}
-		}
-	}
 
 	getCollection(dataKind: DataKind, bulkName: string | null = null) {
 		return !bulkName ? collection(this.db, dataKind) : collection(this.db, this.collectionName, bulkName, dataKind);
@@ -103,6 +81,28 @@ export default class DBFirebase implements DBInterface {
 			}
 		} catch (error) {
 			this.reportError(error);
+		}
+	}
+		
+	async fetchAllBulks() {
+		if (dbDispatch.bulkName == 'Jonathan Sand') {
+			try {
+				const bulksCollection = collection(this.db, this.collectionName);		// fetch all bulks (documents)
+				let bulkSnapshot = await getDocs(bulksCollection);
+				for (const bulkShot of bulkSnapshot.docs) {
+					const title = bulkShot.id;
+					if (title != dbDispatch.bulkName && !this.hierarchy.hasRootWithTitle(title)) {				// create a thing for each bulk
+						const thing = this.hierarchy.rememberThing_runtimeCreate(Datum.newID, title, 'red', '~', -1, false);
+						await this.thing_remoteCreate(thing);
+					}
+				}
+				// create a relationship from that thing to the root of that bulk
+				// do not fetch anything until reveal dot is clicked
+				// when clicked, create a new hierarchy for the fetched data
+				// store the expanded in its own bulk-specific persistent storage
+			} catch (error) {
+				this.reportError(error);
+			}
 		}
 	}
 
@@ -351,10 +351,11 @@ export default class DBFirebase implements DBInterface {
 
 	async rememberValidatedDocument(dataKind: DataKind, id: string, data: DocumentData) {
 		if (DBFirebase.isValidOfKind(dataKind, data)) {
+			const h = this.hierarchy;
 			switch (dataKind) {
-				case DataKind.things:			this.hierarchy.rememberThing_runtimeCreate(id, data.title, data.color, data.trait, -1, true); break;
-				case DataKind.predicates:		this.hierarchy.rememberPredicate_runtimeCreate(id, data.kind); break;
-				case DataKind.relationships:	await this.hierarchy.rememberRelationship_remoteCreateNoDuplicate(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
+				case DataKind.things:			h.rememberThing_runtimeCreate(id, data.title, data.color, data.trait, -1, true); break;
+				case DataKind.predicates:		h.rememberPredicate_runtimeCreate(id, data.kind); break;
+				case DataKind.relationships:	await h.rememberRelationship_remoteCreateNoDuplicate(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
 			}
 		}
 	}

@@ -87,7 +87,11 @@ export default class GraphEditor {
 
 	async thing_redraw_remoteMoveRight(thing: Thing, RIGHT: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		if (!OPTION) {
-			thing.redraw_browseRight(RIGHT, SHIFT, EXTREME);
+			if (thing.isBulkAlias && !thing.hasChildren) {
+				await thing.redraw_fetchAll_browseRight();
+			} else {
+				thing.redraw_browseRight(RIGHT, SHIFT, EXTREME);
+			}
 		} else if (constants.allowGraphEditing) {
 			await this.thing_redraw_remoteRelocateRight(thing, RIGHT, EXTREME);
 		}
@@ -132,9 +136,10 @@ export default class GraphEditor {
 	//////////////////////
 
 	async grabs_redraw_remoteDelete() {
-		if (dbDispatch.db.hierarchy.here) {
+		const h = dbDispatch.db.hierarchy;
+		if (h.here) {
 			for (const id of get(idsGrabbed)) {
-				const grabbed = dbDispatch.db.hierarchy.getThing_forID(id);
+				const grabbed = h.getThing_forID(id);
 				if (grabbed && !grabbed.isEditing) {
 					let newGrab = grabbed.firstParent;
 					const siblings = grabbed.siblings;
@@ -151,8 +156,8 @@ export default class GraphEditor {
 						grandparent.becomeHere();
 					}
 					await grabbed.traverse(async (child: Thing): Promise<boolean> => {
-						await dbDispatch.db.hierarchy.forgetRelationships_remoteDeleteAllForThing(child);
-						await dbDispatch.db.hierarchy.forgetThing_remoteDelete(child);
+						await h.forgetRelationships_remoteDeleteAllForThing(child);
+						await h.forgetThing_remoteDelete(child);
 						return false; // continue the traversal
 					});
 					newGrab.grabOnly();
