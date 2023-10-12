@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { noop, Thing, onMount, ZIndex, signal, Signals, BrowserType, getBrowserType } from '../../ts/common/GlobalImports';
+	import { noop, Thing, onMount, ZIndex, signal, Signals, BrowserType, getBrowserType, dbDispatch } from '../../ts/common/GlobalImports';
 	import { idsGrabbed, dotDiameter } from '../../ts/managers/State';
 	export let isReveal = false;
 	export let thing = Thing;
@@ -35,8 +35,14 @@
 	async function handleClick(event) {
 		if (thing.isExemplar) { return; }
 		if (isReveal) {
-			thing.toggleExpand();
-			signal(Signals.childrenOf);
+			if (thing.isBulkAlias) {
+				// test if already fetched
+				// create hierarchy and fetch data
+				await dbDispatch.db.fetchAllFrom(thing.title)
+			} else {
+				thing.toggleExpand();
+				signal(Signals.childrenOf);
+			}
 		} else if (event.shiftKey || isGrabbed) {
 			thing.toggleGrab();
 		} else {

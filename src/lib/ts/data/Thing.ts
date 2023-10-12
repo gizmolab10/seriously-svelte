@@ -48,6 +48,7 @@ export default class Thing extends Datum {
 	get halfVisibleProgenySize():	  Size { return this.visibleProgenySize.dividedInHalf; }
 	get halfVisibleProgenyWidth():  number { return this.visibleProgenyWidth / 2; }
 	get halfVisibleProgenyHeight(): number { return this.visibleProgenyHeight / 2; }
+	get isBulkAlias():			   boolean { return this.trait == '~'; }
 	get hasChildren():			   boolean { return this.hasPredicate(false); }
 	get isRoot():				   boolean { return this == dbDispatch.db.hierarchy.root; }
 	get showBorder():			   boolean { return this.isGrabbed || this.isEditing || this.isExemplar; }

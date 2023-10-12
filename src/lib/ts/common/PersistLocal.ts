@@ -21,7 +21,7 @@ class PersistLocal {
 		// localStorage.clear();
 		// const isLocal = isServerLocal();
 		dbLoadTime.set(null);
-		persistLocal.writeToKey(PersistID.lineStretch, 25);
+		persistLocal.writeToKey(PersistID.lineStretch, 30);
 		lineGap. set(this.readFromKey(PersistID.gap) ?? 30);
 		dotDiameter.set(this.readFromKey(PersistID.dotDiameter) ?? 14);
 		lineStretch.set(this.readFromKey(PersistID.lineStretch) ?? 25);

@@ -37,9 +37,9 @@ export default class DBDispatch {
 	}
 
 	applyQueryStrings(params: URLSearchParams) {
-		const db = params.get('db') ?? persistLocal.readFromKey(PersistID.db) ?? DBType.firebase;
 		this.bulkName = params.get('name') ?? 'Public';
-		dbType.set(db); // invokes cloud setup, which needs bulk name already set (must be above)
+		const type = params.get('db') ?? persistLocal.readFromKey(PersistID.db) ?? DBType.firebase;
+		dbType.set(type); // invokes cloud setup, which needs bulk name already set (must be above)
 	}
 
 	dbForType(type: string): DBInterface {
@@ -79,7 +79,7 @@ export default class DBDispatch {
 	updateHierarchy(type: string) {
 		const h = this.db.hierarchy;
 		if (this.db.hasData) {
-			this.setupDBFor(type, this.db.hierarchy.idRoot!);
+			this.updateStateFor(type, this.db.hierarchy.idRoot!);
 			h.restoreHere();
 		} else {
 			if (type != DBType.local) {
@@ -100,7 +100,7 @@ export default class DBDispatch {
 		}
 	}
 
-	setupDBFor(type: string, defaultIDHere: string) {
+	updateStateFor(type: string, defaultIDHere: string) {
 		const dbValues = persistLocal.readFromKeys(PersistID.db, type);
 		if (dbValues == null) {
 			idHere.set(defaultIDHere);

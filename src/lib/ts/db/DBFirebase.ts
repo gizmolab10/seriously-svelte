@@ -38,14 +38,14 @@ export default class DBFirebase implements DBInterface {
 	}
 
 	async setupDB() {
-		await this.fetchDocumentsIn(DataKind.things);
-		await this.fetchDocumentsIn(DataKind.predicates, true)
-		await this.fetchDocumentsIn(DataKind.relationships);
+		await this.fetchAllFrom(dbDispatch.bulkName);
 		await this.fetchAllBulks();
 	}
 
-	getCollection(dataKind: DataKind, noBulk: boolean = false) {
-		return noBulk ? collection(this.db, dataKind) : collection(this.db, this.collectionName, dbDispatch.bulkName, dataKind);
+	async fetchAllFrom(bulkName: string) {
+		await this.fetchDocumentsIn(DataKind.things, bulkName);
+		await this.fetchDocumentsIn(DataKind.predicates);
+		await this.fetchDocumentsIn(DataKind.relationships, bulkName);
 	}
 		
 	async fetchAllBulks() {
@@ -56,7 +56,7 @@ export default class DBFirebase implements DBInterface {
 				for (const bulkShot of bulkSnapshot.docs) {
 					const title = bulkShot.id;
 					if (title != dbDispatch.bulkName && !this.hierarchy.hasRootWithTitle(title)) {				// create a thing for each bulk
-						const thing = this.hierarchy.rememberThing_runtimeCreate(Datum.newID, title, 'red', 'b', -1, false);
+						const thing = this.hierarchy.rememberThing_runtimeCreate(Datum.newID, title, 'red', '~', -1, false);
 						await this.thing_remoteCreate(thing);
 					}
 				}
@@ -69,10 +69,14 @@ export default class DBFirebase implements DBInterface {
 			}
 		}
 	}
+
+	getCollection(dataKind: DataKind, bulkName: string | null = null) {
+		return !bulkName ? collection(this.db, dataKind) : collection(this.db, this.collectionName, bulkName, dataKind);
+	}
 		
-	async fetchDocumentsIn(dataKind: DataKind, noBulk: boolean = false) {
+	async fetchDocumentsIn(dataKind: DataKind, bulkName: string | null = null) {
 		try {
-			const documentsCollection = this.getCollection(dataKind)
+			const documentsCollection = this.getCollection(dataKind, bulkName)
 			let querySnapshot = await getDocs(documentsCollection);
 			this.setupRemoteHandler(dataKind, documentsCollection);
 

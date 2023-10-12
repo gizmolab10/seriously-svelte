@@ -9,7 +9,6 @@ export default class Relationship extends Datum {
 	idPredicate: string;
 	order: number;
 	dbType: string;
-	bulkName: string;
 
 	constructor(id: string, idPredicate: string, idFrom: string, idTo: string, order = 0, isRemotelyStored: boolean) {
 		super(id, isRemotelyStored);
@@ -19,7 +18,6 @@ export default class Relationship extends Datum {
 		this.idPredicate = idPredicate;
 		this.dbType = dbDispatch.db.dbType;
 		this.order = order;
-		this.bulkName = '';
 	}
 
 	log(message: string) { console.log(message, this.description); }

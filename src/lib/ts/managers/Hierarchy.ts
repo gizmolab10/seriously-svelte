@@ -66,7 +66,7 @@ export default class Hierarchy {
 			this.root.normalizeOrder_recursive(true)	// setup order values for all things and relationships
 			this.db.hasData = true;
 			normalizeOrderOf(this.root.children)
-			dbDispatch.setupDBFor(type, idRoot);
+			dbDispatch.updateStateFor(type, idRoot);
 		}
 		this.restoreHere();
 		thingsArrived.set(true);
@@ -92,7 +92,7 @@ export default class Hierarchy {
 
 	hasRootWithTitle(title: string) {
 		for (const thing of this.knownTs) {
-			if (thing.trait == 'b' && thing.title == title) {
+			if (thing.isBulkAlias && thing.title == title) {
 				return true;
 			}
 		}

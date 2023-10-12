@@ -94,7 +94,7 @@
 		}
 	}
 
-	</script>
+</script>
 
 {#key originalTitle}
 	<span class="wrapper" bind:this={wrapper}

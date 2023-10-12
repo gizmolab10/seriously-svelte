@@ -46,20 +46,20 @@
 	bind:this={widget}
 	style='z-index: {ZIndex.highlights};
 		top: {origin.y + delta}px;
-		left: {origin.x+ delta}px;
-		padding: {thing.isExemplar ? 1 : 0}px 10px {thing.isExemplar ? 0 : 1}px 1px;
+		left: {origin.x + delta}px;
+		padding: {thing.isExemplar ? 1 : 0}px 12px {thing.isExemplar ? 0 : 1}px 1px;
 		{background};
 		{border};'>
 	<Dot thing={thing}/>&nbsp;
 	<TitleEditor thing={thing}/>
-	{#if thing.hasChildren}
+	{#if thing.hasChildren || thing.isBulkAlias}
 		<Dot thing={thing} isReveal={true}/>
 	{/if}
 </div>
 
 <style>
 	div {
-		height: 24px;
+		height: 25px;
 		position: absolute;
 		white-space: nowrap;
 		border-radius: 16px;
