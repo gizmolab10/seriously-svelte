@@ -87,7 +87,7 @@ export default class GraphEditor {
 
 	async thing_redraw_remoteMoveRight(thing: Thing, RIGHT: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		if (!OPTION) {
-			if (thing.isBulkAlias && !thing.hasChildren) {
+			if (thing.needsBulkFetch) {
 				await thing.redraw_fetchAll_browseRight();
 			} else {
 				thing.redraw_browseRight(RIGHT, SHIFT, EXTREME);
@@ -106,6 +106,9 @@ export default class GraphEditor {
 			// simpler than adjusting children or parents arrays
 			// TODO: also match against the 'to' to the current parent
 			// TODO: pass predicate in ... to support editing different kinds of relationships
+			//
+			// TODO: detect if relocating from one db to another, and then
+			// TODO: delete thing and add it to the destination's thing's collection
 
 			const relationship = dbDispatch.db.hierarchy.getRelationship_whereIDEqualsTo(thing.id);
 			if (relationship) {

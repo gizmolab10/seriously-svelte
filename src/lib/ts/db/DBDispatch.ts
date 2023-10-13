@@ -8,6 +8,7 @@ import { dbLocal } from './DBLocal';
 export default class DBDispatch {
 	db: DBInterface;
 	bulkName: string;
+	eraseDB = false;
 	okayToWrite = false;
 	updateDBForType(type: string) { this.db = this.dbForType(type); }
 	nextDB(forward: boolean) { this.changeDBTo(this.getNextDB(forward)); }
@@ -37,6 +38,9 @@ export default class DBDispatch {
 	}
 
 	applyQueryStrings(params: URLSearchParams) {
+		if (params.get('erase') === 'db') {
+			this.eraseDB = true;
+		}
 		this.bulkName = params.get('name') ?? 'Public';
 		const type = params.get('db') ?? persistLocal.readFromKey(PersistID.db) ?? DBType.firebase;
 		dbType.set(type); // invokes cloud setup, which needs bulk name already set (must be above)
@@ -89,7 +93,7 @@ export default class DBDispatch {
 			(async () => {							// this will happen when Local sets dbType !!! too early?
 				dbLoadTime.set(null);
 				const startTime = new Date().getTime();
-				await this.db.setupDB();
+				await this.db.fetch_all();
 				h.constructHierarchy(type);
 				const duration = Math.trunc(((new Date().getTime()) - startTime) / 100) / 10;
 				const places = (duration == Math.trunc(duration)) ? 0 : 1;

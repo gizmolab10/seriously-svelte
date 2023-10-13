@@ -35,9 +35,8 @@
 	async function handleClick(event) {
 		if (thing.isExemplar) { return; }
 		if (isReveal) {
-			if (thing.isBulkAlias && !thing.hasChildren) {
-				thing.redraw_fetchAll_browseRight(false);
-				await dbDispatch.db.fetchAllFrom(thing.title)
+			if (thing.needsBulkFetch) {
+				thing.redraw_fetch_all_browseRight(false);
 			} else {
 				thing.toggleExpand();
 				signal(Signals.childrenOf);

@@ -32,9 +32,9 @@
 		top: {origin.y - 6}px;
 		left: {origin.x - 6}px;
 	'>
-	<svg width='40'
-		height='40'
-		viewbox='0 0 40 40'
+	<svg width='20'
+		height='20'
+		viewbox='0 0 20 20'
 		on:blur={noop()}
 		on:focus={noop()}
 		on:mouseout={mouseout}

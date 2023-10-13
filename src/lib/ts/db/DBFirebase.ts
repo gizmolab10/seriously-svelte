@@ -37,29 +37,30 @@ export default class DBFirebase implements DBInterface {
 		return this._hierarchy!;
 	}
 
-	async setupDB() {
-		await this.fetchAllFrom(dbDispatch.bulkName);
-		await this.fetchAllBulks();
+	async fetch_all() {
+		const name = dbDispatch.bulkName;
+		if (dbDispatch.eraseDB) {
+			await this.delete_subcollections(name);
+			await this.delete_document(name);
+		}
+		await this.fetch_allFrom(name);
+		await this.fetch_allBulks();
 	}
 
-	async fetchAllFrom(bulkName: string) {
-		await this.fetchDocumentsIn(DataKind.things, bulkName);
-		await this.fetchDocumentsIn(DataKind.predicates);
-		await this.fetchDocumentsIn(DataKind.relationships, bulkName);
-	}
-
-	getCollection(dataKind: DataKind, bulkName: string | null = null) {
-		return !bulkName ? collection(this.db, dataKind) : collection(this.db, this.collectionName, bulkName, dataKind);
+	async fetch_allFrom(bulkName: string) {
+		await this.fetch_documentsIn(DataKind.things, bulkName);
+		await this.fetch_documentsIn(DataKind.predicates);
+		await this.fetch_documentsIn(DataKind.relationships, bulkName);
 	}
 		
-	async fetchDocumentsIn(dataKind: DataKind, bulkName: string | null = null) {
+	async fetch_documentsIn(dataKind: DataKind, bulkName: string | null = null) {
 		try {
-			const documentsCollection = this.getCollection(dataKind, bulkName)
+			const documentsCollection = !bulkName ? collection(this.db, dataKind) : collection(this.db, this.collectionName, bulkName, dataKind);
 			let querySnapshot = await getDocs(documentsCollection);
-			this.setupRemoteHandler(dataKind, documentsCollection);
+			this.setup_remoteHandler(dataKind, documentsCollection);
 
 			if (querySnapshot.empty && dataKind == DataKind.things) {
-				await this.createDefaultThingsIn(documentsCollection);
+				await this.create_defaultThingsIn(documentsCollection);
 				querySnapshot = await getDocs(documentsCollection);
 			}
 			
@@ -84,7 +85,7 @@ export default class DBFirebase implements DBInterface {
 		}
 	}
 		
-	async fetchAllBulks() {
+	async fetch_allBulks() {
 		if (dbDispatch.bulkName == 'Jonathan Sand') {
 			try {
 				const bulksCollection = collection(this.db, this.collectionName);		// fetch all bulks (documents)
@@ -105,8 +106,34 @@ export default class DBFirebase implements DBInterface {
 			}
 		}
 	}
+	
+	async delete_subcollections(name: string) {
+		const docRef = doc(this.db, this.collectionName, name);
 
-	async createDefaultThingsIn(documentsCollection: CollectionReference) {
+		const subcollectionNames = ['Things', 'Relationships'];
+
+		for (const subcollectionName of subcollectionNames) {
+			const subcollectionRef = collection(docRef, subcollectionName);
+			const snapshot = await getDocs(subcollectionRef);
+			
+			for (const subDoc of snapshot.docs) {
+				await deleteDoc(subDoc.ref);
+			}
+		}
+	}
+
+	async delete_document(name: string) {
+		const documentRef = doc(this.db, this.collectionName, name);
+
+		try {
+			await deleteDoc(documentRef);
+			console.log('deleted');
+		} catch (error) {
+			this.reportError(error);
+		}
+	}
+
+	async create_defaultThingsIn(documentsCollection: CollectionReference) {
 		const fields = ['title', 'color', 'trait'];
 		const root = new Thing(Datum.newID, dbDispatch.bulkName, 'coral', '!', 0, false);
 		const thing = new Thing(Datum.newID, 'Click this text to edit it', 'purple', '', 0, false);
@@ -115,18 +142,18 @@ export default class DBFirebase implements DBInterface {
 		await addDoc(documentsCollection, convertToObject(root, fields));
 	}
 
-	setupRemoteHandler(dataKind: DataKind, collection: CollectionReference) {
+	setup_remoteHandler(dataKind: DataKind, collection: CollectionReference) {
 		onSnapshot(collection, (snapshot) => {
 			if (this.hierarchy.isConstructed) {								// ignore snapshots caused by data written to server
 				snapshot.docChanges().forEach((change) => {	// convert and remember
-					this.handleChange(change, dataKind);
+					this.remoteHandler(change, dataKind);
 				});
 				signal(Signals.childrenOf);
 			}
 		}
 	)};
 
-	async handleChange(change: DocumentChange, dataKind: DataKind) {
+	async remoteHandler(change: DocumentChange, dataKind: DataKind) {
 		const doc = change.doc;
 		const data = doc.data();
 		if (DBFirebase.isValidOfKind(dataKind, data)) {

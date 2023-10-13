@@ -19,8 +19,8 @@ export default interface DBInterface {
 	hasData: boolean;
 	hierarchy: Hierarchy;
 	loadTime: string | null;
-	setupDB(): Promise<void>;
-	fetchAllFrom(bulkName: string): Promise<void>;
+	fetch_all(): Promise<void>;
+	fetch_allFrom(bulkName: string): Promise<void>;
 	thing_remoteCreate(thing: Thing): Promise<void>;
 	thing_remoteUpdate(thing: Thing): Promise<void>;
 	thing_remoteDelete(thing: Thing): Promise<void>;

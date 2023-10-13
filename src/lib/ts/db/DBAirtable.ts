@@ -39,7 +39,7 @@ export default class DBAirtable implements DBInterface {
 		return this._hierarchy!;
 	}
 
-	async setupDB() {
+	async fetch_all() {
 		await this.things_readAll()
 		await this.predicates_readAll();
 		await this.relationships_readAll();

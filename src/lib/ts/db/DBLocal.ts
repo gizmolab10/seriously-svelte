@@ -16,7 +16,7 @@ export default class DBLocal implements DBInterface {
 
 	localName(suffix: string) { return 'local' + suffix; }
 
-	async setupDB() {
+	async fetch_all() {
 		const h = this.hierarchy;
 		const idPredicate = this.localName('P');
 		const idRoot = this.localName('Root');

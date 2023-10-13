@@ -3,6 +3,7 @@ import { idHere, idEditing, expanded, idsGrabbed, lineGap, lineStretch, dotDiame
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
+	needsBulkFetch = false;
 	hoverAttributes = '';
 	borderAttribute = '';
 	grabAttributes = '';
@@ -43,9 +44,9 @@ export default class Thing extends Datum {
 	};
 
 	get description():				string { return this.id + ' (\" ' + this.title + '\") '; }
-	get titleWidth():				number { return getWidthOf(this.title) }
 	get visibleProgenySize():		  Size { return new Size(this.visibleProgenyWidth, this.visibleProgenyHeight); }
 	get halfVisibleProgenySize():	  Size { return this.visibleProgenySize.dividedInHalf; }
+	get titleWidth():				number { return getWidthOf(this.title) }
 	get halfVisibleProgenyWidth():  number { return this.visibleProgenyWidth / 2; }
 	get halfVisibleProgenyHeight(): number { return this.visibleProgenyHeight / 2; }
 	get isBulkAlias():			   boolean { return this.trait == '~'; }
@@ -54,14 +55,14 @@ export default class Thing extends Datum {
 	get showBorder():			   boolean { return this.isGrabbed || this.isEditing || this.isExemplar; }
 	get isVisible():			   boolean { return this.ancestors(Number.MAX_SAFE_INTEGER).includes(dbDispatch.db.hierarchy.here!); }
 	get isExpanded():			   boolean { return this.isRoot || get(expanded).includes(this.parentRelationshipID); }
-	get fields():		 Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
-	get children():			  Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id, false, this.id); }
-	get parents():			  Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id,	true, this.id); }
-	get siblings():			  Array<Thing> { return this.firstParent?.children ?? []; }
 	get grandparent():				 Thing { return this.firstParent?.firstParent ?? dbDispatch.db.hierarchy.root; }
 	get lastChild():				 Thing { return this.children.slice(-1)[0]; }
 	get firstChild():				 Thing { return this.children[0]; }
 	get firstParent():				 Thing { return this.parents[0]; }
+	get fields():		 Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
+	get siblings():			  Array<Thing> { return this.firstParent?.children ?? []; }
+	get children():			  Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id, false, this.id); }
+	get parents():			  Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id,	true, this.id); }
 
 	get parentRelationshipID(): string { // WRONG
 		return dbDispatch.db.hierarchy.getRelationship_whereIDEqualsTo(this.id, true)?.id ?? '';
@@ -243,7 +244,7 @@ export default class Thing extends Datum {
 	}
 
 	async redraw_fetchAll_browseRight(grab: boolean = true) {
-		await dbDispatch.db.fetchAllFrom(this.title)
+		await dbDispatch.db.fetch_allFrom(this.title)
 		if (this.hasChildren) {
 			if (grab) {
 				this.children[0].grabOnly()

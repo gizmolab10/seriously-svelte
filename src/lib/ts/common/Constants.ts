@@ -25,7 +25,7 @@ export default class Constants {
 		const params = new URLSearchParams(window.location.search);
 		this.graphIsCentered = !isMobileDevice();
 		dbDispatch.applyQueryStrings(params);
-		this.applyQueryStrings(params)
+		this.applyQueryStrings(params);
 	}
 
 	applyQueryStrings(params: URLSearchParams) {
