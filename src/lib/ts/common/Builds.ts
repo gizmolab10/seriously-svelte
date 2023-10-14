@@ -4,6 +4,7 @@ class Builds {
 
 	constructor() {
 		this.notes = {
+			52 : ['October 13, 2023', 'new bulks correctly created'],
 			51 : ['October 12, 2023', 'new admin view of all data'],
 			50 : ['October 10, 2023', 'eliminate details view, show focus title at top'],
 			49 : ['October 10, 2023', 'create private firebase bulks as needed'],

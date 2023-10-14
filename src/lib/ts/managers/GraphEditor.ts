@@ -11,14 +11,15 @@ import { idsGrabbed } from './State';
 export default class GraphEditor {
 
 	async handleKeyDown(event: KeyboardEvent) {
-		let grab = dbDispatch.db.hierarchy.grabs.furthestGrab(true);
+		const h = dbDispatch.db.hierarchy;
+		let grab = h.grabs.furthestGrab(true);
 		if (event.type == 'keydown') {
 			const OPTION = event.altKey;
 			const SHIFT = event.shiftKey;
 			const EXTREME = SHIFT && OPTION;
 			const key = event.key.toLowerCase();
 			if (!grab) {
-				const root = dbDispatch.db.hierarchy.root;
+				const root = h.root;
 				root?.becomeHere();
 				root?.grabOnly(); // to update crumbs and dots
 				grab = root;
@@ -62,23 +63,18 @@ export default class GraphEditor {
 	}
 
 	async thing_redraw_remoteDuplicate(thing: Thing) {
-		const sibling = dbDispatch.db.hierarchy.rememberThing_runtimeCreateAt(thing.order + constants.orderIncrement, thing.color);
-		const parent = thing.firstParent ?? dbDispatch.db.hierarchy.root;
+		const h = dbDispatch.db.hierarchy;
+		const sibling = h.rememberThing_runtimeCreateAt(thing.order + constants.orderIncrement, thing.color);
+		const parent = thing.firstParent ?? h.root;
 		sibling.title = thing.title;
 		await this.thing_redraw_remoteAddAsChild(sibling, parent);
 	}
 
 	async thing_redraw_remoteAddAsChild(child: Thing, parent: Thing) {
-		const idPredicateIsAParentOf = Predicate.idIsAParentOf;
-		const idRelationship = Datum.newID;
-		await dbDispatch.db.thing_remoteCreate(child); // for everything below, need to await child.id fetched from dbDispatch
-		dbDispatch.db.hierarchy.rememberThing(child);
-		const relationship = await dbDispatch.db.hierarchy.rememberRelationship_remoteCreate(idRelationship, idPredicateIsAParentOf, parent.id, child.id, child.order, CreationFlag.getRemoteID)
-		normalizeOrderOf(parent.children);
+		dbDispatch.db.hierarchy.thing_remoteAddAsChild(child, parent);
 		child.startEdit();
 		child.grabOnly();
 		signal(Signals.childrenOf);
-		await relationship.remoteWrite();
 	}
 
 	////////////////////
@@ -110,14 +106,15 @@ export default class GraphEditor {
 			// TODO: detect if relocating from one db to another, and then
 			// TODO: delete thing and add it to the destination's thing's collection
 
-			const relationship = dbDispatch.db.hierarchy.getRelationship_whereIDEqualsTo(thing.id);
+			const h = dbDispatch.db.hierarchy;
+			const relationship = h.getRelationship_whereIDEqualsTo(thing.id);
 			if (relationship) {
 				relationship.idFrom = newParent.id;
 				thing.setOrderTo(parent.order + 0.5, true);
 				await dbDispatch.db.relationship_remoteUpdate(relationship);
 			}
 
-			dbDispatch.db.hierarchy.relationships_refreshKnowns();		// so children and parent will see the newly relocated things
+			h.relationships_refreshKnowns();		// so children and parent will see the newly relocated things
 			normalizeOrderOf(newParent.children);						// refresh knowns first
 			normalizeOrderOf(parent.children);
 			thing.grabOnly();

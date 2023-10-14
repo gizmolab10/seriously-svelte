@@ -36,7 +36,7 @@
 		if (thing.isExemplar) { return; }
 		if (isReveal) {
 			if (thing.needsBulkFetch) {
-				thing.redraw_fetch_all_browseRight(false);
+				thing.redraw_fetchAll_browseRight(false);
 			} else {
 				thing.toggleExpand();
 				signal(Signals.childrenOf);

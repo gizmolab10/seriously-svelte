@@ -33,7 +33,7 @@ export default class Hierarchy {
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): (string | null) { return this.root?.id ?? null; };
 	get things(): Array<Thing> { return Object.values(this.knownT_byID) };
-	hasRootWithTitle(title: string) { return this.getRootThingWithTitle(title) != null; }
+	hasRootWithTitle(title: string) { return this.getBulkAliasWithTitle(title) != null; }
 	getThing_forID(idThing: string | null): Thing | null { return (!idThing) ? null : this.knownT_byID[idThing]; }
 	getPredicate_forID(idPredicate: string | null): Predicate | null { return (!idPredicate) ? null : this.knownP_byID[idPredicate]; }
 
@@ -99,6 +99,17 @@ export default class Hierarchy {
 			}
 		}
 		return null;
+	}
+
+	async thing_remoteAddAsChild(child: Thing, parent: Thing) {
+		const idPredicateIsAParentOf = Predicate.idIsAParentOf;
+		const idRelationship = Datum.newID;
+		const db = dbDispatch.db;
+		await db.thing_remoteCreate(child); // for everything below, need to await child.id fetched from dbDispatch
+		this.rememberThing(child);
+		const relationship = await this.rememberRelationship_remoteCreate(idRelationship, idPredicateIsAParentOf, parent.id, child.id, child.order, CreationFlag.getRemoteID)
+		normalizeOrderOf(parent.children);
+		await relationship.remoteWrite();
 	}
 
 	//////////////////////////////
