@@ -91,6 +91,15 @@ export default class Hierarchy {
 		return this._grabs!;
 	}
 
+	getRootsThing() {
+		for (const thing of this.knownTs) {
+			if  (thing.trait == '^' && thing.title == 'roots') {	// special case TODO: convert to a auery string
+				return thing;
+			}
+		}
+		return null;
+	}
+
 	getBulkAliasWithTitle(title: string) {
 		for (const thing of this.knownTs) {
 			if  (thing.isBulkAlias && (thing.title == title ||
@@ -170,7 +179,8 @@ export default class Hierarchy {
 
 	rememberThing_runtimeCreate(id: string, title: string, color: string, trait: string, order: number, isRemotelyStored: boolean): Thing {
 		let thing = this.getBulkAliasWithTitle(title);
-		if (thing) {					// this is the bulk alias
+		if (thing) {	//  this is a bulk alias
+			//				need relationships to work
 			const relationship = this.getRelationship_whereIDEqualsTo(thing.id);
 			if (relationship) {
 				this.forgetRelationship(relationship);
@@ -179,7 +189,7 @@ export default class Hierarchy {
 			}
 			this.forgetThing(thing);
 			thing.needsBulkFetch = false;
-			thing.color = color;		// ignore trait
+			thing.color = color;		// N.B., ignore trait
 			thing.id = id;				// so children relatiohships will work
 		} else {
 			thing = new Thing(id, title, color, trait, order, isRemotelyStored);

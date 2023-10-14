@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { noop, Thing, Point, ZIndex, onMount, onDestroy, constants } from '../../ts/common/GlobalImports';
 	import { idEditing, idsGrabbed } from '../../ts/managers/State';
-	import TitleEditor from './TitleEditor.svelte';
+	import EditorTitle from './EditorTitle.svelte';
 	import Dot from './Dot.svelte';
 	export let origin = Point;
 	export let thing = Thing;
@@ -50,7 +50,7 @@
 		padding: {thing.isExemplar ? 1 : 0}px 12px {thing.isExemplar ? 0 : 1}px 1px;
 		{background};
 		{border};'>
-	<Dot thing={thing}/>&nbsp;<TitleEditor thing={thing}/>
+	<Dot thing={thing}/>&nbsp;<EditorTitle thing={thing}/>
 	{#if thing.hasChildren || thing.isBulkAlias}
 		<Dot thing={thing} isReveal={true}/>
 	{/if}

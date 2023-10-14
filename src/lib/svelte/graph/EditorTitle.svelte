@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { Thing, signal, Signals, ZIndex, constants, onDestroy, dbDispatch, graphEditor } from '../../ts/common/GlobalImports';
+	import { Thing, signal, Signals, ZIndex, constants, onDestroy, dbDispatch, editorGraph } from '../../ts/common/GlobalImports';
 	import { idEditing, titleFontSize, titleFontFamily, stoppedIDEditing } from '../../ts/managers/State';
 	import Widget from './Widget.svelte';
 	export let thing = Thing;
@@ -17,7 +17,7 @@
 	function handleKeyDown(event) {
 		if ($idEditing == thing.id) {
 			switch (event.key) {	
-				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); graphEditor.thing_redraw_remoteAddChildTo(thing.firstParent); break;
+				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); editorGraph.thing_redraw_remoteAddChildTo(thing.firstParent); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
 			}
 		}

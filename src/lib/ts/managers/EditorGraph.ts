@@ -8,7 +8,7 @@ import { idsGrabbed } from './State';
 //									//
 //////////////////////////////////////
 
-export default class GraphEditor {
+export default class EditorGraph {
 
 	async handleKeyDown(event: KeyboardEvent) {
 		const h = dbDispatch.db.hierarchy;
@@ -169,4 +169,4 @@ export default class GraphEditor {
 
 }
 
-export const graphEditor = new GraphEditor();
+export const editorGraph = new EditorGraph();
