@@ -396,7 +396,7 @@ export default class DBFirebase implements DBInterface {
 			const h = this.hierarchy;
 			switch (dataKind) {
 				case DataKind.things:			h.thing_remember_runtimeCreate(id, data.title, data.color, data.trait, -1, true, bulkName); break;
-				case DataKind.predicates:		h.predicate_rememberRuntimeCreate(id, data.kind); break;
+				case DataKind.predicates:		h.predicate_remember_runtimeCreate(id, data.kind); break;
 				case DataKind.relationships:	await h.relationship_remember_remoteCreateNoDuplicate(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
 			}
 		}

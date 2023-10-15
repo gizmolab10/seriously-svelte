@@ -330,7 +330,7 @@ export default class Hierarchy {
 		this.knownP_byID[predicate.id] = predicate;
 	}
 
-	predicate_rememberRuntimeCreate(id: string, kind: string) {
+	predicate_remember_runtimeCreate(id: string, kind: string) {
 		const predicate = new Predicate(id, kind);
 		this.predicate_remember(predicate)
 	}

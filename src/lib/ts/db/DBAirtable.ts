@@ -173,7 +173,7 @@ export default class DBAirtable implements DBInterface {
 			for (const record of records) {
 				const id = record.id as string; // do not yet need this
 				const kind = record.fields.kind as string;
-				this.hierarchy.predicate_rememberRuntimeCreate(id, kind);
+				this.hierarchy.predicate_remember_runtimeCreate(id, kind);
 			}
 
 		} catch (error) {
