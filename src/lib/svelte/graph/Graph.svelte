@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { noop, Rect, Size, Point, Thing, ZIndex, Signals, onMount, onDestroy, editorGraph, PersistID, persistLocal } from '../../ts/common/GlobalImports';
 	import { idHere, lineGap, idEditing, idsGrabbed, graphRect, windowSize, graphOffset, popupViewID } from '../../ts/managers/State';
-	import { constants, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
+	import { k, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
 	import FatTriangleButton from '../kit/FatTriangleButton.svelte';
 	import Children from './Children.svelte';
 	let triangleOrigin = new Point();
@@ -18,17 +18,17 @@
 	});
 
 	window.addEventListener('wheel', (event: WheelEvent) => {
-		const canScroll = constants.allowHorizontalScrolling;
+		const canScroll = k.allowHorizontalScrolling;
 		const offsetX = canScroll ? -event.deltaX : 0;
 		const offsetY = -event.deltaY;
 		if (Math.abs(offsetX) > 1 || Math.abs(offsetY) > 1) {
 			const offset = $graphOffset;
 			const newOffset = new Point(offset.x + offsetX, offset.y + offsetY);
-			setGraphOffset(newOffset);
+			graphOffset_setTo(newOffset);
 		}
 	});
 
-	function setGraphOffset(origin: Point) {
+	function graphOffset_setTo(origin: Point) {
 		persistLocal.writeToKey(PersistID.origin, origin);
 		$graphOffset = origin;
 		updateOrigins();
@@ -39,7 +39,7 @@
 			const gCenter = $graphRect.center.offsetBy($graphOffset);		// user-determined center
 			const tOffset = here.halfVisibleProgenySize.asPoint.multipliedBy(-1);
 			let tOrigin = gCenter.offsetBy(new Point(-here.visibleProgenyWidth * 0.69, -20));
-			if (!constants.graphIsCentered) {
+			if (!k.graphIsCentered) {
 				tOrigin.x = 25;
 			}
 			triangleOrigin = tOrigin;
@@ -49,7 +49,7 @@
 	
 	$: {
 		if (here == null || here.id != $idHere) {			
-			here = dbDispatch.db.hierarchy.getThing_forID($idHere);
+			here = dbDispatch.db.hierarchy.thing_getForID($idHere);
 			updateOrigins();
 		}
 		if (here) { // can sometimes be null !!!!!! ????????
@@ -66,7 +66,7 @@
 		if (event.type == 'keydown') {
 			const key = event.key;
 			switch (key) {
-				case 'c': setGraphOffset(new Point()); break;
+				case 'c': graphOffset_setTo(new Point()); break;
 				case '?': $popupViewID = ButtonID.help; break;
 				case ']':
 				case '[': dbDispatch.nextDB(key == ']'); break;
@@ -87,7 +87,7 @@
 					position: absolute;
 					left: {triangleOrigin.x - 7};
 					top: {triangleOrigin.y - 21};'>
-				<circle cx='14' cy='14' r='13' stroke={here.color} fill={constants.backgroundColor}/>
+				<circle cx='14' cy='14' r='13' stroke={here.color} fill={k.backgroundColor}/>
 			</svg>
 		{/if}
 		<FatTriangleButton here={here} origin={triangleOrigin.offsetByY(-15)}/>

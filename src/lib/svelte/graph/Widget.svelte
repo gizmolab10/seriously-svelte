@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { noop, Thing, Point, ZIndex, onMount, onDestroy, constants } from '../../ts/common/GlobalImports';
+	import { noop, Thing, Point, ZIndex, onMount, onDestroy, k } from '../../ts/common/GlobalImports';
 	import { idEditing, idsGrabbed } from '../../ts/managers/State';
 	import EditorTitle from './EditorTitle.svelte';
 	import Dot from './Dot.svelte';
@@ -25,7 +25,7 @@
 		thing.updateColorAttributes();
 		delta = showBorder ? 0 : 1;
 		border = showBorder ? 'border: ' + thing.grabAttributes : '';
-		background = showBorder ? 'background-color: ' + constants.backgroundColor : '';
+		background = showBorder ? 'background-color: ' + k.backgroundColor : '';
 	}
 
 	$: {

@@ -1,8 +1,8 @@
 <script>
-	import { noop, Thing, ZIndex, constants, dbDispatch, editorGraph, FatTrianglePath } from "../../ts/common/GlobalImports";
+	import { noop, Thing, ZIndex, k, dbDispatch, editorGraph, FatTrianglePath } from "../../ts/common/GlobalImports";
 	import { idHere, dotDiameter } from '../../ts/managers/State';
 	const triangle = new FatTrianglePath($dotDiameter + 2, 0);
-	let fillColor = constants.backgroundColor;
+	let fillColor = k.backgroundColor;
 	export let origin = new Point($dotDiameter, 20);
 	const path = triangle.path;
 	let button = null;

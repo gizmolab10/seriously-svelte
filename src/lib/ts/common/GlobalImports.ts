@@ -1,4 +1,4 @@
-import { log, noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, isServerLocal, getBrowserType, isMobileDevice, convertToObject, normalizeOrderOf, sortAccordingToOrder } from './Utilities';
+import { log, noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, isServerLocal, getBrowserType, isMobileDevice, convertToObject, orders_normalize_remoteMaybe, sort_byOrder } from './Utilities';
 import { ZIndex, ButtonID, BrowserType, CreationFlag, LineCurveType } from './Enumerations';
 import { Point, Size, Rect, LineRect, updateGraphRect } from '../geometry/Geometry';
 import { FatTrianglePath, Direction } from '../geometry/FatTrianglePath';
@@ -8,7 +8,7 @@ import { editorGraph } from '../managers/EditorGraph';
 import { DBType, DataKind } from '../db/DBInterface';
 import { dbDispatch } from '../db/DBDispatch';
 import { onMount, onDestroy } from 'svelte';
-import { constants } from './Constants';
+import { k } from './Constants';
 import { get } from 'svelte/store';
 import { builds } from './Builds';
 import './Extensions';
@@ -24,7 +24,7 @@ import Datum from '../data/Datum';
 import User from '../data/User';
 
 export {
-	constants, builds,
+	k, builds,
 	PersistID, persistLocal,
 	get, onMount, onDestroy,
 	FatTrianglePath, Direction,
@@ -35,5 +35,5 @@ export {
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Point, Size, Rect, Layout, LineRect, LineCurveType, updateGraphRect,
 	log, noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy,
-	isServerLocal, getBrowserType, isMobileDevice, convertToObject, normalizeOrderOf, sortAccordingToOrder,
+	isServerLocal, getBrowserType, isMobileDevice, convertToObject, orders_normalize_remoteMaybe, sort_byOrder,
 };

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { Thing, signal, Signals, ZIndex, constants, onDestroy, dbDispatch, editorGraph } from '../../ts/common/GlobalImports';
+	import { Thing, signal, Signals, ZIndex, k, onDestroy, dbDispatch, editorGraph } from '../../ts/common/GlobalImports';
 	import { idEditing, titleFontSize, titleFontFamily, stoppedIDEditing } from '../../ts/managers/State';
 	import Widget from './Widget.svelte';
 	export let thing = Thing;
@@ -36,7 +36,7 @@
 		// manage edit state //
 		///////////////////////
 
-		if (constants.allowTitleEditing) {
+		if (k.allowTitleEditing) {
 			if ($stoppedIDEditing == thing.id) {
 				stopEditing();
 				$stoppedIDEditing = null;
@@ -79,7 +79,7 @@
 	}
 
 	function handleFocus(event) {
-		if (!constants.allowTitleEditing) {
+		if (!k.allowTitleEditing) {
 			input.blur();
 		} else if (!isEditing) {
 			isEditing = true;

@@ -1,5 +1,5 @@
 <script lang=ts>
-	import { noop, Rect, Size, Point, Thing, Signals, Layout, onMount, onDestroy, LineRect, LineCurveType, normalizeOrderOf, handleSignalOfKind } from '../../ts/common/GlobalImports';
+	import { noop, Rect, Size, Point, Thing, Signals, Layout, onMount, onDestroy, LineRect, LineCurveType, orders_normalize_remoteMaybe, handleSignalOfKind } from '../../ts/common/GlobalImports';
 	import { lineGap, lineStretch, dotDiameter } from '../../ts/managers/State';
 	import Children from './Children.svelte';
 	import Widget from './Widget.svelte';
@@ -20,7 +20,7 @@
 	const signalHandler = handleSignalOfKind(Signals.childrenOf, (signal_idThing) => {
 		setTimeout(() => { // delay until all other handlers for this signal are done TODO: WHY?
 			if (signal_idThing == thing.id || children != thing.children) {
-				normalizeOrderOf(thing.children);
+				orders_normalize_remoteMaybe(thing.children);
 				children = thing.children;
 				layoutChildren();
 				toggleDraw = !toggleDraw;

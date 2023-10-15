@@ -83,8 +83,8 @@ export default class DBDispatch {
 	updateHierarchy(type: string) {
 		const h = this.db.hierarchy;
 		if (this.db.hasData) {
-			this.updateStateFor(type, this.db.hierarchy.idRoot!);
-			h.restoreHere();
+			this.state_updateFor(type, this.db.hierarchy.idRoot!);
+			h.here_restore();
 		} else {
 			if (type != DBType.local) {
 				isBusy.set(true);
@@ -94,7 +94,7 @@ export default class DBDispatch {
 				dbLoadTime.set(null);
 				const startTime = new Date().getTime();
 				await this.db.fetch_all();
-				h.constructHierarchy(type);
+				h.hierarchy_construct(type);
 				const duration = Math.trunc(((new Date().getTime()) - startTime) / 100) / 10;
 				const places = (duration == Math.trunc(duration)) ? 0 : 1;
 				const loadTime = (((new Date().getTime()) - startTime) / 1000).toFixed(places);
@@ -104,7 +104,7 @@ export default class DBDispatch {
 		}
 	}
 
-	updateStateFor(type: string, defaultIDHere: string) {
+	state_updateFor(type: string, defaultIDHere: string) {
 		const dbValues = persistLocal.readFromKeys(PersistID.db, type);
 		if (dbValues == null) {
 			idHere.set(defaultIDHere);

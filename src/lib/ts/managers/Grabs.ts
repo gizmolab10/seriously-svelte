@@ -1,4 +1,4 @@
-import { get, Thing, Hierarchy, sortAccordingToOrder } from "../common/GlobalImports";
+import { get, Thing, Hierarchy, sort_byOrder } from "../common/GlobalImports";
 import { idsGrabbed } from './State';
 
 export default class Grabs {
@@ -11,7 +11,7 @@ export default class Grabs {
 			if (ids && this.hierarchy.db.hasData) {
 				this.grabbed = [];
 				for (const id of ids) {
-					const thing = this.hierarchy.getThing_forID(id)
+					const thing = this.hierarchy.thing_getForID(id)
 					if (thing) {
 						this.grabbed.push(thing);						
 					}
@@ -20,7 +20,7 @@ export default class Grabs {
 		});
 	};
 
-	get last_thingGrabbed(): (Thing | null) { return this.hierarchy.getThing_forID(this.last_idGrabbed); }
+	get last_thingGrabbed(): (Thing | null) { return this.hierarchy.thing_getForID(this.last_idGrabbed); }
 	toggleGrab = (thing: Thing) => { if (thing.isGrabbed) { this.ungrab(thing); } else { this.grab(thing); } }
 
 	get last_idGrabbed(): string | null {
@@ -68,8 +68,8 @@ export default class Grabs {
 	furthestGrab(up: boolean) {
 		const ids = get(idsGrabbed);
 		if (ids) {
-			let grabs = this.hierarchy.getThings_forIDs(ids);
-			sortAccordingToOrder(grabs);
+			let grabs = this.hierarchy.things_getForIDs(ids);
+			sort_byOrder(grabs);
 			if (up) {
 				return grabs[0];
 			} else if (this.hierarchy.grabs.grabbed) {

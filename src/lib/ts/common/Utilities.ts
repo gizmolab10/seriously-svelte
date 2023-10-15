@@ -8,17 +8,17 @@ export function log(target: any, key: string) {
 	console.log(`Method \'${key}\' is called on class \'${target.constructor.name}\'`);
 }
 
-export function sortAccordingToOrder(array: Array<Thing>) {
+export function sort_byOrder(array: Array<Thing>) {
 	return array.sort( (a: Thing, b: Thing) => { return a.order - b.order; });
 }
 
-export function normalizeOrderOf(array: Array<Thing>, remoteWrite: boolean = true) {
+export function orders_normalize_remoteMaybe(array: Array<Thing>, remoteWrite: boolean = true) {
 	// dbDispatch.db.hierarchy.relationships_refreshKnowns(); // order is stored in relationships
-	sortAccordingToOrder(array);
+	sort_byOrder(array);
 	for (let index = 0; index < array.length; index++) {
 		const thing = array[index];
 		if (thing.order != index) {
-			thing.setOrderTo(index, remoteWrite);
+			thing.order_setTo(index, remoteWrite);
 		}
 	}
 }

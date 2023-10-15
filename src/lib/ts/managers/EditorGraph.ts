@@ -1,4 +1,4 @@
-import { get, Thing, Datum, signal, Signals, constants, Predicate, dbDispatch, CreationFlag, normalizeOrderOf, Hierarchy } from '../common/GlobalImports';
+import { get, Thing, Datum, signal, Signals, k, Predicate, dbDispatch, CreationFlag, orders_normalize_remoteMaybe, Hierarchy } from '../common/GlobalImports';
 import { idsGrabbed } from './State';
 
 //////////////////////////////////////
@@ -25,8 +25,8 @@ export default class EditorGraph {
 				root?.grabOnly(); // to update crumbs and dots
 				grab = root;
 			}
-			if (constants.allowGraphEditing) {
-				if (grab && constants.allowTitleEditing) {
+			if (k.allowGraphEditing) {
+				if (grab && k.allowTitleEditing) {
 					switch (key) {
 						case '-':			await this.thing_redraw_remoteAddLine(grab); break;
 						case 'd':			await this.thing_redraw_remoteDuplicate(grab); break;
@@ -59,14 +59,14 @@ export default class EditorGraph {
 	//////////////////
 
 	async thing_redraw_remoteAddChildTo(parent: Thing) {
-		const child = this.hierarchy.rememberThing_runtimeCreateAt(-1, parent.color);
+		const child = this.hierarchy.thing_remember_runtimeCreateAt(-1, parent.color);
 		parent.expand();
 		await this.thing_redraw_remoteAddAsChild(child, parent);
 	}
 
 	async thing_redraw_remoteDuplicate(thing: Thing) {
 		const h = this.hierarchy;
-		const sibling = h.rememberThing_runtimeCreateAt(thing.order + constants.orderIncrement, thing.color);
+		const sibling = h.thing_remember_runtimeCreateAt(thing.order + k.orderIncrement, thing.color);
 		const parent = thing.firstParent ?? h.root;
 		sibling.title = thing.title;
 		await this.thing_redraw_remoteAddAsChild(sibling, parent);
@@ -75,7 +75,7 @@ export default class EditorGraph {
 	async thing_redraw_remoteAddLine(thing: Thing, below: boolean = true) {
 		const parent = thing.firstParent;
 		const order = thing.order + (below ? 0.5 : -0.5);
-		const child = this.hierarchy.rememberThing_runtimeCreate(Datum.newID, constants.lineTitle, parent.color, '', order, false);
+		const child = this.hierarchy.thing_remember_runtimeCreate(Datum.newID, k.lineTitle, parent.color, '', order, false);
 		parent.expand();
 		await this.thing_redraw_remoteAddAsChild(child, parent, false);
 	}
@@ -96,11 +96,11 @@ export default class EditorGraph {
 	async thing_redraw_remoteMoveRight(thing: Thing, RIGHT: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		if (!OPTION) {
 			if (thing.needsBulkFetch) {
-				await thing.redraw_fetchAll_browseRight();
+				await thing.redraw_fetchAll_runtimeBrowseRight();
 			} else {
-				thing.redraw_browseRight(RIGHT, SHIFT, EXTREME);
+				thing.redraw_runtimeBrowseRight(RIGHT, SHIFT, EXTREME);
 			}
-		} else if (constants.allowGraphEditing) {
+		} else if (k.allowGraphEditing) {
 			await this.thing_redraw_remoteRelocateRight(thing, RIGHT, EXTREME);
 		}
 	}
@@ -119,16 +119,16 @@ export default class EditorGraph {
 			// TODO: delete thing and add it to the destination's thing's collection
 
 			const h = this.hierarchy;
-			const relationship = h.getRelationship_whereIDEqualsTo(thing.id);
+			const relationship = h.relationship_getWhereIDEqualsTo(thing.id);
 			if (relationship) {
 				relationship.idFrom = newParent.id;
-				thing.setOrderTo(parent.order + 0.5, true);
+				thing.order_setTo(parent.order + 0.5, true);
 				await dbDispatch.db.relationship_remoteUpdate(relationship);
 			}
 
 			h.relationships_refreshKnowns();		// so children and parent will see the newly relocated things
-			normalizeOrderOf(newParent.children);						// refresh knowns first
-			normalizeOrderOf(parent.children);
+			orders_normalize_remoteMaybe(newParent.children);						// refresh knowns first
+			orders_normalize_remoteMaybe(parent.children);
 			thing.grabOnly();
 			newParent.expand();
 			if (!newParent.isVisible) {
@@ -151,7 +151,7 @@ export default class EditorGraph {
 		const h = this.hierarchy;
 		if (h.here) {
 			for (const id of get(idsGrabbed)) {
-				const grabbed = h.getThing_forID(id);
+				const grabbed = h.thing_getForID(id);
 				if (grabbed && !grabbed.isEditing) {
 					let newGrab = grabbed.firstParent;
 					const siblings = grabbed.siblings;
@@ -163,13 +163,13 @@ export default class EditorGraph {
 							index = siblings.length - 1;
 						}
 						newGrab = siblings[index];
-						normalizeOrderOf(grabbed.siblings);
+						orders_normalize_remoteMaybe(grabbed.siblings);
 					} else if (!grandparent.isVisible) {
 						grandparent.becomeHere();
 					}
 					await grabbed.traverse(async (child: Thing): Promise<boolean> => {
-						await h.forgetRelationships_remoteDeleteAllForThing(child);
-						await h.forgetThing_remoteDelete(child);
+						await h.relationship_forgets_remoteDeleteAllForThing(child);
+						await h.thing_forget_remoteDelete(child);
 						return false; // continue the traversal
 					});
 					newGrab.grabOnly();

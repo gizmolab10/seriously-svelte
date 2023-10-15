@@ -43,4 +43,4 @@ export default class Constants {
 	}
 }
 
-export let constants = new Constants();
+export let k = new Constants();

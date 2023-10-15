@@ -1,5 +1,5 @@
 <script>
-	import { get, noop, Rect, Point, DBType, ZIndex, onMount, PersistID, ButtonID, constants, Hierarchy, Thing } from '../../ts/common/GlobalImports'
+	import { get, noop, Rect, Point, DBType, ZIndex, onMount, PersistID, ButtonID, k, Hierarchy, Thing } from '../../ts/common/GlobalImports'
 	import { dbDispatch, persistLocal, getBrowserType, isMobileDevice, isServerLocal, updateGraphRect } from '../../ts/common/GlobalImports'
 	import { build, dbType, isBusy, idHere, graphRect, popupViewID, thingsArrived } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
@@ -20,11 +20,11 @@
 		document.title = 'Seriously ('+ (isServerLocal() ? 'local' : 'remote') + ', ' + getBrowserType()  + ', α)';
 		updateGraphRect();
 		persistLocal.restore();
-		constants.setup();
+		k.setup();
 	})
 
 	$: {
-		here = dbDispatch.db.hierarchy.getThing_forID($idHere);
+		here = dbDispatch.db.hierarchy.thing_getForID($idHere);
 	}
 
 </script>
@@ -35,7 +35,7 @@
 	{#if $isBusy}
 		<p>Welcome to Seriously</p>
 		{#if $dbType != DBType.local}
-			<p>(loading your data from {$dbType})</p>
+			<p>(loading your {$dbType} data{$dbType == DBType.firebase ? ', from ' + dbDispatch.bulkName : ''})</p>
 		{/if}
 	{:else if !$thingsArrived}
 		<p>Nothing is available.</p>

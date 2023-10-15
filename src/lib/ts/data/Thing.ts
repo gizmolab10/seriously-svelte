@@ -1,4 +1,4 @@
-import { get, Size, Datum, signal, Signals, constants, Predicate, PersistID, dbDispatch, getWidthOf, persistLocal, normalizeOrderOf, Hierarchy } from '../common/GlobalImports';
+import { get, Size, Datum, signal, Signals, k, Predicate, PersistID, dbDispatch, getWidthOf, persistLocal, orders_normalize_remoteMaybe, Hierarchy } from '../common/GlobalImports';
 import { idHere, idEditing, expanded, idsGrabbed, lineGap, lineStretch, dotDiameter } from '../managers/State';
 import Airtable from 'airtable';
 
@@ -16,7 +16,7 @@ export default class Thing extends Datum {
 	trait: string;
 	order: number;
 
-	constructor(id: string = Datum.newID, title = constants.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
+	constructor(id: string = Datum.newID, title = k.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
 		super(id, isRemotelyStored);
 		this.dbType = dbDispatch.db.dbType;
 		this.title = title;
@@ -62,11 +62,11 @@ export default class Thing extends Datum {
 	get firstParent():				 Thing { return this.parents[0]; }
 	get fields():		 Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get siblings():			  Array<Thing> { return this.firstParent?.children ?? []; }
-	get children():			  Array<Thing> { const id = Predicate.idIsAParentOf; return this.hierarchy.getThings_byIDPredicateToAndID(id, false, this.id); }
-	get parents():			  Array<Thing> { const id = Predicate.idIsAParentOf; return this.hierarchy.getThings_byIDPredicateToAndID(id,	true, this.id); }
+	get children():			  Array<Thing> { const id = Predicate.idIsAParentOf; return this.hierarchy.things_getByIDPredicateToAndID(id, false, this.id); }
+	get parents():			  Array<Thing> { const id = Predicate.idIsAParentOf; return this.hierarchy.things_getByIDPredicateToAndID(id,	true, this.id); }
 
 	get parentRelationshipID(): string { // WRONG
-		return this.hierarchy.getRelationship_whereIDEqualsTo(this.id, true)?.id ?? '';
+		return this.hierarchy.relationship_getWhereIDEqualsTo(this.id, true)?.id ?? '';
 	}
 
 	get hasGrandChildren(): boolean {
@@ -123,16 +123,16 @@ export default class Thing extends Datum {
 	persistExpanded()	 { persistLocal.writeToKey(PersistID.expanded + dbDispatch.db.dbType, get(expanded)); }
 	toggleGrab()		 { this.hierarchy.grabs.toggleGrab(this); }
 	grabOnly()			 { this.hierarchy.grabs.grabOnly(this); }
-	toggleExpand()		 { this.setExpanded(!this.isExpanded) }
-	collapse()			 { this.setExpanded(false); }
-	expand()			 { this.setExpanded(true); }
+	toggleExpand()		 { this.expanded_setTo(!this.isExpanded) }
+	collapse()			 { this.expanded_setTo(false); }
+	expand()			 { this.expanded_setTo(true); }
 
 	hasPredicate(asParents: boolean): boolean {
 		return asParents ? this.parents.length > 0 : this.children.length > 0
 	}
 
 	revealColor(isReveal: boolean): string {
-		return (this.showBorder != isReveal) ? this.color : constants.backgroundColor;
+		return (this.showBorder != isReveal) ? this.color : k.backgroundColor;
 	}
 
 	startEdit() {
@@ -151,8 +151,8 @@ export default class Thing extends Datum {
 		this.grabAttributes = grab;
 	}
 	
-	setExpanded(expand: boolean) {
-		const relationship = this.hierarchy.getRelationship_whereIDEqualsTo(this.id);
+	expanded_setTo(expand: boolean) {
+		const relationship = this.hierarchy.relationship_getWhereIDEqualsTo(this.id);
 		if (relationship) {
 			expanded.update((array) => {
 				if (expand) {
@@ -198,20 +198,20 @@ export default class Thing extends Datum {
 		};
 	}
 
-	normalizeOrder_recursive(remoteWrite: boolean) {
+	order_normalizeRecursive(remoteWrite: boolean) {
 		const children = this.children;
 		if (children && children.length > 0) {
-			normalizeOrderOf(children, remoteWrite);
+			orders_normalize_remoteMaybe(children, remoteWrite);
 			for (const child of children) {
-				child.normalizeOrder_recursive(remoteWrite);
+				child.order_normalizeRecursive(remoteWrite);
 			}
 		}
 	}
 
-	async setOrderTo(newOrder: number, remoteWrite: boolean) {
+	async order_setTo(newOrder: number, remoteWrite: boolean) {
 		if (this.order != newOrder) {
 			this.order = newOrder;
-			const relationship = this.hierarchy.getRelationship_whereIDEqualsTo(this.id);
+			const relationship = this.hierarchy.relationship_getWhereIDEqualsTo(this.id);
 			if (relationship && (relationship.order != newOrder)) {
 				relationship.order = newOrder;
 				if (remoteWrite) {
@@ -244,7 +244,7 @@ export default class Thing extends Datum {
 		return this;
 	}
 
-	async redraw_fetchAll_browseRight(grab: boolean = true) {
+	async redraw_fetchAll_runtimeBrowseRight(grab: boolean = true) {
 		await dbDispatch.db.fetch_allFrom(this.title)
 		if (this.hasChildren) {
 			if (grab) {
@@ -258,7 +258,7 @@ export default class Thing extends Datum {
 	redraw_remoteMoveup(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const siblings = this.siblings;
 		if (!siblings || siblings.length == 0) {
-			this.redraw_browseRight(true, EXTREME, up);
+			this.redraw_runtimeBrowseRight(true, EXTREME, up);
 		} else {
 			const index = siblings.indexOf(this);
 			const newIndex = index.increment(!up, siblings.length);
@@ -269,18 +269,18 @@ export default class Thing extends Datum {
 				} else {
 					newGrab?.grabOnly();
 				}
-			} else if (constants.allowGraphEditing) {
+			} else if (k.allowGraphEditing) {
 				const wrapped = up ? (index == 0) : (index == siblings.length - 1);
-				const goose = ((wrapped == up) ? 1 : -1) * constants.orderIncrement;
+				const goose = ((wrapped == up) ? 1 : -1) * k.orderIncrement;
 				const newOrder =	newIndex + goose;
-				siblings[index].setOrderTo(newOrder, true);
-				normalizeOrderOf(siblings);
+				siblings[index].order_setTo(newOrder, false);
+				orders_normalize_remoteMaybe(siblings);
 				signal(Signals.childrenOf, this.firstParent.id);
 			}
 		}
 	}
 
-	redraw_browseRight(RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, toTop: boolean = false, moveHere: boolean = false) {
+	redraw_runtimeBrowseRight(RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, toTop: boolean = false, moveHere: boolean = false) {
 		let newGrab: Thing | null = RIGHT ? toTop ? this.lastChild : this.firstChild : this.firstParent;
 		const newHere = RIGHT ? this : this.grandparent;
 		const root = this.hierarchy.root;

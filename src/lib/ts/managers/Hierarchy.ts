@@ -1,5 +1,5 @@
-import { get, User, Datum, Thing, Grabs, Access, remove, constants, Predicate, dbDispatch, Relationship } from '../common/GlobalImports';
-import { CreationFlag, normalizeOrderOf, sortAccordingToOrder } from '../common/GlobalImports';
+import { get, User, Datum, Thing, Grabs, Access, remove, k, Predicate, dbDispatch, Relationship } from '../common/GlobalImports';
+import { CreationFlag, orders_normalize_remoteMaybe, sort_byOrder } from '../common/GlobalImports';
 import { idHere, isBusy, idsGrabbed, thingsArrived } from './State';
 import DBInterface from '../db/DBInterface';
 
@@ -33,26 +33,26 @@ export default class Hierarchy {
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): (string | null) { return this.root?.id ?? null; };
 	get things(): Array<Thing> { return Object.values(this.knownT_byID) };
-	hasRootWithTitle(title: string) { return this.getBulkAliasWithTitle(title) != null; }
-	getThing_forID(idThing: string | null): Thing | null { return (!idThing) ? null : this.knownT_byID[idThing]; }
-	getPredicate_forID(idPredicate: string | null): Predicate | null { return (!idPredicate) ? null : this.knownP_byID[idPredicate]; }
+	hasRootWithTitle(title: string) { return this.thing_getBulkAliasWithTitle(title) != null; }
+	thing_getForID(idThing: string | null): Thing | null { return (!idThing) ? null : this.knownT_byID[idThing]; }
+	predicate_getForID(idPredicate: string | null): Predicate | null { return (!idPredicate) ? null : this.knownP_byID[idPredicate]; }
 
 	constructor(db: DBInterface) {
 		this.db = db;
 		idHere.subscribe((id: string | null) => {
 			if (this.db.hasData) {
-				this.here = this.getThing_forID(id);
+				this.here = this.thing_getForID(id);
 			}
 		})
 	}
 	
-	async constructHierarchy(type: string) {
+	async hierarchy_construct(type: string) {
 		const idRoot = this.idRoot;
 		if (this.root && idRoot) {
 			for (const thing of this.things) {
 				const idThing = thing.id;
 				if (idThing != idRoot) {
-					let relationship = this.getRelationship_whereIDEqualsTo(idThing);
+					let relationship = this.relationship_getWhereIDEqualsTo(idThing);
 					if (relationship) {
 						thing.order = relationship.order;
 					} else {
@@ -60,23 +60,23 @@ export default class Hierarchy {
 						
 						// already determined that WE DO NOT NEED NoDuplicate, we do need it's id now
 
-						await this.rememberRelationship_remoteCreate(Datum.newID, idPredicateIsAParentOf, idRoot, idThing, -1, CreationFlag.getRemoteID)
+						await this.relationship_remember_remoteCreate(Datum.newID, idPredicateIsAParentOf, idRoot, idThing, -1, CreationFlag.getRemoteID)
 					}
 				}
 			}
-			this.root.normalizeOrder_recursive(true)	// setup order values for all things and relationships
+			this.root.order_normalizeRecursive(true)	// setup order values for all things and relationships
 			this.db.hasData = true;
-			normalizeOrderOf(this.root.children)
-			dbDispatch.updateStateFor(type, idRoot);
+			orders_normalize_remoteMaybe(this.root.children)
+			dbDispatch.state_updateFor(type, idRoot);
 		}
-		this.restoreHere();
+		this.here_restore();
 		thingsArrived.set(true);
 		isBusy.set(false);
 		this.isConstructed = true;
 	}
 
-	restoreHere() {
-		let here = this.getThing_forID(get(idHere));
+	here_restore() {
+		let here = this.thing_getForID(get(idHere));
 		if (here == null) {
 			const grab = this.grabs.last_thingGrabbed;
 			here = grab?.firstParent ?? this.root;
@@ -91,7 +91,11 @@ export default class Hierarchy {
 		return this._grabs!;
 	}
 
-	getRootsThing() {
+	//////////////////////////////
+	//			THINGS			//
+	//////////////////////////////
+
+	thing_getRoots() {
 		for (const thing of this.knownTs) {
 			if  (thing.trait == '^' && thing.title == 'roots') {	// special case TODO: convert to a auery string
 				return thing;
@@ -100,7 +104,7 @@ export default class Hierarchy {
 		return null;
 	}
 
-	getBulkAliasWithTitle(title: string | null) {
+	thing_getBulkAliasWithTitle(title: string | null) {
 		if (title) {
 			for (const thing of this.knownTs) {
 				if  (thing.isBulkAlias && (thing.title == title ||
@@ -117,17 +121,22 @@ export default class Hierarchy {
 		const idRelationship = Datum.newID;
 		const db = dbDispatch.db;
 		await db.thing_remoteCreate(child); // for everything below, need to await child.id fetched from dbDispatch
-		this.rememberThing(child);
-		const relationship = await this.rememberRelationship_remoteCreate(idRelationship, idPredicateIsAParentOf, parent.id, child.id, child.order, CreationFlag.getRemoteID)
-		normalizeOrderOf(parent.children);
+		this.thing_remember(child);
+		const relationship = await this.relationship_remember_remoteCreate(idRelationship, idPredicateIsAParentOf, parent.id, child.id, child.order, CreationFlag.getRemoteID)
+		orders_normalize_remoteMaybe(parent.children);
 		await relationship.remoteWrite();
 	}
 
-	//////////////////////////////
-	//			MEMORY			//
-	//////////////////////////////
+	thing_forget(thing: Thing) {
+		delete this.knownT_byID[thing.id];
+	}
 
-	rememberThing(thing: Thing) {
+	async thing_forget_remoteDelete(thing: Thing) {
+		await this.db.thing_remoteDelete(thing);
+		this.thing_forget(thing);
+	}
+
+	thing_remember(thing: Thing) {
 		this.knownT_byID[thing.id] = thing;
 		this.knownTs.push(thing);
 		if (thing.trait == '!') {
@@ -135,63 +144,23 @@ export default class Hierarchy {
 		}
 	}
 
-	forgetThing(thing: Thing) {
-		delete this.knownT_byID[thing.id];
+	thing_remember_runtimeCreateAt(order: number, color: string) {
+		return this.thing_remember_runtimeCreate(Datum.newID, k.defaultTitle, color, '', order, false);
 	}
 
-	async forgetThing_remoteDelete(thing: Thing) {
-		await this.db.thing_remoteDelete(thing);
-		this.forgetThing(thing);
-	}
-
-	rememberRelationship(relationship: Relationship) {
-		if (!this.knownR_byID[relationship.id]) {
-			this.knownRs.push(relationship);
-			this.knownR_byID[relationship.id] = relationship;
-			this.rememberRelationshipByKnown(this.knownRs_byIDTo, relationship.idTo, relationship);
-			this.rememberRelationshipByKnown(this.knownRs_byIDFrom, relationship.idFrom, relationship);
-			this.rememberRelationshipByKnown(this.knownRs_byIDPredicate, relationship.idPredicate, relationship);
-		}
-	}
-
-	forgetRelationship(relationship: Relationship) {
-		remove<Relationship>(this.knownRs, relationship);
-		delete this.knownR_byID[relationship.id];
-		this.forgetRelationshipByKnown(this.knownRs_byIDTo, relationship.idTo, relationship);
-		this.forgetRelationshipByKnown(this.knownRs_byIDFrom, relationship.idFrom, relationship);
-		this.forgetRelationshipByKnown(this.knownRs_byIDPredicate, relationship.idPredicate, relationship);
-		relationship.log('forget');
-	}
-
-	forgetRelationshipByKnown(known: KnownRelationships, idRelationship: string, relationship: Relationship) {
-		let array = known[idRelationship] ?? [];
-		remove<Relationship>(array, relationship)
-		known[idRelationship] = array;
-	}
-
-	rememberRelationshipByKnown(known: KnownRelationships, idRelationship: string, relationship: Relationship) {
-		let array = known[idRelationship] ?? [];
-		array.push(relationship);
-		known[idRelationship] = array;
-	}
-
-	rememberThing_runtimeCreateAt(order: number, color: string) {
-		return this.rememberThing_runtimeCreate(Datum.newID, constants.defaultTitle, color, '', order, false);
-	}
-
-	rememberThing_runtimeCreate(id: string, title: string, color: string, trait: string, order: number, isRemotelyStored: boolean, bulkName: string | null = null): Thing {
+	thing_remember_runtimeCreate(id: string, title: string, color: string, trait: string, order: number, isRemotelyStored: boolean, bulkName: string | null = null): Thing {
 		let thing: Thing | null = null;
 		if (trait == '!' && bulkName) {
-			thing = this.getBulkAliasWithTitle(bulkName);
+			thing = this.thing_getBulkAliasWithTitle(bulkName);
 			if (thing) {	//  this is a bulk alias
 				//				need relationships to work
-				const relationship = this.getRelationship_whereIDEqualsTo(thing.id);
+				const relationship = this.relationship_getWhereIDEqualsTo(thing.id);
 				if (relationship) {
-					this.forgetRelationship(relationship);
+					this.relationship_forget(relationship);
 					relationship.idTo = id; // so this relatiohship will continue to work
-					this.rememberRelationship(relationship);
+					this.relationship_remember(relationship);
 				}
-				this.forgetThing(thing);		// remove stale knowns
+				this.thing_forget(thing);		// remove stale knowns
 				thing.needsBulkFetch = false;	// for when user reveals children: they must first be fetched
 				thing.color = color;			// N.B., ignore trait
 				thing.id = id;					// so children relatiohships will work
@@ -203,18 +172,71 @@ export default class Hierarchy {
 				thing.needsBulkFetch = true;
 			}
 		}
-		this.rememberThing(thing);
+		this.thing_remember(thing);
 		return thing;
 	}
 
-	relationships_refreshKnowns_runtimeRenormalize() {
-		this.relationships_refreshKnowns();
-		// this.root?.normalizeOrder_recursive(false);
+	things_getForIDs(ids: Array<string>): Array<Thing> {
+		const array = Array<Thing>();
+		for (const id of ids) {
+			const thing = this.thing_getForID(id);
+			if (thing) {
+				array.push(thing);
+			}
+		}
+		return sort_byOrder(array);
+	}
+
+	things_getByIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Thing> {
+		const matches = this.relationships_getByIDPredicateToAndID(idPredicate, to, idThing);
+		const ids: Array<string> = [];
+		if (Array.isArray(matches) && matches.length > 0) {
+			for (const relationship of matches) {
+				ids.push(to ? relationship.idFrom : relationship.idTo);
+			}
+		}
+		return this.things_getForIDs(ids);
 	}
 
 	////////////////////////////////////
 	//		   RELATIONSHIPS		  //
 	////////////////////////////////////
+
+	relationship_remember(relationship: Relationship) {
+		if (!this.knownR_byID[relationship.id]) {
+			this.knownRs.push(relationship);
+			this.knownR_byID[relationship.id] = relationship;
+			this.relationship_rememberByKnown(this.knownRs_byIDTo, relationship.idTo, relationship);
+			this.relationship_rememberByKnown(this.knownRs_byIDFrom, relationship.idFrom, relationship);
+			this.relationship_rememberByKnown(this.knownRs_byIDPredicate, relationship.idPredicate, relationship);
+		}
+	}
+
+	relationship_forget(relationship: Relationship) {
+		remove<Relationship>(this.knownRs, relationship);
+		delete this.knownR_byID[relationship.id];
+		this.relationship_forgetByKnown(this.knownRs_byIDTo, relationship.idTo, relationship);
+		this.relationship_forgetByKnown(this.knownRs_byIDFrom, relationship.idFrom, relationship);
+		this.relationship_forgetByKnown(this.knownRs_byIDPredicate, relationship.idPredicate, relationship);
+		relationship.log('forget');
+	}
+
+	relationship_forgetByKnown(known: KnownRelationships, idRelationship: string, relationship: Relationship) {
+		let array = known[idRelationship] ?? [];
+		remove<Relationship>(array, relationship)
+		known[idRelationship] = array;
+	}
+
+	relationship_rememberByKnown(known: KnownRelationships, idRelationship: string, relationship: Relationship) {
+		let array = known[idRelationship] ?? [];
+		array.push(relationship);
+		known[idRelationship] = array;
+	}
+
+	relationships_refreshKnowns_runtimeRenormalize() {
+		this.relationships_refreshKnowns();
+		// this.root?.order_normalizeRecursive(false);
+	}
 
 	relationships_clearKnowns() {
 		this.knownRs = [];
@@ -228,7 +250,7 @@ export default class Hierarchy {
 		const saved = this.knownRs;
 		this.relationships_clearKnowns();
 		for (const relationship of saved) {
-			this.rememberRelationship(relationship);
+			this.relationship_remember(relationship);
 		}
 	}
 
@@ -236,11 +258,11 @@ export default class Hierarchy {
 		const idChild = relationship.idTo;
 		const idOriginal = original.idFrom;
 		const idParent = relationship.idFrom;
-		const parent = this.getThing_forID(idParent);
-		const oParent = this.getThing_forID(idOriginal);
+		const parent = this.thing_getForID(idParent);
+		const oParent = this.thing_getForID(idOriginal);
 		const childIsGrabbed = get(idsGrabbed).includes(idChild);
 		if (idOriginal == get(idHere) && idOriginal != idParent && childIsGrabbed) {
-			const child = this.getThing_forID(idChild);
+			const child = this.thing_getForID(idChild);
 			child?.grabOnly(); // update crumbs
 			if (oParent && !oParent.hasChildren) {
 				parent?.becomeHere();
@@ -248,61 +270,35 @@ export default class Hierarchy {
 		}
 	}
 
-	rememberRelationship_runtimeCreate(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none) {
+	relationship_remember_runtimeCreate(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none) {
 		const relationship = new Relationship(idRelationship, idPredicate, idFrom, idTo, order, creationFlag == CreationFlag.isFromRemote);
-		this.rememberRelationship(relationship);
+		this.relationship_remember(relationship);
 		return relationship;
 	}
 
-	async rememberRelationship_remoteCreate(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none) {
-		const relationship = this.rememberRelationship_runtimeCreate(idRelationship, idPredicate, idFrom, idTo, order, creationFlag);
+	async relationship_remember_remoteCreate(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none) {
+		const relationship = this.relationship_remember_runtimeCreate(idRelationship, idPredicate, idFrom, idTo, order, creationFlag);
 		await relationship.remoteWrite();
 		return relationship;
 	}
 
-	async rememberRelationship_remoteCreateNoDuplicate(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none) {
-		return this.getRelationship_whereIDEqualsTo(idTo) ?? await this.rememberRelationship_remoteCreate(idRelationship, idPredicate, idFrom, idTo, order, creationFlag);
+	async relationship_remember_remoteCreateNoDuplicate(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none) {
+		return this.relationship_getWhereIDEqualsTo(idTo) ?? await this.relationship_remember_remoteCreate(idRelationship, idPredicate, idFrom, idTo, order, creationFlag);
 	}
 
-	async forgetRelationships_remoteDeleteAllForThing(thing: Thing) {
+	async relationship_forgets_remoteDeleteAllForThing(thing: Thing) {
 		const array = this.knownRs_byIDTo[thing.id];
 		if (array) {
 			for (const relationship of array) {
 				await this.db.relationship_remoteDelete(relationship);
-				this.forgetRelationship(relationship);
+				this.relationship_forget(relationship);
 			}
 		}
 	}
 
-	//////////////////////////
-	//			GET			//
-	//////////////////////////
-
-	getThings_forIDs(ids: Array<string>): Array<Thing> {
-		const array = Array<Thing>();
-		for (const id of ids) {
-			const thing = this.getThing_forID(id);
-			if (thing) {
-				array.push(thing);
-			}
-		}
-		return sortAccordingToOrder(array);
-	}
-
-	getThings_byIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Thing> {
-		const matches = this.getRelationships_byIDPredicateToAndID(idPredicate, to, idThing);
-		const ids: Array<string> = [];
-		if (Array.isArray(matches) && matches.length > 0) {
-			for (const relationship of matches) {
-				ids.push(to ? relationship.idFrom : relationship.idTo);
-			}
-		}
-		return this.getThings_forIDs(ids);
-	}
-
-	getRelationship_whereIDEqualsTo(idThing: string, to: boolean = true) {
+	relationship_getWhereIDEqualsTo(idThing: string, to: boolean = true) {
 		const idPredicateIsAParentOf = Predicate.idIsAParentOf;
-		const matches = this.getRelationships_byIDPredicateToAndID(idPredicateIsAParentOf, to, idThing);
+		const matches = this.relationships_getByIDPredicateToAndID(idPredicateIsAParentOf, to, idThing);
 		if (matches.length > 0) {
 			const relationship = matches[0];
 			// relationship.log('known');
@@ -311,7 +307,7 @@ export default class Hierarchy {
 		return null;		
 	}
 
-	getRelationships_byIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Relationship> {
+	relationships_getByIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Relationship> {
 		const dict = to ? this.knownRs_byIDTo : this.knownRs_byIDFrom;
 		const matches = dict[idThing] as Array<Relationship>; // filter out bad values (dunno what this does)
 		const array: Array<Relationship> = [];
@@ -329,14 +325,14 @@ export default class Hierarchy {
 	//			ANCILLARY DATA			//
 	//////////////////////////////////////
 
-	rememberPredicate(predicate: Predicate) {
+	predicate_remember(predicate: Predicate) {
 		this.knownP_byKind[predicate.kind] = predicate;
 		this.knownP_byID[predicate.id] = predicate;
 	}
 
-	rememberPredicate_runtimeCreate(id: string, kind: string) {
+	predicate_rememberRuntimeCreate(id: string, kind: string) {
 		const predicate = new Predicate(id, kind);
-		this.rememberPredicate(predicate)
+		this.predicate_remember(predicate)
 	}
 
 	access_runtimeCreate(idAccess: string, kind: string) {
