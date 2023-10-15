@@ -17,12 +17,11 @@
 	function lineRectAt(index: number): LineRect { return lineRects[index]; }
 	function curveTypeAt(index: number): number { return lineRectAt(index).curveType; }
 	
-	const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
+	const signalHandler = handleSignalOfKind(Signals.childrenOf, (signal_idThing) => {
 		setTimeout(() => { // delay until all other handlers for this signal are done TODO: WHY?
-			const newChildren = thing.children;
-			if (idThing == thing.id || children != newChildren) {
-				normalizeOrderOf(newChildren);
-				children = newChildren;
+			if (signal_idThing == thing.id || children != thing.children) {
+				normalizeOrderOf(thing.children);
+				children = thing.children;
 				layoutChildren();
 				toggleDraw = !toggleDraw;
 			}

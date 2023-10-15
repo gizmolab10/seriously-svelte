@@ -9,12 +9,14 @@ export default class Constants {
 	public backgroundColor: string;
 	public highlightColor: string;
 	public defaultTitle: string;
+	public lineTitle: string;
 
 	constructor() {
 		this.orderIncrement = 0.5;
 		this.backgroundColor = 'white';
 		this.highlightColor = '#9e7daa';
 		this.defaultTitle = 'Please, enter a title';
+		this.lineTitle = '------------------------';
 		this.allowHorizontalScrolling = true;
 		this.allowGraphEditing = true;
 		this.allowTitleEditing = true;

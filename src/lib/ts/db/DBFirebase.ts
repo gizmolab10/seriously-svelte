@@ -40,44 +40,26 @@ export default class DBFirebase implements DBInterface {
 	async fetch_all() {
 		const name = dbDispatch.bulkName;
 		if (dbDispatch.eraseDB) {
-			await this.delete_document(name);
+			await this.document_remoteDelete(name);
 		}
+		await this.fetch_documentsOf(DataKind.predicates);
 		await this.fetch_allFrom(name);
 		await this.fetch_allBulks();
 	}
 
 	async fetch_allFrom(bulkName: string) {
-		await this.fetch_documentsIn(DataKind.things, bulkName);
-		await this.fetch_documentsIn(DataKind.predicates);
-		await this.fetch_documentsIn(DataKind.relationships, bulkName);
-	}
-
-	async create_defaultDocuments(bulkName: string, dataKind: DataKind, collectionRef: CollectionReference) {
-		const docRef = doc(this.db, this.collectionName, bulkName);
-		await setDoc(docRef, { isReal: true }, { merge: true });
-		await updateDoc(docRef, { isReal: deleteField() });
-		if (dataKind == DataKind.things) {
-			await this.create_defaultThingsIn(collectionRef);
-		}
-	}
-
-	async create_defaultThingsIn(collectionRef: CollectionReference) {
-		const fields = ['title', 'color', 'trait'];
-		const root = new Thing(Datum.newID, dbDispatch.bulkName, 'coral', '!', 0, false);
-		const thing = new Thing(Datum.newID, 'Click this text to edit it', 'purple', '', 0, false);
-		this.hierarchy.root = root;
-		await addDoc(collectionRef, convertToObject(thing, fields));
-		await addDoc(collectionRef, convertToObject(root, fields));
+		await this.fetch_documentsOf(DataKind.things, bulkName);
+		await this.fetch_documentsOf(DataKind.relationships, bulkName);
 	}
 		
-	async fetch_documentsIn(dataKind: DataKind, bulkName: string | null = null) {
+	async fetch_documentsOf(dataKind: DataKind, bulkName: string | null = null) {
 		try {
 			const collectionRef = !bulkName ? collection(this.db, dataKind) : collection(this.db, this.collectionName, bulkName, dataKind);
 			let querySnapshot = await getDocs(collectionRef);
 			this.setup_remoteHandler(dataKind, collectionRef);
 
 			if (querySnapshot.empty && bulkName) {
-				await this.create_defaultDocuments(bulkName, dataKind, collectionRef);
+				await this.documents_startup_remoteCreate(dataKind, bulkName, collectionRef);
 				querySnapshot = await getDocs(collectionRef);
 			}
 			
@@ -95,7 +77,7 @@ export default class DBFirebase implements DBInterface {
 			for (const docSnapshot of docs) {
 				const id = docSnapshot.id;
 				const data = docSnapshot.data();
-				await this.remember_validatedDocument(dataKind, id, data);
+				await this.remember_validatedDocument(dataKind, id, data, bulkName);
 			}
 		} catch (error) {
 			this.reportError(error);
@@ -124,31 +106,6 @@ export default class DBFirebase implements DBInterface {
 				// TODO: store the expanded in its own bulk-specific persistent storage
 			} catch (error) {
 				this.reportError(error);
-			}
-		}
-	}
-
-	async delete_document(name: string) {
-		const documentRef = doc(this.db, this.collectionName, name);
-		await this.delete_subcollectionsIn(documentRef);
-
-		try {
-			await deleteDoc(documentRef);
-			console.log('deleted');
-		} catch (error) {
-			this.reportError(error);
-		}
-	}
-	
-	async delete_subcollectionsIn(docRef: DocumentReference) {
-		const subcollectionNames = ['Things', 'Relationships'];
-
-		for (const subcollectionName of subcollectionNames) {
-			const subcollectionRef = collection(docRef, subcollectionName);
-			const snapshot = await getDocs(subcollectionRef);
-			
-			for (const subDoc of snapshot.docs) {
-				await deleteDoc(subDoc.ref);
 			}
 		}
 	}
@@ -244,6 +201,44 @@ export default class DBFirebase implements DBInterface {
 		}
 	}
 
+	//////////////////////////////////////////
+	//	    DOCUMENTS / SUBCOLLECTIONS		//
+	//////////////////////////////////////////
+
+	async documents_startup_remoteCreate(dataKind: DataKind, bulkName: string, collectionRef: CollectionReference) {
+		const docRef = doc(this.db, this.collectionName, bulkName);
+		await setDoc(docRef, { isReal: true }, { merge: true });
+		await updateDoc(docRef, { isReal: deleteField() });
+		if (dataKind == DataKind.things) {
+			await this.things_startup_remoteCreateIn(collectionRef);
+		}
+	}
+
+	async document_remoteDelete(name: string) {
+		const documentRef = doc(this.db, this.collectionName, name);
+		await this.subcollections_remoteDeleteIn(documentRef);
+
+		try {
+			await deleteDoc(documentRef);
+			console.log('deleted');
+		} catch (error) {
+			this.reportError(error);
+		}
+	}
+	
+	async subcollections_remoteDeleteIn(docRef: DocumentReference) {
+		const subcollectionNames = ['Things', 'Relationships'];
+
+		for (const subcollectionName of subcollectionNames) {
+			const subcollectionRef = collection(docRef, subcollectionName);
+			const snapshot = await getDocs(subcollectionRef);
+			
+			for (const subDoc of snapshot.docs) {
+				await deleteDoc(subDoc.ref);
+			}
+		}
+	}
+
 	//////////////////////////////
 	//			 THING			//
 	//////////////////////////////
@@ -261,6 +256,15 @@ export default class DBFirebase implements DBInterface {
 				this.reportError(error);
 			}
 		}
+	}
+
+	async things_startup_remoteCreateIn(collectionRef: CollectionReference) {
+		const fields = ['title', 'color', 'trait'];
+		const root = new Thing(Datum.newID, dbDispatch.bulkName, 'coral', '!', 0, false);
+		const thing = new Thing(Datum.newID, 'Click this text to edit it', 'purple', '', 0, false);
+		this.hierarchy.root = root;
+		await addDoc(collectionRef, convertToObject(thing, fields));
+		await addDoc(collectionRef, convertToObject(root, fields));
 	}
 
 	async thing_remoteUpdate(thing: Thing) {
@@ -387,11 +391,11 @@ export default class DBFirebase implements DBInterface {
 		return true;
 	}
 
-	async remember_validatedDocument(dataKind: DataKind, id: string, data: DocumentData) {
+	async remember_validatedDocument(dataKind: DataKind, id: string, data: DocumentData, bulkName: string | null = null) {
 		if (DBFirebase.isValidOfKind(dataKind, data)) {
 			const h = this.hierarchy;
 			switch (dataKind) {
-				case DataKind.things:			h.rememberThing_runtimeCreate(id, data.title, data.color, data.trait, -1, true); break;
+				case DataKind.things:			h.rememberThing_runtimeCreate(id, data.title, data.color, data.trait, -1, true, bulkName); break;
 				case DataKind.predicates:		h.rememberPredicate_runtimeCreate(id, data.kind); break;
 				case DataKind.relationships:	await h.rememberRelationship_remoteCreateNoDuplicate(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
 			}

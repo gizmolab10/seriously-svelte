@@ -1,4 +1,4 @@
-import { get, Thing, Datum, signal, Signals, constants, Predicate, dbDispatch, CreationFlag, normalizeOrderOf } from '../common/GlobalImports';
+import { get, Thing, Datum, signal, Signals, constants, Predicate, dbDispatch, CreationFlag, normalizeOrderOf, Hierarchy } from '../common/GlobalImports';
 import { idsGrabbed } from './State';
 
 //////////////////////////////////////
@@ -9,9 +9,10 @@ import { idsGrabbed } from './State';
 //////////////////////////////////////
 
 export default class EditorGraph {
+	get hierarchy(): Hierarchy { return dbDispatch.db.hierarchy }
 
 	async handleKeyDown(event: KeyboardEvent) {
-		const h = dbDispatch.db.hierarchy;
+		const h = this.hierarchy;
 		let grab = h.grabs.furthestGrab(true);
 		if (event.type == 'keydown') {
 			const OPTION = event.altKey;
@@ -27,6 +28,7 @@ export default class EditorGraph {
 			if (constants.allowGraphEditing) {
 				if (grab && constants.allowTitleEditing) {
 					switch (key) {
+						case '-':			await this.thing_redraw_remoteAddLine(grab); break;
 						case 'd':			await this.thing_redraw_remoteDuplicate(grab); break;
 						case ' ':			await this.thing_redraw_remoteAddChildTo(grab); break;
 						case 'tab':			await this.thing_redraw_remoteAddChildTo(grab.firstParent); break; // Title editor also makes this call
@@ -57,22 +59,32 @@ export default class EditorGraph {
 	//////////////////
 
 	async thing_redraw_remoteAddChildTo(parent: Thing) {
-		const child = dbDispatch.db.hierarchy.rememberThing_runtimeCreateAt(-1, parent.color);
+		const child = this.hierarchy.rememberThing_runtimeCreateAt(-1, parent.color);
 		parent.expand();
 		await this.thing_redraw_remoteAddAsChild(child, parent);
 	}
 
 	async thing_redraw_remoteDuplicate(thing: Thing) {
-		const h = dbDispatch.db.hierarchy;
+		const h = this.hierarchy;
 		const sibling = h.rememberThing_runtimeCreateAt(thing.order + constants.orderIncrement, thing.color);
 		const parent = thing.firstParent ?? h.root;
 		sibling.title = thing.title;
 		await this.thing_redraw_remoteAddAsChild(sibling, parent);
 	}
 
-	async thing_redraw_remoteAddAsChild(child: Thing, parent: Thing) {
-		dbDispatch.db.hierarchy.thing_remoteAddAsChild(child, parent);
-		child.startEdit();
+	async thing_redraw_remoteAddLine(thing: Thing, below: boolean = true) {
+		const parent = thing.firstParent;
+		const order = thing.order + (below ? 0.5 : -0.5);
+		const child = this.hierarchy.rememberThing_runtimeCreate(Datum.newID, constants.lineTitle, parent.color, '', order, false);
+		parent.expand();
+		await this.thing_redraw_remoteAddAsChild(child, parent, false);
+	}
+
+	async thing_redraw_remoteAddAsChild(child: Thing, parent: Thing, startEdit: boolean = true) {
+		this.hierarchy.thing_remoteAddAsChild(child, parent);
+		if (startEdit) {
+			child.startEdit();
+		}
 		child.grabOnly();
 		signal(Signals.childrenOf);
 	}
@@ -106,7 +118,7 @@ export default class EditorGraph {
 			// TODO: detect if relocating from one db to another, and then
 			// TODO: delete thing and add it to the destination's thing's collection
 
-			const h = dbDispatch.db.hierarchy;
+			const h = this.hierarchy;
 			const relationship = h.getRelationship_whereIDEqualsTo(thing.id);
 			if (relationship) {
 				relationship.idFrom = newParent.id;
@@ -127,7 +139,7 @@ export default class EditorGraph {
 	}
 
 	async furthestGrab_redraw_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
-		const grab = dbDispatch.db.hierarchy.grabs.furthestGrab(up);
+		const grab = this.hierarchy.grabs.furthestGrab(up);
 		grab?.redraw_remoteMoveup(up, SHIFT, OPTION, EXTREME);
 	}
 
@@ -136,7 +148,7 @@ export default class EditorGraph {
 	//////////////////////
 
 	async grabs_redraw_remoteDelete() {
-		const h = dbDispatch.db.hierarchy;
+		const h = this.hierarchy;
 		if (h.here) {
 			for (const id of get(idsGrabbed)) {
 				const grabbed = h.getThing_forID(id);

@@ -1,4 +1,4 @@
-import { get, Size, Datum, signal, Signals, constants, Predicate, PersistID, dbDispatch, getWidthOf, persistLocal, normalizeOrderOf } from '../common/GlobalImports';
+import { get, Size, Datum, signal, Signals, constants, Predicate, PersistID, dbDispatch, getWidthOf, persistLocal, normalizeOrderOf, Hierarchy } from '../common/GlobalImports';
 import { idHere, idEditing, expanded, idsGrabbed, lineGap, lineStretch, dotDiameter } from '../managers/State';
 import Airtable from 'airtable';
 
@@ -43,6 +43,7 @@ export default class Thing extends Datum {
 		});
 	};
 
+	get hierarchy():			 Hierarchy { return dbDispatch.db.hierarchy; }
 	get description():				string { return this.id + ' (\" ' + this.title + '\") '; }
 	get visibleProgenySize():		  Size { return new Size(this.visibleProgenyWidth, this.visibleProgenyHeight); }
 	get halfVisibleProgenySize():	  Size { return this.visibleProgenySize.dividedInHalf; }
@@ -51,21 +52,21 @@ export default class Thing extends Datum {
 	get halfVisibleProgenyHeight(): number { return this.visibleProgenyHeight / 2; }
 	get isBulkAlias():			   boolean { return this.trait == '~'; }
 	get hasChildren():			   boolean { return this.hasPredicate(false); }
-	get isRoot():				   boolean { return this == dbDispatch.db.hierarchy.root; }
+	get isRoot():				   boolean { return this == this.hierarchy.root; }
 	get showBorder():			   boolean { return this.isGrabbed || this.isEditing || this.isExemplar; }
-	get isVisible():			   boolean { return this.ancestors(Number.MAX_SAFE_INTEGER).includes(dbDispatch.db.hierarchy.here!); }
+	get isVisible():			   boolean { return this.ancestors(Number.MAX_SAFE_INTEGER).includes(this.hierarchy.here!); }
 	get isExpanded():			   boolean { return this.isRoot || get(expanded).includes(this.parentRelationshipID); }
-	get grandparent():				 Thing { return this.firstParent?.firstParent ?? dbDispatch.db.hierarchy.root; }
+	get grandparent():				 Thing { return this.firstParent?.firstParent ?? this.hierarchy.root; }
 	get lastChild():				 Thing { return this.children.slice(-1)[0]; }
 	get firstChild():				 Thing { return this.children[0]; }
 	get firstParent():				 Thing { return this.parents[0]; }
 	get fields():		 Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get siblings():			  Array<Thing> { return this.firstParent?.children ?? []; }
-	get children():			  Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id, false, this.id); }
-	get parents():			  Array<Thing> { const id = Predicate.idIsAParentOf; return dbDispatch.db.hierarchy.getThings_byIDPredicateToAndID(id,	true, this.id); }
+	get children():			  Array<Thing> { const id = Predicate.idIsAParentOf; return this.hierarchy.getThings_byIDPredicateToAndID(id, false, this.id); }
+	get parents():			  Array<Thing> { const id = Predicate.idIsAParentOf; return this.hierarchy.getThings_byIDPredicateToAndID(id,	true, this.id); }
 
 	get parentRelationshipID(): string { // WRONG
-		return dbDispatch.db.hierarchy.getRelationship_whereIDEqualsTo(this.id, true)?.id ?? '';
+		return this.hierarchy.getRelationship_whereIDEqualsTo(this.id, true)?.id ?? '';
 	}
 
 	get hasGrandChildren(): boolean {
@@ -120,8 +121,8 @@ export default class Thing extends Datum {
 
 	log(message: string) { console.log(message, this.description); }
 	persistExpanded()	 { persistLocal.writeToKey(PersistID.expanded + dbDispatch.db.dbType, get(expanded)); }
-	toggleGrab()		 { dbDispatch.db.hierarchy.grabs.toggleGrab(this); }
-	grabOnly()			 { dbDispatch.db.hierarchy.grabs.grabOnly(this); }
+	toggleGrab()		 { this.hierarchy.grabs.toggleGrab(this); }
+	grabOnly()			 { this.hierarchy.grabs.grabOnly(this); }
 	toggleExpand()		 { this.setExpanded(!this.isExpanded) }
 	collapse()			 { this.setExpanded(false); }
 	expand()			 { this.setExpanded(true); }
@@ -135,7 +136,7 @@ export default class Thing extends Datum {
 	}
 
 	startEdit() {
-		if (this != dbDispatch.db.hierarchy.root) {
+		if (this != this.hierarchy.root) {
 			idEditing.set(this.id);
 		}
 	}
@@ -151,7 +152,7 @@ export default class Thing extends Datum {
 	}
 	
 	setExpanded(expand: boolean) {
-		const relationship = dbDispatch.db.hierarchy.getRelationship_whereIDEqualsTo(this.id);
+		const relationship = this.hierarchy.getRelationship_whereIDEqualsTo(this.id);
 		if (relationship) {
 			expanded.update((array) => {
 				if (expand) {
@@ -210,7 +211,7 @@ export default class Thing extends Datum {
 	async setOrderTo(newOrder: number, remoteWrite: boolean) {
 		if (this.order != newOrder) {
 			this.order = newOrder;
-			const relationship = dbDispatch.db.hierarchy.getRelationship_whereIDEqualsTo(this.id);
+			const relationship = this.hierarchy.getRelationship_whereIDEqualsTo(this.id);
 			if (relationship && (relationship.order != newOrder)) {
 				relationship.order = newOrder;
 				if (remoteWrite) {
@@ -282,7 +283,7 @@ export default class Thing extends Datum {
 	redraw_browseRight(RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, toTop: boolean = false, moveHere: boolean = false) {
 		let newGrab: Thing | null = RIGHT ? toTop ? this.lastChild : this.firstChild : this.firstParent;
 		const newHere = RIGHT ? this : this.grandparent;
-		const root = dbDispatch.db.hierarchy.root;
+		const root = this.hierarchy.root;
 		if (!RIGHT) {
 			if (EXTREME) {
 				root?.becomeHere();	// tells graph to update line rects

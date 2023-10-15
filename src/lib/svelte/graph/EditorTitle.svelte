@@ -25,6 +25,13 @@
 
 	$: {
 
+		if (currentThing != thing) {
+			currentThing = thing;
+			setTimeout(() => {
+				updateInputWidth();
+			}, 1);
+		}
+
 		///////////////////////
 		// manage edit state //
 		///////////////////////
@@ -43,12 +50,6 @@
 					input?.select();
 				}, 10);
 			}
-		}
-		if (currentThing != thing) {
-			currentThing = thing;
-			setTimeout(() => {
-				updateInputWidth();
-			}, 1);
 		}
 	}
 

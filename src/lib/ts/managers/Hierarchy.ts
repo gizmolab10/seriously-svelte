@@ -1,5 +1,5 @@
 import { get, User, Datum, Thing, Grabs, Access, remove, constants, Predicate, dbDispatch, Relationship } from '../common/GlobalImports';
-import { persistLocal, CreationFlag, normalizeOrderOf, sortAccordingToOrder } from '../common/GlobalImports';
+import { CreationFlag, normalizeOrderOf, sortAccordingToOrder } from '../common/GlobalImports';
 import { idHere, isBusy, idsGrabbed, thingsArrived } from './State';
 import DBInterface from '../db/DBInterface';
 
@@ -100,11 +100,13 @@ export default class Hierarchy {
 		return null;
 	}
 
-	getBulkAliasWithTitle(title: string) {
-		for (const thing of this.knownTs) {
-			if  (thing.isBulkAlias && (thing.title == title ||
-				(thing.title == 'Public' && title == 'seriously'))) {	// special case TODO: convert to a auery string
-				return thing;
+	getBulkAliasWithTitle(title: string | null) {
+		if (title) {
+			for (const thing of this.knownTs) {
+				if  (thing.isBulkAlias && (thing.title == title ||
+					(thing.title == 'Public' && title == 'seriously'))) {	// special case TODO: convert to a auery string
+					return thing;
+				}
 			}
 		}
 		return null;
@@ -177,21 +179,25 @@ export default class Hierarchy {
 		return this.rememberThing_runtimeCreate(Datum.newID, constants.defaultTitle, color, '', order, false);
 	}
 
-	rememberThing_runtimeCreate(id: string, title: string, color: string, trait: string, order: number, isRemotelyStored: boolean): Thing {
-		let thing = this.getBulkAliasWithTitle(title);
-		if (thing) {	//  this is a bulk alias
-			//				need relationships to work
-			const relationship = this.getRelationship_whereIDEqualsTo(thing.id);
-			if (relationship) {
-				this.forgetRelationship(relationship);
-				relationship.idTo = id; // so this relatiohship will continue to work
-				this.rememberRelationship(relationship);
+	rememberThing_runtimeCreate(id: string, title: string, color: string, trait: string, order: number, isRemotelyStored: boolean, bulkName: string | null = null): Thing {
+		let thing: Thing | null = null;
+		if (trait == '!' && bulkName) {
+			thing = this.getBulkAliasWithTitle(bulkName);
+			if (thing) {	//  this is a bulk alias
+				//				need relationships to work
+				const relationship = this.getRelationship_whereIDEqualsTo(thing.id);
+				if (relationship) {
+					this.forgetRelationship(relationship);
+					relationship.idTo = id; // so this relatiohship will continue to work
+					this.rememberRelationship(relationship);
+				}
+				this.forgetThing(thing);		// remove stale knowns
+				thing.needsBulkFetch = false;	// for when user reveals children: they must first be fetched
+				thing.color = color;			// N.B., ignore trait
+				thing.id = id;					// so children relatiohships will work
 			}
-			this.forgetThing(thing);
-			thing.needsBulkFetch = false;
-			thing.color = color;		// N.B., ignore trait
-			thing.id = id;				// so children relatiohships will work
-		} else {
+		}
+		if (!thing) {
 			thing = new Thing(id, title, color, trait, order, isRemotelyStored);
 			if (thing.isBulkAlias) {
 				thing.needsBulkFetch = true;
