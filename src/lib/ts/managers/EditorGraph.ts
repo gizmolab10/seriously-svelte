@@ -58,29 +58,29 @@ export default class EditorGraph {
 	//		ADD		//
 	//////////////////
 
-	async thing_redraw_remoteAddChildTo(parent: Thing) {
+	thing_redraw_remoteAddChildTo(parent: Thing) {
 		const child = this.hierarchy.thing_remember_runtimeCreateAt(-1, parent.color);
 		parent.expand();
-		await this.thing_redraw_remoteAddAsChild(child, parent);
+		this.thing_redraw_remoteAddAsChild(child, parent);
 	}
 
-	async thing_redraw_remoteDuplicate(thing: Thing) {
+	thing_redraw_remoteDuplicate(thing: Thing) {
 		const h = this.hierarchy;
 		const sibling = h.thing_remember_runtimeCreateAt(thing.order + k.orderIncrement, thing.color);
 		const parent = thing.firstParent ?? h.root;
 		sibling.title = thing.title;
-		await this.thing_redraw_remoteAddAsChild(sibling, parent);
+		this.thing_redraw_remoteAddAsChild(sibling, parent);
 	}
 
-	async thing_redraw_remoteAddLine(thing: Thing, below: boolean = true) {
+	thing_redraw_remoteAddLine(thing: Thing, below: boolean = true) {
 		const parent = thing.firstParent;
 		const order = thing.order + (below ? 0.5 : -0.5);
 		const child = this.hierarchy.thing_remember_runtimeCreate(Datum.newID, k.lineTitle, parent.color, '', order, false);
 		parent.expand();
-		await this.thing_redraw_remoteAddAsChild(child, parent, false);
+		this.thing_redraw_remoteAddAsChild(child, parent, false);
 	}
 
-	async thing_redraw_remoteAddAsChild(child: Thing, parent: Thing, startEdit: boolean = true) {
+	thing_redraw_remoteAddAsChild(child: Thing, parent: Thing, startEdit: boolean = true) {
 		this.hierarchy.thing_remoteAddAsChild(child, parent);
 		if (startEdit) {
 			child.startEdit();

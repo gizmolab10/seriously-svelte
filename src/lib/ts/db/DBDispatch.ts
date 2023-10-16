@@ -48,9 +48,10 @@ export default class DBDispatch {
 
 	dbForType(type: string): DBInterface {
 		switch (type) {
-			case DBType.airtable: return dbAirtable;
-			case DBType.firebase: return dbFirebase;
-			default:			  return dbLocal;
+			case DBType.postgres:	return dbPostreSQL;
+			case DBType.airtable:	return dbAirtable;
+			case DBType.firebase:	return dbFirebase;
+			default:				return dbLocal;
 		}
 	}
 
@@ -90,7 +91,7 @@ export default class DBDispatch {
 				isBusy.set(true);
 				thingsArrived.set(false);
 			}
-			(async () => {							// this will happen when Local sets dbType !!! too early?
+			(async () => {							// this will happen when local sets dbType !!! too early?
 				dbLoadTime.set(null);
 				const startTime = new Date().getTime();
 				await this.db.fetch_all();

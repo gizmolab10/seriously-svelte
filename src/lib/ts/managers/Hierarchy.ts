@@ -35,7 +35,6 @@ export default class Hierarchy {
 	get things(): Array<Thing> { return Object.values(this.knownT_byID) };
 	hasRootWithTitle(title: string) { return this.thing_getBulkAliasWithTitle(title) != null; }
 	thing_getForID(idThing: string | null): Thing | null { return (!idThing) ? null : this.knownT_byID[idThing]; }
-	predicate_getForID(idPredicate: string | null): Predicate | null { return (!idPredicate) ? null : this.knownP_byID[idPredicate]; }
 
 	constructor(db: DBInterface) {
 		this.db = db;
@@ -60,7 +59,8 @@ export default class Hierarchy {
 						
 						// already determined that WE DO NOT NEED Unique, we do need it's id now
 
-						await this.relationship_remember_remoteCreate(Datum.newID, idPredicateIsAParentOf, idRoot, idThing, -1, CreationFlag.getRemoteID)
+						await this.relationship_remember_remoteCreate(Datum.newID, idPredicateIsAParentOf,
+							idRoot, idThing, -1, CreationFlag.getRemoteID)
 					}
 				}
 			}
@@ -116,15 +116,20 @@ export default class Hierarchy {
 		return null;
 	}
 
-	async thing_remoteAddAsChild(child: Thing, parent: Thing) {
+	thing_remoteAddAsChild(child: Thing, parent: Thing): Promise<any> {
 		const idPredicateIsAParentOf = Predicate.idIsAParentOf;
 		const idRelationship = Datum.newID;
 		const db = dbDispatch.db;
-		await db.thing_remoteCreate(child); // for everything below, need to await child.id fetched from dbDispatch
-		this.thing_remember(child);
-		const relationship = await this.relationship_remember_remoteCreate(idRelationship, idPredicateIsAParentOf, parent.id, child.id, child.order, CreationFlag.getRemoteID)
-		orders_normalize_remoteMaybe(parent.children);
-		await relationship.remoteWrite();
+		db.thing_remoteCreate(child).then(() => { // for everything below, need to await child.id fetched from dbDispatch
+			this.thing_remember(child);
+			this.relationship_remember_remoteCreate(idRelationship, idPredicateIsAParentOf, parent.id,
+				child.id, child.order, CreationFlag.getRemoteID)
+			.then((relationship) => {
+				orders_normalize_remoteMaybe(parent.children);
+				relationship.remoteWrite();
+				Promise.resolve(relationship);
+			})
+		});
 	}
 
 	thing_forget(thing: Thing) {
@@ -148,7 +153,8 @@ export default class Hierarchy {
 		return this.thing_remember_runtimeCreate(Datum.newID, k.defaultTitle, color, '', order, false);
 	}
 
-	thing_remember_runtimeCreate(id: string, title: string, color: string, trait: string, order: number, isRemotelyStored: boolean, bulkName: string | null = null): Thing {
+	thing_remember_runtimeCreate(id: string, title: string, color: string, trait: string, order: number,
+		isRemotelyStored: boolean, bulkName: string | null = null): Thing {
 		let thing: Thing | null = null;
 		if (trait == '!' && bulkName) {
 			thing = this.thing_getBulkAliasWithTitle(bulkName);
@@ -270,20 +276,20 @@ export default class Hierarchy {
 		}
 	}
 
-	relationship_remember_runtimeCreate(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none) {
-		const relationship = new Relationship(idRelationship, idPredicate, idFrom, idTo, order, creationFlag == CreationFlag.isFromRemote);
+	relationship_remember_runtimeCreate(idRelationship: string, idPredicate: string, idFrom: string,
+		idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none) {
+		const relationship = new Relationship(idRelationship, idPredicate, idFrom, idTo, order,
+			creationFlag == CreationFlag.isFromRemote);
 		this.relationship_remember(relationship);
 		return relationship;
 	}
 
-	async relationship_remember_remoteCreate(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none) {
-		const relationship = this.relationship_remember_runtimeCreate(idRelationship, idPredicate, idFrom, idTo, order, creationFlag);
+	async relationship_remember_remoteCreate(idRelationship: string, idPredicate: string, idFrom: string,
+		idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none): Promise<any> {
+		const relationship = this.relationship_remember_runtimeCreate(idRelationship, idPredicate, idFrom,
+			idTo, order, creationFlag);
 		await relationship.remoteWrite();
-		return relationship;
-	}
-
-	async relationship_remember_remoteCreateUnique(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none) {
-		return this.relationship_getWhereIDEqualsTo(idTo) ?? await this.relationship_remember_remoteCreate(idRelationship, idPredicate, idFrom, idTo, order, creationFlag);
+		Promise.resolve(relationship);
 	}
 
 	async relationship_forgets_remoteDeleteAllForThing(thing: Thing) {
@@ -324,6 +330,10 @@ export default class Hierarchy {
 	//////////////////////////////////////
 	//			ANCILLARY DATA			//
 	//////////////////////////////////////
+
+	predicate_getForID(idPredicate: string | null): Predicate | null {
+		return (!idPredicate) ? null : this.knownP_byID[idPredicate];
+	}
 
 	predicate_remember(predicate: Predicate) {
 		this.knownP_byKind[predicate.kind] = predicate;

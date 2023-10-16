@@ -90,7 +90,7 @@ export default class DBFirebase implements DBInterface {
 			let roots = this.hierarchy.thing_getRoots();
 			if (!roots) {
 				roots = this.hierarchy.thing_remember_runtimeCreate(Datum.newID, 'roots', 'red', '^', -1, false);
-				await this.hierarchy.thing_remoteAddAsChild(roots, root);
+				this.hierarchy.thing_remoteAddAsChild(roots, root);
 			}
 			try {		// add bulks to roots thing
 				const bulksCollection = collection(this.db, this.collectionName);		// fetch all bulks (documents)
@@ -99,7 +99,7 @@ export default class DBFirebase implements DBInterface {
 					const title = bulkShot.id;
 					if (title != dbDispatch.bulkName && !this.hierarchy.hasRootWithTitle(title)) {				// create a thing for each bulk
 						const thing = this.hierarchy.thing_remember_runtimeCreate(Datum.newID, title, 'red', '~', -1, false);
-						await this.hierarchy.thing_remoteAddAsChild(thing, roots);
+						this.hierarchy.thing_remoteAddAsChild(thing, roots);
 					}
 				}
 				// TODO: detect when a root disappears

@@ -1,6 +1,7 @@
 import { Thing, Hierarchy, Relationship } from '../common/GlobalImports';
 
 export enum DBType {
+	postgres = 'postgres',
 	airtable = 'airtable',
 	firebase = 'firebase',
 	local	 = 'local',
