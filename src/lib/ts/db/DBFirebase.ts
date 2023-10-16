@@ -77,7 +77,7 @@ export default class DBFirebase implements DBInterface {
 			for (const docSnapshot of docs) {
 				const id = docSnapshot.id;
 				const data = docSnapshot.data();
-				await this.remember_validatedDocument(dataKind, id, data, bulkName);
+				await this.document_remember_validated(dataKind, id, data, bulkName);
 			}
 		} catch (error) {
 			this.reportError(error);
@@ -124,7 +124,7 @@ export default class DBFirebase implements DBInterface {
 	async remoteHandler(change: DocumentChange, dataKind: DataKind) {
 		const doc = change.doc;
 		const data = doc.data();
-		if (DBFirebase.isValidOfKind(dataKind, data)) {
+		if (DBFirebase.data_isValidOfKind(dataKind, data)) {
 			const id = doc.id;
 
 			////////////////////
@@ -141,7 +141,7 @@ export default class DBFirebase implements DBInterface {
 						switch (change.type) {
 							case 'added':
 								if (!relationship) {
-									await this.hierarchy.relationship_remember_remoteCreateNoDuplicate(id, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote);
+									this.hierarchy.relationship_remember_runtimeCreate(id, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote);
 									this.hierarchy.relationships_refreshKnowns_runtimeRenormalize();
 								}
 								break;
@@ -149,7 +149,7 @@ export default class DBFirebase implements DBInterface {
 								if (relationship) {
 									switch (change.type) {
 										case 'modified':
-											if (relationship.wasModifiedWithinMS(100) || this.isEqualTo(relationship, remote)) {
+											if (relationship.wasModifiedWithinMS(100) || remote.isEqualTo(relationship)) {
 												return;	// already known and contains no new data, or needs to be 'tamed'
 											}
 											this.relationship_extractRemote(relationship, remote);
@@ -211,6 +211,17 @@ export default class DBFirebase implements DBInterface {
 		await updateDoc(docRef, { isReal: deleteField() });
 		if (dataKind == DataKind.things) {
 			await this.things_startup_remoteCreateIn(collectionRef);
+		}
+	}
+
+	async document_remember_validated(dataKind: DataKind, id: string, data: DocumentData, bulkName: string | null = null) {
+		if (DBFirebase.data_isValidOfKind(dataKind, data)) {
+			const h = this.hierarchy;
+			switch (dataKind) {
+				case DataKind.things:			h.thing_remember_runtimeCreate(id, data.title, data.color, data.trait, -1, true, bulkName); break;
+				case DataKind.predicates:		h.predicate_remember_runtimeCreate(id, data.kind); break;
+				case DataKind.relationships:	h.relationship_remember_runtimeCreate(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
+			}
 		}
 	}
 
@@ -346,13 +357,6 @@ export default class DBFirebase implements DBInterface {
 		}
 	}
 
-	isEqualTo(relationship: Relationship, remote: RemoteRelationship) {
-		return relationship.idPredicate == remote.predicate.id &&
-		relationship.idFrom == remote.from.id &&
-		relationship.order == remote.order &&
-		relationship.idTo == remote.to.id;
-	}
-
 	relationship_extractRemote(relationship: Relationship, remote: RemoteRelationship) {
 		const order = remote.order - k.orderIncrement;
 		relationship.idTo = remote.to.id;
@@ -366,7 +370,7 @@ export default class DBFirebase implements DBInterface {
 	//			VALIDATION			//
 	//////////////////////////////////
 
-	static isValidOfKind(dataKind: DataKind, data: DocumentData) {
+	static data_isValidOfKind(dataKind: DataKind, data: DocumentData) {
 		switch (dataKind) {
 			case DataKind.things:		
 				const thing = data as Thing;	
@@ -391,16 +395,6 @@ export default class DBFirebase implements DBInterface {
 		return true;
 	}
 
-	async remember_validatedDocument(dataKind: DataKind, id: string, data: DocumentData, bulkName: string | null = null) {
-		if (DBFirebase.isValidOfKind(dataKind, data)) {
-			const h = this.hierarchy;
-			switch (dataKind) {
-				case DataKind.things:			h.thing_remember_runtimeCreate(id, data.title, data.color, data.trait, -1, true, bulkName); break;
-				case DataKind.predicates:		h.predicate_remember_runtimeCreate(id, data.kind); break;
-				case DataKind.relationships:	await h.relationship_remember_remoteCreateNoDuplicate(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
-			}
-		}
-	}
 }
 
 export const dbFirebase = new DBFirebase();
@@ -428,6 +422,7 @@ interface RemoteRelationship {
 }
 
 class RemoteRelationship implements RemoteRelationship {
+
 	constructor(data: DocumentData | Relationship) {
 		const things = dbFirebase.thingsCollection;
 		const predicates = dbFirebase.predicatesCollection;
@@ -442,7 +437,7 @@ class RemoteRelationship implements RemoteRelationship {
 					}
 				} else {
 					const remote = data as RemoteRelationship;
-					if (DBFirebase.isValidOfKind(DataKind.relationships, data)) {
+					if (DBFirebase.data_isValidOfKind(DataKind.relationships, data)) {
 						this.to = doc(things, remote.to.id) as DocumentReference<Thing>;
 						this.from = doc(things, remote.from.id) as DocumentReference<Thing>;
 						this.predicate = doc(predicates, remote.predicate.id) as DocumentReference<Predicate>;
@@ -452,6 +447,13 @@ class RemoteRelationship implements RemoteRelationship {
 				dbFirebase.reportError(error);
 			}
 		}
+	}
+
+	isEqualTo(relationship: Relationship) {
+		return relationship.idPredicate == this.predicate.id &&
+		relationship.idFrom == this.from.id &&
+		relationship.order == this.order &&
+		relationship.idTo == this.to.id;
 	}
 
 }

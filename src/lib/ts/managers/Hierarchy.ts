@@ -58,7 +58,7 @@ export default class Hierarchy {
 					} else {
 						const idPredicateIsAParentOf = Predicate.idIsAParentOf;
 						
-						// already determined that WE DO NOT NEED NoDuplicate, we do need it's id now
+						// already determined that WE DO NOT NEED Unique, we do need it's id now
 
 						await this.relationship_remember_remoteCreate(Datum.newID, idPredicateIsAParentOf, idRoot, idThing, -1, CreationFlag.getRemoteID)
 					}
@@ -282,7 +282,7 @@ export default class Hierarchy {
 		return relationship;
 	}
 
-	async relationship_remember_remoteCreateNoDuplicate(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none) {
+	async relationship_remember_remoteCreateUnique(idRelationship: string, idPredicate: string, idFrom: string, idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none) {
 		return this.relationship_getWhereIDEqualsTo(idTo) ?? await this.relationship_remember_remoteCreate(idRelationship, idPredicate, idFrom, idTo, order, creationFlag);
 	}
 
