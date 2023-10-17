@@ -26,12 +26,11 @@ export default class DBAirtable implements DBInterface {
 	dbType = DBType.airtable;
 	hasData = false;
 	loadTime = null;
-	//apphGUCbYIEJLvRrR/tblX6p54PWDNivXTV/viwNcWhtiMJSqXthF
-	//appq1IjzmiRdlZi3H/tblkGEeKXY5U4YcyL/viwGBm0IG8ie4CFvn
 
 	relationships_errorMessage = 'Error in Relationships:';
+	setHasData(flag: boolean) { this.hasData = flag; }
 	things_errorMessage = 'Error in Things:';
-
+	
 	get hierarchy(): Hierarchy { 
 		if (this._hierarchy == null) {
 			this._hierarchy = new Hierarchy(this);
@@ -52,8 +51,7 @@ export default class DBAirtable implements DBInterface {
 	//////////////////////////////
 
 	async things_readAll() {
-		this.hierarchy.knownTs = []; // clear
-		this.hierarchy.knownT_byID = {};
+		this.hierarchy.things_forgetAll(); // clear
 
 		try {
 			const select = this.things_table.select();
@@ -70,7 +68,6 @@ export default class DBAirtable implements DBInterface {
 		}
 	}
 
-
 	////////////////////////////
 	//			THING		  //
 	////////////////////////////
@@ -81,7 +78,7 @@ export default class DBAirtable implements DBInterface {
 			const id = fields['id']; //	// need for update, delete and knownTs_byID (to get parent from relationship)
 			thing.id = id;
 			thing.isRemotelyStored = true;
-			this.hierarchy.knownT_byID[id] = thing;
+			this.hierarchy.thing_remember(thing);
 		} catch (error) {
 			thing.log(this.things_errorMessage + error);
 		}
@@ -97,7 +94,7 @@ export default class DBAirtable implements DBInterface {
 
 	async thing_remoteDelete(thing: Thing) {
 		try {
-			delete this.hierarchy.knownT_byID[thing.id]; // do first so UX updates quickly
+			this.hierarchy.thing_forget(thing);		// do first so UX updates quickly
 			await this.things_table.destroy(thing.id);
 		} catch (error) {
 			thing.log(this.things_errorMessage + error);

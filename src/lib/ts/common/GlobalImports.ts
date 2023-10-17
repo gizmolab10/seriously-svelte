@@ -8,9 +8,9 @@ import { editorGraph } from '../managers/EditorGraph';
 import { DBType, DataKind } from '../db/DBInterface';
 import { dbDispatch } from '../db/DBDispatch';
 import { onMount, onDestroy } from 'svelte';
-import { k } from './Constants';
 import { get } from 'svelte/store';
 import { builds } from './Builds';
+import { k } from './Constants';
 import './Extensions';
 
 import Relationship from '../data/Relationship';

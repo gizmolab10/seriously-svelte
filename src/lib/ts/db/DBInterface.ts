@@ -21,6 +21,7 @@ export default interface DBInterface {
 	hierarchy: Hierarchy;
 	loadTime: string | null;
 	fetch_all(): Promise<void>;
+	setHasData(flag: boolean): void;
 	fetch_allFrom(bulkName: string): Promise<void>;
 	thing_remoteCreate(thing: Thing): Promise<void>;
 	thing_remoteUpdate(thing: Thing): Promise<void>;

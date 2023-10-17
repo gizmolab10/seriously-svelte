@@ -1,5 +1,6 @@
 import { dbType, isBusy, idHere, idsGrabbed, dbLoadTime, thingsArrived } from '../managers/State';
 import { get, DBType, PersistID, persistLocal } from '../common/GlobalImports';
+// import { dbPostgres } from './DBPostgres';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
@@ -48,9 +49,9 @@ export default class DBDispatch {
 
 	dbForType(type: string): DBInterface {
 		switch (type) {
-			case DBType.postgres:	return dbPostreSQL;
 			case DBType.airtable:	return dbAirtable;
 			case DBType.firebase:	return dbFirebase;
+			// case DBType.postgres:	return dbPostgres;
 			default:				return dbLocal;
 		}
 	}

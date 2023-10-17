@@ -22,18 +22,19 @@ export default class DBFirebase implements DBInterface {
 	dbType = DBType.firebase;
 	collectionName = 'Bulks';
 	app = initializeApp(this.firebaseConfig);
-	db = getFirestore(this.app);
 	_hierarchy: Hierarchy | null = null;
 	thingsCollection: CollectionReference | null = null;
 	predicatesCollection: CollectionReference | null = null;
 	relationshipsCollection: CollectionReference | null = null;
+	db = getFirestore(this.app);
 
+	setHasData(flag: boolean) { this.hasData = flag; }
 	reportError(error: any) { console.log(error); }
 
 	get hierarchy(): Hierarchy { 
 		if (this._hierarchy == null) {
-			this._hierarchy = new Hierarchy(this);
-		}
+		this._hierarchy = new Hierarchy(this);
+}
 		return this._hierarchy!;
 	}
 
@@ -186,7 +187,7 @@ export default class DBFirebase implements DBInterface {
 											this.thing_extractRemote(thing, remote);
 											break;
 										case 'removed': 
-											delete this.hierarchy.knownT_byID[id];
+											this.hierarchy.thing_forget(thing);
 											break;
 									}
 									signal(Signals.childrenOf, parentID);

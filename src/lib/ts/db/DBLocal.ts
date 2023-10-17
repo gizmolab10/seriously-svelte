@@ -15,6 +15,7 @@ export default class DBLocal implements DBInterface {
 	}
 
 	localName(suffix: string) { return 'local' + suffix; }
+	setHasData(flag: boolean) { this.hasData = flag; }
 
 	async fetch_all() {
 		const h = this.hierarchy;
@@ -39,12 +40,13 @@ export default class DBLocal implements DBInterface {
 		h.relationship_remember_runtimeCreate(this.localName('Er'), idPredicate, idA, idE, 0);
 	};
 
-	async thing_remoteCreate(thing: Thing) {};
-	async thing_remoteUpdate(thing: Thing) {};
-	async thing_remoteDelete(thing: Thing) {};
-	async relationship_remoteCreate(relationship: Relationship | null) {};
-	async relationship_remoteUpdate(relationship: Relationship) {};
-	async relationship_remoteDelete(relationship: Relationship) {};
+	async fetch_allFrom(bulkName: string) {}
+	async thing_remoteCreate(thing: Thing) {}
+	async thing_remoteUpdate(thing: Thing) {}
+	async thing_remoteDelete(thing: Thing) {}
+	async relationship_remoteUpdate(relationship: Relationship) {}
+	async relationship_remoteDelete(relationship: Relationship) {}
+	async relationship_remoteCreate(relationship: Relationship | null) {}
 }
 
 export const dbLocal = new DBLocal();

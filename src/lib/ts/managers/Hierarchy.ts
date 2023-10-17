@@ -24,11 +24,12 @@ export default class Hierarchy {
 	knownRs_byIDTo: KnownRelationships = {};
 	knownRs: Array<Relationship> = [];
 	knownTs: Thing[] = [];
+	db: DBInterface | null = null;
 	_grabs: Grabs | null = null;
 	root: Thing | null = null;
 	here: Thing | null = null;
 	isConstructed = false;
-	db: DBInterface;
+	dbType: string;
 
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): (string | null) { return this.root?.id ?? null; };
@@ -36,10 +37,14 @@ export default class Hierarchy {
 	hasRootWithTitle(title: string) { return this.thing_getBulkAliasWithTitle(title) != null; }
 	thing_getForID(idThing: string | null): Thing | null { return (!idThing) ? null : this.knownT_byID[idThing]; }
 
-	constructor(db: DBInterface) {
-		this.db = db;
+	constructor(dbType: string) {
+		this.dbType = dbType;
+	}
+
+	setup() {
+		this.db = dbDispatch.dbForType(this.dbType);
 		idHere.subscribe((id: string | null) => {
-			if (this.db.hasData) {
+			if (this.db && this.db.hasData) {
 				this.here = this.thing_getForID(id);
 			}
 		})
@@ -65,7 +70,7 @@ export default class Hierarchy {
 				}
 			}
 			this.root.order_normalizeRecursive(true)	// setup order values for all things and relationships
-			this.db.hasData = true;
+			this.db?.setHasData(true);
 			orders_normalize_remoteMaybe(this.root.children)
 			dbDispatch.state_updateFor(type, idRoot);
 		}
@@ -119,8 +124,7 @@ export default class Hierarchy {
 	thing_remoteAddAsChild(child: Thing, parent: Thing): Promise<any> {
 		const idPredicateIsAParentOf = Predicate.idIsAParentOf;
 		const idRelationship = Datum.newID;
-		const db = dbDispatch.db;
-		db.thing_remoteCreate(child).then(() => { // for everything below, need to await child.id fetched from dbDispatch
+		this.db?.thing_remoteCreate(child).then(() => { // for everything below, need to await child.id fetched from dbDispatch
 			this.thing_remember(child);
 			this.relationship_remember_remoteCreate(idRelationship, idPredicateIsAParentOf, parent.id,
 				child.id, child.order, CreationFlag.getRemoteID)
@@ -132,12 +136,17 @@ export default class Hierarchy {
 		});
 	}
 
+	things_forgetAll() {
+		this.knownTs = []; // clear
+		this.knownT_byID = {};
+	}
+
 	thing_forget(thing: Thing) {
 		delete this.knownT_byID[thing.id];
 	}
 
 	async thing_forget_remoteDelete(thing: Thing) {
-		await this.db.thing_remoteDelete(thing);
+		await this.db?.thing_remoteDelete(thing);
 		this.thing_forget(thing);
 	}
 
@@ -296,7 +305,7 @@ export default class Hierarchy {
 		const array = this.knownRs_byIDTo[thing.id];
 		if (array) {
 			for (const relationship of array) {
-				await this.db.relationship_remoteDelete(relationship);
+				await this.db?.relationship_remoteDelete(relationship);
 				this.relationship_forget(relationship);
 			}
 		}
