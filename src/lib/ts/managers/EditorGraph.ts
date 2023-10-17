@@ -95,7 +95,7 @@ export default class EditorGraph {
 
 	async thing_redraw_remoteMoveRight(thing: Thing, RIGHT: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		if (!OPTION) {
-			if (thing.needsBulkFetch) {
+			if (RIGHT && thing.needsBulkFetch) {
 				await thing.redraw_fetchAll_runtimeBrowseRight();
 			} else {
 				thing.redraw_runtimeBrowseRight(RIGHT, SHIFT, EXTREME);

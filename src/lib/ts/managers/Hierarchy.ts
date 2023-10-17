@@ -165,7 +165,7 @@ export default class Hierarchy {
 			if (thing) {	//  this is a bulk alias
 				//				need relationships to work
 				const relationship = this.relationship_getWhereIDEqualsTo(thing.id);
-				if (relationship) {
+				if (relationship && relationship.idTo != id) {
 					this.relationship_forget(relationship);
 					relationship.idTo = id; // so this relatiohship will continue to work
 					this.relationship_remember(relationship);
