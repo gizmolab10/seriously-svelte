@@ -30,6 +30,7 @@ export default class DBAirtable implements DBInterface {
 	relationships_errorMessage = 'Error in Relationships:';
 	setHasData(flag: boolean) { this.hasData = flag; }
 	things_errorMessage = 'Error in Things:';
+	async fetch_allFrom(bulkName: string) {}
 	
 	get hierarchy(): Hierarchy { 
 		if (this._hierarchy == null) {

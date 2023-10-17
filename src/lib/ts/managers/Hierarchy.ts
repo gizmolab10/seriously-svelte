@@ -29,7 +29,6 @@ export default class Hierarchy {
 	root: Thing | null = null;
 	here: Thing | null = null;
 	isConstructed = false;
-	dbType: string;
 
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): (string | null) { return this.root?.id ?? null; };
@@ -37,12 +36,8 @@ export default class Hierarchy {
 	hasRootWithTitle(title: string) { return this.thing_getBulkAliasWithTitle(title) != null; }
 	thing_getForID(idThing: string | null): Thing | null { return (!idThing) ? null : this.knownT_byID[idThing]; }
 
-	constructor(dbType: string) {
-		this.dbType = dbType;
-	}
-
-	setup() {
-		this.db = dbDispatch.dbForType(this.dbType);
+	constructor(db: DBInterface) {
+		this.db = db;
 		idHere.subscribe((id: string | null) => {
 			if (this.db && this.db.hasData) {
 				this.here = this.thing_getForID(id);
