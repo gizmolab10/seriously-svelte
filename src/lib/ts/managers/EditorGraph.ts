@@ -82,11 +82,11 @@ export default class EditorGraph {
 
 	thing_redraw_remoteAddAsChild(child: Thing, parent: Thing, startEdit: boolean = true) {
 		this.hierarchy.thing_remoteAddAsChild(child, parent);
+		signal(Signals.childrenOf);
+		child.grabOnly();
 		if (startEdit) {
 			child.startEdit();
 		}
-		child.grabOnly();
-		signal(Signals.childrenOf);
 	}
 
 	////////////////////

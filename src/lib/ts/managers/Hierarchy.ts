@@ -124,8 +124,7 @@ export default class Hierarchy {
 			this.relationship_remember_remoteCreate(idRelationship, idPredicateIsAParentOf, parent.id,
 				child.id, child.order, CreationFlag.getRemoteID)
 			.then((relationship) => {
-				orders_normalize_remoteMaybe(parent.children);
-				relationship.remoteWrite();
+				orders_normalize_remoteMaybe(parent.children);		// write new order values for relationships
 				Promise.resolve(relationship);
 			})
 		});
@@ -228,7 +227,6 @@ export default class Hierarchy {
 		this.relationship_forgetByKnown(this.knownRs_byIDTo, relationship.idTo, relationship);
 		this.relationship_forgetByKnown(this.knownRs_byIDFrom, relationship.idFrom, relationship);
 		this.relationship_forgetByKnown(this.knownRs_byIDPredicate, relationship.idPredicate, relationship);
-		relationship.log('forget');
 	}
 
 	relationship_forgetByKnown(known: KnownRelationships, idRelationship: string, relationship: Relationship) {

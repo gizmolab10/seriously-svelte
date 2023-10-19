@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { noop, Thing, Point, ZIndex, onMount, onDestroy, k } from '../../ts/common/GlobalImports';
+	import { k, noop, Thing, Point, ZIndex, onMount, Signals, onDestroy, handleSignalOfKind } from '../../ts/common/GlobalImports';
 	import { idEditing, idsGrabbed } from '../../ts/managers/State';
 	import EditorTitle from './EditorTitle.svelte';
 	import Dot from './Dot.svelte';
@@ -14,22 +14,12 @@
 	let delta = 0;
 	let widget;
 
-	onMount(() => {
-		const id = thing.id;
-		isGrabbed = $idsGrabbed?.includes(id) || thing.isExemplar;
-		isEditing = (thing.id == $idEditing);
-		updateBorderStyle();
-	});
-
 	function updateBorderStyle() {
 		const showBorder = isEditing || isGrabbed;
 		thing.updateColorAttributes();
 		delta = showBorder ? 0 : 1;
 		border = showBorder ? 'border: ' + thing.grabAttributes : '';
 		background = showBorder ? 'background-color: ' + k.backgroundColor : '';
-		if (isEditing) {
-			console.log('EDIT:', thing.title );
-		}
 	}
 	
 	$: {

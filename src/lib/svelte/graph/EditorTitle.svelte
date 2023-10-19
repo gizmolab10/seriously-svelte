@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { Thing, signal, Signals, ZIndex, k, onDestroy, dbDispatch, editorGraph } from '../../ts/common/GlobalImports';
+	import { Thing, signal, Signals, ZIndex, k, onMount, onDestroy, dbDispatch, editorGraph } from '../../ts/common/GlobalImports';
 	import { idEditing, titleFontSize, titleFontFamily, stoppedIDEditing } from '../../ts/managers/State';
 	import Widget from './Widget.svelte';
 	export let thing = Thing;
@@ -9,9 +9,10 @@
 	let wrapper = null;
 	let input = null;
 
-	var hasChanges = () => { return originalTitle != thing.title; }
-	function handleInput(event) { thing.title = event.target.value; }
 	function handleBlur(event) { stopAndClearEditing(false); updateInputWidth(); }
+	function handleInput(event) { thing.title = event.target.value; }
+	var hasChanges = () => { return originalTitle != thing.title; }
+	onMount(() => { updateInputWidth(); });
 	onDestroy(() => { thing = null; });
 
 	function handleKeyDown(event) {

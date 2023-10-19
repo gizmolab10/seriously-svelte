@@ -1,4 +1,4 @@
-import { Thing, DBType, DataKind, Hierarchy, Relationship, CreationFlag } from '../common/GlobalImports';
+import { Thing, DBType, DataKind, Hierarchy, Relationship, CreationFlag, dbDispatch } from '../common/GlobalImports';
 import { thingsArrived } from '../managers/State';
 import DBInterface from './DBInterface';
 import Airtable from 'airtable';

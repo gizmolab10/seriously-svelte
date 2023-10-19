@@ -208,18 +208,14 @@ export default class Thing extends Datum {
 		}
 	}
 
-	async order_setTo(newOrder: number, remoteWrite: boolean) {
+	order_setTo(newOrder: number, remoteWrite: boolean) {
 		if (this.order != newOrder) {
 			this.order = newOrder;
 			const relationship = this.hierarchy.relationship_getWhereIDEqualsTo(this.id);
 			if (relationship && (relationship.order != newOrder)) {
 				relationship.order = newOrder;
 				if (remoteWrite) {
-					setTimeout(() => {
-						(async () => {
-							await relationship.remoteWrite();
-						})();
-					}, 100);
+					relationship.remoteWrite();
 				}
 			}
 		}

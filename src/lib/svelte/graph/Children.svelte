@@ -25,7 +25,7 @@
 				layoutChildren();
 				toggleDraw = !toggleDraw;
 			}
-		}, 1);
+		}, 1000);
 	})
 
 	function layoutChildren() {
