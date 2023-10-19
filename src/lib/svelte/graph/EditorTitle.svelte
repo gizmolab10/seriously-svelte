@@ -4,7 +4,6 @@
 	import Widget from './Widget.svelte';
 	export let thing = Thing;
 	let originalTitle = thing.title;
-	let currentThing = Thing;
 	let isEditing = false;
 	let wrapper = null;
 	let input = null;
@@ -25,13 +24,6 @@
 	}
 
 	$: {
-
-		if (currentThing != thing) {
-			currentThing = thing;
-			setTimeout(() => {
-				updateInputWidth();
-			}, 1);
-		}
 
 		///////////////////////
 		// manage edit state //
@@ -71,7 +63,7 @@
 			if (invokeBlur) {
 				input?.blur();
 			}
-			if (hasChanges()) {
+			if (hasChanges() && !thing.isExemplar) {
 				dbDispatch.db.thing_remoteUpdate(thing);
 				originalTitle = thing.title;		// so hasChanges will be correct
 				signal(Signals.childrenOf, thing.firstParent.id); // for crumbs
