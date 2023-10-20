@@ -116,10 +116,10 @@ export default class Hierarchy {
 		return null;
 	}
 
-	thing_remoteAddAsChild(child: Thing, parent: Thing): Promise<any> {
+	async thing_remoteAddAsChild(child: Thing, parent: Thing): Promise<any> {
 		const idPredicateIsAParentOf = Predicate.idIsAParentOf;
 		const idRelationship = Datum.newID;
-		this.db?.thing_remoteCreate(child).then(() => { // for everything below, need to await child.id fetched from dbDispatch
+		await this.db?.thing_remoteCreate(child).then(() => { // for everything below, need to await child.id fetched from dbDispatch
 			this.thing_remember(child);
 			this.relationship_remember_remoteCreate(idRelationship, idPredicateIsAParentOf, parent.id,
 				child.id, child.order, CreationFlag.getRemoteID)

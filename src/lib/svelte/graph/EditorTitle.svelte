@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { Thing, signal, Signals, ZIndex, k, onMount, onDestroy, dbDispatch, editorGraph } from '../../ts/common/GlobalImports';
-	import { idEditing, titleFontSize, titleFontFamily, stoppedIDEditing } from '../../ts/managers/State';
+	import { idEditing, titleFontSize, titleFontFamily, idEditingStopped } from '../../ts/managers/State';
 	import Widget from './Widget.svelte';
 	export let thing = Thing;
 	let originalTitle = thing.title;
@@ -11,8 +11,12 @@
 	function handleBlur(event) { stopAndClearEditing(false); updateInputWidth(); }
 	function handleInput(event) { thing.title = event.target.value; }
 	var hasChanges = () => { return originalTitle != thing.title; }
-	onMount(() => { updateInputWidth(); });
 	onDestroy(() => { thing = null; });
+
+	onMount(() => {
+		updateInputWidth();
+		console.log('MOUNT TITLE', thing.id, thing.title);		// prevent reveal dot blinking
+	});
 
 	function handleKeyDown(event) {
 		if ($idEditing == thing.id) {
@@ -30,9 +34,9 @@
 		///////////////////////
 
 		if (k.allowTitleEditing) {
-			if ($stoppedIDEditing == thing.id) {
+			if ($idEditingStopped == thing.id) {
 				stopEditing();
-				$stoppedIDEditing = null;
+				$idEditingStopped = null;
 			} else if ($idEditing != thing.id) {
 				stopEditing();
 			} else if (!isEditing) {
@@ -41,6 +45,7 @@
 				setTimeout(() => {
 					input?.focus();
 					input?.select();
+					console.log('SELECT');
 				}, 10);
 			}
 		}
@@ -58,7 +63,7 @@
 
 	function stopEditing(invokeBlur: boolean = true) {
 		if (isEditing) {
-			$stoppedIDEditing = $idEditing;
+			$idEditingStopped = $idEditing;
 			isEditing = false;
 			if (invokeBlur) {
 				input?.blur();
@@ -77,7 +82,9 @@
 		} else if (!isEditing) {
 			isEditing = true;
 			thing.grabOnly()
-			thing.startEdit();
+			setTimeout(() => {
+				thing?.startEdit();
+			}, 100);
 		}
 	}
 

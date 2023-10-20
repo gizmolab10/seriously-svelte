@@ -18,14 +18,14 @@
 	function curveTypeAt(index: number): number { return lineRectAt(index).curveType; }
 	
 	const signalHandler = handleSignalOfKind(Signals.childrenOf, (signal_idThing) => {
-		setTimeout(() => { // delay until all other handlers for this signal are done TODO: WHY?
-			if (signal_idThing == thing.id || children != thing.children) {
+		if (signal_idThing == thing.id || children != thing.children) {
+			setTimeout(() => { // delay until all other handlers for this signal are done TODO: WHY?
 				orders_normalize_remoteMaybe(thing.children);
 				children = thing.children;
 				layoutChildren();
 				toggleDraw = !toggleDraw;
-			}
-		}, 1000);
+			}, 1000);
+		}
 	})
 
 	function layoutChildren() {
