@@ -24,7 +24,7 @@
 				children = thing.children;
 				layoutChildren();
 				toggleDraw = !toggleDraw;
-			}, 1000);
+			}, 100);
 		}
 	})
 

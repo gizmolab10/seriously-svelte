@@ -59,7 +59,7 @@ export default class Hierarchy {
 						
 						// already determined that WE DO NOT NEED Unique, we do need it's id now
 
-						await this.relationship_remember_remoteCreate(Datum.newID, idPredicateIsAParentOf,
+						await this.relationship_remember_remoteCreateUnique(Datum.newID, idPredicateIsAParentOf,
 							idRoot, idThing, -1, CreationFlag.getRemoteID)
 					}
 				}
@@ -121,7 +121,7 @@ export default class Hierarchy {
 		const idRelationship = Datum.newID;
 		await this.db?.thing_remoteCreate(child).then(() => { // for everything below, need to await child.id fetched from dbDispatch
 			this.thing_remember(child);
-			this.relationship_remember_remoteCreate(idRelationship, idPredicateIsAParentOf, parent.id,
+			this.relationship_remember_remoteCreateUnique(idRelationship, idPredicateIsAParentOf, parent.id,
 				child.id, child.order, CreationFlag.getRemoteID)
 			.then((relationship) => {
 				orders_normalize_remoteMaybe(parent.children);		// write new order values for relationships
@@ -278,23 +278,28 @@ export default class Hierarchy {
 		}
 	}
 
-	relationship_remember_runtimeCreate(idRelationship: string, idPredicate: string, idFrom: string,
+	relationship_remember_runtimeCreateUnique(idRelationship: string, idPredicate: string, idFrom: string,
 		idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none) {
-		const relationship = new Relationship(idRelationship, idPredicate, idFrom, idTo, order,
-			creationFlag == CreationFlag.isFromRemote);
-		this.relationship_remember(relationship);
+		let relationship = this.relationships_getByIDPredicateFromAndTo(idPredicate, idFrom, idTo);
+		if (!relationship) {
+			relationship = new Relationship(idRelationship, idPredicate, idFrom, idTo, order, creationFlag == CreationFlag.isFromRemote);
+			this.relationship_remember(relationship);
+		}
 		return relationship;
 	}
 
-	async relationship_remember_remoteCreate(idRelationship: string, idPredicate: string, idFrom: string,
+	async relationship_remember_remoteCreateUnique(idRelationship: string, idPredicate: string, idFrom: string,
 		idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none): Promise<any> {
-		const relationship = this.relationship_remember_runtimeCreate(idRelationship, idPredicate, idFrom,
-			idTo, order, creationFlag);
-		await relationship.remoteWrite();
+		let relationship = this.relationships_getByIDPredicateFromAndTo(idPredicate, idFrom, idTo);
+		if (!relationship) {
+			relationship = new Relationship(idRelationship, idPredicate, idFrom, idTo, order, creationFlag == CreationFlag.isFromRemote);
+			this.relationship_remember(relationship);
+			await relationship.remoteWrite();
+		}
 		Promise.resolve(relationship);
 	}
 
-	async relationship_forgets_remoteDeleteAllForThing(thing: Thing) {
+	async relationship_forget_remoteDeleteAllForThing(thing: Thing) {
 		const array = this.knownRs_byIDTo[thing.id];
 		if (array) {
 			for (const relationship of array) {
@@ -309,10 +314,9 @@ export default class Hierarchy {
 		const matches = this.relationships_getByIDPredicateToAndID(idPredicateIsAParentOf, to, idThing);
 		if (matches.length > 0) {
 			const relationship = matches[0];
-			// relationship.log('known');
 			return relationship;
 		}
-		return null;		
+		return null;
 	}
 
 	relationships_getByIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Relationship> {
@@ -327,6 +331,19 @@ export default class Hierarchy {
 			}
 		}
 		return array;
+	}
+
+	relationships_getByIDPredicateFromAndTo(idPredicate: string, idFrom: string, idTo: string): Relationship | null {
+		const idPredicateIsAParentOf = Predicate.idIsAParentOf;
+		const matches = this.relationships_getByIDPredicateToAndID(idPredicateIsAParentOf, false, idFrom);
+		if (Array.isArray(matches)) {
+			for (const relationship of matches) {
+				if (relationship.idTo == idTo) {
+					return relationship;
+				}
+			}
+		}
+		return null;
 	}
 
 	//////////////////////////////////////

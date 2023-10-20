@@ -142,7 +142,7 @@ export default class DBFirebase implements DBInterface {
 						switch (change.type) {
 							case 'added':
 								if (!relationship) {
-									this.hierarchy.relationship_remember_runtimeCreate(id, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote);
+									this.hierarchy.relationship_remember_runtimeCreateUnique(id, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote);
 									this.hierarchy.relationships_refreshKnowns_runtimeRenormalize();
 								}
 								break;
@@ -221,7 +221,7 @@ export default class DBFirebase implements DBInterface {
 			switch (dataKind) {
 				case DataKind.things:			h.thing_remember_runtimeCreate(id, data.title, data.color, data.trait, -1, true, bulkName); break;
 				case DataKind.predicates:		h.predicate_remember_runtimeCreate(id, data.kind); break;
-				case DataKind.relationships:	h.relationship_remember_runtimeCreate(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
+				case DataKind.relationships:	h.relationship_remember_runtimeCreateUnique(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
 			}
 		}
 	}

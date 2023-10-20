@@ -82,12 +82,12 @@ export default class EditorGraph {
 
 	async thing_redraw_remoteAddAsChild(child: Thing, parent: Thing, startEdit: boolean = true) {
 		await this.hierarchy.thing_remoteAddAsChild(child, parent);
-		signal(Signals.childrenOf);
+		signal(Signals.childrenOf, parent.id);
 		child.grabOnly();
 		if (startEdit) {
 			setTimeout(() => {
 				child.startEdit();
-			}, 100);
+			}, 200);
 		}
 	}
 
@@ -170,7 +170,7 @@ export default class EditorGraph {
 						grandparent.becomeHere();
 					}
 					await grabbed.traverse(async (child: Thing): Promise<boolean> => {
-						await h.relationship_forgets_remoteDeleteAllForThing(child);
+						await h.relationship_forget_remoteDeleteAllForThing(child);
 						await h.thing_forget_remoteDelete(child);
 						return false; // continue the traversal
 					});
