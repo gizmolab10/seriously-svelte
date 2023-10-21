@@ -1,20 +1,21 @@
 <script>
-	import { get, noop, Rect, Point, DBType, ZIndex, onMount, PersistID, ButtonID, k, Hierarchy, Thing } from '../../ts/common/GlobalImports'
-	import { dbDispatch, persistLocal, getBrowserType, isMobileDevice, isServerLocal, updateGraphRect } from '../../ts/common/GlobalImports'
-	import { build, dbType, isBusy, idHere, graphRect, popupViewID, thingsArrived } from '../../ts/managers/State';
+	import { k, get, noop, Rect, Point, Thing, DBType, ZIndex, onMount, PersistID, ButtonID, Hierarchy, dbDispatch } from '../../ts/common/GlobalImports'
+	import { persistLocal, getBrowserType, isServerLocal, isMobileDevice, updateGraphRect } from '../../ts/common/GlobalImports'
+	import { dbType, isBusy, idHere, build, graphRect, popupViewID, showDetails, thingsArrived } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import LabelButton from '../kit/LabelButton.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import Graph from '../graph/Graph.svelte';
 	import Help from '../help/Help.svelte';
+	import Details from './Details.svelte';
 	import Crumbs from './Crumbs.svelte';
 	let toggleDraw = false;
 	let here = Thing;
 	let size = 14;
 	
-	function handleBuildsClick(event) { $popupViewID = ButtonID.buildNotes; }
-	function handleClick(id) { $popupViewID = ($popupViewID == id) ? null : id; }
+	function handleHelpClick() { $popupViewID = ($popupViewID == ButtonID.help) ? null : ButtonID.help; }
 	window.addEventListener('resize', (event) => { updateGraphRect(); toggleDraw = !toggleDraw; });
+	function handleBuildsClick(event) { $popupViewID = ButtonID.buildNotes; }
 
 	onMount(async () => {
 		document.title = 'Seriously ('+ (isServerLocal() ? 'local' : 'remote') + ', ' + getBrowserType()  + ', α)';
@@ -26,9 +27,32 @@
 	$: {
 		here = dbDispatch.db.hierarchy.thing_getForID($idHere);
 	}
+	
+	function handleSettings(event) {
+		$showDetails = !$showDetails;
+		persistLocal.writeToKey(PersistID.details, $showDetails);
+	}
 
 </script>
 
+<div class='left-side'
+	style='z-index: {ZIndex.details}; background-color: {k.backgroundColor}'>
+	<CircularButton left=15
+		image='settings.svg'
+		borderColor='white'
+		onClick={handleSettings}/>
+	&nbsp;
+		<button on:click={handleBuildsClick} class='build'>notes</button>
+	{#if !$isBusy}
+		<CircularButton left=85
+			onClick={() => {handleHelpClick()}}
+			label='i'
+			size={size}/>
+	{/if}
+	{#if $showDetails}
+		<Details/>
+	{/if}
+</div>
 <div class='vertical-line'></div>
 <div class='horizontal-line' style='z-index: {ZIndex.top}'></div>
 <div class='right-side'>
@@ -40,22 +64,11 @@
 	{:else if !$thingsArrived}
 		<p>Nothing is available.</p>
 	{:else}
-		<div class='left-side'>
-			<div class='build'>
-				<LabelButton
-					title='build {$build}'
-					onClick={handleBuildsClick}/>
-			</div>
-			<CircularButton left=85
-				onClick={() => {handleClick(ButtonID.help)}}
-				label='i'
-				size={size}/>
-		</div>
 		<div class='top'>
-			<Crumbs here={here}/>
+			<Crumbs/>
 		</div>
-		<div class='title' style='color: {here.color}'>
-			{here.title}
+		<div class='title' style='color: {here?.color}'>
+			{here?.title}
 		</div>
 		{#key toggleDraw}
 			<div class='graph'
@@ -87,6 +100,14 @@
 	div {
 		cursor: default;
 	}
+	.build {
+		top: -2px;
+		left: 26px;
+		cursor: pointer;
+		border: 1px solid;
+		position: absolute;
+		border-radius: 0.5em;
+	}
 	.title {
 		text-align: center;
 		position: fixed;
@@ -94,11 +115,6 @@
 		width: 100%;
 		left: -1px;
 		top: 40px;
-	}
-	.build {
-		position: fixed;
-		top: 6.5px;
-		left: 10px
 	}
 	.right-side {
 		position: fixed;
@@ -131,7 +147,7 @@
 		position: absolute;
 		left: 100px;
 		top: 0px;
-		height: 35px;
+		height: 100%;
 		width: 1px;
 		background-color: lightgray;
 	}

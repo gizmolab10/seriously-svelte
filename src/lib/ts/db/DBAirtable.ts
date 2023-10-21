@@ -8,8 +8,8 @@ import Airtable from 'airtable';
 //		users				//
 //		things				//
 //		access				//
-//		relationships		//
 //		predicates			//
+//		relationships		//
 //							//
 //////////////////////////////
 

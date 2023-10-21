@@ -1,24 +1,26 @@
 <script lang='ts'>
 	import { Thing, Signals, onDestroy, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
-	import { idHere, windowSize } from '../../ts/managers/State';
+	import { idsGrabbed, windowSize } from '../../ts/managers/State';
 	import Crumb from '../kit/Crumb.svelte';
 	let ancestors: Array<Thing> = [];
-	export let here: Thing;
 	let toggleDraw = false;
+	let grab: Thing;
 
 	onDestroy( () => {signalHandler.disconnect(); });
-	const signalHandler = handleSignalOfKind(Signals.childrenOf, (thingID) => { toggleDraw = !toggleDraw; })
+	const signalHandler = handleSignalOfKind(Signals.childrenOf, (thingID) => {
+		toggleDraw = !toggleDraw;
+	})
 
 	$: {
-		if (here == null || $idHere != here.id || ancestors.length == 0) {
+		if ($idsGrabbed || grab == null || ancestors.length == 0) {
 			const h = dbDispatch.db.hierarchy;
-			const thing = h.here;	// start over with new grab
+			const thing = h.grabs.last_thingGrabbed;	// start over with new grab
 			if (thing) {
-				here = thing;
+				grab = thing;
 			}
 		}
-		if (here) {
-			ancestors = here.ancestors($windowSize.width - 50);
+		if (grab) {
+			ancestors = grab.ancestors($windowSize.width - 250);
 			toggleDraw = !toggleDraw;
 		}
 	}

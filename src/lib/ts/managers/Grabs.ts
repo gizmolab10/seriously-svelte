@@ -8,7 +8,7 @@ export default class Grabs {
 	constructor(hierarchy: Hierarchy) {
 		this.hierarchy = hierarchy;
 		idsGrabbed.subscribe((ids: string[] | undefined) => { // executes whenever idsGrabbed changes
-			if (ids && this.hierarchy.db.hasData) {
+			if (ids && this.hierarchy.db && this.hierarchy.db.hasData) {
 				this.grabbed = [];
 				for (const id of ids) {
 					const thing = this.hierarchy.thing_getForID(id)

@@ -15,7 +15,7 @@
 
 	onMount(() => {
 		updateInputWidth();
-		console.log('MOUNT TITLE', thing.id, thing.title);		// prevent reveal dot blinking
+		// console.log('MOUNT TITLE', thing.id, thing.title);		// prevent reveal dot blinking
 	});
 
 	function handleKeyDown(event) {
@@ -45,7 +45,7 @@
 				setTimeout(() => {
 					input?.focus();
 					input?.select();
-					console.log('SELECT');
+					// console.log('SELECT');
 				}, 10);
 			}
 		}

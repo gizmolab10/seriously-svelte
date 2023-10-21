@@ -138,7 +138,7 @@ export default class Thing extends Datum {
 	startEdit() {
 		if (this != this.hierarchy.root) {
 			idEditing.set(this.id);
-			console.log('EDIT', this.id, this.title);
+			// console.log('EDIT', this.id, this.title);
 		}
 	}
 
@@ -173,7 +173,7 @@ export default class Thing extends Datum {
 	}
 
 	ancestors(thresholdWidth: number): Array<Thing> {
-		let thing: Thing = this.firstParent;
+		let thing: Thing = this;
 		let totalWidth = 0;
 		const array = [];
 		while (thing) {

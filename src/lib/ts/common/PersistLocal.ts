@@ -1,4 +1,4 @@
-import { lineGap, expanded, titleFontSize, titleFontFamily, graphOffset, lineStretch, dbLoadTime, dotDiameter } from '../managers/State';
+import { lineGap, expanded, titleFontSize, titleFontFamily, graphOffset, showDetails, lineStretch, dbLoadTime, dotDiameter } from '../managers/State';
 import { Point, dbDispatch } from './GlobalImports'
 
 export enum PersistID {
@@ -6,6 +6,7 @@ export enum PersistID {
 	dotDiameter	= 'dotDiameter',
 	expanded	= 'expanded',
 	fontSize	= 'fontSize',
+	details		= 'details',
 	origin		= 'origin',
 	here		= 'here',
 	font		= 'font',
@@ -23,6 +24,7 @@ class PersistLocal {
 		dbLoadTime.set(null);
 		persistLocal.writeToKey(PersistID.lineStretch, 30);
 		lineGap. set(this.readFromKey(PersistID.gap) ?? 30);
+		showDetails.set(this.readFromKey(PersistID.details) ?? false);
 		dotDiameter.set(this.readFromKey(PersistID.dotDiameter) ?? 14);
 		lineStretch.set(this.readFromKey(PersistID.lineStretch) ?? 25);
 		titleFontFamily.set(this.readFromKey(PersistID.font) ?? 'Arial');
