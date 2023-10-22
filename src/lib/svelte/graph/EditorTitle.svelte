@@ -35,10 +35,9 @@
 
 		if (k.allowTitleEditing) {
 			if ($idEditingStopped == thing.id) {
-				stopEditing();
 				$idEditingStopped = null;
 			} else if ($idEditing != thing.id) {
-				stopEditing();
+				invokeBlurAndDoNotClearEditing();
 			} else if (!isEditing) {
 				isEditing = true;
 				thing.grabOnly();
@@ -51,8 +50,8 @@
 		}
 	}
 
-	function stopAndClearEditing(invokeBlur: boolean = true) {
-		stopEditing(invokeBlur);
+	function stopAndClearEditing() {
+		invokeBlurAndDoNotClearEditing();
 		setTimeout(() => {		// eliminate infinite recursion
 			const id = thing?.id;
 			if (id && $idEditing == id) {				
@@ -61,13 +60,11 @@
 		}, 20);
 	}
 
-	function stopEditing(invokeBlur: boolean = true) {
+	function invokeBlurAndDoNotClearEditing() {
 		if (isEditing) {
 			$idEditingStopped = $idEditing;
 			isEditing = false;
-			if (invokeBlur) {
-				input?.blur();
-			}
+			input?.blur();
 			if (hasChanges() && !thing.isExemplar) {
 				dbDispatch.db.thing_remoteUpdate(thing);
 				originalTitle = thing.title;		// so hasChanges will be correct
@@ -80,11 +77,9 @@
 		if (!k.allowTitleEditing) {
 			input.blur();
 		} else if (!isEditing) {
-			isEditing = true;
+			// isEditing = true;
 			thing.grabOnly()
-			setTimeout(() => {
-				thing?.startEdit();
-			}, 100);
+			thing?.startEdit();
 		}
 	}
 

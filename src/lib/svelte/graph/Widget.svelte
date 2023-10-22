@@ -2,8 +2,8 @@
 	import { k, noop, Thing, Point, ZIndex, onMount, Signals, onDestroy, handleSignalOfKind } from '../../ts/common/GlobalImports';
 	import { idEditing, idsGrabbed } from '../../ts/managers/State';
 	import EditorTitle from './EditorTitle.svelte';
+	export let origin = new Point();
 	import Dot from './Dot.svelte';
-	export let origin = Point;
 	export let thing = Thing;
 	let toggleDraw = false;
 	let isGrabbed = false;

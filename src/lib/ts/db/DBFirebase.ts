@@ -184,7 +184,9 @@ export default class DBFirebase implements DBInterface {
 								if (thing && parentID) {
 									switch (change.type) {
 										case 'modified':
-											this.thing_extractRemote(thing, remote);
+											if (!this.thing_extractChangesFromRemote(thing, remote)) {
+												return;		// do not invoke signal if nothing changed
+											}
 											break;
 										case 'removed': 
 											this.hierarchy.thing_forget(thing);
@@ -305,10 +307,14 @@ export default class DBFirebase implements DBInterface {
 		}
 	}
 
-	thing_extractRemote = (thing: Thing, from: RemoteThing) => {
-		thing.title = from.title;
-		thing.trait = from.trait;
-		thing.color = from.color;
+	thing_extractChangesFromRemote = (thing: Thing, from: RemoteThing) => {
+		const changed = (thing.title != from.title || thing.trait != from.trait || thing.color != from.color)
+		if (changed) {
+			thing.title = from.title;
+			thing.trait = from.trait;
+			thing.color = from.color;
+		}
+		return changed;
 	}
 
 	//////////////////////////////////////
