@@ -26,18 +26,18 @@ export default class Thing extends Datum {
 
 		this.updateColorAttributes();
 
-		idEditing.subscribe((id: string | null) => { // executes whenever idEditing changes
-			const isEditing = (id == this.id);
+		idEditing.subscribe((idEdit: string | null) => {	// executes whenever idEditing changes
+			const isEditing = (idEdit == this.id);
 			if (this.isEditing != isEditing) {
-				this.isEditing = isEditing;
+				this.isEditing  = isEditing;
 				this.updateColorAttributes();
 			}
 		});
 
-		idsGrabbed.subscribe((ids: string[] | undefined) => { // executes whenever idsGrabbed changes
-			const isGrabbed = (ids != undefined) && ids.includes(this.id);
+		idsGrabbed.subscribe((idsGrab: string[] | undefined) => {	// executes whenever idsGrabbed changes
+			const isGrabbed = (idsGrab != undefined) && idsGrab.includes(this.id);
 			if (this.isGrabbed != isGrabbed) {
-				this.isGrabbed = isGrabbed;
+				this.isGrabbed  = isGrabbed;
 				this.updateColorAttributes();
 			}
 		});
@@ -138,7 +138,7 @@ export default class Thing extends Datum {
 	startEdit() {
 		if (this != this.hierarchy.root) {
 			idEditing.set(this.id);
-			console.log('EDIT', this.id, this.title);
+			// console.log('EDIT', this.id, this.title);
 		}
 	}
 

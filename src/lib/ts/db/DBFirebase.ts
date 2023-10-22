@@ -117,7 +117,6 @@ export default class DBFirebase implements DBInterface {
 				snapshot.docChanges().forEach((change) => {	// convert and remember
 					this.remoteHandler(change, dataKind);
 				});
-				signal(Signals.childrenOf);
 			}
 		}
 	)};

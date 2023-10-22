@@ -4,7 +4,9 @@
 	import Widget from './Widget.svelte';
 	export let thing = Thing;
 	let originalTitle = thing.title;
+	let suspendUpdate = false;
 	let isEditing = false;
+	let identifier = '';
 	let wrapper = null;
 	let input = null;
 
@@ -15,6 +17,7 @@
 
 	onMount(() => {
 		updateInputWidth();
+		identifier = '${new Date().getTime()}';
 		// console.log('MOUNT TITLE', thing.id, thing.title);		// prevent reveal dot blinking
 	});
 
@@ -33,34 +36,40 @@
 		// manage edit state //
 		///////////////////////
 
-		if (k.allowTitleEditing) {
+		if (k.allowTitleEditing && !suspendUpdate) {
 			if ($idEditingStopped == thing.id) {
+				console.log('STOPPED', $idEditingStopped, thing.title);
 				$idEditingStopped = null;
+				suspendUpdate = true;
+				setTimeout(() => {
+					suspendUpdate = false;
+				}, 1000);
 			} else if ($idEditing != thing.id) {
-				invokeBlurAndDoNotClearEditing();
+				input?.blur();
 			} else if (!isEditing) {
 				isEditing = true;
 				thing.grabOnly();
+				console.log('EDIT', thing?.title);
 				setTimeout(() => {
 					input?.focus();
 					input?.select();
-					// console.log('SELECT');
+					console.log('SELECT', thing?.title);
 				}, 10);
 			}
 		}
 	}
 
 	function stopAndClearEditing() {
-		invokeBlurAndDoNotClearEditing();
+		invokeBlurNotClearEditing();
 		setTimeout(() => {		// eliminate infinite recursion
 			const id = thing?.id;
-			if (id && $idEditing == id) {				
+			if (id != null && $idEditing == id) {				
 				$idEditing = null;
 			}
 		}, 20);
 	}
 
-	function invokeBlurAndDoNotClearEditing() {
+	function invokeBlurNotClearEditing() {
 		if (isEditing) {
 			$idEditingStopped = $idEditing;
 			isEditing = false;
@@ -68,7 +77,7 @@
 			if (hasChanges() && !thing.isExemplar) {
 				dbDispatch.db.thing_remoteUpdate(thing);
 				originalTitle = thing.title;		// so hasChanges will be correct
-				signal(Signals.childrenOf, thing.firstParent.id); // for crumbs
+				// signal(Signals.childrenOf, thing.firstParent.id); // for crumbs
 			}
 		}
 	}
@@ -77,7 +86,6 @@
 		if (!k.allowTitleEditing) {
 			input.blur();
 		} else if (!isEditing) {
-			// isEditing = true;
 			thing.grabOnly()
 			thing?.startEdit();
 		}
