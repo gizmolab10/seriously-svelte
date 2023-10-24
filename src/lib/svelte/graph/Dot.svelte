@@ -11,7 +11,17 @@
 	let isGrabbed = false;
 	let dot = null;
 
-	onMount( () => { updateColorStyle(); });
+	onMount( () => {
+		updateColorStyle();
+		dot.addEventListener('dblclick', handleDoubleClick);
+	});
+
+	function updateColorStyle() {
+		thing.updateColorAttributes();
+		const buttonFlag = (isReveal && (!thing.isExpanded || isGrabbed));
+		traitColor = thing.revealColor(!isReveal || isGrabbed);
+		buttonColor = thing.revealColor(buttonFlag);
+	}
 
 	$: {
 		const grabbed = $idsGrabbed?.includes(thing.id);
@@ -25,12 +35,11 @@
 		}
 	}
 
-	function updateColorStyle() {
-		thing.updateColorAttributes();
-		const buttonFlag = (isReveal && (!thing.isExpanded || isGrabbed));
-		traitColor = thing.revealColor(!isReveal || isGrabbed);
-		buttonColor = thing.revealColor(buttonFlag);
-	}
+	function handleDoubleClick() {
+		if (!isReveal) {
+			thing.becomeHere();
+		}
+    }
 
 	async function handleClick(event) {
 		if (thing.isExemplar) { return; }

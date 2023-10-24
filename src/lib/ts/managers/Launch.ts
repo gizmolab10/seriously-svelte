@@ -1,4 +1,5 @@
 import { k, noop, dbDispatch, persistLocal, isServerLocal, getBrowserType } from '../common/GlobalImports'
+import { idsGrabbed } from './State';
 
 class Launch {
 
@@ -13,7 +14,7 @@ class Launch {
 
 	applyQueryStrings(params: URLSearchParams) {
 		if (params.get('grabs') === 'erase') {
-			noop();
+			idsGrabbed.set([]);
 		}
 	}
     
