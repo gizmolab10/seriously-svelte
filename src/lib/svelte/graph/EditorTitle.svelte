@@ -4,7 +4,6 @@
 	import Widget from './Widget.svelte';
 	export let thing = Thing;
 	let originalTitle = thing.title;
-	let suspendUpdate = false;
 	let isEditing = false;
 	let identifier = '';
 	let wrapper = null;
@@ -25,6 +24,7 @@
 			switch (event.key) {	
 				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); editorGraph.thing_redraw_remoteAddChildTo(thing.firstParent); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
+				// default:      signal(Signals.childrenOf, thing.id); break;
 			}
 		}
 	}
@@ -35,12 +35,10 @@
 		// manage edit state //
 		///////////////////////
 
-		if (k.allowTitleEditing && !suspendUpdate) {
+		if (k.allowTitleEditing) {
 			if ($idEditingStopped == thing.id) {
-				$idEditingStopped = null;
-				suspendUpdate = true;
 				setTimeout(() => {
-					suspendUpdate = false;
+					$idEditingStopped = null;
 				}, 1000);
 			} else if ($idEditing != thing.id) {
 				input?.blur();
@@ -73,7 +71,7 @@
 			if (hasChanges() && !thing.isExemplar) {
 				dbDispatch.db.thing_remoteUpdate(thing);
 				originalTitle = thing.title;		// so hasChanges will be correct
-				// signal(Signals.childrenOf, thing.firstParent.id); // for crumbs
+				signal(Signals.childrenOf, thing.id);
 			}
 		}
 	}

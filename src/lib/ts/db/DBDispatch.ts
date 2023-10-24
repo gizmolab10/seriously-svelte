@@ -44,7 +44,7 @@ export default class DBDispatch {
 		}
 		this.bulkName = params.get('name') ?? 'Public';
 		const type = params.get('db') ?? persistLocal.readFromKey(PersistID.db) ?? DBType.firebase;
-		dbType.set(type); // invokes cloud setup, which needs bulk name already set (must be above)
+		dbType.set(type);	// invokes cloud setup, which needs bulk name already set (must be above)
 	}
 
 	dbForType(type: string): DBInterface {

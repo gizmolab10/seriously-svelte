@@ -1,5 +1,5 @@
-import { lineGap, expanded, titleFontSize, titleFontFamily, graphOffset, showDetails, lineStretch, dbLoadTime, dotDiameter } from '../managers/State';
-import { Point, dbDispatch } from './GlobalImports'
+import { lineGap, expanded, titleFontSize, titleFontFamily, graphOffset, showDetails, lineStretch, dbLoadTime, dotDiameter } from './State';
+import { Point, dbDispatch } from '../common/GlobalImports'
 
 export enum PersistID {
 	lineStretch = 'lineStretch',

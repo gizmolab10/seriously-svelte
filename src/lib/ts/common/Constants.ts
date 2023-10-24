@@ -1,12 +1,12 @@
 import { noop, dbDispatch, isMobileDevice } from '../../ts/common/GlobalImports'
 
 export default class Constants {
-	public allowHorizontalScrolling: boolean;
-	public graphIsLeftJustified: boolean;
+	public detailsMargin: number;
+	public orderIncrement: number;
+	public leftJustifyGraph: boolean;
 	public allowGraphEditing: boolean;
 	public allowTitleEditing: boolean;
-	public orderIncrement: number;
-	public detailsMargin: number;
+	public allowHorizontalScrolling: boolean;
 	public backgroundColor: string;
 	public highlightColor: string;
 	public defaultTitle: string;
@@ -20,16 +20,9 @@ export default class Constants {
 		this.defaultTitle = 'Please, enter a title';
 		this.lineTitle = '------------------------';
 		this.allowHorizontalScrolling = true;
-		this.graphIsLeftJustified = false;
 		this.allowGraphEditing = true;
 		this.allowTitleEditing = true;
-	}
-
-	setup() {
-		const params = new URLSearchParams(window.location.search);
-		this.graphIsLeftJustified = isMobileDevice();
-		dbDispatch.applyQueryStrings(params);
-		this.applyQueryStrings(params);
+		this.leftJustifyGraph = isMobileDevice();
 	}
 
 	applyQueryStrings(params: URLSearchParams) {
@@ -41,9 +34,6 @@ export default class Constants {
 		}
 		if (params.get('horizontalScrolling') === 'deny') {
 			this.allowHorizontalScrolling = false;
-		}
-		if (params.get('grabs') === 'erase') {
-			noop();
 		}
 	}
 }

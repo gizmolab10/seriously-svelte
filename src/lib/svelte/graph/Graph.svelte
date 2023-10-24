@@ -38,9 +38,8 @@
 		if (here) {
 			const gCenter = $graphRect.center.offsetBy($graphOffset);		// user-determined center
 			const tOffset = here.halfVisibleProgenySize.asPoint.multipliedBy(-1);
-			console.log('HEIGHT:', tOffset.y)
 			let tOrigin = gCenter.offsetBy(new Point(60 - here.halfVisibleProgenyWidth, -78));
-			if (k.graphIsLeftJustified) {
+			if (k.leftJustifyGraph) {
 				tOrigin.x = 25;
 			}
 			triangleOrigin = tOrigin;

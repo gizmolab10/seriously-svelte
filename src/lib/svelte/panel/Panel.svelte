@@ -1,7 +1,7 @@
 <script>
-	import { k, get, noop, Rect, Point, Thing, DBType, ZIndex, onMount, PersistID, ButtonID, Hierarchy, dbDispatch } from '../../ts/common/GlobalImports'
-	import { persistLocal, getBrowserType, isServerLocal, isMobileDevice, updateGraphRect } from '../../ts/common/GlobalImports'
+	import { k, get, noop, Rect, Point, Thing, launch, DBType, ZIndex, onMount, PersistID, dbDispatch } from '../../ts/common/GlobalImports'
 	import { dbType, isBusy, idHere, build, graphRect, popupViewID, showDetails, thingsArrived } from '../../ts/managers/State';
+	import { ButtonID, Hierarchy, persistLocal, updateGraphRect } from '../../ts/common/GlobalImports'
 	import CircularButton from '../kit/CircularButton.svelte';
 	import LabelButton from '../kit/LabelButton.svelte';
 	import BuildNotes from './BuildNotes.svelte';
@@ -16,17 +16,12 @@
 	function handleBuildsClick(event) { $popupViewID = ($popupViewID == ButtonID.buildNotes) ? null : ButtonID.buildNotes; }
 	function handleHelpClick() { $popupViewID = ($popupViewID == ButtonID.help) ? null : ButtonID.help; }
 	window.addEventListener('resize', (event) => { updateGraphRect(); toggleDraw = !toggleDraw; });
-
+	$: { here = dbDispatch.db.hierarchy.thing_getForID($idHere); }
+	
 	onMount(async () => {
-		document.title = 'Seriously ('+ (isServerLocal() ? 'local' : 'remote') + ', ' + getBrowserType()  + ', α)';
+		launch.setup();
 		updateGraphRect();
-		persistLocal.restore();
-		k.setup();
 	})
-
-	$: {
-		here = dbDispatch.db.hierarchy.thing_getForID($idHere);
-	}
 	
 	function handleSettings(event) {
 		$showDetails = !$showDetails;
@@ -46,8 +41,7 @@
 			image='settings.svg'
 			borderColor='white'
 			onClick={handleSettings}/>
-		&nbsp;
-			<button on:click={handleBuildsClick} class='build'>notes</button>
+			<button on:click={handleBuildsClick} class='build' style='width: 47px;'>v: {$build}</button>
 		{#if !$isBusy}
 			<CircularButton left=85
 				onClick={() => {handleHelpClick()}}
@@ -59,7 +53,7 @@
 		{/if}
 	</div>
 </div>
-<div class='horizontal-line' style='z-index: {ZIndex.frontmost}; left: -10px; top: 32px;'></div>
+<div class='horizontal-line' style='z-index: {ZIndex.frontmost}; left: -10px; top: 32px; width: {$popupViewID ? '111px' : '110%'};'></div>
 <div class='vertical-line' style='height: {$showDetails ? '100%' : '33px'}; z-index: {ZIndex.frontmost};'></div>
 <div class='right-side' style='left: {$showDetails ? k.detailsMargin : 0}px; z-index: {ZIndex.base};'>
 	{#if $isBusy}
@@ -70,30 +64,30 @@
 	{:else if !$thingsArrived}
 		<p>Nothing is available.</p>
 	{:else}
-		<div class='top' style='z-index: {ZIndex.frontmost}'>
-			<Crumbs/>
-		</div>
-		<div class='title' style='color: {here?.color}; z-index: {ZIndex.frontmost}'>
-			{here?.title}
-		</div>
-		<div class='horizontal-line' style='z-index: {ZIndex.frontmost}; left: {$showDetails ? k.detailsMargin : 0}px; top: 85px;'></div>
 		{#if $popupViewID == null}
-		{#key toggleDraw}
-			<div class='graph'
-				style='
-					overflow: hidden;
-					z-index: {ZIndex.base};
-					top: {$graphRect.origin.y}px;
-					left: {$graphRect.origin.x}px;
-					width: {$graphRect.size.width}px;
-					height: {$graphRect.size.height}px;'
-				on:keyup={noop()}
-				on:keydown={noop()}
-				on:keypress={noop()}
-				on:click={() => { $popupViewID = null; }}>
-				<Graph/>
+			<div class='top' style='z-index: {ZIndex.frontmost}'>
+				<Crumbs/>
 			</div>
-		{/key}
+			<div class='title' style='color: {here?.color}; z-index: {ZIndex.frontmost}'>
+				{here?.title}
+			</div>
+			<div class='horizontal-line' style='z-index: {ZIndex.frontmost}; left: {$showDetails ? k.detailsMargin : 0}px; top: 85px;'></div>
+			{#key toggleDraw}
+				<div class='graph'
+					style='
+						overflow: hidden;
+						z-index: {ZIndex.base};
+						top: {$graphRect.origin.y}px;
+						left: {$graphRect.origin.x}px;
+						width: {$graphRect.size.width}px;
+						height: {$graphRect.size.height}px;'
+					on:keyup={noop()}
+					on:keydown={noop()}
+					on:keypress={noop()}
+					on:click={() => { $popupViewID = null; }}>
+					<Graph/>
+				</div>
+			{/key}
 		{:else if $popupViewID == ButtonID.help}
 			<Help size={size}/>
 		{:else if $popupViewID == ButtonID.buildNotes}

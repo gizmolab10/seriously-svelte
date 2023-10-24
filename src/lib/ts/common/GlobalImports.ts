@@ -2,12 +2,13 @@ import { log, noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject,
 import { ZIndex, ButtonID, BrowserType, CreationFlag, LineCurveType } from './Enumerations';
 import { Point, Size, Rect, LineRect, updateGraphRect } from '../geometry/Geometry';
 import { FatTrianglePath, Direction } from '../geometry/FatTrianglePath';
+import { PersistID, persistLocal } from '../managers/PersistLocal';
 import { signal, Signals, handleSignalOfKind } from './Signals';
-import { PersistID, persistLocal } from './PersistLocal';
 import { editorGraph } from '../managers/EditorGraph';
 import { DBType, DataKind } from '../db/DBInterface';
 import { dbDispatch } from '../db/DBDispatch';
 import { onMount, onDestroy } from 'svelte';
+import { launch } from '../managers/Launch';
 import { get } from 'svelte/store';
 import { builds } from './Builds';
 import { k } from './Constants';
@@ -24,7 +25,7 @@ import Datum from '../data/Datum';
 import User from '../data/User';
 
 export {
-	k, builds,
+	k, builds, launch,
 	PersistID, persistLocal,
 	get, onMount, onDestroy,
 	FatTrianglePath, Direction,
