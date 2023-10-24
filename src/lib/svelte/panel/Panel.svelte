@@ -35,7 +35,12 @@
 
 </script>
 
-<div class='left-side' style='z-index: {ZIndex.frontmost}; background-color: {k.backgroundColor}'>
+<div class='left-side'
+	style='
+		z-index: {ZIndex.frontmost}; 
+		background-color: {k.backgroundColor};
+		height: {$showDetails ? '100%' : '33px'};
+		'>
 	<CircularButton left=15
 		image='settings.svg'
 		borderColor='white'
@@ -52,9 +57,9 @@
 		<Details/>
 	{/if}
 </div>
-<div class='vertical-line'></div>
+<div class='vertical-line' style='height: {$showDetails ? '100%' : '33px'};'></div>
 <div class='horizontal-line' style='z-index: {ZIndex.frontmost}'></div>
-<div class='right-side'>
+<div class='right-side' style='left: {$showDetails ? '101' : '0'}px;'>
 	{#if $isBusy}
 		<p>Welcome to Seriously</p>
 		{#if $dbType != DBType.local}
@@ -93,19 +98,18 @@
 </div>
 
 <style>
+	div {
+		cursor: default;
+	}
 	.graph {
 		position: absolute;
 	}
-	div {
-		cursor: default;
+	.right-side {
+		position: fixed;
 	}
 	p {
 		text-align: center;
 		font-size: 3em;
-	}
-	.right-side {
-		position: fixed;
-		left: 101px;
 	}
 	.top {
 		position: fixed;
@@ -130,7 +134,6 @@
 	}
 	.left-side {
 		position: fixed;
-		height: 100%;
 		width: 100px;
 		margin: 1px;
 		left: -1px;
@@ -147,7 +150,6 @@
 		position: absolute;
 		left: 100px;
 		top: 0px;
-		height: 100%;
 		width: 1px;
 		background-color: lightgray;
 	}
