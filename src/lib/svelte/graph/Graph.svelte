@@ -38,8 +38,9 @@
 		if (here) {
 			const gCenter = $graphRect.center.offsetBy($graphOffset);		// user-determined center
 			const tOffset = here.halfVisibleProgenySize.asPoint.multipliedBy(-1);
-			let tOrigin = gCenter.offsetBy(new Point(-here.visibleProgenyWidth * 0.69, -20));
-			if (!k.graphIsCentered) {
+			console.log('HEIGHT:', tOffset.y)
+			let tOrigin = gCenter.offsetBy(new Point(60 - here.halfVisibleProgenyWidth, -78));
+			if (k.graphIsLeftJustified) {
 				tOrigin.x = 25;
 			}
 			triangleOrigin = tOrigin;
@@ -52,7 +53,7 @@
 			here = dbDispatch.db.hierarchy.thing_getForID($idHere);
 			updateOrigins();
 		}
-		if (here) { // can sometimes be null !!!!!! ????????
+		if (here) { // can sometimes be null TODO: WHY?
 			let grabbed = $idsGrabbed.includes(here.id);
 			if (grabbed != isGrabbed) {
 				isGrabbed = grabbed;

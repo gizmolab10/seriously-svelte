@@ -13,9 +13,9 @@
 	let here = Thing;
 	let size = 14;
 	
+	function handleBuildsClick(event) { $popupViewID = ($popupViewID == ButtonID.buildNotes) ? null : ButtonID.buildNotes; }
 	function handleHelpClick() { $popupViewID = ($popupViewID == ButtonID.help) ? null : ButtonID.help; }
 	window.addEventListener('resize', (event) => { updateGraphRect(); toggleDraw = !toggleDraw; });
-	function handleBuildsClick(event) { $popupViewID = ButtonID.buildNotes; }
 
 	onMount(async () => {
 		document.title = 'Seriously ('+ (isServerLocal() ? 'local' : 'remote') + ', ' + getBrowserType()  + ', α)';
@@ -41,21 +41,23 @@
 		background-color: {k.backgroundColor};
 		height: {$showDetails ? '100%' : '33px'};
 		'>
-	<CircularButton left=15
-		image='settings.svg'
-		borderColor='white'
-		onClick={handleSettings}/>
-	&nbsp;
-		<button on:click={handleBuildsClick} class='build'>notes</button>
-	{#if !$isBusy}
-		<CircularButton left=85
-			onClick={() => {handleHelpClick()}}
-			label='i'
-			size={size}/>
-	{/if}
-	{#if $showDetails}
-		<Details/>
-	{/if}
+	<div style='position: absolute; top: 8px;'>
+		<CircularButton left=15
+			image='settings.svg'
+			borderColor='white'
+			onClick={handleSettings}/>
+		&nbsp;
+			<button on:click={handleBuildsClick} class='build'>notes</button>
+		{#if !$isBusy}
+			<CircularButton left=85
+				onClick={() => {handleHelpClick()}}
+				label='i'
+				size={size}/>
+		{/if}
+		{#if $showDetails}
+			<Details/>
+		{/if}
+	</div>
 </div>
 <div class='horizontal-line' style='z-index: {ZIndex.frontmost}; left: -10px; top: 32px;'></div>
 <div class='vertical-line' style='height: {$showDetails ? '100%' : '33px'}; z-index: {ZIndex.frontmost};'></div>
@@ -141,6 +143,7 @@
 		width: 100px;
 		margin: 1px;
 		left: -1px;
+		top: -1px;
 	}
 	.horizontal-line {
 		position: fixed;
