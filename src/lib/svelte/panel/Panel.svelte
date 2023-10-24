@@ -35,8 +35,7 @@
 
 </script>
 
-<div class='left-side'
-	style='z-index: {ZIndex.details}; background-color: {k.backgroundColor}'>
+<div class='left-side' style='z-index: {ZIndex.frontmost}; background-color: {k.backgroundColor}'>
 	<CircularButton left=15
 		image='settings.svg'
 		borderColor='white'
@@ -54,7 +53,7 @@
 	{/if}
 </div>
 <div class='vertical-line'></div>
-<div class='horizontal-line' style='z-index: {ZIndex.top}'></div>
+<div class='horizontal-line' style='z-index: {ZIndex.frontmost}'></div>
 <div class='right-side'>
 	{#if $isBusy}
 		<p>Welcome to Seriously</p>
@@ -64,15 +63,16 @@
 	{:else if !$thingsArrived}
 		<p>Nothing is available.</p>
 	{:else}
-		<div class='top'>
+		<div class='top' style='z-index: {ZIndex.frontmost}'>
 			<Crumbs/>
 		</div>
-		<div class='title' style='color: {here?.color}'>
+		<div class='title' style='color: {here?.color}; z-index: {ZIndex.frontmost}'>
 			{here?.title}
 		</div>
 		{#key toggleDraw}
 			<div class='graph'
 				style='
+					z-index: {ZIndex.base};
 					top: {$graphRect.origin.y}px;
 					left: {$graphRect.origin.x}px;
 					width: {$graphRect.size.width}px;
@@ -93,12 +93,24 @@
 </div>
 
 <style>
+	.graph {
+		position: absolute;
+	}
+	div {
+		cursor: default;
+	}
 	p {
 		text-align: center;
 		font-size: 3em;
 	}
-	div {
-		cursor: default;
+	.right-side {
+		position: fixed;
+		left: 101px;
+	}
+	.top {
+		position: fixed;
+		left: 110px;
+		top: 6px;
 	}
 	.build {
 		top: -2px;
@@ -116,24 +128,12 @@
 		left: -1px;
 		top: 40px;
 	}
-	.right-side {
-		position: fixed;
-		left: 101px;
-	}
 	.left-side {
 		position: fixed;
 		height: 100%;
 		width: 100px;
 		margin: 1px;
 		left: -1px;
-	}
-	.top {
-		position: fixed;
-		left: 110px;
-		top: 6px;
-	}
-	.graph {
-		position: fixed;
 	}
 	.horizontal-line {
 		position: absolute;

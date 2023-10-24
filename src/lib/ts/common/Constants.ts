@@ -1,4 +1,4 @@
-import { dbDispatch, isMobileDevice } from '../../ts/common/GlobalImports'
+import { noop, dbDispatch, isMobileDevice } from '../../ts/common/GlobalImports'
 
 export default class Constants {
 	public allowHorizontalScrolling: boolean;
@@ -39,6 +39,9 @@ export default class Constants {
 		}
 		if (params.get('horizontalScrolling') === 'deny') {
 			this.allowHorizontalScrolling = false;
+		}
+		if (params.get('grabs') === 'erase') {
+			noop();
 		}
 	}
 }

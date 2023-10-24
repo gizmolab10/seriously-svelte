@@ -39,7 +39,7 @@ export default class DBDispatch {
 	}
 
 	applyQueryStrings(params: URLSearchParams) {
-		if (params.get('erase') === 'db') {
+		if (params.get('data') === 'erase') {
 			this.eraseDB = true;
 		}
 		this.bulkName = params.get('name') ?? 'Public';

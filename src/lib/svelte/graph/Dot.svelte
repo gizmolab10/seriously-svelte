@@ -61,7 +61,7 @@
 	style='{placement}
 		width:{$dotDiameter}px;
 		height:{$dotDiameter}px;
-		z-index: {ZIndex.text};
+		z-index: {ZIndex.dots};
 		background-color: {buttonColor};
 		border-color: {dotColor};
 		color: {traitColor};'>

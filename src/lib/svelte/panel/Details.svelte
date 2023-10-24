@@ -1,5 +1,5 @@
 <script>
-	import { DBType, PersistID, onMount, ButtonID, Hierarchy, dbDispatch, persistLocal } from '../../ts/common/GlobalImports';
+	import { DBType, ZIndex, PersistID, onMount, ButtonID, Hierarchy, dbDispatch, persistLocal } from '../../ts/common/GlobalImports';
 	import { build, dbType, isBusy, dbLoadTime, popupViewID } from '../../ts/managers/State';
 	import RadioButtons from '../kit/RadioButtons.svelte'
 	import LabelButton from '../kit/LabelButton.svelte';
@@ -15,8 +15,8 @@
 
 </script>
 
-<div class='modal-overlay'>
-	<div class='modal-content'>
+<div class='modal-overlay' style='z-index: {ZIndex.frontmost};'>
+	<div class='modal-content' style='z-index: {ZIndex.frontmost};'>
 		<RadioButtons menuItems={menuItems} idSelected={$dbType}/>
 		<br>
 		{#if $dbLoadTime}
