@@ -107,6 +107,7 @@
 	</span>
 	<input
 		type='text'
+		name='title'
 		bind:this={input}
 		on:blur={handleBlur}
 		on:focus={handleFocus}

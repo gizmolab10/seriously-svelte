@@ -103,7 +103,7 @@
 	.buttons-container {
 		gap: 15px;
 		display: flex;
-		margin-top: 20px;
+		margin-top: 10px;
 		margin-bottom: 20px;
 		justify-content: center;
 	}

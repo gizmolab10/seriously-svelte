@@ -1,5 +1,4 @@
 import { graphRect, windowSize } from "../managers/State";
-import { get } from "../common/GlobalImports";
 
 export class Point {
 	x: number;

@@ -1,11 +1,12 @@
 <script>
+	import { Point } from "../../ts/common/GlobalImports";
 	import { exemplar } from '../../ts/data/Exemplar';
 	import Widget from '../graph/Widget.svelte';
 </script>
 
 <div>
 	<div class='centered-container'>
-		<Widget thing={exemplar}/>
+		<Widget thing={exemplar} origin={new Point(150, 5)}/>
 	</div>
 	<br>
 	<br>

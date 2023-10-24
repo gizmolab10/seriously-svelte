@@ -36,7 +36,7 @@
 	.horizontal-line {
 		position: absolute;
 		left: 10px;
-		top: 145px;
+		top: 138px;
 		height: 1px;
 		width: 96%;
 		background-color: lightgray;
