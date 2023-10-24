@@ -13,9 +13,9 @@
 </script>
 
 <svelte:document on:keydown={handleKeyDown} />
-<div class="modal-overlay">
-	<div class="modal-content">
-		<div class="close-button" style='
+<div class='modal-overlay'>
+	<div class='modal-content'>
+		<div class='close-button' style='
 			width: {size}px;
 			height: {size}px;
 			font-size: {size - 1}px;;

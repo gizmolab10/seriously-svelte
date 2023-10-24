@@ -71,7 +71,7 @@ export class LineRect extends Rect {
 };
 
 export function updateGraphRect() {
-	const graphOrigin = new Point(0, 78);						// height of top, width of left
+	const graphOrigin = new Point(0, 85);						// height of top, width of left
 	const sizeShrink = graphOrigin.asSize.multipliedBy(-1);
 	const newWindowSize = new Size(window.innerWidth, window.innerHeight);
 	const graphSize = newWindowSize.expandedBy(sizeShrink);		// remove top and left

@@ -6,12 +6,14 @@ export default class Constants {
 	public allowTitleEditing: boolean;
 	public graphIsCentered: boolean;
 	public orderIncrement: number;
+	public detailsMargin: number;
 	public backgroundColor: string;
 	public highlightColor: string;
 	public defaultTitle: string;
 	public lineTitle: string;
 
 	constructor() {
+		this.detailsMargin = 101;
 		this.orderIncrement = 0.5;
 		this.backgroundColor = 'white';
 		this.highlightColor = '#9e7daa';

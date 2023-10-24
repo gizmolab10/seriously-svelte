@@ -57,9 +57,9 @@
 		<Details/>
 	{/if}
 </div>
-<div class='vertical-line' style='height: {$showDetails ? '100%' : '33px'};'></div>
-<div class='horizontal-line' style='z-index: {ZIndex.frontmost}'></div>
-<div class='right-side' style='left: {$showDetails ? '101' : '0'}px;'>
+<div class='horizontal-line' style='z-index: {ZIndex.frontmost}; left: -10px; top: 32px;'></div>
+<div class='vertical-line' style='height: {$showDetails ? '100%' : '33px'}; z-index: {ZIndex.frontmost};'></div>
+<div class='right-side' style='left: {$showDetails ? k.detailsMargin : 0}px; z-index: {ZIndex.base};'>
 	{#if $isBusy}
 		<p>Welcome to Seriously</p>
 		{#if $dbType != DBType.local}
@@ -74,9 +74,12 @@
 		<div class='title' style='color: {here?.color}; z-index: {ZIndex.frontmost}'>
 			{here?.title}
 		</div>
+		<div class='horizontal-line' style='z-index: {ZIndex.frontmost}; left: {$showDetails ? k.detailsMargin : 0}px; top: 85px;'></div>
+		{#if $popupViewID == null}
 		{#key toggleDraw}
 			<div class='graph'
 				style='
+					overflow: hidden;
 					z-index: {ZIndex.base};
 					top: {$graphRect.origin.y}px;
 					left: {$graphRect.origin.x}px;
@@ -89,11 +92,11 @@
 				<Graph/>
 			</div>
 		{/key}
-	{/if}
-	{#if $popupViewID == ButtonID.help}
-		<Help size={size}/>
-	{:else if $popupViewID == ButtonID.buildNotes}
-		<BuildNotes/>
+		{:else if $popupViewID == ButtonID.help}
+			<Help size={size}/>
+		{:else if $popupViewID == ButtonID.buildNotes}
+			<BuildNotes/>
+		{/if}
 	{/if}
 </div>
 
@@ -102,7 +105,7 @@
 		cursor: default;
 	}
 	.graph {
-		position: absolute;
+		position: fixed;
 	}
 	.right-side {
 		position: fixed;
@@ -139,11 +142,9 @@
 		left: -1px;
 	}
 	.horizontal-line {
-		position: absolute;
-		left: -10px;
-		top: 32px;
+		position: fixed;
 		height: 1px;
-		width: 100%;
+		width: 110%;
 		background-color: lightgray;
 	}
 	.vertical-line {

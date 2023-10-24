@@ -34,4 +34,5 @@ export enum ZIndex {
 	text		= baseZIndex + 30,
 	dots		= baseZIndex + 40,
 	frontmost	= baseZIndex + 50,
+	overlay		= baseZIndex + 60,
 }
