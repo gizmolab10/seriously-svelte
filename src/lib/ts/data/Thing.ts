@@ -138,7 +138,6 @@ export default class Thing extends Datum {
 	startEdit() {
 		if (this != this.hierarchy.root) {
 			idEditing.set(this.id);
-			// console.log('EDIT', this.id, this.title);
 		}
 	}
 

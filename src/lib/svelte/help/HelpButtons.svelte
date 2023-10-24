@@ -2,27 +2,41 @@
 	import { onMount } from 'svelte';
 
 	let dots;
+	let edit;
 	let focus;
 	let browse;
 	let selection;
 	let dotsTitle = '';
+	let editTitle = '';
 	let focusTitle = '';
 	let browseTitle = '';
 	let selectionTitle = '';
 	let showingDots = false;
+	let showingEdit = false;
 	let showingFocus = false;
 	let showingBrowse = false;
 	let showingSelection = true;
 
 	const updateTitles = () => {
 		dotsTitle = showingDots ? 'How the <b>Dots</b> work' : 'Dots';
+		editTitle = showingEdit ? 'How to <b>Edit</b> an item' : 'Edit';
 		focusTitle = showingFocus ? 'Changing the <b>Focus</b>' : 'Focus';
-		browseTitle = showingBrowse ? '<b>Browsing</b> (changing which item is <b>selected</b>)' : 'Browse';
+		browseTitle = showingBrowse ? '<b>Browsing</b> to a nearby item' : 'Browse';
 		selectionTitle = showingSelection ? 'When a item is <b>selected</b>' : 'Select';
 	}
 
 	const showDots = () => {
 		showingDots = true;
+		showingEdit = false;
+		showingFocus = false;
+		showingBrowse = false;
+		showingSelection = false;
+		updateTitles();
+	};
+
+	const showEdit = () => {
+		showingDots = false;
+		showingEdit = true;
 		showingFocus = false;
 		showingBrowse = false;
 		showingSelection = false;
@@ -31,6 +45,7 @@
 	
 	const showSelection = () => {
 		showingDots = false;
+		showingEdit = false;
 		showingFocus = false;
 		showingBrowse = false;
 		showingSelection = true;
@@ -39,6 +54,7 @@
 	
 	const showFocus = () => {
 		showingDots = false;
+		showingEdit = false;
 		showingFocus = true;
 		showingBrowse = false;
 		showingSelection = false;
@@ -47,6 +63,7 @@
 
 	const showBrowse = () => {
 		showingDots = false;
+		showingEdit = false;
 		showingFocus = false;
 		showingBrowse = true;
 		showingSelection = false;
@@ -56,6 +73,9 @@
 	onMount(() => {
 		import('/src/lib/svelte/help/HelpDots.svelte').then(module => {
 			dots = module.default;
+		});
+		import('/src/lib/svelte/help/HelpEdit.svelte').then(module => {
+			edit = module.default;
 		});
 		import('/src/lib/svelte/help/HelpFocus.svelte').then(module => {
 			focus = module.default;
@@ -74,6 +94,7 @@
 	<button class:selected={showingSelection} on:click={showSelection}>{@html selectionTitle}</button>
 	<button class:selected={showingBrowse} on:click={showBrowse}>{@html browseTitle}</button>
 	<button class:selected={showingFocus} on:click={showFocus}>{@html focusTitle}</button>
+	<button class:selected={showingEdit} on:click={showEdit}>{@html editTitle}</button>
 	<button class:selected={showingDots} on:click={showDots}>{@html dotsTitle}</button>
 </div>
 {#if showingSelection && selection}
@@ -82,11 +103,14 @@
 {#if showingBrowse && browse}
 	<svelte:component this={browse} />
 {/if}
-{#if showingDots && dots}
-	<svelte:component this={dots} />
-{/if}
 {#if showingFocus && focus}
 	<svelte:component this={focus} />
+{/if}
+{#if showingEdit && edit}
+	<svelte:component this={edit} />
+{/if}
+{#if showingDots && dots}
+	<svelte:component this={dots} />
 {/if}
 
 <style>

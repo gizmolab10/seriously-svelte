@@ -18,7 +18,6 @@
 	onMount(() => {
 		updateInputWidth();
 		identifier = '${new Date().getTime()}';
-		// console.log('MOUNT TITLE', thing.id, thing.title);		// prevent reveal dot blinking
 	});
 
 	function handleKeyDown(event) {
@@ -38,7 +37,6 @@
 
 		if (k.allowTitleEditing && !suspendUpdate) {
 			if ($idEditingStopped == thing.id) {
-				console.log('STOPPED', $idEditingStopped, thing.title);
 				$idEditingStopped = null;
 				suspendUpdate = true;
 				setTimeout(() => {
@@ -49,11 +47,9 @@
 			} else if (!isEditing) {
 				isEditing = true;
 				thing.grabOnly();
-				console.log('EDIT', thing?.title);
 				setTimeout(() => {
 					input?.focus();
 					input?.select();
-					console.log('SELECT', thing?.title);
 				}, 10);
 			}
 		}

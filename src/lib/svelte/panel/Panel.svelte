@@ -113,6 +113,7 @@
 	p {
 		text-align: center;
 		font-size: 3em;
+		width: 100%;
 	}
 	.top {
 		position: fixed;

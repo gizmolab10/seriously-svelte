@@ -5,11 +5,7 @@
 	function handleClick(event) {
 		if (dbDispatch.db.hasData) {
 			thing.grabOnly();
-			if (thing == dbDispatch.db.hierarchy.root) {
-				thing.becomeHere();
-			} else {
-				thing.firstParent.becomeHere();
-			}
+			thing.becomeHere();
 		}
 	}
 
