@@ -18,6 +18,6 @@
 		color: {thing.color};
 		border-radius: 0.5em;
 		shadow: 2.0px;
-		cursor: pointer;'>
+		cursor: {thing.hasChildren ? 'pointer' : 'normal'};'>
 	{thing.title.injectElipsisAt()}
 </button>
