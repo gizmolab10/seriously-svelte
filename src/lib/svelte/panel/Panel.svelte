@@ -41,7 +41,7 @@
 			image='settings.svg'
 			borderColor='white'
 			onClick={handleSettings}/>
-			<button on:click={handleBuildsClick} class='build' style='width: 47px;'>v: {$build}</button>
+			<button on:click={handleBuildsClick} class='build' style='width: 47px;'>{$build}</button>
 		{#if !$isBusy}
 			<CircularButton left=85
 				onClick={() => {handleHelpClick()}}
