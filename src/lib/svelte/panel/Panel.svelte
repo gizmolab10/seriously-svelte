@@ -41,7 +41,7 @@
 			image='settings.svg'
 			borderColor='white'
 			onClick={handleSettings}/>
-			<button on:click={handleBuildsClick} class='build' style='width: 47px;'>{$build}</button>
+			<button class='build' on:click={handleBuildsClick}>{$build}</button>
 		{#if !$isBusy}
 			<CircularButton left=85
 				onClick={() => {handleHelpClick()}}
@@ -118,11 +118,11 @@
 	}
 	.build {
 		top: -2px;
-		left: 26px;
+		left: 35px;
 		cursor: pointer;
 		border: 1px solid;
 		position: absolute;
-		border-radius: 0.5em;
+		border-radius: 16px;
 	}
 	.title {
 		text-align: center;

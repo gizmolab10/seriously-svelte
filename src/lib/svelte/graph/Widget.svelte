@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import { k, noop, Thing, Point, ZIndex, onMount, Signals, onDestroy, handleSignalOfKind } from '../../ts/common/GlobalImports';
 	import { idEditing, idsGrabbed } from '../../ts/managers/State';
+	import RevealCluster from './RevealCluster.svelte';
 	import EditorTitle from './EditorTitle.svelte';
 	export let origin = new Point();
 	import Dot from './Dot.svelte';
@@ -48,7 +49,7 @@
 			{border};'>
 		<Dot thing={thing}/>&nbsp;<EditorTitle thing={thing}/>
 		{#if thing.hasChildren || thing.isBulkAlias}
-			<Dot thing={thing} isReveal={true}/>
+			<RevealCluster thing={thing}/>
 		{/if}
 	</div>
 {/key}

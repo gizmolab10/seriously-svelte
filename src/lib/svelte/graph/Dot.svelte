@@ -3,18 +3,24 @@
 	import { idsGrabbed, dotDiameter } from '../../ts/managers/State';
 	export let isReveal = false;
 	export let thing = Thing;
-	let placement = 'left: 5px; top: 4px;' // tiny browser compensation
+    export let title = '';
+	const doubleClickThreshold = 200;				// one fifth of a second
+	const longClickThreshold = 500;
 	const browserType = getBrowserType();
+	const dotColor = thing.color;
 	let buttonColor = thing.color;
 	let traitColor = thing.color;
-	const dotColor = thing.color;
+	let placement = 'left: 5px; top: 4px;'			// tiny browser compensation
 	let isGrabbed = false;
+	let clickCount = 0;
+	let clickTimer;
 	let dot = null;
 
-	onMount( () => {
-		updateColorStyle();
-		dot.addEventListener('dblclick', handleDoubleClick);
-	});
+	onMount( () => { updateColorStyle(); });
+	function handleMouseUp() { clearTimeout(clickTimer); }
+	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right-
+	function handleMouseOut(event) { dot.style.backgroundColor=buttonColor; }
+	function handleMouseOver(event) { dot.style.backgroundColor=traitColor; }
 
 	function updateColorStyle() {
 		thing.updateColorAttributes();
@@ -35,11 +41,31 @@
 		}
 	}
 
-	function handleDoubleClick() {
-		if (!isReveal) {
-			thing.becomeHere();
-		}
+	function handleLongClick(event) {
+		clearTimeout(clickTimer); // Clear any previous timers
+		clickCount = 0;
+		clickTimer = setTimeout(() => {
+			if (!isReveal ) {
+				thing.becomeHere();
+			}
+		}, longClickThreshold);
+	}
+
+	function handleDoubleClick(event) {
+		clearTimeout(clickTimer);
+		clickCount = 0;
     }
+
+	function handleSingleClick(event) {
+		clickCount++;
+
+		clickTimer = setTimeout(() => {
+			if (clickCount === 1) {
+				handleClick(event);
+			}
+			clickCount = 0;
+		}, doubleClickThreshold);
+	}
 
 	async function handleClick(event) {
 		if (thing.isExemplar) { return; }
@@ -64,9 +90,13 @@
 	on:blur={noop()}
 	on:focus={noop()}
 	on:keypress={noop()}
-	on:click={handleClick}
-	on:mouseover={dot.style.backgroundColor=traitColor}
-	on:mouseout={dot.style.backgroundColor=buttonColor}
+	on:mouseup={handleMouseUp}
+    on:click={handleSingleClick}
+	on:mouseout={handleMouseOut}
+	on:mouseover={handleMouseOver}
+    on:mousedown={handleLongClick}
+    on:dblclick={handleDoubleClick}
+    on:contextmenu={handleContextMenu}
 	style='{placement}
 		width:{$dotDiameter}px;
 		height:{$dotDiameter}px;
