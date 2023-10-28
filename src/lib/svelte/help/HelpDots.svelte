@@ -1,7 +1,7 @@
 <script>
 	import { Point } from "../../ts/common/GlobalImports";
 	import { exemplar } from '../../ts/data/Exemplar';
-	import Widget from '../graph/Widget.svelte';
+	import Widget from '../widget/Widget.svelte';
 
 	export function title(isSelected) {
 		return isSelected ? 'How the <b>Dots</b> work' : 'Dots';
