@@ -1,5 +1,5 @@
 <script>
-	import { noop, Thing, ZIndex, k, dbDispatch, graphEditor, FatTrianglePath } from "../../ts/common/GlobalImports";
+	import { k, noop, Thing, ZIndex, dbDispatch, graphEditor, FatTrianglePath } from "../../ts/common/GlobalImports";
 	import { dotDiameter } from '../../ts/managers/State';
 	const path = (new FatTrianglePath($dotDiameter + 2, 0)).path;
 	export let origin = new Point($dotDiameter, 20);
@@ -33,9 +33,9 @@
 	'>
 	<svg width='20'
 		height='20'
-		viewbox='0 0 20 20'
 		on:blur={noop()}
 		on:focus={noop()}
+		viewbox='0 0 20 20'
 		on:mouseout={mouseout}
 		on:mouseover={mouseOver}
 		style='position: absolute; left: 5px; top: 6px; z-index: {ZIndex.dots};'>

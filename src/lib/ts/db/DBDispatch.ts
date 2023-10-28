@@ -1,6 +1,5 @@
 import { dbType, isBusy, idHere, idsGrabbed, dbLoadTime, thingsArrived } from '../managers/State';
-import { get, DBType, PersistID, persistLocal } from '../common/GlobalImports';
-// import { dbPostgres } from './DBPostgres';
+import { DBType, PersistID, persistLocal } from '../common/GlobalImports';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
@@ -10,13 +9,11 @@ export default class DBDispatch {
 	db: DBInterface;
 	bulkName: string;
 	eraseDB = false;
-	okayToWrite = false;
 	updateDBForType(type: string) { this.db = this.dbForType(type); }
 	nextDB(forward: boolean) { this.changeDBTo(this.getNextDB(forward)); }
 
 	constructor() {
 		this.db = dbFirebase;
-		this.okayToWrite = true;
 		this.bulkName = 'Public';
 		dbType.subscribe((type: string) => {
 			if (type) {
@@ -25,17 +22,7 @@ export default class DBDispatch {
 				this.updateDBForType(type);
 				this.updateHierarchy(type);
 			}
-		})
-		setTimeout(() => {
-			idsGrabbed.subscribe((ids: Array<string>) => {
-				if (this.okayToWrite) {
-					const here = this.db.hierarchy.here;
-					if (ids && here) {
-						persistLocal.writeToKeys(PersistID.here, here.id, this.db.dbType, get(idsGrabbed))
-					}
-				}
-			});
-		}, 1);
+		});
 	}
 
 	applyQueryStrings(params: URLSearchParams) {
@@ -84,7 +71,7 @@ export default class DBDispatch {
 	updateHierarchy(type: string) {
 		const h = this.db.hierarchy;
 		if (this.db.hasData) {
-			this.state_updateFor(type, this.db.hierarchy.idRoot!);
+			persistLocal.state_updateFor(type, h.idRoot!);
 			h.here_restore();
 		} else {
 			if (type != DBType.local) {
@@ -102,19 +89,6 @@ export default class DBDispatch {
 				this.db.loadTime = loadTime;
 				dbLoadTime.set(loadTime);
 			})();
-		}
-	}
-
-	state_updateFor(type: string, defaultIDHere: string) {
-		const dbValues = persistLocal.readFromKeys(PersistID.here, type);
-		if (dbValues == null) {
-			idHere.set(defaultIDHere);
-			idsGrabbed.set([defaultIDHere]);
-		} else {
-			this.okayToWrite = false;
-			idHere.set(dbValues[0]);
-			idsGrabbed.set(dbValues[1]);
-			this.okayToWrite = true;
 		}
 	}
 

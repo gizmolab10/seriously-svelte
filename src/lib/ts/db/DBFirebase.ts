@@ -1,4 +1,4 @@
-import { Thing, Datum, DBType, DataKind, signal, Signals, k, Hierarchy, copyObject, Predicate, dbDispatch, Relationship, CreationFlag, convertToObject } from '../common/GlobalImports';
+import { k, Thing, Datum, DBType, DataKind, signal, Signals, Hierarchy, copyObject, Predicate, dbDispatch, Relationship, CreationFlag, convertToObject } from '../common/GlobalImports';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection, onSnapshot, getFirestore, deleteField } from 'firebase/firestore';
 import { DocumentData, DocumentChange, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { initializeApp } from "firebase/app";

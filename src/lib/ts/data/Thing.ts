@@ -1,4 +1,4 @@
-import { get, Size, Datum, signal, Signals, k, Predicate, PersistID, dbDispatch, getWidthOf, persistLocal, orders_normalize_remoteMaybe, Hierarchy } from '../common/GlobalImports';
+import { k, get, Size, Datum, signal, Signals, Predicate, PersistID, dbDispatch, getWidthOf, persistLocal, orders_normalize_remoteMaybe, Hierarchy } from '../common/GlobalImports';
 import { idHere, idEditing, expanded, idsGrabbed, lineGap, lineStretch, dotDiameter } from '../managers/State';
 import Airtable from 'airtable';
 
@@ -195,7 +195,7 @@ export default class Thing extends Datum {
 			idHere.set(id);
 			this.expand();
 			signal(Signals.childrenOf, id);
-			persistLocal.writeToKeys(PersistID.here, id, dbDispatch.db.dbType, get(idsGrabbed))
+			persistLocal.writeToKey(PersistID.here + dbDispatch.db.dbType, id)
 		};
 	}
 

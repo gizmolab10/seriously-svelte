@@ -1,4 +1,4 @@
-import { get, Thing, Datum, signal, Signals, k, Predicate, dbDispatch, CreationFlag, orders_normalize_remoteMaybe, Hierarchy } from '../common/GlobalImports';
+import { k, get, Thing, Datum, signal, Signals, Hierarchy, dbDispatch, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { idsGrabbed } from './State';
 
 //////////////////////////////////////

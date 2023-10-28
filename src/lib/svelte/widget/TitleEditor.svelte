@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { Thing, signal, Signals, ZIndex, k, onMount, onDestroy, dbDispatch, graphEditor } from '../../ts/common/GlobalImports';
+	import { k, Thing, signal, Signals, ZIndex, onMount, onDestroy, dbDispatch, graphEditor } from '../../ts/common/GlobalImports';
 	import { idEditing, titleFontSize, titleFontFamily, idEditingStopped } from '../../ts/managers/State';
 	import Widget from './Widget.svelte';
 	export let thing = Thing;

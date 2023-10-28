@@ -1,5 +1,5 @@
-import { get, User, Datum, Thing, Grabs, Access, remove, k, Predicate, dbDispatch, Relationship } from '../common/GlobalImports';
-import { CreationFlag, orders_normalize_remoteMaybe, sort_byOrder } from '../common/GlobalImports';
+import { k, get, User, Datum, Thing, Grabs, Access, remove, Predicate, Relationship } from '../common/GlobalImports';
+import { persistLocal, CreationFlag, sort_byOrder, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { idHere, isBusy, idsGrabbed, thingsArrived } from './State';
 import DBInterface from '../db/DBInterface';
 
@@ -67,7 +67,7 @@ export default class Hierarchy {
 			this.root.order_normalizeRecursive(true)	// setup order values for all things and relationships
 			this.db?.setHasData(true);
 			orders_normalize_remoteMaybe(this.root.children)
-			dbDispatch.state_updateFor(type, idRoot);
+			persistLocal.state_updateFor(type, idRoot);
 		}
 		this.here_restore();
 		thingsArrived.set(true);
