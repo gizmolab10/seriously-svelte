@@ -40,17 +40,20 @@
 		}
 	}
 
-	function handleLongClick(event) {
-		clearTimeout(clickTimer);	// clear all previous timers
+	function clearClicks() {
 		clickCount = 0;
+		clearTimeout(clickTimer);	// clear all previous timers
+	}
+
+	function handleLongClick(event) {
+		clearClicks();
 		clickTimer = setTimeout(() => {
-			// does nothing
+			// do nothing
 		}, longClickThreshold);
 	}
 
 	function handleDoubleClick(event) {
-		clearTimeout(clickTimer);
-		clickCount = 0;
+		clearClicks();
 		thing.becomeHere();
     }
 
@@ -61,7 +64,7 @@
 			if (clickCount === 1) {
 				handleClick(event);
 			}
-			clickCount = 0;
+			clearClicks();
 		}, doubleClickThreshold);
 	}
 

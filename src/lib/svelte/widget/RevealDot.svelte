@@ -3,27 +3,32 @@
 	import { onMount, onDestroy, graphEditor, Direction, FatTrianglePath } from "../../ts/common/GlobalImports";
 	import { dotDiameter } from '../../ts/managers/State';
 	export let thing;
-	
+	const longClickThreshold = 500;
+	const doubleClickThreshold = 200;				// one fifth of a second
 	let triangle = new FatTrianglePath($dotDiameter + 2, Direction.left);
 	let fillColor = k.backgroundColor;
 	let path = triangle.path;
+	let clickCount = 0;
 	let button = null;
+	let clickTimer;
 	
 	onMount( () => { updateState(false); });
+	onDestroy( () => { signalHandler.disconnect(); });
+	function handleMouseUp() { clearTimeout(clickTimer); }
 	function handleMouseOut(event) { updateColors(false); }
 	function handleMouseOver(event) { updateColors(true); }
-	const signalHandler = handleSignalOfKind(Signals.dots, (id) => { if (thing.id == id) { updatePath(); } });
-	onDestroy( () => { signalHandler.disconnect(); });
-	
+	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right-
+
 	function updateState(isHovering) {
 		updateColors(isHovering);
 		updatePath();
 	}
 
-	function handleClick(event) {
-		graphEditor.thing_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
-		updateState(false);
-	}
+	const signalHandler = handleSignalOfKind(Signals.dots, (id) => {
+		if (thing.id == id) {
+			updatePath();
+		}
+	});
 
 	function updateColors(isHovering) {
 		thing.updateColorAttributes();
@@ -42,11 +47,43 @@
 		}
 	}
 
+	function clearClicks() {
+		clickCount = 0;
+		clearTimeout(clickTimer);	// clear all previous timers
+	}
+
+	function handleLongClick(event) {
+		clearClicks();
+		clickTimer = setTimeout(() => {
+			// do nothing
+		}, longClickThreshold);
+	}
+
+	function handleDoubleClick(event) {
+		clearClicks();
+		// do nothing
+    }
+
+	function handleSingleClick(event) {
+		clickCount++;
+
+		clickTimer = setTimeout(() => {
+			if (clickCount === 1) {
+				handleClick(event);
+			}
+			clearClicks();
+		}, doubleClickThreshold);
+	}
+
+	function handleClick(event) {
+		graphEditor.thing_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
+		updateState(false);
+	}
+
 </script>
 
 <button class='svg-button'
 	bind:this={button}
-	on:click={handleClick}
 	style='
 		top: 5px;
 		left: {$dotDiameter + thing.titleWidth + 23}px;
@@ -56,8 +93,13 @@
 		viewbox='0 0 16 16'
 		on:blur={noop()}
 		on:focus={noop()}
+		on:mouseup={handleMouseUp}
+		on:click={handleSingleClick}
 		on:mouseout={handleMouseOut}
 		on:mouseover={handleMouseOver}
+		on:mousedown={handleLongClick}
+		on:dblclick={handleDoubleClick}
+		on:contextmenu={handleContextMenu}
 		style='
 			position: absolute;
 			left: 0px;
