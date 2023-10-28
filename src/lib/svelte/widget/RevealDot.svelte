@@ -4,7 +4,7 @@
 	import { dotDiameter } from '../../ts/managers/State';
 	export let thing;
 	const longClickThreshold = 500;
-	const doubleClickThreshold = 200;				// one fifth of a second
+	const doubleClickThreshold = 100;				// one fifth of a second
 	let triangle = new FatTrianglePath($dotDiameter + 2, Direction.left);
 	let fillColor = k.backgroundColor;
 	let path = triangle.path;
@@ -14,7 +14,6 @@
 	
 	onMount( () => { updateState(false); });
 	onDestroy( () => { signalHandler.disconnect(); });
-	function handleMouseUp() { clearTimeout(clickTimer); }
 	function handleMouseOut(event) { updateColors(false); }
 	function handleMouseOver(event) { updateColors(true); }
 	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right-
@@ -46,6 +45,8 @@
 			path = null;
 		}
 	}
+ 
+	function handleMouseUp() { clearTimeout(clickTimer); }
 
 	function clearClicks() {
 		clickCount = 0;
@@ -55,6 +56,7 @@
 	function handleLongClick(event) {
 		clearClicks();
 		clickTimer = setTimeout(() => {
+			clearClicks();
 			// do nothing
 		}, longClickThreshold);
 	}
@@ -66,12 +68,11 @@
 
 	function handleSingleClick(event) {
 		clickCount++;
-
 		clickTimer = setTimeout(() => {
 			if (clickCount === 1) {
 				handleClick(event);
+				clearClicks();
 			}
-			clearClicks();
 		}, doubleClickThreshold);
 	}
 
@@ -85,7 +86,6 @@
 <button class='svg-button'
 	bind:this={button}
 	style='
-		top: 5px;
 		left: {$dotDiameter + thing.titleWidth + 23}px;
 	'>
 	<svg width='16'
@@ -111,12 +111,13 @@
 
 <style>
 	.svg-button {
-		position: absolute;
+		top: 5px;
 		width: 16px;	 /* Match SVG viewbox width */
 		height: 16px;	/* Match SVG viewbox height */
+		border: none;
 		cursor: pointer;
 		background: none;
-		border: none;
+		position: absolute;
 	}
 
 	.svg-button svg {

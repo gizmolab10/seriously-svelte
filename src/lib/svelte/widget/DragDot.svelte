@@ -3,8 +3,8 @@
 	import { idsGrabbed, dotDiameter } from '../../ts/managers/State';
 	export let thing = Thing;
     export let title = '';
-	const doubleClickThreshold = 200;				// one fifth of a second
 	const longClickThreshold = 500;
+	const doubleClickThreshold = 100;				// one fifth of a second
 	const browserType = getBrowserType();
 	let hoverColor = thing.color;
 	let fillColor = thing.color;
@@ -48,6 +48,7 @@
 	function handleLongClick(event) {
 		clearClicks();
 		clickTimer = setTimeout(() => {
+			clearClicks();
 			// do nothing
 		}, longClickThreshold);
 	}
@@ -59,12 +60,11 @@
 
 	function handleSingleClick(event) {
 		clickCount++;
-
 		clickTimer = setTimeout(() => {
 			if (clickCount === 1) {
 				handleClick(event);
+				clearClicks();
 			}
-			clearClicks();
 		}, doubleClickThreshold);
 	}
 

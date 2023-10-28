@@ -114,6 +114,7 @@
 			z-index: {ZIndex.text};
 			font-size: {$titleFontSize}px;
 			font-family: {$titleFontFamily};
+			padding: 0px {thing.hasChildren || thing.isBulkAlias ? 16 : 0}px 0px 6px;
 		'/>
 {/key}
 
@@ -121,7 +122,6 @@
 	input {
 		border: none;
 		outline: none;
-		padding: 0px 16px 0px 6px;
 		position: relative;
 		top: 3px;
 		outline-color: 'white';

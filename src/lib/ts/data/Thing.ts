@@ -309,7 +309,7 @@ export default class Thing extends Datum {
 			this.expand();
 		}
 		const shouldBecomeHere = !newHere.isVisible || newHere.isRoot;
-		if (!RIGHT && shouldBecomeHere) {
+		if (!RIGHT && !SHIFT && shouldBecomeHere) {
 			newHere.becomeHere();
 		}
 		idEditing.set(null);
