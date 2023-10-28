@@ -168,6 +168,7 @@ export default class Thing extends Datum {
 				return array;
 			});
 			this.persistExpanded();
+			signal(Signals.dots, this.id);
 		}
 	}
 
@@ -276,16 +277,20 @@ export default class Thing extends Datum {
 		}
 	}
 
-	redraw_runtimeBrowseRight(RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, toTop: boolean = false, moveHere: boolean = false) {
-		let newGrab: Thing | null = RIGHT ? toTop ? this.lastChild : this.firstChild : this.firstParent;
+	redraw_runtimeBrowseRight(RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, fromReveal: boolean = false) {
+		let newGrab: Thing | null = RIGHT ? this.firstChild : this.firstParent;
 		const newHere = RIGHT ? this : this.grandparent;
-		const root = this.hierarchy.root;
 		if (!RIGHT) {
+			const root = this.hierarchy.root;
 			if (EXTREME) {
 				root?.becomeHere();	// tells graph to update line rects
 			} else {
 				if (!SHIFT) {
-					newHere.expand();
+					if (fromReveal) {
+						this.expand();
+					} else {
+						newGrab.expand();
+					}
 				} else {
 					if (this.isExpanded) {
 						newGrab = null;
@@ -304,7 +309,7 @@ export default class Thing extends Datum {
 			this.expand();
 		}
 		const shouldBecomeHere = !newHere.isVisible || newHere.isRoot;
-		if (moveHere || (!RIGHT && shouldBecomeHere)) {
+		if (!RIGHT && shouldBecomeHere) {
 			newHere.becomeHere();
 		}
 		idEditing.set(null);

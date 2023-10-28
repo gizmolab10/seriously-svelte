@@ -8,7 +8,7 @@ import { idsGrabbed } from './State';
 //									//
 //////////////////////////////////////
 
-export default class EditorGraph {
+export default class GraphEditor {
 	get hierarchy(): Hierarchy { return dbDispatch.db.hierarchy }
 
 	async handleKeyDown(event: KeyboardEvent) {
@@ -95,12 +95,12 @@ export default class EditorGraph {
 	//		MOVE	  //
 	////////////////////
 
-	async thing_redraw_remoteMoveRight(thing: Thing, RIGHT: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
+	async thing_redraw_remoteMoveRight(thing: Thing, RIGHT: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean, fromReveal: boolean = false) {
 		if (!OPTION) {
 			if (RIGHT && thing.needsBulkFetch) {
 				await thing.redraw_fetchAll_runtimeBrowseRight();
 			} else {
-				thing.redraw_runtimeBrowseRight(RIGHT, SHIFT, EXTREME);
+				thing.redraw_runtimeBrowseRight(RIGHT, SHIFT, EXTREME, fromReveal);
 			}
 		} else if (k.allowGraphEditing) {
 			await this.thing_redraw_remoteRelocateRight(thing, RIGHT, EXTREME);
@@ -183,4 +183,4 @@ export default class EditorGraph {
 
 }
 
-export const editorGraph = new EditorGraph();
+export const graphEditor = new GraphEditor();

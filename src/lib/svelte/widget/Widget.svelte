@@ -1,10 +1,10 @@
 <script lang='ts'>
 	import { k, noop, Thing, Point, ZIndex, onMount, Signals, onDestroy, handleSignalOfKind } from '../../ts/common/GlobalImports';
 	import { idEditing, idsGrabbed } from '../../ts/managers/State';
-	import RevealCluster from './RevealCluster.svelte';
-	import EditorTitle from './EditorTitle.svelte';
+	import TitleEditor from './TitleEditor.svelte';
+	import RevealDot from './RevealDot.svelte';
+	import DragDot from './DragDot.svelte';
 	export let origin = new Point();
-	import Dot from './Dot.svelte';
 	export let thing = Thing;
 	let toggleDraw = false;
 	let isGrabbed = false;
@@ -16,8 +16,8 @@
 	let widget;
 
 	function updateBorderStyle() {
-		const showBorder = isEditing || isGrabbed;
 		thing.updateColorAttributes();
+		const showBorder = isEditing || isGrabbed;
 		delta = showBorder ? -1 : 0;
 		border = showBorder ? 'border: ' + thing.grabAttributes : '';
 		background = showBorder ? 'background-color: ' + k.backgroundColor : '';
@@ -47,10 +47,8 @@
 			padding: {thing.isExemplar ? 1 : 0}px 12px {thing.isExemplar ? 0 : 1}px 1px;
 			{background};
 			{border};'>
-		<Dot thing={thing}/>&nbsp;<EditorTitle thing={thing}/>
-		{#if thing.hasChildren || thing.isBulkAlias}
-			<RevealCluster thing={thing}/>
-		{/if}
+		<DragDot thing={thing}/>&nbsp;<TitleEditor thing={thing}/>
+		<RevealDot thing={thing}/>
 	</div>
 {/key}
 

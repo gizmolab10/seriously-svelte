@@ -1,6 +1,5 @@
-import {noop} from 'svelte/internal';
 import { get, Rect, Size, Point, Thing, LineRect, LineCurveType } from '../common/GlobalImports';
-import { lineGap, lineStretch } from '../managers/State'
+import { lineStretch } from '../managers/State'
 
 export default class Layout {
 	lineRects: Array<LineRect>;
@@ -22,15 +21,10 @@ export default class Layout {
 					const sizeY = childHalfVisibleProgenyHeight + initialOffsetY + sumOfSiblingsAbove;
 					const direction = this.getDirection(sizeY);
 					const rect = new Rect(origin, new Size(sizeX, sizeY));
-					
-					// console.log('LINE r.e.y:', rect.extent.y, ' o.y:', origin.y, ' s.y:', sizeY, 'h:', childHalfVisibleProgenyHeight, direction, index, child.title);
-					
 					sumOfSiblingsAbove += child.visibleProgenyHeight;
 					this.lineRects.push(new LineRect(direction, rect));
 					index += 1;
 				}
-
-				// console.log('LAYOUT', origin.x, parent.title);
 			}
 		}
 	}

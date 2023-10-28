@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { Thing, signal, Signals, ZIndex, k, onMount, onDestroy, dbDispatch, editorGraph } from '../../ts/common/GlobalImports';
+	import { Thing, signal, Signals, ZIndex, k, onMount, onDestroy, dbDispatch, graphEditor } from '../../ts/common/GlobalImports';
 	import { idEditing, titleFontSize, titleFontFamily, idEditingStopped } from '../../ts/managers/State';
 	import Widget from './Widget.svelte';
 	export let thing = Thing;
@@ -22,7 +22,7 @@
 	function handleKeyDown(event) {
 		if ($idEditing == thing.id) {
 			switch (event.key) {	
-				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); editorGraph.thing_redraw_remoteAddChildTo(thing.firstParent); break;
+				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); graphEditor.thing_redraw_remoteAddChildTo(thing.firstParent); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
 				// default:      signal(Signals.childrenOf, thing.id); break;
 			}
@@ -103,12 +103,12 @@
 		type='text'
 		name='title'
 		bind:this={input}
-		on:blur={handleBlur}
-		on:focus={handleFocus}
-		on:input={handleInput}
-		on:keydown={handleKeyDown}
-		on:input={updateInputWidth}
 		bind:value={thing.title}
+		on:input={updateInputWidth}
+		on:keydown={handleKeyDown}
+		on:input={handleInput}
+		on:focus={handleFocus}
+		on:blur={handleBlur}
 		style='
 			color: {thing.color};
 			z-index: {ZIndex.text};
@@ -121,7 +121,7 @@
 	input {
 		border: none;
 		outline: none;
-		padding: 0px 0px 0px 6px;
+		padding: 0px 16px 0px 6px;
 		position: relative;
 		top: 3px;
 		outline-color: 'white';

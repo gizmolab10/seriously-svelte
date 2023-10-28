@@ -4,7 +4,7 @@ import { Point, Size, Rect, LineRect, updateGraphRect } from '../geometry/Geomet
 import { FatTrianglePath, Direction } from '../geometry/FatTrianglePath';
 import { PersistID, persistLocal } from '../managers/PersistLocal';
 import { signal, Signals, handleSignalOfKind } from './Signals';
-import { editorGraph } from '../managers/EditorGraph';
+import { graphEditor } from '../managers/GraphEditor';
 import { DBType, DataKind } from '../db/DBInterface';
 import { dbDispatch } from '../db/DBDispatch';
 import { onMount, onDestroy } from 'svelte';
@@ -30,7 +30,7 @@ export {
 	get, onMount, onDestroy,
 	FatTrianglePath, Direction,
 	dbDispatch, DBType, DataKind,
-	Grabs, editorGraph, Hierarchy,
+	Grabs, graphEditor, Hierarchy,
 	signal, Signals, handleSignalOfKind,
 	ZIndex, ButtonID, BrowserType, CreationFlag,
 	User, Datum, Thing, Access, Predicate, Relationship,

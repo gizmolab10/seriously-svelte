@@ -1,7 +1,6 @@
 <script lang='ts'>
 	import { noop, Thing, onMount, ZIndex, signal, Signals, BrowserType, getBrowserType, dbDispatch } from '../../ts/common/GlobalImports';
 	import { idsGrabbed, dotDiameter } from '../../ts/managers/State';
-	export let isReveal = false;
 	export let thing = Thing;
     export let title = '';
 	const doubleClickThreshold = 200;				// one fifth of a second
@@ -24,8 +23,8 @@
 
 	function updateColorStyle() {
 		thing.updateColorAttributes();
-		const buttonFlag = (isReveal && (!thing.isExpanded || isGrabbed));
-		traitColor = thing.revealColor(!isReveal || isGrabbed);
+		const buttonFlag = (!thing.isExpanded || isGrabbed);
+		traitColor = thing.revealColor(isGrabbed);
 		buttonColor = thing.revealColor(buttonFlag);
 	}
 
@@ -45,15 +44,13 @@
 		clearTimeout(clickTimer); // Clear any previous timers
 		clickCount = 0;
 		clickTimer = setTimeout(() => {
-			if (!isReveal ) {
-				thing.becomeHere();
-			}
 		}, longClickThreshold);
 	}
 
 	function handleDoubleClick(event) {
 		clearTimeout(clickTimer);
 		clickCount = 0;
+		thing.becomeHere();
     }
 
 	function handleSingleClick(event) {
@@ -69,7 +66,7 @@
 
 	async function handleClick(event) {
 		if (thing.isExemplar) { return; }
-		if (isReveal) {
+		if (false) {
 			if (thing.needsBulkFetch) {
 				thing.redraw_fetchAll_runtimeBrowseRight(false);
 			} else {

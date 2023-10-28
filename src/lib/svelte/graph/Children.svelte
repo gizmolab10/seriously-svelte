@@ -1,8 +1,8 @@
 <script lang=ts>
 	import { noop, Rect, Size, Point, Thing, Signals, Layout, onMount, onDestroy, LineRect, LineCurveType, orders_normalize_remoteMaybe, handleSignalOfKind } from '../../ts/common/GlobalImports';
 	import { lineGap, lineStretch, dotDiameter } from '../../ts/managers/State';
+	import Widget from '../widget/Widget.svelte';
 	import Children from './Children.svelte';
-	import Widget from './Widget.svelte';
 	import Line from './Line.svelte';
 	export let origin = new Point();
 	export let thing: Thing;

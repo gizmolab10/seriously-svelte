@@ -1,5 +1,5 @@
 <script>
-	import { noop, Thing, ZIndex, k, dbDispatch, editorGraph, FatTrianglePath } from "../../ts/common/GlobalImports";
+	import { noop, Thing, ZIndex, k, dbDispatch, graphEditor, FatTrianglePath } from "../../ts/common/GlobalImports";
 	import { idHere, dotDiameter } from '../../ts/managers/State';
 	const triangle = new FatTrianglePath($dotDiameter + 2, 0);
 	let fillColor = k.backgroundColor;
@@ -15,7 +15,7 @@
 	function handleClick(event) {
 		const grab = dbDispatch.db.hierarchy.grabs.furthestGrab(true);
 		if (grab) {
-			editorGraph.thing_redraw_remoteMoveRight(grab, false, false);
+			graphEditor.thing_redraw_remoteMoveRight(grab, false, false);
 		}
 	}
 
@@ -39,7 +39,7 @@
 		on:focus={noop()}
 		on:mouseout={mouseout}
 		on:mouseover={mouseOver}
-		style='position: absolute; left: 5px; top: 6px; z-index: {ZIndex.text};'>
+		style='position: absolute; left: 5px; top: 6px; z-index: {ZIndex.dots};'>
 		<path d={path} stroke={here.color} fill={fillColor}/>
 	</svg>
 </button>

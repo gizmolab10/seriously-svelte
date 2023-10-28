@@ -34,7 +34,7 @@ export class FatTrianglePath {
 			data.push({
 				controlOne: this.rotatePoint(outer, preceder),
 				controlTwo: this.rotatePoint(outer, follower),
-				end:				this.rotatePoint(inner, angle),
+				end:		this.rotatePoint(inner, angle),
 			});
 			index += 1;
 		}
