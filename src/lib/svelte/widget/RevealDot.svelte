@@ -10,15 +10,25 @@
 	let button = null;
 	
 	onMount( () => { updateState(false); });
-	function mouseOver(event) { updateColors(true); }
-	function mouseout(event) { updateColors(false); }
-	onDestroy( () => { signalHandler.disconnect(); });
-	function updateColors(isFilled) { fillColor = thing.revealColor(isFilled); }
+	function handleMouseOut(event) { updateColors(false); }
+	function handleMouseOver(event) { updateColors(true); }
 	const signalHandler = handleSignalOfKind(Signals.dots, (id) => { if (thing.id == id) { updatePath(); } });
+	onDestroy( () => { signalHandler.disconnect(); });
 	
-	function updateState(isFilled) {
-		updateColors(isFilled);
+	function updateState(isHovering) {
+		updateColors(isHovering);
 		updatePath();
+	}
+
+	function handleClick(event) {
+		graphEditor.thing_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
+		updateState(false);
+	}
+
+	function updateColors(isHovering) {
+		thing.updateColorAttributes();
+		const buttonFlag = !thing.isExpanded || thing.isGrabbed;
+		fillColor = thing.revealColor(buttonFlag != isHovering);
 	}
 
 	function updatePath() {
@@ -30,11 +40,6 @@
 		} else {
 			path = null;
 		}
-	}
-
-	function handleClick(event) {
-		graphEditor.thing_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
-		updateState(false);
 	}
 
 </script>
@@ -51,8 +56,8 @@
 		viewbox='0 0 16 16'
 		on:blur={noop()}
 		on:focus={noop()}
-		on:mouseout={mouseout}
-		on:mouseover={mouseOver}
+		on:mouseout={handleMouseOut}
+		on:mouseover={handleMouseOver}
 		style='
 			position: absolute;
 			left: 0px;

@@ -6,44 +6,45 @@
 	const doubleClickThreshold = 200;				// one fifth of a second
 	const longClickThreshold = 500;
 	const browserType = getBrowserType();
-	const dotColor = thing.color;
-	let buttonColor = thing.color;
-	let traitColor = thing.color;
+	let hoverColor = thing.color;
+	let fillColor = thing.color;
 	let placement = 'left: 5px; top: 4px;'			// tiny browser compensation
 	let isGrabbed = false;
 	let clickCount = 0;
 	let clickTimer;
 	let dot = null;
-
-	onMount( () => { updateColorStyle(); });
-	function handleMouseUp() { clearTimeout(clickTimer); }
+	
 	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right-
-	function handleMouseOut(event) { dot.style.backgroundColor=buttonColor; }
-	function handleMouseOver(event) { dot.style.backgroundColor=traitColor; }
+	function handleMouseOut(event) { updateColors(false); }
+	function handleMouseOver(event) { updateColors(true); }
+	function handleMouseUp() { clearTimeout(clickTimer); }
 
-	function updateColorStyle() {
-		thing.updateColorAttributes();
-		const buttonFlag = (!thing.isExpanded || isGrabbed);
-		traitColor = thing.revealColor(isGrabbed);
-		buttonColor = thing.revealColor(buttonFlag);
+	onMount( () => {
+		updateColors(false);		
+		if (browserType != BrowserType.chrome) {
+			placement = 'top: 2px; left: 5px;'
+		}
+	});
+
+	function updateColors(isHovering) {
+		thing.updateColorAttributes();	// needed for revealColor
+		fillColor = thing.revealColor(isHovering);
+		hoverColor = thing.revealColor(!isHovering);
 	}
 
 	$: {
 		const grabbed = $idsGrabbed?.includes(thing.id);
 		if (isGrabbed != grabbed) {
 			isGrabbed = grabbed;
-			updateColorStyle();
-		}
-		
-		if (browserType != BrowserType.chrome) {
-			placement = 'top: 2px; left: 5px;'
+			updateColors();
 		}
 	}
 
 	function handleLongClick(event) {
-		clearTimeout(clickTimer); // Clear any previous timers
+		clearTimeout(clickTimer);	// clear all previous timers
 		clickCount = 0;
 		clickTimer = setTimeout(() => {
+			// does nothing
 		}, longClickThreshold);
 	}
 
@@ -95,12 +96,12 @@
     on:dblclick={handleDoubleClick}
     on:contextmenu={handleContextMenu}
 	style='{placement}
+		z-index: {ZIndex.dots};
 		width:{$dotDiameter}px;
 		height:{$dotDiameter}px;
-		z-index: {ZIndex.dots};
-		background-color: {buttonColor};
-		border-color: {dotColor};
-		color: {traitColor};'>
+		background-color: {fillColor};
+		border-color: {thing.color};
+		color: {hoverColor};'>
 </button>
 
 <style lang='scss'>
