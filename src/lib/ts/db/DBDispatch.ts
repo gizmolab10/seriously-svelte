@@ -31,7 +31,7 @@ export default class DBDispatch {
 				if (this.okayToWrite) {
 					const here = this.db.hierarchy.here;
 					if (ids && here) {
-						persistLocal.writeToKeys(PersistID.db, here.id, this.db.dbType, get(idsGrabbed))
+						persistLocal.writeToKeys(PersistID.here, here.id, this.db.dbType, get(idsGrabbed))
 					}
 				}
 			});
@@ -49,10 +49,9 @@ export default class DBDispatch {
 
 	dbForType(type: string): DBInterface {
 		switch (type) {
-			case DBType.airtable:	return dbAirtable;
-			case DBType.firebase:	return dbFirebase;
-			// case DBType.postgres:	return dbPostgres;
-			default:				return dbLocal;
+			case DBType.airtable: return dbAirtable;
+			case DBType.firebase: return dbFirebase;
+			default:			  return dbLocal;
 		}
 	}
 
@@ -61,7 +60,7 @@ export default class DBDispatch {
 		dbLoadTime.set(db.loadTime);
 		persistLocal.writeToKey(PersistID.db, newDBType);
 		if (newDBType != DBType.local && !db.hasData) {
-			isBusy.set(true);		// set this before changing $dbType so panel will show 'loading ...'
+			isBusy.set(true);			// set this before changing $dbType so panel will show 'loading ...'
 		}
 		dbType.set(newDBType);			// tell components to render the [possibly previously] fetched data
 	}
@@ -107,7 +106,7 @@ export default class DBDispatch {
 	}
 
 	state_updateFor(type: string, defaultIDHere: string) {
-		const dbValues = persistLocal.readFromKeys(PersistID.db, type);
+		const dbValues = persistLocal.readFromKeys(PersistID.here, type);
 		if (dbValues == null) {
 			idHere.set(defaultIDHere);
 			idsGrabbed.set([defaultIDHere]);

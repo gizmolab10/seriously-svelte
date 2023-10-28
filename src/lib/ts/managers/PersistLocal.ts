@@ -26,7 +26,7 @@ class PersistLocal {
 		lineGap. set(this.readFromKey(PersistID.gap) ?? 30);
 		showDetails.set(this.readFromKey(PersistID.details) ?? false);
 		dotDiameter.set(this.readFromKey(PersistID.dotDiameter) ?? 14);
-		lineStretch.set(this.readFromKey(PersistID.lineStretch) ?? 25);
+		lineStretch.set(this.readFromKey(PersistID.lineStretch) ?? 30);
 		titleFontFamily.set(this.readFromKey(PersistID.font) ?? 'Arial');
 		titleFontSize.set(this.readFromKey(PersistID.fontSize) ?? 14);
 		graphOffset.set(this.readFromKey(PersistID.origin) ?? new Point());

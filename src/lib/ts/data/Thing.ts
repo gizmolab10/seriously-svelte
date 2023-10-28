@@ -26,7 +26,7 @@ export default class Thing extends Datum {
 
 		this.updateColorAttributes();
 
-		idEditing.subscribe((idEdit: string | null) => {	// executes whenever idEditing changes
+		idEditing.subscribe((idEdit: string | null) => {
 			const isEditing = (idEdit == this.id);
 			if (this.isEditing != isEditing) {
 				this.isEditing  = isEditing;
@@ -34,7 +34,7 @@ export default class Thing extends Datum {
 			}
 		});
 
-		idsGrabbed.subscribe((idsGrab: string[] | undefined) => {	// executes whenever idsGrabbed changes
+		idsGrabbed.subscribe((idsGrab: string[] | undefined) => {
 			const isGrabbed = (idsGrab != undefined) && idsGrab.includes(this.id);
 			if (this.isGrabbed != isGrabbed) {
 				this.isGrabbed  = isGrabbed;
@@ -194,8 +194,8 @@ export default class Thing extends Datum {
 			const id = this.id;
 			idHere.set(id);
 			this.expand();
-			persistLocal.writeToKey(PersistID.here, id);
 			signal(Signals.childrenOf, id);
+			persistLocal.writeToKeys(PersistID.here, id, dbDispatch.db.dbType, get(idsGrabbed))
 		};
 	}
 

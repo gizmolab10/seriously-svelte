@@ -15,7 +15,7 @@ class Launch {
 	applyQueryStrings(params: URLSearchParams) {
 		if (params.get('persist') === 'erase') {
 			idsGrabbed.set([]);
-			idHere.set('');
+			idHere.set(null);
 		}
 	}
     
