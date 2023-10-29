@@ -88,25 +88,23 @@ export default class DBFirebase implements DBInterface {
 	async fetch_allBulks() {
 		const root = this.hierarchy.root;
 		if (dbDispatch.bulkName == 'Jonathan Sand' && root) {
-			let roots = this.hierarchy.thing_getRoots();
-			if (!roots) {
-				roots = this.hierarchy.thing_remember_runtimeCreate(Datum.newID, 'roots', 'red', '^', -1, false);
-				this.hierarchy.thing_remoteAddAsChild(roots, root);
-			}
-			try {		// add bulks to roots thing
-				const bulksCollection = collection(this.db, this.collectionName);		// fetch all bulks (documents)
-				let bulkSnapshot = await getDocs(bulksCollection);
-				for (const bulkShot of bulkSnapshot.docs) {
-					const title = bulkShot.id;
-					if (title != dbDispatch.bulkName && !this.hierarchy.hasRootWithTitle(title)) {				// create a thing for each bulk
-						const thing = this.hierarchy.thing_remember_runtimeCreate(Datum.newID, title, 'red', '~', -1, false);
-						this.hierarchy.thing_remoteAddAsChild(thing, roots);
+			const roots = this.hierarchy.thing_getRoots();
+			if (roots) {
+				try {		// add bulks to roots thing
+					const bulksCollection = collection(this.db, this.collectionName);		// fetch all bulks (documents)
+					let bulkSnapshot = await getDocs(bulksCollection);
+					for (const bulkShot of bulkSnapshot.docs) {
+						const title = bulkShot.id;
+						if (title != dbDispatch.bulkName && !this.hierarchy.hasRootWithTitle(title)) {				// create a thing for each bulk
+							const thing = this.hierarchy.thing_remember_runtimeCreate(Datum.newID, title, 'red', '~', -1, false);
+							this.hierarchy.thing_remoteAddAsChild(thing, roots);
+						}
 					}
+					// TODO: detect when a root disappears
+					// TODO: store the expanded in its own  ** bulk-specific **  persistent storage
+				} catch (error) {
+					this.reportError(error);
 				}
-				// TODO: detect when a root disappears
-				// TODO: store the expanded in its own bulk-specific persistent storage
-			} catch (error) {
-				this.reportError(error);
 			}
 		}
 	}

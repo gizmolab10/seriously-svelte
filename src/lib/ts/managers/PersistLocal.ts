@@ -25,31 +25,31 @@ class PersistLocal {
 		// localStorage.clear();
 		// const isLocal = isServerLocal();
 		dbLoadTime.set(null);
-		const type = dbDispatch.db.dbType;
 		this.writeToKey(PersistID.lineStretch, 30);
 		lineGap.set(this.readFromKey(PersistID.gap) ?? 30);
-		idHere.set(this.readFromKey(PersistID.here + type));
+		idHere.set(this.readFromDBKey(PersistID.here));
 		showDetails.set(this.readFromKey(PersistID.details) ?? false);
 		titleFontSize.set(this.readFromKey(PersistID.fontSize) ?? 14);
 		dotDiameter.set(this.readFromKey(PersistID.dotDiameter) ?? 14);
 		lineStretch.set(this.readFromKey(PersistID.lineStretch) ?? 30);
 		titleFontFamily.set(this.readFromKey(PersistID.font) ?? 'Arial');
-		expanded.set(this.readFromKey(PersistID.expanded + type) ?? []);
-		idsGrabbed.set(this.readFromKey(PersistID.grabbed + type) ?? []);
+		expanded.set(this.readFromDBKey(PersistID.expanded) ?? []);
+		idsGrabbed.set(this.readFromDBKey(PersistID.grabbed) ?? []);
 		graphOffset.set(this.readFromKey(PersistID.origin) ?? new Point());
 		idsGrabbed.subscribe((ids: Array<string>) => {
 			if (this.okayToPersist) {
 				const here = dbDispatch.db.hierarchy.here;
 				if (ids && here) {
-					this.writeToKey(PersistID.grabbed + dbDispatch.db.dbType, get(idsGrabbed));
+					this.writeToDBKey(PersistID.grabbed, get(idsGrabbed));
 				}
 			}
 		});
 	}
 
-	writeToKey(key: string, value: any) {
-		localStorage.setItem(key, JSON.stringify(value));
-	}
+	get dbType(): string { return dbDispatch.db.dbType; }
+	readFromDBKey(key: string) { return this.readFromKey(key + this.dbType); }
+	writeToDBKey(key: string, value: any) { this.writeToKey(key + this.dbType, value); }
+	writeToKey(key: string, value: any) { localStorage.setItem(key, JSON.stringify(value)); }
 
 	readFromKey(key: string): any | null {
 		const storedValue = localStorage.getItem(key);

@@ -31,6 +31,13 @@ export default class Relationship extends Datum {
 		return false;
 	}
 
+	order_setTo(newOrder: number, remoteWrite: boolean) {
+		if (this.order != newOrder) {
+			this.order = newOrder;
+			this.thingTo_updateOrder(remoteWrite);
+		}
+	}
+
 	async remoteWrite() {
 		if (!this.awaitingCreation) {
 			if (this.isRemotelyStored) {

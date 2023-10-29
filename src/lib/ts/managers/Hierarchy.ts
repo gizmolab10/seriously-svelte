@@ -291,7 +291,9 @@ export default class Hierarchy {
 	async relationship_remember_remoteCreateUnique(idRelationship: string, idPredicate: string, idFrom: string,
 		idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none): Promise<any> {
 		let relationship = this.relationships_getByIDPredicateFromAndTo(idPredicate, idFrom, idTo);
-		if (!relationship) {
+		if (relationship) {
+			relationship.order_setTo(order, false);						// AND thing are updated
+		} else {
 			relationship = new Relationship(idRelationship, idPredicate, idFrom, idTo, order, creationFlag == CreationFlag.isFromRemote);
 			this.relationship_remember(relationship);
 			await relationship.remoteWrite();

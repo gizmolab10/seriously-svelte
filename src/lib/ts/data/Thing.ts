@@ -120,7 +120,6 @@ export default class Thing extends Datum {
 	}
 
 	log(message: string) { console.log(message, this.description); }
-	persistExpanded()	 { persistLocal.writeToKey(PersistID.expanded + dbDispatch.db.dbType, get(expanded)); }
 	toggleGrab()		 { this.hierarchy.grabs.toggleGrab(this); }
 	grabOnly()			 { this.hierarchy.grabs.grabOnly(this); }
 	toggleExpand()		 { this.expanded_setTo(!this.isExpanded) }
@@ -167,7 +166,7 @@ export default class Thing extends Datum {
 				}
 				return array;
 			});
-			this.persistExpanded();
+			persistLocal.writeToDBKey(PersistID.expanded, get(expanded));
 			signal(Signals.dots, this.id);
 		}
 	}
@@ -195,7 +194,7 @@ export default class Thing extends Datum {
 			idHere.set(id);
 			this.expand();
 			signal(Signals.childrenOf, id);
-			persistLocal.writeToKey(PersistID.here + dbDispatch.db.dbType, id)
+			persistLocal.writeToDBKey(PersistID.here, id)
 		};
 	}
 
