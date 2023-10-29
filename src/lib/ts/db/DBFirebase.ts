@@ -1,6 +1,7 @@
-import { k, Thing, Datum, DBType, DataKind, signal, Signals, Hierarchy, copyObject, Predicate, dbDispatch, Relationship, CreationFlag, convertToObject } from '../common/GlobalImports';
-import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection, onSnapshot, getFirestore, deleteField } from 'firebase/firestore';
-import { DocumentData, DocumentChange, DocumentReference, CollectionReference } from 'firebase/firestore';
+import { k, Thing, Datum, DBType, DataKind, signal, Signals, TraitType, Hierarchy, copyObject } from '../common/GlobalImports';
+import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection, onSnapshot, deleteField } from 'firebase/firestore';
+import { getFirestore, DocumentData, DocumentChange, DocumentReference, CollectionReference } from 'firebase/firestore';
+import { Predicate, dbDispatch, Relationship, CreationFlag, convertToObject } from '../common/GlobalImports';
 import { initializeApp } from "firebase/app";
 import DBInterface from './DBInterface';
 
@@ -87,7 +88,7 @@ export default class DBFirebase implements DBInterface {
 		
 	async fetch_allBulks() {
 		const root = this.hierarchy.root;
-		if (dbDispatch.bulkName == 'Jonathan Sand' && root) {
+		if (dbDispatch.bulkName == k.adminBulkName && root) {
 			const roots = this.hierarchy.thing_getRoots();
 			if (roots) {
 				try {		// add bulks to roots thing
@@ -95,9 +96,14 @@ export default class DBFirebase implements DBInterface {
 					let bulkSnapshot = await getDocs(bulksCollection);
 					for (const bulkShot of bulkSnapshot.docs) {
 						const title = bulkShot.id;
-						if (title != dbDispatch.bulkName && !this.hierarchy.hasRootWithTitle(title)) {				// create a thing for each bulk
-							const thing = this.hierarchy.thing_remember_runtimeCreate(Datum.newID, title, 'red', '~', -1, false);
-							this.hierarchy.thing_remoteAddAsChild(thing, roots);
+						if (title != dbDispatch.bulkName) {
+							let thing = this.hierarchy.thing_getBulkAliasWithTitle(title)
+							if (!thing) {													// create a thing for each bulk
+								thing = this.hierarchy.thing_remember_runtimeCreate(Datum.newID, title, 'red', TraitType.bulk, -1, false);
+								this.hierarchy.thing_remoteAddAsChild(thing, roots);
+							} else if (thing.isExpanded) {
+								thing.redraw_fetchAll_runtimeBrowseRight(false);
+							}
 						}
 					}
 					// TODO: detect when a root disappears
@@ -270,7 +276,7 @@ export default class DBFirebase implements DBInterface {
 
 	async things_startup_remoteCreateIn(collectionRef: CollectionReference) {
 		const fields = ['title', 'color', 'trait'];
-		const root = new Thing(Datum.newID, dbDispatch.bulkName, 'coral', '!', 0, false);
+		const root = new Thing(Datum.newID, dbDispatch.bulkName, 'coral', TraitType.root, 0, false);
 		const thing = new Thing(Datum.newID, 'Click this text to edit it', 'purple', '', 0, false);
 		this.hierarchy.root = root;
 		await addDoc(collectionRef, convertToObject(thing, fields));

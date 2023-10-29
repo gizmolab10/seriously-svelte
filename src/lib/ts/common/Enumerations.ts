@@ -25,6 +25,12 @@ export enum LineCurveType {
 	flat = 'flat',
 }
 
+export enum TraitType {
+	roots = '^',
+	root  = '!',
+	bulk  = '~',
+}
+
 const baseZIndex = 10000;
 
 export enum ZIndex {

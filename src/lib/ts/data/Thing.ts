@@ -1,4 +1,4 @@
-import { k, get, Size, Datum, signal, Signals, Predicate, PersistID, dbDispatch, getWidthOf, persistLocal, orders_normalize_remoteMaybe, Hierarchy } from '../common/GlobalImports';
+import { k, get, Size, Datum, signal, Signals, Predicate, PersistID, dbDispatch, getWidthOf, persistLocal, orders_normalize_remoteMaybe, Hierarchy, TraitType } from '../common/GlobalImports';
 import { idHere, idEditing, expanded, idsGrabbed, lineGap, lineStretch, dotDiameter } from '../managers/State';
 import Airtable from 'airtable';
 
@@ -47,23 +47,23 @@ export default class Thing extends Datum {
 	get description():				string { return this.id + ' (\" ' + this.title + '\") '; }
 	get visibleProgenySize():		  Size { return new Size(this.visibleProgenyWidth, this.visibleProgenyHeight); }
 	get halfVisibleProgenySize():	  Size { return this.visibleProgenySize.dividedInHalf; }
-	get titleWidth():				number { return getWidthOf(this.title) }
-	get halfVisibleProgenyWidth():  number { return this.visibleProgenyWidth / 2; }
 	get halfVisibleProgenyHeight(): number { return this.visibleProgenyHeight / 2; }
-	get isBulkAlias():			   boolean { return this.trait == '~'; }
+	get halfVisibleProgenyWidth():  number { return this.visibleProgenyWidth / 2; }
+	get titleWidth():				number { return getWidthOf(this.title) }
 	get hasChildren():			   boolean { return this.hasPredicate(false); }
 	get isRoot():				   boolean { return this == this.hierarchy.root; }
+	get isBulkAlias():			   boolean { return this.trait == TraitType.bulk; }
 	get showBorder():			   boolean { return this.isGrabbed || this.isEditing || this.isExemplar; }
-	get isVisible():			   boolean { return this.ancestors(Number.MAX_SAFE_INTEGER).includes(this.hierarchy.here!); }
 	get isExpanded():			   boolean { return this.isRoot || get(expanded).includes(this.parentRelationshipID); }
+	get isVisible():			   boolean { return this.ancestors(Number.MAX_SAFE_INTEGER).includes(this.hierarchy.here!); }
 	get grandparent():				 Thing { return this.firstParent?.firstParent ?? this.hierarchy.root; }
 	get lastChild():				 Thing { return this.children.slice(-1)[0]; }
 	get firstChild():				 Thing { return this.children[0]; }
 	get firstParent():				 Thing { return this.parents[0]; }
-	get fields():		 Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get siblings():			  Array<Thing> { return this.firstParent?.children ?? []; }
-	get children():			  Array<Thing> { const id = Predicate.idIsAParentOf; return this.hierarchy.things_getByIDPredicateToAndID(id, false, this.id); }
-	get parents():			  Array<Thing> { const id = Predicate.idIsAParentOf; return this.hierarchy.things_getByIDPredicateToAndID(id,	true, this.id); }
+	get children():			  Array<Thing> { const idP = Predicate.idIsAParentOf; return this.hierarchy.things_getByIDPredicateToAndID(idP, false, this.id); }
+	get parents():			  Array<Thing> { const idP = Predicate.idIsAParentOf; return this.hierarchy.things_getByIDPredicateToAndID(idP,	true, this.id); }
+	get fields():		 Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 
 	get parentRelationshipID(): string { // WRONG
 		return this.hierarchy.relationship_getWhereIDEqualsTo(this.id, true)?.id ?? '';

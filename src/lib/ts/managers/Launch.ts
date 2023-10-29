@@ -1,20 +1,21 @@
 import { k, dbDispatch, persistLocal, isServerLocal, getBrowserType } from '../common/GlobalImports'
-import { idHere, idsGrabbed } from './State';
+import { idHere, expanded, idsGrabbed } from './State';
 
 class Launch {
 
 	setup() {
-		const params = new URLSearchParams(window.location.search);
 		document.title = 'Seriously ('+ (isServerLocal() ? 'local' : 'remote') + ', ' + getBrowserType()  + ', α)';
+		const queryStrings = new URLSearchParams(window.location.search);
 		persistLocal.restore();
-		k.applyQueryStrings(params);
-		this.applyQueryStrings(params);
-		dbDispatch.applyQueryStrings(params);
+		k.applyQueryStrings(queryStrings);
+		this.applyQueryStrings(queryStrings);
+		dbDispatch.applyQueryStrings(queryStrings);
 	}
 
-	applyQueryStrings(params: URLSearchParams) {
-		if (params.get('persist') === 'erase') {
+	applyQueryStrings(queryStrings: URLSearchParams) {
+		if (queryStrings.get('persist') === 'erase') {
 			idsGrabbed.set([]);
+			expanded.set([]);
 			idHere.set(null);
 		}
 	}

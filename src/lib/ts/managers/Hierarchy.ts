@@ -1,4 +1,4 @@
-import { k, get, User, Datum, Thing, Grabs, Access, remove, Predicate, Relationship } from '../common/GlobalImports';
+import { k, get, User, Datum, Thing, Grabs, Access, remove, TraitType, Predicate, Relationship } from '../common/GlobalImports';
 import { persistLocal, CreationFlag, sort_byOrder, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { idHere, isBusy, idsGrabbed, thingsArrived } from './State';
 import DBInterface from '../db/DBInterface';
@@ -33,7 +33,6 @@ export default class Hierarchy {
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): (string | null) { return this.root?.id ?? null; };
 	get things(): Array<Thing> { return Object.values(this.knownT_byID) };
-	hasRootWithTitle(title: string) { return this.thing_getBulkAliasWithTitle(title) != null; }
 	thing_getForID(idThing: string | null): Thing | null { return (!idThing) ? null : this.knownT_byID[idThing]; }
 
 	constructor(db: DBInterface) {
@@ -97,13 +96,13 @@ export default class Hierarchy {
 
 	thing_getRoots() {
 		for (const thing of this.knownTs) {
-			if  (thing.trait == '^' && thing.title == 'roots') {	// special case TODO: convert to a auery string
+			if  (thing.trait == TraitType.roots && thing.title == 'roots') {	// special case TODO: convert to a auery string
 				return thing;
 			}
 		}
 		const root = this.root;
 		if (root) {
-			const roots = this.thing_remember_runtimeCreate(Datum.newID, 'roots', 'red', '^', -1, false);
+			const roots = this.thing_remember_runtimeCreate(Datum.newID, 'roots', 'red', TraitType.roots, -1, false);
 			this.thing_remoteAddAsChild(roots, root);
 			return roots;
 		}
@@ -153,7 +152,7 @@ export default class Hierarchy {
 	thing_remember(thing: Thing) {
 		this.knownT_byID[thing.id] = thing;
 		this.knownTs.push(thing);
-		if (thing.trait == '!') {
+		if (thing.trait == TraitType.root) {
 			this.root = thing;
 		}
 	}
@@ -162,7 +161,7 @@ export default class Hierarchy {
 		return this.thing_remember_runtimeCreate(Datum.newID, k.defaultTitle, color, '', order, false);
 	}
 
-	thing_bulkAdjust(bulkName: string, id: string, color: string, trait: string) {
+	thing_bulkAdjust(bulkName: string, id: string, color: string) {
 		// this is a bulk alias
 		// need relationships to work
 		const thing = this.thing_getBulkAliasWithTitle(bulkName);
@@ -170,7 +169,7 @@ export default class Hierarchy {
 			const relationship = this.relationship_getWhereIDEqualsTo(thing.id);
 			if (relationship && relationship.idTo != id) {
 				this.relationship_forget(relationship);
-				relationship.idTo = id; // so this relatiohship will continue to work
+				relationship.idTo = id;		// so this relatiohship will continue to work
 				this.relationship_remember(relationship);
 			}
 			this.thing_forget(thing);		// remove stale knowns
@@ -184,8 +183,8 @@ export default class Hierarchy {
 	thing_remember_runtimeCreate(id: string, title: string, color: string, trait: string, order: number,
 		isRemotelyStored: boolean, bulkName: string | null = null): Thing {
 		let thing: Thing | null = null;
-		if (trait == '!' && bulkName) {
-			thing = this.thing_bulkAdjust(bulkName, id, color, trait);
+		if (trait == TraitType.root && bulkName && bulkName != k.adminBulkName) {		// other bulks have their own root & id
+			thing = this.thing_bulkAdjust(bulkName, id, color);				// which our (thing and relationship) needs to adopt
 		}
 		if (!thing) {
 			thing = new Thing(id, title, color, trait, order, isRemotelyStored);
