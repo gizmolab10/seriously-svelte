@@ -162,24 +162,30 @@ export default class Hierarchy {
 		return this.thing_remember_runtimeCreate(Datum.newID, k.defaultTitle, color, '', order, false);
 	}
 
+	thing_bulkAdjust(bulkName: string, id: string, color: string, trait: string) {
+		// this is a bulk alias
+		// need relationships to work
+		const thing = this.thing_getBulkAliasWithTitle(bulkName);
+		if (thing) {
+			const relationship = this.relationship_getWhereIDEqualsTo(thing.id);
+			if (relationship && relationship.idTo != id) {
+				this.relationship_forget(relationship);
+				relationship.idTo = id; // so this relatiohship will continue to work
+				this.relationship_remember(relationship);
+			}
+			this.thing_forget(thing);		// remove stale knowns
+			thing.needsBulkFetch = false;	// for when user reveals children: they must first be fetched
+			thing.color = color;			// N.B., ignore trait
+			thing.id = id;					// so children relatiohships will work
+		}
+		return thing;
+	}
+
 	thing_remember_runtimeCreate(id: string, title: string, color: string, trait: string, order: number,
 		isRemotelyStored: boolean, bulkName: string | null = null): Thing {
 		let thing: Thing | null = null;
 		if (trait == '!' && bulkName) {
-			thing = this.thing_getBulkAliasWithTitle(bulkName);
-			if (thing) {	//  this is a bulk alias
-				//				need relationships to work
-				const relationship = this.relationship_getWhereIDEqualsTo(thing.id);
-				if (relationship && relationship.idTo != id) {
-					this.relationship_forget(relationship);
-					relationship.idTo = id; // so this relatiohship will continue to work
-					this.relationship_remember(relationship);
-				}
-				this.thing_forget(thing);		// remove stale knowns
-				thing.needsBulkFetch = false;	// for when user reveals children: they must first be fetched
-				thing.color = color;			// N.B., ignore trait
-				thing.id = id;					// so children relatiohships will work
-			}
+			thing = this.thing_bulkAdjust(bulkName, id, color, trait);
 		}
 		if (!thing) {
 			thing = new Thing(id, title, color, trait, order, isRemotelyStored);
