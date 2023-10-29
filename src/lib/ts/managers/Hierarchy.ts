@@ -101,6 +101,12 @@ export default class Hierarchy {
 				return thing;
 			}
 		}
+		const root = this.root;
+		if (root) {
+			const roots = this.thing_remember_runtimeCreate(Datum.newID, 'roots', 'red', '^', -1, false);
+			this.thing_remoteAddAsChild(roots, root);
+			return roots;
+		}
 		return null;
 	}
 
@@ -281,7 +287,9 @@ export default class Hierarchy {
 	relationship_remember_runtimeCreateUnique(idRelationship: string, idPredicate: string, idFrom: string,
 		idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none) {
 		let relationship = this.relationships_getByIDPredicateFromAndTo(idPredicate, idFrom, idTo);
-		if (!relationship) {
+		if (relationship) {
+			relationship.order_setTo(order, false);						// AND thing are updated
+		} else {
 			relationship = new Relationship(idRelationship, idPredicate, idFrom, idTo, order, creationFlag == CreationFlag.isFromRemote);
 			this.relationship_remember(relationship);
 		}
