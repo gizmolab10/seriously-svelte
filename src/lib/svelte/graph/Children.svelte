@@ -30,14 +30,14 @@
 
 	function layoutChildren() {
 		if (thing) {
-			const height = (thing.halfVisibleProgenyHeight);		// TODO: why 4?
+			const height = (thing.halfVisibleProgenyHeight);
 			const childOrigin = origin.offsetByY(height);
 			lineRects = new Layout(thing, childOrigin).lineRects;
 		}
 	}
 
 	function originForGrandchildren(child: Thing, index: number): Point {
-		const more = 17;									// TODO: WHY 14? perhaps it accounts for title margin
+		const more = 17;									// TODO: WHY 17? perhaps it accounts for title margin
 		const rect = lineRectAt(index);
 		const x = origin.x + child.titleWidth + $dotDiameter + $lineStretch + more;
 		const y = rect.extent.y - child.halfVisibleProgenyHeight;

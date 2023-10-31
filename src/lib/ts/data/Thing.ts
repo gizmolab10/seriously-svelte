@@ -54,7 +54,7 @@ export default class Thing extends Datum {
 	get isRoot():				   boolean { return this == this.hierarchy.root; }
 	get isBulkAlias():			   boolean { return this.trait == TraitType.bulk; }
 	get showBorder():			   boolean { return this.isGrabbed || this.isEditing || this.isExemplar; }
-	get isExpanded():			   boolean { return this.isRoot || get(expanded).includes(this.parentRelationshipID); }
+	get isExpanded():			   boolean { return this.isRoot || get(expanded)?.includes(this.parentRelationshipID); }
 	get isVisible():			   boolean { return this.ancestors(Number.MAX_SAFE_INTEGER).includes(this.hierarchy.here!); }
 	get grandparent():				 Thing { return this.firstParent?.firstParent ?? this.hierarchy.root; }
 	get lastChild():				 Thing { return this.children.slice(-1)[0]; }
@@ -66,7 +66,7 @@ export default class Thing extends Datum {
 	get fields():		 Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 
 	get parentRelationshipID(): string { // WRONG
-		return this.hierarchy.relationship_getWhereIDEqualsTo(this.id, true)?.id ?? '';
+		return this.hierarchy.relationship_getWhereIDEqualsTo(this.id)?.id ?? '';
 	}
 
 	get hasGrandChildren(): boolean {
@@ -154,14 +154,16 @@ export default class Thing extends Datum {
 		const relationship = this.hierarchy.relationship_getWhereIDEqualsTo(this.id);
 		if (relationship) {
 			expanded.update((array) => {
-				if (expand) {
-					if (array.indexOf(relationship.id) == -1) {
-						array.push(relationship.id);	// only add if not already added
-					}
-				} else {
-					const index = array.indexOf(relationship.id);
-					if (index != -1) {					// only splice array when item is found
-						array.splice(index, 1);			// 2nd parameter means 'remove one item only'
+				if (array) {
+					if (expand) {
+						if (array.indexOf(relationship.id) == -1) {
+							array.push(relationship.id);	// only add if not already added
+						}
+					} else {
+						const index = array.indexOf(relationship.id);
+						if (index != -1) {					// only splice array when item is found
+							array.splice(index, 1);			// 2nd parameter means 'remove one item only'
+						}
 					}
 				}
 				return array;
@@ -241,6 +243,7 @@ export default class Thing extends Datum {
 	}
 
 	async redraw_fetchAll_runtimeBrowseRight(grab: boolean = true) {
+		this.expand();		// do this before fetch, which changes the relationship id being stored
 		await dbDispatch.db.fetch_allFrom(this.title)
 		if (this.hasChildren) {
 			if (grab) {

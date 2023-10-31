@@ -32,7 +32,6 @@ export default class Hierarchy {
 
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): (string | null) { return this.root?.id ?? null; };
-	get things(): Array<Thing> { return Object.values(this.knownT_byID) };
 	thing_getForID(idThing: string | null): Thing | null { return (!idThing) ? null : this.knownT_byID[idThing]; }
 
 	constructor(db: DBInterface) {
@@ -47,22 +46,8 @@ export default class Hierarchy {
 	async hierarchy_construct(type: string) {
 		const idRoot = this.idRoot;
 		if (this.root && idRoot) {
-			for (const thing of this.things) {
-				const idThing = thing.id;
-				if (idThing != idRoot) {
-					let relationship = this.relationship_getWhereIDEqualsTo(idThing);
-					if (relationship) {
-						thing.order = relationship.order;
-					} else {
-						const idPredicateIsAParentOf = Predicate.idIsAParentOf;
-						
-						// already determined that WE DO NOT NEED Unique, we do need it's id now
-
-						await this.relationship_remember_remoteCreateUnique(dbDispatch.bulkName, Datum.newID, idPredicateIsAParentOf,
-							idRoot, idThing, -1, CreationFlag.getRemoteID)
-					}
-				}
-			}
+			await this.relationships_remoteCreateMissing(idRoot);
+			this.relationships_removePhantoms();
 			this.root.order_normalizeRecursive(true)	// setup order values for all things and relationships
 			this.db?.setHasData(true);
 			orders_normalize_remoteMaybe(this.root.children)
@@ -72,6 +57,40 @@ export default class Hierarchy {
 		thingsArrived.set(true);
 		isBusy.set(false);
 		this.isConstructed = true;
+	}
+
+	async relationships_remoteCreateMissing(idRoot: string) {
+		for (const thing of this.knownTs) {
+			const idThing = thing.id;
+			if (idThing != idRoot) {
+				let relationship = this.relationship_getWhereIDEqualsTo(idThing);
+				if (relationship) {
+					thing.order = relationship.order;
+				} else {
+					const idPredicateIsAParentOf = Predicate.idIsAParentOf;
+					await this.relationship_remember_remoteCreateUnique(dbDispatch.bulkName, Datum.newID, idPredicateIsAParentOf,
+						idRoot, idThing, -1, CreationFlag.getRemoteID)
+				}
+			}
+		}
+	}
+
+	relationships_removePhantoms() {
+		const array = Array<Relationship>();
+		for (const relationship of this.knownRs) {
+			const thingTo = this.thing_getForID(relationship.idTo);
+			const thingFrom = this.thing_getForID(relationship.idFrom);
+			if (!thingTo || !thingFrom) {
+				array.push(relationship);
+				dbDispatch.db.relationship_remoteDelete(relationship);
+			}
+		}
+		while (array.length > 0) {
+			const relationship = array.pop();
+			if (relationship) {
+				this.relationship_forget(relationship);
+			}
+		}
 	}
 
 	here_restore() {
@@ -163,10 +182,11 @@ export default class Hierarchy {
 	}
 
 	thing_bulkAdjust(bulkName: string, id: string, color: string) {
-		// this is a bulk alias
-		// need relationships to work
+		if (bulkName == dbDispatch.bulkName) {
+			return null;
+		}
 		const thing = this.thing_getBulkAliasWithTitle(bulkName);
-		if (thing) {
+		if (thing) {	// need alias' parent and child relationships to work
 			const relationship = this.relationship_getWhereIDEqualsTo(thing.id);
 			if (relationship && relationship.idTo != id) {
 				this.relationship_forget(relationship);
@@ -191,7 +211,7 @@ export default class Hierarchy {
 	thing_runtimeCreate(bulkName: string, id: string, title: string, color: string, trait: string, order: number,
 		isRemotelyStored: boolean): Thing {
 		let thing: Thing | null = null;
-		if (trait == TraitType.root && bulkName && bulkName != k.adminBulkName) {		// other bulks have their own root & id
+		if (trait == TraitType.root && bulkName) {		// other bulks have their own root & id
 			thing = this.thing_bulkAdjust(bulkName, id, color);				// which our (thing and relationship) needs to adopt
 		}
 		if (!thing) {

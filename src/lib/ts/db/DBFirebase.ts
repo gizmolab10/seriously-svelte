@@ -46,13 +46,12 @@ export default class DBFirebase implements DBInterface {
 		this.setup_bulks()
 		await this.fetch_documentsOf(DataKind.predicates);
 		await this.fetch_allFrom(name);
-		await this.fetch_allBulks();
+		await this.fetch_bulkAliases();
 	}
 
 	setup_bulks() {
 		if (!this.bulks) {
-			const launchCollection = new Bulk(dbDispatch.bulkName);
-			this.bulks = [launchCollection];
+			this.bulks = [new Bulk(dbDispatch.bulkName)];
 		}
 	}
 
@@ -82,8 +81,11 @@ export default class DBFirebase implements DBInterface {
 		try {
 			const collectionRef = !bulkName ? collection(this.db, dataKind) : collection(this.db, this.bulksName, bulkName, dataKind);
 			let querySnapshot = await getDocs(collectionRef);
-			this.remoteHandler_setup(dataKind, collectionRef);
 			const bulk = this.get_bulkFor(bulkName);
+
+			if (bulkName) {
+				this.remoteHandler_setup(bulkName, dataKind, collectionRef);
+			}
 
 			if (querySnapshot.empty && bulkName) {
 				await this.documents_startup_remoteCreate(dataKind, bulkName, collectionRef);
@@ -114,7 +116,7 @@ export default class DBFirebase implements DBInterface {
 		}
 	}
 		
-	async fetch_allBulks() {
+	async fetch_bulkAliases() {
 		const root = this.hierarchy.root;
 		if (dbDispatch.bulkName == k.adminBulkName && root) {
 			const roots = this.hierarchy.thing_getRoots();
@@ -127,7 +129,7 @@ export default class DBFirebase implements DBInterface {
 						if (bulkName != dbDispatch.bulkName) {
 							let thing = this.hierarchy.thing_getBulkAliasWithTitle(bulkName)
 							if (!thing) {													// create a thing for each bulk
-								thing = this.hierarchy.thing_runtimeCreate(bulkName, Datum.newID, bulkName, 'red', TraitType.bulk, -1, false);
+								thing = this.hierarchy.thing_runtimeCreate(dbDispatch.bulkName, Datum.newID, bulkName, 'red', TraitType.bulk, -1, false);
 								this.hierarchy.thing_remoteAddAsChild(thing, roots);
 							} else if (thing.isExpanded) {
 								thing.redraw_fetchAll_runtimeBrowseRight(false);
@@ -143,17 +145,17 @@ export default class DBFirebase implements DBInterface {
 		}
 	}
 
-	remoteHandler_setup(dataKind: DataKind, collection: CollectionReference) {
+	remoteHandler_setup(bulkName: string, dataKind: DataKind, collection: CollectionReference) {
 		onSnapshot(collection, (snapshot) => {
 			if (this.hierarchy.isConstructed) {								// ignore snapshots caused by data written to server
 				snapshot.docChanges().forEach((change) => {	// convert and remember
-					this.remoteHandler(change, dataKind);
+					this.remoteHandler(bulkName, dataKind, change);
 				});
 			}
 		}
 	)};
 
-	async remoteHandler(change: DocumentChange, dataKind: DataKind) {
+	async remoteHandler(bulkName: string, dataKind: DataKind, change: DocumentChange) {
 		const doc = change.doc;
 		const data = doc.data();
 		if (DBFirebase.data_isValidOfKind(dataKind, data)) {
@@ -173,7 +175,7 @@ export default class DBFirebase implements DBInterface {
 						switch (change.type) {
 							case 'added':
 								if (!relationship) {
-									this.hierarchy.relationship_remember_runtimeCreateUnique(id, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote);
+									this.hierarchy.relationship_remember_runtimeCreateUnique(bulkName, id, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote);
 									this.hierarchy.relationships_refreshKnowns_runtimeRenormalize();
 								}
 								break;
@@ -207,7 +209,7 @@ export default class DBFirebase implements DBInterface {
 						switch (change.type) {
 							case 'added':
 								if (!thing) {
-									this.hierarchy.thing_remember_runtimeCreate('hell and damnation', id, remote.title, remote.color, remote.trait, -1, true);
+									this.hierarchy.thing_remember_runtimeCreate(bulkName, id, remote.title, remote.color, remote.trait, -1, true);
 								}
 								break;
 							default:

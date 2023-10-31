@@ -53,7 +53,7 @@ class PersistLocal {
 
 	readFromKey(key: string): any | null {
 		const storedValue = localStorage.getItem(key);
-		return storedValue ? JSON.parse(storedValue) : null;
+		return (storedValue == 'undefined') ? null : JSON.parse(storedValue!);
 	}
 
 	state_updateFor(type: string, defaultIDHere: string) {
