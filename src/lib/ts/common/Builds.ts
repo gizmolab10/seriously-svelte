@@ -4,6 +4,7 @@ class Builds {
 
 	constructor() {
 		this.notes = {
+			57 : ['October 31, 2023', 'separate bulk collections'],
 			56 : ['October 27, 2023', 'fat triangle for all reveal dots'],
 			55 : ['October 25, 2023', 'double-click drag dot applies focus'],
 			54 : ['October 21, 2023', 'restore details at left'],
