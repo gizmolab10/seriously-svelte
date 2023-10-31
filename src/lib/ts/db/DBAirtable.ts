@@ -60,7 +60,7 @@ export default class DBAirtable implements DBInterface {
 				const remoteThings = records;
 				for (const remoteThing of remoteThings) {
 					const id = remoteThing.id;
-					this.hierarchy.thing_remember_runtimeCreate(id, remoteThing.fields.title as string, remoteThing.fields.color as string, remoteThing.fields.trait as string, -1, true);
+					this.hierarchy.thing_remember_runtimeCreate('', id, remoteThing.fields.title as string, remoteThing.fields.color as string, remoteThing.fields.trait as string, -1, true);
 				}
 				thingsArrived.set(true);
 			})

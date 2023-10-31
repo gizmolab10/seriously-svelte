@@ -1,4 +1,4 @@
-import { k, get, User, Datum, Thing, Grabs, Access, remove, TraitType, Predicate, Relationship } from '../common/GlobalImports';
+import { k, get, User, Datum, Thing, Grabs, Access, remove, TraitType, Predicate, Relationship, dbDispatch } from '../common/GlobalImports';
 import { persistLocal, CreationFlag, sort_byOrder, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { idHere, isBusy, idsGrabbed, thingsArrived } from './State';
 import DBInterface from '../db/DBInterface';
@@ -58,7 +58,7 @@ export default class Hierarchy {
 						
 						// already determined that WE DO NOT NEED Unique, we do need it's id now
 
-						await this.relationship_remember_remoteCreateUnique(Datum.newID, idPredicateIsAParentOf,
+						await this.relationship_remember_remoteCreateUnique(dbDispatch.bulkName, Datum.newID, idPredicateIsAParentOf,
 							idRoot, idThing, -1, CreationFlag.getRemoteID)
 					}
 				}
@@ -102,7 +102,7 @@ export default class Hierarchy {
 		}
 		const root = this.root;
 		if (root) {
-			const roots = this.thing_remember_runtimeCreate(Datum.newID, 'roots', 'red', TraitType.roots, -1, false);
+			const roots = this.thing_runtimeCreate(dbDispatch.bulkName, Datum.newID, 'roots', 'red', TraitType.roots, -1, false);
 			this.thing_remoteAddAsChild(roots, root);
 			return roots;
 		}
@@ -126,7 +126,7 @@ export default class Hierarchy {
 		const idRelationship = Datum.newID;
 		await this.db?.thing_remoteCreate(child).then(() => { // for everything below, need to await child.id fetched from dbDispatch
 			this.thing_remember(child);
-			this.relationship_remember_remoteCreateUnique(idRelationship, idPredicateIsAParentOf, parent.id,
+			this.relationship_remember_remoteCreateUnique(parent.bulkName, idRelationship, idPredicateIsAParentOf, parent.id,
 				child.id, child.order, CreationFlag.getRemoteID)
 			.then((relationship) => {
 				orders_normalize_remoteMaybe(parent.children);		// write new order values for relationships
@@ -142,6 +142,7 @@ export default class Hierarchy {
 
 	thing_forget(thing: Thing) {
 		delete this.knownT_byID[thing.id];
+		this.knownTs = this.knownTs.filter((known) => known.id !== thing.id);
 	}
 
 	async thing_forget_remoteDelete(thing: Thing) {
@@ -157,8 +158,8 @@ export default class Hierarchy {
 		}
 	}
 
-	thing_remember_runtimeCreateAt(order: number, color: string) {
-		return this.thing_remember_runtimeCreate(Datum.newID, k.defaultTitle, color, '', order, false);
+	thing_remember_runtimeCreateAt(bulkName: string, order: number, color: string) {
+		return this.thing_remember_runtimeCreate(bulkName, Datum.newID, k.defaultTitle, color, '', order, false);
 	}
 
 	thing_bulkAdjust(bulkName: string, id: string, color: string) {
@@ -180,19 +181,25 @@ export default class Hierarchy {
 		return thing;
 	}
 
-	thing_remember_runtimeCreate(id: string, title: string, color: string, trait: string, order: number,
-		isRemotelyStored: boolean, bulkName: string | null = null): Thing {
+	thing_remember_runtimeCreate(bulkName: string, id: string, title: string, color: string, trait: string, order: number,
+		isRemotelyStored: boolean): Thing {
+		const thing = this.thing_runtimeCreate(bulkName, id, title, color, trait, order, isRemotelyStored);
+		this.thing_remember(thing);
+		return thing;
+	}
+
+	thing_runtimeCreate(bulkName: string, id: string, title: string, color: string, trait: string, order: number,
+		isRemotelyStored: boolean): Thing {
 		let thing: Thing | null = null;
 		if (trait == TraitType.root && bulkName && bulkName != k.adminBulkName) {		// other bulks have their own root & id
 			thing = this.thing_bulkAdjust(bulkName, id, color);				// which our (thing and relationship) needs to adopt
 		}
 		if (!thing) {
-			thing = new Thing(id, title, color, trait, order, isRemotelyStored);
+			thing = new Thing(bulkName ?? dbDispatch.bulkName, id, title, color, trait, order, isRemotelyStored);
 			if (thing.isBulkAlias) {
 				thing.needsBulkFetch = true;
 			}
 		}
-		this.thing_remember(thing);
 		return thing;
 	}
 
@@ -289,25 +296,25 @@ export default class Hierarchy {
 		}
 	}
 
-	relationship_remember_runtimeCreateUnique(idRelationship: string, idPredicate: string, idFrom: string,
+	relationship_remember_runtimeCreateUnique(bulkName: string, idRelationship: string, idPredicate: string, idFrom: string,
 		idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none) {
 		let relationship = this.relationships_getByIDPredicateFromAndTo(idPredicate, idFrom, idTo);
 		if (relationship) {
 			relationship.order_setTo(order, false);						// AND thing are updated
 		} else {
-			relationship = new Relationship(idRelationship, idPredicate, idFrom, idTo, order, creationFlag == CreationFlag.isFromRemote);
+			relationship = new Relationship(bulkName, idRelationship, idPredicate, idFrom, idTo, order, creationFlag == CreationFlag.isFromRemote);
 			this.relationship_remember(relationship);
 		}
 		return relationship;
 	}
 
-	async relationship_remember_remoteCreateUnique(idRelationship: string, idPredicate: string, idFrom: string,
+	async relationship_remember_remoteCreateUnique(bulkName: string, idRelationship: string, idPredicate: string, idFrom: string,
 		idTo: string, order: number, creationFlag: CreationFlag = CreationFlag.none): Promise<any> {
 		let relationship = this.relationships_getByIDPredicateFromAndTo(idPredicate, idFrom, idTo);
 		if (relationship) {
 			relationship.order_setTo(order, false);						// AND thing are updated
 		} else {
-			relationship = new Relationship(idRelationship, idPredicate, idFrom, idTo, order, creationFlag == CreationFlag.isFromRemote);
+			relationship = new Relationship(bulkName, idRelationship, idPredicate, idFrom, idTo, order, creationFlag == CreationFlag.isFromRemote);
 			this.relationship_remember(relationship);
 			await relationship.remoteWrite();
 		}

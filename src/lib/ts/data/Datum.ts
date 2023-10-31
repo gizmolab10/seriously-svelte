@@ -2,15 +2,17 @@ import { removeAll } from '../common/GlobalImports';
 import { v4 as uuid } from 'uuid';
 
 export default class Basis {
-	isRemotelyStored: boolean;
 	lastWriteDate = new Date();
+	isRemotelyStored: boolean;
 	needsWrite = false;
+	bulkName: string;
 	id: string;
 
 	static get newID(): string { return 'NEW' + removeAll('-', uuid()).slice(10, 24); } // use last, most-unique bytes of uuid
 
-	constructor(id: string, isRemotelyStored: boolean) {
+	constructor(bulkName: string, id: string, isRemotelyStored: boolean) {
 		this.isRemotelyStored = isRemotelyStored;
+		this.bulkName = bulkName;
 		this.id = id;
 	}
 

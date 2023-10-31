@@ -2,7 +2,6 @@
 	import { noop, Thing, onMount, ZIndex, signal, Signals, BrowserType, getBrowserType, dbDispatch } from '../../ts/common/GlobalImports';
 	import { idsGrabbed, dotDiameter } from '../../ts/managers/State';
 	export let thing = Thing;
-    export let title = '';
 	const longClickThreshold = 500;
 	const doubleClickThreshold = 100;				// one fifth of a second
 	const browserType = getBrowserType();

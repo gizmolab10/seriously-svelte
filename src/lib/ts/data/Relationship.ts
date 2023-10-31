@@ -10,8 +10,8 @@ export default class Relationship extends Datum {
 	order: number;
 	dbType: string;
 
-	constructor(id: string, idPredicate: string, idFrom: string, idTo: string, order = 0, isRemotelyStored: boolean) {
-		super(id, isRemotelyStored);
+	constructor(bulkName: string, id: string, idPredicate: string, idFrom: string, idTo: string, order = 0, isRemotelyStored: boolean) {
+		super(bulkName, id, isRemotelyStored);
 		this.awaitingCreation = false;
 		this.idTo = idTo; // idTo is child
 		this.idFrom = idFrom; // idFrom is parent

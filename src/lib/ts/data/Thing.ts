@@ -16,8 +16,8 @@ export default class Thing extends Datum {
 	trait: string;
 	order: number;
 
-	constructor(id: string = Datum.newID, title = k.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
-		super(id, isRemotelyStored);
+	constructor(bulkName: string, id: string = Datum.newID, title = k.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
+		super(bulkName, id, isRemotelyStored);
 		this.dbType = dbDispatch.db.dbType;
 		this.title = title;
 		this.color = color;
@@ -290,14 +290,14 @@ export default class Thing extends Datum {
 					} else {
 						newGrab.expand();
 					}
-				} else {
+				} else if (newGrab) { 
 					if (this.isExpanded) {
-						newGrab = null;
 						this.collapse();
-					} else if (newGrab != root) {
-						newGrab.collapse();
-					} else {
 						newGrab = null;
+					} else if (newGrab == root) {
+						newGrab = null;
+					} else {
+						newGrab.collapse();
 					}
 				}
 			}

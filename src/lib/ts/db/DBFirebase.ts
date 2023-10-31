@@ -21,12 +21,11 @@ export default class DBFirebase implements DBInterface {
 	loadTime = null;
 	hasData = false;
 	dbType = DBType.firebase;
-	collectionName = 'Bulks';
+	bulksName = 'Bulks';
+	bulks: [Bulk] | null = null;
 	app = initializeApp(this.firebaseConfig);
-	_hierarchy: Hierarchy | null = null;
-	thingsCollection: CollectionReference | null = null;
 	predicatesCollection: CollectionReference | null = null;
-	relationshipsCollection: CollectionReference | null = null;
+	_hierarchy: Hierarchy | null = null;
 	db = getFirestore(this.app);
 
 	setHasData(flag: boolean) { this.hasData = flag; }
@@ -44,9 +43,34 @@ export default class DBFirebase implements DBInterface {
 		if (dbDispatch.eraseDB) {
 			await this.document_remoteDelete(name);
 		}
+		this.setup_bulks()
 		await this.fetch_documentsOf(DataKind.predicates);
 		await this.fetch_allFrom(name);
 		await this.fetch_allBulks();
+	}
+
+	setup_bulks() {
+		if (!this.bulks) {
+			const launchCollection = new Bulk(dbDispatch.bulkName);
+			this.bulks = [launchCollection];
+		}
+	}
+
+	get_bulkFor(bulkName: string | null) {
+		if (bulkName) {
+			const bulks = this.bulks;
+			if (bulks) {
+				for (const bulk of bulks) {
+					if (bulk.bulkName == bulkName) {
+						return bulk;
+					}
+				}
+				const newBulk = new Bulk(bulkName);
+				this.bulks!.push(newBulk);
+				return newBulk;
+			}
+		}
+		return null;
 	}
 
 	async fetch_allFrom(bulkName: string) {
@@ -56,9 +80,10 @@ export default class DBFirebase implements DBInterface {
 		
 	async fetch_documentsOf(dataKind: DataKind, bulkName: string | null = null) {
 		try {
-			const collectionRef = !bulkName ? collection(this.db, dataKind) : collection(this.db, this.collectionName, bulkName, dataKind);
+			const collectionRef = !bulkName ? collection(this.db, dataKind) : collection(this.db, this.bulksName, bulkName, dataKind);
 			let querySnapshot = await getDocs(collectionRef);
 			this.remoteHandler_setup(dataKind, collectionRef);
+			const bulk = this.get_bulkFor(bulkName);
 
 			if (querySnapshot.empty && bulkName) {
 				await this.documents_startup_remoteCreate(dataKind, bulkName, collectionRef);
@@ -69,17 +94,20 @@ export default class DBFirebase implements DBInterface {
 			// data kinds //
 			////////////////
 
-			switch (dataKind) {
-				case DataKind.things:				this.thingsCollection = collectionRef; break;
-				case DataKind.predicates:		this.predicatesCollection = collectionRef; break;
-				case DataKind.relationships: this.relationshipsCollection = collectionRef; break;
+			if (bulk) {
+				switch (dataKind) {
+					case DataKind.things:				bulk.thingsCollection = collectionRef; break;
+					case DataKind.relationships: bulk.relationshipsCollection = collectionRef; break;
+				}
+			} else if (dataKind == DataKind.predicates) {
+				this.predicatesCollection = collectionRef;
 			}
 
 			const docs = querySnapshot.docs;
 			for (const docSnapshot of docs) {
 				const id = docSnapshot.id;
 				const data = docSnapshot.data();
-				await this.document_remember_validated(dataKind, id, data, bulkName);
+				await this.document_remember_validated(dataKind, id, data, bulkName ?? dbDispatch.bulkName);
 			}
 		} catch (error) {
 			this.reportError(error);
@@ -92,14 +120,14 @@ export default class DBFirebase implements DBInterface {
 			const roots = this.hierarchy.thing_getRoots();
 			if (roots) {
 				try {		// add bulks to roots thing
-					const bulksCollection = collection(this.db, this.collectionName);		// fetch all bulks (documents)
-					let bulkSnapshot = await getDocs(bulksCollection);
-					for (const bulkShot of bulkSnapshot.docs) {
-						const title = bulkShot.id;
-						if (title != dbDispatch.bulkName) {
-							let thing = this.hierarchy.thing_getBulkAliasWithTitle(title)
+					const bulk = collection(this.db, this.bulksName);		// fetch all bulks (documents)
+					let bulkSnapshot = await getDocs(bulk);
+					for (const bulkDoc of bulkSnapshot.docs) {
+						const bulkName = bulkDoc.id;
+						if (bulkName != dbDispatch.bulkName) {
+							let thing = this.hierarchy.thing_getBulkAliasWithTitle(bulkName)
 							if (!thing) {													// create a thing for each bulk
-								thing = this.hierarchy.thing_remember_runtimeCreate(Datum.newID, title, 'red', TraitType.bulk, -1, false);
+								thing = this.hierarchy.thing_runtimeCreate(bulkName, Datum.newID, bulkName, 'red', TraitType.bulk, -1, false);
 								this.hierarchy.thing_remoteAddAsChild(thing, roots);
 							} else if (thing.isExpanded) {
 								thing.redraw_fetchAll_runtimeBrowseRight(false);
@@ -179,7 +207,7 @@ export default class DBFirebase implements DBInterface {
 						switch (change.type) {
 							case 'added':
 								if (!thing) {
-									this.hierarchy.thing_remember_runtimeCreate(id, remote.title, remote.color, remote.trait, -1, true);
+									this.hierarchy.thing_remember_runtimeCreate('hell and damnation', id, remote.title, remote.color, remote.trait, -1, true);
 								}
 								break;
 							default:
@@ -208,11 +236,11 @@ export default class DBFirebase implements DBInterface {
 	}
 
 	//////////////////////////////////////////
-	//	    DOCUMENTS / SUBCOLLECTIONS		//
+	//	    DOCUMENTS & SUBCOLLECTIONS		//
 	//////////////////////////////////////////
 
 	async documents_startup_remoteCreate(dataKind: DataKind, bulkName: string, collectionRef: CollectionReference) {
-		const docRef = doc(this.db, this.collectionName, bulkName);
+		const docRef = doc(this.db, this.bulksName, bulkName);
 		await setDoc(docRef, { isReal: true }, { merge: true });
 		await updateDoc(docRef, { isReal: deleteField() });
 		if (dataKind == DataKind.things) {
@@ -220,19 +248,19 @@ export default class DBFirebase implements DBInterface {
 		}
 	}
 
-	async document_remember_validated(dataKind: DataKind, id: string, data: DocumentData, bulkName: string | null = null) {
+	async document_remember_validated(dataKind: DataKind, id: string, data: DocumentData, bulkName: string) {
 		if (DBFirebase.data_isValidOfKind(dataKind, data)) {
 			const h = this.hierarchy;
 			switch (dataKind) {
-				case DataKind.things:		 h.thing_remember_runtimeCreate(id, data.title, data.color, data.trait, -1, true, bulkName); break;
+				case DataKind.things:		 h.thing_remember_runtimeCreate(bulkName, id, data.title, data.color, data.trait, -1, true); break;
 				case DataKind.predicates:	 h.predicate_remember_runtimeCreate(id, data.kind); break;
-				case DataKind.relationships: h.relationship_remember_runtimeCreateUnique(id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
+				case DataKind.relationships: h.relationship_remember_runtimeCreateUnique(bulkName, id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
 			}
 		}
 	}
 
 	async document_remoteDelete(name: string) {
-		const documentRef = doc(this.db, this.collectionName, name);
+		const documentRef = doc(this.db, this.bulksName, name);
 		await this.subcollections_remoteDeleteIn(documentRef);
 
 		try {
@@ -260,12 +288,12 @@ export default class DBFirebase implements DBInterface {
 	//////////////////////////////
 
 	async thing_remoteCreate(thing: Thing) {
-		const collection = this.thingsCollection;
-		if (collection) {
+		const thingsCollection = this.get_bulkFor(thing.bulkName)?.thingsCollection;
+		if (thingsCollection) {
 			const remoteThing = new RemoteThing(thing);
 			const jsThing = { ...remoteThing };
 			try {
-				const ref = await addDoc(collection, jsThing)
+				const ref = await addDoc(thingsCollection, jsThing)
 				thing.isRemotelyStored = true;
 				thing.id = ref.id;			// so relationship will be correct
 			} catch (error) {
@@ -276,17 +304,17 @@ export default class DBFirebase implements DBInterface {
 
 	async things_startup_remoteCreateIn(collectionRef: CollectionReference) {
 		const fields = ['title', 'color', 'trait'];
-		const root = new Thing(Datum.newID, dbDispatch.bulkName, 'coral', TraitType.root, 0, false);
-		const thing = new Thing(Datum.newID, 'Click this text to edit it', 'purple', '', 0, false);
+		const root = new Thing(dbDispatch.bulkName, Datum.newID, dbDispatch.bulkName, 'coral', TraitType.root, 0, false);
+		const thing = new Thing(dbDispatch.bulkName, Datum.newID, 'Click this text to edit it', 'purple', '', 0, false);
 		this.hierarchy.root = root;
 		await addDoc(collectionRef, convertToObject(thing, fields));
 		await addDoc(collectionRef, convertToObject(root, fields));
 	}
 
 	async thing_remoteUpdate(thing: Thing) {
-		const collection = this.thingsCollection;
-		if (collection) {
-			const ref = doc(collection, thing.id) as DocumentReference<Thing>;
+		const thingsCollection = this.get_bulkFor(thing.bulkName)?.thingsCollection;
+		if (thingsCollection) {
+			const ref = doc(thingsCollection, thing.id) as DocumentReference<Thing>;
 			const remoteThing = new RemoteThing(thing);
 			const jsThing = { ...remoteThing };
 			try {
@@ -298,10 +326,10 @@ export default class DBFirebase implements DBInterface {
 	}
 
 	async thing_remoteDelete(thing: Thing) {
-		const collection = this.thingsCollection;
-		if (collection) {
+		const thingsCollection = this.get_bulkFor(thing.bulkName)?.thingsCollection;
+		if (thingsCollection) {
 			try {
-				const ref = doc(collection, thing.id) as DocumentReference<Thing>;
+				const ref = doc(thingsCollection, thing.id) as DocumentReference<Thing>;
 				await deleteDoc(ref);
 			} catch (error) {
 				this.reportError(error);
@@ -324,13 +352,13 @@ export default class DBFirebase implements DBInterface {
 	//////////////////////////////////////
 
 	async relationship_remoteCreate(relationship: Relationship) {
-		const collection = this.relationshipsCollection;
-		if (collection) {
+		const relationshipsCollection = this.get_bulkFor(relationship.bulkName)?.relationshipsCollection;
+		if (relationshipsCollection) {
 			const remoteRelationship = new RemoteRelationship(relationship);
 			const jsRelationship = { ...remoteRelationship };
 			relationship.awaitingCreation = true;
 			try {
-				const ref = await addDoc(collection, jsRelationship); // works!
+				const ref = await addDoc(relationshipsCollection, jsRelationship); // works!
 				relationship.awaitingCreation = false;
 				relationship.isRemotelyStored = true;
 				relationship.id = ref.id;
@@ -341,10 +369,10 @@ export default class DBFirebase implements DBInterface {
 	}
 
 	async relationship_remoteUpdate(relationship: Relationship) {
-		const collection = this.relationshipsCollection;
-		if (collection) {
+		const relationshipsCollection = this.get_bulkFor(relationship.bulkName)?.relationshipsCollection;
+		if (relationshipsCollection) {
 			try {
-				const ref = doc(collection, relationship.id) as DocumentReference<RemoteRelationship>;
+				const ref = doc(relationshipsCollection, relationship.id) as DocumentReference<RemoteRelationship>;
 				const remoteRelationship = new RemoteRelationship(relationship);
 				const jsRelationship = { ...remoteRelationship };
 				await setDoc(ref, jsRelationship);
@@ -355,10 +383,10 @@ export default class DBFirebase implements DBInterface {
 	}
 
 	async relationship_remoteDelete(relationship: Relationship) {
-		const collection = this.relationshipsCollection;
-		if (collection) {
+		const relationshipsCollection = this.get_bulkFor(relationship.bulkName)?.relationshipsCollection;
+		if (relationshipsCollection) {
 			try {
-				const ref = doc(collection, relationship.id) as DocumentReference<RemoteRelationship>;
+				const ref = doc(relationshipsCollection, relationship.id) as DocumentReference<RemoteRelationship>;
 				await deleteDoc(ref);
 			} catch (error) {
 				this.reportError(error);
@@ -408,6 +436,15 @@ export default class DBFirebase implements DBInterface {
 
 export const dbFirebase = new DBFirebase();
 
+class Bulk {
+	bulkName: string = '';
+	thingsCollection: CollectionReference | null = null;
+	relationshipsCollection: CollectionReference | null = null;
+	constructor(bulkName: string) {
+		this.bulkName = bulkName;
+	}
+}
+
 interface RemoteThing {
 	title: string;
 	color: string;
@@ -433,7 +470,7 @@ interface RemoteRelationship {
 class RemoteRelationship implements RemoteRelationship {
 
 	constructor(data: DocumentData | Relationship) {
-		const things = dbFirebase.thingsCollection;
+		const things = dbFirebase.get_bulkFor(dbDispatch.bulkName)?.thingsCollection;
 		const predicates = dbFirebase.predicatesCollection;
 		this.order = data.order;
 		if (things && predicates) {
