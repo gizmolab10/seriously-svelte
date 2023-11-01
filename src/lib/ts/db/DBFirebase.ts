@@ -134,6 +134,7 @@ export default class DBFirebase implements DBInterface {
 							} else if (thing.isExpanded) {
 								thing.redraw_fetchAll_runtimeBrowseRight(false);
 							}
+							thing.bulkName = bulkName;
 						}
 					}
 					// TODO: detect when a root disappears

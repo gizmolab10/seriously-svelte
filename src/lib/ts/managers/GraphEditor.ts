@@ -154,7 +154,7 @@ export default class GraphEditor {
 		if (h.here) {
 			for (const id of get(idsGrabbed)) {
 				const grabbed = h.thing_getForID(id);
-				if (grabbed && !grabbed.isEditing) {
+				if (grabbed && !grabbed.isEditing && !grabbed.isBulkAlias) {
 					let newGrab = grabbed.firstParent;
 					const siblings = grabbed.siblings;
 					const grandparent = grabbed.grandparent;
