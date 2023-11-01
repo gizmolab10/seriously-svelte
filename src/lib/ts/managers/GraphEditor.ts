@@ -1,4 +1,4 @@
-import { k, get, Thing, Datum, signal, Signals, Hierarchy, dbDispatch, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { k, get, Thing, Datum, signal, Signals, Hierarchy, dbDispatch, orders_normalize_remoteMaybe, Relationship, Predicate } from '../common/GlobalImports';
 import { idsGrabbed } from './State';
 
 //////////////////////////////////////
@@ -28,10 +28,10 @@ export default class GraphEditor {
 			if (k.allowGraphEditing) {
 				if (grab && k.allowTitleEditing) {
 					switch (key) {
-						case '-':			await this.thing_redraw_remoteAddLine(grab); break;
-						case 'd':			await this.thing_redraw_remoteDuplicate(grab); break;
-						case ' ':			await this.thing_redraw_remoteAddChildTo(grab); break;
-						case 'tab':			await this.thing_redraw_remoteAddChildTo(grab.firstParent); break; // Title editor also makes this call
+						case '-':			await this.thing_edit_remoteAddLine(grab); break;
+						case 'd':			await this.thing_edit_remoteDuplicate(grab); break;
+						case ' ':			await this.thing_edit_remoteAddChildTo(grab); break;
+						case 'tab':			await this.thing_edit_remoteAddChildTo(grab.firstParent); break; // Title editor also makes this call
 						case 'enter':		grab.startEdit(); break;
 					}
 				}
@@ -58,29 +58,29 @@ export default class GraphEditor {
 	//		ADD		//
 	//////////////////
 
-	async thing_redraw_remoteAddChildTo(parent: Thing) {
+	async thing_edit_remoteAddChildTo(parent: Thing) {
 		const child = this.hierarchy.thing_remember_runtimeCreateAt(parent.bulkName, -1, parent.color);
 		parent.expand();
-		await this.thing_redraw_remoteAddAsChild(child, parent);
+		await this.thing_edit_remoteAddAsChild(child, parent);
 	}
 
-	async thing_redraw_remoteDuplicate(thing: Thing) {
+	async thing_edit_remoteDuplicate(thing: Thing) {
 		const h = this.hierarchy;
 		const sibling = h.thing_remember_runtimeCreateAt(thing.bulkName, thing.order + k.orderIncrement, thing.color);
 		const parent = thing.firstParent ?? h.root;
 		sibling.title = thing.title;
-		await this.thing_redraw_remoteAddAsChild(sibling, parent);
+		await this.thing_edit_remoteAddAsChild(sibling, parent);
 	}
 
-	async thing_redraw_remoteAddLine(thing: Thing, below: boolean = true) {
+	async thing_edit_remoteAddLine(thing: Thing, below: boolean = true) {
 		const parent = thing.firstParent;
 		const order = thing.order + (below ? 0.5 : -0.5);
 		const child = this.hierarchy.thing_runtimeCreate(thing.bulkName, Datum.newID, k.lineTitle, parent.color, '', order, false);
 		parent.expand();
-		this.thing_redraw_remoteAddAsChild(child, parent, false);
+		this.thing_edit_remoteAddAsChild(child, parent, false);
 	}
 
-	async thing_redraw_remoteAddAsChild(child: Thing, parent: Thing, startEdit: boolean = true) {
+	async thing_edit_remoteAddAsChild(child: Thing, parent: Thing, startEdit: boolean = true) {
 		await this.hierarchy.thing_remoteAddAsChild(child, parent);
 		signal(Signals.childrenOf, parent.id);
 		child.grabOnly();
@@ -110,33 +110,33 @@ export default class GraphEditor {
 	async thing_redraw_remoteRelocateRight(thing: Thing, RIGHT: boolean, EXTREME: boolean) {
 		const newParent = RIGHT ? thing.nextSibling(false) : thing.grandparent;
 		if (newParent) {
-			const parent = thing.firstParent;
-
-			// alter the 'to' in ALL [?] the matching 'from' relationships
-			// simpler than adjusting children or parents arrays
-			// TODO: also match against the 'to' to the current parent
-			// TODO: pass predicate in ... to support editing different kinds of relationships
-			//
-			// TODO: detect if relocating from one db to another, and then
-			// TODO: delete thing and add it to the destination's thing's collection
-
 			const h = this.hierarchy;
+			const parent = thing.firstParent;
 			const relationship = h.relationship_getWhereIDEqualsTo(thing.id);
-			if (relationship) {
-				relationship.idFrom = newParent.id;
-				thing.order_setTo(parent.order + 0.5, true);
-				await dbDispatch.db.relationship_remoteUpdate(relationship);
-			}
+			if (newParent.bulkName != thing.bulkName && !thing.isBulkAlias) {		// if bulkNames are different, move across bulks
+				h.thing_redraw_remoteBulkRelocateRight(thing, newParent);
+			} else {
+				// alter the 'to' in ALL [?] the matching 'from' relationships
+				// simpler than adjusting children or parents arrays
+				// TODO: also match against the 'to' to the current parent
+				// TODO: pass predicate in ... to support editing different kinds of relationships
 
-			h.relationships_refreshKnowns();		// so children and parent will see the newly relocated things
-			orders_normalize_remoteMaybe(newParent.children);						// refresh knowns first
-			orders_normalize_remoteMaybe(parent.children);
-			thing.grabOnly();
-			newParent.expand();
-			if (!newParent.isVisible) {
-				newParent.becomeHere();
+				if (relationship) {
+					relationship.idFrom = newParent.id;
+					thing.order_setTo(parent.order + 0.5, true);
+					await dbDispatch.db.relationship_remoteUpdate(relationship);
+				}
+
+				h.relationships_refreshKnowns();		// so children and parent will see the newly relocated things
+				orders_normalize_remoteMaybe(newParent.children);						// refresh knowns first
+				orders_normalize_remoteMaybe(parent.children);
+				thing.grabOnly();
+				newParent.expand();
+				if (!newParent.isVisible) {
+					newParent.becomeHere();
+				}
+				signal(Signals.childrenOf);					// so Children component will update
 			}
-			signal(Signals.childrenOf);					// so Children component will update
 		}
 	}
 
@@ -170,7 +170,7 @@ export default class GraphEditor {
 						grandparent.becomeHere();
 					}
 					await grabbed.traverse(async (child: Thing): Promise<boolean> => {
-						await h.relationship_forget_remoteDeleteAllForThing(child);
+						await h.relationships_forget_remoteDeleteAllForThing(child);
 						await h.thing_forget_remoteDelete(child);
 						return false; // continue the traversal
 					});

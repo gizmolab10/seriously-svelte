@@ -16,6 +16,10 @@ export default class Thing extends Datum {
 	trait: string;
 	order: number;
 
+	static thing_runtimeCreate(inBulkName: string, from: Thing) {
+		return new Thing(inBulkName, Datum.newID, from.title, from.color, from.trait, from.order, false);
+	}
+
 	constructor(bulkName: string, id: string = Datum.newID, title = k.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
 		super(bulkName, id, isRemotelyStored);
 		this.dbType = dbDispatch.db.dbType;

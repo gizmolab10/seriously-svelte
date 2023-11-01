@@ -128,6 +128,28 @@ export default class Hierarchy {
 		return null;
 	}
 
+	things_getForIDs(ids: Array<string>): Array<Thing> {
+		const array = Array<Thing>();
+		for (const id of ids) {
+			const thing = this.thing_getForID(id);
+			if (thing) {
+				array.push(thing);
+			}
+		}
+		return sort_byOrder(array);
+	}
+
+	things_getByIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Thing> {
+		const matches = this.relationships_getByIDPredicateToAndID(idPredicate, to, idThing);
+		const ids: Array<string> = [];
+		if (Array.isArray(matches) && matches.length > 0) {
+			for (const relationship of matches) {
+				ids.push(to ? relationship.idFrom : relationship.idTo);
+			}
+		}
+		return this.things_getForIDs(ids);
+	}
+
 	thing_getBulkAliasWithTitle(title: string | null) {
 		if (title) {
 			for (const thing of this.knownTs) {
@@ -181,26 +203,6 @@ export default class Hierarchy {
 		return this.thing_remember_runtimeCreate(bulkName, Datum.newID, k.defaultTitle, color, '', order, false);
 	}
 
-	thing_bulkAdjust(bulkName: string, id: string, color: string) {
-		if (bulkName == dbDispatch.bulkName) {
-			return null;
-		}
-		const thing = this.thing_getBulkAliasWithTitle(bulkName);
-		if (thing) {	// need alias' parent and child relationships to work
-			const relationship = this.relationship_getWhereIDEqualsTo(thing.id);
-			if (relationship && relationship.idTo != id) {
-				this.relationship_forget(relationship);
-				relationship.idTo = id;		// so this relatiohship will continue to work
-				this.relationship_remember(relationship);
-			}
-			this.thing_forget(thing);		// remove stale knowns
-			thing.needsBulkFetch = false;	// for when user reveals children: they must first be fetched
-			thing.color = color;			// N.B., ignore trait
-			thing.id = id;					// so children relatiohships will work
-		}
-		return thing;
-	}
-
 	thing_remember_runtimeCreate(bulkName: string, id: string, title: string, color: string, trait: string, order: number,
 		isRemotelyStored: boolean): Thing {
 		const thing = this.thing_runtimeCreate(bulkName, id, title, color, trait, order, isRemotelyStored);
@@ -223,26 +225,37 @@ export default class Hierarchy {
 		return thing;
 	}
 
-	things_getForIDs(ids: Array<string>): Array<Thing> {
-		const array = Array<Thing>();
-		for (const id of ids) {
-			const thing = this.thing_getForID(id);
-			if (thing) {
-				array.push(thing);
-			}
+	async thing_redraw_remoteBulkRelocateRight(thing: Thing, newParent: Thing) {
+		const bulkName = newParent.bulkName;
+		const newThing = Thing.thing_runtimeCreate(bulkName, thing);
+		await this.thing_forget_remoteDelete(thing);	// remove thing [N.B. and its progney] from current bulk
+		await this.relationships_forget_remoteDeleteAllForThing(thing)
+		await this.thing_remoteAddAsChild(newThing, newParent);
+		if (newParent.isExpanded) {
+			newThing.grabOnly();
+		} else {
+			newParent.grabOnly();
 		}
-		return sort_byOrder(array);
 	}
 
-	things_getByIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Thing> {
-		const matches = this.relationships_getByIDPredicateToAndID(idPredicate, to, idThing);
-		const ids: Array<string> = [];
-		if (Array.isArray(matches) && matches.length > 0) {
-			for (const relationship of matches) {
-				ids.push(to ? relationship.idFrom : relationship.idTo);
-			}
+	thing_bulkAdjust(bulkName: string, id: string, color: string) {
+		if (bulkName == dbDispatch.bulkName) {
+			return null;
 		}
-		return this.things_getForIDs(ids);
+		const thing = this.thing_getBulkAliasWithTitle(bulkName);
+		if (thing) {	// need alias' parent and child relationships to work
+			const relationship = this.relationship_getWhereIDEqualsTo(thing.id);
+			if (relationship && relationship.idTo != id) {
+				this.relationship_forget(relationship);
+				relationship.idTo = id;		// so this relatiohship will continue to work
+				this.relationship_remember(relationship);
+			}
+			this.thing_forget(thing);		// remove stale knowns
+			thing.needsBulkFetch = false;	// for when user reveals children: they must first be fetched
+			thing.color = color;			// N.B., ignore trait
+			thing.id = id;					// so children relatiohships will work
+		}
+		return thing;
 	}
 
 	////////////////////////////////////
@@ -341,7 +354,7 @@ export default class Hierarchy {
 		Promise.resolve(relationship);
 	}
 
-	async relationship_forget_remoteDeleteAllForThing(thing: Thing) {
+	async relationships_forget_remoteDeleteAllForThing(thing: Thing) {
 		const array = this.knownRs_byIDTo[thing.id];
 		if (array) {
 			for (const relationship of array) {
