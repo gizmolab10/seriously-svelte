@@ -281,15 +281,7 @@ export default class Hierarchy {
 
 	relationships_refreshKnowns_runtimeRenormalize() {
 		this.relationships_refreshKnowns();
-		// this.root?.order_normalizeRecursive(false);
-	}
-
-	relationships_clearKnowns() {
-		this.knownRs = [];
-		this.knownR_byID = {};
-		this.knownRs_byIDTo = {};
-		this.knownRs_byIDFrom = {};
-		this.knownRs_byIDPredicate = {};
+		this.root?.order_normalizeRecursive(false);
 	}
 
 	relationships_refreshKnowns() {
@@ -298,6 +290,14 @@ export default class Hierarchy {
 		for (const relationship of saved) {
 			this.relationship_remember(relationship);
 		}
+	}
+
+	relationships_clearKnowns() {
+		this.knownRs_byIDPredicate = {};
+		this.knownRs_byIDFrom = {};
+		this.knownRs_byIDTo = {};
+		this.knownR_byID = {};
+		this.knownRs = [];
 	}
 
 	relationships_accomodateRelocations(original: Relationship, relationship: Relationship) {

@@ -160,6 +160,9 @@ export default class DBFirebase implements DBInterface {
 		const data = doc.data();
 		if (DBFirebase.data_isValidOfKind(dataKind, data)) {
 			const id = doc.id;
+			const h = this.hierarchy;
+			const thing = h.thing_getForID(id);
+			const parentID = thing?.firstParent?.id;
 
 			////////////////////
 			//	 data kinds	  //
@@ -170,13 +173,12 @@ export default class DBFirebase implements DBInterface {
 				if (dataKind == DataKind.relationships) {
 					const remote = new RemoteRelationship(data);
 					if (remote) {
-						const relationship = this.hierarchy.knownR_byID[id];
+						const relationship = h.knownR_byID[id];
 						const original = !relationship ? null : copyObject(relationship);
 						switch (change.type) {
 							case 'added':
 								if (!relationship) {
-									this.hierarchy.relationship_remember_runtimeCreateUnique(bulkName, id, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote);
-									this.hierarchy.relationships_refreshKnowns_runtimeRenormalize();
+									h.relationship_remember_runtimeCreateUnique(bulkName, id, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote);
 								}
 								break;
 							default:
@@ -187,33 +189,29 @@ export default class DBFirebase implements DBInterface {
 												return;	// already known and contains no new data, or needs to be 'tamed'
 											}
 											this.relationship_extractRemote(relationship, remote);
-											this.hierarchy.relationships_refreshKnowns_runtimeRenormalize();
-											relationship.thingTo_updateOrder(false);
 											break;
-										case 'removed': 
-											delete this.hierarchy.knownR_byID[id];
-											this.hierarchy.relationships_refreshKnowns_runtimeRenormalize();
+										case 'removed':
+											h.relationship_forget(relationship);
 											break;
 									}
 								}
 								break;
 						}
+						h.relationships_refreshKnowns_runtimeRenormalize();
 						if (relationship) {
-							this.hierarchy.relationships_accomodateRelocations(original, relationship);
+							h.relationships_accomodateRelocations(original, relationship);
 						}
 					}
 				} else if (dataKind == DataKind.things) {
 					const remote = new RemoteThing(data);
-					const thing = this.hierarchy.thing_getForID(id);
 					if (remote) {
 						switch (change.type) {
 							case 'added':
 								if (!thing) {
-									this.hierarchy.thing_remember_runtimeCreate(bulkName, id, remote.title, remote.color, remote.trait, -1, true);
+									h.thing_remember_runtimeCreate(bulkName, id, remote.title, remote.color, remote.trait, -1, true);
 								}
 								break;
 							default:
-								const parentID = thing?.firstParent?.id;
 								if (thing && parentID) {
 									switch (change.type) {
 										case 'modified':
@@ -222,15 +220,15 @@ export default class DBFirebase implements DBInterface {
 											}
 											break;
 										case 'removed': 
-											this.hierarchy.thing_forget(thing);
+											h.thing_forget(thing);
 											break;
 									}
-									signal(Signals.childrenOf, parentID);
 								}
 								break;
 						}
 					}
 				}
+				signal(Signals.childrenOf, parentID);
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -399,10 +397,9 @@ export default class DBFirebase implements DBInterface {
 	relationship_extractRemote(relationship: Relationship, remote: RemoteRelationship) {
 		const order = remote.order - k.orderIncrement;
 		relationship.idTo = remote.to.id;
-		relationship.order = order;
 		relationship.idFrom = remote.from.id;
+		relationship.order_setTo(order, false);		// also sets to-thing's order
 		relationship.idPredicate = remote.predicate.id;
-		// relationship.log('extract');
 	}
 
 	//////////////////////////////////

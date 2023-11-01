@@ -243,8 +243,9 @@ export default class Thing extends Datum {
 	}
 
 	async redraw_fetchAll_runtimeBrowseRight(grab: boolean = true) {
-		this.expand();		// do this before fetch, which changes the relationship id being stored
+		this.expand();		// do this before fetch, so next launch will see it
 		await dbDispatch.db.fetch_allFrom(this.title)
+		this.order_normalizeRecursive(true);
 		if (this.hasChildren) {
 			if (grab) {
 				this.children[0].grabOnly()
