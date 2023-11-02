@@ -1,9 +1,9 @@
-import { Thing, Datum } from '../common/GlobalImports'
+import { Thing, dbDispatch } from '../common/GlobalImports'
 
 class Exemplar extends Thing {
 
 	constructor() {
-		super(Datum.newID, 'this item is selected', '#b52', '?', 0, true);
+		super(dbDispatch.bulkName, null, 'this item is selected', '#b52', '?', 0, true);
 		this.isExemplar = true;
 	}
 

@@ -10,7 +10,7 @@ export default class Relationship extends Datum {
 	order: number;
 	dbType: string;
 
-	constructor(bulkName: string, id: string, idPredicate: string, idFrom: string, idTo: string, order = 0, isRemotelyStored: boolean) {
+	constructor(bulkName: string, id: string | null, idPredicate: string, idFrom: string, idTo: string, order = 0, isRemotelyStored: boolean) {
 		super(bulkName, id, isRemotelyStored);
 		this.awaitingCreation = false;
 		this.idTo = idTo; // idTo is child
@@ -43,7 +43,7 @@ export default class Relationship extends Datum {
 			if (this.isRemotelyStored) {
 				await dbDispatch.db.relationship_remoteUpdate(this);
 			} else {
-				await dbDispatch.db.relationship_remoteCreate(this);
+				await dbDispatch.db.relationship_remember_remoteCreate(this);
 			}
 		}
 	}

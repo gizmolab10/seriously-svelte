@@ -28,5 +28,5 @@ export default interface DBInterface {
 	thing_remoteDelete(thing: Thing): Promise<void>;
 	relationship_remoteUpdate(relationship: Relationship): Promise<void>;
 	relationship_remoteDelete(relationship: Relationship): Promise<void>;
-	relationship_remoteCreate(relationship: Relationship | null): Promise<void>;
+	relationship_remember_remoteCreate(relationship: Relationship | null): Promise<void>;
 }

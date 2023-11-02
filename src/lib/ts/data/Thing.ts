@@ -1,3 +1,4 @@
+import {noop} from 'svelte/internal';
 import { k, get, Size, Datum, signal, Signals, Predicate, PersistID, dbDispatch, getWidthOf, persistLocal, orders_normalize_remoteMaybe, Hierarchy, TraitType } from '../common/GlobalImports';
 import { idHere, idEditing, expanded, idsGrabbed, lineGap, lineStretch, dotDiameter } from '../managers/State';
 import Airtable from 'airtable';
@@ -17,10 +18,10 @@ export default class Thing extends Datum {
 	order: number;
 
 	static thing_runtimeCreate(inBulkName: string, from: Thing) {
-		return new Thing(inBulkName, Datum.newID, from.title, from.color, from.trait, from.order, false);
+		return new Thing(inBulkName, null, from.title, from.color, from.trait, from.order, false);
 	}
 
-	constructor(bulkName: string, id: string = Datum.newID, title = k.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
+	constructor(bulkName: string, id: string | null, title = k.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
 		super(bulkName, id, isRemotelyStored);
 		this.dbType = dbDispatch.db.dbType;
 		this.title = title;
@@ -217,6 +218,9 @@ export default class Thing extends Datum {
 	order_setTo(newOrder: number, remoteWrite: boolean) {
 		if (this.order != newOrder) {
 			this.order = newOrder;
+			if (newOrder % 1 != 0) {
+				noop();
+			}
 			const relationship = this.hierarchy.relationship_getWhereIDEqualsTo(this.id);
 			if (relationship && (relationship.order != newOrder)) {
 				relationship.order = newOrder;

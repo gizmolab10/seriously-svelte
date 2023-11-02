@@ -59,36 +59,38 @@ export default class GraphEditor {
 	//////////////////
 
 	async thing_edit_remoteAddChildTo(parent: Thing) {
-		const child = this.hierarchy.thing_remember_runtimeCreateAt(parent.bulkName, -1, parent.color);
-		parent.expand();
-		await this.thing_edit_remoteAddAsChild(child, parent);
+		const child = this.hierarchy.thing_remember_remoteCopy(parent.bulkName, parent).then((child) => {
+			parent.expand();
+			this.thing_edit_remoteAddAsChild(child, parent).then();
+		})
 	}
 
 	async thing_edit_remoteDuplicate(thing: Thing) {
 		const h = this.hierarchy;
-		const sibling = h.thing_remember_runtimeCreateAt(thing.bulkName, thing.order + k.orderIncrement, thing.color);
-		const parent = thing.firstParent ?? h.root;
-		sibling.title = thing.title;
-		await this.thing_edit_remoteAddAsChild(sibling, parent);
+		h.thing_remember_remoteCopy(thing.bulkName, thing).then((sibling) => {
+			const parent = thing.firstParent ?? h.root;
+			sibling.title = thing.title;
+			this.thing_edit_remoteAddAsChild(sibling, parent);
+		})
 	}
 
 	async thing_edit_remoteAddLine(thing: Thing, below: boolean = true) {
 		const parent = thing.firstParent;
 		const order = thing.order + (below ? 0.5 : -0.5);
-		const child = this.hierarchy.thing_runtimeCreate(thing.bulkName, Datum.newID, k.lineTitle, parent.color, '', order, false);
-		parent.expand();
-		this.thing_edit_remoteAddAsChild(child, parent, false);
+		const child = this.hierarchy.thing_runtimeCreate(thing.bulkName, null, k.lineTitle, parent.color, '', order, false);
+		await this.thing_edit_remoteAddAsChild(child, parent, false);
 	}
 
 	async thing_edit_remoteAddAsChild(child: Thing, parent: Thing, startEdit: boolean = true) {
-		await this.hierarchy.thing_remoteAddAsChild(child, parent);
-		signal(Signals.childrenOf, parent.id);
-		child.grabOnly();
-		if (startEdit) {
-			setTimeout(() => {
-				child.startEdit();
-			}, 200);
-		}
+		await this.hierarchy.thing_remember_remoteAddAsChild(child, parent).then((child) => {
+			signal(Signals.childrenOf, parent.id);
+			child.grabOnly();
+			if (startEdit) {
+				setTimeout(() => {
+					child.startEdit();
+				}, 200);
+			}
+		});
 	}
 
 	////////////////////
@@ -122,8 +124,9 @@ export default class GraphEditor {
 				// TODO: pass predicate in ... to support editing different kinds of relationships
 
 				if (relationship) {
+					const order = RIGHT ? parent.order : 0;
 					relationship.idFrom = newParent.id;
-					thing.order_setTo(parent.order + 0.5, true);
+					thing.order_setTo(order + 0.5, true);
 					await dbDispatch.db.relationship_remoteUpdate(relationship);
 				}
 

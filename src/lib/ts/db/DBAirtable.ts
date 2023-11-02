@@ -128,7 +128,7 @@ export default class DBAirtable implements DBInterface {
 	//			 RELATIONSHIP			//
 	//////////////////////////////////////
 
-	async relationship_remoteCreate(relationship: Relationship | null) {
+	async relationship_remember_remoteCreate(relationship: Relationship | null) {
 		if (relationship) {
 			try {
 				const fields = await this.relationships_table.create(relationship.fields);	// insert with temporary id
