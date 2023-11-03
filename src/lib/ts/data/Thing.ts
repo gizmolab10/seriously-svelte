@@ -231,6 +231,7 @@ export default class Thing extends Datum {
 	order_setTo(newOrder: number, remoteWrite: boolean) {
 		if (this.order != newOrder) {
 			this.order = newOrder;
+			// console.log('ORDER:', this.title, newOrder, 'in', this.firstParent.title);
 			const relationship = this.hierarchy.relationship_getWhereIDEqualsTo(this.id);
 			if (relationship && (relationship.order != newOrder)) {
 				relationship.order = newOrder;

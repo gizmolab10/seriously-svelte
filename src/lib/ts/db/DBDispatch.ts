@@ -82,7 +82,7 @@ export default class DBDispatch {
 				dbLoadTime.set(null);
 				const startTime = new Date().getTime();
 				await this.db.fetch_all();
-				h.hierarchy_construct(type);
+				h.hierarchy_assemble(type);
 				const duration = Math.trunc(((new Date().getTime()) - startTime) / 100) / 10;
 				const places = (duration == Math.trunc(duration)) ? 0 : 1;
 				const loadTime = (((new Date().getTime()) - startTime) / 1000).toFixed(places);

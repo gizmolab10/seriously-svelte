@@ -13,7 +13,6 @@ export function sort_byOrder(array: Array<Thing>) {
 }
 
 export function orders_normalize_remoteMaybe(array: Array<Thing>, remoteWrite: boolean = true) {
-	// dbDispatch.db.hierarchy.relationships_refreshKnowns(); // order is stored in relationships
 	sort_byOrder(array);
 	for (let index = 0; index < array.length; index++) {
 		const thing = array[index];

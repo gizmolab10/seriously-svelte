@@ -42,6 +42,10 @@ export default class DBFirebase implements DBInterface {
 		return this._hierarchy!;
 	}
 
+	//////////////////////////
+	//	 	   FETCH		//
+	//////////////////////////
+
 	async fetch_all() {
 		const name = dbDispatch.bulkName;
 		if (dbDispatch.eraseDB) {
@@ -51,29 +55,6 @@ export default class DBFirebase implements DBInterface {
 		await this.fetch_documentsOf(DataKind.predicates);
 		await this.fetch_allFrom(name);
 		await this.fetch_bulkAliases();
-	}
-
-	setup_bulks() {
-		if (!this.bulks) {
-			this.bulks = [new Bulk(dbDispatch.bulkName)];
-		}
-	}
-
-	get_bulk_for(bulkName: string | null) {
-		if (bulkName) {
-			const bulks = this.bulks;
-			if (bulks) {
-				for (const bulk of bulks) {
-					if (bulk.bulkName == bulkName) {
-						return bulk;
-					}
-				}
-				const newBulk = new Bulk(bulkName);
-				this.bulks!.push(newBulk);
-				return newBulk;
-			}
-		}
-		return null;
 	}
 
 	async fetch_allFrom(bulkName: string) {
@@ -119,6 +100,33 @@ export default class DBFirebase implements DBInterface {
 			this.reportError(error);
 		}
 	}
+
+	//////////////////////////
+	//	 	   BULKS		//
+	//////////////////////////
+
+	setup_bulks() {
+		if (!this.bulks) {
+			this.bulks = [new Bulk(dbDispatch.bulkName)];
+		}
+	}
+
+	get_bulk_for(bulkName: string | null) {
+		if (bulkName) {
+			const bulks = this.bulks;
+			if (bulks) {
+				for (const bulk of bulks) {
+					if (bulk.bulkName == bulkName) {
+						return bulk;
+					}
+				}
+				const newBulk = new Bulk(bulkName);
+				this.bulks!.push(newBulk);
+				return newBulk;
+			}
+		}
+		return null;
+	}
 	
 	async fetch_bulkAliases() {
 		const root = this.hierarchy.root;
@@ -131,7 +139,7 @@ export default class DBFirebase implements DBInterface {
 					for (const bulkDoc of bulkSnapshot.docs) {
 						const bulkName = bulkDoc.id;
 						if (bulkName != dbDispatch.bulkName) {
-							let thing = this.hierarchy.thing_getBulkAliasWithTitle(bulkName)
+							let thing = this.hierarchy.thing_bulkAlias_getForTitle(bulkName)
 							if (!thing) {													// create a thing for each bulk
 								thing = this.hierarchy.thing_runtimeCreate(dbDispatch.bulkName, null, bulkName, 'red', TraitType.bulk, -1, false);
 								await this.hierarchy.thing_remember_remoteAddAsChild(thing, roots);
@@ -149,6 +157,10 @@ export default class DBFirebase implements DBInterface {
 			}
 		}
 	}
+
+	//////////////////////////////////////
+	//	 		REMOTE SNAPSHOTS		//
+	//////////////////////////////////////
 	
 	snapshot_deferOne(bulkName: string, dataKind: DataKind, snapshot: QuerySnapshot) {
 		const deferral = new SnapshotDeferal(bulkName, dataKind, snapshot);

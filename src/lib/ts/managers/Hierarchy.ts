@@ -43,11 +43,11 @@ export default class Hierarchy {
 		})
 	}
 	
-	async hierarchy_construct(type: string) {
+	async hierarchy_assemble(type: string) {
 		const idRoot = this.idRoot;
 		if (this.root && idRoot) {
 			await this.relationships_remoteCreateMissing();
-			this.relationships_removePhantoms();
+			// this.relationships_removePhantoms();
 			this.root.order_normalizeRecursive(true)	// setup order values for all things and relationships
 			this.db?.setHasData(true);
 			orders_normalize_remoteMaybe(this.root.children)
@@ -116,21 +116,6 @@ export default class Hierarchy {
 	//			THINGS			//
 	//////////////////////////////
 
-	async thing_getRoots() {
-		let root = this.root;
-		for (const thing of this.knownTs) {
-			if  (thing.trait == TraitType.roots && thing.title == 'roots') {	// special case TODO: convert to a auery string
-				return thing;
-			}
-		}
-		if (root) {
-			const roots = this.thing_runtimeCreate(dbDispatch.bulkName, null, 'roots', 'red', TraitType.roots, -1, false);
-			await this.thing_remember_remoteAddAsChild(roots, root);
-			return roots;
-		}
-		return null;
-	}
-
 	things_getForIDs(ids: Array<string>): Array<Thing> {
 		const array = Array<Thing>();
 		for (const id of ids) {
@@ -151,18 +136,6 @@ export default class Hierarchy {
 			}
 		}
 		return this.things_getForIDs(ids);
-	}
-
-	thing_getBulkAliasWithTitle(title: string | null) {
-		if (title) {
-			for (const thing of this.knownTs) {
-				if  (thing.isBulkAlias && (thing.title == title ||
-					(thing.title == 'Public' && title == 'seriously'))) {	// special case TODO: convert to a auery string
-					return thing;
-				}
-			}
-		}
-		return null;
 	}
 
 	async thing_remember_remoteAddAsChild(child: Thing, parent: Thing): Promise<any> {
@@ -200,18 +173,11 @@ export default class Hierarchy {
 		}
 	}
 
-	thing_remember_runtimeCreate(bulkName: string, id: string | null, title: string, color: string, trait: string, order: number,
-		isRemotelyStored: boolean): Thing {
-		const thing = this.thing_runtimeCreate(bulkName, id, title, color, trait, order, isRemotelyStored);
-		this.thing_remember(thing);
-		return thing;
-	}
-
 	thing_runtimeCreate(bulkName: string, id: string | null, title: string, color: string, trait: string, order: number,
 		isRemotelyStored: boolean): Thing {
 		let thing: Thing | null = null;
-		if (id && bulkName && bulkName != dbDispatch.bulkName && trait == TraitType.root) {								// other bulks have their own root & id
-			thing = this.thing_remember_bulk_adjust(bulkName, id, color);	// which our (thing and relationship) needs to adopt
+		if (id && bulkName && bulkName != dbDispatch.bulkName && trait == TraitType.root) {		// other bulks have their own root & id
+			thing = this.thing_remember_bulkAlias_adjust(bulkName, id, color);						// which our (thing and relationship) needs to adopt
 		}
 		if (!thing) {
 			thing = new Thing(bulkName ?? dbDispatch.bulkName, id, title, color, trait, order, isRemotelyStored);
@@ -222,28 +188,59 @@ export default class Hierarchy {
 		return thing;
 	}
 
+	thing_remember_runtimeCreate(bulkName: string, id: string | null, title: string, color: string, trait: string, order: number,
+		isRemotelyStored: boolean): Thing {
+		const thing = this.thing_runtimeCreate(bulkName, id, title, color, trait, order, isRemotelyStored);
+		this.thing_remember(thing);
+		return thing;
+	}
+
 	async thing_remember_remoteCopy(bulkName: string, thing: Thing) {
 		const newThing = Thing.thing_runtimeCreate(bulkName, thing);
 		await this.db?.thing_remember_remoteCreate(newThing);
 		return newThing;
 	}
 
-	async thing_remember_bulk_remoteRelocateRight(thing: Thing, newParent: Thing) {
-		const bulkName = newParent.bulkName;
-		const newThing = await this.thing_remember_remoteCopy(bulkName, thing);
-		await this.thing_forget_remoteDelete(thing);	// remove thing [N.B. and its progney] from current bulk
-		await this.relationships_forget_remoteDeleteAllForThing(thing)
-		await this.thing_remember_remoteAddAsChild(newThing, newParent);
-		signal(Signals.childrenOf, newParent.id);
-		if (newParent.isExpanded) {
-			newThing.grabOnly();
-		} else {
-			newParent.grabOnly();
+	//////////////////////////
+	//	 	   BULKS		//
+	//////////////////////////
+
+	thing_bulkAlias_getForTitle(title: string | null) {
+		if (title) {
+			for (const thing of this.knownTs) {
+				if  (thing.isBulkAlias && (thing.title == title ||
+					(thing.title == 'Public' && title == 'seriously'))) {	// special case TODO: convert to a auery string
+					return thing;
+				}
+			}
 		}
+		return null;
 	}
 
-	thing_remember_bulk_adjust(bulkName: string, id: string, color: string) {
-		const thing = this.thing_getBulkAliasWithTitle(bulkName);
+	async thing_remember_bulk_remoteRelocateRight(thing: Thing, newParent: Thing) {
+		this.thing_remember_bulk_recursive_remoteRelocateRight(thing, newParent).then((newThing) => {
+			signal(Signals.childrenOf, newParent.id);
+			if (newParent.isExpanded) {
+				newThing.grabOnly();
+			} else {
+				newParent.grabOnly();
+			}
+		})
+	}
+
+	async thing_remember_bulk_recursive_remoteRelocateRight(thing: Thing, newParent: Thing) {
+		const newThing = await this.thing_remember_remoteCopy(newParent.bulkName, thing);
+		await this.thing_remember_remoteAddAsChild(newThing, newParent);
+		for (const child of thing.children) {
+			this.thing_remember_bulk_recursive_remoteRelocateRight(child, newThing);
+		}
+		await this.thing_forget_remoteDelete(thing);	// remove thing [N.B. and its progney] from current bulk
+		await this.relationships_forget_remoteDeleteAllForThing(thing)
+		return newThing;
+	}
+
+	thing_remember_bulkAlias_adjust(bulkName: string, id: string, color: string) {
+		const thing = this.thing_bulkAlias_getForTitle(bulkName);
 		if (thing) {	// need alias' parent and child relationships to work
 			const relationship = this.relationship_getWhereIDEqualsTo(thing.id);
 			if (relationship && relationship.idTo != id) {
@@ -257,6 +254,21 @@ export default class Hierarchy {
 			thing.id = id;					// so children relatiohships will work
 		}
 		return thing;
+	}
+
+	async thing_getRoots() {
+		let root = this.root;
+		for (const thing of this.knownTs) {
+			if  (thing.trait == TraitType.roots && thing.title == 'roots') {	// special case TODO: convert to a auery string
+				return thing;
+			}
+		}
+		if (root) {
+			const roots = this.thing_runtimeCreate(dbDispatch.bulkName, null, 'roots', 'red', TraitType.roots, -1, false);
+			await this.thing_remember_remoteAddAsChild(roots, root);
+			return roots;
+		}
+		return null;
 	}
 
 	////////////////////////////////////
