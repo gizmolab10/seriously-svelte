@@ -3,7 +3,6 @@ import Airtable from 'airtable';
 import Datum from './Datum';
 
 export default class Relationship extends Datum {
-	awaitingCreation: boolean;
 	idTo: string;
 	idFrom: string;
 	idPredicate: string;
@@ -12,7 +11,6 @@ export default class Relationship extends Datum {
 
 	constructor(bulkName: string, id: string | null, idPredicate: string, idFrom: string, idTo: string, order = 0, isRemotelyStored: boolean) {
 		super(bulkName, id, isRemotelyStored);
-		this.awaitingCreation = false;
 		this.idTo = idTo; // idTo is child
 		this.idFrom = idFrom; // idFrom is parent
 		this.idPredicate = idPredicate;

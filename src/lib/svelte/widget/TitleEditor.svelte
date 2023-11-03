@@ -24,7 +24,6 @@
 			switch (event.key) {	
 				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); graphEditor.thing_redraw_remoteAddChildTo(thing.firstParent); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
-				// default:      signal(Signals.childrenOf, thing.id); break;
 			}
 		}
 	}

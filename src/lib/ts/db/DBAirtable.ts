@@ -73,7 +73,7 @@ export default class DBAirtable implements DBInterface {
 	//			THING		  //
 	////////////////////////////
 
-	async thing_remoteCreate(thing: Thing) {
+	async thing_remember_remoteCreate(thing: Thing) {
 		try {
 			const fields = await this.things_table.create(thing.fields);
 			const id = fields['id']; //	// need for update, delete and knownTs_byID (to get parent from relationship)

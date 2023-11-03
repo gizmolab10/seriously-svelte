@@ -1,4 +1,4 @@
-import { k, get, Thing, Datum, signal, Signals, Hierarchy, dbDispatch, orders_normalize_remoteMaybe, Relationship, Predicate } from '../common/GlobalImports';
+import { k, get, Thing, signal, Signals, Hierarchy, dbDispatch, orders_normalize_remoteMaybe, Relationship, Predicate } from '../common/GlobalImports';
 import { idsGrabbed } from './State';
 
 //////////////////////////////////////
@@ -59,7 +59,7 @@ export default class GraphEditor {
 	//////////////////
 
 	async thing_edit_remoteAddChildTo(parent: Thing) {
-		const child = this.hierarchy.thing_remember_remoteCopy(parent.bulkName, parent).then((child) => {
+		this.hierarchy.thing_remember_remoteCopy(parent.bulkName, parent).then((child) => {
 			parent.expand();
 			this.thing_edit_remoteAddAsChild(child, parent).then();
 		})
@@ -116,7 +116,7 @@ export default class GraphEditor {
 			const parent = thing.firstParent;
 			const relationship = h.relationship_getWhereIDEqualsTo(thing.id);
 			if (newParent.bulkName != thing.bulkName && !thing.isBulkAlias) {		// if bulkNames are different, move across bulks
-				h.thing_redraw_remoteBulkRelocateRight(thing, newParent);
+				h.thing_remember_bulk_remoteRelocateRight(thing, newParent);
 			} else {
 				// alter the 'to' in ALL [?] the matching 'from' relationships
 				// simpler than adjusting children or parents arrays
@@ -138,8 +138,8 @@ export default class GraphEditor {
 				if (!newParent.isVisible) {
 					newParent.becomeHere();
 				}
-				signal(Signals.childrenOf);					// so Children component will update
 			}
+			signal(Signals.childrenOf);					// so Children component will update
 		}
 	}
 

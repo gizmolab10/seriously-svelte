@@ -23,7 +23,7 @@ export default interface DBInterface {
 	fetch_all(): Promise<void>;
 	setHasData(flag: boolean): void;
 	fetch_allFrom(bulkName: string): Promise<void>;
-	thing_remoteCreate(thing: Thing): Promise<void>;
+	thing_remember_remoteCreate(thing: Thing): Promise<void>;
 	thing_remoteUpdate(thing: Thing): Promise<void>;
 	thing_remoteDelete(thing: Thing): Promise<void>;
 	relationship_remoteUpdate(relationship: Relationship): Promise<void>;

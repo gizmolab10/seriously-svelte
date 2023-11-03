@@ -1,4 +1,4 @@
-import { k, get, User, Datum, Thing, Grabs, Access, remove, TraitType, Predicate, Relationship, dbDispatch } from '../common/GlobalImports';
+import { get, User, Thing, Grabs, Access, remove, signal, Signals, TraitType, Predicate, Relationship, dbDispatch } from '../common/GlobalImports';
 import { persistLocal, CreationFlag, sort_byOrder, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { idHere, isBusy, idsGrabbed, thingsArrived } from './State';
 import DBInterface from '../db/DBInterface';
@@ -46,7 +46,7 @@ export default class Hierarchy {
 	async hierarchy_construct(type: string) {
 		const idRoot = this.idRoot;
 		if (this.root && idRoot) {
-			await this.relationships_remoteCreateMissing(idRoot);
+			await this.relationships_remoteCreateMissing();
 			this.relationships_removePhantoms();
 			this.root.order_normalizeRecursive(true)	// setup order values for all things and relationships
 			this.db?.setHasData(true);
@@ -59,17 +59,20 @@ export default class Hierarchy {
 		this.isConstructed = true;
 	}
 
-	async relationships_remoteCreateMissing(idRoot: string) {
-		for (const thing of this.knownTs) {
-			const idThing = thing.id;
-			if (idThing != idRoot) {
-				let relationship = this.relationship_getWhereIDEqualsTo(idThing);
-				if (relationship) {
-					thing.order = relationship.order;
-				} else {
-					const idPredicateIsAParentOf = Predicate.idIsAParentOf;
-					await this.relationship_remember_remoteCreateUnique(dbDispatch.bulkName, null, idPredicateIsAParentOf,
-						idRoot, idThing, -1, CreationFlag.getRemoteID)
+	async relationships_remoteCreateMissing() {
+		const idRoot = this.idRoot;
+		if (idRoot) {
+			for (const thing of this.knownTs) {
+				const idThing = thing.id;
+				if (idThing != idRoot) {
+					let relationship = this.relationship_getWhereIDEqualsTo(idThing);
+					if (relationship) {
+						thing.order = relationship.order;
+					} else {
+						const idPredicateIsAParentOf = Predicate.idIsAParentOf;
+						await this.relationship_remember_remoteCreateUnique(dbDispatch.bulkName, null, idPredicateIsAParentOf,
+							idRoot, idThing, -1, CreationFlag.getRemoteID)
+					}
 				}
 			}
 		}
@@ -164,8 +167,7 @@ export default class Hierarchy {
 
 	async thing_remember_remoteAddAsChild(child: Thing, parent: Thing): Promise<any> {
 		const idPredicateIsAParentOf = Predicate.idIsAParentOf;
-		await this.db?.thing_remoteCreate(child).then(() => { // for everything below, need to await child.id fetched from dbDispatch
-			this.thing_remember(child);
+		await this.db?.thing_remember_remoteCreate(child).then(() => { // for everything below, need to await child.id fetched from dbDispatch
 			this.relationship_remember_remoteCreateUnique(parent.bulkName, null, idPredicateIsAParentOf, parent.id,
 				child.id, child.order, CreationFlag.getRemoteID)
 			.then((relationship) => {
@@ -186,7 +188,7 @@ export default class Hierarchy {
 	}
 
 	async thing_forget_remoteDelete(thing: Thing) {
-		this.thing_forget(thing); // do this first so onSnapshot logic will not signal children
+		this.thing_forget(thing);					// forget first, so onSnapshot logic will not signal children
 		await this.db?.thing_remoteDelete(thing);
 	}
 
@@ -209,7 +211,7 @@ export default class Hierarchy {
 		isRemotelyStored: boolean): Thing {
 		let thing: Thing | null = null;
 		if (id && bulkName && bulkName != dbDispatch.bulkName && trait == TraitType.root) {								// other bulks have their own root & id
-			thing = this.thing_bulkAdjust(bulkName, id, color);	// which our (thing and relationship) needs to adopt
+			thing = this.thing_remember_bulk_adjust(bulkName, id, color);	// which our (thing and relationship) needs to adopt
 		}
 		if (!thing) {
 			thing = new Thing(bulkName ?? dbDispatch.bulkName, id, title, color, trait, order, isRemotelyStored);
@@ -222,16 +224,17 @@ export default class Hierarchy {
 
 	async thing_remember_remoteCopy(bulkName: string, thing: Thing) {
 		const newThing = Thing.thing_runtimeCreate(bulkName, thing);
-		await this.db?.thing_remoteCreate(newThing);
+		await this.db?.thing_remember_remoteCreate(newThing);
 		return newThing;
 	}
 
-	async thing_redraw_remoteBulkRelocateRight(thing: Thing, newParent: Thing) {
+	async thing_remember_bulk_remoteRelocateRight(thing: Thing, newParent: Thing) {
 		const bulkName = newParent.bulkName;
 		const newThing = await this.thing_remember_remoteCopy(bulkName, thing);
 		await this.thing_forget_remoteDelete(thing);	// remove thing [N.B. and its progney] from current bulk
 		await this.relationships_forget_remoteDeleteAllForThing(thing)
 		await this.thing_remember_remoteAddAsChild(newThing, newParent);
+		signal(Signals.childrenOf, newParent.id);
 		if (newParent.isExpanded) {
 			newThing.grabOnly();
 		} else {
@@ -239,7 +242,7 @@ export default class Hierarchy {
 		}
 	}
 
-	thing_bulkAdjust(bulkName: string, id: string, color: string) {
+	thing_remember_bulk_adjust(bulkName: string, id: string, color: string) {
 		const thing = this.thing_getBulkAliasWithTitle(bulkName);
 		if (thing) {	// need alias' parent and child relationships to work
 			const relationship = this.relationship_getWhereIDEqualsTo(thing.id);
@@ -346,6 +349,7 @@ export default class Hierarchy {
 			relationship.order_setTo(order, false);						// AND thing are updated
 		} else {
 			relationship = new Relationship(bulkName, idRelationship, idPredicate, idFrom, idTo, order, creationFlag == CreationFlag.isFromRemote);
+			await this.db?.relationship_remember_remoteCreate(relationship);
 			this.relationship_remember(relationship);
 		}
 		Promise.resolve(relationship);
@@ -355,8 +359,8 @@ export default class Hierarchy {
 		const array = this.knownRs_byIDTo[thing.id];
 		if (array) {
 			for (const relationship of array) {
-				this.relationship_forget(relationship);		// forget first so onSnapshot will not signal children
 				await this.db?.relationship_remoteDelete(relationship);
+				this.relationship_forget(relationship);
 			}
 		}
 	}

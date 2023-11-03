@@ -205,6 +205,19 @@ export default class Thing extends Datum {
 		};
 	}
 
+	hasSameChildrenIDsAs(children: Array<Thing>) {
+		if (this.children.length != children.length) {
+			return false;
+		}
+		const tIDs = this.children.map(c => c.id);
+		for (const child of children) {
+			if (!tIDs.includes(child.id)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	order_normalizeRecursive(remoteWrite: boolean) {
 		const children = this.children;
 		if (children && children.length > 0) {
@@ -218,9 +231,6 @@ export default class Thing extends Datum {
 	order_setTo(newOrder: number, remoteWrite: boolean) {
 		if (this.order != newOrder) {
 			this.order = newOrder;
-			if (newOrder % 1 != 0) {
-				noop();
-			}
 			const relationship = this.hierarchy.relationship_getWhereIDEqualsTo(this.id);
 			if (relationship && (relationship.order != newOrder)) {
 				relationship.order = newOrder;
@@ -326,7 +336,7 @@ export default class Thing extends Datum {
 		}
 		idEditing.set(null);
 		newGrab?.grabOnly();
-		signal(Signals.childrenOf, null);			// tell graph to update line rects
+		signal(Signals.childrenOf);			// tell graph to update line rects
 	}
 
 }
