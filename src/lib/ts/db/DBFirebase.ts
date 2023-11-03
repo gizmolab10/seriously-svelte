@@ -262,7 +262,7 @@ export default class DBFirebase implements DBInterface {
 						}
 					}
 				}
-				signal(Signals.childrenOf, parentID);
+				signal(Signals.childrenOf, this.hierarchy.here?.id);
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -439,7 +439,7 @@ export default class DBFirebase implements DBInterface {
 	}
 
 	relationship_extractRemote(relationship: Relationship, remote: RemoteRelationship) {
-		const order = remote.order - k.orderIncrement;
+		const order = remote.order + k.orderIncrement;
 		const changed = (relationship.idTo != remote.to.id || relationship.idFrom != remote.from.id || relationship.idPredicate != remote.predicate.i)
 		if (changed) {
 			relationship.idTo = remote.to.id;
