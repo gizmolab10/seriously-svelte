@@ -65,15 +65,15 @@ export default class Grabs {
 		}
 	}
 
-	furthestGrab(up: boolean) {
+	latestGrab(up: boolean) {
 		const ids = get(idsGrabbed);
 		if (ids) {
 			let grabs = this.hierarchy.things_getForIDs(ids);
 			sort_byOrder(grabs);
 			if (up) {
 				return grabs[0];
-			} else if (this.hierarchy.grabs.grabbed) {
-				return grabs[this.hierarchy.grabs.grabbed.length - 1];
+			} else {
+				return grabs.slice(-1)[0];
 			}
 		}
 		return this.hierarchy.root;

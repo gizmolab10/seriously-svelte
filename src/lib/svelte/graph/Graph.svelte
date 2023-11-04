@@ -70,7 +70,6 @@
 				case '?': $popupViewID = ButtonID.help; break;
 				case ']':
 				case '[': dbDispatch.nextDB(key == ']'); break;
-				case '!': dbDispatch.db.hierarchy.root?.becomeHere();
 				default:  await graphEditor.handleKeyDown(event); break; // editor-specific key values
 			}
 		}

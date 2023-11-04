@@ -123,14 +123,14 @@ export default class Thing extends Datum {
 		//												//
 		//////////////////////////////////////////////////
 		
-		let height = this.showCluster ? k.clusterHeight : get(lineGap);		// default row height
+		let height = 0;
+		let simpleHeight = this.showCluster ? k.clusterHeight + 6 : get(lineGap);		// default row height
 		if (this.hasChildren && this.isExpanded) {
-			height = 0;
 			for (const child of this.children) {
 				height += child.visibleProgenyHeight;
 			}
 		}
-		return height;
+		return Math.max(height, simpleHeight);
 	}
 
 	log(message: string) { console.log(message, this.description); }
@@ -320,7 +320,7 @@ export default class Thing extends Datum {
 					if (fromReveal) {
 						this.expand();
 					} else {
-						newGrab.expand();
+						newGrab?.expand();
 					}
 				} else if (newGrab) { 
 					if (this.isExpanded) {

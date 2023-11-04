@@ -12,7 +12,7 @@
 	function mouseout(event) { updateColors(false); }
 
 	function handleClick(event) {
-		const grab = dbDispatch.db.hierarchy.grabs.furthestGrab(true);
+		const grab = dbDispatch.db.hierarchy.grabs.latestGrab(true);
 		if (grab) {
 			graphEditor.thing_redraw_remoteMoveRight(grab, false, false);
 		}

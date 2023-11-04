@@ -1,5 +1,5 @@
 import { k, get, Thing, signal, Signals, Hierarchy, dbDispatch, orders_normalize_remoteMaybe, Relationship, Predicate } from '../common/GlobalImports';
-import { idsGrabbed } from './State';
+import { idsGrabbed, idShowRevealCluster } from './State';
 
 //////////////////////////////////////
 //									//
@@ -13,7 +13,7 @@ export default class GraphEditor {
 
 	async handleKeyDown(event: KeyboardEvent) {
 		const h = this.hierarchy;
-		let grab = h.grabs.furthestGrab(true);
+		let grab = h.grabs.latestGrab(true);
 		if (event.type == 'keydown') {
 			const OPTION = event.altKey;
 			const SHIFT = event.shiftKey;
@@ -28,16 +28,16 @@ export default class GraphEditor {
 			if (k.allowGraphEditing) {
 				if (grab && k.allowTitleEditing) {
 					switch (key) {
-						case '-':			await this.thing_edit_remoteAddLine(grab); break;
-						case 'd':			await this.thing_edit_remoteDuplicate(grab); break;
-						case ' ':			await this.thing_edit_remoteAddChildTo(grab); break;
-						case 'tab':			await this.thing_edit_remoteAddChildTo(grab.firstParent); break; // Title editor also makes this call
-						case 'enter':		grab.startEdit(); break;
+						case '-':		await this.thing_edit_remoteAddLine(grab); break;
+						case 'd':		await this.thing_edit_remoteDuplicate(grab); break;
+						case ' ':		await this.thing_edit_remoteAddChildTo(grab); break;
+						case 'tab':		await this.thing_edit_remoteAddChildTo(grab.firstParent); break; // Title editor also makes this call
+						case 'enter':	grab.startEdit(); break;
 					}
 				}
 				switch (key) {
 					case 'delete':
-					case 'backspace':		await this.grabs_redraw_remoteDelete(); break;
+					case 'backspace':	await this.grabs_redraw_remoteDelete(); break;
 				}
 			}
 			if (grab) {
@@ -48,8 +48,10 @@ export default class GraphEditor {
 				}
 			}
 			switch (key) {
-				case 'arrowup':			await this.furthestGrab_redraw_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
-				case 'arrowdown':		await this.furthestGrab_redraw_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
+				case '`':               event.preventDefault(); this.latestGrabToggleRevealCluster(); break;
+				case '!':				dbDispatch.db.hierarchy.root?.becomeHere(); break;
+				case 'arrowup':			await this.latestGrab_redraw_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
+				case 'arrowdown':		await this.latestGrab_redraw_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
 			}
 		}
 	}
@@ -143,8 +145,17 @@ export default class GraphEditor {
 		}
 	}
 
-	async furthestGrab_redraw_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
-		const grab = this.hierarchy.grabs.furthestGrab(up);
+	latestGrabToggleRevealCluster() {
+		const id = this.hierarchy.grabs.latestGrab(true)?.id;
+		if (id) {
+			const clear = id == get(idShowRevealCluster);
+			idShowRevealCluster.set(clear ? '' : id);
+		}
+
+	}
+
+	async latestGrab_redraw_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
+		const grab = this.hierarchy.grabs.latestGrab(up);
 		grab?.redraw_remoteMoveup(up, SHIFT, OPTION, EXTREME);
 	}
 
