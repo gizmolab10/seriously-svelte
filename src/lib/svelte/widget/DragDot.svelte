@@ -85,7 +85,7 @@
 
 </script>
 
-<button
+<button class='dragDot'
 	bind:this={dot}
 	on:blur={noop()}
 	on:focus={noop()}
@@ -107,7 +107,7 @@
 </button>
 
 <style lang='scss'>
-	button {
+	.dragDot {
 		min-width: 1px;
 		cursor: pointer;
 		border: 1px solid;

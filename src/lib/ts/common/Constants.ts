@@ -1,6 +1,7 @@
 import { noop, dbDispatch, isMobileDevice } from '../../ts/common/GlobalImports'
 
 export default class Constants {
+	public clusterHeight: number;
 	public detailsMargin: number;
 	public orderIncrement: number;
 	public leftJustifyGraph: boolean;
@@ -25,6 +26,7 @@ export default class Constants {
 		this.allowTitleEditing = true;
 		this.orderIncrement = 0.5;
 		this.detailsMargin = 101;
+		this.clusterHeight = 80;
 	}
 
 	applyQueryStrings(params: URLSearchParams) {

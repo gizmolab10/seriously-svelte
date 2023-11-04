@@ -1,7 +1,7 @@
 <script>
 	import { k, noop, Thing, Point, ZIndex, dbDispatch, Signals, handleSignalOfKind } from "../../ts/common/GlobalImports";
 	import { onMount, onDestroy, graphEditor, Direction, FatTrianglePath } from "../../ts/common/GlobalImports";
-	import { dotDiameter } from '../../ts/managers/State';
+	import { dotDiameter, idShowRevealCluster } from '../../ts/managers/State';
 	export let thing;
 	const longClickThreshold = 500;
 	const doubleClickThreshold = 100;				// one fifth of a second
@@ -57,7 +57,7 @@
 		clearClicks();
 		clickTimer = setTimeout(() => {
 			clearClicks();
-			// do nothing
+			$idShowRevealCluster = thing.id;
 		}, longClickThreshold);
 	}
 
@@ -83,7 +83,7 @@
 
 </script>
 
-<button class='svg-button'
+<button class='revealDot'
 	bind:this={button}
 	style='
 		left: {$dotDiameter + thing.titleWidth + 23}px;
@@ -113,7 +113,7 @@
 </button>
 
 <style>
-	.svg-button {
+	.revealDot {
 		top: 5px;
 		width: 16px;	 /* Match SVG viewbox width */
 		height: 16px;	/* Match SVG viewbox height */

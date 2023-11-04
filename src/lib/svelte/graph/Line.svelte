@@ -33,13 +33,16 @@
 
 </script>
 
-<svg width='100%'
+<svg class='line'
+	width='100%'
 	height={window.innerHeight} 
-	style='position: absolute;
-		left: 0px;
-		z-index: {ZIndex.lines};'>
+	style='z-index: {ZIndex.lines};'>
 	<path d={path} stroke={color} fill='none'/>
 </svg>
 
 <style lang='scss'>
+	.line {
+		left: 0px;
+		position: absolute;
+	}
 </style>

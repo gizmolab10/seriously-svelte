@@ -1,6 +1,6 @@
 import {noop} from 'svelte/internal';
 import { k, get, Size, Datum, signal, Signals, Predicate, PersistID, dbDispatch, getWidthOf, persistLocal, orders_normalize_remoteMaybe, Hierarchy, TraitType } from '../common/GlobalImports';
-import { idHere, idEditing, expanded, idsGrabbed, lineGap, lineStretch, dotDiameter } from '../managers/State';
+import { idHere, idEditing, expanded, idsGrabbed, lineGap, lineStretch, dotDiameter, idShowRevealCluster } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -8,6 +8,7 @@ export default class Thing extends Datum {
 	hoverAttributes = '';
 	borderAttribute = '';
 	grabAttributes = '';
+	showCluster = false;
 	isExemplar = false;
 	isEditing = false;
 	isGrabbed = false;
@@ -44,6 +45,14 @@ export default class Thing extends Datum {
 			if (this.isGrabbed != isGrabbed) {
 				this.isGrabbed  = isGrabbed;
 				this.updateColorAttributes();
+			}
+		});
+
+		idShowRevealCluster.subscribe((idCluster: string | null) => {
+			const shouldShow = (idCluster != undefined) && idCluster == this.id;
+			if (this.showCluster != shouldShow) {
+				this.showCluster = shouldShow;
+				signal(Signals.childrenOf);
 			}
 		});
 	};
@@ -114,7 +123,7 @@ export default class Thing extends Datum {
 		//												//
 		//////////////////////////////////////////////////
 		
-		let height = get(lineGap);		// default row height
+		let height = this.showCluster ? k.clusterHeight : get(lineGap);		// default row height
 		if (this.hasChildren && this.isExpanded) {
 			height = 0;
 			for (const child of this.children) {

@@ -99,6 +99,7 @@
 		{thing.title}
 	</span>
 	<input
+		class='title'
 		type='text'
 		name='title'
 		bind:this={input}
@@ -118,7 +119,7 @@
 {/key}
 
 <style lang='scss'>
-	input {
+	.title {
 		border: none;
 		outline: none;
 		position: relative;
