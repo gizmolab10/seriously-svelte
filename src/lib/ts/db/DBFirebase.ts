@@ -1,7 +1,7 @@
 import { k, Thing, DBType, DataKind, signal, Signals, TraitType, Hierarchy, copyObject, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection, onSnapshot, deleteField, getFirestore } from 'firebase/firestore';
 import { QuerySnapshot, DocumentData, DocumentChange, DocumentReference, CollectionReference } from 'firebase/firestore';
-import { Predicate, dbDispatch, Relationship, CreationFlag, convertToObject } from '../common/GlobalImports';
+import { Predicate, dbDispatch, Relationship, CreationOptions, convertToObject } from '../common/GlobalImports';
 import { initializeApp } from "firebase/app";
 import DBInterface from './DBInterface';
 
@@ -146,7 +146,6 @@ export default class DBFirebase implements DBInterface {
 							} else if (thing.isExpanded) {
 								thing.redraw_fetchAll_runtimeBrowseRight(false);
 							}
-							thing.bulkName = bulkName;
 						}
 					}
 					// TODO: detect when a root disappears
@@ -199,8 +198,6 @@ export default class DBFirebase implements DBInterface {
 		if (DBFirebase.data_isValidOfKind(dataKind, data)) {
 			const id = doc.id;
 			const h = this.hierarchy;
-			let thing = h.thing_getForID(id);
-			let parentID = thing?.firstParent?.id;
 
 			////////////////////
 			//	 data kinds	  //
@@ -218,17 +215,15 @@ export default class DBFirebase implements DBInterface {
 								if (relationship || remote.isEqualTo(this.addedRelationship)) {
 									return;
 								}
-								h.relationship_remember_runtimeCreateUnique(bulkName, id, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationFlag.isFromRemote);
-								parentID = remote.from.id;
+								h.relationship_remember_runtimeCreateUnique(bulkName, id, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationOptions.isFromRemote);
 								break;
 							default:
 								if (!relationship) {
 									return;	// not known so do not signal
 								} else {
-									parentID = relationship.idFrom;
 									switch (change.type) {
 										case 'modified':
-											if (relationship.wasModifiedWithinMS(800) || !this.relationship_extractRemote(relationship, remote)) {
+											if (relationship.wasModifiedWithinMS(800) || !this.relationship_extractChangesFromRemote(relationship, remote)) {
 												return;	// already known and contains no new data, or needs to be 'tamed'
 											}
 											break;
@@ -246,29 +241,24 @@ export default class DBFirebase implements DBInterface {
 					}
 				} else if (dataKind == DataKind.things) {
 					const remote = new RemoteThing(data);
+					let thing = h.thing_getForID(id);
 					if (remote) {
 						switch (change.type) {
 							case 'added':
-								if (thing || remote.isEqualTo(this.addedThing)) {
+								if (thing || remote.isEqualTo(this.addedThing) || remote.trait == TraitType.root) {
 									return;			// do not invoke signal because nothing has changed
 								}
 								thing = h.thing_remember_runtimeCreate(bulkName, id, remote.title, remote.color, remote.trait, -1, true);
 								orders_normalize_remoteMaybe(thing.siblings);
 								break;
-							default:
-								if (!thing) {
-									return;			// do not invoke signal because nothing has changed
-								} else if (parentID) {
-									switch (change.type) {
-										case 'modified':
-											if (thing.wasModifiedWithinMS(800) || !this.thing_extractChangesFromRemote(thing, remote)) {
-												return;		// do not invoke signal if nothing changed
-											}
-											break;
-										case 'removed':
-											h.thing_forget(thing);
-											break;
-									}
+							case 'removed':
+								if (thing) {
+									h.thing_forget(thing);
+								}
+								break;
+							case 'modified':
+								if (!thing || thing.wasModifiedWithinMS(800) || !this.thing_extractChangesFromRemote(thing, remote)) {
+									return;		// do not invoke signal if nothing changed
 								}
 								break;
 						}
@@ -300,7 +290,7 @@ export default class DBFirebase implements DBInterface {
 			switch (dataKind) {
 				case DataKind.things:		 h.thing_remember_runtimeCreate(bulkName, id, data.title, data.color, data.trait, -1, true); break;
 				case DataKind.predicates:	 h.predicate_remember_runtimeCreate(id, data.kind); break;
-				case DataKind.relationships: h.relationship_remember_runtimeCreateUnique(bulkName, id, data.predicate.id, data.from.id, data.to.id, data.order, CreationFlag.isFromRemote); break;
+				case DataKind.relationships: h.relationship_remember_runtimeCreateUnique(bulkName, id, data.predicate.id, data.from.id, data.to.id, data.order, CreationOptions.isFromRemote); break;
 			}
 		}
 	}
@@ -348,6 +338,7 @@ export default class DBFirebase implements DBInterface {
 				thing.id = ref.id;			// so relationship will be correct
 				this.hierarchy.thing_remember(thing);
 				this.snapshots_handleDeferred();
+				console.log('CREATE', thing.id, thing.title);
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -356,8 +347,8 @@ export default class DBFirebase implements DBInterface {
 
 	async things_firstTime_remoteCreateIn(collectionRef: CollectionReference) {
 		const fields = ['title', 'color', 'trait'];
-		const root = new Thing(dbDispatch.bulkName, null, dbDispatch.bulkName, 'coral', TraitType.root, 0, false);
-		const thing = new Thing(dbDispatch.bulkName, null, 'Click this text to edit it', 'purple', '', 0, false);
+		const root = new Thing(dbDispatch.bulkName, null, dbDispatch.bulkName, 'coral', TraitType.root, 0, true);
+		const thing = new Thing(dbDispatch.bulkName, null, 'Click this text to edit it', 'purple', '', 0, true);
 		this.hierarchy.root = root;
 		await addDoc(collectionRef, convertToObject(thing, fields));
 		await addDoc(collectionRef, convertToObject(root, fields));
@@ -383,6 +374,7 @@ export default class DBFirebase implements DBInterface {
 			try {
 				const ref = doc(thingsCollection, thing.id) as DocumentReference<Thing>;
 				await deleteDoc(ref);
+				console.log('DELETE', thing.id, thing.title);
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -390,9 +382,9 @@ export default class DBFirebase implements DBInterface {
 	}
 
 	thing_extractChangesFromRemote(thing: Thing, from: RemoteThing) {
-		const changed = (thing.title != from.title || thing.trait != from.trait || thing.color != from.color)
+		const changed = (thing.title != from.virginTitle || thing.trait != from.trait || thing.color != from.color)
 		if (changed) {
-			thing.title = from.title;
+			thing.title = from.virginTitle;
 			thing.trait = from.trait;
 			thing.color = from.color;
 		}
@@ -418,6 +410,7 @@ export default class DBFirebase implements DBInterface {
 				relationship.id = ref.id;
 				this.hierarchy.relationship_remember(relationship);
 				this.snapshots_handleDeferred();
+				console.log('CREATE', relationship.idTo);
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -444,18 +437,20 @@ export default class DBFirebase implements DBInterface {
 			try {
 				const ref = doc(relationshipsCollection, relationship.id) as DocumentReference<RemoteRelationship>;
 				await deleteDoc(ref);
+				console.log('DELETE', relationship.idTo, this.hierarchy.thing_getForID(relationship.idTo)?.title);
 			} catch (error) {
 				this.reportError(error);
 			}
 		}
 	}
 
-	relationship_extractRemote(relationship: Relationship, remote: RemoteRelationship) {
+	relationship_extractChangesFromRemote(relationship: Relationship, remote: RemoteRelationship) {
 		const order = remote.order + k.orderIncrement;
 		const changed = (relationship.idTo != remote.to.id || relationship.idFrom != remote.from.id || relationship.idPredicate != remote.predicate.i)
 		if (changed) {
 			relationship.idTo = remote.to.id;
 			relationship.idFrom = remote.from.id;
+			relationship.isRemotelyStored = true;
 			relationship.order_setTo(order, false);		// also sets to-thing's order
 			relationship.idPredicate = remote.predicate.id;
 		}
@@ -528,6 +523,15 @@ class RemoteThing implements RemoteThing {
 		this.title = remote.title;
 		this.trait = remote.trait;
 		this.color = remote.color;
+	}
+
+	get virginTitle(): string {
+		const title = this.title;
+		if (title.includes('@')) {
+			const dual = title.split('@');
+			return dual[0];
+		}
+		return title
 	}
 
 	isEqualTo(thing: Thing | null) {

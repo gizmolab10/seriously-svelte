@@ -17,8 +17,6 @@ export enum PersistID {
 }
 
 class PersistLocal {
-	keySeparator = '|';
-	valueSeparator = ':';
 	okayToPersist = false;
 
 	restore() {

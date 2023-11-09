@@ -1,4 +1,4 @@
-import { noop, dbDispatch, isMobileDevice } from '../../ts/common/GlobalImports'
+import { isMobileDevice } from '../../ts/common/GlobalImports'
 
 export default class Constants {
 	public clusterHeight: number;

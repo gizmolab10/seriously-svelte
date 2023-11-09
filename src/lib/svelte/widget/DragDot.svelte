@@ -69,14 +69,7 @@
 
 	async function handleClick(event) {
 		if (thing.isExemplar) { return; }
-		if (false) {
-			if (thing.needsBulkFetch) {
-				thing.redraw_fetchAll_runtimeBrowseRight(false);
-			} else {
-				thing.toggleExpand();
-				signal(Signals.childrenOf);
-			}
-		} else if (event.shiftKey || isGrabbed) {
+		if (event.shiftKey || isGrabbed) {
 			thing.toggleGrab();
 		} else {
 			thing.grabOnly();

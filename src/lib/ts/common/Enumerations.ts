@@ -1,26 +1,26 @@
 export enum ButtonID {
 	buildNotes = 'show build notes',
-	help				= '?',
+	help	   = '?',
 }
 
-export enum CreationFlag {
-	none				= '',
-	getRemoteID	= 'get',
-	isFromRemote = 'isFrom'
+export enum CreationOptions {
+	isFromRemote = 'isFrom',
+	getRemoteID	 = 'getID',
+	none		 = '',
 }
 
 export enum BrowserType  {
-	unknown = 'unknown',
+	unknown  = 'unknown',
 	explorer = 'explorer',
-	firefox = 'firefox',
-	chrome = 'chrome',
-	safari = 'safari',
-	opera = 'opera',
-	orion = 'orion',
+	firefox	 = 'firefox',
+	chrome	 = 'chrome',
+	safari	 = 'safari',
+	opera	 = 'opera',
+	orion	 = 'orion',
 }
 
 export enum LineCurveType {
-	up = 'up',
+	up	 = 'up',
 	down = 'down',
 	flat = 'flat',
 }

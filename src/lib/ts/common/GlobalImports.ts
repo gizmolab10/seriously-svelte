@@ -1,5 +1,5 @@
 import { log, noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, isServerLocal, getBrowserType, isMobileDevice, convertToObject, orders_normalize_remoteMaybe, sort_byOrder } from './Utilities';
-import { ZIndex, ButtonID, TraitType, BrowserType, CreationFlag, LineCurveType } from './Enumerations';
+import { ZIndex, ButtonID, TraitType, BrowserType, CreationOptions, LineCurveType } from './Enumerations';
 import { Point, Size, Rect, LineRect, updateGraphRect } from '../geometry/Geometry';
 import { FatTrianglePath, Direction } from '../geometry/FatTrianglePath';
 import { PersistID, persistLocal } from '../managers/PersistLocal';
@@ -32,7 +32,7 @@ export {
 	dbDispatch, DBType, DataKind,
 	Grabs, graphEditor, Hierarchy,
 	signal, Signals, handleSignalOfKind,
-	ZIndex, ButtonID, BrowserType, CreationFlag,
+	ZIndex, ButtonID, BrowserType, CreationOptions,
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Point, Size, Rect, Layout, LineRect, TraitType, LineCurveType, updateGraphRect,
 	log, noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy,

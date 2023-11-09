@@ -1,4 +1,4 @@
-import { Thing, DBType, DataKind, Hierarchy, Relationship, CreationFlag, dbDispatch } from '../common/GlobalImports';
+import { Thing, DBType, DataKind, Hierarchy, Relationship, CreationOptions, dbDispatch } from '../common/GlobalImports';
 import { thingsArrived } from '../managers/State';
 import DBInterface from './DBInterface';
 import Airtable from 'airtable';
@@ -117,7 +117,7 @@ export default class DBAirtable implements DBInterface {
 				const order = record.fields.order as number;
 				const froms = record.fields.from as (string[]);
 				const predicates = record.fields.predicate as (string[]);
-				this.hierarchy.relationship_remember_runtimeCreateUnique(id, predicates[0], froms[0], tos[0], order, CreationFlag.isFromRemote);
+				this.hierarchy.relationship_remember_runtimeCreateUnique(id, predicates[0], froms[0], tos[0], order, CreationOptions.isFromRemote);
 			}
 		} catch (error) {
 			console.log(this.relationships_errorMessage + error);

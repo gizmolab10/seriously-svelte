@@ -61,19 +61,17 @@ export default class GraphEditor {
 	//////////////////
 
 	async thing_edit_remoteAddChildTo(parent: Thing) {
-		this.hierarchy.thing_remember_remoteCopy(parent.bulkName, parent).then((child) => {
-			parent.expand();
-			this.thing_edit_remoteAddAsChild(child, parent).then();
-		})
+		const child = await this.hierarchy.thing_remember_runtimeCopy(parent.bulkName, parent);
+		parent.expand();
+		await this.thing_edit_remoteAddAsChild(child, parent);
 	}
 
 	async thing_edit_remoteDuplicate(thing: Thing) {
 		const h = this.hierarchy;
-		h.thing_remember_remoteCopy(thing.bulkName, thing).then((sibling) => {
-			const parent = thing.firstParent ?? h.root;
-			sibling.title = thing.title;
-			this.thing_edit_remoteAddAsChild(sibling, parent);
-		})
+		const sibling = await h.thing_remember_runtimeCopy(thing.bulkName, thing);
+		const parent = thing.firstParent ?? h.root;
+		sibling.title = thing.title;
+		this.thing_edit_remoteAddAsChild(sibling, parent);
 	}
 
 	async thing_edit_remoteAddLine(thing: Thing, below: boolean = true) {
@@ -84,15 +82,15 @@ export default class GraphEditor {
 	}
 
 	async thing_edit_remoteAddAsChild(child: Thing, parent: Thing, startEdit: boolean = true) {
-		await this.hierarchy.thing_remember_remoteAddAsChild(child, parent).then((child) => {
-			signal(Signals.childrenOf, parent.id);
-			child.grabOnly();
-			if (startEdit) {
-				setTimeout(() => {
-					child.startEdit();
-				}, 200);
-			}
-		});
+		await this.hierarchy.thing_remember_remoteAddAsChild(child, parent);
+		signal(Signals.childrenOf);
+		parent.expand();
+		child.grabOnly();
+		if (startEdit) {
+			setTimeout(() => {
+				child.startEdit();
+			}, 200);
+		}
 	}
 
 	////////////////////
@@ -128,7 +126,7 @@ export default class GraphEditor {
 				if (relationship) {
 					const order = RIGHT ? parent.order : 0;
 					relationship.idFrom = newParent.id;
-					thing.order_setTo(order + 0.5, true);
+					await thing.order_setTo(order + 0.5, true);
 					await dbDispatch.db.relationship_remoteUpdate(relationship);
 				}
 

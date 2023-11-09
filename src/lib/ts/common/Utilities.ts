@@ -12,12 +12,12 @@ export function sort_byOrder(array: Array<Thing>) {
 	return array.sort( (a: Thing, b: Thing) => { return a.order - b.order; });
 }
 
-export function orders_normalize_remoteMaybe(array: Array<Thing>, remoteWrite: boolean = true) {
+export async function orders_normalize_remoteMaybe(array: Array<Thing>, remoteWrite: boolean = true) {
 	sort_byOrder(array);
 	for (let index = 0; index < array.length; index++) {
 		const thing = array[index];
 		if (thing.order != index) {
-			thing.order_setTo(index, remoteWrite);
+			await thing.order_setTo(index, remoteWrite);
 		}
 	}
 }
