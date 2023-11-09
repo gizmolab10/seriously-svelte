@@ -19,6 +19,7 @@ export default class Datum {
 
 	static get newID(): string { return 'NEW' + removeAll('-', uuid()).slice(10, 24); } // use last, most-unique bytes of uuid
 	updateWriteDate() { this.lastWriteDate = new Date(); }
+	log(message: string) {}
 
 	wasModifiedWithinMS(threshold: number): boolean {
 		const duration = new Date().getTime() - this.lastWriteDate.getTime();

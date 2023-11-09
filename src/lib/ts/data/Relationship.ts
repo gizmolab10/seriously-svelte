@@ -21,7 +21,7 @@ export default class Relationship extends Datum {
 	log(message: string) { console.log(message, this.description); }
 	async thingTo_updateOrder(remoteWrite: boolean) { await dbDispatch.db.hierarchy.thing_getForID(this.idTo)?.order_setTo(this.order, remoteWrite); }
 	get fields(): Airtable.FieldSet { return { predicate: [this.idPredicate], from: [this.idFrom], to: [this.idTo], order: this.order }; }
-	get description(): string { return this.isRemotelyStored + ' ' + this.order + ' ' + this.id + ' '	+ dbDispatch.db.hierarchy.thing_getForID(this.idFrom)?.title + ' => ' + dbDispatch.db.hierarchy.thing_getForID(this.idTo)?.title; }
+	get description(): string { return ' \"' + this.bulkName + '\" ' + this.isRemotelyStored + ' ' + this.order + ' ' + this.id + ' '	+ dbDispatch.db.hierarchy.thing_getForID(this.idFrom)?.description + ' => ' + dbDispatch.db.hierarchy.thing_getForID(this.idTo)?.description; }
 	get isValid(): boolean {
 		if (this.idPredicate && this.idFrom && this.idTo) {
 			return true;

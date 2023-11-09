@@ -58,7 +58,7 @@ export default class Thing extends Datum {
 	};
 
 	get hierarchy():			 Hierarchy { return dbDispatch.db.hierarchy; }
-	get description():				string { return this.id + ' (\" ' + this.title + '\") '; }
+	get description():				string { return this.id + ' \"' + this.title + '\"'; }
 	get idForChildren():            string { return this.isBulkAlias ? this.bulkAliasID : this.id; }
 	get visibleProgenySize():		  Size { return new Size(this.visibleProgenyWidth, this.visibleProgenyHeight); }
 	get halfVisibleProgenySize():	  Size { return this.visibleProgenySize.dividedInHalf; }

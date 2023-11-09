@@ -71,7 +71,7 @@ export default class Hierarchy {
 					} else {
 						const idPredicateIsAParentOf = Predicate.idIsAParentOf;
 						await this.relationship_remember_remoteCreateUnique(root.bulkName, null, idPredicateIsAParentOf,
-							idRoot, idThing, -1, CreationOptions.getRemoteID)
+							idRoot, idThing, 0, CreationOptions.getRemoteID)
 					}
 				}
 			}
@@ -266,7 +266,7 @@ export default class Hierarchy {
 			}
 		}
 		if (root) {
-			const roots = this.thing_runtimeCreate(dbDispatch.bulkName, null, 'roots', 'red', TraitType.roots, -1, false);
+			const roots = this.thing_runtimeCreate(dbDispatch.bulkName, null, 'roots', 'red', TraitType.roots, 0, false);
 			await this.thing_remember_remoteAddAsChild(roots, root);
 			return roots;
 		}
