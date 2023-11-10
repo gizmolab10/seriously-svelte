@@ -3,7 +3,7 @@ import { isMobileDevice } from '../../ts/common/GlobalImports'
 export default class Constants {
 	public clusterHeight: number;
 	public detailsMargin: number;
-	public orderIncrement: number;
+	public halfIncrement: number;
 	public leftJustifyGraph: boolean;
 	public allowGraphEditing: boolean;
 	public allowTitleEditing: boolean;
@@ -24,7 +24,7 @@ export default class Constants {
 		this.allowHorizontalScrolling = true;
 		this.allowGraphEditing = true;
 		this.allowTitleEditing = true;
-		this.orderIncrement = 0.5;
+		this.halfIncrement = 0.5;
 		this.detailsMargin = 101;
 		this.clusterHeight = 80;
 	}

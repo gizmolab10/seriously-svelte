@@ -1,4 +1,4 @@
-import { k, get, Thing, signal, Signals, Hierarchy, dbDispatch, orders_normalize_remoteMaybe, Relationship, Predicate } from '../common/GlobalImports';
+import { k, get, Thing, signal, Signals, Hierarchy, dbDispatch, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { idsGrabbed, idShowRevealCluster } from './State';
 
 //////////////////////////////////////
@@ -126,13 +126,11 @@ export default class GraphEditor {
 				if (relationship) {
 					const order = RIGHT ? parent.order : 0;
 					relationship.idFrom = newParent.id;
-					await thing.order_setTo(order + 0.5, true);
-					await dbDispatch.db.relationship_remoteUpdate(relationship);
+					await thing.order_setTo(order + 0.5, false);
 				}
 
 				h.relationships_refreshKnowns();		// so children and parent will see the newly relocated things
-				orders_normalize_remoteMaybe(newParent.children);						// refresh knowns first
-				orders_normalize_remoteMaybe(parent.children);
+				h.root?.order_normalizeRecursive(true);
 				thing.grabOnly();
 				newParent.expand();
 				if (!newParent.isVisible) {

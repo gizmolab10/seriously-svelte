@@ -1,4 +1,4 @@
-import { dbDispatch } from '../common/GlobalImports';
+import { debug, dbDispatch, DebuggingOptions } from '../common/GlobalImports';
 import Airtable from 'airtable';
 import Datum from './Datum';
 
@@ -18,8 +18,6 @@ export default class Relationship extends Datum {
 		this.order = order;
 	}
 
-	log(message: string) { console.log(message, this.description); }
-	async thingTo_updateOrder(remoteWrite: boolean) { await dbDispatch.db.hierarchy.thing_getForID(this.idTo)?.order_setTo(this.order, remoteWrite); }
 	get fields(): Airtable.FieldSet { return { predicate: [this.idPredicate], from: [this.idFrom], to: [this.idTo], order: this.order }; }
 	get description(): string { return ' \"' + this.bulkName + '\" ' + this.isRemotelyStored + ' ' + this.order + ' ' + this.id + ' '	+ dbDispatch.db.hierarchy.thing_getForID(this.idFrom)?.description + ' => ' + dbDispatch.db.hierarchy.thing_getForID(this.idTo)?.description; }
 	get isValid(): boolean {
@@ -29,10 +27,14 @@ export default class Relationship extends Datum {
 		return false;
 	}
 
+	log(option: DebuggingOptions, message: string) {
+		debug.log(option, message + ' ' + this.description);
+	}
+
 	async order_setTo(newOrder: number, remoteWrite: boolean) {
-		if (this.order != newOrder) {
-			this.order = newOrder;
-			await this.thingTo_updateOrder(remoteWrite);
+		if (Math.abs(this.order - newOrder) > 0.001) {
+			const thing = dbDispatch.db.hierarchy.thing_getForID(this.idTo);
+			await thing?.order_setTo(newOrder, remoteWrite);
 		}
 	}
 

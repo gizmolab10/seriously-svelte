@@ -1,7 +1,7 @@
-import { k, Thing, DBType, DataKind, signal, Signals, TraitType, Hierarchy, copyObject, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { k, Thing, debug, DBType, signal, Signals, TraitType, DataKind, Hierarchy, copyObject, DebuggingOptions } from '../common/GlobalImports';
+import { Predicate, dbDispatch, Relationship, CreationOptions, convertToObject, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection, onSnapshot, deleteField, getFirestore } from 'firebase/firestore';
-import { QuerySnapshot, DocumentData, DocumentChange, DocumentReference, CollectionReference } from 'firebase/firestore';
-import { Predicate, dbDispatch, Relationship, CreationOptions, convertToObject } from '../common/GlobalImports';
+import { QuerySnapshot, DocumentData, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { initializeApp } from "firebase/app";
 import DBInterface from './DBInterface';
 
@@ -47,6 +47,7 @@ export default class DBFirebase implements DBInterface {
 	//////////////////////////
 
 	async fetch_all() {
+		await this.recordLogin();
 		const name = dbDispatch.bulkName;
 		if (dbDispatch.eraseDB) {
 			await this.document_remoteDelete(name);
@@ -91,6 +92,7 @@ export default class DBFirebase implements DBInterface {
 			}
 
 			const docs = querySnapshot.docs;
+			debug.log(DebuggingOptions.remote, 'READ ' + docs.length + ' from ' + bulkName + ':' + dataKind);
 			for (const docSnapshot of docs) {
 				const id = docSnapshot.id;
 				const data = docSnapshot.data();
@@ -196,8 +198,8 @@ export default class DBFirebase implements DBInterface {
 		const doc = change.doc;
 		const data = doc.data();
 		if (DBFirebase.data_isValidOfKind(dataKind, data)) {
-			const id = doc.id;
 			const h = this.hierarchy;
+			const id = doc.id;
 
 			////////////////////
 			//	 data kinds	  //
@@ -234,7 +236,7 @@ export default class DBFirebase implements DBInterface {
 								}
 								break;
 						}
-						h.relationships_refreshKnowns_runtimeRenormalize();
+						h.relationships_refreshKnowns_remoteRenormalize();
 						if (relationship) {
 							h.relationships_accomodateRelocations(original, relationship);
 						}
@@ -268,6 +270,7 @@ export default class DBFirebase implements DBInterface {
 			} catch (error) {
 				this.reportError(error);
 			}
+			debug.log(DebuggingOptions.remote, 'HANDLE ' + bulkName + ':' + dataKind + ' ' + change.type);
 		}
 	}
 
@@ -338,7 +341,7 @@ export default class DBFirebase implements DBInterface {
 				thing.id = ref.id;			// so relationship will be correct
 				this.hierarchy.thing_remember(thing);
 				this.snapshots_handleDeferred();
-				thing.log('CREATE T');
+				thing.log(DebuggingOptions.remote, 'CREATE T');
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -354,8 +357,8 @@ export default class DBFirebase implements DBInterface {
 		const rootRef = await addDoc(collectionRef, convertToObject(root, fields));		// no need to remember now
 		thing.id = thingRef.id;
 		root.id = rootRef.id;
-		root.log('CREATE T');
-		thing.log('CREATE T');
+		root.log(DebuggingOptions.remote, 'CREATE T');
+		thing.log(DebuggingOptions.remote, 'CREATE T');
 	}
 
 	async thing_remoteUpdate(thing: Thing) {
@@ -366,7 +369,7 @@ export default class DBFirebase implements DBInterface {
 			const jsThing = { ...remoteThing };
 			try {
 				await setDoc(ref, jsThing);
-				thing.log('UPDATE T');
+				thing.log(DebuggingOptions.remote, 'UPDATE T');
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -379,7 +382,7 @@ export default class DBFirebase implements DBInterface {
 			try {
 				const ref = doc(thingsCollection, thing.id) as DocumentReference<Thing>;
 				await deleteDoc(ref);
-				thing.log('DELETE T');
+				thing.log(DebuggingOptions.remote, 'DELETE T');
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -415,7 +418,7 @@ export default class DBFirebase implements DBInterface {
 				relationship.id = ref.id;
 				this.hierarchy.relationship_remember(relationship);
 				this.snapshots_handleDeferred();
-				relationship.log('CREATE R');
+				relationship.log(DebuggingOptions.remote, 'CREATE R');
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -430,7 +433,7 @@ export default class DBFirebase implements DBInterface {
 				const remoteRelationship = new RemoteRelationship(relationship);
 				const jsRelationship = { ...remoteRelationship };
 				await setDoc(ref, jsRelationship);
-				relationship.log('UPDATE R');
+				relationship.log(DebuggingOptions.remote, 'UPDATE R');
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -443,7 +446,7 @@ export default class DBFirebase implements DBInterface {
 			try {
 				const ref = doc(relationshipsCollection, relationship.id) as DocumentReference<RemoteRelationship>;
 				await deleteDoc(ref);
-				relationship.log('DELETE R');
+				relationship.log(DebuggingOptions.remote, 'DELETE R');
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -451,7 +454,7 @@ export default class DBFirebase implements DBInterface {
 	}
 
 	relationship_extractChangesFromRemote(relationship: Relationship, remote: RemoteRelationship) {
-		const order = remote.order + k.orderIncrement;
+		const order = remote.order + k.halfIncrement;
 		const changed = (relationship.idTo != remote.to.id || relationship.idFrom != remote.from.id || relationship.idPredicate != remote.predicate.i)
 		if (changed) {
 			relationship.idTo = remote.to.id;
@@ -490,6 +493,41 @@ export default class DBFirebase implements DBInterface {
 				return false;
 		}
 		return true;
+	}
+
+	async recordLogin() {
+		await this.getUserIPAddress().then((ipAddress) => {
+			if (ipAddress != null) {
+				const logRef = collection(this.db, 'access_logs');
+				const item = {
+					ipAddress: ipAddress,
+					timestamp: serverTimestamp()
+				}
+				const jsItem = { ...item };
+				try {
+					(async () => {
+						await addDoc(logRef, jsItem);
+					})();
+				} catch (error) {
+					this.reportError(error);
+				}
+			}
+		});
+	}
+	
+	async getUserIPAddress(): Promise<string | null> {
+		try {
+			// Use an external service to determine the IP address (you can replace this URL with a different service if needed).
+			const response = await fetch('https://ipv4.icanhazip.com');
+			if (!response.ok) {
+				throw new Error('Unable to fetch IP address.');
+			}
+			const ipAddress = await response.text();
+			return ipAddress;
+		} catch (error) {
+			this.reportError('Error fetching IP address:' + error);
+			return null;
+		}
 	}
 
 }

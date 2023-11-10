@@ -1,9 +1,10 @@
-import { log, noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, isServerLocal, getBrowserType, isMobileDevice, convertToObject, orders_normalize_remoteMaybe, sort_byOrder } from './Utilities';
+import { noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, isServerLocal, getBrowserType, isMobileDevice, convertToObject, orders_normalize_remoteMaybe, sort_byOrder } from './Utilities';
 import { ZIndex, ButtonID, TraitType, BrowserType, CreationOptions, LineCurveType } from './Enumerations';
 import { Point, Size, Rect, LineRect, updateGraphRect } from '../geometry/Geometry';
 import { FatTrianglePath, Direction } from '../geometry/FatTrianglePath';
 import { PersistID, persistLocal } from '../managers/PersistLocal';
 import { signal, Signals, handleSignalOfKind } from './Signals';
+import { debug, Debug, DebuggingOptions } from './Debug'
 import { graphEditor } from '../managers/GraphEditor';
 import { DBType, DataKind } from '../db/DBInterface';
 import { dbDispatch } from '../db/DBDispatch';
@@ -31,10 +32,11 @@ export {
 	FatTrianglePath, Direction,
 	dbDispatch, DBType, DataKind,
 	Grabs, graphEditor, Hierarchy,
+	debug, Debug, DebuggingOptions,
 	signal, Signals, handleSignalOfKind,
 	ZIndex, ButtonID, BrowserType, CreationOptions,
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Point, Size, Rect, Layout, LineRect, TraitType, LineCurveType, updateGraphRect,
-	log, noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy,
+	noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy,
 	isServerLocal, getBrowserType, isMobileDevice, convertToObject, orders_normalize_remoteMaybe, sort_byOrder,
 };

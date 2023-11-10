@@ -1,9 +1,10 @@
-import { k, get, Size, Datum, signal, Signals, Predicate, PersistID, dbDispatch, getWidthOf, persistLocal, orders_normalize_remoteMaybe, Hierarchy, TraitType } from '../common/GlobalImports';
+import { k, get, Size, Datum, signal, Signals, Predicate, PersistID, debug, DebuggingOptions } from '../common/GlobalImports';
+import { Hierarchy, TraitType, dbDispatch, getWidthOf, persistLocal, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { idHere, idEditing, expanded, idsGrabbed, lineGap, lineStretch, dotDiameter, idShowRevealCluster } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
-    bulkAliasID: string = '';
+    bulkRootID: string = '';
 	needsBulkFetch = false;
 	hoverAttributes = '';
 	borderAttribute = '';
@@ -59,7 +60,7 @@ export default class Thing extends Datum {
 
 	get hierarchy():			 Hierarchy { return dbDispatch.db.hierarchy; }
 	get description():				string { return this.id + ' \"' + this.title + '\"'; }
-	get idForChildren():            string { return this.isBulkAlias ? this.bulkAliasID : this.id; }
+	get idForChildren():            string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get visibleProgenySize():		  Size { return new Size(this.visibleProgenyWidth, this.visibleProgenyHeight); }
 	get halfVisibleProgenySize():	  Size { return this.visibleProgenySize.dividedInHalf; }
 	get halfVisibleProgenyHeight(): number { return this.visibleProgenyHeight / 2; }
@@ -134,8 +135,7 @@ export default class Thing extends Datum {
 		}
 		return Math.max(height, simpleHeight);
 	}
-
-	log(message: string) { console.log(message, this.description); }
+	
 	toggleGrab()		 { this.hierarchy.grabs.toggleGrab(this); }
 	grabOnly()			 { this.hierarchy.grabs.grabOnly(this); }
 	toggleExpand()		 { this.expanded_setTo(!this.isExpanded) }
@@ -144,6 +144,10 @@ export default class Thing extends Datum {
 
 	hasPredicate(asParents: boolean): boolean {
 		return asParents ? this.parents.length > 0 : this.children.length > 0
+	}
+
+	log(option: DebuggingOptions, message: string) {
+		debug.log(option, message + ' ' + this.description);
 	}
 
 	revealColor(isReveal: boolean): string {
@@ -240,14 +244,14 @@ export default class Thing extends Datum {
 	}
 
 	async order_setTo(newOrder: number, remoteWrite: boolean) {
-		if (this.order != newOrder) {
+		const relationship = this.hierarchy.relationship_getWhereIDEqualsTo(this.id);
+		if (relationship && Math.abs(relationship.order - newOrder) > 0.001) {
+			const oldOrder = relationship.order;
+			relationship.order = newOrder;
 			this.order = newOrder;
-			const relationship = this.hierarchy.relationship_getWhereIDEqualsTo(this.id);
-			if (relationship && (relationship.order != newOrder)) {
-				relationship.order = newOrder;
-				if (remoteWrite) {
-					await relationship.remoteWrite();
-				}
+			if (remoteWrite) {
+				this.log(DebuggingOptions.order, 'ORDER ' + oldOrder + ' => ' + newOrder);
+				await relationship.remoteWrite();
 			}
 		}
 	}
@@ -302,8 +306,8 @@ export default class Thing extends Datum {
 				}
 			} else if (k.allowGraphEditing) {
 				const wrapped = up ? (index == 0) : (index == siblings.length - 1);
-				const goose = ((wrapped == up) ? 1 : -1) * k.orderIncrement;
-				const newOrder =	newIndex + goose;
+				const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
+				const newOrder = newIndex + goose;
 				siblings[index].order_setTo(newOrder, false);
 				orders_normalize_remoteMaybe(siblings);
 				signal(Signals.childrenOf, this.firstParent.id);

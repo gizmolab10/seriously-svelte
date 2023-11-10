@@ -191,7 +191,7 @@ export default class Hierarchy {
 		isRemotelyStored: boolean): Thing {
 		let thing: Thing | null = null;
 		if (id && trait == TraitType.root && bulkName != dbDispatch.bulkName) {		// other bulks have their own root & id
-			thing = this.thing_bulkAliasID_set(bulkName, id, color);				// which our thing needs to adopt
+			thing = this.thing_bulkRootID_set(bulkName, id, color);				// which our thing needs to adopt
 		}
 		if (!thing) {
 			thing = new Thing(bulkName, id, title, color, trait, order, isRemotelyStored);
@@ -203,7 +203,7 @@ export default class Hierarchy {
 				if (title.includes('@')) {
 					const dual = title.split('@');
 					thing.title = dual[0];
-					thing.bulkAliasID = dual[1];
+					thing.bulkRootID = dual[1];
 				}
 			}
 		}
@@ -214,11 +214,11 @@ export default class Hierarchy {
 	//	 	   BULKS		//
 	//////////////////////////
 
-	thing_bulkAliasID_set(bulkName: string, id: string, color: string) {
+	thing_bulkRootID_set(bulkName: string, id: string, color: string) {
 		const thing = this.thing_bulkAlias_getForTitle(bulkName);
 		if (thing) {
 			thing.needsBulkFetch = false;	// this id is from bulk fetch all
-			thing.bulkAliasID = id;			// so children relatiohships will work
+			thing.bulkRootID = id;			// so children relatiohships will work
 			thing.color = color;			// N.B., ignore trait
 			this.knownT_byID[id] = thing;
 			// dbDispatch.db.thing_remoteUpdate(thing);		// not needed if bulk id not remotely stored
@@ -280,7 +280,7 @@ export default class Hierarchy {
 	relationship_remember(relationship: Relationship) {
 		if (!this.knownR_byID[relationship.id]) {
 			if (relationship.bulkName != dbDispatch.bulkName) {
-				// console.log('RELATIONSHIP', relationship.bulkName, relationship.idFrom, this.thing_getForID(relationship.idFrom)?.title, this.thing_getForID(relationship.idTo)?.title);
+				// debug.log(DebuggingOptions.error, 'RELATIONSHIP', relationship.bulkName, relationship.idFrom, this.thing_getForID(relationship.idFrom)?.title, this.thing_getForID(relationship.idTo)?.title);
 			}
 			this.knownRs.push(relationship);
 			this.knownR_byID[relationship.id] = relationship;
@@ -310,9 +310,9 @@ export default class Hierarchy {
 		known[idRelationship] = array;
 	}
 
-	relationships_refreshKnowns_runtimeRenormalize() {
+	relationships_refreshKnowns_remoteRenormalize() {
 		this.relationships_refreshKnowns();
-		this.root?.order_normalizeRecursive(false);
+		this.root?.order_normalizeRecursive(true);
 	}
 
 	relationships_refreshKnowns() {
