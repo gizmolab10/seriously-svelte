@@ -1,5 +1,5 @@
-import { get, noop, User, Thing, Grabs, Access, remove, signal, Signals, TraitType, Predicate, Relationship, dbDispatch } from '../common/GlobalImports';
-import { persistLocal, CreationOptions, sort_byOrder, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { Relationship, persistLocal, CreationOptions, DebuggingOptions, sort_byOrder, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { get, noop, User, Thing, Grabs, debug, Access, remove, signal, Signals, TraitType, Predicate, dbDispatch } from '../common/GlobalImports';
 import { idHere, isBusy, idsGrabbed, thingsArrived } from './State';
 import DBInterface from '../db/DBInterface';
 
@@ -17,8 +17,9 @@ export default class Hierarchy {
 	knownA_byID: { [id: string]: Access } = {};
 	knownP_byID: { [id: string]: Predicate } = {};
 	knownR_byID: { [id: string]: Relationship } = {};
-	knownP_byKind: { [kind: string]: Predicate } = {};
 	knownA_byKind: { [kind: string]: Access } = {};
+	knownP_byKind: { [kind: string]: Predicate } = {};
+	knownTs_byTrait: { [trait: string]: Thing[] } = {};
 	knownRs_byIDPredicate: KnownRelationships = {};
 	knownRs_byIDFrom: KnownRelationships = {};
 	knownRs_byIDTo: KnownRelationships = {};
@@ -149,11 +150,13 @@ export default class Hierarchy {
 	things_forgetAll() {
 		this.knownTs = []; // clear
 		this.knownT_byID = {};
+		this.knownTs_byTrait = {};
 	}
 
 	thing_forget(thing: Thing) {
 		delete this.knownT_byID[thing.id];
 		this.knownTs = this.knownTs.filter((known) => known.id !== thing.id);
+		this.knownTs_byTrait[thing.trait] = this.knownTs_byTrait[thing.trait].filter((known) => known.id !== thing.id);
 	}
 
 	async thing_forget_remoteDelete(thing: Thing) {
@@ -164,6 +167,12 @@ export default class Hierarchy {
 	thing_remember(thing: Thing) {
 		if (this.knownT_byID[thing.id] == null) {
 			this.knownT_byID[thing.id] = thing;
+			let things = this.knownTs_byTrait[thing.trait];
+			if (things == null) {
+				things = [thing];
+			}
+			things.push(thing);
+			this.knownTs_byTrait[thing.trait] = things;
 			this.knownTs.push(thing);
 			if (thing.trait == TraitType.root && thing.bulkName == dbDispatch.bulkName) {
 				this.root = thing;
@@ -228,8 +237,8 @@ export default class Hierarchy {
 
 	thing_bulkAlias_getForTitle(title: string | null) {
 		if (title) {
-			for (const thing of this.knownTs) {
-				if  (thing.isBulkAlias && thing.title == title) {	// special case TODO: convert to a auery string
+			for (const thing of this.knownTs_byTrait[TraitType.bulk]) {
+				if  (thing.title == title) {							// special case TODO: convert to a auery string
 					return thing;
 				}
 			}
@@ -260,8 +269,8 @@ export default class Hierarchy {
 
 	async thing_getRoots() {
 		let root = this.root;
-		for (const thing of this.knownTs) {
-			if  (thing.trait == TraitType.roots && thing.title == 'roots') {	// special case TODO: convert to a auery string
+		for (const thing of this.knownTs_byTrait[TraitType.roots]) {
+			if  (thing.title == 'roots') {	// special case TODO: convert to a auery string
 				return thing;
 			}
 		}
@@ -280,7 +289,7 @@ export default class Hierarchy {
 	relationship_remember(relationship: Relationship) {
 		if (!this.knownR_byID[relationship.id]) {
 			if (relationship.bulkName != dbDispatch.bulkName) {
-				// debug.log(DebuggingOptions.error, 'RELATIONSHIP', relationship.bulkName, relationship.idFrom, this.thing_getForID(relationship.idFrom)?.title, this.thing_getForID(relationship.idTo)?.title);
+				debug.log(DebuggingOptions.error, 'RELATIONSHIP', relationship.bulkName, relationship.idFrom, this.thing_getForID(relationship.idFrom)?.title, this.thing_getForID(relationship.idTo)?.title);
 			}
 			this.knownRs.push(relationship);
 			this.knownR_byID[relationship.id] = relationship;

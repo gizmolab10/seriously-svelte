@@ -14,9 +14,25 @@
 	
 	onMount( () => { updateState(false); });
 	onDestroy( () => { signalHandler.disconnect(); });
+	function handleMouseUp() { clearTimeout(clickTimer); }
 	function handleMouseOut(event) { updateColors(false); }
 	function handleMouseOver(event) { updateColors(true); }
-	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right-
+	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
+
+	function handleClick(event) {
+		graphEditor.thing_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
+		updateState(false);
+	}
+
+	function handleDoubleClick(event) {
+		clearClicks();
+		// do nothing
+    }
+ 
+	function clearClicks() {
+		clickCount = 0;
+		clearTimeout(clickTimer);	// clear all previous timers
+	}
 
 	function updateState(isHovering) {
 		updateColors(isHovering);
@@ -35,24 +51,6 @@
 		fillColor = thing.revealColor(buttonFlag != isHovering);
 	}
 
-	function updatePath() {
-		const asTriangle = thing.hasChildren || thing.isBulkAlias;
-		if (asTriangle) {
-			const direction = thing.isExpanded ? Direction.left : Direction.right;
-			triangle = new FatTrianglePath($dotDiameter + 2, direction);
-			path = triangle.path;
-		} else {
-			path = null;
-		}
-	}
- 
-	function handleMouseUp() { clearTimeout(clickTimer); }
-
-	function clearClicks() {
-		clickCount = 0;
-		clearTimeout(clickTimer);	// clear all previous timers
-	}
-
 	function handleLongClick(event) {
 		clearClicks();
 		clickTimer = setTimeout(() => {
@@ -60,11 +58,6 @@
 			$idShowRevealCluster = thing.id;
 		}, longClickThreshold);
 	}
-
-	function handleDoubleClick(event) {
-		clearClicks();
-		// do nothing
-    }
 
 	function handleSingleClick(event) {
 		clickCount++;
@@ -76,9 +69,15 @@
 		}, doubleClickThreshold);
 	}
 
-	function handleClick(event) {
-		graphEditor.thing_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
-		updateState(false);
+	function updatePath() {
+		const asTriangle = thing.hasChildren || thing.isBulkAlias;
+		if (asTriangle) {
+			const direction = thing.isExpanded ? Direction.left : Direction.right;
+			triangle = new FatTrianglePath($dotDiameter + 2, direction);
+			path = triangle.path;
+		} else {
+			path = null;
+		}
 	}
 
 </script>
@@ -123,18 +122,4 @@
 		position: absolute;
 	}
 
-	.svg-button svg {
-	}
-
-	.svg-button:hover {
-			/* Styles for hover state, e.g., change SVG color */
-	}
-
-	.svg-button:active {
-			/* Styles for active state */
-	}
-
-	.svg-button:focus {
-			/* Styles for focus state, e.g., add an outline or change SVG color */
-	}
 </style>

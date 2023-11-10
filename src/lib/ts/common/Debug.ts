@@ -4,9 +4,9 @@ export enum DebuggingOptions {
 	error  = 'error',
 }
 
-const options = [
-    DebuggingOptions.remote,
-    DebuggingOptions.order,
+const options: DebuggingOptions[] = [
+    // DebuggingOptions.remote,
+    // DebuggingOptions.order,
 ];
 
 export class Debug {
@@ -17,4 +17,4 @@ export class Debug {
     tLog(target: any, key: string) { console.log(`Method \'${key}\' is called on class \'${target.constructor.name}\'`); }
 }
 
-export const debug = new Debug([]);
+export const debug = new Debug(options);
