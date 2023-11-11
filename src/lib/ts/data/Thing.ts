@@ -1,6 +1,6 @@
-import { k, get, Size, Datum, signal, Signals, Predicate, PersistID, debug, DebuggingOptions } from '../common/GlobalImports';
-import { Hierarchy, TraitType, dbDispatch, getWidthOf, persistLocal, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { idHere, idEditing, expanded, idsGrabbed, lineGap, lineStretch, dotDiameter, idShowRevealCluster } from '../managers/State';
+import { k, get, Size, Datum, signal, Signals, debug, DebugOption, Predicate, PersistID, Hierarchy } from '../common/GlobalImports';
+import { TraitType, dbDispatch, getWidthOf, persistLocal, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -146,7 +146,7 @@ export default class Thing extends Datum {
 		return asParents ? this.parents.length > 0 : this.children.length > 0
 	}
 
-	log(option: DebuggingOptions, message: string) {
+	log(option: DebugOption, message: string) {
 		debug.log(option, message + ' ' + this.description);
 	}
 
@@ -250,7 +250,7 @@ export default class Thing extends Datum {
 			relationship.order = newOrder;
 			this.order = newOrder;
 			if (remoteWrite) {
-				this.log(DebuggingOptions.order, 'ORDER ' + oldOrder + ' => ' + newOrder);
+				this.log(DebugOption.order, 'ORDER ' + oldOrder + ' => ' + newOrder);
 				await relationship.remoteWrite();
 			}
 		}

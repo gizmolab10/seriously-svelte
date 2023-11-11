@@ -1,5 +1,5 @@
-import { DebuggingOptions } from '../common/Debug';
 import { removeAll } from '../common/Utilities';
+import { DebugOption } from '../common/Debug';
 import { v4 as uuid } from 'uuid';
 
 export default class Datum {
@@ -20,7 +20,7 @@ export default class Datum {
 
 	static get newID(): string { return 'NEW' + removeAll('-', uuid()).slice(10, 24); } // use last, most-unique bytes of uuid
 	updateWriteDate() { this.lastWriteDate = new Date(); }
-	log(option: DebuggingOptions, message: string) {}
+	log(option: DebugOption, message: string) {}
 
 	wasModifiedWithinMS(threshold: number): boolean {
 		const duration = new Date().getTime() - this.lastWriteDate.getTime();

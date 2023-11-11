@@ -41,9 +41,9 @@ export default class DBLocal implements DBInterface {
 	};
 
 	async fetch_allFrom(bulkName: string) {}
-	async thing_remember_remoteCreate(thing: Thing) {}
 	async thing_remoteUpdate(thing: Thing) {}
 	async thing_remoteDelete(thing: Thing) {}
+	async thing_remember_remoteCreate(thing: Thing) {}
 	async relationship_remoteUpdate(relationship: Relationship) {}
 	async relationship_remoteDelete(relationship: Relationship) {}
 	async relationship_remember_remoteCreate(relationship: Relationship | null) {}

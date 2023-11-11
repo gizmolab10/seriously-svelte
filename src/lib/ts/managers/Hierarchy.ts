@@ -1,5 +1,5 @@
-import { Relationship, persistLocal, CreationOptions, DebuggingOptions, sort_byOrder, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { get, noop, User, Thing, Grabs, debug, Access, remove, signal, Signals, TraitType, Predicate, dbDispatch } from '../common/GlobalImports';
+import { Relationship, persistLocal, CreationOptions, DebugOption, sort_byOrder, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { idHere, isBusy, idsGrabbed, thingsArrived } from './State';
 import DBInterface from '../db/DBInterface';
 
@@ -289,7 +289,7 @@ export default class Hierarchy {
 	relationship_remember(relationship: Relationship) {
 		if (!this.knownR_byID[relationship.id]) {
 			if (relationship.bulkName != dbDispatch.bulkName) {
-				debug.log(DebuggingOptions.error, 'RELATIONSHIP', relationship.bulkName, relationship.idFrom, this.thing_getForID(relationship.idFrom)?.title, this.thing_getForID(relationship.idTo)?.title);
+				debug.log(DebugOption.error, 'RELATIONSHIP ' + relationship.bulkName + ' ' + this.thing_getForID(relationship.idFrom)?.description + ' => ' + this.thing_getForID(relationship.idTo)?.description);
 			}
 			this.knownRs.push(relationship);
 			this.knownR_byID[relationship.id] = relationship;
