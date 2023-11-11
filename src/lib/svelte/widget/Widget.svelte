@@ -41,7 +41,7 @@
 		if (thing.showCluster) {
 			radius = k.clusterHeight / 2;
 			revealTop = radius - 12;
-			padding = revealTop + 'px 15px ' + revealTop + 'px 1px';
+			padding = revealTop + 'px 12.5px ' + revealTop + 'px 1px';
 			top = origin.y + delta - revealTop;
 		} else {
 			radius = 16;
@@ -86,7 +86,7 @@
 			{background};
 			{border};'>
 		<DragDot thing={thing}/>&nbsp;<TitleEditor thing={thing}/>
-		<div class='at-right'
+		<div class='reveal'
 			style='top:{revealTop}px'>
 			<RevealDot thing={thing}/>
 			{#if showingCluster}
@@ -101,7 +101,7 @@
 		position: absolute;
 		white-space: nowrap;
 	}
-	.at-right {
+	.reveal {
 		position: absolute;
 	}
 </style>

@@ -76,7 +76,7 @@
 			triangle = new FatTrianglePath($dotDiameter + 2, direction);
 			path = triangle.path;
 		} else {
-			path = null;
+			path = 'M8,8 m-7,0a7,7 0 1,0 14,0a7,7 0 1,0 -14,0';
 		}
 	}
 
@@ -121,5 +121,4 @@
 		background: none;
 		position: absolute;
 	}
-
 </style>

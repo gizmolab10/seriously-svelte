@@ -1,20 +1,21 @@
 <script lang='ts'>
-    import { k, onMount, ZIndex } from '../../ts/common/GlobalImports';
+    import { k, ZIndex, onMount, graphEditor } from '../../ts/common/GlobalImports';
     import { idShowRevealCluster } from '../../ts/managers/State';
 	export let thing: Thing;
     let color = 'black';
     let left = 60;
 
-	onMount( () => {
+    onMount( () => {
         color = thing.color;
 		left = thing.titleWidth + (thing.hasChildren ? 25 : 7);
 	});
 
-	function handleClick(id: string) {
+	async function handleClick(id: string) {
         switch (id) {
-            case 'dismiss': $idShowRevealCluster = ''; break;
-            case 'add': alert('ADD'); break;
+            case 'add': await graphEditor.thing_edit_remoteAddChildTo(thing); break;
+            default: break;
         }
+        $idShowRevealCluster = '';
     }
 
 </script>
