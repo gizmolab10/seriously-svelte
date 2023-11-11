@@ -1,4 +1,4 @@
-import { k, get, Thing, debug, DBType, signal, Signals, TraitType, DataKind, Hierarchy, copyObject, DebuggingOptions } from '../common/GlobalImports';
+import { k, get, Thing, debug, launch, DBType, signal, Signals, TraitType, DataKind, Hierarchy, copyObject, DebuggingOptions } from '../common/GlobalImports';
 import { Predicate, dbDispatch, Relationship, CreationOptions, convertToObject, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection, onSnapshot, deleteField, getFirestore } from 'firebase/firestore';
 import { QuerySnapshot, DocumentData, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
@@ -499,11 +499,13 @@ export default class DBFirebase implements DBInterface {
 	async recordLogin() {
 		await this.getUserIPAddress().then((ipAddress) => {
 			if (ipAddress != null && ipAddress != '69.181.235.85') {
+				const queries = launch.queryStrings?.toString() ?? 'empty';
 				const logRef = collection(this.db, 'access_logs');
 				const item = {
+					queries: queries,
+					build: get(build),
 					ipAddress: ipAddress,
 					timestamp: serverTimestamp(),
-					build: get(build),
 				}
 				const jsItem = { ...item };
 				try {

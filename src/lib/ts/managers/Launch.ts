@@ -2,14 +2,14 @@ import { k, dbDispatch, persistLocal, isServerLocal, getBrowserType } from '../c
 import { idHere, expanded, idsGrabbed } from './State';
 
 class Launch {
-
+	queryStrings: URLSearchParams | null = null;
 	setup() {
 		document.title = 'Seriously ('+ (isServerLocal() ? 'local' : 'remote') + ', ' + getBrowserType()  + ', α)';
-		const queryStrings = new URLSearchParams(window.location.search);
+		this.queryStrings = new URLSearchParams(window.location.search);
 		persistLocal.restore();
-		k.applyQueryStrings(queryStrings);
-		this.applyQueryStrings(queryStrings);
-		dbDispatch.applyQueryStrings(queryStrings);
+		k.applyQueryStrings(this.queryStrings);
+		this.applyQueryStrings(this.queryStrings);
+		dbDispatch.applyQueryStrings(this.queryStrings);
 	}
 
 	applyQueryStrings(queryStrings: URLSearchParams) {
