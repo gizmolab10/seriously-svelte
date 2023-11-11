@@ -1,8 +1,9 @@
-import { k, Thing, debug, DBType, signal, Signals, TraitType, DataKind, Hierarchy, copyObject, DebuggingOptions } from '../common/GlobalImports';
+import { k, get, Thing, debug, DBType, signal, Signals, TraitType, DataKind, Hierarchy, copyObject, DebuggingOptions } from '../common/GlobalImports';
 import { Predicate, dbDispatch, Relationship, CreationOptions, convertToObject, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection, onSnapshot, deleteField, getFirestore } from 'firebase/firestore';
 import { QuerySnapshot, DocumentData, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { initializeApp } from "firebase/app";
+import { build } from '../managers/State';
 import DBInterface from './DBInterface';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -497,11 +498,12 @@ export default class DBFirebase implements DBInterface {
 
 	async recordLogin() {
 		await this.getUserIPAddress().then((ipAddress) => {
-			if (ipAddress != null) {
+			if (ipAddress != null && ipAddress != '69.181.235.85') {
 				const logRef = collection(this.db, 'access_logs');
 				const item = {
 					ipAddress: ipAddress,
-					timestamp: serverTimestamp()
+					timestamp: serverTimestamp(),
+					build: get(build),
 				}
 				const jsItem = { ...item };
 				try {
@@ -523,7 +525,7 @@ export default class DBFirebase implements DBInterface {
 				throw new Error('Unable to fetch IP address.');
 			}
 			const ipAddress = await response.text();
-			return ipAddress;
+			return ipAddress.replace(/\n/g, '');
 		} catch (error) {
 			this.reportError('Error fetching IP address:' + error);
 			return null;
