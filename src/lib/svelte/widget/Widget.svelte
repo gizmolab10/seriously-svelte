@@ -3,8 +3,8 @@
 	import { lineGap, idEditing, idsGrabbed, idShowRevealCluster} from '../../ts/managers/State';
 	import RevealCluster from './RevealCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
-	import NewDragDot from './NewDragDot.svelte';
 	import RevealDot from './RevealDot.svelte';
+	import DragDot from './DragDot.svelte';
 	export let origin = new Point();
 	export let thing = Thing;
 	let showingCluster = false;
@@ -87,7 +87,7 @@
 			{background};
 			{border};
 		'>
-		<NewDragDot thing={thing}/>&nbsp;<TitleEditor thing={thing}/>
+		<DragDot thing={thing}/>&nbsp;<TitleEditor thing={thing}/>
 		<div class='reveal'
 			style='top:{revealTop}px'>
 			<RevealDot thing={thing}/>

@@ -7,7 +7,7 @@
 
     onMount( () => {
         color = thing.color;
-		left = thing.titleWidth + (thing.hasChildren ? 25 : 7);
+		left = thing.titleWidth + 5;
 	});
 
 	async function handleClick(id: string) {

@@ -55,6 +55,7 @@
 		clearClicks();
 		clickTimer = setTimeout(() => {
 			clearClicks();
+			thing.grabOnly()
 			$idShowRevealCluster = thing.id;
 		}, longClickThreshold);
 	}
