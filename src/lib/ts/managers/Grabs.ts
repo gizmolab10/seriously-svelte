@@ -1,5 +1,5 @@
 import { get, Thing, Hierarchy, sort_byOrder } from "../common/GlobalImports";
-import { idsGrabbed } from './State';
+import { idsGrabbed, idShowRevealCluster } from './State';
 
 export default class Grabs {
 	hierarchy: Hierarchy;
@@ -23,6 +23,17 @@ export default class Grabs {
 	get last_thingGrabbed(): (Thing | null) { return this.hierarchy.thing_getForID(this.last_idGrabbed); }
 	toggleGrab = (thing: Thing) => { if (thing.isGrabbed) { this.ungrab(thing); } else { this.grab(thing); } }
 
+	clearClusterState(thing: Thing) {
+		const id = get(idShowRevealCluster);
+		if (id != null) {
+			if (id == thing.id) {
+				idShowRevealCluster.set(null);
+			} else {
+				idShowRevealCluster.set(thing.id);
+			}
+		}
+	}
+
 	get last_idGrabbed(): string | null {
 		const ids = get(idsGrabbed);
 		if (ids) {
@@ -31,21 +42,23 @@ export default class Grabs {
 		return null;
 	}
 
-	grabOnly = (thing: Thing) => {
+	grabOnly(thing: Thing) {
 		const ids = [thing.id]
 		idsGrabbed.set(ids);
+		this.clearClusterState(thing);
 	}
 
-	grab = (thing: Thing) => {
+	grab(thing: Thing) {
 		idsGrabbed.update((array) => {
 			if (array.indexOf(thing.id) == -1) {
 				array.push(thing.id);	// only add if not already added
 			}
 			return array;
 		});
+		this.clearClusterState(thing);
 	}
 
-	ungrab = (thing: Thing) => {
+	ungrab(thing: Thing) {
 		let nextGrabbedID: (string | null) = null;
 		const rootID = this.hierarchy.idRoot;
 		idsGrabbed.update((array) => {
@@ -63,6 +76,7 @@ export default class Grabs {
 		if (ids.length == 0) {
 			this.hierarchy.root?.grabOnly();
 		}
+		this.clearClusterState(thing);
 	}
 
 	latestGrab(up: boolean) {

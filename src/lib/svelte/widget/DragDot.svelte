@@ -44,7 +44,7 @@
 		clearClicks();
 		clickTimer = setTimeout(() => {
 			clearClicks();
-			// do nothing
+			thing.becomeHere();
 		}, longClickThreshold);
 	}
 
