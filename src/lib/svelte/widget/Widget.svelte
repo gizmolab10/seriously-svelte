@@ -3,8 +3,8 @@
 	import { lineGap, idEditing, idsGrabbed, idShowRevealCluster} from '../../ts/managers/State';
 	import RevealCluster from './RevealCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
+	import NewDragDot from './NewDragDot.svelte';
 	import RevealDot from './RevealDot.svelte';
-	import DragDot from './DragDot.svelte';
 	export let origin = new Point();
 	export let thing = Thing;
 	let showingCluster = false;
@@ -40,7 +40,7 @@
 		height = $lineGap - 5;
 		if (thing.showCluster) {
 			radius = k.clusterHeight / 2;
-			revealTop = radius - 12;
+			revealTop = radius - 17;
 			padding = revealTop + 'px 12.5px ' + revealTop + 'px 1px';
 			top = origin.y + delta - revealTop;
 		} else {
@@ -77,15 +77,17 @@
 {#key toggleDraw}
 	<div class='widget' id='{thing.title}'
 		bind:this={widget}
-		style='z-index: {ZIndex.highlights};
+		style='
 			top: {top}px;
 			left: {left}px;
 			height: {height}px;
 			padding: {padding};
 			border-radius: {radius}px;
+			z-index: {ZIndex.highlights};
 			{background};
-			{border};'>
-		<DragDot thing={thing}/>&nbsp;<TitleEditor thing={thing}/>
+			{border};
+		'>
+		<NewDragDot thing={thing}/>&nbsp;<TitleEditor thing={thing}/>
 		<div class='reveal'
 			style='top:{revealTop}px'>
 			<RevealDot thing={thing}/>

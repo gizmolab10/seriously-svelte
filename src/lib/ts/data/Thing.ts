@@ -98,8 +98,7 @@ export default class Thing extends Datum {
 	}
 
 	get visibleProgenyWidth(): number {
-		const dotWidth = get(dotDiameter);
-		let width = this.titleWidth + dotWidth + 18;
+		let width = this.titleWidth;
 		if (this.hasChildren && this.isExpanded) {
 			let progenyWidth = 0;
 			for (const child of this.children) {
@@ -108,7 +107,7 @@ export default class Thing extends Datum {
 					progenyWidth = childProgenyWidth;
 				}
 			}
-			width += progenyWidth + get(lineStretch);
+			width += progenyWidth;
 		}
 		return width;
 	}
