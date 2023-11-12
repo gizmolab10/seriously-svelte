@@ -1,6 +1,6 @@
-import { idHere, idEditing, expanded, idsGrabbed, lineGap, lineStretch, dotDiameter, idShowRevealCluster } from '../managers/State';
 import { k, get, Size, Datum, signal, Signals, debug, DebugOption, Predicate, PersistID, Hierarchy } from '../common/GlobalImports';
 import { TraitType, dbDispatch, getWidthOf, persistLocal, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { idHere, idEditing, expanded, idsGrabbed, lineGap, idShowRevealCluster } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -64,7 +64,6 @@ export default class Thing extends Datum {
 	get visibleProgenySize():		  Size { return new Size(this.visibleProgenyWidth, this.visibleProgenyHeight); }
 	get halfVisibleProgenySize():	  Size { return this.visibleProgenySize.dividedInHalf; }
 	get halfVisibleProgenyHeight(): number { return this.visibleProgenyHeight / 2; }
-	get halfVisibleProgenyWidth():  number { return this.visibleProgenyWidth / 2; }
 	get titleWidth():				number { return getWidthOf(this.title) }
 	get hasChildren():			   boolean { return this.hasPredicate(false); }
 	get hasParents():			   boolean { return this.hasPredicate(true); }
@@ -214,6 +213,7 @@ export default class Thing extends Datum {
 			const id = this.id;
 			idHere.set(id);
 			this.expand();
+			idShowRevealCluster.set(null);
 			signal(Signals.childrenOf, id);
 			persistLocal.writeToDBKey(PersistID.here, id)
 		};

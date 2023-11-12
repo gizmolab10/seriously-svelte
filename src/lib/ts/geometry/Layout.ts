@@ -1,4 +1,4 @@
-import { get, Rect, Size, Point, Thing, LineRect, LineCurveType } from '../common/GlobalImports';
+import { get, Rect, Size, Point, Thing, DebugOption, LineRect, LineCurveType } from '../common/GlobalImports';
 import { lineStretch } from '../managers/State'
 
 export default class Layout {

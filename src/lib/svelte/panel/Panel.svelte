@@ -30,7 +30,7 @@
 
 </script>
 
-<div class='left-side'
+<div class='leftSide'
 	style='
 		z-index: {ZIndex.frontmost}; 
 		background-color: {k.backgroundColor};
@@ -53,9 +53,9 @@
 		{/if}
 	</div>
 </div>
-<div class='horizontal-line' style='z-index: {ZIndex.frontmost}; left: -10px; top: 32px; width: {$popupViewID ? '111px' : '110%'};'></div>
-<div class='vertical-line' style='height: {$showDetails ? '100%' : '33px'}; z-index: {ZIndex.frontmost};'></div>
-<div class='right-side' style='left: {$showDetails ? k.detailsMargin : 0}px; z-index: {ZIndex.base};'>
+<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: -10px; top: 32px; width: {$popupViewID ? '111px' : '110%'};'></div>
+<div class='verticalLine' style='height: {$showDetails ? '100%' : '33px'}; z-index: {ZIndex.frontmost};'></div>
+<div class='rightSide' style='left: {$showDetails ? k.detailsMargin : 0}px; z-index: {ZIndex.panel};'>
 	{#if $isBusy}
 		<p>Welcome to Seriously</p>
 		{#if $dbType != DBType.local}
@@ -68,15 +68,15 @@
 			<div class='top' style='z-index: {ZIndex.frontmost}'>
 				<Crumbs/>
 			</div>
-			<div class='title' style='color: {here?.color}; z-index: {ZIndex.frontmost}'>
+			<div class='topTitle' style='color: {here?.color}; z-index: {ZIndex.frontmost}'>
 				{here?.title}
 			</div>
-			<div class='horizontal-line' style='z-index: {ZIndex.frontmost}; left: {$showDetails ? k.detailsMargin : 0}px; top: 85px;'></div>
+			<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: {$showDetails ? k.detailsMargin : 0}px; top: 85px;'></div>
 			{#key toggleDraw}
 				<div class='graph'
 					style='
 						overflow: hidden;
-						z-index: {ZIndex.base};
+						z-index: {ZIndex.panel};
 						top: {$graphRect.origin.y}px;
 						left: {$graphRect.origin.x}px;
 						width: {$graphRect.size.width}px;
@@ -103,7 +103,7 @@
 	.graph {
 		position: fixed;
 	}
-	.right-side {
+	.rightSide {
 		position: fixed;
 	}
 	p {
@@ -124,7 +124,7 @@
 		position: absolute;
 		border-radius: 16px;
 	}
-	.title {
+	.topTitle {
 		text-align: center;
 		position: fixed;
 		font-size: 2em;
@@ -132,20 +132,20 @@
 		left: -1px;
 		top: 40px;
 	}
-	.left-side {
+	.leftSide {
 		position: fixed;
 		width: 100px;
 		margin: 1px;
 		left: -1px;
 		top: -1px;
 	}
-	.horizontal-line {
+	.horizontalLine {
 		position: fixed;
 		height: 1px;
 		width: 110%;
 		background-color: lightgray;
 	}
-	.vertical-line {
+	.verticalLine {
 		position: absolute;
 		left: 100px;
 		top: 0px;

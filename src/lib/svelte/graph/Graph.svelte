@@ -84,7 +84,7 @@
 		<Children thing={here} origin={childrenOrigin}/>
 		{#if isGrabbed}
 			<svg width='28' height='28'
-				style='z-index: {ZIndex.highlights};
+				style='z-index: {ZIndex.dots};
 					position: absolute;
 					left: {triangleOrigin.x - 7};
 					top: {triangleOrigin.y - 21};'>

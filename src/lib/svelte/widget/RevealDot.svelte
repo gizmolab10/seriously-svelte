@@ -72,7 +72,7 @@
 
 	function updatePath() {
 		if (!thing.hasChildren && !thing.isBulkAlias) {
-			path = 'M8,8 m-7,0a7,7 0 1,0 14,0a7,7 0 1,0 -14,0';
+			path = 'M8,8 m-7,0a7,7 0 1,0 14,0a7,7 0 1,0 -14,0';		// plain circle
 		} else {
 			const direction = thing.isExpanded ? Direction.left : Direction.right;
 			triangle = new FatTrianglePath($dotDiameter + 2, direction);
@@ -85,7 +85,7 @@
 <button class='dot'
 	bind:this={button}
 	style='
-		left: {$dotDiameter + thing.titleWidth + 11}px;
+		left: {$dotDiameter + thing.titleWidth + 9}px;
 	'>
 	<svg width='16'
 		height='16'

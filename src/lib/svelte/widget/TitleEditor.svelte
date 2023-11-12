@@ -115,7 +115,7 @@
 			z-index: {ZIndex.text};
 			font-size: {$titleFontSize}px;
 			font-family: {$titleFontFamily};
-			padding: 0px 17px 0px 6px;
+			padding: 0px 0px 0px 6px;
 		'/>
 {/key}
 

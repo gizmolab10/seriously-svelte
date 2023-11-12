@@ -42,7 +42,7 @@
 	}
 
 	function originForGrandchildren(child: Thing, index: number): Point {
-		const more = 7;									// TODO: WHY 17? perhaps it accounts for title margin
+		const more = 6;									// TODO: WHY 17? perhaps it accounts for title margin
 		const rect = lineRectAt(index);
 		const x = origin.x + child.titleWidth + $dotDiameter + $lineStretch + more;
 		const y = rect.extent.y - child.halfVisibleProgenyHeight;
@@ -65,7 +65,7 @@
 	{#if children && children.length != 0 && lineRects.length == children.length}
 		{#each children as child, index}
 			<Widget thing={child} origin={lineRectAt(index).extent.offsetBy(mysteryWidgetOffset)}/>
-			<Line color={child.color} curveType={curveTypeAt(index)} rect={lineRectAt(index).offsetByX(25)}/>
+			<Line thing={child} curveType={curveTypeAt(index)} rect={lineRectAt(index).offsetByX(-120)}/>
 			{#if child.hasChildren && child.isExpanded}
 				<Children thing={child} origin={originForGrandchildren(child, index)}/>
 			{/if}

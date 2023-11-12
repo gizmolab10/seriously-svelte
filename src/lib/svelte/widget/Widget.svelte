@@ -41,16 +41,16 @@
 		if (thing.showCluster) {
 			radius = k.clusterHeight / 2;
 			revealTop = radius - 17;
-			padding = revealTop + 'px 12.5px ' + revealTop + 'px 1px';
+			padding = revealTop + 'px 27.5px ' + revealTop + 'px 1px';
 			top = origin.y + delta - revealTop;
 		} else {
 			radius = 16;
 			revealTop = 0;
 			top = origin.y + delta;
 			if (thing.isExemplar) {
-				padding = '1px 15px 0px 1px';
+				padding = '1px 30px 0px 1px';
 			} else {
-				padding = '0px 13px 1px 1px';
+				padding = '0px 28px 1px 1px';
 			}
 		}
 	}
@@ -83,7 +83,7 @@
 			height: {height}px;
 			padding: {padding};
 			border-radius: {radius}px;
-			z-index: {ZIndex.highlights};
+			z-index: {ZIndex.widgets};
 			{background};
 			{border};
 		'>

@@ -34,11 +34,11 @@ export enum TraitType {
 const baseZIndex = 10000;
 
 export enum ZIndex {
-	base		= baseZIndex,
-	text		= baseZIndex + 10,
-	lines		= baseZIndex + 20,
-	highlights	= baseZIndex + 30,
-	dots		= baseZIndex + 40,
-	frontmost	= baseZIndex + 50,
-	overlay		= baseZIndex + 60,
+	panel	  = baseZIndex,
+	text	  = baseZIndex + 10,
+	lines	  = baseZIndex + 20,
+	widgets	  = baseZIndex + 30,
+	dots	  = baseZIndex + 40,
+	frontmost = baseZIndex + 50,
+	overlay	  = baseZIndex + 60,
 }

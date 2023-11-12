@@ -1,11 +1,13 @@
 export enum DebugOption {
 	remote = 'remote',
+	debug  = 'debug',
 	order  = 'order',
 	error  = 'error',
 }
 
 const options: DebugOption[] = [
     DebugOption.remote,
+    DebugOption.debug,
     DebugOption.order,
 ];
 
