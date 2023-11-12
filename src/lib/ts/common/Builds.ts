@@ -4,7 +4,7 @@ class Builds {
 
 	constructor() {
 		this.notes = {
-			60 : ['November 9, 2023', 'massuve cosmetic tweaks'],
+			60 : ['November 12, 2023', 'massuve cosmetic tweaks'],
 			59 : ['November 9, 2023', 'added ip logging'],
 			58 : ['November 3, 2023', 'begin work on reveal cluster'],
 			57 : ['October 31, 2023', 'separate bulk collections'],
