@@ -223,7 +223,7 @@ export default class Hierarchy {
 	//		DELETE		//
 	//////////////////////
 
-	async things_redraw_remoteDelete(things: Array<Thing>) {
+	async things_redraw_remoteTraverseDelete(things: Array<Thing>) {
 		const h = this;
 		if (h.here) {
 			for (const grabbed of things) {

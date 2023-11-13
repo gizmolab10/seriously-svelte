@@ -37,7 +37,7 @@ export default class GraphEditor {
 				}
 				switch (key) {
 					case 'delete':
-					case 'backspace':	await h.things_redraw_remoteDelete(h.things_getForIDs(get(idsGrabbed))); break;
+					case 'backspace':	await h.things_redraw_remoteTraverseDelete(h.things_getForIDs(get(idsGrabbed))); break;
 				}
 			}
 			if (grab) {

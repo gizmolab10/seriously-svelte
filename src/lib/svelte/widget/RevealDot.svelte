@@ -6,6 +6,8 @@
 	const longClickThreshold = 500;
 	const doubleClickThreshold = 100;				// one fifth of a second
 	let triangle = new FatTrianglePath($dotDiameter + 2, Direction.left);
+	let insidePath = svgFactory.circle(16, 6);
+	let antiFillColor = k.backgroundColor;
 	let fillColor = k.backgroundColor;
 	let path = triangle.path;
 	let clickCount = 0;
@@ -53,6 +55,7 @@
 		thing.updateColorAttributes();
 		const buttonFlag = !thing.isExpanded || thing.isGrabbed;
 		fillColor = thing.revealColor(buttonFlag != isHovering);
+		antiFillColor = thing.revealColor(buttonFlag == isHovering);
 	}
 
 	function handleLongClick(event) {
@@ -78,9 +81,12 @@
 		if (!thing.hasChildren && !thing.isBulkAlias) {
 			path = svgFactory.oval(16);			// horizontal oval
 		} else {
-			const direction = thing.isExpanded ? Direction.left : Direction.right;
+			const direction = (thing.isExpanded && thing.hasChildren) ? Direction.left : Direction.right;
 			triangle = new FatTrianglePath($dotDiameter + 2, direction);
 			path = triangle.path;
+			if (thing.isBulkAlias) {
+				insidePath = svgFactory.circle(16, 6);
+			}
 		}
 	}
 
@@ -112,6 +118,9 @@
 			top: 0px;
 			z-index: {ZIndex.dots};'>
 		<path d={path} stroke={thing.color} fill={fillColor}/>
+		{#if thing.isBulkAlias}
+			<path d={insidePath} stroke={thing.color} fill={antiFillColor}/>
+		{/if}
 	</svg>
 </button>
 
