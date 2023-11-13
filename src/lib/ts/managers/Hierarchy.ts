@@ -141,8 +141,11 @@ export default class Hierarchy {
 
 	async thing_remember_remoteAddAsChild(child: Thing, parent: Thing): Promise<any> {
 		const idPredicateIsAParentOf = Predicate.idIsAParentOf;
-		await this.db?.thing_remember_remoteCreate(child); // for everything below, need to await child.id fetched from dbDispatch
-		const relationship = await this.relationship_remember_remoteCreateUnique(parent.bulkName, null, idPredicateIsAParentOf, parent.id, child.id, child.order, CreationOptions.getRemoteID)
+		const changingBulk = parent.isBulkAlias || child.bulkName != dbDispatch.bulkName;
+		const bulkName = changingBulk ? child.bulkName : parent.bulkName;
+		const parentID = changingBulk ? parent.bulkRootID : parent.id;
+		await this.db?.thing_remember_remoteCreate(child);			// for everything below, need to await child.id fetched from dbDispatch
+		const relationship = await this.relationship_remember_remoteCreateUnique(bulkName, null, idPredicateIsAParentOf, parentID, child.id, child.order, CreationOptions.getRemoteID)
 		await orders_normalize_remoteMaybe(parent.children);		// write new order values for relationships
 		return relationship;
 	}
@@ -292,7 +295,8 @@ export default class Hierarchy {
 	}
 
 	async thing_remember_bulk_recursive_remoteRelocateRight(thing: Thing, newParent: Thing) {
-		const newThing = await this.thing_remember_runtimeCopy(newParent.bulkName, thing);
+		const bulkName = newParent.isBulkAlias ? newParent.title : newParent.bulkName;
+		const newThing = await this.thing_remember_runtimeCopy(bulkName, thing);
 		await this.thing_remember_remoteAddAsChild(newThing, newParent);
 		for (const child of thing.children) {
 			this.thing_remember_bulk_recursive_remoteRelocateRight(child, newThing);

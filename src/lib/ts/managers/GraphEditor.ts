@@ -115,7 +115,8 @@ export default class GraphEditor {
 			const h = this.hierarchy;
 			const parent = thing.firstParent;
 			const relationship = h.relationship_getWhereIDEqualsTo(thing.id);
-			if (newParent.bulkName != thing.bulkName && !thing.isBulkAlias) {		// if bulkNames are different, move across bulks
+			const changingBulk = thing.isInDifferentBulkThan(newParent);
+			if (changingBulk) {		// test if should move across bulks
 				h.thing_remember_bulk_remoteRelocateRight(thing, newParent);
 			} else {
 				// alter the 'to' in ALL [?] the matching 'from' relationships

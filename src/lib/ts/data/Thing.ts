@@ -278,6 +278,10 @@ export default class Thing extends Datum {
 		return this;
 	}
 
+	isInDifferentBulkThan(other: Thing) {
+		return this.bulkName != other.bulkName || (other.isBulkAlias && !this.isBulkAlias && this.bulkName != other.title);
+	}
+
 	async redraw_fetchAll_runtimeBrowseRight(grab: boolean = true) {
 		this.expand();		// do this before fetch, so next launch will see it
 		await dbDispatch.db.fetch_allFrom(this.title)
