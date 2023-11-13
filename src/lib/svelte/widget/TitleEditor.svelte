@@ -124,7 +124,7 @@
 		border: none;
 		outline: none;
 		position: relative;
-		top: 3px;
+		top: 3.5px;
 		outline-color: 'white';
 	}
 	.wrapper {

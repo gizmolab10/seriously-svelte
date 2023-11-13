@@ -103,7 +103,7 @@
 		on:contextmenu={handleContextMenu}
 		style='
 			position: absolute;
-			left: 0px;
+			left: 2px;
 			top: {$idShowRevealCluster == thing.id ? 23 : 0}px;
 			z-index: {ZIndex.dots};'>
 		<path d={path} stroke={thing.color} fill={fillColor}/>

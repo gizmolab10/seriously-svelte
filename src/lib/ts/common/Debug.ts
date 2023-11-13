@@ -6,8 +6,8 @@ export enum DebugOption {
 }
 
 const options: DebugOption[] = [
-    // DebugOption.remote,
-    // DebugOption.debug,
+    DebugOption.remote,
+    DebugOption.debug,
     // DebugOption.order,
 ];
 

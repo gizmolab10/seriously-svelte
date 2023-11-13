@@ -1,5 +1,5 @@
 <script lang=ts>
-	import { noop, Rect, Size, Point, Thing, signal, Signals, Layout, onMount, onDestroy, LineRect, LineCurveType, orders_normalize_remoteMaybe, handleSignalOfKind } from '../../ts/common/GlobalImports';
+	import { noop, Rect, Size, Point, Thing, signal, Signals, Layout, onMount, onDestroy, LineRect, LineCurveType, orders_normalize_remoteMaybe, handleSignalOfKind, DebugOption } from '../../ts/common/GlobalImports';
 	import { lineGap, lineStretch, dotDiameter } from '../../ts/managers/State';
 	import Widget from '../widget/Widget.svelte';
 	import Children from './Children.svelte';
@@ -19,9 +19,10 @@
 	
 	const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
 		if (idThing == thing.id || !thing.hasSameChildrenIDsAs(children)) {
-			setTimeout(() => { // delay until all other handlers for this signal are done TODO: WHY?
-				orders_normalize_remoteMaybe(thing.children);
+			setTimeout(async () => { // delay until all other handlers for this signal are done TODO: WHY?
+				await orders_normalize_remoteMaybe(thing.children);
 				children = thing.children;
+				describe(children);
 				layoutChildren();
 				toggleDraw = !toggleDraw;
 				for (const child of children) {
@@ -32,6 +33,12 @@
 			}, 10);
 		}
 	})
+
+	function describe(things: Array<Thing>) {
+		for (const [index, thing] of things.entries()) {
+			thing.log(DebugOption.debug, 'CHILD at ' + index);
+		}
+	}
 
 	function layoutChildren() {
 		if (thing) {

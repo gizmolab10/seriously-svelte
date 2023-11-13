@@ -69,7 +69,6 @@ export default class Thing extends Datum {
 	get hasParents():			   boolean { return this.hasPredicate(true); }
 	get isRoot():				   boolean { return this == this.hierarchy.root; }
 	get isBulkAlias():			   boolean { return this.trait == TraitType.bulk; }
-	get showBorder():			   boolean { return this.isGrabbed || this.isEditing || this.isExemplar; }
 	get isExpanded():			   boolean { return this.isRoot || get(expanded)?.includes(this.parentRelationshipID); }
 	get isVisible():			   boolean { return this.ancestors(Number.MAX_SAFE_INTEGER).includes(this.hierarchy.here!); }
 	get grandparent():				 Thing { return this.firstParent?.firstParent ?? this.hierarchy.root; }
@@ -149,7 +148,10 @@ export default class Thing extends Datum {
 	}
 
 	revealColor(isReveal: boolean): string {
-		return (this.showBorder != isReveal) ? this.color : k.backgroundColor;
+		const showBorder = this.isGrabbed || this.isEditing || this.isExemplar;
+		const reverseColor = isReveal && (this.hasChildren || this.isBulkAlias);
+		const useThingColor = reverseColor != showBorder;
+		return useThingColor ? this.color : k.backgroundColor;
 	}
 
 	startEdit() {
@@ -307,8 +309,7 @@ export default class Thing extends Datum {
 				const wrapped = up ? (index == 0) : (index == siblings.length - 1);
 				const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
 				const newOrder = newIndex + goose;
-				siblings[index].order_setTo(newOrder, false);
-				orders_normalize_remoteMaybe(siblings);
+				this.order_setTo(newOrder, false);
 				signal(Signals.childrenOf, this.firstParent.id);
 			}
 		}

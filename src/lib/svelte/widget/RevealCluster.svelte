@@ -15,7 +15,7 @@
             case 'add': await graphEditor.thing_edit_remoteAddChildTo(thing); break;
             default: break;
         }
-        $idShowRevealCluster = '';
+        $idShowRevealCluster = null;
     }
 
 </script>
