@@ -130,7 +130,7 @@ export default class Thing extends Datum {
 				singleHeight = get(lineGap);
 			}
 			for (const child of this.children) {
-				height += child.visibleProgenyHeight(includeCluster);
+				height += child.visibleProgenyHeight();
 			}
 		}
 		return Math.max(height, singleHeight);

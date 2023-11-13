@@ -9,6 +9,7 @@ const options: DebugOption[] = [
     DebugOption.remote,
     DebugOption.debug,
     // DebugOption.order,
+    // DebugOption.error,
 ];
 
 export class Debug {

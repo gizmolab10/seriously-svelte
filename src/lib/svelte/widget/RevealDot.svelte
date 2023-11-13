@@ -1,5 +1,5 @@
 <script>
-	import { k, noop, Thing, Point, ZIndex, Signals, SVGType, svgFactory, dbDispatch } from "../../ts/common/GlobalImports";
+	import { k, noop, Thing, Point, ZIndex, Signals, SVGType, svgFactory, dbDispatch, DebugOption } from "../../ts/common/GlobalImports";
 	import { onMount, onDestroy, graphEditor, Direction, handleSignalOfKind } from "../../ts/common/GlobalImports";
 	import { dotDiameter, idShowRevealCluster } from '../../ts/managers/State';
 	export let thing;
@@ -20,20 +20,6 @@
 	function handleMouseOver(event) { updateColors(true); }
 	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
 
-	function handleClick(event) {
-		if ($idShowRevealCluster == thing.id) {
-			$idShowRevealCluster = null;
-		} else {
-			graphEditor.thing_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
-		}
-		updateState(false);
-	}
-
-	function handleDoubleClick(event) {
-		clearClicks();
-		// do nothing
-    }
- 
 	function clearClicks() {
 		clickCount = 0;
 		clearTimeout(clickTimer);	// clear all previous timers
@@ -57,12 +43,32 @@
 		antiFillColor = thing.revealColor(buttonFlag == isHovering);
 	}
 
+	function handleClick(event) {
+		if ($idShowRevealCluster == thing.id) {
+			thing.log(DebugOption.debug, 'CLICK');
+			$idShowRevealCluster = null;
+		} else {
+			graphEditor.thing_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
+		}
+		updateState(false);
+	}
+
+	function handleDoubleClick(event) {
+		clearClicks();
+		// do nothing
+    }
+ 
 	function handleLongClick(event) {
 		clearClicks();
 		clickTimer = setTimeout(() => {
 			clearClicks();
-			thing.grabOnly()
-			$idShowRevealCluster = thing.id;
+			if ($idShowRevealCluster == thing.id) {
+				thing.log(DebugOption.debug, 'LONG');
+				$idShowRevealCluster = null;
+			} else {
+				thing.grabOnly()
+				$idShowRevealCluster = thing.id;
+			}
 		}, longClickThreshold);
 	}
 
