@@ -1,12 +1,13 @@
 <script>
 	import { k, noop, Thing, Point, ZIndex, Signals, dbDispatch, BrowserType, getBrowserType, handleSignalOfKind } from "../../ts/common/GlobalImports";
-	import { onMount, graphEditor, Direction, FatTrianglePath } from "../../ts/common/GlobalImports";
+	import { onMount, graphEditor, SVGType, svgFactory, Direction, FatTrianglePath } from "../../ts/common/GlobalImports";
 	import { idsGrabbed, dotDiameter, idShowRevealCluster } from '../../ts/managers/State';
 	export let thing;
 	const longClickThreshold = 500;
 	const doubleClickThreshold = 100;				// one fifth of a second
 	const browserType = getBrowserType();
-	let path = 'M6,8 m-5,0a5,7 0 1,0 10,0a5,7 0 1,0 -10,0';
+	// let path = 'M6,8 m-5,0a5,7 0 1,0 10,0a5,7 0 1,0 -10,0';
+	const path = svgFactory.oval(16, false);
 	let placement = 'left: 5px; top: 4px;'			// tiny browser compensation
 	let hoverColor = thing.color;
 	let fillColor = thing.color;
@@ -83,7 +84,7 @@
 <button class='dot'
 	bind:this={button}
 	style='
-		left: 3px;
+		left: 1px;
 		width: 16px;
 	'>
 	<svg width='16'

@@ -110,7 +110,7 @@
 		on:focus={handleFocus}
 		on:blur={handleBlur}
 		style='
-			left: 5px;
+			left: 7.5px;
 			color: {thing.color};
 			z-index: {ZIndex.text};
 			font-size: {$titleFontSize}px;

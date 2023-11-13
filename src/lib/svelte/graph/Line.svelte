@@ -1,10 +1,5 @@
 <script lang='ts'>
-
-	/////////////////////////////////////////////////////
-	//	draw a line in rect, curving up, down or flat	//
-	/////////////////////////////////////////////////////
-
-	import { Rect, Size, Point, ZIndex, LineCurveType } from '../../ts/common/GlobalImports';
+	import { Rect, Size, Point, ZIndex, SVGType, svgFactory, LineCurveType } from '../../ts/common/GlobalImports';
 	import { lineStretch, graphOffset } from '../../ts/managers/State'
 	export let curveType: string = LineCurveType.up;
 	export let rect = new Rect();
@@ -15,12 +10,16 @@
 	let size = new Size();
 	let path = '';
 
+	////////////////////////////////////////////////////
+	//	draw a curved line in rect, up, down or flat  //
+	////////////////////////////////////////////////////
+
 	$: {
 		if (curveType == LineCurveType.flat) {
 			origin = rect.centerLeft;
 			extent = rect.centerRight;
 			size = origin.distanceTo(extent).asSize;
-			path = 'M0 1 L' + size.width + ' 1';
+			path = svgFactory.line(size.width);
 		} else {
 			let flag = 1;
 			if (curveType == LineCurveType.down) {

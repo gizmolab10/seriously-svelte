@@ -1,5 +1,5 @@
 <script>
-	import { k, noop, Thing, Point, ZIndex, dbDispatch, Signals, handleSignalOfKind } from "../../ts/common/GlobalImports";
+	import { k, noop, Thing, Point, ZIndex, Signals, SVGType, svgFactory, dbDispatch, handleSignalOfKind } from "../../ts/common/GlobalImports";
 	import { onMount, onDestroy, graphEditor, Direction, FatTrianglePath } from "../../ts/common/GlobalImports";
 	import { dotDiameter, idShowRevealCluster } from '../../ts/managers/State';
 	export let thing;
@@ -20,7 +20,11 @@
 	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
 
 	function handleClick(event) {
-		graphEditor.thing_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
+		if ($idShowRevealCluster == thing.id) {
+			$idShowRevealCluster = null;
+		} else {
+			graphEditor.thing_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
+		}
 		updateState(false);
 	}
 
@@ -72,7 +76,7 @@
 
 	function updatePath() {
 		if (!thing.hasChildren && !thing.isBulkAlias) {
-			path = 'M8,8 m-7,0.5a7,5 0 1,0 14,0a7,5 0 1,0 -14,0';			// horizontal oval
+			path = svgFactory.oval(16);			// horizontal oval
 		} else {
 			const direction = thing.isExpanded ? Direction.left : Direction.right;
 			triangle = new FatTrianglePath($dotDiameter + 2, direction);
@@ -85,7 +89,7 @@
 <button class='dot'
 	bind:this={button}
 	style='
-		left: {$dotDiameter + thing.titleWidth + 9}px;
+		left: {$dotDiameter + thing.titleWidth + 10}px;
 	'>
 	<svg width='16'
 		height='16'
