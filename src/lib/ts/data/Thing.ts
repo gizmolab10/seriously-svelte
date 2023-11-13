@@ -152,8 +152,7 @@ export default class Thing extends Datum {
 
 	revealColor(isReveal: boolean): string {
 		const showBorder = this.isGrabbed || this.isEditing || this.isExemplar;
-		const reverseColor = isReveal && (this.hasChildren || this.isBulkAlias);
-		const useThingColor = reverseColor != showBorder;
+		const useThingColor = isReveal != showBorder;
 		return useThingColor ? this.color : k.backgroundColor;
 	}
 

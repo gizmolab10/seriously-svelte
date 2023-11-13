@@ -6,7 +6,6 @@
 	const longClickThreshold = 500;
 	const doubleClickThreshold = 100;				// one fifth of a second
 	const browserType = getBrowserType();
-	// let path = 'M6,8 m-5,0a5,7 0 1,0 10,0a5,7 0 1,0 -10,0';
 	const path = svgFactory.oval(16, false);
 	let placement = 'left: 5px; top: 4px;'			// tiny browser compensation
 	let hoverColor = thing.color;
@@ -34,6 +33,13 @@
 			isGrabbed = grabbed;
 			updateColors(false);
 		}
+	}
+
+	function updateColors(isHovering) {
+		thing.updateColorAttributes();	// needed for revealColor
+		const flag = isHovering;// && thing.hasChildren;
+		hoverColor = thing.revealColor(!flag);
+		fillColor = thing.revealColor(flag);
 	}
 
 	function clearClicks() {
@@ -71,12 +77,6 @@
 		} else {
 			thing.grabOnly();
 		}
-	}
-
-	function updateColors(isHovering) {
-		thing.updateColorAttributes();	// needed for revealColor
-		fillColor = thing.revealColor(isHovering);
-		hoverColor = thing.revealColor(!isHovering);
 	}
 
 </script>
