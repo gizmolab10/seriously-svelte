@@ -11,7 +11,7 @@ export default class Layout {
 			const quantity = children.length;
 			if (quantity > 0) {
 				const sizeX = get(lineStretch);
-				const initialOffsetY = -parent.halfVisibleProgenyHeight; // start out negative and grow positive
+				const initialOffsetY = -parent.visibleProgenyHeight(false) / 2; // start out negative and grow positive
 
 				let index = 0;
 				let sumOfSiblingsAbove = 0;
@@ -21,8 +21,8 @@ export default class Layout {
 					const sizeY = childHalfVisibleProgenyHeight + initialOffsetY + sumOfSiblingsAbove;
 					const direction = this.getDirection(sizeY);
 					const rect = new Rect(origin, new Size(sizeX, sizeY));
-					sumOfSiblingsAbove += child.visibleProgenyHeight;
 					this.lineRects.push(new LineRect(direction, rect));
+					sumOfSiblingsAbove += child.visibleProgenyHeight();
 					index += 1;
 				}
 			}

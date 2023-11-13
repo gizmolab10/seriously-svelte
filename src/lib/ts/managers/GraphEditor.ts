@@ -145,7 +145,7 @@ export default class GraphEditor {
 		const id = this.hierarchy.grabs.latestGrab(true)?.id;
 		if (id) {
 			const clear = id == get(idShowRevealCluster);
-			idShowRevealCluster.set(clear ? '' : id);
+			idShowRevealCluster.set(clear ? null : id);
 		}
 
 	}

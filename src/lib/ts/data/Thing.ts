@@ -61,9 +61,9 @@ export default class Thing extends Datum {
 	get hierarchy():			 Hierarchy { return dbDispatch.db.hierarchy; }
 	get description():				string { return this.id + ' \"' + this.title + '\"'; }
 	get idForChildren():            string { return this.isBulkAlias ? this.bulkRootID : this.id; }
-	get visibleProgenySize():		  Size { return new Size(this.visibleProgenyWidth, this.visibleProgenyHeight); }
+	get visibleProgenySize():		  Size { return new Size(this.visibleProgenyWidth, this.visibleProgenyHeight()); }
 	get halfVisibleProgenySize():	  Size { return this.visibleProgenySize.dividedInHalf; }
-	get halfVisibleProgenyHeight(): number { return this.visibleProgenyHeight / 2; }
+	get halfVisibleProgenyHeight(): number { return this.visibleProgenyHeight() / 2; }
 	get titleWidth():				number { return getWidthOf(this.title) }
 	get hasChildren():			   boolean { return this.hasPredicate(false); }
 	get hasParents():			   boolean { return this.hasPredicate(true); }
@@ -110,7 +110,7 @@ export default class Thing extends Datum {
 		return width;
 	}
 
-	get visibleProgenyHeight(): number {
+	visibleProgenyHeight(includeCluster: boolean = true): number {
 
 		//////////////////////////////////////////////////
 		//												//
@@ -124,13 +124,16 @@ export default class Thing extends Datum {
 		//////////////////////////////////////////////////
 		
 		let height = 0;
-		let simpleHeight = this.showCluster ? k.clusterHeight + 6 : get(lineGap);		// default row height
+		let singleHeight = this.showCluster ? k.clusterHeight + 6 : get(lineGap);		// default row height
 		if (this.hasChildren && this.isExpanded) {
+			if (this.children.length < 3 && !includeCluster) {
+				singleHeight = get(lineGap);
+			}
 			for (const child of this.children) {
-				height += child.visibleProgenyHeight;
+				height += child.visibleProgenyHeight(includeCluster);
 			}
 		}
-		return Math.max(height, simpleHeight);
+		return Math.max(height, singleHeight);
 	}
 	
 	toggleGrab()		 { this.hierarchy.grabs.toggleGrab(this); }

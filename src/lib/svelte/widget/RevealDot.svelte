@@ -1,15 +1,14 @@
 <script>
-	import { k, noop, Thing, Point, ZIndex, Signals, SVGType, svgFactory, dbDispatch, handleSignalOfKind } from "../../ts/common/GlobalImports";
-	import { onMount, onDestroy, graphEditor, Direction, FatTrianglePath } from "../../ts/common/GlobalImports";
+	import { k, noop, Thing, Point, ZIndex, Signals, SVGType, svgFactory, dbDispatch } from "../../ts/common/GlobalImports";
+	import { onMount, onDestroy, graphEditor, Direction, handleSignalOfKind } from "../../ts/common/GlobalImports";
 	import { dotDiameter, idShowRevealCluster } from '../../ts/managers/State';
 	export let thing;
 	const longClickThreshold = 500;
 	const doubleClickThreshold = 100;				// one fifth of a second
-	let triangle = new FatTrianglePath($dotDiameter + 2, Direction.left);
+	let path = svgFactory.triangle($dotDiameter + 2, Direction.left);
 	let insidePath = svgFactory.circle(16, 6);
 	let antiFillColor = k.backgroundColor;
 	let fillColor = k.backgroundColor;
-	let path = triangle.path;
 	let clickCount = 0;
 	let button = null;
 	let clickTimer;
@@ -82,8 +81,7 @@
 			path = svgFactory.oval(16);			// horizontal oval
 		} else {
 			const direction = (thing.isExpanded && thing.hasChildren) ? Direction.left : Direction.right;
-			triangle = new FatTrianglePath($dotDiameter + 2, direction);
-			path = triangle.path;
+			path = svgFactory.triangle($dotDiameter + 2, direction);
 			if (thing.isBulkAlias) {
 				insidePath = svgFactory.circle(16, 6);
 			}
@@ -118,7 +116,7 @@
 			top: 0px;
 			z-index: {ZIndex.dots};'>
 		<path d={path} stroke={thing.color} fill={fillColor}/>
-		{#if thing.isBulkAlias}
+		{#if thing.isBulkAlias && !thing.hasChildren}
 			<path d={insidePath} stroke={thing.color} fill={antiFillColor}/>
 		{/if}
 	</svg>

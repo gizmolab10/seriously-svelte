@@ -1,7 +1,7 @@
 <script>
-	import { k, noop, Thing, ZIndex, dbDispatch, graphEditor, FatTrianglePath } from "../../ts/common/GlobalImports";
+	import { k, noop, Thing, ZIndex, dbDispatch, graphEditor, svgFactory } from "../../ts/common/GlobalImports";
 	import { dotDiameter } from '../../ts/managers/State';
-	const path = (new FatTrianglePath($dotDiameter + 2, 0)).path;
+	const path = svgFactory.triangle($dotDiameter + 2, 0);
 	export let origin = new Point($dotDiameter, 20);
 	let fillColor = k.backgroundColor;
 	let button = null;

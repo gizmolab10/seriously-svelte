@@ -1,4 +1,4 @@
-import { Point, FatTrianglePath } from "../common/GlobalImports";;
+import { FatTrianglePath } from "../common/GlobalImports";;
 
 export enum SVGType {
 	triangle = 'triangle',
@@ -28,6 +28,11 @@ export default class SVGFactory {
         const doubleRadius = radius * 2;
         const path = 'M' + centerOffset + ' ' + centerOffset + ' m-' + radius + ' 0a' + radius + ' ' + radius + ' 0 1,0 ' + doubleRadius + ' 0a' + radius + ' ' + radius + ' 0 1,0 -' + doubleRadius + ' 0';
         return path;
+    }
+
+    triangle(size: number, direction: number) {
+        const triangle = new FatTrianglePath(size, direction);
+        return triangle.path;
     }
 }
 

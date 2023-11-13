@@ -1,6 +1,6 @@
 <script>
 	import { k, noop, Thing, Point, ZIndex, Signals, dbDispatch, BrowserType, getBrowserType, handleSignalOfKind } from "../../ts/common/GlobalImports";
-	import { onMount, graphEditor, SVGType, svgFactory, Direction, FatTrianglePath } from "../../ts/common/GlobalImports";
+	import { onMount, graphEditor, SVGType, svgFactory, Direction } from "../../ts/common/GlobalImports";
 	import { idsGrabbed, dotDiameter, idShowRevealCluster } from '../../ts/managers/State';
 	export let thing;
 	const longClickThreshold = 500;
