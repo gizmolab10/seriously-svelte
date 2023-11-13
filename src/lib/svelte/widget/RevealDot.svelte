@@ -84,7 +84,7 @@
 
 	function updatePath() {
 		if (!thing.hasChildren && !thing.isBulkAlias) {
-			path = svgFactory.oval(16);			// horizontal oval
+			path = svgFactory.circle(16, 8);
 		} else {
 			const direction = (thing.isExpanded && thing.hasChildren) ? Direction.left : Direction.right;
 			path = svgFactory.triangle($dotDiameter + 2, direction);
