@@ -49,7 +49,7 @@
 	}
 
 	function originForGrandchildren(child: Thing, index: number): Point {
-		const more = 6;									// TODO: WHY 17? perhaps it accounts for title margin
+		const more = 7;									// TODO: WHY 17? perhaps it accounts for title margin
 		const rect = lineRectAt(index);
 		const x = origin.x + child.titleWidth + $dotDiameter + $lineStretch + more;
 		const y = rect.extent.y - child.halfVisibleProgenyHeight;

@@ -52,7 +52,7 @@ export default class Hierarchy {
 			root.order_normalizeRecursive(true)	// setup order values for all things and relationships
 			this.db?.setHasData(true);
 			orders_normalize_remoteMaybe(root.children)
-			persistLocal.state_updateFor(type, root.id);
+			persistLocal.state_updateForDBType(type, root.id);
 		}
 		this.here_restore();
 		thingsArrived.set(true);

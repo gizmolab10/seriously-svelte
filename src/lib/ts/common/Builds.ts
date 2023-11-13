@@ -3,7 +3,8 @@ import { build } from '../managers/State';
 class Builds {
 	notes: { [id: number]: string[] } = {};
 	constructor() {
-		this.notes = {
+		this.notes = { 
+			61 : ['November 13, 2023', 'lots of cosmetic cleanups & added query strings'],
 			60 : ['November 12, 2023', 'massive cosmetic tweaks'],
 			59 : ['November 9, 2023', 'added ip logging'],
 			58 : ['November 3, 2023', 'begin work on reveal cluster'],

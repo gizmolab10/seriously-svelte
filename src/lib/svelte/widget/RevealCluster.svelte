@@ -11,12 +11,14 @@
 	});
 
 	async function handleClick(id: string) {
-        switch (id) {
-            case 'add': await graphEditor.thing_edit_remoteAddChildTo(thing); break;
-            case 'delete': await dbDispatch.db.hierarchy.things_redraw_remoteTraverseDelete([thing]); break;
-            default: break;
+        if (!thing.isExemplar) {
+            switch (id) {
+                case 'add': await graphEditor.thing_edit_remoteAddChildTo(thing); break;
+                case 'delete': await dbDispatch.db.hierarchy.things_redraw_remoteTraverseDelete([thing]); break;
+                default: break;
+            }
+            $idShowRevealCluster = null;
         }
-        $idShowRevealCluster = null;
     }
 
 </script>

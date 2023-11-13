@@ -54,12 +54,12 @@ class PersistLocal {
 		return (storedValue == 'undefined') ? null : JSON.parse(storedValue!);
 	}
 
-	state_updateFor(type: string, defaultIDHere: string) {
-		const hID = this.readFromKey(PersistID.here + type) ?? defaultIDHere;
-		const gIDs = this.readFromKey(PersistID.grabbed + type) ?? [defaultIDHere];
+	state_updateForDBType(dbType: string, defaultIDHere: string) {
+		const hereID = this.readFromKey(PersistID.here + dbType) ?? defaultIDHere;
+		const grabbedIDs = this.readFromKey(PersistID.grabbed + dbType) ?? [defaultIDHere];
 		this.okayToPersist = false;
-		idHere.set(hID);
-		idsGrabbed.set(gIDs);
+		idHere.set(hereID);
+		idsGrabbed.set(grabbedIDs);
 		this.okayToPersist = true;
 	}
 
