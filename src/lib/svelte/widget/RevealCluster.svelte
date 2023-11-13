@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import { k, ZIndex, onMount, graphEditor } from '../../ts/common/GlobalImports';
+    import { k, ZIndex, onMount, graphEditor, dbDispatch } from '../../ts/common/GlobalImports';
     import { idShowRevealCluster } from '../../ts/managers/State';
 	export let thing: Thing;
     let color = 'black';
@@ -13,6 +13,7 @@
 	async function handleClick(id: string) {
         switch (id) {
             case 'add': await graphEditor.thing_edit_remoteAddChildTo(thing); break;
+            case 'delete': dbDispatch.db.hierarchy.things_redraw_remoteDelete([thing]); break;
             default: break;
         }
         $idShowRevealCluster = null;
@@ -27,8 +28,8 @@
         background-color:{k.backgroundColor};
         border-color: {color};
         color: {color};'
-    on:click={() => handleClick('dismiss')}
->X</button>
+    on:click={() => handleClick('add')}
+>+</button>
 <button class='add'
 	style='top: 24px;
         left: {left}px;
@@ -36,8 +37,8 @@
         background-color:{k.backgroundColor};
         border-color: {color};
         color: {color};'
-    on:click={() => handleClick('add')}
->+</button>
+    on:click={() => handleClick('delete')}
+>-</button>
 
 <style>
     button {

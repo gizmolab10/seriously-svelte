@@ -37,7 +37,7 @@ export default class GraphEditor {
 				}
 				switch (key) {
 					case 'delete':
-					case 'backspace':	await this.grabs_redraw_remoteDelete(); break;
+					case 'backspace':	await h.things_redraw_remoteDelete(h.things_getForIDs(get(idsGrabbed))); break;
 				}
 			}
 			if (grab) {
@@ -153,42 +153,6 @@ export default class GraphEditor {
 	async latestGrab_redraw_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const grab = this.hierarchy.grabs.latestGrab(up);
 		grab?.redraw_remoteMoveup(up, SHIFT, OPTION, EXTREME);
-	}
-
-	//////////////////////
-	//		DELETE		//
-	//////////////////////
-
-	async grabs_redraw_remoteDelete() {
-		const h = this.hierarchy;
-		if (h.here) {
-			for (const id of get(idsGrabbed)) {
-				const grabbed = h.thing_getForID(id);
-				if (grabbed && !grabbed.isEditing && !grabbed.isBulkAlias) {
-					let newGrab = grabbed.firstParent;
-					const siblings = grabbed.siblings;
-					const grandparent = grabbed.grandparent;
-					let index = siblings.indexOf(grabbed);
-					siblings.splice(index, 1);
-					if (siblings.length > 0) {
-						if (index >= siblings.length) {
-							index = siblings.length - 1;
-						}
-						newGrab = siblings[index];
-						orders_normalize_remoteMaybe(grabbed.siblings);
-					} else if (!grandparent.isVisible) {
-						grandparent.becomeHere();
-					}
-					await grabbed.traverse(async (child: Thing): Promise<boolean> => {
-						await h.relationships_forget_remoteDeleteAllForThing(child);
-						await h.thing_forget_remoteDelete(child);
-						return false; // continue the traversal
-					});
-					newGrab.grabOnly();
-				}
-			}
-			signal(Signals.childrenOf);
-		}
 	}
 
 }

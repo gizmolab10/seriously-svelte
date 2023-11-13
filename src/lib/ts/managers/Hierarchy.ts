@@ -219,6 +219,41 @@ export default class Hierarchy {
 		return thing;
 	}
 
+	//////////////////////
+	//		DELETE		//
+	//////////////////////
+
+	async things_redraw_remoteDelete(things: Array<Thing>) {
+		const h = this;
+		if (h.here) {
+			for (const grabbed of things) {
+				if (grabbed && !grabbed.isEditing && !grabbed.isBulkAlias) {
+					let newGrab = grabbed.firstParent;
+					const siblings = grabbed.siblings;
+					const grandparent = grabbed.grandparent;
+					let index = siblings.indexOf(grabbed);
+					siblings.splice(index, 1);
+					if (siblings.length > 0) {
+						if (index >= siblings.length) {
+							index = siblings.length - 1;
+						}
+						newGrab = siblings[index];
+						orders_normalize_remoteMaybe(grabbed.siblings);
+					} else if (!grandparent.isVisible) {
+						grandparent.becomeHere();
+					}
+					await grabbed.traverse(async (child: Thing): Promise<boolean> => {
+						await h.relationships_forget_remoteDeleteAllForThing(child);
+						await h.thing_forget_remoteDelete(child);
+						return false; // continue the traversal
+					});
+					newGrab.grabOnly();
+				}
+			}
+			signal(Signals.childrenOf);
+		}
+	}
+
 	//////////////////////////
 	//	 	   BULKS		//
 	//////////////////////////
