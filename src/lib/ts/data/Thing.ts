@@ -67,6 +67,7 @@ export default class Thing extends Datum {
 	get titleWidth():				number { return getWidthOf(this.title) }
 	get hasChildren():			   boolean { return this.hasPredicate(false); }
 	get hasParents():			   boolean { return this.hasPredicate(true); }
+	get isHere():				   boolean { return this.id == get(idHere); }
 	get isRoot():				   boolean { return this == this.hierarchy.root; }
 	get isBulkAlias():			   boolean { return this.trait == TraitType.bulk; }
 	get isExpanded():			   boolean { return this.isRoot || get(expanded)?.includes(this.parentRelationshipID); }

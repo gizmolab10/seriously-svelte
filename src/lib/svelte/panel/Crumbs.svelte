@@ -7,18 +7,24 @@
 	let grab: Thing;
 
 	onDestroy( () => {signalHandler.disconnect(); });
+	function thing_lastGrabbed() { return dbDispatch.db.hierarchy.grabs.thing_lastGrabbed; }
+
 	const signalHandler = handleSignalOfKind(Signals.childrenOf, (thingID) => {
+		updateAncestors();
 		toggleDraw = !toggleDraw;
 	})
 
 	$: {
 		if ($idsGrabbed || grab == null || ancestors.length == 0) {
-			const h = dbDispatch.db.hierarchy;
-			const thing = h.grabs.last_thingGrabbed;	// start over with new grab
+			const thing = thing_lastGrabbed()	// start over with new grab
 			if (thing) {
 				grab = thing;
 			}
 		}
+		updateAncestors();
+	}
+
+	function updateAncestors() {
 		if (grab) {
 			ancestors = grab.ancestors($windowSize.width - 250);
 			toggleDraw = !toggleDraw;
@@ -30,7 +36,7 @@
 	{#if ancestors.length > 0}
 		{#each ancestors as thing, index}
 			{#if index > 0}
-				&nbsp; &gt; 
+				&nbsp;:
 			{/if}
 			<Crumb thing={thing}/>
 		{/each}

@@ -24,8 +24,8 @@
 
 </script>
 
-<button class='dismiss'
-	style='top: -17px;
+<button class='add'
+	style='top: -17.5px;
         left: {left}px;
 		border: none;
 		cursor: pointer;
@@ -38,7 +38,7 @@
         <path d={path} stroke={thing.color} fill={k.backgroundColor}/>
         <text x='2.5' y='14.5' fill={thing.color} font-size='1.5em'>+</text>
     </svg></button>
-<button class='add'
+<button class='dismiss'
 	style='top: 24px;
         left: {left}px;
 		border: none;

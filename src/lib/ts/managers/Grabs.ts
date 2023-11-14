@@ -26,7 +26,7 @@ export default class Grabs {
 		});
 	};
 
-	get last_thingGrabbed(): (Thing | null) { return this.hierarchy.thing_getForID(this.last_idGrabbed); }
+	get thing_lastGrabbed(): (Thing | null) { return this.hierarchy.thing_getForID(this.last_idGrabbed); }
 	toggleGrab = (thing: Thing) => { if (thing.isGrabbed) { this.ungrab(thing); } else { this.grab(thing); } }
 
 	clearClusterState(thing: Thing) {

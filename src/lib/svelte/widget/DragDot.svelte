@@ -50,8 +50,7 @@
 	function handleLongClick(event) {
 		clearClicks();
 		clickTimer = setTimeout(() => {
-			clearClicks();
-			thing.becomeHere();
+			handleDoubleClick(event);
 		}, longClickThreshold);
 	}
 

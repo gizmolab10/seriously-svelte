@@ -4,12 +4,19 @@ import { idHere, expanded, idsGrabbed, showDetails } from './State';
 class Launch {
 	queryStrings: URLSearchParams | null = null;
 	setup() {
-		document.title = 'Seriously ('+ (isServerLocal() ? 'local' : 'remote') + ', ' + getBrowserType()  + ', α)';
 		this.queryStrings = new URLSearchParams(window.location.search);
 		persistLocal.restore();
 		k.applyQueryStrings(this.queryStrings);
 		this.applyQueryStrings(this.queryStrings);
 		dbDispatch.applyQueryStrings(this.queryStrings);
+		document.title = this.title;
+	}
+
+	get title(): string {
+		const host = isServerLocal() ? 'local' : 'remote';
+		const bulkName = dbDispatch.bulkName;
+		const name = bulkName ? (bulkName! + ', ') : '';
+		return 'Seriously (' + host + ', ' + getBrowserType() + ', ' + name + 'α)'
 	}
 
 	applyQueryStrings(queryStrings: URLSearchParams) {

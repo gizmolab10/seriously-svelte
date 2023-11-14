@@ -60,7 +60,7 @@ export default class Hierarchy {
 	here_restore() {
 		let here = this.thing_getForID(get(idHere));
 		if (here == null) {
-			const grab = this.grabs.last_thingGrabbed;
+			const grab = this.grabs.thing_lastGrabbed;
 			here = grab?.firstParent ?? this.root;
 		}
 		here?.becomeHere();
