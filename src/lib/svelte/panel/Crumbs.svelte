@@ -10,7 +10,7 @@
 	function thing_lastGrabbed() { return dbDispatch.db.hierarchy.grabs.thing_lastGrabbed; }
 
 	const signalHandler = handleSignalOfKind(Signals.childrenOf, (thingID) => {
-		updateAncestors();
+		updateAncestors($windowSize.width);
 		toggleDraw = !toggleDraw;
 	})
 
@@ -21,12 +21,12 @@
 				grab = thing;
 			}
 		}
-		updateAncestors();
+		updateAncestors($windowSize.width);
 	}
 
-	function updateAncestors() {
+	function updateAncestors(width: number) {
 		if (grab) {
-			ancestors = grab.ancestors($windowSize.width - 250);
+			ancestors = grab.ancestors(width - 250);
 			toggleDraw = !toggleDraw;
 		}
 	}
