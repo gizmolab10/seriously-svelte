@@ -100,7 +100,7 @@ export default class GraphEditor {
 	async thing_redraw_remoteMoveRight(thing: Thing, RIGHT: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean, fromReveal: boolean = false) {
 		if (!OPTION) {
 			if (RIGHT && thing.needsBulkFetch) {
-				await thing.redraw_fetchAll_runtimeBrowseRight();
+				await thing.redraw_bulkFetchAll_runtimeBrowseRight();
 			} else {
 				thing.redraw_runtimeBrowseRight(RIGHT, SHIFT, EXTREME, fromReveal);
 			}
@@ -115,7 +115,7 @@ export default class GraphEditor {
 			const h = this.hierarchy;
 			const parent = thing.firstParent;
 			const relationship = h.relationship_getWhereIDEqualsTo(thing.id);
-			const changingBulk = thing.isInDifferentBulkThan(newParent);
+			const changingBulk = thing.thing_isInDifferentBulkThan(newParent);
 			if (changingBulk) {		// test if should move across bulks
 				h.thing_remember_bulk_remoteRelocateRight(thing, newParent);
 			} else {

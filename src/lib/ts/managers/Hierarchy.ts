@@ -47,54 +47,14 @@ export default class Hierarchy {
 	async hierarchy_assemble(type: string) {
 		const root = this.root;
 		if (root) {
-			await this.relationships_remoteCreateMissing(root);
-			await this.relationships_removeHavingNullReferences();
-			root.order_normalizeRecursive(true)	// setup order values for all things and relationships
+			await root.normalize_bulkFetchAll(root.bulkName);
 			this.db?.setHasData(true);
-			orders_normalize_remoteMaybe(root.children)
 			persistLocal.state_updateForDBType(type, root.id);
 		}
 		this.here_restore();
 		thingsArrived.set(true);
 		isBusy.set(false);
 		this.isConstructed = true;
-	}
-
-	async relationships_remoteCreateMissing(root: Thing) {
-		const idRoot = root.id;
-		if (idRoot) {
-			for (const thing of this.knownTs) {
-				const idThing = thing.id;
-				if (idThing != idRoot && thing.trait != TraitType.root && thing.bulkName == root.bulkName) {
-					let relationship = this.relationship_getWhereIDEqualsTo(idThing);
-					if (relationship) {
-						thing.order = relationship.order;
-					} else {
-						const idPredicateIsAParentOf = Predicate.idIsAParentOf;
-						await this.relationship_remember_remoteCreateUnique(root.bulkName, null, idPredicateIsAParentOf,
-							idRoot, idThing, 0, CreationOptions.getRemoteID)
-					}
-				}
-			}
-		}
-	}
-
-	async relationships_removeHavingNullReferences() {
-		const array = Array<Relationship>();
-		for (const relationship of this.knownRs) {
-			const thingTo = this.thing_getForID(relationship.idTo);
-			const thingFrom = this.thing_getForID(relationship.idFrom);
-			if (!thingTo || !thingFrom) {
-				array.push(relationship);
-				await dbDispatch.db.relationship_remoteDelete(relationship);
-			}
-		}
-		while (array.length > 0) {
-			const relationship = array.pop();
-			if (relationship) {
-				this.relationship_forget(relationship);
-			}
-		}
 	}
 
 	here_restore() {
@@ -139,21 +99,60 @@ export default class Hierarchy {
 		return this.things_getForIDs(ids);
 	}
 
-	async thing_remember_remoteAddAsChild(child: Thing, parent: Thing): Promise<any> {
-		const idPredicateIsAParentOf = Predicate.idIsAParentOf;
-		const changingBulk = parent.isBulkAlias || child.bulkName != dbDispatch.bulkName;
-		const bulkName = changingBulk ? child.bulkName : parent.bulkName;
-		const parentID = changingBulk ? parent.bulkRootID : parent.id;
-		await this.db?.thing_remember_remoteCreate(child);			// for everything below, need to await child.id fetched from dbDispatch
-		const relationship = await this.relationship_remember_remoteCreateUnique(bulkName, null, idPredicateIsAParentOf, parentID, child.id, child.order, CreationOptions.getRemoteID)
-		await orders_normalize_remoteMaybe(parent.children);		// write new order values for relationships
-		return relationship;
-	}
-
 	things_forgetAll() {
 		this.knownTs = []; // clear
 		this.knownT_byID = {};
 		this.knownTs_byTrait = {};
+	}
+
+	//////////////////////
+	//		DELETE		//
+	//////////////////////
+
+	async things_redraw_remoteTraverseDelete(things: Array<Thing>) {
+		const h = this;
+		if (h.here) {
+			for (const grabbed of things) {
+				if (grabbed && !grabbed.isEditing && !grabbed.isBulkAlias) {
+					let newGrab = grabbed.firstParent;
+					const siblings = grabbed.siblings;
+					const grandparent = grabbed.grandparent;
+					let index = siblings.indexOf(grabbed);
+					siblings.splice(index, 1);
+					if (siblings.length > 0) {
+						if (index >= siblings.length) {
+							index = siblings.length - 1;
+						}
+						newGrab = siblings[index];
+						orders_normalize_remoteMaybe(grabbed.siblings);
+					} else if (!grandparent.isVisible) {
+						grandparent.becomeHere();
+					}
+					await grabbed.traverse(async (child: Thing): Promise<boolean> => {
+						await h.relationships_forget_remoteDeleteAllForThing(child);
+						await h.thing_forget_remoteDelete(child);
+						return false; // continue the traversal
+					});
+					newGrab.grabOnly();
+				}
+			}
+			signal(Signals.childrenOf);
+		}
+	}
+
+	//////////////////////////////
+	//			THING			//
+	//////////////////////////////
+
+	async thing_remember_remoteAddAsChild(child: Thing, parent: Thing): Promise<any> {
+		const idPredicateIsAParentOf = Predicate.idIsAParentOf;
+		const changingBulk = parent.isBulkAlias || child.bulkName != dbDispatch.bulkName;
+		const bulkName = changingBulk ? child.bulkName : parent.bulkName;
+		const parentID = parent.idForChildren;
+		await this.db?.thing_remember_remoteCreate(child);			// for everything below, need to await child.id fetched from dbDispatch
+		const relationship = await this.relationship_remember_remoteCreateUnique(bulkName, null, idPredicateIsAParentOf, parentID, child.id, child.order, CreationOptions.getRemoteID)
+		await orders_normalize_remoteMaybe(parent.children);		// write new order values for relationships
+		return relationship;
 	}
 
 	thing_forget(thing: Thing) {
@@ -222,41 +221,6 @@ export default class Hierarchy {
 		return thing;
 	}
 
-	//////////////////////
-	//		DELETE		//
-	//////////////////////
-
-	async things_redraw_remoteTraverseDelete(things: Array<Thing>) {
-		const h = this;
-		if (h.here) {
-			for (const grabbed of things) {
-				if (grabbed && !grabbed.isEditing && !grabbed.isBulkAlias) {
-					let newGrab = grabbed.firstParent;
-					const siblings = grabbed.siblings;
-					const grandparent = grabbed.grandparent;
-					let index = siblings.indexOf(grabbed);
-					siblings.splice(index, 1);
-					if (siblings.length > 0) {
-						if (index >= siblings.length) {
-							index = siblings.length - 1;
-						}
-						newGrab = siblings[index];
-						orders_normalize_remoteMaybe(grabbed.siblings);
-					} else if (!grandparent.isVisible) {
-						grandparent.becomeHere();
-					}
-					await grabbed.traverse(async (child: Thing): Promise<boolean> => {
-						await h.relationships_forget_remoteDeleteAllForThing(child);
-						await h.thing_forget_remoteDelete(child);
-						return false; // continue the traversal
-					});
-					newGrab.grabOnly();
-				}
-			}
-			signal(Signals.childrenOf);
-		}
-	}
-
 	//////////////////////////
 	//	 	   BULKS		//
 	//////////////////////////
@@ -301,6 +265,12 @@ export default class Hierarchy {
 		for (const child of thing.children) {
 			this.thing_remember_bulk_recursive_remoteRelocateRight(child, newThing);
 		}
+		if (thing.isExpanded) {
+			setTimeout(() => {
+				newThing.expand();	
+				thing.collapse();
+			}, 2);
+		}
 		await this.thing_forget_remoteDelete(thing);	// remove thing [N.B. and its progney] from current bulk
 		await this.relationships_forget_remoteDeleteAllForThing(thing)
 		return newThing;
@@ -325,37 +295,41 @@ export default class Hierarchy {
 	//		   RELATIONSHIPS		  //
 	////////////////////////////////////
 
-	relationship_remember(relationship: Relationship) {
-		if (!this.knownR_byID[relationship.id]) {
-			if (relationship.bulkName != dbDispatch.bulkName) {
-				debug.log(DebugOption.error, 'RELATIONSHIP ' + relationship.bulkName + ' ' + this.thing_getForID(relationship.idFrom)?.description + ' => ' + this.thing_getForID(relationship.idTo)?.description);
+	async relationships_remoteCreateMissing(root: Thing) {
+		const idRoot = root.id;
+		if (idRoot) {
+			for (const thing of this.knownTs) {
+				const idThing = thing.id;
+				if (idThing != idRoot && thing.trait != TraitType.root && thing.bulkName == root.bulkName) {
+					let relationship = this.relationship_getWhereIDEqualsTo(idThing);
+					if (relationship) {
+						thing.order = relationship.order;
+					} else {
+						const idPredicateIsAParentOf = Predicate.idIsAParentOf;
+						await this.relationship_remember_remoteCreateUnique(root.bulkName, null, idPredicateIsAParentOf,
+							idRoot, idThing, 0, CreationOptions.getRemoteID)
+					}
+				}
 			}
-			this.knownRs.push(relationship);
-			this.knownR_byID[relationship.id] = relationship;
-			this.relationship_rememberByKnown(this.knownRs_byIDTo, relationship.idTo, relationship);
-			this.relationship_rememberByKnown(this.knownRs_byIDFrom, relationship.idFrom, relationship);
-			this.relationship_rememberByKnown(this.knownRs_byIDPredicate, relationship.idPredicate, relationship);
 		}
 	}
 
-	relationship_forget(relationship: Relationship) {
-		remove<Relationship>(this.knownRs, relationship);
-		delete this.knownR_byID[relationship.id];
-		this.relationship_forgetByKnown(this.knownRs_byIDTo, relationship.idTo, relationship);
-		this.relationship_forgetByKnown(this.knownRs_byIDFrom, relationship.idFrom, relationship);
-		this.relationship_forgetByKnown(this.knownRs_byIDPredicate, relationship.idPredicate, relationship);
-	}
-
-	relationship_forgetByKnown(known: KnownRelationships, idRelationship: string, relationship: Relationship) {
-		let array = known[idRelationship] ?? [];
-		remove<Relationship>(array, relationship)
-		known[idRelationship] = array;
-	}
-
-	relationship_rememberByKnown(known: KnownRelationships, idRelationship: string, relationship: Relationship) {
-		let array = known[idRelationship] ?? [];
-		array.push(relationship);
-		known[idRelationship] = array;
+	async relationships_removeHavingNullReferences() {
+		const array = Array<Relationship>();
+		for (const relationship of this.knownRs) {
+			const thingTo = this.thing_getForID(relationship.idTo);
+			const thingFrom = this.thing_getForID(relationship.idFrom);
+			if (!thingTo || !thingFrom) {
+				array.push(relationship);
+				await dbDispatch.db.relationship_remoteDelete(relationship);
+			}
+		}
+		while (array.length > 0) {
+			const relationship = array.pop();
+			if (relationship) {
+				this.relationship_forget(relationship);
+			}
+		}
 	}
 
 	relationships_refreshKnowns_remoteRenormalize() {
@@ -395,31 +369,6 @@ export default class Hierarchy {
 		}
 	}
 
-	relationship_remember_runtimeCreateUnique(bulkName: string, idRelationship: string, idPredicate: string, idFrom: string,
-		idTo: string, order: number, creationOptions: CreationOptions = CreationOptions.none) {
-		let relationship = this.relationships_getByIDPredicateFromAndTo(idPredicate, idFrom, idTo);
-		if (relationship) {
-			relationship.order_setTo(order, false);						// AND thing are updated
-		} else {
-			relationship = new Relationship(bulkName, idRelationship, idPredicate, idFrom, idTo, order, creationOptions != CreationOptions.none);
-			this.relationship_remember(relationship);
-		}
-		return relationship;
-	}
-
-	async relationship_remember_remoteCreateUnique(bulkName: string, idRelationship: string | null, idPredicate: string, idFrom: string,
-		idTo: string, order: number, creationOptions: CreationOptions = CreationOptions.isFromRemote): Promise<any> {
-		let relationship = this.relationships_getByIDPredicateFromAndTo(idPredicate, idFrom, idTo);
-		if (relationship) {
-			relationship.order_setTo(order, false);						// AND thing are updated
-		} else {
-			relationship = new Relationship(bulkName, idRelationship, idPredicate, idFrom, idTo, order, creationOptions != CreationOptions.none);
-			await this.db?.relationship_remember_remoteCreate(relationship);
-			this.relationship_remember(relationship);
-		}
-		return relationship;
-	}
-
 	async relationships_forget_remoteDeleteAllForThing(thing: Thing) {
 		const array = this.knownRs_byIDTo[thing.id];
 		if (array) {
@@ -428,16 +377,6 @@ export default class Hierarchy {
 				this.relationship_forget(relationship);
 			}
 		}
-	}
-
-	relationship_getWhereIDEqualsTo(idThing: string, to: boolean = true) {
-		const idPredicateIsAParentOf = Predicate.idIsAParentOf;
-		const matches = this.relationships_getByIDPredicateToAndID(idPredicateIsAParentOf, to, idThing);
-		if (matches.length > 0) {
-			const relationship = matches[0];
-			return relationship;
-		}
-		return null;
 	}
 
 	relationships_getByIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Relationship> {
@@ -463,6 +402,78 @@ export default class Hierarchy {
 					return relationship;
 				}
 			}
+		}
+		return null;
+	}
+
+	/////////////////////////////////////
+	//			RELATIONSHIP		   //
+	/////////////////////////////////////
+
+	relationship_remember(relationship: Relationship) {
+		if (!this.knownR_byID[relationship.id]) {
+			if (relationship.bulkName != dbDispatch.bulkName) {
+				debug.log(DebugOption.error, 'RELATIONSHIP ' + relationship.bulkName + ' ' + this.thing_getForID(relationship.idFrom)?.description + ' => ' + this.thing_getForID(relationship.idTo)?.description);
+			}
+			this.knownRs.push(relationship);
+			this.knownR_byID[relationship.id] = relationship;
+			this.relationship_rememberByKnown(this.knownRs_byIDTo, relationship.idTo, relationship);
+			this.relationship_rememberByKnown(this.knownRs_byIDFrom, relationship.idFrom, relationship);
+			this.relationship_rememberByKnown(this.knownRs_byIDPredicate, relationship.idPredicate, relationship);
+		}
+	}
+
+	relationship_forget(relationship: Relationship) {
+		remove<Relationship>(this.knownRs, relationship);
+		delete this.knownR_byID[relationship.id];
+		this.relationship_forgetByKnown(this.knownRs_byIDTo, relationship.idTo, relationship);
+		this.relationship_forgetByKnown(this.knownRs_byIDFrom, relationship.idFrom, relationship);
+		this.relationship_forgetByKnown(this.knownRs_byIDPredicate, relationship.idPredicate, relationship);
+	}
+
+	relationship_forgetByKnown(known: KnownRelationships, idRelationship: string, relationship: Relationship) {
+		let array = known[idRelationship] ?? [];
+		remove<Relationship>(array, relationship)
+		known[idRelationship] = array;
+	}
+
+	relationship_rememberByKnown(known: KnownRelationships, idRelationship: string, relationship: Relationship) {
+		let array = known[idRelationship] ?? [];
+		array.push(relationship);
+		known[idRelationship] = array;
+	}
+
+	relationship_remember_runtimeCreateUnique(bulkName: string, idRelationship: string, idPredicate: string, idFrom: string,
+		idTo: string, order: number, creationOptions: CreationOptions = CreationOptions.none) {
+		let relationship = this.relationships_getByIDPredicateFromAndTo(idPredicate, idFrom, idTo);
+		if (relationship) {
+			relationship.order_setTo(order, false);						// AND thing are updated
+		} else {
+			relationship = new Relationship(bulkName, idRelationship, idPredicate, idFrom, idTo, order, creationOptions != CreationOptions.none);
+			this.relationship_remember(relationship);
+		}
+		return relationship;
+	}
+
+	async relationship_remember_remoteCreateUnique(bulkName: string, idRelationship: string | null, idPredicate: string, idFrom: string,
+		idTo: string, order: number, creationOptions: CreationOptions = CreationOptions.isFromRemote): Promise<any> {
+		let relationship = this.relationships_getByIDPredicateFromAndTo(idPredicate, idFrom, idTo);
+		if (relationship) {
+			relationship.order_setTo(order, false);						// AND thing are updated
+		} else {
+			relationship = new Relationship(bulkName, idRelationship, idPredicate, idFrom, idTo, order, creationOptions != CreationOptions.none);
+			await this.db?.relationship_remember_remoteCreate(relationship);
+			this.relationship_remember(relationship);
+		}
+		return relationship;
+	}
+
+	relationship_getWhereIDEqualsTo(idThing: string, to: boolean = true) {
+		const idPredicateIsAParentOf = Predicate.idIsAParentOf;
+		const matches = this.relationships_getByIDPredicateToAndID(idPredicateIsAParentOf, to, idThing);
+		if (matches.length > 0) {
+			const relationship = matches[0];
+			return relationship;
 		}
 		return null;
 	}

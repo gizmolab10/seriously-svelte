@@ -191,6 +191,7 @@ export default class Thing extends Datum {
 				return array;
 			});
 			persistLocal.writeToDBKey(PersistID.expanded, get(expanded));
+			signal(Signals.childrenOf, this.firstParent.id);
 			signal(Signals.dots, this.id);
 		}
 	}
@@ -223,7 +224,7 @@ export default class Thing extends Datum {
 		};
 	}
 
-	hasSameChildrenIDsAs(children: Array<Thing>) {
+	childrenIDs_oneMatchesIDOf(children: Array<Thing>) {
 		if (this.children.length != children.length) {
 			return false;
 		}
@@ -278,16 +279,20 @@ export default class Thing extends Datum {
 		return this;
 	}
 
-	isInDifferentBulkThan(other: Thing) {
+	thing_isInDifferentBulkThan(other: Thing) {
 		return this.bulkName != other.bulkName || (other.isBulkAlias && !this.isBulkAlias && this.bulkName != other.title);
 	}
 
-	async redraw_fetchAll_runtimeBrowseRight(grab: boolean = true) {
-		this.expand();		// do this before fetch, so next launch will see it
-		await dbDispatch.db.fetch_allFrom(this.title)
+	async normalize_bulkFetchAll(bulkName: string) {
+		await dbDispatch.db.fetch_allFrom(bulkName)
 		await dbDispatch.db.hierarchy?.relationships_remoteCreateMissing(this);
 		await dbDispatch.db.hierarchy?.relationships_removeHavingNullReferences();
 		this.order_normalizeRecursive(true);
+	}
+
+	async redraw_bulkFetchAll_runtimeBrowseRight(grab: boolean = true) {
+		this.expand();		// do this before fetch, so next launch will see it
+		await this.normalize_bulkFetchAll(this.title);
 		if (this.hasChildren) {
 			if (grab) {
 				this.children[0].grabOnly()

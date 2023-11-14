@@ -18,7 +18,7 @@
 	function curveTypeAt(index: number): number { return lineRectAt(index).curveType; }
 	
 	const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
-		if (idThing == thing.id || !thing.hasSameChildrenIDsAs(children)) {
+		if (idThing == thing.id || !thing.childrenIDs_oneMatchesIDOf(children)) {
 			setTimeout(async () => { // delay until all other handlers for this signal are done TODO: WHY?
 				await orders_normalize_remoteMaybe(thing.children);
 				children = thing.children;

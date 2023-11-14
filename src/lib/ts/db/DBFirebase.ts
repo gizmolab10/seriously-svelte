@@ -147,7 +147,7 @@ export default class DBFirebase implements DBInterface {
 								thing = this.hierarchy.thing_runtimeCreate(dbDispatch.bulkName, null, bulkName, 'red', TraitType.bulk, 0, false);
 								await this.hierarchy.thing_remember_remoteAddAsChild(thing, roots);
 							} else if (thing.isExpanded) {
-								thing.redraw_fetchAll_runtimeBrowseRight(false);
+								thing.redraw_bulkFetchAll_runtimeBrowseRight(false);
 							}
 						}
 					}
