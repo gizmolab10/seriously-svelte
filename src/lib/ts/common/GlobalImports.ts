@@ -4,7 +4,7 @@ import { Point, Size, Rect, LineRect, updateGraphRect } from '../geometry/Geomet
 import { FatTrianglePath, Direction } from '../geometry/FatTrianglePath';
 import { PersistID, persistLocal } from '../managers/PersistLocal';
 import { signal, Signals, handleSignalOfKind } from './Signals';
-import { SVGType, svgFactory } from '../geometry/SVGFactory';;
+import { SVGType, svgPathFactory } from '../geometry/SVGPathFactory';;
 import { graphEditor } from '../managers/GraphEditor';
 import { DBType, DataKind } from '../db/DBInterface';
 import { debug, Debug, DebugOption } from './Debug'
@@ -35,7 +35,7 @@ export {
 	Grabs, graphEditor, Hierarchy,
 	signal, Signals, handleSignalOfKind,
 	ZIndex, ButtonID, BrowserType, CreationOptions,
-	SVGType, svgFactory, Direction, FatTrianglePath,
+	SVGType, svgPathFactory, Direction, FatTrianglePath,
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Point, Size, Rect, Layout, LineRect, TraitType, LineCurveType, updateGraphRect,
 	noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy,

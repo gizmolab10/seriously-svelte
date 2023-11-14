@@ -1,12 +1,12 @@
 <script>
-	import { k, noop, Thing, Point, ZIndex, Signals, SVGType, svgFactory, dbDispatch, DebugOption } from "../../ts/common/GlobalImports";
+	import { k, noop, Thing, Point, ZIndex, Signals, SVGType, svgPathFactory, dbDispatch, DebugOption } from "../../ts/common/GlobalImports";
 	import { onMount, onDestroy, graphEditor, Direction, handleSignalOfKind } from "../../ts/common/GlobalImports";
 	import { dotDiameter, idShowRevealCluster } from '../../ts/managers/State';
 	export let thing;
 	const longClickThreshold = 500;
 	const doubleClickThreshold = 100;				// one fifth of a second
-	let path = svgFactory.triangle($dotDiameter + 2, Direction.left);
-	let insidePath = svgFactory.circle(16, 6);
+	let path = svgPathFactory.triangle($dotDiameter + 2, Direction.left);
+	let insidePath = svgPathFactory.circle(16, 6);
 	let antiFillColor = k.backgroundColor;
 	let fillColor = k.backgroundColor;
 	let clickCount = 0;
@@ -84,12 +84,12 @@
 
 	function updatePath() {
 		if (!thing.hasChildren && !thing.isBulkAlias) {
-			path = svgFactory.circle(16, 8);
+			path = svgPathFactory.circle(16, 8);
 		} else {
 			const direction = (thing.isExpanded && thing.hasChildren) ? Direction.left : Direction.right;
-			path = svgFactory.triangle($dotDiameter + 2, direction);
+			path = svgPathFactory.triangle($dotDiameter + 2, direction);
 			if (thing.isBulkAlias) {
-				insidePath = svgFactory.circle(16, 6);
+				insidePath = svgPathFactory.circle(16, 6);
 			}
 		}
 	}

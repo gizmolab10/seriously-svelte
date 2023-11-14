@@ -1,12 +1,12 @@
 <script>
 	import { k, noop, Thing, Point, ZIndex, Signals, dbDispatch, BrowserType, getBrowserType, handleSignalOfKind } from "../../ts/common/GlobalImports";
-	import { onMount, graphEditor, SVGType, svgFactory, Direction } from "../../ts/common/GlobalImports";
+	import { onMount, graphEditor, SVGType, svgPathFactory, Direction } from "../../ts/common/GlobalImports";
 	import { idsGrabbed, dotDiameter, idShowRevealCluster } from '../../ts/managers/State';
 	export let thing;
 	const longClickThreshold = 500;
 	const doubleClickThreshold = 100;				// one fifth of a second
 	const browserType = getBrowserType();
-	const path = svgFactory.oval(16, false);
+	const path = svgPathFactory.oval(16, false);
 	let placement = 'left: 5px; top: 4px;'			// tiny browser compensation
 	let hoverColor = thing.color;
 	let fillColor = thing.color;

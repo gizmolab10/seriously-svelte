@@ -1,13 +1,13 @@
 <script>
-	import { k, noop, Thing, ZIndex, dbDispatch, graphEditor, svgFactory } from "../../ts/common/GlobalImports";
+	import { k, noop, Thing, ZIndex, dbDispatch, graphEditor, svgPathFactory } from "../../ts/common/GlobalImports";
 	import { dotDiameter } from '../../ts/managers/State';
-	const path = svgFactory.triangle($dotDiameter + 2, 0);
+	const path = svgPathFactory.triangle($dotDiameter + 2, 0);
 	export let origin = new Point($dotDiameter, 20);
 	let fillColor = k.backgroundColor;
 	let button = null;
 	export let here;
 	
-	$: { updateColors(true) }
+	$: { updateColors(false) }
 	function mouseOver(event) { updateColors(true); }
 	function mouseout(event) { updateColors(false); }
 

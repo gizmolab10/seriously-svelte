@@ -1,8 +1,8 @@
 <script lang='ts'>
-    import { k, ZIndex, onMount, svgFactory, graphEditor, dbDispatch } from '../../ts/common/GlobalImports';
+    import { k, ZIndex, onMount, svgPathFactory, graphEditor, dbDispatch } from '../../ts/common/GlobalImports';
     import { idShowRevealCluster } from '../../ts/managers/State';
 	export let thing: Thing;
-    const path = svgFactory.circle(16, 14);
+    const path = svgPathFactory.circle(16, 14);
     let color = 'black';
     let left = 60;
 
