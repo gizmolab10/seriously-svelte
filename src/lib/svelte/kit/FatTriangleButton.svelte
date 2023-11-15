@@ -1,8 +1,8 @@
 <script>
-	import { k, noop, Thing, ZIndex, dbDispatch, graphEditor, svgPathFactory } from "../../ts/common/GlobalImports";
-	import { dotDiameter } from '../../ts/managers/State';
-	const path = svgPathFactory.triangle($dotDiameter + 2, 0);
-	export let origin = new Point($dotDiameter, 20);
+	import { k, noop, Size, Thing, ZIndex, Direction, dbDispatch, graphEditor, svgPath } from "../../ts/common/GlobalImports";
+	import { dotSize } from '../../ts/managers/State';
+	const path = svgPath.triangle(Size.square($dotSize), Direction.left);
+	export let origin = new Point($dotSize, 20);
 	let fillColor = k.backgroundColor;
 	let button = null;
 	export let here;

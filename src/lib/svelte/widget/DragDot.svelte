@@ -1,12 +1,13 @@
 <script>
-	import { k, noop, Thing, Point, ZIndex, Signals, dbDispatch, BrowserType, getBrowserType, handleSignalOfKind } from "../../ts/common/GlobalImports";
-	import { onMount, graphEditor, SVGType, svgPathFactory, Direction } from "../../ts/common/GlobalImports";
-	import { idsGrabbed, dotDiameter, idShowRevealCluster } from '../../ts/managers/State';
+	import { Direction, BrowserType, getBrowserType, svgPath, handleSignalOfKind } from "../../ts/common/GlobalImports";
+	import { k, noop, Thing, Point, ZIndex, Signals, onMount, graphEditor, dbDispatch } from "../../ts/common/GlobalImports";
+	import { dotSize, idsGrabbed, idShowRevealCluster } from '../../ts/managers/State';
 	export let thing;
+	let diameter = $dotSize;
 	const longClickThreshold = 500;
 	const doubleClickThreshold = 100;				// one fifth of a second
 	const browserType = getBrowserType();
-	const path = svgPathFactory.oval(16, false);
+	const path = svgPath.oval(diameter, false);
 	let placement = 'left: 5px; top: 4px;'			// tiny browser compensation
 	let hoverColor = thing.color;
 	let fillColor = thing.color;
@@ -84,11 +85,12 @@
 	bind:this={button}
 	style='
 		left: 1px;
-		width: 16px;
+		width: {diameter}px;	 /* Match SVG viewbox width */
+		height: {diameter}px;	/* Match SVG viewbox height */
 	'>
-	<svg width='16'
-		height='16'
-		viewbox='0 0 16 16'
+	<svg width={diameter}
+		height={diameter}
+		viewbox='0 0 {diameter} {diameter}'
 		on:blur={noop()}
 		on:focus={noop()}
 		on:keyup={noop()}
@@ -113,8 +115,6 @@
 <style>
 	.dot {
 		top: 5px;
-		width: 16px;	 /* Match SVG viewbox width */
-		height: 16px;	/* Match SVG viewbox height */
 		border: none;
 		cursor: pointer;
 		background: none;

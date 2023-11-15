@@ -1,12 +1,13 @@
 <script>
-	import { k, noop, Thing, Point, ZIndex, Signals, SVGType, svgPathFactory, dbDispatch, DebugOption } from "../../ts/common/GlobalImports";
-	import { onMount, onDestroy, graphEditor, Direction, handleSignalOfKind } from "../../ts/common/GlobalImports";
-	import { dotDiameter, idShowRevealCluster } from '../../ts/managers/State';
+	import { k, noop, Size, Thing, Point, ZIndex, Signals, onMount, onDestroy, dbDispatch } from "../../ts/common/GlobalImports";
+	import { Direction, graphEditor, DebugOption, svgPath, handleSignalOfKind } from "../../ts/common/GlobalImports";
+	import { dotSize, idShowRevealCluster } from '../../ts/managers/State';
 	export let thing;
 	const longClickThreshold = 500;
 	const doubleClickThreshold = 100;				// one fifth of a second
-	let path = svgPathFactory.triangle($dotDiameter + 2, Direction.left);
-	let insidePath = svgPathFactory.circle(16, 6);
+	let diameter = $dotSize;
+	let path = svgPath.triangle(Size.square(diameter), Direction.left);
+	let insidePath = svgPath.circle(16, 6);
 	let antiFillColor = k.backgroundColor;
 	let fillColor = k.backgroundColor;
 	let clickCount = 0;
@@ -25,22 +26,34 @@
 		clearTimeout(clickTimer);	// clear all previous timers
 	}
 
-	function updateState(isHovering) {
-		updateColors(isHovering);
-		updatePath();
-	}
-
 	const signalHandler = handleSignalOfKind(Signals.dots, (id) => {
 		if (thing.id == id) {
 			updatePath();
 		}
 	});
 
+	function updateState(isHovering) {
+		updateColors(isHovering);
+		updatePath();
+	}
+
 	function updateColors(isHovering) {
 		thing.updateColorAttributes();
 		const buttonFlag = !thing.isExpanded || thing.isGrabbed;
 		fillColor = thing.revealColor(buttonFlag != isHovering);
 		antiFillColor = thing.revealColor(buttonFlag == isHovering);
+	}
+
+	function updatePath() {
+		if (!thing.hasChildren && !thing.isBulkAlias) {
+			path = svgPath.circle(16, 8);
+		} else {
+			const direction = (thing.isExpanded && thing.hasChildren) ? Direction.left : Direction.right;
+			path = svgPath.triangle(Size.square(diameter), direction);
+			if (thing.isBulkAlias) {
+				insidePath = svgPath.circle(16, 6);
+			}
+		}
 	}
 
 	function handleClick(event) {
@@ -82,28 +95,18 @@
 		}, doubleClickThreshold);
 	}
 
-	function updatePath() {
-		if (!thing.hasChildren && !thing.isBulkAlias) {
-			path = svgPathFactory.circle(16, 8);
-		} else {
-			const direction = (thing.isExpanded && thing.hasChildren) ? Direction.left : Direction.right;
-			path = svgPathFactory.triangle($dotDiameter + 2, direction);
-			if (thing.isBulkAlias) {
-				insidePath = svgPathFactory.circle(16, 6);
-			}
-		}
-	}
-
 </script>
 
 <button class='dot'
 	bind:this={button}
 	style='
-		left: {$dotDiameter + thing.titleWidth + 10}px;
+		width={diameter}px;
+		height={diameter}px;
+		left: {diameter + thing.titleWidth + 10}px;
 	'>
-	<svg width='16'
-		height='16'
-		viewbox='0 0 16 16'
+	<svg width={diameter}
+		height={diameter}
+		viewbox='0 0 {diameter} {diameter}'
 		on:blur={noop()}
 		on:focus={noop()}
 		on:keyup={noop()}
@@ -131,8 +134,6 @@
 <style>
 	.dot {
 		top: 5px;
-		width: 16px;	 /* Match SVG viewbox width */
-		height: 16px;	/* Match SVG viewbox height */
 		border: none;
 		cursor: pointer;
 		background: none;

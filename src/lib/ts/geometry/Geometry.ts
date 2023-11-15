@@ -37,6 +37,7 @@ export class Size {
 	multipliedBy(multiplier: number): Size { return new Size(this.width * multiplier, this.height * multiplier) }
 	expandedBy(size: Size):			  Size { return new Size(this.width + size.width, this.height + size.height); }
 	unionWith(size: Size):			  Size { return new Size(Math.max(this.width, size.width), Math.max(this.height, size.height)); }
+	static square(length: number):	  Size { return new Size(length, length); }
 }
 
 export class Rect {

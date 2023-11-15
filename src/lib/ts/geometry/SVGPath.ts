@@ -1,9 +1,4 @@
-export enum SVGType {
-	triangle = 'triangle',
-	circle = 'circle',
-	oval = 'oval',
-    line = 'line',
-}
+import { Size } from "./Geometry";
 
 export enum Direction {
 	down = Math.PI/6,
@@ -12,7 +7,7 @@ export enum Direction {
 	left = 0,
 }
 
-export default class SVGPathFactory {
+export default class SVGPath {
 
     line(width: number) {
         return 'M0 1 L' + width + ' 1';
@@ -29,15 +24,15 @@ export default class SVGPathFactory {
 
     circle(width: number, diameter: number) {
         const radius = diameter / 2;
-        const centerOffset = width / 2;
+        const center = width / 2;
         const doubleRadius = radius * 2;
-        const path = 'M' + centerOffset + ' ' + centerOffset + ' m-' + radius + ' 0a' + radius + ' ' + radius + ' 0 1,0 ' + doubleRadius + ' 0a' + radius + ' ' + radius + ' 0 1,0 -' + doubleRadius + ' 0';
+        const path = 'M' + center + ' ' + center + ' m-' + radius + ' 0a' + radius + ' ' + radius + ' 0 1,0 ' + doubleRadius + ' 0a' + radius + ' ' + radius + ' 0 1,0 -' + doubleRadius + ' 0';
         return path;
     }
 
-	triangle(size: number, direction: number) {
-		const width = size;
-		const height = size;
+	triangle(size: Size, direction: number) {
+		const width = size.width;
+		const height = size.height;
 		const offsetX = width / 2;
 		const offsetY = height / 2;
 		const insetRatio = 0.35;
@@ -82,4 +77,4 @@ export default class SVGPathFactory {
 	}
 }
 
-export const svgPathFactory = new SVGPathFactory();
+export const svgPath = new SVGPath();

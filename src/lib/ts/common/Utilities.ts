@@ -1,4 +1,4 @@
-import { titleFontSize, titleFontFamily } from '../managers/State';
+import { thingFontSize, thingFontFamily } from '../managers/State';
 import { get, Thing, BrowserType } from './GlobalImports';
 import convert from 'color-convert';
 
@@ -73,7 +73,7 @@ export function getFontOf(element: HTMLElement): string {
 export function getWidthOf(s: string): number {
 		const element: HTMLElement = document.createElement('span');
 		element.textContent = s;
-		const fontStyle = get(titleFontSize) + 'px ' + get(titleFontFamily)
+		const fontStyle = get(thingFontSize) + 'px ' + get(thingFontFamily)
 		
 		// Apply font styling (you can extend this to other styles if needed)
 		element.style.font = fontStyle;

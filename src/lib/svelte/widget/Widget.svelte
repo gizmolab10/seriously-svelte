@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, noop, Thing, Point, ZIndex, onMount, Signals, onDestroy, handleSignalOfKind } from '../../ts/common/GlobalImports';
-	import { lineGap, idEditing, idsGrabbed, idShowRevealCluster} from '../../ts/managers/State';
+	import { lineGap, dotSize, idEditing, idsGrabbed, idShowRevealCluster} from '../../ts/managers/State';
 	import RevealCluster from './RevealCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
 	import RevealDot from './RevealDot.svelte';
@@ -12,11 +12,11 @@
 	let toggleDraw = false;
 	let isGrabbed = false;
 	let isEditing = false;
+	let radius = $dotSize;
 	let background = '';
 	let padding = '';
 	let border = '';
 	let revealTop = 0;
-	let radius = 16;
 	let height = 0;
 	let delta = 0;
 	let left = 0;
@@ -39,13 +39,13 @@
 		left = origin.x + delta;
 		height = $lineGap - 5;
 		if (thing.showCluster) {
-			radius = k.clusterHeight / 2;
 			revealTop = radius - 17;
-			padding = revealTop + 'px 29.5px ' + revealTop + 'px 1px';
+			radius = k.clusterHeight / 2;
 			top = origin.y + delta - revealTop;
+			padding = revealTop + 'px 29.5px ' + revealTop + 'px 1px';
 		} else {
-			radius = 16;
 			revealTop = 0;
+			radius = $dotSize;
 			top = origin.y + delta;
 			if (thing.isExemplar) {
 				padding = '1px 32px 0px 1px';

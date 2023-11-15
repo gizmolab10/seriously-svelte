@@ -1,12 +1,12 @@
-import { graphOffset, showDetails, lineStretch, titleFontSize, titleFontFamily } from './State';
-import { idHere, lineGap, expanded, dbLoadTime, dotDiameter, idsGrabbed } from './State';
+import { graphOffset, showDetails, lineStretch, thingFontSize, thingFontFamily } from './State';
+import { idHere, lineGap, dotSize, expanded, dbLoadTime, idsGrabbed } from './State';
 import { get, Point, dbDispatch } from '../common/GlobalImports'
 
 export enum PersistID {
 	lineStretch = 'lineStretch',
-	dotDiameter	= 'dotDiameter',
 	expanded	= 'expanded',
 	fontSize	= 'fontSize',
+	dotSize		= 'dotSize',
 	grabbed		= 'grabbed',
 	details		= 'details',
 	origin		= 'origin',
@@ -23,17 +23,18 @@ class PersistLocal {
 		// localStorage.clear();
 		// const isLocal = isServerLocal();
 		dbLoadTime.set(null);
-		this.writeToKey(PersistID.lineStretch, 30);
-		lineGap.set(this.readFromKey(PersistID.gap) ?? 30);
+		this.writeToKey(PersistID.dotSize, 16);
 		idHere.set(this.readFromDBKey(PersistID.here));
-		showDetails.set(this.readFromKey(PersistID.details) ?? false);
-		titleFontSize.set(this.readFromKey(PersistID.fontSize) ?? 14);
-		dotDiameter.set(this.readFromKey(PersistID.dotDiameter) ?? 14);
-		lineStretch.set(this.readFromKey(PersistID.lineStretch) ?? 30);
-		titleFontFamily.set(this.readFromKey(PersistID.font) ?? 'Arial');
+		lineGap.set(this.readFromKey(PersistID.gap) ?? 30);
+		const size = this.readFromKey(PersistID.dotSize) ?? 16;
 		expanded.set(this.readFromDBKey(PersistID.expanded) ?? []);
 		idsGrabbed.set(this.readFromDBKey(PersistID.grabbed) ?? []);
+		showDetails.set(this.readFromKey(PersistID.details) ?? false);
+		lineStretch.set(this.readFromKey(PersistID.lineStretch) ?? 30);
+		thingFontFamily.set(this.readFromKey(PersistID.font) ?? 'Arial');
 		graphOffset.set(this.readFromKey(PersistID.origin) ?? new Point());
+		thingFontSize.set(size - 2);
+		dotSize.set(size);
 		idsGrabbed.subscribe((ids: Array<string>) => {
 			if (this.okayToPersist) {
 				const here = dbDispatch.db.hierarchy.here;

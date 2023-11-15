@@ -1,8 +1,9 @@
 <script lang='ts'>
-    import { k, ZIndex, onMount, svgPathFactory, graphEditor, dbDispatch } from '../../ts/common/GlobalImports';
-    import { idShowRevealCluster } from '../../ts/managers/State';
+    import { k, ZIndex, onMount, svgPath, graphEditor, dbDispatch } from '../../ts/common/GlobalImports';
+    import { dotSize, idShowRevealCluster } from '../../ts/managers/State';
 	export let thing: Thing;
-    const path = svgPathFactory.circle(16, 14);
+	let diameter = $dotSize;
+    const path = svgPath.circle(diameter, diameter - 2);
     let color = 'black';
     let left = 60;
 
@@ -25,32 +26,32 @@
 </script>
 
 <button class='add'
-	style='top: -17.5px;
+	style='top: {-diameter - 1.5}px;
         left: {left}px;
 		border: none;
 		cursor: pointer;
 		background: none;
         z-index:{ZIndex.overlay};'>
-    <svg width='16'
-		height='16'
-		viewbox='0 0 16 16'
+    <svg width={diameter}
+		height={diameter}
+		viewbox='0 0 {diameter} {diameter}'
         on:click={() => handleClick('add')}>
         <path d={path} stroke={thing.color} fill={k.backgroundColor}/>
-        <text x='2.5' y='14.5' fill={thing.color} font-size='1.5em'>+</text>
+        <text x='2.5' y={diameter - 1.5} fill={thing.color} font-size='1.5em'>+</text>
     </svg></button>
 <button class='dismiss'
-	style='top: 24px;
+	style='top: {diameter + 8}px;
         left: {left}px;
 		border: none;
 		cursor: pointer;
 		background: none;
         z-index:{ZIndex.overlay};'>
-    <svg width='16'
-		height='16'
-		viewbox='0 0 16 16'
+    <svg width={diameter}
+		height={diameter}
+		viewbox='0 0 {diameter} {diameter}'
         on:click={() => handleClick('delete')}>
         <path d={path} stroke={thing.color} fill={k.backgroundColor}/>
-        <text x='3.5' y='14.5' fill={thing.color} font-size='2em'>-</text>
+        <text x='3.5' y={diameter - 1.5} fill={thing.color} font-size='2em'>-</text>
     </svg></button>
 
 <style>

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { Rect, Size, Point, ZIndex, SVGType, svgPathFactory, LineCurveType } from '../../ts/common/GlobalImports';
+	import { Rect, Size, Point, ZIndex, SVGType, svgPath, LineCurveType } from '../../ts/common/GlobalImports';
 	import { lineStretch, graphOffset } from '../../ts/managers/State'
 	export let curveType: string = LineCurveType.up;
 	export let rect = new Rect();
@@ -19,7 +19,7 @@
 			origin = rect.centerLeft;
 			extent = rect.centerRight;
 			size = origin.distanceTo(extent).asSize;
-			path = svgPathFactory.line(size.width);
+			path = svgPath.line(size.width);
 		} else {
 			let flag = 1;
 			if (curveType == LineCurveType.down) {

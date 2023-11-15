@@ -1,10 +1,9 @@
 import { noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, isServerLocal, getBrowserType, isMobileDevice, convertToObject, orders_normalize_remoteMaybe, sort_byOrder } from './Utilities';
 import { ZIndex, ButtonID, TraitType, BrowserType, CreationOptions, LineCurveType } from './Enumerations';
 import { Point, Size, Rect, LineRect, updateGraphRect } from '../geometry/Geometry';
-import { FatTrianglePath, Direction } from '../geometry/FatTrianglePath';
+import { Direction, svgPath } from '../geometry/SVGPath';;
 import { PersistID, persistLocal } from '../managers/PersistLocal';
 import { signal, Signals, handleSignalOfKind } from './Signals';
-import { SVGType, svgPathFactory } from '../geometry/SVGPathFactory';;
 import { graphEditor } from '../managers/GraphEditor';
 import { DBType, DataKind } from '../db/DBInterface';
 import { debug, Debug, DebugOption } from './Debug'
@@ -31,11 +30,11 @@ export {
 	PersistID, persistLocal,
 	get, onMount, onDestroy,
 	debug, Debug, DebugOption,
+	Direction, svgPath,
 	dbDispatch, DBType, DataKind,
 	Grabs, graphEditor, Hierarchy,
 	signal, Signals, handleSignalOfKind,
 	ZIndex, ButtonID, BrowserType, CreationOptions,
-	SVGType, svgPathFactory, Direction, FatTrianglePath,
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Point, Size, Rect, Layout, LineRect, TraitType, LineCurveType, updateGraphRect,
 	noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy,

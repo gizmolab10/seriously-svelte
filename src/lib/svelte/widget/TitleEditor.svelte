@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, Thing, signal, Signals, ZIndex, onMount, onDestroy, dbDispatch, graphEditor } from '../../ts/common/GlobalImports';
-	import { idEditing, titleFontSize, titleFontFamily, idEditingStopped } from '../../ts/managers/State';
+	import { idEditing, thingFontSize, thingFontFamily, idEditingStopped } from '../../ts/managers/State';
 	import Widget from './Widget.svelte';
 	export let thing = Thing;
 	let originalTitle = thing.title;
@@ -95,7 +95,7 @@
 
 {#key originalTitle}
 	<span class="wrapper" bind:this={wrapper}
-		style='font-size: {$titleFontSize}px; font-family: {$titleFontFamily};'>
+		style='font-size: {$thingFontSize}px; font-family: {$thingFontFamily};'>
 		{thing.title}
 	</span>
 	<input
@@ -113,8 +113,8 @@
 			left: 7.5px;
 			color: {thing.color};
 			z-index: {ZIndex.text};
-			font-size: {$titleFontSize}px;
-			font-family: {$titleFontFamily};
+			font-size: {$thingFontSize}px;
+			font-family: {$thingFontFamily};
 			padding: 0px 0px 0px 6px;
 		'/>
 {/key}
