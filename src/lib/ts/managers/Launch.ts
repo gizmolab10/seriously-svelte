@@ -20,12 +20,12 @@ class Launch {
 	}
 
 	applyQueryStrings(queryStrings: URLSearchParams) {
-		if (queryStrings.get('persist') === 'erase') {
+		if (queryStrings.get('settings') === 'erase') {
 			idsGrabbed.set([]);
 			expanded.set([]);
 			idHere.set(null);
 		}
-		if (queryStrings.get('settings') === 'hide') {
+		if (queryStrings.get('details') === 'hide') {
 			persistLocal.writeToKey(PersistID.details, false);
 			showDetails.set(false);
 		}

@@ -29,7 +29,7 @@ export default class DBDispatch {
 		if (params.get('data') === 'erase') {
 			this.eraseDB = true;
 		}
-		this.bulkName = params.get('name') ?? 'Public';
+		this.bulkName = params.get('name') ?? params.get('dbid') ?? 'Public';
 		const type = params.get('db') ?? persistLocal.readFromKey(PersistID.db) ?? DBType.firebase;
 		dbType.set(type);	// invokes DB update (line 22 above), which needs bulkName already set (must be above)
 	}
