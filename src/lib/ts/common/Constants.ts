@@ -4,6 +4,8 @@ export default class Constants {
 	public clusterHeight: number;
 	public detailsMargin: number;
 	public halfIncrement: number;
+	public longClickThreshold: number;
+	public doubleClickThreshold: number;
 	public leftJustifyGraph: boolean;
 	public allowGraphEditing: boolean;
 	public allowTitleEditing: boolean;
@@ -24,6 +26,8 @@ export default class Constants {
 		this.allowHorizontalScrolling = true;
 		this.allowGraphEditing = true;
 		this.allowTitleEditing = true;
+		this.doubleClickThreshold = 100;
+		this.longClickThreshold = 500;
 		this.halfIncrement = 0.5;
 		this.detailsMargin = 101;
 		this.clusterHeight = 80;

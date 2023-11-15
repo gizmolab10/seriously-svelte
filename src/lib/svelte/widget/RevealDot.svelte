@@ -3,8 +3,6 @@
 	import { Direction, graphEditor, DebugOption, svgPath, handleSignalOfKind } from "../../ts/common/GlobalImports";
 	import { dotSize, idShowRevealCluster } from '../../ts/managers/State';
 	export let thing;
-	const longClickThreshold = 500;
-	const doubleClickThreshold = 100;				// one fifth of a second
 	let diameter = $dotSize;
 	let path = svgPath.triangle(Size.square(diameter), Direction.left);
 	let insidePath = svgPath.circle(16, 6);
@@ -45,7 +43,7 @@
 	}
 
 	function updatePath() {
-		if (!thing.hasChildren && !thing.isBulkAlias) {
+		if ((!thing.hasChildren && !thing.isBulkAlias) || ($idShowRevealCluster == thing.id)) {
 			path = svgPath.circle(16, 8);
 		} else {
 			const direction = (thing.isExpanded && thing.hasChildren) ? Direction.left : Direction.right;
@@ -82,7 +80,7 @@
 				thing.grabOnly()
 				$idShowRevealCluster = thing.id;
 			}
-		}, longClickThreshold);
+		}, k.longClickThreshold);
 	}
 
 	function handleSingleClick(event) {
@@ -92,7 +90,7 @@
 				handleClick(event);
 				clearClicks();
 			}
-		}, doubleClickThreshold);
+		}, k.doubleClickThreshold);
 	}
 
 </script>

@@ -4,6 +4,7 @@ class Builds {
 	notes: { [id: number]: string[] } = {};
 	constructor() {
 		this.notes = { 
+			62 : ['November 13, 2023', 'cluster dot tweaks'],
 			61 : ['November 13, 2023', 'lots of cosmetic cleanups & added query strings'],
 			60 : ['November 12, 2023', 'massive cosmetic tweaks'],
 			59 : ['November 9, 2023', 'added ip logging'],

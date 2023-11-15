@@ -4,8 +4,6 @@
 	import { dotSize, idsGrabbed, idShowRevealCluster } from '../../ts/managers/State';
 	export let thing;
 	let diameter = $dotSize;
-	const longClickThreshold = 500;
-	const doubleClickThreshold = 100;				// one fifth of a second
 	const browserType = getBrowserType();
 	const path = svgPath.oval(diameter, false);
 	let placement = 'left: 5px; top: 4px;'			// tiny browser compensation
@@ -52,7 +50,7 @@
 		clearClicks();
 		clickTimer = setTimeout(() => {
 			handleDoubleClick(event);
-		}, longClickThreshold);
+		}, k.longClickThreshold);
 	}
 
 	function handleDoubleClick(event) {
@@ -67,7 +65,7 @@
 				handleClick(event);
 				clearClicks();
 			}
-		}, doubleClickThreshold);
+		}, k.doubleClickThreshold);
 	}
 
 	async function handleClick(event) {
