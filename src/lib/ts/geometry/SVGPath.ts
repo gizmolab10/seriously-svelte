@@ -1,9 +1,11 @@
 import { Size } from "./Geometry";
 
 export enum Direction {
-	down = Math.PI/6,
+	downRight = Math.PI * 4 / 3,
+	upRight = Math.PI * 2 / 3,
+	down = Math.PI * 3 / 2,
+	up = Math.PI / 2,
 	right = Math.PI,
-	up = Math.PI/2,
 	left = 0,
 }
 

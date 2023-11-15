@@ -2,8 +2,8 @@
     import { k, ZIndex, onMount, svgPath, graphEditor, dbDispatch } from '../../ts/common/GlobalImports';
     import { dotSize, idShowRevealCluster } from '../../ts/managers/State';
 	export let thing: Thing;
-	let diameter = $dotSize;
     const path = svgPath.circle(diameter, diameter - 2);
+	let diameter = $dotSize;
     let color = 'black';
     let left = 60;
 
