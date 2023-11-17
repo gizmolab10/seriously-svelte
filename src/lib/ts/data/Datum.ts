@@ -7,15 +7,15 @@ export default class Datum {
 	isRemotelyStored: boolean;
 	lastWriteDate: Date;
 	needsWrite = false;
-	bulkName: string;
+	bulkID: string;
 	id: string;
 
-	constructor(bulkName: string, id: string | null, isRemotelyStored: boolean) {
+	constructor(bulkID: string, id: string | null, isRemotelyStored: boolean) {
 		this.isRemotelyStored = isRemotelyStored;
 		this.lastWriteDate = new Date();
 		this.awaitingCreation = false;
 		this.id = id ?? Datum.newID;
-		this.bulkName = bulkName;
+		this.bulkID = bulkID;
 	}
 
 	static get newID(): string { return 'NEW' + removeAll('-', uuid()).slice(10, 24); } // use last, most-unique bytes of uuid

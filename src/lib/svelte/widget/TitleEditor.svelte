@@ -1,29 +1,34 @@
 <script lang='ts'>
-	import { k, Thing, signal, Signals, ZIndex, onMount, onDestroy, dbDispatch, graphEditor } from '../../ts/common/GlobalImports';
+	import { k, Thing, signal, Signals, ZIndex, onMount, onDestroy, dbDispatch, graphEditor, DebugOption } from '../../ts/common/GlobalImports';
 	import { idEditing, thingFontSize, thingFontFamily, idEditingStopped } from '../../ts/managers/State';
 	import Widget from './Widget.svelte';
 	export let thing = Thing;
 	let originalTitle = thing.title;
 	let isEditing = false;
-	let identifier = '';
-	let wrapper = null;
+	let ghost = null;
 	let input = null;
 
-	function handleBlur(event) { stopAndClearEditing(false); updateInputWidth(); }
-	function handleInput(event) { thing.title = event.target.value; }
-	var hasChanges = () => { return originalTitle != thing.title; }
 	onDestroy(() => { thing = null; });
+	onMount(() => { updateInputWidth(); });
+	var hasChanges = () => { return originalTitle != thing.title; }
+	function handleBlur(event) { stopAndClearEditing(false); updateInputWidth(); }
+	function handleInput(event) { thing.title = event.target.value; updateInputWidth(); }
 
-	onMount(() => {
-		updateInputWidth();
-		identifier = '${new Date().getTime()}';
-	});
+
+	function updateInputWidth() {
+		if (input && ghost && thing) { // ghost only exists to provide its scroll width
+			const width = ghost.scrollWidth;
+			thing.log(DebugOption.debug, width + ' ' + thing.titleWidth);
+			input.style.width = `${width}px`;
+		}
+	}
 
 	function handleKeyDown(event) {
 		if ($idEditing == thing.id) {
 			switch (event.key) {	
 				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); graphEditor.thing_redraw_remoteAddChildTo(thing.firstParent); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
+				default:	  signal(Signals.childrenOf, thing.id);
 			}
 		}
 	}
@@ -84,18 +89,13 @@
 		}
 	}
 
-	function updateInputWidth() {
-		if (input && wrapper && thing) { // wrapper only exists to provide its scroll width
-			const width = wrapper.scrollWidth;
-			input.style.width = `${width - 6}px`;
-		}
-	}
-
 </script>
 
 {#key originalTitle}
-	<span class="wrapper" bind:this={wrapper}
-		style='font-size: {$thingFontSize}px; font-family: {$thingFontFamily};'>
+	<span class="ghost" bind:this={ghost}
+		style='
+			font-size: {$thingFontSize}px;
+			font-family: {$thingFontFamily};'>
 		{thing.title}
 	</span>
 	<input
@@ -104,30 +104,30 @@
 		name='title'
 		bind:this={input}
 		bind:value={thing.title}
-		on:input={updateInputWidth}
 		on:keydown={handleKeyDown}
 		on:input={handleInput}
 		on:focus={handleFocus}
 		on:blur={handleBlur}
 		style='
-			left: 7.5px;
 			color: {thing.color};
 			z-index: {ZIndex.text};
 			font-size: {$thingFontSize}px;
 			font-family: {$thingFontFamily};
-			padding: 0px 0px 0px 6px;
+			outline-color: k.backgroundColor;
 		'/>
 {/key}
 
 <style lang='scss'>
 	.title {
+		top: 3.5px;
+		left: 7.5px;
 		border: none;
 		outline: none;
+		white-space: pre;
 		position: relative;
-		top: 3.5px;
-		outline-color: 'white';
+		padding: 0px 0px 0px 6px;
 	}
-	.wrapper {
+	.ghost {
 		position: absolute;
 		visibility: hidden;
 		padding: 0px 0px 0px 6px;

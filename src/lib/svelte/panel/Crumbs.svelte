@@ -26,7 +26,7 @@
 
 	function updateAncestors(width: number) {
 		if (grab) {
-			ancestors = grab.ancestors(width - 250);
+			ancestors = grab.ancestors(width - 132);
 			toggleDraw = !toggleDraw;
 		}
 	}

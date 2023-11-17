@@ -7,6 +7,7 @@
 	import DragDot from './DragDot.svelte';
 	export let origin = new Point();
 	export let thing = Thing;
+	const rightPadding = 26
 	let showingCluster = false;
 	let showingBorder = false;
 	let toggleDraw = false;
@@ -16,7 +17,7 @@
 	let background = '';
 	let padding = '';
 	let border = '';
-	let revealTop = 0;
+	let yPadding = 0;
 	let height = 0;
 	let delta = 0;
 	let left = 0;
@@ -39,18 +40,20 @@
 		left = origin.x + delta;
 		height = $lineGap - 5;
 		if (thing.showCluster) {
-			revealTop = radius - 17;
+			yPadding = radius - 17;
 			radius = k.clusterHeight / 2;
-			top = origin.y + delta - revealTop;
-			padding = revealTop + 'px 29.5px ' + revealTop + 'px 1px';
+			top = origin.y + delta - yPadding;
+			const xPadding = rightPadding - 3.5;
+			padding = yPadding + 'px ' + xPadding + 'px' + yPadding + 'px 1px';
 		} else {
-			revealTop = 0;
+			yPadding = 0;
 			radius = $dotSize;
 			top = origin.y + delta;
 			if (thing.isExemplar) {
-				padding = '1px 32px 0px 1px';
+				const xPadding = rightPadding + 2;
+				padding = '1px ' + xPadding + 'px 0px 1px';
 			} else {
-				padding = '0px 30px 1px 1px';
+				padding = '0px ' + rightPadding + 'px 1px 1px';
 			}
 		}
 	}
@@ -89,7 +92,7 @@
 		'>
 		<DragDot thing={thing}/>&nbsp;<TitleEditor thing={thing}/>
 		<div class='reveal'
-			style='top:{revealTop}px'>
+			style='top:{yPadding}px'>
 			<RevealDot thing={thing}/>
 			{#if showingCluster}
 				<RevealCluster thing={thing}/>

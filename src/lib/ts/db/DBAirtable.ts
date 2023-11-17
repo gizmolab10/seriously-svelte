@@ -15,7 +15,7 @@ import Airtable from 'airtable';
 
 export default class DBAirtable implements DBInterface {
 	basePublic = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
-	baseCatalist = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('apphGUCbYIEJLvRrR');
+	baseCatalist = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('apphGUCbYIEJLvRrR'); // TODO: dbid query string
 	base = this.baseCatalist;
 	relationships_table = this.base(DataKind.relationships);
 	predicates_table = this.base(DataKind.predicates);
@@ -30,7 +30,7 @@ export default class DBAirtable implements DBInterface {
 	relationships_errorMessage = 'Error in Relationships:';
 	setHasData(flag: boolean) { this.hasData = flag; }
 	things_errorMessage = 'Error in Things:';
-	async fetch_allFrom(bulkName: string) {}
+	async fetch_allFrom(bulkID: string) {}
 	
 	get hierarchy(): Hierarchy { 
 		if (this._hierarchy == null) {

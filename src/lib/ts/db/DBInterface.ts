@@ -22,7 +22,7 @@ export default interface DBInterface {
 	loadTime: string | null;
 	fetch_all(): Promise<void>;
 	setHasData(flag: boolean): void;
-	fetch_allFrom(bulkName: string): Promise<void>;
+	fetch_allFrom(bulkID: string): Promise<void>;
 	thing_remember_remoteCreate(thing: Thing): Promise<void>;
 	thing_remoteUpdate(thing: Thing): Promise<void>;
 	thing_remoteDelete(thing: Thing): Promise<void>;

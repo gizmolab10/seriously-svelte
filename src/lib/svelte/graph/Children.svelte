@@ -1,5 +1,6 @@
 <script lang=ts>
-	import { noop, Rect, Size, Point, Thing, signal, Signals, Layout, onMount, onDestroy, LineRect, LineCurveType, orders_normalize_remoteMaybe, handleSignalOfKind, DebugOption } from '../../ts/common/GlobalImports';
+	import { noop, Rect, Size, Point, Thing, signal, Signals, Layout, onMount, LineRect, onDestroy } from '../../ts/common/GlobalImports';
+	import { DebugOption, LineCurveType, orders_normalize_remoteMaybe, handleSignalOfKind } from '../../ts/common/GlobalImports';
 	import { lineGap, lineStretch, dotSize } from '../../ts/managers/State';
 	import Widget from '../widget/Widget.svelte';
 	import Children from './Children.svelte';
@@ -18,7 +19,7 @@
 	function curveTypeAt(index: number): number { return lineRectAt(index).curveType; }
 	
 	const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
-		if (idThing == thing.id || !thing.childrenIDs_oneMatchesIDOf(children)) {
+		if (!idThing || idThing == thing.id || !thing.childrenIDs_oneMatchesIDOf(children)) {
 			setTimeout(async () => { // delay until all other handlers for this signal are done TODO: WHY?
 				await orders_normalize_remoteMaybe(thing.children);
 				children = thing.children;
@@ -49,7 +50,7 @@
 	}
 
 	function originForGrandchildren(child: Thing, index: number): Point {
-		const more = 7;									// TODO: WHY 17? perhaps it accounts for title margin
+		const more = 1;									// TODO: WHY 4? perhaps it accounts for title margin
 		const rect = lineRectAt(index);
 		const x = origin.x + child.titleWidth + $dotSize + $lineStretch + more;
 		const y = rect.extent.y - child.halfVisibleProgenyHeight;

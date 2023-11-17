@@ -100,7 +100,7 @@
 	style='
 		width={diameter}px;
 		height={diameter}px;
-		left: {diameter + thing.titleWidth + 10}px;
+		left: {diameter + thing.titleWidth + 4}px;
 	'>
 	<svg width={diameter}
 		height={diameter}

@@ -23,8 +23,8 @@ export default class Thing extends Datum {
 		return new Thing(inBulkName, null, from.title, from.color, from.trait, from.order, false);
 	}
 
-	constructor(bulkName: string, id: string | null, title = k.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
-		super(bulkName, id, isRemotelyStored);
+	constructor(bulkID: string, id: string | null, title = k.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
+		super(bulkID, id, isRemotelyStored);
 		this.dbType = dbDispatch.db.dbType;
 		this.title = title;
 		this.color = color;
@@ -202,11 +202,10 @@ export default class Thing extends Datum {
 		let totalWidth = 0;
 		const array = [];
 		while (thing) {
-			const width = thing.titleWidth + 5;				// 5 for the '>' separator
-			if (totalWidth + width > thresholdWidth) {
+			totalWidth += thing.titleWidth;
+			if (totalWidth > thresholdWidth) {
 				break;
 			}
-			totalWidth += width;
 			array.push(thing);
 			thing = thing.firstParent;
 		}
@@ -281,11 +280,11 @@ export default class Thing extends Datum {
 	}
 
 	thing_isInDifferentBulkThan(other: Thing) {
-		return this.bulkName != other.bulkName || (other.isBulkAlias && !this.isBulkAlias && this.bulkName != other.title);
+		return this.bulkID != other.bulkID || (other.isBulkAlias && !this.isBulkAlias && this.bulkID != other.title);
 	}
 
-	async normalize_bulkFetchAll(bulkName: string) {
-		await dbDispatch.db.fetch_allFrom(bulkName)
+	async normalize_bulkFetchAll(bulkID: string) {
+		await dbDispatch.db.fetch_allFrom(bulkID)
 		await dbDispatch.db.hierarchy?.relationships_remoteCreateMissing(this);
 		await dbDispatch.db.hierarchy?.relationships_removeHavingNullReferences();
 		this.order_normalizeRecursive(true);

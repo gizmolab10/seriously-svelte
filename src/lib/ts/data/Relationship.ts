@@ -9,8 +9,8 @@ export default class Relationship extends Datum {
 	order: number;
 	dbType: string;
 
-	constructor(bulkName: string, id: string | null, idPredicate: string, idFrom: string, idTo: string, order = 0, isRemotelyStored: boolean) {
-		super(bulkName, id, isRemotelyStored);
+	constructor(bulkID: string, id: string | null, idPredicate: string, idFrom: string, idTo: string, order = 0, isRemotelyStored: boolean) {
+		super(bulkID, id, isRemotelyStored);
 		this.idTo = idTo; // idTo is child
 		this.idFrom = idFrom; // idFrom is parent
 		this.idPredicate = idPredicate;
@@ -19,7 +19,7 @@ export default class Relationship extends Datum {
 	}
 
 	get fields(): Airtable.FieldSet { return { predicate: [this.idPredicate], from: [this.idFrom], to: [this.idTo], order: this.order }; }
-	get description(): string { return ' \"' + this.bulkName + '\" ' + this.isRemotelyStored + ' ' + this.order + ' ' + this.id + ' '	+ dbDispatch.db.hierarchy.thing_getForID(this.idFrom)?.description + ' => ' + dbDispatch.db.hierarchy.thing_getForID(this.idTo)?.description; }
+	get description(): string { return ' \"' + this.bulkID + '\" ' + this.isRemotelyStored + ' ' + this.order + ' ' + this.id + ' '	+ dbDispatch.db.hierarchy.thing_getForID(this.idFrom)?.description + ' => ' + dbDispatch.db.hierarchy.thing_getForID(this.idTo)?.description; }
 	get isValid(): boolean {
 		if (this.idPredicate && this.idFrom && this.idTo) {
 			return true;

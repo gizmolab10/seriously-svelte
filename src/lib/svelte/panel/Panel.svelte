@@ -59,7 +59,7 @@
 	{#if $isBusy}
 		<p>Welcome to Seriously</p>
 		{#if $dbType != DBType.local}
-			<p>(loading your {$dbType} data{$dbType == DBType.firebase ? ', from ' + dbDispatch.bulkName : ''})</p>
+			<p>(loading your {$dbType} data{$dbType == DBType.firebase ? ', from ' + dbDispatch.bulkID : ''})</p>
 		{/if}
 	{:else if !$thingsArrived}
 		<p>Nothing is available.</p>

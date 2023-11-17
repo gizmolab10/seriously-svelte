@@ -63,34 +63,27 @@ export function convertToObject(instance: any, fields: string[]): object {
 }
 
 export function getFontOf(element: HTMLElement): string {
-		const computedStyle: CSSStyleDeclaration = window.getComputedStyle(element);
-		const fontFamily: string = computedStyle.fontFamily;
-		const fontSize: string = computedStyle.fontSize;
-		
-		return `${fontSize} ${fontFamily}`;
+	const computedStyle: CSSStyleDeclaration = window.getComputedStyle(element);
+	const fontFamily: string = computedStyle.fontFamily;
+	const fontSize: string = computedStyle.fontSize;
+	
+	return `${fontSize} ${fontFamily}`;
 }
 
 export function getWidthOf(s: string): number {
-		const element: HTMLElement = document.createElement('span');
-		element.textContent = s;
-		const fontStyle = get(thingFontSize) + 'px ' + get(thingFontFamily)
-		
-		// Apply font styling (you can extend this to other styles if needed)
-		element.style.font = fontStyle;
+	const span: HTMLElement = document.createElement('span');
+	span.style.font = get(thingFontSize) + 'px ' + get(thingFontFamily);
+	span.style.left = '-9999px'; // offscreen
+	span.style.padding = '0px 0px 0px 6px';
+	span.style.position = 'absolute';
+	span.style.whiteSpace = 'pre';
+	span.textContent = s;
+	
+	document.body.appendChild(span);
+	const width: number = span.scrollWidth;
+	document.body.removeChild(span);
 
-		// Position element off-screen
-		element.style.position = 'absolute';
-		element.style.left = '-9999px'; // offscreen
-		
-		document.body.appendChild(element);
-
-		// Measure width
-		const width: number = element.offsetWidth;
-
-		// Cleanup
-		document.body.removeChild(element);
-
-		return width;
+	return width;
 }
 
 export function getBrowserType(): BrowserType {
@@ -104,7 +97,7 @@ export function getBrowserType(): BrowserType {
 		case /opr\/(\d+)/i.test(userAgent):				return BrowserType.opera;
 		case /orion\/(\d+)/i.test(userAgent):			return BrowserType.orion;
 		case /safari\/(\d+)/i.test(userAgent):			return BrowserType.safari;
-		default:																				return BrowserType.unknown
+		default:										return BrowserType.unknown
 	}
 }
 
