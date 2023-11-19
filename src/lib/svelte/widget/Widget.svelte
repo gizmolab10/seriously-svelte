@@ -60,9 +60,9 @@
 
 	$: {
 		const id = thing.id;
-		const shouldEdit = (id == $idEditing);
-		const shouldShowCluster = $idShowRevealCluster == id;
 		const shouldGrab = $idsGrabbed?.includes(id) || thing.isExemplar;
+		const shouldShowCluster = $idShowRevealCluster == id;
+		const shouldEdit = (id == $idEditing);
 		const change = (isEditing != shouldEdit || isGrabbed != shouldGrab || showingCluster != shouldShowCluster);
 		if (change) {
 			showingCluster = shouldShowCluster;

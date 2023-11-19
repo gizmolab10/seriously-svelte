@@ -1,6 +1,7 @@
 <script lang='ts'>
-	import { k, Thing, signal, Signals, ZIndex, onMount, onDestroy, dbDispatch, graphEditor, DebugOption } from '../../ts/common/GlobalImports';
+	import { k, noop, Thing, signal, Signals, ZIndex, onMount, onDestroy } from '../../ts/common/GlobalImports';
 	import { idEditing, thingFontSize, thingFontFamily, idEditingStopped } from '../../ts/managers/State';
+	import { dbDispatch, SeriouslyRange, graphEditor, DebugOption } from '../../ts/common/GlobalImports';
 	import Widget from './Widget.svelte';
 	export let thing = Thing;
 	let originalTitle = thing.title;
@@ -11,20 +12,26 @@
 	onDestroy(() => { thing = null; });
 	onMount(() => { updateInputWidth(); });
 	var hasChanges = () => { return originalTitle != thing.title; }
-	function handleBlur(event) { stopAndClearEditing(false); updateInputWidth(); }
+	function handleBlur(event) { stopAndClearEditing(); updateInputWidth(); }
 	function handleInput(event) { thing.title = event.target.value; updateInputWidth(); }
-
 
 	function updateInputWidth() {
 		if (input && ghost && thing) { // ghost only exists to provide its scroll width
 			const width = ghost.scrollWidth;
-			thing.log(DebugOption.debug, width + ' ' + thing.titleWidth);
 			input.style.width = `${width}px`;
 		}
 	}
 
+	function canAlterTitle(event) {
+		var canAlter = (event instanceof KeyboardEvent) && !event.altKey && !event.shiftKey && !event.code.startsWith("Arrow");
+		if (canAlter && event.metaKey) {
+			canAlter = false;
+		}
+		return canAlter;
+	}
+
 	function handleKeyDown(event) {
-		if ($idEditing == thing.id) {
+		if ($idEditing == thing.id && canAlterTitle(event)) {
 			switch (event.key) {	
 				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); graphEditor.thing_redraw_remoteAddChildTo(thing.firstParent); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
@@ -51,7 +58,7 @@
 				thing.grabOnly();
 				setTimeout(() => {
 					input?.focus();
-					input?.select();
+					applyRange();
 				}, 10);
 			}
 		}
@@ -71,6 +78,7 @@
 		if (isEditing) {
 			$idEditingStopped = $idEditing;
 			isEditing = false;
+			extractRange();
 			input?.blur();
 			if (hasChanges() && !thing.isExemplar) {
 				dbDispatch.db.thing_remoteUpdate(thing);
@@ -89,6 +97,26 @@
 		}
 	}
 
+	function handleCutOrPaste(event) {
+		extractRange();
+		signal(Signals.childrenOf, thing.id);
+	}
+
+	function extractRange() {
+		if (input) {
+			const end = input.selectionEnd;
+			const start = input.selectionStart;
+			thing.selectionRange = new SeriouslyRange(start, end);
+		}
+	}
+
+	function applyRange() {
+		const priorRange = thing.selectionRange;
+		if (priorRange && input) {
+			input.setSelectionRange(priorRange.start, priorRange.end);
+		}
+	}
+
 </script>
 
 {#key originalTitle}
@@ -104,7 +132,9 @@
 		name='title'
 		bind:this={input}
 		bind:value={thing.title}
+		on:paste={handleCutOrPaste}
 		on:keydown={handleKeyDown}
+		on:cut={handleCutOrPaste}
 		on:input={handleInput}
 		on:focus={handleFocus}
 		on:blur={handleBlur}

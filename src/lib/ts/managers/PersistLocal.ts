@@ -48,11 +48,11 @@ class PersistLocal {
 	get dbType(): string { return dbDispatch.db.dbType; }
 	readFromDBKey(key: string) { return this.readFromKey(key + this.dbType); }
 	writeToDBKey(key: string, value: any) { this.writeToKey(key + this.dbType, value); }
-	writeToKey(key: string, value: any) { localStorage.setItem(key, JSON.stringify(value)); }
+	writeToKey(key: string, value: any) { localStorage[key] = JSON.stringify(value); }
 
 	readFromKey(key: string): any | null {
-		const storedValue = localStorage.getItem(key);
-		return (storedValue == 'undefined') ? null : JSON.parse(storedValue!);
+		const storedValue = localStorage[key];
+		return !storedValue ? null : JSON.parse(storedValue!);
 	}
 
 	state_updateForDBType(dbType: string, defaultIDHere: string) {

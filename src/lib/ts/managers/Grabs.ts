@@ -43,7 +43,7 @@ export default class Grabs {
 	get last_idGrabbed(): string | null {
 		const ids = get(idsGrabbed);
 		if (ids) {
-			return ids.slice(-1)[0]
+			return ids.slice(-1)[0];
 		}
 		return null;
 	}

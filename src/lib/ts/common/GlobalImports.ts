@@ -1,4 +1,5 @@
-import { noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, isServerLocal, getBrowserType, isMobileDevice, convertToObject, orders_normalize_remoteMaybe, sort_byOrder } from './Utilities';
+import { noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, sort_byOrder, isServerLocal } from './Utilities';
+import { getBrowserType, isMobileDevice, convertToObject, orders_normalize_remoteMaybe } from './Utilities';
 import { ZIndex, ButtonID, TraitType, BrowserType, CreationOptions, LineCurveType } from './Enumerations';
 import { Point, Size, Rect, LineRect, updateGraphRect } from '../geometry/Geometry';
 import { PersistID, persistLocal } from '../managers/PersistLocal';
@@ -10,6 +11,7 @@ import { debug, Debug, DebugOption } from './Debug'
 import { dbDispatch } from '../db/DBDispatch';
 import { onMount, onDestroy } from 'svelte';
 import { launch } from '../managers/Launch';
+import { SeriouslyRange } from './Types';
 import { get } from 'svelte/store';
 import { builds } from './Builds';
 import { k } from './Constants';
@@ -27,16 +29,16 @@ import User from '../data/User';
 
 export {
 	k, builds, launch,
+	Direction, svgPath,
 	PersistID, persistLocal,
 	get, onMount, onDestroy,
 	debug, Debug, DebugOption,
-	Direction, svgPath,
 	dbDispatch, DBType, DataKind,
 	Grabs, graphEditor, Hierarchy,
 	signal, Signals, handleSignalOfKind,
 	ZIndex, ButtonID, BrowserType, CreationOptions,
-	User, Datum, Thing, Access, Predicate, Relationship,
+	User, SeriouslyRange, Datum, Thing, Access, Predicate, Relationship,
 	Point, Size, Rect, Layout, LineRect, TraitType, LineCurveType, updateGraphRect,
-	noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy,
-	isServerLocal, getBrowserType, isMobileDevice, convertToObject, orders_normalize_remoteMaybe, sort_byOrder,
+	sort_byOrder, getBrowserType, isMobileDevice, convertToObject, orders_normalize_remoteMaybe,
+	noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, isServerLocal,
 };

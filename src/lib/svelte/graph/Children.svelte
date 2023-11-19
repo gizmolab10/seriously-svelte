@@ -10,6 +10,7 @@
 
 	const mysteryWidgetOffset = new Point(10, -14);	// TODO: WHY is this needed, where does this value come from?
 	let lineRects: Array<LineRect> = [];
+	let prior = new Date().getTime();
 	let children = thing.children;
 	let toggleDraw = false;
 
@@ -19,19 +20,26 @@
 	function curveTypeAt(index: number): number { return lineRectAt(index).curveType; }
 	
 	const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
-		if (!idThing || idThing == thing.id || !thing.childrenIDs_oneMatchesIDOf(children)) {
-			setTimeout(async () => { // delay until all other handlers for this signal are done TODO: WHY?
-				await orders_normalize_remoteMaybe(thing.children);
-				children = thing.children;
-				describe(children);
-				layoutChildren();
-				toggleDraw = !toggleDraw;
-				for (const child of children) {
-					if (child.hasChildren && child.isExpanded) {
-						signal(Signals.childrenOf, child.id); // percolate
+		if (!idThing || idThing == thing.id || thing.childrenIDs_anyMissingFromIDsOf(children) || thing.isRoot) {
+			const now = new Date().getTime();
+			if (now - prior > 1000) {
+				prior = now;
+				setTimeout(async () => { // delay until all other handlers for this signal are done TODO: WHY?
+					await orders_normalize_remoteMaybe(thing.children);
+					children = thing.children;
+					// thing.log(DebugOption.debug, 'CHILDREN ' + idThing);
+					// describe(children);
+					layoutChildren();
+					for (const child of children) {
+						if (child.hasChildren && child.isExpanded) {
+							signal(Signals.childrenOf, child.id); // percolate
+						}
 					}
-				}
-			}, 10);
+					setTimeout(async () => {
+						toggleDraw = !toggleDraw;
+					}, 20);
+				}, 10);
+			}
 		}
 	})
 

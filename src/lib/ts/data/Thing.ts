@@ -1,9 +1,10 @@
-import { k, get, Size, Datum, signal, Signals, debug, DebugOption, Predicate, PersistID, Hierarchy } from '../common/GlobalImports';
-import { TraitType, dbDispatch, getWidthOf, persistLocal, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { TraitType, dbDispatch, getWidthOf, DebugOption, persistLocal, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { k, get, Size, Range, Datum, signal, Signals, debug, Predicate, Hierarchy, PersistID } from '../common/GlobalImports';
 import { idHere, idEditing, expanded, idsGrabbed, lineGap, idShowRevealCluster } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
+	selectionRange: Range | null = null;
     bulkRootID: string = '';
 	needsBulkFetch = false;
 	hoverAttributes = '';
@@ -224,17 +225,17 @@ export default class Thing extends Datum {
 		};
 	}
 
-	childrenIDs_oneMatchesIDOf(children: Array<Thing>) {
+	childrenIDs_anyMissingFromIDsOf(children: Array<Thing>) {
 		if (this.children.length != children.length) {
-			return false;
+			return true;
 		}
-		const tIDs = this.children.map(c => c.id);
+		const cIDs = this.children.map(c => c.id);
 		for (const child of children) {
-			if (!tIDs.includes(child.id)) {
-				return false;
+			if (!cIDs.includes(child.id)) {
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
 	order_normalizeRecursive(remoteWrite: boolean) {
