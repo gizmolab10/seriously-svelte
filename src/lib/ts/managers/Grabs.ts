@@ -43,7 +43,7 @@ export default class Grabs {
 	get last_idGrabbed(): string | null {
 		const ids = get(idsGrabbed);
 		if (ids) {
-			return ids.slice(-1)[0];
+			return ids.slice(-1)[0];	// not alter ids
 		}
 		return null;
 	}
@@ -75,12 +75,12 @@ export default class Grabs {
 		idsGrabbed.update((array) => {
 			const index = array.indexOf(id);
 			if (index != -1) {				// only splice array when item is found
-				array.splice(index, 1); // 2nd parameter means remove one item only
+				array.splice(index, 1);		// 2nd parameter means remove one item only
 			}
 			if (array.length == 0 && rootID) {
 				array.push(rootID);
 			}
-			nextGrabbedID = array.slice(-1)[0];
+			nextGrabbedID = array.slice(-1)[0];	// not alter array
 			return array;
 		});
 		const ids = get(idsGrabbed);
@@ -97,7 +97,7 @@ export default class Grabs {
 			if (up) {
 				return grabs[0];
 			} else {
-				return grabs.slice(-1)[0];
+				return grabs.slice(-1)[0];	// not alter array
 			}
 		}
 		return this.hierarchy.root;

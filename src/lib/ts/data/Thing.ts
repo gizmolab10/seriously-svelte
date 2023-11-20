@@ -20,10 +20,6 @@ export default class Thing extends Datum {
 	trait: string;
 	order: number;
 
-	static thing_runtimeCopy(inBulkName: string, from: Thing) {
-		return new Thing(inBulkName, null, from.title, from.color, from.trait, from.order, false);
-	}
-
 	constructor(bulkID: string, id: string | null, title = k.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
 		super(bulkID, id, isRemotelyStored);
 		this.dbType = dbDispatch.db.dbType;
@@ -74,7 +70,7 @@ export default class Thing extends Datum {
 	get isExpanded():			   boolean { return this.isRoot || get(expanded)?.includes(this.parentRelationshipID); }
 	get isVisible():			   boolean { return this.ancestors(Number.MAX_SAFE_INTEGER).includes(this.hierarchy.here!); }
 	get grandparent():				 Thing { return this.firstParent?.firstParent ?? this.hierarchy.root; }
-	get lastChild():				 Thing { return this.children.slice(-1)[0]; }
+	get lastChild():				 Thing { return this.children.slice(-1)[0]; }	// not alter children
 	get firstChild():				 Thing { return this.children[0]; }
 	get firstParent():				 Thing { return this.parents[0]; }
 	get siblings():			  Array<Thing> { return this.firstParent?.children ?? []; }
@@ -150,6 +146,10 @@ export default class Thing extends Datum {
 
 	log(option: DebugOption, message: string) {
 		debug.log(option, message + ' ' + this.description);
+	}
+
+	debugLog(message: string) {
+		this.log(DebugOption.debug, message);
 	}
 
 	revealColor(isReveal: boolean): string {

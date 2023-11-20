@@ -12,9 +12,8 @@
 	let lineRects: Array<LineRect> = [];
 	let prior = new Date().getTime();
 	let children = thing.children;
-	let toggleDraw = false;
 
-	onMount( () => { layoutChildren(); });
+	onMount( () => { thing.debugLog('CHILDREN MOUNT'); layoutChildren(); });
 	onDestroy( () => { signalHandler.disconnect(); });
 	function lineRectAt(index: number): LineRect { return lineRects[index]; }
 	function curveTypeAt(index: number): number { return lineRectAt(index).curveType; }
@@ -27,7 +26,7 @@
 				setTimeout(async () => { // delay until all other handlers for this signal are done TODO: WHY?
 					await orders_normalize_remoteMaybe(thing.children);
 					children = thing.children;
-					// thing.log(DebugOption.debug, 'CHILDREN ' + idThing);
+					// thing.debugLog('CHILDREN SIGNAL' + idThing);
 					// describe(children);
 					layoutChildren();
 					for (const child of children) {
@@ -35,9 +34,6 @@
 							signal(Signals.childrenOf, child.id); // percolate
 						}
 					}
-					setTimeout(async () => {
-						toggleDraw = !toggleDraw;
-					}, 20);
 				}, 10);
 			}
 		}
@@ -45,7 +41,7 @@
 
 	function describe(things: Array<Thing>) {
 		for (const [index, thing] of things.entries()) {
-			thing.log(DebugOption.debug, 'CHILD at ' + index);
+			thing.debugLog('CHILD at ' + index);
 		}
 	}
 
@@ -75,16 +71,16 @@
 		return strings.join(', ');
 	}
 
+	// {thing.debugLog('CHILDREN DRAW')}
+	
 </script>
 
-{#key toggleDraw}
-	{#if children && children.length != 0 && lineRects.length == children.length}
-		{#each children as child, index}
-			<Widget thing={child} origin={lineRectAt(index).extent.offsetBy(mysteryWidgetOffset)}/>
-			<Line thing={child} curveType={curveTypeAt(index)} rect={lineRectAt(index).offsetByX(-120)}/>
-			{#if child.hasChildren && child.isExpanded}
-				<Children thing={child} origin={originForGrandchildren(child, index)}/>
-			{/if}
-		{/each}
-	{/if}
-{/key}
+{#if children && children.length != 0 && lineRects.length == children.length}
+	{#each lineRects as lineRect, index}
+		<Widget thing={children[index]} origin={lineRect.extent.offsetBy(mysteryWidgetOffset)}/>
+		<Line thing={children[index]} curveType={curveTypeAt(index)} rect={lineRect.offsetByX(-120)}/>
+		{#if children[index].hasChildren && children[index].isExpanded}
+			<Children thing={children[index]} origin={originForGrandchildren(children[index], index)}/>
+		{/if}
+	{/each}
+{/if}

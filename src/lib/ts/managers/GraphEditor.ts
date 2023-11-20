@@ -70,7 +70,6 @@ export default class GraphEditor {
 		const h = this.hierarchy;
 		const sibling = await h.thing_remember_runtimeCopy(thing.bulkID, thing);
 		const parent = thing.firstParent ?? h.root;
-		sibling.title = thing.title;
 		this.thing_edit_remoteAddAsChild(sibling, parent);
 	}
 

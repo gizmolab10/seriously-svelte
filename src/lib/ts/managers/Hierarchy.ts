@@ -189,8 +189,8 @@ export default class Hierarchy {
 		return thing;
 	}
 
-	async thing_remember_runtimeCopy(bulkID: string, thing: Thing) {
-		const newThing = Thing.thing_runtimeCopy(bulkID, thing);
+	async thing_remember_runtimeCopy(bulkID: string, from: Thing) {
+		const newThing = new Thing(bulkID, null, from.title, from.color, from.trait, from.order, false);
 		if (newThing.isBulkAlias || newThing.trait == TraitType.roots || newThing.trait == TraitType.root) {
 			newThing.trait = '';
 		}

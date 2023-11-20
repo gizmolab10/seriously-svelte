@@ -56,7 +56,7 @@
 
 	function handleClick(event) {
 		if ($idShowRevealCluster == thing.id) {
-			thing.log(DebugOption.debug, 'CLICK');
+			thing.debugLog('CLICK');
 			$idShowRevealCluster = null;
 		} else {
 			graphEditor.thing_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
@@ -74,7 +74,7 @@
 		clickTimer = setTimeout(() => {
 			clearClicks();
 			if ($idShowRevealCluster == thing.id) {
-				thing.log(DebugOption.debug, 'LONG');
+				thing.debugLog('LONG');
 				$idShowRevealCluster = null;
 			} else {
 				thing.grabOnly()

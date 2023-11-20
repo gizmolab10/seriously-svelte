@@ -19,6 +19,7 @@ import './Extensions';
 
 import Relationship from '../data/Relationship';
 import Hierarchy from '../managers/Hierarchy';
+import Catalist from '../managers/Catalist';
 import Predicate from '../data/Predicate';
 import Layout from '../geometry/Layout';
 import Grabs from '../managers/Grabs';
@@ -29,13 +30,13 @@ import User from '../data/User';
 
 export {
 	k, builds, launch,
-	Direction, svgPath,
+	svgPath, Direction,
 	PersistID, persistLocal,
 	get, onMount, onDestroy,
 	debug, Debug, DebugOption,
 	dbDispatch, DBType, DataKind,
-	Grabs, graphEditor, Hierarchy,
 	signal, Signals, handleSignalOfKind,
+	Grabs, graphEditor, Hierarchy, Catalist,
 	ZIndex, ButtonID, BrowserType, CreationOptions,
 	User, SeriouslyRange, Datum, Thing, Access, Predicate, Relationship,
 	Point, Size, Rect, Layout, LineRect, TraitType, LineCurveType, updateGraphRect,

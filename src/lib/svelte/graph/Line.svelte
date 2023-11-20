@@ -15,6 +15,7 @@
 	////////////////////////////////////////////////////
 
 	$: {
+		thing.debugLog('LINE REACT')
 		if (curveType == LineCurveType.flat) {
 			origin = rect.centerLeft;
 			extent = rect.centerRight;

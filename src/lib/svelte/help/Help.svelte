@@ -1,6 +1,7 @@
 <script>
 	import { popupViewID } from '../../ts/managers/State';
 	import { noop } from '../../ts/common/GlobalImports';
+	import CloseButton from '../kit/CloseButton.svelte'
 	import HelpButtons from './HelpButtons.svelte';
 	export let size = 20;
 	
@@ -15,15 +16,7 @@
 <svelte:document on:keydown={handleKeyDown} />
 <div class="help-modal-overlay">
 	<div class="help-modal-content">
-		<div class="close-button" style='
-			width: {size}px;
-			height: {size}px;
-			font-size: {size - 1}px;;
-			line-height: {size}px;'
-			on:keypress={noop()}
-			on:click={() => { $popupViewID = null; }}>
-				×
-			</div>
+		<CloseButton size={size}/>
 		<h2>Welcome to Seriously</h2>
 		<p>The Seriously <b>graph</b> is essentially a hierarchal menu system, to which you can <b>add</b> new items, and within which you can easily <b>browse</b> and <b>focus</b>.</p>
 		<HelpButtons/>

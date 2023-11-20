@@ -1,6 +1,7 @@
 <script>
 	import { noop, builds } from '../../ts/common/GlobalImports';
 	import { popupViewID } from '../../ts/managers/State';
+	import CloseButton from '../kit/CloseButton.svelte'
 	export let size = 20;
 	let notes = Object.entries(builds.notes).reverse().slice(0, 10)
 	
@@ -15,15 +16,13 @@
 <svelte:document on:keydown={handleKeyDown} />
 <div class='modal-overlay'>
 	<div class='modal-content'>
-		<div class='close-button' style='
-			width: {size}px;
+		<div class='arrows'style='
+			width: {size * 2.5}px;
 			height: {size}px;
 			font-size: {size - 1}px;;
-			line-height: {size}px;'
-			on:keypress={noop()}
-			on:click={() => { $popupViewID = null; }}>
-				×
-			</div>
+			line-height: {size}px;'>
+		</div>
+		<CloseButton size={size}/>
 		<h2>Seriously Build Notes (10 most recent)</h2>
 		<table>
 			<tr>
@@ -62,16 +61,5 @@
 		max-width: 500px;
 		position: relative;
 		font-size: 0.8em;
-	}
-	.close-button {
-		display: inline-block;
-		text-align: center;
-		cursor: pointer;
-		color: #000;
-		position: absolute;
-		border: 1px solid black;
-		border-radius: 50%;
-		top: 10px;
-		right: 10px;
 	}
 </style>

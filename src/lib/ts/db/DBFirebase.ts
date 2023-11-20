@@ -172,7 +172,7 @@ export default class DBFirebase implements DBInterface {
 	snapshots_handleDeferred() {
 		this.deferSnapshots = false;
 		while (this.deferredSnapshots.length > 0) {
-			const deferral = this.deferredSnapshots.slice(-1)[0];
+			const deferral = this.deferredSnapshots.pop();
 			if (deferral) {
 				deferral.snapshot.docChanges().forEach((change) => {	// convert and remember
 					this.remoteHandler(deferral.bulkID, deferral.dataKind, change);
