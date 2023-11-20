@@ -89,11 +89,11 @@
 	<svg width={diameter}
 		height={diameter}
 		viewbox='0 0 {diameter} {diameter}'
-		on:blur={noop()}
-		on:focus={noop()}
-		on:keyup={noop()}
-		on:keydown={noop()}
-		on:keypress={noop()}
+		on:blur={() => { noop(); }}
+		on:focus={() => { noop(); }}
+		on:keyup={() => { noop(); }}
+		on:keydown={() => { noop(); }}
+		on:keypress={() => { noop(); }}
 		on:mouseup={handleMouseUp}
 		on:click={handleSingleClick}
 		on:mouseout={handleMouseOut}

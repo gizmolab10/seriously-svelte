@@ -13,7 +13,7 @@
 
 <div
 	on:click={onClick}
-	on:keypress={noop()}
+	on:keypress={() => { noop(); }}
 	style='
 		position: absolute;
 		left: {left}px;

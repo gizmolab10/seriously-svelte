@@ -81,9 +81,9 @@
 						left: {$graphRect.origin.x}px;
 						width: {$graphRect.size.width}px;
 						height: {$graphRect.size.height}px;'
-					on:keyup={noop()}
-					on:keydown={noop()}
-					on:keypress={noop()}
+					on:keyup={() => { noop(); }}
+					on:keydown={() => { noop(); }}
+					on:keypress={() => { noop(); }}
 					on:click={() => { $popupViewID = null; }}>
 					<Graph/>
 				</div>

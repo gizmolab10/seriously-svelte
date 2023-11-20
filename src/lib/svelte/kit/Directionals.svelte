@@ -1,16 +1,20 @@
 <script>
-    import { popupViewID } from '../../ts/managers/State';
+    import FatTriangleButton from './FatTriangleButton.svelte'
     import { noop } from '../../ts/common/GlobalImports';
+    import { dotSize } from '../../ts/managers/State';
+	const rightPath = svgPath.triangle(Size.square($dotSize), Direction.right);
+	const leftPath = svgPath.triangle(Size.square($dotSize), Direction.left);
 	export let size = 20;
 </script>
 
+<FatTriangleButton
 <div class='close-button' style='
     width: {size}px;
     height: {size}px;
     font-size: {size - 1}px;;
     line-height: {size}px;'
     on:keypress={() => { noop(); }}
-    on:click={() => { $popupViewID = null; }}>
+    on:click={() => { noop(); }}>
     ×
 </div>
 
