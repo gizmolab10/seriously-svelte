@@ -1,10 +1,10 @@
-import { TraitType, dbDispatch, getWidthOf, DebugOption, persistLocal, orders_normalize_remoteMaybe } from '../common/GlobalImports';
-import { k, get, Size, Range, Datum, signal, Signals, debug, Predicate, Hierarchy, PersistID } from '../common/GlobalImports';
+import { dbDispatch, getWidthOf, DebugOption, persistLocal, SeriouslyRange, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { k, get, Size, Datum, signal, Signals, debug, Predicate, Hierarchy, TraitType, PersistID } from '../common/GlobalImports';
 import { idHere, idEditing, expanded, idsGrabbed, lineGap, idShowRevealCluster } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
-	selectionRange: Range | null = null;
+	selectionRange: SeriouslyRange | null = null;
     bulkRootID: string = '';
 	needsBulkFetch = false;
 	hoverAttributes = '';
