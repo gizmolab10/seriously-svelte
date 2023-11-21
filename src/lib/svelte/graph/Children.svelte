@@ -1,5 +1,5 @@
 <script lang=ts>
-	import { noop, Rect, Size, Point, Thing, signal, Signals, Layout, onMount, LineRect, onDestroy } from '../../ts/common/GlobalImports';
+	import { Rect, Size, Point, Thing, signal, Signals, Layout, onMount, LineRect, onDestroy } from '../../ts/common/GlobalImports';
 	import { DebugOption, LineCurveType, orders_normalize_remoteMaybe, handleSignalOfKind } from '../../ts/common/GlobalImports';
 	import { lineGap, lineStretch, dotSize } from '../../ts/managers/State';
 	import Widget from '../widget/Widget.svelte';

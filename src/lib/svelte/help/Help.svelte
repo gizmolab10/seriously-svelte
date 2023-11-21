@@ -1,6 +1,5 @@
 <script>
 	import { popupViewID } from '../../ts/managers/State';
-	import { noop } from '../../ts/common/GlobalImports';
 	import CloseButton from '../kit/CloseButton.svelte'
 	import HelpButtons from './HelpButtons.svelte';
 	export let size = 20;

@@ -1,9 +1,20 @@
 <script>
-	import { noop, builds } from '../../ts/common/GlobalImports';
+	import { builds, onMount } from '../../ts/common/GlobalImports';
 	import { popupViewID } from '../../ts/managers/State';
+	import Directionals from '../kit/Directionals.svelte'
 	import CloseButton from '../kit/CloseButton.svelte'
 	export let size = 20;
-	let notes = Object.entries(builds.notes).reverse().slice(0, 10)
+	const indexedNotes = Object.entries(builds.notes).reverse();
+	let notesOffset = 0;
+	let notes = []
+	
+	onMount(() => { updateNotes(); })
+    function display(goLeft) { return shouldEnable(goLeft) ? 'block' : 'none'; }
+
+	function updateNotes() {
+		const end = Math.min(indexedNotes.length, notesOffset + 10);
+		notes = indexedNotes.slice(notesOffset, end);
+	}
 	
 	function handleKeyDown(event) {
 		const key = event.key.toLowerCase();
@@ -11,17 +22,32 @@
 			case 'escape': $popupViewID = null; break;
 		}
 	}
+
+	function shouldEnable(goLeft) {
+		if (goLeft) {
+			return notesOffset >= 0;
+		} else {
+			return (builds.notes.length - notesOffset) > 1;
+		}
+	}
+
+	function handleHit(goLeft) {
+		let offset = notesOffset + (10 * (goLeft ? -1 : 1));
+		if (offset < 0 || (builds.notes.length - offset) < 1) {
+			return;
+		}
+		notesOffset = offset;
+		updateNotes();
+	}
+
 </script>
 
 <svelte:document on:keydown={handleKeyDown} />
 <div class='modal-overlay'>
 	<div class='modal-content'>
-		<div class='arrows'style='
-			width: {size * 2.5}px;
-			height: {size}px;
-			font-size: {size - 1}px;;
-			line-height: {size}px;'>
-		</div>
+		{#key notes}
+			<Directionals hit={handleHit} display={display}/>
+		{/key}
 		<CloseButton size={size}/>
 		<h2>Seriously Build Notes (10 most recent)</h2>
 		<table>
@@ -43,23 +69,23 @@
 
 <style>
 	.modal-overlay {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
 		background-color: rgba(0, 0, 0, 0.1);
-		display: flex;
 		justify-content: center;
 		align-items: center;
+		position: fixed;
+		display: flex;
+		height: 100%;
+		width: 100%;
+		left: 0;
+		top: 0;
 	}
 	.modal-content {
-		background-color: #fff;
-		padding: 20px;
-		border-radius: 4px;
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-		max-width: 500px;
+		background-color: #fff;
+		border-radius: 4px;
 		position: relative;
 		font-size: 0.8em;
+		padding: 20px;
+		width: 400px;
 	}
 </style>

@@ -1,5 +1,5 @@
 <script>
-	import { k, get, noop, Rect, Point, Thing, launch, DBType, ZIndex, onMount, PersistID, dbDispatch } from '../../ts/common/GlobalImports'
+	import { k, get, Rect, Point, Thing, launch, DBType, ZIndex, onMount, PersistID, dbDispatch } from '../../ts/common/GlobalImports'
 	import { dbType, isBusy, idHere, build, graphRect, popupViewID, showDetails, thingsArrived } from '../../ts/managers/State';
 	import { ButtonID, Hierarchy, persistLocal, updateGraphRect } from '../../ts/common/GlobalImports'
 	import CircularButton from '../kit/CircularButton.svelte';
@@ -17,6 +17,7 @@
 	function handleHelpClick() { $popupViewID = ($popupViewID == ButtonID.help) ? null : ButtonID.help; }
 	window.addEventListener('resize', (event) => { updateGraphRect(); toggleDraw = !toggleDraw; });
 	$: { here = dbDispatch.db.hierarchy.thing_getForID($idHere); }
+	function ignore(event) {}
 	
 	onMount(async () => {
 		launch.setup();
@@ -81,9 +82,9 @@
 						left: {$graphRect.origin.x}px;
 						width: {$graphRect.size.width}px;
 						height: {$graphRect.size.height}px;'
-					on:keyup={() => { noop(); }}
-					on:keydown={() => { noop(); }}
-					on:keypress={() => { noop(); }}
+					on:keyup={ignore}
+					on:keydown={ignore}
+					on:keypress={ignore}
 					on:click={() => { $popupViewID = null; }}>
 					<Graph/>
 				</div>

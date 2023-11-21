@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, noop, Thing, signal, Signals, ZIndex, onMount, onDestroy } from '../../ts/common/GlobalImports';
+	import { k, Thing, signal, Signals, ZIndex, onMount, onDestroy } from '../../ts/common/GlobalImports';
 	import { idEditing, thingFontSize, thingFontFamily, idEditingStopped } from '../../ts/managers/State';
 	import { dbDispatch, SeriouslyRange, graphEditor, DebugOption } from '../../ts/common/GlobalImports';
 	import Widget from './Widget.svelte';

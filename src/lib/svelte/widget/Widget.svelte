@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, noop, Thing, Point, ZIndex, onMount, Signals, onDestroy, handleSignalOfKind } from '../../ts/common/GlobalImports';
+	import { k, Thing, Point, ZIndex, onMount, Signals, onDestroy, handleSignalOfKind } from '../../ts/common/GlobalImports';
 	import { lineGap, dotSize, idEditing, idsGrabbed, idShowRevealCluster} from '../../ts/managers/State';
 	import RevealCluster from './RevealCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';

@@ -1,6 +1,6 @@
 <script>
 	import { Direction, BrowserType, getBrowserType, svgPath, handleSignalOfKind } from "../../ts/common/GlobalImports";
-	import { k, noop, Thing, Point, ZIndex, Signals, onMount, graphEditor, dbDispatch } from "../../ts/common/GlobalImports";
+	import { k, Thing, Point, ZIndex, Signals, onMount, graphEditor, dbDispatch } from "../../ts/common/GlobalImports";
 	import { dotSize, idsGrabbed, idShowRevealCluster } from '../../ts/managers/State';
 	export let thing;
 	let diameter = $dotSize;
@@ -18,6 +18,7 @@
 	function handleMouseOut(event) { updateColors(false); }
 	function handleMouseOver(event) { updateColors(true); }
 	function handleMouseUp() { clearTimeout(clickTimer); }
+	function ignore(event) {}
 	
 	onMount( () => {
 		updateColors(false);		
@@ -89,11 +90,11 @@
 	<svg width={diameter}
 		height={diameter}
 		viewbox='0 0 {diameter} {diameter}'
-		on:blur={() => { noop(); }}
-		on:focus={() => { noop(); }}
-		on:keyup={() => { noop(); }}
-		on:keydown={() => { noop(); }}
-		on:keypress={() => { noop(); }}
+		on:blur={ignore}
+		on:focus={ignore}
+		on:keyup={ignore}
+		on:keydown={ignore}
+		on:keypress={ignore}
 		on:mouseup={handleMouseUp}
 		on:click={handleSingleClick}
 		on:mouseout={handleMouseOut}

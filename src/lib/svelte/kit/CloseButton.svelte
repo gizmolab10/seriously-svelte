@@ -1,7 +1,7 @@
 <script>
     import { popupViewID } from '../../ts/managers/State';
-    import { noop } from '../../ts/common/GlobalImports';
 	export let size = 20;
+	function ignore(event) {}
 </script>
 
 <div class='close-button' style='
@@ -9,7 +9,7 @@
     height: {size}px;
     font-size: {size - 1}px;;
     line-height: {size}px;'
-    on:keypress={() => { noop(); }}
+    on:keypress={ignore}
     on:click={() => { $popupViewID = null; }}>
     ×
 </div>

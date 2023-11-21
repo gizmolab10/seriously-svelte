@@ -1,5 +1,5 @@
 <script>
-	import { k, noop, Size, Thing, Point, ZIndex, Signals, onMount, onDestroy, dbDispatch } from "../../ts/common/GlobalImports";
+	import { k, Size, Thing, Point, ZIndex, Signals, onMount, onDestroy, dbDispatch } from "../../ts/common/GlobalImports";
 	import { Direction, graphEditor, DebugOption, svgPath, handleSignalOfKind } from "../../ts/common/GlobalImports";
 	import { dotSize, idShowRevealCluster } from '../../ts/managers/State';
 	export let thing;
@@ -12,6 +12,7 @@
 	let button = null;
 	let clickTimer;
 	
+	function ignore(event) {}
 	onMount( () => { updateState(false); });
 	onDestroy( () => { signalHandler.disconnect(); });
 	function handleMouseUp() { clearTimeout(clickTimer); }
@@ -105,11 +106,11 @@
 	<svg width={diameter}
 		height={diameter}
 		viewbox='0 0 {diameter} {diameter}'
-		on:blur={() => { noop(); }}
-		on:focus={() => { noop(); }}
-		on:keyup={() => { noop(); }}
-		on:keydown={() => { noop(); }}
-		on:keypress={() => { noop(); }}
+		on:blur={ignore}
+		on:focus={ignore}
+		on:keyup={ignore}
+		on:keydown={ignore}
+		on:keypress={ignore}
 		on:mouseup={handleMouseUp}
 		on:click={handleSingleClick}
 		on:mouseout={handleMouseOut}

@@ -2,8 +2,9 @@
 	import { Point, Direction, dbDispatch, graphEditor } from "../../ts/common/GlobalImports";
 	import { dotSize } from '../../ts/managers/State';
 	import TriangleDot from './TriangleDot.svelte'
-	export let origin = new Point($dotSize, 20);
+	const size = 20;
 	export let here;
+	export let origin = new Point($dotSize, 20);
 
 	function newFillColor(isFilled) { return here.revealColor(isFilled); }
 
@@ -21,5 +22,7 @@
 	direction={Direction.left}
 	strokeColor={here.color}
 	onClick={onClick}
+	display='block'
 	origin={origin}
+    size={size}
 />

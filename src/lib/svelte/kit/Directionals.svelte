@@ -1,33 +1,40 @@
 <script>
-    import FatTriangleButton from './FatTriangleButton.svelte'
-    import { noop } from '../../ts/common/GlobalImports';
-    import { dotSize } from '../../ts/managers/State';
-	const rightPath = svgPath.triangle(Size.square($dotSize), Direction.right);
-	const leftPath = svgPath.triangle(Size.square($dotSize), Direction.left);
-	export let size = 20;
+    import { k, Point, Direction } from '../../ts/common/GlobalImports';
+    import TriangleDot from './TriangleDot.svelte'
+    const origin = new Point(12, 10);
+    const size = 24;
+    let toggle = false;
+    export let display;
+    export let hit;
+
+	function newFillColor(isFilled) { return isFilled ? 'black' : k.backgroundColor; }
+
+	function onClick(event) {
+        const pointsLeft = event.clientX > 234;
+        hit(pointsLeft);
+        toggle = !toggle;
+	}
+
 </script>
 
-<FatTriangleButton
-<div class='close-button' style='
-    width: {size}px;
-    height: {size}px;
-    font-size: {size - 1}px;;
-    line-height: {size}px;'
-    on:keypress={() => { noop(); }}
-    on:click={() => { noop(); }}>
-    ×
-</div>
+{#key toggle}
+    <TriangleDot
+        newFillColor={newFillColor}
+        direction={Direction.left}
+        display={display(true)}
+        strokeColor={'black'}
+        onClick={onClick}
+        origin={origin}
+        size={size}
+    />
 
-<style>
-	.close-button {
-		display: inline-block;
-		text-align: center;
-		cursor: pointer;
-		color: #000;
-		position: absolute;
-		border: 1px solid black;
-		border-radius: 50%;
-		top: 10px;
-		right: 10px;
-	}
-</style>
+    <TriangleDot
+        origin={origin.offsetByX(size)}
+        newFillColor={newFillColor}
+        direction={Direction.right}
+        display={display(false)}
+        strokeColor={'black'}
+        onClick={onClick}
+        size={size}
+    />
+{/key}
