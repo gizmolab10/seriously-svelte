@@ -70,7 +70,6 @@ export default class Grabs {
 	}
 
 	ungrab_ID(id: string) {
-		let nextGrabbedID: (string | null) = null;
 		const rootID = this.hierarchy.idRoot;
 		idsGrabbed.update((array) => {
 			const index = array.indexOf(id);
@@ -80,7 +79,6 @@ export default class Grabs {
 			if (array.length == 0 && rootID) {
 				array.push(rootID);
 			}
-			nextGrabbedID = array.slice(-1)[0];	// not alter array
 			return array;
 		});
 		const ids = get(idsGrabbed);

@@ -11,6 +11,7 @@ import { debug, Debug, DebugOption } from './Debug'
 import { dbDispatch } from '../db/DBDispatch';
 import { onMount, onDestroy } from 'svelte';
 import { launch } from '../managers/Launch';
+import { embed } from '../managers/Embed';
 import { SeriouslyRange } from './Types';
 import { get } from 'svelte/store';
 import { builds } from './Builds';
@@ -19,7 +20,6 @@ import './Extensions';
 
 import Relationship from '../data/Relationship';
 import Hierarchy from '../managers/Hierarchy';
-import Catalist from '../managers/Catalist';
 import Predicate from '../data/Predicate';
 import Layout from '../geometry/Layout';
 import Grabs from '../managers/Grabs';
@@ -36,7 +36,7 @@ export {
 	debug, Debug, DebugOption,
 	dbDispatch, DBType, DataKind,
 	signal, Signals, handleSignalOfKind,
-	Grabs, graphEditor, Hierarchy, Catalist,
+	Grabs, graphEditor, Hierarchy, embed,
 	ZIndex, ButtonID, BrowserType, CreationOptions,
 	User, SeriouslyRange, Datum, Thing, Access, Predicate, Relationship,
 	Point, Size, Rect, Layout, LineRect, TraitType, LineCurveType, updateGraphRect,

@@ -9,6 +9,7 @@ export enum PersistID {
 	dotSize		= 'dotSize',
 	grabbed		= 'grabbed',
 	details		= 'details',
+	select		= 'select',
 	origin		= 'origin',
 	here		= 'here',
 	font		= 'font',
