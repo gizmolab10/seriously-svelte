@@ -61,14 +61,14 @@ export default class GraphEditor {
 	//////////////////
 
 	async thing_edit_remoteAddChildTo(parent: Thing) {
-		const child = await this.hierarchy.thing_remember_runtimeCopy(parent.bulkID, parent);
+		const child = await this.hierarchy.thing_remember_runtimeCopy(parent.baseID, parent);
 		parent.expand();
 		await this.thing_edit_remoteAddAsChild(child, parent);
 	}
 
 	async thing_edit_remoteDuplicate(thing: Thing) {
 		const h = this.hierarchy;
-		const sibling = await h.thing_remember_runtimeCopy(thing.bulkID, thing);
+		const sibling = await h.thing_remember_runtimeCopy(thing.baseID, thing);
 		const parent = thing.firstParent ?? h.root;
 		this.thing_edit_remoteAddAsChild(sibling, parent);
 	}
@@ -76,7 +76,7 @@ export default class GraphEditor {
 	async thing_edit_remoteAddLine(thing: Thing, below: boolean = true) {
 		const parent = thing.firstParent;
 		const order = thing.order + (below ? 0.5 : -0.5);
-		const child = this.hierarchy.thing_runtimeCreate(thing.bulkID, null, k.lineTitle, parent.color, '', order, false);
+		const child = this.hierarchy.thing_runtimeCreate(thing.baseID, null, k.lineTitle, parent.color, '', order, false);
 		await this.thing_edit_remoteAddAsChild(child, parent, false);
 	}
 

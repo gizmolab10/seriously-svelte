@@ -7,14 +7,12 @@ import { dbLocal } from './DBLocal';
 
 export default class DBDispatch {
 	db: DBInterface;
-	bulkID: string;
 	eraseDB = false;
 	updateDBForType(type: string) { this.db = this.dbForType(type); }
 	nextDB(forward: boolean) { this.changeDBTo(this.getNextDB(forward)); }
 
 	constructor() {
 		this.db = dbFirebase;
-		this.bulkID = 'Public';
 		dbType.subscribe((type: string) => {
 			if (type) {
 				idHere.set(null);
@@ -29,9 +27,9 @@ export default class DBDispatch {
 		if (params.get('data') === 'erase') {
 			this.eraseDB = true;
 		}
-		this.bulkID = params.get('name') ?? params.get('dbid') ?? 'Public';
 		const type = params.get('db') ?? persistLocal.readFromKey(PersistID.db) ?? DBType.firebase;
-		dbType.set(type);	// invokes DB update (line 22 above), which needs bulkID already set (must be above)
+		this.dbForType(type).applyQueryStrings(params)
+		dbType.set(type);	// invokes DB update (line 22 above), which needs baseID already set (must be above)
 	}
 
 	dbForType(type: string): DBInterface {

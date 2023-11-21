@@ -14,8 +14,8 @@ class Launch {
 
 	get title(): string {
 		const host = isServerLocal() ? 'local' : 'remote';
-		const bulkID = dbDispatch.bulkID;
-		const name = bulkID ? (bulkID! + ', ') : '';
+		const baseID = dbDispatch.db.baseID;
+		const name = baseID ? (baseID! + ', ') : '';
 		return 'Seriously (' + host + ', ' + getBrowserType() + ', ' + name + 'α)'
 	}
 

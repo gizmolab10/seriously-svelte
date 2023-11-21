@@ -17,15 +17,17 @@ export enum DataKind {
 
 export default interface DBInterface {
 	dbType: string;
+	baseID: string;
 	hasData: boolean;
 	hierarchy: Hierarchy;
 	loadTime: string | null;
 	fetch_all(): Promise<void>;
 	setHasData(flag: boolean): void;
-	fetch_allFrom(bulkID: string): Promise<void>;
-	thing_remember_remoteCreate(thing: Thing): Promise<void>;
+	fetch_allFrom(baseID: string): Promise<void>;
 	thing_remoteUpdate(thing: Thing): Promise<void>;
 	thing_remoteDelete(thing: Thing): Promise<void>;
+	applyQueryStrings(params: URLSearchParams): void;
+	thing_remember_remoteCreate(thing: Thing): Promise<void>;
 	relationship_remoteUpdate(relationship: Relationship): Promise<void>;
 	relationship_remoteDelete(relationship: Relationship): Promise<void>;
 	relationship_remember_remoteCreate(relationship: Relationship | null): Promise<void>;

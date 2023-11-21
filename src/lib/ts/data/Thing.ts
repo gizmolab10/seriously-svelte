@@ -20,8 +20,8 @@ export default class Thing extends Datum {
 	trait: string;
 	order: number;
 
-	constructor(bulkID: string, id: string | null, title = k.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
-		super(bulkID, id, isRemotelyStored);
+	constructor(baseID: string, id: string | null, title = k.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
+		super(baseID, id, isRemotelyStored);
 		this.dbType = dbDispatch.db.dbType;
 		this.title = title;
 		this.color = color;
@@ -281,11 +281,11 @@ export default class Thing extends Datum {
 	}
 
 	thing_isInDifferentBulkThan(other: Thing) {
-		return this.bulkID != other.bulkID || (other.isBulkAlias && !this.isBulkAlias && this.bulkID != other.title);
+		return this.baseID != other.baseID || (other.isBulkAlias && !this.isBulkAlias && this.baseID != other.title);
 	}
 
-	async normalize_bulkFetchAll(bulkID: string) {
-		await dbDispatch.db.fetch_allFrom(bulkID)
+	async normalize_bulkFetchAll(baseID: string) {
+		await dbDispatch.db.fetch_allFrom(baseID)
 		await dbDispatch.db.hierarchy?.relationships_remoteCreateMissing(this);
 		await dbDispatch.db.hierarchy?.relationships_removeHavingNullReferences();
 		this.order_normalizeRecursive(true);

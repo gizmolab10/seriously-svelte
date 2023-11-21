@@ -21,6 +21,7 @@ export default class DBFirebase implements DBInterface {
 
 	loadTime = null;
 	hasData = false;
+	baseID = 'Public';
 	bulksName = 'Bulks';
 	deferSnapshots = false;
 	dbType = DBType.firebase;
@@ -43,13 +44,17 @@ export default class DBFirebase implements DBInterface {
 		return this._hierarchy!;
 	}
 
+	applyQueryStrings(params: URLSearchParams) {
+		this.baseID = params.get('name') ?? params.get('dbid') ?? 'Public';
+	}
+
 	//////////////////////////
 	//	 	   FETCH		//
 	//////////////////////////
 
 	async fetch_all() {
 		await this.recordLogin();
-		const name = dbDispatch.bulkID;
+		const name = this.baseID;
 		if (dbDispatch.eraseDB) {
 			await this.document_remoteDelete(name);
 		}
@@ -59,23 +64,23 @@ export default class DBFirebase implements DBInterface {
 		await this.fetch_bulkAliases();
 	}
 
-	async fetch_allFrom(bulkID: string) {
-		await this.fetch_documentsOf(DataKind.things, bulkID);
-		await this.fetch_documentsOf(DataKind.relationships, bulkID);
+	async fetch_allFrom(baseID: string) {
+		await this.fetch_documentsOf(DataKind.things, baseID);
+		await this.fetch_documentsOf(DataKind.relationships, baseID);
 	}
 		
-	async fetch_documentsOf(dataKind: DataKind, bulkID: string | null = null) {
+	async fetch_documentsOf(dataKind: DataKind, baseID: string | null = null) {
 		try {
-			const collectionRef = !bulkID ? collection(this.db, dataKind) : collection(this.db, this.bulksName, bulkID, dataKind);
+			const collectionRef = !baseID ? collection(this.db, dataKind) : collection(this.db, this.bulksName, baseID, dataKind);
 			let querySnapshot = await getDocs(collectionRef);
-			const bulk = this.get_bulk_for(bulkID);
+			const bulk = this.get_bulk_for(baseID);
 
-			if (bulkID) {
-				this.setup_remoteHandler(bulkID, dataKind, collectionRef);
+			if (baseID) {
+				this.setup_remoteHandler(baseID, dataKind, collectionRef);
 			}
 
-			if (querySnapshot.empty && bulkID) {
-				await this.documents_firstTime_remoteCreate(dataKind, bulkID, collectionRef);
+			if (querySnapshot.empty && baseID) {
+				await this.documents_firstTime_remoteCreate(dataKind, baseID, collectionRef);
 				querySnapshot = await getDocs(collectionRef);
 			}
 			
@@ -93,11 +98,11 @@ export default class DBFirebase implements DBInterface {
 			}
 
 			const docs = querySnapshot.docs;
-			debug.log(DebugOption.remote, 'READ ' + docs.length + ' from ' + bulkID + ':' + dataKind);
+			debug.log(DebugOption.remote, 'READ ' + docs.length + ' from ' + baseID + ':' + dataKind);
 			for (const docSnapshot of docs) {
 				const id = docSnapshot.id;
 				const data = docSnapshot.data();
-				await this.document_remember_validated(dataKind, id, data, bulkID ?? dbDispatch.bulkID);
+				await this.document_remember_validated(dataKind, id, data, baseID ?? this.baseID);
 			}
 		} catch (error) {
 			this.reportError(error);
@@ -110,20 +115,20 @@ export default class DBFirebase implements DBInterface {
 
 	setup_bulks() {
 		if (!this.bulks) {
-			this.bulks = [new Bulk(dbDispatch.bulkID)];
+			this.bulks = [new Bulk(this.baseID)];
 		}
 	}
 
-	get_bulk_for(bulkID: string | null) {
-		if (bulkID) {
+	get_bulk_for(baseID: string | null) {
+		if (baseID) {
 			const bulks = this.bulks;
 			if (bulks) {
 				for (const bulk of bulks) {
-					if (bulk.bulkID == bulkID) {
+					if (bulk.baseID == baseID) {
 						return bulk;
 					}
 				}
-				const newBulk = new Bulk(bulkID);
+				const newBulk = new Bulk(baseID);
 				this.bulks!.push(newBulk);
 				return newBulk;
 			}
@@ -133,18 +138,18 @@ export default class DBFirebase implements DBInterface {
 	
 	async fetch_bulkAliases() {
 		const root = this.hierarchy.root;
-		if (dbDispatch.bulkID == k.adminBulkName && root) {
+		if (this.baseID == k.adminBulkName && root) {
 			const roots = await this.hierarchy.thing_getRoots();
 			if (roots) {
 				try {		// add bulks to roots thing
 					const bulk = collection(this.db, this.bulksName);		// fetch all bulks (documents)
 					let bulkSnapshot = await getDocs(bulk);
 					for (const bulkDoc of bulkSnapshot.docs) {
-						const bulkID = bulkDoc.id;
-						if (bulkID != dbDispatch.bulkID) {
-							let thing = this.hierarchy.thing_bulkAlias_getForTitle(bulkID)
+						const baseID = bulkDoc.id;
+						if (baseID != this.baseID) {
+							let thing = this.hierarchy.thing_bulkAlias_getForTitle(baseID)
 							if (!thing) {													// create a thing for each bulk
-								thing = this.hierarchy.thing_runtimeCreate(dbDispatch.bulkID, null, bulkID, 'red', TraitType.bulk, 0, false);
+								thing = this.hierarchy.thing_runtimeCreate(this.baseID, null, baseID, 'red', TraitType.bulk, 0, false);
 								await this.hierarchy.thing_remember_remoteAddAsChild(thing, roots);
 							} else if (thing.isExpanded) {
 								thing.redraw_bulkFetchAll_runtimeBrowseRight(false);
@@ -164,8 +169,8 @@ export default class DBFirebase implements DBInterface {
 	//	 		REMOTE SNAPSHOTS		//
 	//////////////////////////////////////
 	
-	snapshot_deferOne(bulkID: string, dataKind: DataKind, snapshot: QuerySnapshot) {
-		const deferral = new SnapshotDeferal(bulkID, dataKind, snapshot);
+	snapshot_deferOne(baseID: string, dataKind: DataKind, snapshot: QuerySnapshot) {
+		const deferral = new SnapshotDeferal(baseID, dataKind, snapshot);
 		this.deferredSnapshots.push(deferral);
 	}
 
@@ -175,27 +180,27 @@ export default class DBFirebase implements DBInterface {
 			const deferral = this.deferredSnapshots.pop();
 			if (deferral) {
 				deferral.snapshot.docChanges().forEach((change) => {	// convert and remember
-					this.remoteHandler(deferral.bulkID, deferral.dataKind, change);
+					this.remoteHandler(deferral.baseID, deferral.dataKind, change);
 				});
 			}
 		}
 	}
 
-	setup_remoteHandler(bulkID: string, dataKind: DataKind, collection: CollectionReference) {
+	setup_remoteHandler(baseID: string, dataKind: DataKind, collection: CollectionReference) {
 		onSnapshot(collection, (snapshot) => {
 			if (this.hierarchy.isConstructed) {		// ignore snapshots caused by data written to server
 				if (this.deferSnapshots) {
-					this.snapshot_deferOne(bulkID, dataKind, snapshot);
+					this.snapshot_deferOne(baseID, dataKind, snapshot);
 				} else {
 					snapshot.docChanges().forEach((change) => {	// convert and remember
-						this.remoteHandler(bulkID, dataKind, change);
+						this.remoteHandler(baseID, dataKind, change);
 					});
 				}
 			}
 		}
 	)};
 
-	async remoteHandler(bulkID: string, dataKind: DataKind, change: DocumentChange) {
+	async remoteHandler(baseID: string, dataKind: DataKind, change: DocumentChange) {
 		const doc = change.doc;
 		const data = doc.data();
 		if (DBFirebase.data_isValidOfKind(dataKind, data)) {
@@ -218,7 +223,7 @@ export default class DBFirebase implements DBInterface {
 								if (relationship || remote.isEqualTo(this.addedRelationship)) {
 									return;
 								}
-								h.relationship_remember_runtimeCreateUnique(bulkID, id, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationOptions.isFromRemote);
+								h.relationship_remember_runtimeCreateUnique(baseID, id, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationOptions.isFromRemote);
 								break;
 							default:
 								if (!relationship) {
@@ -251,7 +256,7 @@ export default class DBFirebase implements DBInterface {
 								if (thing || remote.isEqualTo(this.addedThing) || remote.trait == TraitType.root) {
 									return;			// do not invoke signal because nothing has changed
 								}
-								thing = h.thing_remember_runtimeCreate(bulkID, id, remote.title, remote.color, remote.trait, 0, true);
+								thing = h.thing_remember_runtimeCreate(baseID, id, remote.title, remote.color, remote.trait, 0, true);
 								orders_normalize_remoteMaybe(thing.siblings);
 								break;
 							case 'removed':
@@ -271,7 +276,7 @@ export default class DBFirebase implements DBInterface {
 			} catch (error) {
 				this.reportError(error);
 			}
-			debug.log(DebugOption.remote, 'HANDLE ' + bulkID + ':' + dataKind + ' ' + change.type);
+			debug.log(DebugOption.remote, 'HANDLE ' + baseID + ':' + dataKind + ' ' + change.type);
 		}
 	}
 
@@ -279,8 +284,8 @@ export default class DBFirebase implements DBInterface {
 	//	    DOCUMENTS & SUBCOLLECTIONS		//
 	//////////////////////////////////////////
 
-	async documents_firstTime_remoteCreate(dataKind: DataKind, bulkID: string, collectionRef: CollectionReference) {
-		const docRef = doc(this.db, this.bulksName, bulkID);
+	async documents_firstTime_remoteCreate(dataKind: DataKind, baseID: string, collectionRef: CollectionReference) {
+		const docRef = doc(this.db, this.bulksName, baseID);
 		await setDoc(docRef, { isReal: true }, { merge: true });
 		await updateDoc(docRef, { isReal: deleteField() });
 		if (dataKind == DataKind.things) {
@@ -288,13 +293,13 @@ export default class DBFirebase implements DBInterface {
 		}
 	}
 
-	async document_remember_validated(dataKind: DataKind, id: string, data: DocumentData, bulkID: string) {
+	async document_remember_validated(dataKind: DataKind, id: string, data: DocumentData, baseID: string) {
 		if (DBFirebase.data_isValidOfKind(dataKind, data)) {
 			const h = this.hierarchy;
 			switch (dataKind) {
-				case DataKind.things:		 h.thing_remember_runtimeCreate(bulkID, id, data.title, data.color, data.trait, 0, true); break;
+				case DataKind.things:		 h.thing_remember_runtimeCreate(baseID, id, data.title, data.color, data.trait, 0, true); break;
 				case DataKind.predicates:	 h.predicate_remember_runtimeCreate(id, data.kind); break;
-				case DataKind.relationships: h.relationship_remember_runtimeCreateUnique(bulkID, id, data.predicate.id, data.from.id, data.to.id, data.order, CreationOptions.isFromRemote); break;
+				case DataKind.relationships: h.relationship_remember_runtimeCreateUnique(baseID, id, data.predicate.id, data.from.id, data.to.id, data.order, CreationOptions.isFromRemote); break;
 			}
 		}
 	}
@@ -328,7 +333,7 @@ export default class DBFirebase implements DBInterface {
 	//////////////////////////////
 
 	async thing_remember_remoteCreate(thing: Thing) {
-		const thingsCollection = this.get_bulk_for(thing.bulkID)?.thingsCollection;
+		const thingsCollection = this.get_bulk_for(thing.baseID)?.thingsCollection;
 		if (thingsCollection) {
 			const remoteThing = new RemoteThing(thing);
 			const jsThing = { ...remoteThing };
@@ -351,8 +356,8 @@ export default class DBFirebase implements DBInterface {
 
 	async things_remember_firstTime_remoteCreateIn(collectionRef: CollectionReference) {
 		const fields = ['title', 'color', 'trait'];
-		const root = new Thing(dbDispatch.bulkID, null, dbDispatch.bulkID, 'coral', TraitType.root, 0, true);
-		const thing = new Thing(dbDispatch.bulkID, null, 'Click this text to edit it', 'purple', '', 0, true);
+		const root = new Thing(this.baseID, null, this.baseID, 'coral', TraitType.root, 0, true);
+		const thing = new Thing(this.baseID, null, 'Click this text to edit it', 'purple', '', 0, true);
 		this.hierarchy.root = root;
 		const thingRef = await addDoc(collectionRef, convertToObject(thing, fields));	// N.B. these will be fetched, shortly
 		const rootRef = await addDoc(collectionRef, convertToObject(root, fields));		// no need to remember now
@@ -363,7 +368,7 @@ export default class DBFirebase implements DBInterface {
 	}
 
 	async thing_remoteUpdate(thing: Thing) {
-		const thingsCollection = this.get_bulk_for(thing.bulkID)?.thingsCollection;
+		const thingsCollection = this.get_bulk_for(thing.baseID)?.thingsCollection;
 		if (thingsCollection) {
 			const ref = doc(thingsCollection, thing.id) as DocumentReference<Thing>;
 			const remoteThing = new RemoteThing(thing);
@@ -378,7 +383,7 @@ export default class DBFirebase implements DBInterface {
 	}
 
 	async thing_remoteDelete(thing: Thing) {
-		const thingsCollection = this.get_bulk_for(thing.bulkID)?.thingsCollection;
+		const thingsCollection = this.get_bulk_for(thing.baseID)?.thingsCollection;
 		if (thingsCollection) {
 			try {
 				const ref = doc(thingsCollection, thing.id) as DocumentReference<Thing>;
@@ -405,7 +410,7 @@ export default class DBFirebase implements DBInterface {
 	//////////////////////////////////////
 
 	async relationship_remember_remoteCreate(relationship: Relationship) {
-		const relationshipsCollection = this.get_bulk_for(relationship.bulkID)?.relationshipsCollection;
+		const relationshipsCollection = this.get_bulk_for(relationship.baseID)?.relationshipsCollection;
 		if (relationshipsCollection) {
 			const remoteRelationship = new RemoteRelationship(relationship);
 			const jsRelationship = { ...remoteRelationship };
@@ -427,7 +432,7 @@ export default class DBFirebase implements DBInterface {
 	}
 
 	async relationship_remoteUpdate(relationship: Relationship) {
-		const relationshipsCollection = this.get_bulk_for(relationship.bulkID)?.relationshipsCollection;
+		const relationshipsCollection = this.get_bulk_for(relationship.baseID)?.relationshipsCollection;
 		if (relationshipsCollection) {
 			try {
 				const ref = doc(relationshipsCollection, relationship.id) as DocumentReference<RemoteRelationship>;
@@ -442,7 +447,7 @@ export default class DBFirebase implements DBInterface {
 	}
 
 	async relationship_remoteDelete(relationship: Relationship) {
-		const relationshipsCollection = this.get_bulk_for(relationship.bulkID)?.relationshipsCollection;
+		const relationshipsCollection = this.get_bulk_for(relationship.baseID)?.relationshipsCollection;
 		if (relationshipsCollection) {
 			try {
 				const ref = doc(relationshipsCollection, relationship.id) as DocumentReference<RemoteRelationship>;
@@ -539,21 +544,21 @@ export default class DBFirebase implements DBInterface {
 export const dbFirebase = new DBFirebase();
 
 class Bulk {
-	bulkID: string = '';
+	baseID: string = '';
 	thingsCollection: CollectionReference | null = null;
 	relationshipsCollection: CollectionReference | null = null;
-	constructor(bulkID: string) {
-		this.bulkID = bulkID;
+	constructor(baseID: string) {
+		this.baseID = baseID;
 	}
 }
 
 class SnapshotDeferal {
-	bulkID: string;
+	baseID: string;
 	dataKind: DataKind;
 	snapshot: QuerySnapshot;
 
-	constructor(bulkID: string, dataKind: DataKind, snapshot: QuerySnapshot) {
-		this.bulkID = bulkID;
+	constructor(baseID: string, dataKind: DataKind, snapshot: QuerySnapshot) {
+		this.baseID = baseID;
 		this.dataKind = dataKind;
 		this.snapshot = snapshot;
 	}
@@ -600,7 +605,7 @@ interface RemoteRelationship {
 class RemoteRelationship implements RemoteRelationship {
 
 	constructor(data: DocumentData | Relationship) {
-		const things = dbFirebase.get_bulk_for(dbDispatch.bulkID)?.thingsCollection;
+		const things = dbFirebase.get_bulk_for(dbFirebase.baseID)?.thingsCollection;
 		const predicates = dbFirebase.predicatesCollection;
 		this.order = data.order;
 		if (things && predicates) {
