@@ -38,8 +38,8 @@ export default class Thing extends Datum {
 			}
 		});
 
-		idsGrabbed.subscribe((idsGrab: string[] | undefined) => {
-			const isGrabbed = (idsGrab != undefined) && idsGrab.includes(this.id);
+		idsGrabbed.subscribe((idsGrab: string[]) => {
+			const isGrabbed = idsGrab.includes(this.id;
 			if (this.isGrabbed != isGrabbed) {
 				this.isGrabbed  = isGrabbed;
 				this.updateColorAttributes();

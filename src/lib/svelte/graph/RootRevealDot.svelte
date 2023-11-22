@@ -1,7 +1,7 @@
 <script>
 	import { Point, Direction, dbDispatch, graphEditor } from "../../ts/common/GlobalImports";
+	import TriangleDot from '../kit/TriangleDot.svelte'
 	import { dotSize } from '../../ts/managers/State';
-	import TriangleDot from './TriangleDot.svelte'
 	const size = 20;
 	export let here;
 	export let origin = new Point($dotSize, 20);

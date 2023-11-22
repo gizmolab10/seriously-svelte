@@ -7,6 +7,7 @@ export default class Constants {
 	public longClickThreshold: number;
 	public doubleClickThreshold: number;
 	public leftJustifyGraph: boolean;
+	public isEmbedded: boolean;
 	public allowGraphEditing: boolean;
 	public allowTitleEditing: boolean;
 	public allowHorizontalScrolling: boolean;
@@ -26,6 +27,7 @@ export default class Constants {
 		this.allowHorizontalScrolling = true;
 		this.allowGraphEditing = true;
 		this.allowTitleEditing = true;
+		this.isEmbedded = false;
 		this.doubleClickThreshold = 100;
 		this.longClickThreshold = 500;
 		this.halfIncrement = 0.5;
@@ -34,6 +36,9 @@ export default class Constants {
 	}
 
 	applyQueryStrings(params: URLSearchParams) {
+		if (params.get('embed') === 'true') {
+			this.isEmbedded = true;
+		}
 		if (params.get('editGraph') === 'deny') {
 			this.allowGraphEditing = false;
 		}

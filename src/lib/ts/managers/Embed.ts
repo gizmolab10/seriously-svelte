@@ -1,19 +1,22 @@
-import { PersistID, persistLocal } from '../common/GlobalImports';
+import { k, PersistID, persistLocal } from '../common/GlobalImports';
 import { idsGrabbed } from './State';
 
 export default class Embed {
 
 	constructor() {
-		idsGrabbed.subscribe((ids: string[] | undefined) => { // executes whenever idsGrabbed changes
-            this.iframeEvent(ids);
+		idsGrabbed.subscribe((ids: string[]) => { // executes whenever idsGrabbed changes
+            this.sendGrabbedIDs(ids);
 		});
 	};
 
-    iframeEvent(ids: string[] | undefined) {
-        // window.parent.bubble_fn_select();
-        const message = ids?.join('$');
-		persistLocal.writeToKey(PersistID.select, message);
-        console.log('iframe', message);
+
+    sendGrabbedIDs(ids: string[]) {
+        if (k.isEmbedded) {
+            const message = ids?.join('$');
+            // window.parent.bubble_fn_select(message);
+            persistLocal.writeToKey(PersistID.select, message);
+            console.log('iframe', message);
+        }
     }
 }
 

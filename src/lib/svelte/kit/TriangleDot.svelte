@@ -29,20 +29,25 @@
 			top: {origin.y - 6}px;
 			left: {origin.x - 6}px;
 		'>
-		<svg width={size}
+		<svg class='svg'
+			width={size}
 			height={size}
 			on:blur={ignore}
 			on:focus={ignore}
 			on:mouseout={mouseOut}
 			on:mouseover={mouseOver}
 			viewbox='0 0 {size} {size}'
-			style='position: absolute; left: 5px; top: 6px; z-index: {ZIndex.dots};'>
+			style='z-index: {ZIndex.dots};'>
 			<path d={path} stroke={strokeColor} fill={fillColor}/>
 		</svg>
 	</button>
 {/key}
 
 <style>
+	.svg {
+		position: absolute;
+		left: 5px; top: 6px; 
+	}
 	.svg-button {
 		width: 20px;
 		height: 20px;

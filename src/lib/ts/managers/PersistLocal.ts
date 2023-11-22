@@ -36,12 +36,11 @@ class PersistLocal {
 		graphOffset.set(this.readFromKey(PersistID.origin) ?? new Point());
 		thingFontSize.set(size - 2);
 		dotSize.set(size);
-		idsGrabbed.subscribe((ids: Array<string>) => {
-			if (this.okayToPersist) {
-				const here = dbDispatch.db.hierarchy.here;
-				if (ids && here) {
-					this.writeToDBKey(PersistID.grabbed, get(idsGrabbed));
-				}
+
+		idsGrabbed.subscribe((ids: string[]) => {
+			const here = dbDispatch.db.hierarchy.here;
+			if (this.okayToPersist && here) {
+				this.writeToDBKey(PersistID.grabbed, ids);
 			}
 		});
 	}

@@ -2,7 +2,7 @@
 	import { Rect, Size, Point, Thing, ZIndex, Signals, onDestroy, graphEditor, PersistID, persistLocal } from '../../ts/common/GlobalImports';
 	import { idHere, lineGap, idEditing, idsGrabbed, graphRect, windowSize, graphOffset, popupViewID } from '../../ts/managers/State';
 	import { k, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
-	import FatTriangleButton from '../kit/FatTriangleButton.svelte';
+	import RootRevealDot from './RootRevealDot.svelte';
 	import Children from './Children.svelte';
 	let triangleOrigin = new Point();
 	let childrenOrigin = new Point();
@@ -91,6 +91,6 @@
 				<circle cx='14' cy='14' r='13' stroke={here.color} fill={k.backgroundColor}/>
 			</svg>
 		{/if}
-		<FatTriangleButton here={here} origin={triangleOrigin.offsetByY(-15)}/>
+		<RootRevealDot here={here} origin={triangleOrigin.offsetByY(-15)}/>
 	{/if}
 {/key}
