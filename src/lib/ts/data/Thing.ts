@@ -39,7 +39,7 @@ export default class Thing extends Datum {
 		});
 
 		idsGrabbed.subscribe((idsGrab: string[]) => {
-			const isGrabbed = idsGrab.includes(this.id;
+			const isGrabbed = idsGrab.includes(this.id);
 			if (this.isGrabbed != isGrabbed) {
 				this.isGrabbed  = isGrabbed;
 				this.updateColorAttributes();

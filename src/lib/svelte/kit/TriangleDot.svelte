@@ -47,27 +47,23 @@
 	.svg {
 		position: absolute;
 		left: 5px; top: 6px; 
+		&:focus {
+			outline: none;
+		}
 	}
 	.svg-button {
 		width: 20px;
 		height: 20px;
 		border: none;
-		outline: none;
 		cursor: pointer;
 		background: none;
 		position: absolute;
 		border-radius: 50%;
 	}
-
-	.svg-button:focus {
-		outline: none;
-	}
-
 	.svg-button svg {
 		display: block; /* This removes any unwanted space below the SVG */
 		outline: none;
 	}
-
 	.svg-button:hover {}
 	.svg-button:active {}
 	

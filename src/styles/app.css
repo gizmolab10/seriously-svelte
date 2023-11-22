@@ -1,4 +1,11 @@
 .root {
-		background-color: #1d1d1d;
-		color: #ffffff;
+	background-color: white;
+	color: white;
+}
+
+button, svg {
+	outline: none;
+	&:focus {
+		outline: none;
+	}
 }

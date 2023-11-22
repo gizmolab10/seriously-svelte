@@ -11,7 +11,7 @@ export default class Embed {
 
 
     sendGrabbedIDs(ids: string[]) {
-        if (k.isEmbedded) {
+        if (ids && k.isEmbedded) {
             const message = ids?.join('$');
             // window.parent.bubble_fn_select(message);
             persistLocal.writeToKey(PersistID.select, message);
