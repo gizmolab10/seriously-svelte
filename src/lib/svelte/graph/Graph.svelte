@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { Rect, Size, Point, Thing, ZIndex, Signals, onDestroy, graphEditor, PersistID, persistLocal } from '../../ts/common/GlobalImports';
-	import { idHere, lineGap, idEditing, idsGrabbed, graphRect, windowSize, graphOffset, popupViewID } from '../../ts/managers/State';
+	import { idHere, lineGap, idEditing, idsGrabbed, graphRect, windowSize, user_graphOffset, popupViewID } from '../../ts/managers/State';
 	import { k, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
 	import RootRevealDot from './RootRevealDot.svelte';
 	import Children from './Children.svelte';
@@ -22,21 +22,21 @@
 		const offsetX = canScroll ? -event.deltaX : 0;
 		const offsetY = -event.deltaY;
 		if (Math.abs(offsetX) > 1 || Math.abs(offsetY) > 1) {
-			const offset = $graphOffset;
+			const offset = $user_graphOffset;
 			const newOffset = new Point(offset.x + offsetX, offset.y + offsetY);
-			graphOffset_setTo(newOffset);
+			user_graphOffset_setTo(newOffset);
 		}
 	});
 
-	function graphOffset_setTo(origin: Point) {
+	function user_graphOffset_setTo(origin: Point) {
 		persistLocal.writeToKey(PersistID.origin, origin);
-		$graphOffset = origin;
+		$user_graphOffset = origin;
 		updateOrigins();
 	}
 
 	function updateOrigins() {
 		if (here) {
-			const gCenter = $graphRect.center.offsetBy($graphOffset);		// user-determined center
+			const gCenter = $graphRect.center.offsetBy($user_graphOffset);		// user-determined center
 			const tOffset = here.halfVisibleProgenySize.asPoint.multipliedBy(-1);
 			const cOffset = new Point(-16, tOffset.y - 7);
 			let tOrigin = gCenter.offsetBy(new Point(tOffset.x, -78));
@@ -67,7 +67,7 @@
 		if (event.type == 'keydown') {
 			const key = event.key;
 			switch (key) {
-				case 'c': graphOffset_setTo(new Point()); break;
+				case 'c': user_graphOffset_setTo(new Point()); break;
 				case '?': $popupViewID = ButtonID.help; break;
 				case ']':
 				case '[': dbDispatch.nextDB(key == ']'); break;

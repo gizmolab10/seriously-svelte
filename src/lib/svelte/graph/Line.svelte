@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { Rect, Size, Point, ZIndex, SVGType, svgPath, LineCurveType } from '../../ts/common/GlobalImports';
-	import { lineStretch, graphOffset } from '../../ts/managers/State'
+	import { lineStretch, user_graphOffset } from '../../ts/managers/State'
 	export let curveType: string = LineCurveType.up;
 	export let rect = new Rect();
 	export let thing: Thing;
@@ -33,7 +33,7 @@
 			const originY = curveType == LineCurveType.down ? 1 : size.height;
 			const extentY = curveType == LineCurveType.up   ? 1 : size.height;
 			const boxSize = new Size(size.width, (noHeight ? 2 : size.height));
-			viewBox = new Rect(origin.offsetByY($graphOffset.y), boxSize);
+			viewBox = new Rect(origin.offsetByY($user_graphOffset.y), boxSize);
 			path = 'M0 ' + originY + 'A' + size.description + ' 0 0 ' + flag + ' ' + size.width + ' ' + extentY;
 		}
 	}

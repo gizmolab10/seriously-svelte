@@ -27,6 +27,7 @@
 	function handleSettings(event) {
 		$showDetails = !$showDetails;
 		persistLocal.writeToKey(PersistID.details, $showDetails);
+		updateGraphRect();
 	}
 
 </script>
@@ -65,11 +66,19 @@
 	{:else if !$thingsArrived}
 		<p>Nothing is available.</p>
 	{:else}
-		{#if $popupViewID == null}
+		{#if $popupViewID == ButtonID.help}
+			<Help size={size}/>
+		{:else if $popupViewID == ButtonID.buildNotes}
+			<BuildNotes/>
+		{:else if $popupViewID == null}
 			<div class='top' style='z-index: {ZIndex.frontmost}'>
 				<Crumbs/>
 			</div>
-			<div class='topTitle' style='color: {here?.color}; z-index: {ZIndex.frontmost}'>
+			<div class='topTitle'
+				style='color: {here?.color};
+					left: {$showDetails ? '100px' : '-1px'};
+					z-index: {ZIndex.frontmost}
+					left: 100px;'>
 				{here?.title}
 			</div>
 			<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: {$showDetails ? k.detailsMargin : 0}px; top: 85px;'></div>
@@ -89,10 +98,6 @@
 					<Graph/>
 				</div>
 			{/key}
-		{:else if $popupViewID == ButtonID.help}
-			<Help size={size}/>
-		{:else if $popupViewID == ButtonID.buildNotes}
-			<BuildNotes/>
 		{/if}
 	{/if}
 </div>
@@ -129,8 +134,7 @@
 		text-align: center;
 		position: fixed;
 		font-size: 2em;
-		width: 100%;
-		left: -1px;
+		right: 0px;
 		top: 40px;
 	}
 	.leftSide {

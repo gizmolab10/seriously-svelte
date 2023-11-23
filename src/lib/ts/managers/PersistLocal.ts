@@ -1,4 +1,4 @@
-import { graphOffset, showDetails, lineStretch, thingFontSize, thingFontFamily } from './State';
+import { user_graphOffset, showDetails, lineStretch, thingFontSize, thingFontFamily } from './State';
 import { idHere, lineGap, dotSize, expanded, dbLoadTime, idsGrabbed } from './State';
 import { get, Point, dbDispatch } from '../common/GlobalImports'
 
@@ -33,7 +33,7 @@ class PersistLocal {
 		showDetails.set(this.readFromKey(PersistID.details) ?? false);
 		lineStretch.set(this.readFromKey(PersistID.lineStretch) ?? 30);
 		thingFontFamily.set(this.readFromKey(PersistID.font) ?? 'Arial');
-		graphOffset.set(this.readFromKey(PersistID.origin) ?? new Point());
+		user_graphOffset.set(this.readFromKey(PersistID.origin) ?? new Point());
 		thingFontSize.set(size - 2);
 		dotSize.set(size);
 

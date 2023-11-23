@@ -1,4 +1,5 @@
-import { graphRect, windowSize } from "../managers/State";
+import { graphRect, showDetails, windowSize } from "../managers/State";
+import { get } from '../common/GlobalImports'
 
 export class Point {
 	x: number;
@@ -8,34 +9,39 @@ export class Point {
 		this.y = y;
 	}
 	get verbose():			 		 string { return '(' + this.x + ', ' + this.y + ')'; }
-	get description():		 		 string { return this.x + ',' + this.y; }
 	get pixelVerbose():				 string { return this.x + 'px ' + this.y + 'px'; }
-	get dividedInHalf():			  Point { return this.multipliedBy(1/2); }
-	get asSize():					   Size { return new Size(this.x, this.y); }
 	get copy():						  Point { return new Point(this.x, this.y); }
+	get asSize():					   Size { return new Size(this.x, this.y); }
+	get dividedInHalf():			  Point { return this.multipliedBy(1/2); }
+	get negated():					  Point { return this.multipliedBy(-1); }
+	get description():		 		 string { return this.x + ' ' + this.y; }
 	offsetByX(x: number):			  Point { return new Point(this.x + x, this.y); }
 	offsetByY(y: number):			  Point { return new Point(this.x, this.y + y); }
 	offsetBy(point: Point):			  Point { return new Point(this.x + point.x, this.y + point.y); }
+	multipliedBy(multiplier: number): Point { return new Point(this.x * multiplier, this.y * multiplier) }
 	offsetBySize(size: Size):		  Point { return new Point(this.x + size.width, this.y + size.height); }
 	distanceTo(point: Point):		  Point { return new Point(Math.abs(point.x - this.x), Math.abs(point.y - this.y)) }
-	multipliedBy(multiplier: number): Point { return new Point(this.x * multiplier, this.y * multiplier) }
 }
 
 export class Size {
 	width: number;
 	height: number;
+
 	constructor(width: number = 0, height: number = 0) {
 		this.width = width;
 		this.height = height;
 	}
+
 	get verbose():					string { return '(' + this.width + ', ' + this.height + ')'; }
 	get pixelVerbose():				string { return this.width + 'px ' + this.height + 'px'; }
-	get description():				string { return this.width + ',' + this.height; }
+	get description():				string { return this.width + ' ' + this.height; }
 	get asPoint():			   		 Point { return new Point(this.width, this.height); }
 	get dividedInHalf():			  Size { return this.multipliedBy(1/2); }
+	get negated():					  Size { return this.multipliedBy(-1); }
 	get copy():						  Size { return new Size(this.width, this.height); }
-	multipliedBy(multiplier: number): Size { return new Size(this.width * multiplier, this.height * multiplier) }
+	reducedBy(delta: Point):		  Size { return new Size(this.width + delta.x, this.height + delta.y); }
 	expandedBy(size: Size):			  Size { return new Size(this.width + size.width, this.height + size.height); }
+	multipliedBy(multiplier: number): Size { return new Size(this.width * multiplier, this.height * multiplier) }
 	unionWith(size: Size):			  Size { return new Size(Math.max(this.width, size.width), Math.max(this.height, size.height)); }
 	static square(length: number):	  Size { return new Size(length, length); }
 }
@@ -43,10 +49,12 @@ export class Size {
 export class Rect {
 	origin: Point;
 	size: Size;
+
 	constructor(origin: Point = new Point(), size: Size = new Size()) {
 		this.origin = origin;
 		this.size = size;
 	}
+
 	get pixelVerbose():	string { return this.origin.pixelVerbose + ' ' + this.size.pixelVerbose; }
 	get description():	string { return this.origin.verbose + ', ' + this.size.verbose; }
 	get center():		 Point { return this.origin.offsetBySize(this.size.dividedInHalf); }
@@ -71,10 +79,11 @@ export class LineRect extends Rect {
 };
 
 export function updateGraphRect() {
-	const graphOrigin = new Point(-20, 85);						// height of top, width of left
-	const sizeShrink = graphOrigin.asSize.multipliedBy(-1);
-	const newWindowSize = new Size(window.innerWidth, window.innerHeight);
-	const graphSize = newWindowSize.expandedBy(sizeShrink);		// remove top and left
-	windowSize.set(newWindowSize);								// used by Crumbs
-	graphRect.set(new Rect(graphOrigin, graphSize));			// used by Panel and Graph
+	const originY = 85;										// height of stuff at the top
+	const originX = (get(showDetails) ? 100 : 0) - 20;		// width of details - 20. TODO: why 20?
+	const originOfGraph = new Point(originX, originY);
+	const size = new Size(window.innerWidth, window.innerHeight);
+	const sizeOfGraph = size.reducedBy(originOfGraph);		// account for origin
+	windowSize.set(size);									// used by Crumbs
+	graphRect.set(new Rect(originOfGraph, sizeOfGraph));	// used by Panel and Graph
 };
