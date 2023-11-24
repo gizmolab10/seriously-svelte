@@ -1,4 +1,4 @@
-import { graphRect, showDetails, windowSize } from "../managers/State";
+import { graphRect, showDetails, windowWidth } from "../managers/State";
 import { get } from '../common/GlobalImports'
 
 export class Point {
@@ -39,7 +39,7 @@ export class Size {
 	get dividedInHalf():			  Size { return this.multipliedBy(1/2); }
 	get negated():					  Size { return this.multipliedBy(-1); }
 	get copy():						  Size { return new Size(this.width, this.height); }
-	reducedBy(delta: Point):		  Size { return new Size(this.width + delta.x, this.height + delta.y); }
+	reducedBy(delta: Point):		  Size { return new Size(this.width - delta.x, this.height - delta.y); }
 	expandedBy(size: Size):			  Size { return new Size(this.width + size.width, this.height + size.height); }
 	multipliedBy(multiplier: number): Size { return new Size(this.width * multiplier, this.height * multiplier) }
 	unionWith(size: Size):			  Size { return new Size(Math.max(this.width, size.width), Math.max(this.height, size.height)); }
@@ -57,8 +57,8 @@ export class Rect {
 
 	get pixelVerbose():	string { return this.origin.pixelVerbose + ' ' + this.size.pixelVerbose; }
 	get description():	string { return this.origin.verbose + ', ' + this.size.verbose; }
-	get center():		 Point { return this.origin.offsetBySize(this.size.dividedInHalf); }
-	get extent():		 Point { return this.origin.offsetBySize(this.size); }	// bottom right
+	get center():		 Point { return this.origin.offsetBySize(this.size.dividedInHalf); }	// add half of size to origin
+	get extent():		 Point { return this.origin.offsetBySize(this.size); }					// bottom right
 	get topRight():		 Point { return new Point(this.extent.x, this.origin.y); };
 	get bottomLeft():	 Point { return new Point(this.origin.x, this.extent.y); };
 	get centerLeft():	 Point { return new Point(this.origin.x, this.center.y); };
@@ -79,11 +79,13 @@ export class LineRect extends Rect {
 };
 
 export function updateGraphRect() {
-	const originY = 85;										// height of stuff at the top
-	const originX = (get(showDetails) ? 100 : 0) - 20;		// width of details - 20. TODO: why 20?
+	const originY = 39;										// height of title at the top
+	const originX = get(showDetails) ? 100 : 0;				// width of details
 	const originOfGraph = new Point(originX, originY);
 	const size = new Size(window.innerWidth, window.innerHeight);
-	const sizeOfGraph = size.reducedBy(originOfGraph);		// account for origin
-	windowSize.set(size);									// used by Crumbs
-	graphRect.set(new Rect(originOfGraph, sizeOfGraph));	// used by Panel and Graph
+	const sizeOfGraph = size.reducedBy(originOfGraph);//.reducedBy(new Point(900, 900));		// account for origin
+	const rect = new Rect(originOfGraph, sizeOfGraph);
+	windowWidth.set(size.width);							// used by Crumbs
+	graphRect.set(rect);									// used by Panel and Graph
+	console.log('GRAPH', rect.description);
 };

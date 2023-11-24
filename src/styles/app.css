@@ -9,3 +9,7 @@ button, svg {
 		outline: none;
 	}
 }
+
+div {
+	cursor: default;
+}

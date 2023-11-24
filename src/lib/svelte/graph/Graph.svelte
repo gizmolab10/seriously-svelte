@@ -1,12 +1,15 @@
 <script lang='ts'>
-	import { Rect, Size, Point, Thing, ZIndex, Signals, onDestroy, graphEditor, PersistID, persistLocal } from '../../ts/common/GlobalImports';
-	import { idHere, lineGap, idEditing, idsGrabbed, graphRect, windowSize, user_graphOffset, popupViewID } from '../../ts/managers/State';
+	import { Rect, Size, Point, Thing, ZIndex, Signals, onDestroy, graphEditor, PersistID, persistLocal, updateGraphRect } from '../../ts/common/GlobalImports';
+	import { idHere, lineGap, idEditing, idsGrabbed, graphRect, user_graphOffset, popupViewID } from '../../ts/managers/State';
 	import { k, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
 	import RootRevealDot from './RootRevealDot.svelte';
+	import Circle from '../kit/Circle.svelte';
 	import Children from './Children.svelte';
-	let triangleOrigin = new Point();
-	let childrenOrigin = new Point();
+	import Box from '../kit/Box.svelte';
+	let origin_ofFirstReveal = new Point();
+	let origin_ofChildren = new Point();
 	let isGrabbed = false;
+	let debugRect;
 	let here;
 
 	onDestroy( () => { signalHandler.disconnect(); });
@@ -36,15 +39,16 @@
 
 	function updateOrigins() {
 		if (here) {
-			const gCenter = $graphRect.center.offsetBy($user_graphOffset);		// user-determined center
-			const tOffset = here.halfVisibleProgenySize.asPoint.multipliedBy(-1);
-			const cOffset = new Point(-16, tOffset.y - 7);
-			let tOrigin = gCenter.offsetBy(new Point(tOffset.x, -78));
+			updateGraphRect();
+			const offsetFrom_firstReveal = here.halfVisibleProgenySize.asPoint.negated;
+			const offsetTo_userCenter = $graphRect.center.offsetBy($user_graphOffset);
+			const offsetTo_children = new Point(-16, offsetFrom_firstReveal.y - 7);
+			origin_ofFirstReveal = offsetTo_userCenter.offsetBy(new Point(offsetFrom_firstReveal.x, -78));
 			if (k.leftJustifyGraph) {
-				tOrigin.x = 25;
+				origin_ofFirstReveal.x = 25;
 			}
-			triangleOrigin = tOrigin;
-			childrenOrigin = tOrigin.offsetBy(cOffset);
+			origin_ofChildren = origin_ofFirstReveal.offsetBy(offsetTo_children);
+			debugRect = new Rect(new Point(0, 39), origin_ofFirstReveal.offsetBy(new Point(-33, -85)).asSize); // $graphRect; // 
 		}
 	}
 	
@@ -78,19 +82,16 @@
 
 </script>
 
-<svelte:document on:keydown={handleKeyDown} />
-{#key childrenOrigin}
+<svelte:document on:keydown={handleKeyDown}/>
+{#key origin_ofChildren}
 	{#if here}
-		<Children thing={here} origin={childrenOrigin}/>
-		{#if isGrabbed}
-			<svg width='28' height='28'
-				style='z-index: {ZIndex.dots};
-					position: absolute;
-					left: {triangleOrigin.x - 7};
-					top: {triangleOrigin.y - 21};'>
-				<circle cx='14' cy='14' r='13' stroke={here.color} fill={k.backgroundColor}/>
-			</svg>
-		{/if}
-		<RootRevealDot here={here} origin={triangleOrigin.offsetByY(-15)}/>
+		<div style='overflow: hidden; top:{$graphRect.origin.x}px;'>
+			<Box rect={debugRect} color=green/>
+			<Children thing={here} origin={origin_ofChildren}/>
+			{#if isGrabbed}
+				<Circle radius=14 center={origin_ofFirstReveal.offsetBy(new Point(6, -8))} color={here.color} thickness=1/>
+			{/if}
+			<RootRevealDot here={here} origin={origin_ofFirstReveal.offsetByY(-15)}/>
+		</div>
 	{/if}
 {/key}
