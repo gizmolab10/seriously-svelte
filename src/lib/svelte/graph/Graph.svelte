@@ -86,7 +86,6 @@
 {#key origin_ofChildren}
 	{#if here}
 		<div style='overflow: hidden; top:{$graphRect.origin.x}px;'>
-			<Box rect={debugRect} color=green/>
 			<Children thing={here} origin={origin_ofChildren}/>
 			{#if isGrabbed}
 				<Circle radius=14 center={origin_ofFirstReveal.offsetBy(new Point(6, -8))} color={here.color} thickness=1/>
