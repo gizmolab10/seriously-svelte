@@ -1,4 +1,4 @@
-import { k, PersistID, dbDispatch, persistLocal, isServerLocal, getBrowserType } from '../common/GlobalImports'
+import { k, debug, PersistID, dbDispatch, persistLocal, isServerLocal, getBrowserType } from '../common/GlobalImports'
 import { idHere, expanded, idsGrabbed, showDetails } from './State';
 
 class Launch {
@@ -8,7 +8,8 @@ class Launch {
 		persistLocal.restore();
 		k.applyQueryStrings(this.queryStrings);
 		this.applyQueryStrings(this.queryStrings);
-		dbDispatch.applyQueryStrings(this.queryStrings);
+		debug.applyQueryStrings(this.queryStrings);
+		dbDispatch.applyQueryStrings(this.queryStrings); // do this last
 		document.title = this.title;
 	}
 

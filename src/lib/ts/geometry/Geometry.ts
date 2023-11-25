@@ -1,5 +1,5 @@
-import { graphRect, showDetails, windowWidth } from "../managers/State";
-import { get } from '../common/GlobalImports'
+import { graphRect, showDetails, crumbsWidth } from "../managers/State";
+import { get, debug, DebugOption } from '../common/GlobalImports'
 
 export class Point {
 	x: number;
@@ -50,24 +50,30 @@ export class Rect {
 	origin: Point;
 	size: Size;
 
+	static createRect(origin: Point, extent: Point) {
+		return new Rect(origin, extent.offsetBy(origin.negated).asSize);
+	}
+
 	constructor(origin: Point = new Point(), size: Size = new Size()) {
 		this.origin = origin;
 		this.size = size;
 	}
 
-	get pixelVerbose():	string { return this.origin.pixelVerbose + ' ' + this.size.pixelVerbose; }
-	get description():	string { return this.origin.verbose + ', ' + this.size.verbose; }
-	get center():		 Point { return this.origin.offsetBySize(this.size.dividedInHalf); }	// add half of size to origin
-	get extent():		 Point { return this.origin.offsetBySize(this.size); }					// bottom right
-	get topRight():		 Point { return new Point(this.extent.x, this.origin.y); };
-	get bottomLeft():	 Point { return new Point(this.origin.x, this.extent.y); };
-	get centerLeft():	 Point { return new Point(this.origin.x, this.center.y); };
-	get centerRight():	 Point { return new Point(this.extent.x, this.center.y); };
-	get centerBottom():	 Point { return new Point(this.center.x, this.extent.y); };
-	get centerTop():	 Point { return new Point(this.center.x, this.origin.y); };
-	get copy():			  Rect { return new Rect(this.origin.copy, this.size.copy); }
-	offsetByX(x: number): Rect { return new Rect(this.origin.offsetByX(x), this.size); }
-	offsetByY(y: number): Rect { return new Rect(this.origin.offsetByY(y), this.size); }
+	get pixelVerbose():	   string { return this.origin.pixelVerbose + ' ' + this.size.pixelVerbose; }
+	get description():	   string { return this.origin.verbose + ', ' + this.size.verbose; }
+	get center():			Point { return this.origin.offsetBySize(this.size.dividedInHalf); }	// add half of size to origin
+	get extent():			Point { return this.origin.offsetBySize(this.size); }					// bottom right
+	get topRight():			Point { return new Point(this.extent.x, this.origin.y); };
+	get bottomLeft():		Point { return new Point(this.origin.x, this.extent.y); };
+	get centerLeft():		Point { return new Point(this.origin.x, this.center.y); };
+	get centerRight():		Point { return new Point(this.extent.x, this.center.y); };
+	get centerBottom():		Point { return new Point(this.center.x, this.extent.y); };
+	get centerTop():	 	Point { return new Point(this.center.x, this.origin.y); };
+	get copy():			 	 Rect { return new Rect(this.origin.copy, this.size.copy); }
+	get dividedInHalf():	 Rect { return this.expandedBy(this.size.multipliedBy(-1/2)); }
+	offsetByX(x: number):	 Rect { return new Rect(this.origin.offsetByX(x), this.size); }
+	offsetByY(y: number):	 Rect { return new Rect(this.origin.offsetByY(y), this.size); }
+	expandedBy(delta: Size): Rect { return new Rect(this.origin, this.size.expandedBy(delta)) }
 }
 
 export class LineRect extends Rect {
@@ -79,13 +85,16 @@ export class LineRect extends Rect {
 };
 
 export function updateGraphRect() {
-	const originY = 39;										// height of title at the top
-	const originX = get(showDetails) ? 100 : 0;				// width of details
+	const originY = 78;											// height of title at the top
+	const originX = get(showDetails) ? 100 : 0;					// width of details
+	const mysteryOffset = new Point(originX + 76, 170);					// TODO: why?
 	const originOfGraph = new Point(originX, originY);
-	const size = new Size(window.innerWidth, window.innerHeight);
-	const sizeOfGraph = size.reducedBy(originOfGraph);//.reducedBy(new Point(900, 900));		// account for origin
+	const windowSize = new Size(window.innerWidth, window.innerHeight);
+	const sizeOfGraph = windowSize.reducedBy(mysteryOffset);	// account for origin
 	const rect = new Rect(originOfGraph, sizeOfGraph);
-	windowWidth.set(size.width);							// used by Crumbs
-	graphRect.set(rect);									// used by Panel and Graph
-	console.log('GRAPH', rect.description);
+	crumbsWidth.set(sizeOfGraph.width);
+	graphRect.set(rect);										// used by Panel and Graph
+	if (debug.hasOption(DebugOption.graph)) {
+		console.log('GRAPH', rect.description);
+	}
 };

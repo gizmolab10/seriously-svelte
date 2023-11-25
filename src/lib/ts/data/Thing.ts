@@ -149,7 +149,7 @@ export default class Thing extends Datum {
 	}
 
 	debugLog(message: string) {
-		this.log(DebugOption.debug, message);
+		this.log(DebugOption.things, message);
 	}
 
 	revealColor(isReveal: boolean): string {

@@ -31,7 +31,7 @@
 	}
 
 	function handleKeyDown(event) {
-		if ($idEditing == thing.id && canAlterTitle(event)) {
+		if (thing && $idEditing == thing.id && canAlterTitle(event)) {
 			switch (event.key) {	
 				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); graphEditor.thing_redraw_remoteAddChildTo(thing.firstParent); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
@@ -75,7 +75,7 @@
 	}
 
 	function invokeBlurNotClearEditing() {
-		if (isEditing) {
+		if (isEditing && thing) {
 			$idEditingStopped = $idEditing;
 			isEditing = false;
 			extractRange();
@@ -91,9 +91,9 @@
 	function handleFocus(event) {
 		if (!k.allowTitleEditing) {
 			input.blur();
-		} else if (!isEditing) {
+		} else if (!isEditing && thing) {
 			thing.grabOnly()
-			thing?.startEdit();
+			thing.startEdit();
 		}
 	}
 
@@ -103,7 +103,7 @@
 	}
 
 	function extractRange() {
-		if (input) {
+		if (input && thing) {
 			const end = input.selectionEnd;
 			const start = input.selectionStart;
 			thing.selectionRange = new SeriouslyRange(start, end);
@@ -111,7 +111,7 @@
 	}
 
 	function applyRange() {
-		const priorRange = thing.selectionRange;
+		const priorRange = thing?.selectionRange;
 		if (priorRange && input) {
 			input.setSelectionRange(priorRange.start, priorRange.end);
 		}

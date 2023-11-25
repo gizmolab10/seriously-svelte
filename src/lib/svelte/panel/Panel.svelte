@@ -97,7 +97,6 @@
 					style='
 						position: fixed;
 						z-index: {ZIndex.panel};
-						top: {$graphRect.origin.y + 8}px;
 						left: {$graphRect.origin.x - ($showDetails ? k.detailsMargin : 0)}px;
 						width: {size_graphRect.width}px;
 						height: {size_graphRect.height}px;'

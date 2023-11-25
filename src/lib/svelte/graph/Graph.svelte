@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { Rect, Size, Point, Thing, ZIndex, Signals, onDestroy, graphEditor, PersistID, persistLocal, updateGraphRect } from '../../ts/common/GlobalImports';
+	import { k, Rect, Size, Point, Thing, ZIndex, Signals, onDestroy, graphEditor, PersistID, persistLocal, updateGraphRect } from '../../ts/common/GlobalImports';
+	import { debug, DebugOption, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
 	import { idHere, lineGap, idEditing, idsGrabbed, graphRect, user_graphOffset, popupViewID } from '../../ts/managers/State';
-	import { k, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
 	import RootRevealDot from './RootRevealDot.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Children from './Children.svelte';
@@ -9,7 +9,6 @@
 	let origin_ofFirstReveal = new Point();
 	let origin_ofChildren = new Point();
 	let isGrabbed = false;
-	let debugRect;
 	let here;
 
 	onDestroy( () => { signalHandler.disconnect(); });
@@ -42,14 +41,19 @@
 			updateGraphRect();
 			const offsetFrom_firstReveal = here.halfVisibleProgenySize.asPoint.negated;
 			const offsetTo_userCenter = $graphRect.center.offsetBy($user_graphOffset);
-			const offsetTo_children = new Point(-16, offsetFrom_firstReveal.y - 7);
-			origin_ofFirstReveal = offsetTo_userCenter.offsetBy(new Point(offsetFrom_firstReveal.x, -78));
+			const offsetTo_children = new Point(-16, offsetFrom_firstReveal.y + 8);
+			origin_ofFirstReveal = offsetTo_userCenter.offsetBy(new Point(offsetFrom_firstReveal.x - 16, 31));
 			if (k.leftJustifyGraph) {
 				origin_ofFirstReveal.x = 25;
 			}
 			origin_ofChildren = origin_ofFirstReveal.offsetBy(offsetTo_children);
-			debugRect = new Rect(new Point(0, 39), origin_ofFirstReveal.offsetBy(new Point(-33, -85)).asSize); // $graphRect; // 
 		}
+	}
+
+	function rectTo_firstReveal(): Rect {
+		const centerFrom_firstReveal = new Point(-33, -31);
+		const extent = origin_ofFirstReveal.offsetBy(centerFrom_firstReveal);
+		return Rect.createRect(new Point(0, 78), extent);
 	}
 	
 	$: {
@@ -87,10 +91,14 @@
 	{#if here}
 		<div style='overflow: hidden; top:{$graphRect.origin.x}px;'>
 			<Children thing={here} origin={origin_ofChildren}/>
-			{#if isGrabbed}
-				<Circle radius=14 center={origin_ofFirstReveal.offsetBy(new Point(6, -8))} color={here.color} thickness=1/>
+			{#if debug.hasOption(DebugOption.colors)}
+				<Box rect={$graphRect.dividedInHalf} color=aliceblue/>
+				<Box rect={rectTo_firstReveal()} color=lavenderblush/>
 			{/if}
-			<RootRevealDot here={here} origin={origin_ofFirstReveal.offsetByY(-15)}/>
+			{#if isGrabbed}
+				<Circle radius=14 center={origin_ofFirstReveal.offsetBy(new Point(6, 7))} color={here.color} thickness=1/>
+			{/if}
+			<RootRevealDot here={here} origin={origin_ofFirstReveal}/>
 		</div>
 	{/if}
 {/key}
