@@ -1,4 +1,4 @@
-import { Size, Rect, Point } from '../geometry/Geometry';
+import { Rect, Point } from '../geometry/Geometry';
 import { writable } from 'svelte/store';
 
 export const idShowRevealCluster	= writable<string | null>();
@@ -22,3 +22,8 @@ export const dotSize			  	= writable<number>();
 export const build					= writable<number>();
 export const user_graphOffset		= writable<Point>();
 export const graphRect  			= writable<Rect>();
+
+lineGap.subscribe(($lineGap) => {
+	thingFontSize.set($lineGap * 7 / 8);
+	dotSize.set($lineGap * 2 / 3);
+});

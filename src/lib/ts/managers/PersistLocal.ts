@@ -1,11 +1,10 @@
-import { user_graphOffset, showDetails, lineStretch, thingFontSize, thingFontFamily } from './State';
-import { idHere, lineGap, dotSize, expanded, dbLoadTime, idsGrabbed } from './State';
-import { get, Point, dbDispatch } from '../common/GlobalImports'
+import { user_graphOffset, showDetails, lineStretch, thingFontFamily } from './State';
+import { idHere, lineGap, expanded, dbLoadTime, idsGrabbed } from './State';
+import { Point, dbDispatch } from '../common/GlobalImports'
 
 export enum PersistID {
 	lineStretch = 'lineStretch',
 	expanded	= 'expanded',
-	dotSize		= 'dotSize',
 	lineGap		= 'lineGap',
 	grabbed		= 'grabbed',
 	details		= 'details',
@@ -23,21 +22,18 @@ class PersistLocal {
 		// localStorage.clear();
 		// const isLocal = isServerLocal();
 
-		this.writeToKey(PersistID.lineGap, 20);
-		this.writeToKey(PersistID.dotSize, 13);
+		// this.writeToKey(PersistID.lineGap, 20);
+		// this.writeToKey(PersistID.dotSize, 13);
 
 		dbLoadTime.set(null);
 		idHere.set(this.readFromDBKey(PersistID.here));
-		lineGap.set(this.readFromKey(PersistID.lineGap) ?? 20);
-		const size = this.readFromKey(PersistID.dotSize) ?? 16;
+		lineGap.set(this.readFromKey(PersistID.lineGap) ?? 20); // sets dotSize and thingFontSize
 		expanded.set(this.readFromDBKey(PersistID.expanded) ?? []);
 		idsGrabbed.set(this.readFromDBKey(PersistID.grabbed) ?? []);
 		showDetails.set(this.readFromKey(PersistID.details) ?? false);
 		lineStretch.set(this.readFromKey(PersistID.lineStretch) ?? 30);
 		thingFontFamily.set(this.readFromKey(PersistID.font) ?? 'Arial');
 		user_graphOffset.set(this.readFromKey(PersistID.origin) ?? new Point());
-		thingFontSize.set(size - 2);
-		dotSize.set(size);
 
 		idsGrabbed.subscribe((ids: string[]) => {
 			const here = dbDispatch.db.hierarchy.here;

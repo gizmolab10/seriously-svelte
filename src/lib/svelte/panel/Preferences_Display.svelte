@@ -1,23 +1,26 @@
-
 <script>
-  let foo = 10; // Initial value for foo
+	import { signal, Signals, PersistID, persistLocal } from '../../ts/common/GlobalImports'
+	import { lineGap } from "../../ts/managers/State"
+
+	function handleInput(event) {
+		signal(Signals.childrenOf);
+		persistLocal.writeToKey(PersistID.lineGap, $lineGap);
+	}
 </script>
 
 <input
   type='range'
-  min='10'
-  max='20'
+  min='15'
+  max='30'
   width='60'
-  bind:value={foo}
+  bind:value={$lineGap}
+  on:input={handleInput}
 />
-Foo: {foo}
+Row gap: {$lineGap}
 
 <style>
-  input[type="range"] {
-    width: 60px; /* Set the width to 60 units */
-  }
-  
-  input[type="range"]::-webkit-slider-thumb {
-    background-color: green; /* Set the thumb color to green */
+  input {
+    width: 60px;
+    background: green;
   }
 </style>
