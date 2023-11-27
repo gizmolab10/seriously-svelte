@@ -1,6 +1,6 @@
 import { dbDispatch, getWidthOf, DebugOption, persistLocal, SeriouslyRange, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { k, get, Size, Datum, signal, Signals, debug, Predicate, Hierarchy, TraitType, PersistID } from '../common/GlobalImports';
-import { idHere, idEditing, expanded, idsGrabbed, lineGap, idShowRevealCluster } from '../managers/State';
+import { idHere, dotSize, idEditing, expanded, idsGrabbed, lineGap, idShowRevealCluster, lineStretch } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -55,28 +55,28 @@ export default class Thing extends Datum {
 		});
 	};
 
-	get hierarchy():			 Hierarchy { return dbDispatch.db.hierarchy; }
-	get description():				string { return this.id + ' \"' + this.title + '\"'; }
-	get idForChildren():            string { return this.isBulkAlias ? this.bulkRootID : this.id; }
-	get visibleProgenySize():		  Size { return new Size(this.visibleProgenyWidth, this.visibleProgenyHeight()); }
-	get halfVisibleProgenySize():	  Size { return this.visibleProgenySize.dividedInHalf; }
-	get halfVisibleProgenyHeight(): number { return this.visibleProgenyHeight() / 2; }
-	get titleWidth():				number { return getWidthOf(this.title) }
-	get hasChildren():			   boolean { return this.hasPredicate(false); }
-	get hasParents():			   boolean { return this.hasPredicate(true); }
-	get isHere():				   boolean { return this.id == get(idHere); }
-	get isRoot():				   boolean { return this == this.hierarchy.root; }
-	get isBulkAlias():			   boolean { return this.trait == TraitType.bulk; }
-	get isExpanded():			   boolean { return this.isRoot || get(expanded)?.includes(this.parentRelationshipID); }
-	get isVisible():			   boolean { return this.ancestors(Number.MAX_SAFE_INTEGER).includes(this.hierarchy.here!); }
-	get grandparent():				 Thing { return this.firstParent?.firstParent ?? this.hierarchy.root; }
-	get lastChild():				 Thing { return this.children.slice(-1)[0]; }	// not alter children
-	get firstChild():				 Thing { return this.children[0]; }
-	get firstParent():				 Thing { return this.parents[0]; }
-	get siblings():			  Array<Thing> { return this.firstParent?.children ?? []; }
-	get children():			  Array<Thing> { const idP = Predicate.idIsAParentOf; return this.hierarchy.things_getByIDPredicateToAndID(idP, false, this.idForChildren); }
-	get parents():			  Array<Thing> { const idP = Predicate.idIsAParentOf; return this.hierarchy.things_getByIDPredicateToAndID(idP,	true, this.id); }
-	get fields():		 Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
+	get fields():		  Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
+	get siblings():			   Array<Thing> { return this.firstParent?.children ?? []; }
+	get children():			   Array<Thing> { const idP = Predicate.idIsAParentOf; return this.hierarchy.things_getByIDPredicateToAndID(idP, false, this.idForChildren); }
+	get parents():			   Array<Thing> { const idP = Predicate.idIsAParentOf; return this.hierarchy.things_getByIDPredicateToAndID(idP,	true, this.id); }
+	get hierarchy():			  Hierarchy { return dbDispatch.db.hierarchy; }
+	get hasChildren():				boolean { return this.hasPredicate(false); }
+	get hasParents():				boolean { return this.hasPredicate(true); }
+	get isHere():					boolean { return this.id == get(idHere); }
+	get isRoot():					boolean { return this == this.hierarchy.root; }
+	get isBulkAlias():				boolean { return this.trait == TraitType.bulk; }
+	get isExpanded():				boolean { return this.isRoot || get(expanded)?.includes(this.parentRelationshipID); }
+	get isVisible():				boolean { return this.ancestors(Number.MAX_SAFE_INTEGER).includes(this.hierarchy.here!); }
+	get grandparent():				  Thing { return this.firstParent?.firstParent ?? this.hierarchy.root; }
+	get lastChild():				  Thing { return this.children.slice(-1)[0]; }	// not alter children
+	get firstChild():				  Thing { return this.children[0]; }
+	get firstParent():				  Thing { return this.parents[0]; }
+	get description():				 string { return this.id + ' \"' + this.title + '\"'; }
+	get idForChildren():             string { return this.isBulkAlias ? this.bulkRootID : this.id; }
+	get titleWidth():				 number { return getWidthOf(this.title) }
+	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height / 2; }
+	get visibleProgeny_halfSize():	   Size { return this.visibleProgeny_size.dividedInHalf; }
+	get visibleProgeny_size():		   Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height); }
 
 	get parentRelationshipID(): string { // WRONG
 		return this.hierarchy.relationship_getWhereIDEqualsTo(this.id)?.id ?? '';
@@ -93,45 +93,31 @@ export default class Thing extends Datum {
 		return false;
 	}
 
-	get visibleProgenyWidth(): number {
-		let width = this.titleWidth;
+	get visibleProgeny_height(): number {
+		let singleRowHeight = this.showCluster ? k.clusterHeight + 6 : get(lineGap);
+		if (this.hasChildren && this.isExpanded) {
+			let height = 0;
+			for (const child of this.children) {
+				height += child.visibleProgeny_height;
+			}
+			return Math.max(height, singleRowHeight);
+		}
+		return singleRowHeight;
+	}
+
+	visibleProgeny_width(isFirst: boolean = true): number {
+		let width = isFirst ? 0 : this.titleWidth;
 		if (this.hasChildren && this.isExpanded) {
 			let progenyWidth = 0;
 			for (const child of this.children) {
-				let childProgenyWidth = child.visibleProgenyWidth;
-				if (childProgenyWidth > progenyWidth) {
+				let childProgenyWidth = child.visibleProgeny_width(false);
+				if (progenyWidth < childProgenyWidth) {
 					progenyWidth = childProgenyWidth;
 				}
 			}
-			width += progenyWidth;
+			width += progenyWidth + get(lineStretch) + get(dotSize) * (isFirst ? 2 : 1);
 		}
 		return width;
-	}
-
-	visibleProgenyHeight(includeCluster: boolean = true): number {
-
-		//////////////////////////////////////////////////
-		//												//
-		//			lineGap gives the height			//
-		//												//
-		//					   OR						//
-		//												//
-		//		 this has children & is expanded		//
-		//	so, add each child's visibleProgenyHeight	//
-		//												//
-		//////////////////////////////////////////////////
-		
-		let height = 0;
-		let singleHeight = this.showCluster ? k.clusterHeight + 6 : get(lineGap);		// default row height
-		if (this.hasChildren && this.isExpanded) {
-			if (this.children.length < 3 && !includeCluster) {
-				singleHeight = get(lineGap);
-			}
-			for (const child of this.children) {
-				height += child.visibleProgenyHeight();
-			}
-		}
-		return Math.max(height, singleHeight);
 	}
 	
 	toggleGrab()		 { this.hierarchy.grabs.toggleGrab(this); }

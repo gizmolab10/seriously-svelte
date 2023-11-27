@@ -104,8 +104,8 @@
 		on:contextmenu={handleContextMenu}
 		style='
 			position: absolute;
-			left: 2px;
-			top: {$idShowRevealCluster == thing.id ? 23 : 0}px;
+			left: 1px;
+			top: {$idShowRevealCluster == thing.id ? 23 : -2}px;
 			z-index: {ZIndex.dots};'>
 		<path d={path} stroke={thing.color} fill={fillColor}/>
 	</svg>
@@ -113,7 +113,7 @@
 
 <style>
 	.dot {
-		top: 5px;
+		top: 6px;
 		border: none;
 		cursor: pointer;
 		background: none;

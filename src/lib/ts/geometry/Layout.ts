@@ -4,25 +4,26 @@ import { lineStretch } from '../managers/State'
 export default class Layout {
 	lineRects: Array<LineRect>;
 
-	constructor(parent: Thing, origin: Point) {
+	constructor(thing: Thing, origin: Point) {
 		this.lineRects = [];
-		if (parent) {
-			const children = parent.children;
+		if (thing) {
+			const children = thing.children;
 			const quantity = children.length;
-			if (quantity > 0) {
-				const sizeX = get(lineStretch);
-				const initialOffsetY = -parent.visibleProgenyHeight(false) / 2; // start out negative and grow positive
-
+			const sizeX = get(lineStretch);
+			if (quantity < 2 || !thing.isExpanded) {
+				const rect = new Rect(origin, new Size(sizeX, 0));
+				this.lineRects.push(new LineRect(LineCurveType.flat, rect));
+			} else {
 				let index = 0;
-				let sumOfSiblingsAbove = 0;
+				let sumOfSiblingsAbove = -thing.visibleProgeny_halfHeight; // start out negative and grow positive
 				while (index < quantity) {
 					const child = children[index];
-					const childHalfVisibleProgenyHeight = child.halfVisibleProgenyHeight;
-					const sizeY = childHalfVisibleProgenyHeight + initialOffsetY + sumOfSiblingsAbove;
+					const childvisibleProgeny_halfHeight = child.visibleProgeny_halfHeight;
+					const sizeY = sumOfSiblingsAbove + childvisibleProgeny_halfHeight;
 					const direction = this.getDirection(sizeY);
 					const rect = new Rect(origin, new Size(sizeX, sizeY));
 					this.lineRects.push(new LineRect(direction, rect));
-					sumOfSiblingsAbove += child.visibleProgenyHeight();
+					sumOfSiblingsAbove += child.visibleProgeny_height;
 					index += 1;
 				}
 			}

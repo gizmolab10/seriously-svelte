@@ -1,5 +1,5 @@
 <script>
-	import { k, Size, Thing, Point, ZIndex, Signals, onMount, onDestroy, dbDispatch } from "../../ts/common/GlobalImports";
+	import { k, get, Size, Thing, Point, ZIndex, Signals, onMount, onDestroy, dbDispatch } from "../../ts/common/GlobalImports";
 	import { Direction, graphEditor, DebugOption, svgPath, handleSignalOfKind } from "../../ts/common/GlobalImports";
 	import { dotSize, idShowRevealCluster } from '../../ts/managers/State';
 	export let thing;
@@ -45,7 +45,7 @@
 
 	function updatePath() {
 		if ((!thing.hasChildren && !thing.isBulkAlias) || ($idShowRevealCluster == thing.id)) {
-			path = svgPath.circle(16, 8);
+			path = svgPath.circle(get(dotSize), 8);
 		} else {
 			const direction = (thing.isExpanded && thing.hasChildren) ? Direction.left : Direction.right;
 			path = svgPath.triangle(Size.square(diameter), direction);
@@ -101,7 +101,7 @@
 	style='
 		width={diameter}px;
 		height={diameter}px;
-		left: {diameter + thing.titleWidth + 4}px;
+		left: {diameter + thing.titleWidth + 2}px;
 	'>
 	<svg width={diameter}
 		height={diameter}
@@ -121,10 +121,10 @@
 		style='
 			position: absolute;
 			left: 0px;
-			top: 0px;
+			top: -1px;
 			z-index: {ZIndex.dots};'>
 		<path d={path} stroke={thing.color} fill={fillColor}/>
-		{#if thing.isBulkAlias && !thing.hasChildren}
+		{#if thing.isBulkAlias}
 			<path d={insidePath} stroke={thing.color} fill={antiFillColor}/>
 		{/if}
 	</svg>
@@ -132,7 +132,7 @@
 
 <style>
 	.dot {
-		top: 5px;
+		top: 7px;
 		border: none;
 		cursor: pointer;
 		background: none;

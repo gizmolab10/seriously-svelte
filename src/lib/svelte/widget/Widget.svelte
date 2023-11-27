@@ -7,7 +7,7 @@
 	import DragDot from './DragDot.svelte';
 	export let origin = new Point();
 	export let thing = Thing;
-	const rightPadding = 26
+	const rightPadding = 22
 	let showingCluster = false;
 	let showingBorder = false;
 	let toggleDraw = false;
@@ -38,22 +38,22 @@
 	function updatePosition() {
 		delta = showingBorder ? 0 : 1;
 		left = origin.x + delta;
-		height = $lineGap - 5;
+		height = $lineGap;
 		if (thing.showCluster) {
 			yPadding = radius - 17;
 			radius = k.clusterHeight / 2;
 			top = origin.y + delta - yPadding;
 			const xPadding = rightPadding - 3.5;
-			padding = yPadding + 'px ' + xPadding + 'px' + yPadding + 'px 1px';
+			padding = yPadding + 'px ' + xPadding + 'px' + yPadding + 'px 0px';
 		} else {
-			yPadding = 0;
+			yPadding = -2;
 			radius = $dotSize;
 			top = origin.y + delta;
 			if (thing.isExemplar) {
 				const xPadding = rightPadding + 2;
-				padding = '1px ' + xPadding + 'px 0px 1px';
+				padding = '1px ' + xPadding + 'px 0px 0px';
 			} else {
-				padding = '0px ' + rightPadding + 'px 1px 1px';
+				padding = '0px ' + rightPadding + 'px 1px 0px';
 			}
 		}
 	}
@@ -91,7 +91,7 @@
 			{border};
 		'>
 		<DragDot thing={thing}/>&nbsp;<TitleEditor thing={thing}/>
-		<div class='reveal'
+		<div class='revealDot'
 			style='top:{yPadding}px'>
 			<RevealDot thing={thing}/>
 			{#if showingCluster}
@@ -106,7 +106,7 @@
 		position: absolute;
 		white-space: nowrap;
 	}
-	.reveal {
+	.revealDot {
 		position: absolute;
 	}
 </style>

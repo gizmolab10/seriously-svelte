@@ -5,15 +5,14 @@ import { get, Point, dbDispatch } from '../common/GlobalImports'
 export enum PersistID {
 	lineStretch = 'lineStretch',
 	expanded	= 'expanded',
-	fontSize	= 'fontSize',
 	dotSize		= 'dotSize',
+	lineGap		= 'lineGap',
 	grabbed		= 'grabbed',
 	details		= 'details',
 	select		= 'select',
 	origin		= 'origin',
 	here		= 'here',
 	font		= 'font',
-	gap			= 'gap',
 	db			= 'db',
 }
 
@@ -23,10 +22,13 @@ class PersistLocal {
 	restore() {
 		// localStorage.clear();
 		// const isLocal = isServerLocal();
+
+		this.writeToKey(PersistID.lineGap, 20);
+		this.writeToKey(PersistID.dotSize, 13);
+
 		dbLoadTime.set(null);
-		this.writeToKey(PersistID.dotSize, 16);
 		idHere.set(this.readFromDBKey(PersistID.here));
-		lineGap.set(this.readFromKey(PersistID.gap) ?? 30);
+		lineGap.set(this.readFromKey(PersistID.lineGap) ?? 20);
 		const size = this.readFromKey(PersistID.dotSize) ?? 16;
 		expanded.set(this.readFromDBKey(PersistID.expanded) ?? []);
 		idsGrabbed.set(this.readFromDBKey(PersistID.grabbed) ?? []);

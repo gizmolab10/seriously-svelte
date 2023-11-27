@@ -35,26 +35,6 @@
 		$user_graphOffset = origin;
 		updateOrigins();
 	}
-
-	function updateOrigins() {
-		if (here) {
-			updateGraphRect();
-			const offsetFrom_firstReveal = here.halfVisibleProgenySize.asPoint.negated;
-			const offsetTo_userCenter = $graphRect.center.offsetBy($user_graphOffset);
-			const offsetTo_children = new Point(-16, offsetFrom_firstReveal.y + 8);
-			origin_ofFirstReveal = offsetTo_userCenter.offsetBy(new Point(offsetFrom_firstReveal.x - 16, 31));
-			if (k.leftJustifyGraph) {
-				origin_ofFirstReveal.x = 25;
-			}
-			origin_ofChildren = origin_ofFirstReveal.offsetBy(offsetTo_children);
-		}
-	}
-
-	function rectTo_firstReveal(): Rect {
-		const centerFrom_firstReveal = new Point(-33, -31);
-		const extent = origin_ofFirstReveal.offsetBy(centerFrom_firstReveal);
-		return Rect.createRect(new Point(0, 78), extent);
-	}
 	
 	$: {
 		if (here == null || here.id != $idHere) {			
@@ -84,6 +64,31 @@
 		}
 	}
 
+	function updateOrigins() {
+		if (here) {
+			updateGraphRect();
+			const mysteryOffset = new Point(16, 46);
+			const userCenter = $graphRect.center.offsetBy($user_graphOffset);
+			const halfChildren = here.visibleProgeny_halfSize.asPoint.negated;
+			origin_ofFirstReveal = userCenter.offsetBy(halfChildren).offsetBy(mysteryOffset);
+			if (k.leftJustifyGraph) {
+				origin_ofFirstReveal.x = 25;
+			}
+			const toChildren = new Point(-16, halfChildren.y + 8);
+			origin_ofChildren = origin_ofFirstReveal.offsetBy(toChildren);
+		}
+	}
+
+	function rectTo_firstReveal(): Rect {
+		const mysteryOffset = new Point(-33, -31);
+		const extent = origin_ofFirstReveal.offsetBy(mysteryOffset);
+		return Rect.createRect($graphRect.origin, extent);
+	}
+
+	function rectOfChildren(): Rect {
+		return new Rect(origin_ofChildren, here.visibleProgeny_size);
+	}
+
 </script>
 
 <svelte:document on:keydown={handleKeyDown}/>
@@ -92,8 +97,9 @@
 		<div style='overflow: hidden; top:{$graphRect.origin.x}px;'>
 			<Children thing={here} origin={origin_ofChildren}/>
 			{#if debug.hasOption(DebugOption.colors)}
-				<Box rect={$graphRect.dividedInHalf} color=aliceblue/>
-				<Box rect={rectTo_firstReveal()} color=lavenderblush/>
+				<Box rect={$graphRect.dividedInHalf} color=blue/>
+				<Box rect={rectTo_firstReveal()} color=red/>
+				<Box rect={rectOfChildren()} color=green/>
 			{/if}
 			{#if isGrabbed}
 				<Circle radius=14 center={origin_ofFirstReveal.offsetBy(new Point(6, 7))} color={here.color} thickness=1/>

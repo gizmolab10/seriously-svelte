@@ -149,8 +149,8 @@
 
 <style lang='scss'>
 	.title {
-		top: 3.5px;
-		left: 7.5px;
+		top: 0px;
+		left: 2px;
 		border: none;
 		outline: none;
 		white-space: pre;

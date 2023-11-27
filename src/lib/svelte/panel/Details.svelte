@@ -1,6 +1,7 @@
 <script>
 	import { DBType, ZIndex, PersistID, ButtonID, Hierarchy, dbDispatch, persistLocal } from '../../ts/common/GlobalImports';
 	import { build, dbType, isBusy, dbLoadTime, popupViewID } from '../../ts/managers/State';
+	import Preferences_Display from './Preferences_Display.svelte';
 	import RadioButtons from '../kit/RadioButtons.svelte'
 	import LabelButton from '../kit/LabelButton.svelte';
 	import Label from '../kit/Label.svelte';
@@ -24,6 +25,8 @@
 		{:else}
 			<br>
 		{/if}
+		<br>
+		<Preferences_Display/>
 	</div>
 </div>
 

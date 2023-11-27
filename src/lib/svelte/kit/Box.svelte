@@ -10,7 +10,7 @@
         left: {rect.origin.x}px;
         width: {rect.size.width}px;
         height: {rect.size.height}px;
-        border: 20px solid {color};'>
+        border: 1px solid {color};'>
 </div>
 
 <style>

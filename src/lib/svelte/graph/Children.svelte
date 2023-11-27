@@ -8,7 +8,7 @@
 	export let origin = new Point();
 	export let thing: Thing;
 
-	const mysteryWidgetOffset = new Point(10, -14);	// TODO: WHY is this needed, where does this value come from?
+	const mysteryWidgetOffset = new Point(10, -10);	// TODO: WHY is this needed, where does this value come from?
 	let lineRects: Array<LineRect> = [];
 	let prior = new Date().getTime();
 	let children = thing.children;
@@ -47,17 +47,18 @@
 
 	function layoutChildren() {
 		if (thing) {
-			const height = (thing.halfVisibleProgenyHeight);
+			const height = (thing.visibleProgeny_halfHeight);
 			const childOrigin = origin.offsetByY(height);
 			lineRects = new Layout(thing, childOrigin).lineRects;
+			// console.log(lineRects);
 		}
 	}
 
 	function originForGrandchildren(child: Thing, index: number): Point {
-		const more = 1;									// TODO: WHY 4? perhaps it accounts for title margin
+		const more = 0;									// TODO: WHY 1? perhaps it accounts for title margin
 		const rect = lineRectAt(index);
 		const x = origin.x + child.titleWidth + $dotSize + $lineStretch + more;
-		const y = rect.extent.y - child.halfVisibleProgenyHeight;
+		const y = rect.extent.y - child.visibleProgeny_halfHeight;
 		return new Point(x, y);
 	}
 	
@@ -78,7 +79,7 @@
 {#if children && children.length != 0 && lineRects.length == children.length}
 	{#each lineRects as lineRect, index}
 		<Widget thing={children[index]} origin={lineRect.extent.offsetBy(mysteryWidgetOffset)}/>
-		<Line thing={children[index]} curveType={curveTypeAt(index)} rect={lineRect.offsetByX(-120)}/>
+		<Line thing={children[index]} curveType={curveTypeAt(index)} rect={lineRect.offsetBy(new Point(-120, 1))}/>
 		{#if children[index].hasChildren && children[index].isExpanded}
 			<Children thing={children[index]} origin={originForGrandchildren(children[index], index)}/>
 		{/if}

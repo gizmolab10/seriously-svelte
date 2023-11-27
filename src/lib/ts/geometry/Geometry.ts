@@ -73,6 +73,7 @@ export class Rect {
 	get dividedInHalf():	 Rect { return this.expandedBy(this.size.multipliedBy(-1/2)); }
 	offsetByX(x: number):	 Rect { return new Rect(this.origin.offsetByX(x), this.size); }
 	offsetByY(y: number):	 Rect { return new Rect(this.origin.offsetByY(y), this.size); }
+	offsetBy(delta: Point):	 Rect { return new Rect(this.origin.offsetBy(delta), this.size); }
 	expandedBy(delta: Size): Rect { return new Rect(this.origin, this.size.expandedBy(delta)) }
 }
 
@@ -86,8 +87,8 @@ export class LineRect extends Rect {
 
 export function updateGraphRect() {
 	const originY = 78;											// height of title at the top
-	const originX = get(showDetails) ? 100 : 0;					// width of details
-	const mysteryOffset = new Point(originX + 76, 170);					// TODO: why?
+	const originX = get(showDetails) ? 101 : 0;					// width of details
+	const mysteryOffset = new Point(originX + 2, 88);					// TODO: why?
 	const originOfGraph = new Point(originX, originY);
 	const windowSize = new Size(window.innerWidth, window.innerHeight);
 	const sizeOfGraph = windowSize.reducedBy(mysteryOffset);	// account for origin
