@@ -7,14 +7,14 @@ export default class Relationship extends Datum {
 	idFrom: string;
 	idPredicate: string;
 	order: number;
-	dbType: string;
+	db_type: string;
 
 	constructor(baseID: string, id: string | null, idPredicate: string, idFrom: string, idTo: string, order = 0, isRemotelyStored: boolean) {
 		super(baseID, id, isRemotelyStored);
 		this.idTo = idTo; // idTo is child
 		this.idFrom = idFrom; // idFrom is parent
 		this.idPredicate = idPredicate;
-		this.dbType = dbDispatch.db.dbType;
+		this.db_type = dbDispatch.db.db_type;
 		this.order = order;
 	}
 

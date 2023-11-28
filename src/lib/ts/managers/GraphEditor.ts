@@ -1,5 +1,5 @@
 import { k, get, Thing, signal, Signals, Hierarchy, dbDispatch, orders_normalize_remoteMaybe } from '../common/GlobalImports';
-import { idsGrabbed, idShowRevealCluster } from './State';
+import { ids_grabbed, id_showRevealCluster } from './State';
 
 //////////////////////////////////////
 //									//
@@ -37,7 +37,7 @@ export default class GraphEditor {
 				}
 				switch (key) {
 					case 'delete':
-					case 'backspace':	await h.things_redraw_remoteTraverseDelete(h.things_getForIDs(get(idsGrabbed))); break;
+					case 'backspace':	await h.things_redraw_remoteTraverseDelete(h.things_getForIDs(get(ids_grabbed))); break;
 				}
 			}
 			if (grab) {
@@ -144,8 +144,8 @@ export default class GraphEditor {
 	latestGrabToggleRevealCluster() {
 		const id = this.hierarchy.grabs.latestGrab(true)?.id;
 		if (id) {
-			const clear = id == get(idShowRevealCluster);
-			idShowRevealCluster.set(clear ? null : id);
+			const clear = id == get(id_showRevealCluster);
+			id_showRevealCluster.set(clear ? null : id);
 		}
 
 	}

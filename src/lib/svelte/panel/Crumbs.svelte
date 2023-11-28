@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { Thing, Signals, onDestroy, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
-	import { idsGrabbed, crumbsWidth } from '../../ts/managers/State';
+	import { ids_grabbed, crumbsWidth } from '../../ts/managers/State';
 	import Crumb from '../kit/Crumb.svelte';
 	let ancestors: Array<Thing> = [];
 	let toggleDraw = false;
@@ -15,7 +15,7 @@
 	})
 
 	$: {
-		if ($idsGrabbed || grab == null || ancestors.length == 0) {
+		if ($ids_grabbed || grab == null || ancestors.length == 0) {
 			const thing = thing_lastGrabbed()	// start over with new grab
 			if (thing) {
 				grab = thing;

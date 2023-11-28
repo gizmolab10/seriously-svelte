@@ -1,10 +1,10 @@
 <script>
 	import { Point, Direction, dbDispatch, graphEditor } from "../../ts/common/GlobalImports";
 	import TriangleDot from '../kit/TriangleDot.svelte'
-	import { dotSize } from '../../ts/managers/State';
+	import { dot_size } from '../../ts/managers/State';
 	const size = 20;
 	export let here;
-	export let origin = new Point($dotSize, 20);
+	export let origin = new Point($dot_size, 20);
 
 	function newFillColor(isFilled) { return here.revealColor(isFilled); }
 

@@ -1,6 +1,6 @@
 <script>
 	import { builds, onMount } from '../../ts/common/GlobalImports';
-	import { popupViewID } from '../../ts/managers/State';
+	import { id_popupView } from '../../ts/managers/State';
 	import Directionals from '../kit/Directionals.svelte'
 	import CloseButton from '../kit/CloseButton.svelte'
 	export let size = 20;
@@ -19,7 +19,7 @@
 	function handleKeyDown(event) {
 		const key = event.key.toLowerCase();
 		switch (key) {
-			case 'escape': $popupViewID = null; break;
+			case 'escape': $id_popupView = null; break;
 		}
 	}
 

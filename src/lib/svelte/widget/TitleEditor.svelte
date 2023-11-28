@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, Thing, signal, Signals, ZIndex, onMount, onDestroy } from '../../ts/common/GlobalImports';
-	import { idEditing, thingFontSize, thingFontFamily, idEditingStopped } from '../../ts/managers/State';
+	import { id_editing, thing_fontSize, thing_fontFamily, id_editingStopped } from '../../ts/managers/State';
 	import { dbDispatch, SeriouslyRange, graphEditor, DebugOption } from '../../ts/common/GlobalImports';
 	import Widget from './Widget.svelte';
 	export let thing = Thing;
@@ -31,11 +31,11 @@
 	}
 
 	function handleKeyDown(event) {
-		if (thing && $idEditing == thing.id && canAlterTitle(event)) {
+		if (thing && $id_editing == thing.id && canAlterTitle(event)) {
 			switch (event.key) {	
 				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); graphEditor.thing_redraw_remoteAddChildTo(thing.firstParent); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
-				default:	  signal(Signals.childrenOf, thing.id);
+				default:	  signal(Signals.layout, thing.id); break;
 			}
 		}
 	}
@@ -47,11 +47,11 @@
 		///////////////////////
 
 		if (k.allowTitleEditing) {
-			if ($idEditingStopped == thing.id) {
+			if ($id_editingStopped == thing.id) {
 				setTimeout(() => {
-					$idEditingStopped = null;
+					$id_editingStopped = null;
 				}, 1000);
-			} else if ($idEditing != thing.id) {
+			} else if ($id_editing != thing.id) {
 				input?.blur();
 			} else if (!isEditing) {
 				isEditing = true;
@@ -68,15 +68,15 @@
 		invokeBlurNotClearEditing();
 		setTimeout(() => {		// eliminate infinite recursion
 			const id = thing?.id;
-			if (id != null && $idEditing == id) {				
-				$idEditing = null;
+			if (id != null && $id_editing == id) {				
+				$id_editing = null;
 			}
 		}, 20);
 	}
 
 	function invokeBlurNotClearEditing() {
 		if (isEditing && thing) {
-			$idEditingStopped = $idEditing;
+			$id_editingStopped = $id_editing;
 			isEditing = false;
 			extractRange();
 			input?.blur();
@@ -122,8 +122,8 @@
 {#key originalTitle}
 	<span class="ghost" bind:this={ghost}
 		style='
-			font-size: {$thingFontSize}px;
-			font-family: {$thingFontFamily};'>
+			font-size: {$thing_fontSize}px;
+			font-family: {$thing_fontFamily};'>
 		{thing.title}
 	</span>
 	<input
@@ -141,8 +141,8 @@
 		style='
 			color: {thing.color};
 			z-index: {ZIndex.text};
-			font-size: {$thingFontSize}px;
-			font-family: {$thingFontFamily};
+			font-size: {$thing_fontSize}px;
+			font-family: {$thing_fontFamily};
 			outline-color: k.backgroundColor;
 		'/>
 {/key}

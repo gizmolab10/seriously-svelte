@@ -1,4 +1,4 @@
-import { thingFontSize, thingFontFamily } from '../managers/State';
+import { thing_fontSize, thing_fontFamily } from '../managers/State';
 import { get, Thing, BrowserType } from './GlobalImports';
 import convert from 'color-convert';
 
@@ -72,7 +72,7 @@ export function getFontOf(element: HTMLElement): string {
 
 export function getWidthOf(s: string): number {
 	const span: HTMLElement = document.createElement('span');
-	span.style.font = get(thingFontSize) + 'px ' + get(thingFontFamily);
+	span.style.font = get(thing_fontSize) + 'px ' + get(thing_fontFamily);
 	span.style.left = '-9999px'; // offscreen
 	span.style.padding = '0px 0px 0px 6px';
 	span.style.position = 'absolute';

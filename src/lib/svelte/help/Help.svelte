@@ -1,5 +1,5 @@
 <script>
-	import { popupViewID } from '../../ts/managers/State';
+	import { id_popupView } from '../../ts/managers/State';
 	import CloseButton from '../kit/CloseButton.svelte'
 	import HelpButtons from './HelpButtons.svelte';
 	export let size = 20;
@@ -7,7 +7,7 @@
 	function handleKeyDown(event) {
 		const key = event.key.toLowerCase();
 		switch (key) {
-			case 'escape': $popupViewID = null; break;
+			case 'escape': $id_popupView = null; break;
 		}
 	}
 </script>

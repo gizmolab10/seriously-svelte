@@ -1,6 +1,6 @@
 import { get, noop, User, Thing, Grabs, debug, Access, remove, signal, Signals, TraitType, Predicate, dbDispatch } from '../common/GlobalImports';
 import { Relationship, persistLocal, CreationOptions, DebugOption, sort_byOrder, orders_normalize_remoteMaybe } from '../common/GlobalImports';
-import { idHere, isBusy, idsGrabbed, thingsArrived } from './State';
+import { id_here, isBusy, ids_grabbed, things_arrived } from './State';
 import DBInterface from '../db/DBInterface';
 
 type KnownRelationships = { [id: string]: Array<Relationship> }
@@ -37,7 +37,7 @@ export default class Hierarchy {
 
 	constructor(db: DBInterface) {
 		this.db = db;
-		idHere.subscribe((id: string | null) => {
+		id_here.subscribe((id: string | null) => {
 			if (this.db && this.db.hasData) {
 				this.here = this.thing_getForID(id);
 			}
@@ -52,13 +52,13 @@ export default class Hierarchy {
 			persistLocal.state_updateForDBType(type, root.id);
 		}
 		this.here_restore();
-		thingsArrived.set(true);
+		things_arrived.set(true);
 		isBusy.set(false);
 		this.isConstructed = true;
 	}
 
 	here_restore() {
-		let here = this.thing_getForID(get(idHere));
+		let here = this.thing_getForID(get(id_here));
 		if (here == null) {
 			const grab = this.grabs.thing_lastGrabbed;
 			here = grab?.firstParent ?? this.root;
@@ -359,8 +359,8 @@ export default class Hierarchy {
 		const idParent = relationship.idFrom;
 		const parent = this.thing_getForID(idParent);
 		const oParent = this.thing_getForID(idOriginal);
-		const childIsGrabbed = get(idsGrabbed).includes(idChild);
-		if (idOriginal == get(idHere) && idOriginal != idParent && childIsGrabbed) {
+		const childIsGrabbed = get(ids_grabbed).includes(idChild);
+		if (idOriginal == get(id_here) && idOriginal != idParent && childIsGrabbed) {
 			const child = this.thing_getForID(idChild);
 			child?.grabOnly(); // update crumbs
 			if (oParent && !oParent.hasChildren) {

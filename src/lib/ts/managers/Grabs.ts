@@ -1,5 +1,5 @@
 import { get, Thing, Hierarchy, sort_byOrder } from "../common/GlobalImports";
-import { idsGrabbed, idShowRevealCluster } from './State';
+import { ids_grabbed, id_showRevealCluster } from './State';
 
 export default class Grabs {
 	hierarchy: Hierarchy;
@@ -7,7 +7,7 @@ export default class Grabs {
 
 	constructor(hierarchy: Hierarchy) {
 		this.hierarchy = hierarchy;
-		idsGrabbed.subscribe((ids: string[]) => { // executes whenever idsGrabbed changes
+		ids_grabbed.subscribe((ids: string[]) => { // executes whenever ids_grabbed changes
 			if (ids.length > 0 && this.hierarchy.db && this.hierarchy.db.hasData) {
 				this.grabbed = [];
 				let remove = [];
@@ -30,18 +30,18 @@ export default class Grabs {
 	toggleGrab = (thing: Thing) => { if (thing.isGrabbed) { this.ungrab(thing); } else { this.grab(thing); } }
 
 	clearClusterState(thing: Thing) {
-		const id = get(idShowRevealCluster);
+		const id = get(id_showRevealCluster);
 		if (id != null) {
 			if (id == thing.id) {
-				idShowRevealCluster.set(null);
+				id_showRevealCluster.set(null);
 			} else {
-				idShowRevealCluster.set(thing.id);
+				id_showRevealCluster.set(thing.id);
 			}
 		}
 	}
 
 	get last_idGrabbed(): string | null {
-		const ids = get(idsGrabbed);
+		const ids = get(ids_grabbed);
 		if (ids) {
 			return ids.slice(-1)[0];	// not alter ids
 		}
@@ -50,12 +50,12 @@ export default class Grabs {
 
 	grabOnly(thing: Thing) {
 		const ids = [thing.id]
-		idsGrabbed.set(ids);
+		ids_grabbed.set(ids);
 		this.clearClusterState(thing);
 	}
 
 	grab(thing: Thing) {
-		idsGrabbed.update((array) => {
+		ids_grabbed.update((array) => {
 			if (array.indexOf(thing.id) == -1) {
 				array.push(thing.id);	// only add if not already added
 			}
@@ -71,7 +71,7 @@ export default class Grabs {
 
 	ungrab_ID(id: string) {
 		const rootID = this.hierarchy.idRoot;
-		idsGrabbed.update((array) => {
+		ids_grabbed.update((array) => {
 			const index = array.indexOf(id);
 			if (index != -1) {				// only splice array when item is found
 				array.splice(index, 1);		// 2nd parameter means remove one item only
@@ -81,14 +81,14 @@ export default class Grabs {
 			}
 			return array;
 		});
-		const ids = get(idsGrabbed);
+		const ids = get(ids_grabbed);
 		if (ids.length == 0) {
 			this.hierarchy.root?.grabOnly();
 		}
 	}
 
 	latestGrab(up: boolean) {
-		const ids = get(idsGrabbed);
+		const ids = get(ids_grabbed);
 		if (ids) {
 			let grabs = this.hierarchy.things_getForIDs(ids);
 			sort_byOrder(grabs);

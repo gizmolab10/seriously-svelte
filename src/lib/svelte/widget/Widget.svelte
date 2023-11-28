@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, Thing, Point, ZIndex, onMount, Signals, onDestroy, handleSignalOfKind } from '../../ts/common/GlobalImports';
-	import { lineGap, dotSize, idEditing, idsGrabbed, idShowRevealCluster} from '../../ts/managers/State';
+	import { line_gap, dot_size, id_editing, ids_grabbed, id_showRevealCluster} from '../../ts/managers/State';
 	import RevealCluster from './RevealCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
 	import RevealDot from './RevealDot.svelte';
@@ -13,7 +13,7 @@
 	let toggleDraw = false;
 	let isGrabbed = false;
 	let isEditing = false;
-	let radius = $dotSize;
+	let radius = $dot_size;
 	let background = '';
 	let padding = '';
 	let border = '';
@@ -38,7 +38,7 @@
 	function updatePosition() {
 		delta = showingBorder ? 0 : 1;
 		left = origin.x + delta;
-		height = $lineGap;
+		height = $line_gap;
 		if (thing.showCluster) {
 			yPadding = radius - 17;
 			radius = k.clusterHeight / 2;
@@ -47,7 +47,7 @@
 			padding = yPadding + 'px ' + xPadding + 'px' + yPadding + 'px 0px';
 		} else {
 			yPadding = -2;
-			radius = $dotSize;
+			radius = $dot_size;
 			top = origin.y + delta;
 			if (thing.isExemplar) {
 				const xPadding = rightPadding + 2;
@@ -60,9 +60,9 @@
 
 	$: {
 		const id = thing.id;
-		const shouldGrab = $idsGrabbed?.includes(id) || thing.isExemplar;
-		const shouldShowCluster = $idShowRevealCluster == id;
-		const shouldEdit = (id == $idEditing);
+		const shouldGrab = $ids_grabbed?.includes(id) || thing.isExemplar;
+		const shouldShowCluster = $id_showRevealCluster == id;
+		const shouldEdit = (id == $id_editing);
 		const change = (isEditing != shouldEdit || isGrabbed != shouldGrab || showingCluster != shouldShowCluster);
 		if (change) {
 			showingCluster = shouldShowCluster;

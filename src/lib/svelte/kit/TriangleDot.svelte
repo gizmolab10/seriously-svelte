@@ -1,6 +1,6 @@
 <script>
 	import { k, Size, Thing, Point, ZIndex, Direction, dbDispatch, graphEditor, svgPath } from "../../ts/common/GlobalImports";
-	import { dotSize } from '../../ts/managers/State';
+	import { dot_size } from '../../ts/managers/State';
 	export let newFillColor;
 	export let strokeColor;
 	export let direction;
@@ -8,7 +8,7 @@
 	export let display;
 	export let origin;
 	export let size;
-	const path = svgPath.triangle(Size.square($dotSize), direction);
+	const path = svgPath.triangle(Size.square($dot_size), direction);
 	let fillColor = k.backgroundColor;
 	let button = null;
 	

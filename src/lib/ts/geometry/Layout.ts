@@ -1,5 +1,5 @@
 import { get, Rect, Size, Point, Thing, DebugOption, LineRect, LineCurveType } from '../common/GlobalImports';
-import { lineStretch } from '../managers/State'
+import { line_stretch } from '../managers/State'
 
 export default class Layout {
 	lineRects: Array<LineRect>;
@@ -9,7 +9,7 @@ export default class Layout {
 		if (thing) {
 			const children = thing.children;
 			const quantity = children.length;
-			const sizeX = get(lineStretch);
+			const sizeX = get(line_stretch);
 			if (quantity < 2 || !thing.isExpanded) {
 				const rect = new Rect(origin, new Size(sizeX, 0));
 				this.lineRects.push(new LineRect(LineCurveType.flat, rect));

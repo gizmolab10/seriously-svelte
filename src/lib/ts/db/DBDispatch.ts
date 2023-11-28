@@ -1,4 +1,4 @@
-import { dbType, isBusy, idHere, idsGrabbed, dbLoadTime, thingsArrived } from '../managers/State';
+import { db_type, isBusy, id_here, ids_grabbed, db_loadTime, things_arrived } from '../managers/State';
 import { DBType, PersistID, persistLocal } from '../common/GlobalImports';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
@@ -13,10 +13,10 @@ export default class DBDispatch {
 
 	constructor() {
 		this.db = dbFirebase;
-		dbType.subscribe((type: string) => {
+		db_type.subscribe((type: string) => {
 			if (type) {
-				idHere.set(null);
-				idsGrabbed.set([]);
+				id_here.set(null);
+				ids_grabbed.set([]);
 				this.updateDBForType(type);
 				this.updateHierarchy(type);
 			}
@@ -29,7 +29,7 @@ export default class DBDispatch {
 		}
 		const type = params.get('db') ?? persistLocal.readFromKey(PersistID.db) ?? DBType.firebase;
 		this.dbForType(type).applyQueryStrings(params)
-		dbType.set(type);	// invokes DB update (line 22 above), which needs baseID already set (must be above)
+		db_type.set(type);	// invokes DB update (line 22 above), which needs baseID already set (must be above)
 	}
 
 	dbForType(type: string): DBInterface {
@@ -42,23 +42,23 @@ export default class DBDispatch {
 
 	changeDBTo(newDBType: DBType) {
 		const db = this.dbForType(newDBType);
-		dbLoadTime.set(db.loadTime);
+		db_loadTime.set(db.loadTime);
 		persistLocal.writeToKey(PersistID.db, newDBType);
 		if (newDBType != DBType.local && !db.hasData) {
-			isBusy.set(true);			// set this before changing $dbType so panel will show 'loading ...'
+			isBusy.set(true);			// set this before changing $db_type so panel will show 'loading ...'
 		}
-		dbType.set(newDBType);			// tell components to render the [possibly previously] fetched data
+		db_type.set(newDBType);			// tell components to render the [possibly previously] fetched data
 	}
 
 	getNextDB(forward: boolean): DBType {
 		if (forward) {
-			switch (this.db.dbType) {
+			switch (this.db.db_type) {
 				case DBType.airtable: return DBType.local;
 				case DBType.local:	  return DBType.firebase;
 				default:			  return DBType.airtable;
 			}
 		} else {
-			switch (this.db.dbType) {
+			switch (this.db.db_type) {
 				case DBType.airtable: return DBType.firebase;
 				case DBType.local:	  return DBType.airtable;
 				default:			  return DBType.local;
@@ -74,10 +74,10 @@ export default class DBDispatch {
 		} else {
 			if (type != DBType.local) {
 				isBusy.set(true);
-				thingsArrived.set(false);
+				things_arrived.set(false);
 			}
-			(async () => {							// this will happen when local sets dbType !!! too early?
-				dbLoadTime.set(null);
+			(async () => {							// this will happen when local sets db_type !!! too early?
+				db_loadTime.set(null);
 				const startTime = new Date().getTime();
 				await this.db.fetch_all();
 				h.hierarchy_assemble(type);
@@ -85,7 +85,7 @@ export default class DBDispatch {
 				const places = (duration == Math.trunc(duration)) ? 0 : 1;
 				const loadTime = (((new Date().getTime()) - startTime) / 1000).toFixed(places);
 				this.db.loadTime = loadTime;
-				dbLoadTime.set(loadTime);
+				db_loadTime.set(loadTime);
 			})();
 		}
 	}

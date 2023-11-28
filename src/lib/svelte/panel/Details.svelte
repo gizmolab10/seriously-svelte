@@ -1,6 +1,6 @@
 <script>
 	import { DBType, ZIndex, PersistID, ButtonID, Hierarchy, dbDispatch, persistLocal } from '../../ts/common/GlobalImports';
-	import { build, dbType, isBusy, dbLoadTime, popupViewID } from '../../ts/managers/State';
+	import { build, db_type, isBusy, db_loadTime, id_popupView } from '../../ts/managers/State';
 	import Preferences_Display from './Preferences_Display.svelte';
 	import RadioButtons from '../kit/RadioButtons.svelte'
 	import LabelButton from '../kit/LabelButton.svelte';
@@ -18,10 +18,10 @@
 
 <div class='modal-overlay' style='z-index: {ZIndex.frontmost};'>
 	<div class='modal-content' style='z-index: {ZIndex.frontmost};'>
-		<RadioButtons menuItems={menuItems} idSelected={$dbType}/>
+		<RadioButtons menuItems={menuItems} idSelected={$db_type}/>
 		<br>
-		{#if $dbLoadTime}
-			<Label title={'fetch in ' + $dbLoadTime + ' s'}/>
+		{#if $db_loadTime}
+			<Label title={'fetch in ' + $db_loadTime + ' s'}/>
 		{:else}
 			<br>
 		{/if}

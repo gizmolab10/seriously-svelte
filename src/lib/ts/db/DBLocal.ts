@@ -3,7 +3,7 @@ import DBInterface from './DBInterface';
 
 export default class DBLocal implements DBInterface {
 	_hierarchy: Hierarchy | null = null;
-	dbType = DBType.local;
+	db_type = DBType.local;
 	hasData = false;
 	loadTime = null;
 

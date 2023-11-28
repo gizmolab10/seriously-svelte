@@ -24,7 +24,7 @@ export default class DBFirebase implements DBInterface {
 	baseID = 'Public';
 	bulksName = 'Bulks';
 	deferSnapshots = false;
-	dbType = DBType.firebase;
+	db_type = DBType.firebase;
 	bulks: [Bulk] | null = null;
 	app = initializeApp(this.firebaseConfig);
 	predicatesCollection: CollectionReference | null = null;

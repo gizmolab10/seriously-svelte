@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { Rect, Size, Point, ZIndex, SVGType, svgPath, LineCurveType } from '../../ts/common/GlobalImports';
-	import { lineStretch, user_graphOffset } from '../../ts/managers/State'
+	import { line_stretch, user_graphOffset } from '../../ts/managers/State'
 	export let curveType: string = LineCurveType.up;
 	export let rect = new Rect();
 	export let thing: Thing;

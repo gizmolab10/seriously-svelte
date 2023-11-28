@@ -1,6 +1,6 @@
 <script>
 	import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, PersistID, dbDispatch } from '../../ts/common/GlobalImports'
-	import { dbType, isBusy, idHere, build, graphRect, popupViewID, showDetails, thingsArrived } from '../../ts/managers/State';
+	import { db_type, isBusy, id_here, build, graphRect, id_popupView, showDetails, things_arrived } from '../../ts/managers/State';
 	import { signal, Signals, ButtonID, Hierarchy, persistLocal, updateGraphRect } from '../../ts/common/GlobalImports'
 	import CircularButton from '../kit/CircularButton.svelte';
 	import LabelButton from '../kit/LabelButton.svelte';
@@ -14,13 +14,13 @@
 	let here = Thing;
 	let size = 14;
 	
-	function handleBuildsClick(event) { $popupViewID = ($popupViewID == ButtonID.buildNotes) ? null : ButtonID.buildNotes; }
-	function handleHelpClick() { $popupViewID = ($popupViewID == ButtonID.help) ? null : ButtonID.help; }
+	function handleBuildsClick(event) { $id_popupView = ($id_popupView == ButtonID.buildNotes) ? null : ButtonID.buildNotes; }
+	function handleHelpClick() { $id_popupView = ($id_popupView == ButtonID.help) ? null : ButtonID.help; }
 	window.addEventListener('resize', (event) => { updateGraphRect(); toggleDraw = !toggleDraw; });
 	function ignore(event) {}
 
 	$: {
-		here = dbDispatch.db.hierarchy.thing_getForID($idHere);
+		here = dbDispatch.db.hierarchy.thing_getForID($id_here);
 		if ($graphRect) {
 			size_graphRect = $graphRect.size;
 		}
@@ -60,7 +60,7 @@
 		<Details/>
 	{/if}
 </div>
-<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: -10px; top: 32px; width: {$popupViewID ? '111px' : '110%'};'></div>
+<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: -10px; top: 32px; width: {$id_popupView ? '111px' : '110%'};'></div>
 <div class='verticalLine' style='height: {$showDetails ? '100%' : '33px'}; z-index: {ZIndex.frontmost};'></div>
 <div class='rightSide' style='
 	left: {$showDetails ? 100 : 0}px;
@@ -71,17 +71,17 @@
 	width: {size_graphRect.width}px;'>
 	{#if $isBusy}
 		<p>Welcome to Seriously</p>
-		{#if $dbType != DBType.local}
-			<p>(loading your {$dbType} data{$dbType == DBType.firebase ? ', from ' + dbDispatch.db.baseID : ''})</p>
+		{#if $db_type != DBType.local}
+			<p>(loading your {$db_type} data{$db_type == DBType.firebase ? ', from ' + dbDispatch.db.baseID : ''})</p>
 		{/if}
-	{:else if !$thingsArrived}
+	{:else if !$things_arrived}
 		<p>Nothing is available.</p>
 	{:else}
-		{#if $popupViewID == ButtonID.help}
+		{#if $id_popupView == ButtonID.help}
 			<Help size={size}/>
-		{:else if $popupViewID == ButtonID.buildNotes}
+		{:else if $id_popupView == ButtonID.buildNotes}
 			<BuildNotes/>
-		{:else if $popupViewID == null}
+		{:else if $id_popupView == null}
 			<div class='top' style='z-index: {ZIndex.frontmost}'>
 				<Crumbs/>
 			</div>
@@ -103,7 +103,7 @@
 					on:keyup={ignore}
 					on:keydown={ignore}
 					on:keypress={ignore}
-					on:click={() => { $popupViewID = null; }}>
+					on:click={() => { $id_popupView = null; }}>
 					<Graph/>
 				</div>
 			{/key}

@@ -1,10 +1,10 @@
 <script>
 	import { signal, Signals, PersistID, persistLocal } from '../../ts/common/GlobalImports'
-	import { lineGap } from "../../ts/managers/State"
+	import { line_gap } from "../../ts/managers/State"
 
 	function handleInput(event) {
 		signal(Signals.childrenOf);
-		persistLocal.writeToKey(PersistID.lineGap, $lineGap);
+		persistLocal.writeToKey(PersistID.line_gap, $line_gap);
 	}
 </script>
 
@@ -13,10 +13,10 @@
   min='15'
   max='30'
   width='60'
-  bind:value={$lineGap}
+  bind:value={$line_gap}
   on:input={handleInput}
 />
-Row gap: {$lineGap}
+Row gap: {$line_gap}
 
 <style>
   input {

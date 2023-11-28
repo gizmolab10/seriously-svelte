@@ -1,9 +1,9 @@
 <script>
 	import { Direction, BrowserType, getBrowserType, svgPath, handleSignalOfKind } from "../../ts/common/GlobalImports";
 	import { k, Thing, Point, ZIndex, Signals, onMount, graphEditor, dbDispatch } from "../../ts/common/GlobalImports";
-	import { dotSize, idsGrabbed, idShowRevealCluster } from '../../ts/managers/State';
+	import { dot_size, ids_grabbed, id_showRevealCluster } from '../../ts/managers/State';
 	export let thing;
-	let diameter = $dotSize;
+	let diameter = $dot_size;
 	const browserType = getBrowserType();
 	const path = svgPath.oval(diameter, false);
 	let placement = 'left: 5px; top: 4px;'			// tiny browser compensation
@@ -28,7 +28,7 @@
 	});
 
 	$: {
-		const grabbed = $idsGrabbed?.includes(thing.id);
+		const grabbed = $ids_grabbed?.includes(thing.id);
 		if (isGrabbed != grabbed) {
 			isGrabbed = grabbed;
 			updateColors(false);
@@ -105,7 +105,7 @@
 		style='
 			position: absolute;
 			left: 1px;
-			top: {$idShowRevealCluster == thing.id ? 23 : -2}px;
+			top: {$id_showRevealCluster == thing.id ? 23 : -2}px;
 			z-index: {ZIndex.dots};'>
 		<path d={path} stroke={thing.color} fill={fillColor}/>
 	</svg>

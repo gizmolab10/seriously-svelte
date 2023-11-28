@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, Rect, Size, Point, Thing, ZIndex, Signals, onDestroy, graphEditor, PersistID, persistLocal, updateGraphRect } from '../../ts/common/GlobalImports';
 	import { debug, DebugOption, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
-	import { idHere, lineGap, idEditing, idsGrabbed, graphRect, user_graphOffset, popupViewID } from '../../ts/managers/State';
+	import { id_here, line_gap, id_editing, ids_grabbed, graphRect, user_graphOffset, id_popupView } from '../../ts/managers/State';
 	import RootRevealDot from './RootRevealDot.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Children from './Children.svelte';
@@ -37,12 +37,12 @@
 	}
 	
 	$: {
-		if (here == null || here.id != $idHere) {			
-			here = dbDispatch.db.hierarchy.thing_getForID($idHere);
+		if (here == null || here.id != $id_here) {			
+			here = dbDispatch.db.hierarchy.thing_getForID($id_here);
 			updateOrigins();
 		}
 		if (here) { // can sometimes be null TODO: WHY?
-			let grabbed = $idsGrabbed.includes(here.id);
+			let grabbed = $ids_grabbed.includes(here.id);
 			if (grabbed != isGrabbed) {
 				isGrabbed = grabbed;
 			}
@@ -50,13 +50,13 @@
 	}
 
 	async function handleKeyDown(event) {
-		if ($idEditing)			{ return; } // let Title component consume the events
+		if ($id_editing)			{ return; } // let Title component consume the events
 		if (event.key == undefined)	{ alert('no key for ' + event.type); return; }
 		if (event.type == 'keydown') {
 			const key = event.key;
 			switch (key) {
 				case 'c': user_graphOffset_setTo(new Point()); break;
-				case '?': $popupViewID = ButtonID.help; break;
+				case '?': $id_popupView = ButtonID.help; break;
 				case ']':
 				case '[': dbDispatch.nextDB(key == ']'); break;
 				default:  await graphEditor.handleKeyDown(event); break; // editor-specific key values

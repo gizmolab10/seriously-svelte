@@ -16,7 +16,7 @@ export enum DataKind {
 }
 
 export default interface DBInterface {
-	dbType: string;
+	db_type: string;
 	baseID: string;
 	hasData: boolean;
 	hierarchy: Hierarchy;

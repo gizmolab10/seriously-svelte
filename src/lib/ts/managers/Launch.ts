@@ -1,5 +1,5 @@
 import { k, debug, PersistID, dbDispatch, persistLocal, isServerLocal, getBrowserType } from '../common/GlobalImports'
-import { idHere, expanded, idsGrabbed, showDetails } from './State';
+import { id_here, expanded, ids_grabbed, showDetails } from './State';
 
 class Launch {
 	queryStrings: URLSearchParams | null = null;
@@ -22,9 +22,9 @@ class Launch {
 
 	applyQueryStrings(queryStrings: URLSearchParams) {
 		if (queryStrings.get('settings') === 'erase') {
-			idsGrabbed.set([]);
+			ids_grabbed.set([]);
 			expanded.set([]);
-			idHere.set(null);
+			id_here.set(null);
 		}
 		if (queryStrings.get('details') === 'hide') {
 			persistLocal.writeToKey(PersistID.details, false);

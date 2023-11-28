@@ -1,11 +1,11 @@
-import { user_graphOffset, showDetails, lineStretch, thingFontFamily } from './State';
-import { idHere, lineGap, expanded, dbLoadTime, idsGrabbed } from './State';
+import { user_graphOffset, showDetails, line_stretch, thing_fontFamily } from './State';
+import { id_here, line_gap, expanded, db_loadTime, ids_grabbed } from './State';
 import { Point, dbDispatch } from '../common/GlobalImports'
 
 export enum PersistID {
-	lineStretch = 'lineStretch',
+	line_stretch = 'line_stretch',
 	expanded	= 'expanded',
-	lineGap		= 'lineGap',
+	line_gap		= 'line_gap',
 	grabbed		= 'grabbed',
 	details		= 'details',
 	select		= 'select',
@@ -22,20 +22,20 @@ class PersistLocal {
 		// localStorage.clear();
 		// const isLocal = isServerLocal();
 
-		// this.writeToKey(PersistID.lineGap, 20);
-		// this.writeToKey(PersistID.dotSize, 13);
+		// this.writeToKey(PersistID.line_gap, 20);
+		// this.writeToKey(PersistID.dot_size, 13);
 
-		dbLoadTime.set(null);
-		idHere.set(this.readFromDBKey(PersistID.here));
-		lineGap.set(this.readFromKey(PersistID.lineGap) ?? 20); // sets dotSize and thingFontSize
+		db_loadTime.set(null);
+		id_here.set(this.readFromDBKey(PersistID.here));
+		line_gap.set(this.readFromKey(PersistID.line_gap) ?? 20); // sets dot_size and thing_fontSize
 		expanded.set(this.readFromDBKey(PersistID.expanded) ?? []);
-		idsGrabbed.set(this.readFromDBKey(PersistID.grabbed) ?? []);
+		ids_grabbed.set(this.readFromDBKey(PersistID.grabbed) ?? []);
 		showDetails.set(this.readFromKey(PersistID.details) ?? false);
-		lineStretch.set(this.readFromKey(PersistID.lineStretch) ?? 30);
-		thingFontFamily.set(this.readFromKey(PersistID.font) ?? 'Arial');
+		line_stretch.set(this.readFromKey(PersistID.line_stretch) ?? 30);
+		thing_fontFamily.set(this.readFromKey(PersistID.font) ?? 'Arial');
 		user_graphOffset.set(this.readFromKey(PersistID.origin) ?? new Point());
 
-		idsGrabbed.subscribe((ids: string[]) => {
+		ids_grabbed.subscribe((ids: string[]) => {
 			const here = dbDispatch.db.hierarchy.here;
 			if (this.okayToPersist && here) {
 				this.writeToDBKey(PersistID.grabbed, ids);
@@ -43,9 +43,9 @@ class PersistLocal {
 		});
 	}
 
-	get dbType(): string { return dbDispatch.db.dbType; }
-	readFromDBKey(key: string) { return this.readFromKey(key + this.dbType); }
-	writeToDBKey(key: string, value: any) { this.writeToKey(key + this.dbType, value); }
+	get db_type(): string { return dbDispatch.db.db_type; }
+	readFromDBKey(key: string) { return this.readFromKey(key + this.db_type); }
+	writeToDBKey(key: string, value: any) { this.writeToKey(key + this.db_type, value); }
 	writeToKey(key: string, value: any) { localStorage[key] = JSON.stringify(value); }
 
 	readFromKey(key: string): any | null {
@@ -53,12 +53,12 @@ class PersistLocal {
 		return !storedValue ? null : JSON.parse(storedValue!);
 	}
 
-	state_updateForDBType(dbType: string, defaultIDHere: string) {
-		const hereID = this.readFromKey(PersistID.here + dbType) ?? defaultIDHere;
-		const grabbedIDs = this.readFromKey(PersistID.grabbed + dbType) ?? [defaultIDHere];
+	state_updateForDBType(db_type: string, defaultid_here: string) {
+		const hereID = this.readFromKey(PersistID.here + db_type) ?? defaultid_here;
+		const grabbedIDs = this.readFromKey(PersistID.grabbed + db_type) ?? [defaultid_here];
 		this.okayToPersist = false;
-		idHere.set(hereID);
-		idsGrabbed.set(grabbedIDs);
+		id_here.set(hereID);
+		ids_grabbed.set(grabbedIDs);
 		this.okayToPersist = true;
 	}
 

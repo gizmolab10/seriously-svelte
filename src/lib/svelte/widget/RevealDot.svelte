@@ -1,9 +1,9 @@
 <script>
 	import { k, get, Size, Thing, Point, ZIndex, Signals, onMount, onDestroy, dbDispatch } from "../../ts/common/GlobalImports";
 	import { Direction, graphEditor, DebugOption, svgPath, handleSignalOfKind } from "../../ts/common/GlobalImports";
-	import { dotSize, idShowRevealCluster } from '../../ts/managers/State';
+	import { dot_size, id_showRevealCluster } from '../../ts/managers/State';
 	export let thing;
-	let diameter = $dotSize;
+	let diameter = $dot_size;
 	let path = svgPath.triangle(Size.square(diameter), Direction.left);
 	let insidePath = svgPath.circle(16, 6);
 	let antiFillColor = k.backgroundColor;
@@ -44,8 +44,8 @@
 	}
 
 	function updatePath() {
-		if ((!thing.hasChildren && !thing.isBulkAlias) || ($idShowRevealCluster == thing.id)) {
-			path = svgPath.circle(get(dotSize), 8);
+		if ((!thing.hasChildren && !thing.isBulkAlias) || ($id_showRevealCluster == thing.id)) {
+			path = svgPath.circle(get(dot_size), 8);
 		} else {
 			const direction = (thing.isExpanded && thing.hasChildren) ? Direction.left : Direction.right;
 			path = svgPath.triangle(Size.square(diameter), direction);
@@ -56,9 +56,9 @@
 	}
 
 	function handleClick(event) {
-		if ($idShowRevealCluster == thing.id) {
+		if ($id_showRevealCluster == thing.id) {
 			thing.debugLog('CLICK');
-			$idShowRevealCluster = null;
+			$id_showRevealCluster = null;
 		} else {
 			graphEditor.thing_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
 		}
@@ -74,12 +74,12 @@
 		clearClicks();
 		clickTimer = setTimeout(() => {
 			clearClicks();
-			if ($idShowRevealCluster == thing.id) {
+			if ($id_showRevealCluster == thing.id) {
 				thing.debugLog('LONG');
-				$idShowRevealCluster = null;
+				$id_showRevealCluster = null;
 			} else {
 				thing.grabOnly()
-				$idShowRevealCluster = thing.id;
+				$id_showRevealCluster = thing.id;
 			}
 		}, k.longClickThreshold);
 	}

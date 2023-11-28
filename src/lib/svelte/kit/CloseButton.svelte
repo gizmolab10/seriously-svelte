@@ -1,5 +1,5 @@
 <script>
-    import { popupViewID } from '../../ts/managers/State';
+    import { id_popupView } from '../../ts/managers/State';
 	export let size = 20;
 	function ignore(event) {}
 </script>
@@ -10,7 +10,7 @@
     font-size: {size - 1}px;;
     line-height: {size}px;'
     on:keypress={ignore}
-    on:click={() => { $popupViewID = null; }}>
+    on:click={() => { $id_popupView = null; }}>
     ×
 </div>
 

@@ -1,6 +1,6 @@
 import { dbDispatch, getWidthOf, DebugOption, persistLocal, SeriouslyRange, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { k, get, Size, Datum, signal, Signals, debug, Predicate, Hierarchy, TraitType, PersistID } from '../common/GlobalImports';
-import { idHere, dotSize, idEditing, expanded, idsGrabbed, lineGap, idShowRevealCluster, lineStretch } from '../managers/State';
+import { id_here, dot_size, id_editing, expanded, ids_grabbed, line_gap, id_showRevealCluster, line_stretch } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -14,7 +14,7 @@ export default class Thing extends Datum {
 	isExemplar = false;
 	isEditing = false;
 	isGrabbed = false;
-	dbType: string;
+	db_type: string;
 	title: string;
 	color: string;
 	trait: string;
@@ -22,7 +22,7 @@ export default class Thing extends Datum {
 
 	constructor(baseID: string, id: string | null, title = k.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
 		super(baseID, id, isRemotelyStored);
-		this.dbType = dbDispatch.db.dbType;
+		this.db_type = dbDispatch.db.db_type;
 		this.title = title;
 		this.color = color;
 		this.trait = trait;
@@ -30,7 +30,7 @@ export default class Thing extends Datum {
 
 		this.updateColorAttributes();
 
-		idEditing.subscribe((idEdit: string | null) => {
+		id_editing.subscribe((idEdit: string | null) => {
 			const isEditing = (idEdit == this.id);
 			if (this.isEditing != isEditing) {
 				this.isEditing  = isEditing;
@@ -38,7 +38,7 @@ export default class Thing extends Datum {
 			}
 		});
 
-		idsGrabbed.subscribe((idsGrab: string[]) => {
+		ids_grabbed.subscribe((idsGrab: string[]) => {
 			const isGrabbed = idsGrab.includes(this.id);
 			if (this.isGrabbed != isGrabbed) {
 				this.isGrabbed  = isGrabbed;
@@ -46,7 +46,7 @@ export default class Thing extends Datum {
 			}
 		});
 
-		idShowRevealCluster.subscribe((idCluster: string | null) => {
+		id_showRevealCluster.subscribe((idCluster: string | null) => {
 			const shouldShow = (idCluster != undefined) && idCluster == this.id;
 			if (this.showCluster != shouldShow) {
 				this.showCluster = shouldShow;
@@ -62,7 +62,7 @@ export default class Thing extends Datum {
 	get hierarchy():			  Hierarchy { return dbDispatch.db.hierarchy; }
 	get hasChildren():				boolean { return this.hasPredicate(false); }
 	get hasParents():				boolean { return this.hasPredicate(true); }
-	get isHere():					boolean { return this.id == get(idHere); }
+	get isHere():					boolean { return this.id == get(id_here); }
 	get isRoot():					boolean { return this == this.hierarchy.root; }
 	get isBulkAlias():				boolean { return this.trait == TraitType.bulk; }
 	get isExpanded():				boolean { return this.isRoot || get(expanded)?.includes(this.parentRelationshipID); }
@@ -94,7 +94,7 @@ export default class Thing extends Datum {
 	}
 
 	get visibleProgeny_height(): number {
-		let singleRowHeight = this.showCluster ? k.clusterHeight + 6 : get(lineGap);
+		let singleRowHeight = this.showCluster ? k.clusterHeight + 6 : get(line_gap);
 		if (this.hasChildren && this.isExpanded) {
 			let height = 0;
 			for (const child of this.children) {
@@ -115,7 +115,7 @@ export default class Thing extends Datum {
 					progenyWidth = childProgenyWidth;
 				}
 			}
-			width += progenyWidth + get(lineStretch) + get(dotSize) * (isFirst ? 2 : 1);
+			width += progenyWidth + get(line_stretch) + get(dot_size) * (isFirst ? 2 : 1);
 		}
 		return width;
 	}
@@ -146,7 +146,7 @@ export default class Thing extends Datum {
 
 	startEdit() {
 		if (this != this.hierarchy.root) {
-			idEditing.set(this.id);
+			id_editing.set(this.id);
 		}
 	}
 
@@ -203,9 +203,9 @@ export default class Thing extends Datum {
 	becomeHere() {
 		if (this.hasChildren) {
 			const id = this.id;
-			idHere.set(id);
+			id_here.set(id);
 			this.expand();
-			idShowRevealCluster.set(null);
+			id_showRevealCluster.set(null);
 			signal(Signals.childrenOf, id);
 			persistLocal.writeToDBKey(PersistID.here, id)
 		};
@@ -349,7 +349,7 @@ export default class Thing extends Datum {
 		if (!RIGHT && allowToBecomeHere && shouldBecomeHere) {
 			newHere.becomeHere();
 		}
-		idEditing.set(null);
+		id_editing.set(null);
 		newGrab?.grabOnly();
 		signal(Signals.childrenOf);			// tell graph to update line rects
 	}

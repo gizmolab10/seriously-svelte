@@ -1,8 +1,8 @@
 <script lang='ts'>
     import { k, ZIndex, onMount, svgPath, graphEditor, dbDispatch } from '../../ts/common/GlobalImports';
-    import { dotSize, idShowRevealCluster } from '../../ts/managers/State';
+    import { dot_size, id_showRevealCluster } from '../../ts/managers/State';
 	export let thing: Thing;
-	let diameter = $dotSize;
+	let diameter = $dot_size;
     const path = svgPath.circle(diameter, diameter - 2);
     let color = 'black';
     let left = 60;
@@ -19,7 +19,7 @@
                 case 'delete': await dbDispatch.db.hierarchy.things_redraw_remoteTraverseDelete([thing]); break;
                 default: break;
             }
-            $idShowRevealCluster = null;
+            $id_showRevealCluster = null;
         }
     }
 
