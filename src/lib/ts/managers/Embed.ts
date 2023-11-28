@@ -13,7 +13,7 @@ export default class Embed {
         if (ids && k.isEmbedded) {
             const message = ids?.join('$');
             //@ts-ignore
-            // window.parent.bubble_fn_select(message);
+            window.parent.bubble_fn_select(message);
             persistLocal.writeToKey(PersistID.select, message);
             console.log('iframe', message);
         }

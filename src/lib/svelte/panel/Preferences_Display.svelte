@@ -3,7 +3,7 @@
 	import { line_gap } from "../../ts/managers/State"
 
 	function handleInput(event) {
-		signal(Signals.childrenOf);
+		signal(Signals.layout);
 		persistLocal.writeToKey(PersistID.line_gap, $line_gap);
 	}
 </script>
@@ -16,7 +16,7 @@
   bind:value={$line_gap}
   on:input={handleInput}
 />
-Row gap: {$line_gap}
+Vertical: {$line_gap}
 
 <style>
   input {

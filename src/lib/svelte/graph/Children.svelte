@@ -14,11 +14,22 @@
 	let children = thing.children;
 
 	onMount( () => { thing.debugLog('CHILDREN MOUNT'); layoutChildren(); });
-	onDestroy( () => { signalHandler.disconnect(); });
 	function lineRectAt(index: number): LineRect { return lineRects[index]; }
 	function curveTypeAt(index: number): number { return lineRectAt(index).curveType; }
+	onDestroy( () => { layout_signalHandler.disconnect(); redraw_signalHandler.disconnect(); });
 	
-	const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
+	const layout_signalHandler = handleSignalOfKind(Signals.layout, (idThing) => {
+		if (idThing && idThing == thing.id) {
+			layoutChildren();
+			for (const child of children) {
+				if (child.hasChildren && child.isExpanded) {
+					signal(Signals.layout, child.id); // percolate
+				}
+			}
+		}
+	})
+	
+	const redraw_signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
 		if (!idThing || idThing == thing.id || thing.childrenIDs_anyMissingFromIDsOf(children) || thing.isRoot) {
 			const now = new Date().getTime();
 			if (now - prior > 1000) {

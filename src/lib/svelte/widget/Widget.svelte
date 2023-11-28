@@ -24,6 +24,10 @@
 	let top = 0;
 	let widget;
 
+	onDestroy( () => {
+		layout_signalHandler.disconnect();
+	});
+
 	onMount( () => {
 		updateBorderStyle();
 		updatePosition();
@@ -57,8 +61,13 @@
 			}
 		}
 	}
+	
+	const layout_signalHandler = handleSignalOfKind(Signals.layout, (idThing) => {
+		height = $line_gap;
+	})
 
 	$: {
+		height = $line_gap;
 		const id = thing.id;
 		const shouldGrab = $ids_grabbed?.includes(id) || thing.isExemplar;
 		const shouldShowCluster = $id_showRevealCluster == id;
