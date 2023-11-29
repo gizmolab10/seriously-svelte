@@ -2,4 +2,5 @@
   for = "/*"
   [headers.values]
     Content-Security-Policy = 
-    "default-src 'self' https://www.catalist.network https://api.airtable.com https://firestore.googleapis.com;"
+    "default-src 'self';
+    frame-src 'self' https://www.catalist.network https://api.airtable.com https://firestore.googleapis.com;"
