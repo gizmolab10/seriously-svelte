@@ -1,4 +1,4 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    Content-Security-Policy = "default-src 'self' https://www.catalist.network;"
+    Content-Security-Policy = "default-src 'self' https://www.catalist.network; connect-src 'self' https://www.catalist.network;"
