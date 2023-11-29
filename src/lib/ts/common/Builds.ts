@@ -4,7 +4,7 @@ class Builds {
 	notes: { [id: number]: string[] } = {};
 	constructor() {
 		this.notes = { 
-			66 : ['November 28, 2023', 'configuration 7 netlify content security profile'],
+			66 : ['November 28, 2023', 'configuration 8 netlify content security profile'],
 			65 : ['November 27, 2023', 'size slider'],
 			64 : ['November 24, 2023', 'perfect scrolling'],
 			63 : ['November 20, 2023', 'add select notification'],
