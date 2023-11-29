@@ -3,6 +3,6 @@
   [headers.values]
     Content-Security-Policy = 
     "default-src 'self' https://www.catalist.network;
-    connect-src 'self' https://www.catalist.network;
+    connect-src 'self' https://www.catalist.network https://api.airtable.com https://firestore.googleapis.com;
     frame-ancestor 'self' https://www.catalist.network;
     frame-src 'self' https://www.catalist.network;"
