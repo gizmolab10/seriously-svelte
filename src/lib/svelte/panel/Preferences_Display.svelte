@@ -16,7 +16,7 @@
   bind:value={$line_gap}
   on:input={handleInput}
 />
-Vertical: {$line_gap}
+Size: {$line_gap}
 
 <style>
   input {
