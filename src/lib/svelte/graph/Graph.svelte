@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, Rect, Size, Point, Thing, ZIndex, Signals, onDestroy, graphEditor, PersistID, persistLocal, updateGraphRect } from '../../ts/common/GlobalImports';
 	import { debug, DebugOption, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
-	import { id_here, line_gap, id_editing, ids_grabbed, graphRect, user_graphOffset, id_popupView } from '../../ts/managers/State';
+	import { id_here, dot_size, id_editing, ids_grabbed, graphRect, user_graphOffset, id_popupView } from '../../ts/managers/State';
 	import RootRevealDot from './RootRevealDot.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Children from './Children.svelte';
@@ -9,6 +9,10 @@
 	let origin_ofFirstReveal = new Point();
 	let origin_ofChildren = new Point();
 	let isGrabbed = false;
+	let greenRect: Rect;
+	let blueRect: Rect;
+	let redRect: Rect;
+	let size = 0;
 	let here;
 
 	onDestroy( () => { signalHandler.disconnect(); });
@@ -30,25 +34,6 @@
 		}
 	});
 
-	function user_graphOffset_setTo(origin: Point) {
-		persistLocal.writeToKey(PersistID.origin, origin);
-		$user_graphOffset = origin;
-		updateOrigins();
-	}
-	
-	$: {
-		if (here == null || here.id != $id_here) {			
-			here = dbDispatch.db.hierarchy.thing_getForID($id_here);
-			updateOrigins();
-		}
-		if (here) { // can sometimes be null TODO: WHY?
-			let grabbed = $ids_grabbed.includes(here.id);
-			if (grabbed != isGrabbed) {
-				isGrabbed = grabbed;
-			}
-		}
-	}
-
 	async function handleKeyDown(event) {
 		if ($id_editing)			{ return; } // let Title component consume the events
 		if (event.key == undefined)	{ alert('no key for ' + event.type); return; }
@@ -64,10 +49,41 @@
 		}
 	}
 
+	function user_graphOffset_setTo(origin: Point) {
+		persistLocal.writeToKey(PersistID.origin, origin);
+		$user_graphOffset = origin;
+		updateOrigins();
+	}
+	
+	$: {
+		if ($user_graphOffset != null) {
+			updateOrigins();
+		}
+	}
+	
+	$: {
+		if ($dot_size > 0) {
+			updateOrigins();
+		}
+	}
+	
+	$: {
+		if (here == null || here.id != $id_here) {			
+			here = dbDispatch.db.hierarchy.thing_getForID($id_here);
+			updateOrigins();
+		}
+		if (here) { // can sometimes be null TODO: WHY?
+			let grabbed = $ids_grabbed.includes(here.id);
+			if (grabbed != isGrabbed) {
+				isGrabbed = grabbed;
+			}
+		}
+	}
+
 	function updateOrigins() {
 		if (here) {
 			updateGraphRect();
-			const mysteryOffset = new Point(16, 46);
+			const mysteryOffset = new Point(20, 43);
 			const userCenter = $graphRect.center.offsetBy($user_graphOffset);
 			const halfChildren = here.visibleProgeny_halfSize.asPoint.negated;
 			origin_ofFirstReveal = userCenter.offsetBy(halfChildren).offsetBy(mysteryOffset);
@@ -76,6 +92,9 @@
 			}
 			const toChildren = new Point(-16, halfChildren.y + 8);
 			origin_ofChildren = origin_ofFirstReveal.offsetBy(toChildren);
+			blueRect = $graphRect.dividedInHalf;
+			redRect = rectTo_firstReveal();
+			greenRect = rectOfChildren();
 		}
 	}
 
@@ -92,19 +111,17 @@
 </script>
 
 <svelte:document on:keydown={handleKeyDown}/>
-{#key origin_ofChildren}
-	{#if here}
-		<div style='overflow: hidden; top:{$graphRect.origin.x}px;'>
-			<Children thing={here} origin={origin_ofChildren}/>
-			{#if debug.hasOption(DebugOption.colors)}
-				<Box rect={$graphRect.dividedInHalf} color=blue/>
-				<Box rect={rectTo_firstReveal()} color=red/>
-				<Box rect={rectOfChildren()} color=green/>
-			{/if}
-			{#if isGrabbed}
-				<Circle radius=14 center={origin_ofFirstReveal.offsetBy(new Point(6, 7))} color={here.color} thickness=1/>
-			{/if}
-			<RootRevealDot here={here} origin={origin_ofFirstReveal}/>
-		</div>
-	{/if}
-{/key}
+{#if here}
+	<div style='overflow: hidden; top:{$graphRect.origin.x}px;'>
+		<Children thing={here} origin={origin_ofChildren}/>
+		{#if debug.hasOption(DebugOption.colors)}
+			<Box rect={redRect} color=red/>
+			<Box rect={blueRect} color=blue/>
+			<Box rect={greenRect} color=green/>
+		{/if}
+		{#if isGrabbed}
+			<Circle radius={size / 1.5} center={origin_ofFirstReveal.offsetBy(new Point(6, 8))} color={here.color} thickness=1/>
+		{/if}
+		<RootRevealDot here={here} origin={origin_ofFirstReveal}/>
+	</div>
+{/if}

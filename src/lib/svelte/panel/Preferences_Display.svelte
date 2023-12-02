@@ -1,26 +1,32 @@
 <script>
-	import { signal, Signals, PersistID, persistLocal } from '../../ts/common/GlobalImports'
-	import { line_gap } from "../../ts/managers/State"
+	import { signal, Signals, PersistID, persistLocal } from '../../ts/common/GlobalImports';
+	import { line_gap } from '../../ts/managers/State';
 
 	function handleInput(event) {
-		signal(Signals.layout);
+		// signal(Signals.layout);
 		persistLocal.writeToKey(PersistID.line_gap, $line_gap);
 	}
-</script>
+
+  </script>
 
 <input
-  type='range'
   min='15'
   max='30'
-  width='60'
+  type='range'
+  style='width: 70px;'
   bind:value={$line_gap}
   on:input={handleInput}
+  on:keydown={(event) => { event.preventDefault(); }}
 />
-Size: {$line_gap}
+<div style='text-align: center;'>
+  Size: {$line_gap}
+</div>
 
 <style>
   input {
-    width: 60px;
-    background: green;
+    width: 60px;  
+    &:focus {
+      outline: none;
+    }
   }
 </style>

@@ -1,21 +1,18 @@
 <script lang=ts>
 	import { Rect, Size, Point, Thing, signal, Signals, Layout, onMount, LineRect, onDestroy } from '../../ts/common/GlobalImports';
 	import { DebugOption, LineCurveType, orders_normalize_remoteMaybe, handleSignalOfKind } from '../../ts/common/GlobalImports';
-	import { line_gap, line_stretch, dot_size } from '../../ts/managers/State';
+	import { dot_size, line_stretch, user_graphOffset } from '../../ts/managers/State';
 	import Widget from '../widget/Widget.svelte';
 	import Children from './Children.svelte';
 	import Line from './Line.svelte';
 	export let origin = new Point();
 	export let thing: Thing;
-
-	const mysteryWidgetOffset = new Point(10, -10);	// TODO: WHY is this needed, where does this value come from?
 	let lineRects: Array<LineRect> = [];
 	let prior = new Date().getTime();
 	let children = thing.children;
+	let threeArrays = [];
 
 	onMount( () => { thing.debugLog('CHILDREN MOUNT'); layoutChildren(); });
-	function lineRectAt(index: number): LineRect { return lineRects[index]; }
-	function curveTypeAt(index: number): number { return lineRectAt(index).curveType; }
 	onDestroy( () => { layout_signalHandler.disconnect(); redraw_signalHandler.disconnect(); });
 	
 	const layout_signalHandler = handleSignalOfKind(Signals.layout, (idThing) => {
@@ -49,25 +46,37 @@
 			}
 		}
 	})
-
-	function describe(things: Array<Thing>) {
-		for (const [index, thing] of things.entries()) {
-			thing.debugLog('CHILD at ' + index);
+	
+	$: {
+		if ($user_graphOffset != null) {
+			layoutChildren();
 		}
 	}
 
+	$: {
+		if ($dot_size > 0) {
+			layoutChildren();
+		}
+	}
+	
 	function layoutChildren() {
 		if (thing) {
 			const height = (thing.visibleProgeny_halfHeight);
 			const childOrigin = origin.offsetByY(height);
 			lineRects = new Layout(thing, childOrigin).lineRects;
-			// console.log(lineRects);
+			threeArrays = lineRects.map((rect, index) => ({
+				origin: originForGrandchildren(children[index], rect),
+				child: children[index], 
+				rect: rect,
+			}));
 		}
 	}
 
-	function originForGrandchildren(child: Thing, index: number): Point {
+	function originForGrandchildren(child: Thing, rect: LineRect): Point {
 		const more = 0;									// TODO: WHY 1? perhaps it accounts for title margin
-		const rect = lineRectAt(index);
+		if (!rect) {
+			alert('grandchildren origin not computable');
+		}
 		const x = origin.x + child.titleWidth + $dot_size + $line_stretch + more;
 		const y = rect.extent.y - child.visibleProgeny_halfHeight;
 		return new Point(x, y);
@@ -83,16 +92,20 @@
 		return strings.join(', ');
 	}
 
-	// {thing.debugLog('CHILDREN DRAW')}
+	function describe(things: Array<Thing>) {
+		for (const [index, thing] of things.entries()) {
+			thing.debugLog('CHILD at ' + index);
+		}
+	}
 	
 </script>
 
 {#if children && children.length != 0 && lineRects.length == children.length}
-	{#each lineRects as lineRect, index}
-		<Widget thing={children[index]} origin={lineRect.extent.offsetBy(mysteryWidgetOffset)}/>
-		<Line thing={children[index]} curveType={curveTypeAt(index)} rect={lineRect.offsetBy(new Point(-120, 1))}/>
-		{#if children[index].hasChildren && children[index].isExpanded}
-			<Children thing={children[index]} origin={originForGrandchildren(children[index], index)}/>
+	{#each threeArrays as i, index}
+		<Widget thing={i.child} origin={i.rect.extent.offsetBy(new Point(10, -13))}/>
+		<Line thing={i.child} curveType={i.rect.curveType} rect={i.rect.offsetBy(new Point(($dot_size / 2) - 130, ($dot_size / 2) - 8))}/>
+		{#if i.child.hasChildren && i.child.isExpanded}
+			<Children thing={i.child} origin={i.origin}/>
 		{/if}
 	{/each}
 {/if}

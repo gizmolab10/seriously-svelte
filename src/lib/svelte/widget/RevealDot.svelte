@@ -3,11 +3,11 @@
 	import { Direction, graphEditor, DebugOption, svgPath, handleSignalOfKind } from "../../ts/common/GlobalImports";
 	import { dot_size, id_showRevealCluster } from '../../ts/managers/State';
 	export let thing;
-	let diameter = $dot_size;
-	let path = svgPath.triangle(Size.square(diameter), Direction.left);
+	let path = svgPath.triangle(Size.square($dot_size), Direction.left);
 	let insidePath = svgPath.circle(16, 6);
 	let antiFillColor = k.backgroundColor;
 	let fillColor = k.backgroundColor;
+	let size = $dot_size;;
 	let clickCount = 0;
 	let button = null;
 	let clickTimer;
@@ -31,6 +31,13 @@
 		}
 	});
 
+	$: {
+		if ($dot_size > 0) {
+			updatePath();
+			size = $dot_size;
+		}
+	}
+
 	function updateState(isHovering) {
 		updateColors(isHovering);
 		updatePath();
@@ -45,12 +52,12 @@
 
 	function updatePath() {
 		if ((!thing.hasChildren && !thing.isBulkAlias) || ($id_showRevealCluster == thing.id)) {
-			path = svgPath.circle(get(dot_size), 8);
+			path = svgPath.circle(size, size / 2);
 		} else {
 			const direction = (thing.isExpanded && thing.hasChildren) ? Direction.left : Direction.right;
-			path = svgPath.triangle(Size.square(diameter), direction);
+			path = svgPath.triangle(Size.square(size), direction);
 			if (thing.isBulkAlias) {
-				insidePath = svgPath.circle(16, 6);
+				insidePath = svgPath.circle(size, size / 3);
 			}
 		}
 	}
@@ -99,16 +106,15 @@
 <button class='dot'
 	bind:this={button}
 	style='
-		width={diameter}px;
-		height={diameter}px;
-		left: {diameter + thing.titleWidth + 2}px;
+		width={size}px;
+		height={size}px;
+		left: {size + thing.titleWidth + 2}px;
 	'>
-	<svg width={diameter}
-		height={diameter}
-		viewbox='0 0 {diameter} {diameter}'
-		on:blur={ignore}
+	<svg on:blur={ignore}
 		on:focus={ignore}
 		on:keyup={ignore}
+		width={size}
+		height={size}
 		on:keydown={ignore}
 		on:keypress={ignore}
 		on:mouseup={handleMouseUp}
@@ -118,10 +124,11 @@
 		on:mousedown={handleLongClick}
 		on:dblclick={handleDoubleClick}
 		on:contextmenu={handleContextMenu}
+		viewbox='0 0 {size} {size}'
 		style='
+			top: 0px;
+			left: -3px;
 			position: absolute;
-			left: 0px;
-			top: -1px;
 			z-index: {ZIndex.dots};'>
 		<path d={path} stroke={thing.color} fill={fillColor}/>
 		{#if thing.isBulkAlias}

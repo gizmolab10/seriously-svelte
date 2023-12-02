@@ -1,11 +1,9 @@
 <script>
-	import { Direction, BrowserType, getBrowserType, svgPath, handleSignalOfKind } from "../../ts/common/GlobalImports";
 	import { k, Thing, Point, ZIndex, Signals, onMount, graphEditor, dbDispatch } from "../../ts/common/GlobalImports";
+	import { Direction, BrowserType, getBrowserType, svgPath } from "../../ts/common/GlobalImports";
 	import { dot_size, ids_grabbed, id_showRevealCluster } from '../../ts/managers/State';
 	export let thing;
-	let diameter = $dot_size;
 	const browserType = getBrowserType();
-	const path = svgPath.oval(diameter, false);
 	let placement = 'left: 5px; top: 4px;'			// tiny browser compensation
 	let hoverColor = thing.color;
 	let fillColor = thing.color;
@@ -13,6 +11,10 @@
 	let clickCount = 0;
 	let button = null;
 	let clickTimer;
+	let path = '';
+	let size = 0;
+	let left = 0;
+	let top = 0;
 	
 	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right-
 	function handleMouseOut(event) { updateColors(false); }
@@ -21,13 +23,19 @@
 	function ignore(event) {}
 	
 	onMount( () => {
-		updateColors(false);		
+		updateColors(false);
 		if (browserType != BrowserType.chrome) {
 			placement = 'top: 2px; left: 5px;'
 		}
 	});
 
 	$: {
+		if ($dot_size > 0) {
+			size = $dot_size;
+			left = 10 - (size / 2);
+			path = svgPath.oval(size, false);
+			top = $id_showRevealCluster == thing.id ? 23 : -1.5;
+		}
 		const grabbed = $ids_grabbed?.includes(thing.id);
 		if (isGrabbed != grabbed) {
 			isGrabbed = grabbed;
@@ -83,16 +91,15 @@
 <button class='dot'
 	bind:this={button}
 	style='
-		left: 1px;
-		width: {diameter}px;	 /* Match SVG viewbox width */
-		height: {diameter}px;	/* Match SVG viewbox height */
+		left: 2px;
+		width: {size}px;	 /* Match SVG viewbox width */
+		height: {size}px;	/* Match SVG viewbox height */
 	'>
-	<svg width={diameter}
-		height={diameter}
-		viewbox='0 0 {diameter} {diameter}'
-		on:blur={ignore}
+	<svg on:blur={ignore}
 		on:focus={ignore}
 		on:keyup={ignore}
+		width={size}
+		height={size}
 		on:keydown={ignore}
 		on:keypress={ignore}
 		on:mouseup={handleMouseUp}
@@ -102,10 +109,11 @@
 		on:mousedown={handleLongClick}
 		on:dblclick={handleDoubleClick}
 		on:contextmenu={handleContextMenu}
+		viewbox='0 0 {size} {size}'
 		style='
+			top: {top}px;
+			left: {left}px;
 			position: absolute;
-			left: 1px;
-			top: {$id_showRevealCluster == thing.id ? 23 : -2}px;
 			z-index: {ZIndex.dots};'>
 		<path d={path} stroke={thing.color} fill={fillColor}/>
 	</svg>

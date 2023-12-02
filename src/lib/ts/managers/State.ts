@@ -25,5 +25,6 @@ export const graphRect  			= writable<Rect>();
 
 line_gap.subscribe(($line_gap) => {
 	thing_fontSize.set($line_gap * .77);
+	line_stretch.set($line_gap * 1.25);
 	dot_size.set($line_gap * .65);
 });

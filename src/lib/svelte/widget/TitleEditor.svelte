@@ -1,6 +1,6 @@
 <script lang='ts'>
+	import { line_gap, id_editing, thing_fontSize, thing_fontFamily, id_editingStopped } from '../../ts/managers/State';
 	import { k, Thing, signal, Signals, ZIndex, onMount, onDestroy } from '../../ts/common/GlobalImports';
-	import { id_editing, thing_fontSize, thing_fontFamily, id_editingStopped } from '../../ts/managers/State';
 	import { dbDispatch, SeriouslyRange, graphEditor, DebugOption } from '../../ts/common/GlobalImports';
 	import Widget from './Widget.svelte';
 	export let thing = Thing;
@@ -127,35 +127,35 @@
 		{thing.title}
 	</span>
 	<input
-		class='title'
 		type='text'
 		name='title'
+		class='title'
 		bind:this={input}
-		bind:value={thing.title}
-		on:paste={handleCutOrPaste}
-		on:keydown={handleKeyDown}
-		on:cut={handleCutOrPaste}
-		on:input={handleInput}
-		on:focus={handleFocus}
 		on:blur={handleBlur}
+		on:focus={handleFocus}
+		on:input={handleInput}
+		bind:value={thing.title}
+		on:cut={handleCutOrPaste}
+		on:keydown={handleKeyDown}
+		on:paste={handleCutOrPaste}
 		style='
 			color: {thing.color};
 			z-index: {ZIndex.text};
+			top: {15 / $line_gap}px;
 			font-size: {$thing_fontSize}px;
 			font-family: {$thing_fontFamily};
 			outline-color: k.backgroundColor;
+			padding: 0px 0px 0px {$line_gap / 3}px;
 		'/>
 {/key}
 
 <style lang='scss'>
 	.title {
-		top: 0px;
 		left: 2px;
 		border: none;
 		outline: none;
 		white-space: pre;
 		position: relative;
-		padding: 0px 0px 0px 6px;
 	}
 	.ghost {
 		position: absolute;

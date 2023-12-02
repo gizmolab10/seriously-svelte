@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { Rect, Size, Point, ZIndex, SVGType, svgPath, LineCurveType } from '../../ts/common/GlobalImports';
-	import { line_stretch, user_graphOffset } from '../../ts/managers/State'
+	import { dot_size, user_graphOffset } from '../../ts/managers/State'
 	export let curveType: string = LineCurveType.up;
 	export let rect = new Rect();
 	export let thing: Thing;
@@ -15,26 +15,34 @@
 	////////////////////////////////////////////////////
 
 	$: {
-		thing.debugLog('LINE REACT')
-		if (curveType == LineCurveType.flat) {
-			origin = rect.centerLeft;
-			extent = rect.centerRight;
-			size = origin.distanceTo(extent).asSize;
-			path = svgPath.line(size.width);
-		} else {
-			let flag = 1;
-			if (curveType == LineCurveType.down) {
-				flag = 0;
-				origin = rect.bottomLeft;
-				extent = origin.offsetBy(rect.size.asPoint);
+		if ($dot_size > 0) {
+			thing.debugLog('LINE REACT')
+			switch (curveType) {
+				case LineCurveType.up:
+					origin = rect.origin;
+					extent = rect.extent;
+					break;
+				case LineCurveType.down:
+					origin = rect.bottomLeft;
+					extent = origin.offsetBy(rect.size.asPoint);
+					break;
+				case LineCurveType.flat:
+					origin = rect.centerLeft;
+					extent = rect.centerRight;
+					size = origin.distanceTo(extent).asSize;
+					path = svgPath.line(size.width);
+					break;
 			}
-			const noHeight = origin.y == extent.y;
-			size = origin.distanceTo(extent).asSize;
-			const originY = curveType == LineCurveType.down ? 1 : size.height;
-			const extentY = curveType == LineCurveType.up   ? 1 : size.height;
-			const boxSize = new Size(size.width, (noHeight ? 2 : size.height));
-			viewBox = new Rect(origin.offsetByY($user_graphOffset.y), boxSize);
-			path = 'M0 ' + originY + 'A' + size.description + ' 0 0 ' + flag + ' ' + size.width + ' ' + extentY;
+			if (curveType != LineCurveType.flat) {
+				let flag = (curveType == LineCurveType.down) ? 0 : 1;
+				const noHeight = origin.y == extent.y;
+				size = origin.distanceTo(extent).asSize;
+				const originY = curveType == LineCurveType.down ? 1 : size.height;
+				const extentY = curveType == LineCurveType.up   ? 1 : size.height;
+				const boxSize = new Size(size.width, (noHeight ? 2 : size.height));
+				viewBox = new Rect(origin.offsetByY($user_graphOffset.y), boxSize);
+				path = 'M0 ' + originY + 'A' + size.description + ' 0 0 ' + flag + ' ' + size.width + ' ' + extentY;
+			}
 		}
 	}
 

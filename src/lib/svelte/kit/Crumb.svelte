@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, get, Thing, Signals, onMount, dbDispatch, desaturateBy, handleSignalOfKind } from '../../ts/common/GlobalImports';
+	import { k, get, Thing, Signals, onMount, dbDispatch, desaturateBy } from '../../ts/common/GlobalImports';
 	import { id_here } from '../../ts/managers/State';
 	export let thing = Thing;
 	let colorStyles = '';

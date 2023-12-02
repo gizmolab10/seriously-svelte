@@ -12,8 +12,7 @@
 	let fillColor = k.backgroundColor;
 	let button = null;
 	
-	$: { updateColors(false) }
-	function ignore(event) {}
+	$: updateColors(false);
 	function mouseOut(event) { updateColors(false); }
 	function mouseOver(event) { updateColors(true); }
 	function updateColors(isFilled) { fillColor = newFillColor(isFilled); }
@@ -32,8 +31,6 @@
 		<svg class='svg'
 			width={size}
 			height={size}
-			on:blur={ignore}
-			on:focus={ignore}
 			on:mouseout={mouseOut}
 			on:mouseover={mouseOver}
 			viewbox='0 0 {size} {size}'
@@ -46,10 +43,7 @@
 <style>
 	.svg {
 		position: absolute;
-		left: 5px; top: 6px; 
-		&:focus {
-			outline: none;
-		}
+		left: 5px; top: 6px;
 	}
 	.svg-button {
 		width: 20px;
@@ -62,7 +56,6 @@
 	}
 	.svg-button svg {
 		display: block; /* This removes any unwanted space below the SVG */
-		outline: none;
 	}
 	.svg-button:hover {}
 	.svg-button:active {}
