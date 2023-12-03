@@ -47,7 +47,7 @@
 		thing.updateColorAttributes();	// needed for revealColor
 		const flag = isHovering;// && thing.hasChildren;
 		hoverColor = thing.revealColor(!flag);
-		fillColor = thing.revealColor(flag);
+		fillColor = k.clearDots ? 'transparent' : thing.revealColor(flag);
 	}
 
 	function clearClicks() {

@@ -17,6 +17,7 @@
 	let padding = '';
 	let border = '';
 	let yPadding = 0;
+	let height = 0;
 	let left = 0;
 	let top = 0;
 	let widget;
@@ -47,18 +48,20 @@
 			updateBorderStyle();
 		}
 		if (thing.showCluster) {
+			height = k.clusterHeight;
+			radius = height / 2;
 			yPadding = radius - 17;
-			radius = k.clusterHeight / 2;
 			top = origin.y + delta - yPadding;
 			const xPadding = $dot_size - 3.5;
 			padding = yPadding + 'px ' + xPadding + 'px' + yPadding + 'px 0px';
 		} else {
+			height = $line_gap - 2;
 			yPadding = -2;
 			radius = $dot_size / 2;
 			top = origin.y + delta;
 			if (thing.isExemplar) {
 				const xPadding = rightPadding + 2;
-				padding = '1px ' + xPadding + 'px 0px 0px';
+				padding = '0px ' + xPadding + 'px 0px 0px';
 			} else {
 				padding = '0px ' + rightPadding + 'px 1px 0px';
 			}
@@ -75,7 +78,7 @@
 		top: {top}px;
 		left: {left}px;
 		padding: {padding};
-		height: {$line_gap}px;
+		height: {height}px;
 		z-index: {ZIndex.widgets};
 		border-radius: {$line_gap / 1.5}px;
 	'>

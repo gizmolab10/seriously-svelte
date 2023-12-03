@@ -13,7 +13,6 @@
   min='15'
   max='30'
   type='range'
-  style='width: 70px;'
   bind:value={$line_gap}
   on:input={handleInput}
   on:keydown={(event) => { event.preventDefault(); }}
@@ -24,7 +23,7 @@
 
 <style>
   input {
-    width: 60px;  
+    width: 70px;  
     &:focus {
       outline: none;
     }

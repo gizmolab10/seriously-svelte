@@ -73,12 +73,12 @@
 	}
 
 	function originForGrandchildren(child: Thing, rect: LineRect): Point {
-		const more = 0;									// TODO: WHY 1? perhaps it accounts for title margin
-		if (!rect) {
+		const more = -4;									// TODO: WHY 1? perhaps it accounts for title margin
+		if (!rect || !child) {
 			alert('grandchildren origin not computable');
 		}
 		const x = origin.x + child.titleWidth + $dot_size + $line_stretch + more;
-		const y = rect.extent.y - child.visibleProgeny_halfHeight;
+		const y = rect.extent.y + 1 - child.visibleProgeny_halfHeight;
 		return new Point(x, y);
 	}
 	

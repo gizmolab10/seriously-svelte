@@ -4,7 +4,10 @@
   export let radius;
   export let center;
   export let color;
-  const diameter = radius * 2;
+  let diameter = 0;
+
+  $: diameter = radius * 2;
+
 </script>
 
 <div
@@ -16,7 +19,7 @@
     top: {center.y - radius}px;
     left: {center.x - radius}px;
     border: {thickness}px solid {color};
-    background-color: {k.backgroundColor};'>
+    background-color: {k.clearDots ? 'transparent' : k.backgroundColor};'>
 </div>
 
 <style>

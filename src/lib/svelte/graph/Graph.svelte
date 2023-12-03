@@ -12,7 +12,6 @@
 	let greenRect: Rect;
 	let blueRect: Rect;
 	let redRect: Rect;
-	let size = 0;
 	let here;
 
 	onDestroy( () => { signalHandler.disconnect(); });
@@ -83,14 +82,14 @@
 	function updateOrigins() {
 		if (here) {
 			updateGraphRect();
-			const mysteryOffset = new Point(20, 43);
+			const mysteryOffset = new Point($dot_size, 43);
 			const userCenter = $graphRect.center.offsetBy($user_graphOffset);
 			const halfChildren = here.visibleProgeny_halfSize.asPoint.negated;
 			origin_ofFirstReveal = userCenter.offsetBy(halfChildren).offsetBy(mysteryOffset);
 			if (k.leftJustifyGraph) {
 				origin_ofFirstReveal.x = 25;
 			}
-			const toChildren = new Point(-16, halfChildren.y + 8);
+			const toChildren = new Point(-13, halfChildren.y + 9);
 			origin_ofChildren = origin_ofFirstReveal.offsetBy(toChildren);
 			blueRect = $graphRect.dividedInHalf;
 			redRect = rectTo_firstReveal();
@@ -120,7 +119,7 @@
 			<Box rect={greenRect} color=green/>
 		{/if}
 		{#if isGrabbed}
-			<Circle radius={size / 1.5} center={origin_ofFirstReveal.offsetBy(new Point(6, 8))} color={here.color} thickness=1/>
+			<Circle radius={$dot_size / 1.5} center={origin_ofFirstReveal.offsetBy(new Point(7, 9))} color={here.color} thickness=1/>
 		{/if}
 		<RootRevealDot here={here} origin={origin_ofFirstReveal}/>
 	</div>

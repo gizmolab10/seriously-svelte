@@ -4,6 +4,7 @@
 	import { dot_size, id_showRevealCluster } from '../../ts/managers/State';
 	export let thing;
 	let path = svgPath.triangle(Size.square($dot_size), Direction.left);
+	let strokeColor = thing.color;
 	let insidePath = svgPath.circle(16, 6);
 	let antiFillColor = k.backgroundColor;
 	let fillColor = k.backgroundColor;
@@ -33,8 +34,8 @@
 
 	$: {
 		if ($dot_size > 0) {
-			updatePath();
 			size = $dot_size;
+			updatePath();
 		}
 	}
 
@@ -110,29 +111,29 @@
 		height={size}px;
 		left: {size + thing.titleWidth + 2}px;
 	'>
-	<svg on:blur={ignore}
+	<svg width={size}
+		height={size}
+		on:blur={ignore}
 		on:focus={ignore}
 		on:keyup={ignore}
-		width={size}
-		height={size}
 		on:keydown={ignore}
 		on:keypress={ignore}
 		on:mouseup={handleMouseUp}
+		viewbox='0 0 {size} {size}'
 		on:click={handleSingleClick}
 		on:mouseout={handleMouseOut}
 		on:mouseover={handleMouseOver}
 		on:mousedown={handleLongClick}
 		on:dblclick={handleDoubleClick}
 		on:contextmenu={handleContextMenu}
-		viewbox='0 0 {size} {size}'
 		style='
 			top: 0px;
 			left: -3px;
 			position: absolute;
 			z-index: {ZIndex.dots};'>
-		<path d={path} stroke={thing.color} fill={fillColor}/>
+		<path d={path} stroke={strokeColor} fill={k.clearDots ? 'transparent' : fillColor}/>
 		{#if thing.isBulkAlias}
-			<path d={insidePath} stroke={thing.color} fill={antiFillColor}/>
+			<path d={insidePath} stroke={strokeColor} fill={antiFillColor}/>
 		{/if}
 	</svg>
 </button>

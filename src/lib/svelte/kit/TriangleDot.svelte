@@ -8,11 +8,15 @@
 	export let display;
 	export let origin;
 	export let size;
-	const path = svgPath.triangle(Size.square($dot_size), direction);
+	const path = svgPath.triangle(Size.square(size), direction);
 	let fillColor = k.backgroundColor;
 	let button = null;
 	
-	$: updateColors(false);
+	$: {
+		size = size + 1;
+		updateColors(false);
+		size = size - 1;
+	}
 	function mouseOut(event) { updateColors(false); }
 	function mouseOver(event) { updateColors(true); }
 	function updateColors(isFilled) { fillColor = newFillColor(isFilled); }

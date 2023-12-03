@@ -141,7 +141,7 @@
 		style='
 			color: {thing.color};
 			z-index: {ZIndex.text};
-			top: {15 / $line_gap}px;
+			top: {($line_gap / 20) - 1}px;
 			font-size: {$thing_fontSize}px;
 			font-family: {$thing_fontFamily};
 			outline-color: k.backgroundColor;

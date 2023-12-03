@@ -1,18 +1,25 @@
 <script>
-	import { Point, Direction, dbDispatch, graphEditor } from "../../ts/common/GlobalImports";
-	import TriangleDot from '../kit/TriangleDot.svelte'
+	import { k, Point, Direction, dbDispatch, graphEditor } from "../../ts/common/GlobalImports";
+	import TriangleDot from '../kit/TriangleDot.svelte';
 	import { dot_size } from '../../ts/managers/State';
-	const size = 20;
-	export let here;
 	export let origin = new Point($dot_size, 20);
+	export let here;
+	let size = $dot_size;
 
-	function newFillColor(isFilled) { return here.revealColor(isFilled); }
+	function newFillColor(isFilled) { return k.clearDots ? 'transparent' : here.revealColor(isFilled); }
 
 	function onClick(event) {
 		const grab = dbDispatch.db.hierarchy.grabs.latestGrab(true);
 		if (grab) {
 			graphEditor.thing_redraw_remoteMoveRight(grab, false, false);
 		}
+	}
+
+	$: {
+		if ($dot_size > 0) {
+			size = $dot_size;
+		}
+		origin = origin;
 	}
 
 </script>
@@ -22,7 +29,7 @@
 	direction={Direction.left}
 	strokeColor={here.color}
 	onClick={onClick}
-	display='block'
 	origin={origin}
+	display='block'
     size={size}
 />

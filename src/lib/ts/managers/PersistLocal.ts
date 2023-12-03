@@ -4,15 +4,15 @@ import { Point, dbDispatch } from '../common/GlobalImports'
 
 export enum PersistID {
 	line_stretch = 'line_stretch',
-	expanded	= 'expanded',
-	line_gap		= 'line_gap',
-	grabbed		= 'grabbed',
-	details		= 'details',
-	select		= 'select',
-	origin		= 'origin',
-	here		= 'here',
-	font		= 'font',
-	db			= 'db',
+	line_gap	 = 'line_gap',
+	expanded	 = 'expanded',
+	grabbed		 = 'grabbed',
+	details		 = 'details',
+	select		 = 'select',
+	origin		 = 'origin',
+	here		 = 'here',
+	font		 = 'font',
+	db			 = 'db',
 }
 
 class PersistLocal {
