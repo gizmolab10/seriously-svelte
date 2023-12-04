@@ -1,5 +1,5 @@
 <script>
-	import { k, Thing, Point, ZIndex, Signals, onMount, graphEditor, dbDispatch } from "../../ts/common/GlobalImports";
+	import { k, Thing, Point, debug, ZIndex, Signals, onMount, graphEditor, dbDispatch } from "../../ts/common/GlobalImports";
 	import { Direction, BrowserType, getBrowserType, svgPath } from "../../ts/common/GlobalImports";
 	import { dot_size, ids_grabbed, id_showRevealCluster } from '../../ts/managers/State';
 	export let thing;
@@ -8,6 +8,7 @@
 	let hoverColor = thing.color;
 	let fillColor = thing.color;
 	let isGrabbed = false;
+	let center = new Point();;
 	let clickCount = 0;
 	let button = null;
 	let clickTimer;
@@ -32,9 +33,9 @@
 	$: {
 		if ($dot_size > 0) {
 			size = $dot_size;
-			left = 10 - (size / 2);
+			left = -7 - (size * 0.08);
 			path = svgPath.oval(size, false);
-			top = $id_showRevealCluster == thing.id ? 23 : -1.5;
+			top = $id_showRevealCluster == thing.id ? 23 : -3;
 		}
 		const grabbed = $ids_grabbed?.includes(thing.id);
 		if (isGrabbed != grabbed) {
@@ -47,7 +48,7 @@
 		thing.updateColorAttributes();	// needed for revealColor
 		const flag = isHovering;// && thing.hasChildren;
 		hoverColor = thing.revealColor(!flag);
-		fillColor = k.clearDots ? 'transparent' : thing.revealColor(flag);
+		fillColor = debug.lines ? 'transparent' : thing.revealColor(flag);
 	}
 
 	function clearClicks() {
@@ -88,6 +89,16 @@
 
 </script>
 
+<style>
+	.dot {
+		top: 6px;
+		border: none;
+		cursor: pointer;
+		background: none;
+		position: absolute;
+	}
+</style>
+
 <button class='dot'
 	bind:this={button}
 	style='
@@ -95,11 +106,11 @@
 		width: {size}px;	 /* Match SVG viewbox width */
 		height: {size}px;	/* Match SVG viewbox height */
 	'>
-	<svg on:blur={ignore}
+	<svg width={size}
+		height={size}
+		on:blur={ignore}
 		on:focus={ignore}
 		on:keyup={ignore}
-		width={size}
-		height={size}
 		on:keydown={ignore}
 		on:keypress={ignore}
 		on:mouseup={handleMouseUp}
@@ -113,18 +124,8 @@
 		style='
 			top: {top}px;
 			left: {left}px;
-			position: absolute;
+			position: relative;
 			z-index: {ZIndex.dots};'>
 		<path d={path} stroke={thing.color} fill={fillColor}/>
 	</svg>
 </button>
-
-<style>
-	.dot {
-		top: 6px;
-		border: none;
-		cursor: pointer;
-		background: none;
-		position: absolute;
-	}
-</style>

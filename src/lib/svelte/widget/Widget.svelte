@@ -39,7 +39,7 @@
 		const shouldShowCluster = $id_showRevealCluster == id;
 		const shouldGrab = $ids_grabbed?.includes(id) || thing.isExemplar;
 		const change = (isEditing != shouldEdit || isGrabbed != shouldGrab || showingCluster != shouldShowCluster);
-		left = origin.x + delta;
+		left = origin.x + delta + 1;
 		if (change) {
 			showingCluster = shouldShowCluster;
 			showingBorder = shouldEdit || shouldGrab;
@@ -70,6 +70,16 @@
 
 </script>
 
+<style>
+	.widget {
+		position: absolute;
+		white-space: nowrap;
+	}
+	.revealDot {
+		position: absolute;
+	}
+</style>
+
 <div class='widget' id='{thing.title}'
 	bind:this={widget}
 	style='
@@ -91,13 +101,3 @@
 		{/if}
 	</div>
 </div>
-
-<style>
-	.widget {
-		position: absolute;
-		white-space: nowrap;
-	}
-	.revealDot {
-		position: absolute;
-	}
-</style>

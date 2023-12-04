@@ -5,6 +5,7 @@ export enum DebugOption {
 	graph  = 'graph',
 	order  = 'order',
 	error  = 'error',
+	lines  = 'lines',
 }
 
 const options: DebugOption[] = [
@@ -20,6 +21,8 @@ export class Debug {
     hasOption(option: DebugOption) { return this.options.includes(option); }
     log(option: DebugOption, message: string) { if (this.hasOption(option)) { console.log(message); }}
     tLog(target: any, key: string) { console.log(`Method \'${key}\' is called on class \'${target.constructor.name}\'`); }
+    get colors(): boolean { return this.hasOption(DebugOption.colors); }
+    get lines(): boolean { return this.hasOption(DebugOption.lines); }
 
 	applyQueryStrings(queryStrings: URLSearchParams) {
 		if (queryStrings.get('remote') === 'debug') {
@@ -39,6 +42,9 @@ export class Debug {
         }
 		if (queryStrings.get('error') === 'debug') {
             this.options.push(DebugOption.error);
+        }
+		if (queryStrings.get('lines') === 'debug') {
+            this.options.push(DebugOption.lines);
         }
     }
 }

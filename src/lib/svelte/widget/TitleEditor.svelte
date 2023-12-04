@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { line_gap, id_editing, thing_fontSize, thing_fontFamily, id_editingStopped } from '../../ts/managers/State';
 	import { k, Thing, signal, Signals, ZIndex, onMount, onDestroy } from '../../ts/common/GlobalImports';
-	import { dbDispatch, SeriouslyRange, graphEditor, DebugOption } from '../../ts/common/GlobalImports';
+	import { dbDispatch, SeriouslyRange, graphEditor } from '../../ts/common/GlobalImports';
 	import Widget from './Widget.svelte';
 	export let thing = Thing;
 	let originalTitle = thing.title;

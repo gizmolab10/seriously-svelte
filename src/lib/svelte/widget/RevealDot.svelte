@@ -1,6 +1,6 @@
 <script>
-	import { k, get, Size, Thing, Point, ZIndex, Signals, onMount, onDestroy, dbDispatch } from "../../ts/common/GlobalImports";
-	import { Direction, graphEditor, DebugOption, svgPath, handleSignalOfKind } from "../../ts/common/GlobalImports";
+	import { k, get, Size, Thing, Point, debug, ZIndex, Signals, onMount, onDestroy, dbDispatch } from "../../ts/common/GlobalImports";
+	import { Direction, graphEditor, svgPath, handleSignalOfKind } from "../../ts/common/GlobalImports";
 	import { dot_size, id_showRevealCluster } from '../../ts/managers/State';
 	export let thing;
 	let path = svgPath.triangle(Size.square($dot_size), Direction.left);
@@ -104,11 +104,22 @@
 
 </script>
 
+<style>
+	.dot {
+		top: 7px;
+		border: none;
+		cursor: pointer;
+		background: none;
+		position: absolute;
+	}
+</style>
+
 <button class='dot'
 	bind:this={button}
-	style='
+	style='top: -5px;
 		width={size}px;
 		height={size}px;
+		position: relative;
 		left: {size + thing.titleWidth + 2}px;
 	'>
 	<svg width={size}
@@ -127,23 +138,13 @@
 		on:dblclick={handleDoubleClick}
 		on:contextmenu={handleContextMenu}
 		style='
-			top: 0px;
+			top: -2px;
 			left: -3px;
 			position: absolute;
 			z-index: {ZIndex.dots};'>
-		<path d={path} stroke={strokeColor} fill={k.clearDots ? 'transparent' : fillColor}/>
+		<path d={path} stroke={strokeColor} fill={debug.lines ? 'transparent' : fillColor}/>
 		{#if thing.isBulkAlias}
 			<path d={insidePath} stroke={strokeColor} fill={antiFillColor}/>
 		{/if}
 	</svg>
 </button>
-
-<style>
-	.dot {
-		top: 7px;
-		border: none;
-		cursor: pointer;
-		background: none;
-		position: absolute;
-	}
-</style>

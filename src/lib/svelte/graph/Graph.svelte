@@ -82,14 +82,14 @@
 	function updateOrigins() {
 		if (here) {
 			updateGraphRect();
-			const mysteryOffset = new Point($dot_size, 43);
+			const mysteryOffset = new Point($dot_size, 20);
 			const userCenter = $graphRect.center.offsetBy($user_graphOffset);
 			const halfChildren = here.visibleProgeny_halfSize.asPoint.negated;
 			origin_ofFirstReveal = userCenter.offsetBy(halfChildren).offsetBy(mysteryOffset);
 			if (k.leftJustifyGraph) {
 				origin_ofFirstReveal.x = 25;
 			}
-			const toChildren = new Point(-13, halfChildren.y + 9);
+			const toChildren = new Point(-13, halfChildren.y - 2 + ($dot_size / 2));
 			origin_ofChildren = origin_ofFirstReveal.offsetBy(toChildren);
 			blueRect = $graphRect.dividedInHalf;
 			redRect = rectTo_firstReveal();
@@ -113,7 +113,7 @@
 {#if here}
 	<div style='overflow: hidden; top:{$graphRect.origin.x}px;'>
 		<Children thing={here} origin={origin_ofChildren}/>
-		{#if debug.hasOption(DebugOption.colors)}
+		{#if debug.colors}
 			<Box rect={redRect} color=red/>
 			<Box rect={blueRect} color=blue/>
 			<Box rect={greenRect} color=green/>

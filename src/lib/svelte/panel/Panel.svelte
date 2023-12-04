@@ -97,7 +97,7 @@
 					style='
 						position: fixed;
 						z-index: {ZIndex.panel};
-						left: {$graphRect.origin.x - ($showDetails ? k.detailsMargin : 0)}px;
+						left: {$graphRect.origin.x}px;
 						width: {size_graphRect.width}px;
 						height: {size_graphRect.height}px;'
 					on:keyup={ignore}

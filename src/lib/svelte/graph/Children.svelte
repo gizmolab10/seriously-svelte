@@ -1,8 +1,9 @@
 <script lang=ts>
-	import { Rect, Size, Point, Thing, signal, Signals, Layout, onMount, LineRect, onDestroy } from '../../ts/common/GlobalImports';
-	import { DebugOption, LineCurveType, orders_normalize_remoteMaybe, handleSignalOfKind } from '../../ts/common/GlobalImports';
+	import { Rect, Size, Point, Thing, debug, signal, Signals, Layout, onMount, LineRect, onDestroy } from '../../ts/common/GlobalImports';
+	import { LineCurveType, orders_normalize_remoteMaybe, handleSignalOfKind } from '../../ts/common/GlobalImports';
 	import { dot_size, line_stretch, user_graphOffset } from '../../ts/managers/State';
 	import Widget from '../widget/Widget.svelte';
+	import Circle from '../kit/Circle.svelte';
 	import Children from './Children.svelte';
 	import Line from './Line.svelte';
 	export let origin = new Point();
@@ -10,6 +11,7 @@
 	let lineRects: Array<LineRect> = [];
 	let prior = new Date().getTime();
 	let children = thing.children;
+	let center = new Point();
 	let threeArrays = [];
 
 	onMount( () => { thing.debugLog('CHILDREN MOUNT'); layoutChildren(); });
@@ -63,6 +65,8 @@
 		if (thing) {
 			const height = (thing.visibleProgeny_halfHeight);
 			const childOrigin = origin.offsetByY(height);
+			const delta = new Point($dot_size * 0.6 + 11, $dot_size / 2 - 9);
+			center = childOrigin.offsetBy(delta);
 			lineRects = new Layout(thing, childOrigin).lineRects;
 			threeArrays = lineRects.map((rect, index) => ({
 				origin: originForGrandchildren(children[index], rect),
@@ -73,12 +77,12 @@
 	}
 
 	function originForGrandchildren(child: Thing, rect: LineRect): Point {
-		const more = -4;									// TODO: WHY 1? perhaps it accounts for title margin
+		const more = -2;									// TODO: WHY 1? perhaps it accounts for title margin
 		if (!rect || !child) {
 			alert('grandchildren origin not computable');
 		}
 		const x = origin.x + child.titleWidth + $dot_size + $line_stretch + more;
-		const y = rect.extent.y + 1 - child.visibleProgeny_halfHeight;
+		const y = rect.extent.y - child.visibleProgeny_halfHeight;
 		return new Point(x, y);
 	}
 	
@@ -101,6 +105,9 @@
 </script>
 
 {#if children && children.length != 0 && lineRects.length == children.length}
+	{#if debug.lines}
+		<Circle radius=1 center={center} color=black thickness=1/>
+	{/if}
 	{#each threeArrays as i, index}
 		<Widget thing={i.child} origin={i.rect.extent.offsetBy(new Point(10, -13))}/>
 		<Line thing={i.child} curveType={i.rect.curveType} rect={i.rect.offsetBy(new Point(($dot_size / 2) - 130, ($dot_size / 2) - 8))}/>

@@ -1,9 +1,12 @@
 <script lang='ts'>
-	import { Rect, Size, Point, ZIndex, SVGType, svgPath, LineCurveType } from '../../ts/common/GlobalImports';
-	import { dot_size, user_graphOffset } from '../../ts/managers/State'
+	import { Rect, Size, Point, debug, ZIndex, SVGType, svgPath, LineCurveType } from '../../ts/common/GlobalImports';
+	import { dot_size, user_graphOffset } from '../../ts/managers/State';
+	import Circle from '../kit/Circle.svelte';
+	import Box from '../kit/Box.svelte';
 	export let curveType: string = LineCurveType.up;
 	export let rect = new Rect();
 	export let thing: Thing;
+	const debugOffset = new Point(141, -1);
 	let origin = rect.origin;
 	let extent = rect.extent;
 	let viewBox = new Rect();
@@ -48,6 +51,13 @@
 
 </script>
 
+<style lang='scss'>
+	.line {
+		left: 0px;
+		position: absolute;
+	}
+</style>
+
 <svg class='line'
 	width={size.width}px
 	height={Math.max(2, size.height)}px
@@ -56,10 +66,7 @@
 		left: {origin.x + 143}px;'>
 	<path d={path} stroke={thing.color} fill='none'/>
 </svg>
-
-<style lang='scss'>
-	.line {
-		left: 0px;
-		position: absolute;
-	}
-</style>
+{#if debug.lines}
+	<!--Box rect={rect.offsetBy(debugOffset)} color=gray/-->
+	<Circle radius=1 center={rect.extent.offsetBy(debugOffset)} color=black thickness=1/>
+{/if}

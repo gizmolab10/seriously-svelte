@@ -1,5 +1,5 @@
 <script>
-  import { k, Point, ZIndex } from '../../ts/common/GlobalImports'
+  import { Point, debug, ZIndex } from '../../ts/common/GlobalImports'
   export let thickness;
   export let radius;
   export let center;
@@ -19,7 +19,7 @@
     top: {center.y - radius}px;
     left: {center.x - radius}px;
     border: {thickness}px solid {color};
-    background-color: {k.clearDots ? 'transparent' : k.backgroundColor};'>
+    background-color: {debug.lines ? 'transparent' : k.backgroundColor};'>
 </div>
 
 <style>
