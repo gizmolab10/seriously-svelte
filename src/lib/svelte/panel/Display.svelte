@@ -10,7 +10,7 @@
   </script>
 
 <input
-  min='20'
+  min='15'
   max='30'
   type='range'
   bind:value={$line_gap}

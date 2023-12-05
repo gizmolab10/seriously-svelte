@@ -8,12 +8,7 @@ export enum DebugOption {
 	lines  = 'lines',
 }
 
-const options: DebugOption[] = [
-    // DebugOption.remote,
-    // DebugOption.things,
-    // DebugOption.order,
-    // DebugOption.error,
-];
+const options: DebugOption[] = [];
 
 export class Debug {
     options: DebugOption[];
@@ -25,26 +20,20 @@ export class Debug {
     get lines(): boolean { return this.hasOption(DebugOption.lines); }
 
 	applyQueryStrings(queryStrings: URLSearchParams) {
-		if (queryStrings.get('remote') === 'debug') {
-            this.options.push(DebugOption.remote);
-        }
-        if (queryStrings.get('things') === 'debug') {
-            this.options.push(DebugOption.things);
-        }
-		if (queryStrings.get('colors') === 'debug') {
-            this.options.push(DebugOption.colors);
-        }
-		if (queryStrings.get('graph') === 'debug') {
-            this.options.push(DebugOption.graph);
-        }
-		if (queryStrings.get('order') === 'debug') {
-            this.options.push(DebugOption.order);
-        }
-		if (queryStrings.get('error') === 'debug') {
-            this.options.push(DebugOption.error);
-        }
-		if (queryStrings.get('lines') === 'debug') {
-            this.options.push(DebugOption.lines);
+        const debug = queryStrings.get('debug');
+        if (debug) {
+            const options = debug.split(',');
+            for (const option of options) {
+                switch (option) {
+                    case 'remote': this.options.push(DebugOption.remote); break;
+                    case 'things': this.options.push(DebugOption.things); break;
+                    case 'colors': this.options.push(DebugOption.colors); break;
+                    case 'graph': this.options.push(DebugOption.graph); break;
+                    case 'order': this.options.push(DebugOption.order); break;
+                    case 'error': this.options.push(DebugOption.error); break;
+                    case 'lines': this.options.push(DebugOption.lines); break;
+                }
+            }
         }
     }
 }

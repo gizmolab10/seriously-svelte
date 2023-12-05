@@ -86,7 +86,7 @@ export class LineRect extends Rect {
 };
 
 export function updateGraphRect() {
-	const originY = 78;											// height of title at the top
+	const originY = 86;											// height of title at the top
 	const originX = get(showDetails) ? 101 : 0;					// width of details
 	const mysteryOffset = new Point(originX + 2, 88);					// TODO: why?
 	const originOfGraph = new Point(originX, originY);

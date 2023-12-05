@@ -19,7 +19,6 @@
 		if ($dot_size > 0) {
 			size = $dot_size;
 		}
-		origin = origin;
 	}
 
 </script>

@@ -3,15 +3,15 @@
 	import { Direction, graphEditor, svgPath, handleSignalOfKind } from "../../ts/common/GlobalImports";
 	import { dot_size, id_showRevealCluster } from '../../ts/managers/State';
 	export let thing;
-	let path = svgPath.triangle(Size.square($dot_size), Direction.left);
-	let strokeColor = thing.color;
 	let insidePath = svgPath.circle(16, 6);
 	let antiFillColor = k.backgroundColor;
 	let fillColor = k.backgroundColor;
+	let strokeColor = thing.color;
 	let size = $dot_size;;
 	let clickCount = 0;
 	let button = null;
 	let clickTimer;
+	let path = '';
 	
 	function ignore(event) {}
 	onMount( () => { updateState(false); });
@@ -138,9 +138,9 @@
 		on:dblclick={handleDoubleClick}
 		on:contextmenu={handleContextMenu}
 		style='
-			top: -2px;
-			left: -3px;
-			position: absolute;
+			top: 10px;
+			left: -5px;
+			position: relative;
 			z-index: {ZIndex.dots};'>
 		<path d={path} stroke={strokeColor} fill={debug.lines ? 'transparent' : fillColor}/>
 		{#if thing.isBulkAlias}

@@ -7,15 +7,15 @@
 	import DragDot from './DragDot.svelte';
 	export let origin = new Point();
 	export let thing = Thing;
-	const rightPadding = 22
 	let showingCluster = false;
 	let showingBorder = false;
 	let isGrabbed = false;
 	let isEditing = false;
-	let radius = $dot_size;
 	let background = '';
 	let padding = '';
 	let border = '';
+	let radius = $dot_size / 2;
+	let rightPadding = 22
 	let yPadding = 0;
 	let height = 0;
 	let left = 0;
@@ -33,20 +33,8 @@
 	}
 
 	$: {
-		const id = thing.id;
 		const delta = showingBorder ? 0 : 1;
-		const shouldEdit = (id == $id_editing);
-		const shouldShowCluster = $id_showRevealCluster == id;
-		const shouldGrab = $ids_grabbed?.includes(id) || thing.isExemplar;
-		const change = (isEditing != shouldEdit || isGrabbed != shouldGrab || showingCluster != shouldShowCluster);
-		left = origin.x + delta + 1;
-		if (change) {
-			showingCluster = shouldShowCluster;
-			showingBorder = shouldEdit || shouldGrab;
-			isGrabbed = shouldGrab;
-			isEditing = shouldEdit;
-			updateBorderStyle();
-		}
+		left = origin.x + delta - 3;
 		if (thing.showCluster) {
 			height = k.clusterHeight;
 			radius = height / 2;
@@ -55,16 +43,31 @@
 			const xPadding = $dot_size - 3.5;
 			padding = yPadding + 'px ' + xPadding + 'px' + yPadding + 'px 0px';
 		} else {
-			height = $line_gap - 2;
 			yPadding = -2;
+			height = $line_gap - 2;
 			radius = $dot_size / 2;
 			top = origin.y + delta;
 			if (thing.isExemplar) {
 				const xPadding = rightPadding + 2;
 				padding = '0px ' + xPadding + 'px 0px 0px';
 			} else {
-				padding = '0px ' + rightPadding + 'px 1px 0px';
+				padding = '0px ' + rightPadding + 'px 0px 0px';
 			}
+		}
+	}
+
+	$: {
+		const id = thing.id;
+		const shouldEdit = (id == $id_editing);
+		const shouldShowCluster = $id_showRevealCluster == id;
+		const shouldGrab = $ids_grabbed?.includes(id) || thing.isExemplar;
+		const change = (isEditing != shouldEdit || isGrabbed != shouldGrab || showingCluster != shouldShowCluster);
+		if (change) {
+			showingCluster = shouldShowCluster;
+			showingBorder = shouldEdit || shouldGrab;
+			isGrabbed = shouldGrab;
+			isEditing = shouldEdit;
+			updateBorderStyle();
 		}
 	}
 
@@ -92,7 +95,7 @@
 		z-index: {ZIndex.widgets};
 		border-radius: {$line_gap / 1.5}px;
 	'>
-	<DragDot thing={thing}/>&nbsp;<TitleEditor thing={thing}/>
+	<DragDot thing={thing}/><TitleEditor thing={thing}/>
 	<div class='revealDot'
 		style='top:{yPadding}px'>
 		<RevealDot thing={thing}/>

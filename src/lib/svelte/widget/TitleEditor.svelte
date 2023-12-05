@@ -119,6 +119,21 @@
 
 </script>
 
+<style lang='scss'>
+	.title {
+		border: none;
+		outline: none;
+		white-space: pre;
+		position: relative;
+	}
+	.ghost {
+		position: absolute;
+		visibility: hidden;
+		padding: 0px 0px 0px 6px;
+		white-space: pre; /* Preserve whitespace to accurately measure the width */
+	}
+</style>
+
 {#key originalTitle}
 	<span class="ghost" bind:this={ghost}
 		style='
@@ -139,28 +154,13 @@
 		on:keydown={handleKeyDown}
 		on:paste={handleCutOrPaste}
 		style='
+			left: {$line_gap / -4}px;
 			color: {thing.color};
 			z-index: {ZIndex.text};
-			top: {($line_gap / 20) - 1}px;
+			top: {($line_gap / -8) + 3}px;
 			font-size: {$thing_fontSize}px;
 			font-family: {$thing_fontFamily};
 			outline-color: k.backgroundColor;
 			padding: 0px 0px 0px {$line_gap / 3}px;
 		'/>
 {/key}
-
-<style lang='scss'>
-	.title {
-		left: 2px;
-		border: none;
-		outline: none;
-		white-space: pre;
-		position: relative;
-	}
-	.ghost {
-		position: absolute;
-		visibility: hidden;
-		padding: 0px 0px 0px 6px;
-		white-space: pre; /* Preserve whitespace to accurately measure the width */
-	}
-</style>

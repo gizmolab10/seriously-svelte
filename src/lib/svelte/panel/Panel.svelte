@@ -96,7 +96,9 @@
 				<div class='graph'
 					style='
 						position: fixed;
+						overflow: hidden;
 						z-index: {ZIndex.panel};
+						top:{$graphRect.origin.y}px;
 						left: {$graphRect.origin.x}px;
 						width: {size_graphRect.width}px;
 						height: {size_graphRect.height}px;'

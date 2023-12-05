@@ -19,6 +19,7 @@
 	
 	const layout_signalHandler = handleSignalOfKind(Signals.layout, (idThing) => {
 		if (idThing && idThing == thing.id) {
+			thing.debugLog('CHILDREN LAYOUT');
 			layoutChildren();
 			for (const child of children) {
 				if (child.hasChildren && child.isExpanded) {
@@ -36,7 +37,7 @@
 				setTimeout(async () => { // delay until all other handlers for this signal are done TODO: WHY?
 					await orders_normalize_remoteMaybe(thing.children);
 					children = thing.children;
-					// thing.debugLog('CHILDREN SIGNAL' + idThing);
+					thing.debugLog('CHILDREN SIGNAL');
 					// describe(children);
 					layoutChildren();
 					for (const child of children) {
@@ -109,8 +110,8 @@
 		<Circle radius=1 center={center} color=black thickness=1/>
 	{/if}
 	{#each threeArrays as i, index}
-		<Widget thing={i.child} origin={i.rect.extent.offsetBy(new Point(10, -13))}/>
-		<Line thing={i.child} curveType={i.rect.curveType} rect={i.rect.offsetBy(new Point(($dot_size / 2) - 130, ($dot_size / 2) - 8))}/>
+		<Widget thing={i.child} origin={i.rect.extent.offsetBy(new Point(12, ($dot_size / -15) -11))}/>
+		<Line thing={i.child} curveType={i.rect.curveType} rect={i.rect.offsetBy(new Point(($dot_size / 2) - 129, ($dot_size / 2) - 8))}/>
 		{#if i.child.hasChildren && i.child.isExpanded}
 			<Children thing={i.child} origin={i.origin}/>
 		{/if}

@@ -1,5 +1,5 @@
 <script>
-    import { Rect, Datum } from '../../ts/common/GlobalImports'
+    import { Rect } from '../../ts/common/GlobalImports'
     export let half = false;
     export let color;
     export let rect;
@@ -14,7 +14,7 @@
         border: 1px dashed {color};
 '>
 </div>
-{#if half}
+{#if half == true}
     <div
         style='
             top: {rect.center.y}px;
@@ -24,10 +24,19 @@
             background-color: {color};
     '>
     </div>
+    <div
+        style='
+            top: {rect.origin.y}px;
+            left: {rect.center.x}px;
+            height: {rect.size.height}px;
+            width: 0.1px;
+            background-color: {color};
+    '>
+    </div>
 {/if}
 <style>
     div {
-        position: absolute;
+        position: fixed;
         backgroundColor: transparent;
     }
 </style>

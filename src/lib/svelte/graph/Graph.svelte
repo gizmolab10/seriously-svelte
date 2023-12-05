@@ -55,12 +55,6 @@
 	}
 	
 	$: {
-		if ($user_graphOffset != null) {
-			updateOrigins();
-		}
-	}
-	
-	$: {
 		if ($dot_size > 0) {
 			updateOrigins();
 		}
@@ -82,7 +76,7 @@
 	function updateOrigins() {
 		if (here) {
 			updateGraphRect();
-			const mysteryOffset = new Point($dot_size, 20);
+			const mysteryOffset = new Point($dot_size / 2 + 9, $dot_size / 2 + 14);
 			const userCenter = $graphRect.center.offsetBy($user_graphOffset);
 			const halfChildren = here.visibleProgeny_halfSize.asPoint.negated;
 			origin_ofFirstReveal = userCenter.offsetBy(halfChildren).offsetBy(mysteryOffset);
@@ -104,23 +98,24 @@
 	}
 
 	function rectOfChildren(): Rect {
-		return new Rect(origin_ofChildren, here.visibleProgeny_size);
+		const half = $dot_size / 2;
+		const delta = new Point(112 + half, 9.5 - half);
+		const origin = origin_ofChildren.offsetBy(delta);
+		return new Rect(origin, here.visibleProgeny_size);
 	}
 
 </script>
 
 <svelte:document on:keydown={handleKeyDown}/>
 {#if here}
-	<div style='overflow: hidden; top:{$graphRect.origin.x}px;'>
-		<Children thing={here} origin={origin_ofChildren}/>
-		{#if debug.colors}
-			<Box rect={redRect} color=red/>
-			<Box rect={blueRect} color=blue/>
-			<Box rect={greenRect} color=green/>
-		{/if}
-		{#if isGrabbed}
-			<Circle radius={$dot_size / 1.5} center={origin_ofFirstReveal.offsetBy(new Point(7, 9))} color={here.color} thickness=1/>
-		{/if}
-		<RootRevealDot here={here} origin={origin_ofFirstReveal}/>
-	</div>
+	<Children thing={here} origin={origin_ofChildren}/>
+	{#if debug.colors}
+		<Box rect={redRect} color=red/>
+		<Box rect={blueRect} color=blue/>
+		<Box rect={greenRect} color=green half={true}/>
+	{/if}
+	{#if isGrabbed}
+		<Circle radius={$dot_size / 1.5} center={origin_ofFirstReveal.offsetBy(new Point(7, 9))} color={here.color} thickness=1/>
+	{/if}
+	<RootRevealDot here={here} origin={origin_ofFirstReveal}/>
 {/if}

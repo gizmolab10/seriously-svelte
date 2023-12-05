@@ -8,14 +8,13 @@
 	export let display;
 	export let origin;
 	export let size;
-	const path = svgPath.triangle(Size.square(size), direction);
+	let path = svgPath.triangle(Size.square(size), direction);
 	let fillColor = k.backgroundColor;
 	let button = null;
 	
 	$: {
-		size = size + 1;
+		path = svgPath.triangle(Size.square(size), direction);
 		updateColors(false);
-		size = size - 1;
 	}
 	function mouseOut(event) { updateColors(false); }
 	function mouseOver(event) { updateColors(true); }
@@ -29,8 +28,8 @@
 		on:click={onClick}
 		style='
 			display: {display};
-			top: {origin.y - 6}px;
-			left: {origin.x - 6}px;
+			top: {origin.y + 2 - (size / 2)}px;
+			left: {origin.x + 3 - (size / 2)}px;
 		'>
 		<svg class='svg'
 			width={size}

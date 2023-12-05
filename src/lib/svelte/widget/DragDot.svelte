@@ -1,14 +1,12 @@
 <script>
-	import { k, Thing, Point, debug, ZIndex, Signals, onMount, graphEditor, dbDispatch } from "../../ts/common/GlobalImports";
-	import { Direction, BrowserType, getBrowserType, svgPath } from "../../ts/common/GlobalImports";
+	import { k, Thing, Point, debug, ZIndex, Signals, onMount } from "../../ts/common/GlobalImports";
+	import { graphEditor, dbDispatch, Direction, svgPath } from "../../ts/common/GlobalImports";
 	import { dot_size, ids_grabbed, id_showRevealCluster } from '../../ts/managers/State';
 	export let thing;
-	const browserType = getBrowserType();
-	let placement = 'left: 5px; top: 4px;'			// tiny browser compensation
 	let hoverColor = thing.color;
 	let fillColor = thing.color;
-	let isGrabbed = false;
 	let center = new Point();;
+	let isGrabbed = false;
 	let clickCount = 0;
 	let button = null;
 	let clickTimer;
@@ -25,18 +23,18 @@
 	
 	onMount( () => {
 		updateColors(false);
-		if (browserType != BrowserType.chrome) {
-			placement = 'top: 2px; left: 5px;'
-		}
 	});
 
 	$: {
 		if ($dot_size > 0) {
 			size = $dot_size;
-			left = -7 - (size * 0.08);
+			left = (size / 8) - 6;
 			path = svgPath.oval(size, false);
-			top = $id_showRevealCluster == thing.id ? 23 : -3;
+			top = $id_showRevealCluster == thing.id ? 23 : left / 2 + 1;
 		}
+	}
+
+	$: {
 		const grabbed = $ids_grabbed?.includes(thing.id);
 		if (isGrabbed != grabbed) {
 			isGrabbed = grabbed;
@@ -91,18 +89,17 @@
 
 <style>
 	.dot {
-		top: 6px;
+		top: 4px;
 		border: none;
 		cursor: pointer;
 		background: none;
-		position: absolute;
+		position: relative;
 	}
 </style>
 
 <button class='dot'
 	bind:this={button}
 	style='
-		left: 2px;
 		width: {size}px;	 /* Match SVG viewbox width */
 		height: {size}px;	/* Match SVG viewbox height */
 	'>
