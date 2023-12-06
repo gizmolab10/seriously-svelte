@@ -1,9 +1,9 @@
 <script lang='ts'>
-	import { line_gap, dot_size, id_editing, ids_grabbed, id_showRevealCluster} from '../../ts/managers/State';
+	import { line_gap, dot_size, id_editing, ids_grabbed, user_graphOffset, id_showRevealCluster} from '../../ts/managers/State';
 	import { k, Thing, Point, ZIndex, onMount, onDestroy } from '../../ts/common/GlobalImports';
 	import RevealCluster from './RevealCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
-	import RevealDot from './RevealDot.svelte';
+	import RevealDot, {center} from './RevealDot.svelte';
 	import DragDot from './DragDot.svelte';
 	export let origin = new Point();
 	export let thing = Thing;
@@ -18,6 +18,7 @@
 	let rightPadding = 22
 	let yPadding = 0;
 	let height = 0;
+	let width = 0;
 	let left = 0;
 	let top = 0;
 	let widget;
@@ -31,10 +32,29 @@
 		border = showingBorder ? 'border: ' + thing.grabAttributes : '';
 		background = showingBorder ? 'background-color: ' + k.backgroundColor : '';
 	}
+	
+	$: {
+		if ($user_graphOffset != null) {
+			setTimeout(() => {
+				updateLayout()
+			}, 1);
+		}
+	}
 
 	$: {
+		if ($line_gap > 0) {
+			setTimeout(() => {
+				updateLayout()
+			}, 1);
+		}
+	}
+
+	function updateLayout() {
 		const delta = showingBorder ? 0 : 1;
 		left = origin.x + delta - 3;
+		const titleWidth = thing.titleWidth;
+		width = titleWidth - 18 + ($dot_size * 2);
+		thing.debugLog('TITLE WIDTH: ' + titleWidth);
 		if (thing.showCluster) {
 			height = k.clusterHeight;
 			radius = height / 2;
@@ -43,7 +63,7 @@
 			const xPadding = $dot_size - 3.5;
 			padding = yPadding + 'px ' + xPadding + 'px' + yPadding + 'px 0px';
 		} else {
-			yPadding = -2;
+			yPadding = $dot_size / -3;
 			height = $line_gap - 2;
 			radius = $dot_size / 2;
 			top = origin.y + delta;
@@ -90,15 +110,16 @@
 		{background};
 		top: {top}px;
 		left: {left}px;
-		padding: {padding};
+		width: {width}px;
 		height: {height}px;
+		padding: {padding};
 		z-index: {ZIndex.widgets};
 		border-radius: {$line_gap / 1.5}px;
 	'>
 	<DragDot thing={thing}/><TitleEditor thing={thing}/>
 	<div class='revealDot'
 		style='top:{yPadding}px'>
-		<RevealDot thing={thing}/>
+		<RevealDot thing={thing} center={origin}/>
 		{#if showingCluster}
 			<RevealCluster thing={thing}/>
 		{/if}

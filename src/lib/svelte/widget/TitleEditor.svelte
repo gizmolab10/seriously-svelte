@@ -19,6 +19,13 @@
 		if (input && ghost && thing) { // ghost only exists to provide its scroll width
 			const width = ghost.scrollWidth;
 			input.style.width = `${width}px`;
+			thing.debugLog('GHOST WIDTH: ' + width);
+		}
+	}
+
+	$: {
+		if ($line_gap > 0) {
+			updateInputWidth();
 		}
 	}
 
@@ -129,7 +136,6 @@
 	.ghost {
 		position: absolute;
 		visibility: hidden;
-		padding: 0px 0px 0px 6px;
 		white-space: pre; /* Preserve whitespace to accurately measure the width */
 	}
 </style>
@@ -138,7 +144,8 @@
 	<span class="ghost" bind:this={ghost}
 		style='
 			font-size: {$thing_fontSize}px;
-			font-family: {$thing_fontFamily};'>
+			font-family: {$thing_fontFamily};
+			padding: 0px 0px 0px {$line_gap / 3}px;'>
 		{thing.title}
 	</span>
 	<input

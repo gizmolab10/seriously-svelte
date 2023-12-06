@@ -89,7 +89,6 @@
 
 <style>
 	.dot {
-		top: 4px;
 		border: none;
 		cursor: pointer;
 		background: none;
@@ -100,6 +99,7 @@
 <button class='dot'
 	bind:this={button}
 	style='
+		top: {(size / 2) - 6}px;
 		width: {size}px;	 /* Match SVG viewbox width */
 		height: {size}px;	/* Match SVG viewbox height */
 	'>

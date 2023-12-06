@@ -50,8 +50,16 @@ export class Rect {
 	origin: Point;
 	size: Size;
 
-	static createRect(origin: Point, extent: Point) {
+	static createExtentRect(origin: Point, extent: Point) {
 		return new Rect(origin, extent.offsetBy(origin.negated).asSize);
+	}
+
+	static createCenterRect(center: Point, size: Size) {
+		return new Rect(center.offsetBy(size.asPoint.negated.dividedInHalf), size);
+	}
+
+	static createRightCenterRect(rightCenter: Point, size: Size) {
+		return new Rect(rightCenter.offsetByY(size.height / -2), size);
 	}
 
 	constructor(origin: Point = new Point(), size: Size = new Size()) {

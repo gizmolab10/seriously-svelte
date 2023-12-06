@@ -58,7 +58,9 @@
 
 	$: {
 		if ($dot_size > 0) {
-			layoutChildren();
+			setTimeout(() => {
+				layoutChildren()
+			}, 2);
 		}
 	}
 	

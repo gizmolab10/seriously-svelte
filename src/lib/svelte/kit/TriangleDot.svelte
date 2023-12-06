@@ -6,7 +6,7 @@
 	export let direction;
 	export let onClick;
 	export let display;
-	export let origin;
+	export let center;
 	export let size;
 	let path = svgPath.triangle(Size.square(size), direction);
 	let fillColor = k.backgroundColor;
@@ -28,8 +28,8 @@
 		on:click={onClick}
 		style='
 			display: {display};
-			top: {origin.y + 2 - (size / 2)}px;
-			left: {origin.x + 3 - (size / 2)}px;
+			top: {center.y + 2 - (size / 2)}px;
+			left: {center.x + 3 - (size / 2)}px;
 		'>
 		<svg class='svg'
 			width={size}

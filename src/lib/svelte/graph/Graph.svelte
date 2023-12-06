@@ -94,7 +94,7 @@
 	function rectTo_firstReveal(): Rect {
 		const mysteryOffset = new Point(-33, -31);
 		const extent = origin_ofFirstReveal.offsetBy(mysteryOffset);
-		return Rect.createRect($graphRect.origin, extent);
+		return Rect.createExtentRect($graphRect.origin, extent);
 	}
 
 	function rectOfChildren(): Rect {
@@ -117,5 +117,5 @@
 	{#if isGrabbed}
 		<Circle radius={$dot_size / 1.5} center={origin_ofFirstReveal.offsetBy(new Point(7, 9))} color={here.color} thickness=1/>
 	{/if}
-	<RootRevealDot here={here} origin={origin_ofFirstReveal}/>
+	<RootRevealDot here={here} center={origin_ofFirstReveal}/>
 {/if}

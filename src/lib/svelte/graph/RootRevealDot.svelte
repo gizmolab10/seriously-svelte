@@ -2,7 +2,7 @@
 	import { Point, debug, Direction, dbDispatch, graphEditor } from "../../ts/common/GlobalImports";
 	import TriangleDot from '../kit/TriangleDot.svelte';
 	import { dot_size } from '../../ts/managers/State';
-	export let origin = new Point($dot_size, 20);
+	export let center = new Point();
 	export let here;
 	let size = $dot_size;
 
@@ -28,7 +28,7 @@
 	direction={Direction.left}
 	strokeColor={here.color}
 	onClick={onClick}
-	origin={origin}
+	center={center}
 	display='block'
     size={size}
 />

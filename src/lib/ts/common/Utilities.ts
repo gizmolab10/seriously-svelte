@@ -71,17 +71,17 @@ export function getFontOf(element: HTMLElement): string {
 }
 
 export function getWidthOf(s: string): number {
-	const span: HTMLElement = document.createElement('span');
-	span.style.font = get(thing_fontSize) + 'px ' + get(thing_fontFamily);
-	span.style.left = '-9999px'; // offscreen
-	span.style.padding = '0px 0px 0px 6px';
-	span.style.position = 'absolute';
-	span.style.whiteSpace = 'pre';
-	span.textContent = s;
+	const element: HTMLElement = document.createElement('div');
+	element.style.font = get(thing_fontSize) + 'px ' + get(thing_fontFamily);
+	element.style.left = '-9999px'; // offscreen
+	element.style.padding = '0px 0px 0px 6px';
+	element.style.position = 'absolute';
+	element.style.whiteSpace = 'pre';
+	element.textContent = s;
 	
-	document.body.appendChild(span);
-	const width: number = span.scrollWidth;
-	document.body.removeChild(span);
+	document.body.appendChild(element);
+	const width: number = element.scrollWidth;
+	document.body.removeChild(element);
 
 	return width;
 }

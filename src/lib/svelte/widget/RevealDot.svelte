@@ -2,6 +2,7 @@
 	import { k, get, Size, Thing, Point, debug, ZIndex, Signals, onMount, onDestroy, dbDispatch } from "../../ts/common/GlobalImports";
 	import { Direction, graphEditor, svgPath, handleSignalOfKind } from "../../ts/common/GlobalImports";
 	import { dot_size, id_showRevealCluster } from '../../ts/managers/State';
+	export let center = new Point();
 	export let thing;
 	let insidePath = svgPath.circle(16, 6);
 	let antiFillColor = k.backgroundColor;
@@ -106,7 +107,6 @@
 
 <style>
 	.dot {
-		top: 7px;
 		border: none;
 		cursor: pointer;
 		background: none;
@@ -116,7 +116,7 @@
 
 <button class='dot'
 	bind:this={button}
-	style='top: -5px;
+	style='top: {3 - ($dot_size / 8)}px;
 		width={size}px;
 		height={size}px;
 		position: relative;
@@ -138,8 +138,8 @@
 		on:dblclick={handleDoubleClick}
 		on:contextmenu={handleContextMenu}
 		style='
-			top: 10px;
-			left: -5px;
+			top: {$dot_size / 2}px;
+			left: -7px;
 			position: relative;
 			z-index: {ZIndex.dots};'>
 		<path d={path} stroke={strokeColor} fill={debug.lines ? 'transparent' : fillColor}/>
