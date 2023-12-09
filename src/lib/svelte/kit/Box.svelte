@@ -1,11 +1,18 @@
 <script>
-    import { Rect } from '../../ts/common/GlobalImports'
     export let half = false;
     export let color;
     export let rect;
 </script>
 
-<div
+<style>
+    div {
+        position: fixed;
+        backgroundColor: transparent;
+    }
+</style>
+
+<div class='box'>
+<div class='inner'
     style='
         top: {rect.origin.y}px;
         left: {rect.origin.x}px;
@@ -15,7 +22,7 @@
 '>
 </div>
 {#if half == true}
-    <div
+    <div class='horizontal'
         style='
             top: {rect.center.y}px;
             left: {rect.origin.x}px;
@@ -24,7 +31,7 @@
             background-color: {color};
     '>
     </div>
-    <div
+    <div class='vertical'
         style='
             top: {rect.origin.y}px;
             left: {rect.center.x}px;
@@ -34,9 +41,4 @@
     '>
     </div>
 {/if}
-<style>
-    div {
-        position: fixed;
-        backgroundColor: transparent;
-    }
-</style>
+</div>

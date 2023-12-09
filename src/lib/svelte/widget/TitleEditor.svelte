@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { line_gap, id_editing, thing_fontSize, thing_fontFamily, id_editingStopped } from '../../ts/managers/State';
+	import { row_height, id_editing, thing_fontSize, thing_fontFamily, id_editingStopped } from '../../ts/managers/State';
 	import { k, Thing, signal, Signals, ZIndex, onMount, onDestroy } from '../../ts/common/GlobalImports';
 	import { dbDispatch, SeriouslyRange, graphEditor } from '../../ts/common/GlobalImports';
 	import Widget from './Widget.svelte';
@@ -19,12 +19,12 @@
 		if (input && ghost && thing) { // ghost only exists to provide its scroll width
 			const width = ghost.scrollWidth;
 			input.style.width = `${width}px`;
-			thing.debugLog('GHOST WIDTH: ' + width);
+			thing.debugLog('TITLE WIDTH: ' + width);
 		}
 	}
 
 	$: {
-		if ($line_gap > 0) {
+		if ($row_height > 0) {
 			updateInputWidth();
 		}
 	}
@@ -134,7 +134,7 @@
 		position: relative;
 	}
 	.ghost {
-		position: absolute;
+		position: fixed;
 		visibility: hidden;
 		white-space: pre; /* Preserve whitespace to accurately measure the width */
 	}
@@ -145,7 +145,7 @@
 		style='
 			font-size: {$thing_fontSize}px;
 			font-family: {$thing_fontFamily};
-			padding: 0px 0px 0px {$line_gap / 3}px;'>
+			padding: 0px 0px 0px {$row_height / 3}px;'>
 		{thing.title}
 	</span>
 	<input
@@ -161,13 +161,13 @@
 		on:keydown={handleKeyDown}
 		on:paste={handleCutOrPaste}
 		style='
-			left: {$line_gap / -4}px;
+			left: {$row_height / -4}px;
 			color: {thing.color};
 			z-index: {ZIndex.text};
-			top: {($line_gap / -8) + 3}px;
+			top: {($row_height / -8) + 3}px;
 			font-size: {$thing_fontSize}px;
 			font-family: {$thing_fontFamily};
 			outline-color: k.backgroundColor;
-			padding: 0px 0px 0px {$line_gap / 3}px;
+			padding: 0px 0px 0px {$row_height / 3}px;
 		'/>
 {/key}

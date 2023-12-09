@@ -1,18 +1,20 @@
 <script lang=ts>
-	import { Rect, Size, Point, Thing, debug, signal, Signals, Layout, onMount, LineRect, onDestroy } from '../../ts/common/GlobalImports';
+	import { Size, Point, Thing, debug, signal, Signals, Layout, onMount, LineRect, onDestroy } from '../../ts/common/GlobalImports';
 	import { LineCurveType, orders_normalize_remoteMaybe, handleSignalOfKind } from '../../ts/common/GlobalImports';
-	import { dot_size, line_stretch, user_graphOffset } from '../../ts/managers/State';
-	import Widget from '../widget/Widget.svelte';
+	import { dot_size, row_height, line_stretch, user_graphOffset } from '../../ts/managers/State';
+	import Widget, {dotCenter} from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Children from './Children.svelte';
 	import Line from './Line.svelte';
-	export let origin = new Point();
+	export let rightCenter = new Point();
 	export let thing: Thing;
+	const widgetOffset = new Point($line_stretch + $dot_size, -$row_height).dividedInHalf;
 	let lineRects: Array<LineRect> = [];
 	let prior = new Date().getTime();
 	let children = thing.children;
-	let center = new Point();
-	let threeArrays = [];
+	let origin = new Point();
+	let size = new Size();
+	let lineMap = [];
 
 	onMount( () => { thing.debugLog('CHILDREN MOUNT'); layoutChildren(); });
 	onDestroy( () => { layout_signalHandler.disconnect(); redraw_signalHandler.disconnect(); });
@@ -20,12 +22,12 @@
 	const layout_signalHandler = handleSignalOfKind(Signals.layout, (idThing) => {
 		if (idThing && idThing == thing.id) {
 			thing.debugLog('CHILDREN LAYOUT');
-			layoutChildren();
 			for (const child of children) {
 				if (child.hasChildren && child.isExpanded) {
 					signal(Signals.layout, child.id); // percolate
 				}
 			}
+			layoutChildren();
 		}
 	})
 	
@@ -66,56 +68,41 @@
 	
 	function layoutChildren() {
 		if (thing) {
-			const height = (thing.visibleProgeny_halfHeight);
-			const childOrigin = origin.offsetByY(height);
-			const delta = new Point($dot_size * 0.6 + 11, $dot_size / 2 - 9);
-			center = childOrigin.offsetBy(delta);
-			lineRects = new Layout(thing, childOrigin).lineRects;
-			threeArrays = lineRects.map((rect, index) => ({
-				origin: originForGrandchildren(children[index], rect),
-				child: children[index], 
-				rect: rect,
+			size = thing.visibleProgeny_size;
+			origin = rightCenter.offsetByY(size.height / 2);
+			lineRects = new Layout(thing).lineRects;
+			lineMap = lineRects.map((l, index) => ({
+				rightCenter: rightCenterForGrandchildren(children[index], l.extent),
+				curveType: l.curveType,
+				child: children[index],
+				extent: l.extent,
 			}));
 		}
 	}
 
-	function originForGrandchildren(child: Thing, rect: LineRect): Point {
-		const more = -2;									// TODO: WHY 1? perhaps it accounts for title margin
-		if (!rect || !child) {
-			alert('grandchildren origin not computable');
-		}
-		const x = origin.x + child.titleWidth + $dot_size + $line_stretch + more;
-		const y = rect.extent.y - child.visibleProgeny_halfHeight;
-		return new Point(x, y);
-	}
-	
-	function description() {
-		let strings: Array<string> = [];
-		for (const lineRect of lineRects) {
-			strings.push(lineRect.origin.verbose);
-			strings.push(lineRect.extent.verbose);
-			strings.push(lineRect.size.verbose);
-		}
-		return strings.join(', ');
-	}
-
-	function describe(things: Array<Thing>) {
-		for (const [index, thing] of things.entries()) {
-			thing.debugLog('CHILD at ' + index);
-		}
+	function rightCenterForGrandchildren(child: Thing, extent: number): Point {
+		const x = child.titleWidth + $dot_size + $line_stretch;
+		return new Point(x, -extent);
 	}
 	
 </script>
 
 {#if children && children.length != 0 && lineRects.length == children.length}
-	{#if debug.lines}
-		<Circle radius=1 center={center} color=black thickness=1/>
-	{/if}
-	{#each threeArrays as i, index}
-		<Widget thing={i.child} origin={i.rect.extent.offsetBy(new Point(12, ($dot_size / -15) -11))}/>
-		<Line thing={i.child} curveType={i.rect.curveType} rect={i.rect.offsetBy(new Point(($dot_size / 2) - 129, ($dot_size / 2) - 8))}/>
-		{#if i.child.hasChildren && i.child.isExpanded}
-			<Children thing={i.child} origin={i.origin}/>
+	<div class='children'
+			style='position: relative;
+			height: {size.height}px;
+			width: {size.width}px;
+			left: {origin.x}px;
+			top: {origin.y}px;'>
+		{#if debug.lines}
+			<Circle radius=1 center={new Point(0, size.height / 2)} color=black thickness=1/>
 		{/if}
-	{/each}
+		{#each lineMap as l}
+			<Widget thing={l.child} dotCenter={widgetOffset.offsetByY(l.extent)}/>
+			<Line thing={l.child} curveType={l.curveType} origin={origin.y - rightCenter.y} extent={l.extent}/>
+			{#if l.child.hasChildren && l.child.isExpanded}
+				<Children thing={l.child} rightCenter={l.rightCenter}/>
+			{/if}
+		{/each}
+	</div>
 {/if}

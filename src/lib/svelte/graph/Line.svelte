@@ -1,50 +1,40 @@
 <script lang='ts'>
 	import { Rect, Size, Point, debug, ZIndex, SVGType, svgPath, LineCurveType } from '../../ts/common/GlobalImports';
-	import { dot_size, user_graphOffset } from '../../ts/managers/State';
+	import { dot_size, line_stretch, user_graphOffset } from '../../ts/managers/State';
 	import Circle from '../kit/Circle.svelte';
 	import Box from '../kit/Box.svelte';
-	export let curveType: string = LineCurveType.up;
-	export let rect = new Rect();
+	export let curveType = '';
 	export let thing: Thing;
-	const debugOffset = new Point(141, -1);
-	let origin = rect.origin;
-	let extent = rect.extent;
-	let viewBox = new Rect();
-	let size = new Size();
+	export let origin = 0;
+	export let extent = 0;
+	const height = Math.abs(extent - origin);
+	let viewBox = '';
 	let path = '';
 
-	////////////////////////////////////////////////////
-	//	draw a curved line in rect, up, down or flat  //
-	////////////////////////////////////////////////////
+	//////////////////////////////////////////
+	//	draw a line, from origin to extent	//
+	//	  flat, curved up or curved down	//
+	//////////////////////////////////////////
 
 	$: {
-		if ($dot_size > 0) {
-			// thing.debugLog('LINE REACT')
-			switch (curveType) {
-				case LineCurveType.up:
-					origin = rect.origin;
-					extent = rect.extent;
-					break;
-				case LineCurveType.down:
-					origin = rect.bottomLeft;
-					extent = origin.offsetBy(rect.size.asPoint);
-					break;
-				case LineCurveType.flat:
-					origin = rect.centerLeft;
-					extent = rect.centerRight;
-					size = origin.distanceTo(extent).asSize;
-					path = svgPath.line(size.width);
-					break;
-			}
-			if (curveType != LineCurveType.flat) {
-				let flag = (curveType == LineCurveType.down) ? 0 : 1;
-				const noHeight = origin.y == extent.y;
-				size = origin.distanceTo(extent).asSize;
-				const originY = curveType == LineCurveType.down ? 1 : size.height;
-				const extentY = curveType == LineCurveType.up   ? 1 : size.height;
-				const boxSize = new Size(size.width, (noHeight ? 2 : size.height));
-				viewBox = new Rect(origin.offsetByY($user_graphOffset.y), boxSize);
-				path = 'M0 ' + originY + 'A' + size.description + ' 0 0 ' + flag + ' ' + size.width + ' ' + extentY;
+		if ($line_stretch > 0) {
+			if (curveType == LineCurveType.flat) {
+				path = svgPath.line(origin, $line_stretch);
+				viewBox = `0 ${origin} ${$line_stretch} 2`;
+			} else {
+				let o = origin;
+				let e = extent;
+				if (curveType == LineCurveType.up) {
+					o = extent;
+					e = origin;
+				}
+				const size = new Size($line_stretch, height).description;
+				viewBox = `0 ${o} ${size}`;
+				if (curveType == LineCurveType.down) {
+					path = 'M1 ' + o + 'A' + size + ' 0 0 0 ' + $line_stretch + ' ' + e;
+				} else {
+					path = 'M1 ' + e + 'A' + size + ' 0 0 1 ' + $line_stretch + ' ' + o;
+				}
 			}
 		}
 	}
@@ -52,21 +42,27 @@
 </script>
 
 <style lang='scss'>
-	.line {
+	.svg {
 		left: 0px;
 		position: absolute;
 	}
 </style>
 
-<svg class='line'
-	width={size.width}px
-	height={Math.max(2, size.height)}px
-	style='z-index: {ZIndex.lines};
-		top: {origin.y - Math.max(1, size.height)}px;
-		left: {origin.x + 143}px;'>
-	<path d={path} stroke={thing.color} fill='none'/>
-</svg>
-{#if debug.lines}
-	<!--Box rect={rect.offsetBy(debugOffset)} color=gray/-->
-	<Circle radius=1 center={rect.extent.offsetBy(debugOffset)} color=black thickness=1/>
-{/if}
+<div class='line'
+	style='
+		left: 0px;
+		width: {$line_stretch}px;
+		position: absolute;
+		height: {Math.max(2, height)}px;
+		top: {Math.min(origin, extent)}px;'>
+	<svg class='svg'
+		viewBox={viewBox}
+		width={$line_stretch}px
+		height={Math.max(2, height)}px
+		style='z-index: {ZIndex.lines};'>
+		<path d={path} stroke={thing.color} fill='none'/>
+	</svg>
+	{#if debug.lines}
+		<Circle radius=1 center={new Point($line_stretch, extent - 46)} color=red thickness=1/>
+	{/if}
+</div>

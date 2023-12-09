@@ -110,13 +110,13 @@
 		border: none;
 		cursor: pointer;
 		background: none;
-		position: absolute;
+		position: relative;
 	}
 </style>
 
 <button class='dot'
 	bind:this={button}
-	style='top: {3 - ($dot_size / 8)}px;
+	style='top: {2 - ($dot_size / 8)}px;
 		width={size}px;
 		height={size}px;
 		position: relative;

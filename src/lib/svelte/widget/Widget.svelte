@@ -1,11 +1,11 @@
 <script lang='ts'>
-	import { line_gap, dot_size, id_editing, ids_grabbed, user_graphOffset, id_showRevealCluster} from '../../ts/managers/State';
+	import { row_height, dot_size, id_editing, ids_grabbed, user_graphOffset, id_showRevealCluster} from '../../ts/managers/State';
 	import { k, Thing, Point, ZIndex, onMount, onDestroy } from '../../ts/common/GlobalImports';
 	import RevealCluster from './RevealCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
-	import RevealDot, {center} from './RevealDot.svelte';
+	import RevealDot from './RevealDot.svelte';
 	import DragDot from './DragDot.svelte';
-	export let origin = new Point();
+	export let dotCenter = new Point();
 	export let thing = Thing;
 	let showingCluster = false;
 	let showingBorder = false;
@@ -42,7 +42,7 @@
 	}
 
 	$: {
-		if ($line_gap > 0) {
+		if ($row_height > 0) {
 			setTimeout(() => {
 				updateLayout()
 			}, 1);
@@ -50,23 +50,22 @@
 	}
 
 	function updateLayout() {
-		const delta = showingBorder ? 0 : 1;
-		left = origin.x + delta - 3;
+		const delta = showingBorder ? 1 : 0;
+		left = dotCenter.x - 6 - delta;
 		const titleWidth = thing.titleWidth;
 		width = titleWidth - 18 + ($dot_size * 2);
-		thing.debugLog('TITLE WIDTH: ' + titleWidth);
 		if (thing.showCluster) {
 			height = k.clusterHeight;
 			radius = height / 2;
 			yPadding = radius - 17;
-			top = origin.y + delta - yPadding;
+			top = dotCenter.y + delta - yPadding;
 			const xPadding = $dot_size - 3.5;
 			padding = yPadding + 'px ' + xPadding + 'px' + yPadding + 'px 0px';
 		} else {
 			yPadding = $dot_size / -3;
-			height = $line_gap - 2;
+			height = $row_height - 2;
 			radius = $dot_size / 2;
-			top = origin.y + delta;
+			top = dotCenter.y - delta + 1;
 			if (thing.isExemplar) {
 				const xPadding = rightPadding + 2;
 				padding = '0px ' + xPadding + 'px 0px 0px';
@@ -74,6 +73,7 @@
 				padding = '0px ' + rightPadding + 'px 0px 0px';
 			}
 		}
+		thing.debugLog('WIDGET TOP: ' + top);
 	}
 
 	$: {
@@ -88,6 +88,7 @@
 			isGrabbed = shouldGrab;
 			isEditing = shouldEdit;
 			updateBorderStyle();
+			updateLayout();
 		}
 	}
 
@@ -114,12 +115,12 @@
 		height: {height}px;
 		padding: {padding};
 		z-index: {ZIndex.widgets};
-		border-radius: {$line_gap / 1.5}px;
+		border-radius: {$row_height / 1.5}px;
 	'>
-	<DragDot thing={thing}/><TitleEditor thing={thing}/>
+	<DragDot thing={thing} center={dotCenter}/><TitleEditor thing={thing}/>
 	<div class='revealDot'
-		style='top:{yPadding}px'>
-		<RevealDot thing={thing} center={origin}/>
+		style='top:{yPadding}px;'>
+		<RevealDot thing={thing} center={dotCenter}/>
 		{#if showingCluster}
 			<RevealCluster thing={thing}/>
 		{/if}

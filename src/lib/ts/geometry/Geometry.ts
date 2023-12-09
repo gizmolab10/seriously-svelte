@@ -68,7 +68,7 @@ export class Rect {
 	}
 
 	get pixelVerbose():	   string { return this.origin.pixelVerbose + ' ' + this.size.pixelVerbose; }
-	get description():	   string { return this.origin.verbose + ', ' + this.size.verbose; }
+	get description():	   string { return this.origin.description + ' ' + this.size.description; }
 	get center():			Point { return this.origin.offsetBySize(this.size.dividedInHalf); }	// add half of size to origin
 	get extent():			Point { return this.origin.offsetBySize(this.size); }					// bottom right
 	get topRight():			Point { return new Point(this.extent.x, this.origin.y); };
@@ -85,11 +85,12 @@ export class Rect {
 	expandedBy(delta: Size): Rect { return new Rect(this.origin, this.size.expandedBy(delta)) }
 }
 
-export class LineRect extends Rect {
+export class LineRect {
 	curveType: string;
-	constructor(curveType: string, rect: Rect) {
-		super(rect.origin.copy, rect.size.copy);
+	extent: number;
+	constructor(curveType: string, extent: number) {
 		this.curveType = curveType;
+		this.extent = extent;
 	}
 };
 

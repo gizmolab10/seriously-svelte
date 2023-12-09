@@ -1,6 +1,6 @@
 import { dbDispatch, getWidthOf, DebugOption, persistLocal, SeriouslyRange, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { id_here, dot_size, id_editing, expanded, row_height, ids_grabbed, line_stretch, id_showRevealCluster, thing_fontSize } from '../managers/State';
 import { k, get, Size, Datum, signal, Signals, debug, Predicate, Hierarchy, TraitType, PersistID } from '../common/GlobalImports';
-import { id_here, dot_size, id_editing, expanded, ids_grabbed, line_gap, id_showRevealCluster, line_stretch } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -12,6 +12,7 @@ export default class Thing extends Datum {
 	grabAttributes = '';
 	showCluster = false;
 	isExemplar = false;
+	titleWidth: number;
 	isEditing = false;
 	isGrabbed = false;
 	db_type: string;
@@ -23,6 +24,7 @@ export default class Thing extends Datum {
 	constructor(baseID: string, id: string | null, title = k.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
 		super(baseID, id, isRemotelyStored);
 		this.db_type = dbDispatch.db.db_type;
+		this.titleWidth = 0;
 		this.title = title;
 		this.color = color;
 		this.trait = trait;
@@ -53,6 +55,10 @@ export default class Thing extends Datum {
 				signal(Signals.childrenOf);
 			}
 		});
+
+		thing_fontSize.subscribe((size: number) => {
+			this.titleWidth = getWidthOf(this.title);
+		})
 	};
 
 	get fields():		  Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
@@ -71,9 +77,8 @@ export default class Thing extends Datum {
 	get lastChild():				  Thing { return this.children.slice(-1)[0]; }	// not alter children
 	get firstChild():				  Thing { return this.children[0]; }
 	get firstParent():				  Thing { return this.parents[0]; }
-	get description():				 string { return this.id + ' \"' + this.title + '\"'; }
+	get description():				 string { return `\"${this.title}\"`; }
 	get idForChildren():             string { return this.isBulkAlias ? this.bulkRootID : this.id; }
-	get titleWidth():				 number { return getWidthOf(this.title) }
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height / 2; }
 	get visibleProgeny_halfSize():	   Size { return this.visibleProgeny_size.dividedInHalf; }
 	get visibleProgeny_size():		   Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height); }
@@ -94,7 +99,7 @@ export default class Thing extends Datum {
 	}
 
 	get visibleProgeny_height(): number {
-		let singleRowHeight = this.showCluster ? k.clusterHeight + 6 : get(line_gap);
+		let singleRowHeight = this.showCluster ? k.clusterHeight + 6 : get(row_height);
 		if (this.hasChildren && this.isExpanded) {
 			let height = 0;
 			for (const child of this.children) {

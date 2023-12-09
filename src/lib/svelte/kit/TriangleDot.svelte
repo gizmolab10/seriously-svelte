@@ -45,7 +45,7 @@
 
 <style>
 	.svg {
-		position: absolute;
+		position: relative;
 		left: 5px; top: 6px;
 	}
 	.svg-button {
@@ -54,8 +54,8 @@
 		border: none;
 		cursor: pointer;
 		background: none;
-		position: absolute;
 		border-radius: 50%;
+		position: relative;
 	}
 	.svg-button svg {
 		display: block; /* This removes any unwanted space below the SVG */

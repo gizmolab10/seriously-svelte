@@ -1,10 +1,10 @@
 import { user_graphOffset, showDetails, line_stretch, thing_fontFamily } from './State';
-import { id_here, line_gap, expanded, db_loadTime, ids_grabbed } from './State';
+import { id_here, row_height, expanded, db_loadTime, ids_grabbed } from './State';
 import { Point, dbDispatch } from '../common/GlobalImports'
 
 export enum PersistID {
 	line_stretch = 'line_stretch',
-	line_gap	 = 'line_gap',
+	row_height	 = 'row_height',
 	expanded	 = 'expanded',
 	grabbed		 = 'grabbed',
 	details		 = 'details',
@@ -22,12 +22,12 @@ class PersistLocal {
 		// localStorage.clear();
 		// const isLocal = isServerLocal();
 
-		// this.writeToKey(PersistID.line_gap, 20);
+		// this.writeToKey(PersistID.row_height, 20);
 		// this.writeToKey(PersistID.dot_size, 13);
 
 		db_loadTime.set(null);
 		id_here.set(this.readFromDBKey(PersistID.here));
-		line_gap.set(this.readFromKey(PersistID.line_gap) ?? 20); // sets dot_size and thing_fontSize
+		row_height.set(this.readFromKey(PersistID.row_height) ?? 20); // sets dot_size and thing_fontSize
 		expanded.set(this.readFromDBKey(PersistID.expanded) ?? []);
 		ids_grabbed.set(this.readFromDBKey(PersistID.grabbed) ?? []);
 		showDetails.set(this.readFromKey(PersistID.details) ?? false);

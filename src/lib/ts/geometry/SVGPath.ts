@@ -11,8 +11,8 @@ export enum Direction {
 
 export default class SVGPath {
 
-    line(width: number) {
-        return 'M0 1 L' + width + ' 1';
+    line(y: number, width: number) {
+        return `M1 ${y} L${width} ${y}`;
     }
 
     oval(diameter: number, horizontal: boolean = true) {

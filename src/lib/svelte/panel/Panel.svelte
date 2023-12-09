@@ -1,5 +1,5 @@
 <script>
-	import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, PersistID, dbDispatch } from '../../ts/common/GlobalImports'
+	import { k, get, Size, Point, Thing, launch, DBType, ZIndex, onMount, PersistID, dbDispatch } from '../../ts/common/GlobalImports'
 	import { db_type, isBusy, id_here, build, graphRect, id_popupView, showDetails, things_arrived } from '../../ts/managers/State';
 	import { signal, Signals, ButtonID, Hierarchy, persistLocal, updateGraphRect } from '../../ts/common/GlobalImports'
 	import CircularButton from '../kit/CircularButton.svelte';
