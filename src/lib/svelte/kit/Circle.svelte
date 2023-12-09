@@ -28,7 +28,7 @@
 
 <style>
   .circle {
-    position: relative;
+    position: absolute;
     border-radius: 50%;
   }
 </style>

@@ -110,7 +110,7 @@
 		border: none;
 		cursor: pointer;
 		background: none;
-		position: relative;
+		position: absolute;
 	}
 </style>
 
@@ -119,7 +119,7 @@
 	style='top: {2 - ($dot_size / 8)}px;
 		width={size}px;
 		height={size}px;
-		position: relative;
+		position: absolute;
 		left: {size + thing.titleWidth + 2}px;
 	'>
 	<svg width={size}
@@ -140,7 +140,7 @@
 		style='
 			top: {$dot_size / 2}px;
 			left: -7px;
-			position: relative;
+			position: absolute;
 			z-index: {ZIndex.dots};'>
 		<path d={path} stroke={strokeColor} fill={debug.lines ? 'transparent' : fillColor}/>
 		{#if thing.isBulkAlias}

@@ -10,20 +10,17 @@ export default class Layout {
 			const children = thing.children;
 			const quantity = children.length;
 			if (quantity < 2 || !thing.isExpanded) {
-				const extent = origin;
-				this.lineRects.push(new LineRect(LineCurveType.flat, extent));
+				this.lineRects.push(new LineRect(LineCurveType.flat, origin));
 			} else {
 				let index = 0;
 				let sumOfSiblingsAbove = -thing.visibleProgeny_halfHeight; // start out negative and grow positive
 				while (index < quantity) {
 					const child = children[index];
-					const childvisibleProgeny_halfHeight = child.visibleProgeny_halfHeight;
-					const sizeY = sumOfSiblingsAbove + childvisibleProgeny_halfHeight;
-					const direction = this.getDirection(sizeY);
-					const extent = origin + sizeY;
-					this.lineRects.push(new LineRect(direction, extent));
-					sumOfSiblingsAbove += child.visibleProgeny_height;
 					index += 1;
+					const sizeY = sumOfSiblingsAbove + child.visibleProgeny_halfHeight;
+					sumOfSiblingsAbove += child.visibleProgeny_height;
+					const direction = this.getDirection(sizeY);
+					this.lineRects.push(new LineRect(direction, origin + sizeY));
 				}
 			}
 		}

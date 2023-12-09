@@ -82,7 +82,7 @@
 				center.x = 25;
 			}
 			rightCenter = center.offsetBy(toChildren);
-			center_ofFirstReveal = rightCenter.offsetBy(new Point(-14, 10 - $dot_size));
+			center_ofFirstReveal = rightCenter.offsetBy(new Point(($dot_size / -15) - 6, here.visibleProgeny_height - 7));
 		}
 	}
 

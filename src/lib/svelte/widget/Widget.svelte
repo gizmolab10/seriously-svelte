@@ -51,7 +51,7 @@
 
 	function updateLayout() {
 		const delta = showingBorder ? 1 : 0;
-		left = dotCenter.x - 6 - delta;
+		left = dotCenter.x - delta - $dot_size / 3;
 		const titleWidth = thing.titleWidth;
 		width = titleWidth - 18 + ($dot_size * 2);
 		if (thing.showCluster) {
@@ -65,12 +65,12 @@
 			yPadding = $dot_size / -3;
 			height = $row_height - 2;
 			radius = $dot_size / 2;
-			top = dotCenter.y - delta + 1;
+			top = dotCenter.y - delta + 2;
 			if (thing.isExemplar) {
 				const xPadding = rightPadding + 2;
-				padding = '0px ' + xPadding + 'px 0px 0px';
+				padding = `0px ${xPadding}px 0px ${$dot_size / 3}px`;
 			} else {
-				padding = '0px ' + rightPadding + 'px 0px 0px';
+				padding = `0px ${rightPadding}px 0px ${$dot_size / 3}px`;
 			}
 		}
 		thing.debugLog('WIDGET TOP: ' + top);

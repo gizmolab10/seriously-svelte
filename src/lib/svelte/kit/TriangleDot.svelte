@@ -22,6 +22,28 @@
 
 </script>
 
+<style>
+	.svg {
+		position: absolute;
+		left: 5px; top: 6px;
+	}
+	.svg-button {
+		width: 20px;
+		height: 20px;
+		border: none;
+		cursor: pointer;
+		background: none;
+		border-radius: 50%;
+		position: absolute;
+	}
+	.svg-button svg {
+		display: block; /* This removes any unwanted space below the SVG */
+	}
+	.svg-button:hover {}
+	.svg-button:active {}
+	
+</style>
+
 {#key display}
 	<button class='svg-button'
 		bind:this={button}
@@ -42,25 +64,3 @@
 		</svg>
 	</button>
 {/key}
-
-<style>
-	.svg {
-		position: relative;
-		left: 5px; top: 6px;
-	}
-	.svg-button {
-		width: 20px;
-		height: 20px;
-		border: none;
-		cursor: pointer;
-		background: none;
-		border-radius: 50%;
-		position: relative;
-	}
-	.svg-button svg {
-		display: block; /* This removes any unwanted space below the SVG */
-	}
-	.svg-button:hover {}
-	.svg-button:active {}
-	
-</style>

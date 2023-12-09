@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { row_height, id_editing, thing_fontSize, thing_fontFamily, id_editingStopped } from '../../ts/managers/State';
+	import { dot_size, row_height, id_editing, thing_fontSize, thing_fontFamily, id_editingStopped } from '../../ts/managers/State';
 	import { k, Thing, signal, Signals, ZIndex, onMount, onDestroy } from '../../ts/common/GlobalImports';
 	import { dbDispatch, SeriouslyRange, graphEditor } from '../../ts/common/GlobalImports';
 	import Widget from './Widget.svelte';
@@ -131,7 +131,7 @@
 		border: none;
 		outline: none;
 		white-space: pre;
-		position: relative;
+		position: absolute;
 	}
 	.ghost {
 		position: fixed;
@@ -161,7 +161,7 @@
 		on:keydown={handleKeyDown}
 		on:paste={handleCutOrPaste}
 		style='
-			left: {$row_height / -4}px;
+			left: {$dot_size / 2 + 3}px;
 			color: {thing.color};
 			z-index: {ZIndex.text};
 			top: {($row_height / -8) + 3}px;

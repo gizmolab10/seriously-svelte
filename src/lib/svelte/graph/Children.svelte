@@ -8,7 +8,7 @@
 	import Line from './Line.svelte';
 	export let rightCenter = new Point();
 	export let thing: Thing;
-	const widgetOffset = new Point($line_stretch + $dot_size, -$row_height).dividedInHalf;
+	const center = new Point($line_stretch + $dot_size, -$row_height).dividedInHalf;
 	let lineRects: Array<LineRect> = [];
 	let prior = new Date().getTime();
 	let children = thing.children;
@@ -82,14 +82,15 @@
 
 	function rightCenterForGrandchildren(child: Thing, extent: number): Point {
 		const x = child.titleWidth + $dot_size + $line_stretch;
-		return new Point(x, -extent);
+		const why = -1; // sometimes 0 (???)
+		return new Point(x, why - extent);
 	}
 	
 </script>
 
 {#if children && children.length != 0 && lineRects.length == children.length}
 	<div class='children'
-			style='position: relative;
+			style='position: absolute;
 			height: {size.height}px;
 			width: {size.width}px;
 			left: {origin.x}px;
@@ -98,8 +99,8 @@
 			<Circle radius=1 center={new Point(0, size.height / 2)} color=black thickness=1/>
 		{/if}
 		{#each lineMap as l}
-			<Widget thing={l.child} dotCenter={widgetOffset.offsetByY(l.extent)}/>
-			<Line thing={l.child} curveType={l.curveType} origin={origin.y - rightCenter.y} extent={l.extent}/>
+			<Widget thing={l.child} dotCenter={center.offsetByY(l.extent)}/>
+			<Line thing={l.child} curveType={l.curveType} yOrigin={origin.y - rightCenter.y} yExtent={l.extent}/>
 			{#if l.child.hasChildren && l.child.isExpanded}
 				<Children thing={l.child} rightCenter={l.rightCenter}/>
 			{/if}

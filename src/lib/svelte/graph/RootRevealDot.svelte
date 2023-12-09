@@ -4,7 +4,6 @@
 	import { dot_size } from '../../ts/managers/State';
 	export let center = new Point();
 	export let here;
-	let size = $dot_size;
 
 	function newFillColor(isFilled) { return debug.lines ? 'transparent' : here.revealColor(isFilled); }
 
@@ -15,12 +14,6 @@
 		}
 	}
 
-	$: {
-		if ($dot_size > 0) {
-			size = $dot_size;
-		}
-	}
-
 </script>
 
 <TriangleDot
@@ -28,7 +21,7 @@
 	direction={Direction.left}
 	strokeColor={here.color}
 	onClick={onClick}
+    size={$dot_size}
 	center={center}
 	display='block'
-    size={size}
 />

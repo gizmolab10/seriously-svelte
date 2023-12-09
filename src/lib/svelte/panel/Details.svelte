@@ -43,7 +43,7 @@
 		background-color: #fff;
 		padding: 14px;
 		max-width: 500px;
-		position: relative;
+		position: absolute;
 		font-size: 0.8em;
 	}
 </style>

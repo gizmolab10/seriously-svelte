@@ -5,28 +5,29 @@
 	import Box from '../kit/Box.svelte';
 	export let curveType = '';
 	export let thing: Thing;
-	export let origin = 0;
-	export let extent = 0;
-	const height = Math.abs(extent - origin);
+	export let yOrigin = 0;
+	export let yExtent = 0;
+	const height = Math.abs(yExtent - yOrigin);
 	let viewBox = '';
 	let path = '';
 
-	//////////////////////////////////////////
-	//	draw a line, from origin to extent	//
-	//	  flat, curved up or curved down	//
-	//////////////////////////////////////////
+	//////////////////////////////////////////////
+	//	 draw a line, from yOrigin to yExtent	//
+	//		flat, curved up or curved down		//
+	//		 	width = $line_stretch			//
+	//////////////////////////////////////////////
 
 	$: {
 		if ($line_stretch > 0) {
 			if (curveType == LineCurveType.flat) {
-				path = svgPath.line(origin, $line_stretch);
-				viewBox = `0 ${origin} ${$line_stretch} 2`;
+				path = svgPath.line(yOrigin, $line_stretch);
+				viewBox = `0 ${yOrigin} ${$line_stretch} 2`;
 			} else {
-				let o = origin;
-				let e = extent;
+				let o = yOrigin;
+				let e = yExtent;
 				if (curveType == LineCurveType.up) {
-					o = extent;
-					e = origin;
+					o = yExtent;
+					e = yOrigin;
 				}
 				const size = new Size($line_stretch, height).description;
 				viewBox = `0 ${o} ${size}`;
@@ -54,7 +55,7 @@
 		width: {$line_stretch}px;
 		position: absolute;
 		height: {Math.max(2, height)}px;
-		top: {Math.min(origin, extent)}px;'>
+		top: {Math.min(yOrigin, yExtent)}px;'>
 	<svg class='svg'
 		viewBox={viewBox}
 		width={$line_stretch}px
@@ -63,6 +64,6 @@
 		<path d={path} stroke={thing.color} fill='none'/>
 	</svg>
 	{#if debug.lines}
-		<Circle radius=1 center={new Point($line_stretch, extent - 46)} color=red thickness=1/>
+		<Circle radius=1 center={new Point($line_stretch, yExtent - 46)} color=red thickness=1/>
 	{/if}
 </div>

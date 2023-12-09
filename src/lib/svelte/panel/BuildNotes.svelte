@@ -83,7 +83,7 @@
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 		background-color: #fff;
 		border-radius: 4px;
-		position: relative;
+		position: absolute;
 		font-size: 0.8em;
 		padding: 20px;
 		width: 400px;

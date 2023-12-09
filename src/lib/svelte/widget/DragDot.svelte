@@ -92,7 +92,7 @@
 		border: none;
 		cursor: pointer;
 		background: none;
-		position: relative;
+		position: absolute;
 	}
 </style>
 
@@ -121,7 +121,7 @@
 		style='
 			top: {top}px;
 			left: {left}px;
-			position: relative;
+			position: absolute;
 			z-index: {ZIndex.dots};'>
 		<path d={path} stroke={thing.color} fill={fillColor}/>
 	</svg>
