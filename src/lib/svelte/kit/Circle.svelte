@@ -9,7 +9,7 @@
 
   $: {
     diameter = radius * 2;
-    origin = center.offsetBy(Size.square(radius).negated.asPoint)
+    origin = center.offsetBy(Point.square(radius).negated)
   }
 
 </script>

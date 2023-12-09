@@ -6,6 +6,7 @@
 	import Circle from '../kit/Circle.svelte';
 	import Children from './Children.svelte';
 	import Debug from './Debug.svelte';
+	let center_ofGrabbedReveal = new Point();
 	let center_ofFirstReveal = new Point();
 	let rightCenter = new Point();
 	let center = new Point();
@@ -82,7 +83,9 @@
 				center.x = 25;
 			}
 			rightCenter = center.offsetBy(toChildren);
-			center_ofFirstReveal = rightCenter.offsetBy(new Point(($dot_size / -15) - 6, here.visibleProgeny_height - 7));
+			const toFirstReveal = new Point(-($dot_size / 15) - 6, here.visibleProgeny_height - 7);
+			center_ofFirstReveal = rightCenter.offsetBy(toFirstReveal);
+			center_ofGrabbedReveal = center_ofFirstReveal.offsetByX(0.5).offsetBy(Point.square($dot_size / 3));
 		}
 	}
 
@@ -95,7 +98,7 @@
 		<Debug center={center} size={here.visibleProgeny_size}/>
 	{/if}
 	{#if isGrabbed}
-		<Circle radius={$dot_size / 1.5} center={rightCenter} color={here.color} thickness=1/>
+		<Circle radius={$dot_size / 1.5} center={center_ofGrabbedReveal} color={here.color} thickness=1/>
 	{/if}
 	<RootRevealDot here={here} center={center_ofFirstReveal}/>
 {/if}

@@ -8,6 +8,7 @@
 	export let yOrigin = 0;
 	export let yExtent = 0;
 	const height = Math.abs(yExtent - yOrigin);
+	let debugCenter = new Point();
 	let viewBox = '';
 	let path = '';
 
@@ -19,6 +20,7 @@
 
 	$: {
 		if ($line_stretch > 0) {
+			debugCenter = new Point($line_stretch, (curveType == LineCurveType.up ? yOrigin : yExtent) - 76);
 			if (curveType == LineCurveType.flat) {
 				path = svgPath.line(yOrigin, $line_stretch);
 				viewBox = `0 ${yOrigin} ${$line_stretch} 2`;
@@ -52,8 +54,8 @@
 <div class='line'
 	style='
 		left: 0px;
-		width: {$line_stretch}px;
 		position: absolute;
+		width: {$line_stretch}px;
 		height: {Math.max(2, height)}px;
 		top: {Math.min(yOrigin, yExtent)}px;'>
 	<svg class='svg'
@@ -64,6 +66,6 @@
 		<path d={path} stroke={thing.color} fill='none'/>
 	</svg>
 	{#if debug.lines}
-		<Circle radius=1 center={new Point($line_stretch, yExtent - 46)} color=red thickness=1/>
+		<Circle radius=1 center={debugCenter} color=red thickness=1/>
 	{/if}
 </div>

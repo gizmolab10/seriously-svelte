@@ -8,7 +8,7 @@
 	import Line from './Line.svelte';
 	export let rightCenter = new Point();
 	export let thing: Thing;
-	const center = new Point($line_stretch + $dot_size, -$row_height).dividedInHalf;
+	let center = new Point($line_stretch + $dot_size, -$row_height).dividedInHalf;
 	let lineRects: Array<LineRect> = [];
 	let prior = new Date().getTime();
 	let children = thing.children;
@@ -69,8 +69,9 @@
 	function layoutChildren() {
 		if (thing) {
 			size = thing.visibleProgeny_size;
-			origin = rightCenter.offsetByY(size.height / 2);
 			lineRects = new Layout(thing).lineRects;
+			origin = rightCenter.offsetByY(size.height / 2);
+			center = new Point($line_stretch + $dot_size, -$row_height).dividedInHalf;
 			lineMap = lineRects.map((l, index) => ({
 				rightCenter: rightCenterForGrandchildren(children[index], l.extent),
 				curveType: l.curveType,
@@ -80,28 +81,31 @@
 		}
 	}
 
-	function rightCenterForGrandchildren(child: Thing, extent: number): Point {
+	function rightCenterForGrandchildren(child: Thing, extent: number): Point | null {
+		if (!child.hasChildren || !child.isExpanded) {
+			return null;
+		}
 		const x = child.titleWidth + $dot_size + $line_stretch;
-		const why = -1; // sometimes 0 (???)
-		return new Point(x, why - extent);
+		const y = -1; // sometimes 0 (???)
+		return new Point(x, y - extent);
 	}
 	
 </script>
 
 {#if children && children.length != 0 && lineRects.length == children.length}
-	<div class='children'
-			style='position: absolute;
-			height: {size.height}px;
-			width: {size.width}px;
+	<div class='children' style='
+			top: {origin.y}px;
 			left: {origin.x}px;
-			top: {origin.y}px;'>
+			position: absolute;
+			width: {size.width}px;
+			height: {size.height}px;'>
 		{#if debug.lines}
 			<Circle radius=1 center={new Point(0, size.height / 2)} color=black thickness=1/>
 		{/if}
 		{#each lineMap as l}
 			<Widget thing={l.child} dotCenter={center.offsetByY(l.extent)}/>
 			<Line thing={l.child} curveType={l.curveType} yOrigin={origin.y - rightCenter.y} yExtent={l.extent}/>
-			{#if l.child.hasChildren && l.child.isExpanded}
+			{#if l.rightCenter}
 				<Children thing={l.child} rightCenter={l.rightCenter}/>
 			{/if}
 		{/each}
