@@ -85,7 +85,7 @@
 			rightCenter = center.offsetBy(toChildren);
 			const toFirstReveal = new Point(-($dot_size / 15) - 6, here.visibleProgeny_height - 7);
 			center_ofFirstReveal = rightCenter.offsetBy(toFirstReveal);
-			center_ofGrabbedReveal = center_ofFirstReveal.offsetByX(0.5).offsetBy(Point.square($dot_size / 3));
+			center_ofGrabbedReveal = center_ofFirstReveal.offsetByX(-0.5).offsetBy(Point.square($dot_size / 2 + 1));
 		}
 	}
 

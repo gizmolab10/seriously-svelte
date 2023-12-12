@@ -2,7 +2,7 @@
 	import { Size, Point, Thing, debug, signal, Signals, Layout, onMount, LineRect, onDestroy } from '../../../ts/common/GlobalImports';
 	import { LineCurveType, orders_normalize_remoteMaybe, handleSignalOfKind } from '../../../ts/common/GlobalImports';
 	import { dot_size, row_height, line_stretch, user_graphOffset } from '../../../ts/managers/State';
-	import Widget, {dotCenter} from '../widget/Widget.svelte';
+	import Widget from '../widget/Widget.svelte';
 	import Circle from '../../kit/Circle.svelte';
 	import Children from './Children.svelte';
 	import Line from './Line.svelte';
@@ -86,8 +86,8 @@
 			return null;
 		}
 		const x = child.titleWidth + $dot_size + $line_stretch;
-		const y = -1; // sometimes 0 (???)
-		return new Point(x, y - extent);
+		const y = -11; // sometimes 0 (???)
+		return new Point(x, y + extent / -2);
 	}
 	
 </script>

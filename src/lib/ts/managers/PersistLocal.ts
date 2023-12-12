@@ -27,8 +27,8 @@ class PersistLocal {
 
 		db_loadTime.set(null);
 		id_here.set(this.readFromDBKey(PersistID.here));
-		row_height.set(this.readFromKey(PersistID.row_height) ?? 20); // sets dot_size and thing_fontSize
 		expanded.set(this.readFromDBKey(PersistID.expanded) ?? []);
+		row_height.set(this.readFromKey(PersistID.row_height) ?? 20); // sets dot_size and thing_fontSize
 		ids_grabbed.set(this.readFromDBKey(PersistID.grabbed) ?? []);
 		showDetails.set(this.readFromKey(PersistID.details) ?? false);
 		line_stretch.set(this.readFromKey(PersistID.line_stretch) ?? 30);

@@ -1,7 +1,6 @@
 <script>
 	import { DBType, ZIndex, PersistID, ButtonID, Hierarchy, dbDispatch, persistLocal } from '../../ts/common/GlobalImports';
 	import { build, db_type, isBusy, db_loadTime, id_popupView } from '../../ts/managers/State';
-	import Display from './Display.svelte';
 	import RadioButtons from '../kit/RadioButtons.svelte'
 	import LabelButton from '../kit/LabelButton.svelte';
 	import Label from '../kit/Label.svelte';
@@ -15,20 +14,6 @@
 	];
 
 </script>
-
-<div class='modal-overlay' style='z-index: {ZIndex.frontmost};'>
-	<div class='modal-content' style='z-index: {ZIndex.frontmost};'>
-		<RadioButtons menuItems={menuItems} idSelected={$db_type}/>
-		<br>
-		{#if $db_loadTime}
-			<Label title={'fetch in ' + $db_loadTime + ' s'}/>
-		{:else}
-			<br>
-		{/if}
-		<br>
-		<Display/>
-	</div>
-</div>
 
 <style>
 	.modal-overlay {
@@ -47,3 +32,16 @@
 		font-size: 0.8em;
 	}
 </style>
+
+<div class='modal-overlay' style='z-index: {ZIndex.frontmost};'>
+	<div class='modal-content' style='z-index: {ZIndex.frontmost};'>
+		<RadioButtons menuItems={menuItems} idSelected={$db_type}/>
+		<br>
+		{#if $db_loadTime}
+			<Label title={'fetch in ' + $db_loadTime + ' s'}/>
+		{:else}
+			<br>
+		{/if}
+		<br>
+	</div>
+</div>

@@ -20,7 +20,7 @@
 
 	$: {
 		if ($line_stretch > 0) {
-			debugCenter = new Point($line_stretch, (curveType == LineCurveType.up ? yOrigin : yExtent) - 76);
+			debugCenter = new Point($line_stretch, (curveType == LineCurveType.up ? yOrigin : yExtent) - 51);
 			if (curveType == LineCurveType.flat) {
 				path = svgPath.line(yOrigin, $line_stretch);
 				viewBox = `0 ${yOrigin} ${$line_stretch} 2`;

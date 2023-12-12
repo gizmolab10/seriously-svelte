@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { row_height, dot_size, id_editing, ids_grabbed, user_graphOffset, id_showRevealCluster} from '../../../ts/managers/State';
-	import { k, d3 Thing, Point, ZIndex, onMount, onDestroy } from '../../../ts/common/GlobalImports';
+	import { k, Thing, Point, ZIndex, onMount, onDestroy } from '../../../ts/common/GlobalImports';
 	import RevealCluster from './RevealCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
 	import RevealDot from './RevealDot.svelte';
@@ -51,7 +51,7 @@
 
 	function updateLayout() {
 		const delta = showingBorder ? 1 : 0;
-		left = dotCenter.x - delta - $dot_size / 3;
+		left = dotCenter.x - delta + 3.5;
 		const titleWidth = thing.titleWidth;
 		width = titleWidth - 18 + ($dot_size * 2);
 		if (thing.showCluster) {
