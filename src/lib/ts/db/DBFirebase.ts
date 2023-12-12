@@ -55,7 +55,7 @@ export default class DBFirebase implements DBInterface {
 	async fetch_all() {
 		await this.recordLogin();
 		const name = this.baseID;
-		if (dbDispatch.eraseDB) {
+		if (k.eraseData) {
 			await this.document_remoteDelete(name);
 		}
 		this.setup_bulks()

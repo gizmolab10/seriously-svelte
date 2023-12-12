@@ -9,6 +9,6 @@
     "strictNullChecks": true,
     "moduleResolution": "node"
   },
-  "include": ["src/lib/**/*.ts", "src/lib/**/*.tsx"],
+  "include": ["src/lib/**/*.ts", "src/lib/**/*.tsx", "aside/December 2023/Embed.ts"],
   "exclude": ["node_modules", "aside"]
 }

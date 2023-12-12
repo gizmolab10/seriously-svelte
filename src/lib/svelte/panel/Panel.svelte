@@ -4,12 +4,14 @@
 	import { signal, Signals, ButtonID, Hierarchy, persistLocal, updateGraphRect } from '../../ts/common/GlobalImports'
 	import CircularButton from '../kit/CircularButton.svelte';
 	import LabelButton from '../kit/LabelButton.svelte';
+	import FlowGraph from '../../flow/FlowGraph.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import Graph from '../graph/Graph.svelte';
 	import Help from '../help/Help.svelte';
 	import Details from './Details.svelte';
 	import Crumbs from './Crumbs.svelte';
-	let size_graphRect = Size;
+	let origin_graph = Point;
+	let size_graph = Size;
 	let toggleDraw = false;
 	let here = Thing;
 	let size = 14;
@@ -22,7 +24,8 @@
 	$: {
 		here = dbDispatch.db.hierarchy.thing_getForID($id_here);
 		if ($graphRect) {
-			size_graphRect = $graphRect.size;
+			size_graph = $graphRect.size;
+			origin_graph = $graphRect.origin;
 		}
 	}
 	
@@ -68,7 +71,7 @@
 	position: fixed;
 	overflow: hidden;
 	z-index: {ZIndex.panel};
-	width: {size_graphRect.width}px;'>
+	width: {size_graph.width}px;'>
 	{#if $isBusy}
 		<p>Welcome to Seriously</p>
 		{#if $db_type != DBType.local}
@@ -98,15 +101,19 @@
 						position: fixed;
 						overflow: hidden;
 						z-index: {ZIndex.panel};
-						top:{$graphRect.origin.y}px;
-						left: {$graphRect.origin.x}px;
-						width: {size_graphRect.width}px;
-						height: {size_graphRect.height}px;'
+						top:{origin_graph.y}px;
+						left: {origin_graph.x}px;
+						width: {size_graph.width}px;
+						height: {size_graph.height}px;'
 					on:keyup={ignore}
 					on:keydown={ignore}
 					on:keypress={ignore}
 					on:click={() => { $id_popupView = null; }}>
-					<Graph/>
+					{#if k.useFlow}
+						<FlowGraph/>
+					{:else}
+						<Graph/>
+					{/if}
 				</div>
 			{/key}
 		{/if}

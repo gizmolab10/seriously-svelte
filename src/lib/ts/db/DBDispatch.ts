@@ -7,7 +7,6 @@ import { dbLocal } from './DBLocal';
 
 export default class DBDispatch {
 	db: DBInterface;
-	eraseDB = false;
 	updateDBForType(type: string) { this.db = this.dbForType(type); }
 	nextDB(forward: boolean) { this.changeDBTo(this.getNextDB(forward)); }
 
@@ -23,12 +22,9 @@ export default class DBDispatch {
 		});
 	}
 
-	applyQueryStrings(params: URLSearchParams) {
-		if (params.get('data') === 'erase') {
-			this.eraseDB = true;
-		}
-		const type = params.get('db') ?? persistLocal.readFromKey(PersistID.db) ?? DBType.firebase;
-		this.dbForType(type).applyQueryStrings(params)
+	applyQueryStrings(queryStrings: URLSearchParams) {
+		const type = queryStrings.get('db') ?? persistLocal.readFromKey(PersistID.db) ?? DBType.firebase;
+		this.dbForType(type).applyQueryStrings(queryStrings)
 		db_type.set(type);	// invokes DB update (line 22 above), which needs baseID already set (must be above)
 	}
 
