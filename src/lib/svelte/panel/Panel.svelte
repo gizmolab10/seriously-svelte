@@ -3,8 +3,8 @@
 	import { db_type, isBusy, id_here, build, graphRect, id_popupView, showDetails, things_arrived } from '../../ts/managers/State';
 	import { signal, Signals, ButtonID, Hierarchy, persistLocal, updateGraphRect } from '../../ts/common/GlobalImports'
 	import CircularButton from '../kit/CircularButton.svelte';
+	// import FlowGraph from '../../flow/FlowGraph.svelte';
 	import LabelButton from '../kit/LabelButton.svelte';
-	import FlowGraph from '../../flow/FlowGraph.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import Graph from '../graph/Graph.svelte';
 	import Help from '../help/Help.svelte';
@@ -109,11 +109,7 @@
 					on:keydown={ignore}
 					on:keypress={ignore}
 					on:click={() => { $id_popupView = null; }}>
-					{#if k.useFlow}
-						<FlowGraph/>
-					{:else}
-						<Graph/>
-					{/if}
+					<Graph/>
 				</div>
 			{/key}
 		{/if}
