@@ -28,9 +28,9 @@
 	$: {
 		if ($dot_size > 0) {
 			size = $dot_size;
-			left = (size / 8) - 5.6;
+			left = -5;
 			path = svgPath.oval(size, false);
-			top = $id_showRevealCluster == thing.id ? 23 : 1;
+			top = $id_showRevealCluster == thing.id ? 23 : 2;
 		}
 	}
 

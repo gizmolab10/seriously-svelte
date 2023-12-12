@@ -85,9 +85,9 @@
 		if (!child.hasChildren || !child.isExpanded) {
 			return null;
 		}
-		const x = child.titleWidth + $dot_size + $line_stretch;
-		const y = -11; // sometimes 0 (???)
-		return new Point(x, y + extent / -2);
+		const x = child.titleWidth - 2 + $dot_size + $line_stretch;
+		const y = 3 + extent - $dot_size - (size.height / 2);
+		return new Point(x, y);
 	}
 	
 </script>

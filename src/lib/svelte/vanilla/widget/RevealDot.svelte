@@ -138,8 +138,8 @@
 		on:dblclick={handleDoubleClick}
 		on:contextmenu={handleContextMenu}
 		style='
-			top: {$dot_size / 2 - 1}px;
-			left: -7px;
+			top: {$dot_size / 2}px;
+			left: {-2 - ($dot_size / 2)}px;
 			position: absolute;
 			z-index: {ZIndex.dots};'>
 		<path d={path} stroke={strokeColor} fill={debug.lines ? 'transparent' : fillColor}/>

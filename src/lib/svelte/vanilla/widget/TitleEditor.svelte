@@ -161,7 +161,7 @@
 		on:keydown={handleKeyDown}
 		on:paste={handleCutOrPaste}
 		style='
-			left: {$dot_size / 2 + 3}px;
+			left: {$dot_size / 2 + 2}px;
 			color: {thing.color};
 			z-index: {ZIndex.text};
 			top: {($row_height / -8) + 3}px;
