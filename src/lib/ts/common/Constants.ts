@@ -46,9 +46,9 @@ export default class Constants {
 
     hasDenyOption(option: DenyOptions) { return this.denyOptions.includes(option); }
     hasEraseOption(option: EraseOptions) { return this.eraseOptions.includes(option); }
-	get allowHorizontalScrolling(): boolean { return this.hasDenyOption(DenyOptions.horizontalScrolling); }
-	get allowGraphEditing(): boolean { return this.hasDenyOption(DenyOptions.editGraph); }
-	get allowTitleEditing(): boolean { return this.hasDenyOption(DenyOptions.editTitles); }
+	get allowHorizontalScrolling(): boolean { return !this.hasDenyOption(DenyOptions.horizontalScrolling); }
+	get allowGraphEditing(): boolean { return !this.hasDenyOption(DenyOptions.editGraph); }
+	get allowTitleEditing(): boolean { return !this.hasDenyOption(DenyOptions.editTitles); }
 	get eraseSettings(): boolean { return this.hasEraseOption(EraseOptions.settings); }
 	get eraseData(): boolean { return this.hasEraseOption(EraseOptions.data); }
 

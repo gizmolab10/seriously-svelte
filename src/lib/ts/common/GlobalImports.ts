@@ -15,6 +15,7 @@ import { SeriouslyRange } from './Types';
 import { get } from 'svelte/store';
 import { builds } from './Builds';
 import { k } from './Constants';
+import * as d3 from 'd3';
 import './Extensions';
 
 import Relationship from '../data/Relationship';
@@ -28,8 +29,8 @@ import Datum from '../data/Datum';
 import User from '../data/User';
 
 export {
-	k, builds, launch,
 	svgPath, Direction,
+	k, d3, builds, launch,
 	PersistID, persistLocal,
 	get, onMount, onDestroy,
 	debug, Debug, DebugOption,
