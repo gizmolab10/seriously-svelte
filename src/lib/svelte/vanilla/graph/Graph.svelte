@@ -1,9 +1,9 @@
 <script lang='ts'>
-	import { k, Rect, Size, Point, Thing, ZIndex, Signals, onDestroy, graphEditor, PersistID, persistLocal, updateGraphRect } from '../../ts/common/GlobalImports';
-	import { debug, DebugOption, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
-	import { id_here, dot_size, row_height, line_stretch, id_editing, ids_grabbed, graphRect, user_graphOffset, id_popupView } from '../../ts/managers/State';
+	import { k, Rect, Size, Point, Thing, ZIndex, Signals, onDestroy, graphEditor, PersistID, persistLocal, updateGraphRect } from '../../../ts/common/GlobalImports';
+	import { debug, DebugOption, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../../ts/common/GlobalImports';
+	import { id_here, dot_size, row_height, line_stretch, id_editing, ids_grabbed, graphRect, user_graphOffset, id_popupView } from '../../../ts/managers/State';
 	import RootRevealDot from './RootRevealDot.svelte';
-	import Circle from '../kit/Circle.svelte';
+	import Circle from '../../kit/Circle.svelte';
 	import Children from './Children.svelte';
 	import Debug from './Debug.svelte';
 	let center_ofGrabbedReveal = new Point();

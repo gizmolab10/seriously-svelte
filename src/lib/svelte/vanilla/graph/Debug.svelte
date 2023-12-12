@@ -1,7 +1,7 @@
 <script>
-	import { Rect, Size, Point, Thing } from '../../ts/common/GlobalImports';
-	import { dot_size, graphRect } from '../../ts/managers/State';
-	import Box from '../kit/Box.svelte';
+	import { Rect, Size, Point, Thing } from '../../../ts/common/GlobalImports';
+	import { dot_size, graphRect } from '../../../ts/managers/State';
+	import Box from '../../kit/Box.svelte';
 	export let center = new Point();
 	export let size = new Size();
 	let greenRect = new Rect();

@@ -1,9 +1,9 @@
 <script lang=ts>
-	import { Size, Point, Thing, debug, signal, Signals, Layout, onMount, LineRect, onDestroy } from '../../ts/common/GlobalImports';
-	import { LineCurveType, orders_normalize_remoteMaybe, handleSignalOfKind } from '../../ts/common/GlobalImports';
-	import { dot_size, row_height, line_stretch, user_graphOffset } from '../../ts/managers/State';
+	import { Size, Point, Thing, debug, signal, Signals, Layout, onMount, LineRect, onDestroy } from '../../../ts/common/GlobalImports';
+	import { LineCurveType, orders_normalize_remoteMaybe, handleSignalOfKind } from '../../../ts/common/GlobalImports';
+	import { dot_size, row_height, line_stretch, user_graphOffset } from '../../../ts/managers/State';
 	import Widget, {dotCenter} from '../widget/Widget.svelte';
-	import Circle from '../kit/Circle.svelte';
+	import Circle from '../../kit/Circle.svelte';
 	import Children from './Children.svelte';
 	import Line from './Line.svelte';
 	export let rightCenter = new Point();

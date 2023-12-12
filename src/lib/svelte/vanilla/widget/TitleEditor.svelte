@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { dot_size, row_height, id_editing, thing_fontSize, thing_fontFamily, id_editingStopped } from '../../ts/managers/State';
-	import { k, Thing, signal, Signals, ZIndex, onMount, onDestroy } from '../../ts/common/GlobalImports';
-	import { dbDispatch, SeriouslyRange, graphEditor } from '../../ts/common/GlobalImports';
+	import { dot_size, row_height, id_editing, thing_fontSize, thing_fontFamily, id_editingStopped } from '../../../ts/managers/State';
+	import { k, Thing, signal, Signals, ZIndex, onMount, onDestroy } from '../../../ts/common/GlobalImports';
+	import { dbDispatch, SeriouslyRange, graphEditor } from '../../../ts/common/GlobalImports';
 	import Widget from './Widget.svelte';
 	export let thing = Thing;
 	let originalTitle = thing.title;

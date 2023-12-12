@@ -1,7 +1,7 @@
 <script>
-	import { k, Thing, Point, debug, ZIndex, Signals, onMount } from "../../ts/common/GlobalImports";
-	import { graphEditor, dbDispatch, Direction, svgPath } from "../../ts/common/GlobalImports";
-	import { dot_size, ids_grabbed, id_showRevealCluster } from '../../ts/managers/State';
+	import { k, Thing, Point, debug, ZIndex, Signals, onMount } from "../../../ts/common/GlobalImports";
+	import { graphEditor, dbDispatch, Direction, svgPath } from "../../../ts/common/GlobalImports";
+	import { dot_size, ids_grabbed, id_showRevealCluster } from '../../../ts/managers/State';
 	export let center = new Point();
 	export let thing;
 	let hoverColor = thing.color;

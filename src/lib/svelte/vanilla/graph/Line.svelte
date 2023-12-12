@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { Rect, Size, Point, debug, ZIndex, SVGType, svgPath, LineCurveType } from '../../ts/common/GlobalImports';
-	import { dot_size, line_stretch, user_graphOffset } from '../../ts/managers/State';
-	import Circle from '../kit/Circle.svelte';
-	import Box from '../kit/Box.svelte';
+	import { Rect, Size, Point, debug, ZIndex, SVGType, svgPath, LineCurveType } from '../../../ts/common/GlobalImports';
+	import { dot_size, line_stretch, user_graphOffset } from '../../../ts/managers/State';
+	import Circle from '../../kit/Circle.svelte';
+	import Box from '../../kit/Box.svelte';
 	export let curveType = '';
 	export let thing: Thing;
 	export let yOrigin = 0;
