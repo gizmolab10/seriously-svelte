@@ -12,8 +12,8 @@ export default class Embed {
     sendGrabbedIDs(ids: string[]) {
         if (ids && k.isEmbedded) {
             const message = ids?.join('$');
-            //@ts-ignore
-            window.parent.bubble_fn_select(message);
+            // @ts-ignore
+            // window.parent.bubble_fn_select(message);
             persistLocal.writeToKey(PersistID.select, message);
             console.log('iframe', message);
         }
