@@ -1,4 +1,4 @@
-import { k, get, debug, PersistID, dbDispatch, persistLocal, isServerLocal, getBrowserType } from '../common/GlobalImports'
+import { k, debug, PersistID, dbDispatch, persistLocal, isServerLocal, getBrowserType } from '../common/GlobalImports'
 import { id_here, expanded, ids_grabbed, showDetails } from './State';
 
 class Launch {
