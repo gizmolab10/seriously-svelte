@@ -1,5 +1,5 @@
 <script>
-  import { Point, debug, ZIndex } from '../../ts/common/GlobalImports'
+  import { k, Point, debug, ZIndex } from '../../ts/common/GlobalImports'
   export let thickness;
   export let radius;
   export let center;
