@@ -180,6 +180,7 @@ export default class Thing extends Datum {
 			});
 			persistLocal.writeToDBKey(PersistID.expanded, get(expanded));
 			signal(Signals.childrenOf, this.firstParent.id);
+			signal(Signals.layout, this.id);
 			signal(Signals.dots, this.id);
 		}
 	}

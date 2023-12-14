@@ -8,6 +8,7 @@
 	import Box from '../../kit/Box.svelte';
 	let origin_ofFirstReveal = new Point();
 	let origin_ofChildren = new Point();
+	let size_graphRect = Size;
 	let isGrabbed = false;
 	let greenRect: Rect;
 	let blueRect: Rect;
@@ -15,6 +16,7 @@
 	let here;
 
 	onDestroy( () => { signalHandler.disconnect(); });
+	function ignore(event) {}
 
 	const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
 		if (here && (idThing == null || idThing == here.id)) {
@@ -33,7 +35,7 @@
 		}
 	});
 
-	async function handleKeyDown(event) {
+	async function globalHandleKeyDown(event) {
 		if ($id_editing)			{ return; } // let Title component consume the events
 		if (event.key == undefined)	{ alert('no key for ' + event.type); return; }
 		if (event.type == 'keydown') {
@@ -77,12 +79,12 @@
 		if (here) {
 			updateGraphRect();
 			const userCenter = $graphRect.center.offsetBy($user_graphOffset);
-			const halfChildren = here.visibleProgeny_halfSize.asPoint;
-			origin_ofFirstReveal = userCenter.offsetBy(halfChildren.negated);
+			const childrenOffset = here.visibleProgeny_size.asPoint;
+			origin_ofFirstReveal = userCenter.offsetBy(childrenOffset.negated);
 			if (k.leftJustifyGraph) {
 				origin_ofFirstReveal.x = 25;
 			}
-			const toChildren = new Point(-12, -halfChildren.y + 2 + ($dot_size / 2));
+			const toChildren = new Point(-12, childrenOffset.y / -2 + 2 + ($dot_size / 2));
 			origin_ofChildren = origin_ofFirstReveal.offsetBy(toChildren);
 			blueRect = $graphRect.dividedInHalf;
 			redRect = rectTo_firstReveal();
@@ -97,24 +99,37 @@
 	}
 
 	function rectOfChildren(): Rect {
-		const half = $dot_size / 2;
-		const delta = new Point(112 + half, 9.5 - half);
+		const delta = new Point(112, 83);
 		const origin = origin_ofChildren.offsetBy(delta);
 		return new Rect(origin, here.visibleProgeny_size);
 	}
 
 </script>
 
-<svelte:document on:keydown={handleKeyDown}/>
+<svelte:document on:keydown={globalHandleKeyDown}/>
 {#if here}
-	<Children thing={here} origin={origin_ofChildren}/>
-	{#if debug.colors}
-		<Box rect={redRect} color=red/>
-		<Box rect={blueRect} color=blue/>
-		<Box rect={greenRect} color=green half={true}/>
-	{/if}
-	{#if isGrabbed}
-		<Circle radius={10} center={origin_ofFirstReveal.offsetBy(new Point(7, 7))} color={here.color} thickness=1/>
-	{/if}
-	<RootRevealDot here={here} center={origin_ofFirstReveal}/>
+	<div class='graph'
+		style='
+			position: fixed;
+			overflow: hidden;
+			z-index: {ZIndex.panel};
+			top:{$graphRect.origin.y}px;
+			left: {$graphRect.origin.x}px;
+			width: {$graphRect.size.width}px;
+			height: {$graphRect.size.height}px;'
+		on:keyup={ignore}
+		on:keydown={ignore}
+		on:keypress={ignore}
+		on:click={() => { $id_popupView = null; }}>
+		<Children thing={here} origin={origin_ofChildren}/>
+		{#if debug.colors}
+			<Box rect={redRect} color=red/>
+			<Box rect={blueRect} color=blue/>
+			<Box rect={greenRect} color=green half={true}/>
+		{/if}
+		{#if isGrabbed}
+			<Circle radius={10} center={origin_ofFirstReveal.offsetBy(Point.square(7))} color={here.color} thickness=1/>
+		{/if}
+		<RootRevealDot here={here} center={origin_ofFirstReveal.offsetBy(Point.square(1))}/>
+	</div>
 {/if}

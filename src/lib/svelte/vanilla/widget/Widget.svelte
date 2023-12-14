@@ -51,7 +51,7 @@
 
 	function updateLayout() {
 		const delta = showingBorder ? 0 : 1;
-		left = origin.x + delta - 3;
+		left = origin.x + delta - 2;
 		const titleWidth = thing.titleWidth;
 		width = titleWidth - 18 + ($dot_size * 2);
 		thing.debugLog('TITLE WIDTH: ' + titleWidth);
@@ -66,10 +66,9 @@
 			yPadding = $dot_size / -3;
 			height = $row_height - 2;
 			radius = $dot_size / 2;
-			top = origin.y + delta;
+			top = origin.y + delta + 1;
 			if (thing.isExemplar) {
-				const xPadding = rightPadding + 2;
-				padding = '0px ' + xPadding + 'px 0px 0px';
+				padding = '0px ' + rightPadding + 2 + 'px 0px 0px';
 			} else {
 				padding = '0px ' + rightPadding + 'px 0px 0px';
 			}
@@ -88,6 +87,7 @@
 			isGrabbed = shouldGrab;
 			isEditing = shouldEdit;
 			updateBorderStyle();
+			updateLayout();
 		}
 	}
 
@@ -116,7 +116,8 @@
 		z-index: {ZIndex.widgets};
 		border-radius: {$row_height / 1.5}px;
 	'>
-	<DragDot thing={thing}/><TitleEditor thing={thing}/>
+	<DragDot thing={thing}/>
+	<TitleEditor thing={thing}/>
 	<div class='revealDot'
 		style='top:{yPadding}px'>
 		<RevealDot thing={thing} center={origin}/>

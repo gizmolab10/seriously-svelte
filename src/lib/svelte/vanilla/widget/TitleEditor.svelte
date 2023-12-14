@@ -161,10 +161,10 @@
 		on:keydown={handleKeyDown}
 		on:paste={handleCutOrPaste}
 		style='
-			left: {$row_height / -4}px;
+			top: -2px;
 			color: {thing.color};
 			z-index: {ZIndex.text};
-			top: {($row_height / -8) + 3}px;
+			left: -7px;
 			font-size: {$thing_fontSize}px;
 			font-family: {$thing_fontFamily};
 			outline-color: k.backgroundColor;

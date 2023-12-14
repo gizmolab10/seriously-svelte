@@ -68,7 +68,7 @@
 		if (thing) {
 			const height = (thing.visibleProgeny_halfHeight);
 			const childOrigin = origin.offsetByY(height);
-			const delta = new Point($dot_size * 0.6 + 11, $dot_size / 2 - 9);
+			const delta = new Point(20, -1);
 			center = childOrigin.offsetBy(delta);
 			lineRects = new Layout(thing, childOrigin).lineRects;
 			threeArrays = lineRects.map((rect, index) => ({
@@ -80,11 +80,10 @@
 	}
 
 	function originForGrandchildren(child: Thing, rect: LineRect): Point {
-		const more = -2;									// TODO: WHY 1? perhaps it accounts for title margin
 		if (!rect || !child) {
 			alert('grandchildren origin not computable');
 		}
-		const x = origin.x + child.titleWidth + $dot_size + $line_stretch + more;
+		const x = origin.x + child.titleWidth + $dot_size + $line_stretch - 2;
 		const y = rect.extent.y - child.visibleProgeny_halfHeight;
 		return new Point(x, y);
 	}
@@ -111,7 +110,7 @@
 	{#if debug.lines}
 		<Circle radius=1 center={center} color=black thickness=1/>
 	{/if}
-	{#each threeArrays as i, index}
+	{#each threeArrays as i}
 		<Widget thing={i.child} origin={i.rect.extent.offsetBy(new Point(12, ($dot_size / -15) -11))}/>
 		<Line thing={i.child} curveType={i.rect.curveType} rect={i.rect.offsetBy(new Point(($dot_size / 2) - 129, ($dot_size / 2) - 8))}/>
 		{#if i.child.hasChildren && i.child.isExpanded}

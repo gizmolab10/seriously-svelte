@@ -24,12 +24,12 @@
         display={display(true)}
         strokeColor={'black'}
         onClick={onClick}
-        origin={origin}
+        center={origin}
         size={size}
     />
 
     <TriangleDot
-        origin={origin.offsetByX(size)}
+        center={origin.offsetByX(size)}
         newFillColor={newFillColor}
         direction={Direction.right}
         display={display(false)}

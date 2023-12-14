@@ -9,7 +9,6 @@
 	import Help from '../help/Help.svelte';
 	import Details from './Details.svelte';
 	import Crumbs from './Crumbs.svelte';
-	let size_graphRect = Size;
 	let toggleDraw = false;
 	let here = Thing;
 	let size = 14;
@@ -17,13 +16,9 @@
 	function handleBuildsClick(event) { $id_popupView = ($id_popupView == ButtonID.buildNotes) ? null : ButtonID.buildNotes; }
 	function handleHelpClick() { $id_popupView = ($id_popupView == ButtonID.help) ? null : ButtonID.help; }
 	window.addEventListener('resize', (event) => { updateGraphRect(); toggleDraw = !toggleDraw; });
-	function ignore(event) {}
 
 	$: {
 		here = dbDispatch.db.hierarchy.thing_getForID($id_here);
-		if ($graphRect) {
-			size_graphRect = $graphRect.size;
-		}
 	}
 	
 	onMount(async () => {
@@ -67,8 +62,7 @@
 	height: 100%;
 	position: fixed;
 	overflow: hidden;
-	z-index: {ZIndex.panel};
-	width: {size_graphRect.width}px;'>
+	z-index: {ZIndex.panel};'>
 	{#if $isBusy}
 		<p>Welcome to Seriously</p>
 		{#if $db_type != DBType.local}
@@ -93,21 +87,7 @@
 			</div>
 			<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: {$showDetails ? k.detailsMargin : 0}px; top: 85px;'></div>
 			{#key toggleDraw}
-				<div class='graph'
-					style='
-						position: fixed;
-						overflow: hidden;
-						z-index: {ZIndex.panel};
-						top:{$graphRect.origin.y}px;
-						left: {$graphRect.origin.x}px;
-						width: {size_graphRect.width}px;
-						height: {size_graphRect.height}px;'
-					on:keyup={ignore}
-					on:keydown={ignore}
-					on:keypress={ignore}
-					on:click={() => { $id_popupView = null; }}>
-					<Graph/>
-				</div>
+				<Graph/>
 			{/key}
 		{/if}
 	{/if}

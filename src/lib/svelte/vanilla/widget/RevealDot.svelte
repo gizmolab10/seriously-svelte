@@ -138,7 +138,7 @@
 		on:dblclick={handleDoubleClick}
 		on:contextmenu={handleContextMenu}
 		style='
-			top: {$dot_size / 2}px;
+			top: {$dot_size / 2 - 1}px;
 			left: -7px;
 			position: relative;
 			z-index: {ZIndex.dots};'>

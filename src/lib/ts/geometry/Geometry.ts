@@ -21,6 +21,7 @@ export class Point {
 	multipliedBy(multiplier: number): Point { return new Point(this.x * multiplier, this.y * multiplier) }
 	offsetBySize(size: Size):		  Point { return new Point(this.x + size.width, this.y + size.height); }
 	distanceTo(point: Point):		  Point { return new Point(Math.abs(point.x - this.x), Math.abs(point.y - this.y)) }
+	static square(length: number):	  Point { return new Point(length, length); }
 }
 
 export class Size {
