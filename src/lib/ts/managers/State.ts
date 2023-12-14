@@ -23,8 +23,8 @@ export const build					= writable<number>();
 export const user_graphOffset		= writable<Point>();
 export const graphRect  			= writable<Rect>();
 
-row_height.subscribe(($row_height) => {
-	thing_fontSize.set($row_height * .7);
-	line_stretch.set($row_height * 1.25);
-	dot_size.set($row_height * .65);
+row_height.subscribe((height) => {
+	thing_fontSize.set(Math.round(height * .35) * 2);
+	line_stretch.set(Math.round(height * .625) * 2);
+	dot_size.set(Math.round(height * .325) * 2);
 });

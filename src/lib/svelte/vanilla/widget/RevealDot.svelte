@@ -116,7 +116,7 @@
 
 <button class='dot'
 	bind:this={button}
-	style='top: {3 - ($dot_size / 8)}px;
+	style='
 		width={size}px;
 		height={size}px;
 		position: relative;
