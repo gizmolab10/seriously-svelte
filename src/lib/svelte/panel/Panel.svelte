@@ -5,7 +5,7 @@
 	import CircularButton from '../kit/CircularButton.svelte';
 	import LabelButton from '../kit/LabelButton.svelte';
 	import BuildNotes from './BuildNotes.svelte';
-	import Graph from '../graph/Graph.svelte';
+	import Graph from '../vanilla/graph/Graph.svelte';
 	import Help from '../help/Help.svelte';
 	import Details from './Details.svelte';
 	import Crumbs from './Crumbs.svelte';

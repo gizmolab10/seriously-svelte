@@ -1,11 +1,11 @@
 <script lang='ts'>
-	import { k, Rect, Size, Point, Thing, ZIndex, Signals, onDestroy, graphEditor, PersistID, persistLocal, updateGraphRect } from '../../ts/common/GlobalImports';
-	import { debug, DebugOption, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../ts/common/GlobalImports';
-	import { id_here, dot_size, id_editing, ids_grabbed, graphRect, user_graphOffset, id_popupView } from '../../ts/managers/State';
+	import { k, Rect, Size, Point, Thing, ZIndex, Signals, onDestroy, graphEditor, PersistID, persistLocal, updateGraphRect } from '../../../ts/common/GlobalImports';
+	import { debug, DebugOption, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../../ts/common/GlobalImports';
+	import { id_here, dot_size, id_editing, ids_grabbed, graphRect, user_graphOffset, id_popupView } from '../../../ts/managers/State';
 	import RootRevealDot from './RootRevealDot.svelte';
-	import Circle from '../kit/Circle.svelte';
+	import Circle from '../../kit/Circle.svelte';
 	import Children from './Children.svelte';
-	import Box from '../kit/Box.svelte';
+	import Box from '../../kit/Box.svelte';
 	let origin_ofFirstReveal = new Point();
 	let origin_ofChildren = new Point();
 	let isGrabbed = false;

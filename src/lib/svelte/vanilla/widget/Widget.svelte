@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { line_gap, dot_size, id_editing, ids_grabbed, user_graphOffset, id_showRevealCluster} from '../../ts/managers/State';
-	import { k, Thing, Point, ZIndex, onMount, onDestroy } from '../../ts/common/GlobalImports';
+	import { line_gap, dot_size, id_editing, ids_grabbed, user_graphOffset, id_showRevealCluster} from '../../../ts/managers/State';
+	import { k, Thing, Point, ZIndex, onMount, onDestroy } from '../../../ts/common/GlobalImports';
 	import RevealCluster from './RevealCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
 	import RevealDot, {center} from './RevealDot.svelte';

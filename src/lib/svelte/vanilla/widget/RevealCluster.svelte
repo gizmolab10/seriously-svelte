@@ -1,6 +1,6 @@
 <script lang='ts'>
-    import { k, ZIndex, onMount, svgPath, graphEditor, dbDispatch } from '../../ts/common/GlobalImports';
-    import { dot_size, id_showRevealCluster } from '../../ts/managers/State';
+    import { k, ZIndex, onMount, svgPath, graphEditor, dbDispatch } from '../../../ts/common/GlobalImports';
+    import { dot_size, id_showRevealCluster } from '../../../ts/managers/State';
 	export let thing: Thing;
 	let diameter = $dot_size;
     const path = svgPath.circle(diameter, diameter - 2);
