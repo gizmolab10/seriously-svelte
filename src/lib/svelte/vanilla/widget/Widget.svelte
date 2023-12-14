@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { line_gap, dot_size, id_editing, ids_grabbed, user_graphOffset, id_showRevealCluster} from '../../../ts/managers/State';
+	import { row_height, dot_size, id_editing, ids_grabbed, user_graphOffset, id_showRevealCluster} from '../../../ts/managers/State';
 	import { k, Thing, Point, ZIndex, onMount, onDestroy } from '../../../ts/common/GlobalImports';
 	import RevealCluster from './RevealCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
@@ -42,7 +42,7 @@
 	}
 
 	$: {
-		if ($line_gap > 0) {
+		if ($row_height > 0) {
 			setTimeout(() => {
 				updateLayout()
 			}, 1);
@@ -64,7 +64,7 @@
 			padding = yPadding + 'px ' + xPadding + 'px' + yPadding + 'px 0px';
 		} else {
 			yPadding = $dot_size / -3;
-			height = $line_gap - 2;
+			height = $row_height - 2;
 			radius = $dot_size / 2;
 			top = origin.y + delta;
 			if (thing.isExemplar) {
@@ -114,7 +114,7 @@
 		height: {height}px;
 		padding: {padding};
 		z-index: {ZIndex.widgets};
-		border-radius: {$line_gap / 1.5}px;
+		border-radius: {$row_height / 1.5}px;
 	'>
 	<DragDot thing={thing}/><TitleEditor thing={thing}/>
 	<div class='revealDot'

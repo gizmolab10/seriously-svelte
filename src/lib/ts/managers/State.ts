@@ -17,14 +17,14 @@ export const thing_fontFamily		= writable<string>();
 export const thing_fontSize			= writable<number>();
 export const line_stretch			= writable<number>();
 export const crumbsWidth  			= writable<number>();
-export const line_gap				= writable<number>();
+export const row_height				= writable<number>();
 export const dot_size			  	= writable<number>();
 export const build					= writable<number>();
 export const user_graphOffset		= writable<Point>();
 export const graphRect  			= writable<Rect>();
 
-line_gap.subscribe(($line_gap) => {
-	thing_fontSize.set($line_gap * .7);
-	line_stretch.set($line_gap * 1.25);
-	dot_size.set($line_gap * .65);
+row_height.subscribe(($row_height) => {
+	thing_fontSize.set($row_height * .7);
+	line_stretch.set($row_height * 1.25);
+	dot_size.set($row_height * .65);
 });

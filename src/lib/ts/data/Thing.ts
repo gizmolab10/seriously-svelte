@@ -1,6 +1,6 @@
 import { dbDispatch, getWidthOf, DebugOption, persistLocal, SeriouslyRange, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { k, get, Size, Datum, signal, Signals, debug, Predicate, Hierarchy, TraitType, PersistID } from '../common/GlobalImports';
-import { id_here, dot_size, id_editing, expanded, ids_grabbed, line_gap, id_showRevealCluster, line_stretch } from '../managers/State';
+import { id_here, dot_size, id_editing, expanded, ids_grabbed, row_height, id_showRevealCluster, line_stretch } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -94,7 +94,7 @@ export default class Thing extends Datum {
 	}
 
 	get visibleProgeny_height(): number {
-		let singleRowHeight = this.showCluster ? k.clusterHeight + 6 : get(line_gap);
+		let singleRowHeight = this.showCluster ? k.clusterHeight + 6 : get(row_height);
 		if (this.hasChildren && this.isExpanded) {
 			let height = 0;
 			for (const child of this.children) {

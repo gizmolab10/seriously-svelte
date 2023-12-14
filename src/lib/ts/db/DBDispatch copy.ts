@@ -7,7 +7,6 @@ import { dbLocal } from './DBLocal';
 
 export default class DBDispatch {
 	db: DBInterface;
-	eraseDB = false;
 	updateDBForType(type: string) { this.db = this.dbForType(type); }
 	nextDB(forward: boolean) { this.changeDBTo(this.getNextDB(forward)); }
 

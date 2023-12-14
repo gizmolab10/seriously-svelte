@@ -2,30 +2,29 @@ import { k, debug, PersistID, dbDispatch, persistLocal, isServerLocal, getBrowse
 import { id_here, expanded, ids_grabbed, showDetails } from './State';
 
 class Launch {
-	queryStrings: URLSearchParams | null = null;
 	setup() {
-		this.queryStrings = new URLSearchParams(window.location.search);
+		const queryStrings = new URLSearchParams(window.location.search);
 		persistLocal.restore();
-		k.applyQueryStrings(this.queryStrings);
-		this.applyQueryStrings(this.queryStrings);
-		debug.applyQueryStrings(this.queryStrings);
-		dbDispatch.applyQueryStrings(this.queryStrings); // do this last
+		k.applyQueryStrings(queryStrings);
+		this.applyQueryStrings(queryStrings);
+		debug.applyQueryStrings(queryStrings);
+		dbDispatch.applyQueryStrings(queryStrings); // do this last
 		document.title = this.title;
-	}
-
-	get title(): string {
-		const host = isServerLocal() ? 'local' : 'remote';
-		const baseID = dbDispatch.db.baseID;
-		const name = baseID ? (baseID! + ', ') : '';
-		return 'Seriously (' + host + ', ' + getBrowserType() + ', ' + name + 'α)'
-	}
-
-	applyQueryStrings(queryStrings: URLSearchParams) {
-		if (queryStrings.get('settings') === 'erase') {
+		if (k.eraseSettings) {
 			ids_grabbed.set([]);
 			expanded.set([]);
 			id_here.set(null);
 		}
+	}
+
+	get title(): string {
+		const baseID = dbDispatch.db.baseID;
+		const name = baseID ? (baseID! + ', ') : '';
+		const host = isServerLocal() ? 'local' : 'remote';
+		return `Seriously (${host}, ${name}${getBrowserType()}, α)`;
+	}
+
+	applyQueryStrings(queryStrings: URLSearchParams) {
 		if (queryStrings.get('details') === 'hide') {
 			persistLocal.writeToKey(PersistID.details, false);
 			showDetails.set(false);

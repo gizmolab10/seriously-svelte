@@ -6,6 +6,7 @@ export default class DBLocal implements DBInterface {
 	db_type = DBType.local;
 	hasData = false;
 	loadTime = null;
+	baseID = '';
 
 	get hierarchy(): Hierarchy { 
 		if (this._hierarchy == null) {
@@ -44,6 +45,7 @@ export default class DBLocal implements DBInterface {
 	async thing_remoteUpdate(thing: Thing) {}
 	async thing_remoteDelete(thing: Thing) {}
 	async thing_remember_remoteCreate(thing: Thing) {}
+	applyQueryStrings(queryStrings: URLSearchParams) {}
 	async relationship_remoteUpdate(relationship: Relationship) {}
 	async relationship_remoteDelete(relationship: Relationship) {}
 	async relationship_remember_remoteCreate(relationship: Relationship | null) {}
