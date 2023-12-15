@@ -7,7 +7,7 @@ import { signal, Signals, handleSignalOfKind } from './Signals';
 import { Direction, svgPath } from '../geometry/SVGPath';
 import { graphEditor } from '../managers/GraphEditor';
 import { DBType, DataKind } from '../db/DBInterface';
-import { debug, Debug, DebugOption } from './Debug'
+import { debug, Debug, DebugFlag } from './Debug'
 import { dbDispatch } from '../db/DBDispatch';
 import { onMount, onDestroy } from 'svelte';
 import { launch } from '../managers/Launch';
@@ -33,7 +33,7 @@ export {
 	svgPath, Direction,
 	PersistID, persistLocal,
 	get, onMount, onDestroy,
-	debug, Debug, DebugOption,
+	debug, Debug, DebugFlag as DebugOption,
 	dbDispatch, DBType, DataKind,
 	signal, Signals, handleSignalOfKind,
 	Grabs, graphEditor, Hierarchy, embed,

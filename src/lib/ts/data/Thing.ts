@@ -131,7 +131,7 @@ export default class Thing extends Datum {
 	}
 
 	log(option: DebugOption, message: string) {
-		debug.log(option, message + ' ' + this.description);
+		debug.log_maybe(option, message + ' ' + this.description);
 	}
 
 	debugLog(message: string) {

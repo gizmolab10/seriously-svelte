@@ -68,7 +68,7 @@
 		if (thing) {
 			const height = (thing.visibleProgeny_halfHeight);
 			const childOrigin = origin.offsetByY(height);
-			const delta = new Point(20, -1);
+			const delta = new Point(20, -2);
 			center = childOrigin.offsetBy(delta);
 			lineRects = new Layout(thing, childOrigin).lineRects;
 			threeArrays = lineRects.map((rect, index) => ({

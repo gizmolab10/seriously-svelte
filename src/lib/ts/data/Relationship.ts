@@ -28,7 +28,7 @@ export default class Relationship extends Datum {
 	}
 
 	log(option: DebugOption, message: string) {
-		debug.log(option, message + ' ' + this.description);
+		debug.log_maybe(option, message + ' ' + this.description);
 	}
 
 	async order_setTo(newOrder: number, remoteWrite: boolean) {

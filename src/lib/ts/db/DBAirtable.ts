@@ -70,7 +70,7 @@ export default class DBAirtable implements DBInterface {
 				things_arrived.set(true);
 			})
 		} catch (error) {
-			debug.log(DebugOption.error, this.things_errorMessage + ' (things_readAll) ' + error);
+			debug.log_error(this.things_errorMessage + ' (things_readAll) ' + error);
 		}
 	}
 
@@ -125,7 +125,7 @@ export default class DBAirtable implements DBInterface {
 				this.hierarchy.relationship_remember_runtimeCreateUnique('', id, predicates[0], froms[0], tos[0], order, CreationOptions.isFromRemote);
 			}
 		} catch (error) {
-			debug.log(DebugOption.error, this.relationships_errorMessage + error);
+			debug.log_error(this.relationships_errorMessage + error);
 		}
 	}
 
@@ -180,7 +180,7 @@ export default class DBAirtable implements DBInterface {
 			}
 
 		} catch (error) {
-			debug.log(DebugOption.error, 'Error in Predicates:' + error);
+			debug.log_error('Error in Predicates:' + error);
 		}
 	}
 
@@ -195,7 +195,7 @@ export default class DBAirtable implements DBInterface {
 			}
 
 		} catch (error) {
-			debug.log(DebugOption.error, 'Error in Access:' + error);
+			debug.log_error('Error in Access:' + error);
 		}
 	}
 
@@ -209,7 +209,7 @@ export default class DBAirtable implements DBInterface {
 			}
 
 		} catch (error) {
-			debug.log(DebugOption.error, 'Error in Users:' + error);
+			debug.log_error('Error in Users:' + error);
 		}
 	}
 

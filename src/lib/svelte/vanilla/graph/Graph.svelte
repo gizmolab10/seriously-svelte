@@ -128,8 +128,8 @@
 			<Box rect={greenRect} color=green half={true}/>
 		{/if}
 		{#if isGrabbed}
-			<Circle radius={10} center={origin_ofFirstReveal.offsetBy(Point.square(7))} color={here.color} thickness=1/>
+			<Circle radius={10} center={origin_ofFirstReveal.offsetBy(new Point(8, 7))} color={here.color} thickness=1/>
 		{/if}
-		<RootRevealDot here={here} center={origin_ofFirstReveal.offsetBy(Point.square(1))}/>
+		<RootRevealDot here={here} center={origin_ofFirstReveal.offsetBy(new Point(1, 0))}/>
 	</div>
 {/if}

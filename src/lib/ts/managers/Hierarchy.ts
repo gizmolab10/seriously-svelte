@@ -413,7 +413,7 @@ export default class Hierarchy {
 	relationship_remember(relationship: Relationship) {
 		if (!this.knownR_byID[relationship.id]) {
 			if (relationship.baseID != this.db.baseID) {
-				debug.log(DebugOption.error, 'RELATIONSHIP ' + relationship.baseID + ' ' + this.thing_getForID(relationship.idFrom)?.description + ' => ' + this.thing_getForID(relationship.idTo)?.description);
+				debug.log_error('RELATIONSHIP ' + relationship.baseID + ' ' + this.thing_getForID(relationship.idFrom)?.description + ' => ' + this.thing_getForID(relationship.idTo)?.description);
 			}
 			this.knownRs.push(relationship);
 			this.knownR_byID[relationship.id] = relationship;

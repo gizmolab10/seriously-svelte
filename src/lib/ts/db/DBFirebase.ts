@@ -98,7 +98,7 @@ export default class DBFirebase implements DBInterface {
 			}
 
 			const docs = querySnapshot.docs;
-			debug.log(DebugOption.remote, 'READ ' + docs.length + ' from ' + baseID + ':' + dataKind);
+			debug.log_remote('READ ' + docs.length + ' from ' + baseID + ':' + dataKind);
 			for (const docSnapshot of docs) {
 				const id = docSnapshot.id;
 				const data = docSnapshot.data();
@@ -276,7 +276,7 @@ export default class DBFirebase implements DBInterface {
 			} catch (error) {
 				this.reportError(error);
 			}
-			debug.log(DebugOption.remote, 'HANDLE ' + baseID + ':' + dataKind + ' ' + change.type);
+			debug.log_remote('HANDLE ' + baseID + ':' + dataKind + ' ' + change.type);
 		}
 	}
 
