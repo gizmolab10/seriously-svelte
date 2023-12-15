@@ -1,4 +1,5 @@
 import { Rect, Point } from '../geometry/Geometry';
+import { roundToEven } from '../common/Utilities';
 import { writable } from 'svelte/store';
 
 export const id_showRevealCluster	= writable<string | null>();
@@ -24,7 +25,7 @@ export const user_graphOffset		= writable<Point>();
 export const graphRect  			= writable<Rect>();
 
 row_height.subscribe((height) => {
-	thing_fontSize.set(Math.round(height * .35) * 2);
-	line_stretch.set(Math.round(height * .625) * 2);
-	dot_size.set(Math.round(height * .325) * 2);
+	thing_fontSize.set(roundToEven(height * .7));
+	line_stretch.set(roundToEven(height * 1.25));
+	dot_size.set(roundToEven(height * .65));
 });

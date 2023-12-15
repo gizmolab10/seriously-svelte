@@ -3,6 +3,7 @@ import { get, Thing, BrowserType } from './GlobalImports';
 import convert from 'color-convert';
 
 export function noop() {}
+export function roundToEven(n: number): number{ return Math.round(n / 2) * 2; }
 
 export function sort_byOrder(array: Array<Thing>) {
 	return array.sort( (a: Thing, b: Thing) => { return a.order - b.order; });
