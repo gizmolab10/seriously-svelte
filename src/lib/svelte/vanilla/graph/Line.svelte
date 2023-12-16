@@ -19,7 +19,7 @@
 
 	$: {
 		if ($dot_size > 0) {
-			// thing.debugLog('LINE REACT')
+			// debug.log_react(`LINE ${thing.description}`);
 			switch (curveType) {
 				case LineCurveType.up:
 					origin = rect.origin;

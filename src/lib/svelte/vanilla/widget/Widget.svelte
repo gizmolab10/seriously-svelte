@@ -1,12 +1,13 @@
 <script lang='ts'>
 	import { row_height, dot_size, id_editing, ids_grabbed, user_graphOffset, id_showRevealCluster} from '../../../ts/managers/State';
-	import { k, Thing, Point, ZIndex, onMount, onDestroy } from '../../../ts/common/GlobalImports';
+	import { k, Thing, Point, debug, ZIndex, onMount, onDestroy } from '../../../ts/common/GlobalImports';
 	import RevealCluster from './RevealCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
 	import RevealDot, {center} from './RevealDot.svelte';
 	import DragDot from './DragDot.svelte';
 	export let origin = new Point();
 	export let thing = Thing;
+	let priorOrigin = origin;
 	let showingCluster = false;
 	let showingBorder = false;
 	let isGrabbed = false;
@@ -34,18 +35,11 @@
 	}
 	
 	$: {
-		if ($user_graphOffset != null) {
+		if ($user_graphOffset != null || $row_height > 0 || origin != priorOrigin) {
 			setTimeout(() => {
 				updateLayout()
 			}, 1);
-		}
-	}
-
-	$: {
-		if ($row_height > 0) {
-			setTimeout(() => {
-				updateLayout()
-			}, 1);
+			priorOrigin = origin;
 		}
 	}
 
@@ -55,6 +49,7 @@
 		const titleWidth = thing.titleWidth;
 		width = titleWidth - 18 + ($dot_size * 2);
 		thing.debugLog('TITLE WIDTH: ' + titleWidth);
+		debug.log_react(`WIDGET layout ${thing.description}`);
 		if (thing.showCluster) {
 			height = k.clusterHeight;
 			radius = height / 2;

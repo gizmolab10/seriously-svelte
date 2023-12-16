@@ -40,6 +40,8 @@ export class Size {
 	get dividedInHalf():			  Size { return this.multipliedBy(1/2); }
 	get negated():					  Size { return this.multipliedBy(-1); }
 	get copy():						  Size { return new Size(this.width, this.height); }
+	expandedByX(width: number):		  Size { return new Size(this.width + width, this.height); }
+	expandedByY(height: number):	  Size { return new Size(this.width, this.height + height); }
 	reducedBy(delta: Point):		  Size { return new Size(this.width - delta.x, this.height - delta.y); }
 	expandedBy(size: Size):			  Size { return new Size(this.width + size.width, this.height + size.height); }
 	multipliedBy(multiplier: number): Size { return new Size(this.width * multiplier, this.height * multiplier) }

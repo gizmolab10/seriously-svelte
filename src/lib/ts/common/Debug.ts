@@ -35,6 +35,7 @@ export class Debug {
                     case 'order': this.flags.push(DebugFlag.order); break;
                     case 'error': this.flags.push(DebugFlag.error); break;
                     case 'lines': this.flags.push(DebugFlag.lines); break;
+                    case 'react': this.flags.push(DebugFlag.react); break;
                 }
             }
         }

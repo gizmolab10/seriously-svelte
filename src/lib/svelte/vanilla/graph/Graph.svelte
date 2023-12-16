@@ -1,13 +1,14 @@
 <script lang='ts'>
 	import { k, Rect, Size, Point, Thing, ZIndex, Signals, onDestroy, graphEditor, PersistID, persistLocal, updateGraphRect } from '../../../ts/common/GlobalImports';
-	import { debug, DebugOption, Predicate, ButtonID, LineRect, dbDispatch, handleSignalOfKind } from '../../../ts/common/GlobalImports';
-	import { id_here, dot_size, id_editing, ids_grabbed, graphRect, user_graphOffset, id_popupView } from '../../../ts/managers/State';
+	import { id_here, graphRect, dot_size, id_editing, ids_grabbed, line_stretch, user_graphOffset, id_popupView } from '../../../ts/managers/State';
+	import { debug, DebugOption, Predicate, ButtonID, dbDispatch, handleSignalOfKind } from '../../../ts/common/GlobalImports';
 	import RootRevealDot from './RootRevealDot.svelte';
 	import Circle from '../../kit/Circle.svelte';
 	import Children from './Children.svelte';
 	import Box from '../../kit/Box.svelte';
 	let origin_ofFirstReveal = new Point();
 	let origin_ofChildren = new Point();
+	let childrenSize = new Point();
 	let size_graphRect = Size;
 	let isGrabbed = false;
 	let greenRect: Rect;
@@ -77,14 +78,16 @@
 
 	function updateOrigins() {
 		if (here) {
+			debug.log_react(`GRAPH updateOrigins ${here.description}`);
 			updateGraphRect();
 			const userCenter = $graphRect.center.offsetBy($user_graphOffset);
-			const childrenOffset = here.visibleProgeny_size.asPoint;
-			origin_ofFirstReveal = userCenter.offsetBy(childrenOffset.negated);
+			childrenSize = here.visibleProgeny_size.asPoint;
+			const mysteryOffset = new Point(-childrenSize.x - 2, -(childrenSize.y / 2) - 31);
+			origin_ofFirstReveal = userCenter.offsetBy(mysteryOffset);
 			if (k.leftJustifyGraph) {
 				origin_ofFirstReveal.x = 25;
 			}
-			const toChildren = new Point(-12, childrenOffset.y / -2 + 2 + ($dot_size / 2));
+			const toChildren = new Point(-36 + $line_stretch - ($dot_size / 2), 1 + ($dot_size / 2) - (childrenSize.y / 2));
 			origin_ofChildren = origin_ofFirstReveal.offsetBy(toChildren);
 			blueRect = $graphRect.dividedInHalf;
 			redRect = rectTo_firstReveal();
@@ -93,15 +96,15 @@
 	}
 
 	function rectTo_firstReveal(): Rect {
-		const mysteryOffset = new Point(-33, -31);
+		const mysteryOffset = new Point(108, 92);
 		const extent = origin_ofFirstReveal.offsetBy(mysteryOffset);
 		return Rect.createExtentRect($graphRect.origin, extent);
 	}
 
 	function rectOfChildren(): Rect {
-		const delta = new Point(112, 83);
-		const origin = origin_ofChildren.offsetBy(delta);
-		return new Rect(origin, here.visibleProgeny_size);
+		const delta = new Point(9, -2);
+		const origin = $graphRect.origin.offsetBy(delta).offsetBy(origin_ofChildren);
+		return new Rect(origin, here.visibleProgeny_size.expandedByX(4));
 	}
 
 </script>
@@ -128,8 +131,8 @@
 			<Box rect={greenRect} color=green half={true}/>
 		{/if}
 		{#if isGrabbed}
-			<Circle radius={10} center={origin_ofFirstReveal.offsetBy(new Point(8, 7))} color={here.color} thickness=1/>
+			<Circle radius={10} center={origin_ofFirstReveal.offsetBy(new Point(7, 6))} color={here.color} thickness=1/>
 		{/if}
-		<RootRevealDot here={here} center={origin_ofFirstReveal.offsetBy(new Point(1, 0))}/>
+		<RootRevealDot here={here} center={origin_ofFirstReveal.offsetByY(-1)}/>
 	</div>
 {/if}

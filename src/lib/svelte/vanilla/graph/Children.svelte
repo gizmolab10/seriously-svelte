@@ -66,6 +66,7 @@
 	
 	function layoutChildren() {
 		if (thing) {
+			debug.log_react(`CHILDREN layout ${thing.description}`);
 			const height = (thing.visibleProgeny_halfHeight);
 			const childOrigin = origin.offsetByY(height);
 			const delta = new Point(20, -2);
@@ -86,22 +87,6 @@
 		const x = origin.x + child.titleWidth + $dot_size + $line_stretch - 2;
 		const y = rect.extent.y - child.visibleProgeny_halfHeight;
 		return new Point(x, y);
-	}
-	
-	function description() {
-		let strings: Array<string> = [];
-		for (const lineRect of lineRects) {
-			strings.push(lineRect.origin.verbose);
-			strings.push(lineRect.extent.verbose);
-			strings.push(lineRect.size.verbose);
-		}
-		return strings.join(', ');
-	}
-
-	function describe(things: Array<Thing>) {
-		for (const [index, thing] of things.entries()) {
-			thing.debugLog('CHILD at ' + index);
-		}
 	}
 	
 </script>
