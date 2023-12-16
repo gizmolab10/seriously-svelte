@@ -1,6 +1,6 @@
 <script lang='ts'>
+	import { k, Thing, Point, debug, ZIndex, signal, Signals, onMount, onDestroy, handleSignalOfKind } from '../../../ts/common/GlobalImports';
 	import { row_height, dot_size, id_editing, ids_grabbed, user_graphOffset, id_showRevealCluster} from '../../../ts/managers/State';
-	import { k, Thing, Point, debug, ZIndex, onMount, onDestroy } from '../../../ts/common/GlobalImports';
 	import RevealCluster from './RevealCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
 	import RevealDot, {center} from './RevealDot.svelte';
@@ -24,9 +24,7 @@
 	let top = 0;
 	let widget;
 
-	onMount( () => {
-		updateBorderStyle();
-	});
+	onMount(() => { updateBorderStyle(); });
 
 	function updateBorderStyle() {
 		thing.updateColorAttributes();
@@ -49,7 +47,7 @@
 		const titleWidth = thing.titleWidth;
 		width = titleWidth - 18 + ($dot_size * 2);
 		thing.debugLog('TITLE WIDTH: ' + titleWidth);
-		debug.log_react(`WIDGET layout ${thing.description}`);
+		// debug.log_react(`WIDGET layout ${thing.description}`);
 		if (thing.showCluster) {
 			height = k.clusterHeight;
 			radius = height / 2;

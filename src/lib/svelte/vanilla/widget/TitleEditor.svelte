@@ -1,8 +1,7 @@
 <script lang='ts'>
-	import { row_height, id_editing, thing_fontSize, thing_fontFamily, id_editingStopped } from '../../../ts/managers/State';
+	import { id_here, row_height, id_editing, thing_fontSize, thing_fontFamily, id_editingStopped } from '../../../ts/managers/State';
 	import { k, Thing, signal, Signals, ZIndex, onMount, onDestroy } from '../../../ts/common/GlobalImports';
 	import { dbDispatch, SeriouslyRange, graphEditor } from '../../../ts/common/GlobalImports';
-	import Widget from './Widget.svelte';
 	export let thing = Thing;
 	let originalTitle = thing.title;
 	let isEditing = false;
@@ -12,19 +11,24 @@
 	onDestroy(() => { thing = null; });
 	onMount(() => { updateInputWidth(); });
 	var hasChanges = () => { return originalTitle != thing.title; }
+	function layoutGraph() { signal(Signals.graph, $id_here); }
 	function handleBlur(event) { stopAndClearEditing(); updateInputWidth(); }
-	function handleInput(event) { thing.title = event.target.value; updateInputWidth(); }
+	
+	function handleInput(event) {
+		thing.title = event.target.value;
+		updateInputWidth();
+	}
 
 	function updateInputWidth() {
 		if (input && ghost && thing) { // ghost only exists to provide its scroll width
 			const width = ghost.scrollWidth;
 			input.style.width = `${width}px`;
-			thing.debugLog('GHOST WIDTH: ' + width);
+			layoutGraph();
 		}
 	}
 
 	$: {
-		if ($row_height > 0) {
+		if ($row_height > 0 || originalTitle != thing.title) {
 			updateInputWidth();
 		}
 	}
@@ -42,7 +46,7 @@
 			switch (event.key) {	
 				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); graphEditor.thing_redraw_remoteAddChildTo(thing.firstParent); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
-				default:	  signal(Signals.layout, thing.id); break;
+				default: break;
 			}
 		}
 	}
@@ -75,7 +79,7 @@
 		invokeBlurNotClearEditing();
 		setTimeout(() => {		// eliminate infinite recursion
 			const id = thing?.id;
-			if (id != null && $id_editing == id) {				
+			if (id != null && $id_editing == id) {	
 				$id_editing = null;
 			}
 		}, 20);
@@ -90,7 +94,7 @@
 			if (hasChanges() && !thing.isExemplar) {
 				dbDispatch.db.thing_remoteUpdate(thing);
 				originalTitle = thing.title;		// so hasChanges will be correct
-				signal(Signals.childrenOf, thing.id);
+				layoutGraph();
 			}
 		}
 	}
@@ -106,7 +110,7 @@
 
 	function handleCutOrPaste(event) {
 		extractRange();
-		signal(Signals.childrenOf, thing.id);
+		layoutGraph();
 	}
 
 	function extractRange() {
@@ -140,34 +144,32 @@
 	}
 </style>
 
-{#key originalTitle}
-	<span class="ghost" bind:this={ghost}
-		style='
-			font-size: {$thing_fontSize}px;
-			font-family: {$thing_fontFamily};
-			padding: 0px 0px 0px {$row_height / 3}px;'>
-		{thing.title}
-	</span>
-	<input
-		type='text'
-		name='title'
-		class='title'
-		bind:this={input}
-		on:blur={handleBlur}
-		on:focus={handleFocus}
-		on:input={handleInput}
-		bind:value={thing.title}
-		on:cut={handleCutOrPaste}
-		on:keydown={handleKeyDown}
-		on:paste={handleCutOrPaste}
-		style='
-			top: -2px;
-			color: {thing.color};
-			z-index: {ZIndex.text};
-			left: -7px;
-			font-size: {$thing_fontSize}px;
-			font-family: {$thing_fontFamily};
-			outline-color: k.backgroundColor;
-			padding: 0px 0px 0px {$row_height / 3}px;
-		'/>
-{/key}
+<span class="ghost" bind:this={ghost}
+	style='
+		font-size: {$thing_fontSize}px;
+		font-family: {$thing_fontFamily};
+		padding: 0px 0px 0px {$row_height / 3}px;'>
+	{thing.title}
+</span>
+<input
+	type='text'
+	name='title'
+	class='title'
+	bind:this={input}
+	on:blur={handleBlur}
+	on:focus={handleFocus}
+	on:input={handleInput}
+	bind:value={thing.title}
+	on:cut={handleCutOrPaste}
+	on:keydown={handleKeyDown}
+	on:paste={handleCutOrPaste}
+	style='
+		top: -2px;
+		color: {thing.color};
+		z-index: {ZIndex.text};
+		left: -7px;
+		font-size: {$thing_fontSize}px;
+		font-family: {$thing_fontFamily};
+		outline-color: k.backgroundColor;
+		padding: 0px 0px 0px {$row_height / 3}px;
+'/>

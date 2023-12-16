@@ -272,7 +272,7 @@ export default class DBFirebase implements DBInterface {
 						}
 					}
 				}
-				signal(Signals.childrenOf, this.hierarchy.here?.id);
+				signal(Signals.children, this.hierarchy.here?.id);
 			} catch (error) {
 				this.reportError(error);
 			}

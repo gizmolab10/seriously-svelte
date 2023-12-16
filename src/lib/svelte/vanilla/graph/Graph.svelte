@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { k, Rect, Size, Point, Thing, ZIndex, Signals, onDestroy, graphEditor, PersistID, persistLocal, updateGraphRect } from '../../../ts/common/GlobalImports';
+	import { k, Rect, Size, Point, Thing, debug, ZIndex, signal, Signals, onDestroy, graphEditor, PersistID, updateGraphRect } from '../../../ts/common/GlobalImports';
 	import { id_here, graphRect, dot_size, id_editing, ids_grabbed, line_stretch, user_graphOffset, id_popupView } from '../../../ts/managers/State';
-	import { debug, DebugOption, Predicate, ButtonID, dbDispatch, handleSignalOfKind } from '../../../ts/common/GlobalImports';
+	import { DebugOption, persistLocal, Predicate, ButtonID, dbDispatch, handleSignalOfKind } from '../../../ts/common/GlobalImports';
 	import RootRevealDot from './RootRevealDot.svelte';
 	import Circle from '../../kit/Circle.svelte';
 	import Children from './Children.svelte';
@@ -19,9 +19,10 @@
 	onDestroy( () => { signalHandler.disconnect(); });
 	function ignore(event) {}
 
-	const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
+	const signalHandler = handleSignalOfKind(Signals.graph, (idThing) => {
 		if (here && (idThing == null || idThing == here.id)) {
 			updateOrigins();
+			// signal(Signals.layout, idThing);
 		}
 	});
 

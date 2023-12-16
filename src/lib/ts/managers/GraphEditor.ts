@@ -82,7 +82,7 @@ export default class GraphEditor {
 
 	async thing_edit_remoteAddAsChild(child: Thing, parent: Thing, startEdit: boolean = true) {
 		await this.hierarchy.thing_remember_remoteAddAsChild(child, parent);
-		signal(Signals.childrenOf);
+		signal(Signals.children);
 		parent.expand();
 		child.grabOnly();
 		if (startEdit) {
@@ -137,7 +137,7 @@ export default class GraphEditor {
 					newParent.becomeHere();
 				}
 			}
-			signal(Signals.childrenOf);					// so Children component will update
+			signal(Signals.children);					// so Children component will update
 		}
 	}
 

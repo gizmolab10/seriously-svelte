@@ -6,10 +6,10 @@
 	let toggleDraw = false;
 	let grab: Thing;
 
-	onDestroy( () => {signalHandler.disconnect(); });
+	onDestroy( () => { signalHandler.disconnect(); });
 	function thing_lastGrabbed() { return dbDispatch.db.hierarchy.grabs.thing_lastGrabbed; }
 
-	const signalHandler = handleSignalOfKind(Signals.childrenOf, (thingID) => {
+	const signalHandler = handleSignalOfKind(Signals.children, (thingID) => {
 		updateAncestors($crumbsWidth);
 		toggleDraw = !toggleDraw;
 	})

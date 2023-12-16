@@ -14,12 +14,15 @@
 	let center = new Point();
 	let threeArrays = [];
 
-	onMount( () => { thing.debugLog('CHILDREN MOUNT'); layoutChildren(); });
-	onDestroy( () => { layout_signalHandler.disconnect(); redraw_signalHandler.disconnect(); });
+	onMount( () => { layoutChildren(); });
+	
+	onDestroy( () => {
+		layout_signalHandler.disconnect();
+		redraw_signalHandler.disconnect();
+	});
 	
 	const layout_signalHandler = handleSignalOfKind(Signals.layout, (idThing) => {
 		if (idThing && idThing == thing.id) {
-			thing.debugLog('CHILDREN LAYOUT');
 			layoutChildren();
 			for (const child of children) {
 				if (child.hasChildren && child.isExpanded) {
@@ -29,7 +32,7 @@
 		}
 	})
 	
-	const redraw_signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
+	const redraw_signalHandler = handleSignalOfKind(Signals.children, (idThing) => {
 		if (!idThing || idThing == thing.id || thing.childrenIDs_anyMissingFromIDsOf(children) || thing.isRoot) {
 			const now = new Date().getTime();
 			if (now - prior > 1000) {
@@ -42,7 +45,7 @@
 					layoutChildren();
 					for (const child of children) {
 						if (child.hasChildren && child.isExpanded) {
-							signal(Signals.childrenOf, child.id); // percolate
+							signal(Signals.children, child.id); // percolate
 						}
 					}
 				}, 10);
@@ -92,14 +95,16 @@
 </script>
 
 {#if children && children.length != 0 && lineRects.length == children.length}
-	{#if debug.lines}
-		<Circle radius=1 center={center} color=black thickness=1/>
-	{/if}
-	{#each threeArrays as i}
-		<Widget thing={i.child} origin={i.rect.extent.offsetBy(new Point(12, ($dot_size / -15) -11))}/>
-		<Line thing={i.child} curveType={i.rect.curveType} rect={i.rect.offsetBy(new Point(($dot_size / 2) - 129, ($dot_size / 2) - 8))}/>
-		{#if i.child.hasChildren && i.child.isExpanded}
-			<Children thing={i.child} origin={i.origin}/>
+	<div class='children'>
+		{#if debug.lines}
+			<Circle radius=1 center={center} color=black thickness=1/>
 		{/if}
-	{/each}
+		{#each threeArrays as i}
+			<Line thing={i.child} curveType={i.rect.curveType} rect={i.rect.offsetBy(new Point(($dot_size / 2) - 129, ($dot_size / 2) - 8))}/>
+			<Widget thing={i.child} origin={i.rect.extent.offsetBy(new Point(12, ($dot_size / -15) -11))}/>
+			{#if i.child.hasChildren && i.child.isExpanded}
+				<Children thing={i.child} origin={i.origin}/>
+			{/if}
+		{/each}
+	</div>
 {/if}
