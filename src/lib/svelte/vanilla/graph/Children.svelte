@@ -21,19 +21,19 @@
 		redraw_signalHandler.disconnect();
 	});
 	
-	const layout_signalHandler = handleSignalOfKind(Signals.layout, (idThing) => {
-		if (idThing && idThing == thing.id) {
+	const layout_signalHandler = handleSignalOfKind(Signals.layout, (visited, idThing) => {
+		if (idThing && idThing == thing.id && !visited.includes(thing.id)) {
 			layoutChildren();
 			for (const child of children) {
 				if (child.hasChildren && child.isExpanded) {
-					signal(Signals.layout, child.id); // percolate
+					signal(Signals.layout, [...visited, thing.id], child.id); // percolate
 				}
 			}
 		}
 	})
 	
-	const redraw_signalHandler = handleSignalOfKind(Signals.children, (idThing) => {
-		if (!idThing || idThing == thing.id || thing.childrenIDs_anyMissingFromIDsOf(children) || thing.isRoot) {
+	const redraw_signalHandler = handleSignalOfKind(Signals.children, (visited, idThing) => {
+		if ((!idThing || idThing == thing.id || thing.childrenIDs_anyMissingFromIDsOf(children) || thing.isRoot) && !visited.includes(thing.id)) {
 			const now = new Date().getTime();
 			if (now - prior > 1000) {
 				prior = now;
@@ -45,7 +45,7 @@
 					layoutChildren();
 					for (const child of children) {
 						if (child.hasChildren && child.isExpanded) {
-							signal(Signals.children, child.id); // percolate
+							signal(Signals.children, [...visited, thing.id], child.id); // percolate
 						}
 					}
 				}, 10);

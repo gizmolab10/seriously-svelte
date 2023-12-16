@@ -19,10 +19,10 @@
 	onDestroy( () => { signalHandler.disconnect(); });
 	function ignore(event) {}
 
-	const signalHandler = handleSignalOfKind(Signals.graph, (idThing) => {
+	const signalHandler = handleSignalOfKind(Signals.graph, (visited, idThing) => {
 		if (here && (idThing == null || idThing == here.id)) {
 			updateOrigins();
-			// signal(Signals.layout, idThing);
+			signal(Signals.layout, [...visited, idThing], idThing);
 		}
 	});
 

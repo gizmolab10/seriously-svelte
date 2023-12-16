@@ -9,7 +9,7 @@
 	onDestroy( () => { signalHandler.disconnect(); });
 	function thing_lastGrabbed() { return dbDispatch.db.hierarchy.grabs.thing_lastGrabbed; }
 
-	const signalHandler = handleSignalOfKind(Signals.children, (thingID) => {
+	const signalHandler = handleSignalOfKind(Signals.children, (visited, idThing) => {
 		updateAncestors($crumbsWidth);
 		toggleDraw = !toggleDraw;
 	})

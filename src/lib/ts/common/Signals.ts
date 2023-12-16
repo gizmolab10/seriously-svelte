@@ -7,14 +7,14 @@ export enum Signals {
 	dot			= 'd',
 }
 
-const handleSignal = new Signal<(kinds: Signals[], value: any) => void>();
-export function signal(kind: Signals, value: any = null) { handleSignal.emit([kind], value); }
-export function signalMultiple(kinds: Signals[], value: any = null) { handleSignal.emit(kinds, value); }
+const handleSignal = new Signal<(kinds: Signals[], visited: string[], value: any) => void>();
+export function signal(kind: Signals, visited: string[], value: any = null) { handleSignal.emit([kind], visited, value); }
+export function signalMultiple(kinds: Signals[], visited: string[], value: any = null) { handleSignal.emit(kinds, visited, value); }
 
-export function handleSignalOfKind(kind: Signals, onSignal: (optionalValue: any | null) => any ) {
-	return handleSignal.connect((kinds, value) => {
+export function handleSignalOfKind(kind: Signals, onSignal: (visited: string[], optionalValue: any | null) => any ) {
+	return handleSignal.connect((kinds, visited, value) => {
 		if (kinds.includes(kind)) {
-			onSignal(value);
+			onSignal(visited, value);
 		}
 	})
 }

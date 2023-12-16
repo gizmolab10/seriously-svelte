@@ -136,7 +136,7 @@ export default class Hierarchy {
 					newGrab.grabOnly();
 				}
 			}
-			signal(Signals.children);
+			signal(Signals.children, []);
 		}
 	}
 
@@ -250,7 +250,7 @@ export default class Hierarchy {
 
 	async thing_remember_bulk_remoteRelocateRight(thing: Thing, newParent: Thing) {
 		const newThing = await this.thing_remember_bulk_recursive_remoteRelocateRight(thing, newParent)
-		signal(Signals.children, newParent.id);
+		signal(Signals.children, [], newParent.id);
 		if (newParent.isExpanded) {
 			newThing.grabOnly();
 		} else {

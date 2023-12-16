@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { k, Thing, Point, debug, ZIndex, signal, Signals, onMount, onDestroy, handleSignalOfKind } from '../../../ts/common/GlobalImports';
 	import { row_height, dot_size, id_editing, ids_grabbed, user_graphOffset, id_showRevealCluster} from '../../../ts/managers/State';
+	import { k, Thing, Point, debug, ZIndex, signal, Signals, onMount, onDestroy } from '../../../ts/common/GlobalImports';
 	import RevealCluster from './RevealCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
 	import RevealDot, {center} from './RevealDot.svelte';

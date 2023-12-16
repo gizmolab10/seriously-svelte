@@ -27,7 +27,7 @@
 		clearTimeout(clickTimer);	// clear all previous timers
 	}
 
-	const signalHandler = handleSignalOfKind(Signals.dot, (id) => {
+	const signalHandler = handleSignalOfKind(Signals.dot, (visited, id) => {
 		if (thing.id == id) {
 			updatePath();
 		}

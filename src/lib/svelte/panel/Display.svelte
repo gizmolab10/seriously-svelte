@@ -3,7 +3,7 @@
 	import { row_height } from '../../ts/managers/State';
 
 	function handleInput(event) {
-		// signal(Signals.layout);
+		// signal(Signals.layout, []);
 		persistLocal.writeToKey(PersistID.row_height, $row_height);
 	}
 

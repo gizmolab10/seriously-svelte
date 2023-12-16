@@ -50,7 +50,7 @@ export default class Thing extends Datum {
 			const shouldShow = (idCluster != undefined) && idCluster == this.id;
 			if (this.showCluster != shouldShow) {
 				this.showCluster = shouldShow;
-				signal(Signals.children);
+				signal(Signals.children, [this.id]);
 			}
 		});
 	};
@@ -179,9 +179,9 @@ export default class Thing extends Datum {
 				return array;
 			});
 			persistLocal.writeToDBKey(PersistID.expanded, get(expanded));
-			signal(Signals.children, this.firstParent.id);
-			signal(Signals.layout, this.id);
-			signal(Signals.dot, this.id);
+			signal(Signals.children, [this.id], this.firstParent.id);
+			signal(Signals.layout, [this.id], this.id);
+			signal(Signals.dot, [this.id], this.id);
 		}
 	}
 
@@ -207,7 +207,7 @@ export default class Thing extends Datum {
 			id_here.set(id);
 			this.expand();
 			id_showRevealCluster.set(null);
-			signal(Signals.children, id);
+			signal(Signals.children, [id], id);
 			persistLocal.writeToDBKey(PersistID.here, id)
 		};
 	}
@@ -286,7 +286,7 @@ export default class Thing extends Datum {
 				this.children[0].grabOnly()
 			}
 			this.expand();
-			signal(Signals.children);
+			signal(Signals.children, [this.id]);
 		}
 	}
 
@@ -309,7 +309,7 @@ export default class Thing extends Datum {
 				const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
 				const newOrder = newIndex + goose;
 				this.order_setTo(newOrder, false);
-				signal(Signals.children, this.firstParent.id);
+				signal(Signals.children, [this.id], this.firstParent.id);
 			}
 		}
 	}
@@ -352,7 +352,7 @@ export default class Thing extends Datum {
 		}
 		id_editing.set(null);
 		newGrab?.grabOnly();
-		signal(Signals.children);			// tell graph to update line rects
+		signal(Signals.children, [this.id]);			// tell graph to update line rects
 	}
 
 }

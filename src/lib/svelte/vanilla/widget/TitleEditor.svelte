@@ -11,7 +11,7 @@
 	onDestroy(() => { thing = null; });
 	onMount(() => { updateInputWidth(); });
 	var hasChanges = () => { return originalTitle != thing.title; }
-	function layoutGraph() { signal(Signals.graph, $id_here); }
+	function layoutGraph() { signal(Signals.graph, [thing.id], $id_here); }
 	function handleBlur(event) { stopAndClearEditing(); updateInputWidth(); }
 	
 	function handleInput(event) {

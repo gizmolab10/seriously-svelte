@@ -23,12 +23,12 @@
 	
 	onMount(async () => {
 		launch.setup();
-		signal(Signals.children);
+		signal(Signals.children, []);
 	})
 	
 	function handleSettings(event) {
 		$showDetails = !$showDetails;
-		signal(Signals.children);
+		signal(Signals.children, []);
 		persistLocal.writeToKey(PersistID.details, $showDetails);
 	}
 
