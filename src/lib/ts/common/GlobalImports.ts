@@ -2,8 +2,8 @@ import { noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desa
 import { getBrowserType, isMobileDevice, convertToObject, orders_normalize_remoteMaybe } from './Utilities';
 import { ZIndex, ButtonID, TraitType, BrowserType, CreationOptions, LineCurveType } from './Enumerations';
 import { Point, Size, Rect, LineRect, updateGraphRect } from '../geometry/Geometry';
+import { signal, Signals, signalRelayout, handleSignalOfKind } from './Signals';
 import { PersistID, persistLocal } from '../managers/PersistLocal';
-import { signal, Signals, handleSignalOfKind } from './Signals';
 import { Direction, svgPath } from '../geometry/SVGPath';
 import { graphEditor } from '../managers/GraphEditor';
 import { DBType, DataKind } from '../db/DBInterface';
@@ -11,7 +11,6 @@ import { debug, Debug, DebugFlag } from './Debug'
 import { dbDispatch } from '../db/DBDispatch';
 import { onMount, onDestroy } from 'svelte';
 import { launch } from '../managers/Launch';
-import { embed } from '../../../../aside/December 2023/Embed';
 import { SeriouslyRange } from './Types';
 import { get } from 'svelte/store';
 import { builds } from './Builds';
@@ -33,11 +32,11 @@ export {
 	svgPath, Direction,
 	PersistID, persistLocal,
 	get, onMount, onDestroy,
-	debug, Debug, DebugFlag as DebugOption,
+	debug, Debug, DebugFlag,
 	dbDispatch, DBType, DataKind,
-	signal, Signals, handleSignalOfKind,
-	Grabs, graphEditor, Hierarchy, embed,
+	Grabs, graphEditor, Hierarchy,
 	ZIndex, ButtonID, BrowserType, CreationOptions,
+	signal, Signals, signalRelayout, handleSignalOfKind,
 	User, SeriouslyRange, Datum, Thing, Access, Predicate, Relationship,
 	Point, Size, Rect, Layout, LineRect, TraitType, LineCurveType, updateGraphRect,
 	sort_byOrder, getBrowserType, isMobileDevice, convertToObject, orders_normalize_remoteMaybe,

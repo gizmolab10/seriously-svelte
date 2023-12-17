@@ -14,35 +14,25 @@
 	let center = new Point();
 	let threeArrays = [];
 
-	onMount( () => { thing.debugLog('CHILDREN MOUNT'); layoutChildren(); });
-	onDestroy( () => { layout_signalHandler.disconnect(); redraw_signalHandler.disconnect(); });
+	onDestroy( () => { signalHandler.disconnect(); });
+	onMount( () => { thing.debugLog('CHILDREN mount'); layoutChildren(); });
 	
-	const layout_signalHandler = handleSignalOfKind(Signals.layout, (idThing) => {
-		if (idThing && idThing == thing.id) {
-			thing.debugLog('CHILDREN LAYOUT');
-			layoutChildren();
-			for (const child of children) {
-				if (child.hasChildren && child.isExpanded) {
-					signal(Signals.layout, child.id); // percolate
-				}
-			}
-		}
-	})
-	
-	const redraw_signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
-		if (!idThing || idThing == thing.id || thing.childrenIDs_anyMissingFromIDsOf(children) || thing.isRoot) {
+	const signalHandler = handleSignalOfKind(Signals.childrenOf, (idThing) => {
+		if (!idThing || idThing == thing.id || thing.childrenIDs_anyMissingFromIDsOf(children)) {
 			const now = new Date().getTime();
 			if (now - prior > 1000) {
 				prior = now;
 				setTimeout(async () => { // delay until all other handlers for this signal are done TODO: WHY?
 					await orders_normalize_remoteMaybe(thing.children);
 					children = thing.children;
-					thing.debugLog('CHILDREN SIGNAL');
+					thing.debugLog('CHILDREN signal');
 					// describe(children);
 					layoutChildren();
-					for (const child of children) {
-						if (child.hasChildren && child.isExpanded) {
-							signal(Signals.childrenOf, child.id); // percolate
+					if (idThing) { // only recurse if starting at a specific id
+						for (const child of children) {
+							if (child.hasChildren && child.isExpanded) {
+								child.thing_relayout();
+							}
 						}
 					}
 				}, 10);

@@ -1,4 +1,4 @@
-import { k, get, Thing, signal, Signals, Hierarchy, dbDispatch, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { k, get, Thing, Hierarchy, dbDispatch, signalRelayout } from '../common/GlobalImports';
 import { ids_grabbed, id_showRevealCluster } from './State';
 
 //////////////////////////////////////
@@ -82,7 +82,7 @@ export default class GraphEditor {
 
 	async thing_edit_remoteAddAsChild(child: Thing, parent: Thing, startEdit: boolean = true) {
 		await this.hierarchy.thing_remember_remoteAddAsChild(child, parent);
-		signal(Signals.childrenOf);
+		signalRelayout();
 		parent.expand();
 		child.grabOnly();
 		if (startEdit) {
@@ -137,7 +137,7 @@ export default class GraphEditor {
 					newParent.becomeHere();
 				}
 			}
-			signal(Signals.childrenOf);					// so Children component will update
+			signalRelayout();					// so Children component will update
 		}
 	}
 

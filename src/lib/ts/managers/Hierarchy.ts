@@ -1,5 +1,5 @@
-import { get, noop, User, Thing, Grabs, debug, Access, remove, signal, Signals, TraitType, Predicate, dbDispatch } from '../common/GlobalImports';
-import { Relationship, persistLocal, CreationOptions, DebugOption, sort_byOrder, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { persistLocal, signalRelayout, CreationOptions, sort_byOrder, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { get, noop, User, Thing, Grabs, debug, Access, remove, TraitType, Predicate, Relationship } from '../common/GlobalImports';
 import { id_here, isBusy, ids_grabbed, things_arrived } from './State';
 import DBInterface from '../db/DBInterface';
 
@@ -136,7 +136,7 @@ export default class Hierarchy {
 					newGrab.grabOnly();
 				}
 			}
-			signal(Signals.childrenOf);
+			signalRelayout();
 		}
 	}
 
@@ -250,7 +250,7 @@ export default class Hierarchy {
 
 	async thing_remember_bulk_remoteRelocateRight(thing: Thing, newParent: Thing) {
 		const newThing = await this.thing_remember_bulk_recursive_remoteRelocateRight(thing, newParent)
-		signal(Signals.childrenOf, newParent.id);
+		newParent.thing_relayout();
 		if (newParent.isExpanded) {
 			newThing.grabOnly();
 		} else {

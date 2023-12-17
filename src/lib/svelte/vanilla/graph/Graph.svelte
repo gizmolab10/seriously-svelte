@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, Rect, Size, Point, Thing, ZIndex, Signals, onDestroy, graphEditor, PersistID, persistLocal, updateGraphRect } from '../../../ts/common/GlobalImports';
 	import { id_here, graphRect, dot_size, id_editing, ids_grabbed, line_stretch, user_graphOffset, id_popupView } from '../../../ts/managers/State';
-	import { debug, DebugOption, Predicate, ButtonID, dbDispatch, handleSignalOfKind } from '../../../ts/common/GlobalImports';
+	import { debug, DebugFlag, Predicate, ButtonID, dbDispatch, handleSignalOfKind } from '../../../ts/common/GlobalImports';
 	import FocusRevealDot from './FocusRevealDot.svelte';
 	import Circle from '../../kit/Circle.svelte';
 	import Children from './Children.svelte';

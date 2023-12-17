@@ -1,4 +1,4 @@
-import { debug, dbDispatch, DebugOption } from '../common/GlobalImports';
+import { debug, dbDispatch, DebugFlag } from '../common/GlobalImports';
 import Airtable from 'airtable';
 import Datum from './Datum';
 
@@ -27,7 +27,7 @@ export default class Relationship extends Datum {
 		return false;
 	}
 
-	log(option: DebugOption, message: string) {
+	log(option: DebugFlag, message: string) {
 		debug.log_maybe(option, message + ' ' + this.description);
 	}
 

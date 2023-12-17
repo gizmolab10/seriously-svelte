@@ -1,6 +1,6 @@
-import { dbDispatch, getWidthOf, DebugOption, persistLocal, SeriouslyRange, orders_normalize_remoteMaybe } from '../common/GlobalImports';
-import { k, get, Size, Datum, signal, Signals, debug, Predicate, Hierarchy, TraitType, PersistID } from '../common/GlobalImports';
 import { id_here, dot_size, id_editing, expanded, ids_grabbed, row_height, id_showRevealCluster, line_stretch } from '../managers/State';
+import { k, get, Size, Datum, debug, signal, Signals, Predicate, Hierarchy, TraitType, PersistID, DebugFlag } from '../common/GlobalImports';
+import { dbDispatch, persistLocal, getWidthOf, signalRelayout, SeriouslyRange, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -50,7 +50,7 @@ export default class Thing extends Datum {
 			const shouldShow = (idCluster != undefined) && idCluster == this.id;
 			if (this.showCluster != shouldShow) {
 				this.showCluster = shouldShow;
-				signal(Signals.childrenOf);
+				signalRelayout();
 			}
 		});
 	};
@@ -120,22 +120,23 @@ export default class Thing extends Datum {
 		return width;
 	}
 	
-	toggleGrab()		 { this.hierarchy.grabs.toggleGrab(this); }
-	grabOnly()			 { this.hierarchy.grabs.grabOnly(this); }
-	toggleExpand()		 { this.expanded_setTo(!this.isExpanded) }
-	collapse()			 { this.expanded_setTo(false); }
-	expand()			 { this.expanded_setTo(true); }
+	thing_relayout() { signal(Signals.childrenOf, this.id); }
+	toggleGrab()	 { this.hierarchy.grabs.toggleGrab(this); }
+	grabOnly()		 { this.hierarchy.grabs.grabOnly(this); }
+	toggleExpand()	 { this.expanded_setTo(!this.isExpanded) }
+	collapse()		 { this.expanded_setTo(false); }
+	expand()		 { this.expanded_setTo(true); }
 
 	hasPredicate(asParents: boolean): boolean {
 		return asParents ? this.parents.length > 0 : this.children.length > 0
 	}
 
-	log(option: DebugOption, message: string) {
+	log(option: DebugFlag, message: string) {
 		debug.log_maybe(option, message + ' ' + this.description);
 	}
 
 	debugLog(message: string) {
-		this.log(DebugOption.things, message);
+		this.log(DebugFlag.things, message);
 	}
 
 	revealColor(isReveal: boolean): string {
@@ -179,9 +180,7 @@ export default class Thing extends Datum {
 				return array;
 			});
 			persistLocal.writeToDBKey(PersistID.expanded, get(expanded));
-			signal(Signals.childrenOf, this.firstParent.id);
-			signal(Signals.layout, this.id);
-			signal(Signals.reveal, this.id);
+			signalRelayout();
 		}
 	}
 
@@ -207,7 +206,7 @@ export default class Thing extends Datum {
 			id_here.set(id);
 			this.expand();
 			id_showRevealCluster.set(null);
-			signal(Signals.childrenOf, id);
+			this.thing_relayout();
 			persistLocal.writeToDBKey(PersistID.here, id)
 		};
 	}
@@ -242,7 +241,7 @@ export default class Thing extends Datum {
 			relationship.order = newOrder;
 			this.order = newOrder;
 			if (remoteWrite) {
-				this.log(DebugOption.order, 'ORDER ' + oldOrder + ' => ' + newOrder);
+				this.log(DebugFlag.order, 'ORDER ' + oldOrder + ' => ' + newOrder);
 				await relationship.remoteWrite();
 			}
 		}
@@ -286,7 +285,7 @@ export default class Thing extends Datum {
 				this.children[0].grabOnly()
 			}
 			this.expand();
-			signal(Signals.childrenOf);
+			signalRelayout();
 		}
 	}
 
@@ -309,7 +308,7 @@ export default class Thing extends Datum {
 				const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
 				const newOrder = newIndex + goose;
 				this.order_setTo(newOrder, false);
-				signal(Signals.childrenOf, this.firstParent.id);
+				this.firstParent.thing_relayout();
 			}
 		}
 	}
@@ -352,7 +351,7 @@ export default class Thing extends Datum {
 		}
 		id_editing.set(null);
 		newGrab?.grabOnly();
-		signal(Signals.childrenOf);			// tell graph to update line rects
+		signalRelayout();			// tell graph to update line rects
 	}
 
 }

@@ -1,4 +1,4 @@
-import { k, get, Thing, debug, launch, DBType, signal, Signals, TraitType, DataKind, Hierarchy, copyObject, DebugOption } from '../common/GlobalImports';
+import { k, get, Thing, debug, launch, DBType, TraitType, DataKind, Hierarchy, copyObject, DebugFlag, signalRelayout } from '../common/GlobalImports';
 import { Predicate, dbDispatch, Relationship, CreationOptions, convertToObject, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection, onSnapshot, deleteField, getFirestore } from 'firebase/firestore';
 import { DocumentData, DocumentChange, QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
@@ -272,7 +272,7 @@ export default class DBFirebase implements DBInterface {
 						}
 					}
 				}
-				signal(Signals.childrenOf, this.hierarchy.here?.id);
+				signalRelayout();
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -347,7 +347,7 @@ export default class DBFirebase implements DBInterface {
 				thing.id = ref.id;			// so relationship will be correct
 				this.hierarchy.thing_remember(thing);
 				this.snapshots_handleDeferred();
-				thing.log(DebugOption.remote, 'CREATE T');
+				thing.log(DebugFlag.remote, 'CREATE T');
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -363,8 +363,8 @@ export default class DBFirebase implements DBInterface {
 		const rootRef = await addDoc(collectionRef, convertToObject(root, fields));		// no need to remember now
 		thing.id = thingRef.id;
 		root.id = rootRef.id;
-		root.log(DebugOption.remote, 'CREATE T');
-		thing.log(DebugOption.remote, 'CREATE T');
+		root.log(DebugFlag.remote, 'CREATE T');
+		thing.log(DebugFlag.remote, 'CREATE T');
 	}
 
 	async thing_remoteUpdate(thing: Thing) {
@@ -375,7 +375,7 @@ export default class DBFirebase implements DBInterface {
 			const jsThing = { ...remoteThing };
 			try {
 				await setDoc(ref, jsThing);
-				thing.log(DebugOption.remote, 'UPDATE T');
+				thing.log(DebugFlag.remote, 'UPDATE T');
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -388,7 +388,7 @@ export default class DBFirebase implements DBInterface {
 			try {
 				const ref = doc(thingsCollection, thing.id) as DocumentReference<Thing>;
 				await deleteDoc(ref);
-				thing.log(DebugOption.remote, 'DELETE T');
+				thing.log(DebugFlag.remote, 'DELETE T');
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -424,7 +424,7 @@ export default class DBFirebase implements DBInterface {
 				relationship.id = ref.id;
 				this.hierarchy.relationship_remember(relationship);
 				this.snapshots_handleDeferred();
-				relationship.log(DebugOption.remote, 'CREATE R');
+				relationship.log(DebugFlag.remote, 'CREATE R');
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -439,7 +439,7 @@ export default class DBFirebase implements DBInterface {
 				const remoteRelationship = new RemoteRelationship(relationship);
 				const jsRelationship = { ...remoteRelationship };
 				await setDoc(ref, jsRelationship);
-				relationship.log(DebugOption.remote, 'UPDATE R');
+				relationship.log(DebugFlag.remote, 'UPDATE R');
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -452,7 +452,7 @@ export default class DBFirebase implements DBInterface {
 			try {
 				const ref = doc(relationshipsCollection, relationship.id) as DocumentReference<RemoteRelationship>;
 				await deleteDoc(ref);
-				relationship.log(DebugOption.remote, 'DELETE R');
+				relationship.log(DebugFlag.remote, 'DELETE R');
 			} catch (error) {
 				this.reportError(error);
 			}

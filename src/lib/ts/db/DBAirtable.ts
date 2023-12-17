@@ -1,4 +1,4 @@
-import { debug, Thing, DBType, DataKind, Hierarchy, Relationship, CreationOptions, DebugOption, dbDispatch } from '../common/GlobalImports';
+import { debug, Thing, DBType, DataKind, Hierarchy, Relationship, CreationOptions, DebugFlag, dbDispatch } from '../common/GlobalImports';
 import { things_arrived } from '../managers/State';
 import DBInterface from './DBInterface';
 import Airtable from 'airtable';
@@ -86,7 +86,7 @@ export default class DBAirtable implements DBInterface {
 			thing.isRemotelyStored = true;
 			this.hierarchy.thing_remember(thing);
 		} catch (error) {
-			thing.log(DebugOption.remote, this.things_errorMessage + error);
+			thing.log(DebugFlag.remote, this.things_errorMessage + error);
 		}
 	}
 
@@ -94,7 +94,7 @@ export default class DBAirtable implements DBInterface {
 		try {
 			await this.things_table.update(thing.id, thing.fields);
 		} catch (error) {
-			thing.log(DebugOption.remote, this.things_errorMessage + error);
+			thing.log(DebugFlag.remote, this.things_errorMessage + error);
 		}
 	}
 
@@ -103,7 +103,7 @@ export default class DBAirtable implements DBInterface {
 			this.hierarchy.thing_forget(thing);		// do first so UX updates quickly
 			await this.things_table.destroy(thing.id);
 		} catch (error) {
-			thing.log(DebugOption.remote, this.things_errorMessage + error);
+			thing.log(DebugFlag.remote, this.things_errorMessage + error);
 		}
 	}
 
@@ -142,7 +142,7 @@ export default class DBAirtable implements DBInterface {
 				relationship.isRemotelyStored = true;
 				this.hierarchy.relationships_refreshKnowns();
 			} catch (error) {
-				relationship.log(DebugOption.remote, this.relationships_errorMessage + error);
+				relationship.log(DebugFlag.remote, this.relationships_errorMessage + error);
 			}
 		}
 	}
@@ -151,7 +151,7 @@ export default class DBAirtable implements DBInterface {
 		try {
 			this.relationships_table.update(relationship.id, relationship.fields);
 		} catch (error) {
-			relationship.log(DebugOption.remote, this.relationships_errorMessage + error);
+			relationship.log(DebugFlag.remote, this.relationships_errorMessage + error);
 		}
 	}
 
@@ -161,7 +161,7 @@ export default class DBAirtable implements DBInterface {
 			this.hierarchy.relationships_refreshKnowns(); // do first so UX updates quickly
 			await this.relationships_table.destroy(relationship.id);
 		} catch (error) {
-			relationship.log(DebugOption.remote, this.relationships_errorMessage + error);
+			relationship.log(DebugFlag.remote, this.relationships_errorMessage + error);
 		}
 	}
 

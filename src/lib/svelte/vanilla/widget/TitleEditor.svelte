@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { row_height, id_editing, thing_fontSize, thing_fontFamily, id_editingStopped } from '../../../ts/managers/State';
-	import { k, Thing, signal, Signals, ZIndex, onMount, onDestroy } from '../../../ts/common/GlobalImports';
-	import { dbDispatch, SeriouslyRange, graphEditor } from '../../../ts/common/GlobalImports';
+	import { childrenOf, SeriouslyRange, graphEditor, signalRelayout } from '../../../ts/common/GlobalImports'; 
+	import { k, Thing, ZIndex, onMount, onDestroy, dbDispatch } from '../../../ts/common/GlobalImports';
 	import Widget from './Widget.svelte';
 	export let thing = Thing;
 	let originalTitle = thing.title;
@@ -42,7 +42,7 @@
 			switch (event.key) {	
 				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); graphEditor.thing_redraw_remoteAddChildTo(thing.firstParent); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
-				default:	  signal(Signals.layout, thing.id); break;
+				default:	  signalRelayout(); break;
 			}
 		}
 	}
@@ -90,7 +90,7 @@
 			if (hasChanges() && !thing.isExemplar) {
 				dbDispatch.db.thing_remoteUpdate(thing);
 				originalTitle = thing.title;		// so hasChanges will be correct
-				signal(Signals.childrenOf, thing.id);
+				thing.thing_relayout();
 			}
 		}
 	}
@@ -106,7 +106,7 @@
 
 	function handleCutOrPaste(event) {
 		extractRange();
-		signal(Signals.childrenOf, thing.id);
+		thing.thing_relayout();
 	}
 
 	function extractRange() {

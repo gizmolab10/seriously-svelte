@@ -1,7 +1,7 @@
 <script>
 	import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, PersistID, dbDispatch } from '../../ts/common/GlobalImports'
 	import { db_type, isBusy, id_here, build, graphRect, id_popupView, showDetails, things_arrived } from '../../ts/managers/State';
-	import { signal, Signals, ButtonID, Hierarchy, persistLocal, updateGraphRect } from '../../ts/common/GlobalImports'
+	import { ButtonID, Hierarchy, persistLocal, signalRelayout, updateGraphRect } from '../../ts/common/GlobalImports'
 	import CircularButton from '../kit/CircularButton.svelte';
 	import LabelButton from '../kit/LabelButton.svelte';
 	import BuildNotes from './BuildNotes.svelte';
@@ -23,12 +23,12 @@
 	
 	onMount(async () => {
 		launch.setup();
-		signal(Signals.childrenOf);
+		signalRelayout();
 	})
 	
 	function handleSettings(event) {
 		$showDetails = !$showDetails;
-		signal(Signals.childrenOf);
+		signalRelayout();
 		persistLocal.writeToKey(PersistID.details, $showDetails);
 	}
 

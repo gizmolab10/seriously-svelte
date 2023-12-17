@@ -1,7 +1,7 @@
 <script>
 	import { k, get, Size, Thing, Point, debug, ZIndex, Signals, onMount, onDestroy, dbDispatch } from "../../../ts/common/GlobalImports";
 	import { Direction, graphEditor, svgPath, handleSignalOfKind } from "../../../ts/common/GlobalImports";
-	import { dot_size, id_showRevealCluster } from '../../../ts/managers/State';
+	import { dot_size, expanded, id_showRevealCluster } from '../../../ts/managers/State';
 	export let center = new Point();
 	export let thing;
 	let insidePath = svgPath.circle(16, 6);
@@ -16,7 +16,6 @@
 	let path = '';
 	
 	function ignore(event) {}
-	onDestroy( () => { signalHandler.disconnect(); });
 	onMount( () => { setIsHovering_updateColors(false); updatePath(); });
 	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
 	function handleMouseOut(event) { setIsHovering_updateColors(false); }
@@ -28,11 +27,10 @@
 		clearTimeout(clickTimer);	// clear all previous timers
 	}
 
-	const signalHandler = handleSignalOfKind(Signals.reveal, (id) => {
-		if (thing.id == id) {
-			updatePath();
-		}
-	});
+	$: {
+		const _ = $expanded;
+		updatePath();
+	}
 
 	$: {
 		if (strokeColor != thing.color) {

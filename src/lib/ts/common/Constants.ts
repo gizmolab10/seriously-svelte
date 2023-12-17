@@ -34,15 +34,17 @@ export default class Constants {
 	}
 
 	applyQueryStrings(queryStrings: URLSearchParams) {
-		if (queryStrings.get('editGraph') === 'deny') {
-			this.allowGraphEditing = false;
-		}
-		if (queryStrings.get('editTitles') === 'deny') {
-			this.allowTitleEditing = false;
-		}
-		if (queryStrings.get('horizontalScrolling') === 'deny') {
-			this.allowHorizontalScrolling = false;
-		}
+        const deny = queryStrings.get('deny');
+        if (deny) {
+            const flags = deny.split(',');
+            for (const option of flags) {
+                switch (option) {
+                    case 'editGraph': this.allowGraphEditing = false; break;
+                    case 'editTitles': this.allowTitleEditing = false; break;
+                    case 'horizontalScrolling': this.allowHorizontalScrolling = false; break;
+                }
+            }
+        }
 	}
 }
 
