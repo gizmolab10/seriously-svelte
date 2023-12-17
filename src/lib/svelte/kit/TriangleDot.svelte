@@ -8,6 +8,7 @@
 	export let display;
 	export let center;
 	export let size;
+	export let id;
 	let path = svgPath.triangle(Size.square(size), direction);
 	let fillColor = k.backgroundColor;
 	let button = null;
@@ -23,44 +24,32 @@
 </script>
 
 {#key display}
-	<button class='svg-button'
+	<button id={id}
 		bind:this={button}
 		on:click={onClick}
 		style='
-			display: {display};
+			width: 20px;
+			height: 20px;
+			border: none;
+			display: block;
+			cursor: pointer;
+			background: none;
+			position: absolute;
+			border-radius: 50%;
 			top: {center.y + 2 - (size / 2)}px;
 			left: {center.x + 3 - (size / 2)}px;
 		'>
-		<svg class='svg'
+		<svg
 			width={size}
 			height={size}
 			on:mouseout={mouseOut}
 			on:mouseover={mouseOver}
 			viewbox='0 0 {size} {size}'
-			style='z-index: {ZIndex.dots};'>
+			style='
+				position: absolute;
+				left: 5px; top: 6px;
+				z-index: {ZIndex.dots};'>
 			<path d={path} stroke={strokeColor} fill={fillColor}/>
 		</svg>
 	</button>
 {/key}
-
-<style>
-	.svg {
-		position: absolute;
-		left: 5px; top: 6px;
-	}
-	.svg-button {
-		width: 20px;
-		height: 20px;
-		border: none;
-		cursor: pointer;
-		background: none;
-		position: absolute;
-		border-radius: 50%;
-	}
-	.svg-button svg {
-		display: block; /* This removes any unwanted space below the SVG */
-	}
-	.svg-button:hover {}
-	.svg-button:active {}
-	
-</style>
