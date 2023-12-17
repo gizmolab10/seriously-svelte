@@ -64,7 +64,7 @@
 	style='z-index: {ZIndex.lines};
 		top: {origin.y - Math.max(1, size.height)}px;
 		left: {origin.x + 143}px;'>
-	<path d={path} stroke={thing.color} fill='none'/>
+	<path d={path} stroke={thing.firstParent?.color} fill='none'/>
 </svg>
 {#if debug.lines}
 	<!--Box rect={rect.offsetBy(debugOffset)} color=gray/-->

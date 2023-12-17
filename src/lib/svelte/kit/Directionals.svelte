@@ -10,31 +10,44 @@
 	function newFillColor(isFilled) { return isFilled ? 'black' : k.backgroundColor; }
 
 	function onClick(event) {
-        const pointsLeft = event.clientX > 234;
+        const pointsLeft = event.currentTarget.id == 'left';
         hit(pointsLeft);
         toggle = !toggle;
 	}
 
 </script>
 
-{#key toggle}
-    <TriangleDot
-        newFillColor={newFillColor}
-        direction={Direction.left}
-        display={display(true)}
-        strokeColor={'black'}
-        onClick={onClick}
-        center={origin}
-        size={size}
-    />
+<style>
+    .directionals {
+		top: 12px;
+		left: 12px;
+		position: absolute;     
+    }
+</style>
 
-    <TriangleDot
-        center={origin.offsetByX(size)}
-        newFillColor={newFillColor}
-        direction={Direction.right}
-        display={display(false)}
-        strokeColor={'black'}
-        onClick={onClick}
-        size={size}
-    />
+{#key toggle}
+    <div class='directionals'>
+        {#if display(true)}
+            <TriangleDot
+                newFillColor={newFillColor}
+                direction={Direction.left}
+                strokeColor={'black'}
+                onClick={onClick}
+                center={origin}
+                size={size}
+                id='left'
+            />
+        {/if}
+        {#if display(false)}
+            <TriangleDot
+                center={origin.offsetByX(size)}
+                newFillColor={newFillColor}
+                direction={Direction.right}
+                strokeColor={'black'}
+                onClick={onClick}
+                size={size}
+                id='right'
+            />
+        {/if}
+    </div>
 {/key}

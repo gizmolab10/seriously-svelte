@@ -1,19 +1,19 @@
 <script>
-	import { builds, onMount } from '../../ts/common/GlobalImports';
+	import { builds, onMount, ZIndex } from '../../ts/common/GlobalImports';
 	import { id_popupView } from '../../ts/managers/State';
 	import Directionals from '../kit/Directionals.svelte'
 	import CloseButton from '../kit/CloseButton.svelte'
 	export let size = 20;
 	const indexedNotes = Object.entries(builds.notes).reverse();
-	let notesOffset = 0;
+	let notesIndex = 0;
 	let notes = []
 	
 	onMount(() => { updateNotes(); })
     function display(goLeft) { return shouldEnable(goLeft) ? 'block' : 'none'; }
 
 	function updateNotes() {
-		const end = Math.min(indexedNotes.length, notesOffset + 10);
-		notes = indexedNotes.slice(notesOffset, end);
+		const end = Math.min(indexedNotes.length, notesIndex + 10);
+		notes = indexedNotes.slice(notesIndex, end);
 	}
 	
 	function handleKeyDown(event) {
@@ -25,47 +25,22 @@
 
 	function shouldEnable(goLeft) {
 		if (goLeft) {
-			return notesOffset >= 0;
+			return notesIndex >= 0;
 		} else {
-			return (builds.notes.length - notesOffset) > 1;
+			return (builds.notes.length - notesIndex) > 0;
 		}
 	}
 
 	function handleHit(goLeft) {
-		let offset = notesOffset + (10 * (goLeft ? -1 : 1));
-		if (offset < 0 || (builds.notes.length - offset) < 1) {
+		let nextIndex = notesIndex + (10 * (goLeft ? -1 : 1));
+		if (nextIndex < 0 || (builds.notes.length - nextIndex) < 1) {
 			return;
 		}
-		notesOffset = offset;
+		notesIndex = nextIndex;
 		updateNotes();
 	}
 
 </script>
-
-<svelte:document on:keydown={handleKeyDown} />
-<div class='modal-overlay'>
-	<div class='modal-content'>
-		{#key notes}
-			<Directionals hit={handleHit} display={display}/>
-		{/key}
-		<CloseButton size={size}/>
-		<h2>Seriously Build Notes (10 most recent)</h2>
-		<table>
-			<tr>
-				<th>Build</th>
-				<th>Date</th>
-				<th>Note</th>
-			</tr>
-			{#each notes as [key, value]}
-				<tr>
-					<td>{key}</td>
-					<td>{value[0]}</td>
-					<td>&nbsp; {value[1]}</td>
-				</tr>
-			{/each}
-		</table>
-	</div>
-</div>
 
 <style>
 	.modal-overlay {
@@ -86,6 +61,52 @@
 		position: relative;
 		font-size: 0.8em;
 		padding: 20px;
-		width: 400px;
+		width: 500px;
+	}
+	.header-line {
+		justify-content: center;
+        align-items: center;
+        display: flex;
+        gap: 10px;
+    }
+	.horizontal-line {
+		background-color: lightgray;
+		position: fixed;
+		height: 1px;
+		width: 500px;
+	}
+	.title {
+		font-size: 1.5em;
 	}
 </style>
+
+<svelte:document on:keydown={handleKeyDown} />
+<div class='modal-overlay'>
+	<div class='modal-content'>
+		<div class='header-line'>
+			{#key notes}
+				<Directionals hit={handleHit} display={display}/>
+			{/key}
+			<div class='title'>Seriously Build Notes (10 most recent)</div>
+			<CloseButton size={size}/>
+		</div>
+		<br>
+		<table>
+			<tr>
+				<th>Build</th>
+				<th>Date</th>
+				<th>Note</th>
+			</tr>
+			<div class='horizontal-line' style='z-index: {ZIndex.frontmost};'></div>
+			{#key notes}
+				{#each notes as [key, value]}
+					<tr>
+						<td>{key}</td>
+						<td>{value[0]}</td>
+						<td>&nbsp; {value[1]}</td>
+					</tr>
+				{/each}
+			{/key}
+		</table>
+	</div>
+</div>
