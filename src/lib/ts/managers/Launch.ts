@@ -10,11 +10,6 @@ class Launch {
 		debug.applyQueryStrings(queryStrings);
 		dbDispatch.applyQueryStrings(queryStrings); // do this last
 		document.title = this.title;
-		if (k.eraseSettings) {
-			ids_grabbed.set([]);
-			expanded.set([]);
-			id_here.set(null);
-		}
 	}
 
 	get title(): string {
@@ -25,11 +20,27 @@ class Launch {
 	}
 
 	applyQueryStrings(queryStrings: URLSearchParams) {
+        const erase = queryStrings.get('erase');
 		if (queryStrings.get('details') === 'hide') {
 			persistLocal.writeToKey(PersistID.details, false);
 			showDetails.set(false);
 		}
-	}
+        if (erase) {
+            const flags = erase.split(',');
+            for (const option of flags) {
+                switch (option) {
+                    case 'data':
+						dbDispatch.eraseDB = true;
+						break;
+                    case 'settings': 
+						ids_grabbed.set([]);
+						expanded.set([]);
+						id_here.set(null);
+						break;
+                }
+            }
+        }
+    }
     
 }
 

@@ -11,7 +11,7 @@ import { debug, Debug, DebugFlag } from './Debug'
 import { dbDispatch } from '../db/DBDispatch';
 import { onMount, onDestroy } from 'svelte';
 import { launch } from '../managers/Launch';
-import { embed } from '../managers/Embed';
+import { embed } from '../../../../aside/December 2023/Embed';
 import { SeriouslyRange } from './Types';
 import { get } from 'svelte/store';
 import { builds } from './Builds';

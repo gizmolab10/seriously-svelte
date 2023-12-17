@@ -6,11 +6,10 @@ export default class Constants {
 	public halfIncrement: number;
 	public longClickThreshold: number;
 	public doubleClickThreshold: number;
+	public allowHorizontalScrolling: boolean;
 	public leftJustifyGraph: boolean;
-	public isEmbedded: boolean;
 	public allowGraphEditing: boolean;
 	public allowTitleEditing: boolean;
-	public allowHorizontalScrolling: boolean;
 	public backgroundColor: string;
 	public highlightColor: string;
 	public adminBulkName: string;
@@ -27,7 +26,6 @@ export default class Constants {
 		this.allowHorizontalScrolling = true;
 		this.allowGraphEditing = true;
 		this.allowTitleEditing = true;
-		this.isEmbedded = false;
 		this.doubleClickThreshold = 100;
 		this.longClickThreshold = 500;
 		this.halfIncrement = 0.5;
@@ -36,9 +34,6 @@ export default class Constants {
 	}
 
 	applyQueryStrings(queryStrings: URLSearchParams) {
-		if (queryStrings.get('embed') === 'true') {
-			this.isEmbedded = true;
-		}
 		if (queryStrings.get('editGraph') === 'deny') {
 			this.allowGraphEditing = false;
 		}
