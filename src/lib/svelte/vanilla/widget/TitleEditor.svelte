@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { row_height, id_editing, thing_fontSize, thing_fontFamily, id_editingStopped } from '../../../ts/managers/State';
-	import { childrenOf, SeriouslyRange, graphEditor, signalRelayout } from '../../../ts/common/GlobalImports'; 
+	import { SeriouslyRange, graphEditor, signalRelayout } from '../../../ts/common/GlobalImports'; 
 	import { k, Thing, ZIndex, onMount, onDestroy, dbDispatch } from '../../../ts/common/GlobalImports';
 	import Widget from './Widget.svelte';
 	export let thing = Thing;

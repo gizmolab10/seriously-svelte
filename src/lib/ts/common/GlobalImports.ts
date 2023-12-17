@@ -2,7 +2,7 @@ import { noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desa
 import { getBrowserType, isMobileDevice, convertToObject, orders_normalize_remoteMaybe } from './Utilities';
 import { ZIndex, ButtonID, TraitType, BrowserType, CreationOptions, LineCurveType } from './Enumerations';
 import { Point, Size, Rect, LineRect, updateGraphRect } from '../geometry/Geometry';
-import { signal, Signals, signalRelayout, handleSignalOfKind } from './Signals';
+import { signal, Signals, signalRelayout, handleRelayout } from './Signals';
 import { PersistID, persistLocal } from '../managers/PersistLocal';
 import { Direction, svgPath } from '../geometry/SVGPath';
 import { graphEditor } from '../managers/GraphEditor';
@@ -36,7 +36,7 @@ export {
 	dbDispatch, DBType, DataKind,
 	Grabs, graphEditor, Hierarchy,
 	ZIndex, ButtonID, BrowserType, CreationOptions,
-	signal, Signals, signalRelayout, handleSignalOfKind,
+	signal, Signals, signalRelayout, handleRelayout,
 	User, SeriouslyRange, Datum, Thing, Access, Predicate, Relationship,
 	Point, Size, Rect, Layout, LineRect, TraitType, LineCurveType, updateGraphRect,
 	sort_byOrder, getBrowserType, isMobileDevice, convertToObject, orders_normalize_remoteMaybe,

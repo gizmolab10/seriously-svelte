@@ -1,6 +1,6 @@
 <script>
-	import { k, get, Size, Thing, Point, debug, ZIndex, Signals, onMount, onDestroy, dbDispatch } from "../../../ts/common/GlobalImports";
-	import { Direction, graphEditor, svgPath, handleSignalOfKind } from "../../../ts/common/GlobalImports";
+	import { k, get, Size, Thing, Point, debug, ZIndex, Signals, onMount } from "../../../ts/common/GlobalImports";
+	import { Direction, onDestroy, dbDispatch, graphEditor, svgPath } from "../../../ts/common/GlobalImports";
 	import { dot_size, expanded, id_showRevealCluster } from '../../../ts/managers/State';
 	export let center = new Point();
 	export let thing;

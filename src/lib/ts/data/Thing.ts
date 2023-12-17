@@ -120,7 +120,7 @@ export default class Thing extends Datum {
 		return width;
 	}
 	
-	thing_relayout() { signal(Signals.childrenOf, this.id); }
+	thing_relayout() { signal(Signals.relayout, this.id); }
 	toggleGrab()	 { this.hierarchy.grabs.toggleGrab(this); }
 	grabOnly()		 { this.hierarchy.grabs.grabOnly(this); }
 	toggleExpand()	 { this.expanded_setTo(!this.isExpanded) }
@@ -316,6 +316,7 @@ export default class Thing extends Datum {
 	redraw_runtimeBrowseRight(RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, fromReveal: boolean = false) {
 		let newGrab: Thing | null = RIGHT ? this.firstChild : this.firstParent;
 		const newHere = RIGHT ? this : this.grandparent;
+		const newGrabIsHere = newGrab.id == get(id_here)
 		if (!RIGHT) {
 			const root = this.hierarchy.root;
 			if (EXTREME) {
@@ -324,7 +325,7 @@ export default class Thing extends Datum {
 				if (!SHIFT) {
 					if (fromReveal) {
 						this.expand();
-					} else {
+					} else if (newGrabIsHere) {
 						newGrab?.expand();
 					}
 				} else if (newGrab) { 
@@ -344,7 +345,7 @@ export default class Thing extends Datum {
 			}
 			this.expand();
 		}
-		const allowToBecomeHere = !SHIFT || newGrab == this.firstParent; 
+		const allowToBecomeHere = (!SHIFT || newGrab == this.firstParent) && !newGrabIsHere; 
 		const shouldBecomeHere = !newHere.isVisible || newHere.isRoot;
 		if (!RIGHT && allowToBecomeHere && shouldBecomeHere) {
 			newHere.becomeHere();
