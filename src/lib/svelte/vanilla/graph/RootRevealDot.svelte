@@ -6,12 +6,16 @@
 	export let here;
 	let size = $dot_size;
 
-	function newFillColor(isFilled) { return debug.lines ? 'transparent' : here.revealColor(isFilled); }
+	function fillColor_closure(isFilled) {
+		return debug.lines ? 'transparent' : here.revealColor(isFilled);
+	}
 
 	function onClick(event) {
 		const grab = dbDispatch.db.hierarchy.grabs.latestGrab(true);
-		if (grab) {
+		if (grab && grab.id == here.id) {
 			graphEditor.thing_redraw_remoteMoveRight(grab, false, false);
+		} else {
+			here.grabOnly();
 		}
 	}
 
@@ -24,7 +28,7 @@
 </script>
 
 <TriangleDot
-	newFillColor={newFillColor}
+	fillColor_closure={fillColor_closure}
 	direction={Direction.left}
 	strokeColor={here.color}
 	onClick={onClick}

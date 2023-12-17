@@ -7,7 +7,7 @@
     export let display;
     export let hit;
 
-	function newFillColor(isFilled) { return isFilled ? 'black' : k.backgroundColor; }
+	function fillColor_closure(isFilled) { return isFilled ? 'black' : k.backgroundColor; }
 
 	function onClick(event) {
         const pointsLeft = event.currentTarget.id == 'left';
@@ -29,7 +29,7 @@
     <div class='directionals'>
         {#if display(true)}
             <TriangleDot
-                newFillColor={newFillColor}
+                fillColor_closure={fillColor_closure}
                 direction={Direction.left}
                 strokeColor={'black'}
                 onClick={onClick}
@@ -41,7 +41,7 @@
         {#if display(false)}
             <TriangleDot
                 center={origin.offsetByX(size)}
-                newFillColor={newFillColor}
+                fillColor_closure={fillColor_closure}
                 direction={Direction.right}
                 strokeColor={'black'}
                 onClick={onClick}

@@ -5,33 +5,41 @@
 	export let center = new Point();
 	export let thing;
 	let insidePath = svgPath.circle(16, 6);
-	let antiFillColor = k.backgroundColor;
+	let aliasFillColor = k.backgroundColor;
 	let fillColor = k.backgroundColor;
 	let strokeColor = thing.color;
-	let size = $dot_size;;
+	let isHovering = false;
+	let size = $dot_size;
 	let clickCount = 0;
 	let button = null;
 	let clickTimer;
 	let path = '';
 	
 	function ignore(event) {}
-	onMount( () => { updateState(false); });
 	onDestroy( () => { signalHandler.disconnect(); });
-	function handleMouseUp() { clearTimeout(clickTimer); }
-	function handleMouseOut(event) { updateColors(false); }
-	function handleMouseOver(event) { updateColors(true); }
+	onMount( () => { setIsHovering_updateColors(false); updatePath(); });
 	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
+	function handleMouseOut(event) { setIsHovering_updateColors(false); }
+	function handleMouseOver(event) { setIsHovering_updateColors(true); }
+	function handleMouseUp() { clearTimeout(clickTimer); }
 
 	function clearClicks() {
 		clickCount = 0;
 		clearTimeout(clickTimer);	// clear all previous timers
 	}
 
-	const signalHandler = handleSignalOfKind(Signals.dots, (id) => {
+	const signalHandler = handleSignalOfKind(Signals.reveal, (id) => {
 		if (thing.id == id) {
 			updatePath();
 		}
 	});
+
+	$: {
+		if (strokeColor != thing.color) {
+			strokeColor = thing.color
+			updateColors();
+		}
+	}
 
 	$: {
 		if ($dot_size > 0) {
@@ -40,16 +48,16 @@
 		}
 	}
 
-	function updateState(isHovering) {
-		updateColors(isHovering);
-		updatePath();
+	function setIsHovering_updateColors(hovering) {
+		isHovering = hovering;
+		updateColors();
 	}
 
-	function updateColors(isHovering) {
+	function updateColors() {
 		thing.updateColorAttributes();
-		const buttonFlag = !thing.isExpanded || thing.isGrabbed;
-		fillColor = thing.revealColor(buttonFlag != isHovering);
-		antiFillColor = thing.revealColor(buttonFlag == isHovering);
+		const collapsedGrabbed = !thing.isExpanded || thing.isGrabbed;
+		fillColor = thing.revealColor(collapsedGrabbed != isHovering);
+		aliasFillColor = thing.revealColor(collapsedGrabbed == isHovering);
 	}
 
 	function updatePath() {
@@ -71,7 +79,8 @@
 		} else {
 			graphEditor.thing_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
 		}
-		updateState(false);
+		setIsHovering_updateColors(false);
+		updatePath();
 	}
 
 	function handleDoubleClick(event) {
@@ -144,7 +153,7 @@
 			z-index: {ZIndex.dots};'>
 		<path d={path} stroke={strokeColor} fill={debug.lines ? 'transparent' : fillColor}/>
 		{#if thing.isBulkAlias}
-			<path d={insidePath} stroke={strokeColor} fill={antiFillColor}/>
+			<path d={insidePath} stroke={strokeColor} fill={aliasFillColor}/>
 		{/if}
 	</svg>
 </button>

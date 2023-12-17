@@ -1,9 +1,9 @@
 import { Signal } from 'typed-signals';
 
 export enum Signals {
-	childrenOf = 'c', // for parent thing whose children are being drawn
-	layout = 'l',
-	dots = 'd',
+	childrenOf	= 'c', // for parent thing whose children are being drawn
+	layout		= 'l',
+	reveal		= 'r',
 }
 
 const handleSignal = new Signal<(kinds: Signals[], value: any) => void>();

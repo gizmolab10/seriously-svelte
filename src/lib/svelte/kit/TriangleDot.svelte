@@ -1,7 +1,7 @@
 <script>
 	import { k, Size, Thing, Point, ZIndex, Direction, dbDispatch, graphEditor, svgPath } from "../../ts/common/GlobalImports";
-	import { dot_size } from '../../ts/managers/State';
-	export let newFillColor;
+	import { dot_size, ids_grabbed } from '../../ts/managers/State';
+	export let fillColor_closure;
 	export let strokeColor;
 	export let direction;
 	export let onClick;
@@ -12,14 +12,20 @@
 	let path = svgPath.triangle(Size.square(size), direction);
 	let fillColor = k.backgroundColor;
 	let button = null;
+
+	function mouseOut(event) { setFillColor(false); }
+	function mouseOver(event) { setFillColor(true); }
+	function setFillColor(isFilled) { fillColor = fillColor_closure(isFilled); }
 	
 	$: {
 		path = svgPath.triangle(Size.square(size), direction);
-		updateColors(false);
+		setFillColor(false);
 	}
-	function mouseOut(event) { updateColors(false); }
-	function mouseOver(event) { updateColors(true); }
-	function updateColors(isFilled) { fillColor = newFillColor(isFilled); }
+
+	$: {
+		const _ = $ids_grabbed;
+		setFillColor(false);
+	}
 
 </script>
 
