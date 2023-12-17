@@ -2,7 +2,7 @@
 	import { k, Rect, Size, Point, Thing, ZIndex, Signals, onDestroy, graphEditor, PersistID, persistLocal, updateGraphRect } from '../../../ts/common/GlobalImports';
 	import { id_here, graphRect, dot_size, id_editing, ids_grabbed, line_stretch, user_graphOffset, id_popupView } from '../../../ts/managers/State';
 	import { debug, DebugOption, Predicate, ButtonID, dbDispatch, handleSignalOfKind } from '../../../ts/common/GlobalImports';
-	import RootRevealDot from './RootRevealDot.svelte';
+	import FocusRevealDot from './FocusRevealDot.svelte';
 	import Circle from '../../kit/Circle.svelte';
 	import Children from './Children.svelte';
 	import Box from '../../kit/Box.svelte';
@@ -133,6 +133,6 @@
 		{#if isGrabbed}
 			<Circle radius={10} center={origin_ofFirstReveal.offsetBy(new Point(7, 6))} color={here.color} thickness=1/>
 		{/if}
-		<RootRevealDot here={here} center={origin_ofFirstReveal.offsetByY(-1)}/>
+		<FocusRevealDot here={here} center={origin_ofFirstReveal.offsetByY(-1)}/>
 	</div>
 {/if}
