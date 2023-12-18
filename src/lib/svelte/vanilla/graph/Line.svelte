@@ -53,7 +53,6 @@
 
 <style lang='scss'>
 	.line {
-		left: 0px;
 		position: absolute;
 	}
 </style>

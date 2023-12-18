@@ -37,8 +37,8 @@ export enum ZIndex {
 	panel	  = baseZIndex,
 	text	  = baseZIndex + 10,
 	lines	  = baseZIndex + 20,
-	widgets	  = baseZIndex + 30,
-	dots	  = baseZIndex + 40,
+	dots	  = baseZIndex + 30,
+	widgets	  = baseZIndex + 40,
 	frontmost = baseZIndex + 50,
 	overlay	  = baseZIndex + 60,
 }

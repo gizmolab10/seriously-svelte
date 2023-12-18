@@ -114,10 +114,12 @@
 	<DragDot thing={thing}/>
 	<TitleEditor thing={thing}/>
 	<div class='revealDot'
-		style='top:{yPadding}px'>
+		style='
+			top:{yPadding}px;
+			z-index: {ZIndex.dots};'>
 		<RevealDot thing={thing} center={origin}/>
-		{#if showingCluster}
-			<RevealCluster thing={thing}/>
-		{/if}
 	</div>
+	{#if showingCluster}
+		<RevealCluster thing={thing}/>
+	{/if}
 </div>

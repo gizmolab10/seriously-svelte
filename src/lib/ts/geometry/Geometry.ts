@@ -53,6 +53,11 @@ export class Rect {
 	origin: Point;
 	size: Size;
 
+	constructor(origin: Point = new Point(), size: Size = new Size()) {
+		this.origin = origin;
+		this.size = size;
+	}
+
 	static createExtentRect(origin: Point, extent: Point) {
 		return new Rect(origin, extent.offsetBy(origin.negated).asSize);
 	}
@@ -65,9 +70,8 @@ export class Rect {
 		return new Rect(rightCenter.offsetByY(size.height / -2), size);
 	}
 
-	constructor(origin: Point = new Point(), size: Size = new Size()) {
-		this.origin = origin;
-		this.size = size;
+	static createFromDOMRect(rect: DOMRect) {
+		return new Rect(new Point(rect.x, rect.y), new Size(rect.width, rect.height));
 	}
 
 	get pixelVerbose():	   string { return this.origin.pixelVerbose + ' ' + this.size.pixelVerbose; }

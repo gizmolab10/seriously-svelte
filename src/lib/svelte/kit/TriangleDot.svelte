@@ -1,6 +1,7 @@
 <script>
 	import { k, Size, Thing, Point, ZIndex, Direction, dbDispatch, graphEditor, svgPath } from "../../ts/common/GlobalImports";
 	import { dot_size, ids_grabbed } from '../../ts/managers/State';
+	import SVGD3 from './SVGD3.svelte'
 	export let fillColor_closure;
 	export let strokeColor;
 	export let direction;
@@ -33,6 +34,8 @@
 	<button id={id}
 		bind:this={button}
 		on:click={onClick}
+		on:mouseout={mouseOut}
+		on:mouseover={mouseOver}
 		style='
 			width: 20px;
 			height: 20px;
@@ -45,17 +48,13 @@
 			top: {center.y + 2 - (size / 2)}px;
 			left: {center.x + 3 - (size / 2)}px;
 		'>
-		<svg
-			width={size}
-			height={size}
-			on:mouseout={mouseOut}
-			on:mouseover={mouseOver}
-			viewbox='0 0 {size} {size}'
-			style='
-				position: absolute;
-				left: 5px; top: 6px;
-				z-index: {ZIndex.dots};'>
-			<path d={path} stroke={strokeColor} fill={fillColor}/>
-		</svg>
+		<SVGD3
+			path={path}
+			center={center}
+			fill={fillColor}
+			stroke={strokeColor}
+			zIndex={ZIndex.dots}
+			size={new Size(size, size)}
+		/>
 	</button>
 {/key}

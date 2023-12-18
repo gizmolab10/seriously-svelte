@@ -28,7 +28,6 @@
 	$: {
 		if ($dot_size > 0) {
 			size = $dot_size;
-			left = 1;
 			path = svgPath.oval(size, false);
 			top = $id_showRevealCluster == thing.id ? 23 : 0;
 		}
@@ -99,9 +98,10 @@
 <button class='dot'
 	bind:this={button}
 	style='
-		top: {(size / 2) - 5}px;
+		left: 1px;
 		width: {size}px;	 /* Match SVG viewbox width */
 		height: {size}px;	/* Match SVG viewbox height */
+		top: {(size / 2) - 5}px;
 	'>
 	<svg width={size}
 		height={size}
