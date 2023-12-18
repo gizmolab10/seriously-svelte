@@ -52,7 +52,7 @@
 			fill={fillColor}
 			stroke={strokeColor}
 			zIndex={ZIndex.dots}
-			size={new Size(size, size)}
+			size={Size.square(size)}
 		/>
 	</button>
 {/key}

@@ -121,6 +121,6 @@
 		fill={fillColor}
 		stroke={thing.color}
 		zIndex={ZIndex.dots}
-		size={new Size(size, size)}
+		size={Size.square(size)}
 	/>
 </button>

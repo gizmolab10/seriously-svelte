@@ -1,7 +1,8 @@
 <script>
 	import { k, get, Size, Thing, Point, debug, ZIndex, Signals, onMount } from "../../../ts/common/GlobalImports";
-	import { Direction, onDestroy, dbDispatch, graphEditor, svgPath } from "../../../ts/common/GlobalImports";
-	import { dot_size, expanded, id_showRevealCluster } from '../../../ts/managers/State';
+	import { svgPath, Direction, onDestroy, dbDispatch, graphEditor } from "../../../ts/common/GlobalImports";
+	import { expanded, dot_size, ids_grabbed, id_showRevealCluster } from '../../../ts/managers/State';
+	import SVGD3 from '../../kit/SVGD3.svelte';
 	export let center = new Point();
 	export let thing;
 	let insidePath = svgPath.circle(16, 6);
@@ -44,6 +45,13 @@
 			size = $dot_size;
 			updatePath();
 		}
+	}
+
+	$: {
+		if ($ids_grabbed != null) {
+			updateColors();
+		}
+
 	}
 
 	function setIsHovering_updateColors(hovering) {
@@ -123,35 +131,40 @@
 
 <button class='dot'
 	bind:this={button}
+	on:blur={ignore}
+	on:focus={ignore}
+	on:keyup={ignore}
+	on:keydown={ignore}
+	on:keypress={ignore}
+	on:mouseup={handleMouseUp}
+	on:click={handleSingleClick}
+	on:mouseout={handleMouseOut}
+	on:mouseover={handleMouseOver}
+	on:mousedown={handleLongClick}
+	on:dblclick={handleDoubleClick}
+	on:contextmenu={handleContextMenu}
 	style='
 		width={size}px;
 		height={size}px;
-		position: absolute;
-		left: {size + thing.titleWidth + 2}px;
+		top: {$dot_size / 2 - 1}px;
+		left: {size + thing.titleWidth - 5}px;
 	'>
-	<svg width={size}
-		height={size}
-		on:blur={ignore}
-		on:focus={ignore}
-		on:keyup={ignore}
-		on:keydown={ignore}
-		on:keypress={ignore}
-		on:mouseup={handleMouseUp}
-		viewbox='0 0 {size} {size}'
-		on:click={handleSingleClick}
-		on:mouseout={handleMouseOut}
-		on:mouseover={handleMouseOver}
-		on:mousedown={handleLongClick}
-		on:dblclick={handleDoubleClick}
-		on:contextmenu={handleContextMenu}
-		style='
-			top: {$dot_size / 2}px;
-			left: -1px;
-			position: absolute;
-			z-index: {ZIndex.dots};'>
-		<path d={path} stroke={strokeColor} fill={debug.lines ? 'transparent' : fillColor}/>
-		{#if thing.isBulkAlias}
-			<path d={insidePath} stroke={strokeColor} fill={aliasFillColor}/>
-		{/if}
-	</svg>
+	<SVGD3
+		path={path}
+		fill={debug.lines ? 'transparent' : fillColor}
+		stroke={strokeColor}
+		zIndex={ZIndex.dots}
+		size={Size.square(size)}
+	/>
+	{#if thing.isBulkAlias}
+		<div style='left:-1px; width:14px; height:14px; position:absolute;'>
+			<SVGD3
+				path={insidePath}
+				fill={aliasFillColor}
+				stroke={strokeColor}
+				zIndex={ZIndex.dots}
+				size={Size.square(size)}
+			/>
+		</div>
+	{/if}
 </button>
