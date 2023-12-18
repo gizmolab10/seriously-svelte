@@ -6,6 +6,7 @@
 	import Circle from '../../kit/Circle.svelte';
 	import Children from './Children.svelte';
 	import Box from '../../kit/Box.svelte';
+import {size} from '../../kit/SVGD3.svelte';
 	let origin_ofFirstReveal = new Point();
 	let origin_ofChildren = new Point();
 	let childrenSize = new Point();
@@ -135,6 +136,6 @@
 		{#if isGrabbed}
 			<Circle radius={10} center={origin_ofFirstReveal.offsetBy(new Point(7, 6))} color={here.color} thickness=1/>
 		{/if}
-		<FocusRevealDot here={here} center={origin_ofFirstReveal.offsetByY(-1)}/>
+		<FocusRevealDot here={here} center={origin_ofFirstReveal.offsetBy(Point.square(-5))}/>
 	</div>
 {/if}

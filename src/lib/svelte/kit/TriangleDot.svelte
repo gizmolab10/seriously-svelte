@@ -1,7 +1,7 @@
 <script>
 	import { k, Size, Thing, Point, ZIndex, Direction, dbDispatch, graphEditor, svgPath } from "../../ts/common/GlobalImports";
 	import { dot_size, ids_grabbed } from '../../ts/managers/State';
-	import SVGD3 from './SVGD3.svelte'
+	import SVGD3 from './SVGD3.svelte';
 	export let fillColor_closure;
 	export let strokeColor;
 	export let direction;
@@ -44,13 +44,11 @@
 			cursor: pointer;
 			background: none;
 			position: absolute;
-			border-radius: 50%;
 			top: {center.y + 2 - (size / 2)}px;
 			left: {center.x + 3 - (size / 2)}px;
 		'>
 		<SVGD3
 			path={path}
-			center={center}
 			fill={fillColor}
 			stroke={strokeColor}
 			zIndex={ZIndex.dots}

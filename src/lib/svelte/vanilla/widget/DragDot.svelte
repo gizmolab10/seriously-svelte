@@ -1,11 +1,11 @@
 <script>
-	import { k, Thing, Point, debug, ZIndex, Signals, onMount } from "../../../ts/common/GlobalImports";
+	import { k, Size, Point, Thing, debug, ZIndex, Signals, onMount } from "../../../ts/common/GlobalImports";
 	import { graphEditor, dbDispatch, Direction, svgPath } from "../../../ts/common/GlobalImports";
 	import { dot_size, ids_grabbed, id_showRevealCluster } from '../../../ts/managers/State';
+	import SVGD3 from '../../kit/SVGD3.svelte';
 	export let thing;
 	let hoverColor = thing.color;
 	let fillColor = thing.color;
-	let center = new Point();;
 	let isGrabbed = false;
 	let clickCount = 0;
 	let button = null;
@@ -26,14 +26,6 @@
 	});
 
 	$: {
-		if ($dot_size > 0) {
-			size = $dot_size;
-			path = svgPath.oval(size, false);
-			top = $id_showRevealCluster == thing.id ? 23 : 0;
-		}
-	}
-
-	$: {
 		const grabbed = $ids_grabbed?.includes(thing.id);
 		if (isGrabbed != grabbed) {
 			isGrabbed = grabbed;
@@ -43,7 +35,7 @@
 
 	function updateColors(isHovering) {
 		thing.updateColorAttributes();	// needed for revealColor
-		const flag = isHovering;// && thing.hasChildren;
+		const flag = isHovering;
 		hoverColor = thing.revealColor(!flag);
 		fillColor = debug.lines ? 'transparent' : thing.revealColor(flag);
 	}
@@ -84,6 +76,15 @@
 		}
 	}
 
+	$: {
+		if ($dot_size > 0) {
+			size = $dot_size;
+			left = 1 - (size / 2);
+			path = svgPath.oval(size, false);
+			top = $id_showRevealCluster == thing.id ? 23 : -5;
+		}
+	}
+
 </script>
 
 <style>
@@ -97,32 +98,29 @@
 
 <button class='dot'
 	bind:this={button}
+	on:blur={ignore}
+	on:focus={ignore}
+	on:keyup={ignore}
+	on:keydown={ignore}
+	on:keypress={ignore}
+	on:mouseup={handleMouseUp}
+	on:click={handleSingleClick}
+	on:mouseout={handleMouseOut}
+	on:mouseover={handleMouseOver}
+	on:mousedown={handleLongClick}
+	on:dblclick={handleDoubleClick}
+	on:contextmenu={handleContextMenu}
 	style='
-		left: 1px;
-		width: {size}px;	 /* Match SVG viewbox width */
-		height: {size}px;	/* Match SVG viewbox height */
-		top: {(size / 2) - 5}px;
+		top: {top}px;
+		left: {left}px;
+		width: {size}px;
+		height: {size}px;
 	'>
-	<svg width={size}
-		height={size}
-		on:blur={ignore}
-		on:focus={ignore}
-		on:keyup={ignore}
-		on:keydown={ignore}
-		on:keypress={ignore}
-		on:mouseup={handleMouseUp}
-		on:click={handleSingleClick}
-		on:mouseout={handleMouseOut}
-		on:mouseover={handleMouseOver}
-		on:mousedown={handleLongClick}
-		on:dblclick={handleDoubleClick}
-		on:contextmenu={handleContextMenu}
-		viewbox='0 0 {size} {size}'
-		style='
-			top: {top}px;
-			left: {left}px;
-			position: absolute;
-			z-index: {ZIndex.dots};'>
-		<path d={path} stroke={thing.color} fill={fillColor}/>
-	</svg>
+	<SVGD3
+		path={path}
+		fill={fillColor}
+		stroke={thing.color}
+		zIndex={ZIndex.dots}
+		size={new Size(size, size)}
+	/>
 </button>
