@@ -131,7 +131,7 @@
 		border: none;
 		outline: none;
 		white-space: pre;
-		position: relative;
+		position: absolute;
 	}
 	.ghost {
 		position: absolute;
@@ -160,11 +160,9 @@
 		on:cut={handleCutOrPaste}
 		on:keydown={handleKeyDown}
 		on:paste={handleCutOrPaste}
-		style='
-			top: -2px;
+		style='left: 10px;
 			color: {thing.color};
 			z-index: {ZIndex.text};
-			left: -7px;
 			font-size: {$thing_fontSize}px;
 			font-family: {$thing_fontFamily};
 			outline-color: k.backgroundColor;

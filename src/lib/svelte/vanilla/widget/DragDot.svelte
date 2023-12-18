@@ -28,9 +28,9 @@
 	$: {
 		if ($dot_size > 0) {
 			size = $dot_size;
-			left = -4;
+			left = 1;
 			path = svgPath.oval(size, false);
-			top = $id_showRevealCluster == thing.id ? 23 : -1;
+			top = $id_showRevealCluster == thing.id ? 23 : 0;
 		}
 	}
 
@@ -92,7 +92,7 @@
 		border: none;
 		cursor: pointer;
 		background: none;
-		position: relative;
+		position: absolute;
 	}
 </style>
 
@@ -121,7 +121,7 @@
 		style='
 			top: {top}px;
 			left: {left}px;
-			position: relative;
+			position: absolute;
 			z-index: {ZIndex.dots};'>
 		<path d={path} stroke={thing.color} fill={fillColor}/>
 	</svg>

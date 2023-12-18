@@ -10,17 +10,11 @@ export default class Grabs {
 		ids_grabbed.subscribe((ids: string[]) => { // executes whenever ids_grabbed changes
 			if (ids.length > 0 && this.hierarchy.db && this.hierarchy.db.hasData) {
 				this.grabbed = [];
-				let remove = [];
 				for (const id of ids) {
 					const thing = this.hierarchy.thing_getForID(id)
-					if (!thing) {
-						remove.push(id)
-					} else {
-						this.grabbed.push(thing);						
+					if (thing) {
+						this.grabbed.push(thing);
 					}
-				}
-				for (const id of remove) {
-					this.ungrab_ID(id);
 				}
 			}
 		});
@@ -65,14 +59,9 @@ export default class Grabs {
 	}
 
 	ungrab(thing: Thing) {
-		this.ungrab_ID(thing.id);
-		this.clearClusterState(thing);
-	}
-
-	ungrab_ID(id: string) {
 		const rootID = this.hierarchy.idRoot;
 		ids_grabbed.update((array) => {
-			const index = array.indexOf(id);
+			const index = array.indexOf(thing.id);
 			if (index != -1) {				// only splice array when item is found
 				array.splice(index, 1);		// 2nd parameter means remove one item only
 			}
@@ -85,6 +74,7 @@ export default class Grabs {
 		if (ids.length == 0) {
 			this.hierarchy.root?.grabOnly();
 		}
+		this.clearClusterState(thing);
 	}
 
 	latestGrab(up: boolean) {

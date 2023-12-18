@@ -126,7 +126,7 @@
 	style='
 		width={size}px;
 		height={size}px;
-		position: relative;
+		position: absolute;
 		left: {size + thing.titleWidth + 2}px;
 	'>
 	<svg width={size}
@@ -145,9 +145,9 @@
 		on:dblclick={handleDoubleClick}
 		on:contextmenu={handleContextMenu}
 		style='
-			top: {$dot_size / 2 - 1}px;
-			left: -7px;
-			position: relative;
+			top: {$dot_size / 2}px;
+			left: -1px;
+			position: absolute;
 			z-index: {ZIndex.dots};'>
 		<path d={path} stroke={strokeColor} fill={debug.lines ? 'transparent' : fillColor}/>
 		{#if thing.isBulkAlias}

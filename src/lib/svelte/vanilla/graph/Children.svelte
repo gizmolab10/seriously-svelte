@@ -12,7 +12,7 @@
 	let prior = new Date().getTime();
 	let children = thing.children;
 	let center = new Point();
-	let threeArrays = [];
+	let childArray = [];
 
 	onDestroy( () => { signalHandler.disconnect(); });
 	onMount( () => { thing.debugLog('CHILDREN mount'); layoutChildren(); });
@@ -62,7 +62,7 @@
 			const delta = new Point(20, -2);
 			center = childOrigin.offsetBy(delta);
 			lineRects = new Layout(thing, childOrigin).lineRects;
-			threeArrays = lineRects.map((rect, index) => ({
+			childArray = lineRects.map((rect, index) => ({
 				origin: originForGrandchildren(children[index], rect),
 				child: children[index], 
 				rect: rect,
@@ -85,7 +85,7 @@
 	{#if debug.lines}
 		<Circle radius=1 center={center} color=black thickness=1/>
 	{/if}
-	{#each threeArrays as i}
+	{#each childArray as i}
 		<Widget thing={i.child} origin={i.rect.extent.offsetBy(new Point(12, ($dot_size / -15) -11))}/>
 		<Line thing={i.child} curveType={i.rect.curveType} rect={i.rect.offsetBy(new Point(($dot_size / 2) - 129, ($dot_size / 2) - 8))}/>
 		{#if i.child.hasChildren && i.child.isExpanded}

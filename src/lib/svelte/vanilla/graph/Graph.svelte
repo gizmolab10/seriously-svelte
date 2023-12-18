@@ -14,10 +14,11 @@
 	let greenRect: Rect;
 	let blueRect: Rect;
 	let redRect: Rect;
+	let toggle = true;
 	let here;
 
-	onDestroy( () => { signalHandler.disconnect(); });
 	function ignore(event) {}
+	onDestroy( () => { signalHandler.disconnect(); });
 
 	const signalHandler = handleRelayout((idThing) => {
 		if (here && (idThing == null || idThing == here.id)) {
@@ -67,6 +68,7 @@
 		if (here == null || here.id != $id_here) {			
 			here = dbDispatch.db.hierarchy.thing_getForID($id_here);
 			updateOrigins();
+			toggle = !toggle;	// also cause entire graph to be replaced
 		}
 		if (here) { // can sometimes be null TODO: WHY?
 			let grabbed = $ids_grabbed.includes(here.id);
@@ -111,7 +113,7 @@
 
 <svelte:document on:keydown={globalHandleKeyDown}/>
 {#if here}
-	<div class='graph'
+	<div class='graph' key={toggle}
 		style='
 			position: fixed;
 			overflow: hidden;

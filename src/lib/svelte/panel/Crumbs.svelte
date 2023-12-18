@@ -1,18 +1,12 @@
 <script lang='ts'>
-	import { Thing, Signals, onDestroy, dbDispatch, handleRelayout } from '../../ts/common/GlobalImports';
 	import { ids_grabbed, crumbsWidth } from '../../ts/managers/State';
+	import { Thing, dbDispatch } from '../../ts/common/GlobalImports';
 	import Crumb from '../kit/Crumb.svelte';
 	let ancestors: Array<Thing> = [];
 	let toggleDraw = false;
 	let grab: Thing;
 
-	onDestroy( () => {signalHandler.disconnect(); });
 	function thing_lastGrabbed() { return dbDispatch.db.hierarchy.grabs.thing_lastGrabbed; }
-
-	const signalHandler = handleRelayout((thingID) => {
-		updateAncestors($crumbsWidth);
-		toggleDraw = !toggleDraw;
-	})
 
 	$: {
 		if ($ids_grabbed || grab == null || ancestors.length == 0) {

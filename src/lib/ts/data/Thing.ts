@@ -202,12 +202,11 @@ export default class Thing extends Datum {
 
 	becomeHere() {
 		if (this.hasChildren) {
-			const id = this.id;
-			id_here.set(id);
+			id_here.set(this.id);
 			this.expand();
 			id_showRevealCluster.set(null);
 			this.thing_relayout();
-			persistLocal.writeToDBKey(PersistID.here, id)
+			persistLocal.writeToDBKey(PersistID.here, this.id)
 		};
 	}
 
@@ -315,8 +314,8 @@ export default class Thing extends Datum {
 
 	redraw_runtimeBrowseRight(RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, fromReveal: boolean = false) {
 		let newGrab: Thing | null = RIGHT ? this.firstChild : this.firstParent;
+		const newGrabIsNotHere = get(id_here) != newGrab?.id;
 		const newHere = RIGHT ? this : this.grandparent;
-		const newGrabIsHere = newGrab.id == get(id_here)
 		if (!RIGHT) {
 			const root = this.hierarchy.root;
 			if (EXTREME) {
@@ -325,7 +324,7 @@ export default class Thing extends Datum {
 				if (!SHIFT) {
 					if (fromReveal) {
 						this.expand();
-					} else if (newGrabIsHere) {
+					} else if (newGrabIsNotHere && newGrab && !newGrab.isExpanded) {
 						newGrab?.expand();
 					}
 				} else if (newGrab) { 
@@ -345,14 +344,15 @@ export default class Thing extends Datum {
 			}
 			this.expand();
 		}
-		const allowToBecomeHere = (!SHIFT || newGrab == this.firstParent) && !newGrabIsHere; 
+		id_editing.set(null);
+		newGrab?.grabOnly();
+		const allowToBecomeHere = (!SHIFT || newGrab == this.firstParent) && newGrabIsNotHere; 
 		const shouldBecomeHere = !newHere.isVisible || newHere.isRoot;
 		if (!RIGHT && allowToBecomeHere && shouldBecomeHere) {
 			newHere.becomeHere();
+		} else {
+			signalRelayout();			// becomeHere already does this
 		}
-		id_editing.set(null);
-		newGrab?.grabOnly();
-		signalRelayout();			// tell graph to update line rects
 	}
 
 }
