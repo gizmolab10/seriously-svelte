@@ -1,6 +1,6 @@
 <script>
-	import { k, get, Size, Thing, Point, debug, ZIndex, Signals, onMount } from "../../../ts/common/GlobalImports";
-	import { svgPath, Direction, onDestroy, dbDispatch, graphEditor } from "../../../ts/common/GlobalImports";
+	import { Direction, onDestroy, dbDispatch, graphEditor, signal_rebuild } from "../../../ts/common/GlobalImports";
+	import { k, get, Size, Thing, Point, debug, ZIndex, onMount, svgPath } from "../../../ts/common/GlobalImports";
 	import { expanded, dot_size, ids_grabbed, id_showRevealCluster } from '../../../ts/managers/State';
 	import SVGD3 from '../../kit/SVGD3.svelte';
 	export let center = new Point();
@@ -105,6 +105,7 @@
 				thing.grabOnly()
 				$id_showRevealCluster = thing.id;
 			}
+			signal_rebuild();
 		}, k.longClickThreshold);
 	}
 

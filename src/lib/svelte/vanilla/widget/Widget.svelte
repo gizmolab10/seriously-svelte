@@ -17,7 +17,7 @@
 	let border = '';
 	let radius = $dot_size / 2;
 	let rightPadding = 22
-	let yPadding = 0;
+	let revealTop = 0;
 	let height = 0;
 	let width = 0;
 	let left = 0;
@@ -44,6 +44,7 @@
 	}
 
 	function updateLayout() {
+		height = $row_height - 2;
 		const delta = showingBorder ? 0 : 1;
 		left = origin.x + delta - 2;
 		const titleWidth = thing.titleWidth;
@@ -51,22 +52,16 @@
 		thing.debugLog('TITLE WIDTH: ' + titleWidth);
 		// debugReact.log_layout(`WIDGET layout ${thing.description}`);
 		if (thing.showCluster) {
-			height = k.clusterHeight;
-			radius = height / 2;
-			yPadding = radius - 17;
-			top = origin.y + delta - yPadding;
-			const xPadding = $dot_size - 3.5;
-			padding = yPadding + 'px ' + xPadding + 'px' + yPadding + 'px 0px';
+			radius = k.clusterHeight / 2;
+			const yPadding = radius - 12;
+			revealTop = radius - 17;
+			top = origin.y + delta - yPadding + 1;
+			padding = `${yPadding}px ${rightPadding}px ${yPadding}px 0px`;
 		} else {
-			yPadding = $dot_size / -3;
-			height = $row_height - 2;
-			radius = $dot_size / 2;
+			revealTop = $dot_size / -3;
+			radius = $row_height / 2;
 			top = origin.y + delta + 1;
-			if (thing.isExemplar) {
-				padding = '0px ' + rightPadding + 2 + 'px 0px 0px';
-			} else {
-				padding = '0px ' + rightPadding + 'px 0px 0px';
-			}
+			padding = `0px ${rightPadding}px 0px 0px`;
 		}
 	}
 
@@ -109,13 +104,13 @@
 		height: {height}px;
 		padding: {padding};
 		z-index: {ZIndex.widgets};
-		border-radius: {$row_height / 1.5}px;
+		border-radius: {radius}px;
 	'>
 	<DragDot thing={thing}/>
 	<TitleEditor thing={thing}/>
 	<div class='revealDot'
 		style='
-			top:{yPadding}px;
+			top:{revealTop}px;
 			z-index: {ZIndex.dots};'>
 		<RevealDot thing={thing} center={origin}/>
 	</div>

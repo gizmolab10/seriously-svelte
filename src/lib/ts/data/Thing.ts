@@ -306,8 +306,8 @@ export default class Thing extends Datum {
 				const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
 				const newOrder = newIndex + goose;
 				this.order_setTo(newOrder, false);
-				signal_rebuild();
 			}
+			signal_rebuild();
 		}
 	}
 

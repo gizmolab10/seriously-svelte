@@ -106,7 +106,6 @@
 			</div>
 			<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: {$showDetails ? k.detailsMargin : 0}px; top: 85px;'></div>
 			{#key graph_toggle}
-				{graph_toggle}
 				<Graph/>
 			{/key}
 		{/if}
