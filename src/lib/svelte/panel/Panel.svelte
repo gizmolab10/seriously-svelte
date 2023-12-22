@@ -33,12 +33,6 @@
 		}
 	}
 
-	$: {
-		if ($expanded != null) {
-			graph_fullRebuild();
-		}
-	}
-
 	function graph_fullRebuild() {
 		graphRect_update();
 		debugReact.log_rebuild(`PANEL ${here.description}`)
@@ -52,65 +46,6 @@
 	}
 
 </script>
-
-<div class='leftSide'
-	style='top: 8px;
-		position: fixed;
-		z-index: {ZIndex.frontmost}; 
-		background-color: transparent;
-		height: {$showDetails ? '100%' : '33px'};'>
-	<CircularButton left=15
-		image='settings.svg'
-		borderColor='white'
-		onClick={details_buttonClicked}/>
-		<button class='build' on:click={builds_buttonClicked}>{$build}</button>
-	{#if !$isBusy}
-		<CircularButton left=85
-			onClick={() => {help_buttonClicked()}}
-			label='i'
-			size={size}/>
-	{/if}
-	{#if $showDetails}
-		<Details/>
-	{/if}
-</div>
-<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: -10px; top: 32px; width: {$id_popupView ? '111px' : '110%'};'></div>
-<div class='verticalLine' style='height: {$showDetails ? '100%' : '33px'}; z-index: {ZIndex.frontmost};'></div>
-<div class='rightSide' style='
-	left: {$showDetails ? 100 : 0}px;
-	height: 100%;
-	position: fixed;
-	overflow: hidden;
-	z-index: {ZIndex.panel};'>
-	{#if $isBusy}
-		<p>Welcome to Seriously</p>
-		{#if $db_type != DBType.local}
-			<p>(loading your {$db_type} data{$db_type == DBType.firebase ? ', from ' + dbDispatch.db.baseID : ''})</p>
-		{/if}
-	{:else if !$things_arrived}
-		<p>Nothing is available.</p>
-	{:else}
-		{#if $id_popupView == ButtonID.help}
-			<Help size={size}/>
-		{:else if $id_popupView == ButtonID.buildNotes}
-			<BuildNotes/>
-		{:else if $id_popupView == null}
-			<div class='top' style='z-index: {ZIndex.frontmost}'>
-				<Crumbs/>
-			</div>
-			<div class='topTitle'
-				style='color: {here?.color};;
-					z-index: {ZIndex.frontmost};
-					left: {$showDetails ? '100px' : '-1px'}'>
-				{here?.title}
-			</div>
-			<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: {$showDetails ? k.detailsMargin : 0}px; top: 85px;'></div>
-			{#key graph_toggle}
-				<Graph/>
-			{/key}
-		{/if}
-	{/if}
-</div>
 
 <style>
 	p {
@@ -159,3 +94,62 @@
 		background-color: lightgray;
 	}
 </style>
+
+<div class='leftSide'
+	style='top: 8px;
+		position: fixed;
+		z-index: {ZIndex.frontmost}; 
+		background-color: transparent;
+		height: {$showDetails ? '100%' : '33px'};'>
+	<CircularButton left=15
+		image='settings.svg'
+		borderColor='white'
+		onClick={details_buttonClicked}/>
+	<button class='build' on:click={builds_buttonClicked}>{$build}</button>
+	{#if !$isBusy}
+		<CircularButton left=85
+			onClick={() => {help_buttonClicked()}}
+			label='i'
+			size={size}/>
+	{/if}
+	{#if $showDetails}
+		<Details/>
+	{/if}
+</div>
+<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: -10px; top: 32px; width: {$id_popupView ? '111px' : '110%'};'></div>
+<div class='verticalLine' style='height: {$showDetails ? '100%' : '33px'}; z-index: {ZIndex.frontmost};'></div>
+<div class='rightSide' style='
+	left: {$showDetails ? 100 : 0}px;
+	height: 100%;
+	position: fixed;
+	overflow: hidden;
+	z-index: {ZIndex.panel};'>
+	{#if $isBusy}
+		<p>Welcome to Seriously</p>
+		{#if $db_type != DBType.local}
+			<p>(loading your {$db_type} data{$db_type == DBType.firebase ? ', from ' + dbDispatch.db.baseID : ''})</p>
+		{/if}
+	{:else if !$things_arrived}
+		<p>Nothing is available.</p>
+	{:else}
+		{#if $id_popupView == ButtonID.help}
+			<Help size={size}/>
+		{:else if $id_popupView == ButtonID.buildNotes}
+			<BuildNotes/>
+		{:else if $id_popupView == null}
+			<div class='top' style='z-index: {ZIndex.frontmost}'>
+				<Crumbs/>
+			</div>
+			<div class='topTitle'
+				style='color: {here?.color};;
+					z-index: {ZIndex.frontmost};
+					left: {$showDetails ? '100px' : '-1px'}'>
+				{here?.title}
+			</div>
+			<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: {$showDetails ? k.detailsMargin : 0}px; top: 85px;'></div>
+			{#key graph_toggle}
+				<Graph/>
+			{/key}
+		{/if}
+	{/if}
+</div>

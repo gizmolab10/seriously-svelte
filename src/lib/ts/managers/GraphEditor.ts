@@ -146,6 +146,7 @@ export default class GraphEditor {
 		if (id) {
 			const clear = id == get(id_showRevealCluster);
 			id_showRevealCluster.set(clear ? null : id);
+			signal_rebuild();
 		}
 
 	}

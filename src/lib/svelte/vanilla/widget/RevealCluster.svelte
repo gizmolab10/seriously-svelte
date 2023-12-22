@@ -1,6 +1,7 @@
 <script lang='ts'>
-    import { k, ZIndex, onMount, svgPath, graphEditor, dbDispatch } from '../../../ts/common/GlobalImports';
+    import { k, Size, ZIndex, onMount, svgPath, graphEditor, dbDispatch } from '../../../ts/common/GlobalImports';
     import { dot_size, id_showRevealCluster } from '../../../ts/managers/State';
+	import CircularButton from '../../kit/CircularButton.svelte';
 	import Trash from '../../kit/Trash.svelte';
 	export let thing: Thing;
 	let diameter = $dot_size;
@@ -27,6 +28,14 @@
 
 </script>
 
+<style>
+    button {
+        border-width: 1px;
+        position: absolute;
+        border-radius: 17px
+    }
+</style>
+
 <button class='add'
     on:click={() => handleClick('add')}
 	style='top: {top - diameter + 1.5}px;
@@ -38,25 +47,17 @@
     <svg width={diameter}
 		height={diameter}
 		viewbox='0 0 {diameter} {diameter}'>
-        <path d={path} stroke={thing.color} fill={k.backgroundColor}/>
-        <text x='1.5' y={diameter} fill={thing.color} font-size='1.5em'>+</text>
+        <path d={path} stroke={color} fill={k.backgroundColor}/>
+        <text x='1.5' y={diameter} fill={color} font-size='1.5em'>+</text>
     </svg>
 </button>
 <button class='dismiss'
     on:click={() => handleClick('delete')}
-	style='top: {top + diameter + 13}px;
+	style='top: {top + diameter + 14}px;
         left: {left - 1}px;
 		border: none;
 		cursor: pointer;
 		background: none;
         z-index:{ZIndex.overlay};'>
-    <Trash color={thing.color}/>
+    <Trash color={color}/>
 </button>
-
-<style>
-    button {
-        border-width: 1px;
-        position: absolute;
-        border-radius: 17px
-    }
-</style>

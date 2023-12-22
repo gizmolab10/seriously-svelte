@@ -86,7 +86,7 @@
 			graphEditor.thing_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
 		}
 		setIsHovering_updateColors(false);
-		updatePath();
+		signal_rebuild();
 	}
 
 	function handleDoubleClick(event) {

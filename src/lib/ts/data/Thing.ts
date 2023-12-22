@@ -349,7 +349,7 @@ export default class Thing extends Datum {
 		const shouldBecomeHere = !newHere.isVisible || newHere.isRoot;
 		if (!RIGHT && allowToBecomeHere && shouldBecomeHere) {
 			newHere.becomeHere();
-		} else {
+		} else if (!RIGHT || !this.hasChildren) {
 			signal_rebuild();			// becomeHere already does this
 		}
 	}
