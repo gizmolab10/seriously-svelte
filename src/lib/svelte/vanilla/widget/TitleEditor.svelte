@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { row_height, id_editing, thing_fontSize, thing_fontFamily, id_editingStopped } from '../../../ts/managers/State';
-	import { SeriouslyRange, graphEditor, signalRelayout } from '../../../ts/common/GlobalImports'; 
+	import { SeriouslyRange, graphEditor, signal_relayout } from '../../../ts/common/GlobalImports'; 
 	import { k, Thing, ZIndex, onMount, onDestroy, dbDispatch } from '../../../ts/common/GlobalImports';
 	import Widget from './Widget.svelte';
 	export let thing = Thing;
@@ -42,7 +42,7 @@
 			switch (event.key) {	
 				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); graphEditor.thing_redraw_remoteAddChildTo(thing.firstParent); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
-				default:	  signalRelayout(); break;
+				default:	  signal_relayout(); break;
 			}
 		}
 	}

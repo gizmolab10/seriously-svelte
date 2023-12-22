@@ -1,7 +1,7 @@
 <script>
-	import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, PersistID, dbDispatch } from '../../ts/common/GlobalImports'
-	import { db_type, isBusy, id_here, build, graphRect, id_popupView, showDetails, things_arrived } from '../../ts/managers/State';
-	import { ButtonID, Hierarchy, persistLocal, signalRelayout, updateGraphRect } from '../../ts/common/GlobalImports'
+	import { build, isBusy, id_here, db_type, expanded, graphRect, id_popupView, showDetails, things_arrived } from '../../ts/managers/State';
+	import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, PersistID, dbDispatch, debugReact } from '../../ts/common/GlobalImports';
+	import { ButtonID, Hierarchy, persistLocal, handle_rebuild, signal_relayout, graphRect_update } from '../../ts/common/GlobalImports';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import LabelButton from '../kit/LabelButton.svelte';
 	import BuildNotes from './BuildNotes.svelte';
@@ -9,26 +9,45 @@
 	import Help from '../help/Help.svelte';
 	import Details from './Details.svelte';
 	import Crumbs from './Crumbs.svelte';
-	let toggleDraw = false;
+	let graph_toggle = false;
 	let here = Thing;
 	let size = 14;
 	
-	function handleBuildsClick(event) { $id_popupView = ($id_popupView == ButtonID.buildNotes) ? null : ButtonID.buildNotes; }
-	function handleHelpClick() { $id_popupView = ($id_popupView == ButtonID.help) ? null : ButtonID.help; }
-	window.addEventListener('resize', (event) => { updateGraphRect(); toggleDraw = !toggleDraw; });
-
-	$: {
-		here = dbDispatch.db.hierarchy.thing_getForID($id_here);
-	}
+	function builds_buttonClicked(event) { $id_popupView = ($id_popupView == ButtonID.buildNotes) ? null : ButtonID.buildNotes; }
+	function help_buttonClicked() { $id_popupView = ($id_popupView == ButtonID.help) ? null : ButtonID.help; }
+	window.addEventListener('resize', (event) => { graph_fullRebuild(); });
 	
 	onMount(async () => {
 		launch.setup();
-		signalRelayout();
-	})
+		graph_fullRebuild();
+	});
+
+	const rebuild_signalHandler = handle_rebuild((idThing) => {
+		graph_fullRebuild();
+	});
+
+	$: {
+		if (here.id != $id_here) {
+			here = dbDispatch.db.hierarchy.thing_getForID($id_here);
+			graph_fullRebuild();
+		}
+	}
+
+	$: {
+		if ($expanded != null) {
+			graph_fullRebuild();
+		}
+	}
+
+	function graph_fullRebuild() {
+		graphRect_update();
+		debugReact.log_rebuild(`PANEL ${here.description}`)
+		graph_toggle = !graph_toggle;	// remount graph component
+	}
 	
-	function handleSettings(event) {
+	function details_buttonClicked(event) {
 		$showDetails = !$showDetails;
-		signalRelayout();
+		signal_relayout();
 		persistLocal.writeToKey(PersistID.details, $showDetails);
 	}
 
@@ -43,11 +62,11 @@
 	<CircularButton left=15
 		image='settings.svg'
 		borderColor='white'
-		onClick={handleSettings}/>
-		<button class='build' on:click={handleBuildsClick}>{$build}</button>
+		onClick={details_buttonClicked}/>
+		<button class='build' on:click={builds_buttonClicked}>{$build}</button>
 	{#if !$isBusy}
 		<CircularButton left=85
-			onClick={() => {handleHelpClick()}}
+			onClick={() => {help_buttonClicked()}}
 			label='i'
 			size={size}/>
 	{/if}
@@ -86,7 +105,8 @@
 				{here?.title}
 			</div>
 			<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: {$showDetails ? k.detailsMargin : 0}px; top: 85px;'></div>
-			{#key toggleDraw}
+			{#key graph_toggle}
+				{graph_toggle}
 				<Graph/>
 			{/key}
 		{/if}

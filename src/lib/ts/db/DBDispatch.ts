@@ -13,6 +13,14 @@ export default class DBDispatch {
 
 	constructor() {
 		this.db = dbFirebase;
+	}
+
+	applyQueryStrings(queryStrings: URLSearchParams) {
+		const type = queryStrings.get('db') ?? persistLocal.readFromKey(PersistID.db) ?? DBType.firebase;
+		this.updateDBForType(type);
+		this.db.applyQueryStrings(queryStrings);
+		db_type.set(type);
+		this.updateHierarchy(type);
 		db_type.subscribe((type: string) => {
 			if (type) {
 				id_here.set(null);
@@ -21,12 +29,6 @@ export default class DBDispatch {
 				this.updateHierarchy(type);
 			}
 		});
-	}
-
-	applyQueryStrings(queryStrings: URLSearchParams) {
-		const type = queryStrings.get('db') ?? persistLocal.readFromKey(PersistID.db) ?? DBType.firebase;
-		this.dbForType(type).applyQueryStrings(queryStrings)
-		db_type.set(type);	// invokes DB update (line 22 above), which needs baseID already set (must be above)
 	}
 
 	dbForType(type: string): DBInterface {

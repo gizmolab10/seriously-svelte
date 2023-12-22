@@ -31,7 +31,7 @@
 		}
 	}
 
-	function handleHit(goLeft) {
+	function directional_buttonClicked(goLeft) {
 		let nextIndex = notesIndex + (10 * (goLeft ? -1 : 1));
 		if (nextIndex < 0 || (builds.notes.length - nextIndex) < 1) {
 			return;
@@ -85,7 +85,7 @@
 	<div class='modal-content'>
 		<div class='header-line'>
 			{#key notes}
-				<Directionals hit={handleHit} display={display}/>
+				<Directionals hit={directional_buttonClicked} display={display}/>
 			{/key}
 			<div class='title'>Seriously Build Notes (10 most recent)</div>
 			<CloseButton size={size}/>

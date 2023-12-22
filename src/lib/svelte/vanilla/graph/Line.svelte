@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { Rect, Size, Point, debug, ZIndex, SVGType, svgPath, LineCurveType } from '../../../ts/common/GlobalImports';
+	import { Rect, Size, Point, debug, ZIndex, SVGType, svgPath, debugReact, LineCurveType } from '../../../ts/common/GlobalImports';
 	import { dot_size, user_graphOffset } from '../../../ts/managers/State';
 	import Circle from '../../kit/Circle.svelte';
 	import Box from '../../kit/Box.svelte';
@@ -19,7 +19,7 @@
 
 	$: {
 		if ($dot_size > 0) {
-			// debug.log_react(`LINE ${thing.description}`);
+			// debugReact.log_origins(`LINE ${thing.description}`);
 			switch (curveType) {
 				case LineCurveType.up:
 					origin = rect.origin;

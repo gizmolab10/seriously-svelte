@@ -3,18 +3,24 @@ import { Signal } from 'typed-signals';
 import { get } from 'svelte/store';
 
 export enum Signals {
-	relayout = 'r',
+	relayout = 'l',
+	rebuild = 'b',
 }
 
 const handleSignal = new Signal<(kinds: Signals[], value: any) => void>();
-export function signalRelayout() { signal(Signals.relayout, get(id_here)); }
+export function signal_rebuild() { signal(Signals.rebuild, get(id_here)); }
+export function signal_relayout() { signal(Signals.relayout, get(id_here)); }
 export function signal(kind: Signals, value: any = null) { handleSignal.emit([kind], value); }
 
-export function handleRelayout(onSignal: (optionalValue: any | null) => any ) {
+export function handle_rebuild(onSignal: (value: any | null) => any ) {
+	return handleSignalOfKind(Signals.rebuild, onSignal);
+}
+
+export function handle_relayout(onSignal: (value: any | null) => any ) {
 	return handleSignalOfKind(Signals.relayout, onSignal);
 }
 
-function handleSignalOfKind(kind: Signals, onSignal: (optionalValue: any | null) => any ) {
+function handleSignalOfKind(kind: Signals, onSignal: (value: any | null) => any ) {
 	return handleSignal.connect((kinds, value) => {
 		if (kinds.includes(kind)) {
 			onSignal(value);

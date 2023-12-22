@@ -4,8 +4,9 @@
 	import { dot_size, ids_grabbed, id_showRevealCluster } from '../../../ts/managers/State';
 	import SVGD3 from '../../kit/SVGD3.svelte';
 	export let thing;
-	let hoverColor = thing.color;
+	let strokeColor = thing.color;
 	let fillColor = thing.color;
+	let isHovering = true;
 	let isGrabbed = false;
 	let clickCount = 0;
 	let button = null;
@@ -15,29 +16,38 @@
 	let left = 0;
 	let top = 0;
 	
-	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right-
-	function handleMouseOut(event) { updateColors(false); }
-	function handleMouseOver(event) { updateColors(true); }
-	function handleMouseUp() { clearTimeout(clickTimer); }
 	function ignore(event) {}
-	
-	onMount( () => {
-		updateColors(false);
-	});
+	onMount( () => { updateColorsForIsHovering(false); });
+	function handleMouseIn(event) { updateColorsForIsHovering(true); }
+	function handleMouseUp() { clearTimeout(clickTimer); }
+	function handleMouseOut(event) { updateColorsForIsHovering(false); }
+	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right-
 
 	$: {
 		const grabbed = $ids_grabbed?.includes(thing.id);
 		if (isGrabbed != grabbed) {
 			isGrabbed = grabbed;
-			updateColors(false);
 		}
 	}
 
-	function updateColors(isHovering) {
+	$: {
+		if (thing != null) {
+			updateColors();
+		}
+	}
+
+	function updateColors() {
+		thing.updateColorAttributes();
+		strokeColor = thing.color;
 		thing.updateColorAttributes();	// needed for revealColor
-		const flag = isHovering;
-		hoverColor = thing.revealColor(!flag);
-		fillColor = debug.lines ? 'transparent' : thing.revealColor(flag);
+		fillColor = debug.lines ? 'transparent' : thing.revealColor(isHovering);
+	}
+
+	function updateColorsForIsHovering(flag) {
+		if (isHovering != flag) {
+			isHovering = flag;
+			updateColors();
+		}
 	}
 
 	function clearClicks() {
@@ -79,7 +89,7 @@
 	$: {
 		if ($dot_size > 0) {
 			size = $dot_size;
-			left = 1 - (size / 2);
+			left = 1 - (size / 2); // offset from center?
 			path = svgPath.oval(size, false);
 			top = $id_showRevealCluster == thing.id ? 23 : -5;
 		}
@@ -106,7 +116,7 @@
 	on:mouseup={handleMouseUp}
 	on:click={handleSingleClick}
 	on:mouseout={handleMouseOut}
-	on:mouseover={handleMouseOver}
+	on:mouseover={handleMouseIn}
 	on:mousedown={handleLongClick}
 	on:dblclick={handleDoubleClick}
 	on:contextmenu={handleContextMenu}
@@ -119,7 +129,7 @@
 	<SVGD3
 		path={path}
 		fill={fillColor}
-		stroke={thing.color}
+		stroke={strokeColor}
 		zIndex={ZIndex.dots}
 		size={Size.square(size)}
 	/>

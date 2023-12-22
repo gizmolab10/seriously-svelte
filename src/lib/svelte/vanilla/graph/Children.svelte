@@ -1,6 +1,6 @@
 <script lang=ts>
 	import { Rect, Size, Point, Thing, debug, signal, Signals, Layout, onMount, LineRect, onDestroy } from '../../../ts/common/GlobalImports';
-	import { LineCurveType, orders_normalize_remoteMaybe, handleRelayout } from '../../../ts/common/GlobalImports';
+	import { debugReact, LineCurveType, orders_normalize_remoteMaybe, handle_relayout } from '../../../ts/common/GlobalImports';
 	import { dot_size, line_stretch, user_graphOffset } from '../../../ts/managers/State';
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../../kit/Circle.svelte';
@@ -15,17 +15,16 @@
 	let childArray = [];
 
 	onDestroy( () => { signalHandler.disconnect(); });
-	onMount( () => { thing.debugLog('CHILDREN mount'); layoutChildren(); });
+	onMount( () => { debugReact.log_mount(`CHILDREN ${thing.description}`); layoutChildren(); });
 	
-	const signalHandler = handleRelayout((idThing) => {
+	const signalHandler = handle_relayout((idThing) => {
 		if (!idThing || idThing == thing.id || thing.childrenIDs_anyMissingFromIDsOf(children)) {
 			const now = new Date().getTime();
 			if (now - prior > 1000) {
 				prior = now;
 				setTimeout(async () => { // delay until all other handlers for this signal are done TODO: WHY?
 					await orders_normalize_remoteMaybe(thing.children);
-					children = thing.children;
-					thing.debugLog('CHILDREN signal');
+					debugReact.log_layout('CHILDREN signal');
 					// describe(children);
 					layoutChildren();
 					if (idThing) { // only recurse if starting at a specific id
@@ -42,6 +41,7 @@
 	
 	$: {
 		if ($user_graphOffset != null) {
+			debugReact.log_layout(`CHILDREN $user_graphOffset ${thing.description}`);
 			layoutChildren();
 		}
 	}
@@ -49,6 +49,7 @@
 	$: {
 		if ($dot_size > 0) {
 			setTimeout(() => {
+				debugReact.log_layout(`CHILDREN $dot_size ${thing.description}`);
 				layoutChildren()
 			}, 2);
 		}
@@ -56,11 +57,11 @@
 	
 	function layoutChildren() {
 		if (thing) {
-			debug.log_react(`CHILDREN layout ${thing.description}`);
+			const delta = new Point(20, -2);
 			const height = (thing.visibleProgeny_halfHeight);
 			const childOrigin = origin.offsetByY(height);
-			const delta = new Point(20, -2);
 			center = childOrigin.offsetBy(delta);
+			children = thing.children;
 			lineRects = new Layout(thing, childOrigin).lineRects;
 			childArray = lineRects.map((rect, index) => ({
 				origin: originForGrandchildren(children[index], rect),
@@ -73,6 +74,7 @@
 	function originForGrandchildren(child: Thing, rect: LineRect): Point {
 		if (!rect || !child) {
 			alert('grandchildren origin not computable');
+			return new Point();
 		}
 		const x = origin.x + child.titleWidth + $dot_size + $line_stretch - 2;
 		const y = rect.extent.y - child.visibleProgeny_halfHeight;

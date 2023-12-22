@@ -1,6 +1,6 @@
-import { id_here, dot_size, id_editing, expanded, ids_grabbed, row_height, id_showRevealCluster, line_stretch } from '../managers/State';
 import { k, get, Size, Datum, debug, signal, Signals, Predicate, Hierarchy, TraitType, PersistID, DebugFlag } from '../common/GlobalImports';
-import { dbDispatch, persistLocal, getWidthOf, signalRelayout, SeriouslyRange, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { dbDispatch, persistLocal, getWidthOf, signal_rebuild, SeriouslyRange, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { id_here, dot_size, id_editing, expanded, ids_grabbed, row_height, id_showRevealCluster, line_stretch } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -50,7 +50,7 @@ export default class Thing extends Datum {
 			const shouldShow = (idCluster != undefined) && idCluster == this.id;
 			if (this.showCluster != shouldShow) {
 				this.showCluster = shouldShow;
-				signalRelayout();
+				signal_rebuild();
 			}
 		});
 	};
@@ -180,7 +180,7 @@ export default class Thing extends Datum {
 				return array;
 			});
 			persistLocal.writeToDBKey(PersistID.expanded, get(expanded));
-			signalRelayout();
+			signal_rebuild();
 		}
 	}
 
@@ -205,7 +205,6 @@ export default class Thing extends Datum {
 			id_here.set(this.id);
 			this.expand();
 			id_showRevealCluster.set(null);
-			this.thing_relayout();
 			persistLocal.writeToDBKey(PersistID.here, this.id)
 		};
 	}
@@ -284,7 +283,7 @@ export default class Thing extends Datum {
 				this.children[0].grabOnly()
 			}
 			this.expand();
-			signalRelayout();
+			signal_rebuild();
 		}
 	}
 
@@ -307,7 +306,7 @@ export default class Thing extends Datum {
 				const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
 				const newOrder = newIndex + goose;
 				this.order_setTo(newOrder, false);
-				this.firstParent.thing_relayout();
+				signal_rebuild();
 			}
 		}
 	}
@@ -351,7 +350,7 @@ export default class Thing extends Datum {
 		if (!RIGHT && allowToBecomeHere && shouldBecomeHere) {
 			newHere.becomeHere();
 		} else {
-			signalRelayout();			// becomeHere already does this
+			signal_rebuild();			// becomeHere already does this
 		}
 	}
 

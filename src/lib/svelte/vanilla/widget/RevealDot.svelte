@@ -5,8 +5,8 @@
 	import SVGD3 from '../../kit/SVGD3.svelte';
 	export let center = new Point();
 	export let thing;
+	let bulkAliasFillColor = k.backgroundColor;
 	let insidePath = svgPath.circle(16, 6);
-	let aliasFillColor = k.backgroundColor;
 	let fillColor = k.backgroundColor;
 	let strokeColor = thing.color;
 	let isHovering = false;
@@ -48,7 +48,7 @@
 	}
 
 	$: {
-		if ($ids_grabbed != null) {
+		if ($ids_grabbed != null || thing != null) {
 			updateColors();
 		}
 
@@ -63,7 +63,7 @@
 		thing.updateColorAttributes();
 		const collapsedGrabbed = !thing.isExpanded || thing.isGrabbed;
 		fillColor = thing.revealColor(collapsedGrabbed != isHovering);
-		aliasFillColor = thing.revealColor(collapsedGrabbed == isHovering);
+		bulkAliasFillColor = thing.revealColor(collapsedGrabbed == isHovering);
 	}
 
 	function updatePath() {
@@ -160,10 +160,10 @@
 		<div style='left:-1px; width:14px; height:14px; position:absolute;'>
 			<SVGD3
 				path={insidePath}
-				fill={aliasFillColor}
 				stroke={strokeColor}
 				zIndex={ZIndex.dots}
 				size={Size.square(size)}
+				fill={bulkAliasFillColor}
 			/>
 		</div>
 	{/if}

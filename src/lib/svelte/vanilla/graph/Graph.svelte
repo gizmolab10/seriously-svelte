@@ -1,12 +1,11 @@
 <script lang='ts'>
-	import { k, Rect, Size, Point, Thing, ZIndex, Signals, onDestroy, graphEditor, PersistID, persistLocal, updateGraphRect } from '../../../ts/common/GlobalImports';
+	import { k, Rect, Size, Point, Thing, ZIndex, Signals, onMount, onDestroy, graphEditor, PersistID, persistLocal } from '../../../ts/common/GlobalImports';
+	import { debug, debugReact, Predicate, ButtonID, dbDispatch, handle_rebuild, handle_relayout, graphRect_update } from '../../../ts/common/GlobalImports';
 	import { id_here, graphRect, dot_size, id_editing, ids_grabbed, line_stretch, user_graphOffset, id_popupView } from '../../../ts/managers/State';
-	import { debug, DebugFlag, Predicate, ButtonID, dbDispatch, handleRelayout } from '../../../ts/common/GlobalImports';
 	import FocusRevealDot from './FocusRevealDot.svelte';
 	import Circle from '../../kit/Circle.svelte';
 	import Children from './Children.svelte';
 	import Box from '../../kit/Box.svelte';
-import {size} from '../../kit/SVGD3.svelte';
 	let origin_ofFirstReveal = new Point();
 	let origin_ofChildren = new Point();
 	let childrenSize = new Point();
@@ -19,10 +18,16 @@ import {size} from '../../kit/SVGD3.svelte';
 	let here;
 
 	function ignore(event) {}
-	onDestroy( () => { signalHandler.disconnect(); });
+	onMount( () => { debugReact.log_mount(`GRAPH ${here.description}`); });
+	onDestroy( () => { rebuild_signalHandler.disconnect(); relayout_signalHandler.disconnect(); });
+	
+	const rebuild_signalHandler = handle_rebuild((idThing) => {
+		updateOrigins();
+		toggle = !toggle;	// rebuild entire graph
+	});
 
-	const signalHandler = handleRelayout((idThing) => {
-		if (here && (idThing == null || idThing == here.id)) {
+	const relayout_signalHandler = handle_relayout((idThing) => {
+		if (here) {
 			updateOrigins();
 		}
 	});
@@ -54,13 +59,18 @@ import {size} from '../../kit/SVGD3.svelte';
 	}
 
 	function user_graphOffset_setTo(origin: Point) {
-		persistLocal.writeToKey(PersistID.origin, origin);
-		$user_graphOffset = origin;
-		updateOrigins();
+		if (user_graphOffset != origin) {
+			persistLocal.writeToKey(PersistID.origin, origin);
+			$user_graphOffset = origin;
+			debugReact.log_origins(`GRAPH $user_graphOffset ${here.description}`);
+			updateOrigins();
+			toggle = !toggle;	// rebuild entire graph
+		}
 	}
 	
 	$: {
 		if ($dot_size > 0) {
+			debugReact.log_origins(`GRAPH $dot_size ${here.description}`);
 			updateOrigins();
 		}
 	}
@@ -68,9 +78,13 @@ import {size} from '../../kit/SVGD3.svelte';
 	$: {
 		if (here == null || here.id != $id_here) {			
 			here = dbDispatch.db.hierarchy.thing_getForID($id_here);
+			debugReact.log_origins(`GRAPH $id_here ${here.description}`);
 			updateOrigins();
 			toggle = !toggle;	// also cause entire graph to be replaced
 		}
+	}
+	
+	$: {
 		if (here) { // can sometimes be null TODO: WHY?
 			let grabbed = $ids_grabbed.includes(here.id);
 			if (grabbed != isGrabbed) {
@@ -81,8 +95,7 @@ import {size} from '../../kit/SVGD3.svelte';
 
 	function updateOrigins() {
 		if (here) {
-			debug.log_react(`GRAPH updateOrigins ${here.description}`);
-			updateGraphRect();
+			graphRect_update();
 			const userCenter = $graphRect.center.offsetBy($user_graphOffset);
 			childrenSize = here.visibleProgeny_size.asPoint;
 			const mysteryOffset = new Point(-childrenSize.x - 2, -(childrenSize.y / 2) - 31);

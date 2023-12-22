@@ -15,7 +15,7 @@
 		}
 	};
 
-	function handleClick(event) {
+	function crumb_buttonClicked(event) {
 		if (dbDispatch.db.hasData) {
 			thing.grabOnly();
 			thing.becomeHere();
@@ -25,7 +25,7 @@
 </script>
 
 <button
-	on:click={handleClick}
+	on:click={crumb_buttonClicked}
 	style='
 		border-radius: 0.5em;
 		border: 1px solid {thing.color};

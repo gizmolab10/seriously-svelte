@@ -100,7 +100,7 @@ export class LineRect extends Rect {
 	}
 };
 
-export function updateGraphRect() {
+export function graphRect_update() {
 	const originY = 86;											// height of title at the top
 	const originX = get(showDetails) ? 101 : 0;					// width of details
 	const mysteryOffset = new Point(originX + 2, 88);					// TODO: why?

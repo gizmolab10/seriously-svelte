@@ -49,7 +49,7 @@
 		const titleWidth = thing.titleWidth;
 		width = titleWidth - 18 + ($dot_size * 2);
 		thing.debugLog('TITLE WIDTH: ' + titleWidth);
-		debug.log_react(`WIDGET layout ${thing.description}`);
+		// debugReact.log_layout(`WIDGET layout ${thing.description}`);
 		if (thing.showCluster) {
 			height = k.clusterHeight;
 			radius = height / 2;
