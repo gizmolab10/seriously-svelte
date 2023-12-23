@@ -79,13 +79,16 @@
 	}
 
 	function handleClick(event) {
+		setIsHovering_updateColors(false);
 		if ($id_showRevealCluster == thing.id) {
-			thing.debugLog('CLICK');
 			$id_showRevealCluster = null;
+		} else if (!thing.hasChildren) {
+			thing.grabOnly();
+			$id_showRevealCluster = thing.id;
 		} else {
 			graphEditor.thing_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
+			return;
 		}
-		setIsHovering_updateColors(false);
 		signal_rebuild();
 	}
 
@@ -99,7 +102,6 @@
 		clickTimer = setTimeout(() => {
 			clearClicks();
 			if ($id_showRevealCluster == thing.id) {
-				thing.debugLog('LONG');
 				$id_showRevealCluster = null;
 			} else {
 				thing.grabOnly()

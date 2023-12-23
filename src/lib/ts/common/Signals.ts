@@ -7,10 +7,20 @@ export enum Signals {
 	rebuild = 'b',
 }
 
+let priorSignals : {[kind: string] : number} = {}
+
 const handleSignal = new Signal<(kinds: Signals[], value: any) => void>();
 export function signal_rebuild() { signal(Signals.rebuild, get(id_here)); }
 export function signal_relayout() { signal(Signals.relayout, get(id_here)); }
-export function signal(kind: Signals, value: any = null) { handleSignal.emit([kind], value); }
+
+export function signal(kind: Signals, value: any = null) {
+	const prior = priorSignals[kind];
+	const now = new Date().getTime();
+	if (prior == null || (now - prior) > 100) {
+		priorSignals[kind] = now;
+		handleSignal.emit([kind], value);
+	}
+}
 
 export function handle_rebuild(onSignal: (value: any | null) => any ) {
 	return handleSignalOfKind(Signals.rebuild, onSignal);
