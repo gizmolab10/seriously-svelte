@@ -178,25 +178,28 @@ export default class Thing extends Datum {
 	}
 	
 	expanded_setTo(expand: boolean) {
+		let mutated = false;
 		const relationship = this.hierarchy.relationship_getWhereIDEqualsTo(this.id);
 		if (relationship) {
 			expanded.update((array) => {
 				if (array) {
+					const index = array.indexOf(relationship.id);
 					if (expand) {
-						if (array.indexOf(relationship.id) == -1) {
+						if (index == -1) {
 							array.push(relationship.id);	// only add if not already added
+							mutated = true;
 						}
-					} else {
-						const index = array.indexOf(relationship.id);
-						if (index != -1) {					// only splice array when item is found
-							array.splice(index, 1);			// 2nd parameter means 'remove one item only'
-						}
+					} else if (index != -1) {					// only splice array when item is found
+						array.splice(index, 1);			// 2nd parameter means 'remove one item only'
+						mutated = true;
 					}
 				}
 				return array;
 			});
-			persistLocal.writeToDBKey(PersistID.expanded, get(expanded));
-			signal_rebuild();
+			if (mutated) {			// avoid disruptive rebuild
+				persistLocal.writeToDBKey(PersistID.expanded, get(expanded));
+				signal_rebuild();
+			}
 		}
 	}
 
@@ -328,9 +331,9 @@ export default class Thing extends Datum {
 	}
 
 	redraw_runtimeBrowseRight(RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, fromReveal: boolean = false) {
+		const newHere = RIGHT ? this : this.grandparent;
 		let newGrab: Thing | null = RIGHT ? this.firstChild : this.firstParent;
 		const newGrabIsNotHere = get(id_here) != newGrab?.id;
-		const newHere = RIGHT ? this : this.grandparent;
 		if (!RIGHT) {
 			const root = this.hierarchy.root;
 			if (EXTREME) {

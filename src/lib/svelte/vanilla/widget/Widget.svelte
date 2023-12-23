@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { id_here, dot_size, id_editing, row_height, ids_grabbed, user_graphOffset, id_showRevealCluster} from '../../../ts/managers/State';
-	import { k, Thing, Point, debug, ZIndex, onMount, onDestroy } from '../../../ts/common/GlobalImports';
+	import { k, Thing, Point, debug, ZIndex, onMount, onDestroy, debugReact } from '../../../ts/common/GlobalImports';
 	import RevealCluster from './RevealCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
 	import RevealDot, {center} from './RevealDot.svelte';
@@ -26,6 +26,7 @@
 
 	onMount( () => {
 		updateBorderStyle();
+		debugReact.log_mount(`WIDGET ${thing.description}`);
 	});
 
 	function updateBorderStyle() {

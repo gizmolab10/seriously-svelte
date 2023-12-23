@@ -16,7 +16,7 @@ export function signal_relayout() { signal(Signals.relayout, get(id_here)); }
 export function signal(kind: Signals, value: any = null) {
 	const prior = priorSignals[kind];
 	const now = new Date().getTime();
-	if (prior == null || (now - prior) > 100) {
+	if (prior == null || (now - prior) > 200) {
 		priorSignals[kind] = now;
 		handleSignal.emit([kind], value);
 	}
