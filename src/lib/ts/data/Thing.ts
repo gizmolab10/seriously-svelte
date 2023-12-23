@@ -47,7 +47,7 @@ export default class Thing extends Datum {
 		});
 
 		id_showRevealCluster.subscribe((idCluster: string | null) => {
-			const shouldShow = (idCluster != undefined) && idCluster == this.id;
+			const shouldShow = (idCluster != undefined) && idCluster == this.id && get(id_here) != this.id;
 			if (this.showCluster != shouldShow) {
 				this.showCluster = shouldShow;
 				signal_rebuild();
@@ -93,8 +93,24 @@ export default class Thing extends Datum {
 		return false;
 	}
 
+	get singleRowHeight(): number {
+		return this.showCluster ? k.clusterHeight : get(row_height);
+	}
+
 	get visibleProgeny_height(): number {
-		let singleRowHeight = this.showCluster ? k.clusterHeight + 6 : get(row_height);
+		const singleRowHeight = this.singleRowHeight;
+		if (this.hasChildren && this.isExpanded) {
+			let height = 0;
+			for (const child of this.children) {
+				height += child.visibleProgeny_height;
+			}
+			return Math.max(height, singleRowHeight);
+		}
+		return singleRowHeight;
+	}
+
+	get visibleProgenyOnly_height(): number {
+		const singleRowHeight = get(row_height);
 		if (this.hasChildren && this.isExpanded) {
 			let height = 0;
 			for (const child of this.children) {
@@ -350,7 +366,7 @@ export default class Thing extends Datum {
 		if (!RIGHT && allowToBecomeHere && shouldBecomeHere) {
 			newHere.becomeHere();
 		} else if (!RIGHT || !this.hasChildren) {
-			signal_rebuild();			// becomeHere already does this
+			signal_rebuild();	// becomeHere also does this
 		}
 	}
 

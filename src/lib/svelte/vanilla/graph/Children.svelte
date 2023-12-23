@@ -64,14 +64,14 @@
 			children = thing.children;
 			lineRects = new Layout(thing, childOrigin).lineRects;
 			childArray = lineRects.map((rect, index) => ({
-				origin: originForGrandchildren(children[index], rect),
+				origin: originForChildrenOf(children[index], rect),
 				child: children[index], 
 				rect: rect,
 			}));
 		}
 	}
 
-	function originForGrandchildren(child: Thing, rect: LineRect): Point {
+	function originForChildrenOf(child: Thing, rect: LineRect): Point {
 		if (!rect || !child) {
 			alert('grandchildren origin not computable');
 			return new Point();

@@ -12,7 +12,9 @@
 
     onMount( () => {
         color = thing.color;
-		left = thing.titleWidth;
+        const width = thing.titleWidth;
+        const delta = Math.max(0, k.clusterHeight - width - 25)
+		left = width + delta / 8;
 	});
 
 	async function handleClick(id: string) {

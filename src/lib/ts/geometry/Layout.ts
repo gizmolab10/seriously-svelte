@@ -7,15 +7,15 @@ export default class Layout {
 	constructor(thing: Thing, origin: Point) {
 		this.lineRects = [];
 		if (thing) {
+			const sizeX = get(line_stretch);
 			const children = thing.children;
 			const quantity = children.length;
-			const sizeX = get(line_stretch);
 			if (quantity < 2 || !thing.isExpanded) {
 				const rect = new Rect(origin, new Size(sizeX, 0));
 				this.lineRects.push(new LineRect(LineCurveType.flat, rect));
 			} else {
 				let index = 0;
-				let sumOfSiblingsAbove = -thing.visibleProgeny_halfHeight; // start out negative and grow positive
+				let sumOfSiblingsAbove = -thing.visibleProgenyOnly_height / 2; // start out negative and grow positive
 				while (index < quantity) {
 					const child = children[index];
 					const childvisibleProgeny_halfHeight = child.visibleProgeny_halfHeight;

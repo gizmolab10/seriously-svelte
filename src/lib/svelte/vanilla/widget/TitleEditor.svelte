@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { row_height, id_editing, thing_fontSize, thing_fontFamily, id_editingStopped } from '../../../ts/managers/State';
-	import { SeriouslyRange, graphEditor, signal_relayout } from '../../../ts/common/GlobalImports'; 
+	import { SeriouslyRange, graphEditor, signal_rebuild, signal_relayout } from '../../../ts/common/GlobalImports'; 
 	import { k, Thing, ZIndex, onMount, onDestroy, dbDispatch } from '../../../ts/common/GlobalImports';
 	import Widget from './Widget.svelte';
 	export let thing = Thing;
@@ -77,6 +77,7 @@
 			const id = thing?.id;
 			if (id != null && $id_editing == id) {				
 				$id_editing = null;
+				signal_rebuild();
 			}
 		}, 20);
 	}
