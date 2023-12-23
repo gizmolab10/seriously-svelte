@@ -1,5 +1,5 @@
 import { get, Thing, Hierarchy, sort_byOrder } from "../common/GlobalImports";
-import { ids_grabbed, id_showRevealCluster } from './State';
+import { ids_grabbed, id_showingTools } from './State';
 
 export default class Grabs {
 	hierarchy: Hierarchy;
@@ -24,12 +24,12 @@ export default class Grabs {
 	toggleGrab = (thing: Thing) => { if (thing.isGrabbed) { this.ungrab(thing); } else { this.grab(thing); } }
 
 	clearClusterState(thing: Thing) {
-		const id = get(id_showRevealCluster);
+		const id = get(id_showingTools);
 		if (id != null) {
 			if (id == thing.id) {
-				id_showRevealCluster.set(null);
+				id_showingTools.set(null);
 			} else {
-				id_showRevealCluster.set(thing.id);
+				id_showingTools.set(thing.id);
 			}
 		}
 	}

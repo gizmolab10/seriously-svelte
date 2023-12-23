@@ -1,7 +1,7 @@
 <script>
 	import { k, Size, Point, Thing, debug, ZIndex, Signals, onMount } from "../../../ts/common/GlobalImports";
 	import { graphEditor, dbDispatch, Direction, svgPath } from "../../../ts/common/GlobalImports";
-	import { dot_size, ids_grabbed, id_showRevealCluster } from '../../../ts/managers/State';
+	import { dot_size, ids_grabbed, id_showingTools } from '../../../ts/managers/State';
 	import SVGD3 from '../../kit/SVGD3.svelte';
 	export let thing;
 	let strokeColor = thing.color;
@@ -91,7 +91,7 @@
 			size = $dot_size;
 			left = 1 - (size / 2); // offset from center?
 			path = svgPath.oval(size, false);
-			top = $id_showRevealCluster == thing.id ? 23 : -5;
+			top = $id_showingTools == thing.id ? 23 : -5;
 		}
 	}
 

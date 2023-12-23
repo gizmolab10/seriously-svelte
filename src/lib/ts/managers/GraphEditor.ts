@@ -1,5 +1,5 @@
 import { k, get, Thing, Hierarchy, dbDispatch, signal_rebuild } from '../common/GlobalImports';
-import { ids_grabbed, id_showRevealCluster } from './State';
+import { ids_grabbed, id_showingTools } from './State';
 
 //////////////////////////////////////
 //									//
@@ -144,8 +144,8 @@ export default class GraphEditor {
 	latestGrabToggleRevealCluster() {
 		const id = this.hierarchy.grabs.latestGrab(true)?.id;
 		if (id) {
-			const clear = id == get(id_showRevealCluster);
-			id_showRevealCluster.set(clear ? null : id);
+			const clear = id == get(id_showingTools);
+			id_showingTools.set(clear ? null : id);
 			signal_rebuild();
 		}
 

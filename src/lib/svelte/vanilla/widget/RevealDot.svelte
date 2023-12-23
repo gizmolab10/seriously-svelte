@@ -1,7 +1,7 @@
 <script>
 	import { Direction, onDestroy, dbDispatch, graphEditor, signal_rebuild } from "../../../ts/common/GlobalImports";
 	import { k, get, Size, Thing, Point, debug, ZIndex, onMount, svgPath } from "../../../ts/common/GlobalImports";
-	import { expanded, dot_size, ids_grabbed, id_showRevealCluster } from '../../../ts/managers/State';
+	import { expanded, dot_size, ids_grabbed, id_showingTools } from '../../../ts/managers/State';
 	import SVGD3 from '../../kit/SVGD3.svelte';
 	export let center = new Point();
 	export let thing;
@@ -67,7 +67,7 @@
 	}
 
 	function updatePath() {
-		if ((!thing.hasChildren && !thing.isBulkAlias) || ($id_showRevealCluster == thing.id)) {
+		if ((!thing.hasChildren && !thing.isBulkAlias) || ($id_showingTools == thing.id)) {
 			path = svgPath.circle(size, size / 2);
 		} else {
 			const direction = (thing.isExpanded && thing.hasChildren) ? Direction.left : Direction.right;
@@ -80,11 +80,11 @@
 
 	function handleClick(event) {
 		setIsHovering_updateColors(false);
-		if ($id_showRevealCluster == thing.id) {
-			$id_showRevealCluster = null;
+		if ($id_showingTools == thing.id) {
+			$id_showingTools = null;
 		} else if (!thing.hasChildren) {
 			thing.grabOnly();
-			$id_showRevealCluster = thing.id;
+			$id_showingTools = thing.id;
 		} else {
 			graphEditor.thing_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
 			return;
@@ -101,11 +101,11 @@
 		clearClicks();
 		clickTimer = setTimeout(() => {
 			clearClicks();
-			if ($id_showRevealCluster == thing.id) {
-				$id_showRevealCluster = null;
+			if ($id_showingTools == thing.id) {
+				$id_showingTools = null;
 			} else {
 				thing.grabOnly()
-				$id_showRevealCluster = thing.id;
+				$id_showingTools = thing.id;
 			}
 			signal_rebuild();
 		}, k.longClickThreshold);

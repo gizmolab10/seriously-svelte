@@ -95,43 +95,43 @@
 	}
 </style>
 
-<div class='leftSide'
-	style='top: 8px;
-		position: fixed;
-		z-index: {ZIndex.frontmost}; 
-		background-color: transparent;
-		height: {$showDetails ? '100%' : '33px'};'>
-	<CircularButton left=15
-		image='settings.svg'
-		borderColor='white'
-		onClick={details_buttonClicked}/>
-	<button class='build' on:click={builds_buttonClicked}>{$build}</button>
-	{#if !$isBusy}
-		<CircularButton left=85
-			onClick={() => {help_buttonClicked()}}
-			label='i'
-			size={size}/>
+{#if $isBusy}
+	<p>Welcome to Seriously</p>
+	{#if $db_type != DBType.local}
+		<p>(loading your {$db_type} data{$db_type == DBType.firebase ? ', from ' + dbDispatch.db.baseID : ''})</p>
 	{/if}
-	{#if $showDetails}
-		<Details/>
-	{/if}
-</div>
-<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: -10px; top: 32px; width: {$id_popupView ? '111px' : '110%'};'></div>
-<div class='verticalLine' style='height: {$showDetails ? '100%' : '33px'}; z-index: {ZIndex.frontmost};'></div>
-<div class='rightSide' style='
-	left: {$showDetails ? 100 : 0}px;
-	height: 100%;
-	position: fixed;
-	overflow: hidden;
-	z-index: {ZIndex.panel};'>
-	{#if $isBusy}
-		<p>Welcome to Seriously</p>
-		{#if $db_type != DBType.local}
-			<p>(loading your {$db_type} data{$db_type == DBType.firebase ? ', from ' + dbDispatch.db.baseID : ''})</p>
+{:else if !$things_arrived}
+	<p>Nothing is available.</p>
+{:else}
+	<div class='leftSide'
+		style='top: 8px;
+			position: fixed;
+			z-index: {ZIndex.frontmost}; 
+			background-color: transparent;
+			height: {$showDetails ? '100%' : '33px'};'>
+		<CircularButton left=15
+			image='settings.svg'
+			borderColor='white'
+			onClick={details_buttonClicked}/>
+		<button class='build' on:click={builds_buttonClicked}>{$build}</button>
+		{#if !$isBusy}
+			<CircularButton left=85
+				onClick={() => {help_buttonClicked()}}
+				label='i'
+				size={size}/>
 		{/if}
-	{:else if !$things_arrived}
-		<p>Nothing is available.</p>
-	{:else}
+		{#if $showDetails}
+			<Details/>
+		{/if}
+	</div>
+	<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: -10px; top: 32px; width: {$id_popupView ? '111px' : '110%'};'></div>
+	<div class='verticalLine' style='height: {$showDetails ? '100%' : '33px'}; z-index: {ZIndex.frontmost};'></div>
+	<div class='rightSide' style='
+		left: {$showDetails ? 100 : 0}px;
+		height: 100%;
+		position: fixed;
+		overflow: hidden;
+		z-index: {ZIndex.panel};'>
 		{#if $id_popupView == ButtonID.help}
 			<Help size={size}/>
 		{:else if $id_popupView == ButtonID.buildNotes}
@@ -151,5 +151,5 @@
 				<Graph/>
 			{/key}
 		{/if}
-	{/if}
-</div>
+	</div>
+{/if}

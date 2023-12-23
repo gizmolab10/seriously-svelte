@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { id_here, dot_size, id_editing, row_height, ids_grabbed, user_graphOffset, id_showRevealCluster} from '../../../ts/managers/State';
+	import { id_here, dot_size, id_editing, row_height, ids_grabbed, user_graphOffset, id_showingTools} from '../../../ts/managers/State';
 	import { k, Thing, Point, debug, ZIndex, onMount, onDestroy, debugReact } from '../../../ts/common/GlobalImports';
 	import RevealCluster from './RevealCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
@@ -69,7 +69,7 @@
 	$: {
 		const id = thing.id;
 		const shouldEdit = (id == $id_editing);
-		const shouldShowCluster = $id_showRevealCluster == id && $id_here != id;
+		const shouldShowCluster = $id_showingTools == id && $id_here != id;
 		const shouldGrab = $ids_grabbed?.includes(id) || thing.isExemplar;
 		const change = (isEditing != shouldEdit || isGrabbed != shouldGrab || showingCluster != shouldShowCluster);
 		if (change) {

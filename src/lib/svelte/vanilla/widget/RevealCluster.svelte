@@ -1,6 +1,6 @@
 <script lang='ts'>
     import { k, Size, ZIndex, onMount, svgPath, graphEditor, dbDispatch } from '../../../ts/common/GlobalImports';
-    import { dot_size, id_showRevealCluster } from '../../../ts/managers/State';
+    import { dot_size, id_showingTools } from '../../../ts/managers/State';
 	import CircularButton from '../../kit/CircularButton.svelte';
 	import Trash from '../../kit/Trash.svelte';
 	export let thing: Thing;
@@ -24,7 +24,7 @@
                 case 'delete': await dbDispatch.db.hierarchy.things_redraw_remoteTraverseDelete([thing]); break;
                 default: break;
             }
-            $id_showRevealCluster = null;
+            $id_showingTools = null;
         }
     }
 

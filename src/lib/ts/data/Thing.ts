@@ -1,6 +1,6 @@
 import { k, get, Size, Datum, debug, signal, Signals, Predicate, Hierarchy, TraitType, PersistID, DebugFlag } from '../common/GlobalImports';
 import { dbDispatch, persistLocal, getWidthOf, signal_rebuild, SeriouslyRange, orders_normalize_remoteMaybe } from '../common/GlobalImports';
-import { id_here, dot_size, id_editing, expanded, ids_grabbed, row_height, id_showRevealCluster, line_stretch } from '../managers/State';
+import { id_here, dot_size, id_editing, expanded, ids_grabbed, row_height, id_showingTools, line_stretch } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -46,7 +46,7 @@ export default class Thing extends Datum {
 			}
 		});
 
-		id_showRevealCluster.subscribe((idCluster: string | null) => {
+		id_showingTools.subscribe((idCluster: string | null) => {
 			const shouldShow = (idCluster != undefined) && idCluster == this.id && get(id_here) != this.id;
 			if (this.showCluster != shouldShow) {
 				this.showCluster = shouldShow;
@@ -223,7 +223,7 @@ export default class Thing extends Datum {
 		if (this.hasChildren) {
 			id_here.set(this.id);
 			this.expand();
-			id_showRevealCluster.set(null);
+			id_showingTools.set(null);
 			persistLocal.writeToDBKey(PersistID.here, this.id)
 		};
 	}
