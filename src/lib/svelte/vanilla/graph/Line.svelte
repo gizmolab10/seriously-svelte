@@ -6,7 +6,7 @@
 	export let curveType: string = LineCurveType.up;
 	export let rect = new Rect();
 	export let thing: Thing;
-	const debugOffset = new Point(141, -1);
+	const debugOffset = new Point(141, -1.5);
 	let origin = rect.origin;
 	let extent = rect.extent;
 	let viewBox = new Rect();
@@ -23,15 +23,15 @@
 			switch (curveType) {
 				case LineCurveType.up:
 					origin = rect.origin;
-					extent = rect.extent;
+					extent = rect.extent.offsetByY(-1.5);
 					break;
 				case LineCurveType.down:
-					origin = rect.bottomLeft;
-					extent = origin.offsetBy(rect.size.asPoint);
+					origin = rect.bottomLeft.offsetByY(-0.5);
+					extent = origin.offsetBy(rect.size.asPoint).offsetByY(0.5);
 					break;
 				case LineCurveType.flat:
-					origin = rect.centerLeft;
-					extent = rect.centerRight;
+					origin = rect.centerLeft.offsetByY(-0.5);
+					extent = rect.centerRight.offsetBy(new Point(0.5, -0.5));
 					size = origin.distanceTo(extent).asSize;
 					path = svgPath.line(size.width);
 					break;
@@ -62,7 +62,7 @@
 	height={Math.max(2, size.height)}px
 	style='z-index: {ZIndex.lines};
 		top: {origin.y - Math.max(1, size.height)}px;
-		left: {origin.x + 143}px;'>
+		left: {origin.x + 142}px;'>
 	<path d={path} stroke={thing.firstParent?.color} fill='none'/>
 </svg>
 {#if debug.lines}

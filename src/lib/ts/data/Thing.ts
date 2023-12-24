@@ -325,8 +325,8 @@ export default class Thing extends Datum {
 				const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
 				const newOrder = newIndex + goose;
 				this.order_setTo(newOrder, false);
+				signal_rebuild();
 			}
-			signal_rebuild();
 		}
 	}
 
@@ -361,6 +361,8 @@ export default class Thing extends Datum {
 				newGrab = null;
 			}
 			this.expand();
+		} else {
+			return;
 		}
 		id_editing.set(null);
 		newGrab?.grabOnly();
@@ -368,8 +370,6 @@ export default class Thing extends Datum {
 		const shouldBecomeHere = !newHere.isVisible || newHere.isRoot;
 		if (!RIGHT && allowToBecomeHere && shouldBecomeHere) {
 			newHere.becomeHere();
-		} else if (!RIGHT || !this.hasChildren) {
-			signal_rebuild();	// becomeHere also does this
 		}
 	}
 

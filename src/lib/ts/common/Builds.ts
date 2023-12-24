@@ -11,6 +11,7 @@ class Builds {
 
 	constructor() {
 		this.notes = { 
+			70 : ['December 24, 2023', 'center graph'],
 			69 : ['December 21, 2023', 'remount graph on relocate and hide/show children'],
 			68 : ['December 17, 2023', 'relayout on title edit keystrokes'],
 			67 : ['December 15, 2023', 'add div and origin to all components, position: absolute'],

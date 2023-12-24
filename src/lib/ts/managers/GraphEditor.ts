@@ -17,6 +17,7 @@ export default class GraphEditor {
 		if (event.type == 'keydown') {
 			const OPTION = event.altKey;
 			const SHIFT = event.shiftKey;
+			const COMMAND = event.metaKey;
 			const EXTREME = SHIFT && OPTION;
 			const key = event.key.toLowerCase();
 			if (!grab) {
@@ -28,9 +29,9 @@ export default class GraphEditor {
 			if (k.allowGraphEditing) {
 				if (grab && k.allowTitleEditing) {
 					switch (key) {
-						case '-':		await this.thing_edit_remoteAddLine(grab); break;
 						case 'd':		await this.thing_edit_remoteDuplicate(grab); break;
 						case ' ':		await this.thing_edit_remoteAddChildTo(grab); break;
+						case '-':		if (!COMMAND) { await this.thing_edit_remoteAddLine(grab); } break;
 						case 'tab':		await this.thing_edit_remoteAddChildTo(grab.firstParent); break; // Title editor also makes this call
 						case 'enter':	grab.startEdit(); break;
 					}

@@ -27,6 +27,7 @@
 		const grabbed = $ids_grabbed?.includes(thing.id);
 		if (isGrabbed != grabbed) {
 			isGrabbed = grabbed;
+			updateColors();
 		}
 	}
 
@@ -89,9 +90,9 @@
 	$: {
 		if ($dot_size > 0) {
 			size = $dot_size;
-			left = 1 - (size / 2); // offset from center?
+			left = 1.5 - (size / 2); // offset from center?
 			path = svgPath.oval(size, false);
-			top = $id_showingTools == thing.id ? 23 : -5;
+			top = $id_showingTools == thing.id ? 23 : -5.5;
 		}
 	}
 

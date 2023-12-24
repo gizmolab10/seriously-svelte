@@ -149,7 +149,7 @@
 	style='
 		width={size}px;
 		height={size}px;
-		top: {$dot_size / 2 - 1}px;
+		top: {$dot_size / 2 - 1.15 - (thing.isGrabbed ? 0 : 1)}px;
 		left: {size + thing.titleWidth - 5}px;
 	'>
 	<SVGD3

@@ -98,12 +98,12 @@
 			graphRect_update();
 			const userCenter = $graphRect.center.offsetBy($user_graphOffset);
 			childrenSize = here.visibleProgeny_size.asPoint;
-			const mysteryOffset = new Point(-childrenSize.x - 2, -(childrenSize.y / 2) - 31);
+			const mysteryOffset = new Point(-92 - (childrenSize.x / 2), -85);
 			origin_ofFirstReveal = userCenter.offsetBy(mysteryOffset);
 			if (k.leftJustifyGraph) {
 				origin_ofFirstReveal.x = 25;
 			}
-			const toChildren = new Point(-36 + $line_stretch - ($dot_size / 2), 1 + ($dot_size / 2) - (childrenSize.y / 2));
+			const toChildren = new Point(-42 + $line_stretch - ($dot_size / 2), ($dot_size / 2) - (childrenSize.y / 2) - 5);
 			origin_ofChildren = origin_ofFirstReveal.offsetBy(toChildren);
 			blueRect = $graphRect.dividedInHalf;
 			redRect = rectTo_firstReveal();
@@ -112,7 +112,7 @@
 	}
 
 	function rectTo_firstReveal(): Rect {
-		const mysteryOffset = new Point(108, 92);
+		const mysteryOffset = new Point(101, 85);
 		const extent = origin_ofFirstReveal.offsetBy(mysteryOffset);
 		return Rect.createExtentRect($graphRect.origin, extent);
 	}
@@ -120,7 +120,7 @@
 	function rectOfChildren(): Rect {
 		const delta = new Point(9, -2);
 		const origin = $graphRect.origin.offsetBy(delta).offsetBy(origin_ofChildren);
-		return new Rect(origin, here.visibleProgeny_size.expandedByX(4));
+		return new Rect(origin, here.visibleProgeny_size.expandedByX(3));
 	}
 
 </script>
@@ -147,8 +147,8 @@
 			<Box rect={greenRect} color=green half={true}/>
 		{/if}
 		{#if isGrabbed}
-			<Circle radius={10} center={origin_ofFirstReveal.offsetBy(new Point(7, 6))} color={here.color} thickness=1/>
+			<Circle radius={10} center={origin_ofFirstReveal} color={here.color} thickness=1/>
 		{/if}
-		<FocusRevealDot here={here} center={origin_ofFirstReveal.offsetBy(Point.square(-5))}/>
+		<FocusRevealDot here={here} center={origin_ofFirstReveal.offsetBy(new Point(-12.5, -11))}/>
 	</div>
 {/if}

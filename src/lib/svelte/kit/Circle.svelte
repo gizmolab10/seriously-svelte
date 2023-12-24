@@ -10,6 +10,13 @@
 
 </script>
 
+<style>
+  .circle {
+    position: absolute;
+    border-radius: 50%;
+  }
+</style>
+
 <div
   class='circle'
   style='
@@ -21,10 +28,3 @@
     border: {thickness}px solid {color};
     background-color: {debug.lines ? 'transparent' : k.backgroundColor};'>
 </div>
-
-<style>
-  .circle {
-    position: absolute;
-    border-radius: 50%;
-  }
-</style>

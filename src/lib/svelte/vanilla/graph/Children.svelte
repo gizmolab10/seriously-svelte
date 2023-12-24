@@ -57,7 +57,7 @@
 	
 	function layoutChildren() {
 		if (thing) {
-			const delta = new Point(20, -2);
+			const delta = new Point(19.5, -2.5);
 			const height = (thing.visibleProgeny_halfHeight);
 			const childOrigin = origin.offsetByY(height);
 			center = childOrigin.offsetBy(delta);
