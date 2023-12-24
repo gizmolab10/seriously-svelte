@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, Rect, Size, Point, Thing, ZIndex, Signals, onMount, onDestroy, graphEditor, PersistID, persistLocal } from '../../../ts/common/GlobalImports';
 	import { debug, debugReact, Predicate, ButtonID, dbDispatch, handle_rebuild, handle_relayout, graphRect_update } from '../../../ts/common/GlobalImports';
-	import { id_here, graphRect, dot_size, id_editing, ids_grabbed, line_stretch, user_graphOffset, id_popupView } from '../../../ts/managers/State';
+	import { id_here, graphRect, dot_size, id_editing, ids_grabbed, line_stretch, showDetails, user_graphOffset, id_popupView } from '../../../ts/managers/State';
 	import FocusRevealDot from './FocusRevealDot.svelte';
 	import Circle from '../../kit/Circle.svelte';
 	import Children from './Children.svelte';
@@ -98,7 +98,7 @@
 			graphRect_update();
 			const userCenter = $graphRect.center.offsetBy($user_graphOffset);
 			childrenSize = here.visibleProgeny_size.asPoint;
-			const mysteryOffset = new Point(-92 - (childrenSize.x / 2), -85);
+			const mysteryOffset = new Point(($showDetails ? -92 : 8) - (childrenSize.x / 2), -85);
 			origin_ofFirstReveal = userCenter.offsetBy(mysteryOffset);
 			if (k.leftJustifyGraph) {
 				origin_ofFirstReveal.x = 25;

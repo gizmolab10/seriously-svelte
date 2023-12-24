@@ -120,12 +120,12 @@
 				label='i'
 				size={size}/>
 		{/if}
-		{#if $showDetails}
+		{#if $showDetails && $id_popupView == null}
 			<Details/>
 		{/if}
 	</div>
 	<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: -10px; top: 32px; width: {$id_popupView ? '111px' : '110%'};'></div>
-	<div class='verticalLine' style='height: {$showDetails ? '100%' : '33px'}; z-index: {ZIndex.frontmost};'></div>
+	<div class='verticalLine' style='height: {$showDetails && $id_popupView == null ? '100%' : '33px'}; z-index: {ZIndex.frontmost};'></div>
 	<div class='rightSide' style='
 		left: {$showDetails ? 100 : 0}px;
 		height: 100%;
