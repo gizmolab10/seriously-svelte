@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { Rect, Size, Point, debug, ZIndex, SVGType, svgPath, debugReact, LineCurveType } from '../../../ts/common/GlobalImports';
-	import { dot_size, user_graphOffset } from '../../../ts/managers/State';
+	import { dot_size } from '../../../ts/managers/State';
 	import Circle from '../../kit/Circle.svelte';
 	import Box from '../../kit/Box.svelte';
 	export let curveType: string = LineCurveType.up;
@@ -43,7 +43,7 @@
 				const originY = curveType == LineCurveType.down ? 1 : size.height;
 				const extentY = curveType == LineCurveType.up   ? 1 : size.height;
 				const boxSize = new Size(size.width, (noHeight ? 2 : size.height));
-				viewBox = new Rect(origin.offsetByY($user_graphOffset.y), boxSize);
+				viewBox = new Rect(origin, boxSize);
 				path = 'M0 ' + originY + 'A' + size.description + ' 0 0 ' + flag + ' ' + size.width + ' ' + extentY;
 			}
 		}

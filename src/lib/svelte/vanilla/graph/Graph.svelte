@@ -32,7 +32,7 @@
 		}
 	});
 
-	window.addEventListener('wheel', (event: WheelEvent) => {
+	function handleWheel(event){
 		const canScroll = k.allowHorizontalScrolling;
 		const offsetX = canScroll ? -event.deltaX : 0;
 		const offsetY = -event.deltaY;
@@ -41,7 +41,7 @@
 			const newOffset = new Point(offset.x + offsetX, offset.y + offsetY);
 			user_graphOffset_setTo(newOffset);
 		}
-	});
+	};
 
 	async function globalHandleKeyDown(event) {
 		if ($id_editing)			{ return; } // let Title component consume the events
@@ -59,7 +59,7 @@
 	}
 
 	function user_graphOffset_setTo(origin: Point) {
-		if (user_graphOffset != origin) {
+		if ($user_graphOffset != origin) {
 			persistLocal.writeToKey(PersistID.origin, origin);
 			$user_graphOffset = origin;
 			debugReact.log_origins(`GRAPH $user_graphOffset ${here.description}`);
@@ -96,10 +96,9 @@
 	function updateOrigins() {
 		if (here) {
 			graphRect_update();
-			const userCenter = $graphRect.center.offsetBy($user_graphOffset);
 			childrenSize = here.visibleProgeny_size.asPoint;
 			const mysteryOffset = new Point(($showDetails ? -92 : 8) - (childrenSize.x / 2), -85);
-			origin_ofFirstReveal = userCenter.offsetBy(mysteryOffset);
+			origin_ofFirstReveal = $graphRect.center.offsetBy(mysteryOffset);
 			if (k.leftJustifyGraph) {
 				origin_ofFirstReveal.x = 25;
 			}
@@ -127,28 +126,31 @@
 
 <svelte:document on:keydown={globalHandleKeyDown}/>
 {#if here}
-	<div class='graph' key={toggle}
-		style='
-			position: fixed;
-			overflow: hidden;
-			z-index: {ZIndex.panel};
-			top:{$graphRect.origin.y}px;
-			left: {$graphRect.origin.x}px;
-			width: {$graphRect.size.width}px;
-			height: {$graphRect.size.height}px;'
-		on:keyup={ignore}
-		on:keydown={ignore}
-		on:keypress={ignore}
-		on:click={() => { $id_popupView = null; }}>
-		<Children thing={here} origin={origin_ofChildren}/>
-		{#if debug.colors}
-			<Box rect={redRect} color=red/>
-			<Box rect={blueRect} color=blue/>
-			<Box rect={greenRect} color=green half={true}/>
-		{/if}
-		{#if isGrabbed}
-			<Circle radius={10} center={origin_ofFirstReveal} color={here.color} thickness=1/>
-		{/if}
-		<FocusRevealDot here={here} center={origin_ofFirstReveal.offsetBy(new Point(-12.5, -11))}/>
+	<div class='clipper' on:wheel={handleWheel}>
+		<div class='graph' key={toggle}
+			style='
+				position: fixed;
+				overflow: hidden;
+				z-index: {ZIndex.panel};
+				top:{$graphRect.origin.y}px;
+				left: {$graphRect.origin.x}px;
+				width: {$graphRect.size.width}px;
+				height: {$graphRect.size.height}px;
+				transform: translate({$user_graphOffset.x}px, {$user_graphOffset.y}px);'
+			on:keyup={ignore}
+			on:keydown={ignore}
+			on:keypress={ignore}
+			on:click={() => { $id_popupView = null; }}>
+			<Children thing={here} origin={origin_ofChildren}/>
+			{#if debug.colors}
+				<Box rect={redRect} color=red/>
+				<Box rect={blueRect} color=blue/>
+				<Box rect={greenRect} color=green half={true}/>
+			{/if}
+			{#if isGrabbed}
+				<Circle radius={10} center={origin_ofFirstReveal} color={here.color} thickness=1/>
+			{/if}
+			<FocusRevealDot here={here} center={origin_ofFirstReveal.offsetBy(new Point(-12.5, -11))}/>
+		</div>
 	</div>
 {/if}

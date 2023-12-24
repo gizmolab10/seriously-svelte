@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { id_here, dot_size, id_editing, row_height, ids_grabbed, user_graphOffset, id_showingTools} from '../../../ts/managers/State';
+	import { id_here, dot_size, id_editing, row_height, ids_grabbed, id_showingTools} from '../../../ts/managers/State';
 	import { k, Thing, Point, debug, ZIndex, onMount, onDestroy, debugReact } from '../../../ts/common/GlobalImports';
 	import RevealCluster from './RevealCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
@@ -36,7 +36,7 @@
 	}
 	
 	$: {
-		if ($user_graphOffset != null || $row_height > 0 || origin != priorOrigin) {
+		if ($row_height > 0 || origin != priorOrigin) {
 			setTimeout(() => {
 				updateLayout()
 			}, 1);
