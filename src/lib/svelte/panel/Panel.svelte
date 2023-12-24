@@ -1,6 +1,6 @@
 <script>
+import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, PersistID, dbDispatch, debugReact } from '../../ts/common/GlobalImports';
 	import { build, isBusy, id_here, db_type, expanded, graphRect, id_popupView, showDetails, things_arrived } from '../../ts/managers/State';
-	import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, PersistID, dbDispatch, debugReact } from '../../ts/common/GlobalImports';
 	import { ButtonID, Hierarchy, persistLocal, handle_rebuild, signal_relayout, graphRect_update } from '../../ts/common/GlobalImports';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import LabelButton from '../kit/LabelButton.svelte';
@@ -9,13 +9,13 @@
 	import Help from '../help/Help.svelte';
 	import Details from './Details.svelte';
 	import Crumbs from './Crumbs.svelte';
-	let graph_toggle = false;
+	let toggle = false;
 	let here = Thing;
 	let size = 14;
 	
 	function builds_buttonClicked(event) { $id_popupView = ($id_popupView == ButtonID.buildNotes) ? null : ButtonID.buildNotes; }
 	function help_buttonClicked() { $id_popupView = ($id_popupView == ButtonID.help) ? null : ButtonID.help; }
-	window.addEventListener('resize', (event) => { graph_fullRebuild(); });
+	window.addEventListener('resize', (event) => { graphRect_update(); });
 	
 	onMount(async () => {
 		launch.setup();
@@ -36,7 +36,7 @@
 	function graph_fullRebuild() {
 		graphRect_update();
 		debugReact.log_rebuild(`PANEL ${here.description}`)
-		graph_toggle = !graph_toggle;	// remount graph component
+		toggle = !toggle;	// remount graph component
 	}
 	
 	function details_buttonClicked(event) {
@@ -147,7 +147,7 @@
 				{here?.title}
 			</div>
 			<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: {$showDetails ? k.detailsMargin : 0}px; top: 85px;'></div>
-			{#key graph_toggle}
+			{#key toggle}
 				<Graph/>
 			{/key}
 		{/if}

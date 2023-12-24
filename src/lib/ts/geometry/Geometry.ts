@@ -1,5 +1,5 @@
 import { graphRect, showDetails, crumbsWidth } from "../managers/State";
-import { get, debug, DebugFlag } from '../common/GlobalImports'
+import { get } from '../common/GlobalImports'
 
 export class Point {
 	x: number;
@@ -110,7 +110,4 @@ export function graphRect_update() {
 	const rect = new Rect(originOfGraph, sizeOfGraph);
 	crumbsWidth.set(sizeOfGraph.width);
 	graphRect.set(rect);										// used by Panel and Graph
-	if (debug.hasOption(DebugFlag.graph)) {
-		console.log('GRAPH', rect.description);
-	}
 };

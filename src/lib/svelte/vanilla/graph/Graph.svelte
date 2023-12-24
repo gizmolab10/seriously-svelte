@@ -9,12 +9,15 @@
 	let origin_ofFirstReveal = new Point();
 	let origin_ofChildren = new Point();
 	let childrenSize = new Point();
-	let size_graphRect = Size;
 	let isGrabbed = false;
 	let greenRect: Rect;
 	let blueRect: Rect;
 	let redRect: Rect;
 	let toggle = true;
+	let height = 0;
+	let width = 0;
+	let left = 0;
+	let top = 0;
 	let here;
 
 	function ignore(event) {}
@@ -69,6 +72,16 @@
 	}
 	
 	$: {
+		if ($graphRect) {
+			height = $graphRect.size.height;
+			width = $graphRect.size.width;
+			left = $graphRect.origin.x;
+			top = $graphRect.origin.y;
+			updateOrigins();
+		}
+	}
+	
+	$: {
 		if ($dot_size > 0) {
 			debugReact.log_origins(`GRAPH $dot_size ${here.description}`);
 			updateOrigins();
@@ -95,7 +108,6 @@
 
 	function updateOrigins() {
 		if (here) {
-			graphRect_update();
 			childrenSize = here.visibleProgeny_size.asPoint;
 			const mysteryOffset = new Point(($showDetails ? -92 : 8) - (childrenSize.x / 2), -85);
 			origin_ofFirstReveal = $graphRect.center.offsetBy(mysteryOffset);
@@ -129,13 +141,13 @@
 	<div class='clipper' on:wheel={handleWheel}>
 		<div class='graph' key={toggle}
 			style='
+				top:{top}px;
+				left: {left}px;
 				position: fixed;
 				overflow: hidden;
+				width: {width}px;
+				height: {height}px;
 				z-index: {ZIndex.panel};
-				top:{$graphRect.origin.y}px;
-				left: {$graphRect.origin.x}px;
-				width: {$graphRect.size.width}px;
-				height: {$graphRect.size.height}px;
 				transform: translate({$user_graphOffset.x}px, {$user_graphOffset.y}px);'
 			on:keyup={ignore}
 			on:keydown={ignore}
