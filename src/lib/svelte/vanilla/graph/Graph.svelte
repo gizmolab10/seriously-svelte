@@ -139,15 +139,17 @@
 
 <svelte:document on:keydown={globalHandleKeyDown}/>
 {#if here}
-	<div class='clipper' on:wheel={handleWheel}>
+	<div class='clipper' on:wheel={handleWheel}
+		style='
+			top:{top}px;
+			left: {left}px;
+			position: fixed;
+			overflow: hidden;
+			width: {width}px;
+			height: {height}px;
+			z-index: {ZIndex.panel};'>
 		<div class='graph' key={toggle}
-			style='
-				top:{top}px;
-				left: {left}px;
-				position: fixed;
-				overflow: hidden;
-				width: {width}px;
-				height: {height}px;
+			style='position: relative;
 				z-index: {ZIndex.panel};
 				transform: translate({$user_graphOffset.x}px, {$user_graphOffset.y}px);'
 			on:keyup={ignore}
