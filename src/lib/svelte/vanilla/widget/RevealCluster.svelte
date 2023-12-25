@@ -2,7 +2,7 @@
     import { k, Size, ZIndex, onMount, svgPath, graphEditor, dbDispatch } from '../../../ts/common/GlobalImports';
     import { dot_size, id_showingTools } from '../../../ts/managers/State';
 	import CircularButton from '../../kit/CircularButton.svelte';
-	import Trash from '../../kit/Trash.svelte';
+	import Trash from '../../svg/Trash.svelte';
 	export let thing: Thing;
 	let diameter = $dot_size;
     const path = svgPath.circle(diameter, diameter - 2);

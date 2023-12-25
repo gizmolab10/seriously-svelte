@@ -2,7 +2,7 @@
 	import { k, Size, Point, Thing, debug, ZIndex, Signals, onMount } from "../../../ts/common/GlobalImports";
 	import { graphEditor, dbDispatch, Direction, svgPath } from "../../../ts/common/GlobalImports";
 	import { dot_size, ids_grabbed, id_showingTools } from '../../../ts/managers/State';
-	import SVGD3 from '../../kit/SVGD3.svelte';
+	import SVGD3 from '../../svg/SVGD3.svelte';
 	export let thing;
 	let strokeColor = thing.color;
 	let fillColor = thing.color;

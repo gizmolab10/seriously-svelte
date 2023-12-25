@@ -1,6 +1,6 @@
 <script>
 	import { Point, debug, Direction, dbDispatch, graphEditor } from "../../../ts/common/GlobalImports";
-	import TriangleDot from '../../kit/TriangleDot.svelte';
+	import TriangleDot from '../../svg/TriangleDot.svelte';
 	import { dot_size } from '../../../ts/managers/State';
 	export let center = new Point();
 	export let here;

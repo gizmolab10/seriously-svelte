@@ -21,23 +21,6 @@
 	function handleKeyDown(event) { event.preventDefault(); return false; }
 </script>
 
-<div class='popup'>
-	{#each menuItems as menuItem}
-		<label class="menu-item"
-			style='on:keydown={handleKeyDown}'>
-			<input class='radio'
-				name='menu'
-				type='radio'
-				style='outline: none'
-				on:keydown={handleKeyDown}
-				value={menuItem.id}
-				on:change={() => handleSelect(menuItem.id) }
-				bind:group={idSelected}/>
-			<div class="label-text">{menuItem.label}</div>
-		</label>
-	{/each}
-</div>
-
 <style>
 	.radio {
 		cursor: pointer;
@@ -55,3 +38,20 @@
 		margin-top: 1px;
 	}
 </style>
+
+<div class='popup'>
+	{#each menuItems as menuItem}
+		<label class="menu-item"
+			style='on:keydown={handleKeyDown}'>
+			<input class='radio'
+				name='menu'
+				type='radio'
+				value={menuItem.id}
+				style='outline: none'
+				bind:group={idSelected}
+				on:keydown={handleKeyDown}
+				on:change={() => handleSelect(menuItem.id) }/>
+			<div class="label-text">{menuItem.label}</div>
+		</label>
+	{/each}
+</div>
