@@ -1,5 +1,5 @@
-import { k, get, Size, Datum, debug, signal, Signals, Predicate, Hierarchy, TraitType, PersistID, DebugFlag } from '../common/GlobalImports';
-import { dbDispatch, persistLocal, getWidthOf, signal_rebuild, SeriouslyRange, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { dbDispatch, persistLocal, getWidthOf, signal_rebuild_fromHere, SeriouslyRange, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { k, get, Size, Datum, debug, signal_relayout, Predicate, Hierarchy, TraitType, PersistID, DebugFlag } from '../common/GlobalImports';
 import { id_here, dot_size, id_editing, expanded, ids_grabbed, row_height, id_showingTools, line_stretch } from '../managers/State';
 import Airtable from 'airtable';
 
@@ -50,7 +50,7 @@ export default class Thing extends Datum {
 			const shouldShow = (idCluster != undefined) && idCluster == this.id && get(id_here) != this.id;
 			if (this.showCluster != shouldShow) {
 				this.showCluster = shouldShow;
-				signal_rebuild();
+				signal_rebuild_fromHere();
 			}
 		});
 	};
@@ -136,12 +136,12 @@ export default class Thing extends Datum {
 		return width;
 	}
 	
-	thing_relayout() { signal(Signals.relayout, this.id); }
-	toggleGrab()	 { this.hierarchy.grabs.toggleGrab(this); }
-	grabOnly()		 { this.hierarchy.grabs.grabOnly(this); }
-	toggleExpand()	 { this.expanded_setTo(!this.isExpanded) }
-	collapse()		 { this.expanded_setTo(false); }
-	expand()		 { this.expanded_setTo(true); }
+	signal_relayout() { signal_relayout(this.id); }
+	toggleGrab()	  { this.hierarchy.grabs.toggleGrab(this); }
+	grabOnly()		  { this.hierarchy.grabs.grabOnly(this); }
+	toggleExpand()	  { this.expanded_setTo(!this.isExpanded) }
+	collapse()		  { this.expanded_setTo(false); }
+	expand()		  { this.expanded_setTo(true); }
 
 	hasPredicate(asParents: boolean): boolean {
 		return asParents ? this.parents.length > 0 : this.children.length > 0
@@ -198,7 +198,7 @@ export default class Thing extends Datum {
 			});
 			if (mutated) {			// avoid disruptive rebuild
 				persistLocal.writeToDBKey(PersistID.expanded, get(expanded));
-				signal_rebuild();
+				signal_rebuild_fromHere();
 			}
 		}
 	}
@@ -302,7 +302,7 @@ export default class Thing extends Datum {
 				this.children[0].grabOnly()
 			}
 			this.expand();
-			signal_rebuild();
+			signal_rebuild_fromHere();
 		}
 	}
 
@@ -325,7 +325,7 @@ export default class Thing extends Datum {
 				const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
 				const newOrder = newIndex + goose;
 				this.order_setTo(newOrder, false);
-				signal_rebuild();
+				signal_rebuild_fromHere();
 			}
 		}
 	}

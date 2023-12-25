@@ -1,12 +1,13 @@
 <script lang='ts'>
+	import { k, Thing, Point, debug, ZIndex, onMount, onDestroy, debugReact, handle_relayout } from '../../../ts/common/GlobalImports';
 	import { id_here, dot_size, id_editing, row_height, ids_grabbed, id_showingTools} from '../../../ts/managers/State';
-	import { k, Thing, Point, debug, ZIndex, onMount, onDestroy, debugReact } from '../../../ts/common/GlobalImports';
 	import RevealCluster from './RevealCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
 	import RevealDot, {center} from './RevealDot.svelte';
 	import DragDot from './DragDot.svelte';
 	export let origin = new Point();
 	export let thing = Thing;
+	let priorRowHeight = $row_height;
 	let priorOrigin = origin;
 	let showingCluster = false;
 	let showingBorder = false;
@@ -24,9 +25,18 @@
 	let top = 0;
 	let widget;
 
+	onDestroy( () => { signalHandler.disconnect(); });
+
 	onMount( () => {
 		updateBorderStyle();
 		debugReact.log_mount(`WIDGET ${thing.description}`);
+	});
+	
+	const signalHandler = handle_relayout((idThing) => {
+		if (idThing == thing.id) {
+			debugReact.log_layout(`WIDGET signal ${thing.description}`);
+			updateLayout()
+		}
 	});
 
 	function updateBorderStyle() {
@@ -36,8 +46,19 @@
 	}
 	
 	$: {
-		if ($row_height > 0 || origin != priorOrigin) {
+		if (priorRowHeight != $row_height) {
 			setTimeout(() => {
+				debugReact.log_layout(`WIDGET $row_height ${thing.description}`);
+				updateLayout()
+			}, 1);
+			priorRowHeight = $row_height;
+		}
+	}
+	
+	$: {
+		if (priorOrigin != origin) {
+			setTimeout(() => {
+				debugReact.log_layout(`WIDGET origin ${thing.description}`);
 				updateLayout()
 			}, 1);
 			priorOrigin = origin;
@@ -50,8 +71,6 @@
 		left = origin.x + delta - 2;
 		const titleWidth = thing.titleWidth;
 		width = titleWidth - 18 + ($dot_size * 2);
-		thing.debugLog('TITLE WIDTH: ' + titleWidth);
-		// debugReact.log_layout(`WIDGET layout ${thing.description}`);
 		if (thing.showCluster) {
 			radius = k.clusterHeight / 2;
 			const yPadding = radius - 12;
@@ -73,6 +92,7 @@
 		const shouldGrab = $ids_grabbed?.includes(id) || thing.isExemplar;
 		const change = (isEditing != shouldEdit || isGrabbed != shouldGrab || showingCluster != shouldShowCluster);
 		if (change) {
+			debugReact.log_layout(`WIDGET visibility ${thing.description}`);
 			showingCluster = shouldShowCluster;
 			showingBorder = shouldEdit || shouldGrab;
 			isGrabbed = shouldGrab;

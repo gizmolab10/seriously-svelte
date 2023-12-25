@@ -1,4 +1,4 @@
-import { k, get, Thing, Hierarchy, dbDispatch, signal_rebuild } from '../common/GlobalImports';
+import { k, get, Thing, Hierarchy, dbDispatch, signal_rebuild_fromHere } from '../common/GlobalImports';
 import { ids_grabbed, id_showingTools } from './State';
 
 //////////////////////////////////////
@@ -83,7 +83,7 @@ export default class GraphEditor {
 
 	async thing_edit_remoteAddAsChild(child: Thing, parent: Thing, startEdit: boolean = true) {
 		await this.hierarchy.thing_remember_remoteAddAsChild(child, parent);
-		signal_rebuild();
+		signal_rebuild_fromHere();
 		parent.expand();
 		child.grabOnly();
 		if (startEdit) {
@@ -138,7 +138,7 @@ export default class GraphEditor {
 					newParent.becomeHere();
 				}
 			}
-			signal_rebuild();					// so Children component will update
+			signal_rebuild_fromHere();					// so Children component will update
 		}
 	}
 
@@ -147,7 +147,7 @@ export default class GraphEditor {
 		if (id) {
 			const clear = id == get(id_showingTools);
 			id_showingTools.set(clear ? null : id);
-			signal_rebuild();
+			signal_rebuild_fromHere();
 		}
 
 	}

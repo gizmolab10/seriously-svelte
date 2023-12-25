@@ -1,5 +1,5 @@
 <script>
-	import { Direction, onDestroy, dbDispatch, graphEditor, signal_rebuild } from "../../../ts/common/GlobalImports";
+	import { Direction, onDestroy, dbDispatch, graphEditor, signal_rebuild_fromHere } from "../../../ts/common/GlobalImports";
 	import { k, get, Size, Thing, Point, debug, ZIndex, onMount, svgPath } from "../../../ts/common/GlobalImports";
 	import { expanded, dot_size, ids_grabbed, id_showingTools } from '../../../ts/managers/State';
 	import SVGD3 from '../../kit/SVGD3.svelte';
@@ -89,7 +89,7 @@
 			graphEditor.thing_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
 			return;
 		}
-		signal_rebuild();
+		signal_rebuild_fromHere();
 	}
 
 	function handleDoubleClick(event) {
@@ -107,7 +107,7 @@
 				thing.grabOnly()
 				$id_showingTools = thing.id;
 			}
-			signal_rebuild();
+			signal_rebuild_fromHere();
 		}, k.longClickThreshold);
 	}
 

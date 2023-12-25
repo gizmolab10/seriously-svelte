@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { row_height, id_editing, thing_fontSize, thing_fontFamily, id_editingStopped } from '../../../ts/managers/State';
-	import { SeriouslyRange, graphEditor, signal_rebuild, signal_relayout } from '../../../ts/common/GlobalImports'; 
+	import { graphEditor, signal_relayout, SeriouslyRange, signal_rebuild_fromHere } from '../../../ts/common/GlobalImports'; 
 	import { k, Thing, ZIndex, onMount, onDestroy, dbDispatch } from '../../../ts/common/GlobalImports';
 	import Widget from './Widget.svelte';
 	export let thing = Thing;
@@ -42,7 +42,7 @@
 			switch (event.key) {	
 				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); graphEditor.thing_redraw_remoteAddChildTo(thing.firstParent); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
-				default:	  signal_relayout(); break;
+				default:	  console.log(event.key); signal_relayout(); break;
 			}
 		}
 	}
@@ -77,7 +77,7 @@
 			const id = thing?.id;
 			if (id != null && $id_editing == id) {				
 				$id_editing = null;
-				signal_rebuild();
+				signal_rebuild_fromHere();
 			}
 		}, 20);
 	}
@@ -91,7 +91,7 @@
 			if (hasChanges() && !thing.isExemplar) {
 				dbDispatch.db.thing_remoteUpdate(thing);
 				originalTitle = thing.title;		// so hasChanges will be correct
-				thing.thing_relayout();
+				thing.signal_relayout();
 			}
 		}
 	}
@@ -107,7 +107,7 @@
 
 	function handleCutOrPaste(event) {
 		extractRange();
-		thing.thing_relayout();
+		thing.signal_relayout();
 	}
 
 	function extractRange() {

@@ -20,21 +20,20 @@
 	const signalHandler = handle_relayout((idThing) => {
 		if (!idThing || idThing == thing.id || thing.childrenIDs_anyMissingFromIDsOf(children)) {
 			const now = new Date().getTime();
-			if (now - prior > 1000) {
+			if (now - prior > 100) {
 				prior = now;
 				setTimeout(async () => { // delay until all other handlers for this signal are done TODO: WHY?
 					await orders_normalize_remoteMaybe(thing.children);
-					debugReact.log_layout('CHILDREN signal');
-					// describe(children);
+					debugReact.log_layout(`CHILDREN signal ${thing.description}`);
 					layoutChildren();
 					if (idThing) { // only recurse if starting at a specific id
 						for (const child of children) {
 							if (child.hasChildren && child.isExpanded) {
-								child.thing_relayout();
+								child.signal_relayout();
 							}
 						}
 					}
-				}, 10);
+				}, 1);
 			}
 		}
 	})

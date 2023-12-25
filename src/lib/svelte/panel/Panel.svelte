@@ -1,7 +1,7 @@
 <script>
 import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, PersistID, dbDispatch, debugReact } from '../../ts/common/GlobalImports';
 	import { build, isBusy, id_here, db_type, expanded, graphRect, id_popupView, showDetails, things_arrived } from '../../ts/managers/State';
-	import { ButtonID, Hierarchy, persistLocal, handle_rebuild, signal_relayout, graphRect_update } from '../../ts/common/GlobalImports';
+	import { ButtonID, Hierarchy, persistLocal, handle_rebuild, signal_relayout_fromHere, graphRect_update } from '../../ts/common/GlobalImports';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import LabelButton from '../kit/LabelButton.svelte';
 	import BuildNotes from './BuildNotes.svelte';
@@ -41,7 +41,7 @@ import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, Pers
 	
 	function details_buttonClicked(event) {
 		$showDetails = !$showDetails;
-		signal_relayout();
+		signal_relayout_fromHere();
 		persistLocal.writeToKey(PersistID.details, $showDetails);
 	}
 

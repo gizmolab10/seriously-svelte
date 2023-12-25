@@ -25,6 +25,7 @@
 	onDestroy( () => { rebuild_signalHandler.disconnect(); relayout_signalHandler.disconnect(); });
 	
 	const rebuild_signalHandler = handle_rebuild((idThing) => {
+		debugReact.log_layout(`GRAPH signal ${here.description}`);
 		updateOrigins();
 		toggle = !toggle;	// rebuild entire graph
 	});
