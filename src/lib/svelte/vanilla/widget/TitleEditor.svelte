@@ -42,7 +42,7 @@
 			switch (event.key) {	
 				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); graphEditor.thing_redraw_remoteAddChildTo(thing.firstParent); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
-				default:	  console.log(event.key); signal_relayout(); break;
+				default:	  signal_relayout(); break;
 			}
 		}
 	}
