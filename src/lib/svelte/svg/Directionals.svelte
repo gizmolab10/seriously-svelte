@@ -1,6 +1,6 @@
 <script>
     import { k, Point, Direction } from '../../ts/common/GlobalImports';
-    import TriangleDot from './TriangleDot.svelte'
+    import TriangleButton from './TriangleButton.svelte'
     const origin = new Point(12, 10);
     const size = 24;
     let toggle = false;
@@ -28,7 +28,7 @@
 {#key toggle}
     <div class='directionals'>
         {#if display(true)}
-            <TriangleDot
+            <TriangleButton
                 fillColor_closure={fillColor_closure}
                 direction={Direction.left}
                 strokeColor={'black'}
@@ -39,7 +39,7 @@
             />
         {/if}
         {#if display(false)}
-            <TriangleDot
+            <TriangleButton
                 center={origin.offsetByX(size)}
                 fillColor_closure={fillColor_closure}
                 direction={Direction.right}

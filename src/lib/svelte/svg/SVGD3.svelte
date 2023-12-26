@@ -21,6 +21,8 @@
         d3.select(svg)
             .select('path')
             .attr('fill', fill)
+            .attr('stroke', stroke)
+            .attr('stroke-width', 1)
             .attr('shape-rendering', 'geometricPrecision'); // anti-alias
         svg = svg;
     }

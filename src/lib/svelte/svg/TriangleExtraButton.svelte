@@ -8,6 +8,7 @@
 	export let onClick;
 	export let display;
 	export let center;
+	export let extra;
 	export let size;
 	export let id;
 	let path = svgPath.triangle(Size.square(size), direction);
@@ -49,6 +50,13 @@
 		'>
 		<SVGD3
 			path={path}
+			fill={fillColor}
+			stroke={strokeColor}
+			zIndex={ZIndex.dots}
+			size={Size.square(size)}
+		/>
+		<SVGD3
+			path={extra}
 			fill={fillColor}
 			stroke={strokeColor}
 			zIndex={ZIndex.dots}

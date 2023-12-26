@@ -50,6 +50,7 @@
 	$: {
 		if ($ids_grabbed != null || thing != null) {
 			updateColors();
+			updatePath();
 		}
 
 	}
@@ -152,13 +153,15 @@
 		top: {$dot_size / 2 - 1.15 - (thing.isGrabbed ? 0 : 1)}px;
 		left: {size + thing.titleWidth - 5}px;
 	'>
-	<SVGD3
-		path={path}
-		fill={debug.lines ? 'transparent' : fillColor}
-		stroke={strokeColor}
-		zIndex={ZIndex.dots}
-		size={Size.square(size)}
-	/>
+	{#key path}
+		<SVGD3
+			path={path}
+			fill={debug.lines ? 'transparent' : fillColor}
+			stroke={strokeColor}
+			zIndex={ZIndex.dots}
+			size={Size.square(size)}
+		/>
+	{/key}
 	{#if thing.isBulkAlias}
 		<div style='left:-1px; width:14px; height:14px; position:absolute;'>
 			<SVGD3
