@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import { ids_grabbed, crumbsWidth } from '../../ts/managers/State';
 	import { Thing, dbDispatch } from '../../ts/common/GlobalImports';
+	import FatTriangle from '../svg/FatTriangle.svelte';
 	import Crumb from '../kit/Crumb.svelte';
 	let ancestors: Array<Thing> = [];
 	let toggleDraw = false;
@@ -30,7 +31,9 @@
 	{#if ancestors.length > 0}
 		{#each ancestors as thing, index}
 			{#if index > 0}
-				&nbsp;:
+				&nbsp;<FatTriangle size=10
+					strokeColor={thing.firstParent.color}
+					position='relative'/>
 			{/if}
 			<Crumb thing={thing}/>
 		{/each}

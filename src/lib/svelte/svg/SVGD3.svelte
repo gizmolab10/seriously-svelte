@@ -1,6 +1,7 @@
 <script>
     import { Rect, Size, Point, onMount } from '../../ts/common/GlobalImports';
     import * as d3 from 'd3';
+    export let position = 'absolute';
     export let size = new Size();
     export let stroke = 'black';
     export let fill = 'white';
@@ -33,5 +34,5 @@
     width={size.width}
     height={size.height}
     style='z-index: {zIndex};
-        position: absolute;
+        position: {position};
         shape-rendering: geometricPrecision;'/>

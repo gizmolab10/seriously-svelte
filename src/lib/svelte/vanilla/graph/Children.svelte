@@ -86,7 +86,7 @@
 		<Circle radius=1 center={center} color=black thickness=1/>
 	{/if}
 	{#each childArray as i}
-		<Widget thing={i.child} origin={i.rect.extent.offsetBy(new Point(12, ($dot_size / -15) -11))}/>
+		<Widget thing={i.child} origin={i.rect.extent.offsetBy(new Point(12, ($dot_size / -15) -10))}/>
 		<Line thing={i.child} curveType={i.rect.curveType} rect={i.rect.offsetBy(new Point(($dot_size / 2) - 129, ($dot_size / 2) - 8))}/>
 		{#if i.child.hasChildren && i.child.isExpanded}
 			<Children thing={i.child} origin={i.origin}/>

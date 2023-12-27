@@ -80,7 +80,7 @@
 		} else {
 			revealTop = $dot_size / -3;
 			radius = $row_height / 2;
-			top = origin.y + delta + 1;
+			top = origin.y + delta;
 			padding = `0px ${rightPadding}px 0px 0px`;
 		}
 	}
