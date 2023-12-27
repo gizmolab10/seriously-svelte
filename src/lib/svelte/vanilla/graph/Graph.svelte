@@ -115,7 +115,7 @@
 			if (k.leftJustifyGraph) {
 				origin_ofFirstReveal.x = 25;
 			}
-			const toChildren = new Point(-42 + $line_stretch - ($dot_size / 2), ($dot_size / 2) - (childrenSize.y / 2) - 5);
+			const toChildren = new Point(-43 + $line_stretch - ($dot_size / 2), ($dot_size / 2) - (childrenSize.y / 2) - 5);
 			origin_ofChildren = origin_ofFirstReveal.offsetBy(toChildren);
 			blueRect = $graphRect.dividedInHalf;
 			redRect = rectTo_firstReveal();
@@ -165,7 +165,7 @@
 			{#if isGrabbed}
 				<Circle radius={10} center={origin_ofFirstReveal} color={here.color} thickness=1/>
 			{/if}
-			<FocusRevealDot here={here} center={origin_ofFirstReveal.offsetBy(new Point(-12.5, -11))}/>
+			<FocusRevealDot here={here} center={origin_ofFirstReveal.offsetBy(new Point(-12.5, -8))}/>
 		</div>
 	</div>
 {/if}

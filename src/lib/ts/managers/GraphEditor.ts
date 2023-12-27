@@ -23,7 +23,7 @@ export default class GraphEditor {
 			if (!grab) {
 				const root = h.root;
 				root?.becomeHere();
-				root?.grabOnly(); // to update crumbs and dots
+				root?.grabOnly();		// update crumbs and dots
 				grab = root;
 			}
 			if (k.allowGraphEditing) {
@@ -44,7 +44,7 @@ export default class GraphEditor {
 			if (grab) {
 				switch (key) {
 					case 'arrowright':	await this.thing_redraw_remoteMoveRight(grab, true, SHIFT, OPTION, EXTREME); break;
-					case 'arrowleft':	await this.thing_redraw_remoteMoveRight(grab, false, SHIFT, OPTION, EXTREME); break;
+					case 'arrowleft':	event.preventDefault(); await this.thing_redraw_remoteMoveRight(grab, false, SHIFT, OPTION, EXTREME); break;
 					case '/':			grab.becomeHere(); break;
 				}
 			}
