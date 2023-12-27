@@ -15,10 +15,23 @@ export default class SVGPath {
         return 'M0 1 L' + width + ' 1';
     }
 
+    dash(diameter: number, margin: number) {
+		const start = margin + 2;
+		const radius = diameter / 2;
+		const end = diameter - start;
+        return `M${start} ${radius} L${end} ${radius}`;
+    }
+
+    diagonalCross(diameter: number, margin: number) {
+		const start = margin + 2;
+		const end = diameter - start;
+        return `M${start} ${start} L${end} ${end} M${start} ${end} L${end} ${start}`;
+    }
+
     cross(diameter: number, margin: number) {
 		const radius = diameter / 2;
 		const length = (radius - margin) * 2;
-        return `M${margin + 2} ${radius} L${length} ${radius} M${radius} ${margin + 2} L${radius} ${radius + margin + 1}`;
+        return `M${margin + 2} ${radius} L${length} ${radius} M${radius} ${margin + 2} L${radius} ${diameter - margin - 2}`;
     }
 
     oval(diameter: number, horizontal: boolean = true) {

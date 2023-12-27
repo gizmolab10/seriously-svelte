@@ -7,6 +7,7 @@
 	export let thing: Thing;
 	let diameter = $dot_size;
     const path = svgPath.circle(diameter, diameter - 2);
+    let deleteParentCenter = new Point();
     let parentCenter = new Point();
     let childCenter = new Point();
 	let radius = $dot_size / 2;
@@ -23,6 +24,7 @@
         top = 24 - offsetY;
         childCenter = new Point(left, top - diameter);
         parentCenter = new Point(7 - offsetX, top - diameter);
+        deleteParentCenter = new Point(7 - offsetX, top + diameter + 10);
 	});
 
 	async function handleClick(id: string) {
@@ -31,6 +33,7 @@
                 case 'child': await graphEditor.thing_edit_remoteAddChildTo(thing); break;
                 case 'parent': await graphEditor.thing_edit_remoteInsertParent(thing); break;
                 case 'delete': await dbDispatch.db.hierarchy.things_redraw_remoteTraverseDelete([thing]); break;
+                case 'deleteParent': alert('delete parent is under construction'); break;
                 default: break;
             }
             $id_showingTools = null;
@@ -57,6 +60,16 @@
     size={diameter}
 	display='block'
 	id={'parent'}/>
+<TriangleExtraButton
+	fillColor_closure={() => { return k.backgroundColor; }}
+	onClick={() => handleClick('deleteParent')}
+    extra={svgPath.dash(diameter, 2)}
+	direction={Direction.left}
+	center={deleteParentCenter}
+	strokeColor={color}
+	id={'deleteParent'}
+    size={diameter}
+	display='block'/>
 <TriangleExtraButton
 	fillColor_closure={() => { return k.backgroundColor; }}
 	onClick={() => handleClick('child')}
