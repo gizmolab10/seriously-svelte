@@ -15,6 +15,12 @@ export default class SVGPath {
         return 'M0 1 L' + width + ' 1';
     }
 
+    cross(diameter: number, margin: number) {
+		const radius = diameter / 2;
+		const length = (radius - margin) * 2;
+        return `M${margin + 2} ${radius} L${length} ${radius} M${radius} ${margin + 2} L${radius} ${radius + margin + 1}`;
+    }
+
     oval(diameter: number, horizontal: boolean = true) {
         const radius = diameter / 2;
         const width = radius - (horizontal ? 1 : 3);

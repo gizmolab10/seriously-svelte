@@ -58,7 +58,7 @@ export default class Thing extends Datum {
 	get fields():		  Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get siblings():			   Array<Thing> { return this.firstParent?.children ?? []; }
 	get children():			   Array<Thing> { const idP = Predicate.idIsAParentOf; return this.hierarchy.things_getByIDPredicateToAndID(idP, false, this.idForChildren); }
-	get parents():			   Array<Thing> { const idP = Predicate.idIsAParentOf; return this.hierarchy.things_getByIDPredicateToAndID(idP,	true, this.id); }
+	get parents():			   Array<Thing> { const idP = Predicate.idIsAParentOf; return this.hierarchy.things_getByIDPredicateToAndID(idP,  true, this.id); }
 	get hierarchy():			  Hierarchy { return dbDispatch.db.hierarchy; }
 	get hasChildren():				boolean { return this.hasPredicate(false); }
 	get hasParents():				boolean { return this.hasPredicate(true); }

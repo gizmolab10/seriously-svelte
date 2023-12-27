@@ -155,6 +155,17 @@ export default class Hierarchy {
 		return relationship;
 	}
 
+	async thing_remember_remoteRelocateChild(child: Thing, fromParent: Thing, toParent: Thing): Promise<any> {
+		let relationship = this.relationship_getWhereIDEqualsTo(child.id);
+		if (relationship && relationship.idFrom == fromParent.id) {
+			this.relationship_forget(relationship);
+			relationship.idFrom = toParent.id;
+			this.relationship_remember(relationship);
+			relationship.remoteWrite();
+		}
+					
+	}
+
 	thing_forget(thing: Thing) {
 		delete this.knownT_byID[thing.id];
 		this.knownTs = this.knownTs.filter((known) => known.id !== thing.id);

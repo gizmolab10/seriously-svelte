@@ -83,14 +83,28 @@ export default class GraphEditor {
 
 	async thing_edit_remoteAddAsChild(child: Thing, parent: Thing, startEdit: boolean = true) {
 		await this.hierarchy.thing_remember_remoteAddAsChild(child, parent);
-		signal_rebuild_fromHere();
 		parent.expand();
+		signal_rebuild_fromHere();
 		child.grabOnly();
 		if (startEdit) {
 			setTimeout(() => {
 				child.startEdit();
 			}, 200);
 		}
+	}
+
+	async thing_edit_remoteInsertParent(child: Thing) {
+		const parent = child.firstParent;
+		const newParent = await this.hierarchy.thing_remember_runtimeCopy(child.baseID, child);
+		parent.expand();
+		await this.hierarchy.thing_remember_remoteAddAsChild(newParent, parent);
+		await this.hierarchy.thing_remember_remoteRelocateChild(child, parent, newParent);
+		newParent.expand();
+		signal_rebuild_fromHere();
+		newParent.grabOnly();
+		setTimeout(() => {
+			newParent.startEdit();
+		}, 200);
 	}
 
 	////////////////////
