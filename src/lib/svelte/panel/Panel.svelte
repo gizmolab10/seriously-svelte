@@ -1,16 +1,18 @@
 <script>
+import { build, isBusy, id_here, db_type, expanded, graphRect, id_popupView, showDetails, things_arrived, thing_fontSize } from '../../ts/managers/State';
 import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, PersistID, dbDispatch, debugReact } from '../../ts/common/GlobalImports';
-	import { build, isBusy, id_here, db_type, expanded, graphRect, id_popupView, showDetails, things_arrived } from '../../ts/managers/State';
 	import { ButtonID, Hierarchy, persistLocal, handle_rebuild, signal_relayout_fromHere, graphRect_update } from '../../ts/common/GlobalImports';
+	import TitleEditor from '../vanilla/widget/TitleEditor.svelte';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import LabelButton from '../kit/LabelButton.svelte';
-	import BuildNotes from './BuildNotes.svelte';
 	import Graph from '../vanilla/graph/Graph.svelte';
+	import BuildNotes from './BuildNotes.svelte';
 	import Help from '../help/Help.svelte';
 	import Details from './Details.svelte';
 	import Crumbs from './Crumbs.svelte';
 	let toggle = false;
 	let here = Thing;
+	let left = 14;
 	let size = 14;
 	
 	function builds_buttonClicked(event) { $id_popupView = ($id_popupView == ButtonID.buildNotes) ? null : ButtonID.buildNotes; }
@@ -35,6 +37,7 @@ import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, Pers
 
 	function graph_fullRebuild() {
 		graphRect_update();
+		left = $graphRect.origin.x;
 		debugReact.log_rebuild(`PANEL ${here.description}`)
 		toggle = !toggle;	// remount graph component
 	}
@@ -67,9 +70,6 @@ import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, Pers
 		border-radius: 16px;
 	}
 	.topTitle {
-		text-align: center;
-		position: fixed;
-		font-size: 2em;
 		right: 0px;
 		top: 40px;
 	}
@@ -110,15 +110,16 @@ import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, Pers
 			background-color: transparent;
 			height: {$showDetails ? '100%' : '33px'};'>
 		<CircularButton left=15
-			image='settings.svg'
 			borderColor='white'
-			onClick={details_buttonClicked}/>
+			onClick={details_buttonClicked}>
+			<img src='settings.svg' alt='circular button' width={size}px height={size}px/>
+		</CircularButton>
 		<button class='build' on:click={builds_buttonClicked}>{$build}</button>
 		{#if !$isBusy}
 			<CircularButton left=85
 				onClick={() => {help_buttonClicked()}}
-				label='i'
-				size={size}/>
+				size={size}>i
+			</CircularButton>
 		{/if}
 		{#if $showDetails && $id_popupView == null}
 			<Details/>
@@ -141,10 +142,11 @@ import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, Pers
 				<Crumbs/>
 			</div>
 			<div class='topTitle'
-				style='color: {here?.color};;
-					z-index: {ZIndex.frontmost};
-					left: {$showDetails ? '100px' : '-1px'}'>
-				{here?.title}
+				style='left: {left};
+					position: absolute;
+					color: {here?.color};
+					z-index: {ZIndex.frontmost};'>
+				<TitleEditor thing={here} fontSize={$thing_fontSize * 2}px fontFamily='Times New Roman'/>
 			</div>
 			<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: {$showDetails ? k.detailsMargin : 0}px; top: 85px;'></div>
 			{#key toggle}

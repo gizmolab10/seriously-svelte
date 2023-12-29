@@ -15,33 +15,33 @@
 
 </script>
 
+<style>
+	.modal-overlay {
+		left: 0;
+		top: 31px;
+		width: 100px;
+		height: 100%;
+		position: fixed;
+		justify-content: center;
+	}
+	.modal-content {
+		padding: 14px;
+		max-width: 500px;
+		font-size: 0.8em;
+		position: relative;
+		background-color: #fff;
+	}
+</style>
+
 <div class='modal-overlay' style='z-index: {ZIndex.frontmost};'>
 	<div class='modal-content' style='z-index: {ZIndex.frontmost};'>
 		<RadioButtons menuItems={menuItems} idSelected={$db_type}/>
 		<br>
 		{#if $db_loadTime}
-			<Label title={'fetch in ' + $db_loadTime + ' s'}/>
+			<Label>fetch = {$db_loadTime} s</Label>
 		{:else}
 			<br>
 		{/if}
 		<br>
 	</div>
 </div>
-
-<style>
-	.modal-overlay {
-		position: fixed;
-		left: 0;
-		top: 31px;
-		height: 100%;
-		width: 100px;
-		justify-content: center;
-	}
-	.modal-content {
-		background-color: #fff;
-		padding: 14px;
-		max-width: 500px;
-		position: relative;
-		font-size: 0.8em;
-	}
-</style>

@@ -1,12 +1,11 @@
 <script>
-	export let title;
 </script>
 
-<div>{title}</div>
-
 <style>
-	div {
+	slot {
 		font-size: 13px;
 		color: #333;
 	}
 </style>
+
+<slot></slot>

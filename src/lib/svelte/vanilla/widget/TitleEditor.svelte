@@ -1,8 +1,10 @@
 <script lang='ts'>
-	import { row_height, id_editing, thing_fontSize, thing_fontFamily, id_editingStopped } from '../../../ts/managers/State';
 	import { graphEditor, signal_relayout, SeriouslyRange, signal_rebuild_fromHere } from '../../../ts/common/GlobalImports'; 
 	import { k, Thing, ZIndex, onMount, onDestroy, dbDispatch } from '../../../ts/common/GlobalImports';
+	import { row_height, id_editing, id_editingStopped } from '../../../ts/managers/State';
 	import Widget from './Widget.svelte';
+	export let fontFamily = 'Arial';
+	export let fontSize = '1em';
 	export let thing = Thing;
 	let originalTitle = thing.title;
 	let isEditing = false;
@@ -144,8 +146,8 @@
 {#key originalTitle}
 	<span class="ghost" bind:this={ghost}
 		style='
-			font-size: {$thing_fontSize}px;
-			font-family: {$thing_fontFamily};
+			font-size: {fontSize};
+			font-family: {fontFamily};
 			padding: 0px 0px 0px {$row_height / 3}px;'>
 		{thing.title}
 	</span>
@@ -163,10 +165,10 @@
 		on:paste={handleCutOrPaste}
 		style='left: 10px;
 			color: {thing.color};
+			font-size: {fontSize};
 			z-index: {ZIndex.text};
-			font-size: {$thing_fontSize}px;
-			font-family: {$thing_fontFamily};
-			outline-color: k.backgroundColor;
+			font-family: {fontFamily};
+			outline-color: {k.backgroundColor};
 			padding: 0px 0px 0px {$row_height / 3}px;
 		'/>
 {/key}

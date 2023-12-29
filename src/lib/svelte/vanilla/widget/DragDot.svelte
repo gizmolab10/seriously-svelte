@@ -92,7 +92,7 @@
 			size = $dot_size;
 			left = 1.5 - (size / 2); // offset from center?
 			path = svgPath.oval(size, false);
-			top = $id_showingTools == thing.id ? 23 : -5.5;
+			top = $id_showingTools == thing.id ? 23 : -$dot_size / 2 + 2;
 		}
 	}
 

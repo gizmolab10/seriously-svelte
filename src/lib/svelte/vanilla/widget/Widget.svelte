@@ -1,9 +1,9 @@
 <script lang='ts'>
+import { id_here, dot_size, id_editing, row_height, ids_grabbed, thing_fontSize, thing_fontFamily, id_showingTools} from '../../../ts/managers/State';
 	import { k, Thing, Point, debug, ZIndex, onMount, onDestroy, debugReact, handle_relayout } from '../../../ts/common/GlobalImports';
-	import { id_here, dot_size, id_editing, row_height, ids_grabbed, id_showingTools} from '../../../ts/managers/State';
 	import RevealCluster from './RevealCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
-	import RevealDot, {center} from './RevealDot.svelte';
+	import RevealDot from './RevealDot.svelte';
 	import DragDot from './DragDot.svelte';
 	export let origin = new Point();
 	export let thing = Thing;
@@ -78,7 +78,7 @@
 			top = origin.y + delta - yPadding + 1;
 			padding = `${yPadding}px ${rightPadding}px ${yPadding}px 0px`;
 		} else {
-			revealTop = $dot_size / -3;
+			revealTop = $dot_size / -3 + 1;
 			radius = $row_height / 2;
 			top = origin.y + delta;
 			padding = `0px ${rightPadding}px 0px 0px`;
@@ -127,8 +127,10 @@
 		z-index: {ZIndex.widgets};
 		border-radius: {radius}px;
 	'>
-	<DragDot thing={thing}/>
-	<TitleEditor thing={thing}/>
+	<div style='top:{revealTop}px;'>
+		<DragDot thing={thing}/>
+	</div>
+	<TitleEditor thing={thing} fontSize={$thing_fontSize}px fontFamily={$thing_fontFamily}/>
 	<div class='revealDot'
 		style='
 			top:{revealTop}px;

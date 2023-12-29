@@ -3,8 +3,6 @@
 	export let textColor = '#400';
 	export let color = '#ccc';
 	export let onClick = null;
-	export let label = null;
-	export let image = null;
 	export let size = 14;
 	export let left = 7;
 	export let top = 7;
@@ -33,9 +31,5 @@
 		font-weight: bold;
 		cursor: pointer;
 	'>
-	{#if image}
-		<img src="{image}" alt="circular button" width={size}px height={size}px/>
-	{:else if label}
-		{label}
-	{/if}
+	<slot></slot>
 </div>

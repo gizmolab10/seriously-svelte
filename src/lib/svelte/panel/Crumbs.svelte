@@ -32,8 +32,9 @@
 		{#each ancestors as thing, index}
 			{#if index > 0}
 				&nbsp;<FatTriangle size=10
-					strokeColor={thing.firstParent.color}
-					position='relative'/>
+					position='relative'
+					fillColor={thing.firstParent.color}
+					strokeColor={thing.firstParent.color}/>
 			{/if}
 			<Crumb thing={thing}/>
 		{/each}

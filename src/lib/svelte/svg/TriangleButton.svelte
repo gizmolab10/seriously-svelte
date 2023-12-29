@@ -3,10 +3,10 @@
 	import { dot_size, ids_grabbed } from '../../ts/managers/State';
 	import SVGD3 from './SVGD3.svelte';
 	export let fillColor_closure;
+	export let extra = null;
 	export let strokeColor;
 	export let direction;
 	export let onClick;
-	export let display;
 	export let center;
 	export let size;
 	export let id;
@@ -30,29 +30,36 @@
 
 </script>
 
-{#key display}
-	<button id={id}
-		bind:this={button}
-		on:click={onClick}
-		on:mouseout={mouseOut}
-		on:mouseover={mouseOver}
-		style='
-			width: {size}px;
-			height: {size}px;
-			border: none;
-			display: block;
-			cursor: pointer;
-			background: none;
-			position: absolute;
-			top: {center.y + 2 - (size / 2)}px;
-			left: {center.x + 6 - (size / 2)}px;
-		'>
+<button id={id}
+	bind:this={button}
+	on:click={onClick}
+	on:mouseout={mouseOut}
+	on:mouseover={mouseOver}
+	style='
+		width: 20px;
+		height: 20px;
+		border: none;
+		display: block;
+		cursor: pointer;
+		background: none;
+		position: absolute;
+		top: {center.y + 2 - (size / 2)}px;
+		left: {center.x + 3 - (size / 2)}px;
+	'>
+	<SVGD3
+		path={path}
+		fill={fillColor}
+		stroke={strokeColor}
+		zIndex={ZIndex.dots}
+		size={Size.square(size)}
+	/>
+	{#if extra}
 		<SVGD3
-			path={path}
+			path={extra}
 			fill={fillColor}
 			stroke={strokeColor}
 			zIndex={ZIndex.dots}
 			size={Size.square(size)}
 		/>
-	</button>
-{/key}
+	{/if}
+</button>

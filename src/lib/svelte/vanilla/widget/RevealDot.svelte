@@ -3,14 +3,12 @@
 	import { k, get, Size, Thing, Point, debug, ZIndex, onMount, svgPath } from "../../../ts/common/GlobalImports";
 	import { expanded, dot_size, ids_grabbed, id_showingTools } from '../../../ts/managers/State';
 	import SVGD3 from '../../svg/SVGD3.svelte';
-	export let center = new Point();
 	export let thing;
 	let bulkAliasFillColor = k.backgroundColor;
 	let insidePath = svgPath.circle(16, 6);
 	let fillColor = k.backgroundColor;
 	let strokeColor = thing.color;
 	let isHovering = false;
-	let size = $dot_size;
 	let clickCount = 0;
 	let button = null;
 	let clickTimer;
@@ -42,7 +40,6 @@
 
 	$: {
 		if ($dot_size > 0) {
-			size = $dot_size;
 			updatePath();
 		}
 	}
@@ -69,12 +66,12 @@
 
 	function updatePath() {
 		if ((!thing.hasChildren && !thing.isBulkAlias) || ($id_showingTools == thing.id)) {
-			path = svgPath.circle(size, size / 2);
+			path = svgPath.circle($dot_size, $dot_size / 2);
 		} else {
 			const direction = (thing.isExpanded && thing.hasChildren) ? Direction.left : Direction.right;
-			path = svgPath.triangle(Size.square(size), direction);
+			path = svgPath.triangle(Size.square($dot_size), direction);
 			if (thing.isBulkAlias) {
-				insidePath = svgPath.circle(size, size / 3);
+				insidePath = svgPath.circle($dot_size, $dot_size / 3);
 			}
 		}
 	}
@@ -148,10 +145,10 @@
 	on:dblclick={handleDoubleClick}
 	on:contextmenu={handleContextMenu}
 	style='
-		width={size}px;
-		height={size}px;
-		top: {$dot_size / 2 - 1.15 - (thing.isGrabbed ? 0 : 1)}px;
-		left: {size + thing.titleWidth - 5}px;
+		width={$dot_size}px;
+		height={$dot_size}px;
+		top: {$dot_size / 2 - 2 - (thing.isGrabbed ? 0 : 1)}px;
+		left: {$dot_size + thing.titleWidth - 5}px;
 	'>
 	{#key path}
 		<SVGD3
@@ -159,7 +156,7 @@
 			fill={debug.lines ? 'transparent' : fillColor}
 			stroke={strokeColor}
 			zIndex={ZIndex.dots}
-			size={Size.square(size)}
+			size={Size.square($dot_size)}
 		/>
 	{/key}
 	{#if thing.isBulkAlias}
@@ -168,7 +165,7 @@
 				path={insidePath}
 				stroke={strokeColor}
 				zIndex={ZIndex.dots}
-				size={Size.square(size)}
+				size={Size.square($dot_size)}
 				fill={bulkAliasFillColor}
 			/>
 		</div>

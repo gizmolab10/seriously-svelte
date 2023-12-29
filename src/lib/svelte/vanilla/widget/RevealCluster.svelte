@@ -1,8 +1,8 @@
 <script lang='ts'>
     import { k, Size, Point, ZIndex, onMount, svgPath, Direction, dbDispatch, graphEditor } from '../../../ts/common/GlobalImports';
     import { dot_size, row_height, id_showingTools } from '../../../ts/managers/State';
-	import TriangleExtraButton from '../../svg/TriangleExtraButton.svelte';
 	import CircularButton from '../../kit/CircularButton.svelte';
+	import TriangleButton from '../../svg/TriangleButton.svelte';
 	import Trash from '../../svg/Trash.svelte';
 	export let thing: Thing;
 	let diameter = $dot_size;
@@ -33,12 +33,22 @@
                 case 'child': await graphEditor.thing_edit_remoteAddChildTo(thing); break;
                 case 'parent': await graphEditor.thing_edit_remoteInsertParent(thing); break;
                 case 'delete': await dbDispatch.db.hierarchy.things_redraw_remoteTraverseDelete([thing]); break;
-                case 'deleteParent': alert('delete parent is under construction'); break;
+                // case 'deleteParent': alert('delete parent is under construction'); break;
                 default: break;
             }
             $id_showingTools = null;
         }
     }
+
+    // <TriangleButton
+    //     fillColor_closure={() => { return k.backgroundColor; }}
+    //     onClick={() => handleClick('deleteParent')}
+    //     extra={svgPath.dash(diameter, 2)}
+    //     direction={Direction.left}
+    //     center={deleteParentCenter}
+    //     strokeColor={color}
+    //     id={'deleteParent'}
+    //     size={diameter}/>
 
 </script>
 
@@ -50,7 +60,7 @@
     }
 </style>
 
-<TriangleExtraButton
+<TriangleButton
 	fillColor_closure={() => { return k.backgroundColor; }}
 	onClick={() => handleClick('parent')}
     extra={svgPath.cross(diameter, 2)}
@@ -58,19 +68,8 @@
 	center={parentCenter}
 	strokeColor={color}
     size={diameter}
-	display='block'
 	id={'parent'}/>
-<TriangleExtraButton
-	fillColor_closure={() => { return k.backgroundColor; }}
-	onClick={() => handleClick('deleteParent')}
-    extra={svgPath.dash(diameter, 2)}
-	direction={Direction.left}
-	center={deleteParentCenter}
-	strokeColor={color}
-	id={'deleteParent'}
-    size={diameter}
-	display='block'/>
-<TriangleExtraButton
+<TriangleButton
 	fillColor_closure={() => { return k.backgroundColor; }}
 	onClick={() => handleClick('child')}
     extra={svgPath.cross(diameter, 2)}
@@ -78,7 +77,6 @@
 	center={childCenter}
 	strokeColor={color}
     size={diameter}
-	display='block'
 	id={'child'}/>
 <button class='dismiss'
     on:click={() => handleClick('delete')}

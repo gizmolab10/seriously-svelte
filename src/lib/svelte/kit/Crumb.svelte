@@ -31,5 +31,7 @@
 		border: 1px solid {thing.color};
 		cursor: {thing.hasChildren ? 'pointer' : 'normal'};
 		{colorStyles};'>
-	{thing.title.injectElipsisAt()}
+		<div style='padding:0px 0px 1px 0px'>
+			{thing.title.injectElipsisAt()}
+		</div>
 </button>

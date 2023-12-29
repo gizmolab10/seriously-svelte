@@ -34,6 +34,5 @@
 	onClick={onClick}
 	id={here.title}
 	center={center}
-	display='block'
     size={size}
 />
