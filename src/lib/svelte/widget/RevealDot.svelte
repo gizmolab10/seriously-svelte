@@ -1,8 +1,8 @@
 <script>
-	import { Direction, onDestroy, dbDispatch, graphEditor, signal_rebuild_fromHere } from "../../../ts/common/GlobalImports";
-	import { k, get, Size, Thing, Point, debug, ZIndex, onMount, svgPath } from "../../../ts/common/GlobalImports";
-	import { expanded, dot_size, ids_grabbed, id_showingTools } from '../../../ts/managers/State';
-	import SVGD3 from '../../svg/SVGD3.svelte';
+	import { Direction, onDestroy, dbDispatch, graphEditor, signal_rebuild_fromHere } from "../../ts/common/GlobalImports";
+	import { k, get, Size, Thing, Point, debug, ZIndex, onMount, svgPath } from "../../ts/common/GlobalImports";
+	import { expanded, dot_size, ids_grabbed, id_showingTools } from '../../ts/managers/State';
+	import SVGD3 from '../svg/SVGD3.svelte';
 	export let thing;
 	let bulkAliasFillColor = k.backgroundColor;
 	let insidePath = svgPath.circle(16, 6);

@@ -2,10 +2,10 @@
 import { build, isBusy, id_here, db_type, expanded, graphRect, id_popupView, showDetails, things_arrived, thing_fontSize } from '../../ts/managers/State';
 import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, PersistID, dbDispatch, debugReact } from '../../ts/common/GlobalImports';
 	import { ButtonID, Hierarchy, persistLocal, handle_rebuild, signal_relayout_fromHere, graphRect_update } from '../../ts/common/GlobalImports';
-	import TitleEditor from '../vanilla/widget/TitleEditor.svelte';
+	import TitleEditor from '../widget/TitleEditor.svelte';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import LabelButton from '../kit/LabelButton.svelte';
-	import Graph from '../vanilla/graph/Graph.svelte';
+	import Graph from '../graph/Graph.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import Help from '../help/Help.svelte';
 	import Details from './Details.svelte';

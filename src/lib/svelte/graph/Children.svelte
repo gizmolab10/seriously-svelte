@@ -1,9 +1,9 @@
 <script lang=ts>
-	import { Rect, Size, Point, Thing, debug, signal, Signals, Layout, onMount, LineRect, onDestroy } from '../../../ts/common/GlobalImports';
-	import { debugReact, LineCurveType, orders_normalize_remoteMaybe, handle_relayout } from '../../../ts/common/GlobalImports';
-	import { dot_size, graphRect, line_stretch } from '../../../ts/managers/State';
+	import { Rect, Size, Point, Thing, debug, signal, Signals, Layout, onMount, LineRect, onDestroy } from '../../ts/common/GlobalImports';
+	import { debugReact, LineCurveType, orders_normalize_remoteMaybe, handle_relayout } from '../../ts/common/GlobalImports';
+	import { dot_size, graphRect, line_stretch } from '../../ts/managers/State';
 	import Widget from '../widget/Widget.svelte';
-	import Circle from '../../kit/Circle.svelte';
+	import Circle from '../kit/Circle.svelte';
 	import Children from './Children.svelte';
 	import Line from './Line.svelte';
 	export let origin = new Point();

@@ -6,7 +6,8 @@
 	export let size = 20;
 	const indexedNotes = Object.entries(builds.notes).reverse();
 	let notesIndex = 0;
-	let notes = []
+	let notes = [];
+	let title = '';
 	
 	onMount(() => { updateNotes(); })
     function display(goLeft) { return shouldEnable(goLeft) ? 'block' : 'none'; }
@@ -14,6 +15,8 @@
 	function updateNotes() {
 		const end = Math.min(indexedNotes.length, notesIndex + 10);
 		notes = indexedNotes.slice(notesIndex, end);
+		const suffix = notesIndex < 10 ? ' (10 most recent)' : '';
+		title = `Seriously Build Notes${suffix}`;
 	}
 	
 	function handleKeyDown(event) {
@@ -87,7 +90,7 @@
 			{#key notes}
 				<Directionals hit={directional_buttonClicked} display={display}/>
 			{/key}
-			<div class='title'>Seriously Build Notes (10 most recent)</div>
+			<div class='title'>{title}</div>
 			<CloseButton size={size}/>
 		</div>
 		<br>

@@ -1,11 +1,11 @@
 <script lang='ts'>
-	import { k, Rect, Size, Point, Thing, ZIndex, Signals, onMount, onDestroy, graphEditor, PersistID, persistLocal } from '../../../ts/common/GlobalImports';
-	import { debug, debugReact, Predicate, ButtonID, dbDispatch, handle_rebuild, handle_relayout, graphRect_update } from '../../../ts/common/GlobalImports';
-	import { id_here, graphRect, dot_size, id_editing, ids_grabbed, line_stretch, showDetails, user_graphOffset, id_popupView } from '../../../ts/managers/State';
+	import { k, Rect, Size, Point, Thing, ZIndex, Signals, onMount, onDestroy, graphEditor, PersistID, persistLocal } from '../../ts/common/GlobalImports';
+	import { debug, debugReact, Predicate, ButtonID, dbDispatch, handle_rebuild, handle_relayout, graphRect_update } from '../../ts/common/GlobalImports';
+	import { id_here, graphRect, dot_size, id_editing, ids_grabbed, line_stretch, showDetails, user_graphOffset, id_popupView } from '../../ts/managers/State';
 	import FocusRevealDot from './FocusRevealDot.svelte';
-	import Circle from '../../kit/Circle.svelte';
+	import Circle from '../kit/Circle.svelte';
 	import Children from './Children.svelte';
-	import Box from '../../kit/Box.svelte';
+	import Box from '../kit/Box.svelte';
 	let origin_ofFirstReveal = new Point();
 	let origin_ofChildren = new Point();
 	let childrenSize = new Point();
@@ -149,14 +149,11 @@
 			height: {height}px;
 			z-index: {ZIndex.panel};'>
 		<div class='graph' key={toggle}
-			style='position: relative;
-				z-index: {ZIndex.panel};
-				transform: translate({$user_graphOffset.x}px, {$user_graphOffset.y}px);'
+			style='transform: translate({$user_graphOffset.x}px, {$user_graphOffset.y}px);'
 			on:keyup={ignore}
 			on:keydown={ignore}
 			on:keypress={ignore}
 			on:click={() => { $id_popupView = null; }}>
-			<Children thing={here} origin={origin_ofChildren}/>
 			{#if debug.colors}
 				<Box rect={redRect} color=red/>
 				<Box rect={blueRect} color=blue/>
@@ -166,6 +163,7 @@
 				<Circle radius={10} center={origin_ofFirstReveal} color={here.color} thickness=1/>
 			{/if}
 			<FocusRevealDot here={here} center={origin_ofFirstReveal.offsetBy(new Point(-12, -11))}/>
+			<Children thing={here} origin={origin_ofChildren}/>
 		</div>
 	</div>
 {/if}

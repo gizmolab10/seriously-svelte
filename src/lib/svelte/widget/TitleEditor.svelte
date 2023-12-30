@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { graphEditor, signal_relayout, SeriouslyRange, signal_rebuild_fromHere } from '../../../ts/common/GlobalImports'; 
-	import { k, Thing, ZIndex, onMount, onDestroy, dbDispatch } from '../../../ts/common/GlobalImports';
-	import { row_height, id_editing, id_editingStopped } from '../../../ts/managers/State';
+	import { graphEditor, signal_relayout, SeriouslyRange, signal_rebuild_fromHere } from '../../ts/common/GlobalImports'; 
+	import { k, Thing, ZIndex, onMount, onDestroy, dbDispatch } from '../../ts/common/GlobalImports';
+	import { row_height, id_editing, id_editingStopped } from '../../ts/managers/State';
 	import Widget from './Widget.svelte';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';

@@ -1,7 +1,7 @@
 <script>
-	import { Point, debug, Direction, dbDispatch, graphEditor } from "../../../ts/common/GlobalImports";
-	import TriangleButton from '../../svg/TriangleButton.svelte';
-	import { dot_size } from '../../../ts/managers/State';
+	import { Point, debug, Direction, dbDispatch, graphEditor } from "../../ts/common/GlobalImports";
+	import TriangleButton from '../svg/TriangleButton.svelte';
+	import { dot_size } from '../../ts/managers/State';
 	export let center = new Point();
 	export let here;
 	let size = $dot_size;

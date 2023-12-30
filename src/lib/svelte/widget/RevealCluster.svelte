@@ -1,9 +1,9 @@
 <script lang='ts'>
-    import { k, Size, Point, ZIndex, onMount, svgPath, Direction, dbDispatch, graphEditor } from '../../../ts/common/GlobalImports';
-    import { dot_size, row_height, id_showingTools } from '../../../ts/managers/State';
-	import CircularButton from '../../kit/CircularButton.svelte';
-	import TriangleButton from '../../svg/TriangleButton.svelte';
-	import Trash from '../../svg/Trash.svelte';
+    import { k, Size, Point, ZIndex, onMount, svgPath, Direction, dbDispatch, graphEditor } from '../../ts/common/GlobalImports';
+    import { dot_size, row_height, id_showingTools } from '../../ts/managers/State';
+	import CircularButton from '../kit/CircularButton.svelte';
+	import TriangleButton from '../svg/TriangleButton.svelte';
+	import Trash from '../svg/Trash.svelte';
 	export let thing: Thing;
 	let diameter = $dot_size;
     const path = svgPath.circle(diameter, diameter - 2);

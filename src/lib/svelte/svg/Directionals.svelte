@@ -2,7 +2,8 @@
     import { k, Point, Direction } from '../../ts/common/GlobalImports';
     import TriangleButton from './TriangleButton.svelte'
     const origin = new Point(12, 10);
-    const size = 24;
+    const size = 20;
+    const offsetY = size / 2 - 1;
     let toggle = false;
     export let display;
     export let hit;
@@ -10,8 +11,8 @@
 	function fillColor_closure(isFilled) { return isFilled ? 'black' : k.backgroundColor; }
 
 	function onClick(event) {
-        const pointsLeft = event.currentTarget.id == 'left';
-        hit(pointsLeft);
+        const pointsUp = event.currentTarget.id == 'up';
+        hit(pointsUp);
         toggle = !toggle;
 	}
 
@@ -19,7 +20,7 @@
 
 <style>
     .directionals {
-		top: 12px;
+		top: 9px;
 		left: 12px;
 		position: absolute;     
     }
@@ -30,23 +31,23 @@
         {#if display(true)}
             <TriangleButton
                 fillColor_closure={fillColor_closure}
-                direction={Direction.left}
+                center={origin.offsetByY(-offsetY)}
+                direction={Direction.up}
                 strokeColor={'black'}
                 onClick={onClick}
-                center={origin}
                 size={size}
-                id='left'
+                id='up'
             />
         {/if}
         {#if display(false)}
             <TriangleButton
-                center={origin.offsetByX(size)}
                 fillColor_closure={fillColor_closure}
-                direction={Direction.right}
+                center={origin.offsetByY(offsetY)}
+                direction={Direction.down}
                 strokeColor={'black'}
                 onClick={onClick}
                 size={size}
-                id='right'
+                id='down'
             />
         {/if}
     </div>

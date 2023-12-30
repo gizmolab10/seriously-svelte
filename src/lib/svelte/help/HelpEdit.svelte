@@ -1,7 +1,7 @@
 <script>
 	import { Point } from "../../ts/common/GlobalImports";
 	import { exemplar } from '../../ts/data/Exemplar';
-	import Widget from '../vanilla/widget/Widget.svelte';
+	import Widget from '../widget/Widget.svelte';
 </script>
 
 <div>
