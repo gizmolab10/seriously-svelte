@@ -135,7 +135,7 @@ import { id_here, dot_size, id_editing, row_height, ids_grabbed, thing_fontSize,
 		style='
 			top:{revealTop}px;
 			z-index: {ZIndex.dots};'>
-		<RevealDot thing={thing} center={origin}/>
+		<RevealDot thing={thing}/>
 	</div>
 	{#if showingCluster}
 		<RevealCluster thing={thing}/>

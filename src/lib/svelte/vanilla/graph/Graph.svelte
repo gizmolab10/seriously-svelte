@@ -165,7 +165,7 @@
 			{#if isGrabbed}
 				<Circle radius={10} center={origin_ofFirstReveal} color={here.color} thickness=1/>
 			{/if}
-			<FocusRevealDot here={here} center={origin_ofFirstReveal.offsetBy(new Point(-12.5, -8))}/>
+			<FocusRevealDot here={here} center={origin_ofFirstReveal.offsetBy(new Point(-12, -11))}/>
 		</div>
 	</div>
 {/if}

@@ -62,36 +62,40 @@ import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, Pers
 		top: 6px;
 	}
 	.build {
-		top: -2px;
-		left: 35px;
-		cursor: pointer;
-		border: 1px solid;
-		position: absolute;
 		border-radius: 16px;
+		position: absolute;
+		border: 1px solid;
+		cursor: pointer;
+		left: 35px;
+		top: -2px;
 	}
 	.topTitle {
+		text-align: center;
+		position: fixed;
+		font-size: 2em;
 		right: 0px;
 		top: 40px;
 	}
 	.leftSide {
+		background-color: transparent;
 		position: fixed;
 		width: 100px;
 		margin: 1px;
 		left: -1px;
-		top: -1px;
+		top: 8px;
 	}
 	.horizontalLine {
+		background-color: lightgray;
 		position: fixed;
 		height: 1px;
 		width: 110%;
-		background-color: lightgray;
 	}
 	.verticalLine {
+		background-color: lightgray;
 		position: absolute;
 		left: 100px;
-		top: 0px;
 		width: 1px;
-		background-color: lightgray;
+		top: 0px;
 	}
 </style>
 
@@ -104,10 +108,8 @@ import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, Pers
 	<p>Nothing is available.</p>
 {:else}
 	<div class='leftSide'
-		style='top: 8px;
-			position: fixed;
-			z-index: {ZIndex.frontmost}; 
-			background-color: transparent;
+		style='
+			z-index: {ZIndex.frontmost};
 			height: {$showDetails ? '100%' : '33px'};'>
 		<CircularButton left=15
 			borderColor='white'
@@ -129,10 +131,9 @@ import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, Pers
 	<div class='verticalLine' style='height: {$showDetails && $id_popupView == null ? '100%' : '33px'}; z-index: {ZIndex.frontmost};'></div>
 	<div class='rightSide' style='
 		left: {$showDetails ? 100 : 0}px;
-		height: 100%;
+		z-index: {ZIndex.panel};
 		position: fixed;
-		overflow: hidden;
-		z-index: {ZIndex.panel};'>
+		height: 100%;'>
 		{#if $id_popupView == ButtonID.help}
 			<Help size={size}/>
 		{:else if $id_popupView == ButtonID.buildNotes}
@@ -142,11 +143,10 @@ import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, Pers
 				<Crumbs/>
 			</div>
 			<div class='topTitle'
-				style='left: {left};
-					position: absolute;
-					color: {here?.color};
-					z-index: {ZIndex.frontmost};'>
-				<TitleEditor thing={here} fontSize={$thing_fontSize * 2}px fontFamily='Times New Roman'/>
+				style='color: {here?.color};
+					z-index: {ZIndex.frontmost};
+					left: {$showDetails ? '100px' : '-1px'};'>
+				{here?.title}
 			</div>
 			<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: {$showDetails ? k.detailsMargin : 0}px; top: 85px;'></div>
 			{#key toggle}
