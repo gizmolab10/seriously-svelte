@@ -1,6 +1,6 @@
-import { dbDispatch, persistLocal, getWidthOf, signal_rebuild_fromHere, SeriouslyRange, orders_normalize_remoteMaybe } from '../common/GlobalImports';
-import { k, get, Size, Datum, debug, signal_relayout, Predicate, Hierarchy, TraitType, PersistID, DebugFlag } from '../common/GlobalImports';
+import { k, get, Size, Datum, debug, Predicate, Hierarchy, TraitType, PersistID, DebugFlag, dbDispatch } from '../common/GlobalImports';
 import { id_here, dot_size, id_editing, expanded, ids_grabbed, row_height, id_showingTools, line_stretch } from '../managers/State';
+import { getWidthOf, persistLocal, signal_relayout, SeriouslyRange, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -136,6 +136,7 @@ export default class Thing extends Datum {
 		return width;
 	}
 	
+	signal_rebuild()  { signal_rebuild(this.id); }
 	signal_relayout() { signal_relayout(this.id); }
 	toggleGrab()	  { this.hierarchy.grabs.toggleGrab(this); }
 	grabOnly()		  { this.hierarchy.grabs.grabOnly(this); }
@@ -243,7 +244,7 @@ export default class Thing extends Datum {
 
 	order_normalizeRecursive(remoteWrite: boolean) {
 		const children = this.children;
-		if (children && children.length > 0) {
+		if (children && children.length > 1) {
 			orders_normalize_remoteMaybe(children, remoteWrite);
 			for (const child of children) {
 				child.order_normalizeRecursive(remoteWrite);
@@ -307,7 +308,8 @@ export default class Thing extends Datum {
 	}
 
 	redraw_remoteMoveup(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
-		const siblings = this.siblings;
+		const parent = this.firstParent;
+		const siblings = parent.children;
 		if (!siblings || siblings.length == 0) {
 			this.redraw_runtimeBrowseRight(true, EXTREME, up);
 		} else {
@@ -325,7 +327,8 @@ export default class Thing extends Datum {
 				const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
 				const newOrder = newIndex + goose;
 				this.order_setTo(newOrder, false);
-				signal_rebuild_fromHere();
+				parent.order_normalizeRecursive(true);
+				parent.signal_relayout();
 			}
 		}
 	}

@@ -1,5 +1,4 @@
 <script lang='ts'>
-	export let title;
 	export let onClick = null;
 
 </script>
@@ -10,7 +9,7 @@
 		border: 1px solid;
 		border-radius: 0.5em;
 		cursor: pointer;'>
-	{title}
+	<slot></slot>
 </button>
 
 <style>
