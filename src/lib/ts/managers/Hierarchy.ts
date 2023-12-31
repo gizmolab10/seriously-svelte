@@ -345,7 +345,7 @@ export default class Hierarchy {
 
 	relationships_refreshKnowns_remoteRenormalize() {
 		this.relationships_refreshKnowns();
-		this.root?.order_normalizeRecursive(true);
+		this.root?.order_normalizeRecursive_remoteMaybe(true);
 	}
 
 	relationships_refreshKnowns() {

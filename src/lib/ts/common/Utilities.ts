@@ -11,12 +11,13 @@ export function sort_byOrder(array: Array<Thing>) {
 
 export async function orders_normalize_remoteMaybe(array: Array<Thing>, remoteWrite: boolean = true) {
 	sort_byOrder(array);
-	for (let index = 0; index < array.length; index++) {
-		const thing = array[index];
+	array.forEach((thing, index) => {
 		if (thing.order != index) {
-			await thing.order_setTo(index, remoteWrite);
-		}
-	}
+			(async () => {
+				await thing.order_setTo(index, remoteWrite);
+			})();
+        }
+	});
 }
 
 export function remove<T>(from: Array<T>, item: T): void {

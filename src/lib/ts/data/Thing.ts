@@ -1,6 +1,6 @@
-import { k, get, Size, Datum, debug, Predicate, Hierarchy, TraitType, PersistID, DebugFlag, dbDispatch } from '../common/GlobalImports';
-import { id_here, dot_size, id_editing, expanded, ids_grabbed, row_height, id_showingTools, line_stretch } from '../managers/State';
-import { getWidthOf, persistLocal, signal_relayout, SeriouslyRange, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { k, get, Size, Datum, debug, Predicate, Hierarchy, TraitType, PersistID, DebugFlag, dbDispatch, getWidthOf, sort_byOrder, persistLocal } from '../common/GlobalImports';
+import { SeriouslyRange, signal_rebuild, signal_relayout, signal_rebuild_fromHere, signal_relayout_fromHere, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { id_here, dot_size, id_editing, expanded, ids_grabbed, row_height, line_stretch, id_showingTools } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -242,12 +242,12 @@ export default class Thing extends Datum {
 		return false;
 	}
 
-	order_normalizeRecursive(remoteWrite: boolean) {
+	order_normalizeRecursive_remoteMaybe(remoteWrite: boolean) {
 		const children = this.children;
 		if (children && children.length > 1) {
 			orders_normalize_remoteMaybe(children, remoteWrite);
 			for (const child of children) {
-				child.order_normalizeRecursive(remoteWrite);
+				child.order_normalizeRecursive_remoteMaybe(remoteWrite);
 			}
 		}
 	}
@@ -259,7 +259,7 @@ export default class Thing extends Datum {
 			relationship.order = newOrder;
 			this.order = newOrder;
 			if (remoteWrite) {
-				this.log(DebugFlag.order, 'ORDER ' + oldOrder + ' => ' + newOrder);
+				this.log(DebugFlag.order, `${oldOrder} => ${newOrder}`);
 				await relationship.remoteWrite();
 			}
 		}
@@ -292,7 +292,7 @@ export default class Thing extends Datum {
 		await dbDispatch.db.fetch_allFrom(baseID)
 		await dbDispatch.db.hierarchy?.relationships_remoteCreateMissing(this);
 		await dbDispatch.db.hierarchy?.relationships_removeHavingNullReferences();
-		this.order_normalizeRecursive(true);
+		this.order_normalizeRecursive_remoteMaybe(true);
 	}
 
 	async redraw_bulkFetchAll_runtimeBrowseRight(grab: boolean = true) {
@@ -307,7 +307,7 @@ export default class Thing extends Datum {
 		}
 	}
 
-	redraw_remoteMoveup(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
+	redraw_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const parent = this.firstParent;
 		const siblings = parent.children;
 		if (!siblings || siblings.length == 0) {
@@ -326,9 +326,12 @@ export default class Thing extends Datum {
 				const wrapped = up ? (index == 0) : (index == siblings.length - 1);
 				const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
 				const newOrder = newIndex + goose;
-				this.order_setTo(newOrder, false);
-				parent.order_normalizeRecursive(true);
-				parent.signal_relayout();
+				const order = this.order;
+				this.order_setTo(newOrder, true);
+				parent.order_normalizeRecursive_remoteMaybe(true);
+				signal_relayout_fromHere();
+				this.log(DebugFlag.order, `${order} => ${this.order} wanted: ${newOrder}`);
+				parent.log(DebugFlag.order, `MAP ${parent.children.map(c => c.order)}`);
 			}
 		}
 	}

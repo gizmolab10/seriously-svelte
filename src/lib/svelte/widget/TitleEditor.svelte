@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { graphEditor, signal_relayout, SeriouslyRange, signal_rebuild_fromHere } from '../../ts/common/GlobalImports'; 
-	import { k, Thing, ZIndex, onMount, onDestroy, dbDispatch } from '../../ts/common/GlobalImports';
+	import { SeriouslyRange, handle_relayout, signal_relayout, signal_rebuild_fromHere } from '../../ts/common/GlobalImports'; 
+	import { k, Thing, ZIndex, onMount, onDestroy, dbDispatch, graphEditor } from '../../ts/common/GlobalImports';
 	import { row_height, id_editing, id_editingStopped } from '../../ts/managers/State';
 	import Widget from './Widget.svelte';
 	export let fontFamily = 'Arial';
@@ -8,20 +8,22 @@
 	export let thing = Thing;
 	let originalTitle = thing.title;
 	let isEditing = false;
+	let titleWidth = 0;
 	let ghost = null;
 	let input = null;
 
-	onDestroy(() => { thing = null; });
 	onMount(() => { updateInputWidth(); });
+	onDestroy(() => { thing = null; signalHandler.disconnect(); });
 	var hasChanges = () => { return originalTitle != thing.title; }
 	function handleBlur(event) { stopAndClearEditing(); updateInputWidth(); }
 	function handleInput(event) { thing.title = event.target.value; updateInputWidth(); }
+	const signalHandler = handle_relayout((idThing) => setTimeout(() => { updateInputWidth(); }, 10));
 
 	function updateInputWidth() {
 		if (input && ghost && thing) { // ghost only exists to provide its scroll width
-			const width = ghost.scrollWidth;
-			input.style.width = `${width}px`;
-			thing.debugLog('GHOST WIDTH: ' + width);
+			titleWidth = ghost.scrollWidth;
+			input.style.width = `${titleWidth}px`;
+			thing.debugLog(`titleWidth: ${titleWidth}`);
 		}
 	}
 

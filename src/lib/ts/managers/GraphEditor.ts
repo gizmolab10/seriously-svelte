@@ -145,7 +145,7 @@ export default class GraphEditor {
 				}
 
 				h.relationships_refreshKnowns();		// so children and parent will see the newly relocated things
-				h.root?.order_normalizeRecursive(true);
+				h.root?.order_normalizeRecursive_remoteMaybe(true);
 				thing.grabOnly();
 				newParent.expand();
 				if (!newParent.isVisible) {
@@ -168,7 +168,7 @@ export default class GraphEditor {
 
 	async latestGrab_redraw_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const grab = this.hierarchy.grabs.latestGrab(up);
-		grab?.redraw_remoteMoveup(up, SHIFT, OPTION, EXTREME);
+		grab?.redraw_remoteMoveUp(up, SHIFT, OPTION, EXTREME);
 	}
 
 }
