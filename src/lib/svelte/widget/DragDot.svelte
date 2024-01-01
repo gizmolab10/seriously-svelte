@@ -4,12 +4,14 @@
 	import { dot_size, ids_grabbed, id_showingTools } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
 	export let thing;
+	let tinyDotColor = thing.color;
 	let strokeColor = thing.color;
 	let fillColor = thing.color;
 	let isHovering = true;
 	let isGrabbed = false;
 	let clickCount = 0;
 	let button = null;
+	let extra = null;
 	let clickTimer;
 	let path = '';
 	let size = 0;
@@ -38,10 +40,10 @@
 	}
 
 	function updateColors() {
-		thing.updateColorAttributes();
-		strokeColor = thing.color;
 		thing.updateColorAttributes();	// needed for revealColor
 		fillColor = debug.lines ? 'transparent' : thing.revealColor(isHovering);
+		tinyDotColor = thing.revealColor(!isHovering);
+		strokeColor = thing.color;
 	}
 
 	function updateColorsForIsHovering(flag) {
@@ -90,9 +92,12 @@
 	$: {
 		if ($dot_size > 0) {
 			size = $dot_size;
+			top = $id_showingTools == thing.id ? 23 : -size / 2 + 2;
 			left = 1.5 - (size / 2); // offset from center?
 			path = svgPath.oval(size, false);
-			top = $id_showingTools == thing.id ? 23 : -$dot_size / 2 + 2;
+			if (thing.parents.count > 1) {
+				extra = svgPath.circle(size, size / 5);74
+			}
 		}
 	}
 
@@ -134,4 +139,13 @@
 		zIndex={ZIndex.dots}
 		size={Size.square(size)}
 	/>
+	{#if extra}
+		<SVGD3
+			path={extra}
+			fill={tinyDotColor}
+			zIndex={ZIndex.dots}
+			stroke={tinyDotColor}
+			size={Size.square(size)}
+		/>
+	{/if}
 </button>

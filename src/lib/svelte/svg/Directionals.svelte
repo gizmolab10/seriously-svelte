@@ -21,7 +21,7 @@
 <style>
     .directionals {
 		top: 9px;
-		left: 12px;
+		left: 5px;
 		position: absolute;     
     }
 </style>

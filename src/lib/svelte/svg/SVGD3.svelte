@@ -13,10 +13,6 @@
         d3.select(svg)
             .append('path')
             .attr('d', path)
-            .attr('fill', fill)
-            .attr('stroke', stroke)
-            .attr('stroke-width', 1)
-            .attr('shape-rendering', 'geometricPrecision'); // anti-alias
     });
     $: {
         d3.select(svg)

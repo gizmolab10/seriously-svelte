@@ -1,29 +1,36 @@
 <script>
+	import { Size, ZIndex, svgPath } from '../../ts/common/GlobalImports';
     import { id_popupView } from '../../ts/managers/State';
-	export let size = 20;
+	import SVGD3 from '../svg/SVGD3.svelte';
+    export let size = 20;
 	function ignore(event) {}
+    const cross = svgPath.xCross(size, size / 6);
+    const circle = svgPath.circle(size, size - 2);
 </script>
 
 <style>
 	.close-button {
-		display: inline-block;
-		text-align: center;
+		border: 0px;
 		cursor: pointer;
-		color: #000;
 		position: absolute;
-		border: 1px solid black;
-		border-radius: 50%;
-		top: 20px;
-		right: 20px;
 	}
 </style>
 
-<div class='close-button' style='
-    width: {size}px;
-    height: {size}px;
-    font-size: {size - 1}px;;
-    line-height: {size}px;'
+<div class='close-button' style='top: {size * 0.5}px; right: {size * 1.5}px;'
     on:keypress={ignore}
     on:click={() => { $id_popupView = null; }}>
-    ×
+    <SVGD3
+		path={circle}
+		stroke='black'
+		position='absolute'
+		zIndex={ZIndex.dots}
+		size={Size.square(size)}
+	/>
+    <SVGD3
+		path={cross}
+		stroke='black'
+		position='absolute'
+		zIndex={ZIndex.dots}
+		size={Size.square(size)}
+	/>
 </div>

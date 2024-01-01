@@ -6,7 +6,6 @@
 	import Trash from '../svg/Trash.svelte';
 	export let thing: Thing;
 	let diameter = $dot_size;
-    const path = svgPath.circle(diameter, diameter - 2);
     let deleteParentCenter = new Point();
     let parentCenter = new Point();
     let childCenter = new Point();
@@ -63,7 +62,7 @@
 <TriangleButton
 	fillColor_closure={() => { return k.backgroundColor; }}
 	onClick={() => handleClick('parent')}
-    extra={svgPath.cross(diameter, 2)}
+    extra={svgPath.tCross(diameter, 2)}
 	direction={Direction.left}
 	center={parentCenter}
 	strokeColor={color}
@@ -72,7 +71,7 @@
 <TriangleButton
 	fillColor_closure={() => { return k.backgroundColor; }}
 	onClick={() => handleClick('child')}
-    extra={svgPath.cross(diameter, 2)}
+    extra={svgPath.tCross(diameter, 2)}
 	direction={Direction.right}
 	center={childCenter}
 	strokeColor={color}
