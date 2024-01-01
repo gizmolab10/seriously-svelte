@@ -1,24 +1,22 @@
-import { removeAll } from '../common/Utilities';
+import Identifiable from "../common/Identifiable";
 import { DebugFlag } from '../debug/Debug';
-import { v4 as uuid } from 'uuid';
 
-export default class Datum {
+export default class Datum extends Identifiable {
 	awaitingCreation: boolean;
 	isRemotelyStored: boolean;
 	lastWriteDate: Date;
 	needsWrite = false;
 	baseID: string;
-	id: string;
 
 	constructor(baseID: string, id: string | null, isRemotelyStored: boolean) {
+		super(id);
+
 		this.isRemotelyStored = isRemotelyStored;
 		this.lastWriteDate = new Date();
 		this.awaitingCreation = false;
-		this.id = id ?? Datum.newID;
 		this.baseID = baseID;
 	}
 
-	static get newID(): string { return 'NEW' + removeAll('-', uuid()).slice(10, 24); } // use last, most-unique bytes of uuid
 	updateWriteDate() { this.lastWriteDate = new Date(); }
 	log(option: DebugFlag, message: string) {}
 

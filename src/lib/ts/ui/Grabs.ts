@@ -1,5 +1,5 @@
 import { get, Thing, Hierarchy, sort_byOrder } from "../common/GlobalImports";
-import { ids_grabbed, id_showingTools } from './State';
+import { ids_grabbed, id_showingTools } from '../managers/State';
 
 export default class Grabs {
 	hierarchy: Hierarchy;

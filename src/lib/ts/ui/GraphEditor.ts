@@ -1,5 +1,5 @@
 import { k, get, Thing, Hierarchy, dbDispatch, signal_rebuild_fromHere } from '../common/GlobalImports';
-import { ids_grabbed, id_showingTools } from './State';
+import { ids_grabbed, id_showingTools } from '../managers/State';
 
 //////////////////////////////////////
 //									//
