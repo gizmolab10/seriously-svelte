@@ -1,17 +1,18 @@
-import { k, debug, builds, debugReact, PersistID, dbDispatch, persistLocal, isServerLocal, getBrowserType } from '../common/GlobalImports'
-import { id_here, expanded, ids_grabbed, showDetails } from './State';
+import { k, debug, builds, EditMode, debugReact, PersistID, dbDispatch, persistLocal, isServerLocal, getBrowserType } from '../common/GlobalImports'
+import { id_here, expanded, edit_mode, ids_grabbed, showDetails } from './State';
 
 class Launch {
 	setup() {
 		const queryStrings = new URLSearchParams(window.location.search);
+		document.title = this.title;
 		builds.setup();
 		persistLocal.restore();
+		edit_mode.set(EditMode.normal);
 		k.applyQueryStrings(queryStrings);
 		this.applyQueryStrings(queryStrings);
 		debug.applyQueryStrings(queryStrings);
 		debugReact.applyQueryStrings(queryStrings);
 		dbDispatch.applyQueryStrings(queryStrings); // do this last
-		document.title = this.title;
 	}
 
 	get title(): string {

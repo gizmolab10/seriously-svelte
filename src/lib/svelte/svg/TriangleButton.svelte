@@ -2,6 +2,7 @@
 	import { k, Size, Thing, Point, ZIndex, Direction, dbDispatch, graphEditor, svgPath } from "../../ts/common/GlobalImports";
 	import { dot_size, ids_grabbed } from '../../ts/managers/State';
 	import SVGD3 from './SVGD3.svelte';
+	export let extraColor = k.backgroundColor;
 	export let fillColor_closure;
 	export let extra = null;
 	export let strokeColor;
@@ -56,8 +57,8 @@
 	{#if extra}
 		<SVGD3
 			path={extra}
-			fill={fillColor}
-			stroke={strokeColor}
+			fill={extraColor}
+			stroke={extraColor}
 			zIndex={ZIndex.dots}
 			size={Size.square(size)}
 		/>

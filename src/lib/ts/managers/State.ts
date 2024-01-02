@@ -14,6 +14,7 @@ export const things_arrived		= writable<boolean>();
 export const showDetails		= writable<boolean>();
 export const isBusy				= writable<boolean>();
 export const db_type			= writable<string>();
+export const edit_mode	 		= writable<string>();
 export const thing_fontFamily	= writable<string>();
 export const thing_fontSize		= writable<number>();
 export const line_stretch		= writable<number>();

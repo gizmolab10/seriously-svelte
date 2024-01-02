@@ -1,4 +1,4 @@
-import { Size } from "./Geometry";
+import { Size, Point } from "./Geometry";
 
 export enum Direction {
 	downRight = Math.PI * 4 / 3,
@@ -12,7 +12,7 @@ export enum Direction {
 export default class SVGPath {
 
     line(width: number) {
-        return 'M0 1 L' + width + ' 1';
+        return `M0 1 L${width} 1`;
     }
 
     dash(diameter: number, margin: number) {
@@ -39,15 +39,15 @@ export default class SVGPath {
         const width = radius - (horizontal ? 1 : 3);
         const height = radius - (horizontal ? 3 : 1);
         const doubleWidth = width * 2;
-        const path = 'M' + radius + ' ' + radius + ' m-' + width + ' 0a' + width + ' ' + height + ' 0 1,0 ' + doubleWidth + ' 0a' + width + ' ' + height + ' 0 1,0 -' + doubleWidth + ' 0';
+        const path = `M${radius} ${radius} m${-width} 0a${width} ${height} 0 1,0 ${doubleWidth} 0a${width} ${height} 0 1,0 ${-doubleWidth} 0`;
         return path;
     }
 
-    circle(width: number, diameter: number) {
+    circle(width: number, diameter: number, offset: Point = new Point()) {
         const radius = diameter / 2;
         const center = width / 2;
         const doubleRadius = radius * 2;
-        const path = 'M' + center + ' ' + center + ' m-' + radius + ' 0a' + radius + ' ' + radius + ' 0 1,0 ' + doubleRadius + ' 0a' + radius + ' ' + radius + ' 0 1,0 -' + doubleRadius + ' 0';
+        const path = `M${center + offset.x} ${center+ offset.y} m${-radius} 0a${radius} ${radius} 0 1,0 ${doubleRadius} 0a${radius} ${radius} 0 1,0 ${-doubleRadius} 0`;
         return path;
     }
 
