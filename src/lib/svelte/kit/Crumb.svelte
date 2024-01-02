@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, get, Thing, Signals, onMount, dbDispatch, desaturateBy } from '../../ts/common/GlobalImports';
+	import { k, Thing, onMount, dbDispatch } from '../../ts/common/GlobalImports';
 	import { id_here } from '../../ts/managers/State';
 	export let thing = Thing;
 	let colorStyles = '';
@@ -7,7 +7,7 @@
 	onMount( () => { updateColors(); });
 
 	function updateColors() {
-		const isHere = thing.id === get(id_here);
+		const isHere = thing.id === $id_here;
 		if (isHere) {
 			colorStyles = 'background-color: ' + thing.color + '; color: ' + k.backgroundColor;
 		} else {

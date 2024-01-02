@@ -31,14 +31,14 @@ export enum TraitType {
 	bulk  = '~',
 }
 
-const baseZIndex = 10000;
+const baseZIndex = 1;
 
 export enum ZIndex {
 	panel	  = baseZIndex,
-	text	  = baseZIndex + 10,
-	lines	  = baseZIndex + 20,
-	dots	  = baseZIndex + 30,
-	widgets	  = baseZIndex + 40,
-	frontmost = baseZIndex + 50,
-	overlay	  = baseZIndex + 60,
+	text	  = baseZIndex + 1,
+	lines	  = baseZIndex + 2,
+	dots	  = baseZIndex + 3,
+	widgets	  = baseZIndex + 4,
+	frontmost = baseZIndex + 5,
+	overlay	  = baseZIndex + 6,
 }

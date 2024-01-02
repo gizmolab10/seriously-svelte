@@ -1,7 +1,8 @@
 <script>
-    import { Rect, Size, Point, onMount } from '../../ts/common/GlobalImports';
+    import { Size, Point, onMount } from '../../ts/common/GlobalImports';
     import * as d3 from 'd3';
     export let position = 'absolute';
+    export let center = new Point();
     export let size = new Size();
     export let stroke = 'black';
     export let fill = 'white';
@@ -20,6 +21,7 @@
             .attr('fill', fill)
             .attr('stroke', stroke)
             .attr('stroke-width', 1)
+            .attr('transform', `translate(${center.x},${center.y})`)
             .attr('shape-rendering', 'geometricPrecision'); // anti-alias
         svg = svg;
     }
@@ -27,8 +29,8 @@
 </script>
 
 <svg bind:this={svg}
-    width={size.width}
-    height={size.height}
+    width={size.width}px
+    height={size.height}px
     style='z-index: {zIndex};
         position: {position};
         shape-rendering: geometricPrecision;'/>

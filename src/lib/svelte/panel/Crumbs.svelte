@@ -1,11 +1,16 @@
 <script lang='ts'>
-	import { ids_grabbed, crumbsWidth } from '../../ts/managers/State';
-	import { Thing, dbDispatch } from '../../ts/common/GlobalImports';
+	import { k, Size, Point, Thing, ZIndex, svgPath, dbDispatch } from '../../ts/common/GlobalImports';
+	import { dot_size, ids_grabbed, crumbsWidth } from '../../ts/managers/State';
 	import FatTriangle from '../svg/FatTriangle.svelte';
+	import Spacer from '../kit/Spacer.svelte';
 	import Crumb from '../kit/Crumb.svelte';
+	import SVGD3 from '../svg/SVGD3.svelte';
+import {width} from '../kit/Spacer.svelte';
 	let ancestors: Array<Thing> = [];
 	let toggleDraw = false;
+	let extra = null;
 	let grab: Thing;
+	let size = 10;
 
 	function thing_lastGrabbed() { return dbDispatch.db.hierarchy.grabs.thing_lastGrabbed; }
 
@@ -31,10 +36,18 @@
 	{#if ancestors.length > 0}
 		{#each ancestors as thing, index}
 			{#if index > 0}
-				&nbsp;<FatTriangle size=10
-					position='relative'
-					fillColor={thing.firstParent.color}
-					strokeColor={thing.firstParent.color}/>
+				<span style='
+					color: transparent;
+					position: relative;
+					top:{size / ((thing.parents.length > 1) ? 4 : 2)}px;
+					left: {size / ((thing.parents.length > 1) ? 3 : 3.3)}px;'>
+					<FatTriangle size={((thing.parents.length < 2) ? size : size * 1.5)}
+						strokeColor={thing.firstParent.color}
+						fillColor={thing.firstParent.color}
+						position='absolute'
+					/>
+					&nbsp;{#if thing.parents.length > 1}-{/if}&nbsp;
+				</span>
 			{/if}
 			<Crumb thing={thing}/>
 		{/each}
