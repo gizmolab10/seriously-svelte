@@ -9,11 +9,6 @@ export enum CreationOptions {
 	none		 = '',
 }
 
-export enum EditMode {
-	normal	  = 'n',
-	addParent = 'p',
-}
-
 export enum BrowserType  {
 	unknown  = 'unknown',
 	explorer = 'explorer',

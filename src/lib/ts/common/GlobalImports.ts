@@ -1,7 +1,7 @@
 import { noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, sort_byOrder } from './Utilities';
 import { isServerLocal, isMobileDevice, getBrowserType, convertToObject, orders_normalize_remoteMaybe } from './Utilities';
 import { signal_rebuild, signal_relayout, signal_rebuild_fromHere, signal_relayout_fromHere } from './Signals';
-import { ZIndex, ButtonID, EditMode, TraitType, BrowserType, CreationOptions, LineCurveType } from './Enumerations';
+import { ZIndex, ButtonID, TraitType, BrowserType, CreationOptions, LineCurveType } from './Enumerations';
 import { Point, Size, Rect, LineRect, graphRect_update } from '../geometry/Geometry';
 import { signal, Signals, handle_rebuild, handle_relayout } from './Signals';
 import { debugReact, DebugReact, ReactFlag } from '../debug/DebugReact';
@@ -41,8 +41,8 @@ export {
 	ZIndex, ButtonID, BrowserType, CreationOptions,
 	signal, Signals, handle_rebuild, handle_relayout,
 	User, SeriouslyRange, Datum, Thing, Access, Predicate, Relationship,
+	Point, Size, Rect, Layout, LineRect, TraitType, LineCurveType, graphRect_update,
 	signal_rebuild, signal_relayout, signal_rebuild_fromHere, signal_relayout_fromHere,
-	Point, Size, Rect, Layout, LineRect, EditMode, TraitType, LineCurveType, graphRect_update,
 	sort_byOrder, getBrowserType, isMobileDevice, convertToObject, orders_normalize_remoteMaybe,
 	noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, isServerLocal,
 };

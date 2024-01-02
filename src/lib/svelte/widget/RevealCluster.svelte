@@ -1,6 +1,6 @@
 <script lang='ts'>
-    import { k, Size, Point, ZIndex, onMount, svgPath, EditMode, Direction, dbDispatch, graphEditor } from '../../ts/common/GlobalImports';
-    import { dot_size, edit_mode, row_height, id_showingTools } from '../../ts/managers/State';
+    import { k, Size, Point, ZIndex, onMount, svgPath, Direction, dbDispatch, graphEditor } from '../../ts/common/GlobalImports';
+    import { dot_size, add_parent, row_height, id_showingTools } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TriangleButton from '../svg/TriangleButton.svelte';
 	import Trash from '../svg/Trash.svelte';
@@ -15,12 +15,13 @@
     let top = 24;
 
     onMount( () => {
-        color = thing.color;
         const width = thing.titleWidth;
         const offsetX = Math.max(0, (k.clusterHeight - width - 21) / 8)
         const offsetY = Math.max(0, (k.clusterHeight - $row_height - 21) / 8)
-		left = width + offsetX - 1;
+
         top = 24 - offsetY;
+        color = thing.color;
+		left = width + offsetX - 1;
         childCenter = new Point(left, top - diameter);
         parentCenter = new Point(7 - offsetX, top - diameter);
         deleteParentCenter = new Point(7 - offsetX, top + diameter + 10);
@@ -29,13 +30,17 @@
 	async function handleClick(id: string) {
         if (!thing.isExemplar) {
             switch (id) {
-                case 'parent': $edit_mode = EditMode.addParent; return;
+                case 'parent': toggleAddParent(); return;
                 case 'child': await graphEditor.thing_edit_remoteAddChildTo(thing); break;
                 case 'delete': await dbDispatch.db.hierarchy.things_redraw_remoteTraverseDelete([thing]); break;
                 default: break;
             }
             $id_showingTools = null;
         }
+    }
+
+    function toggleAddParent() {
+        $add_parent = ($add_parent != null) ? null : thing.id;
     }
 
     // <TriangleButton
@@ -59,10 +64,10 @@
 </style>
 
 <TriangleButton
-	fillColor_closure={() => { return ($edit_mode == EditMode.normal) ? k.backgroundColor : thing.color }}
+	fillColor_closure={() => { return ($add_parent == null) ? k.backgroundColor : thing.color }}
+    extraColor = {($add_parent != null) ? k.backgroundColor : thing.color}
 	onClick={() => handleClick('parent')}
     extra={svgPath.tCross(diameter, 2)}
-    extraColor = {($edit_mode == EditMode.addParent) ? k.backgroundColor : thing.color}
 	direction={Direction.left}
 	center={parentCenter}
 	strokeColor={color}
