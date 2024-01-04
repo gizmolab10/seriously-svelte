@@ -10,7 +10,7 @@
     let parentCenter = new Point();
     let childCenter = new Point();
 	let radius = $dot_size / 2;
-    let color = 'black';
+    let color = thing.color;
     let left = 60;
     let top = 24;
 
@@ -60,6 +60,10 @@
         border-width: 1px;
         position: absolute;
         border-radius: 17px
+    }
+    @keyframes colorFade {
+        0%, 100% { color: black; }
+        50% { color: lightgray; }
     }
 </style>
 

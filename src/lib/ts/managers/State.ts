@@ -1,6 +1,6 @@
-import { Rect, Point } from '../geometry/Geometry';
-import { roundToEven } from '../common/Utilities';
+import { Rect, Point, signal, Signals, roundToEven, signal_addParent } from '../common/GlobalImports';
 import { writable } from 'svelte/store';
+let interval : NodeJS.Timeout | null = null;
 
 export const id_editingStopped	= writable<string | null>();
 export const id_showingTools	= writable<string | null>();
@@ -30,3 +30,16 @@ row_height.subscribe((height) => {
 	line_stretch.set(roundToEven(height * 1.25));
 	dot_size.set(roundToEven(height * .65));
 });
+
+add_parent.subscribe((childID: string | null) => {
+	if (childID) {
+		interval = setInterval(() => {
+			signal_addParent(childID);
+		}, 500)
+	} else {
+		if (interval) {
+			clearInterval(interval);
+		}
+		signal_addParent(null);
+	}
+})

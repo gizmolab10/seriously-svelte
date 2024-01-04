@@ -1,8 +1,7 @@
 <script>
-    import { Size, Point, onMount } from '../../ts/common/GlobalImports';
+    import { Size, Point, onMount, handle_addParent, onDestroy } from '../../ts/common/GlobalImports';
     import * as d3 from 'd3';
     export let position = 'absolute';
-    export let center = new Point();
     export let size = new Size();
     export let stroke = 'black';
     export let fill = 'white';
@@ -14,16 +13,23 @@
         d3.select(svg)
             .append('path')
             .attr('d', path)
-    });
-    $: {
-        d3.select(svg)
-            .select('path')
             .attr('fill', fill)
             .attr('stroke', stroke)
             .attr('stroke-width', 1)
-            .attr('transform', `translate(${center.x},${center.y})`)
-            .attr('shape-rendering', 'geometricPrecision'); // anti-alias
-        svg = svg;
+            .attr('shape-rendering', 'geometricPrecision'); // anti-alias;
+    })
+
+    $: {
+        if (fill) {
+            d3.select(svg)
+                .select('path')
+                .attr('d', path)
+                .attr('fill', fill)
+                .attr('stroke', stroke)
+                .attr('stroke-width', 1)
+                .attr('shape-rendering', 'geometricPrecision') // anti-alias
+            svg = svg;
+        }
     }
 
 </script>

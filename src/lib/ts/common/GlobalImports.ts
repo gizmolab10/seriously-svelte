@@ -1,9 +1,9 @@
-import { noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, sort_byOrder } from './Utilities';
+import { noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, sort_byOrder, roundToEven } from './Utilities';
+import { signal_rebuild, signal_relayout, signal_addParent, signal_rebuild_fromHere, signal_relayout_fromHere } from './Signals';
 import { isServerLocal, isMobileDevice, getBrowserType, convertToObject, orders_normalize_remoteMaybe } from './Utilities';
-import { signal_rebuild, signal_relayout, signal_rebuild_fromHere, signal_relayout_fromHere } from './Signals';
 import { ZIndex, ButtonID, TraitType, BrowserType, CreationOptions, LineCurveType } from './Enumerations';
+import { signal, Signals, handle_rebuild, handle_relayout, handle_addParent } from './Signals';
 import { Point, Size, Rect, LineRect, graphRect_update } from '../geometry/Geometry';
-import { signal, Signals, handle_rebuild, handle_relayout } from './Signals';
 import { debugReact, DebugReact, ReactFlag } from '../debug/DebugReact';
 import { PersistID, persistLocal } from '../managers/PersistLocal';
 import { Direction, svgPath } from '../geometry/SVGPath';
@@ -17,6 +17,7 @@ import { SeriouslyRange } from './Types';
 import { get } from 'svelte/store';
 import { builds } from './Builds';
 import { k } from './Constants';
+import './Extensions';
 import './Extensions';
 
 import Relationship from '../data/Relationship';
@@ -39,10 +40,10 @@ export {
 	Grabs, graphEditor, Hierarchy,
 	debugReact, DebugReact, ReactFlag,
 	ZIndex, ButtonID, BrowserType, CreationOptions,
-	signal, Signals, handle_rebuild, handle_relayout,
+	signal, Signals, handle_rebuild, handle_relayout, handle_addParent,
 	User, SeriouslyRange, Datum, Thing, Access, Predicate, Relationship,
 	Point, Size, Rect, Layout, LineRect, TraitType, LineCurveType, graphRect_update,
-	signal_rebuild, signal_relayout, signal_rebuild_fromHere, signal_relayout_fromHere,
-	sort_byOrder, getBrowserType, isMobileDevice, convertToObject, orders_normalize_remoteMaybe,
+	signal_rebuild, signal_relayout, signal_addParent, signal_rebuild_fromHere, signal_relayout_fromHere,
 	noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, isServerLocal,
+	sort_byOrder, roundToEven, getBrowserType, isMobileDevice, convertToObject, orders_normalize_remoteMaybe,
 };

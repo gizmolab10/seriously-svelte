@@ -4,6 +4,7 @@ import { get } from 'svelte/store';
 let signal_isInFlight = false;
 
 export enum Signals {
+	addParent = 'p',
 	relayout = 'l',
 	rebuild = 'b',
 }
@@ -13,6 +14,7 @@ export function signal_rebuild_fromHere() { signal_rebuild(get(id_here)); }
 export function signal_relayout_fromHere() { signal_relayout(get(id_here)); }
 export function signal_rebuild(value: any = null) { signal(Signals.rebuild, value); }
 export function signal_relayout(value: any = null) { signal(Signals.relayout, value); }
+export function signal_addParent(value: any = null) { signal(Signals.addParent, value); }
 
 export function signal(kind: Signals, value: any = null) {
 	if (signal_isInFlight) {
@@ -30,6 +32,10 @@ export function handle_rebuild(onSignal: (value: any | null) => any ) {
 
 export function handle_relayout(onSignal: (value: any | null) => any ) {
 	return handleSignalOfKind(Signals.relayout, onSignal);
+}
+
+export function handle_addParent(onSignal: (value: any | null) => any ) {
+	return handleSignalOfKind(Signals.addParent, onSignal);
 }
 
 function handleSignalOfKind(kind: Signals, onSignal: (value: any | null) => any ) {

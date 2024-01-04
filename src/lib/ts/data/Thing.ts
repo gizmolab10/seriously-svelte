@@ -1,6 +1,6 @@
-import { k, get, Size, Datum, debug, Predicate, Hierarchy, TraitType, PersistID, DebugFlag, dbDispatch, getWidthOf, sort_byOrder, persistLocal } from '../common/GlobalImports';
+import { k, get, Size, Datum, debug, Predicate, Hierarchy, TraitType, PersistID, DebugFlag, dbDispatch, getWidthOf, persistLocal } from '../common/GlobalImports';
 import { SeriouslyRange, signal_rebuild, signal_relayout, signal_rebuild_fromHere, signal_relayout_fromHere, orders_normalize_remoteMaybe } from '../common/GlobalImports';
-import { id_here, dot_size, id_editing, expanded, ids_grabbed, row_height, line_stretch, id_showingTools } from '../managers/State';
+import { id_here, dot_size, expanded, add_parent, row_height, id_editing, ids_grabbed, line_stretch, id_showingTools } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -80,6 +80,14 @@ export default class Thing extends Datum {
 
 	get parentRelationshipID(): string { // WRONG
 		return this.hierarchy.relationship_getWhereIDEqualsTo(this.id)?.id ?? '';
+	}
+
+	get canAddChild(): boolean {
+		const child = dbDispatch.db.hierarchy.thing_getForID(get(add_parent));
+		if (child && child != this && !child.parents.includes(this)) {
+			return true;
+		}
+		return false;
 	}
 
 	get hasGrandChildren(): boolean {

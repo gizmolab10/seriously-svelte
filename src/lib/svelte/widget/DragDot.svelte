@@ -1,7 +1,7 @@
 <script>
-	import { k, Size, Point, Thing, debug, ZIndex, Signals, onMount } from "../../ts/common/GlobalImports";
+	import { k, Size, Point, Thing, debug, ZIndex, onMount, svgPath, onDestroy } from "../../ts/common/GlobalImports";
+	import { Direction, dbDispatch, graphEditor, handle_addParent } from "../../ts/common/GlobalImports";
 	import { dot_size, add_parent, ids_grabbed, id_showingTools } from '../../ts/managers/State';
-	import { svgPath, Direction, dbDispatch, graphEditor } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte';
 	export let thing;
 	let tinyDotColor = thing.color;
@@ -10,6 +10,8 @@
 	let isHovering = true;
 	let isGrabbed = false;
 	let clickCount = 0;
+	let handler = null;
+	let alter = false;
 	let button = null;
 	let extra = null;
 	let clickTimer;
@@ -19,11 +21,18 @@
 	let top = 0;
 	
 	function ignore(event) {}
-	onMount( () => { updateColorsForIsHovering(false); });
+    onDestroy(() => { handler.disconnect(); })
 	function handleMouseIn(event) { updateColorsForIsHovering(true); }
 	function handleMouseUp() { clearTimeout(clickTimer); }
 	function handleMouseOut(event) { updateColorsForIsHovering(false); }
 	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right-
+
+    onMount(() => {
+		updateColorsForIsHovering(false);
+        handler = handle_addParent((childID) => {
+			alter = !alter == (!childID || !thing.canAddChild);
+        })
+    })
 
 	$: {
 		const grabbed = $ids_grabbed?.includes(thing.id);
@@ -41,8 +50,8 @@
 
 	function updateColors() {
 		thing.updateColorAttributes();	// needed for revealColor
-		fillColor = debug.lines ? 'transparent' : thing.revealColor(isHovering);
-		tinyDotColor = thing.revealColor(!isHovering);
+		fillColor = debug.lines ? 'transparent' : thing.revealColor(isHovering != alter);
+		tinyDotColor = thing.revealColor(isHovering == alter);
 		strokeColor = thing.color;
 	}
 
@@ -81,13 +90,20 @@
 	}
 
 	async function handleClick(event) {
-		if (thing.isExemplar) { return; }
-		if ($add_parent) {
+		if (!thing.isExemplar) {
+			if ($add_parent) {
+				add_parentMaybe();
+			} else if (event.shiftKey || isGrabbed) {
+				thing.toggleGrab();
+			} else {
+				thing.grabOnly();
+			}
+		}
+	}
 
-		} else if (event.shiftKey || isGrabbed) {
-			thing.toggleGrab();
-		} else {
-			thing.grabOnly();
+	function add_parentMaybe() {
+		if (thing.canAddChild) {
+			alert('hah');	// create a new relationship
 		}
 	}
 
