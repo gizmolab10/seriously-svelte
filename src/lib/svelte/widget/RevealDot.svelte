@@ -80,7 +80,7 @@
 		setIsHovering_updateColors(false);
 		if ($id_showingTools == thing.id) {
 			$id_showingTools = null;
-			$add_parent = null;
+			$add_parent = false;
 		} else if (!thing.hasChildren) {
 			thing.grabOnly();
 			$id_showingTools = thing.id;

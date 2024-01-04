@@ -83,9 +83,11 @@ export default class Thing extends Datum {
 	}
 
 	get canAddChild(): boolean {
-		const child = dbDispatch.db.hierarchy.thing_getForID(get(add_parent));
-		if (child && child != this && !child.parents.includes(this)) {
-			return true;
+		if (get(add_parent)) {
+			const child = dbDispatch.db.hierarchy.thing_getForID(get(id_showingTools));
+			if (child && child != this && !child.parents.includes(this)) {
+				return true;
+			}
 		}
 		return false;
 	}

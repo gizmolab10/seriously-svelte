@@ -1,5 +1,5 @@
 <script>
-    import { Size, Point, onMount, handle_addParent, onDestroy } from '../../ts/common/GlobalImports';
+    import { Size, Point, onMount, onDestroy } from '../../ts/common/GlobalImports';
     import * as d3 from 'd3';
     export let position = 'absolute';
     export let size = new Size();

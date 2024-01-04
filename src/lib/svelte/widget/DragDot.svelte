@@ -1,6 +1,6 @@
 <script>
 	import { k, Size, Point, Thing, debug, ZIndex, onMount, svgPath, onDestroy } from "../../ts/common/GlobalImports";
-	import { Direction, dbDispatch, graphEditor, handle_addParent } from "../../ts/common/GlobalImports";
+	import { Direction, dbDispatch, graphEditor, handle_duringAddParent } from "../../ts/common/GlobalImports";
 	import { dot_size, add_parent, ids_grabbed, id_showingTools } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
 	export let thing;
@@ -22,15 +22,17 @@
 	
 	function ignore(event) {}
     onDestroy(() => { handler.disconnect(); })
-	function handleMouseIn(event) { updateColorsForIsHovering(true); }
+	function handleMouseIn(event) { updateColorsForHover(true); }
 	function handleMouseUp() { clearTimeout(clickTimer); }
-	function handleMouseOut(event) { updateColorsForIsHovering(false); }
+	function handleMouseOut(event) { updateColorsForHover(false); }
 	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right-
 
     onMount(() => {
-		updateColorsForIsHovering(false);
-        handler = handle_addParent((childID) => {
-			alter = !alter == (!childID || !thing.canAddChild);
+		updateColorsForHover(false);
+        handler = handle_duringAddParent((flag) => {
+			const applyFlag = $id_showingTools && thing.canAddChild;
+			alter = applyFlag ? flag : false;
+			updateColors();
         })
     })
 
@@ -55,7 +57,7 @@
 		strokeColor = thing.color;
 	}
 
-	function updateColorsForIsHovering(flag) {
+	function updateColorsForHover(flag) {
 		if (isHovering != flag) {
 			isHovering = flag;
 			updateColors();

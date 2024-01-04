@@ -40,7 +40,7 @@
     }
 
     function toggleAddParent() {
-        $add_parent = ($add_parent != null) ? null : thing.id;
+        $add_parent = !$add_parent;
     }
 
     // <TriangleButton
@@ -68,8 +68,8 @@
 </style>
 
 <TriangleButton
-	fillColor_closure={() => { return ($add_parent == null) ? k.backgroundColor : thing.color }}
-    extraColor = {($add_parent != null) ? k.backgroundColor : thing.color}
+	fillColor_closure={() => { return $add_parent ? thing.color : k.backgroundColor }}
+    extraColor = {$add_parent ? k.backgroundColor : thing.color}
 	onClick={() => handleClick('parent')}
     extra={svgPath.tCross(diameter, 2)}
 	direction={Direction.left}
