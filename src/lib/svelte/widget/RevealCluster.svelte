@@ -6,9 +6,9 @@
 	import Trash from '../svg/Trash.svelte';
 	export let thing: Thing;
 	let diameter = $dot_size;
-    let deleteParentCenter = new Point();
-    let parentCenter = new Point();
-    let childCenter = new Point();
+    // let deleteParentCenter = new Point();
+    let center_addParent = new Point();
+    let center_addChild = new Point();
 	let radius = $dot_size / 2;
     let color = thing.color;
     let left = 60;
@@ -22,25 +22,21 @@
         top = 24 - offsetY;
         color = thing.color;
 		left = width + offsetX - 1;
-        childCenter = new Point(left, top - diameter);
-        parentCenter = new Point(7 - offsetX, top - diameter);
-        deleteParentCenter = new Point(7 - offsetX, top + diameter + 10);
+        center_addChild = new Point(left, top - diameter);
+        center_addParent = new Point(left - diameter * 1.2, top - diameter);
+        // deleteParentCenter = new Point(7 - offsetX, top + diameter + 10);
 	});
 
 	async function handleClick(id: string) {
         if (!thing.isExemplar) {
             switch (id) {
-                case 'parent': toggleAddParent(); return;
+                case 'addParent': $add_parent = !$add_parent; return;
                 case 'child': await graphEditor.thing_edit_remoteAddChildTo(thing); break;
                 case 'delete': await dbDispatch.db.hierarchy.things_redraw_remoteTraverseDelete([thing]); break;
                 default: break;
             }
             $id_showingTools = null;
         }
-    }
-
-    function toggleAddParent() {
-        $add_parent = !$add_parent;
     }
 
     // <TriangleButton
@@ -70,20 +66,20 @@
 <TriangleButton
 	fillColor_closure={() => { return $add_parent ? thing.color : k.backgroundColor }}
     extraColor = {$add_parent ? k.backgroundColor : thing.color}
-	onClick={() => handleClick('parent')}
+	onClick={() => handleClick('addParent')}
     extra={svgPath.tCross(diameter, 2)}
 	direction={Direction.left}
-	center={parentCenter}
+	center={center_addParent}
 	strokeColor={color}
     size={diameter}
-	id={'parent'}/>
+	id={'addParent'}/>
 <TriangleButton
 	fillColor_closure={() => { return k.backgroundColor; }}
 	onClick={() => handleClick('child')}
     extra={svgPath.tCross(diameter, 2)}
 	direction={Direction.right}
     extraColor = {thing.color}
-	center={childCenter}
+	center={center_addChild}
 	strokeColor={color}
     size={diameter}
 	id={'child'}/>
