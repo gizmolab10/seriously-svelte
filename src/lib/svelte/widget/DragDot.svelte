@@ -1,7 +1,7 @@
 <script>
-	import { k, Size, Point, Thing, debug, ZIndex, onMount, svgPath, onDestroy } from "../../ts/common/GlobalImports";
-	import { Direction, dbDispatch, graphEditor, handle_addingParent } from "../../ts/common/GlobalImports";
-	import { dot_size, adding_parent, ids_grabbed, id_toolsGrab } from '../../ts/managers/State';
+	import { k, Size, Point, Thing, debug, ZIndex, onMount, svgPath, onDestroy, AlteringParent } from "../../ts/common/GlobalImports";
+	import { Direction, dbDispatch, graphEditor, handle_alteringParent } from "../../ts/common/GlobalImports";
+	import { dot_size, ids_grabbed, id_toolsGrab, altering_parent } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
 	export let thing;
 	let tinyDotColor = thing.color;
@@ -29,9 +29,9 @@
 
     onMount(() => {
 		updateColorsForHover(false);
-        handler = handle_addingParent((flag) => {
-			const applyFlag = $id_toolsGrab && thing.canAddAsChildTo_toolsGrab != null;
-			alter = applyFlag ? flag : false;
+        handler = handle_alteringParent((alteration) => {
+			const applyFlag = $id_toolsGrab && thing.canAlterParentOf_toolsGrab != null;
+			alter = applyFlag ? (alteration != null) : false;
 			updateColors();
         })
     })

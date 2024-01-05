@@ -1,8 +1,8 @@
 import { noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, sort_byOrder, roundToEven } from './Utilities';
-import { signal_rebuild, signal_relayout, signal_addingParent, signal_rebuild_fromHere, signal_relayout_fromHere } from './Signals';
+import { signal_rebuild, signal_relayout, signal_alteringParent, signal_rebuild_fromHere, signal_relayout_fromHere } from './Signals';
 import { isServerLocal, isMobileDevice, getBrowserType, convertToObject, orders_normalize_remoteMaybe } from './Utilities';
-import { ZIndex, ButtonID, TraitType, BrowserType, CreationOptions, LineCurveType } from './Enumerations';
-import { signal, Signals, handle_rebuild, handle_relayout, handle_addingParent } from './Signals';
+import { ZIndex, ButtonID, TraitType, BrowserType, AlteringParent, CreationOptions, LineCurveType } from './Enumerations';
+import { signal, Signals, handle_rebuild, handle_relayout, handle_alteringParent } from './Signals';
 import { Point, Size, Rect, LineRect, graphRect_update } from '../geometry/Geometry';
 import { debugReact, DebugReact, ReactFlag } from '../debug/DebugReact';
 import { PersistID, persistLocal } from '../managers/PersistLocal';
@@ -17,7 +17,6 @@ import { SeriouslyRange } from './Types';
 import { get } from 'svelte/store';
 import { builds } from './Builds';
 import { k } from './Constants';
-import './Extensions';
 import './Extensions';
 
 import Relationship from '../data/Relationship';
@@ -39,11 +38,11 @@ export {
 	dbDispatch, DBType, DataKind,
 	Grabs, graphEditor, Hierarchy,
 	debugReact, DebugReact, ReactFlag,
-	ZIndex, ButtonID, BrowserType, CreationOptions,
+	ZIndex, ButtonID, BrowserType, AlteringParent, CreationOptions,
 	User, SeriouslyRange, Datum, Thing, Access, Predicate, Relationship,
-	signal, Signals, handle_rebuild, handle_relayout, handle_addingParent,
+	signal, Signals, handle_rebuild, handle_relayout, handle_alteringParent,
 	Point, Size, Rect, Layout, LineRect, TraitType, LineCurveType, graphRect_update,
 	noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, isServerLocal,
 	sort_byOrder, roundToEven, getBrowserType, isMobileDevice, convertToObject, orders_normalize_remoteMaybe,
-	signal_rebuild, signal_relayout, signal_addingParent, signal_rebuild_fromHere, signal_relayout_fromHere,
+	signal_rebuild, signal_relayout, signal_alteringParent, signal_rebuild_fromHere, signal_relayout_fromHere,
 };

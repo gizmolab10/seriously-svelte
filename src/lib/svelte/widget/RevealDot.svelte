@@ -1,7 +1,7 @@
 <script>
 	import { Direction, onDestroy, dbDispatch, graphEditor, signal_rebuild_fromHere } from "../../ts/common/GlobalImports";
 	import { k, get, Size, Thing, Point, debug, ZIndex, onMount, svgPath } from "../../ts/common/GlobalImports";
-	import { expanded, dot_size, adding_parent, ids_grabbed, id_toolsGrab } from '../../ts/managers/State';
+	import { expanded, dot_size, altering_parent, ids_grabbed, id_toolsGrab } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
 	export let thing;
 	let bulkAliasFillColor = k.backgroundColor;
@@ -80,7 +80,7 @@
 		setIsHovering_updateColors(false);
 		if ($id_toolsGrab == thing.id) {
 			$id_toolsGrab = null;
-			$adding_parent = false;
+			$altering_parent = null;
 		} else if (!thing.hasChildren) {
 			thing.grabOnly();
 			$id_toolsGrab = thing.id;

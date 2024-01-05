@@ -3,20 +3,15 @@ export enum ButtonID {
 	help	   = '?',
 }
 
+export enum AlteringParent {
+	deleting = 'deleting',
+	adding	 = 'adding',
+}
+
 export enum CreationOptions {
 	isFromRemote = 'isFrom',
 	getRemoteID	 = 'getID',
 	none		 = '',
-}
-
-export enum BrowserType  {
-	unknown  = 'unknown',
-	explorer = 'explorer',
-	firefox	 = 'firefox',
-	chrome	 = 'chrome',
-	safari	 = 'safari',
-	opera	 = 'opera',
-	orion	 = 'orion',
 }
 
 export enum LineCurveType {
@@ -29,6 +24,16 @@ export enum TraitType {
 	roots = '^',
 	root  = '!',
 	bulk  = '~',
+}
+
+export enum BrowserType  {
+	unknown  = 'unknown',
+	explorer = 'explorer',
+	firefox	 = 'firefox',
+	chrome	 = 'chrome',
+	safari	 = 'safari',
+	opera	 = 'opera',
+	orion	 = 'orion',
 }
 
 const baseZIndex = 1;

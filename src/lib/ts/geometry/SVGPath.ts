@@ -16,10 +16,10 @@ export default class SVGPath {
     }
 
     dash(diameter: number, margin: number) {
+		const y = diameter / 2;
 		const start = margin + 2;
-		const radius = diameter / 2;
 		const end = diameter - start;
-        return `M${start} ${radius} L${end} ${radius}`;
+        return `M${start} ${y} L${end} ${y}`;
     }
 
     xCross(diameter: number, margin: number) {

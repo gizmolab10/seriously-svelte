@@ -1,6 +1,6 @@
-import { k, get, Size, Datum, debug, Predicate, Hierarchy, TraitType, PersistID, DebugFlag, dbDispatch, getWidthOf, persistLocal, CreationOptions } from '../common/GlobalImports';
+import { k, get, Size, Datum, debug, Predicate, Hierarchy, TraitType, PersistID, DebugFlag, dbDispatch, getWidthOf, persistLocal, CreationOptions, AlteringParent } from '../common/GlobalImports';
 import { SeriouslyRange, signal_rebuild, signal_relayout, signal_rebuild_fromHere, signal_relayout_fromHere, orders_normalize_remoteMaybe } from '../common/GlobalImports';
-import { id_here, dot_size, expanded, adding_parent, row_height, id_editing, ids_grabbed, line_stretch, id_toolsGrab } from '../managers/State';
+import { id_here, dot_size, expanded, altering_parent, row_height, id_editing, ids_grabbed, line_stretch, id_toolsGrab } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -83,8 +83,8 @@ export default class Thing extends Datum {
 		return this.hierarchy.relationship_getWhereIDEqualsTo(this.id)?.id ?? '';
 	}
 
-	get canAddAsChildTo_toolsGrab(): Thing | null {
-		if (get(adding_parent)) {
+	get canAlterParentOf_toolsGrab(): Thing | null {
+		if (get(altering_parent)) {
 			const id_showsTools = get(id_toolsGrab);
 			const showsTools = dbDispatch.db.hierarchy.thing_getForID(id_showsTools);
 			if (id_showsTools && showsTools && showsTools != this && !this.ancestors_include(showsTools)) {
@@ -205,19 +205,17 @@ export default class Thing extends Datum {
 	}
 
 	ancestors_include(thing: Thing, visited: Array<string> = []): boolean {
-		let isAncestor = false;
 		if (visited.length == 0 || !visited.includes(this.id)) {
 			if (this.parents.length > 0) {
-				this.parents.forEach(parent => {
+				for (let parent of this.parents) {
 					if (parent.id == thing.id || parent.ancestors_include(thing, [...visited, this.id])) {
 						console.log(thing.title, '[is an ancestor of]', this.title);
-						isAncestor = true;
+						return true;
 					}
-				});
+				};
 			}
 		}
-		// console.log(thing.title, '[not an ancestor of]', this.title);
-		return isAncestor;
+		return false;
 	}
 
 	ancestors(thresholdWidth: number): Array<Thing> {
@@ -300,20 +298,27 @@ export default class Thing extends Datum {
 		return this;
 	}
 
-	child_addMaybe() {
-		const child = this.canAddAsChildTo_toolsGrab;
-		if (child) {
-			adding_parent.set(false);
+	parent_forget_remoteRemove(parent: Thing) {
+	}
+
+	parent_alterMaybe() {
+		const alteration = get(altering_parent);
+		const other = this.canAlterParentOf_toolsGrab;
+		if (other) {
+			altering_parent.set(null);
 			id_toolsGrab.set(null);
-			this.thing_remember_remoteAddAsChild(child, false);
+			switch (alteration) {
+				case AlteringParent.deleting: this.parent_forget_remoteRemove(other); break;
+				case AlteringParent.adding: this.thing_remember_remoteAddAsChild(other, false); break;
+			}
 			signal_rebuild_fromHere();
 		}
 	}
 
 	clicked_dragDot(shiftKey: boolean) {
 		if (!this.isExemplar) {
-			if (get(adding_parent)) {
-				this.child_addMaybe();
+			if (get(altering_parent)) {
+				this.parent_alterMaybe();
 			} else if (shiftKey || this.isGrabbed) {
 				this.toggleGrab();
 			} else {

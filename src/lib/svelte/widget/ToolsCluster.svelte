@@ -1,12 +1,12 @@
 <script lang='ts'>
-    import { k, Size, Point, ZIndex, onMount, svgPath, Direction, dbDispatch, graphEditor } from '../../ts/common/GlobalImports';
-    import { dot_size, adding_parent, row_height, id_toolsGrab } from '../../ts/managers/State';
+    import { k, Size, Point, ZIndex, onMount, svgPath, Direction, dbDispatch, graphEditor, AlteringParent } from '../../ts/common/GlobalImports';
+    import { dot_size, altering_parent, row_height, id_toolsGrab } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TriangleButton from '../svg/TriangleButton.svelte';
 	import Trash from '../svg/Trash.svelte';
 	export let thing: Thing;
 	let diameter = $dot_size;
-    // let deleteParentCenter = new Point();
+    let center_deleteParent = new Point();
     let center_addParent = new Point();
     let center_addChild = new Point();
 	let radius = $dot_size / 2;
@@ -22,16 +22,18 @@
         top = 24 - offsetY;
         color = thing.color;
 		left = width + offsetX - 1;
+        const otherLeft = left - diameter * 1.2;
         center_addChild = new Point(left, top - diameter);
-        center_addParent = new Point(left - diameter * 1.2, top - diameter);
-        // deleteParentCenter = new Point(7 - offsetX, top + diameter + 10);
+        center_addParent = new Point(otherLeft, top - diameter);
+        center_deleteParent = new Point(otherLeft, top + diameter + 10);
 	});
 
 	async function handleClick(id: string) {
         if (!thing.isExemplar) {
             switch (id) {
-                case 'addParent': $adding_parent = !$adding_parent; return;
-                case 'child': await graphEditor.thing_edit_remoteAddChildTo(thing); break;
+                case 'addParent': toggleAlteration(AlteringParent.adding); return;
+                case 'deleteParent': toggleAlteration(AlteringParent.deleting); return;
+                case 'addChild': await graphEditor.thing_edit_remoteAddChildTo(thing); break;
                 case 'delete': await dbDispatch.db.hierarchy.things_redraw_remoteTraverseDelete([thing]); break;
                 default: break;
             }
@@ -39,15 +41,9 @@
         }
     }
 
-    // <TriangleButton
-    //     fillColor_closure={() => { return k.backgroundColor; }}
-    //     onClick={() => handleClick('????')}
-    //     extra={svgPath.dash(diameter, 2)}
-    //     direction={Direction.left}
-    //     center={deleteParentCenter}
-    //     strokeColor={color}
-    //     id={'deleteParent'}
-    //     size={diameter}/>
+    function toggleAlteration(alteration: AlteringParent) {
+        $altering_parent = ($altering_parent == alteration) ? null : alteration;
+    }
 
 </script>
 
@@ -64,25 +60,35 @@
 </style>
 
 <TriangleButton
-	fillColor_closure={() => { return $adding_parent ? thing.color : k.backgroundColor }}
-    extraColor = {$adding_parent ? k.backgroundColor : thing.color}
+	fillColor_closure={() => { return ($altering_parent == AlteringParent.adding) ? thing.color : k.backgroundColor }}
+    extraColor = {($altering_parent == AlteringParent.adding) ? k.backgroundColor : thing.color}
 	onClick={() => handleClick('addParent')}
     extra={svgPath.tCross(diameter, 2)}
 	direction={Direction.left}
 	center={center_addParent}
 	strokeColor={color}
     size={diameter}
-	id={'addParent'}/>
+	id='addParent'/>
+<TriangleButton
+	fillColor_closure={() => { return ($altering_parent == AlteringParent.deleting) ? thing.color : k.backgroundColor }}
+    extraColor = {($altering_parent == AlteringParent.deleting) ? k.backgroundColor : thing.color}
+	onClick={() => handleClick('deleteParent')}
+    extra={svgPath.dash(diameter, 2)}
+    center={center_deleteParent}
+    direction={Direction.left}
+    strokeColor={color}
+    id='deleteParent'
+    size={diameter}/>
 <TriangleButton
 	fillColor_closure={() => { return k.backgroundColor; }}
-	onClick={() => handleClick('child')}
+	onClick={() => handleClick('addChild')}
     extra={svgPath.tCross(diameter, 2)}
 	direction={Direction.right}
     extraColor = {thing.color}
 	center={center_addChild}
 	strokeColor={color}
     size={diameter}
-	id={'child'}/>
+	id='addChild'/>
 <button class='delete'
     on:click={() => handleClick('delete')}
 	style='top: {top + diameter + 13}px;
