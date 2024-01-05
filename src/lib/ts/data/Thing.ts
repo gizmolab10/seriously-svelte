@@ -84,10 +84,12 @@ export default class Thing extends Datum {
 	}
 
 	get canAlterParentOf_toolsGrab(): Thing | null {
-		if (get(altering_parent)) {
-			const id_showsTools = get(id_toolsGrab);
-			const showsTools = dbDispatch.db.hierarchy.thing_getForID(id_showsTools);
-			if (id_showsTools && showsTools && showsTools != this && !this.ancestors_include(showsTools)) {
+		const id_showsTools = get(id_toolsGrab);
+		const showsTools = dbDispatch.db.hierarchy.thing_getForID(id_showsTools);
+		if (id_showsTools && showsTools && showsTools != this)  {
+			const alteration = get(altering_parent);
+			if ((alteration == AlteringParent.adding && !this.ancestors_include(showsTools)) ||
+				(alteration == AlteringParent.deleting && showsTools.parentIDs.includes(this.id))) {
 				return showsTools;
 			}
 		}
@@ -298,9 +300,6 @@ export default class Thing extends Datum {
 		return this;
 	}
 
-	parent_forget_remoteRemove(parent: Thing) {
-	}
-
 	parent_alterMaybe() {
 		const alteration = get(altering_parent);
 		const other = this.canAlterParentOf_toolsGrab;
@@ -308,8 +307,8 @@ export default class Thing extends Datum {
 			altering_parent.set(null);
 			id_toolsGrab.set(null);
 			switch (alteration) {
-				case AlteringParent.deleting: this.parent_forget_remoteRemove(other); break;
-				case AlteringParent.adding: this.thing_remember_remoteAddAsChild(other, false); break;
+				case AlteringParent.deleting: other.parent_forget_remoteRemove(this); break;
+				case AlteringParent.adding: this.thing_remember_remoteAddAsChild(other); break;
 			}
 			signal_rebuild_fromHere();
 		}
@@ -350,12 +349,23 @@ export default class Thing extends Datum {
 		}
 	}
 
-	async thing_remember_remoteAddAsChild(child: Thing, remoteCreate: boolean = true): Promise<any> {
-		const idPredicateIsAParentOf = Predicate.idIsAParentOf;
+	async parent_forget_remoteRemove(parent: Thing) {
+		const h = dbDispatch.db.hierarchy;
+		const relationship = h.relationships_getByIDPredicateFromAndTo(Predicate.idIsAParentOf, parent.id, this.id);
+		if (relationship && this.parents.length > 1) {
+			h.relationship_forget(relationship);
+			await orders_normalize_remoteMaybe(parent.children);
+			signal_rebuild_fromHere();
+			await dbDispatch.db.relationship_remoteDelete(relationship);
+		}
+	}
+
+	async thing_remember_remoteAddAsChild(child: Thing): Promise<any> {
 		const changingBulk = this.isBulkAlias || child.baseID != dbDispatch.db.baseID;
 		const baseID = changingBulk ? child.baseID : this.baseID;
+		const idPredicateIsAParentOf = Predicate.idIsAParentOf;
 		const parentID = this.idForChildren;
-		if (remoteCreate) {	
+		if (!child.isRemotelyStored) {	
 			await dbDispatch.db.thing_remember_remoteCreate(child);			// for everything below, need to await child.id fetched from dbDispatch
 		}
 		const relationship = await dbDispatch.db.hierarchy.relationship_remember_remoteCreateUnique(baseID, null, idPredicateIsAParentOf, parentID, child.id, child.order, CreationOptions.getRemoteID)
