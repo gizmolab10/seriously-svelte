@@ -150,7 +150,7 @@ export default class DBFirebase implements DBInterface {
 							let thing = this.hierarchy.thing_bulkAlias_getForTitle(baseID)
 							if (!thing) {													// create a thing for each bulk
 								thing = this.hierarchy.thing_runtimeCreate(this.baseID, null, baseID, 'red', TraitType.bulk, 0, false);
-								await this.hierarchy.thing_remember_remoteAddAsChild(thing, roots);
+								await roots.thing_remember_remoteAddAsChild(thing);
 							} else if (thing.isExpanded) {
 								thing.redraw_bulkFetchAll_runtimeBrowseRight(false);
 							}

@@ -1,6 +1,6 @@
 <script lang='ts'>
     import { k, Size, Point, ZIndex, onMount, svgPath, Direction, dbDispatch, graphEditor } from '../../ts/common/GlobalImports';
-    import { dot_size, add_parent, row_height, id_showingTools } from '../../ts/managers/State';
+    import { dot_size, adding_parent, row_height, id_toolsGrab } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TriangleButton from '../svg/TriangleButton.svelte';
 	import Trash from '../svg/Trash.svelte';
@@ -30,12 +30,12 @@
 	async function handleClick(id: string) {
         if (!thing.isExemplar) {
             switch (id) {
-                case 'addParent': $add_parent = !$add_parent; return;
+                case 'addParent': $adding_parent = !$adding_parent; return;
                 case 'child': await graphEditor.thing_edit_remoteAddChildTo(thing); break;
                 case 'delete': await dbDispatch.db.hierarchy.things_redraw_remoteTraverseDelete([thing]); break;
                 default: break;
             }
-            $id_showingTools = null;
+            $id_toolsGrab = null;
         }
     }
 
@@ -64,8 +64,8 @@
 </style>
 
 <TriangleButton
-	fillColor_closure={() => { return $add_parent ? thing.color : k.backgroundColor }}
-    extraColor = {$add_parent ? k.backgroundColor : thing.color}
+	fillColor_closure={() => { return $adding_parent ? thing.color : k.backgroundColor }}
+    extraColor = {$adding_parent ? k.backgroundColor : thing.color}
 	onClick={() => handleClick('addParent')}
     extra={svgPath.tCross(diameter, 2)}
 	direction={Direction.left}

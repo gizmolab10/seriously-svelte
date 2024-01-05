@@ -1,6 +1,6 @@
-import { k, get, Size, Datum, debug, Predicate, Hierarchy, TraitType, PersistID, DebugFlag, dbDispatch, getWidthOf, persistLocal } from '../common/GlobalImports';
+import { k, get, Size, Datum, debug, Predicate, Hierarchy, TraitType, PersistID, DebugFlag, dbDispatch, getWidthOf, persistLocal, CreationOptions } from '../common/GlobalImports';
 import { SeriouslyRange, signal_rebuild, signal_relayout, signal_rebuild_fromHere, signal_relayout_fromHere, orders_normalize_remoteMaybe } from '../common/GlobalImports';
-import { id_here, dot_size, expanded, add_parent, row_height, id_editing, ids_grabbed, line_stretch, id_showingTools } from '../managers/State';
+import { id_here, dot_size, expanded, adding_parent, row_height, id_editing, ids_grabbed, line_stretch, id_toolsGrab } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -46,7 +46,7 @@ export default class Thing extends Datum {
 			}
 		});
 
-		id_showingTools.subscribe((idCluster: string | null) => {
+		id_toolsGrab.subscribe((idCluster: string | null) => {
 			const shouldShow = (idCluster != undefined) && idCluster == this.id && get(id_here) != this.id;
 			if (this.showCluster != shouldShow) {
 				this.showCluster = shouldShow;
@@ -56,9 +56,10 @@ export default class Thing extends Datum {
 	};
 
 	get fields():		  Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
+	get parentIDs():		  Array<string> { return this.hierarchy.thingIDs_getByIDPredicateToAndID(Predicate.idIsAParentOf,  true, this.id); }
+	get children():			   Array<Thing> { return this.hierarchy.things_getByIDPredicateToAndID(Predicate.idIsAParentOf, false, this.idForChildren); }
+	get parents():			   Array<Thing> { return this.hierarchy.things_getByIDPredicateToAndID(Predicate.idIsAParentOf,  true, this.id); }
 	get siblings():			   Array<Thing> { return this.firstParent?.children ?? []; }
-	get children():			   Array<Thing> { const idP = Predicate.idIsAParentOf; return this.hierarchy.things_getByIDPredicateToAndID(idP, false, this.idForChildren); }
-	get parents():			   Array<Thing> { const idP = Predicate.idIsAParentOf; return this.hierarchy.things_getByIDPredicateToAndID(idP,  true, this.id); }
 	get hierarchy():			  Hierarchy { return dbDispatch.db.hierarchy; }
 	get hasChildren():				boolean { return this.hasPredicate(false); }
 	get hasParents():				boolean { return this.hasPredicate(true); }
@@ -74,22 +75,23 @@ export default class Thing extends Datum {
 	get description():				 string { return this.id + ' \"' + this.title + '\"'; }
 	get idForChildren():             string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get titleWidth():				 number { return getWidthOf(this.title) }
-	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height / 2; }
+	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
 	get visibleProgeny_halfSize():	   Size { return this.visibleProgeny_size.dividedInHalf; }
-	get visibleProgeny_size():		   Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height); }
+	get visibleProgeny_size():		   Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 
 	get parentRelationshipID(): string { // WRONG
 		return this.hierarchy.relationship_getWhereIDEqualsTo(this.id)?.id ?? '';
 	}
 
-	get canAddChild(): boolean {
-		if (get(add_parent)) {
-			const child = dbDispatch.db.hierarchy.thing_getForID(get(id_showingTools));
-			if (child && child != this && !child.parents.includes(this)) {
-				return true;
+	get canAddAsChildTo_toolsGrab(): Thing | null {
+		if (get(adding_parent)) {
+			const id_showsTools = get(id_toolsGrab);
+			const showsTools = dbDispatch.db.hierarchy.thing_getForID(id_showsTools);
+			if (id_showsTools && showsTools && showsTools != this && !this.ancestors_include(showsTools)) {
+				return showsTools;
 			}
 		}
-		return false;
+		return null;
 	}
 
 	get hasGrandChildren(): boolean {
@@ -107,36 +109,24 @@ export default class Thing extends Datum {
 		return this.showCluster ? k.clusterHeight : get(row_height);
 	}
 
-	get visibleProgeny_height(): number {
-		const singleRowHeight = this.singleRowHeight;
-		if (this.hasChildren && this.isExpanded) {
+	visibleProgeny_height(only: boolean = false, visited: Array<string> = []): number {
+		const singleRowHeight = only ? get(row_height) : this.singleRowHeight;
+		if (!visited.includes(this.id) && this.hasChildren && this.isExpanded) {
 			let height = 0;
 			for (const child of this.children) {
-				height += child.visibleProgeny_height;
+				height += child.visibleProgeny_height(only, [...visited, this.id]);
 			}
 			return Math.max(height, singleRowHeight);
 		}
 		return singleRowHeight;
 	}
 
-	get visibleProgenyOnly_height(): number {
-		const singleRowHeight = get(row_height);
-		if (this.hasChildren && this.isExpanded) {
-			let height = 0;
-			for (const child of this.children) {
-				height += child.visibleProgeny_height;
-			}
-			return Math.max(height, singleRowHeight);
-		}
-		return singleRowHeight;
-	}
-
-	visibleProgeny_width(isFirst: boolean = true): number {
+	visibleProgeny_width(isFirst: boolean = true, visited: Array<string> = []): number {
 		let width = isFirst ? 0 : this.titleWidth;
-		if (this.hasChildren && this.isExpanded) {
+		if (!visited.includes(this.id) && this.isExpanded && this.hasChildren) {
 			let progenyWidth = 0;
 			for (const child of this.children) {
-				let childProgenyWidth = child.visibleProgeny_width(false);
+				let childProgenyWidth = child.visibleProgeny_width(false, [...visited, this.id]);
 				if (progenyWidth < childProgenyWidth) {
 					progenyWidth = childProgenyWidth;
 				}
@@ -214,17 +204,33 @@ export default class Thing extends Datum {
 		}
 	}
 
+	ancestors_include(thing: Thing, visited: Array<string> = []): boolean {
+		let isAncestor = false;
+		if (visited.length == 0 || !visited.includes(this.id)) {
+			if (this.parents.length > 0) {
+				this.parents.forEach(parent => {
+					if (parent.id == thing.id || parent.ancestors_include(thing, [...visited, this.id])) {
+						console.log(thing.title, '[is an ancestor of]', this.title);
+						isAncestor = true;
+					}
+				});
+			}
+		}
+		// console.log(thing.title, '[not an ancestor of]', this.title);
+		return isAncestor;
+	}
+
 	ancestors(thresholdWidth: number): Array<Thing> {
-		let thing: Thing = this;
+		let parent: Thing | null = this;
 		let totalWidth = 0;
 		const array = [];
-		while (thing) {
-			totalWidth += thing.titleWidth;
+		while (parent) {
+			totalWidth += parent.titleWidth;
 			if (totalWidth > thresholdWidth) {
 				break;
 			}
-			array.push(thing);
-			thing = thing.firstParent;
+			array.push(parent);
+			parent = parent.firstParent;
 		}
 		array.reverse();
 		return array;
@@ -234,7 +240,7 @@ export default class Thing extends Datum {
 		if (this.hasChildren) {
 			id_here.set(this.id);
 			this.expand();
-			id_showingTools.set(null);
+			id_toolsGrab.set(null);
 			persistLocal.writeToDBKey(PersistID.here, this.id)
 		};
 	}
@@ -294,6 +300,28 @@ export default class Thing extends Datum {
 		return this;
 	}
 
+	child_addMaybe() {
+		const child = this.canAddAsChildTo_toolsGrab;
+		if (child) {
+			adding_parent.set(false);
+			id_toolsGrab.set(null);
+			this.thing_remember_remoteAddAsChild(child, false);
+			signal_rebuild_fromHere();
+		}
+	}
+
+	clicked_dragDot(shiftKey: boolean) {
+		if (!this.isExemplar) {
+			if (get(adding_parent)) {
+				this.child_addMaybe();
+			} else if (shiftKey || this.isGrabbed) {
+				this.toggleGrab();
+			} else {
+				this.grabOnly();
+			}
+		}
+	}
+
 	thing_isInDifferentBulkThan(other: Thing) {
 		return this.baseID != other.baseID || (other.isBulkAlias && !this.isBulkAlias && this.baseID != other.title);
 	}
@@ -315,6 +343,19 @@ export default class Thing extends Datum {
 			this.expand();
 			signal_rebuild_fromHere();
 		}
+	}
+
+	async thing_remember_remoteAddAsChild(child: Thing, remoteCreate: boolean = true): Promise<any> {
+		const idPredicateIsAParentOf = Predicate.idIsAParentOf;
+		const changingBulk = this.isBulkAlias || child.baseID != dbDispatch.db.baseID;
+		const baseID = changingBulk ? child.baseID : this.baseID;
+		const parentID = this.idForChildren;
+		if (remoteCreate) {	
+			await dbDispatch.db.thing_remember_remoteCreate(child);			// for everything below, need to await child.id fetched from dbDispatch
+		}
+		const relationship = await dbDispatch.db.hierarchy.relationship_remember_remoteCreateUnique(baseID, null, idPredicateIsAParentOf, parentID, child.id, child.order, CreationOptions.getRemoteID)
+		await orders_normalize_remoteMaybe(this.children);		// write new order values for relationships
+		return relationship;
 	}
 
 	redraw_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {

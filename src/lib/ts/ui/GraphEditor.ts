@@ -1,5 +1,5 @@
 import { k, get, Thing, Hierarchy, dbDispatch, signal_rebuild_fromHere } from '../common/GlobalImports';
-import { ids_grabbed, id_showingTools } from '../managers/State';
+import { ids_grabbed, id_toolsGrab } from '../managers/State';
 
 //////////////////////////////////////
 //									//
@@ -49,7 +49,7 @@ export default class GraphEditor {
 				}
 			}
 			switch (key) {
-				case '`':               event.preventDefault(); this.latestGrabToggleRevealCluster(); break;
+				case '`':               event.preventDefault(); this.latestGrab_toggleToolsCluster(); break;
 				case '!':				dbDispatch.db.hierarchy.root?.becomeHere(); break;
 				case 'arrowup':			await this.latestGrab_redraw_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
 				case 'arrowdown':		await this.latestGrab_redraw_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
@@ -82,7 +82,7 @@ export default class GraphEditor {
 	}
 
 	async thing_edit_remoteAddAsChild(child: Thing, parent: Thing, startEdit: boolean = true) {
-		await this.hierarchy.thing_remember_remoteAddAsChild(child, parent);
+		await parent.thing_remember_remoteAddAsChild(child);
 		parent.expand();
 		signal_rebuild_fromHere();
 		child.grabOnly();
@@ -97,7 +97,7 @@ export default class GraphEditor {
 		const parent = child.firstParent;
 		const newParent = await this.hierarchy.thing_remember_runtimeCopy(child.baseID, child);
 		parent.expand();
-		await this.hierarchy.thing_remember_remoteAddAsChild(newParent, parent);
+		await parent.thing_remember_remoteAddAsChild(newParent);
 		await this.hierarchy.thing_remember_remoteRelocateChild(child, parent, newParent);
 		newParent.expand();
 		signal_rebuild_fromHere();
@@ -156,11 +156,11 @@ export default class GraphEditor {
 		}
 	}
 
-	latestGrabToggleRevealCluster() {
+	latestGrab_toggleToolsCluster() {
 		const id = this.hierarchy.grabs.latestGrab(true)?.id;
 		if (id) {
-			const clear = id == get(id_showingTools);
-			id_showingTools.set(clear ? null : id);
+			const clear = id == get(id_toolsGrab);
+			id_toolsGrab.set(clear ? null : id);
 			signal_rebuild_fromHere();
 		}
 

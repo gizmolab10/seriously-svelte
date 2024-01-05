@@ -1,5 +1,5 @@
 import { get, Thing, Hierarchy, sort_byOrder } from "../common/GlobalImports";
-import { ids_grabbed, id_showingTools } from '../managers/State';
+import { ids_grabbed, id_toolsGrab } from '../managers/State';
 
 export default class Grabs {
 	hierarchy: Hierarchy;
@@ -23,13 +23,13 @@ export default class Grabs {
 	get thing_lastGrabbed(): (Thing | null) { return this.hierarchy.thing_getForID(this.last_idGrabbed); }
 	toggleGrab = (thing: Thing) => { if (thing.isGrabbed) { this.ungrab(thing); } else { this.grab(thing); } }
 
-	clearClusterState(thing: Thing) {
-		const id = get(id_showingTools);
+	thing_toggleToolsGrab(thing: Thing) {
+		const id = get(id_toolsGrab);
 		if (id != null) {
 			if (id == thing.id) {
-				id_showingTools.set(null);
+				id_toolsGrab.set(null);
 			} else {
-				id_showingTools.set(thing.id);
+				id_toolsGrab.set(thing.id);
 			}
 		}
 	}
@@ -45,7 +45,7 @@ export default class Grabs {
 	grabOnly(thing: Thing) {
 		const ids = [thing.id]
 		ids_grabbed.set(ids);
-		this.clearClusterState(thing);
+		this.thing_toggleToolsGrab(thing);
 	}
 
 	grab(thing: Thing) {
@@ -55,7 +55,7 @@ export default class Grabs {
 			}
 			return array;
 		});
-		this.clearClusterState(thing);
+		this.thing_toggleToolsGrab(thing);
 	}
 
 	ungrab(thing: Thing) {
@@ -74,7 +74,7 @@ export default class Grabs {
 		if (ids.length == 0) {
 			this.hierarchy.root?.grabOnly();
 		}
-		this.clearClusterState(thing);
+		this.thing_toggleToolsGrab(thing);
 	}
 
 	latestGrab(up: boolean) {

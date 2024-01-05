@@ -12,7 +12,7 @@
 	let prior = new Date().getTime();
 	let children = thing.children;
 	let center = new Point();
-	let childArray = [];
+	let childMapArray = [];
 
 	onDestroy( () => { signalHandler.disconnect(); });
 	onMount( () => { debugReact.log_mount(`CHILDREN ${thing.description}`); layoutChildren(); });
@@ -54,14 +54,14 @@
 	}
 	
 	function layoutChildren() {
-		if (thing) {
+		if (thing && !thing.ancestors_include(thing)) {
 			const delta = new Point(19.5, -2.5);
 			const height = (thing.visibleProgeny_halfHeight);
 			const childOrigin = origin.offsetByY(height);
 			center = childOrigin.offsetBy(delta);
 			children = thing.children;
 			lineRects = new Layout(thing, childOrigin).lineRects;
-			childArray = lineRects.map((rect, index) => ({
+			childMapArray = lineRects.map((rect, index) => ({
 				origin: originForChildrenOf(children[index], rect),
 				child: children[index], 
 				rect: rect,
@@ -85,11 +85,11 @@
 	{#if debug.lines}
 		<Circle radius=1 center={center} color=black thickness=1/>
 	{/if}
-	{#each childArray as i}
-		<Widget thing={i.child} origin={i.rect.extent.offsetBy(new Point(12, ($dot_size / -15) -10))}/>
-		<Line thing={i.child} curveType={i.rect.curveType} rect={i.rect.offsetBy(new Point(($dot_size / 2) - 129, ($dot_size / 2) - 8))}/>
-		{#if i.child.hasChildren && i.child.isExpanded}
-			<Children thing={i.child} origin={i.origin}/>
+	{#each childMapArray as a}
+		<Widget thing={a.child} origin={a.rect.extent.offsetBy(new Point(12, ($dot_size / -15) -10))}/>
+		<Line thing={a.child} curveType={a.rect.curveType} rect={a.rect.offsetBy(new Point(($dot_size / 2) - 129, ($dot_size / 2) - 8))}/>
+		{#if a.child.hasChildren && a.child.isExpanded}
+			<Children thing={a.child} origin={a.origin}/>
 		{/if}
 	{/each}
 {/if}

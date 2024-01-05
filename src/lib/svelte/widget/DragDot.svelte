@@ -1,7 +1,7 @@
 <script>
 	import { k, Size, Point, Thing, debug, ZIndex, onMount, svgPath, onDestroy } from "../../ts/common/GlobalImports";
-	import { Direction, dbDispatch, graphEditor, handle_duringAddParent } from "../../ts/common/GlobalImports";
-	import { dot_size, add_parent, ids_grabbed, id_showingTools } from '../../ts/managers/State';
+	import { Direction, dbDispatch, graphEditor, handle_addingParent } from "../../ts/common/GlobalImports";
+	import { dot_size, adding_parent, ids_grabbed, id_toolsGrab } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
 	export let thing;
 	let tinyDotColor = thing.color;
@@ -29,8 +29,8 @@
 
     onMount(() => {
 		updateColorsForHover(false);
-        handler = handle_duringAddParent((flag) => {
-			const applyFlag = $id_showingTools && thing.canAddChild;
+        handler = handle_addingParent((flag) => {
+			const applyFlag = $id_toolsGrab && thing.canAddAsChildTo_toolsGrab != null;
 			alter = applyFlag ? flag : false;
 			updateColors();
         })
@@ -85,34 +85,16 @@
 		clickCount++;
 		clickTimer = setTimeout(() => {
 			if (clickCount === 1) {
-				handleClick(event);
+				thing.clicked_dragDot(event.shiftKey);
 				clearClicks();
 			}
 		}, k.doubleClickThreshold);
 	}
 
-	async function handleClick(event) {
-		if (!thing.isExemplar) {
-			if ($add_parent) {
-				add_parentMaybe();
-			} else if (event.shiftKey || isGrabbed) {
-				thing.toggleGrab();
-			} else {
-				thing.grabOnly();
-			}
-		}
-	}
-
-	function add_parentMaybe() {
-		if (thing.canAddChild) {
-			alert('hah');	// create a new relationship
-		}
-	}
-
 	$: {
 		if ($dot_size > 0) {
 			size = $dot_size;
-			top = $id_showingTools == thing.id ? 23 : -size / 2 + 2;
+			top = $id_toolsGrab == thing.id ? 23 : -size / 2 + 2;
 			left = 1.5 - (size / 2); // offset from center?
 			path = svgPath.oval(size, false);
 			if (thing.parents.length > 1) {

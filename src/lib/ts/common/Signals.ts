@@ -14,7 +14,7 @@ export function signal_rebuild_fromHere() { signal_rebuild(get(id_here)); }
 export function signal_relayout_fromHere() { signal_relayout(get(id_here)); }
 export function signal_rebuild(value: any = null) { signal(Signals.rebuild, value); }
 export function signal_relayout(value: any = null) { signal(Signals.relayout, value); }
-export function signal_duringAddParent(value: any = null) { signal(Signals.addParent, value); }
+export function signal_addingParent(value: any = null) { signal(Signals.addParent, value); }
 
 export function signal(kind: Signals, value: any = null) {
 	if (signal_isInFlight) {
@@ -34,7 +34,7 @@ export function handle_relayout(onSignal: (value: any | null) => any ) {
 	return handleSignalOfKind(Signals.relayout, onSignal);
 }
 
-export function handle_duringAddParent(onSignal: (value: any | null) => any ) {
+export function handle_addingParent(onSignal: (value: any | null) => any ) {
 	return handleSignalOfKind(Signals.addParent, onSignal);
 }
 

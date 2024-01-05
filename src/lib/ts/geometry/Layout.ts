@@ -15,7 +15,7 @@ export default class Layout {
 				this.lineRects.push(new LineRect(LineCurveType.flat, rect));
 			} else {
 				let index = 0;
-				let sumOfSiblingsAbove = -thing.visibleProgenyOnly_height / 2; // start out negative and grow positive
+				let sumOfSiblingsAbove = -thing.visibleProgeny_height(true) / 2; // start out negative and grow positive
 				while (index < quantity) {
 					const child = children[index];
 					const childvisibleProgeny_halfHeight = child.visibleProgeny_halfHeight;
@@ -23,7 +23,7 @@ export default class Layout {
 					const direction = this.getDirection(sizeY);
 					const rect = new Rect(origin, new Size(sizeX, sizeY));
 					this.lineRects.push(new LineRect(direction, rect));
-					sumOfSiblingsAbove += child.visibleProgeny_height;
+					sumOfSiblingsAbove += child.visibleProgeny_height();
 					index += 1;
 				}
 			}
