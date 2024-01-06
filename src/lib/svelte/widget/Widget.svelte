@@ -1,10 +1,11 @@
 <script lang='ts'>
 	import { id_here, dot_size, id_editing, row_height, ids_grabbed, thing_fontSize, thing_fontFamily, id_toolsGrab} from '../../ts/managers/State';
-	import { k, Thing, Point, debug, ZIndex, Wrapper, onMount, onDestroy, debugReact, handle_relayout } from '../../ts/common/GlobalImports';
+	import { k, Thing, Point, debug, ZIndex, Wrapper, onMount, onDestroy, debugReact, handle_relayout, Relationship } from '../../ts/common/GlobalImports';
 	import ToolsCluster from './ToolsCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
 	import RevealDot from './RevealDot.svelte';
 	import DragDot from './DragDot.svelte';
+	export let relationship = Relationship;
 	export let origin = new Point();
 	export let thing = Thing;
 	let priorRowHeight = $row_height;

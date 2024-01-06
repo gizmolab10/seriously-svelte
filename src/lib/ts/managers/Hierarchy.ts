@@ -382,6 +382,19 @@ export default class Hierarchy {
 		}
 	}
 
+	relationship_getForIDs_predicateFromAndTo(idPredicate: string, idFrom: string, idTo: string): Relationship | null {
+		const dict = this.knownRs_byIDTo;
+		const relationships = dict[idTo] as Array<Relationship>;
+		if (Array.isArray(relationships)) {
+			for (const relationship of relationships) {
+				if (relationship.idFrom == idFrom && relationship.idPredicate == idPredicate) {
+					return relationship;
+				}
+			}
+		}
+		return null;
+	}
+
 	relationships_getByIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Relationship> {
 		const dict = to ? this.knownRs_byIDTo : this.knownRs_byIDFrom;
 		const matches = dict[idThing] as Array<Relationship>; // filter out bad values (dunno what this does)

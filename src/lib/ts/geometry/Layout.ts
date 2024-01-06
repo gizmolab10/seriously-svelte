@@ -1,4 +1,4 @@
-import { get, Rect, Size, Point, Thing, LineRect, LineCurveType } from '../common/GlobalImports';
+import { get, Rect, Size, Point, Thing, LineRect, Relationship, LineCurveType } from '../common/GlobalImports';
 import { line_stretch } from '../managers/State'
 
 export default class Layout {

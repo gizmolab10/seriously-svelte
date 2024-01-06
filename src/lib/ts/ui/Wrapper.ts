@@ -1,7 +1,8 @@
 import Identifiable from "../common/Identifiable";
-import { Thing } from "../common/GlobalImports";
+import { Thing, Relationship } from "../common/GlobalImports";
 
 export interface ThingWrapper {
+    relationship: Relationship;
     thing: Thing;
 }
 

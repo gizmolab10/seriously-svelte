@@ -1,4 +1,4 @@
-import { get, Thing, Hierarchy, sort_byOrder } from "../common/GlobalImports";
+import { get, Thing, Hierarchy, sort_byOrder, Relationship } from "../common/GlobalImports";
 import { ids_grabbed, id_toolsGrab } from '../managers/State';
 
 export default class Grabs {

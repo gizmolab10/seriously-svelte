@@ -55,29 +55,30 @@ export default class Thing extends Datum {
 		});
 	};
 
-	get fields():		  Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
-	get parentIDs():		  Array<string> { return this.hierarchy.thingIDs_getByIDPredicateToAndID(Predicate.idIsAParentOf,  true, this.id); }
-	get children():			   Array<Thing> { return this.hierarchy.things_getByIDPredicateToAndID(Predicate.idIsAParentOf, false, this.idForChildren); }
-	get parents():			   Array<Thing> { return this.hierarchy.things_getByIDPredicateToAndID(Predicate.idIsAParentOf,  true, this.id); }
-	get siblings():			   Array<Thing> { return this.firstParent?.children ?? []; }
-	get hierarchy():			  Hierarchy { return dbDispatch.db.hierarchy; }
-	get hasChildren():				boolean { return this.children.length > 0; }
-	get hasParents():				boolean { return this.parents.length > 0; }
-	get isHere():					boolean { return this.id == get(id_here); }
-	get isRoot():					boolean { return this == this.hierarchy.root; }
-	get isBulkAlias():				boolean { return this.trait == TraitType.bulk; }
-	get isExpanded():				boolean { return this.isRoot || get(expanded)?.includes(this.parentRelationshipID); }
-	get isVisible():				boolean { return this.ancestors(Number.MAX_SAFE_INTEGER).includes(this.hierarchy.here!); }
-	get grandparent():				  Thing { return this.firstParent?.firstParent ?? this.hierarchy.root; }
-	get lastChild():				  Thing { return this.children.slice(-1)[0]; }	// not alter children
-	get firstChild():				  Thing { return this.children[0]; }
-	get firstParent():				  Thing { return this.parents[0]; }
-	get description():				 string { return this.id + ' \"' + this.title + '\"'; }
-	get idForChildren():             string { return this.isBulkAlias ? this.bulkRootID : this.id; }
-	get titleWidth():				 number { return getWidthOf(this.title) }
-	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
-	get visibleProgeny_halfSize():	   Size { return this.visibleProgeny_size.dividedInHalf; }
-	get visibleProgeny_size():		   Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
+	
+	get fields():			Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
+	get parentIDs():			Array<string> { return this.hierarchy.thingIDs_getByIDPredicateToAndID(Predicate.idIsAParentOf,  true, this.id); }
+	get children():				 Array<Thing> { return this.hierarchy.things_getByIDPredicateToAndID(Predicate.idIsAParentOf, false, this.idForChildren); }
+	get parents():				 Array<Thing> { return this.hierarchy.things_getByIDPredicateToAndID(Predicate.idIsAParentOf,  true, this.id); }
+	get siblings():				 Array<Thing> { return this.firstParent?.children ?? []; }
+	get hierarchy():				Hierarchy { return dbDispatch.db.hierarchy; }
+	get hasChildren():				  boolean { return this.children.length > 0; }
+	get hasParents():				  boolean { return this.parents.length > 0; }
+	get isHere():					  boolean { return this.id == get(id_here); }
+	get isRoot():					  boolean { return this == this.hierarchy.root; }
+	get isBulkAlias():				  boolean { return this.trait == TraitType.bulk; }
+	get isExpanded():				  boolean { return this.isRoot || get(expanded)?.includes(this.parentRelationshipID); }
+	get isVisible():				  boolean { return this.ancestors(Number.MAX_SAFE_INTEGER).includes(this.hierarchy.here!); }
+	get grandparent():					Thing { return this.firstParent?.firstParent ?? this.hierarchy.root; }
+	get lastChild():					Thing { return this.children.slice(-1)[0]; }	// not alter children
+	get firstChild():					Thing { return this.children[0]; }
+	get firstParent():					Thing { return this.parents[0]; }
+	get description():				   string { return this.id + ' \"' + this.title + '\"'; }
+	get idForChildren():               string { return this.isBulkAlias ? this.bulkRootID : this.id; }
+	get titleWidth():				   number { return getWidthOf(this.title) }
+	get visibleProgeny_halfHeight():   number { return this.visibleProgeny_height() / 2; }
+	get visibleProgeny_halfSize():		 Size { return this.visibleProgeny_size.dividedInHalf; }
+	get visibleProgeny_size():			 Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 
 	get parentRelationshipID(): string { // WRONG
 		return this.hierarchy.relationship_getWhereIDEqualsTo(this.id)?.id ?? '';
@@ -294,6 +295,10 @@ export default class Thing extends Datum {
 			}
 		}
 		return this;
+	}
+
+	relationship_fromParent(parent: Thing) {
+		return this.hierarchy.relationship_getForIDs_predicateFromAndTo(Predicate.idIsAParentOf, this.id, parent.id);
 	}
 
 	async parent_alterMaybe() {
