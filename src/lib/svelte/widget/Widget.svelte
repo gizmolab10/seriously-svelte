@@ -1,6 +1,6 @@
 <script lang='ts'>
-import { id_here, dot_size, id_editing, row_height, ids_grabbed, thing_fontSize, thing_fontFamily, id_toolsGrab} from '../../ts/managers/State';
-	import { k, Thing, Point, debug, ZIndex, onMount, onDestroy, debugReact, handle_relayout } from '../../ts/common/GlobalImports';
+	import { id_here, dot_size, id_editing, row_height, ids_grabbed, thing_fontSize, thing_fontFamily, id_toolsGrab} from '../../ts/managers/State';
+	import { k, Thing, Point, debug, ZIndex, Wrapper, onMount, onDestroy, debugReact, handle_relayout } from '../../ts/common/GlobalImports';
 	import ToolsCluster from './ToolsCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
 	import RevealDot from './RevealDot.svelte';
@@ -16,6 +16,7 @@ import { id_here, dot_size, id_editing, row_height, ids_grabbed, thing_fontSize,
 	let background = '';
 	let padding = '';
 	let border = '';
+	let wrapper: Wrapper;
 	let radius = $dot_size / 2;
 	let rightPadding = 22
 	let revealTop = 0;
@@ -30,6 +31,7 @@ import { id_here, dot_size, id_editing, row_height, ids_grabbed, thing_fontSize,
 	onMount( () => {
 		updateBorderStyle();
 		debugReact.log_mount(`WIDGET ${thing.description}`);
+		wrapper = new Wrapper(this as ThingWrapper);
 	});
 	
 	const signalHandler = handle_relayout((idThing) => {

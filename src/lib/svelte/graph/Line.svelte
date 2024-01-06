@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { Rect, Size, Point, debug, ZIndex, SVGType, svgPath, debugReact, LineCurveType } from '../../ts/common/GlobalImports';
+	import { Rect, Size, Point, debug, onMount, ZIndex, SVGType, svgPath, Wrapper, debugReact, LineCurveType } from '../../ts/common/GlobalImports';
 	import { dot_size } from '../../ts/managers/State';
 	import Circle from '../kit/Circle.svelte';
 	import Box from '../kit/Box.svelte';
@@ -11,11 +11,16 @@
 	let extent = rect.extent;
 	let viewBox = new Rect();
 	let size = new Size();
+	let wrapper: Wrapper;
 	let path = '';
 
 	////////////////////////////////////////////////////
 	//	draw a curved line in rect, up, down or flat  //
 	////////////////////////////////////////////////////
+
+	onMount(() => {
+		wrapper = new Wrapper(this);
+	})
 
 	$: {
 		if ($dot_size > 0) {

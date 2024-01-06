@@ -14,6 +14,8 @@ import { dbDispatch } from '../db/DBDispatch';
 import { onMount, onDestroy } from 'svelte';
 import { launch } from '../managers/Launch';
 import { SeriouslyRange } from './Types';
+import ThingWrapper from '../ui/Wrapper';
+import Wrapper from '../ui/Wrapper';
 import { get } from 'svelte/store';
 import { builds } from './Builds';
 import { k } from './Constants';
@@ -23,11 +25,11 @@ import Relationship from '../data/Relationship';
 import Hierarchy from '../managers/Hierarchy';
 import Predicate from '../data/Predicate';
 import Layout from '../geometry/Layout';
-import Grabs from '../ui/Grabs';
 import Access from '../data/Access';
 import Thing from '../data/Thing';
 import Datum from '../data/Datum';
 import User from '../data/User';
+import Grabs from '../ui/Grabs';
 
 export {
 	k, builds, launch,
@@ -37,7 +39,7 @@ export {
 	debug, Debug, DebugFlag,
 	dbDispatch, DBType, DataKind,
 	Grabs, graphEditor, Hierarchy,
-	debugReact, DebugReact, ReactFlag,
+	debugReact, DebugReact, ReactFlag, Wrapper, ThingWrapper,
 	ZIndex, ButtonID, BrowserType, AlteringParent, CreationOptions,
 	User, SeriouslyRange, Datum, Thing, Access, Predicate, Relationship,
 	signal, Signals, handle_rebuild, handle_relayout, handle_alteringParent,
