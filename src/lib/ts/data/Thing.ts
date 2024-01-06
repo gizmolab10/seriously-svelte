@@ -47,7 +47,7 @@ export default class Thing extends Datum {
 		});
 
 		id_toolsGrab.subscribe((idCluster: string | null) => {
-			const shouldShow = (idCluster != undefined) && idCluster == this.id && get(id_here) != this.id;
+			const shouldShow = (idCluster != null) && idCluster == this.id && get(id_here) != this.id;
 			if (this.showCluster != shouldShow) {
 				this.showCluster = shouldShow;
 				signal_rebuild_fromHere();
@@ -61,8 +61,8 @@ export default class Thing extends Datum {
 	get parents():			   Array<Thing> { return this.hierarchy.things_getByIDPredicateToAndID(Predicate.idIsAParentOf,  true, this.id); }
 	get siblings():			   Array<Thing> { return this.firstParent?.children ?? []; }
 	get hierarchy():			  Hierarchy { return dbDispatch.db.hierarchy; }
-	get hasChildren():				boolean { return this.hasPredicate(false); }
-	get hasParents():				boolean { return this.hasPredicate(true); }
+	get hasChildren():				boolean { return this.children.length > 0; }
+	get hasParents():				boolean { return this.parents.length > 0; }
 	get isHere():					boolean { return this.id == get(id_here); }
 	get isRoot():					boolean { return this == this.hierarchy.root; }
 	get isBulkAlias():				boolean { return this.trait == TraitType.bulk; }
@@ -145,10 +145,6 @@ export default class Thing extends Datum {
 	toggleExpand()	  { this.expanded_setTo(!this.isExpanded) }
 	collapse()		  { this.expanded_setTo(false); }
 	expand()		  { this.expanded_setTo(true); }
-
-	hasPredicate(asParents: boolean): boolean {
-		return asParents ? this.parents.length > 0 : this.children.length > 0
-	}
 
 	log(option: DebugFlag, message: string) {
 		debug.log_maybe(option, message + ' ' + this.description);
@@ -300,15 +296,15 @@ export default class Thing extends Datum {
 		return this;
 	}
 
-	parent_alterMaybe() {
+	async parent_alterMaybe() {
 		const alteration = get(altering_parent);
 		const other = this.canAlterParentOf_toolsGrab;
 		if (other) {
 			altering_parent.set(null);
 			id_toolsGrab.set(null);
 			switch (alteration) {
-				case AlteringParent.deleting: other.parent_forget_remoteRemove(this); break;
-				case AlteringParent.adding: this.thing_remember_remoteAddAsChild(other); break;
+				case AlteringParent.deleting: await other.parent_forget_remoteRemove(this); break;
+				case AlteringParent.adding: await this.thing_remember_remoteAddAsChild(other); break;
 			}
 			signal_rebuild_fromHere();
 		}
@@ -354,8 +350,7 @@ export default class Thing extends Datum {
 		const relationship = h.relationships_getByIDPredicateFromAndTo(Predicate.idIsAParentOf, parent.id, this.id);
 		if (relationship && this.parents.length > 1) {
 			h.relationship_forget(relationship);
-			await orders_normalize_remoteMaybe(parent.children);
-			signal_rebuild_fromHere();
+			parent.order_normalizeRecursive_remoteMaybe(true);
 			await dbDispatch.db.relationship_remoteDelete(relationship);
 		}
 	}

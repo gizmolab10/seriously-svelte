@@ -1,29 +1,34 @@
 <script lang='ts'>
 	import { k, Size, Point, Thing, ZIndex, svgPath, dbDispatch } from '../../ts/common/GlobalImports';
-	import { dot_size, ids_grabbed, crumbsWidth } from '../../ts/managers/State';
+	import { dot_size, ids_grabbed, crumbsWidth, id_toolsGrab } from '../../ts/managers/State';
 	import FatTriangle from '../svg/FatTriangle.svelte';
 	import Crumb from '../kit/Crumb.svelte';
 	let ancestors: Array<Thing> = [];
+	let grabbedThing: Thing;
 	let toggleDraw = false;
 	let extra = null;
-	let grab: Thing;
 	let size = 10;
 
 	function thing_lastGrabbed() { return dbDispatch.db.hierarchy.grabs.thing_lastGrabbed; }
 
 	$: {
-		if ($ids_grabbed || grab == null || ancestors.length == 0) {
+		const _ = $id_toolsGrab;
+		updateAncestors($crumbsWidth);
+	}
+
+	$: {
+		if ($ids_grabbed || grabbedThing == null || ancestors.length == 0) {
 			const thing = thing_lastGrabbed()	// start over with new grab
 			if (thing) {
-				grab = thing;
+				grabbedThing = thing;
 			}
 		}
 		updateAncestors($crumbsWidth);
 	}
 
 	function updateAncestors(width: number) {
-		if (grab) {
-			ancestors = grab.ancestors(width - 132);
+		if (grabbedThing) {
+			ancestors = grabbedThing.ancestors(width - 132);
 			toggleDraw = !toggleDraw;
 		}
 	}
@@ -31,24 +36,24 @@
 
 {#key toggleDraw}
 	{#if ancestors.length > 0}
-		{#each ancestors as thing, index}
+		{#each ancestors as ancestor, index}
 			{#if index > 0}
 				<span style='
 					color: transparent;
 					position: relative;
-					top:{size / ((thing.parents.length > 1) ? 4 : 2)}px;
-					left: {size / ((thing.parents.length > 1) ? 3 : 3.3)}px;'>
+					top:{size / ((ancestor.parents.length > 1) ? 4 : 2)}px;
+					left: {size / ((ancestor.parents.length > 1) ? 3 : 3.3)}px;'>
 					<FatTriangle
-						extra={(thing.parents.length < 2) ? null : svgPath.circle(size, size / 2, new Point(size / -7, size / 4))}
-						size={((thing.parents.length < 2) ? size : size * 1.5)}
-						strokeColor={thing.firstParent.color}
-						fillColor={thing.firstParent.color}
+						extra={(ancestor.parents.length < 2) ? null : svgPath.circle(size, size / 2, new Point(size / -7, size / 4))}
+						size={((ancestor.parents.length < 2) ? size : size * 1.5)}
+						strokeColor={ancestor.firstParent.color}
+						fillColor={ancestor.firstParent.color}
 						position='absolute'
 					/>
-					&nbsp;{#if thing.parents.length > 1}-{/if}&nbsp;
+					&nbsp;{#if ancestor.parents.length > 1}-{/if}&nbsp;
 				</span>
 			{/if}
-			<Crumb thing={thing}/>
+			<Crumb thing={ancestor}/>
 		{/each}
 	{/if}
 {/key}

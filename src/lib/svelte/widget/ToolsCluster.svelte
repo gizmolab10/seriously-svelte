@@ -69,16 +69,18 @@
 	strokeColor={color}
     size={diameter}
 	id='addParent'/>
-<TriangleButton
-	fillColor_closure={() => { return ($altering_parent == AlteringParent.deleting) ? thing.color : k.backgroundColor }}
-    extraColor = {($altering_parent == AlteringParent.deleting) ? k.backgroundColor : thing.color}
-	onClick={() => handleClick('deleteParent')}
-    extra={svgPath.dash(diameter, 2)}
-    center={center_deleteParent}
-    direction={Direction.left}
-    strokeColor={color}
-    id='deleteParent'
-    size={diameter}/>
+{#if thing.parents.length > 1}
+    <TriangleButton
+        fillColor_closure={() => { return ($altering_parent == AlteringParent.deleting) ? thing.color : k.backgroundColor }}
+        extraColor = {($altering_parent == AlteringParent.deleting) ? k.backgroundColor : thing.color}
+        onClick={() => handleClick('deleteParent')}
+        extra={svgPath.dash(diameter, 2)}
+        center={center_deleteParent}
+        direction={Direction.left}
+        strokeColor={color}
+        id='deleteParent'
+        size={diameter}/>
+{/if}
 <TriangleButton
 	fillColor_closure={() => { return k.backgroundColor; }}
 	onClick={() => handleClick('addChild')}

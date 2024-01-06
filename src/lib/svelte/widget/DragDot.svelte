@@ -32,6 +32,7 @@
         handler = handle_alteringParent((alteration) => {
 			const applyFlag = $id_toolsGrab && thing.canAlterParentOf_toolsGrab != null;
 			alter = applyFlag ? (alteration != null) : false;
+			extra = (thing.parents.length < 2) ? null : svgPath.circle(size, size / 5);
 			updateColors();
         })
     })
@@ -98,7 +99,7 @@
 			left = 1.5 - (size / 2); // offset from center?
 			path = svgPath.oval(size, false);
 			if (thing.parents.length > 1) {
-				extra = svgPath.circle(size, size / 5);74
+				extra = svgPath.circle(size, size / 5);
 			}
 		}
 	}
