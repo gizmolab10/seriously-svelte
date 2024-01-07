@@ -1,16 +1,17 @@
 <script lang='ts'>
-    import { k, Size, Point, ZIndex, onMount, svgPath, Direction, dbDispatch, graphEditor, AlteringParent } from '../../ts/common/GlobalImports';
+    import { k, Size, Point, ZIndex, onMount, svgPath, Direction, dbDispatch, graphEditor, Relationship, AlteringParent } from '../../ts/common/GlobalImports';
     import { dot_size, altering_parent, row_height, id_toolsGrab } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TriangleButton from '../svg/TriangleButton.svelte';
 	import Trash from '../svg/Trash.svelte';
-	export let thing: Thing;
+	export let relationship: Relationship;
 	let diameter = $dot_size;
     let center_deleteParent = new Point();
     let center_addParent = new Point();
     let center_addChild = new Point();
 	let radius = $dot_size / 2;
     let color = thing.color;
+	let thing: Thing;
     let left = 60;
     let top = 24;
 

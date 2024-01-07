@@ -3,23 +3,29 @@
 	import { k, get, Size, Thing, Point, debug, ZIndex, onMount, svgPath } from "../../ts/common/GlobalImports";
 	import { expanded, dot_size, altering_parent, ids_grabbed, id_toolsGrab } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
-	export let thing;
+	export let relationship = Relationship;
+	let strokeColor = relationship.toThing?.color;
 	let bulkAliasFillColor = k.backgroundColor;
 	let insidePath = svgPath.circle(16, 6);
 	let fillColor = k.backgroundColor;
-	let strokeColor = thing.color;
 	let isHovering = false;
 	let clickCount = 0;
 	let button = null;
 	let clickTimer;
 	let path = '';
+	let thing;
 	
 	function ignore(event) {}
-	onMount( () => { setIsHovering_updateColors(false); updatePath(); });
 	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
 	function handleMouseOut(event) { setIsHovering_updateColors(false); }
 	function handleMouseOver(event) { setIsHovering_updateColors(true); }
 	function handleMouseUp() { clearTimeout(clickTimer); }
+	
+	onMount( () => {
+		thing = relationship.toThing;
+		setIsHovering_updateColors(false);
+		updatePath();
+	});
 
 	function clearClicks() {
 		clickCount = 0;
@@ -32,7 +38,7 @@
 	}
 
 	$: {
-		if (strokeColor != thing.color) {
+		if (thing && strokeColor != thing.color) {
 			strokeColor = thing.color
 			updateColors();
 		}
@@ -58,37 +64,43 @@
 	}
 
 	function updateColors() {
-		thing.updateColorAttributes();
-		const collapsedGrabbed = !thing.isExpanded || thing.isGrabbed;
-		fillColor = thing.revealColor(collapsedGrabbed != isHovering);
-		bulkAliasFillColor = thing.revealColor(collapsedGrabbed == isHovering);
+		if (thing) {
+			thing.updateColorAttributes();
+			const collapsedGrabbed = !thing.isExpanded || thing.isGrabbed;
+			fillColor = thing.revealColor(collapsedGrabbed != isHovering);
+			bulkAliasFillColor = thing.revealColor(collapsedGrabbed == isHovering);
+		}
 	}
 
 	function updatePath() {
-		if ((!thing.hasChildren && !thing.isBulkAlias) || ($id_toolsGrab == thing.id)) {
-			path = svgPath.circle($dot_size, $dot_size / 2);
-		} else {
-			const direction = (thing.isExpanded && thing.hasChildren) ? Direction.left : Direction.right;
-			path = svgPath.triangle(Size.square($dot_size), direction);
-			if (thing.isBulkAlias) {
-				insidePath = svgPath.circle($dot_size, $dot_size / 3);
+		if (thing) {
+			if ((!thing.hasChildren && !thing.isBulkAlias) || ($id_toolsGrab == thing.id)) {
+				path = svgPath.circle($dot_size, $dot_size / 2);
+			} else {
+				const direction = (thing.isExpanded && thing.hasChildren) ? Direction.left : Direction.right;
+				path = svgPath.triangle(Size.square($dot_size), direction);
+				if (thing.isBulkAlias) {
+					insidePath = svgPath.circle($dot_size, $dot_size / 3);
+				}
 			}
 		}
 	}
 
 	function handleClick(event) {
-		setIsHovering_updateColors(false);
-		if ($id_toolsGrab == thing.id) {
-			$id_toolsGrab = null;
-			$altering_parent = null;
-		} else if (!thing.hasChildren) {
-			thing.grabOnly();
-			$id_toolsGrab = thing.id;
-		} else {
-			graphEditor.thing_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
-			return;
+		if (thing) {
+			setIsHovering_updateColors(false);
+			if ($id_toolsGrab == thing.id) {
+				$id_toolsGrab = null;
+				$altering_parent = null;
+			} else if (!thing.hasChildren) {
+				thing.grabOnly();
+				$id_toolsGrab = thing.id;
+			} else {
+				graphEditor.thing_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
+				return;
+			}
+			signal_rebuild_fromHere();
 		}
-		signal_rebuild_fromHere();
 	}
 
 	function handleDoubleClick(event) {
@@ -100,13 +112,15 @@
 		clearClicks();
 		clickTimer = setTimeout(() => {
 			clearClicks();
-			if ($id_toolsGrab == thing.id) {
-				$id_toolsGrab = null;
-			} else {
-				thing.grabOnly()
-				$id_toolsGrab = thing.id;
+			if (thing) {
+				if ($id_toolsGrab == thing.id) {
+					$id_toolsGrab = null;
+				} else {
+					thing.grabOnly()
+					$id_toolsGrab = thing.id;
+				}
+				signal_rebuild_fromHere();
 			}
-			signal_rebuild_fromHere();
 		}, k.longClickThreshold);
 	}
 
@@ -148,8 +162,8 @@
 	style='
 		width={$dot_size}px;
 		height={$dot_size}px;
-		top: {$dot_size / 2 - 2 - (thing.isGrabbed ? 0 : 1)}px;
-		left: {$dot_size + thing.titleWidth - 5}px;
+		top: {$dot_size / 2 - 2 - ((thing && thing.isGrabbed) ? 0 : 1)}px;
+		left: {$dot_size + (thing?.titleWidth ?? 0) - 5}px;
 	'>
 	{#key path}
 		<SVGD3
@@ -160,7 +174,7 @@
 			size={Size.square($dot_size)}
 		/>
 	{/key}
-	{#if thing.isBulkAlias}
+	{#if thing && thing.isBulkAlias}
 		<div style='left:-1px; width:14px; height:14px; position:absolute;'>
 			<SVGD3
 				path={insidePath}

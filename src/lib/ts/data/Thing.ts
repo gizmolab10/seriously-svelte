@@ -1,4 +1,4 @@
-import { k, get, Size, Datum, debug, Predicate, Hierarchy, TraitType, PersistID, DebugFlag, dbDispatch, getWidthOf, persistLocal, CreationOptions, AlteringParent } from '../common/GlobalImports';
+import { k, get, Size, Datum, debug, Predicate, TraitType, PersistID, DebugFlag, dbDispatch, getWidthOf, Relationship, persistLocal, CreationOptions, AlteringParent } from '../common/GlobalImports';
 import { SeriouslyRange, signal_rebuild, signal_relayout, signal_rebuild_fromHere, signal_relayout_fromHere, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { id_here, dot_size, expanded, altering_parent, row_height, id_editing, ids_grabbed, line_stretch, id_toolsGrab } from '../managers/State';
 import Airtable from 'airtable';
@@ -56,31 +56,32 @@ export default class Thing extends Datum {
 	};
 
 	
-	get fields():			Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
-	get parentIDs():			Array<string> { return this.hierarchy.thingIDs_getByIDPredicateToAndID(Predicate.idIsAParentOf,  true, this.id); }
-	get children():				 Array<Thing> { return this.hierarchy.things_getByIDPredicateToAndID(Predicate.idIsAParentOf, false, this.idForChildren); }
-	get parents():				 Array<Thing> { return this.hierarchy.things_getByIDPredicateToAndID(Predicate.idIsAParentOf,  true, this.id); }
-	get siblings():				 Array<Thing> { return this.firstParent?.children ?? []; }
-	get hierarchy():				Hierarchy { return dbDispatch.db.hierarchy; }
-	get hasChildren():				  boolean { return this.children.length > 0; }
-	get hasParents():				  boolean { return this.parents.length > 0; }
-	get isHere():					  boolean { return this.id == get(id_here); }
-	get isRoot():					  boolean { return this == this.hierarchy.root; }
-	get isBulkAlias():				  boolean { return this.trait == TraitType.bulk; }
-	get isExpanded():				  boolean { return this.isRoot || get(expanded)?.includes(this.parentRelationshipID); }
-	get isVisible():				  boolean { return this.ancestors(Number.MAX_SAFE_INTEGER).includes(this.hierarchy.here!); }
-	get grandparent():					Thing { return this.firstParent?.firstParent ?? this.hierarchy.root; }
-	get lastChild():					Thing { return this.children.slice(-1)[0]; }	// not alter children
-	get firstChild():					Thing { return this.children[0]; }
-	get firstParent():					Thing { return this.parents[0]; }
-	get description():				   string { return this.id + ' \"' + this.title + '\"'; }
-	get idForChildren():               string { return this.isBulkAlias ? this.bulkRootID : this.id; }
-	get titleWidth():				   number { return getWidthOf(this.title) }
-	get visibleProgeny_halfHeight():   number { return this.visibleProgeny_height() / 2; }
-	get visibleProgeny_halfSize():		 Size { return this.visibleProgeny_size.dividedInHalf; }
-	get visibleProgeny_size():			 Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
+	get fields():				 Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
+	get parentRelationships(): Array<Relationship> { return this.hierarchy.relationships_getByIDPredicateToAndID(Predicate.idIsAParentOf, true, this.idForChildren); }
+	get childRelationships():  Array<Relationship> { return this.hierarchy.relationships_getByIDPredicateToAndID(Predicate.idIsAParentOf, false, this.idForChildren); }
+	get parentIDs():				 Array<string> { return this.hierarchy.thingIDs_getByIDPredicateToAndID(Predicate.idIsAParentOf,  true, this.id); }
+	get children():					  Array<Thing> { return this.hierarchy.things_getByIDPredicateToAndID(Predicate.idIsAParentOf, false, this.idForChildren); }
+	get parents():					  Array<Thing> { return this.hierarchy.things_getByIDPredicateToAndID(Predicate.idIsAParentOf,  true, this.id); }
+	get siblings():					  Array<Thing> { return this.firstParent?.children ?? []; }
+	get hasChildren():					   boolean { return this.children.length > 0; }
+	get hasParents():					   boolean { return this.parents.length > 0; }
+	get isHere():						   boolean { return this.id == get(id_here); }
+	get isRoot():						   boolean { return this == this.hierarchy.root; }
+	get isBulkAlias():					   boolean { return this.trait == TraitType.bulk; }
+	get isExpanded():					   boolean { return this.isRoot || get(expanded)?.includes(this.parentRelationshipID); }
+	get isVisible():					   boolean { return this.ancestors(Number.MAX_SAFE_INTEGER).includes(this.hierarchy.here!); }
+	get grandparent():						 Thing { return this.firstParent?.firstParent ?? this.hierarchy.root; }
+	get lastChild():						 Thing { return this.children.slice(-1)[0]; }	// not alter children
+	get firstChild():						 Thing { return this.children[0]; }
+	get firstParent():						 Thing { return this.parents[0]; }
+	get description():						string { return this.id + ' \"' + this.title + '\"'; }
+	get idForChildren():					string { return this.isBulkAlias ? this.bulkRootID : this.id; }
+	get titleWidth():						number { return getWidthOf(this.title) }
+	get visibleProgeny_halfHeight():		number { return this.visibleProgeny_height() / 2; }
+	get visibleProgeny_halfSize():			  Size { return this.visibleProgeny_size.dividedInHalf; }
+	get visibleProgeny_size():				  Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 
-	get parentRelationshipID(): string { // WRONG
+	get parentRelationshipID(): string { // WRONG (TODO ???)
 		return this.hierarchy.relationship_getWhereIDEqualsTo(this.id)?.id ?? '';
 	}
 
@@ -141,8 +142,6 @@ export default class Thing extends Datum {
 	
 	signal_rebuild()  { signal_rebuild(this.id); }
 	signal_relayout() { signal_relayout(this.id); }
-	toggleGrab()	  { this.hierarchy.grabs.toggleGrab(this); }
-	grabOnly()		  { this.hierarchy.grabs.grabOnly(this); }
 	toggleExpand()	  { this.expanded_setTo(!this.isExpanded) }
 	collapse()		  { this.expanded_setTo(false); }
 	expand()		  { this.expanded_setTo(true); }
@@ -298,7 +297,7 @@ export default class Thing extends Datum {
 	}
 
 	relationship_fromParent(parent: Thing) {
-		return this.hierarchy.relationship_getForIDs_predicateFromAndTo(Predicate.idIsAParentOf, this.id, parent.id);
+		return this.hierarchy.relationship_getForIDs_predicateFromAndTo(Predicate.idIsAParentOf, parent.id, this.id);
 	}
 
 	async parent_alterMaybe() {
@@ -312,18 +311,6 @@ export default class Thing extends Datum {
 				case AlteringParent.adding: await this.thing_remember_remoteAddAsChild(other); break;
 			}
 			signal_rebuild_fromHere();
-		}
-	}
-
-	clicked_dragDot(shiftKey: boolean) {
-		if (!this.isExemplar) {
-			if (get(altering_parent)) {
-				this.parent_alterMaybe();
-			} else if (shiftKey || this.isGrabbed) {
-				this.toggleGrab();
-			} else {
-				this.grabOnly();
-			}
 		}
 	}
 
@@ -343,7 +330,7 @@ export default class Thing extends Datum {
 		await this.normalize_bulkFetchAll(this.title);
 		if (this.hasChildren) {
 			if (grab) {
-				this.children[0].grabOnly()
+				this.childRelationships[0].grabOnly()
 			}
 			this.expand();
 			signal_rebuild_fromHere();
@@ -375,21 +362,21 @@ export default class Thing extends Datum {
 
 	redraw_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const parent = this.firstParent;
-		const siblings = parent.children;
-		if (!siblings || siblings.length == 0) {
+		const siblingRelationships = parent.childRelationships;
+		if (!siblingRelationships || siblingRelationships.length == 0) {
 			this.redraw_runtimeBrowseRight(true, EXTREME, up);
 		} else {
-			const index = siblings.indexOf(this);
-			const newIndex = index.increment(!up, siblings.length);
+			const index = this.order;
+			const newIndex = index.increment(!up, siblingRelationships.length);
 			if (!OPTION) {
-				const newGrab = siblings[newIndex];
+				const newGrab = siblingRelationships[newIndex];
 				if (SHIFT) {
 					newGrab?.toggleGrab()
 				} else {
 					newGrab?.grabOnly();
 				}
 			} else if (k.allowGraphEditing) {
-				const wrapped = up ? (index == 0) : (index == siblings.length - 1);
+				const wrapped = up ? (index == 0) : (index == siblingRelationships.length - 1);
 				const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
 				const newOrder = newIndex + goose;
 				const order = this.order;
@@ -404,7 +391,7 @@ export default class Thing extends Datum {
 
 	redraw_runtimeBrowseRight(RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, fromReveal: boolean = false) {
 		const newHere = RIGHT ? this : this.grandparent;
-		let newGrab: Thing | null = RIGHT ? this.firstChild : this.firstParent;
+		let newGrab: Relationship | null = RIGHT ? this.childRelationships[0] : this.parentRelationships[0];
 		const newGrabIsNotHere = get(id_here) != newGrab?.id;
 		if (!RIGHT) {
 			const root = this.hierarchy.root;
@@ -414,17 +401,17 @@ export default class Thing extends Datum {
 				if (!SHIFT) {
 					if (fromReveal) {
 						this.expand();
-					} else if (newGrabIsNotHere && newGrab && !newGrab.isExpanded) {
-						newGrab?.expand();
+					} else if (newGrabIsNotHere && newGrab && !newGrab.toThing?.isExpanded) {
+						newGrab?.toThing?.expand();
 					}
 				} else if (newGrab) { 
 					if (this.isExpanded) {
 						this.collapse();
 						newGrab = null;
-					} else if (newGrab == root) {
+					} else if (newGrab.toThing == root) {
 						newGrab = null;
 					} else {
-						newGrab.collapse();
+						newGrab.toThing?.collapse();
 					}
 				}
 			}
@@ -438,7 +425,7 @@ export default class Thing extends Datum {
 		}
 		id_editing.set(null);
 		newGrab?.grabOnly();
-		const allowToBecomeHere = (!SHIFT || newGrab == this.firstParent) && newGrabIsNotHere; 
+		const allowToBecomeHere = (!SHIFT || newGrab == this.parentRelationships[0]) && newGrabIsNotHere; 
 		const shouldBecomeHere = !newHere.isVisible || newHere.isRoot;
 		if (!RIGHT && allowToBecomeHere && shouldBecomeHere) {
 			newHere.becomeHere();

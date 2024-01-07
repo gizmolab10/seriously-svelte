@@ -1,3 +1,4 @@
+import { dbDispatch, Hierarchy } from "../common/GlobalImports";
 import Identifiable from "../common/Identifiable";
 import { DebugFlag } from '../debug/Debug';
 
@@ -17,6 +18,7 @@ export default class Datum extends Identifiable {
 		this.baseID = baseID;
 	}
 
+	get hierarchy(): Hierarchy { return dbDispatch.db.hierarchy; }
 	updateWriteDate() { this.lastWriteDate = new Date(); }
 	log(option: DebugFlag, message: string) {}
 

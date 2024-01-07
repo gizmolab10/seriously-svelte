@@ -6,13 +6,13 @@
 	export let curveType: string = LineCurveType.up;
 	export let relationship = Relationship;
 	export let rect = new Rect();
-	export let thing: Thing;
 	const debugOffset = new Point(141, -1.5);
 	let origin = rect.origin;
 	let extent = rect.extent;
 	let viewBox = new Rect();
 	let size = new Size();
 	let wrapper: Wrapper;
+	let thing: Thing;
 	let path = '';
 
 	////////////////////////////////////////////////////
@@ -20,6 +20,7 @@
 	////////////////////////////////////////////////////
 
 	onMount(() => {
+		thing = relationship.toThing;
 		wrapper = new Wrapper(this);
 	})
 
@@ -69,7 +70,7 @@
 	style='z-index: {ZIndex.lines};
 		top: {origin.y - Math.max(1, size.height)}px;
 		left: {origin.x + 142}px;'>
-	<path d={path} stroke={thing.color} fill='none'/>
+	<path d={path} stroke={thing?.color ?? 'black'} fill='none'/>
 </svg>
 {#if debug.lines}
 	<!--Box rect={rect.offsetBy(debugOffset)} color=gray/-->

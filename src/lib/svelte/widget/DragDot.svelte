@@ -1,12 +1,12 @@
 <script>
-	import { k, Size, Point, Thing, debug, ZIndex, onMount, svgPath, onDestroy, AlteringParent } from "../../ts/common/GlobalImports";
-	import { Direction, dbDispatch, graphEditor, handle_alteringParent } from "../../ts/common/GlobalImports";
+	import { k, Size, Point, debug, Thing, ZIndex, onMount, svgPath, onDestroy, AlteringParent } from "../../ts/common/GlobalImports";
+	import { Direction, dbDispatch, graphEditor, Relationship, handle_alteringParent } from "../../ts/common/GlobalImports";
 	import { dot_size, ids_grabbed, id_toolsGrab } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
-	export let thing;
-	let tinyDotColor = thing.color;
-	let strokeColor = thing.color;
-	let fillColor = thing.color;
+	export let relationship;
+	let tinyDotColor = relationship.toThing?.color;
+	let strokeColor = relationship.toThing?.color;
+	let fillColor = relationship.toThing?.color;
 	let isHovering = true;
 	let isGrabbed = false;
 	let clickCount = 0;
@@ -30,15 +30,18 @@
     onMount(() => {
 		updateColorsForHover(false);
         handler = handle_alteringParent((alteration) => {
-			const applyFlag = $id_toolsGrab && thing.canAlterParentOf_toolsGrab != null;
-			alter = applyFlag ? (alteration != null) : false;
-			extra = (thing.parents.length < 2) ? null : svgPath.circle(size, size / 5);
-			updateColors();
+			const thing = relationship.toThing;
+			if (thing) {
+				const applyFlag = $id_toolsGrab && thing.canAlterParentOf_toolsGrab != null;
+				alter = applyFlag ? (alteration != null) : false;
+				extra = (relationship.siblingRelationships?.length < 2) ? null : svgPath.circle(size, size / 5);
+				updateColors();
+			}
         })
     })
 
 	$: {
-		const grabbed = $ids_grabbed?.includes(thing.id);
+		const grabbed = $ids_grabbed?.includes(relationship.id);
 		if (isGrabbed != grabbed) {
 			isGrabbed = grabbed;
 			updateColors();
@@ -46,16 +49,19 @@
 	}
 
 	$: {
-		if (thing != null) {
+		if (relationship.toThing != null) {
 			updateColors();
 		}
 	}
 
 	function updateColors() {
-		thing.updateColorAttributes();	// needed for revealColor
-		fillColor = debug.lines ? 'transparent' : thing.revealColor(isHovering != alter);
-		tinyDotColor = thing.revealColor(isHovering == alter);
-		strokeColor = thing.color;
+		const thing = relationship.toThing;
+		if (thing) {
+			thing.updateColorAttributes();	// needed for revealColor
+			fillColor = debug.lines ? 'transparent' : thing.revealColor(isHovering != alter);
+			tinyDotColor = thing.revealColor(isHovering == alter);
+			strokeColor = thing.color;
+		}
 	}
 
 	function updateColorsForHover(flag) {
@@ -79,14 +85,14 @@
 
 	function handleDoubleClick(event) {
 		clearClicks();
-		thing.becomeHere();
+		relationship.toThing.becomeHere();
     }
 
 	function handleSingleClick(event) {
 		clickCount++;
 		clickTimer = setTimeout(() => {
 			if (clickCount === 1) {
-				thing.clicked_dragDot(event.shiftKey);
+				relationship?.clicked_dragDot(event.shiftKey);
 				clearClicks();
 			}
 		}, k.doubleClickThreshold);
@@ -95,10 +101,10 @@
 	$: {
 		if ($dot_size > 0) {
 			size = $dot_size;
-			top = $id_toolsGrab == thing.id ? 23 : -size / 2 + 2;
+			top = $id_toolsGrab == relationship.id ? 23 : -size / 2 + 2;
 			left = 1.5 - (size / 2); // offset from center?
 			path = svgPath.oval(size, false);
-			if (thing.parents.length > 1) {
+			if (relationship.siblingRelationships?.length > 1) {
 				extra = svgPath.circle(size, size / 5);
 			}
 		}

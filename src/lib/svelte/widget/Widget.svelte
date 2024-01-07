@@ -1,13 +1,12 @@
 <script lang='ts'>
-	import { id_here, dot_size, id_editing, row_height, ids_grabbed, thing_fontSize, thing_fontFamily, id_toolsGrab} from '../../ts/managers/State';
 	import { k, Thing, Point, debug, ZIndex, Wrapper, onMount, onDestroy, debugReact, handle_relayout, Relationship } from '../../ts/common/GlobalImports';
+	import { id_here, dot_size, id_editing, row_height, ids_grabbed, thing_fontSize, thing_fontFamily, id_toolsGrab} from '../../ts/managers/State';
 	import ToolsCluster from './ToolsCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
 	import RevealDot from './RevealDot.svelte';
 	import DragDot from './DragDot.svelte';
 	export let relationship = Relationship;
 	export let origin = new Point();
-	export let thing = Thing;
 	let priorRowHeight = $row_height;
 	let priorOrigin = origin;
 	let showingCluster = false;
@@ -17,6 +16,7 @@
 	let background = '';
 	let padding = '';
 	let border = '';
+	let thing: Thing;
 	let wrapper: Wrapper;
 	let radius = $dot_size / 2;
 	let rightPadding = 22
@@ -31,8 +31,9 @@
 
 	onMount( () => {
 		updateBorderStyle();
-		debugReact.log_mount(`WIDGET ${thing.description}`);
+		debugReact.log_mount(`WIDGET ${thing?.description}`);
 		wrapper = new Wrapper(this as ThingWrapper);
+		thing = relationship.toThing;
 	});
 	
 	const signalHandler = handle_relayout((idThing) => {
@@ -43,8 +44,10 @@
 	});
 
 	function updateBorderStyle() {
-		thing.updateColorAttributes();
-		border = showingBorder ? 'border: ' + thing.grabAttributes : '';
+		if (thing) {
+			thing.updateColorAttributes();
+			border = showingBorder ? 'border: ' + thing.grabAttributes : '';
+		}
 		background = showingBorder ? 'background-color: ' + k.backgroundColor : '';
 	}
 	
@@ -69,39 +72,43 @@
 	}
 
 	function updateLayout() {
-		height = $row_height - 2;
-		const delta = showingBorder ? 0 : 1;
-		left = origin.x + delta - 2;
-		const titleWidth = thing.titleWidth;
-		width = titleWidth - 18 + ($dot_size * 2);
-		if (thing.showCluster) {
-			radius = k.clusterHeight / 2;
-			const yPadding = radius - 12;
-			revealTop = radius - 17;
-			top = origin.y + delta - yPadding + 1;
-			padding = `${yPadding}px ${rightPadding}px ${yPadding}px 0px`;
-		} else {
-			revealTop = $dot_size / -3 + 1;
-			radius = $row_height / 2;
-			top = origin.y + delta;
-			padding = `0px ${rightPadding}px 0px 0px`;
+		if (thing) {
+			height = $row_height - 2;
+			const delta = showingBorder ? 0 : 1;
+			left = origin.x + delta - 2;
+			const titleWidth = thing.titleWidth;
+			width = titleWidth - 18 + ($dot_size * 2);
+			if (thing.showCluster) {
+				radius = k.clusterHeight / 2;
+				const yPadding = radius - 12;
+				revealTop = radius - 17;
+				top = origin.y + delta - yPadding + 1;
+				padding = `${yPadding}px ${rightPadding}px ${yPadding}px 0px`;
+			} else {
+				revealTop = $dot_size / -3 + 1;
+				radius = $row_height / 2;
+				top = origin.y + delta;
+				padding = `0px ${rightPadding}px 0px 0px`;
+			}
 		}
 	}
 
 	$: {
-		const id = thing.id;
-		const shouldEdit = (id == $id_editing);
-		const shouldShowCluster = $id_toolsGrab == id && $id_here != id;
-		const shouldGrab = $ids_grabbed?.includes(id) || thing.isExemplar;
-		const change = (isEditing != shouldEdit || isGrabbed != shouldGrab || showingCluster != shouldShowCluster);
-		if (change) {
-			debugReact.log_layout(`WIDGET visibility ${thing.description}`);
-			showingCluster = shouldShowCluster;
-			showingBorder = shouldEdit || shouldGrab;
-			isGrabbed = shouldGrab;
-			isEditing = shouldEdit;
-			updateBorderStyle();
-			updateLayout();
+		const id = relationship?.id;
+		if (id) {
+			const shouldEdit = (id == $id_editing);
+			const shouldShowCluster = $id_toolsGrab == id; // && $id_here != id;
+			const shouldGrab = $ids_grabbed?.includes(id) || thing?.isExemplar ?? false;
+			const change = (isEditing != shouldEdit || isGrabbed != shouldGrab || showingCluster != shouldShowCluster);
+			if (change) {
+				debugReact.log_layout(`WIDGET visibility ${thing?.description}`);
+				showingCluster = shouldShowCluster;
+				showingBorder = shouldEdit || shouldGrab;
+				isGrabbed = shouldGrab;
+				isEditing = shouldEdit;
+				updateBorderStyle();
+				updateLayout();
+			}
 		}
 	}
 
@@ -117,7 +124,7 @@
 	}
 </style>
 
-<div class='widget' id='{thing.title}'
+<div class='widget' id='{thing?.title ?? "unknown"}'
 	bind:this={widget}
 	style='
 		{border};
@@ -131,16 +138,16 @@
 		border-radius: {radius}px;
 	'>
 	<div style='top:{revealTop}px;'>
-		<DragDot thing={thing}/>
+		<DragDot relationship={relationship}/>
 	</div>
-	<TitleEditor thing={thing} fontSize={$thing_fontSize}px fontFamily={$thing_fontFamily}/>
+	<TitleEditor relationship={relationship} fontSize={$thing_fontSize}px fontFamily={$thing_fontFamily}/>
 	<div class='revealDot'
 		style='
 			top:{revealTop}px;
 			z-index: {ZIndex.dots};'>
-		<RevealDot thing={thing}/>
+		<RevealDot relationship={relationship}/>
 	</div>
 	{#if showingCluster}
-		<ToolsCluster thing={thing}/>
+		<ToolsCluster thing={thing} relationship={relationship}/>
 	{/if}
 </div>

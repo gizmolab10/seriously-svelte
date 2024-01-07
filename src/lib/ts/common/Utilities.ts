@@ -1,16 +1,20 @@
 import { thing_fontSize, thing_fontFamily } from '../managers/State';
-import { get, Thing, BrowserType } from './GlobalImports';
+import { get, Thing, BrowserType, Relationship } from './GlobalImports';
 import convert from 'color-convert';
 
 export function noop() {}
 export function roundToEven(n: number): number{ return Math.round(n / 2) * 2; }
 
-export function sort_byOrder(array: Array<Thing>) {
+export function things_sort_byOrder(array: Array<Thing>) {
 	return array.sort( (a: Thing, b: Thing) => { return a.order - b.order; });
 }
 
+export function relationships_sort_byOrder(array: Array<Relationship>) {
+	return array.sort( (a: Relationship, b: Relationship) => { return a.order - b.order; });
+}
+
 export async function orders_normalize_remoteMaybe(array: Array<Thing>, remoteWrite: boolean = true) {
-	sort_byOrder(array);
+	things_sort_byOrder(array);
 	array.forEach((thing, index) => {
 		if (thing.order != index) {
 			(async () => {

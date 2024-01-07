@@ -1,4 +1,4 @@
-import { noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, sort_byOrder, roundToEven } from './Utilities';
+import { noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, roundToEven, things_sort_byOrder, relationships_sort_byOrder } from './Utilities';
 import { signal_rebuild, signal_relayout, signal_alteringParent, signal_rebuild_fromHere, signal_relayout_fromHere } from './Signals';
 import { isServerLocal, isMobileDevice, getBrowserType, convertToObject, orders_normalize_remoteMaybe } from './Utilities';
 import { ZIndex, ButtonID, TraitType, BrowserType, AlteringParent, CreationOptions, LineCurveType } from './Enumerations';
@@ -40,11 +40,12 @@ export {
 	dbDispatch, DBType, DataKind,
 	Grabs, graphEditor, Hierarchy,
 	debugReact, DebugReact, ReactFlag, Wrapper, ThingWrapper,
+	roundToEven, getBrowserType, isMobileDevice, convertToObject,
 	ZIndex, ButtonID, BrowserType, AlteringParent, CreationOptions,
 	User, SeriouslyRange, Datum, Thing, Access, Predicate, Relationship,
 	signal, Signals, handle_rebuild, handle_relayout, handle_alteringParent,
+	things_sort_byOrder, relationships_sort_byOrder, orders_normalize_remoteMaybe,
 	Point, Size, Rect, Layout, LineRect, TraitType, LineCurveType, graphRect_update,
 	noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, isServerLocal,
-	sort_byOrder, roundToEven, getBrowserType, isMobileDevice, convertToObject, orders_normalize_remoteMaybe,
 	signal_rebuild, signal_relayout, signal_alteringParent, signal_rebuild_fromHere, signal_relayout_fromHere,
 };

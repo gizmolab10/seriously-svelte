@@ -1,9 +1,9 @@
-import { get, Thing, Hierarchy, sort_byOrder, Relationship } from "../common/GlobalImports";
+import { get, Hierarchy, Relationship, relationships_sort_byOrder } from "../common/GlobalImports";
 import { ids_grabbed, id_toolsGrab } from '../managers/State';
 
 export default class Grabs {
 	hierarchy: Hierarchy;
-	grabbed: Thing[] | null = null;
+	grabbed: Relationship[] | null = null;
 
 	constructor(hierarchy: Hierarchy) {
 		this.hierarchy = hierarchy;
@@ -11,25 +11,25 @@ export default class Grabs {
 			if (ids.length > 0 && this.hierarchy.db && this.hierarchy.db.hasData) {
 				this.grabbed = [];
 				for (const id of ids) {
-					const thing = this.hierarchy.thing_getForID(id)
-					if (thing) {
-						this.grabbed.push(thing);
+					const relationship = this.hierarchy.relationship_getForID(id)
+					if (relationship) {
+						this.grabbed.push(relationship);
 					}
 				}
 			}
 		});
 	};
 
-	get thing_lastGrabbed(): (Thing | null) { return this.hierarchy.thing_getForID(this.last_idGrabbed); }
-	toggleGrab = (thing: Thing) => { if (thing.isGrabbed) { this.ungrab(thing); } else { this.grab(thing); } }
+	get relationship_lastGrabbed(): (Relationship | null) { return this.hierarchy.relationship_getForID(this.last_idGrabbed); }
+	toggleGrab = (relationship: Relationship) => { if (relationship.isGrabbed) { this.ungrab(relationship); } else { this.grab(relationship); } }
 
-	thing_toggleToolsGrab(thing: Thing) {
+	relationship_toggleToolsGrab(relationship: Relationship) {
 		const id = get(id_toolsGrab);
 		if (id != null) {
-			if (id == thing.id) {
+			if (id == relationship.id) {
 				id_toolsGrab.set(null);
 			} else {
-				id_toolsGrab.set(thing.id);
+				id_toolsGrab.set(relationship.id);
 			}
 		}
 	}
@@ -42,26 +42,26 @@ export default class Grabs {
 		return null;
 	}
 
-	grabOnly(thing: Thing) {
-		const ids = [thing.id]
+	grabOnly(relationship: Relationship) {
+		const ids = [relationship.id]
 		ids_grabbed.set(ids);
-		this.thing_toggleToolsGrab(thing);
+		this.relationship_toggleToolsGrab(relationship);
 	}
 
-	grab(thing: Thing) {
+	grab(relationship: Relationship) {
 		ids_grabbed.update((array) => {
-			if (array.indexOf(thing.id) == -1) {
-				array.push(thing.id);	// only add if not already added
+			if (array.indexOf(relationship.id) == -1) {
+				array.push(relationship.id);	// only add if not already added
 			}
 			return array;
 		});
-		this.thing_toggleToolsGrab(thing);
+		this.relationship_toggleToolsGrab(relationship);
 	}
 
-	ungrab(thing: Thing) {
+	ungrab(relationship: Relationship) {
 		const rootID = this.hierarchy.idRoot;
 		ids_grabbed.update((array) => {
-			const index = array.indexOf(thing.id);
+			const index = array.indexOf(relationship.id);
 			if (index != -1) {				// only splice array when item is found
 				array.splice(index, 1);		// 2nd parameter means remove one item only
 			}
@@ -74,14 +74,14 @@ export default class Grabs {
 		if (ids.length == 0) {
 			this.hierarchy.root?.grabOnly();
 		}
-		this.thing_toggleToolsGrab(thing);
+		this.relationship_toggleToolsGrab(relationship);
 	}
 
 	latestGrab(up: boolean) {
 		const ids = get(ids_grabbed);
 		if (ids) {
 			let grabs = this.hierarchy.things_getForIDs(ids);
-			sort_byOrder(grabs);
+			relationships_sort_byOrder(grabs);
 			if (up) {
 				return grabs[0];
 			} else {

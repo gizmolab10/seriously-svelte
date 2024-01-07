@@ -1,22 +1,23 @@
 <script lang='ts'>
+	import { k, Thing, ZIndex, onMount, onDestroy, dbDispatch, graphEditor, Relationship } from '../../ts/common/GlobalImports';
 	import { SeriouslyRange, handle_relayout, signal_relayout, signal_rebuild_fromHere } from '../../ts/common/GlobalImports'; 
-	import { k, Thing, ZIndex, onMount, onDestroy, dbDispatch, graphEditor } from '../../ts/common/GlobalImports';
 	import { row_height, id_editing, id_editingStopped } from '../../ts/managers/State';
 	import Widget from './Widget.svelte';
+	export let relationship = Relationship;
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
-	export let thing = Thing;
-	let originalTitle = thing.title;
+	let originalTitle = relationship.toThing?.title;
 	let isEditing = false;
 	let titleWidth = 0;
 	let ghost = null;
 	let input = null;
+	let thing: Thing;
 
-	onMount(() => { updateInputWidth(); });
 	onDestroy(() => { thing = null; signalHandler.disconnect(); });
-	var hasChanges = () => { return originalTitle != thing.title; }
+	var hasChanges = () => { return originalTitle != (thing?.title ?? ''); }
+	onMount(() => { thing = relationship.toThing; updateInputWidth(); });
 	function handleBlur(event) { stopAndClearEditing(); updateInputWidth(); }
-	function handleInput(event) { thing.title = event.target.value; updateInputWidth(); }
+	function handleInput(event) { thing = event.target.value; updateInputWidth(); }
 	const signalHandler = handle_relayout((idThing) => setTimeout(() => { updateInputWidth(); }, 10));
 
 	function updateInputWidth() {
@@ -57,7 +58,7 @@
 		// manage edit state //
 		///////////////////////
 
-		if (k.allowTitleEditing) {
+		if (k.allowTitleEditing && thing) {
 			if ($id_editingStopped == thing.id) {
 				setTimeout(() => {
 					$id_editingStopped = null;
@@ -94,7 +95,7 @@
 			input?.blur();
 			if (hasChanges() && !thing.isExemplar) {
 				dbDispatch.db.thing_remoteUpdate(thing);
-				originalTitle = thing.title;		// so hasChanges will be correct
+				originalTitle = thing?.title ?? '';		// so hasChanges will be correct
 				thing.signal_relayout();
 			}
 		}
@@ -146,31 +147,33 @@
 </style>
 
 {#key originalTitle}
-	<span class="ghost" bind:this={ghost}
-		style='
-			font-size: {fontSize};
-			font-family: {fontFamily};
-			padding: 0px 0px 0px {$row_height / 3}px;'>
-		{thing.title}
-	</span>
-	<input
-		type='text'
-		name='title'
-		class='title'
-		bind:this={input}
-		on:blur={handleBlur}
-		on:focus={handleFocus}
-		on:input={handleInput}
-		bind:value={thing.title}
-		on:cut={handleCutOrPaste}
-		on:keydown={handleKeyDown}
-		on:paste={handleCutOrPaste}
-		style='left: 10px;
-			color: {thing.color};
-			font-size: {fontSize};
-			z-index: {ZIndex.text};
-			font-family: {fontFamily};
-			outline-color: {k.backgroundColor};
-			padding: 0px 0px 0px {$row_height / 3}px;
-		'/>
+	{#if thing}
+		<span class="ghost" bind:this={ghost}
+			style='
+				font-size: {fontSize};
+				font-family: {fontFamily};
+				padding: 0px 0px 0px {$row_height / 3}px;'>
+			{thing.title}
+		</span>
+		<input
+			type='text'
+			name='title'
+			class='title'
+			bind:this={input}
+			on:blur={handleBlur}
+			on:focus={handleFocus}
+			on:input={handleInput}
+			bind:value={thing.title}
+			on:cut={handleCutOrPaste}
+			on:keydown={handleKeyDown}
+			on:paste={handleCutOrPaste}
+			style='left: 10px;
+				color: {thing.color};
+				font-size: {fontSize};
+				z-index: {ZIndex.text};
+				font-family: {fontFamily};
+				outline-color: {k.backgroundColor};
+				padding: 0px 0px 0px {$row_height / 3}px;
+			'/>
+	{/if}
 {/key}

@@ -1,10 +1,11 @@
 <script lang='ts'>
-	import { k, Thing, onMount, dbDispatch } from '../../ts/common/GlobalImports';
+	import { k, Thing, onMount, dbDispatch, Relationship } from '../../ts/common/GlobalImports';
 	import { id_here } from '../../ts/managers/State';
-	export let thing = Thing;
+	export let relationship = Relationship;
+	let thing = Thing;
 	let colorStyles = '';
 
-	onMount( () => { updateColors(); });
+	onMount( () => { thing = relationship.toThing; updateColors(); });
 
 	function updateColors() {
 		const isHere = thing.id === $id_here;
@@ -17,7 +18,7 @@
 
 	function crumb_buttonClicked(event) {
 		if (dbDispatch.db.hasData) {
-			thing.grabOnly();
+			relationship.grabOnly();
 			thing.becomeHere();
 		}
 	}
@@ -32,6 +33,6 @@
 		cursor: {thing.hasChildren ? 'pointer' : 'normal'};
 		{colorStyles};'>
 		<div style='padding:0px 0px 1px 0px'>
-			{thing.title.injectElipsisAt()}
+			{thing.title?.injectElipsisAt() ?? ''}
 		</div>
 </button>

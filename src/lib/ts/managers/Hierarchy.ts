@@ -1,4 +1,4 @@
-import { persistLocal, CreationOptions, sort_byOrder, signal_rebuild_fromHere, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { persistLocal, CreationOptions, things_sort_byOrder, signal_rebuild_fromHere, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { get, noop, User, Thing, Grabs, debug, Access, remove, TraitType, Predicate, Relationship } from '../common/GlobalImports';
 import { id_here, isBusy, ids_grabbed, things_arrived } from './State';
 import DBInterface from '../db/DBInterface';
@@ -60,7 +60,7 @@ export default class Hierarchy {
 	here_restore() {
 		let here = this.thing_getForID(get(id_here));
 		if (here == null) {
-			const grab = this.grabs.thing_lastGrabbed;
+			const grab = this.grabs.relationship_lastGrabbed;
 			here = grab?.firstParent ?? this.root;
 		}
 		here?.becomeHere();
@@ -85,7 +85,7 @@ export default class Hierarchy {
 				array.push(thing);
 			}
 		}
-		return sort_byOrder(array);
+		return things_sort_byOrder(array);
 	}
 
 	things_getByIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Thing> {
@@ -382,17 +382,15 @@ export default class Hierarchy {
 		}
 	}
 
-	relationship_getForIDs_predicateFromAndTo(idPredicate: string, idFrom: string, idTo: string): Relationship | null {
-		const dict = this.knownRs_byIDTo;
-		const relationships = dict[idTo] as Array<Relationship>;
-		if (Array.isArray(relationships)) {
-			for (const relationship of relationships) {
-				if (relationship.idFrom == idFrom && relationship.idPredicate == idPredicate) {
-					return relationship;
-				}
+	relationships_getForIDs(ids: Array<string>): Array<Relationship> {
+		const array = Array<Relationship>();
+		for (const id of ids) {
+			const relationship = this.relationship_getForID(id);
+			if (relationship) {
+				array.push(relationship);
 			}
 		}
-		return null;
+		return things_sort_byOrder(array);
 	}
 
 	relationships_getByIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Relationship> {
@@ -490,6 +488,21 @@ export default class Hierarchy {
 		if (matches.length > 0) {
 			const relationship = matches[0];
 			return relationship;
+		}
+		return null;
+	}
+
+	relationship_getForID(id: string | null) { return id == null ? null : this.knownR_byID[id]; }
+
+	relationship_getForIDs_predicateFromAndTo(idPredicate: string, idFrom: string, idTo: string): Relationship | null {
+		const dict = this.knownRs_byIDTo;
+		const relationships = dict[idTo] as Array<Relationship>;
+		if (Array.isArray(relationships)) {
+			for (const relationship of relationships) {
+				if (relationship.idFrom == idFrom && relationship.idPredicate == idPredicate) {
+					return relationship;
+				}
+			}
 		}
 		return null;
 	}

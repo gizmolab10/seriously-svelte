@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, Size, Point, ZIndex, svgPath, dbDispatch, Relationship, } from '../../ts/common/GlobalImports';
+	import { k, Size, Point ZIndex, svgPath, dbDispatch, Relationship, } from '../../ts/common/GlobalImports';
 	import { dot_size, ids_grabbed, crumbsWidth, id_toolsGrab } from '../../ts/managers/State';
 	import FatTriangle from '../svg/FatTriangle.svelte';
 	import Crumb from '../kit/Crumb.svelte';
