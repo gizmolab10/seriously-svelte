@@ -36,7 +36,7 @@ export enum BrowserType  {
 	orion	 = 'orion',
 }
 
-const baseZIndex = 1;
+const baseZIndex = 0;
 
 export enum ZIndex {
 	panel	  = baseZIndex,

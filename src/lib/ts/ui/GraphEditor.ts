@@ -38,7 +38,7 @@ export default class GraphEditor {
 				}
 				switch (key) {
 					case 'delete':
-					case 'backspace':	await h.things_redraw_remoteTraverseDelete(h.things_getForIDs(get(ids_grabbed))); break;
+					case 'backspace':	await h.grabbed_redraw_remoteTraverseDelete(); break;
 				}
 			}
 			if (grab) {
@@ -85,7 +85,7 @@ export default class GraphEditor {
 		await parent.thing_remember_remoteAddAsChild(child);
 		parent.expand();
 		signal_rebuild_fromHere();
-		child.grabOnly();
+		child.parentRelationships[0].grabOnly();
 		if (startEdit) {
 			setTimeout(() => {
 				child.startEdit();
@@ -101,7 +101,7 @@ export default class GraphEditor {
 		await this.hierarchy.thing_remember_remoteRelocateChild(child, parent, newParent);
 		newParent.expand();
 		signal_rebuild_fromHere();
-		newParent.grabOnly();
+		newParent.parentRelationships[0].grabOnly();
 		setTimeout(() => {
 			newParent.startEdit();
 		}, 200);
@@ -146,7 +146,7 @@ export default class GraphEditor {
 
 				h.relationships_refreshKnowns();		// so children and parent will see the newly relocated things
 				h.root?.order_normalizeRecursive_remoteMaybe(true);
-				thing.grabOnly();
+				thing.parentRelationships[0].grabOnly();
 				newParent.expand();
 				if (!newParent.isVisible) {
 					newParent.becomeHere();

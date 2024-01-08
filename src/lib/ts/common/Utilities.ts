@@ -1,24 +1,20 @@
 import { thing_fontSize, thing_fontFamily } from '../managers/State';
-import { get, Thing, BrowserType, Relationship } from './GlobalImports';
+import { get, Orderable, BrowserType } from './GlobalImports';
 import convert from 'color-convert';
 
 export function noop() {}
 export function roundToEven(n: number): number{ return Math.round(n / 2) * 2; }
 
-export function things_sort_byOrder(array: Array<Thing>) {
-	return array.sort( (a: Thing, b: Thing) => { return a.order - b.order; });
+export function sort_byOrder(array: Array<Orderable>) {
+	return array.sort( (a: Orderable, b: Orderable) => { return a.order - b.order; });
 }
 
-export function relationships_sort_byOrder(array: Array<Relationship>) {
-	return array.sort( (a: Relationship, b: Relationship) => { return a.order - b.order; });
-}
-
-export async function orders_normalize_remoteMaybe(array: Array<Thing>, remoteWrite: boolean = true) {
-	things_sort_byOrder(array);
-	array.forEach((thing, index) => {
-		if (thing.order != index) {
+export async function orders_normalize_remoteMaybe(array: Array<Orderable>, remoteWrite: boolean = true) {
+	sort_byOrder(array);
+	array.forEach((orderable, index) => {
+		if (orderable.order != index) {
 			(async () => {
-				await thing.order_setTo(index, remoteWrite);
+				await orderable.order_setTo(index, remoteWrite);
 			})();
         }
 	});

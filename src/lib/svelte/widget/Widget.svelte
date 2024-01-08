@@ -5,7 +5,7 @@
 	import TitleEditor from './TitleEditor.svelte';
 	import RevealDot from './RevealDot.svelte';
 	import DragDot from './DragDot.svelte';
-	export let relationship = Relationship;
+	export let relationship: Relationship;
 	export let origin = new Point();
 	let priorRowHeight = $row_height;
 	let priorOrigin = origin;

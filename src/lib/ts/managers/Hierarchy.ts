@@ -1,4 +1,4 @@
-import { persistLocal, CreationOptions, things_sort_byOrder, signal_rebuild_fromHere, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { sort_byOrder, persistLocal, CreationOptions, signal_rebuild_fromHere, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { get, noop, User, Thing, Grabs, debug, Access, remove, TraitType, Predicate, Relationship } from '../common/GlobalImports';
 import { id_here, isBusy, ids_grabbed, things_arrived } from './State';
 import DBInterface from '../db/DBInterface';
@@ -85,7 +85,7 @@ export default class Hierarchy {
 				array.push(thing);
 			}
 		}
-		return things_sort_byOrder(array);
+		return sort_byOrder(array);
 	}
 
 	things_getByIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Thing> {
@@ -113,13 +113,21 @@ export default class Hierarchy {
 	//		DELETE		//
 	//////////////////////
 
-	async things_redraw_remoteTraverseDelete(things: Array<Thing>) {
+	async grabbed_redraw_remoteTraverseDelete() {
+		const things = this.relationships_getForIDs(get(ids_grabbed));
+		this.things_redraw_remoteTraverseDelete(things);
+
+	}
+
+	async things_redraw_remoteTraverseDelete(relationships: Array<Relationship | null>) {
 		const h = this;
 		if (h.here) {
-			for (const grabbed of things) {
-				if (grabbed && !grabbed.isEditing && !grabbed.isBulkAlias) {
-					let newGrab = grabbed.firstParent;
-					const siblings = grabbed.siblings;
+			for (const grabbed of relationships) {
+				if (grabbed && !grabbed.isEditing && !grabbed.toThing?.isBulkAlias) {
+					// let newGrab = grabbed.firstParent;
+					// const siblings = grabbed.siblings;
+					const siblings = grabbed.siblingRelationships;
+					let newGrab = grabbed.toThing?.parentRelationships[0];
 					const grandparent = grabbed.grandparent;
 					let index = siblings.indexOf(grabbed);
 					siblings.splice(index, 1);
@@ -132,7 +140,7 @@ export default class Hierarchy {
 					} else if (!grandparent.isVisible) {
 						grandparent.becomeHere();
 					}
-					await grabbed.traverse(async (child: Thing): Promise<boolean> => {
+					await grabbed.traverse(async (child: Relationship): Promise<boolean> => {
 						await h.relationships_forget_remoteDeleteAllForThing(child);
 						await h.thing_forget_remoteDelete(child);
 						return false; // continue the traversal
@@ -390,7 +398,7 @@ export default class Hierarchy {
 				array.push(relationship);
 			}
 		}
-		return things_sort_byOrder(array);
+		return sort_byOrder(array);
 	}
 
 	relationships_getByIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Relationship> {

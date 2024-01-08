@@ -1,9 +1,9 @@
-import { k, get, Size, Datum, debug, Predicate, TraitType, PersistID, DebugFlag, dbDispatch, getWidthOf, Relationship, persistLocal, CreationOptions, AlteringParent } from '../common/GlobalImports';
-import { SeriouslyRange, signal_rebuild, signal_relayout, signal_rebuild_fromHere, signal_relayout_fromHere, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { AlteringParent, SeriouslyRange, signal_rebuild, signal_relayout, signal_rebuild_fromHere, signal_relayout_fromHere, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { k, get, Size, debug, Predicate, TraitType, PersistID, DebugFlag, Orderable, dbDispatch, getWidthOf, Relationship, persistLocal, CreationOptions } from '../common/GlobalImports';
 import { id_here, dot_size, expanded, altering_parent, row_height, id_editing, ids_grabbed, line_stretch, id_toolsGrab } from '../managers/State';
 import Airtable from 'airtable';
 
-export default class Thing extends Datum {
+export default class Thing extends Orderable {
 	selectionRange: SeriouslyRange | null = null;
     bulkRootID: string = '';
 	needsBulkFetch = false;
@@ -18,15 +18,13 @@ export default class Thing extends Datum {
 	title: string;
 	color: string;
 	trait: string;
-	order: number;
 
 	constructor(baseID: string, id: string | null, title = k.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
-		super(baseID, id, isRemotelyStored);
+		super(baseID, order, id, isRemotelyStored);
 		this.db_type = dbDispatch.db.db_type;
 		this.title = title;
 		this.color = color;
 		this.trait = trait;
-		this.order = order;
 
 		this.updateColorAttributes();
 
@@ -39,7 +37,8 @@ export default class Thing extends Datum {
 		});
 
 		ids_grabbed.subscribe((idsGrab: string[]) => {
-			const isGrabbed = idsGrab.includes(this.id);
+			const parentIDs = this.parentRelationships.map(r => r.id);
+			const isGrabbed = parentIDs.some(element => idsGrab.includes(element));
 			if (this.isGrabbed != isGrabbed) {
 				this.isGrabbed  = isGrabbed;
 				this.updateColorAttributes();
@@ -264,7 +263,7 @@ export default class Thing extends Datum {
 		}
 	}
 
-	async order_setTo(newOrder: number, remoteWrite: boolean) {
+	override async order_setTo(newOrder: number, remoteWrite: boolean) {
 		const relationship = this.hierarchy.relationship_getWhereIDEqualsTo(this.id);
 		if (relationship && Math.abs(relationship.order - newOrder) > 0.001) {
 			const oldOrder = relationship.order;
@@ -285,15 +284,6 @@ export default class Thing extends Datum {
 			siblingIndex = 1;
 		}
 		return array[siblingIndex];
-	}
-
-	async traverse(applyTo: (thing: Thing) => Promise<boolean>) {
-		if (!await applyTo(this)) {
-			for (const progeny of this.children) {
-				await progeny.traverse(applyTo);
-			}
-		}
-		return this;
 	}
 
 	relationship_fromParent(parent: Thing) {

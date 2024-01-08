@@ -1,4 +1,4 @@
-import { noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, roundToEven, things_sort_byOrder, relationships_sort_byOrder } from './Utilities';
+import { noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, roundToEven, sort_byOrder } from './Utilities';
 import { signal_rebuild, signal_relayout, signal_alteringParent, signal_rebuild_fromHere, signal_relayout_fromHere } from './Signals';
 import { isServerLocal, isMobileDevice, getBrowserType, convertToObject, orders_normalize_remoteMaybe } from './Utilities';
 import { ZIndex, ButtonID, TraitType, BrowserType, AlteringParent, CreationOptions, LineCurveType } from './Enumerations';
@@ -21,15 +21,16 @@ import { builds } from './Builds';
 import { k } from './Constants';
 import './Extensions';
 
+import Datum from '../data/Datum';				// import before orderable
+import Orderable from '../data/Orderable';		// import before Relationship and Thing
 import Relationship from '../data/Relationship';
 import Hierarchy from '../managers/Hierarchy';
 import Predicate from '../data/Predicate';
 import Layout from '../geometry/Layout';
 import Access from '../data/Access';
 import Thing from '../data/Thing';
-import Datum from '../data/Datum';
-import User from '../data/User';
 import Grabs from '../ui/Grabs';
+import User from '../data/User';
 
 export {
 	k, builds, launch,
@@ -39,12 +40,12 @@ export {
 	debug, Debug, DebugFlag,
 	dbDispatch, DBType, DataKind,
 	Grabs, graphEditor, Hierarchy,
+	sort_byOrder, orders_normalize_remoteMaybe,
 	debugReact, DebugReact, ReactFlag, Wrapper, ThingWrapper,
 	roundToEven, getBrowserType, isMobileDevice, convertToObject,
-	ZIndex, ButtonID, BrowserType, AlteringParent, CreationOptions,
-	User, SeriouslyRange, Datum, Thing, Access, Predicate, Relationship,
+	User, Datum, Thing, Access, Predicate, Orderable, Relationship,
 	signal, Signals, handle_rebuild, handle_relayout, handle_alteringParent,
-	things_sort_byOrder, relationships_sort_byOrder, orders_normalize_remoteMaybe,
+	ZIndex, ButtonID, BrowserType, AlteringParent, CreationOptions, SeriouslyRange,
 	Point, Size, Rect, Layout, LineRect, TraitType, LineCurveType, graphRect_update,
 	noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, isServerLocal,
 	signal_rebuild, signal_relayout, signal_alteringParent, signal_rebuild_fromHere, signal_relayout_fromHere,

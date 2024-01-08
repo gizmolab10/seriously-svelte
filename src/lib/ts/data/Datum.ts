@@ -2,7 +2,7 @@ import { dbDispatch, Hierarchy } from "../common/GlobalImports";
 import Identifiable from "../common/Identifiable";
 import { DebugFlag } from '../debug/Debug';
 
-export default class Datum extends Identifiable {
+export class Datum extends Identifiable {
 	awaitingCreation: boolean;
 	isRemotelyStored: boolean;
 	lastWriteDate: Date;
@@ -11,7 +11,6 @@ export default class Datum extends Identifiable {
 
 	constructor(baseID: string, id: string | null, isRemotelyStored: boolean) {
 		super(id);
-
 		this.isRemotelyStored = isRemotelyStored;
 		this.lastWriteDate = new Date();
 		this.awaitingCreation = false;
@@ -28,3 +27,5 @@ export default class Datum extends Identifiable {
 	}
 
 }
+
+export default Datum;

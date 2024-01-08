@@ -1,7 +1,7 @@
 import { removeAll } from './Utilities';
 import { v4 as uuid } from 'uuid';
 
-export default class Identifiable {
+export class Identifiable {
 	id: string;
 
 	constructor(id: string | null) {
@@ -11,3 +11,5 @@ export default class Identifiable {
 	static get newID(): string { return 'NEW' + removeAll('-', uuid()).slice(10, 24); } // use last, most-unique bytes of uuid
 	
 }
+
+export default Identifiable;

@@ -1,27 +1,24 @@
-import { get, debug, Thing, DebugFlag, dbDispatch, AlteringParent, signal_rebuild_fromHere } from '../common/GlobalImports';
+import { get, debug, Thing, DebugFlag, Orderable, dbDispatch, AlteringParent, signal_rebuild_fromHere } from '../common/GlobalImports';
 import { ids_grabbed, id_toolsGrab, altering_parent } from '../managers/State'
 import Airtable from 'airtable';
-import Datum from './Datum';
 
-export default class Relationship extends Datum {
-	idTo: string;
-	idFrom: string;
-	db_type: string;
-	idPredicate: string;
-	toThing: Thing | null;
+export default class Relationship extends Orderable {
 	fromThing: Thing | null;
+	toThing: Thing | null;
+	idPredicate: string;
 	isGrabbed = false;
-	order: number;
+	db_type: string;
+	idFrom: string;
+	idTo: string;
 
 	constructor(baseID: string, id: string | null, idPredicate: string, idFrom: string, idTo: string, order = 0, isRemotelyStored: boolean) {
-		super(baseID, id, isRemotelyStored);
-		this.idTo = idTo; // idTo is child
-		this.idFrom = idFrom; // idFrom is parent
+		super(baseID, order, id, isRemotelyStored);
+		this.idTo = idTo;							// idTo is child
+		this.idFrom = idFrom;						// idFrom is parent
 		this.idPredicate = idPredicate;
 		this.db_type = dbDispatch.db.db_type;
 		this.toThing = dbDispatch.db.hierarchy.thing_getForID(idTo);
 		this.fromThing = dbDispatch.db.hierarchy.thing_getForID(idFrom);
-		this.order = order;
 
 		ids_grabbed.subscribe((idsGrab: string[]) => {
 			const isGrabbed = idsGrab.includes(this.id);
@@ -46,6 +43,16 @@ export default class Relationship extends Datum {
 
 	log(option: DebugFlag, message: string) {
 		debug.log_maybe(option, message + ' ' + this.description);
+	}
+
+	async traverse(applyTo: (relationship: Relationship) => Promise<boolean>) {
+		const thing = this.toThing;
+		if (!await applyTo(this) && thing) {
+			for (const progeny of thing.childRelationships) {
+				await progeny.traverse(applyTo);
+			}
+		}
+		return this;
 	}
 
 	ancestors(thresholdWidth: number): Array<Relationship> {
@@ -93,7 +100,7 @@ export default class Relationship extends Datum {
 		}
 	}
 
-	async order_setTo(newOrder: number, remoteWrite: boolean) {
+	override async order_setTo(newOrder: number, remoteWrite: boolean) {
 		if (Math.abs(this.order - newOrder) > 0.001) {
 			const thing = dbDispatch.db.hierarchy.thing_getForID(this.idTo);
 			await thing?.order_setTo(newOrder, remoteWrite);

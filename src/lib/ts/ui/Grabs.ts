@@ -1,4 +1,4 @@
-import { get, Hierarchy, Relationship, relationships_sort_byOrder } from "../common/GlobalImports";
+import { get, Hierarchy, Relationship, sort_byOrder } from "../common/GlobalImports";
 import { ids_grabbed, id_toolsGrab } from '../managers/State';
 
 export default class Grabs {
@@ -80,8 +80,8 @@ export default class Grabs {
 	latestGrab(up: boolean) {
 		const ids = get(ids_grabbed);
 		if (ids) {
-			let grabs = this.hierarchy.things_getForIDs(ids);
-			relationships_sort_byOrder(grabs);
+			let grabs = this.hierarchy.relationships_getForIDs(ids);
+			sort_byOrder(grabs);
 			if (up) {
 				return grabs[0];
 			} else {

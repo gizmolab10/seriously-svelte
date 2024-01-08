@@ -15,7 +15,7 @@
 
 	onDestroy(() => { thing = null; signalHandler.disconnect(); });
 	var hasChanges = () => { return originalTitle != (thing?.title ?? ''); }
-	onMount(() => { thing = relationship.toThing; updateInputWidth(); });
+	onMount(() => { thing = relationship.toThing; setTimeout(() => { updateInputWidth(); }, 10) });
 	function handleBlur(event) { stopAndClearEditing(); updateInputWidth(); }
 	function handleInput(event) { thing = event.target.value; updateInputWidth(); }
 	const signalHandler = handle_relayout((idThing) => setTimeout(() => { updateInputWidth(); }, 10));
@@ -58,16 +58,16 @@
 		// manage edit state //
 		///////////////////////
 
-		if (k.allowTitleEditing && thing) {
-			if ($id_editingStopped == thing.id) {
+		if (k.allowTitleEditing) {
+			if ($id_editingStopped == relationship.id) {
 				setTimeout(() => {
 					$id_editingStopped = null;
 				}, 1000);
-			} else if ($id_editing != thing.id) {
+			} else if ($id_editing != relationship.id) {
 				input?.blur();
 			} else if (!isEditing) {
 				isEditing = true;
-				thing.grabOnly();
+				relationship.grabOnly();
 				setTimeout(() => {
 					input?.focus();
 					applyRange();
@@ -79,7 +79,7 @@
 	function stopAndClearEditing() {
 		invokeBlurNotClearEditing();
 		setTimeout(() => {		// eliminate infinite recursion
-			const id = thing?.id;
+			const id = relationship.id;
 			if (id != null && $id_editing == id) {				
 				$id_editing = null;
 				signal_rebuild_fromHere();
@@ -168,6 +168,7 @@
 			on:keydown={handleKeyDown}
 			on:paste={handleCutOrPaste}
 			style='left: 10px;
+				width: {titleWidth};
 				color: {thing.color};
 				font-size: {fontSize};
 				z-index: {ZIndex.text};
