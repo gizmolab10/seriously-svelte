@@ -30,10 +30,10 @@
 	onDestroy( () => { signalHandler.disconnect(); });
 
 	onMount( () => {
-		updateBorderStyle();
 		debugReact.log_mount(`WIDGET ${thing?.description}`);
 		wrapper = new Wrapper(this as ThingWrapper);
 		thing = relationship.toThing;
+		updateBorderStyle();
 	});
 	
 	const signalHandler = handle_relayout((idThing) => {

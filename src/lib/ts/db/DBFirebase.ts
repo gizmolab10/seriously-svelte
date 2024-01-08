@@ -358,9 +358,9 @@ export default class DBFirebase implements DBInterface {
 		const fields = ['title', 'color', 'trait'];
 		const root = new Thing(this.baseID, null, this.baseID, 'coral', TraitType.root, 0, true);
 		const thing = new Thing(this.baseID, null, 'Click this text to edit it', 'purple', '', 0, true);
-		this.hierarchy.root = root;
 		const thingRef = await addDoc(collectionRef, convertToObject(thing, fields));	// N.B. these will be fetched, shortly
 		const rootRef = await addDoc(collectionRef, convertToObject(root, fields));		// no need to remember now
+		this.hierarchy.root = Relationship.createRoot(rootRef.id);
 		thing.id = thingRef.id;
 		root.id = rootRef.id;
 		root.log(DebugFlag.remote, 'CREATE T');

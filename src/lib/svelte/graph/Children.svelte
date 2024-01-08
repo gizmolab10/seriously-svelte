@@ -1,21 +1,28 @@
 <script lang=ts>
-	import { Rect, Size, Point, Thing, debug, signal, Signals, Layout, onMount, LineRect, onDestroy } from '../../ts/common/GlobalImports';
+	import { Rect, Size, Point, Thing, debug, signal, Signals, Layout, onMount, LineRect, onDestroy, Relationship } from '../../ts/common/GlobalImports';
 	import { DebugFlag, debugReact, LineCurveType, orders_normalize_remoteMaybe, handle_relayout } from '../../ts/common/GlobalImports';
 	import { dot_size, graphRect, line_stretch } from '../../ts/managers/State';
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Children from './Children.svelte';
 	import Line from './Line.svelte';
+	export let relationship: Relationship;
 	export let origin = new Point();
-	export let thing: Thing;
 	let lineRects: Array<LineRect> = [];
 	let prior = new Date().getTime();
-	let children = thing.children;
 	let center = new Point();
 	let childMapArray = [];
+	let children;
+	let thing;
 
 	onDestroy( () => { signalHandler.disconnect(); });
-	onMount( () => { debugReact.log_mount(`CHILDREN ${thing.description}`); layoutChildren(); });
+	
+	onMount( () => {
+		debugReact.log_mount(`CHILDREN ${relationship.description}`);
+		thing = relationship.toThing;
+		children = thing.children;
+		layoutChildren();
+	});
 	
 	const signalHandler = handle_relayout((idThing) => {
 		if (!idThing || idThing == thing.id || thing.childrenIDs_anyMissingFromIDsOf(children)) {
@@ -41,7 +48,7 @@
 	$: {
 		if ($dot_size > 0) {
 			setTimeout(() => {
-				debugReact.log_layout(`CHILDREN $dot_size ${thing.description}`);
+				debugReact.log_layout(`CHILDREN $dot_size ${relationship.description}`);
 				layoutChildren()
 			}, 2);
 		}
@@ -54,7 +61,7 @@
 	}
 	
 	function layoutChildren() {
-		if (thing && !thing.ancestors_include(thing)) {
+		if (relationship && thing && !thing.ancestors_include(thing)) {
 			const delta = new Point(19.5, -2.5);
 			const height = (thing.visibleProgeny_halfHeight);
 			const childOrigin = origin.offsetByY(height);
@@ -90,7 +97,7 @@
 		<Widget relationship={a.relationship} origin={a.rect.extent.offsetBy(new Point(12, ($dot_size / -15) -10))}/>
 		<Line relationship={a.relationship} curveType={a.rect.curveType} rect={a.rect.offsetBy(new Point(($dot_size / 2) - 129, ($dot_size / 2) - 8))}/>
 		{#if a.child.hasChildren && a.child.isExpanded}
-			<Children thing={a.child} origin={a.origin}/>
+			<Children relationship={a.relationship} origin={a.origin}/>
 		{/if}
 	{/each}
 {/if}

@@ -91,8 +91,8 @@
 	
 	$: {
 		if (here == null || here.id != $id_here) {			
-			here = dbDispatch.db.hierarchy.thing_getForID($id_here);
-			debugReact.log_origins(`GRAPH $id_here ${here.description}`);
+			here = dbDispatch.db.hierarchy.relationship_getForID($id_here);
+			debugReact.log_origins(`GRAPH $id_here ${here?.description}`);
 			updateOrigins();
 			toggle = !toggle;	// also cause entire graph to be replaced
 		}
@@ -108,8 +108,9 @@
 	}
 
 	function updateOrigins() {
-		if (here) {
-			childrenSize = here.visibleProgeny_size.asPoint;
+		const thing = here?.toThing;
+		if (thing) {
+			childrenSize = thing.visibleProgeny_size.asPoint;
 			const mysteryOffset = new Point(($showDetails ? -92 : 8) - (childrenSize.x / 2), -85);
 			origin_ofFirstReveal = $graphRect.center.offsetBy(mysteryOffset);
 			if (k.leftJustifyGraph) {
@@ -132,7 +133,7 @@
 	function rectOfChildren(): Rect {
 		const delta = new Point(9, -2);
 		const origin = $graphRect.origin.offsetBy(delta).offsetBy(origin_ofChildren);
-		return new Rect(origin, here.visibleProgeny_size.expandedByX(3));
+		return new Rect(origin, here?.toThing?.visibleProgeny_size.expandedByX(3));
 	}
 
 </script>
@@ -163,7 +164,7 @@
 				<Circle radius={10} center={origin_ofFirstReveal} color={here.color} thickness=1/>
 			{/if}
 			<FocusRevealDot here={here} center={origin_ofFirstReveal.offsetBy(new Point(-12, -11))}/>
-			<Children thing={here} origin={origin_ofChildren}/>
+			<Children relationship={here} origin={origin_ofChildren}/>
 		</div>
 	</div>
 {/if}

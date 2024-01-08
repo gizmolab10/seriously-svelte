@@ -1,5 +1,5 @@
-import { k, get, Thing, Hierarchy, dbDispatch, signal_rebuild_fromHere } from '../common/GlobalImports';
-import { ids_grabbed, id_toolsGrab } from '../managers/State';
+import { k, get, Thing, Hierarchy, dbDispatch, signal_rebuild_fromHere, Relationship } from '../common/GlobalImports';
+import { id_toolsGrab } from '../managers/State';
 
 //////////////////////////////////////
 //									//
@@ -20,10 +20,10 @@ export default class GraphEditor {
 			const COMMAND = event.metaKey;
 			const EXTREME = SHIFT && OPTION;
 			const key = event.key.toLowerCase();
-			if (!grab) {
-				const root = h.root;
-				root?.becomeHere();
-				root?.grabOnly();		// update crumbs and dots
+			const root = h.root;
+			if (!grab && root) {
+				root.becomeHere();
+				root.grabOnly();		// update crumbs and dots
 				grab = root;
 			}
 			if (k.allowGraphEditing) {
@@ -43,8 +43,8 @@ export default class GraphEditor {
 			}
 			if (grab) {
 				switch (key) {
-					case 'arrowright':	await this.thing_redraw_remoteMoveRight(grab, true, SHIFT, OPTION, EXTREME); break;
-					case 'arrowleft':	event.preventDefault(); await this.thing_redraw_remoteMoveRight(grab, false, SHIFT, OPTION, EXTREME); break;
+					case 'arrowright':	await this.relationship_toThing_redraw_remoteMoveRight(grab, true, SHIFT, OPTION, EXTREME); break;
+					case 'arrowleft':	event.preventDefault(); await this.relationship_toThing_redraw_remoteMoveRight(grab, false, SHIFT, OPTION, EXTREME); break;
 					case '/':			grab.becomeHere(); break;
 				}
 			}
@@ -111,19 +111,22 @@ export default class GraphEditor {
 	//		MOVE	  //
 	////////////////////
 
-	async thing_redraw_remoteMoveRight(thing: Thing, RIGHT: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean, fromReveal: boolean = false) {
-		if (!OPTION) {
-			if (RIGHT && thing.needsBulkFetch) {
-				await thing.redraw_bulkFetchAll_runtimeBrowseRight();
-			} else {
-				thing.redraw_runtimeBrowseRight(RIGHT, SHIFT, EXTREME, fromReveal);
+	async relationship_toThing_redraw_remoteMoveRight(relationship: Relationship, RIGHT: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean, fromReveal: boolean = false) {
+		const thing = relationship.toThing;
+		if (thing) {
+			if (!OPTION) {
+				if (RIGHT && thing.needsBulkFetch) {
+					await thing.redraw_bulkFetchAll_runtimeBrowseRight();
+				} else {
+					thing.redraw_runtimeBrowseRight(RIGHT, SHIFT, EXTREME, fromReveal);
+				}
+			} else if (k.allowGraphEditing) {
+				await this.relationship_toThing_redraw_remoteRelocateRight(thing, RIGHT, EXTREME);
 			}
-		} else if (k.allowGraphEditing) {
-			await this.thing_redraw_remoteRelocateRight(thing, RIGHT, EXTREME);
 		}
 	}
 
-	async thing_redraw_remoteRelocateRight(thing: Thing, RIGHT: boolean, EXTREME: boolean) {
+	async relationship_toThing_redraw_remoteRelocateRight(thing: Thing, RIGHT: boolean, EXTREME: boolean) {
 		const newParent = RIGHT ? thing.nextSibling(false) : thing.grandparent;
 		if (newParent) {
 			const h = this.hierarchy;
@@ -168,7 +171,7 @@ export default class GraphEditor {
 
 	async latestGrab_redraw_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const grab = this.hierarchy.grabs.latestGrab(up);
-		grab?.redraw_remoteMoveUp(up, SHIFT, OPTION, EXTREME);
+		grab?.toThing?.redraw_remoteMoveUp(up, SHIFT, OPTION, EXTREME);
 	}
 
 }

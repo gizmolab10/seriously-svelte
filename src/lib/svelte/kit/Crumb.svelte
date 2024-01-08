@@ -19,7 +19,7 @@
 	function crumb_buttonClicked(event) {
 		if (dbDispatch.db.hasData) {
 			relationship.grabOnly();
-			thing.becomeHere();
+			relationship.becomeHere();
 		}
 	}
 

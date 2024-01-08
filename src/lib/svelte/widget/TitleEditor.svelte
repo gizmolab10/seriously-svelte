@@ -45,7 +45,7 @@
 	function handleKeyDown(event) {
 		if (thing && $id_editing == thing.id && canAlterTitle(event)) {
 			switch (event.key) {	
-				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); graphEditor.thing_redraw_remoteAddChildTo(thing.firstParent); break;
+				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); graphEditor.relationship_toThing_redraw_remoteAddChildTo(thing.firstParent); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
 				default:	  signal_relayout(); break;
 			}

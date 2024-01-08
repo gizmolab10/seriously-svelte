@@ -77,7 +77,7 @@ export default class Grabs {
 		this.relationship_toggleToolsGrab(relationship);
 	}
 
-	latestGrab(up: boolean) {
+	latestGrab(up: boolean): Relationship {
 		const ids = get(ids_grabbed);
 		if (ids) {
 			let grabs = this.hierarchy.relationships_getForIDs(ids);

@@ -26,20 +26,21 @@ export default class Hierarchy {
 	knownRs: Array<Relationship> = [];
 	knownTs: Thing[] = [];
 	_grabs: Grabs | null = null;
-	root: Thing | null = null;
-	here: Thing | null = null;
+	root: Relationship | null = null;
+	here: Relationship | null = null;
 	isConstructed = false;
 	db: DBInterface;
 
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): (string | null) { return this.root?.id ?? null; };
-	thing_getForID(idThing: string | null): Thing | null { return (!idThing) ? null : this.knownT_byID[idThing]; }
+	thing_getForID(id: string | null): Thing | null { return id == null ? null : this.knownT_byID[id]; }
+	relationship_getForID(id: string | null): Relationship | null { return id == null ? null : this.knownR_byID[id]; }
 
 	constructor(db: DBInterface) {
 		this.db = db;
 		id_here.subscribe((id: string | null) => {
 			if (this.db && this.db.hasData) {
-				this.here = this.thing_getForID(id);
+				this.here = this.relationship_getForID(id);
 			}
 		})
 	}
@@ -47,7 +48,7 @@ export default class Hierarchy {
 	async hierarchy_assemble(type: string) {
 		const root = this.root;
 		if (root) {
-			await root.normalize_bulkFetchAll(root.baseID);
+			await root.toThing?.normalize_bulkFetchAll(root.baseID);
 			this.db.setHasData(true);
 			persistLocal.state_updateForDBType(type, root.id);
 		}
@@ -58,10 +59,10 @@ export default class Hierarchy {
 	}
 
 	here_restore() {
-		let here = this.thing_getForID(get(id_here));
+		let here = this.relationship_getForID(get(id_here));
 		if (here == null) {
 			const grab = this.grabs.relationship_lastGrabbed;
-			here = grab?.firstParent ?? this.root;
+			here = grab?.fromThing?.parentRelationships[0] ?? this.root;
 		}
 		here?.becomeHere();
 	}
@@ -85,7 +86,7 @@ export default class Hierarchy {
 				array.push(thing);
 			}
 		}
-		return sort_byOrder(array);
+		return sort_byOrder(array) as Array<Thing>;
 	}
 
 	things_getByIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Thing> {
@@ -114,9 +115,8 @@ export default class Hierarchy {
 	//////////////////////
 
 	async grabbed_redraw_remoteTraverseDelete() {
-		const things = this.relationships_getForIDs(get(ids_grabbed));
-		this.things_redraw_remoteTraverseDelete(things);
-
+		const relationships = this.relationships_getForIDs(get(ids_grabbed));
+		this.things_redraw_remoteTraverseDelete(relationships);
 	}
 
 	async things_redraw_remoteTraverseDelete(relationships: Array<Relationship | null>) {
@@ -188,7 +188,7 @@ export default class Hierarchy {
 			this.knownTs_byTrait[thing.trait] = things;
 			this.knownTs.push(thing);
 			if (thing.trait == TraitType.root && (thing.baseID == '' || thing.baseID == this.db.baseID)) {
-				this.root = thing;
+				this.root = Relationship.createRoot(thing.id);
 			}
 		}
 	}
@@ -398,7 +398,7 @@ export default class Hierarchy {
 				array.push(relationship);
 			}
 		}
-		return sort_byOrder(array);
+		return sort_byOrder(array) as Array<Relationship>;
 	}
 
 	relationships_getByIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Relationship> {
@@ -499,8 +499,6 @@ export default class Hierarchy {
 		}
 		return null;
 	}
-
-	relationship_getForID(id: string | null) { return id == null ? null : this.knownR_byID[id]; }
 
 	relationship_getForIDs_predicateFromAndTo(idPredicate: string, idFrom: string, idTo: string): Relationship | null {
 		const dict = this.knownRs_byIDTo;

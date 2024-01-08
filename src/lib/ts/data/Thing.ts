@@ -36,9 +36,9 @@ export default class Thing extends Orderable {
 			}
 		});
 
-		ids_grabbed.subscribe((idsGrab: string[]) => {
-			const parentIDs = this.parentRelationships.map(r => r.id);
-			const isGrabbed = parentIDs.some(element => idsGrab.includes(element));
+		ids_grabbed.subscribe((idsGrabbed: string[]) => {
+			const parentRelationshipIDs = this.parentRelationships.map(r => r.id);
+			const isGrabbed = parentRelationshipIDs.some(element => idsGrabbed.includes(element));
 			if (this.isGrabbed != isGrabbed) {
 				this.isGrabbed  = isGrabbed;
 				this.updateColorAttributes();
@@ -231,15 +231,6 @@ export default class Thing extends Orderable {
 		return array;
 	}
 
-	becomeHere() {
-		if (this.hasChildren) {
-			id_here.set(this.id);
-			this.expand();
-			id_toolsGrab.set(null);
-			persistLocal.writeToDBKey(PersistID.here, this.id)
-		};
-	}
-
 	childrenIDs_anyMissingFromIDsOf(children: Array<Thing>) {
 		if (this.children.length != children.length) {
 			return true;
@@ -251,16 +242,6 @@ export default class Thing extends Orderable {
 			}
 		}
 		return false;
-	}
-
-	order_normalizeRecursive_remoteMaybe(remoteWrite: boolean) {
-		const children = this.children;
-		if (children && children.length > 1) {
-			orders_normalize_remoteMaybe(children, remoteWrite);
-			for (const child of children) {
-				child.order_normalizeRecursive_remoteMaybe(remoteWrite);
-			}
-		}
 	}
 
 	override async order_setTo(newOrder: number, remoteWrite: boolean) {
@@ -312,7 +293,7 @@ export default class Thing extends Orderable {
 		await dbDispatch.db.fetch_allFrom(baseID)
 		await dbDispatch.db.hierarchy?.relationships_remoteCreateMissing(this);
 		await dbDispatch.db.hierarchy?.relationships_removeHavingNullReferences();
-		this.order_normalizeRecursive_remoteMaybe(true);
+		dbDispatch.db.hierarchy?.root?.order_normalizeRecursive_remoteMaybe(true);
 	}
 
 	async redraw_bulkFetchAll_runtimeBrowseRight(grab: boolean = true) {
@@ -381,7 +362,7 @@ export default class Thing extends Orderable {
 
 	redraw_runtimeBrowseRight(RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, fromReveal: boolean = false) {
 		const newHere = RIGHT ? this : this.grandparent;
-		let newGrab: Relationship | null = RIGHT ? this.childRelationships[0] : this.parentRelationships[0];
+		let newGrab: Relationship | undefined = RIGHT ? this.childRelationships[0] : this.firstParent.parentRelationships[0];
 		const newGrabIsNotHere = get(id_here) != newGrab?.id;
 		if (!RIGHT) {
 			const root = this.hierarchy.root;
@@ -397,9 +378,9 @@ export default class Thing extends Orderable {
 				} else if (newGrab) { 
 					if (this.isExpanded) {
 						this.collapse();
-						newGrab = null;
+						newGrab = undefined;
 					} else if (newGrab.toThing == root) {
-						newGrab = null;
+						newGrab = undefined;
 					} else {
 						newGrab.toThing?.collapse();
 					}
@@ -407,7 +388,7 @@ export default class Thing extends Orderable {
 			}
 		} else if (this.hasChildren) {
 			if (SHIFT) {
-				newGrab = null;
+				newGrab = undefined;
 			}
 			this.expand();
 		} else {
@@ -415,11 +396,11 @@ export default class Thing extends Orderable {
 		}
 		id_editing.set(null);
 		newGrab?.grabOnly();
-		const allowToBecomeHere = (!SHIFT || newGrab == this.parentRelationships[0]) && newGrabIsNotHere; 
-		const shouldBecomeHere = !newHere.isVisible || newHere.isRoot;
-		if (!RIGHT && allowToBecomeHere && shouldBecomeHere) {
-			newHere.becomeHere();
-		}
+		// const allowToBecomeHere = (!SHIFT || newGrab == this.parentRelationships[0]) && newGrabIsNotHere; 
+		// const shouldBecomeHere = !newHere.isVisible || newHere.isRoot;
+		// if (!RIGHT && allowToBecomeHere && shouldBecomeHere) {
+		// 	newHere.becomeHere();
+		// }
 	}
 
 }

@@ -1,5 +1,6 @@
-import { get, debug, Thing, DebugFlag, Orderable, dbDispatch, AlteringParent, signal_rebuild_fromHere } from '../common/GlobalImports';
-import { ids_grabbed, id_toolsGrab, altering_parent } from '../managers/State'
+import { Predicate, AlteringParent, signal_rebuild_fromHere, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { get, debug, Thing, DebugFlag, Orderable, dbDispatch, PersistID, persistLocal } from '../common/GlobalImports';
+import { id_here, ids_grabbed, id_toolsGrab, altering_parent } from '../managers/State'
 import Airtable from 'airtable';
 
 export default class Relationship extends Orderable {
@@ -8,17 +9,24 @@ export default class Relationship extends Orderable {
 	idPredicate: string;
 	isGrabbed = false;
 	db_type: string;
+	isRoot = false;
 	idFrom: string;
 	idTo: string;
+
+	static createRoot(idTo: string) { return new Relationship(dbDispatch.db.baseID, 'root', Predicate.idIsAParentOf, 'nothing', idTo, 0, false); }
 
 	constructor(baseID: string, id: string | null, idPredicate: string, idFrom: string, idTo: string, order = 0, isRemotelyStored: boolean) {
 		super(baseID, order, id, isRemotelyStored);
 		this.idTo = idTo;							// idTo is child
-		this.idFrom = idFrom;						// idFrom is parent
+		this.idFrom = idFrom;						// idFrom is parent. for root it is null
 		this.idPredicate = idPredicate;
 		this.db_type = dbDispatch.db.db_type;
 		this.toThing = dbDispatch.db.hierarchy.thing_getForID(idTo);
 		this.fromThing = dbDispatch.db.hierarchy.thing_getForID(idFrom);
+
+		if (id == 'root') {
+			this.isRoot == true;
+		}
 
 		ids_grabbed.subscribe((idsGrab: string[]) => {
 			const isGrabbed = idsGrab.includes(this.id);
@@ -107,8 +115,28 @@ export default class Relationship extends Orderable {
 		}
 	}
 
+	order_normalizeRecursive_remoteMaybe(remoteWrite: boolean) {
+		const childRelationships = this.toThing?.childRelationships;
+		if (childRelationships && childRelationships.length > 1) {
+			orders_normalize_remoteMaybe(childRelationships, remoteWrite);
+			for (const childRelationship of childRelationships) {
+				childRelationship.order_normalizeRecursive_remoteMaybe(remoteWrite);
+			}
+		}
+	}
+
+	becomeHere() {
+		const thing = this.toThing;
+		if (thing && thing.hasChildren) {
+			id_here.set(this.id);
+			thing.expand();
+			id_toolsGrab.set(null);
+			persistLocal.writeToDBKey(PersistID.here, this.id)
+		};
+	}
+
 	async remoteWrite() {
-		if (!this.awaitingCreation) {
+		if (!this.awaitingCreation && !this.isRoot) {
 			if (this.isRemotelyStored) {
 				await dbDispatch.db.relationship_remoteUpdate(this);
 			} else {

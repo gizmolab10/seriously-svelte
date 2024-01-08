@@ -1,5 +1,5 @@
 <script>
-	import { Point, debug, Direction, dbDispatch, graphEditor } from "../../ts/common/GlobalImports";
+	import { Point, debug, Direction, dbDispatch, graphEditor, Relationship } from "../../ts/common/GlobalImports";
 	import TriangleButton from '../svg/TriangleButton.svelte';
 	import { dot_size } from '../../ts/managers/State';
 	export let center = new Point();
@@ -7,13 +7,13 @@
 	let size = $dot_size;
 
 	function fillColor_closure(isFilled) {
-		return debug.lines ? 'transparent' : here.revealColor(isFilled);
+		return debug.lines ? 'transparent' : here.toThing?.revealColor(isFilled);
 	}
 
 	function onClick(event) {
 		const grab = dbDispatch.db.hierarchy.grabs.latestGrab(true);
 		if (grab && grab.id == here.id) {
-			graphEditor.thing_redraw_remoteMoveRight(grab, false, false);
+			graphEditor.relationship_toThing_redraw_remoteMoveRight(grab, false, false);
 		} else {
 			here.grabOnly();
 		}

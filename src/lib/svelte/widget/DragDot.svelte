@@ -85,7 +85,7 @@
 
 	function handleDoubleClick(event) {
 		clearClicks();
-		relationship.toThing.becomeHere();
+		relationship.becomeHere();
     }
 
 	function handleSingleClick(event) {

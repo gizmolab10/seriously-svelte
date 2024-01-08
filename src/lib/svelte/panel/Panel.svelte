@@ -30,7 +30,7 @@ import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, Pers
 
 	$: {
 		if (here.id != $id_here) {
-			here = dbDispatch.db.hierarchy.thing_getForID($id_here);
+			here = dbDispatch.db.hierarchy.relationship_getForID($id_here);
 			graph_fullRebuild();
 		}
 	}

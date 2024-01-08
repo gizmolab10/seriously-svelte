@@ -96,7 +96,7 @@
 				thing.grabOnly();
 				$id_toolsGrab = thing.id;
 			} else {
-				graphEditor.thing_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
+				graphEditor.relationship_toThing_redraw_remoteMoveRight(relationship, !thing.isExpanded, true);
 				return;
 			}
 			signal_rebuild_fromHere();
