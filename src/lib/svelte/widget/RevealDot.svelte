@@ -65,10 +65,10 @@
 
 	function updateColors() {
 		if (thing) {
-			thing.updateColorAttributes();
+			thing.updateColorAttributes(relationship);
 			const collapsedGrabbed = !thing.isExpanded || thing.isGrabbed;
-			fillColor = thing.revealColor(collapsedGrabbed != isHovering);
-			bulkAliasFillColor = thing.revealColor(collapsedGrabbed == isHovering);
+			fillColor = relationship.revealColor(collapsedGrabbed != isHovering);
+			bulkAliasFillColor = relationship.revealColor(collapsedGrabbed == isHovering);
 		}
 	}
 

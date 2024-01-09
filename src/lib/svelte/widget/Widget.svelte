@@ -45,7 +45,7 @@
 
 	function updateBorderStyle() {
 		if (thing) {
-			thing.updateColorAttributes();
+			thing.updateColorAttributes(relationship);
 			border = showingBorder ? 'border: ' + thing.grabAttributes : '';
 		}
 		background = showingBorder ? 'background-color: ' + k.backgroundColor : '';

@@ -1,21 +1,21 @@
-import { get, Rect, Size, Point, Thing, LineRect, Relationship, LineCurveType } from '../common/GlobalImports';
+import { get, Rect, Size, Point, LineRect, Relationship, LineCurveType } from '../common/GlobalImports';
 import { line_stretch } from '../managers/State'
 
 export default class Layout {
 	lineRects: Array<LineRect>;
 
-	constructor(thing: Thing, origin: Point) {
+	constructor(relationship: Relationship, origin: Point) {
 		this.lineRects = [];
-		if (thing) {
+		if (relationship) {
 			const sizeX = get(line_stretch);
-			const children = thing.children;
+			const children = relationship.childRelationships;
 			const quantity = children.length;
-			if (quantity < 2 || !thing.isExpanded) {
+			if (quantity < 2 || !relationship.toThing?.isExpanded) {
 				const rect = new Rect(origin, new Size(sizeX, 0));
 				this.lineRects.push(new LineRect(LineCurveType.flat, rect));
 			} else {
 				let index = 0;
-				let sumOfSiblingsAbove = -thing.visibleProgeny_height() / 2; // start out negative and grow positive
+				let sumOfSiblingsAbove = -relationship.visibleProgeny_height() / 2; // start out negative and grow positive
 				while (index < quantity) {
 					const child = children[index];
 					const childvisibleProgeny_halfHeight = child.visibleProgeny_halfHeight;

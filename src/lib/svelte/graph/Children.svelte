@@ -11,8 +11,8 @@
 	let lineRects: Array<LineRect> = [];
 	let prior = new Date().getTime();
 	let center = new Point();
+	let childRelationships;
 	let childMapArray = [];
-	let children;
 	let thing;
 
 	onDestroy( () => { signalHandler.disconnect(); });
@@ -20,12 +20,12 @@
 	onMount( () => {
 		debugReact.log_mount(`CHILDREN ${relationship.description}`);
 		thing = relationship.toThing;
-		children = thing.children;
+		childRelationships = relationship.childRelationships;
 		layoutChildren();
 	});
 	
-	const signalHandler = handle_relayout((idThing) => {
-		if (!idThing || idThing == thing.id || thing.childrenIDs_anyMissingFromIDsOf(children)) {
+	const signalHandler = handle_relayout((idRelationship) => {
+		if (!idRelationship || idRelationship == relationship.id || thing.childrenIDs_anyMissingFromIDsOf(children)) {
 			const now = new Date().getTime();
 			if (now - prior > 100) {
 				prior = now;
@@ -33,7 +33,7 @@
 					await orders_normalize_remoteMaybe(thing.children);
 					debugReact.log_layout(`CHILDREN signal ${thing.description}`);
 					layoutChildren();
-					if (idThing) { // only recurse if starting at a specific id
+					if (idRelationship) { // only recurse if starting at a specific id
 						for (const child of children) {
 							if (child.hasChildren && child.isExpanded) {
 								child.signal_relayout();
@@ -63,33 +63,33 @@
 	function layoutChildren() {
 		if (relationship && thing && !thing.ancestors_include(thing)) {
 			const delta = new Point(19.5, -2.5);
-			const height = (thing.visibleProgeny_halfHeight);
+			const height = relationship.visibleProgeny_halfHeight;
 			const childOrigin = origin.offsetByY(height);
 			center = childOrigin.offsetBy(delta);
-			children = thing.children;
-			lineRects = new Layout(thing, childOrigin).lineRects;
+			lineRects = new Layout(relationship, childOrigin).lineRects;
+			childRelationships = relationship.childRelationships;
 			childMapArray = lineRects.map((rect, index) => ({
-				relationship: children[index].relationship_fromParent(thing),
-				origin: originForChildrenOf(children[index], rect),
-				child: children[index], 
+				origin: originForChildrenOf(childRelationships[index], rect),
+				child: childRelationships[index].toThing, 
+				relationship: childRelationships[index],
 				rect: rect,
 			}));
 		}
 	}
 
-	function originForChildrenOf(child: Thing, rect: LineRect): Point {
-		if (!rect || !child) {
+	function originForChildrenOf(childRelationship: Relationship, rect: LineRect): Point {
+		if (!rect || !childRelationship) {
 			alert('grandchildren origin not computable');
 			return new Point();
 		}
-		const x = origin.x + child.titleWidth + $dot_size + $line_stretch - 2;
-		const y = rect.extent.y - child.visibleProgeny_halfHeight;
+		const x = origin.x + childRelationship.toThing?.titleWidth + $dot_size + $line_stretch - 2;
+		const y = rect.extent.y - childRelationship.visibleProgeny_halfHeight;
 		return new Point(x, y);
 	}
 	
 </script>
 
-{#if children && children.length != 0 && lineRects.length == children.length}
+{#if childRelationships && childRelationships.length != 0 && lineRects.length == childRelationships.length}
 	{#if debug.lines}
 		<Circle radius=1 center={center} color=black thickness=1/>
 	{/if}

@@ -24,13 +24,13 @@
 	onMount( () => { debugReact.log_mount(`GRAPH ${here.description}`); });
 	onDestroy( () => { rebuild_signalHandler.disconnect(); relayout_signalHandler.disconnect(); });
 	
-	const rebuild_signalHandler = handle_rebuild((idThing) => {
+	const rebuild_signalHandler = handle_rebuild((id) => {
 		debugReact.log_layout(`GRAPH signal ${here.description}`);
 		updateOrigins();
 		toggle = !toggle;	// rebuild entire graph
 	});
 
-	const relayout_signalHandler = handle_relayout((idThing) => {
+	const relayout_signalHandler = handle_relayout((id) => {
 		if (here) {
 			updateOrigins();
 		}
@@ -110,7 +110,7 @@
 	function updateOrigins() {
 		const thing = here?.toThing;
 		if (thing) {
-			childrenSize = thing.visibleProgeny_size.asPoint;
+			childrenSize = here.visibleProgeny_size.asPoint;
 			const mysteryOffset = new Point(($showDetails ? -92 : 8) - (childrenSize.x / 2), -85);
 			origin_ofFirstReveal = $graphRect.center.offsetBy(mysteryOffset);
 			if (k.leftJustifyGraph) {
@@ -133,7 +133,7 @@
 	function rectOfChildren(): Rect {
 		const delta = new Point(9, -2);
 		const origin = $graphRect.origin.offsetBy(delta).offsetBy(origin_ofChildren);
-		return new Rect(origin, here?.toThing?.visibleProgeny_size.expandedByX(3));
+		return new Rect(origin, here?.visibleProgeny_size.expandedByX(3));
 	}
 
 </script>

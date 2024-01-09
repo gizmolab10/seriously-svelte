@@ -33,8 +33,8 @@ export default class Hierarchy {
 
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): (string | null) { return this.root?.id ?? null; };
-	thing_getForID(id: string | null): Thing | null { return id == null ? null : this.knownT_byID[id]; }
-	relationship_getForID(id: string | null): Relationship | null { return id == null ? null : this.knownR_byID[id]; }
+	thing_getForID(id: string | null): Thing | null { return id == null ? null : this.knownT_byID[id] as Thing; }
+	relationship_getForID(id: string | null): Relationship | null { return id == null ? null : this.knownR_byID[id] as Relationship; }
 
 	constructor(db: DBInterface) {
 		this.db = db;

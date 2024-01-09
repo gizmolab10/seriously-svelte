@@ -1,12 +1,14 @@
-import { Predicate, AlteringParent, signal_rebuild_fromHere, orders_normalize_remoteMaybe } from '../common/GlobalImports';
-import { get, debug, Thing, DebugFlag, Orderable, dbDispatch, PersistID, persistLocal } from '../common/GlobalImports';
-import { id_here, ids_grabbed, id_toolsGrab, altering_parent } from '../managers/State'
+import { k, get, Size, debug, Thing, DebugFlag, Orderable, dbDispatch, Predicate, PersistID, persistLocal, sort_byOrder, AlteringParent } from '../common/GlobalImports';
+import { signal_rebuild, signal_relayout, signal_rebuild_fromHere, signal_relayout_fromHere, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { id_here, dot_size, row_height, id_editing, ids_grabbed, id_toolsGrab, line_stretch, altering_parent } from '../managers/State'
 import Airtable from 'airtable';
 
 export default class Relationship extends Orderable {
 	fromThing: Thing | null;
 	toThing: Thing | null;
 	idPredicate: string;
+	showCluster = false;
+	isEditing = false;
 	isGrabbed = false;
 	db_type: string;
 	isRoot = false;
@@ -34,11 +36,35 @@ export default class Relationship extends Orderable {
 				this.isGrabbed  = isGrabbed;
 			}
 		});
+
+		id_editing.subscribe((idEdit: string | null) => {
+			const isEditing = (idEdit == this.id);
+			if (this.isEditing != isEditing) {
+				this.isEditing  = isEditing;
+				this.toThing?.updateColorAttributes(this);
+			}
+		});
+
+		id_toolsGrab.subscribe((idCluster: string | null) => {
+			const shouldShow = (idCluster != null) && idCluster == this.id && get(id_here) != this.id;
+			if (this.showCluster != shouldShow) {
+				this.showCluster = shouldShow;
+				signal_rebuild_fromHere();
+			}
+		});
 	}
 
-	get siblingRelationships(): Array<Relationship> { return this.toThing?.parentRelationships ?? []; }
 	get fields(): Airtable.FieldSet { return { predicate: [this.idPredicate], from: [this.idFrom], to: [this.idTo], order: this.order }; }
+
+	get hasChildren(): boolean { return this.childRelationships.length > 0; }
+	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
+	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
+	get singleRowHeight(): number { return this.showCluster ? k.clusterHeight : get(row_height); }
+	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
+	get childRelationships(): Array<Relationship> { return sort_byOrder(this.toThing?.childRelationships ?? []) as Array<Relationship>; }
+	get siblingRelationships(): Array<Relationship> { return sort_byOrder(this.toThing?.parentRelationships ?? []) as Array<Relationship>; }
 	get description(): string { return ' \"' + this.baseID + '\" ' + this.isRemotelyStored + ' ' + this.order + ' ' + this.id + ' '	+ dbDispatch.db.hierarchy.thing_getForID(this.idFrom)?.description + ' => ' + dbDispatch.db.hierarchy.thing_getForID(this.idTo)?.description; }
+
 	get isValid(): boolean {
 		if (this.idPredicate && this.idFrom && this.idTo) {
 			return true;
@@ -46,11 +72,30 @@ export default class Relationship extends Orderable {
 		return false;
 	}
 
+	signal_rebuild()  { signal_rebuild(this.id); }
+	signal_relayout() { signal_relayout(this.id); }
 	grabOnly()	 { this.hierarchy.grabs.grabOnly(this); }
 	toggleGrab() { this.hierarchy.grabs.toggleGrab(this); }
 
 	log(option: DebugFlag, message: string) {
 		debug.log_maybe(option, message + ' ' + this.description);
+	}
+
+	revealColor(isReveal: boolean): string {
+		let result = k.backgroundColor;
+		const thing = this.toThing;
+		if (thing) {
+			const showBorder = this.isGrabbed || this.isEditing || thing.isExemplar;
+			const useThingColor = isReveal != showBorder;
+			result = useThingColor ? thing.color : k.backgroundColor;
+		}
+		return result;
+	}
+
+	startEdit() {
+		if (this != this.hierarchy.root) {
+			id_editing.set(this.id);
+		}
 	}
 
 	async traverse(applyTo: (relationship: Relationship) => Promise<boolean>) {
@@ -108,6 +153,37 @@ export default class Relationship extends Orderable {
 		}
 	}
 
+	redraw_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
+		const parent = this.fromThing;
+		if (parent) {
+			const siblingRelationships = sort_byOrder(parent.childRelationships) as Array<Relationship>;
+			if (!siblingRelationships || siblingRelationships.length == 0) {
+				this.toThing?.redraw_runtimeBrowseRight(true, EXTREME, up);
+			} else {
+				const index = this.order;
+				const newIndex = index.increment(!up, siblingRelationships.length);
+				if (!OPTION) {
+					const newGrab = siblingRelationships[newIndex];
+					if (SHIFT) {
+						newGrab?.toggleGrab()
+					} else {
+						newGrab?.grabOnly();
+					}
+				} else if (k.allowGraphEditing) {
+					const wrapped = up ? (index == 0) : (index == siblingRelationships.length - 1);
+					const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
+					const newOrder = newIndex + goose;
+					const order = this.order;
+					this.order_setTo(newOrder, true);
+					this.order_normalizeRecursive_remoteMaybe(true);
+					signal_relayout_fromHere();
+					this.log(DebugFlag.order, `${order} => ${this.order} wanted: ${newOrder}`);
+					parent.log(DebugFlag.order, `MAP ${parent.children.map(c => c.order)}`);
+				}
+			}
+		}
+	}
+
 	override async order_setTo(newOrder: number, remoteWrite: boolean) {
 		if (Math.abs(this.order - newOrder) > 0.001) {
 			const thing = dbDispatch.db.hierarchy.thing_getForID(this.idTo);
@@ -116,7 +192,7 @@ export default class Relationship extends Orderable {
 	}
 
 	order_normalizeRecursive_remoteMaybe(remoteWrite: boolean) {
-		const childRelationships = this.toThing?.childRelationships;
+		const childRelationships = sort_byOrder(this.childRelationships ?? []) as Array<Relationship>;
 		if (childRelationships && childRelationships.length > 1) {
 			orders_normalize_remoteMaybe(childRelationships, remoteWrite);
 			for (const childRelationship of childRelationships) {
@@ -143,6 +219,34 @@ export default class Relationship extends Orderable {
 				await dbDispatch.db.relationship_remember_remoteCreate(this);
 			}
 		}
+	}
+
+	visibleProgeny_height(only: boolean = false, visited: Array<string> = []): number {
+		const singleRowHeight = only ? get(row_height) : this.singleRowHeight;
+		if (!visited.includes(this.id) && this.hasChildren && this.toThing?.isExpanded) {
+			let height = 0;
+			for (const child of this.childRelationships) {
+				height += child.visibleProgeny_height(only, [...visited, this.id]);
+			}
+			return Math.max(height, singleRowHeight);
+		}
+		return singleRowHeight;
+	}
+
+	visibleProgeny_width(isFirst: boolean = true, visited: Array<string> = []): number {
+		let width = isFirst ? 0 : this.toThing?.titleWidth ?? 0;
+		const thing = this.toThing;
+		if (thing && !visited.includes(this.id) && thing.isExpanded && thing.hasChildren) {
+			let progenyWidth = 0;
+			for (const child of this.childRelationships) {
+				let childProgenyWidth = child.visibleProgeny_width(false, [...visited, this.id]);
+				if (progenyWidth < childProgenyWidth) {
+					progenyWidth = childProgenyWidth;
+				}
+			}
+			width += progenyWidth + get(line_stretch) + get(dot_size) * (isFirst ? 2 : 1);
+		}
+		return width;
 	}
 
 }

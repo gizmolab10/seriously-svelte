@@ -57,9 +57,9 @@
 	function updateColors() {
 		const thing = relationship.toThing;
 		if (thing) {
-			thing.updateColorAttributes();	// needed for revealColor
-			fillColor = debug.lines ? 'transparent' : thing.revealColor(isHovering != alter);
-			tinyDotColor = thing.revealColor(isHovering == alter);
+			thing.updateColorAttributes(relationship);	// needed for revealColor
+			fillColor = debug.lines ? 'transparent' : relationship.revealColor(isHovering != alter);
+			tinyDotColor = relationship.revealColor(isHovering == alter);
 			strokeColor = thing.color;
 		}
 	}

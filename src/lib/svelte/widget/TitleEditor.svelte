@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, Thing, ZIndex, onMount, onDestroy, dbDispatch, graphEditor, Relationship } from '../../ts/common/GlobalImports';
-	import { SeriouslyRange, handle_relayout, signal_relayout, signal_rebuild_fromHere } from '../../ts/common/GlobalImports'; 
+	import { SeriouslyRange, handle_relayout, signal_relayout, signal_rebuild_fromHere, signal_relayout_fromHere } from '../../ts/common/GlobalImports'; 
 	import { row_height, id_editing, id_editingStopped } from '../../ts/managers/State';
 	import Widget from './Widget.svelte';
 	export let relationship = Relationship;
@@ -15,10 +15,15 @@
 
 	onDestroy(() => { thing = null; signalHandler.disconnect(); });
 	var hasChanges = () => { return originalTitle != (thing?.title ?? ''); }
-	onMount(() => { thing = relationship.toThing; setTimeout(() => { updateInputWidth(); }, 10) });
 	function handleBlur(event) { stopAndClearEditing(); updateInputWidth(); }
-	function handleInput(event) { thing = event.target.value; updateInputWidth(); }
-	const signalHandler = handle_relayout((idThing) => setTimeout(() => { updateInputWidth(); }, 10));
+	const signalHandler = handle_relayout((id) => setTimeout(() => { updateInputWidth(); }, 10));
+	onMount(() => { thing = relationship.toThing; setTimeout(() => { updateInputWidth(); }, 10) });
+	
+	function handleInput(event) {
+		thing.title = event.target.value;
+		updateInputWidth();
+		signal_relayout_fromHere();
+	}
 
 	function updateInputWidth() {
 		if (input && ghost && thing) { // ghost only exists to provide its scroll width
@@ -47,7 +52,7 @@
 			switch (event.key) {	
 				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); graphEditor.relationship_toThing_redraw_remoteAddChildTo(thing.firstParent); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
-				default:	  signal_relayout(); break;
+				default:	  signal_relayout_fromHere(); break;
 			}
 		}
 	}
@@ -96,7 +101,7 @@
 			if (hasChanges() && !thing.isExemplar) {
 				dbDispatch.db.thing_remoteUpdate(thing);
 				originalTitle = thing?.title ?? '';		// so hasChanges will be correct
-				thing.signal_relayout();
+				relationship.signal_relayout();
 			}
 		}
 	}
@@ -104,15 +109,15 @@
 	function handleFocus(event) {
 		if (!k.allowTitleEditing) {
 			input.blur();
-		} else if (!isEditing && thing) {
-			thing.grabOnly()
-			thing.startEdit();
+		} else if (!isEditing) {
+			relationship.grabOnly()
+			relationship.startEdit();
 		}
 	}
 
 	function handleCutOrPaste(event) {
 		extractRange();
-		thing.signal_relayout();
+		relationship.signal_relayout();
 	}
 
 	function extractRange() {

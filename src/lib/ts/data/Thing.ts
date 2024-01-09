@@ -1,4 +1,4 @@
-import { AlteringParent, SeriouslyRange, signal_rebuild, signal_relayout, signal_rebuild_fromHere, signal_relayout_fromHere, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { sort_byOrder, AlteringParent, SeriouslyRange, signal_rebuild, signal_relayout, signal_rebuild_fromHere, signal_relayout_fromHere, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { k, get, Size, debug, Predicate, TraitType, PersistID, DebugFlag, Orderable, dbDispatch, getWidthOf, Relationship, persistLocal, CreationOptions } from '../common/GlobalImports';
 import { id_here, dot_size, expanded, altering_parent, row_height, id_editing, ids_grabbed, line_stretch, id_toolsGrab } from '../managers/State';
 import Airtable from 'airtable';
@@ -10,7 +10,6 @@ export default class Thing extends Orderable {
 	hoverAttributes = '';
 	borderAttribute = '';
 	grabAttributes = '';
-	showCluster = false;
 	isExemplar = false;
 	isEditing = false;
 	isGrabbed = false;
@@ -25,33 +24,6 @@ export default class Thing extends Orderable {
 		this.title = title;
 		this.color = color;
 		this.trait = trait;
-
-		this.updateColorAttributes();
-
-		id_editing.subscribe((idEdit: string | null) => {
-			const isEditing = (idEdit == this.id);
-			if (this.isEditing != isEditing) {
-				this.isEditing  = isEditing;
-				this.updateColorAttributes();
-			}
-		});
-
-		ids_grabbed.subscribe((idsGrabbed: string[]) => {
-			const parentRelationshipIDs = this.parentRelationships.map(r => r.id);
-			const isGrabbed = parentRelationshipIDs.some(element => idsGrabbed.includes(element));
-			if (this.isGrabbed != isGrabbed) {
-				this.isGrabbed  = isGrabbed;
-				this.updateColorAttributes();
-			}
-		});
-
-		id_toolsGrab.subscribe((idCluster: string | null) => {
-			const shouldShow = (idCluster != null) && idCluster == this.id && get(id_here) != this.id;
-			if (this.showCluster != shouldShow) {
-				this.showCluster = shouldShow;
-				signal_rebuild_fromHere();
-			}
-		});
 	};
 
 	
@@ -65,10 +37,10 @@ export default class Thing extends Orderable {
 	get hasChildren():					   boolean { return this.children.length > 0; }
 	get hasParents():					   boolean { return this.parents.length > 0; }
 	get isHere():						   boolean { return this.id == get(id_here); }
-	get isRoot():						   boolean { return this == this.hierarchy.root; }
+	get isRoot():						   boolean { return this == this.hierarchy.root?.toThing; }
 	get isBulkAlias():					   boolean { return this.trait == TraitType.bulk; }
 	get isExpanded():					   boolean { return this.isRoot || get(expanded)?.includes(this.parentRelationshipID); }
-	get isVisible():					   boolean { return this.ancestors(Number.MAX_SAFE_INTEGER).includes(this.hierarchy.here!); }
+	get isVisible():					   boolean { return this.ancestors(Number.MAX_SAFE_INTEGER).includes(this.hierarchy.here!.toThing!); }
 	get grandparent():						 Thing { return this.firstParent?.firstParent ?? this.hierarchy.root; }
 	get lastChild():						 Thing { return this.children.slice(-1)[0]; }	// not alter children
 	get firstChild():						 Thing { return this.children[0]; }
@@ -76,9 +48,6 @@ export default class Thing extends Orderable {
 	get description():						string { return this.id + ' \"' + this.title + '\"'; }
 	get idForChildren():					string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get titleWidth():						number { return getWidthOf(this.title) }
-	get visibleProgeny_halfHeight():		number { return this.visibleProgeny_height() / 2; }
-	get visibleProgeny_halfSize():			  Size { return this.visibleProgeny_size.dividedInHalf; }
-	get visibleProgeny_size():				  Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 
 	get parentRelationshipID(): string { // WRONG (TODO ???)
 		return this.hierarchy.relationship_getWhereIDEqualsTo(this.id)?.id ?? '';
@@ -107,40 +76,7 @@ export default class Thing extends Orderable {
 		}
 		return false;
 	}
-
-	get singleRowHeight(): number {
-		return this.showCluster ? k.clusterHeight : get(row_height);
-	}
-
-	visibleProgeny_height(only: boolean = false, visited: Array<string> = []): number {
-		const singleRowHeight = only ? get(row_height) : this.singleRowHeight;
-		if (!visited.includes(this.id) && this.hasChildren && this.isExpanded) {
-			let height = 0;
-			for (const child of this.children) {
-				height += child.visibleProgeny_height(only, [...visited, this.id]);
-			}
-			return Math.max(height, singleRowHeight);
-		}
-		return singleRowHeight;
-	}
-
-	visibleProgeny_width(isFirst: boolean = true, visited: Array<string> = []): number {
-		let width = isFirst ? 0 : this.titleWidth;
-		if (!visited.includes(this.id) && this.isExpanded && this.hasChildren) {
-			let progenyWidth = 0;
-			for (const child of this.children) {
-				let childProgenyWidth = child.visibleProgeny_width(false, [...visited, this.id]);
-				if (progenyWidth < childProgenyWidth) {
-					progenyWidth = childProgenyWidth;
-				}
-			}
-			width += progenyWidth + get(line_stretch) + get(dot_size) * (isFirst ? 2 : 1);
-		}
-		return width;
-	}
 	
-	signal_rebuild()  { signal_rebuild(this.id); }
-	signal_relayout() { signal_relayout(this.id); }
 	toggleExpand()	  { this.expanded_setTo(!this.isExpanded) }
 	collapse()		  { this.expanded_setTo(false); }
 	expand()		  { this.expanded_setTo(true); }
@@ -153,23 +89,11 @@ export default class Thing extends Orderable {
 		this.log(DebugFlag.things, message);
 	}
 
-	revealColor(isReveal: boolean): string {
-		const showBorder = this.isGrabbed || this.isEditing || this.isExemplar;
-		const useThingColor = isReveal != showBorder;
-		return useThingColor ? this.color : k.backgroundColor;
-	}
-
-	startEdit() {
-		if (this != this.hierarchy.root) {
-			id_editing.set(this.id);
-		}
-	}
-
-	updateColorAttributes() {
-		const borderStyle = this.isEditing ? 'dashed' : 'solid';
+	updateColorAttributes(relationship: Relationship) {
+		const borderStyle = relationship.isEditing ? 'dashed' : 'solid';
 		const border = borderStyle + ' 1px ';
-		const hover = border + this.revealColor(true);
-		const grab = border + this.revealColor(false);
+		const hover = border + relationship.revealColor(true);
+		const grab = border + relationship.revealColor(false);
 		this.borderAttribute = border;
 		this.hoverAttributes = hover;
 		this.grabAttributes = grab;
@@ -318,6 +242,18 @@ export default class Thing extends Orderable {
 		}
 	}
 
+	afterAdding(startEdit: boolean = true) {
+		const relationship = this.parentRelationships[0];
+		signal_rebuild_fromHere();
+		relationship.grabOnly();
+		if (startEdit) {
+			setTimeout(() => {
+				relationship.startEdit();
+			}, 200);
+		}
+
+	}
+
 	async thing_remember_remoteAddAsChild(child: Thing): Promise<any> {
 		const changingBulk = this.isBulkAlias || child.baseID != dbDispatch.db.baseID;
 		const baseID = changingBulk ? child.baseID : this.baseID;
@@ -333,7 +269,7 @@ export default class Thing extends Orderable {
 
 	redraw_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const parent = this.firstParent;
-		const siblingRelationships = parent.childRelationships;
+		const siblingRelationships = sort_byOrder(parent.childRelationships) as Array<Relationship>;
 		if (!siblingRelationships || siblingRelationships.length == 0) {
 			this.redraw_runtimeBrowseRight(true, EXTREME, up);
 		} else {
@@ -352,7 +288,7 @@ export default class Thing extends Orderable {
 				const newOrder = newIndex + goose;
 				const order = this.order;
 				this.order_setTo(newOrder, true);
-				parent.order_normalizeRecursive_remoteMaybe(true);
+				this.parentRelationships[0].order_normalizeRecursive_remoteMaybe(true);
 				signal_relayout_fromHere();
 				this.log(DebugFlag.order, `${order} => ${this.order} wanted: ${newOrder}`);
 				parent.log(DebugFlag.order, `MAP ${parent.children.map(c => c.order)}`);

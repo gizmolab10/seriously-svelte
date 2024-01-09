@@ -70,14 +70,13 @@ export default class Grabs {
 			}
 			return array;
 		});
-		const ids = get(ids_grabbed);
-		if (ids.length == 0) {
+		if (get(ids_grabbed).length == 0) {
 			this.hierarchy.root?.grabOnly();
 		}
 		this.relationship_toggleToolsGrab(relationship);
 	}
 
-	latestGrab(up: boolean): Relationship {
+	latestGrab(up: boolean): Relationship | null {
 		const ids = get(ids_grabbed);
 		if (ids) {
 			let grabs = this.hierarchy.relationships_getForIDs(ids);
