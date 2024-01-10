@@ -38,16 +38,16 @@
 				<span style='
 					color: transparent;
 					position: relative;
-					top:{size / ((ancestor.siblingRelationships.length > 1) ? 4 : 2)}px;
-					left: {size / ((ancestor.siblingRelationships.length > 1) ? 3 : 3.3)}px;'>
+					top:{size / ((ancestor.toThing?.parentRelationships.length > 1) ? 4 : 2)}px;
+					left: {size / ((ancestor.toThing?.parentRelationships.length > 1) ? 3 : 3.3)}px;'>
 					<FatTriangle
-						extra={(ancestor.siblingRelationships.length < 2) ? null : svgPath.circle(size, size / 2, new Point(size / -7, size / 4))}
-						size={((ancestor.siblingRelationships.length < 2) ? size : size * 1.5)}
+						extra={(ancestor.toThing?.parentRelationships.length < 2) ? null : svgPath.circle(size, size / 2, new Point(size / -7, size / 4))}
+						size={((ancestor.toThing?.parentRelationships.length < 2) ? size : size * 1.5)}
 						strokeColor={ancestor.fromThing.color}
 						fillColor={ancestor.fromThing.color}
 						position='absolute'
 					/>
-					&nbsp;{#if ancestor.siblingRelationships.length > 1}-{/if}&nbsp;
+					&nbsp;{#if ancestor.toThing?.parentRelationships.length > 1}-{/if}&nbsp;
 				</span>
 			{/if}
 			<Crumb relationship={ancestor}/>

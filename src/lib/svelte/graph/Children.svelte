@@ -34,7 +34,7 @@
 					debugReact.log_layout(`CHILDREN signal ${thing.description}`);
 					layoutChildren();
 					if (idRelationship) { // only recurse if starting at a specific id
-						for (const child of children) {
+						for (const child of childRelationships) {
 							if (child.hasChildren && child.isExpanded) {
 								child.signal_relayout();
 							}
@@ -96,7 +96,7 @@
 	{#each childMapArray as a}
 		<Widget relationship={a.relationship} origin={a.rect.extent.offsetBy(new Point(12, ($dot_size / -15) -10))}/>
 		<Line relationship={a.relationship} curveType={a.rect.curveType} rect={a.rect.offsetBy(new Point(($dot_size / 2) - 129, ($dot_size / 2) - 8))}/>
-		{#if a.child.hasChildren && a.child.isExpanded}
+		{#if a.child.hasChildren && a.relationship.isExpanded}
 			<Children relationship={a.relationship} origin={a.origin}/>
 		{/if}
 	{/each}

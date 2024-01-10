@@ -108,7 +108,7 @@ export default class GraphEditor {
 				if (RIGHT && thing.needsBulkFetch) {
 					await thing.redraw_bulkFetchAll_runtimeBrowseRight();
 				} else {
-					thing.redraw_runtimeBrowseRight(RIGHT, SHIFT, EXTREME, fromReveal);
+					relationship.redraw_runtimeBrowseRight(RIGHT, SHIFT, EXTREME, fromReveal);
 				}
 			} else if (k.allowGraphEditing) {
 				await this.relationship_toThing_redraw_remoteRelocateRight(thing, RIGHT, EXTREME);
@@ -161,7 +161,7 @@ export default class GraphEditor {
 
 	async latestGrab_redraw_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const grab = this.hierarchy.grabs.latestGrab(up);
-		grab?.toThing?.redraw_remoteMoveUp(up, SHIFT, OPTION, EXTREME);
+		grab?.redraw_remoteMoveUp(up, SHIFT, OPTION, EXTREME);
 	}
 
 }

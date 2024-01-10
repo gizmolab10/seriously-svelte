@@ -1,7 +1,7 @@
 <script>
-import { build, isBusy, id_here, db_type, expanded, graphRect, id_popupView, showDetails, things_arrived, thing_fontSize } from '../../ts/managers/State';
-import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, PersistID, dbDispatch, debugReact } from '../../ts/common/GlobalImports';
-	import { ButtonID, Hierarchy, persistLocal, handle_rebuild, signal_relayout_fromHere, graphRect_update } from '../../ts/common/GlobalImports';
+	import { build, isBusy, id_here, db_type, expanded, graphRect, id_popupView, showDetails, things_arrived, thing_fontSize } from '../../ts/managers/State';
+	import { ButtonID, Hierarchy, Relationship, persistLocal, handle_rebuild, signal_relayout_fromHere, graphRect_update } from '../../ts/common/GlobalImports';
+	import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, PersistID, dbDispatch, debugReact } from '../../ts/common/GlobalImports';
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import LabelButton from '../kit/LabelButton.svelte';
@@ -10,14 +10,15 @@ import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, Pers
 	import Help from '../help/Help.svelte';
 	import Details from './Details.svelte';
 	import Crumbs from './Crumbs.svelte';
+	let relationship = Relationship;
 	let toggle = false;
 	let here = Thing;
 	let left = 14;
 	let size = 14;
 	
-	function builds_buttonClicked(event) { $id_popupView = ($id_popupView == ButtonID.buildNotes) ? null : ButtonID.buildNotes; }
-	function help_buttonClicked() { $id_popupView = ($id_popupView == ButtonID.help) ? null : ButtonID.help; }
 	window.addEventListener('resize', (event) => { graphRect_update(); });
+	function help_buttonClicked() { $id_popupView = ($id_popupView == ButtonID.help) ? null : ButtonID.help; }
+	function builds_buttonClicked(event) { $id_popupView = ($id_popupView == ButtonID.buildNotes) ? null : ButtonID.buildNotes; }
 	
 	onMount(async () => {
 		launch.setup();
@@ -29,8 +30,9 @@ import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, Pers
 	});
 
 	$: {
-		if (here.id != $id_here) {
-			here = dbDispatch.db.hierarchy.relationship_getForID($id_here);
+		if (relationship.id != $id_here) {
+			relationship = dbDispatch.db.hierarchy.relationship_getForID($id_here);
+			here = relationship.toThing
 			graph_fullRebuild();
 		}
 	}
@@ -38,7 +40,7 @@ import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, Pers
 	function graph_fullRebuild() {
 		graphRect_update();
 		left = $graphRect.origin.x;
-		debugReact.log_rebuild(`PANEL ${here.description}`)
+		debugReact.log_rebuild(`PANEL ${here?.description}`)
 		toggle = !toggle;	// remount graph component
 	}
 	

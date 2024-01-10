@@ -10,7 +10,7 @@ export default class Layout {
 			const sizeX = get(line_stretch);
 			const children = relationship.childRelationships;
 			const quantity = children.length;
-			if (quantity < 2 || !relationship.toThing?.isExpanded) {
+			if (quantity < 2 || !relationship.isExpanded) {
 				const rect = new Rect(origin, new Size(sizeX, 0));
 				this.lineRects.push(new LineRect(LineCurveType.flat, rect));
 			} else {

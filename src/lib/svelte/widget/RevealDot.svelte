@@ -66,7 +66,7 @@
 	function updateColors() {
 		if (thing) {
 			thing.updateColorAttributes(relationship);
-			const collapsedGrabbed = !thing.isExpanded || thing.isGrabbed;
+			const collapsedGrabbed = !relationship.isExpanded || relationship.isGrabbed;
 			fillColor = relationship.revealColor(collapsedGrabbed != isHovering);
 			bulkAliasFillColor = relationship.revealColor(collapsedGrabbed == isHovering);
 		}
@@ -74,10 +74,10 @@
 
 	function updatePath() {
 		if (thing) {
-			if ((!thing.hasChildren && !thing.isBulkAlias) || ($id_toolsGrab == thing.id)) {
+			if ((!thing.hasChildren && !thing.isBulkAlias) || ($id_toolsGrab == relationship.id)) {
 				path = svgPath.circle($dot_size, $dot_size / 2);
 			} else {
-				const direction = (thing.isExpanded && thing.hasChildren) ? Direction.left : Direction.right;
+				const direction = (relationship.isExpanded && thing.hasChildren) ? Direction.left : Direction.right;
 				path = svgPath.triangle(Size.square($dot_size), direction);
 				if (thing.isBulkAlias) {
 					insidePath = svgPath.circle($dot_size, $dot_size / 3);
@@ -89,14 +89,14 @@
 	function handleClick(event) {
 		if (thing) {
 			setIsHovering_updateColors(false);
-			if ($id_toolsGrab == thing.id) {
+			if ($id_toolsGrab == relationship.id) {
 				$id_toolsGrab = null;
 				$altering_parent = null;
 			} else if (!thing.hasChildren) {
-				thing.grabOnly();
-				$id_toolsGrab = thing.id;
+				relationship.grabOnly();
+				$id_toolsGrab = relationship.id;
 			} else {
-				graphEditor.relationship_toThing_redraw_remoteMoveRight(relationship, !thing.isExpanded, true);
+				graphEditor.relationship_toThing_redraw_remoteMoveRight(relationship, !relationship.isExpanded, true);
 				return;
 			}
 			signal_rebuild_fromHere();

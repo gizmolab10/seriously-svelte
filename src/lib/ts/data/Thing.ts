@@ -39,7 +39,6 @@ export default class Thing extends Orderable {
 	get isHere():						   boolean { return this.id == get(id_here); }
 	get isRoot():						   boolean { return this == this.hierarchy.root?.toThing; }
 	get isBulkAlias():					   boolean { return this.trait == TraitType.bulk; }
-	get isExpanded():					   boolean { return this.isRoot || get(expanded)?.includes(this.parentRelationshipID); }
 	get isVisible():					   boolean { return this.ancestors(Number.MAX_SAFE_INTEGER).includes(this.hierarchy.here!.toThing!); }
 	get grandparent():						 Thing { return this.firstParent?.firstParent ?? this.hierarchy.root; }
 	get lastChild():						 Thing { return this.children.slice(-1)[0]; }	// not alter children
@@ -76,10 +75,6 @@ export default class Thing extends Orderable {
 		}
 		return false;
 	}
-	
-	toggleExpand()	  { this.expanded_setTo(!this.isExpanded) }
-	collapse()		  { this.expanded_setTo(false); }
-	expand()		  { this.expanded_setTo(true); }
 
 	log(option: DebugFlag, message: string) {
 		debug.log_maybe(option, message + ' ' + this.description);
@@ -97,32 +92,6 @@ export default class Thing extends Orderable {
 		this.borderAttribute = border;
 		this.hoverAttributes = hover;
 		this.grabAttributes = grab;
-	}
-	
-	expanded_setTo(expand: boolean) {
-		let mutated = false;
-		const relationship = this.hierarchy.relationship_getWhereIDEqualsTo(this.id);
-		if (relationship) {
-			expanded.update((array) => {
-				if (array) {
-					const index = array.indexOf(relationship.id);
-					if (expand) {
-						if (index == -1) {
-							array.push(relationship.id);	// only add if not already added
-							mutated = true;
-						}
-					} else if (index != -1) {					// only splice array when item is found
-						array.splice(index, 1);			// 2nd parameter means 'remove one item only'
-						mutated = true;
-					}
-				}
-				return array;
-			});
-			if (mutated) {			// avoid disruptive rebuild
-				persistLocal.writeToDBKey(PersistID.expanded, get(expanded));
-				signal_rebuild_fromHere();
-			}
-		}
 	}
 
 	ancestors_include(thing: Thing, visited: Array<string> = []): boolean {
@@ -265,78 +234,6 @@ export default class Thing extends Orderable {
 		const relationship = await dbDispatch.db.hierarchy.relationship_remember_remoteCreateUnique(baseID, null, idPredicateIsAParentOf, parentID, child.id, child.order, CreationOptions.getRemoteID)
 		await orders_normalize_remoteMaybe(this.children);		// write new order values for relationships
 		return relationship;
-	}
-
-	redraw_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
-		const parent = this.firstParent;
-		const siblingRelationships = sort_byOrder(parent.childRelationships) as Array<Relationship>;
-		if (!siblingRelationships || siblingRelationships.length == 0) {
-			this.redraw_runtimeBrowseRight(true, EXTREME, up);
-		} else {
-			const index = this.order;
-			const newIndex = index.increment(!up, siblingRelationships.length);
-			if (!OPTION) {
-				const newGrab = siblingRelationships[newIndex];
-				if (SHIFT) {
-					newGrab?.toggleGrab()
-				} else {
-					newGrab?.grabOnly();
-				}
-			} else if (k.allowGraphEditing) {
-				const wrapped = up ? (index == 0) : (index == siblingRelationships.length - 1);
-				const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
-				const newOrder = newIndex + goose;
-				const order = this.order;
-				this.order_setTo(newOrder, true);
-				this.parentRelationships[0].order_normalizeRecursive_remoteMaybe(true);
-				signal_relayout_fromHere();
-				this.log(DebugFlag.order, `${order} => ${this.order} wanted: ${newOrder}`);
-				parent.log(DebugFlag.order, `MAP ${parent.children.map(c => c.order)}`);
-			}
-		}
-	}
-
-	redraw_runtimeBrowseRight(RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, fromReveal: boolean = false) {
-		const newHere = RIGHT ? this : this.grandparent;
-		let newGrab: Relationship | undefined = RIGHT ? this.childRelationships[0] : this.firstParent.parentRelationships[0];
-		const newGrabIsNotHere = get(id_here) != newGrab?.id;
-		if (!RIGHT) {
-			const root = this.hierarchy.root;
-			if (EXTREME) {
-				root?.becomeHere();	// tells graph to update line rects
-			} else {
-				if (!SHIFT) {
-					if (fromReveal) {
-						this.expand();
-					} else if (newGrabIsNotHere && newGrab && !newGrab.toThing?.isExpanded) {
-						newGrab?.toThing?.expand();
-					}
-				} else if (newGrab) { 
-					if (this.isExpanded) {
-						this.collapse();
-						newGrab = undefined;
-					} else if (newGrab.toThing == root) {
-						newGrab = undefined;
-					} else {
-						newGrab.toThing?.collapse();
-					}
-				}
-			}
-		} else if (this.hasChildren) {
-			if (SHIFT) {
-				newGrab = undefined;
-			}
-			this.expand();
-		} else {
-			return;
-		}
-		id_editing.set(null);
-		newGrab?.grabOnly();
-		// const allowToBecomeHere = (!SHIFT || newGrab == this.parentRelationships[0]) && newGrabIsNotHere; 
-		// const shouldBecomeHere = !newHere.isVisible || newHere.isRoot;
-		// if (!RIGHT && allowToBecomeHere && shouldBecomeHere) {
-		// 	newHere.becomeHere();
-		// }
 	}
 
 }

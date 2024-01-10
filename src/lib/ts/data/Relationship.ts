@@ -1,6 +1,6 @@
 import { k, get, Size, debug, Thing, DebugFlag, Orderable, dbDispatch, Predicate, PersistID, persistLocal, sort_byOrder, AlteringParent } from '../common/GlobalImports';
 import { signal_rebuild, signal_relayout, signal_rebuild_fromHere, signal_relayout_fromHere, orders_normalize_remoteMaybe } from '../common/GlobalImports';
-import { id_here, dot_size, row_height, id_editing, ids_grabbed, id_toolsGrab, line_stretch, altering_parent } from '../managers/State'
+import { id_here, dot_size, row_height, id_editing, ids_grabbed, id_toolsGrab, line_stretch, expanded, altering_parent } from '../managers/State'
 import Airtable from 'airtable';
 
 export default class Relationship extends Orderable {
@@ -58,11 +58,12 @@ export default class Relationship extends Orderable {
 
 	get hasChildren(): boolean { return this.childRelationships.length > 0; }
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
+	get isExpanded(): boolean { return this.isRoot || get(expanded)?.includes(this.id); }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get singleRowHeight(): number { return this.showCluster ? k.clusterHeight : get(row_height); }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	get childRelationships(): Array<Relationship> { return sort_byOrder(this.toThing?.childRelationships ?? []) as Array<Relationship>; }
-	get siblingRelationships(): Array<Relationship> { return sort_byOrder(this.toThing?.parentRelationships ?? []) as Array<Relationship>; }
+	get siblingRelationships(): Array<Relationship> { return sort_byOrder(this.fromThing?.childRelationships ?? []) as Array<Relationship>; }
 	get description(): string { return ' \"' + this.baseID + '\" ' + this.isRemotelyStored + ' ' + this.order + ' ' + this.id + ' '	+ dbDispatch.db.hierarchy.thing_getForID(this.idFrom)?.description + ' => ' + dbDispatch.db.hierarchy.thing_getForID(this.idTo)?.description; }
 
 	get isValid(): boolean {
@@ -74,8 +75,11 @@ export default class Relationship extends Orderable {
 
 	signal_rebuild()  { signal_rebuild(this.id); }
 	signal_relayout() { signal_relayout(this.id); }
-	grabOnly()	 { this.hierarchy.grabs.grabOnly(this); }
-	toggleGrab() { this.hierarchy.grabs.toggleGrab(this); }
+	expand()		  { this.expanded_setTo(true); }
+	collapse()		  { this.expanded_setTo(false); }
+	toggleExpand()	  { this.expanded_setTo(!this.isExpanded) }
+	grabOnly()		  { this.hierarchy.grabs.grabOnly(this); }
+	toggleGrab()	  { this.hierarchy.grabs.toggleGrab(this); }
 
 	log(option: DebugFlag, message: string) {
 		debug.log_maybe(option, message + ' ' + this.description);
@@ -140,6 +144,32 @@ export default class Relationship extends Orderable {
 			}
 		}
 	}
+	
+	expanded_setTo(expand: boolean) {
+		let mutated = false;
+		const relationship = this.hierarchy.relationship_getWhereIDEqualsTo(this.id);
+		if (relationship) {
+			expanded.update((array) => {
+				if (array) {
+					const index = array.indexOf(relationship.id);
+					if (expand) {
+						if (index == -1) {
+							array.push(relationship.id);	// only add if not already added
+							mutated = true;
+						}
+					} else if (index != -1) {					// only splice array when item is found
+						array.splice(index, 1);			// 2nd parameter means 'remove one item only'
+						mutated = true;
+					}
+				}
+				return array;
+			});
+			if (mutated) {			// avoid disruptive rebuild
+				persistLocal.writeToDBKey(PersistID.expanded, get(expanded));
+				signal_rebuild_fromHere();
+			}
+		}
+	}
 
 	clicked_dragDot(shiftKey: boolean) {
 		if (this.toThing && !this.toThing.isExemplar) {
@@ -149,37 +179,6 @@ export default class Relationship extends Orderable {
 				this.toggleGrab();
 			} else {
 				this.grabOnly();
-			}
-		}
-	}
-
-	redraw_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
-		const parent = this.fromThing;
-		if (parent) {
-			const siblingRelationships = sort_byOrder(parent.childRelationships) as Array<Relationship>;
-			if (!siblingRelationships || siblingRelationships.length == 0) {
-				this.toThing?.redraw_runtimeBrowseRight(true, EXTREME, up);
-			} else {
-				const index = this.order;
-				const newIndex = index.increment(!up, siblingRelationships.length);
-				if (!OPTION) {
-					const newGrab = siblingRelationships[newIndex];
-					if (SHIFT) {
-						newGrab?.toggleGrab()
-					} else {
-						newGrab?.grabOnly();
-					}
-				} else if (k.allowGraphEditing) {
-					const wrapped = up ? (index == 0) : (index == siblingRelationships.length - 1);
-					const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
-					const newOrder = newIndex + goose;
-					const order = this.order;
-					this.order_setTo(newOrder, true);
-					this.order_normalizeRecursive_remoteMaybe(true);
-					signal_relayout_fromHere();
-					this.log(DebugFlag.order, `${order} => ${this.order} wanted: ${newOrder}`);
-					parent.log(DebugFlag.order, `MAP ${parent.children.map(c => c.order)}`);
-				}
 			}
 		}
 	}
@@ -205,7 +204,7 @@ export default class Relationship extends Orderable {
 		const thing = this.toThing;
 		if (thing && thing.hasChildren) {
 			id_here.set(this.id);
-			thing.expand();
+			this.expand();
 			id_toolsGrab.set(null);
 			persistLocal.writeToDBKey(PersistID.here, this.id)
 		};
@@ -223,7 +222,7 @@ export default class Relationship extends Orderable {
 
 	visibleProgeny_height(only: boolean = false, visited: Array<string> = []): number {
 		const singleRowHeight = only ? get(row_height) : this.singleRowHeight;
-		if (!visited.includes(this.id) && this.hasChildren && this.toThing?.isExpanded) {
+		if (!visited.includes(this.id) && this.hasChildren && this.isExpanded) {
 			let height = 0;
 			for (const child of this.childRelationships) {
 				height += child.visibleProgeny_height(only, [...visited, this.id]);
@@ -236,7 +235,7 @@ export default class Relationship extends Orderable {
 	visibleProgeny_width(isFirst: boolean = true, visited: Array<string> = []): number {
 		let width = isFirst ? 0 : this.toThing?.titleWidth ?? 0;
 		const thing = this.toThing;
-		if (thing && !visited.includes(this.id) && thing.isExpanded && thing.hasChildren) {
+		if (thing && !visited.includes(this.id) && this.isExpanded && thing.hasChildren) {
 			let progenyWidth = 0;
 			for (const child of this.childRelationships) {
 				let childProgenyWidth = child.visibleProgeny_width(false, [...visited, this.id]);
@@ -247,6 +246,76 @@ export default class Relationship extends Orderable {
 			width += progenyWidth + get(line_stretch) + get(dot_size) * (isFirst ? 2 : 1);
 		}
 		return width;
+	}
+
+	redraw_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
+		const siblingRelationships = this.siblingRelationships;
+		if (!siblingRelationships || siblingRelationships.length == 0) {
+			this.redraw_runtimeBrowseRight(true, EXTREME, up);
+		} else {
+			const index = this.order;
+			const newIndex = index.increment(!up, siblingRelationships.length);
+			if (!OPTION) {
+				const newGrab = siblingRelationships[newIndex];
+				if (SHIFT) {
+					newGrab?.toggleGrab()
+				} else {
+					newGrab?.grabOnly();
+				}
+			} else if (k.allowGraphEditing) {
+				const wrapped = up ? (index == 0) : (index == siblingRelationships.length - 1);
+				const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
+				const newOrder = newIndex + goose;
+				const order = this.order;
+				this.order_setTo(newOrder, true);
+				this.order_normalizeRecursive_remoteMaybe(true);
+				signal_relayout_fromHere();
+				this.log(DebugFlag.order, `${order} => ${this.order} wanted: ${newOrder}`);
+			}
+		}
+	}
+
+	redraw_runtimeBrowseRight(RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, fromReveal: boolean = false) {
+		// const newHere = RIGHT ? this : this.grandparent;
+		let newGrab: Relationship | undefined = RIGHT ? this.childRelationships[0] : this.fromThing?.parentRelationships[0];
+		const newGrabIsNotHere = get(id_here) != newGrab?.id;
+		if (!RIGHT) {
+			const root = this.hierarchy.root;
+			if (EXTREME) {
+				root?.becomeHere();	// tells graph to update line rects
+			} else {
+				if (!SHIFT) {
+					if (fromReveal) {
+						this.expand();
+					} else if (newGrabIsNotHere && newGrab && !newGrab.isExpanded) {
+						newGrab?.expand();
+					}
+				} else if (newGrab) { 
+					if (this.isExpanded) {
+						this.collapse();
+						newGrab = undefined;
+					} else if (newGrab.toThing == root) {
+						newGrab = undefined;
+					} else {
+						newGrab.collapse();
+					}
+				}
+			}
+		} else if (this.hasChildren) {
+			if (SHIFT) {
+				newGrab = undefined;
+			}
+			// this.expand();
+		} else {
+			return;
+		}
+		id_editing.set(null);
+		newGrab?.grabOnly();
+		// const allowToBecomeHere = (!SHIFT || newGrab == this.parentRelationships[0]) && newGrabIsNotHere; 
+		// const shouldBecomeHere = !newHere.isVisible || newHere.isRoot;
+		// if (!RIGHT && allowToBecomeHere && shouldBecomeHere) {
+		// 	newHere.becomeHere();
+		// }
 	}
 
 }
