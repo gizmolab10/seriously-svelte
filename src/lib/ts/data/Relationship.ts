@@ -6,12 +6,12 @@ import Airtable from 'airtable';
 export default class Relationship extends Orderable {
 	fromThing: Thing | null;
 	toThing: Thing | null;
-	idPredicate: string;
+	doNotPersist = false;
 	showCluster = false;
+	idPredicate: string;
 	isEditing = false;
 	isGrabbed = false;
 	db_type: string;
-	isRoot = false;
 	idFrom: string;
 	idTo: string;
 
@@ -26,8 +26,8 @@ export default class Relationship extends Orderable {
 		this.toThing = dbDispatch.db.hierarchy.thing_getForID(idTo);
 		this.fromThing = dbDispatch.db.hierarchy.thing_getForID(idFrom);
 
-		if (id == 'root') {
-			this.isRoot == true;
+		if (['root', 'exemplar'].includes(this.id)) {
+			this.doNotPersist == true;
 		}
 
 		ids_grabbed.subscribe((idsGrab: string[]) => {
@@ -58,7 +58,7 @@ export default class Relationship extends Orderable {
 
 	get hasChildren(): boolean { return this.childRelationships.length > 0; }
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
-	get isExpanded(): boolean { return this.isRoot || get(expanded)?.includes(this.id); }
+	get isExpanded(): boolean { return this.doNotPersist || get(expanded)?.includes(this.id); }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get singleRowHeight(): number { return this.showCluster ? k.clusterHeight : get(row_height); }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
@@ -209,7 +209,7 @@ export default class Relationship extends Orderable {
 	}
 
 	async remoteWrite() {
-		if (!this.awaitingCreation && !this.isRoot) {
+		if (!this.awaitingCreation && !this.doNotPersist) {
 			if (this.isRemotelyStored) {
 				await dbDispatch.db.relationship_remoteUpdate(this);
 			} else {
@@ -310,7 +310,7 @@ export default class Relationship extends Orderable {
 		id_editing.set(null);
 		newGrab?.grabOnly();
 		// const allowToBecomeHere = (!SHIFT || newGrab == this.parentRelationships[0]) && newGrabIsNotHere; 
-		// const shouldBecomeHere = !newHere.isVisible || newHere.isRoot;
+		// const shouldBecomeHere = !newHere.isVisible || newHere.doNotPersist;
 		// if (!RIGHT && allowToBecomeHere && shouldBecomeHere) {
 		// 	newHere.becomeHere();
 		// }

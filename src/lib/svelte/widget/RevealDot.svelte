@@ -59,8 +59,10 @@
 	}
 
 	function setIsHovering_updateColors(hovering) {
-		isHovering = hovering;
-		updateColors();
+		// if (isHovering != hovering) {
+		// 	isHovering = hovering;
+		// 	updateColors();
+		// }
 	}
 
 	function updateColors() {
@@ -162,7 +164,7 @@
 	style='
 		width={$dot_size}px;
 		height={$dot_size}px;
-		top: {$dot_size / 2 - 2 - ((thing && thing.isGrabbed) ? 0 : 1)}px;
+		top: {$dot_size / 2 - 1 - ((thing && thing.isGrabbed) ? 0 : 1)}px;
 		left: {$dot_size + (thing?.titleWidth ?? 0) - 5}px;
 	'>
 	{#key path}

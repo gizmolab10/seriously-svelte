@@ -137,7 +137,7 @@
 		position: fixed;
 		height: 100%;'>
 		{#if $id_popupView == ButtonID.help}
-			<Help size={size}/>
+			<Help/>
 		{:else if $id_popupView == ButtonID.buildNotes}
 			<BuildNotes/>
 		{:else if $id_popupView == null}

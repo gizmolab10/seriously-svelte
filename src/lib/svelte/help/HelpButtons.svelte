@@ -117,6 +117,7 @@
 	button {
 		height: 20px;
 		color: #b64b1d;
+		cursor: pointer;
 		border: 1px solid;
 		border-radius: 0.5em;
 	}

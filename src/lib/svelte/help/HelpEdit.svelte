@@ -6,7 +6,7 @@
 
 <div>
 	<div class='centered-container'>
-		<Widget thing={exemplar} origin={new Point(150, 5)}/>
+		<Widget relationship={exemplar} origin={new Point(150, 5)}/>
 	</div>
 	<br>
 	<br>

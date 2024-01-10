@@ -1,5 +1,5 @@
 <script lang='ts'>
-  export let color = black;
+  export let color = 'black';
 </script>
 
 <svg width='16' height='16' fill={color} viewBox='0 0 16 16'>

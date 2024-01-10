@@ -78,7 +78,7 @@
 			left = origin.x + delta - 2;
 			const titleWidth = thing.titleWidth;
 			width = titleWidth - 18 + ($dot_size * 2);
-			if (thing.showCluster) {
+			if (relationship.showCluster) {
 				radius = k.clusterHeight / 2;
 				const yPadding = radius - 12;
 				revealTop = radius - 17;
@@ -134,20 +134,22 @@
 		width: {width}px;
 		height: {height}px;
 		padding: {padding};
+		position: absolute;
 		z-index: {ZIndex.widgets};
 		border-radius: {radius}px;
 	'>
-	<div style='top:{revealTop}px;'>
+	<div class='dragDot' style='top:{revealTop}px;'>
 		<DragDot relationship={relationship}/>
 	</div>
-	<TitleEditor relationship={relationship} fontSize={$thing_fontSize}px fontFamily={$thing_fontFamily}/>
-	<div class='revealDot'
-		style='
-			top:{revealTop}px;
-			z-index: {ZIndex.dots};'>
+	<div class='titleEditor'>
+		<TitleEditor relationship={relationship} fontSize={$thing_fontSize}px fontFamily={$thing_fontFamily}/>
+	</div>
+	<div class='revealDot' style='top:{revealTop}px;'>
 		<RevealDot relationship={relationship}/>
 	</div>
 	{#if showingCluster}
-		<ToolsCluster thing={thing} relationship={relationship}/>
+		<div class='toolsCluster'>
+			<ToolsCluster relationship={relationship}/>
+		</div>
 	{/if}
 </div>

@@ -87,11 +87,9 @@ export default class Thing extends Orderable {
 	updateColorAttributes(relationship: Relationship) {
 		const borderStyle = relationship.isEditing ? 'dashed' : 'solid';
 		const border = borderStyle + ' 1px ';
-		const hover = border + relationship.revealColor(true);
-		const grab = border + relationship.revealColor(false);
+		this.grabAttributes = border + relationship.revealColor(false);
+		this.hoverAttributes = border + relationship.revealColor(true);
 		this.borderAttribute = border;
-		this.hoverAttributes = hover;
-		this.grabAttributes = grab;
 	}
 
 	ancestors_include(thing: Thing, visited: Array<string> = []): boolean {
