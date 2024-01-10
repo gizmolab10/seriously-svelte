@@ -101,7 +101,7 @@ export default class GraphEditor {
 	//		MOVE	  //
 	////////////////////
 
-	async relationship_toThing_redraw_remoteMoveRight(relationship: Relationship, RIGHT: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean, fromReveal: boolean = false) {
+	async relationship_toThing_redraw_remoteMoveRight(relationship: Relationship, RIGHT: boolean, SHIFT: boolean, OPTION: boolean = false, EXTREME: boolean = false, fromReveal: boolean = false) {
 		const thing = relationship.toThing;
 		if (thing) {
 			if (!OPTION) {

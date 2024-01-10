@@ -104,7 +104,7 @@
 			top = $id_toolsGrab == relationship.id ? 23 : -size / 2 + 2;
 			left = 1.5 - (size / 2); // offset from center?
 			path = svgPath.oval(size, false);
-			if (relationship.toThing?.parentRelationships?.length > 1) {
+			if (relationship.multipleParentRelationships?.length > 1) {
 				extra = svgPath.circle(size, size / 5);
 			}
 		}

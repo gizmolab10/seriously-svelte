@@ -64,6 +64,7 @@ export default class Relationship extends Orderable {
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	get childRelationships(): Array<Relationship> { return sort_byOrder(this.toThing?.childRelationships ?? []) as Array<Relationship>; }
 	get siblingRelationships(): Array<Relationship> { return sort_byOrder(this.fromThing?.childRelationships ?? []) as Array<Relationship>; }
+	get multipleParentRelationships(): Array<Relationship> { return this.toThing?.parentRelationships ?? []; }
 	get description(): string { return ' \"' + this.baseID + '\" ' + this.isRemotelyStored + ' ' + this.order + ' ' + this.id + ' '	+ dbDispatch.db.hierarchy.thing_getForID(this.idFrom)?.description + ' => ' + dbDispatch.db.hierarchy.thing_getForID(this.idTo)?.description; }
 
 	get isValid(): boolean {
@@ -147,27 +148,24 @@ export default class Relationship extends Orderable {
 	
 	expanded_setTo(expand: boolean) {
 		let mutated = false;
-		const relationship = this.hierarchy.relationship_getWhereIDEqualsTo(this.id);
-		if (relationship) {
-			expanded.update((array) => {
-				if (array) {
-					const index = array.indexOf(relationship.id);
-					if (expand) {
-						if (index == -1) {
-							array.push(relationship.id);	// only add if not already added
-							mutated = true;
-						}
-					} else if (index != -1) {					// only splice array when item is found
-						array.splice(index, 1);			// 2nd parameter means 'remove one item only'
+		expanded.update((array) => {
+			if (array) {
+				const index = array.indexOf(this.id);
+				if (expand) {
+					if (index == -1) {
+						array.push(this.id);		// only add if not already added
 						mutated = true;
 					}
+				} else if (index != -1) {			// only splice array when item is found
+					array.splice(index, 1);			// 2nd parameter means 'remove one item only'
+					mutated = true;
 				}
-				return array;
-			});
-			if (mutated) {			// avoid disruptive rebuild
-				persistLocal.writeToDBKey(PersistID.expanded, get(expanded));
-				signal_rebuild_fromHere();
 			}
+			return array;
+		});
+		if (mutated) {			// avoid disruptive rebuild
+			persistLocal.writeToDBKey(PersistID.expanded, get(expanded));
+			signal_rebuild_fromHere();
 		}
 	}
 
@@ -305,7 +303,7 @@ export default class Relationship extends Orderable {
 			if (SHIFT) {
 				newGrab = undefined;
 			}
-			// this.expand();
+			this.expand();
 		} else {
 			return;
 		}

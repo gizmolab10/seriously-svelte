@@ -127,7 +127,7 @@ export default class Hierarchy {
 					// let newGrab = grabbed.firstParent;
 					// const siblings = grabbed.siblings;
 					const siblings = grabbed.siblingRelationships;
-					let newGrab = grabbed.toThing?.parentRelationships[0];
+					let newGrab = grabbed.multipleParentRelationships[0];
 					const grandparent = grabbed.grandparent;
 					let index = siblings.indexOf(grabbed);
 					siblings.splice(index, 1);
