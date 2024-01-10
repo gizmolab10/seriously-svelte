@@ -62,7 +62,7 @@ export default class Hierarchy {
 		let here = this.relationship_getForID(get(id_here));
 		if (here == null) {
 			const grab = this.grabs.relationship_lastGrabbed;
-			here = grab?.fromThing?.parentRelationships[0] ?? this.root;
+			here = grab?.parentRelationships[0] ?? this.root;
 		}
 		here?.becomeHere();
 	}
@@ -127,7 +127,7 @@ export default class Hierarchy {
 					// let newGrab = grabbed.firstParent;
 					// const siblings = grabbed.siblings;
 					const siblings = grabbed.siblingRelationships;
-					let newGrab = grabbed.multipleParentRelationships[0];
+					let newGrab = grabbed.parentRelationships[0];
 					const grandparent = grabbed.grandparent;
 					let index = siblings.indexOf(grabbed);
 					siblings.splice(index, 1);

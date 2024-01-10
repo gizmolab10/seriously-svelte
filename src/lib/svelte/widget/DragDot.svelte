@@ -1,19 +1,19 @@
 <script>
 	import { k, Size, Point, debug, Thing, ZIndex, onMount, svgPath, onDestroy, AlteringParent } from "../../ts/common/GlobalImports";
 	import { Direction, dbDispatch, graphEditor, Relationship, handle_alteringParent } from "../../ts/common/GlobalImports";
-	import { dot_size, ids_grabbed, id_toolsGrab } from '../../ts/managers/State';
+	import { dot_size, ids_grabbed, id_showTools } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
 	export let relationship;
 	let tinyDotColor = relationship.toThing?.color;
 	let strokeColor = relationship.toThing?.color;
 	let fillColor = relationship.toThing?.color;
+	let canAlterParent = false;
 	let isHovering = true;
 	let isGrabbed = false;
-	let clickCount = 0;
+	let extraPath = null;
 	let handler = null;
-	let alter = false;
+	let clickCount = 0;
 	let button = null;
-	let extra = null;
 	let clickTimer;
 	let path = '';
 	let size = 0;
@@ -30,14 +30,11 @@
     onMount(() => {
 		updateColorsForHover(false);
         handler = handle_alteringParent((alteration) => {
-			const thing = relationship.toThing;
-			if (thing) {
-				const applyFlag = $id_toolsGrab && thing.canAlterParentOf_toolsGrab != null;
-				alter = applyFlag ? (alteration != null) : false;
-				extra = (relationship.siblingRelationships?.length < 2) ? null : svgPath.circle(size, size / 5);
-				updateColors();
-			}
-        })
+			const applyAlteration = $id_showTools && relationship.canAlterParentOf_showTools != null;
+			canAlterParent = applyAlteration ? (alteration != null) : false;
+			extraPath = (relationship.parentRelationships?.length < 2) ? null : svgPath.circle(size, size / 5);
+			updateColors();
+		})
     })
 
 	$: {
@@ -57,9 +54,9 @@
 	function updateColors() {
 		const thing = relationship.toThing;
 		if (thing) {
-			thing.updateColorAttributes(relationship);	// needed for revealColor
-			fillColor = debug.lines ? 'transparent' : relationship.revealColor(isHovering != alter);
-			tinyDotColor = relationship.revealColor(isHovering == alter);
+			thing.updateColorAttributes(relationship);	// needed for revealColor, below
+			fillColor = debug.lines ? 'transparent' : relationship.revealColor(isHovering != canAlterParent);
+			tinyDotColor = relationship.revealColor(isHovering == canAlterParent);
 			strokeColor = thing.color;
 		}
 	}
@@ -101,11 +98,11 @@
 	$: {
 		if ($dot_size > 0) {
 			size = $dot_size;
-			top = $id_toolsGrab == relationship.id ? 23 : -size / 2 + 2;
+			top = $id_showTools == relationship.id ? 23 : -size / 2 + 2;
 			left = 1.5 - (size / 2); // offset from center?
 			path = svgPath.oval(size, false);
-			if (relationship.multipleParentRelationships?.length > 1) {
-				extra = svgPath.circle(size, size / 5);
+			if (relationship.parentRelationships?.length > 1) {
+				extraPath = svgPath.circle(size, size / 5);
 			}
 		}
 	}
@@ -148,9 +145,9 @@
 		zIndex={ZIndex.dots}
 		size={Size.square(size)}
 	/>
-	{#if extra}
+	{#if extraPath}
 		<SVGD3
-			path={extra}
+			path={extraPath}
 			fill={tinyDotColor}
 			zIndex={ZIndex.dots}
 			stroke={tinyDotColor}

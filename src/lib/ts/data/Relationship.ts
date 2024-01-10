@@ -1,6 +1,6 @@
 import { k, get, Size, debug, Thing, DebugFlag, Orderable, dbDispatch, Predicate, PersistID, persistLocal, sort_byOrder, AlteringParent } from '../common/GlobalImports';
 import { signal_rebuild, signal_relayout, signal_rebuild_fromHere, signal_relayout_fromHere, orders_normalize_remoteMaybe } from '../common/GlobalImports';
-import { id_here, dot_size, row_height, id_editing, ids_grabbed, id_toolsGrab, line_stretch, expanded, altering_parent } from '../managers/State'
+import { id_here, dot_size, row_height, id_editing, ids_grabbed, id_showTools, line_stretch, expanded, altering_parent } from '../managers/State'
 import Airtable from 'airtable';
 
 export default class Relationship extends Orderable {
@@ -45,7 +45,7 @@ export default class Relationship extends Orderable {
 			}
 		});
 
-		id_toolsGrab.subscribe((idCluster: string | null) => {
+		id_showTools.subscribe((idCluster: string | null) => {
 			const shouldShow = (idCluster != null) && idCluster == this.id && get(id_here) != this.id;
 			if (this.showCluster != shouldShow) {
 				this.showCluster = shouldShow;
@@ -57,14 +57,15 @@ export default class Relationship extends Orderable {
 	get fields(): Airtable.FieldSet { return { predicate: [this.idPredicate], from: [this.idFrom], to: [this.idTo], order: this.order }; }
 
 	get hasChildren(): boolean { return this.childRelationships.length > 0; }
+	get hasMultipleParents(): boolean { return this.parentRelationships.length > 1; }
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
-	get isExpanded(): boolean { return this.doNotPersist || get(expanded)?.includes(this.id); }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
+	get isExpanded(): boolean { return this.doNotPersist || get(expanded)?.includes(this.id); }
 	get singleRowHeight(): number { return this.showCluster ? k.clusterHeight : get(row_height); }
+	get parentRelationships(): Array<Relationship> { return this.toThing?.parentRelationships ?? []; }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	get childRelationships(): Array<Relationship> { return sort_byOrder(this.toThing?.childRelationships ?? []) as Array<Relationship>; }
 	get siblingRelationships(): Array<Relationship> { return sort_byOrder(this.fromThing?.childRelationships ?? []) as Array<Relationship>; }
-	get multipleParentRelationships(): Array<Relationship> { return this.toThing?.parentRelationships ?? []; }
 	get description(): string { return ' \"' + this.baseID + '\" ' + this.isRemotelyStored + ' ' + this.order + ' ' + this.id + ' '	+ dbDispatch.db.hierarchy.thing_getForID(this.idFrom)?.description + ' => ' + dbDispatch.db.hierarchy.thing_getForID(this.idTo)?.description; }
 
 	get isValid(): boolean {
@@ -133,10 +134,10 @@ export default class Relationship extends Orderable {
 		const thing = this.toThing;
 		const alteration = get(altering_parent);
 		if (thing) {
-			const other = thing.canAlterParentOf_toolsGrab;
+			const other = this.canAlterParentOf_showTools;
 			if (other) {
 				altering_parent.set(null);
-				id_toolsGrab.set(null);
+				id_showTools.set(null);
 				switch (alteration) {
 					case AlteringParent.deleting: await other.parent_forget_remoteRemove(thing); break;
 					case AlteringParent.adding: await thing.thing_remember_remoteAddAsChild(other); break;
@@ -144,6 +145,31 @@ export default class Relationship extends Orderable {
 				signal_rebuild_fromHere();
 			}
 		}
+	}
+
+	get canAlterParentOf_showTools(): Relationship | null {
+		const relationship_showTools = dbDispatch.db.hierarchy.relationship_getForID(get(id_showTools));
+		if (relationship_showTools && relationship_showTools != this)  {
+			const alteration = get(altering_parent);
+			if ((alteration == AlteringParent.adding && !this.ancestors_include(relationship_showTools)) ||
+				(alteration == AlteringParent.deleting && relationship_showTools.toThing?.parentRelationships.map(r => r.fromThing).includes(this.toThing))) {
+				return relationship_showTools;
+			}
+		}
+		return null;
+	}
+
+	ancestors_include(relationship: Relationship, visited: Array<string> = []): boolean {
+		if (visited.length == 0 || !visited.includes(this.id)) {
+			if (this.parentRelationships.length > 0) {
+				for (let parentRelationship of this.parentRelationships) {
+					if (parentRelationship.id == relationship.id || parentRelationship.ancestors_include(relationship, [...visited, this.id])) {
+						return true;
+					}
+				};
+			}
+		}
+		return false;
 	}
 	
 	expanded_setTo(expand: boolean) {
@@ -203,7 +229,7 @@ export default class Relationship extends Orderable {
 		if (thing && thing.hasChildren) {
 			id_here.set(this.id);
 			this.expand();
-			id_toolsGrab.set(null);
+			id_showTools.set(null);
 			persistLocal.writeToDBKey(PersistID.here, this.id)
 		};
 	}

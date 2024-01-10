@@ -61,7 +61,7 @@
 	}
 	
 	function layoutChildren() {
-		if (relationship && thing && !thing.ancestors_include(thing)) {
+		if (relationship) {
 			const delta = new Point(19.5, -2.5);
 			const height = relationship.visibleProgeny_halfHeight;
 			const childOrigin = origin.offsetByY(height);

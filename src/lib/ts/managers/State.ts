@@ -4,7 +4,7 @@ let interval : NodeJS.Timeout | null = null;
 
 export const id_editingStopped	= writable<string | null>();
 export const altering_parent 	= writable<string | null>();
-export const id_toolsGrab		= writable<string | null>();
+export const id_showTools		= writable<string | null>();
 export const id_popupView		= writable<string | null>();
 export const db_loadTime 		= writable<string | null>();
 export const id_editing			= writable<string | null>();

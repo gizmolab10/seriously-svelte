@@ -4,7 +4,7 @@
 	import SVGD3 from './SVGD3.svelte';
 	export let extraColor = k.backgroundColor;
 	export let fillColor_closure;
-	export let extra = null;
+	export let extraPath = null;
 	export let strokeColor;
 	export let direction;
 	export let onClick;
@@ -54,9 +54,9 @@
 		zIndex={ZIndex.dots}
 		size={Size.square(size)}
 	/>
-	{#if extra}
+	{#if extraPath}
 		<SVGD3
-			path={extra}
+			path={extraPath}
 			fill={extraColor}
 			stroke={extraColor}
 			zIndex={ZIndex.dots}

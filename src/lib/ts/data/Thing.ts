@@ -1,6 +1,6 @@
 import { sort_byOrder, AlteringParent, SeriouslyRange, signal_rebuild, signal_relayout, signal_rebuild_fromHere, signal_relayout_fromHere, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { k, get, Size, debug, Predicate, TraitType, PersistID, DebugFlag, Orderable, dbDispatch, getWidthOf, Relationship, persistLocal, CreationOptions } from '../common/GlobalImports';
-import { id_here, dot_size, expanded, altering_parent, row_height, id_editing, ids_grabbed, line_stretch, id_toolsGrab } from '../managers/State';
+import { id_here, dot_size, expanded, altering_parent, row_height, id_editing, ids_grabbed, line_stretch, id_showTools } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Orderable {
@@ -44,26 +44,10 @@ export default class Thing extends Orderable {
 	get lastChild():						 Thing { return this.children.slice(-1)[0]; }	// not alter children
 	get firstChild():						 Thing { return this.children[0]; }
 	get firstParent():						 Thing { return this.parents[0]; }
+	get titleWidth():						number { return getWidthOf(this.title) }
 	get description():						string { return this.id + ' \"' + this.title + '\"'; }
 	get idForChildren():					string { return this.isBulkAlias ? this.bulkRootID : this.id; }
-	get titleWidth():						number { return getWidthOf(this.title) }
-
-	get parentRelationshipID(): string { // WRONG (TODO ???)
-		return this.hierarchy.relationship_getWhereIDEqualsTo(this.id)?.id ?? '';
-	}
-
-	get canAlterParentOf_toolsGrab(): Thing | null {
-		const id_showsTools = get(id_toolsGrab);
-		const showsTools = dbDispatch.db.hierarchy.thing_getForID(id_showsTools);
-		if (id_showsTools && showsTools && showsTools != this)  {
-			const alteration = get(altering_parent);
-			if ((alteration == AlteringParent.adding && !this.ancestors_include(showsTools)) ||
-				(alteration == AlteringParent.deleting && showsTools.parentIDs.includes(this.id))) {
-				return showsTools;
-			}
-		}
-		return null;
-	}
+	get parentRelationshipID():				string { return this.hierarchy.relationship_getWhereIDEqualsTo(this.id)?.id ?? ''; }
 
 	get hasGrandChildren(): boolean {
 		if (this.hasChildren) {
@@ -90,20 +74,6 @@ export default class Thing extends Orderable {
 		this.grabAttributes = border + relationship.revealColor(false);
 		this.hoverAttributes = border + relationship.revealColor(true);
 		this.borderAttribute = border;
-	}
-
-	ancestors_include(thing: Thing, visited: Array<string> = []): boolean {
-		if (visited.length == 0 || !visited.includes(this.id)) {
-			if (this.parents.length > 0) {
-				for (let parent of this.parents) {
-					if (parent.id == thing.id || parent.ancestors_include(thing, [...visited, this.id])) {
-						console.log(thing.title, '[is an ancestor of]', this.title);
-						return true;
-					}
-				};
-			}
-		}
-		return false;
 	}
 
 	ancestors(thresholdWidth: number): Array<Thing> {
@@ -162,20 +132,6 @@ export default class Thing extends Orderable {
 		return this.hierarchy.relationship_getForIDs_predicateFromAndTo(Predicate.idIsAParentOf, parent.id, this.id);
 	}
 
-	async parent_alterMaybe() {
-		const alteration = get(altering_parent);
-		const other = this.canAlterParentOf_toolsGrab;
-		if (other) {
-			altering_parent.set(null);
-			id_toolsGrab.set(null);
-			switch (alteration) {
-				case AlteringParent.deleting: await other.parent_forget_remoteRemove(this); break;
-				case AlteringParent.adding: await this.thing_remember_remoteAddAsChild(other); break;
-			}
-			signal_rebuild_fromHere();
-		}
-	}
-
 	thing_isInDifferentBulkThan(other: Thing) {
 		return this.baseID != other.baseID || (other.isBulkAlias && !this.isBulkAlias && this.baseID != other.title);
 	}
@@ -210,12 +166,12 @@ export default class Thing extends Orderable {
 	}
 
 	afterAdding(startEdit: boolean = true) {
-		const relationship = this.parentRelationships[0];
+		const parentRelationship = this.parentRelationships[0];
 		signal_rebuild_fromHere();
-		relationship.grabOnly();
+		parentRelationship.grabOnly();
 		if (startEdit) {
 			setTimeout(() => {
-				relationship.startEdit();
+				parentRelationship.startEdit();
 			}, 200);
 		}
 

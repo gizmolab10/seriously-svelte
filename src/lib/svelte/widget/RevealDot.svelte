@@ -1,7 +1,7 @@
 <script>
 	import { Direction, onDestroy, dbDispatch, graphEditor, signal_rebuild_fromHere } from "../../ts/common/GlobalImports";
 	import { k, get, Size, Thing, Point, debug, ZIndex, onMount, svgPath } from "../../ts/common/GlobalImports";
-	import { expanded, dot_size, altering_parent, ids_grabbed, id_toolsGrab } from '../../ts/managers/State';
+	import { expanded, dot_size, altering_parent, ids_grabbed, id_showTools } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
 	export let relationship = Relationship;
 	let strokeColor = relationship.toThing?.color;
@@ -76,7 +76,7 @@
 
 	function updatePath() {
 		if (thing) {
-			if ((!thing.hasChildren && !thing.isBulkAlias) || ($id_toolsGrab == relationship.id)) {
+			if ((!thing.hasChildren && !thing.isBulkAlias) || ($id_showTools == relationship.id)) {
 				path = svgPath.circle($dot_size, $dot_size / 2);
 			} else {
 				const direction = (relationship.isExpanded && thing.hasChildren) ? Direction.left : Direction.right;
@@ -91,12 +91,12 @@
 	function handleClick(event) {
 		if (thing) {
 			setIsHovering_updateColors(false);
-			if ($id_toolsGrab == relationship.id) {
-				$id_toolsGrab = null;
+			if ($id_showTools == relationship.id) {
+				$id_showTools = null;
 				$altering_parent = null;
 			} else if (!thing.hasChildren) {
 				relationship.grabOnly();
-				$id_toolsGrab = relationship.id;
+				$id_showTools = relationship.id;
 			} else {
 				graphEditor.relationship_toThing_redraw_remoteMoveRight(relationship, !relationship.isExpanded, true);
 				return;
@@ -115,11 +115,11 @@
 		clickTimer = setTimeout(() => {
 			clearClicks();
 			if (thing) {
-				if ($id_toolsGrab == thing.id) {
-					$id_toolsGrab = null;
+				if ($id_showTools == thing.id) {
+					$id_showTools = null;
 				} else {
 					thing.grabOnly()
-					$id_toolsGrab = thing.id;
+					$id_showTools = thing.id;
 				}
 				signal_rebuild_fromHere();
 			}

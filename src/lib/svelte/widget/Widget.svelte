@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, Thing, Point, debug, ZIndex, Wrapper, onMount, onDestroy, debugReact, handle_relayout, Relationship } from '../../ts/common/GlobalImports';
-	import { id_here, dot_size, id_editing, row_height, ids_grabbed, thing_fontSize, thing_fontFamily, id_toolsGrab} from '../../ts/managers/State';
+	import { id_here, dot_size, id_editing, row_height, ids_grabbed, thing_fontSize, thing_fontFamily, id_showTools} from '../../ts/managers/State';
 	import ToolsCluster from './ToolsCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
 	import RevealDot from './RevealDot.svelte';
@@ -97,7 +97,7 @@
 		const id = relationship?.id;
 		if (id) {
 			const shouldEdit = (id == $id_editing);
-			const shouldShowCluster = $id_toolsGrab == id; // && $id_here != id;
+			const shouldShowCluster = $id_showTools == id; // && $id_here != id;
 			const shouldGrab = $ids_grabbed?.includes(id) || thing?.isExemplar ?? false;
 			const change = (isEditing != shouldEdit || isGrabbed != shouldGrab || showingCluster != shouldShowCluster);
 			if (change) {

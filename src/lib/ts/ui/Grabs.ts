@@ -1,5 +1,5 @@
 import { get, Hierarchy, Relationship, sort_byOrder } from "../common/GlobalImports";
-import { ids_grabbed, id_toolsGrab } from '../managers/State';
+import { ids_grabbed, id_showTools } from '../managers/State';
 
 export default class Grabs {
 	hierarchy: Hierarchy;
@@ -24,12 +24,12 @@ export default class Grabs {
 	toggleGrab = (relationship: Relationship) => { if (relationship.isGrabbed) { this.ungrab(relationship); } else { this.grab(relationship); } }
 
 	relationship_toggleToolsGrab(relationship: Relationship) {
-		const id = get(id_toolsGrab);
+		const id = get(id_showTools);
 		if (id != null) {
 			if (id == relationship.id) {
-				id_toolsGrab.set(null);
+				id_showTools.set(null);
 			} else {
-				id_toolsGrab.set(relationship.id);
+				id_showTools.set(relationship.id);
 			}
 		}
 	}

@@ -1,6 +1,6 @@
 <script lang='ts'>
     import { k, Size, Point, ZIndex, onMount, svgPath, Direction, dbDispatch, graphEditor, Relationship, AlteringParent } from '../../ts/common/GlobalImports';
-    import { dot_size, altering_parent, row_height, id_toolsGrab } from '../../ts/managers/State';
+    import { dot_size, altering_parent, row_height, id_showTools } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TriangleButton from '../svg/TriangleButton.svelte';
 	import Trash from '../svg/Trash.svelte';
@@ -39,7 +39,7 @@
                 case 'delete': await dbDispatch.db.hierarchy.things_redraw_remoteTraverseDelete([thing]); break;
                 default: break;
             }
-            $id_toolsGrab = null;
+            $id_showTools = null;
         }
     }
 
@@ -65,7 +65,7 @@
 	fillColor_closure={() => { return ($altering_parent == AlteringParent.adding) ? thing?.color : k.backgroundColor }}
     extraColor = {($altering_parent == AlteringParent.adding) ? k.backgroundColor : thing?.color}
 	onClick={() => handleClick('addParent')}
-    extra={svgPath.tCross(diameter, 2)}
+    extraPath={svgPath.tCross(diameter, 2)}
 	direction={Direction.left}
 	center={center_addParent}
 	strokeColor={color}
@@ -76,7 +76,7 @@
         fillColor_closure={() => { return ($altering_parent == AlteringParent.deleting) ? thing?.color : k.backgroundColor }}
         extraColor = {($altering_parent == AlteringParent.deleting) ? k.backgroundColor : thing?.color}
         onClick={() => handleClick('deleteParent')}
-        extra={svgPath.dash(diameter, 2)}
+        extraPath={svgPath.dash(diameter, 2)}
         center={center_deleteParent}
         direction={Direction.left}
         strokeColor={color}
@@ -86,7 +86,7 @@
 <TriangleButton
 	fillColor_closure={() => { return k.backgroundColor; }}
 	onClick={() => handleClick('addChild')}
-    extra={svgPath.tCross(diameter, 2)}
+    extraPath={svgPath.tCross(diameter, 2)}
 	direction={Direction.right}
     extraColor = {thing?.color}
 	center={center_addChild}

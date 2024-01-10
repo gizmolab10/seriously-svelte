@@ -1,5 +1,5 @@
 import { k, get, Thing, Hierarchy, dbDispatch, signal_rebuild_fromHere, Relationship } from '../common/GlobalImports';
-import { id_toolsGrab } from '../managers/State';
+import { id_showTools } from '../managers/State';
 
 //////////////////////////////////////
 //									//
@@ -152,8 +152,8 @@ export default class GraphEditor {
 	latestGrab_toggleToolsCluster() {
 		const id = this.hierarchy.grabs.latestGrab(true)?.id;
 		if (id) {
-			const clear = (id == get(id_toolsGrab));
-			id_toolsGrab.set(clear ? null : id);
+			const clear = (id == get(id_showTools));
+			id_showTools.set(clear ? null : id);
 			signal_rebuild_fromHere();
 		}
 
