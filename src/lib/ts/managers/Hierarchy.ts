@@ -188,7 +188,7 @@ export default class Hierarchy {
 			this.knownTs_byTrait[thing.trait] = things;
 			this.knownTs.push(thing);
 			if (thing.trait == TraitType.root && (thing.baseID == '' || thing.baseID == this.db.baseID)) {
-				this.root = Relationship.createRoot(thing.id);
+				this.root = this.relationship_remember_runtimeOnlyCreate('root', thing.id);
 			}
 		}
 	}
@@ -328,11 +328,13 @@ export default class Hierarchy {
 	async relationships_removeHavingNullReferences() {
 		const array = Array<Relationship>();
 		for (const relationship of this.knownRs) {
-			const thingTo = this.thing_getForID(relationship.idTo);
-			const thingFrom = this.thing_getForID(relationship.idFrom);
-			if (!thingTo || !thingFrom) {
-				array.push(relationship);
-				await this.db.relationship_remoteDelete(relationship);
+			if (!relationship.doNotPersist) { // allow some abnormal [non-persisted] relationships
+				const thingTo = this.thing_getForID(relationship.idTo);
+				const thingFrom = this.thing_getForID(relationship.idFrom);
+				if (!thingTo || !thingFrom) {
+					array.push(relationship);
+					await this.db.relationship_remoteDelete(relationship);
+				}
 			}
 		}
 		while (array.length > 0) {
@@ -432,19 +434,6 @@ export default class Hierarchy {
 	//			RELATIONSHIP		   //
 	/////////////////////////////////////
 
-	relationship_remember(relationship: Relationship) {
-		if (!this.knownR_byID[relationship.id]) {
-			if (relationship.baseID != this.db.baseID) {
-				debug.log_error('RELATIONSHIP ' + relationship.baseID + ' ' + this.thing_getForID(relationship.idFrom)?.description + ' => ' + this.thing_getForID(relationship.idTo)?.description);
-			}
-			this.knownRs.push(relationship);
-			this.knownR_byID[relationship.id] = relationship;
-			this.relationship_rememberByKnown(this.knownRs_byIDTo, relationship.idTo, relationship);
-			this.relationship_rememberByKnown(this.knownRs_byIDFrom, relationship.idFrom, relationship);
-			this.relationship_rememberByKnown(this.knownRs_byIDPredicate, relationship.idPredicate, relationship);
-		}
-	}
-
 	relationship_forget(relationship: Relationship) {
 		remove<Relationship>(this.knownRs, relationship);
 		delete this.knownR_byID[relationship.id];
@@ -455,8 +444,24 @@ export default class Hierarchy {
 
 	relationship_forgetByKnown(known: KnownRelationships, idRelationship: string, relationship: Relationship) {
 		let array = known[idRelationship] ?? [];
-		remove<Relationship>(array, relationship)
+		remove<Relationship>(array, relationship);
 		known[idRelationship] = array;
+	}
+
+	relationship_remember(relationship: Relationship) {
+		if (!this.knownR_byID[relationship.id]) {
+			if (relationship.baseID != this.db.baseID) {
+				debug.log_error('RELATIONSHIP ' + relationship.baseID + ' ' + this.thing_getForID(relationship.idFrom)?.description + ' => ' + this.thing_getForID(relationship.idTo)?.description);
+			}
+			if (relationship.doNotPersist) {
+				console.log('flighty');
+			}
+			this.knownRs.push(relationship);
+			this.knownR_byID[relationship.id] = relationship;
+			this.relationship_rememberByKnown(this.knownRs_byIDTo, relationship.idTo, relationship);
+			this.relationship_rememberByKnown(this.knownRs_byIDFrom, relationship.idFrom, relationship);
+			this.relationship_rememberByKnown(this.knownRs_byIDPredicate, relationship.idPredicate, relationship);
+		}
 	}
 
 	relationship_rememberByKnown(known: KnownRelationships, idRelationship: string, relationship: Relationship) {
@@ -474,6 +479,13 @@ export default class Hierarchy {
 			relationship = new Relationship(baseID, idRelationship, idPredicate, idFrom, idTo, order, creationOptions != CreationOptions.none);
 			this.relationship_remember(relationship);
 		}
+		return relationship;
+	}
+
+	relationship_remember_runtimeOnlyCreate(id: string, idTo: string) {
+		let relationship = new Relationship(this.db.baseID, id, Predicate.idIsAParentOf, id, idTo, 0, false);
+		relationship.doNotPersist = true;
+		this.relationship_remember(relationship);
 		return relationship;
 	}
 

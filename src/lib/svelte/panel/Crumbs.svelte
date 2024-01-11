@@ -47,7 +47,7 @@
 						fillColor = {ancestor.fromThing.color}
 						position = 'absolute'
 					/>
-					&nbsp;{#if ancestor.hasMultipleParents}-{/if}&nbsp;
+					&nbsp;{#if ancestor.hasMultipleParents}-{/if}&nbsp; <!-- needed for separation gap -->
 				</span>
 			{/if}
 			<Crumb relationship={ancestor}/>

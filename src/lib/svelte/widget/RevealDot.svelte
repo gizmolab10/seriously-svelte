@@ -114,12 +114,12 @@
 		clearClicks();
 		clickTimer = setTimeout(() => {
 			clearClicks();
-			if (thing) {
-				if ($id_showTools == thing.id) {
+			if (relationship) {
+				if ($id_showTools == relationship.id) {
 					$id_showTools = null;
 				} else {
-					thing.grabOnly()
-					$id_showTools = thing.id;
+					relationship.grabOnly()
+					$id_showTools = relationship.id;
 				}
 				signal_rebuild_fromHere();
 			}

@@ -1,4 +1,4 @@
-import { k, get, Size, debug, Thing, DebugFlag, Orderable, dbDispatch, Predicate, PersistID, persistLocal, sort_byOrder, AlteringParent } from '../common/GlobalImports';
+import { k, get, Size, debug, Thing, DebugFlag, Orderable, dbDispatch, Predicate, PersistID, persistLocal, sort_byOrder, AlteringParent, graphEditor } from '../common/GlobalImports';
 import { signal_rebuild, signal_relayout, signal_rebuild_fromHere, signal_relayout_fromHere, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { id_here, dot_size, row_height, id_editing, ids_grabbed, id_showTools, line_stretch, expanded, altering_parent } from '../managers/State'
 import Airtable from 'airtable';
@@ -15,8 +15,6 @@ export default class Relationship extends Orderable {
 	idFrom: string;
 	idTo: string;
 
-	static createRoot(idTo: string) { return new Relationship(dbDispatch.db.baseID, 'root', Predicate.idIsAParentOf, 'nothing', idTo, 0, false); }
-
 	constructor(baseID: string, id: string | null, idPredicate: string, idFrom: string, idTo: string, order = 0, isRemotelyStored: boolean) {
 		super(baseID, order, id, isRemotelyStored);
 		this.idTo = idTo;							// idTo is child
@@ -25,10 +23,6 @@ export default class Relationship extends Orderable {
 		this.db_type = dbDispatch.db.db_type;
 		this.toThing = dbDispatch.db.hierarchy.thing_getForID(idTo);
 		this.fromThing = dbDispatch.db.hierarchy.thing_getForID(idFrom);
-
-		if (['root', 'exemplar'].includes(this.id)) {
-			this.doNotPersist == true;
-		}
 
 		ids_grabbed.subscribe((idsGrab: string[]) => {
 			const isGrabbed = idsGrab.includes(this.id);
@@ -131,19 +125,16 @@ export default class Relationship extends Orderable {
 	}
 
 	async parent_alterMaybe() {
-		const thing = this.toThing;
 		const alteration = get(altering_parent);
-		if (thing) {
-			const other = this.canAlterParentOf_showTools;
-			if (other) {
-				altering_parent.set(null);
-				id_showTools.set(null);
-				switch (alteration) {
-					case AlteringParent.deleting: await other.parent_forget_remoteRemove(thing); break;
-					case AlteringParent.adding: await thing.thing_remember_remoteAddAsChild(other); break;
-				}
-				signal_rebuild_fromHere();
+		const relationship_showingTools = this.canAlterParentOf_showTools;
+		if (relationship_showingTools) {
+			altering_parent.set(null);
+			id_showTools.set(null);
+			switch (alteration) {
+				case AlteringParent.deleting: await relationship_showingTools.toThing?.relationship_forget_remoteRemove(this); break;
+				case AlteringParent.adding: await this.toThing?.thing_remember_remoteAddAsChild(relationship_showingTools.toThing); break;
 			}
+			signal_rebuild_fromHere();
 		}
 	}
 
@@ -270,6 +261,15 @@ export default class Relationship extends Orderable {
 			width += progenyWidth + get(line_stretch) + get(dot_size) * (isFirst ? 2 : 1);
 		}
 		return width;
+	}
+
+	async thing_edit_remoteAddChildTo() {
+		const parent = this.fromThing;
+		if (parent) {
+			const child = await this.hierarchy.thing_remember_runtimeCopy(this.baseID, parent);
+			this.expand();
+			await graphEditor.thing_edit_remoteAddAsChild(child, parent);
+		}
 	}
 
 	redraw_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {

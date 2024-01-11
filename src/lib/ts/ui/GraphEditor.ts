@@ -30,9 +30,9 @@ export default class GraphEditor {
 				if (grab && k.allowTitleEditing) {
 					switch (key) {
 						case 'd':		await this.thing_edit_remoteDuplicate(grab); break;
-						case ' ':		await this.thing_edit_remoteAddChildTo(grab); break;
+						case ' ':		await grab.thing_edit_remoteAddChildTo(); break;
 						case '-':		if (!COMMAND) { await this.thing_edit_remoteAddLine(grab); } break;
-						case 'tab':		await this.thing_edit_remoteAddChildTo(grab.firstParent); break; // Title editor also makes this call
+						case 'tab':		await grab.parentRelationships[0].thing_edit_remoteAddChildTo(); break; // Title editor also makes this call
 						case 'enter':	grab.startEdit(); break;
 					}
 				}
@@ -61,12 +61,6 @@ export default class GraphEditor {
 	//		ADD		//
 	//////////////////
 
-	async thing_edit_remoteAddChildTo(parent: Thing) {
-		const child = await this.hierarchy.thing_remember_runtimeCopy(parent.baseID, parent);
-		parent.expand();
-		await this.thing_edit_remoteAddAsChild(child, parent);
-	}
-
 	async thing_edit_remoteDuplicate(thing: Thing) {
 		const h = this.hierarchy;
 		const sibling = await h.thing_remember_runtimeCopy(thing.baseID, thing);
@@ -82,8 +76,8 @@ export default class GraphEditor {
 	}
 
 	async thing_edit_remoteAddAsChild(child: Thing, parent: Thing, startEdit: boolean = true) {
-		await parent.thing_remember_remoteAddAsChild(child);
-		parent.expand();
+		const relationship = await parent.thing_remember_remoteAddAsChild(child);
+		relationship.expand();
 		child.afterAdding(startEdit);
 	}
 
@@ -140,9 +134,9 @@ export default class GraphEditor {
 				h.relationships_refreshKnowns();		// so children and parent will see the newly relocated things
 				h.root?.order_normalizeRecursive_remoteMaybe(true);
 				thing.parentRelationships[0].grabOnly();
-				newParent.expand();
+				relationship?.expand();
 				if (!newParent.isVisible) {
-					newParent.becomeHere();
+					relationship?.becomeHere();
 				}
 			}
 			signal_rebuild_fromHere();					// so Children component will update

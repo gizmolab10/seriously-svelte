@@ -35,7 +35,7 @@
             switch (id) {
                 case 'addParent': toggleAlteration(AlteringParent.adding); return;
                 case 'deleteParent': toggleAlteration(AlteringParent.deleting); return;
-                case 'addChild': await graphEditor.thing_edit_remoteAddChildTo(thing); break;
+                case 'addChild': await relationship.thing_edit_remoteAddChildTo(); break;
                 case 'delete': await dbDispatch.db.hierarchy.things_redraw_remoteTraverseDelete([thing]); break;
                 default: break;
             }

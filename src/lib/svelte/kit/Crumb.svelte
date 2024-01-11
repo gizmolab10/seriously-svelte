@@ -2,10 +2,13 @@
 	import { k, Thing, onMount, dbDispatch, Relationship } from '../../ts/common/GlobalImports';
 	import { id_here } from '../../ts/managers/State';
 	export let relationship = Relationship;
-	let thing = Thing;
 	let colorStyles = '';
+	let thing = Thing;
 
-	onMount( () => { thing = relationship.toThing; updateColors(); });
+	onMount( () => {
+		thing = relationship.toThing;
+		updateColors();
+	});
 
 	function updateColors() {
 		const isHere = thing.id === $id_here;

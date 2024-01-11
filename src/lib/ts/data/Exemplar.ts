@@ -14,7 +14,8 @@ class Exemplar extends Relationship {
 
 	constructor() {
 		const thing = new ExemplaryThing();
-		super(dbDispatch.db.baseID, Datum.newID, Predicate.idIsAParentOf, 'exemplar', thing.id, 0, false );
+		super(dbDispatch.db.baseID, 'exemplar', Predicate.idIsAParentOf, 'exemplar', thing.id, 0, false );
+		this.doNotPersist = true;
 	}
 
 	get hasChildren(): boolean { return true; }

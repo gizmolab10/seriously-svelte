@@ -155,13 +155,26 @@ export default class Thing extends Orderable {
 		}
 	}
 
-	async parent_forget_remoteRemove(parent: Thing) {
-		const h = dbDispatch.db.hierarchy;
-		const relationship = h.relationships_getByIDPredicateFromAndTo(Predicate.idIsAParentOf, parent.id, this.id);
-		if (relationship && this.parents.length > 1) {
-			h.relationship_forget(relationship);
-			parent.order_normalizeRecursive_remoteMaybe(true);
-			await dbDispatch.db.relationship_remoteDelete(relationship);
+	order_normalizeRecursive_remoteMaybe(remoteWrite: boolean) {
+		const childRelationships = sort_byOrder(this.childRelationships ?? []) as Array<Relationship>;
+		if (childRelationships && childRelationships.length > 1) {
+			orders_normalize_remoteMaybe(childRelationships, remoteWrite);
+			for (const childRelationship of childRelationships) {
+				childRelationship.order_normalizeRecursive_remoteMaybe(remoteWrite);
+			}
+		}
+	}
+
+	async relationship_forget_remoteRemove(relationship: Relationship | null) {
+		if (relationship) {
+			for (const parentRelationship of this.parentRelationships) {
+				if (parentRelationship.idFrom == relationship.idTo) {
+					const db = dbDispatch.db;
+					db.hierarchy.relationship_forget(parentRelationship);
+					parentRelationship.fromThing?.order_normalizeRecursive_remoteMaybe(true);
+					await db.relationship_remoteDelete(parentRelationship);
+				}
+			}
 		}
 	}
 
@@ -174,20 +187,21 @@ export default class Thing extends Orderable {
 				parentRelationship.startEdit();
 			}, 200);
 		}
-
 	}
 
-	async thing_remember_remoteAddAsChild(child: Thing): Promise<any> {
-		const changingBulk = this.isBulkAlias || child.baseID != dbDispatch.db.baseID;
-		const baseID = changingBulk ? child.baseID : this.baseID;
-		const idPredicateIsAParentOf = Predicate.idIsAParentOf;
-		const parentID = this.idForChildren;
-		if (!child.isRemotelyStored) {	
-			await dbDispatch.db.thing_remember_remoteCreate(child);			// for everything below, need to await child.id fetched from dbDispatch
+	async thing_remember_remoteAddAsChild(child: Thing | null): Promise<any> {
+		if (child) {
+			const changingBulk = this.isBulkAlias || child.baseID != dbDispatch.db.baseID;
+			const baseID = changingBulk ? child.baseID : this.baseID;
+			const idPredicateIsAParentOf = Predicate.idIsAParentOf;
+			const parentID = this.idForChildren;
+			if (!child.isRemotelyStored) {	
+				await dbDispatch.db.thing_remember_remoteCreate(child);			// for everything below, need to await child.id fetched from dbDispatch
+			}
+			const relationship = await dbDispatch.db.hierarchy.relationship_remember_remoteCreateUnique(baseID, null, idPredicateIsAParentOf, parentID, child.id, child.order, CreationOptions.getRemoteID)
+			await orders_normalize_remoteMaybe(this.children);		// write new order values for relationships
+			return relationship;
 		}
-		const relationship = await dbDispatch.db.hierarchy.relationship_remember_remoteCreateUnique(baseID, null, idPredicateIsAParentOf, parentID, child.id, child.order, CreationOptions.getRemoteID)
-		await orders_normalize_remoteMaybe(this.children);		// write new order values for relationships
-		return relationship;
 	}
 
 }

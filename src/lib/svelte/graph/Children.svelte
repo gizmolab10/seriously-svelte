@@ -13,24 +13,24 @@
 	let center = new Point();
 	let childRelationships;
 	let childMapArray = [];
-	let thing;
 
 	onDestroy( () => { signalHandler.disconnect(); });
 	
 	onMount( () => {
 		debugReact.log_mount(`CHILDREN ${relationship.description}`);
-		thing = relationship.toThing;
 		childRelationships = relationship.childRelationships;
 		layoutChildren();
 	});
 	
 	const signalHandler = handle_relayout((idRelationship) => {
-		if (!idRelationship || idRelationship == relationship.id || thing.childrenIDs_anyMissingFromIDsOf(children)) {
+		const thing = relationship.toThing;
+		const children = thing?.children;
+		if (!idRelationship || idRelationship == relationship.id || thing?.childrenIDs_anyMissingFromIDsOf(children)) {
 			const now = new Date().getTime();
 			if (now - prior > 100) {
 				prior = now;
 				setTimeout(async () => { // delay until all other handlers for this signal are done TODO: WHY?
-					await orders_normalize_remoteMaybe(thing.children);
+					await orders_normalize_remoteMaybe(children);
 					debugReact.log_layout(`CHILDREN signal ${thing.description}`);
 					layoutChildren();
 					if (idRelationship) { // only recurse if starting at a specific id
