@@ -163,7 +163,7 @@
 				<Circle radius={10} center={origin_ofFirstReveal} color={here.color} thickness=1/>
 			{/if}
 			<FocusRevealDot here={here} center={origin_ofFirstReveal.offsetBy(new Point(-12, -11))}/>
-			<Children thing={here} origin={origin_ofChildren}/>
+			<Children thing={here} ancestralString={$id_here} origin={origin_ofChildren}/>
 		</div>
 	</div>
 {/if}
