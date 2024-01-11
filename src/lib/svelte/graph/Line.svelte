@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, Rect, Size, Point, debug, onMount, ZIndex, SVGType, svgPath, Wrapper, debugReact, Relationship, LineCurveType } from '../../ts/common/GlobalImports';
+	import { k, Rect, Size, Point, debug, onMount, ZIndex, SVGType, svgPath, Wrapper, debugReact, ThingWrapper, Relationship, LineCurveType } from '../../ts/common/GlobalImports';
 	import { dot_size } from '../../ts/managers/State';
 	import Circle from '../kit/Circle.svelte';
 	import Box from '../kit/Box.svelte';
@@ -21,7 +21,7 @@
 
 	onMount(() => {
 		thing = relationship.toThing;
-		wrapper = new Wrapper(this);
+		wrapper = new Wrapper(this as ThingWrapper);
 	})
 
 	$: {

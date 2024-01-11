@@ -30,12 +30,10 @@ export default class Thing extends Orderable {
 	get fields():				 Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get parentRelationships(): Array<Relationship> { return this.hierarchy.relationships_getByIDPredicateToAndID(Predicate.idIsAParentOf, true, this.idForChildren); }
 	get childRelationships():  Array<Relationship> { return this.hierarchy.relationships_getByIDPredicateToAndID(Predicate.idIsAParentOf, false, this.idForChildren); }
-	get parentIDs():				 Array<string> { return this.hierarchy.thingIDs_getByIDPredicateToAndID(Predicate.idIsAParentOf,  true, this.id); }
 	get children():					  Array<Thing> { return this.hierarchy.things_getByIDPredicateToAndID(Predicate.idIsAParentOf, false, this.idForChildren); }
 	get parents():					  Array<Thing> { return this.hierarchy.things_getByIDPredicateToAndID(Predicate.idIsAParentOf,  true, this.id); }
 	get siblings():					  Array<Thing> { return this.firstParent?.children ?? []; }
 	get hasChildren():					   boolean { return this.children.length > 0; }
-	get hasParents():					   boolean { return this.parents.length > 0; }
 	get isHere():						   boolean { return this.id == get(id_here); }
 	get isRoot():						   boolean { return this == this.hierarchy.root?.toThing; }
 	get isBulkAlias():					   boolean { return this.trait == TraitType.bulk; }
@@ -47,18 +45,6 @@ export default class Thing extends Orderable {
 	get titleWidth():						number { return getWidthOf(this.title) }
 	get description():						string { return this.id + ' \"' + this.title + '\"'; }
 	get idForChildren():					string { return this.isBulkAlias ? this.bulkRootID : this.id; }
-	get parentRelationshipID():				string { return this.hierarchy.relationship_getWhereIDEqualsTo(this.id)?.id ?? ''; }
-
-	get hasGrandChildren(): boolean {
-		if (this.hasChildren) {
-			for (const child of this.children) {
-				if (child.hasChildren) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
 
 	log(option: DebugFlag, message: string) {
 		debug.log_maybe(option, message + ' ' + this.description);
@@ -161,19 +147,6 @@ export default class Thing extends Orderable {
 			orders_normalize_remoteMaybe(childRelationships, remoteWrite);
 			for (const childRelationship of childRelationships) {
 				childRelationship.order_normalizeRecursive_remoteMaybe(remoteWrite);
-			}
-		}
-	}
-
-	async relationship_forget_remoteRemove(relationship: Relationship | null) {
-		if (relationship) {
-			for (const parentRelationship of this.parentRelationships) {
-				if (parentRelationship.idFrom == relationship.idTo) {
-					const db = dbDispatch.db;
-					db.hierarchy.relationship_forget(parentRelationship);
-					parentRelationship.fromThing?.order_normalizeRecursive_remoteMaybe(true);
-					await db.relationship_remoteDelete(parentRelationship);
-				}
 			}
 		}
 	}

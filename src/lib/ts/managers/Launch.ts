@@ -1,10 +1,11 @@
 import { k, debug, builds, debugReact, PersistID, dbDispatch, persistLocal, isServerLocal, getBrowserType } from '../common/GlobalImports'
-import { id_here, expanded, ids_grabbed, showDetails } from './State';
+import { id_here, expanded, ids_grabbed, db_loadTime, showDetails } from './State';
 
 class Launch {
 	setup() {
 		const queryStrings = new URLSearchParams(window.location.search);
 		document.title = this.title;
+		db_loadTime.set(null);
 		builds.setup();
 		persistLocal.restore();
 		k.applyQueryStrings(queryStrings);

@@ -131,7 +131,7 @@ export default class Relationship extends Orderable {
 			altering_parent.set(null);
 			id_showTools.set(null);
 			switch (alteration) {
-				case AlteringParent.deleting: await relationship_showingTools.toThing?.relationship_forget_remoteRemove(this); break;
+				case AlteringParent.deleting: await this.relationship_forget_remoteRemove(); break;
 				case AlteringParent.adding: await this.toThing?.thing_remember_remoteAddAsChild(relationship_showingTools.toThing); break;
 			}
 			signal_rebuild_fromHere();
@@ -270,6 +270,13 @@ export default class Relationship extends Orderable {
 			this.expand();
 			await graphEditor.thing_edit_remoteAddAsChild(child, parent);
 		}
+	}
+
+	async relationship_forget_remoteRemove() {
+		const db = dbDispatch.db;
+		db.hierarchy.relationship_forget(this);
+		this.fromThing?.order_normalizeRecursive_remoteMaybe(true);
+		await db.relationship_remoteDelete(this);
 	}
 
 	redraw_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {

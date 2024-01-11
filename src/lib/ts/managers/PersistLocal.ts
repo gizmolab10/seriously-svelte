@@ -1,5 +1,5 @@
-import { user_graphOffset, showDetails, line_stretch, thing_fontFamily } from './State';
-import { id_here, row_height, expanded, db_loadTime, ids_grabbed } from './State';
+import { id_here, row_height, expanded, ids_grabbed, showDetails } from './State';
+import { line_stretch, thing_fontFamily, user_graphOffset } from './State';
 import { Point, dbDispatch } from '../common/GlobalImports'
 
 export enum PersistID {
@@ -25,16 +25,16 @@ class PersistLocal {
 		// this.writeToKey(PersistID.row_height, 20);
 		// this.writeToKey(PersistID.dot_size, 13);
 
-		db_loadTime.set(null);
-		id_here.set(this.readFromDBKey(PersistID.here));
-		expanded.set(this.readFromDBKey(PersistID.expanded) ?? []);
 		row_height.set(this.readFromKey(PersistID.row_height) ?? 20); // sets dot_size and thing_fontSize
-		ids_grabbed.set(this.readFromDBKey(PersistID.grabbed) ?? []);
 		showDetails.set(this.readFromKey(PersistID.details) ?? false);
 		line_stretch.set(this.readFromKey(PersistID.line_stretch) ?? 30);
 		thing_fontFamily.set(this.readFromKey(PersistID.font) ?? 'Arial');
 		user_graphOffset.set(this.readFromKey(PersistID.origin) ?? new Point());
 
+		// persist relationship ids
+		id_here.set(this.readFromDBKey(PersistID.here));
+		expanded.set(this.readFromDBKey(PersistID.expanded) ?? []);
+		ids_grabbed.set(this.readFromDBKey(PersistID.grabbed) ?? []);
 		ids_grabbed.subscribe((ids: string[]) => {
 			const here = dbDispatch.db.hierarchy.here;
 			if (this.okayToPersist && here) {
