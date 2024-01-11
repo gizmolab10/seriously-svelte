@@ -1,5 +1,4 @@
 import { isMobileDevice } from '../../ts/common/GlobalImports'
-
 export default class Constants {
 	public clusterHeight: number;
 	public detailsMargin: number;
@@ -11,14 +10,14 @@ export default class Constants {
 	public allowGraphEditing: boolean;
 	public allowTitleEditing: boolean;
 	public backgroundColor: string;
-	public highlightColor: string;
 	public adminBulkName: string;
+	public defaultColor: string;
 	public defaultTitle: string;
 	public lineTitle: string;
 
 	constructor() {
+		this.defaultColor = 'black';
 		this.backgroundColor = 'white';
-		this.highlightColor = '#9e7daa';
 		this.adminBulkName = 'Jonathan Sand';
 		this.defaultTitle = 'Please, enter a title';
 		this.lineTitle = '------------------------';

@@ -11,7 +11,7 @@
 	});
 
 	function updateColors() {
-		const isHere = thing.id === $id_here;
+		const isHere = relationship.id === $id_here;
 		if (isHere) {
 			colorStyles = 'background-color: ' + thing.color + '; color: ' + k.backgroundColor;
 		} else {

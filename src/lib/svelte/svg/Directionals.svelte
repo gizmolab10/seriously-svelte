@@ -8,7 +8,7 @@
     export let display;
     export let hit;
 
-	function fillColor_closure(isFilled) { return isFilled ? 'black' : k.backgroundColor; }
+	function fillColor_closure(isFilled) { return isFilled ? k.defaultColor : k.backgroundColor; }
 
 	function onClick(event) {
         const pointsUp = event.currentTarget.id == 'up';
@@ -33,7 +33,7 @@
                 fillColor_closure={fillColor_closure}
                 center={origin.offsetByY(-offsetY)}
                 direction={Direction.up}
-                strokeColor={'black'}
+                strokeColor={k.defaultColor}
                 onClick={onClick}
                 size={size}
                 id='up'
@@ -44,7 +44,7 @@
                 fillColor_closure={fillColor_closure}
                 center={origin.offsetByY(offsetY)}
                 direction={Direction.down}
-                strokeColor={'black'}
+                strokeColor={k.defaultColor}
                 onClick={onClick}
                 size={size}
                 id='down'

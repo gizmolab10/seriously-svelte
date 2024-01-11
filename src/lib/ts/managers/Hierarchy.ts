@@ -453,9 +453,6 @@ export default class Hierarchy {
 			if (relationship.baseID != this.db.baseID) {
 				debug.log_error('RELATIONSHIP ' + relationship.baseID + ' ' + this.thing_getForID(relationship.idFrom)?.description + ' => ' + this.thing_getForID(relationship.idTo)?.description);
 			}
-			if (relationship.doNotPersist) {
-				console.log('flighty');
-			}
 			this.knownRs.push(relationship);
 			this.knownR_byID[relationship.id] = relationship;
 			this.relationship_rememberByKnown(this.knownRs_byIDTo, relationship.idTo, relationship);

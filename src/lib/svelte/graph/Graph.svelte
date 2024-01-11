@@ -14,24 +14,24 @@
 	let blueRect: Rect;
 	let redRect: Rect;
 	let toggle = true;
+	let relationship;
 	let height = 0;
 	let width = 0;
 	let left = 0;
 	let top = 0;
-	let here;
 
 	function ignore(event) {}
-	onMount( () => { debugReact.log_mount(`GRAPH ${here.description}`); });
+	onMount( () => { debugReact.log_mount(`GRAPH ${relationship.description}`); });
 	onDestroy( () => { rebuild_signalHandler.disconnect(); relayout_signalHandler.disconnect(); });
 	
 	const rebuild_signalHandler = handle_rebuild((id) => {
-		debugReact.log_layout(`GRAPH signal ${here.description}`);
+		debugReact.log_layout(`GRAPH signal ${relationship.description}`);
 		updateOrigins();
 		toggle = !toggle;	// rebuild entire graph
 	});
 
 	const relayout_signalHandler = handle_relayout((id) => {
-		if (here) {
+		if (relationship) {
 			updateOrigins();
 		}
 	});
@@ -66,7 +66,7 @@
 		if ($user_graphOffset != origin) {
 			persistLocal.writeToKey(PersistID.origin, origin);
 			$user_graphOffset = origin;
-			debugReact.log_origins(`GRAPH $user_graphOffset ${here.description}`);
+			debugReact.log_origins(`GRAPH $user_graphOffset ${relationship.description}`);
 			updateOrigins();
 			toggle = !toggle;	// rebuild entire graph
 		}
@@ -84,23 +84,23 @@
 	
 	$: {
 		if ($dot_size > 0) {
-			debugReact.log_origins(`GRAPH $dot_size ${here.description}`);
+			debugReact.log_origins(`GRAPH $dot_size ${relationship.description}`);
 			updateOrigins();
 		}
 	}
 	
 	$: {
-		if (here == null || here.id != $id_here) {			
-			here = dbDispatch.db.hierarchy.relationship_getForID($id_here);
-			debugReact.log_origins(`GRAPH $id_here ${here?.description}`);
+		if (relationship == null || relationship.id != $id_here) {			
+			relationship = dbDispatch.db.hierarchy.relationship_getForID($id_here);
+			debugReact.log_origins(`GRAPH $id_here ${relationship?.description}`);
 			updateOrigins();
 			toggle = !toggle;	// also cause entire graph to be replaced
 		}
 	}
 	
 	$: {
-		if (here) { // can sometimes be null TODO: WHY?
-			let grabbed = $ids_grabbed.includes(here.id);
+		if (relationship) { // can sometimes be null TODO: WHY?
+			let grabbed = $ids_grabbed.includes(relationship.id);
 			if (grabbed != isGrabbed) {
 				isGrabbed = grabbed;
 			}
@@ -108,9 +108,9 @@
 	}
 
 	function updateOrigins() {
-		const thing = here?.toThing;
+		const thing = relationship?.toThing;
 		if (thing) {
-			childrenSize = here.visibleProgeny_size.asPoint;
+			childrenSize = relationship.visibleProgeny_size.asPoint;
 			const mysteryOffset = new Point(($showDetails ? -92 : 8) - (childrenSize.x / 2), -85);
 			origin_ofFirstReveal = $graphRect.center.offsetBy(mysteryOffset);
 			if (k.leftJustifyGraph) {
@@ -133,13 +133,13 @@
 	function rectOfChildren(): Rect {
 		const delta = new Point(9, -2);
 		const origin = $graphRect.origin.offsetBy(delta).offsetBy(origin_ofChildren);
-		return new Rect(origin, here?.visibleProgeny_size.expandedByX(3));
+		return new Rect(origin, relationship?.visibleProgeny_size.expandedByX(3));
 	}
 
 </script>
 
 <svelte:document on:keydown={globalHandleKeyDown}/>
-{#if here}
+{#if relationship}
 	<div class='clipper' on:wheel={handleWheel}
 		style='
 			top:{top}px;
@@ -161,10 +161,10 @@
 				<Box rect={greenRect} color=green half={true}/>
 			{/if}
 			{#if isGrabbed}
-				<Circle radius={10} center={origin_ofFirstReveal} color={here.color} thickness=1/>
+				<Circle radius={10} center={origin_ofFirstReveal} color={relationship.toThing?.color ?? k.defaultColor} thickness=1/>
 			{/if}
-			<FocusRevealDot here={here} center={origin_ofFirstReveal.offsetBy(new Point(-12, -11))}/>
-			<Children relationship={here} origin={origin_ofChildren}/>
+			<FocusRevealDot relationship={relationship} center={origin_ofFirstReveal.offsetBy(new Point(-12, -11))}/>
+			<Children relationship={relationship} origin={origin_ofChildren}/>
 		</div>
 	</div>
 {/if}

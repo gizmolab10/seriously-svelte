@@ -1,5 +1,5 @@
 <script lang=ts>
-	import { Rect, Size, Point, Thing, debug, signal, Signals, Layout, onMount, LineRect, onDestroy, Relationship } from '../../ts/common/GlobalImports';
+	import { k, Rect, Size, Point, Thing, debug, signal, Signals, Layout, onMount, LineRect, onDestroy, Relationship } from '../../ts/common/GlobalImports';
 	import { DebugFlag, debugReact, LineCurveType, orders_normalize_remoteMaybe, handle_relayout } from '../../ts/common/GlobalImports';
 	import { dot_size, graphRect, line_stretch } from '../../ts/managers/State';
 	import Widget from '../widget/Widget.svelte';
@@ -91,7 +91,7 @@
 
 {#if childRelationships && childRelationships.length != 0 && lineRects.length == childRelationships.length}
 	{#if debug.lines}
-		<Circle radius=1 center={center} color=black thickness=1/>
+		<Circle radius=1 center={center} color={k.defaultColor} thickness=1/>
 	{/if}
 	{#each childMapArray as a}
 		<Widget relationship={a.relationship} origin={a.rect.extent.offsetBy(new Point(12, ($dot_size / -15) -10))}/>

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { Rect, Size, Point, debug, onMount, ZIndex, SVGType, svgPath, Wrapper, debugReact, Relationship, LineCurveType } from '../../ts/common/GlobalImports';
+	import { k, Rect, Size, Point, debug, onMount, ZIndex, SVGType, svgPath, Wrapper, debugReact, Relationship, LineCurveType } from '../../ts/common/GlobalImports';
 	import { dot_size } from '../../ts/managers/State';
 	import Circle from '../kit/Circle.svelte';
 	import Box from '../kit/Box.svelte';
@@ -70,9 +70,9 @@
 	style='z-index: {ZIndex.lines};
 		top: {origin.y - Math.max(1, size.height)}px;
 		left: {origin.x + 142}px;'>
-	<path d={path} stroke={thing?.color ?? 'black'} fill='none'/>
+	<path d={path} stroke={thing?.color ?? k.defaultColor} fill='none'/>
 </svg>
 {#if debug.lines}
 	<!--Box rect={rect.offsetBy(debugOffset)} color=gray/-->
-	<Circle radius=1 center={rect.extent.offsetBy(debugOffset)} color=black thickness=1/>
+	<Circle radius=1 center={rect.extent.offsetBy(debugOffset)} color={k.defaultColor} thickness=1/>
 {/if}

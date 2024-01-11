@@ -1,9 +1,9 @@
 <script>
-    import { Size, Point, onMount, onDestroy } from '../../ts/common/GlobalImports';
+    import { k, Size, Point, onMount, onDestroy } from '../../ts/common/GlobalImports';
     import * as d3 from 'd3';
     export let position = 'absolute';
     export let size = new Size();
-    export let stroke = 'black';
+    export let stroke = k.defaultColor;
     export let fill = 'white';
     export let zIndex = 0;
     export let path = '';

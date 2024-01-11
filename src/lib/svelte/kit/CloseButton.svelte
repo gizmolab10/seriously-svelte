@@ -1,5 +1,5 @@
 <script>
-	import { Size, ZIndex, svgPath } from '../../ts/common/GlobalImports';
+	import { k, Size, ZIndex, svgPath } from '../../ts/common/GlobalImports';
     import { id_popupView } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
     export let size = 20;
@@ -21,14 +21,14 @@
     on:click={() => { $id_popupView = null; }}>
     <SVGD3
 		path={circle}
-		stroke='black'
+		stroke={k.defaultColor}
 		position='absolute'
 		zIndex={ZIndex.dots}
 		size={Size.square(size)}
 	/>
     <SVGD3
 		path={cross}
-		stroke='black'
+		stroke={k.defaultColor}
 		position='absolute'
 		zIndex={ZIndex.dots}
 		size={Size.square(size)}
