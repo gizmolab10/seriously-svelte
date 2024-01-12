@@ -1,5 +1,5 @@
 <script>
-import { build, isBusy, id_here, db_type, expanded, graphRect, id_popupView, showDetails, things_arrived, thing_fontSize } from '../../ts/managers/State';
+import { build, isBusy, path_here, db_type, paths_expanded, graphRect, id_popupView, showDetails, things_arrived, thing_fontSize } from '../../ts/managers/State';
 import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, PersistID, dbDispatch, debugReact } from '../../ts/common/GlobalImports';
 	import { ButtonID, Hierarchy, persistLocal, handle_rebuild, signal_relayout_fromHere, graphRect_update } from '../../ts/common/GlobalImports';
 	import TitleEditor from '../widget/TitleEditor.svelte';
@@ -29,8 +29,8 @@ import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, Pers
 	});
 
 	$: {
-		if (here.id != $id_here) {
-			here = dbDispatch.db.hierarchy.thing_getForID($id_here);
+		if (here.id != $path_here) {
+			here = dbDispatch.db.hierarchy.thing_getForPath($path_here);
 			graph_fullRebuild();
 		}
 	}
@@ -38,7 +38,7 @@ import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, Pers
 	function graph_fullRebuild() {
 		graphRect_update();
 		left = $graphRect.origin.x;
-		debugReact.log_rebuild(`PANEL ${here.description}`)
+		debugReact.log_rebuild(`PANEL ${here?.description}`)
 		toggle = !toggle;	// remount graph component
 	}
 	

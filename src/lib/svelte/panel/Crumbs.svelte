@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, Size, Point, Thing, ZIndex, svgPath, dbDispatch } from '../../ts/common/GlobalImports';
-	import { dot_size, ids_grabbed, crumbsWidth, id_toolsGrab } from '../../ts/managers/State';
+	import { dot_size, paths_grabbed, crumbsWidth, path_toolsGrab } from '../../ts/managers/State';
 	import FatTriangle from '../svg/FatTriangle.svelte';
 	import Crumb from '../kit/Crumb.svelte';
 import {index} from 'd3';
@@ -13,12 +13,12 @@ import {index} from 'd3';
 	function thing_lastGrabbed() { return dbDispatch.db.hierarchy.grabs.thing_lastGrabbed; }
 
 	$: {
-		const _ = $id_toolsGrab;
+		const _ = $path_toolsGrab;
 		updateAncestors($crumbsWidth);
 	}
 
 	$: {
-		if ($ids_grabbed || grabbedThing == null || ancestors.length == 0) {
+		if ($paths_grabbed || grabbedThing == null || ancestors.length == 0) {
 			const thing = thing_lastGrabbed()	// start over with new grab
 			if (thing) {
 				grabbedThing = thing;

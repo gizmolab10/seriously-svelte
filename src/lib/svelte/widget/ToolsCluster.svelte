@@ -1,6 +1,6 @@
 <script lang='ts'>
     import { k, Size, Point, ZIndex, onMount, svgPath, Direction, dbDispatch, graphEditor, AlteringParent } from '../../ts/common/GlobalImports';
-    import { dot_size, altering_parent, row_height, id_toolsGrab } from '../../ts/managers/State';
+    import { dot_size, altering_parent, row_height, path_toolsGrab } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TriangleButton from '../svg/TriangleButton.svelte';
 	import Trash from '../svg/Trash.svelte';
@@ -38,7 +38,7 @@
                 case 'delete': await dbDispatch.db.hierarchy.things_redraw_remoteTraverseDelete([thing]); break;
                 default: break;
             }
-            $id_toolsGrab = null;
+            $path_toolsGrab = null;
         }
     }
 

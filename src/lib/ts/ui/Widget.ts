@@ -1,15 +1,15 @@
-import { Grabs, Thing, Hierarchy, dbDispatch } from '../common/GlobalImports';
+import { Path, Grabs, Thing, Hierarchy, dbDispatch } from '../common/GlobalImports';
 import Identifiable from "../common/Identifiable";
 
 export default class Widget extends Identifiable {
-    path: string;
+    path: Path;
     thing: Thing | null;
     component: any;
 
-    constructor(component: any, path: string) {
+    constructor(component: any, path: Path) {
 		super(null);
         this.component = component;
-        this.path = path;
+        this.path = new Path(path);
         this.thing = this.hierarchy.thing_getForPath(this.path)
     }
 

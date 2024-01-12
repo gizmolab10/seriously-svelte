@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { SeriouslyRange, handle_relayout, signal_relayout, signal_rebuild_fromHere } from '../../ts/common/GlobalImports'; 
 	import { k, Thing, ZIndex, Widget, onMount, onDestroy, dbDispatch, graphEditor } from '../../ts/common/GlobalImports';
-	import { row_height, id_editing, id_editingStopped } from '../../ts/managers/State';
+	import { row_height, path_editing, path_editingStopped } from '../../ts/managers/State';
 	import Widget from './Widget.svelte';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
@@ -43,7 +43,7 @@
 	}
 
 	function handleKeyDown(event) {
-		if (thing && $id_editing == thing.id && canAlterTitle(event)) {
+		if (thing && $path_editing == thing.id && canAlterTitle(event)) {
 			switch (event.key) {	
 				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); graphEditor.widget_redraw_remoteAddChildTo(thing.firstParent); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
@@ -59,11 +59,11 @@
 		///////////////////////
 
 		if (k.allowTitleEditing) {
-			if ($id_editingStopped == thing.id) {
+			if ($path_editingStopped == thing.id) {
 				setTimeout(() => {
-					$id_editingStopped = null;
+					$path_editingStopped = null;
 				}, 1000);
-			} else if ($id_editing != thing.id) {
+			} else if ($path_editing != thing.id) {
 				input?.blur();
 			} else if (!isEditing) {
 				isEditing = true;
@@ -80,8 +80,8 @@
 		invokeBlurNotClearEditing();
 		setTimeout(() => {		// eliminate infinite recursion
 			const id = thing?.id;
-			if (id != null && $id_editing == id) {				
-				$id_editing = null;
+			if (id != null && $path_editing == id) {				
+				$path_editing = null;
 				signal_rebuild_fromHere();
 			}
 		}, 20);
@@ -89,7 +89,7 @@
 
 	function invokeBlurNotClearEditing() {
 		if (isEditing && thing) {
-			$id_editingStopped = $id_editing;
+			$path_editingStopped = $path_editing;
 			isEditing = false;
 			extractRange();
 			input?.blur();

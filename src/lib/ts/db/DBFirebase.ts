@@ -157,7 +157,7 @@ export default class DBFirebase implements DBInterface {
 						}
 					}
 					// TODO: detect when a root disappears
-					// TODO: store the expanded in its own  ** bulk-specific **  persistent storage
+					// TODO: store the paths_expanded in its own  ** bulk-specific **  persistent storage
 				} catch (error) {
 					this.reportError(error);
 				}

@@ -1,7 +1,7 @@
 <script>
 	import { k, Size, Point, Thing, debug, ZIndex, onMount, svgPath, onDestroy, AlteringParent } from "../../ts/common/GlobalImports";
 	import { Direction, dbDispatch, graphEditor, handle_alteringParent } from "../../ts/common/GlobalImports";
-	import { dot_size, ids_grabbed, id_toolsGrab } from '../../ts/managers/State';
+	import { dot_size, paths_grabbed, path_toolsGrab } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
     export let widget;
 	export let thing;
@@ -31,7 +31,7 @@
     onMount(() => {
 		updateColorsForHover(false);
         handler = handle_alteringParent((alteration) => {
-			const applyFlag = $id_toolsGrab && thing.canAlterParentOf_toolsGrab != null;
+			const applyFlag = $path_toolsGrab && thing.canAlterParentOf_toolsGrab != null;
 			alter = applyFlag ? (alteration != null) : false;
 			extra = (thing.parents.length < 2) ? null : svgPath.circle(size, size / 5);
 			updateColors();
@@ -39,7 +39,7 @@
     })
 
 	$: {
-		const grabbed = $ids_grabbed?.includes(thing.id);
+		const grabbed = $paths_grabbed?.includes(thing.id);
 		if (isGrabbed != grabbed) {
 			isGrabbed = grabbed;
 			updateColors();
@@ -80,7 +80,7 @@
 
 	function handleDoubleClick(event) {
 		clearClicks();
-		thing.becomeHere(widget.path);
+		widget.path.becomeHere();
     }
 
 	function handleSingleClick(event) {
@@ -96,7 +96,7 @@
 	$: {
 		if ($dot_size > 0) {
 			size = $dot_size;
-			top = $id_toolsGrab == thing.id ? 23 : -size / 2 + 2;
+			top = $path_toolsGrab == thing.id ? 23 : -size / 2 + 2;
 			left = 1.5 - (size / 2); // offset from center?
 			path = svgPath.oval(size, false);
 			if (thing.parents.length > 1) {

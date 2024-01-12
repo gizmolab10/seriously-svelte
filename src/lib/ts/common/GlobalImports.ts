@@ -1,4 +1,4 @@
-import { noop, apply, remove, removeAll, getFontOf, lastIDOf, stripPath, appendPath, getWidthOf, copyObject, desaturateBy, sort_byOrder, roundToEven } from './Utilities';
+import { noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, sort_byOrder, roundToEven } from './Utilities';
 import { signal_rebuild, signal_relayout, signal_alteringParent, signal_rebuild_fromHere, signal_relayout_fromHere } from './Signals';
 import { isServerLocal, isMobileDevice, getBrowserType, convertToObject, orders_normalize_remoteMaybe } from './Utilities';
 import { ZIndex, ButtonID, TraitType, BrowserType, AlteringParent, CreationOptions, LineCurveType } from './Enumerations';
@@ -15,7 +15,6 @@ import { onMount, onDestroy } from 'svelte';
 import { launch } from '../managers/Launch';
 import { SeriouslyRange } from './Types';
 import { get } from 'svelte/store';
-import Widget from '../ui/Widget';
 import { builds } from './Builds';
 import { k } from './Constants';
 import './Extensions';
@@ -25,10 +24,12 @@ import Hierarchy from '../managers/Hierarchy';
 import Predicate from '../data/Predicate';
 import Layout from '../geometry/Layout';
 import Access from '../data/Access';
+import Widget from '../ui/Widget';
 import Thing from '../data/Thing';
 import Datum from '../data/Datum';
 import User from '../data/User';
 import Grabs from '../ui/Grabs';
+import Path from './Path';
 
 export {
 	k, builds, launch,
@@ -37,8 +38,7 @@ export {
 	get, onMount, onDestroy,
 	debug, Debug, DebugFlag,
 	dbDispatch, DBType, DataKind,
-	Grabs, graphEditor, Hierarchy,
-	lastIDOf, stripPath, appendPath,
+	Path, Grabs, graphEditor, Hierarchy,
 	debugReact, DebugReact, ReactFlag, Widget,
 	ZIndex, ButtonID, BrowserType, AlteringParent, CreationOptions,
 	User, SeriouslyRange, Datum, Thing, Access, Predicate, Relationship,

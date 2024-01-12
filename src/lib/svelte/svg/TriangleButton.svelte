@@ -1,6 +1,6 @@
 <script>
 	import { k, Size, Thing, Point, ZIndex, Direction, dbDispatch, graphEditor, svgPath } from "../../ts/common/GlobalImports";
-	import { dot_size, ids_grabbed } from '../../ts/managers/State';
+	import { dot_size, paths_grabbed } from '../../ts/managers/State';
 	import SVGD3 from './SVGD3.svelte';
 	export let extraColor = k.backgroundColor;
 	export let fillColor_closure;
@@ -25,7 +25,7 @@
 	}
 
 	$: {
-		const _ = $ids_grabbed;
+		const _ = $paths_grabbed;
 		setFillColor(false);
 	}
 

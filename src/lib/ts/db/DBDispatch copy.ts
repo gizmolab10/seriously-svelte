@@ -1,4 +1,4 @@
-import { db_type, isBusy, id_here, ids_grabbed, db_loadTime, things_arrived } from '../managers/State';
+import { db_type, isBusy, path_here, paths_grabbed, db_loadTime, things_arrived } from '../managers/State';
 import { DBType, PersistID, persistLocal } from '../common/GlobalImports';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
@@ -14,8 +14,8 @@ export default class DBDispatch {
 		this.db = dbFirebase;
 		db_type.subscribe((type: string) => {
 			if (type) {
-				id_here.set(null);
-				ids_grabbed.set([]);
+				path_here.set(null);
+				paths_grabbed.set([]);
 				this.updateDBForType(type);
 				this.updateHierarchy(type);
 			}

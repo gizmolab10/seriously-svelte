@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, Thing, onMount, dbDispatch } from '../../ts/common/GlobalImports';
-	import { id_here } from '../../ts/managers/State';
+	import { path_here } from '../../ts/managers/State';
 	export let path = '';
 	export let thing: Thing;
 	let colorStyles = '';
@@ -8,7 +8,7 @@
 	onMount(() => { updateColors(); });
 
 	function updateColors() {
-		const isHere = path === $id_here;
+		const isHere = path === $path_here;
 		if (isHere) {
 			colorStyles = 'background-color: ' + thing.color + '; color: ' + k.backgroundColor;
 		} else {
@@ -21,7 +21,7 @@
 		const h = db.hierarchy;
 		if (db.hasData) {
 			h.grabs.grabOnly(path);
-			h.becomeHere(path);
+			path.becomeHere();
 		}
 	}
 

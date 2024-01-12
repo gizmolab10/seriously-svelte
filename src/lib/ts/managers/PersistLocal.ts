@@ -1,6 +1,6 @@
 import { user_graphOffset, showDetails, line_stretch, thing_fontFamily } from './State';
-import { id_here, row_height, expanded, db_loadTime, ids_grabbed } from './State';
-import { Point, dbDispatch } from '../common/GlobalImports'
+import { path_here, row_height, paths_expanded, db_loadTime, paths_grabbed } from './State';
+import { Path, Point, dbDispatch } from '../common/GlobalImports'
 
 export enum PersistID {
 	line_stretch = 'line_stretch',
@@ -25,20 +25,33 @@ class PersistLocal {
 		// this.writeToKey(PersistID.row_height, 20);
 		// this.writeToKey(PersistID.dot_size, 13);
 
+		const id = this.readFromDBKey(PersistID.here);
 		db_loadTime.set(null);
-		id_here.set(this.readFromDBKey(PersistID.here));
-		expanded.set(this.readFromDBKey(PersistID.expanded) ?? []);
+		path_here.set(!id ? null : new Path(id));
 		row_height.set(this.readFromKey(PersistID.row_height) ?? 20); // sets dot_size and thing_fontSize
-		ids_grabbed.set(this.readFromDBKey(PersistID.grabbed) ?? []);
 		showDetails.set(this.readFromKey(PersistID.details) ?? false);
 		line_stretch.set(this.readFromKey(PersistID.line_stretch) ?? 30);
 		thing_fontFamily.set(this.readFromKey(PersistID.font) ?? 'Arial');
 		user_graphOffset.set(this.readFromKey(PersistID.origin) ?? new Point());
+		paths_grabbed.set(this.readFromDBKey(PersistID.grabbed)?.map((s: string) => new Path(s)) ?? []);
+		paths_expanded.set(this.readFromDBKey(PersistID.expanded)?.map((e: string) => new Path(e)) ?? []);
 
-		ids_grabbed.subscribe((ids: string[]) => {
-			const here = dbDispatch.db.hierarchy.here;
-			if (this.okayToPersist && here) {
-				this.writeToDBKey(PersistID.grabbed, ids);
+
+		paths_grabbed.subscribe((paths: Path[]) => {
+			if (this.okayToPersist) {
+				this.writeToDBKey(PersistID.grabbed, paths.map(p => p.path));
+			}
+		});
+
+		paths_expanded.subscribe((paths: Path[]) => {
+			if (this.okayToPersist) {
+				this.writeToDBKey(PersistID.expanded, paths.map(p => p.path));
+			}
+		});
+
+		path_here.subscribe((path: Path | null) => {
+			if (this.okayToPersist && path) {
+				this.writeToDBKey(PersistID.here, path.path);
 			}
 		});
 	}
@@ -57,12 +70,14 @@ class PersistLocal {
 		} 
 	}
 
-	state_updateForDBType(db_type: string, defaultid_here: string) {
-		const hereID = this.readFromKey(PersistID.here + db_type) ?? defaultid_here;
-		const grabbedIDs = this.readFromKey(PersistID.grabbed + db_type) ?? [defaultid_here];
-		this.okayToPersist = false;
-		id_here.set(hereID);
-		ids_grabbed.set(grabbedIDs);
+	state_updateForDBType(db_type: string, defaultpath_here: string) {
+		this.okayToPersist = false; // avoid infinite recursion (above for path_here & paths_grabbed)
+
+		const hereID = this.readFromKey(PersistID.here + db_type) ?? defaultpath_here;
+		const grabbedIDs = this.readFromKey(PersistID.grabbed + db_type) ?? [defaultpath_here];
+		path_here.set(new Path(hereID));
+		paths_grabbed.set(grabbedIDs.map((id: string) => new Path(id)));
+
 		this.okayToPersist = true;
 	}
 

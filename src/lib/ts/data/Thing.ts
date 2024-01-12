@@ -1,6 +1,6 @@
-import { k, get, Size, Datum, debug, Widget, Predicate, Hierarchy, TraitType, PersistID, DebugFlag, dbDispatch, getWidthOf, persistLocal, CreationOptions } from '../common/GlobalImports';
+import { k, get, Size, Path, Datum, debug, Widget, Predicate, Hierarchy, TraitType, PersistID, DebugFlag, dbDispatch, getWidthOf, persistLocal, CreationOptions } from '../common/GlobalImports';
 import { SeriouslyRange, AlteringParent, signal_rebuild, signal_relayout, signal_rebuild_fromHere, signal_relayout_fromHere, orders_normalize_remoteMaybe } from '../common/GlobalImports';
-import { id_here, dot_size, expanded, altering_parent, row_height, id_editing, ids_grabbed, line_stretch, id_toolsGrab } from '../managers/State';
+import { path_here, dot_size, paths_expanded, altering_parent, row_height, path_editing, paths_grabbed, line_stretch, path_toolsGrab } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -30,7 +30,7 @@ export default class Thing extends Datum {
 
 		this.updateColorAttributes();
 
-		id_editing.subscribe((idEdit: string | null) => {
+		path_editing.subscribe((idEdit: string | null) => {
 			const isEditing = (idEdit == this.id);
 			if (this.isEditing != isEditing) {
 				this.isEditing  = isEditing;
@@ -38,7 +38,7 @@ export default class Thing extends Datum {
 			}
 		});
 
-		ids_grabbed.subscribe((idsGrab: string[]) => {
+		paths_grabbed.subscribe((idsGrab: string[]) => {
 			const isGrabbed = idsGrab.includes(this.id);
 			if (this.isGrabbed != isGrabbed) {
 				this.isGrabbed  = isGrabbed;
@@ -46,8 +46,8 @@ export default class Thing extends Datum {
 			}
 		});
 
-		id_toolsGrab.subscribe((idCluster: string | null) => {
-			const shouldShow = (idCluster != null) && idCluster == this.id && get(id_here) != this.id;
+		path_toolsGrab.subscribe((idCluster: string | null) => {
+			const shouldShow = (idCluster != null) && idCluster == this.id && get(path_here) != this.id;
 			if (this.showCluster != shouldShow) {
 				this.showCluster = shouldShow;
 				signal_rebuild_fromHere();
@@ -63,10 +63,10 @@ export default class Thing extends Datum {
 	get hierarchy():				Hierarchy { return dbDispatch.db.hierarchy; }
 	get hasChildren():				  boolean { return this.children.length > 0; }
 	get hasParents():				  boolean { return this.parents.length > 0; }
-	get isHere():					  boolean { return this.id == get(id_here); }
+	get isHere():					  boolean { return this.id == get(path_here); }
 	get isRoot():					  boolean { return this == this.hierarchy.root; }
 	get isBulkAlias():				  boolean { return this.trait == TraitType.bulk; }
-	get isExpanded():				  boolean { return this.isRoot || get(expanded)?.includes(this.parentRelationshipID); }
+	get isExpanded():				  boolean { return this.isRoot || get(paths_expanded)?.includes(this.parentRelationshipID); }
 	get isVisible():				  boolean { return this.ancestors(Number.MAX_SAFE_INTEGER).includes(this.hierarchy.here!); }
 	get lastChild():					Thing { return this.children.slice(-1)[0]; }	// not alter children
 	get firstChild():					Thing { return this.children[0]; }
@@ -82,9 +82,9 @@ export default class Thing extends Datum {
 	}
 
 	get canAlterParentOf_toolsGrab(): Thing | null {
-		const id_showsTools = get(id_toolsGrab);
-		const showsTools = dbDispatch.db.hierarchy.thing_getForID(id_showsTools);
-		if (id_showsTools && showsTools && showsTools != this)  {
+		const path_showsTools = get(path_toolsGrab);
+		const showsTools = dbDispatch.db.hierarchy.thing_getForID(path_showsTools);
+		if (path_showsTools && showsTools && showsTools != this)  {
 			const alteration = get(altering_parent);
 			if ((alteration == AlteringParent.adding && !this.ancestors_include(showsTools)) ||
 				(alteration == AlteringParent.deleting && showsTools.parentIDs.includes(this.id))) {
@@ -158,7 +158,7 @@ export default class Thing extends Datum {
 
 	startEdit() {
 		if (this != this.hierarchy.root) {
-			id_editing.set(this.id);
+			path_editing.set(this.id);
 		}
 	}
 
@@ -176,12 +176,12 @@ export default class Thing extends Datum {
 		let mutated = false;
 		const relationship = this.hierarchy.relationship_getWhereIDEqualsTo(this.id);
 		if (relationship) {
-			expanded.update((array) => {
+			paths_expanded.update((array) => {
 				if (array) {
-					const index = array.indexOf(relationship.id);
+					const index = array.indexOf(new Path(relationship.id));
 					if (expand) {
 						if (index == -1) {
-							array.push(relationship.id);	// only add if not already added
+							array.push(new Path(relationship.id));	// only add if not already added
 							mutated = true;
 						}
 					} else if (index != -1) {					// only splice array when item is found
@@ -192,7 +192,6 @@ export default class Thing extends Datum {
 				return array;
 			});
 			if (mutated) {			// avoid disruptive rebuild
-				persistLocal.writeToDBKey(PersistID.expanded, get(expanded));
 				signal_rebuild_fromHere();
 			}
 		}
@@ -226,15 +225,6 @@ export default class Thing extends Datum {
 		}
 		array.reverse();
 		return array;
-	}
-
-	becomeHere(path: string | null) {
-		if (this.hasChildren) {
-			id_here.set(path);
-			this.expand();
-			id_toolsGrab.set(null);
-			persistLocal.writeToDBKey(PersistID.here, path)
-		};
 	}
 
 	childrenIDs_anyMissingFromIDsOf(children: Array<Thing>) {
@@ -297,7 +287,7 @@ export default class Thing extends Datum {
 		const other = this.canAlterParentOf_toolsGrab;
 		if (other) {
 			altering_parent.set(null);
-			id_toolsGrab.set(null);
+			path_toolsGrab.set(null);
 			switch (alteration) {
 				case AlteringParent.deleting: await other.parent_forget_remoteRemove(this); break;
 				case AlteringParent.adding: await this.thing_remember_remoteAddAsChild(other); break;

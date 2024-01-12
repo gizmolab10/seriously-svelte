@@ -1,5 +1,5 @@
-import { k, get, Thing, Widget, Hierarchy, dbDispatch, stripPath, appendPath, signal_rebuild_fromHere, signal_relayout_fromHere } from '../common/GlobalImports';
-import { id_here, id_editing, ids_grabbed, id_toolsGrab } from '../managers/State';
+import { k, get, Path, Thing, Widget, Hierarchy, dbDispatch, signal_rebuild_fromHere, signal_relayout_fromHere } from '../common/GlobalImports';
+import { path_here, path_editing, paths_grabbed, path_toolsGrab } from '../managers/State';
 
 //////////////////////////////////////
 //									//
@@ -20,11 +20,11 @@ export default class GraphEditor {
 			const COMMAND = event.metaKey;
 			const EXTREME = SHIFT && OPTION;
 			const key = event.key.toLowerCase();
-			const idRoot = h.idRoot;
-			if (!idGrab && idRoot) {
-				root.becomeHere();
-				h.grabs.grabOnly(idRoot);		// update crumbs and dots
-				idGrab = idRoot;
+			const rootPath = h.rootPath;
+			if (!idGrab && rootPath) {
+				rootPath.becomeHere();
+				h.grabs.grabOnly(rootPath);		// update crumbs and dots
+				idGrab = rootPath;
 			}
 			if (k.allowGraphEditing) {
 				if (idGrab && k.allowTitleEditing) {
@@ -38,7 +38,7 @@ export default class GraphEditor {
 				}
 				switch (key) {
 					case 'delete':
-					case 'backspace':	await h.things_redraw_remoteTraverseDelete(h.things_getForIDs(get(ids_grabbed))); break;
+					case 'backspace':	await h.things_redraw_remoteTraverseDelete(h.things_getForIDs(get(paths_grabbed))); break;
 				}
 			}
 			if (idGrab) {
@@ -163,8 +163,8 @@ export default class GraphEditor {
 	latestPath_toggleToolsCluster() {
 		const path = this.hierarchy.grabs.latestPath(true);
 		if (path) {
-			const clear = path == get(id_toolsGrab);
-			id_toolsGrab.set(clear ? null : path);
+			const clear = path == get(path_toolsGrab);
+			path_toolsGrab.set(clear ? null : path);
 			signal_rebuild_fromHere();
 		}
 	}
@@ -174,7 +174,7 @@ export default class GraphEditor {
 		this.redraw_remoteMoveUp(path, up, SHIFT, OPTION, EXTREME);
 	}
 
-	redraw_remoteMoveUp(path: string | null, up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
+	redraw_remoteMoveUp(path: Path | null, up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const thing = this.hierarchy.thing_getForPath(path);
 		const parent = this.hierarchy.thing_getForPath(path, -2);
 		const siblings = parent?.children;
@@ -202,7 +202,7 @@ export default class GraphEditor {
 		}
 	}
 
-	redraw_runtimeBrowseRight(path: string | null, RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, fromReveal: boolean = false) {
+	redraw_runtimeBrowseRight(path: Path | null, RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, fromReveal: boolean = false) {
 		const by = RIGHT ? 1 : 3;
 		const thing = this.hierarchy.thing_getForPath(path);
 		if (thing && path) {
@@ -210,7 +210,7 @@ export default class GraphEditor {
 			const childPath = appendPath(path, thing.firstChild);
 			const newHere = parentPath;
 			let newGrab: string | null | undefined = RIGHT ? childPath : parentPath;
-			const newGrabIsNotHere = get(id_here) != newGrab;
+			const newGrabIsNotHere = get(path_here) != newGrab;
 			if (!RIGHT) {
 				const root = this.hierarchy.root;
 				if (EXTREME) {
@@ -241,7 +241,7 @@ export default class GraphEditor {
 			} else {
 				return;
 			}
-			id_editing.set(null);
+			path_editing.set(null);
 			newGrab?.grabOnly();
 			const allowToBecomeHere = (!SHIFT || newGrab == this.firstParent) && newGrabIsNotHere; 
 			const shouldBecomeHere = !newHere.isVisible || newHere.isRoot;

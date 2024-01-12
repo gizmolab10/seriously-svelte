@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { id_here, dot_size, id_editing, row_height, ids_grabbed, thing_fontSize, thing_fontFamily, id_toolsGrab} from '../../ts/managers/State';
+	import { path_here, dot_size, path_editing, row_height, paths_grabbed, thing_fontSize, thing_fontFamily, path_toolsGrab} from '../../ts/managers/State';
 	import { k, Thing, Point, debug, ZIndex, Widget, onMount, onDestroy, debugReact, handle_relayout } from '../../ts/common/GlobalImports';
 	import ToolsCluster from './ToolsCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
@@ -89,9 +89,9 @@
 
 	$: {
 		const id = thing.id;
-		const shouldEdit = (id == $id_editing);
-		const shouldShowCluster = $id_toolsGrab == id && $id_here != id;
-		const shouldGrab = $ids_grabbed?.includes(id) || thing.isExemplar;
+		const shouldEdit = (id == $path_editing);
+		const shouldShowCluster = $path_toolsGrab == id && $path_here != id;
+		const shouldGrab = $paths_grabbed?.includes(id) || thing.isExemplar;
 		const change = (isEditing != shouldEdit || isGrabbed != shouldGrab || showingCluster != shouldShowCluster);
 		if (change) {
 			debugReact.log_layout(`WIDGET visibility ${thing.description}`);

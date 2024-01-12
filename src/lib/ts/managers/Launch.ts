@@ -1,5 +1,5 @@
 import { k, debug, builds, debugReact, PersistID, dbDispatch, persistLocal, isServerLocal, getBrowserType } from '../common/GlobalImports'
-import { id_here, expanded, ids_grabbed, showDetails } from './State';
+import { path_here, paths_expanded, paths_grabbed, showDetails } from './State';
 
 class Launch {
 	setup() {
@@ -36,9 +36,9 @@ class Launch {
 						break;
                     case 'settings': 
 						localStorage.clear();
-						ids_grabbed.set([]);
-						id_here.set(null);
-						expanded.set([]);
+						paths_grabbed.set([]);
+						path_here.set(null);
+						paths_expanded.set([]);
 						break;
                 }
             }

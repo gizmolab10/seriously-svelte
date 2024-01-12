@@ -1,6 +1,6 @@
-import { get, noop, User, Thing, Grabs, debug, Access, remove, TraitType, lastIDOf, PersistID, Predicate, Relationship } from '../common/GlobalImports';
+import { get, noop, User, Path, Thing, Grabs, debug, Access, remove, TraitType, PersistID, Predicate, Relationship } from '../common/GlobalImports';
 import { persistLocal, CreationOptions, sort_byOrder, signal_rebuild_fromHere, orders_normalize_remoteMaybe } from '../common/GlobalImports';
-import { id_here, isBusy, ids_grabbed, id_toolsGrab, things_arrived } from './State';
+import { path_here, isBusy, paths_grabbed, path_toolsGrab, things_arrived } from './State';
 import DBInterface from '../db/DBInterface';
 
 type KnownRelationships = { [id: string]: Array<Relationship> }
@@ -33,13 +33,14 @@ export default class Hierarchy {
 
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): (string | null) { return this.root?.id ?? null; };
+	get rootPath(): Path | null { return !this.idRoot ? null : new Path(this.idRoot); }
 	thing_getForID(idThing: string | null): Thing | null { return (!idThing) ? null : this.knownT_byID[idThing]; }
-	thing_getForPath(path: string | null, by: number = -1): Thing | null { return (!path) ? null : this.knownT_byID[lastIDOf(path, by)]; }
+	thing_getForPath(path: Path | null, back: number = 1): Thing | null { return (path == null) ? null : this.knownT_byID[path?.lastIDOf(back)]; }
 
 	constructor(db: DBInterface) {
 		this.db = db;
-		id_here.subscribe((path: string | null) => {
-			if (this.db && this.db.hasData) {
+		path_here.subscribe((path: Path | null) => {
+			if (this.db && this.db.hasData) { // make sure this.db has not become null
 				this.here = this.thing_getForPath(path);
 			}
 		})
@@ -59,12 +60,13 @@ export default class Hierarchy {
 	}
 
 	here_restore() {
-		let here = this.thing_getForID(get(id_here));
+		const path = get(path_here);
+		let here = this.thing_getForPath(path);
 		if (here == null) {
 			const grab = this.grabs.thing_lastGrabbed;
 			here = grab?.firstParent ?? this.root;
 		}
-		here?.becomeHere();
+		path?.becomeHere();
 	}
 
 	get grabs(): Grabs { 
@@ -72,16 +74,6 @@ export default class Hierarchy {
 			this._grabs = new Grabs(this);
 		}
 		return this._grabs!;
-	}
-
-	becomeHere(path: string) {
-		const thing = this.thing_getForPath(path);
-		if (thing && thing.hasChildren) {
-			id_here.set(path);
-			thing.expand();
-			id_toolsGrab.set(null);
-			persistLocal.writeToDBKey(PersistID.here, path)
-		};
 	}
 
 	//////////////////////////////
@@ -216,7 +208,7 @@ export default class Hierarchy {
 		isRemotelyStored: boolean): Thing {
 		let thing: Thing | null = null;
 		if (id && trait == TraitType.root && baseID != this.db.baseID) {		// other bulks have their own root & id
-			thing = this.thing_bulkRootID_set(baseID, id, color);				// which our thing needs to adopt
+			thing = this.thing_bulkRootpath_set(baseID, id, color);				// which our thing needs to adopt
 		}
 		if (!thing) {
 			thing = new Thing(baseID, id, title, color, trait, order, isRemotelyStored);
@@ -239,7 +231,7 @@ export default class Hierarchy {
 	//	 	   BULKS		//
 	//////////////////////////
 
-	thing_bulkRootID_set(baseID: string, id: string, color: string) {
+	thing_bulkRootpath_set(baseID: string, id: string, color: string) {
 		const thing = this.thing_bulkAlias_getForTitle(baseID);
 		if (thing) {
 			thing.needsBulkFetch = false;	// this id is from bulk fetch all
@@ -373,8 +365,8 @@ export default class Hierarchy {
 		const idParent = relationship.idFrom;
 		const parent = this.thing_getForID(idParent);
 		const oParent = this.thing_getForID(idOriginal);
-		const childIsGrabbed = get(ids_grabbed).includes(idChild);
-		if (idOriginal == get(id_here) && idOriginal != idParent && childIsGrabbed) {
+		const childIsGrabbed = get(paths_grabbed).includes(idChild);
+		if (idOriginal == get(path_here) && idOriginal != idParent && childIsGrabbed) {
 			const child = this.thing_getForID(idChild);
 			child?.grabOnly(); // update crumbs
 			if (oParent && !oParent.hasChildren) {
@@ -489,6 +481,10 @@ export default class Hierarchy {
 			const relationship = matches[0];
 			return relationship;
 		}
+		return null;
+	}
+
+	relationship_getForPath(path: Path | null, by: number = -1): Relationship | null {
 		return null;
 	}
 

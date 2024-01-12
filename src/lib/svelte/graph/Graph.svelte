@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, Rect, Size, Point, Thing, ZIndex, Signals, onMount, onDestroy, graphEditor, PersistID, persistLocal } from '../../ts/common/GlobalImports';
 	import { debug, debugReact, Predicate, ButtonID, dbDispatch, handle_rebuild, handle_relayout, graphRect_update } from '../../ts/common/GlobalImports';
-	import { id_here, graphRect, dot_size, id_editing, ids_grabbed, line_stretch, showDetails, user_graphOffset, id_popupView } from '../../ts/managers/State';
+	import { path_here, graphRect, dot_size, path_editing, paths_grabbed, line_stretch, showDetails, user_graphOffset, id_popupView } from '../../ts/managers/State';
 	import FocusRevealDot from './FocusRevealDot.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Children from './Children.svelte';
@@ -48,7 +48,7 @@
 	};
 
 	async function globalHandleKeyDown(event) {
-		if ($id_editing)			{ return; } // let Title component consume the events
+		if ($path_editing)			{ return; } // let Title component consume the events
 		if (event.key == undefined)	{ alert('no key for ' + event.type); return; }
 		if (event.type == 'keydown') {
 			const key = event.key;
@@ -90,10 +90,10 @@
 	}
 	
 	$: {
-		if (here == null || here.id != $id_here) {
+		if (here == null || here.id != $path_here) {
 			const h = dbDispatch.db.hierarchy;
-			here = !$id_here ? h.root : h.thing_getForPath($id_here);
-			debugReact.log_origins(`GRAPH $id_here ${here.description}`);
+			here = !$path_here ? h.root : h.thing_getForPath($path_here);
+			debugReact.log_origins(`GRAPH $path_here ${here.description}`);
 			updateOrigins();
 			toggle = !toggle;	// also cause entire graph to be replaced
 		}
@@ -101,7 +101,7 @@
 	
 	$: {
 		if (here) { // can sometimes be null TODO: WHY?
-			let grabbed = $ids_grabbed.includes(here.id);
+			let grabbed = $paths_grabbed.includes(here.id);
 			if (grabbed != isGrabbed) {
 				isGrabbed = grabbed;
 			}
@@ -163,8 +163,8 @@
 			{#if isGrabbed}
 				<Circle radius={10} center={origin_ofFirstReveal} color={here.color} thickness=1/>
 			{/if}
-			<FocusRevealDot here={here} path={$id_here} center={origin_ofFirstReveal.offsetBy(new Point(-12, -11))}/>
-			<Children thing={here} path={$id_here} origin={origin_ofChildren}/>
+			<FocusRevealDot here={here} path={$path_here} center={origin_ofFirstReveal.offsetBy(new Point(-12, -11))}/>
+			<Children thing={here} path={$path_here} origin={origin_ofChildren}/>
 		</div>
 	</div>
 {/if}

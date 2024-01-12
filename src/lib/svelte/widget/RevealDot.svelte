@@ -1,7 +1,7 @@
 <script>
 	import { Direction, onDestroy, dbDispatch, graphEditor, signal_rebuild_fromHere } from "../../ts/common/GlobalImports";
 	import { k, get, Size, Thing, Point, debug, ZIndex, Widget, onMount, svgPath } from "../../ts/common/GlobalImports";
-	import { expanded, dot_size, altering_parent, ids_grabbed, id_toolsGrab } from '../../ts/managers/State';
+	import { paths_expanded, dot_size, altering_parent, paths_grabbed, path_toolsGrab } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
 	export let widget;
 	export let thing;
@@ -28,7 +28,7 @@
 	}
 
 	$: {
-		const _ = $expanded;
+		const _ = $paths_expanded;
 		updatePath();
 	}
 
@@ -46,7 +46,7 @@
 	}
 
 	$: {
-		if ($ids_grabbed != null || thing != null) {
+		if ($paths_grabbed != null || thing != null) {
 			updateColors();
 			updatePath();
 		}
@@ -66,7 +66,7 @@
 	}
 
 	function updatePath() {
-		if ((!thing.hasChildren && !thing.isBulkAlias) || ($id_toolsGrab == thing.id)) {
+		if ((!thing.hasChildren && !thing.isBulkAlias) || ($path_toolsGrab == thing.id)) {
 			path = svgPath.circle($dot_size, $dot_size / 2);
 		} else {
 			const direction = (thing.isExpanded && thing.hasChildren) ? Direction.left : Direction.right;
@@ -79,12 +79,12 @@
 
 	function handleClick(event) {
 		setIsHovering_updateColors(false);
-		if ($id_toolsGrab == thing.id) {
-			$id_toolsGrab = null;
+		if ($path_toolsGrab == thing.id) {
+			$path_toolsGrab = null;
 			$altering_parent = null;
 		} else if (!thing.hasChildren) {
 			widget.grabOnly();
-			$id_toolsGrab = thing.id;
+			$path_toolsGrab = thing.id;
 		} else {
 			graphEditor.widget_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
 			return;
@@ -102,11 +102,11 @@
 		clickTimer = setTimeout(() => {
 			clearClicks();
 			const path = widget.path;
-			if ($id_toolsGrab == path) {
-				$id_toolsGrab = null;
+			if ($path_toolsGrab == path) {
+				$path_toolsGrab = null;
 			} else {
 				dbDispatch.db.hierarchy.grabs.grabOnly(path);
-				$id_toolsGrab = path;
+				$path_toolsGrab = path;
 			}
 			signal_rebuild_fromHere();
 		}, k.longClickThreshold);

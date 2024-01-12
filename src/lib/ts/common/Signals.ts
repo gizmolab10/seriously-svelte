@@ -1,4 +1,4 @@
-import { id_here } from '../managers/State';
+import { path_here } from '../managers/State';
 import { Signal } from 'typed-signals';
 import { get } from 'svelte/store';
 let signal_isInFlight = false;
@@ -10,8 +10,8 @@ export enum Signals {
 }
 
 const handleSignal = new Signal<(kinds: Signals[], value: any) => void>();
-export function signal_rebuild_fromHere() { signal_rebuild(get(id_here)); }
-export function signal_relayout_fromHere() { signal_relayout(get(id_here)); }
+export function signal_rebuild_fromHere() { signal_rebuild(get(path_here)); }
+export function signal_relayout_fromHere() { signal_relayout(get(path_here)); }
 export function signal_rebuild(value: any = null) { signal(Signals.rebuild, value); }
 export function signal_relayout(value: any = null) { signal(Signals.relayout, value); }
 export function signal_alteringParent(value: any = null) { signal(Signals.alterParent, value); }
