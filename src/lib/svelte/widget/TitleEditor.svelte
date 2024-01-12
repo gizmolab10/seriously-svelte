@@ -1,10 +1,11 @@
 <script lang='ts'>
 	import { SeriouslyRange, handle_relayout, signal_relayout, signal_rebuild_fromHere } from '../../ts/common/GlobalImports'; 
-	import { k, Thing, ZIndex, onMount, onDestroy, dbDispatch, graphEditor } from '../../ts/common/GlobalImports';
+	import { k, Thing, ZIndex, Widget, onMount, onDestroy, dbDispatch, graphEditor } from '../../ts/common/GlobalImports';
 	import { row_height, id_editing, id_editingStopped } from '../../ts/managers/State';
 	import Widget from './Widget.svelte';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
+	export let widget: Widget;
 	export let thing = Thing;
 	let originalTitle = thing.title;
 	let isEditing = false;
@@ -44,7 +45,7 @@
 	function handleKeyDown(event) {
 		if (thing && $id_editing == thing.id && canAlterTitle(event)) {
 			switch (event.key) {	
-				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); graphEditor.thing_redraw_remoteAddChildTo(thing.firstParent); break;
+				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); graphEditor.widget_redraw_remoteAddChildTo(thing.firstParent); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
 				default:	  signal_relayout(); break;
 			}
@@ -66,7 +67,7 @@
 				input?.blur();
 			} else if (!isEditing) {
 				isEditing = true;
-				thing.grabOnly();
+				dbDispatch.db.hierarchy.grabs.grabOnly(widget.path);
 				setTimeout(() => {
 					input?.focus();
 					applyRange();

@@ -1,6 +1,6 @@
+import { get, noop, User, Thing, Grabs, debug, Access, remove, TraitType, lastIDOf, PersistID, Predicate, Relationship } from '../common/GlobalImports';
 import { persistLocal, CreationOptions, sort_byOrder, signal_rebuild_fromHere, orders_normalize_remoteMaybe } from '../common/GlobalImports';
-import { get, noop, User, Thing, Grabs, debug, Access, remove, TraitType, Predicate, Relationship } from '../common/GlobalImports';
-import { id_here, isBusy, ids_grabbed, things_arrived } from './State';
+import { id_here, isBusy, ids_grabbed, id_toolsGrab, things_arrived } from './State';
 import DBInterface from '../db/DBInterface';
 
 type KnownRelationships = { [id: string]: Array<Relationship> }
@@ -34,12 +34,13 @@ export default class Hierarchy {
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): (string | null) { return this.root?.id ?? null; };
 	thing_getForID(idThing: string | null): Thing | null { return (!idThing) ? null : this.knownT_byID[idThing]; }
+	thing_getForPath(path: string | null, by: number = -1): Thing | null { return (!path) ? null : this.knownT_byID[lastIDOf(path, by)]; }
 
 	constructor(db: DBInterface) {
 		this.db = db;
-		id_here.subscribe((id: string | null) => {
+		id_here.subscribe((path: string | null) => {
 			if (this.db && this.db.hasData) {
-				this.here = this.thing_getForID(id);
+				this.here = this.thing_getForPath(path);
 			}
 		})
 	}
@@ -71,6 +72,16 @@ export default class Hierarchy {
 			this._grabs = new Grabs(this);
 		}
 		return this._grabs!;
+	}
+
+	becomeHere(path: string) {
+		const thing = this.thing_getForPath(path);
+		if (thing && thing.hasChildren) {
+			id_here.set(path);
+			thing.expand();
+			id_toolsGrab.set(null);
+			persistLocal.writeToDBKey(PersistID.here, path)
+		};
 	}
 
 	//////////////////////////////
@@ -380,19 +391,6 @@ export default class Hierarchy {
 				this.relationship_forget(relationship);
 			}
 		}
-	}
-
-	relationship_getForIDs_predicateFromAndTo(idPredicate: string, idFrom: string, idTo: string): Relationship | null {
-		const dict = this.knownRs_byIDTo;
-		const relationships = dict[idTo] as Array<Relationship>;
-		if (Array.isArray(relationships)) {
-			for (const relationship of relationships) {
-				if (relationship.idFrom == idFrom && relationship.idPredicate == idPredicate) {
-					return relationship;
-				}
-			}
-		}
-		return null;
 	}
 
 	relationships_getByIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Relationship> {

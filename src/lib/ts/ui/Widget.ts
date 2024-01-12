@@ -1,13 +1,23 @@
+import { Grabs, Thing, Hierarchy, dbDispatch } from '../common/GlobalImports';
 import Identifiable from "../common/Identifiable";
-import Relationship from "../data/Relationship";
 
 export default class Widget extends Identifiable {
-    private component: any;
-    ancestralString: string;
+    path: string;
+    thing: Thing | null;
+    component: any;
 
-    constructor(component: any, ancestralString: string) {
+    constructor(component: any, path: string) {
 		super(null);
         this.component = component;
-        this.ancestralString = ancestralString;
+        this.path = path;
+        this.thing = this.hierarchy.thing_getForPath(this.path)
     }
+
+    get hierarchy(): Hierarchy { return dbDispatch.db.hierarchy; }
+    get grabs(): Grabs { return this.hierarchy.grabs; }
+
+    toggleGrab() { this.grabs.toggleGrab(this.path); }
+    grabOnly() { this.grabs.grabOnly(this.path); }
+    ungrab() { this.grabs.ungrab(this.path); }
+    grab() { this.grabs.grab(this.path); }
 }

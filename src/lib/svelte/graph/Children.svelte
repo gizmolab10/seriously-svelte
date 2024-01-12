@@ -1,12 +1,12 @@
 <script lang=ts>
-	import { Rect, Size, Point, Thing, debug, signal, Signals, Layout, onMount, LineRect, onDestroy } from '../../ts/common/GlobalImports';
+	import { k, Rect, Size, Point, Thing, debug, signal, Signals, Layout, onMount, LineRect, onDestroy } from '../../ts/common/GlobalImports';
 	import { DebugFlag, debugReact, LineCurveType, orders_normalize_remoteMaybe, handle_relayout } from '../../ts/common/GlobalImports';
 	import { dot_size, graphRect, line_stretch } from '../../ts/managers/State';
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Children from './Children.svelte';
 	import Line, {relationship} from './Line.svelte';
-    export let ancestralString = '';
+    export let path = '';
 	export let origin = new Point();
 	export let thing: Thing;
 	let lineRects: Array<LineRect> = [];
@@ -63,8 +63,7 @@
 			children = thing.children;
 			lineRects = new Layout(thing, childOrigin).lineRects;
 			childMapArray = lineRects.map((rect, index) => ({
-				parentRelationship: children[index].relationship_fromParent(thing),
-				ancestralString: ancestralString + '::' + children[index].id,
+				path: path + k.pathSeparator + children[index].id,
 				origin: originForChildrenOf(children[index], rect),
 				child: children[index], 
 				rect: rect,
@@ -89,10 +88,10 @@
 		<Circle radius=1 center={center} color=black thickness=1/>
 	{/if}
 	{#each childMapArray as a}
-		<Widget thing={a.child} ancestralString={a.ancestralString} relationship={a.relationship} origin={a.rect.extent.offsetBy(new Point(12, ($dot_size / -15) -10))}/>
-		<Line thing={a.child} relationship={a.relationship} curveType={a.rect.curveType} rect={a.rect.offsetBy(new Point(($dot_size / 2) - 129, ($dot_size / 2) - 8))}/>
+		<Widget thing={a.child} path={a.path} origin={a.rect.extent.offsetBy(new Point(12, ($dot_size / -15) -10))}/>
+		<Line thing={a.child} curveType={a.rect.curveType} rect={a.rect.offsetBy(new Point(($dot_size / 2) - 129, ($dot_size / 2) - 8))}/>
 		{#if a.child.hasChildren && a.child.isExpanded}
-			<Children thing={a.child} ancestralString={a.ancestralString} origin={a.origin}/>
+			<Children thing={a.child} path={a.path} origin={a.origin}/>
 		{/if}
 	{/each}
 {/if}

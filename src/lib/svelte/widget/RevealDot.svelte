@@ -1,8 +1,9 @@
 <script>
 	import { Direction, onDestroy, dbDispatch, graphEditor, signal_rebuild_fromHere } from "../../ts/common/GlobalImports";
-	import { k, get, Size, Thing, Point, debug, ZIndex, onMount, svgPath } from "../../ts/common/GlobalImports";
+	import { k, get, Size, Thing, Point, debug, ZIndex, Widget, onMount, svgPath } from "../../ts/common/GlobalImports";
 	import { expanded, dot_size, altering_parent, ids_grabbed, id_toolsGrab } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
+	export let widget;
 	export let thing;
 	let bulkAliasFillColor = k.backgroundColor;
 	let insidePath = svgPath.circle(16, 6);
@@ -82,10 +83,10 @@
 			$id_toolsGrab = null;
 			$altering_parent = null;
 		} else if (!thing.hasChildren) {
-			thing.grabOnly();
+			widget.grabOnly();
 			$id_toolsGrab = thing.id;
 		} else {
-			graphEditor.thing_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
+			graphEditor.widget_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
 			return;
 		}
 		signal_rebuild_fromHere();
@@ -100,11 +101,12 @@
 		clearClicks();
 		clickTimer = setTimeout(() => {
 			clearClicks();
-			if ($id_toolsGrab == thing.id) {
+			const path = widget.path;
+			if ($id_toolsGrab == path) {
 				$id_toolsGrab = null;
 			} else {
-				thing.grabOnly()
-				$id_toolsGrab = thing.id;
+				dbDispatch.db.hierarchy.grabs.grabOnly(path);
+				$id_toolsGrab = path;
 			}
 			signal_rebuild_fromHere();
 		}, k.longClickThreshold);

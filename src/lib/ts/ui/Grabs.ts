@@ -1,35 +1,29 @@
-import { get, Thing, Hierarchy, sort_byOrder, Relationship } from "../common/GlobalImports";
+import { get, Thing, Hierarchy } from "../common/GlobalImports";
 import { ids_grabbed, id_toolsGrab } from '../managers/State';
 
 export default class Grabs {
 	hierarchy: Hierarchy;
-	grabbed: Thing[] | null = null;
+	grabbed: string[] | null = null;
 
 	constructor(hierarchy: Hierarchy) {
 		this.hierarchy = hierarchy;
-		ids_grabbed.subscribe((ids: string[]) => { // executes whenever ids_grabbed changes
-			if (ids.length > 0 && this.hierarchy.db && this.hierarchy.db.hasData) {
-				this.grabbed = [];
-				for (const id of ids) {
-					const thing = this.hierarchy.thing_getForID(id)
-					if (thing) {
-						this.grabbed.push(thing);
-					}
-				}
+		ids_grabbed.subscribe((paths: string[]) => { // executes whenever ids_grabbed changes
+			if (paths.length > 0 && this.hierarchy.db && this.hierarchy.db.hasData) {
+				this.grabbed = paths;
 			}
 		});
 	};
 
-	get thing_lastGrabbed(): (Thing | null) { return this.hierarchy.thing_getForID(this.last_idGrabbed); }
-	toggleGrab = (thing: Thing) => { if (thing.isGrabbed) { this.ungrab(thing); } else { this.grab(thing); } }
+	get thing_lastGrabbed(): (Thing | null) { return this.hierarchy.thing_getForPath(this.last_idGrabbed); }
+	toggleGrab = (path: string) => { if (this.grabbed?.includes(path)) { this.ungrab(path); } else { this.grab(path); } }
 
-	thing_toggleToolsGrab(thing: Thing) {
-		const id = get(id_toolsGrab);
-		if (id != null) {
-			if (id == thing.id) {
+	private toggleToolsGrab(path: string) {
+		const paths = get(id_toolsGrab);
+		if (paths != null) {
+			if (paths.includes(path)) {
 				id_toolsGrab.set(null);
 			} else {
-				id_toolsGrab.set(thing.id);
+				id_toolsGrab.set(path);
 			}
 		}
 	}
@@ -42,26 +36,25 @@ export default class Grabs {
 		return null;
 	}
 
-	grabOnly(thing: Thing) {
-		const ids = [thing.id]
-		ids_grabbed.set(ids);
-		this.thing_toggleToolsGrab(thing);
+	grabOnly(path: string) {
+		ids_grabbed.set([path]);
+		this.toggleToolsGrab(path);
 	}
 
-	grab(thing: Thing) {
+	grab(path: string) {
 		ids_grabbed.update((array) => {
-			if (array.indexOf(thing.id) == -1) {
-				array.push(thing.id);	// only add if not already added
+			if (array.indexOf(path) == -1) {
+				array.push(path);	// only add if not already added
 			}
 			return array;
 		});
-		this.thing_toggleToolsGrab(thing);
+		this.toggleToolsGrab(path);
 	}
 
-	ungrab(thing: Thing) {
+	ungrab(path: string) {
 		const rootID = this.hierarchy.idRoot;
 		ids_grabbed.update((array) => {
-			const index = array.indexOf(thing.id);
+			const index = array.indexOf(path);
 			if (index != -1) {				// only splice array when item is found
 				array.splice(index, 1);		// 2nd parameter means remove one item only
 			}
@@ -70,25 +63,24 @@ export default class Grabs {
 			}
 			return array;
 		});
-		const ids = get(ids_grabbed);
-		if (ids.length == 0) {
-			this.hierarchy.root?.grabOnly();
+		let paths = get(ids_grabbed);
+		if (paths.length == 0 && rootID) {
+			this.grabOnly(rootID);
+		} else {
+			this.toggleToolsGrab(path); // do not show tools cluster for root
 		}
-		this.thing_toggleToolsGrab(thing);
 	}
 
-	latestGrab(up: boolean) {
-		const ids = get(ids_grabbed);
-		if (ids) {
-			let grabs = this.hierarchy.things_getForIDs(ids);
-			sort_byOrder(grabs);
+	latestPath(up: boolean): string | null {
+		const paths = get(ids_grabbed);
+		if (paths) {
 			if (up) {
-				return grabs[0];
+				return paths[0];
 			} else {
-				return grabs.slice(-1)[0];	// not alter array
+				return paths.slice(-1)[0];	// not alter array
 			}
 		}
-		return this.hierarchy.root;
+		return this.hierarchy.idRoot;
 	}
 
 }

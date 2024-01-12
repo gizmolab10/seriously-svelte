@@ -2,6 +2,7 @@
 	import { Point, debug, Direction, dbDispatch, graphEditor } from "../../ts/common/GlobalImports";
 	import TriangleButton from '../svg/TriangleButton.svelte';
 	import { dot_size } from '../../ts/managers/State';
+    export let path = '';
 	export let center = new Point();
 	export let here;
 	let size = $dot_size;
@@ -11,11 +12,11 @@
 	}
 
 	function onClick(event) {
-		const grab = dbDispatch.db.hierarchy.grabs.latestGrab(true);
+		const grab = dbDispatch.db.hierarchy.grabs.latestPath(true);
 		if (grab && grab.id == here.id) {
-			graphEditor.thing_redraw_remoteMoveRight(grab, false, false);
+			graphEditor.widget_redraw_remoteMoveRight(path, false, false);
 		} else {
-			here.grabOnly();
+			dbDispatch.db.hierarchy.grabs.grabOnly(path);
 		}
 	}
 

@@ -1,13 +1,12 @@
 <script lang='ts'>
 	import { id_here, dot_size, id_editing, row_height, ids_grabbed, thing_fontSize, thing_fontFamily, id_toolsGrab} from '../../ts/managers/State';
-	import { k, Thing, Point, debug, ZIndex, Widget, onMount, onDestroy, debugReact, handle_relayout, Relationship } from '../../ts/common/GlobalImports';
+	import { k, Thing, Point, debug, ZIndex, Widget, onMount, onDestroy, debugReact, handle_relayout } from '../../ts/common/GlobalImports';
 	import ToolsCluster from './ToolsCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
 	import RevealDot from './RevealDot.svelte';
 	import DragDot from './DragDot.svelte';
-	export let relationship = Relationship;
 	export let origin = new Point();
-    export let ancestralString = '';
+    export let path = '';
 	export let thing = Thing;
 	let priorRowHeight = $row_height;
 	let priorOrigin = origin;
@@ -18,7 +17,7 @@
 	let background = '';
 	let padding = '';
 	let border = '';
-	let wrapper: Widget;
+	let widget: Widget;
 	let radius = $dot_size / 2;
 	let rightPadding = 22
 	let revealTop = 0;
@@ -26,14 +25,13 @@
 	let width = 0;
 	let left = 0;
 	let top = 0;
-	let widget;
 
 	onDestroy( () => { signalHandler.disconnect(); });
 
 	onMount( () => {
 		updateBorderStyle();
 		debugReact.log_mount(`WIDGET ${thing.description}`);
-		wrapper = new Widget(this, '');
+		widget = new Widget(this, '');
 	});
 	
 	const signalHandler = handle_relayout((idThing) => {
@@ -119,7 +117,6 @@
 </style>
 
 <div class='widget' id='{thing.title}'
-	bind:this={widget}
 	style='
 		{border};
 		{background};
@@ -132,16 +129,16 @@
 		border-radius: {radius}px;
 	'>
 	<div style='top:{revealTop}px;'>
-		<DragDot thing={thing}/>
+		<DragDot thing={thing} widget={widget}/>
 	</div>
-	<TitleEditor thing={thing} fontSize={$thing_fontSize}px fontFamily={$thing_fontFamily}/>
+	<TitleEditor thing={thing} widget={widget} fontSize={$thing_fontSize}px fontFamily={$thing_fontFamily}/>
 	<div class='revealDot'
 		style='
 			top:{revealTop + 0.3}px;
 			z-index: {ZIndex.dots};'>
-		<RevealDot thing={thing}/>
+		<RevealDot thing={thing} widget={widget}/>
 	</div>
 	{#if showingCluster}
-		<ToolsCluster thing={thing}/>
+		<ToolsCluster thing={thing} widget={widget}/>
 	{/if}
 </div>

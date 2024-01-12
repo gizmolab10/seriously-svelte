@@ -90,8 +90,9 @@
 	}
 	
 	$: {
-		if (here == null || here.id != $id_here) {			
-			here = dbDispatch.db.hierarchy.thing_getForID($id_here);
+		if (here == null || here.id != $id_here) {
+			const h = dbDispatch.db.hierarchy;
+			here = !$id_here ? h.root : h.thing_getForPath($id_here);
 			debugReact.log_origins(`GRAPH $id_here ${here.description}`);
 			updateOrigins();
 			toggle = !toggle;	// also cause entire graph to be replaced
@@ -162,8 +163,8 @@
 			{#if isGrabbed}
 				<Circle radius={10} center={origin_ofFirstReveal} color={here.color} thickness=1/>
 			{/if}
-			<FocusRevealDot here={here} center={origin_ofFirstReveal.offsetBy(new Point(-12, -11))}/>
-			<Children thing={here} ancestralString={$id_here} origin={origin_ofChildren}/>
+			<FocusRevealDot here={here} path={$id_here} center={origin_ofFirstReveal.offsetBy(new Point(-12, -11))}/>
+			<Children thing={here} path={$id_here} origin={origin_ofChildren}/>
 		</div>
 	</div>
 {/if}

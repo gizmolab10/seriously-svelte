@@ -50,7 +50,11 @@ class PersistLocal {
 
 	readFromKey(key: string): any | null {
 		const storedValue = localStorage[key];
-		return !storedValue ? null : JSON.parse(storedValue!);
+		if (!storedValue || storedValue == 'undefined') {
+			return null;
+		} else {
+			return JSON.parse(storedValue);
+		} 
 	}
 
 	state_updateForDBType(db_type: string, defaultid_here: string) {

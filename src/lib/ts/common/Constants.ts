@@ -13,10 +13,12 @@ export default class Constants {
 	public backgroundColor: string;
 	public highlightColor: string;
 	public adminBulkName: string;
+	public pathSeparator: string;
 	public defaultTitle: string;
 	public lineTitle: string;
 
 	constructor() {
+		this.pathSeparator = '::';
 		this.backgroundColor = 'white';
 		this.highlightColor = '#9e7daa';
 		this.adminBulkName = 'Jonathan Sand';

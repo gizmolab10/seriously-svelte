@@ -4,6 +4,7 @@
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TriangleButton from '../svg/TriangleButton.svelte';
 	import Trash from '../svg/Trash.svelte';
+    export let path = '';
 	export let thing: Thing;
 	let diameter = $dot_size;
     let center_deleteParent = new Point();
@@ -28,9 +29,9 @@
         center_deleteParent = new Point(otherLeft, top + diameter + 10);
 	});
 
-	async function handleClick(id: string) {
+	async function handleClick(buttonID: string) {
         if (!thing.isExemplar) {
-            switch (id) {
+            switch (buttonID) {
                 case 'addParent': toggleAlteration(AlteringParent.adding); return;
                 case 'deleteParent': toggleAlteration(AlteringParent.deleting); return;
                 case 'addChild': await graphEditor.thing_edit_remoteAddChildTo(thing); break;

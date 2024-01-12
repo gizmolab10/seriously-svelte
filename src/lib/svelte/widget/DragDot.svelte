@@ -3,6 +3,7 @@
 	import { Direction, dbDispatch, graphEditor, handle_alteringParent } from "../../ts/common/GlobalImports";
 	import { dot_size, ids_grabbed, id_toolsGrab } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
+    export let widget;
 	export let thing;
 	let tinyDotColor = thing.color;
 	let strokeColor = thing.color;
@@ -79,14 +80,14 @@
 
 	function handleDoubleClick(event) {
 		clearClicks();
-		thing.becomeHere();
+		thing.becomeHere(widget.path);
     }
 
 	function handleSingleClick(event) {
 		clickCount++;
 		clickTimer = setTimeout(() => {
 			if (clickCount === 1) {
-				thing.clicked_dragDot(event.shiftKey);
+				thing.clicked_dragDot(event.shiftKey, widget);
 				clearClicks();
 			}
 		}, k.doubleClickThreshold);

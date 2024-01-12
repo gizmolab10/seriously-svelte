@@ -35,9 +35,10 @@ class Launch {
 						dbDispatch.eraseDB = true;
 						break;
                     case 'settings': 
+						localStorage.clear();
 						ids_grabbed.set([]);
-						expanded.set([]);
 						id_here.set(null);
+						expanded.set([]);
 						break;
                 }
             }

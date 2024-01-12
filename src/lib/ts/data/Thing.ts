@@ -1,5 +1,5 @@
-import { k, get, Size, Datum, debug, Predicate, Hierarchy, TraitType, PersistID, DebugFlag, dbDispatch, getWidthOf, persistLocal, CreationOptions, AlteringParent } from '../common/GlobalImports';
-import { SeriouslyRange, signal_rebuild, signal_relayout, signal_rebuild_fromHere, signal_relayout_fromHere, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { k, get, Size, Datum, debug, Widget, Predicate, Hierarchy, TraitType, PersistID, DebugFlag, dbDispatch, getWidthOf, persistLocal, CreationOptions } from '../common/GlobalImports';
+import { SeriouslyRange, AlteringParent, signal_rebuild, signal_relayout, signal_rebuild_fromHere, signal_relayout_fromHere, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { id_here, dot_size, expanded, altering_parent, row_height, id_editing, ids_grabbed, line_stretch, id_toolsGrab } from '../managers/State';
 import Airtable from 'airtable';
 
@@ -60,7 +60,6 @@ export default class Thing extends Datum {
 	get parentIDs():			Array<string> { return this.hierarchy.thingIDs_getByIDPredicateToAndID(Predicate.idIsAParentOf,  true, this.id); }
 	get children():				 Array<Thing> { return this.hierarchy.things_getByIDPredicateToAndID(Predicate.idIsAParentOf, false, this.idForChildren); }
 	get parents():				 Array<Thing> { return this.hierarchy.things_getByIDPredicateToAndID(Predicate.idIsAParentOf,  true, this.id); }
-	get siblings():				 Array<Thing> { return this.firstParent?.children ?? []; }
 	get hierarchy():				Hierarchy { return dbDispatch.db.hierarchy; }
 	get hasChildren():				  boolean { return this.children.length > 0; }
 	get hasParents():				  boolean { return this.parents.length > 0; }
@@ -69,10 +68,8 @@ export default class Thing extends Datum {
 	get isBulkAlias():				  boolean { return this.trait == TraitType.bulk; }
 	get isExpanded():				  boolean { return this.isRoot || get(expanded)?.includes(this.parentRelationshipID); }
 	get isVisible():				  boolean { return this.ancestors(Number.MAX_SAFE_INTEGER).includes(this.hierarchy.here!); }
-	get grandparent():					Thing { return this.firstParent?.firstParent ?? this.hierarchy.root; }
 	get lastChild():					Thing { return this.children.slice(-1)[0]; }	// not alter children
 	get firstChild():					Thing { return this.children[0]; }
-	get firstParent():					Thing { return this.parents[0]; }
 	get description():				   string { return this.id + ' \"' + this.title + '\"'; }
 	get idForChildren():               string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get titleWidth():				   number { return getWidthOf(this.title) }
@@ -141,8 +138,6 @@ export default class Thing extends Datum {
 	
 	signal_rebuild()  { signal_rebuild(this.id); }
 	signal_relayout() { signal_relayout(this.id); }
-	toggleGrab()	  { this.hierarchy.grabs.toggleGrab(this); }
-	grabOnly()		  { this.hierarchy.grabs.grabOnly(this); }
 	toggleExpand()	  { this.expanded_setTo(!this.isExpanded) }
 	collapse()		  { this.expanded_setTo(false); }
 	expand()		  { this.expanded_setTo(true); }
@@ -233,12 +228,12 @@ export default class Thing extends Datum {
 		return array;
 	}
 
-	becomeHere() {
+	becomeHere(path: string | null) {
 		if (this.hasChildren) {
-			id_here.set(this.id);
+			id_here.set(path);
 			this.expand();
 			id_toolsGrab.set(null);
-			persistLocal.writeToDBKey(PersistID.here, this.id)
+			persistLocal.writeToDBKey(PersistID.here, path)
 		};
 	}
 
@@ -297,10 +292,6 @@ export default class Thing extends Datum {
 		return this;
 	}
 
-	relationship_fromParent(parent: Thing) {
-		return this.hierarchy.relationship_getForIDs_predicateFromAndTo(Predicate.idIsAParentOf, this.id, parent.id);
-	}
-
 	async parent_alterMaybe() {
 		const alteration = get(altering_parent);
 		const other = this.canAlterParentOf_toolsGrab;
@@ -315,14 +306,14 @@ export default class Thing extends Datum {
 		}
 	}
 
-	clicked_dragDot(shiftKey: boolean) {
+	clicked_dragDot(shiftKey: boolean, widget: Widget) {
 		if (!this.isExemplar) {
 			if (get(altering_parent)) {
 				this.parent_alterMaybe();
 			} else if (shiftKey || this.isGrabbed) {
-				this.toggleGrab();
+				widget.toggleGrab();
 			} else {
-				this.grabOnly();
+				widget.grabOnly();
 			}
 		}
 	}
@@ -371,78 +362,6 @@ export default class Thing extends Datum {
 		const relationship = await dbDispatch.db.hierarchy.relationship_remember_remoteCreateUnique(baseID, null, idPredicateIsAParentOf, parentID, child.id, child.order, CreationOptions.getRemoteID)
 		await orders_normalize_remoteMaybe(this.children);		// write new order values for relationships
 		return relationship;
-	}
-
-	redraw_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
-		const parent = this.firstParent;
-		const siblings = parent.children;
-		if (!siblings || siblings.length == 0) {
-			this.redraw_runtimeBrowseRight(true, EXTREME, up);
-		} else {
-			const index = siblings.indexOf(this);
-			const newIndex = index.increment(!up, siblings.length);
-			if (!OPTION) {
-				const newGrab = siblings[newIndex];
-				if (SHIFT) {
-					newGrab?.toggleGrab()
-				} else {
-					newGrab?.grabOnly();
-				}
-			} else if (k.allowGraphEditing) {
-				const wrapped = up ? (index == 0) : (index == siblings.length - 1);
-				const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
-				const newOrder = newIndex + goose;
-				const order = this.order;
-				this.order_setTo(newOrder, true);
-				parent.order_normalizeRecursive_remoteMaybe(true);
-				signal_relayout_fromHere();
-				this.log(DebugFlag.order, `${order} => ${this.order} wanted: ${newOrder}`);
-				parent.log(DebugFlag.order, `MAP ${parent.children.map(c => c.order)}`);
-			}
-		}
-	}
-
-	redraw_runtimeBrowseRight(RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, fromReveal: boolean = false) {
-		const newHere = RIGHT ? this : this.grandparent;
-		let newGrab: Thing | null = RIGHT ? this.firstChild : this.firstParent;
-		const newGrabIsNotHere = get(id_here) != newGrab?.id;
-		if (!RIGHT) {
-			const root = this.hierarchy.root;
-			if (EXTREME) {
-				root?.becomeHere();	// tells graph to update line rects
-			} else {
-				if (!SHIFT) {
-					if (fromReveal) {
-						this.expand();
-					} else if (newGrabIsNotHere && newGrab && !newGrab.isExpanded) {
-						newGrab?.expand();
-					}
-				} else if (newGrab) { 
-					if (this.isExpanded) {
-						this.collapse();
-						newGrab = null;
-					} else if (newGrab == root) {
-						newGrab = null;
-					} else {
-						newGrab.collapse();
-					}
-				}
-			}
-		} else if (this.hasChildren) {
-			if (SHIFT) {
-				newGrab = null;
-			}
-			this.expand();
-		} else {
-			return;
-		}
-		id_editing.set(null);
-		newGrab?.grabOnly();
-		const allowToBecomeHere = (!SHIFT || newGrab == this.firstParent) && newGrabIsNotHere; 
-		const shouldBecomeHere = !newHere.isVisible || newHere.isRoot;
-		if (!RIGHT && allowToBecomeHere && shouldBecomeHere) {
-			newHere.becomeHere();
-		}
 	}
 
 }

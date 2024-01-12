@@ -1,13 +1,14 @@
 <script lang='ts'>
 	import { k, Thing, onMount, dbDispatch } from '../../ts/common/GlobalImports';
 	import { id_here } from '../../ts/managers/State';
-	export let thing = Thing;
+	export let path = '';
+	export let thing: Thing;
 	let colorStyles = '';
 
-	onMount( () => { updateColors(); });
+	onMount(() => { updateColors(); });
 
 	function updateColors() {
-		const isHere = thing.id === $id_here;
+		const isHere = path === $id_here;
 		if (isHere) {
 			colorStyles = 'background-color: ' + thing.color + '; color: ' + k.backgroundColor;
 		} else {
@@ -16,9 +17,11 @@
 	};
 
 	function crumb_buttonClicked(event) {
-		if (dbDispatch.db.hasData) {
-			thing.grabOnly();
-			thing.becomeHere();
+		const db = dbDispatch.db;
+		const h = db.hierarchy;
+		if (db.hasData) {
+			h.grabs.grabOnly(path);
+			h.becomeHere(path);
 		}
 	}
 

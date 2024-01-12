@@ -1,5 +1,5 @@
-import { k, get, Thing, Hierarchy, dbDispatch, signal_rebuild_fromHere } from '../common/GlobalImports';
-import { ids_grabbed, id_toolsGrab } from '../managers/State';
+import { k, get, Thing, Widget, Hierarchy, dbDispatch, stripPath, appendPath, signal_rebuild_fromHere, signal_relayout_fromHere } from '../common/GlobalImports';
+import { id_here, id_editing, ids_grabbed, id_toolsGrab } from '../managers/State';
 
 //////////////////////////////////////
 //									//
@@ -13,27 +13,27 @@ export default class GraphEditor {
 
 	async handleKeyDown(event: KeyboardEvent) {
 		const h = this.hierarchy;
-		let grab = h.grabs.latestGrab(true);
+		let idGrab = h.grabs.latestPath(true);
 		if (event.type == 'keydown') {
 			const OPTION = event.altKey;
 			const SHIFT = event.shiftKey;
 			const COMMAND = event.metaKey;
 			const EXTREME = SHIFT && OPTION;
 			const key = event.key.toLowerCase();
-			if (!grab) {
-				const root = h.root;
-				root?.becomeHere();
-				root?.grabOnly();		// update crumbs and dots
-				grab = root;
+			const idRoot = h.idRoot;
+			if (!idGrab && idRoot) {
+				root.becomeHere();
+				h.grabs.grabOnly(idRoot);		// update crumbs and dots
+				idGrab = idRoot;
 			}
 			if (k.allowGraphEditing) {
-				if (grab && k.allowTitleEditing) {
+				if (idGrab && k.allowTitleEditing) {
 					switch (key) {
-						case 'd':		await this.thing_edit_remoteDuplicate(grab); break;
-						case ' ':		await this.thing_edit_remoteAddChildTo(grab); break;
-						case '-':		if (!COMMAND) { await this.thing_edit_remoteAddLine(grab); } break;
-						case 'tab':		await this.thing_edit_remoteAddChildTo(grab.firstParent); break; // Title editor also makes this call
-						case 'enter':	grab.startEdit(); break;
+						case 'd':		await this.thing_edit_remoteDuplicate(idGrab); break;
+						case ' ':		await this.thing_edit_remoteAddChildTo(idGrab); break;
+						case '-':		if (!COMMAND) { await this.thing_edit_remoteAddLine(idGrab); } break;
+						case 'tab':		await this.thing_edit_remoteAddChildTo(idGrab.firstParent); break; // Title editor also makes this call
+						case 'enter':	idGrab.startEdit(); break;
 					}
 				}
 				switch (key) {
@@ -41,18 +41,18 @@ export default class GraphEditor {
 					case 'backspace':	await h.things_redraw_remoteTraverseDelete(h.things_getForIDs(get(ids_grabbed))); break;
 				}
 			}
-			if (grab) {
+			if (idGrab) {
 				switch (key) {
-					case 'arrowright':	await this.thing_redraw_remoteMoveRight(grab, true, SHIFT, OPTION, EXTREME); break;
-					case 'arrowleft':	event.preventDefault(); await this.thing_redraw_remoteMoveRight(grab, false, SHIFT, OPTION, EXTREME); break;
-					case '/':			grab.becomeHere(); break;
+					case '/':			idGrab.becomeHere(); break;
+					case 'arrowright':	await this.widget_redraw_remoteMoveRight(idGrab, true, SHIFT, OPTION, EXTREME); break;
+					case 'arrowleft':	event.preventDefault(); await this.widget_redraw_remoteMoveRight(idGrab, false, SHIFT, OPTION, EXTREME); break;
 				}
 			}
 			switch (key) {
-				case '`':               event.preventDefault(); this.latestGrab_toggleToolsCluster(); break;
-				case '!':				dbDispatch.db.hierarchy.root?.becomeHere(); break;
-				case 'arrowup':			await this.latestGrab_redraw_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
-				case 'arrowdown':		await this.latestGrab_redraw_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
+				case '!':				h.root?.becomeHere(); break;
+				case '`':               event.preventDefault(); this.latestPath_toggleToolsCluster(); break;
+				case 'arrowup':			await this.latestPath_redraw_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
+				case 'arrowdown':		await this.latestPath_redraw_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
 			}
 		}
 	}
@@ -111,21 +111,25 @@ export default class GraphEditor {
 	//		MOVE	  //
 	////////////////////
 
-	async thing_redraw_remoteMoveRight(thing: Thing, RIGHT: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean, fromReveal: boolean = false) {
+	async widget_redraw_remoteMoveRight(widget: Widget, RIGHT: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean, fromReveal: boolean = false) {
 		if (!OPTION) {
-			if (RIGHT && thing.needsBulkFetch) {
-				await thing.redraw_bulkFetchAll_runtimeBrowseRight();
-			} else {
-				thing.redraw_runtimeBrowseRight(RIGHT, SHIFT, EXTREME, fromReveal);
+			const thing = widget.thing;
+			if (thing) {
+				if (RIGHT && thing.needsBulkFetch) {
+					await thing.redraw_bulkFetchAll_runtimeBrowseRight();
+				} else {
+					thing.redraw_runtimeBrowseRight(RIGHT, SHIFT, EXTREME, fromReveal);
+				}
 			}
 		} else if (k.allowGraphEditing) {
-			await this.thing_redraw_remoteRelocateRight(thing, RIGHT, EXTREME);
+			await this.widget_redraw_remoteRelocateRight(widget, RIGHT, EXTREME);
 		}
 	}
 
-	async thing_redraw_remoteRelocateRight(thing: Thing, RIGHT: boolean, EXTREME: boolean) {
-		const newParent = RIGHT ? thing.nextSibling(false) : thing.grandparent;
-		if (newParent) {
+	async widget_redraw_remoteRelocateRight(widget: Widget, RIGHT: boolean, EXTREME: boolean) {
+		const thing = widget.thing;
+		const newParent = RIGHT ? thing?.nextSibling(false) : thing?.grandparent;
+		if (newParent && thing) {
 			const h = this.hierarchy;
 			const parent = thing.firstParent;
 			const relationship = h.relationship_getWhereIDEqualsTo(thing.id);
@@ -156,19 +160,95 @@ export default class GraphEditor {
 		}
 	}
 
-	latestGrab_toggleToolsCluster() {
-		const id = this.hierarchy.grabs.latestGrab(true)?.id;
-		if (id) {
-			const clear = id == get(id_toolsGrab);
-			id_toolsGrab.set(clear ? null : id);
+	latestPath_toggleToolsCluster() {
+		const path = this.hierarchy.grabs.latestPath(true);
+		if (path) {
+			const clear = path == get(id_toolsGrab);
+			id_toolsGrab.set(clear ? null : path);
 			signal_rebuild_fromHere();
 		}
-
 	}
 
-	async latestGrab_redraw_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
-		const grab = this.hierarchy.grabs.latestGrab(up);
-		grab?.redraw_remoteMoveUp(up, SHIFT, OPTION, EXTREME);
+	async latestPath_redraw_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
+		const path = this.hierarchy.grabs.latestPath(up); // use thing_get for ancest
+		this.redraw_remoteMoveUp(path, up, SHIFT, OPTION, EXTREME);
+	}
+
+	redraw_remoteMoveUp(path: string | null, up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
+		const thing = this.hierarchy.thing_getForPath(path);
+		const parent = this.hierarchy.thing_getForPath(path, -2);
+		const siblings = parent?.children;
+		if (!siblings || siblings.length == 0) {
+			this.redraw_runtimeBrowseRight(path, true, EXTREME, up);
+		} else if (thing) {
+			const index = siblings.indexOf(thing);
+			const newIndex = index.increment(!up, siblings.length);
+			if (!OPTION) {
+				const newGrab = siblings[newIndex];
+				if (SHIFT) {
+					newGrab?.toggleGrab()
+				} else {
+					newGrab?.grabOnly();
+				}
+			} else if (k.allowGraphEditing) {
+				const wrapped = up ? (index == 0) : (index == siblings.length - 1);
+				const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
+				const newOrder = newIndex + goose;
+				const order = this.order;
+				this.order_setTo(newOrder, true);
+				parent.order_normalizeRecursive_remoteMaybe(true);
+				signal_relayout_fromHere();
+			}
+		}
+	}
+
+	redraw_runtimeBrowseRight(path: string | null, RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, fromReveal: boolean = false) {
+		const by = RIGHT ? 1 : 3;
+		const thing = this.hierarchy.thing_getForPath(path);
+		if (thing && path) {
+			const parentPath = stripPath(path, by);
+			const childPath = appendPath(path, thing.firstChild);
+			const newHere = parentPath;
+			let newGrab: string | null | undefined = RIGHT ? childPath : parentPath;
+			const newGrabIsNotHere = get(id_here) != newGrab;
+			if (!RIGHT) {
+				const root = this.hierarchy.root;
+				if (EXTREME) {
+					root?.becomeHere();	// tells graph to update line rects
+				} else {
+					if (!SHIFT) {
+						if (fromReveal) {
+							thing.expand();
+						} else if (newGrabIsNotHere && newGrab && !newGrab.isExpanded) {
+							newGrab?.expand();
+						}
+					} else if (newGrab) { 
+						if (thing.isExpanded) {
+							thing.collapse();
+							newGrab = null;
+						} else if (newGrab == root) {
+							newGrab = null;
+						} else {
+							newGrab.collapse();
+						}
+					}
+				}
+			} else if (thing.hasChildren) {
+				if (SHIFT) {
+					newGrab = null;
+				}
+				thing.expand();
+			} else {
+				return;
+			}
+			id_editing.set(null);
+			newGrab?.grabOnly();
+			const allowToBecomeHere = (!SHIFT || newGrab == this.firstParent) && newGrabIsNotHere; 
+			const shouldBecomeHere = !newHere.isVisible || newHere.isRoot;
+			if (!RIGHT && allowToBecomeHere && shouldBecomeHere) {
+				newHere.becomeHere();
+			}
+		}
 	}
 
 }

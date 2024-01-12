@@ -1,4 +1,4 @@
-import { noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, sort_byOrder, roundToEven } from './Utilities';
+import { noop, apply, remove, removeAll, getFontOf, lastIDOf, stripPath, appendPath, getWidthOf, copyObject, desaturateBy, sort_byOrder, roundToEven } from './Utilities';
 import { signal_rebuild, signal_relayout, signal_alteringParent, signal_rebuild_fromHere, signal_relayout_fromHere } from './Signals';
 import { isServerLocal, isMobileDevice, getBrowserType, convertToObject, orders_normalize_remoteMaybe } from './Utilities';
 import { ZIndex, ButtonID, TraitType, BrowserType, AlteringParent, CreationOptions, LineCurveType } from './Enumerations';
@@ -38,6 +38,7 @@ export {
 	debug, Debug, DebugFlag,
 	dbDispatch, DBType, DataKind,
 	Grabs, graphEditor, Hierarchy,
+	lastIDOf, stripPath, appendPath,
 	debugReact, DebugReact, ReactFlag, Widget,
 	ZIndex, ButtonID, BrowserType, AlteringParent, CreationOptions,
 	User, SeriouslyRange, Datum, Thing, Access, Predicate, Relationship,

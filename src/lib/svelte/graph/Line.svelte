@@ -1,10 +1,9 @@
 <script lang='ts'>
-	import { Rect, Size, Point, debug, onMount, ZIndex, SVGType, svgPath, debugReact, Relationship, LineCurveType } from '../../ts/common/GlobalImports';
+	import { Rect, Size, Point, debug, onMount, ZIndex, SVGType, svgPath, debugReact, LineCurveType } from '../../ts/common/GlobalImports';
 	import { dot_size } from '../../ts/managers/State';
 	import Circle from '../kit/Circle.svelte';
 	import Box from '../kit/Box.svelte';
 	export let curveType: string = LineCurveType.up;
-	export let relationship = Relationship;
 	export let rect = new Rect();
 	export let thing: Thing;
 	const debugOffset = new Point(141, -1.5);

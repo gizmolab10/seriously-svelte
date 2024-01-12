@@ -1,4 +1,4 @@
-import { Rect, Point, signal, Signals, roundToEven, signal_alteringParent } from '../common/GlobalImports';
+import { Rect, Point, roundToEven, signal_alteringParent } from '../common/GlobalImports';
 import { writable } from 'svelte/store';
 let interval : NodeJS.Timeout | null = null;
 
