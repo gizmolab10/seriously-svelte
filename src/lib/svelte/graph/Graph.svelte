@@ -110,7 +110,7 @@
 
 	function updateOrigins() {
 		if (here) {
-			childrenSize = here.visibleProgeny_size.asPoint;
+			childrenSize = $path_here.visibleProgeny_size.asPoint;
 			const mysteryOffset = new Point(($showDetails ? -92 : 8) - (childrenSize.x / 2), -85);
 			origin_ofFirstReveal = $graphRect.center.offsetBy(mysteryOffset);
 			if (k.leftJustifyGraph) {
@@ -133,7 +133,7 @@
 	function rectOfChildren(): Rect {
 		const delta = new Point(9, -2);
 		const origin = $graphRect.origin.offsetBy(delta).offsetBy(origin_ofChildren);
-		return new Rect(origin, here.visibleProgeny_size.expandedByX(3));
+		return new Rect(origin, $path_here.visibleProgeny_size.expandedByX(3));
 	}
 
 </script>

@@ -15,15 +15,16 @@ export default class Layout {
 				this.lineRects.push(new LineRect(LineCurveType.flat, rect));
 			} else {
 				let index = 0;
-				let sumOfSiblingsAbove = -thing.visibleProgeny_height() / 2; // start out negative and grow positive
+				let sumOfSiblingsAbove = -path.visibleProgeny_height() / 2; // start out negative and grow positive
 				while (index < quantity) {
 					const child = children[index];
-					const childvisibleProgeny_halfHeight = child.visibleProgeny_halfHeight;
+					const childPath = path.appendThing(child);
+					const childvisibleProgeny_halfHeight = childPath.visibleProgeny_halfHeight;
 					const sizeY = sumOfSiblingsAbove + childvisibleProgeny_halfHeight;
 					const direction = this.getDirection(sizeY);
 					const rect = new Rect(origin, new Size(sizeX, sizeY));
 					this.lineRects.push(new LineRect(direction, rect));
-					sumOfSiblingsAbove += child.visibleProgeny_height();
+					sumOfSiblingsAbove += childPath.visibleProgeny_height();
 					index += 1;
 				}
 			}

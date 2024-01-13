@@ -1,6 +1,6 @@
 <script lang=ts>
-	import { onMount, LineRect, onDestroy, DebugFlag, debugReact, LineCurveType } from '../../ts/common/GlobalImports';
-	import { k, Rect, Size, Point, Thing, debug, signals, SignalKind, Layout } from '../../ts/common/GlobalImports';
+	import { k, Rect, Size, Point, Thing, debug, signals, onMount, Layout } from '../../ts/common/GlobalImports';
+	import { LineRect, onDestroy, DebugFlag, debugReact, LineCurveType } from '../../ts/common/GlobalImports';
 	import { dot_size, graphRect, line_stretch } from '../../ts/managers/State';
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
@@ -57,7 +57,7 @@
 	function layoutChildren() {
 		if (thing && !thing.ancestors_include(thing)) {
 			const delta = new Point(19.5, -2.5);
-			const height = (thing.visibleProgeny_halfHeight);
+			const height = (path.visibleProgeny_halfHeight);
 			const childOrigin = origin.offsetByY(height);
 			center = childOrigin.offsetBy(delta);
 			children = thing.children;
@@ -76,8 +76,9 @@
 			alert('grandchildren origin not computable');
 			return new Point();
 		}
+		const childPath = path.appendThing(child);
 		const x = origin.x + child.titleWidth + $dot_size + $line_stretch - 2;
-		const y = rect.extent.y - child.visibleProgeny_halfHeight;
+		const y = rect.extent.y - childPath.visibleProgeny_halfHeight;
 		return new Point(x, y);
 	}
 	

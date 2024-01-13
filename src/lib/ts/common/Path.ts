@@ -1,6 +1,5 @@
-import { k, get, Thing, Hierarchy, dbDispatch, graphEditor, getWidthOf } from './GlobalImports';
-import { path_here, path_editing, paths_grabbed, paths_expanded, path_toolsGrab } from '../managers/State';
-
+import { dot_size, path_here, row_height, line_stretch, path_editing, paths_grabbed, paths_expanded, path_toolsGrab } from '../managers/State';
+import { k, get, Size, Thing, Hierarchy, dbDispatch, graphEditor, getWidthOf } from './GlobalImports';
 
 export default class Path {
 	pathString: string;
@@ -14,7 +13,10 @@ export default class Path {
 	get hierarchy(): Hierarchy { return dbDispatch.db.hierarchy; }
 	get isRoot(): boolean { return this == this.hierarchy.rootPath; }
 	get ids(): Array<string> { return this.pathString.split(k.pathSeparator); }
+	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
+	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get toolsGrabbed(): boolean { return this.pathString == get(path_toolsGrab)?.pathString; }
+	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	get isExpanded(): boolean { return this.isRoot || get(paths_expanded)?.filter(path => path.pathString == this.pathString).length > 0; }
 	thing(back: number = 0): Thing | null { return this.hierarchy.thing_getForID(this.pluckID(back)); }
 	pluckID(back: number = 1): string | null { return this.ids.slice(-back)[0]; }
@@ -41,6 +43,43 @@ export default class Path {
 		}
 		array.reverse(); // TODO: is this needed?
 		return array;
+	}
+
+	visibleProgeny_height(only: boolean = false, visited: Array<string> = []): number {
+		const thing = dbDispatch.db.hierarchy.thing_getForPath(this);
+		if (thing) {
+			const singleRowHeight = only ? get(row_height) : thing.singleRowHeight;
+			if (!visited.includes(this.pathString) && thing.hasChildren && this.isExpanded) {
+				let height = 0;
+				for (const child of thing.children) {
+					const childpath = this.appendThing(child);
+					height += childpath.visibleProgeny_height(only, [...visited, this.pathString]);
+				}
+				return Math.max(height, singleRowHeight);
+			}
+			return singleRowHeight;
+		}
+		return 0;
+	}
+
+	visibleProgeny_width(isFirst: boolean = true, visited: Array<string> = []): number {
+		const thing = dbDispatch.db.hierarchy.thing_getForPath(this);
+		if (thing) {
+			let width = isFirst ? 0 : thing.titleWidth;
+			if (!visited.includes(this.pathString) && this.isExpanded && thing.hasChildren) {
+				let progenyWidth = 0;
+				for (const child of thing.children) {
+					const childpath = this.appendThing(child);
+					const childProgenyWidth = childpath.visibleProgeny_width(false, [...visited, this.pathString]);
+					if (progenyWidth < childProgenyWidth) {
+						progenyWidth = childProgenyWidth;
+					}
+				}
+				width += progenyWidth + get(line_stretch) + get(dot_size) * (isFirst ? 2 : 1);
+			}
+			return width;
+		}
+		return 0;
 	}
 		
 	// operations

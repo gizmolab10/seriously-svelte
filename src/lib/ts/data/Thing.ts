@@ -1,6 +1,6 @@
-import { k, get, Size, Path, Datum, debug, Widget, Predicate, Hierarchy, TraitType, PersistID, DebugFlag, dbDispatch, getWidthOf, persistLocal, CreationOptions } from '../common/GlobalImports';
-import { SeriouslyRange, AlteringParent, signal_rebuild, orders_normalize_remoteMaybe } from '../common/GlobalImports';
-import { path_here, dot_size, paths_expanded, altering_parent, row_height, path_editing, paths_grabbed, line_stretch, path_toolsGrab } from '../managers/State';
+import { k, get, Path, Datum, debug, Widget, Predicate, Hierarchy, TraitType, DebugFlag, getWidthOf, dbDispatch } from '../common/GlobalImports';
+import { SeriouslyRange, CreationOptions, AlteringParent, signals, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { path_here, altering_parent, row_height, path_editing, paths_grabbed, path_toolsGrab } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -76,9 +76,6 @@ export default class Thing extends Datum {
 	get description():				   string { return this.id + ' \"' + this.title + '\"'; }
 	get idForChildren():               string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get titleWidth():				   number { return getWidthOf(this.title) }
-	get visibleProgeny_halfHeight():   number { return this.visibleProgeny_height() / 2; }
-	get visibleProgeny_halfSize():		 Size { return this.visibleProgeny_size.dividedInHalf; }
-	get visibleProgeny_size():			 Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 
 	get parentRelationshipID(): string { // WRONG
 		return this.hierarchy.relationship_getWhereIDEqualsTo(this.id)?.id ?? '';
@@ -114,33 +111,6 @@ export default class Thing extends Datum {
 		return this.showCluster ? k.clusterHeight : get(row_height);
 	}
 
-	visibleProgeny_height(only: boolean = false, visited: Array<string> = []): number {
-		const singleRowHeight = only ? get(row_height) : this.singleRowHeight;
-		if (!visited.includes(this.id) && this.hasChildren && this.isExpanded) {
-			let height = 0;
-			for (const child of this.children) {
-				height += child.visibleProgeny_height(only, [...visited, this.id]);
-			}
-			return Math.max(height, singleRowHeight);
-		}
-		return singleRowHeight;
-	}
-
-	visibleProgeny_width(isFirst: boolean = true, visited: Array<string> = []): number {
-		let width = isFirst ? 0 : this.titleWidth;
-		if (!visited.includes(this.id) && this.isExpanded && this.hasChildren) {
-			let progenyWidth = 0;
-			for (const child of this.children) {
-				let childProgenyWidth = child.visibleProgeny_width(false, [...visited, this.id]);
-				if (progenyWidth < childProgenyWidth) {
-					progenyWidth = childProgenyWidth;
-				}
-			}
-			width += progenyWidth + get(line_stretch) + get(dot_size) * (isFirst ? 2 : 1);
-		}
-		return width;
-	}
-	
 	signal_rebuild()  { signals.signal_rebuild(this.id); }
 	signal_relayout() { signals.signal_relayout(this.id); }
 
