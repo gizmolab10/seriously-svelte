@@ -8,7 +8,7 @@
 	let size = $dot_size;
 
 	function fillColor_closure(isFilled) {
-		return debug.lines ? 'transparent' : here.revealColor(isFilled);
+		return debug.lines ? 'transparent' : here.revealColor(isFilled, path);
 	}
 
 	function onClick(event) {

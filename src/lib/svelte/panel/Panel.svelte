@@ -1,6 +1,6 @@
 <script>
 	import { build, isBusy, path_here, db_type, graphRect, id_popupView, showDetails, things_arrived, thing_fontSize } from '../../ts/managers/State';
-	import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, signals, onMount, ButtonID } from '../../ts/common/GlobalImports';
+	import { k, get, Path, Rect, Size, Point, Thing, launch, DBType, ZIndex, signals, onMount, ButtonID } from '../../ts/common/GlobalImports';
 	import { Hierarchy, PersistID, dbDispatch, debugReact, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import CircularButton from '../kit/CircularButton.svelte';
@@ -10,13 +10,14 @@
 	import Help from '../help/Help.svelte';
 	import Details from './Details.svelte';
 	import Crumbs from './Crumbs.svelte';
+	let herePath = Path;
 	let toggle = false;
-	let here = Thing;
 	let left = 14;
 	let size = 14;
 	
 	function builds_buttonClicked(event) { $id_popupView = ($id_popupView == ButtonID.buildNotes) ? null : ButtonID.buildNotes; }
 	function help_buttonClicked() { $id_popupView = ($id_popupView == ButtonID.help) ? null : ButtonID.help; }
+	const rebuild_signalHandler = signals.handle_rebuild(() => { graph_fullRebuild(); });
 	window.addEventListener('resize', (event) => { graphRect_update(); });
 	
 	onMount(async () => {
@@ -24,13 +25,9 @@
 		graph_fullRebuild();
 	});
 
-	const rebuild_signalHandler = signals.handle_rebuild((idThing) => {
-		graph_fullRebuild();
-	});
-
 	$: {
-		if (here.id != $path_here) {
-			here = dbDispatch.db.hierarchy.thing_getForPath($path_here);
+		if (herePath.pathString != $path_here?.pathString) {
+			herePath = $path_here;
 			graph_fullRebuild();
 		}
 	}
@@ -38,7 +35,7 @@
 	function graph_fullRebuild() {
 		graphRect_update();
 		left = $graphRect.origin.x;
-		debugReact.log_rebuild(`PANEL ${here?.description}`)
+		debugReact.log_rebuild(`PANEL ${$path_here?.thing()?.description}`)
 		toggle = !toggle;	// remount graph component
 	}
 	
@@ -143,10 +140,10 @@
 				<Crumbs/>
 			</div>
 			<div class='topTitle'
-				style='color: {here?.color};
+				style='color: {$path_here?.thing()?.color};
 					z-index: {ZIndex.frontmost};
 					left: {$showDetails ? '100px' : '-1px'};'>
-				{here?.title}
+				{$path_here?.thing()?.title}
 			</div>
 			<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: {$showDetails ? k.detailsMargin : 0}px; top: 85px;'></div>
 			{#key toggle}

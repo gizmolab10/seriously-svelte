@@ -7,24 +7,24 @@
 	export let fillColor;
 	export let position;
 	export let size;
-	const path = svgPath.triangle(Size.square(size), Direction.right);
+	const scalablePath = svgPath.triangle(size, Direction.right);
 
 </script>
 
 <SVGD3
-	path={path}
+	size={size}
 	fill={fillColor}
 	position={position}
 	stroke={strokeColor}
 	zIndex={ZIndex.dots}
-	size={Size.square(size)}
+	scalablePath={scalablePath}
 />
 {#if extra}
 	<SVGD3
-		path={extra}
+		size={size}
 		fill={extraColor}
 		stroke={extraColor}
+		scalablePath={extra}
 		zIndex={ZIndex.dots}
-		size={Size.square(size)}
 	/>
 {/if}

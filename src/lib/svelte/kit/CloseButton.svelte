@@ -20,17 +20,17 @@
     on:keypress={ignore}
     on:click={() => { $id_popupView = null; }}>
     <SVGD3
-		path={circle}
+		size={size}
 		stroke='black'
 		position='absolute'
 		zIndex={ZIndex.dots}
-		size={Size.square(size)}
+		scalablePath={circle}
 	/>
     <SVGD3
-		path={cross}
+		size={size}
 		stroke='black'
 		position='absolute'
 		zIndex={ZIndex.dots}
-		size={Size.square(size)}
+		scalablePath={cross}
 	/>
 </div>

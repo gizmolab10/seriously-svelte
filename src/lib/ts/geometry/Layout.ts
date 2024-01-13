@@ -1,4 +1,4 @@
-import { get, Path, Rect, Size, Point, Thing, LineRect, Relationship, LineCurveType } from '../common/GlobalImports';
+import { get, Path, Rect, Size, Point, Thing, LineRect, LineCurveType } from '../common/GlobalImports';
 import { line_stretch } from '../managers/State'
 
 export default class Layout {
@@ -19,12 +19,12 @@ export default class Layout {
 				while (index < quantity) {
 					const child = children[index];
 					const childPath = path.appendThing(child);
-					const childvisibleProgeny_halfHeight = childPath.visibleProgeny_halfHeight;
-					const sizeY = sumOfSiblingsAbove + childvisibleProgeny_halfHeight;
+					const childHeight = childPath.visibleProgeny_height();
+					const sizeY = sumOfSiblingsAbove + childHeight / 2;
 					const direction = this.getDirection(sizeY);
 					const rect = new Rect(origin, new Size(sizeX, sizeY));
 					this.lineRects.push(new LineRect(direction, rect));
-					sumOfSiblingsAbove += childPath.visibleProgeny_height();
+					sumOfSiblingsAbove += childHeight;
 					index += 1;
 				}
 			}

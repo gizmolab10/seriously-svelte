@@ -8,6 +8,7 @@
 	let tinyDotColor = thing.color;
 	let strokeColor = thing.color;
 	let fillColor = thing.color;
+	let scalablePath = '';
 	let isHovering = true;
 	let isGrabbed = false;
 	let clickCount = 0;
@@ -16,7 +17,6 @@
 	let button = null;
 	let extra = null;
 	let clickTimer;
-	let path = '';
 	let size = 0;
 	let left = 0;
 	let top = 0;
@@ -53,9 +53,9 @@
 	}
 
 	function updateColors() {
-		thing.updateColorAttributes();	// needed for revealColor
-		fillColor = debug.lines ? 'transparent' : thing.revealColor(isHovering != alter);
-		tinyDotColor = thing.revealColor(isHovering == alter);
+		thing.updateColorAttributes(widget.path);	// needed for revealColor
+		fillColor = debug.lines ? 'transparent' : thing.revealColor(isHovering != alter, widget.path);
+		tinyDotColor = thing.revealColor(isHovering == alter, widget.path);
 		strokeColor = thing.color;
 	}
 
@@ -98,7 +98,7 @@
 			size = $dot_size;
 			top = $path_toolsGrab?.endsWithID(thing.id) ? 23 : -size / 2 + 2;
 			left = 1.5 - (size / 2); // offset from center?
-			path = svgPath.oval(size, false);
+			scalablePath = svgPath.oval(size, false);
 			if (thing.parents.length > 1) {
 				extra = svgPath.circle(size, size / 5);
 			}
@@ -137,19 +137,19 @@
 		height: {size}px;
 	'>
 	<SVGD3
-		path={path}
+		size={size}
 		fill={fillColor}
 		stroke={strokeColor}
 		zIndex={ZIndex.dots}
-		size={Size.square(size)}
+		scalablePath={scalablePath}
 	/>
 	{#if extra}
 		<SVGD3
-			path={extra}
+			size={size}
 			fill={tinyDotColor}
 			zIndex={ZIndex.dots}
+			scalablePath={extra}
 			stroke={tinyDotColor}
-			size={Size.square(size)}
 		/>
 	{/if}
 </button>

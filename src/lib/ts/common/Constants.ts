@@ -1,15 +1,15 @@
 import { isMobileDevice } from '../../ts/common/GlobalImports'
 
 export default class Constants {
-	public clusterHeight: number;
-	public detailsMargin: number;
 	public halfIncrement: number;
+	public detailsMargin: number;
+	public toolsClusterHeight: number;
 	public longClickThreshold: number;
 	public doubleClickThreshold: number;
 	public allowHorizontalScrolling: boolean;
-	public leftJustifyGraph: boolean;
 	public allowGraphEditing: boolean;
 	public allowTitleEditing: boolean;
+	public leftJustifyGraph: boolean;
 	public backgroundColor: string;
 	public highlightColor: string;
 	public adminBulkName: string;
@@ -30,9 +30,9 @@ export default class Constants {
 		this.allowTitleEditing = true;
 		this.doubleClickThreshold = 100;
 		this.longClickThreshold = 500;
+		this.toolsClusterHeight = 80;
 		this.halfIncrement = 0.5;
 		this.detailsMargin = 101;
-		this.clusterHeight = 80;
 	}
 
 	applyQueryStrings(queryStrings: URLSearchParams) {

@@ -11,7 +11,7 @@
 	export let center;
 	export let size;
 	export let id;
-	let path = svgPath.triangle(Size.square(size), direction);
+	let scalablePath = svgPath.triangle(size, direction);
 	let fillColor = k.backgroundColor;
 	let button = null;
 
@@ -20,7 +20,7 @@
 	function setFillColor(isFilled) { fillColor = fillColor_closure(isFilled); }
 	
 	$: {
-		path = svgPath.triangle(Size.square(size), direction);
+		scalablePath = svgPath.triangle(size, direction);
 		setFillColor(false);
 	}
 
@@ -48,19 +48,19 @@
 		left: {center.x + 3 - (size / 2)}px;
 	'>
 	<SVGD3
-		path={path}
+		size={size}
 		fill={fillColor}
 		stroke={strokeColor}
 		zIndex={ZIndex.dots}
-		size={Size.square(size)}
+		scalablePath={scalablePath}
 	/>
 	{#if extra}
 		<SVGD3
-			path={extra}
+			size={size}
 			fill={extraColor}
 			stroke={extraColor}
 			zIndex={ZIndex.dots}
-			size={Size.square(size)}
+			scalablePath={extra}
 		/>
 	{/if}
 </button>

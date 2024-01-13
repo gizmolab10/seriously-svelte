@@ -41,7 +41,7 @@
 	});
 
 	function updateBorderStyle() {
-		thing.updateColorAttributes();
+		thing.updateColorAttributes(path);
 		border = showingBorder ? 'border: ' + thing.grabAttributes : '';
 		background = showingBorder ? 'background-color: ' + k.backgroundColor : '';
 	}
@@ -78,7 +78,7 @@
 		const titleWidth = thing.titleWidth;
 		width = titleWidth - 18 + ($dot_size * 2);
 		if (thing.showCluster) {
-			radius = k.clusterHeight / 2;
+			radius = k.toolsClusterHeight / 2;
 			const yPadding = radius - 12;
 			revealTop = radius - 17;
 			top = origin.y + delta - yPadding + 1;
@@ -92,8 +92,8 @@
 	}
 
 	$: {
-		const shouldEdit = (path == $path_editing);
-		const shouldGrab = $paths_grabbed.filter(p => p.endsWithID(path.pluckID())).length > 0 || thing.isExemplar;
+		const shouldEdit = (path.isEditing);
+		const shouldGrab = path.isGrabbed || thing.isExemplar;
 		const shouldShowCluster = path == $path_toolsGrab && path != $path_here;
 		const change = (isEditing != shouldEdit || isGrabbed != shouldGrab || showingCluster != shouldShowCluster);
 		if (change) {

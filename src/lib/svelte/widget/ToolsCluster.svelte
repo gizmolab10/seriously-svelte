@@ -17,8 +17,8 @@
 
     onMount( () => {
         const width = thing.titleWidth;
-        const offsetX = Math.max(0, (k.clusterHeight - width - 21) / 8)
-        const offsetY = Math.max(0, (k.clusterHeight - $row_height - 21) / 8)
+        const offsetX = Math.max(0, (k.toolsClusterHeight - width - 21) / 8)
+        const offsetY = Math.max(0, (k.toolsClusterHeight - $row_height - 21) / 8)
 
         top = 24 - offsetY;
         color = thing.color;
@@ -62,7 +62,7 @@
 
 <TriangleButton
 	fillColor_closure={() => { return ($altering_parent == AlteringParent.adding) ? thing.color : k.backgroundColor }}
-    extraColor = {($altering_parent == AlteringParent.adding) ? k.backgroundColor : thing.color}
+    extraColor={($altering_parent == AlteringParent.adding) ? k.backgroundColor : thing.color}
 	onClick={() => handleClick('addParent')}
     extra={svgPath.tCross(diameter, 2)}
 	direction={Direction.left}
@@ -73,7 +73,7 @@
 {#if thing.parents.length > 1}
     <TriangleButton
         fillColor_closure={() => { return ($altering_parent == AlteringParent.deleting) ? thing.color : k.backgroundColor }}
-        extraColor = {($altering_parent == AlteringParent.deleting) ? k.backgroundColor : thing.color}
+        extraColor={($altering_parent == AlteringParent.deleting) ? k.backgroundColor : thing.color}
         onClick={() => handleClick('deleteParent')}
         extra={svgPath.dash(diameter, 2)}
         center={center_deleteParent}
@@ -87,8 +87,8 @@
 	onClick={() => handleClick('addChild')}
     extra={svgPath.tCross(diameter, 2)}
 	direction={Direction.right}
-    extraColor = {thing.color}
 	center={center_addChild}
+    extraColor={thing.color}
 	strokeColor={color}
     size={diameter}
 	id='addChild'/>
@@ -99,6 +99,6 @@
 		border: none;
 		cursor: pointer;
 		background: none;
-        z-index:{ZIndex.overlay};'>
+        z-index: {ZIndex.overlay};'>
     <Trash color={color}/>
 </button>

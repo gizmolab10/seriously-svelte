@@ -10,6 +10,8 @@ export default class Grabs {
 		paths_grabbed.subscribe((paths: Array<Path>) => { // executes whenever paths_grabbed changes
 			if (paths.length > 0 && this.hierarchy.db && this.hierarchy.db.hasData) {
 				this.grabbed = paths;
+			} else {
+				this.grabbed = null;
 			}
 		});
 	};

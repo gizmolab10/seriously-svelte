@@ -1,5 +1,5 @@
-import { k, get, Path, Thing, Widget, Hierarchy, dbDispatch } from '../common/GlobalImports';
-import { path_here, path_editing, paths_grabbed, path_toolsGrab } from '../managers/State';
+import { k, get, Thing, signals, Hierarchy, dbDispatch } from '../common/GlobalImports';
+import { paths_grabbed, path_toolsGrab } from '../managers/State';
 
 //////////////////////////////////////
 //									//
@@ -101,9 +101,10 @@ export default class GraphEditor {
 		const h = this.hierarchy;
 		const pathGrab = h.grabs.latestPath(true);
 		const thing = pathGrab?.thing();
-		const newParent = RIGHT ? thing?.nextSibling(false) : thing?.grandparent;
-		if (newParent && thing) {
-			const parent = thing.firstParent;
+		const newParentPath = RIGHT ? pathGrab?.nextSiblingPath(false) : pathGrab?.thing(2);
+		const newParent = newParentPath?.thing();
+		if (thing && pathGrab && newParent) {
+			const parent = pathGrab.parent;
 			const relationship = h.relationship_getWhereIDEqualsTo(thing.id);
 			const changingBulk = thing.thing_isInDifferentBulkThan(newParent);
 			if (changingBulk) {		// test if should move across bulks
@@ -122,7 +123,7 @@ export default class GraphEditor {
 
 				h.relationships_refreshKnowns();		// so children and parent will see the newly relocated things
 				h.root?.order_normalizeRecursive_remoteMaybe(true);
-				thing.grabOnly();
+				pathGrab.grabOnly();
 				newParent.expand();
 				if (!newParent.isVisible) {
 					newParent.becomeHere();

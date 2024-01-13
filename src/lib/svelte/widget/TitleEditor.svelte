@@ -2,13 +2,11 @@
 	import { onDestroy, dbDispatch, graphEditor, SeriouslyRange } from '../../ts/common/GlobalImports';
 	import { k, Thing, ZIndex, Widget, signals, onMount } from '../../ts/common/GlobalImports';
 	import { row_height, path_editing, path_editingStopped } from '../../ts/managers/State';
-	import Widget from './Widget.svelte';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
 	export let widget: Widget;
 	export let thing = Thing;
 	let originalTitle = thing.title;
-	let isEditing = false;
 	let titleWidth = 0;
 	let ghost = null;
 	let input = null;
@@ -32,6 +30,11 @@
 		if ($row_height > 0) {
 			updateInputWidth();
 		}
+	}
+
+	$: {
+		const _ = $path_editing;
+		updateInputWidth();
 	}
 
 	function canAlterTitle(event) {
@@ -65,9 +68,9 @@
 				}, 1000);
 			} else if ($path_editing != thing.id) {
 				input?.blur();
-			} else if (!isEditing) {
-				isEditing = true;
-				dbDispatch.db.hierarchy.grabs.grabOnly(widget.path);
+			} else if ($path_editing == null) {
+				$path_editing = widget.path;
+				widget.path.grabOnly();
 				setTimeout(() => {
 					input?.focus();
 					applyRange();
@@ -105,7 +108,7 @@
 		if (!k.allowTitleEditing) {
 			input.blur();
 		} else if (!isEditing && thing) {
-			thing.grabOnly()
+			widget.path.grabOnly()
 			thing.startEdit();
 		}
 	}

@@ -10,10 +10,10 @@
 	let fillColor = k.backgroundColor;
 	let strokeColor = thing.color;
 	let isHovering = false;
+	let scalablePath = '';
 	let clickCount = 0;
 	let button = null;
 	let clickTimer;
-	let path = '';
 	
 	function ignore(event) {}
 	onMount( () => { setIsHovering_updateColors(false); updatePath(); });
@@ -59,19 +59,19 @@
 	}
 
 	function updateColors() {
-		thing.updateColorAttributes();
-		const collapsedGrabbed = !widget.path.isExpanded || widget.path.thing.isGrabbed;
-		fillColor = thing.revealColor(collapsedGrabbed != isHovering);
-		bulkAliasFillColor = thing.revealColor(collapsedGrabbed == isHovering);
+		thing.updateColorAttributes(widget.path);
+		const collapsedGrabbed = !widget.path.isExpanded || widget.path.isGrabbed;
+		fillColor = thing.revealColor(collapsedGrabbed != isHovering, widget.path);
+		bulkAliasFillColor = thing.revealColor(collapsedGrabbed == isHovering, widget.path);
 	}
 
 	function updatePath() {
 		if ((!thing.hasChildren && !thing.isBulkAlias) || $path_toolsGrab?.endsWithID(thing.id)) {
-			path = svgPath.circle($dot_size, $dot_size / 2);
+			scalablePath = svgPath.circle($dot_size, $dot_size / 2);
 		} else {
 			const goLeft = widget.path.isExpanded && widget.thing.hasChildren;
 			const direction = goLeft ? Direction.left : Direction.right;
-			path = svgPath.triangle(Size.square($dot_size), direction);
+			scalablePath = svgPath.triangle($dot_size, direction);
 			if (thing.isBulkAlias) {
 				insidePath = svgPath.circle($dot_size, $dot_size / 3);
 			}
@@ -151,26 +151,26 @@
 	style='
 		width={$dot_size}px;
 		height={$dot_size}px;
-		top: {$dot_size / 2 - 2 - (thing.isGrabbed ? 0 : 1)}px;
+		top: {$dot_size / 2 - 2 - (widget.path.isGrabbed ? 0 : 1)}px;
 		left: {$dot_size + thing.titleWidth - 5}px;
 	'>
-	{#key path}
+	{#key scalablePath}
 		<SVGD3
-			path={path}
-			fill={debug.lines ? 'transparent' : fillColor}
+			size={$dot_size}
 			stroke={strokeColor}
 			zIndex={ZIndex.dots}
-			size={Size.square($dot_size)}
+			scalablePath={scalablePath}
+			fill={debug.lines ? 'transparent' : fillColor}
 		/>
 	{/key}
 	{#if thing.isBulkAlias}
 		<div style='left:-1px; width:14px; height:14px; position:absolute;'>
 			<SVGD3
-				path={insidePath}
+				size={$dot_size}
 				stroke={strokeColor}
 				zIndex={ZIndex.dots}
-				size={Size.square($dot_size)}
 				fill={bulkAliasFillColor}
+				scalablePath={insidePath}
 			/>
 		</div>
 	{/if}

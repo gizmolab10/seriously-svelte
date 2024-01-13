@@ -51,9 +51,9 @@ export default class SVGPath {
         return path;
     }
 
-	triangle(size: Size, direction: number) {
-		const width = size.width;
-		const height = size.height;
+	triangle(size: number, direction: number) {
+		const width = size;
+		const height = size;
 		const offsetX = width / 2;
 		const offsetY = height / 2;
 		const insetRatio = 0.35;

@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { path_here, graphRect, dot_size, path_editing, paths_grabbed, line_stretch, showDetails, user_graphOffset, id_popupView } from '../../ts/managers/State';
-	import { k, Rect, Size, Point, Thing, ZIndex, debug, signals, onMount, onDestroy, debugReact, graphEditor } from '../../ts/common/GlobalImports';
-	import { Predicate, ButtonID, dbDispatch, PersistID, SignalKind, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
+	import { Predicate, graphEditor, ButtonID, dbDispatch, PersistID, SignalKind, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
+	import { k, Path, Rect, Size, Point, Thing, ZIndex, debug, signals, onMount, onDestroy, debugReact } from '../../ts/common/GlobalImports';
 	import FocusRevealDot from './FocusRevealDot.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Children from './Children.svelte';
@@ -101,7 +101,7 @@
 	
 	$: {
 		if (here) { // can sometimes be null TODO: WHY?
-			let grabbed = $paths_grabbed.filter(p => p.endsWithID(here.id)).length > 0;
+			let grabbed = $path_here.isGrabbed;
 			if (grabbed != isGrabbed) {
 				isGrabbed = grabbed;
 			}

@@ -1,4 +1,4 @@
-import { k, get, Path, Datum, debug, Widget, Predicate, Hierarchy, TraitType, DebugFlag, getWidthOf, dbDispatch } from '../common/GlobalImports';
+import { k, get, noop, Path, Datum, debug, Widget, Predicate, Hierarchy, TraitType, DebugFlag, getWidthOf, dbDispatch } from '../common/GlobalImports';
 import { SeriouslyRange, CreationOptions, AlteringParent, signals, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { path_here, altering_parent, row_height, path_editing, paths_grabbed, path_toolsGrab } from '../managers/State';
 import Airtable from 'airtable';
@@ -10,7 +10,6 @@ export default class Thing extends Datum {
 	hoverAttributes = '';
 	borderAttribute = '';
 	grabAttributes = '';
-	showCluster = false;
 	isExemplar = false;
 	isEditing = false;
 	isGrabbed = false;
@@ -27,37 +26,6 @@ export default class Thing extends Datum {
 		this.color = color;
 		this.trait = trait;
 		this.order = order;
-
-		this.updateColorAttributes();
-
-		path_editing.subscribe((pathEdit: Path | null) => {
-			if (pathEdit) {
-				const isEditing = pathEdit?.endsWith(this);
-				if (this.isEditing != isEditing) {
-					this.isEditing  = isEditing;
-					this.updateColorAttributes();
-				}
-			}
-		});
-
-		paths_grabbed.subscribe((paths: Array<Path>) => {
-			const isGrabbed = paths.filter(p => p.endsWith(this)).length > 0;
-			if (this.isGrabbed != isGrabbed) {
-				this.isGrabbed  = isGrabbed;
-				this.updateColorAttributes();
-			}
-		});
-
-		path_toolsGrab.subscribe((clusterPath: Path | null) => {
-			const herePath = get(path_here);
-			if (herePath && clusterPath) {
-				const shouldShow = clusterPath.endsWith(this) && herePath.endsWith(this);
-				if (this.showCluster != shouldShow) {
-					this.showCluster = shouldShow;
-					signal_rebuild_fromHere();
-				}
-			}
-		});
 	};
 	
 	get fields():			Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
@@ -69,7 +37,6 @@ export default class Thing extends Datum {
 	get hasParents():				  boolean { return this.parents.length > 0; }
 	get isHere():					  boolean { return get(path_here)?.endsWith(this) ?? false; }
 	get isRoot():					  boolean { return this == this.hierarchy.root; }
-	// get isExpanded():				  boolean { return this.isRoot || get(paths_expanded)?.includes(this.parentRelationshipID); }
 	get isBulkAlias():				  boolean { return this.trait == TraitType.bulk; }
 	get lastChild():					Thing { return this.children.slice(-1)[0]; }	// not alter children
 	get firstChild():					Thing { return this.children[0]; }
@@ -107,10 +74,6 @@ export default class Thing extends Datum {
 		return false;
 	}
 
-	get singleRowHeight(): number {
-		return this.showCluster ? k.clusterHeight : get(row_height);
-	}
-
 	signal_rebuild()  { signals.signal_rebuild(this.id); }
 	signal_relayout() { signals.signal_relayout(this.id); }
 
@@ -122,8 +85,11 @@ export default class Thing extends Datum {
 		this.log(DebugFlag.things, message);
 	}
 
-	revealColor(isReveal: boolean): string {
-		const showBorder = this.isGrabbed || this.isEditing || this.isExemplar;
+	revealColor(isReveal: boolean, path: Path): string {
+		if (!path) {
+			noop();
+		}
+		const showBorder = path.isGrabbed || path.isEditing || this.isExemplar;
 		const useThingColor = isReveal != showBorder;
 		return useThingColor ? this.color : k.backgroundColor;
 	}
@@ -134,11 +100,10 @@ export default class Thing extends Datum {
 		}
 	}
 
-	updateColorAttributes() {
-		const borderStyle = this.isEditing ? 'dashed' : 'solid';
-		const border = borderStyle + ' 1px ';
-		const hover = border + this.revealColor(true);
-		const grab = border + this.revealColor(false);
+	updateColorAttributes(path: Path) {
+		const border = (path.isEditing ? 'dashed' : 'solid') + ' 1px ';
+		const hover = border + this.revealColor(true, path);
+		const grab = border + this.revealColor(false, path);
 		this.borderAttribute = border;
 		this.hoverAttributes = hover;
 		this.grabAttributes = grab;
@@ -192,16 +157,6 @@ export default class Thing extends Datum {
 				await relationship.remoteWrite();
 			}
 		}
-	}
-
-	nextSibling(increment: boolean): Thing {
-		const array = this.siblings;
-		const index = array.indexOf(this);
-		let siblingIndex = index.increment(increment, array.length)
-		if (index == 0) {
-			siblingIndex = 1;
-		}
-		return array[siblingIndex];
 	}
 
 	async traverse(applyTo: (thing: Thing) => Promise<boolean>) {
