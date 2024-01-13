@@ -138,9 +138,6 @@ export default class Thing extends Datum {
 	
 	signal_rebuild()  { signal_rebuild(this.id); }
 	signal_relayout() { signal_relayout(this.id); }
-	toggleExpand()	  { this.expanded_setTo(!this.isExpanded) }
-	collapse()		  { this.expanded_setTo(false); }
-	expand()		  { this.expanded_setTo(true); }
 
 	log(option: DebugFlag, message: string) {
 		debug.log_maybe(option, message + ' ' + this.description);
@@ -170,31 +167,6 @@ export default class Thing extends Datum {
 		this.borderAttribute = border;
 		this.hoverAttributes = hover;
 		this.grabAttributes = grab;
-	}
-	
-	expanded_setTo(expand: boolean) {
-		let mutated = false;
-		const relationship = this.hierarchy.relationship_getWhereIDEqualsTo(this.id);
-		if (relationship) {
-			paths_expanded.update((array) => {
-				if (array) {
-					const index = array.indexOf(new Path(relationship.id));
-					if (expand) {
-						if (index == -1) {
-							array.push(new Path(relationship.id));	// only add if not already added
-							mutated = true;
-						}
-					} else if (index != -1) {					// only splice array when item is found
-						array.splice(index, 1);			// 2nd parameter means 'remove one item only'
-						mutated = true;
-					}
-				}
-				return array;
-			});
-			if (mutated) {			// avoid disruptive rebuild
-				signal_rebuild_fromHere();
-			}
-		}
 	}
 
 	ancestors_include(thing: Thing, visited: Array<string> = []): boolean {
@@ -338,6 +310,18 @@ export default class Thing extends Datum {
 			h.relationship_forget(relationship);
 			parent.order_normalizeRecursive_remoteMaybe(true);
 			await dbDispatch.db.relationship_remoteDelete(relationship);
+		}
+	}
+
+	async thing_edit_remoteAddAsChild(child: Thing, startEdit: boolean = true) {
+		await this.thing_remember_remoteAddAsChild(child);
+		this.expand();
+		signal_rebuild_fromHere();
+		child.grabOnly();
+		if (startEdit) {
+			setTimeout(() => {
+				child.startEdit();
+			}, 200);
 		}
 	}
 

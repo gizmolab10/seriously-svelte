@@ -6,8 +6,8 @@
 	import RevealDot from './RevealDot.svelte';
 	import DragDot from './DragDot.svelte';
 	export let origin = new Point();
-    export let path = '';
 	export let thing = Thing;
+    export let path = '';
 	let priorRowHeight = $row_height;
 	let priorOrigin = origin;
 	let showingCluster = false;
@@ -31,7 +31,6 @@
 	onMount( () => {
 		updateBorderStyle();
 		debugReact.log_mount(`WIDGET ${thing.description}`);
-		widget = new Widget(this, '');
 	});
 	
 	const signalHandler = handle_relayout((idThing) => {
@@ -45,6 +44,11 @@
 		thing.updateColorAttributes();
 		border = showingBorder ? 'border: ' + thing.grabAttributes : '';
 		background = showingBorder ? 'background-color: ' + k.backgroundColor : '';
+	}
+
+	$: {
+		const _ = path;
+		widget = new Widget(this, path, thing);
 	}
 	
 	$: {

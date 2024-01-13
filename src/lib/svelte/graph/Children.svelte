@@ -63,8 +63,8 @@
 			children = thing.children;
 			lineRects = new Layout(thing, childOrigin).lineRects;
 			childMapArray = lineRects.map((rect, index) => ({
-				path: path + k.pathSeparator + children[index].id,
 				origin: originForChildrenOf(children[index], rect),
+				path: path.appendThing(children[index]),
 				child: children[index], 
 				rect: rect,
 			}));

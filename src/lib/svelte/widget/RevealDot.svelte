@@ -60,7 +60,7 @@
 
 	function updateColors() {
 		thing.updateColorAttributes();
-		const collapsedGrabbed = !thing.isExpanded || thing.isGrabbed;
+		const collapsedGrabbed = !widget.path.isExpanded || widget.path.thing.isGrabbed;
 		fillColor = thing.revealColor(collapsedGrabbed != isHovering);
 		bulkAliasFillColor = thing.revealColor(collapsedGrabbed == isHovering);
 	}
@@ -69,7 +69,8 @@
 		if ((!thing.hasChildren && !thing.isBulkAlias) || ($path_toolsGrab == thing.id)) {
 			path = svgPath.circle($dot_size, $dot_size / 2);
 		} else {
-			const direction = (thing.isExpanded && thing.hasChildren) ? Direction.left : Direction.right;
+			const goLeft = widget.path.isExpanded && widget.thing.hasChildren;
+			const direction = goLeft ? Direction.left : Direction.right;
 			path = svgPath.triangle(Size.square($dot_size), direction);
 			if (thing.isBulkAlias) {
 				insidePath = svgPath.circle($dot_size, $dot_size / 3);

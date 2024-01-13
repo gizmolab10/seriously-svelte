@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { k, Thing, onMount, dbDispatch } from '../../ts/common/GlobalImports';
 	import { path_here } from '../../ts/managers/State';
-	export let path = '';
 	export let thing: Thing;
+	export let path = '';
 	let colorStyles = '';
 
 	onMount(() => { updateColors(); });
@@ -17,10 +17,8 @@
 	};
 
 	function crumb_buttonClicked(event) {
-		const db = dbDispatch.db;
-		const h = db.hierarchy;
-		if (db.hasData) {
-			h.grabs.grabOnly(path);
+		if (dbDispatch.db.hasData) {
+			path.grabOnly();
 			path.becomeHere();
 		}
 	}

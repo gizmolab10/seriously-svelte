@@ -35,7 +35,7 @@ export default class Hierarchy {
 	get idRoot(): (string | null) { return this.root?.id ?? null; };
 	get rootPath(): Path | null { return !this.idRoot ? null : new Path(this.idRoot); }
 	thing_getForID(idThing: string | null): Thing | null { return (!idThing) ? null : this.knownT_byID[idThing]; }
-	thing_getForPath(path: Path | null, back: number = 1): Thing | null { return (path == null) ? null : this.knownT_byID[path?.lastIDOf(back)]; }
+	thing_getForPath(path: Path | null, back: number = 1): Thing | null { return (path == null) ? null : this.knownT_byID[path?.pluckID(back)]; }
 
 	constructor(db: DBInterface) {
 		this.db = db;
@@ -63,8 +63,7 @@ export default class Hierarchy {
 		const path = get(path_here);
 		let here = this.thing_getForPath(path);
 		if (here == null) {
-			const grab = this.grabs.thing_lastGrabbed;
-			here = grab?.firstParent ?? this.root;
+			here = this.grabs.path_lastGrabbed?.parent ?? this.root;
 		}
 		path?.becomeHere();
 	}
