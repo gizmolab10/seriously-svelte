@@ -1,17 +1,18 @@
 import { k, get, Thing, Hierarchy, dbDispatch, graphEditor, getWidthOf, signal_rebuild_fromHere, signal_relayout_fromHere } from './GlobalImports';
 import { path_here, path_editing, paths_grabbed, paths_expanded, path_toolsGrab } from '../managers/State';
 export default class Path {
-	path: string;
+	pathString: string;
 
 	constructor(path: string) {
-		this.path = path;
+		this.pathString = path;
 	}
 
 	// extracts
 	get parent(): Thing | null { return this.thing(1); }
 	get hierarchy(): Hierarchy { return dbDispatch.db.hierarchy; }
 	get isRoot(): boolean { return this == this.hierarchy.rootPath; }
-	get ids(): Array<string> { return this.path.split(k.pathSeparator); }
+	get ids(): Array<string> { return this.pathString.split(k.pathSeparator); }
+	get toolsGrabbed(): boolean { return this.pathString == get(path_toolsGrab)?.pathString; }
 	get isExpanded(): boolean { return this.isRoot || get(paths_expanded)?.includes(this.stripPath(1)); }
 	thing(back: number = 0): Thing | null { return this.hierarchy.thing_getForID(this.pluckID(back)); }
 	pluckID(back: number = 1): string | null { return this.ids.slice(-back)[0]; }
@@ -46,7 +47,10 @@ export default class Path {
 	toggleExpand() { this.expanded_setTo(!this.isExpanded) }
 
 	stripPath(back: number): Path | null {
-		const ids = this.path.split(k.pathSeparator).slice(0, -back);
+		if (back == 0) {
+			return this;
+		}
+		const ids = this.pathString.split(k.pathSeparator).slice(0, -back);
 		if (ids.length < 1) {
 			return this.hierarchy.rootPath;
 		}
@@ -55,7 +59,7 @@ export default class Path {
 
 	appendThing(thing: Thing | null): Path {
 		if (thing) {
-			const elements = this.path.split(k.pathSeparator);
+			const elements = this.pathString.split(k.pathSeparator);
 			elements.push(thing.id);
 			return new Path(elements.join(k.pathSeparator));
 		}
@@ -76,7 +80,7 @@ export default class Path {
 			let mutated = false;
 			paths_expanded.update((array) => {
 				if (array) {
-					const index = array.indexOf(this);
+					const index = array.map(e => e.pathString).indexOf(this.pathString);
 					if (expand) {
 						if (index == -1) {
 							array.push(this);	// only add if not already added
@@ -96,10 +100,13 @@ export default class Path {
 	}
 
 	toggleToolsGrab() {
-		if (get(path_toolsGrab) == this) {
-			path_toolsGrab.set(null);
-		} else {
-			path_toolsGrab.set(this);
+		const grab = get(path_toolsGrab);
+		if (grab) {
+			if (grab.pathString == this.pathString) {
+				path_toolsGrab.set(null);
+			} else {
+				path_toolsGrab.set(this);
+			}
 		}
 	}
 
@@ -194,10 +201,10 @@ export default class Path {
 	redraw_runtimeBrowseRight(RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, fromReveal: boolean = false) {
 		const thing = this.hierarchy.thing_getForPath(this);
 		if (thing) {
-			const newParentPath = this.stripPath(RIGHT ? 1 : 3);
+			const newParentPath = this.stripPath(RIGHT ? 1 : 2);
 			const childPath = this.appendThing(thing?.firstChild);
 			let newGrabPath: Path | null = RIGHT ? childPath : newParentPath;
-			const newGrabIsNotHere = get(path_here) != newGrabPath;
+			const newGrabIsNotHere = newGrabPath?.toolsGrabbed;
 			const newHerePath = newParentPath;
 			if (RIGHT) {
 				if (thing.hasChildren) {

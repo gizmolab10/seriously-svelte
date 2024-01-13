@@ -96,7 +96,7 @@
 	$: {
 		if ($dot_size > 0) {
 			size = $dot_size;
-			top = $path_toolsGrab == thing.id ? 23 : -size / 2 + 2;
+			top = $path_toolsGrab?.endsWithID(thing.id) ? 23 : -size / 2 + 2;
 			left = 1.5 - (size / 2); // offset from center?
 			path = svgPath.oval(size, false);
 			if (thing.parents.length > 1) {

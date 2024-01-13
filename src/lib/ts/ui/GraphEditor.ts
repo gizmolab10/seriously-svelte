@@ -135,7 +135,7 @@ export default class GraphEditor {
 	latestPath_toggleToolsCluster() {
 		const path = this.hierarchy.grabs.latestPath(true);
 		if (path) {
-			const clear = path == get(path_toolsGrab);
+			const clear = path.toolsGrabbed;
 			path_toolsGrab.set(clear ? null : path);
 			signal_rebuild_fromHere();
 		}

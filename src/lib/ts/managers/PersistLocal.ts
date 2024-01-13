@@ -39,19 +39,19 @@ class PersistLocal {
 
 		paths_grabbed.subscribe((paths: Array<Path>) => {
 			if (this.okayToPersist) {
-				this.writeToDBKey(PersistID.grabbed, paths.map(p => p.path));
+				this.writeToDBKey(PersistID.grabbed, paths.map(p => p.pathString));
 			}
 		});
 
 		paths_expanded.subscribe((paths: Array<Path>) => {
 			if (this.okayToPersist) {
-				this.writeToDBKey(PersistID.expanded, paths.map(p => p.path));
+				this.writeToDBKey(PersistID.expanded, paths.map(p => p.pathString));
 			}
 		});
 
 		path_here.subscribe((path: Path | null) => {
 			if (this.okayToPersist && path) {
-				this.writeToDBKey(PersistID.here, path.path);
+				this.writeToDBKey(PersistID.here, path.pathString);
 			}
 		});
 	}

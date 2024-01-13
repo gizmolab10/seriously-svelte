@@ -66,7 +66,7 @@
 	}
 
 	function updatePath() {
-		if ((!thing.hasChildren && !thing.isBulkAlias) || ($path_toolsGrab == thing.id)) {
+		if ((!thing.hasChildren && !thing.isBulkAlias) || $path_toolsGrab?.endsWithID(thing.id)) {
 			path = svgPath.circle($dot_size, $dot_size / 2);
 		} else {
 			const goLeft = widget.path.isExpanded && widget.thing.hasChildren;
@@ -80,12 +80,12 @@
 
 	function handleClick(event) {
 		setIsHovering_updateColors(false);
-		if ($path_toolsGrab == thing.id) {
+		if ($path_toolsGrab?.pathString == widget.path.pathString) {
 			$path_toolsGrab = null;
 			$altering_parent = null;
 		} else if (!thing.hasChildren) {
 			widget.grabOnly();
-			$path_toolsGrab = thing.id;
+			$path_toolsGrab = widget.path;
 		} else {
 			graphEditor.path_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
 			return;
@@ -106,7 +106,7 @@
 			if ($path_toolsGrab == path) {
 				$path_toolsGrab = null;
 			} else {
-				dbDispatch.db.hierarchy.grabs.grabOnly(path);
+				path.grabOnly();
 				$path_toolsGrab = path;
 			}
 			signal_rebuild_fromHere();
