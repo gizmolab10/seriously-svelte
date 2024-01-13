@@ -29,6 +29,7 @@ import Thing from '../data/Thing';
 import Datum from '../data/Datum';
 import User from '../data/User';
 import Grabs from '../ui/Grabs';
+import Paths from './Paths';
 import Path from './Path';
 
 export {
@@ -38,7 +39,7 @@ export {
 	get, onMount, onDestroy,
 	debug, Debug, DebugFlag,
 	dbDispatch, DBType, DataKind,
-	Path, Grabs, graphEditor, Hierarchy,
+	Path, Paths, Grabs, graphEditor, Hierarchy,
 	debugReact, DebugReact, ReactFlag, Widget,
 	ZIndex, ButtonID, BrowserType, AlteringParent, CreationOptions,
 	User, SeriouslyRange, Datum, Thing, Access, Predicate, Relationship,

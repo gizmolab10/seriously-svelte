@@ -5,8 +5,8 @@ export enum ReactFlag {
 	rebuild = 'rebuild',
 }
 export class DebugReact {
-	flags: ReactFlag[];
-	constructor(flags: ReactFlag[]) { this.flags = flags; }
+	flags: Array<ReactFlag>;
+	constructor(flags: Array<ReactFlag>) { this.flags = flags; }
 	hasOption(option: ReactFlag) { return this.flags.includes(option); }
 	log_layout(message: string) { this.log_maybe(ReactFlag.layout, message) }
 	log_origins(message: string) { this.log_maybe(ReactFlag.origins, message) }

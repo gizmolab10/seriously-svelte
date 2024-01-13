@@ -1,5 +1,5 @@
 <script>
-	import { Point, debug, Direction, dbDispatch, graphEditor } from "../../ts/common/GlobalImports";
+	import { Point, debug, Direction, dbDispatch } from "../../ts/common/GlobalImports";
 	import TriangleButton from '../svg/TriangleButton.svelte';
 	import { dot_size } from '../../ts/managers/State';
     export let path = '';
@@ -14,7 +14,7 @@
 	function onClick(event) {
 		const grab = dbDispatch.db.hierarchy.grabs.latestPath(true);
 		if (grab && grab.id == here.id) {
-			graphEditor.widget_redraw_remoteMoveRight(path, false, false);
+			path.path_redraw_remoteMoveRight(false, false);
 		} else {
 			dbDispatch.db.hierarchy.grabs.grabOnly(path);
 		}

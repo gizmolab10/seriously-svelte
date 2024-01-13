@@ -1,7 +1,7 @@
 import { build } from '../managers/State';
 
 class Builds {
-	notes: { [id: number]: string[] } = {};
+	notes: { [id: number]: Array<string> } = {};
 
 	setup() {
 		const keys = Object.keys(this.notes);

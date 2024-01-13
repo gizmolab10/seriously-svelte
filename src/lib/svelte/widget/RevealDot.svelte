@@ -87,7 +87,7 @@
 			widget.grabOnly();
 			$path_toolsGrab = thing.id;
 		} else {
-			graphEditor.widget_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
+			graphEditor.path_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
 			return;
 		}
 		signal_rebuild_fromHere();

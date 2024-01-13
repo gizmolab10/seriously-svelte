@@ -37,13 +37,13 @@ class PersistLocal {
 		paths_expanded.set(this.readFromDBKey(PersistID.expanded)?.map((e: string) => new Path(e)) ?? []);
 
 
-		paths_grabbed.subscribe((paths: Path[]) => {
+		paths_grabbed.subscribe((paths: Array<Path>) => {
 			if (this.okayToPersist) {
 				this.writeToDBKey(PersistID.grabbed, paths.map(p => p.path));
 			}
 		});
 
-		paths_expanded.subscribe((paths: Path[]) => {
+		paths_expanded.subscribe((paths: Array<Path>) => {
 			if (this.okayToPersist) {
 				this.writeToDBKey(PersistID.expanded, paths.map(p => p.path));
 			}

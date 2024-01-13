@@ -92,15 +92,13 @@
 	}
 
 	$: {
-		const id = thing.id;
-		const shouldEdit = (id == $path_editing);
-		const shouldShowCluster = $path_toolsGrab == id && $path_here != id;
-		const shouldGrab = $paths_grabbed?.includes(id) || thing.isExemplar;
+		const shouldEdit = (path == $path_editing);
+		const shouldGrab = $paths_grabbed.filter(p => p.endsWithID(path.pluckID())).length > 0 || thing.isExemplar;
+		const shouldShowCluster = path == $path_toolsGrab && path != $path_here;
 		const change = (isEditing != shouldEdit || isGrabbed != shouldGrab || showingCluster != shouldShowCluster);
 		if (change) {
-			debugReact.log_layout(`WIDGET visibility ${thing.description}`);
-			showingCluster = shouldShowCluster;
 			showingBorder = shouldEdit || shouldGrab;
+			showingCluster = shouldShowCluster;
 			isGrabbed = shouldGrab;
 			isEditing = shouldEdit;
 			updateBorderStyle();

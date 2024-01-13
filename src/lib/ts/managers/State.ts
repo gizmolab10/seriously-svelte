@@ -1,4 +1,4 @@
-import { Path, Rect, Point, roundToEven, signal_alteringParent } from '../common/GlobalImports';
+import { Rect, Path, Paths, Point, roundToEven, signal_alteringParent } from '../common/GlobalImports';
 import { writable } from 'svelte/store';
 let interval : NodeJS.Timeout | null = null;
 
@@ -9,8 +9,8 @@ export const path_editingStopped = writable<Path | null>();
 export const path_toolsGrab		 = writable<Path | null>();
 export const path_editing		 = writable<Path | null>();
 export const path_here			 = writable<Path | null>();
-export const paths_grabbed		 = writable<Path[]>();
-export const paths_expanded		 = writable<Path[]>();
+export const paths_grabbed		 = writable<Paths>();
+export const paths_expanded		 = writable<Paths>();
 export const things_arrived		 = writable<boolean>();
 export const showDetails		 = writable<boolean>();
 export const isBusy				 = writable<boolean>();

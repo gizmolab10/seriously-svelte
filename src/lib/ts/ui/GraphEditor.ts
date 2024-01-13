@@ -44,8 +44,8 @@ export default class GraphEditor {
 			if (pathGrab) {
 				switch (key) {
 					case '/':			pathGrab.becomeHere(); break;
-					case 'arrowright':	await this.widget_redraw_remoteMoveRight(pathGrab, true, SHIFT, OPTION, EXTREME); break;
-					case 'arrowleft':	event.preventDefault(); await this.widget_redraw_remoteMoveRight(pathGrab, false, SHIFT, OPTION, EXTREME); break;
+					case 'arrowright':	await pathGrab.path_redraw_remoteMoveRight(true, SHIFT, OPTION, EXTREME); break;
+					case 'arrowleft':	event.preventDefault(); await pathGrab.path_redraw_remoteMoveRight(false, SHIFT, OPTION, EXTREME); break;
 				}
 			}
 			switch (key) {
@@ -97,26 +97,12 @@ export default class GraphEditor {
 		path?.redraw_remoteMoveUp(up, SHIFT, OPTION, EXTREME);
 	}
 
-	async widget_redraw_remoteMoveRight(widget: Widget, RIGHT: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean, fromReveal: boolean = false) {
-		if (!OPTION) {
-			const thing = widget.thing;
-			if (thing) {
-				if (RIGHT && thing.needsBulkFetch) {
-					await thing.redraw_bulkFetchAll_runtimeBrowseRight();
-				} else {
-					widget.path.redraw_runtimeBrowseRight(RIGHT, SHIFT, EXTREME, fromReveal);
-				}
-			}
-		} else if (k.allowGraphEditing) {
-			await this.widget_redraw_remoteRelocateRight(widget, RIGHT, EXTREME);
-		}
-	}
-
-	async widget_redraw_remoteRelocateRight(widget: Widget, RIGHT: boolean, EXTREME: boolean) {
-		const thing = widget.thing;
+	async widget_redraw_remoteRelocateRight(RIGHT: boolean, EXTREME: boolean) {
+		const h = this.hierarchy;
+		const pathGrab = h.grabs.latestPath(true);
+		const thing = pathGrab?.thing();
 		const newParent = RIGHT ? thing?.nextSibling(false) : thing?.grandparent;
 		if (newParent && thing) {
-			const h = this.hierarchy;
 			const parent = thing.firstParent;
 			const relationship = h.relationship_getWhereIDEqualsTo(thing.id);
 			const changingBulk = thing.thing_isInDifferentBulkThan(newParent);

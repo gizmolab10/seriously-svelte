@@ -19,12 +19,12 @@ export default class Hierarchy {
 	knownR_byID: { [id: string]: Relationship } = {};
 	knownA_byKind: { [kind: string]: Access } = {};
 	knownP_byKind: { [kind: string]: Predicate } = {};
-	knownTs_byTrait: { [trait: string]: Thing[] } = {};
+	knownTs_byTrait: { [trait: string]: Array<Thing> } = {};
 	knownRs_byIDPredicate: KnownRelationships = {};
 	knownRs_byIDFrom: KnownRelationships = {};
 	knownRs_byIDTo: KnownRelationships = {};
 	knownRs: Array<Relationship> = [];
-	knownTs: Thing[] = [];
+	knownTs: Array<Thing> = [];
 	_grabs: Grabs | null = null;
 	root: Thing | null = null;
 	here: Thing | null = null;
@@ -364,7 +364,7 @@ export default class Hierarchy {
 		const idParent = relationship.idFrom;
 		const parent = this.thing_getForID(idParent);
 		const oParent = this.thing_getForID(idOriginal);
-		const childIsGrabbed = get(paths_grabbed).includes(idChild);
+		const childIsGrabbed = get(paths_grabbed).filter(p => p.endsWithID(idChild)).length > 0;
 		if (idOriginal == get(path_here) && idOriginal != idParent && childIsGrabbed) {
 			const child = this.thing_getForID(idChild);
 			child?.grabOnly(); // update crumbs

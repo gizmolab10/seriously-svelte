@@ -39,7 +39,7 @@
     })
 
 	$: {
-		const grabbed = $paths_grabbed?.includes(thing.id);
+		const grabbed = $paths_grabbed?.filter(p => p.endsWithID(thing.id)).length > 0;
 		if (isGrabbed != grabbed) {
 			isGrabbed = grabbed;
 			updateColors();

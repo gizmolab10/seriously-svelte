@@ -118,10 +118,10 @@ export default class DBAirtable implements DBInterface {
 
 			for (const record of records) {
 				const id = record.id as string;
-				const tos = record.fields.to as (string[]);
+				const tos = record.fields.to as (Array<string>);
 				const order = record.fields.order as number;
-				const froms = record.fields.from as (string[]);
-				const predicates = record.fields.predicate as (string[]);
+				const froms = record.fields.from as (Array<string>);
+				const predicates = record.fields.predicate as (Array<string>);
 				this.hierarchy.relationship_remember_runtimeCreateUnique('', id, predicates[0], froms[0], tos[0], order, CreationOptions.isFromRemote);
 			}
 		} catch (error) {

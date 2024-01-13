@@ -9,8 +9,8 @@ export enum DebugFlag {
 }
 
 export class Debug {
-	flags: DebugFlag[];
-	constructor(flags: DebugFlag[]) { this.flags = flags; }
+	flags: Array<DebugFlag>;
+	constructor(flags: Array<DebugFlag>) { this.flags = flags; }
 	hasOption(option: DebugFlag) { return this.flags.includes(option); }
 	log_error(message: string) { this.log_maybe(DebugFlag.error, message) }
 	log_remote(message: string) { this.log_maybe(DebugFlag.remote, message) }

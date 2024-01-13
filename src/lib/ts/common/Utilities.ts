@@ -51,7 +51,7 @@ export function isServerLocal(): boolean {
 	return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "0.0.0.0";
 }
 
-export function convertToObject(instance: any, fields: string[]): object {
+export function convertToObject(instance: any, fields: Array<string>): object {
     const o: { [key: string]: any } = {};
     for (const field of fields) {
         if (instance.hasOwnProperty(field)) {

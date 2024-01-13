@@ -1,6 +1,5 @@
-import { k, get, Thing, Hierarchy, dbDispatch, getWidthOf, signal_rebuild_fromHere, signal_relayout_fromHere } from './GlobalImports';
+import { k, get, Thing, Hierarchy, dbDispatch, graphEditor, getWidthOf, signal_rebuild_fromHere, signal_relayout_fromHere } from './GlobalImports';
 import { path_here, path_editing, paths_grabbed, paths_expanded, path_toolsGrab } from '../managers/State';
-
 export default class Path {
 	path: string;
 
@@ -15,7 +14,13 @@ export default class Path {
 	get ids(): Array<string> { return this.path.split(k.pathSeparator); }
 	get isExpanded(): boolean { return this.isRoot || get(paths_expanded)?.includes(this.stripPath(1)); }
 	thing(back: number = 0): Thing | null { return this.hierarchy.thing_getForID(this.pluckID(back)); }
-	pluckID(back: number = 1): string { return this.ids.slice(-back)[0]; }
+	pluckID(back: number = 1): string | null { return this.ids.slice(-back)[0]; }
+	endsWith(thing: Thing): boolean { return this.endsWithID(thing.id); }
+
+	endsWithID(id: string): boolean {
+		const endID = this.pluckID() ?? '';
+		return id == endID;
+	}
 
 	ancestors(thresholdWidth: number): Array<Thing> {
 		const ids = this.ids.reverse();
@@ -40,15 +45,21 @@ export default class Path {
 	collapse() { this.expanded_setTo(false); }
 	toggleExpand() { this.expanded_setTo(!this.isExpanded) }
 
-	stripPath(back: number): Path {
-		const ids = this.path.split(k.pathSeparator);
-		return new Path(ids.slice(0, -back).join(k.pathSeparator));
+	stripPath(back: number): Path | null {
+		const ids = this.path.split(k.pathSeparator).slice(0, -back);
+		if (ids.length < 1) {
+			return this.hierarchy.rootPath;
+		}
+		return new Path(ids.join(k.pathSeparator));
 	}
 
-	appendThing(thing: Thing): Path {
-		const elements = this.path.split(k.pathSeparator);
-		elements.push(thing.id);
-		return new Path(elements.join(k.pathSeparator));
+	appendThing(thing: Thing | null): Path {
+		if (thing) {
+			const elements = this.path.split(k.pathSeparator);
+			elements.push(thing.id);
+			return new Path(elements.join(k.pathSeparator));
+		}
+		return this;
 	}
 
 	becomeHere() {
@@ -147,18 +158,17 @@ export default class Path {
 		} else if (thing) {
 			const index = siblings.indexOf(thing);
 			const newIndex = index.increment(!up, siblings.length);
-			if (!OPTION) {
+			if (parentPath && !OPTION) {
 				const grabPath = parentPath.appendThing(siblings[newIndex]);
 				if (SHIFT) {
 					this.hierarchy.grabs.toggleGrab(grabPath);
 				} else {
 					grabPath.grabOnly();
 				}
-			} else if (k.allowGraphEditing) {
+			} else if (k.allowGraphEditing && OPTION) {
 				const wrapped = up ? (index == 0) : (index == siblings.length - 1);
 				const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
 				const newOrder = newIndex + goose;
-				const order = thing.order;
 				thing.order_setTo(newOrder, true);
 				parent.order_normalizeRecursive_remoteMaybe(true);
 				signal_relayout_fromHere();
@@ -166,15 +176,39 @@ export default class Path {
 		}
 	}
 
+	async path_redraw_remoteMoveRight(RIGHT: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean, fromReveal: boolean = false) {
+		if (!OPTION) {
+			const thing = this.thing();
+			if (thing) {
+				if (RIGHT && thing.needsBulkFetch) {
+					await thing.redraw_bulkFetchAll_runtimeBrowseRight();
+				} else {
+					this.redraw_runtimeBrowseRight(RIGHT, SHIFT, EXTREME, fromReveal);
+				}
+			}
+		} else if (k.allowGraphEditing) {
+			await graphEditor.widget_redraw_remoteRelocateRight(RIGHT, EXTREME);
+		}
+	}
+
 	redraw_runtimeBrowseRight(RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, fromReveal: boolean = false) {
 		const thing = this.hierarchy.thing_getForPath(this);
 		if (thing) {
-			const parentPath = this.stripPath(RIGHT ? 1 : 3);
-			const childPath = this.appendThing(thing.firstChild);
-			const newHere = parentPath;
-			let newGrab: Path | null = RIGHT ? childPath : parentPath;
-			const newGrabIsNotHere = get(path_here) != newGrab;
-			if (!RIGHT) {
+			const newParentPath = this.stripPath(RIGHT ? 1 : 3);
+			const childPath = this.appendThing(thing?.firstChild);
+			let newGrabPath: Path | null = RIGHT ? childPath : newParentPath;
+			const newGrabIsNotHere = get(path_here) != newGrabPath;
+			const newHerePath = newParentPath;
+			if (RIGHT) {
+				if (thing.hasChildren) {
+					if (SHIFT) {
+						newGrabPath = null;
+					}
+					this.expand();
+				} else {
+					return;
+				}
+			} else {
 				const rootPath = this.hierarchy.rootPath;
 				if (EXTREME) {
 					rootPath?.becomeHere();	// tells graph to update line rects
@@ -182,34 +216,29 @@ export default class Path {
 					if (!SHIFT) {
 						if (fromReveal) {
 							this.expand();
-						} else if (newGrabIsNotHere && newGrab && !newGrab.isExpanded) {
-							newGrab?.expand();
+						} else {
+							if (newGrabIsNotHere && newGrabPath && !newGrabPath.isExpanded) {
+								newGrabPath?.expand();
+							}
 						}
-					} else if (newGrab) { 
+					} else if (newGrabPath) { 
 						if (this.isExpanded) {
 							this.collapse();
-							newGrab = null;
-						} else if (newGrab == rootPath) {
-							newGrab = null;
+							newGrabPath = null;
+						} else if (newGrabPath == rootPath) {
+							newGrabPath = null;
 						} else {
-							newGrab.collapse();
+							newGrabPath.collapse();
 						}
 					}
 				}
-			} else if (thing.hasChildren) {
-				if (SHIFT) {
-					newGrab = null;
-				}
-				this.expand();
-			} else {
-				return;
 			}
 			path_editing.set(null);
-			newGrab?.grabOnly();
-			const allowToBecomeHere = (!SHIFT || newGrab == this.parent) && newGrabIsNotHere; 
-			const shouldBecomeHere = !newHere.isVisible || newHere.isRoot;
+			newGrabPath?.grabOnly();
+			const allowToBecomeHere = (!SHIFT || newGrabPath == this.parent) && newGrabIsNotHere; 
+			const shouldBecomeHere = !newHerePath.isVisible || newHerePath.isRoot;
 			if (!RIGHT && allowToBecomeHere && shouldBecomeHere) {
-				newHere.becomeHere();
+				newHerePath.becomeHere();
 			}
 		}
 	}

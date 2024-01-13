@@ -101,7 +101,7 @@
 	
 	$: {
 		if (here) { // can sometimes be null TODO: WHY?
-			let grabbed = $paths_grabbed.includes(here.id);
+			let grabbed = $paths_grabbed.filter(p => p.endsWithID(here.id)).length > 0;
 			if (grabbed != isGrabbed) {
 				isGrabbed = grabbed;
 			}

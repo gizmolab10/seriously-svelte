@@ -30,31 +30,35 @@ export default class Thing extends Datum {
 
 		this.updateColorAttributes();
 
-		path_editing.subscribe((idEdit: string | null) => {
-			const isEditing = (idEdit == this.id);
-			if (this.isEditing != isEditing) {
-				this.isEditing  = isEditing;
-				this.updateColorAttributes();
+		path_editing.subscribe((pathEdit: Path | null) => {
+			if (pathEdit) {
+				const isEditing = pathEdit?.endsWith(this);
+				if (this.isEditing != isEditing) {
+					this.isEditing  = isEditing;
+					this.updateColorAttributes();
+				}
 			}
 		});
 
-		paths_grabbed.subscribe((idsGrab: string[]) => {
-			const isGrabbed = idsGrab.includes(this.id);
+		paths_grabbed.subscribe((paths: Array<Path>) => {
+			const isGrabbed = paths.filter(p => p.endsWith(this)).length > 0;
 			if (this.isGrabbed != isGrabbed) {
 				this.isGrabbed  = isGrabbed;
 				this.updateColorAttributes();
 			}
 		});
 
-		path_toolsGrab.subscribe((idCluster: string | null) => {
-			const shouldShow = (idCluster != null) && idCluster == this.id && get(path_here) != this.id;
-			if (this.showCluster != shouldShow) {
-				this.showCluster = shouldShow;
-				signal_rebuild_fromHere();
+		path_toolsGrab.subscribe((clusterPath: Path | null) => {
+			const herePath = get(path_here);
+			if (herePath && clusterPath) {
+				const shouldShow = clusterPath.endsWith(this) && herePath.endsWith(this);
+				if (this.showCluster != shouldShow) {
+					this.showCluster = shouldShow;
+					signal_rebuild_fromHere();
+				}
 			}
 		});
 	};
-
 	
 	get fields():			Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get parentIDs():			Array<string> { return this.hierarchy.thingIDs_getByIDPredicateToAndID(Predicate.idIsAParentOf,  true, this.id); }
@@ -63,11 +67,10 @@ export default class Thing extends Datum {
 	get hierarchy():				Hierarchy { return dbDispatch.db.hierarchy; }
 	get hasChildren():				  boolean { return this.children.length > 0; }
 	get hasParents():				  boolean { return this.parents.length > 0; }
-	get isHere():					  boolean { return this.id == get(path_here); }
+	get isHere():					  boolean { return get(path_here)?.endsWith(this) ?? false; }
 	get isRoot():					  boolean { return this == this.hierarchy.root; }
-	get isBulkAlias():				  boolean { return this.trait == TraitType.bulk; }
 	get isExpanded():				  boolean { return this.isRoot || get(paths_expanded)?.includes(this.parentRelationshipID); }
-	get isVisible():				  boolean { return this.ancestors(Number.MAX_SAFE_INTEGER).includes(this.hierarchy.here!); }
+	get isBulkAlias():				  boolean { return this.trait == TraitType.bulk; }
 	get lastChild():					Thing { return this.children.slice(-1)[0]; }	// not alter children
 	get firstChild():					Thing { return this.children[0]; }
 	get description():				   string { return this.id + ' \"' + this.title + '\"'; }
@@ -83,12 +86,14 @@ export default class Thing extends Datum {
 
 	get canAlterParentOf_toolsGrab(): Thing | null {
 		const path_showsTools = get(path_toolsGrab);
-		const showsTools = dbDispatch.db.hierarchy.thing_getForID(path_showsTools);
-		if (path_showsTools && showsTools && showsTools != this)  {
-			const alteration = get(altering_parent);
-			if ((alteration == AlteringParent.adding && !this.ancestors_include(showsTools)) ||
-				(alteration == AlteringParent.deleting && showsTools.parentIDs.includes(this.id))) {
-				return showsTools;
+		if (path_showsTools) {
+			const showsTools = dbDispatch.db.hierarchy.thing_getForPath(path_showsTools);
+			if (showsTools && showsTools != this)  {
+				const alteration = get(altering_parent);
+				if ((alteration == AlteringParent.adding && !this.ancestors_include(showsTools)) ||
+					(alteration == AlteringParent.deleting && showsTools.parentIDs.includes(this.id))) {
+					return showsTools;
+				}
 			}
 		}
 		return null;
@@ -181,22 +186,6 @@ export default class Thing extends Datum {
 			}
 		}
 		return false;
-	}
-
-	ancestors(thresholdWidth: number): Array<Thing> {
-		let parent: Thing | null = this;
-		let totalWidth = 0;
-		const array = [];
-		while (parent) {
-			totalWidth += parent.titleWidth;
-			if (totalWidth > thresholdWidth) {
-				break;
-			}
-			array.push(parent);
-			parent = parent.firstParent;
-		}
-		array.reverse();
-		return array;
 	}
 
 	childrenIDs_anyMissingFromIDsOf(children: Array<Thing>) {
