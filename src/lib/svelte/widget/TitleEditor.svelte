@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { SeriouslyRange, handle_relayout, signal_relayout, signal_rebuild_fromHere } from '../../ts/common/GlobalImports'; 
-	import { k, Thing, ZIndex, Widget, onMount, onDestroy, dbDispatch, graphEditor } from '../../ts/common/GlobalImports';
+	import { onDestroy, dbDispatch, graphEditor, SeriouslyRange } from '../../ts/common/GlobalImports';
+	import { k, Thing, ZIndex, Widget, signals, onMount } from '../../ts/common/GlobalImports';
 	import { row_height, path_editing, path_editingStopped } from '../../ts/managers/State';
 	import Widget from './Widget.svelte';
 	export let fontFamily = 'Arial';
@@ -18,7 +18,7 @@
 	var hasChanges = () => { return originalTitle != thing.title; }
 	function handleBlur(event) { stopAndClearEditing(); updateInputWidth(); }
 	function handleInput(event) { thing.title = event.target.value; updateInputWidth(); }
-	const signalHandler = handle_relayout((idThing) => setTimeout(() => { updateInputWidth(); }, 10));
+	const signalHandler = signals.handle_relayout((id) => setTimeout(() => { updateInputWidth(); }, 10));
 
 	function updateInputWidth() {
 		if (input && ghost && thing) { // ghost only exists to provide its scroll width
@@ -47,7 +47,7 @@
 			switch (event.key) {	
 				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); graphEditor.widget_redraw_remoteAddChildTo(thing.firstParent); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
-				default:	  signal_relayout(); break;
+				default:	  signals.signal_relayout(); break;
 			}
 		}
 	}
@@ -82,7 +82,7 @@
 			const id = thing?.id;
 			if (id != null && $path_editing == id) {				
 				$path_editing = null;
-				signal_rebuild_fromHere();
+				signals.signal_rebuild_fromHere();
 			}
 		}, 20);
 	}

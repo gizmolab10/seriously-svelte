@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { k, Rect, Size, Point, Thing, ZIndex, Signals, onMount, onDestroy, graphEditor, PersistID, persistLocal } from '../../ts/common/GlobalImports';
-	import { debug, debugReact, Predicate, ButtonID, dbDispatch, handle_rebuild, handle_relayout, graphRect_update } from '../../ts/common/GlobalImports';
 	import { path_here, graphRect, dot_size, path_editing, paths_grabbed, line_stretch, showDetails, user_graphOffset, id_popupView } from '../../ts/managers/State';
+	import { k, Rect, Size, Point, Thing, ZIndex, debug, signals, onMount, onDestroy, debugReact, graphEditor } from '../../ts/common/GlobalImports';
+	import { Predicate, ButtonID, dbDispatch, PersistID, SignalKind, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
 	import FocusRevealDot from './FocusRevealDot.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Children from './Children.svelte';
@@ -24,13 +24,13 @@
 	onMount( () => { debugReact.log_mount(`GRAPH ${here.description}`); });
 	onDestroy( () => { rebuild_signalHandler.disconnect(); relayout_signalHandler.disconnect(); });
 	
-	const rebuild_signalHandler = handle_rebuild((idThing) => {
+	const rebuild_signalHandler = signals.handle_rebuild((id) => {
 		debugReact.log_layout(`GRAPH signal ${here.description}`);
 		updateOrigins();
 		toggle = !toggle;	// rebuild entire graph
 	});
 
-	const relayout_signalHandler = handle_relayout((idThing) => {
+	const relayout_signalHandler = signals.handle_relayout((id) => {
 		if (here) {
 			updateOrigins();
 		}

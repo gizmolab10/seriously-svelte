@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { path_here, dot_size, path_editing, row_height, paths_grabbed, thing_fontSize, thing_fontFamily, path_toolsGrab} from '../../ts/managers/State';
-	import { k, Thing, Point, debug, ZIndex, Widget, onMount, onDestroy, debugReact, handle_relayout } from '../../ts/common/GlobalImports';
+	import { k, Thing, Point, debug, ZIndex, Widget, signals, onMount, onDestroy, debugReact } from '../../ts/common/GlobalImports';
 	import ToolsCluster from './ToolsCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
 	import RevealDot from './RevealDot.svelte';
@@ -33,8 +33,8 @@
 		debugReact.log_mount(`WIDGET ${thing.description}`);
 	});
 	
-	const signalHandler = handle_relayout((idThing) => {
-		if (idThing == thing.id) {
+	const signalHandler = signals.handle_relayout((id) => {
+		if (id == thing.id) {
 			debugReact.log_layout(`WIDGET signal ${thing.description}`);
 			updateLayout()
 		}

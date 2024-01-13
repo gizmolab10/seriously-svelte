@@ -1,6 +1,6 @@
 <script>
-	import { k, Size, Point, Thing, debug, ZIndex, onMount, svgPath, onDestroy, AlteringParent } from "../../ts/common/GlobalImports";
-	import { Direction, dbDispatch, graphEditor, handle_alteringParent } from "../../ts/common/GlobalImports";
+	import { k, Size, Point, Thing, debug, ZIndex, onMount, signals, svgPath } from "../../ts/common/GlobalImports";
+	import { Direction, onDestroy, dbDispatch, graphEditor, AlteringParent } from "../../ts/common/GlobalImports";
 	import { dot_size, paths_grabbed, path_toolsGrab } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
     export let widget;
@@ -30,7 +30,7 @@
 
     onMount(() => {
 		updateColorsForHover(false);
-        handler = handle_alteringParent((alteration) => {
+        handler = signals.handle_alteringParent((alteration) => {
 			const applyFlag = $path_toolsGrab && thing.canAlterParentOf_toolsGrab != null;
 			alter = applyFlag ? (alteration != null) : false;
 			extra = (thing.parents.length < 2) ? null : svgPath.circle(size, size / 5);

@@ -1,5 +1,5 @@
 <script>
-	import { Direction, onDestroy, dbDispatch, graphEditor, signal_rebuild_fromHere } from "../../ts/common/GlobalImports";
+	import { Direction, onDestroy, dbDispatch, graphEditor } from "../../ts/common/GlobalImports";
 	import { k, get, Size, Thing, Point, debug, ZIndex, Widget, onMount, svgPath } from "../../ts/common/GlobalImports";
 	import { paths_expanded, dot_size, altering_parent, paths_grabbed, path_toolsGrab } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
@@ -90,7 +90,7 @@
 			graphEditor.path_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
 			return;
 		}
-		signal_rebuild_fromHere();
+		signals.signal_rebuild_fromHere();
 	}
 
 	function handleDoubleClick(event) {
@@ -109,7 +109,7 @@
 				path.grabOnly();
 				$path_toolsGrab = path;
 			}
-			signal_rebuild_fromHere();
+			signals.signal_rebuild_fromHere();
 		}, k.longClickThreshold);
 	}
 

@@ -1,7 +1,7 @@
 <script>
-import { build, isBusy, path_here, db_type, paths_expanded, graphRect, id_popupView, showDetails, things_arrived, thing_fontSize } from '../../ts/managers/State';
-import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, PersistID, dbDispatch, debugReact } from '../../ts/common/GlobalImports';
-	import { ButtonID, Hierarchy, persistLocal, handle_rebuild, signal_relayout_fromHere, graphRect_update } from '../../ts/common/GlobalImports';
+	import { build, isBusy, path_here, db_type, graphRect, id_popupView, showDetails, things_arrived, thing_fontSize } from '../../ts/managers/State';
+	import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, signals, onMount, ButtonID } from '../../ts/common/GlobalImports';
+	import { Hierarchy, PersistID, dbDispatch, debugReact, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import LabelButton from '../kit/LabelButton.svelte';
@@ -24,7 +24,7 @@ import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, Pers
 		graph_fullRebuild();
 	});
 
-	const rebuild_signalHandler = handle_rebuild((idThing) => {
+	const rebuild_signalHandler = signals.handle_rebuild((idThing) => {
 		graph_fullRebuild();
 	});
 
@@ -44,7 +44,7 @@ import { k, get, Rect, Size, Point, Thing, launch, DBType, ZIndex, onMount, Pers
 	
 	function details_buttonClicked(event) {
 		$showDetails = !$showDetails;
-		signal_relayout_fromHere();
+		signals.signal_relayout_fromHere();
 		persistLocal.writeToKey(PersistID.details, $showDetails);
 	}
 

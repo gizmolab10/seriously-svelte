@@ -1,4 +1,5 @@
-import { Rect, Path, Paths, Point, roundToEven, signal_alteringParent } from '../common/GlobalImports';
+import { Rect, Path, Point, roundToEven } from '../common/GlobalImports';
+import { signals } from '../common/Signals';
 import { writable } from 'svelte/store';
 let interval : NodeJS.Timeout | null = null;
 
@@ -9,8 +10,8 @@ export const path_editingStopped = writable<Path | null>();
 export const path_toolsGrab		 = writable<Path | null>();
 export const path_editing		 = writable<Path | null>();
 export const path_here			 = writable<Path | null>();
-export const paths_grabbed		 = writable<Paths>();
-export const paths_expanded		 = writable<Paths>();
+export const paths_grabbed		 = writable<Array<Path>>();
+export const paths_expanded		 = writable<Array<Path>>();
 export const things_arrived		 = writable<boolean>();
 export const showDetails		 = writable<boolean>();
 export const isBusy				 = writable<boolean>();
@@ -35,13 +36,13 @@ altering_parent.subscribe((alteration: string | null) => {
 	if (alteration) {
 		let blink = true;
 		interval = setInterval(() => {
-			signal_alteringParent(blink ? alteration : null);
+			signals.signal_alteringParent(blink ? alteration : null);
 			blink = !blink;
 		}, 500)
 	} else {
 		if (interval) {
 			clearInterval(interval);
 		}
-		signal_alteringParent(null);
+		signals.signal_alteringParent(null);
 	}
 })

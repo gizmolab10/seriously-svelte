@@ -1,5 +1,5 @@
 import { k, get, Size, Path, Datum, debug, Widget, Predicate, Hierarchy, TraitType, PersistID, DebugFlag, dbDispatch, getWidthOf, persistLocal, CreationOptions } from '../common/GlobalImports';
-import { SeriouslyRange, AlteringParent, signal_rebuild, signal_relayout, signal_rebuild_fromHere, signal_relayout_fromHere, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { SeriouslyRange, AlteringParent, signal_rebuild, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { path_here, dot_size, paths_expanded, altering_parent, row_height, path_editing, paths_grabbed, line_stretch, path_toolsGrab } from '../managers/State';
 import Airtable from 'airtable';
 
@@ -69,7 +69,7 @@ export default class Thing extends Datum {
 	get hasParents():				  boolean { return this.parents.length > 0; }
 	get isHere():					  boolean { return get(path_here)?.endsWith(this) ?? false; }
 	get isRoot():					  boolean { return this == this.hierarchy.root; }
-	get isExpanded():				  boolean { return this.isRoot || get(paths_expanded)?.includes(this.parentRelationshipID); }
+	// get isExpanded():				  boolean { return this.isRoot || get(paths_expanded)?.includes(this.parentRelationshipID); }
 	get isBulkAlias():				  boolean { return this.trait == TraitType.bulk; }
 	get lastChild():					Thing { return this.children.slice(-1)[0]; }	// not alter children
 	get firstChild():					Thing { return this.children[0]; }
@@ -141,8 +141,8 @@ export default class Thing extends Datum {
 		return width;
 	}
 	
-	signal_rebuild()  { signal_rebuild(this.id); }
-	signal_relayout() { signal_relayout(this.id); }
+	signal_rebuild()  { signals.signal_rebuild(this.id); }
+	signal_relayout() { signals.signal_relayout(this.id); }
 
 	log(option: DebugFlag, message: string) {
 		debug.log_maybe(option, message + ' ' + this.description);
@@ -253,7 +253,7 @@ export default class Thing extends Datum {
 				case AlteringParent.deleting: await other.parent_forget_remoteRemove(this); break;
 				case AlteringParent.adding: await this.thing_remember_remoteAddAsChild(other); break;
 			}
-			signal_rebuild_fromHere();
+			signals.signal_rebuild_fromHere();
 		}
 	}
 
@@ -288,7 +288,7 @@ export default class Thing extends Datum {
 				this.children[0].grabOnly()
 			}
 			this.expand();
-			signal_rebuild_fromHere();
+			signals.signal_rebuild_fromHere();
 		}
 	}
 
@@ -305,7 +305,7 @@ export default class Thing extends Datum {
 	async thing_edit_remoteAddAsChild(child: Thing, startEdit: boolean = true) {
 		await this.thing_remember_remoteAddAsChild(child);
 		this.expand();
-		signal_rebuild_fromHere();
+		signals.signal_rebuild_fromHere();
 		child.grabOnly();
 		if (startEdit) {
 			setTimeout(() => {

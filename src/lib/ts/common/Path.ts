@@ -1,5 +1,7 @@
-import { k, get, Thing, Hierarchy, dbDispatch, graphEditor, getWidthOf, signal_rebuild_fromHere, signal_relayout_fromHere } from './GlobalImports';
+import { k, get, Thing, Hierarchy, dbDispatch, graphEditor, getWidthOf } from './GlobalImports';
 import { path_here, path_editing, paths_grabbed, paths_expanded, path_toolsGrab } from '../managers/State';
+
+
 export default class Path {
 	pathString: string;
 
@@ -13,7 +15,7 @@ export default class Path {
 	get isRoot(): boolean { return this == this.hierarchy.rootPath; }
 	get ids(): Array<string> { return this.pathString.split(k.pathSeparator); }
 	get toolsGrabbed(): boolean { return this.pathString == get(path_toolsGrab)?.pathString; }
-	get isExpanded(): boolean { return this.isRoot || get(paths_expanded)?.includes(this.stripPath(1)); }
+	get isExpanded(): boolean { return this.isRoot || get(paths_expanded)?.filter(path => path.pathString == this.pathString).length > 0; }
 	thing(back: number = 0): Thing | null { return this.hierarchy.thing_getForID(this.pluckID(back)); }
 	pluckID(back: number = 1): string | null { return this.ids.slice(-back)[0]; }
 	endsWith(thing: Thing): boolean { return this.endsWithID(thing.id); }
@@ -50,7 +52,7 @@ export default class Path {
 		if (back == 0) {
 			return this;
 		}
-		const ids = this.pathString.split(k.pathSeparator).slice(0, -back);
+		const ids = this.ids.slice(0, -back);
 		if (ids.length < 1) {
 			return this.hierarchy.rootPath;
 		}
@@ -59,9 +61,9 @@ export default class Path {
 
 	appendThing(thing: Thing | null): Path {
 		if (thing) {
-			const elements = this.pathString.split(k.pathSeparator);
-			elements.push(thing.id);
-			return new Path(elements.join(k.pathSeparator));
+			const ids = this.ids;
+			ids.push(thing.id);
+			return new Path(ids.join(k.pathSeparator));
 		}
 		return this;
 	}
@@ -94,7 +96,7 @@ export default class Path {
 				return array;
 			});
 			if (mutated) {			// avoid disruptive rebuild
-				signal_rebuild_fromHere();
+				signals.signal_rebuild_fromHere();
 			}
 		}
 	}
@@ -147,9 +149,10 @@ export default class Path {
 
 	async thing_edit_remoteDuplicate() {
 		const h = this.hierarchy;
+		const id = this.pluckID();
 		const thing = h.thing_getForPath(this);
-		if (thing) {
-			const sibling = await h.thing_remember_runtimeCopy(this.pluckID(), thing);
+		if (thing && id) {
+			const sibling = await h.thing_remember_runtimeCopy(id, thing);
 			const parent = thing.firstParent ?? h.root;
 			parent.thing_edit_remoteAddAsChild(sibling);
 		}
@@ -178,7 +181,7 @@ export default class Path {
 				const newOrder = newIndex + goose;
 				thing.order_setTo(newOrder, true);
 				parent.order_normalizeRecursive_remoteMaybe(true);
-				signal_relayout_fromHere();
+				signals.signal_rebuild_fromHere();
 			}
 		}
 	}
@@ -247,6 +250,7 @@ export default class Path {
 			if (!RIGHT && allowToBecomeHere && shouldBecomeHere) {
 				newHerePath.becomeHere();
 			}
+			signals.signal_rebuild_fromHere();
 		}
 	}
 	

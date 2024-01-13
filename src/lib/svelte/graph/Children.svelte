@@ -1,14 +1,14 @@
 <script lang=ts>
-	import { k, Rect, Size, Point, Thing, debug, signal, Signals, Layout, onMount, LineRect, onDestroy } from '../../ts/common/GlobalImports';
-	import { DebugFlag, debugReact, LineCurveType, orders_normalize_remoteMaybe, handle_relayout } from '../../ts/common/GlobalImports';
+	import { onMount, LineRect, onDestroy, DebugFlag, debugReact, LineCurveType } from '../../ts/common/GlobalImports';
+	import { k, Rect, Size, Point, Thing, debug, signals, SignalKind, Layout } from '../../ts/common/GlobalImports';
 	import { dot_size, graphRect, line_stretch } from '../../ts/managers/State';
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Children from './Children.svelte';
 	import Line, {relationship} from './Line.svelte';
-    export let path = '';
 	export let origin = new Point();
 	export let thing: Thing;
+    export let path = '';
 	let lineRects: Array<LineRect> = [];
 	let prior = new Date().getTime();
 	let children = thing.children;
@@ -18,26 +18,11 @@
 	onDestroy( () => { signalHandler.disconnect(); });
 	onMount( () => { debugReact.log_mount(`CHILDREN ${thing.description}`); layoutChildren(); });
 	
-	const signalHandler = handle_relayout((idThing) => {
-		if (!idThing || idThing == thing.id || thing.childrenIDs_anyMissingFromIDsOf(children)) {
-			const now = new Date().getTime();
-			if (now - prior > 100) {
-				prior = now;
-				setTimeout(async () => { // delay until all other handlers for this signal are done TODO: WHY?
-					await orders_normalize_remoteMaybe(thing.children);
-					debugReact.log_layout(`CHILDREN signal ${thing.description}`);
-					layoutChildren();
-					if (idThing) { // only recurse if starting at a specific id
-						for (const child of children) {
-							if (child.hasChildren && child.isExpanded) {
-								child.signal_relayout();
-							}
-						}
-					}
-				}, 1);
-			}
+	$: {
+		if ($graphRect) {
+			layoutChildren()
 		}
-	})
+	}
 
 	$: {
 		if ($dot_size > 0) {
@@ -48,11 +33,26 @@
 		}
 	}
 	
-	$: {
-		if ($graphRect) {
-			layoutChildren()
+	const signalHandler = signals.handle_relayout((id) => {
+		if (!id || id == thing.id || thing.childrenIDs_anyMissingFromIDsOf(children)) {
+			const now = new Date().getTime();
+			if (now - prior > 100) {
+				prior = now;
+				setTimeout(async () => { // delay until all other handlers for this signal are done TODO: WHY?
+					await orders_normalize_remoteMaybe(thing.children);
+					debugReact.log_layout(`CHILDREN signal ${thing.description}`);
+					layoutChildren();
+					if (id) { // only recurse if starting at a specific id
+						for (const childMap of childMapArray) {
+							if (childMap.child.hasChildren && childMap.path.isExpanded) {
+								childMap.child.signal_relayout();
+							}
+						}
+					}
+				}, 1);
+			}
 		}
-	}
+	})
 	
 	function layoutChildren() {
 		if (thing && !thing.ancestors_include(thing)) {
@@ -61,7 +61,7 @@
 			const childOrigin = origin.offsetByY(height);
 			center = childOrigin.offsetBy(delta);
 			children = thing.children;
-			lineRects = new Layout(thing, childOrigin).lineRects;
+			lineRects = new Layout(thing, path, childOrigin).lineRects;
 			childMapArray = lineRects.map((rect, index) => ({
 				origin: originForChildrenOf(children[index], rect),
 				path: path.appendThing(children[index]),
@@ -90,7 +90,7 @@
 	{#each childMapArray as a}
 		<Widget thing={a.child} path={a.path} origin={a.rect.extent.offsetBy(new Point(12, ($dot_size / -15) -10))}/>
 		<Line thing={a.child} curveType={a.rect.curveType} rect={a.rect.offsetBy(new Point(($dot_size / 2) - 129, ($dot_size / 2) - 8))}/>
-		{#if a.child.hasChildren && a.child.isExpanded}
+		{#if a.child.hasChildren && a.path.isExpanded}
 			<Children thing={a.child} path={a.path} origin={a.origin}/>
 		{/if}
 	{/each}

@@ -1,5 +1,5 @@
 import { get, noop, User, Path, Thing, Grabs, debug, Access, remove, TraitType, PersistID, Predicate, Relationship } from '../common/GlobalImports';
-import { persistLocal, CreationOptions, sort_byOrder, signal_rebuild_fromHere, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { persistLocal, CreationOptions, sort_byOrder, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { path_here, isBusy, paths_grabbed, path_toolsGrab, things_arrived } from './State';
 import DBInterface from '../db/DBInterface';
 
@@ -32,10 +32,10 @@ export default class Hierarchy {
 	db: DBInterface;
 
 	get hasNothing(): boolean { return !this.root; }
-	get idRoot(): (string | null) { return this.root?.id ?? null; };
+	get idRoot(): (string | null) { return this.root?.id ?? null; }; // undefined --> null
 	get rootPath(): Path | null { return !this.idRoot ? null : new Path(this.idRoot); }
-	thing_getForID(idThing: string | null): Thing | null { return (!idThing) ? null : this.knownT_byID[idThing]; }
-	thing_getForPath(path: Path | null, back: number = 1): Thing | null { return (path == null) ? null : this.knownT_byID[path?.pluckID(back)]; }
+	thing_getForID(id: string | null): Thing | null { return (!id) ? null : this.knownT_byID[id]; }
+	thing_getForPath(path: Path | null, back: number = 1): Thing | null { return (path == null) ? null : this.thing_getForID(path?.pluckID(back)); }
 
 	constructor(db: DBInterface) {
 		this.db = db;
@@ -142,7 +142,7 @@ export default class Hierarchy {
 					newGrab.grabOnly();
 				}
 			}
-			signal_rebuild_fromHere();
+			signals.signal_rebuild_fromHere();
 		}
 	}
 
@@ -255,7 +255,7 @@ export default class Hierarchy {
 
 	async thing_remember_bulk_remoteRelocateRight(thing: Thing, newParent: Thing) {
 		const newThing = await this.thing_remember_bulk_recursive_remoteRelocateRight(thing, newParent)
-		newParent.signal_relayout();
+		newParent.signals.signal_relayout();
 		if (newParent.isExpanded) {
 			newThing.grabOnly();
 		} else {

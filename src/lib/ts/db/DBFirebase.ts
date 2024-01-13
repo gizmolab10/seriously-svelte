@@ -1,4 +1,4 @@
-import { k, get, Thing, debug, launch, DBType, TraitType, DataKind, Hierarchy, copyObject, DebugFlag, signal_rebuild_fromHere } from '../common/GlobalImports';
+import { k, get, Thing, debug, launch, DBType, TraitType, DataKind, Hierarchy, copyObject, DebugFlag } from '../common/GlobalImports';
 import { Predicate, dbDispatch, Relationship, CreationOptions, convertToObject, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection, onSnapshot, deleteField, getFirestore } from 'firebase/firestore';
 import { DocumentData, DocumentChange, QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
@@ -272,7 +272,7 @@ export default class DBFirebase implements DBInterface {
 						}
 					}
 				}
-				signal_rebuild_fromHere();
+				signals.signal_rebuild_fromHere();
 			} catch (error) {
 				this.reportError(error);
 			}

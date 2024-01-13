@@ -1,14 +1,14 @@
-import { noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, sort_byOrder, roundToEven } from './Utilities';
-import { signal_rebuild, signal_relayout, signal_alteringParent, signal_rebuild_fromHere, signal_relayout_fromHere } from './Signals';
-import { isServerLocal, isMobileDevice, getBrowserType, convertToObject, orders_normalize_remoteMaybe } from './Utilities';
 import { ZIndex, ButtonID, TraitType, BrowserType, AlteringParent, CreationOptions, LineCurveType } from './Enumerations';
-import { signal, Signals, handle_rebuild, handle_relayout, handle_alteringParent } from './Signals';
+import { desaturateBy, sort_byOrder, roundToEven, isServerLocal, isMobileDevice } from './Utilities';
+import { noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject } from './Utilities';
+import { getBrowserType, convertToObject, orders_normalize_remoteMaybe } from './Utilities';
 import { Point, Size, Rect, LineRect, graphRect_update } from '../geometry/Geometry';
 import { debugReact, DebugReact, ReactFlag } from '../debug/DebugReact';
 import { PersistID, persistLocal } from '../managers/PersistLocal';
 import { Direction, svgPath } from '../geometry/SVGPath';
 import { debug, Debug, DebugFlag } from '../debug/Debug';
 import { DBType, DataKind } from '../db/DBInterface';
+import { signals, SignalKind } from './Signals';
 import { graphEditor } from '../ui/GraphEditor';
 import { dbDispatch } from '../db/DBDispatch';
 import { onMount, onDestroy } from 'svelte';
@@ -29,23 +29,21 @@ import Thing from '../data/Thing';
 import Datum from '../data/Datum';
 import User from '../data/User';
 import Grabs from '../ui/Grabs';
-import Paths from './Paths';
 import Path from './Path';
 
 export {
 	k, builds, launch,
 	svgPath, Direction,
+	signals, SignalKind,
 	PersistID, persistLocal,
 	get, onMount, onDestroy,
 	debug, Debug, DebugFlag,
 	dbDispatch, DBType, DataKind,
-	Path, Paths, Grabs, graphEditor, Hierarchy,
+	Path, Grabs, graphEditor, Hierarchy,
 	debugReact, DebugReact, ReactFlag, Widget,
 	ZIndex, ButtonID, BrowserType, AlteringParent, CreationOptions,
 	User, SeriouslyRange, Datum, Thing, Access, Predicate, Relationship,
-	signal, Signals, handle_rebuild, handle_relayout, handle_alteringParent,
 	Point, Size, Rect, Layout, LineRect, TraitType, LineCurveType, graphRect_update,
 	noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, isServerLocal,
 	sort_byOrder, roundToEven, getBrowserType, isMobileDevice, convertToObject, orders_normalize_remoteMaybe,
-	signal_rebuild, signal_relayout, signal_alteringParent, signal_rebuild_fromHere, signal_relayout_fromHere,
 };

@@ -1,4 +1,4 @@
-import { k, get, Path, Thing, Widget, Hierarchy, dbDispatch, signal_rebuild_fromHere, signal_relayout_fromHere } from '../common/GlobalImports';
+import { k, get, Path, Thing, Widget, Hierarchy, dbDispatch } from '../common/GlobalImports';
 import { path_here, path_editing, paths_grabbed, path_toolsGrab } from '../managers/State';
 
 //////////////////////////////////////
@@ -81,7 +81,7 @@ export default class GraphEditor {
 		await parent.thing_remember_remoteAddAsChild(newParent);
 		await this.hierarchy.thing_remember_remoteRelocateChild(child, parent, newParent);
 		newParent.expand();
-		signal_rebuild_fromHere();
+		signals.signal_rebuild_fromHere();
 		newParent.grabOnly();
 		setTimeout(() => {
 			newParent.startEdit();
@@ -128,7 +128,7 @@ export default class GraphEditor {
 					newParent.becomeHere();
 				}
 			}
-			signal_rebuild_fromHere();					// so Children component will update
+			signals.signal_rebuild_fromHere();					// so Children component will update
 		}
 	}
 
@@ -137,7 +137,7 @@ export default class GraphEditor {
 		if (path) {
 			const clear = path.toolsGrabbed;
 			path_toolsGrab.set(clear ? null : path);
-			signal_rebuild_fromHere();
+			signals.signal_rebuild_fromHere();
 		}
 	}
 
