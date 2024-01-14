@@ -178,19 +178,6 @@ export default class Thing extends Datum {
 				case AlteringParent.deleting: await other.parent_forget_remoteRemove(this); break;
 				case AlteringParent.adding: await this.thing_remember_remoteAddAsChild(other); break;
 			}
-			signals.signal_rebuild_fromHere();
-		}
-	}
-
-	clicked_dragDot(shiftKey: boolean, widget: Widget) {
-		if (!this.isExemplar) {
-			if (get(altering_parent)) {
-				this.parent_alterMaybe();
-			} else if (shiftKey || this.isGrabbed) {
-				widget.toggleGrab();
-			} else {
-				widget.grabOnly();
-			}
 		}
 	}
 

@@ -92,15 +92,15 @@
 	}
 
 	$: {
-		const shouldEdit = (path.isEditing);
-		const shouldGrab = path.isGrabbed || thing.isExemplar;
-		const shouldShowCluster = path.toolsGrabbed && !path.isHere;
-		const change = (isEditing != shouldEdit || isGrabbed != shouldGrab || showingCluster != shouldShowCluster);
+		const willEdit = (path.isEditing);
+		const willGrab = path.isGrabbed || thing.isExemplar;
+		const willShowCluster = path.toolsGrabbed && !path.isHere;
+		const change = (isEditing != willEdit || isGrabbed != willGrab || showingCluster != willShowCluster);
 		if (change) {
-			showingBorder = shouldEdit || shouldGrab;
-			showingCluster = shouldShowCluster;
-			isGrabbed = shouldGrab;
-			isEditing = shouldEdit;
+			showingBorder = willEdit || willGrab;
+			showingCluster = willShowCluster;
+			isGrabbed = willGrab;
+			isEditing = willEdit;
 			updateBorderStyle();
 			updateLayout();
 		}

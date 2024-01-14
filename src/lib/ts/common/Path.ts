@@ -1,6 +1,6 @@
 import { k, get, Size, Thing, signals, Hierarchy, dbDispatch, graphEditor, getWidthOf } from './GlobalImports';
-import { path_editing, paths_grabbed, paths_expanded, path_toolsGrab } from '../managers/State';
-import { db_type, dot_size, path_here, row_height, line_stretch } from '../managers/State';
+import { db_type, dot_size, path_here, row_height, path_editing, line_stretch } from '../managers/State';
+import { paths_grabbed, paths_expanded, path_toolsGrab, altering_parent } from '../managers/State';
 import { Writable } from 'svelte/store';
 
 export default class Path {
@@ -36,11 +36,11 @@ export default class Path {
 	includedInPaths(paths: Array<Path>): boolean { return paths.filter(p => p.pathString == this.pathString).length > 0; }
 	matchesStore(store: Writable<Path | null>): boolean { return this.pathString == get(store)?.pathString; }
 	includedInStore(store: Writable<Array<Path>>): boolean { return this.includedInPaths(get(store)); }
-	thing(back: number = 0): Thing | null { return this.hierarchy.thing_getForID(this.pluckID(back)); }
+	thing(back: number = 1): Thing | null { return this.hierarchy.thing_getForID(this.pluckID(back)); }
 	pluckID(back: number = 1): string | null { return this.ids.slice(-back)[0]; }
 	endsWithID(id: string): boolean { return id == this.pluckID() ?? ''; }
 	endsWith(thing: Thing): boolean { return this.endsWithID(thing.id); }
-	
+
 	nextSiblingPath(increment: boolean): Path {
 		const array = this.siblingPaths;
 		const index = array.indexOf(this);
@@ -124,7 +124,8 @@ export default class Path {
 
 	expand() { this.expanded_setTo(true); }
 	collapse() { this.expanded_setTo(false); }
-	toggleExpand() { this.expanded_setTo(!this.isExpanded) }
+	toggleExpand() { this.expanded_setTo(!this.isExpanded) }	
+	toggleGrab() { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }
 
 	grabOnly() {
 		paths_grabbed.set([this]);
@@ -157,6 +158,20 @@ export default class Path {
 			return array;
 		});
 		this.toggleToolsGrab();
+	}
+
+	clicked_dragDot(shiftKey: boolean) {
+		const thing = this.thing();
+        if (thing && !thing.isExemplar) {
+			if (get(altering_parent)) {
+				thing.parent_alterMaybe();
+			} else if (shiftKey || this.isGrabbed) {
+				this.toggleGrab();
+			} else {
+				this.grabOnly();
+            }
+			signals.signal_rebuild_fromHere();
+        }
 	}
 
 	stripPath(back: number): Path | null {
@@ -248,7 +263,7 @@ export default class Path {
 			if (parentPath && !OPTION) {
 				const grabPath = parentPath.appendingThing(siblings[newIndex]);
 				if (SHIFT) {
-					this.hierarchy.grabs.toggleGrab(grabPath);
+					grabPath.toggleGrab();
 				} else {
 					grabPath.grabOnly();
 				}

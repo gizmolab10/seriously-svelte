@@ -16,8 +16,6 @@ export default class Grabs {
 		});
 	};
 
-
-	toggleGrab(path: Path) { if (this.grabbed?.includes(path)) { path.ungrab(); } else { path.grab(); } }
 	get thing_lastGrabbed(): (Thing | null) { return this.hierarchy.thing_getForPath(this.path_lastGrabbed); }
 
 	get path_lastGrabbed(): Path | null {

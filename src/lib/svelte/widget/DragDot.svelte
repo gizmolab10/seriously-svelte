@@ -87,7 +87,7 @@
 		clickCount++;
 		clickTimer = setTimeout(() => {
 			if (clickCount === 1) {
-				thing.clicked_dragDot(event.shiftKey, widget);
+				widget.path.clicked_dragDot(event.shiftKey);
 				clearClicks();
 			}
 		}, k.doubleClickThreshold);
