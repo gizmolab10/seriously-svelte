@@ -1,7 +1,7 @@
 <script>
-	import { Direction, onDestroy, dbDispatch, graphEditor } from "../../ts/common/GlobalImports";
-	import { k, get, Size, Thing, Point, debug, ZIndex, Widget, onMount, svgPath } from "../../ts/common/GlobalImports";
 	import { paths_expanded, dot_size, altering_parent, paths_grabbed, path_toolsGrab } from '../../ts/managers/State';
+	import { svgPath, onMount, Direction, onDestroy, dbDispatch, graphEditor } from "../../ts/common/GlobalImports";
+	import { k, get, Size, Thing, Point, debug, ZIndex, Widget, signals } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte';
 	export let widget;
 	export let thing;
@@ -87,7 +87,7 @@
 			widget.grabOnly();
 			$path_toolsGrab = widget.path;
 		} else {
-			graphEditor.path_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
+			widget.path.path_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
 			return;
 		}
 		signals.signal_rebuild_fromHere();

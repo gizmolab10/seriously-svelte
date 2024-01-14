@@ -25,9 +25,9 @@ export default class Hierarchy {
 	knownRs_byIDTo: KnownRelationships = {};
 	knownRs: Array<Relationship> = [];
 	knownTs: Array<Thing> = [];
+	herePath: Path | null = null;
 	_grabs: Grabs | null = null;
 	root: Thing | null = null;
-	here: Thing | null = null;
 	isConstructed = false;
 	db: DBInterface;
 
@@ -41,7 +41,7 @@ export default class Hierarchy {
 		this.db = db;
 		path_here.subscribe((path: Path | null) => {
 			if (this.db && this.db.hasData) { // make sure this.db has not become null
-				this.here = this.thing_getForPath(path);
+				this.herePath = path;
 			}
 		})
 	}
@@ -60,12 +60,11 @@ export default class Hierarchy {
 	}
 
 	here_restore() {
-		const path = get(path_here);
-		let here = this.thing_getForPath(path);
+		let here = this.thing_getForPath(this.herePath);
 		if (here == null) {
-			here = this.grabs.path_lastGrabbed?.parent ?? this.root;
+			this.herePath = this.grabs.path_lastGrabbed?.stripPath(1) ?? this.rootPath;
 		}
-		path?.becomeHere();
+		this.herePath?.becomeHere();
 	}
 
 	get grabs(): Grabs { 

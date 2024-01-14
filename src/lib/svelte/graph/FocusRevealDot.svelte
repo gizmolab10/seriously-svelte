@@ -12,8 +12,7 @@
 	}
 
 	function onClick(event) {
-		const grab = dbDispatch.db.hierarchy.grabs.latestPath(true);
-		if (grab && grab.id == here.id) {
+		if (dbDispatch.db.hierarchy.grabs.latestPathGrabbed(true)?.isHere) {
 			path.path_redraw_remoteMoveRight(false, false);
 		} else {
 			dbDispatch.db.hierarchy.grabs.grabOnly(path);

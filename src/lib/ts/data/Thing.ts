@@ -49,14 +49,14 @@ export default class Thing extends Datum {
 	}
 
 	get canAlterParentOf_toolsGrab(): Thing | null {
-		const path_showsTools = get(path_toolsGrab);
-		if (path_showsTools) {
-			const showsTools = dbDispatch.db.hierarchy.thing_getForPath(path_showsTools);
-			if (showsTools && showsTools != this)  {
+		const path_showingTools = get(path_toolsGrab);
+		if (path_showingTools) {
+			const thing_showingTools = dbDispatch.db.hierarchy.thing_getForPath(path_showingTools);
+			if (thing_showingTools && thing_showingTools != this)  {
 				const alteration = get(altering_parent);
-				if ((alteration == AlteringParent.adding && !this.ancestors_include(showsTools)) ||
-					(alteration == AlteringParent.deleting && showsTools.parentIDs.includes(this.id))) {
-					return showsTools;
+				if ((alteration == AlteringParent.adding && !this.ancestors_include(thing_showingTools)) ||
+					(alteration == AlteringParent.deleting && thing_showingTools.parentIDs.includes(this.id))) {
+					return thing_showingTools;
 				}
 			}
 		}

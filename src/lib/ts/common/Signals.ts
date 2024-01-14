@@ -9,13 +9,23 @@ export enum SignalKind {
 }
 
 export class Signals {
+	signal_isInFlight = false;
 	handleSignal = new Signal<(kinds: Array<SignalKind>, value: any) => void>();
 	signal_rebuild_fromHere() { this.signal_rebuild(get(path_here)); }
 	signal_relayout_fromHere() { this.signal_relayout(get(path_here)); }
 	signal_rebuild(value: any = null) { this.signal(SignalKind.rebuild, value); }
 	signal_relayout(value: any = null) { this.signal(SignalKind.relayout, value); }
-	signal(kind: SignalKind, value: any = null) { this.handleSignal.emit([kind], value); }
 	signal_alteringParent(value: any = null) { this.signal(SignalKind.alterParent, value); }
+
+	signal(kind: SignalKind, value: any = null) {
+		if (this.signal_isInFlight) {
+			console.log(`signal ${kind} in flight`);
+		} else {
+			this.signal_isInFlight = true;
+			this.handleSignal.emit([kind], value);
+			this.signal_isInFlight = false;
+		}
+	}
 
 	handle_rebuild(onSignal: (value: any | null) => any ) {
 	return this.handleSignalOfKind(SignalKind.rebuild, onSignal);

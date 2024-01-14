@@ -96,9 +96,9 @@
 	$: {
 		if ($dot_size > 0) {
 			size = $dot_size;
-			top = $path_toolsGrab?.endsWithID(thing.id) ? 23 : -size / 2 + 2;
-			left = 1.5 - (size / 2); // offset from center?
 			scalablePath = svgPath.oval(size, false);
+			left = 1 - (size / 2); // offset from center?
+			top = widget.path.toolsGrabbed ? 23 : -size / 2 + 2;
 			if (thing.parents.length > 1) {
 				extra = svgPath.circle(size, size / 5);
 			}

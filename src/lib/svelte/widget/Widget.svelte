@@ -77,7 +77,7 @@
 		left = origin.x + delta - 2;
 		const titleWidth = thing.titleWidth;
 		width = titleWidth - 18 + ($dot_size * 2);
-		if (thing.showCluster) {
+		if (path.toolsGrabbed) {
 			radius = k.toolsClusterHeight / 2;
 			const yPadding = radius - 12;
 			revealTop = radius - 17;
@@ -94,7 +94,7 @@
 	$: {
 		const shouldEdit = (path.isEditing);
 		const shouldGrab = path.isGrabbed || thing.isExemplar;
-		const shouldShowCluster = path == $path_toolsGrab && path != $path_here;
+		const shouldShowCluster = path.toolsGrabbed && !path.isHere;
 		const change = (isEditing != shouldEdit || isGrabbed != shouldGrab || showingCluster != shouldShowCluster);
 		if (change) {
 			showingBorder = shouldEdit || shouldGrab;

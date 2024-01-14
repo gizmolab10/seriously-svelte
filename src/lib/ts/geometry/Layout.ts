@@ -18,7 +18,7 @@ export default class Layout {
 				let sumOfSiblingsAbove = -path.visibleProgeny_height() / 2; // start out negative and grow positive
 				while (index < quantity) {
 					const child = children[index];
-					const childPath = path.appendThing(child);
+					const childPath = path.appendingThing(child);
 					const childHeight = childPath.visibleProgeny_height();
 					const sizeY = sumOfSiblingsAbove + childHeight / 2;
 					const direction = this.getDirection(sizeY);

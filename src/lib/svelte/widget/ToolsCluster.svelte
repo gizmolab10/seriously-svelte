@@ -26,7 +26,7 @@
         const otherLeft = left - diameter * 1.2;
         center_addChild = new Point(left, top - diameter);
         center_addParent = new Point(otherLeft, top - diameter);
-        center_deleteParent = new Point(otherLeft, top + diameter + 10);
+        center_deleteParent = new Point(otherLeft, top + diameter + 9);
 	});
 
 	async function handleClick(buttonID: string) {

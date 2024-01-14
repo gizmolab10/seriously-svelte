@@ -13,7 +13,7 @@ export default class GraphEditor {
 
 	async handleKeyDown(event: KeyboardEvent) {
 		const h = this.hierarchy;
-		let pathGrab = h.grabs.latestPath(true);
+		let pathGrab = h.grabs.latestPathGrabbed(true);
 		if (event.type == 'keydown') {
 			const OPTION = event.altKey;
 			const SHIFT = event.shiftKey;
@@ -50,9 +50,9 @@ export default class GraphEditor {
 			}
 			switch (key) {
 				case '!':				h.rootPath?.becomeHere(); break;
-				case '`':               event.preventDefault(); this.latestPath_toggleToolsCluster(); break;
-				case 'arrowup':			await this.latestPath_redraw_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
-				case 'arrowdown':		await this.latestPath_redraw_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
+				case '`':               event.preventDefault(); this.latestPathGrabbed_toggleToolsCluster(); break;
+				case 'arrowup':			await this.latestPathGrabbed_redraw_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
+				case 'arrowdown':		await this.latestPathGrabbed_redraw_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
 			}
 		}
 	}
@@ -92,14 +92,14 @@ export default class GraphEditor {
 	//		MOVE	  //
 	////////////////////
 
-	async latestPath_redraw_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
-		const path = this.hierarchy.grabs.latestPath(up); // use thing_get for ancest
+	async latestPathGrabbed_redraw_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
+		const path = this.hierarchy.grabs.latestPathGrabbed(up); // use thing_get for ancest
 		path?.redraw_remoteMoveUp(up, SHIFT, OPTION, EXTREME);
 	}
 
 	async widget_redraw_remoteRelocateRight(RIGHT: boolean, EXTREME: boolean) {
 		const h = this.hierarchy;
-		const pathGrab = h.grabs.latestPath(true);
+		const pathGrab = h.grabs.latestPathGrabbed(true);
 		const thing = pathGrab?.thing();
 		const newParentPath = RIGHT ? pathGrab?.nextSiblingPath(false) : pathGrab?.thing(2);
 		const newParent = newParentPath?.thing();
@@ -133,11 +133,10 @@ export default class GraphEditor {
 		}
 	}
 
-	latestPath_toggleToolsCluster() {
-		const path = this.hierarchy.grabs.latestPath(true);
+	latestPathGrabbed_toggleToolsCluster() {
+		const path = this.hierarchy.grabs.latestPathGrabbed(true);
 		if (path) {
-			const clear = path.toolsGrabbed;
-			path_toolsGrab.set(clear ? null : path);
+			path_toolsGrab.set(path.toolsGrabbed ? null : path);
 			signals.signal_rebuild_fromHere();
 		}
 	}

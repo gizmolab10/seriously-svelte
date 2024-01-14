@@ -11,6 +11,7 @@ class Builds {
 
 	constructor() {
 		this.notes = { 
+			73 : ['January 13, 2024', 'paths mostly working'],
 			72 : ['January 11, 2024', 'path based design'],
 			71 : ['January 7, 2024', 'try to stop using thing ids for grab, here, etc.'],
 			70 : ['December 24, 2023', 'center graph'],

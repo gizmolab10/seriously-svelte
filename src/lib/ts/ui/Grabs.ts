@@ -28,17 +28,16 @@ export default class Grabs {
 		return null;
 	}
 
-	latestPath(up: boolean): Path | null {
+	latestPathGrabbed(up: boolean): Path | null {	// does not alter array
 		const paths = get(paths_grabbed);
 		if (paths) {
 			if (up) {
 				return paths[0];
 			} else {
-				return paths.slice(-1)[0];	// not alter array
+				return paths.slice(-1)[0];
 			}
 		}
-		const idRoot = this.hierarchy.idRoot
-		return !idRoot ? null : new Path(idRoot);
+		return this.hierarchy.rootPath;
 	}
 
 }

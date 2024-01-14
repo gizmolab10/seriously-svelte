@@ -64,7 +64,7 @@
 			lineRects = new Layout(thing, path, childOrigin).lineRects;
 			childMapArray = lineRects.map((rect, index) => ({
 				origin: originForChildrenOf(children[index], rect),
-				path: path.appendThing(children[index]),
+				path: path.appendingThing(children[index]),
 				child: children[index], 
 				rect: rect,
 			}));
@@ -76,9 +76,9 @@
 			alert('grandchildren origin not computable');
 			return new Point();
 		}
-		const childPath = path.appendThing(child);
-		const x = origin.x + child.titleWidth + $dot_size + $line_stretch - 2;
+		const childPath = path.appendingThing(child);
 		const y = rect.extent.y - childPath.visibleProgeny_halfHeight;
+		const x = origin.x + child.titleWidth + $dot_size + $line_stretch - 2;
 		return new Point(x, y);
 	}
 	
