@@ -1,7 +1,7 @@
 <script lang=ts>
 	import { k, Rect, Size, Point, Thing, debug, signals, onMount, Layout } from '../../ts/common/GlobalImports';
 	import { LineRect, onDestroy, DebugFlag, debugReact, LineCurveType } from '../../ts/common/GlobalImports';
-	import { dot_size, graphRect, line_stretch } from '../../ts/managers/State';
+	import { s_dot_size, s_graphRect, s_line_stretch } from '../../ts/managers/State';
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Children from './Children.svelte';
@@ -19,22 +19,22 @@
 	onMount( () => { debugReact.log_mount(`CHILDREN ${thing.description}`); layoutChildren(); });
 	
 	$: {
-		if ($graphRect) {
+		if ($s_graphRect) {
 			layoutChildren()
 		}
 	}
 
 	$: {
-		if ($dot_size > 0) {
+		if ($s_dot_size > 0) {
 			setTimeout(() => {
-				debugReact.log_layout(`CHILDREN $dot_size ${thing.description}`);
+				debugReact.log_layout(`CHILDREN $s_dot_size ${thing.description}`);
 				layoutChildren()
 			}, 2);
 		}
 	}
 	
 	const signalHandler = signals.handle_relayout((id) => {
-		if (!id || id == thing.id || thing.childrenIDs_anyMissingFromIDsOf(children)) {
+		if (!id || id == thing.id) {
 			const now = new Date().getTime();
 			if (now - prior > 100) {
 				prior = now;
@@ -78,7 +78,7 @@
 		}
 		const childPath = path.appendingThing(child);
 		const y = rect.extent.y - childPath.visibleProgeny_halfHeight;
-		const x = origin.x + child.titleWidth + $dot_size + $line_stretch - 2;
+		const x = origin.x + child.titleWidth + $s_dot_size + $s_line_stretch - 2;
 		return new Point(x, y);
 	}
 	
@@ -89,8 +89,8 @@
 		<Circle radius=1 center={center} color=black thickness=1/>
 	{/if}
 	{#each childMapArray as a}
-		<Widget thing={a.child} path={a.path} origin={a.rect.extent.offsetBy(new Point(12, ($dot_size / -15) -10))}/>
-		<Line thing={a.child} curveType={a.rect.curveType} rect={a.rect.offsetBy(new Point(($dot_size / 2) - 129, ($dot_size / 2) - 8))}/>
+		<Widget thing={a.child} path={a.path} origin={a.rect.extent.offsetBy(new Point(12, ($s_dot_size / -15) -10))}/>
+		<Line thing={a.child} curveType={a.rect.curveType} rect={a.rect.offsetBy(new Point(($s_dot_size / 2) - 129, ($s_dot_size / 2) - 8))}/>
 		{#if a.child.hasChildren && a.path.isExpanded}
 			<Children thing={a.child} path={a.path} origin={a.origin}/>
 		{/if}

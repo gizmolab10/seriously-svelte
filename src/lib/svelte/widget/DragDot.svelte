@@ -1,7 +1,7 @@
 <script>
 	import { k, Size, Point, Thing, debug, ZIndex, onMount, signals, svgPath } from "../../ts/common/GlobalImports";
 	import { Direction, onDestroy, dbDispatch, graphEditor, AlteringParent } from "../../ts/common/GlobalImports";
-	import { dot_size, paths_grabbed, path_toolsGrab } from '../../ts/managers/State';
+	import { s_dot_size, s_paths_grabbed, s_path_toolsGrab } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
     export let widget;
 	export let thing;
@@ -11,9 +11,9 @@
 	let scalablePath = '';
 	let isHovering = true;
 	let isGrabbed = false;
+	let altering = false;
 	let clickCount = 0;
 	let handler = null;
-	let alter = false;
 	let button = null;
 	let extra = null;
 	let clickTimer;
@@ -31,15 +31,15 @@
     onMount(() => {
 		updateColorsForHover(false);
         handler = signals.handle_alteringParent((alteration) => {
-			const applyFlag = $path_toolsGrab && thing.canAlterParentOf_toolsGrab != null;
-			alter = applyFlag ? (alteration != null) : false;
+			const applyFlag = $s_path_toolsGrab && widget.path.canAlter_asParentOf_toolsGrab;
 			extra = (thing.parents.length < 2) ? null : svgPath.circle(size, size / 5);
+			altering = applyFlag ? (alteration != null) : false;
 			updateColors();
         })
     })
 
 	$: {
-		const grabbed = $paths_grabbed?.filter(p => p.endsWithID(thing.id)).length > 0;
+		const grabbed = $s_paths_grabbed?.filter(p => p.endsWithID(thing.id)).length > 0;
 		if (isGrabbed != grabbed) {
 			isGrabbed = grabbed;
 			updateColors();
@@ -53,9 +53,10 @@
 	}
 
 	function updateColors() {
-		thing.updateColorAttributes(widget.path);	// needed for revealColor
-		fillColor = debug.lines ? 'transparent' : thing.revealColor(isHovering != alter, widget.path);
-		tinyDotColor = thing.revealColor(isHovering == alter, widget.path);
+		const asReveal = isHovering == altering;
+		thing.updateColorAttributes(widget.path);	// for revealColor
+		tinyDotColor = thing.revealColor(asReveal, widget.path);
+		fillColor = debug.lines ? 'transparent' : thing.revealColor(!asReveal, widget.path);
 		strokeColor = thing.color;
 	}
 
@@ -94,8 +95,8 @@
 	}
 
 	$: {
-		if ($dot_size > 0) {
-			size = $dot_size;
+		if ($s_dot_size > 0) {
+			size = $s_dot_size;
 			scalablePath = svgPath.oval(size, false);
 			left = 1 - (size / 2); // offset from center?
 			top = widget.path.toolsGrabbed ? 23 : -size / 2 + 2;

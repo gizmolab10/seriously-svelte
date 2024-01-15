@@ -1,4 +1,4 @@
-import { build } from '../managers/State';
+import { s_build } from '../managers/State';
 
 class Builds {
 	notes: { [id: number]: Array<string> } = {};
@@ -6,7 +6,7 @@ class Builds {
 	setup() {
 		const keys = Object.keys(this.notes);
 		const top = keys.slice(-1);
-		build.set(Number(top));
+		s_build.set(Number(top));
 	}
 
 	constructor() {

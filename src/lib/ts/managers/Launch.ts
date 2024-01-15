@@ -1,5 +1,5 @@
 import { k, debug, builds, debugReact, PersistID, dbDispatch, persistLocal, isServerLocal, getBrowserType } from '../common/GlobalImports'
-import { path_here, paths_expanded, paths_grabbed, showDetails } from './State';
+import { s_path_here, s_paths_expanded, s_paths_grabbed, s_showDetails } from './State';
 
 class Launch {
 	setup() {
@@ -25,7 +25,7 @@ class Launch {
         const erase = queryStrings.get('erase');
 		if (queryStrings.get('details') === 'hide') {
 			persistLocal.writeToKey(PersistID.details, false);
-			showDetails.set(false);
+			s_showDetails.set(false);
 		}
         if (erase) {
             const flags = erase.split(',');
@@ -36,9 +36,9 @@ class Launch {
 						break;
                     case 'settings': 
 						localStorage.clear();
-						paths_grabbed.set([]);
-						path_here.set(null);
-						paths_expanded.set([]);
+						s_paths_grabbed.set([]);
+						s_path_here.set(null);
+						s_paths_expanded.set([]);
 						break;
                 }
             }

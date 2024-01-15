@@ -1,6 +1,6 @@
 <script>
 	import { DBType, ZIndex, PersistID, ButtonID, Hierarchy, dbDispatch, persistLocal } from '../../ts/common/GlobalImports';
-	import { db_type, db_loadTime, id_popupView } from '../../ts/managers/State';
+	import { s_db_type, s_db_loadTime, s_id_popupView } from '../../ts/managers/State';
 	import RadioButtons from '../kit/RadioButtons.svelte'
 	import LabelButton from '../kit/LabelButton.svelte';
 	import Label from '../kit/Label.svelte';
@@ -35,10 +35,10 @@
 
 <div class='modal-overlay' style='z-index: {ZIndex.frontmost};'>
 	<div class='modal-content' style='z-index: {ZIndex.frontmost};'>
-		<RadioButtons menuItems={menuItems} idSelected={$db_type}/>
+		<RadioButtons menuItems={menuItems} idSelected={$s_db_type}/>
 		<br>
-		{#if $db_loadTime}
-			<Label>fetch = {$db_loadTime} s</Label>
+		{#if $s_db_loadTime}
+			<Label>fetch = {$s_db_loadTime} s</Label>
 		{:else}
 			<br>
 		{/if}

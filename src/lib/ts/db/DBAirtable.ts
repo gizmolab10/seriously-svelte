@@ -1,5 +1,5 @@
 import { debug, Thing, DBType, DataKind, Hierarchy, Relationship, CreationOptions, DebugFlag, dbDispatch } from '../common/GlobalImports';
-import { things_arrived } from '../managers/State';
+import { s_things_arrived } from '../managers/State';
 import DBInterface from './DBInterface';
 import Airtable from 'airtable';
 
@@ -23,7 +23,7 @@ export default class DBAirtable implements DBInterface {
 	access_table = this.base(DataKind.access);
 	users_table = this.base(DataKind.users);
 	_hierarchy: Hierarchy | null = null;
-	db_type = DBType.airtable;
+	s_db_type = DBType.airtable;
 	hasData = false;
 	loadTime = null;
 	baseID = '';
@@ -67,7 +67,7 @@ export default class DBAirtable implements DBInterface {
 					const id = remoteThing.id;
 					this.hierarchy.thing_remember_runtimeCreate('', id, remoteThing.fields.title as string, remoteThing.fields.color as string, remoteThing.fields.trait as string, 0, true);
 				}
-				things_arrived.set(true);
+				s_things_arrived.set(true);
 			})
 		} catch (error) {
 			debug.log_error(this.things_errorMessage + ' (things_readAll) ' + error);

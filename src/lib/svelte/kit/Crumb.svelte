@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, Thing, onMount, dbDispatch } from '../../ts/common/GlobalImports';
-	import { path_here } from '../../ts/managers/State';
+	import { s_path_here } from '../../ts/managers/State';
 	export let thing: Thing;
 	export let path = '';
 	let colorStyles = '';
@@ -8,7 +8,7 @@
 	onMount(() => { updateColors(); });
 
 	function updateColors() {
-		const isHere = path === $path_here;
+		const isHere = path === $s_path_here;
 		if (isHere) {
 			colorStyles = 'background-color: ' + thing.color + '; color: ' + k.backgroundColor;
 		} else {

@@ -1,6 +1,6 @@
 <script>
 	import { Size, ZIndex, svgPath } from '../../ts/common/GlobalImports';
-    import { id_popupView } from '../../ts/managers/State';
+    import { s_id_popupView } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
     export let size = 20;
 	function ignore(event) {}
@@ -18,7 +18,7 @@
 
 <div class='close-button' style='top: {size * 0.5}px; right: {size * 1.5}px;'
     on:keypress={ignore}
-    on:click={() => { $id_popupView = null; }}>
+    on:click={() => { $s_id_popupView = null; }}>
     <SVGD3
 		size={size}
 		stroke='black'

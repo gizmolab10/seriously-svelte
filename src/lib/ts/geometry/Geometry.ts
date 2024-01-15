@@ -1,4 +1,4 @@
-import { graphRect, showDetails, crumbsWidth } from "../managers/State";
+import { s_graphRect, s_showDetails, s_crumbs_width } from "../managers/State";
 import { get } from '../common/GlobalImports'
 
 export class Point {
@@ -102,12 +102,12 @@ export class LineRect extends Rect {
 
 export function graphRect_update() {
 	const originY = 86;											// height of title at the top
-	const originX = get(showDetails) ? 101 : 0;					// width of details
+	const originX = get(s_showDetails) ? 101 : 0;					// width of details
 	const mysteryOffset = new Point(originX + 2, 88);					// TODO: why?
 	const originOfGraph = new Point(originX, originY);
 	const windowSize = new Size(window.innerWidth, window.innerHeight);
 	const sizeOfGraph = windowSize.reducedBy(mysteryOffset);	// account for origin
 	const rect = new Rect(originOfGraph, sizeOfGraph);
-	crumbsWidth.set(sizeOfGraph.width);
-	graphRect.set(rect);										// used by Panel and Graph
+	s_crumbs_width.set(sizeOfGraph.width);
+	s_graphRect.set(rect);										// used by Panel and Graph
 };

@@ -1,6 +1,6 @@
 <script lang='ts'>
+	import { s_dot_size, s_paths_grabbed, s_crumbs_width, s_path_toolsGrab } from '../../ts/managers/State';
 	import { k, Size, Point, Thing, ZIndex, svgPath, dbDispatch } from '../../ts/common/GlobalImports';
-	import { dot_size, paths_grabbed, crumbsWidth, path_toolsGrab } from '../../ts/managers/State';
 	import FatTriangle from '../svg/FatTriangle.svelte';
 	import Crumb from '../kit/Crumb.svelte';
 	let ancestors: Array<Thing> = [];
@@ -12,18 +12,18 @@
 	function path_lastGrabbed() { return dbDispatch.db.hierarchy.grabs.path_lastGrabbed; }
 
 	$: {
-		const _ = $path_toolsGrab;
-		updateAncestors($crumbsWidth);
+		const _ = $s_path_toolsGrab;
+		updateAncestors($s_crumbs_width);
 	}
 
 	$: {
-		if ($paths_grabbed || grabbedPath == null || ancestors.length == 0) {
+		if ($s_paths_grabbed || grabbedPath == null || ancestors.length == 0) {
 			const path = path_lastGrabbed()	// start over with new grab
 			if (path) {
 				grabbedPath = path;
 			}
 		}
-		updateAncestors($crumbsWidth);
+		updateAncestors($s_crumbs_width);
 	}
 
 	function updateAncestors(width: number) {
@@ -54,7 +54,7 @@
 					&nbsp;{#if count > 1}-{/if}&nbsp;
 				</span>
 			{/if}
-			<Crumb thing={ancestors[index]} path={grabbedPath.stripPath(index)}/>
+			<Crumb thing={ancestors[index]} path={grabbedPath.stripBack(index)}/>
 		{/each}
 	{/if}
 {/key}

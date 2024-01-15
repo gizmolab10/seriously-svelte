@@ -1,5 +1,5 @@
 <script>
-	import { paths_expanded, dot_size, altering_parent, paths_grabbed, path_toolsGrab } from '../../ts/managers/State';
+	import { s_paths_expanded, s_dot_size, s_altering_parent, s_paths_grabbed, s_path_toolsGrab } from '../../ts/managers/State';
 	import { svgPath, onMount, Direction, onDestroy, dbDispatch, graphEditor } from "../../ts/common/GlobalImports";
 	import { k, get, Size, Thing, Point, debug, ZIndex, Widget, signals } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte';
@@ -28,7 +28,7 @@
 	}
 
 	$: {
-		const _ = $paths_expanded;
+		const _ = $s_paths_expanded;
 		updatePath();
 	}
 
@@ -40,13 +40,13 @@
 	}
 
 	$: {
-		if ($dot_size > 0) {
+		if ($s_dot_size > 0) {
 			updatePath();
 		}
 	}
 
 	$: {
-		if ($paths_grabbed != null || thing != null) {
+		if ($s_paths_grabbed != null || thing != null) {
 			updateColors();
 			updatePath();
 		}
@@ -66,28 +66,29 @@
 	}
 
 	function updatePath() {
-		if ((!thing.hasChildren && !thing.isBulkAlias) || $path_toolsGrab?.endsWithID(thing.id)) {
-			scalablePath = svgPath.circle($dot_size, $dot_size / 2);
+		if ((!thing.hasChildren && !thing.isBulkAlias) || $s_path_toolsGrab?.endsWithID(thing.id)) {
+			scalablePath = svgPath.circle($s_dot_size, $s_dot_size / 2);
 		} else {
 			const goLeft = widget.path.isExpanded && widget.thing.hasChildren;
 			const direction = goLeft ? Direction.left : Direction.right;
-			scalablePath = svgPath.triangle($dot_size, direction);
+			scalablePath = svgPath.triangle($s_dot_size, direction);
 			if (thing.isBulkAlias) {
-				insidePath = svgPath.circle($dot_size, $dot_size / 3);
+				insidePath = svgPath.circle($s_dot_size, $s_dot_size / 3);
 			}
 		}
 	}
 
 	function handleClick(event) {
 		setIsHovering_updateColors(false);
-		if ($path_toolsGrab?.pathString == widget.path.pathString) {
-			$path_toolsGrab = null;
-			$altering_parent = null;
+		const path = widget.path;
+		if (path.toolsGrabbed) {
+			$s_path_toolsGrab = null;
+			$s_altering_parent = null;
 		} else if (!thing.hasChildren) {
 			widget.grabOnly();
-			$path_toolsGrab = widget.path;
+			$s_path_toolsGrab = path;
 		} else {
-			widget.path.path_redraw_remoteMoveRight(thing, !thing.isExpanded, true);
+			dbDispatch.db.hierarchy.path_redraw_remoteMoveRight(path, !path.isExpanded, true, false);
 			return;
 		}
 		signals.signal_rebuild_fromHere();
@@ -103,11 +104,11 @@
 		clickTimer = setTimeout(() => {
 			clearClicks();
 			const path = widget.path;
-			if ($path_toolsGrab == path) {
-				$path_toolsGrab = null;
+			if ($s_path_toolsGrab == path) {
+				$s_path_toolsGrab = null;
 			} else {
 				path.grabOnly();
-				$path_toolsGrab = path;
+				$s_path_toolsGrab = path;
 			}
 			signals.signal_rebuild_fromHere();
 		}, k.longClickThreshold);
@@ -149,14 +150,14 @@
 	on:dblclick={handleDoubleClick}
 	on:contextmenu={handleContextMenu}
 	style='
-		width={$dot_size}px;
-		height={$dot_size}px;
-		top: {$dot_size / 2 - 2 - (widget.path.isGrabbed ? 0 : 1)}px;
-		left: {$dot_size + thing.titleWidth - 5}px;
+		width={$s_dot_size}px;
+		height={$s_dot_size}px;
+		top: {$s_dot_size / 2 - 3}px;
+		left: {$s_dot_size + thing.titleWidth - 7}px;
 	'>
 	{#key scalablePath}
 		<SVGD3
-			size={$dot_size}
+			size={$s_dot_size}
 			stroke={strokeColor}
 			zIndex={ZIndex.dots}
 			scalablePath={scalablePath}
@@ -166,7 +167,7 @@
 	{#if thing.isBulkAlias}
 		<div style='left:-1px; width:14px; height:14px; position:absolute;'>
 			<SVGD3
-				size={$dot_size}
+				size={$s_dot_size}
 				stroke={strokeColor}
 				zIndex={ZIndex.dots}
 				fill={bulkAliasFillColor}

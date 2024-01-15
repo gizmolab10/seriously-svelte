@@ -1,6 +1,7 @@
 <script lang='ts'>
-	import { path_here, dot_size, path_editing, row_height, paths_grabbed, thing_fontSize, thing_fontFamily, path_toolsGrab} from '../../ts/managers/State';
 	import { k, Thing, Point, debug, ZIndex, Widget, signals, onMount, onDestroy, debugReact } from '../../ts/common/GlobalImports';
+	import { s_path_here, s_dot_size, s_path_editing, s_row_height, s_paths_grabbed} from '../../ts/managers/State';
+	import {s_thing_fontSize, s_thing_fontFamily, s_path_toolsGrab} from '../../ts/managers/State';
 	import ToolsCluster from './ToolsCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
 	import RevealDot from './RevealDot.svelte';
@@ -8,7 +9,7 @@
 	export let origin = new Point();
 	export let thing = Thing;
     export let path = '';
-	let priorRowHeight = $row_height;
+	let priorRowHeight = $s_row_height;
 	let priorOrigin = origin;
 	let showingCluster = false;
 	let showingBorder = false;
@@ -18,8 +19,8 @@
 	let padding = '';
 	let border = '';
 	let widget: Widget;
-	let radius = $dot_size / 2;
-	let rightPadding = 22
+	let radius = $s_dot_size / 2;
+	let rightPadding = 19;
 	let revealTop = 0;
 	let height = 0;
 	let width = 0;
@@ -52,12 +53,12 @@
 	}
 	
 	$: {
-		if (priorRowHeight != $row_height) {
+		if (priorRowHeight != $s_row_height) {
 			setTimeout(() => {
-				debugReact.log_layout(`WIDGET $row_height ${thing.description}`);
+				debugReact.log_layout(`WIDGET $s_row_height ${thing.description}`);
 				updateLayout()
 			}, 1);
-			priorRowHeight = $row_height;
+			priorRowHeight = $s_row_height;
 		}
 	}
 	
@@ -72,11 +73,11 @@
 	}
 
 	function updateLayout() {
-		height = $row_height - 2;
+		height = $s_row_height - 2;
 		const delta = showingBorder ? 0 : 1;
 		left = origin.x + delta - 2;
 		const titleWidth = thing.titleWidth;
-		width = titleWidth - 18 + ($dot_size * 2);
+		width = titleWidth - 18 + ($s_dot_size * 2);
 		if (path.toolsGrabbed) {
 			radius = k.toolsClusterHeight / 2;
 			const yPadding = radius - 12;
@@ -84,8 +85,8 @@
 			top = origin.y + delta - yPadding + 1;
 			padding = `${yPadding}px ${rightPadding}px ${yPadding}px 0px`;
 		} else {
-			revealTop = $dot_size / -3 + 1;
-			radius = $row_height / 2;
+			revealTop = $s_dot_size / -3 + 1;
+			radius = $s_row_height / 2;
 			top = origin.y + delta;
 			padding = `0px ${rightPadding}px 0px 0px`;
 		}
@@ -133,7 +134,7 @@
 	<div style='top:{revealTop}px;'>
 		<DragDot thing={thing} widget={widget}/>
 	</div>
-	<TitleEditor thing={thing} widget={widget} fontSize={$thing_fontSize}px fontFamily={$thing_fontFamily}/>
+	<TitleEditor thing={thing} widget={widget} fontSize={$s_thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 	<div class='revealDot'
 		style='
 			top:{revealTop + 0.3}px;

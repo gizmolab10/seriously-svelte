@@ -1,5 +1,5 @@
 import { get, Path, Thing, dbDispatch } from '../common/GlobalImports';
-import { altering_parent } from '../managers/State';
+import { s_altering_parent } from '../managers/State';
 import Identifiable from "../common/Identifiable";
 
 export default class Widget extends Identifiable {

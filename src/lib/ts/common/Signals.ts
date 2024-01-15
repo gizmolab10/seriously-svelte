@@ -1,4 +1,4 @@
-import { path_here } from '../managers/State';
+import { s_path_here } from '../managers/State';
 import { Signal } from 'typed-signals';
 import { get } from 'svelte/store';
 
@@ -11,8 +11,8 @@ export enum SignalKind {
 export class Signals {
 	signal_isInFlight = false;
 	handleSignal = new Signal<(kinds: Array<SignalKind>, value: any) => void>();
-	signal_rebuild_fromHere() { this.signal_rebuild(get(path_here)); }
-	signal_relayout_fromHere() { this.signal_relayout(get(path_here)); }
+	signal_rebuild_fromHere() { this.signal_rebuild(get(s_path_here)); }
+	signal_relayout_fromHere() { this.signal_relayout(get(s_path_here)); }
 	signal_rebuild(value: any = null) { this.signal(SignalKind.rebuild, value); }
 	signal_relayout(value: any = null) { this.signal(SignalKind.relayout, value); }
 	signal_alteringParent(value: any = null) { this.signal(SignalKind.alterParent, value); }

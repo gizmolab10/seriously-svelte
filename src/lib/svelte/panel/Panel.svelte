@@ -1,7 +1,8 @@
 <script>
-	import { build, isBusy, path_here, db_type, graphRect, id_popupView, showDetails, things_arrived, thing_fontSize } from '../../ts/managers/State';
 	import { k, get, Path, Rect, Size, Point, Thing, launch, DBType, ZIndex, signals, onMount, ButtonID } from '../../ts/common/GlobalImports';
 	import { Hierarchy, PersistID, dbDispatch, debugReact, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
+	import { s_id_popupView, s_showDetails, s_things_arrived, s_thing_fontSize } from '../../ts/managers/State';
+	import { s_build, s_isBusy, s_path_here, s_db_type, s_graphRect } from '../../ts/managers/State';
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import LabelButton from '../kit/LabelButton.svelte';
@@ -15,8 +16,8 @@
 	let left = 14;
 	let size = 14;
 	
-	function builds_buttonClicked(event) { $id_popupView = ($id_popupView == ButtonID.buildNotes) ? null : ButtonID.buildNotes; }
-	function help_buttonClicked() { $id_popupView = ($id_popupView == ButtonID.help) ? null : ButtonID.help; }
+	function builds_buttonClicked(event) { $s_id_popupView = ($s_id_popupView == ButtonID.buildNotes) ? null : ButtonID.buildNotes; }
+	function help_buttonClicked() { $s_id_popupView = ($s_id_popupView == ButtonID.help) ? null : ButtonID.help; }
 	const rebuild_signalHandler = signals.handle_rebuild(() => { graph_fullRebuild(); });
 	window.addEventListener('resize', (event) => { graphRect_update(); });
 	
@@ -26,23 +27,23 @@
 	});
 
 	$: {
-		if (herePath.pathString != $path_here?.pathString) {
-			herePath = $path_here;
+		if (herePath.pathString != $s_path_here?.pathString) {
+			herePath = $s_path_here;
 			graph_fullRebuild();
 		}
 	}
 
 	function graph_fullRebuild() {
 		graphRect_update();
-		left = $graphRect.origin.x;
-		debugReact.log_rebuild(`PANEL ${$path_here?.thing()?.description}`)
+		left = $s_graphRect.origin.x;
+		debugReact.log_rebuild(`PANEL ${$s_path_here?.thing()?.description}`)
 		toggle = !toggle;	// remount graph component
 	}
 	
 	function details_buttonClicked(event) {
-		$showDetails = !$showDetails;
+		$s_showDetails = !$s_showDetails;
 		signals.signal_relayout_fromHere();
-		persistLocal.writeToKey(PersistID.details, $showDetails);
+		persistLocal.writeToKey(PersistID.details, $s_showDetails);
 	}
 
 </script>
@@ -96,56 +97,56 @@
 	}
 </style>
 
-{#if $isBusy}
+{#if $s_isBusy}
 	<p>Welcome to Seriously</p>
-	{#if $db_type != DBType.local}
-		<p>(loading your {$db_type} data{$db_type == DBType.firebase ? ', from ' + dbDispatch.db.baseID : ''})</p>
+	{#if $s_db_type != DBType.local}
+		<p>(loading your {$s_db_type} data{$s_db_type == DBType.firebase ? ', from ' + dbDispatch.db.baseID : ''})</p>
 	{/if}
-{:else if !$things_arrived}
+{:else if !$s_things_arrived}
 	<p>Nothing is available.</p>
 {:else}
 	<div class='leftSide'
 		style='
 			z-index: {ZIndex.frontmost};
-			height: {$showDetails ? '100%' : '33px'};'>
+			height: {$s_showDetails ? '100%' : '33px'};'>
 		<CircularButton left=15
 			borderColor='white'
 			onClick={details_buttonClicked}>
 			<img src='settings.svg' alt='circular button' width={size}px height={size}px/>
 		</CircularButton>
-		<button class='build' on:click={builds_buttonClicked}>{$build}</button>
-		{#if !$isBusy}
+		<button class='build' on:click={builds_buttonClicked}>{$s_build}</button>
+		{#if !$s_isBusy}
 			<CircularButton left=85
 				onClick={() => {help_buttonClicked()}}
 				size={size}>i
 			</CircularButton>
 		{/if}
-		{#if $showDetails && $id_popupView == null}
+		{#if $s_showDetails && $s_id_popupView == null}
 			<Details/>
 		{/if}
 	</div>
-	<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: -10px; top: 32px; width: {$id_popupView ? '111px' : '110%'};'></div>
-	<div class='verticalLine' style='height: {$showDetails && $id_popupView == null ? '100%' : '33px'}; z-index: {ZIndex.frontmost};'></div>
+	<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: -10px; top: 32px; width: {$s_id_popupView ? '111px' : '110%'};'></div>
+	<div class='verticalLine' style='height: {$s_showDetails && $s_id_popupView == null ? '100%' : '33px'}; z-index: {ZIndex.frontmost};'></div>
 	<div class='rightSide' style='
-		left: {$showDetails ? 100 : 0}px;
+		left: {$s_showDetails ? 100 : 0}px;
 		z-index: {ZIndex.panel};
 		position: fixed;
 		height: 100%;'>
-		{#if $id_popupView == ButtonID.help}
+		{#if $s_id_popupView == ButtonID.help}
 			<Help size={size}/>
-		{:else if $id_popupView == ButtonID.buildNotes}
+		{:else if $s_id_popupView == ButtonID.buildNotes}
 			<BuildNotes/>
-		{:else if $id_popupView == null}
+		{:else if $s_id_popupView == null}
 			<div class='top' style='z-index: {ZIndex.frontmost}'>
 				<Crumbs/>
 			</div>
 			<div class='topTitle'
-				style='color: {$path_here?.thing()?.color};
+				style='color: {$s_path_here?.thing()?.color};
 					z-index: {ZIndex.frontmost};
-					left: {$showDetails ? '100px' : '-1px'};'>
-				{$path_here?.thing()?.title}
+					left: {$s_showDetails ? '100px' : '-1px'};'>
+				{$s_path_here?.thing()?.title}
 			</div>
-			<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: {$showDetails ? k.detailsMargin : 0}px; top: 85px;'></div>
+			<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: {$s_showDetails ? k.detailsMargin : 0}px; top: 85px;'></div>
 			{#key toggle}
 				<Graph/>
 			{/key}

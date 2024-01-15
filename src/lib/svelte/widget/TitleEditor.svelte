@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { onDestroy, dbDispatch, graphEditor, SeriouslyRange } from '../../ts/common/GlobalImports';
+	import { s_row_height, s_path_editing, s_path_editingStopped } from '../../ts/managers/State';
 	import { k, Thing, ZIndex, Widget, signals, onMount } from '../../ts/common/GlobalImports';
-	import { row_height, path_editing, path_editingStopped } from '../../ts/managers/State';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
 	export let widget: Widget;
@@ -27,13 +27,13 @@
 	}
 
 	$: {
-		if ($row_height > 0) {
+		if ($s_row_height > 0) {
 			updateInputWidth();
 		}
 	}
 
 	$: {
-		const _ = $path_editing;
+		const _ = $s_path_editing;
 		updateInputWidth();
 	}
 
@@ -46,7 +46,7 @@
 	}
 
 	function handleKeyDown(event) {
-		if (thing && $path_editing == thing.id && canAlterTitle(event)) {
+		if (thing && $s_path_editing == thing.id && canAlterTitle(event)) {
 			switch (event.key) {	
 				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); graphEditor.widget_redraw_remoteAddChildTo(thing.firstParent); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
@@ -62,14 +62,14 @@
 		///////////////////////
 
 		if (k.allowTitleEditing) {
-			if ($path_editingStopped == thing.id) {
+			if ($s_path_editingStopped == thing.id) {
 				setTimeout(() => {
-					$path_editingStopped = null;
+					$s_path_editingStopped = null;
 				}, 1000);
-			} else if ($path_editing != thing.id) {
+			} else if ($s_path_editing != thing.id) {
 				input?.blur();
-			} else if ($path_editing == null) {
-				$path_editing = widget.path;
+			} else if ($s_path_editing == null) {
+				$s_path_editing = widget.path;
 				widget.path.grabOnly();
 				setTimeout(() => {
 					input?.focus();
@@ -83,17 +83,16 @@
 		invokeBlurNotClearEditing();
 		setTimeout(() => {		// eliminate infinite recursion
 			const id = thing?.id;
-			if (id != null && $path_editing == id) {				
-				$path_editing = null;
+			if (id != null && $s_path_editing == id) {				
+				$s_path_editing = null;
 				signals.signal_rebuild_fromHere();
 			}
 		}, 20);
 	}
 
 	function invokeBlurNotClearEditing() {
-		if (isEditing && thing) {
-			$path_editingStopped = $path_editing;
-			isEditing = false;
+		if (widget.path.isEditing && thing) {
+			$s_path_editingStopped = $s_path_editing;
 			extractRange();
 			input?.blur();
 			if (hasChanges() && !thing.isExemplar) {
@@ -107,9 +106,9 @@
 	function handleFocus(event) {
 		if (!k.allowTitleEditing) {
 			input.blur();
-		} else if (!isEditing && thing) {
+		} else if (!widget.path.isEditing) {
 			widget.path.grabOnly()
-			thing.startEdit();
+			widget.path.startEdit();
 		}
 	}
 
@@ -154,7 +153,7 @@
 		style='
 			font-size: {fontSize};
 			font-family: {fontFamily};
-			padding: 0px 0px 0px {$row_height / 3}px;'>
+			padding: 0px 0px 0px {$s_row_height / 3}px;'>
 		{thing.title}
 	</span>
 	<input
@@ -175,6 +174,6 @@
 			z-index: {ZIndex.text};
 			font-family: {fontFamily};
 			outline-color: {k.backgroundColor};
-			padding: 0px 0px 0px {$row_height / 3}px;
+			padding: 0px 0px 0px {$s_row_height / 3}px;
 		'/>
 {/key}

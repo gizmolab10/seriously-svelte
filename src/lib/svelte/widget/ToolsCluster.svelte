@@ -1,16 +1,16 @@
 <script lang='ts'>
     import { k, Size, Point, Widget, ZIndex, onMount, svgPath, Direction, dbDispatch, graphEditor, AlteringParent } from '../../ts/common/GlobalImports';
-    import { dot_size, altering_parent, row_height, path_toolsGrab } from '../../ts/managers/State';
+    import { s_dot_size, s_altering_parent, s_row_height, s_path_toolsGrab } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TriangleButton from '../svg/TriangleButton.svelte';
 	import Trash from '../svg/Trash.svelte';
     export let widget: Widget;
 	export let thing: Thing;
-	let diameter = $dot_size;
+	let diameter = $s_dot_size;
     let center_deleteParent = new Point();
     let center_addParent = new Point();
     let center_addChild = new Point();
-	let radius = $dot_size / 2;
+	let radius = $s_dot_size / 2;
     let color = thing.color;
     let left = 60;
     let top = 24;
@@ -18,11 +18,11 @@
     onMount( () => {
         const width = thing.titleWidth;
         const offsetX = Math.max(0, (k.toolsClusterHeight - width - 21) / 8)
-        const offsetY = Math.max(0, (k.toolsClusterHeight - $row_height - 21) / 8)
+        const offsetY = Math.max(0, (k.toolsClusterHeight - $s_row_height - 21) / 8)
 
         top = 24 - offsetY;
         color = thing.color;
-		left = width + offsetX - 1;
+		left = width + offsetX - 9;
         const otherLeft = left - diameter * 1.2;
         center_addChild = new Point(left, top - diameter);
         center_addParent = new Point(otherLeft, top - diameter);
@@ -34,16 +34,16 @@
             switch (buttonID) {
                 case 'addParent': toggleAlteration(AlteringParent.adding); return;
                 case 'deleteParent': toggleAlteration(AlteringParent.deleting); return;
-                case 'addChild': await graphEditor.thing_edit_remoteAddChildTo(thing); break;
+                case 'addChild': await dbDispatch.db.hierarchy.path_edit_remoteCreateChildOf(widget.path.parentPath); break;
                 case 'delete': await dbDispatch.db.hierarchy.things_redraw_remoteTraverseDelete([thing]); break;
                 default: break;
             }
-            $path_toolsGrab = null;
+            $s_path_toolsGrab = null;
         }
     }
 
     function toggleAlteration(alteration: AlteringParent) {
-        $altering_parent = ($altering_parent == alteration) ? null : alteration;
+        $s_altering_parent = ($s_altering_parent == alteration) ? null : alteration;
     }
 
 </script>
@@ -61,8 +61,8 @@
 </style>
 
 <TriangleButton
-	fillColor_closure={() => { return ($altering_parent == AlteringParent.adding) ? thing.color : k.backgroundColor }}
-    extraColor={($altering_parent == AlteringParent.adding) ? k.backgroundColor : thing.color}
+	fillColor_closure={() => { return ($s_altering_parent == AlteringParent.adding) ? thing.color : k.backgroundColor }}
+    extraColor={($s_altering_parent == AlteringParent.adding) ? k.backgroundColor : thing.color}
 	onClick={() => handleClick('addParent')}
     extra={svgPath.tCross(diameter, 2)}
 	direction={Direction.left}
@@ -72,8 +72,8 @@
 	id='addParent'/>
 {#if thing.parents.length > 1}
     <TriangleButton
-        fillColor_closure={() => { return ($altering_parent == AlteringParent.deleting) ? thing.color : k.backgroundColor }}
-        extraColor={($altering_parent == AlteringParent.deleting) ? k.backgroundColor : thing.color}
+        fillColor_closure={() => { return ($s_altering_parent == AlteringParent.deleting) ? thing.color : k.backgroundColor }}
+        extraColor={($s_altering_parent == AlteringParent.deleting) ? k.backgroundColor : thing.color}
         onClick={() => handleClick('deleteParent')}
         extra={svgPath.dash(diameter, 2)}
         center={center_deleteParent}

@@ -2,8 +2,8 @@ import { k, get, Thing, debug, launch, DBType, TraitType, DataKind, Hierarchy, c
 import { Predicate, dbDispatch, Relationship, CreationOptions, convertToObject, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection, onSnapshot, deleteField, getFirestore } from 'firebase/firestore';
 import { DocumentData, DocumentChange, QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
+import { s_build } from '../managers/State';
 import { initializeApp } from "firebase/app";
-import { build } from '../managers/State';
 import DBInterface from './DBInterface';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -24,7 +24,7 @@ export default class DBFirebase implements DBInterface {
 	baseID = 'Public';
 	bulksName = 'Bulks';
 	deferSnapshots = false;
-	db_type = DBType.firebase;
+	s_db_type = DBType.firebase;
 	bulks: [Bulk] | null = null;
 	app = initializeApp(this.firebaseConfig);
 	predicatesCollection: CollectionReference | null = null;
@@ -139,25 +139,25 @@ export default class DBFirebase implements DBInterface {
 	async fetch_bulkAliases() {
 		const root = this.hierarchy.root;
 		if (this.baseID == k.adminBulkName && root) {
-			const roots = await this.hierarchy.thing_getRoots();
-			if (roots) {
+			const rootsPath = await this.hierarchy.thing_getRoots();
+			if (rootsPath) {
 				try {		// add bulks to roots thing
 					const bulk = collection(this.db, this.bulksName);		// fetch all bulks (documents)
 					let bulkSnapshot = await getDocs(bulk);
 					for (const bulkDoc of bulkSnapshot.docs) {
 						const baseID = bulkDoc.id;
 						if (baseID != this.baseID) {
-							let thing = this.hierarchy.thing_bulkAlias_getForTitle(baseID)
+							let thing = this.hierarchy.thing_bulkAlias_getForTitle(baseID);
 							if (!thing) {													// create a thing for each bulk
 								thing = this.hierarchy.thing_runtimeCreate(this.baseID, null, baseID, 'red', TraitType.bulk, 0, false);
-								await roots.thing_remember_remoteAddAsChild(thing);
+								await this.hierarchy.path_remember_remoteAddAsChild(rootsPath, thing);
 							} else if (thing.isExpanded) {
 								thing.redraw_bulkFetchAll_runtimeBrowseRight(false);
 							}
 						}
 					}
 					// TODO: detect when a root disappears
-					// TODO: store the paths_expanded in its own  ** bulk-specific **  persistent storage
+					// TODO: store the s_paths_expanded in its own  ** bulk-specific **  persistent storage
 				} catch (error) {
 					this.reportError(error);
 				}
@@ -508,7 +508,7 @@ export default class DBFirebase implements DBInterface {
 				const logRef = collection(this.db, 'access_logs');
 				const item = {
 					queries: queries,
-					build: get(build),
+					build: get(s_build),
 					ipAddress: ipAddress,
 					timestamp: serverTimestamp(),
 				}
