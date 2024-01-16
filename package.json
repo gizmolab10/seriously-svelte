@@ -36,6 +36,6 @@
     "typed-signals": "^2.5.0",
     "typescript": "^4.3.5",
     "undici": "^5.26.2",
-    "uuid": "^9.0.0",
+    "uuid": "^9.0.0"
   }
 }

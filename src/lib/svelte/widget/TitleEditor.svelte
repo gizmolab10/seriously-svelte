@@ -62,7 +62,7 @@
 		///////////////////////
 
 		if (k.allowTitleEditing) {
-			if ($s_path_editingStopped == thing.id) {
+			if ($s_path_editingStopped?.matchesPath(widget.path)) {
 				setTimeout(() => {
 					$s_path_editingStopped = null;
 				}, 1000);

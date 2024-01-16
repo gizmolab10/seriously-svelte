@@ -39,21 +39,21 @@
 
 {#key toggleDraw}
 	{#if ancestors.length > 0}
-		{#each ancestors.map(a => a.parents.length) as count, index}
+		{#each ancestors.map(a => a.parents.length > 1) as multiple, index}
 			{#if index > 0}
 				<span style='
 					color: transparent;
 					position: relative;
-					top:{size / ((count > 1) ? 4 : 2)}px;
-					left: {size / ((count > 1) ? 3 : 3.3)}px;'>
+					top:{size / (multiple ? 4 : 2)}px;
+					left: {size / (multiple ? 3 : 3.3)}px;'>
 					<FatTriangle
-						extra={(count < 2) ? null : svgPath.circle(size, size / 2, new Point(size / -7, size / 4))}
-						strokeColor={grabbedPath.thing(1)?.color}
-						fillColor={grabbedPath.thing(1)?.color}
-						size={size * ((count < 2) ? 1 : 1.5)}
+						extra={!multiple ? null : svgPath.circle(size, size / 2, new Point(size / -7, size / 4))}
+						strokeColor={grabbedPath.thing(ancestors.length - index)?.color}
+						fillColor={grabbedPath.thing(ancestors.length - index)?.color}
+						size={size * (!multiple ? 1 : 1.5)}
 						position='absolute'
 					/>
-					&nbsp;{#if count > 1}-{/if}&nbsp;
+					&nbsp;{#if multiple}-{/if}&nbsp;
 				</span>
 			{/if}
 			<Crumb thing={ancestors[index]} path={grabbedPath.stripBack(index)}/>

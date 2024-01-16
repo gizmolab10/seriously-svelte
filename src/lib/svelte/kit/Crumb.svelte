@@ -4,6 +4,7 @@
 	export let thing: Thing;
 	export let path = '';
 	let colorStyles = '';
+	let cursorStyle = '';
 
 	onMount(() => { updateColors(); });
 
@@ -14,6 +15,7 @@
 		} else {
 			colorStyles = 'background-color: ' + k.backgroundColor + '; color: ' + thing.color;
 		}
+		cursorStyle = (thing.hasChildren && !path.isGrabbed) ? 'cursor: pointer' : '';
 	};
 
 	function crumb_buttonClicked(event) {
@@ -29,10 +31,10 @@
 	on:click={crumb_buttonClicked}
 	style='
 		border-radius: 0.5em;
-		border: 1px solid {thing.color};
-		cursor: {thing.hasChildren ? 'pointer' : 'normal'};
-		{colorStyles};'>
-		<div style='padding:0px 0px 1px 0px'>
+		border: 1px solid {thing.color};;
+		{colorStyles};
+		{cursorStyle};'>
+		<div style='padding:0px 0px 1px 0px; {cursorStyle};'>
 			{thing.title.injectElipsisAt()}
 		</div>
 </button>

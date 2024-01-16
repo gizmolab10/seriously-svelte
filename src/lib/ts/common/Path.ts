@@ -30,11 +30,11 @@ export default class Path {
 	get parentPath(): Path | null { return this.stripBack(); }
 	get isHere(): boolean { return this.matchesStore(s_path_here); }
 	get isEditing(): boolean { return this.matchesStore(s_path_editing); }
-	get isRoot(): boolean { return this.matches(this.hierarchy.rootPath); }
 	get isExemplar(): boolean { return this.thing()?.isExemplar ?? false; }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
-	get toolsGrabbed(): boolean { return this.matchesStore(s_path_toolsGrab); }
+	get isRoot(): boolean { return this.matchesPath(this.hierarchy.rootPath); }
 	get ids(): Array<string> { return this.pathString.split(k.pathSeparator); }
+	get toolsGrabbed(): boolean { return this.matchesStore(s_path_toolsGrab); }
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
@@ -71,11 +71,11 @@ export default class Path {
 		return false;
 	}
 
-	includedInPaths(paths: Array<Path>): boolean { return paths.filter(p => p.matches(this)).length > 0; }
+	includedInPaths(paths: Array<Path>): boolean { return paths.filter(p => p.matchesPath(this)).length > 0; }
 	thing(back: number = 1): Thing | null { return this.hierarchy.thing_getForID(this.ancestorID(back)); }
 	includedInStore(store: Writable<Array<Path>>): boolean { return this.includedInPaths(get(store)); }
-	matches(path: Path | null): boolean { return !path ? false : this.pathString == path.pathString; }
-	matchesStore(store: Writable<Path | null>): boolean { return this.matches(get(store)); }
+	matchesPath(path: Path | null): boolean { return !path ? false : this.pathString == path.pathString; }
+	matchesStore(store: Writable<Path | null>): boolean { return this.matchesPath(get(store)); }
 	ancestorID(back: number = 1): string { return this.ids.slice(-(Math.max(1, back)))[0]; }
 	endsWith(thing: Thing): boolean { return this.endsWithID(thing.id); }
 	endsWithID(id: string): boolean { return id == this.thingID; }
