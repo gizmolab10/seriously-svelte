@@ -48,7 +48,7 @@
 						extra={(count < 2) ? null : svgPath.circle(size, size / 2, new Point(size / -7, size / 4))}
 						strokeColor={grabbedPath.thing(1).color}
 						fillColor={grabbedPath.thing(1).color}
-						size={size * (count < 2) ? 1 : 1.5}
+						size={size * ((count < 2) ? 1 : 1.5)}
 						position='absolute'
 					/>
 					&nbsp;{#if count > 1}-{/if}&nbsp;

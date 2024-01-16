@@ -61,7 +61,7 @@ export default class Path {
 			if (thing.title == 'has four parents') {
 				noop();
 			}
-			const includesToolsGrab = this.things_progeny_includesID(id_toolsGrab);
+			const includesToolsGrab = this.descendant_matchesID(id_toolsGrab);
 			switch (get(s_altering_parent)) {
 				case AlteringParent.adding: return !includesToolsGrab;
 				case AlteringParent.deleting: return includesToolsGrab && thing.id != id_toolsGrab;
@@ -105,7 +105,7 @@ export default class Path {
 		return new Path(ids.join(k.pathSeparator));
 	}
 
-	things_progeny_includesID(id: string | null): boolean {
+	descendant_matchesID(id: string | null): boolean {
 		let found = false;
 		const thing = this.thing();
 		if (thing && id) {
