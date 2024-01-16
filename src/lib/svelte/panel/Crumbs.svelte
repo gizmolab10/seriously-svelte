@@ -1,6 +1,6 @@
 <script lang='ts'>
+	import { k, Size, Point, Thing, ZIndex, signals, svgPath, onDestroy, dbDispatch } from '../../ts/common/GlobalImports';
 	import { s_dot_size, s_paths_grabbed, s_crumbs_width, s_path_toolsGrab } from '../../ts/managers/State';
-	import { k, Size, Point, Thing, ZIndex, svgPath, dbDispatch } from '../../ts/common/GlobalImports';
 	import FatTriangle from '../svg/FatTriangle.svelte';
 	import Crumb from '../kit/Crumb.svelte';
 	let ancestors: Array<Thing> = [];
@@ -10,6 +10,8 @@
 	let size = 10;
 
 	function path_lastGrabbed() { return dbDispatch.db.hierarchy.grabs.path_lastGrabbed; }
+	const rebuild_signalHandler = signals.handle_rebuild(() => { toggleDraw = !toggleDraw; });
+	onDestroy(() => { rebuild_signalHandler.disconnect() })
 
 	$: {
 		const _ = $s_path_toolsGrab;

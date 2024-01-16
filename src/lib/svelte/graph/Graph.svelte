@@ -22,15 +22,9 @@
 	let here;
 
 	function ignore(event) {}
+	onDestroy( () => { relayout_signalHandler.disconnect(); });
 	onMount( () => { debugReact.log_mount(`GRAPH ${here.description}`); });
-	onDestroy( () => { rebuild_signalHandler.disconnect(); relayout_signalHandler.disconnect(); });
 	
-	const rebuild_signalHandler = signals.handle_rebuild((id) => {
-		debugReact.log_layout(`GRAPH signal ${here.description}`);
-		updateOrigins();
-		toggle = !toggle;	// rebuild entire graph
-	});
-
 	const relayout_signalHandler = signals.handle_relayout((id) => {
 		if (here) {
 			updateOrigins();

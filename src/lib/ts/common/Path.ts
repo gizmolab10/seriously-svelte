@@ -31,6 +31,7 @@ export default class Path {
 	get isHere(): boolean { return this.matchesStore(s_path_here); }
 	get isEditing(): boolean { return this.matchesStore(s_path_editing); }
 	get isRoot(): boolean { return this.matches(this.hierarchy.rootPath); }
+	get isExemplar(): boolean { return this.thing()?.isExemplar ?? false; }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
 	get toolsGrabbed(): boolean { return this.matchesStore(s_path_toolsGrab); }
 	get ids(): Array<string> { return this.pathString.split(k.pathSeparator); }
@@ -243,16 +244,20 @@ export default class Path {
 				s_altering_parent.set(null);
 				s_path_toolsGrab.set(null);
 				switch (alteration) {
-					case AlteringParent.deleting: await toolsPath.parentRelationship_forget_remoteRemove(this); break;
-					case AlteringParent.adding: await this.hierarchy.path_remember_remoteAddAsChild(this, toolsThing); break;
+					case AlteringParent.deleting:
+						await toolsPath.parentRelationship_forget_remoteRemove(this);
+						break;
+					case AlteringParent.adding:
+						await this.hierarchy.path_remember_remoteAddAsChild(this, toolsThing);
+						signals.signal_rebuild_fromHere();
+						break;
 				}
 			}
 		}
 	}
 
 	clicked_dragDot(shiftKey: boolean) {
-		const thing = this.thing();
-        if (thing && !thing.isExemplar) {
+        if (!this.isExemplar) {
 			if (get(s_altering_parent)) {
 				this.parent_alterMaybe();
 			} else if (shiftKey || this.isGrabbed) {
