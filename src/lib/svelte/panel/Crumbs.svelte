@@ -48,8 +48,8 @@
 					left: {size / ((count > 1) ? 3 : 3.3)}px;'>
 					<FatTriangle
 						extra={(count < 2) ? null : svgPath.circle(size, size / 2, new Point(size / -7, size / 4))}
-						strokeColor={grabbedPath.thing(1).color}
-						fillColor={grabbedPath.thing(1).color}
+						strokeColor={grabbedPath.thing(1)?.color}
+						fillColor={grabbedPath.thing(1)?.color}
 						size={size * ((count < 2) ? 1 : 1.5)}
 						position='absolute'
 					/>
