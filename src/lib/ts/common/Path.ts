@@ -34,13 +34,42 @@ export default class Path {
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
 	get toolsGrabbed(): boolean { return this.matchesStore(s_path_toolsGrab); }
 	get ids(): Array<string> { return this.pathString.split(k.pathSeparator); }
-	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height / 2; }
-	get visibleProgeny_height(): number { return this.visibleProgenyRecursive_height(); }
+	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
 	get isVisible(): boolean { return this.ids.includes(this.hierarchy.herePath?.thingID ?? ''); }
 	get singleRowHeight(): number { return this.toolsGrabbed ? k.toolsClusterHeight : get(s_row_height); }
-	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height); }
+	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
+
+	get paths_ofSiblings(): Array<Path> {
+		const thing = this.thing()
+		const parentPath = this.parentPath;
+		let paths = Array<Path>();
+		if (thing && parentPath) {
+			for (const child of thing.children) {
+				paths.push(parentPath.appendingThing(child));
+			}
+		}
+		return paths;
+	}
+
+	get things_canAlter_asParentOf_toolsGrab(): boolean {
+		const path_showingTools = get(s_path_toolsGrab);
+		const id_toolsGrab = path_showingTools?.thingID;
+		const thing = this.thing();
+		if (thing && id_toolsGrab) {
+			if (thing.title == 'has four parents') {
+				noop();
+			}
+			const includesToolsGrab = this.things_progeny_includesID(id_toolsGrab);
+			switch (get(s_altering_parent)) {
+				case AlteringParent.adding: return !includesToolsGrab;
+				case AlteringParent.deleting: return includesToolsGrab && thing.id != id_toolsGrab;
+			}
+		}
+		return false;
+	}
+
 	includedInPaths(paths: Array<Path>): boolean { return paths.filter(p => p.matches(this)).length > 0; }
 	thing(back: number = 1): Thing | null { return this.hierarchy.thing_getForID(this.ancestorID(back)); }
 	includedInStore(store: Writable<Array<Path>>): boolean { return this.includedInPaths(get(store)); }
@@ -55,8 +84,8 @@ export default class Path {
 		return !path ? false : this.ids.some(id => id != rootID && path.ids.includes(id));
 	}
 
-	nextSiblingPath(increment: boolean): Path {
-		const array = this.siblingPaths;
+	path_ofNextSibling(increment: boolean): Path {
+		const array = this.paths_ofSiblings;
 		const index = array.indexOf(this);
 		let siblingIndex = index.increment(increment, array.length)
 		if (index == 0) {
@@ -76,19 +105,7 @@ export default class Path {
 		return new Path(ids.join(k.pathSeparator));
 	}
 
-	get siblingPaths(): Array<Path> {
-		const thing = this.thing()
-		const parentPath = this.parentPath;
-		let paths = Array<Path>();
-		if (thing && parentPath) {
-			for (const child of thing.children) {
-				paths.push(parentPath.appendingThing(child));
-			}
-		}
-		return paths;
-	}
-
-	progeny_includesID(id: string | null): boolean {
+	things_progeny_includesID(id: string | null): boolean {
 		let found = false;
 		const thing = this.thing();
 		if (thing && id) {
@@ -102,24 +119,7 @@ export default class Path {
 		return found;
 	}
 
-	get canAlter_asParentOf_toolsGrab(): boolean {
-		const path_showingTools = get(s_path_toolsGrab);
-		const id_toolsGrab = path_showingTools?.thingID;
-		const thing = this.thing();
-		if (thing && id_toolsGrab) {
-			if (thing.title == 'has four parents') {
-				noop();
-			}
-			const includesToolsGrab = this.progeny_includesID(id_toolsGrab);
-			switch (get(s_altering_parent)) {
-				case AlteringParent.adding: return !includesToolsGrab;
-				case AlteringParent.deleting: return includesToolsGrab && thing.id != id_toolsGrab;
-			}
-		}
-		return false;
-	}
-
-	ancestralThings(thresholdWidth: number): Array<Thing> {
+	things_ancestry(thresholdWidth: number): Array<Thing> {
 		const ids = this.ids.reverse();
 		let totalWidth = 0;
 		const array = [];
@@ -137,7 +137,7 @@ export default class Path {
 		return array;
 	}
 
-	visibleProgenyRecursive_height(visited: Array<string> = []): number {
+	visibleProgeny_height(visited: Array<string> = []): number {
 		const thing = this.hierarchy.thing_getForPath(this);
 		if (thing) {
 			const singleRowHeight = this.singleRowHeight;
@@ -145,7 +145,7 @@ export default class Path {
 				let height = 0;
 				for (const child of thing.children) {
 					const childpath = this.appendingThing(child);
-					height += childpath.visibleProgenyRecursive_height([...visited, this.pathString]);
+					height += childpath.visibleProgeny_height([...visited, this.pathString]);
 				}
 				return Math.max(height, singleRowHeight);
 			}
@@ -236,7 +236,7 @@ export default class Path {
 
 	async parent_alterMaybe() {
 		const alteration = get(s_altering_parent);
-		if (this.canAlter_asParentOf_toolsGrab) {
+		if (this.things_canAlter_asParentOf_toolsGrab) {
 			const toolsPath = get(s_path_toolsGrab);
 			const toolsThing = toolsPath?.thing();
 			if (toolsPath && toolsThing) {

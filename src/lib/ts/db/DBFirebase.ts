@@ -148,11 +148,14 @@ export default class DBFirebase implements DBInterface {
 						const baseID = bulkDoc.id;
 						if (baseID != this.baseID) {
 							let thing = this.hierarchy.thing_bulkAlias_getForTitle(baseID);
-							if (!thing) {													// create a thing for each bulk
+							if (thing) {
+								const path = rootsPath.appendingThing(thing);
+								if (path.isExpanded) {
+									this.hierarchy.redraw_bulkFetchAll_runtimeBrowseRight(path, false);
+								}
+							} else {													// create a thing for each bulk
 								thing = this.hierarchy.thing_runtimeCreate(this.baseID, null, baseID, 'red', TraitType.bulk, 0, false);
 								await this.hierarchy.path_remember_remoteAddAsChild(rootsPath, thing);
-							} else if (thing.isExpanded) {
-								thing.redraw_bulkFetchAll_runtimeBrowseRight(false);
 							}
 						}
 					}
@@ -257,7 +260,9 @@ export default class DBFirebase implements DBInterface {
 									return;			// do not invoke signal because nothing has changed
 								}
 								thing = h.thing_remember_runtimeCreate(baseID, id, remote.title, remote.color, remote.trait, 0, true);
-								orders_normalize_remoteMaybe(thing.siblings);
+								if (thing) {
+									orders_normalize_remoteMaybe(thing.siblings);
+								}
 								break;
 							case 'removed':
 								if (thing) {
@@ -504,7 +509,7 @@ export default class DBFirebase implements DBInterface {
 	async recordLogin() {
 		await this.getUserIPAddress().then((ipAddress) => {
 			if (ipAddress != null && ipAddress != '69.181.235.85') {
-				const queries = launch.queryStrings?.toString() ?? 'empty';
+				const queries = launch.queryString.toString() ?? 'empty';
 				const logRef = collection(this.db, 'access_logs');
 				const item = {
 					queries: queries,

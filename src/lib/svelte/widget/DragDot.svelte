@@ -31,7 +31,7 @@
     onMount(() => {
 		updateColorsForHover(false);
         handler = signals.handle_alteringParent((alteration) => {
-			const applyFlag = $s_path_toolsGrab && widget.path.canAlter_asParentOf_toolsGrab;
+			const applyFlag = $s_path_toolsGrab && widget.path.things_canAlter_asParentOf_toolsGrab;
 			extra = (thing.parents.length < 2) ? null : svgPath.circle(size, size / 5);
 			altering = applyFlag ? (alteration != null) : false;
 			updateColors();

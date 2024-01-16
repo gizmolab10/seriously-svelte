@@ -149,16 +149,4 @@ export default class Thing extends Datum {
 		this.order_normalizeRecursive_remoteMaybe(true);
 	}
 
-	async redraw_bulkFetchAll_runtimeBrowseRight(grab: boolean = true) {
-		this.expand();		// do this before fetch, so next launch will see it
-		await this.normalize_bulkFetchAll(this.title);
-		if (this.hasChildren) {
-			if (grab) {
-				this.children[0].grabOnly()
-			}
-			this.expand();
-			signals.signal_rebuild_fromHere();
-		}
-	}
-
 }

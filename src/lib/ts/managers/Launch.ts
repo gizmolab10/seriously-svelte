@@ -2,16 +2,21 @@ import { k, debug, builds, debugReact, PersistID, dbDispatch, persistLocal, isSe
 import { s_path_here, s_paths_expanded, s_paths_grabbed, s_showDetails } from './State';
 
 class Launch {
+	queryString: URLSearchParams;
+
+	constructor() {
+		this.queryString = new URLSearchParams(window.location.search);
+	}
+
 	setup() {
-		const queryStrings = new URLSearchParams(window.location.search);
 		document.title = this.title;
 		builds.setup();
 		persistLocal.restore();
-		k.applyQueryStrings(queryStrings);
-		this.applyQueryStrings(queryStrings);
-		debug.applyQueryStrings(queryStrings);
-		debugReact.applyQueryStrings(queryStrings);
-		dbDispatch.applyQueryStrings(queryStrings); // do this last
+		k.applyQueryStrings(this.queryString);
+		this.applyQueryStrings(this.queryString);
+		debug.applyQueryStrings(this.queryString);
+		debugReact.applyQueryStrings(this.queryString);
+		dbDispatch.applyQueryStrings(this.queryString); // do this last
 	}
 
 	get title(): string {
@@ -21,9 +26,9 @@ class Launch {
 		return `Seriously (${host}, ${name}${getBrowserType()}, α)`;
 	}
 
-	applyQueryStrings(queryStrings: URLSearchParams) {
-        const erase = queryStrings.get('erase');
-		if (queryStrings.get('details') === 'hide') {
+	applyQueryStrings(queryString: URLSearchParams) {
+        const erase = queryString.get('erase');
+		if (queryString.get('details') === 'hide') {
 			persistLocal.writeToKey(PersistID.details, false);
 			s_showDetails.set(false);
 		}

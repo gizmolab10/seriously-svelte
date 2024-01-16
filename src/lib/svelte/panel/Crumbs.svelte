@@ -28,7 +28,7 @@
 
 	function updateAncestors(width: number) {
 		if (grabbedPath) {
-			ancestors = grabbedPath.ancestralThings(width - 132);
+			ancestors = grabbedPath.things_ancestry(width - 132);
 			toggleDraw = !toggleDraw;
 		}
 	}

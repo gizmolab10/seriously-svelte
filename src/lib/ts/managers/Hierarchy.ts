@@ -2,6 +2,7 @@ import { k, get, noop, User, Path, Thing, Grabs, debug, Access, remove, signals,
 import { Relationship, persistLocal, CreationOptions, sort_byOrder, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { s_path_here, s_isBusy, s_path_editing, s_paths_grabbed, s_things_arrived, s_path_toolsGrab } from './State';
 import DBInterface from '../db/DBInterface';
+import {children} from 'svelte/internal';
 
 type KnownRelationships = { [id: string]: Array<Relationship> }
 
@@ -551,6 +552,21 @@ export default class Hierarchy {
 		}
 	}
 
+	async redraw_bulkFetchAll_runtimeBrowseRight(path: Path, grab: boolean = true) {
+		const thing = path.thing();
+		if (thing) {
+			path.expand();		// do this before fetch, so next launch will see it
+			await thing.normalize_bulkFetchAll(thing.title);
+			if (thing.hasChildren) {
+				if (grab) {
+					path.appendingThing(thing.children[0]).grabOnly()
+				}
+				path.expand();
+				signals.signal_rebuild_fromHere();
+			}
+		}
+	}
+
 	async path_edit_remoteAddAsChild(path: Path, child: Thing, startEdit: boolean = true) {
 		const thing = path.thing();
 		if (thing) {
@@ -588,7 +604,7 @@ export default class Hierarchy {
 			const thing = path.thing();
 			if (thing) {
 				if (RIGHT && thing.needsBulkFetch) {
-					await thing.redraw_bulkFetchAll_runtimeBrowseRight();
+					await this.redraw_bulkFetchAll_runtimeBrowseRight(path);
 				} else {
 					this.path_redraw_runtimeBrowseRight(path, RIGHT, SHIFT, EXTREME, fromReveal);
 				}
@@ -631,7 +647,7 @@ export default class Hierarchy {
 
 	async path_redraw_remoteRelocateRight(path: Path, RIGHT: boolean, EXTREME: boolean) {
 		const thing = path.thing();
-		const newParentPath = RIGHT ? path.nextSiblingPath(false) : path.stripBack(2);
+		const newParentPath = RIGHT ? path.path_ofNextSibling(false) : path.stripBack(2);
 		const newParent = newParentPath?.thing();
 		if (thing && newParent && newParentPath) {
 			const parent = path.parent;
