@@ -38,21 +38,21 @@ export default class GraphEditor {
 				}
 				switch (key) {
 					case 'delete':
-					case 'backspace':	await h.things_redraw_remoteTraverseDelete(h.things_getForIDs(get(s_paths_grabbed))); break;
+					case 'backspace':	await h.paths_rebuild_traverse_remoteDelete(get(s_paths_grabbed)); break;
 				}
 			}
 			if (pathGrab) {
 				switch (key) {
 					case '/':			pathGrab.becomeHere(); break;
-					case 'arrowright':	await h.path_redraw_remoteMoveRight(pathGrab, true, SHIFT, OPTION, EXTREME); break;
-					case 'arrowleft':	event.preventDefault(); await h.path_redraw_remoteMoveRight(pathGrab, false, SHIFT, OPTION, EXTREME); break;
+					case 'arrowright':	await h.path_rebuild_remoteMoveRight(pathGrab, true, SHIFT, OPTION, EXTREME); break;
+					case 'arrowleft':	event.preventDefault(); await h.path_rebuild_remoteMoveRight(pathGrab, false, SHIFT, OPTION, EXTREME); break;
 				}
 			}
 			switch (key) {
 				case '!':				h.rootPath?.becomeHere(); break;
 				case '`':               event.preventDefault(); h.latestPathGrabbed_toggleToolsCluster(); break;
-				case 'arrowup':			await h.latestPathGrabbed_redraw_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
-				case 'arrowdown':		await h.latestPathGrabbed_redraw_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
+				case 'arrowup':			await h.latestPathGrabbed_rebuild_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
+				case 'arrowdown':		await h.latestPathGrabbed_rebuild_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
 			}
 		}
 	}

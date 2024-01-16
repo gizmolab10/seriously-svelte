@@ -47,7 +47,7 @@ export default class Path {
 		let paths = Array<Path>();
 		if (thing && parentPath) {
 			for (const child of thing.children) {
-				paths.push(parentPath.appendingThing(child));
+				paths.push(parentPath.appendChild(child));
 			}
 		}
 		return paths;
@@ -144,7 +144,7 @@ export default class Path {
 			if (!visited.includes(this.pathString) && thing.hasChildren && this.isExpanded) {
 				let height = 0;
 				for (const child of thing.children) {
-					const childpath = this.appendingThing(child);
+					const childpath = this.appendChild(child);
 					height += childpath.visibleProgeny_height([...visited, this.pathString]);
 				}
 				return Math.max(height, singleRowHeight);
@@ -161,7 +161,7 @@ export default class Path {
 			if (!visited.includes(this.pathString) && this.isExpanded && thing.hasChildren) {
 				let progenyWidth = 0;
 				for (const child of thing.children) {
-					const childpath = this.appendingThing(child);
+					const childpath = this.appendChild(child);
 					const childProgenyWidth = childpath.visibleProgeny_width(false, [...visited, this.pathString]);
 					if (progenyWidth < childProgenyWidth) {
 						progenyWidth = childProgenyWidth;
@@ -194,7 +194,7 @@ export default class Path {
 		}
 	}
 
-	appendingThing(thing: Thing): Path {
+	appendChild(thing: Thing): Path {
 		if (thing) {
 			const ids = this.ids;
 			ids.push(thing.id);

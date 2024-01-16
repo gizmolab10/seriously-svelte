@@ -35,7 +35,7 @@
                 case 'addParent': toggleAlteration(AlteringParent.adding); return;
                 case 'deleteParent': toggleAlteration(AlteringParent.deleting); return;
                 case 'addChild': await dbDispatch.db.hierarchy.path_edit_remoteCreateChildOf(widget.path.parentPath); break;
-                case 'delete': await dbDispatch.db.hierarchy.things_redraw_remoteTraverseDelete([thing]); break;
+                case 'delete': await dbDispatch.db.hierarchy.things_rebuild_remoteTraverseDelete([thing]); break;
                 default: break;
             }
             $s_path_toolsGrab = null;

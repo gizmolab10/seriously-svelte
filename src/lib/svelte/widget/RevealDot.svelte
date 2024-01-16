@@ -88,7 +88,7 @@
 			widget.grabOnly();
 			$s_path_toolsGrab = path;
 		} else {
-			dbDispatch.db.hierarchy.path_redraw_remoteMoveRight(path, !path.isExpanded, true, false);
+			dbDispatch.db.hierarchy.path_rebuild_remoteMoveRight(path, !path.isExpanded, true, false);
 			return;
 		}
 		signals.signal_rebuild_fromHere();

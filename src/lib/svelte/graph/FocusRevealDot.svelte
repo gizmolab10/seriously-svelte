@@ -13,7 +13,7 @@
 
 	function onClick(event) {
 		if (dbDispatch.db.hierarchy.grabs.latestPathGrabbed(true)?.isHere) {
-			path.path_redraw_remoteMoveRight(false, false);
+			path.path_rebuild_remoteMoveRight(false, false);
 		} else {
 			dbDispatch.db.hierarchy.grabs.grabOnly(path);
 		}

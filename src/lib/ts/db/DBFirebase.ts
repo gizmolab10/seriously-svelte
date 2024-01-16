@@ -1,4 +1,4 @@
-import { k, get, Thing, debug, launch, DBType, TraitType, DataKind, Hierarchy, copyObject, DebugFlag } from '../common/GlobalImports';
+import { k, get, Thing, debug, launch, DBType, signals, TraitType, DataKind, Hierarchy, copyObject, DebugFlag } from '../common/GlobalImports';
 import { Predicate, dbDispatch, Relationship, CreationOptions, convertToObject, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection, onSnapshot, deleteField, getFirestore } from 'firebase/firestore';
 import { DocumentData, DocumentChange, QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
@@ -149,7 +149,7 @@ export default class DBFirebase implements DBInterface {
 						if (baseID != this.baseID) {
 							let thing = this.hierarchy.thing_bulkAlias_getForTitle(baseID);
 							if (thing) {
-								const path = rootsPath.appendingThing(thing);
+								const path = rootsPath.appendChild(thing);
 								if (path.isExpanded) {
 									this.hierarchy.redraw_bulkFetchAll_runtimeBrowseRight(path, false);
 								}
@@ -217,16 +217,16 @@ export default class DBFirebase implements DBInterface {
 
 			try {
 				if (dataKind == DataKind.relationships) {
-					const remote = new RemoteRelationship(data);
-					if (remote) {
-						const relationship = h.knownR_byID[id];
+					const remoteRelationship = new RemoteRelationship(data);
+					if (remoteRelationship) {
+						let relationship = h.knownR_byID[id];
 						const original = !relationship ? null : copyObject(relationship);
 						switch (change.type) {
 							case 'added':
-								if (relationship || remote.isEqualTo(this.addedRelationship)) {
+								if (relationship || remoteRelationship.isEqualTo(this.addedRelationship)) {
 									return;
 								}
-								h.relationship_remember_runtimeCreateUnique(baseID, id, remote.predicate.id, remote.from.id, remote.to.id, remote.order, CreationOptions.isFromRemote);
+								relationship = h.relationship_remember_runtimeCreateUnique(baseID, id, remoteRelationship.predicate.id, remoteRelationship.from.id, remoteRelationship.to.id, remoteRelationship.order, CreationOptions.isFromRemote);
 								break;
 							default:
 								if (!relationship) {
@@ -234,7 +234,7 @@ export default class DBFirebase implements DBInterface {
 								} else {
 									switch (change.type) {
 										case 'modified':
-											if (relationship.wasModifiedWithinMS(800) || !this.relationship_extractChangesFromRemote(relationship, remote)) {
+											if (relationship.wasModifiedWithinMS(800) || !this.relationship_extractChangesFromRemote(relationship, remoteRelationship)) {
 												return;	// already known and contains no new data, or needs to be 'tamed'
 											}
 											break;
@@ -245,24 +245,23 @@ export default class DBFirebase implements DBInterface {
 								}
 								break;
 						}
-						h.relationships_refreshKnowns_remoteRenormalize();
-						if (relationship) {
-							h.relationships_accomodateRelocations(original, relationship);
-						}
+						setTimeout(() => { // wait in case a thing involved in this relationship arrives in the data
+							h.relationships_refreshKnowns_remoteRenormalize();
+							// if (relationship) {		// TODO: make sure this is not needed
+							// 	h.relationships_accomodateRelocations(original, relationship);
+							// }
+						}, 20);
 					}
 				} else if (dataKind == DataKind.things) {
-					const remote = new RemoteThing(data);
+					const remoteThing = new RemoteThing(data);
 					let thing = h.thing_getForID(id);
-					if (remote) {
+					if (remoteThing) {
 						switch (change.type) {
 							case 'added':
-								if (thing || remote.isEqualTo(this.addedThing) || remote.trait == TraitType.root) {
+								if (thing || remoteThing.isEqualTo(this.addedThing) || remoteThing.trait == TraitType.root) {
 									return;			// do not invoke signal because nothing has changed
 								}
-								thing = h.thing_remember_runtimeCreate(baseID, id, remote.title, remote.color, remote.trait, 0, true);
-								if (thing) {
-									orders_normalize_remoteMaybe(thing.siblings);
-								}
+								thing = h.thing_remember_runtimeCreate(baseID, id, remoteThing.title, remoteThing.color, remoteThing.trait, 0, true);
 								break;
 							case 'removed':
 								if (thing) {
@@ -270,7 +269,7 @@ export default class DBFirebase implements DBInterface {
 								}
 								break;
 							case 'modified':
-								if (!thing || thing.wasModifiedWithinMS(800) || !this.thing_extractChangesFromRemote(thing, remote)) {
+								if (!thing || thing.wasModifiedWithinMS(800) || !this.thing_extractChangesFromRemote(thing, remoteThing)) {
 									return;		// do not invoke signal if nothing changed
 								}
 								break;
