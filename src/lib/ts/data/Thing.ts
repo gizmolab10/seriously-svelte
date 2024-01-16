@@ -109,7 +109,7 @@ export default class Thing extends Datum {
 		}
 	}
 
-	async order_setTo(newOrder: number, remoteWrite: boolean) {
+	async order_setTo(newOrder: number, remoteWrite: boolean = false) {
 		const relationship = this.hierarchy.relationship_getWhereIDEqualsTo(this.id);
 		if (relationship && Math.abs(relationship.order - newOrder) > 0.001) {
 			const oldOrder = relationship.order;

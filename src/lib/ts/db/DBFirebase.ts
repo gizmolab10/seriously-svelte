@@ -470,7 +470,7 @@ export default class DBFirebase implements DBInterface {
 			relationship.idTo = remote.to.id;
 			relationship.idFrom = remote.from.id;
 			relationship.isRemotelyStored = true;
-			relationship.order_setTo(order, false);		// also sets to-thing's order
+			relationship.order_setTo(order);		// also sets to-thing's order
 			relationship.idPredicate = remote.predicate.id;
 		}
 		return changed;

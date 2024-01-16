@@ -512,7 +512,7 @@ export default class Hierarchy {
 		idTo: string, order: number, creationOptions: CreationOptions = CreationOptions.none) {
 		let relationship = this.relationships_getByIDPredicateFromAndTo(idPredicate, idFrom, idTo);
 		if (relationship) {
-			relationship.order_setTo(order, false);						// AND thing are updated
+			relationship.order_setTo(order);						// AND thing are updated
 		} else {
 			relationship = new Relationship(baseID, idRelationship, idPredicate, idFrom, idTo, order, creationOptions != CreationOptions.none);
 			this.relationship_remember(relationship);
@@ -524,7 +524,7 @@ export default class Hierarchy {
 		idTo: string, order: number, creationOptions: CreationOptions = CreationOptions.isFromRemote): Promise<any> {
 		let relationship = this.relationships_getByIDPredicateFromAndTo(idPredicate, idFrom, idTo);
 		if (relationship) {
-			relationship.order_setTo(order, false);						// AND thing are updated
+			relationship.order_setTo(order);						// AND thing are updated
 		} else {
 			relationship = new Relationship(baseID, idRelationship, idPredicate, idFrom, idTo, order, creationOptions != CreationOptions.none);
 			await this.db.relationship_remember_remoteCreate(relationship);
@@ -625,7 +625,7 @@ export default class Hierarchy {
 		}
 	}
 
-	path_rebuild_remoteMoveUp(path: Path, up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
+	async path_rebuild_remoteMoveUp(path: Path, up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const thing = this.thing_getForPath(path);
 		const parentPath = path.parentPath;
 		const parent = this.thing_getForPath(parentPath);
@@ -643,11 +643,12 @@ export default class Hierarchy {
 					grabPath.grabOnly();
 				}
 			} else if (k.allowGraphEditing && OPTION) {
+				orders_normalize_remoteMaybe(parent.children, false);
 				const wrapped = up ? (index == 0) : (index == siblings.length - 1);
 				const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
 				const newOrder = newIndex + goose;
-				thing.order_setTo(newOrder, true);
-				parent.order_normalizeRecursive_remoteMaybe(true);
+				thing.order_setTo(newOrder);
+				await orders_normalize_remoteMaybe(parent.children);
 			}
 			signals.signal_rebuild_fromHere();
 		}
@@ -671,12 +672,12 @@ export default class Hierarchy {
 				if (parent && relationship) {
 					const order = RIGHT ? parent.order : 0;
 					relationship.idFrom = newParent.id;
-					await thing.order_setTo(order + 0.5, false);
+					await thing.order_setTo(order + 0.5);
 				}
 
 				this.relationships_refreshKnowns();		// so children and parent will see the newly relocated things
 				this.root?.order_normalizeRecursive_remoteMaybe(true);
-				path.grabOnly();
+				newParentPath.appendChild(thing).grabOnly();
 				newParentPath.expand();
 				if (!newParentPath.isVisible) {
 					newParentPath.becomeHere();

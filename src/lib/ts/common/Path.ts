@@ -43,11 +43,11 @@ export default class Path {
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 
 	get paths_ofSiblings(): Array<Path> {
-		const thing = this.thing()
 		const parentPath = this.parentPath;
+		const parent = parentPath?.thing()
 		let paths = Array<Path>();
-		if (thing && parentPath) {
-			for (const child of thing.children) {
+		if (parent && parentPath) {
+			for (const child of parent.children) {
 				paths.push(parentPath.appendChild(child));
 			}
 		}
@@ -85,14 +85,17 @@ export default class Path {
 		return !path ? false : this.ids.some(id => id != rootID && path.ids.includes(id));
 	}
 
-	path_ofNextSibling(increment: boolean): Path {
+	path_ofNextSibling(increment: boolean): Path | null {
 		const array = this.paths_ofSiblings;
-		const index = array.indexOf(this);
-		let siblingIndex = index.increment(increment, array.length)
-		if (index == 0) {
-			siblingIndex = 1;
+		const index = array.map(p => p.pathString).indexOf(this.pathString);
+		if (index != -1) {
+			let siblingIndex = index.increment(increment, array.length)
+			if (index == 0) {
+				siblingIndex = 1;
+			}
+			return array[siblingIndex];
 		}
-		return array[siblingIndex];
+		return null;
 	}
 
 	stripBack(back: number = 1): Path | null {
