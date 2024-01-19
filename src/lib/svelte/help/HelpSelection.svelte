@@ -6,7 +6,7 @@
 
 <div>
 	<div class='centered-container'>
-		<Widget thing={exemplar} path='' origin={new Point(150, 5)}/>
+		<Widget thing={exemplar} path={exemplar.path} origin={new Point(150, 5)}/>
 	</div>
 	<br>
 	<br>

@@ -192,6 +192,7 @@ export default class Hierarchy {
 					const siblings = parent.children;
 					let index = siblings.indexOf(thing);
 					siblings.splice(index, 1);
+					parentPath.grabOnly();
 					if (siblings.length > 0) {
 						if (index >= siblings.length) {
 							index = siblings.length - 1;
@@ -207,7 +208,6 @@ export default class Hierarchy {
 						await this.thing_forget_remoteDelete(descendant);
 						return false; // continue the traversal
 					});
-					parentPath.grabOnly();
 				}
 			}
 			signals.signal_rebuild_fromHere();
@@ -272,6 +272,7 @@ export default class Hierarchy {
 		const parentPath = path.parentPath;
 		if (thing && id && parentPath) {
 			const sibling = await this.thing_remember_runtimeCopy(id, thing);
+			sibling.title = 'idea';
 			await this.path_edit_remoteAddAsChild(parentPath, sibling);
 		}
 	}
@@ -566,6 +567,7 @@ export default class Hierarchy {
 		const parent = parentPath?.thing();
 		if (parent && parentPath) {
 			const child = await this.thing_remember_runtimeCopy(parent.baseID, parent);
+			child.title = 'idea';
 			parentPath.expand();
 			await this.path_edit_remoteAddAsChild(parentPath, child);
 		}

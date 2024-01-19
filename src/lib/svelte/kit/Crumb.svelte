@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, Thing, onMount, dbDispatch } from '../../ts/common/GlobalImports';
+	import { k, noop, Thing, onMount, dbDispatch } from '../../ts/common/GlobalImports';
 	import { s_path_here } from '../../ts/managers/State';
 	export let path = '';
 	let thing: Thing = path.thing();
@@ -9,12 +9,16 @@
 	onMount(() => { updateColors(); });
 
 	function updateColors() {
-		if ($s_path_here?.thingID == thing.id) {
-			colorStyles = 'background-color: ' + thing.color + '; color: ' + k.backgroundColor;
+		if (thing) {
+			if ($s_path_here?.thingID == thing.id) {
+				colorStyles = 'background-color: ' + thing.color + '; color: ' + k.backgroundColor;
+			} else {
+				colorStyles = 'background-color: ' + k.backgroundColor + '; color: ' + thing.color;
+			}
+			cursorStyle = thing.hasChildren ? 'cursor: pointer' : '';
 		} else {
-			colorStyles = 'background-color: ' + k.backgroundColor + '; color: ' + thing.color;
+			noop()
 		}
-		cursorStyle = thing.hasChildren ? 'cursor: pointer' : '';
 	};
 
 	$: {

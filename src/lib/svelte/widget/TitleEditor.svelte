@@ -49,7 +49,7 @@
 	function handleKeyDown(event) {
 		if (thing && widget.path.isEditing && canAlterTitle(event)) {
 			switch (event.key) {	
-				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); graphEditor.widget_rebuild_remoteAddChildTo(thing.firstParent); break;
+				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); dbDispatch.db.hierarchy.path_edit_remoteCreateChildOf(widget.path.parentPath); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
 				default:	  signals.signal_relayout(); break;
 			}
