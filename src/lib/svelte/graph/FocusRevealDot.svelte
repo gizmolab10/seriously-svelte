@@ -13,9 +13,9 @@
 
 	function onClick(event) {
 		if (dbDispatch.db.hierarchy.grabs.latestPathGrabbed(true)?.isHere) {
-			path.path_rebuild_remoteMoveRight(false, false);
+			dbDispatch.db.hierarchy.path_rebuild_remoteMoveRight(path, false, false);
 		} else {
-			dbDispatch.db.hierarchy.grabs.grabOnly(path);
+			path.grabOnly();
 		}
 	}
 

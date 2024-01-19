@@ -1,6 +1,6 @@
-import { k, get, noop, Path, Datum, debug, Widget, Predicate, Hierarchy, TraitType, DebugFlag, getWidthOf, dbDispatch } from '../common/GlobalImports';
-import { SeriouslyRange, CreationOptions, AlteringParent, signals, orders_normalize_remoteMaybe } from '../common/GlobalImports';
-import { s_path_here, s_altering_parent, s_row_height, s_path_editing, s_paths_grabbed, s_path_toolsGrab } from '../managers/State';
+import { k, get, noop, Path, Datum, debug, signals, Predicate, Hierarchy, TraitType, DebugFlag } from '../common/GlobalImports';
+import { getWidthOf, dbDispatch, SeriouslyRange, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { s_path_here } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -77,6 +77,9 @@ export default class Thing extends Datum {
 	}
 
 	updateColorAttributes(path: Path) {
+		if (path.isEditing) {
+			noop();
+		}
 		const border = (path.isEditing ? 'dashed' : 'solid') + ' 1px ';
 		const hover = border + this.revealColor(true, path);
 		const grab = border + this.revealColor(false, path);

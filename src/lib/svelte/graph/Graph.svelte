@@ -1,8 +1,9 @@
 <script lang='ts'>
-	import { Predicate, graphEditor, ButtonID, dbDispatch, PersistID, SignalKind, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
-	import { k, Path, Rect, Size, Point, Thing, ZIndex, debug, signals, onMount, onDestroy, debugReact } from '../../ts/common/GlobalImports';
+	import { dbDispatch, PersistID, SignalKind, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
 	import { s_path_here, s_graphRect, s_dot_size, s_path_editing, s_paths_grabbed } from '../../ts/managers/State';
 	import { s_line_stretch, s_showDetails, s_user_graphOffset, s_id_popupView } from '../../ts/managers/State';
+	import { k, Path, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/GlobalImports';
+	import { onMount, onDestroy, debugReact, Predicate, ButtonID } from '../../ts/common/GlobalImports';
 	import FocusRevealDot from './FocusRevealDot.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Children from './Children.svelte';
@@ -23,7 +24,7 @@
 
 	function ignore(event) {}
 	onDestroy( () => { relayout_signalHandler.disconnect(); });
-	onMount( () => { debugReact.log_mount(`GRAPH ${here.description}`); });
+	// onMount( () => { debugReact.log_mount(`GRAPH ${here.description}`); });
 	
 	const relayout_signalHandler = signals.handle_relayout((id) => {
 		if (here) {
@@ -52,7 +53,7 @@
 				case '?': $s_id_popupView = ButtonID.help; break;
 				case ']':
 				case '[': dbDispatch.nextDB(key == ']'); break;
-				default:  await graphEditor.handleKeyDown(event); break; // editor-specific key values
+				default:  await dbDispatch.db.hierarchy.handleKeyDown(event); break;
 			}
 		}
 	}
@@ -61,7 +62,7 @@
 		if ($s_user_graphOffset != origin) {
 			persistLocal.writeToKey(PersistID.origin, origin);
 			$s_user_graphOffset = origin;
-			debugReact.log_origins(`GRAPH $s_user_graphOffset ${here.description}`);
+			// debugReact.log_origins(`GRAPH $s_user_graphOffset ${here.description}`);
 			updateOrigins();
 			toggle = !toggle;	// rebuild entire graph
 		}
@@ -79,7 +80,7 @@
 	
 	$: {
 		if ($s_dot_size > 0) {
-			debugReact.log_origins(`GRAPH $s_dot_size ${here.description}`);
+			// debugReact.log_origins(`GRAPH $s_dot_size ${here.description}`);
 			updateOrigins();
 		}
 	}
@@ -88,7 +89,7 @@
 		if (here == null || here.id != $s_path_here) {
 			const h = dbDispatch.db.hierarchy;
 			here = !$s_path_here ? h.root : h.thing_getForPath($s_path_here);
-			debugReact.log_origins(`GRAPH $s_path_here ${here.description}`);
+			// debugReact.log_origins(`GRAPH $s_path_here ${here.description}`);
 			updateOrigins();
 			toggle = !toggle;	// also cause entire graph to be replaced
 		}

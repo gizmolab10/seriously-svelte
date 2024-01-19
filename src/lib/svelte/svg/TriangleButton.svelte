@@ -1,5 +1,5 @@
 <script>
-	import { k, Size, Thing, Point, ZIndex, svgPath, Direction, dbDispatch, graphEditor } from "../../ts/common/GlobalImports";
+	import { k, Size, Thing, Point, ZIndex, svgPath, Direction, dbDispatch } from "../../ts/common/GlobalImports";
 	import { s_dot_size, s_paths_grabbed } from '../../ts/managers/State';
 	import SVGD3 from './SVGD3.svelte';
 	export let extraColor = k.backgroundColor;

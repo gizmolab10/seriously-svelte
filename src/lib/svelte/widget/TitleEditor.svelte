@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { onDestroy, dbDispatch, graphEditor, SeriouslyRange } from '../../ts/common/GlobalImports';
+	import { onDestroy, dbDispatch, SeriouslyRange } from '../../ts/common/GlobalImports';
 	import { s_row_height, s_path_editing, s_path_editingStopped } from '../../ts/managers/State';
 	import { k, Thing, ZIndex, Widget, signals, onMount } from '../../ts/common/GlobalImports';
 	export let fontFamily = 'Arial';
@@ -7,6 +7,7 @@
 	export let widget: Widget;
 	export let thing = Thing;
 	let originalTitle = thing.title;
+	let isEditing = false;
 	let titleWidth = 0;
 	let ghost = null;
 	let input = null;
@@ -46,7 +47,7 @@
 	}
 
 	function handleKeyDown(event) {
-		if (thing && $s_path_editing == thing.id && canAlterTitle(event)) {
+		if (thing && widget.path.isEditing && canAlterTitle(event)) {
 			switch (event.key) {	
 				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); graphEditor.widget_rebuild_remoteAddChildTo(thing.firstParent); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
@@ -57,20 +58,24 @@
 
 	$: {
 
-		///////////////////////
-		// manage edit state //
-		///////////////////////
+		///////////////////////////////////////////////////////
+		//													 //
+		//				   manage edit state				 //
+		//													 //
+		//	N.B., to react, must use $s_path_edit variables	 //
+		///////////////////////////////////////////////////////
 
 		if (k.allowTitleEditing) {
-			if ($s_path_editingStopped?.matchesPath(widget.path)) {
+			const path = widget.path;
+			if ($s_path_editingStopped?.matchesPath(path)) {
 				setTimeout(() => {
 					$s_path_editingStopped = null;
 				}, 1000);
-			} else if ($s_path_editing != thing.id) {
+			} else if (!$s_path_editing?.matchesPath(path)) {
 				input?.blur();
-			} else if ($s_path_editing == null) {
-				$s_path_editing = widget.path;
-				widget.path.grabOnly();
+			} else if (!isEditing) {
+				isEditing = true;
+				path.grabOnly();
 				setTimeout(() => {
 					input?.focus();
 					applyRange();
@@ -82,17 +87,17 @@
 	function stopAndClearEditing() {
 		invokeBlurNotClearEditing();
 		setTimeout(() => {		// eliminate infinite recursion
-			const id = thing?.id;
-			if (id != null && $s_path_editing == id) {				
+			if (widget.path.isEditing) {				
 				$s_path_editing = null;
-				signals.signal_rebuild_fromHere();
+				signals.signal_relayout_fromHere();
 			}
 		}, 20);
 	}
 
 	function invokeBlurNotClearEditing() {
 		if (widget.path.isEditing && thing) {
-			$s_path_editingStopped = $s_path_editing;
+			$s_path_editing?.matchesPath($s_path_editingStopped);
+			isEditing = false;
 			extractRange();
 			input?.blur();
 			if (hasChanges() && !thing.isExemplar) {
@@ -105,9 +110,8 @@
 
 	function handleFocus(event) {
 		if (!k.allowTitleEditing) {
-			input.blur();
-		} else if (!widget.path.isEditing) {
-			widget.path.grabOnly()
+			input?.blur();
+		} else if (!isEditing && thing) {
 			widget.path.startEdit();
 		}
 	}

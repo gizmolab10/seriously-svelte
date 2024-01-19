@@ -42,7 +42,7 @@ export default class Path {
 	get singleRowHeight(): number { return this.toolsGrabbed ? k.toolsClusterHeight : get(s_row_height); }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 
-	get paths_ofSiblings(): Array<Path> {
+	get siblingPaths(): Array<Path> {
 		const parentPath = this.parentPath;
 		const parent = parentPath?.thing()
 		let paths = Array<Path>();
@@ -86,7 +86,7 @@ export default class Path {
 	}
 
 	path_ofNextSibling(increment: boolean): Path | null {
-		const array = this.paths_ofSiblings;
+		const array = this.siblingPaths;
 		const index = array.map(p => p.pathString).indexOf(this.pathString);
 		if (index != -1) {
 			let siblingIndex = index.increment(increment, array.length)
@@ -194,6 +194,7 @@ export default class Path {
 
 	startEdit() {
 		if (!this.isRoot) {
+			this.grabOnly();
 			s_path_editing.set(this);
 		}
 	}
@@ -261,6 +262,7 @@ export default class Path {
 
 	clicked_dragDot(shiftKey: boolean) {
         if (!this.isExemplar) {
+			s_path_editing?.set(null);
 			if (get(s_altering_parent)) {
 				this.parent_alterMaybe();
 			} else if (shiftKey || this.isGrabbed) {

@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { k, Thing, Point, debug, ZIndex, Widget, signals, onMount, onDestroy, debugReact } from '../../ts/common/GlobalImports';
-	import { s_path_here, s_dot_size, s_row_height, s_paths_grabbed } from '../../ts/managers/State';
+	import { k, Thing, Point, debug, ZIndex, Widget, signals, onMount, onDestroy, debugReact, SignalKind } from '../../ts/common/GlobalImports';
+	import { s_path_here, s_dot_size, s_row_height, s_paths_grabbed, s_path_editing, } from '../../ts/managers/State';
 	import { s_path_toolsGrab, s_thing_fontSize, s_thing_fontFamily } from '../../ts/managers/State';
 	import ToolsCluster from './ToolsCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
@@ -27,25 +27,29 @@
 	let left = 0;
 	let top = 0;
 
-	onDestroy( () => { signalHandler.disconnect(); });
+	onDestroy( () => { any_signalHandler.disconnect(); });
 
 	onMount( () => {
 		updateBorderStyle();
 		debugReact.log_mount(`WIDGET ${thing.description}`);
 	});
-	
-	const signalHandler = signals.handle_relayout((id) => {
-		if (id == thing.id) {
-			debugReact.log_layout(`WIDGET signal ${thing.description}`);
-			updateLayout()
-		}
-	});
 
-	function updateBorderStyle() {
-		thing.updateColorAttributes(path);
-		border = showingBorder ? 'border: ' + thing.grabAttributes : '';
-		background = showingBorder ? 'background-color: ' + k.backgroundColor : '';
-	}
+	const any_signalHandler = signals.handleAnySignal((kinds, id) => {
+		for (const kind of kinds) {
+			switch (kind) {
+				case SignalKind.relayout:
+					if (id == thing.id) {
+						debugReact.log_layout(`WIDGET signal ${thing.description}`);
+						updateLayout()
+					}
+					break;
+				default:
+					fullUpdate();
+					break;
+			}
+		}
+
+	});
 
 	$: {
 		const _ = path;
@@ -72,6 +76,32 @@
 		}
 	}
 
+	$: {
+		const _ = $s_path_editing + $s_paths_grabbed + $s_path_toolsGrab;
+		fullUpdate();
+	}
+
+	function fullUpdate() {
+		const willEdit = (path.isEditing);
+		const willGrab = path.isGrabbed || thing.isExemplar;
+		const willShowCluster = path.toolsGrabbed && !path.isHere;
+		const change = (isEditing != willEdit || isGrabbed != willGrab || showingCluster != willShowCluster);
+		if (change) {
+			showingBorder = willEdit || willGrab;
+			showingCluster = willShowCluster;
+			isGrabbed = willGrab;
+			isEditing = willEdit;
+			updateBorderStyle();
+			updateLayout();
+		}
+	}
+
+	function updateBorderStyle() {
+		thing.updateColorAttributes(path);
+		border = showingBorder ? 'border: ' + thing.grabAttributes : '';
+		background = showingBorder ? 'background-color: ' + k.backgroundColor : '';
+	}
+
 	function updateLayout() {
 		height = $s_row_height - 2;
 		const delta = showingBorder ? 0 : 1;
@@ -89,21 +119,6 @@
 			radius = $s_row_height / 2;
 			top = origin.y + delta;
 			padding = `0px ${rightPadding}px 0px 0px`;
-		}
-	}
-
-	$: {
-		const willEdit = (path.isEditing);
-		const willGrab = path.isGrabbed || thing.isExemplar;
-		const willShowCluster = path.toolsGrabbed && !path.isHere;
-		const change = (isEditing != willEdit || isGrabbed != willGrab || showingCluster != willShowCluster);
-		if (change) {
-			showingBorder = willEdit || willGrab;
-			showingCluster = willShowCluster;
-			isGrabbed = willGrab;
-			isEditing = willEdit;
-			updateBorderStyle();
-			updateLayout();
 		}
 	}
 

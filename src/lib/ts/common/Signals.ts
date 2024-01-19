@@ -28,24 +28,31 @@ export class Signals {
 	}
 
 	handle_rebuild(onSignal: (value: any | null) => any ) {
-	return this.handleSignalOfKind(SignalKind.rebuild, onSignal);
-}
+		return this.handleSignalOfKind(SignalKind.rebuild, onSignal);
+	}
 
 	handle_relayout(onSignal: (value: any | null) => any ) {
-	return this.handleSignalOfKind(SignalKind.relayout, onSignal);
-}
+		return this.handleSignalOfKind(SignalKind.relayout, onSignal);
+	}
 
 	handle_alteringParent(onSignal: (value: any | null) => any ) {
-	return this.handleSignalOfKind(SignalKind.alterParent, onSignal);
-}
+		return this.handleSignalOfKind(SignalKind.alterParent, onSignal);
+	}
 
 	handleSignalOfKind(kind: SignalKind, onSignal: (value: any | null) => any ) {
-	return this.handleSignal.connect((kinds, value) => {
-		if (kinds.includes(kind)) {
-			onSignal(value);
-		}
-	})
-}
+		return this.handleSignal.connect((kinds, value) => {
+			if (kinds.includes(kind)) {
+				onSignal(value);
+			}
+		})
+	}
+
+	handleAnySignal(onSignal: (kinds: Array<SignalKind>, value: any | null) => any ) {
+		return this.handleSignal.connect((kinds, value) => {
+			onSignal(kinds, value);
+		})
+	}
+
 }
 
 export const signals = new Signals();

@@ -31,7 +31,7 @@ export default class Relationship extends Datum {
 		debug.log_maybe(option, message + ' ' + this.description);
 	}
 
-	async order_setTo(newOrder: number, remoteWrite: boolean) {
+	async order_setTo(newOrder: number, remoteWrite: boolean = false) {
 		if (Math.abs(this.order - newOrder) > 0.001) {
 			const thing = dbDispatch.db.hierarchy.thing_getForID(this.idTo);
 			await thing?.order_setTo(newOrder, remoteWrite);

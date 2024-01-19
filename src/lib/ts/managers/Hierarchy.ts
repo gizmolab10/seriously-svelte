@@ -6,12 +6,6 @@ import {children} from 'svelte/internal';
 
 type KnownRelationships = { [id: string]: Array<Relationship> }
 
-//////////////////////////////////////////
-//	create, delete, remember, forget	//
-//			realtime, remote			//
-//		of things and relationships		//
-//////////////////////////////////////////
-
 export default class Hierarchy {
 	knownU_byID: { [id: string]: User } = {};
 	knownT_byID: { [id: string]: Thing } = {};
@@ -66,6 +60,51 @@ export default class Hierarchy {
 			this.herePath = this.grabs.path_lastGrabbed?.stripBack() ?? this.rootPath;
 		}
 		this.herePath?.becomeHere();
+	}
+
+	async handleKeyDown(event: KeyboardEvent) {
+		let pathGrab = this.grabs.latestPathGrabbed(true);
+		if (event.type == 'keydown') {
+			const OPTION = event.altKey;
+			const SHIFT = event.shiftKey;
+			const COMMAND = event.metaKey;
+			const EXTREME = SHIFT && OPTION;
+			const key = event.key.toLowerCase();
+			const rootPath = this.rootPath;
+			if (!pathGrab && rootPath) {
+				rootPath.becomeHere();
+				rootPath.grabOnly();		// update crumbs and dots
+				pathGrab = rootPath;
+			}
+			if (k.allowGraphEditing) {
+				if (pathGrab && k.allowTitleEditing) {
+					switch (key) {
+						case 'd':		await this.thing_edit_remoteDuplicate(pathGrab); break;
+						case ' ':		await this.path_edit_remoteCreateChildOf(pathGrab); break;
+						case '-':		if (!COMMAND) { await this.thing_edit_remoteAddLine(pathGrab); } break;
+						case 'tab':		await this.path_edit_remoteCreateChildOf(pathGrab.parentPath); break; // Title editor also makes this call
+						case 'enter':	pathGrab.startEdit(); break;
+					}
+				}
+				switch (key) {
+					case 'delete':
+					case 'backspace':	await this.paths_rebuild_traverse_remoteDelete(get(s_paths_grabbed)); break;
+				}
+			}
+			if (pathGrab) {
+				switch (key) {
+					case '/':			pathGrab.becomeHere(); break;
+					case 'arrowright':	await this.path_rebuild_remoteMoveRight(pathGrab, true, SHIFT, OPTION, EXTREME); break;
+					case 'arrowleft':	event.preventDefault(); await this.path_rebuild_remoteMoveRight(pathGrab, false, SHIFT, OPTION, EXTREME); break;
+				}
+			}
+			switch (key) {
+				case '!':				this.rootPath?.becomeHere(); break;
+				case '`':               event.preventDefault(); this.latestPathGrabbed_toggleToolsCluster(); break;
+				case 'arrowup':			await this.latestPathGrabbed_rebuild_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
+				case 'arrowdown':		await this.latestPathGrabbed_rebuild_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
+			}
+		}
 	}
 
 	//////////////////////////////
@@ -303,18 +342,6 @@ export default class Hierarchy {
 		return null;
 	}
 
-	async path_remember_bulk_remoteRelocateRight(path: Path, newParentPath: Path) {
-		const newThingPath = await this.thing_remember_bulk_recursive_remoteRelocateRight(path, newParentPath);
-		if (newThingPath) {
-			newParentPath.thing()?.signal_relayout();
-			if (newParentPath.isExpanded) {
-				newThingPath.grabOnly();
-			} else {
-				newParentPath.grabOnly();
-			}
-		}
-	}
-
 	async thing_remember_bulk_recursive_remoteRelocateRight(path: Path, newParentPath: Path) {
 		const newParent = newParentPath.thing();
 		const thing = path.thing();
@@ -418,22 +445,6 @@ export default class Hierarchy {
 		this.knownRs = [];
 	}
 
-	// relationships_accomodateRelocations(original: Relationship, incoming: Relationship) {
-	// 	const idChild = incoming.idTo;
-	// 	const idOriginal = original.idFrom;
-	// 	const idParent = incoming.idFrom;
-	// 	const parent = this.thing_getForID(idParent);
-	// 	const oParent = this.thing_getForID(idOriginal);
-	// 	const childIsGrabbed = get(s_paths_grabbed).filter(p => p.endsWithID(idChild)).length > 0;
-	// 	if (idOriginal == get(s_path_here)?.thingID && idOriginal != idParent && childIsGrabbed) {
-	// 		const child = this.thing_getForID(idChild);
-	// 		child?.grabOnly(); // update crumbs
-	// 		if (oParent && !oParent.hasChildren) {
-	// 			parent?.becomeHere();
-	// 		}
-	// 	}
-	// }
-
 	async relationships_forget_remoteDeleteAllForThing(thing: Thing) {
 		const array = this.knownRs_byIDTo[thing.id];
 		if (array) {
@@ -524,7 +535,7 @@ export default class Hierarchy {
 		idTo: string, order: number, creationOptions: CreationOptions = CreationOptions.isFromRemote): Promise<any> {
 		let relationship = this.relationships_getByIDPredicateFromAndTo(idPredicate, idFrom, idTo);
 		if (relationship) {
-			relationship.order_setTo(order);						// AND thing are updated
+			relationship.order_setTo(order, true);						// AND thing are updated
 		} else {
 			relationship = new Relationship(baseID, idRelationship, idPredicate, idFrom, idTo, order, creationOptions != CreationOptions.none);
 			await this.db.relationship_remember_remoteCreate(relationship);
@@ -560,7 +571,23 @@ export default class Hierarchy {
 		}
 	}
 
-	async redraw_bulkFetchAll_runtimeBrowseRight(path: Path, grab: boolean = true) {
+	async path_edit_remoteAddAsChild(path: Path, child: Thing, shouldStartEdit: boolean = true) {
+		const thing = path.thing();
+		if (thing) {
+			await this.path_remember_remoteAddAsChild(path, child);
+			path.expand();
+			signals.signal_rebuild_fromHere();
+			const childPath = path.appendChild(child);
+			childPath.grabOnly();
+			if (shouldStartEdit) {
+				setTimeout(() => {
+					childPath.startEdit();
+				}, 200);
+			}
+		}
+	}
+
+	async path_redraw_bulkFetchAll_runtimeBrowseRight(path: Path, grab: boolean = true) {
 		const thing = path.thing();
 		if (thing) {
 			path.expand();		// do this before fetch, so next launch will see it
@@ -575,18 +602,14 @@ export default class Hierarchy {
 		}
 	}
 
-	async path_edit_remoteAddAsChild(path: Path, child: Thing, startEdit: boolean = true) {
-		const thing = path.thing();
-		if (thing) {
-			await this.path_remember_remoteAddAsChild(path, child);
-			path.expand();
-			signals.signal_rebuild_fromHere();
-			const childPath = path.appendChild(child);
-			childPath.grabOnly();
-			if (startEdit) {
-				setTimeout(() => {
-					childPath.startEdit();
-				}, 200);
+	async path_remember_bulk_remoteRelocateRight(path: Path, newParentPath: Path) {
+		const newThingPath = await this.thing_remember_bulk_recursive_remoteRelocateRight(path, newParentPath);
+		if (newThingPath) {
+			newParentPath.thing()?.signal_relayout();
+			if (newParentPath.isExpanded) {
+				newThingPath.grabOnly();
+			} else {
+				newParentPath.grabOnly();
 			}
 		}
 	}
@@ -612,7 +635,7 @@ export default class Hierarchy {
 			const thing = path.thing();
 			if (thing) {
 				if (RIGHT && thing.needsBulkFetch) {
-					await this.redraw_bulkFetchAll_runtimeBrowseRight(path);
+					await this.path_redraw_bulkFetchAll_runtimeBrowseRight(path);
 				} else {
 					this.path_rebuild_runtimeBrowseRight(path, RIGHT, SHIFT, EXTREME, fromReveal);
 				}
@@ -735,6 +758,36 @@ export default class Hierarchy {
 			const shouldBecomeHere = !newHerePath?.isVisible || newHerePath.isRoot;
 			if (!RIGHT && allowToBecomeHere && shouldBecomeHere) {
 				newHerePath?.becomeHere();
+			}
+			signals.signal_rebuild_fromHere();
+		}
+	}
+
+	async paths_rebuild_remoteTraverseDelete(paths: Array<Path>) {
+		if (this.herePath) {
+			for (const path of paths) {
+				if (path && !path.isEditing && !path.thing()?.isBulkAlias) {
+					let newPath = path.parentPath;
+					const siblingPaths = path.siblingPaths;
+					const grandparent = path.thing(3);
+					let index = siblingPaths.map(p => p.pathString).indexOf(path.pathString);
+					siblingPaths.splice(index, 1);
+					if (siblingPaths.length > 0) {
+						if (index >= siblingPaths.length) {
+							index = siblingPaths.length - 1;
+						}
+						newPath = siblingPaths[index];
+						orders_normalize_remoteMaybe(path.parentPath?.thing()?.children);
+					} else if (!grandparent.isVisible) {
+						grandparent.becomeHere();
+					}
+					await thing.traverse_async(async (descendant: Thing): Promise<boolean> => {
+						await this.relationships_forget_remoteDeleteAllForThing(descendant);
+						await this.thing_forget_remoteDelete(descendant);
+						return false; // continue the traversal
+					});
+					newPath?.grabOnly();
+				}
 			}
 			signals.signal_rebuild_fromHere();
 		}

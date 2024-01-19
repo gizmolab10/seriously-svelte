@@ -1,22 +1,26 @@
 <script lang='ts'>
 	import { k, Thing, onMount, dbDispatch } from '../../ts/common/GlobalImports';
 	import { s_path_here } from '../../ts/managers/State';
-	export let thing: Thing;
 	export let path = '';
+	let thing: Thing = path.thing();
 	let colorStyles = '';
 	let cursorStyle = '';
 
 	onMount(() => { updateColors(); });
 
 	function updateColors() {
-		const isHere = path === $s_path_here;
-		if (isHere) {
+		if ($s_path_here?.thingID == thing.id) {
 			colorStyles = 'background-color: ' + thing.color + '; color: ' + k.backgroundColor;
 		} else {
 			colorStyles = 'background-color: ' + k.backgroundColor + '; color: ' + thing.color;
 		}
-		cursorStyle = (thing.hasChildren && !path.isGrabbed) ? 'cursor: pointer' : '';
+		cursorStyle = thing.hasChildren ? 'cursor: pointer' : '';
 	};
+
+	$: {
+		thing = path.thing();
+		updateColors();
+	}
 
 	function crumb_buttonClicked(event) {
 		if (dbDispatch.db.hasData) {
@@ -24,6 +28,8 @@
 			path.becomeHere();
 		}
 	}
+
+	// react to path with     $: {}
 
 </script>
 

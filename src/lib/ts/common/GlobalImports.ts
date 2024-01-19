@@ -9,7 +9,6 @@ import { Direction, svgPath } from '../geometry/SVGPath';
 import { debug, Debug, DebugFlag } from '../debug/Debug';
 import { DBType, DataKind } from '../db/DBInterface';
 import { signals, SignalKind } from './Signals';
-import { graphEditor } from '../ui/GraphEditor';
 import { dbDispatch } from '../db/DBDispatch';
 import { onMount, onDestroy } from 'svelte';
 import { launch } from '../managers/Launch';
@@ -35,14 +34,14 @@ export {
 	k, builds, launch,
 	svgPath, Direction,
 	signals, SignalKind,
+	Path, Grabs, Hierarchy,
 	PersistID, persistLocal,
 	get, onMount, onDestroy,
 	debug, Debug, DebugFlag,
 	dbDispatch, DBType, DataKind,
-	Path, Grabs, graphEditor, Hierarchy,
 	debugReact, DebugReact, ReactFlag, Widget,
 	ZIndex, ButtonID, BrowserType, AlteringParent, CreationOptions,
-	User, SeriouslyRange, Datum, Thing, Access, Predicate, Relationship,
+	User, Datum, Thing, Access, Predicate, Relationship, SeriouslyRange,
 	Point, Size, Rect, Layout, LineRect, TraitType, LineCurveType, graphRect_update,
 	noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, isServerLocal,
 	sort_byOrder, roundToEven, getBrowserType, isMobileDevice, convertToObject, orders_normalize_remoteMaybe,

@@ -1,6 +1,6 @@
 <script>
 	import { s_paths_expanded, s_dot_size, s_altering_parent, s_paths_grabbed, s_path_toolsGrab } from '../../ts/managers/State';
-	import { svgPath, onMount, Direction, onDestroy, dbDispatch, graphEditor } from "../../ts/common/GlobalImports";
+	import { svgPath, onMount, Direction, onDestroy, dbDispatch } from "../../ts/common/GlobalImports";
 	import { k, get, Size, Thing, Point, debug, ZIndex, Widget, signals } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte';
 	export let widget;

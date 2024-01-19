@@ -151,7 +151,7 @@ export default class DBFirebase implements DBInterface {
 							if (thing) {
 								const path = rootsPath.appendChild(thing);
 								if (path.isExpanded) {
-									this.hierarchy.redraw_bulkFetchAll_runtimeBrowseRight(path, false);
+									this.hierarchy.path_redraw_bulkFetchAll_runtimeBrowseRight(path, false);
 								}
 							} else {													// create a thing for each bulk
 								thing = this.hierarchy.thing_runtimeCreate(this.baseID, null, baseID, 'red', TraitType.bulk, 0, false);

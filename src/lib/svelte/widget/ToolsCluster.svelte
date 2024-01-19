@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import { k, Size, Point, Widget, ZIndex, onMount, svgPath, Direction, dbDispatch, graphEditor, AlteringParent } from '../../ts/common/GlobalImports';
+    import { k, Size, Point, Widget, ZIndex, onMount, svgPath, Direction, dbDispatch, AlteringParent } from '../../ts/common/GlobalImports';
     import { s_dot_size, s_altering_parent, s_row_height, s_path_toolsGrab } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TriangleButton from '../svg/TriangleButton.svelte';
@@ -22,7 +22,7 @@
 
         top = 24 - offsetY;
         color = thing.color;
-		left = width + offsetX - 9;
+		left = width + offsetX - 3;
         const otherLeft = left - diameter * 1.2;
         center_addChild = new Point(left, top - diameter);
         center_addParent = new Point(otherLeft, top - diameter);
@@ -35,7 +35,7 @@
                 case 'addParent': toggleAlteration(AlteringParent.adding); return;
                 case 'deleteParent': toggleAlteration(AlteringParent.deleting); return;
                 case 'addChild': await dbDispatch.db.hierarchy.path_edit_remoteCreateChildOf(widget.path.parentPath); break;
-                case 'delete': await dbDispatch.db.hierarchy.things_rebuild_remoteTraverseDelete([thing]); break;
+                case 'delete': await dbDispatch.db.hierarchy.paths_rebuild_remoteTraverseDelete([widget.path]); break;
                 default: break;
             }
             $s_path_toolsGrab = null;
