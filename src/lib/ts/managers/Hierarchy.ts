@@ -607,7 +607,7 @@ export default class Hierarchy {
 	async path_remember_bulk_remoteRelocateRight(path: Path, newParentPath: Path) {
 		const newThingPath = await this.thing_remember_bulk_recursive_remoteRelocateRight(path, newParentPath);
 		if (newThingPath) {
-			newParentPath.thing()?.signal_relayout();
+			newParentPath.signal_relayout();
 			if (newParentPath.isExpanded) {
 				newThingPath.grabOnly();
 			} else {
@@ -771,7 +771,7 @@ export default class Hierarchy {
 				if (path && !path.isEditing && !path.thing()?.isBulkAlias) {
 					let newPath = path.parentPath;
 					const siblingPaths = path.siblingPaths;
-					const grandparent = path.thing(3);
+					const grandparentPath = path.stripBack(2);
 					let index = siblingPaths.map(p => p.pathString).indexOf(path.pathString);
 					siblingPaths.splice(index, 1);
 					if (siblingPaths.length > 0) {
@@ -779,11 +779,11 @@ export default class Hierarchy {
 							index = siblingPaths.length - 1;
 						}
 						newPath = siblingPaths[index];
-						orders_normalize_remoteMaybe(path.parentPath?.thing()?.children);
-					} else if (!grandparent.isVisible) {
-						grandparent.becomeHere();
+						orders_normalize_remoteMaybe(path.parent?.children ?? []);
+					} else if (grandparentPath && !grandparentPath.isVisible) {
+						grandparentPath.becomeHere();
 					}
-					await thing.traverse_async(async (descendant: Thing): Promise<boolean> => {
+					await path.thing()?.traverse_async(async (descendant: Thing): Promise<boolean> => {
 						await this.relationships_forget_remoteDeleteAllForThing(descendant);
 						await this.thing_forget_remoteDelete(descendant);
 						return false; // continue the traversal

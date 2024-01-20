@@ -1,10 +1,10 @@
 <script lang='ts'>
-    import { k, Size, Point, Widget, ZIndex, onMount, svgPath, Direction, dbDispatch, AlteringParent } from '../../ts/common/GlobalImports';
+    import { k, Size, Point, WidgetWrapper, ZIndex, onMount, svgPath, Direction, dbDispatch, AlteringParent } from '../../ts/common/GlobalImports';
     import { s_dot_size, s_altering_parent, s_row_height, s_path_toolsGrab } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TriangleButton from '../svg/TriangleButton.svelte';
 	import Trash from '../svg/Trash.svelte';
-    export let widget: Widget;
+    export let widget: WidgetWrapper;
 	export let thing: Thing;
 	let diameter = $s_dot_size;
     let center_deleteParent = new Point();

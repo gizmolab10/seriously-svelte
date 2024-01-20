@@ -1,10 +1,9 @@
-import { k, get, noop, Path, Datum, debug, signals, Predicate, Hierarchy, TraitType, DebugFlag } from '../common/GlobalImports';
-import { getWidthOf, dbDispatch, SeriouslyRange, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { k, get, noop, Path, Datum, debug, signals, Predicate, Hierarchy, DebugFlag } from '../common/GlobalImports';
+import { TraitType, getWidthOf, dbDispatch, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { s_path_here } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
-	selectionRange: SeriouslyRange | null = null;
     bulkRootID: string = '';
 	needsBulkFetch = false;
 	hoverAttributes = '';
@@ -58,9 +57,6 @@ export default class Thing extends Datum {
 		}
 		return false;
 	}
-
-	signal_rebuild()  { signals.signal_rebuild(this.id); }
-	signal_relayout() { signals.signal_relayout(this.id); }
 
 	log(option: DebugFlag, message: string) {
 		debug.log_maybe(option, message + ' ' + this.description);

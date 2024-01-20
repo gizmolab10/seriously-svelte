@@ -19,11 +19,11 @@ import { k } from './Constants';
 import './Extensions';
 
 import Relationship from '../data/Relationship';
+import WidgetWrapper from '../ui/WidgetWrapper';
 import Hierarchy from '../managers/Hierarchy';
 import Predicate from '../data/Predicate';
 import Layout from '../geometry/Layout';
 import Access from '../data/Access';
-import Widget from '../ui/Widget';
 import Thing from '../data/Thing';
 import Datum from '../data/Datum';
 import User from '../data/User';
@@ -39,7 +39,7 @@ export {
 	get, onMount, onDestroy,
 	debug, Debug, DebugFlag,
 	dbDispatch, DBType, DataKind,
-	debugReact, DebugReact, ReactFlag, Widget,
+	debugReact, DebugReact, ReactFlag, WidgetWrapper,
 	ZIndex, ButtonID, BrowserType, AlteringParent, CreationOptions,
 	User, Datum, Thing, Access, Predicate, Relationship, SeriouslyRange,
 	Point, Size, Rect, Layout, LineRect, TraitType, LineCurveType, graphRect_update,

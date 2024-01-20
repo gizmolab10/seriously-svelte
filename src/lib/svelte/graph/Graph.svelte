@@ -24,9 +24,8 @@
 
 	function ignore(event) {}
 	onDestroy( () => { relayout_signalHandler.disconnect(); });
-	// onMount( () => { debugReact.log_mount(`GRAPH ${here.description}`); });
 	
-	const relayout_signalHandler = signals.handle_relayout((id) => {
+	const relayout_signalHandler = signals.handle_relayout((path) => {
 		if (here) {
 			updateOrigins();
 		}

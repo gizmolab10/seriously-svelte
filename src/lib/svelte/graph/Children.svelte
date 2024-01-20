@@ -33,8 +33,8 @@
 		}
 	}
 	
-	const signalHandler = signals.handle_relayout((id) => {
-		if (!id || id == thing.id) {
+	const signalHandler = signals.handle_relayout((signalPath) => {
+		if (!signalPath || signalPath.matchesPath(path)) {
 			const now = new Date().getTime();
 			if (now - prior > 100) {
 				prior = now;
@@ -42,10 +42,10 @@
 					await orders_normalize_remoteMaybe(thing.children);
 					debugReact.log_layout(`CHILDREN signal ${thing.description}`);
 					layoutChildren();
-					if (id) { // only recurse if starting at a specific id
+					if (signalPath) { // only recurse if starting at a specific signalPath
 						for (const childMap of childMapArray) {
 							if (childMap.child.hasChildren && childMap.path.isExpanded) {
-								childMap.child.signal_relayout();
+								childMap.path.signal_relayout();
 							}
 						}
 					}

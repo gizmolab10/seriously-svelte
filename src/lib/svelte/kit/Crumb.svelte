@@ -16,8 +16,6 @@
 				colorStyles = 'background-color: ' + k.backgroundColor + '; color: ' + thing.color;
 			}
 			cursorStyle = thing.hasChildren ? 'cursor: pointer' : '';
-		} else {
-			noop()
 		}
 	};
 

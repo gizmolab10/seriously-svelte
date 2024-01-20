@@ -1,15 +1,19 @@
-import { k, get, noop, Size, Thing, signals, Hierarchy, dbDispatch, getWidthOf, Predicate, AlteringParent } from './GlobalImports';
+import { s_paths_grabbed, s_paths_expanded, s_path_toolsGrab, s_altering_parent, s_path_editingStopped } from '../managers/State';
 import { s_db_type, s_dot_size, s_path_here, s_row_height, s_path_editing, s_line_stretch } from '../managers/State';
-import { s_paths_grabbed, s_paths_expanded, s_path_toolsGrab, s_altering_parent } from '../managers/State';
+import { k, get, noop, Size, Thing, WidgetWrapper, signals, Hierarchy, dbDispatch } from './GlobalImports';
+import { getWidthOf, Predicate, SeriouslyRange, AlteringParent } from './GlobalImports';
 import { Writable } from 'svelte/store';
 
 export default class Path {
+	selectionRange = new SeriouslyRange(0, 0);
+	widget: WidgetWrapper | null = null;
 	hierarchy: Hierarchy;
 	pathString: string;
 
 	constructor(path: string) {
 		this.pathString = path;
 		this.hierarchy = dbDispatch.db.hierarchy;
+		this.selectionRange = new SeriouslyRange(0, this.thing()?.titleWidth ?? 0);
 
 		s_path_editing.subscribe(() => { this.thing()?.updateColorAttributes(this); });
 		s_paths_grabbed.subscribe(() => { this.thing()?.updateColorAttributes(this); });
@@ -20,6 +24,9 @@ export default class Path {
 			}
 		});
 	}
+
+	signal_rebuild()  { signals.signal_rebuild(this); }
+	signal_relayout() { signals.signal_relayout(this); }
 
 	////////////////////////////////////
 	//			properties			  //
@@ -188,6 +195,7 @@ export default class Path {
 	toggleGrab() { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }
 
 	grabOnly() {
+		console.log(`GRAB ${this.thing()?.title}`);
 		s_paths_grabbed.set([this]);
 		this.toggleToolsGrab();
 	}
@@ -195,7 +203,9 @@ export default class Path {
 	startEdit() {
 		if (!this.isRoot) {
 			this.grabOnly();
+			s_path_editingStopped.set(get(s_path_editing));
 			s_path_editing.set(this);
+			console.log(`EDIT ${this.thing()?.title}`)
 		}
 	}
 

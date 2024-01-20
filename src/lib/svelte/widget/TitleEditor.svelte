@@ -1,10 +1,10 @@
 <script lang='ts'>
-	import { onDestroy, dbDispatch, SeriouslyRange } from '../../ts/common/GlobalImports';
 	import { s_row_height, s_path_editing, s_path_editingStopped } from '../../ts/managers/State';
-	import { k, Thing, ZIndex, Widget, signals, onMount } from '../../ts/common/GlobalImports';
+	import { k, Thing, ZIndex, WidgetWrapper, signals, onMount } from '../../ts/common/GlobalImports';
+	import { onDestroy, dbDispatch, SeriouslyRange } from '../../ts/common/GlobalImports';
+	export let widget: WidgetWrapper;
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
-	export let widget: Widget;
 	export let thing = Thing;
 	let originalTitle = thing.title;
 	let isEditing = false;
@@ -15,15 +15,15 @@
 	onMount(() => { updateInputWidth(); });
 	onDestroy(() => { thing = null; signalHandler.disconnect(); });
 	var hasChanges = () => { return originalTitle != thing.title; }
-	function handleBlur(event) { stopAndClearEditing(); updateInputWidth(); }
+	function handleBlur(event) { stopAndClearEditing(); console.log(`BLUR ${widget.path.thing()?.title}`); updateInputWidth(); }
 	function handleInput(event) { thing.title = event.target.value; updateInputWidth(); }
-	const signalHandler = signals.handle_relayout((id) => setTimeout(() => { updateInputWidth(); }, 10));
+	const signalHandler = signals.handle_relayout((path) => setTimeout(() => { updateInputWidth(); }, 10));
 
 	function updateInputWidth() {
-		if (input && ghost && thing) { // ghost only exists to provide its scroll width
+		if (input && ghost) { // ghost only exists to provide its scroll width
 			titleWidth = ghost.scrollWidth;
 			input.style.width = `${titleWidth}px`;
-			thing.debugLog(`titleWidth: ${titleWidth}`);
+			// console.log(`WIDTH: ${titleWidth} ${widget.path.thing()?.title}`);
 		}
 	}
 
@@ -68,18 +68,17 @@
 		if (k.allowTitleEditing) {
 			const path = widget.path;
 			if ($s_path_editingStopped?.matchesPath(path)) {
-				setTimeout(() => {
-					$s_path_editingStopped = null;
-				}, 1000);
+				console.log(`STOPPING ${widget.path.thing()?.title}`);
+				$s_path_editingStopped = null;
+				input?.blur();
 			} else if (!$s_path_editing?.matchesPath(path)) {
+				// console.log(`BLUR ${widget.path.thing()?.title}`);
 				input?.blur();
 			} else if (!isEditing) {
+				console.log(`RANGE ${widget.path.thing()?.title}`);
 				isEditing = true;
-				path.grabOnly();
-				setTimeout(() => {
-					input?.focus();
-					applyRange();
-				}, 10);
+				input?.focus();
+				applyRange();
 			}
 		}
 	}
@@ -103,36 +102,37 @@
 			if (hasChanges() && !thing.isExemplar) {
 				dbDispatch.db.thing_remoteUpdate(thing);
 				originalTitle = thing.title;		// so hasChanges will be correct
-				thing.signal_relayout();
+				widget.path.signal_relayout();
 			}
 		}
 	}
 
 	function handleFocus(event) {
+		console.log(`FOCUS ${widget.path.thing()?.title}`);
 		if (!k.allowTitleEditing) {
 			input?.blur();
-		} else if (!isEditing && thing) {
+		} else if (!isEditing) {
 			widget.path.startEdit();
 		}
 	}
 
 	function handleCutOrPaste(event) {
 		extractRange();
-		thing.signal_relayout();
+		widget.path.signal_relayout();
 	}
 
 	function extractRange() {
-		if (input && thing) {
+		if (input) {
 			const end = input.selectionEnd;
 			const start = input.selectionStart;
-			thing.selectionRange = new SeriouslyRange(start, end);
+			widget.path.selectionRange = new SeriouslyRange(start, end);
 		}
 	}
 
 	function applyRange() {
-		const priorRange = thing?.selectionRange;
-		if (priorRange && input) {
-			input.setSelectionRange(priorRange.start, priorRange.end);
+		const range = widget.path.selectionRange;
+		if (range && input) {
+			input.setSelectionRange(range.start, range.end);
 		}
 	}
 
