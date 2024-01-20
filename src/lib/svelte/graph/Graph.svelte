@@ -43,7 +43,7 @@
 	};
 
 	async function globalHandleKeyDown(event) {
-		if ($s_path_editing)			{ return; } // let Title component consume the events
+		if ($s_path_editing)		{ return; } // let Title component consume the events
 		if (event.key == undefined)	{ alert('no key for ' + event.type); return; }
 		if (event.type == 'keydown') {
 			const key = event.key;

@@ -18,30 +18,28 @@ import { builds } from './Builds';
 import { k } from './Constants';
 import './Extensions';
 
-import Relationship from '../data/Relationship';
+import TitleEditState from '../ui/TitleEditState';
 import WidgetWrapper from '../ui/WidgetWrapper';
+import Relationship from '../data/Relationship';
+import TitleWrapper from '../ui/TitleWrapper';
 import Hierarchy from '../managers/Hierarchy';
 import Predicate from '../data/Predicate';
 import Layout from '../geometry/Layout';
 import Access from '../data/Access';
 import Thing from '../data/Thing';
 import Datum from '../data/Datum';
-import User from '../data/User';
 import Grabs from '../ui/Grabs';
-import Path from './Path';
+import User from '../data/User';
+import Path from '../ui/Path';
 
 export {
-	k, builds, launch,
-	svgPath, Direction,
-	signals, SignalKind,
-	Path, Grabs, Hierarchy,
-	PersistID, persistLocal,
-	get, onMount, onDestroy,
-	debug, Debug, DebugFlag,
-	dbDispatch, DBType, DataKind,
-	debugReact, DebugReact, ReactFlag, WidgetWrapper,
+	k, get, builds, launch, onMount, onDestroy,
+	svgPath, Direction, PersistID, persistLocal,
+	signals, SignalKind, Path, Grabs, Hierarchy,
+	debug, Debug, DebugFlag, dbDispatch, DBType, DataKind,
 	ZIndex, ButtonID, BrowserType, AlteringParent, CreationOptions,
 	User, Datum, Thing, Access, Predicate, Relationship, SeriouslyRange,
+	debugReact, DebugReact, ReactFlag, TitleWrapper, WidgetWrapper, TitleEditState,
 	Point, Size, Rect, Layout, LineRect, TraitType, LineCurveType, graphRect_update,
 	noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, isServerLocal,
 	sort_byOrder, roundToEven, getBrowserType, isMobileDevice, convertToObject, orders_normalize_remoteMaybe,

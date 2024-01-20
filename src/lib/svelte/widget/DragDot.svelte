@@ -3,7 +3,7 @@
 	import { Direction, onDestroy, dbDispatch, AlteringParent } from "../../ts/common/GlobalImports";
 	import { s_dot_size, s_paths_grabbed, s_path_toolsGrab } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
-    export let widget;
+    export let widgetWrapper;
 	export let thing;
 	let tinyDotColor = thing.color;
 	let strokeColor = thing.color;
@@ -31,7 +31,7 @@
     onMount(() => {
 		updateColorsForHover(false);
         handler = signals.handle_alteringParent((alteration) => {
-			const applyFlag = $s_path_toolsGrab && widget.path.things_canAlter_asParentOf_toolsGrab;
+			const applyFlag = $s_path_toolsGrab && widgetWrapper.path.things_canAlter_asParentOf_toolsGrab;
 			extra = (thing.parents.length < 2) ? null : svgPath.circle(size, size / 5);
 			altering = applyFlag ? (alteration != null) : false;
 			updateColors();
@@ -54,9 +54,9 @@
 
 	function updateColors() {
 		const asReveal = isHovering == altering;
-		thing.updateColorAttributes(widget.path);	// for revealColor
-		tinyDotColor = thing.revealColor(asReveal, widget.path);
-		fillColor = debug.lines ? 'transparent' : thing.revealColor(!asReveal, widget.path);
+		thing.updateColorAttributes(widgetWrapper.path);	// for revealColor
+		tinyDotColor = thing.revealColor(asReveal, widgetWrapper.path);
+		fillColor = debug.lines ? 'transparent' : thing.revealColor(!asReveal, widgetWrapper.path);
 		strokeColor = thing.color;
 	}
 
@@ -81,14 +81,14 @@
 
 	function handleDoubleClick(event) {
 		clearClicks();
-		widget.path.becomeHere();
+		widgetWrapper.path.becomeHere();
     }
 
 	function handleSingleClick(event) {
 		clickCount++;
 		clickTimer = setTimeout(() => {
 			if (clickCount === 1) {
-				widget.path.clicked_dragDot(event.shiftKey);
+				widgetWrapper.path.clicked_dragDot(event.shiftKey);
 				clearClicks();
 			}
 		}, k.doubleClickThreshold);
@@ -99,7 +99,7 @@
 			size = $s_dot_size;
 			scalablePath = svgPath.oval(size, false);
 			left = 1 - (size / 2); // offset from center?
-			top = widget.path.toolsGrabbed ? 23 : -size / 2 + 2;
+			top = widgetWrapper.path.toolsGrabbed ? 23 : -size / 2 + 2;
 			if (thing.parents.length > 1) {
 				extra = svgPath.circle(size, size / 5);
 			}

@@ -4,7 +4,7 @@
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TriangleButton from '../svg/TriangleButton.svelte';
 	import Trash from '../svg/Trash.svelte';
-    export let widget: WidgetWrapper;
+    export let widgetWrapper: WidgetWrapper;
 	export let thing: Thing;
 	let diameter = $s_dot_size;
     let center_deleteParent = new Point();
@@ -34,8 +34,8 @@
             switch (buttonID) {
                 case 'addParent': toggleAlteration(AlteringParent.adding); return;
                 case 'deleteParent': toggleAlteration(AlteringParent.deleting); return;
-                case 'addChild': await dbDispatch.db.hierarchy.path_edit_remoteCreateChildOf(widget.path.parentPath); break;
-                case 'delete': await dbDispatch.db.hierarchy.paths_rebuild_remoteTraverseDelete([widget.path]); break;
+                case 'addChild': await dbDispatch.db.hierarchy.path_edit_remoteCreateChildOf(widgetWrapper.path.parentPath); break;
+                case 'delete': await dbDispatch.db.hierarchy.paths_rebuild_remoteTraverseDelete([widgetWrapper.path]); break;
                 default: break;
             }
             $s_path_toolsGrab = null;

@@ -10,7 +10,7 @@
 	export let thing = Thing;
     export let path = '';
 	let priorRowHeight = $s_row_height;
-	let widget: WidgetWrapper;
+	let widgetWrapper: WidgetWrapper;
 	let priorOrigin = origin;
 	let showingCluster = false;
 	let showingBorder = false;
@@ -53,7 +53,7 @@
 
 	$: {
 		const _ = path;
-		widget = new WidgetWrapper(this, path, thing);
+		widgetWrapper = new WidgetWrapper(this, path);
 	}
 	
 	$: {
@@ -147,16 +147,16 @@
 		border-radius: {radius}px;
 	'>
 	<div style='top:{revealTop}px;'>
-		<DragDot thing={thing} widget={widget}/>
+		<DragDot thing={thing} widgetWrapper={widgetWrapper}/>
 	</div>
-	<TitleEditor thing={thing} widget={widget} fontSize={$s_thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
+	<TitleEditor thing={thing} widgetWrapper={widgetWrapper} fontSize={$s_thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 	<div class='revealDot'
 		style='
 			top:{revealTop + 0.3}px;
 			z-index: {ZIndex.dots};'>
-		<RevealDot thing={thing} widget={widget}/>
+		<RevealDot thing={thing} widgetWrapper={widgetWrapper}/>
 	</div>
 	{#if showingCluster}
-		<ToolsCluster thing={thing} widget={widget}/>
+		<ToolsCluster thing={thing} widgetWrapper={widgetWrapper}/>
 	{/if}
 </div>

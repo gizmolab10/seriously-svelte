@@ -1,7 +1,7 @@
 import Identifiable from "../common/Identifiable";
 import { Path } from '../common/GlobalImports';
 
-export default class WidgetWrapper extends Identifiable {
+export default class TitleWrapper extends Identifiable {
     component: any;
     path: Path;
 
@@ -9,7 +9,7 @@ export default class WidgetWrapper extends Identifiable {
 		super(null);
         this.path = path;
         this.component = component;
-        this.path.widgetWrapper = this;
+        this.path.titleWrapper = this;
     }
 
 }

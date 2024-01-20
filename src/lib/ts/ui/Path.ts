@@ -1,12 +1,13 @@
-import { s_paths_grabbed, s_paths_expanded, s_path_toolsGrab, s_altering_parent, s_path_editingStopped } from '../managers/State';
+import { s_paths_grabbed, s_paths_expanded, s_path_toolsGrab, s_altering_parent, s_path_editStopping } from '../managers/State';
 import { s_db_type, s_dot_size, s_path_here, s_row_height, s_path_editing, s_line_stretch } from '../managers/State';
-import { k, get, noop, Size, Thing, WidgetWrapper, signals, Hierarchy, dbDispatch } from './GlobalImports';
-import { getWidthOf, Predicate, SeriouslyRange, AlteringParent } from './GlobalImports';
+import { dbDispatch, TitleWrapper, WidgetWrapper, SeriouslyRange, AlteringParent } from '../common/GlobalImports';
+import { k, get, noop, Size, Thing, signals, Hierarchy, getWidthOf, Predicate } from '../common/GlobalImports';
 import { Writable } from 'svelte/store';
 
 export default class Path {
 	selectionRange = new SeriouslyRange(0, 0);
-	widget: WidgetWrapper | null = null;
+	widgetWrapper: WidgetWrapper | null = null;
+	titleWrapper: TitleWrapper | null = null;
 	hierarchy: Hierarchy;
 	pathString: string;
 
@@ -203,7 +204,7 @@ export default class Path {
 	startEdit() {
 		if (!this.isRoot) {
 			this.grabOnly();
-			s_path_editingStopped.set(get(s_path_editing));
+			s_path_editStopping.set(get(s_path_editing));
 			s_path_editing.set(this);
 			console.log(`EDIT ${this.thing()?.title}`)
 		}
