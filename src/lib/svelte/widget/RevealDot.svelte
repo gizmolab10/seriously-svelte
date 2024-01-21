@@ -1,7 +1,7 @@
 <script>
 	import { s_paths_expanded, s_dot_size, s_altering_parent, s_paths_grabbed, s_path_toolsGrab } from '../../ts/managers/State';
+	import { k, get, Size, Thing, Point, debug, ZIndex, ignore, svgPath, signals } from "../../ts/common/GlobalImports";
 	import { onMount, Wrapper, Direction, onDestroy, dbDispatch, SvelteType } from "../../ts/common/GlobalImports";
-	import { k, get, Size, Thing, Point, debug, ZIndex, svgPath, signals } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte';
 	export let widgetWrapper;
 	export let thing;
@@ -15,7 +15,6 @@
 	let button = null;
 	let clickTimer;
 	
-	function ignore(event) {}
 	onMount( () => { setIsHovering_updateColors(false); updatePath(); });
 	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
 	function handleMouseOut(event) { setIsHovering_updateColors(false); }

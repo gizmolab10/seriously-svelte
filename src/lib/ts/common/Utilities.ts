@@ -1,8 +1,9 @@
 import { s_thing_fontSize, s_thing_fontFamily } from '../managers/State';
-import { k, get, Thing, BrowserType } from './GlobalImports';
+import { get, Thing, BrowserType } from './GlobalImports';
 import convert from 'color-convert';
 
 export function noop() {}
+export function ignore(event: Event) {}
 export function roundToEven(n: number): number{ return Math.round(n / 2) * 2; }
 export function sort_byOrder(array: Array<Thing>) { return array.sort( (a: Thing, b: Thing) => { return a.order - b.order; }); }
 

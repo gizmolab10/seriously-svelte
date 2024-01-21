@@ -1,6 +1,6 @@
 import { ZIndex, ButtonID, TraitType, BrowserType, AlteringParent, CreationOptions, LineCurveType } from './Enumerations';
+import { noop, apply, ignore, remove, removeAll, getFontOf, getWidthOf, copyObject } from './Utilities';
 import { desaturateBy, sort_byOrder, roundToEven, isServerLocal, isMobileDevice } from './Utilities';
-import { noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject } from './Utilities';
 import { getBrowserType, convertToObject, orders_normalize_remoteMaybe } from './Utilities';
 import { Point, Size, Rect, LineRect, graphRect_update } from '../geometry/Geometry';
 import { debugReact, DebugReact, ReactFlag } from '../debug/DebugReact';
@@ -41,6 +41,6 @@ export {
 	debug, Debug, DebugFlag, DBType, DataKind, dbDispatch, Hierarchy,
 	User, Datum, Thing, Access, Predicate, Relationship, SeriouslyRange,
 	Point, Size, Rect, Layout, LineRect, TraitType, LineCurveType, graphRect_update,
-	noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, isServerLocal,
+	noop, apply, remove, ignore, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, isServerLocal,
 	sort_byOrder, roundToEven, getBrowserType, isMobileDevice, convertToObject, orders_normalize_remoteMaybe,
 };

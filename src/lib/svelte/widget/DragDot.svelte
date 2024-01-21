@@ -1,6 +1,6 @@
 <script>
+	import { k, Size, Point, Thing, debug, ZIndex, onMount, ignore, signals, svgPath } from "../../ts/common/GlobalImports";
 	import { Wrapper, Direction, onDestroy, dbDispatch, SvelteType, AlteringParent } from "../../ts/common/GlobalImports";
-	import { k, Size, Point, Thing, debug, ZIndex, onMount, signals, svgPath } from "../../ts/common/GlobalImports";
 	import { s_dot_size, s_paths_grabbed, s_path_toolsGrab } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
     export let widgetWrapper;
@@ -21,7 +21,6 @@
 	let left = 0;
 	let top = 0;
 	
-	function ignore(event) {}
     onDestroy(() => { handler.disconnect(); })
 	function handleMouseIn(event) { updateColorsForHover(true); }
 	function handleMouseUp() { clearTimeout(clickTimer); }

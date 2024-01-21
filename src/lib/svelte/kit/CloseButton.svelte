@@ -1,9 +1,8 @@
 <script>
-	import { Size, ZIndex, svgPath } from '../../ts/common/GlobalImports';
+	import { Size, ZIndex, ignore, svgPath } from '../../ts/common/GlobalImports';
     import { s_id_popupView } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
     export let size = 20;
-	function ignore(event) {}
     const cross = svgPath.xCross(size, size / 6);
     const circle = svgPath.circle(size, size - 2);
 </script>

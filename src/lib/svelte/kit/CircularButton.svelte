@@ -1,4 +1,5 @@
 <script>
+	import { ignore } from '../../ts/common/GlobalImports';
 	export let borderColor = '#333';
 	export let textColor = '#400';
 	export let color = '#ccc';
@@ -6,8 +7,6 @@
 	export let size = 14;
 	export let left = 7;
 	export let top = 7;
-
-	function ignore(event) {}
 </script>
 
 <div

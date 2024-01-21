@@ -1,4 +1,4 @@
-import { Rect, Path, Point, roundToEven, TitleState } from '../common/GlobalImports';
+import { Rect, Path, Point, TitleState, roundToEven } from '../common/GlobalImports';
 import { signals } from '../common/Signals';
 import { writable } from 'svelte/store';
 let interval : NodeJS.Timeout | null = null;
