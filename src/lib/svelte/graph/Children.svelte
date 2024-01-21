@@ -90,7 +90,7 @@
 	{/if}
 	{#each childMapArray as a}
 		<Widget thing={a.child} path={a.path} origin={a.rect.extent.offsetBy(new Point(12, ($s_dot_size / -15) -10))}/>
-		<Line thing={a.child} curveType={a.rect.curveType} rect={a.rect.offsetBy(new Point(($s_dot_size / 2) - 129, ($s_dot_size / 2) - 8))}/>
+		<Line thing={a.child} path={a.path} curveType={a.rect.curveType} rect={a.rect.offsetBy(new Point(($s_dot_size / 2) - 129, ($s_dot_size / 2) - 8))}/>
 		{#if a.child.hasChildren && a.path.isExpanded}
 			<Children thing={a.child} path={a.path} origin={a.origin}/>
 		{/if}

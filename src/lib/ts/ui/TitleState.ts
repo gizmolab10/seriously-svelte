@@ -1,6 +1,6 @@
 import { Path } from '../common/GlobalImports';
 
-export default class TitleEditState {
+export default class TitleState {
 	stopping: Path | null = null;
 	editing: Path | null = null;
 

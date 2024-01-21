@@ -7,7 +7,7 @@
 	let path: Path;
 	let toggleDraw = false;
 	let ancestors: Array<Thing> = [];
-	let extra = svgPath.circle(size, size / 2, new Point(size / -7, size / 4));
+	let insidePath = svgPath.circle(size, size / 2, new Point(size / -7, size / 4));
 
 	function path_lastGrabbed() { return dbDispatch.db.hierarchy.grabs.path_lastGrabbed; }
 	const rebuild_signalHandler = signals.handle_rebuild(() => { toggleDraw = !toggleDraw; });
@@ -48,10 +48,10 @@
 				left: {size / (multiple ? 3 : 3.3)}px;'>
 				<FatTriangle
 					position='absolute'
-					extra={!multiple ? null : extra}
-					size={size * (!multiple ? 1 : 1.5)}
 					fillColor={ancestors[index].color}
+					size={size * (!multiple ? 1 : 1.5)}
 					strokeColor={ancestors[index].color}
+					extra={!multiple ? null : insidePath}
 				/>
 				&nbsp;{#if multiple}-{/if}&nbsp;
 			</span>

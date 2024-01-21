@@ -1,13 +1,12 @@
-import { s_paths_grabbed, s_paths_expanded, s_path_toolsGrab, s_altering_parent } from '../managers/State';
+import { dbDispatch, Wrapper, WrapperType, SeriouslyRange, AlteringParent, TitleState } from '../common/GlobalImports';
 import { s_db_type, s_dot_size, s_path_here, s_row_height, s_title_editing, s_line_stretch } from '../managers/State';
-import { dbDispatch, TitleWrapper, WidgetWrapper, SeriouslyRange, AlteringParent, TitleEditState } from '../common/GlobalImports';
 import { k, get, noop, Size, Thing, signals, Hierarchy, getWidthOf, Predicate } from '../common/GlobalImports';
+import { s_paths_grabbed, s_paths_expanded, s_path_toolsGrab, s_altering_parent } from '../managers/State';
 import { Writable } from 'svelte/store';
 
 export default class Path {
+	wrappers: { [type: string]: Wrapper } = {};
 	selectionRange = new SeriouslyRange(0, 0);
-	widgetWrapper: WidgetWrapper | null = null;
-	titleWrapper: TitleWrapper | null = null;
 	hierarchy: Hierarchy;
 	pathString: string;
 
@@ -28,6 +27,7 @@ export default class Path {
 
 	signal_rebuild()  { signals.signal_rebuild(this); }
 	signal_relayout() { signals.signal_relayout(this); }
+	addWrapper(wrapper: Wrapper, type: WrapperType) { this.wrappers[type] = wrapper; }
 
 	////////////////////////////////////
 	//			properties			  //
@@ -42,6 +42,8 @@ export default class Path {
 	get isRoot(): boolean { return this.matchesPath(this.hierarchy.rootPath); }
 	get ids(): Array<string> { return this.pathString.split(k.pathSeparator); }
 	get toolsGrabbed(): boolean { return this.matchesStore(s_path_toolsGrab); }
+	get titleWrapper(): Wrapper | null { return this.wrappers[WrapperType.title]; };
+	get widgetWrapper(): Wrapper | null { return this.wrappers[WrapperType.widget]; };
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
@@ -208,7 +210,7 @@ export default class Path {
 			this.grabOnly();
 			let editState = get(s_title_editing);
 			if (!editState) {
-				s_title_editing.set(new TitleEditState(this));
+				s_title_editing.set(new TitleState(this));
 			} else {
 				editState.stopping = editState.editing;
 				editState.editing = this;

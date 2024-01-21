@@ -1,9 +1,9 @@
-import { Rect, Path, Point, roundToEven, TitleEditState } from '../common/GlobalImports';
+import { Rect, Path, Point, roundToEven, TitleState } from '../common/GlobalImports';
 import { signals } from '../common/Signals';
 import { writable } from 'svelte/store';
 let interval : NodeJS.Timeout | null = null;
 
-export const s_title_editing	   = writable<TitleEditState | null>();
+export const s_title_editing	   = writable<TitleState | null>();
 export const s_db_loadTime 		   = writable<string | null>();
 export const s_id_popupView		   = writable<string | null>();
 export const s_altering_parent	   = writable<string | null>();

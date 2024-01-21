@@ -5,12 +5,13 @@ import { getBrowserType, convertToObject, orders_normalize_remoteMaybe } from '.
 import { Point, Size, Rect, LineRect, graphRect_update } from '../geometry/Geometry';
 import { debugReact, DebugReact, ReactFlag } from '../debug/DebugReact';
 import { PersistID, persistLocal } from '../managers/PersistLocal';
-import { Direction, svgPath } from '../geometry/SVGPath';
 import { debug, Debug, DebugFlag } from '../debug/Debug';
+import { Direction, svgPath } from '../geometry/SVGPath';
 import { DBType, DataKind } from '../db/DBInterface';
 import { signals, SignalKind } from './Signals';
 import { dbDispatch } from '../db/DBDispatch';
 import { onMount, onDestroy } from 'svelte';
+import { WrapperType } from '../ui/Wrapper';
 import { launch } from '../managers/Launch';
 import { SeriouslyRange } from './Types';
 import { get } from 'svelte/store';
@@ -18,13 +19,12 @@ import { builds } from './Builds';
 import { k } from './Constants';
 import './Extensions';
 
-import TitleEditState from '../ui/TitleEditState';
-import WidgetWrapper from '../ui/WidgetWrapper';
 import Relationship from '../data/Relationship';
-import TitleWrapper from '../ui/TitleWrapper';
 import Hierarchy from '../managers/Hierarchy';
+import TitleState from '../ui/TitleState';
 import Predicate from '../data/Predicate';
 import Layout from '../geometry/Layout';
+import Wrapper from '../ui/Wrapper';
 import Access from '../data/Access';
 import Thing from '../data/Thing';
 import Datum from '../data/Datum';
@@ -35,11 +35,11 @@ import Path from '../ui/Path';
 export {
 	k, get, builds, launch, onMount, onDestroy,
 	svgPath, Direction, PersistID, persistLocal,
-	signals, SignalKind, Path, Grabs, Hierarchy,
-	debug, Debug, DebugFlag, dbDispatch, DBType, DataKind,
+	Path, Grabs, Wrapper, TitleState, WrapperType,
+	signals, SignalKind, debugReact, DebugReact, ReactFlag,
 	ZIndex, ButtonID, BrowserType, AlteringParent, CreationOptions,
+	debug, Debug, DebugFlag, DBType, DataKind, dbDispatch, Hierarchy,
 	User, Datum, Thing, Access, Predicate, Relationship, SeriouslyRange,
-	debugReact, DebugReact, ReactFlag, TitleWrapper, WidgetWrapper, TitleEditState,
 	Point, Size, Rect, Layout, LineRect, TraitType, LineCurveType, graphRect_update,
 	noop, apply, remove, removeAll, getFontOf, getWidthOf, copyObject, desaturateBy, isServerLocal,
 	sort_byOrder, roundToEven, getBrowserType, isMobileDevice, convertToObject, orders_normalize_remoteMaybe,

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, Thing, Point, debug, ZIndex, WidgetWrapper, signals, onMount, onDestroy, debugReact, SignalKind } from '../../ts/common/GlobalImports';
+	import { k, Thing, Point, debug, ZIndex, Wrapper, signals, onMount, onDestroy, debugReact, SignalKind, WrapperType } from '../../ts/common/GlobalImports';
 	import { s_path_here, s_dot_size, s_row_height, s_paths_grabbed, s_title_editing, } from '../../ts/managers/State';
 	import { s_path_toolsGrab, s_thing_fontSize, s_thing_fontFamily } from '../../ts/managers/State';
 	import ToolsCluster from './ToolsCluster.svelte';
@@ -10,7 +10,7 @@
 	export let thing = Thing;
     export let path = '';
 	let priorRowHeight = $s_row_height;
-	let widgetWrapper: WidgetWrapper;
+	let widgetWrapper: Wrapper;
 	let priorOrigin = origin;
 	let showingCluster = false;
 	let showingBorder = false;
@@ -52,8 +52,7 @@
 	});
 
 	$: {
-		const _ = path;
-		widgetWrapper = new WidgetWrapper(this, path);
+		widgetWrapper = new Wrapper(this, path, WrapperType.widget);
 	}
 	
 	$: {

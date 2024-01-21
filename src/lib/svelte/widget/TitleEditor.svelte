@@ -1,13 +1,13 @@
 <script lang='ts'>
-	import { k, Thing, ZIndex, onMount, signals, onDestroy, dbDispatch } from '../../ts/common/GlobalImports';
-	import { SeriouslyRange, TitleWrapper, WidgetWrapper } from '../../ts/common/GlobalImports';
+	import { dbDispatch, SeriouslyRange, Wrapper, WrapperType } from '../../ts/common/GlobalImports';
+	import { k, Thing, ZIndex, onMount, signals, onDestroy } from '../../ts/common/GlobalImports';
 	import { s_row_height, s_title_editing } from '../../ts/managers/State';
-	export let widgetWrapper: WidgetWrapper;
+	export let widgetWrapper: Wrapper;
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
 	export let thing = Thing;
 	let originalTitle = thing.title;
-	let titleWrapper: TitleWrapper;
+	let titleWrapper: Wrapper;
 	let isEditing = false;
 	let titleWidth = 0;
 	let ghost = null;
@@ -20,7 +20,6 @@
 	
 	onMount(() => {
 		updateInputWidth();
-		titleWrapper = new TitleWrapper(this, widgetWrapper.path);
 	});
 
 	function updateInputWidth() {
@@ -29,6 +28,10 @@
 			input.style.width = `${titleWidth}px`;
 			// console.log(`WIDTH: ${titleWidth} ${widgetWrapper.path.thing()?.title}`);
 		}
+	}
+
+	$: {
+		titleWrapper = new Wrapper(this, widgetWrapper.path, WrapperType.title);
 	}
 
 	$: {
