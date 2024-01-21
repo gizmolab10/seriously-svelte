@@ -11,7 +11,6 @@
 	let origin_ofFirstReveal = new Point();
 	let origin_ofChildren = new Point();
 	let childrenSize = new Point();
-	let isGrabbed = false;
 	let greenRect: Rect;
 	let blueRect: Rect;
 	let redRect: Rect;
@@ -92,15 +91,6 @@
 			toggle = !toggle;	// also cause entire graph to be replaced
 		}
 	}
-	
-	$: {
-		if (here) { // can sometimes be null TODO: WHY?
-			let grabbed = $s_path_here.isGrabbed;
-			if (grabbed != isGrabbed) {
-				isGrabbed = grabbed;
-			}
-		}
-	}
 
 	function updateOrigins() {
 		if (here) {
@@ -154,7 +144,7 @@
 				<Box rect={blueRect} color=blue/>
 				<Box rect={greenRect} color=green half={true}/>
 			{/if}
-			{#if isGrabbed}
+			{#if $s_path_here.isGrabbed}
 				<Circle radius={10} center={origin_ofFirstReveal} color={here.color} thickness=1/>
 			{/if}
 			<FocusRevealDot here={here} path={$s_path_here} center={origin_ofFirstReveal.offsetBy(new Point(-12, -11))}/>

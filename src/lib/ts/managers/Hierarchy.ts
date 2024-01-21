@@ -662,6 +662,9 @@ export default class Hierarchy {
 			const newIndex = index.increment(!up, siblings.length);
 			if (parentPath && !OPTION) {
 				const grabPath = parentPath.appendChild(siblings[newIndex]);
+				if (!grabPath.isVisible) {
+					grabPath.parentPath?.becomeHere();
+				}
 				if (SHIFT) {
 					grabPath.toggleGrab();
 				} else {
