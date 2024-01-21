@@ -1,6 +1,6 @@
 <script>
 	import { s_paths_expanded, s_dot_size, s_altering_parent, s_paths_grabbed, s_path_toolsGrab } from '../../ts/managers/State';
-	import { onMount, Wrapper, Direction, onDestroy, dbDispatch, WrapperType } from "../../ts/common/GlobalImports";
+	import { onMount, Wrapper, Direction, onDestroy, dbDispatch, SvelteType } from "../../ts/common/GlobalImports";
 	import { k, get, Size, Thing, Point, debug, ZIndex, svgPath, signals } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte';
 	export let widgetWrapper;

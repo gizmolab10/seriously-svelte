@@ -1,18 +1,18 @@
 import Identifiable from "../common/Identifiable";
 import { Path } from '../common/GlobalImports';
 
-export enum WrapperType {
+export enum SvelteType {
 	widget	= 'widget',
 	title	= 'title',
 	line	= 'line',
 }
 
 export default class Wrapper extends Identifiable {
-    type: WrapperType;
+    type: SvelteType;
     component: any;
     path: Path;
 
-    constructor(component: any, path: Path, type: WrapperType) {
+    constructor(component: any, path: Path, type: SvelteType) {
 		super(null);
         this.path = path;
         this.type = type;

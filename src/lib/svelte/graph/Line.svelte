@@ -1,5 +1,6 @@
 <script lang='ts'>
-	import { Path, Rect, Size, Point, debug, onMount, ZIndex, SVGType, svgPath, debugReact, LineCurveType } from '../../ts/common/GlobalImports';
+	import { Path, Rect, Size, Point, debug, onMount, ZIndex, SVGType, svgPath } from '../../ts/common/GlobalImports';
+	import { Wrapper, debugReact, SvelteType, LineCurveType } from '../../ts/common/GlobalImports';
 	import { s_dot_size } from '../../ts/managers/State';
 	import Circle from '../kit/Circle.svelte';
 	import Box from '../kit/Box.svelte';
@@ -15,9 +16,9 @@
 	let size = new Size();
 	let scalablePath = '';
 
-	// $: {
-	// 	lineWrapper = new Wrapper(this, path, WrapperType.line);
-	// }
+	$: {
+		lineWrapper = new Wrapper(this, path, SvelteType.line);
+	}
 
 	////////////////////////////////////////////////////
 	//	draw a curved line in rect, up, down or flat  //

@@ -11,7 +11,7 @@ import { DBType, DataKind } from '../db/DBInterface';
 import { signals, SignalKind } from './Signals';
 import { dbDispatch } from '../db/DBDispatch';
 import { onMount, onDestroy } from 'svelte';
-import { WrapperType } from '../ui/Wrapper';
+import { SvelteType } from '../ui/Wrapper';
 import { launch } from '../managers/Launch';
 import { SeriouslyRange } from './Types';
 import { get } from 'svelte/store';
@@ -35,7 +35,7 @@ import Path from '../ui/Path';
 export {
 	k, get, builds, launch, onMount, onDestroy,
 	svgPath, Direction, PersistID, persistLocal,
-	Path, Grabs, Wrapper, TitleState, WrapperType,
+	Path, Grabs, Wrapper, TitleState, SvelteType,
 	signals, SignalKind, debugReact, DebugReact, ReactFlag,
 	ZIndex, ButtonID, BrowserType, AlteringParent, CreationOptions,
 	debug, Debug, DebugFlag, DBType, DataKind, dbDispatch, Hierarchy,

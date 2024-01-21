@@ -1,5 +1,5 @@
 <script>
-	import { Wrapper, Direction, onDestroy, dbDispatch, WrapperType, AlteringParent } from "../../ts/common/GlobalImports";
+	import { Wrapper, Direction, onDestroy, dbDispatch, SvelteType, AlteringParent } from "../../ts/common/GlobalImports";
 	import { k, Size, Point, Thing, debug, ZIndex, onMount, signals, svgPath } from "../../ts/common/GlobalImports";
 	import { s_dot_size, s_paths_grabbed, s_path_toolsGrab } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';

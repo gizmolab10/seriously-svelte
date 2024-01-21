@@ -1,6 +1,6 @@
 import { k, get, noop, User, Path, Thing, Grabs, debug, Access, remove, signals, TraitType, Predicate } from '../common/GlobalImports';
 import { Relationship, persistLocal, CreationOptions, sort_byOrder, orders_normalize_remoteMaybe } from '../common/GlobalImports';
-import { s_path_here, s_isBusy, s_title_editing, s_paths_grabbed, s_things_arrived, s_path_toolsGrab } from './State';
+import { s_title, s_isBusy, s_path_here, s_paths_grabbed, s_things_arrived, s_path_toolsGrab } from './State';
 import DBInterface from '../db/DBInterface';
 import {children} from 'svelte/internal';
 
@@ -355,7 +355,7 @@ export default class Hierarchy {
 				const childpath = path.appendChild(child);
 				this.thing_remember_bulk_recursive_remoteRelocateRight(childpath, newThingPath);
 			}
-			if (newThingPath.isExpanded) {
+			if (!newThingPath.isExpanded) {
 				setTimeout(() => {
 					newThingPath.expand();	
 					path.collapse();
@@ -681,6 +681,7 @@ export default class Hierarchy {
 	}
 
 	async path_rebuild_remoteRelocateRight(path: Path, RIGHT: boolean, EXTREME: boolean) {
+		let needsRebuild = false;
 		const thing = path.thing();
 		const newParentPath = RIGHT ? path.path_ofNextSibling(false) : path.stripBack(2);
 		const newParent = newParentPath?.thing();
@@ -704,12 +705,20 @@ export default class Hierarchy {
 				this.relationships_refreshKnowns();		// so children and parent will see the newly relocated things
 				this.root?.order_normalizeRecursive_remoteMaybe(true);
 				newParentPath.appendChild(thing).grabOnly();
-				newParentPath.expand();
+				if (!newParentPath.isExpanded) {
+					newParentPath.expand();
+					needsRebuild = true;
+				}
 				if (!newParentPath.isVisible) {
 					newParentPath.becomeHere();
+					needsRebuild = true;
 				}
 			}
-			signals.signal_rebuild_fromHere();					// so Children component will update
+			if (needsRebuild) {
+				signals.signal_rebuild_fromHere();			// so Children component will update
+			} else {
+				signals.signal_relayout_fromHere();
+			}
 		}
 	}
 
@@ -762,7 +771,7 @@ export default class Hierarchy {
 					}
 				}
 			}
-			s_title_editing.set(null);
+			s_title.set(null);
 			newGrabPath?.grabOnly();
 			const allowToBecomeHere = (!SHIFT || newGrabPath == path.parent) && newGrabIsNotHere; 
 			const shouldBecomeHere = !newHerePath?.isVisible || newHerePath.isRoot;
