@@ -1,6 +1,6 @@
 import { k, get, noop, User, Path, Thing, Grabs, debug, Access, remove, signals, TraitType, Predicate } from '../common/GlobalImports';
 import { Relationship, persistLocal, CreationOptions, sort_byOrder, orders_normalize_remoteMaybe } from '../common/GlobalImports';
-import { s_path_here, s_isBusy, s_path_editing, s_paths_grabbed, s_things_arrived, s_path_toolsGrab } from './State';
+import { s_path_here, s_isBusy, s_title_editing, s_paths_grabbed, s_things_arrived, s_path_toolsGrab } from './State';
 import DBInterface from '../db/DBInterface';
 import {children} from 'svelte/internal';
 
@@ -667,6 +667,7 @@ export default class Hierarchy {
 				} else {
 					grabPath.grabOnly();
 				}
+				signals.signal_relayout_fromHere();
 			} else if (k.allowGraphEditing && OPTION) {
 				orders_normalize_remoteMaybe(parent.children, false);
 				const wrapped = up ? (index == 0) : (index == siblings.length - 1);
@@ -674,8 +675,8 @@ export default class Hierarchy {
 				const newOrder = newIndex + goose;
 				thing.order_setTo(newOrder);
 				await orders_normalize_remoteMaybe(parent.children);
+				signals.signal_rebuild_fromHere();
 			}
-			signals.signal_rebuild_fromHere();
 		}
 	}
 
@@ -714,6 +715,7 @@ export default class Hierarchy {
 
 	path_rebuild_runtimeBrowseRight(path: Path, RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, fromReveal: boolean = false) {
 		const thing = this.thing_getForPath(path);
+		let needsRebuild = false;
 		if (thing) {
 			const newParentPath = path.parentPath;
 			const childPath = path.appendChild(thing?.firstChild);
@@ -736,32 +738,43 @@ export default class Hierarchy {
 				} else {
 					if (!SHIFT) {
 						if (fromReveal) {
-							path.expand();
+							if (!path.isExpanded) {
+								path.expand();
+								needsRebuild = true;
+							}
 						} else {
 							if (newGrabIsNotHere && newGrabPath && !newGrabPath.isExpanded) {
-								newGrabPath?.expand();
+								newGrabPath.expand();
+								needsRebuild = true;
 							}
 						}
 					} else if (newGrabPath) { 
 						if (path.isExpanded) {
 							path.collapse();
 							newGrabPath = null;
+							needsRebuild = true;
 						} else if (newGrabPath == rootPath) {
 							newGrabPath = null;
 						} else {
 							newGrabPath.collapse();
+							needsRebuild = true;
 						}
 					}
 				}
 			}
-			s_path_editing.set(null);
+			s_title_editing.set(null);
 			newGrabPath?.grabOnly();
 			const allowToBecomeHere = (!SHIFT || newGrabPath == path.parent) && newGrabIsNotHere; 
 			const shouldBecomeHere = !newHerePath?.isVisible || newHerePath.isRoot;
 			if (!RIGHT && allowToBecomeHere && shouldBecomeHere) {
 				newHerePath?.becomeHere();
+				needsRebuild = true;
 			}
-			signals.signal_rebuild_fromHere();
+			if (needsRebuild) {
+				signals.signal_rebuild_fromHere();
+			} else {
+				signals.signal_relayout_fromHere();
+			}
 		}
 	}
 

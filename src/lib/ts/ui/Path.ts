@@ -1,6 +1,6 @@
-import { s_paths_grabbed, s_paths_expanded, s_path_toolsGrab, s_altering_parent, s_path_editStopping } from '../managers/State';
-import { s_db_type, s_dot_size, s_path_here, s_row_height, s_path_editing, s_line_stretch } from '../managers/State';
-import { dbDispatch, TitleWrapper, WidgetWrapper, SeriouslyRange, AlteringParent } from '../common/GlobalImports';
+import { s_paths_grabbed, s_paths_expanded, s_path_toolsGrab, s_altering_parent } from '../managers/State';
+import { s_db_type, s_dot_size, s_path_here, s_row_height, s_title_editing, s_line_stretch } from '../managers/State';
+import { dbDispatch, TitleWrapper, WidgetWrapper, SeriouslyRange, AlteringParent, TitleEditState } from '../common/GlobalImports';
 import { k, get, noop, Size, Thing, signals, Hierarchy, getWidthOf, Predicate } from '../common/GlobalImports';
 import { Writable } from 'svelte/store';
 
@@ -11,12 +11,12 @@ export default class Path {
 	hierarchy: Hierarchy;
 	pathString: string;
 
-	constructor(path: string) {
-		this.pathString = path;
+	constructor(pathString: string) {
+		this.pathString = pathString;
 		this.hierarchy = dbDispatch.db.hierarchy;
 		this.selectionRange = new SeriouslyRange(0, this.thing()?.titleWidth ?? 0);
 
-		s_path_editing.subscribe(() => { this.thing()?.updateColorAttributes(this); });
+		s_title_editing.subscribe(() => { this.thing()?.updateColorAttributes(this); });
 		s_paths_grabbed.subscribe(() => { this.thing()?.updateColorAttributes(this); });
 		
 		s_db_type.subscribe((type: string) => {
@@ -37,7 +37,6 @@ export default class Path {
 	get parent(): Thing | null { return this.thing(2); }
 	get parentPath(): Path | null { return this.stripBack(); }
 	get isHere(): boolean { return this.matchesStore(s_path_here); }
-	get isEditing(): boolean { return this.matchesStore(s_path_editing); }
 	get isExemplar(): boolean { return this.thing()?.isExemplar ?? false; }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
 	get isRoot(): boolean { return this.matchesPath(this.hierarchy.rootPath); }
@@ -47,7 +46,9 @@ export default class Path {
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
 	get isVisible(): boolean { return this.ids.includes(this.hierarchy.herePath?.thingID ?? ''); }
+	get isEditing(): boolean { return this.pathString == get(s_title_editing)?.editing?.pathString; }
 	get singleRowHeight(): number { return this.toolsGrabbed ? k.toolsClusterHeight : get(s_row_height); }
+	get isStoppingEdit(): boolean { return this.pathString == get(s_title_editing)?.stopping?.pathString; }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 
 	get siblingPaths(): Array<Path> {
@@ -203,10 +204,16 @@ export default class Path {
 
 	startEdit() {
 		if (!this.isRoot) {
-			this.grabOnly();
-			s_path_editStopping.set(get(s_path_editing));
-			s_path_editing.set(this);
 			console.log(`EDIT ${this.thing()?.title}`)
+			this.grabOnly();
+			let editState = get(s_title_editing);
+			if (!editState) {
+				s_title_editing.set(new TitleEditState(this));
+			} else {
+				editState.stopping = editState.editing;
+				editState.editing = this;
+			}
+			signals.signal_relayout_fromHere();
 		}
 	}
 
@@ -273,7 +280,7 @@ export default class Path {
 
 	clicked_dragDot(shiftKey: boolean) {
         if (!this.isExemplar) {
-			s_path_editing?.set(null);
+			s_title_editing?.set(null);
 			if (get(s_altering_parent)) {
 				this.parent_alterMaybe();
 			} else if (shiftKey || this.isGrabbed) {

@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { k, Thing, ZIndex, TitleWrapper, WidgetWrapper, signals } from '../../ts/common/GlobalImports';
-	import { onMount, onDestroy, dbDispatch, SeriouslyRange } from '../../ts/common/GlobalImports';
-	import { s_row_height, s_path_editing, s_path_editStopping } from '../../ts/managers/State';
+	import { k, Thing, ZIndex, onMount, signals, onDestroy, dbDispatch } from '../../ts/common/GlobalImports';
+	import { SeriouslyRange, TitleWrapper, WidgetWrapper } from '../../ts/common/GlobalImports';
+	import { s_row_height, s_title_editing } from '../../ts/managers/State';
 	export let widgetWrapper: WidgetWrapper;
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
@@ -38,7 +38,7 @@
 	}
 
 	$: {
-		const _ = $s_path_editing;
+		const _ = $s_title_editing;
 		updateInputWidth();
 	}
 
@@ -60,6 +60,21 @@
 		}
 	}
 
+	function handleBlur(event) {
+		stopAndClearEditing();
+		console.log(`BLUR ${widgetWrapper.path.thing()?.title}`);
+		updateInputWidth();
+	}
+
+	function handleFocus(event) {
+		if (!k.allowTitleEditing) {
+			input?.blur();
+		} else if (!widgetWrapper.path.isEditing) {
+			console.log(`FOCUS ${widgetWrapper.path.thing()?.title}`);
+			widgetWrapper.path.startEdit();
+		}
+	}
+
 	$: {
 
 		///////////////////////////////////////////////////////
@@ -71,20 +86,20 @@
 
 		if (k.allowTitleEditing) {
 			const path = widgetWrapper.path;
-			if ($s_path_editStopping?.matchesPath(path)) {
+			if (path.isStoppingEdit) {
 				console.log(`STOPPING ${path.thing()?.title}`);
-				$s_path_editStopping = null;
+				$s_title_editing = null;
 				input?.blur();
 			} else if (isEditing != path.isEditing) {
 				if (isEditing) {
-					// console.log(`STOP ${path.thing()?.title}`);
+					console.log(`STOP ${path.thing()?.title}`);
 					input?.blur();
 				} else {
-					isEditing = true;
 					input?.focus();
 					console.log(`RANGE ${path.thing()?.title}`);
 					applyRange();
 				}
+				isEditing = !isEditing;
 			}
 		}
 	}
@@ -93,7 +108,7 @@
 		invokeBlurNotClearEditing();
 		setTimeout(() => {		// eliminate infinite recursion
 			if (widgetWrapper.path.isEditing) {				
-				$s_path_editing = null;
+				$s_title_editing.stop();
 				signals.signal_relayout_fromHere();
 			}
 		}, 20);
@@ -101,7 +116,6 @@
 
 	function invokeBlurNotClearEditing() {
 		if (widgetWrapper.path.isEditing && thing) {
-			$s_path_editing?.matchesPath($s_path_editStopping);
 			isEditing = false;
 			extractRange();
 			input?.blur();
@@ -110,21 +124,6 @@
 				originalTitle = thing.title;		// so hasChanges will be correct
 				widgetWrapper.path.signal_relayout();
 			}
-		}
-	}
-
-	function handleBlur(event) {
-		stopAndClearEditing();
-		console.log(`BLUR ${widgetWrapper.path.thing()?.title}`);
-		updateInputWidth();
-	}
-
-	function handleFocus(event) {
-		console.log(`FOCUS ${widgetWrapper.path.thing()?.title}`);
-		if (!k.allowTitleEditing) {
-			input?.blur();
-		} else if (!isEditing) {
-			widgetWrapper.path.startEdit();
 		}
 	}
 

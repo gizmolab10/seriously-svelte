@@ -3,12 +3,11 @@ import { signals } from '../common/Signals';
 import { writable } from 'svelte/store';
 let interval : NodeJS.Timeout | null = null;
 
+export const s_title_editing	   = writable<TitleEditState | null>();
 export const s_db_loadTime 		   = writable<string | null>();
 export const s_id_popupView		   = writable<string | null>();
 export const s_altering_parent	   = writable<string | null>();
-export const s_path_editStopping   = writable<Path | null>();
 export const s_path_toolsGrab	   = writable<Path | null>();
-export const s_path_editing		   = writable<Path | null>();
 export const s_path_here		   = writable<Path | null>();
 export const s_paths_grabbed	   = writable<Array<Path>>();
 export const s_paths_expanded	   = writable<Array<Path>>();

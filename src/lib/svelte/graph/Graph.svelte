@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { dbDispatch, PersistID, SignalKind, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
-	import { s_path_here, s_graphRect, s_dot_size, s_path_editing, s_paths_grabbed } from '../../ts/managers/State';
+	import { s_path_here, s_graphRect, s_dot_size, s_title_editing, s_paths_grabbed } from '../../ts/managers/State';
 	import { s_line_stretch, s_showDetails, s_user_graphOffset, s_id_popupView } from '../../ts/managers/State';
 	import { k, Path, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/GlobalImports';
 	import { onMount, onDestroy, debugReact, Predicate, ButtonID } from '../../ts/common/GlobalImports';
@@ -43,7 +43,7 @@
 	};
 
 	async function globalHandleKeyDown(event) {
-		if ($s_path_editing)		{ return; } // let Title component consume the events
+		if ($s_title_editing)		{ return; } // let Title component consume the events
 		if (event.key == undefined)	{ alert('no key for ' + event.type); return; }
 		if (event.type == 'keydown') {
 			const key = event.key;
