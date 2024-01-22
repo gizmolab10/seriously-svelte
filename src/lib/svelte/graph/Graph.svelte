@@ -3,7 +3,7 @@
 	import { s_line_stretch, s_showDetails, s_user_graphOffset, s_id_popupView } from '../../ts/managers/State';
 	import { ignore, onMount, onDestroy, debugReact, Predicate, ButtonID } from '../../ts/common/GlobalImports';
 	import { k, Path, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/GlobalImports';
-	import { s_title, s_path_here, s_graphRect, s_dot_size, s_paths_grabbed } from '../../ts/managers/State';
+	import { s_title_editing, s_path_here, s_graphRect, s_dot_size, s_paths_grabbed } from '../../ts/managers/State';
 	import FocusRevealDot from './FocusRevealDot.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Children from './Children.svelte';
@@ -41,7 +41,7 @@
 	};
 
 	async function globalHandleKeyDown(event) {
-		if ($s_title)		{ return; } // let Title component consume the events
+		if ($s_title_editing)		{ return; } // let Title component consume the events
 		if (event.key == undefined)	{ alert('no key for ' + event.type); return; }
 		if (event.type == 'keydown') {
 			const key = event.key;

@@ -10,7 +10,7 @@
 
 	function updateColors() {
 		if (thing) {
-			if ($s_path_here?.thingID == thing.id) {
+			if ($s_path_here.thingID == thing.id) {
 				colorStyles = 'background-color: ' + thing.color + '; color: ' + k.backgroundColor;
 			} else {
 				colorStyles = 'background-color: ' + k.backgroundColor + '; color: ' + thing.color;

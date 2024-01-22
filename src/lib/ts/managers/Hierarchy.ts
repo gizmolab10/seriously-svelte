@@ -1,8 +1,7 @@
 import { k, get, noop, User, Path, Thing, Grabs, debug, Access, remove, signals, TraitType, Predicate } from '../common/GlobalImports';
 import { Relationship, persistLocal, CreationOptions, sort_byOrder, orders_normalize_remoteMaybe } from '../common/GlobalImports';
-import { s_title, s_isBusy, s_path_here, s_paths_grabbed, s_things_arrived, s_path_toolsGrab } from './State';
+import { s_title_editing, s_isBusy, s_path_here, s_paths_grabbed, s_things_arrived, s_path_toolsGrab } from './State';
 import DBInterface from '../db/DBInterface';
-import {children} from 'svelte/internal';
 
 type KnownRelationships = { [id: string]: Array<Relationship> }
 
@@ -24,13 +23,13 @@ export default class Hierarchy {
 	_grabs: Grabs | null = null;
 	root: Thing | null = null;
 	isConstructed = false;
+	rootPath = new Path();
 	db: DBInterface;
 
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): (string | null) { return this.root?.id ?? null; }; // undefined --> null
-	get rootPath(): Path | null { return !this.idRoot ? null : new Path(this.idRoot); }
 	thing_getForID(id: string | null): Thing | null { return (!id) ? null : this.knownT_byID[id]; }
-	thing_getForPath(path: Path | null, back: number = 1): Thing | null { return (path == null) ? null : this.thing_getForID(path?.ancestorID(back)); }
+	thing_getForPath(path: Path | null, back: number = 1): Thing | null { return (path == null) ? null : path?.thing(back) ?? null; }
 
 	constructor(db: DBInterface) {
 		this.db = db;
@@ -46,7 +45,7 @@ export default class Hierarchy {
 		if (root) {
 			await root.normalize_bulkFetchAll(root.baseID);
 			this.db.setHasData(true);
-			persistLocal.s_updateForDBType(type, root.id);
+			persistLocal.s_updateForDBType(type);
 		}
 		this.here_restore();
 		s_things_arrived.set(true);
@@ -71,7 +70,7 @@ export default class Hierarchy {
 			const EXTREME = SHIFT && OPTION;
 			const key = event.key.toLowerCase();
 			const rootPath = this.rootPath;
-			if (!pathGrab && rootPath) {
+			if (!pathGrab) {
 				rootPath.becomeHere();
 				rootPath.grabOnly();		// update crumbs and dots
 				pathGrab = rootPath;
@@ -133,14 +132,19 @@ export default class Hierarchy {
 		}
 	}
 
+	thing_to_getForRelationshipID(id: string | null): Thing | null {
+		if (id) {
+			const relationship = this.relationship_getForID(id);
+			if (relationship) {
+				return this.knownT_byID[relationship.idTo];
+			}
+		}
+		return this.root;
+	}
+
 	//////////////////////////////
 	//			THINGS			//
 	//////////////////////////////
-
-	things_getForPaths(paths: Array<Path>): Array<Thing> {
-		const ids = paths.map(p => p.thingID);
-		return this.things_getForIDs(ids);
-	}
 
 	things_getForIDs(ids: Array<string> | null): Array<Thing> {
 		if (ids) {
@@ -371,17 +375,14 @@ export default class Hierarchy {
 		let rootPath = this.rootPath;
 		for (const thing of this.knownTs_byTrait[TraitType.roots]) {
 			if  (thing.title == 'roots') {	// special case TODO: convert to a auery string
-				const rootsPath = rootPath?.appendChild(thing) ?? null;
+				const rootsPath = rootPath.appendChild(thing) ?? null;
 				return rootsPath;
 			}
 		}
-		if (rootPath) {
-			const roots = this.thing_runtimeCreate(this.db.baseID, null, 'roots', 'red', TraitType.roots, 0, false);
-			await this.path_remember_remoteAddAsChild(rootPath, roots);
-			const rootsPath = rootPath?.appendChild(roots) ?? null;
-			return rootsPath;
-		}
-		return null;
+		const roots = this.thing_runtimeCreate(this.db.baseID, null, 'roots', 'red', TraitType.roots, 0, false);
+		await this.path_remember_remoteAddAsChild(rootPath, roots);
+		const rootsPath = rootPath?.appendChild(roots) ?? null;
+		return rootsPath;
 	}
 
 	////////////////////////////////////
@@ -471,8 +472,7 @@ export default class Hierarchy {
 	}
 
 	relationships_getByIDPredicateFromAndTo(idPredicate: string, idFrom: string, idTo: string): Relationship | null {
-		const idPredicateIsAParentOf = Predicate.idIsAParentOf;
-		const matches = this.relationships_getByIDPredicateToAndID(idPredicateIsAParentOf, false, idFrom);
+		const matches = this.relationships_getByIDPredicateToAndID(idPredicate, false, idFrom);
 		if (Array.isArray(matches)) {
 			for (const relationship of matches) {
 				if (relationship.idTo == idTo) {
@@ -486,6 +486,8 @@ export default class Hierarchy {
 	/////////////////////////////////////
 	//			RELATIONSHIP		   //
 	/////////////////////////////////////
+
+	relationship_getForID(id: string): Relationship | null { return this.knownR_byID[id]; }
 
 	relationship_remember(relationship: Relationship) {
 		if (!this.knownR_byID[relationship.id]) {
@@ -552,10 +554,6 @@ export default class Hierarchy {
 			const relationship = matches[0];
 			return relationship;
 		}
-		return null;
-	}
-
-	relationship_getForPath(path: Path | null, by: number = -1): Relationship | null {
 		return null;
 	}
 
@@ -774,7 +772,7 @@ export default class Hierarchy {
 					}
 				}
 			}
-			s_title.set(null);
+			s_title_editing.set(null);
 			newGrabPath?.grabOnly();
 			const allowToBecomeHere = (!SHIFT || newGrabPath == path.parent) && newGrabIsNotHere; 
 			const shouldBecomeHere = !newHerePath?.isVisible || newHerePath.isRoot;

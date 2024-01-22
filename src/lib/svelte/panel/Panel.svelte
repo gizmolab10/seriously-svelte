@@ -27,17 +27,20 @@
 	});
 
 	$: {
-		if (herePath.pathString != $s_path_here?.pathString) {
-			herePath = $s_path_here;
+		const path = $s_path_here;
+		if (path && !path.matchesPath(herePath)) {
+			herePath = path;
 			graph_fullRebuild();
 		}
 	}
 
 	function graph_fullRebuild() {
 		graphRect_update();
-		left = $s_graphRect.origin.x;
-		debugReact.log_rebuild(`PANEL ${$s_path_here?.thing()?.description}`)
-		toggle = !toggle;	// remount graph component
+		if ($s_graphRect) {
+			left = $s_graphRect.origin.x;
+			debugReact.log_rebuild(`PANEL ${$s_path_here.thing()?.description}`);
+			toggle = !toggle;	// remount graph component
+		}
 	}
 	
 	function details_buttonClicked(event) {
@@ -141,10 +144,10 @@
 				<Crumbs/>
 			</div>
 			<div class='topTitle'
-				style='color: {$s_path_here?.thing()?.color};
+				style='color: {$s_path_here.thing()?.color};
 					z-index: {ZIndex.frontmost};
 					left: {$s_showDetails ? '100px' : '-1px'};'>
-				{$s_path_here?.thing()?.title}
+				{$s_path_here.thing()?.title}
 			</div>
 			<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: {$s_showDetails ? k.detailsMargin : 0}px; top: 85px;'></div>
 			{#key toggle}

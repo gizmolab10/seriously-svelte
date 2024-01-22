@@ -65,7 +65,7 @@
 	}
 
 	function updatePath() {
-		if ((!thing.hasChildren && !thing.isBulkAlias) || $s_path_toolsGrab?.endsWithID(thing.id)) {
+		if ((!thing.hasChildren && !thing.isBulkAlias) || $s_path_toolsGrab?.endsWithRelationshipID(thing.id)) {
 			scalablePath = svgPath.circle($s_dot_size, $s_dot_size / 2);
 		} else {
 			const goLeft = widgetWrapper.path.isExpanded && thing.hasChildren;

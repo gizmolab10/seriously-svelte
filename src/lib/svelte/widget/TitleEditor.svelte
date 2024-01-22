@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { dbDispatch, SeriouslyRange, Wrapper, SvelteType } from '../../ts/common/GlobalImports';
 	import { k, Thing, ZIndex, onMount, signals, onDestroy } from '../../ts/common/GlobalImports';
-	import { s_title, s_row_height } from '../../ts/managers/State';
+	import { s_title_editing, s_row_height } from '../../ts/managers/State';
 	export let widgetWrapper: Wrapper;
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
@@ -41,7 +41,7 @@
 	}
 
 	$: {
-		const _ = $s_title;
+		const _ = $s_title_editing;
 		updateInputWidth();
 	}
 
@@ -91,7 +91,7 @@
 			const path = widgetWrapper.path;
 			if (path.isStoppingEdit) {
 				console.log(`STOPPING ${path.thing()?.title}`);
-				$s_title = null;
+				$s_title_editing = null;
 				input?.blur();
 			} else if (isEditing != path.isEditing) {
 				if (isEditing) {
@@ -111,7 +111,7 @@
 		invokeBlurNotClearEditing();
 		setTimeout(() => {		// eliminate infinite recursion
 			if (widgetWrapper.path.isEditing) {				
-				$s_title.stop();
+				$s_title_editing.stop();
 				signals.signal_relayout_fromHere();
 			}
 		}, 20);

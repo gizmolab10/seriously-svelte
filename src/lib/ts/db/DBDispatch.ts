@@ -1,5 +1,5 @@
 import { s_db_type, s_isBusy, s_path_here, s_paths_grabbed, s_db_loadTime, s_things_arrived } from '../managers/State';
-import { DBType, PersistID, persistLocal } from '../common/GlobalImports';
+import { Path, DBType, PersistID, persistLocal } from '../common/GlobalImports';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
@@ -23,7 +23,7 @@ export default class DBDispatch {
 		this.updateHierarchy(type);
 		s_db_type.subscribe((type: string) => {
 			if (type) {
-				s_path_here.set(null);
+				s_path_here.set(new Path());
 				s_paths_grabbed.set([]);
 				this.updateDBForType(type);
 				this.updateHierarchy(type);
@@ -68,7 +68,7 @@ export default class DBDispatch {
 	updateHierarchy(type: string) {
 		const h = this.db.hierarchy;
 		if (this.db.hasData) {
-			persistLocal.s_updateForDBType(type, h.idRoot!);
+			persistLocal.s_updateForDBType(type);
 			h.here_restore();
 		} else {
 			if (type != DBType.local) {

@@ -31,21 +31,17 @@ export default class Thing extends Datum {
 	get parentIDs():			Array<string> { return this.hierarchy.thingIDs_getByIDPredicateToAndID(Predicate.idIsAParentOf,  true, this.id); }
 	get children():				 Array<Thing> { return this.hierarchy.things_getByIDPredicateToAndID(Predicate.idIsAParentOf, false, this.idForChildren); }
 	get parents():				 Array<Thing> { return this.hierarchy.things_getByIDPredicateToAndID(Predicate.idIsAParentOf,  true, this.id); }
-	get hierarchy():				Hierarchy { return dbDispatch.db.hierarchy; }
-	get hasChildren():				  boolean { return this.children.length > 0; }
-	get hasParents():				  boolean { return this.parents.length > 0; }
-	get isHere():					  boolean { return get(s_path_here)?.endsWith(this) ?? false; }
-	get isRoot():					  boolean { return this == this.hierarchy.root; }
-	get isBulkAlias():				  boolean { return this.trait == TraitType.bulk; }
-	get lastChild():					Thing { return this.children.slice(-1)[0]; }	// not alter children
-	get firstChild():					Thing { return this.children[0]; }
-	get description():				   string { return this.id + ' \"' + this.title + '\"'; }
+	get isHere():					  boolean { return (get(s_path_here).thing()?.id ?? '') == this.id; }
 	get idForChildren():               string { return this.isBulkAlias ? this.bulkRootID : this.id; }
+	get description():				   string { return this.id + ' \"' + this.title + '\"'; }
+	get isBulkAlias():				  boolean { return this.trait == TraitType.bulk; }
+	get isRoot():					  boolean { return this == this.hierarchy.root; }
+	get lastChild():					Thing { return this.children.slice(-1)[0]; }	// not alter children
+	get hasChildren():				  boolean { return this.children.length > 0; }
+	get hierarchy():				Hierarchy { return dbDispatch.db.hierarchy; }
+	get hasParents():				  boolean { return this.parents.length > 0; }
 	get titleWidth():				   number { return getWidthOf(this.title) }
-
-	get parentRelationshipID(): string { // WRONG
-		return this.hierarchy.relationship_getWhereIDEqualsTo(this.id)?.id ?? '';
-	}
+	get firstChild():					Thing { return this.children[0]; }
 
 	get hasGrandChildren(): boolean {
 		if (this.hasChildren) {

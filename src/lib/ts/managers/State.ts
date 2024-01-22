@@ -3,12 +3,11 @@ import { signals } from '../common/Signals';
 import { writable } from 'svelte/store';
 let interval : NodeJS.Timeout | null = null;
 
-export const s_title			= writable<TitleState | null>();
+export const s_title_editing	= writable<TitleState | null>();
 export const s_db_loadTime 		= writable<string | null>();
 export const s_id_popupView		= writable<string | null>();
 export const s_altering_parent	= writable<string | null>();
 export const s_path_toolsGrab	= writable<Path | null>();
-export const s_path_here		= writable<Path | null>();
 export const s_paths_grabbed	= writable<Array<Path>>();
 export const s_paths_expanded	= writable<Array<Path>>();
 export const s_things_arrived	= writable<boolean>();
@@ -24,6 +23,7 @@ export const s_dot_size			= writable<number>();
 export const s_build			= writable<number>();
 export const s_user_graphOffset	= writable<Point>();
 export const s_graphRect		= writable<Rect>();
+export const s_path_here		= writable<Path>();
 
 s_row_height.subscribe((height) => {
 	s_thing_fontSize.set(roundToEven(height * .7));
