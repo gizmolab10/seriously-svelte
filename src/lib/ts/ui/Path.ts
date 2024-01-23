@@ -1,6 +1,6 @@
 import { SvelteType, TitleState, dbDispatch, Relationship, SeriouslyRange, AlteringParent } from '../common/GlobalImports';
-import { s_title_editing, s_db_type, s_dot_size, s_path_here, s_row_height, s_line_stretch } from '../managers/State';
 import { k, get, Size, Thing, signals, Wrapper, Hierarchy, getWidthOf, Predicate } from '../common/GlobalImports';
+import { s_dot_size, s_path_here, s_row_height, s_line_stretch, s_title_editing } from '../managers/State';
 import { s_paths_grabbed, s_paths_expanded, s_path_toolsGrab, s_altering_parent } from '../managers/State';
 import { Writable } from 'svelte/store';
 

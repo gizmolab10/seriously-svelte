@@ -1,4 +1,4 @@
-import { k, get, noop, Path, Datum, debug, signals, Predicate, Hierarchy, DebugFlag } from '../common/GlobalImports';
+import { k, get, noop, Path, Datum, debug, Predicate, Hierarchy, DebugFlag } from '../common/GlobalImports';
 import { TraitType, getWidthOf, dbDispatch, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { s_path_here } from '../managers/State';
 import Airtable from 'airtable';
@@ -12,7 +12,7 @@ export default class Thing extends Datum {
 	isExemplar = false;
 	isEditing = false;
 	isGrabbed = false;
-	s_db_type: string;
+	dbType: string;
 	title: string;
 	color: string;
 	trait: string;
@@ -20,7 +20,7 @@ export default class Thing extends Datum {
 
 	constructor(baseID: string, id: string | null, title = k.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
 		super(baseID, id, isRemotelyStored);
-		this.s_db_type = dbDispatch.db.s_db_type;
+		this.dbType = dbDispatch.db.dbType;
 		this.title = title;
 		this.color = color;
 		this.trait = trait;

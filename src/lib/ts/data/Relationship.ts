@@ -3,18 +3,18 @@ import Airtable from 'airtable';
 import Datum from './Datum';
 
 export default class Relationship extends Datum {
-	idTo: string;
-	idFrom: string;
 	idPredicate: string;
+	dbType: string;
+	idFrom: string;
 	order: number;
-	s_db_type: string;
+	idTo: string;
 
 	constructor(baseID: string, id: string | null, idPredicate: string, idFrom: string, idTo: string, order = 0, isRemotelyStored: boolean) {
 		super(baseID, id, isRemotelyStored);
 		this.idTo = idTo; // idTo is child
 		this.idFrom = idFrom; // idFrom is parent
 		this.idPredicate = idPredicate;
-		this.s_db_type = dbDispatch.db.s_db_type;
+		this.dbType = dbDispatch.db.dbType;
 		this.order = order;
 	}
 

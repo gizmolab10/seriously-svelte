@@ -61,9 +61,9 @@ class PersistLocal {
 		});
 	}
 
-	get s_db_type(): string { return dbDispatch.db.s_db_type; }
-	readFromDBKey(key: string) { return this.readFromKey(key + this.s_db_type); }
-	writeToDBKey(key: string, value: any) { this.writeToKey(key + this.s_db_type, value); }
+	get dbType(): string { return dbDispatch.db.dbType; }
+	readFromDBKey(key: string) { return this.readFromKey(key + this.dbType); }
+	writeToDBKey(key: string, value: any) { this.writeToKey(key + this.dbType, value); }
 	writeToKey(key: string, value: any) { localStorage[key] = JSON.stringify(value); }
 
 	readFromKey(key: string): any | null {
@@ -75,11 +75,11 @@ class PersistLocal {
 		} 
 	}
 
-	s_updateForDBType(s_db_type: string) {
+	s_updateForDBType(dbType: string) {
 		this.okayToPersist = false; // avoid infinite recursion (above for s_path_here & s_paths_grabbed)
 
-		const hereID = this.ignorePaths ? '' : this.readFromKey(PersistID.here + s_db_type) ?? '';
-		const grabbedIDs = this.ignorePaths ? [] : this.readFromKey(PersistID.grabbed + s_db_type) ?? [''];
+		const hereID = this.ignorePaths ? '' : this.readFromKey(PersistID.here + dbType) ?? '';
+		const grabbedIDs = this.ignorePaths ? [] : this.readFromKey(PersistID.grabbed + dbType) ?? [''];
 		s_path_here.set(new Path(hereID));
 		s_paths_grabbed.set(grabbedIDs.map((id: string) => new Path(id)));
 

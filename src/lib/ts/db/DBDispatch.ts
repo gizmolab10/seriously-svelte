@@ -22,7 +22,7 @@ export default class DBDispatch {
 		s_db_type.set(type);
 		this.updateHierarchy(type);
 		s_db_type.subscribe((type: string) => {
-			if (type) {
+			if (type && this.db.dbType != type) {
 				s_path_here.set(new Path());
 				s_paths_grabbed.set([]);
 				this.updateDBForType(type);
@@ -51,13 +51,13 @@ export default class DBDispatch {
 
 	getNextDB(forward: boolean): DBType {
 		if (forward) {
-			switch (this.db.s_db_type) {
+			switch (this.db.dbType) {
 				case DBType.airtable: return DBType.local;
 				case DBType.local:	  return DBType.firebase;
 				default:			  return DBType.airtable;
 			}
 		} else {
-			switch (this.db.s_db_type) {
+			switch (this.db.dbType) {
 				case DBType.airtable: return DBType.firebase;
 				case DBType.local:	  return DBType.airtable;
 				default:			  return DBType.local;
