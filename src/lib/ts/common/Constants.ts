@@ -1,4 +1,4 @@
-import { isMobileDevice } from '../../ts/common/GlobalImports'
+import { Path, isMobileDevice } from '../../ts/common/GlobalImports'
 
 export default class Constants {
 	public halfIncrement: number;
@@ -16,6 +16,7 @@ export default class Constants {
 	public pathSeparator: string;
 	public defaultTitle: string;
 	public lineTitle: string;
+	public rootPath: Path;
 
 	constructor() {
 		this.pathSeparator = '::';
@@ -47,6 +48,7 @@ export default class Constants {
                 }
             }
         }
+		this.rootPath = new Path();
 	}
 }
 

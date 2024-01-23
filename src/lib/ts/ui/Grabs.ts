@@ -1,5 +1,5 @@
-import { get, Path, Thing, Hierarchy } from "../common/GlobalImports";
-import { s_paths_grabbed, s_path_toolsGrab } from '../managers/State';
+import { k, get, Path, Thing, Hierarchy } from "../common/GlobalImports";
+import { s_paths_grabbed } from '../managers/State';
 
 export default class Grabs {
 	hierarchy: Hierarchy;
@@ -35,7 +35,7 @@ export default class Grabs {
 				return paths.slice(-1)[0];
 			}
 		}
-		return this.hierarchy.rootPath;
+		return k.rootPath;
 	}
 
 }

@@ -38,7 +38,7 @@
     })
 
 	$: {
-		const grabbed = $s_paths_grabbed?.filter(p => p.endsWithRelationshipID(thing.id)).length > 0;
+		const grabbed = $s_paths_grabbed?.filter(p => p.matchesPath(widgetWrapper.path)).length > 0;
 		if (isGrabbed != grabbed) {
 			isGrabbed = grabbed;
 			updateColors();

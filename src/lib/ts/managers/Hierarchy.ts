@@ -23,7 +23,6 @@ export default class Hierarchy {
 	_grabs: Grabs | null = null;
 	root: Thing | null = null;
 	isConstructed = false;
-	rootPath = new Path();
 	db: DBInterface;
 
 	get hasNothing(): boolean { return !this.root; }
@@ -56,7 +55,7 @@ export default class Hierarchy {
 	here_restore() {
 		let here = this.thing_getForPath(this.herePath);
 		if (here == null) {
-			this.herePath = this.grabs.path_lastGrabbed?.stripBack() ?? this.rootPath;
+			this.herePath = this.grabs.path_lastGrabbed?.stripBack() ?? k.rootPath;
 		}
 		this.herePath?.becomeHere();
 	}
@@ -69,7 +68,7 @@ export default class Hierarchy {
 			const COMMAND = event.metaKey;
 			const EXTREME = SHIFT && OPTION;
 			const key = event.key.toLowerCase();
-			const rootPath = this.rootPath;
+			const rootPath = k.rootPath;
 			if (!pathGrab) {
 				rootPath.becomeHere();
 				rootPath.grabOnly();		// update crumbs and dots
@@ -98,7 +97,7 @@ export default class Hierarchy {
 				}
 			}
 			switch (key) {
-				case '!':				this.rootPath?.becomeHere(); break;
+				case '!':				k.rootPath?.becomeHere(); break;
 				case '`':               event.preventDefault(); this.latestPathGrabbed_toggleToolsCluster(); break;
 				case 'arrowup':			await this.latestPathGrabbed_rebuild_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
 				case 'arrowdown':		await this.latestPathGrabbed_rebuild_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
@@ -165,7 +164,7 @@ export default class Hierarchy {
 	}
 
 	thingIDs_getByIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<string> {
-		const matches = this.relationships_getByIDPredicateToAndID(idPredicate, to, idThing);
+		const matches = this.relationships_getByPredicateIDToAndID(idPredicate, to, idThing);
 		const ids: Array<string> = [];
 		if (Array.isArray(matches) && matches.length > 0) {
 			for (const relationship of matches) {
@@ -372,7 +371,7 @@ export default class Hierarchy {
 	}
 
 	async thing_getRoots() {
-		let rootPath = this.rootPath;
+		let rootPath = k.rootPath;
 		for (const thing of this.knownTs_byTrait[TraitType.roots]) {
 			if  (thing.title == 'roots') {	// special case TODO: convert to a auery string
 				const rootsPath = rootPath.appendChild(thing) ?? null;
@@ -457,7 +456,7 @@ export default class Hierarchy {
 		}
 	}
 
-	relationships_getByIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Relationship> {
+	relationships_getByPredicateIDToAndID(idPredicate: string, to: boolean, idThing: string): Array<Relationship> {
 		const dict = to ? this.knownRs_byIDTo : this.knownRs_byIDFrom;
 		const matches = dict[idThing] as Array<Relationship>; // filter out bad values (dunno what this does)
 		const array: Array<Relationship> = [];
@@ -472,7 +471,7 @@ export default class Hierarchy {
 	}
 
 	relationships_getByIDPredicateFromAndTo(idPredicate: string, idFrom: string, idTo: string): Relationship | null {
-		const matches = this.relationships_getByIDPredicateToAndID(idPredicate, false, idFrom);
+		const matches = this.relationships_getByPredicateIDToAndID(idPredicate, false, idFrom);
 		if (Array.isArray(matches)) {
 			for (const relationship of matches) {
 				if (relationship.idTo == idTo) {
@@ -549,7 +548,7 @@ export default class Hierarchy {
 
 	relationship_getWhereIDEqualsTo(idThing: string, to: boolean = true) {
 		const idPredicateIsAParentOf = Predicate.idIsAParentOf;
-		const matches = this.relationships_getByIDPredicateToAndID(idPredicateIsAParentOf, to, idThing);
+		const matches = this.relationships_getByPredicateIDToAndID(idPredicateIsAParentOf, to, idThing);
 		if (matches.length > 0) {
 			const relationship = matches[0];
 			return relationship;
@@ -742,7 +741,7 @@ export default class Hierarchy {
 					return;
 				}
 			} else {
-				const rootPath = this.rootPath;
+				const rootPath = k.rootPath;
 				if (EXTREME) {
 					rootPath?.becomeHere();	// tells graph to update line rects
 				} else {
