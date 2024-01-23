@@ -11,9 +11,7 @@ export default class DBDispatch {
 	updateDBForType(type: string) { this.db = this.dbForType(type); }
 	nextDB(forward: boolean) { this.changeDBTo(this.getNextDB(forward)); }
 
-	constructor() {
-		this.db = dbFirebase;
-	}
+	constructor() { this.db = dbFirebase; }
 
 	applyQueryStrings(queryStrings: URLSearchParams) {
 		const type = queryStrings.get('db') ?? persistLocal.readFromKey(PersistID.db) ?? DBType.firebase;
@@ -23,7 +21,7 @@ export default class DBDispatch {
 		this.updateHierarchy(type);
 		s_db_type.subscribe((type: string) => {
 			if (type && this.db.dbType != type) {
-				s_path_here.set(new Path());
+				s_path_here.set(paths.uniquePath());
 				s_paths_grabbed.set([]);
 				this.updateDBForType(type);
 				this.updateHierarchy(type);

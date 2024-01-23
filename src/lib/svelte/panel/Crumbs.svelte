@@ -14,23 +14,9 @@
 	onDestroy(() => { rebuild_signalHandler.disconnect() })
 
 	$: {
-		const _ = $s_path_toolsGrab + $s_path_here;
-		updateAncestors();
-	}
-
-	$: {
-		const trigger = $s_paths_grabbed + $s_path_here;
-		if (trigger || ancestors.length == 0) {
-			const last = path_lastGrabbed()	// start over with new grab
-			if (last) {
-				path = last;
-			}
-		}
-		updateAncestors();
-	}
-
-	function updateAncestors() {
-		if (path) {
+		const trigger = $s_paths_grabbed + $s_path_toolsGrab + $s_path_here;
+		if (!path || trigger || ancestors.length == 0) {
+			path = path_lastGrabbed() ?? k.rootPath;	// assure we have a path
 			ancestors = path.things_ancestry($s_crumbs_width - 132);
 			toggleDraw = !toggleDraw;
 		}

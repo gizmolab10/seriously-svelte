@@ -21,7 +21,7 @@
 	const rebuild_signalHandler = signals.handle_rebuild(() => { graph_fullRebuild(); });
 	window.addEventListener('resize', (event) => { graphRect_update(); });
 	
-	onMount(async () => {
+	onMount(() => {
 		launch.setup();
 		graph_fullRebuild();
 	});

@@ -5,8 +5,44 @@ declare global {
 	}
 	interface String {
 		injectElipsisAt(at: number): string;
+		asyncHash(): Promise<number>;
+		hash(): number;
 	}
 }
+// Async hash function
+Object.defineProperty(String.prototype, 'asyncHash', {
+  value: function() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(this);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        resolve(parseInt(hashHex.substring(0, 15), 16));
+      } catch (error) {
+        console.error('Error in asyncHash:', error);
+        reject(error);
+      }
+    });
+  },
+  writable: true,
+  configurable: true
+});
+
+// Sync hash function (note: this is not truly synchronous)
+Object.defineProperty(String.prototype, 'hash', {
+  value: function() {
+    let result = null;
+    this.asyncHash().then(value => { result = value;});
+	if (!result) {
+		console.log('null hash');
+	}
+    return result;
+  },
+  writable: true,
+  configurable: true
+});
 
 Object.defineProperty(String.prototype, 'injectElipsisAt', {
 	value: function(at: number = 7): string {

@@ -1,6 +1,6 @@
-import { s_user_graphOffset, s_showDetails, s_line_stretch, s_thing_fontFamily } from './State';
 import { s_path_here, s_row_height, s_paths_expanded, s_db_loadTime, s_paths_grabbed } from './State';
-import { Path, Point, dbDispatch } from '../common/GlobalImports'
+import { s_user_graphOffset, s_showDetails, s_line_stretch, s_thing_fontFamily } from './State';
+import { Path, paths, Point, dbDispatch } from '../common/GlobalImports'
 
 export enum PersistID {
 	relationships = 'relationships',
@@ -33,14 +33,14 @@ class PersistLocal {
 
 		const id = this.ignorePaths ? '' : this.readFromDBKey(PersistID.here);
 		s_db_loadTime.set(null);
-		s_path_here.set(new Path(id));
+		s_path_here.set(paths.uniquePath(id));
 		s_row_height.set(this.readFromKey(PersistID.row_height) ?? 20); // sets s_dot_size and s_thing_fontSize
 		s_showDetails.set(this.readFromKey(PersistID.details) ?? false);
 		s_line_stretch.set(this.readFromKey(PersistID.line_stretch) ?? 30);
 		s_thing_fontFamily.set(this.readFromKey(PersistID.font) ?? 'Arial');
 		s_user_graphOffset.set(this.readFromKey(PersistID.origin) ?? new Point());
-		s_paths_grabbed.set(this.ignorePaths ? [] : this.readFromDBKey(PersistID.grabbed)?.map((s: string) => new Path(s)) ?? []);
-		s_paths_expanded.set(this.ignorePaths ? [] : this.readFromDBKey(PersistID.expanded)?.map((e: string) => new Path(e)) ?? []);
+		s_paths_grabbed.set(this.ignorePaths ? [] : this.readFromDBKey(PersistID.grabbed)?.map((s: string) => paths.uniquePath(s)) ?? []);
+		s_paths_expanded.set(this.ignorePaths ? [] : this.readFromDBKey(PersistID.expanded)?.map((e: string) => paths.uniquePath(e)) ?? []);
 
 		s_paths_grabbed.subscribe((paths: Array<Path>) => {
 			if (this.okayToPersist) {
@@ -80,8 +80,8 @@ class PersistLocal {
 
 		const hereID = this.ignorePaths ? '' : this.readFromKey(PersistID.here + dbType) ?? '';
 		const grabbedIDs = this.ignorePaths ? [] : this.readFromKey(PersistID.grabbed + dbType) ?? [''];
-		s_path_here.set(new Path(hereID));
-		s_paths_grabbed.set(grabbedIDs.map((id: string) => new Path(id)));
+		s_path_here.set(paths.uniquePath(hereID));
+		s_paths_grabbed.set(grabbedIDs.map((id: string) => paths.uniquePath(id)));
 
 		this.okayToPersist = true;
 	}

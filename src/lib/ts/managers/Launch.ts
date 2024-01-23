@@ -1,5 +1,5 @@
 import { k, Path, debug, builds, debugReact, PersistID, dbDispatch, persistLocal, isServerLocal, getBrowserType } from '../common/GlobalImports'
-import { s_path_here, s_paths_expanded, s_paths_grabbed, s_showDetails } from './State';
+import { s_setup, s_path_here, s_paths_expanded, s_paths_grabbed, s_showDetails } from './State';
 
 class Launch {
 	queryString: URLSearchParams;
@@ -17,6 +17,7 @@ class Launch {
 		debug.applyQueryStrings(this.queryString);
 		debugReact.applyQueryStrings(this.queryString);
 		dbDispatch.applyQueryStrings(this.queryString); // do this last
+		s_setup();
 	}
 
 	get title(): string {
@@ -41,7 +42,7 @@ class Launch {
 						break;
                     case 'settings': 
 						localStorage.clear();
-						s_path_here.set(new Path());
+						s_path_here.set(paths.uniquePath());
 						s_paths_grabbed.set([]);
 						s_paths_expanded.set([]);
 						break;

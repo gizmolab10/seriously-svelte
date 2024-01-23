@@ -1,5 +1,5 @@
-import { SvelteType, TitleState, dbDispatch, Relationship, SeriouslyRange, AlteringParent } from '../common/GlobalImports';
-import { k, get, Size, Thing, signals, Wrapper, Hierarchy, getWidthOf, Predicate } from '../common/GlobalImports';
+import { k, get, Size, paths, Thing, signals, Wrapper, getWidthOf, Predicate, TitleState } from '../common/GlobalImports';
+import { SvelteType, dbDispatch, Relationship, SeriouslyRange, AlteringParent } from '../common/GlobalImports';
 import { s_dot_size, s_path_here, s_row_height, s_line_stretch, s_title_editing } from '../managers/State';
 import { s_paths_grabbed, s_paths_expanded, s_path_toolsGrab, s_altering_parent } from '../managers/State';
 import { Writable } from 'svelte/store';
@@ -22,14 +22,11 @@ export default class Path {
 		s_paths_grabbed.subscribe(() => { this.thing()?.updateColorAttributes(this); });
 	}
 
-	setup() {
-		this.selectionRange = new SeriouslyRange(0, this.thing()?.titleWidth ?? 0);
-	}
-
 	signal_rebuild()  { signals.signal_rebuild(this); }
 	signal_relayout() { signals.signal_relayout(this); }
 	addWrapper(wrapper: Wrapper, type: SvelteType) { this.wrappers[type] = wrapper; }
-
+	setup() { this.selectionRange = new SeriouslyRange(0, this.thing()?.titleWidth ?? 0); }
+	
 	////////////////////////////////////
 	//			properties			  //
 	////////////////////////////////////
@@ -157,7 +154,7 @@ export default class Path {
 		if (ids.length < 1) {
 			return k.rootPath;
 		}
-		return new Path(ids.join(k.pathSeparator));
+		return paths.uniquePath(ids.join(k.pathSeparator));
 	}
 
 	appendChild(thing: Thing | null): Path {
@@ -174,7 +171,7 @@ export default class Path {
 		if (relationship) {
 			let ids = this.ids;
 			ids.push(relationship.id);
-			return new Path(ids.join(k.pathSeparator));
+			return paths.uniquePath(ids.join(k.pathSeparator));
 		}
 		return this;
 	}
@@ -205,7 +202,7 @@ export default class Path {
 		const array = root ? [root] : [];
 		for (const id of ids) {
 			const thing = dbDispatch.db.hierarchy?.thing_to_getForRelationshipID(id);
-			if (thing) {
+			if (thing && thing != root) {
 				totalWidth += getWidthOf(thing.title);
 				if (totalWidth > thresholdWidth) {
 					break;

@@ -1,5 +1,5 @@
 import { k, get, Path, Thing, Hierarchy } from "../common/GlobalImports";
-import { s_paths_grabbed } from '../managers/State';
+import { s_paths_grabbed } from './State';
 
 export default class Grabs {
 	hierarchy: Hierarchy;
