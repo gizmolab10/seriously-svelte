@@ -287,7 +287,11 @@ export default class Path {
 		const relationship = h.relationships_getByIDPredicateFromAndTo(Predicate.idIsAParentOf, parentPath.thingID, this.thingID);
 		if (parent && relationship && (thing?.parents.length ?? 0) > 1) {
 			h.relationship_forget(relationship);
-			parent.order_normalizeRecursive_remoteMaybe(true);
+			if (parentPath.thing()?.hasChildren) {
+				parent.order_normalizeRecursive_remoteMaybe(true);
+			} else {
+				parentPath.collapse();
+			}
 			await dbDispatch.db.relationship_remoteDelete(relationship);
 		}
 	}
