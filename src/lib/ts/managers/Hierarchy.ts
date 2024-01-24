@@ -13,6 +13,7 @@ export default class Hierarchy {
 	knownR_byID: { [id: string]: Relationship } = {};
 	knownA_byKind: { [kind: string]: Access } = {};
 	knownP_byKind: { [kind: string]: Predicate } = {};
+	knownP_byPathString: { [pathString: string]: Path } = {};
 	knownTs_byTrait: { [trait: string]: Array<Thing> } = {};
 	knownRs_byIDPredicate: KnownRelationships = {};
 	knownRs_byIDFrom: KnownRelationships = {};
@@ -559,6 +560,18 @@ export default class Hierarchy {
 	////////////////////////
 	//		  PATHS		  //
 	////////////////////////
+
+	add(path: Path) { this.knownP_byPathString[path.pathString.hash()] = path; }
+	find(pathString: string) { return this.knownP_byPathString[pathString.hash()]; }
+
+	uniquePath(pathString: string = '') {
+		let path = this.find(pathString)
+		if (!path) {
+			path = new Path(pathString);
+			this.add(path);
+		}
+		return path;
+	}
 
 	async path_edit_remoteCreateChildOf(parentPath: Path | null) {
 		const parent = parentPath?.thing();

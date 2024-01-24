@@ -1,4 +1,4 @@
-import { k, Path, debug, builds, debugReact, PersistID, dbDispatch, persistLocal, isServerLocal, getBrowserType } from '../common/GlobalImports'
+import { k, debug, builds, debugReact, PersistID, dbDispatch, persistLocal, isServerLocal, getBrowserType } from '../common/GlobalImports'
 import { s_setup, s_path_here, s_paths_expanded, s_paths_grabbed, s_showDetails } from './State';
 
 class Launch {
@@ -42,7 +42,7 @@ class Launch {
 						break;
                     case 'settings': 
 						localStorage.clear();
-						s_path_here.set(paths.uniquePath());
+						s_path_here.set(dbDispatch.db.hierarchy.uniquePath());
 						s_paths_grabbed.set([]);
 						s_paths_expanded.set([]);
 						break;

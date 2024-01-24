@@ -154,7 +154,7 @@ export default class Path {
 		if (ids.length < 1) {
 			return k.rootPath;
 		}
-		return paths.uniquePath(ids.join(k.pathSeparator));
+		return dbDispatch.db.hierarchy.uniquePath(ids.join(k.pathSeparator));
 	}
 
 	appendChild(thing: Thing | null): Path {
@@ -171,7 +171,7 @@ export default class Path {
 		if (relationship) {
 			let ids = this.ids;
 			ids.push(relationship.id);
-			return paths.uniquePath(ids.join(k.pathSeparator));
+			return dbDispatch.db.hierarchy.uniquePath(ids.join(k.pathSeparator));
 		}
 		return this;
 	}

@@ -13,7 +13,7 @@ import { dbDispatch } from '../db/DBDispatch';
 import { onMount, onDestroy } from 'svelte';
 import { launch } from '../managers/Launch';
 import { SvelteType } from '../ui/Wrapper';
-import { paths } from '../managers/Paths';
+import { paths } from '../../../../aside/2024/January/Paths';
 import { SeriouslyRange } from './Types';
 import { get } from 'svelte/store';
 import { builds } from './Builds';

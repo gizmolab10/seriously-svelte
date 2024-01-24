@@ -1,4 +1,4 @@
-import { Path, paths, isMobileDevice } from '../../ts/common/GlobalImports'
+import { Path, dbDispatch, isMobileDevice } from '../../ts/common/GlobalImports'
 
 export default class Constants {
 	public halfIncrement: number;
@@ -48,7 +48,7 @@ export default class Constants {
                 }
             }
         }
-		this.rootPath = paths.uniquePath();
+		this.rootPath = dbDispatch.db.hierarchy.uniquePath();
 	}
 }
 
