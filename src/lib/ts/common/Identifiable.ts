@@ -1,4 +1,4 @@
-import { removeAll } from './Utilities';
+import { u } from './Utilities';
 import { v4 as uuid } from 'uuid';
 
 export default class Identifiable {
@@ -8,6 +8,6 @@ export default class Identifiable {
 		this.id = id ?? Identifiable.newID;
 	}
 	
-	static get newID(): string { return 'NEW' + removeAll('-', uuid()).slice(10, 24); } // use last, most-unique bytes of uuid
+	static get newID(): string { return 'NEW' + u.removeAll('-', uuid()).slice(10, 24); } // use last, most-unique bytes of uuid
 	
 }

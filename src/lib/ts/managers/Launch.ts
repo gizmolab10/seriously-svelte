@@ -1,4 +1,4 @@
-import { k, debug, builds, debugReact, PersistID, dbDispatch, persistLocal, isServerLocal, getBrowserType } from '../common/GlobalImports'
+import { k, u, debug, builds, debugReact, PersistID, dbDispatch, persistLocal } from '../common/GlobalImports'
 import { s_setup, s_path_here, s_paths_expanded, s_paths_grabbed, s_showDetails } from './State';
 
 class Launch {
@@ -23,8 +23,8 @@ class Launch {
 	get title(): string {
 		const baseID = dbDispatch.db.baseID;
 		const name = baseID ? (baseID! + ', ') : '';
-		const host = isServerLocal() ? 'local' : 'remote';
-		return `Seriously (${host}, ${name}${getBrowserType()}, α)`;
+		const host = u.isServerLocal() ? 'local' : 'remote';
+		return `Seriously (${host}, ${name}${u.getBrowserType()}, α)`;
 	}
 
 	applyQueryStrings(queryString: URLSearchParams) {

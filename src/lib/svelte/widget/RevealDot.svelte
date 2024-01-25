@@ -1,6 +1,6 @@
 <script>
 	import { s_paths_expanded, s_dot_size, s_altering_parent, s_paths_grabbed, s_path_toolsGrab } from '../../ts/managers/State';
-	import { k, get, Size, Thing, Point, debug, ZIndex, ignore, svgPath, signals } from "../../ts/common/GlobalImports";
+	import { k, u, get, Size, Thing, Point, debug, ZIndex, svgPath, signals } from "../../ts/common/GlobalImports";
 	import { onMount, Wrapper, Direction, onDestroy, dbDispatch, SvelteType } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte';
 	export let widgetWrapper;
@@ -136,11 +136,11 @@
 
 <button class='dot'
 	bind:this={button}
-	on:blur={ignore}
-	on:focus={ignore}
-	on:keyup={ignore}
-	on:keydown={ignore}
-	on:keypress={ignore}
+	on:blur={u.ignore}
+	on:focus={u.ignore}
+	on:keyup={u.ignore}
+	on:keydown={u.ignore}
+	on:keypress={u.ignore}
 	on:mouseup={handleMouseUp}
 	on:click={handleSingleClick}
 	on:mouseout={handleMouseOut}

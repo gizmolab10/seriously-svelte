@@ -1,6 +1,6 @@
-import { k, get, noop, User, Path, Thing, Grabs, debug, Access, remove, signals, TraitType, Predicate } from '../common/GlobalImports';
-import { Relationship, persistLocal, CreationOptions, sort_byOrder, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { s_title_editing, s_isBusy, s_path_here, s_paths_grabbed, s_things_arrived, s_path_toolsGrab } from './State';
+import { k, u, get, User, Path, Thing, Grabs, debug, Access, signals, TraitType } from '../common/GlobalImports';
+import { Predicate, Relationship, persistLocal, CreationOptions } from '../common/GlobalImports';
 import DBInterface from '../db/DBInterface';
 
 type KnownRelationships = { [id: string]: Array<Relationship> }
@@ -155,7 +155,7 @@ export default class Hierarchy {
 					array.push(thing);
 				}
 			}
-			return sort_byOrder(array);
+			return u.sort_byOrder(array);
 		}
 		return [];
 	}
@@ -203,7 +203,7 @@ export default class Hierarchy {
 						}
 						parentPath?.appendChild(parent);
 						parent = siblings[index];
-						orders_normalize_remoteMaybe(parent.children);
+						u.orders_normalize_remoteMaybe(parent.children);
 					} else if (!grandparentPath.isVisible) {
 						grandparentPath.becomeHere();
 					}
@@ -306,7 +306,7 @@ export default class Hierarchy {
 		if (!thing) {
 			thing = new Thing(baseID, id, title, color, trait, order, isRemotelyStored);
 			if (baseID != this.db.baseID) {
-				noop()
+				u.noop()
 			}
 			if (thing.isBulkAlias) {
 				thing.needsBulkFetch = true;
@@ -329,7 +329,7 @@ export default class Hierarchy {
 		if (thing) {
 			thing.needsBulkFetch = false;	// this id is from bulk fetch all
 			thing.bulkRootID = id;			// so children relatiohships will work
-			thing.color = color;			// N.B., ignore trait
+			thing.color = color;			// N.B., u trait
 			this.knownT_byID[id] = thing;
 			// this.db.thing_remoteUpdate(thing);		// not needed if bulk id not remotely stored
 		}
@@ -503,7 +503,7 @@ export default class Hierarchy {
 	}
 
 	relationship_forget(relationship: Relationship) {
-		remove<Relationship>(this.knownRs, relationship);
+		u.remove<Relationship>(this.knownRs, relationship);
 		delete this.knownR_byID[relationship.id];
 		this.relationship_forgetByKnown(this.knownRs_byIDTo, relationship.idTo, relationship);
 		this.relationship_forgetByKnown(this.knownRs_byIDFrom, relationship.idFrom, relationship);
@@ -512,7 +512,7 @@ export default class Hierarchy {
 
 	relationship_forgetByKnown(known: KnownRelationships, idRelationship: string, relationship: Relationship) {
 		let array = known[idRelationship] ?? [];
-		remove<Relationship>(array, relationship)
+		u.remove<Relationship>(array, relationship)
 		known[idRelationship] = array;
 	}
 
@@ -637,7 +637,7 @@ export default class Hierarchy {
 				await this.db.thing_remember_remoteCreate(child);			// for everything below, need to await child.id fetched from dbDispatch
 			}
 			const relationship = await this.db.hierarchy.relationship_remember_remoteCreateUnique(baseID, null, idPredicateIsAParentOf, parentID, child.id, child.order, CreationOptions.getRemoteID)
-			await orders_normalize_remoteMaybe(thing.children);		// write new order values for relationships
+			await u.orders_normalize_remoteMaybe(thing.children);		// write new order values for relationships
 			return relationship;
 		}
 	}
@@ -682,12 +682,12 @@ export default class Hierarchy {
 				}
 				signals.signal_relayout_fromHere();
 			} else if (k.allowGraphEditing && OPTION) {
-				orders_normalize_remoteMaybe(parent.children, false);
+				u.orders_normalize_remoteMaybe(parent.children, false);
 				const wrapped = up ? (index == 0) : (index == siblings.length - 1);
 				const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
 				const newOrder = newIndex + goose;
 				thing.order_setTo(newOrder);
-				await orders_normalize_remoteMaybe(parent.children);
+				await u.orders_normalize_remoteMaybe(parent.children);
 				signals.signal_rebuild_fromHere();
 			}
 		}
@@ -814,7 +814,7 @@ export default class Hierarchy {
 							index = siblingPaths.length - 1;
 						}
 						newPath = siblingPaths[index];
-						orders_normalize_remoteMaybe(path.parent?.children ?? []);
+						u.orders_normalize_remoteMaybe(path.parent?.children ?? []);
 					} else if (grandparentPath && !grandparentPath.isVisible) {
 						grandparentPath.becomeHere();
 					}

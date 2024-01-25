@@ -1,6 +1,7 @@
-import { k, get, Rect, Path, Point, TitleState, roundToEven } from '../common/GlobalImports';
+import { k, get, Rect, Path, Point, TitleState } from '../common/GlobalImports';
 import { signals } from '../common/Signals';
 import { writable } from 'svelte/store';
+import { u } from '../common/Utilities'; // import separately from globals to avoid recursive initialization
 let interval : NodeJS.Timeout | null = null;
 
 export const s_title_editing	= writable<TitleState | null>();
@@ -26,9 +27,9 @@ export const s_graphRect		= writable<Rect>();
 export const s_path_here		= writable<Path>();
 
 s_row_height.subscribe((height) => {
-	s_thing_fontSize.set(roundToEven(height * .7));
-	s_line_stretch.set(roundToEven(height * 1.25));
-	s_dot_size.set(roundToEven(height * .65));
+	s_thing_fontSize.set(u.roundToEven(height * .7));
+	s_line_stretch.set(u.roundToEven(height * 1.25));
+	s_dot_size.set(u.roundToEven(height * .65));
 });
 
 s_altering_parent.subscribe((alteration: string | null)=> {

@@ -1,6 +1,6 @@
 import { s_path_here, s_row_height, s_paths_expanded, s_db_loadTime, s_paths_grabbed } from './State';
 import { s_user_graphOffset, s_showDetails, s_line_stretch, s_thing_fontFamily } from './State';
-import { Path, paths, Point, dbDispatch } from '../common/GlobalImports'
+import { Path, Point, dbDispatch } from '../common/GlobalImports'
 
 export enum PersistID {
 	relationships = 'relationships',
@@ -26,7 +26,7 @@ class PersistLocal {
 		}
 
 		// localStorage.clear();
-		// const isLocal = isServerLocal();
+		// const isLocal = u.isServerLocal();
 
 		// this.writeToKey(PersistID.row_height, 20);
 		// this.writeToKey(PersistID.dot_size, 13);

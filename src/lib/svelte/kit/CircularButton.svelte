@@ -1,5 +1,5 @@
 <script>
-	import { ignore } from '../../ts/common/GlobalImports';
+	import { u } from '../../ts/common/GlobalImports';
 	export let borderColor = '#333';
 	export let textColor = '#400';
 	export let color = '#ccc';
@@ -11,7 +11,7 @@
 
 <div
 	on:click={onClick}
-	on:keypress={ignore}
+	on:keypress={u.ignore}
 	style='
 		position: absolute;
 		left: {left}px;

@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { dbDispatch, PersistID, SignalKind, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
-	import { s_line_stretch, s_showDetails, s_user_graphOffset, s_id_popupView } from '../../ts/managers/State';
-	import { ignore, onMount, onDestroy, debugReact, Predicate, ButtonID } from '../../ts/common/GlobalImports';
-	import { k, Path, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/GlobalImports';
 	import { s_title_editing, s_path_here, s_graphRect, s_dot_size, s_paths_grabbed } from '../../ts/managers/State';
+	import { k, u, Path, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/GlobalImports';
+	import { s_line_stretch, s_showDetails, s_user_graphOffset, s_id_popupView } from '../../ts/managers/State';
+	import { onMount, onDestroy, debugReact, Predicate, ButtonID } from '../../ts/common/GlobalImports';
 	import FocusRevealDot from './FocusRevealDot.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Children from './Children.svelte';
@@ -59,7 +59,6 @@
 		if ($s_user_graphOffset != origin) {
 			persistLocal.writeToKey(PersistID.origin, origin);
 			$s_user_graphOffset = origin;
-			// debugReact.log_origins(`GRAPH $s_user_graphOffset ${here.description}`);
 			updateOrigins();
 			toggle = !toggle;	// rebuild entire graph
 		}
@@ -77,7 +76,6 @@
 	
 	$: {
 		if ($s_dot_size > 0) {
-			// debugReact.log_origins(`GRAPH $s_dot_size ${here.description}`);
 			updateOrigins();
 		}
 	}
@@ -86,7 +84,6 @@
 		if (here == null || here.id != $s_path_here) {
 			const h = dbDispatch.db.hierarchy;
 			here = !$s_path_here ? h.root : h.thing_getForPath($s_path_here);
-			// debugReact.log_origins(`GRAPH $s_path_here ${here.description}`);
 			updateOrigins();
 			toggle = !toggle;	// also cause entire graph to be replaced
 		}
@@ -135,9 +132,9 @@
 			z-index: {ZIndex.panel};'>
 		<div class='graph' key={toggle}
 			style='transform: translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px);'
-			on:keyup={ignore}
-			on:keydown={ignore}
-			on:keypress={ignore}
+			on:keyup={u.ignore}
+			on:keydown={u.ignore}
+			on:keypress={u.ignore}
 			on:click={() => { $s_id_popupView = null; }}>
 			{#if debug.colors}
 				<Box rect={redRect} color=red/>

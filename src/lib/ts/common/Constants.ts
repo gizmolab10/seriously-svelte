@@ -1,4 +1,4 @@
-import { Path, dbDispatch, isMobileDevice } from '../../ts/common/GlobalImports'
+import { u, Path, dbDispatch } from '../../ts/common/GlobalImports'
 
 export default class Constants {
 	public halfIncrement: number;
@@ -25,7 +25,7 @@ export default class Constants {
 		this.adminBulkName = 'Jonathan Sand';
 		this.defaultTitle = 'Please, enter a title';
 		this.lineTitle = '------------------------';
-		this.leftJustifyGraph = isMobileDevice();
+		this.leftJustifyGraph = u.isMobileDevice();
 		this.allowHorizontalScrolling = true;
 		this.allowGraphEditing = true;
 		this.allowTitleEditing = true;

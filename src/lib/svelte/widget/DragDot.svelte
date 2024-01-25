@@ -1,5 +1,5 @@
 <script>
-	import { k, Size, Point, Thing, debug, ZIndex, onMount, ignore, signals, svgPath } from "../../ts/common/GlobalImports";
+	import { k, u, Size, Point, Thing, debug, ZIndex, onMount, signals, svgPath } from "../../ts/common/GlobalImports";
 	import { Wrapper, Direction, onDestroy, dbDispatch, SvelteType, AlteringParent } from "../../ts/common/GlobalImports";
 	import { s_dot_size, s_paths_grabbed, s_path_toolsGrab } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
@@ -96,6 +96,7 @@
 	$: {
 		if ($s_dot_size > 0) {
 			size = $s_dot_size;
+			// TODO: change scalable path and position when altering state changes
 			scalablePath = svgPath.oval(size, false);
 			left = 1 - (size / 2); // offset from center?
 			top = widgetWrapper.path.toolsGrabbed ? 23 : -size / 2 + 2;
@@ -118,11 +119,11 @@
 
 <button class='dot'
 	bind:this={button}
-	on:blur={ignore}
-	on:focus={ignore}
-	on:keyup={ignore}
-	on:keydown={ignore}
-	on:keypress={ignore}
+	on:blur={u.ignore}
+	on:focus={u.ignore}
+	on:keyup={u.ignore}
+	on:keydown={u.ignore}
+	on:keypress={u.ignore}
 	on:mouseup={handleMouseUp}
 	on:click={handleSingleClick}
 	on:mouseout={handleMouseOut}

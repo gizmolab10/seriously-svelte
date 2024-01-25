@@ -1,6 +1,6 @@
 <script lang=ts>
-	import { k, Rect, Size, Point, Thing, debug, signals, onMount, Layout, LineRect, onDestroy } from '../../ts/common/GlobalImports';
-	import { DebugFlag, debugReact, LineCurveType, orders_normalize_remoteMaybe } from '../../ts/common/GlobalImports';
+	import { k, Rect, Size, Point, Thing, debug, signals, onMount, Layout } from '../../ts/common/GlobalImports';
+	import { LineRect, onDestroy, DebugFlag, debugReact, LineCurveType } from '../../ts/common/GlobalImports';
 	import { s_dot_size, s_graphRect, s_line_stretch } from '../../ts/managers/State';
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
@@ -39,7 +39,7 @@
 			if (now - prior > 100) {
 				prior = now;
 				setTimeout(async () => { // delay until all other handlers for this signal are done TODO: WHY?
-					await orders_normalize_remoteMaybe(thing.children);
+					await u.orders_normalize_remoteMaybe(thing.children);
 					debugReact.log_layout(`CHILDREN signal ${thing.description}`);
 					layoutChildren();
 					if (signalPath) { // only recurse if starting at a specific signalPath

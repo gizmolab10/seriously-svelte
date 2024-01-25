@@ -1,4 +1,4 @@
-import { k, get, Size, paths, Thing, signals, Wrapper, getWidthOf, Predicate, TitleState } from '../common/GlobalImports';
+import { k, u, get, Size, Thing, signals, Wrapper, Predicate, TitleState } from '../common/GlobalImports';
 import { SvelteType, dbDispatch, Relationship, SeriouslyRange, AlteringParent } from '../common/GlobalImports';
 import { s_dot_size, s_path_here, s_row_height, s_line_stretch, s_title_editing } from '../managers/State';
 import { s_paths_grabbed, s_paths_expanded, s_path_toolsGrab, s_altering_parent } from '../managers/State';
@@ -203,7 +203,7 @@ export default class Path {
 		for (const id of ids) {
 			const thing = dbDispatch.db.hierarchy?.thing_to_getForRelationshipID(id);
 			if (thing && thing != root) {
-				totalWidth += getWidthOf(thing.title);
+				totalWidth += u.getWidthOf(thing.title);
 				if (totalWidth > thresholdWidth) {
 					break;
 				}
@@ -332,7 +332,7 @@ export default class Path {
 	}
 
 	toggleToolsGrab() {
-		if (get(s_path_toolsGrab)) { // ignore if no reveal dot set s_path_toolsGrab
+		if (get(s_path_toolsGrab)) { // u.ignore if no reveal dot set s_path_toolsGrab
 			if (this.toolsGrabbed) {
 				s_path_toolsGrab.set(null);
 			} else {

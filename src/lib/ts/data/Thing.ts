@@ -1,5 +1,5 @@
-import { k, get, noop, Path, Datum, debug, Predicate, Hierarchy, DebugFlag } from '../common/GlobalImports';
-import { TraitType, getWidthOf, dbDispatch, orders_normalize_remoteMaybe } from '../common/GlobalImports';
+import { k, u, get, Path, Datum, debug, Predicate, Hierarchy, DebugFlag } from '../common/GlobalImports';
+import { TraitType, dbDispatch } from '../common/GlobalImports';
 import { s_path_here } from '../managers/State';
 import Airtable from 'airtable';
 
@@ -40,7 +40,7 @@ export default class Thing extends Datum {
 	get hasChildren():				  boolean { return this.children.length > 0; }
 	get hierarchy():				Hierarchy { return dbDispatch.db.hierarchy; }
 	get hasParents():				  boolean { return this.parents.length > 0; }
-	get titleWidth():				   number { return getWidthOf(this.title) }
+	get titleWidth():				   number { return u.getWidthOf(this.title) }
 	get firstChild():					Thing { return this.children[0]; }
 
 	get hasGrandChildren(): boolean {
@@ -70,7 +70,7 @@ export default class Thing extends Datum {
 
 	updateColorAttributes(path: Path) {
 		if (path.isEditing) {
-			noop();
+			u.noop();
 		}
 		const border = (path.isEditing ? 'dashed' : 'solid') + ' 1px ';
 		const hover = border + this.revealColor(true, path);
@@ -97,7 +97,7 @@ export default class Thing extends Datum {
 	order_normalizeRecursive_remoteMaybe(remoteWrite: boolean, visited: Array<string> = []) {
 		const children = this.children;
 		if (!visited.includes(this.id) && children && children.length > 1) {
-			orders_normalize_remoteMaybe(children, remoteWrite);
+			u.orders_normalize_remoteMaybe(children, remoteWrite);
 			for (const child of children) {
 				child.order_normalizeRecursive_remoteMaybe(remoteWrite, [...visited, this.id]);
 			}

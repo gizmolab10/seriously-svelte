@@ -1,7 +1,7 @@
-import { k, get, Thing, debug, launch, DBType, signals, TraitType, DataKind, Hierarchy, copyObject, DebugFlag } from '../common/GlobalImports';
-import { Predicate, dbDispatch, Relationship, CreationOptions, convertToObject, orders_normalize_remoteMaybe } from '../common/GlobalImports';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection, onSnapshot, deleteField, getFirestore } from 'firebase/firestore';
 import { DocumentData, DocumentChange, QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
+import { k, u, get, Thing, debug, launch, DBType, signals, TraitType, DataKind, Hierarchy, DebugFlag } from '../common/GlobalImports';
+import { Predicate, dbDispatch, Relationship, CreationOptions } from '../common/GlobalImports';
 import { s_build } from '../managers/State';
 import { initializeApp } from "firebase/app";
 import DBInterface from './DBInterface';
@@ -191,7 +191,7 @@ export default class DBFirebase implements DBInterface {
 
 	setup_remoteHandler(baseID: string, dataKind: DataKind, collection: CollectionReference) {
 		onSnapshot(collection, (snapshot) => {
-			if (this.hierarchy.isConstructed) {		// ignore snapshots caused by data written to server
+			if (this.hierarchy.isConstructed) {		// u.ignore snapshots caused by data written to server
 				if (this.deferSnapshots) {
 					this.snapshot_deferOne(baseID, dataKind, snapshot);
 				} else {
@@ -220,7 +220,7 @@ export default class DBFirebase implements DBInterface {
 					const remoteRelationship = new RemoteRelationship(data);
 					if (remoteRelationship) {
 						let relationship = h.knownR_byID[id];
-						const original = !relationship ? null : copyObject(relationship);
+						const original = !relationship ? null : u.copyObject(relationship);
 						switch (change.type) {
 							case 'added':
 								if (relationship || remoteRelationship.isEqualTo(this.addedRelationship)) {
@@ -363,8 +363,8 @@ export default class DBFirebase implements DBInterface {
 		const root = new Thing(this.baseID, null, this.baseID, 'coral', TraitType.root, 0, true);
 		const thing = new Thing(this.baseID, null, 'Click this text to edit it', 'purple', '', 0, true);
 		this.hierarchy.root = root;
-		const thingRef = await addDoc(collectionRef, convertToObject(thing, fields));	// N.B. these will be fetched, shortly
-		const rootRef = await addDoc(collectionRef, convertToObject(root, fields));		// no need to remember now
+		const thingRef = await addDoc(collectionRef, u.convertToObject(thing, fields));	// N.B. these will be fetched, shortly
+		const rootRef = await addDoc(collectionRef, u.convertToObject(root, fields));		// no need to remember now
 		thing.id = thingRef.id;
 		root.id = rootRef.id;
 		root.log(DebugFlag.remote, 'CREATE T');
