@@ -3,6 +3,8 @@ import { u, Path, dbDispatch } from '../../ts/common/GlobalImports'
 export default class Constants {
 	public halfIncrement: number;
 	public detailsMargin: number;
+	public bandHeightAtTop: number;
+	public titleHeightAtTop: number;
 	public toolsClusterHeight: number;
 	public longClickThreshold: number;
 	public doubleClickThreshold: number;
@@ -32,6 +34,8 @@ export default class Constants {
 		this.doubleClickThreshold = 100;
 		this.longClickThreshold = 500;
 		this.toolsClusterHeight = 80;
+		this.titleHeightAtTop = 50;
+		this.bandHeightAtTop = 35;
 		this.halfIncrement = 0.5;
 		this.detailsMargin = 101;
 	}

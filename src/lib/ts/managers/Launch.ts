@@ -1,5 +1,5 @@
 import { k, u, debug, builds, debugReact, PersistID, dbDispatch, persistLocal } from '../common/GlobalImports'
-import { s_setup, s_path_here, s_paths_expanded, s_paths_grabbed, s_showDetails } from './State';
+import { s_setup, s_path_here, s_title_atTop, s_paths_expanded, s_paths_grabbed, s_showDetails } from './State';
 
 class Launch {
 	queryString: URLSearchParams;
@@ -33,6 +33,10 @@ class Launch {
 			persistLocal.writeToKey(PersistID.details, false);
 			s_showDetails.set(false);
 		}
+		if (queryString.get('titleAtTop') === 'true') {
+			persistLocal.writeToKey(PersistID.title_atTop, true);
+			s_title_atTop.set(true);
+		}
         if (erase) {
             const flags = erase.split(',');
             for (const option of flags) {
@@ -45,6 +49,8 @@ class Launch {
 						s_path_here.set(dbDispatch.db.hierarchy.uniquePath());
 						s_paths_grabbed.set([]);
 						s_paths_expanded.set([]);
+						break;
+					case 'titleAtTop':
 						break;
                 }
             }

@@ -1,8 +1,8 @@
 <script>
 	import { k, get, Path, Rect, Size, Point, Thing, launch, DBType, ZIndex, signals, onMount, ButtonID } from '../../ts/common/GlobalImports';
 	import { Hierarchy, PersistID, dbDispatch, debugReact, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
+	import { s_build, s_isBusy, s_path_here, s_db_type, s_graphRect, s_title_atTop } from '../../ts/managers/State';
 	import { s_id_popupView, s_showDetails, s_things_arrived, s_thing_fontSize } from '../../ts/managers/State';
-	import { s_build, s_isBusy, s_path_here, s_db_type, s_graphRect } from '../../ts/managers/State';
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import LabelButton from '../kit/LabelButton.svelte';
@@ -11,6 +11,8 @@
 	import Help from '../help/Help.svelte';
 	import Details from './Details.svelte';
 	import Crumbs from './Crumbs.svelte';
+	const topBandHeight = k.bandHeightAtTop - 2;
+	const bottomOfTitle = k.bandHeightAtTop + k.titleHeightAtTop;
 	let herePath = Path;
 	let toggle = false;
 	let left = 14;
@@ -111,7 +113,7 @@
 	<div class='leftSide'
 		style='
 			z-index: {ZIndex.frontmost};
-			height: {$s_showDetails ? '100%' : '33px'};'>
+			height: {$s_showDetails ? '100%' : {topBandHeight} + 'px'};'>
 		<CircularButton left=15
 			borderColor='white'
 			onClick={details_buttonClicked}>
@@ -128,8 +130,8 @@
 			<Details/>
 		{/if}
 	</div>
-	<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: -10px; top: 32px; width: {$s_id_popupView ? '111px' : '110%'};'></div>
-	<div class='verticalLine' style='height: {$s_showDetails && $s_id_popupView == null ? '100%' : '33px'}; z-index: {ZIndex.frontmost};'></div>
+	<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: -10px; top: {topBandHeight}px; width: {$s_id_popupView ? '111px' : '110%'};'></div>
+	<div class='verticalLine' style='height: {$s_showDetails && $s_id_popupView == null ? '100%' : topBandHeight + 'px'}; z-index: {ZIndex.frontmost};'></div>
 	<div class='rightSide' style='
 		left: {$s_showDetails ? 100 : 0}px;
 		z-index: {ZIndex.panel};
@@ -143,13 +145,15 @@
 			<div class='top' style='z-index: {ZIndex.frontmost}'>
 				<Crumbs/>
 			</div>
-			<div class='topTitle'
-				style='color: {$s_path_here.thing()?.color};
-					z-index: {ZIndex.frontmost};
-					left: {$s_showDetails ? '100px' : '-1px'};'>
-				{$s_path_here.thing()?.title}
-			</div>
-			<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: {$s_showDetails ? k.detailsMargin : 0}px; top: 85px;'></div>
+			{#if $s_title_atTop}
+				<div class='topTitle'
+					style='color: {$s_path_here.thing()?.color};
+						z-index: {ZIndex.frontmost};
+						left: {$s_showDetails ? '100px' : '-1px'};'>
+					{$s_path_here.thing()?.title}
+				</div>
+				<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: {$s_showDetails ? k.detailsMargin : 0}px; top: {k.bottomOfTitle}px;'></div>
+			{/if}
 			{#key toggle}
 				<Graph/>
 			{/key}

@@ -1,10 +1,11 @@
 <script lang='ts'>
+	import { s_title_editing, s_path_here, s_graphRect, s_dot_size, s_title_atTop, s_paths_grabbed } from '../../ts/managers/State';
 	import { dbDispatch, PersistID, SignalKind, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
-	import { s_title_editing, s_path_here, s_graphRect, s_dot_size, s_paths_grabbed } from '../../ts/managers/State';
 	import { k, u, Path, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/GlobalImports';
 	import { s_line_stretch, s_showDetails, s_user_graphOffset, s_id_popupView } from '../../ts/managers/State';
 	import { onMount, onDestroy, debugReact, Predicate, ButtonID } from '../../ts/common/GlobalImports';
 	import FocusRevealDot from './FocusRevealDot.svelte';
+	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Children from './Children.svelte';
 	import Box from '../kit/Box.svelte';
@@ -92,7 +93,7 @@
 	function updateOrigins() {
 		if (here) {
 			childrenSize = $s_path_here.visibleProgeny_size.asPoint;
-			const mysteryOffset = new Point(($s_showDetails ? -92 : 8) - (childrenSize.x / 2), -85);
+			const mysteryOffset = new Point(($s_showDetails ? -92 : 8) - (childrenSize.x / 2), $s_title_atTop ? -85 : -35);
 			origin_ofFirstReveal = $s_graphRect.center.offsetBy(mysteryOffset);
 			if (k.leftJustifyGraph) {
 				origin_ofFirstReveal.x = 25;
@@ -141,10 +142,14 @@
 				<Box rect={blueRect} color=blue/>
 				<Box rect={greenRect} color=green half={true}/>
 			{/if}
-			{#if $s_path_here.isGrabbed}
-				<Circle radius={10} center={origin_ofFirstReveal} color={here.color} thickness=1/>
+			{#if $s_title_atTop}
+				{#if $s_path_here.isGrabbed}
+					<Circle radius={10} center={origin_ofFirstReveal} color={here.color} thickness=1/>
+				{/if}
+				<FocusRevealDot here={here} path={$s_path_here} center={origin_ofFirstReveal.offsetBy(new Point(-12, -11))}/>
+			{:else}
+				<Widget thing={here} path={$s_path_here} origin={origin_ofFirstReveal.offsetBy(new Point(-20 - here.titleWidth, -9))}/>
 			{/if}
-			<FocusRevealDot here={here} path={$s_path_here} center={origin_ofFirstReveal.offsetBy(new Point(-12, -11))}/>
 			<Children thing={here} path={$s_path_here} origin={origin_ofChildren}/>
 		</div>
 	</div>

@@ -1,10 +1,11 @@
-import { s_path_here, s_row_height, s_paths_expanded, s_db_loadTime, s_paths_grabbed } from './State';
+import { s_path_here, s_row_height, s_paths_expanded, s_db_loadTime, s_title_atTop, s_paths_grabbed } from './State';
 import { s_user_graphOffset, s_showDetails, s_line_stretch, s_thing_fontFamily } from './State';
 import { Path, Point, dbDispatch } from '../common/GlobalImports'
 
 export enum PersistID {
 	relationships = 'relationships',
 	line_stretch  = 'line_stretch',
+	title_atTop   = 'title_atTop',
 	row_height    = 'row_height',
 	expanded	  = 'expanded',
 	grabbed		  = 'grabbed',
@@ -21,22 +22,22 @@ class PersistLocal {
 	ignorePaths = !this.usesRelationships || this.usesRelationships == 'undefined';
 
 	restore() {
-		if (this.ignorePaths) {
-			this.writeToKey(PersistID.relationships, true);
-		}
-
 		// localStorage.clear();
 		// const isLocal = u.isServerLocal();
-
 		// this.writeToKey(PersistID.row_height, 20);
 		// this.writeToKey(PersistID.dot_size, 13);
 
+		this.writeToKey(PersistID.title_atTop, false);
+		if (this.ignorePaths) {
+			this.writeToKey(PersistID.relationships, true);
+		}
 		const id = this.ignorePaths ? '' : this.readFromDBKey(PersistID.here);
 		s_db_loadTime.set(null);
 		s_path_here.set(dbDispatch.db.hierarchy.uniquePath(id));
 		s_row_height.set(this.readFromKey(PersistID.row_height) ?? 20); // sets s_dot_size and s_thing_fontSize
 		s_showDetails.set(this.readFromKey(PersistID.details) ?? false);
 		s_line_stretch.set(this.readFromKey(PersistID.line_stretch) ?? 30);
+		s_title_atTop.set(this.readFromKey(PersistID.title_atTop) ?? false);
 		s_thing_fontFamily.set(this.readFromKey(PersistID.font) ?? 'Arial');
 		s_user_graphOffset.set(this.readFromKey(PersistID.origin) ?? new Point());
 		s_paths_grabbed.set(this.ignorePaths ? [] : this.readFromDBKey(PersistID.grabbed)?.map((s: string) => dbDispatch.db.hierarchy.uniquePath(s)) ?? []);

@@ -1,5 +1,5 @@
 <script lang=ts>
-	import { k, Rect, Size, Point, Thing, debug, signals, onMount, Layout } from '../../ts/common/GlobalImports';
+	import { k, u, Rect, Size, Point, Thing, debug, signals, onMount, Layout } from '../../ts/common/GlobalImports';
 	import { LineRect, onDestroy, DebugFlag, debugReact, LineCurveType } from '../../ts/common/GlobalImports';
 	import { s_dot_size, s_graphRect, s_line_stretch } from '../../ts/managers/State';
 	import Widget from '../widget/Widget.svelte';

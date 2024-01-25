@@ -13,6 +13,7 @@ export const s_paths_grabbed	= writable<Array<Path>>();
 export const s_paths_expanded	= writable<Array<Path>>();
 export const s_things_arrived	= writable<boolean>();
 export const s_showDetails		= writable<boolean>();
+export const s_title_atTop		= writable<boolean>();
 export const s_isBusy			= writable<boolean>();
 export const s_db_type			= writable<string>();
 export const s_thing_fontFamily	= writable<string>();

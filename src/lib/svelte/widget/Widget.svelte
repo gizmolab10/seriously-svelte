@@ -31,6 +31,7 @@
 
 	onMount( () => {
 		updateBorderStyle();
+		updateLayout();
 		debugReact.log_mount(`WIDGET ${thing.description}`);
 	});
 
