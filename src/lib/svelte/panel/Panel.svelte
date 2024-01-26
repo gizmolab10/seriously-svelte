@@ -136,7 +136,8 @@
 		left: {$s_showDetails ? 100 : 0}px;
 		z-index: {ZIndex.panel};
 		position: fixed;
-		height: 100%;'>
+		height: 100%;'
+		on:click={() => { $s_id_popupView = null; }}>
 		{#if $s_id_popupView == ButtonID.help}
 			<Help/>
 		{:else if $s_id_popupView == ButtonID.buildNotes}
