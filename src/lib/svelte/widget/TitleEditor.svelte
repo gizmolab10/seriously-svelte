@@ -13,13 +13,17 @@
 	let ghost = null;
 	let input = null;
 
-	onDestroy(() => { thing = null; signalHandler.disconnect(); });
-	var hasChanges = () => { return originalTitle != thing.title; }
-	function handleInput(event) { thing.title = event.target.value; updateInputWidth(); }
-	const signalHandler = signals.handle_relayout((path) => setTimeout(() => { updateInputWidth(); }, 10));
-	
+	onDestroy(() => { thing = null; relayoutHandler.disconnect(); });
+	var hasChanges = () => { return originalTitle != thing.title; };
+	$: { titleWrapper = new Wrapper(this, widgetWrapper.path, SvelteType.title); }
+	function handleInput(event) { thing.title = event.target.value; updateInputWidth(); };
+	const relayoutHandler = signals.handle_relayout((path) => setTimeout(() => { updateInputWidth(); }, 10));
+	const rebuildHandler = signals.handle_rebuild((path) => setTimeout(() => { updateInputWidth(); }, 10));
+
 	onMount(() => {
-		updateInputWidth();
+		setTimeout(() => {
+			updateInputWidth();
+		}, 100);
 	});
 
 	function updateInputWidth() {
@@ -28,10 +32,6 @@
 			input.style.width = `${titleWidth}px`;
 			// console.log(`WIDTH: ${titleWidth} ${widgetWrapper.path.thing()?.title}`);
 		}
-	}
-
-	$: {
-		titleWrapper = new Wrapper(this, widgetWrapper.path, SvelteType.title);
 	}
 
 	$: {
