@@ -9,6 +9,9 @@
 	export let origin = new Point();
 	export let thing: Thing;
     export let path = '';
+	const halfDotSize = $s_dot_size / 2;
+	const lineOffset = new Point(halfDotSize - 129, halfDotSize - 8);
+	const widgetOffset = new Point(12, ($s_dot_size / -15) - 11);
 	let lineRects: Array<LineRect> = [];
 	let prior = new Date().getTime();
 	let children = thing.children;
@@ -89,8 +92,8 @@
 		<Circle radius=1 center={center} color=black thickness=1/>
 	{/if}
 	{#each childMapArray as a}
-		<Widget thing={a.child} path={a.path} origin={a.rect.extent.offsetBy(new Point(12, ($s_dot_size / -15) -10))}/>
-		<Line thing={a.child} path={a.path} curveType={a.rect.curveType} rect={a.rect.offsetBy(new Point(($s_dot_size / 2) - 129, ($s_dot_size / 2) - 8))}/>
+		<Widget thing={a.child} path={a.path} origin={a.rect.extent.offsetBy(widgetOffset)}/>
+		<Line thing={a.child} path={a.path} curveType={a.rect.curveType} rect={a.rect.offsetBy(lineOffset)}/>
 		{#if a.child.hasChildren && a.path.isExpanded}
 			<Children thing={a.child} path={a.path} origin={a.origin}/>
 		{/if}

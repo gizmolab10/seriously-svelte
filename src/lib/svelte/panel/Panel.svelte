@@ -11,8 +11,8 @@
 	import Help from '../help/Help.svelte';
 	import Details from './Details.svelte';
 	import Crumbs from './Crumbs.svelte';
-	const topBandHeight = k.bandHeightAtTop - 2;
 	const bottomOfTitle = k.bandHeightAtTop + k.titleHeightAtTop;
+	const topBandHeight = k.bandHeightAtTop - 2;
 	let herePath = Path;
 	let toggle = false;
 	let left = 14;
@@ -152,7 +152,7 @@
 						left: {$s_showDetails ? '100px' : '-1px'};'>
 					{$s_path_here.thing()?.title}
 				</div>
-				<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: {$s_showDetails ? k.detailsMargin : 0}px; top: {k.bottomOfTitle}px;'></div>
+				<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: {$s_showDetails ? k.detailsMargin : 0}px; top: {bottomOfTitle}px;'></div>
 			{/if}
 			{#key toggle}
 				<Graph/>

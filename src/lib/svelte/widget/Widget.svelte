@@ -105,7 +105,7 @@
 	function updateLayout() {
 		height = $s_row_height - 2;
 		const delta = showingBorder ? 0 : 1;
-		left = origin.x + delta - 2;
+		left = origin.x + delta - 1;
 		const titleWidth = thing.titleWidth;
 		width = titleWidth - 18 + ($s_dot_size * 2);
 		if (path.toolsGrabbed) {
@@ -152,7 +152,7 @@
 	<TitleEditor thing={thing} widgetWrapper={widgetWrapper} fontSize={$s_thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 	<div class='revealDot'
 		style='
-			top:{revealTop + 0.3}px;
+			top:{revealTop + 1}px;
 			z-index: {ZIndex.dots};'>
 		<RevealDot thing={thing} widgetWrapper={widgetWrapper}/>
 	</div>

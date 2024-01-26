@@ -16,6 +16,7 @@
 	let blueRect: Rect;
 	let redRect: Rect;
 	let toggle = true;
+	let focusOffsetX = 0;
 	let height = 0;
 	let width = 0;
 	let left = 0;
@@ -85,6 +86,7 @@
 		if (here == null || here.id != $s_path_here) {
 			const h = dbDispatch.db.hierarchy;
 			here = !$s_path_here ? h.root : h.thing_getForPath($s_path_here);
+			focusOffsetX = $s_title_atTop ? 0 : here?.titleWidth / 2
 			updateOrigins();
 			toggle = !toggle;	// also cause entire graph to be replaced
 		}
@@ -93,12 +95,14 @@
 	function updateOrigins() {
 		if (here) {
 			childrenSize = $s_path_here.visibleProgeny_size.asPoint;
-			const mysteryOffset = new Point(($s_showDetails ? -92 : 8) - (childrenSize.x / 2), $s_title_atTop ? -85 : -35);
+			const mysteryX = ($s_showDetails ? -92 : 8) - (childrenSize.x / 2) - focusOffsetX;
+			const mysteryY = -k.bandHeightAtTop - ($s_title_atTop ? k.titleHeightAtTop : 0);
+			const mysteryOffset = new Point(mysteryX, mysteryY);
 			origin_ofFirstReveal = $s_graphRect.center.offsetBy(mysteryOffset);
 			if (k.leftJustifyGraph) {
 				origin_ofFirstReveal.x = 25;
 			}
-			const toChildren = new Point(-43 + $s_line_stretch - ($s_dot_size / 2), ($s_dot_size / 2) - (childrenSize.y / 2) - 5);
+			const toChildren = new Point(-43 + $s_line_stretch - ($s_dot_size / 2) + focusOffsetX, ($s_dot_size / 2) - (childrenSize.y / 2) - 5);
 			origin_ofChildren = origin_ofFirstReveal.offsetBy(toChildren);
 			blueRect = $s_graphRect.dividedInHalf;
 			redRect = rectTo_firstReveal();
@@ -148,7 +152,7 @@
 				{/if}
 				<FocusRevealDot here={here} path={$s_path_here} center={origin_ofFirstReveal.offsetBy(new Point(-12, -11))}/>
 			{:else}
-				<Widget thing={here} path={$s_path_here} origin={origin_ofFirstReveal.offsetBy(new Point(-20 - here.titleWidth, -9))}/>
+				<Widget thing={here} path={$s_path_here} origin={origin_ofFirstReveal.offsetBy(new Point(-20 - focusOffsetX, -10))}/>
 			{/if}
 			<Children thing={here} path={$s_path_here} origin={origin_ofChildren}/>
 		</div>
