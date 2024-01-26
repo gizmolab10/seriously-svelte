@@ -120,15 +120,15 @@
 			<img src='settings.svg' alt='circular button' width={size}px height={size}px/>
 		</CircularButton>
 		<button class='build' on:click={builds_buttonClicked}>{$s_build}</button>
-		{#if !$s_isBusy}
-			<CircularButton left=85
-				onClick={() => {help_buttonClicked()}}
-				size={size}>i
-			</CircularButton>
-		{/if}
-		{#if $s_showDetails && $s_id_popupView == null}
-			<Details/>
-		{/if}
+		<CircularButton left=85
+			onClick={() => {help_buttonClicked()}}
+			size={size}>i
+		</CircularButton>
+		<div on:click={() => { $s_id_popupView = null; }}>
+			{#if $s_showDetails && $s_id_popupView == null}
+				<Details/>
+			{/if}
+		</div>
 	</div>
 	<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: -10px; top: {topBandHeight}px; width: {$s_id_popupView ? '111px' : '110%'};'></div>
 	<div class='verticalLine' style='height: {$s_showDetails && $s_id_popupView == null ? '100%' : topBandHeight + 'px'}; z-index: {ZIndex.frontmost};'></div>

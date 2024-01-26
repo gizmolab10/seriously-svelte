@@ -33,7 +33,8 @@
 	}
 </style>
 
-<div class='modal-overlay' style='z-index: {ZIndex.frontmost};'>
+<div class='modal-overlay'
+	style='z-index: {ZIndex.frontmost};'>
 	<div class='modal-content' style='z-index: {ZIndex.frontmost};'>
 		<RadioButtons menuItems={menuItems} idSelected={$s_db_type}/>
 		<br>
