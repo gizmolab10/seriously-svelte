@@ -3,6 +3,7 @@ import { Path } from '../common/GlobalImports';
 
 export enum SvelteType {
 	widget	= 'widget',
+	reveal	= 'reveal',
 	title	= 'title',
 	line	= 'line',
 }

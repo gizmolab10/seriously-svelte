@@ -3,16 +3,18 @@
 	import { k, u, get, Size, Thing, Point, debug, ZIndex, svgPath, signals } from "../../ts/common/GlobalImports";
 	import { onMount, Wrapper, Direction, onDestroy, dbDispatch, SvelteType } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte';
+	export let center;
 	export let path;
 	let thing = path.thing();
 	let bulkAliasFillColor = k.backgroundColor;
 	let insidePath = svgPath.circle(16, 6);
 	let fillColor = k.backgroundColor;
 	let strokeColor = thing.color;
+	let revealWrapper = Wrapper;
 	let isHovering = false;
 	let scalablePath = '';
+	let revealDot = null;
 	let clickCount = 0;
-	let button = null;
 	let clickTimer;
 	
 	onMount( () => { setIsHovering_updateColors(false); updatePath(); });
@@ -24,6 +26,12 @@
 	function clearClicks() {
 		clickCount = 0;
 		clearTimeout(clickTimer);	// clear all previous timers
+	}
+
+	$: {
+		if (revealDot) {
+			revealWrapper = new Wrapper(revealDot, path, SvelteType.reveal);
+		}
 	}
 
 	$: {
@@ -79,17 +87,19 @@
 
 	function handleClick(event) {
 		setIsHovering_updateColors(false);
-		if (path.toolsGrabbed) {
-			$s_path_toolsGrab = null;
-			$s_altering_parent = null;
-		} else if (!thing.hasChildren) {
-			path.grabOnly();
-			$s_path_toolsGrab = path;
-		} else {
-			dbDispatch.db.hierarchy.path_rebuild_remoteMoveRight(path, !path.isExpanded, true, false);
-			return;
+		if (!path.isRoot) {
+			if (path.toolsGrabbed) {
+				$s_path_toolsGrab = null;
+				$s_altering_parent = null;
+			} else if (!thing.hasChildren) {
+				path.grabOnly();
+				$s_path_toolsGrab = path;
+			} else {
+				dbDispatch.db.hierarchy.path_rebuild_remoteMoveRight(path, !path.isExpanded, true, false);
+				return;
+			}
+			signals.signal_rebuild_fromHere();
 		}
-		signals.signal_rebuild_fromHere();
 	}
 
 	function handleDoubleClick(event) {
@@ -101,14 +111,15 @@
 		clearClicks();
 		clickTimer = setTimeout(() => {
 			clearClicks();
-			const path = path;
-			if ($s_path_toolsGrab == path) {
-				$s_path_toolsGrab = null;
-			} else {
-				path.grabOnly();
-				$s_path_toolsGrab = path;
+			if (!path.isRoot) {
+				if ($s_path_toolsGrab == path) {
+					$s_path_toolsGrab = null;
+				} else  {
+					path.grabOnly();
+					$s_path_toolsGrab = path;
+				}
+				signals.signal_rebuild_fromHere();
 			}
-			signals.signal_rebuild_fromHere();
 		}, k.longClickThreshold);
 	}
 
@@ -133,44 +144,46 @@
 	}
 </style>
 
-<button class='dot'
-	bind:this={button}
-	on:blur={u.ignore}
-	on:focus={u.ignore}
-	on:keyup={u.ignore}
-	on:keydown={u.ignore}
-	on:keypress={u.ignore}
-	on:mouseup={handleMouseUp}
-	on:click={handleSingleClick}
-	on:mouseout={handleMouseOut}
-	on:mouseover={handleMouseOver}
-	on:mousedown={handleLongClick}
-	on:dblclick={handleDoubleClick}
-	on:contextmenu={handleContextMenu}
-	style='
-		width={$s_dot_size}px;
-		height={$s_dot_size}px;
-		top: {$s_dot_size / 2 - 3}px;
-		left: {$s_dot_size + thing.titleWidth - 7}px;
-	'>
-	{#key scalablePath}
-		<SVGD3
-			size={$s_dot_size}
-			stroke={strokeColor}
-			zIndex={ZIndex.dots}
-			scalablePath={scalablePath}
-			fill={debug.lines ? 'transparent' : fillColor}
-		/>
-	{/key}
-	{#if thing.isBulkAlias}
-		<div style='left:-1px; width:14px; height:14px; position:absolute;'>
+<div class='revealDot' style='top:{top + 1}px; z-index:{ZIndex.dots}'>
+	<button class='dot'
+		on:blur={u.ignore}
+		on:focus={u.ignore}
+		on:keyup={u.ignore}
+		bind:this={revealDot}
+		on:keydown={u.ignore}
+		on:keypress={u.ignore}
+		on:mouseup={handleMouseUp}
+		on:click={handleSingleClick}
+		on:mouseout={handleMouseOut}
+		on:mouseover={handleMouseOver}
+		on:mousedown={handleLongClick}
+		on:dblclick={handleDoubleClick}
+		on:contextmenu={handleContextMenu}
+		style='
+			width={$s_dot_size}px;
+			height={$s_dot_size}px;
+			top: {$s_dot_size / 2 + center.y - 3}px;
+			left: {$s_dot_size + center.x + thing.titleWidth - 7}px;
+		'>
+		{#key scalablePath}
 			<SVGD3
 				size={$s_dot_size}
 				stroke={strokeColor}
 				zIndex={ZIndex.dots}
-				fill={bulkAliasFillColor}
-				scalablePath={insidePath}
+				scalablePath={scalablePath}
+				fill={debug.lines ? 'transparent' : fillColor}
 			/>
-		</div>
-	{/if}
-</button>
+		{/key}
+		{#if thing.isBulkAlias}
+			<div style='left:-1px; width:14px; height:14px; position:absolute;'>
+				<SVGD3
+					size={$s_dot_size}
+					stroke={strokeColor}
+					zIndex={ZIndex.dots}
+					fill={bulkAliasFillColor}
+					scalablePath={insidePath}
+				/>
+			</div>
+		{/if}
+	</button>
+</div>

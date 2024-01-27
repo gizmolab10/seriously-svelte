@@ -15,11 +15,16 @@
 
 	onDestroy(() => { thing = null; relayoutHandler.disconnect(); });
 	var hasChanges = () => { return originalTitle != thing.title; };
-	$: { titleWrapper = new Wrapper(this, path, SvelteType.title); }
 	function handleInput(event) { thing.title = event.target.value; updateInputWidth(); };
 	const relayoutHandler = signals.handle_relayout((path) => setTimeout(() => { updateInputWidth(); }, 10));
 	const rebuildHandler = signals.handle_rebuild((path) => setTimeout(() => { updateInputWidth(); }, 10));
 
+	$: {
+		if (input) {
+			titleWrapper = new Wrapper(input, path, SvelteType.title);
+		}
+	}
+	
 	onMount(() => {
 		setTimeout(() => {
 			updateInputWidth();

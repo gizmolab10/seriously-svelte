@@ -1,10 +1,11 @@
 <script lang='ts'>
-    import { k, Path, Size, Point, Wrapper, ZIndex, onMount } from '../../ts/common/GlobalImports';
+    import { k, Path, Rect, Size, Point, Wrapper, ZIndex, onMount } from '../../ts/common/GlobalImports';
     import { svgPath, Direction, dbDispatch, AlteringParent } from '../../ts/common/GlobalImports';
     import { s_dot_size, s_altering_parent, s_row_height } from '../../ts/managers/State';
     import { s_path_toolsGrab, s_tools_inWidgets } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TriangleButton from '../svg/TriangleButton.svelte';
+	import RevealDot from './RevealDot.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Trash from '../svg/Trash.svelte';
 	export let path: Path;
@@ -20,18 +21,22 @@
     let top = 24;
 
     onMount( () => {
-        const titleWidth = thing.titleWidth;
-        const offsetX = Math.max(0, (k.toolsClusterHeight - titleWidth - 21) / 8)
-        const offsetY = Math.max(0, ((s_tools_inWidgets ? k.toolsClusterHeight : 0) - $s_row_height - 21) / 8)
+        setTimeout(() => {
+            const rect = Rect.createFromDOMRect(path.widgetWrapper.component.getBoundingClientRect());
+            const center = rect.centerLeft.offsetBy(new Point(-6, -50));
+            const titleWidth = thing.titleWidth;
+            const offsetX = Math.max(0, (k.toolsClusterHeight - titleWidth - 21) / 8)
+            const offsetY = Math.max(0, (($s_tools_inWidgets ? k.toolsClusterHeight : 0) - $s_row_height - 21) / 8)
 
-        top = 24 - offsetY;
-        color = thing.color;
-		left = titleWidth + offsetX - 3;
-        const otherLeft = left - diameter * 1.2;
-        center_cluster = new Point(left + diameter + 5, top - diameter);
-        center_addChild = new Point(left, top - diameter);
-        center_addParent = new Point(otherLeft, top - diameter);
-        center_deleteParent = new Point(otherLeft, top + diameter + 9);
+            color = thing.color;
+            top = ($s_tools_inWidgets ? -3 : center.y) - offsetY;
+            left = ($s_tools_inWidgets ? -3 : center.x - 80) + titleWidth + offsetX;
+            const otherLeft = left - diameter * 1.2;
+            center_addChild = new Point(left, top - diameter);
+            center_addParent = new Point(otherLeft, top - diameter);
+            center_cluster = new Point(left + radius - 2, top + diameter + 2);
+            center_deleteParent = new Point(otherLeft, top + diameter + 10);
+        }, 10)
 	});
 
 	async function handleClick(buttonID: string) {
@@ -68,9 +73,10 @@
     }
 </style>
 
-<div class='toolsCluster'>
+<div class='toolsCluster' style='top: {path.widgetWrapper} z-index: {ZIndex.lines}'>
     {#if !$s_tools_inWidgets}
         <Circle radius={k.toolsClusterHeight / 2.5} center={center_cluster} color={color} thickness=1 zindex={ZIndex.lines}/>
+		<RevealDot path={path} center={center_cluster.offsetBy(new Point(-19 - thing.titleWidth, k.toolsClusterHeight / 2 - 51))}/>
     {/if}
     <TriangleButton
         fillColor_closure={() => { return ($s_altering_parent == AlteringParent.adding) ? thing.color : k.backgroundColor }}
@@ -106,12 +112,12 @@
         id='addChild'/>
     <button class='delete'
         on:click={() => handleClick('delete')}
-        style='top: {top + diameter + 13}px;
-            left: {left - 1}px;
-            border: none;
+        style='border: none;
             cursor: pointer;
             background: none;
-            z-index: {ZIndex.overlay};'>
+            left: {left - 1}px;
+            z-index: {ZIndex.lines};
+            top: {top + diameter + 13}px;'>
         <Trash color={color}/>
     </button>
 </div>

@@ -153,12 +153,12 @@
 				{/if}
 				<FocusRevealDot here={here} path={$s_path_here} center={origin_ofFirstReveal.offsetBy(new Point(-12, -11))}/>
 			{:else}
-				<Widget thing={here} path={$s_path_here} origin={origin_ofFirstReveal.offsetBy(new Point(-20 - focusOffsetX, -10))}/>
+				<Widget thing={here} path={$s_path_here} origin={origin_ofFirstReveal.offsetBy(new Point(-19 - focusOffsetX, -9))}/>
 			{/if}
 			<Children thing={here} path={$s_path_here} origin={origin_ofChildren}/>
-			{#if $s_path_toolsGrab && !$s_tools_inWidgets}
-				<ToolsCluster path={$s_path_toolsGrab}/>
-			{/if}
 		</div>
+		{#if $s_path_toolsGrab && !$s_tools_inWidgets}
+			<ToolsCluster path={$s_path_toolsGrab}/>
+		{/if}
 	</div>
 {/if}

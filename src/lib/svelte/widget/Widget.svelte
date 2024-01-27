@@ -27,6 +27,7 @@
 	let width = 0;
 	let left = 0;
 	let top = 0;
+	let widget;
 
 	onDestroy( () => { any_signalHandler.disconnect(); });
 
@@ -54,7 +55,9 @@
 	});
 
 	$: {
-		widgetWrapper = new Wrapper(this, path, SvelteType.widget);
+		if (widget) {
+			widgetWrapper = new Wrapper(widget, path, SvelteType.widget);
+		}
 	}
 	
 	$: {
@@ -125,17 +128,8 @@
 
 </script>
 
-<style>
-	.widget {
-		position: absolute;
-		white-space: nowrap;
-	}
-	.revealDot {
-		position: absolute;
-	}
-</style>
-
 <div class='widget' id='{thing.title}'
+	bind:this={widget}
 	style='
 		{border};
 		{background};
@@ -144,19 +138,14 @@
 		width: {width}px;
 		height: {height}px;
 		padding: {padding};
+		position: absolute;
+		white-space: nowrap;
 		z-index: {ZIndex.widgets};
 		border-radius: {radius}px;
 	'>
-	<div style='top:{revealTop}px;'>
-		<DragDot path={path}/>
-	</div>
+	<DragDot path={path} center={new Point(0, revealTop)}/>
 	<TitleEditor path={path} fontSize={$s_thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
-	<div class='revealDot'
-		style='
-			top:{revealTop + 1}px;
-			z-index: {ZIndex.dots};'>
-		<RevealDot path={path}/>
-	</div>
+	<RevealDot path={path} center={new Point(0, revealTop + 1)}/>
 	{#if showingCluster && $s_tools_inWidgets}
 		<ToolsCluster path={path}/>
 	{/if}

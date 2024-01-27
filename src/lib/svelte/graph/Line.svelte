@@ -15,9 +15,12 @@
 	let viewBox = new Rect();
 	let size = new Size();
 	let scalablePath = '';
+	let line;
 
 	$: {
-		lineWrapper = new Wrapper(this, path, SvelteType.line);
+		if (line) {
+			lineWrapper = new Wrapper(line, path, SvelteType.line);
+		}
 	}
 
 	////////////////////////////////////////////////////
@@ -65,6 +68,7 @@
 </style>
 
 <svg class='line'
+	bind:this={line}
 	width={size.width}px
 	height={Math.max(2, size.height)}px
 	style='z-index: {ZIndex.lines};

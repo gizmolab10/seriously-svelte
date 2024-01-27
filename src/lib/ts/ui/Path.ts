@@ -38,7 +38,9 @@ export default class Path {
 	get isExemplar(): boolean { return this.thing()?.isExemplar ?? false; }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
 	get toolsGrabbed(): boolean { return this.matchesStore(s_path_toolsGrab); }
+	get lineWrapper(): Wrapper | null { return this.wrappers[SvelteType.line]; };
 	get titleWrapper(): Wrapper | null { return this.wrappers[SvelteType.title]; };
+	get revealWrapper(): Wrapper | null { return this.wrappers[SvelteType.reveal]; };
 	get widgetWrapper(): Wrapper | null { return this.wrappers[SvelteType.widget]; };
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
@@ -335,7 +337,7 @@ export default class Path {
 		if (get(s_path_toolsGrab)) { // u.ignore if no reveal dot set s_path_toolsGrab
 			if (this.toolsGrabbed) {
 				s_path_toolsGrab.set(null);
-			} else {
+			} else if (!this.isRoot) {
 				s_path_toolsGrab.set(this);
 			}
 		}

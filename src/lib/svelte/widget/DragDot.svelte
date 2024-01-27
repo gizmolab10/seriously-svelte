@@ -1,8 +1,9 @@
 <script>
-	import { k, u, Size, Point, Thing, debug, ZIndex, onMount, signals, svgPath } from "../../ts/common/GlobalImports";
 	import { Wrapper, Direction, onDestroy, dbDispatch, SvelteType, AlteringParent } from "../../ts/common/GlobalImports";
-	import { s_dot_size, s_paths_grabbed, s_path_toolsGrab } from '../../ts/managers/State';
+	import { k, u, Size, Point, Thing, debug, ZIndex, onMount, signals, svgPath } from "../../ts/common/GlobalImports";
+	import { s_dot_size, s_paths_grabbed, s_path_toolsGrab, s_tools_inWidgets } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
+	export let center;
 	export let path;
 	let thing = path.thing();
 	let tinyDotColor = thing.color;
@@ -28,6 +29,7 @@
 	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right-
 
     onMount(() => {
+		updatePathAndPosition();
 		updateColorsForHover(false);
         handler = signals.handle_alteringParent((alteration) => {
 			const applyFlag = $s_path_toolsGrab && path.things_canAlter_asParentOf_toolsGrab;
@@ -48,6 +50,12 @@
 	$: {
 		if (thing != null) {
 			updateColors();
+		}
+	}
+
+	$: {
+		if ($s_dot_size > 0) {
+			updatePathAndPosition();
 		}
 	}
 
@@ -93,64 +101,58 @@
 		}, k.doubleClickThreshold);
 	}
 
-	$: {
-		if ($s_dot_size > 0) {
-			size = $s_dot_size;
-			// TODO: change scalable path and position when altering state changes
-			scalablePath = svgPath.oval(size, false);
-			left = 1 - (size / 2); // offset from center?
-			top = path.toolsGrabbed ? 23 : -size / 2 + 2;
-			if (thing.parents.length > 1) {
-				extra = svgPath.circle(size, size / 5);
-			}
+	function updatePathAndPosition() {
+		size = $s_dot_size;
+		left = center.x + 1 - (size / 2);
+		top = 3 - size + ((path.toolsGrabbed && $s_tools_inWidgets) ? 0 : -size / 2 + 6);
+		scalablePath = svgPath.oval(size, false);	// TODO: change it & position when altering state changes
+		if (thing.parents.length > 1) {
+			extra = svgPath.circle(size, size / 5);
 		}
 	}
 
 </script>
 
-<style>
-	.dot {
-		border: none;
-		cursor: pointer;
-		background: none;
-		position: absolute;
-	}
-</style>
-
-<button class='dot'
-	bind:this={button}
-	on:blur={u.ignore}
-	on:focus={u.ignore}
-	on:keyup={u.ignore}
-	on:keydown={u.ignore}
-	on:keypress={u.ignore}
-	on:mouseup={handleMouseUp}
-	on:click={handleSingleClick}
-	on:mouseout={handleMouseOut}
-	on:mouseover={handleMouseIn}
-	on:mousedown={handleLongClick}
-	on:dblclick={handleDoubleClick}
-	on:contextmenu={handleContextMenu}
-	style='
-		top: {top}px;
+<div class='dragDot'
+	style='top: {top}px;
 		left: {left}px;
-		width: {size}px;
-		height: {size}px;
-	'>
-	<SVGD3
-		size={size}
-		fill={fillColor}
-		stroke={strokeColor}
-		zIndex={ZIndex.dots}
-		scalablePath={scalablePath}
-	/>
-	{#if extra}
+		position: absolute;'>
+	<button class='dot'
+		bind:this={button}
+		on:blur={u.ignore}
+		on:focus={u.ignore}
+		on:keyup={u.ignore}
+		on:keydown={u.ignore}
+		on:keypress={u.ignore}
+		on:mouseup={handleMouseUp}
+		on:click={handleSingleClick}
+		on:mouseout={handleMouseOut}
+		on:mouseover={handleMouseIn}
+		on:mousedown={handleLongClick}
+		on:dblclick={handleDoubleClick}
+		on:contextmenu={handleContextMenu}
+		style='
+			border: none;
+			cursor: pointer;
+			width: {size}px;
+			height: {size}px;
+			background: none;
+		'>
 		<SVGD3
 			size={size}
-			fill={tinyDotColor}
+			fill={fillColor}
+			stroke={strokeColor}
 			zIndex={ZIndex.dots}
-			scalablePath={extra}
-			stroke={tinyDotColor}
+			scalablePath={scalablePath}
 		/>
-	{/if}
-</button>
+		{#if extra}
+			<SVGD3
+				size={size}
+				fill={tinyDotColor}
+				zIndex={ZIndex.dots}
+				scalablePath={extra}
+				stroke={tinyDotColor}
+			/>
+		{/if}
+	</button>
+</div>

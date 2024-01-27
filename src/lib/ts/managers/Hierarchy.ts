@@ -126,7 +126,7 @@ export default class Hierarchy {
 
 	latestPathGrabbed_toggleToolsCluster(up: boolean = true) {
 		const path = this.grabs.latestPathGrabbed(up);
-		if (path) {
+		if (path && !path.isRoot) {
 			s_path_toolsGrab.set(path.toolsGrabbed ? null : path);
 			signals.signal_rebuild_fromHere();
 		}
