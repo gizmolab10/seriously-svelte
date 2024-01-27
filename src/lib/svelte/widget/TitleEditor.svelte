@@ -2,10 +2,10 @@
 	import { dbDispatch, SeriouslyRange, Wrapper, SvelteType } from '../../ts/common/GlobalImports';
 	import { k, Thing, ZIndex, onMount, signals, onDestroy } from '../../ts/common/GlobalImports';
 	import { s_title_editing, s_row_height } from '../../ts/managers/State';
-	export let widgetWrapper: Wrapper;
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
-	export let thing = Thing;
+	export let path;
+	let thing = path.thing();
 	let originalTitle = thing.title;
 	let titleWrapper: Wrapper;
 	let isEditing = false;
@@ -15,7 +15,7 @@
 
 	onDestroy(() => { thing = null; relayoutHandler.disconnect(); });
 	var hasChanges = () => { return originalTitle != thing.title; };
-	$: { titleWrapper = new Wrapper(this, widgetWrapper.path, SvelteType.title); }
+	$: { titleWrapper = new Wrapper(this, path, SvelteType.title); }
 	function handleInput(event) { thing.title = event.target.value; updateInputWidth(); };
 	const relayoutHandler = signals.handle_relayout((path) => setTimeout(() => { updateInputWidth(); }, 10));
 	const rebuildHandler = signals.handle_rebuild((path) => setTimeout(() => { updateInputWidth(); }, 10));
@@ -30,7 +30,7 @@
 		if (input && ghost) { // ghost only exists to provide its scroll width
 			titleWidth = ghost.scrollWidth;
 			input.style.width = `${titleWidth}px`;
-			// console.log(`WIDTH: ${titleWidth} ${widgetWrapper.path.thing()?.title}`);
+			// console.log(`WIDTH: ${titleWidth} ${path.thing()?.title}`);
 		}
 	}
 
@@ -54,9 +54,9 @@
 	}
 
 	function handleKeyDown(event) {
-		if (thing && widgetWrapper.path.isEditing && canAlterTitle(event)) {
+		if (thing && path.isEditing && canAlterTitle(event)) {
 			switch (event.key) {	
-				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); dbDispatch.db.hierarchy.path_edit_remoteCreateChildOf(widgetWrapper.path.parentPath); break;
+				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); dbDispatch.db.hierarchy.path_edit_remoteCreateChildOf(path.parentPath); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
 				default:	  signals.signal_relayout(); break;
 			}
@@ -65,16 +65,16 @@
 
 	function handleBlur(event) {
 		stopAndClearEditing();
-		console.log(`BLUR ${widgetWrapper.path.thing()?.title}`);
+		console.log(`BLUR ${path.thing()?.title}`);
 		updateInputWidth();
 	}
 
 	function handleFocus(event) {
 		if (!k.allowTitleEditing) {
 			input?.blur();
-		} else if (!widgetWrapper.path.isEditing) {
-			console.log(`FOCUS ${widgetWrapper.path.thing()?.title}`);
-			widgetWrapper.path.startEdit();
+		} else if (!path.isEditing) {
+			console.log(`FOCUS ${path.thing()?.title}`);
+			path.startEdit();
 		}
 	}
 
@@ -88,7 +88,6 @@
 		///////////////////////////////////////////////////////
 
 		if (k.allowTitleEditing) {
-			const path = widgetWrapper.path;
 			if (path.isStoppingEdit) {
 				console.log(`STOPPING ${path.thing()?.title}`);
 				$s_title_editing = null;
@@ -110,7 +109,7 @@
 	function stopAndClearEditing() {
 		invokeBlurNotClearEditing();
 		setTimeout(() => {		// eliminate infinite recursion
-			if (widgetWrapper.path.isEditing) {				
+			if (path.isEditing) {				
 				$s_title_editing.stop();
 				signals.signal_relayout_fromHere();
 			}
@@ -118,33 +117,33 @@
 	}
 
 	function invokeBlurNotClearEditing() {
-		if (widgetWrapper.path.isEditing && thing) {
+		if (path.isEditing && thing) {
 			isEditing = false;
 			extractRange();
 			input?.blur();
 			if (hasChanges() && !thing.isExemplar) {
 				dbDispatch.db.thing_remoteUpdate(thing);
 				originalTitle = thing.title;		// so hasChanges will be correct
-				widgetWrapper.path.signal_relayout();
+				path.signal_relayout();
 			}
 		}
 	}
 
 	function handleCutOrPaste(event) {
 		extractRange();
-		widgetWrapper.path.signal_relayout();
+		path.signal_relayout();
 	}
 
 	function extractRange() {
 		if (input) {
 			const end = input.selectionEnd;
 			const start = input.selectionStart;
-			widgetWrapper.path.selectionRange = new SeriouslyRange(start, end);
+			path.selectionRange = new SeriouslyRange(start, end);
 		}
 	}
 
 	function applyRange() {
-		const range = widgetWrapper.path.selectionRange;
+		const range = path.selectionRange;
 		if (range && input) {
 			input.setSelectionRange(range.start, range.end);
 		}

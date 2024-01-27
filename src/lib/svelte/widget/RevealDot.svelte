@@ -3,8 +3,8 @@
 	import { k, u, get, Size, Thing, Point, debug, ZIndex, svgPath, signals } from "../../ts/common/GlobalImports";
 	import { onMount, Wrapper, Direction, onDestroy, dbDispatch, SvelteType } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte';
-	export let widgetWrapper;
-	export let thing;
+	export let path;
+	let thing = path.thing();
 	let bulkAliasFillColor = k.backgroundColor;
 	let insidePath = svgPath.circle(16, 6);
 	let fillColor = k.backgroundColor;
@@ -58,17 +58,17 @@
 	}
 
 	function updateColors() {
-		thing.updateColorAttributes(widgetWrapper.path);
-		const collapsedGrabbed = !widgetWrapper.path.isExpanded || widgetWrapper.path.isGrabbed;
-		fillColor = thing.revealColor(collapsedGrabbed != isHovering, widgetWrapper.path);
-		bulkAliasFillColor = thing.revealColor(collapsedGrabbed == isHovering, widgetWrapper.path);
+		thing.updateColorAttributes(path);
+		const collapsedGrabbed = !path.isExpanded || path.isGrabbed;
+		fillColor = thing.revealColor(collapsedGrabbed != isHovering, path);
+		bulkAliasFillColor = thing.revealColor(collapsedGrabbed == isHovering, path);
 	}
 
 	function updatePath() {
-		if ((!thing.hasChildren && !thing.isBulkAlias) || $s_path_toolsGrab?.matchesPath(widgetWrapper.path)) {
+		if ((!thing.hasChildren && !thing.isBulkAlias) || $s_path_toolsGrab?.matchesPath(path)) {
 			scalablePath = svgPath.circle($s_dot_size, $s_dot_size / 2);
 		} else {
-			const goLeft = widgetWrapper.path.isExpanded && thing.hasChildren;
+			const goLeft = path.isExpanded && thing.hasChildren;
 			const direction = goLeft ? Direction.left : Direction.right;
 			scalablePath = svgPath.triangle($s_dot_size, direction);
 			if (thing.isBulkAlias) {
@@ -79,12 +79,11 @@
 
 	function handleClick(event) {
 		setIsHovering_updateColors(false);
-		const path = widgetWrapper.path;
 		if (path.toolsGrabbed) {
 			$s_path_toolsGrab = null;
 			$s_altering_parent = null;
 		} else if (!thing.hasChildren) {
-			widgetWrapper.path.grabOnly();
+			path.grabOnly();
 			$s_path_toolsGrab = path;
 		} else {
 			dbDispatch.db.hierarchy.path_rebuild_remoteMoveRight(path, !path.isExpanded, true, false);
@@ -102,7 +101,7 @@
 		clearClicks();
 		clickTimer = setTimeout(() => {
 			clearClicks();
-			const path = widgetWrapper.path;
+			const path = path;
 			if ($s_path_toolsGrab == path) {
 				$s_path_toolsGrab = null;
 			} else {

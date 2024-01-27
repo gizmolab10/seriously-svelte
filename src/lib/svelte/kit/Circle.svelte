@@ -1,5 +1,6 @@
 <script>
   import { k, Point, debug, ZIndex } from '../../ts/common/GlobalImports'
+  export let zindex = ZIndex.dots;
   export let thickness;
   export let radius;
   export let center;
@@ -22,7 +23,7 @@
   style='
     width: {diameter}px;
     height: {diameter}px;
-    z-index: {ZIndex.dots};
+    z-index: {zindex};
     top: {center.y - radius}px;
     left: {center.x - radius}px;
     border: {thickness}px solid {color};

@@ -1,7 +1,7 @@
-import { k, u, get, Size, Thing, signals, Wrapper, Predicate, TitleState } from '../common/GlobalImports';
+import { s_dot_size, s_path_here, s_row_height, s_line_stretch, s_title_editing, s_paths_grabbed } from '../managers/State';
 import { SvelteType, dbDispatch, Relationship, SeriouslyRange, AlteringParent } from '../common/GlobalImports';
-import { s_dot_size, s_path_here, s_row_height, s_line_stretch, s_title_editing } from '../managers/State';
-import { s_paths_grabbed, s_paths_expanded, s_path_toolsGrab, s_altering_parent } from '../managers/State';
+import { s_paths_expanded, s_path_toolsGrab, s_altering_parent, s_tools_inWidgets } from '../managers/State';
+import { k, u, get, Size, Thing, signals, Wrapper, Predicate, TitleState } from '../common/GlobalImports';
 import { Writable } from 'svelte/store';
 
 export default class Path {
@@ -44,7 +44,7 @@ export default class Path {
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
 	get isEditing(): boolean { return this.pathString == get(s_title_editing)?.editing?.pathString; }
-	get singleRowHeight(): number { return this.toolsGrabbed ? k.toolsClusterHeight : get(s_row_height); }
+	get singleRowHeight(): number { return this.toolsGrabbed && get(s_tools_inWidgets) ? k.toolsClusterHeight : get(s_row_height); }
 	get isStoppingEdit(): boolean { return this.pathString == get(s_title_editing)?.stopping?.pathString; }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	

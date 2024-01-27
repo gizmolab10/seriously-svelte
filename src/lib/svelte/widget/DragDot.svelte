@@ -3,8 +3,8 @@
 	import { Wrapper, Direction, onDestroy, dbDispatch, SvelteType, AlteringParent } from "../../ts/common/GlobalImports";
 	import { s_dot_size, s_paths_grabbed, s_path_toolsGrab } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
-    export let widgetWrapper;
-	export let thing;
+	export let path;
+	let thing = path.thing();
 	let tinyDotColor = thing.color;
 	let strokeColor = thing.color;
 	let fillColor = thing.color;
@@ -30,7 +30,7 @@
     onMount(() => {
 		updateColorsForHover(false);
         handler = signals.handle_alteringParent((alteration) => {
-			const applyFlag = $s_path_toolsGrab && widgetWrapper.path.things_canAlter_asParentOf_toolsGrab;
+			const applyFlag = $s_path_toolsGrab && path.things_canAlter_asParentOf_toolsGrab;
 			extra = (thing.parents.length < 2) ? null : svgPath.circle(size, size / 5);
 			altering = applyFlag ? (alteration != null) : false;
 			updateColors();
@@ -38,7 +38,7 @@
     })
 
 	$: {
-		const grabbed = $s_paths_grabbed?.filter(p => p.matchesPath(widgetWrapper.path)).length > 0;
+		const grabbed = $s_paths_grabbed?.filter(p => p.matchesPath(path)).length > 0;
 		if (isGrabbed != grabbed) {
 			isGrabbed = grabbed;
 			updateColors();
@@ -53,9 +53,9 @@
 
 	function updateColors() {
 		const asReveal = isHovering == altering;
-		thing.updateColorAttributes(widgetWrapper.path);	// for revealColor
-		tinyDotColor = thing.revealColor(asReveal, widgetWrapper.path);
-		fillColor = debug.lines ? 'transparent' : thing.revealColor(!asReveal, widgetWrapper.path);
+		thing.updateColorAttributes(path);	// for revealColor
+		tinyDotColor = thing.revealColor(asReveal, path);
+		fillColor = debug.lines ? 'transparent' : thing.revealColor(!asReveal, path);
 		strokeColor = thing.color;
 	}
 
@@ -80,14 +80,14 @@
 
 	function handleDoubleClick(event) {
 		clearClicks();
-		widgetWrapper.path.becomeHere();
+		path.becomeHere();
     }
 
 	function handleSingleClick(event) {
 		clickCount++;
 		clickTimer = setTimeout(() => {
 			if (clickCount === 1) {
-				widgetWrapper.path.clicked_dragDot(event.shiftKey);
+				path.clicked_dragDot(event.shiftKey);
 				clearClicks();
 			}
 		}, k.doubleClickThreshold);
@@ -99,7 +99,7 @@
 			// TODO: change scalable path and position when altering state changes
 			scalablePath = svgPath.oval(size, false);
 			left = 1 - (size / 2); // offset from center?
-			top = widgetWrapper.path.toolsGrabbed ? 23 : -size / 2 + 2;
+			top = path.toolsGrabbed ? 23 : -size / 2 + 2;
 			if (thing.parents.length > 1) {
 				extra = svgPath.circle(size, size / 5);
 			}

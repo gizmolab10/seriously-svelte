@@ -1,19 +1,20 @@
 import { s_path_here, s_row_height, s_paths_expanded, s_db_loadTime, s_title_atTop, s_paths_grabbed } from './State';
-import { s_user_graphOffset, s_showDetails, s_line_stretch, s_thing_fontFamily } from './State';
+import { s_showDetails, s_line_stretch, s_tools_inWidgets, s_user_graphOffset, s_thing_fontFamily } from './State';
 import { Path, Point, dbDispatch } from '../common/GlobalImports'
 
 export enum PersistID {
-	relationships = 'relationships',
-	line_stretch  = 'line_stretch',
-	title_atTop   = 'title_atTop',
-	row_height    = 'row_height',
-	expanded	  = 'expanded',
-	grabbed		  = 'grabbed',
-	details		  = 'details',
-	origin		  = 'origin',
-	here		  = 'here',
-	font		  = 'font',
-	db			  = 'db',
+	tools_inWidgets	= 'tools_inWidgets',
+	relationships	= 'relationships',
+	line_stretch 	= 'line_stretch',
+	title_atTop  	= 'title_atTop',
+	row_height   	= 'row_height',
+	expanded	 	= 'expanded',
+	grabbed		 	= 'grabbed',
+	details		 	= 'details',
+	origin		 	= 'origin',
+	here		 	= 'here',
+	font		 	= 'font',
+	db			 	= 'db',
 }
 
 class PersistLocal {
@@ -28,6 +29,7 @@ class PersistLocal {
 		// this.writeToKey(PersistID.dot_size, 13);
 
 		this.writeToKey(PersistID.title_atTop, false);
+		this.writeToKey(PersistID.tools_inWidgets, false);
 		if (this.ignorePaths) {
 			this.writeToKey(PersistID.relationships, true);
 		}
@@ -40,6 +42,7 @@ class PersistLocal {
 		s_title_atTop.set(this.readFromKey(PersistID.title_atTop) ?? false);
 		s_thing_fontFamily.set(this.readFromKey(PersistID.font) ?? 'Arial');
 		s_user_graphOffset.set(this.readFromKey(PersistID.origin) ?? new Point());
+		s_tools_inWidgets.set(this.readFromKey(PersistID.tools_inWidgets) ?? false);
 		s_paths_grabbed.set(this.ignorePaths ? [] : this.readFromDBKey(PersistID.grabbed)?.map((s: string) => dbDispatch.db.hierarchy.uniquePath(s)) ?? []);
 		s_paths_expanded.set(this.ignorePaths ? [] : this.readFromDBKey(PersistID.expanded)?.map((e: string) => dbDispatch.db.hierarchy.uniquePath(e)) ?? []);
 

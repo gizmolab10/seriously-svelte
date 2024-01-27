@@ -1,7 +1,8 @@
 <script lang='ts'>
-	import { k, Thing, Point, debug, ZIndex, Wrapper, signals, onMount, onDestroy, debugReact, SignalKind, SvelteType } from '../../ts/common/GlobalImports';
+	import { s_path_toolsGrab, s_tools_inWidgets, s_thing_fontSize, s_thing_fontFamily } from '../../ts/managers/State';
 	import { s_title_editing, s_dot_size, s_path_here, s_row_height, s_paths_grabbed, } from '../../ts/managers/State';
-	import { s_path_toolsGrab, s_thing_fontSize, s_thing_fontFamily } from '../../ts/managers/State';
+	import { onMount, onDestroy, debugReact, SignalKind, SvelteType } from '../../ts/common/GlobalImports';
+	import { k, Thing, Point, debug, ZIndex, Wrapper, signals } from '../../ts/common/GlobalImports';
 	import ToolsCluster from './ToolsCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
 	import RevealDot from './RevealDot.svelte';
@@ -108,7 +109,7 @@
 		left = origin.x + delta - 1;
 		const titleWidth = thing.titleWidth;
 		width = titleWidth - 18 + ($s_dot_size * 2);
-		if (path.toolsGrabbed) {
+		if (path.toolsGrabbed && $s_tools_inWidgets) {
 			radius = k.toolsClusterHeight / 2;
 			const yPadding = radius - 12;
 			revealTop = radius - 17;
@@ -147,16 +148,16 @@
 		border-radius: {radius}px;
 	'>
 	<div style='top:{revealTop}px;'>
-		<DragDot thing={thing} widgetWrapper={widgetWrapper}/>
+		<DragDot path={path}/>
 	</div>
-	<TitleEditor thing={thing} widgetWrapper={widgetWrapper} fontSize={$s_thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
+	<TitleEditor path={path} fontSize={$s_thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 	<div class='revealDot'
 		style='
 			top:{revealTop + 1}px;
 			z-index: {ZIndex.dots};'>
-		<RevealDot thing={thing} widgetWrapper={widgetWrapper}/>
+		<RevealDot path={path}/>
 	</div>
-	{#if showingCluster}
-		<ToolsCluster thing={thing} widgetWrapper={widgetWrapper}/>
+	{#if showingCluster && $s_tools_inWidgets}
+		<ToolsCluster path={path}/>
 	{/if}
 </div>

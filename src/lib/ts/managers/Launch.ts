@@ -1,5 +1,6 @@
 import { k, u, debug, builds, debugReact, PersistID, dbDispatch, persistLocal } from '../common/GlobalImports'
-import { s_setup, s_path_here, s_title_atTop, s_paths_expanded, s_paths_grabbed, s_showDetails } from './State';
+import { s_paths_grabbed, s_paths_expanded, s_tools_inWidgets } from './State';
+import { s_setup, s_path_here, s_showDetails, s_title_atTop } from './State';
 
 class Launch {
 	queryString: URLSearchParams;
@@ -29,17 +30,27 @@ class Launch {
 
 	applyQueryStrings(queryString: URLSearchParams) {
         const erase = queryString.get('erase');
+        const locate = queryString.get('locate');
 		if (queryString.get('details') === 'hide') {
 			persistLocal.writeToKey(PersistID.details, false);
 			s_showDetails.set(false);
 		}
-		if (queryString.get('titleAtTop') === 'true') {
-			persistLocal.writeToKey(PersistID.title_atTop, true);
-			s_title_atTop.set(true);
+        if (locate) {
+            for (const option of locate.split(',')) {
+                switch (option) {
+                    case 'titleAtTop':
+						persistLocal.writeToKey(PersistID.title_atTop, true);
+						s_title_atTop.set(true);
+						break;
+                    case 'toolsInWidgets':
+						persistLocal.writeToKey(PersistID.tools_inWidgets, true);
+						s_tools_inWidgets.set(true);
+						break;
+				}
+			}
 		}
         if (erase) {
-            const flags = erase.split(',');
-            for (const option of flags) {
+            for (const option of erase.split(',')) {
                 switch (option) {
                     case 'data':
 						dbDispatch.eraseDB = true;
@@ -49,8 +60,6 @@ class Launch {
 						s_path_here.set(dbDispatch.db.hierarchy.uniquePath());
 						s_paths_grabbed.set([]);
 						s_paths_expanded.set([]);
-						break;
-					case 'titleAtTop':
 						break;
                 }
             }

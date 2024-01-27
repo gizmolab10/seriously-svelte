@@ -45,5 +45,5 @@ export enum ZIndex {
 	dots	  = baseZIndex + 3,
 	widgets	  = baseZIndex + 4,
 	frontmost = baseZIndex + 5,
-	overlay	  = baseZIndex + 6,
+	tools	  = baseZIndex + 6,
 }

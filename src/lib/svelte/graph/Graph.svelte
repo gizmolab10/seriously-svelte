@@ -1,9 +1,10 @@
 <script lang='ts'>
-	import { s_title_editing, s_path_here, s_graphRect, s_dot_size, s_title_atTop, s_paths_grabbed } from '../../ts/managers/State';
+	import { s_title_editing, s_path_here, s_graphRect, s_dot_size, s_showDetails, s_title_atTop, s_paths_grabbed } from '../../ts/managers/State';
+	import { s_id_popupView, s_line_stretch, s_tools_inWidgets, s_path_toolsGrab, s_user_graphOffset } from '../../ts/managers/State';
 	import { dbDispatch, PersistID, SignalKind, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
 	import { k, u, Path, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/GlobalImports';
-	import { s_line_stretch, s_showDetails, s_user_graphOffset, s_id_popupView } from '../../ts/managers/State';
 	import { onMount, onDestroy, debugReact, Predicate, ButtonID } from '../../ts/common/GlobalImports';
+	import ToolsCluster from '../widget/ToolsCluster.svelte';
 	import FocusRevealDot from './FocusRevealDot.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
@@ -148,13 +149,16 @@
 			{/if}
 			{#if $s_title_atTop}
 				{#if $s_path_here.isGrabbed}
-					<Circle radius={10} center={origin_ofFirstReveal} color={here.color} thickness=1/>
+					<Circle radius=10 center={origin_ofFirstReveal} color={here.color} thickness=1/>
 				{/if}
 				<FocusRevealDot here={here} path={$s_path_here} center={origin_ofFirstReveal.offsetBy(new Point(-12, -11))}/>
 			{:else}
 				<Widget thing={here} path={$s_path_here} origin={origin_ofFirstReveal.offsetBy(new Point(-20 - focusOffsetX, -10))}/>
 			{/if}
 			<Children thing={here} path={$s_path_here} origin={origin_ofChildren}/>
+			{#if $s_path_toolsGrab && !$s_tools_inWidgets}
+				<ToolsCluster path={$s_path_toolsGrab}/>
+			{/if}
 		</div>
 	</div>
 {/if}
