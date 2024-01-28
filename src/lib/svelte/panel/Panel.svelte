@@ -22,7 +22,7 @@
 	function help_buttonClicked() { $s_id_popupView = ($s_id_popupView == ButtonID.help) ? null : ButtonID.help; }
 	const rebuild_signalHandler = signals.handle_rebuild(() => { graph_fullRebuild(); });
 	window.addEventListener('resize', (event) => { graphRect_update(); });
-	
+
 	onMount(() => {
 		launch.setup();
 		graph_fullRebuild();

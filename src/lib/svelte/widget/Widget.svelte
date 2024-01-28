@@ -145,7 +145,7 @@
 	'>
 	<DragDot path={path} center={new Point(0, revealTop)}/>
 	<TitleEditor path={path} fontSize={$s_thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
-	<RevealDot path={path} center={new Point(0, revealTop + 1)}/>
+	<RevealDot path={path} center={new Point(0, revealTop)}/>
 	{#if showingCluster && $s_tools_inWidgets}
 		<ToolsCluster path={path}/>
 	{/if}

@@ -32,7 +32,7 @@
 		}
 	});
 
-	function handleWheel(event){
+	function handleWheel(event) {
 		const canScroll = k.allowHorizontalScrolling;
 		const offsetX = canScroll ? -event.deltaX : 0;
 		const offsetY = -event.deltaY;

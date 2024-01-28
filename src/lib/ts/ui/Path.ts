@@ -46,7 +46,6 @@ export default class Path {
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
 	get isEditing(): boolean { return this.pathString == get(s_title_editing)?.editing?.pathString; }
-	get singleRowHeight(): number { return this.toolsGrabbed && get(s_tools_inWidgets) ? k.toolsClusterHeight : get(s_row_height); }
 	get isStoppingEdit(): boolean { return this.pathString == get(s_title_editing)?.stopping?.pathString; }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	
@@ -218,16 +217,17 @@ export default class Path {
 	visibleProgeny_height(visited: Array<string> = []): number {
 		const thing = dbDispatch.db.hierarchy?.thing_getForPath(this);
 		if (thing) {
-			const singleRowHeight = this.singleRowHeight;
+			const useToolHeight = this.toolsGrabbed && get(s_tools_inWidgets);
+			const rowHeight = useToolHeight ? k.toolsClusterHeight : get(s_row_height);
 			if (!visited.includes(this.pathString) && thing.hasChildren && this.isExpanded) {
 				let height = 0;
 				for (const child of thing.children) {
 					const childpath = this.appendChild(child);
 					height += childpath.visibleProgeny_height([...visited, this.pathString]);
 				}
-				return Math.max(height, singleRowHeight);
+				return Math.max(height, rowHeight);
 			}
-			return singleRowHeight;
+			return rowHeight;
 		}
 		return 0;
 	}

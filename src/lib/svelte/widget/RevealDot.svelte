@@ -144,7 +144,7 @@
 	}
 </style>
 
-<div class='revealDot' style='top:{top + 1}px; z-index:{ZIndex.dots}'>
+<div class='revealDot' style='z-index:{ZIndex.dots}'>
 	<button class='dot'
 		on:blur={u.ignore}
 		on:focus={u.ignore}
@@ -162,7 +162,7 @@
 		style='
 			width={$s_dot_size}px;
 			height={$s_dot_size}px;
-			top: {$s_dot_size / 2 + center.y - 3}px;
+			top: {$s_dot_size / 2 + center.y - 2}px;
 			left: {$s_dot_size + center.x + thing.titleWidth - 7}px;
 		'>
 		{#key scalablePath}
