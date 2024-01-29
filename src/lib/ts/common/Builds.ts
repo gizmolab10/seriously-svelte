@@ -11,6 +11,7 @@ class Builds {
 
 	constructor() {
 		this.notes = { 
+			78 : ['January 29, 2024', 'fix tools cluster bug when browsing'],
 			77 : ['January 27, 2024', 'tools cluster is now an overlay hiding title and reveal dot'],
 			76 : ['January 25, 2024', 'default [option] to relocate focus title into graph'],
 			75 : ['January 23, 2024', 'switched path ids from things to relationships'],
