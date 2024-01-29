@@ -3,11 +3,11 @@
 	import { Hierarchy, PersistID, dbDispatch, debugReact, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
 	import { s_build, s_isBusy, s_path_here, s_db_type, s_graphRect, s_title_atTop } from '../../ts/managers/State';
 	import { s_id_popupView, s_showDetails, s_things_arrived, s_thing_fontSize } from '../../ts/managers/State';
-	import TitleEditor from '../widget/TitleEditor.svelte';
 	import CircularButton from '../kit/CircularButton.svelte';
+	import TitleEditor from '../widget/TitleEditor.svelte';
 	import LabelButton from '../kit/LabelButton.svelte';
-	import Graph from '../graph/Graph.svelte';
 	import BuildNotes from './BuildNotes.svelte';
+	import Graph from '../graph/Graph.svelte';
 	import Help from '../help/Help.svelte';
 	import Details from './Details.svelte';
 	import Crumbs from './Crumbs.svelte';
@@ -65,7 +65,7 @@
 		top: 6px;
 	}
 	.build {
-		border-radius: 16px;
+		border-radius: 1em;
 		position: absolute;
 		border: 1px solid;
 		cursor: pointer;

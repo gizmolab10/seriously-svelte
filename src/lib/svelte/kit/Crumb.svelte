@@ -38,7 +38,7 @@
 <button
 	on:click={crumb_buttonClicked}
 	style='
-		border-radius: 0.5em;
+		border-radius: 1em;
 		border: 1px solid {thing.color};;
 		{colorStyles};
 		{cursorStyle};'>

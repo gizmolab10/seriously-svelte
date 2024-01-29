@@ -157,8 +157,10 @@
 			{/if}
 			<Children thing={here} path={$s_path_here} origin={origin_ofChildren}/>
 		</div>
-		{#if $s_path_toolsGrab && !$s_tools_inWidgets}
-			<ToolsCluster path={$s_path_toolsGrab}/>
-		{/if}
+		{#key $s_path_toolsGrab}
+			{#if $s_path_toolsGrab && !$s_tools_inWidgets}
+				<ToolsCluster/>
+			{/if}
+		{/key}
 	</div>
 {/if}

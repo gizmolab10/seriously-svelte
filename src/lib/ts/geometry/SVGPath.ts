@@ -11,16 +11,7 @@ export enum Direction {
 
 export default class SVGPath {
 
-    line(width: number) {
-        return `M0 1 L${width} 1`;
-    }
-
-    dash(diameter: number, margin: number) {
-		const y = diameter / 2;
-		const start = margin + 2;
-		const end = diameter - start;
-        return `M${start} ${y} L${end} ${y}`;
-    }
+    line(width: number) { return `M0 1 L${width} 1`; }
 
     xCross(diameter: number, margin: number) {
 		const start = margin + 2;
@@ -34,13 +25,11 @@ export default class SVGPath {
         return `M${margin + 2} ${radius} L${length} ${radius} M${radius} ${margin + 2} L${radius} ${diameter - margin - 2}`;
     }
 
-    oval(diameter: number, horizontal: boolean = true) {
-        const radius = diameter / 2;
-        const width = radius - (horizontal ? 1 : 3);
-        const height = radius - (horizontal ? 3 : 1);
-        const doubleWidth = width * 2;
-        const path = `M${radius} ${radius} m${-width} 0a${width} ${height} 0 1,0 ${doubleWidth} 0a${width} ${height} 0 1,0 ${-doubleWidth} 0`;
-        return path;
+    dash(diameter: number, margin: number) {
+		const y = diameter / 2;
+		const start = margin + 2;
+		const end = diameter - start;
+        return `M${start} ${y} L${end} ${y}`;
     }
 
     circle(width: number, diameter: number, offset: Point = new Point()) {
@@ -50,6 +39,28 @@ export default class SVGPath {
         const path = `M${center + offset.x} ${center+ offset.y} m${-radius} 0a${radius} ${radius} 0 1,0 ${doubleRadius} 0a${radius} ${radius} 0 1,0 ${-doubleRadius} 0`;
         return path;
     }
+
+    oval(diameter: number, horizontal: boolean = true) {
+        const radius = diameter / 2;
+        const width = radius - (horizontal ? 1 : 3);
+        const height = radius - (horizontal ? 3 : 1);
+        const doubleWidth = width * 2;
+        const path = `M${radius} ${radius} m${-width} 0a${width} ${height} 0 1,0 ${doubleWidth} 0a${width} ${height} 0 1,0 ${-doubleWidth} 0`;
+        return path;
+    }
+
+	ellipses(tiny: number, gap: number) {
+		const x = 1;
+		const y = 6;
+		const x2 = x + tiny * 2;
+		const x3 = x2 + gap + tiny;
+		const x4 = x3 + 2 * tiny;
+		const x5 = x4 + gap + tiny;
+		const x6 = x5 + 2 * tiny;
+		return `M ${x},${y} A ${tiny},${tiny} 0 1,1 ${x2},${y} A ${tiny},${tiny} 0 1,1 ${x},${y}
+		M ${x3},${y} A ${tiny},${tiny} 0 1,1 ${x4},${y} A ${tiny},${tiny} 0 1,1 ${x3},${y}
+		M ${x5},${y} A ${tiny},${tiny} 0 1,1 ${x6},${y} A ${tiny},${tiny} 0 1,1 ${x5},${y}`;
+	}
 
 	triangle(size: number, direction: number) {
 		const width = size;

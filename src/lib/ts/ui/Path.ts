@@ -186,16 +186,6 @@ export default class Path {
 		};
 	}
 
-	grab() {
-		s_paths_grabbed.update((array) => {
-			if (array.indexOf(this) == -1) {
-				array.push(this);	// only add if not already added
-			}
-			return array;
-		});
-		this.toggleToolsGrab();
-	}
-
 	things_ancestry(thresholdWidth: number): Array<Thing> {
 		const root = dbDispatch.db.hierarchy?.root;
 		const ids = this.ids;
@@ -253,7 +243,7 @@ export default class Path {
 	}
 
 	////////////////////////////////////
-	//			operations			  //
+	//			mutate state		  //
 	////////////////////////////////////
 
 	expand() { this.expanded_setTo(true); }
@@ -261,10 +251,77 @@ export default class Path {
 	toggleExpand() { this.expanded_setTo(!this.isExpanded) }	
 	toggleGrab() { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }
 
+	toggleToolsGrab(update: boolean = true) {
+		if (get(s_path_toolsGrab)) { // ignore if no reveal dot set s_path_toolsGrab
+			if (this.toolsGrabbed) {
+				s_path_toolsGrab.set(null);
+			} else if (!this.isRoot) {
+				s_path_toolsGrab.set(this);
+			}
+		}
+	}
+
 	grabOnly() {
 		console.log(`GRAB ${this.thing()?.title}`);
 		s_paths_grabbed.set([this]);
 		this.toggleToolsGrab();
+	}
+
+	grab() {
+		s_paths_grabbed.update((array) => {
+			const index = array.indexOf(this);
+			if (index != -1) {
+				// remove, then push
+			} else {
+				array.push(this);	// add last
+			}
+			return array;
+		});
+		this.toggleToolsGrab();
+	}
+
+	ungrab() {
+		const rootPath = k.rootPath;
+		s_paths_grabbed.update((array) => {
+			const index = array.indexOf(this);
+			if (index != -1) {				// only splice array when item is found
+				array.splice(index, 1);		// 2nd parameter means remove one item only
+			}
+			if (array.length == 0) {
+				array.push(rootPath);
+			}
+			return array;
+		});
+		let paths = get(s_paths_grabbed);
+		if (paths.length == 0) {
+			rootPath.grabOnly();
+		} else {
+			this.toggleToolsGrab(); // do not show tools toolsCluster for root
+		}
+	}
+	
+	expanded_setTo(expand: boolean) {
+		if (!this.isRoot) {
+			let mutated = false;
+			s_paths_expanded.update((array) => {
+				if (array) {
+					const index = array.map(e => e.pathString).indexOf(this.pathString);
+					if (expand) {
+						if (index == -1) {
+							array.push(this);	// only add if not already added
+							mutated = true;
+						}
+					} else if (index != -1) {					// only splice array when item is found
+						array.splice(index, 1);			// 2nd parameter means 'remove one item only'
+						mutated = true;
+					}
+				}
+				return array;
+			});
+			if (mutated) {			// avoid disruptive rebuild
+				signals.signal_rebuild_fromHere();
+			}
+		}
 	}
 
 	startEdit() {
@@ -281,6 +338,10 @@ export default class Path {
 			signals.signal_relayout_fromHere();
 		}
 	}
+
+	////////////////////////////////////
+	//			operations			  //
+	////////////////////////////////////
 
 	async parentRelationship_forget_remoteRemove(parentPath: Path) {
 		const h = dbDispatch.db.hierarchy;
@@ -331,60 +392,5 @@ export default class Path {
             }
 			signals.signal_rebuild_fromHere();
         }
-	}
-
-	toggleToolsGrab() {
-		if (get(s_path_toolsGrab)) { // u.ignore if no reveal dot set s_path_toolsGrab
-			if (this.toolsGrabbed) {
-				s_path_toolsGrab.set(null);
-			} else if (!this.isRoot) {
-				s_path_toolsGrab.set(this);
-			}
-		}
-	}
-	
-	expanded_setTo(expand: boolean) {
-		if (!this.isRoot) {
-			let mutated = false;
-			s_paths_expanded.update((array) => {
-				if (array) {
-					const index = array.map(e => e.pathString).indexOf(this.pathString);
-					if (expand) {
-						if (index == -1) {
-							array.push(this);	// only add if not already added
-							mutated = true;
-						}
-					} else if (index != -1) {					// only splice array when item is found
-						array.splice(index, 1);			// 2nd parameter means 'remove one item only'
-						mutated = true;
-					}
-				}
-				return array;
-			});
-			if (mutated) {			// avoid disruptive rebuild
-				signals.signal_rebuild_fromHere();
-			}
-		}
-	}
-
-	ungrab() {
-		const rootPath = k.rootPath;
-		s_paths_grabbed.update((array) => {
-			const index = array.indexOf(this);
-			if (index != -1) {				// only splice array when item is found
-				array.splice(index, 1);		// 2nd parameter means remove one item only
-			}
-			if (array.length == 0) {
-				array.push(rootPath);
-			}
-			return array;
-		});
-		let paths = get(s_paths_grabbed);
-		if (paths.length == 0) {
-			rootPath.grabOnly();
-		} else {
-			this.toggleToolsGrab(); // do not show tools toolsCluster for root
-		}
-	}
-	
+	}	
 }
