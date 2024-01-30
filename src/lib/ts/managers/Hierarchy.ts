@@ -182,43 +182,6 @@ export default class Hierarchy {
 		this.knownTs_byTrait = {};
 	}
 
-	//////////////////////
-	//		DELETE		//
-	//////////////////////
-
-	async paths_rebuild_traverse_remoteDelete(paths: Array<Path>) {
-		if (this.herePath) {
-			for (const path of paths) {
-				let parent = path.parent;
-				const thing = path.thing();
-				const parentPath = path.stripBack(1);
-				const grandparentPath = path.stripBack(2);
-				if (thing && parent && parentPath && grandparentPath && path && !path.isEditing && !thing.isBulkAlias) {
-					const siblings = parent.children;
-					let index = siblings.indexOf(thing);
-					siblings.splice(index, 1);
-					parentPath.grabOnly();
-					if (siblings.length > 0) {
-						if (index >= siblings.length) {
-							index = siblings.length - 1;
-						}
-						parentPath?.appendChild(parent);
-						parent = siblings[index];
-						u.orders_normalize_remoteMaybe(parent.children);
-					} else if (!grandparentPath.isVisible) {
-						grandparentPath.becomeHere();
-					}
-					await thing.traverse_async(async (descendant: Thing): Promise<boolean> => {
-						await this.relationships_forget_remoteDeleteAllForThing(descendant);
-						await this.thing_forget_remoteDelete(descendant);
-						return false; // continue the traversal
-					});
-				}
-			}
-			signals.signal_rebuild_fromHere();
-		}
-	}
-
 	//////////////////////////////
 	//			THING			//
 	//////////////////////////////
@@ -559,13 +522,8 @@ export default class Hierarchy {
 	}
 
 	////////////////////////
-	//		  PATHS		  //
+	//		  PATH		  //
 	////////////////////////
-
-	paths_forgetAll() {
-		this.knownPath_byPathStringHash = {};
-		this.knownPaths_toThingIDHash = {};
-	}
 
 	path_unique(pathString: string = '') {
 		let path = this.knownPath_byPathStringHash[pathString.hash()];
@@ -583,28 +541,31 @@ export default class Hierarchy {
 		this.knownPath_byPathStringHash[pathStringHash] = path;
 		if (thingIDHash != 0 && paths.indexOf(path) == -1) {
 			paths.push(path);
+			console.log(`remember path for ${path.thing()?.title}`)
 			this.knownPaths_toThingIDHash[thingIDHash] = paths;
 		}
 	}
 
 	path_nextParent(path: Path): Path | null {
-		let result: Path | null = null
-		const paths = this.knownPaths_toThingIDHash[path.thingID];
+		let nextPath: Path | null = null
+		const thingIDHash = path.thingID.hash();
+		const paths = this.knownPaths_toThingIDHash[thingIDHash];
 		if (paths) {
 			const index = paths.map(p => p.pathString).indexOf(path.pathString);
 			const next = index.increment(true, paths.length)
-			result = paths[next];
+			nextPath = paths[next];
 		}
-		return result;
+		return nextPath;
 	}
 
 	async path_relayout_toolCluster_nextParent() {
 		const path = get(s_path_toolsCluster);
 		if (path) {
-			const nextParent = this.path_nextParent(path);
-			if (nextParent) {
-				await nextParent.assureIsVisible();
-				s_path_toolsCluster.set(nextParent);
+			const nextPath = this.path_nextParent(path);
+			if (nextPath && !path.matchesPath(nextPath)) {
+				await nextPath.assureIsVisible();
+				nextPath.grabOnly();
+				s_path_toolsCluster.set(nextPath);
 				signals.signal_relayout_fromHere();
 			}
 		}
@@ -837,6 +798,15 @@ export default class Hierarchy {
 		}
 	}
 
+	////////////////////////
+	//		  PATHS		  //
+	////////////////////////
+
+	paths_forgetAll() {
+		this.knownPath_byPathStringHash = {};
+		this.knownPaths_toThingIDHash = {};
+	}
+
 	async paths_rebuild_remoteTraverseDelete(paths: Array<Path>) {
 		if (this.herePath) {
 			for (const path of paths) {
@@ -861,6 +831,39 @@ export default class Hierarchy {
 						return false; // continue the traversal
 					});
 					newPath?.grabOnly();
+				}
+			}
+			signals.signal_rebuild_fromHere();
+		}
+	}
+
+	async paths_rebuild_traverse_remoteDelete(paths: Array<Path>) {
+		if (this.herePath) {
+			for (const path of paths) {
+				let parent = path.parent;
+				const thing = path.thing();
+				const parentPath = path.stripBack(1);
+				const grandparentPath = path.stripBack(2);
+				if (thing && parent && parentPath && grandparentPath && path && !path.isEditing && !thing.isBulkAlias) {
+					const siblings = parent.children;
+					let index = siblings.indexOf(thing);
+					siblings.splice(index, 1);
+					parentPath.grabOnly();
+					if (siblings.length > 0) {
+						if (index >= siblings.length) {
+							index = siblings.length - 1;
+						}
+						parentPath?.appendChild(parent);
+						parent = siblings[index];
+						u.orders_normalize_remoteMaybe(parent.children);
+					} else if (!grandparentPath.isVisible) {
+						grandparentPath.becomeHere();
+					}
+					await thing.traverse_async(async (descendant: Thing): Promise<boolean> => {
+						await this.relationships_forget_remoteDeleteAllForThing(descendant);
+						await this.thing_forget_remoteDelete(descendant);
+						return false; // continue the traversal
+					});
 				}
 			}
 			signals.signal_rebuild_fromHere();

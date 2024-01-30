@@ -301,7 +301,7 @@ export default class Path {
 	}
 
 	async assureIsVisible() {
-		alert('assureIsVisible is not done')
+		console.log('assureIsVisible is not done');
 	}
 	
 	expanded_setTo(expand: boolean) {

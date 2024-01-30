@@ -87,8 +87,8 @@
             const hierarchy = dbDispatch.db.hierarchy;
 			switch (buttonID) {
 				case ToolType.addParent: toggleAlteration(AlteringParent.adding); return;
-				case ToolType.deleteParent: toggleAlteration(AlteringParent.deleting); return;
                 case ToolType.next: hierarchy.path_relayout_toolCluster_nextParent(); return;
+				case ToolType.deleteParent: toggleAlteration(AlteringParent.deleting); return;
 				case ToolType.add: await hierarchy.path_edit_remoteCreateChildOf($s_path_toolsCluster); break;
 				case ToolType.delete: await hierarchy.paths_rebuild_remoteTraverseDelete([$s_path_toolsCluster]); break;
                 case ToolType.more: console.log('needs more'); break;
@@ -143,16 +143,18 @@
                     <path d={svgPath.ellipses(1, 2)}/>
                 </svg>
             </LabelButton>
-            <TriangleButton
-                fillColor_closure={() => { return ($s_altering_parent == AlteringParent.adding) ? thing.color : k.backgroundColor }}
-                extraColor={($s_altering_parent == AlteringParent.adding) ? k.backgroundColor : thing.color}
-                onClick={() => handleClick(ToolType.next)}
-                extra={svgPath.circle(diameter, 4)}
-                center={centers[ToolType.next]}
-                direction={Direction.up}
-                strokeColor={color}
-                size={diameter}
-                id='next'/>
+            {#if thing.parents.length > 1}
+                <TriangleButton
+                    fillColor_closure={() => { return ($s_altering_parent == AlteringParent.adding) ? thing.color : k.backgroundColor }}
+                    extraColor={($s_altering_parent == AlteringParent.adding) ? k.backgroundColor : thing.color}
+                    onClick={() => handleClick(ToolType.next)}
+                    extra={svgPath.circle(diameter, 4)}
+                    center={centers[ToolType.next]}
+                    direction={Direction.up}
+                    strokeColor={color}
+                    size={diameter}
+                    id='next'/>
+            {/if}
         {/if}
         <TriangleButton
             fillColor_closure={() => { return ($s_altering_parent == AlteringParent.adding) ? thing.color : k.backgroundColor }}

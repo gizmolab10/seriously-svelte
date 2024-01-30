@@ -57,7 +57,7 @@ class Launch {
 						break;
                     case 'settings': 
 						localStorage.clear();
-						s_path_here.set(dbDispatch.db.hierarchy.path_unique());
+						s_path_here.set(k.rootPath);
 						s_paths_grabbed.set([]);
 						s_paths_expanded.set([]);
 						break;

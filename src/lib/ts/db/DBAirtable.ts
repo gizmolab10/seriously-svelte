@@ -23,7 +23,7 @@ export default class DBAirtable implements DBInterface {
 	access_table = this.base(DataKind.access);
 	users_table = this.base(DataKind.users);
 	_hierarchy: Hierarchy | null = null;
-	db_type = DBType.airtable;
+	dbType = DBType.airtable;
 	hasData = false;
 	loadTime = null;
 	baseID = '';
