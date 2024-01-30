@@ -2,8 +2,8 @@ import { u } from './Utilities';
 import { v4 as uuid } from 'uuid';
 
 export default class Identifiable {
-	id: string;
 	hashedID: number;
+	id: string;
 
 	constructor(id: string | null) {
 		this.id = id ?? Identifiable.newID;
@@ -11,8 +11,8 @@ export default class Identifiable {
 	}
 
 	setID(id: string) {
+		this.hashedID = id.hash();
 		this.id = id;
-		this.hashedID = this.id.hash();
 	}
 	
 	static get newID(): string { return 'NEW' + u.removeAll('-', uuid()).slice(10, 24); } // use last, most-unique bytes of uuid

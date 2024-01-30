@@ -107,7 +107,7 @@ export default class Path {
 		return false;
 	}
 
-	relationship(back: number = 1): Relationship | null { return dbDispatch.db.hierarchy?.relationship_getForID(this.ancestorRelationshipID(back)) ?? null; }
+	relationship(back: number = 1): Relationship | null { return dbDispatch.db.hierarchy?.relationship_getForHID(this.ancestorRelationshipID(back).hash()) ?? null; }
 	includedInPaths(paths: Array<Path>): boolean { return paths.filter(p => p.matchesPath(this)).length > 0; }
 	matchesPath(path: Path | null): boolean { return !path ? false : this.pathString == path.pathString; }
 	includedInStore(store: Writable<Array<Path>>): boolean { return this.includedInPaths(get(store)); }
@@ -124,7 +124,7 @@ export default class Path {
 	thing(back: number = 1): Thing | null {
 		const relationship = this.relationship(back);
 		if (this.pathString != '' && relationship) {
-			return !relationship ? null : dbDispatch.db.hierarchy?.thing_getForID(relationship.idTo) ?? null;
+			return !relationship ? null : dbDispatch.db.hierarchy?.thing_getForHID(relationship.idTo.hash()) ?? null;
 		}
 		return dbDispatch.db.hierarchy?.root ?? null;
 	}
@@ -192,7 +192,7 @@ export default class Path {
 		let totalWidth = 0;
 		const array = root ? [root] : [];
 		for (const id of ids) {
-			const thing = dbDispatch.db.hierarchy?.thing_to_getForRelationshipID(id);
+			const thing = dbDispatch.db.hierarchy?.thing_to_getForRelationshipHID(id);
 			if (thing && thing != root) {
 				totalWidth += u.getWidthOf(thing.title);
 				if (totalWidth > thresholdWidth) {

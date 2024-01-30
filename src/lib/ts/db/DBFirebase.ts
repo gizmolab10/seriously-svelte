@@ -219,7 +219,7 @@ export default class DBFirebase implements DBInterface {
 				if (dataKind == DataKind.relationships) {
 					const remoteRelationship = new RemoteRelationship(data);
 					if (remoteRelationship) {
-						let relationship = h.knownR_byID[id];
+						let relationship = h.knownR_byHID[id.hash()];
 						const original = !relationship ? null : u.copyObject(relationship);
 						switch (change.type) {
 							case 'added':
@@ -254,7 +254,7 @@ export default class DBFirebase implements DBInterface {
 					}
 				} else if (dataKind == DataKind.things) {
 					const remoteThing = new RemoteThing(data);
-					let thing = h.thing_getForID(id);
+					let thing = h.thing_getForHID(id.hash());
 					if (remoteThing) {
 						switch (change.type) {
 							case 'added':

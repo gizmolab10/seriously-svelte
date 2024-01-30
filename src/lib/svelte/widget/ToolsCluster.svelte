@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { k, Rect, Size, Point, Wrapper, ZIndex, onMount, signals } from '../../ts/common/GlobalImports';
-	import { s_path_toolsCluster, s_tools_inWidgets, s_user_graphOffset } from '../../ts/managers/State';
+	import { s_tools_inWidgets, s_user_graphOffset, s_path_toolsCluster } from '../../ts/managers/State';
+	import { s_dot_size, s_row_height, s_graphRect, s_altering_parent } from '../../ts/managers/State';
 	import { svgPath, Direction, dbDispatch, AlteringParent } from '../../ts/common/GlobalImports';
-	import { s_dot_size, s_row_height, s_altering_parent } from '../../ts/managers/State';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TriangleButton from '../svg/TriangleButton.svelte';
@@ -31,6 +31,12 @@
 
 	onMount(() => { setTimeout(() => { update(); }, 10) });
     const relayoutHandler = signals.handle_relayout(() => { update(); });
+
+    $: {
+        if ($s_user_graphOffset || $s_graphRect) {
+            update();
+        }
+    }
 
     $: {
         if (userOffset != $s_user_graphOffset) {
