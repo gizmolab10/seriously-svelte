@@ -348,7 +348,7 @@ export default class DBFirebase implements DBInterface {
 				const ref = await addDoc(thingsCollection, jsThing)
 				thing.awaitingCreation = false;
 				thing.isRemotelyStored = true;
-				thing.id = ref.id;			// so relationship will be correct
+				thing.setID(ref.id);			// so relationship will be correct
 				this.hierarchy.thing_remember(thing);
 				this.snapshots_handleDeferred();
 				thing.log(DebugFlag.remote, 'CREATE T');
@@ -365,8 +365,8 @@ export default class DBFirebase implements DBInterface {
 		this.hierarchy.root = root;
 		const thingRef = await addDoc(collectionRef, u.convertToObject(thing, fields));	// N.B. these will be fetched, shortly
 		const rootRef = await addDoc(collectionRef, u.convertToObject(root, fields));		// no need to remember now
-		thing.id = thingRef.id;
-		root.id = rootRef.id;
+		thing.setID(thingRef.id);
+		root.setID(rootRef.id);
 		root.log(DebugFlag.remote, 'CREATE T');
 		thing.log(DebugFlag.remote, 'CREATE T');
 	}
@@ -425,7 +425,7 @@ export default class DBFirebase implements DBInterface {
 				const ref = await addDoc(relationshipsCollection, jsRelationship); // works!
 				relationship.awaitingCreation = false;
 				relationship.isRemotelyStored = true;
-				relationship.id = ref.id;
+				relationship.setID(ref.id);
 				this.hierarchy.relationship_remember(relationship);
 				this.snapshots_handleDeferred();
 				relationship.log(DebugFlag.remote, 'CREATE R');

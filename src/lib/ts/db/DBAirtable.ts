@@ -23,7 +23,7 @@ export default class DBAirtable implements DBInterface {
 	access_table = this.base(DataKind.access);
 	users_table = this.base(DataKind.users);
 	_hierarchy: Hierarchy | null = null;
-	dbType = DBType.airtable;
+	db_type = DBType.airtable;
 	hasData = false;
 	loadTime = null;
 	baseID = '';
@@ -82,7 +82,7 @@ export default class DBAirtable implements DBInterface {
 		try {
 			const fields = await this.things_table.create(thing.fields);
 			const id = fields['id']; //	// need for update, delete and knownTs_byID (to get parent from relationship)
-			thing.id = id;
+			thing.setID(id);
 			thing.isRemotelyStored = true;
 			this.hierarchy.thing_remember(thing);
 		} catch (error) {
@@ -138,7 +138,7 @@ export default class DBAirtable implements DBInterface {
 			try {
 				const fields = await this.relationships_table.create(relationship.fields);	// insert with temporary id
 				const id = fields['id'];																										// grab permanent id
-				relationship.id = id;
+				relationship.setID(id);
 				relationship.isRemotelyStored = true;
 				this.hierarchy.relationships_refreshKnowns();
 			} catch (error) {

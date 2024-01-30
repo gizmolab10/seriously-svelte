@@ -1,11 +1,11 @@
 import { dbDispatch } from '../common/GlobalImports';
+import Identifiable from '../common/Identifiable';
 
-export default class Predicate {
-	id: string;
+export default class Predicate extends Identifiable {
 	kind: string;
 
 	constructor(id: string, kind: string) {
-		this.id = id;
+		super(id);
 		this.kind = kind;
 	}
 
