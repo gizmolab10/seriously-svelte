@@ -1,5 +1,5 @@
 <script>
-	import { s_paths_expanded, s_dot_size, s_altering_parent, s_paths_grabbed, s_path_toolsGrab } from '../../ts/managers/State';
+	import { s_paths_expanded, s_dot_size, s_altering_parent, s_paths_grabbed, s_path_toolsCluster } from '../../ts/managers/State';
 	import { k, u, get, Size, Thing, Point, debug, ZIndex, svgPath, signals } from "../../ts/common/GlobalImports";
 	import { onMount, Wrapper, Direction, onDestroy, dbDispatch, SvelteType } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte';
@@ -73,7 +73,7 @@
 	}
 
 	function updatePath() {
-		if ((!thing.hasChildren && !thing.isBulkAlias) || $s_path_toolsGrab?.matchesPath(path)) {
+		if ((!thing.hasChildren && !thing.isBulkAlias) || $s_path_toolsCluster?.matchesPath(path)) {
 			scalablePath = svgPath.circle($s_dot_size, $s_dot_size / 2);
 		} else {
 			const goLeft = path.isExpanded && thing.hasChildren;
@@ -89,11 +89,11 @@
 		setIsHovering_updateColors(false);
 		if (!path.isRoot) {
 			if (path.toolsGrabbed) {
-				$s_path_toolsGrab = null;
+				$s_path_toolsCluster = null;
 				$s_altering_parent = null;
 			} else if (!thing.hasChildren) {
 				path.grabOnly();
-				$s_path_toolsGrab = path;
+				$s_path_toolsCluster = path;
 			} else {
 				dbDispatch.db.hierarchy.path_rebuild_remoteMoveRight(path, !path.isExpanded, true, false);
 				return;
@@ -112,11 +112,11 @@
 		clickTimer = setTimeout(() => {
 			clearClicks();
 			if (!path.isRoot) {
-				if ($s_path_toolsGrab == path) {
-					$s_path_toolsGrab = null;
+				if ($s_path_toolsCluster == path) {
+					$s_path_toolsCluster = null;
 				} else  {
 					path.grabOnly();
-					$s_path_toolsGrab = path;
+					$s_path_toolsCluster = path;
 				}
 				signals.signal_rebuild_fromHere();
 			}

@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, Size, Point, Thing, ZIndex, signals, svgPath, onDestroy, dbDispatch } from '../../ts/common/GlobalImports';
-	import { s_dot_size, s_path_here, s_paths_grabbed, s_crumbs_width, s_path_toolsGrab } from '../../ts/managers/State';
+	import { s_dot_size, s_path_here, s_paths_grabbed, s_crumbs_width, s_path_toolsCluster } from '../../ts/managers/State';
 	import FatTriangle from '../svg/FatTriangle.svelte';
 	import Crumb from '../kit/Crumb.svelte';
 	let size = 10;
@@ -14,7 +14,7 @@
 	onDestroy(() => { rebuild_signalHandler.disconnect() })
 
 	$: {
-		const trigger = $s_paths_grabbed + $s_path_toolsGrab + $s_path_here;
+		const trigger = $s_paths_grabbed + $s_path_toolsCluster + $s_path_here;
 		if (!path || trigger || ancestors.length == 0) {
 			path = path_lastGrabbed() ?? k.rootPath;	// assure we have a path
 			ancestors = path.things_ancestry($s_crumbs_width - 132);

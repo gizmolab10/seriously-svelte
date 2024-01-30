@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_path_toolsGrab, s_tools_inWidgets, s_thing_fontSize, s_thing_fontFamily } from '../../ts/managers/State';
+	import { s_path_toolsCluster, s_tools_inWidgets, s_thing_fontSize, s_thing_fontFamily } from '../../ts/managers/State';
 	import { s_title_editing, s_dot_size, s_path_here, s_row_height, s_paths_grabbed, } from '../../ts/managers/State';
 	import { onMount, onDestroy, debugReact, SignalKind, SvelteType } from '../../ts/common/GlobalImports';
 	import { k, Thing, Point, debug, ZIndex, Wrapper, signals } from '../../ts/common/GlobalImports';
@@ -81,7 +81,7 @@
 	}
 
 	$: {
-		const _ = $s_title_editing + $s_paths_grabbed + $s_path_toolsGrab;
+		const _ = $s_title_editing + $s_paths_grabbed + $s_path_toolsCluster;
 		fullUpdate();
 	}
 

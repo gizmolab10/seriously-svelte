@@ -21,7 +21,7 @@ export default class DBDispatch {
 		this.updateHierarchy(type);
 		s_db_type.subscribe((type: string) => {
 			if (type && this.db.dbType != type) {
-				s_path_here.set(this.db.hierarchy.uniquePath());
+				s_path_here.set(this.db.hierarchy.path_unique());
 				s_paths_grabbed.set([]);
 				this.updateDBForType(type);
 				this.updateHierarchy(type);

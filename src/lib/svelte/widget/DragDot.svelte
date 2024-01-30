@@ -1,7 +1,7 @@
 <script>
 	import { Wrapper, Direction, onDestroy, dbDispatch, SvelteType, AlteringParent } from "../../ts/common/GlobalImports";
 	import { k, u, Size, Point, Thing, debug, ZIndex, onMount, signals, svgPath } from "../../ts/common/GlobalImports";
-	import { s_dot_size, s_paths_grabbed, s_path_toolsGrab, s_tools_inWidgets } from '../../ts/managers/State';
+	import { s_dot_size, s_paths_grabbed, s_path_toolsCluster, s_tools_inWidgets } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
 	export let center;
 	export let path;
@@ -32,7 +32,7 @@
 		updatePathAndPosition();
 		updateColorsForHover(false);
         handler = signals.handle_alteringParent((alteration) => {
-			const applyFlag = $s_path_toolsGrab && path.things_canAlter_asParentOf_toolsGrab;
+			const applyFlag = $s_path_toolsCluster && path.things_canAlter_asParentOf_toolsGrab;
 			extra = (thing.parents.length < 2) ? null : svgPath.circle(size, size / 5);
 			altering = applyFlag ? (alteration != null) : false;
 			updateColors();

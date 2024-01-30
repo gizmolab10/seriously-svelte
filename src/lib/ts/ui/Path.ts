@@ -1,6 +1,6 @@
 import { s_dot_size, s_path_here, s_row_height, s_line_stretch, s_title_editing, s_paths_grabbed } from '../managers/State';
 import { SvelteType, dbDispatch, Relationship, SeriouslyRange, AlteringParent } from '../common/GlobalImports';
-import { s_paths_expanded, s_path_toolsGrab, s_altering_parent, s_tools_inWidgets } from '../managers/State';
+import { s_paths_expanded, s_path_toolsCluster, s_altering_parent, s_tools_inWidgets } from '../managers/State';
 import { k, u, get, Size, Thing, signals, Wrapper, Predicate, TitleState } from '../common/GlobalImports';
 import { Writable } from 'svelte/store';
 
@@ -37,7 +37,7 @@ export default class Path {
 	get endID(): string { return this.ancestorRelationshipID(); }
 	get isExemplar(): boolean { return this.thing()?.isExemplar ?? false; }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
-	get toolsGrabbed(): boolean { return this.matchesStore(s_path_toolsGrab); }
+	get toolsGrabbed(): boolean { return this.matchesStore(s_path_toolsCluster); }
 	get lineWrapper(): Wrapper | null { return this.wrappers[SvelteType.line]; };
 	get titleWrapper(): Wrapper | null { return this.wrappers[SvelteType.title]; };
 	get revealWrapper(): Wrapper | null { return this.wrappers[SvelteType.reveal]; };
@@ -91,7 +91,7 @@ export default class Path {
 	}
 
 	get things_canAlter_asParentOf_toolsGrab(): boolean {
-		const path_toolsGrab = get(s_path_toolsGrab);
+		const path_toolsGrab = get(s_path_toolsCluster);
 		if (path_toolsGrab && !this.matchesPath(path_toolsGrab)) {
 			const includesToolsGrab = this.thing_isParentOf(path_toolsGrab);
 			return (get(s_altering_parent) == AlteringParent.deleting) == includesToolsGrab;
@@ -155,7 +155,7 @@ export default class Path {
 		if (ids.length < 1) {
 			return k.rootPath;
 		}
-		return dbDispatch.db.hierarchy.uniquePath(ids.join(k.pathSeparator));
+		return dbDispatch.db.hierarchy.path_unique(ids.join(k.pathSeparator));
 	}
 
 	appendChild(thing: Thing | null): Path {
@@ -172,7 +172,7 @@ export default class Path {
 		if (relationship) {
 			let ids = this.ids;
 			ids.push(relationship.id);
-			return dbDispatch.db.hierarchy.uniquePath(ids.join(k.pathSeparator));
+			return dbDispatch.db.hierarchy.path_unique(ids.join(k.pathSeparator));
 		}
 		return this;
 	}
@@ -182,7 +182,7 @@ export default class Path {
 		if (thing && thing.hasChildren) {
 			s_path_here.set(this);
 			this.expand();
-			s_path_toolsGrab.set(null);
+			s_path_toolsCluster.set(null);
 		};
 	}
 
@@ -252,11 +252,11 @@ export default class Path {
 	toggleGrab() { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }
 
 	toggleToolsGrab(update: boolean = true) {
-		if (get(s_path_toolsGrab)) { // ignore if no reveal dot set s_path_toolsGrab
+		if (get(s_path_toolsCluster)) { // ignore if no reveal dot set s_path_toolsCluster
 			if (this.toolsGrabbed) {
-				s_path_toolsGrab.set(null);
+				s_path_toolsCluster.set(null);
 			} else if (!this.isRoot) {
-				s_path_toolsGrab.set(this);
+				s_path_toolsCluster.set(this);
 			}
 		}
 	}
@@ -298,6 +298,10 @@ export default class Path {
 		} else {
 			this.toggleToolsGrab(); // do not show tools toolsCluster for root
 		}
+	}
+
+	async assureIsVisible() {
+		alert('assureIsVisible is not done')
 	}
 	
 	expanded_setTo(expand: boolean) {
@@ -362,11 +366,11 @@ export default class Path {
 	async parent_alterMaybe() {
 		const alteration = get(s_altering_parent);
 		if (this.things_canAlter_asParentOf_toolsGrab) {
-			const toolsPath = get(s_path_toolsGrab);
+			const toolsPath = get(s_path_toolsCluster);
 			const toolsThing = toolsPath?.thing();
 			if (toolsPath && toolsThing) {
 				s_altering_parent.set(null);
-				s_path_toolsGrab.set(null);
+				s_path_toolsCluster.set(null);
 				switch (alteration) {
 					case AlteringParent.deleting:
 						await toolsPath.parentRelationship_forget_remoteRemove(this);

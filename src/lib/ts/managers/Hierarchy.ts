@@ -1,4 +1,4 @@
-import { s_title_editing, s_isBusy, s_path_here, s_paths_grabbed, s_things_arrived, s_path_toolsGrab } from './State';
+import { s_title_editing, s_isBusy, s_path_here, s_paths_grabbed, s_things_arrived, s_path_toolsCluster } from './State';
 import { k, u, get, User, Path, Thing, Grabs, debug, Access, signals, TraitType } from '../common/GlobalImports';
 import { Predicate, Relationship, persistLocal, CreationOptions } from '../common/GlobalImports';
 import DBInterface from '../db/DBInterface';
@@ -13,7 +13,8 @@ export default class Hierarchy {
 	knownR_byID: { [id: string]: Relationship } = {};
 	knownA_byKind: { [kind: string]: Access } = {};
 	knownP_byKind: { [kind: string]: Predicate } = {};
-	knownP_byPathString: { [pathString: string]: Path } = {};
+	knownPath_byPathStringHash: { [hash: number]: Path } = {};
+	knownPaths_toThingIDHash: { [hash: number]: Array<Path> } = {};
 	knownTs_byTrait: { [trait: string]: Array<Thing> } = {};
 	knownRs_byIDPredicate: KnownRelationships = {};
 	knownRs_byIDFrom: KnownRelationships = {};
@@ -127,7 +128,7 @@ export default class Hierarchy {
 	latestPathGrabbed_toggleToolsCluster(up: boolean = true) {
 		const path = this.grabs.latestPathGrabbed(up);
 		if (path && !path.isRoot) {
-			s_path_toolsGrab.set(path.toolsGrabbed ? null : path);
+			s_path_toolsCluster.set(path.toolsGrabbed ? null : path);
 			signals.signal_rebuild_fromHere();
 		}
 	}
@@ -561,16 +562,52 @@ export default class Hierarchy {
 	//		  PATHS		  //
 	////////////////////////
 
-	add(path: Path) { this.knownP_byPathString[path.pathString.hash()] = path; }
-	find(pathString: string) { return this.knownP_byPathString[pathString.hash()]; }
+	paths_forgetAll() {
+		this.knownPath_byPathStringHash = {};
+		this.knownPaths_toThingIDHash = {};
+	}
 
-	uniquePath(pathString: string = '') {
-		let path = this.find(pathString)
+	path_unique(pathString: string = '') {
+		let path = this.knownPath_byPathStringHash[pathString.hash()];
 		if (!path) {
 			path = new Path(pathString);
-			this.add(path);
+			this.path_remember(path);
 		}
 		return path;
+	}
+
+	path_remember(path: Path) {
+		const thingIDHash = path.thingID.hash();
+		const pathStringHash = path.pathString.hash();
+		const paths = this.knownPaths_toThingIDHash[thingIDHash] ?? [];
+		this.knownPath_byPathStringHash[pathStringHash] = path;
+		if (thingIDHash != 0 && paths.indexOf(path) == -1) {
+			paths.push(path);
+			this.knownPaths_toThingIDHash[thingIDHash] = paths;
+		}
+	}
+
+	path_nextParent(path: Path): Path | null {
+		let result: Path | null = null
+		const paths = this.knownPaths_toThingIDHash[path.thingID];
+		if (paths) {
+			const index = paths.map(p => p.pathString).indexOf(path.pathString);
+			const next = index.increment(true, paths.length)
+			result = paths[next];
+		}
+		return result;
+	}
+
+	async path_relayout_toolCluster_nextParent() {
+		const path = get(s_path_toolsCluster);
+		if (path) {
+			const nextParent = this.path_nextParent(path);
+			if (nextParent) {
+				await nextParent.assureIsVisible();
+				s_path_toolsCluster.set(nextParent);
+				signals.signal_relayout_fromHere();
+			}
+		}
 	}
 
 	async path_edit_remoteCreateChildOf(parentPath: Path | null) {

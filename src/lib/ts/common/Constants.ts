@@ -52,7 +52,7 @@ export default class Constants {
                 }
             }
         }
-		this.rootPath = dbDispatch.db.hierarchy.uniquePath();
+		this.rootPath = dbDispatch.db.hierarchy.path_unique();
 	}
 }
 

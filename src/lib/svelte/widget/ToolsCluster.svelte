@@ -1,21 +1,21 @@
 <script lang='ts'>
 	import { k, Rect, Size, Point, Wrapper, ZIndex, onMount, signals } from '../../ts/common/GlobalImports';
-	import { s_path_toolsGrab, s_tools_inWidgets, s_user_graphOffset } from '../../ts/managers/State';
+	import { s_path_toolsCluster, s_tools_inWidgets, s_user_graphOffset } from '../../ts/managers/State';
 	import { svgPath, Direction, dbDispatch, AlteringParent } from '../../ts/common/GlobalImports';
 	import { s_dot_size, s_row_height, s_altering_parent } from '../../ts/managers/State';
-    import { transparentize } from 'color2k';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TriangleButton from '../svg/TriangleButton.svelte';
 	import LabelButton from '../kit/LabelButton.svelte';
 	import RevealDot from './RevealDot.svelte';
+    import { transparentize } from 'color2k';
 	import Trash from '../svg/Trash.svelte';
     let centers: { [id: string]: Point } = {}
+	let thing = $s_path_toolsCluster.thing();
     let revealOffset = new Point();
     let userOffset = new Point();
 	let diameter = $s_dot_size;
 	let radius = diameter / 2;
-	let thing = $s_path_toolsGrab.thing();
 	let color = thing.color;
 	let left = 64;
 
@@ -42,7 +42,7 @@
 	function update() {
         if ($s_tools_inWidgets) {
             updateForInsideWidget();
-        } else if ($s_path_toolsGrab.widgetWrapper) {
+        } else if ($s_path_toolsCluster && $s_path_toolsCluster.titleWrapper) {
             updateForOverlay();
         }
 	}
@@ -51,7 +51,7 @@
 		const toolsHeight = k.toolsClusterHeight;
 		const halfHeight = toolsHeight / 2;
 		const titleWidth = thing.titleWidth;
-		const rect = Rect.createFromDOMRect($s_path_toolsGrab.titleWrapper.component.getBoundingClientRect());
+		const rect = Rect.createFromDOMRect($s_path_toolsCluster.titleWrapper.component.getBoundingClientRect());
 		const center = rect.centerLeft.offsetBy(new Point(titleWidth - 92, -34));
 		const top = center.y - 6;
 		left = center.x - diameter * 2.1;
@@ -84,16 +84,17 @@
 
 	async function handleClick(buttonID: string) {
 		if (!thing.isExemplar) {
+            const hierarchy = dbDispatch.db.hierarchy;
 			switch (buttonID) {
 				case ToolType.addParent: toggleAlteration(AlteringParent.adding); return;
 				case ToolType.deleteParent: toggleAlteration(AlteringParent.deleting); return;
-				case ToolType.add: await dbDispatch.db.hierarchy.path_edit_remoteCreateChildOf($s_path_toolsGrab); break;
-				case ToolType.delete: await dbDispatch.db.hierarchy.paths_rebuild_remoteTraverseDelete([$s_path_toolsGrab]); break;
+                case ToolType.next: hierarchy.path_relayout_toolCluster_nextParent(); return;
+				case ToolType.add: await hierarchy.path_edit_remoteCreateChildOf($s_path_toolsCluster); break;
+				case ToolType.delete: await hierarchy.paths_rebuild_remoteTraverseDelete([$s_path_toolsCluster]); break;
                 case ToolType.more: console.log('needs more'); break;
-                case ToolType.next: console.log('needs next'); break;
 				default: break;
 			}
-			$s_path_toolsGrab = null;
+			$s_path_toolsCluster = null;
 			signals.signal_relayout_fromHere();
 		}
 	}
@@ -130,7 +131,7 @@
                 backgroundColor={k.backgroundColor}
                 radius={k.toolsClusterHeight / 2.5}
                 center={centers[ToolType.cluster]}/>
-            <RevealDot path={$s_path_toolsGrab} center={centers[ToolType.cluster].offsetBy(new Point(-19 - thing.titleWidth, k.toolsClusterHeight / 2 - 51))}/>
+            <RevealDot path={$s_path_toolsCluster} center={centers[ToolType.cluster].offsetBy(new Point(-19 - thing.titleWidth, k.toolsClusterHeight / 2 - 51))}/>
             <LabelButton
                 color={color}
                 center={centers[ToolType.more]}
