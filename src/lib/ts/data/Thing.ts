@@ -1,4 +1,4 @@
-import { k, u, get, Path, Datum, debug, Predicate, Hierarchy, DebugFlag } from '../common/GlobalImports';
+import { k, u, get, Path, Relations, Datum, debug, Predicate, Hierarchy, DebugFlag } from '../common/GlobalImports';
 import { TraitType, dbDispatch } from '../common/GlobalImports';
 import { s_path_here } from '../managers/State';
 import Airtable from 'airtable';
@@ -17,10 +17,12 @@ export default class Thing extends Datum {
 	color: string;
 	trait: string;
 	order: number;
+	Relations: Relations;
 
 	constructor(baseID: string, id: string | null, title = k.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
 		super(baseID, id, isRemotelyStored);
 		this.dbType = dbDispatch.db.dbType;
+		this.Relations = new Relations(this);
 		this.title = title;
 		this.color = color;
 		this.trait = trait;
@@ -80,6 +82,10 @@ export default class Thing extends Datum {
 		this.grabAttributes = grab;
 	}
 
+	thing_isInDifferentBulkThan(other: Thing) {
+		return this.baseID != other.baseID || (other.isBulkAlias && !this.isBulkAlias && this.baseID != other.title);
+	}
+
 	ancestors_include(thing: Thing, visited: Array<string> = []): boolean {
 		if (visited.length == 0 || !visited.includes(this.id)) {
 			if (this.parents.length > 0) {
@@ -94,12 +100,18 @@ export default class Thing extends Datum {
 		return false;
 	}
 
-	order_normalizeRecursive_remoteMaybe(remoteWrite: boolean, visited: Array<string> = []) {
-		const children = this.children;
-		if (!visited.includes(this.id) && children && children.length > 1) {
-			u.orders_normalize_remoteMaybe(children, remoteWrite);
-			for (const child of children) {
-				child.order_normalizeRecursive_remoteMaybe(remoteWrite, [...visited, this.id]);
+	async traverse_async(applyTo: (thing: Thing) => Promise<boolean>) {
+		if (!await applyTo(this)) {
+			for (const child of this.children) {
+				await child.traverse_async(applyTo);
+			}
+		}
+	}
+
+	traverse(applyTo: (thing: Thing) => boolean) {
+		if (!applyTo(this)) {
+			for (const child of this.children) {
+				child.traverse(applyTo);
 			}
 		}
 	}
@@ -117,24 +129,14 @@ export default class Thing extends Datum {
 		}
 	}
 
-	traverse(applyTo: (thing: Thing) => boolean) {
-		if (!applyTo(this)) {
-			for (const child of this.children) {
-				child.traverse(applyTo);
+	order_normalizeRecursive_remoteMaybe(remoteWrite: boolean, visited: Array<string> = []) {
+		const children = this.children;
+		if (!visited.includes(this.id) && children && children.length > 1) {
+			u.orders_normalize_remoteMaybe(children, remoteWrite);
+			for (const child of children) {
+				child.order_normalizeRecursive_remoteMaybe(remoteWrite, [...visited, this.id]);
 			}
 		}
-	}
-
-	async traverse_async(applyTo: (thing: Thing) => Promise<boolean>) {
-		if (!await applyTo(this)) {
-			for (const child of this.children) {
-				await child.traverse_async(applyTo);
-			}
-		}
-	}
-
-	thing_isInDifferentBulkThan(other: Thing) {
-		return this.baseID != other.baseID || (other.isBulkAlias && !this.isBulkAlias && this.baseID != other.title);
 	}
 
 	async normalize_bulkFetchAll(baseID: string) {
@@ -142,6 +144,9 @@ export default class Thing extends Datum {
 		await dbDispatch.db.hierarchy?.relationships_remoteCreateMissing(this);
 		await dbDispatch.db.hierarchy?.relationships_removeHavingNullReferences();
 		this.order_normalizeRecursive_remoteMaybe(true);
+		this.assembleAllRelations();
 	}
+
+	assembleAllRelations() {}
 
 }

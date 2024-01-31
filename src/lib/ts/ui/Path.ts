@@ -33,10 +33,11 @@ export default class Path {
 
 	get parent(): Thing | null { return this.thing(2); }
 	get parentPath(): Path | null { return this.stripBack(); }
-	get isHere(): boolean { return this.matchesStore(s_path_here); }
 	get endID(): string { return this.ancestorRelationshipID(); }
+	get isHere(): boolean { return this.matchesStore(s_path_here); }
 	get hashedIDs(): Array<number> { return this.ids.map(i => i.hash()); }
 	get isExemplar(): boolean { return this.thing()?.isExemplar ?? false; }
+	get order(): number | null { return this.relationship()?.order || null; }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
 	get toolsGrabbed(): boolean { return this.matchesStore(s_path_toolsCluster); }
 	get lineWrapper(): Wrapper | null { return this.wrappers[SvelteType.line]; };
@@ -49,7 +50,7 @@ export default class Path {
 	get isEditing(): boolean { return this.pathString == get(s_title_editing)?.editing?.pathString; }
 	get isStoppingEdit(): boolean { return this.pathString == get(s_title_editing)?.stopping?.pathString; }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
-	
+		
 	get ids(): Array<string> {
 		if (this.isRoot) {
 			return [];
@@ -250,6 +251,12 @@ export default class Path {
 	collapse() { this.expanded_setTo(false); }
 	toggleExpand() { this.expanded_setTo(!this.isExpanded) }	
 	toggleGrab() { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }
+
+	order_setTo(order: number, remoteWrite: boolean = true) {
+		if (this.relationship()) {
+			this.relationship()?.order_setTo(order, remoteWrite);
+		}
+	}
 
 	toggleToolsGrab(update: boolean = true) {
 		if (get(s_path_toolsCluster)) { // ignore if no reveal dot set s_path_toolsCluster

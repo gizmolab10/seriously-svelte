@@ -10,5 +10,5 @@ export default class Predicate extends Identifiable {
 	}
 
 	static get idIsAParentOf(): string { return dbDispatch.db.hierarchy.knownP_byKind['isAParentOf']?.id ?? 'alert: isAParentOf is unrecognized'; }
-
+	static get predicate_isAParentOf(): Predicate { return dbDispatch.db.hierarchy.knownP_byHID[Predicate.idIsAParentOf.hash()]; }
 }
