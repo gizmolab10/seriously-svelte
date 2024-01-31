@@ -157,7 +157,7 @@
 			{/if}
 			<Children thing={here} path={$s_path_here} origin={origin_ofChildren}/>
 		</div>
-		{#key $s_path_toolsCluster}
+		{#key $s_path_toolsCluster || $s_graphRect}
 			{#if $s_path_toolsCluster && !$s_tools_inWidgets}
 				<ToolsCluster/>
 			{/if}

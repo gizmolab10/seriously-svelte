@@ -26,6 +26,16 @@ export enum TraitType {
 	bulk  = '~',
 }
 
+export enum ClusterToolType {
+	deleteParent = 'P',
+	addParent	 = 'A',
+	cluster		 = 'c',
+	delete		 = 'd',
+	next		 = 'n',
+	more		 = 'm',
+	add     	 = 'a',
+}
+
 export enum BrowserType  {
 	unknown  = 'unknown',
 	explorer = 'explorer',

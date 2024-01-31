@@ -1,5 +1,6 @@
-import { ZIndex, ButtonID, TraitType, BrowserType, AlteringParent, CreationOptions, LineCurveType } from './Enumerations';
+import { ZIndex, ButtonID, TraitType, BrowserType, AlteringParent } from './Enumerations';
 import { Point, Size, Rect, LineRect, graphRect_update } from '../geometry/Geometry';
+import { CreationOptions, LineCurveType, ClusterToolType } from './Enumerations';
 import { debugReact, DebugReact, ReactFlag } from '../debug/DebugReact';
 import { PersistID, persistLocal } from '../managers/PersistLocal';
 import { debug, Debug, DebugFlag } from '../debug/Debug';
@@ -22,21 +23,21 @@ import Hierarchy from '../managers/Hierarchy';
 import TitleState from '../ui/TitleState';
 import Predicate from '../data/Predicate';
 import Layout from '../geometry/Layout';
+import Grabs from '../managers/Grabs';
 import Wrapper from '../ui/Wrapper';
 import Access from '../data/Access';
 import Thing from '../data/Thing';
 import Datum from '../data/Datum';
-import Grabs from '../managers/Grabs';
 import User from '../data/User';
 import Path from '../ui/Path';
 
 export {
-	k, u, get, builds, launch, onMount, onDestroy,
 	svgPath, Direction, PersistID, persistLocal,
 	Path, Grabs, Wrapper, TitleState, SvelteType,
+	k, u, get, builds, launch, onMount, onDestroy,
 	signals, SignalKind, debugReact, DebugReact, ReactFlag,
 	ZIndex, ButtonID, BrowserType, AlteringParent, CreationOptions,
 	debug, Debug, DebugFlag, DBType, DataKind, dbDispatch, Hierarchy,
 	User, Datum, Thing, Access, Predicate, Relationship, SeriouslyRange,
-	Point, Size, Rect, Layout, LineRect, TraitType, LineCurveType, graphRect_update,
+	Point, Size, Rect, Layout, LineRect, TraitType, LineCurveType, ClusterToolType, graphRect_update,
 };

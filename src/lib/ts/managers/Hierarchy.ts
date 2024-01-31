@@ -1,6 +1,6 @@
-import { s_title_editing, s_isBusy, s_path_here, s_paths_grabbed, s_things_arrived, s_path_toolsCluster } from './State';
-import { k, u, get, User, Path, Thing, Grabs, debug, Access, signals, TraitType } from '../common/GlobalImports';
-import { Predicate, Relationship, persistLocal, CreationOptions } from '../common/GlobalImports';
+import { s_isBusy, s_path_here, s_paths_grabbed, s_things_arrived, s_title_editing, s_altering_parent, s_path_toolsCluster } from './State';
+import { k, u, get, User, Path, Thing, Grabs, debug, Access, signals, TraitType, Predicate } from '../common/GlobalImports';
+import { Relationship, persistLocal, AlteringParent, CreationOptions, ClusterToolType } from '../common/GlobalImports';
 import DBInterface from '../db/DBInterface';
 
 type KnownRelationships = { [hID: number]: Array<Relationship> }
@@ -14,7 +14,7 @@ export default class Hierarchy {
 	knownA_byKind: { [kind: string]: Access } = {};
 	knownP_byKind: { [kind: string]: Predicate } = {};
 	knownPath_byPathStringHash: { [hID: number]: Path } = {};
-	knownPaths_toThingIDHash: { [hID: number]: Array<Path> } = {};
+	knownPaths_toThingHID: { [hID: number]: Array<Path> } = {};
 	knownTs_byTrait: { [trait: string]: Array<Thing> } = {};
 	knownRs_byHIDPredicate: KnownRelationships = {};
 	knownRs_byHIDFrom: KnownRelationships = {};
@@ -60,6 +60,27 @@ export default class Hierarchy {
 			this.herePath = this.grabs.path_lastGrabbed?.stripBack() ?? k.rootPath;
 		}
 		this.herePath?.becomeHere();
+	}
+
+	toggleAlteration(alteration: AlteringParent) {
+		s_altering_parent.set((get(s_altering_parent) == alteration) ? null : alteration);
+	}
+
+	async handleToolClicked(buttonID: string) {
+		const path = get(s_path_toolsCluster);
+		if (path) {
+			switch (buttonID) {
+				case ClusterToolType.next: this.path_relayout_toolCluster_nextParent(); return;
+				case ClusterToolType.add: await this.path_edit_remoteCreateChildOf(path); break;
+				case ClusterToolType.addParent: this.toggleAlteration(AlteringParent.adding); return;
+				case ClusterToolType.deleteParent: this.toggleAlteration(AlteringParent.deleting); return;
+				case ClusterToolType.delete: await this.paths_rebuild_traverse_remoteDelete([path]); break;
+				case ClusterToolType.more: console.log('needs more'); break;
+				default: break;
+			}
+			s_path_toolsCluster.set(null);
+			signals.signal_relayout_fromHere();
+		}
 	}
 
 	async handleKeyDown(event: KeyboardEvent) {
@@ -534,19 +555,19 @@ export default class Hierarchy {
 	path_remember(path: Path) {
 		const hID = path.thingID.hash();
 		const pathHash = path.pathString.hash();
-		const paths = this.knownPaths_toThingIDHash[hID] ?? [];
+		const paths = this.knownPaths_toThingHID[hID] ?? [];
 		this.knownPath_byPathStringHash[pathHash] = path;
 		if (hID != 0 && paths.indexOf(path) == -1) {
 			paths.push(path);
 			// console.log(`remember path for ${path.thing()?.title}`)
-			this.knownPaths_toThingIDHash[hID] = paths;
+			this.knownPaths_toThingHID[hID] = paths;
 		}
 	}
 
 	path_nextParent(path: Path): Path | null {
 		let nextPath: Path | null = null
 		const hID = path.thingID.hash();
-		const paths = this.knownPaths_toThingIDHash[hID];
+		const paths = this.knownPaths_toThingHID[hID];
 		if (paths) {
 			const index = paths.map(p => p.pathString).indexOf(path.pathString);
 			const next = index.increment(true, paths.length)
@@ -801,37 +822,7 @@ export default class Hierarchy {
 
 	paths_forgetAll() {
 		this.knownPath_byPathStringHash = {};
-		this.knownPaths_toThingIDHash = {};
-	}
-
-	async paths_rebuild_remoteTraverseDelete(paths: Array<Path>) {
-		if (this.herePath) {
-			for (const path of paths) {
-				if (path && !path.isEditing && !path.thing()?.isBulkAlias) {
-					let newPath = path.parentPath;
-					const siblingPaths = path.siblingPaths;
-					const grandparentPath = path.stripBack(2);
-					let index = siblingPaths.map(p => p.pathString).indexOf(path.pathString);
-					siblingPaths.splice(index, 1);
-					if (siblingPaths.length > 0) {
-						if (index >= siblingPaths.length) {
-							index = siblingPaths.length - 1;
-						}
-						newPath = siblingPaths[index];
-						u.orders_normalize_remoteMaybe(path.parent?.children ?? []);
-					} else if (grandparentPath && !grandparentPath.isVisible) {
-						grandparentPath.becomeHere();
-					}
-					await path.thing()?.traverse_async(async (descendant: Thing): Promise<boolean> => {
-						await this.relationships_forget_remoteDeleteAllForThing(descendant);
-						await this.thing_forget_remoteDelete(descendant);
-						return false; // continue the traversal
-					});
-					newPath?.grabOnly();
-				}
-			}
-			signals.signal_rebuild_fromHere();
-		}
+		this.knownPaths_toThingHID = {};
 	}
 
 	async paths_rebuild_traverse_remoteDelete(paths: Array<Path>) {

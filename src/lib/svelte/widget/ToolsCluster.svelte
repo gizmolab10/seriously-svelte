@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { k, Rect, Size, Point, Wrapper, ZIndex, onMount, signals } from '../../ts/common/GlobalImports';
+	import { k, Rect, Size, Point, Wrapper, ZIndex, onMount, signals, svgPath } from '../../ts/common/GlobalImports';
+	import { Direction, dbDispatch, AlteringParent, ClusterToolType } from '../../ts/common/GlobalImports';
 	import { s_tools_inWidgets, s_user_graphOffset, s_path_toolsCluster } from '../../ts/managers/State';
 	import { s_dot_size, s_row_height, s_graphRect, s_altering_parent } from '../../ts/managers/State';
-	import { svgPath, Direction, dbDispatch, AlteringParent } from '../../ts/common/GlobalImports';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TriangleButton from '../svg/TriangleButton.svelte';
@@ -19,16 +19,6 @@
 	let color = thing.color;
 	let left = 64;
 
-	export enum ToolType {
-		deleteParent = 'P',
-		addParent	 = 'A',
-		cluster		 = 'c',
-		delete		 = 'd',
-		next		 = 'n',
-		more		 = 'm',
-		add     	 = 'a',
-	}
-
 	onMount(() => { setTimeout(() => { update(); }, 10) });
     const relayoutHandler = signals.handle_relayout(() => { update(); });
 
@@ -44,6 +34,12 @@
             update();
         }
     }
+
+	async function handleClick(buttonID: string) {
+		if (!thing.isExemplar) {
+            await dbDispatch.db.hierarchy.handleToolClicked(buttonID);
+		}
+	}
 
 	function update() {
         if ($s_tools_inWidgets) {
@@ -62,13 +58,13 @@
 		const top = center.y - 6;
 		left = center.x - diameter * 2.1;
 		const leftLeft = center.x + radius * 0.8;
-		centers[ToolType.cluster] = center;
-		centers[ToolType.add] = new Point(leftLeft, top - diameter);
-		centers[ToolType.addParent] = new Point(left, top - diameter);
-		centers[ToolType.delete] = new Point(leftLeft, top + diameter - 5);
-		centers[ToolType.deleteParent] = new Point(left, top + diameter - 8);
-		centers[ToolType.next] = new Point(center.x - diameter + 2, top - diameter - 10);
-		centers[ToolType.more] = new Point(center.x - diameter - 1, top + diameter + 3);
+		centers[ClusterToolType.cluster] = center;
+		centers[ClusterToolType.add] = new Point(leftLeft, top - diameter);
+		centers[ClusterToolType.addParent] = new Point(left, top - diameter);
+		centers[ClusterToolType.delete] = new Point(leftLeft, top + diameter - 5);
+		centers[ClusterToolType.deleteParent] = new Point(left, top + diameter - 8);
+		centers[ClusterToolType.next] = new Point(center.x - diameter + 2, top - diameter - 10);
+		centers[ClusterToolType.more] = new Point(center.x - diameter - 1, top + diameter + 3);
         revealOffset = new Point(-19 - thing.titleWidth, k.toolsClusterHeight / 2 - 51)
 		color = thing.color;
 	}
@@ -80,33 +76,12 @@
 		const top = -offsetY - 3;
 		left = offsetX + titleWidth - 3;
 		const otherLeft = left - diameter * 1.2;
-		centers[ToolType.add] = new Point(left, top - diameter);
-		centers[ToolType.delete] = new Point(left, top + diameter + 12);
-		centers[ToolType.addParent] = new Point(otherLeft, top - diameter);
-		centers[ToolType.deleteParent] = new Point(otherLeft, top + diameter + 10);
-		centers[ToolType.cluster] = new Point(left + radius - 2, top + diameter + 2);
+		centers[ClusterToolType.add] = new Point(left, top - diameter);
+		centers[ClusterToolType.delete] = new Point(left, top + diameter + 12);
+		centers[ClusterToolType.addParent] = new Point(otherLeft, top - diameter);
+		centers[ClusterToolType.deleteParent] = new Point(otherLeft, top + diameter + 10);
+		centers[ClusterToolType.cluster] = new Point(left + radius - 2, top + diameter + 2);
 		color = thing.color;
-	}
-
-	async function handleClick(buttonID: string) {
-		if (!thing.isExemplar) {
-            const hierarchy = dbDispatch.db.hierarchy;
-			switch (buttonID) {
-				case ToolType.addParent: toggleAlteration(AlteringParent.adding); return;
-                case ToolType.next: hierarchy.path_relayout_toolCluster_nextParent(); return;
-				case ToolType.deleteParent: toggleAlteration(AlteringParent.deleting); return;
-				case ToolType.add: await hierarchy.path_edit_remoteCreateChildOf($s_path_toolsCluster); break;
-				case ToolType.delete: await hierarchy.paths_rebuild_remoteTraverseDelete([$s_path_toolsCluster]); break;
-                case ToolType.more: console.log('needs more'); break;
-				default: break;
-			}
-			$s_path_toolsCluster = null;
-			signals.signal_relayout_fromHere();
-		}
-	}
-
-	function toggleAlteration(alteration: AlteringParent) {
-		$s_altering_parent = ($s_altering_parent == alteration) ? null : alteration;
 	}
 
 </script>
@@ -136,12 +111,12 @@
                 color={transparentize(color, 0.2)}
                 backgroundColor={k.backgroundColor}
                 radius={k.toolsClusterHeight / 2.5}
-                center={centers[ToolType.cluster]}/>
-            <RevealDot path={$s_path_toolsCluster} center={centers[ToolType.cluster].offsetBy(new Point(-19 - thing.titleWidth, k.toolsClusterHeight / 2 - 51))}/>
+                center={centers[ClusterToolType.cluster]}/>
+            <RevealDot path={$s_path_toolsCluster} center={centers[ClusterToolType.cluster].offsetBy(new Point(-19 - thing.titleWidth, k.toolsClusterHeight / 2 - 51))}/>
             <LabelButton
                 color={color}
-                center={centers[ToolType.more]}
-                onClick={() => handleClick(ToolType.more)}>
+                center={centers[ClusterToolType.more]}
+                onClick={() => handleClick(ClusterToolType.more)}>
                 <svg style='position:absolute' width='28' height='16' fill={'transparent'} stroke={color} viewBox='6 2 16 16'>
                     <path d={svgPath.oval(20, true)}/>
                 </svg>
@@ -153,9 +128,9 @@
                 <TriangleButton
                     fillColor_closure={() => { return ($s_altering_parent == AlteringParent.adding) ? thing.color : k.backgroundColor }}
                     extraColor={($s_altering_parent == AlteringParent.adding) ? k.backgroundColor : thing.color}
-                    onClick={() => handleClick(ToolType.next)}
+                    onClick={() => handleClick(ClusterToolType.next)}
                     extra={svgPath.circle(diameter, 4)}
-                    center={centers[ToolType.next]}
+                    center={centers[ClusterToolType.next]}
                     direction={Direction.up}
                     strokeColor={color}
                     size={diameter}
@@ -165,8 +140,8 @@
         <TriangleButton
             fillColor_closure={() => { return ($s_altering_parent == AlteringParent.adding) ? thing.color : k.backgroundColor }}
             extraColor={($s_altering_parent == AlteringParent.adding) ? k.backgroundColor : thing.color}
-            onClick={() => handleClick(ToolType.addParent)}
-            center={centers[ToolType.addParent]}
+            onClick={() => handleClick(ClusterToolType.addParent)}
+            center={centers[ClusterToolType.addParent]}
             extra={svgPath.tCross(diameter, 2)}
             direction={Direction.left}
             strokeColor={color}
@@ -176,8 +151,8 @@
             <TriangleButton
                 fillColor_closure={() => { return ($s_altering_parent == AlteringParent.deleting) ? thing.color : k.backgroundColor }}
                 extraColor={($s_altering_parent == AlteringParent.deleting) ? k.backgroundColor : thing.color}
-                onClick={() => handleClick(ToolType.deleteParent)}
-                center={centers[ToolType.deleteParent]}
+                onClick={() => handleClick(ClusterToolType.deleteParent)}
+                center={centers[ClusterToolType.deleteParent]}
                 extra={svgPath.dash(diameter, 2)}
                 direction={Direction.left}
                 strokeColor={color}
@@ -186,22 +161,22 @@
         {/if}
         <TriangleButton
             fillColor_closure={() => { return k.backgroundColor; }}
-            onClick={() => handleClick(ToolType.add)}
+            onClick={() => handleClick(ClusterToolType.add)}
             extra={svgPath.tCross(diameter, 2)}
-            center={centers[ToolType.add]}
+            center={centers[ClusterToolType.add]}
             direction={Direction.right}
             extraColor={thing.color}
             strokeColor={color}
             size={diameter}
             id='add'/>
         <button class='delete'
-            on:click={() => handleClick('delete')}
+            on:click={() => handleClick(ClusterToolType.delete)}
             style='border: none;
                 cursor: pointer;
                 background: none;
                 z-index: {ZIndex.lines};
-                left: {centers[ToolType.delete].x}px;
-                top: {centers[ToolType.delete].y}px;'>
+                left: {centers[ClusterToolType.delete].x}px;
+                top: {centers[ClusterToolType.delete].y}px;'>
             <Trash color={color}/>
         </button>
     </div>

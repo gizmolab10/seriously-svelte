@@ -35,6 +35,7 @@ export default class Path {
 	get parentPath(): Path | null { return this.stripBack(); }
 	get isHere(): boolean { return this.matchesStore(s_path_here); }
 	get endID(): string { return this.ancestorRelationshipID(); }
+	get hashedIDs(): Array<number> { return this.ids.map(i => i.hash()); }
 	get isExemplar(): boolean { return this.thing()?.isExemplar ?? false; }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
 	get toolsGrabbed(): boolean { return this.matchesStore(s_path_toolsCluster); }
@@ -107,11 +108,11 @@ export default class Path {
 		return false;
 	}
 
-	relationship(back: number = 1): Relationship | null { return dbDispatch.db.hierarchy?.relationship_getForHID(this.ancestorRelationshipID(back).hash()) ?? null; }
-	includedInPaths(paths: Array<Path>): boolean { return paths.filter(p => p.matchesPath(this)).length > 0; }
-	matchesPath(path: Path | null): boolean { return !path ? false : this.pathString == path.pathString; }
-	includedInStore(store: Writable<Array<Path>>): boolean { return this.includedInPaths(get(store)); }
 	matchesStore(store: Writable<Path | null>): boolean { return this.matchesPath(get(store)); }
+	includedInStore(store: Writable<Array<Path>>): boolean { return this.includedInPaths(get(store)); }
+	matchesPath(path: Path | null): boolean { return !path ? false : this.pathString == path.pathString; }
+	includedInPaths(paths: Array<Path>): boolean { return paths.filter(p => p.matchesPath(this)).length > 0; }
+	relationship(back: number = 1): Relationship | null { return dbDispatch.db.hierarchy?.relationship_getForHID(this.ancestorRelationshipID(back).hash()) ?? null; }
 
 	ancestorRelationshipID(back: number = 1): string {
 		const ids = this.ids;
@@ -188,11 +189,10 @@ export default class Path {
 
 	things_ancestry(thresholdWidth: number): Array<Thing> {
 		const root = dbDispatch.db.hierarchy?.root;
-		const ids = this.ids;
 		let totalWidth = 0;
 		const array = root ? [root] : [];
-		for (const id of ids) {
-			const thing = dbDispatch.db.hierarchy?.thing_to_getForRelationshipHID(id);
+		for (const hID of this.hashedIDs) {
+			const thing = dbDispatch.db.hierarchy?.thing_to_getForRelationshipHID(hID);
 			if (thing && thing != root) {
 				totalWidth += u.getWidthOf(thing.title);
 				if (totalWidth > thresholdWidth) {
