@@ -16,34 +16,32 @@ export default class Thing extends Datum {
 	title: string;
 	color: string;
 	trait: string;
-	order: number;
-	Relations: Relations;
+	relations: Relations;
 
-	constructor(baseID: string, id: string | null, title = k.defaultTitle, color = 'blue', trait = 's', order = 0, isRemotelyStored: boolean) {
+	constructor(baseID: string, id: string | null, title = k.defaultTitle, color = 'blue', trait = 's', isRemotelyStored: boolean) {
 		super(baseID, id, isRemotelyStored);
+		this.relations = new Relations(this);
 		this.dbType = dbDispatch.db.dbType;
-		this.Relations = new Relations(this);
 		this.title = title;
 		this.color = color;
 		this.trait = trait;
-		this.order = order;
 	};
 	
-	get fields():			Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
-	get parentIDs():			Array<string> { return this.hierarchy.thingIDs_getByIDPredicateToAndID(Predicate.idIsAParentOf,  true, this.id); }
-	get children():				 Array<Thing> { return this.hierarchy.things_getByIDPredicateToAndID(Predicate.idIsAParentOf, false, this.idForChildren); }
-	get parents():				 Array<Thing> { return this.hierarchy.things_getByIDPredicateToAndID(Predicate.idIsAParentOf,  true, this.id); }
-	get isHere():					  boolean { return (get(s_path_here).thing()?.id ?? '') == this.id; }
-	get idForChildren():               string { return this.isBulkAlias ? this.bulkRootID : this.id; }
-	get description():				   string { return this.id + ' \"' + this.title + '\"'; }
-	get isBulkAlias():				  boolean { return this.trait == TraitType.bulk; }
-	get isRoot():					  boolean { return this == this.hierarchy.root; }
-	get lastChild():					Thing { return this.children.slice(-1)[0]; }	// not alter children
-	get hasChildren():				  boolean { return this.children.length > 0; }
-	get hierarchy():				Hierarchy { return dbDispatch.db.hierarchy; }
-	get hasParents():				  boolean { return this.parents.length > 0; }
-	get titleWidth():				   number { return u.getWidthOf(this.title) }
-	get firstChild():					Thing { return this.children[0]; }
+	get fields():	Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
+	get parentIDs():	Array<string> { return this.parents.map(t => t.id); }
+	get parents():		 Array<Thing> { return this.relations.thingsFor(Predicate.idIsAParentOf.hash(), false); }
+	get children():		 Array<Thing> { return this.relations.thingsFor(Predicate.idIsAParentOf.hash(), true); }
+	get isHere():			  boolean { return (get(s_path_here).thing()?.id ?? '') == this.id; }
+	get idForChildren():	   string { return this.isBulkAlias ? this.bulkRootID : this.id; }
+	get description():		   string { return this.id + ' \"' + this.title + '\"'; }
+	get isBulkAlias():		  boolean { return this.trait == TraitType.bulk; }
+	get isRoot():			  boolean { return this == this.hierarchy.root; }
+	get lastChild():			Thing { return this.children.slice(-1)[0]; }	// not alter children
+	get hasChildren():		  boolean { return this.children.length > 0; }
+	get hierarchy():		Hierarchy { return dbDispatch.db.hierarchy; }
+	get hasParents():		  boolean { return this.parents.length > 0; }
+	get titleWidth():		   number { return u.getWidthOf(this.title) }
+	get firstChild():			Thing { return this.children[0]; }
 
 	get hasGrandChildren(): boolean {
 		if (this.hasChildren) {
@@ -117,24 +115,16 @@ export default class Thing extends Datum {
 	}
 
 	async order_setTo(newOrder: number, remoteWrite: boolean = false) {
-		const relationship = this.hierarchy.relationship_getWhereIDEqualsTo(this.id);
-		if (relationship && Math.abs(relationship.order - newOrder) > 0.001) {
-			const oldOrder = relationship.order;
-			relationship.order = newOrder;
-			this.order = newOrder;
-			if (remoteWrite) {
-				this.log(DebugFlag.order, `${oldOrder} => ${newOrder}`);
-				await relationship.remoteWrite();
-			}
-		}
+		this.hierarchy.relationship_getWhereIDEqualsTo(this.id)?.order_setTo(newOrder, remoteWrite);
 	}
 
-	order_normalizeRecursive_remoteMaybe(remoteWrite: boolean, visited: Array<string> = []) {
+	order_normalizeRecursive_remoteMaybe(remoteWrite: boolean, visited: Array<number> = []) {
+		const hID = this.hashedID;
 		const children = this.children;
-		if (!visited.includes(this.id) && children && children.length > 1) {
+		if (!visited.includes(hID) && children && children.length > 1) {
 			u.orders_normalize_remoteMaybe(children, remoteWrite);
 			for (const child of children) {
-				child.order_normalizeRecursive_remoteMaybe(remoteWrite, [...visited, this.id]);
+				child.order_normalizeRecursive_remoteMaybe(remoteWrite, [...visited, hID]);
 			}
 		}
 	}
@@ -143,10 +133,7 @@ export default class Thing extends Datum {
 		await dbDispatch.db.fetch_allFrom(baseID)
 		await dbDispatch.db.hierarchy?.relationships_remoteCreateMissing(this);
 		await dbDispatch.db.hierarchy?.relationships_removeHavingNullReferences();
-		this.order_normalizeRecursive_remoteMaybe(true);
-		this.assembleAllRelations();
+		this.order_normalizeRecursive_remoteMaybe(true); // TODO: very slow launch?
 	}
-
-	assembleAllRelations() {}
 
 }

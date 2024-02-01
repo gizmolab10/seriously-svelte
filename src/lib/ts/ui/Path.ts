@@ -1,6 +1,6 @@
 import { s_dot_size, s_path_here, s_row_height, s_line_stretch, s_title_editing, s_paths_grabbed } from '../managers/State';
-import { SvelteType, dbDispatch, Relationship, SeriouslyRange, AlteringParent } from '../common/GlobalImports';
 import { s_paths_expanded, s_path_toolsCluster, s_altering_parent, s_tools_inWidgets } from '../managers/State';
+import { SvelteType, dbDispatch, Relationship, SeriouslyRange, AlteringParent } from '../common/GlobalImports';
 import { k, u, get, Size, Thing, signals, Wrapper, Predicate, TitleState } from '../common/GlobalImports';
 import { Writable } from 'svelte/store';
 
@@ -34,16 +34,16 @@ export default class Path {
 	get parent(): Thing | null { return this.thing(2); }
 	get parentPath(): Path | null { return this.stripBack(); }
 	get endID(): string { return this.ancestorRelationshipID(); }
+	get order(): number { return this.relationship()?.order ?? -1; }
 	get isHere(): boolean { return this.matchesStore(s_path_here); }
 	get hashedIDs(): Array<number> { return this.ids.map(i => i.hash()); }
 	get isExemplar(): boolean { return this.thing()?.isExemplar ?? false; }
-	get order(): number | null { return this.relationship()?.order || null; }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
+	get lineWrapper(): Wrapper | null { return this.wrappers[SvelteType.line]; }
 	get toolsGrabbed(): boolean { return this.matchesStore(s_path_toolsCluster); }
-	get lineWrapper(): Wrapper | null { return this.wrappers[SvelteType.line]; };
-	get titleWrapper(): Wrapper | null { return this.wrappers[SvelteType.title]; };
-	get revealWrapper(): Wrapper | null { return this.wrappers[SvelteType.reveal]; };
-	get widgetWrapper(): Wrapper | null { return this.wrappers[SvelteType.widget]; };
+	get titleWrapper(): Wrapper | null { return this.wrappers[SvelteType.title]; }
+	get revealWrapper(): Wrapper | null { return this.wrappers[SvelteType.reveal]; }
+	get widgetWrapper(): Wrapper | null { return this.wrappers[SvelteType.widget]; }
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
@@ -149,7 +149,7 @@ export default class Path {
 		return null;
 	}
 
-	stripBack(back: number = 1): Path | null {
+	stripBack(back: number = 1): Path {
 		if (back == 0) {
 			return this;
 		}
@@ -162,21 +162,18 @@ export default class Path {
 
 	appendChild(thing: Thing | null): Path {
 		if (thing) {
-			const relationship = dbDispatch.db.hierarchy?.relationships_getByIDPredicateFromAndTo(Predicate.idIsAParentOf, this.thingID, thing.id);
+			const relationship = dbDispatch.db.hierarchy?.relationship_getByIDPredicateFromAndTo(Predicate.idIsAParentOf, this.thingID, thing.id);
 			if (relationship) {
-				return this.appendChildRelationship(relationship);
+				return this.appendID(relationship.id);
 			}
 		}
 		return this;
 	}
 
-	appendChildRelationship(relationship: Relationship | null): Path {
-		if (relationship) {
-			let ids = this.ids;
-			ids.push(relationship.id);
-			return dbDispatch.db.hierarchy.path_unique(ids.join(k.pathSeparator));
-		}
-		return this;
+	appendID(id: string): Path {
+		let ids = this.ids;
+		ids.push(id);
+		return dbDispatch.db.hierarchy.path_unique(ids.join(k.pathSeparator));
 	}
 
 	becomeHere() {
@@ -252,10 +249,8 @@ export default class Path {
 	toggleExpand() { this.expanded_setTo(!this.isExpanded) }	
 	toggleGrab() { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }
 
-	order_setTo(order: number, remoteWrite: boolean = true) {
-		if (this.relationship()) {
-			this.relationship()?.order_setTo(order, remoteWrite);
-		}
+	async order_setTo(order: number, remoteWrite: boolean = true) {
+		await this.relationship()?.order_setTo(order, remoteWrite);
 	}
 
 	toggleToolsGrab(update: boolean = true) {
@@ -358,7 +353,7 @@ export default class Path {
 		const h = dbDispatch.db.hierarchy;
 		const thing = this.thing();
 		const parent = this.parent;
-		const relationship = h.relationships_getByIDPredicateFromAndTo(Predicate.idIsAParentOf, parentPath.thingID, this.thingID);
+		const relationship = h.relationship_getByIDPredicateFromAndTo(Predicate.idIsAParentOf, parentPath.thingID, this.thingID);
 		if (parent && relationship && (thing?.parents.length ?? 0) > 1) {
 			h.relationship_forget(relationship);
 			if (parentPath.thing()?.hasChildren) {

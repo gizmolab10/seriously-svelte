@@ -1,18 +1,19 @@
 import { s_thing_fontSize, s_thing_fontFamily } from '../managers/State';
-import { get, Thing, BrowserType } from './GlobalImports';
+import { get, Path, Thing, BrowserType } from './GlobalImports';
 
 class Utilities {
 	noop() {}
 	ignore(event: Event) {}
 	roundToEven(n: number): number{ return Math.round(n / 2) * 2; }
-	sort_byOrder(array: Array<Thing>) { return array.sort( (a: Thing, b: Thing) => { return a.order - b.order; }); }
+	sort_byOrder(array: Array<Path>) { return array.sort( (a: Path, b: Path) => { return a.order - b.order; }); }
+	async orders_normalize_remoteMaybe(array: Array<Thing>, remoteWrite: boolean = true) {}
 
-	async orders_normalize_remoteMaybe(array: Array<Thing>, remoteWrite: boolean = true) {
+	async paths_orders_normalize_remoteMaybe(array: Array<Path>, remoteWrite: boolean = true) {
 		this.sort_byOrder(array);
-		array.forEach((thing, index) => {
-			if (thing.order != index) {
+		array.forEach((path, index) => {
+			if (path.order != index) {
 				(async () => {
-					await thing.order_setTo(index, remoteWrite);
+					await path.order_setTo(index, remoteWrite);
 				})();
 			}
 		});

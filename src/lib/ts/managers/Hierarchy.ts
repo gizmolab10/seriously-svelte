@@ -1,6 +1,6 @@
 import { s_isBusy, s_path_here, s_paths_grabbed, s_things_arrived, s_title_editing, s_altering_parent, s_path_toolsCluster } from './State';
-import { k, u, get, User, Path, Thing, Grabs, debug, Access, signals, TraitType, Predicate } from '../common/GlobalImports';
-import { Relationship, persistLocal, AlteringParent, CreationOptions, ClusterToolType } from '../common/GlobalImports';
+import { k, u, get, User, Path, Paths, Thing, Grabs, debug, Access, signals, TraitType, Predicate } from '../common/GlobalImports';
+import { Relations, Relationship, persistLocal, AlteringParent, CreationOptions, ClusterToolType } from '../common/GlobalImports';
 import DBInterface from '../db/DBInterface';
 
 type KnownRelationships = { [hID: number]: Array<Relationship> }
@@ -20,6 +20,7 @@ export default class Hierarchy {
 	knownRs_byHIDFrom: KnownRelationships = {};
 	knownRs_byHIDTo: KnownRelationships = {};
 	knownRs: Array<Relationship> = [];
+	knownPs: Array<Predicate> = [];
 	knownTs: Array<Thing> = [];
 	herePath: Path | null = null;
 	_grabs: Grabs | null = null;
@@ -45,6 +46,7 @@ export default class Hierarchy {
 		const root = this.root;
 		if (root) {
 			await root.normalize_bulkFetchAll(root.baseID);
+			root.relations.relations_recursive_assemble(k.rootPath);
 			this.db.setHasData(true);
 			persistLocal.s_updateForDBType(type);
 		}
@@ -168,19 +170,30 @@ export default class Hierarchy {
 	//			THINGS			//
 	//////////////////////////////
 
+	things_getForPaths(paths: Array<Path>): Array<Thing> {
+		const things = Array<Thing>();
+		for (const path of paths) {
+			const thing = this.thing_getForPath(path);
+			if (thing) {
+				things.push(thing);
+			}
+		}
+		return things;
+	}
+
 	things_getForIDs(ids: Array<string> | null): Array<Thing> {
 		if (ids) {
-			const array = Array<Thing>();
+			const things = Array<Thing>();
 			for (const id of ids) {
 				const thing = this.thing_getForHID(id.hash());
 				if (thing) {
-					array.push(thing);
+					things.push(thing);
 				}
 			}
-			return u.sort_byOrder(array);
+			return u.sort_byOrder(things);
 		}
 		return [];
-	}
+	}//knownPaths_toThingHID
 
 	things_getByIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Thing> {
 		return this.things_getForIDs(this.thingIDs_getByIDPredicateToAndID(idPredicate, to, idThing));
@@ -233,21 +246,21 @@ export default class Hierarchy {
 		const parent = parentPath?.thing();
 		const thing = path.thing();
 		if (thing && parent && parentPath) {
-			const order = thing.order + (below ? 0.5 : -0.5);
-			const child = this.thing_runtimeCreate(thing.baseID, null, k.lineTitle, parent.color, '', order, false);
-			await this.path_edit_remoteAddAsChild(parentPath, child, false);
+			const order = path.order + (below ? 0.5 : -0.5);
+			const child = this.thing_runtimeCreate(thing.baseID, null, k.lineTitle, parent.color, '', false);
+			await this.path_edit_remoteAddAsChild(parentPath, child, order, false);
 		}
 	}
 
-	thing_remember_runtimeCreate(baseID: string, id: string | null, title: string, color: string, trait: string, order: number,
+	thing_remember_runtimeCreate(baseID: string, id: string | null, title: string, color: string, trait: string,
 		isRemotelyStored: boolean): Thing {
-		const thing = this.thing_runtimeCreate(baseID, id, title, color, trait, order, isRemotelyStored);
+		const thing = this.thing_runtimeCreate(baseID, id, title, color, trait, isRemotelyStored);
 		this.thing_remember(thing);
 		return thing;
 	}
 
 	async thing_remember_runtimeCopy(baseID: string, from: Thing) {
-		const newThing = new Thing(baseID, null, from.title, from.color, from.trait, from.order, false);
+		const newThing = new Thing(baseID, null, from.title, from.color, from.trait, false);
 		if (newThing.isBulkAlias || newThing.trait == TraitType.roots || newThing.trait == TraitType.root) {
 			newThing.trait = '';
 		}
@@ -262,7 +275,7 @@ export default class Hierarchy {
 		if (thing && id && parentPath) {
 			const sibling = await this.thing_remember_runtimeCopy(id, thing);
 			sibling.title = 'idea';
-			await this.path_edit_remoteAddAsChild(parentPath, sibling);
+			await this.path_edit_remoteAddAsChild(parentPath, sibling, path.order + 0.5);
 		}
 	}
 
@@ -279,14 +292,14 @@ export default class Hierarchy {
 		}
 	}
 
-	thing_runtimeCreate(baseID: string, id: string | null, title: string, color: string, trait: string, order: number,
+	thing_runtimeCreate(baseID: string, id: string | null, title: string, color: string, trait: string,
 		isRemotelyStored: boolean): Thing {
 		let thing: Thing | null = null;
 		if (id && trait == TraitType.root && baseID != this.db.baseID) {		// other bulks have their own root & id
 			thing = this.thing_bulkRootpath_set(baseID, id, color);				// which our thing needs to adopt
 		}
 		if (!thing) {
-			thing = new Thing(baseID, id, title, color, trait, order, isRemotelyStored);
+			thing = new Thing(baseID, id, title, color, trait, isRemotelyStored);
 			if (baseID != this.db.baseID) {
 				u.noop()
 			}
@@ -361,7 +374,7 @@ export default class Hierarchy {
 				return rootsPath;
 			}
 		}
-		const roots = this.thing_runtimeCreate(this.db.baseID, null, 'roots', 'red', TraitType.roots, 0, false);
+		const roots = this.thing_runtimeCreate(this.db.baseID, null, 'roots', 'red', TraitType.roots, false);
 		await this.path_remember_remoteAddAsChild(rootPath, roots);
 		const rootsPath = rootPath?.appendChild(roots) ?? null;
 		return rootsPath;
@@ -416,7 +429,7 @@ export default class Hierarchy {
 		return array;
 	}
 
-	relationships_getByIDPredicateFromAndTo(idPredicate: string, idFrom: string, idTo: string): Relationship | null {
+	relationship_getByIDPredicateFromAndTo(idPredicate: string, idFrom: string, idTo: string): Relationship | null {
 		const matches = this.relationships_getByPredicateIDToAndID(idPredicate, false, idFrom);
 		if (Array.isArray(matches)) {
 			for (const relationship of matches) {
@@ -435,9 +448,7 @@ export default class Hierarchy {
 				const idThing = thing.id;
 				if (idThing != idRoot && thing.trait != TraitType.root && thing.baseID == root.baseID) {
 					let relationship = this.relationship_getWhereIDEqualsTo(idThing);
-					if (relationship) {
-						thing.order = relationship.order;
-					} else {
+					if (!relationship) {
 						const idPredicateIsAParentOf = Predicate.idIsAParentOf;
 						await this.relationship_remember_remoteCreateUnique(root.baseID, null, idPredicateIsAParentOf,
 							idRoot, idThing, 0, CreationOptions.getRemoteID)
@@ -503,7 +514,7 @@ export default class Hierarchy {
 
 	relationship_remember_runtimeCreateUnique(baseID: string, idRelationship: string, idPredicate: string, idFrom: string,
 		idTo: string, order: number, creationOptions: CreationOptions = CreationOptions.none) {
-		let relationship = this.relationships_getByIDPredicateFromAndTo(idPredicate, idFrom, idTo);
+		let relationship = this.relationship_getByIDPredicateFromAndTo(idPredicate, idFrom, idTo);
 		if (relationship) {
 			relationship.order_setTo(order);						// AND thing are updated
 		} else {
@@ -515,7 +526,7 @@ export default class Hierarchy {
 
 	async relationship_remember_remoteCreateUnique(baseID: string, idRelationship: string | null, idPredicate: string, idFrom: string,
 		idTo: string, order: number, creationOptions: CreationOptions = CreationOptions.isFromRemote): Promise<any> {
-		let relationship = this.relationships_getByIDPredicateFromAndTo(idPredicate, idFrom, idTo);
+		let relationship = this.relationship_getByIDPredicateFromAndTo(idPredicate, idFrom, idTo);
 		if (relationship) {
 			relationship.order_setTo(order, true);						// AND thing are updated
 		} else {
@@ -543,7 +554,7 @@ export default class Hierarchy {
 	//		  PATH		  //
 	////////////////////////
 
-	path_unique(pathString: string = '') {
+	path_unique(pathString: string = ''): Path {
 		let path = this.knownPath_byPathStringHash[pathString.hash()];
 		if (!path) {
 			path = new Path(pathString);
@@ -595,11 +606,11 @@ export default class Hierarchy {
 			const child = await this.thing_remember_runtimeCopy(parent.baseID, parent);
 			child.title = 'idea';
 			parentPath.expand();
-			await this.path_edit_remoteAddAsChild(parentPath, child);
+			await this.path_edit_remoteAddAsChild(parentPath, child, 0);
 		}
 	}
 
-	async path_edit_remoteAddAsChild(path: Path, child: Thing, shouldStartEdit: boolean = true) {
+	async path_edit_remoteAddAsChild(path: Path, child: Thing, order: number, shouldStartEdit: boolean = true) {
 		const thing = path.thing();
 		if (thing) {
 			await this.path_remember_remoteAddAsChild(path, child);
@@ -607,6 +618,7 @@ export default class Hierarchy {
 			signals.signal_rebuild_fromHere();
 			const childPath = path.appendChild(child);
 			childPath.grabOnly();
+			childPath.order_setTo(order);
 			if (shouldStartEdit) {
 				setTimeout(() => {
 					childPath.startEdit();
@@ -620,6 +632,7 @@ export default class Hierarchy {
 		if (thing) {
 			path.expand();		// do this before fetch, so next launch will see it
 			await thing.normalize_bulkFetchAll(thing.title);
+			thing.relations.relations_recursive_assemble(path);
 			if (thing.hasChildren) {
 				if (grab) {
 					path.appendChild(thing.children[0]).grabOnly()
@@ -652,7 +665,7 @@ export default class Hierarchy {
 			if (!child.isRemotelyStored) {	
 				await this.db.thing_remember_remoteCreate(child);			// for everything below, need to await child.id fetched from dbDispatch
 			}
-			const relationship = await this.db.hierarchy.relationship_remember_remoteCreateUnique(baseID, null, idPredicateIsAParentOf, parentID, child.id, child.order, CreationOptions.getRemoteID)
+			const relationship = await this.db.hierarchy.relationship_remember_remoteCreateUnique(baseID, null, idPredicateIsAParentOf, parentID, child.id, 0, CreationOptions.getRemoteID)
 			await u.orders_normalize_remoteMaybe(thing.children);		// write new order values for relationships
 			return relationship;
 		}
@@ -715,20 +728,20 @@ export default class Hierarchy {
 		const newParentPath = RIGHT ? path.path_ofNextSibling(false) : path.stripBack(2);
 		const newParent = newParentPath?.thing();
 		if (thing && newParent && newParentPath) {
-			const parent = path.parent;
-			const relationship = this.relationship_getWhereIDEqualsTo(thing.id);
 			if (thing.thing_isInDifferentBulkThan(newParent)) {		// should move across bulks
 				this.path_remember_bulk_remoteRelocateRight(path, newParentPath);
 			} else {
+				const relationship = path.relationship();
+
 				// alter the 'to' in ALL [?] the matching 'from' relationships
 				// simpler than adjusting children or parents arrays
 				// TODO: also match against the 'to' to the current parent
 				// TODO: pass predicate in ... to support editing different kinds of relationships
 
-				if (parent && relationship) {
-					const order = RIGHT ? parent.order : 0;
+				if (relationship) {
+					const order = RIGHT ? relationship.order : 0;
 					relationship.idFrom = newParent.id;
-					await thing.order_setTo(order + 0.5);
+					await relationship.order_setTo(order + 0.5);
 				}
 
 				this.relationships_refreshKnowns();		// so children and parent will see the newly relocated things
@@ -867,8 +880,9 @@ export default class Hierarchy {
 	}
 
 	predicate_remember(predicate: Predicate) {
-		this.knownP_byKind[predicate.kind] = predicate;
 		this.knownP_byHID[predicate.hashedID] = predicate;
+		this.knownP_byKind[predicate.kind] = predicate;
+		this.knownPs.push(predicate);
 	}
 
 	predicate_remember_runtimeCreate(id: string, kind: string) {
