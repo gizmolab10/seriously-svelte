@@ -45,8 +45,9 @@ export default class Hierarchy {
 	async hierarchy_assemble(type: string) {
 		const root = this.root;
 		if (root) {
-			await root.normalize_bulkFetchAll(root.baseID);
+			await root.bulk_fetchAll(root.baseID);
 			root.relations.relations_recursive_assemble(k.rootPath);
+			root.order_normalizeRecursive_remoteMaybe(true);
 			this.db.setHasData(true);
 			persistLocal.s_updateForDBType(type);
 		}
@@ -59,7 +60,7 @@ export default class Hierarchy {
 	here_restore() {
 		let here = this.thing_getForPath(this.herePath);
 		if (here == null) {
-			this.herePath = this.grabs.path_lastGrabbed?.stripBack() ?? k.rootPath;
+			this.herePath = this.grabs.path_lastGrabbed?.parentPath ?? k.rootPath;
 		}
 		this.herePath?.becomeHere();
 	}
@@ -179,35 +180,6 @@ export default class Hierarchy {
 			}
 		}
 		return things;
-	}
-
-	things_getForIDs(ids: Array<string> | null): Array<Thing> {
-		if (ids) {
-			const things = Array<Thing>();
-			for (const id of ids) {
-				const thing = this.thing_getForHID(id.hash());
-				if (thing) {
-					things.push(thing);
-				}
-			}
-			return u.sort_byOrder(things);
-		}
-		return [];
-	}//knownPaths_toThingHID
-
-	things_getByIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<Thing> {
-		return this.things_getForIDs(this.thingIDs_getByIDPredicateToAndID(idPredicate, to, idThing));
-	}
-
-	thingIDs_getByIDPredicateToAndID(idPredicate: string, to: boolean, idThing: string): Array<string> {
-		const matches = this.relationships_getByPredicateIDToAndID(idPredicate, to, idThing);
-		const ids: Array<string> = [];
-		if (Array.isArray(matches) && matches.length > 0) {
-			for (const relationship of matches) {
-				ids.push(to ? relationship.idFrom : relationship.idTo);
-			}
-		}
-		return ids;
 	}
 
 	things_forgetAll() {
@@ -631,8 +603,9 @@ export default class Hierarchy {
 		const thing = path.thing();
 		if (thing) {
 			path.expand();		// do this before fetch, so next launch will see it
-			await thing.normalize_bulkFetchAll(thing.title);
+			await thing.bulk_fetchAll(thing.title);
 			thing.relations.relations_recursive_assemble(path);
+			thing.order_normalizeRecursive_remoteMaybe(true);
 			if (thing.hasChildren) {
 				if (grab) {
 					path.appendChild(thing.children[0]).grabOnly()
@@ -666,7 +639,7 @@ export default class Hierarchy {
 				await this.db.thing_remember_remoteCreate(child);			// for everything below, need to await child.id fetched from dbDispatch
 			}
 			const relationship = await this.db.hierarchy.relationship_remember_remoteCreateUnique(baseID, null, idPredicateIsAParentOf, parentID, child.id, 0, CreationOptions.getRemoteID)
-			await u.orders_normalize_remoteMaybe(thing.children);		// write new order values for relationships
+			await u.paths_orders_normalize_remoteMaybe(thing.childPaths);		// write new order values for relationships
 			return relationship;
 		}
 	}
@@ -711,12 +684,12 @@ export default class Hierarchy {
 				}
 				signals.signal_relayout_fromHere();
 			} else if (k.allowGraphEditing && OPTION) {
-				u.orders_normalize_remoteMaybe(parent.children, false);
+				await u.paths_orders_normalize_remoteMaybe(parent.childPaths, false);
 				const wrapped = up ? (index == 0) : (index == siblings.length - 1);
 				const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
 				const newOrder = newIndex + goose;
 				thing.order_setTo(newOrder);
-				await u.orders_normalize_remoteMaybe(parent.children);
+				await u.paths_orders_normalize_remoteMaybe(parent.childPaths);
 				signals.signal_rebuild_fromHere();
 			}
 		}
@@ -856,7 +829,7 @@ export default class Hierarchy {
 						}
 						parentPath?.appendChild(parent);
 						parent = siblings[index];
-						u.orders_normalize_remoteMaybe(parent.children);
+						await u.paths_orders_normalize_remoteMaybe(parent.childPaths);
 					} else if (!grandparentPath.isVisible) {
 						grandparentPath.becomeHere();
 					}

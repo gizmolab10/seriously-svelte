@@ -6,7 +6,6 @@ class Utilities {
 	ignore(event: Event) {}
 	roundToEven(n: number): number{ return Math.round(n / 2) * 2; }
 	sort_byOrder(array: Array<Path>) { return array.sort( (a: Path, b: Path) => { return a.order - b.order; }); }
-	async orders_normalize_remoteMaybe(array: Array<Thing>, remoteWrite: boolean = true) {}
 
 	async paths_orders_normalize_remoteMaybe(array: Array<Path>, remoteWrite: boolean = true) {
 		this.sort_byOrder(array);

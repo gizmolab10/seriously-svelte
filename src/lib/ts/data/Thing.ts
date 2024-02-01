@@ -31,6 +31,7 @@ export default class Thing extends Datum {
 	get parentIDs():	Array<string> { return this.parents.map(t => t.id); }
 	get parents():		 Array<Thing> { return this.relations.thingsFor(Predicate.idIsAParentOf.hash(), false); }
 	get children():		 Array<Thing> { return this.relations.thingsFor(Predicate.idIsAParentOf.hash(), true); }
+	get childPaths():	  Array<Path> { return this.relations.pathsFor(Predicate.idIsAParentOf.hash(), true); }
 	get isHere():			  boolean { return (get(s_path_here).thing()?.id ?? '') == this.id; }
 	get idForChildren():	   string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get description():		   string { return this.id + ' \"' + this.title + '\"'; }
@@ -118,22 +119,21 @@ export default class Thing extends Datum {
 		this.hierarchy.relationship_getWhereIDEqualsTo(this.id)?.order_setTo(newOrder, remoteWrite);
 	}
 
-	order_normalizeRecursive_remoteMaybe(remoteWrite: boolean, visited: Array<number> = []) {
+	async order_normalizeRecursive_remoteMaybe(remoteWrite: boolean, visited: Array<number> = []) {
 		const hID = this.hashedID;
-		const children = this.children;
-		if (!visited.includes(hID) && children && children.length > 1) {
-			u.orders_normalize_remoteMaybe(children, remoteWrite);
-			for (const child of children) {
-				child.order_normalizeRecursive_remoteMaybe(remoteWrite, [...visited, hID]);
+		const childPaths = this.relations.pathsFor(Predicate.idIsAParentOf.hash(), true);
+		if (!visited.includes(hID) && childPaths && childPaths.length > 1) {
+			await u.paths_orders_normalize_remoteMaybe(childPaths, remoteWrite);
+			for (const childPath of childPaths) {
+				childPath.thing()?.order_normalizeRecursive_remoteMaybe(remoteWrite, [...visited, hID]);
 			}
 		}
 	}
 
-	async normalize_bulkFetchAll(baseID: string) {
+	async bulk_fetchAll(baseID: string) {
 		await dbDispatch.db.fetch_allFrom(baseID)
 		await dbDispatch.db.hierarchy?.relationships_remoteCreateMissing(this);
 		await dbDispatch.db.hierarchy?.relationships_removeHavingNullReferences();
-		this.order_normalizeRecursive_remoteMaybe(true); // TODO: very slow launch?
 	}
 
 }

@@ -42,7 +42,7 @@
 			if (now - prior > 100) {
 				prior = now;
 				setTimeout(async () => { // delay until all other handlers for this signal are done TODO: WHY?
-					await u.orders_normalize_remoteMaybe(thing.children);
+					await u.paths_orders_normalize_remoteMaybe(thing.children);
 					debugReact.log_layout(`CHILDREN signal ${thing.description}`);
 					layoutChildren();
 					if (signalPath) { // only recurse if starting at a specific signalPath

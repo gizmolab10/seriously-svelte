@@ -31,8 +31,8 @@ export default class Path {
 	//			properties			  //
 	////////////////////////////////////
 
+	get parentPath(): Path { return this.stripBack(); }
 	get parent(): Thing | null { return this.thing(2); }
-	get parentPath(): Path | null { return this.stripBack(); }
 	get endID(): string { return this.ancestorRelationshipID(); }
 	get order(): number { return this.relationship()?.order ?? -1; }
 	get isHere(): boolean { return this.matchesStore(s_path_here); }
@@ -81,12 +81,12 @@ export default class Path {
 	}
 
 	get siblingPaths(): Array<Path> {
-		const parentPath = this.parentPath;
-		const parent = parentPath?.thing()
+		const path = this.parentPath;
+		const parent = path?.thing()
 		let paths = Array<Path>();
-		if (parent && parentPath) {
+		if (parent && path) {
 			for (const child of parent.children) {
-				paths.push(parentPath.appendChild(child));
+				paths.push(path.appendChild(child));
 			}
 		}
 		return paths;
@@ -349,17 +349,17 @@ export default class Path {
 	//			operations			  //
 	////////////////////////////////////
 
-	async parentRelationship_forget_remoteRemove(parentPath: Path) {
+	async relationship_forget_remoteRemove(path: Path) {
 		const h = dbDispatch.db.hierarchy;
 		const thing = this.thing();
 		const parent = this.parent;
-		const relationship = h.relationship_getByIDPredicateFromAndTo(Predicate.idIsAParentOf, parentPath.thingID, this.thingID);
+		const relationship = h.relationship_getByIDPredicateFromAndTo(Predicate.idIsAParentOf, path.thingID, this.thingID);
 		if (parent && relationship && (thing?.parents.length ?? 0) > 1) {
 			h.relationship_forget(relationship);
-			if (parentPath.thing()?.hasChildren) {
+			if (path.thing()?.hasChildren) {
 				parent.order_normalizeRecursive_remoteMaybe(true);
 			} else {
-				parentPath.collapse();
+				path.collapse();
 			}
 			await dbDispatch.db.relationship_remoteDelete(relationship);
 		}
@@ -375,7 +375,7 @@ export default class Path {
 				s_path_toolsCluster.set(null);
 				switch (alteration) {
 					case AlteringParent.deleting:
-						await toolsPath.parentRelationship_forget_remoteRemove(this);
+						await toolsPath.relationship_forget_remoteRemove(this);
 						break;
 					case AlteringParent.adding:
 						await dbDispatch.db.hierarchy?.path_remember_remoteAddAsChild(this, toolsThing);
