@@ -31,9 +31,10 @@ export default class Path {
 	//			properties			  //
 	////////////////////////////////////
 
+	get endID(): string { return this.idAt(); }
 	get parentPath(): Path { return this.stripBack(); }
 	get parent(): Thing | null { return this.thing(2); }
-	get endID(): string { return this.ancestorRelationshipID(); }
+	get isRoot(): boolean { return this.matchesPath(k.rootPath); }
 	get order(): number { return this.relationship()?.order ?? -1; }
 	get isHere(): boolean { return this.matchesStore(s_path_here); }
 	get hashedIDs(): Array<number> { return this.ids.map(i => i.hash()); }
@@ -49,8 +50,10 @@ export default class Path {
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
 	get isEditing(): boolean { return this.pathString == get(s_title_editing)?.editing?.pathString; }
 	get isStoppingEdit(): boolean { return this.pathString == get(s_title_editing)?.stopping?.pathString; }
+	get things_allAncestors(): Array<Thing> { return this.things_ancestryWithin(Number.MAX_SAFE_INTEGER); }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
-		
+	get thingTitles(): Array<string> { return dbDispatch.db.hierarchy?.things_getForPath(this).map(t => `\"${t.title}\"`) ?? []; }
+
 	get ids(): Array<string> {
 		if (this.isRoot) {
 			return [];
@@ -63,13 +66,6 @@ export default class Path {
 			return dbDispatch.db.hierarchy?.idRoot ?? '';
 		}
 		return this.relationship()?.idTo ?? '';
-	}
-
-	get isRoot(): boolean {
-		if (dbDispatch.db.hierarchy) {
-			return this.matchesPath(k.rootPath);
-		}
-		return false;
 	}
 
 	get isVisible(): boolean {
@@ -113,9 +109,9 @@ export default class Path {
 	includedInStore(store: Writable<Array<Path>>): boolean { return this.includedInPaths(get(store)); }
 	matchesPath(path: Path | null): boolean { return !path ? false : this.pathString == path.pathString; }
 	includedInPaths(paths: Array<Path>): boolean { return paths.filter(p => p.matchesPath(this)).length > 0; }
-	relationship(back: number = 1): Relationship | null { return dbDispatch.db.hierarchy?.relationship_getForHID(this.ancestorRelationshipID(back).hash()) ?? null; }
+	relationship(back: number = 1): Relationship | null { return dbDispatch.db.hierarchy?.relationship_getForHID(this.idAt(back).hash()) ?? null; }
 
-	ancestorRelationshipID(back: number = 1): string {
+	idAt(back: number = 1): string {
 		const ids = this.ids;
 		if (back > ids.length) {
 			return '';
@@ -185,7 +181,7 @@ export default class Path {
 		};
 	}
 
-	things_ancestry(thresholdWidth: number): Array<Thing> {
+	things_ancestryWithin(thresholdWidth: number): Array<Thing> {
 		const root = dbDispatch.db.hierarchy?.root;
 		let totalWidth = 0;
 		const array = root ? [root] : [];

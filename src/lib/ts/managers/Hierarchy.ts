@@ -1,6 +1,6 @@
 import { s_isBusy, s_path_here, s_paths_grabbed, s_things_arrived, s_title_editing, s_altering_parent, s_path_toolsCluster } from './State';
-import { k, u, get, User, Path, Paths, Thing, Grabs, debug, Access, signals, TraitType, Predicate } from '../common/GlobalImports';
-import { Relations, Relationship, persistLocal, AlteringParent, CreationOptions, ClusterToolType } from '../common/GlobalImports';
+import { k, u, get, User, Path, Thing, Grabs, debug, Access, signals, TraitType, Predicate } from '../common/GlobalImports';
+import { Relationship, persistLocal, AlteringParent, CreationOptions, ClusterToolType } from '../common/GlobalImports';
 import DBInterface from '../db/DBInterface';
 
 type KnownRelationships = { [hID: number]: Array<Relationship> }
@@ -14,7 +14,6 @@ export default class Hierarchy {
 	knownA_byKind: { [kind: string]: Access } = {};
 	knownP_byKind: { [kind: string]: Predicate } = {};
 	knownPath_byPathStringHash: { [hID: number]: Path } = {};
-	knownPaths_toThingHID: { [hID: number]: Array<Path> } = {};
 	knownTs_byTrait: { [trait: string]: Array<Thing> } = {};
 	knownRs_byHIDPredicate: KnownRelationships = {};
 	knownRs_byHIDFrom: KnownRelationships = {};
@@ -29,7 +28,7 @@ export default class Hierarchy {
 	db: DBInterface;
 
 	get hasNothing(): boolean { return !this.root; }
-	get idRoot(): (string | null) { return this.root?.id ?? null; }; // undefined --> null
+	get idRoot(): (string | null) { return this.root?.id ?? null; };
 	thing_getForHID(hID: number | null): Thing | null { return (!hID) ? null : this.knownT_byHID[hID]; }
 	thing_getForPath(path: Path | null, back: number = 1): Thing | null { return (path == null) ? null : path?.thing(back) ?? null; }
 
@@ -170,6 +169,17 @@ export default class Hierarchy {
 	//////////////////////////////
 	//			THINGS			//
 	//////////////////////////////
+
+	things_getForPath(path: Path): Array<Thing> {
+		const things = Array<Thing>();
+		for (const hid of path.hashedIDs) {
+			const thing = this.relationship_getForHID(hid)?.thing(true);
+			if (thing) {
+				things.push(thing);
+			}
+		}
+		return things;
+	}
 
 	things_getForPaths(paths: Array<Path>): Array<Thing> {
 		const things = Array<Thing>();
@@ -536,22 +546,20 @@ export default class Hierarchy {
 	}
 
 	path_remember(path: Path) {
-		const hID = path.thingID.hash();
-		const pathHash = path.pathString.hash();
-		const paths = this.knownPaths_toThingHID[hID] ?? [];
-		this.knownPath_byPathStringHash[pathHash] = path;
-		if (hID != 0 && paths.indexOf(path) == -1) {
-			paths.push(path);
-			// console.log(`remember path for ${path.thing()?.title}`)
-			this.knownPaths_toThingHID[hID] = paths;
+		const parent = path.thing(2);
+		if (parent) {
+			const pathHash = path.pathString.hash();
+			this.knownPath_byPathStringHash[pathHash] = path;
+			parent.relations.path_remember(path, true);
 		}
 	}
 
 	path_nextParent(path: Path): Path | null {
+		const thing = path.thing();
 		let nextPath: Path | null = null
 		const hID = path.thingID.hash();
-		const paths = this.knownPaths_toThingHID[hID];
-		if (paths) {
+		if (thing) {
+			const paths = thing.parentPaths;
 			const index = paths.map(p => p.pathString).indexOf(path.pathString);
 			const next = index.increment(true, paths.length)
 			nextPath = paths[next];
@@ -806,10 +814,7 @@ export default class Hierarchy {
 	//		  PATHS		  //
 	////////////////////////
 
-	paths_forgetAll() {
-		this.knownPath_byPathStringHash = {};
-		this.knownPaths_toThingHID = {};
-	}
+	paths_forgetAll() { this.knownPath_byPathStringHash = {}; }
 
 	async paths_rebuild_traverse_remoteDelete(paths: Array<Path>) {
 		if (this.herePath) {

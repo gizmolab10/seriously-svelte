@@ -17,7 +17,7 @@
 		const trigger = $s_paths_grabbed + $s_path_toolsCluster + $s_path_here;
 		if (!path || trigger || ancestors.length == 0) {
 			path = path_lastGrabbed() ?? k.rootPath;	// assure we have a path
-			ancestors = path.things_ancestry($s_crumbs_width - 132);
+			ancestors = path.things_ancestryWithin($s_crumbs_width - 132);
 			toggleDraw = !toggleDraw;
 		}
 	}

@@ -3,6 +3,7 @@ import { Point, Size, Rect, LineRect, graphRect_update } from '../geometry/Geome
 import { CreationOptions, LineCurveType, ClusterToolType } from './Enumerations';
 import { debugReact, DebugReact, ReactFlag } from '../debug/DebugReact';
 import { PersistID, persistLocal } from '../managers/PersistLocal';
+import { Relations, PredicatedPaths } from '../ui/Relations';
 import { debug, Debug, DebugFlag } from '../debug/Debug';
 import { Direction, svgPath } from '../geometry/SVGPath';
 import { DBType, DataKind } from '../db/DBInterface';
@@ -11,7 +12,6 @@ import { signals, SignalKind } from './Signals';
 import { dbDispatch } from '../db/DBDispatch';
 import { onMount, onDestroy } from 'svelte';
 import { launch } from '../managers/Launch';
-import { Paths, Relations } from '../ui/Relations';
 import { SvelteType } from '../ui/Wrapper';
 import { get } from 'svelte/store';
 import { builds } from './Builds';
@@ -36,9 +36,9 @@ export {
 	svgPath, Direction, PersistID, persistLocal,
 	k, u, get, builds, launch, onMount, onDestroy,
 	signals, SignalKind, debugReact, DebugReact, ReactFlag,
-	Path, Paths, Relations, Grabs, Wrapper, TitleState, SvelteType,
 	ZIndex, ButtonID, BrowserType, AlteringParent, CreationOptions,
 	debug, Debug, DebugFlag, DBType, DataKind, dbDispatch, Hierarchy,
 	User, Datum, Thing, Access, Predicate, Relationship, SeriouslyRange,
+	Path, Relations, Grabs, Wrapper, TitleState, SvelteType, PredicatedPaths,
 	Point, Size, Rect, Layout, LineRect, TraitType, LineCurveType, ClusterToolType, graphRect_update,
 };

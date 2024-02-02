@@ -1,4 +1,4 @@
-import { Path, debug, dbDispatch, DebugFlag } from '../common/GlobalImports';
+import { Thing, debug, dbDispatch, DebugFlag } from '../common/GlobalImports';
 import Airtable from 'airtable';
 import Datum from './Datum';
 
@@ -30,6 +30,11 @@ export default class Relationship extends Datum {
 
 	log(option: DebugFlag, message: string) {
 		debug.log_maybe(option, message + ' ' + this.description);
+	}
+
+	thing(to: boolean): Thing | null {
+		const id = to ? this.idTo : this.idFrom;
+		return dbDispatch.db.hierarchy?.thing_getForHID(id.hash()) ?? null
 	}
 
 	async order_setTo(newOrder: number, remoteWrite: boolean = false) {
