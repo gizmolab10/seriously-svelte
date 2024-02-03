@@ -1,9 +1,10 @@
-import { k, u, get, Path, Relations, Datum, debug, Predicate, Hierarchy, DebugFlag } from '../common/GlobalImports';
+import { k, u, get, Path, ParentRelations, Datum, debug, Predicate, Hierarchy, DebugFlag } from '../common/GlobalImports';
 import { TraitType, dbDispatch } from '../common/GlobalImports';
 import { s_path_here } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
+	parentRelations: ParentRelations;
     bulkRootID: string = '';
 	needsBulkFetch = false;
 	hoverAttributes = '';
@@ -16,11 +17,10 @@ export default class Thing extends Datum {
 	title: string;
 	color: string;
 	trait: string;
-	relations: Relations;
 
 	constructor(baseID: string, id: string | null, title = k.defaultTitle, color = 'blue', trait = 's', isRemotelyStored: boolean) {
 		super(baseID, id, isRemotelyStored);
-		this.relations = new Relations(this);
+		this.parentRelations = new ParentRelations(this);
 		this.dbType = dbDispatch.db.dbType;
 		this.title = title;
 		this.color = color;
@@ -29,9 +29,8 @@ export default class Thing extends Datum {
 	
 	get fields():	Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get parentIDs():	Array<string> { return this.parents.map(t => t.id); }
-	get parents():		 Array<Thing> { return this.relations.thingsFor(Predicate.idIsAParentOf.hash(), false); }
-	// get children():		 Array<Thing> { return this.relations.thingsFor(Predicate.idIsAParentOf.hash(), true); }
-	get parentPaths():	  Array<Path> { return this.relations.pathsFor(Predicate.idIsAParentOf.hash(), false); }
+	get parents():	 Array<Thing> { return this.parentRelations.parentsFor(Predicate.idIsAParentOf.hash()); }
+	get parentPaths():	  Array<Path> { return this.parentRelations.parentPathsFor(Predicate.idIsAParentOf.hash()); }
 	get isHere():			  boolean { return (get(s_path_here).thing()?.id ?? '') == this.id; }
 	get idForChildren():	   string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get description():		   string { return this.id + ' \"' + this.title + '\"'; }

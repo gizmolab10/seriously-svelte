@@ -45,7 +45,8 @@ export default class Hierarchy {
 		const root = this.root;
 		if (root) {
 			await root.bulk_fetchAll(root.baseID);
-			root.relations.relations_recursive_assemble(k.rootPath);
+			k.rootPath.paths_recursive_assemble();
+			root.parentRelations.relations_recursive_assemble(k.rootPath);
 			k.rootPath.order_normalizeRecursive_remoteMaybe(true);
 			this.db.setHasData(true);
 			persistLocal.s_updateForDBType(type);
@@ -539,13 +540,6 @@ export default class Hierarchy {
 		let path = this.knownPath_byPathStringHash[pathString.hash()];
 		if (!path) {
 			path = new Path(pathString);
-			// update parent's relations ... why?
-			// const parent = path.thing(2);
-			// if (parent) {
-			// 	const pathHash = path.pathString.hash();
-			// 	this.knownPath_byPathStringHash[pathHash] = path;
-			// 	parent.relations.path_remember(path, true);
-			// }
 		}
 		return path;
 	}
@@ -608,7 +602,8 @@ export default class Hierarchy {
 		if (thing) {
 			path.expand();		// do this before fetch, so next launch will see it
 			await thing.bulk_fetchAll(thing.title);
-			thing.relations.relations_recursive_assemble(path);
+			path.paths_recursive_assemble();
+			thing.parentRelations.relations_recursive_assemble(path);
 			path.order_normalizeRecursive_remoteMaybe(true);
 			if (path.hasChildren) {
 				if (grab) {

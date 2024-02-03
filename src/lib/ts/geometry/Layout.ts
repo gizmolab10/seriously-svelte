@@ -1,4 +1,4 @@
-import { get, Path, Rect, Size, Point, Thing, ChildMap, LineCurveType } from '../common/GlobalImports';
+import { get, Path, Rect, Size, Point, ChildMap, LineCurveType } from '../common/GlobalImports';
 import { s_dot_size, s_line_stretch } from '../managers/State'
 
 export default class Layout {
@@ -8,23 +8,19 @@ export default class Layout {
 		const sizeX = get(s_line_stretch);
 		const childPaths = path.childPaths;
 		const length = childPaths.length;
-		if (length < 2 || !path.isExpanded) {
-			const rect = new Rect(origin, new Size(sizeX, 0));
-			this.childMapArray.push(new ChildMap(LineCurveType.flat, rect, new Point(), path, path));	// TODO: debug "path, path"
-		} else {
-			let index = 0;
-			let sumOfSiblingsAbove = -path.visibleProgeny_height() / 2; // start out negative and grow positive
-			while (index < length) {
-				const childPath = childPaths[index];
-				const childHeight = childPath.visibleProgeny_height();
-				const sizeY = sumOfSiblingsAbove + childHeight / 2;
-				const direction = this.getDirection(sizeY);
-				const rect = new Rect(origin, new Size(sizeX, sizeY));
-				const childOrigin = this.originForChildrenOf(childPath, origin, rect.extent);
-				this.childMapArray.push(new ChildMap(direction, rect, childOrigin, childPath, path));
-				sumOfSiblingsAbove += childHeight;
-				index += 1;
-			}
+		let index = 0;
+		let sumOfSiblingsAbove = -path.visibleProgeny_height() / 2; // start out negative and grow positive
+		while (index < length) {
+			const childPath = childPaths[index];
+			const childHeight = childPath.visibleProgeny_height();
+			const sizeY = sumOfSiblingsAbove + childHeight / 2;
+			const rect = new Rect(origin, new Size(sizeX, sizeY));
+			const childOrigin = this.originForChildrenOf(childPath, origin, rect.extent);
+			const direction = this.getDirection(sizeY);
+			const childMap = new ChildMap(direction, rect, childOrigin, childPath, path);
+			this.childMapArray.push(childMap);
+			sumOfSiblingsAbove += childHeight;
+			index += 1;
 		}
 	}
 
