@@ -1,25 +1,21 @@
 <script lang=ts>
 	import { k, u, Rect, Size, Point, Thing, debug, signals, onMount, Layout } from '../../ts/common/GlobalImports';
-	import { LineRect, onDestroy, DebugFlag, debugReact, LineCurveType } from '../../ts/common/GlobalImports';
+	import { onDestroy, DebugFlag, debugReact, LineCurveType } from '../../ts/common/GlobalImports';
 	import { s_dot_size, s_graphRect, s_line_stretch } from '../../ts/managers/State';
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Children from './Children.svelte';
-	import Line, {relationship} from './Line.svelte';
+	import Line from './Line.svelte';
 	export let origin = new Point();
-	export let thing: Thing;
     export let path = '';
 	const halfDotSize = $s_dot_size / 2;
-	const lineOffset = new Point(halfDotSize - 129, halfDotSize - 8);
 	const widgetOffset = new Point(12, ($s_dot_size / -15) - 10);
-	let lineRects: Array<LineRect> = [];
+	const lineOffset = new Point(halfDotSize - 129, halfDotSize - 8);
+	let childMapArray: Array<ChildMap> = [];
 	let prior = new Date().getTime();
-	let children = thing.children;
 	let center = new Point();
-	let childMapArray = [];
-
+	onMount( () => { layoutChildren(); });
 	onDestroy( () => { signalHandler.disconnect(); });
-	onMount( () => { debugReact.log_mount(`CHILDREN ${thing.description}`); layoutChildren(); });
 	
 	$: {
 		if ($s_graphRect) {
@@ -30,7 +26,6 @@
 	$: {
 		if ($s_dot_size > 0) {
 			setTimeout(() => {
-				debugReact.log_layout(`CHILDREN $s_dot_size ${thing.description}`);
 				layoutChildren()
 			}, 2);
 		}
@@ -42,8 +37,6 @@
 			if (now - prior > 100) {
 				prior = now;
 				setTimeout(async () => { // delay until all other handlers for this signal are done TODO: WHY?
-					await u.paths_orders_normalize_remoteMaybe(thing.children);
-					debugReact.log_layout(`CHILDREN signal ${thing.description}`);
 					layoutChildren();
 					if (signalPath) { // only recurse if starting at a specific signalPath
 						for (const childMap of childMapArray) {
@@ -58,44 +51,22 @@
 	})
 	
 	function layoutChildren() {
-		if (thing && !thing.ancestors_include(thing)) {
-			const delta = new Point(19.5, -2.5);
-			const height = (path.visibleProgeny_halfHeight);
-			const childOrigin = origin.offsetByY(height);
-			center = childOrigin.offsetBy(delta);
-			children = thing.children;
-			lineRects = new Layout(thing, path, childOrigin).lineRects;
-			childMapArray = lineRects.map((rect, index) => ({
-				origin: originForChildrenOf(children[index], rect),
-				path: path.appendChild(children[index]),
-				child: children[index], 
-				rect: rect,
-			}));
-		}
-	}
-
-	function originForChildrenOf(child: Thing, rect: LineRect): Point {
-		if (!rect || !child) {
-			alert('grandchildren origin not computable');
-			return new Point();
-		}
-		const childPath = path.appendChild(child);
-		const y = rect.extent.y - childPath.visibleProgeny_halfHeight;
-		const x = origin.x + child.titleWidth + $s_dot_size + $s_line_stretch - 2;
-		return new Point(x, y);
+		const delta = new Point(19.5, -2.5);
+		const height = (path.visibleProgeny_halfHeight);
+		const childrenOrigin = origin.offsetByY(height);
+		childMapArray = new Layout(path, childrenOrigin).childMapArray;
+		center = childrenOrigin.offsetBy(delta);
 	}
 	
 </script>
 
-{#if children && children.length != 0 && lineRects.length == children.length}
-	{#if debug.lines}
-		<Circle radius=1 center={center} color=black thickness=1/>
-	{/if}
-	{#each childMapArray as a}
-		<Widget thing={a.child} path={a.path} origin={a.rect.extent.offsetBy(widgetOffset)}/>
-		<Line thing={a.child} path={a.path} curveType={a.rect.curveType} rect={a.rect.offsetBy(lineOffset)}/>
-		{#if a.child.hasChildren && a.path.isExpanded}
-			<Children thing={a.child} path={a.path} origin={a.origin}/>
-		{/if}
-	{/each}
+{#if debug.lines}
+	<Circle radius=1 center={center} color=black thickness=1/>
 {/if}
+{#each childMapArray as map}
+	<Widget thing={map.child} path={map.path} origin={map.extent.offsetBy(widgetOffset)}/>
+	<Line thing={map.child} path={map.path} curveType={map.curveType} rect={map.offsetBy(lineOffset)}/>
+	{#if map.child.hasChildren && map.path.isExpanded}
+		<Children path={map.path} origin={map.origin}/>
+	{/if}
+{/each}

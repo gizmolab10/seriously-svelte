@@ -1,34 +1,43 @@
-import { get, Path, Rect, Size, Point, Thing, LineRect, LineCurveType } from '../common/GlobalImports';
-import { s_line_stretch } from '../managers/State'
+import { get, Path, Rect, Size, Point, Thing, ChildMap, LineCurveType } from '../common/GlobalImports';
+import { s_dot_size, s_line_stretch } from '../managers/State'
 
 export default class Layout {
-	lineRects: Array<LineRect>;
+	childMapArray: Array<ChildMap> = [];
 
-	constructor(thing: Thing, path: Path, origin: Point) {
-		this.lineRects = [];
-		if (thing) {
-			const sizeX = get(s_line_stretch);
-			const children = thing.children;
-			const length = children.length;
-			if (length < 2 || !path.isExpanded) {
-				const rect = new Rect(origin, new Size(sizeX, 0));
-				this.lineRects.push(new LineRect(LineCurveType.flat, rect));
-			} else {
-				let index = 0;
-				let sumOfSiblingsAbove = -path.visibleProgeny_height() / 2; // start out negative and grow positive
-				while (index < length) {
-					const child = children[index];
-					const childPath = path.appendChild(child);
-					const childHeight = childPath.visibleProgeny_height();
-					const sizeY = sumOfSiblingsAbove + childHeight / 2;
-					const direction = this.getDirection(sizeY);
-					const rect = new Rect(origin, new Size(sizeX, sizeY));
-					this.lineRects.push(new LineRect(direction, rect));
-					sumOfSiblingsAbove += childHeight;
-					index += 1;
-				}
+	constructor(path: Path, origin: Point) {
+		const sizeX = get(s_line_stretch);
+		const childPaths = path.childPaths;
+		const length = childPaths.length;
+		if (length < 2 || !path.isExpanded) {
+			const rect = new Rect(origin, new Size(sizeX, 0));
+			this.childMapArray.push(new ChildMap(LineCurveType.flat, rect, new Point(), path, path));	// TODO: debug "path, path"
+		} else {
+			let index = 0;
+			let sumOfSiblingsAbove = -path.visibleProgeny_height() / 2; // start out negative and grow positive
+			while (index < length) {
+				const childPath = childPaths[index];
+				const childHeight = childPath.visibleProgeny_height();
+				const sizeY = sumOfSiblingsAbove + childHeight / 2;
+				const direction = this.getDirection(sizeY);
+				const rect = new Rect(origin, new Size(sizeX, sizeY));
+				const childOrigin = this.originForChildrenOf(childPath, origin, rect.extent);
+				this.childMapArray.push(new ChildMap(direction, rect, childOrigin, childPath, path));
+				sumOfSiblingsAbove += childHeight;
+				index += 1;
 			}
 		}
+	}
+
+	originForChildrenOf(childPath: Path, origin: Point, extent: Point): Point {
+		const child = childPath.thing();
+		let x, y = 0;
+		if (child) {
+			y = extent.y - childPath.visibleProgeny_halfHeight;
+			x = origin.x + child.titleWidth + get(s_dot_size) + get(s_line_stretch) - 2;
+		} else {
+			alert('grandchildren origin not computable');
+		}
+		return new Point(x, y);
 	}
 
 	getDirection(delta: number) {

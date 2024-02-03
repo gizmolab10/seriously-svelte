@@ -1,5 +1,5 @@
 import { ZIndex, ButtonID, TraitType, BrowserType, AlteringParent } from './Enumerations';
-import { Point, Size, Rect, LineRect, graphRect_update } from '../geometry/Geometry';
+import { Point, Size, Rect, ChildMap, graphRect_update } from '../geometry/Geometry';
 import { CreationOptions, LineCurveType, ClusterToolType } from './Enumerations';
 import { debugReact, DebugReact, ReactFlag } from '../debug/DebugReact';
 import { PersistID, persistLocal } from '../managers/PersistLocal';
@@ -39,6 +39,6 @@ export {
 	ZIndex, ButtonID, BrowserType, AlteringParent, CreationOptions,
 	debug, Debug, DebugFlag, DBType, DataKind, dbDispatch, Hierarchy,
 	User, Datum, Thing, Access, Predicate, Relationship, SeriouslyRange,
-	Path, Relations, Grabs, Wrapper, TitleState, SvelteType, PredicatedPaths,
-	Point, Size, Rect, Layout, LineRect, TraitType, LineCurveType, ClusterToolType, graphRect_update,
+	Path, Grabs, Wrapper, Relations, TitleState, SvelteType, PredicatedPaths,
+	Rect, Size, Point, Layout, ChildMap, TraitType, LineCurveType, ClusterToolType, graphRect_update,
 };

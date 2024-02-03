@@ -30,31 +30,16 @@ export default class Thing extends Datum {
 	get fields():	Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get parentIDs():	Array<string> { return this.parents.map(t => t.id); }
 	get parents():		 Array<Thing> { return this.relations.thingsFor(Predicate.idIsAParentOf.hash(), false); }
-	get children():		 Array<Thing> { return this.relations.thingsFor(Predicate.idIsAParentOf.hash(), true); }
+	// get children():		 Array<Thing> { return this.relations.thingsFor(Predicate.idIsAParentOf.hash(), true); }
 	get parentPaths():	  Array<Path> { return this.relations.pathsFor(Predicate.idIsAParentOf.hash(), false); }
-	get childPaths():	  Array<Path> { return this.relations.pathsFor(Predicate.idIsAParentOf.hash(), true); }
 	get isHere():			  boolean { return (get(s_path_here).thing()?.id ?? '') == this.id; }
 	get idForChildren():	   string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get description():		   string { return this.id + ' \"' + this.title + '\"'; }
 	get isBulkAlias():		  boolean { return this.trait == TraitType.bulk; }
 	get isRoot():			  boolean { return this == this.hierarchy.root; }
 	get hasParents():		  boolean { return this.parentPaths.length > 0; }
-	get hasChildren():		  boolean { return this.childPaths.length > 0; }
-	get lastChild():			Thing { return this.children.slice(-1)[0]; }	// not alter children
 	get hierarchy():		Hierarchy { return dbDispatch.db.hierarchy; }
 	get titleWidth():		   number { return u.getWidthOf(this.title) }
-	get firstChild():			Thing { return this.children[0]; }
-
-	get hasGrandChildren(): boolean {
-		if (this.hasChildren) {
-			for (const child of this.children) {
-				if (child.hasChildren) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
 
 	log(option: DebugFlag, message: string) {
 		debug.log_maybe(option, message + ' ' + this.description);
@@ -62,6 +47,14 @@ export default class Thing extends Datum {
 
 	debugLog(message: string) {
 		this.log(DebugFlag.things, message);
+	}
+
+	thing_isInDifferentBulkThan(other: Thing) {
+		return this.baseID != other.baseID || (other.isBulkAlias && !this.isBulkAlias && this.baseID != other.title);
+	}
+
+	async order_setTo(newOrder: number, remoteWrite: boolean = false) {
+		this.hierarchy.relationship_getWhereIDEqualsTo(this.id)?.order_setTo(newOrder, remoteWrite);
 	}
 
 	revealColor(isReveal: boolean, path: Path): string {
@@ -80,65 +73,6 @@ export default class Thing extends Datum {
 		this.borderAttribute = border;
 		this.hoverAttributes = hover;
 		this.grabAttributes = grab;
-	}
-
-	thing_isInDifferentBulkThan(other: Thing) {
-		return this.baseID != other.baseID || (other.isBulkAlias && !this.isBulkAlias && this.baseID != other.title);
-	}
-
-	ancestors_include(thing: Thing): boolean {
-		const predicated = this.relations.known_byPredicateHID[Predicate.idIsAParentOf.hash()];
-		for (const path of predicated.fromPaths) {
-			if (path.things_allAncestors.map(t => t.id).includes(thing.id)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	ancestors_included(thing: Thing, visited: Array<string> = []): boolean {
-		if (visited.length == 0 || !visited.includes(this.id)) {
-			if (this.parents.length > 0) {
-				for (let parent of this.parents) {
-					if (parent.id == thing.id || parent.ancestors_included(thing, [...visited, this.id])) {
-						console.log(thing.title, '[is an ancestor of]', this.title);
-						return true;
-					}
-				};
-			}
-		}
-		return false;
-	}
-
-	async traverse_async(applyTo: (thing: Thing) => Promise<boolean>) {
-		if (!await applyTo(this)) {
-			for (const child of this.children) {
-				await child.traverse_async(applyTo);
-			}
-		}
-	}
-
-	traverse(applyTo: (thing: Thing) => boolean) {
-		if (!applyTo(this)) {
-			for (const child of this.children) {
-				child.traverse(applyTo);
-			}
-		}
-	}
-
-	async order_setTo(newOrder: number, remoteWrite: boolean = false) {
-		this.hierarchy.relationship_getWhereIDEqualsTo(this.id)?.order_setTo(newOrder, remoteWrite);
-	}
-
-	async order_normalizeRecursive_remoteMaybe(remoteWrite: boolean, visited: Array<number> = []) {
-		const hID = this.hashedID;
-		const childPaths = this.relations.pathsFor(Predicate.idIsAParentOf.hash(), true);
-		if (!visited.includes(hID) && childPaths && childPaths.length > 1) {
-			await u.paths_orders_normalize_remoteMaybe(childPaths, remoteWrite);
-			for (const childPath of childPaths) {
-				childPath.thing()?.order_normalizeRecursive_remoteMaybe(remoteWrite, [...visited, hID]);
-			}
-		}
 	}
 
 	async bulk_fetchAll(baseID: string) {

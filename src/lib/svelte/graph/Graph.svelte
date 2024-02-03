@@ -155,7 +155,7 @@
 			{:else}
 				<Widget thing={here} path={$s_path_here} origin={origin_ofFirstReveal.offsetBy(new Point(-19 - focusOffsetX, -9))}/>
 			{/if}
-			<Children thing={here} path={$s_path_here} origin={origin_ofChildren}/>
+			<Children path={$s_path_here} origin={origin_ofChildren}/>
 		</div>
 		{#key $s_path_toolsCluster || $s_graphRect}
 			{#if $s_path_toolsCluster && !$s_tools_inWidgets}

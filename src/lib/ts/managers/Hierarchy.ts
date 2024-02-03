@@ -46,7 +46,7 @@ export default class Hierarchy {
 		if (root) {
 			await root.bulk_fetchAll(root.baseID);
 			root.relations.relations_recursive_assemble(k.rootPath);
-			root.order_normalizeRecursive_remoteMaybe(true);
+			k.rootPath.order_normalizeRecursive_remoteMaybe(true);
 			this.db.setHasData(true);
 			persistLocal.s_updateForDBType(type);
 		}
@@ -332,8 +332,7 @@ export default class Hierarchy {
 			const newThing = await this.thing_remember_runtimeCopy(baseID, thing);
 			const newThingPath = newParentPath.appendChild(newThing);
 			await this.path_remember_remoteAddAsChild(newParentPath, newThing);
-			for (const child of thing.children) {
-				const childpath = path.appendChild(child);
+			for (const childpath of path.childPaths) {
 				this.thing_remember_bulk_recursive_remoteRelocateRight(childpath, newThingPath);
 			}
 			if (!newThingPath.isExpanded) {
@@ -368,7 +367,7 @@ export default class Hierarchy {
 
 	relationships_refreshKnowns_remoteRenormalize() {
 		this.relationships_refreshKnowns();
-		this.root?.order_normalizeRecursive_remoteMaybe(true);
+		k.rootPath.order_normalizeRecursive_remoteMaybe(true);
 	}
 
 	relationships_refreshKnowns() {
@@ -540,18 +539,15 @@ export default class Hierarchy {
 		let path = this.knownPath_byPathStringHash[pathString.hash()];
 		if (!path) {
 			path = new Path(pathString);
-			this.path_remember(path);
+			// update parent's relations ... why?
+			// const parent = path.thing(2);
+			// if (parent) {
+			// 	const pathHash = path.pathString.hash();
+			// 	this.knownPath_byPathStringHash[pathHash] = path;
+			// 	parent.relations.path_remember(path, true);
+			// }
 		}
 		return path;
-	}
-
-	path_remember(path: Path) {
-		const parent = path.thing(2);
-		if (parent) {
-			const pathHash = path.pathString.hash();
-			this.knownPath_byPathStringHash[pathHash] = path;
-			parent.relations.path_remember(path, true);
-		}
 	}
 
 	path_nextParent(path: Path): Path | null {
@@ -613,10 +609,10 @@ export default class Hierarchy {
 			path.expand();		// do this before fetch, so next launch will see it
 			await thing.bulk_fetchAll(thing.title);
 			thing.relations.relations_recursive_assemble(path);
-			thing.order_normalizeRecursive_remoteMaybe(true);
-			if (thing.hasChildren) {
+			path.order_normalizeRecursive_remoteMaybe(true);
+			if (path.hasChildren) {
 				if (grab) {
-					path.appendChild(thing.children[0]).grabOnly()
+					path.childPaths[0].grabOnly()
 				}
 				path.expand();
 				signals.signal_rebuild_fromHere();
@@ -647,7 +643,7 @@ export default class Hierarchy {
 				await this.db.thing_remember_remoteCreate(child);			// for everything below, need to await child.id fetched from dbDispatch
 			}
 			const relationship = await this.db.hierarchy.relationship_remember_remoteCreateUnique(baseID, null, idPredicateIsAParentOf, parentID, child.id, 0, CreationOptions.getRemoteID)
-			await u.paths_orders_normalize_remoteMaybe(thing.childPaths);		// write new order values for relationships
+			await u.paths_orders_normalize_remoteMaybe(path.childPaths);		// write new order values for relationships
 			return relationship;
 		}
 	}
@@ -726,7 +722,7 @@ export default class Hierarchy {
 				}
 
 				this.relationships_refreshKnowns();		// so children and parent will see the newly relocated things
-				this.root?.order_normalizeRecursive_remoteMaybe(true);
+				k.rootPath.order_normalizeRecursive_remoteMaybe(true);
 				newParentPath.appendChild(thing).grabOnly();
 				if (!newParentPath.isExpanded) {
 					newParentPath.expand();
@@ -746,67 +742,64 @@ export default class Hierarchy {
 	}
 
 	path_rebuild_runtimeBrowseRight(path: Path, RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, fromReveal: boolean = false) {
-		const thing = this.thing_getForPath(path);
 		let needsRebuild = false;
-		if (thing) {
-			const newParentPath = path.parentPath;
-			const childPath = path.appendChild(thing?.firstChild);
-			let newGrabPath: Path | null = RIGHT ? childPath : newParentPath;
-			const newGrabIsNotHere = !newGrabPath?.isHere;
-			const newHerePath = newParentPath;
-			if (RIGHT) {
-				if (thing.hasChildren) {
-					if (SHIFT) {
+		const newParentPath = path.parentPath;
+		const childPath = path.appendChild(path.firstChild);
+		let newGrabPath: Path | null = RIGHT ? childPath : newParentPath;
+		const newGrabIsNotHere = !newGrabPath?.isHere;
+		const newHerePath = newParentPath;
+		if (RIGHT) {
+			if (path.hasChildren) {
+				if (SHIFT) {
+					newGrabPath = null;
+				}
+				path.expand();
+			} else {
+				return;
+			}
+		} else {
+			const rootPath = k.rootPath;
+			if (EXTREME) {
+				rootPath?.becomeHere();	// tells graph to update line rects
+			} else {
+				if (!SHIFT) {
+					if (fromReveal) {
+						if (!path.isExpanded) {
+							path.expand();
+							needsRebuild = true;
+						}
+					} else {
+						if (newGrabIsNotHere && newGrabPath && !newGrabPath.isExpanded) {
+							newGrabPath.expand();
+							needsRebuild = true;
+						}
+					}
+				} else if (newGrabPath) { 
+					if (path.isExpanded) {
+						path.collapse();
 						newGrabPath = null;
-					}
-					path.expand();
-				} else {
-					return;
-				}
-			} else {
-				const rootPath = k.rootPath;
-				if (EXTREME) {
-					rootPath?.becomeHere();	// tells graph to update line rects
-				} else {
-					if (!SHIFT) {
-						if (fromReveal) {
-							if (!path.isExpanded) {
-								path.expand();
-								needsRebuild = true;
-							}
-						} else {
-							if (newGrabIsNotHere && newGrabPath && !newGrabPath.isExpanded) {
-								newGrabPath.expand();
-								needsRebuild = true;
-							}
-						}
-					} else if (newGrabPath) { 
-						if (path.isExpanded) {
-							path.collapse();
-							newGrabPath = null;
-							needsRebuild = true;
-						} else if (newGrabPath == rootPath) {
-							newGrabPath = null;
-						} else {
-							newGrabPath.collapse();
-							needsRebuild = true;
-						}
+						needsRebuild = true;
+					} else if (newGrabPath == rootPath) {
+						newGrabPath = null;
+					} else {
+						newGrabPath.collapse();
+						needsRebuild = true;
 					}
 				}
 			}
-			s_title_editing.set(null);
-			newGrabPath?.grabOnly();
-			const allowToBecomeHere = (!SHIFT || newGrabPath == path.parent) && newGrabIsNotHere; 
-			const shouldBecomeHere = !newHerePath?.isVisible || newHerePath.isRoot;
-			if (!RIGHT && allowToBecomeHere && shouldBecomeHere) {
-				newHerePath?.becomeHere();
-				needsRebuild = true;
-			}
-			if (needsRebuild) {
-				signals.signal_rebuild_fromHere();
-			} else {
-				signals.signal_relayout_fromHere();
-			}
+		}
+		s_title_editing.set(null);
+		newGrabPath?.grabOnly();
+		const allowToBecomeHere = (!SHIFT || newGrabPath == path.parent) && newGrabIsNotHere; 
+		const shouldBecomeHere = !newHerePath?.isVisible || newHerePath.isRoot;
+		if (!RIGHT && allowToBecomeHere && shouldBecomeHere) {
+			newHerePath?.becomeHere();
+			needsRebuild = true;
+		}
+		if (needsRebuild) {
+			signals.signal_rebuild_fromHere();
+		} else {
+			signals.signal_relayout_fromHere();
 		}
 	}
 
@@ -824,7 +817,7 @@ export default class Hierarchy {
 				const parentPath = path.stripBack(1);
 				const grandparentPath = path.stripBack(2);
 				if (thing && parent && parentPath && grandparentPath && path && !path.isEditing && !thing.isBulkAlias) {
-					const siblings = parent.children;
+					const siblings = parentPath.children;
 					let index = siblings.indexOf(thing);
 					siblings.splice(index, 1);
 					parentPath.grabOnly();
@@ -834,7 +827,7 @@ export default class Hierarchy {
 						}
 						parentPath?.appendChild(parent);
 						parent = siblings[index];
-						await u.paths_orders_normalize_remoteMaybe(parent.childPaths);
+						await u.paths_orders_normalize_remoteMaybe(parentPath.childPaths);
 					} else if (!grandparentPath.isVisible) {
 						grandparentPath.becomeHere();
 					}

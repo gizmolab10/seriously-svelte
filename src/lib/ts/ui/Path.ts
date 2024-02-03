@@ -16,7 +16,7 @@ export default class Path {
 		} else {
 			setTimeout(() => {
 				this.setup();
-			}, 100)
+			}, 100);				// TODO: why?
 		}
 		s_title_editing.subscribe(() => { this.thing()?.updateColorAttributes(this); });
 		s_paths_grabbed.subscribe(() => { this.thing()?.updateColorAttributes(this); });
@@ -34,9 +34,13 @@ export default class Path {
 	get endID(): string { return this.idAt(); }
 	get parentPath(): Path { return this.stripBack(); }
 	get parent(): Thing | null { return this.thing(2); }
+	get firstChild(): Thing { return this.children[0]; }
+	get lastChild(): Thing { return this.children.slice(-1)[0]; }
 	get isRoot(): boolean { return this.matchesPath(k.rootPath); }
 	get order(): number { return this.relationship()?.order ?? -1; }
 	get isHere(): boolean { return this.matchesStore(s_path_here); }
+	get hasChildren(): boolean { return this.childPaths.length > 0; }
+	get siblingPaths(): Array<Path> { return this.parentPath.childPaths; }
 	get hashedIDs(): Array<number> { return this.ids.map(i => i.hash()); }
 	get isExemplar(): boolean { return this.thing()?.isExemplar ?? false; }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
@@ -49,10 +53,34 @@ export default class Path {
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
 	get isEditing(): boolean { return this.pathString == get(s_title_editing)?.editing?.pathString; }
+	get children(): Array<Thing> { return dbDispatch.db.hierarchy?.things_getForPaths(this.childPaths); }
 	get isStoppingEdit(): boolean { return this.pathString == get(s_title_editing)?.stopping?.pathString; }
 	get things_allAncestors(): Array<Thing> { return this.things_ancestryWithin(Number.MAX_SAFE_INTEGER); }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	get thingTitles(): Array<string> { return dbDispatch.db.hierarchy?.things_getForPath(this).map(t => `\"${t.title}\"`) ?? []; }
+
+	get childPaths(): Array<Path> {
+		const predicateHID = this.relationship()?.idPredicate.hash();
+		if (predicateHID) {
+			const predicated = this.thing()?.relations.known_byPredicateHID[predicateHID];
+			const paths_to = predicated?.paths_to[this.parentPath.pathString.hash()];
+			if (paths_to) {
+				return paths_to;
+			}
+		}
+		return [];
+	}
+
+	get hasGrandChildren(): boolean {
+		if (this.hasChildren) {
+			for (const childPath of this.childPaths) {
+				if (childPath.hasChildren) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 	get ids(): Array<string> {
 		if (this.isRoot) {
@@ -74,18 +102,6 @@ export default class Path {
 			return herePath.isRoot ? true : this.ids.includes(herePath.endID);
 		}
 		return false;
-	}
-
-	get siblingPaths(): Array<Path> {
-		const path = this.parentPath;
-		const parent = path?.thing()
-		let paths = Array<Path>();
-		if (parent && path) {
-			for (const child of parent.children) {
-				paths.push(path.appendChild(child));
-			}
-		}
-		return paths;
 	}
 
 	get things_canAlter_asParentOf_toolsGrab(): boolean {
@@ -174,7 +190,7 @@ export default class Path {
 
 	becomeHere() {
 		const thing = this.thing();
-		if (thing && thing.hasChildren) {
+		if (thing && this.hasChildren) {
 			s_path_here.set(this);
 			this.expand();
 			s_path_toolsCluster.set(null);
@@ -203,11 +219,10 @@ export default class Path {
 		if (thing) {
 			const useToolHeight = this.toolsGrabbed && get(s_tools_inWidgets);
 			const rowHeight = useToolHeight ? k.toolsClusterHeight : get(s_row_height);
-			if (!visited.includes(this.pathString) && thing.hasChildren && this.isExpanded) {
+			if (!visited.includes(this.pathString) && this.hasChildren && this.isExpanded) {
 				let height = 0;
-				for (const child of thing.children) {
-					const childpath = this.appendChild(child);
-					height += childpath.visibleProgeny_height([...visited, this.pathString]);
+				for (const childPath of this.childPaths) {
+					height += childPath.visibleProgeny_height([...visited, this.pathString]);
 				}
 				return Math.max(height, rowHeight);
 			}
@@ -216,15 +231,14 @@ export default class Path {
 		return 0;
 	}
 
-	visibleProgeny_width(isFirst: boolean = true, visited: Array<string> = []): number {
+	visibleProgeny_width(isFirst: boolean = true, visited: Array<number> = []): number {
 		const thing = dbDispatch.db.hierarchy?.thing_getForPath(this);
 		if (thing) {
 			let width = isFirst ? 0 : thing.titleWidth;
-			if (!visited.includes(this.pathString) && this.isExpanded && thing.hasChildren) {
+			if (!visited.includes(this.pathString.hash()) && this.isExpanded && this.hasChildren) {
 				let progenyWidth = 0;
-				for (const child of thing.children) {
-					const childpath = this.appendChild(child);
-					const childProgenyWidth = childpath.visibleProgeny_width(false, [...visited, this.pathString]);
+			for (const childPath of this.childPaths) {
+					const childProgenyWidth = childPath.visibleProgeny_width(false, [...visited, this.pathString.hash()]);
 					if (progenyWidth < childProgenyWidth) {
 						progenyWidth = childProgenyWidth;
 					}
@@ -301,6 +315,17 @@ export default class Path {
 	async assureIsVisible() {
 		console.log('assureIsVisible is not done');
 	}
+
+	async order_normalizeRecursive_remoteMaybe(remoteWrite: boolean, visited: Array<number> = []) {
+		const hID = this.pathString.hash();
+		const childPaths = this.childPaths;
+		if (!visited.includes(hID) && childPaths && childPaths.length > 1) {
+			await u.paths_orders_normalize_remoteMaybe(childPaths, remoteWrite);
+			for (const childPath of childPaths) {
+				childPath.order_normalizeRecursive_remoteMaybe(remoteWrite, [...visited, hID]);
+			}
+		}
+	}
 	
 	expanded_setTo(expand: boolean) {
 		if (!this.isRoot) {
@@ -341,6 +366,34 @@ export default class Path {
 		}
 	}
 
+	ancestors_include(thing: Thing): boolean {
+		const predicated = this.thing()?.relations.known_byPredicateHID[Predicate.idIsAParentOf.hash()];
+		if (predicated) {
+			for (const path of predicated.paths_from) {
+				if (path.things_allAncestors.map(t => t.id).includes(thing.id)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	async traverse_async(applyTo: (path: Path) => Promise<boolean>) {
+		if (!await applyTo(this)) {
+			for (const childPath of this.childPaths) {
+				await childPath.traverse_async(applyTo);
+			}
+		}
+	}
+
+	traverse(applyTo: (path: Path) => boolean) {
+		if (!applyTo(this)) {
+			for (const childPath of this.childPaths) {
+				childPath.traverse(applyTo);
+			}
+		}
+	}
+
 	////////////////////////////////////
 	//			operations			  //
 	////////////////////////////////////
@@ -348,12 +401,12 @@ export default class Path {
 	async relationship_forget_remoteRemove(path: Path) {
 		const h = dbDispatch.db.hierarchy;
 		const thing = this.thing();
-		const parent = this.parent;
+		const parentPath = this.parentPath;
 		const relationship = h.relationship_getByIDPredicateFromAndTo(Predicate.idIsAParentOf, path.thingID, this.thingID);
-		if (parent && relationship && (thing?.parents.length ?? 0) > 1) {
+		if (parentPath && relationship && (thing?.parents.length ?? 0) > 1) {
 			h.relationship_forget(relationship);
-			if (path.thing()?.hasChildren) {
-				parent.order_normalizeRecursive_remoteMaybe(true);
+			if (path.hasChildren) {
+				parentPath.order_normalizeRecursive_remoteMaybe(true);
 			} else {
 				path.collapse();
 			}

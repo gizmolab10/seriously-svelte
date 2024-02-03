@@ -1,5 +1,5 @@
 import { s_thing_fontSize, s_thing_fontFamily } from '../managers/State';
-import { get, Path, Thing, BrowserType } from './GlobalImports';
+import { get, Path, BrowserType } from './GlobalImports';
 
 class Utilities {
 	noop() {}

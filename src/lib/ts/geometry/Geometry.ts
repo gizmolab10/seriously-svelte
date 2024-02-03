@@ -1,5 +1,5 @@
 import { s_graphRect, s_showDetails, s_title_atTop, s_crumbs_width } from "../managers/State";
-import { get } from '../common/GlobalImports'
+import { get, Path, Thing } from '../common/GlobalImports'
 
 export class Point {
 	x: number;
@@ -92,13 +92,22 @@ export class Rect {
 	expandedBy(delta: Size): Rect { return new Rect(this.origin, this.size.expandedBy(delta)) }
 }
 
-export class LineRect extends Rect {
+export class ChildMap extends Rect {
+	child: Thing | null;
 	curveType: string;
-	constructor(curveType: string, rect: Rect) {
+	childPath: Path;
+	origin: Point;
+	path: Path;
+
+	constructor(curveType: string, rect: Rect, origin: Point, childPath: Path, path: Path) {
 		super(rect.origin.copy, rect.size.copy);
+		this.child = childPath.thing();
+		this.childPath = childPath;
 		this.curveType = curveType;
+		this.origin = origin;
+		this.path = path;
 	}
-};
+}
 
 export function graphRect_update() {
 	const originY = get(s_title_atTop) ? 86 : 33;												// height of title at the top
