@@ -24,16 +24,18 @@ export default class Path {
 		s_paths_grabbed.subscribe(() => { this.thing()?.updateColorAttributes(this); });
 	}
 	
-	paths_recursive_assemble() {
+	async paths_recursive_assemble() {
+		const thing = this.thing();
 		const hierarchy = dbDispatch.db.hierarchy;
-		const thingID = this.thingID;
-		if (thingID) {
-			const toRelationships = hierarchy.relationships_getByPredicateIDToAndID(this.predicateID, false, thingID);
+		this.predicateID = Predicate.idIsAParentOf;
+		if (thing) {
+			const toRelationships = hierarchy.relationships_getByPredicateIDToAndID(this.predicateID, false, thing.id);
+			thing.parentRelations.parentRelations_assemble(this);
 			for (const toRelationship of toRelationships) {				// loop through all to relationships
 				const path_to = this.appendID(toRelationship.id);		// add each toRelationship's id
 				this.paths_to.push(path_to);							// and push onto the paths_to
-				u.paths_orders_normalize_remoteMaybe(this.paths_to);
-				path_to.paths_recursive_assemble();						// recurse with each to path
+				await u.paths_orders_normalize_remoteMaybe(this.paths_to);
+				await path_to.paths_recursive_assemble();						// recurse with each to path
 			}
 		}
 	}

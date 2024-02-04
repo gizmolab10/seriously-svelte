@@ -45,9 +45,7 @@ export default class Hierarchy {
 		const root = this.root;
 		if (root) {
 			await root.bulk_fetchAll(root.baseID);
-			k.rootPath.paths_recursive_assemble();
-			root.parentRelations.relations_recursive_assemble(k.rootPath);
-			k.rootPath.order_normalizeRecursive_remoteMaybe(true);
+			await k.rootPath.paths_recursive_assemble();
 			this.db.setHasData(true);
 			persistLocal.s_updateForDBType(type);
 		}
@@ -603,9 +601,7 @@ export default class Hierarchy {
 		if (thing) {
 			path.expand();		// do this before fetch, so next launch will see it
 			await thing.bulk_fetchAll(thing.title);
-			path.paths_recursive_assemble();
-			thing.parentRelations.relations_recursive_assemble(path);
-			path.order_normalizeRecursive_remoteMaybe(true);
+			await path.paths_recursive_assemble();
 			if (path.hasChildren) {
 				if (grab) {
 					path.childPaths[0].grabOnly()

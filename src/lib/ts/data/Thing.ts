@@ -29,7 +29,7 @@ export default class Thing extends Datum {
 	
 	get fields():	Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get parentIDs():	Array<string> { return this.parents.map(t => t.id); }
-	get parents():	 Array<Thing> { return this.parentRelations.parentsFor(Predicate.idIsAParentOf.hash()); }
+	get parents():		 Array<Thing> { return this.parentRelations.parentsFor(Predicate.idIsAParentOf.hash()); }
 	get parentPaths():	  Array<Path> { return this.parentRelations.parentPathsFor(Predicate.idIsAParentOf.hash()); }
 	get isHere():			  boolean { return (get(s_path_here).thing()?.id ?? '') == this.id; }
 	get idForChildren():	   string { return this.isBulkAlias ? this.bulkRootID : this.id; }
@@ -56,6 +56,12 @@ export default class Thing extends Datum {
 		this.hierarchy.relationship_getWhereIDEqualsTo(this.id)?.order_setTo(newOrder, remoteWrite);
 	}
 
+	async bulk_fetchAll(baseID: string) {
+		await dbDispatch.db.fetch_allFrom(baseID)
+		await dbDispatch.db.hierarchy?.relationships_remoteCreateMissing(this);
+		await dbDispatch.db.hierarchy?.relationships_removeHavingNullReferences();
+	}
+
 	revealColor(isReveal: boolean, path: Path): string {
 		const showBorder = path.isGrabbed || path.isEditing || this.isExemplar;
 		const useThingColor = isReveal != showBorder;
@@ -72,12 +78,6 @@ export default class Thing extends Datum {
 		this.borderAttribute = border;
 		this.hoverAttributes = hover;
 		this.grabAttributes = grab;
-	}
-
-	async bulk_fetchAll(baseID: string) {
-		await dbDispatch.db.fetch_allFrom(baseID)
-		await dbDispatch.db.hierarchy?.relationships_remoteCreateMissing(this);
-		await dbDispatch.db.hierarchy?.relationships_removeHavingNullReferences();
 	}
 
 }

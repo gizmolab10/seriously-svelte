@@ -15,7 +15,7 @@ export default class ParentRelations {
 		return this.parentPaths_byPredicateHID[predicateHID] ?? [];
 	}
 
-	relations_recursive_assemble(path: Path) {
+	parentRelations_assemble(path: Path) {
 		const thingID = this.thing.id;
 		if (!path.hashedIDs.includes(thingID.hash())) {
 			for (const predicate of dbDispatch.db.hierarchy?.knownPs ?? []) {
