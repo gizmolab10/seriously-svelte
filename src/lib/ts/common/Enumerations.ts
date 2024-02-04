@@ -27,18 +27,18 @@ export enum TraitType {
 }
 
 export enum ClusterToolType {
-	deleteParent = 'P',
-	addParent	 = 'A',
-	cluster		 = 'c',
-	delete		 = 'd',
-	next		 = 'n',
-	more		 = 'm',
-	add     	 = 'a',
+	deleteParent = 'deleteParent',
+	addParent	 = 'addParent',
+	cluster		 = 'cluster',
+	delete		 = 'delete',
+	next		 = 'next',
+	more		 = 'more',
+	add     	 = 'add',
 }
 
 export enum BrowserType  {
-	unknown  = 'unknown',
 	explorer = 'explorer',
+	unknown  = 'unknown',
 	firefox	 = 'firefox',
 	chrome	 = 'chrome',
 	safari	 = 'safari',

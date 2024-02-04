@@ -30,13 +30,13 @@ export default class Path {
 		this.predicateID = Predicate.idIsAParentOf;
 		if (thing) {
 			const toRelationships = hierarchy.relationships_getByPredicateIDToAndID(this.predicateID, false, thing.id);
-			thing.parentRelations.parentRelations_assemble(this);
 			for (const toRelationship of toRelationships) {				// loop through all to relationships
 				const path_to = this.appendID(toRelationship.id);		// add each toRelationship's id
 				this.paths_to.push(path_to);							// and push onto the paths_to
 				await u.paths_orders_normalize_remoteMaybe(this.paths_to);
-				await path_to.paths_recursive_assemble();						// recurse with each to path
+				await path_to.paths_recursive_assemble();				// recurse with each to path
 			}
+			thing.parentRelations.assemble_from(this);					// assemble during the traversal's return
 		}
 	}
 
@@ -63,6 +63,7 @@ export default class Path {
 	get hashedIDs(): Array<number> { return this.ids.map(i => i.hash()); }
 	get isExemplar(): boolean { return this.thing()?.isExemplar ?? false; }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
+	get thingTitle(): string { return this.thing()?.title ?? 'missing title'; }
 	get lineWrapper(): Wrapper | null { return this.wrappers[SvelteType.line]; }
 	get toolsGrabbed(): boolean { return this.matchesStore(s_path_toolsCluster); }
 	get titleWrapper(): Wrapper | null { return this.wrappers[SvelteType.title]; }

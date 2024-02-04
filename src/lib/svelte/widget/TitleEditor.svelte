@@ -35,7 +35,7 @@
 		if (input && ghost) { // ghost only exists to provide its scroll width
 			titleWidth = ghost.scrollWidth;
 			input.style.width = `${titleWidth}px`;
-			// console.log(`WIDTH: ${titleWidth} ${path.thing()?.title}`);
+			// console.log(`WIDTH: ${titleWidth} ${path.thingTitle}`);
 		}
 	}
 
@@ -70,7 +70,7 @@
 
 	function handleBlur(event) {
 		stopAndClearEditing();
-		console.log(`BLUR ${path.thing()?.title}`);
+		console.log(`BLUR ${path.thingTitle}`);
 		updateInputWidth();
 	}
 
@@ -78,7 +78,7 @@
 		if (!k.allowTitleEditing) {
 			input?.blur();
 		} else if (!path.isEditing) {
-			console.log(`FOCUS ${path.thing()?.title}`);
+			console.log(`FOCUS ${path.thingTitle}`);
 			path.startEdit();
 		}
 	}
@@ -94,16 +94,16 @@
 
 		if (k.allowTitleEditing) {
 			if (path.isStoppingEdit) {
-				console.log(`STOPPING ${path.thing()?.title}`);
+				console.log(`STOPPING ${path.thingTitle}`);
 				$s_title_editing = null;
 				input?.blur();
 			} else if (isEditing != path.isEditing) {
 				if (isEditing) {
-					console.log(`STOP ${path.thing()?.title}`);
+					console.log(`STOP ${path.thingTitle}`);
 					input?.blur();
 				} else {
 					input?.focus();
-					console.log(`RANGE ${path.thing()?.title}`);
+					console.log(`RANGE ${path.thingTitle}`);
 					applyRange();
 				}
 				isEditing = !isEditing;

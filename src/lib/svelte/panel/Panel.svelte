@@ -151,7 +151,7 @@
 					style='color: {$s_path_here.thing()?.color};
 						z-index: {ZIndex.frontmost};
 						left: {$s_showDetails ? '100px' : '-1px'};'>
-					{$s_path_here.thing()?.title}
+					{$s_path_here.thingTitle}
 				</div>
 				<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: {$s_showDetails ? k.detailsMargin : 0}px; top: {bottomOfTitle}px;'></div>
 			{/if}
