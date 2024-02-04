@@ -1,4 +1,4 @@
-import Identifiable from "../common/Identifiable";
+import Identifiable from "./Identifiable";
 import { Path } from '../common/GlobalImports';
 
 export enum SvelteType {

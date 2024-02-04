@@ -3,7 +3,7 @@ import { Point, Size, Rect, ChildMap, graphRect_update } from '../geometry/Geome
 import { CreationOptions, LineCurveType, ClusterToolType } from './Enumerations';
 import { debugReact, DebugReact, ReactFlag } from '../debug/DebugReact';
 import { PersistID, persistLocal } from '../managers/PersistLocal';
-import ParentRelations from '../ui/ParentRelations';
+import ParentRelations from '../structures/ParentRelations';
 import { debug, Debug, DebugFlag } from '../debug/Debug';
 import { Direction, svgPath } from '../geometry/SVGPath';
 import { DBType, DataKind } from '../db/DBInterface';
@@ -12,7 +12,7 @@ import { signals, SignalKind } from './Signals';
 import { dbDispatch } from '../db/DBDispatch';
 import { onMount, onDestroy } from 'svelte';
 import { launch } from '../managers/Launch';
-import { SvelteType } from '../ui/Wrapper';
+import { SvelteType } from '../structures/Wrapper';
 import { get } from 'svelte/store';
 import { builds } from './Builds';
 import { u } from './Utilities';
@@ -21,16 +21,16 @@ import './Extensions';
 
 import Relationship from '../data/Relationship';
 import Hierarchy from '../managers/Hierarchy';
-import TitleState from '../ui/TitleState';
+import TitleState from './TitleState';
 import Predicate from '../data/Predicate';
 import Layout from '../geometry/Layout';
 import Grabs from '../managers/Grabs';
-import Wrapper from '../ui/Wrapper';
+import Wrapper from '../structures/Wrapper';
 import Access from '../data/Access';
 import Thing from '../data/Thing';
-import Datum from '../data/Datum';
+import Datum from '../structures/Datum';
 import User from '../data/User';
-import Path from '../ui/Path';
+import Path from '../structures/Path';
 
 export {
 	svgPath, Direction, PersistID, persistLocal,

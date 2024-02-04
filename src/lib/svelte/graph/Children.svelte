@@ -51,6 +51,7 @@
 	})
 	
 	function layoutChildren() {
+		console.log(`${path.thingTitles}`);
 		const delta = new Point(19.5, -2.5);
 		const height = (path.visibleProgeny_halfHeight);
 		const childrenOrigin = origin.offsetByY(height);
@@ -64,9 +65,9 @@
 	<Circle radius=1 center={center} color=black thickness=1/>
 {/if}
 {#each childMapArray as map}
-	<Widget thing={map.child} path={map.path} origin={map.extent.offsetBy(widgetOffset)}/>
-	<Line thing={map.child} path={map.path} curveType={map.curveType} rect={map.offsetBy(lineOffset)}/>
-	{#if map.child.hasChildren && map.path.isExpanded}
-		<Children path={map.path} origin={map.origin}/>
+	<Widget thing={map.child} path={map.childPath} origin={map.extent.offsetBy(widgetOffset)}/>
+	<Line thing={map.child} path={map.childPath} curveType={map.curveType} rect={map.offsetBy(lineOffset)}/>
+	{#if map.child.hasChildren && map.childPath.isExpanded}
+		<Children path={map.childPath} origin={map.origin}/>
 	{/if}
 {/each}

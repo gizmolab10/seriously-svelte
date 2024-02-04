@@ -26,14 +26,14 @@ export default class Path {
 	
 	paths_recursive_assemble() {
 		const hierarchy = dbDispatch.db.hierarchy;
-		const thingID = this.thing()?.id;
+		const thingID = this.thingID;
 		if (thingID) {
 			const toRelationships = hierarchy.relationships_getByPredicateIDToAndID(this.predicateID, false, thingID);
-			for (const toRelationship of toRelationships) {						// loop through all child relationships
-				const childPath = this.appendID(toRelationship.id);		// add each toRelationship's id
-				this.paths_to.push(childPath);								// and push onto the paths_to
+			for (const toRelationship of toRelationships) {				// loop through all to relationships
+				const path_to = this.appendID(toRelationship.id);		// add each toRelationship's id
+				this.paths_to.push(path_to);							// and push onto the paths_to
 				u.paths_orders_normalize_remoteMaybe(this.paths_to);
-				childPath.paths_recursive_assemble();	// recurse with each child path
+				path_to.paths_recursive_assemble();						// recurse with each to path
 			}
 		}
 	}
@@ -76,17 +76,6 @@ export default class Path {
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	get thingTitles(): Array<string> { return dbDispatch.db.hierarchy?.things_getForPath(this).map(t => `\"${t.title}\"`) ?? []; }
 
-	get hasGrandChildren(): boolean {
-		if (this.hasChildren) {
-			for (const childPath of this.childPaths) {
-				if (childPath.hasChildren) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
 	get ids(): Array<string> {
 		if (this.isRoot) {
 			return [];
@@ -118,10 +107,13 @@ export default class Path {
 		return false;
 	}
 
-	thing_isParentOf(path: Path): boolean {
-		const parentRelationships = dbDispatch.db.hierarchy?.relationships_getByPredicateIDToAndID(Predicate.idIsAParentOf, true, path.thingID)
-		if (parentRelationships) {
-			return parentRelationships.filter(r => r.idFrom == this.thingID).length > 0;
+	get hasGrandChildren(): boolean {
+		if (this.hasChildren) {
+			for (const childPath of this.childPaths) {
+				if (childPath.hasChildren) {
+					return true;
+				}
+			}
 		}
 		return false;
 	}
@@ -132,12 +124,31 @@ export default class Path {
 	includedInPaths(paths: Array<Path>): boolean { return paths.filter(p => p.matchesPath(this)).length > 0; }
 	relationship(back: number = 1): Relationship | null { return dbDispatch.db.hierarchy?.relationship_getForHID(this.idAt(back).hash()) ?? null; }
 
+	sharesAnID(path: Path | null): boolean {
+		const rootID = dbDispatch.db.hierarchy?.idRoot;
+		return !path ? false : this.ids.some(id => id != rootID && path.ids.includes(id));
+	}
+
+	appendID(id: string): Path {
+		let ids = this.ids;
+		ids.push(id);
+		return dbDispatch.db.hierarchy.path_unique(ids.join(k.pathSeparator));
+	}
+
 	idAt(back: number = 1): string {
 		const ids = this.ids;
 		if (back > ids.length) {
 			return '';
 		}
 		return ids.slice(-(Math.max(1, back)))[0];
+	}
+
+	thing_isParentOf(path: Path): boolean {
+		const parentRelationships = dbDispatch.db.hierarchy?.relationships_getByPredicateIDToAndID(Predicate.idIsAParentOf, true, path.thingID)
+		if (parentRelationships) {
+			return parentRelationships.filter(r => r.idFrom == this.thingID).length > 0;
+		}
+		return false;
 	}
 
 	thing(back: number = 1): Thing | null {
@@ -148,9 +159,13 @@ export default class Path {
 		return dbDispatch.db.hierarchy?.root ?? null;
 	}
 
-	sharesAnID(path: Path | null): boolean {
-		const rootID = dbDispatch.db.hierarchy?.idRoot;
-		return !path ? false : this.ids.some(id => id != rootID && path.ids.includes(id));
+	becomeHere() {
+		const thing = this.thing();
+		if (thing && this.hasChildren) {
+			s_path_here.set(this);
+			this.expand();
+			s_path_toolsCluster.set(null);
+		};
 	}
 
 	path_ofNextSibling(increment: boolean): Path | null {
@@ -187,19 +202,16 @@ export default class Path {
 		return this;
 	}
 
-	appendID(id: string): Path {
-		let ids = this.ids;
-		ids.push(id);
-		return dbDispatch.db.hierarchy.path_unique(ids.join(k.pathSeparator));
-	}
-
-	becomeHere() {
-		const thing = this.thing();
-		if (thing && this.hasChildren) {
-			s_path_here.set(this);
-			this.expand();
-			s_path_toolsCluster.set(null);
-		};
+	ancestors_include(thing: Thing): boolean {
+		const parentPaths = this.thing()?.parentRelations.parentPathsFor(Predicate.idIsAParentOf.hash());
+		if (parentPaths) {
+			for (const parentPath of parentPaths) {
+				if (parentPath.things_allAncestors.map(t => t.id).includes(thing.id)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	things_ancestryWithin(thresholdWidth: number): Array<Thing> {
@@ -369,18 +381,6 @@ export default class Path {
 			}
 			signals.signal_relayout_fromHere();
 		}
-	}
-
-	ancestors_include(thing: Thing): boolean {
-		const parentPaths = this.thing()?.parentRelations.parentPathsFor(Predicate.idIsAParentOf.hash());
-		if (parentPaths) {
-			for (const parentPath of parentPaths) {
-				if (parentPath.things_allAncestors.map(t => t.id).includes(thing.id)) {
-					return true;
-				}
-			}
-		}
-		return false;
 	}
 
 	async traverse_async(applyTo: (path: Path) => Promise<boolean>) {

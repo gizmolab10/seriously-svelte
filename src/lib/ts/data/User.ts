@@ -1,11 +1,12 @@
-import Identifiable from '../common/Identifiable';
-export default class User extends Identifiable {
+import RemoteIdentifiable from "../structures/RemoteIdentifiable";
+
+export default class User extends RemoteIdentifiable {
 	name: string;
 	email: string;
 	phone: string;
 
-	constructor(id: string, name: string, email: string, phone: string) {
-		super(id);
+	constructor(id: string, name: string, email: string, phone: string, isRemotelyStored: boolean) {
+		super(id, isRemotelyStored);
 		this.name = name;
 		this.email = email;
 		this.phone = phone;

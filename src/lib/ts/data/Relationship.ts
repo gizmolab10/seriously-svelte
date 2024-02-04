@@ -1,6 +1,6 @@
 import { Thing, debug, dbDispatch, DebugFlag } from '../common/GlobalImports';
 import Airtable from 'airtable';
-import Datum from './Datum';
+import Datum from '../structures/Datum';
 
 export default class Relationship extends Datum {
 	idPredicate: string;

@@ -540,6 +540,7 @@ export default class Hierarchy {
 		let path = this.knownPath_byPathStringHash[pathString.hash()];
 		if (!path) {
 			path = new Path(pathString);
+			this.knownPath_byPathStringHash[pathString.hash()] = path;
 		}
 		return path;
 	}
@@ -664,8 +665,7 @@ export default class Hierarchy {
 	async path_rebuild_remoteMoveUp(path: Path, up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const thing = this.thing_getForPath(path);
 		const parentPath = path.parentPath;
-		const parent = this.thing_getForPath(parentPath);
-		const siblings = parent?.children;
+		const siblings = parentPath.children;
 		if (!siblings || siblings.length == 0) {
 			this.path_rebuild_runtimeBrowseRight(path, true, EXTREME, up);
 		} else if (thing) {
@@ -683,12 +683,12 @@ export default class Hierarchy {
 				}
 				signals.signal_relayout_fromHere();
 			} else if (k.allowGraphEditing && OPTION) {
-				await u.paths_orders_normalize_remoteMaybe(parent.childPaths, false);
+				await u.paths_orders_normalize_remoteMaybe(parentPath.childPaths, false);
 				const wrapped = up ? (index == 0) : (index == siblings.length - 1);
 				const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
 				const newOrder = newIndex + goose;
 				thing.order_setTo(newOrder);
-				await u.paths_orders_normalize_remoteMaybe(parent.childPaths);
+				await u.paths_orders_normalize_remoteMaybe(parentPath.childPaths);
 				signals.signal_rebuild_fromHere();
 			}
 		}
@@ -826,9 +826,12 @@ export default class Hierarchy {
 					} else if (!grandparentPath.isVisible) {
 						grandparentPath.becomeHere();
 					}
-					await thing.traverse_async(async (descendant: Thing): Promise<boolean> => {
-						await this.relationships_forget_remoteDeleteAllForThing(descendant);
-						await this.thing_forget_remoteDelete(descendant);
+					await path.traverse_async(async (descendantPath: Path): Promise<boolean> => {
+						const descendant = descendantPath.thing();
+						if (descendant) {
+							await this.relationships_forget_remoteDeleteAllForThing(descendant);
+							await this.thing_forget_remoteDelete(descendant);
+						}
 						return false; // continue the traversal
 					});
 				}

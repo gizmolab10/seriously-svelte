@@ -1,4 +1,4 @@
-import { u } from './Utilities';
+import { u } from '../common/Utilities';
 import { v4 as uuid } from 'uuid';
 
 export default class Identifiable {

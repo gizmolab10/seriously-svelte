@@ -33,9 +33,8 @@ class PersistLocal {
 		if (this.ignorePaths) {
 			this.writeToKey(PersistID.relationships, true);
 		}
-		const id = this.ignorePaths ? '' : this.readFromDBKey(PersistID.here);
+		const idHere = this.ignorePaths ? '' : this.readFromDBKey(PersistID.here);
 		s_db_loadTime.set(null);
-		s_path_here.set(dbDispatch.db.hierarchy.path_unique(id));
 		s_row_height.set(this.readFromKey(PersistID.row_height) ?? 20); // sets s_dot_size and s_thing_fontSize
 		s_showDetails.set(this.readFromKey(PersistID.details) ?? false);
 		s_line_stretch.set(this.readFromKey(PersistID.line_stretch) ?? 30);
@@ -58,11 +57,15 @@ class PersistLocal {
 			}
 		});
 
-		s_path_here.subscribe((path: Path) => {
-			if (this.okayToPersist && path) {
-				this.writeToDBKey(PersistID.here, path.pathString);
-			}
-		});
+		setTimeout(() => {
+			s_path_here.set(dbDispatch.db.hierarchy.path_unique(idHere));
+			s_path_here.subscribe((path: Path) => {
+				if (this.okayToPersist && path) {
+					this.writeToDBKey(PersistID.here, path.pathString);
+				}
+			});
+		}, 10);
+
 	}
 
 	get dbType(): string { return dbDispatch.db.dbType; }
