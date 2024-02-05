@@ -1,4 +1,4 @@
-import { get, Path, Rect, Size, Point, ChildMap, LineCurveType } from '../common/GlobalImports';
+import { get, Path, Rect, Size, Point, ChildMap, TypeLC } from '../common/GlobalImports';
 import { s_dot_size, s_line_stretch } from '../managers/State'
 
 export default class Layout {
@@ -38,12 +38,12 @@ export default class Layout {
 
 	getDirection(delta: number) {
 		if (delta == 0) {
-			return LineCurveType.flat;
+			return TypeLC.flat;
 		} else if (delta <
 			 0) {
-			return LineCurveType.up;
+			return TypeLC.up;
 		} else {
-			return LineCurveType.down;
+			return TypeLC.down;
 		}
 	}
 }

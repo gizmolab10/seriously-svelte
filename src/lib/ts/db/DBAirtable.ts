@@ -1,4 +1,4 @@
-import { debug, Thing, DBType, DataKind, Hierarchy, Relationship, CreationOptions, DebugFlag, dbDispatch } from '../common/GlobalImports';
+import { debug, Thing, TypeDB, DataKind, Hierarchy, Relationship, CreationOptions, DebugFlag, dbDispatch } from '../common/GlobalImports';
 import { s_things_arrived } from '../managers/State';
 import DBInterface from './DBInterface';
 import Airtable from 'airtable';
@@ -23,7 +23,7 @@ export default class DBAirtable implements DBInterface {
 	access_table = this.base(DataKind.access);
 	users_table = this.base(DataKind.users);
 	_hierarchy: Hierarchy | null = null;
-	dbType = DBType.airtable;
+	dbType = TypeDB.airtable;
 	hasData = false;
 	loadTime = null;
 	baseID = '';

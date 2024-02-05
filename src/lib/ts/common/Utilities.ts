@@ -1,5 +1,5 @@
 import { s_thing_fontSize, s_thing_fontFamily } from '../managers/State';
-import { get, Path, BrowserType } from './GlobalImports';
+import { get, Path, TypeB } from './GlobalImports';
 
 class Utilities {
 	noop() {}
@@ -86,18 +86,18 @@ class Utilities {
 		return width;
 	}
 
-	getBrowserType(): BrowserType {
+	getBrowserType(): TypeB {
 		const userAgent: string = navigator.userAgent;
 
 		switch (true) {
 			case /msie (\d+)/i.test(userAgent) ||
-				/trident\/.*; rv:(\d+)/i.test(userAgent):	return BrowserType.explorer;
-			case /(chrome|crios)\/(\d+)/i.test(userAgent):	return BrowserType.chrome;
-			case /firefox\/(\d+)/i.test(userAgent):			return BrowserType.firefox;
-			case /opr\/(\d+)/i.test(userAgent):				return BrowserType.opera;
-			case /orion\/(\d+)/i.test(userAgent):			return BrowserType.orion;
-			case /safari\/(\d+)/i.test(userAgent):			return BrowserType.safari;
-			default:										return BrowserType.unknown
+				/trident\/.*; rv:(\d+)/i.test(userAgent):	return TypeB.explorer;
+			case /(chrome|crios)\/(\d+)/i.test(userAgent):	return TypeB.chrome;
+			case /firefox\/(\d+)/i.test(userAgent):			return TypeB.firefox;
+			case /opr\/(\d+)/i.test(userAgent):				return TypeB.opera;
+			case /orion\/(\d+)/i.test(userAgent):			return TypeB.orion;
+			case /safari\/(\d+)/i.test(userAgent):			return TypeB.safari;
+			default:										return TypeB.unknown
 		}
 	}
 

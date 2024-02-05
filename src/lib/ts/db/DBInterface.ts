@@ -1,6 +1,6 @@
 import { Thing, Hierarchy, Relationship } from '../common/GlobalImports';
 
-export enum DBType {
+export enum TypeDB {
 	postgres = 'postgres',
 	airtable = 'airtable',
 	firebase = 'firebase',

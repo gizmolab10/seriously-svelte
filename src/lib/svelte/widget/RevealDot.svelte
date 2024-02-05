@@ -1,7 +1,7 @@
 <script>
 	import { s_paths_expanded, s_dot_size, s_altering_parent, s_paths_grabbed, s_path_toolsCluster } from '../../ts/managers/State';
 	import { k, u, get, Size, Thing, Point, debug, ZIndex, svgPath, signals } from "../../ts/common/GlobalImports";
-	import { onMount, Wrapper, Direction, onDestroy, dbDispatch, SvelteType } from "../../ts/common/GlobalImports";
+	import { onMount, Wrapper, Direction, onDestroy, dbDispatch, TypeW } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte';
 	export let center;
 	export let path;
@@ -30,7 +30,7 @@
 
 	$: {
 		if (revealDot) {
-			revealWrapper = new Wrapper(revealDot, path, SvelteType.reveal);
+			revealWrapper = new Wrapper(revealDot, path, TypeW.reveal);
 		}
 	}
 

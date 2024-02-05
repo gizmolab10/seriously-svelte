@@ -1,6 +1,6 @@
 import { s_isBusy, s_path_here, s_paths_grabbed, s_things_arrived, s_title_editing, s_altering_parent, s_path_toolsCluster } from './State';
-import { k, u, get, User, Path, Thing, Grabs, debug, Access, signals, TraitType, Predicate } from '../common/GlobalImports';
-import { Relationship, persistLocal, AlteringParent, CreationOptions, ClusterToolType } from '../common/GlobalImports';
+import { k, u, get, User, Path, Thing, Grabs, debug, Access, signals, TypeT, Predicate } from '../common/GlobalImports';
+import { Relationship, persistLocal, AlteringParent, CreationOptions, TypeCT } from '../common/GlobalImports';
 import DBInterface from '../db/DBInterface';
 
 type KnownRelationships = { [hID: number]: Array<Relationship> }
@@ -71,12 +71,12 @@ export default class Hierarchy {
 		const path = get(s_path_toolsCluster);
 		if (path) {
 			switch (buttonID) {
-				case ClusterToolType.next: this.path_relayout_toolCluster_nextParent(); return;
-				case ClusterToolType.add: await this.path_edit_remoteCreateChildOf(path); break;
-				case ClusterToolType.addParent: this.toggleAlteration(AlteringParent.adding); return;
-				case ClusterToolType.deleteParent: this.toggleAlteration(AlteringParent.deleting); return;
-				case ClusterToolType.delete: await this.paths_rebuild_traverse_remoteDelete([path]); break;
-				case ClusterToolType.more: console.log('needs more'); break;
+				case TypeCT.next: this.path_relayout_toolCluster_nextParent(); return;
+				case TypeCT.add: await this.path_edit_remoteCreateChildOf(path); break;
+				case TypeCT.addParent: this.toggleAlteration(AlteringParent.adding); return;
+				case TypeCT.deleteParent: this.toggleAlteration(AlteringParent.deleting); return;
+				case TypeCT.delete: await this.paths_rebuild_traverse_remoteDelete([path]); break;
+				case TypeCT.more: console.log('needs more'); break;
 				default: break;
 			}
 			s_path_toolsCluster.set(null);
@@ -242,7 +242,7 @@ export default class Hierarchy {
 
 	async thing_remember_runtimeCopy(baseID: string, from: Thing) {
 		const newThing = new Thing(baseID, null, from.title, from.color, from.trait, false);
-		if (newThing.isBulkAlias || newThing.trait == TraitType.roots || newThing.trait == TraitType.root) {
+		if (newThing.isBulkAlias || newThing.trait == TypeT.roots || newThing.trait == TypeT.root) {
 			newThing.trait = '';
 		}
 		this.thing_remember(newThing);
@@ -267,7 +267,7 @@ export default class Hierarchy {
 			things.push(thing);
 			this.knownTs_byTrait[thing.trait] = things;
 			this.knownTs.push(thing);
-			if (thing.trait == TraitType.root && (thing.baseID == '' || thing.baseID == this.db.baseID)) {
+			if (thing.trait == TypeT.root && (thing.baseID == '' || thing.baseID == this.db.baseID)) {
 				this.root = thing;
 			}
 		}
@@ -276,7 +276,7 @@ export default class Hierarchy {
 	thing_runtimeCreate(baseID: string, id: string | null, title: string, color: string, trait: string,
 		isRemotelyStored: boolean): Thing {
 		let thing: Thing | null = null;
-		if (id && trait == TraitType.root && baseID != this.db.baseID) {		// other bulks have their own root & id
+		if (id && trait == TypeT.root && baseID != this.db.baseID) {		// other bulks have their own root & id
 			thing = this.thing_bulkRootpath_set(baseID, id, color);				// which our thing needs to adopt
 		}
 		if (!thing) {
@@ -314,7 +314,7 @@ export default class Hierarchy {
 
 	thing_bulkAlias_getForTitle(title: string | null) {
 		if (title) {
-			for (const thing of this.knownTs_byTrait[TraitType.bulk]) {
+			for (const thing of this.knownTs_byTrait[TypeT.bulk]) {
 				if  (thing.title == title) {							// special case TODO: convert to a auery string
 					return thing;
 				}
@@ -348,13 +348,13 @@ export default class Hierarchy {
 
 	async thing_getRoots() {
 		let rootPath = k.rootPath;
-		for (const thing of this.knownTs_byTrait[TraitType.roots]) {
+		for (const thing of this.knownTs_byTrait[TypeT.roots]) {
 			if  (thing.title == 'roots') {	// special case TODO: convert to a auery string
 				const rootsPath = rootPath.appendChild(thing) ?? null;
 				return rootsPath;
 			}
 		}
-		const roots = this.thing_runtimeCreate(this.db.baseID, null, 'roots', 'red', TraitType.roots, false);
+		const roots = this.thing_runtimeCreate(this.db.baseID, null, 'roots', 'red', TypeT.roots, false);
 		await this.path_remember_remoteAddAsChild(rootPath, roots);
 		const rootsPath = rootPath?.appendChild(roots) ?? null;
 		return rootsPath;
@@ -426,7 +426,7 @@ export default class Hierarchy {
 		if (idRoot) {
 			for (const thing of this.knownTs) {
 				const idThing = thing.id;
-				if (idThing != idRoot && thing.trait != TraitType.root && thing.baseID == root.baseID) {
+				if (idThing != idRoot && thing.trait != TypeT.root && thing.baseID == root.baseID) {
 					let relationship = this.relationship_getWhereIDEqualsTo(idThing);
 					if (!relationship) {
 						const idPredicateIsAParentOf = Predicate.idIsAParentOf;

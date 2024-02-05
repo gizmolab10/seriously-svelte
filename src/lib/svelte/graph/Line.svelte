@@ -1,10 +1,10 @@
 <script lang='ts'>
-	import { Path, Rect, Size, Point, debug, onMount, ZIndex, SVGType, svgPath } from '../../ts/common/GlobalImports';
-	import { Wrapper, debugReact, SvelteType, LineCurveType } from '../../ts/common/GlobalImports';
+	import { Path, Rect, Size, Point, debug, onMount, ZIndex, svgPath } from '../../ts/common/GlobalImports';
+	import { Wrapper, debugReact, TypeW, TypeLC } from '../../ts/common/GlobalImports';
 	import { s_dot_size } from '../../ts/managers/State';
 	import Circle from '../kit/Circle.svelte';
 	import Box from '../kit/Box.svelte';
-	export let curveType: string = LineCurveType.up;
+	export let curveType: string = TypeLC.up;
 	export let rect = new Rect();
 	export let thing: Thing;
 	export let path: Path;
@@ -19,7 +19,7 @@
 
 	$: {
 		if (line) {
-			lineWrapper = new Wrapper(line, path, SvelteType.line);
+			lineWrapper = new Wrapper(line, path, TypeW.line);
 		}
 	}
 
@@ -31,27 +31,27 @@
 		if ($s_dot_size > 0) {
 			// debugReact.log_origins(`LINE ${thing.description}`);
 			switch (curveType) {
-				case LineCurveType.up:
+				case TypeLC.up:
 					origin = rect.origin;
 					extent = rect.extent.offsetByY(-1.5);
 					break;
-				case LineCurveType.down:
+				case TypeLC.down:
 					origin = rect.bottomLeft.offsetByY(-0.5);
 					extent = origin.offsetBy(rect.size.asPoint).offsetByY(0.5);
 					break;
-				case LineCurveType.flat:
+				case TypeLC.flat:
 					origin = rect.centerLeft.offsetByY(-0.5);
 					extent = rect.centerRight.offsetBy(new Point(0.5, -0.5));
 					size = origin.distanceTo(extent).asSize;
 					scalablePath = svgPath.line(size.width);
 					break;
 			}
-			if (curveType != LineCurveType.flat) {
-				let flag = (curveType == LineCurveType.down) ? 0 : 1;
+			if (curveType != TypeLC.flat) {
+				let flag = (curveType == TypeLC.down) ? 0 : 1;
 				const noHeight = origin.y == extent.y;
 				size = origin.distanceTo(extent).asSize;
-				const originY = curveType == LineCurveType.down ? 1 : size.height;
-				const extentY = curveType == LineCurveType.up   ? 1 : size.height;
+				const originY = curveType == TypeLC.down ? 1 : size.height;
+				const extentY = curveType == TypeLC.up   ? 1 : size.height;
 				const boxSize = new Size(size.width, (noHeight ? 2 : size.height));
 				viewBox = new Rect(origin, boxSize);
 				scalablePath = 'M0 ' + originY + 'A' + size.description + ' 0 0 ' + flag + ' ' + size.width + ' ' + extentY;

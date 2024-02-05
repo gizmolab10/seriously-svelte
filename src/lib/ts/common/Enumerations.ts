@@ -14,19 +14,19 @@ export enum CreationOptions {
 	none		 = '',
 }
 
-export enum LineCurveType {
+export enum TypeLC {
 	up	 = 'up',
 	down = 'down',
 	flat = 'flat',
 }
 
-export enum TraitType {
+export enum TypeT {
 	roots = '^',
 	root  = '!',
 	bulk  = '~',
 }
 
-export enum ClusterToolType {
+export enum TypeCT {
 	deleteParent = 'deleteParent',
 	addParent	 = 'addParent',
 	cluster		 = 'cluster',
@@ -36,7 +36,7 @@ export enum ClusterToolType {
 	add     	 = 'add',
 }
 
-export enum BrowserType  {
+export enum TypeB  {
 	explorer = 'explorer',
 	unknown  = 'unknown',
 	firefox	 = 'firefox',

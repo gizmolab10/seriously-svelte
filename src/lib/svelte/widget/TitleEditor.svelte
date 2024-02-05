@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { dbDispatch, SeriouslyRange, Wrapper, SvelteType } from '../../ts/common/GlobalImports';
+	import { dbDispatch, SeriouslyRange, Wrapper, TypeW } from '../../ts/common/GlobalImports';
 	import { k, Thing, ZIndex, onMount, signals, onDestroy } from '../../ts/common/GlobalImports';
 	import { s_title_editing, s_row_height } from '../../ts/managers/State';
 	export let fontFamily = 'Arial';
@@ -21,7 +21,7 @@
 
 	$: {
 		if (input) {
-			titleWrapper = new Wrapper(input, path, SvelteType.title);
+			titleWrapper = new Wrapper(input, path, TypeW.title);
 		}
 	}
 	

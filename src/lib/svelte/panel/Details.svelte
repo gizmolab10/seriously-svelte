@@ -1,5 +1,5 @@
 <script>
-	import { DBType, ZIndex, PersistID, ButtonID, Hierarchy, dbDispatch, persistLocal } from '../../ts/common/GlobalImports';
+	import { TypeDB, ZIndex, PersistID, ButtonID, Hierarchy, dbDispatch, persistLocal } from '../../ts/common/GlobalImports';
 	import { s_db_type, s_db_loadTime, s_id_popupView } from '../../ts/managers/State';
 	import RadioButtons from '../kit/RadioButtons.svelte'
 	import LabelButton from '../kit/LabelButton.svelte';
@@ -8,9 +8,9 @@
 	function handleDBTypeAt(index) { dbDispatch.changeDBTo(menuItems[index].id); }
 
 	const menuItems = [
-		{ id: DBType.local,	   label: 'built in', action: () => { handleDBTypeAt(0); } },
-		{ id: DBType.firebase, label: 'firebase', action: () => { handleDBTypeAt(1); } },
-		{ id: DBType.airtable, label: 'airtable', action: () => { handleDBTypeAt(2); } }
+		{ id: TypeDB.local,	   label: 'built in', action: () => { handleDBTypeAt(0); } },
+		{ id: TypeDB.firebase, label: 'firebase', action: () => { handleDBTypeAt(1); } },
+		{ id: TypeDB.airtable, label: 'airtable', action: () => { handleDBTypeAt(2); } }
 	];
 
 </script>

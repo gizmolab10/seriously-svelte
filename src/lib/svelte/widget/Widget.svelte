@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { s_path_toolsCluster, s_tools_inWidgets, s_thing_fontSize, s_thing_fontFamily } from '../../ts/managers/State';
 	import { s_title_editing, s_dot_size, s_path_here, s_row_height, s_paths_grabbed, } from '../../ts/managers/State';
-	import { onMount, onDestroy, debugReact, SignalKind, SvelteType } from '../../ts/common/GlobalImports';
+	import { onMount, onDestroy, debugReact, SignalKind, TypeW } from '../../ts/common/GlobalImports';
 	import { k, Thing, Point, debug, ZIndex, Wrapper, signals } from '../../ts/common/GlobalImports';
 	import ToolsCluster from './ToolsCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
@@ -56,7 +56,7 @@
 
 	$: {
 		if (widget) {
-			widgetWrapper = new Wrapper(widget, path, SvelteType.widget);
+			widgetWrapper = new Wrapper(widget, path, TypeW.widget);
 		}
 	}
 	

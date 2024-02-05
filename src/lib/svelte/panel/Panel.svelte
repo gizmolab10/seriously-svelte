@@ -1,5 +1,5 @@
 <script>
-	import { k, get, Path, Rect, Size, Point, Thing, launch, DBType, ZIndex, signals, onMount, ButtonID } from '../../ts/common/GlobalImports';
+	import { k, get, Path, Rect, Size, Point, Thing, launch, TypeDB, ZIndex, signals, onMount, ButtonID } from '../../ts/common/GlobalImports';
 	import { Hierarchy, PersistID, dbDispatch, debugReact, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
 	import { s_build, s_isBusy, s_path_here, s_db_type, s_graphRect, s_title_atTop } from '../../ts/managers/State';
 	import { s_id_popupView, s_showDetails, s_things_arrived, s_thing_fontSize } from '../../ts/managers/State';
@@ -104,8 +104,8 @@
 
 {#if $s_isBusy}
 	<p>Welcome to Seriously</p>
-	{#if $s_db_type != DBType.local}
-		<p>(loading your {$s_db_type} data{$s_db_type == DBType.firebase ? ', from ' + dbDispatch.db.baseID : ''})</p>
+	{#if $s_db_type != TypeDB.local}
+		<p>(loading your {$s_db_type} data{$s_db_type == TypeDB.firebase ? ', from ' + dbDispatch.db.baseID : ''})</p>
 	{/if}
 {:else if !$s_things_arrived}
 	<p>Nothing is available.</p>

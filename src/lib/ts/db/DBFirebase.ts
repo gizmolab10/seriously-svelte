@@ -1,6 +1,6 @@
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection, onSnapshot, deleteField, getFirestore } from 'firebase/firestore';
 import { DocumentData, DocumentChange, QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
-import { k, u, get, Thing, debug, launch, DBType, signals, TraitType, DataKind, Hierarchy, DebugFlag } from '../common/GlobalImports';
+import { k, u, get, Thing, debug, launch, TypeDB, signals, TypeT, DataKind, Hierarchy, DebugFlag } from '../common/GlobalImports';
 import { Predicate, dbDispatch, Relationship, CreationOptions } from '../common/GlobalImports';
 import { s_build } from '../managers/State';
 import { initializeApp } from "firebase/app";
@@ -24,7 +24,7 @@ export default class DBFirebase implements DBInterface {
 	baseID = 'Public';
 	bulksName = 'Bulks';
 	deferSnapshots = false;
-	dbType = DBType.firebase;
+	dbType = TypeDB.firebase;
 	bulks: [Bulk] | null = null;
 	app = initializeApp(this.firebaseConfig);
 	predicatesCollection: CollectionReference | null = null;
@@ -154,7 +154,7 @@ export default class DBFirebase implements DBInterface {
 									this.hierarchy.path_redraw_bulkFetchAll_runtimeBrowseRight(path, false);
 								}
 							} else {													// create a thing for each bulk
-								thing = this.hierarchy.thing_runtimeCreate(this.baseID, null, baseID, 'red', TraitType.bulk, 0, false);
+								thing = this.hierarchy.thing_runtimeCreate(this.baseID, null, baseID, 'red', TypeT.bulk, 0, false);
 								await this.hierarchy.path_remember_remoteAddAsChild(rootsPath, thing);
 							}
 						}
@@ -258,7 +258,7 @@ export default class DBFirebase implements DBInterface {
 					if (remoteThing) {
 						switch (change.type) {
 							case 'added':
-								if (thing || remoteThing.isEqualTo(this.addedThing) || remoteThing.trait == TraitType.root) {
+								if (thing || remoteThing.isEqualTo(this.addedThing) || remoteThing.trait == TypeT.root) {
 									return;			// do not invoke signal because nothing has changed
 								}
 								thing = h.thing_remember_runtimeCreate(baseID, id, remoteThing.title, remoteThing.color, remoteThing.trait, 0, true);
@@ -360,7 +360,7 @@ export default class DBFirebase implements DBInterface {
 
 	async things_remember_firstTime_remoteCreateIn(collectionRef: CollectionReference) {
 		const fields = ['title', 'color', 'trait'];
-		const root = new Thing(this.baseID, null, this.baseID, 'coral', TraitType.root, 0, true);
+		const root = new Thing(this.baseID, null, this.baseID, 'coral', TypeT.root, 0, true);
 		const thing = new Thing(this.baseID, null, 'Click this text to edit it', 'purple', '', 0, true);
 		this.hierarchy.root = root;
 		const thingRef = await addDoc(collectionRef, u.convertToObject(thing, fields));	// N.B. these will be fetched, shortly

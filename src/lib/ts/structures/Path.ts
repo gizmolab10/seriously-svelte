@@ -1,6 +1,6 @@
 import { s_dot_size, s_path_here, s_row_height, s_line_stretch, s_title_editing, s_paths_grabbed } from '../managers/State';
 import { s_paths_expanded, s_path_toolsCluster, s_altering_parent, s_tools_inWidgets } from '../managers/State';
-import { SvelteType, dbDispatch, Relationship, SeriouslyRange, AlteringParent } from '../common/GlobalImports';
+import { TypeW, dbDispatch, Relationship, SeriouslyRange, AlteringParent } from '../common/GlobalImports';
 import { k, u, get, Size, Thing, signals, Wrapper, Predicate, TitleState } from '../common/GlobalImports';
 import { Writable } from 'svelte/store';
 
@@ -42,7 +42,7 @@ export default class Path {
 
 	signal_rebuild()  { signals.signal_rebuild(this); }
 	signal_relayout() { signals.signal_relayout(this); }
-	addWrapper(wrapper: Wrapper, type: SvelteType) { this.wrappers[type] = wrapper; }
+	addWrapper(wrapper: Wrapper, type: TypeW) { this.wrappers[type] = wrapper; }
 	setup() { this.selectionRange = new SeriouslyRange(0, this.thing()?.titleWidth ?? 0); }
 	
 	////////////////////////////////////
@@ -65,11 +65,11 @@ export default class Path {
 	get parentPaths(): Array<Path> { return this.thing()?.parentPaths ?? []; }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
 	get thingTitle(): string { return this.thing()?.title ?? 'missing title'; }
-	get lineWrapper(): Wrapper | null { return this.wrappers[SvelteType.line]; }
+	get lineWrapper(): Wrapper | null { return this.wrappers[TypeW.line]; }
 	get toolsGrabbed(): boolean { return this.matchesStore(s_path_toolsCluster); }
-	get titleWrapper(): Wrapper | null { return this.wrappers[SvelteType.title]; }
-	get revealWrapper(): Wrapper | null { return this.wrappers[SvelteType.reveal]; }
-	get widgetWrapper(): Wrapper | null { return this.wrappers[SvelteType.widget]; }
+	get titleWrapper(): Wrapper | null { return this.wrappers[TypeW.title]; }
+	get revealWrapper(): Wrapper | null { return this.wrappers[TypeW.reveal]; }
+	get widgetWrapper(): Wrapper | null { return this.wrappers[TypeW.widget]; }
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }

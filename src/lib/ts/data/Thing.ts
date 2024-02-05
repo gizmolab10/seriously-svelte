@@ -1,5 +1,5 @@
 import { k, u, get, Path, ParentRelations, Datum, debug, Predicate, Hierarchy, DebugFlag } from '../common/GlobalImports';
-import { TraitType, dbDispatch } from '../common/GlobalImports';
+import { TypeT, dbDispatch } from '../common/GlobalImports';
 import { s_path_here } from '../managers/State';
 import Airtable from 'airtable';
 
@@ -34,7 +34,7 @@ export default class Thing extends Datum {
 	get isHere():			  boolean { return (get(s_path_here).thing()?.id ?? '') == this.id; }
 	get idForChildren():	   string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get description():		   string { return this.id + ' \"' + this.title + '\"'; }
-	get isBulkAlias():		  boolean { return this.trait == TraitType.bulk; }
+	get isBulkAlias():		  boolean { return this.trait == TypeT.bulk; }
 	get isRoot():			  boolean { return this == this.hierarchy.root; }
 	get hasParents():		  boolean { return this.parentPaths.length > 0; }
 	get hierarchy():		Hierarchy { return dbDispatch.db.hierarchy; }

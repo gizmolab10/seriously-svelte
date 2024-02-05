@@ -1,5 +1,5 @@
 import { s_db_type, s_isBusy, s_path_here, s_paths_grabbed, s_db_loadTime, s_things_arrived } from '../managers/State';
-import { k, DBType, PersistID, persistLocal } from '../common/GlobalImports';
+import { k, TypeDB, PersistID, persistLocal } from '../common/GlobalImports';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
@@ -14,7 +14,7 @@ export default class DBDispatch {
 	constructor() { this.db = dbFirebase; }
 
 	applyQueryStrings(queryStrings: URLSearchParams) {
-		const type = queryStrings.get('db') ?? persistLocal.readFromKey(PersistID.db) ?? DBType.firebase;
+		const type = queryStrings.get('db') ?? persistLocal.readFromKey(PersistID.db) ?? TypeDB.firebase;
 		this.updateDBForType(type);
 		this.db.applyQueryStrings(queryStrings);
 		s_db_type.set(type);
@@ -31,34 +31,34 @@ export default class DBDispatch {
 
 	dbForType(type: string): DBInterface {
 		switch (type) {
-			case DBType.airtable: return dbAirtable;
-			case DBType.firebase: return dbFirebase;
+			case TypeDB.airtable: return dbAirtable;
+			case TypeDB.firebase: return dbFirebase;
 			default:			  return dbLocal;
 		}
 	}
 
-	changeDBTo(newDBType: DBType) {
+	changeDBTo(newDBType: TypeDB) {
 		const db = this.dbForType(newDBType);
 		s_db_loadTime.set(db.loadTime);
 		persistLocal.writeToKey(PersistID.db, newDBType);
-		if (newDBType != DBType.local && !db.hasData) {
+		if (newDBType != TypeDB.local && !db.hasData) {
 			s_isBusy.set(true);			// set this before changing $s_db_type so panel will show 'loading ...'
 		}
 		s_db_type.set(newDBType);			// tell components to render the [possibly previously] fetched data
 	}
 
-	getNextDB(forward: boolean): DBType {
+	getNextDB(forward: boolean): TypeDB {
 		if (forward) {
 			switch (this.db.dbType) {
-				case DBType.airtable: return DBType.local;
-				case DBType.local:	  return DBType.firebase;
-				default:			  return DBType.airtable;
+				case TypeDB.airtable: return TypeDB.local;
+				case TypeDB.local:	  return TypeDB.firebase;
+				default:			  return TypeDB.airtable;
 			}
 		} else {
 			switch (this.db.dbType) {
-				case DBType.airtable: return DBType.firebase;
-				case DBType.local:	  return DBType.airtable;
-				default:			  return DBType.local;
+				case TypeDB.airtable: return TypeDB.firebase;
+				case TypeDB.local:	  return TypeDB.airtable;
+				default:			  return TypeDB.local;
 			}
 		}		
 	}
@@ -69,7 +69,7 @@ export default class DBDispatch {
 			persistLocal.s_updateForDBType(type);
 			h.here_restore();
 		} else {
-			if (type != DBType.local) {
+			if (type != TypeDB.local) {
 				s_isBusy.set(true);
 				s_things_arrived.set(false);
 			}

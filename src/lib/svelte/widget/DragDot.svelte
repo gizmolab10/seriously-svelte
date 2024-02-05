@@ -1,7 +1,7 @@
 <script>
-	import { Wrapper, Direction, onDestroy, dbDispatch, SvelteType, AlteringParent } from "../../ts/common/GlobalImports";
 	import { k, u, Size, Point, Thing, debug, ZIndex, onMount, signals, svgPath } from "../../ts/common/GlobalImports";
 	import { s_dot_size, s_paths_grabbed, s_path_toolsCluster, s_tools_inWidgets } from '../../ts/managers/State';
+	import { Wrapper, Direction, onDestroy, dbDispatch, AlteringParent } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte';
 	export let center;
 	export let path;
