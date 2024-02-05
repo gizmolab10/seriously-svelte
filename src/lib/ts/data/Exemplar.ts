@@ -9,8 +9,6 @@ class Exemplar extends Thing {
 		this.isExemplar = true;
 	}
 
-	get hasChildren(): boolean { return true; }
-
 }
 
 export const exemplar = new Exemplar();

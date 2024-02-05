@@ -40,7 +40,7 @@
 					layoutChildren();
 					if (signalPath) { // only recurse if starting at a specific signalPath
 						for (const childMap of childMapArray) {
-							if (childMap.child.hasChildren && childMap.path.isExpanded) {
+							if (childMap.path.hasChildren && childMap.path.isExpanded) {
 								childMap.path.signal_relayout();
 							}
 						}

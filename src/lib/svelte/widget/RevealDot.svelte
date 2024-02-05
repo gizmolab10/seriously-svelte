@@ -73,10 +73,10 @@
 	}
 
 	function updatePath() {
-		if ((!thing.hasChildren && !thing.isBulkAlias) || $s_path_toolsCluster?.matchesPath(path)) {
+		if ((!path.hasChildren && !thing.isBulkAlias) || $s_path_toolsCluster?.matchesPath(path)) {
 			scalablePath = svgPath.circle($s_dot_size, $s_dot_size / 2);
 		} else {
-			const goLeft = path.isExpanded && thing.hasChildren;
+			const goLeft = path.isExpanded && path.hasChildren;
 			const direction = goLeft ? Direction.left : Direction.right;
 			scalablePath = svgPath.triangle($s_dot_size, direction);
 			if (thing.isBulkAlias) {
@@ -91,7 +91,7 @@
 			if (path.toolsGrabbed) {
 				$s_path_toolsCluster = null;
 				$s_altering_parent = null;
-			} else if (!thing.hasChildren) {
+			} else if (!path.hasChildren) {
 				path.grabOnly();
 				$s_path_toolsCluster = path;
 			} else {
