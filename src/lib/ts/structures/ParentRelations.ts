@@ -24,9 +24,6 @@ export default class ParentRelations {
 		const predicateHID = path.predicateID.hash();
 		let paths_from = this.parentPathsFor(predicateHID);
 		if (!parentPath.includedInPaths(paths_from)) {
-			if (this.thing.title == 'h') {
-				console.log(`ADD PATH ${parentPath.thingTitles} TO \"${this.thing.title}\"`);
-			}
 			paths_from.push(parentPath);
 			this.parentPaths_setFor(predicateHID, paths_from);
 		}

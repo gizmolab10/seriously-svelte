@@ -19,19 +19,14 @@
 	let diameter = $s_dot_size;
 	let radius = diameter / 2;
 	let color = thing.color;
+	let jiggle = false;
 	let left = 64;
 
-	onMount(() => { setTimeout(() => { update(); }, 10) });
+	onMount(() => { setTimeout(() => { update(); }, 2) });
+    function getC(type: string) { return c[type] ?? new Point(); }
     const relayoutHandler = signals.handle_relayout(() => { update(); });
-    function centers_isEmpty(): boolean { return Object.keys(c).length == 0; }
     function setC(type: string, center: Point) { return c[type] = center; }
-    
-    function getC(type: string) {
-        if (centers_isEmpty()) {
-            console.log(`empty c array for \"${type}\"`);
-        }
-        return c[type] ?? new Point();
-    }
+    function centers_isEmpty(): boolean { return Object.keys(c).length == 0; }    
 
     $: {
         if ($s_user_graphOffset || $s_graphRect) {
@@ -59,25 +54,30 @@
         } else if ($s_path_toolsCluster && $s_path_toolsCluster.titleWrapper) {
             updateForOverlay();
         }
+        jiggle = !jiggle;
 	}
 
 	function updateForOverlay() {
 		const toolsHeight = k.toolsClusterHeight;
 		const halfHeight = toolsHeight / 2;
 		const rect = Rect.createFromDOMRect($s_path_toolsCluster.titleWrapper.component.getBoundingClientRect());
-		const center = rect.centerLeft.offsetBy(new Point(titleWidth - 92, -34));
-		const leftLeft = center.x + radius * 0.8;
-		const top = center.y - 6;
-		left = center.x - diameter * 2.1;
-		setC(TypeCT.cluster, center);
-		setC(TypeCT.add, new Point(leftLeft, top - diameter));
-		setC(TypeCT.addParent, new Point(left, top - diameter));
-		setC(TypeCT.delete, new Point(leftLeft, top + diameter - 5));
-		setC(TypeCT.deleteParent, new Point(left, top + diameter - 8));
-		setC(TypeCT.more, new Point(center.x - diameter - 1, top + diameter + 3));
-		setC(TypeCT.next, new Point(center.x - diameter + 2, top - diameter - 10));
-        revealOffset = new Point(-19 - titleWidth, k.toolsClusterHeight / 2 - 51)
-		color = thing.color;
+        if (rect.size.width == 0) {
+                console.log(`tools title component has zero size`)
+        } else {
+            const center = rect.centerLeft.offsetBy(new Point(titleWidth - 92, -34));
+            const leftLeft = center.x + radius * 0.8;
+            const top = center.y - 6;
+            left = center.x - diameter * 2.1;
+            setC(TypeCT.cluster, center);
+            setC(TypeCT.add, new Point(leftLeft, top - diameter));
+            setC(TypeCT.addParent, new Point(left, top - diameter));
+            setC(TypeCT.delete, new Point(leftLeft, top + diameter - 5));
+            setC(TypeCT.deleteParent, new Point(left, top + diameter - 8));
+            setC(TypeCT.more, new Point(center.x - diameter - 1, top + diameter + 3));
+            setC(TypeCT.next, new Point(center.x - diameter + 2, top - diameter - 10));
+            revealOffset = new Point(-19 - titleWidth, k.toolsClusterHeight / 2 - 51)
+            color = thing.color;
+        }
 	}
 
 	function updateForInsideWidget() {
@@ -113,7 +113,7 @@
 	}
 </style>
 
-{#key thing}
+{#key thing || jiggle}
     <div class='toolsCluster' style='
         position:absolute;
         z-index: {ZIndex.lines}'>
