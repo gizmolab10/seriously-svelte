@@ -62,6 +62,7 @@ export default class Path {
 	get siblingPaths(): Array<Path> { return this.parentPath.childPaths; }
 	get hashedIDs(): Array<number> { return this.ids.map(i => i.hash()); }
 	get isExemplar(): boolean { return this.thing()?.isExemplar ?? false; }
+	get parentPaths(): Array<Path> { return this.thing()?.parentPaths ?? []; }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
 	get thingTitle(): string { return this.thing()?.title ?? 'missing title'; }
 	get lineWrapper(): Wrapper | null { return this.wrappers[SvelteType.line]; }
@@ -88,9 +89,9 @@ export default class Path {
 
 	get thingID(): string {
 		if (this.isRoot) {
-			return dbDispatch.db.hierarchy?.idRoot ?? '';
+			return dbDispatch.db.hierarchy?.idRoot ?? 'missing root id';
 		}
-		return this.relationship()?.idTo ?? '';
+		return this.relationship()?.idTo ?? 'missing id';
 	}
 
 	get isVisible(): boolean {
@@ -119,6 +120,17 @@ export default class Path {
 			}
 		}
 		return false;
+	}
+
+	get next_siblingPath(): Path | null {
+		let nextPath: Path | null = null
+		const parentPaths = this.parentPaths;
+		const index = parentPaths.map(p => p.thingID).indexOf(this.parentPath.thingID);
+		if (index != -1) {
+			const next = index.increment(true, parentPaths.length)
+			nextPath = parentPaths[next].appendID(this.endID);
+		}
+		return nextPath;
 	}
 
 	matchesStore(store: Writable<Path | null>): boolean { return this.matchesPath(get(store)); }

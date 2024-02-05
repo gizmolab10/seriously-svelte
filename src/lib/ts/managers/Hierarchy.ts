@@ -543,24 +543,11 @@ export default class Hierarchy {
 		return path;
 	}
 
-	path_nextParent(path: Path): Path | null {
-		const thing = path.thing();
-		let nextPath: Path | null = null
-		const hID = path.thingID.hash();
-		if (thing) {
-			const paths = thing.parentPaths;
-			const index = paths.map(p => p.pathString).indexOf(path.pathString);
-			const next = index.increment(true, paths.length)
-			nextPath = paths[next];
-		}
-		return nextPath;
-	}
-
 	async path_relayout_toolCluster_nextParent() {
 		const path = get(s_path_toolsCluster);
 		if (path) {
-			const nextPath = this.path_nextParent(path);
-			if (nextPath && !path.matchesPath(nextPath)) {
+			const nextPath = path.next_siblingPath;
+			if (nextPath) {
 				await nextPath.assureIsVisible();
 				nextPath.grabOnly();
 				s_path_toolsCluster.set(nextPath);
