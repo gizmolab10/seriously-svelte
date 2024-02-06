@@ -550,6 +550,7 @@ export default class Hierarchy {
 			if (nextPath) {
 				await nextPath.assureIsVisible();
 				nextPath.grabOnly();
+				// console.log(`NEXT ${path.thingTitles}`)
 				s_path_toolsCluster.set(nextPath);
 				signals.signal_relayout_fromHere();
 			}
