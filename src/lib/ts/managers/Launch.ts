@@ -10,7 +10,7 @@ class Launch {
 	}
 
 	setup() {
-		document.title = this.title;
+		document.title = this.browserTitle;
 		builds.setup();
 		persistLocal.restore();
 		k.applyQueryStrings(this.queryString);
@@ -21,7 +21,7 @@ class Launch {
 		s_setup();
 	}
 
-	get title(): string {
+	get browserTitle(): string {
 		const baseID = dbDispatch.db.baseID;
 		const name = baseID ? (baseID! + ', ') : '';
 		const host = u.isServerLocal() ? 'local' : 'remote';

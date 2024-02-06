@@ -4,8 +4,8 @@ import { dbDispatch } from '../common/GlobalImports';
 export default class Predicate extends RemoteIdentifiable {
 	kind: string;
 
-	constructor(id: string, kind: string) {
-		super(id, true);
+	constructor(id: string, kind: string, isRemotelyStored: boolean = true) {
+		super(id, isRemotelyStored);
 		this.kind = kind;
 	}
 

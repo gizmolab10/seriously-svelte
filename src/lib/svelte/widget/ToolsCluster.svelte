@@ -1,7 +1,7 @@
 <script lang='ts'>
-    import { svgPath, Direction, dbDispatch, AlteringParent, TypeCT } from '../../ts/common/GlobalImports';
     import { k, Rect, Size, Point, Wrapper, ZIndex, onMount, signals } from '../../ts/common/GlobalImports';
-	import { s_tools_inWidgets, s_user_graphOffset, s_path_toolsCluster } from '../../ts/managers/State';
+	import { svgPath, Direction, dbDispatch, AlteringParent, TypeCT } from '../../ts/common/GlobalImports';
+    import { s_tools_inWidgets, s_user_graphOffset, s_path_toolsCluster } from '../../ts/managers/State';
 	import { s_dot_size, s_row_height, s_graphRect, s_altering_parent } from '../../ts/managers/State';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
 	import CircularButton from '../kit/CircularButton.svelte';
@@ -22,15 +22,17 @@
 	let jiggle = false;
 	let left = 64;
 
-	onMount(() => { setTimeout(() => { update(); }, 2) });
+	onMount(() => { setTimeout(() => { update(); }, 20) });
     function getC(type: string) { return c[type] ?? new Point(); }
     const relayoutHandler = signals.handle_relayout(() => { update(); });
     function setC(type: string, center: Point) { return c[type] = center; }
-    function centers_isEmpty(): boolean { return Object.keys(c).length == 0; }    
+    function centers_isEmpty(): boolean { return Object.keys(c).length == 0; }
 
     $: {
         if ($s_user_graphOffset || $s_graphRect) {
-            update();
+            setTimeout(() => {
+                update();
+            }, 100);
         }
     }
 
@@ -47,22 +49,30 @@
 		}
 	}
 
+    function yikes() {
+        const c = getC(TypeCT.cluster);
+        if (c.x == 0) {
+            console.log(`TOOLS YIKES ${c.description}`);
+        }
+    }
+
 	function update() {
         bigOffset = new Point(-19 - titleWidth, k.toolsClusterHeight / 2 - 51);
         if ($s_tools_inWidgets) {
             updateForInsideWidget();
         } else if ($s_path_toolsCluster && $s_path_toolsCluster.titleWrapper) {
-            updateForOverlay();
+            updateForInFront();
         }
+        yikes();
         jiggle = !jiggle;
 	}
 
-	function updateForOverlay() {
+    function updateForInFront() {
 		const toolsHeight = k.toolsClusterHeight;
 		const halfHeight = toolsHeight / 2;
 		const rect = Rect.createFromDOMRect($s_path_toolsCluster.titleWrapper.component.getBoundingClientRect());
         if (rect.size.width == 0) {
-                console.log(`tools title component has zero size`)
+            console.log(`TOOLS SVELTE zero title size`);
         } else {
             const center = rect.centerLeft.offsetBy(new Point(titleWidth - 92, -34));
             const leftLeft = center.x + radius * 0.8;
@@ -113,7 +123,7 @@
 	}
 </style>
 
-{#key thing || jiggle}
+{#key jiggle}
     <div class='toolsCluster' style='
         position:absolute;
         z-index: {ZIndex.lines}'>

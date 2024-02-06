@@ -837,8 +837,8 @@ export default class Hierarchy {
 		this.knownPs.push(predicate);
 	}
 
-	predicate_remember_runtimeCreate(id: string, kind: string) {
-		const predicate = new Predicate(id, kind);
+	predicate_remember_runtimeCreate(id: string, kind: string, isRemotelyStored: boolean = true) {
+		const predicate = new Predicate(id, kind, isRemotelyStored);
 		this.predicate_remember(predicate)
 	}
 
