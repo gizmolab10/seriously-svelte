@@ -70,8 +70,8 @@ export class Rect {
 		return new Rect(rightCenter.offsetByY(size.height / -2), size);
 	}
 
-	static createFromDOMRect(rect: DOMRect) {
-		return new Rect(new Point(rect.x, rect.y), new Size(rect.width, rect.height));
+	static createFromDOMRect(rect: DOMRect | null) {
+		return !rect ? null : new Rect(new Point(rect.x, rect.y), new Size(rect.width, rect.height));
 	}
 
 	get pixelVerbose():	   string { return this.origin.pixelVerbose + ' ' + this.size.pixelVerbose; }

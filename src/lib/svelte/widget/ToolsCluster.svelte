@@ -10,46 +10,53 @@
 	import RevealDot from './RevealDot.svelte';
     import { transparentize } from 'color2k';
 	import Trash from '../svg/Trash.svelte';
-	let thing: Thing;
     let c: { [type: string]: Point } = {}
     let revealOffset = new Point();
     let userOffset = new Point();
     let bigOffset = new Point();
+    let graphRect = new Rect();
 	let diameter = $s_dot_size;
 	let radius = diameter / 2;
 	let jiggle = false;
     let titleWidth = 0;
 	let color = '';
 	let left = 64;
+	let thing;
+    let path;
 
-	onMount(() => { setTimeout(() => { update(); }, 20) });
     function getC(type: string) { return c[type] ?? new Point(); }
-    const relayoutHandler = signals.handle_relayout(() => { update(); });
     function setC(type: string, center: Point) { return c[type] = center; }
     function centers_isEmpty(): boolean { return Object.keys(c).length == 0; }
+	onMount(() => { setup(); setTimeout(() => { updateMaybeRedraw(); }, 20) });
+    const relayoutHandler = signals.handle_relayout(() => { updateMaybeRedraw(); });
 
-    $: {
-        const path = $s_path_toolsCluster;
+    function setup() {
+        userOffset = $s_user_graphOffset;
+        path = $s_path_toolsCluster;
         thing = path?.thing();
-        if (thing) {
-            color = thing.color;
-            titleWidth = thing.titleWidth;
-        } else {
-            color = '';
-            titleWidth = 0;
-        }
-        update();
     }
+
     $: {
-        if ($s_graphRect) {
+        if (path != $s_path_toolsCluster) {
+            path = $s_path_toolsCluster;
+            thing = path?.thing();
+            if (thing) {
+                color = thing.color;
+                titleWidth = thing.titleWidth;
+            } else {
+                color = '';
+                titleWidth = 0;
+            }
             update();
+            jiggle = !jiggle;
         }
     }
 
     $: {
-        if (userOffset != $s_user_graphOffset) {
-            userOffset = $s_user_graphOffset
-            update();
+        if ((graphRect != $s_graphRect) || (userOffset != $s_user_graphOffset)) {
+            userOffset = $s_user_graphOffset;
+            graphRect = $s_graphRect;
+            updateMaybeRedraw();
         }
     }
 
@@ -59,24 +66,29 @@
 		}
 	}
 
-	function update() {
-        bigOffset = new Point(-19 - titleWidth, k.toolsClusterHeight / 2 - 51);
-        if ($s_tools_inWidgets) {
-            updateForInsideWidget();
-            jiggle = !jiggle;
-        } else if ($s_path_toolsCluster && $s_path_toolsCluster.titleWrapper) {
-            updateForInFront();
+    function updateMaybeRedraw() {
+        if (update()) {
             jiggle = !jiggle;
         }
+    }
+
+	function update() {
+        bigOffset = new Point(-19 - titleWidth, k.toolsClusterHeight / 2 - 51);
+        const path = $s_path_toolsCluster;
+        if (path) {
+            if ($s_tools_inWidgets) {
+                updateForInsideWidget();
+                return true;
+            } else if (updateForInFront()) {
+                return true;
+            }
+        }
+        return false;
 	}
 
-    function updateForInFront() {
-		const toolsHeight = k.toolsClusterHeight;
-		const halfHeight = toolsHeight / 2;
-		const rect = Rect.createFromDOMRect($s_path_toolsCluster.titleWrapper.component.getBoundingClientRect());
-        if (rect.size.width == 0) {
-            console.log(`TOOLS SVELTE zero title size`);
-        } else {
+    function updateForInFront(): boolean {
+        const rect = $s_path_toolsCluster?.thingTitleRect;
+        if (rect && rect.size.width != 0) {
             const center = rect.centerLeft.offsetBy(new Point(titleWidth + 9, -33.5));
             const leftLeft = center.x + radius * 0.8;
             const top = center.y - 6;
@@ -88,8 +100,11 @@
             setC(TypeCT.deleteParent, new Point(left, top + diameter - 8));
             setC(TypeCT.more, new Point(center.x - diameter - 1, top + diameter + 3));
             setC(TypeCT.next, new Point(center.x - diameter + 2, top - diameter - 10));
-            revealOffset = new Point(-19 - titleWidth, k.toolsClusterHeight / 2 - 51)
+            revealOffset = new Point(-19 - titleWidth, k.toolsClusterHeight / 2 - 51);
+            return true;
         }
+        // console.log('NULL thingTitleRect');
+        return false;
 	}
 
 	function updateForInsideWidget() {

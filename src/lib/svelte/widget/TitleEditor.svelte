@@ -21,9 +21,9 @@
 
 	$: {
 		if (input) {
-			if (path.thingTitle == 'a') {
-				console.log(`TITLE ${path.thingTitles}`);
-			}
+			// if (path.thingTitle == 'a') {
+			// 	console.log(`TITLE ${path.thingTitles}`);
+			// }
 			titleWrapper = new Wrapper(input, path, TypeW.title);
 		}
 	}

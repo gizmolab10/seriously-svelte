@@ -1,5 +1,5 @@
 <script>
-	import { s_paths_expanded, s_dot_size, s_altering_parent, s_paths_grabbed, s_path_toolsCluster } from '../../ts/managers/State';
+	import { s_paths_expanded, s_dot_size, s_altering_parent, s_paths_grabbed, s_tools_inWidgets, s_path_toolsCluster } from '../../ts/managers/State';
 	import { k, u, get, Size, Thing, Point, debug, ZIndex, svgPath, signals } from "../../ts/common/GlobalImports";
 	import { onMount, Wrapper, Direction, onDestroy, dbDispatch, TypeW } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte';
@@ -29,7 +29,7 @@
 	}
 
 	$: {
-		if (revealDot) {
+		if (revealDot && (path != $s_path_toolsCluster || $s_tools_inWidgets)) {
 			revealWrapper = new Wrapper(revealDot, path, TypeW.reveal);
 		}
 	}

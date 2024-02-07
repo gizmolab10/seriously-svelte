@@ -1,19 +1,20 @@
 import { s_isBusy, s_path_here, s_paths_grabbed, s_things_arrived, s_title_editing, s_altering_parent, s_path_toolsCluster } from './State';
-import { k, u, get, User, Path, Thing, Grabs, debug, Access, signals, TypeT, Predicate } from '../common/GlobalImports';
-import { Relationship, persistLocal, AlteringParent, CreationOptions, TypeCT } from '../common/GlobalImports';
+import { k, u, get, User, Path, Thing, Grabs, debug, Access, TypeT, TypeCT, signals, Wrapper } from '../common/GlobalImports';
+import { Predicate, Relationship, persistLocal, AlteringParent, CreationOptions } from '../common/GlobalImports';
 import DBInterface from '../db/DBInterface';
 
 type KnownRelationships = { [hID: number]: Array<Relationship> }
 
 export default class Hierarchy {
-	knownU_byHID: { [hID: number]: User } = {};
-	knownT_byHID: { [hID: number]: Thing } = {};
-	knownA_byHID: { [hID: number]: Access } = {};
-	knownP_byHID: { [hID: number]: Predicate } = {};
-	knownR_byHID: { [hID: number]: Relationship } = {};
-	knownA_byKind: { [kind: string]: Access } = {};
-	knownP_byKind: { [kind: string]: Predicate } = {};
-	knownPath_byPathStringHash: { [hID: number]: Path } = {};
+	knownU_byHID: { [h: number]: User } = {};
+	knownT_byHID: { [h: number]: Thing } = {};
+	knownA_byHID: { [h: number]: Access } = {};
+	knownA_byKind: { [k: string]: Access } = {};
+	knownPath_byHash: { [h: number]: Path } = {};
+	knownP_byHID: { [h: number]: Predicate } = {};
+	knownP_byKind: { [k: string]: Predicate } = {};
+	knownR_byHID: { [h: number]: Relationship } = {};
+	knownWs_byTypeAndPath: { [t: string]: { [h: number]: Wrapper } } = {};
 	knownTs_byTrait: { [trait: string]: Array<Thing> } = {};
 	knownRs_byHIDPredicate: KnownRelationships = {};
 	knownRs_byHIDFrom: KnownRelationships = {};
@@ -535,10 +536,10 @@ export default class Hierarchy {
 	////////////////////////
 
 	path_unique(pathString: string = ''): Path {
-		let path = this.knownPath_byPathStringHash[pathString.hash()];
+		let path = this.knownPath_byHash[pathString.hash()];
 		if (!path) {
 			path = new Path(pathString);
-			this.knownPath_byPathStringHash[pathString.hash()] = path;
+			this.knownPath_byHash[pathString.hash()] = path;
 		}
 		return path;
 	}
@@ -550,7 +551,7 @@ export default class Hierarchy {
 			if (nextPath) {
 				await nextPath.assureIsVisible();
 				nextPath.grabOnly();
-				// console.log(`NEXT ${path.thingTitles}`)
+				// console.log(`NEXT ${nextPath.thingTitles}`)
 				s_path_toolsCluster.set(nextPath);
 				signals.signal_relayout_fromHere();
 			}
@@ -786,7 +787,7 @@ export default class Hierarchy {
 	//		  PATHS		  //
 	////////////////////////
 
-	paths_forgetAll() { this.knownPath_byPathStringHash = {}; }
+	paths_forgetAll() { this.knownPath_byHash = {}; }
 
 	async paths_rebuild_traverse_remoteDelete(paths: Array<Path>) {
 		if (this.herePath) {
@@ -853,4 +854,13 @@ export default class Hierarchy {
 		const user = new User(id, name, email, phone);
 		this.knownU_byHID[id.hash()] = user;
 	}
+
+	wrapper_add(wrapper: Wrapper) {
+		const path = wrapper.path
+		const hash = path.pathString.hash();
+		const dict = this.knownWs_byTypeAndPath[wrapper.type] ?? {};
+		dict[hash] = wrapper;
+		this.knownWs_byTypeAndPath[wrapper.type] = dict;
+	}
+
 }

@@ -1,5 +1,5 @@
-import Identifiable from "./Identifiable";
 import { Path } from '../common/GlobalImports';
+import Identifiable from "./Identifiable";
 
 export enum TypeW {
 	widget	= 'widget',
@@ -18,7 +18,7 @@ export default class Wrapper extends Identifiable {
         this.path = path;
         this.type = type;
         this.component = component;
-        this.path.addWrapper(this, type);
+		path.wrapper_add(this);
     }
 
 }

@@ -1,7 +1,7 @@
 import { s_dot_size, s_path_here, s_row_height, s_line_stretch, s_title_editing, s_paths_grabbed } from '../managers/State';
 import { s_paths_expanded, s_path_toolsCluster, s_altering_parent, s_tools_inWidgets } from '../managers/State';
-import { TypeW, dbDispatch, Relationship, SeriouslyRange, AlteringParent } from '../common/GlobalImports';
-import { k, u, get, Size, Thing, signals, Wrapper, Predicate, TitleState } from '../common/GlobalImports';
+import { TitleState, dbDispatch, Relationship, SeriouslyRange, AlteringParent } from '../common/GlobalImports';
+import { k, u, get, Rect, Size, Thing, TypeW, signals, Wrapper, Predicate } from '../common/GlobalImports';
 import { Writable } from 'svelte/store';
 
 export default class Path {
@@ -42,8 +42,12 @@ export default class Path {
 
 	signal_rebuild()  { signals.signal_rebuild(this); }
 	signal_relayout() { signals.signal_relayout(this); }
-	addWrapper(wrapper: Wrapper, type: TypeW) { this.wrappers[type] = wrapper; }
 	setup() { this.selectionRange = new SeriouslyRange(0, this.thing()?.titleWidth ?? 0); }
+
+	wrapper_add(wrapper: Wrapper) {
+		this.wrappers[wrapper.type] = wrapper;
+        dbDispatch.db.hierarchy.wrapper_add(wrapper);
+	}
 	
 	////////////////////////////////////
 	//			properties			  //
@@ -78,6 +82,7 @@ export default class Path {
 	get isStoppingEdit(): boolean { return this.pathString == get(s_title_editing)?.stopping?.pathString; }
 	get things_allAncestors(): Array<Thing> { return this.things_ancestryWithin(Number.MAX_SAFE_INTEGER); }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
+	get thingTitleRect(): Rect | null { return Rect.createFromDOMRect(this.titleWrapper?.component.getBoundingClientRect());}
 	get thingTitles(): Array<string> { return dbDispatch.db.hierarchy?.things_getForPath(this).map(t => `\"${t.title}\"`) ?? []; }
 
 	get ids(): Array<string> {
@@ -306,7 +311,7 @@ export default class Path {
 	}
 
 	grabOnly() {
-		console.log(`GRAB ${this.thing()?.title}`);
+		// console.log(`GRAB ${this.thingTitles}`);
 		s_paths_grabbed.set([this]);
 		this.toggleToolsGrab();
 	}
@@ -314,10 +319,13 @@ export default class Path {
 	grab() {
 		s_paths_grabbed.update((array) => {
 			const index = array.indexOf(this);
-			if (index != -1) {
-				// remove, then push
-			} else {
-				array.push(this);	// add last
+			if (array.length == 0) {
+				array.push(this);
+			} else if (index != array.length - 1) {	// not already last?
+				if (index != -1) {					// found: remove
+					array.splice(index, 1);
+				}
+				array.push(this);					// always add last
 			}
 			return array;
 		});
@@ -345,7 +353,7 @@ export default class Path {
 	}
 
 	async assureIsVisible() {
-		console.log('assureIsVisible is not done');
+		// console.log('assureIsVisible is not done');
 	}
 
 	async order_normalizeRecursive_remoteMaybe(remoteWrite: boolean, visited: Array<number> = []) {
@@ -385,7 +393,7 @@ export default class Path {
 
 	startEdit() {
 		if (!this.isRoot) {
-			console.log(`EDIT ${this.thing()?.title}`)
+			console.log(`EDIT ${this.thingTitles}`)
 			this.grabOnly();
 			let editState = get(s_title_editing);
 			if (!editState) {
