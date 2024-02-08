@@ -2,7 +2,7 @@
 	import { k, noop, Thing, onMount, dbDispatch } from '../../ts/common/GlobalImports';
 	import { s_path_here } from '../../ts/managers/State';
 	export let path = '';
-	let thing: Thing = path.thing();
+	let thing: Thing = path.thing;
 	let colorStyles = '';
 	let cursorStyle = '';
 
@@ -15,12 +15,12 @@
 			} else {
 				colorStyles = 'background-color: ' + k.backgroundColor + '; color: ' + thing.color;
 			}
-			cursorStyle = path.hasChildren ? 'cursor: pointer' : '';
+			cursorStyle = path.hasThingsTo ? 'cursor: pointer' : '';
 		}
 	};
 
 	$: {
-		thing = path.thing();
+		thing = path.thing;
 		updateColors();
 	}
 

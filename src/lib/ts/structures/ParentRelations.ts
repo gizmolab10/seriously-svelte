@@ -6,7 +6,7 @@ export default class ParentRelations {
 	thing: Thing;
 
 	constructor(thing: Thing) { this.thing = thing; }
-	parentsFor(predicateHID: number): Array<Thing> { return this.parentPathsFor(predicateHID).map(p => p.thing()!); }
+	parentsFor(predicateHID: number): Array<Thing> { return this.parentPathsFor(predicateHID).map(p => p.thing!); }
 	parentPathsFor(predicateHID: number): Array<Path> { return this.parentPaths_byPredicateHID[predicateHID] ?? []; }
 	parentPaths_setFor(predicateHID: number, paths: Array<Path>) { return this.parentPaths_byPredicateHID[predicateHID] = paths; }
 

@@ -25,7 +25,7 @@ export default class Layout {
 	}
 
 	originForChildrenOf(childPath: Path, origin: Point, extent: Point): Point {
-		const child = childPath.thing();
+		const child = childPath.thing;
 		let x, y = 0;
 		if (child) {
 			y = extent.y - childPath.visibleProgeny_halfHeight;

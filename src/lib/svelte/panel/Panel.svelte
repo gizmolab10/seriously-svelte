@@ -40,7 +40,7 @@
 		graphRect_update();
 		if ($s_graphRect) {
 			left = $s_graphRect.origin.x;
-			debugReact.log_rebuild(`PANEL ${$s_path_here.thing()?.description}`);
+			debugReact.log_rebuild(`PANEL ${$s_path_here.thing?.description}`);
 			toggle = !toggle;	// remount graph component
 		}
 	}
@@ -148,7 +148,7 @@
 			</div>
 			{#if $s_title_atTop}
 				<div class='topTitle'
-					style='color: {$s_path_here.thing()?.color};
+					style='color: {$s_path_here.thing?.color};
 						z-index: {ZIndex.frontmost};
 						left: {$s_showDetails ? '100px' : '-1px'};'>
 					{$s_path_here.thingTitle}

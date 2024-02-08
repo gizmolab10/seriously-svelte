@@ -31,7 +31,7 @@ export default class Hierarchy {
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): (string | null) { return this.root?.id ?? null; };
 	thing_getForHID(hID: number | null): Thing | null { return (!hID) ? null : this.knownT_byHID[hID]; }
-	thing_getForPath(path: Path | null, back: number = 1): Thing | null { return (path == null) ? null : path?.thing(back) ?? null; }
+	thing_getForPath(path: Path | null, back: number = 1): Thing | null { return (path == null) ? null : path?.thingAt(back) ?? null; }
 
 	constructor(db: DBInterface) {
 		this.db = db;
@@ -59,7 +59,7 @@ export default class Hierarchy {
 	here_restore() {
 		let here = this.thing_getForPath(this.herePath);
 		if (here == null) {
-			this.herePath = this.grabs.path_lastGrabbed?.parentPath ?? k.rootPath;
+			this.herePath = this.grabs.path_lastGrabbed?.fromPath ?? k.rootPath;
 		}
 		this.herePath?.becomeHere();
 	}
@@ -105,7 +105,7 @@ export default class Hierarchy {
 						case 'd':		await this.thing_edit_remoteDuplicate(pathGrab); break;
 						case ' ':		await this.path_edit_remoteCreateChildOf(pathGrab); break;
 						case '-':		if (!COMMAND) { await this.thing_edit_remoteAddLine(pathGrab); } break;
-						case 'tab':		await this.path_edit_remoteCreateChildOf(pathGrab.parentPath); break; // Title editor also makes this call
+						case 'tab':		await this.path_edit_remoteCreateChildOf(pathGrab.fromPath); break; // Title editor also makes this call
 						case 'enter':	pathGrab.startEdit(); break;
 					}
 				}
@@ -225,8 +225,8 @@ export default class Hierarchy {
 
 	async thing_edit_remoteAddLine(path: Path, below: boolean = true) {
 		const parentPath = path.fromPath;
-		const parent = parentPath?.thing();
-		const thing = path.thing();
+		const parent = parentPath?.thing;
+		const thing = path.thing;
 		if (thing && parent && parentPath) {
 			const order = path.order + (below ? 0.5 : -0.5);
 			const child = this.thing_runtimeCreate(thing.baseID, null, k.lineTitle, parent.color, '', false);
@@ -251,7 +251,7 @@ export default class Hierarchy {
 	}
 
 	async thing_edit_remoteDuplicate(path: Path) {
-		const thing = path.thing();
+		const thing = path.thing;
 		const id = thing?.id;
 		const parentPath = path.fromPath;
 		if (thing && id && parentPath) {
@@ -325,8 +325,8 @@ export default class Hierarchy {
 	}
 
 	async thing_remember_bulk_recursive_remoteRelocateRight(path: Path, newParentPath: Path) {
-		const newParent = newParentPath.thing();
-		const thing = path.thing();
+		const newParent = newParentPath.thing;
+		const thing = path.thing;
 		if (thing && newParent) {
 			const baseID = newParent.isBulkAlias ? newParent.title : newParent.baseID;
 			const newThing = await this.thing_remember_runtimeCopy(baseID, thing);
@@ -555,7 +555,7 @@ export default class Hierarchy {
 	}
 
 	async path_edit_remoteCreateChildOf(parentPath: Path | null) {
-		const parent = parentPath?.thing();
+		const parent = parentPath?.thing;
 		if (parent && parentPath) {
 			const child = await this.thing_remember_runtimeCopy(parent.baseID, parent);
 			child.title = 'idea';
@@ -565,7 +565,7 @@ export default class Hierarchy {
 	}
 
 	async path_edit_remoteAddAsChild(path: Path, child: Thing, order: number, shouldStartEdit: boolean = true) {
-		const thing = path.thing();
+		const thing = path.thing;
 		if (thing) {
 			await this.path_remember_remoteAddAsChild(path, child);
 			path.expand();
@@ -582,12 +582,12 @@ export default class Hierarchy {
 	}
 
 	async path_redraw_bulkFetchAll_runtimeBrowseRight(path: Path, grab: boolean = true) {
-		const thing = path.thing();
+		const thing = path.thing;
 		if (thing) {
 			path.expand();		// do this before fetch, so next launch will see it
 			await thing.bulk_fetchAll(thing.title);
 			await path.paths_recursive_assemble();
-			if (path.hasChildren) {
+			if (path.hasThingsTo) {
 				if (grab) {
 					path.toPaths[0].grabOnly()
 				}
@@ -610,7 +610,7 @@ export default class Hierarchy {
 	}
 
 	async path_remember_remoteAddAsChild(path: Path, child: Thing): Promise<any> {
-		const thing = path.thing();
+		const thing = path.thing;
 		if (thing) {
 			const changingBulk = thing.isBulkAlias || child.baseID != this.db.baseID;
 			const baseID = changingBulk ? child.baseID : thing.baseID;
@@ -627,7 +627,7 @@ export default class Hierarchy {
 
 	async path_rebuild_remoteMoveRight(path: Path, RIGHT: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean, fromReveal: boolean = false) {
 		if (!OPTION) {
-			const thing = path.thing();
+			const thing = path.thing;
 			if (thing) {
 				if (RIGHT && thing.needsBulkFetch) {
 					await this.path_redraw_bulkFetchAll_runtimeBrowseRight(path);
@@ -646,7 +646,7 @@ export default class Hierarchy {
 	async path_rebuild_remoteMoveUp(path: Path, up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const thing = this.thing_getForPath(path);
 		const fromPath = path.fromPath;
-		const siblings = fromPath.children;
+		const siblings = fromPath.toThings;
 		if (!siblings || siblings.length == 0) {
 			this.path_rebuild_runtimeBrowseRight(path, true, EXTREME, up);
 		} else if (thing) {
@@ -677,9 +677,9 @@ export default class Hierarchy {
 
 	async path_rebuild_remoteRelocateRight(path: Path, RIGHT: boolean, EXTREME: boolean) {
 		let needsRebuild = false;
-		const thing = path.thing();
+		const thing = path.thing;
 		const newParentPath = RIGHT ? path.path_ofNextSibling(false) : path.stripBack(2);
-		const newParent = newParentPath?.thing();
+		const newParent = newParentPath?.thing;
 		if (thing && newParent && newParentPath) {
 			if (thing.thing_isInDifferentBulkThan(newParent)) {		// should move across bulks
 				this.path_remember_bulk_remoteRelocateRight(path, newParentPath);
@@ -725,7 +725,7 @@ export default class Hierarchy {
 		const newGrabIsNotHere = !newGrabPath?.isHere;
 		const newHerePath = newParentPath;
 		if (RIGHT) {
-			if (path.hasChildren) {
+			if (path.hasThingsTo) {
 				if (SHIFT) {
 					newGrabPath = null;
 				}
@@ -788,12 +788,12 @@ export default class Hierarchy {
 	async paths_rebuild_traverse_remoteDelete(paths: Array<Path>) {
 		if (this.herePath) {
 			for (const path of paths) {
-				let parent = path.parent;
-				const thing = path.thing();
+				let fromThing = path.fromThing;
+				const thing = path.thing;
 				const fromPath = path.fromPath;
 				const fromFromPath = fromPath.fromPath;
-				if (thing && parent && fromPath && fromFromPath && path && !path.isEditing && !thing.isBulkAlias) {
-					const siblings = fromPath.children;
+				if (thing && fromThing && fromPath && fromFromPath && path && !path.isEditing && !thing.isBulkAlias) {
+					const siblings = fromPath.toThings;
 					let index = siblings.indexOf(thing);
 					siblings.splice(index, 1);
 					fromPath.grabOnly();
@@ -801,14 +801,14 @@ export default class Hierarchy {
 						if (index >= siblings.length) {
 							index = siblings.length - 1;
 						}
-						fromPath?.appendChild(parent);
-						parent = siblings[index];
-						await u.paths_orders_normalize_remoteMaybe(fromPath.childPaths);
+						fromPath?.appendChild(fromThing);
+						fromThing = siblings[index];
+						await u.paths_orders_normalize_remoteMaybe(fromPath.toPaths);
 					} else if (!fromFromPath.isVisible) {
 						fromFromPath.becomeHere();
 					}
 					await path.traverse_async(async (descendantPath: Path): Promise<boolean> => {
-						const descendant = descendantPath.thing();
+						const descendant = descendantPath.thing;
 						if (descendant) {
 							await this.relationships_forget_remoteDeleteAllForThing(descendant);
 							await this.thing_forget_remoteDelete(descendant);

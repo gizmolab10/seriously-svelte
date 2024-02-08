@@ -31,7 +31,7 @@ export default class Thing extends Datum {
 	get parentIDs():	Array<string> { return this.parents.map(t => t.id); }
 	get parents():		 Array<Thing> { return this.parentRelations.parentsFor(Predicate.idIsAParentOf.hash()); }
 	get parentPaths():	  Array<Path> { return this.parentRelations.parentPathsFor(Predicate.idIsAParentOf.hash()); }
-	get isHere():			  boolean { return (get(s_path_here).thing()?.id ?? '') == this.id; }
+	get isHere():			  boolean { return (get(s_path_here).thing?.id ?? '') == this.id; }
 	get idForChildren():	   string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get description():		   string { return this.id + ' \"' + this.title + '\"'; }
 	get isBulkAlias():		  boolean { return this.trait == TypeT.bulk; }

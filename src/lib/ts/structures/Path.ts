@@ -22,12 +22,12 @@ export default class Path {
 				this.setup();
 			}, 100);				// TODO: why?
 		}
-		s_title_editing.subscribe(() => { this.thing()?.updateColorAttributes(this); });
-		s_paths_grabbed.subscribe(() => { this.thing()?.updateColorAttributes(this); });
+		s_title_editing.subscribe(() => { this.thing?.updateColorAttributes(this); });
+		s_paths_grabbed.subscribe(() => { this.thing?.updateColorAttributes(this); });
 	}
 	
 	async paths_recursive_assemble() {
-		const thing = this.thing();
+		const thing = this.thing;
 		const hierarchy = dbDispatch.db.hierarchy;
 		this.predicateID = Predicate.idIsAParentOf;
 		if (thing) {
@@ -44,7 +44,7 @@ export default class Path {
 
 	signal_rebuild()  { signals.signal_rebuild(this); }
 	signal_relayout() { signals.signal_relayout(this); }
-	setup() { this.selectionRange = new SeriouslyRange(0, this.thing()?.titleWidth ?? 0); }
+	setup() { this.selectionRange = new SeriouslyRange(0, this.thing?.titleWidth ?? 0); }
 
 	wrapper_add(wrapper: Wrapper) {
 		this.wrappers[wrapper.type] = wrapper;
@@ -57,30 +57,31 @@ export default class Path {
 	
 	get endID(): string { return this.idAt(); }
 	get fromPath(): Path { return this.stripBack(); }
+	get thing(): Thing | null { return this.thingAt(); }
 	get toPaths(): Array<Path> { return this.paths_to; }
-	get firstChild(): Thing { return this.children[0]; }
-	get fromThing(): Thing | null { return this.thing(2); }
-	get lastChild(): Thing { return this.children.slice(-1)[0]; }
+	get firstChild(): Thing { return this.toThings[0]; }
+	get fromThing(): Thing | null { return this.thingAt(2); }
+	get lastChild(): Thing { return this.toThings.slice(-1)[0]; }
 	get isRoot(): boolean { return this.matchesPath(k.rootPath); }
+	get hasThingsTo(): boolean { return this.toPaths.length > 0; }
 	get order(): number { return this.relationship()?.order ?? -1; }
 	get isHere(): boolean { return this.matchesStore(s_path_here); }
-	get hasChildren(): boolean { return this.toPaths.length > 0; }
 	get siblingPaths(): Array<Path> { return this.fromPath.toPaths; }
+	get isExemplar(): boolean { return this.thing?.isExemplar ?? false; }
 	get hashedIDs(): Array<number> { return this.ids.map(i => i.hash()); }
-	get isExemplar(): boolean { return this.thing()?.isExemplar ?? false; }
-	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
-	get thingTitle(): string { return this.thing()?.title ?? 'missing title'; }
 	get lineWrapper(): Wrapper | null { return this.wrappers[TypeW.line]; }
-	get toolsGrabbed(): boolean { return this.matchesStore(s_path_toolsCluster); }
 	get titleWrapper(): Wrapper | null { return this.wrappers[TypeW.title]; }
+	get thingTitle(): string { return this.thing?.title ?? 'missing title'; }
+	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
 	get revealWrapper(): Wrapper | null { return this.wrappers[TypeW.reveal]; }
 	get widgetWrapper(): Wrapper | null { return this.wrappers[TypeW.widget]; }
+	get toolsGrabbed(): boolean { return this.matchesStore(s_path_toolsCluster); }
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
 	get isEditing(): boolean { return this.matchesPath(get(s_title_editing)?.editing ?? null); }
 	get isStoppingEdit(): boolean { return this.matchesPath(get(s_title_editing)?.stopping ?? null); }
-	get children(): Array<Thing> { return dbDispatch.db.hierarchy?.things_getForPaths(this.toPaths); }
+	get toThings(): Array<Thing> { return dbDispatch.db.hierarchy?.things_getForPaths(this.toPaths); }
 	get things_allAncestors(): Array<Thing> { return this.things_ancestryWithin(Number.MAX_SAFE_INTEGER); }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	get thingTitleRect(): Rect | null { return Rect.createFromDOMRect(this.titleWrapper?.component.getBoundingClientRect());}
@@ -110,7 +111,7 @@ export default class Path {
 
 	get things_canAlter_asParentOf_toolsGrab(): boolean {
 		const path_toolsGrab = get(s_path_toolsCluster);
-		if (path_toolsGrab && !this.matchesPath(path_toolsGrab) && this.thing() != path_toolsGrab.thing()) {
+		if (path_toolsGrab && !this.matchesPath(path_toolsGrab) && this.thing != path_toolsGrab.thing) {
 			const includesToolsGrab = this.thing_isParentOf(path_toolsGrab);
 			return (get(s_altering_parent) == AlteringParent.deleting) == includesToolsGrab;
 		}
@@ -118,9 +119,9 @@ export default class Path {
 	}
 
 	get hasGrandChildren(): boolean {
-		if (this.hasChildren) {
+		if (this.hasThingsTo) {
 			for (const toPath of this.toPaths) {
-				if (toPath.hasChildren) {
+				if (toPath.hasThingsTo) {
 					return true;
 				}
 			}
@@ -130,7 +131,7 @@ export default class Path {
 
 	get next_siblingPath(): Path | null {
 		let nextPath: Path | null = null
-		const parentPaths = this.thing()?.parentPaths ?? [];
+		const parentPaths = this.thing?.parentPaths ?? [];
 		const index = parentPaths.indexOf(this.fromPath);
 		if (index != -1) {
 			const next = index.increment(true, parentPaths.length)
@@ -172,7 +173,7 @@ export default class Path {
 		return false;
 	}
 
-	thing(back: number = 1): Thing | null {
+	thingAt(back: number = 1): Thing | null {
 		const relationship = this.relationship(back);
 		if (this.pathString != '' && relationship) {
 			return !relationship ? null : dbDispatch.db.hierarchy?.thing_getForHID(relationship.idTo.hash()) ?? null;
@@ -181,8 +182,8 @@ export default class Path {
 	}
 
 	becomeHere() {
-		const thing = this.thing();
-		if (thing && this.hasChildren) {
+		const thing = this.thing;
+		if (thing && this.hasThingsTo) {
 			s_path_here.set(this);
 			this.expand();
 			s_path_toolsCluster.set(null);
@@ -224,7 +225,7 @@ export default class Path {
 	}
 
 	ancestors_include(thing: Thing): boolean {
-		const parentPaths = this.thing()?.parentRelations.parentPathsFor(Predicate.idIsAParentOf.hash());
+		const parentPaths = this.thing?.parentRelations.parentPathsFor(Predicate.idIsAParentOf.hash());
 		if (parentPaths) {
 			for (const parentPath of parentPaths) {
 				if (parentPath.things_allAncestors.map(t => t.id).includes(thing.id)) {
@@ -257,7 +258,7 @@ export default class Path {
 		if (thing) {
 			const useToolHeight = this.toolsGrabbed && get(s_tools_inWidgets);
 			const rowHeight = useToolHeight ? k.toolsClusterHeight : get(s_row_height);
-			if (!visited.includes(this.pathString) && this.hasChildren && this.isExpanded) {
+			if (!visited.includes(this.pathString) && this.hasThingsTo && this.isExpanded) {
 				let height = 0;
 				for (const toPath of this.toPaths) {
 					height += toPath.visibleProgeny_height([...visited, this.pathString]);
@@ -273,7 +274,7 @@ export default class Path {
 		const thing = dbDispatch.db.hierarchy?.thing_getForPath(this);
 		if (thing) {
 			let width = isFirst ? 0 : thing.titleWidth;
-			if (!visited.includes(this.hashedPath) && this.isExpanded && this.hasChildren) {
+			if (!visited.includes(this.hashedPath) && this.isExpanded && this.hasThingsTo) {
 				let progenyWidth = 0;
 			for (const toPath of this.toPaths) {
 					const childProgenyWidth = toPath.visibleProgeny_width(false, [...visited, this.hashedPath]);
@@ -429,12 +430,12 @@ export default class Path {
 
 	async relationship_forget_remoteRemove(path: Path) {
 		const h = dbDispatch.db.hierarchy;
-		const thing = this.thing();
+		const thing = this.thing;
 		const fromPath = this.fromPath;
 		const relationship = h.relationship_getByIDPredicateFromAndTo(Predicate.idIsAParentOf, path.thingID, this.thingID);
 		if (fromPath && relationship && (thing?.parents.length ?? 0) > 1) {
 			h.relationship_forget(relationship);
-			if (path.hasChildren) {
+			if (path.hasThingsTo) {
 				fromPath.order_normalizeRecursive_remoteMaybe(true);
 			} else {
 				path.collapse();
@@ -447,7 +448,7 @@ export default class Path {
 		const alteration = get(s_altering_parent);
 		if (this.things_canAlter_asParentOf_toolsGrab) {
 			const toolsPath = get(s_path_toolsCluster);
-			const toolsThing = toolsPath?.thing();
+			const toolsThing = toolsPath?.thing;
 			if (toolsPath && toolsThing) {
 				s_altering_parent.set(null);
 				s_path_toolsCluster.set(null);

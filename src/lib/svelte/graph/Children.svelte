@@ -40,7 +40,7 @@
 					layoutChildren();
 					if (signalPath) { // only recurse if starting at a specific signalPath
 						for (const childMap of childMapArray) {
-							if (childMap.path.hasChildren && childMap.path.isExpanded) {
+							if (childMap.path.hasThingsTo && childMap.path.isExpanded) {
 								childMap.path.signal_relayout();
 							}
 						}
@@ -67,7 +67,7 @@
 {#each childMapArray as map}
 	<Widget thing={map.child} path={map.childPath} origin={map.extent.offsetBy(widgetOffset)}/>
 	<Line thing={map.child} path={map.childPath} curveType={map.curveType} rect={map.offsetBy(lineOffset)}/>
-	{#if map.childPath.hasChildren && map.childPath.isExpanded}
+	{#if map.childPath.hasThingsTo && map.childPath.isExpanded}
 		<Children path={map.childPath} origin={map.childOrigin}/>
 	{/if}
 {/each}

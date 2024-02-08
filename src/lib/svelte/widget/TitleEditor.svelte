@@ -5,7 +5,7 @@
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
 	export let path;
-	let thing = path.thing();
+	let thing = path.thing;
 	let originalTitle = thing.title;
 	let titleWrapper: Wrapper;
 	let isEditing = false;

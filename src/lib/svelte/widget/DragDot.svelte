@@ -5,7 +5,7 @@
 	import SVGD3 from '../svg/SVGD3.svelte';
 	export let center;
 	export let path;
-	let thing = path.thing();
+	let thing = path.thing;
 	let tinyDotColor = thing.color;
 	let strokeColor = thing.color;
 	let fillColor = thing.color;

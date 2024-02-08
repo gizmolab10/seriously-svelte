@@ -38,7 +38,7 @@
     function setup() {
         userOffset = $s_user_graphOffset;
         path = $s_path_toolsCluster;
-        thing = path?.thing();
+        thing = path?.thing;
     }
 
     function updateMaybeRedraw() {
@@ -58,7 +58,7 @@
     $: {
         if (!path || !path.matchesPath($s_path_toolsCluster)) {
             path = $s_path_toolsCluster;
-            thing = path?.thing();
+            thing = path?.thing;
             if (thing) {
                 color = thing.color;
                 titleWidth = thing.titleWidth;

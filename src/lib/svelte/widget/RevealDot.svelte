@@ -5,7 +5,7 @@
 	import SVGD3 from '../svg/SVGD3.svelte';
 	export let center;
 	export let path;
-	let thing = path.thing();
+	let thing = path.thing;
 	let bulkAliasFillColor = k.backgroundColor;
 	let insidePath = svgPath.circle(16, 6);
 	let fillColor = k.backgroundColor;
@@ -73,10 +73,10 @@
 	}
 
 	function updatePath() {
-		if ((!path.hasChildren && !thing.isBulkAlias) || $s_path_toolsCluster?.matchesPath(path)) {
+		if ((!path.hasThingsTo && !thing.isBulkAlias) || $s_path_toolsCluster?.matchesPath(path)) {
 			scalablePath = svgPath.circle($s_dot_size, $s_dot_size / 2);
 		} else {
-			const goLeft = path.isExpanded && path.hasChildren;
+			const goLeft = path.isExpanded && path.hasThingsTo;
 			const direction = goLeft ? Direction.left : Direction.right;
 			scalablePath = svgPath.triangle($s_dot_size, direction);
 			if (thing.isBulkAlias) {
@@ -91,7 +91,7 @@
 			if (path.toolsGrabbed) {
 				$s_path_toolsCluster = null;
 				$s_altering_parent = null;
-			} else if (!path.hasChildren) {
+			} else if (!path.hasThingsTo) {
 				path.grabOnly();
 				$s_path_toolsCluster = path;
 			} else {
