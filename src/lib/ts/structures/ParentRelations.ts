@@ -11,7 +11,7 @@ export default class ParentRelations {
 	parentPaths_setFor(predicateHID: number, paths: Array<Path>) { return this.parentPaths_byPredicateHID[predicateHID] = paths; }
 
 	assemble_from(path: Path) {			// path to thing
-		const parentPath = path.parentPath;
+		const parentPath = path.fromPath;
 		const predicateHID = path.predicateID.hash();
 		let paths_from = this.parentPathsFor(predicateHID);
 		if (!parentPath.includedInPaths(paths_from)) {

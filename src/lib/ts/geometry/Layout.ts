@@ -6,12 +6,12 @@ export default class Layout {
 
 	constructor(path: Path, origin: Point) {
 		const sizeX = get(s_line_stretch);
-		const childPaths = path.childPaths;
-		const length = childPaths.length;
+		const toPaths = path.toPaths;
+		const length = toPaths.length;
 		let index = 0;
 		let sumOfSiblingsAbove = -path.visibleProgeny_height() / 2; // start out negative and grow positive
 		while (index < length) {
-			const childPath = childPaths[index];
+			const childPath = toPaths[index];
 			const childHeight = childPath.visibleProgeny_height();
 			const sizeY = sumOfSiblingsAbove + childHeight / 2;
 			const rect = new Rect(origin, new Size(sizeX, sizeY));
