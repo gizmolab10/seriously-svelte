@@ -29,7 +29,7 @@
 	}
 
 	$: {
-		if (revealDot && (path != $s_path_toolsCluster || $s_tools_inWidgets)) {
+		if (revealDot && ($s_tools_inWidgets || !path.matchesPath($s_path_toolsCluster))) {
 			revealWrapper = new Wrapper(revealDot, path, TypeW.reveal);
 		}
 	}

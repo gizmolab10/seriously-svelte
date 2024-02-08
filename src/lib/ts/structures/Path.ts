@@ -10,9 +10,11 @@ export default class Path {
 	predicateID = Predicate.idIsAParentOf;
 	paths_to: Array<Path> = [];
 	pathString: string;
+	hashedPath: number;
 
 	constructor(pathString: string = '') {
 		this.pathString = pathString;
+		this.hashedPath = this.pathString.hash()
 		if (pathString != '') {
 			this.setup();
 		} else {
@@ -66,7 +68,6 @@ export default class Path {
 	get siblingPaths(): Array<Path> { return this.parentPath.childPaths; }
 	get hashedIDs(): Array<number> { return this.ids.map(i => i.hash()); }
 	get isExemplar(): boolean { return this.thing()?.isExemplar ?? false; }
-	get parentPaths(): Array<Path> { return this.thing()?.parentPaths ?? []; }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
 	get thingTitle(): string { return this.thing()?.title ?? 'missing title'; }
 	get lineWrapper(): Wrapper | null { return this.wrappers[TypeW.line]; }
@@ -77,9 +78,9 @@ export default class Path {
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
-	get isEditing(): boolean { return this.pathString == get(s_title_editing)?.editing?.pathString; }
+	get isEditing(): boolean { return this.matchesPath(get(s_title_editing)?.editing ?? null); }
+	get isStoppingEdit(): boolean { return this.matchesPath(get(s_title_editing)?.stopping ?? null); }
 	get children(): Array<Thing> { return dbDispatch.db.hierarchy?.things_getForPaths(this.childPaths); }
-	get isStoppingEdit(): boolean { return this.pathString == get(s_title_editing)?.stopping?.pathString; }
 	get things_allAncestors(): Array<Thing> { return this.things_ancestryWithin(Number.MAX_SAFE_INTEGER); }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	get thingTitleRect(): Rect | null { return Rect.createFromDOMRect(this.titleWrapper?.component.getBoundingClientRect());}
@@ -109,7 +110,7 @@ export default class Path {
 
 	get things_canAlter_asParentOf_toolsGrab(): boolean {
 		const path_toolsGrab = get(s_path_toolsCluster);
-		if (path_toolsGrab && !this.matchesPath(path_toolsGrab)) {
+		if (path_toolsGrab && !this.matchesPath(path_toolsGrab) && this.thing() != path_toolsGrab.thing()) {
 			const includesToolsGrab = this.thing_isParentOf(path_toolsGrab);
 			return (get(s_altering_parent) == AlteringParent.deleting) == includesToolsGrab;
 		}
@@ -129,8 +130,8 @@ export default class Path {
 
 	get next_siblingPath(): Path | null {
 		let nextPath: Path | null = null
-		const parentPaths = this.parentPaths;
-		const index = parentPaths.map(p => p.thingID).indexOf(this.parentPath.thingID);
+		const parentPaths = this.thing()?.parentPaths ?? [];
+		const index = parentPaths.indexOf(this.parentPath);
 		if (index != -1) {
 			const next = index.increment(true, parentPaths.length)
 			nextPath = parentPaths[next].appendID(this.endID);
@@ -272,10 +273,10 @@ export default class Path {
 		const thing = dbDispatch.db.hierarchy?.thing_getForPath(this);
 		if (thing) {
 			let width = isFirst ? 0 : thing.titleWidth;
-			if (!visited.includes(this.pathString.hash()) && this.isExpanded && this.hasChildren) {
+			if (!visited.includes(this.hashedPath) && this.isExpanded && this.hasChildren) {
 				let progenyWidth = 0;
 			for (const childPath of this.childPaths) {
-					const childProgenyWidth = childPath.visibleProgeny_width(false, [...visited, this.pathString.hash()]);
+					const childProgenyWidth = childPath.visibleProgeny_width(false, [...visited, this.hashedPath]);
 					if (progenyWidth < childProgenyWidth) {
 						progenyWidth = childProgenyWidth;
 					}
@@ -357,7 +358,7 @@ export default class Path {
 	}
 
 	async order_normalizeRecursive_remoteMaybe(remoteWrite: boolean, visited: Array<number> = []) {
-		const hID = this.pathString.hash();
+		const hID = this.hashedPath;
 		const childPaths = this.childPaths;
 		if (!visited.includes(hID) && childPaths && childPaths.length > 1) {
 			await u.paths_orders_normalize_remoteMaybe(childPaths, remoteWrite);

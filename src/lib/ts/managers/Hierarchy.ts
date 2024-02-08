@@ -545,16 +545,12 @@ export default class Hierarchy {
 	}
 
 	async path_relayout_toolCluster_nextParent() {
-		const path = get(s_path_toolsCluster);
+		const path = get(s_path_toolsCluster)?.next_siblingPath;
 		if (path) {
-			const nextPath = path.next_siblingPath;
-			if (nextPath) {
-				await nextPath.assureIsVisible();
-				nextPath.grabOnly();
-				// console.log(`NEXT ${nextPath.thingTitles}`)
-				s_path_toolsCluster.set(nextPath);
-				signals.signal_relayout_fromHere();
-			}
+			await path.assureIsVisible();
+			path.grabOnly();
+			signals.signal_relayout_fromHere();
+			s_path_toolsCluster.set(path);
 		}
 	}
 
@@ -759,7 +755,7 @@ export default class Hierarchy {
 						path.collapse();
 						newGrabPath = null;
 						needsRebuild = true;
-					} else if (newGrabPath == rootPath) {
+					} else if (newGrabPath.matchesPath(rootPath)) {
 						newGrabPath = null;
 					} else {
 						newGrabPath.collapse();
@@ -770,7 +766,7 @@ export default class Hierarchy {
 		}
 		s_title_editing.set(null);
 		newGrabPath?.grabOnly();
-		const allowToBecomeHere = (!SHIFT || newGrabPath == path.parent) && newGrabIsNotHere; 
+		const allowToBecomeHere = (!SHIFT || path.parentPath.matchesPath(newGrabPath)) && newGrabIsNotHere; 
 		const shouldBecomeHere = !newHerePath?.isVisible || newHerePath.isRoot;
 		if (!RIGHT && allowToBecomeHere && shouldBecomeHere) {
 			newHerePath?.becomeHere();
@@ -857,7 +853,7 @@ export default class Hierarchy {
 
 	wrapper_add(wrapper: Wrapper) {
 		const path = wrapper.path
-		const hash = path.pathString.hash();
+		const hash = path.hashedPath;
 		const dict = this.knownWs_byTypeAndPath[wrapper.type] ?? {};
 		dict[hash] = wrapper;
 		this.knownWs_byTypeAndPath[wrapper.type] = dict;

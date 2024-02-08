@@ -1,8 +1,8 @@
 <script lang='ts'>
-    import { k, Rect, Size, Point, Wrapper, ZIndex, onMount, signals } from '../../ts/common/GlobalImports';
-	import { svgPath, Direction, dbDispatch, AlteringParent, TypeCT } from '../../ts/common/GlobalImports';
+    import { k, Rect, Size, Point, TypeCT, ZIndex, onMount, Wrapper } from '../../ts/common/GlobalImports';
     import { s_tools_inWidgets, s_user_graphOffset, s_path_toolsCluster } from '../../ts/managers/State';
 	import { s_dot_size, s_row_height, s_graphRect, s_altering_parent } from '../../ts/managers/State';
+	import { svgPath, Direction, dbDispatch, AlteringParent } from '../../ts/common/GlobalImports';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TriangleButton from '../svg/TriangleButton.svelte';
@@ -28,7 +28,12 @@
     function setC(type: string, center: Point) { return c[type] = center; }
     function centers_isEmpty(): boolean { return Object.keys(c).length == 0; }
 	onMount(() => { setup(); setTimeout(() => { updateMaybeRedraw(); }, 20) });
-    const relayoutHandler = signals.handle_relayout(() => { updateMaybeRedraw(); });
+
+	async function handleClick(buttonID: string) {
+		if (!thing.isExemplar) {
+            await dbDispatch.db.hierarchy.handleToolClicked(buttonID);
+		}
+	}
 
     function setup() {
         userOffset = $s_user_graphOffset;
@@ -36,18 +41,8 @@
         thing = path?.thing();
     }
 
-    $: {
-        if (path != $s_path_toolsCluster) {
-            path = $s_path_toolsCluster;
-            thing = path?.thing();
-            if (thing) {
-                color = thing.color;
-                titleWidth = thing.titleWidth;
-            } else {
-                color = '';
-                titleWidth = 0;
-            }
-            update();
+    function updateMaybeRedraw() {
+        if (update()) {
             jiggle = !jiggle;
         }
     }
@@ -60,14 +55,18 @@
         }
     }
 
-	async function handleClick(buttonID: string) {
-		if (!thing.isExemplar) {
-            await dbDispatch.db.hierarchy.handleToolClicked(buttonID);
-		}
-	}
-
-    function updateMaybeRedraw() {
-        if (update()) {
+    $: {
+        if (!path || !path.matchesPath($s_path_toolsCluster)) {
+            path = $s_path_toolsCluster;
+            thing = path?.thing();
+            if (thing) {
+                color = thing.color;
+                titleWidth = thing.titleWidth;
+            } else {
+                color = '';
+                titleWidth = 0;
+            }
+            update();
             jiggle = !jiggle;
         }
     }
@@ -87,7 +86,8 @@
 	}
 
     function updateForInFront(): boolean {
-        const rect = $s_path_toolsCluster?.thingTitleRect;
+        debug();
+        const rect = path?.thingTitleRect;
         if (rect && rect.size.width != 0) {
             const center = rect.centerLeft.offsetBy(new Point(titleWidth + 9, -33.5));
             const leftLeft = center.x + radius * 0.8;
@@ -103,9 +103,15 @@
             revealOffset = new Point(-19 - titleWidth, k.toolsClusterHeight / 2 - 51);
             return true;
         }
-        // console.log('NULL thingTitleRect');
         return false;
 	}
+
+    function debug() {
+        const wrapKeys = Object.keys(path?.wrappers ?? []);
+        if (path && wrapKeys.length > 0) {
+            console.log(`${path.thingTitles} ${wrapKeys}`);
+        }
+    }
 
 	function updateForInsideWidget() {
 		const offsetX = Math.max(0, (k.toolsClusterHeight - titleWidth - 21) / 8);
@@ -148,9 +154,9 @@
                 <TransparencyCircle
                     thickness=1
                     opacity=0.15
+                    color={color}
                     zindex={ZIndex.lines}
-                    color={transparentize(color, 0.2)}
-                    backgroundColor={k.backgroundColor}
+                    backgroundColor={transparentize(k.backgroundColor, 0.05)}
                     radius={k.toolsClusterHeight / 2.5}
                     center={getC(TypeCT.cluster)}/>
                 <RevealDot path={$s_path_toolsCluster} center={getC(TypeCT.cluster).offsetBy(bigOffset)}/>
