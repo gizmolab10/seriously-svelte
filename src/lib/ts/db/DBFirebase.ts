@@ -154,7 +154,7 @@ export default class DBFirebase implements DBInterface {
 									this.hierarchy.path_redraw_bulkFetchAll_runtimeBrowseRight(path, false);
 								}
 							} else {													// create a thing for each bulk
-								thing = this.hierarchy.thing_runtimeCreate(this.baseID, null, baseID, 'red', TypeT.bulk, 0, false);
+								thing = this.hierarchy.thing_runtimeCreate(this.baseID, null, baseID, 'red', TypeT.bulk, false);
 								await this.hierarchy.path_remember_remoteAddAsChild(rootsPath, thing);
 							}
 						}
@@ -246,10 +246,9 @@ export default class DBFirebase implements DBInterface {
 								break;
 						}
 						setTimeout(() => { // wait in case a thing involved in this relationship arrives in the data
-							h.relationships_refreshKnowns_remoteRenormalize();
-							// if (relationship) {		// TODO: make sure this is not needed
-							// 	h.relationships_accomodateRelocations(original, relationship);
-							// }
+							h.relationships_refreshKnowns();
+							h.paths_refreshKnowns();
+							k.rootPath.order_normalizeRecursive_remoteMaybe(true);
 						}, 20);
 					}
 				} else if (dataKind == DataKind.things) {
@@ -261,7 +260,7 @@ export default class DBFirebase implements DBInterface {
 								if (thing || remoteThing.isEqualTo(this.addedThing) || remoteThing.trait == TypeT.root) {
 									return;			// do not invoke signal because nothing has changed
 								}
-								thing = h.thing_remember_runtimeCreate(baseID, id, remoteThing.title, remoteThing.color, remoteThing.trait, 0, true);
+								thing = h.thing_remember_runtimeCreate(baseID, id, remoteThing.title, remoteThing.color, remoteThing.trait, true);
 								break;
 							case 'removed':
 								if (thing) {
@@ -301,7 +300,7 @@ export default class DBFirebase implements DBInterface {
 		if (DBFirebase.data_isValidOfKind(dataKind, data)) {
 			const h = this.hierarchy;
 			switch (dataKind) {
-				case DataKind.things:		 h.thing_remember_runtimeCreate(baseID, id, data.title, data.color, data.trait, 0, true); break;
+				case DataKind.things:		 h.thing_remember_runtimeCreate(baseID, id, data.title, data.color, data.trait, true); break;
 				case DataKind.predicates:	 h.predicate_remember_runtimeCreate(id, data.kind); break;
 				case DataKind.relationships: h.relationship_remember_runtimeCreateUnique(baseID, id, data.predicate.id, data.from.id, data.to.id, data.order, CreationOptions.isFromRemote); break;
 			}
@@ -360,8 +359,8 @@ export default class DBFirebase implements DBInterface {
 
 	async things_remember_firstTime_remoteCreateIn(collectionRef: CollectionReference) {
 		const fields = ['title', 'color', 'trait'];
-		const root = new Thing(this.baseID, null, this.baseID, 'coral', TypeT.root, 0, true);
-		const thing = new Thing(this.baseID, null, 'Click this text to edit it', 'purple', '', 0, true);
+		const root = new Thing(this.baseID, null, this.baseID, 'coral', TypeT.root, true);
+		const thing = new Thing(this.baseID, null, 'Click this text to edit it', 'purple', '', true);
 		this.hierarchy.root = root;
 		const thingRef = await addDoc(collectionRef, u.convertToObject(thing, fields));	// N.B. these will be fetched, shortly
 		const rootRef = await addDoc(collectionRef, u.convertToObject(root, fields));		// no need to remember now

@@ -29,6 +29,7 @@ export default class Hierarchy {
 	db: DBInterface;
 
 	get hasNothing(): boolean { return !this.root; }
+	paths_forgetAll() { this.knownPath_byHash = {}; }
 	get idRoot(): (string | null) { return this.root?.id ?? null; };
 	thing_getForHID(hID: number | null): Thing | null { return (!hID) ? null : this.knownT_byHID[hID]; }
 	thing_getForPath(path: Path | null, back: number = 1): Thing | null { return (path == null) ? null : path?.thingAt(back) ?? null; }
@@ -218,11 +219,6 @@ export default class Hierarchy {
 		this.knownTs_byTrait[thing.trait] = this.knownTs_byTrait[thing.trait].filter((knownT) => knownT.id !== thing.id);
 	}
 
-	async thing_forget_remoteDelete(thing: Thing) {
-		this.thing_forget(thing);					// forget first, so onSnapshot logic will not signal children
-		await this.db.thing_remoteDelete(thing);
-	}
-
 	async thing_edit_remoteAddLine(path: Path, below: boolean = true) {
 		const parentPath = path.fromPath;
 		const parent = parentPath?.thing;
@@ -341,8 +337,7 @@ export default class Hierarchy {
 					path.collapse();
 				}, 2);
 			}
-			await this.thing_forget_remoteDelete(thing);	// remove thing [N.B. and its progney] from current bulk
-			await this.relationships_forget_remoteDeleteAllForThing(thing)
+			await this.path_forget_remoteUpdate(path);
 			return newThingPath;
 		}
 	}
@@ -365,11 +360,6 @@ export default class Hierarchy {
 	//		   RELATIONSHIPS		  //
 	////////////////////////////////////
 
-	relationships_refreshKnowns_remoteRenormalize() {
-		this.relationships_refreshKnowns();
-		k.rootPath.order_normalizeRecursive_remoteMaybe(true);
-	}
-
 	relationships_refreshKnowns() {
 		const saved = this.knownRs;
 		this.relationships_clearKnowns();
@@ -384,16 +374,6 @@ export default class Hierarchy {
 		this.knownRs_byHIDTo = {};
 		this.knownR_byHID = {};
 		this.knownRs = [];
-	}
-
-	async relationships_forget_remoteDeleteAllForThing(thing: Thing) {
-		const array = this.knownRs_byHIDTo[thing.hashedID];
-		if (array) {
-			for (const relationship of array) {
-				await this.db.relationship_remoteDelete(relationship);
-				this.relationship_forget(relationship);
-			}
-		}
 	}
 
 	relationships_getByPredicateIDToAndID(idPredicate: string, to: boolean, idThing: string): Array<Relationship> {
@@ -609,6 +589,26 @@ export default class Hierarchy {
 		}
 	}
 
+	async path_forget_remoteUpdate(path: Path) {
+		const thing = path.thing;
+		const toPaths = path.toPaths;
+		for (const toPath of toPaths) {
+			this.path_forget_remoteUpdate(toPath);
+		}
+		delete this.knownPath_byHash[path.pathString.hash()];
+		if (thing) {
+			const array = this.knownRs_byHIDTo[thing.hashedID];
+			if (array) {
+				for (const relationship of array) {
+					await this.db.relationship_remoteDelete(relationship);
+					this.relationship_forget(relationship);
+				}
+			}
+			await this.db.thing_remoteDelete(thing);
+			this.thing_forget(thing);					// forget first, so onSnapshot logic will not signal children
+		}
+	}
+
 	async path_remember_remoteAddAsChild(path: Path, child: Thing): Promise<any> {
 		const thing = path.thing;
 		if (thing) {
@@ -684,20 +684,14 @@ export default class Hierarchy {
 			if (thing.thing_isInDifferentBulkThan(newParent)) {		// should move across bulks
 				this.path_remember_bulk_remoteRelocateRight(path, newParentPath);
 			} else {
-				const relationship = path.relationship();
-
-				// alter the 'to' in ALL [?] the matching 'from' relationships
-				// simpler than adjusting children or parents arrays
-				// TODO: also match against the 'to' to the current parent
-				// TODO: pass predicate in ... to support editing different kinds of relationships
-
+				const relationship = path.relationship;
 				if (relationship) {
 					const order = RIGHT ? relationship.order : 0;
 					relationship.idFrom = newParent.id;
 					await relationship.order_setTo(order + 0.5);
 				}
-
-				this.relationships_refreshKnowns();		// so children and parent will see the newly relocated things
+				this.relationships_refreshKnowns();
+				this.paths_refreshKnowns();
 				k.rootPath.order_normalizeRecursive_remoteMaybe(true);
 				newParentPath.appendChild(thing).grabOnly();
 				if (!newParentPath.isExpanded) {
@@ -783,36 +777,31 @@ export default class Hierarchy {
 	//		  PATHS		  //
 	////////////////////////
 
-	paths_forgetAll() { this.knownPath_byHash = {}; }
+	async paths_refreshKnowns() {
+		this.paths_forgetAll();
+		await k.rootPath.paths_recursive_assemble();
+	}
 
 	async paths_rebuild_traverse_remoteDelete(paths: Array<Path>) {
 		if (this.herePath) {
 			for (const path of paths) {
-				let fromThing = path.fromThing;
 				const thing = path.thing;
 				const fromPath = path.fromPath;
 				const fromFromPath = fromPath.fromPath;
+				let fromThing = fromPath.thing;
 				if (thing && fromThing && fromPath && fromFromPath && path && !path.isEditing && !thing.isBulkAlias) {
 					const siblings = fromPath.toThings;
 					let index = siblings.indexOf(thing);
 					siblings.splice(index, 1);
 					fromPath.grabOnly();
-					if (siblings.length > 0) {
-						if (index >= siblings.length) {
-							index = siblings.length - 1;
-						}
-						fromPath?.appendChild(fromThing);
-						fromThing = siblings[index];
-						await u.paths_orders_normalize_remoteMaybe(fromPath.toPaths);
-					} else if (!fromFromPath.isVisible) {
+					if (siblings.length == 0) {
+						fromPath.collapse();
+					}
+					if (!fromFromPath.isVisible) {
 						fromFromPath.becomeHere();
 					}
-					await path.traverse_async(async (descendantPath: Path): Promise<boolean> => {
-						const descendant = descendantPath.thing;
-						if (descendant) {
-							await this.relationships_forget_remoteDeleteAllForThing(descendant);
-							await this.thing_forget_remoteDelete(descendant);
-						}
+					await path.traverse_async(async (progenyPath: Path): Promise<boolean> => {
+						await this.path_forget_remoteUpdate(progenyPath);
 						return false; // continue the traversal
 					});
 				}

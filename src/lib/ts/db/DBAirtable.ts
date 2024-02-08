@@ -65,7 +65,7 @@ export default class DBAirtable implements DBInterface {
 				const remoteThings = records;
 				for (const remoteThing of remoteThings) {
 					const id = remoteThing.id;
-					this.hierarchy.thing_remember_runtimeCreate('', id, remoteThing.fields.title as string, remoteThing.fields.color as string, remoteThing.fields.trait as string, 0, true);
+					this.hierarchy.thing_remember_runtimeCreate('', id, remoteThing.fields.title as string, remoteThing.fields.color as string, remoteThing.fields.trait as string, true);
 				}
 				s_things_arrived.set(true);
 			})
@@ -141,6 +141,7 @@ export default class DBAirtable implements DBInterface {
 				relationship.setID(id);
 				relationship.isRemotelyStored = true;
 				this.hierarchy.relationships_refreshKnowns();
+				this.hierarchy.paths_refreshKnowns();
 			} catch (error) {
 				relationship.log(DebugFlag.remote, this.relationships_errorMessage + error);
 			}
@@ -159,6 +160,7 @@ export default class DBAirtable implements DBInterface {
 		try {
 			this.hierarchy.knownRs = this.hierarchy.knownRs.filter((relationship: Relationship) => relationship.id !== relationship.id);
 			this.hierarchy.relationships_refreshKnowns(); // do first so UX updates quickly
+			this.hierarchy.paths_refreshKnowns();
 			await this.relationships_table.destroy(relationship.id);
 		} catch (error) {
 			relationship.log(DebugFlag.remote, this.relationships_errorMessage + error);

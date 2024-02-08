@@ -64,12 +64,13 @@ export default class Path {
 	get lastChild(): Thing { return this.toThings.slice(-1)[0]; }
 	get isRoot(): boolean { return this.matchesPath(k.rootPath); }
 	get hasThingsTo(): boolean { return this.toPaths.length > 0; }
-	get order(): number { return this.relationship()?.order ?? -1; }
+	get order(): number { return this.relationship?.order ?? -1; }
 	get isHere(): boolean { return this.matchesStore(s_path_here); }
 	get siblingPaths(): Array<Path> { return this.fromPath.toPaths; }
 	get isExemplar(): boolean { return this.thing?.isExemplar ?? false; }
 	get hashedIDs(): Array<number> { return this.ids.map(i => i.hash()); }
 	get lineWrapper(): Wrapper | null { return this.wrappers[TypeW.line]; }
+	get relationship(): Relationship | null { return this.relationshipAt(); }
 	get titleWrapper(): Wrapper | null { return this.wrappers[TypeW.title]; }
 	get thingTitle(): string { return this.thing?.title ?? 'missing title'; }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
@@ -98,7 +99,7 @@ export default class Path {
 		if (this.isRoot) {
 			return dbDispatch.db.hierarchy?.idRoot ?? 'missing root id';
 		}
-		return this.relationship()?.idTo ?? 'missing id';
+		return this.relationship?.idTo ?? 'missing id';
 	}
 
 	get isVisible(): boolean {
@@ -144,12 +145,8 @@ export default class Path {
 	includedInStore(store: Writable<Array<Path>>): boolean { return this.includedInPaths(get(store)); }
 	matchesPath(path: Path | null): boolean { return !path ? false : this.pathString == path.pathString; }
 	includedInPaths(paths: Array<Path>): boolean { return paths.filter(p => p.matchesPath(this)).length > 0; }
-	relationship(back: number = 1): Relationship | null { return dbDispatch.db.hierarchy?.relationship_getForHID(this.idAt(back).hash()) ?? null; }
-
-	sharesAnID(path: Path | null): boolean {
-		const rootID = dbDispatch.db.hierarchy?.idRoot;
-		return !path ? false : this.ids.some(id => id != rootID && path.ids.includes(id));
-	}
+	sharesAnID(path: Path | null): boolean { return !path ? false : this.ids.some(id => path.ids.includes(id)); }
+	relationshipAt(back: number = 1): Relationship | null { return dbDispatch.db.hierarchy?.relationship_getForHID(this.idAt(back).hash()) ?? null; }
 
 	appendID(id: string): Path {
 		let ids = this.ids;
@@ -174,7 +171,7 @@ export default class Path {
 	}
 
 	thingAt(back: number = 1): Thing | null {
-		const relationship = this.relationship(back);
+		const relationship = this.relationshipAt(back);
 		if (this.pathString != '' && relationship) {
 			return !relationship ? null : dbDispatch.db.hierarchy?.thing_getForHID(relationship.idTo.hash()) ?? null;
 		}
@@ -299,7 +296,7 @@ export default class Path {
 	toggleGrab() { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }
 
 	async order_setTo(order: number, remoteWrite: boolean = true) {
-		await this.relationship()?.order_setTo(order, remoteWrite);
+		await this.relationship?.order_setTo(order, remoteWrite);
 	}
 
 	toggleToolsGrab(update: boolean = true) {
