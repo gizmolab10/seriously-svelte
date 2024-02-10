@@ -688,10 +688,10 @@ export default class Hierarchy {
 				if (relationship) {
 					const order = RIGHT ? relationship.order : 0;
 					relationship.idFrom = newParent.id;
-					await relationship.order_setTo(order + 0.5);
+					await relationship.order_setTo(order + 0.5, true);
 				}
-				newParentPath.appendChild(thing).grabOnly();
 				this.relationships_refreshKnowns();
+				newParentPath.appendChild(thing).grabOnly();
 				k.rootPath.order_normalizeRecursive_remoteMaybe(true);
 				if (!newParentPath.isExpanded) {
 					newParentPath.expand();
