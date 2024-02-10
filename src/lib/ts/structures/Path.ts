@@ -133,7 +133,7 @@ export default class Path {
 				const path = this.appendID(toRelationship.id);		// add each toRelationship's id
 				paths.push(path);									// and push onto the paths_to
 			}
-			u.paths_orders_normalize_remoteMaybe(paths, false);
+			u.paths_orders_normalize_remoteMaybe(paths);
 		}
 		return paths;
 	}

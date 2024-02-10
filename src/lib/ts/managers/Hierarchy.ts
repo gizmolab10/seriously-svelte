@@ -348,6 +348,7 @@ export default class Hierarchy {
 	}
 
 	async thing_getRoots() {
+		let rootsPath: Path | null = null;
 		let rootPath = k.rootPath;
 		for (const thing of this.knownTs_byTrait[IDTrait.roots]) {
 			if  (thing.title == 'roots') {	// special case TODO: convert to a auery string
@@ -355,7 +356,8 @@ export default class Hierarchy {
 			}
 		}
 		const roots = this.thing_runtimeCreate(this.db.baseID, null, 'roots', 'red', IDTrait.roots, false);
-		return await this.path_remember_remoteAddAsChild(rootPath, roots);
+		await this.path_remember_remoteAddAsChild(rootPath, roots).then((path) => { rootsPath = path; });
+		return rootsPath;
 	}
 
 	////////////////////////////////////
@@ -560,10 +562,10 @@ export default class Hierarchy {
 
 	async path_redraw_fetchBulk_runtimeBrowseRight(path: Path, grab: boolean = true) {
 		const thing = path.thing;
-		const rootsPath = this.thing_getRoots()?.thingID;
+		const rootsPath = await this.thing_getRoots();
 		if (thing && rootsPath) {
 			path.expand();		// do this before fetch, so next launch will see it
-			await this.fetchAll(rootsPath, thing.title);
+			await this.fetchAll(rootsPath.thingID, thing.title);
 			if (path.hasChildren) {
 				if (grab) {
 					path.childPaths[0].grabOnly()
@@ -675,7 +677,6 @@ export default class Hierarchy {
 	}
 
 	async path_rebuild_remoteRelocateRight(path: Path, RIGHT: boolean, EXTREME: boolean) {
-		let needsRebuild = false;
 		const thing = path.thing;
 		const newParentPath = RIGHT ? path.path_ofNextSibling(false) : path.stripBack(2);
 		const newParent = newParentPath?.thing;
@@ -693,17 +694,13 @@ export default class Hierarchy {
 				this.relationships_refreshKnowns();
 				k.rootPath.order_normalizeRecursive_remoteMaybe(true);
 				if (!newParentPath.isExpanded) {
-					needsRebuild = newParentPath.expand();
+					newParentPath.expand();
 				}
 				if (!newParentPath.isVisible) {
-					needsRebuild = newParentPath.becomeHere();
+					newParentPath.becomeHere();
 				}
 			}
-			if (needsRebuild) {
-				signals.signal_rebuild_fromHere();			// so Children component will update
-			} else {
-				signals.signal_relayout_fromHere();
-			}
+			signals.signal_rebuild_fromHere();			// so Children component will update
 		}
 	}
 
