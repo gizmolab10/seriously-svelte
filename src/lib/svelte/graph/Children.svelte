@@ -51,7 +51,7 @@
 	})
 	
 	function layoutChildren() {
-		console.log(`layoutChildren ${path.thingTitles}`);
+		// console.log(`layoutChildren => ${path.thingTitles}`);
 		const delta = new Point(19.5, -2.5);
 		const height = (path.visibleProgeny_halfHeight);
 		const childrenOrigin = origin.offsetByY(height);

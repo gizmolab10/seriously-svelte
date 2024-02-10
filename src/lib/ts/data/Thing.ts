@@ -34,7 +34,6 @@ export default class Thing extends Datum {
 	get description():		   string { return this.id + ' \"' + this.title + '\"'; }
 	get isBulkAlias():		  boolean { return this.trait == IDTrait.bulk; }
 	get isRoot():			  boolean { return this == this.hierarchy.root; }
-	get hasParents():		  boolean { return this.parentPaths.length > 0; }
 	get hierarchy():		Hierarchy { return dbDispatch.db.hierarchy; }
 	get titleWidth():		   number { return u.getWidthOf(this.title) }
 	
@@ -51,10 +50,16 @@ export default class Thing extends Datum {
 		if (!this.isRoot) {
 			const fromRelationships = this.hierarchy.relationships_getByPredicateIDToAndID(predicateID, true, this.id);
 			for (const fromRelationship of fromRelationships) {
+				const endID = fromRelationship.id;
 				const fromThing = fromRelationship.thing(false);
-				const fromPaths = fromThing?.fromPathsFor(predicateID) ?? []
-				for (const fromPath of fromPaths) {
-					paths.push(fromPath.appendID(fromRelationship.id));
+				const fromPaths = fromThing?.fromPathsFor(predicateID) ?? [];
+				if (fromPaths.length == 0) {
+					paths.push(new Path(endID));
+				} else {
+					for (const fromPath of fromPaths) {
+						console.log(`FROM ${fromThing!.title} TO ${this.title}`);
+						paths.push(fromPath.appendID(endID));
+					}
 				}
 			}
 		}
