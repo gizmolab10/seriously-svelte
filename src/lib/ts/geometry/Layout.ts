@@ -1,4 +1,4 @@
-import { get, Path, Rect, Size, Point, ChildMap, TypeLC } from '../common/GlobalImports';
+import { get, Path, Rect, Size, Point, ChildMap, IDLine } from '../common/GlobalImports';
 import { s_dot_size, s_line_stretch } from '../managers/State'
 
 export default class Layout {
@@ -6,12 +6,12 @@ export default class Layout {
 
 	constructor(path: Path, origin: Point) {
 		const sizeX = get(s_line_stretch);
-		const toPaths = path.toPaths;
-		const length = toPaths.length;
+		const childPaths = path.childPaths;
+		const length = childPaths.length;
 		let index = 0;
 		let sumOfSiblingsAbove = -path.visibleProgeny_height() / 2; // start out negative and grow positive
 		while (index < length) {
-			const childPath = toPaths[index];
+			const childPath = childPaths[index];
 			const childHeight = childPath.visibleProgeny_height();
 			const sizeY = sumOfSiblingsAbove + childHeight / 2;
 			const rect = new Rect(origin, new Size(sizeX, sizeY));
@@ -38,12 +38,12 @@ export default class Layout {
 
 	getDirection(delta: number) {
 		if (delta == 0) {
-			return TypeLC.flat;
+			return IDLine.flat;
 		} else if (delta <
 			 0) {
-			return TypeLC.up;
+			return IDLine.up;
 		} else {
-			return TypeLC.down;
+			return IDLine.down;
 		}
 	}
 }

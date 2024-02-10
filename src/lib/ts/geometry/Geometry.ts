@@ -74,10 +74,10 @@ export class Rect {
 		return !rect ? null : new Rect(new Point(rect.x, rect.y), new Size(rect.width, rect.height));
 	}
 
-	get pixelVerbose():	   string { return this.origin.pixelVerbose + ' ' + this.size.pixelVerbose; }
 	get description():	   string { return this.origin.verbose + ', ' + this.size.verbose; }
-	get center():			Point { return this.origin.offsetBySize(this.size.dividedInHalf); }	// add half of size to origin
-	get extent():			Point { return this.origin.offsetBySize(this.size); }					// bottom right
+	get pixelVerbose():	   string { return this.origin.pixelVerbose + ' ' + this.size.pixelVerbose; }
+	get center():			Point { return this.origin.offsetBySize(this.size.dividedInHalf); }
+	get extent():			Point { return this.origin.offsetBySize(this.size); }		// bottom right
 	get topRight():			Point { return new Point(this.extent.x, this.origin.y); };
 	get bottomLeft():		Point { return new Point(this.origin.x, this.extent.y); };
 	get centerLeft():		Point { return new Point(this.origin.x, this.center.y); };

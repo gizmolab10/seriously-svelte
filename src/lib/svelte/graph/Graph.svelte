@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { s_title_editing, s_path_here, s_graphRect, s_dot_size, s_showDetails, s_title_atTop, s_paths_grabbed } from '../../ts/managers/State';
 	import { s_id_popupView, s_line_stretch, s_tools_inWidgets, s_path_toolsCluster, s_user_graphOffset } from '../../ts/managers/State';
-	import { dbDispatch, PersistID, SignalKind, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
+	import { dbDispatch, PersistID, IDSignal, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
 	import { k, u, Path, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/GlobalImports';
-	import { onMount, onDestroy, debugReact, Predicate, ButtonID } from '../../ts/common/GlobalImports';
+	import { onMount, onDestroy, debugReact, Predicate, IDButton } from '../../ts/common/GlobalImports';
 	import ToolsCluster from '../widget/ToolsCluster.svelte';
 	import FocusRevealDot from './FocusRevealDot.svelte';
 	import Widget from '../widget/Widget.svelte';
@@ -13,11 +13,11 @@
 	let origin_ofFirstReveal = new Point();
 	let origin_ofChildren = new Point();
 	let childrenSize = new Point();
+	let focusOffsetX = 0;
 	let greenRect: Rect;
 	let blueRect: Rect;
 	let redRect: Rect;
 	let toggle = true;
-	let focusOffsetX = 0;
 	let height = 0;
 	let width = 0;
 	let left = 0;
@@ -50,7 +50,7 @@
 			const key = event.key;
 			switch (key) {
 				case 'c': s_user_graphOffset_setTo(new Point()); break;
-				case '?': $s_id_popupView = ButtonID.help; break;
+				case '?': $s_id_popupView = IDButton.help; break;
 				case ']':
 				case '[': dbDispatch.nextDB(key == ']'); break;
 				default:  await dbDispatch.db.hierarchy.handleKeyDown(event); break;

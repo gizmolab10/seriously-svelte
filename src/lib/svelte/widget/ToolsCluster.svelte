@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import { k, Rect, Size, Point, TypeCT, ZIndex, onMount, Wrapper } from '../../ts/common/GlobalImports';
+    import { k, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper } from '../../ts/common/GlobalImports';
     import { s_tools_inWidgets, s_user_graphOffset, s_path_toolsCluster } from '../../ts/managers/State';
 	import { s_dot_size, s_row_height, s_graphRect, s_altering_parent } from '../../ts/managers/State';
 	import { svgPath, Direction, dbDispatch, AlteringParent } from '../../ts/common/GlobalImports';
@@ -29,9 +29,9 @@
     function centers_isEmpty(): boolean { return Object.keys(c).length == 0; }
 	onMount(() => { setup(); setTimeout(() => { updateMaybeRedraw(); }, 20) });
 
-	async function handleClick(buttonID: string) {
+	async function handleClick(IDButton: string) {
 		if (!thing.isExemplar) {
-            await dbDispatch.db.hierarchy.handleToolClicked(buttonID);
+            await dbDispatch.db.hierarchy.handleToolClicked(IDButton);
 		}
 	}
 
@@ -93,13 +93,13 @@
             const leftLeft = center.x + radius * 0.8;
             const top = center.y - 6;
             left = center.x - diameter * 2.1;
-            setC(TypeCT.cluster, center);
-            setC(TypeCT.add, new Point(leftLeft, top - diameter));
-            setC(TypeCT.addParent, new Point(left, top - diameter));
-            setC(TypeCT.delete, new Point(leftLeft, top + diameter - 5));
-            setC(TypeCT.deleteParent, new Point(left, top + diameter - 8));
-            setC(TypeCT.more, new Point(center.x - diameter - 1, top + diameter + 3));
-            setC(TypeCT.next, new Point(center.x - diameter + 2, top - diameter - 10));
+            setC(IDTool.cluster, center);
+            setC(IDTool.add, new Point(leftLeft, top - diameter));
+            setC(IDTool.addParent, new Point(left, top - diameter));
+            setC(IDTool.delete, new Point(leftLeft, top + diameter - 5));
+            setC(IDTool.deleteParent, new Point(left, top + diameter - 8));
+            setC(IDTool.more, new Point(center.x - diameter - 1, top + diameter + 3));
+            setC(IDTool.next, new Point(center.x - diameter + 2, top - diameter - 10));
             revealOffset = new Point(-19 - titleWidth, k.toolsClusterHeight / 2 - 51);
             return true;
         }
@@ -119,13 +119,13 @@
 		const top = -offsetY - 3;
 		left = offsetX + titleWidth - 3;
 		const otherLeft = left - diameter * 1.2;
-		setC(TypeCT.add, new Point(left, top - diameter));
-		setC(TypeCT.delete, new Point(left, top + diameter + 12));
-		setC(TypeCT.addParent, new Point(otherLeft, top - diameter));
-		setC(TypeCT.deleteParent, new Point(otherLeft, top + diameter + 10));
-		setC(TypeCT.cluster, new Point(left + radius - 2, top + diameter + 2));
-		setC(TypeCT.more, new Point(center.x - diameter - 1, top + diameter + 3));	// TODO: test
-		setC(TypeCT.next, new Point(center.x - diameter + 2, top - diameter - 10));	// TODO: test
+		setC(IDTool.add, new Point(left, top - diameter));
+		setC(IDTool.delete, new Point(left, top + diameter + 12));
+		setC(IDTool.addParent, new Point(otherLeft, top - diameter));
+		setC(IDTool.deleteParent, new Point(otherLeft, top + diameter + 10));
+		setC(IDTool.cluster, new Point(left + radius - 2, top + diameter + 2));
+		setC(IDTool.more, new Point(center.x - diameter - 1, top + diameter + 3));	// TODO: test
+		setC(IDTool.next, new Point(center.x - diameter + 2, top - diameter - 10));	// TODO: test
 	}
 
 </script>
@@ -158,12 +158,12 @@
                     zindex={ZIndex.lines}
                     backgroundColor={transparentize(k.backgroundColor, 0.05)}
                     radius={k.toolsClusterHeight / 2.5}
-                    center={getC(TypeCT.cluster)}/>
-                <RevealDot path={$s_path_toolsCluster} center={getC(TypeCT.cluster).offsetBy(bigOffset)}/>
+                    center={getC(IDTool.cluster)}/>
+                <RevealDot path={$s_path_toolsCluster} center={getC(IDTool.cluster).offsetBy(bigOffset)}/>
                 <LabelButton
                     color={color}
-                    center={getC(TypeCT.more)}
-                    onClick={() => handleClick(TypeCT.more)}>
+                    center={getC(IDTool.more)}
+                    onClick={() => handleClick(IDTool.more)}>
                     <svg style='position:absolute'
                         width='28'
                         height='16'
@@ -184,9 +184,9 @@
                     <TriangleButton
                         fillColor_closure={() => { return ($s_altering_parent == AlteringParent.adding) ? thing.color : k.backgroundColor }}
                         extraColor={($s_altering_parent == AlteringParent.adding) ? k.backgroundColor : thing.color}
-                        onClick={() => handleClick(TypeCT.next)}
+                        onClick={() => handleClick(IDTool.next)}
                         extra={svgPath.circle(diameter, 4)}
-                        center={getC(TypeCT.next)}
+                        center={getC(IDTool.next)}
                         direction={Direction.up}
                         strokeColor={color}
                         size={diameter}
@@ -196,8 +196,8 @@
             <TriangleButton
                 fillColor_closure={() => { return ($s_altering_parent == AlteringParent.adding) ? thing.color : k.backgroundColor }}
                 extraColor={($s_altering_parent == AlteringParent.adding) ? k.backgroundColor : thing.color}
-                onClick={() => handleClick(TypeCT.addParent)}
-                center={getC(TypeCT.addParent)}
+                onClick={() => handleClick(IDTool.addParent)}
+                center={getC(IDTool.addParent)}
                 extra={svgPath.tCross(diameter, 2)}
                 direction={Direction.left}
                 strokeColor={color}
@@ -207,8 +207,8 @@
                 <TriangleButton
                     fillColor_closure={() => { return ($s_altering_parent == AlteringParent.deleting) ? thing.color : k.backgroundColor }}
                     extraColor={($s_altering_parent == AlteringParent.deleting) ? k.backgroundColor : thing.color}
-                    onClick={() => handleClick(TypeCT.deleteParent)}
-                    center={getC(TypeCT.deleteParent)}
+                    onClick={() => handleClick(IDTool.deleteParent)}
+                    center={getC(IDTool.deleteParent)}
                     extra={svgPath.dash(diameter, 2)}
                     direction={Direction.left}
                     strokeColor={color}
@@ -217,22 +217,22 @@
             {/if}
             <TriangleButton
                 fillColor_closure={() => { return k.backgroundColor; }}
-                onClick={() => handleClick(TypeCT.add)}
+                onClick={() => handleClick(IDTool.add)}
                 extra={svgPath.tCross(diameter, 2)}
-                center={getC(TypeCT.add)}
+                center={getC(IDTool.add)}
                 direction={Direction.right}
                 extraColor={thing.color}
                 strokeColor={color}
                 size={diameter}
                 id='add'/>
             <button class='delete'
-                on:click={() => handleClick(TypeCT.delete)}
+                on:click={() => handleClick(IDTool.delete)}
                 style='border: none;
                     cursor: pointer;
                     background: none;
                     z-index: {ZIndex.lines};
-                    left: {getC(TypeCT.delete).x}px;
-                    top: {getC(TypeCT.delete).y}px;'>
+                    left: {getC(IDTool.delete).x}px;
+                    top: {getC(IDTool.delete).y}px;'>
                 <Trash color={color}/>
             </button>
         </div>

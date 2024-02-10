@@ -1,5 +1,5 @@
 <script>
-	import { k, get, Path, Rect, Size, Point, Thing, launch, TypeDB, ZIndex, signals, onMount, ButtonID } from '../../ts/common/GlobalImports';
+	import { k, get, Path, Rect, Size, Point, Thing, launch, TypeDB, ZIndex, signals, onMount, IDButton } from '../../ts/common/GlobalImports';
 	import { Hierarchy, PersistID, dbDispatch, debugReact, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
 	import { s_build, s_isBusy, s_path_here, s_db_type, s_graphRect, s_title_atTop } from '../../ts/managers/State';
 	import { s_id_popupView, s_showDetails, s_things_arrived, s_thing_fontSize } from '../../ts/managers/State';
@@ -18,8 +18,8 @@
 	let left = 14;
 	let size = 14;
 	
-	function builds_buttonClicked(event) { $s_id_popupView = ($s_id_popupView == ButtonID.buildNotes) ? null : ButtonID.buildNotes; }
-	function help_buttonClicked() { $s_id_popupView = ($s_id_popupView == ButtonID.help) ? null : ButtonID.help; }
+	function builds_buttonClicked(event) { $s_id_popupView = ($s_id_popupView == IDButton.buildNotes) ? null : IDButton.buildNotes; }
+	function help_buttonClicked() { $s_id_popupView = ($s_id_popupView == IDButton.help) ? null : IDButton.help; }
 	const rebuild_signalHandler = signals.handle_rebuild(() => { graph_fullRebuild(); });
 	window.addEventListener('resize', (event) => { graphRect_update(); });
 
@@ -138,9 +138,9 @@
 		position: fixed;
 		height: 100%;'
 		on:click={() => { $s_id_popupView = null; }}>
-		{#if $s_id_popupView == ButtonID.help}
+		{#if $s_id_popupView == IDButton.help}
 			<Help/>
-		{:else if $s_id_popupView == ButtonID.buildNotes}
+		{:else if $s_id_popupView == IDButton.buildNotes}
 			<BuildNotes/>
 		{:else if $s_id_popupView == null}
 			<div class='top' style='z-index: {ZIndex.frontmost}'>

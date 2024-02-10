@@ -88,7 +88,9 @@
 
 	function handleDoubleClick(event) {
 		clearClicks();
-		path.becomeHere();
+		if (path.becomeHere()) {
+			signals.signal_rebuild_fromHere();
+		}
     }
 
 	function handleSingleClick(event) {

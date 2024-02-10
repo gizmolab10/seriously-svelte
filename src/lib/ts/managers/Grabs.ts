@@ -16,7 +16,7 @@ export default class Grabs {
 		});
 	};
 
-	get thing_lastGrabbed(): (Thing | null) { return this.hierarchy.thing_getForPath(this.path_lastGrabbed); }
+	get thing_lastGrabbed(): Thing | null { return this.hierarchy.thing_getForPath(this.path_lastGrabbed); }
 
 	get path_lastGrabbed(): Path | null {
 		const paths = get(s_paths_grabbed);

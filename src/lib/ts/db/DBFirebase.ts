@@ -1,6 +1,6 @@
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection, onSnapshot, deleteField, getFirestore } from 'firebase/firestore';
 import { DocumentData, DocumentChange, QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
-import { k, u, get, Thing, debug, launch, TypeDB, signals, TypeT, DataKind, Hierarchy, DebugFlag } from '../common/GlobalImports';
+import { k, u, get, Thing, debug, launch, TypeDB, signals, IDTrait, TypeDatum, Hierarchy, DebugFlag } from '../common/GlobalImports';
 import { Predicate, dbDispatch, Relationship, CreationOptions } from '../common/GlobalImports';
 import { s_build } from '../managers/State';
 import { initializeApp } from "firebase/app";
@@ -59,50 +59,50 @@ export default class DBFirebase implements DBInterface {
 			await this.document_remoteDelete(name);
 		}
 		this.setup_bulks()
-		await this.fetch_documentsOf(DataKind.predicates);
+		await this.fetch_documentsOf(TypeDatum.predicates);
 		await this.fetch_allFrom(name);
 		await this.fetch_bulkAliases();
 	}
 
 	async fetch_allFrom(baseID: string) {
-		await this.fetch_documentsOf(DataKind.things, baseID);
-		await this.fetch_documentsOf(DataKind.relationships, baseID);
+		await this.fetch_documentsOf(TypeDatum.things, baseID);
+		await this.fetch_documentsOf(TypeDatum.relationships, baseID);
 	}
 		
-	async fetch_documentsOf(dataKind: DataKind, baseID: string | null = null) {
+	async fetch_documentsOf(type: TypeDatum, baseID: string | null = null) {
 		try {
-			const collectionRef = !baseID ? collection(this.db, dataKind) : collection(this.db, this.bulksName, baseID, dataKind);
+			const collectionRef = !baseID ? collection(this.db, type) : collection(this.db, this.bulksName, baseID, type);
 			let querySnapshot = await getDocs(collectionRef);
 			const bulk = this.get_bulk_for(baseID);
 
 			if (baseID) {
-				this.setup_remoteHandler(baseID, dataKind, collectionRef);
+				this.setup_remoteHandler(baseID, type, collectionRef);
 			}
 
 			if (querySnapshot.empty && baseID) {
-				await this.documents_firstTime_remoteCreate(dataKind, baseID, collectionRef);
+				await this.documents_firstTime_remoteCreate(type, baseID, collectionRef);
 				querySnapshot = await getDocs(collectionRef);
 			}
 			
 			////////////////
-			// data kinds //
+			// data IDSignal //
 			////////////////
 
 			if (bulk) {
-				switch (dataKind) {
-					case DataKind.things:				bulk.thingsCollection = collectionRef; break;
-					case DataKind.relationships: bulk.relationshipsCollection = collectionRef; break;
+				switch (type) {
+					case TypeDatum.things:				 bulk.thingsCollection = collectionRef; break;
+					case TypeDatum.relationships: bulk.relationshipsCollection = collectionRef; break;
 				}
-			} else if (dataKind == DataKind.predicates) {
+			} else if (type == TypeDatum.predicates) {
 				this.predicatesCollection = collectionRef;
 			}
 
 			const docs = querySnapshot.docs;
-			debug.log_remote('READ ' + docs.length + ' from ' + baseID + ':' + dataKind);
+			debug.log_remote('READ ' + docs.length + ' from ' + baseID + ':' + type);
 			for (const docSnapshot of docs) {
 				const id = docSnapshot.id;
 				const data = docSnapshot.data();
-				await this.document_remember_validated(dataKind, id, data, baseID ?? this.baseID);
+				await this.document_remember_validated(type, id, data, baseID ?? this.baseID);
 			}
 		} catch (error) {
 			this.reportError(error);
@@ -151,10 +151,10 @@ export default class DBFirebase implements DBInterface {
 							if (thing) {
 								const path = rootsPath.appendChild(thing);
 								if (path.isExpanded) {
-									this.hierarchy.path_redraw_bulkFetchAll_runtimeBrowseRight(path, false);
+									this.hierarchy.path_redraw_fetchBulk_runtimeBrowseRight(path, false);
 								}
 							} else {													// create a thing for each bulk
-								thing = this.hierarchy.thing_runtimeCreate(this.baseID, null, baseID, 'red', TypeT.bulk, false);
+								thing = this.hierarchy.thing_runtimeCreate(this.baseID, null, baseID, 'red', IDTrait.bulk, false);
 								await this.hierarchy.path_remember_remoteAddAsChild(rootsPath, thing);
 							}
 						}
@@ -172,8 +172,8 @@ export default class DBFirebase implements DBInterface {
 	//	 		REMOTE SNAPSHOTS		//
 	//////////////////////////////////////
 	
-	snapshot_deferOne(baseID: string, dataKind: DataKind, snapshot: QuerySnapshot) {
-		const deferral = new SnapshotDeferal(baseID, dataKind, snapshot);
+	snapshot_deferOne(baseID: string, type: TypeDatum, snapshot: QuerySnapshot) {
+		const deferral = new SnapshotDeferal(baseID, type, snapshot);
 		this.deferredSnapshots.push(deferral);
 	}
 
@@ -183,40 +183,40 @@ export default class DBFirebase implements DBInterface {
 			const deferral = this.deferredSnapshots.pop();
 			if (deferral) {
 				deferral.snapshot.docChanges().forEach((change) => {	// convert and remember
-					this.remoteHandler(deferral.baseID, deferral.dataKind, change);
+					this.remoteHandler(deferral.baseID, deferral.type, change);
 				});
 			}
 		}
 	}
 
-	setup_remoteHandler(baseID: string, dataKind: DataKind, collection: CollectionReference) {
+	setup_remoteHandler(baseID: string, type: TypeDatum, collection: CollectionReference) {
 		onSnapshot(collection, (snapshot) => {
 			if (this.hierarchy.isConstructed) {		// u.ignore snapshots caused by data written to server
 				if (this.deferSnapshots) {
-					this.snapshot_deferOne(baseID, dataKind, snapshot);
+					this.snapshot_deferOne(baseID, type, snapshot);
 				} else {
 					snapshot.docChanges().forEach((change) => {	// convert and remember
-						this.remoteHandler(baseID, dataKind, change);
+						this.remoteHandler(baseID, type, change);
 					});
 				}
 			}
 		}
 	)};
 
-	async remoteHandler(baseID: string, dataKind: DataKind, change: DocumentChange) {
+	async remoteHandler(baseID: string, type: TypeDatum, change: DocumentChange) {
 		const doc = change.doc;
 		const data = doc.data();
-		if (DBFirebase.data_isValidOfKind(dataKind, data)) {
+		if (DBFirebase.data_isValidOfKind(type, data)) {
 			const h = this.hierarchy;
 			const id = doc.id;
 
 			////////////////////
-			//	 data kinds	  //
-			//	change types  //
+			//	 data IDSignal	  //
+			//	change IDSignal  //
 			////////////////////
 
 			try {
-				if (dataKind == DataKind.relationships) {
+				if (type == TypeDatum.relationships) {
 					const remoteRelationship = new RemoteRelationship(data);
 					if (remoteRelationship) {
 						let relationship = h.knownR_byHID[id.hash()];
@@ -247,17 +247,16 @@ export default class DBFirebase implements DBInterface {
 						}
 						setTimeout(() => { // wait in case a thing involved in this relationship arrives in the data
 							h.relationships_refreshKnowns();
-							h.paths_refreshKnowns();
 							k.rootPath.order_normalizeRecursive_remoteMaybe(true);
 						}, 20);
 					}
-				} else if (dataKind == DataKind.things) {
+				} else if (type == TypeDatum.things) {
 					const remoteThing = new RemoteThing(data);
 					let thing = h.thing_getForHID(id.hash());
 					if (remoteThing) {
 						switch (change.type) {
 							case 'added':
-								if (thing || remoteThing.isEqualTo(this.addedThing) || remoteThing.trait == TypeT.root) {
+								if (thing || remoteThing.isEqualTo(this.addedThing) || remoteThing.trait == IDTrait.root) {
 									return;			// do not invoke signal because nothing has changed
 								}
 								thing = h.thing_remember_runtimeCreate(baseID, id, remoteThing.title, remoteThing.color, remoteThing.trait, true);
@@ -279,7 +278,7 @@ export default class DBFirebase implements DBInterface {
 			} catch (error) {
 				this.reportError(error);
 			}
-			debug.log_remote('HANDLE ' + baseID + ':' + dataKind + ' ' + change.type);
+			debug.log_remote('HANDLE ' + baseID + ':' + type + ' ' + change.type);
 		}
 	}
 
@@ -287,22 +286,22 @@ export default class DBFirebase implements DBInterface {
 	//	    DOCUMENTS & SUBCOLLECTIONS		//
 	//////////////////////////////////////////
 
-	async documents_firstTime_remoteCreate(dataKind: DataKind, baseID: string, collectionRef: CollectionReference) {
+	async documents_firstTime_remoteCreate(type: TypeDatum, baseID: string, collectionRef: CollectionReference) {
 		const docRef = doc(this.db, this.bulksName, baseID);
 		await setDoc(docRef, { isReal: true }, { merge: true });
 		await updateDoc(docRef, { isReal: deleteField() });
-		if (dataKind == DataKind.things) {
+		if (type == TypeDatum.things) {
 			await this.things_remember_firstTime_remoteCreateIn(collectionRef);
 		}
 	}
 
-	async document_remember_validated(dataKind: DataKind, id: string, data: DocumentData, baseID: string) {
-		if (DBFirebase.data_isValidOfKind(dataKind, data)) {
+	async document_remember_validated(type: TypeDatum, id: string, data: DocumentData, baseID: string) {
+		if (DBFirebase.data_isValidOfKind(type, data)) {
 			const h = this.hierarchy;
-			switch (dataKind) {
-				case DataKind.things:		 h.thing_remember_runtimeCreate(baseID, id, data.title, data.color, data.trait, true); break;
-				case DataKind.predicates:	 h.predicate_remember_runtimeCreate(id, data.kind); break;
-				case DataKind.relationships: h.relationship_remember_runtimeCreateUnique(baseID, id, data.predicate.id, data.from.id, data.to.id, data.order, CreationOptions.isFromRemote); break;
+			switch (type) {
+				case TypeDatum.things:		 h.thing_remember_runtimeCreate(baseID, id, data.title, data.color, data.trait, true); break;
+				case TypeDatum.predicates:	 h.predicate_remember_runtimeCreate(id, data.kind); break;
+				case TypeDatum.relationships: h.relationship_remember_runtimeCreateUnique(baseID, id, data.predicate.id, data.from.id, data.to.id, data.order, CreationOptions.isFromRemote); break;
 			}
 		}
 	}
@@ -359,7 +358,7 @@ export default class DBFirebase implements DBInterface {
 
 	async things_remember_firstTime_remoteCreateIn(collectionRef: CollectionReference) {
 		const fields = ['title', 'color', 'trait'];
-		const root = new Thing(this.baseID, null, this.baseID, 'coral', TypeT.root, true);
+		const root = new Thing(this.baseID, null, this.baseID, 'coral', IDTrait.root, true);
 		const thing = new Thing(this.baseID, null, 'Click this text to edit it', 'purple', '', true);
 		this.hierarchy.root = root;
 		const thingRef = await addDoc(collectionRef, u.convertToObject(thing, fields));	// N.B. these will be fetched, shortly
@@ -479,20 +478,20 @@ export default class DBFirebase implements DBInterface {
 	//			VALIDATION			//
 	//////////////////////////////////
 
-	static data_isValidOfKind(dataKind: DataKind, data: DocumentData) {
-		switch (dataKind) {
-			case DataKind.things:		
+	static data_isValidOfKind(type: TypeDatum, data: DocumentData) {
+		switch (type) {
+			case TypeDatum.things:		
 				const thing = data as Thing;	
 				if (!thing.title && thing.title != '' || !thing.color && thing.color != '' || !thing.trait && thing.trait != '') {
 					return false;
 				}
 				break;
-			case DataKind.predicates:
+			case TypeDatum.predicates:
 				if (!data.kind) {
 					return false;
 				}
 				break;
-			case DataKind.relationships:
+			case TypeDatum.relationships:
 				const relationship = data as RemoteRelationship;
 				if (!relationship.predicate || !relationship.from || !relationship.to) {
 					return false;
@@ -557,12 +556,12 @@ class Bulk {
 
 class SnapshotDeferal {
 	baseID: string;
-	dataKind: DataKind;
+	type: TypeDatum;
 	snapshot: QuerySnapshot;
 
-	constructor(baseID: string, dataKind: DataKind, snapshot: QuerySnapshot) {
+	constructor(baseID: string, type: TypeDatum, snapshot: QuerySnapshot) {
 		this.baseID = baseID;
-		this.dataKind = dataKind;
+		this.type = type;
 		this.snapshot = snapshot;
 	}
 }
@@ -621,7 +620,7 @@ class RemoteRelationship implements RemoteRelationship {
 					}
 				} else {
 					const remote = data as RemoteRelationship;
-					if (DBFirebase.data_isValidOfKind(DataKind.relationships, data)) {
+					if (DBFirebase.data_isValidOfKind(TypeDatum.relationships, data)) {
 						this.to = doc(things, remote.to.id) as DocumentReference<Thing>;
 						this.from = doc(things, remote.from.id) as DocumentReference<Thing>;
 						this.predicate = doc(predicates, remote.predicate.id) as DocumentReference<Predicate>;

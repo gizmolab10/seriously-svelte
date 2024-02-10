@@ -7,7 +7,7 @@ export enum TypeDB {
 	local	 = 'local',
 }
 
-export enum DataKind {
+export enum TypeDatum {
 	relationships = 'Relationships',
 	predicates	  = 'Predicates',
 	things		  = 'Things',

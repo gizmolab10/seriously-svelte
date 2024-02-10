@@ -1,6 +1,6 @@
 <script lang=ts>
-	import { k, u, Rect, Size, Point, Thing, debug, signals, onMount, Layout } from '../../ts/common/GlobalImports';
-	import { onDestroy, DebugFlag, debugReact, TypeLC } from '../../ts/common/GlobalImports';
+	import { k, u, Rect, Size, Point, Thing, debug, signals, onMount } from '../../ts/common/GlobalImports';
+	import { IDLine, Layout, onDestroy, DebugFlag, debugReact } from '../../ts/common/GlobalImports';
 	import { s_dot_size, s_graphRect, s_line_stretch } from '../../ts/managers/State';
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
@@ -40,7 +40,7 @@
 					layoutChildren();
 					if (signalPath) { // only recurse if starting at a specific signalPath
 						for (const childMap of childMapArray) {
-							if (childMap.path.hasThingsTo && childMap.path.isExpanded) {
+							if (childMap.path.hasChildren && childMap.path.isExpanded) {
 								childMap.path.signal_relayout();
 							}
 						}
@@ -51,7 +51,7 @@
 	})
 	
 	function layoutChildren() {
-		// console.log(`layoutChildren ${path.thingTitles}`);
+		console.log(`layoutChildren ${path.thingTitles}`);
 		const delta = new Point(19.5, -2.5);
 		const height = (path.visibleProgeny_halfHeight);
 		const childrenOrigin = origin.offsetByY(height);
@@ -67,7 +67,7 @@
 {#each childMapArray as map}
 	<Widget thing={map.child} path={map.childPath} origin={map.extent.offsetBy(widgetOffset)}/>
 	<Line thing={map.child} path={map.childPath} curveType={map.curveType} rect={map.offsetBy(lineOffset)}/>
-	{#if map.childPath.hasThingsTo && map.childPath.isExpanded}
+	{#if map.childPath.hasChildren && map.childPath.isExpanded}
 		<Children path={map.childPath} origin={map.childOrigin}/>
 	{/if}
 {/each}

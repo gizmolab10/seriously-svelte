@@ -1,4 +1,4 @@
-import { Thing, TypeDB, TypeT, Hierarchy, Relationship } from '../common/GlobalImports';
+import { Thing, TypeDB, IDTrait, Hierarchy, Relationship } from '../common/GlobalImports';
 import DBInterface from './DBInterface';
 
 export default class DBLocal implements DBInterface {
@@ -33,7 +33,7 @@ export default class DBLocal implements DBInterface {
 		h.thing_remember_runtimeCreate('', idD, 'sibling', 'green', 'a', false);
 		h.thing_remember_runtimeCreate('', idB, 'second', 'salmon', '2', false);
 		h.thing_remember_runtimeCreate('', idE, 'another', 'orchid', 'a', false);
-		h.thing_remember_runtimeCreate('', idR, 'seriously', 'plum', TypeT.root, false);
+		h.thing_remember_runtimeCreate('', idR, 'seriously', 'plum', IDTrait.root, false);
 		h.relationship_remember_runtimeCreateUnique('', this.localName('Dr'), idP, idA, idD, 0);
 		h.relationship_remember_runtimeCreateUnique('', this.localName('Er'), idP, idA, idE, 1);
 		h.relationship_remember_runtimeCreateUnique('', this.localName('Ar'), idP, idR, idA, 0);

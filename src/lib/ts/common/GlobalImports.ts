@@ -1,16 +1,15 @@
-import { ZIndex, ButtonID, TypeT, TypeB, AlteringParent } from './Enumerations';
+import { IDTrait, IDBrowser, ZIndex, IDButton, AlteringParent } from './Enumerations';
 import { Point, Size, Rect, ChildMap, graphRect_update } from '../geometry/Geometry';
-import { CreationOptions, TypeLC, TypeCT } from './Enumerations';
 import { debugReact, DebugReact, ReactFlag } from '../debug/DebugReact';
 import { PersistID, persistLocal } from '../managers/PersistLocal';
-import ParentRelations from '../structures/ParentRelations';
+import { CreationOptions, IDLine, IDTool } from './Enumerations';
 import { debug, Debug, DebugFlag } from '../debug/Debug';
 import { Direction, svgPath } from '../geometry/SVGPath';
-import { TypeDB, DataKind } from '../db/DBInterface';
-import { TypeW } from '../structures/Wrapper';
+import { TypeDB, TypeDatum } from '../db/DBInterface';
 import { SeriouslyRange } from './SeriouslyRange';
-import { signals, SignalKind } from './Signals';
+import { signals, IDSignal } from './Signals';
 import { dbDispatch } from '../db/DBDispatch';
+import { IDWrapper } from '../structures/Wrapper';
 import { onMount, onDestroy } from 'svelte';
 import { launch } from '../managers/Launch';
 import { get } from 'svelte/store';
@@ -33,12 +32,13 @@ import Thing from '../data/Thing';
 import User from '../data/User';
 
 export {
+	IDWrapper, IDTrait, TypeDB, IDLine,
+	Path, Grabs, Wrapper, TitleState,
 	svgPath, Direction, PersistID, persistLocal,
 	k, u, get, builds, launch, onMount, onDestroy,
-	signals, SignalKind, debugReact, DebugReact, ReactFlag,
-	Path, Grabs, Wrapper, ParentRelations, TitleState, TypeW,
-	ZIndex, ButtonID, TypeB, AlteringParent, CreationOptions,
-	debug, Debug, DebugFlag, TypeDB, DataKind, dbDispatch, Hierarchy,
+	signals, IDSignal, debugReact, DebugReact, ReactFlag,
+	ZIndex, IDButton, IDBrowser, AlteringParent, CreationOptions,
+	debug, Debug, DebugFlag, TypeDatum, dbDispatch, Hierarchy,
 	User, Datum, Thing, Access, Predicate, Relationship, SeriouslyRange,
-	Rect, Size, Point, Layout, ChildMap, TypeT, TypeLC, TypeCT, graphRect_update,
+	Rect, Size, Point, Layout, ChildMap, IDTool, graphRect_update,
 };

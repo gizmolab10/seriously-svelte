@@ -1,11 +1,10 @@
-import { k, u, get, Path, ParentRelations, Datum, debug, Predicate, Hierarchy, DebugFlag } from '../common/GlobalImports';
-import { TypeT, dbDispatch } from '../common/GlobalImports';
+import { k, u, get, Path, Datum, debug, Predicate, Hierarchy, DebugFlag } from '../common/GlobalImports';
+import { IDTrait, dbDispatch } from '../common/GlobalImports';
 import { s_path_here } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
-	parentRelations: ParentRelations;
-    bulkRootID: string = '';
+	bulkRootID: string = '';
 	needsBulkFetch = false;
 	hoverAttributes = '';
 	borderAttribute = '';
@@ -20,7 +19,6 @@ export default class Thing extends Datum {
 
 	constructor(baseID: string, id: string | null, title = k.defaultTitle, color = 'blue', trait = 's', isRemotelyStored: boolean) {
 		super(baseID, id, isRemotelyStored);
-		this.parentRelations = new ParentRelations(this);
 		this.dbType = dbDispatch.db.dbType;
 		this.title = title;
 		this.color = color;
@@ -29,37 +27,38 @@ export default class Thing extends Datum {
 	
 	get fields():	Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get parentIDs():	Array<string> { return this.parents.map(t => t.id); }
-	get parents():		 Array<Thing> { return this.parentRelations.parentsFor(Predicate.idIsAParentOf.hash()); }
-	get parentPaths():	  Array<Path> { return this.parentRelations.parentPathsFor(Predicate.idIsAParentOf.hash()); }
+	get parents():		 Array<Thing> { return this.fromThingsFor(Predicate.idIsAParentOf); }
+	get parentPaths():	  Array<Path> { return this.fromPathsFor(Predicate.idIsAParentOf); }
 	get isHere():			  boolean { return (get(s_path_here).thing?.id ?? '') == this.id; }
 	get idForChildren():	   string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get description():		   string { return this.id + ' \"' + this.title + '\"'; }
-	get isBulkAlias():		  boolean { return this.trait == TypeT.bulk; }
+	get isBulkAlias():		  boolean { return this.trait == IDTrait.bulk; }
 	get isRoot():			  boolean { return this == this.hierarchy.root; }
 	get hasParents():		  boolean { return this.parentPaths.length > 0; }
 	get hierarchy():		Hierarchy { return dbDispatch.db.hierarchy; }
 	get titleWidth():		   number { return u.getWidthOf(this.title) }
-
-	log(option: DebugFlag, message: string) {
-		debug.log_maybe(option, message + ' ' + this.description);
-	}
-
-	debugLog(message: string) {
-		this.log(DebugFlag.things, message);
-	}
+	
+	debugLog(message: string) { this.log(DebugFlag.things, message); }
+	log(option: DebugFlag, message: string) { debug.log_maybe(option, message + ' ' + this.description); }
+	fromThingsFor(predicateID: string): Array<Thing> { return this.fromPathsFor(predicateID).map(p => p.thing!); }
 
 	thing_isInDifferentBulkThan(other: Thing) {
 		return this.baseID != other.baseID || (other.isBulkAlias && !this.isBulkAlias && this.baseID != other.title);
 	}
 
-	async order_setTo(newOrder: number, remoteWrite: boolean = false) {
-		this.hierarchy.relationship_getWhereIDEqualsTo(this.id)?.order_setTo(newOrder, remoteWrite);
-	}
-
-	async bulk_fetchAll(baseID: string) {
-		await dbDispatch.db.fetch_allFrom(baseID)
-		await dbDispatch.db.hierarchy?.relationships_remoteCreateMissing(this);
-		await dbDispatch.db.hierarchy?.relationships_removeHavingNullReferences();
+	fromPathsFor(predicateID: string): Array<Path> {
+		const paths: Array<Path> = [];
+		if (!this.isRoot) {
+			const fromRelationships = this.hierarchy.relationships_getByPredicateIDToAndID(predicateID, true, this.id);
+			for (const fromRelationship of fromRelationships) {
+				const fromThing = fromRelationship.thing(false);
+				const fromPaths = fromThing?.fromPathsFor(predicateID) ?? []
+				for (const fromPath of fromPaths) {
+					paths.push(fromPath.appendID(fromRelationship.id));
+				}
+			}
+		}
+		return paths;
 	}
 
 	revealColor(isReveal: boolean, path: Path): string {

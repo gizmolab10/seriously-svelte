@@ -1,6 +1,38 @@
-export enum ButtonID {
+export enum IDButton {
 	buildNotes = 'show build notes',
 	help	   = '?',
+}
+
+export enum IDLine {
+	up	 = 'up',
+	down = 'down',
+	flat = 'flat',
+}
+
+export enum IDTrait {
+	roots = '^',
+	root  = '!',
+	bulk  = '~',
+}
+
+export enum IDTool {
+	deleteParent = 'deleteParent',
+	addParent	 = 'addParent',
+	cluster		 = 'cluster',
+	delete		 = 'delete',
+	next		 = 'next',
+	more		 = 'more',
+	add     	 = 'add',
+}
+
+export enum IDBrowser  {
+	explorer = 'explorer',
+	unknown  = 'unknown',
+	firefox	 = 'firefox',
+	chrome	 = 'chrome',
+	safari	 = 'safari',
+	opera	 = 'opera',
+	orion	 = 'orion',
 }
 
 export enum AlteringParent {
@@ -12,38 +44,6 @@ export enum CreationOptions {
 	isFromRemote = 'isFrom',
 	getRemoteID	 = 'getID',
 	none		 = '',
-}
-
-export enum TypeLC {
-	up	 = 'up',
-	down = 'down',
-	flat = 'flat',
-}
-
-export enum TypeT {
-	roots = '^',
-	root  = '!',
-	bulk  = '~',
-}
-
-export enum TypeCT {
-	deleteParent = 'deleteParent',
-	addParent	 = 'addParent',
-	cluster		 = 'cluster',
-	delete		 = 'delete',
-	next		 = 'next',
-	more		 = 'more',
-	add     	 = 'add',
-}
-
-export enum TypeB  {
-	explorer = 'explorer',
-	unknown  = 'unknown',
-	firefox	 = 'firefox',
-	chrome	 = 'chrome',
-	safari	 = 'safari',
-	opera	 = 'opera',
-	orion	 = 'orion',
 }
 
 const baseZIndex = 1;

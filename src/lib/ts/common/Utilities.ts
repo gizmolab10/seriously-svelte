@@ -1,5 +1,5 @@
 import { s_thing_fontSize, s_thing_fontFamily } from '../managers/State';
-import { get, Path, TypeB } from './GlobalImports';
+import { get, Path, IDBrowser } from './GlobalImports';
 
 class Utilities {
 	noop() {}
@@ -12,7 +12,7 @@ class Utilities {
 		array.forEach((path, index) => {
 			if (path.order != index) {
 				(async () => {
-					await path.order_setTo(index, remoteWrite);
+					await path.relationship?.order_setTo(index, remoteWrite);
 				})();
 			}
 		});
@@ -86,18 +86,18 @@ class Utilities {
 		return width;
 	}
 
-	getBrowserType(): TypeB {
+	getBrowserType(): IDBrowser {
 		const userAgent: string = navigator.userAgent;
 
 		switch (true) {
 			case /msie (\d+)/i.test(userAgent) ||
-				/trident\/.*; rv:(\d+)/i.test(userAgent):	return TypeB.explorer;
-			case /(chrome|crios)\/(\d+)/i.test(userAgent):	return TypeB.chrome;
-			case /firefox\/(\d+)/i.test(userAgent):			return TypeB.firefox;
-			case /opr\/(\d+)/i.test(userAgent):				return TypeB.opera;
-			case /orion\/(\d+)/i.test(userAgent):			return TypeB.orion;
-			case /safari\/(\d+)/i.test(userAgent):			return TypeB.safari;
-			default:										return TypeB.unknown
+				/trident\/.*; rv:(\d+)/i.test(userAgent):	return IDBrowser.explorer;
+			case /(chrome|crios)\/(\d+)/i.test(userAgent):	return IDBrowser.chrome;
+			case /firefox\/(\d+)/i.test(userAgent):			return IDBrowser.firefox;
+			case /opr\/(\d+)/i.test(userAgent):				return IDBrowser.opera;
+			case /orion\/(\d+)/i.test(userAgent):			return IDBrowser.orion;
+			case /safari\/(\d+)/i.test(userAgent):			return IDBrowser.safari;
+			default:										return IDBrowser.unknown
 		}
 	}
 

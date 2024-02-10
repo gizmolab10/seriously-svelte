@@ -15,7 +15,7 @@
 			} else {
 				colorStyles = 'background-color: ' + k.backgroundColor + '; color: ' + thing.color;
 			}
-			cursorStyle = path.hasThingsTo ? 'cursor: pointer' : '';
+			cursorStyle = path.hasChildren ? 'cursor: pointer' : '';
 		}
 	};
 
@@ -27,7 +27,9 @@
 	function crumb_buttonClicked(event) {
 		if (dbDispatch.db.hasData) {
 			path.grabOnly();
-			path.becomeHere();
+			if (path.becomeHere()) {
+				signals.signal_rebuild_fromHere();
+			}
 		}
 	}
 

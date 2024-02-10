@@ -1,14 +1,13 @@
 import { s_dot_size, s_path_here, s_row_height, s_line_stretch, s_title_editing, s_paths_grabbed } from '../managers/State';
 import { s_paths_expanded, s_path_toolsCluster, s_altering_parent, s_tools_inWidgets } from '../managers/State';
 import { TitleState, dbDispatch, Relationship, SeriouslyRange, AlteringParent } from '../common/GlobalImports';
-import { k, u, get, Rect, Size, Thing, TypeW, signals, Wrapper, Predicate } from '../common/GlobalImports';
+import { k, u, get, Rect, Size, Thing, IDWrapper, signals, Wrapper, Predicate } from '../common/GlobalImports';
 import { Writable } from 'svelte/store';
 
 export default class Path {
 	wrappers: { [type: string]: Wrapper } = {};
 	selectionRange = new SeriouslyRange(0, 0);
 	predicateID = Predicate.idIsAParentOf;
-	paths_to: Array<Path> = [];
 	pathString: string;
 	hashedPath: number;
 
@@ -24,22 +23,6 @@ export default class Path {
 		}
 		s_title_editing.subscribe(() => { this.thing?.updateColorAttributes(this); });
 		s_paths_grabbed.subscribe(() => { this.thing?.updateColorAttributes(this); });
-	}
-	
-	async paths_recursive_assemble() {
-		const thing = this.thing;
-		const hierarchy = dbDispatch.db.hierarchy;
-		this.predicateID = Predicate.idIsAParentOf;
-		if (thing) {
-			const toRelationships = hierarchy.relationships_getByPredicateIDToAndID(this.predicateID, false, thing.id);
-			for (const toRelationship of toRelationships) {				// loop through all to relationships
-				const path_to = this.appendID(toRelationship.id);		// add each toRelationship's id
-				this.paths_to.push(path_to);							// and push onto the paths_to
-				await u.paths_orders_normalize_remoteMaybe(this.paths_to);
-				await path_to.paths_recursive_assemble();				// recurse with each to path
-			}
-			thing.parentRelations.assemble_from(this);					// assemble during the traversal's return
-		}
 	}
 
 	signal_rebuild()  { signals.signal_rebuild(this); }
@@ -58,31 +41,29 @@ export default class Path {
 	get endID(): string { return this.idAt(); }
 	get fromPath(): Path { return this.stripBack(); }
 	get thing(): Thing | null { return this.thingAt(); }
-	get toPaths(): Array<Path> { return this.paths_to; }
-	get firstChild(): Thing { return this.toThings[0]; }
-	get fromThing(): Thing | null { return this.thingAt(2); }
-	get lastChild(): Thing { return this.toThings.slice(-1)[0]; }
+	get firstChild(): Thing { return this.children[0]; }
+	get lastChild(): Thing { return this.children.slice(-1)[0]; }
 	get isRoot(): boolean { return this.matchesPath(k.rootPath); }
-	get hasThingsTo(): boolean { return this.toPaths.length > 0; }
+	get hasChildren(): boolean { return this.childPaths.length > 0; }
 	get order(): number { return this.relationship?.order ?? -1; }
 	get isHere(): boolean { return this.matchesStore(s_path_here); }
-	get siblingPaths(): Array<Path> { return this.fromPath.toPaths; }
+	get siblingPaths(): Array<Path> { return this.fromPath.childPaths; }
 	get isExemplar(): boolean { return this.thing?.isExemplar ?? false; }
 	get hashedIDs(): Array<number> { return this.ids.map(i => i.hash()); }
-	get lineWrapper(): Wrapper | null { return this.wrappers[TypeW.line]; }
+	get lineWrapper(): Wrapper | null { return this.wrappers[IDWrapper.line]; }
 	get relationship(): Relationship | null { return this.relationshipAt(); }
-	get titleWrapper(): Wrapper | null { return this.wrappers[TypeW.title]; }
+	get titleWrapper(): Wrapper | null { return this.wrappers[IDWrapper.title]; }
 	get thingTitle(): string { return this.thing?.title ?? 'missing title'; }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
-	get revealWrapper(): Wrapper | null { return this.wrappers[TypeW.reveal]; }
-	get widgetWrapper(): Wrapper | null { return this.wrappers[TypeW.widget]; }
+	get revealWrapper(): Wrapper | null { return this.wrappers[IDWrapper.reveal]; }
+	get widgetWrapper(): Wrapper | null { return this.wrappers[IDWrapper.widget]; }
 	get toolsGrabbed(): boolean { return this.matchesStore(s_path_toolsCluster); }
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
 	get isEditing(): boolean { return this.matchesPath(get(s_title_editing)?.editing ?? null); }
 	get isStoppingEdit(): boolean { return this.matchesPath(get(s_title_editing)?.stopping ?? null); }
-	get toThings(): Array<Thing> { return dbDispatch.db.hierarchy?.things_getForPaths(this.toPaths); }
+	get children(): Array<Thing> { return dbDispatch.db.hierarchy?.things_getForPaths(this.childPaths); }
 	get things_allAncestors(): Array<Thing> { return this.things_ancestryWithin(Number.MAX_SAFE_INTEGER); }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	get thingTitleRect(): Rect | null { return Rect.createFromDOMRect(this.titleWrapper?.component.getBoundingClientRect());}
@@ -109,7 +90,7 @@ export default class Path {
 		}
 		return false;
 	}
-
+	
 	get things_canAlter_asParentOf_toolsGrab(): boolean {
 		const path_toolsGrab = get(s_path_toolsCluster);
 		if (path_toolsGrab && !this.matchesPath(path_toolsGrab) && this.thing != path_toolsGrab.thing) {
@@ -120,9 +101,9 @@ export default class Path {
 	}
 
 	get hasGrandChildren(): boolean {
-		if (this.hasThingsTo) {
-			for (const toPath of this.toPaths) {
-				if (toPath.hasThingsTo) {
+		if (this.hasChildren) {
+			for (const childPath of this.childPaths) {
+				if (childPath.hasChildren) {
 					return true;
 				}
 			}
@@ -141,12 +122,32 @@ export default class Path {
 		return nextPath;
 	}
 
+	get childPaths(): Array<Path> {
+		const paths: Array<Path> = [];
+		const thingID = this.relationship?.idTo;
+		const hierarchy = dbDispatch.db.hierarchy;
+		this.predicateID = Predicate.idIsAParentOf;
+		if (thingID) {
+			const toRelationships = hierarchy.relationships_getByPredicateIDToAndID(this.predicateID, false, thingID);
+			for (const toRelationship of toRelationships) {			// loop through all to relationships
+				const path = this.appendID(toRelationship.id);		// add each toRelationship's id
+				paths.push(path);									// and push onto the paths_to
+			}
+			u.paths_orders_normalize_remoteMaybe(paths, false);
+		}
+		return paths;
+	}
+
 	matchesStore(store: Writable<Path | null>): boolean { return this.matchesPath(get(store)); }
 	includedInStore(store: Writable<Array<Path>>): boolean { return this.includedInPaths(get(store)); }
 	matchesPath(path: Path | null): boolean { return !path ? false : this.pathString == path.pathString; }
 	includedInPaths(paths: Array<Path>): boolean { return paths.filter(p => p.matchesPath(this)).length > 0; }
 	sharesAnID(path: Path | null): boolean { return !path ? false : this.ids.some(id => path.ids.includes(id)); }
 	relationshipAt(back: number = 1): Relationship | null { return dbDispatch.db.hierarchy?.relationship_getForHID(this.idAt(back).hash()) ?? null; }
+
+	thing_isParentOf(path: Path): boolean {
+		return path.thing?.fromThingsFor(Predicate.idIsAParentOf).map(t => t.id).includes(this.thingID) ?? false;
+	}
 
 	appendID(id: string): Path {
 		let ids = this.ids;
@@ -162,14 +163,6 @@ export default class Path {
 		return ids.slice(-(Math.max(1, back)))[0];
 	}
 
-	thing_isParentOf(path: Path): boolean {
-		const parentRelationships = dbDispatch.db.hierarchy?.relationships_getByPredicateIDToAndID(Predicate.idIsAParentOf, true, path.thingID)
-		if (parentRelationships) {
-			return parentRelationships.filter(r => r.idFrom == this.thingID).length > 0;
-		}
-		return false;
-	}
-
 	thingAt(back: number = 1): Thing | null {
 		const relationship = this.relationshipAt(back);
 		if (this.pathString != '' && relationship) {
@@ -180,11 +173,12 @@ export default class Path {
 
 	becomeHere() {
 		const thing = this.thing;
-		if (thing && this.hasThingsTo) {
+		if (thing && this.hasChildren) {
 			s_path_here.set(this);
-			this.expand();
 			s_path_toolsCluster.set(null);
-		};
+			return this.expand();
+		}
+		return false;
 	}
 
 	path_ofNextSibling(increment: boolean): Path | null {
@@ -222,7 +216,7 @@ export default class Path {
 	}
 
 	ancestors_include(thing: Thing): boolean {
-		const parentPaths = this.thing?.parentRelations.parentPathsFor(Predicate.idIsAParentOf.hash());
+		const parentPaths = this.thing?.fromPathsFor(Predicate.idIsAParentOf);
 		if (parentPaths) {
 			for (const parentPath of parentPaths) {
 				if (parentPath.things_allAncestors.map(t => t.id).includes(thing.id)) {
@@ -255,10 +249,10 @@ export default class Path {
 		if (thing) {
 			const useToolHeight = this.toolsGrabbed && get(s_tools_inWidgets);
 			const rowHeight = useToolHeight ? k.toolsClusterHeight : get(s_row_height);
-			if (!visited.includes(this.pathString) && this.hasThingsTo && this.isExpanded) {
+			if (!visited.includes(this.pathString) && this.hasChildren && this.isExpanded) {
 				let height = 0;
-				for (const toPath of this.toPaths) {
-					height += toPath.visibleProgeny_height([...visited, this.pathString]);
+				for (const childPath of this.childPaths) {
+					height += childPath.visibleProgeny_height([...visited, this.pathString]);
 				}
 				return Math.max(height, rowHeight);
 			}
@@ -271,10 +265,10 @@ export default class Path {
 		const thing = dbDispatch.db.hierarchy?.thing_getForPath(this);
 		if (thing) {
 			let width = isFirst ? 0 : thing.titleWidth;
-			if (!visited.includes(this.hashedPath) && this.isExpanded && this.hasThingsTo) {
+			if (!visited.includes(this.hashedPath) && this.isExpanded && this.hasChildren) {
 				let progenyWidth = 0;
-			for (const toPath of this.toPaths) {
-					const childProgenyWidth = toPath.visibleProgeny_width(false, [...visited, this.hashedPath]);
+			for (const childPath of this.childPaths) {
+					const childProgenyWidth = childPath.visibleProgeny_width(false, [...visited, this.hashedPath]);
 					if (progenyWidth < childProgenyWidth) {
 						progenyWidth = childProgenyWidth;
 					}
@@ -290,13 +284,14 @@ export default class Path {
 	//			mutate state		  //
 	////////////////////////////////////
 
-	expand() { this.expanded_setTo(true); }
-	collapse() { this.expanded_setTo(false); }
-	toggleExpand() { this.expanded_setTo(!this.isExpanded) }	
+	expand() { return this.expanded_setTo(true); }
+	collapse() { return this.expanded_setTo(false); }
 	toggleGrab() { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }
 
-	async order_setTo(order: number, remoteWrite: boolean = true) {
-		await this.relationship?.order_setTo(order, remoteWrite);
+	grabOnly() {
+		// console.log(`GRAB ${this.thingTitles}`);
+		s_paths_grabbed.set([this]);
+		this.toggleToolsGrab();
 	}
 
 	toggleToolsGrab(update: boolean = true) {
@@ -309,10 +304,18 @@ export default class Path {
 		}
 	}
 
-	grabOnly() {
-		// console.log(`GRAB ${this.thingTitles}`);
-		s_paths_grabbed.set([this]);
-		this.toggleToolsGrab();
+	clicked_dragDot(shiftKey: boolean) {
+        if (!this.isExemplar) {
+			s_title_editing?.set(null);
+			if (get(s_altering_parent)) {
+				dbDispatch.db.hierarchy.path_alterMaybe(this);
+			} else if (shiftKey || this.isGrabbed) {
+				this.toggleGrab();
+			} else {
+				this.grabOnly();
+            }
+			signals.signal_rebuild_fromHere();
+        }
 	}
 
 	grab() {
@@ -357,18 +360,18 @@ export default class Path {
 
 	async order_normalizeRecursive_remoteMaybe(remoteWrite: boolean, visited: Array<number> = []) {
 		const hID = this.hashedPath;
-		const toPaths = this.toPaths;
-		if (!visited.includes(hID) && toPaths && toPaths.length > 1) {
-			await u.paths_orders_normalize_remoteMaybe(toPaths, remoteWrite);
-			for (const toPath of toPaths) {
-				toPath.order_normalizeRecursive_remoteMaybe(remoteWrite, [...visited, hID]);
+		const childPaths = this.childPaths;
+		if (!visited.includes(hID) && childPaths && childPaths.length > 1) {
+			await u.paths_orders_normalize_remoteMaybe(childPaths, remoteWrite);
+			for (const childPath of childPaths) {
+				childPath.order_normalizeRecursive_remoteMaybe(remoteWrite, [...visited, hID]);
 			}
 		}
 	}
 	
 	expanded_setTo(expand: boolean) {
+		let mutated = false;
 		if (!this.isRoot) {
-			let mutated = false;
 			s_paths_expanded.update((array) => {
 				if (array) {
 					const index = array.map(e => e.pathString).indexOf(this.pathString);
@@ -384,10 +387,8 @@ export default class Path {
 				}
 				return array;
 			});
-			if (mutated) {			// avoid disruptive rebuild
-				signals.signal_rebuild_fromHere();
-			}
 		}
+		return mutated;
 	}
 
 	startEdit() {
@@ -401,78 +402,23 @@ export default class Path {
 				editState.stopping = editState.editing;
 				editState.editing = this;
 			}
-			signals.signal_relayout_fromHere();
 		}
 	}
 
 	async traverse_async(applyTo: (path: Path) => Promise<boolean>) {
 		if (!await applyTo(this)) {
-			for (const toPath of this.toPaths) {
-				await toPath.traverse_async(applyTo);
+			for (const childPath of this.childPaths) {
+				await childPath.traverse_async(applyTo);
 			}
 		}
 	}
 
 	traverse(applyTo: (path: Path) => boolean) {
 		if (!applyTo(this)) {
-			for (const toPath of this.toPaths) {
-				toPath.traverse(applyTo);
+			for (const childPath of this.childPaths) {
+				childPath.traverse(applyTo);
 			}
 		}
 	}
 
-	////////////////////////////////////
-	//			operations			  //
-	////////////////////////////////////
-
-	async relationship_forget_remoteRemove(path: Path) {
-		const h = dbDispatch.db.hierarchy;
-		const thing = this.thing;
-		const fromPath = this.fromPath;
-		const relationship = h.relationship_getByIDPredicateFromAndTo(Predicate.idIsAParentOf, path.thingID, this.thingID);
-		if (fromPath && relationship && (thing?.parents.length ?? 0) > 1) {
-			h.relationship_forget(relationship);
-			if (path.hasThingsTo) {
-				fromPath.order_normalizeRecursive_remoteMaybe(true);
-			} else {
-				path.collapse();
-			}
-			await dbDispatch.db.relationship_remoteDelete(relationship);
-		}
-	}
-
-	async parent_alterMaybe() {
-		const alteration = get(s_altering_parent);
-		if (this.things_canAlter_asParentOf_toolsGrab) {
-			const toolsPath = get(s_path_toolsCluster);
-			const toolsThing = toolsPath?.thing;
-			if (toolsPath && toolsThing) {
-				s_altering_parent.set(null);
-				s_path_toolsCluster.set(null);
-				switch (alteration) {
-					case AlteringParent.deleting:
-						await toolsPath.relationship_forget_remoteRemove(this);
-						break;
-					case AlteringParent.adding:
-						await dbDispatch.db.hierarchy?.path_remember_remoteAddAsChild(this, toolsThing);
-						signals.signal_rebuild_fromHere();
-						break;
-				}
-			}
-		}
-	}
-
-	clicked_dragDot(shiftKey: boolean) {
-        if (!this.isExemplar) {
-			s_title_editing?.set(null);
-			if (get(s_altering_parent)) {
-				this.parent_alterMaybe();
-			} else if (shiftKey || this.isGrabbed) {
-				this.toggleGrab();
-			} else {
-				this.grabOnly();
-            }
-			signals.signal_rebuild_fromHere();
-        }
-	}	
 }

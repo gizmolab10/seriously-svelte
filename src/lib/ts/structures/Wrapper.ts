@@ -1,7 +1,7 @@
 import { Path } from '../common/GlobalImports';
 import Identifiable from "./Identifiable";
 
-export enum TypeW {
+export enum IDWrapper {
 	widget	= 'widget',
 	reveal	= 'reveal',
 	title	= 'title',
@@ -9,19 +9,16 @@ export enum TypeW {
 }
 
 export default class Wrapper extends Identifiable {
-    type: TypeW;
+    type: IDWrapper;
     component: any;
     path: Path;
 
-    constructor(component: any, path: Path, type: TypeW) {
+    constructor(component: any, path: Path, type: IDWrapper) {
 		super(null);
         this.path = path;
         this.type = type;
         this.component = component;
 		path.wrapper_add(this);
-        // if (type == 'title' && path.pathString == '4ld8B2MK4JCZuoqZXRcq::Nmad0YqSkZdwcgkNYKow::KtcigOzelF84w0mpK63P') {
-        //     console.log('title wrapper for a');
-        // }
     }
 
 }

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { dbDispatch, SeriouslyRange, Wrapper, TypeW } from '../../ts/common/GlobalImports';
+	import { dbDispatch, SeriouslyRange, Wrapper, IDWrapper } from '../../ts/common/GlobalImports';
 	import { k, Thing, ZIndex, onMount, signals, onDestroy } from '../../ts/common/GlobalImports';
 	import { s_title_editing, s_row_height } from '../../ts/managers/State';
 	export let fontFamily = 'Arial';
@@ -24,7 +24,7 @@
 			// if (path.thingTitle == 'a') {
 			// 	console.log(`TITLE ${path.thingTitles}`);
 			// }
-			titleWrapper = new Wrapper(input, path, TypeW.title);
+			titleWrapper = new Wrapper(input, path, IDWrapper.title);
 		}
 	}
 	
