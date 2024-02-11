@@ -97,8 +97,9 @@ export default class Path {
 	get things_canAlter_asParentOf_toolsGrab(): boolean {
 		const path_toolsGrab = get(s_path_toolsCluster);
 		if (path_toolsGrab && !this.matchesPath(path_toolsGrab) && this.thing != path_toolsGrab.thing) {
-			const includesToolsGrab = this.thing_isParentOf(path_toolsGrab);
-			return (get(s_altering_parent) == AlteringParent.deleting) == includesToolsGrab;
+			const isParentOfTools = this.thing_isParentOf(path_toolsGrab);
+			const isDeleting = get(s_altering_parent) == AlteringParent.deleting;
+			return isDeleting == isParentOfTools;
 		}
 		return false;
 	}
