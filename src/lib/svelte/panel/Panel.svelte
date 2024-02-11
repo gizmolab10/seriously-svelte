@@ -124,11 +124,9 @@
 			onClick={() => {help_buttonClicked()}}
 			size={size}>i
 		</CircularButton>
-		<div on:click={() => { $s_id_popupView = null; }}>
-			{#if $s_showDetails && $s_id_popupView == null}
-				<Details/>
-			{/if}
-		</div>
+		{#if $s_showDetails && $s_id_popupView == null}
+			<Details/>
+		{/if}
 	</div>
 	<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: -10px; top: {topBandHeight}px; width: {$s_id_popupView ? '111px' : '110%'};'></div>
 	<div class='verticalLine' style='height: {$s_showDetails && $s_id_popupView == null ? '100%' : topBandHeight + 'px'}; z-index: {ZIndex.frontmost};'></div>
@@ -136,8 +134,7 @@
 		left: {$s_showDetails ? 100 : 0}px;
 		z-index: {ZIndex.panel};
 		position: fixed;
-		height: 100%;'
-		on:click={() => { $s_id_popupView = null; }}>
+		height: 100%;'>
 		{#if $s_id_popupView == IDButton.help}
 			<Help/>
 		{:else if $s_id_popupView == IDButton.buildNotes}

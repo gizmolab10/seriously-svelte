@@ -150,7 +150,12 @@ export default class Path {
 	relationshipAt(back: number = 1): Relationship | null { return dbDispatch.db.hierarchy?.relationship_getForHID(this.idAt(back).hash()) ?? null; }
 
 	thing_isParentOf(path: Path): boolean {
-		return path.thing?.fromThingsFor(Predicate.idIsAParentOf).map(t => t.id).includes(this.thingID) ?? false;
+		const thingID = this.thingID;
+		if (thingID != k.unknownID) {
+			const parentThings = path.thing?.fromThingsFor(Predicate.idIsAParentOf);
+			return parentThings?.map(t => t.id).includes(thingID) ?? false;
+		}
+		return false;
 	}
 
 	appendID(id: string): Path {

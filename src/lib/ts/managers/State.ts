@@ -34,6 +34,10 @@ s_row_height.subscribe((height) => {
 	s_dot_size.set(u.roundToEven(height * .65));
 });
 
+s_id_popupView.subscribe((id: string | null) => {
+	console.log(`${id}`);
+})
+
 s_altering_parent.subscribe((alteration: string | null) => {
 	if (alteration) {
 		let blink = true;

@@ -57,7 +57,7 @@ export default class Thing extends Datum {
 					paths.push(new Path(endID));
 				} else {
 					for (const fromPath of fromPaths) {
-						console.log(`FROM ${fromThing!.title} TO ${this.title}`);
+						// console.log(`FROM ${fromThing!.title} TO ${this.title}`);
 						paths.push(fromPath.appendID(endID));
 					}
 				}
