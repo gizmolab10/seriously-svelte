@@ -7,22 +7,20 @@ import { Writable } from 'svelte/store';
 export default class Path {
 	wrappers: { [type: string]: Wrapper } = {};
 	selectionRange = new SeriouslyRange(0, 0);
-	predicateID = Predicate.idIsAParentOf;
+	predicateID: string;
 	pathString: string;
 	hashedPath: number;
 
-	constructor(pathString: string = '') {
+	constructor(pathString: string = '', predicateID: string = Predicate.idIsAParentOf) {
+		this.hashedPath = pathString.hash()
+		this.predicateID = predicateID;
 		this.pathString = pathString;
-		this.hashedPath = this.pathString.hash()
-		if (pathString != '') {
+		if (pathString != '') {			// root path is setup in persist local finish setup
 			this.setup();
-		} else {
-			setTimeout(() => {
-				this.setup();
-			}, 100);				// TODO: why?
 		}
-		s_title_editing.subscribe(() => { this.thing?.updateColorAttributes(this); });
-		s_paths_grabbed.subscribe(() => { this.thing?.updateColorAttributes(this); });
+		if (dbDispatch.db.hierarchy.isAssembled) {
+			this.subscriptions_setup();	// not needed during hierarchy assembly
+		}
 	}
 
 	signal_rebuild()  { signals.signal_rebuild(this); }
@@ -32,6 +30,11 @@ export default class Path {
 	wrapper_add(wrapper: Wrapper) {
 		this.wrappers[wrapper.type] = wrapper;
         dbDispatch.db.hierarchy.wrapper_add(wrapper);
+	}
+
+	subscriptions_setup() {
+		s_title_editing.subscribe(() => { this.thing?.updateColorAttributes(this); });
+		s_paths_grabbed.subscribe(() => { this.thing?.updateColorAttributes(this); });
 	}
 	
 	////////////////////////////////////
@@ -78,9 +81,9 @@ export default class Path {
 
 	get thingID(): string {
 		if (this.isRoot) {
-			return dbDispatch.db.hierarchy?.idRoot ?? 'missing root id';
+			return dbDispatch.db.hierarchy?.idRoot ?? k.unknownID;
 		}
-		return this.relationship?.idTo ?? 'missing id';
+		return this.relationship?.idTo ?? k.unknownID;
 	}
 
 	get isVisible(): boolean {
@@ -124,10 +127,11 @@ export default class Path {
 
 	get childPaths(): Array<Path> {
 		const paths: Array<Path> = [];
-		const thingID = this.relationship?.idTo;
-		const hierarchy = dbDispatch.db.hierarchy;
-		this.predicateID = Predicate.idIsAParentOf;
-		if (thingID) {
+		const thingID = this.thingID;
+		if (thingID == k.unknownID) {
+			console.log(`child paths unavailable for ID: ${k.unknownID}`);
+		} else if (thingID) {
+			const hierarchy = dbDispatch.db.hierarchy;
 			const toRelationships = hierarchy.relationships_getByPredicateIDToAndID(this.predicateID, false, thingID);
 			for (const toRelationship of toRelationships) {			// loop through all to relationships
 				const path = this.appendID(toRelationship.id);		// add each toRelationship's id
@@ -172,11 +176,11 @@ export default class Path {
 	}
 
 	becomeHere() {
-		const thing = this.thing;
-		if (thing && this.hasChildren) {
+		if (this.relationship && this.hasChildren) {
 			s_path_here.set(this);
 			s_path_toolsCluster.set(null);
-			return this.expand();
+			this.expand();
+			return true;
 		}
 		return false;
 	}

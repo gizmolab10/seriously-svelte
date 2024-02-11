@@ -25,7 +25,7 @@ export default class Hierarchy {
 	herePath: Path | null = null;
 	_grabs: Grabs | null = null;
 	root: Thing | null = null;
-	isConstructed = false;
+	isAssembled = false;
 	db: DBInterface;
 
 	get hasNothing(): boolean { return !this.root; }
@@ -41,21 +41,16 @@ export default class Hierarchy {
 			}
 		})
 	}
-
-	async fetchAll(parentID: string | null, baseID: string) {
-		await this.db.fetch_allFrom(baseID)
-		await this.relationships_remoteCreateMissing(parentID, baseID);
-		await this.relationships_removeHavingNullReferences();
-	}
 	
 	async hierarchy_assemble(type: string) {
 		await this.fetchAll(null, this.db.baseID);
-		this.db.setHasData(true);
-		persistLocal.s_updateForDBType(type);
+		persistLocal.paths_restore();
+		this.paths_subscriptions_setup();
 		this.here_restore();
+		this.db.setHasData(true);
 		s_things_arrived.set(true);
 		s_isBusy.set(false);
-		this.isConstructed = true;
+		this.isAssembled = true;
 	}
 
 	async handleToolClicked(IDButton: string) {
@@ -122,6 +117,12 @@ export default class Hierarchy {
 				signals.signal_rebuild_fromHere();
 			}
 		}
+	}
+
+	async fetchAll(parentID: string | null, baseID: string) {
+		await this.db.fetch_allFrom(baseID)
+		await this.relationships_remoteCreateMissing(parentID, baseID);
+		await this.relationships_removeHavingNullReferences();
 	}
 
 	here_restore() {
@@ -751,8 +752,8 @@ export default class Hierarchy {
 		newGrabPath?.grabOnly();
 		const allowToBecomeHere = (!SHIFT || path.fromPath.matchesPath(newGrabPath)) && newGrabIsNotHere; 
 		const shouldBecomeHere = !newHerePath?.isVisible || newHerePath.isRoot;
-		if (!RIGHT && allowToBecomeHere && shouldBecomeHere) {
-			needsRebuild = needsRebuild || newHerePath?.becomeHere();
+		if (!RIGHT && allowToBecomeHere && shouldBecomeHere && newHerePath?.becomeHere()) {
+			needsRebuild = true;
 		}
 		if (needsRebuild) {
 			signals.signal_rebuild_fromHere();
@@ -799,6 +800,12 @@ export default class Hierarchy {
 	////////////////////////
 	//		  PATHS		  //
 	////////////////////////
+
+	paths_subscriptions_setup() {
+		for (const path of Object.values(this.knownPath_byHash)) {
+			path.subscriptions_setup();
+		}
+	}
 
 	async paths_rebuild_traverse_remoteDelete(paths: Array<Path>) {
 		let needsRebuild = false;

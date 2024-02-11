@@ -21,7 +21,11 @@ export default class Grabs {
 	get path_lastGrabbed(): Path | null {
 		const paths = get(s_paths_grabbed);
 		if (paths) {
-			return paths.slice(-1)[0];	// not alter paths
+			const path = paths.slice(-1)[0];	// does not alter paths
+			const relationshipHID = path.relationship?.hashedID;
+			if (relationshipHID && this.hierarchy.knownR_byHID[relationshipHID] != null) {
+				return path;
+			}
 		}
 		return null;
 	}

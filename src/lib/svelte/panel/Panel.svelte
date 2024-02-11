@@ -40,7 +40,7 @@
 		graphRect_update();
 		if ($s_graphRect) {
 			left = $s_graphRect.origin.x;
-			debugReact.log_rebuild(`PANEL ${$s_path_here.thing?.description}`);
+			// debugReact.log_rebuild(`PANEL ${$s_path_here.thing.description}`);
 			toggle = !toggle;	// remount graph component
 		}
 	}

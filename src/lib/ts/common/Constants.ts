@@ -18,10 +18,12 @@ export default class Constants {
 	public pathSeparator: string;
 	public defaultTitle: string;
 	public lineTitle: string;
+	public unknownID: string;
 	public rootPath: Path;
 
 	constructor() {
 		this.pathSeparator = '::';
+		this.unknownID = 'unknown';
 		this.backgroundColor = 'white';
 		this.highlightColor = '#9e7daa';
 		this.adminBulkName = 'Jonathan Sand';
@@ -52,7 +54,6 @@ export default class Constants {
                 }
             }
         }
-		this.rootPath = dbDispatch.db.hierarchy.path_unique();
 	}
 }
 

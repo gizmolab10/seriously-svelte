@@ -1,6 +1,6 @@
 import { k, u, debug, builds, debugReact, PersistID, dbDispatch, persistLocal } from '../common/GlobalImports'
 import { s_paths_grabbed, s_paths_expanded, s_tools_inWidgets } from './State';
-import { s_setup, s_path_here, s_showDetails, s_title_atTop } from './State';
+import { s_path_here, s_showDetails, s_title_atTop } from './State';
 
 class Launch {
 	queryString: URLSearchParams;
@@ -18,7 +18,6 @@ class Launch {
 		debug.applyQueryStrings(this.queryString);
 		debugReact.applyQueryStrings(this.queryString);
 		dbDispatch.applyQueryStrings(this.queryString); // do this last
-		s_setup();
 	}
 
 	get browserTitle(): string {

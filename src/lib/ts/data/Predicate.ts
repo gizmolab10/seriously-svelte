@@ -9,6 +9,15 @@ export default class Predicate extends RemoteIdentifiable {
 		this.kind = kind;
 	}
 
-	static get idIsAParentOf(): string { return dbDispatch.db.hierarchy.knownP_byKind['isAParentOf']?.id ?? 'programmer error: isAParentOf is unrecognized'; }
-	static get predicate_isAParentOf(): Predicate { return dbDispatch.db.hierarchy.knownP_byHID[Predicate.idIsAParentOf.hash()]; }
+	static get idIsAParentOf(): string {
+		const id = dbDispatch.db.hierarchy.knownP_byKind['isAParentOf']?.id;
+		if (!id) {
+			alert(`BAD PREDICATE`)
+		}
+		return id;
+	}
+	
+	static get predicate_isAParentOf(): Predicate {
+		return dbDispatch.db.hierarchy.knownP_byHID[Predicate.idIsAParentOf.hash()];
+	}
 }

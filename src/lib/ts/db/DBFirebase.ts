@@ -191,7 +191,7 @@ export default class DBFirebase implements DBInterface {
 
 	setup_remoteHandler(baseID: string, type: TypeDatum, collection: CollectionReference) {
 		onSnapshot(collection, (snapshot) => {
-			if (this.hierarchy.isConstructed) {		// u.ignore snapshots caused by data written to server
+			if (this.hierarchy.isAssembled) {		// u.ignore snapshots caused by data written to server
 				if (this.deferSnapshots) {
 					this.snapshot_deferOne(baseID, type, snapshot);
 				} else {

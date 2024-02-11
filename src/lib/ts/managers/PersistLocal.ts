@@ -1,6 +1,6 @@
 import { s_path_here, s_row_height, s_paths_expanded, s_db_loadTime, s_title_atTop, s_paths_grabbed } from './State';
-import { s_showDetails, s_line_stretch, s_tools_inWidgets, s_user_graphOffset, s_thing_fontFamily } from './State';
-import { Path, Point, dbDispatch } from '../common/GlobalImports'
+import { s_setup, s_showDetails, s_line_stretch, s_tools_inWidgets, s_user_graphOffset, s_thing_fontFamily } from './State';
+import { k, Path, Point, dbDispatch } from '../common/GlobalImports'
 
 export enum PersistID {
 	tools_inWidgets	= 'tools_inWidgets',
@@ -18,7 +18,6 @@ export enum PersistID {
 }
 
 class PersistLocal {
-	okayToPersist = false;
 	usesRelationships = localStorage[PersistID.relationships];
 	ignorePaths = !this.usesRelationships || this.usesRelationships == 'undefined';
 
@@ -33,7 +32,6 @@ class PersistLocal {
 		if (this.ignorePaths) {
 			this.writeToKey(PersistID.relationships, true);
 		}
-		const idHere = this.ignorePaths ? '' : this.readFromDBKey(PersistID.here);
 		s_db_loadTime.set(null);
 		s_row_height.set(this.readFromKey(PersistID.row_height) ?? 20); // sets s_dot_size and s_thing_fontSize
 		s_showDetails.set(this.readFromKey(PersistID.details) ?? false);
@@ -42,30 +40,31 @@ class PersistLocal {
 		s_thing_fontFamily.set(this.readFromKey(PersistID.font) ?? 'Arial');
 		s_user_graphOffset.set(this.readFromKey(PersistID.origin) ?? new Point());
 		s_tools_inWidgets.set(this.readFromKey(PersistID.tools_inWidgets) ?? false);
-		s_paths_grabbed.set(this.ignorePaths ? [] : this.readFromDBKey(PersistID.grabbed)?.map((s: string) => dbDispatch.db.hierarchy.path_unique(s)) ?? []);
-		s_paths_expanded.set(this.ignorePaths ? [] : this.readFromDBKey(PersistID.expanded)?.map((e: string) => dbDispatch.db.hierarchy.path_unique(e)) ?? []);
+	}
+
+	paths_restore() {
+		const hierarchy = dbDispatch.db.hierarchy;
+		const idHere = this.ignorePaths ? '' : (this.readFromDBKey(PersistID.here) ?? hierarchy.idRoot);
+		s_paths_grabbed.set(this.ignorePaths ? [] : this.readFromDBKey(PersistID.grabbed)?.map((s: string) => hierarchy.path_unique(s)) ?? []);
+		s_paths_expanded.set(this.ignorePaths ? [] : this.readFromDBKey(PersistID.expanded)?.map((e: string) => hierarchy.path_unique(e)) ?? []);
+		s_path_here.set(hierarchy.path_unique(idHere));
+		k.rootPath = hierarchy.path_unique();
+		k.rootPath.setup();
+		s_setup();
+
+		s_path_here.subscribe((path: Path) => {
+			if (path) {
+				this.writeToDBKey(PersistID.here, path.pathString);
+			}
+		});
 
 		s_paths_grabbed.subscribe((paths: Array<Path>) => {
-			if (this.okayToPersist) {
-				this.writeToDBKey(PersistID.grabbed, paths.map(p => p.pathString));
-			}
+			this.writeToDBKey(PersistID.grabbed, paths.map(p => p.pathString));
 		});
 
 		s_paths_expanded.subscribe((paths: Array<Path>) => {
-			if (this.okayToPersist) {
-				this.writeToDBKey(PersistID.expanded, paths.map(p => p.pathString));
-			}
+			this.writeToDBKey(PersistID.expanded, paths.map(p => p.pathString));
 		});
-
-		setTimeout(() => {
-			s_path_here.set(dbDispatch.db.hierarchy.path_unique(idHere));
-			s_path_here.subscribe((path: Path) => {
-				if (this.okayToPersist && path) {
-					this.writeToDBKey(PersistID.here, path.pathString);
-				}
-			});
-		}, 10);
-
 	}
 
 	get dbType(): string { return dbDispatch.db.dbType; }
@@ -80,17 +79,6 @@ class PersistLocal {
 		} else {
 			return JSON.parse(storedValue);
 		} 
-	}
-
-	s_updateForDBType(dbType: string) {
-		this.okayToPersist = false; // avoid infinite recursion (above for s_path_here & s_paths_grabbed)
-
-		const hereID = this.ignorePaths ? '' : this.readFromKey(PersistID.here + dbType) ?? '';
-		const grabbedIDs = this.ignorePaths ? [] : this.readFromKey(PersistID.grabbed + dbType) ?? [''];
-		s_path_here.set(dbDispatch.db.hierarchy.path_unique(hereID));
-		s_paths_grabbed.set(grabbedIDs.map((id: string) => dbDispatch.db.hierarchy.path_unique(id)));
-
-		this.okayToPersist = true;
 	}
 
 }
