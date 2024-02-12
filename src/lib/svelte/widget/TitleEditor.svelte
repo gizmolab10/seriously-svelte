@@ -6,6 +6,7 @@
 	export let fontSize = '1em';
 	export let path;
 	let thing = path.thing;
+	let padding = `1px 0px 0px ${$s_row_height / 3}px`;
 	let originalTitle = thing.title;
 	let titleWrapper: Wrapper;
 	let isEditing = false;
@@ -178,7 +179,7 @@
 		style='
 			font-size: {fontSize};
 			font-family: {fontFamily};
-			padding: 0px 0px 0px {$s_row_height / 3}px;'>
+			padding: {padding};'>
 		{thing.title}
 	</span>
 	<input
@@ -199,6 +200,6 @@
 			z-index: {ZIndex.text};
 			font-family: {fontFamily};
 			outline-color: {k.backgroundColor};
-			padding: 0px 0px 0px {$s_row_height / 3}px;
+			padding: {padding};
 		'/>
 {/key}

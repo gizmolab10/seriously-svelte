@@ -107,7 +107,7 @@
 	}
 
 	function updateLayout() {
-		height = $s_row_height - 2;
+		height = $s_row_height - 1;
 		const delta = showingBorder ? 0 : 1;
 		left = origin.x + delta - 1;
 		const titleWidth = thing.titleWidth;

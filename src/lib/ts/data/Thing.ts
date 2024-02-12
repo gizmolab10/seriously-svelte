@@ -55,23 +55,25 @@ export default class Thing extends Datum {
 	}
 
 	fromPathsFor(predicateID: string): Array<Path> {
-		let paths: {[hashedPath: number]: Path} = {};
+		let fromPaths: {[hash: number]: Path} = {};
 		if (!this.isRoot) {
 			const relationships = this.hierarchy.relationships_getByPredicateIDToAndID(predicateID, true, this.id);
 			for (const relationship of relationships) {
-				const fromThing = relationship.thing(false);
-				const fromPaths = fromThing?.fromPathsFor(predicateID) ?? [];
-				if (fromPaths.length == 0) {
-					paths[0] = k.rootPath;
+				const thing = relationship.fromThing;
+				const paths = thing?.fromPathsFor(predicateID) ?? [];
+				const endID = relationship.id;
+				if (paths.length == 0) {
+					const fullPath = k.rootPath.appendID(endID);
+					fromPaths[fullPath.hashedPath] = fullPath;
 				} else {
-					for (const fromPath of fromPaths) {
-						const path = fromPath.appendID(relationship.id);
-						paths[path.hashedPath] = path;
+					for (const path of paths) {
+						const fullPath = path.appendID(endID);
+						fromPaths[fullPath.hashedPath] = fullPath;	// assure uniqueness
 					}
 				}
 			}
 		}
-		return Object.values(paths);
+		return Object.values(fromPaths);
 	}
 
 	revealColor(isReveal: boolean, path: Path): string {

@@ -180,7 +180,7 @@ export default class Hierarchy {
 	things_getForPath(path: Path): Array<Thing> {
 		const things = Array<Thing>();
 		for (const hid of path.hashedIDs) {
-			const thing = this.relationship_getForHID(hid)?.thing(true);
+			const thing = this.relationship_getForHID(hid)?.toThing;
 			if (thing) {
 				things.push(thing);
 			}

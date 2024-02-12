@@ -18,6 +18,8 @@ export default class Relationship extends Datum {
 		this.order = order;
 	}
 
+	get toThing(): Thing | null { return this.thing(true); }
+	get fromThing(): Thing | null { return this.thing(false); }
 	get fields(): Airtable.FieldSet { return { predicate: [this.idPredicate], from: [this.idFrom], to: [this.idTo], order: this.order }; }
 	get description(): string { return ' \"' + this.baseID + '\" ' + this.isRemotelyStored + ' ' + this.order + ' ' + this.id + ' '	+ dbDispatch.db.hierarchy.thing_getForHID(this.idFrom.hash())?.description + ' => ' + dbDispatch.db.hierarchy.thing_getForHID(this.idTo.hash())?.description; }
 
