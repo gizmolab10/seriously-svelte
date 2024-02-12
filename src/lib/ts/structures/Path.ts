@@ -174,7 +174,7 @@ export default class Path {
 	}
 
 	becomeHere() {
-		if (this.relationship && this.hasChildren) {
+		if (this.hasChildren) {
 			s_path_here.set(this);
 			s_path_toolsCluster.set(null);
 			this.expand();

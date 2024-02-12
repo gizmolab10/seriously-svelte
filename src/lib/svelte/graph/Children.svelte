@@ -12,7 +12,7 @@
 	const widgetOffset = new Point(12, ($s_dot_size / -15) - 10);
 	const lineOffset = new Point(halfDotSize - 129, halfDotSize - 7);
 	let childMapArray: Array<ChildMap> = [];
-	let prior = new Date().getTime();
+	let priorTime = new Date().getTime();
 	let center = new Point();
 	onMount( () => { layoutChildren(); });
 	onDestroy( () => { signalHandler.disconnect(); });
@@ -31,14 +31,14 @@
 		}
 	}
 	
-	const signalHandler = signals.handle_relayout((signalPath) => {
-		if (!signalPath || signalPath.matchesPath(path)) {
+	const signalHandler = signals.handle_relayout((path_signal) => {
+		if (!path_signal || path_signal.matchesPath(path)) {
 			const now = new Date().getTime();
-			if (now - prior > 100) {
-				prior = now;
-				setTimeout(async () => { // delay until all other handlers for this signal are done TODO: WHY?
+			if (now - priorTime > 100) {
+				priorTime = now;
+				setTimeout(async () => {	// delay until all other handlers for this signal are done TODO: WHY?
 					layoutChildren();
-					if (signalPath) { // only recurse if starting at a specific signalPath
+					if (path_signal) {		// only recurse if starting at a specific path_signal
 						for (const childMap of childMapArray) {
 							if (childMap.path.hasChildren && childMap.path.isExpanded) {
 								childMap.path.signal_relayout();
