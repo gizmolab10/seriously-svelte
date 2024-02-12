@@ -67,7 +67,6 @@ export default class Path {
 	get isEditing(): boolean { return this.matchesPath(get(s_title_editing)?.editing ?? null); }
 	get isStoppingEdit(): boolean { return this.matchesPath(get(s_title_editing)?.stopping ?? null); }
 	get children(): Array<Thing> { return dbDispatch.db.hierarchy?.things_getForPaths(this.childPaths); }
-	get things_allAncestors(): Array<Thing> { return this.things_ancestryWithin(Number.MAX_SAFE_INTEGER); }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	get thingTitleRect(): Rect | null { return Rect.createFromDOMRect(this.titleWrapper?.component.getBoundingClientRect());}
 	get thingTitles(): Array<string> { return dbDispatch.db.hierarchy?.things_getForPath(this).map(t => `\"${t.title}\"`) ?? []; }
@@ -97,9 +96,10 @@ export default class Path {
 	get things_canAlter_asParentOf_toolsGrab(): boolean {
 		const path_toolsGrab = get(s_path_toolsCluster);
 		if (path_toolsGrab && !this.matchesPath(path_toolsGrab) && this.thing != path_toolsGrab.thing) {
-			const isParentOfTools = this.thing_isParentOf(path_toolsGrab);
+			const isParentOfTools = this.thing_isImmediateParentOf(path_toolsGrab);
+			const isAProgenyOfTools = this.thing_isAProgenyOf(path_toolsGrab)
 			const isDeleting = get(s_altering_parent) == AlteringParent.deleting;
-			return isDeleting == isParentOfTools;
+			return isDeleting ? isParentOfTools : !(isParentOfTools || isAProgenyOfTools);
 		}
 		return false;
 	}
@@ -117,11 +117,12 @@ export default class Path {
 
 	get next_siblingPath(): Path | null {
 		let nextPath: Path | null = null
-		const parentPaths = this.thing?.parentPaths ?? [];
-		const index = parentPaths.indexOf(this.fromPath);
+		const hashedPath = this.fromPath.hashedPath;
+		const paths = this.thing?.parentPaths ?? [];
+		const index = paths.map(p => p.hashedPath).indexOf(hashedPath);
 		if (index != -1) {
-			const next = index.increment(true, parentPaths.length)
-			nextPath = parentPaths[next].appendID(this.endID);
+			const next = index.increment(true, paths.length)
+			nextPath = paths[next].appendID(this.endID);
 		}
 		return nextPath;
 	}
@@ -150,19 +151,10 @@ export default class Path {
 	sharesAnID(path: Path | null): boolean { return !path ? false : this.ids.some(id => path.ids.includes(id)); }
 	relationshipAt(back: number = 1): Relationship | null { return dbDispatch.db.hierarchy?.relationship_getForHID(this.idAt(back).hash()) ?? null; }
 
-	thing_isParentOf(path: Path): boolean {
-		const thingID = this.thingID;
-		if (thingID != k.unknownID) {
-			const parentThings = path.thing?.fromThingsFor(Predicate.idIsAParentOf);
-			return parentThings?.map(t => t.id).includes(thingID) ?? false;
-		}
-		return false;
-	}
-
 	appendID(id: string): Path {
 		let ids = this.ids;
 		ids.push(id);
-		return dbDispatch.db.hierarchy.path_unique(ids.join(k.pathSeparator));
+		return dbDispatch.db.hierarchy.path_remember_unique(ids.join(k.pathSeparator));
 	}
 
 	idAt(back: number = 1): string {
@@ -191,6 +183,27 @@ export default class Path {
 		return false;
 	}
 
+	thing_isImmediateParentOf(path: Path): boolean {
+		const thingID = this.thingID;
+		if (thingID != k.unknownID) {
+			const parentThings = path.thing?.parents;
+			return parentThings?.map(t => t.id).includes(thingID) ?? false;
+		}
+		return false;
+	}
+
+	thing_isAProgenyOf(path: Path): boolean {
+		let isAProgeny = false;
+		path.traverse((progenyPath: Path) => {
+			if (progenyPath.hashedPath == this.hashedPath) {
+				isAProgeny = true;
+				return true;	// stop traversal
+			}
+			return false;
+		})
+		return isAProgeny;
+	}
+
 	path_ofNextSibling(increment: boolean): Path | null {
 		const array = this.siblingPaths;
 		const index = array.map(p => p.pathString).indexOf(this.pathString);
@@ -212,7 +225,7 @@ export default class Path {
 		if (ids.length < 1) {
 			return k.rootPath;
 		}
-		return dbDispatch.db.hierarchy.path_unique(ids.join(k.pathSeparator));
+		return dbDispatch.db.hierarchy.path_remember_unique(ids.join(k.pathSeparator));
 	}
 
 	appendChild(thing: Thing | null): Path {
@@ -225,21 +238,10 @@ export default class Path {
 		return this;
 	}
 
-	ancestors_include(thing: Thing): boolean {
-		const parentPaths = this.thing?.fromPathsFor(Predicate.idIsAParentOf);
-		if (parentPaths) {
-			for (const parentPath of parentPaths) {
-				if (parentPath.things_allAncestors.map(t => t.id).includes(thing.id)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	things_ancestryWithin(thresholdWidth: number): Array<Thing> {
+	things_ancestryWithin(thresholdWidth: number): [number, Array<Thing>] {
 		const root = dbDispatch.db.hierarchy?.root;
 		let totalWidth = 0;
+		let sum = 0;
 		const array = root ? [root] : [];
 		for (const hID of this.hashedIDs) {
 			const thing = dbDispatch.db.hierarchy?.thing_to_getForRelationshipHID(hID);
@@ -248,10 +250,11 @@ export default class Path {
 				if (totalWidth > thresholdWidth) {
 					break;
 				}
+				sum = sum * 10 + thing.parentPaths.length;
 				array.push(thing);
 			}
 		}
-		return array;
+		return [sum, array];
 	}
 
 	visibleProgeny_height(visited: Array<string> = []): number {

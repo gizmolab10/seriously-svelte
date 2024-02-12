@@ -27,7 +27,7 @@ export default class Thing extends Datum {
 	
 	get fields():	Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get parentIDs():	Array<string> { return this.parents.map(t => t.id); }
-	get parents():		 Array<Thing> { return this.fromThingsFor(Predicate.idIsAParentOf); }
+	get parents():		 Array<Thing> { return this.things_fromPaths(this.fromPathsFor(Predicate.idIsAParentOf)); }
 	get parentPaths():	  Array<Path> { return this.fromPathsFor(Predicate.idIsAParentOf); }
 	get isHere():			  boolean { return (get(s_path_here).thing?.id ?? '') == this.id; }
 	get idForChildren():	   string { return this.isBulkAlias ? this.bulkRootID : this.id; }
@@ -43,9 +43,9 @@ export default class Thing extends Datum {
 		return this.baseID != other.baseID || (other.isBulkAlias && !this.isBulkAlias && this.baseID != other.title);
 	}
 
-	fromThingsFor(predicateID: string): Array<Thing> {
+	things_fromPaths(paths: Array<Path>): Array<Thing> {
 		let fromThings: { [id: string]: Thing} = {};
-		for (const fromPath of this.fromPathsFor(predicateID)) {
+		for (const fromPath of paths) {
 			const fromThing = fromPath.thingAt(2);
 			if (fromThing) {
 				fromThings[fromThing.id] = fromThing;
@@ -53,7 +53,6 @@ export default class Thing extends Datum {
 		}
 		return Object.values(fromThings);
 	}
-
 
 	fromPathsFor(predicateID: string): Array<Path> {
 		let paths: {[hashedPath: number]: Path} = {};

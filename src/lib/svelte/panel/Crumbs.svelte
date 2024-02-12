@@ -3,28 +3,27 @@
 	import { k, Size, Point, Thing, ZIndex, signals, svgPath, onDestroy, dbDispatch } from '../../ts/common/GlobalImports';
 	import FatTriangle from '../svg/FatTriangle.svelte';
 	import Crumb from '../kit/Crumb.svelte';
+	let sum = 0;
 	let size = 10;
 	let path: Path;
-	let toggleDraw = false;
 	let ancestors: Array<Thing> = [];
 	let insidePath = svgPath.circle(size, size / 2, new Point(size / -7, size / 4));
 
 	function path_lastGrabbed() { return dbDispatch.db.hierarchy.grabs.path_lastGrabbed; }
-	const rebuild_signalHandler = signals.handle_rebuild(() => { toggleDraw = !toggleDraw; });
+	const rebuild_signalHandler = signals.handle_rebuild(() => { sum += 1; });
 	onDestroy(() => { rebuild_signalHandler.disconnect() })
 
 	$: {
 		const trigger = $s_paths_grabbed + $s_path_toolsCluster + $s_path_here;
 		if (!path || trigger || ancestors.length == 0) {
 			path = path_lastGrabbed() ?? k.rootPath;	// assure we have a path
-			ancestors = path.things_ancestryWithin($s_crumbs_width - 132);
-			toggleDraw = !toggleDraw;
+			[sum, ancestors] = path.things_ancestryWithin($s_crumbs_width - 132);
 		}
 	}
 
 </script>
 
-{#key toggleDraw}
+{#key sum}
 	{#each ancestors.map(thing => thing.parents.length > 1) as multiple, index}
 		{#if index > 0}
 			<span style='

@@ -180,7 +180,7 @@
                         <path d={svgPath.ellipses(1, 2)}/>
                     </svg>
                 </LabelButton>
-                {#if thing.parentPaths.length > 1}
+                {#if thing.parents.length > 1}
                     <TriangleButton
                         fillColor_closure={() => { return ($s_altering_parent == AlteringParent.adding) ? thing.color : k.backgroundColor }}
                         extraColor={($s_altering_parent == AlteringParent.adding) ? k.backgroundColor : thing.color}
@@ -203,7 +203,7 @@
                 strokeColor={color}
                 id='addParent'
                 size={diameter}/>
-            {#if thing.parentPaths.length > 1}
+            {#if thing.parents.length > 1}
                 <TriangleButton
                     fillColor_closure={() => { return ($s_altering_parent == AlteringParent.deleting) ? thing.color : k.backgroundColor }}
                     extraColor={($s_altering_parent == AlteringParent.deleting) ? k.backgroundColor : thing.color}

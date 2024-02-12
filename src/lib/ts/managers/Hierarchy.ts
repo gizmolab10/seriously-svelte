@@ -520,11 +520,12 @@ export default class Hierarchy {
 	//		  PATH		  //
 	////////////////////////
 
-	path_unique(pathString: string = ''): Path {
-		let path = this.knownPath_byHash[pathString.hash()];
+	path_remember_unique(pathString: string = ''): Path {
+		const hashedPath = pathString.hash();
+		let path = this.knownPath_byHash[hashedPath];
 		if (!path) {
 			path = new Path(pathString);
-			this.knownPath_byHash[pathString.hash()] = path;
+			this.knownPath_byHash[hashedPath] = path;
 		}
 		return path;
 	}

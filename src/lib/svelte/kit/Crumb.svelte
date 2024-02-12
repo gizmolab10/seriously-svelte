@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, noop, Thing, onMount, dbDispatch } from '../../ts/common/GlobalImports';
+	import { k, noop, Thing, onMount, signals, dbDispatch } from '../../ts/common/GlobalImports';
 	import { s_path_here } from '../../ts/managers/State';
 	export let path = '';
 	let thing: Thing = path.thing;

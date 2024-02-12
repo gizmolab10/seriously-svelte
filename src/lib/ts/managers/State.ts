@@ -39,6 +39,10 @@ s_id_popupView.subscribe((id: string | null) => {
 })
 
 s_altering_parent.subscribe((alteration: string | null) => {
+	if (interval) {
+		clearInterval(interval);
+		interval = null;
+	}
 	if (alteration) {
 		let blink = true;
 		interval = setInterval(() => {
@@ -46,9 +50,6 @@ s_altering_parent.subscribe((alteration: string | null) => {
 			blink = !blink;
 		}, 500)
 	} else {
-		if (interval) {
-			clearInterval(interval);
-		}
 		signals.signal_alteringParent(null);
 	}
 })
