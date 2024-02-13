@@ -17,21 +17,26 @@
 	let toggle = false;
 	let left = 14;
 	let size = 14;
-	
-	function builds_buttonClicked(event) { $s_id_popupView = ($s_id_popupView == IDButton.buildNotes) ? null : IDButton.buildNotes; }
-	function help_buttonClicked() { $s_id_popupView = ($s_id_popupView == IDButton.help) ? null : IDButton.help; }
-	const rebuild_signalHandler = signals.handle_rebuild(() => { graph_fullRebuild(); });
+
+	$: { updateHerePath($s_path_here); }
+	function help_buttonClicked() { togglePopupID(IDButton.help); }
 	window.addEventListener('resize', (event) => { graphRect_update(); });
+	function builds_buttonClicked(event) { togglePopupID(IDButton.buildNotes); }
+	function togglePopupID(id) { $s_id_popupView = ($s_id_popupView == id) ? null : id; }
+	const rebuild_signalHandler = signals.handle_rebuild(() => { updateHerePath($s_path_here); });
 
 	onMount(() => {
 		launch.setup();
-		graph_fullRebuild();
+		updateHerePath($s_path_here);
 	});
 
-	$: {
-		const path = $s_path_here;
+	function updateHerePath(path, forced = true) {
+		let changed = false;
 		if (path && !path.matchesPath(herePath)) {
 			herePath = path;
+			changed = true;
+		}
+		if (changed || forced) {
 			graph_fullRebuild();
 		}
 	}

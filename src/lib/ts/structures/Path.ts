@@ -117,12 +117,14 @@ export default class Path {
 
 	get next_siblingPath(): Path | null {
 		let nextPath: Path | null = null
-		const hashedPath = this.fromPath.hashedPath;
+		const hashedPath = this.hashedPath;
 		const paths = this.thing?.parentPaths ?? [];
 		const index = paths.map(p => p.hashedPath).indexOf(hashedPath);
-		if (index != -1) {
+		if (index == -1) {
+			console.log(`no next for ${this.thingTitles} of ${paths.map(p => '\n' + p.thingTitles)}`);
+		} else {
 			const next = index.increment(true, paths.length)
-			nextPath = paths[next].appendID(this.endID);
+			nextPath = paths[next];
 		}
 		return nextPath;
 	}

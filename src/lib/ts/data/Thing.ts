@@ -59,16 +59,18 @@ export default class Thing extends Datum {
 		if (!this.isRoot) {
 			const relationships = this.hierarchy.relationships_getByPredicateIDToAndID(predicateID, true, this.id);
 			for (const relationship of relationships) {
+				const endID = relationship.id;
 				const thing = relationship.fromThing;
 				const paths = thing?.fromPathsFor(predicateID) ?? [];
-				const endID = relationship.id;
+				function addPath(path: Path) {
+					const fullPath = path.appendID(endID);
+					fromPaths[fullPath.hashedPath] = fullPath;	
+				}
 				if (paths.length == 0) {
-					const fullPath = k.rootPath.appendID(endID);
-					fromPaths[fullPath.hashedPath] = fullPath;
+					addPath(k.rootPath);
 				} else {
 					for (const path of paths) {
-						const fullPath = path.appendID(endID);
-						fromPaths[fullPath.hashedPath] = fullPath;	// assure uniqueness
+						addPath(path);
 					}
 				}
 			}

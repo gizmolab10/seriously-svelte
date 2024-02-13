@@ -66,7 +66,6 @@ export default class DBDispatch {
 	updateHierarchy(type: string) {
 		const h = this.db.hierarchy;
 		if (this.db.hasData) {
-			persistLocal.s_updateForDBType(type);
 			h.here_restore();
 		} else {
 			if (type != TypeDB.local) {

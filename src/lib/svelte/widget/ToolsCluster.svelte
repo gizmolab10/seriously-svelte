@@ -56,7 +56,7 @@
     }
 
     $: {
-        if (!path || !path.matchesPath($s_path_toolsCluster)) {
+        if (!$s_path_toolsCluster?.matchesPath(path) ?? false) {
             path = $s_path_toolsCluster;
             thing = path?.thing;
             if (thing) {
