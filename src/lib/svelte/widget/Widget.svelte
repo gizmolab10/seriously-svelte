@@ -143,9 +143,9 @@
 		z-index: {ZIndex.widgets};
 		border-radius: {radius}px;
 	'>
-	<DragDot path={path} center={new Point(0, revealTop)}/>
-	<TitleEditor path={path} fontSize={$s_thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
-	<RevealDot path={path} center={new Point(0, revealTop)}/>
+	<DragDot thing={thing} path={path} center={new Point(0, revealTop)}/>
+	<TitleEditor thing={thing} path={path} fontSize={$s_thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
+	<RevealDot thing={thing} path={path} center={new Point(0, revealTop)}/>
 	{#if showingCluster && $s_tools_inWidgets}
 		<ToolsCluster path={path}/>
 	{/if}

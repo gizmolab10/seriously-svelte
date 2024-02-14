@@ -4,6 +4,10 @@
 	import Widget from '../widget/Widget.svelte';
 </script>
 
+<style>
+	@import '../../../styles/Help.css';
+</style>
+
 <div>
 	<div class='centered-container'>
 		<Widget thing={exemplar} path={exemplar.path} origin={new Point(150, 5)}/>
@@ -20,7 +24,3 @@
 		<li class='help-li'>The buttons above the graph indicates the location of the <b>selected</b> item within the hierarchy. They are called <b>breadcrumbs</b> (like Hansel and Grettle left behind to find their way home).
 	</ul>
 </div>
-
-<style>
-	@import '../../../styles/Help.css';
-</style>

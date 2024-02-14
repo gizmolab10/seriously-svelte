@@ -4,8 +4,8 @@
 	import { onMount, Wrapper, Direction, onDestroy, dbDispatch, IDWrapper } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte';
 	export let center;
+	export let thing;
 	export let path;
-	let thing = path.thing;
 	let bulkAliasFillColor = k.backgroundColor;
 	let insidePath = svgPath.circle(16, 6);
 	let fillColor = k.backgroundColor;

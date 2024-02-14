@@ -1,6 +1,10 @@
 <script>
 </script>
 
+<style>
+	@import '../../../styles/Help.css';
+</style>
+
 <div>
 	<ul class='help-ul'>
 		<li class='help-li'>To <b>browse</b>, tap the arrow keys (including up and down). This will change which item is <b>selected</b>.
@@ -9,7 +13,3 @@
 		<li class='help-li'>Hold the <i>Shift</i> key down to reveal or hide the <b>selected</b> item's children.
 	</ul>
 </div>
-
-<style>
-	@import '../../../styles/Help.css';
-</style>

@@ -30,7 +30,7 @@
 	onMount(() => { setup(); setTimeout(() => { updateMaybeRedraw(); }, 20) });
 
 	async function handleClick(IDButton: string, event: MouseEvent) {
-		if (!thing.isExemplar) {
+		if (path && !path.isExemplar) {
             await k.hierarchy.handleToolClicked(IDButton, event);
 		}
 	}

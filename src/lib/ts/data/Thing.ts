@@ -86,9 +86,6 @@ export default class Thing extends Datum {
 	}
 
 	updateColorAttributes(path: Path) {
-		if (path.isEditing) {
-			u.noop();
-		}
 		const border = (path.isEditing ? 'dashed' : 'solid') + ' 1px ';
 		const hover = border + this.revealColor(true, path);
 		const grab = border + this.revealColor(false, path);

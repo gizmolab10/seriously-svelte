@@ -4,8 +4,8 @@
 	import { Wrapper, Direction, onDestroy, dbDispatch, AlteringParent } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte';
 	export let center;
+	export let thing;
 	export let path;
-	let thing = path.thing;
 	let tinyDotColor = thing.color;
 	let strokeColor = thing.color;
 	let fillColor = thing.color;
@@ -106,7 +106,7 @@
 	function updatePathAndPosition() {
 		size = $s_dot_size;
 		left = center.x + 1 - (size / 2);
-		top = path.toolsGrabbed ? $s_tools_inWidgets ? size + 1 : 2 - size : -size / 2 - 5;
+		top = path.toolsGrabbed ? $s_tools_inWidgets ? size + 1 : 2 - size : -size / 2 - (path.isExemplar ? 2 : 5);
 		scalablePath = svgPath.oval(size, false);	// TODO: change it & position when altering state changes
 		if (thing.parents.length > 1) {
 			extra = svgPath.circle(size, size / 5);

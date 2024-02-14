@@ -50,8 +50,8 @@ export default class Path {
 	get order(): number { return this.relationship?.order ?? -1; }
 	get isHere(): boolean { return this.matchesStore(s_path_here); }
 	get hasChildren(): boolean { return this.childPaths.length > 0; }
+	get isExemplar(): boolean { return this.pathString == 'exemplar'; }
 	get siblingPaths(): Array<Path> { return this.fromPath.childPaths; }
-	get isExemplar(): boolean { return this.thing?.isExemplar ?? false; }
 	get hashedIDs(): Array<number> { return this.ids.map(i => i.hash()); }
 	get relationship(): Relationship | null { return this.relationshipAt(); }
 	get thingTitle(): string { return this.thing?.title ?? 'missing title'; }
@@ -166,8 +166,9 @@ export default class Path {
 	}
 
 	thingAt(back: number = 1): Thing | null {
+		const isEmpthPathString = this.pathString == '';
 		const relationship = this.relationshipAt(back);
-		if (this.pathString != '' && relationship) {
+		if (!isEmpthPathString && relationship) {
 			return !relationship ? null : k.hierarchy?.thing_getForHID(relationship.idTo.hash()) ?? null;
 		}
 		return k.hierarchy?.root ?? null;

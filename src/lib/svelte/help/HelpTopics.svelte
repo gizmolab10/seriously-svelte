@@ -121,8 +121,8 @@
 		border-radius: 0.5em;
 	}
 	.selected {
-		color: black;
-		background-color: #def;
+		color: #223;
+		background-color: #eff;
 	}
 	.buttons-container {
 		gap: 15px;

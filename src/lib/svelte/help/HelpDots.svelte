@@ -8,6 +8,10 @@
 	}
 </script>
 
+<style>
+	@import '../../../styles/Help.css';
+</style>
+
 <div>
 	<div class='centered-container'>
 		<Widget thing={exemplar} path={exemplar.path} origin={new Point(150, 5)}/>
@@ -22,7 +26,3 @@
 		<li class='help-li'><b>Hovering</b> over a dot will reverse its color (try it above).
 	</ul>
 </div>
-
-<style>
-	@import '../../../styles/Help.css';
-</style>

@@ -284,9 +284,6 @@ export default class Hierarchy {
 		}
 		if (!thing) {
 			thing = new Thing(baseID, id, title, color, trait, isRemotelyStored);
-			if (baseID != this.db.baseID) {
-				u.noop()
-			}
 			if (thing.isBulkAlias) {
 				thing.needsBulkFetch = true;
 				if (title.includes('@')) {
@@ -513,6 +510,21 @@ export default class Hierarchy {
 			this.relationship_rememberByKnown(this.knownRs_byHIDTo, relationship.idTo.hash(), relationship);
 			this.relationship_rememberByKnown(this.knownRs_byHIDFrom, relationship.idFrom.hash(), relationship);
 			this.relationship_rememberByKnown(this.knownRs_byHIDPredicate, relationship.idPredicate.hash(), relationship);
+		}
+	}
+
+	async relationship_forget_remoteRemove(path: Path, otherPath: Path) {
+		const thing = path.thing;
+		const fromPath = path.fromPath;
+		const relationship = this.relationship_getByIDPredicateFromAndTo(Predicate.idIsAParentOf, otherPath.thingID, path.thingID);
+		if (fromPath && relationship && (thing?.parents.length ?? 0) > 1) {
+			this.relationship_forget(relationship);
+			if (otherPath.hasChildren) {
+				fromPath.order_normalizeRecursive_remoteMaybe(true);
+			} else {
+				otherPath.collapse();
+			}
+			await this.db.relationship_remoteDelete(relationship);
 		}
 	}
 
@@ -769,21 +781,6 @@ export default class Hierarchy {
 			signals.signal_rebuild_fromHere();
 		} else {
 			signals.signal_relayout_fromHere();
-		}
-	}
-
-	async relationship_forget_remoteRemove(path: Path, otherPath: Path) {
-		const thing = path.thing;
-		const fromPath = path.fromPath;
-		const relationship = this.relationship_getByIDPredicateFromAndTo(Predicate.idIsAParentOf, otherPath.thingID, path.thingID);
-		if (fromPath && relationship && (thing?.parents.length ?? 0) > 1) {
-			this.relationship_forget(relationship);
-			if (otherPath.hasChildren) {
-				fromPath.order_normalizeRecursive_remoteMaybe(true);
-			} else {
-				otherPath.collapse();
-			}
-			await this.db.relationship_remoteDelete(relationship);
 		}
 	}
 

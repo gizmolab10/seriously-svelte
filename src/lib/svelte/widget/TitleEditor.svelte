@@ -4,17 +4,17 @@
 	import { s_title_editing, s_row_height } from '../../ts/managers/State';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
+	export let thing;
 	export let path;
-	let thing = path.thing;
 	let padding = `1px 0px 0px ${$s_row_height / 3}px`;
-	let originalTitle = thing.title;
 	let titleWrapper: Wrapper;
+	let originalTitle = '';
 	let isEditing = false;
 	let titleWidth = 0;
 	let ghost = null;
 	let input = null;
 
-	onDestroy(() => { thing = null; relayoutHandler.disconnect(); });
+	onDestroy(() => { relayoutHandler.disconnect(); });
 	var hasChanges = () => { return originalTitle != thing.title; };
 	function handleInput(event) { thing.title = event.target.value; updateInputWidth(); };
 	const relayoutHandler = signals.handle_relayout((path) => setTimeout(() => { updateInputWidth(); }, 10));
@@ -22,15 +22,11 @@
 
 	$: {
 		if (input) {
-			// if (path.thingTitle == 'a') {
-			// 	console.log(`TITLE ${path.thingTitles}`);
-			// }
 			titleWrapper = new Wrapper(input, path, IDWrapper.title);
 		}
 	}
 	
 	onMount(() => {
-		console.log(`TITLE onMount ${thing.title}`);
 		setTimeout(() => {
 			updateInputWidth();
 		}, 100);
