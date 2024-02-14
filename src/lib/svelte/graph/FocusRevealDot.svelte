@@ -1,5 +1,5 @@
 <script>
-	import { Point, debug, Direction, dbDispatch } from "../../ts/common/GlobalImports";
+	import { k, Point, debug, Direction, dbDispatch } from "../../ts/common/GlobalImports";
 	import TriangleButton from '../svg/TriangleButton.svelte';
 	import { s_dot_size } from '../../ts/managers/State';
     export let path = '';
@@ -12,8 +12,8 @@
 	}
 
 	function onClick(event) {
-		if (dbDispatch.db.hierarchy.grabs.latestPathGrabbed(true)?.isHere) {
-			dbDispatch.db.hierarchy.path_rebuild_remoteMoveRight(path, false, false);
+		if (k.hierarchy.grabs.latestPathGrabbed(true)?.isHere) {
+			k.hierarchy.path_rebuild_remoteMoveRight(path, false, false);
 		} else {
 			path.grabOnly();
 		}

@@ -29,9 +29,9 @@
     function centers_isEmpty(): boolean { return Object.keys(c).length == 0; }
 	onMount(() => { setup(); setTimeout(() => { updateMaybeRedraw(); }, 20) });
 
-	async function handleClick(IDButton: string) {
+	async function handleClick(IDButton: string, event: MouseEvent) {
 		if (!thing.isExemplar) {
-            await dbDispatch.db.hierarchy.handleToolClicked(IDButton);
+            await k.hierarchy.handleToolClicked(IDButton, event);
 		}
 	}
 
@@ -163,7 +163,7 @@
                 <LabelButton
                     color={color}
                     center={getC(IDTool.more)}
-                    onClick={() => handleClick(IDTool.more)}>
+                    onClick={(event) => handleClick(IDTool.more, event)}>
                     <svg style='position:absolute'
                         width='28'
                         height='16'
@@ -184,7 +184,7 @@
                     <TriangleButton
                         fillColor_closure={() => { return ($s_altering_parent == AlteringParent.adding) ? thing.color : k.backgroundColor }}
                         extraColor={($s_altering_parent == AlteringParent.adding) ? k.backgroundColor : thing.color}
-                        onClick={() => handleClick(IDTool.next)}
+                        onClick={(event) => handleClick(IDTool.next, event)}
                         extra={svgPath.circle(diameter, 4)}
                         center={getC(IDTool.next)}
                         direction={Direction.up}
@@ -196,7 +196,7 @@
             <TriangleButton
                 fillColor_closure={() => { return ($s_altering_parent == AlteringParent.adding) ? thing.color : k.backgroundColor }}
                 extraColor={($s_altering_parent == AlteringParent.adding) ? k.backgroundColor : thing.color}
-                onClick={() => handleClick(IDTool.addParent)}
+                onClick={(event) => handleClick(IDTool.addParent, event)}
                 center={getC(IDTool.addParent)}
                 extra={svgPath.tCross(diameter, 2)}
                 direction={Direction.left}
@@ -207,7 +207,7 @@
                 <TriangleButton
                     fillColor_closure={() => { return ($s_altering_parent == AlteringParent.deleting) ? thing.color : k.backgroundColor }}
                     extraColor={($s_altering_parent == AlteringParent.deleting) ? k.backgroundColor : thing.color}
-                    onClick={() => handleClick(IDTool.deleteParent)}
+                    onClick={(event) => handleClick(IDTool.deleteParent, event)}
                     center={getC(IDTool.deleteParent)}
                     extra={svgPath.dash(diameter, 2)}
                     direction={Direction.left}
@@ -217,7 +217,7 @@
             {/if}
             <TriangleButton
                 fillColor_closure={() => { return k.backgroundColor; }}
-                onClick={() => handleClick(IDTool.add)}
+                onClick={(event) => handleClick(IDTool.add, event)}
                 extra={svgPath.tCross(diameter, 2)}
                 center={getC(IDTool.add)}
                 direction={Direction.right}
@@ -226,7 +226,7 @@
                 size={diameter}
                 id='add'/>
             <button class='delete'
-                on:click={() => handleClick(IDTool.delete)}
+                on:click={(event) => handleClick(IDTool.delete, event)}
                 style='border: none;
                     cursor: pointer;
                     background: none;

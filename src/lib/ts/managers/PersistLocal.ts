@@ -43,12 +43,13 @@ class PersistLocal {
 	}
 
 	paths_restore() {
-		const hierarchy = dbDispatch.db.hierarchy;
-		const idHere = this.ignorePaths ? '' : (this.readFromDBKey(PersistID.here) ?? hierarchy.idRoot);
-		s_paths_grabbed.set(this.ignorePaths ? [] : this.readFromDBKey(PersistID.grabbed)?.map((s: string) => hierarchy.path_remember_unique(s)) ?? []);
-		s_paths_expanded.set(this.ignorePaths ? [] : this.readFromDBKey(PersistID.expanded)?.map((e: string) => hierarchy.path_remember_unique(e)) ?? []);
-		s_path_here.set(hierarchy.path_remember_unique(idHere));
-		k.rootPath = hierarchy.path_remember_unique();
+		const h = dbDispatch.db.hierarchy;
+		k.hierarchy = h;
+		const idHere = this.ignorePaths ? '' : (this.readFromDBKey(PersistID.here) ?? h.idRoot);
+		s_paths_grabbed.set(this.ignorePaths ? [] : this.readFromDBKey(PersistID.grabbed)?.map((s: string) => h.path_remember_unique(s)) ?? []);
+		s_paths_expanded.set(this.ignorePaths ? [] : this.readFromDBKey(PersistID.expanded)?.map((e: string) => h.path_remember_unique(e)) ?? []);
+		s_path_here.set(h.path_remember_unique(idHere));
+		k.rootPath = h.path_remember_unique();
 		k.rootPath.setup();
 		s_setup();
 

@@ -18,6 +18,14 @@ class Utilities {
 		});
 	}
 
+	sort_byTitleTop(array: Array<Path>) {
+		return array.sort( (a: Path, b: Path) => {
+			const aTop = a.thingTitleRect?.origin.y;
+			const bTop = b.thingTitleRect?.origin.y;
+			return (!aTop || !bTop) ? 0 : aTop - bTop;
+		});
+	}
+
 	remove<T>(from: Array<T>, item: T): void {
 		const index = from.findIndex((element: T) => element === item);
 		if (index !== -1) {

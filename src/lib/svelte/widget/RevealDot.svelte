@@ -95,7 +95,7 @@
 				path.grabOnly();
 				$s_path_toolsCluster = path;
 			} else {
-				dbDispatch.db.hierarchy.path_rebuild_remoteMoveRight(path, !path.isExpanded, true, false);
+				k.hierarchy.path_rebuild_remoteMoveRight(path, !path.isExpanded, true, false);
 				return;
 			}
 			signals.signal_rebuild_fromHere();

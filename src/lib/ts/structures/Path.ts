@@ -18,7 +18,7 @@ export default class Path {
 		if (pathString != '') {			// root path is setup in persist local finish setup
 			this.setup();
 		}
-		if (dbDispatch.db.hierarchy.isAssembled) {
+		if (k.hierarchy.isAssembled) {
 			this.subscriptions_setup();	// not needed during hierarchy assembly
 		}
 	}
@@ -29,7 +29,7 @@ export default class Path {
 
 	wrapper_add(wrapper: Wrapper) {
 		this.wrappers[wrapper.type] = wrapper;
-        dbDispatch.db.hierarchy.wrapper_add(wrapper);
+        k.hierarchy.wrapper_add(wrapper);
 	}
 
 	subscriptions_setup() {
@@ -47,29 +47,30 @@ export default class Path {
 	get firstChild(): Thing { return this.children[0]; }
 	get lastChild(): Thing { return this.children.slice(-1)[0]; }
 	get isRoot(): boolean { return this.matchesPath(k.rootPath); }
-	get hasChildren(): boolean { return this.childPaths.length > 0; }
 	get order(): number { return this.relationship?.order ?? -1; }
 	get isHere(): boolean { return this.matchesStore(s_path_here); }
+	get hasChildren(): boolean { return this.childPaths.length > 0; }
 	get siblingPaths(): Array<Path> { return this.fromPath.childPaths; }
 	get isExemplar(): boolean { return this.thing?.isExemplar ?? false; }
 	get hashedIDs(): Array<number> { return this.ids.map(i => i.hash()); }
-	get lineWrapper(): Wrapper | null { return this.wrappers[IDWrapper.line]; }
 	get relationship(): Relationship | null { return this.relationshipAt(); }
-	get titleWrapper(): Wrapper | null { return this.wrappers[IDWrapper.title]; }
 	get thingTitle(): string { return this.thing?.title ?? 'missing title'; }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
+	get lineWrapper(): Wrapper | null { return this.wrappers[IDWrapper.line]; }
+	get isVisible(): boolean { return this.incorporates(k.hierarchy?.herePath); }
+	get titleWrapper(): Wrapper | null { return this.wrappers[IDWrapper.title]; }
+	get toolsGrabbed(): boolean { return this.matchesStore(s_path_toolsCluster); }
 	get revealWrapper(): Wrapper | null { return this.wrappers[IDWrapper.reveal]; }
 	get widgetWrapper(): Wrapper | null { return this.wrappers[IDWrapper.widget]; }
-	get toolsGrabbed(): boolean { return this.matchesStore(s_path_toolsCluster); }
+	get thingTitleRect(): Rect | null { return this.wrapperRectFor(IDWrapper.title); }
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
+	get children(): Array<Thing> { return k.hierarchy?.things_getForPaths(this.childPaths); }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
 	get isEditing(): boolean { return this.matchesPath(get(s_title_editing)?.editing ?? null); }
 	get isStoppingEdit(): boolean { return this.matchesPath(get(s_title_editing)?.stopping ?? null); }
-	get children(): Array<Thing> { return dbDispatch.db.hierarchy?.things_getForPaths(this.childPaths); }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
-	get thingTitleRect(): Rect | null { return Rect.createFromDOMRect(this.titleWrapper?.component.getBoundingClientRect());}
-	get thingTitles(): Array<string> { return dbDispatch.db.hierarchy?.things_getForPath(this).map(t => `\"${t.title}\"`) ?? []; }
+	get thingTitles(): Array<string> { return k.hierarchy?.things_getForPath(this).map(t => `\"${t.title}\"`) ?? []; }
 
 	get ids(): Array<string> {
 		if (this.isRoot) {
@@ -80,17 +81,9 @@ export default class Path {
 
 	get thingID(): string {
 		if (this.isRoot) {
-			return dbDispatch.db.hierarchy?.idRoot ?? k.unknownID;
+			return k.hierarchy?.idRoot ?? k.unknownID;
 		}
 		return this.relationship?.idTo ?? k.unknownID;
-	}
-
-	get isVisible(): boolean {
-		const herePath = dbDispatch.db.hierarchy?.herePath;
-		if (herePath) {
-			return herePath.isRoot ? true : this.ids.includes(herePath.endID);
-		}
-		return false;
 	}
 	
 	get things_canAlter_asParentOf_toolsGrab(): boolean {
@@ -115,8 +108,8 @@ export default class Path {
 		return false;
 	}
 
-	get next_siblingPath(): Path | null {
-		let nextPath: Path | null = null
+	get next_siblingPath(): Path {
+		let nextPath: Path = this;
 		const hashedPath = this.hashedPath;
 		const paths = this.thing?.parentPaths ?? [];
 		const index = paths.map(p => p.hashedPath).indexOf(hashedPath);
@@ -135,7 +128,7 @@ export default class Path {
 		if (thingID == k.unknownID) {
 			console.log(`child paths unavailable for ID: ${k.unknownID}`);
 		} else if (thingID) {
-			const hierarchy = dbDispatch.db.hierarchy;
+			const hierarchy = k.hierarchy;
 			const toRelationships = hierarchy.relationships_getByPredicateIDToAndID(this.predicateID, false, thingID);
 			for (const toRelationship of toRelationships) {			// loop through all to relationships
 				const path = this.appendID(toRelationship.id);		// add each toRelationship's id
@@ -151,12 +144,13 @@ export default class Path {
 	matchesPath(path: Path | null): boolean { return !path ? false : this.pathString == path.pathString; }
 	includedInPaths(paths: Array<Path>): boolean { return paths.filter(p => p.matchesPath(this)).length > 0; }
 	sharesAnID(path: Path | null): boolean { return !path ? false : this.ids.some(id => path.ids.includes(id)); }
-	relationshipAt(back: number = 1): Relationship | null { return dbDispatch.db.hierarchy?.relationship_getForHID(this.idAt(back).hash()) ?? null; }
+	wrapperRectFor(id: IDWrapper): Rect | null { return Rect.createFromDOMRect(this.wrappers[id]?.component.getBoundingClientRect()); }
+	relationshipAt(back: number = 1): Relationship | null { return k.hierarchy?.relationship_getForHID(this.idAt(back).hash()) ?? null; }
 
 	appendID(id: string): Path {
 		let ids = this.ids;
 		ids.push(id);
-		return dbDispatch.db.hierarchy.path_remember_unique(ids.join(k.pathSeparator));
+		return k.hierarchy.path_remember_unique(ids.join(k.pathSeparator));
 	}
 
 	idAt(back: number = 1): string {
@@ -170,19 +164,9 @@ export default class Path {
 	thingAt(back: number = 1): Thing | null {
 		const relationship = this.relationshipAt(back);
 		if (this.pathString != '' && relationship) {
-			return !relationship ? null : dbDispatch.db.hierarchy?.thing_getForHID(relationship.idTo.hash()) ?? null;
+			return !relationship ? null : k.hierarchy?.thing_getForHID(relationship.idTo.hash()) ?? null;
 		}
-		return dbDispatch.db.hierarchy?.root ?? null;
-	}
-
-	becomeHere() {
-		if (this.hasChildren) {
-			s_path_here.set(this);
-			s_path_toolsCluster.set(null);
-			this.expand();
-			return true;
-		}
-		return false;
+		return k.hierarchy?.root ?? null;
 	}
 
 	thing_isImmediateParentOf(path: Path): boolean {
@@ -192,6 +176,22 @@ export default class Path {
 			return parentThings?.map(t => t.id).includes(thingID) ?? false;
 		}
 		return false;
+	}
+
+	incorporates(path: Path | null): boolean {
+		if (path) {
+			const ids = this.ids;
+			const pathIDs = path.ids;
+			let index = 0;
+			while (index < pathIDs.length) {
+				if (ids[index] != pathIDs[index]) {
+					return false;
+				}
+				index++;
+			}
+			return true;
+		}
+		return false;		
 	}
 
 	thing_isAProgenyOf(path: Path): boolean {
@@ -227,12 +227,12 @@ export default class Path {
 		if (ids.length < 1) {
 			return k.rootPath;
 		}
-		return dbDispatch.db.hierarchy.path_remember_unique(ids.join(k.pathSeparator));
+		return k.hierarchy.path_remember_unique(ids.join(k.pathSeparator));
 	}
 
 	appendChild(thing: Thing | null): Path {
 		if (thing) {
-			const relationship = dbDispatch.db.hierarchy?.relationship_getByIDPredicateFromAndTo(Predicate.idIsAParentOf, this.thingID, thing.id);
+			const relationship = k.hierarchy?.relationship_getByIDPredicateFromAndTo(Predicate.idIsAParentOf, this.thingID, thing.id);
 			if (relationship) {
 				return this.appendID(relationship.id);
 			}
@@ -241,12 +241,12 @@ export default class Path {
 	}
 
 	things_ancestryWithin(thresholdWidth: number): [number, Array<Thing>] {
-		const root = dbDispatch.db.hierarchy?.root;
+		const root = k.hierarchy?.root;
 		let totalWidth = 0;
 		let sum = 0;
 		const array = root ? [root] : [];
 		for (const hID of this.hashedIDs) {
-			const thing = dbDispatch.db.hierarchy?.thing_to_getForRelationshipHID(hID);
+			const thing = k.hierarchy?.thing_to_getForRelationshipHID(hID);
 			if (thing && thing != root) {
 				totalWidth += u.getWidthOf(thing.title);
 				if (totalWidth > thresholdWidth) {
@@ -260,7 +260,7 @@ export default class Path {
 	}
 
 	visibleProgeny_height(visited: Array<string> = []): number {
-		const thing = dbDispatch.db.hierarchy?.thing_getForPath(this);
+		const thing = k.hierarchy?.thing_getForPath(this);
 		if (thing) {
 			const useToolHeight = this.toolsGrabbed && get(s_tools_inWidgets);
 			const rowHeight = useToolHeight ? k.toolsClusterHeight : get(s_row_height);
@@ -277,7 +277,7 @@ export default class Path {
 	}
 
 	visibleProgeny_width(isFirst: boolean = true, visited: Array<number> = []): number {
-		const thing = dbDispatch.db.hierarchy?.thing_getForPath(this);
+		const thing = k.hierarchy?.thing_getForPath(this);
 		if (thing) {
 			let width = isFirst ? 0 : thing.titleWidth;
 			if (!visited.includes(this.hashedPath) && this.isExpanded && this.hasChildren) {
@@ -309,6 +309,16 @@ export default class Path {
 		this.toggleToolsGrab();
 	}
 
+	becomeHere() {
+		if (this.hasChildren) {
+			s_path_here.set(this);
+			s_path_toolsCluster.set(null);
+			this.expand();
+			return true;
+		}
+		return false;
+	}
+
 	toggleToolsGrab(update: boolean = true) {
 		if (get(s_path_toolsCluster)) { // ignore if no reveal dot set s_path_toolsCluster
 			if (this.toolsGrabbed) {
@@ -319,11 +329,28 @@ export default class Path {
 		}
 	}
 
+	async assureIsVisible() {
+		// visit and expand each parent until this
+		let path: Path | null = this;
+		do {
+			path = path?.fromPath;
+			if (path) {
+				if (path.isVisible) {
+					path.becomeHere();
+					return;
+				}
+				path.expand();
+			}
+		} while (!path);
+		k.rootPath.expand();
+		k.rootPath.becomeHere();
+	}
+
 	clicked_dragDot(shiftKey: boolean) {
         if (!this.isExemplar) {
 			s_title_editing?.set(null);
 			if (get(s_altering_parent)) {
-				dbDispatch.db.hierarchy.path_alterMaybe(this);
+				k.hierarchy.path_alterMaybe(this);
 			} else if (shiftKey || this.isGrabbed) {
 				this.toggleGrab();
 			} else {
@@ -367,10 +394,6 @@ export default class Path {
 		} else {
 			this.toggleToolsGrab(); // do not show tools toolsCluster for root
 		}
-	}
-
-	async assureIsVisible() {
-		// console.log('assureIsVisible is not done');
 	}
 
 	async order_normalizeRecursive_remoteMaybe(remoteWrite: boolean, visited: Array<number> = []) {

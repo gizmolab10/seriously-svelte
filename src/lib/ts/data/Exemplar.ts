@@ -1,11 +1,11 @@
-import { Path, Thing, dbDispatch } from '../common/GlobalImports'
+import { k, Path, Thing, dbDispatch } from '../common/GlobalImports'
 
 class Exemplar extends Thing {
 	path: Path;
 
 	constructor() {
 		super(dbDispatch.db.baseID, 'exemplar', 'this item is selected', '#b52', '?', 0, true);
-		this.path = dbDispatch.db.hierarchy.path_remember_unique('exemplar');
+		this.path = k.hierarchy.path_remember_unique('exemplar');
 		this.isExemplar = true;
 	}
 

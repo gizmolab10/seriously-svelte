@@ -53,7 +53,7 @@
 				case '?': $s_id_popupView = IDButton.help; break;
 				case ']':
 				case '[': dbDispatch.nextDB(key == ']'); break;
-				default:  await dbDispatch.db.hierarchy.handleKeyDown(event); break;
+				default:  await k.hierarchy.handleKeyDown(event); break;
 			}
 		}
 	}
@@ -85,7 +85,7 @@
 	
 	$: {
 		if (here == null || here.id != $s_path_here) {
-			const h = dbDispatch.db.hierarchy;
+			const h = k.hierarchy;
 			here = !$s_path_here ? h.root : h.thing_getForPath($s_path_here);
 			focusOffsetX = $s_title_atTop ? 0 : here?.titleWidth / 2
 			updateOrigins();

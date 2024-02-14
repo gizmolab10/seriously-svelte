@@ -53,11 +53,11 @@ export default class Hierarchy {
 		this.isAssembled = true;
 	}
 
-	async handleToolClicked(IDButton: string) {
+	async handleToolClicked(IDButton: string, event: MouseEvent) {
 		const path = get(s_path_toolsCluster);
 		if (path) {
 			switch (IDButton) {
-				case IDTool.next: this.path_relayout_toolCluster_nextParent(); return;
+				case IDTool.next: this.path_relayout_toolCluster_nextParent(event.altKey); return;
 				case IDTool.add: await this.path_edit_remoteCreateChildOf(path); break;
 				case IDTool.addParent: this.toggleAlteration(AlteringParent.adding); return;
 				case IDTool.deleteParent: this.toggleAlteration(AlteringParent.deleting); return;
@@ -530,10 +530,19 @@ export default class Hierarchy {
 		return path;
 	}
 
-	async path_relayout_toolCluster_nextParent() {
-		const path = get(s_path_toolsCluster)?.next_siblingPath;
-		if (path) {
-			await path.assureIsVisible();
+	async path_relayout_toolCluster_nextParent(force: boolean = false) {
+		const toolsPath = get(s_path_toolsCluster);
+		if (toolsPath) {
+			let path = toolsPath;
+			do {
+				path = path.next_siblingPath;
+				if (path.isVisible) {
+					break;
+				} else if (force) {
+					await path.assureIsVisible();
+					break;
+				}	
+			} while (!path.matchesPath(toolsPath));
 			path.grabOnly();
 			signals.signal_relayout_fromHere();
 			s_path_toolsCluster.set(path);

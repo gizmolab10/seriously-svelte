@@ -9,7 +9,7 @@
 	let ancestors: Array<Thing> = [];
 	let insidePath = svgPath.circle(size, size / 2, new Point(size / -7, size / 4));
 
-	function path_lastGrabbed() { return dbDispatch.db.hierarchy.grabs.path_lastGrabbed; }
+	function path_lastGrabbed() { return k.hierarchy.grabs.path_lastGrabbed; }
 	const rebuild_signalHandler = signals.handle_rebuild(() => { sum += 1; });
 	onDestroy(() => { rebuild_signalHandler.disconnect() })
 

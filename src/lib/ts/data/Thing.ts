@@ -34,7 +34,7 @@ export default class Thing extends Datum {
 	get description():		   string { return this.id + ' \"' + this.title + '\"'; }
 	get isBulkAlias():		  boolean { return this.trait == IDTrait.bulk; }
 	get isRoot():			  boolean { return this == this.hierarchy.root; }
-	get hierarchy():		Hierarchy { return dbDispatch.db.hierarchy; }
+	get hierarchy():		Hierarchy { return k.hierarchy; }
 	get titleWidth():		   number { return u.getWidthOf(this.title) }
 	
 	debugLog(message: string) { this.log(DebugFlag.things, message); }
@@ -75,7 +75,8 @@ export default class Thing extends Datum {
 				}
 			}
 		}
-		return Object.values(fromPaths);
+		const paths = Object.values(fromPaths);
+		return u.sort_byTitleTop(paths).reverse();
 	}
 
 	revealColor(isReveal: boolean, path: Path): string {
