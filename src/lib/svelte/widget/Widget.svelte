@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { s_path_toolsCluster, s_tools_inWidgets, s_thing_fontSize, s_thing_fontFamily } from '../../ts/managers/State';
-	import { s_title_editing, s_dot_size, s_path_here, s_row_height, s_paths_grabbed, } from '../../ts/managers/State';
+	import { s_dot_size, s_path_here, s_row_height, s_title_editing, s_paths_grabbed, } from '../../ts/managers/State';
+	import { s_thing_fontSize, s_thing_fontFamily, s_path_toolsCluster } from '../../ts/managers/State';
 	import { onMount, onDestroy, debugReact, IDSignal, IDWrapper } from '../../ts/common/GlobalImports';
 	import { k, Thing, Point, debug, ZIndex, Wrapper, signals } from '../../ts/common/GlobalImports';
 	import ToolsCluster from './ToolsCluster.svelte';
@@ -112,18 +112,10 @@
 		left = origin.x + delta - 1;
 		const titleWidth = thing.titleWidth;
 		width = titleWidth - 18 + ($s_dot_size * 2);
-		if (path.toolsGrabbed && $s_tools_inWidgets) {
-			radius = k.toolsClusterHeight / 2;
-			const yPadding = radius - 12;
-			revealTop = radius - 17;
-			top = origin.y + delta - yPadding + 1;
-			padding = `${yPadding}px ${rightPadding}px ${yPadding}px 0px`;
-		} else {
-			revealTop = $s_dot_size / -3 + 1;
-			radius = $s_row_height / 2;
-			top = origin.y + delta;
-			padding = `0px ${rightPadding}px 0px 0px`;
-		}
+		revealTop = $s_dot_size / -3 + 1;
+		radius = $s_row_height / 2;
+		top = origin.y + delta;
+		padding = `0px ${rightPadding}px 0px 0px`;
 	}
 
 </script>
@@ -146,7 +138,4 @@
 	<DragDot thing={thing} path={path} center={new Point(0, revealTop)}/>
 	<TitleEditor thing={thing} path={path} fontSize={$s_thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 	<RevealDot thing={thing} path={path} center={new Point(0, revealTop)}/>
-	{#if showingCluster && $s_tools_inWidgets}
-		<ToolsCluster path={path}/>
-	{/if}
 </div>

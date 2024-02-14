@@ -11,7 +11,6 @@ export const s_altering_parent	 = writable<string | null>();
 export const s_path_toolsCluster = writable<Path | null>();
 export const s_paths_grabbed	 = writable<Array<Path>>();
 export const s_paths_expanded	 = writable<Array<Path>>();
-export const s_tools_inWidgets	 = writable<boolean>();
 export const s_things_arrived	 = writable<boolean>();
 export const s_showDetails		 = writable<boolean>();
 export const s_title_atTop		 = writable<boolean>();

@@ -1,9 +1,8 @@
 import { s_path_here, s_row_height, s_paths_expanded, s_db_loadTime, s_title_atTop, s_paths_grabbed } from './State';
-import { s_setup, s_showDetails, s_line_stretch, s_tools_inWidgets, s_user_graphOffset, s_thing_fontFamily } from './State';
+import { s_setup, s_showDetails, s_line_stretch, s_user_graphOffset, s_thing_fontFamily } from './State';
 import { k, Path, Point, dbDispatch } from '../common/GlobalImports'
 
 export enum PersistID {
-	tools_inWidgets	= 'tools_inWidgets',
 	relationships	= 'relationships',
 	line_stretch 	= 'line_stretch',
 	title_atTop  	= 'title_atTop',
@@ -28,7 +27,6 @@ class PersistLocal {
 		// this.writeToKey(PersistID.dot_size, 13);
 
 		this.writeToKey(PersistID.title_atTop, false);
-		this.writeToKey(PersistID.tools_inWidgets, false);
 		if (this.ignorePaths) {
 			this.writeToKey(PersistID.relationships, true);
 		}
@@ -39,7 +37,6 @@ class PersistLocal {
 		s_title_atTop.set(this.readFromKey(PersistID.title_atTop) ?? false);
 		s_thing_fontFamily.set(this.readFromKey(PersistID.font) ?? 'Arial');
 		s_user_graphOffset.set(this.readFromKey(PersistID.origin) ?? new Point());
-		s_tools_inWidgets.set(this.readFromKey(PersistID.tools_inWidgets) ?? false);
 	}
 
 	paths_restore() {

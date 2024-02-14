@@ -1,7 +1,7 @@
-import { s_dot_size, s_path_here, s_row_height, s_line_stretch, s_title_editing, s_paths_grabbed } from '../managers/State';
-import { s_paths_expanded, s_path_toolsCluster, s_altering_parent, s_tools_inWidgets } from '../managers/State';
 import { TitleState, dbDispatch, Relationship, SeriouslyRange, AlteringParent } from '../common/GlobalImports';
 import { k, u, get, Rect, Size, Thing, IDWrapper, signals, Wrapper, Predicate } from '../common/GlobalImports';
+import { s_paths_expanded, s_paths_grabbed, s_path_toolsCluster, s_altering_parent } from '../managers/State';
+import { s_dot_size, s_path_here, s_row_height, s_line_stretch, s_title_editing } from '../managers/State';
 import { Writable } from 'svelte/store';
 
 export default class Path {
@@ -280,8 +280,7 @@ export default class Path {
 	visibleProgeny_height(visited: Array<string> = []): number {
 		const thing = k.hierarchy?.thing_getForPath(this);
 		if (thing) {
-			const useToolHeight = this.toolsGrabbed && get(s_tools_inWidgets);
-			const rowHeight = useToolHeight ? k.toolsClusterHeight : get(s_row_height);
+			const rowHeight = get(s_row_height);
 			if (!visited.includes(this.pathString) && this.hasChildren && this.isExpanded) {
 				let height = 0;
 				for (const childPath of this.childPaths) {

@@ -3,11 +3,11 @@
 	import { k, Size, Point, Thing, ZIndex, signals, svgPath, onDestroy, dbDispatch } from '../../ts/common/GlobalImports';
 	import FatTriangle from '../svg/FatTriangle.svelte';
 	import Crumb from '../kit/Crumb.svelte';
-	let sum = 0;
 	let size = 10;
-	let path: Path;
-	let ancestors: Array<Thing> = [];
 	let insidePath = svgPath.circle(size, size / 2, new Point(size / -7, size / 4));
+	let ancestors: Array<Thing> = [];
+	let path: Path;
+	let sum = 0;
 
 	function path_lastGrabbed() { return k.hierarchy.grabs.path_lastGrabbed; }
 	const rebuild_signalHandler = signals.handle_rebuild(() => { sum += 1; });

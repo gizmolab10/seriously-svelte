@@ -1,6 +1,6 @@
 import { k, u, debug, builds, debugReact, PersistID, dbDispatch, persistLocal } from '../common/GlobalImports'
-import { s_paths_grabbed, s_paths_expanded, s_tools_inWidgets } from './State';
 import { s_path_here, s_showDetails, s_title_atTop } from './State';
+import { s_paths_grabbed, s_paths_expanded } from './State';
 
 class Launch {
 	queryString: URLSearchParams;
@@ -40,10 +40,6 @@ class Launch {
                     case 'titleAtTop':
 						persistLocal.writeToKey(PersistID.title_atTop, true);
 						s_title_atTop.set(true);
-						break;
-                    case 'toolsInWidgets':
-						persistLocal.writeToKey(PersistID.tools_inWidgets, true);
-						s_tools_inWidgets.set(true);
 						break;
 				}
 			}

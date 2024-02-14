@@ -1,7 +1,7 @@
 <script lang='ts'>
     import { k, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper } from '../../ts/common/GlobalImports';
-    import { s_tools_inWidgets, s_user_graphOffset, s_path_toolsCluster } from '../../ts/managers/State';
 	import { s_dot_size, s_row_height, s_graphRect, s_altering_parent } from '../../ts/managers/State';
+    import { s_title_atTop, s_user_graphOffset, s_path_toolsCluster } from '../../ts/managers/State';
 	import { svgPath, Direction, dbDispatch, AlteringParent } from '../../ts/common/GlobalImports';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
 	import CircularButton from '../kit/CircularButton.svelte';
@@ -73,23 +73,15 @@
 
 	function update() {
         bigOffset = new Point(-19 - titleWidth, k.toolsClusterHeight / 2 - 51);
-        const path = $s_path_toolsCluster;
-        if (path) {
-            if ($s_tools_inWidgets) {
-                updateForInsideWidget();
-                return true;
-            } else if (updateForInFront()) {
-                return true;
-            }
-        }
-        return false;
+        return $s_path_toolsCluster && updateForInFront();
 	}
 
     function updateForInFront(): boolean {
         // debug();
         const rect = path?.thingTitleRect;
         if (rect && rect.size.width != 0) {
-            const center = rect.centerLeft.offsetBy(new Point(titleWidth - 92, -34));
+            const offsetY = $s_title_atTop ? 87 : 34;
+            const center = rect.centerLeft.offsetBy(new Point(titleWidth - 92, -offsetY));
             const leftLeft = center.x + radius * 0.8;
             const top = center.y - 6;
             left = center.x - diameter * 2.1;
@@ -113,21 +105,6 @@
         }
     }
 
-	function updateForInsideWidget() {
-		const offsetX = Math.max(0, (k.toolsClusterHeight - titleWidth - 21) / 8);
-		const offsetY = Math.max(0, (k.toolsClusterHeight - $s_row_height - 21) / 8);
-		const top = -offsetY - 3;
-		left = offsetX + titleWidth - 3;
-		const otherLeft = left - diameter * 1.2;
-		setC(IDTool.add, new Point(left, top - diameter));
-		setC(IDTool.delete, new Point(left, top + diameter + 12));
-		setC(IDTool.addParent, new Point(otherLeft, top - diameter));
-		setC(IDTool.deleteParent, new Point(otherLeft, top + diameter + 10));
-		setC(IDTool.cluster, new Point(left + radius - 2, top + diameter + 2));
-		setC(IDTool.more, new Point(center.x - diameter - 1, top + diameter + 3));	// TODO: test
-		setC(IDTool.next, new Point(center.x - diameter + 2, top - diameter - 10));	// TODO: test
-	}
-
 </script>
 
 <style>
@@ -150,48 +127,46 @@
         <div class='toolsCluster' style='
             position:absolute;
             z-index: {ZIndex.lines}'>
-            {#if !$s_tools_inWidgets}
-                <TransparencyCircle
-                    thickness=1
-                    opacity=0.15
-                    color={color}
-                    zindex={ZIndex.lines}
-                    backgroundColor={transparentize(k.backgroundColor, 0.05)}
-                    radius={k.toolsClusterHeight / 2.5}
-                    center={getC(IDTool.cluster)}/>
-                <RevealDot path={$s_path_toolsCluster} center={getC(IDTool.cluster).offsetBy(bigOffset)}/>
-                <LabelButton
-                    color={color}
-                    center={getC(IDTool.more)}
-                    onClick={(event) => handleClick(IDTool.more, event)}>
-                    <svg style='position:absolute'
-                        width='28'
-                        height='16'
-                        fill={'transparent'}
-                        stroke={color}
-                        viewBox='6 2 16 16'>
-                        <path d={svgPath.oval(20, true)}/>
-                    </svg>
-                    <svg style='position:absolute'
-                        width='16'
-                        height='10'
-                        fill={color}
-                        viewBox='-2 -2 14 10'>
-                        <path d={svgPath.ellipses(1, 2)}/>
-                    </svg>
-                </LabelButton>
-                {#if thing.parents.length > 1}
-                    <TriangleButton
-                        fillColor_closure={() => { return ($s_altering_parent == AlteringParent.adding) ? thing.color : k.backgroundColor }}
-                        extraColor={($s_altering_parent == AlteringParent.adding) ? k.backgroundColor : thing.color}
-                        onClick={(event) => handleClick(IDTool.next, event)}
-                        extra={svgPath.circle(diameter, 4)}
-                        center={getC(IDTool.next)}
-                        direction={Direction.up}
-                        strokeColor={color}
-                        size={diameter}
-                        id='next'/>
-                {/if}
+            <TransparencyCircle
+                thickness=1
+                opacity=0.15
+                color={color}
+                zindex={ZIndex.lines}
+                backgroundColor={transparentize(k.backgroundColor, 0.05)}
+                radius={k.toolsClusterHeight / 2.5}
+                center={getC(IDTool.cluster)}/>
+            <RevealDot thing={thing} path={$s_path_toolsCluster} center={getC(IDTool.cluster).offsetBy(bigOffset)}/>
+            <LabelButton
+                color={color}
+                center={getC(IDTool.more)}
+                onClick={(event) => handleClick(IDTool.more, event)}>
+                <svg style='position:absolute'
+                    width='28'
+                    height='16'
+                    fill={'transparent'}
+                    stroke={color}
+                    viewBox='6 2 16 16'>
+                    <path d={svgPath.oval(20, true)}/>
+                </svg>
+                <svg style='position:absolute'
+                    width='16'
+                    height='10'
+                    fill={color}
+                    viewBox='-2 -2 14 10'>
+                    <path d={svgPath.ellipses(1, 2)}/>
+                </svg>
+            </LabelButton>
+            {#if thing.parents.length > 1}
+                <TriangleButton
+                    fillColor_closure={() => { return ($s_altering_parent == AlteringParent.adding) ? thing.color : k.backgroundColor }}
+                    extraColor={($s_altering_parent == AlteringParent.adding) ? k.backgroundColor : thing.color}
+                    onClick={(event) => handleClick(IDTool.next, event)}
+                    extra={svgPath.circle(diameter, 4)}
+                    center={getC(IDTool.next)}
+                    direction={Direction.up}
+                    strokeColor={color}
+                    size={diameter}
+                    id='next'/>
             {/if}
             <TriangleButton
                 fillColor_closure={() => { return ($s_altering_parent == AlteringParent.adding) ? thing.color : k.backgroundColor }}

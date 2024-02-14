@@ -8,6 +8,7 @@
 	import LabelButton from '../kit/LabelButton.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import Graph from '../graph/Graph.svelte';
+	import PanelTop from './PanelTop.svelte';
 	import Help from '../help/Help.svelte';
 	import Details from './Details.svelte';
 	import Crumbs from './Crumbs.svelte';
@@ -16,13 +17,9 @@
 	let herePath = Path;
 	let toggle = false;
 	let left = 14;
-	let size = 14;
 
 	$: { updateHerePath($s_path_here); }
-	function help_buttonClicked() { togglePopupID(IDButton.help); }
 	window.addEventListener('resize', (event) => { graphRect_update(); });
-	function builds_buttonClicked(event) { togglePopupID(IDButton.buildNotes); }
-	function togglePopupID(id) { $s_id_popupView = ($s_id_popupView == id) ? null : id; }
 	const rebuild_signalHandler = signals.handle_rebuild(() => { updateHerePath($s_path_here); });
 
 	onMount(() => {
@@ -49,12 +46,6 @@
 			toggle = !toggle;	// remount graph component
 		}
 	}
-	
-	function details_buttonClicked(event) {
-		$s_showDetails = !$s_showDetails;
-		signals.signal_relayout_fromHere();
-		persistLocal.writeToKey(PersistID.details, $s_showDetails);
-	}
 
 </script>
 
@@ -64,10 +55,10 @@
 		font-size: 3em;
 		width: 100%;
 	}
-	.top {
+	.crumbs {
 		position: fixed;
 		left: 110px;
-		top: 6px;
+		top: 41px;
 	}
 	.build {
 		border-radius: 1em;
@@ -115,26 +106,12 @@
 {:else if !$s_things_arrived}
 	<p>Nothing is available.</p>
 {:else}
-	<div class='leftSide'
-		style='
-			z-index: {ZIndex.frontmost};
-			height: {$s_showDetails ? '100%' : {topBandHeight} + 'px'};'>
-		<CircularButton left=15
-			borderColor='white'
-			onClick={details_buttonClicked}>
-			<img src='settings.svg' alt='circular button' width={size}px height={size}px/>
-		</CircularButton>
-		<button class='build' on:click={builds_buttonClicked}>{$s_build}</button>
-		<CircularButton left=85
-			onClick={() => {help_buttonClicked()}}
-			size={size}>i
-		</CircularButton>
-		{#if $s_showDetails && $s_id_popupView == null}
-			<Details/>
-		{/if}
-	</div>
-	<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: -10px; top: {topBandHeight}px; width: {$s_id_popupView ? '111px' : '110%'};'></div>
-	<div class='verticalLine' style='height: {$s_showDetails && $s_id_popupView == null ? '100%' : topBandHeight + 'px'}; z-index: {ZIndex.frontmost};'></div>
+	<PanelTop/>
+	{#if $s_showDetails && $s_id_popupView == null}
+		<Details/>
+		<div class='verticalLine' style='height: calc(100vh - {topBandHeight}px); top: {topBandHeight}px; z-index: {ZIndex.frontmost};'></div>
+	{/if}
+	<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: -10px; top: {topBandHeight}px; width: 110%;'></div>
 	<div class='rightSide' style='
 		left: {$s_showDetails ? 100 : 0}px;
 		z-index: {ZIndex.panel};
@@ -145,17 +122,30 @@
 		{:else if $s_id_popupView == IDButton.buildNotes}
 			<BuildNotes/>
 		{:else if $s_id_popupView == null}
-			<div class='top' style='z-index: {ZIndex.frontmost}'>
+			<div class='crumbs' style='z-index: {ZIndex.frontmost}; top: 40px;'>
 				<Crumbs/>
+				<div class='horizontalLine'
+					style='
+						z-index: {ZIndex.frontmost};
+						left: {$s_showDetails ? k.detailsMargin : 0}px;
+						top: 68px;'>
+				</div>
 			</div>
 			{#if $s_title_atTop}
 				<div class='topTitle'
-					style='color: {$s_path_here.thing?.color};
+					style='
+						top: 68px;
 						z-index: {ZIndex.frontmost};
+						color: {$s_path_here.thing?.color};
 						left: {$s_showDetails ? '100px' : '-1px'};'>
 					{$s_path_here.thingTitle}
 				</div>
-				<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: {$s_showDetails ? k.detailsMargin : 0}px; top: {bottomOfTitle}px;'></div>
+				<div class='horizontalLine'
+					style='
+						z-index: {ZIndex.frontmost};
+						top: {bottomOfTitle + 28}px;
+						left: {$s_showDetails ? k.detailsMargin : 0}px;'>
+				</div>
 			{/if}
 			{#key toggle}
 				<Graph/>

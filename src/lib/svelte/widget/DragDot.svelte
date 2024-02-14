@@ -1,7 +1,7 @@
 <script>
 	import { k, u, Size, Point, Thing, debug, ZIndex, onMount, signals, svgPath } from "../../ts/common/GlobalImports";
-	import { s_dot_size, s_paths_grabbed, s_path_toolsCluster, s_tools_inWidgets } from '../../ts/managers/State';
 	import { Wrapper, Direction, onDestroy, dbDispatch, AlteringParent } from "../../ts/common/GlobalImports";
+	import { s_dot_size, s_paths_grabbed, s_path_toolsCluster } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
 	export let center;
 	export let thing;
@@ -106,7 +106,7 @@
 	function updatePathAndPosition() {
 		size = $s_dot_size;
 		left = center.x + 1 - (size / 2);
-		top = path.toolsGrabbed ? $s_tools_inWidgets ? size + 1 : 2 - size : -size / 2 - (path.isExemplar ? 2 : 5);
+		top = path.toolsGrabbed ? 2 - size : -size / 2 - (path.isExemplar ? 2 : 5);
 		scalablePath = svgPath.oval(size, false);	// TODO: change it & position when altering state changes
 		if (thing.parents.length > 1) {
 			extra = svgPath.circle(size, size / 5);
