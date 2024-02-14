@@ -86,10 +86,10 @@
 	}
 
     function updateForInFront(): boolean {
-        debug();
+        // debug();
         const rect = path?.thingTitleRect;
         if (rect && rect.size.width != 0) {
-            const center = rect.centerLeft.offsetBy(new Point(titleWidth + 9, -33.5));
+            const center = rect.centerLeft.offsetBy(new Point(titleWidth - 92, -34));
             const leftLeft = center.x + radius * 0.8;
             const top = center.y - 6;
             left = center.x - diameter * 2.1;

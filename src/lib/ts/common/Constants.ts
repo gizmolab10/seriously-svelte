@@ -19,8 +19,8 @@ export default class Constants {
 	public defaultTitle: string;
 	public lineTitle: string;
 	public unknownID: string;
-	public rootPath: Path;
 	public hierarchy: Hierarchy;
+	public rootPath: Path;
 
 	constructor() {
 		this.pathSeparator = '::';

@@ -30,10 +30,10 @@
 		updateHerePath($s_path_here);
 	});
 
-	function updateHerePath(path, forced = true) {
+	function updateHerePath(newHerePath, forced = true) {
 		let changed = false;
-		if (path && !path.matchesPath(herePath)) {
-			herePath = path;
+		if (newHerePath && !newHerePath.matchesPath(herePath)) {
+			herePath = newHerePath;
 			changed = true;
 		}
 		if (changed || forced) {

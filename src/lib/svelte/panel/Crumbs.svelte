@@ -18,6 +18,7 @@
 		if (!path || trigger || ancestors.length == 0) {
 			path = path_lastGrabbed() ?? k.rootPath;	// assure we have a path
 			[sum, ancestors] = path.things_ancestryWithin($s_crumbs_width - 132);
+			console.log(`CRUMBS sum ${sum} ${path.thing?.title}`);
 		}
 	}
 

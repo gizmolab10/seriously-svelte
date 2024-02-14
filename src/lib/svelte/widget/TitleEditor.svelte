@@ -30,6 +30,7 @@
 	}
 	
 	onMount(() => {
+		console.log(`TITLE onMount ${thing.title}`);
 		setTimeout(() => {
 			updateInputWidth();
 		}, 100);

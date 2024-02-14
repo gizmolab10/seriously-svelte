@@ -14,6 +14,7 @@
 	let origin_ofChildren = new Point();
 	let childrenSize = new Point();
 	let focusOffsetX = 0;
+	let graphRect: Rect;
 	let greenRect: Rect;
 	let blueRect: Rect;
 	let redRect: Rect;
@@ -24,6 +25,7 @@
 	let top = 0;
 	let here;
 
+	// onMount(() => { ;})
 	onDestroy( () => { relayout_signalHandler.disconnect(); });
 	
 	const relayout_signalHandler = signals.handle_relayout((path) => {
@@ -68,11 +70,12 @@
 	}
 	
 	$: {
-		if ($s_graphRect) {
-			height = $s_graphRect.size.height;
-			width = $s_graphRect.size.width;
-			left = $s_graphRect.origin.x;
-			top = $s_graphRect.origin.y;
+		if (graphRect != $s_graphRect) {
+			graphRect = $s_graphRect;
+			height = graphRect.size.height;
+			width = graphRect.size.width;
+			left = graphRect.origin.x;
+			top = graphRect.origin.y;
 			updateOrigins();
 		}
 	}
@@ -88,6 +91,7 @@
 			const h = k.hierarchy;
 			here = !$s_path_here ? h.root : h.thing_getForPath($s_path_here);
 			focusOffsetX = $s_title_atTop ? 0 : here?.titleWidth / 2
+			console.log(`GRAPH s_path_here ${here.title}`)
 			updateOrigins();
 			toggle = !toggle;	// also cause entire graph to be replaced
 		}
@@ -99,13 +103,13 @@
 			const mysteryX = ($s_showDetails ? -92 : 8) - (childrenSize.x / 2) - focusOffsetX;
 			const mysteryY = -k.bandHeightAtTop - ($s_title_atTop ? k.titleHeightAtTop : 0);
 			const mysteryOffset = new Point(mysteryX, mysteryY);
-			origin_ofFirstReveal = $s_graphRect.center.offsetBy(mysteryOffset);
+			origin_ofFirstReveal = graphRect.center.offsetBy(mysteryOffset);
 			if (k.leftJustifyGraph) {
 				origin_ofFirstReveal.x = 25;
 			}
 			const toChildren = new Point(-43 + $s_line_stretch - ($s_dot_size / 2) + focusOffsetX, ($s_dot_size / 2) - (childrenSize.y / 2) - 5);
 			origin_ofChildren = origin_ofFirstReveal.offsetBy(toChildren);
-			blueRect = $s_graphRect.dividedInHalf;
+			blueRect = graphRect.dividedInHalf;
 			redRect = rectTo_firstReveal();
 			greenRect = rectOfChildren();
 		}
@@ -114,12 +118,12 @@
 	function rectTo_firstReveal(): Rect {
 		const mysteryOffset = new Point(101, 85);
 		const extent = origin_ofFirstReveal.offsetBy(mysteryOffset);
-		return Rect.createExtentRect($s_graphRect.origin, extent);
+		return Rect.createExtentRect(graphRect.origin, extent);
 	}
 
 	function rectOfChildren(): Rect {
 		const delta = new Point(9, -2);
-		const origin = $s_graphRect.origin.offsetBy(delta).offsetBy(origin_ofChildren);
+		const origin = graphRect.origin.offsetBy(delta).offsetBy(origin_ofChildren);
 		return new Rect(origin, $s_path_here.visibleProgeny_size.expandedByX(3));
 	}
 
@@ -136,29 +140,31 @@
 			width: {width}px;
 			height: {height}px;
 			z-index: {ZIndex.panel};'>
-		<div class='graph' key={toggle}
-			style='transform: translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px);'
-			on:keyup={u.ignore}
-			on:keydown={u.ignore}
-			on:keypress={u.ignore}
-			on:click={() => { $s_id_popupView = null; }}>
-			{#if debug.colors}
-				<Box rect={redRect} color=red/>
-				<Box rect={blueRect} color=blue/>
-				<Box rect={greenRect} color=green half={true}/>
-			{/if}
-			{#if $s_title_atTop}
-				{#if $s_path_here.isGrabbed}
-					<Circle radius=10 center={origin_ofFirstReveal} color={here.color} thickness=1/>
+		{#key toggle}
+			<div class='graph'
+				style='transform: translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px);'
+				on:keyup={u.ignore}
+				on:keydown={u.ignore}
+				on:keypress={u.ignore}
+				on:click={() => { $s_id_popupView = null; }}>
+				{#if debug.colors}
+					<Box rect={redRect} color=red/>
+					<Box rect={blueRect} color=blue/>
+					<Box rect={greenRect} color=green half={true}/>
 				{/if}
-				<FocusRevealDot here={here} path={$s_path_here} center={origin_ofFirstReveal.offsetBy(new Point(-12, -11))}/>
-			{:else}
-				<Widget thing={here} path={$s_path_here} origin={origin_ofFirstReveal.offsetBy(new Point(-19 - focusOffsetX, -9))}/>
+				{#if $s_title_atTop}
+					{#if $s_path_here.isGrabbed}
+						<Circle radius=10 center={origin_ofFirstReveal} color={here.color} thickness=1/>
+					{/if}
+					<FocusRevealDot here={here} path={$s_path_here} center={origin_ofFirstReveal.offsetBy(new Point(-12, -11))}/>
+				{:else}
+					<Widget thing={here} path={$s_path_here} origin={origin_ofFirstReveal.offsetBy(new Point(-19 - focusOffsetX, -9))}/>
+				{/if}
+				<Children path={$s_path_here} origin={origin_ofChildren}/>
+			</div>
+			{#if !$s_tools_inWidgets}
+				<ToolsCluster/>
 			{/if}
-			<Children path={$s_path_here} origin={origin_ofChildren}/>
-		</div>
-		{#if !$s_tools_inWidgets}
-			<ToolsCluster/>
-		{/if}
+		{/key}
 	</div>
 {/if}

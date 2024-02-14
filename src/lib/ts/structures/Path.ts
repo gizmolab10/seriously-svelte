@@ -57,7 +57,6 @@ export default class Path {
 	get thingTitle(): string { return this.thing?.title ?? 'missing title'; }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
 	get lineWrapper(): Wrapper | null { return this.wrappers[IDWrapper.line]; }
-	get isVisible(): boolean { return this.incorporates(k.hierarchy?.herePath); }
 	get titleWrapper(): Wrapper | null { return this.wrappers[IDWrapper.title]; }
 	get toolsGrabbed(): boolean { return this.matchesStore(s_path_toolsCluster); }
 	get revealWrapper(): Wrapper | null { return this.wrappers[IDWrapper.reveal]; }
@@ -71,6 +70,11 @@ export default class Path {
 	get isStoppingEdit(): boolean { return this.matchesPath(get(s_title_editing)?.stopping ?? null); }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	get thingTitles(): Array<string> { return k.hierarchy?.things_getForPath(this).map(t => `\"${t.title}\"`) ?? []; }
+
+	get isVisible(): boolean {
+		const here = k.hierarchy?.herePath;
+		return this.incorporates(here) && this.isExpandedFrom(here);
+	}
 
 	get ids(): Array<string> {
 		if (this.isRoot) {
@@ -176,6 +180,19 @@ export default class Path {
 			return parentThings?.map(t => t.id).includes(thingID) ?? false;
 		}
 		return false;
+	}
+
+	isExpandedFrom(path: Path | null): boolean {
+		let index = path?.ids.length ?? 0;
+		const ids = this.ids;
+		while (index < ids.length) {
+			const tweenPath = this.stripBack(ids.length - index);
+			if (tweenPath.hasChildren && !tweenPath.isExpanded) {
+				return false;
+			}
+			index++;
+		}
+		return true;
 	}
 
 	incorporates(path: Path | null): boolean {
