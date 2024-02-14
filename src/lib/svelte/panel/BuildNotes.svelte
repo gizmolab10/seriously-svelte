@@ -65,7 +65,7 @@
 		padding: 20px;
 		width: 500px;
 	}
-	.header-line {
+	.top-bar {
 		justify-content: center;
         align-items: center;
         display: flex;
@@ -85,7 +85,7 @@
 <svelte:document on:keydown={handleKeyDown} />
 <div class='modal-overlay'>
 	<div class='modal-content'>
-		<div class='header-line'>
+		<div class='top-bar'>
 			{#key notes}
 				<Directionals hit={directional_buttonClicked} display={display}/>
 			{/key}

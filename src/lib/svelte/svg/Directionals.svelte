@@ -1,7 +1,7 @@
 <script>
     import { k, Point, Direction } from '../../ts/common/GlobalImports';
     import TriangleButton from './TriangleButton.svelte'
-    const origin = new Point(12, 10);
+    const origin = new Point(64, 17);
     const size = 20;
     const offsetY = size / 2 - 1;
     let toggle = false;
@@ -20,8 +20,8 @@
 
 <style>
     .directionals {
-		top: 9px;
-		left: 5px;
+		top: 0px;
+		left: 0px;
 		position: absolute;     
     }
 </style>

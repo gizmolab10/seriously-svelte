@@ -11,6 +11,7 @@ class Builds {
 
 	constructor() {
 		this.notes = { 
+			80 : ['February 13, 2024', 'dynamic paths for child and parent all seemingly working'],
 			79 : ['February 2, 2024', 'working on relations'],
 			78 : ['January 29, 2024', 'added two new tools to tools cluster'],
 			77 : ['January 27, 2024', 'tools cluster is now an overlay hiding title and reveal dot'],
