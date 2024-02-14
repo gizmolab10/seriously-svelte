@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { s_title_editing, s_path_here, s_graphRect, s_dot_size, s_showDetails, s_title_atTop, s_paths_grabbed } from '../../ts/managers/State';
 	import { s_id_popupView, s_line_stretch, s_path_toolsCluster, s_user_graphOffset } from '../../ts/managers/State';
-	import { dbDispatch, PersistID, IDSignal, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
 	import { k, u, Path, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/GlobalImports';
-	import { onMount, onDestroy, debugReact, Predicate, IDButton } from '../../ts/common/GlobalImports';
+	import { IDButton, onDestroy, debugReact, dbDispatch, Predicate } from '../../ts/common/GlobalImports';
+	import { PersistID, IDSignal, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
 	import ToolsCluster from '../widget/ToolsCluster.svelte';
 	import FocusRevealDot from './FocusRevealDot.svelte';
 	import Widget from '../widget/Widget.svelte';
@@ -25,7 +25,6 @@
 	let top = 0;
 	let here;
 
-	// onMount(() => { ;})
 	onDestroy( () => { relayout_signalHandler.disconnect(); });
 	
 	const relayout_signalHandler = signals.handle_relayout((path) => {

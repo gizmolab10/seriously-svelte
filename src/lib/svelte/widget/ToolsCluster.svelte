@@ -1,8 +1,8 @@
 <script lang='ts'>
-    import { k, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper } from '../../ts/common/GlobalImports';
-	import { s_dot_size, s_row_height, s_graphRect, s_altering_parent } from '../../ts/managers/State';
-    import { s_title_atTop, s_user_graphOffset, s_path_toolsCluster } from '../../ts/managers/State';
-	import { svgPath, Direction, dbDispatch, AlteringParent } from '../../ts/common/GlobalImports';
+    import { k, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, signals } from '../../ts/common/GlobalImports';
+    import { s_dot_size, s_row_height, s_graphRect, s_showDetails, s_title_atTop } from '../../ts/managers/State';
+	import { svgPath, onDestroy, Direction, dbDispatch, AlteringParent } from '../../ts/common/GlobalImports';
+    import { s_user_graphOffset, s_altering_parent, s_path_toolsCluster } from '../../ts/managers/State';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TriangleButton from '../svg/TriangleButton.svelte';
@@ -28,6 +28,7 @@
     function setC(type: string, center: Point) { return c[type] = center; }
     function centers_isEmpty(): boolean { return Object.keys(c).length == 0; }
 	onMount(() => { setup(); setTimeout(() => { updateMaybeRedraw(); }, 20) });
+	onDestroy( () => { relayout_signalHandler.disconnect(); });
 
 	async function handleClick(IDButton: string, event: MouseEvent) {
 		if (path && !path.isExemplar) {
@@ -46,6 +47,13 @@
             jiggle = !jiggle;
         }
     }
+	
+	const relayout_signalHandler = signals.handle_relayout((path) => {
+        setTimeout(() => {
+            update();
+            jiggle = !jiggle;
+        }, 1);      // wait for graph to relayout
+	});
 
     $: {
         if ((graphRect != $s_graphRect) || (userOffset != $s_user_graphOffset)) {
@@ -80,8 +88,9 @@
         // debug();
         const rect = path?.thingTitleRect;
         if (rect && rect.size.width != 0) {
+            const offsetX = $s_showDetails ? -92 : 8;
             const offsetY = $s_title_atTop ? 87 : 34;
-            const center = rect.centerLeft.offsetBy(new Point(titleWidth - 92, -offsetY));
+            const center = rect.centerLeft.offsetBy(new Point(titleWidth + offsetX, -offsetY));
             const leftLeft = center.x + radius * 0.8;
             const top = center.y - 6;
             left = center.x - diameter * 2.1;
