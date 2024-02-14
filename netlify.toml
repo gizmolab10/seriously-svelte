@@ -1,4 +1,4 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    connect-src = "https://api.airtable.com";
+    connect-src = "https://api.airtable.com"
