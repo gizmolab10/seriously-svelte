@@ -1,7 +1,6 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    Content-Security-Policy = "default-src 'self' *.catalist.network;
-    frame-ancestors 'self' *.catalist.network;
+    Content-Security-Policy = "default-src 'self';
+    frame-ancestors 'self';
     connect-src https://api.airtable.com;
-    script-src *.catalist.network;"
