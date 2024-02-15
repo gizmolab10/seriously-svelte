@@ -1,5 +1,5 @@
 <script>
-	import Panel from './lib/svelte/panel/Panel.svelte';
+	import Panel from './lib/svelte/graph/Panel.svelte';
 </script>
 
 <Panel/>

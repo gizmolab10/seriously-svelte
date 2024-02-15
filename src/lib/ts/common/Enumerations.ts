@@ -1,6 +1,8 @@
 export enum IDButton {
-	buildNotes = 'show build notes',
-	help	   = '?',
+	buildNotes	= 'show build notes',
+	relations	= 'relations',
+	layout		= 'layout',
+	help		= '?',
 }
 
 export enum IDLine {

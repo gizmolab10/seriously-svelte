@@ -4,8 +4,8 @@
 	import { k, u, Path, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/GlobalImports';
 	import { IDButton, onDestroy, debugReact, dbDispatch, Predicate } from '../../ts/common/GlobalImports';
 	import { PersistID, IDSignal, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
+	import FocusRevealDot from '../kit/FocusRevealDot.svelte';
 	import ToolsCluster from '../widget/ToolsCluster.svelte';
-	import FocusRevealDot from './FocusRevealDot.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Children from './Children.svelte';

@@ -6,11 +6,13 @@
 	let width = window.innerWidth;
 	let size = 16;
 
-	function help_buttonClicked() { togglePopupID(IDButton.help); }
-	function builds_buttonClicked(event) { togglePopupID(IDButton.buildNotes); }
 	window.addEventListener('resize', (event) => { width = window.innerWidth; });
 	function togglePopupID(id) { $s_id_popupView = ($s_id_popupView == id) ? null : id; }
 	
+	function buttonClickedForID(id) {
+		alert(`alter "${id}" is under construction`)
+	}
+
 	function details_buttonClicked(event) {
 		$s_showDetails = !$s_showDetails;
 		signals.signal_relayout_fromHere();
@@ -19,7 +21,7 @@
 </script>
 
 <style>
-	.build {
+	.button {
 		border-radius: 1em;
 		position: absolute;
 		border: 1px solid;
@@ -36,13 +38,34 @@
 		z-index: {ZIndex.frontmost};
 		height: `${topBandHeight}px`;'>
 	<CircularButton left=15
-		borderColor='white'
+		borderColor='transparent'
 		onClick={details_buttonClicked}>
 		<img src='settings.svg' alt='circular button' width={size}px height={size}px/>
 	</CircularButton>
-	<button class='build' style='left: {width - 60}px;' on:click={builds_buttonClicked}>{$s_build}</button>
-	<CircularButton left={width - 15}
-		onClick={() => {help_buttonClicked()}}
-		size={size}>?
+	<button class='button'
+		style='
+			left: 30px;
+			background-color: {k.backgroundColor};'
+		on:click={() => buttonClickedForID(IDButton.relations)}>
+		children
+	</button>
+	<button class='button'
+		style='
+			left: 97px;
+			background-color: {k.backgroundColor};'
+		on:click={() => buttonClickedForID(IDButton.layout)}>
+		tree
+	</button>
+	<button class='button'
+		style='
+			left: {width - 60}px;
+			background-color: {k.backgroundColor};'
+		on:click={() => togglePopupID(IDButton.buildNotes)}>
+		{$s_build}
+	</button>
+	<CircularButton
+		size={size}
+		left={width - 15}
+		onClick={(event) => togglePopupID(IDButton.help)}>?
 	</CircularButton>
 </div>

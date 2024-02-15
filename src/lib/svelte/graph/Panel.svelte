@@ -7,11 +7,11 @@
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import LabelButton from '../kit/LabelButton.svelte';
 	import BuildNotes from './BuildNotes.svelte';
-	import Graph from '../graph/Graph.svelte';
 	import PanelTop from './PanelTop.svelte';
 	import Help from '../help/Help.svelte';
 	import Details from './Details.svelte';
 	import Crumbs from './Crumbs.svelte';
+	import Graph from './Graph.svelte';
 	const bottomOfTitle = k.bandHeightAtTop + k.titleHeightAtTop;
 	const topBandHeight = k.bandHeightAtTop - 2;
 	let herePath = Path;
