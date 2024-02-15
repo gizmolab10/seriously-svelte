@@ -112,34 +112,34 @@
 		{:else if $s_id_popupView == IDButton.buildNotes}
 			<BuildNotes/>
 		{:else if $s_id_popupView == null}
-			{#key $s_crumbs_width}
-				<div class='crumbs' style='z-index: {ZIndex.frontmost};'>
-					<Crumbs/>
+			{#key toggle}
+				{#key $s_crumbs_width}
+					<div class='crumbs' style='z-index: {ZIndex.frontmost};'>
+						<Crumbs/>
+						<div class='horizontal-line'
+							style='
+								z-index: {ZIndex.frontmost};
+								left: {left}px;
+								top: 68px;'>
+						</div>
+					</div>
+				{/key}
+				{#if $s_title_atTop}
+					<div class='top-title'
+						style='
+							top: 68px;
+							z-index: {ZIndex.frontmost};
+							color: {$s_path_here.thing?.color};
+							left: {$s_showDetails ? '100px' : '-1px'};'>
+						{$s_path_here.thingTitle}
+					</div>
 					<div class='horizontal-line'
 						style='
 							z-index: {ZIndex.frontmost};
-							left: {left}px;
-							top: 68px;'>
+							top: {bottomOfTitle + 28}px;
+							left: {$s_showDetails ? k.detailsMargin : 0}px;'>
 					</div>
-				</div>
-			{/key}
-			{#if $s_title_atTop}
-				<div class='top-title'
-					style='
-						top: 68px;
-						z-index: {ZIndex.frontmost};
-						color: {$s_path_here.thing?.color};
-						left: {$s_showDetails ? '100px' : '-1px'};'>
-					{$s_path_here.thingTitle}
-				</div>
-				<div class='horizontal-line'
-					style='
-						z-index: {ZIndex.frontmost};
-						top: {bottomOfTitle + 28}px;
-						left: {$s_showDetails ? k.detailsMargin : 0}px;'>
-				</div>
-			{/if}
-			{#key toggle}
+				{/if}
 				<Graph/>
 			{/key}
 		{/if}

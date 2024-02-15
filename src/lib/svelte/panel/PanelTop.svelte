@@ -3,10 +3,12 @@
 	import { s_build, s_showDetails, s_id_popupView } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	const topBandHeight = k.bandHeightAtTop - 2;
-	let size = 14;
+	let width = window.innerWidth;
+	let size = 16;
 
 	function help_buttonClicked() { togglePopupID(IDButton.help); }
 	function builds_buttonClicked(event) { togglePopupID(IDButton.buildNotes); }
+	window.addEventListener('resize', (event) => { width = window.innerWidth; });
 	function togglePopupID(id) { $s_id_popupView = ($s_id_popupView == id) ? null : id; }
 	
 	function details_buttonClicked(event) {
@@ -22,7 +24,6 @@
 		position: absolute;
 		border: 1px solid;
 		cursor: pointer;
-		left: 35px;
 		top: -2px;
 	}
 </style>
@@ -39,9 +40,9 @@
 		onClick={details_buttonClicked}>
 		<img src='settings.svg' alt='circular button' width={size}px height={size}px/>
 	</CircularButton>
-	<button class='build' on:click={builds_buttonClicked}>{$s_build}</button>
-	<CircularButton left=85
+	<button class='build' style='left: {width - 60}px;' on:click={builds_buttonClicked}>{$s_build}</button>
+	<CircularButton left={width - 15}
 		onClick={() => {help_buttonClicked()}}
-		size={size}>i
+		size={size}>?
 	</CircularButton>
 </div>

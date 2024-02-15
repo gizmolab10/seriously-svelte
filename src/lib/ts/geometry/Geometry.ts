@@ -1,5 +1,5 @@
 import { s_graphRect, s_showDetails, s_title_atTop, s_crumbs_width } from "../managers/State";
-import { get, Path, Thing } from '../common/GlobalImports'
+import { k, get, Path, Thing } from '../common/GlobalImports'
 
 export class Point {
 	x: number;
@@ -110,10 +110,10 @@ export class ChildMap extends Rect {
 }
 
 export function graphRect_update() {
-	const originY = get(s_title_atTop) ? 86 : 33;												// height of title at the top
-	const originX = get(s_showDetails) ? 101 : 0;					// width of details
-	const mysteryOffset = new Point(originX + 2, originY);			// TODO: why?
-	const originOfGraph = new Point(originX, originY);
+	const top = get(s_title_atTop) ? 86 : 33;												// height of title at the top
+	const left = get(s_showDetails) ? k.detailsMargin : 0;			// width of details
+	const mysteryOffset = new Point(left + 2, top);					// TODO: why?
+	const originOfGraph = new Point(left, top);
 	const windowSize = new Size(window.innerWidth, window.innerHeight);
 	const sizeOfGraph = windowSize.reducedBy(mysteryOffset);		// account for origin
 	const rect = new Rect(originOfGraph, sizeOfGraph);

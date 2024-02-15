@@ -88,7 +88,7 @@
         // debug();
         const rect = path?.thingTitleRect;
         if (rect && rect.size.width != 0) {
-            const offsetX = $s_showDetails ? -92 : 8;
+            const offsetX = $s_showDetails ? -92 : 9;
             const offsetY = $s_title_atTop ? 87 : 34;
             const center = rect.centerLeft.offsetBy(new Point(titleWidth + offsetX, -offsetY));
             const leftLeft = center.x + radius * 0.8;

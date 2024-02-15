@@ -36,16 +36,6 @@ export default class Thing extends Datum {
 	get isBulkAlias():		  boolean { return this.trait == IDTrait.bulk; }
 	get titleWidth():		   number { return u.getWidthOf(this.title) }
 	get hierarchy():		Hierarchy { return k.hierarchy; }
-
-	get crumbWidth(): number {
-		const dotSize = get(s_dot_size);
-		const numberOfParents = this.parentPaths.length;
-		switch (numberOfParents) {
-			case 0: return this.titleWidth;
-			case 1: return this.titleWidth + dotSize * 1.6;
-			default: return this.titleWidth + dotSize * 2.4;
-		}
-	}
 	
 	debugLog(message: string) { this.log(DebugFlag.things, message); }
 	log(option: DebugFlag, message: string) { debug.log_maybe(option, message + ' ' + this.description); }
@@ -62,6 +52,17 @@ export default class Thing extends Datum {
 			}
 		}
 		return Object.values(fromThings);
+	}
+
+	crumbWidth(numberOfParents: number): number {
+		const none = this.titleWidth + 10;
+		const one = none + 11;
+		const multiple = one + 7;
+		switch (numberOfParents) {
+			case 0: return none;
+			case 1: return one;
+			default: return multiple;
+		}
 	}
 
 	fromPathsFor(predicateID: string): Array<Path> {

@@ -56,6 +56,7 @@ export default class Path {
 	get relationship(): Relationship | null { return this.relationshipAt(); }
 	get thingTitle(): string { return this.thing?.title ?? 'missing title'; }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
+	get things(): Array<Thing> { return k.hierarchy?.things_getForPath(this); }
 	get lineWrapper(): Wrapper | null { return this.wrappers[IDWrapper.line]; }
 	get titleWrapper(): Wrapper | null { return this.wrappers[IDWrapper.title]; }
 	get toolsGrabbed(): boolean { return this.matchesStore(s_path_toolsCluster); }
@@ -65,11 +66,11 @@ export default class Path {
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get children(): Array<Thing> { return k.hierarchy?.things_getForPaths(this.childPaths); }
+	get thingTitles(): Array<string> { return this.things.map(t => `\"${t.title}\"`) ?? []; }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
 	get isEditing(): boolean { return this.matchesPath(get(s_title_editing)?.editing ?? null); }
 	get isStoppingEdit(): boolean { return this.matchesPath(get(s_title_editing)?.stopping ?? null); }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
-	get thingTitles(): Array<string> { return k.hierarchy?.things_getForPath(this).map(t => `\"${t.title}\"`) ?? []; }
 
 	get isVisible(): boolean {
 		const here = k.hierarchy?.herePath;
@@ -259,23 +260,23 @@ export default class Path {
 	}
 
 	things_ancestryWithin(thresholdWidth: number): [number, number, Array<Thing>] {
-		const root = k.hierarchy?.root;
+		const h = k.hierarchy;
+		const things = this.things.reverse();
+		const array: Array<Thing> = [];
+		let numberOfParents = 0;
 		let totalWidth = 0;
 		let sum = 0;
-		const array = root ? [root] : [];
-		for (const hID of this.hashedIDs) {
-			const thing = k.hierarchy?.thing_to_getForRelationshipHID(hID);
-			if (thing && thing != root) {
-				const crumbWidth = thing.crumbWidth;
-				if ((totalWidth + crumbWidth) > thresholdWidth) {
-					break;
-				}
-				totalWidth += crumbWidth;
-				sum = sum * 10 + thing.parentPaths.length;
-				array.push(thing);
+		for (const thing of things) {
+			const crumbWidth = thing.crumbWidth(numberOfParents);
+			if ((totalWidth + crumbWidth) > (thresholdWidth - 10)) {
+				break;
 			}
+			numberOfParents = thing.parents.length;
+			sum = sum * 10 + numberOfParents;
+			totalWidth += crumbWidth;
+			array.push(thing);
 		}
-		return [sum, totalWidth, array];
+		return [sum, totalWidth, array.reverse()];
 	}
 
 	visibleProgeny_height(visited: Array<string> = []): number {
