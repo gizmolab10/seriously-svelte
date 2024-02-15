@@ -1,8 +1,8 @@
 <script>
-	import { k, get, Path, Rect, Size, Point, Thing, launch, TypeDB, ZIndex, signals, onMount, IDButton } from '../../ts/common/GlobalImports';
-	import { Hierarchy, PersistID, dbDispatch, debugReact, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
-	import { s_build, s_isBusy, s_path_here, s_db_type, s_graphRect, s_title_atTop } from '../../ts/managers/State';
-	import { s_id_popupView, s_showDetails, s_things_arrived, s_thing_fontSize } from '../../ts/managers/State';
+	import { IDButton, Hierarchy, PersistID, dbDispatch, debugReact, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
+	import { k, get, Path, Rect, Size, Point, Thing, launch, TypeDB, ZIndex, signals, onMount } from '../../ts/common/GlobalImports';
+	import { s_showDetails, s_title_atTop, s_id_popupView, s_things_arrived, s_thing_fontSize } from '../../ts/managers/State';
+	import { s_build, s_isBusy, s_path_here, s_db_type, s_graphRect, s_crumbs_width } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import LabelButton from '../kit/LabelButton.svelte';
@@ -42,7 +42,6 @@
 		graphRect_update();
 		if ($s_graphRect) {
 			left = $s_graphRect.origin.x;
-			// debugReact.log_rebuild(`PANEL ${$s_path_here.thing.description}`);
 			toggle = !toggle;	// remount graph component
 		}
 	}
@@ -57,7 +56,6 @@
 	}
 	.crumbs {
 		position: fixed;
-		left: 110px;
 		top: 41px;
 	}
 	.build {
@@ -68,28 +66,20 @@
 		left: 35px;
 		top: -2px;
 	}
-	.topTitle {
+	.top-title {
 		text-align: center;
 		position: fixed;
 		font-size: 2em;
 		right: 0px;
 		top: 40px;
 	}
-	.leftSide {
-		background-color: transparent;
-		position: fixed;
-		width: 100px;
-		margin: 1px;
-		left: -1px;
-		top: 8px;
-	}
-	.horizontalLine {
+	.horizontal-line {
 		background-color: lightgray;
 		position: fixed;
 		height: 1px;
 		width: 110%;
 	}
-	.verticalLine {
+	.vertical-line {
 		background-color: lightgray;
 		position: absolute;
 		left: 100px;
@@ -109,10 +99,10 @@
 	<PanelTop/>
 	{#if $s_showDetails && $s_id_popupView == null}
 		<Details/>
-		<div class='verticalLine' style='height: calc(100vh - {topBandHeight}px); top: {topBandHeight}px; z-index: {ZIndex.frontmost};'></div>
+		<div class='vertical-line' style='height: calc(100vh - {topBandHeight}px); top: {topBandHeight}px; z-index: {ZIndex.frontmost};'></div>
 	{/if}
-	<div class='horizontalLine' style='z-index: {ZIndex.frontmost}; left: -10px; top: {topBandHeight}px; width: 110%;'></div>
-	<div class='rightSide' style='
+	<div class='horizontal-line' style='z-index: {ZIndex.frontmost}; left: -10px; top: {topBandHeight}px; width: 110%;'></div>
+	<div class='right-side' style='
 		left: {$s_showDetails ? 100 : 0}px;
 		z-index: {ZIndex.panel};
 		position: fixed;
@@ -122,17 +112,19 @@
 		{:else if $s_id_popupView == IDButton.buildNotes}
 			<BuildNotes/>
 		{:else if $s_id_popupView == null}
-			<div class='crumbs' style='z-index: {ZIndex.frontmost}; top: 40px;'>
-				<Crumbs/>
-				<div class='horizontalLine'
-					style='
-						z-index: {ZIndex.frontmost};
-						left: {$s_showDetails ? k.detailsMargin : 0}px;
-						top: 68px;'>
+			{#key $s_crumbs_width}
+				<div class='crumbs' style='z-index: {ZIndex.frontmost};'>
+					<Crumbs/>
+					<div class='horizontal-line'
+						style='
+							z-index: {ZIndex.frontmost};
+							left: {left}px;
+							top: 68px;'>
+					</div>
 				</div>
-			</div>
+			{/key}
 			{#if $s_title_atTop}
-				<div class='topTitle'
+				<div class='top-title'
 					style='
 						top: 68px;
 						z-index: {ZIndex.frontmost};
@@ -140,7 +132,7 @@
 						left: {$s_showDetails ? '100px' : '-1px'};'>
 					{$s_path_here.thingTitle}
 				</div>
-				<div class='horizontalLine'
+				<div class='horizontal-line'
 					style='
 						z-index: {ZIndex.frontmost};
 						top: {bottomOfTitle + 28}px;

@@ -40,10 +40,10 @@
 <button
 	on:click={crumb_buttonClicked}
 	style='
-		border-radius: 1em;
-		border: 1px solid {thing.color};;
 		{colorStyles};
-		{cursorStyle};'>
+		{cursorStyle};
+		border-radius: 1em;
+		border: 1px solid {thing.color};'>
 		<div style='padding:0px 0px 1px 0px; {cursorStyle};'>
 			{thing.title.injectElipsisAt()}
 		</div>

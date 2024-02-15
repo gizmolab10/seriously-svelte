@@ -7,6 +7,8 @@
 	let insidePath = svgPath.circle(size, size / 2, new Point(size / -7, size / 4));
 	let ancestors: Array<Thing> = [];
 	let path: Path;
+	let width = 0;
+	let left = 0;
 	let sum = 0;
 
 	function path_lastGrabbed() { return k.hierarchy.grabs.path_lastGrabbed; }
@@ -14,20 +16,21 @@
 	onDestroy(() => { rebuild_signalHandler.disconnect() })
 
 	$: {
-		const trigger = $s_paths_grabbed + $s_path_toolsCluster + $s_path_here;
+		const trigger = $s_paths_grabbed + $s_path_toolsCluster + $s_path_here + $s_crumbs_width;
 		if (!path || trigger || ancestors.length == 0) {
 			path = path_lastGrabbed() ?? k.rootPath;	// assure we have a path
-			[sum, ancestors] = path.things_ancestryWithin($s_crumbs_width - 132);
-			console.log(`CRUMBS sum ${sum} ${path.thing?.title}`);
+			[sum, width, ancestors] = path.things_ancestryWithin($s_crumbs_width);
+			left = ($s_crumbs_width - width) / 2;
 		}
 	}
 
 </script>
 
-{#key sum}
+{#key `${sum} ${left}`}
+	<span class='left-spacer' style='display: inline-block; width: {left}px;'/>
 	{#each ancestors.map(thing => thing.parents.length > 1) as multiple, index}
 		{#if index > 0}
-			<span style='
+			<span class='crumb-separator' style='
 				position: relative;
 				color: transparent;
 				top:{size / (multiple ? 4 : 2)}px;

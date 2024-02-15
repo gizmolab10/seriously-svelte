@@ -1,6 +1,6 @@
-import { k, u, get, Path, Datum, debug, Predicate, Hierarchy, DebugFlag } from '../common/GlobalImports';
-import { IDTrait, dbDispatch } from '../common/GlobalImports';
-import { s_path_here } from '../managers/State';
+import { Hierarchy, DebugFlag, IDTrait, dbDispatch } from '../common/GlobalImports';
+import { k, u, get, Path, Datum, debug, Predicate } from '../common/GlobalImports';
+import { s_dot_size, s_path_here } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -25,17 +25,27 @@ export default class Thing extends Datum {
 		this.trait = trait;
 	};
 	
-	get fields():	Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
-	get parentIDs():	Array<string> { return this.parents.map(t => t.id); }
 	get parents():		 Array<Thing> { return this.things_fromPaths(this.fromPathsFor(Predicate.idIsAParentOf)); }
-	get parentPaths():	  Array<Path> { return this.fromPathsFor(Predicate.idIsAParentOf); }
+	get fields():	Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get isHere():			  boolean { return (get(s_path_here).thing?.id ?? '') == this.id; }
 	get idForChildren():	   string { return this.isBulkAlias ? this.bulkRootID : this.id; }
+	get parentPaths():	  Array<Path> { return this.fromPathsFor(Predicate.idIsAParentOf); }
 	get description():		   string { return this.id + ' \"' + this.title + '\"'; }
-	get isBulkAlias():		  boolean { return this.trait == IDTrait.bulk; }
+	get parentIDs():	Array<string> { return this.parents.map(t => t.id); }
 	get isRoot():			  boolean { return this == this.hierarchy.root; }
-	get hierarchy():		Hierarchy { return k.hierarchy; }
+	get isBulkAlias():		  boolean { return this.trait == IDTrait.bulk; }
 	get titleWidth():		   number { return u.getWidthOf(this.title) }
+	get hierarchy():		Hierarchy { return k.hierarchy; }
+
+	get crumbWidth(): number {
+		const dotSize = get(s_dot_size);
+		const numberOfParents = this.parentPaths.length;
+		switch (numberOfParents) {
+			case 0: return this.titleWidth;
+			case 1: return this.titleWidth + dotSize * 1.6;
+			default: return this.titleWidth + dotSize * 2.4;
+		}
+	}
 	
 	debugLog(message: string) { this.log(DebugFlag.things, message); }
 	log(option: DebugFlag, message: string) { debug.log_maybe(option, message + ' ' + this.description); }

@@ -90,7 +90,6 @@
 			const h = k.hierarchy;
 			here = !$s_path_here ? h.root : h.thing_getForPath($s_path_here);
 			focusOffsetX = $s_title_atTop ? 0 : here?.titleWidth / 2
-			console.log(`GRAPH s_path_here ${here.title}`)
 			updateOrigins();
 			toggle = !toggle;	// also cause entire graph to be replaced
 		}

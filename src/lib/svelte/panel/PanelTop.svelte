@@ -1,5 +1,5 @@
 <script>
-	import { k, ZIndex, signals, IDButton, PersistID } from '../../ts/common/GlobalImports';
+	import { k, ZIndex, signals, IDButton, PersistID, persistLocal } from '../../ts/common/GlobalImports';
 	import { s_build, s_showDetails, s_id_popupView } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	const topBandHeight = k.bandHeightAtTop - 2;

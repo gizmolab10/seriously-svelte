@@ -258,7 +258,7 @@ export default class Path {
 		return this;
 	}
 
-	things_ancestryWithin(thresholdWidth: number): [number, Array<Thing>] {
+	things_ancestryWithin(thresholdWidth: number): [number, number, Array<Thing>] {
 		const root = k.hierarchy?.root;
 		let totalWidth = 0;
 		let sum = 0;
@@ -266,15 +266,16 @@ export default class Path {
 		for (const hID of this.hashedIDs) {
 			const thing = k.hierarchy?.thing_to_getForRelationshipHID(hID);
 			if (thing && thing != root) {
-				totalWidth += u.getWidthOf(thing.title);
-				if (totalWidth > thresholdWidth) {
+				const crumbWidth = thing.crumbWidth;
+				if ((totalWidth + crumbWidth) > thresholdWidth) {
 					break;
 				}
+				totalWidth += crumbWidth;
 				sum = sum * 10 + thing.parentPaths.length;
 				array.push(thing);
 			}
 		}
-		return [sum, array];
+		return [sum, totalWidth, array];
 	}
 
 	visibleProgeny_height(visited: Array<string> = []): number {
