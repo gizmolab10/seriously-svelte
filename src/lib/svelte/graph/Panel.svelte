@@ -1,5 +1,5 @@
 <script>
-	import { IDButton, Hierarchy, PersistID, dbDispatch, debugReact, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
+	import { IDButton, Hierarchy, IDPersistant, dbDispatch, debugReact, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
 	import { k, get, Path, Rect, Size, Point, Thing, launch, TypeDB, ZIndex, signals, onMount } from '../../ts/common/GlobalImports';
 	import { s_showDetails, s_title_atTop, s_id_popupView, s_things_arrived, s_thing_fontSize } from '../../ts/managers/State';
 	import { s_build, s_isBusy, s_path_here, s_db_type, s_graphRect, s_crumbs_width } from '../../ts/managers/State';
@@ -7,7 +7,7 @@
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import LabelButton from '../kit/LabelButton.svelte';
 	import BuildNotes from './BuildNotes.svelte';
-	import PanelTop from './PanelTop.svelte';
+	import Controls from './Controls.svelte';
 	import Help from '../help/Help.svelte';
 	import Details from './Details.svelte';
 	import Crumbs from './Crumbs.svelte';
@@ -16,7 +16,6 @@
 	const topBandHeight = k.bandHeightAtTop - 2;
 	let herePath = Path;
 	let toggle = false;
-	let left = 14;
 
 	$: { updateHerePath($s_path_here); }
 	window.addEventListener('resize', (event) => { graphRect_update(); });
@@ -41,7 +40,6 @@
 	function graph_fullRebuild() {
 		graphRect_update();
 		if ($s_graphRect) {
-			left = $s_graphRect.origin.x;
 			toggle = !toggle;	// remount graph component
 		}
 	}
@@ -96,7 +94,7 @@
 {:else if !$s_things_arrived}
 	<p>Nothing is available.</p>
 {:else}
-	<PanelTop/>
+	<Controls/>
 	{#if $s_showDetails && $s_id_popupView == null}
 		<Details/>
 		<div class='vertical-line' style='height: calc(100vh - {topBandHeight}px); top: {topBandHeight}px; z-index: {ZIndex.frontmost};'></div>
@@ -119,7 +117,7 @@
 						<div class='horizontal-line'
 							style='
 								z-index: {ZIndex.frontmost};
-								left: {left}px;
+								left: {$s_showDetails ? k.detailsMargin : 0}px;
 								top: 68px;'>
 						</div>
 					</div>
@@ -130,7 +128,7 @@
 							top: 68px;
 							z-index: {ZIndex.frontmost};
 							color: {$s_path_here.thing?.color};
-							left: {$s_showDetails ? '100px' : '-1px'};'>
+							left: {$s_showDetails ? k.detailsMargin : 0}px;'>
 						{$s_path_here.thingTitle}
 					</div>
 					<div class='horizontal-line'

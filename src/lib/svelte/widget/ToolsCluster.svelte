@@ -17,7 +17,7 @@
     let graphRect = new Rect();
 	let diameter = $s_dot_size;
 	let radius = diameter / 2;
-	let jiggle = false;
+	let toggle = false;
     let titleWidth = 0;
 	let color = '';
 	let left = 64;
@@ -44,14 +44,14 @@
 
     function updateMaybeRedraw() {
         if (update()) {
-            jiggle = !jiggle;
+            toggle = !toggle;
         }
     }
 	
 	const relayout_signalHandler = signals.handle_relayout((path) => {
         setTimeout(() => {
             update();
-            jiggle = !jiggle;
+            toggle = !toggle;
         }, 1);      // wait for graph to relayout
 	});
 
@@ -75,7 +75,7 @@
                 titleWidth = 0;
             }
             update();
-            jiggle = !jiggle;
+            toggle = !toggle;
         }
     }
 
@@ -131,7 +131,7 @@
 	}
 </style>
 
-{#key jiggle}
+{#key toggle}
     {#if $s_path_toolsCluster}
         <div class='toolsCluster' style='
             position:absolute;

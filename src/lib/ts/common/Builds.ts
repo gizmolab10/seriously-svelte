@@ -11,6 +11,7 @@ class Builds {
 
 	constructor() {
 		this.notes = { 
+			82 : ['February 16, 2024', 'add zoom in/out buttons for mobile'],
 			81 : ['February 15, 2024', 'new panel layout'],
 			80 : ['February 13, 2024', 'dynamic paths for child and parent all seemingly working'],
 			79 : ['February 2, 2024', 'working on relations'],

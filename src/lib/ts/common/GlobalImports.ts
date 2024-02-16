@@ -1,15 +1,15 @@
+import { Rect, Size, Point, zoomBy, ChildMap, applyScale, graphRect_update } from '../geometry/Geometry';
 import { IDTrait, IDBrowser, ZIndex, IDButton, AlteringParent } from './Enumerations';
-import { Point, Size, Rect, ChildMap, graphRect_update } from '../geometry/Geometry';
 import { debugReact, DebugReact, ReactFlag } from '../debug/DebugReact';
-import { PersistID, persistLocal } from '../managers/PersistLocal';
+import { IDPersistant, persistLocal } from '../managers/PersistLocal';
 import { CreationOptions, IDLine, IDTool } from './Enumerations';
 import { debug, Debug, DebugFlag } from '../debug/Debug';
 import { Direction, svgPath } from '../geometry/SVGPath';
 import { TypeDB, TypeDatum } from '../db/DBInterface';
 import { SeriouslyRange } from './SeriouslyRange';
+import { IDWrapper } from '../structures/Wrapper';
 import { signals, IDSignal } from './Signals';
 import { dbDispatch } from '../db/DBDispatch';
-import { IDWrapper } from '../structures/Wrapper';
 import { onMount, onDestroy } from 'svelte';
 import { launch } from '../managers/Launch';
 import { get } from 'svelte/store';
@@ -32,13 +32,13 @@ import Thing from '../data/Thing';
 import User from '../data/User';
 
 export {
-	IDWrapper, IDTrait, TypeDB, IDLine,
 	Path, Grabs, Wrapper, TitleState,
-	svgPath, Direction, PersistID, persistLocal,
+	IDWrapper, IDTrait, TypeDB, IDLine,
 	k, u, get, builds, launch, onMount, onDestroy,
+	svgPath, Direction, IDPersistant, persistLocal,
 	signals, IDSignal, debugReact, DebugReact, ReactFlag,
-	ZIndex, IDButton, IDBrowser, AlteringParent, CreationOptions,
 	debug, Debug, DebugFlag, TypeDatum, dbDispatch, Hierarchy,
+	ZIndex, IDButton, IDBrowser, AlteringParent, CreationOptions,
 	User, Datum, Thing, Access, Predicate, Relationship, SeriouslyRange,
-	Rect, Size, Point, Layout, ChildMap, IDTool, graphRect_update,
+	Rect, Size, Point, zoomBy, Layout, ChildMap, IDTool, applyScale, graphRect_update,
 };

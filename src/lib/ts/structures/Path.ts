@@ -129,17 +129,19 @@ export default class Path {
 
 	get childPaths(): Array<Path> {
 		const paths: Array<Path> = [];
-		const thingID = this.thingID;
-		if (thingID == k.unknownID) {
-			console.log(`child paths unavailable for ID: ${k.unknownID}`);
-		} else if (thingID) {
-			const hierarchy = k.hierarchy;
-			const toRelationships = hierarchy.relationships_getByPredicateIDToAndID(this.predicateID, false, thingID);
-			for (const toRelationship of toRelationships) {			// loop through all to relationships
-				const path = this.appendID(toRelationship.id);		// add each toRelationship's id
-				paths.push(path);									// and push onto the paths_to
+		if (this.pathString != 'exemplar') {
+			const thingID = this.thingID;
+			if (thingID == k.unknownID) {
+				console.log(`child paths unavailable for ID: ${k.unknownID}`);
+			} else if (thingID) {
+				const hierarchy = k.hierarchy;
+				const toRelationships = hierarchy.relationships_getByPredicateIDToAndID(this.predicateID, false, thingID);
+				for (const toRelationship of toRelationships) {			// loop through all to relationships
+					const path = this.appendID(toRelationship.id);		// add each toRelationship's id
+					paths.push(path);									// and push onto the paths_to
+				}
+				u.paths_orders_normalize_remoteMaybe(paths);
 			}
-			u.paths_orders_normalize_remoteMaybe(paths);
 		}
 		return paths;
 	}

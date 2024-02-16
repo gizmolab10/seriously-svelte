@@ -1,5 +1,5 @@
-import { s_graphRect, s_showDetails, s_title_atTop, s_crumbs_width } from "../managers/State";
-import { k, get, Path, Thing } from '../common/GlobalImports'
+import { s_graphRect, s_showDetails, s_title_atTop, s_crumbs_width, s_scale_factor } from "../managers/State";
+import { k, u, get, Path, Thing, IDPersistant, persistLocal } from '../common/GlobalImports'
 
 export class Point {
 	x: number;
@@ -109,13 +109,31 @@ export class ChildMap extends Rect {
 	}
 }
 
+export function zoomBy(factor: number): number {
+	const zoomContainer = document.documentElement;
+	const currentScale = parseFloat(getComputedStyle(zoomContainer).getPropertyValue('zoom')) || 1;
+	const scale = currentScale * factor;
+	persistLocal.writeToKey(IDPersistant.scale, scale);
+	applyScale(scale);
+	return u.windowSize.width;
+}
+
+export function applyScale(scale: number) {
+	s_scale_factor.set(scale)
+	const zoomContainer = document.documentElement;
+	zoomContainer.style.setProperty('zoom', scale.toString());
+	zoomContainer.style.transform = `scale(var(zoom))`;
+	zoomContainer.style.height = `${100 / scale}%`;
+	zoomContainer.style.width = `${100 / scale}%`;
+	graphRect_update();
+}
+
 export function graphRect_update() {
-	const top = get(s_title_atTop) ? 86 : 33;												// height of title at the top
+	const top = get(s_title_atTop) ? 86 : 33;						// height of title at the top
 	const left = get(s_showDetails) ? k.detailsMargin : 0;			// width of details
-	const mysteryOffset = new Point(left + 2, top);					// TODO: why?
 	const originOfGraph = new Point(left, top);
-	const windowSize = new Size(window.innerWidth, window.innerHeight);
-	const sizeOfGraph = windowSize.reducedBy(mysteryOffset);		// account for origin
+	const mysteryOffset = new Point(left + 2, top);					// TODO: why?
+	const sizeOfGraph = u.windowSize.reducedBy(mysteryOffset);		// account for origin
 	const rect = new Rect(originOfGraph, sizeOfGraph);
 	s_crumbs_width.set(sizeOfGraph.width);
 	s_graphRect.set(rect);											// used by Panel and Graph

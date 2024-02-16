@@ -1,5 +1,5 @@
 import { s_db_type, s_isBusy, s_path_here, s_paths_grabbed, s_db_loadTime, s_things_arrived } from '../managers/State';
-import { k, TypeDB, PersistID, persistLocal } from '../common/GlobalImports';
+import { k, TypeDB, IDPersistant, persistLocal } from '../common/GlobalImports';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
@@ -14,7 +14,7 @@ export default class DBDispatch {
 	constructor() { this.db = dbFirebase; }
 
 	applyQueryStrings(queryStrings: URLSearchParams) {
-		const type = queryStrings.get('db') ?? persistLocal.readFromKey(PersistID.db) ?? TypeDB.firebase;
+		const type = queryStrings.get('db') ?? persistLocal.readFromKey(IDPersistant.db) ?? TypeDB.firebase;
 		this.updateDBForType(type);
 		this.db.applyQueryStrings(queryStrings);
 		s_db_type.set(type);
@@ -40,7 +40,7 @@ export default class DBDispatch {
 	changeDBTo(newDBType: TypeDB) {
 		const db = this.dbForType(newDBType);
 		s_db_loadTime.set(db.loadTime);
-		persistLocal.writeToKey(PersistID.db, newDBType);
+		persistLocal.writeToKey(IDPersistant.db, newDBType);
 		if (newDBType != TypeDB.local && !db.hasData) {
 			s_isBusy.set(true);			// set this before changing $s_db_type so panel will show 'loading ...'
 		}

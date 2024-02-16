@@ -1,4 +1,4 @@
-import { k, u, debug, builds, debugReact, PersistID, dbDispatch, persistLocal } from '../common/GlobalImports'
+import { k, u, debug, builds, debugReact, IDPersistant, dbDispatch, persistLocal } from '../common/GlobalImports'
 import { s_path_here, s_showDetails, s_title_atTop } from './State';
 import { s_paths_grabbed, s_paths_expanded } from './State';
 
@@ -31,18 +31,18 @@ class Launch {
         const erase = queryString.get('erase');
         const locate = queryString.get('locate');
 		if (queryString.get('controls') === 'show') {
-			persistLocal.writeToKey(PersistID.controls, true);
+			persistLocal.writeToKey(IDPersistant.controls, true);
 			k.showControls = true;
 		}
 		if (queryString.get('details') === 'hide') {
-			persistLocal.writeToKey(PersistID.details, false);
+			persistLocal.writeToKey(IDPersistant.details, false);
 			s_showDetails.set(false);
 		}
         if (locate) {
             for (const option of locate.split(',')) {
                 switch (option) {
                     case 'titleAtTop':
-						persistLocal.writeToKey(PersistID.title_atTop, true);
+						persistLocal.writeToKey(IDPersistant.title_atTop, true);
 						s_title_atTop.set(true);
 						break;
 				}

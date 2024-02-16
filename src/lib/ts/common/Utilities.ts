@@ -1,11 +1,16 @@
-import { s_thing_fontSize, s_thing_fontFamily } from '../managers/State';
-import { get, Path, IDBrowser } from './GlobalImports';
+import { s_scale_factor, s_thing_fontSize, s_thing_fontFamily } from '../managers/State';
+import { get, Path, Size, IDBrowser } from './GlobalImports';
 
 class Utilities {
 	noop() {}
 	ignore(event: Event) {}
 	roundToEven(n: number): number{ return Math.round(n / 2) * 2; }
 	sort_byOrder(array: Array<Path>) { return array.sort( (a: Path, b: Path) => { return a.order - b.order; }); }
+
+	get windowSize(): Size {
+		const scaleFactor = get(s_scale_factor);
+		return new Size(window.innerWidth / scaleFactor, window.innerHeight / scaleFactor);
+	}
 
 	async paths_orders_normalize_remoteMaybe(array: Array<Path>, remoteWrite: boolean = true) {
 		this.sort_byOrder(array);

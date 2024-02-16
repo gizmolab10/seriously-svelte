@@ -3,7 +3,7 @@
 	import { s_id_popupView, s_line_stretch, s_path_toolsCluster, s_user_graphOffset } from '../../ts/managers/State';
 	import { k, u, Path, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/GlobalImports';
 	import { IDButton, onDestroy, debugReact, dbDispatch, Predicate } from '../../ts/common/GlobalImports';
-	import { PersistID, IDSignal, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
+	import { IDPersistant, IDSignal, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
 	import FocusRevealDot from '../kit/FocusRevealDot.svelte';
 	import ToolsCluster from '../widget/ToolsCluster.svelte';
 	import Widget from '../widget/Widget.svelte';
@@ -61,7 +61,7 @@
 
 	function s_user_graphOffset_setTo(origin: Point) {
 		if ($s_user_graphOffset != origin) {
-			persistLocal.writeToKey(PersistID.origin, origin);
+			persistLocal.writeToKey(IDPersistant.origin, origin);
 			$s_user_graphOffset = origin;
 			updateOrigins();
 			toggle = !toggle;	// rebuild entire graph
