@@ -19,6 +19,7 @@ export default class Constants {
 	public defaultTitle: string;
 	public lineTitle: string;
 	public unknownID: string;
+	public showControls: boolean;
 	public hierarchy: Hierarchy;
 	public rootPath: Path;
 

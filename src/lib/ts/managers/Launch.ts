@@ -30,6 +30,10 @@ class Launch {
 	applyQueryStrings(queryString: URLSearchParams) {
         const erase = queryString.get('erase');
         const locate = queryString.get('locate');
+		if (queryString.get('controls') === 'show') {
+			persistLocal.writeToKey(PersistID.controls, true);
+			k.showControls = true;
+		}
 		if (queryString.get('details') === 'hide') {
 			persistLocal.writeToKey(PersistID.details, false);
 			s_showDetails.set(false);

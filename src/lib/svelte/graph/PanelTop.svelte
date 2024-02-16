@@ -45,40 +45,42 @@
 		onClick={details_buttonClicked}>
 		<img src='settings.svg' alt='circular button' width={size}px height={size}px/>
 	</CircularButton>
-	<button class='button'
-		style='
-			left: 30px;
-			background-color: {k.backgroundColor};'
-		on:click={() => buttonClickedForID(IDButton.relations)}>
-		children
-	</button>
-	<button class='button'
-		style='
-			left: 97px;
-			background-color: {k.backgroundColor};'
-		on:click={() => buttonClickedForID(IDButton.layout)}>
-		tree
-	</button>
-	<CircularButton
-		size={size}
-		left={width - 102}
-		color={k.backgroundColor}
-		onClick={(event) => buttonClickedForID(IDButton.smaller)}>
-		<SVGD3
+	{#if k.showControls}
+		<button class='button'
+			style='
+				left: 30px;
+				background-color: {k.backgroundColor};'
+			on:click={() => buttonClickedForID(IDButton.relations)}>
+			children
+		</button>
+		<button class='button'
+			style='
+				left: 97px;
+				background-color: {k.backgroundColor};'
+			on:click={() => buttonClickedForID(IDButton.layout)}>
+			tree
+		</button>
+		<CircularButton
 			size={size}
-			scalablePath={svgPath.dash(size, 2)}
-		/>
-	</CircularButton>
-	<CircularButton
-		size={size}
-		left={width - 76}
-		color={k.backgroundColor}
-		onClick={(event) => buttonClickedForID(IDButton.bigger)}>
-		<SVGD3
+			left={width - 102}
+			color={k.backgroundColor}
+			onClick={(event) => buttonClickedForID(IDButton.smaller)}>
+			<SVGD3
+				size={size}
+				scalablePath={svgPath.dash(size, 2)}
+			/>
+		</CircularButton>
+		<CircularButton
 			size={size}
-			scalablePath={svgPath.tCross(size, 2)}
-		/>
-	</CircularButton>
+			left={width - 76}
+			color={k.backgroundColor}
+			onClick={(event) => buttonClickedForID(IDButton.bigger)}>
+			<SVGD3
+				size={size}
+				scalablePath={svgPath.tCross(size, 2)}
+			/>
+		</CircularButton>
+	{/if}
 	<button class='button'
 		style='
 			left: {width - 60}px;

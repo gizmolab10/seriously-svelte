@@ -8,6 +8,7 @@ export enum PersistID {
 	title_atTop  	= 'title_atTop',
 	row_height   	= 'row_height',
 	expanded	 	= 'expanded',
+	controls	 	= 'controls',
 	grabbed		 	= 'grabbed',
 	details		 	= 'details',
 	origin		 	= 'origin',
@@ -31,7 +32,8 @@ class PersistLocal {
 			this.writeToKey(PersistID.relationships, true);
 		}
 		s_db_loadTime.set(null);
-		s_row_height.set(this.readFromKey(PersistID.row_height) ?? 20); // sets s_dot_size and s_thing_fontSize
+		k.showControls = this.readFromKey(PersistID.controls) ?? false;
+		s_row_height.set(this.readFromKey(PersistID.row_height) ?? 20);
 		s_showDetails.set(this.readFromKey(PersistID.details) ?? false);
 		s_line_stretch.set(this.readFromKey(PersistID.line_stretch) ?? 30);
 		s_title_atTop.set(this.readFromKey(PersistID.title_atTop) ?? false);
