@@ -1,6 +1,8 @@
 export enum IDButton {
 	buildNotes	= 'show build notes',
 	relations	= 'relations',
+	smaller		= 'smaller',
+	bigger		= 'bigger',
 	layout		= 'layout',
 	help		= '?',
 }

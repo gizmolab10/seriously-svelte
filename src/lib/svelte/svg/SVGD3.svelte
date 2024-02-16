@@ -1,11 +1,11 @@
 <script>
-    import { Size, Point, onMount, onDestroy } from '../../ts/common/GlobalImports';
+    import { ZIndex, onMount, onDestroy } from '../../ts/common/GlobalImports';
     import * as d3 from 'd3';
     export let position = 'absolute';
+    export let zIndex = ZIndex.dots;
     export let scalablePath = '';
     export let stroke = 'black';
     export let fill = 'white';
-    export let zIndex = 0;
     export let size = 10;
     let svg;
 

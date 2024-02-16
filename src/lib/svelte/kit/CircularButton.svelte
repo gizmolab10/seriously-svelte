@@ -13,22 +13,23 @@
 	on:click={onClick}
 	on:keypress={u.ignore}
 	style='
-		position: absolute;
-		left: {left}px;
 		top: {top}px;
-		transform: translate(-50%, -50%);
+		display: flex;
+		left: {left}px;
+		cursor: pointer;
 		width: {size}px;
 		height: {size}px;
-		font-size: {size - 1}px;;
-		line-height: {size}px;
 		color: {textColor}
+		font-weight: bold;
+		position: absolute;
+		border-radius: 50%;
+		align-items: center;
+		line-height: {size}px;
+		justify-content: center;
+		font-size: {size - 1}px;;
 		background-color: {color};
 		border: 1px solid {borderColor};
-		border-radius: 50%;
-		display: inline-block;
-		text-align: center;
-		font-weight: bold;
-		cursor: pointer;
+		transform: translate(-50%, -50%);
 	'>
 	<slot></slot>
 </div>

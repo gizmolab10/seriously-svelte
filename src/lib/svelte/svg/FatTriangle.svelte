@@ -16,7 +16,6 @@
 	fill={fillColor}
 	position={position}
 	stroke={strokeColor}
-	zIndex={ZIndex.dots}
 	scalablePath={scalablePath}
 />
 {#if extra}
@@ -25,6 +24,5 @@
 		fill={extraColor}
 		stroke={extraColor}
 		scalablePath={extra}
-		zIndex={ZIndex.dots}
 	/>
 {/if}

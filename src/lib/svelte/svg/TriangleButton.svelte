@@ -53,7 +53,6 @@
 		size={size}
 		fill={fillColor}
 		stroke={strokeColor}
-		zIndex={ZIndex.dots}
 		scalablePath={scalablePath}
 	/>
 	{#if extra}
@@ -61,7 +60,6 @@
 			size={size}
 			fill={extraColor}
 			stroke={extraColor}
-			zIndex={ZIndex.dots}
 			scalablePath={extra}
 		/>
 	{/if}

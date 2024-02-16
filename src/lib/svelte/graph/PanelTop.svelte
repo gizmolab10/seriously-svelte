@@ -1,10 +1,12 @@
 <script>
-	import { k, ZIndex, signals, IDButton, PersistID, persistLocal } from '../../ts/common/GlobalImports';
+	import { k, ZIndex, signals, IDButton, PersistID, svgPath, persistLocal } from '../../ts/common/GlobalImports';
 	import { s_build, s_showDetails, s_id_popupView } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
+	import SVGD3 from '../svg/SVGD3.svelte';
 	const topBandHeight = k.bandHeightAtTop - 2;
 	let width = window.innerWidth;
 	let size = 16;
+	let bigSize = size * 1.5;
 
 	window.addEventListener('resize', (event) => { width = window.innerWidth; });
 	function togglePopupID(id) { $s_id_popupView = ($s_id_popupView == id) ? null : id; }
@@ -38,6 +40,7 @@
 		z-index: {ZIndex.frontmost};
 		height: `${topBandHeight}px`;'>
 	<CircularButton left=15
+		color='transparent'
 		borderColor='transparent'
 		onClick={details_buttonClicked}>
 		<img src='settings.svg' alt='circular button' width={size}px height={size}px/>
@@ -56,6 +59,26 @@
 		on:click={() => buttonClickedForID(IDButton.layout)}>
 		tree
 	</button>
+	<CircularButton
+		size={size}
+		left={width - 102}
+		color={k.backgroundColor}
+		onClick={(event) => buttonClickedForID(IDButton.smaller)}>
+		<SVGD3
+			size={size}
+			scalablePath={svgPath.dash(size, 2)}
+		/>
+	</CircularButton>
+	<CircularButton
+		size={size}
+		left={width - 76}
+		color={k.backgroundColor}
+		onClick={(event) => buttonClickedForID(IDButton.bigger)}>
+		<SVGD3
+			size={size}
+			scalablePath={svgPath.tCross(size, 2)}
+		/>
+	</CircularButton>
 	<button class='button'
 		style='
 			left: {width - 60}px;
@@ -66,6 +89,7 @@
 	<CircularButton
 		size={size}
 		left={width - 15}
+		color={k.backgroundColor}
 		onClick={(event) => togglePopupID(IDButton.help)}>?
 	</CircularButton>
 </div>

@@ -20,16 +20,10 @@
     on:click={() => { $s_id_popupView = null; }}>
     <SVGD3
 		size={size}
-		stroke='black'
-		position='absolute'
-		zIndex={ZIndex.dots}
 		scalablePath={circle}
 	/>
     <SVGD3
 		size={size}
-		stroke='black'
-		position='absolute'
-		zIndex={ZIndex.dots}
 		scalablePath={cross}
 	/>
 </div>

@@ -169,7 +169,6 @@
 			<SVGD3
 				size={$s_dot_size}
 				stroke={strokeColor}
-				zIndex={ZIndex.dots}
 				scalablePath={scalablePath}
 				fill={debug.lines ? 'transparent' : fillColor}
 			/>
@@ -179,7 +178,6 @@
 				<SVGD3
 					size={$s_dot_size}
 					stroke={strokeColor}
-					zIndex={ZIndex.dots}
 					fill={bulkAliasFillColor}
 					scalablePath={insidePath}
 				/>

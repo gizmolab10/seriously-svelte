@@ -144,14 +144,12 @@
 			size={size}
 			fill={fillColor}
 			stroke={strokeColor}
-			zIndex={ZIndex.dots}
 			scalablePath={scalablePath}
 		/>
 		{#if extra}
 			<SVGD3
 				size={size}
 				fill={tinyDotColor}
-				zIndex={ZIndex.dots}
 				scalablePath={extra}
 				stroke={tinyDotColor}
 			/>
