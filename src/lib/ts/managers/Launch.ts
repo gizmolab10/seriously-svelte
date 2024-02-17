@@ -1,6 +1,5 @@
-import { k, u, debug, builds, debugReact, IDPersistant, dbDispatch, persistLocal } from '../common/GlobalImports'
-import { s_path_here, s_showDetails, s_title_atTop } from './State';
-import { s_paths_grabbed, s_paths_expanded } from './State';
+import { g, k, u, debug, builds, debugReact, IDPersistant, dbDispatch, persistLocal } from '../common/GlobalImports'
+import { s_path_here, s_showDetails, s_paths_grabbed, s_paths_expanded } from './State';
 
 class Launch {
 	queryString: URLSearchParams;
@@ -17,7 +16,8 @@ class Launch {
 		this.applyQueryStrings(this.queryString);
 		debug.applyQueryStrings(this.queryString);
 		debugReact.applyQueryStrings(this.queryString);
-		dbDispatch.applyQueryStrings(this.queryString); // do this last
+		dbDispatch.applyQueryStrings(this.queryString); // do these two last
+		g.setup();
 	}
 
 	get browserTitle(): string {
@@ -32,7 +32,7 @@ class Launch {
         const locate = queryString.get('locate');
 		if (queryString.get('controls') === 'show') {
 			persistLocal.writeToKey(IDPersistant.controls, true);
-			k.showControls = true;
+			g.showControls = true;
 		}
 		if (queryString.get('details') === 'hide') {
 			persistLocal.writeToKey(IDPersistant.details, false);
@@ -43,7 +43,7 @@ class Launch {
                 switch (option) {
                     case 'titleAtTop':
 						persistLocal.writeToKey(IDPersistant.title_atTop, true);
-						s_title_atTop.set(true);
+						g.titleIsAtTop = true;
 						break;
 				}
 			}
@@ -56,7 +56,7 @@ class Launch {
 						break;
                     case 'settings': 
 						localStorage.clear();
-						s_path_here.set(k.rootPath);
+						s_path_here.set(g.rootPath);
 						s_paths_grabbed.set([]);
 						s_paths_expanded.set([]);
 						break;

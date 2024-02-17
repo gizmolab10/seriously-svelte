@@ -1,4 +1,4 @@
-import { u, Path, Hierarchy } from '../../ts/common/GlobalImports'
+import { u } from '../../ts/common/GlobalImports';
 
 export default class Constants {
 	public halfIncrement: number;
@@ -19,9 +19,6 @@ export default class Constants {
 	public defaultTitle: string;
 	public lineTitle: string;
 	public unknownID: string;
-	public showControls: boolean;
-	public hierarchy: Hierarchy;
-	public rootPath: Path;
 
 	constructor() {
 		this.pathSeparator = '::';

@@ -1,6 +1,6 @@
 <script lang='ts'>
-    import { k, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, signals } from '../../ts/common/GlobalImports';
-    import { s_dot_size, s_row_height, s_graphRect, s_showDetails, s_title_atTop } from '../../ts/managers/State';
+    import { g, k, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, signals } from '../../ts/common/GlobalImports';
+    import { s_dot_size, s_row_height, s_graphRect, s_showDetails } from '../../ts/managers/State';
 	import { svgPath, onDestroy, Direction, dbDispatch, AlteringParent } from '../../ts/common/GlobalImports';
     import { s_user_graphOffset, s_altering_parent, s_path_toolsCluster } from '../../ts/managers/State';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
@@ -32,7 +32,7 @@
 
 	async function handleClick(IDButton: string, event: MouseEvent) {
 		if (path && !path.isExemplar) {
-            await k.hierarchy.handleToolClicked(IDButton, event);
+            await g.hierarchy.handleToolClicked(IDButton, event);
 		}
 	}
 
@@ -89,7 +89,7 @@
         const rect = path?.thingTitleRect;
         if (rect && rect.size.width != 0) {
             const offsetX = $s_showDetails ? -92 : 9;
-            const offsetY = $s_title_atTop ? 87 : 34;
+            const offsetY = g.titleIsAtTop ? 87 : 34;
             const center = rect.centerLeft.offsetBy(new Point(titleWidth + offsetX, -offsetY));
             const leftLeft = center.x + radius * 0.8;
             const top = center.y - 6;

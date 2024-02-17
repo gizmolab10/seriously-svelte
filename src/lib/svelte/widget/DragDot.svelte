@@ -22,7 +22,7 @@
 	let left = 0;
 	let top = 0;
 	
-    onDestroy(() => { handler.disconnect(); })
+    onDestroy(() => { handler?.disconnect(); })
 	function handleMouseIn(event) { updateColorsForHover(true); }
 	function handleMouseUp() { clearTimeout(clickTimer); }
 	function handleMouseOut(event) { updateColorsForHover(false); }

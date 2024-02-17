@@ -1,5 +1,5 @@
 import { TitleState, dbDispatch, Relationship, SeriouslyRange, AlteringParent } from '../common/GlobalImports';
-import { k, u, get, Rect, Size, Thing, IDWrapper, signals, Wrapper, Predicate } from '../common/GlobalImports';
+import { g, k, u, get, Rect, Size, Thing, IDWrapper, signals, Wrapper, Predicate } from '../common/GlobalImports';
 import { s_paths_expanded, s_paths_grabbed, s_path_toolsCluster, s_altering_parent } from '../managers/State';
 import { s_dot_size, s_path_here, s_row_height, s_line_stretch, s_title_editing } from '../managers/State';
 import { Writable } from 'svelte/store';
@@ -15,21 +15,18 @@ export default class Path {
 		this.hashedPath = pathString.hash()
 		this.predicateID = predicateID;
 		this.pathString = pathString;
-		if (pathString != '') {			// root path is setup in persist local finish setup
-			this.setup();
-		}
-		if (k.hierarchy.isAssembled) {
+		this.selectionRange = new SeriouslyRange(0, this.thing?.titleWidth ?? 0);
+		if (g.hierarchy.isAssembled) {
 			this.subscriptions_setup();	// not needed during hierarchy assembly
 		}
 	}
 
 	signal_rebuild()  { signals.signal_rebuild(this); }
 	signal_relayout() { signals.signal_relayout(this); }
-	setup() { this.selectionRange = new SeriouslyRange(0, this.thing?.titleWidth ?? 0); }
 
 	wrapper_add(wrapper: Wrapper) {
 		this.wrappers[wrapper.type] = wrapper;
-        k.hierarchy.wrapper_add(wrapper);
+        g.hierarchy.wrapper_add(wrapper);
 	}
 
 	subscriptions_setup() {
@@ -46,7 +43,7 @@ export default class Path {
 	get thing(): Thing | null { return this.thingAt(); }
 	get firstChild(): Thing { return this.children[0]; }
 	get lastChild(): Thing { return this.children.slice(-1)[0]; }
-	get isRoot(): boolean { return this.matchesPath(k.rootPath); }
+	get isRoot(): boolean { return this.matchesPath(g.rootPath); }
 	get order(): number { return this.relationship?.order ?? -1; }
 	get isHere(): boolean { return this.matchesStore(s_path_here); }
 	get hasChildren(): boolean { return this.childPaths.length > 0; }
@@ -56,7 +53,7 @@ export default class Path {
 	get relationship(): Relationship | null { return this.relationshipAt(); }
 	get thingTitle(): string { return this.thing?.title ?? 'missing title'; }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
-	get things(): Array<Thing> { return k.hierarchy?.things_getForPath(this); }
+	get things(): Array<Thing> { return g.hierarchy?.things_getForPath(this); }
 	get lineWrapper(): Wrapper | null { return this.wrappers[IDWrapper.line]; }
 	get titleWrapper(): Wrapper | null { return this.wrappers[IDWrapper.title]; }
 	get toolsGrabbed(): boolean { return this.matchesStore(s_path_toolsCluster); }
@@ -65,7 +62,7 @@ export default class Path {
 	get thingTitleRect(): Rect | null { return this.wrapperRectFor(IDWrapper.title); }
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
-	get children(): Array<Thing> { return k.hierarchy?.things_getForPaths(this.childPaths); }
+	get children(): Array<Thing> { return g.hierarchy?.things_getForPaths(this.childPaths); }
 	get thingTitles(): Array<string> { return this.things.map(t => `\"${t.title}\"`) ?? []; }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
 	get isEditing(): boolean { return this.matchesPath(get(s_title_editing)?.editing ?? null); }
@@ -73,7 +70,7 @@ export default class Path {
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 
 	get isVisible(): boolean {
-		const here = k.hierarchy?.herePath;
+		const here = g.herePath;
 		return this.incorporates(here) && this.isExpandedFrom(here);
 	}
 
@@ -86,7 +83,7 @@ export default class Path {
 
 	get thingID(): string {
 		if (this.isRoot) {
-			return k.hierarchy?.idRoot ?? k.unknownID;
+			return g.hierarchy?.idRoot ?? k.unknownID;
 		}
 		return this.relationship?.idTo ?? k.unknownID;
 	}
@@ -134,7 +131,7 @@ export default class Path {
 			if (thingID == k.unknownID) {
 				console.log(`child paths unavailable for ID: ${k.unknownID}`);
 			} else if (thingID) {
-				const hierarchy = k.hierarchy;
+				const hierarchy = g.hierarchy;
 				const toRelationships = hierarchy.relationships_getByPredicateIDToAndID(this.predicateID, false, thingID);
 				for (const toRelationship of toRelationships) {			// loop through all to relationships
 					const path = this.appendID(toRelationship.id);		// add each toRelationship's id
@@ -152,12 +149,12 @@ export default class Path {
 	includedInPaths(paths: Array<Path>): boolean { return paths.filter(p => p.matchesPath(this)).length > 0; }
 	sharesAnID(path: Path | null): boolean { return !path ? false : this.ids.some(id => path.ids.includes(id)); }
 	wrapperRectFor(id: IDWrapper): Rect | null { return Rect.createFromDOMRect(this.wrappers[id]?.component.getBoundingClientRect()); }
-	relationshipAt(back: number = 1): Relationship | null { return k.hierarchy?.relationship_getForHID(this.idAt(back).hash()) ?? null; }
+	relationshipAt(back: number = 1): Relationship | null { return g.hierarchy?.relationship_getForHID(this.idAt(back).hash()) ?? null; }
 
 	appendID(id: string): Path {
 		let ids = this.ids;
 		ids.push(id);
-		return k.hierarchy.path_remember_unique(ids.join(k.pathSeparator));
+		return g.hierarchy.path_remember_unique(ids.join(k.pathSeparator));
 	}
 
 	idAt(back: number = 1): string {
@@ -172,9 +169,9 @@ export default class Path {
 		const isEmpthPathString = this.pathString == '';
 		const relationship = this.relationshipAt(back);
 		if (!isEmpthPathString && relationship) {
-			return !relationship ? null : k.hierarchy?.thing_getForHID(relationship.idTo.hash()) ?? null;
+			return !relationship ? null : g.hierarchy?.thing_getForHID(relationship.idTo.hash()) ?? null;
 		}
-		return k.hierarchy?.root ?? null;
+		return g.hierarchy?.root ?? null;
 	}
 
 	thing_isImmediateParentOf(path: Path): boolean {
@@ -246,14 +243,14 @@ export default class Path {
 		}
 		const ids = this.ids.slice(0, -back);
 		if (ids.length < 1) {
-			return k.rootPath;
+			return g.rootPath;
 		}
-		return k.hierarchy.path_remember_unique(ids.join(k.pathSeparator));
+		return g.hierarchy.path_remember_unique(ids.join(k.pathSeparator));
 	}
 
 	appendChild(thing: Thing | null): Path {
 		if (thing) {
-			const relationship = k.hierarchy?.relationship_getByIDPredicateFromAndTo(Predicate.idIsAParentOf, this.thingID, thing.id);
+			const relationship = g.hierarchy?.relationship_getByIDPredicateFromAndTo(Predicate.idIsAParentOf, this.thingID, thing.id);
 			if (relationship) {
 				return this.appendID(relationship.id);
 			}
@@ -262,7 +259,7 @@ export default class Path {
 	}
 
 	things_ancestryWithin(thresholdWidth: number): [number, number, Array<Thing>] {
-		const h = k.hierarchy;
+		const h = g.hierarchy;
 		const things = this.things.reverse();
 		const array: Array<Thing> = [];
 		let numberOfParents = 0;
@@ -282,7 +279,7 @@ export default class Path {
 	}
 
 	visibleProgeny_height(visited: Array<string> = []): number {
-		const thing = k.hierarchy?.thing_getForPath(this);
+		const thing = g.hierarchy?.thing_getForPath(this);
 		if (thing) {
 			const rowHeight = get(s_row_height);
 			if (!visited.includes(this.pathString) && this.hasChildren && this.isExpanded) {
@@ -298,7 +295,7 @@ export default class Path {
 	}
 
 	visibleProgeny_width(isFirst: boolean = true, visited: Array<number> = []): number {
-		const thing = k.hierarchy?.thing_getForPath(this);
+		const thing = g.hierarchy?.thing_getForPath(this);
 		if (thing) {
 			let width = isFirst ? 0 : thing.titleWidth;
 			if (!visited.includes(this.hashedPath) && this.isExpanded && this.hasChildren) {
@@ -363,15 +360,15 @@ export default class Path {
 				path.expand();
 			}
 		} while (!path);
-		k.rootPath.expand();
-		k.rootPath.becomeHere();
+		g.rootPath.expand();
+		g.rootPath.becomeHere();
 	}
 
 	clicked_dragDot(shiftKey: boolean) {
         if (!this.isExemplar) {
 			s_title_editing?.set(null);
 			if (get(s_altering_parent)) {
-				k.hierarchy.path_alterMaybe(this);
+				g.hierarchy.path_alterMaybe(this);
 			} else if (shiftKey || this.isGrabbed) {
 				this.toggleGrab();
 			} else {
@@ -398,7 +395,7 @@ export default class Path {
 	}
 
 	ungrab() {
-		const rootPath = k.rootPath;
+		const rootPath = g.rootPath;
 		s_paths_grabbed.update((array) => {
 			const index = array.indexOf(this);
 			if (index != -1) {				// only splice array when item is found

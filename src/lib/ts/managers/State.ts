@@ -1,4 +1,4 @@
-import { k, get, Rect, Path, Point, TitleState } from '../common/GlobalImports';
+import { g, get, Rect, Path, Point, TitleState } from '../common/GlobalImports';
 import { signals } from '../common/Signals';
 import { writable } from 'svelte/store';
 import { u } from '../common/Utilities'; // import separately from globals to avoid recursive initialization
@@ -14,7 +14,6 @@ export const s_paths_expanded	 = writable<Array<Path>>();
 export const s_show_child_graph	 = writable<boolean>();
 export const s_things_arrived	 = writable<boolean>();
 export const s_showDetails		 = writable<boolean>();
-export const s_title_atTop		 = writable<boolean>();
 export const s_isBusy			 = writable<boolean>();
 export const s_db_type			 = writable<string>();
 export const s_thing_fontFamily	 = writable<string>();
@@ -54,10 +53,10 @@ s_altering_parent.subscribe((alteration: string | null) => {
 export function s_setup() {
 	const herePath = get(s_path_here);
 	if (!herePath) {
-		s_path_here.set(k.rootPath);
+		s_path_here.set(g.rootPath);
 	}
 	const grabbedPaths = get(s_paths_grabbed);
 	if (!grabbedPaths || grabbedPaths.length == 0) {
-		s_paths_grabbed.set([k.rootPath]);
+		s_paths_grabbed.set([g.rootPath]);
 	}
 }

@@ -247,7 +247,7 @@ export default class DBFirebase implements DBInterface {
 						}
 						setTimeout(() => { // wait in case a thing involved in this relationship arrives in the data
 							h.relationships_refreshKnowns();
-							k.rootPath.order_normalizeRecursive_remoteMaybe(true);
+							g.rootPath.order_normalizeRecursive_remoteMaybe(true);
 						}, 20);
 					}
 				} else if (type == TypeDatum.things) {

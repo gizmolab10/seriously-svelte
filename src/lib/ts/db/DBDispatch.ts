@@ -1,5 +1,5 @@
-import { s_db_type, s_isBusy, s_path_here, s_paths_grabbed, s_db_loadTime, s_things_arrived } from '../managers/State';
-import { k, TypeDB, IDPersistant, persistLocal } from '../common/GlobalImports';
+import { s_db_type, s_isBusy, s_db_loadTime, s_things_arrived } from '../managers/State';
+import { g, TypeDB, IDPersistant, persistLocal } from '../common/GlobalImports';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
@@ -19,14 +19,6 @@ export default class DBDispatch {
 		this.db.applyQueryStrings(queryStrings);
 		s_db_type.set(type);
 		this.updateHierarchy(type);
-		s_db_type.subscribe((type: string) => {
-			if (type && this.db.dbType != type) {
-				s_path_here.set(k.rootPath);
-				s_paths_grabbed.set([]);
-				this.updateDBForType(type);
-				this.updateHierarchy(type);
-			}
-		});
 	}
 
 	dbForType(type: string): DBInterface {
@@ -39,12 +31,13 @@ export default class DBDispatch {
 
 	changeDBTo(newDBType: TypeDB) {
 		const db = this.dbForType(newDBType);
-		s_db_loadTime.set(db.loadTime);
 		persistLocal.writeToKey(IDPersistant.db, newDBType);
 		if (newDBType != TypeDB.local && !db.hasData) {
 			s_isBusy.set(true);			// set this before changing $s_db_type so panel will show 'loading ...'
 		}
 		s_db_type.set(newDBType);			// tell components to render the [possibly previously] fetched data
+		persistLocal.paths_restore();
+		s_db_loadTime.set(db.loadTime);
 	}
 
 	getNextDB(forward: boolean): TypeDB {
@@ -64,9 +57,10 @@ export default class DBDispatch {
 	}
 
 	updateHierarchy(type: string) {
-		const h = this.db.hierarchy;
+		g.hierarchy = this.db.hierarchy;
+		const h = g.hierarchy;
 		if (this.db.hasData) {
-			h.here_restore();
+			persistLocal.here_restore();
 		} else {
 			if (type != TypeDB.local) {
 				s_isBusy.set(true);

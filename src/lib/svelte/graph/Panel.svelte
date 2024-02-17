@@ -1,8 +1,8 @@
 <script>
 	import { IDButton, Hierarchy, IDPersistant, dbDispatch, debugReact, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
-	import { k, get, Path, Rect, Size, Point, Thing, launch, TypeDB, ZIndex, signals, onMount } from '../../ts/common/GlobalImports';
-	import { s_showDetails, s_title_atTop, s_id_popupView, s_things_arrived, s_thing_fontSize } from '../../ts/managers/State';
+	import { g, k, get, Path, Rect, Size, Point, Thing, launch, TypeDB, ZIndex, signals, onMount } from '../../ts/common/GlobalImports';
 	import { s_build, s_isBusy, s_path_here, s_db_type, s_graphRect, s_crumbs_width } from '../../ts/managers/State';
+	import { s_showDetails, s_id_popupView, s_things_arrived, s_thing_fontSize } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import LabelButton from '../kit/LabelButton.svelte';
@@ -14,7 +14,6 @@
 	import Graph from './Graph.svelte';
 	const bottomOfTitle = k.bandHeightAtTop + k.titleHeightAtTop;
 	const topBandHeight = k.bandHeightAtTop - 2;
-	let herePath = Path;
 	let toggle = false;
 
 	$: { updateHerePath($s_path_here); }
@@ -26,22 +25,12 @@
 		updateHerePath($s_path_here);
 	});
 
-	function updateHerePath(newHerePath, forced = true) {
-		let changed = false;
-		if (newHerePath && !newHerePath.matchesPath(herePath)) {
-			herePath = newHerePath;
-			changed = true;
+	function updateHerePath(newHerePath) {
+		if (newHerePath && !newHerePath.matchesPath(g.herePath)) {
+			g.herePath = newHerePath;
 		}
-		if (changed || forced) {
-			graph_fullRebuild();
-		}
-	}
-
-	function graph_fullRebuild() {
 		graphRect_update();
-		if ($s_graphRect) {
-			toggle = !toggle;	// remount graph component
-		}
+		toggle = !toggle;	// remount graph component
 	}
 
 </script>
@@ -122,7 +111,7 @@
 						</div>
 					</div>
 				{/key}
-				{#if $s_title_atTop}
+				{#if g.titleIsAtTop}
 					<div class='top-title'
 						style='
 							top: 68px;

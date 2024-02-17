@@ -1,5 +1,5 @@
-import { s_graphRect, s_showDetails, s_title_atTop, s_crumbs_width, s_scale_factor } from "../managers/State";
-import { k, u, get, Path, Thing, IDPersistant, persistLocal } from '../common/GlobalImports'
+import { s_graphRect, s_showDetails, s_crumbs_width, s_scale_factor } from "../managers/State";
+import { g, k, u, get, Path, Thing, IDPersistant, persistLocal } from '../common/GlobalImports'
 
 export class Point {
 	x: number;
@@ -129,7 +129,7 @@ export function applyScale(scale: number) {
 }
 
 export function graphRect_update() {
-	const top = get(s_title_atTop) ? 86 : 33;						// height of title at the top
+	const top = g.titleIsAtTop ? 114 : 69;						// height of title at the top
 	const left = get(s_showDetails) ? k.detailsMargin : 0;			// width of details
 	const originOfGraph = new Point(left, top);
 	const mysteryOffset = new Point(left + 2, top);					// TODO: why?
@@ -138,6 +138,3 @@ export function graphRect_update() {
 	s_crumbs_width.set(sizeOfGraph.width);
 	s_graphRect.set(rect);											// used by Panel and Graph
 };
-
-s_title_atTop.subscribe((_) => { graphRect_update(); });
-s_showDetails.subscribe((_) => { graphRect_update(); });

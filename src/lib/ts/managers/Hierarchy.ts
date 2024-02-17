@@ -1,5 +1,5 @@
 import { s_isBusy, s_path_here, s_paths_grabbed, s_things_arrived, s_title_editing, s_altering_parent, s_path_toolsCluster } from './State';
-import { k, u, get, User, Path, Thing, Grabs, debug, Access, IDTrait, IDTool, signals, Wrapper } from '../common/GlobalImports';
+import { g, k, u, get, User, Path, Thing, Grabs, debug, Access, IDTrait, IDTool, signals, Wrapper } from '../common/GlobalImports';
 import { Predicate, Relationship, persistLocal, AlteringParent, CreationOptions } from '../common/GlobalImports';
 import DBInterface from '../db/DBInterface';
 
@@ -22,7 +22,6 @@ export default class Hierarchy {
 	knownRs: Array<Relationship> = [];
 	knownPs: Array<Predicate> = [];
 	knownTs: Array<Thing> = [];
-	herePath: Path | null = null;
 	_grabs: Grabs | null = null;
 	root: Thing | null = null;
 	isAssembled = false;
@@ -35,18 +34,12 @@ export default class Hierarchy {
 
 	constructor(db: DBInterface) {
 		this.db = db;
-		s_path_here.subscribe((path: Path | null) => {
-			if (this.db && this.db.hasData) { // make sure this.db has not become null
-				this.herePath = path;
-			}
-		})
 	}
 	
 	async hierarchy_assemble(type: string) {
 		await this.fetchAll(null, this.db.baseID);
 		persistLocal.paths_restore();
 		this.paths_subscriptions_setup();
-		this.here_restore();
 		this.db.setHasData(true);
 		s_things_arrived.set(true);
 		s_isBusy.set(false);
@@ -78,7 +71,7 @@ export default class Hierarchy {
 			const COMMAND = event.metaKey;
 			const EXTREME = SHIFT && OPTION;
 			const key = event.key.toLowerCase();
-			const rootPath = k.rootPath;
+			const rootPath = g.rootPath;
 			let needsRebuild = false;
 			if (!pathGrab) {
 				needsRebuild = rootPath.becomeHere();
@@ -108,7 +101,7 @@ export default class Hierarchy {
 				}
 			}
 			switch (key) {
-				case '!':				needsRebuild = needsRebuild || k.rootPath?.becomeHere(); break;
+				case '!':				needsRebuild = needsRebuild || g.rootPath?.becomeHere(); break;
 				case '`':               event.preventDefault(); this.latestPathGrabbed_toggleToolsCluster(); break;
 				case 'arrowup':			await this.latestPathGrabbed_rebuild_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
 				case 'arrowdown':		await this.latestPathGrabbed_rebuild_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
@@ -126,11 +119,11 @@ export default class Hierarchy {
 	}
 
 	here_restore() {
-		let here = this.thing_getForPath(this.herePath);
+		let here = this.thing_getForPath(g.herePath);
 		if (here == null) {
-			this.herePath = this.grabs.path_lastGrabbed?.fromPath ?? k.rootPath;
+			g.herePath = this.grabs.path_lastGrabbed?.fromPath ?? g.rootPath;
 		}
-		this.herePath?.becomeHere();
+		g.herePath?.becomeHere();
 	}
 
 	toggleAlteration(alteration: AlteringParent) {
@@ -348,7 +341,7 @@ export default class Hierarchy {
 
 	async thing_getRoots() {
 		let rootsPath: Path | null = null;
-		let rootPath = k.rootPath;
+		let rootPath = g.rootPath;
 		for (const thing of this.knownTs_byTrait[IDTrait.roots]) {
 			if  (thing.title == 'roots') {	// special case TODO: convert to a auery string
 				return rootPath.appendChild(thing) ?? null;
@@ -716,7 +709,7 @@ export default class Hierarchy {
 				}
 				this.relationships_refreshKnowns();
 				newParentPath.appendChild(thing).grabOnly();
-				k.rootPath.order_normalizeRecursive_remoteMaybe(true);
+				g.rootPath.order_normalizeRecursive_remoteMaybe(true);
 				if (!newParentPath.isExpanded) {
 					newParentPath.expand();
 				}
@@ -745,7 +738,7 @@ export default class Hierarchy {
 				return;
 			}
 		} else {
-			const rootPath = k.rootPath;
+			const rootPath = g.rootPath;
 			if (EXTREME) {
 				needsRebuild = rootPath?.becomeHere();	// tells graph to update line rects
 			} else {
@@ -817,7 +810,7 @@ export default class Hierarchy {
 
 	async paths_rebuild_traverse_remoteDelete(paths: Array<Path>) {
 		let needsRebuild = false;
-		if (this.herePath) {
+		if (g.herePath) {
 			for (const path of paths) {
 				const thing = path.thing;
 				const fromPath = path.fromPath;

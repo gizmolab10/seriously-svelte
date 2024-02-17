@@ -16,6 +16,7 @@ import { get } from 'svelte/store';
 import { builds } from './Builds';
 import { u } from './Utilities';
 import { k } from './Constants';
+import { g } from './Globals';
 import './Extensions';
 
 import Relationship from '../data/Relationship';
@@ -34,8 +35,8 @@ import User from '../data/User';
 export {
 	Path, Grabs, Wrapper, TitleState,
 	IDWrapper, IDTrait, TypeDB, IDLine,
-	k, u, get, builds, launch, onMount, onDestroy,
 	svgPath, Direction, IDPersistant, persistLocal,
+	g, k, u, get, builds, launch, onMount, onDestroy,
 	signals, IDSignal, debugReact, DebugReact, ReactFlag,
 	debug, Debug, DebugFlag, TypeDatum, dbDispatch, Hierarchy,
 	ZIndex, IDButton, IDBrowser, AlteringParent, CreationOptions,

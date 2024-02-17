@@ -6,7 +6,7 @@
 	export let fontSize = '1em';
 	export let thing;
 	export let path;
-	let padding = `1px 0px 0px ${$s_row_height / 3}px`;
+	let padding = `0px 0px 3px ${$s_row_height / 3}px`;
 	let titleWrapper: Wrapper;
 	let originalTitle = '';
 	let isEditing = false;
@@ -62,7 +62,7 @@
 	function handleKeyDown(event) {
 		if (thing && path.isEditing && canAlterTitle(event)) {
 			switch (event.key) {	
-				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); k.hierarchy.path_edit_remoteCreateChildOf(path.fromPath); break;
+				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); g.hierarchy.path_edit_remoteCreateChildOf(path.fromPath); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
 				default:	  signals.signal_relayout(); break;
 			}

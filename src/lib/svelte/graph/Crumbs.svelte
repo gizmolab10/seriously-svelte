@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { s_dot_size, s_path_here, s_paths_grabbed, s_crumbs_width, s_path_toolsCluster } from '../../ts/managers/State';
-	import { k, Size, Point, Thing, ZIndex, signals, svgPath, onDestroy, dbDispatch } from '../../ts/common/GlobalImports';
+	import { g, k, Size, Point, Thing, ZIndex, signals, svgPath, onDestroy, dbDispatch } from '../../ts/common/GlobalImports';
 	import FatTriangle from '../svg/FatTriangle.svelte';
 	import Crumb from '../kit/Crumb.svelte';
 	let size = 10;
@@ -11,14 +11,14 @@
 	let left = 0;
 	let sum = 0;
 
-	function path_lastGrabbed() { return k.hierarchy.grabs.path_lastGrabbed; }
+	function path_lastGrabbed() { return g.hierarchy.grabs.path_lastGrabbed; }
 	const rebuild_signalHandler = signals.handle_rebuild(() => { sum += 1; });
 	onDestroy(() => { rebuild_signalHandler.disconnect() })
 
 	$: {
 		const trigger = $s_paths_grabbed + $s_path_toolsCluster + $s_path_here + $s_crumbs_width;
 		if (!path || trigger || ancestors.length == 0) {
-			path = path_lastGrabbed() ?? k.rootPath;	// assure we have a path
+			path = path_lastGrabbed() ?? g.rootPath;	// assure we have a path
 			[sum, width, ancestors] = path.things_ancestryWithin($s_crumbs_width);
 			left = ($s_crumbs_width - width) / 2;
 		}

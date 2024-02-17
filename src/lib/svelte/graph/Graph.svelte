@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { s_title_editing, s_path_here, s_graphRect, s_dot_size, s_showDetails, s_title_atTop, s_paths_grabbed } from '../../ts/managers/State';
+	import { s_title_editing, s_path_here, s_graphRect, s_dot_size, s_showDetails, s_paths_grabbed } from '../../ts/managers/State';
 	import { s_id_popupView, s_line_stretch, s_path_toolsCluster, s_user_graphOffset } from '../../ts/managers/State';
-	import { k, u, Path, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/GlobalImports';
+	import { g, k, u, Path, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/GlobalImports';
 	import { IDButton, onDestroy, debugReact, dbDispatch, Predicate } from '../../ts/common/GlobalImports';
 	import { IDPersistant, IDSignal, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
 	import FocusRevealDot from '../kit/FocusRevealDot.svelte';
@@ -23,12 +23,11 @@
 	let width = 0;
 	let left = 0;
 	let top = 0;
-	let here;
 
 	onDestroy( () => { relayout_signalHandler.disconnect(); });
 	
 	const relayout_signalHandler = signals.handle_relayout((path) => {
-		if (here) {
+		if (g.here) {
 			updateOrigins();
 		}
 	});
@@ -54,7 +53,7 @@
 				case '?': $s_id_popupView = IDButton.help; break;
 				case ']':
 				case '[': dbDispatch.nextDB(key == ']'); break;
-				default:  await k.hierarchy.handleKeyDown(event); break;
+				default:  await g.hierarchy.handleKeyDown(event); break;
 			}
 		}
 	}
@@ -86,20 +85,20 @@
 	}
 	
 	$: {
-		if (here == null || here.id != $s_path_here) {
-			const h = k.hierarchy;
-			here = !$s_path_here ? h.root : h.thing_getForPath($s_path_here);
-			focusOffsetX = $s_title_atTop ? 0 : here?.titleWidth / 2
+		if (g.here == null || g.here.id != $s_path_here) {
+			const h = g.hierarchy;
+			g.here = !$s_path_here ? h.root : h.thing_getForPath($s_path_here);
+			focusOffsetX = g.titleIsAtTop ? 0 : g.here?.titleWidth / 2
 			updateOrigins();
 			toggle = !toggle;	// also cause entire graph to be replaced
 		}
 	}
 
 	function updateOrigins() {
-		if (here) {
+		if (g.here) {
 			childrenSize = $s_path_here.visibleProgeny_size.asPoint;
 			const mysteryX = ($s_showDetails ? -92 : 8) - (childrenSize.x / 2) - focusOffsetX;
-			const mysteryY = -k.bandHeightAtTop - ($s_title_atTop ? k.titleHeightAtTop : 0);
+			const mysteryY = -k.bandHeightAtTop - (g.titleIsAtTop ? k.titleHeightAtTop : 0);
 			const mysteryOffset = new Point(mysteryX, mysteryY);
 			origin_ofFirstReveal = graphRect.center.offsetBy(mysteryOffset);
 			if (k.leftJustifyGraph) {
@@ -128,7 +127,7 @@
 </script>
 
 <svelte:document on:keydown={globalHandleKeyDown}/>
-{#if here}
+{#if g.here}
 	<div class='clipper' on:wheel={handleWheel}
 		style='
 			top:{top}px;
@@ -150,13 +149,13 @@
 					<Box rect={blueRect} color=blue/>
 					<Box rect={greenRect} color=green half={true}/>
 				{/if}
-				{#if $s_title_atTop}
+				{#if g.titleIsAtTop}
 					{#if $s_path_here.isGrabbed}
-						<Circle radius=10 center={origin_ofFirstReveal} color={here.color} thickness=1/>
+						<Circle radius=10 center={origin_ofFirstReveal} color={g.here.color} thickness=1/>
 					{/if}
-					<FocusRevealDot here={here} path={$s_path_here} center={origin_ofFirstReveal.offsetBy(new Point(-12, -11))}/>
+					<FocusRevealDot here={g.here} path={$s_path_here} center={origin_ofFirstReveal.offsetBy(new Point(-12, -11))}/>
 				{:else}
-					<Widget thing={here} path={$s_path_here} origin={origin_ofFirstReveal.offsetBy(new Point(-19 - focusOffsetX, -9))}/>
+					<Widget thing={g.here} path={$s_path_here} origin={origin_ofFirstReveal.offsetBy(new Point(-19 - focusOffsetX, -9))}/>
 				{/if}
 				<Children path={$s_path_here} origin={origin_ofChildren}/>
 			</div>

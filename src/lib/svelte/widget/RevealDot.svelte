@@ -1,6 +1,6 @@
 <script>
 	import { s_paths_expanded, s_dot_size, s_altering_parent, s_paths_grabbed, s_path_toolsCluster } from '../../ts/managers/State';
-	import { k, u, get, Size, Thing, Point, debug, ZIndex, svgPath, signals } from "../../ts/common/GlobalImports";
+	import { g, k, u, get, Size, Thing, Point, debug, ZIndex, svgPath, signals } from "../../ts/common/GlobalImports";
 	import { onMount, Wrapper, Direction, onDestroy, dbDispatch, IDWrapper } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte';
 	export let center;
@@ -95,7 +95,7 @@
 				path.grabOnly();
 				$s_path_toolsCluster = path;
 			} else {
-				k.hierarchy.path_rebuild_remoteMoveRight(path, !path.isExpanded, true, false);
+				g.hierarchy.path_rebuild_remoteMoveRight(path, !path.isExpanded, true, false);
 				return;
 			}
 			signals.signal_rebuild_fromHere();

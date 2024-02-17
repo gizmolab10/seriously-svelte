@@ -1,6 +1,6 @@
 import { Hierarchy, DebugFlag, IDTrait, dbDispatch } from '../common/GlobalImports';
-import { k, u, get, Path, Datum, debug, Predicate } from '../common/GlobalImports';
-import { s_dot_size, s_path_here } from '../managers/State';
+import { g, k, u, get, Path, Datum, debug, Predicate } from '../common/GlobalImports';
+import { s_path_here } from '../managers/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -35,7 +35,7 @@ export default class Thing extends Datum {
 	get isRoot():			  boolean { return this == this.hierarchy.root; }
 	get isBulkAlias():		  boolean { return this.trait == IDTrait.bulk; }
 	get titleWidth():		   number { return u.getWidthOf(this.title) }
-	get hierarchy():		Hierarchy { return k.hierarchy; }
+	get hierarchy():		Hierarchy { return g.hierarchy; }
 	
 	debugLog(message: string) { this.log(DebugFlag.things, message); }
 	log(option: DebugFlag, message: string) { debug.log_maybe(option, message + ' ' + this.description); }
@@ -78,7 +78,7 @@ export default class Thing extends Datum {
 					fromPaths[fullPath.hashedPath] = fullPath;	
 				}
 				if (paths.length == 0) {
-					addPath(k.rootPath);
+					addPath(g.rootPath);
 				} else {
 					for (const path of paths) {
 						addPath(path);

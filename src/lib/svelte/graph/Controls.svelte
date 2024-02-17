@@ -1,12 +1,11 @@
 <script>
-	import { k, u, zoomBy, ZIndex, signals, svgPath, IDButton, IDPersistant, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
+	import { g, k, u, zoomBy, ZIndex, signals, svgPath, IDButton, IDPersistant, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
 	import { s_build, s_showDetails, s_id_popupView, s_show_child_graph } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import SVGD3 from '../svg/SVGD3.svelte';
 	const topBandHeight = k.bandHeightAtTop - 2;
 	let width = u.windowSize.width - 20;
 	let size = 16;
-	let bigSize = size * 1.5;
 
 	window.addEventListener('resize', (event) => { width = u.windowSize.width - 20; });
 	function togglePopupID(id) { $s_id_popupView = ($s_id_popupView == id) ? null : id; }
@@ -71,7 +70,7 @@
 				scalablePath={svgPath.tCross(size, 2)}
 			/>
 		</CircularButton>
-		{#if k.showControls}
+		{#if g.showControls}
 			<button class='button'
 				style='
 					left:80px;

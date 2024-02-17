@@ -12,8 +12,8 @@
 	}
 
 	function onClick(event) {
-		if (k.hierarchy.grabs.latestPathGrabbed(true)?.isHere) {
-			k.hierarchy.path_rebuild_remoteMoveRight(path, false, false);
+		if (g.hierarchy.grabs.latestPathGrabbed(true)?.isHere) {
+			g.hierarchy.path_rebuild_remoteMoveRight(path, false, false);
 		} else {
 			path.grabOnly();
 		}

@@ -20,7 +20,7 @@ export default class Grabs {
 
 	get path_lastGrabbed(): Path | null {
 		const paths = get(s_paths_grabbed);
-		if (paths) {
+		if (paths && paths.length > 0) {
 			const path = paths.slice(-1)[0];	// does not alter paths
 			const relationshipHID = path.relationship?.hashedID;
 			if (relationshipHID && this.hierarchy.knownR_byHID[relationshipHID] != null) {
@@ -39,7 +39,7 @@ export default class Grabs {
 				return paths.slice(-1)[0];
 			}
 		}
-		return k.rootPath;
+		return g.rootPath;
 	}
 
 }
