@@ -1,6 +1,6 @@
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection, onSnapshot, deleteField, getFirestore } from 'firebase/firestore';
 import { DocumentData, DocumentChange, QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
-import { k, u, get, Thing, debug, launch, TypeDB, signals, IDTrait, TypeDatum, Hierarchy, DebugFlag } from '../common/GlobalImports';
+import { g, k, u, get, Thing, debug, launch, TypeDB, signals, IDTrait, TypeDatum, Hierarchy, DebugFlag } from '../common/GlobalImports';
 import { Predicate, dbDispatch, Relationship, CreationOptions } from '../common/GlobalImports';
 import { s_build } from '../managers/State';
 import { initializeApp } from "firebase/app";
@@ -53,14 +53,16 @@ export default class DBFirebase implements DBInterface {
 	//////////////////////////
 
 	async fetch_all() {
-		await this.recordLogin();
-		const name = this.baseID;
+		await this.recordLoginIP();
+		const baseID = this.baseID;
 		if (dbDispatch.eraseDB) {
-			await this.document_remoteDelete(name);
+			await this.document_remoteDelete(baseID);
 		}
-		this.setup_bulks()
+		if (!this.bulks) {
+			this.bulks = [new Bulk(this.baseID)];
+		}
 		await this.fetch_documentsOf(TypeDatum.predicates);
-		await this.fetch_allFrom(name);
+		await this.fetch_allFrom(baseID);
 		await this.fetch_bulkAliases();
 	}
 
@@ -112,12 +114,6 @@ export default class DBFirebase implements DBInterface {
 	//////////////////////////
 	//	 	   BULKS		//
 	//////////////////////////
-
-	setup_bulks() {
-		if (!this.bulks) {
-			this.bulks = [new Bulk(this.baseID)];
-		}
-	}
 
 	get_bulk_for(baseID: string | null) {
 		if (baseID) {
@@ -503,7 +499,7 @@ export default class DBFirebase implements DBInterface {
 		return true;
 	}
 
-	async recordLogin() {
+	async recordLoginIP() {
 		await this.getUserIPAddress().then((ipAddress) => {
 			if (ipAddress != null && ipAddress != '69.181.235.85') {
 				const queries = launch.queryString.toString() ?? 'empty';

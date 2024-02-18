@@ -18,10 +18,12 @@ class Globals {
 		})
 		s_db_type.subscribe((type: string) => {
 			if (type && dbDispatch.db.dbType != type) {
-				s_path_here.set(this.rootPath);
-				s_paths_grabbed.set([]);
-				dbDispatch.updateDBForType(type);
-				dbDispatch.updateHierarchy(type);
+				(async () => {
+					s_path_here.set(this.rootPath);
+					s_paths_grabbed.set([]);
+					dbDispatch.updateDBForType(type);
+					await dbDispatch.updateHierarchy(type);
+				})()
 			}
 		});
 	}

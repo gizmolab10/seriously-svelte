@@ -8,7 +8,7 @@ class Launch {
 		this.queryString = new URLSearchParams(window.location.search);
 	}
 
-	setup() {
+	async setup() {
 		document.title = this.browserTitle;
 		builds.setup();
 		persistLocal.restore();
@@ -16,7 +16,7 @@ class Launch {
 		this.applyQueryStrings(this.queryString);
 		debug.applyQueryStrings(this.queryString);
 		debugReact.applyQueryStrings(this.queryString);
-		dbDispatch.applyQueryStrings(this.queryString); // do these two last
+		await dbDispatch.applyQueryStrings(this.queryString); // do these two last
 		g.setup();
 	}
 

@@ -21,8 +21,10 @@
 	const rebuild_signalHandler = signals.handle_rebuild(() => { updateHerePath($s_path_here); });
 
 	onMount(() => {
-		launch.setup();
-		updateHerePath($s_path_here);
+		(async () => {
+			await launch.setup();
+			updateHerePath($s_path_here);
+		})()
 	});
 
 	function updateHerePath(newHerePath) {

@@ -37,7 +37,7 @@ export default class Hierarchy {
 	}
 	
 	async hierarchy_assemble(type: string) {
-		await this.fetchAll(null, this.db.baseID);
+		await this.addMissingAndRemoveNulls(null, this.db.baseID);
 		persistLocal.paths_restore();
 		this.paths_subscriptions_setup();
 		this.db.setHasData(true);
@@ -112,8 +112,7 @@ export default class Hierarchy {
 		}
 	}
 
-	async fetchAll(parentID: string | null, baseID: string) {
-		await this.db.fetch_allFrom(baseID)
+	async addMissingAndRemoveNulls(parentID: string | null, baseID: string) {
 		await this.relationships_remoteCreateMissing(parentID, baseID);
 		await this.relationships_removeHavingNullReferences();
 	}
@@ -582,7 +581,8 @@ export default class Hierarchy {
 		const rootsPath = await this.thing_getRoots();
 		if (thing && rootsPath) {
 			path.expand();		// do this before fetch, so next launch will see it
-			await this.fetchAll(rootsPath.thingID, thing.title);
+			await this.db.fetch_allFrom(thing.title)
+			await this.addMissingAndRemoveNulls(rootsPath.thingID, thing.title);
 			if (path.hasChildren) {
 				if (grab) {
 					path.childPaths[0].grabOnly()

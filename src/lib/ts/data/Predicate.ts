@@ -12,7 +12,7 @@ export default class Predicate extends RemoteIdentifiable {
 	static get idIsAParentOf(): string {
 		const id = dbDispatch.db.hierarchy.knownP_byKind['isAParentOf']?.id;
 		if (!id) {
-			alert(`BAD PREDICATE`)
+			console.log(`isAParentOf is missing`)
 		}
 		return id;
 	}
