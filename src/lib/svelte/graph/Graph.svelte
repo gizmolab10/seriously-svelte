@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_title_editing, s_path_here, s_graphRect, s_dot_size, s_showDetails, s_paths_grabbed } from '../../ts/managers/State';
+	import { s_title_editing, s_path_here, s_graphRect, s_dot_size, s_show_details, s_paths_grabbed } from '../../ts/managers/State';
 	import { s_id_popupView, s_line_stretch, s_path_toolsCluster, s_user_graphOffset } from '../../ts/managers/State';
 	import { g, k, u, Path, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/GlobalImports';
 	import { IDButton, onDestroy, debugReact, dbDispatch, Predicate } from '../../ts/common/GlobalImports';
@@ -97,7 +97,7 @@
 	function updateOrigins() {
 		if (g.here) {
 			childrenSize = $s_path_here.visibleProgeny_size.asPoint;
-			const mysteryX = ($s_showDetails ? -92 : 8) - (childrenSize.x / 2) - focusOffsetX;
+			const mysteryX = ($s_show_details ? -92 : 8) - (childrenSize.x / 2) - focusOffsetX;
 			const mysteryY = -k.bandHeightAtTop - (g.titleIsAtTop ? k.titleHeightAtTop : 0);
 			const mysteryOffset = new Point(mysteryX, mysteryY);
 			origin_ofFirstReveal = graphRect.center.offsetBy(mysteryOffset);

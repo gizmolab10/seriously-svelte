@@ -1,5 +1,5 @@
 import { g, Path, Point, applyScale, dbDispatch, graphRect_update } from '../common/GlobalImports'
-import { s_setup, s_showDetails, s_line_stretch, s_user_graphOffset } from './State';
+import { s_setup, s_show_details, s_line_stretch, s_user_graphOffset } from './State';
 import { s_path_here, s_row_height, s_paths_expanded } from './State';
 import { s_thing_fontFamily, s_show_child_graph } from './State';
 import { s_db_loadTime, s_paths_grabbed } from './State';
@@ -39,14 +39,14 @@ class PersistLocal {
 		applyScale(this.readFromKey(IDPersistant.scale) ?? 1);
 		g.showControls = this.readFromKey(IDPersistant.controls) ?? false;
 		s_row_height.set(this.readFromKey(IDPersistant.row_height) ?? 20);
-		s_showDetails.set(this.readFromKey(IDPersistant.details) ?? false);
+		s_show_details.set(this.readFromKey(IDPersistant.details) ?? false);
 		g.titleIsAtTop = this.readFromKey(IDPersistant.title_atTop) ?? false;
 		s_line_stretch.set(this.readFromKey(IDPersistant.line_stretch) ?? 30);
 		s_thing_fontFamily.set(this.readFromKey(IDPersistant.font) ?? 'Arial');
 		s_show_child_graph.set(this.readFromKey(IDPersistant.show_children) ?? true);
 		s_user_graphOffset.set(this.readFromKey(IDPersistant.origin) ?? new Point());
 
-		s_showDetails.subscribe((_) => { graphRect_update(); });
+		s_show_details.subscribe((_) => { graphRect_update(); });
 
 		s_show_child_graph.subscribe((flag: boolean) => {
 			this.writeToKey(IDPersistant.show_children, flag);

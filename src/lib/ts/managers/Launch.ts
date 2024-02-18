@@ -1,5 +1,5 @@
 import { g, k, u, debug, builds, debugReact, IDPersistant, dbDispatch, persistLocal } from '../common/GlobalImports'
-import { s_path_here, s_showDetails, s_paths_grabbed, s_paths_expanded } from './State';
+import { s_path_here, s_show_details, s_paths_grabbed, s_paths_expanded } from './State';
 
 class Launch {
 	queryString: URLSearchParams;
@@ -36,7 +36,7 @@ class Launch {
 		}
 		if (queryString.get('details') === 'hide') {
 			persistLocal.writeToKey(IDPersistant.details, false);
-			s_showDetails.set(false);
+			s_show_details.set(false);
 		}
         if (locate) {
             for (const option of locate.split(',')) {

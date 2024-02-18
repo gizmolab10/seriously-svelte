@@ -262,12 +262,12 @@ export default class Path {
 		const h = g.hierarchy;
 		const things = this.things.reverse();
 		const array: Array<Thing> = [];
-		let numberOfParents = 0;
+		let numberOfParents = 0;	// do not include triangle separator in width of crumb of first thing
 		let totalWidth = 0;
 		let sum = 0;
 		for (const thing of things) {
 			const crumbWidth = thing.crumbWidth(numberOfParents);
-			if ((totalWidth + crumbWidth) > (thresholdWidth - 10)) {
+			if ((totalWidth + crumbWidth) > thresholdWidth) {
 				break;
 			}
 			numberOfParents = thing.parents.length;

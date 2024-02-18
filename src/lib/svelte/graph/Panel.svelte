@@ -2,7 +2,7 @@
 	import { IDButton, Hierarchy, IDPersistant, dbDispatch, debugReact, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
 	import { g, k, get, Path, Rect, Size, Point, Thing, launch, TypeDB, ZIndex, signals, onMount } from '../../ts/common/GlobalImports';
 	import { s_build, s_isBusy, s_path_here, s_db_type, s_graphRect, s_crumbs_width } from '../../ts/managers/State';
-	import { s_showDetails, s_id_popupView, s_things_arrived, s_thing_fontSize } from '../../ts/managers/State';
+	import { s_show_details, s_id_popupView, s_things_arrived, s_thing_fontSize } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import LabelButton from '../kit/LabelButton.svelte';
@@ -86,13 +86,13 @@
 	<p>Nothing is available.</p>
 {:else}
 	<Controls/>
-	{#if $s_showDetails && $s_id_popupView == null}
+	{#if $s_show_details && $s_id_popupView == null}
 		<Details/>
 		<div class='vertical-line' style='height: calc(100vh - {topBandHeight}px); top: {topBandHeight}px; z-index: {ZIndex.frontmost};'></div>
 	{/if}
 	<div class='horizontal-line' style='z-index: {ZIndex.frontmost}; left: -10px; top: {topBandHeight}px; width: 110%;'></div>
 	<div class='right-side' style='
-		left: {$s_showDetails ? 100 : 0}px;
+		left: {$s_show_details ? 100 : 0}px;
 		z-index: {ZIndex.panel};
 		position: fixed;
 		height: 100%;'>
@@ -108,7 +108,7 @@
 						<div class='horizontal-line'
 							style='
 								z-index: {ZIndex.frontmost};
-								left: {$s_showDetails ? k.detailsMargin : 0}px;
+								left: {$s_show_details ? k.detailsMargin : 0}px;
 								top: 68px;'>
 						</div>
 					</div>
@@ -119,14 +119,14 @@
 							top: 68px;
 							z-index: {ZIndex.frontmost};
 							color: {$s_path_here.thing?.color};
-							left: {$s_showDetails ? k.detailsMargin : 0}px;'>
+							left: {$s_show_details ? k.detailsMargin : 0}px;'>
 						{$s_path_here.thingTitle}
 					</div>
 					<div class='horizontal-line'
 						style='
 							z-index: {ZIndex.frontmost};
 							top: {bottomOfTitle + 28}px;
-							left: {$s_showDetails ? k.detailsMargin : 0}px;'>
+							left: {$s_show_details ? k.detailsMargin : 0}px;'>
 					</div>
 				{/if}
 				<Graph/>

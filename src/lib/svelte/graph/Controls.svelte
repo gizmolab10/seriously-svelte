@@ -1,6 +1,6 @@
 <script>
 	import { g, k, u, zoomBy, ZIndex, signals, svgPath, IDButton, IDPersistant, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
-	import { s_build, s_showDetails, s_id_popupView, s_show_child_graph } from '../../ts/managers/State';
+	import { s_build, s_show_details, s_id_popupView, s_show_child_graph } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import SVGD3 from '../svg/SVGD3.svelte';
 	const topBandHeight = k.bandHeightAtTop - 2;
@@ -20,9 +20,9 @@
 	}
 
 	function details_buttonClicked(event) {
-		$s_showDetails = !$s_showDetails;
+		$s_show_details = !$s_show_details;
 		signals.signal_relayout_fromHere();
-		persistLocal.writeToKey(IDPersistant.details, $s_showDetails);
+		persistLocal.writeToKey(IDPersistant.details, $s_show_details);
 	}
 </script>
 

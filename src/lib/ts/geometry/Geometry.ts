@@ -1,4 +1,4 @@
-import { s_graphRect, s_showDetails, s_crumbs_width, s_scale_factor } from "../managers/State";
+import { s_graphRect, s_show_details, s_crumbs_width, s_scale_factor } from "../managers/State";
 import { g, k, u, get, Path, Thing, IDPersistant, persistLocal } from '../common/GlobalImports'
 
 export class Point {
@@ -130,7 +130,7 @@ export function applyScale(scale: number) {
 
 export function graphRect_update() {
 	const top = g.titleIsAtTop ? 114 : 69;						// height of title at the top
-	const left = get(s_showDetails) ? k.detailsMargin : 0;			// width of details
+	const left = get(s_show_details) ? k.detailsMargin : 0;			// width of details
 	const originOfGraph = new Point(left, top);
 	const mysteryOffset = new Point(left + 2, top);					// TODO: why?
 	const sizeOfGraph = u.windowSize.reducedBy(mysteryOffset);		// account for origin
