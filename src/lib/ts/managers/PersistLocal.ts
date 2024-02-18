@@ -35,7 +35,6 @@ class PersistLocal {
 		if (this.ignorePaths) {
 			this.writeToKey(IDPersistant.relationships, true);
 		}
-		s_db_loadTime.set(null);
 		this.writeToKey(IDPersistant.title_atTop, false);
 		applyScale(this.readFromKey(IDPersistant.scale) ?? 1);
 		g.showControls = this.readFromKey(IDPersistant.controls) ?? false;

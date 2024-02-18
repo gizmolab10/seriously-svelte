@@ -1,4 +1,4 @@
-import { Path, Thing, dbDispatch, Hierarchy } from '../../ts/common/GlobalImports';
+import { Path, Thing, launch, dbDispatch, Hierarchy } from '../../ts/common/GlobalImports';
 import { s_db_type, s_path_here, s_paths_grabbed } from '../managers/State';
 
 class Globals {
@@ -22,6 +22,7 @@ class Globals {
 					s_path_here.set(this.rootPath);
 					s_paths_grabbed.set([]);
 					dbDispatch.updateDBForType(type);
+					await dbDispatch.applyQueryStrings(launch.queryString);
 					await dbDispatch.updateHierarchy(type);
 				})()
 			}
