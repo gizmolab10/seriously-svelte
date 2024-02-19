@@ -49,14 +49,3 @@ s_altering_parent.subscribe((alteration: string | null) => {
 		signals.signal_alteringParent(null);
 	}
 })
-
-export function s_setup() {
-	const herePath = get(s_path_here);
-	if (!herePath) {
-		s_path_here.set(g.rootPath);
-	}
-	const grabbedPaths = get(s_paths_grabbed);
-	if (!grabbedPaths || grabbedPaths.length == 0) {
-		s_paths_grabbed.set([g.rootPath]);
-	}
-}

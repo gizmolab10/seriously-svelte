@@ -17,7 +17,7 @@ class Launch {
 		debug.applyQueryStrings(this.queryString);
 		debugReact.applyQueryStrings(this.queryString);
 		await dbDispatch.applyQueryStrings(this.queryString); // do these two last
-		g.setup();
+		g.setup_reacts();
 	}
 
 	get browserTitle(): string {

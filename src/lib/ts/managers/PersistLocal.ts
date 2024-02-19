@@ -1,8 +1,8 @@
-import { g, Path, Point, applyScale, dbDispatch, graphRect_update } from '../common/GlobalImports'
-import { s_setup, s_show_details, s_line_stretch, s_user_graphOffset } from './State';
+import { s_show_details, s_line_stretch, s_user_graphOffset } from './State';
+import { g, get, Path, Point, dbDispatch } from '../common/GlobalImports'
 import { s_path_here, s_row_height, s_paths_expanded } from './State';
 import { s_thing_fontFamily, s_show_child_graph } from './State';
-import { s_db_loadTime, s_paths_grabbed } from './State';
+import { s_paths_grabbed } from './State';
 
 export enum IDPersistant {
 	relationships	= 'relationships',
@@ -36,7 +36,7 @@ class PersistLocal {
 			this.writeToKey(IDPersistant.relationships, true);
 		}
 		this.writeToKey(IDPersistant.title_atTop, false);
-		applyScale(this.readFromKey(IDPersistant.scale) ?? 1);
+		g.applyScale(this.readFromKey(IDPersistant.scale) ?? 1);
 		g.showControls = this.readFromKey(IDPersistant.controls) ?? false;
 		s_row_height.set(this.readFromKey(IDPersistant.row_height) ?? 20);
 		s_show_details.set(this.readFromKey(IDPersistant.details) ?? false);
@@ -46,7 +46,7 @@ class PersistLocal {
 		s_show_child_graph.set(this.readFromKey(IDPersistant.show_children) ?? true);
 		s_user_graphOffset.set(this.readFromKey(IDPersistant.origin) ?? new Point());
 
-		s_show_details.subscribe((_) => { graphRect_update(); });
+		s_show_details.subscribe((_) => { g.graphRect_update(); });
 
 		s_show_child_graph.subscribe((flag: boolean) => {
 			this.writeToKey(IDPersistant.show_children, flag);
@@ -67,10 +67,16 @@ class PersistLocal {
 	paths_restore() {
 		const h = g.hierarchy;
 		g.rootPath = h.path_remember_unique();
-		s_paths_grabbed.set(this.ignorePaths ? [] : this.readFromDBKey(IDPersistant.grabbed)?.map((s: string) => h.path_remember_unique(s)) ?? []);
+		const herePathString = this.readFromDBKey(IDPersistant.here);
+		let pathToHere = this.ignorePaths ? g.rootPath : h.path_remember_unique(herePathString ?? h.idRoot);
+		let here = h.thing_getForPath(pathToHere);
+		if (here == null) {
+			pathToHere = h.grabs.path_lastGrabbed?.fromPath ?? g.rootPath;
+		}
+		pathToHere.becomeHere();
+
+		s_paths_grabbed.set(this.ignorePaths ? [] : this.readFromDBKey(IDPersistant.grabbed)?.map((s: string) => h.path_remember_unique(s)) ?? [g.rootPath]);
 		s_paths_expanded.set(this.ignorePaths ? [] : this.readFromDBKey(IDPersistant.expanded)?.map((e: string) => h.path_remember_unique(e)) ?? []);
-		this.here_restore();
-		s_setup();
 
 		s_paths_grabbed.subscribe((paths: Array<Path>) => {
 			this.writeToDBKey(IDPersistant.grabbed, paths.map(p => p.pathString));

@@ -87,7 +87,7 @@
 
 	function handleClick(event) {
 		setIsHovering_updateColors(false);
-		if (!path.isRoot) {
+		if (!path.isHere) {
 			if (path.toolsGrabbed) {
 				$s_path_toolsCluster = null;
 				$s_altering_parent = null;

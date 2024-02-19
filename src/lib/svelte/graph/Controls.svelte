@@ -1,9 +1,9 @@
 <script>
-	import { g, k, u, zoomBy, ZIndex, signals, svgPath, IDButton, IDPersistant, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
+	import { g, k, u, ZIndex, signals, svgPath, IDButton, IDPersistant, persistLocal } from '../../ts/common/GlobalImports';
 	import { s_build, s_show_details, s_id_popupView, s_show_child_graph } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import SVGD3 from '../svg/SVGD3.svelte';
-	const topBandHeight = k.bandHeightAtTop - 2;
+	const topBandHeight = k.controlsHeight - 2;
 	let width = u.windowSize.width - 20;
 	let size = 16;
 
@@ -12,8 +12,8 @@
 	
 	function buttonClickedForID(id) {
 		switch (id) {
-			case IDButton.bigger: width = zoomBy(1.1) - 20; break;
-			case IDButton.smaller: width = zoomBy(0.9) - 20; break;
+			case IDButton.bigger: width = g.zoomBy(1.1) - 20; break;
+			case IDButton.smaller: width = g.zoomBy(0.9) - 20; break;
 			case IDButton.relations: $s_show_child_graph = !$s_show_child_graph; break;
 			default: alert(`alter "${id}" is under construction`); break;
 		}

@@ -294,19 +294,20 @@ export default class Path {
 		return 0;
 	}
 
-	visibleProgeny_width(isFirst: boolean = true, visited: Array<number> = []): number {
+	visibleProgeny_width(special: boolean = g.titleIsAtTop, visited: Array<number> = []): number {
 		const thing = g.hierarchy?.thing_getForPath(this);
 		if (thing) {
-			let width = isFirst ? 0 : thing.titleWidth;
-			if (!visited.includes(this.hashedPath) && this.isExpanded && this.hasChildren) {
+			const hashedPath = this.hashedPath;
+			let width = special ? 0 : thing.titleWidth;
+			if (!visited.includes(hashedPath) && this.isExpanded && this.hasChildren) {
 				let progenyWidth = 0;
-			for (const childPath of this.childPaths) {
-					const childProgenyWidth = childPath.visibleProgeny_width(false, [...visited, this.hashedPath]);
+				for (const childPath of this.childPaths) {
+					const childProgenyWidth = childPath.visibleProgeny_width(false, [...visited, hashedPath]);
 					if (progenyWidth < childProgenyWidth) {
 						progenyWidth = childProgenyWidth;
 					}
 				}
-				width += progenyWidth + get(s_line_stretch) + get(s_dot_size) * (isFirst ? 2 : 1);
+				width += progenyWidth + get(s_line_stretch) + get(s_dot_size) * (special ? 2 : 1);
 			}
 			return width;
 		}

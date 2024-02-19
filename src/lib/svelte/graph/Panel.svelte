@@ -1,6 +1,6 @@
 <script>
-	import { IDButton, Hierarchy, IDPersistant, dbDispatch, debugReact, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
 	import { g, k, get, Path, Rect, Size, Point, Thing, launch, TypeDB, ZIndex, signals, onMount } from '../../ts/common/GlobalImports';
+	import { IDButton, Hierarchy, IDPersistant, dbDispatch, debugReact, persistLocal } from '../../ts/common/GlobalImports';
 	import { s_build, s_isBusy, s_path_here, s_db_type, s_graphRect, s_crumbs_width } from '../../ts/managers/State';
 	import { s_show_details, s_id_popupView, s_things_arrived, s_thing_fontSize } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
@@ -12,12 +12,12 @@
 	import Details from './Details.svelte';
 	import Crumbs from './Crumbs.svelte';
 	import Graph from './Graph.svelte';
-	const bottomOfTitle = k.bandHeightAtTop + k.titleHeightAtTop;
-	const topBandHeight = k.bandHeightAtTop - 2;
+	const bottomOfTitle = k.controlsHeight + k.titleHeightAtTop;
+	const topBandHeight = k.controlsHeight - 2;
 	let toggle = false;
 
 	$: { updateHerePath($s_path_here); }
-	window.addEventListener('resize', (event) => { graphRect_update(); });
+	window.addEventListener('resize', (event) => { g.graphRect_update(); });
 	const rebuild_signalHandler = signals.handle_rebuild(() => { updateHerePath($s_path_here); });
 
 	onMount(() => {
@@ -31,7 +31,7 @@
 		if (newHerePath && !newHerePath.matchesPath(g.herePath)) {
 			g.herePath = newHerePath;
 		}
-		graphRect_update();
+		g.graphRect_update();
 		toggle = !toggle;	// remount graph component
 	}
 
@@ -71,6 +71,7 @@
 	.vertical-line {
 		background-color: lightgray;
 		position: absolute;
+		overflow: hidden;
 		left: 100px;
 		width: 1px;
 		top: 0px;
@@ -88,9 +89,17 @@
 	<Controls/>
 	{#if $s_show_details && $s_id_popupView == null}
 		<Details/>
-		<div class='vertical-line' style='height: calc(100vh - {topBandHeight}px); top: {topBandHeight}px; z-index: {ZIndex.frontmost};'></div>
+		<div class='vertical-line' style='
+			top: {topBandHeight}px;
+			z-index: {ZIndex.frontmost};
+			height: calc(100vh - {topBandHeight}px);'>
+		</div>
 	{/if}
-	<div class='horizontal-line' style='z-index: {ZIndex.frontmost}; left: -10px; top: {topBandHeight}px; width: 110%;'></div>
+	<div class='horizontal-line' style='left: -10px;
+		z-index: {ZIndex.frontmost};
+		top: {topBandHeight}px;
+		width: 110%;'>
+	</div>
 	<div class='right-side' style='
 		left: {$s_show_details ? 100 : 0}px;
 		z-index: {ZIndex.panel};

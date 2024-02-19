@@ -3,7 +3,7 @@
 	import { s_id_popupView, s_line_stretch, s_path_toolsCluster, s_user_graphOffset } from '../../ts/managers/State';
 	import { g, k, u, Path, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/GlobalImports';
 	import { IDButton, onDestroy, debugReact, dbDispatch, Predicate } from '../../ts/common/GlobalImports';
-	import { IDPersistant, IDSignal, persistLocal, graphRect_update } from '../../ts/common/GlobalImports';
+	import { IDPersistant, IDSignal, persistLocal } from '../../ts/common/GlobalImports';
 	import FocusRevealDot from '../kit/FocusRevealDot.svelte';
 	import ToolsCluster from '../widget/ToolsCluster.svelte';
 	import Widget from '../widget/Widget.svelte';
@@ -13,7 +13,7 @@
 	let origin_ofFirstReveal = new Point();
 	let origin_ofChildren = new Point();
 	let childrenSize = new Point();
-	let focusOffsetX = 0;
+	let offsetX_ofFirstReveal = 0;
 	let graphRect: Rect;
 	let greenRect: Rect;
 	let blueRect: Rect;
@@ -88,7 +88,7 @@
 		if (g.here == null || g.here.id != $s_path_here) {
 			const h = g.hierarchy;
 			g.here = !$s_path_here ? h.root : h.thing_getForPath($s_path_here);
-			focusOffsetX = g.titleIsAtTop ? 0 : g.here?.titleWidth / 2
+			offsetX_ofFirstReveal = g.titleIsAtTop ? 0 : g.here?.titleWidth / 2;
 			updateOrigins();
 			toggle = !toggle;	// also cause entire graph to be replaced
 		}
@@ -96,15 +96,14 @@
 
 	function updateOrigins() {
 		if (g.here) {
-			childrenSize = $s_path_here.visibleProgeny_size.asPoint;
-			const mysteryX = ($s_show_details ? -92 : 8) - (childrenSize.x / 2) - focusOffsetX;
-			const mysteryY = -k.bandHeightAtTop - (g.titleIsAtTop ? k.titleHeightAtTop : 0);
-			const mysteryOffset = new Point(mysteryX, mysteryY);
-			origin_ofFirstReveal = graphRect.center.offsetBy(mysteryOffset);
+			childrenSize = $s_path_here.visibleProgeny_size;
+			const offsetX = ($s_show_details ? -92 : 14.5) - (childrenSize.width / 2) - ($s_dot_size / 2.5) + offsetX_ofFirstReveal;
+			const offsetY = -1 - graphRect.origin.y;
+			origin_ofFirstReveal = graphRect.center.offsetBy(new Point(offsetX, offsetY));
 			if (k.leftJustifyGraph) {
 				origin_ofFirstReveal.x = 25;
 			}
-			const toChildren = new Point(-43 + $s_line_stretch - ($s_dot_size / 2) + focusOffsetX, ($s_dot_size / 2) - (childrenSize.y / 2) - 5);
+			const toChildren = new Point(-43 + $s_line_stretch - ($s_dot_size / 2) + offsetX_ofFirstReveal, ($s_dot_size / 2) -(childrenSize.height / 2) - 5);
 			origin_ofChildren = origin_ofFirstReveal.offsetBy(toChildren);
 			blueRect = graphRect.dividedInHalf;
 			redRect = rectTo_firstReveal();
@@ -113,8 +112,8 @@
 	}
 
 	function rectTo_firstReveal(): Rect {
-		const mysteryOffset = new Point(101, 85);
-		const extent = origin_ofFirstReveal.offsetBy(mysteryOffset);
+		const offset = new Point(101, 85);
+		const extent = origin_ofFirstReveal.offsetBy(offset);
 		return Rect.createExtentRect(graphRect.origin, extent);
 	}
 
@@ -155,7 +154,7 @@
 					{/if}
 					<FocusRevealDot here={g.here} path={$s_path_here} center={origin_ofFirstReveal.offsetBy(new Point(-12, -11))}/>
 				{:else}
-					<Widget thing={g.here} path={$s_path_here} origin={origin_ofFirstReveal.offsetBy(new Point(-19 - focusOffsetX, -9))}/>
+					<Widget thing={g.here} path={$s_path_here} origin={origin_ofFirstReveal.offsetBy(new Point(-19 - offsetX_ofFirstReveal, -9))}/>
 				{/if}
 				<Children path={$s_path_here} origin={origin_ofChildren}/>
 			</div>

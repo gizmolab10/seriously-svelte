@@ -117,14 +117,6 @@ export default class Hierarchy {
 		await this.relationships_removeHavingNullReferences();
 	}
 
-	here_restore() {
-		let here = this.thing_getForPath(g.herePath);
-		if (here == null) {
-			g.herePath = this.grabs.path_lastGrabbed?.fromPath ?? g.rootPath;
-		}
-		g.herePath?.becomeHere();
-	}
-
 	toggleAlteration(alteration: AlteringParent) {
 		s_altering_parent.set((get(s_altering_parent) == alteration) ? null : alteration);
 	}

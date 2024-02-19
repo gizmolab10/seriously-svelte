@@ -1,7 +1,7 @@
-import { Rect, Size, Point, zoomBy, ChildMap, applyScale, graphRect_update } from '../geometry/Geometry';
 import { IDTrait, IDBrowser, ZIndex, IDButton, AlteringParent } from './Enumerations';
 import { debugReact, DebugReact, ReactFlag } from '../debug/DebugReact';
 import { IDPersistant, persistLocal } from '../managers/PersistLocal';
+import { Rect, Size, Point, ChildMap } from '../geometry/Geometry';
 import { CreationOptions, IDLine, IDTool } from './Enumerations';
 import { debug, Debug, DebugFlag } from '../debug/Debug';
 import { Direction, svgPath } from '../geometry/SVGPath';
@@ -35,11 +35,11 @@ import User from '../data/User';
 export {
 	Path, Grabs, Wrapper, TitleState,
 	IDWrapper, IDTrait, TypeDB, IDLine,
+	Rect, Size, Point, Layout, ChildMap, IDTool,
 	svgPath, Direction, IDPersistant, persistLocal,
 	g, k, u, get, builds, launch, onMount, onDestroy,
 	signals, IDSignal, debugReact, DebugReact, ReactFlag,
 	debug, Debug, DebugFlag, TypeDatum, dbDispatch, Hierarchy,
 	ZIndex, IDButton, IDBrowser, AlteringParent, CreationOptions,
 	User, Datum, Thing, Access, Predicate, Relationship, SeriouslyRange,
-	Rect, Size, Point, zoomBy, Layout, ChildMap, IDTool, applyScale, graphRect_update,
 };
