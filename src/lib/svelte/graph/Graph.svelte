@@ -150,9 +150,9 @@
 				{/if}
 				{#if g.titleIsAtTop}
 					{#if $s_path_here.isGrabbed}
-						<Circle radius=10 center={origin_ofFirstReveal} color={g.here.color} thickness=1/>
+						<Circle radius=10 center={origin_ofFirstReveal.offsetBy(new Point(3, 2))} color={g.here.color} thickness=1/>
 					{/if}
-					<FocusRevealDot here={g.here} path={$s_path_here} center={origin_ofFirstReveal.offsetBy(new Point(-12, -11))}/>
+					<FocusRevealDot here={g.here} path={$s_path_here} center={origin_ofFirstReveal}/>
 				{:else}
 					<Widget thing={g.here} path={$s_path_here} origin={origin_ofFirstReveal.offsetBy(new Point(-19 - offsetX_ofFirstReveal, -9))}/>
 				{/if}

@@ -5,8 +5,9 @@
     export let rect;
 </script>
 
-<div
+<div class='box'
     style='
+        position: absolute;
         top: {rect.origin.y}px;
         left: {rect.origin.x}px;
         width: {rect.size.width}px;
@@ -17,6 +18,7 @@
 {#if half == true}
     <div
         style='
+            position: absolute;
             top: {rect.center.y}px;
             left: {rect.origin.x}px;
             width: {rect.size.width}px;
@@ -26,6 +28,7 @@
     </div>
     <div
         style='
+            position: absolute;
             top: {rect.origin.y}px;
             left: {rect.center.x}px;
             height: {rect.size.height}px;

@@ -24,11 +24,11 @@
 	let thing;
     let path;
 
+	onDestroy( () => { relayout_signalHandler.disconnect(); });
     function getC(type: string) { return c[type] ?? new Point(); }
     function setC(type: string, center: Point) { return c[type] = center; }
     function centers_isEmpty(): boolean { return Object.keys(c).length == 0; }
 	onMount(() => { setup(); setTimeout(() => { updateMaybeRedraw(); }, 20) });
-	onDestroy( () => { relayout_signalHandler.disconnect(); });
 
 	async function handleClick(IDButton: string, event: MouseEvent) {
 		if (path && !path.isExemplar) {
@@ -80,39 +80,31 @@
     }
 
 	function update() {
-        bigOffset = new Point(-19 - titleWidth, k.toolsClusterHeight / 2 - 51);
+        bigOffset = new Point(-21 - titleWidth, k.toolsClusterHeight / 2 - 51.5);
         return $s_path_toolsCluster && updateForInFront();
 	}
 
     function updateForInFront(): boolean {
-        // debug();
         const rect = path?.thingTitleRect;
         if (rect && rect.size.width != 0) {
-            const offsetX = $s_show_details ? -92 : 9;
-            const offsetY = g.titleIsAtTop ? 116.5 : 71.5;
+            const offsetY = g.titleIsAtTop ? 116.5 : 73.5;
+            const offsetX = 7 - ($s_show_details ? k.detailsMargin : 0);
             const center = rect.centerLeft.offsetBy(new Point(titleWidth + offsetX, -offsetY));
-            const leftLeft = center.x + radius * 0.8;
-            const top = center.y - 6;
-            left = center.x - diameter * 2.1;
-            setC(IDTool.cluster, center);
-            setC(IDTool.add, new Point(leftLeft, top - diameter));
-            setC(IDTool.addParent, new Point(left, top - diameter));
-            setC(IDTool.delete, new Point(leftLeft, top + diameter - 5));
-            setC(IDTool.deleteParent, new Point(left, top + diameter - 8));
-            setC(IDTool.more, new Point(center.x - diameter - 1, top + diameter + 3));
-            setC(IDTool.next, new Point(center.x - diameter + 2, top - diameter - 10));
+            const right = center.x + diameter * 1.3;
+            const y = center.y;
+            left = center.x - diameter - 2;
+            setC(IDTool.add, new Point(right, y - radius));
+            setC(IDTool.addParent, new Point(left, y - radius));
+            setC(IDTool.cluster, center.offsetBy(new Point(4, 4)));
+            setC(IDTool.deleteParent, new Point(left, y + diameter));
+            setC(IDTool.next, new Point(center.x + 2, y - radius - 10));
+            setC(IDTool.delete, new Point(right - radius - 3, y + diameter - 5));
+            setC(IDTool.more, new Point(center.x - diameter + 2, y + diameter + 1));
             revealOffset = new Point(-19 - titleWidth, k.toolsClusterHeight / 2 - 51);
             return true;
         }
         return false;
 	}
-
-    function debug() {
-        const wrapKeys = Object.keys(path?.wrappers ?? []);
-        if (path && wrapKeys.length > 0) {
-            console.log(`${path.thingTitles} ${wrapKeys}`);
-        }
-    }
 
 </script>
 
@@ -141,9 +133,9 @@
                 opacity=0.15
                 color={color}
                 zindex={ZIndex.lines}
-                backgroundColor={transparentize(k.backgroundColor, 0.05)}
+                center={getC(IDTool.cluster)}
                 radius={k.toolsClusterHeight / 2.5}
-                center={getC(IDTool.cluster)}/>
+                backgroundColor={transparentize(k.backgroundColor, 0.05)}/>
             <RevealDot thing={thing} path={$s_path_toolsCluster} center={getC(IDTool.cluster).offsetBy(bigOffset)}/>
             <LabelButton
                 color={color}
@@ -152,8 +144,8 @@
                 <svg style='position:absolute'
                     width='28'
                     height='16'
-                    fill={'transparent'}
                     stroke={color}
+                    fill={'transparent'}
                     viewBox='6 2 16 16'>
                     <path d={svgPath.oval(20, true)}/>
                 </svg>

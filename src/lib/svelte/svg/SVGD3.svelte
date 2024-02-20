@@ -1,5 +1,5 @@
 <script>
-    import { ZIndex, onMount, onDestroy } from '../../ts/common/GlobalImports';
+    import { Point, ZIndex, onMount, onDestroy } from '../../ts/common/GlobalImports';
     import * as d3 from 'd3';
     export let position = 'absolute';
     export let zIndex = ZIndex.dots;
@@ -7,6 +7,8 @@
     export let stroke = 'black';
     export let fill = 'white';
     export let size = 10;
+    export let x = 0;
+    export let y = 0;
     let svg;
 
     onMount(() => {
@@ -37,6 +39,10 @@
 <svg bind:this={svg}
     width={size}px
     height={size}px
-    style='z-index: {zIndex};
+    viewBox='0 0 {size} {size}'
+    style='
+        top: {y}px;
+        left: {x}px;
+        z-index: {zIndex};
         position: {position};
         shape-rendering: geometricPrecision;'/>

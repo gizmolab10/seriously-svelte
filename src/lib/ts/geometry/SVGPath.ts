@@ -45,7 +45,7 @@ export default class SVGPath {
         const width = radius - (horizontal ? 1 : 3);
         const height = radius - (horizontal ? 3 : 1);
         const doubleWidth = width * 2;
-        const path = `M${radius} ${radius} m${-width} 0a${width} ${height} 0 1,0 ${doubleWidth} 0a${width} ${height} 0 1,0 ${-doubleWidth} 0`;
+        const path = `M${radius - width} ${radius}a${width} ${height} 0 1,0 ${doubleWidth} 0a${width} ${height} 0 1,0 ${-doubleWidth} 0`;
         return path;
     }
 

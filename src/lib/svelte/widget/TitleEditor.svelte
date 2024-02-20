@@ -6,7 +6,7 @@
 	export let fontSize = '1em';
 	export let thing;
 	export let path;
-	let padding = `0px 0px 3px ${$s_row_height / 3}px`;
+	let padding = `0px 0px 0px ${$s_row_height / 3}px`;
 	let titleWrapper: Wrapper;
 	let originalTitle = '';
 	let isEditing = false;

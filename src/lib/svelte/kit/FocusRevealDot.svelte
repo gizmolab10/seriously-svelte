@@ -1,5 +1,5 @@
 <script>
-	import { k, Point, debug, Direction, dbDispatch } from "../../ts/common/GlobalImports";
+	import { g, k, Point, debug, Direction, dbDispatch } from "../../ts/common/GlobalImports";
 	import TriangleButton from '../svg/TriangleButton.svelte';
 	import { s_dot_size } from '../../ts/managers/State';
     export let path = '';

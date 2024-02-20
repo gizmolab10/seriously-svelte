@@ -167,7 +167,9 @@
 		'>
 		{#key scalablePath}
 			<SVGD3
+				y=1
 				size={$s_dot_size}
+				x={$s_dot_size / 2}
 				stroke={strokeColor}
 				scalablePath={scalablePath}
 				fill={debug.lines ? 'transparent' : fillColor}

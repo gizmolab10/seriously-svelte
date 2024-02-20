@@ -86,15 +86,15 @@
 	}
 
 	function fullUpdate() {
-		const willEdit = (path.isEditing);
-		const willGrab = path.isGrabbed || thing.isExemplar;
-		const willShowCluster = path.toolsGrabbed && !path.isHere;
-		const change = (isEditing != willEdit || isGrabbed != willGrab || showingCluster != willShowCluster);
+		const shallEdit = (path.isEditing);
+		const shallGrab = path.isGrabbed || thing.isExemplar;
+		const shallShowCluster = path.toolsGrabbed && !path.isHere;
+		const change = (isEditing != shallEdit || isGrabbed != shallGrab || showingCluster != shallShowCluster);
 		if (change) {
-			showingBorder = willEdit || willGrab;
-			showingCluster = willShowCluster;
-			isGrabbed = willGrab;
-			isEditing = willEdit;
+			showingBorder = shallEdit || shallGrab;
+			showingCluster = shallShowCluster;
+			isGrabbed = shallGrab;
+			isEditing = shallEdit;
 			updateBorderStyle();
 			updateLayout();
 		}
@@ -107,15 +107,15 @@
 	}
 
 	function updateLayout() {
-		height = $s_row_height - 1;
-		const delta = showingBorder ? 0 : 1;
-		left = origin.x + delta - 1;
 		const titleWidth = thing.titleWidth;
+		const delta = showingBorder ? 0 : 0.5;
 		width = titleWidth - 18 + ($s_dot_size * 2);
+		padding = `0px ${rightPadding}px 0px 0px`;
 		revealTop = $s_dot_size / -3 + 1;
+		height = $s_row_height - 1.5;
+		left = origin.x + delta - 1;
 		radius = $s_row_height / 2;
 		top = origin.y + delta;
-		padding = `0px ${rightPadding}px 0px 0px`;
 	}
 
 </script>

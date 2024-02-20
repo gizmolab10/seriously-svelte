@@ -1,5 +1,5 @@
 <script>
-	import { k, Size, ZIndex, Direction, svgPath } from "../../ts/common/GlobalImports";
+	import { k, Size, Point, ZIndex, Direction, svgPath } from "../../ts/common/GlobalImports";
 	import SVGD3 from './SVGD3.svelte';
 	export let extraColor = k.backgroundColor;
 	export let extra = null;
@@ -24,5 +24,6 @@
 		fill={extraColor}
 		stroke={extraColor}
 		scalablePath={extra}
+		x={size / 4}
 	/>
 {/if}
