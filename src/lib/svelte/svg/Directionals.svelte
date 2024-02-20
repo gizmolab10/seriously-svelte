@@ -1,7 +1,7 @@
 <script>
     import { k, Point, Direction } from '../../ts/common/GlobalImports';
     import TriangleButton from './TriangleButton.svelte'
-    const origin = new Point(16, 17);
+    const origin = new Point(26, 27);
     const size = 20;
     const offsetY = size / 2 - 1;
     let toggle = false;

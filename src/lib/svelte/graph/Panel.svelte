@@ -87,19 +87,22 @@
 	<p>Nothing is available.</p>
 {:else}
 	<Controls/>
-	{#if $s_show_details && $s_id_popupView == null}
-		<Details/>
-		<div class='vertical-line' style='
+	{#if $s_id_popupView == null}
+		{#if $s_show_details}
+			<Details/>
+			<div class='vertical-line' style='
+				top: {topBandHeight}px;
+				z-index: {ZIndex.frontmost};
+				height: calc(100vh - {topBandHeight}px);'>
+			</div>
+		{/if}
+		<div class='horizontal-line' style='
+			width: 110%;
+			left: -10px;
 			top: {topBandHeight}px;
-			z-index: {ZIndex.frontmost};
-			height: calc(100vh - {topBandHeight}px);'>
+			z-index: {ZIndex.frontmost};'>
 		</div>
 	{/if}
-	<div class='horizontal-line' style='left: -10px;
-		z-index: {ZIndex.frontmost};
-		top: {topBandHeight}px;
-		width: 110%;'>
-	</div>
 	<div class='right-side' style='
 		left: {$s_show_details ? 100 : 0}px;
 		z-index: {ZIndex.panel};
@@ -107,7 +110,7 @@
 		height: 100%;'>
 		{#if $s_id_popupView == IDButton.help}
 			<Help/>
-		{:else if $s_id_popupView == IDButton.buildNotes}
+		{:else if $s_id_popupView == IDButton.builds}
 			<BuildNotes/>
 		{:else if $s_id_popupView == null}
 			{#key toggle}

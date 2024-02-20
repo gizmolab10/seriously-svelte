@@ -50,26 +50,28 @@
 			onClick={details_buttonClicked}>
 			<img src='settings.svg' alt='circular button' width={size}px height={size}px/>
 		</CircularButton>
-		<CircularButton
+	{/if}
+	<CircularButton
+		left=40
+		size={size}
+		color={k.backgroundColor}
+		onClick={(event) => buttonClickedForID(IDButton.smaller)}>
+		<SVGD3
 			size={size}
-			left={40}
-			color={k.backgroundColor}
-			onClick={(event) => buttonClickedForID(IDButton.smaller)}>
-			<SVGD3
-				size={size}
-				scalablePath={svgPath.dash(size, 2)}
-			/>
-		</CircularButton>
-		<CircularButton
+			scalablePath={svgPath.dash(size, 2)}
+		/>
+	</CircularButton>
+	<CircularButton
+		left=64
+		size={size}
+		color={k.backgroundColor}
+		onClick={(event) => buttonClickedForID(IDButton.bigger)}>
+		<SVGD3
 			size={size}
-			left={64}
-			color={k.backgroundColor}
-			onClick={(event) => buttonClickedForID(IDButton.bigger)}>
-			<SVGD3
-				size={size}
-				scalablePath={svgPath.tCross(size, 2)}
-			/>
-		</CircularButton>
+			scalablePath={svgPath.tCross(size, 2)}
+		/>
+	</CircularButton>
+	{#if !$s_id_popupView}
 		{#if g.showControls}
 			<button class='button'
 				style='
@@ -89,10 +91,10 @@
 	{/if}
 	<button class='button'
 		style='
-			left: {width - 60}px;
+			left: {width - 90}px;
 			background-color: {k.backgroundColor};'
-		on:click={() => togglePopupID(IDButton.buildNotes)}>
-		{$s_build}
+		on:click={() => togglePopupID(IDButton.builds)}>
+		build {$s_build}
 	</button>
 	<CircularButton
 		size={size}
