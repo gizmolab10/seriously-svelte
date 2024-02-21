@@ -79,15 +79,15 @@ class PersistLocal {
 		s_paths_expanded.set(this.ignorePaths ? [] : this.readFromDBKey(IDPersistant.expanded)?.map((e: string) => h.path_remember_unique(e)) ?? []);
 
 		s_paths_grabbed.subscribe((paths: Array<Path>) => {
-			this.writeToDBKey(IDPersistant.grabbed, paths.map(p => p.pathString));
+			this.writeToDBKey(IDPersistant.grabbed, !paths ? null : paths.map(p => p.pathString));
 		});
 
 		s_paths_expanded.subscribe((paths: Array<Path>) => {
-			this.writeToDBKey(IDPersistant.expanded, paths.map(p => p.pathString));
+			this.writeToDBKey(IDPersistant.expanded, !paths ? null : paths.map(p => p.pathString));
 		});
 
 		s_path_here.subscribe((path: Path) => {
-			this.writeToDBKey(IDPersistant.here, path.pathString);
+			this.writeToDBKey(IDPersistant.here, !path ? null : path.pathString);
 		});
 	}
 

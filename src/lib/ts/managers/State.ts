@@ -20,7 +20,6 @@ export const s_thing_fontFamily	 = writable<string>();
 export const s_scale_factor		 = writable<number>();
 export const s_thing_fontSize	 = writable<number>();
 export const s_line_stretch		 = writable<number>();
-export const s_crumbs_width		 = writable<number>();
 export const s_row_height		 = writable<number>();
 export const s_dot_size			 = writable<number>();
 export const s_build			 = writable<number>();

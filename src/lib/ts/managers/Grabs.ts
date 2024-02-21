@@ -8,7 +8,7 @@ export default class Grabs {
 	constructor(hierarchy: Hierarchy) {
 		this.hierarchy = hierarchy;
 		s_paths_grabbed.subscribe((paths: Array<Path>) => { // executes whenever s_paths_grabbed changes
-			if (paths.length > 0 && this.hierarchy.db && this.hierarchy.db.hasData) {
+			if (paths && paths.length > 0 && this.hierarchy.db && this.hierarchy.db.hasData) {
 				this.grabbed = paths;
 			} else {
 				this.grabbed = null;

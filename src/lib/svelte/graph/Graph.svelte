@@ -97,7 +97,7 @@
 	function updateOrigins() {
 		if (g.here) {
 			childrenSize = $s_path_here.visibleProgeny_size;
-			const offsetX = ($s_show_details ? -92 : 15) - (childrenSize.width / 2) - ($s_dot_size / 2.5) + offsetX_ofFirstReveal;
+			const offsetX = 15 + ($s_show_details ? -k.detailsWidth : 0) - (childrenSize.width / 2) - ($s_dot_size / 2.5) + offsetX_ofFirstReveal;
 			const offsetY = -1 - graphRect.origin.y;
 			origin_ofFirstReveal = graphRect.center.offsetBy(new Point(offsetX, offsetY));
 			if (k.isMobileDevice) {
@@ -150,9 +150,9 @@
 				{/if}
 				{#if g.titleIsAtTop}
 					{#if $s_path_here.isGrabbed}
-						<Circle radius=10 center={origin_ofFirstReveal.offsetBy(new Point(3, 2))} color={g.here.color} thickness=1/>
+						<Circle radius=10 center={origin_ofFirstReveal.offsetBy(new Point(-1, 1))} color={g.here.color} thickness=1/>
 					{/if}
-					<FocusRevealDot here={g.here} path={$s_path_here} center={origin_ofFirstReveal}/>
+					<FocusRevealDot here={g.here} path={$s_path_here} center={origin_ofFirstReveal.offsetBy(new Point(-3, 0))}/>
 				{:else}
 					<Widget thing={g.here} path={$s_path_here} origin={origin_ofFirstReveal.offsetBy(new Point(-19 - offsetX_ofFirstReveal, -9))}/>
 				{/if}

@@ -1,5 +1,5 @@
 import { k, u, get, Path, Rect, Point, Thing, launch, dbDispatch, Hierarchy, persistLocal, IDPersistant } from '../../ts/common/GlobalImports';
-import { s_db_type, s_path_here, s_graphRect, s_show_details, s_paths_grabbed, s_scale_factor, s_crumbs_width } from '../managers/State';
+import { s_db_type, s_path_here, s_graphRect, s_show_details, s_paths_grabbed, s_scale_factor } from '../managers/State';
 
 class Globals {
 	titleIsAtTop: boolean = false;
@@ -50,11 +50,10 @@ class Globals {
 
 	graphRect_update() {
 		const top = g.titleIsAtTop ? 114 : 69;							// height of content above the graph
-		const left = get(s_show_details) ? k.detailsMargin : 0;			// width of details
+		const left = get(s_show_details) ? k.detailsWidth : 0;			// width of details
 		const originOfGraph = new Point(left, top);
 		const sizeOfGraph = u.windowSize.reducedBy(originOfGraph);		// account for origin
 		const rect = new Rect(originOfGraph, sizeOfGraph);
-		s_crumbs_width.set(sizeOfGraph.width);
 		s_graphRect.set(rect);											// used by Panel and Graph
 	};
 

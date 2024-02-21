@@ -79,17 +79,13 @@
         }
     }
 
-	function update() {
-        bigOffset = new Point(-21 - titleWidth, k.toolsClusterHeight / 2 - 51.5);
-        return $s_path_toolsCluster && updateForInFront();
-	}
-
-    function updateForInFront(): boolean {
+	function update(): boolean {
         const rect = path?.thingTitleRect;
-        if (rect && rect.size.width != 0) {
-            const offsetY = g.titleIsAtTop ? 116.5 : 73.5;
-            const offsetX = 7 - ($s_show_details ? k.detailsMargin : 0);
-            const center = rect.centerLeft.offsetBy(new Point(titleWidth + offsetX, -offsetY));
+        bigOffset = new Point(-21 - titleWidth, k.toolsClusterHeight / 2 - 51.5);
+        if (rect && $s_path_toolsCluster && rect.size.width != 0) {
+            const offsetY = (g.titleIsAtTop ? -45 : 0) - 73.5;
+            const offsetX = 7 - ($s_show_details ? k.detailsWidth : 0);
+            const center = rect.centerLeft.offsetBy(new Point(titleWidth + offsetX, offsetY));
             const right = center.x + diameter * 1.3;
             const y = center.y;
             left = center.x - diameter - 2;

@@ -3,7 +3,6 @@
 	import { s_build, s_show_details, s_id_popupView, s_show_child_graph } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import SVGD3 from '../svg/SVGD3.svelte';
-	const topBandHeight = k.controlsHeight - 2;
 	let width = u.windowSize.width - 20;
 	let size = 16;
 
@@ -42,7 +41,7 @@
 		left: 0px;
 		position: fixed;
 		z-index: {ZIndex.frontmost};
-		height: `${topBandHeight}px`;'>
+		height: `${k.bannerHeight - 2}px`;'>
 	{#if !$s_id_popupView}
 		<CircularButton left=15
 			color='transparent'

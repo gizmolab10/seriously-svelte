@@ -1,5 +1,4 @@
-import { s_graphRect, s_show_details, s_crumbs_width, s_scale_factor } from "../managers/State";
-import { g, k, u, get, Path, Thing, IDPersistant, persistLocal } from '../common/GlobalImports'
+import { Path, Thing } from '../common/GlobalImports'
 
 export class Point {
 	x: number;
