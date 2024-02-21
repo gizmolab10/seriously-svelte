@@ -96,16 +96,15 @@
 		<div class='horizontal-line' style='
 			left: 0px;
 			z-index: {ZIndex.frontmost};
-			top: {k.bannerHeight - 2}px;
-			width: {u.windowSize.width}px;'>
+			top: {k.bannerHeight - 2}px;'>
 		</div>
 		<div class='crumbs' style='z-index: {ZIndex.frontmost};'>
 			<Crumbs/>
 			<div class='horizontal-line'
 				style='
-					z-index: {ZIndex.frontmost};
+					top: 68px;
 					left: 0px;
-					top: 68px;'>
+					z-index: {ZIndex.frontmost};'>
 			</div>
 		</div>
 		{#if g.titleIsAtTop}

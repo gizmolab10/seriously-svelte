@@ -18,16 +18,19 @@
 	$: {
 		const trigger = $s_path_here + $s_graphRect + $s_paths_grabbed;
 		if (!path || trigger || ancestors.length == 0) {
+			const windowWidth = u.windowSize.width;
 			path = path_lastGrabbed() ?? g.rootPath;	// assure we have a path
-			[sum, width, ancestors] = path.things_ancestryWithin(u.windowSize.width - 10);
-			left = (u.windowSize.width - width - 5) / 2;
+			[sum, width, ancestors] = path.things_ancestryWithin(windowWidth - 10);
+			left = (windowWidth - width - 20) / 2;
 		}
 	}
 
 </script>
 
 {#key `${sum} ${left}`}
-	<span class='left-spacer' style='display: inline-block; width: {left}px;'/>
+	{#if left > 0}
+		<span class='left-spacer' style='display: inline-block; width: {left}px;'/>
+	{/if}
 	{#each ancestors.map(thing => thing.parents.length > 1) as multiple, index}
 		{#if index > 0}
 			<span class='crumb-separator' style='
