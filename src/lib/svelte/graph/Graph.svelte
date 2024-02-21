@@ -97,10 +97,10 @@
 	function updateOrigins() {
 		if (g.here) {
 			childrenSize = $s_path_here.visibleProgeny_size;
-			const offsetX = ($s_show_details ? -92 : 14.5) - (childrenSize.width / 2) - ($s_dot_size / 2.5) + offsetX_ofFirstReveal;
+			const offsetX = ($s_show_details ? -92 : 15) - (childrenSize.width / 2) - ($s_dot_size / 2.5) + offsetX_ofFirstReveal;
 			const offsetY = -1 - graphRect.origin.y;
 			origin_ofFirstReveal = graphRect.center.offsetBy(new Point(offsetX, offsetY));
-			if (k.leftJustifyGraph) {
+			if (k.isMobileDevice) {
 				origin_ofFirstReveal.x = 25;
 			}
 			const toChildren = new Point(-43 + $s_line_stretch - ($s_dot_size / 2) + offsetX_ofFirstReveal, ($s_dot_size / 2) -(childrenSize.height / 2) - 5);

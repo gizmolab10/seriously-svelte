@@ -77,6 +77,5 @@
 	<path d={scalablePath} stroke={thing.color} fill='none'/>
 </svg>
 {#if debug.lines}
-	<!--Box rect={rect.offsetBy(debugOffset)} color=gray/-->
 	<Circle radius=1 center={rect.extent.offsetBy(debugOffset)} color=black thickness=1/>
 {/if}

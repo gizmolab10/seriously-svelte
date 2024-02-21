@@ -36,7 +36,7 @@
 	}
 </style>
 
-<div class='panel-top'
+<div class='controls'
 	style='
 		top: 9px;
 		left: 0px;
@@ -51,43 +51,45 @@
 			<img src='settings.svg' alt='circular button' width={size}px height={size}px/>
 		</CircularButton>
 	{/if}
-	<CircularButton
-		left=40
-		size={size}
-		color={k.backgroundColor}
-		onClick={(event) => buttonClickedForID(IDButton.smaller)}>
-		<SVGD3
-			size={size}
-			scalablePath={svgPath.dash(size, 2)}
-		/>
-	</CircularButton>
-	<CircularButton
-		left=64
-		size={size}
-		color={k.backgroundColor}
-		onClick={(event) => buttonClickedForID(IDButton.bigger)}>
-		<SVGD3
-			size={size}
-			scalablePath={svgPath.tCross(size, 2)}
-		/>
-	</CircularButton>
 	{#if !$s_id_popupView}
 		{#if g.showControls}
 			<button class='button'
 				style='
-					left:80px;
+					left:30px;
 					background-color: {k.backgroundColor};'
 				on:click={() => buttonClickedForID(IDButton.relations)}>
 				{#if $s_show_child_graph}children{:else}parents{/if}
 			</button>
 			<button class='button'
 				style='
-					left: 147px;
+					left: 97px;
 					background-color: {k.backgroundColor};'
 				on:click={() => buttonClickedForID(IDButton.layout)}>
 				tree
 			</button>
 		{/if}
+	{/if}
+	{#if g.isMobileDevice}
+		<CircularButton
+			left={width - 130}
+			size={size}
+			color={k.backgroundColor}
+			onClick={(event) => buttonClickedForID(IDButton.smaller)}>
+			<SVGD3
+				size={size}
+				scalablePath={svgPath.dash(size, 2)}
+			/>
+		</CircularButton>
+		<CircularButton
+			left={width - 105}
+			size={size}
+			color={k.backgroundColor}
+			onClick={(event) => buttonClickedForID(IDButton.bigger)}>
+			<SVGD3
+				size={size}
+				scalablePath={svgPath.tCross(size, 2)}
+			/>
+		</CircularButton>
 	{/if}
 	<button class='button'
 		style='

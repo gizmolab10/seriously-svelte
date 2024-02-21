@@ -12,7 +12,7 @@ export default class Constants {
 	public allowHorizontalScrolling: boolean;
 	public allowGraphEditing: boolean;
 	public allowTitleEditing: boolean;
-	public leftJustifyGraph: boolean;
+	public isMobileDevice: boolean;
 	public backgroundColor: string;
 	public highlightColor: string;
 	public adminBulkName: string;
@@ -29,7 +29,7 @@ export default class Constants {
 		this.adminBulkName = 'Jonathan Sand';
 		this.defaultTitle = 'Please, enter a title';
 		this.lineTitle = '------------------------';
-		this.leftJustifyGraph = u.isMobileDevice();
+		this.isMobileDevice = u.isMobileDevice();
 		this.allowHorizontalScrolling = true;
 		this.allowGraphEditing = true;
 		this.allowTitleEditing = true;

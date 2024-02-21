@@ -108,10 +108,10 @@
 
 	function updateLayout() {
 		const titleWidth = thing.titleWidth;
-		const delta = showingBorder ? 0 : 0.5;
+		const delta = showingBorder ? -0.5 : 0.5;
 		width = titleWidth - 18 + ($s_dot_size * 2);
 		padding = `0px ${rightPadding}px 0px 0px`;
-		revealTop = $s_dot_size / -3 + 1;
+		revealTop = $s_dot_size / -3 + 0.5;
 		height = $s_row_height - 1.5;
 		left = origin.x + delta - 1;
 		radius = $s_row_height / 2;
@@ -135,7 +135,7 @@
 		z-index: {ZIndex.widgets};
 		border-radius: {radius}px;
 	'>
-	<DragDot thing={thing} path={path} center={new Point(0, revealTop)}/>
+	<DragDot thing={thing} path={path} center={new Point(0.5, revealTop)}/>
 	<TitleEditor thing={thing} path={path} fontSize={$s_thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
-	<RevealDot thing={thing} path={path} center={new Point(0, revealTop)}/>
+	<RevealDot thing={thing} path={path} center={new Point(-0.5, revealTop + 0.5)}/>
 </div>

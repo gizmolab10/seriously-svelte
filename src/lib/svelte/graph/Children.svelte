@@ -5,15 +5,16 @@
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Children from './Children.svelte';
-	import Line from './Line.svelte';
+	import Line from '../widget/Line.svelte';
 	export let origin = new Point();
     export let path = '';
 	const halfDotSize = $s_dot_size / 2;
-	const widgetOffset = new Point(12, ($s_dot_size / -15) - 10);
+	const widgetOffset = new Point(12, ($s_dot_size / -15) - 9.5);
 	const lineOffset = new Point(halfDotSize - 129, halfDotSize - 7);
 	let childMapArray: Array<ChildMap> = [];
 	let priorTime = new Date().getTime();
 	let center = new Point();
+
 	onMount( () => { layoutChildren(); });
 	onDestroy( () => { signalHandler.disconnect(); });
 	
@@ -51,8 +52,7 @@
 	})
 	
 	function layoutChildren() {
-		// console.log(`layoutChildren => ${path.thingTitles}`);
-		const delta = new Point(19.5, -2.5);
+		const delta = new Point(19.5, -1.5);
 		const height = (path.visibleProgeny_halfHeight);
 		const childrenOrigin = origin.offsetByY(height);
 		childMapArray = new Layout(path, childrenOrigin).childMapArray;

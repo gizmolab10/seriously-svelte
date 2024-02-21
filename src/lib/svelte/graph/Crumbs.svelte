@@ -4,7 +4,7 @@
 	import FatTriangle from '../svg/FatTriangle.svelte';
 	import Crumb from '../kit/Crumb.svelte';
 	let size = 10;
-	let insidePath = svgPath.circle(size, size / 2, new Point(size / -7, size / 4));
+	let insidePath = svgPath.circle(size, size / 2, new Point(-1, size / 4));
 	let ancestors: Array<Thing> = [];
 	let path: Path;
 	let width = 0;

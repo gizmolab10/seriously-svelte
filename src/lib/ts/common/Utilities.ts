@@ -116,15 +116,12 @@ class Utilities {
 
 	isMobileDevice(): boolean {
 		const userAgent = navigator.userAgent;
-		
 		if (/android/i.test(userAgent) || /iPhone|iPad|iPod/i.test(userAgent)) {    // Check for phones
 			return true;
 		}
-
 		if (/iPad|Android|Touch/i.test(userAgent) && !(window as any).MSStream) {    // Check for tablets
 			return true;
 		}
-
 		return false;
 	}
 
