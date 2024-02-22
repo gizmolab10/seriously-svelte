@@ -7,8 +7,8 @@
 	export let here;
 	let size = $s_dot_size;
 
-	function fillColor_closure(isFilled) {
-		return debug.lines ? 'transparent' : here.revealColor(isFilled, path);
+	function fillColors_closure(isFilled) {
+		return [debug.lines ? 'transparent' : here.revealColor(isFilled, path), ''];
 	}
 
 	function onClick(event) {
@@ -28,7 +28,7 @@
 </script>
 
 <TriangleButton
-	fillColor_closure={fillColor_closure}
+	fillColors_closure={fillColors_closure}
 	direction={Direction.left}
 	strokeColor={here.color}
 	onClick={onClick}

@@ -2,9 +2,9 @@
 	import { k, u, Size, Thing, Point, ZIndex, svgPath, Direction, dbDispatch } from "../../ts/common/GlobalImports";
 	import { s_dot_size, s_paths_grabbed } from '../../ts/managers/State';
 	import SVGD3 from './SVGD3.svelte';
-	export let extraColor = k.backgroundColor;
-	export let fillColor_closure;
-	export let extra = null;
+	export let fillColors_closure = null;
+	export let cursor = 'pointer';
+	export let extraPath = null;
 	export let strokeColor;
 	export let direction;
 	export let onClick;
@@ -12,12 +12,18 @@
 	export let size;
 	export let id;
 	let scalablePath = svgPath.triangle(size, direction);
+	let extraColor = k.backgroundColor;
 	let fillColor = k.backgroundColor;
 	let button = null;
 
 	function mouseOut(event) { setFillColor(false); }
 	function mouseOver(event) { setFillColor(true); }
-	function setFillColor(isFilled) { fillColor = fillColor_closure(isFilled); }
+
+	function setFillColor(isFilled) {
+		if (fillColors_closure != null) {
+			[fillColor, extraColor] = fillColors_closure(isFilled);
+		}
+	}
 	
 	$: {
 		scalablePath = svgPath.triangle(size, direction);
@@ -32,10 +38,10 @@
 </script>
 
 <button id={id}
-	on:blur={u.ignore}
-	on:focus={u.ignore}
 	bind:this={button}
 	on:click={onClick}
+	on:blur={u.ignore}
+	on:focus={u.ignore}
 	on:mouseout={mouseOut}
 	on:mouseover={mouseOver}
 	style='
@@ -43,7 +49,7 @@
 		height: 20px;
 		border: none;
 		display: block;
-		cursor: pointer;
+		cursor: {cursor};
 		background: none;
 		position: absolute;
 		top: {center.y + 2 - (size / 2)}px;
@@ -55,12 +61,12 @@
 		stroke={strokeColor}
 		scalablePath={scalablePath}
 	/>
-	{#if extra}
+	{#if extraPath}
 		<SVGD3
 			size={size}
 			fill={extraColor}
 			stroke={extraColor}
-			scalablePath={extra}
+			scalablePath={extraPath}
 		/>
 	{/if}
 </button>

@@ -17,7 +17,7 @@
 	let clickCount = 0;
 	let handler = null;
 	let button = null;
-	let extra = null;
+	let extraPath = null;
 	let clickTimer;
 	let size = 0;
 	let left = 0;
@@ -34,7 +34,7 @@
 		updateColorsForHover(false);
         handler = signals.handle_alteringParent((alteration) => {
 			const applyFlag = $s_path_toolsCluster && path.things_canAlter_asParentOf_toolsGrab;
-			extra = (thing.parents.length < 2) ? null : svgPath.circle(size, size / 5);
+			extraPath = (thing.parents.length < 2) ? null : svgPath.circle(size, size / 5);
 			altering = applyFlag ? (alteration != null) : false;
 			updateColors();
         })
@@ -108,7 +108,7 @@
 		top = path.toolsGrabbed ? 2 : (size / 2) - 5;
 		scalablePath = svgPath.oval(size, false);
 		if (thing.parents.length > 1) {
-			extra = svgPath.circle(size, size / 5);
+			extraPath = svgPath.circle(size, size / 5);
 		}
 	}
 
@@ -144,11 +144,11 @@
 		stroke={strokeColor}
 		scalablePath={scalablePath}
 	/>
-	{#if extra}
+	{#if extraPath}
 		<SVGD3
 			size={size}
 			fill={tinyDotColor}
-			scalablePath={extra}
+			scalablePath={extraPath}
 			stroke={tinyDotColor}
 		/>
 	{/if}

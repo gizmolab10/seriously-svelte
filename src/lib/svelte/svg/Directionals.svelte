@@ -8,7 +8,7 @@
     export let display;
     export let hit;
 
-	function fillColor_closure(isFilled) { return isFilled ? 'black' : k.backgroundColor; }
+	function fillColors_closure(isFilled) { return [isFilled ? 'black' : k.backgroundColor, '']; }
 
 	function onClick(event) {
         const pointsUp = event.currentTarget.id == 'up';
@@ -30,7 +30,7 @@
     <div class='directionals'>
         {#if display(true)}
             <TriangleButton
-                fillColor_closure={fillColor_closure}
+                fillColors_closure={fillColors_closure}
                 center={origin.offsetByY(-offsetY)}
                 direction={Direction.up}
                 strokeColor={'black'}
@@ -41,7 +41,7 @@
         {/if}
         {#if display(false)}
             <TriangleButton
-                fillColor_closure={fillColor_closure}
+                fillColors_closure={fillColors_closure}
                 center={origin.offsetByY(offsetY)}
                 direction={Direction.down}
                 strokeColor={'black'}

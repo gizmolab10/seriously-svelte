@@ -43,7 +43,7 @@
 					fillColor={ancestors[index].color}
 					size={size * (!multiple ? 1 : 1.5)}
 					strokeColor={ancestors[index].color}
-					extra={!multiple ? null : insidePath}
+					extraPath={!multiple ? null : insidePath}
 				/>
 				&nbsp;{#if multiple}-{/if}&nbsp;
 			</span>

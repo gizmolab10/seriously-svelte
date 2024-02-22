@@ -24,9 +24,9 @@ export enum IDTool {
 	addParent	 = 'addParent',
 	cluster		 = 'cluster',
 	delete		 = 'delete',
+	create    	 = 'create',
 	next		 = 'next',
 	more		 = 'more',
-	add     	 = 'add',
 }
 
 export enum IDBrowser  {

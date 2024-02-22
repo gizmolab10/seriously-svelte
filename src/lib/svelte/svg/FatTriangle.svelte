@@ -2,7 +2,7 @@
 	import { k, Size, Point, ZIndex, Direction, svgPath } from "../../ts/common/GlobalImports";
 	import SVGD3 from './SVGD3.svelte';
 	export let extraColor = k.backgroundColor;
-	export let extra = null;
+	export let extraPath = null;
 	export let strokeColor;
 	export let fillColor;
 	export let position;
@@ -18,12 +18,12 @@
 	stroke={strokeColor}
 	scalablePath={scalablePath}
 />
-{#if extra}
+{#if extraPath}
 	<SVGD3
 		size={size}
 		fill={extraColor}
 		stroke={extraColor}
-		scalablePath={extra}
+		scalablePath={extraPath}
 		x={size / 4}
 	/>
 {/if}

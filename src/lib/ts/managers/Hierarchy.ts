@@ -51,7 +51,7 @@ export default class Hierarchy {
 		if (path) {
 			switch (IDButton) {
 				case IDTool.next: this.path_relayout_toolCluster_nextParent(event.altKey); return;
-				case IDTool.add: await this.path_edit_remoteCreateChildOf(path); break;
+				case IDTool.create: await this.path_edit_remoteCreateChildOf(path); break;
 				case IDTool.addParent: this.toggleAlteration(AlteringParent.adding); return;
 				case IDTool.deleteParent: this.toggleAlteration(AlteringParent.deleting); return;
 				case IDTool.delete: await this.paths_rebuild_traverse_remoteDelete([path]); break;
