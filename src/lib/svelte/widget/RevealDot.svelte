@@ -87,19 +87,19 @@
 
 	function handleClick(event) {
 		setIsHovering_updateColors(false);
-		if (!path.isHere) {
-			if (path.toolsGrabbed) {
-				$s_path_toolsCluster = null;
-				$s_altering_parent = null;
-			} else if (!path.hasChildren) {
-				path.grabOnly();
-				$s_path_toolsCluster = path;
-			} else {
-				g.hierarchy.path_rebuild_remoteMoveRight(path, !path.isExpanded, true, false);
-				return;
-			}
-			signals.signal_rebuild_fromHere();
+		if (path.toolsGrabbed) {
+			$s_path_toolsCluster = null;
+			$s_altering_parent = null;
+		} else if (path.isHere) {
+			return;
+		} else if (path.hasChildren) {
+			g.hierarchy.path_rebuild_remoteMoveRight(path, !path.isExpanded, true, false);
+			return;
+		} else {
+			path.grabOnly();
+			$s_path_toolsCluster = path;
 		}
+		signals.signal_rebuild_fromHere();
 	}
 
 	function handleDoubleClick(event) {
