@@ -15,8 +15,9 @@
     let parentSensitiveColor = '';
     let userOffset = new Point();
     let bigOffset = new Point();
-    let graphRect = new Rect();
+    let hoveringOnTrash = false;
     let hoveringOnMore = false;
+    let graphRect = new Rect();
 	let diameter = $s_dot_size;
 	let radius = diameter / 2;
     let hasOneParent = false;
@@ -214,14 +215,17 @@
                 size={diameter}
                 id='add'/>
             <button class='delete'
+                on:mouseout={() => { hoveringOnTrash = false; }}
+                on:mouseover={() => { hoveringOnTrash = true; }}
                 on:click={(event) => handleClick(IDTool.delete, event)}
                 style='
-                    left: {getC(IDTool.delete).x}px;border: none;
+                    left: {getC(IDTool.delete).x}px;
                     top: {getC(IDTool.delete).y}px;
                     z-index: {ZIndex.lines};
                     background: none;
-                    cursor: pointer;'>
-                <Trash color={color}/>
+                    cursor: pointer;
+                    border: none;'>
+                <Trash color={color} invert={hoveringOnTrash}/>
             </button>
         </div>
     {/if}

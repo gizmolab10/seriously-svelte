@@ -1,8 +1,34 @@
 <script lang='ts'>
-  export let color = black;
+	export let fill = 'white'
+	export let color = black;
+	export let invert = false;
+	const viewBox = '0 -0.5 16 16';
+	const bottom = 12.5;
+	const top = 6;
 </script>
 
-<svg width='16' height='16' fill={color} viewBox='0 0 16 16'>
-  <path d='M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z'/>
-  <path d='M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z'/>
-</svg>
+<style>
+  .svg-container {
+    position: relative;
+    height: 16px;
+    width: 16px;
+  }
+
+  .svg-container svg {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+</style>
+
+<div class='svg-container'>
+	<svg width=16 height=16 fill={invert ? color : fill} stroke={color} viewBox={viewBox}>
+		<path d='M 14.5 3 C 14.5 3.552 14.052 4 13.5 4 L 13 4 L 13 13 C 13 14.105 12.105 15 11 15 L 5 15 C 3.895 15 3 14.105 3 13 L 3 4 L 2.5 4 C 1.948 4 1.5 3.552 1.5 3 L 1.5 2 C 1.5 1.448 1.948 1 2.5 1 L 6 1 C 6 0.448 6.448 0 7 0 L 9 0 C 9.552 0 10 0.448 10 1 L 13.5 1 C 14.052 1 14.5 1.448 14.5 2 L 14.5 3 Z' transform='matrix(1, 0, 0, 1, 0, 4.440892098500626e-16)'/>
+	</svg>
+	<svg width=16 height=16 fill={invert ? fill : color} stroke={invert ? fill : color} viewBox={viewBox}>
+		<line x1={invert ? 0 : 3} y1=4 x2={invert ? 15 : 13} y2=4/>
+		<line x1=10.4 y1={top} x2=10.4 y2={bottom}/>
+		<line x1=5.6 y1={top} x2=5.6 y2={bottom}/>
+		<line x1=8 y1={top} x2=8 y2={bottom}/>
+	</svg>
+</div>

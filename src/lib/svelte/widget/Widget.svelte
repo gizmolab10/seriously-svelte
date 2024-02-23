@@ -87,7 +87,7 @@
 
 	function fullUpdate() {
 		const shallEdit = (path.isEditing);
-		const shallGrab = path.isGrabbed || thing.isExemplar;
+		const shallGrab = path.isGrabbed || (thing?.isExemplar ?? false);
 		const shallShowCluster = path.toolsGrabbed && !path.isHere;
 		const change = (isEditing != shallEdit || isGrabbed != shallGrab || showingCluster != shallShowCluster);
 		if (change) {
