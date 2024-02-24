@@ -90,7 +90,27 @@
 	});
 </script>
 
-<div class='buttons-container'>
+<style>
+	button {
+		height: 20px;
+		color: #b64b1d;
+		border: 1px solid;
+		border-radius: 0.5em;
+	}
+	.selected {
+		color: #223;
+		background-color: #eff;
+	}
+	.help-buttons {
+		gap: 15px;
+		display: flex;
+		margin-top: 10px;
+		margin-bottom: 20px;
+		justify-content: center;
+	}
+</style>
+
+<div class='help-buttons'>
 	<button class:selected={showingSelection} on:click={showSelection}>{@html selectionTitle}</button>
 	<button class:selected={showingBrowse} on:click={showBrowse}>{@html browseTitle}</button>
 	<button class:selected={showingFocus} on:click={showFocus}>{@html focusTitle}</button>
@@ -112,23 +132,3 @@
 {#if showingDots && dots}
 	<svelte:component this={dots} />
 {/if}
-
-<style>
-	button {
-		height: 20px;
-		color: #b64b1d;
-		border: 1px solid;
-		border-radius: 0.5em;
-	}
-	.selected {
-		color: #223;
-		background-color: #eff;
-	}
-	.buttons-container {
-		gap: 15px;
-		display: flex;
-		margin-top: 10px;
-		margin-bottom: 20px;
-		justify-content: center;
-	}
-</style>

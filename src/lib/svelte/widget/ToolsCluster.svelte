@@ -103,21 +103,21 @@
 
 	function update(): boolean {
         const rect = path?.thingTitleRect;
-        bigOffset = new Point(-21 - titleWidth, k.toolsClusterHeight / 2 - 50);
+        bigOffset = new Point(-20 - titleWidth, k.toolsClusterHeight / 2 - 52);
         if (rect && $s_path_toolsCluster && rect.size.width != 0) {
-            const offsetY = (g.titleIsAtTop ? -45 : 0) - 73.5;
-            const offsetX = 7 - ($s_show_details ? k.detailsWidth : 0);
+            const offsetY = (g.titleIsAtTop ? -45 : 0) - 69;
+            const offsetX = 9 - ($s_show_details ? k.detailsWidth : 0);
             const center = rect.centerLeft.offsetBy(new Point(titleWidth + offsetX, offsetY));
             const right = center.x + diameter * 1.3;
             const y = center.y;
             left = center.x - diameter - 2;
-            setC(IDTool.create, new Point(right, y - radius));
-            setC(IDTool.addParent, new Point(left, y - radius));
-            setC(IDTool.cluster, center.offsetBy(new Point(4, 3)));
-            setC(IDTool.deleteParent, new Point(left, y + diameter));
-            setC(IDTool.next, new Point(center.x + 2, y - diameter - 4));
-            setC(IDTool.delete, new Point(right - radius - 3, y + radius + 1));
-            setC(IDTool.more, new Point(center.x - diameter + 2, y + diameter + 1));
+            setC(IDTool.cluster, center);
+            setC(IDTool.create, new Point(right - 3, y - radius - 4));
+            setC(IDTool.more, new Point(center.x + 1, y + radius * 3));
+            setC(IDTool.addParent, new Point(left - 4, y - radius - 4));
+            setC(IDTool.next, new Point(center.x - 2, y - diameter - 8));
+            setC(IDTool.deleteParent, new Point(left - 4, y + diameter - 4));
+            setC(IDTool.delete, new Point(right - radius - 6, y + radius - 4));
             revealOffset = new Point(-19 - titleWidth, k.toolsClusterHeight / 2 - 51);
             return true;
         }
@@ -127,6 +127,11 @@
 </script>
 
 <style>
+	svg {
+		top:0px;
+		left:0px;
+		position: absolute;
+	}
 	button {
 		border-width: 1px;
 		position: absolute;
@@ -136,14 +141,11 @@
 		0%, 100% { color: black; }
 		50% { color: lightgray; }
 	}
-	.toolsCluster {
-		position: absolute;
-	}
 </style>
 
 {#key toggle}
     {#if $s_path_toolsCluster}
-        <div class='toolsCluster' style='
+        <div class='tools-cluster' style='
             position:absolute;
             z-index: {ZIndex.lines}'>
             <TransparencyCircle
@@ -154,28 +156,29 @@
                 center={getC(IDTool.cluster)}
                 radius={k.toolsClusterHeight / 2.5}
                 backgroundColor={transparentize(k.backgroundColor, 0.05)}/>
-            <RevealDot thing={thing} path={$s_path_toolsCluster} center={getC(IDTool.cluster).offsetBy(bigOffset)}/>
             <LabelButton
+                width=20
+                height=16
                 color={color}
+                cursor='pointer'
                 center={getC(IDTool.more)}
                 onClick={(event) => handleClick(IDTool.more, event)}
                 hover_closure={(isHovering) => { hoveringOnMore = isHovering; }}>
-                <svg style='position:absolute;'
-                    width=28
+                <svg width=20
                     height=16
                     stroke={color}
                     fill={hoveringOnMore ? color : 'transparent'}
-                    viewBox='6 2 16 16'>
+                    viewBox='0 2 20 16'>
                     <path d={svgPath.oval(20, true)}/>
                 </svg>
-                <svg style='position:absolute;'
-                    width=16
+                <svg width=16
                     height=10
                     fill={hoveringOnMore ? k.backgroundColor : color}
                     viewBox='-2 -2 14 10'>
                     <path d={svgPath.ellipses(1, 2)}/>
                 </svg>
             </LabelButton>
+            <RevealDot thing={thing} path={$s_path_toolsCluster} center={getC(IDTool.cluster).offsetBy(bigOffset)}/>
             <TriangleButton
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.next, isFilled) }}
                 cursor={isDisabledFor(IDTool.next) ? 'normal' : 'pointer'}
