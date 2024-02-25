@@ -34,7 +34,11 @@
     function centers_isEmpty(): boolean { return Object.keys(c).length == 0; }
 	onMount(() => { setup(); setTimeout(() => { updateMaybeRedraw(); }, 20) });
     function disableSensitive() { return [IDTool.next, IDTool.deleteParent]; }
-    function isDisabledFor(id: string) { return hasOneParent && disableSensitive().includes(id); }
+    
+    function isDisabledFor(id: string) {
+        return (path.isHere && (id == IDTool.addParent)) ||
+        (hasOneParent && disableSensitive().includes(id)) ;
+    }
 
     function fillColorsFor(id: string, isFilled: boolean): [string, string] {
         const same = isFilled == ($s_altering_parent != null);
@@ -84,17 +88,11 @@
             path = $s_path_toolsCluster;
             if (path) {
                 thing = path?.thing;
-                if (!thing) {
-                    color = '';
-                    titleWidth = 0;
-                    parentSensitiveColor = '';
-                    hasOneParent = true;
-                } else {
-                    color = thing.color;
-                    titleWidth = thing.titleWidth;
-                    hasOneParent = thing.parents.length < 2;
-                    parentSensitiveColor = hasOneParent ? transparentize('lightgray', 0.3) : color ;
-                }
+                color = thing?.color ?? '';
+                titleWidth = thing?.titleWidth ?? 0;
+                hasOneParent = (thing?.parents.length ?? 0) < 2;
+                const disabledColor = transparentize('lightgray', 0.3);
+                parentSensitiveColor = (hasOneParent || path.isHere) ? disabledColor : color ;
                 update();
                 toggle = !toggle;
             }
@@ -201,11 +199,12 @@
                 size={diameter}/>
             <TriangleButton
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.addParent, isFilled) }}
+                cursor={isDisabledFor(IDTool.addParent) ? 'normal' : 'pointer'}
                 onClick={(event) => handleClick(IDTool.addParent, event)}
+                strokeColor={path.isHere ? parentSensitiveColor : color}
                 extraPath={svgPath.tCross(diameter, 2)}
                 center={getC(IDTool.addParent)}
                 direction={Direction.left}
-                strokeColor={color}
                 id='addParent'
                 size={diameter}/>
             <TriangleButton

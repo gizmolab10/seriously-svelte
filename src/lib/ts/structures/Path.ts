@@ -40,8 +40,8 @@ export default class Path {
 	
 	get endID(): string { return this.idAt(); }
 	get fromPath(): Path { return this.stripBack(); }
-	get thing(): Thing | null { return this.thingAt(); }
 	get firstChild(): Thing { return this.children[0]; }
+	get thing(): Thing | null { return this.thingAt(); }
 	get lastChild(): Thing { return this.children.slice(-1)[0]; }
 	get isRoot(): boolean { return this.matchesPath(g.rootPath); }
 	get order(): number { return this.relationship?.order ?? -1; }
@@ -68,7 +68,7 @@ export default class Path {
 	get isEditing(): boolean { return this.matchesPath(get(s_title_editing)?.editing ?? null); }
 	get isStoppingEdit(): boolean { return this.matchesPath(get(s_title_editing)?.stopping ?? null); }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
-
+	
 	get isVisible(): boolean {
 		const here = g.herePath;
 		return this.incorporates(here) && this.isExpandedFrom(here);
@@ -87,7 +87,7 @@ export default class Path {
 		}
 		return this.relationship?.idTo ?? k.unknownID;
 	}
-	
+
 	get things_canAlter_asParentOf_toolsGrab(): boolean {
 		const path_toolsGrab = get(s_path_toolsCluster);
 		if (path_toolsGrab && !this.matchesPath(path_toolsGrab) && this.thing != path_toolsGrab.thing) {
@@ -235,6 +235,16 @@ export default class Path {
 			return array[siblingIndex];
 		}
 		return null;
+	}
+	
+	visibleFromPaths(back: number = 1): Array<Path> {
+		const paths: Array<Path> = [];
+		for (const fromPath of (this.thing?.parentPaths ?? [])) {
+			if (fromPath.stripBack(back).isVisible) {
+				paths.push(fromPath);
+			}
+		}
+		return paths;
 	}
 
 	stripBack(back: number = 1): Path {

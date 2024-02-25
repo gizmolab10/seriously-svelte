@@ -15,9 +15,6 @@
 
 </script>
 
-<style>
-</style>
-
 <button class='label-button'
 	on:click={onClick}
 	on:blur={u.ignore}

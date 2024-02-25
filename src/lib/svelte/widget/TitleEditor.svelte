@@ -17,8 +17,8 @@
 	onDestroy(() => { relayoutHandler.disconnect(); });
 	var hasChanges = () => { return originalTitle != thing.title; };
 	function handleInput(event) { thing.title = event.target.value; updateInputWidth(); };
-	const relayoutHandler = signals.handle_relayout((path) => setTimeout(() => { updateInputWidth(); }, 10));
 	const rebuildHandler = signals.handle_rebuild((path) => setTimeout(() => { updateInputWidth(); }, 10));
+	const relayoutHandler = signals.handle_relayout((path) => setTimeout(() => { updateInputWidth(); }, 10));
 
 	$: {
 		if (input) {
@@ -158,16 +158,16 @@
 </script>
 
 <style lang='scss'>
+	.ghost {
+		position: absolute;
+		visibility: hidden;
+		white-space: pre; /* Preserve whitespace to accurately measure the width */
+	}
 	.title {
 		border: none;
 		outline: none;
 		white-space: pre;
 		position: absolute;
-	}
-	.ghost {
-		position: absolute;
-		visibility: hidden;
-		white-space: pre; /* Preserve whitespace to accurately measure the width */
 	}
 </style>
 
@@ -192,11 +192,11 @@
 		on:keydown={handleKeyDown}
 		on:paste={handleCutOrPaste}
 		style='left: 10px;
+			padding: {padding};
 			color: {thing.color};
 			font-size: {fontSize};
 			z-index: {ZIndex.text};
 			font-family: {fontFamily};
 			outline-color: {k.backgroundColor};
-			padding: {padding};
 		'/>
 {/key}

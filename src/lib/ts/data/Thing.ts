@@ -25,11 +25,11 @@ export default class Thing extends Datum {
 		this.trait = trait;
 	};
 	
-	get parents():		 Array<Thing> { return this.things_fromPaths(this.fromPathsFor(Predicate.idIsAParentOf)); }
 	get fields():	Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get isHere():			  boolean { return (get(s_path_here).thing?.id ?? '') == this.id; }
 	get idForChildren():	   string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get parentPaths():	  Array<Path> { return this.fromPathsFor(Predicate.idIsAParentOf); }
+	get parents():		 Array<Thing> { return this.things_fromPaths(this.parentPaths); }
 	get description():		   string { return this.id + ' \"' + this.title + '\"'; }
 	get parentIDs():	Array<string> { return this.parents.map(t => t.id); }
 	get isRoot():			  boolean { return this == this.hierarchy.root; }
