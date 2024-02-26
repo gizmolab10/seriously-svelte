@@ -1,12 +1,12 @@
 <script lang='ts'>
 	import { dbDispatch, SeriouslyRange, Wrapper, IDWrapper } from '../../ts/common/GlobalImports';
 	import { k, Thing, ZIndex, onMount, signals, onDestroy } from '../../ts/common/GlobalImports';
-	import { s_title_editing, s_row_height } from '../../ts/managers/State';
+	import { s_title_editing } from '../../ts/managers/State';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
 	export let thing;
 	export let path;
-	let padding = `0px 0px 0px ${$s_row_height / 3}px`;
+	let padding = `0px 0px 0px ${k.row_height / 3}px`;
 	let titleWrapper: Wrapper;
 	let originalTitle = '';
 	let isEditing = false;
@@ -41,7 +41,7 @@
 	}
 
 	$: {
-		if ($s_row_height > 0) {
+		if (k.row_height > 0) {
 			updateInputWidth();
 		}
 	}

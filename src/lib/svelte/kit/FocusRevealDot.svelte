@@ -1,11 +1,10 @@
 <script>
 	import { g, k, Point, debug, Direction, dbDispatch } from "../../ts/common/GlobalImports";
 	import TriangleButton from '../svg/TriangleButton.svelte';
-	import { s_dot_size } from '../../ts/managers/State';
     export let path = '';
 	export let center = new Point();
 	export let here;
-	let size = $s_dot_size;
+	let size = k.dot_size;
 
 	function fillColors_closure(isFilled) {
 		return [debug.lines ? 'transparent' : here.revealColor(isFilled, path), ''];
@@ -20,8 +19,8 @@
 	}
 
 	$: {
-		if ($s_dot_size > 0) {
-			size = $s_dot_size;
+		if (k.dot_size > 0) {
+			size = k.dot_size;
 		}
 	}
 

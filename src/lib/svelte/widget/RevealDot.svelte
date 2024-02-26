@@ -1,5 +1,5 @@
 <script>
-	import { s_paths_expanded, s_dot_size, s_altering_parent, s_paths_grabbed, s_path_toolsCluster } from '../../ts/managers/State';
+	import { s_paths_expanded, s_altering_parent, s_paths_grabbed, s_path_toolsCluster } from '../../ts/managers/State';
 	import { g, k, u, get, Size, Thing, Point, debug, ZIndex, svgPath, signals } from "../../ts/common/GlobalImports";
 	import { onMount, Wrapper, Direction, onDestroy, dbDispatch, IDWrapper } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte';
@@ -47,7 +47,7 @@
 	}
 
 	$: {
-		if ($s_dot_size > 0) {
+		if (k.dot_size > 0) {
 			updatePath();
 		}
 	}
@@ -74,13 +74,13 @@
 
 	function updatePath() {
 		if ((!path.hasChildren && !thing.isBulkAlias) || $s_path_toolsCluster?.matchesPath(path)) {
-			scalablePath = svgPath.circle($s_dot_size, $s_dot_size / 2);
+			scalablePath = svgPath.circle(k.dot_size, k.dot_size / 2);
 		} else {
 			const goLeft = path.isExpanded && path.hasChildren;
 			const direction = goLeft ? Direction.left : Direction.right;
-			scalablePath = svgPath.triangle($s_dot_size, direction);
+			scalablePath = svgPath.triangle(k.dot_size, direction);
 			if (thing.isBulkAlias) {
-				insidePath = svgPath.circle($s_dot_size, $s_dot_size / 3);
+				insidePath = svgPath.circle(k.dot_size, k.dot_size / 3);
 			}
 		}
 	}
@@ -160,16 +160,16 @@
 		on:dblclick={handleDoubleClick}
 		on:contextmenu={handleContextMenu}
 		style='
-			width={$s_dot_size}px;
-			height={$s_dot_size}px;
-			top: {$s_dot_size / 2 + center.y - 2}px;
-			left: {$s_dot_size + center.x + thing.titleWidth - 7}px;
+			width={k.dot_size}px;
+			height={k.dot_size}px;
+			top: {k.dot_size / 2 + center.y - 2}px;
+			left: {k.dot_size + center.x + thing.titleWidth - 7}px;
 		'>
 		{#key scalablePath}
 			<SVGD3
 				y=1
-				size={$s_dot_size}
-				x={$s_dot_size / 2}
+				size={k.dot_size}
+				x={k.dot_size / 2}
 				stroke={strokeColor}
 				scalablePath={scalablePath}
 				fill={debug.lines ? 'transparent' : fillColor}
@@ -178,7 +178,7 @@
 		{#if thing.isBulkAlias}
 			<div style='left:-1px; width:14px; height:14px; position:absolute;'>
 				<SVGD3
-					size={$s_dot_size}
+					size={k.dot_size}
 					stroke={strokeColor}
 					fill={bulkAliasFillColor}
 					scalablePath={insidePath}

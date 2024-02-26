@@ -1,11 +1,10 @@
-import { get, Path, Rect, Size, Point, ChildMap, IDLine } from '../common/GlobalImports';
-import { s_dot_size, s_line_stretch } from '../managers/State'
+import { k, Path, Rect, Size, Point, ChildMap, IDLine } from '../common/GlobalImports';
 
 export default class Layout {
 	childMapArray: Array<ChildMap> = [];
 
 	constructor(path: Path, origin: Point) {
-		const sizeX = get(s_line_stretch);
+		const sizeX = k.line_stretch;
 		const childPaths = path.childPaths;
 		const length = childPaths.length;
 		let index = 0;
@@ -29,7 +28,7 @@ export default class Layout {
 		let x, y = 0;
 		if (child) {
 			y = extent.y - childPath.visibleProgeny_halfHeight;
-			x = origin.x + child.titleWidth + get(s_dot_size) + get(s_line_stretch) - 2;
+			x = origin.x + child.titleWidth + k.dot_size + k.line_stretch - 2;
 		} else {
 			console.log('grandchildren origin not computable');
 		}

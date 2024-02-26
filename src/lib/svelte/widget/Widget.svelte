@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { s_dot_size, s_path_here, s_row_height, s_title_editing, s_paths_grabbed, } from '../../ts/managers/State';
-	import { s_thing_fontSize, s_thing_fontFamily, s_path_toolsCluster } from '../../ts/managers/State';
+	import { s_path_here, s_title_editing, s_paths_grabbed, } from '../../ts/managers/State';
 	import { onMount, onDestroy, debugReact, IDSignal, IDWrapper } from '../../ts/common/GlobalImports';
 	import { k, Thing, Point, debug, ZIndex, Wrapper, signals } from '../../ts/common/GlobalImports';
+	import { s_thing_fontFamily, s_path_toolsCluster } from '../../ts/managers/State';
 	import ToolsCluster from './ToolsCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
 	import RevealDot from './RevealDot.svelte';
@@ -10,8 +10,8 @@
 	export let origin = new Point();
 	export let thing = Thing;
     export let path = '';
-	let priorRowHeight = $s_row_height;
-	let radius = $s_dot_size / 2;
+	let priorRowHeight = k.row_height;
+	let radius = k.dot_size / 2;
 	let widgetWrapper: Wrapper;
 	let showingCluster = false;
 	let showingBorder = false;
@@ -61,12 +61,12 @@
 	}
 	
 	$: {
-		if (priorRowHeight != $s_row_height) {
+		if (priorRowHeight != k.row_height) {
 			setTimeout(() => {
-				debugReact.log_layout(`WIDGET $s_row_height ${thing.description}`);
+				debugReact.log_layout(`WIDGET k.row_height ${thing.description}`);
 				updateLayout()
 			}, 1);
-			priorRowHeight = $s_row_height;
+			priorRowHeight = k.row_height;
 		}
 	}
 	
@@ -109,12 +109,12 @@
 	function updateLayout() {
 		const titleWidth = thing.titleWidth;
 		const delta = showingBorder ? -0.5 : 0.5;
-		width = titleWidth - 18 + ($s_dot_size * 2);
+		width = titleWidth - 18 + (k.dot_size * 2);
 		padding = `0px ${rightPadding}px 0px 1px`;
-		revealTop = $s_dot_size / -3 + 0.5;
-		height = $s_row_height - 1.5;
+		revealTop = k.dot_size / -3 + 0.5;
+		height = k.row_height - 1.5;
 		left = origin.x + delta - 1;
-		radius = $s_row_height / 2;
+		radius = k.row_height / 2;
 		top = origin.y + delta;
 	}
 
@@ -136,6 +136,6 @@
 		border-radius: {radius}px;
 	'>
 	<DragDot thing={thing} path={path} center={new Point(0.5, revealTop)}/>
-	<TitleEditor thing={thing} path={path} fontSize={$s_thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
+	<TitleEditor thing={thing} path={path} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 	<RevealDot thing={thing} path={path} center={new Point(-0.5, revealTop + 0.5)}/>
 </div>

@@ -2,7 +2,7 @@
 	import { g, k, u, get, Path, Rect, Size, Point, Thing, launch, TypeDB, ZIndex, signals, onMount } from '../../ts/common/GlobalImports';
 	import { IDButton, Hierarchy, IDPersistant, dbDispatch, debugReact, persistLocal } from '../../ts/common/GlobalImports';
 	import { s_build, s_isBusy, s_path_here, s_db_type, s_graphRect } from '../../ts/managers/State';
-	import { s_show_details, s_id_popupView, s_things_arrived, s_thing_fontSize } from '../../ts/managers/State';
+	import { s_show_details, s_id_popupView, s_things_arrived } from '../../ts/managers/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import BuildNotes from './BuildNotes.svelte';

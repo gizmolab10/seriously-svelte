@@ -1,15 +1,15 @@
 <script lang=ts>
 	import { k, u, Rect, Size, Point, Thing, debug, signals, onMount } from '../../ts/common/GlobalImports';
 	import { IDLine, Layout, onDestroy, DebugFlag, debugReact } from '../../ts/common/GlobalImports';
-	import { s_dot_size, s_graphRect, s_line_stretch } from '../../ts/managers/State';
+	import { s_graphRect } from '../../ts/managers/State';
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Children from './Children.svelte';
 	import Line from '../widget/Line.svelte';
 	export let origin = new Point();
     export let path = '';
-	const halfDotSize = $s_dot_size / 2;
-	const widgetOffset = new Point(12, ($s_dot_size / -15) - 9.5);
+	const halfDotSize = k.dot_size / 2;
+	const widgetOffset = new Point(12, (k.dot_size / -15) - 9.5);
 	const lineOffset = new Point(halfDotSize - 129, halfDotSize - 7);
 	let childMapArray: Array<ChildMap> = [];
 	let priorTime = new Date().getTime();
@@ -25,7 +25,7 @@
 	}
 
 	$: {
-		if ($s_dot_size > 0) {
+		if (k.dot_size > 0) {
 			setTimeout(() => {
 				layoutChildren()
 			}, 2);

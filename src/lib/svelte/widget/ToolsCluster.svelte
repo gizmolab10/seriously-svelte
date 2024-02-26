@@ -2,7 +2,7 @@
     import { g, k, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, signals } from '../../ts/common/GlobalImports';
     import { svgPath, onDestroy, Direction, dbDispatch, AlteringParent } from '../../ts/common/GlobalImports';
     import { s_user_graphOffset, s_altering_parent, s_path_toolsCluster } from '../../ts/managers/State';
-    import { s_dot_size, s_row_height, s_graphRect, s_show_details } from '../../ts/managers/State';
+    import { s_graphRect, s_show_details } from '../../ts/managers/State';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TriangleButton from '../svg/TriangleButton.svelte';
@@ -20,7 +20,7 @@
     let hoveringOnTrash = false;
     let hoveringOnMore = false;
     let graphRect = new Rect();
-	let diameter = $s_dot_size;
+	let diameter = k.dot_size;
 	let radius = diameter / 2;
     let hasOneParent = false;
 	let toggle = false;

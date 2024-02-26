@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { s_title_editing, s_path_here, s_graphRect, s_dot_size, s_show_details, s_paths_grabbed } from '../../ts/managers/State';
-	import { s_id_popupView, s_line_stretch, s_path_toolsCluster, s_user_graphOffset } from '../../ts/managers/State';
+	import { s_title_editing, s_path_here, s_graphRect, s_show_details, s_paths_grabbed } from '../../ts/managers/State';
 	import { g, k, u, Path, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/GlobalImports';
 	import { IDButton, onDestroy, debugReact, dbDispatch, Predicate } from '../../ts/common/GlobalImports';
+	import { s_id_popupView, s_path_toolsCluster, s_user_graphOffset } from '../../ts/managers/State';
 	import { IDPersistant, IDSignal, persistLocal } from '../../ts/common/GlobalImports';
 	import FocusRevealDot from '../kit/FocusRevealDot.svelte';
 	import ToolsCluster from '../widget/ToolsCluster.svelte';
@@ -79,7 +79,7 @@
 	}
 	
 	$: {
-		if ($s_dot_size > 0) {
+		if (k.dot_size > 0) {
 			updateOrigins();
 		}
 	}
@@ -97,13 +97,13 @@
 	function updateOrigins() {
 		if (g.here) {
 			childrenSize = $s_path_here.visibleProgeny_size;
-			const offsetX = 15 + ($s_show_details ? -k.detailsWidth : 0) - (childrenSize.width / 2) - ($s_dot_size / 2.5) + offsetX_ofFirstReveal;
+			const offsetX = 15 + ($s_show_details ? -k.detailsWidth : 0) - (childrenSize.width / 2) - (k.dot_size / 2.5) + offsetX_ofFirstReveal;
 			const offsetY = -1 - graphRect.origin.y;
 			origin_ofFirstReveal = graphRect.center.offsetBy(new Point(offsetX, offsetY));
 			if (k.isMobileDevice) {
 				origin_ofFirstReveal.x = 25;
 			}
-			const toChildren = new Point(-43 + $s_line_stretch - ($s_dot_size / 2) + offsetX_ofFirstReveal, ($s_dot_size / 2) -(childrenSize.height / 2) - 5);
+			const toChildren = new Point(-43 + k.line_stretch - (k.dot_size / 2) + offsetX_ofFirstReveal, (k.dot_size / 2) -(childrenSize.height / 2) - 5);
 			origin_ofChildren = origin_ofFirstReveal.offsetBy(toChildren);
 			blueRect = graphRect.dividedInHalf;
 			redRect = rectTo_firstReveal();

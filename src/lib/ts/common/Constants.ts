@@ -1,9 +1,13 @@
 import { u } from '../../ts/common/GlobalImports';
 
 export default class Constants {
+	public dot_size: number;
+	public row_height: number;
+	public line_stretch: number;
 	public bannerHeight: number;
 	public detailsWidth: number;
 	public halfIncrement: number;
+	public thing_fontSize: number;
 	public titleHeightAtTop: number;
 	public toolsClusterHeight: number;
 	public longClickThreshold: number;
@@ -37,8 +41,12 @@ export default class Constants {
 		this.toolsClusterHeight = 80;
 		this.titleHeightAtTop = 50;
 		this.halfIncrement = 0.5;
+		this.thing_fontSize = 14;
 		this.detailsWidth = 80;
 		this.bannerHeight = 35;
+		this.line_stretch = 25;
+		this.row_height = 20;
+		this.dot_size = 13;
 	}
 
 	applyQueryStrings(queryStrings: URLSearchParams) {

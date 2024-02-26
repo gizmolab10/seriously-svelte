@@ -1,15 +1,13 @@
-import { s_show_details, s_line_stretch, s_user_graphOffset } from './State';
-import { g, get, Path, Point, dbDispatch } from '../common/GlobalImports'
-import { s_path_here, s_row_height, s_paths_expanded } from './State';
+import { g, Path, Point, dbDispatch } from '../common/GlobalImports'
 import { s_thing_fontFamily, s_show_child_graph } from './State';
+import { s_show_details, s_user_graphOffset } from './State';
+import { s_path_here, s_paths_expanded } from './State';
 import { s_paths_grabbed } from './State';
 
 export enum IDPersistant {
 	relationships	= 'relationships',
 	show_children  	= 'show_children',
-	line_stretch 	= 'line_stretch',
 	title_atTop  	= 'title_atTop',
-	row_height   	= 'row_height',
 	expanded	 	= 'expanded',
 	controls	 	= 'controls',
 	grabbed		 	= 'grabbed',
@@ -38,10 +36,8 @@ class PersistLocal {
 		this.writeToKey(IDPersistant.title_atTop, false);
 		g.applyScale(this.readFromKey(IDPersistant.scale) ?? 1);
 		g.showControls = this.readFromKey(IDPersistant.controls) ?? false;
-		s_row_height.set(this.readFromKey(IDPersistant.row_height) ?? 20);
 		s_show_details.set(this.readFromKey(IDPersistant.details) ?? false);
 		g.titleIsAtTop = this.readFromKey(IDPersistant.title_atTop) ?? false;
-		s_line_stretch.set(this.readFromKey(IDPersistant.line_stretch) ?? 30);
 		s_thing_fontFamily.set(this.readFromKey(IDPersistant.font) ?? 'Arial');
 		s_show_child_graph.set(this.readFromKey(IDPersistant.show_children) ?? true);
 		s_user_graphOffset.set(this.readFromKey(IDPersistant.origin) ?? new Point());

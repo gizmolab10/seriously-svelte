@@ -1,7 +1,6 @@
 <script lang='ts'>
-	import { Path, Rect, Size, Point, debug, onMount, ZIndex, svgPath } from '../../ts/common/GlobalImports';
+	import { k, Path, Rect, Size, Point, debug, onMount, ZIndex, svgPath } from '../../ts/common/GlobalImports';
 	import { Wrapper, debugReact, IDWrapper, IDLine } from '../../ts/common/GlobalImports';
-	import { s_dot_size } from '../../ts/managers/State';
 	import Circle from '../kit/Circle.svelte';
 	import Box from '../kit/Box.svelte';
 	export let curveType: string = IDLine.up;
@@ -28,7 +27,7 @@
 	////////////////////////////////////////////////////
 
 	$: {
-		if ($s_dot_size > 0) {
+		if (k.dot_size > 0) {
 			// debugReact.log_origins(`LINE ${thing.description}`);
 			switch (curveType) {
 				case IDLine.up:

@@ -1,5 +1,5 @@
-import { s_scale_factor, s_thing_fontSize, s_thing_fontFamily } from '../managers/State';
-import { get, Path, Size, IDBrowser } from './GlobalImports';
+import { s_scale_factor, s_thing_fontFamily } from '../managers/State';
+import { k, get, Path, Size, IDBrowser } from './GlobalImports';
 
 class Utilities {
 	noop() {}
@@ -85,7 +85,7 @@ class Utilities {
 
 	getWidthOf(s: string): number {
 		const element: HTMLElement = document.createElement('div');
-		element.style.font = get(s_thing_fontSize) + 'px ' + get(s_thing_fontFamily);
+		element.style.font = k.thing_fontSize + 'px ' + get(s_thing_fontFamily);
 		element.style.left = '-9999px'; // offscreen
 		element.style.padding = '0px 0px 0px 6px';
 		element.style.position = 'absolute';

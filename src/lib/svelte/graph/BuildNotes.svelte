@@ -1,6 +1,6 @@
 <script>
 	import { builds, onMount, ZIndex } from '../../ts/common/GlobalImports';
-	import { s_dot_size, s_id_popupView } from '../../ts/managers/State';
+	import { s_id_popupView } from '../../ts/managers/State';
 	import Directionals from '../svg/Directionals.svelte'
 	import CloseButton from '../kit/CloseButton.svelte'
 	const indexedNotes = Object.entries(builds.notes).reverse();
@@ -90,7 +90,7 @@
 				<Directionals hit={directional_buttonClicked} display={display}/>
 			{/key}
 			<div class='title'>{title}</div>
-			<CloseButton size={$s_dot_size * 1.5}/>
+			<CloseButton size={k.dot_size * 1.5}/>
 		</div>
 		<br>
 		<table>

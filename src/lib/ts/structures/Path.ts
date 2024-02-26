@@ -1,7 +1,7 @@
-import { TitleState, dbDispatch, Relationship, SeriouslyRange, AlteringParent } from '../common/GlobalImports';
 import { g, k, u, get, Rect, Size, Thing, IDWrapper, signals, Wrapper, Predicate } from '../common/GlobalImports';
 import { s_paths_expanded, s_paths_grabbed, s_path_toolsCluster, s_altering_parent } from '../managers/State';
-import { s_dot_size, s_path_here, s_row_height, s_line_stretch, s_title_editing } from '../managers/State';
+import { TitleState, Relationship, SeriouslyRange, AlteringParent } from '../common/GlobalImports';
+import { s_path_here, s_title_editing } from '../managers/State';
 import { Writable } from 'svelte/store';
 
 export default class Path {
@@ -129,7 +129,7 @@ export default class Path {
 		if (this.pathString != 'exemplar') {
 			const thingID = this.thingID;
 			if (thingID == k.unknownID) {
-				console.log(`child paths unavailable for ID: ${k.unknownID}`);
+				console.log(`child paths unavailable for ID: ${this.title}`);
 			} else if (thingID) {
 				const hierarchy = g.hierarchy;
 				const toRelationships = hierarchy.relationships_getByPredicateIDToAndID(this.predicateID, false, thingID);
@@ -290,15 +290,14 @@ export default class Path {
 	visibleProgeny_height(visited: Array<string> = []): number {
 		const thing = g.hierarchy?.thing_getForPath(this);
 		if (thing) {
-			const rowHeight = get(s_row_height);
 			if (!visited.includes(this.pathString) && this.hasChildren && this.isExpanded) {
 				let height = 0;
 				for (const childPath of this.childPaths) {
 					height += childPath.visibleProgeny_height([...visited, this.pathString]);
 				}
-				return Math.max(height, rowHeight);
+				return Math.max(height, k.row_height);
 			}
-			return rowHeight;
+			return k.row_height;
 		}
 		return 0;
 	}
@@ -316,7 +315,7 @@ export default class Path {
 						progenyWidth = childProgenyWidth;
 					}
 				}
-				width += progenyWidth + get(s_line_stretch) + get(s_dot_size) * (special ? 2 : 1);
+				width += progenyWidth + k.line_stretch + k.dot_size * (special ? 2 : 1);
 			}
 			return width;
 		}
