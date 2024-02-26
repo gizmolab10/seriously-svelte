@@ -127,17 +127,22 @@ export default class Path {
 	get childPaths(): Array<Path> {
 		const paths: Array<Path> = [];
 		if (this.pathString != 'exemplar') {
-			const thingID = this.thingID;
-			if (thingID == k.id_unknown) {
-				console.log(`child paths unavailable for ID: ${this.title}`);
-			} else if (thingID) {
-				const hierarchy = g.hierarchy;
-				const toRelationships = hierarchy.relationships_getByPredicateIDToAndID(this.predicateID, false, thingID);
-				for (const toRelationship of toRelationships) {			// loop through all to relationships
-					const path = this.appendID(toRelationship.id);		// add each toRelationship's id
-					paths.push(path);									// and push onto the paths_to
+			const lastID = this.ids[this.ids.length - 1];
+			if (lastID && !g.hierarchy.knownR_byHID[lastID.hash()]) {
+				console.log(`missing relationship: ${lastID}`);
+			} else {
+				const thingID = this.thingID;
+				if (thingID == k.id_unknown) {
+					console.log(`child paths unavailable for: ${this.title}`);
+				} else if (thingID) {
+					const hierarchy = g.hierarchy;
+					const toRelationships = hierarchy.relationships_getByPredicateIDToAndID(this.predicateID, false, thingID);
+					for (const toRelationship of toRelationships) {			// loop through all to relationships
+						const path = this.appendID(toRelationship.id);		// add each toRelationship's id
+						paths.push(path);									// and push onto the paths_to
+					}
+					u.paths_orders_normalize_remoteMaybe(paths);
 				}
-				u.paths_orders_normalize_remoteMaybe(paths);
 			}
 		}
 		return paths;

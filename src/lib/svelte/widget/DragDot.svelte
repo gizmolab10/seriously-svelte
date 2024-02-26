@@ -4,7 +4,7 @@
 	import { s_paths_grabbed, s_path_toolsCluster } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
 	import Box from '../kit/Box.svelte';
-	export let center;
+	export let center = new Point(0.5, 0);
 	export let thing;
 	export let path;
 	let tinyDotColor = thing.color;
@@ -105,7 +105,7 @@
 	function updatePathAndPosition() {
 		size = k.dot_size;
 		left = center.x + 1;// - (size / 2);
-		top = path.toolsGrabbed ? 2 : (size / 2) - 5;
+		top = path.toolsGrabbed ? 2 : (size / 2) - 4;
 		scalablePath = svgPath.oval(size, false);
 		if (thing.parents.length > 1) {
 			extraPath = svgPath.circle(size, size / 5);

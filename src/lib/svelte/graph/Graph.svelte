@@ -143,7 +143,7 @@
 					<Box rect={greenRect} color=green half={true}/>
 				{/if}
 				{#if !g.titleIsAtTop}
-					<Widget thing={g.here} path={$s_path_here} origin={origin_ofFirstReveal.offsetBy(new Point(-23 - offsetX_ofFirstReveal, -8))}/>
+					<Widget thing={g.here} path={$s_path_here} origin={origin_ofFirstReveal.offsetBy(new Point(-23 - offsetX_ofFirstReveal, -9))}/>
 				{:else}
 					{#if $s_path_here.isGrabbed}
 						<Circle radius=10 center={origin_ofFirstReveal.offsetBy(new Point(-1, 1))} color={g.here.color} thickness=1/>

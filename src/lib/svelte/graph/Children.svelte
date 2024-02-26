@@ -52,7 +52,7 @@
 	})
 	
 	function layoutChildren() {
-		const delta = new Point(19.5, -1.5);
+		const delta = new Point(19, -2);
 		const height = (path.visibleProgeny_halfHeight);
 		const childrenOrigin = origin.offsetByY(height);
 		childMapArray = new Layout(path, childrenOrigin).childMapArray;

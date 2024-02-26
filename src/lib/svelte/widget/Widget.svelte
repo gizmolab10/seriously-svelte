@@ -111,7 +111,7 @@
 		const delta = showingBorder ? -0.5 : 0.5;
 		width = titleWidth - 18 + (k.dot_size * 2);
 		padding = `0px ${rightPadding}px 0px 1px`;
-		revealTop = k.dot_size / -3 + 0.5;
+		revealTop = k.dot_size / -3 + 1;
 		height = k.row_height - 1.5;
 		left = origin.x + delta - 1;
 		radius = k.row_height / 2;
@@ -135,7 +135,7 @@
 		z-index: {ZIndex.widgets};
 		border-radius: {radius}px;
 	'>
-	<DragDot thing={thing} path={path} center={new Point(0.5, revealTop)}/>
+	<DragDot thing={thing} path={path}/>
 	<TitleEditor thing={thing} path={path} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
-	<RevealDot thing={thing} path={path} center={new Point(-0.5, revealTop + 0.5)}/>
+	<RevealDot thing={thing} path={path} center={new Point(0.5, revealTop)}/>
 </div>
