@@ -113,7 +113,7 @@
 					z-index: {ZIndex.frontmost};
 					color: {$s_path_here.thing?.color};
 					left: 0px;'>
-				{$s_path_here.thingTitle}
+				{$s_path_here.title}
 			</div>
 			<div class='horizontal-line'
 				style='

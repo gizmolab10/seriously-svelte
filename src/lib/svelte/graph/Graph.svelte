@@ -148,13 +148,13 @@
 					<Box rect={blueRect} color=blue/>
 					<Box rect={greenRect} color=green half={true}/>
 				{/if}
-				{#if g.titleIsAtTop}
+				{#if !g.titleIsAtTop}
+					<Widget thing={g.here} path={$s_path_here} origin={origin_ofFirstReveal.offsetBy(new Point(-19 - offsetX_ofFirstReveal, -8))}/>
+				{:else}
 					{#if $s_path_here.isGrabbed}
 						<Circle radius=10 center={origin_ofFirstReveal.offsetBy(new Point(-1, 1))} color={g.here.color} thickness=1/>
 					{/if}
 					<FocusRevealDot here={g.here} path={$s_path_here} center={origin_ofFirstReveal.offsetBy(new Point(-3, 0))}/>
-				{:else}
-					<Widget thing={g.here} path={$s_path_here} origin={origin_ofFirstReveal.offsetBy(new Point(-19 - offsetX_ofFirstReveal, -9))}/>
 				{/if}
 				<Children path={$s_path_here} origin={origin_ofChildren}/>
 			</div>

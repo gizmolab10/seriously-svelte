@@ -25,8 +25,8 @@ class Utilities {
 
 	sort_byTitleTop(array: Array<Path>) {
 		return array.sort( (a: Path, b: Path) => {
-			const aTop = a.thingTitleRect?.origin.y;
-			const bTop = b.thingTitleRect?.origin.y;
+			const aTop = a.titleRect?.origin.y;
+			const bTop = b.titleRect?.origin.y;
 			return (!aTop || !bTop) ? 0 : aTop - bTop;
 		});
 	}

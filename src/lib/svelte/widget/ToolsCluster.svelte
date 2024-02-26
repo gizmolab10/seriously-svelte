@@ -10,7 +10,9 @@
 	import RevealDot from './RevealDot.svelte';
     import { transparentize } from 'color2k';
 	import Trash from '../svg/Trash.svelte';
+    const disabledColor = transparentize('lightgray', 0.3);
     let c: { [type: string]: Point } = {}
+    let hasOneVisibleParent = false;
     let revealOffset = new Point();
     let parentSensitiveColor = '';
     let userOffset = new Point();
@@ -37,14 +39,16 @@
     
     function isDisabledFor(id: string) {
         return (path.isHere && (id == IDTool.addParent)) ||
-        (hasOneParent && disableSensitive().includes(id)) ;
+        (hasOneVisibleParent && (id == IDTool.next)) ||
+        (hasOneParent && disableSensitive().includes(id));
     }
 
     function fillColorsFor(id: string, isFilled: boolean): [string, string] {
         const same = isFilled == ($s_altering_parent != null);
         const isDisabled = isDisabledFor(id);
+        const disableNext = id == IDTool.next && isDisabled;
         if (same || isDisabled) {
-            const extraColor = isDisabled || isFilled ? parentSensitiveColor : color;
+            const extraColor = disableNext ? disabledColor : isDisabled || isFilled ? parentSensitiveColor : color;
             return [k.backgroundColor, extraColor];
         }
         return [color, k.backgroundColor];
@@ -91,7 +95,7 @@
                 color = thing?.color ?? '';
                 titleWidth = thing?.titleWidth ?? 0;
                 hasOneParent = (thing?.parents.length ?? 0) < 2;
-                const disabledColor = transparentize('lightgray', 0.3);
+                hasOneVisibleParent = path.visibleFromPaths(0).length < 2;
                 parentSensitiveColor = (hasOneParent || path.isHere) ? disabledColor : color ;
                 update();
                 toggle = !toggle;
@@ -100,7 +104,7 @@
     }
 
 	function update(): boolean {
-        const rect = path?.thingTitleRect;
+        const rect = path?.titleRect;
         bigOffset = new Point(-20 - titleWidth, k.toolsClusterHeight / 2 - 52);
         if (rect && $s_path_toolsCluster && rect.size.width != 0) {
             const offsetY = (g.titleIsAtTop ? -45 : 0) - 69;
@@ -182,7 +186,7 @@
                 cursor={isDisabledFor(IDTool.next) ? 'normal' : 'pointer'}
                 onClick={(event) => handleClick(IDTool.next, event)}
                 extraPath={svgPath.circle(diameter, 4)}
-                strokeColor={parentSensitiveColor}
+                strokeColor={isDisabledFor(IDTool.next) ? disabledColor : parentSensitiveColor}
                 center={getC(IDTool.next)}
                 direction={Direction.up}
                 size={diameter}

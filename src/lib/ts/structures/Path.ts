@@ -51,7 +51,7 @@ export default class Path {
 	get siblingPaths(): Array<Path> { return this.fromPath.childPaths; }
 	get hashedIDs(): Array<number> { return this.ids.map(i => i.hash()); }
 	get relationship(): Relationship | null { return this.relationshipAt(); }
-	get thingTitle(): string { return this.thing?.title ?? 'missing title'; }
+	get title(): string { return this.thing?.title ?? 'missing title'; }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
 	get things(): Array<Thing> { return g.hierarchy?.things_getForPath(this); }
 	get lineWrapper(): Wrapper | null { return this.wrappers[IDWrapper.line]; }
@@ -59,11 +59,11 @@ export default class Path {
 	get toolsGrabbed(): boolean { return this.matchesStore(s_path_toolsCluster); }
 	get revealWrapper(): Wrapper | null { return this.wrappers[IDWrapper.reveal]; }
 	get widgetWrapper(): Wrapper | null { return this.wrappers[IDWrapper.widget]; }
-	get thingTitleRect(): Rect | null { return this.wrapperRectFor(IDWrapper.title); }
+	get titleRect(): Rect | null { return this.wrapperRectFor(IDWrapper.title); }
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get children(): Array<Thing> { return g.hierarchy?.things_getForPaths(this.childPaths); }
-	get thingTitles(): Array<string> { return this.things.map(t => `\"${t.title}\"`) ?? []; }
+	get titles(): Array<string> { return this.things.map(t => `\"${t.title}\"`) ?? []; }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
 	get isEditing(): boolean { return this.matchesPath(get(s_title_editing)?.editing ?? null); }
 	get isStoppingEdit(): boolean { return this.matchesPath(get(s_title_editing)?.stopping ?? null); }
@@ -71,7 +71,7 @@ export default class Path {
 	
 	get isVisible(): boolean {
 		const here = g.herePath;
-		return this.incorporates(here) && this.isExpandedFrom(here);
+		return this.incorporates(here) && this.isAllExpandedFrom(here);
 	}
 
 	get ids(): Array<string> {
@@ -116,7 +116,7 @@ export default class Path {
 		const paths = this.thing?.parentPaths ?? [];
 		const index = paths.map(p => p.hashedPath).indexOf(hashedPath);
 		if (index == -1) {
-			console.log(`no next for ${this.thingTitles} of ${paths.map(p => '\n' + p.thingTitles)}`);
+			console.log(`no next for ${this.titles} of ${paths.map(p => '\n' + p.titles)}`);
 		} else {
 			const next = index.increment(true, paths.length)
 			nextPath = paths[next];
@@ -183,15 +183,14 @@ export default class Path {
 		return false;
 	}
 
-	isExpandedFrom(path: Path | null): boolean {
-		let index = path?.ids.length ?? 0;
-		const ids = this.ids;
-		while (index < ids.length) {
-			const tweenPath = this.stripBack(ids.length - index);
-			if (tweenPath.hasChildren && !tweenPath.isExpanded) {
+	isAllExpandedFrom(path: Path | null): boolean {
+		let tweenPath: Path = this;
+		let limit = path?.ids.length ?? 0;
+		while (limit < tweenPath.ids.length) {
+			tweenPath = tweenPath.stripBack();	// go backwards on this path
+			if (!tweenPath.isExpanded) {		// stop when path is not expanded
 				return false;
 			}
-			index++;
 		}
 		return true;
 	}
@@ -333,7 +332,7 @@ export default class Path {
 	toggleGrab() { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }
 
 	grabOnly() {
-		// console.log(`GRAB ${this.thingTitles}`);
+		// console.log(`GRAB ${this.titles}`);
 		s_paths_grabbed.set([this]);
 		this.toggleToolsGrab();
 	}
@@ -460,7 +459,7 @@ export default class Path {
 
 	startEdit() {
 		if (!this.isRoot) {
-			console.log(`EDIT ${this.thingTitles}`)
+			console.log(`EDIT ${this.titles}`)
 			this.grabOnly();
 			let editState = get(s_title_editing);
 			if (!editState) {
