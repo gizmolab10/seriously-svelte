@@ -50,11 +50,11 @@ export default class Hierarchy {
 		const path = get(s_path_toolsCluster);
 		if (path) {
 			switch (IDButton) {
-				case IDTool.next: this.path_relayout_toolCluster_nextParent(event.altKey); return;
 				case IDTool.create: await this.path_edit_remoteCreateChildOf(path); break;
-				case IDTool.addParent: this.toggleAlteration(AlteringParent.adding); return;
-				case IDTool.deleteParent: this.toggleAlteration(AlteringParent.deleting); return;
-				case IDTool.delete: await this.paths_rebuild_traverse_remoteDelete([path]); break;
+				case IDTool.add_parent: this.toggleAlteration(AlteringParent.adding); return;
+				case IDTool.next: this.path_relayout_toolCluster_nextParent(event.altKey); return;
+				case IDTool.delete_parent: this.toggleAlteration(AlteringParent.deleting); return;
+				case IDTool.delete_confirm: await this.paths_rebuild_traverse_remoteDelete([path]); break;
 				case IDTool.more: console.log('needs more'); break;
 				default: break;
 			}

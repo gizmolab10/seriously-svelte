@@ -20,13 +20,15 @@ export enum IDTrait {
 }
 
 export enum IDTool {
-	deleteParent = 'deleteParent',
-	addParent	 = 'addParent',
-	cluster		 = 'cluster',
-	delete		 = 'delete',
-	create    	 = 'create',
-	next		 = 'next',
-	more		 = 'more',
+	delete_confirm	= 'delete_confirm',
+	delete_cancel	= 'delete_cancel',
+	delete_parent	= 'delete_parent',
+	add_parent		= 'add_parent',
+	cluster			= 'cluster',
+	delete			= 'delete',
+	create    		= 'create',
+	next			= 'next',
+	more			= 'more',
 }
 
 export enum IDBrowser  {

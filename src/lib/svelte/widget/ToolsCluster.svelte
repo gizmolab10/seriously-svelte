@@ -34,10 +34,10 @@
     function setC(type: string, center: Point) { return c[type] = center; }
     function centers_isEmpty(): boolean { return Object.keys(c).length == 0; }
 	onMount(() => { setup(); setTimeout(() => { updateMaybeRedraw(); }, 20) });
-    function disableSensitive() { return [IDTool.next, IDTool.deleteParent]; }
+    function disableSensitive() { return [IDTool.next, IDTool.delete_parent]; }
     
     function isDisabledFor(id: string) {
-        return (path.isHere && (id == IDTool.addParent)) ||
+        return (path.isHere && (id == IDTool.add_parent)) ||
         (hasOneVisibleParent && (id == IDTool.next)) ||
         (hasOneParent && disableSensitive().includes(id));
     }
@@ -54,7 +54,11 @@
     }
 
     async function handleClick(id: string, event: MouseEvent) {
-		if (path && !path.isExemplar && !isDisabledFor(id)) {
+        if (id == IDTool.delete && !verifyingDelete) {
+            verifyingDelete = true;
+        } else if (id == IDTool.delete_cancel && verifyingDelete) {
+            verifyingDelete = false;
+        } else if (path && !path.isExemplar && !isDisabledFor(id)) {
             await g.hierarchy.handleToolClicked(id, event);
 		}
 	}
@@ -104,21 +108,23 @@
 
 	function update(): boolean {
         const rect = path?.titleRect;
-        bigOffset = new Point(-20 - titleWidth, k.height_toolsCluster / 2 - 52);
+        bigOffset = new Point(-19 - titleWidth, k.height_toolsCluster / 2 - 42);
         if (rect && $s_path_toolsCluster && rect.size.width != 0) {
-            const offsetY = (g.titleIsAtTop ? -45 : 0) - 69;
-            const offsetX = 9 - ($s_show_details ? k.width_details : 0);
+            const offsetY = (g.titleIsAtTop ? -45 : 0) - k.height_toolsCluster - 6;
+            const offsetX = 8.5 - ($s_show_details ? k.width_details : 0);
             const center = rect.centerLeft.offsetBy(new Point(titleWidth + offsetX, offsetY));
             const right = center.x + diameter * 1.3;
             const y = center.y;
-            left = center.x - diameter - 2;
+            left = center.x - diameter;
             setC(IDTool.cluster, center);
-            setC(IDTool.create, new Point(right - 3, y - radius - 4));
-            setC(IDTool.more, new Point(center.x + 1, y + radius * 3));
-            setC(IDTool.addParent, new Point(left - 4, y - radius - 4));
-            setC(IDTool.next, new Point(center.x - 2, y - diameter - 8));
-            setC(IDTool.deleteParent, new Point(left - 4, y + diameter - 4));
+            setC(IDTool.create, new Point(right - 2, y - radius - 5));
+            setC(IDTool.more, new Point(center.x, y + radius * 3 + 1));
+            setC(IDTool.add_parent, new Point(left - 7, y - radius - 5));
+            setC(IDTool.next, new Point(center.x - 4, y - diameter - 8));
+            setC(IDTool.delete_parent, new Point(left - 7, y + diameter - 3));
             setC(IDTool.delete, new Point(right - radius - 6, y + radius - 4));
+            setC(IDTool.delete_cancel, center.offsetBy(new Point(-diameter - 3, diameter)));
+            setC(IDTool.delete_confirm, center.offsetBy(new Point(-diameter - 2, -diameter)));
             revealOffset = new Point(-19 - titleWidth, k.height_toolsCluster / 2 - 51);
             return true;
         }
@@ -155,8 +161,32 @@
                 color={color}
                 zindex={ZIndex.lines}
                 center={getC(IDTool.cluster)}
-                radius={k.height_toolsCluster / 2.5}
+                radius={k.height_toolsCluster / 2}
                 color_background={transparentize(k.color_background, 0.05)}/>
+            {#if verifyingDelete}
+                <LabelButton
+                    color={color}
+                    center={getC(IDTool.delete_confirm)}
+                    onClick={(event) => handleClick(IDTool.delete_confirm, event)}>
+                    delete
+                </LabelButton>
+                <div class='horizontal-line'
+                    style='
+                        height: 1px;
+                        position: absolute;
+                        background-color: {color};
+                        z-index: {ZIndex.frontmost};
+                        top: {getC(IDTool.cluster).y}px;
+                        width: {(k.height_toolsCluster) + 1}px;
+                        left: {getC(IDTool.cluster).x - (k.height_toolsCluster / 2)}px;'>
+                </div>
+                <LabelButton
+                    color={color}
+                    center={getC(IDTool.delete_cancel)}
+                    onClick={(event) => handleClick(IDTool.delete_cancel, event)}>
+                    cancel
+                </LabelButton>
+            {:else}
             <LabelButton
                 width=20
                 height=16
@@ -191,24 +221,24 @@
                 size={diameter}
                 id='next'/>
             <TriangleButton
-                fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.deleteParent, isFilled) }}
-                cursor={isDisabledFor(IDTool.deleteParent) ? 'normal' : 'pointer'}
-                onClick={(event) => handleClick(IDTool.deleteParent, event)}
-                center={getC(IDTool.deleteParent)}
+                fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.delete_parent, isFilled) }}
+                cursor={isDisabledFor(IDTool.delete_parent) ? 'normal' : 'pointer'}
+                onClick={(event) => handleClick(IDTool.delete_parent, event)}
+                center={getC(IDTool.delete_parent)}
                 strokeColor={parentSensitiveColor}
                 extraPath={svgPath.dash(diameter, 2)}
                 direction={Direction.left}
-                id='deleteParent'
+                id='delete_parent'
                 size={diameter}/>
             <TriangleButton
-                fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.addParent, isFilled) }}
-                cursor={isDisabledFor(IDTool.addParent) ? 'normal' : 'pointer'}
-                onClick={(event) => handleClick(IDTool.addParent, event)}
+                fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.add_parent, isFilled) }}
+                cursor={isDisabledFor(IDTool.add_parent) ? 'normal' : 'pointer'}
+                onClick={(event) => handleClick(IDTool.add_parent, event)}
                 strokeColor={path.isHere ? parentSensitiveColor : color}
                 extraPath={svgPath.tCross(diameter, 2)}
-                center={getC(IDTool.addParent)}
+                center={getC(IDTool.add_parent)}
                 direction={Direction.left}
-                id='addParent'
+                id='add_parent'
                 size={diameter}/>
             <TriangleButton
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.create, isFilled) }}
@@ -232,6 +262,7 @@
                     border: none;'>
                 <Trash color={color} invert={hoveringOnTrash}/>
             </button>
+            {/if}
         </div>
     {/if}
 {/key}

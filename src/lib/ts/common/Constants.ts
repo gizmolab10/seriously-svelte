@@ -40,7 +40,7 @@ export default class Constants {
 		this.allow_TitleEditing = true;
 		this.threshold_doubleClick = 100;
 		this.threshold_longClick = 500;
-		this.height_toolsCluster = 80;
+		this.height_toolsCluster = 64;
 		this.height_titleAtTop = 50;
 		this.halfIncrement = 0.5;
 		this.thing_fontSize = 14;
