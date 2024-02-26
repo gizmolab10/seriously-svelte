@@ -24,7 +24,7 @@
 	let left = 0;
 	let top = 0;
 
-	onDestroy( () => { relayout_signalHandler.disconnect(); });
+	onDestroy(() => { relayout_signalHandler.disconnect(); });
 	
 	const relayout_signalHandler = signals.handle_relayout((path) => {
 		if (g.here) {
@@ -74,12 +74,6 @@
 			width = graphRect.size.width;
 			left = graphRect.origin.x;
 			top = graphRect.origin.y;
-			updateOrigins();
-		}
-	}
-	
-	$: {
-		if (k.dot_size > 0) {
 			updateOrigins();
 		}
 	}
