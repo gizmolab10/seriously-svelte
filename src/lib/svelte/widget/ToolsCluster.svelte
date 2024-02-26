@@ -43,24 +43,26 @@
     }
 
     function fillColorsFor(id: string, isFilled: boolean): [string, string] {
-        const same = isFilled == ($s_altering_parent != null);
         const isDisabled = isDisabledFor(id);
-        const disableNext = id == IDTool.next && isDisabled;
+        const same = isFilled == ($s_altering_parent != null);
+        const nextIsDisabled = isDisabled && id == IDTool.next;
         if (same || isDisabled) {
-            const extraColor = disableNext ? k.color_disabled : isDisabled || isFilled ? parentSensitiveColor : color;
+            const extraColor = nextIsDisabled ? k.color_disabled : isDisabled || isFilled ? parentSensitiveColor : color;
             return [k.color_background, extraColor];
         }
         return [color, k.color_background];
     }
 
     async function handleClick(id: string, event: MouseEvent) {
-        if (id == IDTool.delete && !verifyingDelete) {
-            verifyingDelete = true;
-        } else if (id == IDTool.delete_cancel && verifyingDelete) {
-            verifyingDelete = false;
-        } else if (path && !path.isExemplar && !isDisabledFor(id)) {
-            await g.hierarchy.handleToolClicked(id, event);
-		}
+        switch (id) {
+            case IDTool.delete: verifyingDelete = true; break;
+            case IDTool.delete_cancel: verifyingDelete = false; break;
+            default:
+                if (path && !path.isExemplar && !isDisabledFor(id)) {
+                    await g.hierarchy.handleToolClicked(id, event);
+        		}
+                break;
+        }
 	}
 
     function setup() {
