@@ -8,7 +8,7 @@
     export let display;
     export let hit;
 
-	function fillColors_closure(isFilled) { return [isFilled ? 'black' : k.backgroundColor, '']; }
+	function fillColors_closure(isFilled) { return [isFilled ? 'black' : k.color_background, '']; }
 
 	function onClick(event) {
         const pointsUp = event.currentTarget.id == 'up';

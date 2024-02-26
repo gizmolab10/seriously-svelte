@@ -1,4 +1,4 @@
-import { g, Path, Point, dbDispatch } from '../common/GlobalImports'
+import { g, k, Path, Point, dbDispatch } from '../common/GlobalImports'
 import { s_thing_fontFamily, s_show_child_graph } from './State';
 import { s_show_details, s_user_graphOffset } from './State';
 import { s_path_here, s_paths_expanded } from './State';
@@ -34,13 +34,13 @@ class PersistLocal {
 			this.writeToKey(IDPersistant.relationships, true);
 		}
 		this.writeToKey(IDPersistant.title_atTop, false);
-		g.applyScale(this.readFromKey(IDPersistant.scale) ?? 1);
 		g.showControls = this.readFromKey(IDPersistant.controls) ?? false;
 		s_show_details.set(this.readFromKey(IDPersistant.details) ?? false);
 		g.titleIsAtTop = this.readFromKey(IDPersistant.title_atTop) ?? false;
 		s_thing_fontFamily.set(this.readFromKey(IDPersistant.font) ?? 'Arial');
 		s_show_child_graph.set(this.readFromKey(IDPersistant.show_children) ?? true);
 		s_user_graphOffset.set(this.readFromKey(IDPersistant.origin) ?? new Point());
+		g.applyScale(!k.device_isMobile ? 1 : this.readFromKey(IDPersistant.scale) ?? 1);
 
 		s_show_details.subscribe((_) => { g.graphRect_update(); });
 

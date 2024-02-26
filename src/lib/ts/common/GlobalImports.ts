@@ -12,6 +12,7 @@ import { signals, IDSignal } from './Signals';
 import { dbDispatch } from '../db/DBDispatch';
 import { onMount, onDestroy } from 'svelte';
 import { launch } from '../managers/Launch';
+import { transparentize } from 'color2k';
 import { get } from 'svelte/store';
 import { builds } from './Builds';
 import { u } from './Utilities';
@@ -37,9 +38,9 @@ export {
 	IDWrapper, IDTrait, TypeDB, IDLine,
 	Rect, Size, Point, Layout, ChildMap, IDTool,
 	svgPath, Direction, IDPersistant, persistLocal,
-	g, k, u, get, builds, launch, onMount, onDestroy,
 	signals, IDSignal, debugReact, DebugReact, ReactFlag,
 	debug, Debug, DebugFlag, TypeDatum, dbDispatch, Hierarchy,
 	ZIndex, IDButton, IDBrowser, AlteringParent, CreationOptions,
+	g, k, u, get, builds, launch, onMount, onDestroy, transparentize,
 	User, Datum, Thing, Access, Predicate, Relationship, SeriouslyRange,
 };

@@ -11,9 +11,9 @@
 	function updateColors() {
 		if (thing) {
 			if ($s_path_here.thingID == thing.id) {
-				colorStyles = 'background-color: ' + thing.color + '; color: ' + k.backgroundColor;
+				colorStyles = 'background-color: ' + thing.color + '; color: ' + k.color_background;
 			} else {
-				colorStyles = 'background-color: ' + k.backgroundColor + '; color: ' + thing.color;
+				colorStyles = 'background-color: ' + k.color_background + '; color: ' + thing.color;
 			}
 			cursorStyle = path.hasChildren ? 'cursor: pointer' : '';
 		}

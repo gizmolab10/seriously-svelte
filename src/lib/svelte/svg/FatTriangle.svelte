@@ -1,7 +1,7 @@
 <script>
 	import { k, Size, Point, ZIndex, Direction, svgPath } from "../../ts/common/GlobalImports";
 	import SVGD3 from './SVGD3.svelte';
-	export let extraColor = k.backgroundColor;
+	export let extraColor = k.color_background;
 	export let extraPath = null;
 	export let strokeColor;
 	export let fillColor;

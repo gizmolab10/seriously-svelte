@@ -12,8 +12,8 @@
 	export let size;
 	export let id;
 	let scalablePath = svgPath.triangle(size, direction);
-	let extraColor = k.backgroundColor;
-	let fillColor = k.backgroundColor;
+	let extraColor = k.color_background;
+	let fillColor = k.color_background;
 	let button = null;
 
 	function mouseOut(event) { setFillColor(false); }

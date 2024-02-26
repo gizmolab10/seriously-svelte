@@ -76,7 +76,7 @@
 	}
 
 	function handleFocus(event) {
-		if (!k.allowTitleEditing) {
+		if (!k.allow_TitleEditing) {
 			input?.blur();
 		} else if (!path.isEditing) {
 			console.log(`FOCUS ${path.title}`);
@@ -93,7 +93,7 @@
 		//	N.B., to react, must use $s_path_edit variables	 //
 		///////////////////////////////////////////////////////
 
-		if (k.allowTitleEditing) {
+		if (k.allow_TitleEditing) {
 			if (path.isStoppingEdit) {
 				console.log(`STOPPING ${path.title}`);
 				$s_title_editing = null;
@@ -197,6 +197,6 @@
 			font-size: {fontSize};
 			z-index: {ZIndex.text};
 			font-family: {fontFamily};
-			outline-color: {k.backgroundColor};
+			outline-color: {k.color_background};
 		'/>
 {/key}

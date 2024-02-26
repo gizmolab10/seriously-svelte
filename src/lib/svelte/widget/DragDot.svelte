@@ -82,7 +82,7 @@
 		clearClicks();
 		clickTimer = setTimeout(() => {
 			handleDoubleClick(event);
-		}, k.longClickThreshold);
+		}, k.threshold_longClick);
 	}
 
 	function handleDoubleClick(event) {
@@ -99,7 +99,7 @@
 				path.clicked_dragDot(event.shiftKey);
 				clearClicks();
 			}
-		}, k.doubleClickThreshold);
+		}, k.threshold_doubleClick);
 	}
 
 	function updatePathAndPosition() {

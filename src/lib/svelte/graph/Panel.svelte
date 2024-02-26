@@ -11,7 +11,7 @@
 	import Details from './Details.svelte';
 	import Crumbs from './Crumbs.svelte';
 	import Graph from './Graph.svelte';
-	const bottomOfTitle = k.bannerHeight + k.titleHeightAtTop;
+	const bottomOfTitle = k.height_banner + k.height_titleAtTop;
 	let toggle = false;
 
 	$: { updateHerePath($s_path_here); }
@@ -86,7 +86,7 @@
 		{#if $s_show_details}
 			<Details/>
 			<div class='vertical-line' style='
-				left: {k.detailsWidth}px;
+				left: {k.width_details}px;
 				z-index: {ZIndex.frontmost};
 				top: {$s_graphRect.origin.y}px;
 				height: {$s_graphRect.size.height}px;'>
@@ -95,7 +95,7 @@
 		<div class='horizontal-line' style='
 			left: 0px;
 			z-index: {ZIndex.frontmost};
-			top: {k.bannerHeight - 2}px;'>
+			top: {k.height_banner - 2}px;'>
 		</div>
 		<div class='crumbs' style='z-index: {ZIndex.frontmost};'>
 			<Crumbs/>
@@ -124,7 +124,7 @@
 		{/if}
 	{/if}
 	<div class='right-side' style='
-		left: {$s_show_details ? k.detailsWidth : 0}px;
+		left: {$s_show_details ? k.width_details : 0}px;
 		z-index: {ZIndex.panel};
 		position: fixed;
 		height: 100%;'>

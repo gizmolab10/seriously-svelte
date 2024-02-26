@@ -83,9 +83,9 @@ export default class Path {
 
 	get thingID(): string {
 		if (this.isRoot) {
-			return g.hierarchy?.idRoot ?? k.unknownID;
+			return g.hierarchy?.idRoot ?? k.id_unknown;
 		}
-		return this.relationship?.idTo ?? k.unknownID;
+		return this.relationship?.idTo ?? k.id_unknown;
 	}
 
 	get things_canAlter_asParentOf_toolsGrab(): boolean {
@@ -128,7 +128,7 @@ export default class Path {
 		const paths: Array<Path> = [];
 		if (this.pathString != 'exemplar') {
 			const thingID = this.thingID;
-			if (thingID == k.unknownID) {
+			if (thingID == k.id_unknown) {
 				console.log(`child paths unavailable for ID: ${this.title}`);
 			} else if (thingID) {
 				const hierarchy = g.hierarchy;
@@ -176,7 +176,7 @@ export default class Path {
 
 	thing_isImmediateParentOf(path: Path): boolean {
 		const thingID = this.thingID;
-		if (thingID != k.unknownID) {
+		if (thingID != k.id_unknown) {
 			const parentThings = path.thing?.parents;
 			return parentThings?.map(t => t.id).includes(thingID) ?? false;
 		}

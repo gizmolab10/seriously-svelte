@@ -17,7 +17,7 @@ export default class Thing extends Datum {
 	color: string;
 	trait: string;
 
-	constructor(baseID: string, id: string | null, title = k.defaultTitle, color = 'blue', trait = 's', isRemotelyStored: boolean) {
+	constructor(baseID: string, id: string | null, title = k.title_default, color = 'blue', trait = 's', isRemotelyStored: boolean) {
 		super(baseID, id, isRemotelyStored);
 		this.dbType = dbDispatch.db.dbType;
 		this.title = title;
@@ -93,7 +93,7 @@ export default class Thing extends Datum {
 	revealColor(isReveal: boolean, path: Path): string {
 		const showBorder = path.isGrabbed || path.isEditing || this.isExemplar;
 		const useThingColor = isReveal != showBorder;
-		return useThingColor ? this.color : k.backgroundColor;
+		return useThingColor ? this.color : k.color_background;
 	}
 
 	updateColorAttributes(path: Path) {

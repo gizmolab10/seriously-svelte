@@ -40,6 +40,6 @@
 <style>
     div {
         position: fixed;
-        backgroundColor: transparent;
+        color_background: transparent;
     }
 </style>

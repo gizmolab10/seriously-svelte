@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k } from '../../ts/common/GlobalImports';
-    export let fill = k.backgroundColor;
+    export let fill = k.color_background;
 	export let invert = false;
 	export let color = black;
 	const viewBox = '0 -0.5 16 16';

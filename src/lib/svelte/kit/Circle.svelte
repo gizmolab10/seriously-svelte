@@ -1,6 +1,6 @@
 <script>
   import { k, Point, debug, ZIndex } from '../../ts/common/GlobalImports'
-  export let backgroundColor = debug.lines ? 'transparent' : k.backgroundColor;
+  export let color_background = debug.lines ? 'transparent' : k.color_background;
   export let zindex = ZIndex.dots;
   export let thickness;
   export let radius;
@@ -28,5 +28,5 @@
     top: {center.y - radius}px;
     left: {center.x - radius}px;
     border: {thickness}px solid {color};
-    background-color: {backgroundColor};'>
+    background-color: {color_background};'>
 </div>

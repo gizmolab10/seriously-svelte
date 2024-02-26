@@ -114,7 +114,7 @@ class Utilities {
 		}
 	}
 
-	isMobileDevice(): boolean {
+	device_isMobile(): boolean {
 		const userAgent = navigator.userAgent;
 		if (/android/i.test(userAgent) || /iPhone|iPad|iPod/i.test(userAgent)) {    // Check for phones
 			return true;

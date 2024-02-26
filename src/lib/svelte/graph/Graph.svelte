@@ -33,7 +33,7 @@
 	});
 
 	function handleWheel(event) {
-		const canScroll = k.allowHorizontalScrolling;
+		const canScroll = k.allow_HorizontalScrolling;
 		const offsetX = canScroll ? -event.deltaX : 0;
 		const offsetY = -event.deltaY;
 		if (Math.abs(offsetX) > 1 || Math.abs(offsetY) > 1) {
@@ -91,10 +91,10 @@
 	function updateOrigins() {
 		if (g.here) {
 			childrenSize = $s_path_here.visibleProgeny_size;
-			const offsetX = 15 + ($s_show_details ? -k.detailsWidth : 0) - (childrenSize.width / 2) - (k.dot_size / 2.5) + offsetX_ofFirstReveal;
+			const offsetX = 15 + ($s_show_details ? -k.width_details : 0) - (childrenSize.width / 2) - (k.dot_size / 2.5) + offsetX_ofFirstReveal;
 			const offsetY = -1 - graphRect.origin.y;
 			origin_ofFirstReveal = graphRect.center.offsetBy(new Point(offsetX, offsetY));
-			if (k.isMobileDevice) {
+			if (k.device_isMobile) {
 				origin_ofFirstReveal.x = 25;
 			}
 			const toChildren = new Point(-43 + k.line_stretch - (k.dot_size / 2) + offsetX_ofFirstReveal, (k.dot_size / 2) -(childrenSize.height / 2) - 5);

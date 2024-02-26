@@ -41,7 +41,7 @@
 		left: 0px;
 		position: fixed;
 		z-index: {ZIndex.frontmost};
-		height: `${k.bannerHeight - 2}px`;'>
+		height: `${k.height_banner - 2}px`;'>
 	{#if !$s_id_popupView}
 		<CircularButton left=15
 			color='transparent'
@@ -55,24 +55,24 @@
 			<button class='button'
 				style='
 					left:30px;
-					background-color: {k.backgroundColor};'
+					background-color: {k.color_background};'
 				on:click={() => buttonClickedForID(IDButton.relations)}>
 				{#if $s_show_child_graph}children{:else}parents{/if}
 			</button>
 			<button class='button'
 				style='
 					left: 97px;
-					background-color: {k.backgroundColor};'
+					background-color: {k.color_background};'
 				on:click={() => buttonClickedForID(IDButton.layout)}>
 				tree
 			</button>
 		{/if}
 	{/if}
-	{#if g.isMobileDevice}
+	{#if g.device_isMobile}
 		<CircularButton
 			left={width - 130}
 			size={size}
-			color={k.backgroundColor}
+			color={k.color_background}
 			onClick={(event) => buttonClickedForID(IDButton.smaller)}>
 			<SVGD3
 				size={size}
@@ -82,7 +82,7 @@
 		<CircularButton
 			left={width - 105}
 			size={size}
-			color={k.backgroundColor}
+			color={k.color_background}
 			onClick={(event) => buttonClickedForID(IDButton.bigger)}>
 			<SVGD3
 				size={size}
@@ -93,14 +93,14 @@
 	<button class='button'
 		style='
 			left: {width - 90}px;
-			background-color: {k.backgroundColor};'
+			background-color: {k.color_background};'
 		on:click={() => togglePopupID(IDButton.builds)}>
 		build {$s_build}
 	</button>
 	<CircularButton
 		size={size}
 		left={width - 15}
-		color={k.backgroundColor}
+		color={k.color_background}
 		onClick={(event) => togglePopupID(IDButton.help)}>?
 	</CircularButton>
 </div>

@@ -6,9 +6,9 @@
 	export let center;
 	export let thing;
 	export let path;
-	let bulkAliasFillColor = k.backgroundColor;
+	let bulkAliasFillColor = k.color_background;
 	let insidePath = svgPath.circle(16, 6);
-	let fillColor = k.backgroundColor;
+	let fillColor = k.color_background;
 	let strokeColor = thing.color;
 	let revealWrapper = Wrapper;
 	let isHovering = false;
@@ -120,7 +120,7 @@
 				}
 				signals.signal_rebuild_fromHere();
 			}
-		}, k.longClickThreshold);
+		}, k.threshold_longClick);
 	}
 
 	function handleSingleClick(event) {
@@ -130,7 +130,7 @@
 				handleClick(event);
 				clearClicks();
 			}
-		}, k.doubleClickThreshold);
+		}, k.threshold_doubleClick);
 	}
 
 </script>

@@ -30,7 +30,7 @@
 
 <div class='modal-overlay'
 	style='
-		width: {k.detailsWidth}px;
+		width: {k.width_details}px;
 		z-index: {ZIndex.frontmost};
 		top: {$s_graphRect.origin.y}px;
 		height: {$s_graphRect.size.height}px;'>

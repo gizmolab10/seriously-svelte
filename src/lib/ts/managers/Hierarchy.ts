@@ -78,8 +78,8 @@ export default class Hierarchy {
 				rootPath.grabOnly();		// update crumbs and dots
 				pathGrab = rootPath;
 			}
-			if (k.allowGraphEditing) {
-				if (pathGrab && k.allowTitleEditing) {
+			if (k.allow_GraphEditing) {
+				if (pathGrab && k.allow_TitleEditing) {
 					switch (key) {
 						case 'd':		await this.thing_edit_remoteDuplicate(pathGrab); break;
 						case ' ':		await this.path_edit_remoteCreateChildOf(pathGrab); break;
@@ -216,7 +216,7 @@ export default class Hierarchy {
 		const thing = path.thing;
 		if (thing && parent && parentPath) {
 			const order = path.order + (below ? 0.5 : -0.5);
-			const child = this.thing_runtimeCreate(thing.baseID, null, k.lineTitle, parent.color, '', false);
+			const child = this.thing_runtimeCreate(thing.baseID, null, k.title_line, parent.color, '', false);
 			await this.path_edit_remoteAddAsChild(parentPath, child, order, false);
 		}
 	}
@@ -645,7 +645,7 @@ export default class Hierarchy {
 					this.path_rebuild_runtimeBrowseRight(path, RIGHT, SHIFT, EXTREME, fromReveal);
 				}
 			}
-		} else if (k.allowGraphEditing) {
+		} else if (k.allow_GraphEditing) {
 			const grab = this.grabs.latestPathGrabbed(true);
 			if (grab) {
 				await this.path_rebuild_remoteRelocateRight(grab, RIGHT, EXTREME);
@@ -673,7 +673,7 @@ export default class Hierarchy {
 					grabPath.grabOnly();
 				}
 				signals.signal_relayout_fromHere();
-			} else if (k.allowGraphEditing && OPTION) {
+			} else if (k.allow_GraphEditing && OPTION) {
 				await u.paths_orders_normalize_remoteMaybe(fromPath.childPaths, false);
 				const wrapped = up ? (index == 0) : (index == siblings.length - 1);
 				const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;

@@ -1,6 +1,6 @@
 <script lang='ts'>
+    import { svgPath, onDestroy, Direction, dbDispatch, transparentize, AlteringParent } from '../../ts/common/GlobalImports';
     import { g, k, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, signals } from '../../ts/common/GlobalImports';
-    import { svgPath, onDestroy, Direction, dbDispatch, AlteringParent } from '../../ts/common/GlobalImports';
     import { s_user_graphOffset, s_altering_parent, s_path_toolsCluster } from '../../ts/managers/State';
     import { s_graphRect, s_show_details } from '../../ts/managers/State';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
@@ -8,15 +8,14 @@
 	import TriangleButton from '../svg/TriangleButton.svelte';
 	import LabelButton from '../kit/LabelButton.svelte';
 	import RevealDot from './RevealDot.svelte';
-    import { transparentize } from 'color2k';
 	import Trash from '../svg/Trash.svelte';
-    const disabledColor = transparentize('lightgray', 0.3);
     let c: { [type: string]: Point } = {}
     let hasOneVisibleParent = false;
     let revealOffset = new Point();
     let parentSensitiveColor = '';
     let userOffset = new Point();
     let bigOffset = new Point();
+    let verifyingDelete = false;
     let hoveringOnTrash = false;
     let hoveringOnMore = false;
     let graphRect = new Rect();
@@ -48,10 +47,10 @@
         const isDisabled = isDisabledFor(id);
         const disableNext = id == IDTool.next && isDisabled;
         if (same || isDisabled) {
-            const extraColor = disableNext ? disabledColor : isDisabled || isFilled ? parentSensitiveColor : color;
-            return [k.backgroundColor, extraColor];
+            const extraColor = disableNext ? k.color_disabled : isDisabled || isFilled ? parentSensitiveColor : color;
+            return [k.color_background, extraColor];
         }
-        return [color, k.backgroundColor];
+        return [color, k.color_background];
     }
 
     async function handleClick(id: string, event: MouseEvent) {
@@ -96,7 +95,7 @@
                 titleWidth = thing?.titleWidth ?? 0;
                 hasOneParent = (thing?.parents.length ?? 0) < 2;
                 hasOneVisibleParent = path.visibleFromPaths(0).length < 2;
-                parentSensitiveColor = (hasOneParent || path.isHere) ? disabledColor : color ;
+                parentSensitiveColor = (hasOneParent || path.isHere) ? k.color_disabled : color ;
                 update();
                 toggle = !toggle;
             }
@@ -105,10 +104,10 @@
 
 	function update(): boolean {
         const rect = path?.titleRect;
-        bigOffset = new Point(-20 - titleWidth, k.toolsClusterHeight / 2 - 52);
+        bigOffset = new Point(-20 - titleWidth, k.height_toolsCluster / 2 - 52);
         if (rect && $s_path_toolsCluster && rect.size.width != 0) {
             const offsetY = (g.titleIsAtTop ? -45 : 0) - 69;
-            const offsetX = 9 - ($s_show_details ? k.detailsWidth : 0);
+            const offsetX = 9 - ($s_show_details ? k.width_details : 0);
             const center = rect.centerLeft.offsetBy(new Point(titleWidth + offsetX, offsetY));
             const right = center.x + diameter * 1.3;
             const y = center.y;
@@ -120,7 +119,7 @@
             setC(IDTool.next, new Point(center.x - 2, y - diameter - 8));
             setC(IDTool.deleteParent, new Point(left - 4, y + diameter - 4));
             setC(IDTool.delete, new Point(right - radius - 6, y + radius - 4));
-            revealOffset = new Point(-19 - titleWidth, k.toolsClusterHeight / 2 - 51);
+            revealOffset = new Point(-19 - titleWidth, k.height_toolsCluster / 2 - 51);
             return true;
         }
         return false;
@@ -156,8 +155,8 @@
                 color={color}
                 zindex={ZIndex.lines}
                 center={getC(IDTool.cluster)}
-                radius={k.toolsClusterHeight / 2.5}
-                backgroundColor={transparentize(k.backgroundColor, 0.05)}/>
+                radius={k.height_toolsCluster / 2.5}
+                color_background={transparentize(k.color_background, 0.05)}/>
             <LabelButton
                 width=20
                 height=16
@@ -175,7 +174,7 @@
                 </svg>
                 <svg width=16
                     height=10
-                    fill={hoveringOnMore ? k.backgroundColor : color}
+                    fill={hoveringOnMore ? k.color_background : color}
                     viewBox='-2 -2 14 10'>
                     <path d={svgPath.ellipses(1, 2)}/>
                 </svg>
@@ -186,7 +185,7 @@
                 cursor={isDisabledFor(IDTool.next) ? 'normal' : 'pointer'}
                 onClick={(event) => handleClick(IDTool.next, event)}
                 extraPath={svgPath.circle(diameter, 4)}
-                strokeColor={isDisabledFor(IDTool.next) ? disabledColor : parentSensitiveColor}
+                strokeColor={isDisabledFor(IDTool.next) ? k.color_disabled : parentSensitiveColor}
                 center={getC(IDTool.next)}
                 direction={Direction.up}
                 size={diameter}

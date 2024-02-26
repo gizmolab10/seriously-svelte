@@ -134,7 +134,7 @@ export default class DBFirebase implements DBInterface {
 	
 	async fetch_bulkAliases() {
 		const root = this.hierarchy.root;
-		if (this.baseID == k.adminBulkName && root) {
+		if (this.baseID == k.name_bulkAdmin && root) {
 			const rootsPath = await this.hierarchy.thing_getRoots();
 			if (rootsPath) {
 				try {		// add bulks to roots thing

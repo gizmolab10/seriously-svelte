@@ -103,7 +103,7 @@
 	function updateBorderStyle() {
 		thing.updateColorAttributes(path);
 		border = showingBorder ? 'border: ' + thing.grabAttributes : '';
-		background = showingBorder ? 'background-color: ' + k.backgroundColor : '';
+		background = showingBorder ? 'background-color: ' + k.color_background : '';
 	}
 
 	function updateLayout() {
