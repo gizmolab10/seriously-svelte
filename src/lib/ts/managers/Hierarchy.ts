@@ -815,9 +815,9 @@ export default class Hierarchy {
 					fromPath.grabOnly();
 					if (siblings.length == 0) {
 						needsRebuild = fromPath.collapse();
-					}
-					if (!fromFromPath.isVisible) {
-						needsRebuild = needsRebuild || fromFromPath.becomeHere();
+						if (!fromFromPath.isVisible) {
+							needsRebuild = fromFromPath.becomeHere() || needsRebuild;	// call become here before applying ||
+						}
 					}
 					await path.traverse_async(async (progenyPath: Path): Promise<boolean> => {
 						await this.path_forget_remoteUpdate(progenyPath);

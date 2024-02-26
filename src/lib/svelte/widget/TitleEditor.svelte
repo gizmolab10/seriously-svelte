@@ -1,6 +1,6 @@
 <script lang='ts'>
+	import { g, k, Thing, debug, ZIndex, onMount, signals, onDestroy } from '../../ts/common/GlobalImports';
 	import { dbDispatch, SeriouslyRange, Wrapper, IDWrapper } from '../../ts/common/GlobalImports';
-	import { k, Thing, ZIndex, onMount, signals, onDestroy } from '../../ts/common/GlobalImports';
 	import { s_title_editing } from '../../ts/managers/State';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
@@ -36,7 +36,7 @@
 		if (input && ghost) { // ghost only exists to provide its scroll width
 			titleWidth = ghost.scrollWidth;
 			input.style.width = `${titleWidth}px`;
-			// console.log(`WIDTH: ${titleWidth} ${path.title}`);
+			// debug.log_edit(`WIDTH: ${titleWidth} ${path.title}`);
 		}
 	}
 
@@ -71,7 +71,7 @@
 
 	function handleBlur(event) {
 		stopAndClearEditing();
-		console.log(`BLUR ${path.title}`);
+		debug.log_edit(`BLUR ${path.title}`);
 		updateInputWidth();
 	}
 
@@ -79,7 +79,7 @@
 		if (!k.allow_TitleEditing) {
 			input?.blur();
 		} else if (!path.isEditing) {
-			console.log(`FOCUS ${path.title}`);
+			debug.log_edit(`FOCUS ${path.title}`);
 			path.startEdit();
 		}
 	}
@@ -95,16 +95,16 @@
 
 		if (k.allow_TitleEditing) {
 			if (path.isStoppingEdit) {
-				console.log(`STOPPING ${path.title}`);
+				debug.log_edit(`STOPPING ${path.title}`);
 				$s_title_editing = null;
 				input?.blur();
 			} else if (isEditing != path.isEditing) {
 				if (isEditing) {
-					console.log(`STOP ${path.title}`);
+					debug.log_edit(`STOP ${path.title}`);
 					input?.blur();
 				} else {
 					input?.focus();
-					console.log(`RANGE ${path.title}`);
+					debug.log_edit(`RANGE ${path.title}`);
 					applyRange();
 				}
 				isEditing = !isEditing;

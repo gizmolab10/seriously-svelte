@@ -6,12 +6,14 @@ export enum DebugFlag {
 	order  = 'order',   // observe relocating
 	error  = 'error',   // async errors
 	lines  = 'lines',   // alignment dots for lines and widgets
+	edit   = 'edit',    // editing state machine
 }
 
 export class Debug {
 	flags: Array<DebugFlag>;
 	constructor(flags: Array<DebugFlag>) { this.flags = flags; }
 	hasOption(option: DebugFlag) { return this.flags.includes(option); }
+	log_edit(message: string) { this.log_maybe(DebugFlag.edit, message); }
 	log_error(message: string) { this.log_maybe(DebugFlag.error, message) }
 	log_remote(message: string) { this.log_maybe(DebugFlag.remote, message) }
 	log_maybe(option: DebugFlag, message: string) { if (this.hasOption(option)) { console.log(option.toUpperCase(), message); }}
@@ -32,6 +34,7 @@ export class Debug {
 					case 'order': this.flags.push(DebugFlag.order); break;
 					case 'error': this.flags.push(DebugFlag.error); break;
 					case 'lines': this.flags.push(DebugFlag.lines); break;
+					case 'edit': this.flags.push(DebugFlag.edit); break;
 				}
 			}
 		}

@@ -1,7 +1,7 @@
-import { g, k, u, get, Rect, Size, Thing, IDWrapper, signals, Wrapper, Predicate } from '../common/GlobalImports';
-import { s_paths_expanded, s_paths_grabbed, s_path_toolsCluster, s_altering_parent } from '../managers/State';
-import { TitleState, Relationship, SeriouslyRange, AlteringParent } from '../common/GlobalImports';
-import { s_path_here, s_title_editing } from '../managers/State';
+import { g, k, u, get, Rect, Size, Thing, debug, signals, Wrapper, IDWrapper } from '../common/GlobalImports';
+import { TitleState, Predicate, Relationship, SeriouslyRange, AlteringParent } from '../common/GlobalImports';
+import { s_paths_expanded, s_path_toolsCluster, s_altering_parent } from '../managers/State';
+import { s_path_here, s_paths_grabbed, s_title_editing } from '../managers/State';
 import { Writable } from 'svelte/store';
 
 export default class Path {
@@ -331,7 +331,7 @@ export default class Path {
 	toggleGrab() { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }
 
 	grabOnly() {
-		// console.log(`GRAB ${this.titles}`);
+		// debug.log_edit(`GRAB ${this.titles}`);
 		s_paths_grabbed.set([this]);
 		this.toggleToolsGrab();
 	}
@@ -458,7 +458,7 @@ export default class Path {
 
 	startEdit() {
 		if (!this.isRoot) {
-			console.log(`EDIT ${this.titles}`)
+			debug.log_edit(`EDIT ${this.titles}`)
 			this.grabOnly();
 			let editState = get(s_title_editing);
 			if (!editState) {
