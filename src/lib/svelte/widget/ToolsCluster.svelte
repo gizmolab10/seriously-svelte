@@ -10,6 +10,8 @@
 	import RevealDot from './RevealDot.svelte';
 	import Trash from '../svg/Trash.svelte';
     const halfCircleViewBox = `0 0 ${k.height_toolsCluster} ${k.height_toolsCluster}`;
+    const parentAltering = [IDTool.add_parent, IDTool.delete_parent];
+    const disableSensitive = [IDTool.next, IDTool.delete_parent];
     let hovers: { [type: string]: boolean } = {}
     let centers: { [type: string]: Point } = {}
     let hasOneVisibleParent = false;
@@ -34,17 +36,24 @@
     function setC(type: string, center: Point) { return centers[type] = center; }
     function centers_isEmpty(): boolean { return Object.keys(centers).length == 0; }
 	onMount(() => { setup(); setTimeout(() => { updateMaybeRedraw(); }, 20) });
-    function disableSensitive() { return [IDTool.next, IDTool.delete_parent]; }
-    
+
+    function alterationFor(id: string) {
+        return(id == IDTool.add_parent) ? AlteringParent.adding : AlteringParent.deleting;
+    }
+
+    function isInvertedFor(id: string) {
+        return parentAltering.includes(id) && $s_altering_parent == alterationFor(id);
+    }
+
     function isDisabledFor(id: string) {
         return (path.isHere && (id == IDTool.add_parent)) ||
         (hasOneVisibleParent && (id == IDTool.next)) ||
-        (hasOneParent && disableSensitive().includes(id));
+        (hasOneParent && disableSensitive.includes(id));
     }
 
     function fillColorsFor(id: string, isFilled: boolean): [string, string] {
         const isDisabled = isDisabledFor(id);
-        const same = isFilled == ($s_altering_parent != null);
+        const same = isFilled == isInvertedFor(id);
         const nextIsDisabled = isDisabled && id == IDTool.next;
         if (same || isDisabled) {
             const extraColor = nextIsDisabled ? k.color_disabled : isDisabled || isFilled ? parentSensitiveColor : color;
