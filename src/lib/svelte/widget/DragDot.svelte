@@ -59,10 +59,10 @@
 	}
 
 	function updateColors() {
-		const asReveal = isHovering == altering;
-		thing.updateColorAttributes(path);	// for revealColor
-		tinyDotColor = thing.revealColor(asReveal, path);
-		fillColor = debug.lines ? 'transparent' : thing.revealColor(!asReveal, path);
+		const isInverted = isHovering == altering;
+		thing.updateColorAttributes(path);
+		tinyDotColor = thing.dotColor(isInverted, path);
+		fillColor = debug.lines ? 'transparent' : thing.dotColor(!isInverted, path);
 		strokeColor = thing.color;
 	}
 

@@ -7,7 +7,7 @@
 	let size = k.dot_size;
 
 	function fillColors_closure(isFilled) {
-		return [debug.lines ? 'transparent' : here.revealColor(isFilled, path), ''];
+		return [debug.lines ? 'transparent' : here.dotColor(isFilled, path), ''];
 	}
 
 	function onClick(event) {

@@ -68,8 +68,8 @@
 	function updateColors() {
 		thing.updateColorAttributes(path);
 		const collapsedGrabbed = !path.isExpanded || path.isGrabbed;
-		fillColor = thing.revealColor(collapsedGrabbed != isHovering, path);
-		bulkAliasFillColor = thing.revealColor(collapsedGrabbed == isHovering, path);
+		fillColor = thing.dotColor(collapsedGrabbed != isHovering, path);
+		bulkAliasFillColor = thing.dotColor(collapsedGrabbed == isHovering, path);
 	}
 
 	function updatePath() {

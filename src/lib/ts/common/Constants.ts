@@ -9,7 +9,6 @@ export default class Constants {
 	public halfIncrement: number;
 	public thing_fontSize: number;
 	public height_titleAtTop: number;
-	public height_toolsCluster: number;
 	public threshold_longClick: number;
 	public threshold_doubleClick: number;
 	public allow_HorizontalScrolling: boolean;
@@ -40,7 +39,6 @@ export default class Constants {
 		this.allow_TitleEditing = true;
 		this.threshold_doubleClick = 100;
 		this.threshold_longClick = 500;
-		this.height_toolsCluster = 64;
 		this.height_titleAtTop = 50;
 		this.halfIncrement = 0.5;
 		this.thing_fontSize = 14;

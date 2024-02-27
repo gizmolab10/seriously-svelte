@@ -6,7 +6,7 @@
 	export let fontSize = '1em';
 	export let thing;
 	export let path;
-	let padding = `0px 0px 0px ${k.row_height / 3}px`;
+	let padding = `0.5px 0px 0px 7px`;	// down half a pixel, 7 over to make room for drag dot
 	let titleWrapper: Wrapper;
 	let originalTitle = '';
 	let isEditing = false;

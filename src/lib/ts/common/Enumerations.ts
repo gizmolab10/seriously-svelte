@@ -23,6 +23,7 @@ export enum IDTool {
 	delete_confirm	= 'delete_confirm',
 	delete_cancel	= 'delete_cancel',
 	delete_parent	= 'delete_parent',
+	confirmation	= 'confirmation',
 	add_parent		= 'add_parent',
 	cluster			= 'cluster',
 	delete			= 'delete',

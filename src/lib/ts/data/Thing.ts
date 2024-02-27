@@ -90,16 +90,16 @@ export default class Thing extends Datum {
 		return u.sort_byTitleTop(paths).reverse();
 	}
 
-	revealColor(isReveal: boolean, path: Path): string {
+	dotColor(isInverted: boolean, path: Path): string {
 		const showBorder = path.isGrabbed || path.isEditing || this.isExemplar;
-		const useThingColor = isReveal != showBorder;
+		const useThingColor = isInverted != showBorder;
 		return useThingColor ? this.color : k.color_background;
 	}
 
 	updateColorAttributes(path: Path) {
 		const border = (path.isEditing ? 'dashed' : 'solid') + ' 1px ';
-		const hover = border + this.revealColor(true, path);
-		const grab = border + this.revealColor(false, path);
+		const hover = border + this.dotColor(true, path);
+		const grab = border + this.dotColor(false, path);
 		this.borderAttribute = border;
 		this.hoverAttributes = hover;
 		this.grabAttributes = grab;
