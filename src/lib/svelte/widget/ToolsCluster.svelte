@@ -9,6 +9,7 @@
 	import LabelButton from '../kit/LabelButton.svelte';
 	import RevealDot from './RevealDot.svelte';
 	import Trash from '../svg/Trash.svelte';
+    const halfCircleViewBox = `0 0 ${k.height_toolsCluster} ${k.height_toolsCluster}`;
     let hovers: { [type: string]: boolean } = {}
     let centers: { [type: string]: Point } = {}
     let hasOneVisibleParent = false;
@@ -166,19 +167,43 @@
                 color_background={transparentize(k.color_background, 0.05)}/>
             {#if verifyingDelete}
                 {#if hovers[IDTool.delete_confirm]}
-                    <svg width=20
-                        height=16
-                        fill={color}
-                        viewBox='0 2 20 16'>
-                        <path d={svgPath.halfCircle(k.height_toolsCluster, true, Direction.up)}/>
+                    <svg class='delete-confirm' style='
+                        left:{getC(IDTool.cluster).x - (k.height_toolsCluster / 2) + 1}px;
+                        top:{getC(IDTool.cluster).y - (k.height_toolsCluster / 2) + 1}px;
+                        z-index:{ZIndex.lines};'
+                        height={k.height_toolsCluster}
+                        width={k.height_toolsCluster}
+                        viewBox={halfCircleViewBox}
+                        stroke=transparent
+                        fill={color}>
+                        <path d={svgPath.halfCircle(k.height_toolsCluster, Direction.up)}/>
+                    </svg>
+                {/if}
+                {#if hovers[IDTool.delete_cancel]}
+                    <svg class='delete-cancel' style='
+                        left:{getC(IDTool.cluster).x - (k.height_toolsCluster / 2) + 1}px;
+                        top:{getC(IDTool.cluster).y - (k.height_toolsCluster / 2) + 1}px;
+                        z-index:{ZIndex.lines};'
+                        height={k.height_toolsCluster}
+                        width={k.height_toolsCluster}
+                        viewBox={halfCircleViewBox}
+                        fill={color}>
+                        <path d={svgPath.halfCircle(k.height_toolsCluster, Direction.down)}/>
                     </svg>
                 {/if}
                 <LabelButton
+                    hover_closure={(isHovering) => { hovers[IDTool.delete_confirm] = isHovering; }}
                     color={ hovers[IDTool.delete_confirm] ? k.color_background : color}
-                    center={getC(IDTool.delete_confirm)}
                     onClick={(event) => handleClick(IDTool.delete_confirm, event)}
-                    hover_closure={(isHovering) => { hovers[IDTool.delete_confirm] = isHovering; }}>
+                    center={getC(IDTool.delete_confirm)}>
                     delete
+                </LabelButton>
+                <LabelButton
+                    hover_closure={(isHovering) => { hovers[IDTool.delete_cancel] = isHovering; }}
+                    color={ hovers[IDTool.delete_cancel] ? k.color_background : color}
+                    onClick={(event) => handleClick(IDTool.delete_cancel, event)}
+                    center={getC(IDTool.delete_cancel)}>
+                    cancel
                 </LabelButton>
                 <div class='horizontal-line'
                     style='
@@ -190,21 +215,6 @@
                         width: {(k.height_toolsCluster) + 1}px;
                         left: {getC(IDTool.cluster).x - (k.height_toolsCluster / 2)}px;'>
                 </div>
-                {#if hovers[IDTool.delete_cancel]}
-                    <svg width=20
-                        height=16
-                        fill={color}
-                        viewBox='0 2 20 16'>
-                        <path d={svgPath.halfCircle(k.height_toolsCluster, true, Direction.down)}/>
-                    </svg>
-                {/if}
-                <LabelButton
-                    color={ hovers[IDTool.delete_cancel] ? k.color_background : color}
-                    center={getC(IDTool.delete_cancel)}
-                    onClick={(event) => handleClick(IDTool.delete_cancel, event)}
-                    hover_closure={(isHovering) => { hovers[IDTool.delete_cancel] = isHovering; }}>
-                    cancel
-                </LabelButton>
             {:else}
             <LabelButton
                 width=20
@@ -217,24 +227,24 @@
                 <svg width=20
                     height=16
                     stroke={color}
-                    fill={hovers[IDTool.more] ? color : 'transparent'}
-                    viewBox='0 2 20 16'>
+                    viewBox='0 2 20 16'
+                    fill={hovers[IDTool.more] ? color : 'transparent'}>
                     <path d={svgPath.oval(20, true)}/>
                 </svg>
                 <svg width=16
                     height=10
-                    fill={hovers[IDTool.more] ? k.color_background : color}
-                    viewBox='-2 -2 14 10'>
+                    viewBox='-2 -2 14 10'
+                    fill={hovers[IDTool.more] ? k.color_background : color}>
                     <path d={svgPath.ellipses(1, 2)}/>
                 </svg>
             </LabelButton>
             <RevealDot thing={thing} path={$s_path_toolsCluster} center={getC(IDTool.cluster).offsetBy(bigOffset)}/>
             <TriangleButton
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.next, isFilled) }}
+                strokeColor={isDisabledFor(IDTool.next) ? k.color_disabled : parentSensitiveColor}
                 cursor={isDisabledFor(IDTool.next) ? 'normal' : 'pointer'}
                 onClick={(event) => handleClick(IDTool.next, event)}
                 extraPath={svgPath.circle(diameter, 4)}
-                strokeColor={isDisabledFor(IDTool.next) ? k.color_disabled : parentSensitiveColor}
                 center={getC(IDTool.next)}
                 direction={Direction.up}
                 size={diameter}
@@ -243,9 +253,9 @@
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.delete_parent, isFilled) }}
                 cursor={isDisabledFor(IDTool.delete_parent) ? 'normal' : 'pointer'}
                 onClick={(event) => handleClick(IDTool.delete_parent, event)}
+                extraPath={svgPath.dash(diameter, 2)}
                 center={getC(IDTool.delete_parent)}
                 strokeColor={parentSensitiveColor}
-                extraPath={svgPath.dash(diameter, 2)}
                 direction={Direction.left}
                 id='delete_parent'
                 size={diameter}/>

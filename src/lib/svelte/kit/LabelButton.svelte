@@ -29,7 +29,7 @@
 		height: {height}px;
 		position: {position};
 		z-index: {ZIndex.dots};
-		background-color: white;
+		background-color: transparent;
 		top: {center.y - height / 2}px;
 		left: {center.x - width / 2}px;'>
 	<slot></slot>

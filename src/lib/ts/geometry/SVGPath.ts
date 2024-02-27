@@ -40,11 +40,12 @@ export default class SVGPath {
         return path;
     }
 
-    halfCircle(width: number, diameter: number, direction: number, offset: Point = new Point()) {
+    halfCircle(diameter: number, direction: number, offset: Point = new Point()) {
+		const up = direction == Direction.up;
         const radius = diameter / 2;
-        const center = width / 2;
-        const doubleRadius = radius * 2;
-        const path = `M${center + offset.x} ${center+ offset.y} m${-radius} 0a${radius} ${radius} 0 1,0 ${doubleRadius} 0a${radius} ${radius} 0 1,0 ${-doubleRadius} 0`;
+        const center = diameter / 2;
+		const delta = up ? -radius : radius;
+        const path = `M ${up ? 0 : diameter} ${center} A ${radius} ${radius} 0 0 1 ${radius - delta} ${center}`;
         return path;
     }
 
