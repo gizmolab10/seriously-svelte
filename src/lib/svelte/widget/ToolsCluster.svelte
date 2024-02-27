@@ -9,15 +9,14 @@
 	import LabelButton from '../kit/LabelButton.svelte';
 	import RevealDot from './RevealDot.svelte';
 	import Trash from '../svg/Trash.svelte';
-    let c: { [type: string]: Point } = {}
+    let hovers: { [type: string]: boolean } = {}
+    let centers: { [type: string]: Point } = {}
     let hasOneVisibleParent = false;
     let revealOffset = new Point();
     let parentSensitiveColor = '';
     let userOffset = new Point();
     let bigOffset = new Point();
     let verifyingDelete = false;
-    let hoveringOnTrash = false;
-    let hoveringOnMore = false;
     let graphRect = new Rect();
 	let diameter = k.dot_size;
 	let radius = diameter / 2;
@@ -30,9 +29,9 @@
     let path;
 
 	onDestroy( () => { relayout_signalHandler.disconnect(); });
-    function getC(type: string) { return c[type] ?? new Point(); }
-    function setC(type: string, center: Point) { return c[type] = center; }
-    function centers_isEmpty(): boolean { return Object.keys(c).length == 0; }
+    function getC(type: string) { return centers[type] ?? new Point(); }
+    function setC(type: string, center: Point) { return centers[type] = center; }
+    function centers_isEmpty(): boolean { return Object.keys(centers).length == 0; }
 	onMount(() => { setup(); setTimeout(() => { updateMaybeRedraw(); }, 20) });
     function disableSensitive() { return [IDTool.next, IDTool.delete_parent]; }
     
@@ -110,9 +109,9 @@
 
 	function update(): boolean {
         const rect = path?.titleRect;
-        bigOffset = new Point(-19 - titleWidth, k.height_toolsCluster / 2 - 42);
+        bigOffset = new Point(-19 - titleWidth, k.height_toolsCluster / 2 - 43);
         if (rect && $s_path_toolsCluster && rect.size.width != 0) {
-            const offsetY = (g.titleIsAtTop ? -45 : 0) - k.height_toolsCluster - 6;
+            const offsetY = (g.titleIsAtTop ? -45 : 0) - k.height_toolsCluster - 5;
             const offsetX = 8.5 - ($s_show_details ? k.width_details : 0);
             const center = rect.centerLeft.offsetBy(new Point(titleWidth + offsetX, offsetY));
             const right = center.x + diameter * 1.3;
@@ -166,10 +165,19 @@
                 radius={k.height_toolsCluster / 2}
                 color_background={transparentize(k.color_background, 0.05)}/>
             {#if verifyingDelete}
+                {#if hovers[IDTool.delete_confirm]}
+                    <svg width=20
+                        height=16
+                        fill={color}
+                        viewBox='0 2 20 16'>
+                        <path d={svgPath.halfCircle(k.height_toolsCluster, true, Direction.up)}/>
+                    </svg>
+                {/if}
                 <LabelButton
-                    color={color}
+                    color={ hovers[IDTool.delete_confirm] ? k.color_background : color}
                     center={getC(IDTool.delete_confirm)}
-                    onClick={(event) => handleClick(IDTool.delete_confirm, event)}>
+                    onClick={(event) => handleClick(IDTool.delete_confirm, event)}
+                    hover_closure={(isHovering) => { hovers[IDTool.delete_confirm] = isHovering; }}>
                     delete
                 </LabelButton>
                 <div class='horizontal-line'
@@ -178,14 +186,23 @@
                         position: absolute;
                         background-color: {color};
                         z-index: {ZIndex.frontmost};
-                        top: {getC(IDTool.cluster).y}px;
+                        top: {getC(IDTool.cluster).y + 0.5}px;
                         width: {(k.height_toolsCluster) + 1}px;
                         left: {getC(IDTool.cluster).x - (k.height_toolsCluster / 2)}px;'>
                 </div>
+                {#if hovers[IDTool.delete_cancel]}
+                    <svg width=20
+                        height=16
+                        fill={color}
+                        viewBox='0 2 20 16'>
+                        <path d={svgPath.halfCircle(k.height_toolsCluster, true, Direction.down)}/>
+                    </svg>
+                {/if}
                 <LabelButton
-                    color={color}
+                    color={ hovers[IDTool.delete_cancel] ? k.color_background : color}
                     center={getC(IDTool.delete_cancel)}
-                    onClick={(event) => handleClick(IDTool.delete_cancel, event)}>
+                    onClick={(event) => handleClick(IDTool.delete_cancel, event)}
+                    hover_closure={(isHovering) => { hovers[IDTool.delete_cancel] = isHovering; }}>
                     cancel
                 </LabelButton>
             {:else}
@@ -196,17 +213,17 @@
                 cursor='pointer'
                 center={getC(IDTool.more)}
                 onClick={(event) => handleClick(IDTool.more, event)}
-                hover_closure={(isHovering) => { hoveringOnMore = isHovering; }}>
+                hover_closure={(isHovering) => { hovers[IDTool.more] = isHovering; }}>
                 <svg width=20
                     height=16
                     stroke={color}
-                    fill={hoveringOnMore ? color : 'transparent'}
+                    fill={hovers[IDTool.more] ? color : 'transparent'}
                     viewBox='0 2 20 16'>
                     <path d={svgPath.oval(20, true)}/>
                 </svg>
                 <svg width=16
                     height=10
-                    fill={hoveringOnMore ? k.color_background : color}
+                    fill={hovers[IDTool.more] ? k.color_background : color}
                     viewBox='-2 -2 14 10'>
                     <path d={svgPath.ellipses(1, 2)}/>
                 </svg>
@@ -252,8 +269,8 @@
                 size={diameter}
                 id='add'/>
             <button class='delete'
-                on:mouseout={() => { hoveringOnTrash = false; }}
-                on:mouseover={() => { hoveringOnTrash = true; }}
+                on:mouseout={() => { hovers[IDTool.delete] = false; }}
+                on:mouseover={() => { hovers[IDTool.delete] = true; }}
                 on:click={(event) => handleClick(IDTool.delete, event)}
                 style='
                     left: {getC(IDTool.delete).x}px;
@@ -262,7 +279,7 @@
                     background: none;
                     cursor: pointer;
                     border: none;'>
-                <Trash color={color} invert={hoveringOnTrash}/>
+                <Trash color={color} invert={hovers[IDTool.delete]}/>
             </button>
             {/if}
         </div>

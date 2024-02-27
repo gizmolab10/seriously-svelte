@@ -1,4 +1,4 @@
-import { Size, Point } from "./Geometry";
+import { Point } from "./Geometry";
 
 export enum Direction {
 	downRight = Math.PI * 4 / 3,
@@ -33,6 +33,14 @@ export default class SVGPath {
     }
 
     circle(width: number, diameter: number, offset: Point = new Point()) {
+        const radius = diameter / 2;
+        const center = width / 2;
+        const doubleRadius = radius * 2;
+        const path = `M${center + offset.x} ${center+ offset.y} m${-radius} 0a${radius} ${radius} 0 1,0 ${doubleRadius} 0a${radius} ${radius} 0 1,0 ${-doubleRadius} 0`;
+        return path;
+    }
+
+    halfCircle(width: number, diameter: number, direction: number, offset: Point = new Point()) {
         const radius = diameter / 2;
         const center = width / 2;
         const doubleRadius = radius * 2;
