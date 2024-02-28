@@ -43,7 +43,6 @@ class PersistLocal {
 		g.applyScale(!k.device_isMobile ? 1 : this.readFromKey(IDPersistant.scale) ?? 1);
 
 		s_show_details.subscribe((_) => { g.graphRect_update(); });
-
 		s_show_child_graph.subscribe((flag: boolean) => {
 			this.writeToKey(IDPersistant.show_children, flag);
 		})
@@ -69,10 +68,9 @@ class PersistLocal {
 		if (here == null) {
 			pathToHere = h.grabs.path_lastGrabbed?.fromPath ?? g.rootPath;
 		}
-		pathToHere.becomeHere();
-
 		s_paths_grabbed.set(this.ignorePaths ? [] : this.readFromDBKey(IDPersistant.grabbed)?.map((s: string) => h.path_remember_unique(s)) ?? [g.rootPath]);
-		s_paths_expanded.set(this.ignorePaths ? [] : this.readFromDBKey(IDPersistant.expanded)?.map((e: string) => h.path_remember_unique(e)) ?? []);
+		pathToHere.becomeHere();
+		this.cleanupExpandeds();
 
 		s_paths_grabbed.subscribe((paths: Array<Path>) => {
 			this.writeToDBKey(IDPersistant.grabbed, !paths ? null : paths.map(p => p.pathString));
@@ -85,6 +83,25 @@ class PersistLocal {
 		s_path_here.subscribe((path: Path) => {
 			this.writeToDBKey(IDPersistant.here, !path ? null : path.pathString);
 		});
+	}
+
+	cleanupExpandeds() {
+		const h = g.hierarchy;
+		let paths = this.ignorePaths ? [] : this.readFromDBKey(IDPersistant.expanded)?.map((e: string) => h.path_remember_unique(e)) ?? [];
+		let index = paths.length - 1;
+		while (index >= 0) {
+			const path = paths[index];
+			if (path) {
+				for (const id of path.ids) {
+					const relationship = h.relationship_getForHID(id.hash());
+					if (!relationship) {
+						paths.slice(1, index);
+					}
+				}
+			}
+			index--;
+		};
+		s_paths_expanded.set(paths);
 	}
 
 	get dbType(): string { return dbDispatch.db.dbType; }

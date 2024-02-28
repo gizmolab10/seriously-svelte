@@ -1,4 +1,4 @@
-import { k, get, Path, Thing, Hierarchy } from "../common/GlobalImports";
+import { g, get, Path, Thing, Hierarchy } from "../common/GlobalImports";
 import { s_paths_grabbed } from './State';
 
 export default class Grabs {

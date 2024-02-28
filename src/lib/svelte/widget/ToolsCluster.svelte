@@ -130,15 +130,15 @@
             left = center.x - toolDiameter;
             setC(IDTool.cluster, center);
             setC(IDTool.create, new Point(right - 2, y - toolRadius - 5));
-            setC(IDTool.more, new Point(center.x + 0.5, y + toolRadius * 3 + 1));
             setC(IDTool.add_parent, new Point(left - 7, y - toolRadius - 5));
             setC(IDTool.next, new Point(center.x - 2, y - toolDiameter - 8));
             setC(IDTool.delete_parent, new Point(left - 7, y + toolDiameter - 3));
+            setC(IDTool.more, new Point(center.x + 0.5, y + (toolRadius * 3) + 1));
+            setC(IDTool.confirmation, center.offsetEquallyBy(1 - (clusterRadius)));
             setC(IDTool.delete, new Point(right - toolRadius - 6, y + toolRadius - 3.5));
             setC(IDTool.delete_cancel, center.offsetBy(new Point(-toolDiameter - 3, toolDiameter)));
             setC(IDTool.delete_confirm, center.offsetBy(new Point(-toolDiameter - 2, -toolDiameter)));
-            setC(IDTool.confirmation, center.offsetBy(Point.square(1 - (clusterRadius))));
-            revealOffset = new Point(-19 - titleWidth, clusterRadius - 51);
+            revealOffset = new Point(-titleWidth, -clusterRadius).offsetEquallyBy(-19);
             return true;
         }
         return false;

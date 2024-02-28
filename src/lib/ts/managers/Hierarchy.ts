@@ -1,4 +1,4 @@
-import { s_isBusy, s_path_here, s_paths_grabbed, s_things_arrived, s_title_editing, s_altering_parent, s_path_toolsCluster } from './State';
+import { s_isBusy, s_paths_grabbed, s_things_arrived, s_title_editing, s_paths_expanded, s_altering_parent, s_path_toolsCluster } from './State';
 import { g, k, u, get, User, Path, Thing, Grabs, debug, Access, IDTrait, IDTool, signals, Wrapper } from '../common/GlobalImports';
 import { Predicate, Relationship, persistLocal, AlteringParent, CreationOptions } from '../common/GlobalImports';
 import DBInterface from '../db/DBInterface';
