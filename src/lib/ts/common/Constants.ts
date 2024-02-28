@@ -32,7 +32,7 @@ export default class Constants {
 		this.name_bulkAdmin = 'Jonathan Sand';
 		this.title_default = 'Please, enter a title';
 		this.title_line = '------------------------';
-		this.color_disabled = transparentize('lightgray', 0.3);
+		this.color_disabled = transparentize('gray', 0.5);
 		this.device_isMobile = u.device_isMobile();
 		this.allow_HorizontalScrolling = true;
 		this.allow_GraphEditing = true;

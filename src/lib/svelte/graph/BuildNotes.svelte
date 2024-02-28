@@ -1,5 +1,5 @@
 <script>
-	import { builds, onMount, ZIndex } from '../../ts/common/GlobalImports';
+	import { k, builds, onMount, ZIndex } from '../../ts/common/GlobalImports';
 	import { s_id_popupView } from '../../ts/managers/State';
 	import Directionals from '../svg/Directionals.svelte'
 	import CloseButton from '../kit/CloseButton.svelte'

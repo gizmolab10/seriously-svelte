@@ -1,6 +1,7 @@
 <script>
 	import { s_id_popupView } from '../../ts/managers/State';
-	import CloseButton from '../kit/CloseButton.svelte'
+	import CloseButton from '../kit/CloseButton.svelte';
+	import { k } from '../../ts/common/GlobalImports';
 	import HelpTopics from './HelpTopics.svelte';
 	
 	function handleKeyDown(event) {

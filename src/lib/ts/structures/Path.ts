@@ -89,12 +89,15 @@ export default class Path {
 	}
 
 	get things_canAlter_asParentOf_toolsGrab(): boolean {
-		const path_toolsGrab = get(s_path_toolsCluster);
-		if (path_toolsGrab && !this.matchesPath(path_toolsGrab) && this.thing != path_toolsGrab.thing) {
-			const isParentOfTools = this.thing_isImmediateParentOf(path_toolsGrab);
-			const isAProgenyOfTools = this.thing_isAProgenyOf(path_toolsGrab)
+		const path_toolGrab = get(s_path_toolsCluster);
+		const toolThing = path_toolGrab?.thing;
+		const thing = this.thing;
+		if (toolThing && !this.matchesPath(path_toolGrab) && thing && thing != toolThing) {
+			const isParentOfTool = this.thing_isImmediateParentOf(path_toolGrab);
+			const isAProgenyOfTool = this.path_isAProgenyOf(path_toolGrab);
+			const toolIsAnAncestor = thing.parentIDs.includes(toolThing.id);
 			const isDeleting = get(s_altering_parent) == AlteringParent.deleting;
-			return isDeleting ? isParentOfTools : !(isParentOfTools || isAProgenyOfTools);
+			return isDeleting ? isParentOfTool : !(isParentOfTool || isAProgenyOfTool || toolIsAnAncestor);
 		}
 		return false;
 	}
@@ -216,7 +219,7 @@ export default class Path {
 		return false;		
 	}
 
-	thing_isAProgenyOf(path: Path): boolean {
+	path_isAProgenyOf(path: Path): boolean {
 		let isAProgeny = false;
 		path.traverse((progenyPath: Path) => {
 			if (progenyPath.hashedPath == this.hashedPath) {
