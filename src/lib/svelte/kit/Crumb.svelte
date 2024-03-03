@@ -33,8 +33,6 @@
 		}
 	}
 
-	// react to path with     $: {}
-
 </script>
 
 <button
@@ -43,7 +41,7 @@
 		{colorStyles};
 		{cursorStyle};
 		border-radius: 1em;
-		border: 1px solid {thing.color};'>
+		border: none;'>
 		<div style='padding:0px 0px 1px 0px; {cursorStyle};'>
 			{thing.title.injectElipsisAt()}
 		</div>

@@ -465,16 +465,10 @@ export default class Path {
 	}
 
 	startEdit() {
-		if (!this.isRoot) {
+		if (!this.isRoot && k.allow_TitleEditing) {
 			debug.log_edit(`EDIT ${this.titles}`)
 			this.grabOnly();
-			let editState = get(s_title_editing);
-			if (!editState) {
-				s_title_editing.set(new TitleState(this));
-			} else {
-				editState.stopping = editState.editing;
-				editState.editing = this;
-			}
+			s_title_editing.set(new TitleState(this));
 		}
 	}
 

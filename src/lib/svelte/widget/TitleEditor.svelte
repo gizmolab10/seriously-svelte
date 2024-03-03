@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { g, k, Thing, debug, ZIndex, onMount, signals, onDestroy } from '../../ts/common/GlobalImports';
-	import { dbDispatch, SeriouslyRange, Wrapper, IDWrapper } from '../../ts/common/GlobalImports';
+	import { g, k, u, Thing, debug, ZIndex, onMount, signals } from '../../ts/common/GlobalImports';
+	import { Wrapper, IDWrapper, dbDispatch, SeriouslyRange } from '../../ts/common/GlobalImports';
 	import { s_title_editing } from '../../ts/managers/State';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
@@ -14,11 +14,8 @@
 	let ghost = null;
 	let input = null;
 
-	onDestroy(() => { relayoutHandler.disconnect(); });
 	var hasChanges = () => { return originalTitle != thing.title; };
 	function handleInput(event) { thing.title = event.target.value; updateInputWidth(); };
-	const rebuildHandler = signals.handle_rebuild((path) => setTimeout(() => { updateInputWidth(); }, 10));
-	const relayoutHandler = signals.handle_relayout((path) => setTimeout(() => { updateInputWidth(); }, 10));
 
 	$: {
 		if (input) {
@@ -27,9 +24,17 @@
 	}
 	
 	onMount(() => {
+		const rebuildHandler = signals.handle_rebuild((path) => { updateInputWidth(); });
+		const relayoutHandler = signals.handle_relayout((path) => { updateInputWidth(); });
+
 		setTimeout(() => {
 			updateInputWidth();
 		}, 100);
+
+		return () => {
+			rebuildHandler.disconnect();
+			relayoutHandler.disconnect()
+		};
 	});
 
 	function updateInputWidth() {
@@ -75,12 +80,18 @@
 		updateInputWidth();
 	}
 
-	function handleFocus(event) {
-		if (!k.allow_TitleEditing) {
-			input?.blur();
-		} else if (!path.isEditing) {
-			debug.log_edit(`FOCUS ${path.title}`);
-			path.startEdit();
+	function handleClick(event) {
+		event.preventDefault();      // avoid focusing the input on the first click
+		if (!path.isEditing && !path.isRoot) {
+			if (!path.isGrabbed) {
+				path.grabOnly();
+			} else if (k.allow_TitleEditing) {
+				path.startEdit();
+				input.focus();
+				return;
+			}
+			$s_title_editing = null;
+			input.blur();
 		}
 	}
 
@@ -90,7 +101,6 @@
 		//													 //
 		//				   manage edit state				 //
 		//													 //
-		//	N.B., to react, must use $s_path_edit variables	 //
 		///////////////////////////////////////////////////////
 
 		if (k.allow_TitleEditing) {
@@ -98,16 +108,19 @@
 				debug.log_edit(`STOPPING ${path.title}`);
 				$s_title_editing = null;
 				input?.blur();
-			} else if (isEditing != path.isEditing) {
-				if (isEditing) {
-					debug.log_edit(`STOP ${path.title}`);
-					input?.blur();
-				} else {
-					input?.focus();
-					debug.log_edit(`RANGE ${path.title}`);
-					applyRange();
+			} else {
+				const editPath = $s_title_editing;
+				if (isEditing != path.matchesPath(editPath?.editing ?? null)) {
+					if (!isEditing) {
+						input?.focus();
+						debug.log_edit(`RANGE ${path.title}`);
+						applyRange();
+					} else {
+						debug.log_edit(`STOP ${path.title}`);
+						input?.blur();
+					}
+					isEditing = !isEditing;
 				}
-				isEditing = !isEditing;
 			}
 		}
 	}
@@ -169,6 +182,9 @@
 		white-space: pre;
 		position: absolute;
 	}
+	input:focus {
+		outline: none;
+	}
 </style>
 
 {#key originalTitle}
@@ -185,8 +201,8 @@
 		class='title'
 		bind:this={input}
 		on:blur={handleBlur}
-		on:focus={handleFocus}
 		on:input={handleInput}
+		on:click={handleClick}
 		bind:value={thing.title}
 		on:cut={handleCutOrPaste}
 		on:keydown={handleKeyDown}

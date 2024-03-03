@@ -49,8 +49,6 @@
 			onClick={details_buttonClicked}>
 			<img src='settings.svg' alt='circular button' width={size}px height={size}px/>
 		</CircularButton>
-	{/if}
-	{#if !$s_id_popupView}
 		{#if g.showControls}
 			<button class='button'
 				style='
