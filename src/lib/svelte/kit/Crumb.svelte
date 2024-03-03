@@ -2,11 +2,15 @@
 	import { k, Thing, onMount, signals, dbDispatch } from '../../ts/common/GlobalImports';
 	import { s_path_here } from '../../ts/managers/State';
 	export let path = '';
+	const borderStyle = '1px solid';
+	let border = `${borderStyle} ${k.color_background}`
 	let thing: Thing = path.thing;
 	let colorStyles = '';
 	let cursorStyle = '';
 
 	onMount(() => { updateColors(); });
+	function mouseOver(event) { border = `${borderStyle} ${thing.color}`; }
+	function mouseOut(event) { border = `${borderStyle} ${k.color_background}`; }
 
 	function updateColors() {
 		if (thing) {
@@ -36,12 +40,14 @@
 </script>
 
 <button
+	on:mouseout={mouseOut}
+	on:mouseover={mouseOver}
 	on:click={crumb_buttonClicked}
 	style='
 		{colorStyles};
 		{cursorStyle};
-		border-radius: 1em;
-		border: none;'>
+		border:{border};
+		border-radius: 1em;'>
 		<div style='padding:0px 0px 1px 0px; {cursorStyle};'>
 			{thing.title.injectElipsisAt()}
 		</div>

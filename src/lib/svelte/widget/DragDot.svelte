@@ -24,9 +24,9 @@
 	let top = 0;
 	
     onDestroy(() => { handler?.disconnect(); })
-	function handleMouseIn(event) { updateColorsForHover(true); }
+	function mouseOver(event) { updateColorsForHover(true); }
 	function handleMouseUp() { clearTimeout(clickTimer); }
-	function handleMouseOut(event) { updateColorsForHover(false); }
+	function mouseOut(event) { updateColorsForHover(false); }
 	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right-
 
     onMount(() => {
@@ -123,8 +123,8 @@
 	on:keypress={u.ignore}
 	on:mouseup={handleMouseUp}
 	on:click={handleSingleClick}
-	on:mouseout={handleMouseOut}
-	on:mouseover={handleMouseIn}
+	on:mouseout={mouseOut}
+	on:mouseover={mouseOver}
 	on:mousedown={handleLongClick}
 	on:dblclick={handleDoubleClick}
 	on:contextmenu={handleContextMenu}

@@ -19,7 +19,7 @@
 	
 	onMount( () => { setIsHovering_updateColors(false); updatePath(); });
 	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
-	function handleMouseOut(event) { setIsHovering_updateColors(false); }
+	function mouseOut(event) { setIsHovering_updateColors(false); }
 	function handleMouseOver(event) { setIsHovering_updateColors(true); }
 	function handleMouseUp() { clearTimeout(clickTimer); }
 
@@ -154,7 +154,7 @@
 		on:keypress={u.ignore}
 		on:mouseup={handleMouseUp}
 		on:click={handleSingleClick}
-		on:mouseout={handleMouseOut}
+		on:mouseout={mouseOut}
 		on:mouseover={handleMouseOver}
 		on:mousedown={handleLongClick}
 		on:dblclick={handleDoubleClick}
