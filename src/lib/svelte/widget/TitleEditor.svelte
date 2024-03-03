@@ -10,6 +10,7 @@
 	let titleWrapper: Wrapper;
 	let originalTitle = '';
 	let isEditing = false;
+	let cursorStyle = '';
 	let titleWidth = 0;
 	let ghost = null;
 	let input = null;
@@ -122,6 +123,7 @@
 					isEditing = !isEditing;
 				}
 			}
+			cursorStyle = path.isEditing ? '' : 'cursor: pointer';
 		}
 	}
 
@@ -208,6 +210,7 @@
 		on:keydown={handleKeyDown}
 		on:paste={handleCutOrPaste}
 		style='left: 10px;
+			{cursorStyle};
 			padding: {padding};
 			color: {thing.color};
 			font-size: {fontSize};

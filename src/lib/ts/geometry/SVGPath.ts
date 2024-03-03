@@ -11,28 +11,28 @@ export enum Direction {
 
 export default class SVGPath {
 
-    line(width: number) { return `M0 1 L${width} 1`; }
+    line(width: number): string { return `M0 1 L${width} 1`; }
 
-    xCross(diameter: number, margin: number) {
+    xCross(diameter: number, margin: number): string {
 		const start = margin + 2;
 		const end = diameter - start;
         return `M${start} ${start} L${end} ${end} M${start} ${end} L${end} ${start}`;
     }
 
-    tCross(diameter: number, margin: number) {
+    tCross(diameter: number, margin: number): string {
 		const radius = diameter / 2;
 		const length = (radius - margin) * 2;
         return `M${margin + 2} ${radius} L${length} ${radius} M${radius} ${margin + 2} L${radius} ${diameter - margin - 2}`;
     }
 
-    dash(diameter: number, margin: number) {
+    dash(diameter: number, margin: number): string {
 		const y = diameter / 2;
 		const start = margin + 2;
 		const end = diameter - start;
         return `M${start} ${y} L${end} ${y}`;
     }
 
-    circle(width: number, diameter: number, offset: Point = new Point()) {
+    circle(width: number, diameter: number, offset: Point = new Point()): string {
         const radius = diameter / 2;
         const center = width / 2;
         const doubleRadius = radius * 2;
@@ -40,7 +40,7 @@ export default class SVGPath {
         return path;
     }
 
-    halfCircle(diameter: number, direction: number, offset: Point = new Point()) {
+    halfCircle(diameter: number, direction: number, offset: Point = new Point()): string {
 		const up = direction == Direction.up;
         const radius = diameter / 2;
         const center = diameter / 2;
@@ -49,7 +49,7 @@ export default class SVGPath {
         return path;
     }
 
-    oval(diameter: number, horizontal: boolean = true) {
+    oval(diameter: number, horizontal: boolean = true): string {
         const radius = diameter / 2;
         const width = radius - (horizontal ? 1 : 3);
         const height = radius - (horizontal ? 3 : 1);
@@ -58,7 +58,7 @@ export default class SVGPath {
         return path;
     }
 
-	ellipses(tiny: number, gap: number) {
+	ellipses(tiny: number, gap: number): string {
 		const x = 1;
 		const y = 6;
 		const x2 = x + tiny * 2;
@@ -71,18 +71,38 @@ export default class SVGPath {
 		M ${x5},${y} A ${tiny},${tiny} 0 1,1 ${x6},${y} A ${tiny},${tiny} 0 1,1 ${x5},${y}`;
 	}
 
-	triangle(size: number, direction: number) {
+	tinyDots(size: number, count: number): string {
+		if (count == 0) {
+			return '';
+		}
+		if (count == 1) {
+			return this.circle(size, size / 2);
+		}
+		const radius = size / 3;
+		const isOdd = (count % 2) != 0;
+		const increment = Math.PI * 2 / count;
+		let offset = new Point(isOdd ? radius : 0, isOdd ? 0 : radius);
+		let index = 0;
+		let path = '';
+		while (index++ < count) {
+			path = path + this.circle(size, size / (count + 1), offset);
+			offset = this.rotatePoint(offset, increment);
+		}
+		return path;
+	}
+
+	triangle(size: number, direction: number): string {
 		const width = size;
 		const height = size;
 		const offsetX = width / 2;
 		const offsetY = height / 2;
 		const insetRatio = 0.35;
 		const radius = Math.min(width, height) * insetRatio;
-		const oneSixth = Math.PI / 3; // one sixth of a circle
+		const outer = new Point(radius * 1.5, 0);
+		const inner = new Point(radius, 0);
 		const oneThirtieth = Math.PI / 15; // one thirtieth of a circle
-		const inner = { x: radius, y: 0 };
-		const outer = { x: radius * 1.5, y: 0 };
-		let start = { x: 0, y: 0 };
+		const oneSixth = Math.PI / 3; // one sixth of a circle
+		let start = new Point(0, 0);
 		let data = [];
 		let index = 0;
 		while (index < 3) {
@@ -99,22 +119,22 @@ export default class SVGPath {
 		}
 
 		data = data.map(d => ({
-			controlOne: { x: d.controlOne.x + offsetX, y: d.controlOne.y + offsetY },
-			controlTwo: { x: d.controlTwo.x + offsetX, y: d.controlTwo.y + offsetY },
-			end: { x: d.end.x + offsetX, y: d.end.y + offsetY },
+			controlOne: new Point(d.controlOne.x + offsetX, d.controlOne.y + offsetY),
+			controlTwo: new Point(d.controlTwo.x + offsetX, d.controlTwo.y + offsetY),
+			end: new Point(d.end.x + offsetX, d.end.y + offsetY),
 		}));
 
 		start = data[2].end;
 		return `M${start.x},${start.y},${data.map(d => `C${d.controlOne.x},${d.controlOne.y} ${d.controlTwo.x},${d.controlTwo.y} ${d.end.x},${d.end.y}`).join('')}Z`;
 	}
 
-	rotatePoint(point: {x:number, y:number}, angle: number) {
+	rotatePoint(point: Point, angle: number): Point {
 		const cos = Math.cos(angle);
 		const sin = Math.sin(angle);
-		return {
-			x: point.x * cos - point.y * sin,
-			y: point.x * sin + point.y * cos
-		};
+		return new Point(
+			point.x * cos - point.y * sin,
+			point.x * sin + point.y * cos
+		);
 	}
 }
 
