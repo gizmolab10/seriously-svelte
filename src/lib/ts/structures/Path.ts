@@ -354,9 +354,10 @@ export default class Path {
 		return false;
 	}
 
-	toggleToolsGrab(update: boolean = true) {
-		if (get(s_path_toolsCluster)) { // ignore if no reveal dot set s_path_toolsCluster
-			if (this.toolsGrabbed) {
+	toggleToolsGrab() {
+		const toolsPath = get(s_path_toolsCluster);
+		if (toolsPath) { // ignore if toolsCluster not in use
+			if (this.matchesPath(toolsPath)) {
 				s_path_toolsCluster.set(null);
 			} else if (!this.isRoot) {
 				s_path_toolsCluster.set(this);

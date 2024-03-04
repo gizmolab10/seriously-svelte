@@ -14,19 +14,11 @@
 	let isHovering = false;
 	let scalablePath = '';
 	let revealDot = null;
-	let clickCount = 0;
-	let clickTimer;
 	
 	onMount( () => { setIsHovering_updateColors(false); updatePath(); });
 	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
 	function mouseOut(event) { setIsHovering_updateColors(false); }
 	function handleMouseOver(event) { setIsHovering_updateColors(true); }
-	function handleMouseUp() { clearTimeout(clickTimer); }
-
-	function clearClicks() {
-		clickCount = 0;
-		clearTimeout(clickTimer);	// clear all previous timers
-	}
 
 	$: {
 		if (revealDot &&!path.matchesPath($s_path_toolsCluster)) {
@@ -95,42 +87,8 @@
 		} else if (path.hasChildren) {
 			g.hierarchy.path_rebuild_remoteMoveRight(path, !path.isExpanded, true, false);
 			return;
-		} else {
-			path.grabOnly();
-			$s_path_toolsCluster = path;
 		}
 		signals.signal_rebuild_fromHere();
-	}
-
-	function handleDoubleClick(event) {
-		clearClicks();
-		// do nothing
-    }
- 
-	function handleLongClick(event) {
-		clearClicks();
-		clickTimer = setTimeout(() => {
-			clearClicks();
-			if (!path.isRoot) {
-				if ($s_path_toolsCluster == path) {
-					$s_path_toolsCluster = null;
-				} else  {
-					path.grabOnly();
-					$s_path_toolsCluster = path;
-				}
-				signals.signal_rebuild_fromHere();
-			}
-		}, k.threshold_longClick);
-	}
-
-	function handleSingleClick(event) {
-		clickCount++;
-		clickTimer = setTimeout(() => {
-			if (clickCount === 1) {
-				handleClick(event);
-				clearClicks();
-			}
-		}, k.threshold_doubleClick);
 	}
 
 </script>
@@ -152,12 +110,9 @@
 		bind:this={revealDot}
 		on:keydown={u.ignore}
 		on:keypress={u.ignore}
-		on:mouseup={handleMouseUp}
-		on:click={handleSingleClick}
 		on:mouseout={mouseOut}
+		on:click={handleClick}
 		on:mouseover={handleMouseOver}
-		on:mousedown={handleLongClick}
-		on:dblclick={handleDoubleClick}
 		on:contextmenu={handleContextMenu}
 		style='
 			width={k.dot_size}px;

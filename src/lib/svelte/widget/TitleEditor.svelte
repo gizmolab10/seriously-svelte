@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { g, k, u, Thing, debug, ZIndex, onMount, signals } from '../../ts/common/GlobalImports';
 	import { Wrapper, IDWrapper, dbDispatch, SeriouslyRange } from '../../ts/common/GlobalImports';
-	import { s_title_editing } from '../../ts/managers/State';
+	import { s_title_editing, s_path_toolsCluster } from '../../ts/managers/State';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
 	export let thing;
@@ -12,11 +12,19 @@
 	let isEditing = false;
 	let cursorStyle = '';
 	let titleWidth = 0;
+	let clickCount = 0;
 	let ghost = null;
 	let input = null;
+	let clickTimer;
 
 	var hasChanges = () => { return originalTitle != thing.title; };
 	function handleInput(event) { thing.title = event.target.value; updateInputWidth(); };
+	function handleMouseUp() { clearTimeout(clickTimer); }
+
+	function clearClicks() {
+		clickCount = 0;
+		clearTimeout(clickTimer);	// clear all previous timers
+	}
 
 	$: {
 		if (input) {
@@ -40,7 +48,7 @@
 
 	function updateInputWidth() {
 		if (input && ghost) { // ghost only exists to provide its scroll width
-			titleWidth = ghost.scrollWidth;
+			titleWidth = ghost.scrollWidth - 5;
 			input.style.width = `${titleWidth}px`;
 			// debug.log_edit(`WIDTH: ${titleWidth} ${path.title}`);
 		}
@@ -81,6 +89,22 @@
 		updateInputWidth();
 	}
 
+	function handleDoubleClick(event) {
+		clearClicks();
+		path.startEdit();
+		input.focus();
+    }
+
+	function handleSingleClick(event) {
+		clickCount++;
+		clickTimer = setTimeout(() => {
+			if (clickCount === 1) {
+				handleClick(event);
+				clearClicks();
+			}
+		}, k.threshold_doubleClick);
+	}
+
 	function handleClick(event) {
 		event.preventDefault();      // avoid focusing the input on the first click
 		if (!path.isEditing && !path.isRoot) {
@@ -95,6 +119,23 @@
 			input.blur();
 		}
 	}
+ 
+	function handleLongClick(event) {
+		clearClicks();
+		clickTimer = setTimeout(() => {
+			clearClicks();
+			if (!path.isRoot) {
+				if ($s_path_toolsCluster == path) {
+					$s_path_toolsCluster = null;
+				} else  {
+					path.grabOnly();
+					$s_path_toolsCluster = path;
+				}
+				signals.signal_rebuild_fromHere();
+			}
+		}, k.threshold_longClick);
+	}
+
 
 	$: {
 
@@ -123,7 +164,7 @@
 					isEditing = !isEditing;
 				}
 			}
-			cursorStyle = path.isEditing ? '' : 'cursor: pointer';
+			cursorStyle = path.isEditing|| path.isGrabbed ? '' : 'cursor: pointer';
 		}
 	}
 
@@ -204,15 +245,19 @@
 		bind:this={input}
 		on:blur={handleBlur}
 		on:input={handleInput}
-		on:click={handleClick}
 		bind:value={thing.title}
 		on:cut={handleCutOrPaste}
+		on:mouseup={handleMouseUp}
 		on:keydown={handleKeyDown}
 		on:paste={handleCutOrPaste}
+		on:click={handleSingleClick}
+		on:mousedown={handleLongClick}
+		on:dblclick={handleDoubleClick}
 		style='left: 10px;
 			{cursorStyle};
 			padding: {padding};
 			color: {thing.color};
+			width: {titleWidth}px;
 			font-size: {fontSize};
 			z-index: {ZIndex.text};
 			font-family: {fontFamily};

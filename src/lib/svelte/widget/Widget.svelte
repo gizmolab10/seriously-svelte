@@ -109,7 +109,7 @@
 	function updateLayout() {
 		const titleWidth = thing.titleWidth;
 		const delta = showingBorder ? -0.5 : 0.5;
-		width = titleWidth - 18 + (k.dot_size * 2);
+		width = titleWidth - 18 + (k.dot_size * (path.hasChildren ? 2 : 1.35));
 		padding = `0px ${rightPadding}px 0px 1px`;
 		revealTop = k.dot_size / -3 + 1;
 		height = k.row_height - 1.5;
@@ -137,5 +137,7 @@
 	'>
 	<DragDot thing={thing} path={path}/>
 	<TitleEditor thing={thing} path={path} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
-	<RevealDot thing={thing} path={path} center={new Point(0.5, revealTop)}/>
+	{#if path.hasChildren}
+		<RevealDot thing={thing} path={path} center={new Point(0.5, revealTop)}/>
+	{/if}
 </div>
