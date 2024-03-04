@@ -66,7 +66,7 @@
 
 	function updatePath() {
 		if ((!path.hasChildren && !thing.isBulkAlias) || $s_path_toolsCluster?.matchesPath(path)) {
-			scalablePath = svgPath.circle(k.dot_size, k.dot_size / 2);
+			scalablePath = svgPath.circle(k.dot_size, k.dot_size - 1);
 		} else {
 			const goLeft = path.isExpanded && path.hasChildren;
 			const direction = goLeft ? Direction.left : Direction.right;
@@ -122,7 +122,7 @@
 		'>
 		{#key scalablePath}
 			<SVGD3
-				y=1
+				y=1.35
 				size={k.dot_size}
 				x={k.dot_size / 2}
 				stroke={strokeColor}

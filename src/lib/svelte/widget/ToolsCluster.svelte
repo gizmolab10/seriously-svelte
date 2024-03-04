@@ -10,7 +10,7 @@
 	import RevealDot from './RevealDot.svelte';
 	import Trash from '../svg/Trash.svelte';
     const clusterDiameter = 64;
-	const toolDiameter = k.dot_size;
+	const toolDiameter = k.dot_size * 1.4;
 	const toolRadius = toolDiameter / 2;
     const clusterRadius = clusterDiameter / 2;
     const disableSensitive = [IDTool.next, IDTool.delete_parent];
@@ -125,17 +125,17 @@
             const offsetX = 9 - ($s_show_details ? k.width_details : 0);
             const offsetY = (g.titleIsAtTop ? -45 : 0) - clusterDiameter - 5.5;
             const center = rect.centerLeft.offsetBy(new Point(titleWidth + offsetX, offsetY));
-            const right = center.x + toolDiameter * 1.3;
-            const y = center.y;
+            const right = center.x + toolDiameter;
+            const y = center.y + 3;
             left = center.x - toolDiameter;
             setC(IDTool.cluster, center);
-            setC(IDTool.create, new Point(right - 2, y - toolRadius - 5));
-            setC(IDTool.add_parent, new Point(left - 7, y - toolRadius - 5));
-            setC(IDTool.next, new Point(center.x - 2, y - toolDiameter - 8));
-            setC(IDTool.delete_parent, new Point(left - 7, y + toolDiameter - 3));
-            setC(IDTool.more, new Point(center.x + 0.5, y + (toolRadius * 3) + 1));
+            setC(IDTool.create, new Point(right - 3, y - toolRadius - 5));
+            setC(IDTool.add_parent, new Point(left - 1, y - toolRadius - 5));
+            setC(IDTool.next, new Point(center.x - 2, y - toolDiameter - 6));
+            setC(IDTool.delete_parent, new Point(left - 1, y + toolDiameter - 11));
+            setC(IDTool.more, new Point(center.x + 0.5, y + (toolRadius * 2) + 1));
             setC(IDTool.confirmation, center.offsetEquallyBy(1 - (clusterRadius)));
-            setC(IDTool.delete, new Point(right - toolRadius - 6, y + toolRadius - 3.5));
+            setC(IDTool.delete, new Point(right - toolRadius - 5, y + toolRadius - 9));
             setC(IDTool.delete_cancel, center.offsetBy(new Point(-toolDiameter - 3, toolDiameter)));
             setC(IDTool.delete_confirm, center.offsetBy(new Point(-toolDiameter - 2, -toolDiameter)));
             revealOffset = new Point(-titleWidth, -clusterRadius).offsetEquallyBy(-19);
@@ -264,7 +264,7 @@
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.delete_parent, isFilled) }}
                 cursor={isDisabledFor(IDTool.delete_parent) ? 'normal' : 'pointer'}
                 onClick={(event) => handleClick(IDTool.delete_parent, event)}
-                extraPath={svgPath.dash(toolDiameter, 2)}
+                extraPath={svgPath.dash(toolDiameter, 3)}
                 center={getC(IDTool.delete_parent)}
                 strokeColor={parentSensitiveColor}
                 direction={Direction.left}
@@ -275,7 +275,7 @@
                 cursor={isDisabledFor(IDTool.add_parent) ? 'normal' : 'pointer'}
                 onClick={(event) => handleClick(IDTool.add_parent, event)}
                 strokeColor={path.isHere ? parentSensitiveColor : color}
-                extraPath={svgPath.tCross(toolDiameter, 2)}
+                extraPath={svgPath.tCross(toolDiameter, 3)}
                 center={getC(IDTool.add_parent)}
                 direction={Direction.left}
                 id='add_parent'
@@ -283,7 +283,7 @@
             <TriangleButton
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.create, isFilled) }}
                 onClick={(event) => handleClick(IDTool.create, event)}
-                extraPath={svgPath.tCross(toolDiameter, 2)}
+                extraPath={svgPath.tCross(toolDiameter, 3)}
                 center={getC(IDTool.create)}
                 direction={Direction.right}
                 strokeColor={color}

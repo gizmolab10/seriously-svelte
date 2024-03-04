@@ -22,7 +22,7 @@ export default class SVGPath {
     tCross(diameter: number, margin: number): string {
 		const radius = diameter / 2;
 		const length = (radius - margin) * 2;
-        return `M${margin + 2} ${radius} L${length} ${radius} M${radius} ${margin + 2} L${radius} ${diameter - margin - 2}`;
+        return `M${margin + 2} ${radius} L${length + 1} ${radius} M${radius} ${margin + 2} L${radius} ${diameter - margin - 2}`;
     }
 
     dash(diameter: number, margin: number): string {
