@@ -458,14 +458,16 @@ export default class DBFirebase implements DBInterface {
 	}
 
 	relationship_extractChangesFromRemote(relationship: Relationship, remote: RemoteRelationship) {
-		const order = remote.order + k.halfIncrement;
-		const changed = (relationship.idTo != remote.to.id || relationship.idFrom != remote.from.id || relationship.idPredicate != remote.predicate.id)
+		const changed = (relationship.idPredicate != remote.predicate.id ||
+			relationship.idFrom != remote.from.id ||
+			relationship.idTo != remote.to.id ||
+			relationship.order != remote.order)
 		if (changed) {
 			relationship.idTo = remote.to.id;
 			relationship.idFrom = remote.from.id;
 			relationship.isRemotelyStored = true;
-			relationship.order_setTo(order);		// also sets to-thing's order
 			relationship.idPredicate = remote.predicate.id;
+			relationship.order_setTo(remote.order + k.halfIncrement);
 		}
 		return changed;
 	}

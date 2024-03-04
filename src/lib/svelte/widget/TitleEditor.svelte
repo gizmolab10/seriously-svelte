@@ -96,6 +96,7 @@
     }
 
 	function handleSingleClick(event) {
+		event.preventDefault();      // avoid focusing the input on the first click
 		clickCount++;
 		clickTimer = setTimeout(() => {
 			if (clickCount === 1) {
@@ -121,6 +122,7 @@
 	}
  
 	function handleLongClick(event) {
+		event.preventDefault();      // avoid focusing the input on the first click
 		clearClicks();
 		clickTimer = setTimeout(() => {
 			clearClicks();

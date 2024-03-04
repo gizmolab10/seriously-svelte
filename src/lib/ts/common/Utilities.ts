@@ -14,13 +14,15 @@ class Utilities {
 
 	async paths_orders_normalize_remoteMaybe(array: Array<Path>, remoteWrite: boolean = true) {
 		this.sort_byOrder(array);
-		array.forEach((path, index) => {
-			if (path.order != index) {
-				(async () => {
-					await path.relationship?.order_setTo(index, remoteWrite);
-				})();
-			}
-		});
+		await (async () => {
+			array.forEach(async (path, index) => {
+				if (path.order != index) {
+					await (async () => {
+						await path.relationship?.order_setTo(index, remoteWrite);
+					})();
+				}
+			});
+		})();
 	}
 
 	sort_byTitleTop(array: Array<Path>) {
