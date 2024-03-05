@@ -30,6 +30,13 @@
 					// 	stroke={ancestors[index].color}
 					// 	scalablePath={svgPath.halfCircle(size, Direction.right)}
 					// />
+					// <SVGD3
+					// 	size={size}
+					// 	position='absolute'
+					// 	fill={ancestors[index].color}
+					// 	stroke={ancestors[index].color}
+					// 	scalablePath={svgPath.tinyDots(size, count)}
+					// />
 
 </script>
 
@@ -44,13 +51,6 @@
 				position: relative;
 				color: transparent;
 				left: {size / 4}px;'>
-				<SVGD3
-					size={size}
-					position='absolute'
-					fill={ancestors[index].color}
-					stroke={ancestors[index].color}
-					scalablePath={svgPath.tinyDots(size, count)}
-				/>
 				<SVGD3
 					size={size}
 					position='absolute'

@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { g, k, u, Thing, debug, ZIndex, onMount, signals } from '../../ts/common/GlobalImports';
 	import { Wrapper, IDWrapper, dbDispatch, SeriouslyRange } from '../../ts/common/GlobalImports';
-	import { s_title_editing, s_path_toolsCluster } from '../../ts/managers/State';
+	import { s_title_editing, s_paths_grabbed, s_path_toolsCluster } from '../../ts/managers/State';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
 	export let thing;
@@ -90,13 +90,14 @@
 	}
 
 	function handleDoubleClick(event) {
+		event.preventDefault();
 		clearClicks();
 		path.startEdit();
 		input.focus();
     }
 
 	function handleSingleClick(event) {
-		event.preventDefault();      // avoid focusing the input on the first click
+		event.preventDefault();
 		clickCount++;
 		clickTimer = setTimeout(() => {
 			if (clickCount === 1) {
@@ -107,7 +108,7 @@
 	}
 
 	function handleClick(event) {
-		event.preventDefault();      // avoid focusing the input on the first click
+		event.preventDefault();
 		if (!path.isEditing && !path.isRoot) {
 			if (!path.isGrabbed) {
 				path.grabOnly();
@@ -122,7 +123,7 @@
 	}
  
 	function handleLongClick(event) {
-		event.preventDefault();      // avoid focusing the input on the first click
+		event.preventDefault();
 		clearClicks();
 		clickTimer = setTimeout(() => {
 			clearClicks();
@@ -141,19 +142,20 @@
 
 	$: {
 
-		///////////////////////////////////////////////////////
-		//													 //
-		//				   manage edit state				 //
-		//													 //
-		///////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////
+		//													//
+		//				  manage focus state				//
+		//													//
+		//////////////////////////////////////////////////////
 
+		const _ = $s_paths_grabbed;
+		const editPath = $s_title_editing;
 		if (k.allow_TitleEditing) {
 			if (path.isStoppingEdit) {
 				debug.log_edit(`STOPPING ${path.title}`);
 				$s_title_editing = null;
 				input?.blur();
 			} else {
-				const editPath = $s_title_editing;
 				if (isEditing != path.matchesPath(editPath?.editing ?? null)) {
 					if (!isEditing) {
 						input?.focus();
@@ -166,8 +168,8 @@
 					isEditing = !isEditing;
 				}
 			}
-			cursorStyle = path.isEditing|| path.isGrabbed ? '' : 'cursor: pointer';
 		}
+		cursorStyle = (!path.isRoot && (path.isEditing || path.isGrabbed)) ? '' : 'cursor: pointer';
 	}
 
 	function stopAndClearEditing() {
