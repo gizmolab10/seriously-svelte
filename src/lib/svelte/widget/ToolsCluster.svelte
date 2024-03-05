@@ -136,8 +136,8 @@
             setC(IDTool.more, new Point(center.x + 0.5, y + (toolRadius * 2) + 1));
             setC(IDTool.confirmation, center.offsetEquallyBy(1 - (clusterRadius)));
             setC(IDTool.delete, new Point(right - toolRadius - 5, y + toolRadius - 9));
-            setC(IDTool.delete_cancel, center.offsetBy(new Point(-toolDiameter - 3, toolDiameter)));
-            setC(IDTool.delete_confirm, center.offsetBy(new Point(-toolDiameter - 2, -toolDiameter)));
+            setC(IDTool.delete_cancel, center.offsetBy(new Point(1 - toolDiameter, toolDiameter - 5)));
+            setC(IDTool.delete_confirm, center.offsetBy(new Point(2 - toolDiameter, 5 - toolDiameter)));
             revealOffset = new Point(-titleWidth, -clusterRadius).offsetEquallyBy(-19);
             return true;
         }
@@ -264,10 +264,10 @@
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.delete_parent, isFilled) }}
                 cursor={isDisabledFor(IDTool.delete_parent) ? 'normal' : 'pointer'}
                 onClick={(event) => handleClick(IDTool.delete_parent, event)}
-                extraPath={svgPath.dash(toolDiameter, 3)}
+                extraPath={svgPath.dash(toolDiameter, 4)}
                 center={getC(IDTool.delete_parent)}
                 strokeColor={parentSensitiveColor}
-                direction={Direction.left}
+                direction={Direction.right}
                 id='delete_parent'
                 size={toolDiameter}/>
             <TriangleButton
@@ -277,7 +277,7 @@
                 strokeColor={path.isHere ? parentSensitiveColor : color}
                 extraPath={svgPath.tCross(toolDiameter, 3)}
                 center={getC(IDTool.add_parent)}
-                direction={Direction.left}
+                direction={Direction.right}
                 id='add_parent'
                 size={toolDiameter}/>
             <TriangleButton
@@ -285,7 +285,7 @@
                 onClick={(event) => handleClick(IDTool.create, event)}
                 extraPath={svgPath.tCross(toolDiameter, 3)}
                 center={getC(IDTool.create)}
-                direction={Direction.right}
+                direction={Direction.left}
                 strokeColor={color}
                 size={toolDiameter}
                 id='add'/>

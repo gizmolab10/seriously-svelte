@@ -97,7 +97,7 @@
 			if (k.device_isMobile) {
 				origin_ofFirstReveal.x = 25;
 			}
-			const toChildren = new Point(-43 + k.line_stretch - (k.dot_size / 2) + offsetX_ofFirstReveal, (k.dot_size / 2) -(childrenSize.height / 2) - 5);
+			const toChildren = new Point(-43 + k.line_stretch - (k.dot_size / 2) + offsetX_ofFirstReveal, (k.dot_size / 2) -(childrenSize.height / 2) - 4);
 			origin_ofChildren = origin_ofFirstReveal.offsetBy(toChildren);
 			blueRect = graphRect.dividedInHalf;
 			redRect = rectTo_firstReveal();

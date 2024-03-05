@@ -111,11 +111,11 @@
 		const delta = showingBorder ? -0.5 : 0.5;
 		width = titleWidth - 18 + (k.dot_size * (path.hasChildren ? 2 : 1.35));
 		padding = `0px ${rightPadding}px 0px 1px`;
-		revealTop = k.dot_size / -3 + 1;
+		revealTop = (4.4 - k.dot_size) / 3;
+		top = origin.y + delta + 0.5;
 		height = k.row_height - 1.5;
 		left = origin.x + delta - 1;
 		radius = k.row_height / 2;
-		top = origin.y + delta;
 	}
 
 </script>
@@ -138,6 +138,6 @@
 	<DragDot thing={thing} path={path}/>
 	<TitleEditor thing={thing} path={path} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 	{#if path.hasChildren}
-		<RevealDot thing={thing} path={path} center={new Point(0.5, revealTop)}/>
+		<RevealDot thing={thing} path={path} center={new Point(0, revealTop)}/>
 	{/if}
 </div>

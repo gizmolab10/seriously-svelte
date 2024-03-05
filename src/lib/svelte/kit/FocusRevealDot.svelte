@@ -28,7 +28,7 @@
 
 <TriangleButton
 	fillColors_closure={fillColors_closure}
-	direction={Direction.left}
+	direction={Direction.right}
 	strokeColor={here.color}
 	onClick={onClick}
 	id={here.title}

@@ -7,7 +7,7 @@
 	export let fillColor;
 	export let position;
 	export let size;
-	const scalablePath = svgPath.triangle(size, Direction.right);
+	const scalablePath = svgPath.fatTriangle(size, Direction.left);
 
 </script>
 

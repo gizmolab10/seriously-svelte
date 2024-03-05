@@ -69,8 +69,8 @@
 			scalablePath = svgPath.circle(k.dot_size, k.dot_size - 1);
 		} else {
 			const goLeft = path.isExpanded && path.hasChildren;
-			const direction = goLeft ? Direction.left : Direction.right;
-			scalablePath = svgPath.triangle(k.dot_size, direction);
+			const direction = goLeft ? Direction.right : Direction.left;
+			scalablePath = svgPath.fatTriangle(k.dot_size, direction);
 			if (thing.isBulkAlias) {
 				insidePath = svgPath.circle(k.dot_size, k.dot_size / 3);
 			}

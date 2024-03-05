@@ -9,8 +9,8 @@
 	export let origin = new Point();
     export let path = '';
 	const halfDotSize = k.dot_size / 2;
-	const widgetOffset = new Point(12, (k.dot_size / -15) - 9.5);
-	const lineOffset = new Point(halfDotSize - 129, halfDotSize - 7);
+	const widgetOffset = new Point(12, (k.dot_size / -15) - 10.5);
+	const lineOffset = new Point(halfDotSize - 129, halfDotSize - 7,3);
 	let childMapArray: Array<ChildMap> = [];
 	let priorTime = new Date().getTime();
 	let center = new Point();

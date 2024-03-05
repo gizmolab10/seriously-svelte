@@ -5,8 +5,8 @@ export enum Direction {
 	upRight = Math.PI * 2 / 3,
 	down = Math.PI * 3 / 2,
 	up = Math.PI / 2,
-	right = Math.PI,
-	left = 0,
+	left = Math.PI,
+	right = 0,
 }
 
 export default class SVGPath {
@@ -27,7 +27,7 @@ export default class SVGPath {
 
     dash(diameter: number, margin: number): string {
 		const y = diameter / 2;
-		const start = margin + 2;
+		const start = margin;
 		const end = diameter - start;
         return `M${start} ${y} L${end} ${y}`;
     }
@@ -40,13 +40,16 @@ export default class SVGPath {
         return path;
     }
 
-    halfCircle(diameter: number, direction: number, offset: Point = new Point()): string {
-		const up = direction == Direction.up;
+    halfCircle(diameter: number, direction: number): string {
+		const vertical = [Direction.up, Direction.down].includes(direction);
         const radius = diameter / 2;
-        const center = diameter / 2;
-		const delta = up ? -radius : radius;
-        const path = `M ${up ? 0 : diameter} ${center} A ${radius} ${radius} 0 0 1 ${radius - delta} ${center}`;
-        return path;
+		if (vertical) {
+			const up = direction == Direction.up;
+        	return `M ${up ? 0 : diameter} ${radius} A ${radius} ${radius} 0 0 1 ${radius + (up ? radius : -radius)} ${radius}`;
+		} else {
+			const left = direction == Direction.right;
+        	return `M ${radius} ${left ? 0 : diameter} A ${radius} ${radius} 0 0 1 ${radius} ${left ? (radius * 2) : 0}`;
+		}
     }
 
     oval(diameter: number, horizontal: boolean = true): string {
@@ -78,10 +81,10 @@ export default class SVGPath {
 		if (count == 1) {
 			return this.circle(size, size / 2);
 		}
-		const radius = size / 3;
+		const radius = size / 4;
 		const isOdd = (count % 2) != 0;
 		const increment = Math.PI * 2 / count;
-		let offset = new Point(isOdd ? radius : 0, isOdd ? 0 : radius);
+		let offset = new Point(isOdd ? -radius : 0, isOdd ? 0 : radius);
 		let index = 0;
 		let path = '';
 		while (index++ < count) {
@@ -91,12 +94,12 @@ export default class SVGPath {
 		return path;
 	}
 
-	triangle(size: number, direction: number): string {
+	fatTriangle(size: number, direction: number): string {
 		const width = size;
 		const height = size;
+		const insetRatio = 0.35;
 		const offsetX = width / 2;
 		const offsetY = height / 2;
-		const insetRatio = 0.35;
 		const radius = Math.min(width, height) * insetRatio;
 		const outer = new Point(radius * 1.5, 0);
 		const inner = new Point(radius, 0);

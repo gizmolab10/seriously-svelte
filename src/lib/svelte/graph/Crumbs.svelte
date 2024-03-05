@@ -1,13 +1,11 @@
 <script lang='ts'>
-	import { g, k, u, Size, Point, Thing, ZIndex, signals, svgPath, onDestroy, dbDispatch } from '../../ts/common/GlobalImports';
+	import { g, k, u, Size, Point, Thing, ZIndex, signals, svgPath, onDestroy, dbDispatch, Direction } from '../../ts/common/GlobalImports';
 	import { s_path_here, s_graphRect, s_show_details, s_paths_grabbed, s_path_toolsCluster } from '../../ts/managers/State';
-	// import FatTriangle from '../svg/FatTriangle.svelte';
 	import Crumb from '../kit/Crumb.svelte';
 	import SVGD3 from '../svg/SVGD3.svelte';
-	let size = 10;
-	let insidePath = svgPath.circle(size, size / 2, new Point(-1, size / 4));
 	let ancestors: Array<Thing> = [];
 	let path: Path;
+	let size = 14;
 	let width = 0;
 	let left = 0;
 	let sum = 0;
@@ -26,6 +24,13 @@
 		}
 	}
 
+					// <SVGD3
+					// 	size={size}
+					// 	position='absolute'
+					// 	stroke={ancestors[index].color}
+					// 	scalablePath={svgPath.halfCircle(size, Direction.right)}
+					// />
+
 </script>
 
 {#key `${sum} ${left}`}
@@ -35,16 +40,22 @@
 	{#each ancestors.map(thing => thing.parents.length) as count, index}
 		{#if index > 0}
 			<span class='crumb-separator' style='
-				top:{size / 2}px;
+				top:{size / 4}px;
 				position: relative;
 				color: transparent;
-				left: {size / 2}px;'>
+				left: {size / 4}px;'>
 				<SVGD3
 					size={size}
 					position='absolute'
 					fill={ancestors[index].color}
 					stroke={ancestors[index].color}
 					scalablePath={svgPath.tinyDots(size, count)}
+				/>
+				<SVGD3
+					size={size}
+					position='absolute'
+					stroke={ancestors[index].color}
+					scalablePath={svgPath.dash(size, 0)}
 				/>
 				&nbsp;{#if count > 1}-{/if}&nbsp;
 			</span>

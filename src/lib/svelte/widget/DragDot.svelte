@@ -105,7 +105,7 @@
 	function updatePathAndPosition() {
 		size = k.dot_size;
 		left = center.x + 1;// - (size / 2);
-		top = path.toolsGrabbed ? 2 : (size / 2) - 4;
+		top = path.toolsGrabbed ? 2 : (size / 2) - 3.7;
 		scalablePath = svgPath.oval(size, false);
 		if (thing.parents.length > 1) {
 			extraPath = svgPath.circle(size, size / 5);

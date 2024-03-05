@@ -27,7 +27,7 @@ export default class Layout {
 		const child = childPath.thing;
 		let x, y = 0;
 		if (child) {
-			y = extent.y - childPath.visibleProgeny_halfHeight;
+			y = extent.y - childPath.visibleProgeny_halfHeight + 0.5;
 			x = origin.x + child.titleWidth + k.dot_size + k.line_stretch - 2;
 		} else {
 			console.log('grandchildren origin not computable');
