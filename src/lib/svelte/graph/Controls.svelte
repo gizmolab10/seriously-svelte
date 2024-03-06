@@ -73,17 +73,19 @@
 			color={k.color_background}
 			onClick={(event) => buttonClickedForID(IDButton.smaller)}>
 			<SVGD3
-				size={size}
+				width={size}
+				height={size}
 				scalablePath={svgPath.dash(size, 2)}
 			/>
 		</CircularButton>
 		<CircularButton
-			left={width - 105}
 			size={size}
+			left={width - 105}
 			color={k.color_background}
 			onClick={(event) => buttonClickedForID(IDButton.bigger)}>
 			<SVGD3
-				size={size}
+				width={size}
+				height={size}
 				scalablePath={svgPath.tCross(size, 2)}
 			/>
 		</CircularButton>

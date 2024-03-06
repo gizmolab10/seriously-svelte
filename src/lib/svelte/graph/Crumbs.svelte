@@ -24,13 +24,6 @@
 		}
 	}
 
-					// <SVGD3
-					// 	size={size}
-					// 	position='absolute'
-					// 	stroke={ancestors[index].color}
-					// 	scalablePath={svgPath.halfCircle(size, Direction.right)}
-					// />
-
 </script>
 
 {#key `${sum} ${left}`}
@@ -45,7 +38,8 @@
 				color: transparent;
 				left: {size / 8}px;'>
 				<SVGD3
-					size={size}
+					width={size}
+					height={size}
 					position='absolute'
 					stroke={ancestors[index].color}
 					scalablePath={svgPath.dash(size, 0)}

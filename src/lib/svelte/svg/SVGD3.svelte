@@ -7,7 +7,8 @@
     export let stroke = 'black';
     export let name = 'SVGD3';
     export let fill = 'none';
-    export let size = 10;
+    export let height = 10;
+    export let width = 10;
     export let x = 0;
     export let y = 0;
     let svg;
@@ -39,9 +40,9 @@
 
 <svg class={name}
     bind:this={svg}
-    width={size}px
-    height={size}px
-    viewBox='0 0 {size} {size}'
+    width={width}px
+    height={height}px
+    viewBox='0 0 {width} {height}'
     style='
         top: {y}px;
         left: {x}px;

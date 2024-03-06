@@ -7,9 +7,10 @@
 	export let thing;
 	export let path;
 	let bulkAliasFillColor = k.color_background;
+	let bulkAliasPath = svgPath.circle(16, 6);
 	let childrenCount = path.children.length;
-	let insidePath = svgPath.circle(16, 6);
-	let tinyDotsDiameter = k.dot_size * 2;
+	let tinyDotsDiameter = k.dot_size * 1.8;
+	let tinyDotsOffset = k.dot_size * -0.4;
 	let fillColor = k.color_background;
 	let strokeColor = thing.color;
 	let revealWrapper = Wrapper;
@@ -68,7 +69,7 @@
 			const direction = goLeft ? Direction.right : Direction.left;
 			scalablePath = svgPath.fatTriangle(k.dot_size, direction);
 			if (thing.isBulkAlias) {
-				insidePath = svgPath.circle(k.dot_size, k.dot_size / 3);
+				bulkAliasPath = svgPath.circle(k.dot_size, k.dot_size / 3);
 			}
 		}
 	}
@@ -122,7 +123,8 @@
 		'>
 		{#key scalablePath}
 			<SVGD3 name='revealDot'
-				size={k.dot_size}
+				width={k.dot_size}
+				height={k.dot_size}
 				stroke={strokeColor}
 				scalablePath={scalablePath}
 				fill={debug.lines ? 'transparent' : fillColor}
@@ -135,24 +137,26 @@
 				height:14px;
 				position:absolute;'>
 				<SVGD3 name='revealInside'
-					size={k.dot_size}
+					width={k.dot_size}
+					height={k.dot_size}
 					stroke={strokeColor}
 					fill={bulkAliasFillColor}
-					scalablePath={insidePath}
+					scalablePath={bulkAliasPath}
 				/>
 			</div>
 		{/if}
 		{#if !path.isExpanded && path.hasChildren}
 			<div class='revealTinyDots' style='
+				top:{tinyDotsOffset + 0.05}px;
 				height:{tinyDotsDiameter}px;
 				width:{tinyDotsDiameter}px;
-				position:absolute;
-				top:-6.5px;
-				left:-6px;'>
+				left:{tinyDotsOffset}px;
+				position:absolute;'>
 				<SVGD3 name='revealTinyDots'
 					fill={strokeColor}
 					stroke={strokeColor}
-					size={tinyDotsDiameter}
+					width={tinyDotsDiameter}
+					height={tinyDotsDiameter}
 					scalablePath={svgPath.tinyDots(tinyDotsDiameter, childrenCount)}
 				/>
 			</div>

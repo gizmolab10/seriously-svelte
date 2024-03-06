@@ -4,10 +4,12 @@
 	import { s_paths_grabbed, s_path_toolsCluster } from '../../ts/managers/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
 	import Box from '../kit/Box.svelte';
-	export let center = new Point(0.5, 0);
+	export let center = new Point(0, 0);
 	export let thing;
 	export let path;
-	let tinyDotColor = thing.color;
+	let parentsCount = thing.parents.length;
+	let tinyDotsDiameter = k.dot_size * 1.6;
+	let tinyDotsOffset = k.dot_size * -0.4;
 	let strokeColor = thing.color;
 	let fillColor = thing.color;
 	let scalablePath = '';
@@ -17,7 +19,7 @@
 	let clickCount = 0;
 	let handler = null;
 	let button = null;
-	let extraPath = null;
+	let tinyDotsPath = null;
 	let clickTimer;
 	let size = 0;
 	let left = 0;
@@ -34,7 +36,7 @@
 		updateColorsForHover(false);
         handler = signals.handle_alteringParent((alteration) => {
 			const applyFlag = $s_path_toolsCluster && path.things_canAlter_asParentOf_toolsGrab;
-			extraPath = (thing.parents.length < 2) ? null : svgPath.circle(size, size / 5);
+			tinyDotsPath = (thing.parents.length < 2) ? null : svgPath.circle(size, size / 5);
 			altering = applyFlag ? (alteration != null) : false;
 			updateColors();
         })
@@ -61,7 +63,6 @@
 	function updateColors() {
 		const isInverted = isHovering == altering;
 		thing.updateColorAttributes(path);
-		tinyDotColor = thing.dotColor(isInverted, path);
 		fillColor = debug.lines ? 'transparent' : thing.dotColor(!isInverted, path);
 		strokeColor = thing.color;
 	}
@@ -104,11 +105,11 @@
 
 	function updatePathAndPosition() {
 		size = k.dot_size;
-		left = center.x + 1;// - (size / 2);
-		top = path.toolsGrabbed ? 2 : (size / 2) - 3;
+		left = center.x + 1;
+		top = path.toolsGrabbed ? 2 : (size / 2) - 4;
 		scalablePath = svgPath.oval(size, false);
 		if (thing.parents.length > 1) {
-			extraPath = svgPath.circle(size, size / 5);
+			tinyDotsPath = svgPath.tinyDots(tinyDotsDiameter, parentsCount);
 		}
 	}
 
@@ -139,17 +140,22 @@
 		width: {size / 2}px;
 	'>
 	<SVGD3 name='dragDot'
-		size={size}
+		width={size}
+		height={size}
 		fill={fillColor}
 		stroke={strokeColor}
 		scalablePath={scalablePath}
 	/>
-	{#if extraPath}
-		<SVGD3 name='dragInnerDot'
-			size={size}
-			fill={tinyDotColor}
-			scalablePath={extraPath}
-			stroke={tinyDotColor}
+	{#if tinyDotsPath}
+		<SVGD3
+			fill={strokeColor}
+			name='dragInnerDot'
+			stroke={strokeColor}
+			y={tinyDotsOffset + 1.2}
+			width={tinyDotsDiameter}
+			height={tinyDotsDiameter}
+			scalablePath={tinyDotsPath}
+			x={tinyDotsOffset + left + 0.7}
 		/>
 	{/if}
 </button>

@@ -10,7 +10,9 @@
 	export let origin = new Point();
     export let path = '';
 	export let thing;
-	let priorRowHeight = k.row_height;
+	const hasExtraX = !path.isExpanded && (path.children.length > 3);
+	const rightPadding = hasExtraX ? 23 : 19;
+	const priorRowHeight = k.row_height;
 	let revealCenter = new Point();
 	let radius = k.dot_size / 2;
 	let widgetWrapper: Wrapper;
@@ -19,7 +21,6 @@
 	let priorOrigin = origin;
 	let isGrabbed = false;
 	let isEditing = false;
-	let rightPadding = 19;
 	let background = '';
 	let padding = '';
 	let border = '';
@@ -57,16 +58,6 @@
 	$: {
 		if (widget) {
 			widgetWrapper = new Wrapper(widget, path, IDWrapper.widget);
-		}
-	}
-	
-	$: {
-		if (priorRowHeight != k.row_height) {
-			setTimeout(() => {
-				debugReact.log_layout(`WIDGET k.row_height ${thing.description}`);
-				updateLayout()
-			}, 1);
-			priorRowHeight = k.row_height;
 		}
 	}
 	
@@ -110,10 +101,10 @@
 		const y = k.dot_size / 2 - 3.8;
 		const titleWidth = thing.titleWidth;
 		const delta = showingBorder ? -0.5 : 0.5;
-		const x = k.dot_size + thing.titleWidth;
-		revealCenter = new Point(x, y);
+		const x = k.dot_size + thing.titleWidth + (hasExtraX ? 3 : 0);
 		width = titleWidth - 18 + (k.dot_size * (path.hasChildren ? 2 : 1.35));
 		padding = `0px ${rightPadding}px 0px 1px`;
+		revealCenter = new Point(x, y);
 		top = origin.y + delta + 0.5;
 		height = k.row_height - 1.5;
 		left = origin.x + delta - 1;

@@ -19,11 +19,13 @@
     on:keypress={u.ignore}
     on:click={() => { $s_id_popupView = null; }}>
     <SVGD3
-		size={size}
+		width={size}
+		height={size}
 		scalablePath={circle}
 	/>
     <SVGD3
-		size={size}
+		width={size}
+		height={size}
 		scalablePath={cross}
 	/>
 </div>

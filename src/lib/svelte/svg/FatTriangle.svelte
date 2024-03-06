@@ -12,7 +12,8 @@
 </script>
 
 <SVGD3
-	size={size}
+	width={size}
+	height={size}
 	fill={fillColor}
 	position={position}
 	stroke={strokeColor}
@@ -20,7 +21,8 @@
 />
 {#if extraPath}
 	<SVGD3
-		size={size}
+		width={size}
+		height={size}
 		fill={extraColor}
 		stroke={extraColor}
 		scalablePath={extraPath}

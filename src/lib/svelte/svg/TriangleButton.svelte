@@ -56,14 +56,16 @@
 		left: {center.x + 3 - (size / 2)}px;
 	'>
 	<SVGD3
-		size={size}
+		width={size}
+		height={size}
 		fill={fillColor}
 		stroke={strokeColor}
 		scalablePath={scalablePath}
 	/>
 	{#if extraPath}
 		<SVGD3
-			size={size}
+			width={size}
+			height={size}
 			fill={extraColor}
 			stroke={extraColor}
 			scalablePath={extraPath}
