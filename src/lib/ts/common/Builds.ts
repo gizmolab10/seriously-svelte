@@ -11,6 +11,7 @@ class Builds {
 
 	constructor() {
 		this.notes = {
+			85 : ['March 6, 2024', 'move tiny dots in crumbs to surround reveal dots'],
 			84 : ['March 3, 2024', 'click title of thing to grab, tiny dots in crumbs'],
 			83 : ['February 24, 2024', 'cluster tools hover and disable logic'],
 			82 : ['February 16, 2024', 'add zoom in/out buttons for mobile'],

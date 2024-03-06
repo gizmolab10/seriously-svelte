@@ -105,7 +105,7 @@
 	function updatePathAndPosition() {
 		size = k.dot_size;
 		left = center.x + 1;// - (size / 2);
-		top = path.toolsGrabbed ? 2 : (size / 2) - 3.7;
+		top = path.toolsGrabbed ? 2 : (size / 2) - 3;
 		scalablePath = svgPath.oval(size, false);
 		if (thing.parents.length > 1) {
 			extraPath = svgPath.circle(size, size / 5);
@@ -138,14 +138,14 @@
 		position: absolute;
 		width: {size / 2}px;
 	'>
-	<SVGD3
+	<SVGD3 name='dragDot'
 		size={size}
 		fill={fillColor}
 		stroke={strokeColor}
 		scalablePath={scalablePath}
 	/>
 	{#if extraPath}
-		<SVGD3
+		<SVGD3 name='dragInnerDot'
 			size={size}
 			fill={tinyDotColor}
 			scalablePath={extraPath}

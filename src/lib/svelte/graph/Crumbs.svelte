@@ -30,13 +30,6 @@
 					// 	stroke={ancestors[index].color}
 					// 	scalablePath={svgPath.halfCircle(size, Direction.right)}
 					// />
-					// <SVGD3
-					// 	size={size}
-					// 	position='absolute'
-					// 	fill={ancestors[index].color}
-					// 	stroke={ancestors[index].color}
-					// 	scalablePath={svgPath.tinyDots(size, count)}
-					// />
 
 </script>
 
@@ -50,15 +43,15 @@
 				top:{size / 4}px;
 				position: relative;
 				color: transparent;
-				left: {size / 4}px;'>
+				left: {size / 8}px;'>
 				<SVGD3
 					size={size}
 					position='absolute'
 					stroke={ancestors[index].color}
 					scalablePath={svgPath.dash(size, 0)}
 				/>
-				&nbsp;{#if count > 1}-{/if}&nbsp;
 			</span>
+			&nbsp;&nbsp;
 		{/if}
 		<Crumb path={path.stripBack(ancestors.length - index - 1)}/>
 	{/each}

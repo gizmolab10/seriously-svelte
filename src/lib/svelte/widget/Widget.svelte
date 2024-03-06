@@ -8,9 +8,10 @@
 	import RevealDot from './RevealDot.svelte';
 	import DragDot from './DragDot.svelte';
 	export let origin = new Point();
-	export let thing = Thing;
     export let path = '';
+	export let thing;
 	let priorRowHeight = k.row_height;
+	let revealCenter = new Point();
 	let radius = k.dot_size / 2;
 	let widgetWrapper: Wrapper;
 	let showingCluster = false;
@@ -20,7 +21,6 @@
 	let isEditing = false;
 	let rightPadding = 19;
 	let background = '';
-	let revealTop = 0;
 	let padding = '';
 	let border = '';
 	let height = 0;
@@ -107,11 +107,13 @@
 	}
 
 	function updateLayout() {
+		const y = k.dot_size / 2 - 3.8;
 		const titleWidth = thing.titleWidth;
 		const delta = showingBorder ? -0.5 : 0.5;
+		const x = k.dot_size + thing.titleWidth;
+		revealCenter = new Point(x, y);
 		width = titleWidth - 18 + (k.dot_size * (path.hasChildren ? 2 : 1.35));
 		padding = `0px ${rightPadding}px 0px 1px`;
-		revealTop = (4.4 - k.dot_size) / 3;
 		top = origin.y + delta + 0.5;
 		height = k.row_height - 1.5;
 		left = origin.x + delta - 1;
@@ -138,6 +140,6 @@
 	<DragDot thing={thing} path={path}/>
 	<TitleEditor thing={thing} path={path} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 	{#if path.hasChildren}
-		<RevealDot thing={thing} path={path} center={new Point(0, revealTop)}/>
+		<RevealDot thing={thing} path={path} center={revealCenter}/>
 	{/if}
 </div>

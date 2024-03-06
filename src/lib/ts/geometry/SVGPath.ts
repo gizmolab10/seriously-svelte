@@ -78,17 +78,14 @@ export default class SVGPath {
 		if (count == 0) {
 			return '';
 		}
-		if (count == 1) {
-			return this.circle(size, size / 2);
-		}
-		const radius = size / 4;
+		const radius = size / 3;
 		const isOdd = (count % 2) != 0;
 		const increment = Math.PI * 2 / count;
-		let offset = new Point(isOdd ? -radius : 0, isOdd ? 0 : radius);
+		let offset = new Point(isOdd ? radius : 0, isOdd ? 0 : radius);
 		let index = 0;
 		let path = '';
 		while (index++ < count) {
-			path = path + this.circle(size, size / (count + 1), offset);
+			path = path + this.circle(size, size / 9, offset.offsetByX(-0.5));
 			offset = this.rotatePoint(offset, increment);
 		}
 		return path;
