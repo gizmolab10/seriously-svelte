@@ -1,4 +1,4 @@
-import { Point } from "./Geometry";
+import { k, Point } from '../common/GlobalImports';
 
 export enum Direction {
 	downRight = Math.PI * 4 / 3,
@@ -74,16 +74,16 @@ export default class SVGPath {
 		M ${x5},${y} A ${tiny},${tiny} 0 1,1 ${x6},${y} A ${tiny},${tiny} 0 1,1 ${x5},${y}`;
 	}
 
-	tinyDots(size: number, count: number): string {
+	tinyDots_circular(size: number, count: number): string {
 		if (count == 0) {
 			return '';
 		}
+		let index = 0;
+		let path = '';
 		const radius = size / 3;
 		const isOdd = (count % 2) != 0;
 		const increment = Math.PI * 2 / count;
-		let offset = new Point(isOdd ? radius : 0, isOdd ? 0 : radius);
-		let index = 0;
-		let path = '';
+		let offset = new Point(isOdd ? radius : 0, isOdd ? 0 : radius);2
 		while (index++ < count) {
 			path = path + this.circle(size, size / 9, offset.offsetByX(-0.5));
 			offset = this.rotatePoint(offset, increment);
@@ -91,41 +91,35 @@ export default class SVGPath {
 		return path;
 	}
 
-	fatTriangle(size: number, direction: number): string {
+	// TODO: this only works for the default number of vertices
+	fatPolygon(size: number, direction: number, vertices: number = 3): string {
 		const width = size;
 		const height = size;
 		const insetRatio = 0.35;
-		const offsetX = width / 2;
-		const offsetY = height / 2;
 		const radius = Math.min(width, height) * insetRatio;
+		const offset = new Point(width / 2, height / 2);
 		const outer = new Point(radius * 1.5, 0);
+		const segmentAngle = Math.PI / vertices;
 		const inner = new Point(radius, 0);
-		const oneThirtieth = Math.PI / 15; // one thirtieth of a circle
-		const oneSixth = Math.PI / 3; // one sixth of a circle
-		let start = new Point(0, 0);
+		const tweak = segmentAngle / 5;
 		let data = [];
 		let index = 0;
-		while (index < 3) {
-			const angle = direction + index * oneSixth * 2; // multiples of one third of a circle
-			const halfWay = angle - oneSixth;
-			const preceder = halfWay - oneThirtieth;
-			const follower = halfWay + oneThirtieth;
+		while (index++ < vertices) {
+			const angle = direction + index * segmentAngle * 2; // multiples of one third of a circle
+			const halfWay = angle - segmentAngle;
+			const preceder = halfWay - tweak;
+			const follower = halfWay + tweak;
 			data.push({
-				controlOne: this.rotatePoint(outer, preceder),
-				controlTwo: this.rotatePoint(outer, follower),
-				end:		this.rotatePoint(inner, angle),
+				controlOne: this.rotatePoint(outer, preceder).offsetBy(offset),
+				controlTwo: this.rotatePoint(outer, follower).offsetBy(offset),
+				end:		this.rotatePoint(inner,    angle).offsetBy(offset),
 			});
-			index += 1;
 		}
-
-		data = data.map(d => ({
-			controlOne: new Point(d.controlOne.x + offsetX, d.controlOne.y + offsetY),
-			controlTwo: new Point(d.controlTwo.x + offsetX, d.controlTwo.y + offsetY),
-			end: new Point(d.end.x + offsetX, d.end.y + offsetY),
-		}));
-
-		start = data[2].end;
-		return `M${start.x},${start.y},${data.map(d => `C${d.controlOne.x},${d.controlOne.y} ${d.controlTwo.x},${d.controlTwo.y} ${d.end.x},${d.end.y}`).join('')}Z`;
+		const start = data[vertices - 1].end;
+		const arcs = data.map(d => `C${d.controlOne.description} ${d.controlTwo.description} ${d.end.description}`);
+		const path = 'M' + start.description+ k.comma + arcs.join(k.space) + 'Z';
+		// console.log(path);
+		return path;
 	}
 
 	rotatePoint(point: Point, angle: number): Point {
@@ -136,6 +130,29 @@ export default class SVGPath {
 			point.x * sin + point.y * cos
 		);
 	}
+
+	tinyDots_linear(size: number, tiny: number, count: number = 3, vertical: boolean = false): string {
+		const pairs: Array<Array<number>> = [[1]];
+		const gap = size / count - tiny;
+		const other = 6;
+		let index = 0;
+		while (index < count) {
+			const pair = pairs[index];
+			const first = pair[0];
+			const other = first + tiny * 2;
+			pairs[index][1] = other;
+			if (index + 1 < count) {
+				pairs[index + 1] = [];
+				pairs[index + 1][0] = other + gap + tiny;
+			}
+			index++;
+		}
+		const paths = pairs.map(p => `M ${p[0]},${other} A ${tiny},${tiny} 0 1,1 ${p[1]},${other} A ${tiny},${tiny} 0 1,1 ${p[0]},${other} `);
+		const path = paths.join(k.space);
+		// console.log(path);
+		return path;
+	}
+
 }
 
 export const svgPath = new SVGPath();

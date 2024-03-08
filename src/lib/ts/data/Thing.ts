@@ -31,14 +31,14 @@ export default class Thing extends Datum {
 	get parentPaths():	  Array<Path> { return this.fromPathsFor(Predicate.idIsAParentOf); }
 	get parents():		 Array<Thing> { return this.things_fromPaths(this.parentPaths); }
 	get description():		   string { return this.id + ' \"' + this.title + '\"'; }
+	get titleWidth():		   number { return u.getWidthOf(this.title) + 6; }
 	get parentIDs():	Array<string> { return this.parents.map(t => t.id); }
 	get isRoot():			  boolean { return this == this.hierarchy.root; }
 	get isBulkAlias():		  boolean { return this.trait == IDTrait.bulk; }
-	get titleWidth():		   number { return u.getWidthOf(this.title) }
 	get hierarchy():		Hierarchy { return g.hierarchy; }
 	
 	debugLog(message: string) { this.log(DebugFlag.things, message); }
-	log(option: DebugFlag, message: string) { debug.log_maybe(option, message + ' ' + this.description); }
+	log(option: DebugFlag, message: string) { debug.log_maybe(option, message + k.space + this.description); }
 	thing_isInDifferentBulkThan(other: Thing) {
 		return this.baseID != other.baseID || (other.isBulkAlias && !this.isBulkAlias && this.baseID != other.title);
 	}

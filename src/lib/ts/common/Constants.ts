@@ -23,8 +23,14 @@ export default class Constants {
 	public title_default: string;
 	public title_line: string;
 	public id_unknown: string;
+	public comma: string;
+	public space: string;
+	public empty: string;
 
 	constructor() {
+		this.empty = '';
+		this.space = ' ';
+		this.comma = ',';
 		this.pathSeparator = '::';
 		this.id_unknown = 'unknown';
 		this.color_background = 'white';

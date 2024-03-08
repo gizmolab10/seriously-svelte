@@ -67,7 +67,7 @@
 		} else {
 			const goLeft = path.isExpanded && path.hasChildren;
 			const direction = goLeft ? Direction.right : Direction.left;
-			scalablePath = svgPath.fatTriangle(k.dot_size, direction);
+			scalablePath = svgPath.fatPolygon(k.dot_size, direction);
 			if (thing.isBulkAlias) {
 				bulkAliasPath = svgPath.circle(k.dot_size, k.dot_size / 3);
 			}
@@ -157,7 +157,7 @@
 					stroke={strokeColor}
 					width={tinyDotsDiameter}
 					height={tinyDotsDiameter}
-					scalablePath={svgPath.tinyDots(tinyDotsDiameter, childrenCount)}
+					scalablePath={svgPath.tinyDots_circular(tinyDotsDiameter, childrenCount)}
 				/>
 			</div>
 		{/if}

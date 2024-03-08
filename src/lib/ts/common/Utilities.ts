@@ -89,7 +89,7 @@ class Utilities {
 		const element: HTMLElement = document.createElement('div');
 		element.style.font = k.thing_fontSize + 'px ' + get(s_thing_fontFamily);
 		element.style.left = '-9999px'; // offscreen
-		element.style.padding = '0px 0px 0px 6px';
+		element.style.padding = '0px 0px 0px 0px';
 		element.style.position = 'absolute';
 		element.style.whiteSpace = 'pre';
 		element.textContent = s;

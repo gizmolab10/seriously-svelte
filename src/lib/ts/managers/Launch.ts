@@ -39,7 +39,7 @@ class Launch {
 			s_show_details.set(false);
 		}
         if (locate) {
-            for (const option of locate.split(',')) {
+            for (const option of locate.split(k.comma)) {
                 switch (option) {
                     case 'titleAtTop':
 						persistLocal.writeToKey(IDPersistant.title_atTop, true);
@@ -49,7 +49,7 @@ class Launch {
 			}
 		}
         if (erase) {
-            for (const option of erase.split(',')) {
+            for (const option of erase.split(k.comma)) {
                 switch (option) {
                     case 'data':
 						dbDispatch.eraseDB = true;

@@ -274,7 +274,7 @@ export default class DBFirebase implements DBInterface {
 			} catch (error) {
 				this.reportError(error);
 			}
-			debug.log_remote('HANDLE ' + baseID + ':' + type + ' ' + change.type);
+			debug.log_remote('HANDLE ' + baseID + ':' + type + k.space + change.type);
 		}
 	}
 

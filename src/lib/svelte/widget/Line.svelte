@@ -53,7 +53,7 @@
 				const extentY = curveType == IDLine.up   ? 1 : size.height;
 				const boxSize = new Size(size.width, (noHeight ? 2 : size.height));
 				viewBox = new Rect(origin, boxSize);
-				scalablePath = 'M0 ' + originY + 'A' + size.description + ' 0 0 ' + flag + ' ' + size.width + ' ' + extentY;
+				scalablePath = 'M0 ' + originY + 'A' + size.description + ' 0 0 ' + flag + k.space + size.width + k.space + extentY;
 			}
 		}
 	}

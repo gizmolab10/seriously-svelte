@@ -11,7 +11,7 @@
 	export let center;
 	export let size;
 	export let id;
-	let scalablePath = svgPath.fatTriangle(size, direction);
+	let scalablePath = svgPath.fatPolygon(size, direction);
 	let extraColor = k.color_background;
 	let fillColor = k.color_background;
 	let button = null;
@@ -26,7 +26,7 @@
 	}
 	
 	$: {
-		scalablePath = svgPath.fatTriangle(size, direction);
+		scalablePath = svgPath.fatPolygon(size, direction);
 		setFillColor(false);
 	}
 

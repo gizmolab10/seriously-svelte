@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, Thing, onMount, signals, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
+	import { k, u, Thing, onMount, signals, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
 	import { s_path_here } from '../../ts/managers/State';
 	export let path = '';
 	let borderColor = k.color_background;
@@ -43,6 +43,8 @@
 </script>
 
 <button
+	on:blur={u.ignore}
+	on:focus={u.ignore}
 	on:mouseout={mouseOut}
 	on:mouseover={mouseOver}
 	on:click={crumb_buttonClicked}

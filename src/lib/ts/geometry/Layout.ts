@@ -4,11 +4,11 @@ export default class Layout {
 	childMapArray: Array<ChildMap> = [];
 
 	constructor(path: Path, origin: Point) {
-		const sizeX = k.line_stretch;
+		let sumOfSiblingsAbove = -path.visibleProgeny_height() / 2; // start out negative and grow positive
 		const childPaths = path.childPaths;
 		const length = childPaths.length;
+		const sizeX = k.line_stretch;
 		let index = 0;
-		let sumOfSiblingsAbove = -path.visibleProgeny_height() / 2; // start out negative and grow positive
 		while (index < length) {
 			const childPath = childPaths[index];
 			const childHeight = childPath.visibleProgeny_height();

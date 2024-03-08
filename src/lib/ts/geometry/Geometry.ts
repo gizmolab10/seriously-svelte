@@ -1,4 +1,4 @@
-import { Path, Thing } from '../common/GlobalImports'
+import { k, Path, Thing } from '../common/GlobalImports'
 
 export class Point {
 	x: number;
@@ -11,9 +11,9 @@ export class Point {
 	get pixelVerbose():				 string { return this.x + 'px ' + this.y + 'px'; }
 	get copy():						  Point { return new Point(this.x, this.y); }
 	get asSize():					   Size { return new Size(this.x, this.y); }
+	get description():		 		 string { return this.x + ', ' + this.y; }
 	get dividedInHalf():			  Point { return this.multipliedBy(1/2); }
 	get negated():					  Point { return this.multipliedBy(-1); }
-	get description():		 		 string { return this.x + ' ' + this.y; }
 	offsetByX(x: number):			  Point { return new Point(this.x + x, this.y); }
 	offsetByY(y: number):			  Point { return new Point(this.x, this.y + y); }
 	offsetEquallyBy(offset: number):  Point { return this.offsetBy(Point.square(offset)); }
@@ -35,7 +35,7 @@ export class Size {
 
 	get verbose():					string { return '(' + this.width + ', ' + this.height + ')'; }
 	get pixelVerbose():				string { return this.width + 'px ' + this.height + 'px'; }
-	get description():				string { return this.width + ' ' + this.height; }
+	get description():				string { return this.width + k.space + this.height; }
 	get asPoint():			   		 Point { return new Point(this.width, this.height); }
 	get dividedInHalf():			  Size { return this.multipliedBy(1/2); }
 	get negated():					  Size { return this.multipliedBy(-1); }
@@ -75,7 +75,7 @@ export class Rect {
 	}
 
 	get description():	   string { return this.origin.verbose + ', ' + this.size.verbose; }
-	get pixelVerbose():	   string { return this.origin.pixelVerbose + ' ' + this.size.pixelVerbose; }
+	get pixelVerbose():	   string { return this.origin.pixelVerbose + k.space + this.size.pixelVerbose; }
 	get center():			Point { return this.origin.offsetBySize(this.size.dividedInHalf); }
 	get extent():			Point { return this.origin.offsetBySize(this.size); }		// bottom right
 	get topRight():			Point { return new Point(this.extent.x, this.origin.y); };

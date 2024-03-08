@@ -1,6 +1,6 @@
 <script lang='ts'>
     import { svgPath, onDestroy, Direction, dbDispatch, transparentize, AlteringParent } from '../../ts/common/GlobalImports';
-    import { g, k, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, signals } from '../../ts/common/GlobalImports';
+    import { g, k, u, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, signals } from '../../ts/common/GlobalImports';
     import { s_user_graphOffset, s_altering_parent, s_path_toolsCluster } from '../../ts/managers/State';
     import { s_graphRect, s_show_details } from '../../ts/managers/State';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
@@ -19,11 +19,9 @@
     let hovers: { [type: string]: boolean } = {}
     let centers: { [type: string]: Point } = {}
     let hasOneVisibleParent = false;
-    let revealOffset = new Point();
     let parentSensitiveColor = '';
     let confirmingDelete = false;
     let userOffset = new Point();
-    let bigOffset = new Point();
     let graphRect = new Rect();
     let hasOneParent = false;
 	let toggle = false;
@@ -120,25 +118,24 @@
 
 	function update(): boolean {
         const rect = path?.titleRect;
-        bigOffset = new Point(-18.5 - titleWidth, clusterRadius - 43);
         if (rect && $s_path_toolsCluster && rect.size.width != 0) {
+            const offsetReveal = new Point(8.5 - titleWidth, -5);
             const offsetX = 9 - ($s_show_details ? k.width_details : 0);
             const offsetY = (g.titleIsAtTop ? -45 : 0) - clusterDiameter - 5.5;
             const center = rect.centerLeft.offsetBy(new Point(titleWidth + offsetX, offsetY));
-            const right = center.x + toolDiameter;
-            const y = center.y + 3;
             left = center.x - toolDiameter;
+            const y = center.y + 3;
             setC(IDTool.cluster, center);
-            setC(IDTool.create, new Point(right - 3, y - toolRadius - 5));
+            setC(IDTool.reveal, center.offsetBy(offsetReveal));
             setC(IDTool.add_parent, new Point(left - 1, y - toolRadius - 5));
             setC(IDTool.next, new Point(center.x - 2, y - toolDiameter - 6));
             setC(IDTool.delete_parent, new Point(left - 1, y + toolDiameter - 11));
             setC(IDTool.more, new Point(center.x + 0.5, y + (toolRadius * 2) + 1));
-            setC(IDTool.confirmation, center.offsetEquallyBy(1 - (clusterRadius)));
-            setC(IDTool.delete, new Point(right - toolRadius - 5, y + toolRadius - 9));
+            setC(IDTool.confirmation, center.offsetEquallyBy(1 - clusterRadius));
+            setC(IDTool.delete, new Point(center.x + toolRadius - 5, y + toolRadius - 9));
+            setC(IDTool.create, new Point(center.x + toolDiameter - 3, y - toolRadius - 5));
             setC(IDTool.delete_cancel, center.offsetBy(new Point(1 - toolDiameter, toolDiameter - 5)));
             setC(IDTool.delete_confirm, center.offsetBy(new Point(2 - toolDiameter, 5 - toolDiameter)));
-            revealOffset = new Point(-titleWidth, -clusterRadius).offsetEquallyBy(-19);
             return true;
         }
         return false;
@@ -179,9 +176,9 @@
             {#if confirmingDelete}
                 {#if hovers[IDTool.delete_confirm]}
                     <svg class='delete-confirm' style='
-                        left:{getC(IDTool.confirmation).x}px;
-                        top:{getC(IDTool.confirmation).y}px;
-                        z-index:{ZIndex.lines};'
+                            left:{getC(IDTool.confirmation).x}px;
+                            top:{getC(IDTool.confirmation).y}px;
+                            z-index:{ZIndex.lines};'
                         viewBox={halfCircleViewBox}
                         height={clusterDiameter}
                         width={clusterDiameter}
@@ -192,9 +189,9 @@
                 {/if}
                 {#if hovers[IDTool.delete_cancel]}
                     <svg class='delete-cancel' style='
-                        left:{getC(IDTool.confirmation).x}px;
-                        top:{getC(IDTool.confirmation).y}px;
-                        z-index:{ZIndex.lines};'
+                            left:{getC(IDTool.confirmation).x}px;
+                            top:{getC(IDTool.confirmation).y}px;
+                            z-index:{ZIndex.lines};'
                         viewBox={halfCircleViewBox}
                         height={clusterDiameter}
                         width={clusterDiameter}
@@ -222,8 +219,8 @@
                         position: absolute;
                         background-color: {color};
                         z-index: {ZIndex.frontmost};
-                        top: {getC(IDTool.cluster).y + 0.5}px;
                         width: {clusterDiameter + 1}px;
+                        top: {getC(IDTool.cluster).y + 0.5}px;
                         left: {getC(IDTool.cluster).x - clusterRadius}px;'>
                 </div>
             {:else}
@@ -246,10 +243,10 @@
                     height=10
                     viewBox='-2 -2 14 10'
                     fill={hovers[IDTool.more] ? k.color_background : color}>
-                    <path d={svgPath.ellipses(1, 2)}/>
+                    <path d={svgPath.tinyDots_linear(14, 1)}/>
                 </svg>
             </LabelButton>
-            <RevealDot thing={thing} path={$s_path_toolsCluster} center={getC(IDTool.cluster).offsetBy(bigOffset)}/>
+            <RevealDot thing={thing} path={$s_path_toolsCluster} center={getC(IDTool.reveal)}/>
             <TriangleButton
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.next, isFilled) }}
                 strokeColor={isDisabledFor(IDTool.next) ? k.color_disabled : parentSensitiveColor}
@@ -290,6 +287,8 @@
                 size={toolDiameter}
                 id='add'/>
             <button class='delete'
+                on:blur={u.ignore}
+                on:focus={u.ignore}
                 on:mouseout={() => { hovers[IDTool.delete] = false; }}
                 on:mouseover={() => { hovers[IDTool.delete] = true; }}
                 on:click={(event) => handleClick(IDTool.delete, event)}

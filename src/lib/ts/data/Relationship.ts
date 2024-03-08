@@ -1,4 +1,4 @@
-import { g, Thing, debug, dbDispatch, DebugFlag } from '../common/GlobalImports';
+import { g, k, Thing, debug, dbDispatch, DebugFlag } from '../common/GlobalImports';
 import Airtable from 'airtable';
 import Datum from '../structures/Datum';
 
@@ -21,7 +21,7 @@ export default class Relationship extends Datum {
 	get toThing(): Thing | null { return this.thing(true); }
 	get fromThing(): Thing | null { return this.thing(false); }
 	get fields(): Airtable.FieldSet { return { predicate: [this.idPredicate], from: [this.idFrom], to: [this.idTo], order: this.order }; }
-	get description(): string { return ' \"' + this.baseID + '\" ' + this.isRemotelyStored + ' ' + this.order + ' ' + this.id + ' '	+ g.hierarchy.thing_getForHID(this.idFrom.hash())?.description + ' => ' + g.hierarchy.thing_getForHID(this.idTo.hash())?.description; }
+	get description(): string { return ' \"' + this.baseID + '\" ' + this.isRemotelyStored + k.space + this.order + k.space + this.id + k.space	+ g.hierarchy.thing_getForHID(this.idFrom.hash())?.description + ' => ' + g.hierarchy.thing_getForHID(this.idTo.hash())?.description; }
 
 	get isValid(): boolean {
 		if (this.idPredicate && this.idFrom && this.idTo) {
@@ -31,7 +31,7 @@ export default class Relationship extends Datum {
 	}
 
 	log(option: DebugFlag, message: string) {
-		debug.log_maybe(option, message + ' ' + this.description);
+		debug.log_maybe(option, message + k.space + this.description);
 	}
 
 	thing(to: boolean): Thing | null {

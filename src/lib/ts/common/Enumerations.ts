@@ -28,6 +28,7 @@ export enum IDTool {
 	cluster			= 'cluster',
 	delete			= 'delete',
 	create    		= 'create',
+	reveal			= 'reveal',
 	next			= 'next',
 	more			= 'more',
 }

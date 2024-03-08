@@ -82,7 +82,7 @@ export default class Hierarchy {
 				if (pathGrab && k.allow_TitleEditing) {
 					switch (key) {
 						case 'd':		await this.thing_edit_remoteDuplicate(pathGrab); break;
-						case ' ':		await this.path_edit_remoteCreateChildOf(pathGrab); break;
+						case k.space:		await this.path_edit_remoteCreateChildOf(pathGrab); break;
 						case '-':		if (!COMMAND) { await this.thing_edit_remoteAddLine(pathGrab); } break;
 						case 'tab':		await this.path_edit_remoteCreateChildOf(pathGrab.fromPath); break; // Title editor also makes this call
 						case 'enter':	pathGrab.startEdit(); break;
@@ -488,7 +488,7 @@ export default class Hierarchy {
 	relationship_remember(relationship: Relationship) {
 		if (!this.knownR_byHID[relationship.hashedID]) {
 			if (relationship.baseID != this.db.baseID) {
-				debug.log_error('RELATIONSHIP ' + relationship.baseID + ' ' + this.thing_getForHID(relationship.idFrom.hash())?.description + ' => ' + this.thing_getForHID(relationship.idTo.hash())?.description);
+				debug.log_error('RELATIONSHIP ' + relationship.baseID + k.space + this.thing_getForHID(relationship.idFrom.hash())?.description + ' => ' + this.thing_getForHID(relationship.idTo.hash())?.description);
 			}
 			this.knownRs.push(relationship);
 			this.knownR_byHID[relationship.hashedID] = relationship;
