@@ -25,10 +25,10 @@ export enum IDTool {
 	delete_parent	= 'delete_parent',
 	confirmation	= 'confirmation',
 	add_parent		= 'add_parent',
+	dismiss			= 'dismiss',
 	cluster			= 'cluster',
 	delete			= 'delete',
 	create    		= 'create',
-	reveal			= 'reveal',
 	next			= 'next',
 	more			= 'more',
 }

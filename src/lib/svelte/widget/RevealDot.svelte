@@ -19,9 +19,9 @@
 	let revealDot = null;
 	
 	onMount( () => { setIsHovering_updateColors(false); updateScalablePaths(); });
-	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
 	function mouseOut(event) { setIsHovering_updateColors(false); }
-	function handleMouseOver(event) { setIsHovering_updateColors(true); }
+	function mouseOver(event) { setIsHovering_updateColors(true); }
+	function contextMenu(event) { event.preventDefault(); }
 
 	$: {
 		if (revealDot &&!path.matchesPath($s_path_toolsCluster)) {
@@ -57,16 +57,15 @@
 	function updateColors() {
 		thing.updateColorAttributes(path);
 		const collapsedGrabbed = !path.isExpanded || path.isGrabbed;
-		fillColor = thing.dotColor(collapsedGrabbed != isHovering, path);
-		bulkAliasFillColor = thing.dotColor(collapsedGrabbed == isHovering, path);
+		fillColor = path.dotColor(collapsedGrabbed != isHovering);
+		bulkAliasFillColor = path.dotColor(collapsedGrabbed == isHovering);
 	}
 
 	function updateScalablePaths() {
 		if ((!path.hasChildren && !thing.isBulkAlias) || $s_path_toolsCluster?.matchesPath(path)) {
 			scalablePath = svgPath.circle(k.dot_size, k.dot_size - 1);
 		} else {
-			const goLeft = path.isExpanded && path.hasChildren;
-			const direction = goLeft ? Direction.right : Direction.left;
+			const direction = path.showsChildren ? Direction.left : Direction.right;
 			scalablePath = svgPath.fatPolygon(k.dot_size, direction);
 			if (thing.isBulkAlias) {
 				bulkAliasPath = svgPath.circle(k.dot_size, k.dot_size / 3);
@@ -99,67 +98,62 @@
 	}
 </style>
 
-<div class='revealDot' style='
-	top: {center.y}px;
-	left: {center.x}px;
-	position: absolute;
-	width: {k.dot_size}px;
-	z-index: {ZIndex.dots};
-	height: {k.dot_size}px;'>
-	<button class='dot'
-		on:blur={u.ignore}
-		on:focus={u.ignore}
-		on:keyup={u.ignore}
-		bind:this={revealDot}
-		on:keydown={u.ignore}
-		on:keypress={u.ignore}
-		on:mouseout={mouseOut}
-		on:click={handleClick}
-		on:mouseover={handleMouseOver}
-		on:contextmenu={handleContextMenu}
-		style='
-			width: {k.dot_size}px;
-			height: {k.dot_size}px;
-		'>
-		{#key scalablePath}
-			<SVGD3 name='revealDot'
+<button class='dot'
+	on:blur={u.ignore}
+	on:focus={u.ignore}
+	on:keyup={u.ignore}
+	bind:this={revealDot}
+	on:keydown={u.ignore}
+	on:keypress={u.ignore}
+	on:mouseout={mouseOut}
+	on:click={handleClick}
+	on:mouseover={mouseOver}
+	on:contextmenu={contextMenu}
+	style='
+		top: {center.y}px;
+		left: {center.x}px;
+		width: {k.dot_size}px;
+		height: {k.dot_size}px;
+		z-index: {ZIndex.dots};
+	'>
+	{#key scalablePath}
+		<SVGD3 name='revealDot'
+			width={k.dot_size}
+			height={k.dot_size}
+			stroke={strokeColor}
+			scalablePath={scalablePath}
+			fill={debug.lines ? 'transparent' : fillColor}
+		/>
+	{/key}
+	{#if thing.isBulkAlias}
+		<div class='revealInside' style='
+			left:-1px;
+			width:14px;
+			height:14px;
+			position:absolute;'>
+			<SVGD3 name='revealInside'
 				width={k.dot_size}
 				height={k.dot_size}
 				stroke={strokeColor}
-				scalablePath={scalablePath}
-				fill={debug.lines ? 'transparent' : fillColor}
+				fill={bulkAliasFillColor}
+				scalablePath={bulkAliasPath}
 			/>
-		{/key}
-		{#if thing.isBulkAlias}
-			<div class='revealInside' style='
-				left:-1px;
-				width:14px;
-				height:14px;
-				position:absolute;'>
-				<SVGD3 name='revealInside'
-					width={k.dot_size}
-					height={k.dot_size}
-					stroke={strokeColor}
-					fill={bulkAliasFillColor}
-					scalablePath={bulkAliasPath}
-				/>
-			</div>
-		{/if}
-		{#if !path.isExpanded && path.hasChildren}
-			<div class='revealTinyDots' style='
-				top:{tinyDotsOffset + 0.05}px;
-				height:{tinyDotsDiameter}px;
-				width:{tinyDotsDiameter}px;
-				left:{tinyDotsOffset}px;
-				position:absolute;'>
-				<SVGD3 name='revealTinyDots'
-					fill={strokeColor}
-					stroke={strokeColor}
-					width={tinyDotsDiameter}
-					height={tinyDotsDiameter}
-					scalablePath={svgPath.tinyDots_circular(tinyDotsDiameter, childrenCount)}
-				/>
-			</div>
-		{/if}
-	</button>
-</div>
+		</div>
+	{/if}
+	{#if !path.isExpanded && path.hasChildren}
+		<div class='revealTinyDots' style='
+			top:{tinyDotsOffset + 0.05}px;
+			height:{tinyDotsDiameter}px;
+			width:{tinyDotsDiameter}px;
+			left:{tinyDotsOffset}px;
+			position:absolute;'>
+			<SVGD3 name='revealTinyDots'
+				fill={strokeColor}
+				stroke={strokeColor}
+				width={tinyDotsDiameter}
+				height={tinyDotsDiameter}
+				scalablePath={svgPath.tinyDots_circular(tinyDotsDiameter, childrenCount)}
+			/>
+		</div>
+	{/if}
+</button>

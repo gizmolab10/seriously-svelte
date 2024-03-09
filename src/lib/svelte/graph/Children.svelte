@@ -8,10 +8,9 @@
 	import Line from '../widget/Line.svelte';
 	export let origin = new Point();
     export let path = '';
-	const halfDotSize = k.dot_size / 2;
 	const widgetOffset = new Point(12, (k.dot_size / -15) - 10.5);
-	const lineOffset = new Point(halfDotSize - 129, halfDotSize - 7.3);
-	let childMapArray: Array<ChildMap> = [];
+	const lineOffset = new Point(-123.5, -0.8);
+	let childMapRectArray: Array<ChildMapRect> = [];
 	let priorTime = new Date().getTime();
 	let center = new Point();
 
@@ -40,9 +39,9 @@
 				setTimeout(async () => {	// delay until all other handlers for this signal are done TODO: WHY?
 					layoutChildren();
 					if (path_signal) {		// only recurse if starting at a specific path_signal
-						for (const childMap of childMapArray) {
-							if (childMap.path.hasChildren && childMap.path.isExpanded) {
-								childMap.path.signal_relayout();
+						for (const childMapRect of childMapRectArray) {
+							if (childMapRect.path.hasChildren && childMapRect.path.isExpanded) {
+								childMapRect.path.signal_relayout();
 							}
 						}
 					}
@@ -55,7 +54,7 @@
 		const delta = new Point(19, -2);
 		const height = (path.visibleProgeny_halfHeight);
 		const childrenOrigin = origin.offsetByY(height);
-		childMapArray = new Layout(path, childrenOrigin).childMapArray;
+		childMapRectArray = new Layout(path, childrenOrigin).childMapRectArray;
 		center = childrenOrigin.offsetBy(delta);
 	}
 	
@@ -64,7 +63,7 @@
 {#if debug.lines}
 	<Circle radius=1 center={center} color=black thickness=1/>
 {/if}
-{#each childMapArray as map}
+{#each childMapRectArray as map}
 	<Widget thing={map.child} path={map.childPath} origin={map.extent.offsetBy(widgetOffset)}/>
 	<Line thing={map.child} path={map.childPath} curveType={map.curveType} rect={map.offsetBy(lineOffset)}/>
 	{#if map.childPath.hasChildren && map.childPath.isExpanded}

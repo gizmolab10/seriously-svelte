@@ -1,12 +1,10 @@
 import { k, Point } from '../common/GlobalImports';
 
 export enum Direction {
-	downRight = Math.PI * 4 / 3,
-	upRight = Math.PI * 2 / 3,
 	down = Math.PI * 3 / 2,
 	up = Math.PI / 2,
-	left = Math.PI,
-	right = 0,
+	right = Math.PI,
+	left = 0,
 }
 
 export default class SVGPath {

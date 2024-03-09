@@ -79,11 +79,11 @@ export class Rect {
 	get center():			Point { return this.origin.offsetBySize(this.size.dividedInHalf); }
 	get extent():			Point { return this.origin.offsetBySize(this.size); }		// bottom right
 	get topRight():			Point { return new Point(this.extent.x, this.origin.y); };
+	get centerTop():	 	Point { return new Point(this.center.x, this.origin.y); };
 	get bottomLeft():		Point { return new Point(this.origin.x, this.extent.y); };
 	get centerLeft():		Point { return new Point(this.origin.x, this.center.y); };
 	get centerRight():		Point { return new Point(this.extent.x, this.center.y); };
 	get centerBottom():		Point { return new Point(this.center.x, this.extent.y); };
-	get centerTop():	 	Point { return new Point(this.center.x, this.origin.y); };
 	get copy():			 	 Rect { return new Rect(this.origin.copy, this.size.copy); }
 	get dividedInHalf():	 Rect { return this.expandedBy(this.size.multipliedBy(-1/2)); }
 	offsetByX(x: number):	 Rect { return new Rect(this.origin.offsetByX(x), this.size); }
@@ -92,7 +92,7 @@ export class Rect {
 	expandedBy(delta: Size): Rect { return new Rect(this.origin, this.size.expandedBy(delta)) }
 }
 
-export class ChildMap extends Rect {
+export class ChildMapRect extends Rect {
 	child: Thing | null;
 	childOrigin: Point;
 	curveType: string;

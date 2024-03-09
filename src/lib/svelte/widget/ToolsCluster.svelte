@@ -11,7 +11,6 @@
 	import Trash from '../svg/Trash.svelte';
     const clusterDiameter = 64;
 	const toolDiameter = k.dot_size * 1.4;
-	const toolRadius = toolDiameter / 2;
     const clusterRadius = clusterDiameter / 2;
     const disableSensitive = [IDTool.next, IDTool.delete_parent];
     const parentAltering = [IDTool.add_parent, IDTool.delete_parent];
@@ -124,18 +123,18 @@
             const offsetY = (g.titleIsAtTop ? -45 : 0) - clusterDiameter - 5.5;
             const center = rect.centerLeft.offsetBy(new Point(titleWidth + offsetX, offsetY));
             left = center.x - toolDiameter;
-            const y = center.y + 3;
-            setC(IDTool.cluster, center);
-            setC(IDTool.reveal, center.offsetBy(offsetReveal));
-            setC(IDTool.add_parent, new Point(left - 1, y - toolRadius - 5));
-            setC(IDTool.next, new Point(center.x - 2, y - toolDiameter - 6));
-            setC(IDTool.delete_parent, new Point(left - 1, y + toolDiameter - 11));
-            setC(IDTool.more, new Point(center.x + 0.5, y + (toolRadius * 2) + 1));
-            setC(IDTool.confirmation, center.offsetEquallyBy(1 - clusterRadius));
-            setC(IDTool.delete, new Point(center.x + toolRadius - 5, y + toolRadius - 9));
-            setC(IDTool.create, new Point(center.x + toolDiameter - 3, y - toolRadius - 5));
-            setC(IDTool.delete_cancel, center.offsetBy(new Point(1 - toolDiameter, toolDiameter - 5)));
+            const y = center.y;
+            setC(IDTool.cluster,        center);
+            setC(IDTool.dismiss,        center.offsetBy(offsetReveal));
+            setC(IDTool.confirmation,   center.offsetEquallyBy(1 - clusterRadius));
+            setC(IDTool.delete_cancel,  center.offsetBy(new Point(1 - toolDiameter, toolDiameter - 5)));
             setC(IDTool.delete_confirm, center.offsetBy(new Point(2 - toolDiameter, 5 - toolDiameter)));
+            setC(IDTool.create,         new Point(center.x + toolDiameter - 3, y - toolDiameter + 3));
+            setC(IDTool.next,           new Point(center.x - 2, y - toolDiameter - 2));
+            setC(IDTool.more,           new Point(center.x + 1, y + toolDiameter + 4));
+            setC(IDTool.delete_parent,  new Point(left - 1, y + toolDiameter - 8));
+            setC(IDTool.add_parent,     new Point(left - 1, y - toolDiameter + 6));
+            setC(IDTool.delete,         new Point(center.x + 4, y + 3));
             return true;
         }
         return false;
@@ -228,7 +227,6 @@
                 width=20
                 height=16
                 color={color}
-                cursor='pointer'
                 center={getC(IDTool.more)}
                 onClick={(event) => handleClick(IDTool.more, event)}
                 hover_closure={(isHovering) => { hovers[IDTool.more] = isHovering; }}>
@@ -246,7 +244,7 @@
                     <path d={svgPath.tinyDots_linear(14, 1)}/>
                 </svg>
             </LabelButton>
-            <RevealDot thing={thing} path={$s_path_toolsCluster} center={getC(IDTool.reveal)}/>
+            <RevealDot thing={thing} path={$s_path_toolsCluster} center={getC(IDTool.dismiss)}/>
             <TriangleButton
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.next, isFilled) }}
                 strokeColor={isDisabledFor(IDTool.next) ? k.color_disabled : parentSensitiveColor}
@@ -264,7 +262,7 @@
                 extraPath={svgPath.dash(toolDiameter, 4)}
                 center={getC(IDTool.delete_parent)}
                 strokeColor={parentSensitiveColor}
-                direction={Direction.right}
+                direction={Direction.left}
                 id='delete_parent'
                 size={toolDiameter}/>
             <TriangleButton
@@ -274,7 +272,7 @@
                 strokeColor={path.isHere ? parentSensitiveColor : color}
                 extraPath={svgPath.tCross(toolDiameter, 3)}
                 center={getC(IDTool.add_parent)}
-                direction={Direction.right}
+                direction={Direction.left}
                 id='add_parent'
                 size={toolDiameter}/>
             <TriangleButton
@@ -282,7 +280,7 @@
                 onClick={(event) => handleClick(IDTool.create, event)}
                 extraPath={svgPath.tCross(toolDiameter, 3)}
                 center={getC(IDTool.create)}
-                direction={Direction.left}
+                direction={Direction.right}
                 strokeColor={color}
                 size={toolDiameter}
                 id='add'/>

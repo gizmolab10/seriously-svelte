@@ -1,7 +1,7 @@
 import { IDTrait, IDBrowser, ZIndex, IDButton, AlteringParent } from './Enumerations';
 import { debugReact, DebugReact, ReactFlag } from '../debug/DebugReact';
 import { IDPersistant, persistLocal } from '../managers/PersistLocal';
-import { Rect, Size, Point, ChildMap } from '../geometry/Geometry';
+import { Rect, Size, Point, ChildMapRect } from '../geometry/Geometry';
 import { CreationOptions, IDLine, IDTool } from './Enumerations';
 import { debug, Debug, DebugFlag } from '../debug/Debug';
 import { Direction, svgPath } from '../geometry/SVGPath';
@@ -36,7 +36,7 @@ import User from '../data/User';
 export {
 	Path, Grabs, Wrapper, TitleState,
 	IDWrapper, IDTrait, TypeDB, IDLine,
-	Rect, Size, Point, Layout, ChildMap, IDTool,
+	Rect, Size, Point, Layout, ChildMapRect, IDTool,
 	svgPath, Direction, IDPersistant, persistLocal,
 	signals, IDSignal, debugReact, DebugReact, ReactFlag,
 	debug, Debug, DebugFlag, TypeDatum, dbDispatch, Hierarchy,

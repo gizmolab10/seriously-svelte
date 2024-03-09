@@ -63,7 +63,7 @@
 	function updateColors() {
 		const isInverted = isHovering == altering;
 		thing.updateColorAttributes(path);
-		fillColor = debug.lines ? 'transparent' : thing.dotColor(!isInverted, path);
+		fillColor = debug.lines ? 'transparent' : path.dotColor(!isInverted);
 		strokeColor = thing.color;
 	}
 

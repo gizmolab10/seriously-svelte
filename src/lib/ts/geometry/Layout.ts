@@ -1,7 +1,7 @@
-import { k, Path, Rect, Size, Point, ChildMap, IDLine } from '../common/GlobalImports';
+import { k, Path, Rect, Size, Point, ChildMapRect, IDLine } from '../common/GlobalImports';
 
 export default class Layout {
-	childMapArray: Array<ChildMap> = [];
+	childMapRectArray: Array<ChildMapRect> = [];
 
 	constructor(path: Path, origin: Point) {
 		let sumOfSiblingsAbove = -path.visibleProgeny_height() / 2; // start out negative and grow positive
@@ -16,8 +16,8 @@ export default class Layout {
 			const rect = new Rect(origin, new Size(sizeX, sizeY));
 			const childOrigin = this.originForChildrenOf(childPath, origin, rect.extent);
 			const direction = this.getDirection(sizeY);
-			const childMap = new ChildMap(direction, rect, childOrigin, childPath, path);
-			this.childMapArray.push(childMap);
+			const childMapRect = new ChildMapRect(direction, rect, childOrigin, childPath, path);
+			this.childMapRectArray.push(childMapRect);
 			sumOfSiblingsAbove += childHeight;
 			index += 1;
 		}
@@ -28,7 +28,7 @@ export default class Layout {
 		let x, y = 0;
 		if (child) {
 			y = extent.y - childPath.visibleProgeny_halfHeight + 0.5;
-			x = origin.x + child.titleWidth + k.dot_size + k.line_stretch - 2;
+			x = origin.x + child.titleWidth + k.dot_size + k.line_stretch - 1;
 		} else {
 			console.log('grandchildren origin not computable');
 		}

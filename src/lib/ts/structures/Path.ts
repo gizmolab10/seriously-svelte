@@ -48,18 +48,19 @@ export default class Path {
 	get isHere(): boolean { return this.matchesStore(s_path_here); }
 	get hasChildren(): boolean { return this.childPaths.length > 0; }
 	get isExemplar(): boolean { return this.pathString == 'exemplar'; }
+	get title(): string { return this.thing?.title ?? 'missing title'; }
 	get siblingPaths(): Array<Path> { return this.fromPath.childPaths; }
 	get hashedIDs(): Array<number> { return this.ids.map(i => i.hash()); }
 	get relationship(): Relationship | null { return this.relationshipAt(); }
-	get title(): string { return this.thing?.title ?? 'missing title'; }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
 	get things(): Array<Thing> { return g.hierarchy?.things_getForPath(this); }
 	get lineWrapper(): Wrapper | null { return this.wrappers[IDWrapper.line]; }
+	get showsChildren(): boolean { return this.isExpanded && this.hasChildren; }
 	get titleWrapper(): Wrapper | null { return this.wrappers[IDWrapper.title]; }
 	get toolsGrabbed(): boolean { return this.matchesStore(s_path_toolsCluster); }
 	get revealWrapper(): Wrapper | null { return this.wrappers[IDWrapper.reveal]; }
 	get widgetWrapper(): Wrapper | null { return this.wrappers[IDWrapper.widget]; }
-	get titleRect(): Rect | null { return this.wrapperRectFor(IDWrapper.title); }
+	get titleRect(): Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get children(): Array<Thing> { return g.hierarchy?.things_getForPaths(this.childPaths); }
@@ -156,8 +157,19 @@ export default class Path {
 	matchesPath(path: Path | null): boolean { return !path ? false : this.pathString == path.pathString; }
 	includedInPaths(paths: Array<Path>): boolean { return paths.filter(p => p.matchesPath(this)).length > 0; }
 	sharesAnID(path: Path | null): boolean { return !path ? false : this.ids.some(id => path.ids.includes(id)); }
-	wrapperRectFor(id: IDWrapper): Rect | null { return Rect.createFromDOMRect(this.wrappers[id]?.component.getBoundingClientRect()); }
+	rect_ofWrapper(wrapper: Wrapper | null): Rect | null { return Rect.createFromDOMRect(wrapper?.component.getBoundingClientRect()); }
 	relationshipAt(back: number = 1): Relationship | null { return g.hierarchy?.relationship_getForHID(this.idAt(back).hash()) ?? null; }
+
+	dotColor(isInverted: boolean): string {
+		const thing = this.thing;
+		if (thing) {
+			const showBorder = this.isGrabbed || this.isEditing || thing.isExemplar;
+			if (isInverted != showBorder) {
+				return thing.color;
+			}
+		}
+		return k.color_background;
+	}
 
 	appendID(id: string): Path {
 		let ids = this.ids;
@@ -298,7 +310,7 @@ export default class Path {
 	visibleProgeny_height(visited: Array<string> = []): number {
 		const thing = g.hierarchy?.thing_getForPath(this);
 		if (thing) {
-			if (!visited.includes(this.pathString) && this.hasChildren && this.isExpanded) {
+			if (!visited.includes(this.pathString) && this.showsChildren) {
 				let height = 0;
 				for (const childPath of this.childPaths) {
 					height += childPath.visibleProgeny_height([...visited, this.pathString]);
@@ -315,7 +327,7 @@ export default class Path {
 		if (thing) {
 			const hashedPath = this.hashedPath;
 			let width = special ? 0 : thing.titleWidth;
-			if (!visited.includes(hashedPath) && this.isExpanded && this.hasChildren) {
+			if (!visited.includes(hashedPath) && this.showsChildren) {
 				let progenyWidth = 0;
 				for (const childPath of this.childPaths) {
 					const childProgenyWidth = childPath.visibleProgeny_width(false, [...visited, hashedPath]);

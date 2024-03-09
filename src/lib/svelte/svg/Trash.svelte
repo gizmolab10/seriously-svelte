@@ -16,6 +16,7 @@
 <style lang='scss'>
 	.trash-container {
 		position: relative;
+		cursor: pointer;
 		height: 16px;
 		width: 16px;
 		svg {
