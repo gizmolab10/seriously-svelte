@@ -17,11 +17,12 @@
 	let isHovering = false;
 	let scalablePath = '';
 	let revealDot = null;
+	let toggle = false;
 	
 	onMount( () => { setIsHovering_updateColors(false); updateScalablePaths(); });
+	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
 	function mouseOut(event) { setIsHovering_updateColors(false); }
-	function mouseOver(event) { setIsHovering_updateColors(true); }
-	function contextMenu(event) { event.preventDefault(); }
+	function handleMouseOver(event) { setIsHovering_updateColors(true); }
 
 	$: {
 		if (revealDot &&!path.matchesPath($s_path_toolsCluster)) {
@@ -46,26 +47,34 @@
 			updateColors();
 			updateScalablePaths();
 		}
-
 	}
 
 	function setIsHovering_updateColors(hovering) {
-		isHovering = hovering;
-		updateColors();
+		if (isHovering != hovering) {
+			isHovering = hovering;
+			updateColors();
+			// console.log('toggle');
+			toggle = !toggle;
+		}
 	}
 
 	function updateColors() {
 		thing.updateColorAttributes(path);
-		const collapsedGrabbed = !path.isExpanded || path.isGrabbed;
-		fillColor = path.dotColor(collapsedGrabbed != isHovering);
-		bulkAliasFillColor = path.dotColor(collapsedGrabbed == isHovering);
+		const collapsedOrGrabbed = !path.isExpanded || path.isGrabbed;
+		fillColor = path.dotColor(collapsedOrGrabbed != isHovering, path);
+		bulkAliasFillColor = path.dotColor(collapsedOrGrabbed == isHovering, path);
+		// const comparison = (collapsedOrGrabbed == isHovering) ? '    ' : 'NOT ';
+		// if (isHovering) {
+		// 	console.log(`${comparison}EQUAL isHovering (${isHovering}) collapsed or grabbed (${collapsedOrGrabbed})   ${thing.title}`)
+		// }
 	}
 
 	function updateScalablePaths() {
 		if ((!path.hasChildren && !thing.isBulkAlias) || $s_path_toolsCluster?.matchesPath(path)) {
 			scalablePath = svgPath.circle(k.dot_size, k.dot_size - 1);
 		} else {
-			const direction = path.showsChildren ? Direction.left : Direction.right;
+			const goLeft = path.isExpanded && path.hasChildren;
+			const direction = goLeft ? Direction.right : Direction.left;
 			scalablePath = svgPath.fatPolygon(k.dot_size, direction);
 			if (thing.isBulkAlias) {
 				bulkAliasPath = svgPath.circle(k.dot_size, k.dot_size / 3);
@@ -98,62 +107,69 @@
 	}
 </style>
 
-<button class='dot'
-	on:blur={u.ignore}
-	on:focus={u.ignore}
-	on:keyup={u.ignore}
-	bind:this={revealDot}
-	on:keydown={u.ignore}
-	on:keypress={u.ignore}
-	on:mouseout={mouseOut}
-	on:click={handleClick}
-	on:mouseover={mouseOver}
-	on:contextmenu={contextMenu}
-	style='
+{#key toggle}
+	<div class='revealDot' style='
 		top: {center.y}px;
 		left: {center.x}px;
+		position: absolute;
 		width: {k.dot_size}px;
-		height: {k.dot_size}px;
 		z-index: {ZIndex.dots};
-	'>
-	{#key scalablePath}
-		<SVGD3 name='revealDot'
-			width={k.dot_size}
-			height={k.dot_size}
-			stroke={strokeColor}
-			scalablePath={scalablePath}
-			fill={debug.lines ? 'transparent' : fillColor}
-		/>
-	{/key}
-	{#if thing.isBulkAlias}
-		<div class='revealInside' style='
-			left:-1px;
-			width:14px;
-			height:14px;
-			position:absolute;'>
-			<SVGD3 name='revealInside'
-				width={k.dot_size}
-				height={k.dot_size}
-				stroke={strokeColor}
-				fill={bulkAliasFillColor}
-				scalablePath={bulkAliasPath}
-			/>
-		</div>
-	{/if}
-	{#if !path.isExpanded && path.hasChildren}
-		<div class='revealTinyDots' style='
-			top:{tinyDotsOffset + 0.05}px;
-			height:{tinyDotsDiameter}px;
-			width:{tinyDotsDiameter}px;
-			left:{tinyDotsOffset}px;
-			position:absolute;'>
-			<SVGD3 name='revealTinyDots'
-				fill={strokeColor}
-				stroke={strokeColor}
-				width={tinyDotsDiameter}
-				height={tinyDotsDiameter}
-				scalablePath={svgPath.tinyDots_circular(tinyDotsDiameter, childrenCount)}
-			/>
-		</div>
-	{/if}
-</button>
+		height: {k.dot_size}px;'>
+		<button class='dot'
+			on:blur={u.ignore}
+			on:focus={u.ignore}
+			on:keyup={u.ignore}
+			bind:this={revealDot}
+			on:keydown={u.ignore}
+			on:keypress={u.ignore}
+			on:mouseout={mouseOut}
+			on:click={handleClick}
+			on:mouseover={handleMouseOver}
+			on:contextmenu={handleContextMenu}
+			style='
+				width: {k.dot_size}px;
+				height: {k.dot_size}px;
+			'>
+			{#key scalablePath}
+				<SVGD3 name='revealDot'
+					width={k.dot_size}
+					height={k.dot_size}
+					stroke={strokeColor}
+					scalablePath={scalablePath}
+					fill={debug.lines ? 'transparent' : fillColor}
+				/>
+			{/key}
+			{#if thing.isBulkAlias}
+				<div class='revealInside' style='
+					left:-1px;
+					width:14px;
+					height:14px;
+					position:absolute;'>
+					<SVGD3 name='revealInside'
+						width={k.dot_size}
+						height={k.dot_size}
+						stroke={strokeColor}
+						fill={bulkAliasFillColor}
+						scalablePath={bulkAliasPath}
+					/>
+				</div>
+			{/if}
+			{#if !path.isExpanded && path.hasChildren}
+				<div class='revealTinyDots' style='
+					top:{tinyDotsOffset + 0.05}px;
+					height:{tinyDotsDiameter}px;
+					width:{tinyDotsDiameter}px;
+					left:{tinyDotsOffset}px;
+					position:absolute;'>
+					<SVGD3 name='revealTinyDots'
+						fill={strokeColor}
+						stroke={strokeColor}
+						width={tinyDotsDiameter}
+						height={tinyDotsDiameter}
+						scalablePath={svgPath.tinyDots_circular(tinyDotsDiameter, childrenCount)}
+					/>
+				</div>
+			{/if}
+		</button>
+	</div>
+{/key}

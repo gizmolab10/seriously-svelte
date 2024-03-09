@@ -55,7 +55,7 @@
 		top: {center.y + 2 - (size / 2)}px;
 		left: {center.x + 3 - (size / 2)}px;
 	'>
-	<SVGD3
+	<SVGD3 name='triangle'
 		width={size}
 		height={size}
 		fill={fillColor}
@@ -63,7 +63,7 @@
 		scalablePath={scalablePath}
 	/>
 	{#if extraPath}
-		<SVGD3
+		<SVGD3 name='triangleInside'
 			width={size}
 			height={size}
 			fill={extraColor}

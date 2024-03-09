@@ -37,7 +37,7 @@
 				position: relative;
 				color: transparent;
 				left: {size / 8}px;'>
-				<SVGD3
+				<SVGD3 name='crumb'
 					width={size}
 					height={size}
 					position='absolute'

@@ -18,12 +18,12 @@
 <div class='close-button' style='top: {size * 0.5}px; right: {size * 1.5}px;'
     on:keypress={u.ignore}
     on:click={() => { $s_id_popupView = null; }}>
-    <SVGD3
+    <SVGD3 name='close'
 		width={size}
 		height={size}
 		scalablePath={circle}
 	/>
-    <SVGD3
+    <SVGD3 name='closeInside'
 		width={size}
 		height={size}
 		scalablePath={cross}

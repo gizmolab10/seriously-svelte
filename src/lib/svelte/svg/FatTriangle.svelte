@@ -11,7 +11,7 @@
 
 </script>
 
-<SVGD3
+<SVGD3 name='fatTriangle'
 	width={size}
 	height={size}
 	fill={fillColor}
@@ -20,7 +20,7 @@
 	scalablePath={scalablePath}
 />
 {#if extraPath}
-	<SVGD3
+	<SVGD3 name='fatTriangleInside'
 		width={size}
 		height={size}
 		fill={extraColor}

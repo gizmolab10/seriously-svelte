@@ -72,7 +72,7 @@
 			size={size}
 			color={k.color_background}
 			onClick={(event) => buttonClickedForID(IDButton.smaller)}>
-			<SVGD3
+			<SVGD3 name='smaller'
 				width={size}
 				height={size}
 				scalablePath={svgPath.dash(size, 2)}
@@ -83,7 +83,7 @@
 			left={width - 105}
 			color={k.color_background}
 			onClick={(event) => buttonClickedForID(IDButton.bigger)}>
-			<SVGD3
+			<SVGD3 name='bigger'
 				width={size}
 				height={size}
 				scalablePath={svgPath.tCross(size, 2)}

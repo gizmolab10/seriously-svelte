@@ -61,9 +61,8 @@
 	}
 
 	function updateColors() {
-		const isInverted = isHovering == altering;
 		thing.updateColorAttributes(path);
-		fillColor = debug.lines ? 'transparent' : path.dotColor(!isInverted);
+		fillColor = debug.lines ? 'transparent' : path.dotColor(isHovering != altering);
 		strokeColor = thing.color;
 	}
 
@@ -148,9 +147,8 @@
 		scalablePath={path_scalable}
 	/>
 	{#if path_extra}
-		<SVGD3
+		<SVGD3 name='dragInside'
 			fill={strokeColor}
-			name='dragInnerDot'
 			stroke={strokeColor}
 			y={extraOffset + 4}
 			width={extraDiameter}
