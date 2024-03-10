@@ -118,9 +118,9 @@
 	function update(): boolean {
         const rect = path?.titleRect;
         if (rect && $s_path_toolsCluster && rect.size.width != 0) {
-            const offsetReveal = new Point(8.5 - titleWidth, -5);
+            const offsetReveal = new Point(-6, -6);
             const offsetX = 9 - ($s_show_details ? k.width_details : 0);
-            const offsetY = (g.titleIsAtTop ? -45 : 0) - clusterDiameter - 5.5;
+            const offsetY = (g.titleIsAtTop ? -45 : 0) - clusterDiameter - 4.5;
             const center = rect.centerLeft.offsetBy(new Point(titleWidth + offsetX, offsetY));
             left = center.x - toolDiameter;
             const y = center.y;
@@ -129,7 +129,7 @@
             setC(IDTool.confirmation,   center.offsetEquallyBy(1 - clusterRadius));
             setC(IDTool.delete_cancel,  center.offsetBy(new Point(1 - toolDiameter, toolDiameter - 5)));
             setC(IDTool.delete_confirm, center.offsetBy(new Point(2 - toolDiameter, 5 - toolDiameter)));
-            setC(IDTool.create,         new Point(center.x + toolDiameter - 3, y - toolDiameter + 3));
+            setC(IDTool.create,         new Point(center.x + toolDiameter - 3, y - toolDiameter + 6));
             setC(IDTool.next,           new Point(center.x - 2, y - toolDiameter - 2));
             setC(IDTool.more,           new Point(center.x + 1, y + toolDiameter + 4));
             setC(IDTool.delete_parent,  new Point(left - 1, y + toolDiameter - 8));
@@ -151,7 +151,7 @@
 	button {
 		border-width: 1px;
 		position: absolute;
-		border-radius: 17px
+		border-radius: 17px;
 	}
 	@keyframes colorFade {
 		0%, 100% { color: black; }
@@ -241,7 +241,7 @@
                     height=10
                     viewBox='-2 -2 14 10'
                     fill={hovers[IDTool.more] ? k.color_background : color}>
-                    <path d={svgPath.tinyDots_linear(14, 1)}/>
+                    <path d={svgPath.tinyDots_linear(9, 1)}/>
                 </svg>
             </LabelButton>
             <RevealDot thing={thing} path={$s_path_toolsCluster} center={getC(IDTool.dismiss)}/>
@@ -284,7 +284,7 @@
                 strokeColor={color}
                 size={toolDiameter}
                 id='add'/>
-            <button class='delete'
+            <button id='delete'
                 on:blur={u.ignore}
                 on:focus={u.ignore}
                 on:mouseout={() => { hovers[IDTool.delete] = false; }}

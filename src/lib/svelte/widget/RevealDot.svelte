@@ -63,10 +63,6 @@
 		const collapsedOrGrabbed = !path.isExpanded || path.isGrabbed;
 		fillColor = path.dotColor(collapsedOrGrabbed != isHovering, path);
 		bulkAliasFillColor = path.dotColor(collapsedOrGrabbed == isHovering, path);
-		// const comparison = (collapsedOrGrabbed == isHovering) ? '    ' : 'NOT ';
-		// if (isHovering) {
-		// 	console.log(`${comparison}EQUAL isHovering (${isHovering}) collapsed or grabbed (${collapsedOrGrabbed})   ${thing.title}`)
-		// }
 	}
 
 	function updateScalablePaths() {
@@ -156,10 +152,10 @@
 			{/if}
 			{#if !path.isExpanded && path.hasChildren}
 				<div class='revealTinyDots' style='
-					top:{tinyDotsOffset + 0.05}px;
+					left:{tinyDotsOffset + 0.65}px;
+					top:{tinyDotsOffset + 0.1}px;
 					height:{tinyDotsDiameter}px;
 					width:{tinyDotsDiameter}px;
-					left:{tinyDotsOffset}px;
 					position:absolute;'>
 					<SVGD3 name='revealTinyDots'
 						fill={strokeColor}

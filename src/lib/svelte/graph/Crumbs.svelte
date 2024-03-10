@@ -5,7 +5,7 @@
 	import SVGD3 from '../svg/SVGD3.svelte';
 	let ancestors: Array<Thing> = [];
 	let path: Path;
-	let size = 14;
+	let size = 16;
 	let width = 0;
 	let left = 0;
 	let sum = 0;
@@ -33,10 +33,10 @@
 	{#each ancestors.map(thing => thing.parents.length) as count, index}
 		{#if index > 0}
 			<span class='crumb-separator' style='
-				top:{size / 4}px;
+				top:{size / 5}px;
 				position: relative;
 				color: transparent;
-				left: {size / 8}px;'>
+				left: 0px;'>
 				<SVGD3 name='crumb'
 					width={size}
 					height={size}
