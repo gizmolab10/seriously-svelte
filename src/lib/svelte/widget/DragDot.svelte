@@ -8,11 +8,11 @@
 	export let thing;
 	export let path;
 	let parentsCount = thing.parents.length;
-	let extraDiameter = k.dot_size * 1.3;
-	let extraOffset = k.dot_size * -0.3;
 	let strokeColor = thing.color;
+	let extraColor = thing.color;
 	let fillColor = thing.color;
 	let path_scalable = '';
+	let size = k.dot_size;
 	let path_extra = null;
 	let isHovering = true;
 	let isGrabbed = false;
@@ -21,7 +21,6 @@
 	let handler = null;
 	let button = null;
 	let clickTimer;
-	let size = 0;
 	let left = 0;
 	let top = 0;
 	
@@ -32,12 +31,12 @@
 	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right-
 
     onMount(() => {
-		updatePathAndPosition();
+		updatePaths();
 		updateColorsForHover(false);
         handler = signals.handle_alteringParent((alteration) => {
 			const applyFlag = $s_path_toolsCluster && path.things_canAlter_asParentOf_toolsGrab;
-			path_extra = (thing.parents.length < 2) ? null : svgPath.circle(size, size / 5);
 			altering = applyFlag ? (alteration != null) : false;
+			updatePathExtra();
 			updateColors();
         })
     })
@@ -57,12 +56,13 @@
 
 	$: {
 		const _ = k.dot_size;
-		updatePathAndPosition();
+		updatePaths();
 	}
 
 	function updateColors() {
 		thing.updateColorAttributes(path);
 		fillColor = debug.lines ? 'transparent' : path.dotColor(isHovering != altering);
+		extraColor = path.dotColor(!isHovering)
 		strokeColor = thing.color;
 	}
 
@@ -102,15 +102,18 @@
 		}, k.threshold_doubleClick);
 	}
 
-	function updatePathAndPosition() {
-		size = k.dot_size;
-		left = center.x + 7 - (size / 2);
-		top = path.toolsGrabbed ? 2 : (size / 2) - 3.5;
-		path_scalable = svgPath.oval(size, false);
-		if (thing.parents.length > 1) {
-			path_extra = svgPath.circle(k.dot_size, k.dot_size / 4);
-			// path_extra = svgPath.extra_circular(extraDiameter, parentsCount);
+	function updatePathExtra() {
+		const count = thing.parents.length;		
+		if (count == 1) {
+			path_extra = svgPath.circle(size, size / 10);
+		} else if (count != 0) {
+			path_extra = svgPath.tinyDots_linear(6, 0.5, false, count, size / 2);
 		}
+	}
+
+	function updatePaths() {
+		path_scalable = svgPath.oval(size, false);
+		updatePathExtra();
 	}
 
 </script>
@@ -130,13 +133,13 @@
 	on:dblclick={handleDoubleClick}
 	on:contextmenu={handleContextMenu}
 	style='
+		top: 2.5px;
 		border: none;
-		top: {top}px;
-		left: {left}px;
 		cursor: pointer;
-		height: {size}px;
 		background: none;
+		height: {size}px;
 		position: absolute;
+		left: {center.x}px;
 		width: {size / 2}px;
 	'>
 	<SVGD3 name='dragDot'
@@ -148,13 +151,11 @@
 	/>
 	{#if path_extra}
 		<SVGD3 name='dragInside'
-			fill={strokeColor}
-			stroke={strokeColor}
-			y={extraOffset + 4}
-			width={extraDiameter}
-			height={extraDiameter}
+			width={size}
+			height={size}
+			fill={extraColor}
+			stroke={extraColor}
 			scalablePath={path_extra}
-			x={extraOffset + left + 3.5}
 		/>
 	{/if}
 </button>

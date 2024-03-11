@@ -72,7 +72,9 @@ export default class Path {
 	
 	get isVisible(): boolean {
 		const here = g.herePath;
-		return this.incorporates(here) && this.isAllExpandedFrom(here);
+		const incorporates = this.incorporates(here);
+		const expanded = this.isAllExpandedFrom(here);
+		return incorporates && expanded;
 	}
 
 	get ids(): Array<string> {
@@ -120,7 +122,7 @@ export default class Path {
 		const paths = this.thing?.parentPaths ?? [];
 		const index = paths.map(p => p.hashedPath).indexOf(hashedPath);
 		if (index == -1) {
-			console.log(`no next for ${this.titles} of ${paths.map(p => '\n' + p.titles)}`);
+			console.log(`no next for ${this.titles} of ${paths.map(p => k.newLine + p.titles)}`);
 		} else {
 			const next = index.increment(true, paths.length)
 			nextPath = paths[next];
@@ -204,12 +206,14 @@ export default class Path {
 	}
 
 	isAllExpandedFrom(path: Path | null): boolean {
-		let tweenPath: Path = this;
-		let limit = path?.ids.length ?? 0;
-		while (limit < tweenPath.ids.length) {
-			tweenPath = tweenPath.stripBack();	// go backwards on this path
-			if (!tweenPath.isExpanded) {		// stop when path is not expanded
-				return false;
+		if (!this.matchesPath(path)) {
+			let tweenPath: Path = this;
+			let limit = path?.ids.length ?? 0;
+			while (limit < tweenPath.ids.length) {
+				tweenPath = tweenPath.stripBack();	// go backwards on this path
+				if (!tweenPath.isExpanded) {		// stop when path is not expanded
+					return false;
+				}
 			}
 		}
 		return true;

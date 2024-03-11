@@ -18,6 +18,16 @@ export default class Grabs {
 
 	get thing_lastGrabbed(): Thing | null { return this.hierarchy.thing_getForPath(this.path_lastGrabbed); }
 
+	get areInvisible(): boolean {
+		const paths = get(s_paths_grabbed);
+		for (const path of paths) {
+			if (!path.isVisible) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	get path_lastGrabbed(): Path | null {
 		const paths = get(s_paths_grabbed);
 		if (paths && paths.length > 0) {

@@ -20,6 +20,7 @@ export default class Constants {
     public color_disabled: string;
 	public name_bulkAdmin: string;
 	public pathSeparator: string;
+	public newLine: string;
 	public title_default: string;
 	public title_line: string;
 	public id_unknown: string;
@@ -31,6 +32,7 @@ export default class Constants {
 		this.empty = '';
 		this.space = ' ';
 		this.comma = ',';
+		this.newLine = '\n';
 		this.pathSeparator = '::';
 		this.id_unknown = 'unknown';
 		this.color_background = 'white';

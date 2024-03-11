@@ -22,8 +22,7 @@
     let confirmingDelete = false;
     let userOffset = new Point();
     let graphRect = new Rect();
-    let hasOneParent = false;
-	let toggle = false;
+    let toggle = false;
     let titleWidth = 0;
 	let color = '';
 	let left = 64;
@@ -46,8 +45,7 @@
 
     function isDisabledFor(id: string) {
         return (path.isHere && (id == IDTool.add_parent)) ||
-        (hasOneVisibleParent && (id == IDTool.next)) ||
-        (hasOneParent && disableSensitive.includes(id));
+        (hasOneVisibleParent && (id == IDTool.next) || disableSensitive.includes(id));
     }
 
     function fillColorsFor(id: string, isFilled: boolean): [string, string] {
@@ -106,9 +104,9 @@
                 thing = path?.thing;
                 color = thing?.color ?? '';
                 titleWidth = thing?.titleWidth ?? 0;
-                hasOneParent = (thing?.parents.length ?? 0) < 2;
-                hasOneVisibleParent = path.visibleFromPaths(0).length < 2;
-                parentSensitiveColor = (hasOneParent || path.isHere) ? k.color_disabled : color ;
+                const hasOneParent = (thing?.parents.length ?? 0) < 2;
+                hasOneVisibleParent = hasOneParent && (path.visibleFromPaths(0).length < 2);
+                parentSensitiveColor = (hasOneVisibleParent || path.isHere) ? k.color_disabled : color ;
                 update();
                 toggle = !toggle;
             }
@@ -130,8 +128,8 @@
             setC(IDTool.delete_cancel,  center.offsetBy(new Point(1 - toolDiameter, toolDiameter - 5)));
             setC(IDTool.delete_confirm, center.offsetBy(new Point(2 - toolDiameter, 5 - toolDiameter)));
             setC(IDTool.create,         new Point(center.x + toolDiameter - 3, y - toolDiameter + 6));
+            setC(IDTool.more,           new Point(center.x + 0.5, y + toolDiameter + 4));
             setC(IDTool.next,           new Point(center.x - 2, y - toolDiameter - 2));
-            setC(IDTool.more,           new Point(center.x + 1, y + toolDiameter + 4));
             setC(IDTool.delete_parent,  new Point(left - 1, y + toolDiameter - 8));
             setC(IDTool.add_parent,     new Point(left - 1, y - toolDiameter + 6));
             setC(IDTool.delete,         new Point(center.x + 4, y + 3));
@@ -224,24 +222,24 @@
                 </div>
             {:else}
             <LabelButton
-                width=20
+                width=18
                 height=16
                 color={color}
                 center={getC(IDTool.more)}
                 onClick={(event) => handleClick(IDTool.more, event)}
                 hover_closure={(isHovering) => { hovers[IDTool.more] = isHovering; }}>
-                <svg width=20
+                <svg width=18
                     height=16
                     stroke={color}
-                    viewBox='0 2 20 16'
+                    viewBox='0 1 18 16'
                     fill={hovers[IDTool.more] ? color : 'transparent'}>
-                    <path d={svgPath.oval(20, true)}/>
+                    <path d={svgPath.oval(18, true)}/>
                 </svg>
                 <svg width=16
                     height=10
                     viewBox='-2 -2 14 10'
                     fill={hovers[IDTool.more] ? k.color_background : color}>
-                    <path d={svgPath.tinyDots_linear(9, 1)}/>
+                    <path d={svgPath.tinyDots_linear(3, 1)}/>
                 </svg>
             </LabelButton>
             <RevealDot thing={thing} path={$s_path_toolsCluster} center={getC(IDTool.dismiss)}/>

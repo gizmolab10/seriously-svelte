@@ -76,20 +76,47 @@ export default class SVGPath {
 		if (count == 0) {
 			return '';
 		}
-		let index = 0;
+		let i = 0;
 		let path = '';
-		const radius = size / 3;
+		const radius = size / 3.5;
 		const isOdd = (count % 2) != 0;
 		const increment = Math.PI * 2 / count;
 		let offset = new Point(isOdd ? radius : 0, isOdd ? 0 : radius);2
-		while (index++ < count) {
-			path = path + this.circle(size, size / 9, offset.offsetByX(-0.5));
+		while (i++ < count) {
+			path = path + this.circle(size, 1, offset.offsetByX(-0.5));
 			offset = this.rotatePoint(offset, increment);
 		}
 		return path;
 	}
 
-	// TODO: this only works for the default number of vertices
+	tinyDots_linear(stretch: number, tiny: number, horizontal: boolean = true, count: number = 3, other: number = 6): string {
+		const max = Math.min(4, count);
+		const gap = stretch / (max - 1) - tiny;
+		let a = 2.5 + ((max > 2) ? 0 : 0.5);
+		let i = 0;
+		let paths: Array<string> = [];
+		const pairs: Array<Array<number>> = [[a]];
+		while (i < max) {
+			const b = a + tiny * 2;
+			pairs[i][1] = b;
+			if (i + 1 < max) {
+				a = b + gap - tiny / max;
+				pairs[i + 1] = [a];
+			}
+			i++;
+		}
+		if (horizontal) {
+			paths = pairs.map(p => `M ${p[0]},${other} A ${tiny},${tiny} 0 1,1 ${p[1]},${other} A ${tiny},${tiny} 0 1,1 ${p[0]},${other}`);
+		} else {
+			paths = pairs.map(p => `M ${other},${p[0]} A ${tiny},${tiny} 0 1,1 ${other},${p[1]} A ${tiny},${tiny} 0 1,1 ${other},${p[0]}`);
+		}
+		const path = paths.join(k.space);
+		const last = pairs[count - 1][1];
+		console.log('count: ' + count + ', gap: ' + gap + ', last: ' + last + ', stretch: ' + (last - gap / 2));
+		return path;
+	}
+
+	// TODO: this only works for the default number of vertices (3)
 	fatPolygon(size: number, direction: number, vertices: number = 3): string {
 		const width = size;
 		const height = size;
@@ -101,9 +128,9 @@ export default class SVGPath {
 		const inner = new Point(radius, 0);
 		const tweak = segmentAngle / 5;
 		let data = [];
-		let index = 0;
-		while (index++ < vertices) {
-			const angle = direction + index * segmentAngle * 2; // multiples of one third of a circle
+		let i = 0;
+		while (i++ < vertices) {
+			const angle = direction + i * segmentAngle * 2; // multiples of one third of a circle
 			const halfWay = angle - segmentAngle;
 			const preceder = halfWay - tweak;
 			const follower = halfWay + tweak;
@@ -127,28 +154,6 @@ export default class SVGPath {
 			point.x * cos - point.y * sin,
 			point.x * sin + point.y * cos
 		);
-	}
-
-	tinyDots_linear(size: number, tiny: number, count: number = 3, vertical: boolean = false): string {
-		const pairs: Array<Array<number>> = [[1]];
-		const gap = size / count - tiny;
-		const other = 6;
-		let index = 0;
-		while (index < count) {
-			const pair = pairs[index];
-			const first = pair[0];
-			const other = first + tiny * 2;
-			pairs[index][1] = other;
-			if (index + 1 < count) {
-				pairs[index + 1] = [];
-				pairs[index + 1][0] = other + gap + tiny;
-			}
-			index++;
-		}
-		const paths = pairs.map(p => `M ${p[0]},${other} A ${tiny},${tiny} 0 1,1 ${p[1]},${other} A ${tiny},${tiny} 0 1,1 ${p[0]},${other} `);
-		const path = paths.join(k.space);
-		// console.log(path);
-		return path;
 	}
 
 }
