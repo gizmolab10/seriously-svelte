@@ -327,7 +327,7 @@ export default class Path {
 	}
 
 	visibleProgeny_width(special: boolean = g.titleIsAtTop, visited: Array<number> = []): number {
-		const thing = g.hierarchy?.thing_getForPath(this);
+		const thing = this.thing;
 		if (thing) {
 			const hashedPath = this.hashedPath;
 			let width = special ? 0 : thing.titleWidth;

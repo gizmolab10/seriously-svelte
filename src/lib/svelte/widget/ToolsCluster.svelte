@@ -12,12 +12,12 @@
     const clusterDiameter = 64;
 	const toolDiameter = k.dot_size * 1.4;
     const clusterRadius = clusterDiameter / 2;
-    const disableSensitive = [IDTool.next, IDTool.delete_parent];
+    const needsMultipleVisibleParents = [IDTool.next, IDTool.delete_parent];
     const parentAltering = [IDTool.add_parent, IDTool.delete_parent];
     const halfCircleViewBox = `0 0 ${clusterDiameter} ${clusterDiameter}`;
     let hovers: { [type: string]: boolean } = {}
     let centers: { [type: string]: Point } = {}
-    let hasOneVisibleParent = false;
+    let countOfVisibleParents = 0;
     let parentSensitiveColor = '';
     let confirmingDelete = false;
     let userOffset = new Point();
@@ -45,12 +45,12 @@
 
     function isDisabledFor(id: string) {
         return (path.isHere && (id == IDTool.add_parent)) ||
-        (hasOneVisibleParent && (id == IDTool.next) || disableSensitive.includes(id));
+        ((countOfVisibleParents < 2) && needsMultipleVisibleParents.includes(id));
     }
 
     function fillColorsFor(id: string, isFilled: boolean): [string, string] {
         const isDisabled = isDisabledFor(id);
-        const nextIsDisabled = isDisabled && id == IDTool.next;
+        const nextIsDisabled = isDisabled && needsMultipleVisibleParents.includes(id);
         if (isDisabled || (isFilled == isInvertedFor(id))) {
             const extraColor = nextIsDisabled ? k.color_disabled : isDisabled || isFilled ? parentSensitiveColor : color;
             return [k.color_background, extraColor];
@@ -68,6 +68,7 @@
         		}
                 break;
         }
+        updateMaybeRedraw();
 	}
 
     function setup() {
@@ -104,9 +105,9 @@
                 thing = path?.thing;
                 color = thing?.color ?? '';
                 titleWidth = thing?.titleWidth ?? 0;
-                const hasOneParent = (thing?.parents.length ?? 0) < 2;
-                hasOneVisibleParent = hasOneParent && (path.visibleFromPaths(0).length < 2);
-                parentSensitiveColor = (hasOneVisibleParent || path.isHere) ? k.color_disabled : color ;
+                const hasOneParent = (thing?.parents.length ?? 0) == 1;
+                countOfVisibleParents = path.visibleFromPaths(0).length;
+                parentSensitiveColor = (hasOneParent || path.isHere) ? k.color_disabled : color ;
                 update();
                 toggle = !toggle;
             }
@@ -255,11 +256,11 @@
                 id='next'/>
             <TriangleButton
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.delete_parent, isFilled) }}
+                strokeColor={isDisabledFor(IDTool.delete_parent) ? k.color_disabled : parentSensitiveColor}
                 cursor={isDisabledFor(IDTool.delete_parent) ? 'normal' : 'pointer'}
                 onClick={(event) => handleClick(IDTool.delete_parent, event)}
                 extraPath={svgPath.dash(toolDiameter, 4)}
                 center={getC(IDTool.delete_parent)}
-                strokeColor={parentSensitiveColor}
                 direction={Direction.left}
                 id='delete_parent'
                 size={toolDiameter}/>

@@ -34,6 +34,7 @@ export default class Thing extends Datum {
 	get titleWidth():		   number { return u.getWidthOf(this.title) + 6; }
 	get parentIDs():	Array<string> { return this.parents.map(t => t.id); }
 	get isRoot():			  boolean { return this == this.hierarchy.root; }
+	get hasMultipleParents(): boolean { return this.parentPaths.length > 1; }
 	get isBulkAlias():		  boolean { return this.trait == IDTrait.bulk; }
 	get hierarchy():		Hierarchy { return g.hierarchy; }
 	

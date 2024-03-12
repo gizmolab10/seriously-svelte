@@ -7,10 +7,9 @@
 	export let center = new Point(0, 0);
 	export let thing;
 	export let path;
-	let parentsCount = thing.parents.length;
-	let strokeColor = thing.color;
-	let extraColor = thing.color;
-	let fillColor = thing.color;
+	let strokeColor = k.color_background;
+	let extraColor = k.color_background;
+	let fillColor = k.color_background;
 	let path_scalable = '';
 	let size = k.dot_size;
 	let path_extra = null;
@@ -60,10 +59,12 @@
 	}
 
 	function updateColors() {
-		thing.updateColorAttributes(path);
-		fillColor = debug.lines ? 'transparent' : path.dotColor(isHovering != altering);
-		extraColor = path.dotColor(!isHovering)
-		strokeColor = thing.color;
+		if (thing) {
+			thing.updateColorAttributes(path);
+			fillColor = debug.lines ? 'transparent' : path.dotColor(isHovering != altering);
+			extraColor = path.dotColor(!isHovering)
+			strokeColor = thing.color;
+		}
 	}
 
 	function updateColorsForHover(flag) {
@@ -103,11 +104,12 @@
 	}
 
 	function updatePathExtra() {
-		const count = thing.parents.length;		
-		if (count == 1) {
-			path_extra = svgPath.circle(size, size / 10);
-		} else if (count != 0) {
-			path_extra = svgPath.tinyDots_linear(6, 0.5, false, count, size / 2);
+		if (thing) {
+			path_extra = null;
+			const count = thing.parents.length;		
+			if (count > 1) {
+				path_extra = svgPath.tinyDots_linear(6, 0.5, false, count, size / 2);
+			}
 		}
 	}
 

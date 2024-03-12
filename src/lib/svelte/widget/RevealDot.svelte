@@ -6,8 +6,8 @@
 	export let center;
 	export let thing;
 	export let path;
-	let bulkAliasFillColor = k.color_background;
-	let bulkAliasPath = svgPath.circle(16, 6);
+	let insidePath = svgPath.circle(16, 6);
+	let insideFillColor = k.color_background;
 	let childrenCount = path.children.length;
 	let tinyDotsDiameter = k.dot_size * 1.8;
 	let tinyDotsOffset = k.dot_size * -0.4;
@@ -62,19 +62,22 @@
 		thing.updateColorAttributes(path);
 		const collapsedOrGrabbed = !path.isExpanded || path.isGrabbed;
 		fillColor = path.dotColor(collapsedOrGrabbed != isHovering, path);
-		bulkAliasFillColor = path.dotColor(collapsedOrGrabbed == isHovering, path);
+		insideFillColor = path.dotColor(collapsedOrGrabbed == isHovering, path);
 	}
 
 	function updateScalablePaths() {
-		if ((!path.hasChildren && !thing.isBulkAlias) || $s_path_toolsCluster?.matchesPath(path)) {
-			scalablePath = svgPath.circle(k.dot_size, k.dot_size - 1);
+		const size = k.dot_size;
+		if ((!path.hasChildren && !thing.isBulkAlias) || path.toolsGrabbed) {
+			scalablePath = svgPath.circle(size, size - 1);
 		} else {
 			const goLeft = path.isExpanded && path.hasChildren;
-			const direction = goLeft ? Direction.right : Direction.left;
-			scalablePath = svgPath.fatPolygon(k.dot_size, direction);
-			if (thing.isBulkAlias) {
-				bulkAliasPath = svgPath.circle(k.dot_size, k.dot_size / 3);
-			}
+			const direction = goLeft ? Direction.left : Direction.right;
+			scalablePath = svgPath.fatPolygon(size, direction);
+		}
+		if (path.toolsGrabbed) {
+			insidePath = svgPath.xCross(size, 1.5);
+		} else if (thing.isBulkAlias) {
+			insidePath = svgPath.circle(size, size / 3);
 		}
 	}
 
@@ -135,9 +138,10 @@
 					fill={debug.lines ? 'transparent' : fillColor}
 				/>
 			{/key}
-			{#if thing.isBulkAlias}
+			{#if path.toolsGrabbed || thing.isBulkAlias}
 				<div class='revealInside' style='
-					left:-1px;
+					top:{path.toolsGrabbed ? 0 : -1}px;
+					left:{path.toolsGrabbed ? 0 : -1}px;
 					width:14px;
 					height:14px;
 					position:absolute;'>
@@ -145,8 +149,8 @@
 						width={k.dot_size}
 						height={k.dot_size}
 						stroke={strokeColor}
-						fill={bulkAliasFillColor}
-						scalablePath={bulkAliasPath}
+						fill={insideFillColor}
+						scalablePath={insidePath}
 					/>
 				</div>
 			{/if}
