@@ -98,7 +98,7 @@
 	}
 
 	function updateLayout() {
-		const y = k.dot_size / 2 - 3.8;
+		const y = k.dot_size / 2 - 4.2;
 		const titleWidth = thing.titleWidth;
 		const delta = showingBorder ? -0.5 : 0.5;
 		const x = k.dot_size + thing.titleWidth + (hasExtraX ? 3 : 0);

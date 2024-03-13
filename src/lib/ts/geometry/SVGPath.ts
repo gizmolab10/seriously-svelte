@@ -78,12 +78,12 @@ export default class SVGPath {
 		}
 		let i = 0;
 		let path = '';
-		const radius = size / 3.5;
+		const radius = size / 3;
 		const isOdd = (count % 2) != 0;
 		const increment = Math.PI * 2 / count;
 		let offset = new Point(isOdd ? radius : 0, isOdd ? 0 : radius);2
 		while (i++ < count) {
-			path = path + this.circle(size, 1, offset.offsetByX(-0.5));
+			path = path + this.circle(size, 2, offset.offsetBy(new Point(-0.7, 0.3)));
 			offset = this.rotatePoint(offset, increment);
 		}
 		return path;
@@ -112,7 +112,7 @@ export default class SVGPath {
 		}
 		const path = paths.join(k.space);
 		const last = pairs[count - 1][1];
-		console.log('count: ' + count + ', gap: ' + gap + ', last: ' + last + ', stretch: ' + (last - gap / 2));
+		// console.log('count: ' + count + ', gap: ' + gap + ', last: ' + last + ', stretch: ' + (last - gap / 2));
 		return path;
 	}
 

@@ -2,6 +2,7 @@ import { u, transparentize } from '../../ts/common/GlobalImports';
 
 export default class Constants {
 	public dot_size: number;
+	public width_max: number;
 	public row_height: number;
 	public line_stretch: number;
 	public height_banner: number;
@@ -20,10 +21,10 @@ export default class Constants {
     public color_disabled: string;
 	public name_bulkAdmin: string;
 	public pathSeparator: string;
-	public newLine: string;
 	public title_default: string;
 	public title_line: string;
 	public id_unknown: string;
+	public newLine: string;
 	public comma: string;
 	public space: string;
 	public empty: string;
@@ -54,6 +55,7 @@ export default class Constants {
 		this.height_banner = 35;
 		this.line_stretch = 25;
 		this.row_height = 20;
+		this.width_max = 200;
 		this.dot_size = 13;
 	}
 

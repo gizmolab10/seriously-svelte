@@ -117,9 +117,9 @@
 	function update(): boolean {
         const rect = path?.titleRect;
         if (rect && $s_path_toolsCluster && rect.size.width != 0) {
-            const offsetReveal = new Point(-6, -6);
-            const offsetX = 9 - ($s_show_details ? k.width_details : 0);
-            const offsetY = (g.titleIsAtTop ? -45 : 0) - clusterDiameter - 4.5;
+            const offsetReveal = new Point(-5.5, -5.5);
+            const offsetX = 11.5 - ($s_show_details ? k.width_details : 0);
+            const offsetY = (g.titleIsAtTop ? -45 : 0) - clusterDiameter - 5.5;
             const center = rect.centerLeft.offsetBy(new Point(titleWidth + offsetX, offsetY));
             left = center.x - toolDiameter;
             const y = center.y;

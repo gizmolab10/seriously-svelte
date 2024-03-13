@@ -6,11 +6,11 @@
 	export let center;
 	export let thing;
 	export let path;
-	let insidePath = svgPath.circle(16, 6);
+	let tinyDotsOffset = k.dot_size * -0.4 + 0.01;
 	let insideFillColor = k.color_background;
 	let childrenCount = path.children.length;
 	let tinyDotsDiameter = k.dot_size * 1.8;
-	let tinyDotsOffset = k.dot_size * -0.4;
+	let insidePath = svgPath.circle(16, 6);
 	let fillColor = k.color_background;
 	let strokeColor = thing.color;
 	let revealWrapper = Wrapper;
@@ -157,7 +157,7 @@
 			{#if !path.isExpanded && path.hasChildren}
 				<div class='revealTinyDots' style='
 					left:{tinyDotsOffset + 0.65}px;
-					top:{tinyDotsOffset + 0.1}px;
+					top:{tinyDotsOffset}px;
 					height:{tinyDotsDiameter}px;
 					width:{tinyDotsDiameter}px;
 					position:absolute;'>
