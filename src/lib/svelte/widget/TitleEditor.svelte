@@ -109,10 +109,10 @@
 
 	function handleClick(event) {
 		event.preventDefault();
-		if (!path.isEditing && !path.isRoot) {
+		if (!path.isEditing) {
 			if (!path.isGrabbed) {
 				path.grabOnly();
-			} else if (k.allow_TitleEditing) {
+			} else if (k.allow_TitleEditing && !path.isRoot) {
 				path.startEdit();
 				input.focus();
 				return;

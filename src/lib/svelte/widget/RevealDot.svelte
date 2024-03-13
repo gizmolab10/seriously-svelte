@@ -86,13 +86,10 @@
 		if (path.toolsGrabbed) {
 			$s_path_toolsCluster = null;
 			$s_altering_parent = null;
-		} else if (path.isHere) {
-			return;
+			signals.signal_rebuild_fromHere();
 		} else if (path.hasChildren) {
 			g.hierarchy.path_rebuild_remoteMoveRight(path, !path.isExpanded, true, false);
-			return;
 		}
-		signals.signal_rebuild_fromHere();
 	}
 
 </script>

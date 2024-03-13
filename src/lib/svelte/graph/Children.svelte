@@ -22,17 +22,9 @@
 			layoutChildren()
 		}
 	}
-
-	$: {
-		if (k.dot_size > 0) {
-			setTimeout(() => {
-				layoutChildren()
-			}, 2);
-		}
-	}
 	
 	const signalHandler = signals.handle_relayout((path_signal) => {
-		if (!path_signal || path_signal.matchesPath(path)) {
+		if ((!path_signal || path_signal.matchesPath(path)) && path.isExpanded) {
 			const now = new Date().getTime();
 			if (now - priorTime > 100) {
 				priorTime = now;
@@ -51,11 +43,13 @@
 	})
 	
 	function layoutChildren() {
-		const delta = new Point(19, -2);
-		const height = (path.visibleProgeny_halfHeight);
-		const childrenOrigin = origin.offsetByY(height);
-		childMapRectArray = new Layout(path, childrenOrigin).childMapRectArray;
-		center = childrenOrigin.offsetBy(delta);
+		if (path.isExpanded) {
+			const delta = new Point(19, -2);
+			const height = (path.visibleProgeny_halfHeight);
+			const childrenOrigin = origin.offsetByY(height);
+			childMapRectArray = new Layout(path, childrenOrigin).childMapRectArray;
+			center = childrenOrigin.offsetBy(delta);
+		}
 	}
 	
 </script>
@@ -63,10 +57,12 @@
 {#if debug.lines}
 	<Circle radius=1 center={center} color=black thickness=1/>
 {/if}
-{#each childMapRectArray as map}
-	<Widget thing={map.child} path={map.childPath} origin={map.extent.offsetBy(widgetOffset)}/>
-	<Line thing={map.child} path={map.childPath} curveType={map.curveType} rect={map.offsetBy(lineOffset)}/>
-	{#if map.childPath.hasChildren && map.childPath.isExpanded}
-		<Children path={map.childPath} origin={map.childOrigin}/>
-	{/if}
-{/each}
+{#if path.isExpanded}
+	{#each childMapRectArray as map}
+		<Widget thing={map.child} path={map.childPath} origin={map.extent.offsetBy(widgetOffset)}/>
+		<Line thing={map.child} path={map.childPath} curveType={map.curveType} rect={map.offsetBy(lineOffset)}/>
+		{#if map.childPath.hasChildren && map.childPath.isExpanded}
+			<Children path={map.childPath} origin={map.childOrigin}/>
+		{/if}
+	{/each}
+{/if}
