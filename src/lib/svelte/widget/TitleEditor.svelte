@@ -97,7 +97,6 @@
     }
 
 	function handleSingleClick(event) {
-		event.preventDefault();
 		clickCount++;
 		clickTimer = setTimeout(() => {
 			if (clickCount === 1) {
@@ -108,8 +107,8 @@
 	}
 
 	function handleClick(event) {
-		event.preventDefault();
 		if (!path.isEditing) {
+			event.preventDefault();
 			if (!path.isGrabbed) {
 				path.grabOnly();
 			} else if (k.allow_TitleEditing && !path.isRoot) {
@@ -123,20 +122,22 @@
 	}
  
 	function handleLongClick(event) {
-		event.preventDefault();
-		clearClicks();
-		clickTimer = setTimeout(() => {
+		if (!path.isEditing) {
+			event.preventDefault();
 			clearClicks();
-			if (!path.isRoot) {
-				if ($s_path_toolsCluster == path) {
-					$s_path_toolsCluster = null;
-				} else  {
-					path.grabOnly();
-					$s_path_toolsCluster = path;
+			clickTimer = setTimeout(() => {
+				clearClicks();
+				if (!path.isRoot) {
+					if ($s_path_toolsCluster == path) {
+						$s_path_toolsCluster = null;
+					} else  {
+						path.grabOnly();
+						$s_path_toolsCluster = path;
+					}
+					signals.signal_rebuild_fromHere();
 				}
-				signals.signal_rebuild_fromHere();
-			}
-		}, k.threshold_longClick);
+			}, k.threshold_longClick);
+		}
 	}
 
 
@@ -156,7 +157,7 @@
 				$s_title_editing = null;
 				input?.blur();
 			} else {
-				if (isEditing != path.matchesPath(editPath?.editing ?? null)) {
+				if (isEditing != path.matchesPath(editPath?.editing ?? null)) { // needs reactivity to $s_title_editing;
 					if (!isEditing) {
 						input?.focus();
 						debug.log_edit(`RANGE ${path.title}`);

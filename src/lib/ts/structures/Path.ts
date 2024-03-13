@@ -15,7 +15,7 @@ export default class Path {
 		this.hashedPath = pathString.hash()
 		this.predicateID = predicateID;
 		this.pathString = pathString;
-		this.selectionRange = new SeriouslyRange(0, this.thing?.titleWidth ?? 0);
+		this.selectionRange = new SeriouslyRange(0, this.thing?.title.length ?? 0);
 		if (g.hierarchy.isAssembled) {
 			this.subscriptions_setup();	// not needed during hierarchy assembly
 		}
