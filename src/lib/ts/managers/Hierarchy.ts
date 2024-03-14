@@ -1,4 +1,4 @@
-import { s_isBusy, s_paths_grabbed, s_things_arrived, s_title_editing, s_paths_expanded, s_altering_parent, s_path_toolsCluster } from './State';
+import { s_isBusy, s_paths_grabbed, s_things_arrived, s_title_editing, s_paths_expanded, s_altering_parent, s_path_toolsCluster } from '../common/State';
 import { g, k, u, get, User, Path, Thing, Grabs, debug, Access, IDTrait, IDTool, signals, Wrapper } from '../common/GlobalImports';
 import { Predicate, Relationship, persistLocal, AlteringParent, CreationOptions } from '../common/GlobalImports';
 import DBInterface from '../db/DBInterface';
@@ -59,7 +59,7 @@ export default class Hierarchy {
 				default: break;
 			}
 			s_path_toolsCluster.set(null);
-			signals.signal_relayout_fromHere();
+			signals.signal_relayoutWidgets_fromHere();
 		}
 	}
 
@@ -107,7 +107,7 @@ export default class Hierarchy {
 				case 'arrowdown':		await this.latestPathGrabbed_rebuild_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
 			}
 			if (needsRebuild) {
-				signals.signal_rebuild_fromHere();
+				signals.signal_rebuildWidgets_fromHere();
 			}
 		}
 	}
@@ -143,7 +143,7 @@ export default class Hierarchy {
 		const path = this.grabs.latestPathGrabbed(up);
 		if (path && !path.isRoot) {
 			s_path_toolsCluster.set(path.toolsGrabbed ? null : path);
-			signals.signal_rebuild_fromHere();
+			signals.signal_rebuildWidgets_fromHere();
 		}
 	}
 
@@ -541,7 +541,7 @@ export default class Hierarchy {
 				}	
 			} while (!path.matchesPath(toolsPath));
 			path.grabOnly();
-			signals.signal_relayout_fromHere();
+			signals.signal_relayoutWidgets_fromHere();
 			s_path_toolsCluster.set(path);
 		}
 	}
@@ -560,7 +560,7 @@ export default class Hierarchy {
 		const childPath = await this.path_remember_remoteAddAsChild(fromPath, child);
 		childPath.grabOnly();
 		childPath.relationship?.order_setTo(order);
-		signals.signal_rebuild_fromHere();
+		signals.signal_rebuildWidgets_fromHere();
 		if (shouldStartEdit) {
 			setTimeout(() => {
 				childPath.startEdit();
@@ -580,7 +580,7 @@ export default class Hierarchy {
 					path.childPaths[0].grabOnly()
 				}
 				if (path.expand()) {
-					signals.signal_rebuild_fromHere();
+					signals.signal_rebuildWidgets_fromHere();
 				}
 			}
 		}
@@ -589,7 +589,7 @@ export default class Hierarchy {
 	async path_remember_bulk_remoteRelocateRight(path: Path, newParentPath: Path) {
 		const newThingPath = await this.thing_remember_bulk_recursive_remoteRelocateRight(path, newParentPath);
 		if (newThingPath) {
-			newParentPath.signal_relayout();
+			newParentPath.signal_relayoutWidgets();
 			if (newParentPath.isExpanded) {
 				newThingPath.grabOnly();
 			} else {
@@ -672,7 +672,7 @@ export default class Hierarchy {
 				} else {
 					grabPath.grabOnly();
 				}
-				signals.signal_relayout_fromHere();
+				signals.signal_relayoutWidgets_fromHere();
 			} else if (k.allow_GraphEditing && OPTION) {
 				await u.paths_orders_normalize_remoteMaybe(fromPath.childPaths, false);
 				const wrapped = up ? (index == 0) : (index == siblings.length - 1);
@@ -680,7 +680,7 @@ export default class Hierarchy {
 				const newOrder = newIndex + goose;
 				path.relationship?.order_setTo(newOrder);
 				await u.paths_orders_normalize_remoteMaybe(fromPath.childPaths);
-				signals.signal_rebuild_fromHere();
+				signals.signal_rebuildWidgets_fromHere();
 			}
 		}
 	}
@@ -709,7 +709,7 @@ export default class Hierarchy {
 					newParentPath.becomeHere();
 				}
 			}
-			signals.signal_rebuild_fromHere();			// so Children component will update
+			signals.signal_rebuildWidgets_fromHere();			// so Children component will update
 		}
 	}
 
@@ -762,9 +762,9 @@ export default class Hierarchy {
 			needsRebuild = true;
 		}
 		if (needsRebuild) {
-			signals.signal_rebuild_fromHere();
+			signals.signal_rebuildWidgets_fromHere();
 		} else {
-			signals.signal_relayout_fromHere();
+			signals.signal_relayoutWidgets_fromHere();
 		}
 	}
 
@@ -782,7 +782,7 @@ export default class Hierarchy {
 						break;
 					case AlteringParent.adding:
 						await this.path_remember_remoteAddAsChild(path, toolsThing);
-						signals.signal_rebuild_fromHere();
+						signals.signal_rebuildWidgets_fromHere();
 						break;
 				}
 			}
@@ -824,7 +824,7 @@ export default class Hierarchy {
 				}
 			}
 			if (needsRebuild) {
-				signals.signal_rebuild_fromHere();
+				signals.signal_rebuildWidgets_fromHere();
 			}
 		}
 	}

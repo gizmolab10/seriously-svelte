@@ -1,5 +1,5 @@
 <script>
-	import { s_paths_expanded, s_altering_parent, s_paths_grabbed, s_path_toolsCluster } from '../../ts/managers/State';
+	import { s_paths_expanded, s_altering_parent, s_paths_grabbed, s_path_toolsCluster } from '../../ts/common/State';
 	import { g, k, u, get, Size, Thing, Point, debug, ZIndex, svgPath, signals } from "../../ts/common/GlobalImports";
 	import { onMount, Wrapper, Direction, onDestroy, dbDispatch, IDWrapper } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte';
@@ -86,7 +86,7 @@
 		if (path.toolsGrabbed) {
 			$s_path_toolsCluster = null;
 			$s_altering_parent = null;
-			signals.signal_rebuild_fromHere();
+			signals.signal_rebuildWidgets_fromHere();
 		} else if (path.hasChildren) {
 			g.hierarchy.path_rebuild_remoteMoveRight(path, !path.isExpanded, true, false);
 		}
@@ -145,7 +145,7 @@
 					<SVGD3 name='revealInside'
 						width={k.dot_size}
 						height={k.dot_size}
-						stroke={strokeColor}
+						stroke={insideFillColor}
 						fill={insideFillColor}
 						scalablePath={insidePath}
 					/>

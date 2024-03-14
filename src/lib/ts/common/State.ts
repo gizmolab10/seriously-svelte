@@ -1,5 +1,5 @@
-import { Rect, Path, Point, TitleState } from '../common/GlobalImports';
-import { signals } from '../common/Signals';
+import { Rect, Path, Point, TitleState } from './GlobalImports';
+import { signals } from './Signals';
 import { writable } from 'svelte/store';
 let interval : NodeJS.Timeout | null = null;
 

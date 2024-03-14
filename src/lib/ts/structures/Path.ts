@@ -1,7 +1,7 @@
 import { g, k, u, get, Rect, Size, Thing, debug, signals, Wrapper, IDWrapper } from '../common/GlobalImports';
 import { TitleState, Predicate, Relationship, SeriouslyRange, AlteringParent } from '../common/GlobalImports';
-import { s_paths_expanded, s_path_toolsCluster, s_altering_parent } from '../managers/State';
-import { s_path_here, s_paths_grabbed, s_title_editing } from '../managers/State';
+import { s_paths_expanded, s_path_toolsCluster, s_altering_parent } from '../common/State';
+import { s_path_here, s_paths_grabbed, s_title_editing } from '../common/State';
 import { Writable } from 'svelte/store';
 
 export default class Path {
@@ -21,8 +21,8 @@ export default class Path {
 		}
 	}
 
-	signal_rebuild()  { signals.signal_rebuild(this); }
-	signal_relayout() { signals.signal_relayout(this); }
+	signal_rebuildWidgets()  { signals.signal_rebuildWidgets(this); }
+	signal_relayoutWidgets() { signals.signal_relayoutWidgets(this); }
 
 	wrapper_add(wrapper: Wrapper) {
 		this.wrappers[wrapper.type] = wrapper;
@@ -408,7 +408,7 @@ export default class Path {
 			} else {
 				this.grabOnly();
             }
-			signals.signal_rebuild_fromHere();
+			signals.signal_rebuildWidgets_fromHere();
         }
 	}
 

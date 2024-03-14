@@ -1,5 +1,5 @@
 import { k, u, get, Path, Rect, Point, Thing, launch, dbDispatch, Hierarchy, persistLocal, IDPersistant } from '../../ts/common/GlobalImports';
-import { s_db_type, s_path_here, s_graphRect, s_show_details, s_paths_grabbed, s_scale_factor } from '../managers/State';
+import { s_db_type, s_path_here, s_graphRect, s_show_details, s_paths_grabbed, s_scale_factor } from './State';
 
 class Globals {
 	titleIsAtTop: boolean = false;
@@ -11,9 +11,10 @@ class Globals {
 	here: Thing;
 
 	setup_reacts() {
-		s_path_here.subscribe((path: Path) => {
-			if (path) {
-				this.herePath = path;
+		s_path_here.subscribe((herePath: Path) => {
+			if (herePath && herePath != this.herePath) {
+				this.here = herePath.thing ?? this.root;
+				this.herePath = herePath;
 			}
 		})
 		s_db_type.subscribe((type: string) => {

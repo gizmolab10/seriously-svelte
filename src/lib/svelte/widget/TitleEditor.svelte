@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { g, k, u, Thing, debug, ZIndex, onMount, signals } from '../../ts/common/GlobalImports';
 	import { Wrapper, IDWrapper, dbDispatch, SeriouslyRange } from '../../ts/common/GlobalImports';
-	import { s_title_editing, s_paths_grabbed, s_path_toolsCluster } from '../../ts/managers/State';
+	import { s_title_editing, s_paths_grabbed, s_path_toolsCluster } from '../../ts/common/State';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
 	export let thing;
@@ -18,8 +18,35 @@
 	let clickTimer;
 
 	var hasChanges = () => { return originalTitle != thing.title; };
-	function handleInput(event) { thing.title = event.target.value; updateInputWidth(); };
 	function handleMouseUp() { clearTimeout(clickTimer); }
+	
+	onMount(() => {
+		const rebuildHandler = signals.handle_rebuildWidgets((path) => { updateInputWidth(); });
+		const relayoutHandler = signals.handle_relayoutWidgets((path) => { updateInputWidth(); });
+
+		setTimeout(() => {
+			updateInputWidth();
+		}, 100);
+
+		return () => {
+			rebuildHandler.disconnect();
+			relayoutHandler.disconnect()
+		};
+	});
+	
+	function handleInput(event) {
+		thing.title = event.target.value;
+	};
+
+	function handleKeyDown(event) {
+		if (thing && path.isEditing && canAlterTitle(event)) {
+			switch (event.key) {	
+				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); g.hierarchy.path_edit_remoteCreateChildOf(path.fromPath); break;
+				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
+				default:	  signals.signal_relayoutWidgets(); break;
+			}
+		}
+	}
 
 	function clearClicks() {
 		clickCount = 0;
@@ -31,32 +58,12 @@
 			titleWrapper = new Wrapper(input, path, IDWrapper.title);
 		}
 	}
-	
-	onMount(() => {
-		const rebuildHandler = signals.handle_rebuild((path) => { updateInputWidth(); });
-		const relayoutHandler = signals.handle_relayout((path) => { updateInputWidth(); });
-
-		setTimeout(() => {
-			updateInputWidth();
-		}, 100);
-
-		return () => {
-			rebuildHandler.disconnect();
-			relayoutHandler.disconnect()
-		};
-	});
 
 	function updateInputWidth() {
-		if (input && ghost) { // ghost only exists to provide its scroll width
+		if (input && ghost) { // ghost only exists to provide its width (in pixels)
 			titleWidth = ghost.scrollWidth - 5;
-			input.style.width = `${titleWidth}px`;
+			input.style.width = `${titleWidth}px`;	// apply its width to the input element
 			// debug.log_edit(`WIDTH: ${titleWidth} ${path.title}`);
-		}
-	}
-
-	$: {
-		if (k.row_height > 0) {
-			updateInputWidth();
 		}
 	}
 
@@ -71,16 +78,6 @@
 			canAlter = false;
 		}
 		return canAlter;
-	}
-
-	function handleKeyDown(event) {
-		if (thing && path.isEditing && canAlterTitle(event)) {
-			switch (event.key) {	
-				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); g.hierarchy.path_edit_remoteCreateChildOf(path.fromPath); break;
-				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
-				default:	  signals.signal_relayout(); break;
-			}
-		}
 	}
 
 	function handleBlur(event) {
@@ -134,7 +131,7 @@
 						path.grabOnly();
 						$s_path_toolsCluster = path;
 					}
-					signals.signal_rebuild_fromHere();
+					signals.signal_rebuildWidgets_fromHere();
 				}
 			}, k.threshold_longClick);
 		}
@@ -175,12 +172,12 @@
 
 	function stopAndClearEditing() {
 		invokeBlurNotClearEditing();
-		setTimeout(() => {		// eliminate infinite recursion
-			if (path.isEditing) {				
+		if (path.isEditing) {				
+			setTimeout(() => {		// eliminate infinite recursion
 				$s_title_editing.stop();
-				signals.signal_relayout_fromHere();
-			}
-		}, 20);
+				signals.signal_relayoutWidgets_fromHere();
+			}, 2);
+		}
 	}
 
 	function invokeBlurNotClearEditing() {
@@ -191,14 +188,14 @@
 			if (hasChanges() && !thing.isExemplar) {
 				dbDispatch.db.thing_remoteUpdate(thing);
 				originalTitle = thing.title;		// so hasChanges will be correct
-				path.signal_relayout();
+				path.signal_relayoutWidgets();
 			}
 		}
 	}
 
 	function handleCutOrPaste(event) {
 		extractRange();
-		path.signal_relayout();
+		path.signal_relayoutWidgets();
 	}
 
 	function extractRange() {

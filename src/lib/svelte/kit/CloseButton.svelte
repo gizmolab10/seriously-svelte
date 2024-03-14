@@ -1,6 +1,6 @@
 <script>
 	import { u, Size, ZIndex, svgPath } from '../../ts/common/GlobalImports';
-    import { s_id_popupView } from '../../ts/managers/State';
+    import { s_id_popupView } from '../../ts/common/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
     export let size = 20;
     const cross = svgPath.xCross(size, size / 6);

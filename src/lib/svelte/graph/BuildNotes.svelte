@@ -1,6 +1,6 @@
 <script>
 	import { k, builds, onMount, ZIndex } from '../../ts/common/GlobalImports';
-	import { s_id_popupView } from '../../ts/managers/State';
+	import { s_id_popupView } from '../../ts/common/State';
 	import Directionals from '../svg/Directionals.svelte'
 	import CloseButton from '../kit/CloseButton.svelte'
 	const indexedNotes = Object.entries(builds.notes).reverse();

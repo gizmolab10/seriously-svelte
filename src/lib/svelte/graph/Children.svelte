@@ -1,7 +1,7 @@
 <script lang=ts>
 	import { k, u, Rect, Size, Point, Thing, debug, signals, onMount } from '../../ts/common/GlobalImports';
 	import { IDLine, Layout, onDestroy, DebugFlag, debugReact } from '../../ts/common/GlobalImports';
-	import { s_graphRect } from '../../ts/managers/State';
+	import { s_graphRect } from '../../ts/common/State';
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Children from './Children.svelte';
@@ -23,17 +23,17 @@
 		}
 	}
 	
-	const signalHandler = signals.handle_relayout((path_signal) => {
-		if ((!path_signal || path_signal.matchesPath(path)) && path.isExpanded) {
+	const signalHandler = signals.handle_relayoutWidgets((signal_path) => {
+		if ((!signal_path || signal_path.matchesPath(path)) && path.isExpanded) {
 			const now = new Date().getTime();
 			if (now - priorTime > 100) {
 				priorTime = now;
 				setTimeout(async () => {	// delay until all other handlers for this signal are done TODO: WHY?
 					layoutChildren();
-					if (path_signal) {		// only recurse if starting at a specific path_signal
+					if (signal_path) {		// only recurse if starting at a specific signal_path
 						for (const childMapRect of childMapRectArray) {
 							if (childMapRect.path.hasChildren && childMapRect.path.isExpanded) {
-								childMapRect.path.signal_relayout();
+								childMapRect.path.signal_relayoutWidgets();
 							}
 						}
 					}
@@ -44,8 +44,9 @@
 	
 	function layoutChildren() {
 		if (path.isExpanded) {
+			console.log('children of ' + path.title + k.space + origin.description);
 			const delta = new Point(19, -2);
-			const height = (path.visibleProgeny_halfHeight);
+			const height = path.visibleProgeny_halfHeight;
 			const childrenOrigin = origin.offsetByY(height);
 			childMapRectArray = new Layout(path, childrenOrigin).childMapRectArray;
 			center = childrenOrigin.offsetBy(delta);

@@ -1,5 +1,5 @@
 import { debug, Thing, TypeDB, TypeDatum, Hierarchy, Relationship, CreationOptions, DebugFlag, dbDispatch } from '../common/GlobalImports';
-import { s_things_arrived } from '../managers/State';
+import { s_things_arrived } from '../common/State';
 import DBInterface from './DBInterface';
 import Airtable from 'airtable';
 

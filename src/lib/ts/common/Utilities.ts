@@ -1,4 +1,4 @@
-import { s_scale_factor, s_thing_fontFamily } from '../managers/State';
+import { s_scale_factor, s_thing_fontFamily } from './State';
 import { k, get, Path, Size, IDBrowser } from './GlobalImports';
 
 class Utilities {

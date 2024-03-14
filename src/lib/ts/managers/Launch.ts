@@ -1,5 +1,5 @@
 import { g, k, u, debug, builds, debugReact, IDPersistant, dbDispatch, persistLocal } from '../common/GlobalImports'
-import { s_path_here, s_show_details, s_paths_grabbed, s_paths_expanded } from './State';
+import { s_path_here, s_show_details, s_paths_grabbed, s_paths_expanded } from '../common/State';
 
 class Launch {
 	queryString: URLSearchParams;

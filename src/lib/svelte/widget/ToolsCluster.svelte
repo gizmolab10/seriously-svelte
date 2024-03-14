@@ -1,8 +1,8 @@
 <script lang='ts'>
     import { svgPath, onDestroy, Direction, dbDispatch, transparentize, AlteringParent } from '../../ts/common/GlobalImports';
     import { g, k, u, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, signals } from '../../ts/common/GlobalImports';
-    import { s_user_graphOffset, s_altering_parent, s_path_toolsCluster } from '../../ts/managers/State';
-    import { s_graphRect, s_show_details } from '../../ts/managers/State';
+    import { s_user_graphOffset, s_altering_parent, s_path_toolsCluster } from '../../ts/common/State';
+    import { s_graphRect, s_show_details } from '../../ts/common/State';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TriangleButton from '../svg/TriangleButton.svelte';
@@ -83,7 +83,7 @@
         }
     }
 	
-	const relayout_signalHandler = signals.handle_relayout((path) => {
+	const relayout_signalHandler = signals.handle_relayoutWidgets((path) => {
         setTimeout(() => {
             update();
             toggle = !toggle;
@@ -117,10 +117,11 @@
 	function update(): boolean {
         const rect = path?.titleRect;
         if (rect && $s_path_toolsCluster && rect.size.width != 0) {
-            const offsetReveal = new Point(-5.5, -5.5);
-            const offsetX = 11.5 - ($s_show_details ? k.width_details : 0);
-            const offsetY = (g.titleIsAtTop ? -45 : 0) - clusterDiameter - 5.5;
-            const center = rect.centerLeft.offsetBy(new Point(titleWidth + offsetX, offsetY));
+            const offsetReveal = new Point(-5.7, -5.5);
+            const offsetTitle = titleWidth * (path.isExpanded ? 1 : 1.034);
+            const offsetX = 8.8 + offsetTitle - ($s_show_details ? k.width_details : 0);
+            const offsetY = (g.titleIsAtTop ? -45 : 0) - clusterDiameter - 5.4;
+            const center = rect.centerLeft.offsetBy(new Point(offsetX, offsetY));
             left = center.x - toolDiameter;
             const y = center.y;
             setC(IDTool.cluster,        center);
@@ -129,7 +130,7 @@
             setC(IDTool.delete_cancel,  center.offsetBy(new Point(1 - toolDiameter, toolDiameter - 5)));
             setC(IDTool.delete_confirm, center.offsetBy(new Point(2 - toolDiameter, 5 - toolDiameter)));
             setC(IDTool.create,         new Point(center.x + toolDiameter - 3, y - toolDiameter + 6));
-            setC(IDTool.more,           new Point(center.x + 0.5, y + toolDiameter + 4));
+            setC(IDTool.more,           new Point(center.x + 1, y + toolDiameter + 4));
             setC(IDTool.next,           new Point(center.x - 2, y - toolDiameter - 2));
             setC(IDTool.delete_parent,  new Point(left - 1, y + toolDiameter - 8));
             setC(IDTool.add_parent,     new Point(left - 1, y - toolDiameter + 6));

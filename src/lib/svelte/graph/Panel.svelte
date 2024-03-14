@@ -1,8 +1,8 @@
 <script>
 	import { g, k, u, get, Path, Rect, Size, Point, Thing, launch, TypeDB, ZIndex, signals, onMount } from '../../ts/common/GlobalImports';
 	import { IDButton, Hierarchy, IDPersistant, dbDispatch, debugReact, persistLocal } from '../../ts/common/GlobalImports';
-	import { s_build, s_isBusy, s_path_here, s_db_type, s_graphRect } from '../../ts/managers/State';
-	import { s_show_details, s_id_popupView, s_things_arrived } from '../../ts/managers/State';
+	import { s_build, s_isBusy, s_path_here, s_db_type, s_graphRect } from '../../ts/common/State';
+	import { s_show_details, s_id_popupView, s_things_arrived } from '../../ts/common/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import BuildNotes from './BuildNotes.svelte';
@@ -16,7 +16,7 @@
 
 	$: { updateHerePath($s_path_here); }
 	window.addEventListener('resize', (event) => { g.graphRect_update(); });
-	const rebuild_signalHandler = signals.handle_rebuild(() => { updateHerePath($s_path_here); });
+	const rebuild_signalHandler = signals.handle_rebuildWidgets(() => { updateHerePath($s_path_here); });
 
 	onMount(() => {
 		(async () => {

@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { s_title_editing, s_path_here, s_graphRect, s_show_details, s_paths_grabbed } from '../../ts/managers/State';
+	import { s_title_editing, s_path_here, s_graphRect, s_show_details, s_paths_grabbed } from '../../ts/common/State';
 	import { g, k, u, Path, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/GlobalImports';
 	import { IDButton, onDestroy, debugReact, dbDispatch, Predicate } from '../../ts/common/GlobalImports';
-	import { s_id_popupView, s_path_toolsCluster, s_user_graphOffset } from '../../ts/managers/State';
+	import { s_id_popupView, s_path_toolsCluster, s_user_graphOffset } from '../../ts/common/State';
 	import { IDPersistant, IDSignal, persistLocal } from '../../ts/common/GlobalImports';
 	import FocusRevealDot from '../kit/FocusRevealDot.svelte';
 	import ToolsCluster from '../widget/ToolsCluster.svelte';
@@ -26,10 +26,8 @@
 
 	onDestroy(() => { relayout_signalHandler.disconnect(); });
 	
-	const relayout_signalHandler = signals.handle_relayout((path) => {
-		if (g.here) {
-			updateOrigins();
-		}
+	const relayout_signalHandler = signals.handle_relayoutWidgets((path) => {
+		updateOrigins();
 	});
 
 	function handleWheel(event) {

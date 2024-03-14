@@ -1,6 +1,6 @@
 <script>
 	import { k, u, TypeDB, ZIndex, IDPersistant, IDButton, Hierarchy, dbDispatch, persistLocal } from '../../ts/common/GlobalImports';
-	import { s_db_type, s_graphRect, s_db_loadTime, s_id_popupView } from '../../ts/managers/State';
+	import { s_db_type, s_graphRect, s_db_loadTime, s_id_popupView } from '../../ts/common/State';
 	import RadioButtons from '../kit/RadioButtons.svelte'
 	import Label from '../kit/Label.svelte';
 

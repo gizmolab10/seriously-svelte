@@ -1,4 +1,4 @@
-import { s_path_here } from '../managers/State';
+import { s_path_here } from './State';
 import { Signal } from 'typed-signals';
 import { get } from 'svelte/store';
 
@@ -11,18 +11,18 @@ export enum IDSignal {
 export class Signals {
 	signal_isInFlight = false;
 
-	signal_rebuild_fromHere() { this.signal_rebuild(get(s_path_here)); }
-	signal_relayout_fromHere() { this.signal_relayout(get(s_path_here)); }
+	signal_rebuildWidgets_fromHere() { this.signal_rebuildWidgets(get(s_path_here)); }
+	signal_relayoutWidgets_fromHere() { this.signal_relayoutWidgets(get(s_path_here)); }
 	handleSignal = new Signal<(IDSignal: Array<IDSignal>, value: any) => void>();
-	signal_rebuild(value: any = null) { this.signal(IDSignal.rebuild, value); }
-	signal_relayout(value: any = null) { this.signal(IDSignal.relayout, value); }
+	signal_rebuildWidgets(value: any = null) { this.signal(IDSignal.rebuild, value); }
+	signal_relayoutWidgets(value: any = null) { this.signal(IDSignal.relayout, value); }
 	signal_alteringParent(value: any = null) { this.signal(IDSignal.alterParent, value); }
 
-	handle_rebuild(onSignal: (value: any | null) => any ) {
+	handle_rebuildWidgets(onSignal: (value: any | null) => any ) {
 		return this.handleSignalOfKind(IDSignal.rebuild, onSignal);
 	}
 
-	handle_relayout(onSignal: (value: any | null) => any ) {
+	handle_relayoutWidgets(onSignal: (value: any | null) => any ) {
 		return this.handleSignalOfKind(IDSignal.relayout, onSignal);
 	}
 

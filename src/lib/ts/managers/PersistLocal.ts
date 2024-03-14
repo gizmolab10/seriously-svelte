@@ -1,8 +1,8 @@
 import { g, k, Path, Point, dbDispatch } from '../common/GlobalImports'
-import { s_thing_fontFamily, s_show_child_graph } from './State';
-import { s_show_details, s_user_graphOffset } from './State';
-import { s_path_here, s_paths_expanded } from './State';
-import { s_paths_grabbed } from './State';
+import { s_thing_fontFamily, s_show_child_graph } from '../common/State';
+import { s_show_details, s_user_graphOffset } from '../common/State';
+import { s_path_here, s_paths_expanded } from '../common/State';
+import { s_paths_grabbed } from '../common/State';
 
 export enum IDPersistant {
 	relationships	= 'relationships',

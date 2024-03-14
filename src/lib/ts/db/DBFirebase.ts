@@ -2,7 +2,7 @@ import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection, onSnaps
 import { DocumentData, DocumentChange, QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { g, k, u, get, Thing, debug, launch, TypeDB, signals, IDTrait, TypeDatum, Hierarchy, DebugFlag } from '../common/GlobalImports';
 import { Predicate, dbDispatch, Relationship, CreationOptions } from '../common/GlobalImports';
-import { s_build } from '../managers/State';
+import { s_build } from '../common/State';
 import { initializeApp } from "firebase/app";
 import DBInterface from './DBInterface';
 
@@ -270,7 +270,7 @@ export default class DBFirebase implements DBInterface {
 						}
 					}
 				}
-				signals.signal_rebuild_fromHere();
+				signals.signal_rebuildWidgets_fromHere();
 			} catch (error) {
 				this.reportError(error);
 			}

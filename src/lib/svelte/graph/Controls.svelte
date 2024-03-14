@@ -1,6 +1,6 @@
 <script>
 	import { g, k, u, ZIndex, signals, svgPath, IDButton, IDPersistant, persistLocal } from '../../ts/common/GlobalImports';
-	import { s_build, s_show_details, s_id_popupView, s_show_child_graph } from '../../ts/managers/State';
+	import { s_build, s_show_details, s_id_popupView, s_show_child_graph } from '../../ts/common/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import SVGD3 from '../svg/SVGD3.svelte';
 	let width = u.windowSize.width - 20;
@@ -20,7 +20,7 @@
 
 	function details_buttonClicked(event) {
 		$s_show_details = !$s_show_details;
-		signals.signal_relayout_fromHere();
+		signals.signal_relayoutWidgets_fromHere();
 		persistLocal.writeToKey(IDPersistant.details, $s_show_details);
 	}
 </script>

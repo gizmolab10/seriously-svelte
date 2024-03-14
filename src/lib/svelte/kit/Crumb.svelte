@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, Thing, onMount, signals, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
-	import { s_path_here } from '../../ts/managers/State';
+	import { s_path_here } from '../../ts/common/State';
 	export let path = '';
 	let borderColor = k.color_background;
 	const borderStyle = '1px solid';
@@ -35,7 +35,7 @@
 		if (dbDispatch.db.hasData) {
 			path.grabOnly();
 			if (path.becomeHere()) {
-				signals.signal_rebuild_fromHere();
+				signals.signal_rebuildWidgets_fromHere();
 			}
 		}
 	}

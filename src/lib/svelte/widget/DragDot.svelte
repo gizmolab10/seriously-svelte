@@ -1,7 +1,7 @@
 <script>
 	import { k, u, Rect, Size, Point, Thing, debug, ZIndex, onMount, signals, svgPath } from "../../ts/common/GlobalImports";
 	import { Wrapper, Direction, onDestroy, dbDispatch, AlteringParent } from "../../ts/common/GlobalImports";
-	import { s_paths_grabbed, s_altering_parent, s_path_toolsCluster } from '../../ts/managers/State';
+	import { s_paths_grabbed, s_altering_parent, s_path_toolsCluster } from '../../ts/common/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
 	import Box from '../kit/Box.svelte';
 	export let center = new Point(0, 0);
@@ -89,7 +89,7 @@
 	function handleDoubleClick(event) {
 		clearClicks();
 		if (path.becomeHere()) {
-			signals.signal_rebuild_fromHere();
+			signals.signal_rebuildWidgets_fromHere();
 		}
     }
 

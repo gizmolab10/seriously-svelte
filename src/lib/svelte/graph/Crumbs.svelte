@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, u, Size, Point, Thing, ZIndex, signals, svgPath, onDestroy, dbDispatch, Direction } from '../../ts/common/GlobalImports';
-	import { s_path_here, s_graphRect, s_show_details, s_paths_grabbed, s_path_toolsCluster } from '../../ts/managers/State';
+	import { s_path_here, s_graphRect, s_show_details, s_paths_grabbed, s_path_toolsCluster } from '../../ts/common/State';
 	import Crumb from '../kit/Crumb.svelte';
 	import SVGD3 from '../svg/SVGD3.svelte';
 	let ancestors: Array<Thing> = [];
@@ -11,7 +11,7 @@
 	let sum = 0;
 
 	function path_lastGrabbed() { return g.hierarchy.grabs.path_lastGrabbed; }
-	const rebuild_signalHandler = signals.handle_rebuild(() => { sum += 1; });
+	const rebuild_signalHandler = signals.handle_rebuildWidgets(() => { sum += 1; });
 	onDestroy(() => { rebuild_signalHandler.disconnect() })
 
 	$: {
