@@ -98,17 +98,20 @@
 	}
 
 	function updateLayout() {
-		const y = k.dot_size / 2 - 4.2;
+		const size = k.dot_size;
 		const titleWidth = thing.titleWidth;
 		const delta = showingBorder ? -0.5 : 0.5;
-		const x = k.dot_size + thing.titleWidth + (hasExtraX ? 3 : 0);
-		width = titleWidth - 18 + (k.dot_size * (path.hasChildren ? 2 : 1.35));
+		width = titleWidth - 18 + (size * (path.showsReveal ? 2 : 1.35));
 		padding = `0px ${rightPadding}px 0px 1px`;
-		revealCenter = new Point(x, y);
 		top = origin.y + delta + 0.5;
 		height = k.row_height - 1.5;
 		left = origin.x + delta - 1;
 		radius = k.row_height / 2;
+		if (path.showsReveal) {
+			const y = size / 2 - 3.8;
+			const x = size + titleWidth + (hasExtraX ? 3 : 0);
+			revealCenter = new Point(x, y);
+		}
 	}
 
 </script>
@@ -130,7 +133,7 @@
 	'>
 	<DragDot thing={thing} path={path}/>
 	<TitleEditor thing={thing} path={path} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
-	{#if path.hasChildren}
+	{#if path.showsReveal}
 		<RevealDot thing={thing} path={path} center={revealCenter}/>
 	{/if}
 </div>

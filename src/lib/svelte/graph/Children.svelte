@@ -24,27 +24,28 @@
 	}
 	
 	const signalHandler = signals.handle_relayoutWidgets((signal_path) => {
-		if ((!signal_path || signal_path.matchesPath(path)) && path.isExpanded) {
-			const now = new Date().getTime();
-			if (now - priorTime > 100) {
-				priorTime = now;
-				setTimeout(async () => {	// delay until all other handlers for this signal are done TODO: WHY?
-					layoutChildren();
-					if (signal_path) {		// only recurse if starting at a specific signal_path
-						for (const childMapRect of childMapRectArray) {
-							if (childMapRect.path.hasChildren && childMapRect.path.isExpanded) {
-								childMapRect.path.signal_relayoutWidgets();
-							}
+		const now = new Date().getTime();
+		if (path.isExpanded &&
+			((now - priorTime) > 100) &&
+			(!signal_path || signal_path.matchesPath(path))) {
+			priorTime = now;
+			console.log(origin.x + ' before timeout');
+			setTimeout(async () => {	// delay until all other handlers for this signal are done TODO: WHY?
+				layoutChildren();
+				if (signal_path) {		// only recurse if starting at a specific signal_path
+					for (const childMapRect of childMapRectArray) {
+						if (childMapRect.path.hasChildren && childMapRect.path.isExpanded) {
+							childMapRect.path.signal_relayoutWidgets();
 						}
 					}
-				}, 1);
-			}
+				}
+			}, 1);
 		}
-	})
+	});
 	
 	function layoutChildren() {
 		if (path.isExpanded) {
-			console.log('children of ' + path.title + k.space + origin.description);
+			console.log(origin.x + ' children layout');
 			const delta = new Point(19, -2);
 			const height = path.visibleProgeny_halfHeight;
 			const childrenOrigin = origin.offsetByY(height);

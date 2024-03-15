@@ -6,12 +6,15 @@
 	export let center;
 	export let thing;
 	export let path;
-	let tinyDotsOffset = k.dot_size * -0.4 + 0.01;
-	let insideFillColor = k.color_background;
+	let size = k.dot_size;
+	let hasInsidePath = path.toolsGrabbed || thing.isBulkAlias;
+	let insideOffset = hasInsidePath ? 0 : -1;
 	let childrenCount = path.children.length;
-	let tinyDotsDiameter = k.dot_size * 1.8;
+	let insideFillColor = k.color_background;
+	let tinyDotsOffset = size * -0.4 + 0.01;
 	let insidePath = svgPath.circle(16, 6);
 	let fillColor = k.color_background;
+	let tinyDotsDiameter = size * 1.8;
 	let strokeColor = thing.color;
 	let revealWrapper = Wrapper;
 	let isHovering = false;
@@ -66,18 +69,17 @@
 	}
 
 	function updateScalablePaths() {
-		const size = k.dot_size;
-		if ((!path.hasChildren && !thing.isBulkAlias) || path.toolsGrabbed) {
+		if (!path.showsReveal || path.toolsGrabbed) {
 			scalablePath = svgPath.circle(size, size - 1);
 		} else {
 			const goLeft = path.isExpanded && path.hasChildren;
 			const direction = goLeft ? Direction.left : Direction.right;
 			scalablePath = svgPath.fatPolygon(size, direction);
 		}
-		if (path.toolsGrabbed) {
+		if (thing.isBulkAlias) {
+			insidePath = svgPath.circle(size, 3);
+		} else if (path.toolsGrabbed) {
 			insidePath = svgPath.xCross(size, 1.5);
-		} else if (thing.isBulkAlias) {
-			insidePath = svgPath.circle(size, size / 3);
 		}
 	}
 
@@ -108,9 +110,9 @@
 		top: {center.y}px;
 		left: {center.x}px;
 		position: absolute;
-		width: {k.dot_size}px;
+		width: {size}px;
 		z-index: {ZIndex.dots};
-		height: {k.dot_size}px;'>
+		height: {size}px;'>
 		<button class='dot'
 			on:blur={u.ignore}
 			on:focus={u.ignore}
@@ -123,30 +125,30 @@
 			on:mouseover={handleMouseOver}
 			on:contextmenu={handleContextMenu}
 			style='
-				width: {k.dot_size}px;
-				height: {k.dot_size}px;
+				width: {size}px;
+				height: {size}px;
 			'>
 			{#key scalablePath}
 				<SVGD3 name='revealDot'
-					width={k.dot_size}
-					height={k.dot_size}
+					width={size}
+					height={size}
 					stroke={strokeColor}
 					scalablePath={scalablePath}
 					fill={debug.lines ? 'transparent' : fillColor}
 				/>
 			{/key}
-			{#if path.toolsGrabbed || thing.isBulkAlias}
+			{#if hasInsidePath}
 				<div class='revealInside' style='
-					top:{path.toolsGrabbed ? 0 : -1}px;
-					left:{path.toolsGrabbed ? 0 : -1}px;
-					width:14px;
-					height:14px;
+					left:{insideOffset}px;
+					height:{size}px;
+					top:{insideOffset}px;
+					width:{size}px;
 					position:absolute;'>
 					<SVGD3 name='revealInside'
-						width={k.dot_size}
-						height={k.dot_size}
-						stroke={insideFillColor}
+						width={size}
+						height={size}
 						fill={insideFillColor}
+						stroke={insideFillColor}
 						scalablePath={insidePath}
 					/>
 				</div>
@@ -154,7 +156,7 @@
 			{#if !path.isExpanded && path.hasChildren}
 				<div class='revealTinyDots' style='
 					left:{tinyDotsOffset + 0.65}px;
-					top:{tinyDotsOffset}px;
+					top:{tinyDotsOffset - 0.28}px;
 					height:{tinyDotsDiameter}px;
 					width:{tinyDotsDiameter}px;
 					position:absolute;'>

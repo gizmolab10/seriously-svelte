@@ -7,6 +7,7 @@ import { Writable } from 'svelte/store';
 export default class Path {
 	wrappers: { [type: string]: Wrapper } = {};
 	selectionRange = new SeriouslyRange(0, 0);
+	thing: Thing | null;
 	predicateID: string;
 	pathString: string;
 	hashedPath: number;
@@ -15,6 +16,7 @@ export default class Path {
 		this.hashedPath = pathString.hash()
 		this.predicateID = predicateID;
 		this.pathString = pathString;
+		this.thing = this.thingAt();
 		this.selectionRange = new SeriouslyRange(0, this.thing?.title.length ?? 0);
 		if (g.hierarchy.isAssembled) {
 			this.subscriptions_setup();	// not needed during hierarchy assembly
@@ -41,7 +43,6 @@ export default class Path {
 	get endID(): string { return this.idAt(); }
 	get fromPath(): Path { return this.stripBack(); }
 	get firstChild(): Thing { return this.children[0]; }
-	get thing(): Thing | null { return this.thingAt(); }
 	get lastChild(): Thing { return this.children.slice(-1)[0]; }
 	get isRoot(): boolean { return this.matchesPath(g.rootPath); }
 	get order(): number { return this.relationship?.order ?? -1; }
@@ -62,11 +63,12 @@ export default class Path {
 	get widgetWrapper(): Wrapper | null { return this.wrappers[IDWrapper.widget]; }
 	get titleRect(): Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
+	get titles(): Array<string> { return this.things.map(t => `\"${t.title}\"`) ?? []; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get children(): Array<Thing> { return g.hierarchy?.things_getForPaths(this.childPaths); }
-	get titles(): Array<string> { return this.things.map(t => `\"${t.title}\"`) ?? []; }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
 	get isEditing(): boolean { return this.matchesPath(get(s_title_editing)?.editing ?? null); }
+	get showsReveal(): boolean { return this.hasChildren || (this.thing?.isBulkAlias ?? false); }
 	get isStoppingEdit(): boolean { return this.matchesPath(get(s_title_editing)?.stopping ?? null); }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	

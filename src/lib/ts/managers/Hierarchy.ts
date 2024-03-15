@@ -1,4 +1,4 @@
-import { s_isBusy, s_paths_grabbed, s_things_arrived, s_title_editing, s_paths_expanded, s_altering_parent, s_path_toolsCluster } from '../common/State';
+import { s_isBusy, s_paths_grabbed, s_things_arrived, s_title_editing, s_altering_parent, s_path_toolsCluster } from '../common/State';
 import { g, k, u, get, User, Path, Thing, Grabs, debug, Access, IDTrait, IDTool, signals, Wrapper } from '../common/GlobalImports';
 import { Predicate, Relationship, persistLocal, AlteringParent, CreationOptions } from '../common/GlobalImports';
 import DBInterface from '../db/DBInterface';
@@ -332,7 +332,8 @@ export default class Hierarchy {
 
 	async thing_getRoots() {
 		let rootsPath: Path | null = null;
-		let rootPath = g.rootPath;
+		persistLocal.paths_restore();
+		const rootPath = g.rootPath;
 		for (const thing of this.knownTs_byTrait[IDTrait.roots]) {
 			if  (thing.title == 'roots') {	// special case TODO: convert to a auery string
 				return rootPath.appendChild(thing) ?? null;

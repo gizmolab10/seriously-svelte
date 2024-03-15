@@ -23,6 +23,7 @@ class PersistLocal {
 	// for backwards compatibility with {here,grabbed, expanded} stored as ids not path strings of relationship ids
 	usesRelationships = localStorage[IDPersistant.relationships];
 	ignorePaths = !this.usesRelationships || this.usesRelationships == 'undefined';
+	pathsRestored = false;
 
 	restore() {
 		// localStorage.clear();
@@ -60,29 +61,32 @@ class PersistLocal {
 	}
 
 	paths_restore() {
-		const h = g.hierarchy;
-		g.rootPath = h.path_remember_unique();
-		const herePathString = this.readFromDBKey(IDPersistant.here) ?? '';
-		let pathToHere = this.ignorePaths ? g.rootPath : h.path_remember_unique(herePathString ?? h.idRoot);
-		let here = h.thing_getForPath(pathToHere);
-		if (here == null) {
-			pathToHere = h.grabs.path_lastGrabbed?.fromPath ?? g.rootPath;
+		if (!this.pathsRestored) {
+			this.pathsRestored = true;
+			const h = g.hierarchy;
+			g.rootPath = h.path_remember_unique();
+			const herePathString = this.readFromDBKey(IDPersistant.here) ?? '';
+			let pathToHere = this.ignorePaths ? g.rootPath : h.path_remember_unique(herePathString ?? h.idRoot);
+			let here = h.thing_getForPath(pathToHere);
+			if (here == null) {
+				pathToHere = h.grabs.path_lastGrabbed?.fromPath ?? g.rootPath;
+			}
+			s_paths_grabbed.set(this.ignorePaths ? [] : this.readFromDBKey(IDPersistant.grabbed)?.map((s: string) => h.path_remember_unique(s)) ?? [g.rootPath]);
+			pathToHere.becomeHere();
+			this.cleanupExpandeds();
+	
+			s_paths_grabbed.subscribe((paths: Array<Path>) => {
+				this.writeToDBKey(IDPersistant.grabbed, !paths ? null : paths.map(p => p.pathString));
+			});
+	
+			s_paths_expanded.subscribe((paths: Array<Path>) => {
+				this.writeToDBKey(IDPersistant.expanded, !paths ? null : paths.map(p => p.pathString));
+			});
+	
+			s_path_here.subscribe((path: Path) => {
+				this.writeToDBKey(IDPersistant.here, !path ? null : path.pathString);
+			});
 		}
-		s_paths_grabbed.set(this.ignorePaths ? [] : this.readFromDBKey(IDPersistant.grabbed)?.map((s: string) => h.path_remember_unique(s)) ?? [g.rootPath]);
-		pathToHere.becomeHere();
-		this.cleanupExpandeds();
-
-		s_paths_grabbed.subscribe((paths: Array<Path>) => {
-			this.writeToDBKey(IDPersistant.grabbed, !paths ? null : paths.map(p => p.pathString));
-		});
-
-		s_paths_expanded.subscribe((paths: Array<Path>) => {
-			this.writeToDBKey(IDPersistant.expanded, !paths ? null : paths.map(p => p.pathString));
-		});
-
-		s_path_here.subscribe((path: Path) => {
-			this.writeToDBKey(IDPersistant.here, !path ? null : path.pathString);
-		});
 	}
 
 	cleanupExpandeds() {

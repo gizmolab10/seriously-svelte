@@ -174,8 +174,11 @@
 		invokeBlurNotClearEditing();
 		if (path.isEditing) {				
 			setTimeout(() => {		// eliminate infinite recursion
-				$s_title_editing.stop();
-				signals.signal_relayoutWidgets_fromHere();
+				const state = $s_title_editing;
+				if (state) {
+					state.stop()
+					signals.signal_relayoutWidgets_fromHere();
+				}
 			}, 2);
 		}
 	}

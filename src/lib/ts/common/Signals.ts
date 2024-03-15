@@ -3,9 +3,9 @@ import { Signal } from 'typed-signals';
 import { get } from 'svelte/store';
 
 export enum IDSignal {
-	alterParent = 'p',
-	relayout	= 'l',
-	rebuild		= 'b',
+	alterParent = 'alterParent',
+	relayout	= 'relayout',
+	rebuild		= 'rebuild',
 }
 
 export class Signals {

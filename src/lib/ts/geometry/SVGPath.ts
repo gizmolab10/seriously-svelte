@@ -111,7 +111,7 @@ export default class SVGPath {
 			paths = pairs.map(p => `M ${other},${p[0]} A ${tiny},${tiny} 0 1,1 ${other},${p[1]} A ${tiny},${tiny} 0 1,1 ${other},${p[0]}`);
 		}
 		const path = paths.join(k.space);
-		const last = pairs[count - 1][1];
+		const last = pairs[max - 1][1];
 		// console.log('count: ' + count + ', gap: ' + gap + ', last: ' + last + ', stretch: ' + (last - gap / 2));
 		return path;
 	}
