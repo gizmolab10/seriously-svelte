@@ -25,7 +25,7 @@ export default class DBFirebase implements DBInterface {
 	bulksName = 'Bulks';
 	deferSnapshots = false;
 	dbType = TypeDB.firebase;
-	bulks: [Bulk] | null = null;
+	bulks: Array<Bulk> | null = null;
 	app = initializeApp(this.firebaseConfig);
 	predicatesCollection: CollectionReference | null = null;
 	deferredSnapshots: Array<SnapshotDeferal> = [];
@@ -57,9 +57,6 @@ export default class DBFirebase implements DBInterface {
 		const baseID = this.baseID;
 		if (dbDispatch.eraseDB) {
 			await this.document_remoteDelete(baseID);
-		}
-		if (!this.bulks) {
-			this.bulks = [new Bulk(this.baseID)];
 		}
 		await this.fetch_documentsOf(TypeDatum.predicates);
 		await this.fetch_allFrom(baseID);
@@ -117,6 +114,9 @@ export default class DBFirebase implements DBInterface {
 
 	get_bulk_for(baseID: string | null) {
 		if (baseID) {
+			if (!this.bulks) {
+				this.bulks = [new Bulk(this.baseID)];
+			}
 			const bulks = this.bulks;
 			if (bulks) {
 				for (const bulk of bulks) {
@@ -125,7 +125,7 @@ export default class DBFirebase implements DBInterface {
 					}
 				}
 				const newBulk = new Bulk(baseID);
-				this.bulks!.push(newBulk);
+				bulks.push(newBulk);
 				return newBulk;
 			}
 		}
@@ -135,8 +135,9 @@ export default class DBFirebase implements DBInterface {
 	async fetch_bulkAliases() {
 		const root = this.hierarchy.root;
 		if (this.baseID == k.name_bulkAdmin && root) {
-			const rootsPath = await this.hierarchy.thing_getRoots();
+			const rootsPath = await this.hierarchy.path_getRoots();
 			if (rootsPath) {
+				g.rootsPath = rootsPath;
 				try {		// add bulks to roots thing
 					const bulk = collection(this.db, this.bulksName);		// fetch all bulks (documents)
 					let bulkSnapshot = await getDocs(bulk);

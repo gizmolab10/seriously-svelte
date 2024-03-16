@@ -21,9 +21,13 @@
 	function handleMouseUp() { clearTimeout(clickTimer); }
 	
 	onMount(() => {
+
+		if (thing == null) {
+			u.noop();
+		}
+
 		const rebuildHandler = signals.handle_rebuildWidgets((path) => { updateInputWidth(); });
 		const relayoutHandler = signals.handle_relayoutWidgets((path) => { updateInputWidth(); });
-
 		setTimeout(() => {
 			updateInputWidth();
 		}, 100);
@@ -238,9 +242,9 @@
 {#key originalTitle}
 	<span class="ghost" bind:this={ghost}
 		style='
+			padding: {padding};
 			font-size: {fontSize};
-			font-family: {fontFamily};
-			padding: {padding};'>
+			font-family: {fontFamily};'>
 		{thing.title}
 	</span>
 	<input

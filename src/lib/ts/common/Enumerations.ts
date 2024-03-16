@@ -1,3 +1,26 @@
+export enum AlteringParent {
+	deleting = 'deleting',
+	adding	 = 'adding',
+}
+
+export enum CreationOptions {
+	isFromRemote = 'isFrom',
+	getRemoteID	 = 'getID',
+	none		 = '',
+}
+
+export enum IDLine {
+	flat = 'flat',
+	down = 'down',
+	up	 = 'up',
+}
+
+export enum IDTrait {
+	roots = '^',
+	root  = '!',
+	bulk  = '~',
+}
+
 export enum IDButton {
 	builds		= 'show build notes',
 	relations	= 'relations',
@@ -7,16 +30,26 @@ export enum IDButton {
 	help		= '?',
 }
 
-export enum IDLine {
-	up	 = 'up',
-	down = 'down',
-	flat = 'flat',
+export enum IDBrowser  {
+	explorer = 'explorer',
+	unknown  = 'unknown',
+	firefox	 = 'firefox',
+	chrome	 = 'chrome',
+	safari	 = 'safari',
+	opera	 = 'opera',
+	orion	 = 'orion',
 }
 
-export enum IDTrait {
-	roots = '^',
-	root  = '!',
-	bulk  = '~',
+const baseZIndex = 1;
+
+export enum ZIndex {
+	panel	  = baseZIndex,
+	text	  = baseZIndex + 1,
+	lines	  = baseZIndex + 2,
+	dots	  = baseZIndex + 3,
+	widgets	  = baseZIndex + 4,
+	frontmost = baseZIndex + 5,
+	tools	  = baseZIndex + 6,
 }
 
 export enum IDTool {
@@ -31,37 +64,4 @@ export enum IDTool {
 	create    		= 'create',
 	next			= 'next',
 	more			= 'more',
-}
-
-export enum IDBrowser  {
-	explorer = 'explorer',
-	unknown  = 'unknown',
-	firefox	 = 'firefox',
-	chrome	 = 'chrome',
-	safari	 = 'safari',
-	opera	 = 'opera',
-	orion	 = 'orion',
-}
-
-export enum AlteringParent {
-	deleting = 'deleting',
-	adding	 = 'adding',
-}
-
-export enum CreationOptions {
-	isFromRemote = 'isFrom',
-	getRemoteID	 = 'getID',
-	none		 = '',
-}
-
-const baseZIndex = 1;
-
-export enum ZIndex {
-	panel	  = baseZIndex,
-	text	  = baseZIndex + 1,
-	lines	  = baseZIndex + 2,
-	dots	  = baseZIndex + 3,
-	widgets	  = baseZIndex + 4,
-	frontmost = baseZIndex + 5,
-	tools	  = baseZIndex + 6,
 }

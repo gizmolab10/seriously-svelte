@@ -230,7 +230,8 @@ export default class Hierarchy {
 
 	async thing_remember_runtimeCopy(baseID: string, from: Thing) {
 		const newThing = new Thing(baseID, null, from.title, from.color, from.trait, false);
-		if (newThing.isBulkAlias || newThing.trait == IDTrait.roots || newThing.trait == IDTrait.root) {
+		const prohibitedTraits: Array<string> = [IDTrait.roots, IDTrait.root, IDTrait.bulk];
+		if (prohibitedTraits.includes(from.trait)) {
 			newThing.trait = '';
 		}
 		this.thing_remember(newThing);
@@ -263,6 +264,9 @@ export default class Hierarchy {
 
 	thing_runtimeCreate(baseID: string, id: string | null, title: string, color: string, trait: string,
 		isRemotelyStored: boolean): Thing {
+		if (baseID == 'roots') {
+			console.log('hah! roots bulk');
+		}
 		let thing: Thing | null = null;
 		if (id && trait == IDTrait.root && baseID != this.db.baseID) {		// other bulks have their own root & id
 			thing = this.thing_bulkRootpath_set(baseID, id, color);				// which our thing needs to adopt
@@ -328,20 +332,6 @@ export default class Hierarchy {
 			await this.path_forget_remoteUpdate(path);
 			return newThingPath;
 		}
-	}
-
-	async thing_getRoots() {
-		let rootsPath: Path | null = null;
-		persistLocal.paths_restore();
-		const rootPath = g.rootPath;
-		for (const thing of this.knownTs_byTrait[IDTrait.roots]) {
-			if  (thing.title == 'roots') {	// special case TODO: convert to a auery string
-				return rootPath.appendChild(thing) ?? null;
-			}
-		}
-		const roots = this.thing_runtimeCreate(this.db.baseID, null, 'roots', 'red', IDTrait.roots, false);
-		await this.path_remember_remoteAddAsChild(rootPath, roots).then((path) => { rootsPath = path; });
-		return rootsPath;
 	}
 
 	////////////////////////////////////
@@ -528,6 +518,20 @@ export default class Hierarchy {
 		return path;
 	}
 
+	async path_getRoots() {
+		let rootsPath: Path | null = null;
+		persistLocal.paths_restore();
+		const rootPath = g.rootPath;
+		for (const roots of this.knownTs_byTrait[IDTrait.roots]) {	// should only be one
+			if  (roots.title == 'roots') {	// special case TODO: convert to a query string
+				return rootPath.appendChild(roots) ?? null;
+			}
+		}
+		const roots = this.thing_runtimeCreate(this.db.baseID, null, 'roots', 'red', IDTrait.roots, false);
+		await this.path_remember_remoteAddAsChild(rootPath, roots).then((path) => { rootsPath = path; });
+		return rootsPath;
+	}
+
 	async path_relayout_toolCluster_nextParent(force: boolean = false) {
 		const toolsPath = get(s_path_toolsCluster);
 		if (toolsPath) {
@@ -571,11 +575,10 @@ export default class Hierarchy {
 
 	async path_redraw_fetchBulk_runtimeBrowseRight(path: Path, grab: boolean = true) {
 		const thing = path.thing;
-		const rootsPath = await this.thing_getRoots();
+		const rootsPath = g.rootsPath;
 		if (thing && rootsPath) {
 			path.expand();		// do this before fetch, so next launch will see it
 			await this.db.fetch_allFrom(thing.title)
-			await this.addMissingAndRemoveNulls(rootsPath.thingID, thing.title);
 			if (path.hasChildren) {
 				if (grab) {
 					path.childPaths[0].grabOnly()

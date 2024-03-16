@@ -5,6 +5,7 @@ class Globals {
 	titleIsAtTop: boolean = false;
 	showControls: boolean = false;
 	hierarchy: Hierarchy;
+	rootsPath: Path;
 	rootPath: Path;
 	herePath: Path;
 	root: Thing;
@@ -29,7 +30,7 @@ class Globals {
 			}
 		});
 	}
-
+ 
 	zoomBy(factor: number): number {
 		const zoomContainer = document.documentElement;
 		const currentScale = parseFloat(getComputedStyle(zoomContainer).getPropertyValue('zoom')) || 1;

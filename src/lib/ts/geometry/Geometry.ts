@@ -101,10 +101,14 @@ export class ChildMapRect extends Rect {
 
 	constructor(curveType: string, rect: Rect, childOrigin: Point, childPath: Path, path: Path) {
 		super(rect.origin.copy, rect.size.copy);
-		this.child = childPath.thing;
 		this.childOrigin = childOrigin;
+		this.child = childPath.thing;
 		this.childPath = childPath;
 		this.curveType = curveType;
 		this.path = path;
+
+		if (this.child == null) {
+			console.log('null thing');
+		}
 	}
 }

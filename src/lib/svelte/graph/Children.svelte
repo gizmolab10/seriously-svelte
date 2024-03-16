@@ -29,7 +29,7 @@
 			((now - priorTime) > 100) &&
 			(!signal_path || signal_path.matchesPath(path))) {
 			priorTime = now;
-			console.log(origin.x + ' before timeout');
+			debugReact.log_origins(origin.x + ' before timeout');
 			setTimeout(async () => {	// delay until all other handlers for this signal are done TODO: WHY?
 				layoutChildren();
 				if (signal_path) {		// only recurse if starting at a specific signal_path
@@ -45,7 +45,7 @@
 	
 	function layoutChildren() {
 		if (path.isExpanded) {
-			console.log(origin.x + ' children layout');
+			debugReact.log_origins(origin.x + ' children layout');
 			const delta = new Point(17.9, -2.4);
 			const height = path.visibleProgeny_halfHeight;
 			const childrenOrigin = origin.offsetByY(height);
