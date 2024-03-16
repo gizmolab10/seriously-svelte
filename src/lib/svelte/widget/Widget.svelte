@@ -11,7 +11,7 @@
     export let path = '';
 	export let thing;
 	const hasExtraX = !path.isExpanded && (path.children.length > 3);
-	const rightPadding = hasExtraX ? 23 : 19;
+	const rightPadding = hasExtraX ? 22.5 : 19;
 	const priorRowHeight = k.row_height;
 	let revealCenter = new Point();
 	let radius = k.dot_size / 2;

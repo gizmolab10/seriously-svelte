@@ -1,9 +1,10 @@
-import { Hierarchy, DebugFlag, IDTrait, dbDispatch } from '../common/GlobalImports';
-import { g, k, u, get, Path, Datum, debug, Predicate } from '../common/GlobalImports';
+import { g, k, u, get, Path, Datum, debug, IDTrait, Predicate } from '../common/GlobalImports';
+import { Hierarchy, DebugFlag, dbDispatch, SeriouslyRange } from '../common/GlobalImports';
 import { s_path_here } from '../common/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
+	selectionRange = new SeriouslyRange(0, 0);
 	bulkRootID: string = '';
 	needsBulkFetch = false;
 	hoverAttributes = '';
@@ -19,6 +20,7 @@ export default class Thing extends Datum {
 
 	constructor(baseID: string, id: string | null, title = k.title_default, color = 'blue', trait = 's', isRemotelyStored: boolean) {
 		super(baseID, id, isRemotelyStored);
+		this.selectionRange = new SeriouslyRange(0, title.length);
 		this.dbType = dbDispatch.db.dbType;
 		this.title = title;
 		this.color = color;

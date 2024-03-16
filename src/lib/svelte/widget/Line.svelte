@@ -7,7 +7,7 @@
 	export let rect = new Rect();
 	export let thing: Thing;
 	export let path: Path;
-	const debugOffset = new Point(141, -1.5);
+	const debugOffset = new Point(140.5, -1.2);
 	let lineWrapper: Wrapper;
 	let origin = rect.origin;
 	let extent = rect.extent;

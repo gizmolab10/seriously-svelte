@@ -1,12 +1,11 @@
 import { g, k, u, get, Rect, Size, Thing, debug, signals, Wrapper, IDWrapper } from '../common/GlobalImports';
-import { TitleState, Predicate, Relationship, SeriouslyRange, AlteringParent } from '../common/GlobalImports';
+import { TitleState, Predicate, Relationship, AlteringParent } from '../common/GlobalImports';
 import { s_paths_expanded, s_path_toolsCluster, s_altering_parent } from '../common/State';
 import { s_path_here, s_paths_grabbed, s_title_editing } from '../common/State';
 import { Writable } from 'svelte/store';
 
 export default class Path {
 	wrappers: { [type: string]: Wrapper } = {};
-	selectionRange = new SeriouslyRange(0, 0);
 	thing: Thing | null;
 	predicateID: string;
 	pathString: string;
@@ -17,7 +16,6 @@ export default class Path {
 		this.predicateID = predicateID;
 		this.pathString = pathString;
 		this.thing = this.thingAt();
-		this.selectionRange = new SeriouslyRange(0, this.thing?.title.length ?? 0);
 		if (g.hierarchy.isAssembled) {
 			this.subscriptions_setup();	// not needed during hierarchy assembly
 		}

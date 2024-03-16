@@ -136,7 +136,7 @@
 	on:dblclick={handleDoubleClick}
 	on:contextmenu={handleContextMenu}
 	style='
-		top: 2.5px;
+		top: 2.7px;
 		border: none;
 		cursor: pointer;
 		background: none;

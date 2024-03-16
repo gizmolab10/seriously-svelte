@@ -95,7 +95,7 @@
 			if (k.device_isMobile) {
 				origin_ofFirstReveal.x = 25;
 			}
-			const toChildren = new Point(-43 + k.line_stretch - (k.dot_size / 2) + offsetX_ofFirstReveal, (k.dot_size / 2) -(childrenSize.height / 2) - 4);
+			const toChildren = new Point(-41.2 + k.line_stretch - (k.dot_size / 2) + offsetX_ofFirstReveal, (k.dot_size / 2) -(childrenSize.height / 2) - 4);
 			origin_ofChildren = origin_ofFirstReveal.offsetBy(toChildren);
 			console.log(origin_ofChildren.x + ' updateOrigins');
 			blueRect = graphRect.dividedInHalf;
@@ -142,7 +142,7 @@
 					<Box rect={greenRect} color=green half={true}/>
 				{/if}
 				{#if !g.titleIsAtTop}
-					<Widget thing={g.here} path={$s_path_here} origin={origin_ofFirstReveal.offsetBy(new Point(-24 - offsetX_ofFirstReveal, -9))}/>
+					<Widget thing={g.here} path={$s_path_here} origin={origin_ofFirstReveal.offsetBy(new Point(-23 - offsetX_ofFirstReveal, -9))}/>
 				{:else}
 					{#if $s_path_here.isGrabbed}
 						<Circle radius=10 center={origin_ofFirstReveal.offsetBy(new Point(-1, 1))} color={g.here.color} thickness=1/>

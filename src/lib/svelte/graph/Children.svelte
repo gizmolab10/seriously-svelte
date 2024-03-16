@@ -8,8 +8,8 @@
 	import Line from '../widget/Line.svelte';
 	export let origin = new Point();
     export let path = '';
-	const widgetOffset = new Point(12, (k.dot_size / -15) - 10.5);
-	const lineOffset = new Point(-123.5, -0.8);
+	const widgetOffset = new Point(12, (k.dot_size / -15) - 10.7);
+	const lineOffset = new Point(-123.5, -1);
 	let childMapRectArray: Array<ChildMapRect> = [];
 	let priorTime = new Date().getTime();
 	let center = new Point();
@@ -46,7 +46,7 @@
 	function layoutChildren() {
 		if (path.isExpanded) {
 			console.log(origin.x + ' children layout');
-			const delta = new Point(19, -2);
+			const delta = new Point(17.9, -2.4);
 			const height = path.visibleProgeny_halfHeight;
 			const childrenOrigin = origin.offsetByY(height);
 			childMapRectArray = new Layout(path, childrenOrigin).childMapRectArray;
