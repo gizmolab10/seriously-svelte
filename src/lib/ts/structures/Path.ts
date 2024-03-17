@@ -193,7 +193,7 @@ export default class Path {
 		if (!isEmpthPathString && relationship) {
 			return !relationship ? null : g.hierarchy?.thing_getForHID(relationship.idTo.hash()) ?? null;
 		}
-		return g.hierarchy?.root ?? null;
+		return g.root ?? null;
 	}
 
 	thing_isImmediateParentOf(path: Path): boolean {

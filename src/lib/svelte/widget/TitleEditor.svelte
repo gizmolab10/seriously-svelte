@@ -21,11 +21,6 @@
 	function handleMouseUp() { clearTimeout(clickTimer); }
 	
 	onMount(() => {
-
-		if (thing == null) {
-			u.noop();
-		}
-
 		const rebuildHandler = signals.handle_rebuildWidgets((path) => { updateInputWidth(); });
 		const relayoutHandler = signals.handle_relayoutWidgets((path) => { updateInputWidth(); });
 		setTimeout(() => {
@@ -112,7 +107,7 @@
 			event.preventDefault();
 			if (!path.isGrabbed) {
 				path.grabOnly();
-			} else if (k.allow_TitleEditing && !path.isRoot) {
+			} else if (k.allow_TitleEditing && !path.isRoot && !thing.isBulkAlias) {
 				path.startEdit();
 				input.focus();
 				return;
@@ -152,26 +147,24 @@
 
 		const _ = $s_paths_grabbed;
 		const editPath = $s_title_editing;
-		if (k.allow_TitleEditing) {
+		if (k.allow_TitleEditing && !thing.isBulkAlias) {
 			if (path.isStoppingEdit) {
 				debug.log_edit(`STOPPING ${path.title}`);
 				$s_title_editing = null;
 				input?.blur();
-			} else {
-				if (isEditing != path.matchesPath(editPath?.editing ?? null)) { // needs reactivity to $s_title_editing;
-					if (!isEditing) {
-						input?.focus();
-						debug.log_edit(`RANGE ${path.title}`);
-						applyRange();
-					} else {
-						debug.log_edit(`STOP ${path.title}`);
-						input?.blur();
-					}
-					isEditing = !isEditing;
+			} else if (isEditing != path.matchesPath(editPath?.editing ?? null)) { // needs reactivity to $s_title_editing;
+				if (!isEditing) {
+					input?.focus();
+					debug.log_edit(`RANGE ${path.title}`);
+					applyRange();
+				} else {
+					debug.log_edit(`STOP ${path.title}`);
+					input?.blur();
 				}
+				isEditing = !isEditing;
 			}
 		}
-		cursorStyle = (!path.isRoot && (path.isEditing || path.isGrabbed)) ? '' : 'cursor: pointer';
+		cursorStyle = (!path.isRoot && !thing.isBulkAlias && (path.isEditing || path.isGrabbed)) ? '' : 'cursor: pointer';
 	}
 
 	function stopAndClearEditing() {

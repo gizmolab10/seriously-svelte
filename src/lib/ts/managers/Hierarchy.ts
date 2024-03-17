@@ -23,12 +23,11 @@ export default class Hierarchy {
 	knownPs: Array<Predicate> = [];
 	knownTs: Array<Thing> = [];
 	_grabs: Grabs | null = null;
-	root: Thing | null = null;
 	isAssembled = false;
 	db: DBInterface;
 
-	get hasNothing(): boolean { return !this.root; }
-	get idRoot(): string | null { return this.root?.id ?? null; };
+	get hasNothing(): boolean { return !g.root; }
+	get idRoot(): string | null { return g.root?.id ?? null; };
 	thing_getForPath(path: Path | null): Thing | null { return path?.thing ?? null; }
 	thing_getForHID(hID: number | null): Thing | null { return (!hID) ? null : this.knownT_byHID[hID]; }
 
@@ -154,7 +153,7 @@ export default class Hierarchy {
 				return this.knownT_byHID[relationship.idTo.hash()];
 			}
 		}
-		return this.root;
+		return g.root;
 	}
 
 	//////////////////////////////
@@ -162,7 +161,7 @@ export default class Hierarchy {
 	//////////////////////////////
 
 	things_getForPath(path: Path): Array<Thing> {
-		const root = this.root;
+		const root = g.root;
 		const things: Array<Thing> = root ? [root] : [];
 		for (const hid of path.hashedIDs) {
 			const thing = this.relationship_getForHID(hid)?.toThing;
@@ -252,24 +251,21 @@ export default class Hierarchy {
 	thing_remember(thing: Thing) {
 		if (this.knownT_byHID[thing.hashedID] == null) {
 			this.knownT_byHID[thing.hashedID] = thing;
-			let things = this.knownTs_byTrait[thing.trait] ?? [];
-			things.push(thing);
-			this.knownTs_byTrait[thing.trait] = things;
+			let knownTs = this.knownTs_byTrait[thing.trait] ?? [];
+			knownTs.push(thing);
+			this.knownTs_byTrait[thing.trait] = knownTs;
 			this.knownTs.push(thing);
 			if (thing.trait == IDTrait.root && (thing.baseID == '' || thing.baseID == this.db.baseID)) {
-				this.root = thing;
+				g.root = thing;
 			}
 		}
 	}
 
 	thing_runtimeCreate(baseID: string, id: string | null, title: string, color: string, trait: string,
 		isRemotelyStored: boolean): Thing {
-		if (baseID == 'roots') {
-			console.log('hah! roots bulk');
-		}
 		let thing: Thing | null = null;
 		if (id && trait == IDTrait.root && baseID != this.db.baseID) {		// other bulks have their own root & id
-			thing = this.thing_bulkRootpath_set(baseID, id, color);				// which our thing needs to adopt
+			thing = this.thing_remember_bulkRootID(baseID, id, color);				// which our thing needs to adopt
 		}
 		if (!thing) {
 			thing = new Thing(baseID, id, title, color, trait, isRemotelyStored);
@@ -289,14 +285,13 @@ export default class Hierarchy {
 	//	 	   BULKS		//
 	//////////////////////////
 
-	thing_bulkRootpath_set(baseID: string, id: string, color: string) {
+	thing_remember_bulkRootID(baseID: string, id: string, color: string) {
 		const thing = this.thing_bulkAlias_getForTitle(baseID);
 		if (thing) {
-			thing.needsBulkFetch = false;	// this id is from bulk fetch all
+			thing.needsBulkFetch = false;	// the id below is from bulk fetch all
 			thing.bulkRootID = id;			// so children relatiohships will work
 			thing.color = color;			// N.B., u trait
 			this.knownT_byHID[id.hash()] = thing;
-			// this.db.thing_remoteUpdate(thing);		// not needed if bulk id not remotely stored
 		}
 		return thing;
 	}
@@ -304,7 +299,7 @@ export default class Hierarchy {
 	thing_bulkAlias_getForTitle(title: string | null) {
 		if (title) {
 			for (const thing of this.knownTs_byTrait[IDTrait.bulk]) {
-				if  (thing.title == title) {							// special case TODO: convert to a auery string
+				if  (thing.title == title) {		// special case TODO: convert to a query string
 					return thing;
 				}
 			}
@@ -573,11 +568,11 @@ export default class Hierarchy {
 		}
 	}
 
-	async path_redraw_fetchBulk_runtimeBrowseRight(path: Path, grab: boolean = true) {
+	async path_redraw_remoteFetchBulk_browseRight(path: Path, grab: boolean = true) {
 		const thing = path.thing;
 		const rootsPath = g.rootsPath;
-		if (thing && rootsPath) {
-			path.expand();		// do this before fetch, so next launch will see it
+		if (rootsPath && thing && thing.title != 'roots') {	// not create roots bulk
+			// path.expand();		// do this before fetch, so next launch will see it
 			await this.db.fetch_allFrom(thing.title)
 			if (path.hasChildren) {
 				if (grab) {
@@ -644,7 +639,7 @@ export default class Hierarchy {
 			const thing = path.thing;
 			if (thing) {
 				if (RIGHT && thing.needsBulkFetch) {
-					await this.path_redraw_fetchBulk_runtimeBrowseRight(path);
+					await this.path_redraw_remoteFetchBulk_browseRight(path);
 				} else {
 					this.path_rebuild_runtimeBrowseRight(path, RIGHT, SHIFT, EXTREME, fromReveal);
 				}

@@ -75,13 +75,13 @@ export default class DBFirebase implements DBInterface {
 			const bulk = this.get_bulk_for(baseID);
 
 			if (baseID) {
+				if (querySnapshot.empty) {
+					await this.documents_firstTime_remoteCreate(type, baseID, collectionRef);
+					querySnapshot = await getDocs(collectionRef);
+				}
 				this.setup_remoteHandler(baseID, type, collectionRef);
 			}
-
-			if (querySnapshot.empty && baseID) {
-				await this.documents_firstTime_remoteCreate(type, baseID, collectionRef);
-				querySnapshot = await getDocs(collectionRef);
-			}
+			
 			
 			////////////////
 			// data IDSignal //
@@ -133,7 +133,7 @@ export default class DBFirebase implements DBInterface {
 	}
 	
 	async fetch_bulkAliases() {
-		const root = this.hierarchy.root;
+		const root = g.root;
 		if (this.baseID == k.name_bulkAdmin && root) {
 			const rootsPath = await this.hierarchy.path_getRoots();
 			if (rootsPath) {
@@ -148,7 +148,7 @@ export default class DBFirebase implements DBInterface {
 							if (thing) {
 								const path = rootsPath.appendChild(thing);
 								if (path.isExpanded) {
-									this.hierarchy.path_redraw_fetchBulk_runtimeBrowseRight(path, false);
+									await this.hierarchy.path_redraw_remoteFetchBulk_browseRight(path, false);
 								}
 							} else {													// create a thing for each bulk
 								thing = this.hierarchy.thing_runtimeCreate(this.baseID, null, baseID, 'red', IDTrait.bulk, false);
@@ -357,7 +357,7 @@ export default class DBFirebase implements DBInterface {
 		const fields = ['title', 'color', 'trait'];
 		const root = new Thing(this.baseID, null, this.baseID, 'coral', IDTrait.root, true);
 		const thing = new Thing(this.baseID, null, 'Click this text to edit it', 'purple', '', true);
-		this.hierarchy.root = root;
+		g.root = root;
 		const thingRef = await addDoc(collectionRef, u.convertToObject(thing, fields));	// N.B. these will be fetched, shortly
 		const rootRef = await addDoc(collectionRef, u.convertToObject(root, fields));		// no need to remember now
 		thing.setID(thingRef.id);

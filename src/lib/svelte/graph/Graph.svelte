@@ -79,7 +79,7 @@
 	$: {
 		if (g.here == null || g.here.id != $s_path_here) {
 			const h = g.hierarchy;
-			g.here = !$s_path_here ? h.root : h.thing_getForPath($s_path_here);
+			g.here = !$s_path_here ? g.root : h.thing_getForPath($s_path_here);
 			offsetX_ofFirstReveal = g.titleIsAtTop ? 0 : g.here?.titleWidth / 2;
 			updateOrigins();
 			toggle = !toggle;	// also cause entire graph to be replaced
