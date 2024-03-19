@@ -589,9 +589,8 @@ export default class Hierarchy {
 				if (grab) {
 					path.childPaths[0].grabOnly()
 				}
-				if (path.expand()) {
-					signals.signal_rebuildWidgets_fromHere();
-				}
+				path.expand()
+				signals.signal_rebuildWidgets_fromHere();
 			}
 		}
 	}

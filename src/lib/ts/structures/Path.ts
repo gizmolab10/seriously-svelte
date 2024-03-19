@@ -132,29 +132,23 @@ export default class Path {
 
 	get childPaths(): Array<Path> {
 
-		// this does not work for a thing that is a bulk alias
+		// idThing does not work for a bulk alias
 		// last id is for a relationship
 		// we need to use the idSmart for the children relationships
 		
 		const paths: Array<Path> = [];
 		if (this.pathString != 'exemplar') {
-			const h = g.hierarchy;
-			const lastID = this.ids[this.ids.length - 1];
-			if (lastID && !h.knownR_byHID[lastID.hash()]) {
-				console.log(`missing relationship: ${lastID}`);
-			} else {
-				const idSmart = this.thing?.idSmart;
-				if (idSmart) {
-					if (idSmart == k.id_unknown) {
-						console.log(`child paths unavailable for: ${this.title}`);
-					} else {
-						const toRelationships = h.relationships_getByPredicateIDToAndID(this.predicateID, false, idSmart);
-						for (const toRelationship of toRelationships) {			// loop through all to relationships
-							const path = this.appendID(toRelationship.id);		// add each toRelationship's id
-							paths.push(path);									// and push onto the paths_to
-						}
-						u.paths_orders_normalize_remoteMaybe(paths);
+			const idSmart = this.thing?.idSmart;
+			if (idSmart) {
+				if (idSmart == k.id_unknown) {
+					console.log(`child paths unavailable for: ${this.title}`);
+				} else {
+					const toRelationships = g.hierarchy.relationships_getByPredicateIDToAndID(this.predicateID, false, idSmart);
+					for (const toRelationship of toRelationships) {			// loop through all to relationships
+						const path = this.appendID(toRelationship.id);		// add each toRelationship's id
+						paths.push(path);									// and push onto the paths_to
 					}
+					u.paths_orders_normalize_remoteMaybe(paths);
 				}
 			}
 		}
