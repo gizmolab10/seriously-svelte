@@ -18,24 +18,14 @@
 	let clickTimer;
 
 	var hasChanges = () => { return originalTitle != thing.title; };
+	function handleInput(event) { thing.title = event.target.value; };
 	function handleMouseUp() { clearTimeout(clickTimer); }
 	
 	onMount(() => {
-		const rebuildHandler = signals.handle_rebuildWidgets((path) => { updateInputWidth(); });
-		const relayoutHandler = signals.handle_relayoutWidgets((path) => { updateInputWidth(); });
-		setTimeout(() => {
-			updateInputWidth();
-		}, 100);
-
-		return () => {
-			rebuildHandler.disconnect();
-			relayoutHandler.disconnect()
-		};
+		const handler = signals.handle_anySignal((IDSignal, path) => { updateInputWidth(); });
+		setTimeout(() => { updateInputWidth(); }, 100);
+		return () => { handler.disconnect() };
 	});
-	
-	function handleInput(event) {
-		thing.title = event.target.value;
-	};
 
 	function handleKeyDown(event) {
 		if (thing && path.isEditing && canAlterTitle(event)) {
@@ -53,7 +43,7 @@
 	}
 
 	$: {
-		if (input) {
+		if (input && !titleWrapper) {
 			titleWrapper = new Wrapper(input, path, IDWrapper.title);
 		}
 	}

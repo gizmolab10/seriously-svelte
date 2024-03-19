@@ -25,11 +25,14 @@ export default class Thing extends Datum {
 		this.title = title;
 		this.color = color;
 		this.trait = trait;
+		// if (baseID != dbDispatch.db.baseID) {
+		// 	console.log(`THING off base ${this.description}`);
+		// }
 	};
 	
+	get idSmart():			   string { return this.isBulkAlias ? this.bulkRootID : this.id; }		// can straddle base ids
 	get fields():	Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get isHere():			  boolean { return (get(s_path_here).thing?.id ?? '') == this.id; }
-	get idForChildren():	   string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get parentPaths():	  Array<Path> { return this.fromPathsFor(Predicate.idIsAParentOf); }
 	get parents():		 Array<Thing> { return this.things_fromPaths(this.parentPaths); }
 	get description():		   string { return this.id + ' \"' + this.title + '\"'; }

@@ -32,13 +32,6 @@
 			debugReact.log_origins(origin.x + ' before timeout');
 			setTimeout(async () => {	// delay until all other handlers for this signal are done TODO: WHY?
 				layoutChildren();
-				if (signal_path) {		// only recurse if starting at a specific signal_path
-					for (const childMapRect of childMapRectArray) {
-						if (childMapRect.path.hasChildren && childMapRect.path.isExpanded) {
-							childMapRect.path.signal_relayoutWidgets();
-						}
-					}
-				}
 			}, 1);
 		}
 	});
@@ -51,6 +44,8 @@
 			const childrenOrigin = origin.offsetByY(height);
 			childMapRectArray = new Layout(path, childrenOrigin).childMapRectArray;
 			center = childrenOrigin.offsetBy(delta);
+		} else {
+			console.log(`not expanded ${path.title}`);
 		}
 	}
 	
@@ -63,7 +58,7 @@
 	{#each childMapRectArray as map}
 		<Widget thing={map.child} path={map.childPath} origin={map.extent.offsetBy(widgetOffset)}/>
 		<Line thing={map.child} path={map.childPath} curveType={map.curveType} rect={map.offsetBy(lineOffset)}/>
-		{#if map.childPath.hasChildren && map.childPath.isExpanded}
+		{#if map.childPath.showsChildren}
 			<Children path={map.childPath} origin={map.childOrigin}/>
 		{/if}
 	{/each}

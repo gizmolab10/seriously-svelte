@@ -16,6 +16,9 @@ export default class Relationship extends Datum {
 		this.idPredicate = idPredicate;
 		this.dbType = dbDispatch.db.dbType;
 		this.order = order;
+		// if (baseID != dbDispatch.db.baseID) {
+		// 	console.log(`RELATIONSHIP off base ${this.description}`);
+		// }
 	}
 
 	get toThing(): Thing | null { return this.thing(true); }

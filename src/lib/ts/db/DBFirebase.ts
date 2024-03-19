@@ -296,8 +296,8 @@ export default class DBFirebase implements DBInterface {
 		if (DBFirebase.data_isValidOfKind(type, data)) {
 			const h = this.hierarchy;
 			switch (type) {
-				case TypeDatum.things:		 h.thing_remember_runtimeCreate(baseID, id, data.title, data.color, data.trait, true); break;
-				case TypeDatum.predicates:	 h.predicate_remember_runtimeCreate(id, data.kind); break;
+				case TypeDatum.things:		  h.thing_remember_runtimeCreate(baseID, id, data.title, data.color, data.trait, true); break;
+				case TypeDatum.predicates:	  h.predicate_remember_runtimeCreate(id, data.kind); break;
 				case TypeDatum.relationships: h.relationship_remember_runtimeCreateUnique(baseID, id, data.predicate.id, data.from.id, data.to.id, data.order, CreationOptions.isFromRemote); break;
 			}
 		}

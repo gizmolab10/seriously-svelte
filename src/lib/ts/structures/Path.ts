@@ -84,7 +84,7 @@ export default class Path {
 		return this.pathString.split(k.pathSeparator);
 	}
 
-	get thingID(): string {
+	get idThing(): string {
 		if (this.isRoot) {
 			return g.hierarchy?.idRoot ?? k.id_unknown;
 		}
@@ -131,23 +131,30 @@ export default class Path {
 	}
 
 	get childPaths(): Array<Path> {
+
+		// this does not work for a thing that is a bulk alias
+		// last id is for a relationship
+		// we need to use the idSmart for the children relationships
+		
 		const paths: Array<Path> = [];
 		if (this.pathString != 'exemplar') {
+			const h = g.hierarchy;
 			const lastID = this.ids[this.ids.length - 1];
-			if (lastID && !g.hierarchy.knownR_byHID[lastID.hash()]) {
+			if (lastID && !h.knownR_byHID[lastID.hash()]) {
 				console.log(`missing relationship: ${lastID}`);
 			} else {
-				const thingID = this.thingID;
-				if (thingID == k.id_unknown) {
-					console.log(`child paths unavailable for: ${this.title}`);
-				} else if (thingID) {
-					const hierarchy = g.hierarchy;
-					const toRelationships = hierarchy.relationships_getByPredicateIDToAndID(this.predicateID, false, thingID);
-					for (const toRelationship of toRelationships) {			// loop through all to relationships
-						const path = this.appendID(toRelationship.id);		// add each toRelationship's id
-						paths.push(path);									// and push onto the paths_to
+				const idSmart = this.thing?.idSmart;
+				if (idSmart) {
+					if (idSmart == k.id_unknown) {
+						console.log(`child paths unavailable for: ${this.title}`);
+					} else {
+						const toRelationships = h.relationships_getByPredicateIDToAndID(this.predicateID, false, idSmart);
+						for (const toRelationship of toRelationships) {			// loop through all to relationships
+							const path = this.appendID(toRelationship.id);		// add each toRelationship's id
+							paths.push(path);									// and push onto the paths_to
+						}
+						u.paths_orders_normalize_remoteMaybe(paths);
 					}
-					u.paths_orders_normalize_remoteMaybe(paths);
 				}
 			}
 		}
@@ -197,10 +204,10 @@ export default class Path {
 	}
 
 	thing_isImmediateParentOf(path: Path): boolean {
-		const thingID = this.thingID;
-		if (thingID != k.id_unknown) {
+		const idThing = this.idThing;
+		if (idThing != k.id_unknown) {
 			const parentThings = path.thing?.parents;
-			return parentThings?.map(t => t.id).includes(thingID) ?? false;
+			return parentThings?.map(t => t.id).includes(idThing) ?? false;
 		}
 		return false;
 	}
@@ -283,7 +290,7 @@ export default class Path {
 
 	appendChild(thing: Thing | null): Path {
 		if (thing) {
-			const relationship = g.hierarchy?.relationship_getByIDPredicateFromAndTo(Predicate.idIsAParentOf, this.thingID, thing.id);
+			const relationship = g.hierarchy?.relationship_getByIDPredicateFromAndTo(Predicate.idIsAParentOf, this.idThing, thing.id);
 			if (relationship) {
 				return this.appendID(relationship.id);
 			}
@@ -361,13 +368,13 @@ export default class Path {
 	}
 
 	becomeHere() {
-		if (this.hasChildren) {
+		// if (this.hasChildren) {
 			s_path_here.set(this);
 			s_path_toolsCluster.set(null);
 			this.expand();
 			return true;
-		}
-		return false;
+		// }
+		// return false;
 	}
 
 	toggleToolsGrab() {

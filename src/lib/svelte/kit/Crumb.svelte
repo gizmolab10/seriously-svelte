@@ -15,7 +15,7 @@
 
 	function updateColors() {
 		if (thing) {
-			if ($s_path_here.thingID == thing.id) {
+			if ($s_path_here.idThing == thing.id) {
 				colorStyles = `background-color: ${transparentize(thing.color, 0.15)}; color: ${k.color_background}`;
 			} else {
 				colorStyles = `background-color: ${k.color_background}; color: ${thing.color}`;

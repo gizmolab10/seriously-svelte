@@ -72,7 +72,7 @@
 		if (!path.showsReveal || path.toolsGrabbed) {
 			scalablePath = svgPath.circle(size, size - 1);
 		} else {
-			const goLeft = path.isExpanded && path.hasChildren;
+			const goLeft = path.showsChildren;
 			const direction = goLeft ? Direction.left : Direction.right;
 			scalablePath = svgPath.fatPolygon(size, direction);
 		}
@@ -88,10 +88,10 @@
 		if (path.toolsGrabbed) {
 			$s_path_toolsCluster = null;
 			$s_altering_parent = null;
-			signals.signal_rebuildWidgets_fromHere();
 		} else if (path.hasChildren || thing.isBulkAlias) {
 			g.hierarchy.path_rebuild_remoteMoveRight(path, !path.isExpanded, true, false);
 		}
+		signals.signal_rebuildWidgets_fromHere();
 	}
 
 </script>

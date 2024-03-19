@@ -41,7 +41,7 @@
 		debugReact.log_mount(`WIDGET ${thing.description}`);
 	});
 
-	const any_signalHandler = signals.handleAnySignal((IDSignal, id) => {
+	const any_signalHandler = signals.handle_anySignal((IDSignal, id) => {
 		for (const kind of IDSignal) {
 			switch (kind) {
 				case IDSignal.relayout:
