@@ -285,8 +285,9 @@ export default class Path {
 	}
 
 	appendChild(thing: Thing | null): Path {
-		if (thing) {
-			const relationship = g.hierarchy?.relationship_getByIDPredicateFromAndTo(Predicate.idIsAParentOf, this.idThing, thing.id);
+		const id = this.thing?.idSmart;
+		if (thing && id) {
+			const relationship = g.hierarchy?.relationship_getByIDPredicateFromAndTo(Predicate.idIsAParentOf, id, thing.id);
 			if (relationship) {
 				return this.appendID(relationship.id);
 			}
