@@ -38,7 +38,6 @@ export default class Hierarchy {
 	async hierarchy_assemble(type: string) {
 		await this.addMissingAndRemoveNulls(null, this.db.baseID);
 		persistLocal.paths_restore();
-		this.paths_subscriptions_setup();
 		this.db.setHasData(true);
 		s_things_arrived.set(true);
 		s_isBusy.set(false);
@@ -264,12 +263,13 @@ export default class Hierarchy {
 	thing_runtimeCreate(baseID: string, id: string | null, title: string, color: string, trait: string,
 		isRemotelyStored: boolean): Thing {
 		let thing: Thing | null = null;
-		if (id && trait == IDTrait.root && baseID != this.db.baseID) {		// other bulks have their own root & id
+		const isBulkAlias = trait == IDTrait.root;
+		if (id && isBulkAlias && baseID != this.db.baseID) {		// other bulks have their own root & id
 			thing = this.thing_remember_bulkRootID(baseID, id, color);				// which our thing needs to adopt
 		}
 		if (!thing) {
 			thing = new Thing(baseID, id, title, color, trait, isRemotelyStored);
-			if (thing.isBulkAlias) {
+			if (isBulkAlias) {
 				thing.needsBulkFetch = true;
 				if (title.includes('@')) {
 					const dual = title.split('@');
@@ -288,14 +288,14 @@ export default class Hierarchy {
 	thing_remember_bulkRootID(baseID: string, id: string, color: string) {
 		const thing = this.thing_bulkAlias_getForTitle(baseID);
 		if (thing) {
-			// id is of the thing from bulk fetch all of the root
+			// id is of the root thing from bulk fetch all
 			// i.e., it is the root id from another baseID
-			// add a second lookup for thing by this root id
-			// so children relatiohships will work
-			thing.color = color;
-			thing.bulkRootID = id;
-			thing.needsBulkFetch = false;
+			// need a second thing lookup by this id
+			// so children relationships will work
 			this.knownT_byHID[id.hash()] = thing;
+			thing.needsBulkFetch = true;
+			thing.bulkRootID = id;
+			thing.color = color;
 		}
 		return thing;
 	}
@@ -400,8 +400,8 @@ export default class Hierarchy {
 	async relationships_removeHavingNullReferences() {
 		const array = Array<Relationship>();
 		for (const relationship of this.knownRs) {
-			const thingTo = this.thing_getForHID(relationship.idTo.hash());
-			const thingFrom = this.thing_getForHID(relationship.idFrom.hash());
+			const thingTo = relationship.toThing;
+			const thingFrom = relationship.fromThing;
 			if (!thingTo || !thingFrom) {
 				array.push(relationship);
 				await this.db.relationship_remoteDelete(relationship);
@@ -432,10 +432,10 @@ export default class Hierarchy {
 	}
 	
 	relationship_remember(relationship: Relationship) {
-		console.log(`RELATIONSHIP ${this.thing_getForHID(relationship.idFrom.hash())?.title} => ${this.thing_getForHID(relationship.idTo.hash())?.title}`);
+		// console.log(`RELATIONSHIP ${relationship.fromThing?.title} => ${relationship.toThing?.title}`);
 		if (!this.knownR_byHID[relationship.hashedID]) {
 			if (relationship.baseID != this.db.baseID) {
-				debug.log_error(`RELATIONSHIP off base ${relationship.baseID} ${this.thing_getForHID(relationship.idFrom.hash())?.description} => ${this.thing_getForHID(relationship.idTo.hash())?.description}`);
+				debug.log_error(`RELATIONSHIP off base ${relationship.baseID} ${relationship.fromThing?.description} => ${relationship.toThing?.description}`);
 			}
 			this.knownRs.push(relationship);
 			this.knownR_byHID[relationship.hashedID] = relationship;
@@ -523,7 +523,7 @@ export default class Hierarchy {
 		return path;
 	}
 
-	async path_getRoots() {
+	async path_getRoots() {		// TODO: assumes all paths created
 		let rootsPath: Path | null = null;
 		persistLocal.paths_restore();
 		const rootPath = g.rootPath;
@@ -582,12 +582,12 @@ export default class Hierarchy {
 		const thing = path.thing;
 		const rootsPath = g.rootsPath;
 		if (rootsPath && thing && thing.title != 'roots') {	// not create roots bulk
-			// path.expand();		// do this before fetch, so next launch will see it
 			await this.db.fetch_allFrom(thing.title)
 			this.relationships_refreshKnowns();
-			if (path.hasChildren) {
+			const childPaths = path.childPaths;
+			if (childPaths.length > 0) {
 				if (grab) {
-					path.childPaths[0].grabOnly()
+					childPaths[0].grabOnly()
 				}
 				path.expand()
 				signals.signal_rebuildWidgets_fromHere();
@@ -629,7 +629,7 @@ export default class Hierarchy {
 
 	async path_remember_remoteAddAsChild(fromPath: Path, toThing: Thing): Promise<any> {
 		const fromThing = fromPath.thing;
-		if (fromThing) {
+		if (fromThing && !toThing.isBulkAlias) {
 			const isBulkAlias = fromThing.isBulkAlias;
 			const idPredicateIsAParentOf = Predicate.idIsAParentOf;
 			const fromID = fromThing.idSmart;
@@ -804,12 +804,6 @@ export default class Hierarchy {
 	////////////////////////
 	//		  PATHS		  //
 	////////////////////////
-
-	paths_subscriptions_setup() {
-		for (const path of Object.values(this.knownPath_byHash)) {
-			path.subscriptions_setup();
-		}
-	}
 
 	async paths_rebuild_traverse_remoteDelete(paths: Array<Path>) {
 		let needsRebuild = false;

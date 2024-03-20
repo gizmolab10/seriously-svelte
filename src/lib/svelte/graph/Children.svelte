@@ -7,7 +7,7 @@
 	import Children from './Children.svelte';
 	import Line from '../widget/Line.svelte';
 	export let origin = new Point();
-    export let path = '';
+    export let path: Path;
 	const widgetOffset = new Point(12, (k.dot_size / -15) - 10.7);
 	const lineOffset = new Point(-123.5, -1);
 	let childMapRectArray: Array<ChildMapRect> = [];
@@ -45,7 +45,7 @@
 			childMapRectArray = new Layout(path, childrenOrigin).childMapRectArray;
 			center = childrenOrigin.offsetBy(delta);
 		} else {
-			console.log(`not expanded ${path.title}`);
+			console.log(`not expanded, cannot layout ${path.title}`);
 		}
 	}
 	

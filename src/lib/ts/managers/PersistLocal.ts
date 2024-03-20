@@ -49,31 +49,14 @@ class PersistLocal {
 		})
 	}
 
-	here_restore() {
-		const h = g.hierarchy;
-		const herePathString = this.readFromDBKey(IDPersistant.here);
-		let pathToHere = this.ignorePaths ? g.rootPath : h.path_remember_unique(herePathString ?? h.idRoot);
-		let here = h.thing_getForPath(pathToHere);
-		if (here == null) {
-			pathToHere = h.grabs.path_lastGrabbed?.fromPath ?? g.rootPath;
-		}
-		pathToHere.becomeHere();
-	}
-
 	paths_restore() {
 		if (!this.pathsRestored) {
 			this.pathsRestored = true;
 			const h = g.hierarchy;
 			g.rootPath = h.path_remember_unique();
-			const herePathString = this.readFromDBKey(IDPersistant.here) ?? '';
-			let pathToHere = this.ignorePaths ? g.rootPath : h.path_remember_unique(herePathString ?? h.idRoot);
-			let here = h.thing_getForPath(pathToHere);
-			if (here == null) {
-				pathToHere = h.grabs.path_lastGrabbed?.fromPath ?? g.rootPath;
-			}
-			s_paths_grabbed.set(this.ignorePaths ? [] : this.readFromDBKey(IDPersistant.grabbed)?.map((s: string) => h.path_remember_unique(s)) ?? [g.rootPath]);
-			pathToHere.becomeHere();
-			this.cleanupExpandeds();
+			this.here_restore();
+			s_paths_grabbed.set(this.store_restore(IDPersistant.grabbed));
+			s_paths_expanded.set(this.store_restore(IDPersistant.expanded));
 	
 			s_paths_grabbed.subscribe((paths: Array<Path>) => {
 				this.writeToDBKey(IDPersistant.grabbed, !paths ? null : paths.map(p => p.pathString));
@@ -89,9 +72,31 @@ class PersistLocal {
 		}
 	}
 
-	cleanupExpandeds() {
+	here_restore() {
 		const h = g.hierarchy;
-		let paths = this.ignorePaths ? [] : this.readFromDBKey(IDPersistant.expanded)?.map((e: string) => h.path_remember_unique(e)) ?? [];
+		let pathToHere = g.rootPath;
+		if (!this.ignorePaths) {
+			const herePathString = this.readFromDBKey(IDPersistant.here);
+			if (herePathString) {
+				const herePath = h.path_remember_unique(herePathString);
+				if (herePath) {
+					pathToHere = herePath;
+				}
+			}
+		}
+		let here = h.thing_getForPath(pathToHere);
+		if (here == null) {
+			const lastGrabbedPath = h.grabs.path_lastGrabbed?.fromPath;
+			if (lastGrabbedPath) {
+				pathToHere = lastGrabbedPath;
+			}
+		}
+		pathToHere.becomeHere();
+	}
+
+	store_restore(key: string): Array<Path> {
+		const h = g.hierarchy;
+		let paths = this.ignorePaths ? [] : this.readFromDBKey(key)?.map((e: string) => h.path_remember_unique(e)) ?? [];
 		let index = paths.length - 1;
 		while (index >= 0) {
 			const path = paths[index];
@@ -105,13 +110,13 @@ class PersistLocal {
 			}
 			index--;
 		};
-		s_paths_expanded.set(paths);
+		return paths;
 	}
 
 	get dbType(): string { return dbDispatch.db.dbType; }
 	readFromDBKey(key: string) { return this.readFromKey(key + this.dbType); }
-	writeToDBKey(key: string, value: any) { this.writeToKey(key + this.dbType, value); }
 	writeToKey(key: string, value: any) { localStorage[key] = JSON.stringify(value); }
+	writeToDBKey(key: string, value: any) { this.writeToKey(key + this.dbType, value); }
 
 	readFromKey(key: string): any | null {
 		const storedValue = localStorage[key];

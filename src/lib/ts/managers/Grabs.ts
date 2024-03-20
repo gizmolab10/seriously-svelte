@@ -32,7 +32,7 @@ export default class Grabs {
 		const paths = get(s_paths_grabbed);
 		if (paths && paths.length > 0) {
 			const path = paths.slice(-1)[0];	// does not alter paths
-			const relationshipHID = path.relationship?.hashedID;
+			const relationshipHID = path?.relationship?.hashedID;
 			if (relationshipHID && this.hierarchy.knownR_byHID[relationshipHID] != null) {
 				return path;
 			}

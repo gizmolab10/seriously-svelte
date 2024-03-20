@@ -44,7 +44,7 @@
     }
 
     function isDisabledFor(id: string) {
-        return (path.isHere && (id == IDTool.add_parent)) ||
+        return ((path.isHere || thing.isBulkAlias) && (id == IDTool.add_parent)) ||
         ((countOfVisibleParents < 2) && needsMultipleVisibleParents.includes(id));
     }
 
@@ -269,7 +269,7 @@
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.add_parent, isFilled) }}
                 cursor={isDisabledFor(IDTool.add_parent) ? 'normal' : 'pointer'}
                 onClick={(event) => handleClick(IDTool.add_parent, event)}
-                strokeColor={path.isHere ? parentSensitiveColor : color}
+                strokeColor={isDisabledFor(IDTool.add_parent) ? k.color_disabled : color}
                 extraPath={svgPath.tCross(toolDiameter, 3)}
                 center={getC(IDTool.add_parent)}
                 direction={Direction.left}

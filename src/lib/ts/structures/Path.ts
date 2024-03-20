@@ -6,7 +6,6 @@ import { Writable } from 'svelte/store';
 
 export default class Path {
 	wrappers: { [type: string]: Wrapper } = {};
-	thing: Thing | null;
 	predicateID: string;
 	pathString: string;
 	hashedPath: number;
@@ -15,7 +14,6 @@ export default class Path {
 		this.hashedPath = pathString.hash()
 		this.predicateID = predicateID;
 		this.pathString = pathString;
-		this.thing = this.thingAt();
 		if (g.hierarchy.isAssembled) {
 			this.subscriptions_setup();	// not needed during hierarchy assembly
 		}
@@ -40,6 +38,7 @@ export default class Path {
 	
 	get endID(): string { return this.idAt(); }
 	get fromPath(): Path { return this.stripBack(); }
+	get thing(): Thing | null { return this.thingAt(); }
 	get firstChild(): Thing { return this.children[0]; }
 	get lastChild(): Thing { return this.children.slice(-1)[0]; }
 	get isRoot(): boolean { return this.matchesPath(g.rootPath); }
@@ -131,37 +130,40 @@ export default class Path {
 	}
 
 	get childPaths(): Array<Path> {
-
-		// idThing does not work for a bulk alias
-		// last id is for a relationship
-		// we need to use the idSmart for the children relationships
-		
 		const paths: Array<Path> = [];
-		if (this.pathString != 'exemplar') {
-			const idSmart = this.thing?.idSmart;
-			if (idSmart) {
-				if (idSmart == k.id_unknown) {
-					console.log(`child paths unavailable for: ${this.title}`);
-				} else {
-					const toRelationships = g.hierarchy.relationships_getByPredicateIDToAndID(this.predicateID, false, idSmart);
-					for (const toRelationship of toRelationships) {			// loop through all to relationships
-						const path = this.appendID(toRelationship.id);		// add each toRelationship's id
-						paths.push(path);									// and push onto the paths_to
-					}
-					u.paths_orders_normalize_remoteMaybe(paths);
-				}
+		const idSmart = this.thing?.idSmart;					//  use idSmart in case thing is a bulk alias
+		if (this.pathString != 'exemplar' && idSmart && !['', 'k.id_unknown'].includes(idSmart)) {
+			const toRelationships = g.hierarchy.relationships_getByPredicateIDToAndID(this.predicateID, false, idSmart);
+			for (const toRelationship of toRelationships) {		// loop through all to relationships
+				const path = this.appendID(toRelationship.id);	// add each toRelationship's id
+				paths.push(path);								// and push onto the paths_to
 			}
+			u.paths_orders_normalize_remoteMaybe(paths);
 		}
+		
 		return paths;
 	}
 
 	matchesStore(store: Writable<Path | null>): boolean { return this.matchesPath(get(store)); }
 	includedInStore(store: Writable<Array<Path>>): boolean { return this.includedInPaths(get(store)); }
 	matchesPath(path: Path | null): boolean { return !path ? false : this.pathString == path.pathString; }
-	includedInPaths(paths: Array<Path>): boolean { return paths.filter(p => p.matchesPath(this)).length > 0; }
 	sharesAnID(path: Path | null): boolean { return !path ? false : this.ids.some(id => path.ids.includes(id)); }
 	rect_ofWrapper(wrapper: Wrapper | null): Rect | null { return Rect.createFromDOMRect(wrapper?.component.getBoundingClientRect()); }
 	relationshipAt(back: number = 1): Relationship | null { return g.hierarchy?.relationship_getForHID(this.idAt(back).hash()) ?? null; }
+
+	includedInPaths(paths: Array<Path>): boolean {
+		if (!paths) {
+			return false;
+		}
+		return paths.filter(p => {
+			const path = p as Path;
+			if (path) {
+				return path.matchesPath(this);
+			} else {
+				return false;
+			}
+		}).length > 0;
+	}
 
 	dotColor(isInverted: boolean): string {
 		const thing = this.thing;
@@ -192,7 +194,7 @@ export default class Path {
 		const isEmpthPathString = this.pathString == '';
 		const relationship = this.relationshipAt(back);
 		if (!isEmpthPathString && relationship) {
-			return !relationship ? null : g.hierarchy?.thing_getForHID(relationship.idTo.hash()) ?? null;
+			return !relationship ? null : relationship.toThing;
 		}
 		return g.root ?? null;
 	}

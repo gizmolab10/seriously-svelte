@@ -149,7 +149,9 @@
 					{/if}
 					<FocusRevealDot here={g.here} path={$s_path_here} center={origin_ofFirstReveal.offsetBy(new Point(-3, 0))}/>
 				{/if}
-				<Children path={$s_path_here} origin={origin_ofChildren}/>
+				{#if $s_path_here.isExpanded}
+					<Children path={$s_path_here} origin={origin_ofChildren}/>
+				{/if}
 			</div>
 			<ToolsCluster/>
 		{/key}

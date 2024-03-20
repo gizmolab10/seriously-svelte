@@ -41,7 +41,8 @@
     })
 
 	$: {
-		const grabbed = $s_paths_grabbed?.filter(p => p.matchesPath(path)).length > 0;
+		const grabbedPaths = $s_paths_grabbed;		// use state variable for react logic
+		const grabbed = path.includedInPaths(grabbedPaths);
 		if (isGrabbed != grabbed) {
 			isGrabbed = grabbed;
 			updateColors();

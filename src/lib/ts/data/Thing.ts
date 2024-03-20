@@ -25,9 +25,6 @@ export default class Thing extends Datum {
 		this.title = title;
 		this.color = color;
 		this.trait = trait;
-		// if (baseID != dbDispatch.db.baseID) {
-		// 	console.log(`THING off base ${this.description}`);
-		// }
 	};
 	
 	get idSmart():			   string { return this.isBulkAlias ? this.bulkRootID : this.id; }		// can straddle base ids

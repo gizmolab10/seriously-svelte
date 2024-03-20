@@ -60,7 +60,7 @@ export default class DBFirebase implements DBInterface {
 		}
 		await this.fetch_documentsOf(TypeDatum.predicates);
 		await this.fetch_allFrom(baseID);
-		await this.fetch_bulkAliases();
+		await this.fetch_bulkAliases();		// TODO: assumes all paths created
 	}
 
 	async fetch_allFrom(baseID: string) {
@@ -135,29 +135,28 @@ export default class DBFirebase implements DBInterface {
 	async fetch_bulkAliases() {
 		const root = g.root;
 		if (this.baseID == k.name_bulkAdmin && root) {
-			const rootsPath = await this.hierarchy.path_getRoots();
+			const rootsPath = await this.hierarchy.path_getRoots();		// TODO: assumes all paths created
 			if (rootsPath) {
 				g.rootsPath = rootsPath;
-				try {		// add bulks to roots thing
-					const bulk = collection(this.db, this.bulksName);		// fetch all bulks (documents)
+				try {		// add bulk aliases to roots thing
+					const bulk = collection(this.db, this.bulksName);	// fetch all bulks (documents)
 					let bulkSnapshot = await getDocs(bulk);
 					for (const bulkDoc of bulkSnapshot.docs) {
 						const baseID = bulkDoc.id;
 						if (baseID != this.baseID) {
 							let thing = this.hierarchy.thing_bulkAlias_getForTitle(baseID);
 							if (thing) {
-								const path = rootsPath.appendChild(thing);
+								const path = thing.parentPaths[0];		// bulk aliases can only have one parent
 								if (path.isExpanded) {
 									await this.hierarchy.path_redraw_remoteFetchBulk_browseRight(path, false);
 								}
-							} else {													// create a thing for each bulk
+							} else {									// create a thing for each bulk
 								thing = this.hierarchy.thing_runtimeCreate(this.baseID, null, baseID, 'red', IDTrait.bulk, false);
 								await this.hierarchy.path_remember_remoteAddAsChild(rootsPath, thing);
 							}
 						}
 					}
 					// TODO: detect when a root disappears
-					// TODO: store the s_paths_expanded in its own  ** bulk-specific **  persistent storage
 				} catch (error) {
 					this.reportError(error);
 				}
