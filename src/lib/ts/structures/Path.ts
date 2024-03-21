@@ -10,7 +10,7 @@ export default class Path {
 	pathString: string;
 	hashedPath: number;
 
-	constructor(pathString: string = '', predicateID: string = Predicate.idIsAParentOf) {
+	constructor(pathString: string = '', predicateID: string = Predicate.idContains) {
 		this.hashedPath = pathString.hash()
 		this.predicateID = predicateID;
 		this.pathString = pathString;
@@ -287,7 +287,7 @@ export default class Path {
 	appendChild(thing: Thing | null): Path {
 		const id = this.thing?.idSmart;
 		if (thing && id) {
-			const relationship = g.hierarchy?.relationship_getByIDPredicateFromAndTo(Predicate.idIsAParentOf, id, thing.id);
+			const relationship = g.hierarchy?.relationship_getByIDPredicateFromAndTo(Predicate.idContains, id, thing.id);
 			if (relationship) {
 				return this.appendID(relationship.id);
 			}

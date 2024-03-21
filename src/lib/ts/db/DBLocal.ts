@@ -27,7 +27,7 @@ export default class DBLocal implements DBInterface {
 		const idE = this.localName('E');
 		const idR = this.localName('Root');
 		const idP = this.localName('P');
-		h.predicate_remember_runtimeCreate(idP, 'isAParentOf', false);
+		h.predicate_remember_runtimeCreate(idP, 'contains', false);
 		h.thing_remember_runtimeCreate('', idA, 'first', 'red', '1', false);
 		h.thing_remember_runtimeCreate('', idC, 'third', 'orange', '3', false);
 		h.thing_remember_runtimeCreate('', idD, 'sibling', 'green', 'a', false);

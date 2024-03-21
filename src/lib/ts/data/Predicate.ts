@@ -9,15 +9,15 @@ export default class Predicate extends RemoteIdentifiable {
 		this.kind = kind;
 	}
 
-	static get idIsAParentOf(): string {
-		const id = dbDispatch.db.hierarchy.knownP_byKind['isAParentOf']?.id;
+	static get idContains(): string {
+		const id = dbDispatch.db.hierarchy.knownP_byKind['contains']?.id;
 		if (!id) {
-			console.log(`isAParentOf is missing`)
+			console.log(`contains is missing`)
 		}
 		return id;
 	}
 	
-	static get predicate_isAParentOf(): Predicate {
-		return dbDispatch.db.hierarchy.knownP_byHID[Predicate.idIsAParentOf.hash()];
+	static get predicate_contains(): Predicate {
+		return dbDispatch.db.hierarchy.knownP_byHID[Predicate.idContains.hash()];
 	}
 }

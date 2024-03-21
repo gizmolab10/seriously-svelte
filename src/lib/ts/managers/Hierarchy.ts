@@ -388,8 +388,8 @@ export default class Hierarchy {
 				if (idThing != startingID && thing.trait != IDTrait.root && thing.baseID == baseID) {
 					let relationship = this.relationship_getWhereIDEqualsTo(idThing);
 					if (!relationship) {
-						const idPredicateIsAParentOf = Predicate.idIsAParentOf;
-						await this.relationship_remember_remoteCreateUnique(baseID, null, idPredicateIsAParentOf,
+						const idPredicateContains = Predicate.idContains;
+						await this.relationship_remember_remoteCreateUnique(baseID, null, idPredicateContains,
 							startingID, idThing, 0, CreationOptions.getRemoteID)
 					}
 				}
@@ -448,7 +448,7 @@ export default class Hierarchy {
 	async relationship_forget_remoteRemove(path: Path, otherPath: Path) {
 		const thing = path.thing;
 		const fromPath = path.fromPath;
-		const relationship = this.relationship_getByIDPredicateFromAndTo(Predicate.idIsAParentOf, otherPath.idThing, path.idThing);
+		const relationship = this.relationship_getByIDPredicateFromAndTo(Predicate.idContains, otherPath.idThing, path.idThing);
 		if (fromPath && relationship && (thing?.parents.length ?? 0) > 1) {
 			this.relationship_forget(relationship);
 			if (otherPath.hasChildren) {
@@ -475,8 +475,8 @@ export default class Hierarchy {
 	}
 
 	relationship_getWhereIDEqualsTo(idThing: string, to: boolean = true) {
-		const idPredicateIsAParentOf = Predicate.idIsAParentOf;
-		const matches = this.relationships_getByPredicateIDToAndID(idPredicateIsAParentOf, to, idThing);
+		const idPredicateContains = Predicate.idContains;
+		const matches = this.relationships_getByPredicateIDToAndID(idPredicateContains, to, idThing);
 		if (matches.length > 0) {
 			const relationship = matches[0];
 			return relationship;
@@ -631,7 +631,7 @@ export default class Hierarchy {
 		const fromThing = fromPath.thing;
 		if (fromThing && !toThing.isBulkAlias) {
 			const isBulkAlias = fromThing.isBulkAlias;
-			const idPredicateIsAParentOf = Predicate.idIsAParentOf;
+			const idPredicateContains = Predicate.idContains;
 			const fromID = fromThing.idSmart;
 			const changingBulk = isBulkAlias || toThing.baseID != this.db.baseID;
 			const baseID = changingBulk ? toThing.baseID : fromThing.baseID;
@@ -641,7 +641,7 @@ export default class Hierarchy {
 			if (!toThing.isRemotelyStored) {	
 				await this.db.thing_remember_remoteCreate(toThing);			// for everything below, need to await toThing.id fetched from dbDispatch
 			}
-			const relationship = await this.relationship_remember_remoteCreateUnique(baseID, null, idPredicateIsAParentOf, fromID, toThing.id, 0, CreationOptions.getRemoteID);
+			const relationship = await this.relationship_remember_remoteCreateUnique(baseID, null, idPredicateContains, fromID, toThing.id, 0, CreationOptions.getRemoteID);
 			const childPath = fromPath.appendID(relationship.id);
 			await u.paths_orders_normalize_remoteMaybe(fromPath.childPaths);		// write new order values for relationships
 			return childPath;
