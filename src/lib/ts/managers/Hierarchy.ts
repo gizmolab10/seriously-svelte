@@ -94,7 +94,7 @@ export default class Hierarchy {
 			if (pathGrab) {
 				switch (key) {
 					case '/':			needsRebuild = needsRebuild || pathGrab.becomeHere(); break;
-					case 'arrowright':	await this.path_rebuild_remoteMoveRight(pathGrab, true, SHIFT, OPTION, EXTREME); break;
+					case 'arrowright':	event.preventDefault(); await this.path_rebuild_remoteMoveRight(pathGrab, true, SHIFT, OPTION, EXTREME); break;
 					case 'arrowleft':	event.preventDefault(); await this.path_rebuild_remoteMoveRight(pathGrab, false, SHIFT, OPTION, EXTREME); break;
 				}
 			}
@@ -263,13 +263,12 @@ export default class Hierarchy {
 	thing_runtimeCreate(baseID: string, id: string | null, title: string, color: string, trait: string,
 		isRemotelyStored: boolean): Thing {
 		let thing: Thing | null = null;
-		const isBulkAlias = trait == IDTrait.root;
-		if (id && isBulkAlias && baseID != this.db.baseID) {		// other bulks have their own root & id
-			thing = this.thing_remember_bulkRootID(baseID, id, color);				// which our thing needs to adopt
+		if (id && trait == IDTrait.root && baseID != this.db.baseID) {		// other bulks have their own root & id
+			thing = this.thing_remember_bulkRootID(baseID, id, color);		// which our thing needs to adopt
 		}
 		if (!thing) {
 			thing = new Thing(baseID, id, title, color, trait, isRemotelyStored);
-			if (isBulkAlias) {
+			if (thing.isBulkAlias) {
 				thing.needsBulkFetch = true;
 				if (title.includes('@')) {
 					const dual = title.split('@');

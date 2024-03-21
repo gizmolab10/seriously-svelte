@@ -7,8 +7,6 @@
 	export let thing;
 	export let path;
 	let size = k.dot_size;
-	let hasInsidePath = path.toolsGrabbed || thing.isBulkAlias;
-	let insideOffset = hasInsidePath ? 0 : -1;
 	let childrenCount = path.children.length;
 	let insideFillColor = k.color_background;
 	let tinyDotsOffset = size * -0.4 + 0.01;
@@ -17,8 +15,10 @@
 	let tinyDotsDiameter = size * 1.8;
 	let strokeColor = thing.color;
 	let revealWrapper = Wrapper;
+	let hasInsidePath = false;
 	let isHovering = false;
 	let scalablePath = '';
+	let insideOffset = 0;
 	let revealDot = null;
 	let toggle = false;
 	
@@ -69,6 +69,8 @@
 	}
 
 	function updateScalablePaths() {
+		hasInsidePath = path.toolsGrabbed || thing.isBulkAlias;
+		insideOffset = hasInsidePath ? 0 : -1;
 		if (!path.showsReveal || path.toolsGrabbed) {
 			scalablePath = svgPath.circle(size, size - 1);
 		} else {
