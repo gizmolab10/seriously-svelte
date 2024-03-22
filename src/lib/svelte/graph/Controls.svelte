@@ -66,7 +66,7 @@
 			</button>
 		{/if}
 	{/if}
-	{#if g.device_isMobile}
+	{#if u.device_isMobile}
 		<CircularButton
 			left={width - 130}
 			size={size}

@@ -92,7 +92,7 @@
 			const offsetX = 15 + ($s_show_details ? -k.width_details : 0) - (childrenSize.width / 2) - (k.dot_size / 2.5) + offsetX_ofFirstReveal;
 			const offsetY = -1 - graphRect.origin.y;
 			origin_ofFirstReveal = graphRect.center.offsetBy(new Point(offsetX, offsetY));
-			if (k.device_isMobile) {
+			if (u.device_isMobile) {
 				origin_ofFirstReveal.x = 25;
 			}
 			const toChildren = new Point(-41.2 + k.line_stretch - (k.dot_size / 2) + offsetX_ofFirstReveal, (k.dot_size / 2) -(childrenSize.height / 2) - 4);

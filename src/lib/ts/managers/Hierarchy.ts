@@ -1,6 +1,6 @@
-import { s_isBusy, s_paths_grabbed, s_things_arrived, s_title_editing, s_altering_parent, s_path_toolsCluster } from '../common/State';
-import { g, k, u, get, User, Path, Thing, Grabs, debug, Access, IDTrait, IDTool, signals, Wrapper } from '../common/GlobalImports';
-import { Predicate, Relationship, persistLocal, AlteringParent, CreationOptions } from '../common/GlobalImports';
+import { s_isBusy, s_db_loadTime, s_paths_grabbed, s_things_arrived, s_title_editing, s_altering_parent, s_path_toolsCluster } from '../common/State';
+import { g, k, u, get, User, Path, Thing, Grabs, debug, Access, IDTool, IDTrait, signals, Wrapper } from '../common/GlobalImports';
+import { TypeDB, Predicate, Relationship, persistLocal, AlteringParent, CreationOptions } from '../common/GlobalImports';
 import DBInterface from '../db/DBInterface';
 
 type KnownRelationships = { [hID: number]: Array<Relationship> }
@@ -31,18 +31,30 @@ export default class Hierarchy {
 	thing_getForPath(path: Path | null): Thing | null { return path?.thing ?? null; }
 	thing_getForHID(hID: number | null): Thing | null { return (!hID) ? null : this.knownT_byHID[hID]; }
 
+	static readonly $_INIT_$: unique symbol;
+
 	constructor(db: DBInterface) {
 		this.db = db;
 	}
-	
-	async hierarchy_assemble(type: string) {
-		await this.addMissingAndRemoveNulls(null, this.db.baseID);
-		persistLocal.paths_restore();
-		this.db.setHasData(true);
-		s_things_arrived.set(true);
-		s_isBusy.set(false);
-		this.isAssembled = true;
+
+	async hierarchy_fetchAndBuild(type: string) {
+		if (this.db.hasData) {
+			persistLocal.paths_restore();
+		} else {
+			const startTime = new Date().getTime();
+			s_db_loadTime.set(null);
+			if (type != TypeDB.local) {
+				s_isBusy.set(true);
+				s_things_arrived.set(false);
+			}
+			await this.db.fetch_all();
+			await this.addMissingAndRemoveNulls(null, this.db.baseID);
+			persistLocal.paths_restore();
+			this.hierarchy_completed(startTime);
+		}
 	}
+
+	static readonly $_EVENTS_$: unique symbol;
 
 	async handleToolClicked(IDButton: string, event: MouseEvent) {
 		const path = get(s_path_toolsCluster);
@@ -110,18 +122,7 @@ export default class Hierarchy {
 		}
 	}
 
-	async addMissingAndRemoveNulls(parentID: string | null, baseID: string) {
-		await this.relationships_remoteCreateMissing(parentID, baseID);
-		await this.relationships_removeHavingNullReferences();
-	}
-
-	toggleAlteration(alteration: AlteringParent) {
-		s_altering_parent.set((get(s_altering_parent) == alteration) ? null : alteration);
-	}
-
-	//////////////////////////////
-	//			 GRABS			//
-	//////////////////////////////
+	static readonly $_GRABS_$: unique symbol;
 
 	get grabs(): Grabs { 
 		if (this._grabs == null) {
@@ -154,10 +155,8 @@ export default class Hierarchy {
 		}
 		return g.root;
 	}
-
-	//////////////////////////////
-	//			THINGS			//
-	//////////////////////////////
+	
+	static readonly $_THINGS_$: unique symbol;
 
 	things_getForPath(path: Path): Array<Thing> {
 		const root = g.root;
@@ -188,9 +187,7 @@ export default class Hierarchy {
 		this.knownTs_byTrait = {};
 	}
 
-	//////////////////////////////
-	//			THING			//
-	//////////////////////////////
+	static readonly $_THING_$: unique symbol;
 
 	async thing_remember_remoteRelocateChild(child: Thing, fromParent: Thing, toParent: Thing): Promise<any> {
 		let relationship = this.relationship_getWhereIDEqualsTo(child.id);
@@ -217,6 +214,15 @@ export default class Hierarchy {
 			const child = this.thing_runtimeCreate(thing.baseID, null, k.title_line, parent.color, '', false);
 			await this.path_edit_remoteAddAsChild(parentPath, child, order, false);
 		}
+	}
+
+	thing_remember_runtimeCreateUnique(baseID: string, id: string | null, title: string, color: string, trait: string,
+		isRemotelyStored: boolean): Thing {
+		let thing = this.thing_getForHID(id?.hash() ?? null);
+		if (!thing) {
+			thing = this.thing_remember_runtimeCreate(baseID, id, title, color, trait, isRemotelyStored);
+		}
+		return thing;
 	}
 
 	thing_remember_runtimeCreate(baseID: string, id: string | null, title: string, color: string, trait: string,
@@ -280,9 +286,7 @@ export default class Hierarchy {
 		return thing;
 	}
 
-	//////////////////////////
-	//	 	   BULKS		//
-	//////////////////////////
+	static readonly $_BULKS_$: unique symbol;
 
 	thing_remember_bulkRootID(baseID: string, id: string, color: string) {
 		const thing = this.thing_bulkAlias_getForTitle(baseID);
@@ -332,9 +336,7 @@ export default class Hierarchy {
 		}
 	}
 
-	////////////////////////////////////
-	//		   RELATIONSHIPS		  //
-	////////////////////////////////////
+	static readonly $_RELATIONSHIPS_$: unique symbol;
 
 	relationships_refreshKnowns() {
 		const saved = this.knownRs;
@@ -414,20 +416,22 @@ export default class Hierarchy {
 		}
 	}
 
-	/////////////////////////////////////
-	//			RELATIONSHIP		   //
-	/////////////////////////////////////
+	static readonly $_RELATIONSHIP_$: unique symbol;
 
 	relationship_getForHID(hID: number): Relationship | null { return this.knownR_byHID[hID]; }
 
 	relationship_rememberByKnown(known: KnownRelationships, relationship: Relationship, id: string) {
-		const hID = id.hash();
-		let array = known[hID] ?? [];
-		array.push(relationship);
-		if (!relationship.toThing) {
-			console.log('missing TO thing');
+		if (!id) {
+			u.noop();
+		} else {
+			const hID = id.hash();
+			let array = known[hID] ?? [];
+			array.push(relationship);
+			if (!relationship.toThing) {
+				console.log('missing TO thing');
+			}
+			known[hID] = array;
 		}
-		known[hID] = array;
 	}
 	
 	relationship_remember(relationship: Relationship) {
@@ -508,9 +512,40 @@ export default class Hierarchy {
 		return relationship;
 	}
 
-	////////////////////////
-	//		  PATH		  //
-	////////////////////////
+	static readonly $_PATHS_$: unique symbol;
+
+	async paths_rebuild_traverse_remoteDelete(paths: Array<Path>) {
+		let needsRebuild = false;
+		if (g.herePath) {
+			for (const path of paths) {
+				const thing = path.thing;
+				const fromPath = path.fromPath;
+				const fromFromPath = fromPath.fromPath;
+				let fromThing = fromPath.thing;
+				if (thing && fromThing && fromPath && fromFromPath && path && !path.isEditing && !thing.isBulkAlias) {
+					const siblings = fromPath.children;
+					let index = siblings.indexOf(thing);
+					siblings.splice(index, 1);
+					fromPath.grabOnly();
+					if (siblings.length == 0) {
+						needsRebuild = fromPath.collapse();
+						if (!fromFromPath.isVisible) {
+							needsRebuild = fromFromPath.becomeHere() || needsRebuild;	// call become here before applying ||
+						}
+					}
+					await path.traverse_async(async (progenyPath: Path): Promise<boolean> => {
+						await this.path_forget_remoteUpdate(progenyPath);
+						return false; // continue the traversal
+					});
+				}
+			}
+			if (needsRebuild) {
+				signals.signal_rebuildWidgets_fromHere();
+			}
+		}
+	}
+
+	static readonly $_PATH_$: unique symbol;
 
 	path_remember_unique(pathString: string = ''): Path {
 		const hashedPath = pathString.hash();
@@ -799,45 +834,9 @@ export default class Hierarchy {
 				}
 			}
 		}
-	}	
-	////////////////////////
-	//		  PATHS		  //
-	////////////////////////
-
-	async paths_rebuild_traverse_remoteDelete(paths: Array<Path>) {
-		let needsRebuild = false;
-		if (g.herePath) {
-			for (const path of paths) {
-				const thing = path.thing;
-				const fromPath = path.fromPath;
-				const fromFromPath = fromPath.fromPath;
-				let fromThing = fromPath.thing;
-				if (thing && fromThing && fromPath && fromFromPath && path && !path.isEditing && !thing.isBulkAlias) {
-					const siblings = fromPath.children;
-					let index = siblings.indexOf(thing);
-					siblings.splice(index, 1);
-					fromPath.grabOnly();
-					if (siblings.length == 0) {
-						needsRebuild = fromPath.collapse();
-						if (!fromFromPath.isVisible) {
-							needsRebuild = fromFromPath.becomeHere() || needsRebuild;	// call become here before applying ||
-						}
-					}
-					await path.traverse_async(async (progenyPath: Path): Promise<boolean> => {
-						await this.path_forget_remoteUpdate(progenyPath);
-						return false; // continue the traversal
-					});
-				}
-			}
-			if (needsRebuild) {
-				signals.signal_rebuildWidgets_fromHere();
-			}
-		}
 	}
 
-	//////////////////////////////////////
-	//			ANCILLARY DATA			//
-	//////////////////////////////////////
+	static readonly $_ANCILLARY_$: unique symbol;
 
 	predicate_getForID(idPredicate: string | null): Predicate | null {
 		return (!idPredicate) ? null : this.knownP_byHID[idPredicate.hash()];
@@ -847,6 +846,12 @@ export default class Hierarchy {
 		this.knownP_byHID[predicate.hashedID] = predicate;
 		this.knownP_byKind[predicate.kind] = predicate;
 		this.knownPs.push(predicate);
+	}
+
+	predicate_remember_runtimeCreateUnique(id: string, kind: string, isRemotelyStored: boolean = true) {
+		if (!this.predicate_getForID(id)) {
+			this.predicate_remember_runtimeCreate(id, kind, isRemotelyStored);
+		}
 	}
 
 	predicate_remember_runtimeCreate(id: string, kind: string, isRemotelyStored: boolean = true) {
@@ -865,12 +870,35 @@ export default class Hierarchy {
 		this.knownU_byHID[id.hash()] = user;
 	}
 
+	static readonly $_OTHER_$: unique symbol;
+
 	wrapper_add(wrapper: Wrapper) {
 		const path = wrapper.path
 		const hash = path.hashedPath;
 		const dict = this.knownWs_byTypeAndPath[wrapper.type] ?? {};
 		dict[hash] = wrapper;
 		this.knownWs_byTypeAndPath[wrapper.type] = dict;
+	}
+
+	hierarchy_completed(startTime: number) {
+		this.db.setHasData(true);
+		s_things_arrived.set(true);
+		s_isBusy.set(false);
+		this.isAssembled = true;
+		const duration = Math.trunc(((new Date().getTime()) - startTime) / 100) / 10;
+		const places = (duration == Math.trunc(duration)) ? 0 : 1;
+		const loadTime = (((new Date().getTime()) - startTime) / 1000).toFixed(places);
+		this.db.loadTime = loadTime;
+		s_db_loadTime.set(loadTime);
+	}
+
+	async addMissingAndRemoveNulls(parentID: string | null, baseID: string) {
+		await this.relationships_remoteCreateMissing(parentID, baseID);
+		await this.relationships_removeHavingNullReferences();
+	}
+
+	toggleAlteration(alteration: AlteringParent) {
+		s_altering_parent.set((get(s_altering_parent) == alteration) ? null : alteration);
 	}
 
 }

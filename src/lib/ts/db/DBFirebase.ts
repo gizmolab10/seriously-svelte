@@ -1,6 +1,6 @@
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection, onSnapshot, deleteField, getFirestore } from 'firebase/firestore';
 import { DocumentData, DocumentChange, QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
-import { g, k, u, get, Thing, debug, launch, TypeDB, signals, IDTrait, TypeDatum, Hierarchy, DebugFlag } from '../common/GlobalImports';
+import { g, k, u, get, Thing, debug, TypeDB, signals, IDTrait, TypeDatum, Hierarchy, DebugFlag } from '../common/GlobalImports';
 import { Predicate, dbDispatch, Relationship, CreationOptions } from '../common/GlobalImports';
 import { s_build } from '../common/State';
 import { initializeApp } from "firebase/app";
@@ -44,13 +44,12 @@ export default class DBFirebase implements DBInterface {
 		return this._hierarchy!;
 	}
 
-	applyQueryStrings(params: URLSearchParams) {
-		this.baseID = params.get('name') ?? params.get('dbid') ?? 'Public';
+	applyQueryStrings() {
+		const queryStrings = k.queryString;
+		this.baseID = queryStrings.get('name') ?? queryStrings.get('dbid') ?? 'Public';
 	}
 
-	//////////////////////////
-	//	 	   FETCH		//
-	//////////////////////////
+	static readonly $_FETCH_$: unique symbol;
 
 	async fetch_all() {
 		await this.recordLoginIP();
@@ -83,9 +82,9 @@ export default class DBFirebase implements DBInterface {
 			}
 			
 			
-			////////////////
+			///////////////////
 			// data IDSignal //
-			////////////////
+			///////////////////
 
 			if (bulk) {
 				switch (type) {
@@ -108,9 +107,7 @@ export default class DBFirebase implements DBInterface {
 		}
 	}
 
-	//////////////////////////
-	//	 	   BULKS		//
-	//////////////////////////
+	static readonly $_BULKS_$: unique symbol;
 
 	get_bulk_for(baseID: string | null) {
 		if (baseID) {
@@ -164,9 +161,7 @@ export default class DBFirebase implements DBInterface {
 		}
 	}
 
-	//////////////////////////////////////
-	//	 		REMOTE SNAPSHOTS		//
-	//////////////////////////////////////
+	static readonly $_REMOTE_$: unique symbol;
 	
 	snapshot_deferOne(baseID: string, type: TypeDatum, snapshot: QuerySnapshot) {
 		const deferral = new SnapshotDeferal(baseID, type, snapshot);
@@ -278,9 +273,7 @@ export default class DBFirebase implements DBInterface {
 		}
 	}
 
-	//////////////////////////////////////////
-	//	    DOCUMENTS & SUBCOLLECTIONS		//
-	//////////////////////////////////////////
+	static readonly $_SUBCOLLECTIONS_$: unique symbol;
 
 	async documents_firstTime_remoteCreate(type: TypeDatum, baseID: string, collectionRef: CollectionReference) {
 		const docRef = doc(this.db, this.bulksName, baseID);
@@ -326,9 +319,7 @@ export default class DBFirebase implements DBInterface {
 		}
 	}
 
-	//////////////////////////////
-	//			 THING			//
-	//////////////////////////////
+	static readonly $_THING_$: unique symbol;
 
 	async thing_remember_remoteCreate(thing: Thing) {
 		const thingsCollection = this.get_bulk_for(thing.baseID)?.thingsCollection;
@@ -403,9 +394,7 @@ export default class DBFirebase implements DBInterface {
 		return changed;
 	}
 
-	//////////////////////////////////////
-	//			 RELATIONSHIP			//
-	//////////////////////////////////////
+	static readonly $_RELATIONSHIP_$: unique symbol;
 
 	async relationship_remember_remoteCreate(relationship: Relationship) {
 		const relationshipsCollection = this.get_bulk_for(relationship.baseID)?.relationshipsCollection;
@@ -472,9 +461,7 @@ export default class DBFirebase implements DBInterface {
 		return changed;
 	}
 
-	//////////////////////////////////
-	//			VALIDATION			//
-	//////////////////////////////////
+	static readonly $_VALIDATION_$: unique symbol;
 
 	static data_isValidOfKind(type: TypeDatum, data: DocumentData) {
 		switch (type) {
@@ -504,10 +491,10 @@ export default class DBFirebase implements DBInterface {
 	async recordLoginIP() {
 		await this.getUserIPAddress().then((ipAddress) => {
 			if (ipAddress != null && ipAddress != '69.181.235.85') {
-				const queries = launch.queryString.toString() ?? 'empty';
+				const queryStrings = k.queryString.toString() ?? 'empty';
 				const logRef = collection(this.db, 'access_logs');
 				const item = {
-					queries: queries,
+					queries: queryStrings,
 					build: get(s_build),
 					ipAddress: ipAddress,
 					timestamp: serverTimestamp(),

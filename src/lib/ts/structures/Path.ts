@@ -6,6 +6,7 @@ import { Writable } from 'svelte/store';
 
 export default class Path {
 	wrappers: { [type: string]: Wrapper } = {};
+	thing: Thing | null;
 	predicateID: string;
 	pathString: string;
 	hashedPath: number;
@@ -14,9 +15,16 @@ export default class Path {
 		this.hashedPath = pathString.hash()
 		this.predicateID = predicateID;
 		this.pathString = pathString;
+		this.thing = this.thingAt();
 		if (g.hierarchy.isAssembled) {
 			this.subscriptions_setup();	// not needed during hierarchy assembly
 		}
+		setTimeout(() => {
+			if (this.thing != this.thingAt()) {
+				console.log('ACK!');
+				this.thing = this.thingAt();
+			}
+		}, 10);
 	}
 
 	signal_rebuildWidgets()  { signals.signal_rebuildWidgets(this); }
@@ -32,13 +40,10 @@ export default class Path {
 		s_paths_grabbed.subscribe(() => { this.thing?.updateColorAttributes(this); });
 	}
 	
-	////////////////////////////////////
-	//			properties			  //
-	////////////////////////////////////
+	static readonly $_PROPERTIES_$: unique symbol;
 	
 	get endID(): string { return this.idAt(); }
 	get fromPath(): Path { return this.stripBack(); }
-	get thing(): Thing | null { return this.thingAt(); }
 	get firstChild(): Thing { return this.children[0]; }
 	get lastChild(): Thing { return this.children.slice(-1)[0]; }
 	get isRoot(): boolean { return this.matchesPath(g.rootPath); }
@@ -316,7 +321,7 @@ export default class Path {
 	}
 
 	visibleProgeny_height(visited: Array<string> = []): number {
-		const thing = g.hierarchy?.thing_getForPath(this);
+		const thing = this.thing;
 		if (thing) {
 			if (!visited.includes(this.pathString) && this.showsChildren) {
 				let height = 0;
@@ -350,10 +355,8 @@ export default class Path {
 		return 0;
 	}
 
-	////////////////////////////////////
-	//			mutate state		  //
-	////////////////////////////////////
-
+	static readonly $_MUTATION_$: unique symbol;
+	
 	expand() { return this.expanded_setTo(true); }
 	collapse() { return this.expanded_setTo(false); }
 	toggleGrab() { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }

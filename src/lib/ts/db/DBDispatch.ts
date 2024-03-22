@@ -1,5 +1,5 @@
-import { s_db_type, s_isBusy, s_db_loadTime, s_things_arrived } from '../common/State';
-import { g, TypeDB, IDPersistant, persistLocal } from '../common/GlobalImports';
+import { s_db_type, s_isBusy, s_db_loadTime, s_path_here, s_paths_grabbed, s_paths_expanded, s_path_toolsCluster } from '../common/State';
+import { g, k, TypeDB, signals, IDPersistant, persistLocal } from '../common/GlobalImports';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
@@ -8,17 +8,46 @@ import { dbLocal } from './DBLocal';
 export default class DBDispatch {
 	db: DBInterface;
 	eraseDB = false;
-	updateDBForType(type: string) { this.db = this.dbForType(type); }
 	nextDB(forward: boolean) { this.changeDBTo(this.getNextDB(forward)); }
+	updateDBForType(type: string) { this.db = this.dbForType(type); g.hierarchy = this.db.hierarchy; }
 
-	constructor() { this.db = dbFirebase; }
+	constructor() {
+		let done = false;
+		this.db = dbFirebase;
+		setTimeout(() => {
+			if (!done) {
+				done = true;
+				this.setup(TypeDB.firebase);
+			}
+		}, 1);
 
-	async applyQueryStrings(queryStrings: URLSearchParams) {
+		s_db_type.subscribe((type: string) => {
+			if (type && this.db.dbType != type) {
+				this.setup(type);
+				signals.signal_rebuildWidgets_fromHere();
+			}
+		});
+	}
+
+	setup(type: string) {
+		this.updateDBForType(type);
+		(async () => {
+			await this.applyQueryStrings();
+			await g.hierarchy.hierarchy_fetchAndBuild(type);
+			g.rootPath = this.db.hierarchy.path_remember_unique();
+			s_paths_grabbed.set([]);
+			s_path_here.set(g.rootPath);
+			s_path_toolsCluster.set(null);
+			s_paths_expanded.set([g.rootPath]);
+		})()
+	}
+
+	async applyQueryStrings() {
+		const queryStrings = k.queryString;
 		const type = queryStrings.get('db') ?? persistLocal.readFromKey(IDPersistant.db) ?? TypeDB.firebase;
 		this.updateDBForType(type);
-		this.db.applyQueryStrings(queryStrings);
+		this.db.applyQueryStrings();
 		s_db_type.set(type);
-		await this.updateHierarchy(type);
 	}
 
 	dbForType(type: string): DBInterface {
@@ -53,28 +82,6 @@ export default class DBDispatch {
 				default:			  return TypeDB.local;
 			}
 		}		
-	}
-
-	async updateHierarchy(type: string) {
-		g.hierarchy = this.db.hierarchy;				// called when local sets s_db_type
-		const h = g.hierarchy;
-		if (this.db.hasData) {
-			persistLocal.paths_restore();
-		} else {
-			if (type != TypeDB.local) {
-				s_isBusy.set(true);
-				s_things_arrived.set(false);
-			}
-			s_db_loadTime.set(null);
-			const startTime = new Date().getTime();
-			await this.db.fetch_all();
-			h.hierarchy_assemble(type);
-			const duration = Math.trunc(((new Date().getTime()) - startTime) / 100) / 10;
-			const places = (duration == Math.trunc(duration)) ? 0 : 1;
-			const loadTime = (((new Date().getTime()) - startTime) / 1000).toFixed(places);
-			this.db.loadTime = loadTime;
-			s_db_loadTime.set(loadTime);
-		}
 	}
 
 }

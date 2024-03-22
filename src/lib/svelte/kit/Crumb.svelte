@@ -54,6 +54,6 @@
 		border:{border};
 		border-radius: 1em;'>
 		<div style='padding:0px 0px 1px 0px; {cursorStyle};'>
-			{thing.title.injectElipsisAt()}
+			{thing?.title.injectElipsisAt()}
 		</div>
 </button>

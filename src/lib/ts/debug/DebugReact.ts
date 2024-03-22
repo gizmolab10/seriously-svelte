@@ -1,3 +1,5 @@
+import { k } from '../../ts/common/Constants';
+
 export enum ReactFlag {
 	mount	= 'mount',
 	layout	= 'layout',
@@ -17,7 +19,8 @@ export class DebugReact {
 	get layout(): boolean { return this.hasOption(ReactFlag.layout); }
 	get mount(): boolean { return this.hasOption(ReactFlag.mount); }
 
-	applyQueryStrings(queryStrings: URLSearchParams) {
+	applyQueryStrings() {
+		const queryStrings = k.queryString;
 		const debug = queryStrings.get('react');
 		if (debug) {
 			const flags = debug.split(',');

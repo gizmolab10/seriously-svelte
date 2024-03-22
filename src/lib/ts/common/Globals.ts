@@ -1,9 +1,8 @@
-import { k, u, get, Path, Rect, Point, Thing, launch, dbDispatch, Hierarchy, persistLocal, IDPersistant } from '../../ts/common/GlobalImports';
-import { s_db_type, s_path_here, s_graphRect, s_show_details, s_paths_grabbed, s_scale_factor } from './State';
+import { Hierarchy, debugReact, dbDispatch, persistLocal, IDPersistant } from '../common/GlobalImports';
+import { k, u, get, Path, Rect, Point, Thing, debug, builds } from '../common/GlobalImports'
+import { s_path_here, s_graphRect, s_show_details, s_scale_factor } from './State';
 
 class Globals {
-	titleIsAtTop: boolean = false;
-	showControls: boolean = false;
 	hierarchy: Hierarchy;
 	rootsPath: Path;
 	rootPath: Path;
@@ -11,22 +10,26 @@ class Globals {
 	root: Thing;
 	here: Thing;
 
+	async setup() {
+		const baseID = dbDispatch.db.baseID;
+		const name = baseID ? (baseID! + ', ') : '';
+		const host = u.isServerLocal ? 'local' : 'remote';
+		document.title = `Seriously (${host}, ${name}${u.browserType}, α)`;
+		builds.setup();
+		persistLocal.restore();
+		k.applyQueryStrings();
+		persistLocal.applyQueryStrings();
+		debug.applyQueryStrings();
+		debugReact.applyQueryStrings();
+		await dbDispatch.applyQueryStrings(); // do these two last
+		this.setup_reacts();
+	}
+
 	setup_reacts() {
 		s_path_here.subscribe((herePath: Path) => {
 			if (herePath && herePath != this.herePath) {
 				this.here = herePath.thing ?? this.root;
 				this.herePath = herePath;
-			}
-		})
-		s_db_type.subscribe((type: string) => {
-			if (type && dbDispatch.db.dbType != type) {
-				(async () => {
-					s_path_here.set(this.rootPath);
-					s_paths_grabbed.set([]);
-					dbDispatch.updateDBForType(type);
-					await dbDispatch.applyQueryStrings(launch.queryString);
-					await dbDispatch.updateHierarchy(type);
-				})()
 			}
 		});
 	}

@@ -1,4 +1,4 @@
-import { debug, Thing, TypeDB, TypeDatum, Hierarchy, Relationship, CreationOptions, DebugFlag, dbDispatch } from '../common/GlobalImports';
+import { k, debug, Thing, TypeDB, DebugFlag, TypeDatum, Hierarchy, Relationship, CreationOptions } from '../common/GlobalImports';
 import { s_things_arrived } from '../common/State';
 import DBInterface from './DBInterface';
 import Airtable from 'airtable';
@@ -14,8 +14,9 @@ import Airtable from 'airtable';
 //////////////////////////////
 
 export default class DBAirtable implements DBInterface {
-	baseCatalist = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('apphGUCbYIEJLvRrR');
-	basePublic = new Airtable({ apiKey: 'keyb0UJGLoLqPZdJR' }).base('appq1IjzmiRdlZi3H');
+	personalAccessToken = 'patgiHQQb6LnEJtf4';
+	basePublic = new Airtable({ apiKey: this.personalAccessToken }).base('appq1IjzmiRdlZi3H');
+	baseCatalist = new Airtable({ apiKey: this.personalAccessToken }).base('apphGUCbYIEJLvRrR');
 	base = this.baseCatalist;
 	relationships_table = this.base(TypeDatum.relationships);
 	predicates_table = this.base(TypeDatum.predicates);
@@ -40,8 +41,9 @@ export default class DBAirtable implements DBInterface {
 		return this._hierarchy!;
 	}
 
-	applyQueryStrings(params: URLSearchParams) {
-		this.baseID = params.get('name') ?? params.get('dbid') ?? 'apphGUCbYIEJLvRrR';
+	applyQueryStrings() {
+		const queryStrings = k.queryString;
+		this.baseID = queryStrings.get('name') ?? queryStrings.get('dbid') ?? 'apphGUCbYIEJLvRrR';
 	}
 
 	async fetch_all() {
@@ -74,10 +76,8 @@ export default class DBAirtable implements DBInterface {
 		}
 	}
 
-	////////////////////////////
-	//			THING		  //
-	////////////////////////////
-
+	static readonly $_THING_$: unique symbol;
+	
 	async thing_remember_remoteCreate(thing: Thing) {
 		try {
 			const fields = await this.things_table.create(thing.fields);
@@ -107,9 +107,7 @@ export default class DBAirtable implements DBInterface {
 		}
 	}
 
-	//////////////////////////////////////
-	//			RELATIONSHIPS			//
-	//////////////////////////////////////
+	static readonly $_RELATIONSHIPS_$: unique symbol;
 
 	async relationships_readAll() {
 		this.hierarchy.relationships_clearKnowns();
@@ -129,9 +127,7 @@ export default class DBAirtable implements DBInterface {
 		}
 	}
 
-	//////////////////////////////////////
-	//			 RELATIONSHIP			//
-	//////////////////////////////////////
+	static readonly $_RELATIONSHIP_$: unique symbol;
 
 	async relationship_remember_remoteCreate(relationship: Relationship | null) {
 		if (relationship) {
@@ -165,9 +161,7 @@ export default class DBAirtable implements DBInterface {
 		}
 	}
 
-	//////////////////////////////////////
-	//			ANCILLARY DATA			//
-	//////////////////////////////////////
+	static readonly $_ANCILLARY_$: unique symbol;
 
 	async predicates_readAll() {
 		try {

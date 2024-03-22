@@ -12,6 +12,37 @@ class Utilities {
 		return new Size(window.innerWidth / scaleFactor, window.innerHeight / scaleFactor);
 	}
 
+	get isServerLocal(): boolean {
+		const hostname = window.location.hostname;
+		return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "0.0.0.0";
+	}
+
+	get browserType(): IDBrowser {
+		const userAgent: string = navigator.userAgent;
+
+		switch (true) {
+			case /msie (\d+)/i.test(userAgent) ||
+				/trident\/.*; rv:(\d+)/i.test(userAgent):	return IDBrowser.explorer;
+			case /(chrome|crios)\/(\d+)/i.test(userAgent):	return IDBrowser.chrome;
+			case /firefox\/(\d+)/i.test(userAgent):			return IDBrowser.firefox;
+			case /opr\/(\d+)/i.test(userAgent):				return IDBrowser.opera;
+			case /orion\/(\d+)/i.test(userAgent):			return IDBrowser.orion;
+			case /safari\/(\d+)/i.test(userAgent):			return IDBrowser.safari;
+			default:										return IDBrowser.unknown
+		}
+	}
+
+	get device_isMobile(): boolean {
+		const userAgent = navigator.userAgent;
+		if (/android/i.test(userAgent) || /iPhone|iPad|iPod/i.test(userAgent)) {    // Check for phones
+			return true;
+		}
+		if (/iPad|Android|Touch/i.test(userAgent) && !(window as any).MSStream) {    // Check for tablets
+			return true;
+		}
+		return false;
+	}
+
 	async paths_orders_normalize_remoteMaybe(array: Array<Path>, remoteWrite: boolean = true) {
 		this.sort_byOrder(array);
 		await (async () => {
@@ -62,11 +93,6 @@ class Utilities {
 		return copiedObject;
 	}
 
-	isServerLocal(): boolean {
-		const hostname = window.location.hostname;
-		return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "0.0.0.0";
-	}
-
 	convertToObject(instance: any, fields: Array<string>): object {
 		const o: { [key: string]: any } = {};
 		for (const field of fields) {
@@ -99,32 +125,6 @@ class Utilities {
 		document.body.removeChild(element);
 
 		return width;
-	}
-
-	getBrowserType(): IDBrowser {
-		const userAgent: string = navigator.userAgent;
-
-		switch (true) {
-			case /msie (\d+)/i.test(userAgent) ||
-				/trident\/.*; rv:(\d+)/i.test(userAgent):	return IDBrowser.explorer;
-			case /(chrome|crios)\/(\d+)/i.test(userAgent):	return IDBrowser.chrome;
-			case /firefox\/(\d+)/i.test(userAgent):			return IDBrowser.firefox;
-			case /opr\/(\d+)/i.test(userAgent):				return IDBrowser.opera;
-			case /orion\/(\d+)/i.test(userAgent):			return IDBrowser.orion;
-			case /safari\/(\d+)/i.test(userAgent):			return IDBrowser.safari;
-			default:										return IDBrowser.unknown
-		}
-	}
-
-	device_isMobile(): boolean {
-		const userAgent = navigator.userAgent;
-		if (/android/i.test(userAgent) || /iPhone|iPad|iPod/i.test(userAgent)) {    // Check for phones
-			return true;
-		}
-		if (/iPad|Android|Touch/i.test(userAgent) && !(window as any).MSStream) {    // Check for tablets
-			return true;
-		}
-		return false;
 	}
 
 }

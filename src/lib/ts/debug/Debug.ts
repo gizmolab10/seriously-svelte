@@ -1,3 +1,5 @@
+import { k } from '../../ts/common/Constants';
+
 export enum DebugFlag {
 	remote = 'remote',  // interactions with remote
 	things = 'things',  // enable Things.debugLog
@@ -21,7 +23,8 @@ export class Debug {
 	get colors(): boolean { return this.hasOption(DebugFlag.colors); }
 	get lines(): boolean { return this.hasOption(DebugFlag.lines); }
 
-	applyQueryStrings(queryStrings: URLSearchParams) {
+	applyQueryStrings() {
+		const queryStrings = k.queryString;
 		const debug = queryStrings.get('debug');
 		if (debug) {
 			const flags = debug.split(',');

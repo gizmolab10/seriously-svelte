@@ -1,6 +1,5 @@
-import { u, transparentize } from '../../ts/common/GlobalImports';
-
 export default class Constants {
+	public queryString: URLSearchParams;
 	public dot_size: number;
 	public width_max: number;
 	public row_height: number;
@@ -15,7 +14,8 @@ export default class Constants {
 	public allow_HorizontalScrolling: boolean;
 	public allow_GraphEditing: boolean;
 	public allow_TitleEditing: boolean;
-	public device_isMobile: boolean;
+	public titleIsAtTop = false;
+	public showControls = false;
 	public color_highlighted: string;
 	public color_background: string;
     public color_disabled: string;
@@ -37,12 +37,12 @@ export default class Constants {
 		this.pathSeparator = '::';
 		this.id_unknown = 'unknown';
 		this.color_background = 'white';
+		this.color_disabled = 'lightGray';
 		this.color_highlighted = '#9e7daa';
 		this.name_bulkAdmin = 'Jonathan Sand';
 		this.title_default = 'Please, enter a title';
 		this.title_line = '------------------------';
-		this.color_disabled = transparentize('gray', 0.5);
-		this.device_isMobile = u.device_isMobile();
+		this.queryString = new URLSearchParams(window.location.search);
 		this.allow_HorizontalScrolling = true;
 		this.allow_GraphEditing = true;
 		this.allow_TitleEditing = true;
@@ -59,8 +59,8 @@ export default class Constants {
 		this.dot_size = 13;
 	}
 
-	applyQueryStrings(queryStrings: URLSearchParams) {
-        const deny = queryStrings.get('deny');
+	applyQueryStrings() {
+        const deny = this.queryString.get('deny');
         if (deny) {
             const flags = deny.split(',');
             for (const option of flags) {

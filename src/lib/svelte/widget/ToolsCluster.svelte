@@ -129,11 +129,11 @@
             setC(IDTool.confirmation,   center.offsetEquallyBy(1 - clusterRadius));
             setC(IDTool.delete_cancel,  center.offsetBy(new Point(1 - toolDiameter, toolDiameter - 5)));
             setC(IDTool.delete_confirm, center.offsetBy(new Point(2 - toolDiameter, 5 - toolDiameter)));
-            setC(IDTool.create,         new Point(center.x + toolDiameter - 3, y - toolDiameter + 6));
+            setC(IDTool.create,         new Point(center.x + toolDiameter - 3, y - toolDiameter + 7));
             setC(IDTool.more,           new Point(center.x + 1, y + toolDiameter + 4));
             setC(IDTool.next,           new Point(center.x - 2, y - toolDiameter - 2));
             setC(IDTool.delete_parent,  new Point(left - 1, y + toolDiameter - 8));
-            setC(IDTool.add_parent,     new Point(left - 1, y - toolDiameter + 6));
+            setC(IDTool.add_parent,     new Point(left - 1, y - toolDiameter + 7));
             setC(IDTool.delete,         new Point(center.x + 4, y + 3));
             return true;
         }

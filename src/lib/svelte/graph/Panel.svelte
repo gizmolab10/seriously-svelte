@@ -1,5 +1,5 @@
 <script>
-	import { g, k, u, get, Path, Rect, Size, Point, Thing, launch, TypeDB, ZIndex, signals, onMount } from '../../ts/common/GlobalImports';
+	import { g, k, u, get, Path, Rect, Size, Point, Thing, TypeDB, ZIndex, signals, onMount } from '../../ts/common/GlobalImports';
 	import { IDButton, Hierarchy, IDPersistant, dbDispatch, debugReact, persistLocal } from '../../ts/common/GlobalImports';
 	import { s_build, s_isBusy, s_path_here, s_db_type, s_graphRect } from '../../ts/common/State';
 	import { s_show_details, s_id_popupView, s_things_arrived } from '../../ts/common/State';
@@ -11,26 +11,19 @@
 	import Details from './Details.svelte';
 	import Crumbs from './Crumbs.svelte';
 	import Graph from './Graph.svelte';
-	const bottomOfTitle = k.height_banner + k.height_titleAtTop;
-	let toggle = false;
+	let rebuilds = 0;
 
 	$: { updateHerePath($s_path_here); }
+	onMount(() => { updateHerePath($s_path_here); });
 	window.addEventListener('resize', (event) => { g.graphRect_update(); });
 	const rebuild_signalHandler = signals.handle_rebuildWidgets(() => { updateHerePath($s_path_here); });
-
-	onMount(() => {
-		(async () => {
-			await launch.setup();
-			updateHerePath($s_path_here);
-		})()
-	});
 
 	function updateHerePath(newHerePath) {
 		if (newHerePath && !newHerePath.matchesPath(g.herePath)) {
 			g.herePath = newHerePath;
 		}
 		g.graphRect_update();
-		toggle = !toggle;	// remount graph component
+		rebuilds += 1;	// remount graph component
 	}
 
 </script>
@@ -118,7 +111,7 @@
 			<div class='horizontal-line'
 				style='
 					z-index: {ZIndex.frontmost};
-					top: {bottomOfTitle + 28}px;
+					top: {k.height_banner + k.height_titleAtTop + 28}px;
 					left: 0px;'>
 			</div>
 		{/if}
@@ -133,7 +126,7 @@
 		{:else if $s_id_popupView == IDButton.builds}
 			<BuildNotes/>
 		{:else if $s_id_popupView == null}
-			{#key toggle}
+			{#key rebuilds}
 				<Graph/>
 			{/key}
 		{/if}

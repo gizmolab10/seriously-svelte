@@ -1,5 +1,5 @@
-import { g, k, Path, Point, dbDispatch } from '../common/GlobalImports'
 import { s_thing_fontFamily, s_show_child_graph } from '../common/State';
+import { g, k, u, Path, Point, dbDispatch } from '../common/GlobalImports'
 import { s_show_details, s_user_graphOffset } from '../common/State';
 import { s_path_here, s_paths_expanded } from '../common/State';
 import { s_paths_grabbed } from '../common/State';
@@ -27,7 +27,7 @@ class PersistLocal {
 
 	restore() {
 		// localStorage.clear();
-		// const isLocal = u.isServerLocal();
+		// const isLocal = u.isServerLocal;
 		// this.writeToKey(IDPersistant.row_height, 20);
 		// this.writeToKey(IDPersistant.dot_size, 13);
 
@@ -35,13 +35,13 @@ class PersistLocal {
 			this.writeToKey(IDPersistant.relationships, true);
 		}
 		this.writeToKey(IDPersistant.title_atTop, false);
-		g.showControls = this.readFromKey(IDPersistant.controls) ?? false;
+		k.showControls = this.readFromKey(IDPersistant.controls) ?? false;
 		s_show_details.set(this.readFromKey(IDPersistant.details) ?? false);
-		g.titleIsAtTop = this.readFromKey(IDPersistant.title_atTop) ?? false;
+		k.titleIsAtTop = this.readFromKey(IDPersistant.title_atTop) ?? false;
 		s_thing_fontFamily.set(this.readFromKey(IDPersistant.font) ?? 'Arial');
 		s_show_child_graph.set(this.readFromKey(IDPersistant.show_children) ?? true);
 		s_user_graphOffset.set(this.readFromKey(IDPersistant.origin) ?? new Point());
-		g.applyScale(!k.device_isMobile ? 1 : this.readFromKey(IDPersistant.scale) ?? 1);
+		g.applyScale(!u.device_isMobile ? 1 : this.readFromKey(IDPersistant.scale) ?? 1);
 
 		s_show_details.subscribe((_) => { g.graphRect_update(); });
 		s_show_child_graph.subscribe((flag: boolean) => {
@@ -127,6 +127,36 @@ class PersistLocal {
 		} 
 	}
 
+	applyQueryStrings() {
+		const queryStrings = k.queryString;
+        const erase = queryStrings.get('erase');
+        const titleFlag = queryStrings.get('locate')?.split(k.comma).includes('titleAtTop') ?? false;
+		this.writeToKey(IDPersistant.title_atTop, titleFlag);
+		k.titleIsAtTop = titleFlag;
+		if (queryStrings.get('controls') === 'show') {
+			this.writeToKey(IDPersistant.controls, true);
+			g.showControls = true;
+		}
+		if (queryStrings.get('details') === 'hide') {
+			this.writeToKey(IDPersistant.details, false);
+			s_show_details.set(false);
+		}
+        if (erase) {
+            for (const option of erase.split(k.comma)) {
+                switch (option) {
+                    case 'data':
+						dbDispatch.eraseDB = true;
+						break;
+                    case 'settings': 
+						localStorage.clear();
+						s_path_here.set(g.rootPath);
+						s_paths_grabbed.set([]);
+						s_paths_expanded.set([]);
+						break;
+                }
+            }
+        }
+    }
 }
 
 export const persistLocal = new PersistLocal();

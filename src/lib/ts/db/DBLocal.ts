@@ -3,10 +3,10 @@ import DBInterface from './DBInterface';
 
 export default class DBLocal implements DBInterface {
 	_hierarchy: Hierarchy | null = null;
+	baseID = 'handcrafted';
 	dbType = TypeDB.local;
 	hasData = false;
 	loadTime = null;
-	baseID = '';
 
 	get hierarchy(): Hierarchy { 
 		if (this._hierarchy == null) {
@@ -15,8 +15,8 @@ export default class DBLocal implements DBInterface {
 		return this._hierarchy!;
 	}
 
-	localName(suffix: string) { return 'local' + suffix; }
 	setHasData(flag: boolean) { this.hasData = flag; }
+	localName(suffix: string) { return 'local' + suffix; }
 
 	async fetch_all() {
 		const h = this.hierarchy;
@@ -27,13 +27,13 @@ export default class DBLocal implements DBInterface {
 		const idE = this.localName('E');
 		const idR = this.localName('Root');
 		const idP = this.localName('P');
-		h.predicate_remember_runtimeCreate(idP, 'contains', false);
-		h.thing_remember_runtimeCreate('', idA, 'first', 'red', '1', false);
-		h.thing_remember_runtimeCreate('', idC, 'third', 'orange', '3', false);
-		h.thing_remember_runtimeCreate('', idD, 'sibling', 'green', 'a', false);
-		h.thing_remember_runtimeCreate('', idB, 'second', 'salmon', '2', false);
-		h.thing_remember_runtimeCreate('', idE, 'another', 'orchid', 'a', false);
-		h.thing_remember_runtimeCreate('', idR, 'seriously', 'plum', IDTrait.root, false);
+		h.predicate_remember_runtimeCreateUnique(idP, 'contains', false);
+		h.thing_remember_runtimeCreateUnique('', idA, 'first', 'red', '1', false);
+		h.thing_remember_runtimeCreateUnique('', idC, 'third', 'orange', '3', false);
+		h.thing_remember_runtimeCreateUnique('', idD, 'sibling', 'green', 'a', false);
+		h.thing_remember_runtimeCreateUnique('', idB, 'second', 'salmon', '2', false);
+		h.thing_remember_runtimeCreateUnique('', idE, 'another', 'orchid', 'a', false);
+		h.thing_remember_runtimeCreateUnique('', idR, 'seriously', 'plum', IDTrait.root, false);
 		h.relationship_remember_runtimeCreateUnique('', this.localName('Dr'), idP, idA, idD, 0);
 		h.relationship_remember_runtimeCreateUnique('', this.localName('Er'), idP, idA, idE, 1);
 		h.relationship_remember_runtimeCreateUnique('', this.localName('Ar'), idP, idR, idA, 0);
@@ -41,11 +41,11 @@ export default class DBLocal implements DBInterface {
 		h.relationship_remember_runtimeCreateUnique('', this.localName('Cr'), idP, idR, idC, 2);
 	};
 
+	applyQueryStrings() {}
 	async fetch_allFrom(baseID: string) {}
 	async thing_remoteUpdate(thing: Thing) {}
 	async thing_remoteDelete(thing: Thing) {}
 	async thing_remember_remoteCreate(thing: Thing) {}
-	applyQueryStrings(queryStrings: URLSearchParams) {}
 	async relationship_remoteUpdate(relationship: Relationship) {}
 	async relationship_remoteDelete(relationship: Relationship) {}
 	async relationship_remember_remoteCreate(relationship: Relationship | null) {}
