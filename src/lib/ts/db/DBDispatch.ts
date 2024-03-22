@@ -9,7 +9,6 @@ export default class DBDispatch {
 	db: DBInterface;
 	eraseDB = false;
 	nextDB(forward: boolean) { this.changeDBTo(this.getNextDB(forward)); }
-	updateDBForType(type: string) { this.db = this.dbForType(type); g.hierarchy = this.db.hierarchy; }
 
 	constructor() {
 		let done = false;
@@ -28,16 +27,22 @@ export default class DBDispatch {
 			}
 		});
 	}
+	
+	updateDBForType(type: string) {
+		const db = this.dbForType(type);
+		g.hierarchy = db.hierarchy;
+		this.db = db;
+	}
 
 	setup(type: string) {
 		this.updateDBForType(type);
 		(async () => {
 			await this.applyQueryStrings();
 			await g.hierarchy.hierarchy_fetchAndBuild(type);
-			g.rootPath = this.db.hierarchy.path_remember_unique();
-			s_paths_grabbed.set([]);
+			g.rootPath = g.hierarchy.path_remember_unique();
 			s_path_here.set(g.rootPath);
 			s_path_toolsCluster.set(null);
+			s_paths_grabbed.set([g.rootPath]);
 			s_paths_expanded.set([g.rootPath]);
 		})()
 	}

@@ -1,6 +1,6 @@
 <script>
 	import { g, k, u, ZIndex, signals, svgPath, IDButton, IDPersistant, persistLocal } from '../../ts/common/GlobalImports';
-	import { s_build, s_show_details, s_id_popupView, s_show_child_graph } from '../../ts/common/State';
+	import { s_build, s_show_details, s_id_popupView, s_layout_asTree, s_show_child_graph } from '../../ts/common/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import SVGD3 from '../svg/SVGD3.svelte';
 	let width = u.windowSize.width - 20;
@@ -13,8 +13,8 @@
 		switch (id) {
 			case IDButton.bigger: width = g.zoomBy(1.1) - 20; break;
 			case IDButton.smaller: width = g.zoomBy(0.9) - 20; break;
+			case IDButton.layout: $s_layout_asTree = !s_layout_asTree; break;
 			case IDButton.relations: $s_show_child_graph = !$s_show_child_graph; break;
-			default: alert(`alter "${id}" is under construction`); break;
 		}
 	}
 
@@ -23,6 +23,7 @@
 		signals.signal_relayoutWidgets_fromHere();
 		persistLocal.writeToKey(IDPersistant.details, $s_show_details);
 	}
+
 </script>
 
 <style>
@@ -49,7 +50,7 @@
 			onClick={details_buttonClicked}>
 			<img src='settings.svg' alt='circular button' width={size}px height={size}px/>
 		</CircularButton>
-		{#if g.showControls}
+		{#if k.showControls}
 			<button class='button'
 				style='
 					left:30px;

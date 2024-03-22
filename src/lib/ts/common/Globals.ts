@@ -21,11 +21,7 @@ class Globals {
 		persistLocal.applyQueryStrings();
 		debug.applyQueryStrings();
 		debugReact.applyQueryStrings();
-		await dbDispatch.applyQueryStrings(); // do these two last
-		this.setup_reacts();
-	}
-
-	setup_reacts() {
+		await dbDispatch.applyQueryStrings();			// do these last
 		s_path_here.subscribe((herePath: Path) => {
 			if (herePath && herePath != this.herePath) {
 				this.here = herePath.thing ?? this.root;
@@ -54,7 +50,7 @@ class Globals {
 	}
 
 	graphRect_update() {
-		const top = g.titleIsAtTop ? 114 : 69;							// height of content above the graph
+		const top = k.titleIsAtTop ? 114 : 69;							// height of content above the graph
 		const left = get(s_show_details) ? k.width_details : 0;			// width of details
 		const originOfGraph = new Point(left, top);
 		const sizeOfGraph = u.windowSize.reducedBy(originOfGraph);		// account for origin

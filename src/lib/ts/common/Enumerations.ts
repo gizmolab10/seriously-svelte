@@ -3,6 +3,11 @@ export enum AlteringParent {
 	adding	 = 'adding',
 }
 
+export enum LayoutStyle {
+	circles = 'circles',
+	tree	= 'tree',
+}
+
 export enum CreationOptions {
 	isFromRemote = 'isFrom',
 	getRemoteID	 = 'getID',

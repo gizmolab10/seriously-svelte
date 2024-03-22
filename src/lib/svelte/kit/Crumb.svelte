@@ -34,9 +34,8 @@
 	function crumb_buttonClicked(event) {
 		if (dbDispatch.db.hasData) {
 			path.grabOnly();
-			if (path.becomeHere()) {
-				signals.signal_rebuildWidgets_fromHere();
-			}
+			path.becomeHere();
+			signals.signal_rebuildWidgets_fromHere();
 		}
 	}
 

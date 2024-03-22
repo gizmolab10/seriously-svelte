@@ -9,7 +9,7 @@
 	const menuItems = [
 		{ id: TypeDB.local,	   label: 'local', action: () => { handleDBTypeAt(0); } },
 		{ id: TypeDB.firebase, label: 'firebase', action: () => { handleDBTypeAt(1); } },
-		{ id: TypeDB.airtable, label: 'airtable', action: () => { handleDBTypeAt(2); } }
+		// { id: TypeDB.airtable, label: 'airtable', action: () => { handleDBTypeAt(2); } }
 	];
 
 </script>

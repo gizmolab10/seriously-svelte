@@ -84,9 +84,10 @@ export default class Hierarchy {
 			const rootPath = g.rootPath;
 			let needsRebuild = false;
 			if (!pathGrab) {
-				needsRebuild = rootPath.becomeHere();
-				rootPath.grabOnly();		// update crumbs and dots
 				pathGrab = rootPath;
+				needsRebuild = true;
+				rootPath.becomeHere();
+				rootPath.grabOnly();		// update crumbs and dots
 			}
 			if (k.allow_GraphEditing) {
 				if (pathGrab && k.allow_TitleEditing) {
@@ -105,13 +106,13 @@ export default class Hierarchy {
 			}
 			if (pathGrab) {
 				switch (key) {
-					case '/':			needsRebuild = needsRebuild || pathGrab.becomeHere(); break;
+					case '/':			needsRebuild = true; pathGrab.becomeHere(); break;
 					case 'arrowright':	event.preventDefault(); await this.path_rebuild_remoteMoveRight(pathGrab, true, SHIFT, OPTION, EXTREME); break;
 					case 'arrowleft':	event.preventDefault(); await this.path_rebuild_remoteMoveRight(pathGrab, false, SHIFT, OPTION, EXTREME); break;
 				}
 			}
 			switch (key) {
-				case '!':				needsRebuild = needsRebuild || g.rootPath?.becomeHere(); break;
+				case '!':				needsRebuild = true; g.rootPath?.becomeHere(); break;
 				case '`':               event.preventDefault(); this.latestPathGrabbed_toggleToolsCluster(); break;
 				case 'arrowup':			await this.latestPathGrabbed_rebuild_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
 				case 'arrowdown':		await this.latestPathGrabbed_rebuild_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
@@ -530,7 +531,8 @@ export default class Hierarchy {
 					if (siblings.length == 0) {
 						needsRebuild = fromPath.collapse();
 						if (!fromFromPath.isVisible) {
-							needsRebuild = fromFromPath.becomeHere() || needsRebuild;	// call become here before applying ||
+							needsRebuild = true;
+							fromFromPath.becomeHere();	// call become here before applying
 						}
 					}
 					await path.traverse_async(async (progenyPath: Path): Promise<boolean> => {
@@ -779,7 +781,8 @@ export default class Hierarchy {
 		} else {
 			const rootPath = g.rootPath;
 			if (EXTREME) {
-				needsRebuild = rootPath?.becomeHere();	// tells graph to update line rects
+				needsRebuild = true;
+				rootPath?.becomeHere();	// tells graph to update line rects
 			} else {
 				if (!SHIFT) {
 					if (fromReveal) {

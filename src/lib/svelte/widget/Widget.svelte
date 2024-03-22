@@ -38,7 +38,7 @@
 		}
 		updateBorderStyle();
 		updateLayout();
-		debugReact.log_mount(`WIDGET ${thing.description}`);
+		debugReact.log_mount(`WIDGET ${thing.description} ${path.isGrabbed}`);
 	});
 
 	const any_signalHandler = signals.handle_anySignal((IDSignal, id) => {

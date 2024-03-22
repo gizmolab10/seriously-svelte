@@ -1,5 +1,4 @@
 export default class Constants {
-	public queryString: URLSearchParams;
 	public dot_size: number;
 	public width_max: number;
 	public row_height: number;
@@ -11,11 +10,6 @@ export default class Constants {
 	public height_titleAtTop: number;
 	public threshold_longClick: number;
 	public threshold_doubleClick: number;
-	public allow_HorizontalScrolling: boolean;
-	public allow_GraphEditing: boolean;
-	public allow_TitleEditing: boolean;
-	public titleIsAtTop = false;
-	public showControls = false;
 	public color_highlighted: string;
 	public color_background: string;
     public color_disabled: string;
@@ -28,6 +22,12 @@ export default class Constants {
 	public comma: string;
 	public space: string;
 	public empty: string;
+	public titleIsAtTop: boolean;
+	public showControls: boolean;
+	public allow_GraphEditing: boolean;
+	public allow_TitleEditing: boolean;
+	public allow_HorizontalScrolling: boolean;
+	public queryString: URLSearchParams;
 
 	constructor() {
 		this.empty = '';
@@ -46,6 +46,8 @@ export default class Constants {
 		this.allow_HorizontalScrolling = true;
 		this.allow_GraphEditing = true;
 		this.allow_TitleEditing = true;
+		this.titleIsAtTop = false;
+		this.showControls = false;
 		this.threshold_doubleClick = 100;
 		this.threshold_longClick = 500;
 		this.height_titleAtTop = 50;

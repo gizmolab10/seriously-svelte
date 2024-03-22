@@ -335,7 +335,7 @@ export default class Path {
 		return 0;
 	}
 
-	visibleProgeny_width(special: boolean = g.titleIsAtTop, visited: Array<number> = []): number {
+	visibleProgeny_width(special: boolean = k.titleIsAtTop, visited: Array<number> = []): number {
 		const thing = this.thing;
 		if (thing) {
 			const hashedPath = this.hashedPath;
@@ -368,13 +368,9 @@ export default class Path {
 	}
 
 	becomeHere() {
-		// if (this.hasChildren) {
-			s_path_here.set(this);
-			s_path_toolsCluster.set(null);
-			this.expand();
-			return true;
-		// }
-		// return false;
+		s_path_here.set(this);
+		s_path_toolsCluster.set(null);
+		this.expand();
 	}
 
 	toggleToolsGrab() {
