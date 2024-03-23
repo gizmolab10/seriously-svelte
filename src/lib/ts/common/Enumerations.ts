@@ -27,6 +27,7 @@ export enum IDTrait {
 }
 
 export enum IDButton {
+	details		= 'show details view',
 	builds		= 'show build notes',
 	relations	= 'relations',
 	smaller		= 'smaller',

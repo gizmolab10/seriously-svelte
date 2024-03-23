@@ -41,7 +41,7 @@ export default class DBAirtable implements DBInterface {
 		return this._hierarchy!;
 	}
 
-	applyQueryStrings() {
+	queryStrings_apply() {
 		const queryStrings = k.queryString;
 		this.baseID = queryStrings.get('name') ?? queryStrings.get('dbid') ?? 'apphGUCbYIEJLvRrR';
 	}

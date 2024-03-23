@@ -23,7 +23,7 @@ export class Debug {
 	get colors(): boolean { return this.hasOption(DebugFlag.colors); }
 	get lines(): boolean { return this.hasOption(DebugFlag.lines); }
 
-	applyQueryStrings() {
+	queryStrings_apply() {
 		const queryStrings = k.queryString;
 		const debug = queryStrings.get('debug');
 		if (debug) {

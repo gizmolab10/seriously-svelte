@@ -17,10 +17,10 @@ class Globals {
 		document.title = `Seriously (${host}, ${name}${u.browserType}, α)`;
 		builds.setup();
 		persistLocal.restore();
-		k.applyQueryStrings();
-		persistLocal.applyQueryStrings();
-		debug.applyQueryStrings();
-		debugReact.applyQueryStrings();
+		k.queryStrings_apply();
+		persistLocal.queryStrings_apply();
+		debug.queryStrings_apply();
+		debugReact.queryStrings_apply();
 		s_path_here.subscribe((herePath: Path) => {
 			if (herePath && herePath != this.herePath) {
 				this.here = herePath.thing ?? this.root;
@@ -33,7 +33,7 @@ class Globals {
 		const zoomContainer = document.documentElement;
 		const currentScale = parseFloat(getComputedStyle(zoomContainer).getPropertyValue('zoom')) || 1;
 		const scale = currentScale * factor;
-		persistLocal.writeToKey(IDPersistant.scale, scale);
+		persistLocal.key_write(IDPersistant.scale, scale);
 		this.applyScale(scale);
 		return u.windowSize.width;
 	}

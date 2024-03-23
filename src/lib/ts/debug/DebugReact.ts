@@ -19,7 +19,7 @@ export class DebugReact {
 	get layout(): boolean { return this.hasOption(ReactFlag.layout); }
 	get mount(): boolean { return this.hasOption(ReactFlag.mount); }
 
-	applyQueryStrings() {
+	queryStrings_apply() {
 		const queryStrings = k.queryString;
 		const debug = queryStrings.get('react');
 		if (debug) {

@@ -58,7 +58,7 @@
 
 	function s_user_graphOffset_setTo(origin: Point) {
 		if ($s_user_graphOffset != origin) {
-			persistLocal.writeToKey(IDPersistant.origin, origin);
+			persistLocal.key_write(IDPersistant.origin, origin);
 			$s_user_graphOffset = origin;
 			updateOrigins();
 			toggle = !toggle;	// rebuild entire graph

@@ -21,7 +21,7 @@ export default interface DBInterface {
 	hasData: boolean;
 	hierarchy: Hierarchy;
 	loadTime: string | null;
-	applyQueryStrings(): void;
+	queryStrings_apply(): void;
 	fetch_all(): Promise<void>;
 	setHasData(flag: boolean): void;
 	fetch_allFrom(baseID: string): Promise<void>;

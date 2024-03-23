@@ -1,8 +1,9 @@
-import { g, k, u, Path, Point, dbDispatch } from '../common/GlobalImports'
+import { g, k, u, Path, Point, signals, dbDispatch } from '../common/GlobalImports'
 import { s_thing_fontFamily, s_show_child_graph } from '../common/State';
 import { s_show_details, s_user_graphOffset } from '../common/State';
 import { s_paths_grabbed, s_paths_expanded } from '../common/State';
-import { s_path_here, s_layout_asTree } from '../common/State';
+import { s_path_here, s_layout_asCircles } from '../common/State';
+import { Writable } from 'svelte/store';
 
 export enum IDPersistant {
 	relationships	= 'relationships',
@@ -29,25 +30,33 @@ class PersistLocal {
 	restore() {
 		// localStorage.clear();
 		// const isLocal = u.isServerLocal;
-		// this.writeToKey(IDPersistant.row_height, 20);
-		// this.writeToKey(IDPersistant.dot_size, 13);
+		// this.key_write(IDPersistant.row_height, 20);
+		// this.key_write(IDPersistant.dot_size, 13);
 
 		if (this.ignorePaths) {
-			this.writeToKey(IDPersistant.relationships, true);
+			this.key_write(IDPersistant.relationships, true);
 		}
-		this.writeToKey(IDPersistant.title_atTop, false);
-		k.showControls = this.readFromKey(IDPersistant.controls) ?? false;
-		s_show_details.set(this.readFromKey(IDPersistant.details) ?? false);
-		s_layout_asTree.set(this.readFromKey(IDPersistant.layout) ?? false);
-		k.titleIsAtTop = this.readFromKey(IDPersistant.title_atTop) ?? false;
-		s_thing_fontFamily.set(this.readFromKey(IDPersistant.font) ?? 'Arial');
-		s_show_child_graph.set(this.readFromKey(IDPersistant.show_children) ?? true);
-		s_user_graphOffset.set(this.readFromKey(IDPersistant.origin) ?? new Point());
-		g.applyScale(!u.device_isMobile ? 1 : this.readFromKey(IDPersistant.scale) ?? 1);
+		this.key_write(IDPersistant.title_atTop, false);
+		k.showControls = this.key_read(IDPersistant.controls) ?? false;
+		k.titleIsAtTop = this.key_read(IDPersistant.title_atTop) ?? false;
+		g.applyScale(!u.device_isMobile ? 1 : this.key_read(IDPersistant.scale) ?? 1);
 
-		s_show_details.subscribe((_) => { g.graphRect_update(); });
+		s_show_details.set(this.key_read(IDPersistant.details) ?? false);
+		s_layout_asCircles.set(this.key_read(IDPersistant.layout) ?? false);
+		s_thing_fontFamily.set(this.key_read(IDPersistant.font) ?? 'Arial');
+		s_show_child_graph.set(this.key_read(IDPersistant.show_children) ?? true);
+		s_user_graphOffset.set(this.key_read(IDPersistant.origin) ?? new Point());
+
+		s_show_details.subscribe((flag: boolean) => {
+			this.key_write(IDPersistant.details, flag);
+			g.graphRect_update();
+			signals.signal_relayoutWidgets_fromHere();
+		});
 		s_show_child_graph.subscribe((flag: boolean) => {
-			this.writeToKey(IDPersistant.show_children, flag);
+			this.key_write(IDPersistant.show_children, flag);
+		})
+		s_layout_asCircles.subscribe((flag: boolean) => {
+			this.key_write(IDPersistant.layout, flag);
 		})
 	}
 
@@ -57,19 +66,19 @@ class PersistLocal {
 			const h = g.hierarchy;
 			g.rootPath = h.path_remember_unique();
 			this.here_restore();
-			s_paths_grabbed.set(this.store_restore(IDPersistant.grabbed));
-			s_paths_expanded.set(this.store_restore(IDPersistant.expanded));
+			s_paths_grabbed.set(this.key_get(IDPersistant.grabbed));
+			s_paths_expanded.set(this.key_get(IDPersistant.expanded));
 	
 			s_paths_grabbed.subscribe((paths: Array<Path>) => {
-				this.writeToDBKey(IDPersistant.grabbed, !paths ? null : paths.map(p => p.pathString));
+				this.dbKey_write(IDPersistant.grabbed, !paths ? null : paths.map(p => p.pathString));
 			});
 	
 			s_paths_expanded.subscribe((paths: Array<Path>) => {
-				this.writeToDBKey(IDPersistant.expanded, !paths ? null : paths.map(p => p.pathString));
+				this.dbKey_write(IDPersistant.expanded, !paths ? null : paths.map(p => p.pathString));
 			});
 	
 			s_path_here.subscribe((path: Path) => {
-				this.writeToDBKey(IDPersistant.here, !path ? null : path.pathString);
+				this.dbKey_write(IDPersistant.here, !path ? null : path.pathString);
 			});
 		}
 	}
@@ -78,7 +87,7 @@ class PersistLocal {
 		const h = g.hierarchy;
 		let pathToHere = g.rootPath;
 		if (!this.ignorePaths) {
-			const herePathString = this.readFromDBKey(IDPersistant.here);
+			const herePathString = this.dbKey_read(IDPersistant.here);
 			if (herePathString) {
 				const herePath = h.path_remember_unique(herePathString);
 				if (herePath) {
@@ -96,9 +105,23 @@ class PersistLocal {
 		pathToHere.becomeHere();
 	}
 
-	store_restore(key: string): Array<Path> {
+	get dbType(): string { return dbDispatch.db.dbType; }
+	key_write(key: string, value: any) { localStorage[key] = JSON.stringify(value); }
+	dbKey_write(key: string, value: any) { this.key_write(key + this.dbType, value); }
+	dbKey_read(key: string) { return this.key_read(key + this.dbType); }
+
+	key_read(key: string): any | null {
+		const storedValue = localStorage[key];
+		if (!storedValue || storedValue == 'undefined') {
+			return null;
+		} else {
+			return JSON.parse(storedValue);
+		} 
+	}
+
+	key_get(key: string): Array<Path> {
 		const h = g.hierarchy;
-		let paths = this.ignorePaths ? [] : this.readFromDBKey(key)?.map((e: string) => h.path_remember_unique(e)) ?? [];
+		let paths = this.ignorePaths ? [] : this.dbKey_read(key)?.map((e: string) => h.path_remember_unique(e)) ?? [];
 		let index = paths.length - 1;
 		while (index >= 0) {
 			const path = paths[index];
@@ -115,31 +138,27 @@ class PersistLocal {
 		return paths;
 	}
 
-	get dbType(): string { return dbDispatch.db.dbType; }
-	readFromDBKey(key: string) { return this.readFromKey(key + this.dbType); }
-	writeToKey(key: string, value: any) { localStorage[key] = JSON.stringify(value); }
-	writeToDBKey(key: string, value: any) { this.writeToKey(key + this.dbType, value); }
-
-	readFromKey(key: string): any | null {
-		const storedValue = localStorage[key];
-		if (!storedValue || storedValue == 'undefined') {
-			return null;
-		} else {
-			return JSON.parse(storedValue);
-		} 
+	key_apply(key: string, matching: string, apply: (flag: boolean) => void, persist: boolean = true) {
+		const queryStrings = k.queryString;
+        const value = queryStrings.get(key);
+		if (value) {
+			const flag = (value === matching);
+			this.key_write(key, flag);
+			apply(flag);
+			if (persist) {
+				this.key_write(key, flag);
+			}
+		}
 	}
 
-	applyQueryStrings() {
+	queryStrings_apply() {
 		const queryStrings = k.queryString;
         const erase = queryStrings.get('erase');
-        const detailsFlag = queryStrings.get('details') === 'hide';
-        const controlsFlag = queryStrings.get('controls') === 'show';
         const titleFlag = queryStrings.get('locate')?.split(k.comma).includes('titleAtTop') ?? false;
-		this.writeToKey(IDPersistant.controls, controlsFlag);
-		this.writeToKey(IDPersistant.title_atTop, titleFlag);
-		this.writeToKey(IDPersistant.details, !detailsFlag);
-		s_show_details.set(!detailsFlag);
-		k.showControls = controlsFlag;
+		this.key_apply(IDPersistant.details, 'hide', (flag) => s_show_details.set(!flag), false);
+		this.key_apply(IDPersistant.layout, 'circles', (flag) => s_layout_asCircles.set(flag));
+		this.key_apply(IDPersistant.controls, 'show', (flag) => k.showControls = flag);
+		this.key_write(IDPersistant.title_atTop, titleFlag);
 		k.titleIsAtTop = titleFlag;
         if (erase) {
             for (const option of erase.split(k.comma)) {

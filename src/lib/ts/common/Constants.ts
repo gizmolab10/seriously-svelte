@@ -61,7 +61,7 @@ export default class Constants {
 		this.dot_size = 13;
 	}
 
-	applyQueryStrings() {
+	queryStrings_apply() {
         const deny = this.queryString.get('deny');
         if (deny) {
             const flags = deny.split(',');

@@ -19,7 +19,7 @@ export default class DBDispatch {
 				setTimeout(() => {
 					(async () => {
 						this.updateDBForType(type);
-						this.applyQueryStrings();
+						this.queryStrings_apply();
 						await g.hierarchy.hierarchy_fetchAndBuild(type);
 						g.rootPath = g.hierarchy.path_remember_unique();
 						persistLocal.paths_restore(true);
@@ -39,11 +39,11 @@ export default class DBDispatch {
 		this.db = db;
 	}
 
-	applyQueryStrings() {
+	queryStrings_apply() {
 		const queryStrings = k.queryString;
-		const type = queryStrings.get('db') ?? persistLocal.readFromKey(IDPersistant.db) ?? TypeDB.firebase;
+		const type = queryStrings.get('db') ?? persistLocal.key_read(IDPersistant.db) ?? TypeDB.firebase;
 		this.updateDBForType(type);
-		this.db.applyQueryStrings();
+		this.db.queryStrings_apply();
 		s_db_type.set(type);
 	}
 
@@ -57,7 +57,7 @@ export default class DBDispatch {
 
 	changeDBTo(newDBType: TypeDB) {
 		const db = this.dbForType(newDBType);
-		persistLocal.writeToKey(IDPersistant.db, newDBType);
+		persistLocal.key_write(IDPersistant.db, newDBType);
 		s_db_type.set(newDBType);		// tell components to render the [possibly previously] fetched data
 		setTimeout(() => {
 			if (newDBType != TypeDB.local && !db.hasData) {

@@ -41,7 +41,7 @@ export default class DBLocal implements DBInterface {
 		h.relationship_remember_runtimeCreateUnique('', this.localName('Cr'), idP, idR, idC, 2);
 	};
 
-	applyQueryStrings() {}
+	queryStrings_apply() {}
 	async fetch_allFrom(baseID: string) {}
 	async thing_remoteUpdate(thing: Thing) {}
 	async thing_remoteDelete(thing: Thing) {}
