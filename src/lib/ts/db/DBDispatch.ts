@@ -1,5 +1,5 @@
-import { s_db_type, s_isBusy, s_db_loadTime, s_path_here, s_paths_grabbed, s_paths_expanded, s_path_toolsCluster } from '../common/State';
 import { g, k, TypeDB, signals, IDPersistant, persistLocal } from '../common/GlobalImports';
+import { s_db_type, s_isBusy, s_db_loadTime } from '../common/State';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
@@ -13,19 +13,22 @@ export default class DBDispatch {
 	constructor() {
 		let done = false;
 		this.db = dbFirebase;
-		setTimeout(() => {
-			if (!done) {
-				done = true;
-				this.setup(TypeDB.firebase);
-			}
-		}, 1);
-
 		s_db_type.subscribe((type: string) => {
-			if (type && this.db.dbType != type) {
-				this.setup(type);
-				signals.signal_rebuildWidgets_fromHere();
+			if (!done || (type && this.db.dbType != type)) {
+				done = true;
+				setTimeout(() => {
+					(async () => {
+						this.updateDBForType(type);
+						this.applyQueryStrings();
+						await g.hierarchy.hierarchy_fetchAndBuild(type);
+						g.rootPath = g.hierarchy.path_remember_unique();
+						persistLocal.paths_restore(true);
+						signals.signal_rebuildWidgets_fromHere();
+					})();
+				}, 1);
 			}
 		});
+		s_db_type.set(TypeDB.firebase);
 	}
 	
 	updateDBForType(type: string) {
@@ -34,20 +37,7 @@ export default class DBDispatch {
 		this.db = db;
 	}
 
-	setup(type: string) {
-		this.updateDBForType(type);
-		(async () => {
-			await this.applyQueryStrings();
-			await g.hierarchy.hierarchy_fetchAndBuild(type);
-			g.rootPath = g.hierarchy.path_remember_unique();
-			s_path_here.set(g.rootPath);
-			s_path_toolsCluster.set(null);
-			s_paths_grabbed.set([g.rootPath]);
-			s_paths_expanded.set([g.rootPath]);
-		})()
-	}
-
-	async applyQueryStrings() {
+	applyQueryStrings() {
 		const queryStrings = k.queryString;
 		const type = queryStrings.get('db') ?? persistLocal.readFromKey(IDPersistant.db) ?? TypeDB.firebase;
 		this.updateDBForType(type);
@@ -66,10 +56,12 @@ export default class DBDispatch {
 	changeDBTo(newDBType: TypeDB) {
 		const db = this.dbForType(newDBType);
 		persistLocal.writeToKey(IDPersistant.db, newDBType);
-		if (newDBType != TypeDB.local && !db.hasData) {
-			s_isBusy.set(true);			// set this before changing $s_db_type so panel will show 'loading ...'
-		}
 		s_db_type.set(newDBType);		// tell components to render the [possibly previously] fetched data
+		setTimeout(() => {
+			if (newDBType != TypeDB.local && !db.hasData) {
+				s_isBusy.set(true);			// set this before changing $s_db_type so panel will show 'loading ...'
+			}
+		}, 2);
 		s_db_loadTime.set(db.loadTime);
 	}
 

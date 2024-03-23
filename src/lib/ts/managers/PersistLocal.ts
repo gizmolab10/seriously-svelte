@@ -51,8 +51,8 @@ class PersistLocal {
 		})
 	}
 
-	paths_restore() {
-		if (!this.pathsRestored) {
+	paths_restore(force: boolean = false) {
+		if (!this.pathsRestored || force) {
 			this.pathsRestored = true;
 			const h = g.hierarchy;
 			g.rootPath = h.path_remember_unique();

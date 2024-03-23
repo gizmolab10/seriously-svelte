@@ -3,11 +3,7 @@
 	import { g } from './lib/ts/common/Globals';
 	import { onMount } from 'svelte';
 
-	onMount(() => {
-		(async () => {
-			await g.setup();
-		})()
-	});
+	onMount(() => { g.setup(); });
 
 </script>
 

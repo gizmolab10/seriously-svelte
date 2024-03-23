@@ -10,7 +10,7 @@ class Globals {
 	root: Thing;
 	here: Thing;
 
-	async setup() {
+	setup() {
 		const baseID = dbDispatch.db.baseID;
 		const name = baseID ? (baseID! + ', ') : '';
 		const host = u.isServerLocal ? 'local' : 'remote';
@@ -21,7 +21,6 @@ class Globals {
 		persistLocal.applyQueryStrings();
 		debug.applyQueryStrings();
 		debugReact.applyQueryStrings();
-		await dbDispatch.applyQueryStrings();			// do these last
 		s_path_here.subscribe((herePath: Path) => {
 			if (herePath && herePath != this.herePath) {
 				this.here = herePath.thing ?? this.root;

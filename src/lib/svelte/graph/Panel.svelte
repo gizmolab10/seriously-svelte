@@ -69,7 +69,7 @@
 {#if $s_isBusy}
 	<p>Welcome to Seriously</p>
 	{#if $s_db_type != TypeDB.local}
-		<p>(loading your {$s_db_type} data{$s_db_type == TypeDB.firebase ? ', from ' + dbDispatch.db.baseID : ''})</p>
+		<p>(loading your {$s_db_type} data{$s_db_type == TypeDB.firebase ? ', from ' + g.hierarchy.db.baseID : ''})</p>
 	{/if}
 {:else if !$s_things_arrived}
 	<p>Nothing is available.</p>

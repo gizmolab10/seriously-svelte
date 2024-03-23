@@ -38,9 +38,7 @@ export default class Hierarchy {
 	}
 
 	async hierarchy_fetchAndBuild(type: string) {
-		if (this.db.hasData) {
-			persistLocal.paths_restore();
-		} else {
+		if (!this.db.hasData) {
 			const startTime = new Date().getTime();
 			s_db_loadTime.set(null);
 			if (type != TypeDB.local) {
