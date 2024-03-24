@@ -3,29 +3,62 @@ import { s_thing_fontFamily, s_show_child_graph } from '../common/State';
 import { s_show_details, s_user_graphOffset } from '../common/State';
 import { s_paths_grabbed, s_paths_expanded } from '../common/State';
 import { s_path_here, s_layout_asCircles } from '../common/State';
-import { Writable } from 'svelte/store';
 
 export enum IDPersistant {
-	relationships	= 'relationships',
-	show_children  	= 'show_children',
-	title_atTop  	= 'title_atTop',
-	expanded	 	= 'expanded',
-	controls	 	= 'controls',
-	grabbed		 	= 'grabbed',
-	details		 	= 'details',
-	layout		 	= 'layout',
-	origin		 	= 'origin',
-	scale		 	= 'scale',
-	here		 	= 'here',
-	font		 	= 'font',
-	db			 	= 'db',
+	relationships = 'relationships',
+	show_children = 'show_children',
+	title_atTop   = 'title_atTop',
+	expanded	  = 'expanded',
+	controls	  = 'controls',
+	grabbed		  = 'grabbed',
+	details		  = 'details',
+	layout		  = 'layout',
+	origin		  = 'origin',
+	scale		  = 'scale',
+	here		  = 'here',
+	font		  = 'font',
+	db			  = 'db',
 }
 
 class PersistLocal {
-	// for backwards compatibility with {here,grabbed, expanded} stored as ids not path strings of relationship ids
+	// for backwards compatibility with {here, grabbed, expanded} which were stored as relationship ids (not as path strings)
 	usesRelationships = localStorage[IDPersistant.relationships];
 	ignorePaths = !this.usesRelationships || this.usesRelationships == 'undefined';
 	pathsRestored = false;
+
+	get dbType(): string { return dbDispatch.db.dbType; }
+	key_write(key: string, value: any) { localStorage[key] = JSON.stringify(value); }
+	dbKey_write(key: string, value: any) { this.key_write(key + this.dbType, value); }
+	dbKey_read(key: string) { return this.key_read(key + this.dbType); }
+	dbKey_get(key: string) { return this.key_get(key + this.dbType); }
+
+	key_read(key: string): any | null {
+		const storedValue = localStorage[key];
+		if (!storedValue || storedValue == 'undefined') {
+			return null;
+		} else {
+			return JSON.parse(storedValue);
+		} 
+	}
+
+	key_get(key: string): Array<Path> {
+		const h = g.hierarchy;
+		let paths = this.ignorePaths ? [] : this.key_read(key)?.map((e: string) => h.path_remember_unique(e)) ?? [];
+		let index = paths.length - 1;
+		while (index >= 0) {
+			const path = paths[index];
+			if (path) {
+				for (const id of path.ids) {
+					const relationship = h.relationship_get_byHID(id.hash());
+					if (!relationship) {
+						paths.slice(1, index);
+					}
+				}
+			}
+			index--;
+		};
+		return paths;
+	}
 
 	restore() {
 		// localStorage.clear();
@@ -66,8 +99,8 @@ class PersistLocal {
 			const h = g.hierarchy;
 			g.rootPath = h.path_remember_unique();
 			this.here_restore();
-			s_paths_grabbed.set(this.key_get(IDPersistant.grabbed));
-			s_paths_expanded.set(this.key_get(IDPersistant.expanded));
+			s_paths_grabbed.set(this.dbKey_get(IDPersistant.grabbed));
+			s_paths_expanded.set(this.dbKey_get(IDPersistant.expanded));
 	
 			s_paths_grabbed.subscribe((paths: Array<Path>) => {
 				this.dbKey_write(IDPersistant.grabbed, !paths ? null : paths.map(p => p.pathString));
@@ -105,45 +138,11 @@ class PersistLocal {
 		pathToHere.becomeHere();
 	}
 
-	get dbType(): string { return dbDispatch.db.dbType; }
-	key_write(key: string, value: any) { localStorage[key] = JSON.stringify(value); }
-	dbKey_write(key: string, value: any) { this.key_write(key + this.dbType, value); }
-	dbKey_read(key: string) { return this.key_read(key + this.dbType); }
-
-	key_read(key: string): any | null {
-		const storedValue = localStorage[key];
-		if (!storedValue || storedValue == 'undefined') {
-			return null;
-		} else {
-			return JSON.parse(storedValue);
-		} 
-	}
-
-	key_get(key: string): Array<Path> {
-		const h = g.hierarchy;
-		let paths = this.ignorePaths ? [] : this.dbKey_read(key)?.map((e: string) => h.path_remember_unique(e)) ?? [];
-		let index = paths.length - 1;
-		while (index >= 0) {
-			const path = paths[index];
-			if (path) {
-				for (const id of path.ids) {
-					const relationship = h.relationship_getForHID(id.hash());
-					if (!relationship) {
-						paths.slice(1, index);
-					}
-				}
-			}
-			index--;
-		};
-		return paths;
-	}
-
 	key_apply(key: string, matching: string, apply: (flag: boolean) => void, persist: boolean = true) {
 		const queryStrings = k.queryString;
         const value = queryStrings.get(key);
 		if (value) {
 			const flag = (value === matching);
-			this.key_write(key, flag);
 			apply(flag);
 			if (persist) {
 				this.key_write(key, flag);

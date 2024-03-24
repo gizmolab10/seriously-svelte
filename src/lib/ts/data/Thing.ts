@@ -71,7 +71,7 @@ export default class Thing extends Datum {
 	fromPathsFor(predicateID: string): Array<Path> {
 		let fromPaths: {[hash: number]: Path} = {};
 		if (!this.isRoot) {
-			const relationships = this.hierarchy.relationships_getByPredicateIDToAndID(predicateID, true, this.id);
+			const relationships = this.hierarchy.relationships_get_byPredicate_to_thing(predicateID, true, this.id);
 			for (const relationship of relationships) {
 				const endID = relationship.id;
 				const thing = relationship.fromThing;

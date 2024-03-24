@@ -70,15 +70,17 @@ export default class DBDispatch {
 	getNextDB(forward: boolean): TypeDB {
 		if (forward) {
 			switch (this.db.dbType) {
-				case TypeDB.airtable: return TypeDB.local;
 				case TypeDB.local:	  return TypeDB.firebase;
-				default:			  return TypeDB.airtable;
+				default:			  return TypeDB.local;
+				// case TypeDB.airtable: return TypeDB.local;
+				// default:			  return TypeDB.airtable;
 			}
 		} else {
 			switch (this.db.dbType) {
-				case TypeDB.airtable: return TypeDB.firebase;
-				case TypeDB.local:	  return TypeDB.airtable;
+				case TypeDB.local:	  return TypeDB.firebase;
 				default:			  return TypeDB.local;
+				// case TypeDB.airtable: return TypeDB.firebase;
+				// case TypeDB.local:	  return TypeDB.airtable;
 			}
 		}		
 	}

@@ -10,7 +10,7 @@ export default class Predicate extends RemoteIdentifiable {
 	}
 
 	static get idContains(): string {
-		const id = dbDispatch.db.hierarchy.knownP_byKind['contains']?.id;
+		const id = dbDispatch.db.hierarchy.predicate_byKind['contains']?.id;
 		if (!id) {
 			console.log(`contains is missing`)
 		}
@@ -18,6 +18,6 @@ export default class Predicate extends RemoteIdentifiable {
 	}
 	
 	static get predicate_contains(): Predicate {
-		return dbDispatch.db.hierarchy.knownP_byHID[Predicate.idContains.hash()];
+		return dbDispatch.db.hierarchy.predicate_byHID[Predicate.idContains.hash()];
 	}
 }

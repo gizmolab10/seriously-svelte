@@ -3,25 +3,25 @@ import { g, k, u, get, User, Path, Thing, Grabs, debug, Access, IDTool, IDTrait,
 import { TypeDB, Predicate, Relationship, persistLocal, AlteringParent, CreationOptions } from '../common/GlobalImports';
 import DBInterface from '../db/DBInterface';
 
-type KnownRelationships = { [hID: number]: Array<Relationship> }
+type Relationships_byHID = { [hID: number]: Array<Relationship> }
 
 export default class Hierarchy {
-	knownU_byHID: { [h: number]: User } = {};
-	knownT_byHID: { [h: number]: Thing } = {};
-	knownA_byHID: { [h: number]: Access } = {};
-	knownA_byKind: { [k: string]: Access } = {};
-	knownPath_byHash: { [h: number]: Path } = {};
-	knownP_byHID: { [h: number]: Predicate } = {};
-	knownP_byKind: { [k: string]: Predicate } = {};
-	knownR_byHID: { [h: number]: Relationship } = {};
-	knownWs_byTypeAndPath: { [t: string]: { [h: number]: Wrapper } } = {};
-	knownTs_byTrait: { [trait: string]: Array<Thing> } = {};
-	knownRs_byHIDPredicate: KnownRelationships = {};
-	knownRs_byHIDFrom: KnownRelationships = {};
-	knownRs_byHIDTo: KnownRelationships = {};
-	knownRs: Array<Relationship> = [];
-	knownPs: Array<Predicate> = [];
-	knownTs: Array<Thing> = [];
+	users_byHID: { [hid: number]: User } = {};
+	thing_byHID: { [hid: number]: Thing } = {};
+	path_byHash: { [hash: number]: Path } = {};
+	access_byHID: { [hid: number]: Access } = {};
+	access_byKind: { [kind: string]: Access } = {};
+	predicate_byHID: { [hid: number]: Predicate } = {};
+	predicate_byKind: { [kind: string]: Predicate } = {};
+	relationship_byHID: { [hid: number]: Relationship } = {};
+	wrappers_byType_andHID: { [type: string]: { [hid: number]: Wrapper } } = {};
+	traits_byTrait: { [trait: string]: Array<Thing> } = {};
+	relationships_byPredicate: Relationships_byHID = {};
+	relationships_byFrom: Relationships_byHID = {};
+	relationships_byTo: Relationships_byHID = {};
+	relationships: Array<Relationship> = [];
+	predicates: Array<Predicate> = [];
+	things: Array<Thing> = [];
 	_grabs: Grabs | null = null;
 	isAssembled = false;
 	db: DBInterface;
@@ -29,7 +29,7 @@ export default class Hierarchy {
 	get hasNothing(): boolean { return !g.root; }
 	get idRoot(): string | null { return g.root?.id ?? null; };
 	thing_getForPath(path: Path | null): Thing | null { return path?.thing ?? null; }
-	thing_getForHID(hID: number | null): Thing | null { return (!hID) ? null : this.knownT_byHID[hID]; }
+	thing_getForHID(hID: number | null): Thing | null { return (!hID) ? null : this.thing_byHID[hID]; }
 
 	static readonly $_INIT_$: unique symbol;
 
@@ -83,9 +83,7 @@ export default class Hierarchy {
 			let needsRebuild = false;
 			if (!pathGrab) {
 				pathGrab = rootPath;
-				needsRebuild = true;
-				rootPath.becomeHere();
-				rootPath.grabOnly();		// update crumbs and dots
+				needsRebuild = rootPath.becomeHere();
 			}
 			if (k.allow_GraphEditing) {
 				if (pathGrab && k.allow_TitleEditing) {
@@ -104,13 +102,13 @@ export default class Hierarchy {
 			}
 			if (pathGrab) {
 				switch (key) {
-					case '/':			needsRebuild = true; pathGrab.becomeHere(); break;
+					case '/':			needsRebuild = pathGrab.becomeHere(); break;
 					case 'arrowright':	event.preventDefault(); await this.path_rebuild_remoteMoveRight(pathGrab, true, SHIFT, OPTION, EXTREME); break;
 					case 'arrowleft':	event.preventDefault(); await this.path_rebuild_remoteMoveRight(pathGrab, false, SHIFT, OPTION, EXTREME); break;
 				}
 			}
 			switch (key) {
-				case '!':				needsRebuild = true; g.rootPath?.becomeHere(); break;
+				case '!':				needsRebuild = g.rootPath?.becomeHere(); break;
 				case '`':               event.preventDefault(); this.latestPathGrabbed_toggleToolsCluster(); break;
 				case 'arrowup':			await this.latestPathGrabbed_rebuild_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
 				case 'arrowdown':		await this.latestPathGrabbed_rebuild_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
@@ -147,9 +145,9 @@ export default class Hierarchy {
 
 	thing_to_getForRelationshipHID(hID: number | null): Thing | null {
 		if (hID) {
-			const relationship = this.relationship_getForHID(hID);
+			const relationship = this.relationship_get_byHID(hID);
 			if (relationship) {
-				return this.knownT_byHID[relationship.idTo.hash()];
+				return this.thing_byHID[relationship.idTo.hash()];
 			}
 		}
 		return g.root;
@@ -161,7 +159,7 @@ export default class Hierarchy {
 		const root = g.root;
 		const things: Array<Thing> = root ? [root] : [];
 		for (const hID of path.hashedIDs) {
-			const thing = this.relationship_getForHID(hID)?.toThing;
+			const thing = this.relationship_get_byHID(hID)?.toThing;
 			if (thing) {
 				things.push(thing);
 			}
@@ -181,15 +179,15 @@ export default class Hierarchy {
 	}
 
 	things_forgetAll() {
-		this.knownTs = []; // clear
-		this.knownT_byHID = {};
-		this.knownTs_byTrait = {};
+		this.things = []; // clear
+		this.thing_byHID = {};
+		this.traits_byTrait = {};
 	}
 
 	static readonly $_THING_$: unique symbol;
 
 	async thing_remember_remoteRelocateChild(child: Thing, fromParent: Thing, toParent: Thing): Promise<any> {
-		let relationship = this.relationship_getWhereIDEqualsTo(child.id);
+		let relationship = this.relationship_get_whereIDEqualsTo(child.id);
 		if (relationship && relationship.idFrom == fromParent.id) {
 			this.relationship_forget(relationship);
 			relationship.idFrom = toParent.id;
@@ -199,9 +197,9 @@ export default class Hierarchy {
 	}
 
 	thing_forget(thing: Thing) {
-		delete this.knownT_byHID[thing.hashedID];
-		this.knownTs = this.knownTs.filter((knownT) => knownT.id !== thing.id);
-		this.knownTs_byTrait[thing.trait] = this.knownTs_byTrait[thing.trait].filter((knownT) => knownT.id !== thing.id);
+		delete this.thing_byHID[thing.hashedID];
+		this.things = this.things.filter((thing) => thing.id !== thing.id);
+		this.traits_byTrait[thing.trait] = this.traits_byTrait[thing.trait].filter((thing) => thing.id !== thing.id);
 	}
 
 	async thing_edit_remoteAddLine(path: Path, below: boolean = true) {
@@ -253,12 +251,12 @@ export default class Hierarchy {
 	}
 
 	thing_remember(thing: Thing) {
-		if (this.knownT_byHID[thing.hashedID] == null) {
-			this.knownT_byHID[thing.hashedID] = thing;
-			let knownTs = this.knownTs_byTrait[thing.trait] ?? [];
-			knownTs.push(thing);
-			this.knownTs_byTrait[thing.trait] = knownTs;
-			this.knownTs.push(thing);
+		if (this.thing_byHID[thing.hashedID] == null) {
+			this.thing_byHID[thing.hashedID] = thing;
+			let things = this.traits_byTrait[thing.trait] ?? [];
+			things.push(thing);
+			this.traits_byTrait[thing.trait] = things;
+			this.things.push(thing);
 			if (thing.trait == IDTrait.root && (thing.baseID == '' || thing.baseID == this.db.baseID)) {
 				g.root = thing;
 			}
@@ -294,7 +292,7 @@ export default class Hierarchy {
 			// i.e., it is the root id from another baseID
 			// need a second thing lookup by this id
 			// so children relationships will work
-			this.knownT_byHID[id.hash()] = thing;
+			this.thing_byHID[id.hash()] = thing;
 			thing.needsBulkFetch = true;
 			thing.bulkRootID = id;
 			thing.color = color;
@@ -304,7 +302,7 @@ export default class Hierarchy {
 
 	thing_bulkAlias_getForTitle(title: string | null) {
 		if (title) {
-			for (const thing of this.knownTs_byTrait[IDTrait.bulk]) {
+			for (const thing of this.traits_byTrait[IDTrait.bulk]) {
 				if  (thing.title == title) {		// special case TODO: convert to a query string
 					return thing;
 				}
@@ -338,7 +336,7 @@ export default class Hierarchy {
 	static readonly $_RELATIONSHIPS_$: unique symbol;
 
 	relationships_refreshKnowns() {
-		const saved = this.knownRs;
+		const saved = this.relationships;
 		this.relationships_clearKnowns();
 		for (const relationship of saved) {
 			this.relationship_remember(relationship);
@@ -346,15 +344,15 @@ export default class Hierarchy {
 	}
 
 	relationships_clearKnowns() {
-		this.knownRs_byHIDPredicate = {};
-		this.knownRs_byHIDFrom = {};
-		this.knownRs_byHIDTo = {};
-		this.knownR_byHID = {};
-		this.knownRs = [];
+		this.relationships_byPredicate = {};
+		this.relationships_byFrom = {};
+		this.relationships_byTo = {};
+		this.relationship_byHID = {};
+		this.relationships = [];
 	}
 
-	relationships_getByPredicateIDToAndID(idPredicate: string, to: boolean, idThing: string): Array<Relationship> {
-		const dict = to ? this.knownRs_byHIDTo : this.knownRs_byHIDFrom;
+	relationships_get_byPredicate_to_thing(idPredicate: string, to: boolean, idThing: string): Array<Relationship> {
+		const dict = to ? this.relationships_byTo : this.relationships_byFrom;
 		const hID = idThing.hash();
 		const matches = dict[hID] as Array<Relationship>; // filter out bad values (dunno what this does)
 		const array: Array<Relationship> = [];
@@ -368,8 +366,8 @@ export default class Hierarchy {
 		return array;
 	}
 
-	relationship_getByIDPredicateFromAndTo(idPredicate: string, idFrom: string, idTo: string): Relationship | null {
-		const matches = this.relationships_getByPredicateIDToAndID(idPredicate, false, idFrom);
+	relationship_get_byPredicate_from_to(idPredicate: string, idFrom: string, idTo: string): Relationship | null {
+		const matches = this.relationships_get_byPredicate_to_thing(idPredicate, false, idFrom);
 		if (Array.isArray(matches)) {
 			for (const relationship of matches) {
 				if (relationship.idTo == idTo) {
@@ -383,10 +381,10 @@ export default class Hierarchy {
 	async relationships_remoteCreateMissing(parentID: string | null, baseID: string) {
 		const startingID = parentID ?? this.idRoot;
 		if (startingID) {
-			for (const thing of this.knownTs) {
+			for (const thing of this.things) {
 				const idThing = thing.id;
 				if (idThing != startingID && thing.trait != IDTrait.root && thing.baseID == baseID) {
-					let relationship = this.relationship_getWhereIDEqualsTo(idThing);
+					let relationship = this.relationship_get_whereIDEqualsTo(idThing);
 					if (!relationship) {
 						const idPredicateContains = Predicate.idContains;
 						await this.relationship_remember_remoteCreateUnique(baseID, null, idPredicateContains,
@@ -399,7 +397,7 @@ export default class Hierarchy {
 
 	async relationships_removeHavingNullReferences() {
 		const array = Array<Relationship>();
-		for (const relationship of this.knownRs) {
+		for (const relationship of this.relationships) {
 			const thingTo = relationship.toThing;
 			const thingFrom = relationship.fromThing;
 			if (!thingTo || !thingFrom) {
@@ -417,40 +415,40 @@ export default class Hierarchy {
 
 	static readonly $_RELATIONSHIP_$: unique symbol;
 
-	relationship_getForHID(hID: number): Relationship | null { return this.knownR_byHID[hID]; }
+	relationship_get_byHID(hID: number): Relationship | null { return this.relationship_byHID[hID]; }
 
-	relationship_rememberByKnown(known: KnownRelationships, relationship: Relationship, id: string) {
+	relationship_rememberByKnown(relationships: Relationships_byHID, relationship: Relationship, id: string) {
 		if (!id) {
 			u.noop();
 		} else {
 			const hID = id.hash();
-			let array = known[hID] ?? [];
+			let array = relationships[hID] ?? [];
 			array.push(relationship);
 			if (!relationship.toThing) {
 				console.log('missing TO thing');
 			}
-			known[hID] = array;
+			relationships[hID] = array;
 		}
 	}
 	
 	relationship_remember(relationship: Relationship) {
 		// console.log(`RELATIONSHIP ${relationship.fromThing?.title} => ${relationship.toThing?.title}`);
-		if (!this.knownR_byHID[relationship.hashedID]) {
+		if (!this.relationship_byHID[relationship.hashedID]) {
 			if (relationship.baseID != this.db.baseID) {
 				debug.log_error(`RELATIONSHIP off base ${relationship.baseID} ${relationship.fromThing?.description} => ${relationship.toThing?.description}`);
 			}
-			this.knownRs.push(relationship);
-			this.knownR_byHID[relationship.hashedID] = relationship;
-			this.relationship_rememberByKnown(this.knownRs_byHIDTo, relationship, relationship.idTo);
-			this.relationship_rememberByKnown(this.knownRs_byHIDFrom, relationship, relationship.idFrom);
-			this.relationship_rememberByKnown(this.knownRs_byHIDPredicate, relationship, relationship.idPredicate);
+			this.relationships.push(relationship);
+			this.relationship_byHID[relationship.hashedID] = relationship;
+			this.relationship_rememberByKnown(this.relationships_byTo, relationship, relationship.idTo);
+			this.relationship_rememberByKnown(this.relationships_byFrom, relationship, relationship.idFrom);
+			this.relationship_rememberByKnown(this.relationships_byPredicate, relationship, relationship.idPredicate);
 		}
 	}
 
 	async relationship_forget_remoteRemove(path: Path, otherPath: Path) {
 		const thing = path.thing;
 		const fromPath = path.fromPath;
-		const relationship = this.relationship_getByIDPredicateFromAndTo(Predicate.idContains, otherPath.idThing, path.idThing);
+		const relationship = this.relationship_get_byPredicate_from_to(Predicate.idContains, otherPath.idThing, path.idThing);
 		if (fromPath && relationship && (thing?.parents.length ?? 0) > 1) {
 			this.relationship_forget(relationship);
 			if (otherPath.hasChildren) {
@@ -462,23 +460,23 @@ export default class Hierarchy {
 		}
 	}
 
-	relationship_forgetByKnown(known: KnownRelationships, hID: number, relationship: Relationship) {
-		let array = known[hID] ?? [];
+	relationship_forget_byHID(relationships: Relationships_byHID, hID: number, relationship: Relationship) {
+		let array = relationships[hID] ?? [];
 		u.remove<Relationship>(array, relationship)
-		known[hID] = array;
+		relationships[hID] = array;
 	}
 
 	relationship_forget(relationship: Relationship) {
-		u.remove<Relationship>(this.knownRs, relationship);
-		delete this.knownR_byHID[relationship.hashedID];
-		this.relationship_forgetByKnown(this.knownRs_byHIDTo, relationship.idTo.hash(), relationship);
-		this.relationship_forgetByKnown(this.knownRs_byHIDFrom, relationship.idFrom.hash(), relationship);
-		this.relationship_forgetByKnown(this.knownRs_byHIDPredicate, relationship.idPredicate.hash(), relationship);
+		u.remove<Relationship>(this.relationships, relationship);
+		delete this.relationship_byHID[relationship.hashedID];
+		this.relationship_forget_byHID(this.relationships_byTo, relationship.idTo.hash(), relationship);
+		this.relationship_forget_byHID(this.relationships_byFrom, relationship.idFrom.hash(), relationship);
+		this.relationship_forget_byHID(this.relationships_byPredicate, relationship.idPredicate.hash(), relationship);
 	}
 
-	relationship_getWhereIDEqualsTo(idThing: string, to: boolean = true) {
+	relationship_get_whereIDEqualsTo(idThing: string, to: boolean = true) {
 		const idPredicateContains = Predicate.idContains;
-		const matches = this.relationships_getByPredicateIDToAndID(idPredicateContains, to, idThing);
+		const matches = this.relationships_get_byPredicate_to_thing(idPredicateContains, to, idThing);
 		if (matches.length > 0) {
 			const relationship = matches[0];
 			return relationship;
@@ -488,7 +486,7 @@ export default class Hierarchy {
 
 	relationship_remember_runtimeCreateUnique(baseID: string, idRelationship: string, idPredicate: string, idFrom: string,
 		idTo: string, order: number, creationOptions: CreationOptions = CreationOptions.none) {
-		let relationship = this.relationship_getByIDPredicateFromAndTo(idPredicate, idFrom, idTo);
+		let relationship = this.relationship_get_byPredicate_from_to(idPredicate, idFrom, idTo);
 		if (relationship) {
 			relationship.order_setTo(order);						// AND thing are updated
 		} else {
@@ -500,7 +498,7 @@ export default class Hierarchy {
 
 	async relationship_remember_remoteCreateUnique(baseID: string, idRelationship: string | null, idPredicate: string, idFrom: string,
 		idTo: string, order: number, creationOptions: CreationOptions = CreationOptions.isFromRemote): Promise<any> {
-		let relationship = this.relationship_getByIDPredicateFromAndTo(idPredicate, idFrom, idTo);
+		let relationship = this.relationship_get_byPredicate_from_to(idPredicate, idFrom, idTo);
 		if (relationship) {
 			relationship.order_setTo(order, true);						// AND thing are updated
 		} else {
@@ -529,8 +527,7 @@ export default class Hierarchy {
 					if (siblings.length == 0) {
 						needsRebuild = fromPath.collapse();
 						if (!fromFromPath.isVisible) {
-							needsRebuild = true;
-							fromFromPath.becomeHere();	// call become here before applying
+							needsRebuild = fromFromPath.becomeHere();	// call become here before applying
 						}
 					}
 					await path.traverse_async(async (progenyPath: Path): Promise<boolean> => {
@@ -549,10 +546,10 @@ export default class Hierarchy {
 
 	path_remember_unique(pathString: string = ''): Path {
 		const hashedPath = pathString.hash();
-		let path = this.knownPath_byHash[hashedPath];
+		let path = this.path_byHash[hashedPath];
 		if (!path) {
 			path = new Path(pathString);
-			this.knownPath_byHash[hashedPath] = path;
+			this.path_byHash[hashedPath] = path;
 		}
 		return path;
 	}
@@ -561,7 +558,7 @@ export default class Hierarchy {
 		let rootsPath: Path | null = null;
 		persistLocal.paths_restore();
 		const rootPath = g.rootPath;
-		for (const roots of this.knownTs_byTrait[IDTrait.roots]) {	// should only be one
+		for (const roots of this.traits_byTrait[IDTrait.roots]) {	// should only be one
 			if  (roots.title == 'roots') {	// special case TODO: convert to a query string
 				return rootPath.appendChild(roots) ?? null;
 			}
@@ -647,9 +644,9 @@ export default class Hierarchy {
 		for (const childPath of childPaths) {
 			this.path_forget_remoteUpdate(childPath);
 		}
-		delete this.knownPath_byHash[path.pathString.hash()];
+		delete this.path_byHash[path.pathString.hash()];
 		if (thing) {
-			const array = this.knownRs_byHIDTo[thing.hashedID];
+			const array = this.relationships_byTo[thing.hashedID];
 			if (array) {
 				for (const relationship of array) {
 					this.relationship_forget(relationship);		// forget so onSnapshot logic will not signal children
@@ -779,8 +776,7 @@ export default class Hierarchy {
 		} else {
 			const rootPath = g.rootPath;
 			if (EXTREME) {
-				needsRebuild = true;
-				rootPath?.becomeHere();	// tells graph to update line rects
+				needsRebuild = rootPath?.becomeHere();	// tells graph to update line rects
 			} else {
 				if (!SHIFT) {
 					if (fromReveal) {
@@ -806,7 +802,7 @@ export default class Hierarchy {
 		newGrabPath?.grabOnly();
 		const allowToBecomeHere = (!SHIFT || path.fromPath.matchesPath(newGrabPath)) && newGrabIsNotHere; 
 		const shouldBecomeHere = !newHerePath?.isVisible || newHerePath.isRoot;
-		if (!RIGHT && allowToBecomeHere && shouldBecomeHere && newHerePath?.becomeHere()) {
+		if (!RIGHT && allowToBecomeHere && shouldBecomeHere && (newHerePath?.becomeHere() ?? false)) {
 			needsRebuild = true;
 		}
 		if (needsRebuild) {
@@ -840,13 +836,13 @@ export default class Hierarchy {
 	static readonly $_ANCILLARY_$: unique symbol;
 
 	predicate_getForID(idPredicate: string | null): Predicate | null {
-		return (!idPredicate) ? null : this.knownP_byHID[idPredicate.hash()];
+		return (!idPredicate) ? null : this.predicate_byHID[idPredicate.hash()];
 	}
 
 	predicate_remember(predicate: Predicate) {
-		this.knownP_byHID[predicate.hashedID] = predicate;
-		this.knownP_byKind[predicate.kind] = predicate;
-		this.knownPs.push(predicate);
+		this.predicate_byHID[predicate.hashedID] = predicate;
+		this.predicate_byKind[predicate.kind] = predicate;
+		this.predicates.push(predicate);
 	}
 
 	predicate_remember_runtimeCreateUnique(id: string, kind: string, isRemotelyStored: boolean = true) {
@@ -862,13 +858,13 @@ export default class Hierarchy {
 
 	access_runtimeCreate(idAccess: string, kind: string) {
 		const access = new Access(idAccess, kind);
-		this.knownA_byKind[kind] = access;
-		this.knownA_byHID[idAccess.hash()] = access;
+		this.access_byKind[kind] = access;
+		this.access_byHID[idAccess.hash()] = access;
 	}
 
 	user_runtimeCreate(id: string, name: string, email: string, phone: string) {
 		const user = new User(id, name, email, phone);
-		this.knownU_byHID[id.hash()] = user;
+		this.users_byHID[id.hash()] = user;
 	}
 
 	static readonly $_OTHER_$: unique symbol;
@@ -876,9 +872,9 @@ export default class Hierarchy {
 	wrapper_add(wrapper: Wrapper) {
 		const path = wrapper.path
 		const hash = path.hashedPath;
-		const dict = this.knownWs_byTypeAndPath[wrapper.type] ?? {};
+		const dict = this.wrappers_byType_andHID[wrapper.type] ?? {};
 		dict[hash] = wrapper;
-		this.knownWs_byTypeAndPath[wrapper.type] = dict;
+		this.wrappers_byType_andHID[wrapper.type] = dict;
 	}
 
 	hierarchy_completed(startTime: number) {

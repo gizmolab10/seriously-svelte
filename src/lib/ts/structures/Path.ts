@@ -45,8 +45,8 @@ export default class Path {
 	get endID(): string { return this.idAt(); }
 	get fromPath(): Path { return this.stripBack(); }
 	get firstChild(): Thing { return this.children[0]; }
+	get isRoot(): boolean { return this.hashedPath == 0; }
 	get lastChild(): Thing { return this.children.slice(-1)[0]; }
-	get isRoot(): boolean { return this.matchesPath(g.rootPath); }
 	get order(): number { return this.relationship?.order ?? -1; }
 	get isHere(): boolean { return this.matchesStore(s_path_here); }
 	get hasChildren(): boolean { return this.childPaths.length > 0; }
@@ -138,7 +138,7 @@ export default class Path {
 		const paths: Array<Path> = [];
 		const idSmart = this.thing?.idSmart;					//  use idSmart in case thing is a bulk alias
 		if (this.pathString != 'exemplar' && idSmart && !['', 'k.id_unknown'].includes(idSmart)) {
-			const toRelationships = g.hierarchy.relationships_getByPredicateIDToAndID(this.predicateID, false, idSmart);
+			const toRelationships = g.hierarchy.relationships_get_byPredicate_to_thing(this.predicateID, false, idSmart);
 			for (const toRelationship of toRelationships) {		// loop through all to relationships
 				const path = this.appendID(toRelationship.id);	// add each toRelationship's id
 				paths.push(path);								// and push onto the paths_to
@@ -151,23 +151,25 @@ export default class Path {
 
 	matchesStore(store: Writable<Path | null>): boolean { return this.matchesPath(get(store)); }
 	includedInStore(store: Writable<Array<Path>>): boolean { return this.includedInPaths(get(store)); }
-	matchesPath(path: Path | null): boolean { return !path ? false : this.pathString == path.pathString; }
+	matchesPath(path: Path | null): boolean { return !path ? false : this.hashedPath == path.hashedPath; }
 	sharesAnID(path: Path | null): boolean { return !path ? false : this.ids.some(id => path.ids.includes(id)); }
 	rect_ofWrapper(wrapper: Wrapper | null): Rect | null { return Rect.createFromDOMRect(wrapper?.component.getBoundingClientRect()); }
-	relationshipAt(back: number = 1): Relationship | null { return g.hierarchy?.relationship_getForHID(this.idAt(back).hash()) ?? null; }
+	relationshipAt(back: number = 1): Relationship | null { return g.hierarchy?.relationship_get_byHID(this.idAt(back).hash()) ?? null; }
 
 	includedInPaths(paths: Array<Path>): boolean {
 		if (!paths) {
 			return false;
 		}
-		return paths.filter(p => {
+		const found = paths.filter(p => {
 			const path = p as Path;
-			if (path) {
-				return path.matchesPath(this);
-			} else {
-				return false;
-			}
+			return path && path.matchesPath(this);
 		}).length > 0;
+		if (found) {
+			if (this.title == 'Nancy Montier') {
+				console.log('hah')
+			}
+		}
+		return found;
 	}
 
 	dotColor(isInverted: boolean): string {
@@ -292,7 +294,7 @@ export default class Path {
 	appendChild(thing: Thing | null): Path {
 		const id = this.thing?.idSmart;
 		if (thing && id) {
-			const relationship = g.hierarchy?.relationship_getByIDPredicateFromAndTo(Predicate.idContains, id, thing.id);
+			const relationship = g.hierarchy?.relationship_get_byPredicate_from_to(Predicate.idContains, id, thing.id);
 			if (relationship) {
 				return this.appendID(relationship.id);
 			}
@@ -367,10 +369,14 @@ export default class Path {
 		this.toggleToolsGrab();
 	}
 
-	becomeHere() {
-		s_path_here.set(this);
+	becomeHere(): boolean {
+		const changed = !this.matchesPath(get(s_path_here));
 		s_path_toolsCluster.set(null);
-		this.expand();
+		if (changed) {
+			s_path_here.set(this);
+			this.expand();
+		}
+		return changed;
 	}
 
 	toggleToolsGrab() {

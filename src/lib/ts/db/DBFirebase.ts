@@ -145,6 +145,7 @@ export default class DBFirebase implements DBInterface {
 							if (thing) {
 								const path = thing.parentPaths[0];		// bulk aliases can only have one parent
 								if (path.isExpanded) {
+									console.log(`EXPANDED ${path.titles}`);
 									await this.hierarchy.path_redraw_remoteFetchBulk_browseRight(path, false);
 								}
 							} else {									// create a thing for each bulk
@@ -210,7 +211,7 @@ export default class DBFirebase implements DBInterface {
 				if (type == TypeDatum.relationships) {
 					const remoteRelationship = new RemoteRelationship(data);
 					if (remoteRelationship) {
-						let relationship = h.knownR_byHID[id.hash()];
+						let relationship = h.relationship_byHID[id.hash()];
 						const original = !relationship ? null : u.copyObject(relationship);
 						switch (change.type) {
 							case 'added':
