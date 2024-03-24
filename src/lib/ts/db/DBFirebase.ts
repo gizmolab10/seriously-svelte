@@ -142,15 +142,11 @@ export default class DBFirebase implements DBInterface {
 						const baseID = bulkDoc.id;
 						if (baseID != this.baseID) {
 							let thing = this.hierarchy.thing_bulkAlias_get_byTitle(baseID);
-							if (thing) {
-								const path = thing.parentPaths[0];		// bulk aliases can only have one parent
-								if (path.isExpanded) {
-									console.log(`EXPANDED ${path.titles}`);
-									await this.hierarchy.path_redraw_remoteFetchBulk_browseRight(path, false);
-								}
-							} else {									// create a thing for each bulk
+							if (!thing) {								// create a thing for each bulk
 								thing = this.hierarchy.thing_runtimeCreate(this.baseID, null, baseID, 'red', IDTrait.bulk, false);
 								await this.hierarchy.path_remember_remoteAddAsChild(rootsPath, thing);
+							} else if (thing.thing_isBulk_expanded) {
+								await this.hierarchy.path_redraw_remoteFetchBulk_browseRight(thing, false);
 							}
 						}
 					}

@@ -609,18 +609,17 @@ export default class Hierarchy {
 		}
 	}
 
-	async path_redraw_remoteFetchBulk_browseRight(path: Path, grab: boolean = true) {
-		const thing = path.thing;
+	async path_redraw_remoteFetchBulk_browseRight(thing: Thing, path: Path | null = null, grab: boolean = true) {
 		const rootsPath = g.rootsPath;
 		if (rootsPath && thing && thing.title != 'roots') {	// not create roots bulk
 			await this.db.fetch_allFrom(thing.title)
 			this.relationships_refreshKnowns();
-			const childPaths = path.childPaths;
-			if (childPaths.length > 0) {
+			const childPaths = path?.childPaths;
+			if (childPaths && childPaths.length > 0) {
 				if (grab) {
 					childPaths[0].grabOnly()
 				}
-				path.expand()
+				path?.expand()
 				signals.signal_rebuildWidgets_fromHere();
 			}
 		}
@@ -684,7 +683,7 @@ export default class Hierarchy {
 			const thing = path.thing;
 			if (thing) {
 				if (RIGHT && thing.needsBulkFetch) {
-					await this.path_redraw_remoteFetchBulk_browseRight(path);
+					await this.path_redraw_remoteFetchBulk_browseRight(thing, path);
 				} else {
 					this.path_rebuild_runtimeBrowseRight(path, RIGHT, SHIFT, EXTREME, fromReveal);
 				}

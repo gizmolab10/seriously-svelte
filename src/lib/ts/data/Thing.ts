@@ -1,6 +1,6 @@
 import { g, k, u, get, Path, Datum, debug, IDTrait, Predicate } from '../common/GlobalImports';
 import { Hierarchy, DebugFlag, dbDispatch, SeriouslyRange } from '../common/GlobalImports';
-import { s_path_here } from '../common/State';
+import { s_path_here, s_paths_expanded } from '../common/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -39,9 +39,21 @@ export default class Thing extends Datum {
 	get isBulkAlias():		  boolean { return this.trait == IDTrait.bulk; }
 	get isRoot():			  boolean { return this == g.root; }
 	get hierarchy():		Hierarchy { return g.hierarchy; }
+
+	get thing_isBulk_expanded(): boolean {
+		if (this.isBulkAlias) {
+			for (const path of get(s_paths_expanded)) {
+				if (this.id == path.thing?.id) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	
 	debugLog(message: string) { this.log(DebugFlag.things, message); }
 	log(option: DebugFlag, message: string) { debug.log_maybe(option, message + k.space + this.description); }
+
 	thing_isInDifferentBulkThan(other: Thing) {
 		return this.baseID != other.baseID || (other.isBulkAlias && !this.isBulkAlias && this.baseID != other.title);
 	}
