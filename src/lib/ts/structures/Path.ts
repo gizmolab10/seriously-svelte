@@ -56,7 +56,7 @@ export default class Path {
 	get hashedIDs(): Array<number> { return this.ids.map(i => i.hash()); }
 	get relationship(): Relationship | null { return this.relationshipAt(); }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
-	get things(): Array<Thing> { return g.hierarchy?.things_getForPath(this); }
+	get things(): Array<Thing> { return g.hierarchy?.things_get_byPath(this); }
 	get lineWrapper(): Wrapper | null { return this.wrappers[IDWrapper.line]; }
 	get showsChildren(): boolean { return this.isExpanded && this.hasChildren; }
 	get titleWrapper(): Wrapper | null { return this.wrappers[IDWrapper.title]; }
@@ -67,7 +67,7 @@ export default class Path {
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
 	get titles(): Array<string> { return this.things.map(t => `\"${t.title}\"`) ?? []; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
-	get children(): Array<Thing> { return g.hierarchy?.things_getForPaths(this.childPaths); }
+	get children(): Array<Thing> { return g.hierarchy?.things_get_byPaths(this.childPaths); }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
 	get isEditing(): boolean { return this.matchesPath(get(s_title_editing)?.editing ?? null); }
 	get showsReveal(): boolean { return this.hasChildren || (this.thing?.isBulkAlias ?? false); }

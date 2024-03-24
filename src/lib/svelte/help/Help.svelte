@@ -4,7 +4,7 @@
 	import { k } from '../../ts/common/GlobalImports';
 	import HelpTopics from './HelpTopics.svelte';
 	
-	function handleKeyDown(event) {
+	function handle_key_down(event) {
 		const key = event.key.toLowerCase();
 		switch (key) {
 			case 'escape': $s_id_popupView = null; break;
@@ -24,7 +24,7 @@
 	}
 </style>
 
-<svelte:document on:keydown={handleKeyDown} />
+<svelte:document on:keydown={handle_key_down} />
 <div class="help-modal-overlay">
 	<div class="help-modal-content">
 		<CloseButton size={k.dot_size * 1.5}/>

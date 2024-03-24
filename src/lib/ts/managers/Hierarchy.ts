@@ -28,8 +28,8 @@ export default class Hierarchy {
 
 	get hasNothing(): boolean { return !g.root; }
 	get idRoot(): string | null { return g.root?.id ?? null; };
-	thing_getForPath(path: Path | null): Thing | null { return path?.thing ?? null; }
-	thing_getForHID(hID: number | null): Thing | null { return (!hID) ? null : this.thing_byHID[hID]; }
+	thing_get_byPath(path: Path | null): Thing | null { return path?.thing ?? null; }
+	thing_get_byHID(hID: number | null): Thing | null { return (!hID) ? null : this.thing_byHID[hID]; }
 
 	static readonly $_INIT_$: unique symbol;
 
@@ -37,7 +37,7 @@ export default class Hierarchy {
 		this.db = db;
 	}
 
-	async hierarchy_fetchAndBuild(type: string) {
+	async hierarchy_fetch_build(type: string) {
 		if (!this.db.hasData) {
 			const startTime = new Date().getTime();
 			s_db_loadTime.set(null);
@@ -46,7 +46,7 @@ export default class Hierarchy {
 				s_things_arrived.set(false);
 			}
 			await this.db.fetch_all();
-			await this.addMissingAndRemoveNulls(null, this.db.baseID);
+			await this.add_missing_removeNulls(null, this.db.baseID);
 			persistLocal.paths_restore();
 			this.hierarchy_completed(startTime);
 		}
@@ -54,7 +54,7 @@ export default class Hierarchy {
 
 	static readonly $_EVENTS_$: unique symbol;
 
-	async handleToolClicked(IDButton: string, event: MouseEvent) {
+	async handle_tool_clicked(IDButton: string, event: MouseEvent) {
 		const path = get(s_path_toolsCluster);
 		if (path) {
 			switch (IDButton) {
@@ -71,7 +71,7 @@ export default class Hierarchy {
 		}
 	}
 
-	async handleKeyDown(event: KeyboardEvent) {
+	async handle_key_down(event: KeyboardEvent) {
 		let pathGrab = this.grabs.latestPathGrabbed(true);
 		if (event.type == 'keydown') {
 			const OPTION = event.altKey;
@@ -143,7 +143,7 @@ export default class Hierarchy {
 		}
 	}
 
-	thing_to_getForRelationshipHID(hID: number | null): Thing | null {
+	thing_to_get_byRelationshipHID(hID: number | null): Thing | null {
 		if (hID) {
 			const relationship = this.relationship_get_byHID(hID);
 			if (relationship) {
@@ -155,7 +155,7 @@ export default class Hierarchy {
 	
 	static readonly $_THINGS_$: unique symbol;
 
-	things_getForPath(path: Path): Array<Thing> {
+	things_get_byPath(path: Path): Array<Thing> {
 		const root = g.root;
 		const things: Array<Thing> = root ? [root] : [];
 		for (const hID of path.hashedIDs) {
@@ -167,10 +167,10 @@ export default class Hierarchy {
 		return things;
 	}
 
-	things_getForPaths(paths: Array<Path>): Array<Thing> {
+	things_get_byPaths(paths: Array<Path>): Array<Thing> {
 		const things = Array<Thing>();
 		for (const path of paths) {
-			const thing = this.thing_getForPath(path);
+			const thing = this.thing_get_byPath(path);
 			if (thing) {
 				things.push(thing);
 			}
@@ -215,7 +215,7 @@ export default class Hierarchy {
 
 	thing_remember_runtimeCreateUnique(baseID: string, id: string | null, title: string, color: string, trait: string,
 		isRemotelyStored: boolean): Thing {
-		let thing = this.thing_getForHID(id?.hash() ?? null);
+		let thing = this.thing_get_byHID(id?.hash() ?? null);
 		if (!thing) {
 			thing = this.thing_remember_runtimeCreate(baseID, id, title, color, trait, isRemotelyStored);
 		}
@@ -286,7 +286,7 @@ export default class Hierarchy {
 	static readonly $_BULKS_$: unique symbol;
 
 	thing_remember_bulkRootID(baseID: string, id: string, color: string) {
-		const thing = this.thing_bulkAlias_getForTitle(baseID);
+		const thing = this.thing_bulkAlias_get_byTitle(baseID);
 		if (thing) {
 			// id is of the root thing from bulk fetch all
 			// i.e., it is the root id from another baseID
@@ -300,7 +300,7 @@ export default class Hierarchy {
 		return thing;
 	}
 
-	thing_bulkAlias_getForTitle(title: string | null) {
+	thing_bulkAlias_get_byTitle(title: string | null) {
 		if (title) {
 			for (const thing of this.traits_byTrait[IDTrait.bulk]) {
 				if  (thing.title == title) {		// special case TODO: convert to a query string
@@ -698,7 +698,7 @@ export default class Hierarchy {
 	}
 
 	async path_rebuild_remoteMoveUp(path: Path, up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
-		const thing = this.thing_getForPath(path);
+		const thing = this.thing_get_byPath(path);
 		const fromPath = path.fromPath;
 		const siblings = fromPath.children;
 		if (!siblings || siblings.length == 0) {
@@ -835,7 +835,7 @@ export default class Hierarchy {
 
 	static readonly $_ANCILLARY_$: unique symbol;
 
-	predicate_getForID(idPredicate: string | null): Predicate | null {
+	predicate_get_byID(idPredicate: string | null): Predicate | null {
 		return (!idPredicate) ? null : this.predicate_byHID[idPredicate.hash()];
 	}
 
@@ -846,7 +846,7 @@ export default class Hierarchy {
 	}
 
 	predicate_remember_runtimeCreateUnique(id: string, kind: string, isRemotelyStored: boolean = true) {
-		if (!this.predicate_getForID(id)) {
+		if (!this.predicate_get_byID(id)) {
 			this.predicate_remember_runtimeCreate(id, kind, isRemotelyStored);
 		}
 	}
@@ -889,7 +889,7 @@ export default class Hierarchy {
 		s_db_loadTime.set(loadTime);
 	}
 
-	async addMissingAndRemoveNulls(parentID: string | null, baseID: string) {
+	async add_missing_removeNulls(parentID: string | null, baseID: string) {
 		await this.relationships_remoteCreateMissing(parentID, baseID);
 		await this.relationships_removeHavingNullReferences();
 	}

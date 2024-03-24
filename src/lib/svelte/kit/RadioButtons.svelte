@@ -18,7 +18,7 @@
 		}
 	}
 	
-	function handleKeyDown(event) { event.preventDefault(); return false; }
+	function handle_key_down(event) { event.preventDefault(); return false; }
 </script>
 
 <style>
@@ -42,14 +42,14 @@
 <div class='popup'>
 	{#each menuItems as menuItem}
 		<label class="menu-item"
-			style='on:keydown={handleKeyDown}'>
+			style='on:keydown={handle_key_down}'>
 			<input class='radio'
 				name='menu'
 				type='radio'
 				value={menuItem.id}
 				style='outline: none'
 				bind:group={idSelected}
-				on:keydown={handleKeyDown}
+				on:keydown={handle_key_down}
 				on:change={() => handleSelect(menuItem.id) }/>
 			<div class="label-text">{menuItem.label}</div>
 		</label>

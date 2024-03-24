@@ -27,7 +27,7 @@
 		return () => { handler.disconnect() };
 	});
 
-	function handleKeyDown(event) {
+	function handle_key_down(event) {
 		if (thing && path.isEditing && canAlterTitle(event)) {
 			switch (event.key) {	
 				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); g.hierarchy.path_edit_remoteCreateChildOf(path.fromPath); break;
@@ -240,7 +240,7 @@
 		bind:value={thing.title}
 		on:cut={handleCutOrPaste}
 		on:mouseup={handleMouseUp}
-		on:keydown={handleKeyDown}
+		on:keydown={handle_key_down}
 		on:paste={handleCutOrPaste}
 		on:click={handleSingleClick}
 		on:mousedown={handleLongClick}

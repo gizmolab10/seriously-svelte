@@ -20,7 +20,7 @@ export default class DBDispatch {
 					(async () => {
 						this.updateDBForType(type);
 						this.queryStrings_apply();
-						await g.hierarchy.hierarchy_fetchAndBuild(type);
+						await g.hierarchy.hierarchy_fetch_build(type);
 						g.rootPath = g.hierarchy.path_remember_unique();
 						persistLocal.paths_restore(true);
 						s_path_toolsCluster.set(null);

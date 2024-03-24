@@ -30,7 +30,7 @@
 		updateOrigins();
 	});
 
-	function handleWheel(event) {
+	function handle_wheel(event) {
 		const canScroll = k.allow_HorizontalScrolling;
 		const offsetX = canScroll ? -event.deltaX : 0;
 		const offsetY = -event.deltaY;
@@ -51,7 +51,7 @@
 				case '?': $s_id_popupView = IDButton.help; break;
 				case ']':
 				case '[': dbDispatch.nextDB(key == ']'); break;
-				default:  await g.hierarchy.handleKeyDown(event); break;
+				default:  await g.hierarchy.handle_key_down(event); break;
 			}
 		}
 	}
@@ -79,7 +79,7 @@
 	$: {
 		if (g.here == null || g.here.id != $s_path_here) {
 			const h = g.hierarchy;
-			g.here = !$s_path_here ? g.root : h.thing_getForPath($s_path_here);
+			g.here = !$s_path_here ? g.root : h.thing_get_byPath($s_path_here);
 			offsetX_ofFirstReveal = g.titleIsAtTop ? 0 : g.here?.titleWidth / 2;
 			updateOrigins();
 			toggle = !toggle;	// also cause entire graph to be replaced
@@ -120,7 +120,7 @@
 
 <svelte:document on:keydown={globalHandleKeyDown}/>
 {#if g.here}
-	<div class='clipper' on:wheel={handleWheel}
+	<div class='clipper' on:wheel={handle_wheel}
 		style='
 			top:{top}px;
 			left: {left}px;

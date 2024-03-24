@@ -64,7 +64,7 @@
             case IDTool.delete_cancel: confirmingDelete = false; break;
             default:
                 if (path && !path.isExemplar && !isDisabledFor(id)) {
-                    await g.hierarchy.handleToolClicked(id, event);
+                    await g.hierarchy.handle_tool_clicked(id, event);
         		}
                 break;
         }

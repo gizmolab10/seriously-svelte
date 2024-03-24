@@ -128,7 +128,7 @@ class PersistLocal {
 				}
 			}
 		}
-		let here = h.thing_getForPath(pathToHere);
+		let here = h.thing_get_byPath(pathToHere);
 		if (here == null) {
 			const lastGrabbedPath = h.grabs.path_lastGrabbed?.fromPath;
 			if (lastGrabbedPath) {

@@ -141,7 +141,7 @@ export default class DBFirebase implements DBInterface {
 					for (const bulkDoc of bulkSnapshot.docs) {
 						const baseID = bulkDoc.id;
 						if (baseID != this.baseID) {
-							let thing = this.hierarchy.thing_bulkAlias_getForTitle(baseID);
+							let thing = this.hierarchy.thing_bulkAlias_get_byTitle(baseID);
 							if (thing) {
 								const path = thing.parentPaths[0];		// bulk aliases can only have one parent
 								if (path.isExpanded) {
@@ -244,7 +244,7 @@ export default class DBFirebase implements DBInterface {
 					}
 				} else if (type == TypeDatum.things) {
 					const remoteThing = new RemoteThing(data);
-					let thing = h.thing_getForHID(id.hash());
+					let thing = h.thing_get_byHID(id.hash());
 					if (remoteThing) {
 						switch (change.type) {
 							case 'added':

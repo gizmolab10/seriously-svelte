@@ -4,12 +4,12 @@
 	import RadioButtons from '../kit/RadioButtons.svelte'
 	import Label from '../kit/Label.svelte';
 
-	function handleDBTypeAt(index) { dbDispatch.changeDBTo(menuItems[index].id); }
+	function handle_dbTypeAt(index) { dbDispatch.changeDBTo(menuItems[index].id); }
 
 	const menuItems = [
-		{ id: TypeDB.local,	   label: 'local', action: () => { handleDBTypeAt(0); } },
-		{ id: TypeDB.firebase, label: 'firebase', action: () => { handleDBTypeAt(1); } },
-		// { id: TypeDB.airtable, label: 'airtable', action: () => { handleDBTypeAt(2); } }
+		{ id: TypeDB.local,	   label: 'local', action: () => { handle_dbTypeAt(0); } },
+		{ id: TypeDB.firebase, label: 'firebase', action: () => { handle_dbTypeAt(1); } },
+		// { id: TypeDB.airtable, label: 'airtable', action: () => { handle_dbTypeAt(2); } }
 	];
 
 </script>

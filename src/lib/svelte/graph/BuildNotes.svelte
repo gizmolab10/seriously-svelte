@@ -18,7 +18,7 @@
 		title = `Seriously Build Notes${suffix}`;
 	}
 	
-	function handleKeyDown(event) {
+	function handle_key_down(event) {
 		const key = event.key.toLowerCase();
 		switch (key) {
 			case 'escape': $s_id_popupView = null; break;
@@ -82,7 +82,7 @@
 	}
 </style>
 
-<svelte:document on:keydown={handleKeyDown} />
+<svelte:document on:keydown={handle_key_down} />
 <div class='modal-overlay'>
 	<div class='modal-content'>
 		<div class='top-bar'>

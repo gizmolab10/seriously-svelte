@@ -39,7 +39,7 @@ export default class Relationship extends Datum {
 
 	thing(to: boolean): Thing | null {
 		const id = to ? this.idTo : this.idFrom;
-		return g.hierarchy?.thing_getForHID(id.hash()) ?? null
+		return g.hierarchy?.thing_get_byHID(id.hash()) ?? null
 	}
 
 	async order_setTo(newOrder: number, remoteWrite: boolean = false) {
