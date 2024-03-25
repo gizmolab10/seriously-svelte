@@ -1,7 +1,7 @@
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection, onSnapshot, deleteField, getFirestore } from 'firebase/firestore';
 import { DocumentData, DocumentChange, QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { g, k, u, get, Thing, debug, TypeDB, signals, IDTrait, TypeDatum, Hierarchy, DebugFlag } from '../common/GlobalImports';
-import { Predicate, dbDispatch, Relationship, CreationOptions } from '../common/GlobalImports';
+import { Predicate, dbDispatch, Relationship, persistLocal, CreationOptions } from '../common/GlobalImports';
 import { s_build } from '../common/State';
 import { initializeApp } from "firebase/app";
 import DBInterface from './DBInterface';
@@ -59,6 +59,7 @@ export default class DBFirebase implements DBInterface {
 		}
 		await this.fetch_documentsOf(TypeDatum.predicates);
 		await this.fetch_allFrom(baseID);
+		persistLocal.paths_restore(); // can paths restore happen here?
 		await this.fetch_bulkAliases();		// TODO: assumes all paths created
 	}
 
@@ -132,7 +133,7 @@ export default class DBFirebase implements DBInterface {
 	async fetch_bulkAliases() {
 		const root = g.root;
 		if (this.baseID == k.name_bulkAdmin && root) {
-			const rootsPath = await this.hierarchy.path_getRoots();		// TODO: assumes all paths created
+			const rootsPath = await this.hierarchy.path_get_roots();		// TODO: assumes all paths created
 			if (rootsPath) {
 				g.rootsPath = rootsPath;
 				try {		// add bulk aliases to roots thing
@@ -146,7 +147,7 @@ export default class DBFirebase implements DBInterface {
 								thing = this.hierarchy.thing_runtimeCreate(this.baseID, null, baseID, 'red', IDTrait.bulk, false);
 								await this.hierarchy.path_remember_remoteAddAsChild(rootsPath, thing);
 							} else if (thing.thing_isBulk_expanded) {
-								await this.hierarchy.path_redraw_remoteFetchBulk_browseRight(thing, false);
+								await this.hierarchy.path_redraw_remoteFetchBulk_browseRight(thing);
 							}
 						}
 					}

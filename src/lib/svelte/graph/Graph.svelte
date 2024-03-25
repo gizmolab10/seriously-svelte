@@ -50,7 +50,7 @@
 				case 'c': s_user_graphOffset_setTo(new Point()); break;
 				case '?': $s_id_popupView = IDButton.help; break;
 				case ']':
-				case '[': dbDispatch.nextDB(key == ']'); break;
+				case '[': dbDispatch.db_next(key == ']'); break;
 				default:  await g.hierarchy.handle_key_down(event); break;
 			}
 		}

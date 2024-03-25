@@ -96,8 +96,6 @@ class PersistLocal {
 	paths_restore(force: boolean = false) {
 		if (!this.pathsRestored || force) {
 			this.pathsRestored = true;
-			const h = g.hierarchy;
-			g.rootPath = h.path_remember_unique();
 			this.here_restore();
 			s_paths_grabbed.set(this.dbKey_get(IDPersistant.grabbed));
 			s_paths_expanded.set(this.dbKey_get(IDPersistant.expanded));
@@ -109,15 +107,12 @@ class PersistLocal {
 			s_paths_expanded.subscribe((paths: Array<Path>) => {
 				this.dbKey_write(IDPersistant.expanded, !paths ? null : paths.map(p => p.pathString));
 			});
-	
-			s_path_here.subscribe((path: Path) => {
-				this.dbKey_write(IDPersistant.here, !path ? null : path.pathString);
-			});
 		}
 	}
 
 	here_restore() {
 		const h = g.hierarchy;
+		g.rootPath = h.path_remember_unique();
 		let pathToHere = g.rootPath;
 		if (!this.ignorePaths) {
 			const herePathString = this.dbKey_read(IDPersistant.here);
@@ -136,6 +131,9 @@ class PersistLocal {
 			}
 		}
 		pathToHere.becomeHere();
+		s_path_here.subscribe((path: Path) => {
+			this.dbKey_write(IDPersistant.here, !path ? null : path.pathString);
+		});
 	}
 
 	key_apply(key: string, matching: string, apply: (flag: boolean) => void, persist: boolean = true) {

@@ -8,23 +8,26 @@ import { dbLocal } from './DBLocal';
 export default class DBDispatch {
 	db: DBInterface;
 	eraseDB = false;
-	nextDB(forward: boolean) { this.changeDBTo(this.getNextDB(forward)); }
+	db_next(forward: boolean) { this.db_changeTo(this.db_get_next(forward)); }
 
 	constructor() {
 		let done = false;
 		this.db = dbFirebase;
+		const startTime = new Date().getTime();
+		s_db_loadTime.set(null);
 		s_db_type.subscribe((type: string) => {
 			if (!done || (type && this.db.dbType != type)) {
 				done = true;
 				setTimeout(() => {
 					(async () => {
-						this.updateDBForType(type);
+						this.db_set_forType(type);
 						this.queryStrings_apply();
-						await g.hierarchy.hierarchy_fetch_build(type);
+						await g.hierarchy.hierarchy_fetch_andBuild(type);
 						g.rootPath = g.hierarchy.path_remember_unique();
 						persistLocal.paths_restore(true);
 						s_path_toolsCluster.set(null);
 						s_title_editing.set(null);
+						g.hierarchy.hierarchy_completed(startTime);
 						signals.signal_rebuildWidgets_fromHere();
 					})();
 				}, 1);
@@ -33,8 +36,8 @@ export default class DBDispatch {
 		s_db_type.set(TypeDB.firebase);
 	}
 	
-	updateDBForType(type: string) {
-		const db = this.dbForType(type);
+	db_set_forType(type: string) {
+		const db = this.db_forType(type);
 		g.hierarchy = db.hierarchy;
 		this.db = db;
 	}
@@ -42,12 +45,12 @@ export default class DBDispatch {
 	queryStrings_apply() {
 		const queryStrings = k.queryString;
 		const type = queryStrings.get('db') ?? persistLocal.key_read(IDPersistant.db) ?? TypeDB.firebase;
-		this.updateDBForType(type);
+		this.db_set_forType(type);
 		this.db.queryStrings_apply();
 		s_db_type.set(type);
 	}
 
-	dbForType(type: string): DBInterface {
+	db_forType(type: string): DBInterface {
 		switch (type) {
 			case TypeDB.airtable: return dbAirtable;
 			case TypeDB.firebase: return dbFirebase;
@@ -55,8 +58,8 @@ export default class DBDispatch {
 		}
 	}
 
-	changeDBTo(newDBType: TypeDB) {
-		const db = this.dbForType(newDBType);
+	db_changeTo(newDBType: TypeDB) {
+		const db = this.db_forType(newDBType);
 		persistLocal.key_write(IDPersistant.db, newDBType);
 		s_db_type.set(newDBType);		// tell components to render the [possibly previously] fetched data
 		setTimeout(() => {
@@ -67,7 +70,7 @@ export default class DBDispatch {
 		s_db_loadTime.set(db.loadTime);
 	}
 
-	getNextDB(forward: boolean): TypeDB {
+	db_get_next(forward: boolean): TypeDB {
 		if (forward) {
 			switch (this.db.dbType) {
 				case TypeDB.local:	  return TypeDB.firebase;

@@ -4,7 +4,7 @@
 	import RadioButtons from '../kit/RadioButtons.svelte'
 	import Label from '../kit/Label.svelte';
 
-	function handle_dbTypeAt(index) { dbDispatch.changeDBTo(menuItems[index].id); }
+	function handle_dbTypeAt(index) { dbDispatch.db_changeTo(menuItems[index].id); }
 
 	const menuItems = [
 		{ id: TypeDB.local,	   label: 'local', action: () => { handle_dbTypeAt(0); } },

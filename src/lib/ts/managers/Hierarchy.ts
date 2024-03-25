@@ -1,24 +1,24 @@
 import { s_isBusy, s_db_loadTime, s_paths_grabbed, s_things_arrived, s_title_editing, s_altering_parent, s_path_toolsCluster } from '../common/State';
-import { g, k, u, get, User, Path, Thing, Grabs, debug, Access, IDTool, IDTrait, signals, Wrapper } from '../common/GlobalImports';
-import { TypeDB, Predicate, Relationship, persistLocal, AlteringParent, CreationOptions } from '../common/GlobalImports';
+import { g, k, u, get, User, Path, Thing, Grabs, debug, Access, IDTool, IDTrait, signals } from '../common/GlobalImports';
+import { TypeDB, Wrapper, Predicate, Relationship, AlteringParent, CreationOptions } from '../common/GlobalImports';
 import DBInterface from '../db/DBInterface';
 
-type Relationships_byHID = { [hID: number]: Array<Relationship> }
+type Relationships_ByHID = { [hid: number]: Array<Relationship> }
 
 export default class Hierarchy {
-	users_byHID: { [hid: number]: User } = {};
-	thing_byHID: { [hid: number]: Thing } = {};
-	path_byHash: { [hash: number]: Path } = {};
-	access_byHID: { [hid: number]: Access } = {};
-	access_byKind: { [kind: string]: Access } = {};
-	predicate_byHID: { [hid: number]: Predicate } = {};
-	predicate_byKind: { [kind: string]: Predicate } = {};
-	relationship_byHID: { [hid: number]: Relationship } = {};
 	wrappers_byType_andHID: { [type: string]: { [hid: number]: Wrapper } } = {};
-	traits_byTrait: { [trait: string]: Array<Thing> } = {};
-	relationships_byPredicate: Relationships_byHID = {};
-	relationships_byFrom: Relationships_byHID = {};
-	relationships_byTo: Relationships_byHID = {};
+	relationship_byHID: { [hid: number]: Relationship } = {};
+	predicate_byHID: { [hid: number]: Predicate } = {};
+	access_byHID: { [hid: number]: Access } = {};
+	thing_byHID: { [hid: number]: Thing } = {};
+	user_byHID: { [hid: number]: User } = {};
+	path_byHash: { [hash: number]: Path } = {};
+	access_byKind: { [kind: string]: Access } = {};
+	predicate_byKind: { [kind: string]: Predicate } = {};
+	things_byTrait: { [trait: string]: Array<Thing> } = {};
+	relationships_byPredicate: Relationships_ByHID = {};
+	relationships_byFrom: Relationships_ByHID = {};
+	relationships_byTo: Relationships_ByHID = {};
 	relationships: Array<Relationship> = [];
 	predicates: Array<Predicate> = [];
 	things: Array<Thing> = [];
@@ -29,7 +29,7 @@ export default class Hierarchy {
 	get hasNothing(): boolean { return !g.root; }
 	get idRoot(): string | null { return g.root?.id ?? null; };
 	thing_get_byPath(path: Path | null): Thing | null { return path?.thing ?? null; }
-	thing_get_byHID(hID: number | null): Thing | null { return (!hID) ? null : this.thing_byHID[hID]; }
+	thing_get_byHID(hid: number | null): Thing | null { return (!hid) ? null : this.thing_byHID[hid]; }
 
 	static readonly $_INIT_$: unique symbol;
 
@@ -37,18 +37,14 @@ export default class Hierarchy {
 		this.db = db;
 	}
 
-	async hierarchy_fetch_build(type: string) {
+	async hierarchy_fetch_andBuild(type: string) {
 		if (!this.db.hasData) {
-			const startTime = new Date().getTime();
-			s_db_loadTime.set(null);
 			if (type != TypeDB.local) {
 				s_isBusy.set(true);
 				s_things_arrived.set(false);
 			}
 			await this.db.fetch_all();
 			await this.add_missing_removeNulls(null, this.db.baseID);
-			persistLocal.paths_restore();
-			this.hierarchy_completed(startTime);
 		}
 	}
 
@@ -143,9 +139,9 @@ export default class Hierarchy {
 		}
 	}
 
-	thing_to_get_byRelationshipHID(hID: number | null): Thing | null {
-		if (hID) {
-			const relationship = this.relationship_get_byHID(hID);
+	thing_to_get_byRelationshipHID(hid: number | null): Thing | null {
+		if (hid) {
+			const relationship = this.relationship_get_byHID(hid);
 			if (relationship) {
 				return this.thing_byHID[relationship.idTo.hash()];
 			}
@@ -155,14 +151,12 @@ export default class Hierarchy {
 	
 	static readonly $_THINGS_$: unique symbol;
 
-	things_get_byPath(path: Path): Array<Thing> {
+	things_get_byPath(path: Path): Array<Thing | null> {
 		const root = g.root;
-		const things: Array<Thing> = root ? [root] : [];
-		for (const hID of path.hashedIDs) {
-			const thing = this.relationship_get_byHID(hID)?.toThing;
-			if (thing) {
-				things.push(thing);
-			}
+		const things: Array<Thing | null> = root ? [root] : [];
+		for (const hid of path.hashedIDs) {
+			const thing = this.relationship_get_byHID(hid)?.toThing || null;
+			things.push(thing);
 		}
 		return things;
 	}
@@ -181,7 +175,7 @@ export default class Hierarchy {
 	things_forgetAll() {
 		this.things = []; // clear
 		this.thing_byHID = {};
-		this.traits_byTrait = {};
+		this.things_byTrait = {};
 	}
 
 	static readonly $_THING_$: unique symbol;
@@ -199,7 +193,7 @@ export default class Hierarchy {
 	thing_forget(thing: Thing) {
 		delete this.thing_byHID[thing.hashedID];
 		this.things = this.things.filter((thing) => thing.id !== thing.id);
-		this.traits_byTrait[thing.trait] = this.traits_byTrait[thing.trait].filter((thing) => thing.id !== thing.id);
+		this.things_byTrait[thing.trait] = this.things_byTrait[thing.trait].filter((thing) => thing.id !== thing.id);
 	}
 
 	async thing_edit_remoteAddLine(path: Path, below: boolean = true) {
@@ -253,9 +247,9 @@ export default class Hierarchy {
 	thing_remember(thing: Thing) {
 		if (this.thing_byHID[thing.hashedID] == null) {
 			this.thing_byHID[thing.hashedID] = thing;
-			let things = this.traits_byTrait[thing.trait] ?? [];
+			let things = this.things_byTrait[thing.trait] ?? [];
 			things.push(thing);
-			this.traits_byTrait[thing.trait] = things;
+			this.things_byTrait[thing.trait] = things;
 			this.things.push(thing);
 			if (thing.trait == IDTrait.root && (thing.baseID == '' || thing.baseID == this.db.baseID)) {
 				g.root = thing;
@@ -302,7 +296,7 @@ export default class Hierarchy {
 
 	thing_bulkAlias_get_byTitle(title: string | null) {
 		if (title) {
-			for (const thing of this.traits_byTrait[IDTrait.bulk]) {
+			for (const thing of this.things_byTrait[IDTrait.bulk]) {
 				if  (thing.title == title) {		// special case TODO: convert to a query string
 					return thing;
 				}
@@ -353,8 +347,8 @@ export default class Hierarchy {
 
 	relationships_get_byPredicate_to_thing(idPredicate: string, to: boolean, idThing: string): Array<Relationship> {
 		const dict = to ? this.relationships_byTo : this.relationships_byFrom;
-		const hID = idThing.hash();
-		const matches = dict[hID] as Array<Relationship>; // filter out bad values (dunno what this does)
+		const hid = idThing.hash();
+		const matches = dict[hid] as Array<Relationship>; // filter out bad values (dunno what this does)
 		const array: Array<Relationship> = [];
 		if (Array.isArray(matches)) {
 			for (const relationship of matches) {
@@ -415,19 +409,19 @@ export default class Hierarchy {
 
 	static readonly $_RELATIONSHIP_$: unique symbol;
 
-	relationship_get_byHID(hID: number): Relationship | null { return this.relationship_byHID[hID]; }
+	relationship_get_byHID(hid: number): Relationship | null { return this.relationship_byHID[hid]; }
 
-	relationship_rememberByKnown(relationships: Relationships_byHID, relationship: Relationship, id: string) {
+	relationship_rememberByKnown(relationships: Relationships_ByHID, relationship: Relationship, id: string) {
 		if (!id) {
 			u.noop();
 		} else {
-			const hID = id.hash();
-			let array = relationships[hID] ?? [];
+			const hid = id.hash();
+			let array = relationships[hid] ?? [];
 			array.push(relationship);
 			if (!relationship.toThing) {
 				console.log('missing TO thing');
 			}
-			relationships[hID] = array;
+			relationships[hid] = array;
 		}
 	}
 	
@@ -435,7 +429,7 @@ export default class Hierarchy {
 		// console.log(`RELATIONSHIP ${relationship.fromThing?.title} => ${relationship.toThing?.title}`);
 		if (!this.relationship_byHID[relationship.hashedID]) {
 			if (relationship.baseID != this.db.baseID) {
-				debug.log_error(`RELATIONSHIP off base ${relationship.baseID} ${relationship.fromThing?.description} => ${relationship.toThing?.description}`);
+				debug.log_error(`RELATIONSHIP off base: ${relationship.baseID} ${relationship.fromThing?.description} => ${relationship.toThing?.description}`);
 			}
 			this.relationships.push(relationship);
 			this.relationship_byHID[relationship.hashedID] = relationship;
@@ -460,10 +454,10 @@ export default class Hierarchy {
 		}
 	}
 
-	relationship_forget_byHID(relationships: Relationships_byHID, hID: number, relationship: Relationship) {
-		let array = relationships[hID] ?? [];
+	relationship_forget_byHID(relationships: Relationships_ByHID, hid: number, relationship: Relationship) {
+		let array = relationships[hid] ?? [];
 		u.remove<Relationship>(array, relationship)
-		relationships[hID] = array;
+		relationships[hid] = array;
 	}
 
 	relationship_forget(relationship: Relationship) {
@@ -486,6 +480,9 @@ export default class Hierarchy {
 
 	relationship_remember_runtimeCreateUnique(baseID: string, idRelationship: string, idPredicate: string, idFrom: string,
 		idTo: string, order: number, creationOptions: CreationOptions = CreationOptions.none) {
+		if (idRelationship == 'FqhFXEEnhs5qSKy1OgCG') {
+			u.noop();
+		}
 		let relationship = this.relationship_get_byPredicate_from_to(idPredicate, idFrom, idTo);
 		if (relationship) {
 			relationship.order_setTo(order);						// AND thing are updated
@@ -554,13 +551,12 @@ export default class Hierarchy {
 		return path;
 	}
 
-	async path_getRoots() {		// TODO: assumes all paths created
+	async path_get_roots() {		// TODO: assumes all paths created
 		let rootsPath: Path | null = null;
-		persistLocal.paths_restore();
 		const rootPath = g.rootPath;
-		for (const roots of this.traits_byTrait[IDTrait.roots]) {	// should only be one
-			if  (roots.title == 'roots') {	// special case TODO: convert to a query string
-				return rootPath.appendChild(roots) ?? null;
+		for (const rootsMaybe of this.things_byTrait[IDTrait.roots]) {	// should only be one
+			if  (rootsMaybe.title == 'roots') {	// special case TODO: convert to a query string
+				return rootPath.appendChild(rootsMaybe) ?? null;
 			}
 		}
 		const roots = this.thing_runtimeCreate(this.db.baseID, null, 'roots', 'red', IDTrait.roots, false);
@@ -609,7 +605,7 @@ export default class Hierarchy {
 		}
 	}
 
-	async path_redraw_remoteFetchBulk_browseRight(thing: Thing, path: Path | null = null, grab: boolean = true) {
+	async path_redraw_remoteFetchBulk_browseRight(thing: Thing, path: Path | null = null, grab: boolean = false) {
 		const rootsPath = g.rootsPath;
 		if (rootsPath && thing && thing.title != 'roots') {	// not create roots bulk
 			await this.db.fetch_allFrom(thing.title)
@@ -683,7 +679,7 @@ export default class Hierarchy {
 			const thing = path.thing;
 			if (thing) {
 				if (RIGHT && thing.needsBulkFetch) {
-					await this.path_redraw_remoteFetchBulk_browseRight(thing, path);
+					await this.path_redraw_remoteFetchBulk_browseRight(thing, path, true);
 				} else {
 					this.path_rebuild_runtimeBrowseRight(path, RIGHT, SHIFT, EXTREME, fromReveal);
 				}
@@ -863,7 +859,7 @@ export default class Hierarchy {
 
 	user_runtimeCreate(id: string, name: string, email: string, phone: string) {
 		const user = new User(id, name, email, phone);
-		this.users_byHID[id.hash()] = user;
+		this.user_byHID[id.hash()] = user;
 	}
 
 	static readonly $_OTHER_$: unique symbol;

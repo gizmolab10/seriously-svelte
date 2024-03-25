@@ -6,25 +6,18 @@ import { Writable } from 'svelte/store';
 
 export default class Path {
 	wrappers: { [type: string]: Wrapper } = {};
-	thing: Thing | null;
+	_thing: Thing | null = null;
 	predicateID: string;
 	pathString: string;
 	hashedPath: number;
 
 	constructor(pathString: string = '', predicateID: string = Predicate.idContains) {
-		this.hashedPath = pathString.hash()
-		this.predicateID = predicateID;
 		this.pathString = pathString;
-		this.thing = this.thingAt();
+		this.predicateID = predicateID;
+		this.hashedPath = pathString.hash();
 		if (g.hierarchy.isAssembled) {
-			this.subscriptions_setup();	// not needed during hierarchy assembly
+			this.subscriptions_setup();			// not needed during hierarchy assembly
 		}
-		setTimeout(() => {
-			if (this.thing != this.thingAt()) {
-				console.log('ACK!');
-				this.thing = this.thingAt();
-			}
-		}, 10);
 	}
 
 	signal_rebuildWidgets()  { signals.signal_rebuildWidgets(this); }
@@ -44,6 +37,7 @@ export default class Path {
 	
 	get endID(): string { return this.idAt(); }
 	get fromPath(): Path { return this.stripBack(); }
+	get id_count():number { return this.ids.length; }
 	get firstChild(): Thing { return this.children[0]; }
 	get isRoot(): boolean { return this.hashedPath == 0; }
 	get lastChild(): Thing { return this.children.slice(-1)[0]; }
@@ -56,7 +50,6 @@ export default class Path {
 	get hashedIDs(): Array<number> { return this.ids.map(i => i.hash()); }
 	get relationship(): Relationship | null { return this.relationshipAt(); }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
-	get things(): Array<Thing> { return g.hierarchy?.things_get_byPath(this); }
 	get lineWrapper(): Wrapper | null { return this.wrappers[IDWrapper.line]; }
 	get showsChildren(): boolean { return this.isExpanded && this.hasChildren; }
 	get titleWrapper(): Wrapper | null { return this.wrappers[IDWrapper.title]; }
@@ -64,16 +57,24 @@ export default class Path {
 	get revealWrapper(): Wrapper | null { return this.wrappers[IDWrapper.reveal]; }
 	get widgetWrapper(): Wrapper | null { return this.wrappers[IDWrapper.widget]; }
 	get titleRect(): Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
+	get things(): Array<Thing | null> { return g.hierarchy?.things_get_byPath(this); }
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
-	get titles(): Array<string> { return this.things.map(t => `\"${t.title}\"`) ?? []; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get children(): Array<Thing> { return g.hierarchy?.things_get_byPaths(this.childPaths); }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
 	get isEditing(): boolean { return this.matchesPath(get(s_title_editing)?.editing ?? null); }
 	get showsReveal(): boolean { return this.hasChildren || (this.thing?.isBulkAlias ?? false); }
+	get titles(): Array<string> { return this.things?.map(t => ` \"${t ? t.title : 'null'}\"`) ?? []; }
 	get isStoppingEdit(): boolean { return this.matchesPath(get(s_title_editing)?.stopping ?? null); }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	
+	get thing(): Thing | null {
+		if (!this._thing) {
+			this._thing = this.thingAt() ?? null;	// must come after setting path string
+		}
+		return this._thing;
+	}
+
 	get isVisible(): boolean {
 		const here = g.herePath;
 		const incorporates = this.incorporates(here);
@@ -138,14 +139,13 @@ export default class Path {
 		const paths: Array<Path> = [];
 		const idSmart = this.thing?.idSmart;					//  use idSmart in case thing is a bulk alias
 		if (this.pathString != 'exemplar' && idSmart && !['', 'k.id_unknown'].includes(idSmart)) {
-			const toRelationships = g.hierarchy.relationships_get_byPredicate_to_thing(this.predicateID, false, idSmart);
-			for (const toRelationship of toRelationships) {		// loop through all to relationships
-				const path = this.appendID(toRelationship.id);	// add each toRelationship's id
-				paths.push(path);								// and push onto the paths_to
+			const relationships = g.hierarchy.relationships_get_byPredicate_to_thing(this.predicateID, false, idSmart);
+			for (const relationship of relationships) {			// loop through all to relationships
+				const path = this.appendID(relationship.id);	// add each relationship's id
+				paths.push(path);								// and push onto the paths_to							// and push onto the paths_to
 			}
 			u.paths_orders_normalize_remoteMaybe(paths);
 		}
-		
 		return paths;
 	}
 
@@ -157,19 +157,10 @@ export default class Path {
 	relationshipAt(back: number = 1): Relationship | null { return g.hierarchy?.relationship_get_byHID(this.idAt(back).hash()) ?? null; }
 
 	includedInPaths(paths: Array<Path>): boolean {
-		if (!paths) {
-			return false;
-		}
-		const found = paths.filter(p => {
+		return (paths?.filter(p => {
 			const path = p as Path;
 			return path && path.matchesPath(this);
-		}).length > 0;
-		if (found) {
-			if (this.title == 'Nancy Montier') {
-				console.log('hah')
-			}
-		}
-		return found;
+		}).length > 0) ?? false;
 	}
 
 	dotColor(isInverted: boolean): string {
@@ -189,7 +180,7 @@ export default class Path {
 		return g.hierarchy.path_remember_unique(ids.join(k.pathSeparator));
 	}
 
-	idAt(back: number = 1): string {
+	idAt(back: number = 1): string {	// default 1 == last
 		const ids = this.ids;
 		if (back > ids.length) {
 			return '';
@@ -197,13 +188,12 @@ export default class Path {
 		return ids.slice(-(Math.max(1, back)))[0];
 	}
 
-	thingAt(back: number = 1): Thing | null {
-		const isEmpthPathString = this.pathString == '';
+	thingAt(back: number = 1): Thing | null {			// default 1 == last
 		const relationship = this.relationshipAt(back);
-		if (!isEmpthPathString && relationship) {
-			return !relationship ? null : relationship.toThing;
+		if (this.pathString != '' && relationship) {
+			return relationship.toThing;
 		}
-		return g.root ?? null;
+		return g.root;
 	}
 
 	thing_isImmediateParentOf(path: Path): boolean {
@@ -218,8 +208,8 @@ export default class Path {
 	isAllExpandedFrom(path: Path | null): boolean {
 		if (!this.matchesPath(path)) {
 			let tweenPath: Path = this;
-			let limit = path?.ids.length ?? 0;
-			while (limit < tweenPath.ids.length) {
+			let limit = path?.id_count ?? 0;
+			while (limit < tweenPath.id_count) {
 				tweenPath = tweenPath.stripBack();	// go backwards on this path
 				if (!tweenPath.isExpanded) {		// stop when path is not expanded
 					return false;
@@ -303,21 +293,22 @@ export default class Path {
 	}
 
 	things_ancestryWithin(thresholdWidth: number): [number, number, Array<Thing>] {
-		const h = g.hierarchy;
-		const things = this.things.reverse();
+		const things = this.things?.reverse() ?? [];
 		const array: Array<Thing> = [];
 		let numberOfParents = 0;	// do not include fatPolygon separator in width of crumb of first thing
 		let totalWidth = 0;
 		let sum = 0;
 		for (const thing of things) {
-			const crumbWidth = thing.crumbWidth(numberOfParents);
-			if ((totalWidth + crumbWidth) > thresholdWidth) {
-				break;
+			if (thing) {
+				const crumbWidth = thing.crumbWidth(numberOfParents);
+				if ((totalWidth + crumbWidth) > thresholdWidth) {
+					break;
+				}
+				numberOfParents = thing.parents.length;
+				sum = sum * 10 + numberOfParents;
+				totalWidth += crumbWidth;
+				array.push(thing);
 			}
-			numberOfParents = thing.parents.length;
-			sum = sum * 10 + numberOfParents;
-			totalWidth += crumbWidth;
-			array.push(thing);
 		}
 		return [sum, totalWidth, array.reverse()];
 	}
@@ -365,6 +356,7 @@ export default class Path {
 
 	grabOnly() {
 		// debug.log_edit(`GRAB ${this.titles}`);
+		console.log(`grabOnly ${this.titles}`);
 		s_paths_grabbed.set([this]);
 		this.toggleToolsGrab();
 	}
@@ -458,12 +450,12 @@ export default class Path {
 	}
 
 	async order_normalizeRecursive_remoteMaybe(remoteWrite: boolean, visited: Array<number> = []) {
-		const hID = this.hashedPath;
+		const hid = this.hashedPath;
 		const childPaths = this.childPaths;
-		if (!visited.includes(hID) && childPaths && childPaths.length > 1) {
+		if (!visited.includes(hid) && childPaths && childPaths.length > 1) {
 			await u.paths_orders_normalize_remoteMaybe(childPaths, remoteWrite);
 			for (const childPath of childPaths) {
-				childPath.order_normalizeRecursive_remoteMaybe(remoteWrite, [...visited, hID]);
+				childPath.order_normalizeRecursive_remoteMaybe(remoteWrite, [...visited, hid]);
 			}
 		}
 	}

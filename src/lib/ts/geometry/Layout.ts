@@ -30,7 +30,7 @@ export default class Layout {
 			y = extent.y - childPath.visibleProgeny_halfHeight + 0.5;
 			x = origin.x + child.titleWidth + k.dot_size + k.line_stretch - 1;
 		} else {
-			console.log('grandchildren origin not computable');
+			console.log('LAYOUT originForChildrenOf null childPath.thing');
 		}
 		return new Point(x, y);
 	}

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, Size, Point, Thing, ZIndex, signals, svgPath, onDestroy, dbDispatch, Direction } from '../../ts/common/GlobalImports';
+	import { g, k, u, Path, Size, Point, Thing, ZIndex, signals, svgPath, onDestroy, dbDispatch, Direction } from '../../ts/common/GlobalImports';
 	import { s_path_here, s_graphRect, s_show_details, s_paths_grabbed, s_path_toolsCluster } from '../../ts/common/State';
 	import Crumb from '../kit/Crumb.svelte';
 	import SVGD3 from '../svg/SVGD3.svelte';
@@ -15,7 +15,7 @@
 	onDestroy(() => { rebuild_signalHandler.disconnect() })
 
 	$: {
-		const trigger = $s_path_here.title + $s_graphRect + $s_paths_grabbed.length;
+		const trigger = ($s_path_here?.title ?? '') + $s_graphRect + ($s_paths_grabbed?.length ?? 0);
 		if (!path || trigger || ancestors.length == 0) {
 			const windowWidth = u.windowSize.width;
 			path = path_lastGrabbed() ?? g.rootPath;	// assure we have a path

@@ -108,7 +108,7 @@ export class ChildMapRect extends Rect {
 		this.path = path;
 
 		if (this.child == null) {
-			console.log('null thing');
+			console.log('ChildMapRect: null childPath.thing');
 		}
 	}
 }

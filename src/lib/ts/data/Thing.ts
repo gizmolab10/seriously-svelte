@@ -41,8 +41,10 @@ export default class Thing extends Datum {
 	get hierarchy():		Hierarchy { return g.hierarchy; }
 
 	get thing_isBulk_expanded(): boolean {
+		// needed because cross db paths do not work quite right
 		if (this.isBulkAlias) {
-			for (const path of get(s_paths_expanded)) {
+			const paths = get(s_paths_expanded);
+			for (const path of paths) {
 				if (this.id == path.thing?.id) {
 					return true;
 				}

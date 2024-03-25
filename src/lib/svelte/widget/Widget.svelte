@@ -34,6 +34,7 @@
 
 	onMount( () => {
 		if (thing == null) {
+			console.log('bad thing');
 			u.noop();
 		}
 		updateBorderStyle();
@@ -95,6 +96,9 @@
 	}
 
 	function updateBorderStyle() {
+		if (!thing) {
+			console.log(`no thing ${path.titles}`)
+		}
 		thing.updateColorAttributes(path);
 		border = showingBorder ? 'border: ' + thing.grabAttributes : '';
 		background = showingBorder ? 'background-color: ' + k.color_background : '';
