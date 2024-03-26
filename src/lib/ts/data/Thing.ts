@@ -27,7 +27,7 @@ export default class Thing extends Datum {
 		this.trait = trait;
 	};
 	
-	get idSmart():			   string { return this.isBulkAlias ? this.bulkRootID : this.id; }		// can straddle base ids
+	get idBridging():		   string { return this.isBulkAlias ? this.bulkRootID : this.id; }		// can straddle base ids
 	get fields():	Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get isHere():			  boolean { return (get(s_path_here).thing?.id ?? '') == this.id; }
 	get parentPaths():	  Array<Path> { return this.fromPathsFor(Predicate.idContains); }
@@ -36,6 +36,7 @@ export default class Thing extends Datum {
 	get titleWidth():		   number { return u.getWidthOf(this.title) + 6; }
 	get parentIDs():	Array<string> { return this.parents.map(t => t.id); }
 	get hasMultipleParents(): boolean { return this.parentPaths.length > 1; }
+	get isAcrossBulk():		  boolean { return this.baseID != g.hierarchy.db.baseID; }
 	get isBulkAlias():		  boolean { return this.trait == IDTrait.bulk; }
 	get isRoot():			  boolean { return this == g.root; }
 	get hierarchy():		Hierarchy { return g.hierarchy; }
@@ -56,8 +57,8 @@ export default class Thing extends Datum {
 	debugLog(message: string) { this.log(DebugFlag.things, message); }
 	log(option: DebugFlag, message: string) { debug.log_maybe(option, message + k.space + this.description); }
 
-	thing_isInDifferentBulkThan(other: Thing) {
-		return this.baseID != other.baseID || (other.isBulkAlias && !this.isBulkAlias && this.baseID != other.title);
+	override isInDifferentBulkThan(other: Thing): boolean {
+		return super.isInDifferentBulkThan(other) || (other.isBulkAlias && !this.isBulkAlias && this.baseID != other.title);
 	}
 
 	things_fromPaths(paths: Array<Path>): Array<Thing> {

@@ -43,7 +43,6 @@ export default class Path {
 	get lastChild(): Thing { return this.children.slice(-1)[0]; }
 	get order(): number { return this.relationship?.order ?? -1; }
 	get isHere(): boolean { return this.matchesStore(s_path_here); }
-	get hasChildren(): boolean { return this.childPaths.length > 0; }
 	get isExemplar(): boolean { return this.pathString == 'exemplar'; }
 	get title(): string { return this.thing?.title ?? 'missing title'; }
 	get siblingPaths(): Array<Path> { return this.fromPath.childPaths; }
@@ -59,6 +58,7 @@ export default class Path {
 	get titleRect(): Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
 	get things(): Array<Thing | null> { return g.hierarchy?.things_get_byPath(this); }
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
+	get hasChildren(): boolean { return this.children_relationships.length > 0; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get children(): Array<Thing> { return g.hierarchy?.things_get_byPaths(this.childPaths); }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
@@ -69,9 +69,7 @@ export default class Path {
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	
 	get thing(): Thing | null {
-		if (!this._thing) {
-			this._thing = this.thingAt() ?? null;	// must come after setting path string
-		}
+		this._thing = this.thingAt() ?? null;	// always recompute, cache is for debugging
 		return this._thing;
 	}
 
@@ -135,16 +133,32 @@ export default class Path {
 		return nextPath;
 	}
 
+	get idBridging(): string | null {
+		return this.thing?.idBridging ?? null;
+	}
+
+	get children_relationships(): Array<Relationship> {
+		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
+		if (this.pathString != 'exemplar' && id && !['', 'k.id_unknown'].includes(id)) {
+			return g.hierarchy.relationships_get_byPredicate_to_thing(this.predicateID, false, id);
+		}
+		return [];
+	}
+
 	get childPaths(): Array<Path> {
+		let log = false;
 		const paths: Array<Path> = [];
-		const idSmart = this.thing?.idSmart;					//  use idSmart in case thing is a bulk alias
-		if (this.pathString != 'exemplar' && idSmart && !['', 'k.id_unknown'].includes(idSmart)) {
-			const relationships = g.hierarchy.relationships_get_byPredicate_to_thing(this.predicateID, false, idSmart);
+		const relationships = this.children_relationships;
+		if (relationships.length > 0) {
 			for (const relationship of relationships) {			// loop through all to relationships
 				const path = this.appendID(relationship.id);	// add each relationship's id
-				paths.push(path);								// and push onto the paths_to							// and push onto the paths_to
+				paths.push(path);								// and push onto the paths_to
+				log = log || (path.pathString.length > 120);
 			}
 			u.paths_orders_normalize_remoteMaybe(paths);
+		}
+		if (log) {
+			console.log(`${paths.length} childPaths: ${paths.map(p => p.titles)}`);
 		}
 		return paths;
 	}
@@ -282,7 +296,7 @@ export default class Path {
 	}
 
 	appendChild(thing: Thing | null): Path {
-		const id = this.thing?.idSmart;
+		const id = this.thing?.idBridging;
 		if (thing && id) {
 			const relationship = g.hierarchy?.relationship_get_byPredicate_from_to(Predicate.idContains, id, thing.id);
 			if (relationship) {

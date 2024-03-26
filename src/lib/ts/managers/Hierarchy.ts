@@ -658,7 +658,7 @@ export default class Hierarchy {
 		if (fromThing && !toThing.isBulkAlias) {
 			const isBulkAlias = fromThing.isBulkAlias;
 			const idPredicateContains = Predicate.idContains;
-			const fromID = fromThing.idSmart;
+			const fromID = fromThing.idBridging;
 			const changingBulk = isBulkAlias || toThing.baseID != this.db.baseID;
 			const baseID = changingBulk ? toThing.baseID : fromThing.baseID;
 			if (changingBulk) {
@@ -729,7 +729,7 @@ export default class Hierarchy {
 		const newParentPath = RIGHT ? path.path_ofNextSibling(false) : path.stripBack(2);
 		const newParent = newParentPath?.thing;
 		if (thing && newParent && newParentPath) {
-			if (thing.thing_isInDifferentBulkThan(newParent)) {		// should move across bulks
+			if (thing.isInDifferentBulkThan(newParent)) {		// should move across bulks
 				this.path_remember_bulk_remoteRelocateRight(path, newParentPath);
 			} else {
 				const relationship = path.relationship;

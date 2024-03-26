@@ -7,7 +7,7 @@
 	export let thing;
 	export let path;
 	let size = k.dot_size;
-	let childrenCount = path.children.length;
+	let childrenCount = path.children_relationships.length;
 	let insideFillColor = k.color_background;
 	let tinyDotsOffset = size * -0.4 + 0.01;
 	let insidePath = svgPath.circle(16, 6);

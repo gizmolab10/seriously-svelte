@@ -11,4 +11,6 @@ export default class Datum extends RemoteIdentifiable {
 
 	log(option: DebugFlag, message: string) {}
 
+	isInDifferentBulkThan(other: Datum) { return this.baseID != other.baseID; }
+
 }
