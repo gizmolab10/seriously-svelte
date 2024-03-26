@@ -14,10 +14,10 @@ import Airtable from 'airtable';
 //////////////////////////////
 
 export default class DBAirtable implements DBInterface {
-	personalAccessToken = 'patgiHQQb6LnEJtf4';
-	basePublic = new Airtable({ apiKey: this.personalAccessToken }).base('appq1IjzmiRdlZi3H');
+	personalAccessToken = 'patGTiWbebGZTw0fh.dd17a194aea98f9e4e918d333babde7bcd39903b4179b139ac8866a5f3cfe5b6';
 	baseCatalist = new Airtable({ apiKey: this.personalAccessToken }).base('apphGUCbYIEJLvRrR');
-	base = this.baseCatalist;
+	basePublic = new Airtable({ apiKey: this.personalAccessToken }).base('appq1IjzmiRdlZi3H');
+	base = this.basePublic;
 	relationships_table = this.base(TypeDatum.relationships);
 	predicates_table = this.base(TypeDatum.predicates);
 	things_table = this.base(TypeDatum.things);
