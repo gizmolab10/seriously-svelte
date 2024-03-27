@@ -33,17 +33,13 @@ export default class DBAirtable implements DBInterface {
 	setHasData(flag: boolean) { this.hasData = flag; }
 	things_errorMessage = 'Error in Things:';
 	async fetch_allFrom(baseID: string) {}
+	queryStrings_apply() {}
 	
 	get hierarchy(): Hierarchy { 
 		if (this._hierarchy == null) {
 			this._hierarchy = new Hierarchy(this);
 		}
 		return this._hierarchy!;
-	}
-
-	queryStrings_apply() {
-		const queryStrings = k.queryString;
-		this.baseID = queryStrings.get('name') ?? queryStrings.get('dbid') ?? 'apphGUCbYIEJLvRrR';
 	}
 
 	async fetch_all() {
