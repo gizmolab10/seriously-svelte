@@ -84,7 +84,7 @@ export default class SVGPath {
 		let offset = new Point(isOdd ? radius : 0, isOdd ? 0 : radius);2
 		while (i++ < count) {
 			path = path + this.circle(size, 2, offset.offsetBy(new Point(-0.7, 0.3)));
-			offset = this.rotatePoint(offset, increment);
+			offset = offset.rotateBy(increment);
 		}
 		return path;
 	}
@@ -135,9 +135,9 @@ export default class SVGPath {
 			const preceder = halfWay - tweak;
 			const follower = halfWay + tweak;
 			data.push({
-				controlOne: this.rotatePoint(outer, preceder).offsetBy(offset),
-				controlTwo: this.rotatePoint(outer, follower).offsetBy(offset),
-				end:		this.rotatePoint(inner,    angle).offsetBy(offset),
+				controlOne: outer.rotateBy(preceder).offsetBy(offset),
+				controlTwo: outer.rotateBy(follower).offsetBy(offset),
+				end:		inner.rotateBy(   angle).offsetBy(offset),
 			});
 		}
 		const start = data[vertices - 1].end;
@@ -145,15 +145,6 @@ export default class SVGPath {
 		const path = 'M' + start.description+ k.comma + arcs.join(k.space) + 'Z';
 		// console.log(path);
 		return path;
-	}
-
-	rotatePoint(point: Point, angle: number): Point {
-		const cos = Math.cos(angle);
-		const sin = Math.sin(angle);
-		return new Point(
-			point.x * cos - point.y * sin,
-			point.x * sin + point.y * cos
-		);
 	}
 
 }

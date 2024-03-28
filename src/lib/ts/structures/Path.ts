@@ -1,7 +1,7 @@
 import { g, k, u, get, Rect, Size, Thing, debug, signals, Wrapper, IDWrapper } from '../common/GlobalImports';
+import { s_path_here, s_paths_grabbed, s_title_editing, s_layout_asCircles } from '../common/State';
 import { TitleState, Predicate, Relationship, AlteringParent } from '../common/GlobalImports';
 import { s_paths_expanded, s_path_toolsCluster, s_altering_parent } from '../common/State';
-import { s_path_here, s_paths_grabbed, s_title_editing } from '../common/State';
 import { Writable } from 'svelte/store';
 
 export default class Path {
@@ -52,21 +52,21 @@ export default class Path {
 	get lineWrapper(): Wrapper | null { return this.wrappers[IDWrapper.line]; }
 	get showsChildren(): boolean { return this.isExpanded && this.hasChildren; }
 	get titleWrapper(): Wrapper | null { return this.wrappers[IDWrapper.title]; }
+	get hasChildren(): boolean { return this.children_relationships.length > 0; }
 	get toolsGrabbed(): boolean { return this.matchesStore(s_path_toolsCluster); }
 	get revealWrapper(): Wrapper | null { return this.wrappers[IDWrapper.reveal]; }
 	get widgetWrapper(): Wrapper | null { return this.wrappers[IDWrapper.widget]; }
 	get titleRect(): Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
 	get things(): Array<Thing | null> { return g.hierarchy?.things_get_byPath(this); }
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
-	get hasChildren(): boolean { return this.children_relationships.length > 0; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get children(): Array<Thing> { return g.hierarchy?.things_get_byPaths(this.childPaths); }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
 	get isEditing(): boolean { return this.matchesPath(get(s_title_editing)?.editing ?? null); }
-	get showsReveal(): boolean { return this.hasChildren || (this.thing?.isBulkAlias ?? false); }
 	get titles(): Array<string> { return this.things?.map(t => ` \"${t ? t.title : 'null'}\"`) ?? []; }
 	get isStoppingEdit(): boolean { return this.matchesPath(get(s_title_editing)?.stopping ?? null); }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
+	get showsReveal(): boolean { return !get(s_layout_asCircles) && (this.hasChildren || (this.thing?.isBulkAlias ?? false)); }
 	
 	get thing(): Thing | null {
 		this._thing = this.thingAt() ?? null;	// always recompute, cache is for debugging
@@ -370,7 +370,7 @@ export default class Path {
 
 	grabOnly() {
 		// debug.log_edit(`GRAB ${this.titles}`);
-		console.log(`grabOnly ${this.titles}`);
+		// console.log(`grabOnly ${this.titles}`);
 		s_paths_grabbed.set([this]);
 		this.toggleToolsGrab();
 	}
@@ -416,13 +416,17 @@ export default class Path {
 	clicked_dragDot(shiftKey: boolean) {
         if (!this.isExemplar) {
 			s_title_editing?.set(null);
-			if (get(s_altering_parent)) {
-				g.hierarchy.path_alterMaybe(this);
-			} else if (shiftKey || this.isGrabbed) {
-				this.toggleGrab();
+			if (get(s_layout_asCircles)) {
+				this.becomeHere();
 			} else {
-				this.grabOnly();
-            }
+				if (get(s_altering_parent)) {
+					g.hierarchy.path_alterMaybe(this);
+				} else if (shiftKey || this.isGrabbed) {
+					this.toggleGrab();
+				} else {
+					this.grabOnly();
+				}
+			}
 			signals.signal_rebuildWidgets_fromHere();
         }
 	}

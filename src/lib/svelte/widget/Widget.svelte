@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { k, u, Thing, Point, debug, ZIndex, Wrapper, signals } from '../../ts/common/GlobalImports';
+	import { s_layout_asCircles, s_thing_fontFamily, s_path_toolsCluster } from '../../ts/common/State';
 	import { onMount, debugReact, IDSignal, IDWrapper } from '../../ts/common/GlobalImports';
-	import { s_path_here, s_title_editing, s_paths_grabbed, } from '../../ts/common/State';
-	import { s_thing_fontFamily, s_path_toolsCluster } from '../../ts/common/State';
+	import { s_path_here, s_title_editing, s_paths_grabbed } from '../../ts/common/State';
 	import ToolsCluster from './ToolsCluster.svelte';
 	import TitleEditor from './TitleEditor.svelte';
 	import RevealDot from './RevealDot.svelte';
@@ -84,7 +84,7 @@
 		const shallShowCluster = path.toolsGrabbed && !path.isHere;
 		const change = (isEditing != shallEdit || isGrabbed != shallGrab || showingCluster != shallShowCluster);
 		if (change) {
-			showingBorder = shallEdit || shallGrab;
+			showingBorder = (shallEdit || shallGrab) && !$s_layout_asCircles;
 			showingCluster = shallShowCluster;
 			isGrabbed = shallGrab;
 			isEditing = shallEdit;

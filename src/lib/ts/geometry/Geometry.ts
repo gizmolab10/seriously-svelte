@@ -22,6 +22,15 @@ export class Point {
 	offsetBySize(size: Size):		  Point { return new Point(this.x + size.width, this.y + size.height); }
 	distanceTo(point: Point):		  Point { return new Point(Math.abs(point.x - this.x), Math.abs(point.y - this.y)) }
 	static square(length: number):	  Point { return new Point(length, length); }
+
+	rotateBy(angle: number): Point {
+		const cos = Math.cos(angle);
+		const sin = Math.sin(angle);
+		return new Point(
+			this.x * cos - this.y * sin,
+			this.x * sin + this.y * cos
+		);
+	}
 }
 
 export class Size {
