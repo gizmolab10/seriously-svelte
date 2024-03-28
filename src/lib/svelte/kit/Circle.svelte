@@ -2,7 +2,7 @@
   import { k, Point, debug, ZIndex } from '../../ts/common/GlobalImports'
   export let color_background = debug.lines ? 'transparent' : k.color_background;
   export let zindex = ZIndex.dots;
-  export let thickness;
+  export let thickness = 1;
   export let radius;
   export let center;
   export let color;

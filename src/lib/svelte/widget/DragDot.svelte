@@ -1,11 +1,10 @@
 <script>
 	import { k, u, Rect, Size, Point, Thing, debug, ZIndex, onMount, signals, svgPath } from "../../ts/common/GlobalImports";
+	import { s_paths_grabbed, s_altering_parent, s_layout_asCircles, s_path_toolsCluster } from '../../ts/common/State';
 	import { Wrapper, Direction, onDestroy, dbDispatch, AlteringParent } from "../../ts/common/GlobalImports";
-	import { s_paths_grabbed, s_altering_parent, s_path_toolsCluster } from '../../ts/common/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
 	import Box from '../kit/Box.svelte';
 	export let center = new Point(0, 0);
-	export let thing;
 	export let path;
 	let strokeColor = k.color_background;
 	let extraColor = k.color_background;
@@ -49,7 +48,7 @@
 	}
 
 	$: {
-		const _ = thing;
+		const _ = path.thing;
 		updateColors();
 	}
 
@@ -59,11 +58,11 @@
 	}
 
 	function updateColors() {
-		if (thing) {
-			thing.updateColorAttributes(path);
+		if (path.thing) {
+			path.thing.updateColorAttributes(path);
 			fillColor = debug.lines ? 'transparent' : path.dotColor(isHovering != altering);
 			extraColor = path.dotColor(!isHovering && !altering)
-			strokeColor = thing.color;
+			strokeColor = path.thing.color;
 		}
 	}
 
@@ -104,8 +103,8 @@
 	}
 
 	function updatePathExtra() {
-		if (thing) {
-			const count = thing.parents.length;		
+		if (path.thing) {
+			const count = path.thing.parents.length;		
 			if (count > 1) {
 				path_extra = svgPath.tinyDots_linear(6, 0.5, false, count, size / 2);
 				return;
@@ -115,7 +114,11 @@
 	}
 
 	function updatePaths() {
-		path_scalable = svgPath.oval(size, false);
+		if ($s_layout_asCircles) {
+			path_scalable = svgPath.circle(size, size - 1);
+		} else {
+			path_scalable = svgPath.oval(size, false);
+		}
 		updatePathExtra();
 	}
 

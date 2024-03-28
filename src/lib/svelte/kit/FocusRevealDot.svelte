@@ -3,7 +3,6 @@
 	import TriangleButton from '../svg/TriangleButton.svelte';
 	export let center = new Point();
     export let path = '';
-	export let here;
 	let size = k.dot_size;
 
 	function fillColors_closure(isFilled) {
@@ -29,9 +28,9 @@
 <TriangleButton
 	fillColors_closure={fillColors_closure}
 	direction={Direction.right}
-	strokeColor={here.color}
+	strokeColor={path.thing.color}
 	onClick={onClick}
-	id={here.title}
+	id={path.thing.title}
 	center={center}
     size={size}
 />

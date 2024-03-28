@@ -4,7 +4,6 @@
 	import { onMount, Wrapper, Direction, onDestroy, dbDispatch, IDWrapper } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte';
 	export let center;
-	export let thing;
 	export let path;
 	let size = k.dot_size;
 	let childrenCount = path.children_relationships.length;
@@ -13,7 +12,7 @@
 	let insidePath = svgPath.circle(16, 6);
 	let fillColor = k.color_background;
 	let tinyDotsDiameter = size * 1.8;
-	let strokeColor = thing.color;
+	let strokeColor = path.thing.color;
 	let revealWrapper = Wrapper;
 	let hasInsidePath = false;
 	let isHovering = false;
@@ -39,14 +38,14 @@
 	}
 
 	$: {
-		if (strokeColor != thing.color) {
-			strokeColor = thing.color
+		if (strokeColor != path.thing.color) {
+			strokeColor = path.thing.color
 			updateColors();
 		}
 	}
 
 	$: {
-		if ($s_paths_grabbed != null || thing != null) {
+		if ($s_paths_grabbed != null || path.thing != null) {
 			updateColors();
 			updateScalablePaths();
 		}
@@ -62,14 +61,14 @@
 	}
 
 	function updateColors() {
-		thing.updateColorAttributes(path);
+		path.thing.updateColorAttributes(path);
 		const collapsedOrGrabbed = !path.isExpanded || path.isGrabbed;
 		fillColor = path.dotColor(collapsedOrGrabbed != isHovering, path);
 		insideFillColor = path.dotColor(collapsedOrGrabbed == isHovering, path);
 	}
 
 	function updateScalablePaths() {
-		hasInsidePath = path.toolsGrabbed || thing.isBulkAlias;
+		hasInsidePath = path.toolsGrabbed || path.thing.isBulkAlias;
 		insideOffset = hasInsidePath ? 0 : -1;
 		if (!path.showsReveal || path.toolsGrabbed) {
 			scalablePath = svgPath.circle(size, size - 1);
@@ -78,7 +77,7 @@
 			const direction = goLeft ? Direction.left : Direction.right;
 			scalablePath = svgPath.fatPolygon(size, direction);
 		}
-		if (thing.isBulkAlias) {
+		if (path.thing.isBulkAlias) {
 			insidePath = svgPath.circle(size, 3);
 		} else if (path.toolsGrabbed) {
 			insidePath = svgPath.xCross(size, 1.5);
@@ -91,7 +90,7 @@
 			$s_path_toolsCluster = null;
 			$s_altering_parent = null;
 			signals.signal_relayoutWidgets_fromHere();
-		} else if (path.hasChildren || thing.isBulkAlias) {
+		} else if (path.hasChildren || path.thing.isBulkAlias) {
 			g.hierarchy.path_rebuild_remoteMoveRight(path, !path.isExpanded, true, false);
 		}
 	}

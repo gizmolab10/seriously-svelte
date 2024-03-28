@@ -4,10 +4,9 @@
 	import { s_title_editing, s_paths_grabbed, s_path_toolsCluster } from '../../ts/common/State';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
-	export let thing;
 	export let path;
 	let padding = `0.5px 0px 0px 7px`;	// down half a pixel, 7 over to make room for drag dot
-	let titleWidth = u.getWidthOf(thing.title);
+	let titleWidth = u.getWidthOf(path.thing.title);
 	let titleWrapper: Wrapper;
 	let originalTitle = '';
 	let isEditing = false;
@@ -17,8 +16,8 @@
 	let input = null;
 	let clickTimer;
 
-	var hasChanges = () => { return originalTitle != thing.title; };
-	function handleInput(event) { thing.title = event.target.value; };
+	var hasChanges = () => { return originalTitle != path.thing.title; };
+	function handleInput(event) { path.thing.title = event.target.value; };
 	function handleMouseUp() { clearTimeout(clickTimer); }
 	
 	onMount(() => {
@@ -28,7 +27,7 @@
 	});
 
 	function handle_key_down(event) {
-		if (thing && path.isEditing && canAlterTitle(event)) {
+		if (path.thing && path.isEditing && canAlterTitle(event)) {
 			switch (event.key) {	
 				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); g.hierarchy.path_edit_remoteCreateChildOf(path.fromPath); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
@@ -97,7 +96,7 @@
 			event.preventDefault();
 			if (!path.isGrabbed) {
 				path.grabOnly();
-			} else if (k.allow_TitleEditing && !path.isRoot && !thing.isBulkAlias) {
+			} else if (k.allow_TitleEditing && !path.isRoot && !path.thing.isBulkAlias) {
 				path.startEdit();
 				input.focus();
 				return;
@@ -137,7 +136,7 @@
 
 		const _ = $s_paths_grabbed;
 		const editPath = $s_title_editing;
-		if (k.allow_TitleEditing && !thing.isBulkAlias) {
+		if (k.allow_TitleEditing && !path.thing.isBulkAlias) {
 			if (path.isStoppingEdit) {
 				debug.log_edit(`STOPPING ${path.title}`);
 				$s_title_editing = null;
@@ -154,7 +153,7 @@
 				isEditing = !isEditing;
 			}
 		}
-		cursorStyle = (!path.isRoot && !thing.isBulkAlias && (path.isEditing || path.isGrabbed)) ? '' : 'cursor: pointer';
+		cursorStyle = (!path.isRoot && !path.thing.isBulkAlias && (path.isEditing || path.isGrabbed)) ? '' : 'cursor: pointer';
 	}
 
 	function stopAndClearEditing() {
@@ -171,13 +170,13 @@
 	}
 
 	function invokeBlurNotClearEditing() {
-		if (path.isEditing && thing) {
+		if (path.isEditing && path.thing) {
 			isEditing = false;
 			extractRange();
 			input?.blur();
-			if (hasChanges() && !thing.isExemplar) {
-				dbDispatch.db.thing_remoteUpdate(thing);
-				originalTitle = thing.title;		// so hasChanges will be correct
+			if (hasChanges() && !path.thing.isExemplar) {
+				dbDispatch.db.thing_remoteUpdate(path.thing);
+				originalTitle = path.thing.title;		// so hasChanges will be correct
 				path.signal_relayoutWidgets();
 			}
 		}
@@ -228,7 +227,7 @@
 			padding: {padding};
 			font-size: {fontSize};
 			font-family: {fontFamily};'>
-		{thing.title}
+		{path.thing.title}
 	</span>
 	<input
 		type='text'
@@ -237,7 +236,7 @@
 		bind:this={input}
 		on:blur={handleBlur}
 		on:input={handleInput}
-		bind:value={thing.title}
+		bind:value={path.thing.title}
 		on:cut={handleCutOrPaste}
 		on:mouseup={handleMouseUp}
 		on:keydown={handle_key_down}
@@ -248,7 +247,7 @@
 		style='left: 10px;
 			{cursorStyle};
 			padding: {padding};
-			color: {thing.color};
+			color: {path.thing.color};
 			width: {titleWidth}px;
 			font-size: {fontSize};
 			z-index: {ZIndex.text};

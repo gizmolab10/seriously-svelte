@@ -1,34 +1,36 @@
 export default class Constants {
-	public dot_size: number;
-	public width_max: number;
-	public row_height: number;
-	public line_stretch: number;
-	public height_banner: number;
-	public width_details: number;
-	public halfIncrement: number;
-	public thing_fontSize: number;
-	public height_titleAtTop: number;
-	public circle_focus_radius: number;
-	public threshold_longClick: number;
-	public threshold_doubleClick: number;
-	public color_highlighted: string;
-	public color_background: string;
-    public color_disabled: string;
-	public name_bulkAdmin: string;
-	public pathSeparator: string;
-	public title_default: string;
-	public title_line: string;
-	public id_unknown: string;
-	public newLine: string;
-	public comma: string;
-	public space: string;
-	public empty: string;
-	public titleIsAtTop: boolean;
-	public showControls: boolean;
-	public allow_GraphEditing: boolean;
-	public allow_TitleEditing: boolean;
-	public allow_HorizontalScrolling: boolean;
-	public queryString: URLSearchParams;
+	dot_size: number;
+	width_max: number;
+	row_height: number;
+	line_stretch: number;
+	height_banner: number;
+	width_details: number;
+	halfIncrement: number;
+	circle_offsetY: number;
+	thing_fontSize: number;
+	height_titleAtTop: number;
+	circle_focus_radius: number;
+	threshold_longClick: number;
+	threshold_doubleClick: number;
+	circle_necklace_radius: number;
+	color_highlighted: string;
+	color_background: string;
+    color_disabled: string;
+	name_bulkAdmin: string;
+	pathSeparator: string;
+	title_default: string;
+	title_line: string;
+	id_unknown: string;
+	newLine: string;
+	comma: string;
+	space: string;
+	empty: string;
+	titleIsAtTop: boolean;
+	showControls: boolean;
+	allow_GraphEditing: boolean;
+	allow_TitleEditing: boolean;
+	allow_HorizontalScrolling: boolean;
+	queryString: URLSearchParams;
 
 	constructor() {
 		this.empty = '';
@@ -49,9 +51,10 @@ export default class Constants {
 		this.allow_TitleEditing = true;
 		this.titleIsAtTop = false;
 		this.showControls = false;
+		this.circle_necklace_radius = 160;
 		this.threshold_doubleClick = 100;
 		this.threshold_longClick = 500;
-		this.circle_focus_radius = 80;
+		this.circle_focus_radius = 90;
 		this.height_titleAtTop = 50;
 		this.halfIncrement = 0.5;
 		this.thing_fontSize = 14;
@@ -61,6 +64,8 @@ export default class Constants {
 		this.row_height = 20;
 		this.width_max = 200;
 		this.dot_size = 13;
+
+		this.circle_offsetY = 5 - this.dot_size;
 	}
 
 	queryStrings_apply() {

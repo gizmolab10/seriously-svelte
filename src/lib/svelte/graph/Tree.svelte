@@ -98,12 +98,12 @@
 				<Box rect={greenRect} color=green half={true}/>
 			{/if}
 			{#if !g.titleIsAtTop}
-				<Widget thing={here} path={$s_path_here} origin={origin_ofFirstReveal.offsetBy(new Point(-23 - offsetX_ofFirstReveal, -9))}/>
+				<Widget path={$s_path_here} origin={origin_ofFirstReveal.offsetBy(new Point(-23 - offsetX_ofFirstReveal, -9))}/>
 			{:else}
 				{#if $s_path_here.isGrabbed}
 					<Circle radius=10 center={origin_ofFirstReveal.offsetBy(new Point(-1, 1))} color={here.color} thickness=1/>
 				{/if}
-				<FocusRevealDot here={here} path={$s_path_here} center={origin_ofFirstReveal.offsetBy(new Point(-3, 0))}/>
+				<FocusRevealDot path={$s_path_here} center={origin_ofFirstReveal.offsetBy(new Point(-3, 0))}/>
 			{/if}
 			{#if $s_path_here.isExpanded}
 				<Children path={$s_path_here} origin={origin_ofChildren}/>

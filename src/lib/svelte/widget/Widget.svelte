@@ -9,7 +9,6 @@
 	import DragDot from './DragDot.svelte';
 	export let origin = new Point();
     export let path = '';
-	export let thing;
 	const hasExtraX = !path.isExpanded && (path.children_relationships.length > 3);
 	const rightPadding = hasExtraX ? 22.5 : 19;
 	const priorRowHeight = k.row_height;
@@ -31,19 +30,19 @@
 	let widget;
 
 	onMount( () => {
-		if (thing == null) {
+		if (path.thing == null) {
 			console.log('bad thing');
 			u.noop();
 		}
 		updateBorderStyle();
 		updateLayout();
-		debugReact.log_mount(`WIDGET ${thing.description} ${path.isGrabbed}`);
+		debugReact.log_mount(`WIDGET ${path.thing.description} ${path.isGrabbed}`);
 		const handler = signals.handle_anySignal((IDSignal, id) => {
 			for (const kind of IDSignal) {
 				switch (kind) {
 					case IDSignal.relayout:
-						if (id == thing.id) {
-							debugReact.log_layout(`WIDGET signal ${thing.description}`);
+						if (id == path.thing.id) {
+							debugReact.log_layout(`WIDGET signal ${path.thing.description}`);
 							updateLayout()
 						}
 						break;
@@ -67,7 +66,7 @@
 	$: {
 		if (priorOrigin != origin) {
 			setTimeout(() => {
-				debugReact.log_layout(`WIDGET origin ${thing.description}`);
+				debugReact.log_layout(`WIDGET origin ${path.thing.description}`);
 				updateLayout()
 			}, 1);
 			priorOrigin = origin;
@@ -81,7 +80,7 @@
 
 	function fullUpdate() {
 		const shallEdit = (path.isEditing);
-		const shallGrab = path.isGrabbed || (thing?.isExemplar ?? false);
+		const shallGrab = path.isGrabbed || (path.thing?.isExemplar ?? false);
 		const shallShowCluster = path.toolsGrabbed && !path.isHere;
 		const change = (isEditing != shallEdit || isGrabbed != shallGrab || showingCluster != shallShowCluster);
 		if (change) {
@@ -95,17 +94,17 @@
 	}
 
 	function updateBorderStyle() {
-		if (!thing) {
+		if (!path.thing) {
 			console.log(`no thing ${path.titles}`)
 		}
-		thing.updateColorAttributes(path);
-		border = showingBorder ? 'border: ' + thing.grabAttributes : '';
+		path.thing.updateColorAttributes(path);
+		border = showingBorder ? 'border: ' + path.thing.grabAttributes : '';
 		background = showingBorder ? 'background-color: ' + k.color_background : '';
 	}
 
 	function updateLayout() {
 		const size = k.dot_size;
-		const titleWidth = thing.titleWidth;
+		const titleWidth = path.thing.titleWidth;
 		const delta = showingBorder ? -0.5 : 0.5;
 		width = titleWidth - 18 + (size * (path.showsReveal ? 2 : 1.35));
 		padding = `0px ${rightPadding}px 0px 1px`;
@@ -122,7 +121,7 @@
 
 </script>
 
-<div class='widget' id='{thing.title}'
+<div class='widget' id='{path.thing.title}'
 	bind:this={widget}
 	style='
 		{border};
@@ -137,9 +136,9 @@
 		z-index: {ZIndex.widgets};
 		border-radius: {radius}px;
 	'>
-	<DragDot thing={thing} path={path}/>
-	<TitleEditor thing={thing} path={path} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
+	<DragDot path={path}/>
+	<TitleEditor path={path} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 	{#if path.showsReveal}
-		<RevealDot thing={thing} path={path} center={revealCenter}/>
+		<RevealDot path={path} center={revealCenter}/>
 	{/if}
 </div>
