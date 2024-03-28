@@ -1,7 +1,7 @@
 <script lang='ts'>
     import { svgPath, onDestroy, Direction, dbDispatch, transparentize, AlteringParent } from '../../ts/common/GlobalImports';
     import { g, k, u, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, signals } from '../../ts/common/GlobalImports';
-    import { s_user_graphOffset, s_altering_parent, s_path_toolsCluster } from '../../ts/common/State';
+    import { s_altering_parent, s_path_toolsCluster } from '../../ts/common/State';
     import { s_graphRect, s_show_details } from '../../ts/common/State';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
 	import CircularButton from '../kit/CircularButton.svelte';
@@ -20,7 +20,6 @@
     let countOfVisibleParents = 0;
     let parentSensitiveColor = '';
     let confirmingDelete = false;
-    let userOffset = new Point();
     let graphRect = new Rect();
     let toggle = false;
     let titleWidth = 0;
@@ -72,7 +71,6 @@
 	}
 
     function setup() {
-        userOffset = $s_user_graphOffset;
         path = $s_path_toolsCluster;
         thing = path?.thing;
     }
@@ -91,8 +89,7 @@
 	});
 
     $: {
-        if ((graphRect != $s_graphRect) || (userOffset != $s_user_graphOffset)) {
-            userOffset = $s_user_graphOffset;
+        if (graphRect != $s_graphRect) {
             graphRect = $s_graphRect;
             updateMaybeRedraw();
         }

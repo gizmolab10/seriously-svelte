@@ -1,16 +1,17 @@
 <script>
+	import { s_build, s_isBusy, s_path_here, s_db_type, s_graphRect, s_id_popupView, s_title_editing } from '../../ts/common/State';
 	import { g, k, u, get, Path, Rect, Size, Point, Thing, TypeDB, ZIndex, signals, onMount } from '../../ts/common/GlobalImports';
 	import { IDButton, Hierarchy, IDPersistant, dbDispatch, debugReact, persistLocal } from '../../ts/common/GlobalImports';
-	import { s_build, s_isBusy, s_path_here, s_db_type, s_graphRect } from '../../ts/common/State';
-	import { s_show_details, s_id_popupView, s_things_arrived } from '../../ts/common/State';
+	import { s_show_details, s_things_arrived, s_user_graphOffset, s_layout_asCircles } from '../../ts/common/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import Controls from './Controls.svelte';
 	import Help from '../help/Help.svelte';
 	import Details from './Details.svelte';
+	import Circles from './Circles.svelte';
 	import Crumbs from './Crumbs.svelte';
-	import Graph from './Graph.svelte';
+	import Tree from './Tree.svelte';
 	let rebuilds = 0;
 
 	$: { updateHerePath($s_path_here); }
@@ -24,6 +25,33 @@
 		}
 		g.graphRect_update();
 		rebuilds += 1;	// remount graph component
+	}
+
+	function handle_wheel(event) {
+		const canScroll = k.allow_HorizontalScrolling;
+		const offsetX = canScroll ? -event.deltaX : 0;
+		const offsetY = -event.deltaY;
+		if (Math.abs(offsetX) > 1 || Math.abs(offsetY) > 1) {
+			const offset = $s_user_graphOffset;
+			const newOffset = new Point(offset.x + offsetX, offset.y + offsetY);
+			g.graphOffset_setTo(newOffset);
+			rebuilds += 1;
+		}
+	};
+
+	async function globalHandleKeyDown(event) {
+		if ($s_title_editing)		{ return; } // let Title component consume the events
+		if (event.key == undefined)	{ alert('no key for ' + event.type); return; }
+		if (event.type == 'keydown') {
+			const key = event.key;
+			switch (key) {
+				case 'c': g.graphOffset_setTo(new Point()); break;
+				case '?': $s_id_popupView = IDButton.help; break;
+				case ']':
+				case '[': dbDispatch.db_next(key == ']'); break;
+				default:  await g.hierarchy.handle_key_down(event); break;
+			}
+		}
 	}
 
 </script>
@@ -64,8 +92,13 @@
 		position: absolute;
 		width: 1px;
 	}
+	.clipper {
+		overflow: hidden;
+		position: fixed;
+	}
 </style>
 
+<svelte:document on:keydown={globalHandleKeyDown}/>
 {#if $s_isBusy}
 	<p>Welcome to Seriously</p>
 	{#if $s_db_type != TypeDB.local}
@@ -127,7 +160,18 @@
 			<BuildNotes/>
 		{:else if $s_id_popupView == null}
 			{#key rebuilds}
-				<Graph/>
+				<div class='clipper' on:wheel={handle_wheel}
+					style='top:{$s_graphRect.origin.y}px;
+						left: {$s_graphRect.origin.x}px;
+						width: {$s_graphRect.size.width}px;
+						height: {$s_graphRect.size.height}px;
+						z-index: {ZIndex.panel};'>
+					{#if $s_layout_asCircles}
+						<Circles/>
+					{:else}
+						<Tree/>
+					{/if}
+				</div>
 			{/key}
 		{/if}
 	</div>

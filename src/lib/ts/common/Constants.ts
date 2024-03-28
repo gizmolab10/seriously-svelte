@@ -8,6 +8,7 @@ export default class Constants {
 	public halfIncrement: number;
 	public thing_fontSize: number;
 	public height_titleAtTop: number;
+	public circle_focus_radius: number;
 	public threshold_longClick: number;
 	public threshold_doubleClick: number;
 	public color_highlighted: string;
@@ -50,6 +51,7 @@ export default class Constants {
 		this.showControls = false;
 		this.threshold_doubleClick = 100;
 		this.threshold_longClick = 500;
+		this.circle_focus_radius = 80;
 		this.height_titleAtTop = 50;
 		this.halfIncrement = 0.5;
 		this.thing_fontSize = 14;

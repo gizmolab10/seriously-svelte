@@ -1,6 +1,6 @@
 import { Hierarchy, debugReact, dbDispatch, persistLocal, IDPersistant } from '../common/GlobalImports';
+import { s_path_here, s_graphRect, s_show_details, s_scale_factor, s_user_graphOffset } from './State';
 import { k, u, get, Path, Rect, Point, Thing, debug, builds } from '../common/GlobalImports'
-import { s_path_here, s_graphRect, s_show_details, s_scale_factor } from './State';
 
 class Globals {
 	hierarchy: Hierarchy;
@@ -54,8 +54,17 @@ class Globals {
 		const originOfGraph = new Point(left, top);
 		const sizeOfGraph = u.windowSize.reducedBy(originOfGraph);		// account for origin
 		const rect = new Rect(originOfGraph, sizeOfGraph);
-		s_graphRect.set(rect);											// used by Panel and Graph
-	};
+		s_graphRect.set(rect);											// used by Panel and Graph_Tree
+	}
+
+	graphOffset_setTo(origin: Point): boolean {
+		if (get(s_user_graphOffset) != origin) {
+			persistLocal.key_write(IDPersistant.origin, origin);
+			s_user_graphOffset.set(origin);
+			return true;
+		}
+		return false;
+	}
 
 }
 
