@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, Thing, Point, debug, ZIndex, Wrapper, signals } from '../../ts/common/GlobalImports';
-	import { onMount, onDestroy, debugReact, IDSignal, IDWrapper } from '../../ts/common/GlobalImports';
+	import { onMount, debugReact, IDSignal, IDWrapper } from '../../ts/common/GlobalImports';
 	import { s_path_here, s_title_editing, s_paths_grabbed, } from '../../ts/common/State';
 	import { s_thing_fontFamily, s_path_toolsCluster } from '../../ts/common/State';
 	import ToolsCluster from './ToolsCluster.svelte';
@@ -30,8 +30,6 @@
 	let top = 0;
 	let widget;
 
-	onDestroy( () => { any_signalHandler.disconnect(); });
-
 	onMount( () => {
 		if (thing == null) {
 			console.log('bad thing');
@@ -40,24 +38,25 @@
 		updateBorderStyle();
 		updateLayout();
 		debugReact.log_mount(`WIDGET ${thing.description} ${path.isGrabbed}`);
-	});
-
-	const any_signalHandler = signals.handle_anySignal((IDSignal, id) => {
-		for (const kind of IDSignal) {
-			switch (kind) {
-				case IDSignal.relayout:
-					if (id == thing.id) {
-						debugReact.log_layout(`WIDGET signal ${thing.description}`);
-						updateLayout()
-					}
-					break;
-				default:
-					fullUpdate();
-					break;
+		const handler = signals.handle_anySignal((IDSignal, id) => {
+			for (const kind of IDSignal) {
+				switch (kind) {
+					case IDSignal.relayout:
+						if (id == thing.id) {
+							debugReact.log_layout(`WIDGET signal ${thing.description}`);
+							updateLayout()
+						}
+						break;
+					default:
+						fullUpdate();
+						break;
+				}
 			}
-		}
-
+	
+		});
+		return () => { handler.disconnect() };
 	});
+
 
 	$: {
 		if (widget) {

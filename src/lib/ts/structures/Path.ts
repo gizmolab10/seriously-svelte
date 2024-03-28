@@ -74,7 +74,7 @@ export default class Path {
 	}
 
 	get isVisible(): boolean {
-		const here = g.herePath;
+		const here = get(s_path_here);
 		const incorporates = this.incorporates(here);
 		const expanded = this.isAllExpandedFrom(here);
 		return incorporates && expanded;

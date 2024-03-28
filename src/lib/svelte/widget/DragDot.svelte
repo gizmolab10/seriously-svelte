@@ -17,13 +17,11 @@
 	let isGrabbed = false;
 	let altering = false;
 	let clickCount = 0;
-	let handler = null;
 	let button = null;
 	let clickTimer;
 	let left = 0;
 	let top = 0;
 	
-    onDestroy(() => { handler?.disconnect(); })
 	function mouseOver(event) { updateColorsForHover(true); }
 	function handleMouseUp() { clearTimeout(clickTimer); }
 	function mouseOut(event) { updateColorsForHover(false); }
@@ -32,13 +30,14 @@
     onMount(() => {
 		updatePaths();
 		updateColorsForHover(false);
-        handler = signals.handle_alteringParent((alteration) => {
+        const handler = signals.handle_alteringParent((alteration) => {
 			const applyFlag = $s_path_toolsCluster && path.things_canAlter_asParentOf_toolsGrab;
 			altering = applyFlag ? (alteration != null) : false;
 			updatePathExtra();
 			updateColors();
         })
-    })
+		return () => { handler.disconnect() };
+	});
 
 	$: {
 		const grabbedPaths = $s_paths_grabbed;		// use state variable for react logic

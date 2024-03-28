@@ -1,6 +1,7 @@
-import { s_isBusy, s_db_loadTime, s_paths_grabbed, s_things_arrived, s_title_editing, s_altering_parent, s_path_toolsCluster } from '../common/State';
 import { g, k, u, get, User, Path, Thing, Grabs, debug, Access, IDTool, IDTrait, signals } from '../common/GlobalImports';
 import { TypeDB, Wrapper, Predicate, Relationship, AlteringParent, CreationOptions } from '../common/GlobalImports';
+import { s_title_editing, s_altering_parent, s_layout_asCircles, s_path_toolsCluster } from '../common/State';
+import { s_isBusy, s_path_here, s_db_loadTime, s_paths_grabbed, s_things_arrived } from '../common/State';
 import DBInterface from '../db/DBInterface';
 
 type Relationships_ByHID = { [hid: number]: Array<Relationship> }
@@ -510,7 +511,7 @@ export default class Hierarchy {
 
 	async paths_rebuild_traverse_remoteDelete(paths: Array<Path>) {
 		let needsRebuild = false;
-		if (g.herePath) {
+		if (get(s_path_here)) {
 			for (const path of paths) {
 				const thing = path.thing;
 				const fromPath = path.fromPath;
@@ -703,8 +704,10 @@ export default class Hierarchy {
 			const newIndex = index.increment(!up, siblings.length);
 			if (fromPath && !OPTION) {
 				const grabPath = fromPath.appendChild(siblings[newIndex]);
-				if (!grabPath.isVisible) {
-					grabPath.fromPath?.becomeHere();
+				if (get(s_layout_asCircles)) {
+					grabPath.becomeHere();
+				} else if (!grabPath.isVisible) {
+					fromPath.becomeHere();
 				}
 				if (SHIFT) {
 					grabPath.toggleGrab();

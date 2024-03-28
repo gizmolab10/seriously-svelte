@@ -5,27 +5,21 @@
 	import { s_show_details, s_things_arrived, s_user_graphOffset, s_layout_asCircles } from '../../ts/common/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
+	import Circles from '../graph/Circles.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import Controls from './Controls.svelte';
+	import Tree from '../graph/Tree.svelte';
 	import Help from '../help/Help.svelte';
 	import Details from './Details.svelte';
-	import Circles from './Circles.svelte';
 	import Crumbs from './Crumbs.svelte';
-	import Tree from './Tree.svelte';
 	let rebuilds = 0;
 
-	$: { updateHerePath($s_path_here); }
-	onMount(() => { updateHerePath($s_path_here); });
 	window.addEventListener('resize', (event) => { g.graphRect_update(); });
-	const rebuild_signalHandler = signals.handle_rebuildWidgets(() => { updateHerePath($s_path_here); });
 
-	function updateHerePath(newHerePath) {
-		if (newHerePath && !newHerePath.matchesPath(g.herePath)) {
-			g.herePath = newHerePath;
-		}
-		g.graphRect_update();
-		rebuilds += 1;	// remount graph component
-	}
+	onMount( () => {
+		const handler = signals.handle_rebuildWidgets((path) => { rebuilds += 1; });
+		return () => { handler.disconnect() };
+	});
 
 	function handle_wheel(event) {
 		const canScroll = k.allow_HorizontalScrolling;
@@ -159,7 +153,7 @@
 		{:else if $s_id_popupView == IDButton.builds}
 			<BuildNotes/>
 		{:else if $s_id_popupView == null}
-			{#key rebuilds}
+			{#key `${$s_path_here} ${rebuilds}`}
 				<div class='clipper' on:wheel={handle_wheel}
 					style='top:{$s_graphRect.origin.y}px;
 						left: {$s_graphRect.origin.x}px;

@@ -7,11 +7,11 @@
 	export let thing;
 	export let path;
 	let padding = `0.5px 0px 0px 7px`;	// down half a pixel, 7 over to make room for drag dot
+	let titleWidth = u.getWidthOf(thing.title);
 	let titleWrapper: Wrapper;
 	let originalTitle = '';
 	let isEditing = false;
 	let cursorStyle = '';
-	let titleWidth = 0;
 	let clickCount = 0;
 	let ghost = null;
 	let input = null;
@@ -43,6 +43,11 @@
 	}
 
 	$: {
+		const _ = $s_title_editing;
+		updateInputWidth();
+	}
+
+	$: {
 		if (input && !titleWrapper) {
 			titleWrapper = new Wrapper(input, path, IDWrapper.title);
 		}
@@ -54,11 +59,6 @@
 			input.style.width = `${titleWidth}px`;	// apply its width to the input element
 			// debug.log_edit(`WIDTH: ${titleWidth} ${path.title}`);
 		}
-	}
-
-	$: {
-		const _ = $s_title_editing;
-		updateInputWidth();
 	}
 
 	function canAlterTitle(event) {

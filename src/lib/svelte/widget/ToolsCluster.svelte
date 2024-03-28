@@ -1,6 +1,6 @@
 <script lang='ts'>
-    import { svgPath, onDestroy, Direction, dbDispatch, transparentize, AlteringParent } from '../../ts/common/GlobalImports';
-    import { g, k, u, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, signals } from '../../ts/common/GlobalImports';
+import { g, k, u, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, signals } from '../../ts/common/GlobalImports';
+import { svgPath, Direction, dbDispatch, transparentize, AlteringParent } from '../../ts/common/GlobalImports';
     import { s_altering_parent, s_path_toolsCluster } from '../../ts/common/State';
     import { s_graphRect, s_show_details } from '../../ts/common/State';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
@@ -28,11 +28,21 @@
 	let thing;
     let path;
 
-	onDestroy( () => { relayout_signalHandler.disconnect(); });
     function getC(type: string) { return centers[type] ?? new Point(); }
     function setC(type: string, center: Point) { return centers[type] = center; }
     function centers_isEmpty(): boolean { return Object.keys(centers).length == 0; }
-	onMount(() => { setup(); setTimeout(() => { updateMaybeRedraw(); }, 20) });
+
+    onMount(() => { 
+        setup();
+        setTimeout(() => { updateMaybeRedraw(); }, 20);	
+        const handler = signals.handle_relayoutWidgets((path) => {
+            setTimeout(() => {
+                update();
+                toggle = !toggle;
+            }, 1);      // wait for graph to relayout
+        });
+		return () => { handler.disconnect() };
+    });
 
     function alterationFor(id: string) {
         return(id == IDTool.add_parent) ? AlteringParent.adding : AlteringParent.deleting;
@@ -80,13 +90,6 @@
             toggle = !toggle;
         }
     }
-	
-	const relayout_signalHandler = signals.handle_relayoutWidgets((path) => {
-        setTimeout(() => {
-            update();
-            toggle = !toggle;
-        }, 1);      // wait for graph to relayout
-	});
 
     $: {
         if (graphRect != $s_graphRect) {

@@ -13,9 +13,6 @@
 	let childMapRectArray: Array<ChildMapRect> = [];
 	let priorTime = new Date().getTime();
 	let center = new Point();
-
-	onMount( () => { layoutChildren(); });
-	onDestroy( () => { signalHandler.disconnect(); });
 	
 	$: {
 		if ($s_graphRect) {
@@ -23,17 +20,21 @@
 		}
 	}
 	
-	const signalHandler = signals.handle_relayoutWidgets((signal_path) => {
-		const now = new Date().getTime();
-		if (path.isExpanded &&
-			((now - priorTime) > 100) &&
-			(!signal_path || signal_path.matchesPath(path))) {
-			priorTime = now;
-			debugReact.log_origins(origin.x + ' before timeout');
-			setTimeout(async () => {	// delay until all other handlers for this signal are done TODO: WHY?
-				layoutChildren();
-			}, 1);
-		}
+	onMount( () => {
+		layoutChildren();
+		const handler = signals.handle_relayoutWidgets((signal_path) => {
+			const now = new Date().getTime();
+			if (path.isExpanded &&
+				((now - priorTime) > 100) &&
+				(!signal_path || signal_path.matchesPath(path))) {
+				priorTime = now;
+				debugReact.log_origins(origin.x + ' before timeout');
+				setTimeout(async () => {	// delay until all other handlers for this signal are done TODO: WHY?
+					layoutChildren();
+				}, 1);
+			}
+		});
+		return () => { handler.disconnect() };
 	});
 	
 	function layoutChildren() {

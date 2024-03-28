@@ -1,12 +1,11 @@
 import { Hierarchy, debugReact, dbDispatch, persistLocal, IDPersistant } from '../common/GlobalImports';
-import { s_path_here, s_graphRect, s_show_details, s_scale_factor, s_user_graphOffset } from './State';
+import { s_graphRect, s_path_here, s_show_details, s_scale_factor, s_user_graphOffset } from './State';
 import { k, u, get, Path, Rect, Point, Thing, debug, builds } from '../common/GlobalImports'
 
 class Globals {
 	hierarchy: Hierarchy;
 	rootsPath: Path;
 	rootPath: Path;
-	herePath: Path;
 	root: Thing;
 	here: Thing;
 
@@ -21,12 +20,6 @@ class Globals {
 		persistLocal.queryStrings_apply();
 		debug.queryStrings_apply();
 		debugReact.queryStrings_apply();
-		s_path_here.subscribe((herePath: Path) => {
-			if (herePath && herePath != this.herePath) {
-				this.here = herePath.thing ?? this.root;
-				this.herePath = herePath;
-			}
-		});
 	}
  
 	zoomBy(factor: number): number {

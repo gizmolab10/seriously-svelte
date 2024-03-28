@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { s_id_popupView, s_path_toolsCluster, s_user_graphOffset, s_layout_asCircles } from '../../ts/common/State';
 	import { g, k, u, Path, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/GlobalImports';
-	import { IDButton, onDestroy, debugReact, dbDispatch, Predicate } from '../../ts/common/GlobalImports';
+	import { IDButton, onMount, debugReact, dbDispatch, Predicate } from '../../ts/common/GlobalImports';
 	import { s_path_here, s_graphRect, s_show_details, s_paths_grabbed } from '../../ts/common/State';
 	import { IDPersistant, IDSignal, persistLocal } from '../../ts/common/GlobalImports';
 	import FocusRevealDot from '../kit/FocusRevealDot.svelte';
@@ -19,16 +19,19 @@
 	let blueRect: Rect;
 	let redRect: Rect;
 	let toggle = true;
+	let here: Thing;
 	let height = 0;
 	let width = 0;
 	let left = 0;
 	let top = 0;
 
 	function rebuild() { toggle = !toggle; }
-	onDestroy(() => { relayout_signalHandler.disconnect(); });
 	
-	const relayout_signalHandler = signals.handle_relayoutWidgets((path) => {
-		updateOrigins();
+	onMount( () => {
+		const handler = signals.handle_relayoutWidgets((path) => {
+			updateOrigins();
+		});
+		return () => { handler.disconnect() };
 	});
 	
 	$: {
@@ -40,10 +43,10 @@
 			top = graphRect.origin.y;
 			updateOrigins();
 		}
-		if (g.here == null || g.here.id != $s_path_here) {
+		if (here == null || here.id != $s_path_here) {
 			const h = g.hierarchy;
-			g.here = !$s_path_here ? g.root : h.thing_get_byPath($s_path_here);
-			offsetX_ofFirstReveal = g.titleIsAtTop ? 0 : g.here?.titleWidth / 2;
+			here = !$s_path_here ? g.root : h.thing_get_byPath($s_path_here);
+			offsetX_ofFirstReveal = g.titleIsAtTop ? 0 : here?.titleWidth / 2;
 			updateOrigins();
 			rebuild();
 		}
@@ -62,7 +65,7 @@
 	}
 
 	function updateOrigins() {
-		if (g.here && graphRect) {
+		if (here && graphRect) {
 			childrenSize = $s_path_here.visibleProgeny_size;
 			const offsetX = 15 + ($s_show_details ? -k.width_details : 0) - (childrenSize.width / 2) - (k.dot_size / 2.5) + offsetX_ofFirstReveal;
 			const offsetY = -1 - graphRect.origin.y;
@@ -81,7 +84,7 @@
 
 </script>
 
-{#if g.here}
+{#if here}
 	{#key toggle}
 		<div class='tree'
 			style='transform: translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px);'
@@ -95,12 +98,12 @@
 				<Box rect={greenRect} color=green half={true}/>
 			{/if}
 			{#if !g.titleIsAtTop}
-				<Widget thing={g.here} path={$s_path_here} origin={origin_ofFirstReveal.offsetBy(new Point(-23 - offsetX_ofFirstReveal, -9))}/>
+				<Widget thing={here} path={$s_path_here} origin={origin_ofFirstReveal.offsetBy(new Point(-23 - offsetX_ofFirstReveal, -9))}/>
 			{:else}
 				{#if $s_path_here.isGrabbed}
-					<Circle radius=10 center={origin_ofFirstReveal.offsetBy(new Point(-1, 1))} color={g.here.color} thickness=1/>
+					<Circle radius=10 center={origin_ofFirstReveal.offsetBy(new Point(-1, 1))} color={here.color} thickness=1/>
 				{/if}
-				<FocusRevealDot here={g.here} path={$s_path_here} center={origin_ofFirstReveal.offsetBy(new Point(-3, 0))}/>
+				<FocusRevealDot here={here} path={$s_path_here} center={origin_ofFirstReveal.offsetBy(new Point(-3, 0))}/>
 			{/if}
 			{#if $s_path_here.isExpanded}
 				<Children path={$s_path_here} origin={origin_ofChildren}/>
