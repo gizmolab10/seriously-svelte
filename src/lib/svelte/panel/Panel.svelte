@@ -4,7 +4,7 @@
 	import { IDButton, Hierarchy, IDPersistant, dbDispatch, debugReact, persistLocal } from '../../ts/common/GlobalImports';
 	import { s_show_details, s_things_arrived, s_user_graphOffset, s_layout_asCircles } from '../../ts/common/State';
 	import CircularButton from '../kit/CircularButton.svelte';
-	import TitleEditor from '../widget/TitleEditor.svelte';
+	import EditorTitle from '../widget/EditorTitle.svelte';
 	import Circles from '../graph/Circles.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import Controls from './Controls.svelte';

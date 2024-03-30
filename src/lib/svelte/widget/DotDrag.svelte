@@ -1,6 +1,6 @@
 <script>
 	import { k, u, Rect, Size, Point, Thing, debug, ZIndex, onMount, signals, svgPath } from "../../ts/common/GlobalImports";
-	import { s_paths_grabbed, s_altering_parent, s_layout_asCircles, s_path_toolsCluster } from '../../ts/common/State';
+	import { s_paths_grabbed, s_altering_parent, s_layout_asCircles, s_path_clusterTools } from '../../ts/common/State';
 	import { Wrapper, Direction, onDestroy, dbDispatch, AlteringParent } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte';
 	import Box from '../kit/Box.svelte';
@@ -30,7 +30,7 @@
 		updatePaths();
 		updateColorsForHover(false);
         const handler = signals.handle_alteringParent((alteration) => {
-			const applyFlag = $s_path_toolsCluster && path.things_canAlter_asParentOf_toolsGrab;
+			const applyFlag = $s_path_clusterTools && path.things_canAlter_asParentOf_toolsGrab;
 			altering = applyFlag ? (alteration != null) : false;
 			updatePathExtra();
 			updateColors();
@@ -96,7 +96,7 @@
 		clickCount++;
 		clickTimer = setTimeout(() => {
 			if (clickCount === 1) {
-				path.clicked_dragDot(event.shiftKey);
+				path.clicked_dotDrag(event.shiftKey);
 				clearClicks();
 			}
 		}, k.threshold_doubleClick);
@@ -124,7 +124,7 @@
 
 </script>
 
-<button class='dragDot'
+<button class='dotDrag'
 	bind:this={button}
 	on:blur={u.ignore}
 	on:focus={u.ignore}
@@ -148,7 +148,7 @@
 		left: {center.x}px;
 		width: {size / 2}px;
 	'>
-	<SVGD3 name='dragDot'
+	<SVGD3 name='dotDrag'
 		width={size}
 		height={size}
 		fill={fillColor}

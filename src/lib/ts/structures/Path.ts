@@ -1,7 +1,7 @@
 import { g, k, u, get, Rect, Size, Thing, debug, signals, Wrapper, IDWrapper } from '../common/GlobalImports';
 import { s_path_here, s_paths_grabbed, s_title_editing, s_layout_asCircles } from '../common/State';
 import { TitleState, Predicate, Relationship, AlteringParent } from '../common/GlobalImports';
-import { s_paths_expanded, s_path_toolsCluster, s_altering_parent } from '../common/State';
+import { s_paths_expanded, s_path_clusterTools, s_altering_parent } from '../common/State';
 import { Writable } from 'svelte/store';
 
 export default class Path {
@@ -53,7 +53,7 @@ export default class Path {
 	get showsChildren(): boolean { return this.isExpanded && this.hasChildren; }
 	get titleWrapper(): Wrapper | null { return this.wrappers[IDWrapper.title]; }
 	get hasChildren(): boolean { return this.children_relationships.length > 0; }
-	get toolsGrabbed(): boolean { return this.matchesStore(s_path_toolsCluster); }
+	get toolsGrabbed(): boolean { return this.matchesStore(s_path_clusterTools); }
 	get revealWrapper(): Wrapper | null { return this.wrappers[IDWrapper.reveal]; }
 	get widgetWrapper(): Wrapper | null { return this.wrappers[IDWrapper.widget]; }
 	get titleRect(): Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
@@ -95,7 +95,7 @@ export default class Path {
 	}
 
 	get things_canAlter_asParentOf_toolsGrab(): boolean {
-		const path_toolGrab = get(s_path_toolsCluster);
+		const path_toolGrab = get(s_path_clusterTools);
 		const toolThing = path_toolGrab?.thing;
 		const thing = this.thing;
 		if (toolThing && !this.matchesPath(path_toolGrab) && thing && thing != toolThing) {
@@ -377,7 +377,7 @@ export default class Path {
 
 	becomeHere(): boolean {
 		const changed = !this.matchesPath(get(s_path_here));
-		s_path_toolsCluster.set(null);
+		s_path_clusterTools.set(null);
 		if (changed) {
 			s_path_here.set(this);
 			this.expand();
@@ -386,12 +386,12 @@ export default class Path {
 	}
 
 	toggleToolsGrab() {
-		const toolsPath = get(s_path_toolsCluster);
-		if (toolsPath) { // ignore if toolsCluster not in use
+		const toolsPath = get(s_path_clusterTools);
+		if (toolsPath) { // ignore if clusterTools not in use
 			if (this.matchesPath(toolsPath)) {
-				s_path_toolsCluster.set(null);
+				s_path_clusterTools.set(null);
 			} else if (!this.isRoot) {
-				s_path_toolsCluster.set(this);
+				s_path_clusterTools.set(this);
 			}
 		}
 	}
@@ -413,7 +413,7 @@ export default class Path {
 		g.rootPath.becomeHere();
 	}
 
-	clicked_dragDot(shiftKey: boolean) {
+	clicked_dotDrag(shiftKey: boolean) {
         if (!this.isExemplar) {
 			s_title_editing?.set(null);
 			if (get(s_layout_asCircles)) {
@@ -463,7 +463,7 @@ export default class Path {
 		if (paths.length == 0) {
 			rootPath.grabOnly();
 		} else {
-			this.toggleToolsGrab(); // do not show tools toolsCluster for root
+			this.toggleToolsGrab(); // do not show tools clusterTools for root
 		}
 	}
 

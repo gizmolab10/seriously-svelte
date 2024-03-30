@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, u, Path, Size, Point, Thing, ZIndex, signals, svgPath, onMount, dbDispatch, Direction } from '../../ts/common/GlobalImports';
-	import { s_path_here, s_graphRect, s_show_details, s_paths_grabbed, s_path_toolsCluster } from '../../ts/common/State';
+	import { s_path_here, s_graphRect, s_show_details, s_paths_grabbed, s_path_clusterTools } from '../../ts/common/State';
 	import Crumb from '../kit/Crumb.svelte';
 	import SVGD3 from '../svg/SVGD3.svelte';
 	let ancestors: Array<Thing> = [];

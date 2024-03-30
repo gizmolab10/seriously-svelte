@@ -2,10 +2,10 @@
 	import { g, k, u, Path, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/GlobalImports';
 	import { IDButton, onMount, debugReact, dbDispatch, Predicate } from '../../ts/common/GlobalImports';
 	import { s_path_here, s_graphRect, s_show_details, s_paths_grabbed } from '../../ts/common/State';
-	import { s_id_popupView, s_path_toolsCluster, s_user_graphOffset } from '../../ts/common/State';
+	import { s_id_popupView, s_path_clusterTools, s_user_graphOffset } from '../../ts/common/State';
 	import { IDPersistant, IDSignal, persistLocal } from '../../ts/common/GlobalImports';
-	import FocusRevealDot from '../kit/FocusRevealDot.svelte';
-	import ToolsCluster from '../widget/ToolsCluster.svelte';
+	import DotRevealFocus from '../kit/DotRevealFocus.svelte';
+	import ClusterTools from '../widget/ClusterTools.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Children from './Children.svelte';
@@ -103,12 +103,12 @@
 				{#if $s_path_here.isGrabbed}
 					<Circle radius=10 center={origin_ofFirstReveal.offsetBy(new Point(-1, 1))} color={here.color} thickness=1/>
 				{/if}
-				<FocusRevealDot path={$s_path_here} center={origin_ofFirstReveal.offsetBy(new Point(-3, 0))}/>
+				<DotRevealFocus path={$s_path_here} center={origin_ofFirstReveal.offsetBy(new Point(-3, 0))}/>
 			{/if}
 			{#if $s_path_here.isExpanded}
 				<Children path={$s_path_here} origin={origin_ofChildren}/>
 			{/if}
 		</div>
-		<ToolsCluster/>
+		<ClusterTools/>
 	{/key}
 {/if}

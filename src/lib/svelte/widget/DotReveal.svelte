@@ -1,5 +1,5 @@
 <script>
-	import { s_paths_expanded, s_altering_parent, s_paths_grabbed, s_path_toolsCluster } from '../../ts/common/State';
+	import { s_paths_expanded, s_altering_parent, s_paths_grabbed, s_path_clusterTools } from '../../ts/common/State';
 	import { g, k, u, get, Size, Thing, Point, debug, ZIndex, svgPath, signals } from "../../ts/common/GlobalImports";
 	import { onMount, Wrapper, Direction, onDestroy, dbDispatch, IDWrapper } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte';
@@ -18,7 +18,7 @@
 	let isHovering = false;
 	let scalablePath = '';
 	let insideOffset = 0;
-	let revealDot = null;
+	let dotReveal = null;
 	let toggle = false;
 	
 	onMount( () => { setIsHovering_updateColors(false); updateScalablePaths(); });
@@ -27,8 +27,8 @@
 	function handleMouseOver(event) { setIsHovering_updateColors(true); }
 
 	$: {
-		if (revealDot &&!path.matchesPath($s_path_toolsCluster)) {
-			revealWrapper = new Wrapper(revealDot, path, IDWrapper.reveal);
+		if (dotReveal &&!path.matchesPath($s_path_clusterTools)) {
+			revealWrapper = new Wrapper(dotReveal, path, IDWrapper.reveal);
 		}
 	}
 
@@ -87,7 +87,7 @@
 	function handleClick(event) {
 		setIsHovering_updateColors(false);
 		if (path.toolsGrabbed) {
-			$s_path_toolsCluster = null;
+			$s_path_clusterTools = null;
 			$s_altering_parent = null;
 			signals.signal_relayoutWidgets_fromHere();
 		} else if (path.hasChildren || path.thing.isBulkAlias) {
@@ -107,7 +107,7 @@
 </style>
 
 {#key toggle}
-	<div class='revealDot' style='
+	<div class='dotReveal' style='
 		top: {center.y}px;
 		left: {center.x}px;
 		position: absolute;
@@ -118,7 +118,7 @@
 			on:blur={u.ignore}
 			on:focus={u.ignore}
 			on:keyup={u.ignore}
-			bind:this={revealDot}
+			bind:this={dotReveal}
 			on:keydown={u.ignore}
 			on:keypress={u.ignore}
 			on:mouseout={mouseOut}
@@ -130,7 +130,7 @@
 				height: {size}px;
 			'>
 			{#key scalablePath}
-				<SVGD3 name='revealDot'
+				<SVGD3 name='dotReveal'
 					width={size}
 					height={size}
 					stroke={strokeColor}

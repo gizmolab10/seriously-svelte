@@ -1,5 +1,5 @@
 import { g, k, TypeDB, signals, IDPersistant, persistLocal } from '../common/GlobalImports';
-import { s_db_type, s_isBusy, s_db_loadTime, s_title_editing, s_path_toolsCluster } from '../common/State';
+import { s_db_type, s_isBusy, s_db_loadTime, s_title_editing, s_path_clusterTools } from '../common/State';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
@@ -25,7 +25,7 @@ export default class DBDispatch {
 						await g.hierarchy.hierarchy_fetch_andBuild(type);
 						g.rootPath = g.hierarchy.path_remember_unique();
 						persistLocal.paths_restore(true);
-						s_path_toolsCluster.set(null);
+						s_path_clusterTools.set(null);
 						s_title_editing.set(null);
 						g.hierarchy.hierarchy_completed(startTime);
 						signals.signal_rebuildWidgets_fromHere();

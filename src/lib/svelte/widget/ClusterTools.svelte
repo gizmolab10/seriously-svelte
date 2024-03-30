@@ -1,13 +1,13 @@
 <script lang='ts'>
 import { g, k, u, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, signals } from '../../ts/common/GlobalImports';
 import { svgPath, Direction, dbDispatch, transparentize, AlteringParent } from '../../ts/common/GlobalImports';
-    import { s_altering_parent, s_path_toolsCluster } from '../../ts/common/State';
+    import { s_altering_parent, s_path_clusterTools } from '../../ts/common/State';
     import { s_graphRect, s_show_details } from '../../ts/common/State';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TriangleButton from '../svg/TriangleButton.svelte';
 	import LabelButton from '../kit/LabelButton.svelte';
-	import RevealDot from './RevealDot.svelte';
+	import DotReveal from './DotReveal.svelte';
 	import Trash from '../svg/Trash.svelte';
     const clusterDiameter = 64;
 	const toolDiameter = k.dot_size * 1.4;
@@ -81,7 +81,7 @@ import { svgPath, Direction, dbDispatch, transparentize, AlteringParent } from '
 	}
 
     function setup() {
-        path = $s_path_toolsCluster;
+        path = $s_path_clusterTools;
         thing = path?.thing;
     }
 
@@ -99,8 +99,8 @@ import { svgPath, Direction, dbDispatch, transparentize, AlteringParent } from '
     }
 
     $: {
-        if (!$s_path_toolsCluster?.matchesPath(path) ?? false) {
-            path = $s_path_toolsCluster;
+        if (!$s_path_clusterTools?.matchesPath(path) ?? false) {
+            path = $s_path_clusterTools;
             if (path) {
                 thing = path?.thing;
                 color = thing?.color ?? '';
@@ -116,7 +116,7 @@ import { svgPath, Direction, dbDispatch, transparentize, AlteringParent } from '
 
 	function update(): boolean {
         const rect = path?.titleRect;
-        if (rect && $s_path_toolsCluster && rect.size.width != 0) {
+        if (rect && $s_path_clusterTools && rect.size.width != 0) {
             const offsetReveal = new Point(-5.7, -5.5);
             const offsetTitle = titleWidth * (path.isExpanded ? 1 : 1.034);
             const offsetX = 8.8 + offsetTitle - ($s_show_details ? k.width_details : 0);
@@ -160,7 +160,7 @@ import { svgPath, Direction, dbDispatch, transparentize, AlteringParent } from '
 </style>
 
 {#key toggle}
-    {#if $s_path_toolsCluster}
+    {#if $s_path_clusterTools}
         <div class='tools-cluster' style='
             position:absolute;
             z-index: {ZIndex.lines}'>
@@ -244,7 +244,7 @@ import { svgPath, Direction, dbDispatch, transparentize, AlteringParent } from '
                     <path d={svgPath.tinyDots_linear(3, 1)}/>
                 </svg>
             </LabelButton>
-            <RevealDot thing={thing} path={$s_path_toolsCluster} center={getC(IDTool.dismiss)}/>
+            <DotReveal thing={thing} path={$s_path_clusterTools} center={getC(IDTool.dismiss)}/>
             <TriangleButton
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.next, isFilled) }}
                 strokeColor={isDisabledFor(IDTool.next) ? k.color_disabled : parentSensitiveColor}
