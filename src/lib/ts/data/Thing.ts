@@ -1,4 +1,4 @@
-import { g, k, u, get, Path, Datum, debug, IDTrait, Predicate } from '../common/GlobalImports';
+import { g, k, u, get, Path, Datum, debug, IDTrait, Predicate, Relationship } from '../common/GlobalImports';
 import { Hierarchy, DebugFlag, dbDispatch, SeriouslyRange } from '../common/GlobalImports';
 import { s_path_here, s_paths_expanded } from '../common/State';
 import Airtable from 'airtable';
@@ -30,8 +30,8 @@ export default class Thing extends Datum {
 	get idBridging():		   string { return this.isBulkAlias ? this.bulkRootID : this.id; }		// can straddle base ids
 	get fields():	Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get isHere():			  boolean { return (get(s_path_here).thing?.id ?? '') == this.id; }
+	get parents():		 Array<Thing> { return this.fromThingsFor(Predicate.idContains); }
 	get parentPaths():	  Array<Path> { return this.fromPathsFor(Predicate.idContains); }
-	get parents():		 Array<Thing> { return this.things_fromPaths(this.parentPaths); }
 	get description():		   string { return this.id + ' \"' + this.title + '\"'; }
 	get titleWidth():		   number { return u.getWidthOf(this.title) + 6; }
 	get parentIDs():	Array<string> { return this.parents.map(t => t.id); }
@@ -61,17 +61,6 @@ export default class Thing extends Datum {
 		return super.isInDifferentBulkThan(other) || (other.isBulkAlias && !this.isBulkAlias && this.baseID != other.title);
 	}
 
-	things_fromPaths(paths: Array<Path>): Array<Thing> {
-		let fromThings: { [id: string]: Thing} = {};
-		for (const fromPath of paths) {
-			const fromThing = fromPath.thingAt(2);
-			if (fromThing) {
-				fromThings[fromThing.id] = fromThing;
-			}
-		}
-		return Object.values(fromThings);
-	}
-
 	crumbWidth(numberOfParents: number): number {
 		const none = this.titleWidth + 10;
 		const one = none + 11;
@@ -83,28 +72,79 @@ export default class Thing extends Datum {
 		}
 	}
 
-	fromPathsFor(predicateID: string): Array<Path> {
-		let fromPaths: {[hash: number]: Path} = {};
+	fromThingsFor(predicateID: string): Array<Thing> {
+		let fromThings: Array<Thing> = [];
 		if (!this.isRoot) {
-			const relationships = this.hierarchy.relationships_get_byPredicate_to_thing(predicateID, true, this.id);
+			const relationships = this.relationships_onceFrom(predicateID);
 			for (const relationship of relationships) {
-				const endID = relationship.id;
 				const thing = relationship.fromThing;
-				const paths = thing?.fromPathsFor(predicateID) ?? [];
+				if (thing) {
+					fromThings.push(thing);
+				}
+			}
+		}
+		return fromThings;
+	}
+
+	relationships_onceFrom(predicateID: string): Array<Relationship> {
+		return this.hierarchy.relationships_get_byPredicate_to_thing(predicateID, true, this.id);
+	}
+
+	relationships_fromRelationship(relationships: Array<Relationship>, predicateID: string): Array<Relationship> {
+		let found: Array<Relationship> = [];
+		for (const relationship of relationships) {
+			const more = relationship.fromThing?.relationships_onceFrom(predicateID) ?? [];
+			found.push(...more);
+		}
+		return found;
+	}
+
+	relationships_twiceFrom(predicateID: string): Array<Relationship> {
+		const relationships = this.relationships_onceFrom(predicateID);
+		return this.relationships_fromRelationship(relationships, predicateID);
+	}
+
+	traverse_fromsFor(predicateID: string, relationship: Relationship | null, applyTo: (ancestor: Thing, relationship: Relationship) => boolean) {
+		if (relationship && applyTo(this, relationship)) {
+			return true;
+		}
+		for (const fromRelationship of this.relationships_twiceFrom(predicateID)) {
+			if (fromRelationship.fromThing?.traverse_fromsFor(predicateID, fromRelationship, applyTo)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// test() {
+	// 	this.traverse_fromsFor(Predicate.idContains, null, ((ancestor, relationship) => {
+	// 		console.log(`${ancestor.title} ${relationship.toThing?.title}`);
+	// 		return false;
+	// 	}))
+	// }
+
+	fromPathsFor(predicateID: string): Array<Path> {
+		let pathsByHID: {[hash: number]: Path} = {};
+		if (!this.isRoot) {
+			const relationships = this.relationships_onceFrom(predicateID);
+			for (const relationship of relationships) {
 				function addPath(path: Path) {
 					const fullPath = path.appendID(endID);
-					fromPaths[fullPath.hashedPath] = fullPath;	
+					pathsByHID[fullPath.hashedPath] = fullPath;	
 				}
-				if (paths.length == 0) {
+				const endID = relationship.id;		// EGADS, this is the wrong relationship; needs the next one
+				const fromThing = relationship.fromThing;
+				const fromPaths = fromThing?.fromPathsFor(predicateID) ?? [];
+				if (fromPaths.length == 0) {
 					addPath(g.rootPath);
 				} else {
-					for (const path of paths) {
-						addPath(path);
+					for (const fromPath of fromPaths) {
+						addPath(fromPath);
 					}
 				}
 			}
 		}
-		const paths = Object.values(fromPaths);
+		const paths = Object.values(pathsByHID);
 		return u.sort_byTitleTop(paths).reverse();
 	}
 

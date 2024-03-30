@@ -274,11 +274,11 @@ export default class Path {
 		return null;
 	}
 	
-	visibleFromPaths(back: number = 1): Array<Path> {
+	visibleParentPaths(back: number = 1): Array<Path> {
 		const paths: Array<Path> = [];
-		for (const fromPath of (this.thing?.parentPaths ?? [])) {
-			if (fromPath.stripBack(back).isVisible) {
-				paths.push(fromPath);
+		for (const parentPath of (this.thing?.parentPaths ?? [])) {
+			if (parentPath.stripBack(back).isVisible) {
+				paths.push(parentPath);
 			}
 		}
 		return paths;

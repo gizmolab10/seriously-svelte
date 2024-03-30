@@ -5,7 +5,6 @@
 	import Box from '../kit/Box.svelte';
 	export let curveType: string = IDLine.up;
 	export let rect = new Rect();
-	export let thing: Thing;
 	export let path: Path;
 	const debugOffset = new Point(140.5, -1.2);
 	let lineWrapper: Wrapper;
@@ -28,7 +27,7 @@
 
 	$: {
 		if (k.dot_size > 0) {
-			// debugReact.log_origins(`LINE ${thing.description}`);
+			// debugReact.log_origins(`LINE ${path.thing.description}`);
 			switch (curveType) {
 				case IDLine.up:
 					origin = rect.origin;
@@ -73,7 +72,7 @@
 	style='z-index: {ZIndex.lines};
 		top: {origin.y - Math.max(1, size.height)}px;
 		left: {origin.x + 142}px;'>
-	<path d={scalablePath} stroke={thing.color} fill='none'/>
+	<path d={scalablePath} stroke={path.thing.color} fill='none'/>
 </svg>
 {#if debug.lines}
 	<Circle radius=1 center={rect.extent.offsetBy(debugOffset)} color=black thickness=1/>

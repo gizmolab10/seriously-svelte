@@ -106,7 +106,7 @@ import { svgPath, Direction, dbDispatch, transparentize, AlteringParent } from '
                 color = thing?.color ?? '';
                 titleWidth = thing?.titleWidth ?? 0;
                 const hasOneParent = (thing?.parents.length ?? 0) == 1;
-                countOfVisibleParents = path.visibleFromPaths(0).length;
+                countOfVisibleParents = path.visibleParentPaths(0).length;
                 parentSensitiveColor = (hasOneParent || path.isHere) ? k.color_disabled : color ;
                 update();
                 toggle = !toggle;

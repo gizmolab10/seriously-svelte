@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { s_id_popupView, s_path_toolsCluster, s_user_graphOffset, s_layout_asCircles } from '../../ts/common/State';
 	import { g, k, u, Path, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/GlobalImports';
 	import { IDButton, onMount, debugReact, dbDispatch, Predicate } from '../../ts/common/GlobalImports';
 	import { s_path_here, s_graphRect, s_show_details, s_paths_grabbed } from '../../ts/common/State';
+	import { s_id_popupView, s_path_toolsCluster, s_user_graphOffset } from '../../ts/common/State';
 	import { IDPersistant, IDSignal, persistLocal } from '../../ts/common/GlobalImports';
 	import FocusRevealDot from '../kit/FocusRevealDot.svelte';
 	import ToolsCluster from '../widget/ToolsCluster.svelte';

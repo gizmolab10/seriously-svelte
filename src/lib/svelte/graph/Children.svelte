@@ -57,8 +57,8 @@
 {/if}
 {#if path.isExpanded}
 	{#each childMapRectArray as map}
-		<Widget thing={map.child} path={map.childPath} origin={map.extent.offsetBy(widgetOffset)}/>
-		<Line thing={map.child} path={map.childPath} curveType={map.curveType} rect={map.offsetBy(lineOffset)}/>
+		<Widget path={map.childPath} origin={map.extent.offsetBy(widgetOffset)}/>
+		<Line path={map.childPath} curveType={map.curveType} rect={map.offsetBy(lineOffset)}/>
 		{#if map.childPath.showsChildren}
 			<Children path={map.childPath} origin={map.childOrigin}/>
 		{/if}

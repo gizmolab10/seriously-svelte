@@ -9,6 +9,8 @@ export default class Relationship extends Datum {
 	order: number;
 	idTo: string;
 
+	static get nullRelationship(): Relationship { return new Relationship('', null, '', '', '', 0, false); }
+
 	constructor(baseID: string, id: string | null, idPredicate: string, idFrom: string, idTo: string, order = 0, isRemotelyStored: boolean) {
 		super(baseID, id, isRemotelyStored);
 		this.idTo = idTo; // idTo is child

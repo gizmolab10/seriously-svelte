@@ -706,6 +706,7 @@ export default class Hierarchy {
 				const grabPath = fromPath.appendChild(siblings[newIndex]);
 				if (get(s_layout_asCircles)) {
 					grabPath.becomeHere();
+					grabPath.grabOnly();
 				} else if (!grabPath.isVisible) {
 					fromPath.becomeHere();
 				}

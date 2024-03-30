@@ -6,24 +6,14 @@ export default class Layout {
 
 	constructor(path: Path, origin: Point) {
 		const childPaths = path.childPaths;
-		const length = childPaths.length;
-		let index = 0;
 		if (get(s_layout_asCircles)) {
-			const radius = k.circle_necklace_radius;
-			const angleIncrement = k.circle_angle_increment;
-			const angleStart = (length - 1) * angleIncrement / -2
-			const radial = new Point(radius, 0);
-			while (index < length) {
-				const childPath = childPaths[index];
-				const angle = angleStart + angleIncrement * index;
-				const circumfralPoint = radial.rotateBy(angle);
-				const childOrigin = origin.offsetBy(circumfralPoint);
-				const childMapRect = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, childPath, path);
-				this.childMapRectArray.push(childMapRect);
-				index += 1;
-			}
+			const parentPaths = path.thingAt(2)?.parentPaths ?? [];
+			this.circles_layout(childPaths, 0, path, origin);
+			this.circles_layout(parentPaths, Math.PI, path, origin);
 		} else {
 			let sumOfSiblingsAbove = -path.visibleProgeny_height() / 2; // start out negative and grow positive
+			const length = childPaths.length;
+			let index = 0;
 			const sizeX = k.line_stretch;
 			while (index < length) {
 				const childPath = childPaths[index];
@@ -37,6 +27,24 @@ export default class Layout {
 				sumOfSiblingsAbove += childHeight;
 				index += 1;
 			}
+		}
+	}
+
+	circles_layout(paths: Array<Path>, start: number, path: Path, origin: Point) {
+		let index = 0;
+		const length = paths.length;
+		const radius = k.circle_necklace_radius;
+		const angleIncrement = k.circle_angle_increment;
+		const angleStart = start + (length - 1) * angleIncrement / -2
+		const radial = new Point(radius, 0);
+		while (index < length) {
+			const childPath = paths[index];
+			const angle = angleStart + angleIncrement * index;
+			const circumfralPoint = radial.rotateBy(angle);
+			const childOrigin = origin.offsetBy(circumfralPoint);
+			const childMapRect = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, childPath, path);
+			this.childMapRectArray.push(childMapRect);
+			index += 1;
 		}
 	}
 

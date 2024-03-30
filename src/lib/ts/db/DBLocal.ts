@@ -20,25 +20,33 @@ export default class DBLocal implements DBInterface {
 
 	async fetch_all() {
 		const h = this.hierarchy;
-		const idA = this.localName('A');
-		const idB = this.localName('B');
-		const idC = this.localName('C');
-		const idD = this.localName('D');
-		const idE = this.localName('E');
-		const idR = this.localName('Root');
-		const idP = this.localName('P');
-		h.predicate_remember_runtimeCreateUnique(idP, 'contains', false);
-		h.thing_remember_runtimeCreateUnique('', idA, 'first', 'red', '1', false);
-		h.thing_remember_runtimeCreateUnique('', idC, 'third', 'orange', '3', false);
-		h.thing_remember_runtimeCreateUnique('', idD, 'sibling', 'green', 'a', false);
-		h.thing_remember_runtimeCreateUnique('', idB, 'second', 'salmon', '2', false);
-		h.thing_remember_runtimeCreateUnique('', idE, 'another', 'orchid', 'a', false);
-		h.thing_remember_runtimeCreateUnique('', idR, 'seriously', 'plum', IDTrait.root, false);
-		h.relationship_remember_runtimeCreateUnique('', this.localName('Dr'), idP, idA, idD, 0);
-		h.relationship_remember_runtimeCreateUnique('', this.localName('Er'), idP, idA, idE, 1);
-		h.relationship_remember_runtimeCreateUnique('', this.localName('Ar'), idP, idR, idA, 0);
-		h.relationship_remember_runtimeCreateUnique('', this.localName('Br'), idP, idR, idB, 1);
-		h.relationship_remember_runtimeCreateUnique('', this.localName('Cr'), idP, idR, idC, 2);
+		const idTa = this.localName('A');
+		const idTb = this.localName('B');
+		const idTc = this.localName('C');
+		const idTd = this.localName('D');
+		const idTe = this.localName('E');
+		const idTr = this.localName('Root');
+		const idPc = this.localName('Pc');
+		const idPr = this.localName('Pr');
+		h.predicate_remember_runtimeCreateUnique(idPr, 'relates', false);
+		h.predicate_remember_runtimeCreateUnique(idPc, 'contains', false);
+		h.thing_remember_runtimeCreateUnique('', idTa, 'first', 'red', '1', false);
+		h.thing_remember_runtimeCreateUnique('', idTb, 'second', 'blue', '2', false);
+		h.thing_remember_runtimeCreateUnique('', idTc, 'third', 'orange', '3', false);
+		h.thing_remember_runtimeCreateUnique('', idTd, 'sibling', 'green', 'a', false);
+		h.thing_remember_runtimeCreateUnique('', idTe, 'another', 'orchid', 'a', false);
+		h.thing_remember_runtimeCreateUnique('', idTr, 'start', 'plum', IDTrait.root, false);
+		h.relationship_remember_runtimeCreateUnique('', this.localName('Ra'), idPc, idTr, idTa, 0);
+		h.relationship_remember_runtimeCreateUnique('', this.localName('Rb'), idPc, idTr, idTb, 1);
+		h.relationship_remember_runtimeCreateUnique('', this.localName('Rc'), idPc, idTr, idTc, 2);
+		h.relationship_remember_runtimeCreateUnique('', this.localName('Rd'), idPc, idTa, idTb, 0);
+		h.relationship_remember_runtimeCreateUnique('', this.localName('Re'), idPc, idTa, idTd, 1);
+		h.relationship_remember_runtimeCreateUnique('', this.localName('Rf'), idPc, idTa, idTe, 2);
+		h.relationship_remember_runtimeCreateUnique('', this.localName('Rg'), idPc, idTb, idTc, 1);
+		h.relationship_remember_runtimeCreateUnique('', this.localName('Rh'), idPc, idTc, idTd, 0);
+		h.relationship_remember_runtimeCreateUnique('', this.localName('Ri'), idPc, idTe, idTd, 0);
+		h.relationship_remember_runtimeCreateUnique('', this.localName('Rj'), idPc, idTe, idTb, 1);
+		h.relationship_remember_runtimeCreateUnique('', this.localName('Rk'), idPc, idTb, idTd, 1);
 	};
 
 	queryStrings_apply() {}
