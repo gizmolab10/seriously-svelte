@@ -128,24 +128,6 @@ export default class Path {
 		return false;
 	}
 
-	get parentPaths(): Array<Path> {	// N.B.: only has one id in the path string
-		if (this.isRoot) {
-			return [];
-		}
-		const relationship_byHID: { [hid: number]: Relationship } = {};
-		for (const relationship of this.thing?.relationships_twiceFrom(Predicate.idContains) ?? []) {
-			const hid = relationship.toThing?.id.hash();
-			if (hid) {
-				relationship_byHID[hid] = relationship;
-			}
-		}
-		const relationships = Object.values(relationship_byHID);
-		if (relationships.length > 0) {
-			return relationships.map(r => new Path(r.id, r.idPredicate));
-		}
-		return [g.rootPath];
-	}
-
 	get next_siblingPath(): Path {
 		let nextPath: Path = this;
 		const hashedPath = this.hashedPath;

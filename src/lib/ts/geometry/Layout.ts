@@ -1,4 +1,4 @@
-import { k, get, Path, Rect, Size, Point, IDLine, ChildMapRect } from '../common/GlobalImports';
+import { k, get, Path, Rect, Size, Point, IDLine, Predicate, ChildMapRect } from '../common/GlobalImports';
 import { s_layout_asCircles } from '../common/State';
 
 export default class Layout {
@@ -7,8 +7,9 @@ export default class Layout {
 	constructor(path: Path, origin: Point) {
 		const childPaths = path.childPaths;
 		if (get(s_layout_asCircles)) {
+			const parentPaths = path.thing?.fromPaths_uniquelyFor(Predicate.idContains) ?? [];
 			this.circles_layout(childPaths, 0, path, origin);
-			this.circles_layout(path.parentPaths, Math.PI, path, origin);
+			this.circles_layout(parentPaths, Math.PI, path, origin);
 		} else {
 			let sumOfSiblingsAbove = -path.visibleProgeny_height() / 2; // start out negative and grow positive
 			const length = childPaths.length;
@@ -32,7 +33,7 @@ export default class Layout {
 	circles_layout(paths: Array<Path>, start: number, path: Path, origin: Point) {
 		let index = 0;
 		const length = paths.length;
-		const rowStart = (3 - length) / 2;
+		const rowStart = Math.max(-2, (6 - length)) / 2;
 		const radius = k.circle_necklace_radius;
 		const radial = new Point(radius, 0);
 		while (index < length) {

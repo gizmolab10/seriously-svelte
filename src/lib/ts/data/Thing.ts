@@ -90,39 +90,6 @@ export default class Thing extends Datum {
 		return this.hierarchy.relationships_get_byPredicate_to_thing(predicateID, true, this.id);
 	}
 
-	relationships_fromRelationship(relationships: Array<Relationship>, predicateID: string): Array<Relationship> {
-		let found: Array<Relationship> = [];
-		for (const relationship of relationships) {
-			const more = relationship.fromThing?.relationships_onceFrom(predicateID) ?? [];
-			found.push(...more);
-		}
-		return found;
-	}
-
-	relationships_twiceFrom(predicateID: string): Array<Relationship> {
-		const relationships = this.relationships_onceFrom(predicateID);
-		return this.relationships_fromRelationship(relationships, predicateID);
-	}
-
-	traverse_fromsFor(predicateID: string, relationship: Relationship | null, applyTo: (ancestor: Thing, relationship: Relationship) => boolean) {
-		if (relationship && applyTo(this, relationship)) {
-			return true;
-		}
-		for (const fromRelationship of this.relationships_twiceFrom(predicateID)) {
-			if (fromRelationship.fromThing?.traverse_fromsFor(predicateID, fromRelationship, applyTo)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	// test() {
-	// 	this.traverse_fromsFor(Predicate.idContains, null, ((ancestor, relationship) => {
-	// 		console.log(`${ancestor.title} ${relationship.toThing?.title}`);
-	// 		return false;
-	// 	}))
-	// }
-
 	fromPathsFor(predicateID: string): Array<Path> {
 		let pathsByHID: {[hash: number]: Path} = {};
 		if (!this.isRoot) {
@@ -146,6 +113,25 @@ export default class Thing extends Datum {
 		}
 		const paths = Object.values(pathsByHID);
 		return u.sort_byTitleTop(paths).reverse();
+	}
+	
+	fromPaths_uniquelyFor(predicateID: string): Array<Path> {
+		if (this.isRoot) {
+			return [];
+		}
+		const paths: Array<Path> = []
+		const parents = this.parents ?? [];
+		for (const parent of parents) {
+			if (parent.isRoot) {
+				paths.push(g.rootPath);
+			} else {
+				const relationships = g.hierarchy.relationships_get_byPredicate_to_thing(predicateID, true, parent.id);
+				if (relationships.length > 0){
+					paths.push(new Path(relationships[0].id, predicateID))
+				}
+			}
+		}
+		return paths.length > 0 ? paths : [g.rootPath];
 	}
 
 	updateColorAttributes(path: Path) {

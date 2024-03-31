@@ -2,8 +2,7 @@
 	import { s_paths_expanded, s_altering_parent, s_paths_grabbed, s_path_clusterTools } from '../../ts/common/State';
 	import { g, k, u, get, Size, Thing, Point, debug, ZIndex, svgPath, signals } from "../../ts/common/GlobalImports";
 	import { onMount, Wrapper, Direction, onDestroy, dbDispatch, IDWrapper } from "../../ts/common/GlobalImports";
-	import SVGD3 from '../svg/SVGD3.svelte';
-    export let thing;
+	import SVGD3 from '../svg/SVGD3.svelte'
     export let path;
 	export let center;
 	let size = k.dot_size;
