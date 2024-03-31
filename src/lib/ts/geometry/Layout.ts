@@ -32,15 +32,14 @@ export default class Layout {
 	circles_layout(paths: Array<Path>, start: number, path: Path, origin: Point) {
 		let index = 0;
 		const length = paths.length;
+		const rowStart = (3 - length) / 2;
 		const radius = k.circle_necklace_radius;
-		const angleIncrement = k.circle_angle_increment;
-		const angleStart = start + (length - 3) * angleIncrement / -2
 		const radial = new Point(radius, 0);
 		while (index < length) {
 			const childPath = paths[index];
-			const angle = angleStart + angleIncrement * index;
-			const circumfralPoint = radial.rotateBy(angle);
-			const childOrigin = origin.offsetBy(circumfralPoint);
+			const angle = Math.asin((rowStart + index) * k.row_height / radius);
+			const point = radial.rotateBy(start + angle);
+			const childOrigin = origin.offsetBy(point);
 			const childMapRect = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, childPath, null);
 			this.childMapRectArray.push(childMapRect);
 			index += 1;

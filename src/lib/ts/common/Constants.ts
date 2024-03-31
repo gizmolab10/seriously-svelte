@@ -13,7 +13,6 @@ export default class Constants {
 	threshold_longClick: number;
 	threshold_doubleClick: number;
 	circle_necklace_radius: number;
-	circle_angle_increment: number;
 	color_highlighted: string;
 	color_background: string;
     color_disabled: string;
@@ -53,7 +52,6 @@ export default class Constants {
 		this.titleIsAtTop = false;
 		this.showControls = false;
 		this.circle_necklace_radius = 160;
-		this.circle_angle_increment = 0.2;
 		this.threshold_doubleClick = 100;
 		this.threshold_longClick = 500;
 		this.circle_focus_radius = 90;
