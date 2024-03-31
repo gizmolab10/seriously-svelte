@@ -5,7 +5,8 @@
 	import SVGD3 from '../svg/SVGD3.svelte';
 	import Box from '../kit/Box.svelte';
 	export let center = new Point(0, 0);
-	export let path;
+    export let thing;
+    export let path;
 	let strokeColor = k.color_background;
 	let extraColor = k.color_background;
 	let fillColor = k.color_background;
@@ -27,10 +28,13 @@
 	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right-
 
     onMount(() => {
+		if (path) {
+			thing = path.thing;
+		}
 		updatePaths();
 		updateColorsForHover(false);
         const handler = signals.handle_alteringParent((alteration) => {
-			const applyFlag = $s_path_clusterTools && path.things_canAlter_asParentOf_toolsGrab;
+			const applyFlag = $s_path_clusterTools && path?.things_canAlter_asParentOf_toolsGrab;
 			altering = applyFlag ? (alteration != null) : false;
 			updatePathExtra();
 			updateColors();
@@ -40,7 +44,7 @@
 
 	$: {
 		const grabbedPaths = $s_paths_grabbed;		// use state variable for react logic
-		const grabbed = path.includedInPaths(grabbedPaths);
+		const grabbed = path?.includedInPaths(grabbedPaths);
 		if (isGrabbed != grabbed) {
 			isGrabbed = grabbed;
 			updateColors();
@@ -48,7 +52,7 @@
 	}
 
 	$: {
-		const _ = path.thing;
+		const _ = thing;
 		updateColors();
 	}
 
@@ -58,11 +62,11 @@
 	}
 
 	function updateColors() {
-		if (path.thing) {
-			path.thing.updateColorAttributes(path);
-			fillColor = debug.lines ? 'transparent' : path.dotColor(isHovering != altering);
-			extraColor = path.dotColor(!isHovering && !altering)
-			strokeColor = path.thing.color;
+		if (thing) {
+			thing.updateColorAttributes(path);
+			fillColor = debug.lines ? 'transparent' : path?.dotColor(isHovering != altering);
+			extraColor = path?.dotColor(!isHovering && !altering)
+			strokeColor = thing.color;
 		}
 	}
 
@@ -87,7 +91,7 @@
 
 	function handleDoubleClick(event) {
 		clearClicks();
-		if (path.becomeHere()) {
+		if (path?.becomeHere()) {
 			signals.signal_rebuildWidgets_fromHere();
 		}
     }
@@ -96,15 +100,15 @@
 		clickCount++;
 		clickTimer = setTimeout(() => {
 			if (clickCount === 1) {
-				path.clicked_dotDrag(event.shiftKey);
+				path?.clicked_dotDrag(event.shiftKey);
 				clearClicks();
 			}
 		}, k.threshold_doubleClick);
 	}
 
 	function updatePathExtra() {
-		if (path.thing) {
-			const count = path.thing.parents.length;		
+		if (thing) {
+			const count = thing.parents.length;		
 			if (count > 1) {
 				path_extra = svgPath.tinyDots_linear(6, 0.5, false, count, size / 2);
 				return;
@@ -156,7 +160,7 @@
 		scalablePath={path_scalable}
 	/>
 	{#if path_extra}
-		<SVGD3 name='dragInside'
+		<SVGD3 name='dotInside'
 			width={size}
 			height={size}
 			fill={extraColor}

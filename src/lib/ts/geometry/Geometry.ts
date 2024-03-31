@@ -102,16 +102,16 @@ export class Rect {
 }
 
 export class ChildMapRect extends Rect {
+	childPath: Path | null;
 	child: Thing | null;
 	childOrigin: Point;
 	curveType: string;
-	childPath: Path;
-	path: Path;
+	path: Path | null;
 
-	constructor(curveType: string, rect: Rect, childOrigin: Point, childPath: Path, path: Path) {
+	constructor(curveType: string, rect: Rect, childOrigin: Point, childPath: Path | null, path: Path | null) {
 		super(rect.origin.copy, rect.size.copy);
+		this.child = childPath?.thing ?? null;
 		this.childOrigin = childOrigin;
-		this.child = childPath.thing;
 		this.childPath = childPath;
 		this.curveType = curveType;
 		this.path = path;

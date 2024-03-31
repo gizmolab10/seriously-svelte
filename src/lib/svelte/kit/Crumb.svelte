@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, u, Thing, onMount, signals, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
 	import { s_path_here } from '../../ts/common/State';
-	export let path = '';
+    export let path;
 	const borderStyle = '1px solid';
 	let borderColor = k.color_background;
 	let border = `${borderStyle} ${borderColor}`;

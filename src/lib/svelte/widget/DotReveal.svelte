@@ -3,8 +3,9 @@
 	import { g, k, u, get, Size, Thing, Point, debug, ZIndex, svgPath, signals } from "../../ts/common/GlobalImports";
 	import { onMount, Wrapper, Direction, onDestroy, dbDispatch, IDWrapper } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte';
+    export let thing;
+    export let path;
 	export let center;
-	export let path;
 	let size = k.dot_size;
 	let childrenCount = path.children_relationships.length;
 	let insideFillColor = k.color_background;

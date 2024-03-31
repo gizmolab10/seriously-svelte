@@ -27,9 +27,9 @@ export default class Thing extends Datum {
 		this.trait = trait;
 	};
 	
-	get idBridging():		   string { return this.isBulkAlias ? this.bulkRootID : this.id; }		// can straddle base ids
 	get fields():	Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get isHere():			  boolean { return (get(s_path_here).thing?.id ?? '') == this.id; }
+	get idBridging():		   string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get parents():		 Array<Thing> { return this.fromThingsFor(Predicate.idContains); }
 	get parentPaths():	  Array<Path> { return this.fromPathsFor(Predicate.idContains); }
 	get description():		   string { return this.id + ' \"' + this.title + '\"'; }

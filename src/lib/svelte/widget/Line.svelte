@@ -5,7 +5,7 @@
 	import Box from '../kit/Box.svelte';
 	export let curveType: string = IDLine.up;
 	export let rect = new Rect();
-	export let path: Path;
+    export let path;
 	const debugOffset = new Point(140.5, -1.2);
 	let lineWrapper: Wrapper;
 	let origin = rect.origin;

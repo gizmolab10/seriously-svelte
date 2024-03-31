@@ -2,7 +2,7 @@
 	import { g, k, Point, debug, Direction, dbDispatch } from "../../ts/common/GlobalImports";
 	import TriangleButton from '../svg/TriangleButton.svelte';
 	export let center = new Point();
-    export let path = '';
+    export let path;
 	let size = k.dot_size;
 
 	function fillColors_closure(isFilled) {

@@ -1,4 +1,4 @@
-import { k, get, Path, Rect, Size, Point, ChildMapRect, IDLine } from '../common/GlobalImports';
+import { k, get, Path, Rect, Size, Point, IDLine, ChildMapRect } from '../common/GlobalImports';
 import { s_layout_asCircles } from '../common/State';
 
 export default class Layout {
@@ -7,9 +7,8 @@ export default class Layout {
 	constructor(path: Path, origin: Point) {
 		const childPaths = path.childPaths;
 		if (get(s_layout_asCircles)) {
-			const parentPaths = path.thingAt(2)?.parentPaths ?? [];
 			this.circles_layout(childPaths, 0, path, origin);
-			this.circles_layout(parentPaths, Math.PI, path, origin);
+			this.circles_layout(path.parentPaths, Math.PI, path, origin);
 		} else {
 			let sumOfSiblingsAbove = -path.visibleProgeny_height() / 2; // start out negative and grow positive
 			const length = childPaths.length;
@@ -35,14 +34,14 @@ export default class Layout {
 		const length = paths.length;
 		const radius = k.circle_necklace_radius;
 		const angleIncrement = k.circle_angle_increment;
-		const angleStart = start + (length - 1) * angleIncrement / -2
+		const angleStart = start + (length - 3) * angleIncrement / -2
 		const radial = new Point(radius, 0);
 		while (index < length) {
 			const childPath = paths[index];
 			const angle = angleStart + angleIncrement * index;
 			const circumfralPoint = radial.rotateBy(angle);
 			const childOrigin = origin.offsetBy(circumfralPoint);
-			const childMapRect = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, childPath, path);
+			const childMapRect = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, childPath, null);
 			this.childMapRectArray.push(childMapRect);
 			index += 1;
 		}

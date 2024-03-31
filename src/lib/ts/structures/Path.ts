@@ -1,6 +1,6 @@
-import { g, k, u, get, Rect, Size, Thing, debug, signals, Wrapper, IDWrapper } from '../common/GlobalImports';
+import { g, k, u, get, Rect, Size, Thing, debug, signals, Wrapper } from '../common/GlobalImports';
+import { IDWrapper, Predicate, TitleState, Relationship, AlteringParent } from '../common/GlobalImports';
 import { s_path_here, s_paths_grabbed, s_title_editing, s_layout_asCircles } from '../common/State';
-import { TitleState, Predicate, Relationship, AlteringParent } from '../common/GlobalImports';
 import { s_paths_expanded, s_path_clusterTools, s_altering_parent } from '../common/State';
 import { Writable } from 'svelte/store';
 
@@ -14,7 +14,7 @@ export default class Path {
 	constructor(pathString: string = '', predicateID: string = Predicate.idContains) {
 		this.pathString = pathString;
 		this.predicateID = predicateID;
-		this.hashedPath = pathString.hash();
+		this.hashedPath = this.pathString.hash();
 		if (g.hierarchy.isAssembled) {
 			this.subscriptions_setup();			// not needed during hierarchy assembly
 		}
@@ -48,6 +48,7 @@ export default class Path {
 	get siblingPaths(): Array<Path> { return this.fromPath.childPaths; }
 	get hashedIDs(): Array<number> { return this.ids.map(i => i.hash()); }
 	get relationship(): Relationship | null { return this.relationshipAt(); }
+	get idBridging(): string | null { return this.thing?.idBridging ?? null; }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
 	get lineWrapper(): Wrapper | null { return this.wrappers[IDWrapper.line]; }
 	get showsChildren(): boolean { return this.isExpanded && this.hasChildren; }
@@ -94,6 +95,14 @@ export default class Path {
 		return this.relationship?.idTo ?? k.id_unknown;
 	}
 
+	get children_relationships(): Array<Relationship> {
+		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
+		if (this.pathString != 'exemplar' && id && !['', 'k.id_unknown'].includes(id)) {
+			return g.hierarchy.relationships_get_byPredicate_to_thing(this.predicateID, false, id);
+		}
+		return [];
+	}
+
 	get things_canAlter_asParentOf_toolsGrab(): boolean {
 		const path_toolGrab = get(s_path_clusterTools);
 		const toolThing = path_toolGrab?.thing;
@@ -119,6 +128,24 @@ export default class Path {
 		return false;
 	}
 
+	get parentPaths(): Array<Path> {	// N.B.: only has one id in the path string
+		if (this.isRoot) {
+			return [];
+		}
+		const relationship_byHID: { [hid: number]: Relationship } = {};
+		for (const relationship of this.thing?.relationships_twiceFrom(Predicate.idContains) ?? []) {
+			const hid = relationship.toThing?.id.hash();
+			if (hid) {
+				relationship_byHID[hid] = relationship;
+			}
+		}
+		const relationships = Object.values(relationship_byHID);
+		if (relationships.length > 0) {
+			return relationships.map(r => new Path(r.id, r.idPredicate));
+		}
+		return [g.rootPath];
+	}
+
 	get next_siblingPath(): Path {
 		let nextPath: Path = this;
 		const hashedPath = this.hashedPath;
@@ -131,18 +158,6 @@ export default class Path {
 			nextPath = paths[next];
 		}
 		return nextPath;
-	}
-
-	get idBridging(): string | null {
-		return this.thing?.idBridging ?? null;
-	}
-
-	get children_relationships(): Array<Relationship> {
-		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
-		if (this.pathString != 'exemplar' && id && !['', 'k.id_unknown'].includes(id)) {
-			return g.hierarchy.relationships_get_byPredicate_to_thing(this.predicateID, false, id);
-		}
-		return [];
 	}
 
 	get childPaths(): Array<Path> {

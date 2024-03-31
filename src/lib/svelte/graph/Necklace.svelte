@@ -4,7 +4,7 @@
 	import Circle from '../kit/Circle.svelte';
 	import Line from '../widget/Line.svelte';
 	export let center: Point;
-	export let path: Path;
+    export let path;
 	let childOffset = new Point(k.dot_size / -3, k.circle_offsetY);;
 	let childMapRectArray: Array<ChildMapRect> = [];
 	

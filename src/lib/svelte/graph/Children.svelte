@@ -7,7 +7,7 @@
 	import Children from './Children.svelte';
 	import Line from '../widget/Line.svelte';
 	export let origin = new Point();
-    export let path: Path;
+    export let path;
 	const widgetOffset = new Point(12, (k.dot_size / -15) - 10.7);
 	const lineOffset = new Point(-123.5, -1);
 	let childMapRectArray: Array<ChildMapRect> = [];
