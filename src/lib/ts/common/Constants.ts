@@ -12,7 +12,7 @@ export default class Constants {
 	cluster_focus_radius: number;
 	threshold_longClick: number;
 	threshold_doubleClick: number;
-	cluster_necklace_radius: number;
+	necklace_radius: number;
 	color_highlighted: string;
 	color_background: string;
     color_disabled: string;
@@ -51,7 +51,7 @@ export default class Constants {
 		this.allow_TitleEditing = true;
 		this.titleIsAtTop = false;
 		this.showControls = false;
-		this.cluster_necklace_radius = 160;
+		this.necklace_radius = 160;
 		this.threshold_doubleClick = 100;
 		this.threshold_longClick = 500;
 		this.cluster_focus_radius = 70;

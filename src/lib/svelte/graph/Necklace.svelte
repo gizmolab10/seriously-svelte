@@ -26,7 +26,7 @@
 	center={center}
 	zindex=ZIndex.lines
 	color_background='transparent'
-	radius={k.cluster_necklace_radius}
+	radius={k.necklace_radius}
 	color={transparentize(path.thing.color, 0.8)}/>
 {#each childMapRectArray as map}
 	<Widget path={map.childPath} origin={map.childOrigin.offsetBy(childOffset)}/>
