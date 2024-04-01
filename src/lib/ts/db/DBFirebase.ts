@@ -465,7 +465,7 @@ export default class DBFirebase implements DBInterface {
 		switch (type) {
 			case TypeDatum.things:		
 				const thing = data as Thing;	
-				if (!thing.title && thing.title != '' || !thing.color && thing.color != '' || !thing.trait && thing.trait != '') {
+				if (!thing.title && thing.title != k.empty || !thing.color && thing.color != k.empty || !thing.trait && thing.trait != k.empty) {
 					return false;
 				}
 				break;
@@ -529,7 +529,7 @@ export default class DBFirebase implements DBInterface {
 export const dbFirebase = new DBFirebase();
 
 class Bulk {
-	baseID: string = '';
+	baseID: string = k.empty;
 	thingsCollection: CollectionReference | null = null;
 	relationshipsCollection: CollectionReference | null = null;
 	constructor(baseID: string) {

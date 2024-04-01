@@ -1,9 +1,9 @@
 <script>
     import { k, Point, ZIndex, onMount, onDestroy } from '../../ts/common/GlobalImports';
     import * as d3 from 'd3';
+    export let scalablePath = k.empty;
     export let position = 'absolute';
     export let zIndex = ZIndex.dots;
-    export let scalablePath = '';
     export let stroke = 'black';
     export let name = 'SVGD3';
     export let fill = 'none';

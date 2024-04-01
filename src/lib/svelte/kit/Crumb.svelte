@@ -6,8 +6,8 @@
 	let borderColor = k.color_background;
 	let border = `${borderStyle} ${borderColor}`;
 	let thing: Thing = path.thing;
-	let colorStyles = '';
-	let cursorStyle = '';
+	let colorStyles = k.empty;
+	let cursorStyle = k.empty;
 
 	onMount(() => { updateColors(); });
 	function mouseOver(event) { border = `${borderStyle} ${thing.color}`; }

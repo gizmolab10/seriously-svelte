@@ -11,7 +11,7 @@ export default class Path {
 	pathString: string;
 	hashedPath: number;
 
-	constructor(pathString: string = '', predicateID: string = Predicate.idContains) {
+	constructor(pathString: string = k.empty, predicateID: string = Predicate.idContains) {
 		this.pathString = pathString;
 		this.predicateID = predicateID;
 		this.hashedPath = this.pathString.hash();
@@ -201,7 +201,7 @@ export default class Path {
 
 	thingAt(back: number = 1): Thing | null {			// default 1 == last
 		const relationship = this.relationshipAt(back);
-		if (this.pathString != '' && relationship) {
+		if (this.pathString != k.empty && relationship) {
 			return relationship.toThing;
 		}
 		return g.root;

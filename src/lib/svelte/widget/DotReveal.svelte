@@ -14,9 +14,9 @@
 	let tinyDotsDiameter = size * 1.8;
 	let strokeColor = path.thing.color;
 	let revealWrapper = Wrapper;
+	let scalablePath = k.empty;
 	let hasInsidePath = false;
 	let isHovering = false;
-	let scalablePath = '';
 	let insideOffset = 0;
 	let dotReveal = null;
 	let toggle = false;

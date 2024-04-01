@@ -9,18 +9,18 @@ export class Point {
 	}
 	get verbose():			 		 string { return '(' + this.x + ', ' + this.y + ')'; }
 	get pixelVerbose():				 string { return this.x + 'px ' + this.y + 'px'; }
-	get copy():						  Point { return new Point(this.x, this.y); }
-	get asSize():					   Size { return new Size(this.x, this.y); }
 	get description():		 		 string { return this.x + ', ' + this.y; }
-	get dividedInHalf():			  Point { return this.multipliedBy(1/2); }
+	get asSize():					   Size { return new Size(Math.abs(this.x), Math.abs(this.y)); }
 	get negated():					  Point { return this.multipliedBy(-1); }
+	get dividedInHalf():			  Point { return this.multipliedBy(1/2); }
+	get copy():						  Point { return new Point(this.x, this.y); }
 	offsetByX(x: number):			  Point { return new Point(this.x + x, this.y); }
 	offsetByY(y: number):			  Point { return new Point(this.x, this.y + y); }
-	offsetEquallyBy(offset: number):  Point { return this.offsetBy(Point.square(offset)); }
 	offsetBy(point: Point):			  Point { return new Point(this.x + point.x, this.y + point.y); }
 	multipliedBy(multiplier: number): Point { return new Point(this.x * multiplier, this.y * multiplier) }
 	offsetBySize(size: Size):		  Point { return new Point(this.x + size.width, this.y + size.height); }
 	distanceTo(point: Point):		  Point { return new Point(Math.abs(point.x - this.x), Math.abs(point.y - this.y)) }
+	offsetEquallyBy(offset: number):  Point { return this.offsetBy(Point.square(offset)); }
 	static square(length: number):	  Point { return new Point(length, length); }
 
 	rotateBy(angle: number): Point {
@@ -38,8 +38,8 @@ export class Size {
 	height: number;
 
 	constructor(width: number = 0, height: number = 0) {
-		this.width = width;
-		this.height = height;
+		this.height = Math.abs(height);
+		this.width = Math.abs(width);
 	}
 
 	get verbose():					string { return '(' + this.width + ', ' + this.height + ')'; }

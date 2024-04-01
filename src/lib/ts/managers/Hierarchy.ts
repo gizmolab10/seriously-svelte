@@ -228,7 +228,7 @@ export default class Hierarchy {
 		const newThing = new Thing(baseID, null, from.title, from.color, from.trait, false);
 		const prohibitedTraits: Array<string> = [IDTrait.roots, IDTrait.root, IDTrait.bulk];
 		if (prohibitedTraits.includes(from.trait)) {
-			newThing.trait = '';
+			newThing.trait = k.empty;
 		}
 		this.thing_remember(newThing);
 		return newThing;
@@ -252,7 +252,7 @@ export default class Hierarchy {
 			things.push(thing);
 			this.things_byTrait[thing.trait] = things;
 			this.things.push(thing);
-			if (thing.trait == IDTrait.root && (thing.baseID == '' || thing.baseID == this.db.baseID)) {
+			if (thing.trait == IDTrait.root && (thing.baseID == k.empty || thing.baseID == this.db.baseID)) {
 				g.root = thing;
 			}
 		}
@@ -542,7 +542,7 @@ export default class Hierarchy {
 
 	static readonly $_PATH_$: unique symbol;
 
-	path_remember_unique(pathString: string = ''): Path {
+	path_remember_unique(pathString: string = k.empty): Path {
 		const hashedPath = pathString.hash();
 		let path = this.path_byHash[hashedPath];
 		if (!path) {

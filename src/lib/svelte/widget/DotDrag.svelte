@@ -10,7 +10,7 @@
 	let strokeColor = k.color_background;
 	let extraColor = k.color_background;
 	let fillColor = k.color_background;
-	let path_scalable = '';
+	let path_scalable = k.empty;
 	let size = k.dot_size;
 	let path_extra = null;
 	let isHovering = true;

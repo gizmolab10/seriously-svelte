@@ -5,11 +5,11 @@ import Airtable from 'airtable';
 
 export default class Thing extends Datum {
 	selectionRange = new SeriouslyRange(0, 0);
-	bulkRootID: string = '';
+	bulkRootID: string = k.empty;
 	needsBulkFetch = false;
-	hoverAttributes = '';
-	borderAttribute = '';
-	grabAttributes = '';
+	hoverAttributes = k.empty;
+	borderAttribute = k.empty;
+	grabAttributes = k.empty;
 	isExemplar = false;
 	isEditing = false;
 	isGrabbed = false;

@@ -2,6 +2,7 @@ import { k, g, get, Path, Rect, Size, Point, IDLine, Predicate, ChildMapRect, Ne
 import { s_layout_byClusters } from '../common/State';
 
 export default class Layout {
+	clusterArray: Array<NecklaceCluster> = [];
 	childMapRectArray: Array<ChildMapRect> = [];
 
 	constructor(path: Path, origin: Point) {
@@ -51,6 +52,7 @@ export default class Layout {
 			this.childMapRectArray.push(childMapRect);
 			index += 1;
 		}
+		this.clusterArray.push(cluster);
 	}
 
 	originForChildrenOf(childPath: Path, origin: Point, extent: Point): Point {

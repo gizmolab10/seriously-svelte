@@ -6,7 +6,7 @@
 	const indexedNotes = Object.entries(builds.notes).reverse();
 	let notesIndex = 0;
 	let notes = [];
-	let title = '';
+	let title = k.empty;
 	
 	onMount(() => { updateNotes(); })
     function display(goLeft) { return shouldEnable(goLeft) ? 'block' : 'none'; }

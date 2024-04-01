@@ -9,8 +9,6 @@ export enum Direction {
 
 export default class SVGPath {
 
-    line(width: number): string { return `M0 1 L${width} 1`; }
-
     xCross(diameter: number, margin: number): string {
 		const start = margin + 2;
 		const end = diameter - start;
@@ -29,6 +27,14 @@ export default class SVGPath {
 		const end = diameter - start;
         return `M${start} ${y} L${end} ${y}`;
     }
+
+	line(x: number, y: number): string {
+		if (x < 0 && y >= 0) {		  return `M${x} 0 L0 ${y}`;
+		} else if (x < 0 && y < 0) {  return `M${x} ${y} L0 0`;
+		} else if (x >= 0 && y < 0) { return `M0 ${y} L${x} 0`;
+		} else {					  return `M0 0 L${x} ${y}`;
+		}
+	}
 
     circle(width: number, diameter: number, offset: Point = new Point()): string {
         const radius = diameter / 2;
@@ -77,7 +83,7 @@ export default class SVGPath {
 			return '';
 		}
 		let i = 0;
-		let path = '';
+		let path = k.empty;
 		const radius = size / 3;
 		const isOdd = (count % 2) != 0;
 		const increment = Math.PI * 2 / count;

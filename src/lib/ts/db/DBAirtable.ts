@@ -27,7 +27,7 @@ export default class DBAirtable implements DBInterface {
 	dbType = TypeDB.airtable;
 	hasData = false;
 	loadTime = null;
-	baseID = '';
+	baseID = k.empty;
 
 	relationships_errorMessage = 'Error in Relationships:';
 	setHasData(flag: boolean) { this.hasData = flag; }

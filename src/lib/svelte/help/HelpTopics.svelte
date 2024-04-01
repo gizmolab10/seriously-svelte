@@ -6,11 +6,11 @@
 	let focus;
 	let browse;
 	let selection;
-	let dotsTitle = '';
-	let editTitle = '';
-	let focusTitle = '';
-	let browseTitle = '';
-	let selectionTitle = '';
+	let dotsTitle = k.empty;
+	let editTitle = k.empty;
+	let focusTitle = k.empty;
+	let browseTitle = k.empty;
+	let selectionTitle = k.empty;
 	let showingDots = false;
 	let showingEdit = false;
 	let showingFocus = false;

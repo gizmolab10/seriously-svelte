@@ -13,7 +13,7 @@
 	let radius = k.dot_size / 2;
 	let widgetWrapper: Wrapper;
 	let priorOrigin = origin;
-	let padding = '';
+	let padding = k.empty;
 	let height = 0;
 	let width = 0;
 	let left = 0;

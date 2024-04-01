@@ -8,9 +8,9 @@
 	export let path;
 	let padding = `0.5px 0px 0px 7px`;	// down half a pixel, 7 over to make room for drag dot
 	let titleWrapper: Wrapper;
-	let originalTitle = '';
+	let originalTitle = k.empty;
 	let isEditing = false;
-	let cursorStyle = '';
+	let cursorStyle = k.empty;
 	let titleWidth = 0;
 	let clickCount = 0;
 	let ghost = null;

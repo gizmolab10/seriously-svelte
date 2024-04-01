@@ -18,12 +18,12 @@ import { svgPath, Direction, dbDispatch, transparentize, AlteringParent } from '
     let hovers: { [type: string]: boolean } = {}
     let centers: { [type: string]: Point } = {}
     let countOfVisibleParents = 0;
-    let parentSensitiveColor = '';
+    let parentSensitiveColor = k.empty;
     let confirmingDelete = false;
     let graphRect = new Rect();
     let toggle = false;
     let titleWidth = 0;
-	let color = '';
+	let color = k.empty;
 	let left = 64;
 	let thing;
     let path;

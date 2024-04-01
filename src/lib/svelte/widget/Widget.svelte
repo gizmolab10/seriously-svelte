@@ -21,9 +21,9 @@
 	let priorOrigin = origin;
 	let isGrabbed = false;
 	let isEditing = false;
-	let background = '';
-	let padding = '';
-	let border = '';
+	let background = k.empty;
+	let padding = k.empty;
+	let border = k.empty;
 	let height = 0;
 	let width = 0;
 	let left = 0;

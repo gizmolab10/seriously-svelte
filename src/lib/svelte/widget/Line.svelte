@@ -7,12 +7,12 @@
 	export let rect = new Rect();
     export let path;
 	const debugOffset = new Point(140.5, -1.2);
+	let scalablePath = k.empty;
 	let lineWrapper: Wrapper;
 	let origin = rect.origin;
 	let extent = rect.extent;
 	let viewBox = new Rect();
 	let size = new Size();
-	let scalablePath = '';
 	let line;
 
 	$: {
@@ -41,7 +41,7 @@
 					origin = rect.centerLeft.offsetByY(-0.5);
 					extent = rect.centerRight.offsetBy(new Point(0.5, -0.5));
 					size = origin.distanceTo(extent).asSize;
-					scalablePath = svgPath.line(size.width);
+					scalablePath = svgPath.line(size.width, 0);
 					break;
 			}
 			if (curveType != IDLine.flat) {

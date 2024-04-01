@@ -51,13 +51,13 @@ export default class Constants {
 		this.allow_TitleEditing = true;
 		this.titleIsAtTop = false;
 		this.showControls = false;
-		this.necklace_radius = 160;
 		this.threshold_doubleClick = 100;
 		this.threshold_longClick = 500;
-		this.cluster_focus_radius = 70;
+		this.cluster_focus_radius = 40;
 		this.height_titleAtTop = 50;
-		this.halfIncrement = 0.5;
+		this.necklace_radius = 110;
 		this.thing_fontSize = 14;
+		this.halfIncrement = 0.5;
 		this.width_details = 80;
 		this.height_banner = 35;
 		this.line_stretch = 25;
@@ -65,7 +65,7 @@ export default class Constants {
 		this.width_max = 200;
 		this.dot_size = 13;
 
-		this.cluster_offsetY = 5 - this.dot_size;
+		this.cluster_offsetY = 4 - this.dot_size;
 	}
 
 	queryStrings_apply() {
