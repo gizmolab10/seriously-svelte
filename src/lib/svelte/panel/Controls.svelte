@@ -1,6 +1,6 @@
 <script>
 	import { g, k, u, ZIndex, signals, svgPath, IDButton, IDPersistant, persistLocal } from '../../ts/common/GlobalImports';
-	import { s_build, s_show_details, s_id_popupView, s_layout_asCircles, s_show_child_graph } from '../../ts/common/State';
+	import { s_build, s_show_details, s_id_popupView, s_layout_byClusters, s_show_child_graph } from '../../ts/common/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import SVGD3 from '../svg/SVGD3.svelte';
 	let width = u.windowSize.width - 20;
@@ -14,7 +14,7 @@
 			case IDButton.bigger: width = g.zoomBy(1.1) - 20; break;
 			case IDButton.smaller: width = g.zoomBy(0.9) - 20; break;
 			case IDButton.details: $s_show_details = !$s_show_details; break;
-			case IDButton.layout: $s_layout_asCircles = !$s_layout_asCircles; break;
+			case IDButton.layout: $s_layout_byClusters = !$s_layout_byClusters; break;
 			case IDButton.relations: $s_show_child_graph = !$s_show_child_graph; break;
 		}
 	}
@@ -58,7 +58,7 @@
 					left: 97px;
 					background-color: {k.color_background};'
 				on:click={() => buttonClickedForID(IDButton.layout)}>
-				{#if $s_layout_asCircles}circles{:else}tree{/if}
+				{#if $s_layout_byClusters}clusters{:else}tree{/if}
 			</button>
 		{/if}
 	{/if}

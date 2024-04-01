@@ -19,6 +19,7 @@ import { k } from './Constants';
 import { g } from './Globals';
 import './Extensions';
 
+import NecklaceCluster from '../geometry/NecklaceCluster';
 import Relationship from '../data/Relationship';
 import Hierarchy from '../managers/Hierarchy';
 import Wrapper from '../structures/Wrapper';
@@ -33,13 +34,12 @@ import Thing from '../data/Thing';
 import User from '../data/User';
 
 export {
-	Path, Grabs, Wrapper, TitleState,
-	IDWrapper, IDTrait, TypeDB, IDLine,
-	Rect, Size, Point, Layout, ChildMapRect, IDTool,
-	svgPath, Direction, IDPersistant, persistLocal,
-	signals, IDSignal, debugReact, DebugReact, ReactFlag,
-	debug, Debug, DebugFlag, TypeDatum, dbDispatch, Hierarchy,
-	ZIndex, IDButton, IDBrowser, AlteringParent, CreationOptions,
+	dbDispatch, Hierarchy, persistLocal,
+	Path, Grabs, Wrapper, signals, IDSignal, TitleState,
 	g, k, u, get, builds, onMount, onDestroy, transparentize,
+	ZIndex, TypeDB, TypeDatum, AlteringParent, CreationOptions,
+	debug, Debug, DebugFlag, debugReact, DebugReact, ReactFlag,
 	User, Datum, Thing, Access, Predicate, Relationship, SeriouslyRange,
+	IDLine, IDTool, IDTrait, IDWrapper, IDButton, IDBrowser, IDPersistant,
+	Rect, Size, Point, Layout, svgPath, Direction, ChildMapRect, NecklaceCluster,
 };

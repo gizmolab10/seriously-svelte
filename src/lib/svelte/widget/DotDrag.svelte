@@ -1,6 +1,6 @@
 <script>
 	import { k, u, Rect, Size, Point, Thing, debug, ZIndex, onMount, signals, svgPath } from "../../ts/common/GlobalImports";
-	import { s_paths_grabbed, s_altering_parent, s_layout_asCircles, s_path_clusterTools } from '../../ts/common/State';
+	import { s_paths_grabbed, s_altering_parent, s_layout_byClusters, s_path_clusterTools } from '../../ts/common/State';
 	import { Wrapper, Direction, onDestroy, dbDispatch, AlteringParent } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte';
 	import Box from '../kit/Box.svelte';
@@ -118,7 +118,7 @@
 	}
 
 	function updatePaths() {
-		if ($s_layout_asCircles) {
+		if ($s_layout_byClusters) {
 			path_scalable = svgPath.circle(size, size - 1);
 		} else {
 			path_scalable = svgPath.oval(size, false);

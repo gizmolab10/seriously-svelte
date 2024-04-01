@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { k, u, Thing, Point, debug, ZIndex, Wrapper, signals } from '../../ts/common/GlobalImports';
-	import { s_layout_asCircles, s_thing_fontFamily, s_path_clusterTools } from '../../ts/common/State';
+	import { s_layout_byClusters, s_thing_fontFamily, s_path_clusterTools } from '../../ts/common/State';
 	import { onMount, debugReact, IDSignal, IDWrapper } from '../../ts/common/GlobalImports';
 	import { s_path_here, s_title_editing, s_paths_grabbed } from '../../ts/common/State';
-	import ClusterTools from './ClusterTools.svelte';
+	import ToolsCluster from './ToolsCluster.svelte';
 	import EditorTitle from './EditorTitle.svelte';
 	import DotReveal from './DotReveal.svelte';
 	import DotDrag from './DotDrag.svelte';

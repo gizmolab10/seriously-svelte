@@ -22,17 +22,17 @@
 		center = size.dividedInHalf.asPoint;
 		titleWidth = u.getWidthOf(thing.title);
 		offsetX = -k.thing_fontSize - 2 - titleWidth / 2;
-		titleCenter = center.offsetBy(new Point(offsetX, k.circle_offsetY));
+		titleCenter = center.offsetBy(new Point(offsetX, k.cluster_offsetY));
 	}
 
 </script>
 
-<div class='circles' style='transform: translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px);'>
+<div class='clusters' style='transform: translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px);'>
 	{#key $s_path_here}
 		<Circle
 			center={center}
 			color_background='transparent'
-			radius={k.circle_focus_radius}
+			radius={k.cluster_focus_radius}
 			color={$s_path_here.thing.color}/>
 		<div style='top:{titleCenter.y}px; left: {titleCenter.x}px; position: absolute;'>
 			<EditorTitle path={$s_path_here} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>

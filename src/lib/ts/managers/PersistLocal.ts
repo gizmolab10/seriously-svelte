@@ -2,7 +2,7 @@ import { g, k, u, Path, Point, signals, dbDispatch } from '../common/GlobalImpor
 import { s_thing_fontFamily, s_show_child_graph } from '../common/State';
 import { s_show_details, s_user_graphOffset } from '../common/State';
 import { s_paths_grabbed, s_paths_expanded } from '../common/State';
-import { s_path_here, s_layout_asCircles } from '../common/State';
+import { s_path_here, s_layout_byClusters } from '../common/State';
 
 export enum IDPersistant {
 	relationships = 'relationships',
@@ -75,7 +75,7 @@ class PersistLocal {
 		g.applyScale(!u.device_isMobile ? 1 : this.key_read(IDPersistant.scale) ?? 1);
 
 		s_show_details.set(this.key_read(IDPersistant.details) ?? false);
-		s_layout_asCircles.set(this.key_read(IDPersistant.layout) ?? false);
+		s_layout_byClusters.set(this.key_read(IDPersistant.layout) ?? false);
 		s_thing_fontFamily.set(this.key_read(IDPersistant.font) ?? 'Arial');
 		s_show_child_graph.set(this.key_read(IDPersistant.show_children) ?? true);
 		s_user_graphOffset.set(this.key_read(IDPersistant.origin) ?? new Point());
@@ -88,7 +88,7 @@ class PersistLocal {
 		s_show_child_graph.subscribe((flag: boolean) => {
 			this.key_write(IDPersistant.show_children, flag);
 		})
-		s_layout_asCircles.subscribe((flag: boolean) => {
+		s_layout_byClusters.subscribe((flag: boolean) => {
 			this.key_write(IDPersistant.layout, flag);
 		})
 	}
@@ -152,8 +152,8 @@ class PersistLocal {
 		const queryStrings = k.queryString;
         const erase = queryStrings.get('erase');
         const titleFlag = queryStrings.get('locate')?.split(k.comma).includes('titleAtTop') ?? false;
+		this.key_apply(IDPersistant.layout, 'clusters', (flag) => s_layout_byClusters.set(flag));
 		this.key_apply(IDPersistant.details, 'hide', (flag) => s_show_details.set(!flag), false);
-		this.key_apply(IDPersistant.layout, 'circles', (flag) => s_layout_asCircles.set(flag));
 		this.key_apply(IDPersistant.controls, 'show', (flag) => k.showControls = flag);
 		this.key_write(IDPersistant.title_atTop, titleFlag);
 		k.titleIsAtTop = titleFlag;

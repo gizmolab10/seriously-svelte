@@ -1,6 +1,6 @@
 import { g, k, u, get, Rect, Size, Thing, debug, signals, Wrapper } from '../common/GlobalImports';
 import { IDWrapper, Predicate, TitleState, Relationship, AlteringParent } from '../common/GlobalImports';
-import { s_path_here, s_paths_grabbed, s_title_editing, s_layout_asCircles } from '../common/State';
+import { s_path_here, s_paths_grabbed, s_title_editing, s_layout_byClusters } from '../common/State';
 import { s_paths_expanded, s_path_clusterTools, s_altering_parent } from '../common/State';
 import { Writable } from 'svelte/store';
 
@@ -67,7 +67,7 @@ export default class Path {
 	get titles(): Array<string> { return this.things?.map(t => ` \"${t ? t.title : 'null'}\"`) ?? []; }
 	get isStoppingEdit(): boolean { return this.matchesPath(get(s_title_editing)?.stopping ?? null); }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
-	get showsReveal(): boolean { return !get(s_layout_asCircles) && (this.hasChildren || (this.thing?.isBulkAlias ?? false)); }
+	get showsReveal(): boolean { return !get(s_layout_byClusters) && (this.hasChildren || (this.thing?.isBulkAlias ?? false)); }
 	
 	get thing(): Thing | null {
 		this._thing = this.thingAt() ?? null;	// always recompute, cache is for debugging
@@ -413,7 +413,7 @@ export default class Path {
 	clicked_dotDrag(shiftKey: boolean) {
         if (!this.isExemplar) {
 			s_title_editing?.set(null);
-			if (get(s_layout_asCircles)) {
+			if (get(s_layout_byClusters)) {
 				this.becomeHere();
 			} else {
 				if (get(s_altering_parent)) {

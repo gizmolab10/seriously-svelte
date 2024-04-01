@@ -5,7 +5,7 @@
 	import Line from '../widget/Line.svelte';
 	export let center: Point;
     export let path;
-	let childOffset = new Point(k.dot_size / -3, k.circle_offsetY);;
+	let childOffset = new Point(k.dot_size / -3, k.cluster_offsetY);;
 	let childMapRectArray: Array<ChildMapRect> = [];
 	
 	onMount( () => {
@@ -26,7 +26,7 @@
 	center={center}
 	zindex=ZIndex.lines
 	color_background='transparent'
-	radius={k.circle_necklace_radius}
+	radius={k.cluster_necklace_radius}
 	color={transparentize(path.thing.color, 0.8)}/>
 {#each childMapRectArray as map}
 	<Widget path={map.childPath} origin={map.childOrigin.offsetBy(childOffset)}/>

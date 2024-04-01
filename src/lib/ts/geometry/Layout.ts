@@ -1,17 +1,17 @@
-import { k, g, get, Path, Rect, Size, Point, IDLine, Predicate, ChildMapRect } from '../common/GlobalImports';
-import { s_layout_asCircles } from '../common/State';
+import { k, g, get, Path, Rect, Size, Point, IDLine, ChildMapRect, NecklaceCluster } from '../common/GlobalImports';
+import { s_layout_byClusters } from '../common/State';
 
 export default class Layout {
 	childMapRectArray: Array<ChildMapRect> = [];
 
 	constructor(path: Path, origin: Point) {
 		const childPaths = path.childPaths;
-		if (get(s_layout_asCircles)) {
+		if (get(s_layout_byClusters)) {
 			const thing = path.thing;
-			this.circles_layout(childPaths, 0, path, origin);
+			this.cluster_layout(childPaths, 0, path, origin);
 			for (const predicate of g.hierarchy.predicates) {
 				const paths = thing?.paths_uniquelyFromFor(predicate.id) ?? [];
-				this.circles_layout(paths, predicate.angle_necklace, path, origin);
+				this.cluster_layout(paths, predicate.angle_necklace, path, origin);
 			}
 		} else {
 			let sumOfSiblingsAbove = -path.visibleProgeny_height() / 2; // start out negative and grow positive
@@ -33,11 +33,11 @@ export default class Layout {
 		}
 	}
 
-	circles_layout(paths: Array<Path>, start: number, path: Path, origin: Point) {
+	cluster_layout(paths: Array<Path>, start: number, path: Path, origin: Point) {
 		let index = 0;
 		const length = paths.length;
 		const rowStart = Math.max(-2, (6 - length)) / 2;
-		const radius = k.circle_necklace_radius;
+		const radius = k.cluster_necklace_radius;
 		const radial = new Point(radius, 0);
 		while (index < length) {
 			const childPath = paths[index];

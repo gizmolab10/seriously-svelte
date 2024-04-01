@@ -4,7 +4,7 @@ export enum AlteringParent {
 }
 
 export enum LayoutStyle {
-	circles = 'circles',
+	clusters = 'clusters',
 	tree	= 'tree',
 }
 

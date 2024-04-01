@@ -11,7 +11,7 @@ class Builds {
 
 	constructor() {
 		this.notes = {
-			89 : ['March 28, 2024', 'display focus in circles'],
+			89 : ['March 28, 2024', 'display focus in clusters'],
 			88 : ['March 26, 2024', 'resume support for Airtable'],
 			87 : ['March 22, 2024', 'begin work on circle layout'],
 			86 : ['March 10, 2024', 'vertical parent count dots inside drag dot'],

@@ -1,6 +1,6 @@
 import { g, k, u, get, User, Path, Thing, Grabs, debug, Access, IDTool, IDTrait, signals } from '../common/GlobalImports';
 import { TypeDB, Wrapper, Predicate, Relationship, AlteringParent, CreationOptions } from '../common/GlobalImports';
-import { s_title_editing, s_altering_parent, s_layout_asCircles, s_path_clusterTools } from '../common/State';
+import { s_title_editing, s_altering_parent, s_layout_byClusters, s_path_clusterTools } from '../common/State';
 import { s_isBusy, s_path_here, s_db_loadTime, s_paths_grabbed, s_things_arrived } from '../common/State';
 import DBInterface from '../db/DBInterface';
 
@@ -106,7 +106,7 @@ export default class Hierarchy {
 			}
 			switch (key) {
 				case '!':				needsRebuild = g.rootPath?.becomeHere(); break;
-				case '`':               event.preventDefault(); this.latestPathGrabbed_toggleClusterTools(); break;
+				case '`':               event.preventDefault(); this.latestPathGrabbed_toggleToolsCluster(); break;
 				case 'arrowup':			await this.latestPathGrabbed_rebuild_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
 				case 'arrowdown':		await this.latestPathGrabbed_rebuild_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
 			}
@@ -132,7 +132,7 @@ export default class Hierarchy {
 		}
 	}
 
-	latestPathGrabbed_toggleClusterTools(up: boolean = true) {
+	latestPathGrabbed_toggleToolsCluster(up: boolean = true) {
 		const path = this.grabs.latestPathGrabbed(up);
 		if (path && !path.isRoot) {
 			s_path_clusterTools.set(path.toolsGrabbed ? null : path);
@@ -704,7 +704,7 @@ export default class Hierarchy {
 			const newIndex = index.increment(!up, siblings.length);
 			if (fromPath && !OPTION) {
 				const grabPath = fromPath.appendChild(siblings[newIndex]);
-				if (get(s_layout_asCircles)) {
+				if (get(s_layout_byClusters)) {
 					grabPath.becomeHere();
 					grabPath.grabOnly();
 				} else if (!grabPath.isVisible) {

@@ -6,13 +6,13 @@ export default class Constants {
 	height_banner: number;
 	width_details: number;
 	halfIncrement: number;
-	circle_offsetY: number;
+	cluster_offsetY: number;
 	thing_fontSize: number;
 	height_titleAtTop: number;
-	circle_focus_radius: number;
+	cluster_focus_radius: number;
 	threshold_longClick: number;
 	threshold_doubleClick: number;
-	circle_necklace_radius: number;
+	cluster_necklace_radius: number;
 	color_highlighted: string;
 	color_background: string;
     color_disabled: string;
@@ -51,10 +51,10 @@ export default class Constants {
 		this.allow_TitleEditing = true;
 		this.titleIsAtTop = false;
 		this.showControls = false;
-		this.circle_necklace_radius = 160;
+		this.cluster_necklace_radius = 160;
 		this.threshold_doubleClick = 100;
 		this.threshold_longClick = 500;
-		this.circle_focus_radius = 90;
+		this.cluster_focus_radius = 70;
 		this.height_titleAtTop = 50;
 		this.halfIncrement = 0.5;
 		this.thing_fontSize = 14;
@@ -65,7 +65,7 @@ export default class Constants {
 		this.width_max = 200;
 		this.dot_size = 13;
 
-		this.circle_offsetY = 5 - this.dot_size;
+		this.cluster_offsetY = 5 - this.dot_size;
 	}
 
 	queryStrings_apply() {

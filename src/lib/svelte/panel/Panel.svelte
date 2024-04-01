@@ -2,10 +2,10 @@
 	import { s_build, s_isBusy, s_path_here, s_db_type, s_graphRect, s_id_popupView, s_title_editing } from '../../ts/common/State';
 	import { g, k, u, get, Path, Rect, Size, Point, Thing, TypeDB, ZIndex, signals, onMount } from '../../ts/common/GlobalImports';
 	import { IDButton, Hierarchy, IDPersistant, dbDispatch, debugReact, persistLocal } from '../../ts/common/GlobalImports';
-	import { s_show_details, s_things_arrived, s_user_graphOffset, s_layout_asCircles } from '../../ts/common/State';
+	import { s_show_details, s_things_arrived, s_user_graphOffset, s_layout_byClusters } from '../../ts/common/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import EditorTitle from '../widget/EditorTitle.svelte';
-	import Circles from '../graph/Circles.svelte';
+	import Clusters from '../graph/Clusters.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import Controls from './Controls.svelte';
 	import Tree from '../graph/Tree.svelte';
@@ -160,8 +160,8 @@
 						width: {$s_graphRect.size.width}px;
 						height: {$s_graphRect.size.height}px;
 						z-index: {ZIndex.panel};'>
-					{#if $s_layout_asCircles}
-						<Circles/>
+					{#if $s_layout_byClusters}
+						<Clusters/>
 					{:else}
 						<Tree/>
 					{/if}
