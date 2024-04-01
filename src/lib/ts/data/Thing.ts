@@ -131,7 +131,7 @@ export default class Thing extends Datum {
 				}
 			}
 		}
-		return paths.length > 0 ? paths : [g.rootPath];
+		return paths.length > 0 ? paths : predicateID == Predicate.idContains ? [g.rootPath] : [];
 	}
 
 	updateColorAttributes(path: Path) {

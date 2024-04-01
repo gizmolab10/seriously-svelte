@@ -29,7 +29,7 @@ export default class DBLocal implements DBInterface {
 		const idPc = this.localName('Pc');
 		const idPr = this.localName('Pr');
 		h.predicate_remember_runtimeCreateUnique(idPc, 'contains', false);
-		h.predicate_remember_runtimeCreateUnique(idPr, 'relatesTo', false);
+		h.predicate_remember_runtimeCreateUnique(idPr, 'isRelated', false, 2);
 		h.thing_remember_runtimeCreateUnique('', idTa, 'first', 'red', '1', false);
 		h.thing_remember_runtimeCreateUnique('', idTb, 'second', 'blue', '2', false);
 		h.thing_remember_runtimeCreateUnique('', idTc, 'third', 'orange', '3', false);

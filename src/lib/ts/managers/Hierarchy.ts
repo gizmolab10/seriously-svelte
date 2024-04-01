@@ -844,14 +844,14 @@ export default class Hierarchy {
 		this.predicates.push(predicate);
 	}
 
-	predicate_remember_runtimeCreateUnique(id: string, kind: string, isRemotelyStored: boolean = true) {
+	predicate_remember_runtimeCreateUnique(id: string, kind: string, isRemotelyStored: boolean = true, directions: number = 1) {
 		if (!this.predicate_get_byID(id)) {
-			this.predicate_remember_runtimeCreate(id, kind, isRemotelyStored);
+			this.predicate_remember_runtimeCreate(id, kind, isRemotelyStored, directions);
 		}
 	}
 
-	predicate_remember_runtimeCreate(id: string, kind: string, isRemotelyStored: boolean = true) {
-		const predicate = new Predicate(id, kind, isRemotelyStored);
+	predicate_remember_runtimeCreate(id: string, kind: string, isRemotelyStored: boolean = true, directions: number = 1) {
+		const predicate = new Predicate(id, kind, isRemotelyStored, directions);
 		this.predicate_remember(predicate)
 	}
 
