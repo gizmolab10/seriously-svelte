@@ -39,7 +39,6 @@ export default class DBLocal implements DBInterface {
 		h.relationship_remember_runtimeCreateUnique('', this.localName('Ra'), idPc, idTr, idTa, 0);
 		h.relationship_remember_runtimeCreateUnique('', this.localName('Rb'), idPc, idTr, idTb, 1);
 		h.relationship_remember_runtimeCreateUnique('', this.localName('Rc'), idPc, idTr, idTc, 2);
-		h.relationship_remember_runtimeCreateUnique('', this.localName('Rc'), idPr, idTr, idTc, 2);
 		h.relationship_remember_runtimeCreateUnique('', this.localName('Rd'), idPc, idTa, idTb, 0);
 		h.relationship_remember_runtimeCreateUnique('', this.localName('Re'), idPc, idTa, idTd, 1);
 		h.relationship_remember_runtimeCreateUnique('', this.localName('Rf'), idPc, idTa, idTe, 2);
@@ -48,6 +47,7 @@ export default class DBLocal implements DBInterface {
 		h.relationship_remember_runtimeCreateUnique('', this.localName('Ri'), idPc, idTe, idTd, 0);
 		h.relationship_remember_runtimeCreateUnique('', this.localName('Rj'), idPc, idTe, idTb, 1);
 		h.relationship_remember_runtimeCreateUnique('', this.localName('Rk'), idPc, idTb, idTd, 1);
+		h.relationship_remember_runtimeCreateUnique('', this.localName('Rl'), idPr, idTr, idTc, 2);
 	};
 
 	queryStrings_apply() {}

@@ -30,8 +30,8 @@ export default class Thing extends Datum {
 	get fields():	Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get isHere():			  boolean { return (get(s_path_here).thing?.id ?? '') == this.id; }
 	get idBridging():		   string { return this.isBulkAlias ? this.bulkRootID : this.id; }
-	get parents():		 Array<Thing> { return this.fromThingsFor(Predicate.idContains); }
-	get parentPaths():	  Array<Path> { return this.fromPathsFor(Predicate.idContains); }
+	get parents():		 Array<Thing> { return this.things_fromFor(Predicate.idContains); }
+	get parentPaths():	  Array<Path> { return this.paths_fromFor(Predicate.idContains); }
 	get description():		   string { return this.id + ' \"' + this.title + '\"'; }
 	get titleWidth():		   number { return u.getWidthOf(this.title) + 6; }
 	get parentIDs():	Array<string> { return this.parents.map(t => t.id); }
@@ -61,6 +61,19 @@ export default class Thing extends Datum {
 		return super.isInDifferentBulkThan(other) || (other.isBulkAlias && !this.isBulkAlias && this.baseID != other.title);
 	}
 
+	relationships_onceFrom(predicateID: string): Array<Relationship> {
+		return this.hierarchy.relationships_get_byPredicate_to_thing(predicateID, true, this.id);
+	}
+
+	updateColorAttributes(path: Path) {
+		const border = (path.isEditing ? 'dashed' : 'solid') + ' 1px ';
+		const hover = border + path.dotColor(true);
+		const grab = border + path.dotColor(false);
+		this.borderAttribute = border;
+		this.hoverAttributes = hover;
+		this.grabAttributes = grab;
+	}
+
 	crumbWidth(numberOfParents: number): number {
 		const none = this.titleWidth + 10;
 		const one = none + 11;
@@ -72,7 +85,7 @@ export default class Thing extends Datum {
 		}
 	}
 
-	fromThingsFor(predicateID: string): Array<Thing> {
+	things_fromFor(predicateID: string): Array<Thing> {
 		let fromThings: Array<Thing> = [];
 		if (!this.isRoot) {
 			const relationships = this.relationships_onceFrom(predicateID);
@@ -86,11 +99,7 @@ export default class Thing extends Datum {
 		return fromThings;
 	}
 
-	relationships_onceFrom(predicateID: string): Array<Relationship> {
-		return this.hierarchy.relationships_get_byPredicate_to_thing(predicateID, true, this.id);
-	}
-
-	fromPathsFor(predicateID: string): Array<Path> {
+	paths_fromFor(predicateID: string): Array<Path> {
 		let pathsByHID: {[hash: number]: Path} = {};
 		if (!this.isRoot) {
 			const relationships = this.relationships_onceFrom(predicateID);
@@ -101,7 +110,7 @@ export default class Thing extends Datum {
 				}
 				const endID = relationship.id;		// EGADS, this is the wrong relationship; needs the next one
 				const fromThing = relationship.fromThing;
-				const fromPaths = fromThing?.fromPathsFor(predicateID) ?? [];
+				const fromPaths = fromThing?.paths_fromFor(predicateID) ?? [];
 				if (fromPaths.length == 0) {
 					addPath(g.rootPath);
 				} else {
@@ -115,32 +124,23 @@ export default class Thing extends Datum {
 		return u.sort_byTitleTop(paths).reverse();
 	}
 	
-	fromPaths_uniquelyFor(predicateID: string): Array<Path> {
+	paths_uniquelyFromFor(predicateID: string): Array<Path> {
 		if (this.isRoot) {
 			return [];
 		}
 		const paths: Array<Path> = []
-		const parents = this.parents ?? [];
-		for (const parent of parents) {
-			if (parent.isRoot) {
+		const fromThings = this.things_fromFor(predicateID) ?? [];
+		for (const fromThing of fromThings) {
+			if (fromThing.isRoot) {
 				paths.push(g.rootPath);
 			} else {
-				const relationships = g.hierarchy.relationships_get_byPredicate_to_thing(predicateID, true, parent.id);
+				const relationships = g.hierarchy.relationships_get_byPredicate_to_thing(predicateID, true, fromThing.id);
 				if (relationships.length > 0){
 					paths.push(new Path(relationships[0].id, predicateID))
 				}
 			}
 		}
-		return paths.length > 0 ? paths : predicateID == Predicate.idContains ? [g.rootPath] : [];
-	}
-
-	updateColorAttributes(path: Path) {
-		const border = (path.isEditing ? 'dashed' : 'solid') + ' 1px ';
-		const hover = border + path.dotColor(true);
-		const grab = border + path.dotColor(false);
-		this.borderAttribute = border;
-		this.hoverAttributes = hover;
-		this.grabAttributes = grab;
+		return paths.length > 0 ? paths : predicateID != Predicate.idContains ? [] : [g.rootPath];
 	}
 
 }

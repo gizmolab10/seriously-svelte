@@ -1,4 +1,4 @@
-import { k, get, Path, Rect, Size, Point, IDLine, Predicate, ChildMapRect } from '../common/GlobalImports';
+import { k, g, get, Path, Rect, Size, Point, IDLine, Predicate, ChildMapRect } from '../common/GlobalImports';
 import { s_layout_asCircles } from '../common/State';
 
 export default class Layout {
@@ -7,9 +7,12 @@ export default class Layout {
 	constructor(path: Path, origin: Point) {
 		const childPaths = path.childPaths;
 		if (get(s_layout_asCircles)) {
+			const thing = path.thing;
 			this.circles_layout(childPaths, 0, path, origin);
-			this.circles_layout_forPredicateID(Predicate.idContains, Math.PI, path, origin);
-			this.circles_layout_forPredicateID(Predicate.idIsRelated, Math.PI / -2, path, origin);
+			for (const predicate of g.hierarchy.predicates) {
+				const paths = thing?.paths_uniquelyFromFor(predicate.id) ?? [];
+				this.circles_layout(paths, predicate.angle_necklace, path, origin);
+			}
 		} else {
 			let sumOfSiblingsAbove = -path.visibleProgeny_height() / 2; // start out negative and grow positive
 			const length = childPaths.length;
@@ -28,11 +31,6 @@ export default class Layout {
 				index += 1;
 			}
 		}
-	}
-
-	circles_layout_forPredicateID(id: string, start: number, path: Path, origin: Point) {
-		const paths = path.thing?.fromPaths_uniquelyFor(id) ?? [];
-		this.circles_layout(paths, start, path, origin);
 	}
 
 	circles_layout(paths: Array<Path>, start: number, path: Path, origin: Point) {

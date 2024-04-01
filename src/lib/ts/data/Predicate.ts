@@ -11,6 +11,14 @@ export default class Predicate extends RemoteIdentifiable {
 		this.kind = kind;
 	}
 
+	get angle_necklace(): number{
+		switch (this.id) {
+			case Predicate.idContains: return Math.PI;
+			case Predicate.idIsRelated: return Math.PI / -2;
+		}
+		return 0;
+	}
+
 	static get idContains(): string {
 		const id = dbDispatch.db.hierarchy.predicate_byKind['contains']?.id;
 		if (!id) {
