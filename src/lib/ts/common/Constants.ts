@@ -17,6 +17,7 @@ export default class Constants {
 	color_background: string;
     color_disabled: string;
 	name_bulkAdmin: string;
+    color_default: string;
 	pathSeparator: string;
 	title_default: string;
 	title_line: string;
@@ -39,6 +40,7 @@ export default class Constants {
 		this.newLine = '\n';
 		this.pathSeparator = '::';
 		this.id_unknown = 'unknown';
+		this.color_default = 'blue';
 		this.color_background = 'white';
 		this.color_disabled = 'lightGray';
 		this.color_highlighted = '#9e7daa';

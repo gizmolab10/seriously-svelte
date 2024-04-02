@@ -94,7 +94,7 @@
 			on:click={() => { $s_id_popupView = null; }}>
 			{#if debug.colors}
 				<Box rect={redRect} color=red/>
-				<Box rect={blueRect} color=blue/>
+				<Box rect={blueRect} color={k.color_default}/>
 				<Box rect={greenRect} color=green half={true}/>
 			{/if}
 			{#if !g.titleIsAtTop}

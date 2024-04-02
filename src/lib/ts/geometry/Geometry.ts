@@ -7,10 +7,10 @@ export class Point {
 		this.x = x;
 		this.y = y;
 	}
+	get asSize():					   Size { return new Size(this.x, this.y); }
 	get verbose():			 		 string { return '(' + this.x + ', ' + this.y + ')'; }
 	get pixelVerbose():				 string { return this.x + 'px ' + this.y + 'px'; }
 	get description():		 		 string { return this.x + ', ' + this.y; }
-	get asSize():					   Size { return new Size(Math.abs(this.x), Math.abs(this.y)); }
 	get negated():					  Point { return this.multipliedBy(-1); }
 	get dividedInHalf():			  Point { return this.multipliedBy(1/2); }
 	get copy():						  Point { return new Point(this.x, this.y); }

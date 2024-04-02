@@ -18,7 +18,7 @@ export default class Thing extends Datum {
 	color: string;
 	trait: string;
 
-	constructor(baseID: string, id: string | null, title = k.title_default, color = 'blue', trait = 's', isRemotelyStored: boolean) {
+	constructor(baseID: string, id: string | null, title = k.title_default, color = k.color_default, trait = 's', isRemotelyStored: boolean) {
 		super(baseID, id, isRemotelyStored);
 		this.selectionRange = new SeriouslyRange(0, title.length);
 		this.dbType = dbDispatch.db.dbType;

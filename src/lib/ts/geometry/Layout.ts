@@ -10,9 +10,9 @@ export default class Layout {
 		if (get(s_layout_byClusters)) {
 			const thing = path.thing;
 			const contains = g.hierarchy.predicate_byHID[Predicate.idContains.hash()];
-			this.cluster_layout(childPaths, new NecklaceCluster(contains, false), path, origin);
+			this.cluster_layout(childPaths, new NecklaceCluster(contains, true), path, origin);
 			for (const predicate of g.hierarchy.predicates) {
-				const cluster = new NecklaceCluster(predicate, true);
+				const cluster = new NecklaceCluster(predicate, false);
 				const paths = thing?.paths_uniquelyFromFor(predicate.id) ?? [];
 				this.cluster_layout(paths, cluster, path, origin);
 			}

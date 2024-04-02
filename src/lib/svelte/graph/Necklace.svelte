@@ -6,6 +6,7 @@
 	export let center: Point;
     export let path;
 	let childOffset = new Point(k.dot_size / -3, k.cluster_offsetY);;
+	let color = path.thing?.color ?? k.color_default;
 	let childMapRectArray: Array<ChildMapRect> = [];
 	let clusterArray: Array<NecklaceCluster>;
 	
@@ -26,7 +27,7 @@
 	// 	zindex=ZIndex.lines
 	// 	color_background='transparent'
 	// 	radius={k.necklace_radius}
-	// 	color={transparentize(path.thing.color, 0.8)}/>
+	// 	color={transparentize(color, 0.8)}/>
 
 	// needs:
 	//  hover
@@ -39,6 +40,6 @@
 {/if}
 {#if clusterArray}
 	{#each clusterArray as cluster}
-		<Arrow cluster={cluster} origin={center} color={path.thing?.color ?? 'blue'}/>
+		<Arrow cluster={cluster} origin={center} color={color}/>
 	{/each}
 {/if}
