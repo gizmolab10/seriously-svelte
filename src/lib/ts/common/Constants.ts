@@ -46,11 +46,6 @@ export default class Constants {
 		this.title_default = 'Please, enter a title';
 		this.title_line = '------------------------';
 		this.queryString = new URLSearchParams(window.location.search);
-		this.allow_HorizontalScrolling = true;
-		this.allow_GraphEditing = true;
-		this.allow_TitleEditing = true;
-		this.titleIsAtTop = false;
-		this.showControls = false;
 		this.threshold_doubleClick = 100;
 		this.threshold_longClick = 500;
 		this.cluster_focus_radius = 40;
@@ -64,7 +59,11 @@ export default class Constants {
 		this.row_height = 20;
 		this.width_max = 200;
 		this.dot_size = 13;
-
+		this.showControls = false;
+		this.titleIsAtTop = false;
+		this.allow_GraphEditing = true;
+		this.allow_TitleEditing = true;
+		this.allow_HorizontalScrolling = true;
 		this.cluster_offsetY = 4 - this.dot_size;
 	}
 

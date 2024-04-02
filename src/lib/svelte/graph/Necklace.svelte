@@ -39,6 +39,6 @@
 {/if}
 {#if clusterArray}
 	{#each clusterArray as cluster}
-		<Arrow cluster={cluster} origin={center}/>
+		<Arrow cluster={cluster} origin={center} color={path.thing?.color ?? 'blue'}/>
 	{/each}
 {/if}
