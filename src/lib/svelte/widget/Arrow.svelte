@@ -5,7 +5,7 @@
 	import Box from '../kit/Box.svelte';
     export let cluster: NecklaceCluster;
 	export let color = k.color_default;
-	export let origin = new Point();
+	export let center = new Point();
 	let translated = new Point();
 	let scalablePath = k.empty;
 	let rotated = new Point();
@@ -23,14 +23,14 @@
 		}
 		const length = k.necklace_radius - k.cluster_focus_radius - k.dot_size;
 		const radial = new Point(k.cluster_focus_radius, 0);
-		const angle = cluster.necklace_angle + Math.PI/6.5;
+		const angle = cluster.angle_necklacePredicate + Math.PI/6.5;
 		const x = length * Math.cos(angle);
 		const y = length * Math.sin(angle);
 		const distance = new Point(x, y)
 		scalablePath = svgPath.line(x, y);
 		rotated = radial.rotateBy(angle);
 		size = distance.asSize;
-		if (cluster.predicate.directions == 2 || cluster.isFrom) {
+		if (cluster.predicate.directions == 2 || !cluster.pointsTo) {
 			translated = rotated.offsetBy(distance);
 		} else {
 			translated = rotated;
@@ -58,8 +58,8 @@
 <div class='arrow'
 	style='z-index: {ZIndex.lines};
 	position: absolute;
-	left: {left + origin.x}px;
-	top: {top + origin.y}px;'>
+	left: {left + center.x}px;
+	top: {top + center.y}px;'>
 	<svg class='line'
 		bind:this={line}
 		width={size.width}px
@@ -70,7 +70,7 @@
 	{#if cluster.predicate.directions == 2}
 		<Circle radius={dot_radius} center={rotated} color={color} thickness={thickness}/>
 		<Circle radius={dot_radius} center={translated} color={color} thickness={thickness}/>
-	{:else if cluster.isFrom}
+	{:else if cluster.pointsTo}
 		<Circle radius={dot_radius} center={rotated} color={color} thickness={thickness}/>
 	{:else}
 		<Circle radius={dot_radius} center={translated} color={color} thickness={thickness}/>

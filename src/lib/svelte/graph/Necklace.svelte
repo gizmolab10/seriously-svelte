@@ -40,6 +40,6 @@
 {/if}
 {#if clusterArray}
 	{#each clusterArray as cluster}
-		<Arrow cluster={cluster} origin={center} color={color}/>
+		<Arrow cluster={cluster} center={center} color={color}/>
 	{/each}
 {/if}

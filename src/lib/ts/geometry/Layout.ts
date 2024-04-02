@@ -12,8 +12,8 @@ export default class Layout {
 			const contains = g.hierarchy.predicate_byHID[Predicate.idContains.hash()];
 			this.cluster_layout(childPaths, new NecklaceCluster(contains, true), path, origin);
 			for (const predicate of g.hierarchy.predicates) {
-				const cluster = new NecklaceCluster(predicate, false);
 				const paths = thing?.paths_uniquelyFromFor(predicate.id) ?? [];
+				const cluster = new NecklaceCluster(predicate, false);
 				this.cluster_layout(paths, cluster, path, origin);
 			}
 		} else {
@@ -37,22 +37,21 @@ export default class Layout {
 	}
 
 	cluster_layout(paths: Array<Path>, cluster: NecklaceCluster, path: Path, origin: Point) {
+		this.clusterArray.push(cluster);
 		let index = 0;
 		const length = paths.length;
 		const radius = k.necklace_radius;
 		const radial = new Point(radius, 0);
 		const rowStart = Math.max(-2, (6 - length)) / 2;
-		const angleStart = cluster.necklace_angle;
+		const angleStart = cluster.angle_necklacePredicate;
 		while (index < length) {
 			const childPath = paths[index];
 			const angle = Math.asin((rowStart + index) * k.row_height / radius);
-			const point = radial.rotateBy(angleStart + angle);
-			const childOrigin = origin.offsetBy(point);
+			const childOrigin = origin.offsetBy(radial.rotateBy(angleStart + angle));
 			const childMapRect = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, childPath, null);
 			this.childMapRectArray.push(childMapRect);
 			index += 1;
 		}
-		this.clusterArray.push(cluster);
 	}
 
 	originForChildrenOf(childPath: Path, origin: Point, extent: Point): Point {

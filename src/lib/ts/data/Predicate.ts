@@ -11,10 +11,10 @@ export default class Predicate extends RemoteIdentifiable {
 		this.kind = kind;
 	}
 
-	necklace_angle(isFrom: boolean): number {
+	angle_necklace(pointsTo: boolean): number {
 		switch (this.id) {
 			case Predicate.idIsRelated: return Math.PI / -2;
-			case Predicate.idContains: return isFrom ? Math.PI : 0;
+			case Predicate.idContains: return pointsTo ? 0 : Math.PI;
 		}
 		return 0;
 	}

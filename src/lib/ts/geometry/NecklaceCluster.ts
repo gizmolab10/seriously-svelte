@@ -1,14 +1,13 @@
 import { Predicate } from '../common/GlobalImports';
 
-
 export default class NecklaceCluster {
 	predicate: Predicate;
-	isFrom: boolean
+	pointsTo: boolean
 
-	constructor(predicate: Predicate, isFrom: boolean) {
+	constructor(predicate: Predicate, pointsTo: boolean) {
 		this.predicate = predicate;
-		this.isFrom = isFrom;
+		this.pointsTo = pointsTo;
 	}
 
-	get necklace_angle(): number { return this.predicate.necklace_angle(this.isFrom); }
+	get angle_necklacePredicate(): number { return this.predicate.angle_necklace(this.pointsTo); }
 }
