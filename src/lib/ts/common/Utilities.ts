@@ -1,11 +1,12 @@
+import { k, get, Path, Size, Angles, Quadrant, IDBrowser, getContext, setContext } from './GlobalImports';
 import { s_scale_factor, s_thing_fontFamily } from './State';
-import { k, get, Path, Size, IDBrowser } from './GlobalImports';
 
 class Utilities {
 	noop() {}
 	ignore(event: Event) {}
 	roundToEven(n: number): number{ return Math.round(n / 2) * 2; }
 	sort_byOrder(array: Array<Path>) { return array.sort( (a: Path, b: Path) => { return a.order - b.order; }); }
+
 
 	get windowSize(): Size {
 		const scaleFactor = get(s_scale_factor);
@@ -15,6 +16,80 @@ class Utilities {
 	get isServerLocal(): boolean {
 		const hostname = window.location.hostname;
 		return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "0.0.0.0";
+	}
+
+	apply(startStop: (flag: boolean) => void, callback: () => void): void {
+		startStop(true);
+		callback();
+		startStop(false);
+	}
+
+	copyObject(obj: any) {
+		const copiedObject = Object.create(Object.getPrototypeOf(obj));
+		Object.assign(copiedObject, obj);
+		return copiedObject;
+	}
+
+	remove<T>(from: Array<T>, item: T): void {
+		const index = from.findIndex((element: T) => element === item);
+		if (index !== -1) {
+			from.splice(index, 1);
+		}
+	}
+
+	sort_byTitleTop(array: Array<Path>) {
+		return array.sort( (a: Path, b: Path) => {
+			const aTop = a.titleRect?.origin.y;
+			const bTop = b.titleRect?.origin.y;
+			return (!aTop || !bTop) ? 0 : aTop - bTop;
+		});
+	}
+
+	angle_quadrant(angle: number): Quadrant {
+		const normalized = angle % Angles.full;
+		if (normalized.isBetween(0, Angles.quarter, true)) { return Quadrant.lowerRight; }
+		if (normalized.isBetween(Angles.quarter, Angles.half, true)) { return Quadrant.lowerLeft;}
+		if (normalized.isBetween(Angles.half, Angles.threeQuarters, true)) { return Quadrant.upperLeft;}
+		return Quadrant.upperRight;
+	}
+
+	getFontOf(element: HTMLElement): string {
+		const computedStyle: CSSStyleDeclaration = window.getComputedStyle(element);
+		const fontFamily: string = computedStyle.fontFamily;
+		const fontSize: string = computedStyle.fontSize;
+		
+		return `${fontSize} ${fontFamily}`;
+	}
+
+	get device_isMobile(): boolean {
+		const userAgent = navigator.userAgent;
+		if (/android/i.test(userAgent) || /iPhone|iPad|iPod/i.test(userAgent)) {    // Check for phones
+			return true;
+		}
+		if (/iPad|Android|Touch/i.test(userAgent) && !(window as any).MSStream) {    // Check for tablets
+			return true;
+		}
+		return false;
+	}
+
+	removeAll(item: string, from: string): string {
+		var to = from;
+		var length = from.length;
+		do {
+			length = to.length;
+			to = to.replace(item, k.empty);
+		} while (length != to.length)
+		return to;
+	}
+
+	convertToObject(instance: any, fields: Array<string>): object {
+		const o: { [key: string]: any } = {};
+		for (const field of fields) {
+			if (instance.hasOwnProperty(field)) {
+				o[field] = instance[field];
+			}
+		}
+		return o;
 	}
 
 	get browserType(): IDBrowser {
@@ -32,17 +107,6 @@ class Utilities {
 		}
 	}
 
-	get device_isMobile(): boolean {
-		const userAgent = navigator.userAgent;
-		if (/android/i.test(userAgent) || /iPhone|iPad|iPod/i.test(userAgent)) {    // Check for phones
-			return true;
-		}
-		if (/iPad|Android|Touch/i.test(userAgent) && !(window as any).MSStream) {    // Check for tablets
-			return true;
-		}
-		return false;
-	}
-
 	async paths_orders_normalize_remoteMaybe(array: Array<Path>, remoteWrite: boolean = true) {
 		this.sort_byOrder(array);
 		await (async () => {
@@ -54,61 +118,6 @@ class Utilities {
 				}
 			});
 		})();
-	}
-
-	sort_byTitleTop(array: Array<Path>) {
-		return array.sort( (a: Path, b: Path) => {
-			const aTop = a.titleRect?.origin.y;
-			const bTop = b.titleRect?.origin.y;
-			return (!aTop || !bTop) ? 0 : aTop - bTop;
-		});
-	}
-
-	remove<T>(from: Array<T>, item: T): void {
-		const index = from.findIndex((element: T) => element === item);
-		if (index !== -1) {
-			from.splice(index, 1);
-		}
-	}
-
-	removeAll(item: string, from: string): string {
-		var to = from;
-		var length = from.length;
-		do {
-			length = to.length;
-			to = to.replace(item, '');
-		} while (length != to.length)
-		return to;
-	}
-
-	apply(startStop: (flag: boolean) => void, callback: () => void): void {
-		startStop(true);
-		callback();
-		startStop(false);
-	}
-
-	copyObject(obj: any) {
-		const copiedObject = Object.create(Object.getPrototypeOf(obj));
-		Object.assign(copiedObject, obj);
-		return copiedObject;
-	}
-
-	convertToObject(instance: any, fields: Array<string>): object {
-		const o: { [key: string]: any } = {};
-		for (const field of fields) {
-			if (instance.hasOwnProperty(field)) {
-				o[field] = instance[field];
-			}
-		}
-		return o;
-	}
-
-	getFontOf(element: HTMLElement): string {
-		const computedStyle: CSSStyleDeclaration = window.getComputedStyle(element);
-		const fontFamily: string = computedStyle.fontFamily;
-		const fontSize: string = computedStyle.fontSize;
-		
-		return `${fontSize} ${fontFamily}`;
 	}
 
 	getWidthOf(s: string): number {

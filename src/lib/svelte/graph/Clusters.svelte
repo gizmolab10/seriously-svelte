@@ -10,11 +10,11 @@
 	//  edit state
 	//  handle keys
 	//  lines with arrows
-	let titleCenter: Point;
+	let titleCenter = Point.zero;
+	let center = Point.zero;
+	let size = Size.zero;
 	let titleWidth = 0;
-	let center: Point;
 	let offsetX = 0;
-	let size: Size;
 
 	$: {
 		size = $s_graphRect.size;

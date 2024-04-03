@@ -1,7 +1,8 @@
-import { IDTrait, IDBrowser, ZIndex, IDButton, AlteringParent } from './Enumerations';
+import { IDTrait, ZIndex, Angles, Quadrant, IDButton, IDBrowser, AlteringParent } from './Enumerations';
 import { debugReact, DebugReact, ReactFlag } from '../debug/DebugReact';
-import { IDPersistant, persistLocal } from '../managers/PersistLocal';
 import { Rect, Size, Point, ChildMapRect } from '../geometry/Geometry';
+import { IDPersistant, persistLocal } from '../managers/PersistLocal';
+import { onMount, onDestroy, setContext, getContext } from 'svelte';
 import { CreationOptions, IDLine, IDTool } from './Enumerations';
 import { debug, Debug, DebugFlag } from '../debug/Debug';
 import { Direction, svgPath } from '../geometry/SVGPath';
@@ -10,7 +11,6 @@ import { SeriouslyRange } from './SeriouslyRange';
 import { IDWrapper } from '../structures/Wrapper';
 import { signals, IDSignal } from './Signals';
 import { dbDispatch } from '../db/DBDispatch';
-import { onMount, onDestroy } from 'svelte';
 import { transparentize } from 'color2k';
 import { get } from 'svelte/store';
 import { builds } from './Builds';
@@ -34,12 +34,12 @@ import Thing from '../data/Thing';
 import User from '../data/User';
 
 export {
-	dbDispatch, Hierarchy, persistLocal,
 	Path, Grabs, Wrapper, signals, IDSignal, TitleState,
-	g, k, u, get, builds, onMount, onDestroy, transparentize,
 	ZIndex, TypeDB, TypeDatum, AlteringParent, CreationOptions,
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactFlag,
+	g, k, u, get, builds, onMount, onDestroy, setContext, getContext,
 	User, Datum, Thing, Access, Predicate, Relationship, SeriouslyRange,
+	dbDispatch, Hierarchy, persistLocal, Quadrant, Angles, transparentize,
 	IDLine, IDTool, IDTrait, IDWrapper, IDButton, IDBrowser, IDPersistant,
 	Rect, Size, Point, Layout, svgPath, Direction, ChildMapRect, NecklaceCluster,
 };

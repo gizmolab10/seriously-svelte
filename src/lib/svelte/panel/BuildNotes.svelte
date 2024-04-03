@@ -14,7 +14,7 @@
 	function updateNotes() {
 		const end = Math.min(indexedNotes.length, notesIndex + 10);
 		notes = indexedNotes.slice(notesIndex, end);
-		const suffix = notesIndex < 10 ? ' (10 most recent)' : '';
+		const suffix = notesIndex < 10 ? ' (10 most recent)' : k.empty;
 		title = `Seriously Build Notes${suffix}`;
 	}
 	

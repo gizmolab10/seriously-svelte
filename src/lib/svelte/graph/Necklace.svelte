@@ -3,7 +3,7 @@
 	import Widget from '../widget/Widget.svelte';
 	import Arrow from '../widget/Arrow.svelte';
 	import Circle from '../kit/Circle.svelte';
-	export let center: Point;
+	export let center = Point.zero;
     export let path;
 	let childOffset = new Point(k.dot_size / -3, k.cluster_offsetY);;
 	let color = path.thing?.color ?? k.color_default;
@@ -22,17 +22,17 @@
 		clusterArray = layout.clusterArray;
 	}
 	
-	// <Circle
-	// 	center={center}
-	// 	zindex=ZIndex.lines
-	// 	color_background='transparent'
-	// 	radius={k.necklace_radius}
-	// 	color={transparentize(color, 0.8)}/>
 
 	// needs:
 	//  hover
 </script>
 
+<Circle
+	center={center}
+	zindex=ZIndex.lines
+	color_background='transparent'
+	radius={k.necklace_radius}
+	color={transparentize(color, 0.8)}/>
 {#if childMapRectArray}
 	{#each childMapRectArray as map}
 		<Widget path={map.childPath} origin={map.childOrigin.offsetBy(childOffset)}/>

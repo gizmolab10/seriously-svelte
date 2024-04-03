@@ -18,7 +18,7 @@
 	});
 
 	$: {
-		const trigger = ($s_path_here?.title ?? '') + $s_graphRect + ($s_paths_grabbed?.length ?? 0);
+		const trigger = ($s_path_here?.title ?? k.empty) + $s_graphRect + ($s_paths_grabbed?.length ?? 0);
 		if (!path || trigger || ancestors.length == 0) {
 			const windowWidth = u.windowSize.width;
 			path = path_lastGrabbed() ?? g.rootPath;	// assure we have a path

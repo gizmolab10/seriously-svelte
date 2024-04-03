@@ -49,7 +49,7 @@ class PersistLocal {
 			const path = paths[index];
 			if (path) {
 				for (const id of path.ids) {
-					const relationship = h.relationship_get_byHID(id.hash());
+					const relationship = h.relationship_get_forHID(id.hash());
 					if (!relationship) {
 						paths.slice(1, index);
 					}
@@ -123,7 +123,7 @@ class PersistLocal {
 				}
 			}
 		}
-		let here = h.thing_get_byPath(pathToHere);
+		let here = h.thing_get_forPath(pathToHere);
 		if (here == null) {
 			const lastGrabbedPath = h.grabs.path_lastGrabbed?.fromPath;
 			if (lastGrabbedPath) {

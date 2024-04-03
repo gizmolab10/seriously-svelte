@@ -7,10 +7,11 @@ export class Point {
 		this.x = x;
 		this.y = y;
 	}
+
 	get asSize():					   Size { return new Size(this.x, this.y); }
-	get verbose():			 		 string { return '(' + this.x + ', ' + this.y + ')'; }
-	get pixelVerbose():				 string { return this.x + 'px ' + this.y + 'px'; }
-	get description():		 		 string { return this.x + ', ' + this.y; }
+	get pixelVerbose():				 string { return `${this.x}px ${this.y}px`; }
+	get verbose():					 string { return `(${this.x}, ${this.y})`; }
+	get description():				 string { return `${this.x} ${this.y}`; }
 	get negated():					  Point { return this.multipliedBy(-1); }
 	get dividedInHalf():			  Point { return this.multipliedBy(1/2); }
 	get copy():						  Point { return new Point(this.x, this.y); }
@@ -22,6 +23,7 @@ export class Point {
 	distanceTo(point: Point):		  Point { return new Point(Math.abs(point.x - this.x), Math.abs(point.y - this.y)) }
 	offsetEquallyBy(offset: number):  Point { return this.offsetBy(Point.square(offset)); }
 	static square(length: number):	  Point { return new Point(length, length); }
+	static get zero():				  Point { return new Point();}
 
 	rotateBy(angle: number): Point {
 		const cos = Math.cos(angle);
@@ -42,9 +44,9 @@ export class Size {
 		this.width = Math.abs(width);
 	}
 
-	get verbose():					string { return '(' + this.width + ', ' + this.height + ')'; }
-	get pixelVerbose():				string { return this.width + 'px ' + this.height + 'px'; }
-	get description():				string { return this.width + k.space + this.height; }
+	get description():				string { return `${this.width} ${this.height}`; }
+	get verbose():					string { return `(${this.width}, ${this.height})`; }
+	get pixelVerbose():				string { return `${this.width}px ${this.height}px`; }
 	get asPoint():			   		 Point { return new Point(this.width, this.height); }
 	get dividedInHalf():			  Size { return this.multipliedBy(1/2); }
 	get negated():					  Size { return this.multipliedBy(-1); }
@@ -56,6 +58,7 @@ export class Size {
 	multipliedBy(multiplier: number): Size { return new Size(this.width * multiplier, this.height * multiplier) }
 	unionWith(size: Size):			  Size { return new Size(Math.max(this.width, size.width), Math.max(this.height, size.height)); }
 	static square(length: number):	  Size { return new Size(length, length); }
+	static get zero():				  Size { return new Size();}
 }
 
 export class Rect {
@@ -83,8 +86,8 @@ export class Rect {
 		return !rect ? null : new Rect(new Point(rect.x, rect.y), new Size(rect.width, rect.height));
 	}
 
-	get description():	   string { return this.origin.verbose + ', ' + this.size.verbose; }
-	get pixelVerbose():	   string { return this.origin.pixelVerbose + k.space + this.size.pixelVerbose; }
+	get description():	   string { return `${this.origin.verbose}, ${this.size.verbose}`; }
+	get pixelVerbose():	   string { return `${this.origin.pixelVerbose}, ${this.size.pixelVerbose}`; }
 	get center():			Point { return this.origin.offsetBySize(this.size.dividedInHalf); }
 	get extent():			Point { return this.origin.offsetBySize(this.size); }		// bottom right
 	get topRight():			Point { return new Point(this.extent.x, this.origin.y); };

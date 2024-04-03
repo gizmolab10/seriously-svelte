@@ -52,7 +52,7 @@ export default class Constants {
 		this.threshold_longClick = 500;
 		this.cluster_focus_radius = 40;
 		this.height_titleAtTop = 50;
-		this.necklace_radius = 110;
+		this.necklace_radius = 160;
 		this.thing_fontSize = 14;
 		this.halfIncrement = 0.5;
 		this.width_details = 80;

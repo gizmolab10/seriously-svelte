@@ -72,7 +72,7 @@ Object.defineProperty(Number.prototype, 'isBetween', {
 
 // Object.defineProperty(String.prototype, 'boilerplate', {
 //	value: function(foo: number): string {
-//		return '';
+//		return k.empty;
 //	},
 //	enumerable: false, // Set enumerable to false to avoid unintended behavior
 //	writable: false, // Set writable to false to prevent the method to be overwritten

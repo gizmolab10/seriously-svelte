@@ -26,6 +26,20 @@ export enum IDTrait {
 	bulk  = '~',
 }
 
+export enum Quadrant {
+	upperRight = 1,
+	upperLeft  = 2,
+	lowerLeft  = 3,
+	lowerRight = 4
+}
+
+export enum Angles {
+	threeQuarters = Math.PI * 3 / 2,
+	quarter = Math.PI / 2,
+	full = Math.PI * 2,
+	half = Math.PI,
+}
+
 export enum IDButton {
 	details		= 'show details view',
 	builds		= 'show build notes',

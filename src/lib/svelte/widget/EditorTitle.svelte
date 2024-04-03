@@ -158,7 +158,7 @@
 				isEditing = !isEditing;
 			}
 		}
-		cursorStyle = (!path.isRoot && !thing.isBulkAlias && (path.isEditing || path.isGrabbed)) ? '' : 'cursor: pointer';
+		cursorStyle = (!path.isRoot && !thing.isBulkAlias && (path.isEditing || path.isGrabbed)) ? k.empty : 'cursor: pointer';
 	}
 
 	function stopAndClearEditing() {

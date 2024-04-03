@@ -32,7 +32,7 @@ export default class SVGPath {
 		if (x >= 0 && y >= 0)		{ return `M0 0 L${x} ${y}`;
 		} else if (x >= 0 && y < 0)	{ return `M0 ${-y} L${x} 0`;
 		} else if (x < 0 && y >= 0)	{ return `M${-x} 0 L0 ${y}`;
-		} else						{ return `M${-x} ${-y} L0 0`;
+		} else						{ return `M${x} ${y} L0 0`;
 		}
 	}
 
@@ -80,7 +80,7 @@ export default class SVGPath {
 
 	tinyDots_circular(size: number, count: number): string {
 		if (count == 0) {
-			return '';
+			return k.empty;
 		}
 		let i = 0;
 		let path = k.empty;

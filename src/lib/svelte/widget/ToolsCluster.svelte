@@ -103,7 +103,7 @@ import { svgPath, Direction, dbDispatch, transparentize, AlteringParent } from '
             path = $s_path_clusterTools;
             if (path) {
                 thing = path?.thing;
-                color = thing?.color ?? '';
+                color = thing?.color ?? k.empty;
                 titleWidth = thing?.titleWidth ?? 0;
                 const hasOneParent = (thing?.parents.length ?? 0) == 1;
                 countOfVisibleParents = path.visibleParentPaths(0).length;

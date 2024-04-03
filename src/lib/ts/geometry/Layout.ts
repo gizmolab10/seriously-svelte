@@ -8,19 +8,23 @@ export default class Layout {
 	constructor(path: Path, origin: Point) {
 		const childPaths = path.childPaths;
 		if (get(s_layout_byClusters)) {
-			const thing = path.thing;
-			const contains = g.hierarchy.predicate_byHID[Predicate.idContains.hash()];
-			this.cluster_layout(childPaths, new NecklaceCluster(contains, true), path, origin);
-			for (const predicate of g.hierarchy.predicates) {
-				const paths = thing?.paths_uniquelyFromFor(predicate.id) ?? [];
-				const cluster = new NecklaceCluster(predicate, false);
-				this.cluster_layout(paths, cluster, path, origin);
+			const contains = g.hierarchy.predicate_get_forID(Predicate.idContains);
+			if (contains) {
+				const thing = path.thing;
+				this.cluster_layout(childPaths, new NecklaceCluster(contains, true), path, origin);
+				for (const predicate of g.hierarchy.predicates) {	// and another 'contains' for parents
+					if (predicate.isInPath(path)) {
+						const paths = thing?.paths_uniquelyFromFor(predicate.id) ?? [];
+						const cluster = new NecklaceCluster(predicate, false);
+						this.cluster_layout(paths, cluster, path, origin);
+					}
+				}
 			}
 		} else {
-			let sumOfSiblingsAbove = -path.visibleProgeny_height() / 2; // start out negative and grow positive
-			const length = childPaths.length;
 			let index = 0;
 			const sizeX = k.line_stretch;
+			const length = childPaths.length;
+			let sumOfSiblingsAbove = -path.visibleProgeny_height() / 2; // start out negative and grow positive
 			while (index < length) {
 				const childPath = childPaths[index];
 				const childHeight = childPath.visibleProgeny_height();
@@ -41,13 +45,14 @@ export default class Layout {
 		let index = 0;
 		const length = paths.length;
 		const radius = k.necklace_radius;
+		const start_angle = cluster.angle;
+		const start_row = (8 - length) / 2;
 		const radial = new Point(radius, 0);
-		const rowStart = Math.max(-2, (6 - length)) / 2;
-		const angleStart = cluster.angle_necklacePredicate;
 		while (index < length) {
 			const childPath = paths[index];
-			const angle = Math.asin((rowStart + index) * k.row_height / radius);
-			const childOrigin = origin.offsetBy(radial.rotateBy(angleStart + angle));
+			const height = (start_row + index) * k.row_height;
+			const angle = start_angle + Math.asin(height / radius);
+			const childOrigin = origin.offsetBy(radial.rotateBy(angle));
 			const childMapRect = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, childPath, null);
 			this.childMapRectArray.push(childMapRect);
 			index += 1;

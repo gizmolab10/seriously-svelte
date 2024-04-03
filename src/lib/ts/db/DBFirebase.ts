@@ -142,7 +142,7 @@ export default class DBFirebase implements DBInterface {
 					for (const bulkDoc of bulkSnapshot.docs) {
 						const baseID = bulkDoc.id;
 						if (baseID != this.baseID) {
-							let thing = this.hierarchy.thing_bulkAlias_get_byTitle(baseID);
+							let thing = this.hierarchy.thing_bulkAlias_get_forTitle(baseID);
 							if (!thing) {								// create a thing for each bulk
 								thing = this.hierarchy.thing_runtimeCreate(this.baseID, null, baseID, 'red', IDTrait.bulk, false);
 								await this.hierarchy.path_remember_remoteAddAsChild(rootsPath, thing);
@@ -241,7 +241,7 @@ export default class DBFirebase implements DBInterface {
 					}
 				} else if (type == TypeDatum.things) {
 					const remoteThing = new RemoteThing(data);
-					let thing = h.thing_get_byHID(id.hash());
+					let thing = h.thing_get_forHID(id.hash());
 					if (remoteThing) {
 						switch (change.type) {
 							case 'added':
@@ -344,7 +344,7 @@ export default class DBFirebase implements DBInterface {
 	async things_remember_firstTime_remoteCreateIn(collectionRef: CollectionReference) {
 		const fields = ['title', 'color', 'trait'];
 		const root = new Thing(this.baseID, null, this.baseID, 'coral', IDTrait.root, true);
-		const thing = new Thing(this.baseID, null, 'Click this text to edit it', 'purple', '', true);
+		const thing = new Thing(this.baseID, null, 'Click this text to edit it', 'purple', k.empty, true);
 		g.root = root;
 		const thingRef = await addDoc(collectionRef, u.convertToObject(thing, fields));	// N.B. these will be fetched, shortly
 		const rootRef = await addDoc(collectionRef, u.convertToObject(root, fields));		// no need to remember now
@@ -517,7 +517,7 @@ export default class DBFirebase implements DBInterface {
 				throw new Error('Unable to fetch IP address.');
 			}
 			const ipAddress = await response.text();
-			return ipAddress.replace(/\n/g, '');
+			return ipAddress.replace(/\n/g, k.empty);
 		} catch (error) {
 			this.reportError('Error fetching IP address:' + error);
 			return null;

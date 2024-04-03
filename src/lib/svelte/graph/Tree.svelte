@@ -45,7 +45,7 @@
 		}
 		if (here == null || here.id != $s_path_here) {
 			const h = g.hierarchy;
-			here = !$s_path_here ? g.root : h.thing_get_byPath($s_path_here);
+			here = !$s_path_here ? g.root : h.thing_get_forPath($s_path_here);
 			offsetX_ofFirstReveal = g.titleIsAtTop ? 0 : here?.titleWidth / 2;
 			updateOrigins();
 			rebuild();

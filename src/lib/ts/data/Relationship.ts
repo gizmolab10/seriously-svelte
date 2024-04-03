@@ -9,7 +9,7 @@ export default class Relationship extends Datum {
 	order: number;
 	idTo: string;
 
-	static get nullRelationship(): Relationship { return new Relationship('', null, '', '', '', 0, false); }
+	static get nullRelationship(): Relationship { return new Relationship(k.empty, null, k.empty, k.empty, k.empty, 0, false); }
 
 	constructor(baseID: string, id: string | null, idPredicate: string, idFrom: string, idTo: string, order = 0, isRemotelyStored: boolean) {
 		super(baseID, id, isRemotelyStored);
@@ -41,7 +41,7 @@ export default class Relationship extends Datum {
 
 	thing(to: boolean): Thing | null {
 		const id = to ? this.idTo : this.idFrom;
-		return g.hierarchy?.thing_get_byHID(id.hash()) ?? null
+		return g.hierarchy?.thing_get_forHID(id.hash()) ?? null
 	}
 
 	async order_setTo(newOrder: number, remoteWrite: boolean = false) {

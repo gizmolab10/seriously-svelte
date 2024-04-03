@@ -28,7 +28,7 @@ export default class Thing extends Datum {
 	};
 	
 	get fields():	Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
-	get isHere():			  boolean { return (get(s_path_here).thing?.id ?? '') == this.id; }
+	get isHere():			  boolean { return (get(s_path_here).thing?.id ?? k.empty) == this.id; }
 	get idBridging():		   string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get parents():		 Array<Thing> { return this.things_fromFor(Predicate.idContains); }
 	get parentPaths():	  Array<Path> { return this.paths_fromFor(Predicate.idContains); }
@@ -62,7 +62,7 @@ export default class Thing extends Datum {
 	}
 
 	relationships_onceFrom(predicateID: string): Array<Relationship> {
-		return this.hierarchy.relationships_get_byPredicate_to_thing(predicateID, true, this.id);
+		return this.hierarchy.relationships_get_forPredicate_to_thing(predicateID, true, this.id);
 	}
 
 	updateColorAttributes(path: Path) {
@@ -134,7 +134,7 @@ export default class Thing extends Datum {
 			if (fromThing.isRoot) {
 				paths.push(g.rootPath);
 			} else {
-				const relationships = g.hierarchy.relationships_get_byPredicate_to_thing(predicateID, true, fromThing.id);
+				const relationships = g.hierarchy.relationships_get_forPredicate_to_thing(predicateID, true, fromThing.id);
 				if (relationships.length > 0){
 					paths.push(new Path(relationships[0].id, predicateID))
 				}

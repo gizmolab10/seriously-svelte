@@ -9,5 +9,5 @@ export default class NecklaceCluster {
 		this.pointsTo = pointsTo;
 	}
 
-	get angle_necklacePredicate(): number { return this.predicate.angle_necklace(this.pointsTo); }
+	get angle(): number { return this.predicate.angle_necklace(this.pointsTo); }
 }

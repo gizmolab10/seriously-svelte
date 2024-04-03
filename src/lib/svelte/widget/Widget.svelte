@@ -102,8 +102,8 @@
 			console.log(`no thing ${path?.titles}`)
 		}
 		path?.thing.updateColorAttributes(path);
-		border = showingBorder ? 'border: ' + path?.thing.grabAttributes : '';
-		background = showingBorder ? 'background-color: ' + k.color_background : '';
+		border = showingBorder ? 'border: ' + path?.thing.grabAttributes : k.empty;
+		background = showingBorder ? 'background-color: ' + k.color_background : k.empty;
 	}
 
 	function updateLayout() {

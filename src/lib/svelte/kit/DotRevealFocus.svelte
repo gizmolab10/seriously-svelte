@@ -6,7 +6,7 @@
 	let size = k.dot_size;
 
 	function fillColors_closure(isFilled) {
-		return [debug.lines ? 'transparent' : path.dotColor(isFilled), ''];
+		return [debug.lines ? 'transparent' : path.dotColor(isFilled), k.empty];
 	}
 
 	function onClick(event) {

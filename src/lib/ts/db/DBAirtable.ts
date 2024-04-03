@@ -63,7 +63,7 @@ export default class DBAirtable implements DBInterface {
 				const remoteThings = records;
 				for (const remoteThing of remoteThings) {
 					const id = remoteThing.id;
-					this.hierarchy.thing_remember_runtimeCreate('', id, remoteThing.fields.title as string, remoteThing.fields.color as string, remoteThing.fields.trait as string, true);
+					this.hierarchy.thing_remember_runtimeCreate(k.empty, id, remoteThing.fields.title as string, remoteThing.fields.color as string, remoteThing.fields.trait as string, true);
 				}
 				s_things_arrived.set(true);
 			})
@@ -116,7 +116,7 @@ export default class DBAirtable implements DBInterface {
 				const order = record.fields.order as number;
 				const froms = record.fields.from as (Array<string>);
 				const predicates = record.fields.predicate as (Array<string>);
-				this.hierarchy.relationship_remember_runtimeCreateUnique('', id, predicates[0], froms[0], tos[0], order, CreationOptions.isFromRemote);
+				this.hierarchy.relationship_remember_runtimeCreateUnique(k.empty, id, predicates[0], froms[0], tos[0], order, CreationOptions.isFromRemote);
 			}
 		} catch (error) {
 			debug.log_error(this.relationships_errorMessage + error);

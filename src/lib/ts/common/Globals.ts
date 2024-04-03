@@ -11,7 +11,7 @@ class Globals {
 
 	setup() {
 		const baseID = dbDispatch.db.baseID;
-		const name = baseID ? (baseID! + ', ') : '';
+		const name = baseID ? (baseID! + ', ') : k.empty;
 		const host = u.isServerLocal ? 'local' : 'remote';
 		document.title = `Seriously (${host}, ${name}${u.browserType}, α)`;
 		builds.setup();

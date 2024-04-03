@@ -20,7 +20,7 @@
 			} else {
 				colorStyles = `background-color: ${k.color_background}; color: ${thing.color}`;
 			}
-			cursorStyle = !path.isGrabbed && path.hasChildren ? 'cursor: pointer' : '';
+			cursorStyle = !path.isGrabbed && path.hasChildren ? 'cursor: pointer' : k.empty;
 			borderColor = path.isGrabbed ? thing.color : k.color_background;
 			border = `${borderStyle} ${borderColor}`;
 		}

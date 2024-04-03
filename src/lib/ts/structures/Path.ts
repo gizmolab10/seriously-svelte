@@ -12,9 +12,9 @@ export default class Path {
 	hashedPath: number;
 
 	constructor(pathString: string = k.empty, predicateID: string = Predicate.idContains) {
-		this.pathString = pathString;
+		this.hashedPath = pathString.hash();
 		this.predicateID = predicateID;
-		this.hashedPath = this.pathString.hash();
+		this.pathString = pathString;
 		if (g.hierarchy.isAssembled) {
 			this.subscriptions_setup();			// not needed during hierarchy assembly
 		}
@@ -58,10 +58,10 @@ export default class Path {
 	get revealWrapper(): Wrapper | null { return this.wrappers[IDWrapper.reveal]; }
 	get widgetWrapper(): Wrapper | null { return this.wrappers[IDWrapper.widget]; }
 	get titleRect(): Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
-	get things(): Array<Thing | null> { return g.hierarchy?.things_get_byPath(this); }
+	get things(): Array<Thing | null> { return g.hierarchy?.things_get_forPath(this); }
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
-	get children(): Array<Thing> { return g.hierarchy?.things_get_byPaths(this.childPaths); }
+	get children(): Array<Thing> { return g.hierarchy?.things_get_forPaths(this.childPaths); }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
 	get isEditing(): boolean { return this.matchesPath(get(s_title_editing)?.editing ?? null); }
 	get titles(): Array<string> { return this.things?.map(t => ` \"${t ? t.title : 'null'}\"`) ?? []; }
@@ -97,8 +97,8 @@ export default class Path {
 
 	get children_relationships(): Array<Relationship> {
 		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
-		if (this.pathString != 'exemplar' && id && !['', 'k.id_unknown'].includes(id)) {
-			return g.hierarchy.relationships_get_byPredicate_to_thing(this.predicateID, false, id);
+		if (this.pathString != 'exemplar' && id && ![k.empty, 'k.id_unknown'].includes(id)) {
+			return g.hierarchy.relationships_get_forPredicate_to_thing(this.predicateID, false, id);
 		}
 		return [];
 	}
@@ -165,7 +165,7 @@ export default class Path {
 	matchesPath(path: Path | null): boolean { return !path ? false : this.hashedPath == path.hashedPath; }
 	sharesAnID(path: Path | null): boolean { return !path ? false : this.ids.some(id => path.ids.includes(id)); }
 	rect_ofWrapper(wrapper: Wrapper | null): Rect | null { return Rect.createFromDOMRect(wrapper?.component.getBoundingClientRect()); }
-	relationshipAt(back: number = 1): Relationship | null { return g.hierarchy?.relationship_get_byHID(this.idAt(back).hash()) ?? null; }
+	relationshipAt(back: number = 1): Relationship | null { return g.hierarchy?.relationship_get_forHID(this.idAt(back).hash()) ?? null; }
 
 	includedInPaths(paths: Array<Path>): boolean {
 		return (paths?.filter(p => {
@@ -194,7 +194,7 @@ export default class Path {
 	idAt(back: number = 1): string {	// default 1 == last
 		const ids = this.ids;
 		if (back > ids.length) {
-			return '';
+			return k.empty;
 		}
 		return ids.slice(-(Math.max(1, back)))[0];
 	}
@@ -295,7 +295,7 @@ export default class Path {
 	appendChild(thing: Thing | null): Path {
 		const id = this.thing?.idBridging;
 		if (thing && id) {
-			const relationship = g.hierarchy?.relationship_get_byPredicate_from_to(Predicate.idContains, id, thing.id);
+			const relationship = g.hierarchy?.relationship_get_forPredicate_from_to(Predicate.idContains, id, thing.id);
 			if (relationship) {
 				return this.appendID(relationship.id);
 			}
