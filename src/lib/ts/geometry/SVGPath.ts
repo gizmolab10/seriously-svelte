@@ -28,7 +28,9 @@ export default class SVGPath {
         return `M${start} ${y} L${end} ${y}`;
     }
 
-	line(x: number, y: number): string {
+	line(vector: Point): string {
+		const x = vector.x;
+		const y = vector.y;
 		if (x >= 0 && y >= 0)		{ return `M0 0 L${x} ${y}`;
 		} else if (x >= 0 && y < 0)	{ return `M0 ${-y} L${x} 0`;
 		} else if (x < 0 && y >= 0)	{ return `M${-x} 0 L0 ${y}`;

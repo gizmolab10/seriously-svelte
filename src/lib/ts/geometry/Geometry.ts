@@ -1,4 +1,4 @@
-import { k, Path, Thing } from '../common/GlobalImports'
+import { u, Path, Thing, Quadrant } from '../common/GlobalImports'
 
 export class Point {
 	x: number;
@@ -70,22 +70,6 @@ export class Rect {
 		this.size = size;
 	}
 
-	static createExtentRect(origin: Point, extent: Point) {
-		return new Rect(origin, extent.offsetBy(origin.negated).asSize);
-	}
-
-	static createCenterRect(center: Point, size: Size) {
-		return new Rect(center.offsetBy(size.asPoint.negated.dividedInHalf), size);
-	}
-
-	static createRightCenterRect(rightCenter: Point, size: Size) {
-		return new Rect(rightCenter.offsetByY(size.height / -2), size);
-	}
-
-	static createFromDOMRect(rect: DOMRect | null) {
-		return !rect ? null : new Rect(new Point(rect.x, rect.y), new Size(rect.width, rect.height));
-	}
-
 	get description():	   string { return `${this.origin.verbose}, ${this.size.verbose}`; }
 	get pixelVerbose():	   string { return `${this.origin.pixelVerbose}, ${this.size.pixelVerbose}`; }
 	get center():			Point { return this.origin.offsetBySize(this.size.dividedInHalf); }
@@ -102,6 +86,32 @@ export class Rect {
 	offsetByY(y: number):	 Rect { return new Rect(this.origin.offsetByY(y), this.size); }
 	offsetBy(delta: Point):	 Rect { return new Rect(this.origin.offsetBy(delta), this.size); }
 	expandedBy(delta: Size): Rect { return new Rect(this.origin, this.size.expandedBy(delta)) }
+
+	cornersForAngle(angle: number): [Point, Point] {
+		switch (u.angle_quadrant(angle)) {
+			case Quadrant.upperRight: return [this.bottomLeft, this.topRight];
+			case Quadrant.lowerLeft:  return [this.topRight, this.bottomLeft];
+			case Quadrant.upperLeft:  return [this.extent, this.origin];
+			default:				  return [this.origin, this.extent];
+		}
+	}
+
+	static createExtentRect(origin: Point, extent: Point) {
+		return new Rect(origin, extent.offsetBy(origin.negated).asSize);
+	}
+
+	static createCenterRect(center: Point, size: Size) {
+		return new Rect(center.offsetBy(size.asPoint.negated.dividedInHalf), size);
+	}
+
+	static createRightCenterRect(rightCenter: Point, size: Size) {
+		return new Rect(rightCenter.offsetByY(size.height / -2), size);
+	}
+
+	static createFromDOMRect(rect: DOMRect | null) {
+		return !rect ? null : new Rect(new Point(rect.x, rect.y), new Size(rect.width, rect.height));
+	}
+
 }
 
 export class ChildMapRect extends Rect {

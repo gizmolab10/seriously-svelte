@@ -41,7 +41,7 @@
 					origin = rect.centerLeft.offsetByY(-0.5);
 					extent = rect.centerRight.offsetBy(new Point(0.5, -0.5));
 					size = origin.distanceTo(extent).asSize;
-					scalablePath = svgPath.line(size.width, 0);
+					scalablePath = svgPath.line(new Point(size.width, 0));
 					break;
 			}
 			if (curveType != IDLine.flat) {

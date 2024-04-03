@@ -1,4 +1,4 @@
-import { k, get, Path, Size, Angles, Quadrant, IDBrowser, getContext, setContext } from './GlobalImports';
+import { k, get, Path, Size, Point, Angles, Quadrant, IDBrowser, getContext, setContext } from './GlobalImports';
 import { s_scale_factor, s_thing_fontFamily } from './State';
 
 class Utilities {
@@ -43,6 +43,20 @@ class Utilities {
 			const bTop = b.titleRect?.origin.y;
 			return (!aTop || !bTop) ? 0 : aTop - bTop;
 		});
+	}
+
+	point_quadrant(point: Point): Quadrant {
+		const x = point.x;
+		const y = point.y;
+		if (x >= 0 && y >= 0) {
+			return Quadrant.upperRight;
+		} else if (x >= 0 && y < 0) {
+			return Quadrant.lowerRight;
+		} else if (x < 0 && y >= 0) {
+			return Quadrant.upperLeft;
+		} else {
+			return Quadrant.lowerLeft;
+		}
 	}
 
 	angle_quadrant(angle: number): Quadrant {
