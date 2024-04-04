@@ -76,7 +76,7 @@
 		position: absolute;
 		font-family: Arial;
 		top: {label_top}px;
-		font-size: 0.65em;
+		font-size: 0.6em;
 		color: {color};
 		left: 50px;'>
 		{cluster.predicate.kind.unCamelCase().lastWord()}

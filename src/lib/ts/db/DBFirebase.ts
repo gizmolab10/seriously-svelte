@@ -208,7 +208,7 @@ export default class DBFirebase implements DBInterface {
 				if (type == TypeDatum.relationships) {
 					const remoteRelationship = new RemoteRelationship(data);
 					if (remoteRelationship) {
-						let relationship = h.relationship_byHID[id.hash()];
+						let relationship = h.relationship_get_forHID(id.hash());
 						const original = !relationship ? null : u.copyObject(relationship);
 						switch (change.type) {
 							case 'added':
