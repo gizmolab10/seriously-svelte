@@ -22,14 +22,12 @@
 <div
 	class= 'arrowhead' id={name} style='
 		position: absolute;
-		width: {diameter}px;
-		height: {diameter}px;
 		top: {center.y - radius}px;
 		left: {center.x - radius}px;
 		z-index: {zindex};'>
 	<svg class='triangle'
-		width={diameter}px
-		height={diameter}px>
+		width={diameter * 2}px
+		height={diameter * 2}px>
 		style='z-index: {ZIndex.lines}; position: absolute'
 		<path d={scalablePath} stroke={color} fill={color_background}/>
 </div>

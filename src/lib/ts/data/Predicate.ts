@@ -15,7 +15,7 @@ export default class Predicate extends RemoteIdentifiable {
 		const delta = Math.PI * 0.36;
 		switch (this.id) {
 			case Predicate.idIsRelated: return -delta;
-			case Predicate.idContains: return pointsTo ? 0 : delta * 2.3;
+			case Predicate.idContains: return pointsTo ? 0 : delta * 2;
 		}
 		return 0;
 	}
