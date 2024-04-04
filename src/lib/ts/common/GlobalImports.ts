@@ -5,7 +5,7 @@ import { IDPersistant, persistLocal } from '../managers/PersistLocal';
 import { onMount, onDestroy, setContext, getContext } from 'svelte';
 import { CreationOptions, IDLine, IDTool } from './Enumerations';
 import { debug, Debug, DebugFlag } from '../debug/Debug';
-import { Direction, svgPath } from '../geometry/SVGPath';
+import { Direction, svgPaths } from '../geometry/SVGPaths';
 import { TypeDB, TypeDatum } from '../db/DBInterface';
 import { SeriouslyRange } from './SeriouslyRange';
 import { IDWrapper } from '../structures/Wrapper';
@@ -41,5 +41,5 @@ export {
 	User, Datum, Thing, Access, Predicate, Relationship, SeriouslyRange,
 	dbDispatch, Hierarchy, persistLocal, Quadrant, Angles, transparentize,
 	IDLine, IDTool, IDTrait, IDWrapper, IDButton, IDBrowser, IDPersistant,
-	Rect, Size, Point, Layout, svgPath, Direction, ChildMapRect, NecklaceCluster,
+	Rect, Size, Point, Layout, svgPaths, Direction, ChildMapRect, NecklaceCluster,
 };

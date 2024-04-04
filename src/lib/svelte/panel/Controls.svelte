@@ -1,5 +1,5 @@
 <script>
-	import { g, k, u, ZIndex, signals, svgPath, IDButton, IDPersistant, persistLocal } from '../../ts/common/GlobalImports';
+	import { g, k, u, ZIndex, signals, svgPaths, IDButton, IDPersistant, persistLocal } from '../../ts/common/GlobalImports';
 	import { s_build, s_show_details, s_id_popupView, s_layout_byClusters, s_show_child_graph } from '../../ts/common/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import SVGD3 from '../svg/SVGD3.svelte';
@@ -71,7 +71,7 @@
 			<SVGD3 name='smaller'
 				width={size}
 				height={size}
-				scalablePath={svgPath.dash(size, 2)}
+				svgPath={svgPaths.dash(size, 2)}
 			/>
 		</CircularButton>
 		<CircularButton
@@ -82,7 +82,7 @@
 			<SVGD3 name='bigger'
 				width={size}
 				height={size}
-				scalablePath={svgPath.tCross(size, 2)}
+				svgPath={svgPaths.tCross(size, 2)}
 			/>
 		</CircularButton>
 	{/if}

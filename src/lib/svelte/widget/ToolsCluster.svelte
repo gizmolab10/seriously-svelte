@@ -1,6 +1,6 @@
 <script lang='ts'>
 import { g, k, u, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, signals } from '../../ts/common/GlobalImports';
-import { svgPath, Direction, dbDispatch, transparentize, AlteringParent } from '../../ts/common/GlobalImports';
+import { svgPaths, Direction, dbDispatch, transparentize, AlteringParent } from '../../ts/common/GlobalImports';
     import { s_altering_parent, s_path_clusterTools } from '../../ts/common/State';
     import { s_graphRect, s_show_details } from '../../ts/common/State';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
@@ -183,7 +183,7 @@ import { svgPath, Direction, dbDispatch, transparentize, AlteringParent } from '
                         width={clusterDiameter}
                         stroke=transparent
                         fill={color}>
-                        <path d={svgPath.halfCircle(clusterDiameter, Direction.up)}/>
+                        <path d={svgPaths.halfCircle(clusterDiameter, Direction.up)}/>
                     </svg>
                 {/if}
                 {#if hovers[IDTool.delete_cancel]}
@@ -195,7 +195,7 @@ import { svgPath, Direction, dbDispatch, transparentize, AlteringParent } from '
                         height={clusterDiameter}
                         width={clusterDiameter}
                         fill={color}>
-                        <path d={svgPath.halfCircle(clusterDiameter, Direction.down)}/>
+                        <path d={svgPaths.halfCircle(clusterDiameter, Direction.down)}/>
                     </svg>
                 {/if}
                 <LabelButton
@@ -235,13 +235,13 @@ import { svgPath, Direction, dbDispatch, transparentize, AlteringParent } from '
                     stroke={color}
                     viewBox='0 1 18 16'
                     fill={hovers[IDTool.more] ? color : 'transparent'}>
-                    <path d={svgPath.oval(18, true)}/>
+                    <path d={svgPaths.oval(18, true)}/>
                 </svg>
                 <svg width=16
                     height=10
                     viewBox='-2 -2 14 10'
                     fill={hovers[IDTool.more] ? k.color_background : color}>
-                    <path d={svgPath.tinyDots_linear(3, 1)}/>
+                    <path d={svgPaths.tinyDots_linear(3, 1)}/>
                 </svg>
             </LabelButton>
             <DotReveal thing={thing} path={$s_path_clusterTools} center={getC(IDTool.dismiss)}/>
@@ -250,7 +250,7 @@ import { svgPath, Direction, dbDispatch, transparentize, AlteringParent } from '
                 strokeColor={isDisabledFor(IDTool.next) ? k.color_disabled : parentSensitiveColor}
                 cursor={isDisabledFor(IDTool.next) ? 'normal' : 'pointer'}
                 onClick={(event) => handleClick(IDTool.next, event)}
-                extraPath={svgPath.circle(toolDiameter, 4)}
+                extraPath={svgPaths.circle(toolDiameter, 4)}
                 center={getC(IDTool.next)}
                 direction={Direction.up}
                 size={toolDiameter}
@@ -260,7 +260,7 @@ import { svgPath, Direction, dbDispatch, transparentize, AlteringParent } from '
                 strokeColor={isDisabledFor(IDTool.delete_parent) ? k.color_disabled : parentSensitiveColor}
                 cursor={isDisabledFor(IDTool.delete_parent) ? 'normal' : 'pointer'}
                 onClick={(event) => handleClick(IDTool.delete_parent, event)}
-                extraPath={svgPath.dash(toolDiameter, 4)}
+                extraPath={svgPaths.dash(toolDiameter, 4)}
                 center={getC(IDTool.delete_parent)}
                 direction={Direction.left}
                 id='delete_parent'
@@ -270,7 +270,7 @@ import { svgPath, Direction, dbDispatch, transparentize, AlteringParent } from '
                 cursor={isDisabledFor(IDTool.add_parent) ? 'normal' : 'pointer'}
                 onClick={(event) => handleClick(IDTool.add_parent, event)}
                 strokeColor={isDisabledFor(IDTool.add_parent) ? k.color_disabled : color}
-                extraPath={svgPath.tCross(toolDiameter, 3)}
+                extraPath={svgPaths.tCross(toolDiameter, 3)}
                 center={getC(IDTool.add_parent)}
                 direction={Direction.left}
                 id='add_parent'
@@ -278,7 +278,7 @@ import { svgPath, Direction, dbDispatch, transparentize, AlteringParent } from '
             <TriangleButton
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.create, isFilled) }}
                 onClick={(event) => handleClick(IDTool.create, event)}
-                extraPath={svgPath.tCross(toolDiameter, 3)}
+                extraPath={svgPaths.tCross(toolDiameter, 3)}
                 center={getC(IDTool.create)}
                 direction={Direction.right}
                 strokeColor={color}

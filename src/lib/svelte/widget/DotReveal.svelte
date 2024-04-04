@@ -1,6 +1,6 @@
 <script>
 	import { s_paths_expanded, s_altering_parent, s_paths_grabbed, s_path_clusterTools } from '../../ts/common/State';
-	import { g, k, u, get, Size, Thing, Point, debug, ZIndex, svgPath, signals } from "../../ts/common/GlobalImports";
+	import { g, k, u, get, Size, Thing, Point, debug, ZIndex, svgPaths, signals } from "../../ts/common/GlobalImports";
 	import { onMount, Wrapper, Direction, onDestroy, dbDispatch, IDWrapper } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte'
     export let path;
@@ -9,14 +9,14 @@
 	let childrenCount = path.children_relationships.length;
 	let insideFillColor = k.color_background;
 	let tinyDotsOffset = size * -0.4 + 0.01;
-	let insidePath = svgPath.circle(16, 6);
+	let insidePath = svgPaths.circle(16, 6);
 	let fillColor = k.color_background;
 	let tinyDotsDiameter = size * 1.8;
 	let strokeColor = path.thing.color;
 	let revealWrapper = Wrapper;
-	let scalablePath = k.empty;
 	let hasInsidePath = false;
 	let isHovering = false;
+	let svgPath = k.empty;
 	let insideOffset = 0;
 	let dotReveal = null;
 	let toggle = false;
@@ -71,16 +71,16 @@
 		hasInsidePath = path.toolsGrabbed || path.thing.isBulkAlias;
 		insideOffset = hasInsidePath ? 0 : -1;
 		if (!path.showsReveal || path.toolsGrabbed) {
-			scalablePath = svgPath.circle(size, size - 1);
+			svgPath = svgPaths.circle(size, size - 1);
 		} else {
 			const goLeft = path.showsChildren;
 			const direction = goLeft ? Direction.left : Direction.right;
-			scalablePath = svgPath.fatPolygon(size, direction);
+			svgPath = svgPaths.fatPolygon(size, direction);
 		}
 		if (path.thing.isBulkAlias) {
-			insidePath = svgPath.circle(size, 3);
+			insidePath = svgPaths.circle(size, 3);
 		} else if (path.toolsGrabbed) {
-			insidePath = svgPath.xCross(size, 1.5);
+			insidePath = svgPaths.xCross(size, 1.5);
 		}
 	}
 
@@ -129,12 +129,12 @@
 				width: {size}px;
 				height: {size}px;
 			'>
-			{#key scalablePath}
+			{#key svgPath}
 				<SVGD3 name='dotReveal'
 					width={size}
 					height={size}
 					stroke={strokeColor}
-					scalablePath={scalablePath}
+					svgPath={svgPath}
 					fill={debug.lines ? 'transparent' : fillColor}
 				/>
 			{/key}
@@ -150,7 +150,7 @@
 						height={size}
 						fill={insideFillColor}
 						stroke={insideFillColor}
-						scalablePath={insidePath}
+						svgPath={insidePath}
 					/>
 				</div>
 			{/if}
@@ -166,7 +166,7 @@
 						stroke={strokeColor}
 						width={tinyDotsDiameter}
 						height={tinyDotsDiameter}
-						scalablePath={svgPath.tinyDots_circular(tinyDotsDiameter, childrenCount)}
+						svgPath={svgPaths.tinyDots_circular(tinyDotsDiameter, childrenCount)}
 					/>
 				</div>
 			{/if}

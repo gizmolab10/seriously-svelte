@@ -1,5 +1,5 @@
 <script>
-	import { k, Size, Point, ZIndex, svgPath, Direction } from "../../ts/common/GlobalImports";
+	import { k, Size, Point, ZIndex, svgPaths, Direction } from "../../ts/common/GlobalImports";
 	import SVGD3 from './SVGD3.svelte';
 	export let extraColor = k.color_background;
 	export let extraPath = null;
@@ -7,7 +7,7 @@
 	export let fillColor;
 	export let position;
 	export let size;
-	const scalablePath = svgPath.fatPolygon(size, Direction.left);
+	const svgPath = svgPaths.fatPolygon(size, Direction.left);
 
 </script>
 
@@ -17,7 +17,7 @@
 	fill={fillColor}
 	position={position}
 	stroke={strokeColor}
-	scalablePath={scalablePath}
+	svgPath={svgPath}
 />
 {#if extraPath}
 	<SVGD3 name='fatTriangleInside'
@@ -25,7 +25,7 @@
 		height={size}
 		fill={extraColor}
 		stroke={extraColor}
-		scalablePath={extraPath}
+		svgPath={extraPath}
 		x={size / 4}
 	/>
 {/if}

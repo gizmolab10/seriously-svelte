@@ -1,10 +1,10 @@
 <script>
-	import { u, Size, ZIndex, svgPath } from '../../ts/common/GlobalImports';
+	import { u, Size, ZIndex, svgPaths } from '../../ts/common/GlobalImports';
     import { s_id_popupView } from '../../ts/common/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
     export let size = 20;
-    const cross = svgPath.xCross(size, size / 6);
-    const circle = svgPath.circle(size, size - 2);
+    const cross = svgPaths.xCross(size, size / 6);
+    const circle = svgPaths.circle(size, size - 2);
 </script>
 
 <style>
@@ -21,11 +21,11 @@
     <SVGD3 name='close'
 		width={size}
 		height={size}
-		scalablePath={circle}
+		svgPath={circle}
 	/>
     <SVGD3 name='closeInside'
 		width={size}
 		height={size}
-		scalablePath={cross}
+		svgPath={cross}
 	/>
 </div>

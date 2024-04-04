@@ -7,7 +7,7 @@ export enum Direction {
 	left = 0,
 }
 
-export default class SVGPath {
+export default class SVGPaths {
 
     dash(diameter: number, margin: number): string {
 		const y = diameter / 2;
@@ -171,4 +171,4 @@ export default class SVGPath {
 
 }
 
-export const svgPath = new SVGPath();
+export const svgPaths = new SVGPaths();

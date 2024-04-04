@@ -1,5 +1,5 @@
 <script>
-	import { k, u, Size, Thing, Point, ZIndex, svgPath, Direction, dbDispatch } from "../../ts/common/GlobalImports";
+	import { k, u, Size, Thing, Point, ZIndex, svgPaths, Direction, dbDispatch } from "../../ts/common/GlobalImports";
 	import { s_paths_grabbed } from '../../ts/common/State';
 	import SVGD3 from './SVGD3.svelte';
 	export let fillColors_closure = null;
@@ -11,7 +11,7 @@
 	export let center;
 	export let size;
 	export let id;
-	let scalablePath = svgPath.fatPolygon(size, direction);
+	let svgPath = svgPaths.fatPolygon(size, direction);
 	let extraColor = k.color_background;
 	let fillColor = k.color_background;
 	let button = null;
@@ -26,7 +26,7 @@
 	}
 	
 	$: {
-		scalablePath = svgPath.fatPolygon(size, direction);
+		svgPath = svgPaths.fatPolygon(size, direction);
 		setFillColor(false);
 	}
 
@@ -60,7 +60,7 @@
 		height={size}
 		fill={fillColor}
 		stroke={strokeColor}
-		scalablePath={scalablePath}
+		svgPath={svgPath}
 	/>
 	{#if extraPath}
 		<SVGD3 name='triangleInside'
@@ -68,7 +68,7 @@
 			height={size}
 			fill={extraColor}
 			stroke={extraColor}
-			scalablePath={extraPath}
+			svgPath={extraPath}
 		/>
 	{/if}
 </button>

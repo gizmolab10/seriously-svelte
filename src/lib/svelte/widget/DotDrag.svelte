@@ -1,5 +1,5 @@
 <script>
-	import { k, u, Rect, Size, Point, Thing, debug, ZIndex, onMount, signals, svgPath } from "../../ts/common/GlobalImports";
+	import { k, u, Rect, Size, Point, Thing, debug, ZIndex, onMount, signals, svgPaths } from "../../ts/common/GlobalImports";
 	import { s_paths_grabbed, s_altering_parent, s_layout_byClusters, s_path_clusterTools } from '../../ts/common/State';
 	import { Wrapper, Direction, onDestroy, dbDispatch, AlteringParent } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte';
@@ -110,7 +110,7 @@
 		if (thing) {
 			const count = thing.parents.length;		
 			if (count > 1) {
-				path_extra = svgPath.tinyDots_linear(6, 0.5, false, count, size / 2);
+				path_extra = svgPaths.tinyDots_linear(6, 0.5, false, count, size / 2);
 				return;
 			}
 		}
@@ -119,9 +119,9 @@
 
 	function updatePaths() {
 		if ($s_layout_byClusters) {
-			path_scalable = svgPath.circle(size, size - 1);
+			path_scalable = svgPaths.circle(size, size - 1);
 		} else {
-			path_scalable = svgPath.oval(size, false);
+			path_scalable = svgPaths.oval(size, false);
 		}
 		updatePathExtra();
 	}
@@ -157,7 +157,7 @@
 		height={size}
 		fill={fillColor}
 		stroke={strokeColor}
-		scalablePath={path_scalable}
+		svgPath={path_scalable}
 	/>
 	{#if path_extra}
 		<SVGD3 name='dotInside'
@@ -165,7 +165,7 @@
 			height={size}
 			fill={extraColor}
 			stroke={extraColor}
-			scalablePath={path_extra}
+			svgPath={path_extra}
 		/>
 	{/if}
 </button>
