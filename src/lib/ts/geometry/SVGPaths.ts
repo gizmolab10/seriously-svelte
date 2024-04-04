@@ -45,10 +45,10 @@ export default class SVGPaths {
 	line(vector: Point): string {
 		const x = vector.x;
 		const y = vector.y;
-		if (x >= 0 && y >= 0)		{ return `M0 0 L${x} ${y}`;
-		} else if (x >= 0 && y < 0)	{ return `M0 ${-y} L${x} 0`;
-		} else if (x < 0 && y >= 0)	{ return `M${-x} 0 L0 ${y}`;
-		} else						{ return `M${x} ${y} L0 0`;
+		if (x >= 0 && y >= 0)		{ return `M 0 0 L ${x} ${y}`;
+		} else if (x >= 0 && y < 0)	{ return `M 0 ${-y} L ${x} 0`;
+		} else if (x < 0 && y >= 0)	{ return `M ${-x} 0 L 0 ${y}`;
+		} else						{ return `M ${x} ${y} L 0 0`;
 		}
 	}
 

@@ -8,16 +8,16 @@ export class Point {
 		this.y = y;
 	}
 
-	get asSize():					   Size { return new Size(this.x, this.y); }
+	get abs():						  Point { return new Point(Math.abs(this.x), Math.abs(this.y)); }
 	get pixelVerbose():				 string { return `${this.x}px ${this.y}px`; }
 	get verbose():					 string { return `(${this.x}, ${this.y})`; }
+	get asSize():					   Size { return new Size(this.x, this.y); }
 	get description():				 string { return `${this.x} ${this.y}`; }
 	get negated():					  Point { return this.multipliedBy(-1); }
 	get dividedInHalf():			  Point { return this.multipliedBy(1/2); }
 	get copy():						  Point { return new Point(this.x, this.y); }
 	offsetByX(x: number):			  Point { return new Point(this.x + x, this.y); }
 	offsetByY(y: number):			  Point { return new Point(this.x, this.y + y); }
-	zoomBy(ratio: number):			  Point { return new Point(this.x * ratio, this.y * ratio); }
 	offsetBy(point: Point):			  Point { return new Point(this.x + point.x, this.y + point.y); }
 	multipliedBy(multiplier: number): Point { return new Point(this.x * multiplier, this.y * multiplier) }
 	offsetBySize(size: Size):		  Point { return new Point(this.x + size.width, this.y + size.height); }
@@ -41,8 +41,8 @@ export class Size {
 	height: number;
 
 	constructor(width: number = 0, height: number = 0) {
-		this.height = Math.abs(height);
-		this.width = Math.abs(width);
+		this.height = height;
+		this.width = width;
 	}
 
 	get proportion():				number { return this.width / this.height; }
@@ -55,11 +55,11 @@ export class Size {
 	get copy():						  Size { return new Size(this.width, this.height); }
 	expandedByX(width: number):		  Size { return new Size(this.width + width, this.height); }
 	expandedByY(height: number):	  Size { return new Size(this.width, this.height + height); }
-	zoomBy(ratio: number):			  Size { return new Size(this.width * ratio, this.height * ratio); }
 	reducedBy(delta: Point):		  Size { return new Size(this.width - delta.x, this.height - delta.y); }
 	multipliedBy(multiplier: number): Size { return new Size(this.width * multiplier, this.height * multiplier); }
-	expandedBy(size: Size):			  Size { return new Size(this.width + size.width, this.height + size.height); }
+	expandedBy(expansion: Point):	  Size { return new Size(this.width + expansion.x, this.height + expansion.y); }
 	unionWith(size: Size):			  Size { return new Size(Math.max(this.width, size.width), Math.max(this.height, size.height)); }
+	subtracting(size: Size):		 Point { return new Point(this.width - size.width, this.height - size.height); }
 	static square(length: number):	  Size { return new Size(length, length); }
 	static get zero():				  Size { return new Size(); }
 }
@@ -84,18 +84,15 @@ export class Rect {
 	get centerRight():		Point { return new Point(this.extent.x, this.center.y); };
 	get centerBottom():		Point { return new Point(this.center.x, this.extent.y); };
 	get copy():			 	 Rect { return new Rect(this.origin.copy, this.size.copy); }
-	get dividedInHalf():	 Rect { return this.expandedBy(this.size.multipliedBy(-1/2)); }
-	offsetByX(x: number):	 Rect { return new Rect(this.origin.offsetByX(x), this.size); }
-	offsetByY(y: number):	 Rect { return new Rect(this.origin.offsetByY(y), this.size); }
+	get dividedInHalf():	 Rect { return new Rect(this.origin, this.size.multipliedBy(-1/2)); }
 	offsetBy(delta: Point):	 Rect { return new Rect(this.origin.offsetBy(delta), this.size); }
-	expandedBy(delta: Size): Rect { return new Rect(this.origin, this.size.expandedBy(delta)) }
+	offsetByY(y: number):	 Rect { return new Rect(this.origin.offsetByY(y), this.size); }
+	offsetByX(x: number):	 Rect { return new Rect(this.origin.offsetByX(x), this.size); }
 
-	zoomBy(ratio: number):	 Rect {
-		const proportion = this.size.proportion;
-		const delta = this.size.asPoint.zoomBy(1 - proportion);
-		const origin = this.origin.offsetBy(delta);
-		const size = this.size.zoomBy(ratio);
-		return new Rect(origin, size);
+	expandedBy(expansion: Point): Rect {
+		const size = this.size.expandedBy(expansion);
+		const origin = this.origin.offsetBy(expansion.negated);
+		return new Rect(origin, size)
 	}
 
 	cornersForAngle(angle: number): [Point, Point] {
