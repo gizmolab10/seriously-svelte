@@ -12,6 +12,7 @@
 	let lineWrapper: Wrapper;
 	let svgPath = k.empty;
 	let size = Size.zero;
+	let label_top = 10;
 	let thickness = 5;
 	let angle = 0;
 	let left = 0;
@@ -35,6 +36,12 @@
 		svgPath = svgPaths.line(length_rotated);
 		[head_start, head_end] = shorty.cornersForAngle(angle);
 		[left, top] = updateLine(length_rotated, focus_rotated);
+		switch (u.angle_quadrant(angle)) {
+			case Quadrant.upperRight: label_top = 30; break;
+			case Quadrant.lowerLeft:  label_top = 20; break;
+			case Quadrant.upperLeft:  break;
+			default:				  break;
+		}
 	}
 
 	function updateLine(length_rotated: Point, focus_rotated: Point): [number, number] {
@@ -55,9 +62,9 @@
 <div class='arrow'
 	id={name}
 	style='z-index: {ZIndex.lines};
-	position: absolute;
-	left: {left + center.x}px;
-	top: {top + center.y}px;'>
+		position: absolute;
+		top: {top + center.y}px;
+		left: {left + center.x}px;'>
 	<svg class='line'
 		bind:this={line}
 		width={size.width}px
@@ -65,6 +72,15 @@
 		style='z-index: {ZIndex.lines}; position: absolute'
 		<path d={svgPath} stroke={color} fill='none'/>
 	</svg>
+	<div class='label' style='
+		position: absolute;
+		font-family: Arial;
+		top: {label_top}px;
+		font-size: 0.65em;
+		color: {color};
+		left: 50px;'>
+		{cluster.predicate.kind.unCamelCase().lastWord()}
+	</div>
 	{#if cluster.predicate.directions == 2}
 		<ArrowHead name='to'   angle={angle} color={color} color_background={color} radius={thickness} center={head_end}/>
 		<ArrowHead name='from' angle={angle + Angles.half} color={color} color_background={color} radius={thickness} center={head_start}/>

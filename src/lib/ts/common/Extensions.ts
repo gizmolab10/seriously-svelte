@@ -5,9 +5,43 @@ declare global {
 	}
 	interface String {
 		injectElipsisAt(at: number): string;
+		unCamelCase(): string;
+		lastWord(): string;
 		hash(): number;
 	}
 }
+
+Object.defineProperty(String.prototype, 'unCamelCase', {
+	value: function(): string {
+		return this.replace(/([A-Z])/g, ' $1').toLowerCase();
+	},
+	enumerable: false, // Set enumerable to false to avoid unintended behavior
+	writable: false, // Set writable to false to prevent the method to be overwritten
+	configurable: false // Set configurable to false to prevent redefinition of the property
+});
+
+Object.defineProperty(String.prototype, 'lastWord', {
+	value: function(): string {
+		return this.split(' ').slice(-1)[0];
+	},
+	enumerable: false, // Set enumerable to false to avoid unintended behavior
+	writable: false, // Set writable to false to prevent the method to be overwritten
+	configurable: false // Set configurable to false to prevent redefinition of the property
+});
+
+Object.defineProperty(String.prototype, 'injectElipsisAt', {
+	value: function(at: number = 7): string {
+		let injected = this;
+		const length = injected.length;
+		if (length > (at * 2) + 3) {
+			injected = injected.slice(0, at) + ' ... ' + injected.slice(length - at, length);
+		}
+		return injected;
+	},
+	enumerable: false,
+	writable: false,
+	configurable: false
+});
 
 // Sync hash function (note: this is not truly synchronous)
 Object.defineProperty(String.prototype, 'hash', {
@@ -26,20 +60,6 @@ Object.defineProperty(String.prototype, 'hash', {
 	},
 	writable: true,
 	configurable: true
-});
-
-Object.defineProperty(String.prototype, 'injectElipsisAt', {
-	value: function(at: number = 7): string {
-		let injected = this;
-		const length = injected.length;
-		if (length > (at * 2) + 3) {
-			injected = injected.slice(0, at) + ' ... ' + injected.slice(length - at, length);
-		}
-		return injected;
-	},
-	enumerable: false,
-	writable: false,
-	configurable: false
 });
 
 Object.defineProperty(Number.prototype, 'increment', {
