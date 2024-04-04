@@ -45,20 +45,6 @@ class Utilities {
 		});
 	}
 
-	point_quadrant(point: Point): Quadrant {
-		const x = point.x;
-		const y = point.y;
-		if (x >= 0 && y >= 0) {
-			return Quadrant.upperRight;
-		} else if (x >= 0 && y < 0) {
-			return Quadrant.lowerRight;
-		} else if (x < 0 && y >= 0) {
-			return Quadrant.upperLeft;
-		} else {
-			return Quadrant.lowerLeft;
-		}
-	}
-
 	angle_quadrant(angle: number): Quadrant {
 		const normalized = angle % Angles.full;
 		if (normalized.isBetween(0, Angles.quarter, true)) { return Quadrant.lowerRight; }
@@ -73,6 +59,30 @@ class Utilities {
 		const fontSize: string = computedStyle.fontSize;
 		
 		return `${fontSize} ${fontFamily}`;
+	}
+
+	point_quadrant(point: Point): Quadrant {
+		const x = point.x;
+		const y = point.y;
+		if		 (x >= 0 && y >= 0) { return Quadrant.upperRight;
+		} else if (x >= 0 && y < 0) { return Quadrant.lowerRight;
+		} else if (x < 0 && y >= 0) { return Quadrant.upperLeft;
+		} else						{ return Quadrant.lowerLeft;
+		}
+	}
+
+	polygonPoints(radius: number, count: number, offset: number): Array<Point> {
+		const increment = Angles.full / count;
+		const radial = new Point(radius, 0);
+		const points: Point[] = [];
+		let angle = offset;
+		let index = count;
+		do {
+			points.push(radial.rotateBy(angle));
+			angle += increment;
+			index--;
+		} while (index > 0)
+		return points;
 	}
 
 	get device_isMobile(): boolean {

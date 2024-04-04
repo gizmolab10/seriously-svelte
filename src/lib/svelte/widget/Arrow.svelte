@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { g, k, u, Rect, Size, Point, onMount, ZIndex, svgPath } from '../../ts/common/GlobalImports';
+	import { g, k, u, Rect, Size, Point, Angles, onMount, ZIndex, svgPath } from '../../ts/common/GlobalImports';
 	import { IDLine, Quadrant, Wrapper, IDWrapper, NecklaceCluster } from '../../ts/common/GlobalImports';
-	import Circle from '../kit/Circle.svelte';
+	import ArrowHead from '../kit/ArrowHead.svelte';
 	import Box from '../kit/Box.svelte';
     export let cluster: NecklaceCluster;
 	export let color = k.color_default;
@@ -12,7 +12,8 @@
 	let origin = Point.zero;
 	let extent = Point.zero;
 	let size = Size.zero;
-	let thickness = 1.5;
+	let thickness = 5;
+	let angle = 0;
 	let left = 0;
 	let top = 0;
 	let line;
@@ -21,7 +22,7 @@
 		if (line && !lineWrapper) {
 			lineWrapper = new Wrapper(line, g.rootPath, IDWrapper.line);
 		}
-		const angle = cluster.angle + Math.PI/6.9;
+		angle = cluster.angle + Math.PI/6.9;
 		const length = k.necklace_radius - k.cluster_focus_radius - k.dot_size;
 		const rotated = new Point(k.cluster_focus_radius, 0).rotateBy(angle);
 		const vector = new Point(length, 0).rotateBy(angle);
@@ -61,11 +62,11 @@
 		<path d={scalablePath} stroke={color} fill='none'/>
 	</svg>
 	{#if cluster.predicate.directions == 2}
-		<Circle name='to'   color={color} color_background={color} thickness={thickness} center={extent}/>
-		<Circle name='from' color={color} color_background={color} thickness={thickness} center={origin}/>
+		<ArrowHead name='to'   angle={angle} color={color} color_background={color} radius={thickness} center={extent}/>
+		<ArrowHead name='from' angle={angle + Angles.half} color={color} color_background={color} radius={thickness} center={origin}/>
 	{:else if cluster.pointsTo}
-		<Circle name='to'   color={color} color_background={color} thickness={thickness} center={extent}/>
+		<ArrowHead name='to'   angle={angle} color={color} color_background={color} radius={thickness} center={extent}/>
 	{:else}
-		<Circle name='from' color={color} color_background={color} thickness={thickness} center={origin}/>
+		<ArrowHead name='from' angle={angle + Angles.half} color={color} color_background={color} radius={thickness} center={origin}/>
 	{/if}
 </div>

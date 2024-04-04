@@ -9,7 +9,6 @@
 	export let color;
 	let diameter = 0;
 
-
 	$: { diameter = radius * 2; }
 
 </script>

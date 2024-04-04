@@ -1,4 +1,4 @@
-import { k, Point } from '../common/GlobalImports';
+import { k, u, Point } from '../common/GlobalImports';
 
 export enum Direction {
 	down = Math.PI * 3 / 2,
@@ -8,6 +8,11 @@ export enum Direction {
 }
 
 export default class SVGPath {
+
+    dash(diameter: number, margin: number): string {
+		const y = diameter / 2;
+        return `M${margin} ${y} L${diameter - margin} ${y}`;
+    }
 
     xCross(diameter: number, margin: number): string {
 		const start = margin + 2;
@@ -21,11 +26,20 @@ export default class SVGPath {
         return `M${margin + 2} ${radius} L${length + 1} ${radius} M${radius} ${margin + 2} L${radius} ${diameter - margin - 2}`;
     }
 
-    dash(diameter: number, margin: number): string {
-		const y = diameter / 2;
-		const start = margin;
-		const end = diameter - start;
-        return `M${start} ${y} L${end} ${y}`;
+    circle(width: number, diameter: number, offset: Point = new Point()): string {
+        const radius = diameter / 2;
+        const center = width / 2;
+        const path = `M${center + offset.x} ${center+ offset.y} m${-radius} 0a${radius} ${radius} 0 1,0 ${diameter} 0a${radius} ${radius} 0 1,0 ${-diameter} 0`;
+        return path;
+    }
+
+    oval(diameter: number, horizontal: boolean = true): string {
+        const radius = diameter / 2;
+        const width = radius - (horizontal ? 1 : 3);
+        const height = radius - (horizontal ? 3 : 1);
+        const doubleWidth = width * 2;
+        const path = `M${radius - width} ${radius}a${width} ${height} 0 1,0 ${doubleWidth} 0a${width} ${height} 0 1,0 ${-doubleWidth} 0`;
+        return path;
     }
 
 	line(vector: Point): string {
@@ -38,13 +52,22 @@ export default class SVGPath {
 		}
 	}
 
-    circle(width: number, diameter: number, offset: Point = new Point()): string {
-        const radius = diameter / 2;
-        const center = width / 2;
-        const doubleRadius = radius * 2;
-        const path = `M${center + offset.x} ${center+ offset.y} m${-radius} 0a${radius} ${radius} 0 1,0 ${doubleRadius} 0a${radius} ${radius} 0 1,0 ${-doubleRadius} 0`;
-        return path;
-    }
+	polygon(radius: number, angle: number, count: number = 3, skip: Array<number>): string {
+		const points = u.polygonPoints(radius, count, angle);
+		const center = Point.square(radius);
+		let index = count;
+		let path = 'M ';
+		while (index > 0) {
+			index --;
+			if (!skip.includes(index)) {
+				const separator = (index == 0) ? k.empty : ' L ';
+				const point = center.offsetBy(points[index]);
+				path = path + `${point.x} ${point.y}${separator}`
+			}
+		}
+		path = path + ' Z';
+		return path;
+	}
 
     halfCircle(diameter: number, direction: number): string {
 		const vertical = [Direction.up, Direction.down].includes(direction);
@@ -56,15 +79,6 @@ export default class SVGPath {
 			const left = direction == Direction.right;
         	return `M ${radius} ${left ? 0 : diameter} A ${radius} ${radius} 0 0 1 ${radius} ${left ? (radius * 2) : 0}`;
 		}
-    }
-
-    oval(diameter: number, horizontal: boolean = true): string {
-        const radius = diameter / 2;
-        const width = radius - (horizontal ? 1 : 3);
-        const height = radius - (horizontal ? 3 : 1);
-        const doubleWidth = width * 2;
-        const path = `M${radius - width} ${radius}a${width} ${height} 0 1,0 ${doubleWidth} 0a${width} ${height} 0 1,0 ${-doubleWidth} 0`;
-        return path;
     }
 
 	ellipses(tiny: number, gap: number): string {

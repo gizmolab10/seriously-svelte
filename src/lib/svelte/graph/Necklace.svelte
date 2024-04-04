@@ -22,17 +22,17 @@
 		clusterArray = layout.clusterArray;
 	}
 	
+	// <Circle
+	// 	center={center}
+	// 	zindex=ZIndex.lines
+	// 	color_background='transparent'
+	// 	radius={k.necklace_radius}
+	// 	color={transparentize(color, 0.8)}/>
 
 	// needs:
 	//  hover
 </script>
 
-<Circle
-	center={center}
-	zindex=ZIndex.lines
-	color_background='transparent'
-	radius={k.necklace_radius}
-	color={transparentize(color, 0.8)}/>
 {#if childMapRectArray}
 	{#each childMapRectArray as map}
 		<Widget path={map.childPath} origin={map.childOrigin.offsetBy(childOffset)}/>
