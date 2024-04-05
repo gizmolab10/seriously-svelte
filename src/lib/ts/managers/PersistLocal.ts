@@ -125,7 +125,7 @@ class PersistLocal {
 		}
 		let here = h.thing_get_forPath(pathToHere);
 		if (here == null) {
-			const lastGrabbedPath = h.grabs.path_lastGrabbed?.fromPath;
+			const lastGrabbedPath = h.grabs.path_lastGrabbed?.pathFrom;
 			if (lastGrabbedPath) {
 				pathToHere = lastGrabbedPath;
 			}

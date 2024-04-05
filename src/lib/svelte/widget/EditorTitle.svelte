@@ -7,10 +7,10 @@
     export let thing;
 	export let path;
 	let padding = `0.5px 0px 0px 7px`;	// down half a pixel, 7 over to make room for drag dot
-	let titleWrapper: Wrapper;
 	let originalTitle = k.empty;
-	let isEditing = false;
 	let cursorStyle = k.empty;
+	let titleWrapper: Wrapper;
+	let isEditing = false;
 	let titleWidth = 0;
 	let clickCount = 0;
 	let ghost = null;
@@ -31,7 +31,7 @@
 	function handle_key_down(event) {
 		if (thing && path.isEditing && canAlterTitle(event)) {
 			switch (event.key) {	
-				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); g.hierarchy.path_edit_remoteCreateChildOf(path.fromPath); break;
+				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); g.hierarchy.path_edit_remoteCreateChildOf(path.pathFrom); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
 				default:	  signals.signal_relayoutWidgets(); break;
 			}

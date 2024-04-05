@@ -1,21 +1,23 @@
-import { k, g, get, Path, Rect, Size, Point, IDLine, Predicate, ChildMapRect, NecklaceCluster } from '../common/GlobalImports';
+import { k, g, get, Path, Rect, Size, Point, IDLine, Predicate, ChildMapRect, ClusterLayout } from '../common/GlobalImports';
 import { s_layout_byClusters } from '../common/State';
 
 export default class Layout {
-	clusterArray: Array<NecklaceCluster> = [];
+	clusterArray: Array<ClusterLayout> = [];
 	childMapRectArray: Array<ChildMapRect> = [];
 
 	constructor(path: Path, origin: Point) {
-		const childPaths = path.childPaths;
+		const pathsTo = path.pathsTo;
 		if (get(s_layout_byClusters)) {
 			const contains = g.hierarchy.predicate_get_forID(Predicate.idContains);
 			if (contains) {
 				const thing = path.thing;
-				this.cluster_layout(childPaths, new NecklaceCluster(contains, true), path, origin);
+				if (path.hasRelationshipsTo) {
+					this.cluster_layout(pathsTo, new ClusterLayout(contains, true), path, origin);
+				}
 				for (const predicate of g.hierarchy.predicates) {	// and another 'contains' for parents
-					if (predicate.isInPath(path)) {
+					if (path.showsClusterFor(predicate)) {
 						const paths = thing?.paths_uniquelyFromFor(predicate.id) ?? [];
-						const cluster = new NecklaceCluster(predicate, false);
+						const cluster = new ClusterLayout(predicate, false);
 						this.cluster_layout(paths, cluster, path, origin);
 					}
 				}
@@ -23,10 +25,10 @@ export default class Layout {
 		} else {
 			let index = 0;
 			const sizeX = k.line_stretch;
-			const length = childPaths.length;
+			const length = pathsTo.length;
 			let sumOfSiblingsAbove = -path.visibleProgeny_height() / 2; // start out negative and grow positive
 			while (index < length) {
-				const childPath = childPaths[index];
+				const childPath = pathsTo[index];
 				const childHeight = childPath.visibleProgeny_height();
 				const sizeY = sumOfSiblingsAbove + childHeight / 2;
 				const direction = this.getDirection(sizeY);
@@ -40,13 +42,13 @@ export default class Layout {
 		}
 	}
 
-	cluster_layout(paths: Array<Path>, cluster: NecklaceCluster, path: Path, origin: Point) {
+	cluster_layout(paths: Array<Path>, cluster: ClusterLayout, path: Path, origin: Point) {
 		this.clusterArray.push(cluster);
 		let index = 0;
 		const length = paths.length;
-		const radius = k.necklace_radius;
 		const start_angle = cluster.angle;
 		const start_row = (8 - length) / 2;
+		const radius = k.necklace_gap + k.cluster_focus_radius;
 		const radial = new Point(radius, 0);
 		while (index < length) {
 			const childPath = paths[index];

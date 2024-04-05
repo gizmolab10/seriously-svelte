@@ -1,5 +1,5 @@
 import RemoteIdentifiable from "../structures/RemoteIdentifiable";
-import { g, Path } from '../common/GlobalImports';
+import { g, PredicateKind  } from '../common/GlobalImports';
 
 export default class Predicate extends RemoteIdentifiable {
 	directions: number;
@@ -11,7 +11,7 @@ export default class Predicate extends RemoteIdentifiable {
 		this.kind = kind;
 	}
 
-	angle_necklace(pointsTo: boolean): number {
+	clusterAngle(pointsTo: boolean): number {
 		const delta = Math.PI * 0.36;
 		switch (this.id) {
 			case Predicate.idIsRelated: return -delta;
@@ -20,31 +20,20 @@ export default class Predicate extends RemoteIdentifiable {
 		return 0;
 	}
 
-	isInPath(path: Path): boolean {
-		let found = false;
-		const relationships = g.hierarchy.relationships_get_forPredicateHID(this.id.hash());
-		if (!!relationships) {
-			for (const hid of path.hashedIDs) {
-				if (g.hierarchy.relationship_get_forHID(hid)) {
-					found = true;
-				}
-			}
-		}
-		return found;
-	}
-
 	static get idContains(): string {
-		const id = g.hierarchy.predicate_get_forKind('contains')?.id;
+		const kind = PredicateKind.contains;
+		const id = g.hierarchy.predicate_get_forKind(kind)?.id;
 		if (!id) {
-			console.log(`contains is missing`)
+			console.log(`${kind} is missing`)
 		}
 		return id!;
 	}
 
 	static get idIsRelated(): string {
-		const id = g.hierarchy.predicate_get_forKind('isRelated')?.id;
+		const kind = PredicateKind.isRelated;
+		const id = g.hierarchy.predicate_get_forKind(kind)?.id;
 		if (!id) {
-			console.log(`isRelated is missing`)
+			console.log(`${kind} is missing`)
 		}
 		return id!;
 	}

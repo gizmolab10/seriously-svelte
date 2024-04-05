@@ -33,9 +33,9 @@ export default class DBLocal implements DBInterface {
 		h.thing_remember_runtimeCreateUnique('', idTa, 'first', 'red', '1', false);
 		h.thing_remember_runtimeCreateUnique('', idTb, 'second', 'darkred', '2', false);
 		h.thing_remember_runtimeCreateUnique('', idTc, 'third', 'blue', '3', false);
-		h.thing_remember_runtimeCreateUnique('', idTd, 'sibling', 'green', 'a', false);
-		h.thing_remember_runtimeCreateUnique('', idTe, 'another', 'orchid', 'a', false);
-		h.thing_remember_runtimeCreateUnique('', idTr, 'start', 'orange', IDTrait.root, false);
+		h.thing_remember_runtimeCreateUnique('', idTd, 'fourth', 'green', 'a', false);
+		h.thing_remember_runtimeCreateUnique('', idTe, 'fifth', 'orchid', 'a', false);
+		h.thing_remember_runtimeCreateUnique('', idTr, 'zeroth', 'orange', IDTrait.root, false);
 		h.relationship_remember_runtimeCreateUnique('', this.localName('Ra'), idPc, idTr, idTa, 0);
 		h.relationship_remember_runtimeCreateUnique('', this.localName('Rb'), idPc, idTr, idTb, 1);
 		h.relationship_remember_runtimeCreateUnique('', this.localName('Rc'), idPc, idTr, idTc, 2);

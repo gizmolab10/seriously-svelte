@@ -1,11 +1,12 @@
 <script lang='ts'>
 	import { g, k, u, Rect, Size, Point, Angles, onMount, ZIndex, svgPaths } from '../../ts/common/GlobalImports';
-	import { IDLine, Quadrant, Wrapper, IDWrapper, NecklaceCluster } from '../../ts/common/GlobalImports';
+	import { IDLine, Quadrant, Wrapper, IDWrapper, ClusterLayout } from '../../ts/common/GlobalImports';
 	import ArrowHead from '../kit/ArrowHead.svelte';
 	import Box from '../kit/Box.svelte';
-    export let cluster: NecklaceCluster;
+    export let cluster: ClusterLayout;
 	export let color = k.color_default;
 	export let center = Point.zero;
+	const showArrows = false;
 	const name = `${cluster.pointsTo ? 'to' : 'from'} ${cluster.predicate.kind}`;
 	let head_start = Point.zero;
 	let head_end = Point.zero;
@@ -24,20 +25,16 @@
 			lineWrapper = new Wrapper(line, g.rootPath, IDWrapper.line);
 		}
 		angle = cluster.angle + Math.PI/6.9;
-		const focus_radius = k.cluster_focus_radius;
-		const arrow_radius = focus_radius - 6;
-		const length = k.necklace_radius - focus_radius - k.dot_size;
-		const focus_rotated = new Point(focus_radius, 0).rotateBy(angle);
+		const focus_radius = k.cluster_focus_radius + (showArrows ? 8 : 0);
+		const length = k.necklace_gap - k.dot_size * (showArrows ? 8 : 0.4);
 		const length_rotated = new Point(length, 0).rotateBy(angle);
-		size = length_rotated.abs.asSize;
-		const rect = new Rect(Point.zero, size);
-		// const shrinkBy = new Point(-8, 0).rotateBy(-angle);
-		const shorty = rect;//.expandedBy(shrinkBy);
+		const focus_rotated = new Point(focus_radius, 0).rotateBy(angle);
 		svgPath = svgPaths.line(length_rotated);
-		[head_start, head_end] = shorty.cornersForAngle(angle);
+		size = length_rotated.abs.asSize;
 		[left, top] = updateLine(length_rotated, focus_rotated);
+		[head_start, head_end] = new Rect(Point.zero, size).cornersForAngle(angle);
 		switch (u.angle_quadrant(angle)) {
-			case Quadrant.upperRight: label_top = 30; break;
+			case Quadrant.upperRight: label_top = 40; break;
 			case Quadrant.lowerLeft:  label_top = 20; break;
 			case Quadrant.upperLeft:  break;
 			default:				  break;
@@ -76,17 +73,20 @@
 		position: absolute;
 		font-family: Arial;
 		top: {label_top}px;
-		font-size: 0.6em;
+		font-size: 0.5em;
 		color: {color};
-		left: 50px;'>
-		{cluster.predicate.kind.unCamelCase().lastWord()}
+		background-color: {k.color_background};
+		left: 20px;'>
+		{cluster.title}
 	</div>
-	{#if cluster.predicate.directions == 2}
-		<ArrowHead name='to'   angle={angle} color={color} color_background={color} radius={thickness} center={head_end}/>
-		<ArrowHead name='from' angle={angle + Angles.half} color={color} color_background={color} radius={thickness} center={head_start}/>
-	{:else if cluster.pointsTo}
-		<ArrowHead name='to'   angle={angle} color={color} color_background={color} radius={thickness} center={head_end}/>
-	{:else}
-		<ArrowHead name='from' angle={angle + Angles.half} color={color} color_background={color} radius={thickness} center={head_start}/>
+	{#if showArrows}
+		{#if cluster.predicate.directions == 2}
+			<ArrowHead name='to'   angle={angle} color={color} color_background={color} radius={thickness} center={head_end}/>
+			<ArrowHead name='from' angle={angle + Angles.half} color={color} color_background={color} radius={thickness} center={head_start}/>
+		{:else if cluster.pointsTo}
+			<ArrowHead name='to'   angle={angle} color={color} color_background={color} radius={thickness} center={head_end}/>
+		{:else}
+			<ArrowHead name='from' angle={angle + Angles.half} color={color} color_background={color} radius={thickness} center={head_start}/>
+		{/if}
 	{/if}
 </div>

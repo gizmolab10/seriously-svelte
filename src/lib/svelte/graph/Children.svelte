@@ -59,7 +59,7 @@
 	{#each childMapRectArray as map}
 		<Widget path={map.childPath} origin={map.extent.offsetBy(widgetOffset)}/>
 		<Line path={map.childPath} curveType={map.curveType} rect={map.offsetBy(lineOffset)}/>
-		{#if map.childPath.showsChildren}
+		{#if map.childPath.showsRelationshipsTo}
 			<Children path={map.childPath} origin={map.childOrigin}/>
 		{/if}
 	{/each}

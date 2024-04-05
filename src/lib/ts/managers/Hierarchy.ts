@@ -88,7 +88,7 @@ export default class Hierarchy {
 						case 'd':		await this.thing_edit_remoteDuplicate(pathGrab); break;
 						case k.space:		await this.path_edit_remoteCreateChildOf(pathGrab); break;
 						case '-':		if (!COMMAND) { await this.thing_edit_remoteAddLine(pathGrab); } break;
-						case 'tab':		await this.path_edit_remoteCreateChildOf(pathGrab.fromPath); break; // Title editor also makes this call
+						case 'tab':		await this.path_edit_remoteCreateChildOf(pathGrab.pathFrom); break; // Title editor also makes this call
 						case 'enter':	pathGrab.startEdit(); break;
 					}
 				}
@@ -198,7 +198,7 @@ export default class Hierarchy {
 	}
 
 	async thing_edit_remoteAddLine(path: Path, below: boolean = true) {
-		const parentPath = path.fromPath;
+		const parentPath = path.pathFrom;
 		const parent = parentPath?.thing;
 		const thing = path.thing;
 		if (thing && parent && parentPath) {
@@ -237,7 +237,7 @@ export default class Hierarchy {
 	async thing_edit_remoteDuplicate(path: Path) {
 		const thing = path.thing;
 		const id = thing?.id;
-		const parentPath = path.fromPath;
+		const parentPath = path.pathFrom;
 		if (thing && id && parentPath) {
 			const sibling = await this.thing_remember_runtimeCopy(id, thing);
 			sibling.title = 'idea';
@@ -314,7 +314,7 @@ export default class Hierarchy {
 			const newThing = await this.thing_remember_runtimeCopy(baseID, thing);
 			const newThingPath = newParentPath.appendChild(newThing);
 			await this.path_remember_remoteAddAsChild(newParentPath, newThing);
-			for (const childPath of path.childPaths) {
+			for (const childPath of path.pathsTo) {
 				this.thing_remember_bulk_recursive_remoteRelocateRight(childPath, newThingPath);
 			}
 			if (!newThingPath.isExpanded) {
@@ -443,12 +443,12 @@ export default class Hierarchy {
 
 	async relationship_forget_remoteRemove(path: Path, otherPath: Path) {
 		const thing = path.thing;
-		const fromPath = path.fromPath;
+		const pathFrom = path.pathFrom;
 		const relationship = this.relationship_get_forPredicate_from_to(Predicate.idContains, otherPath.idThing, path.idThing);
-		if (fromPath && relationship && (thing?.parents.length ?? 0) > 1) {
+		if (pathFrom && relationship && (thing?.parents.length ?? 0) > 1) {
 			this.relationship_forget(relationship);
-			if (otherPath.hasChildren) {
-				fromPath.order_normalizeRecursive_remoteMaybe(true);
+			if (otherPath.hasRelationshipsTo) {
+				pathFrom.order_normalizeRecursive_remoteMaybe(true);
 			} else {
 				otherPath.collapse();
 			}
@@ -515,16 +515,16 @@ export default class Hierarchy {
 		if (get(s_path_here)) {
 			for (const path of paths) {
 				const thing = path.thing;
-				const fromPath = path.fromPath;
-				const fromFromPath = fromPath.fromPath;
-				let fromThing = fromPath.thing;
-				if (thing && fromThing && fromPath && fromFromPath && path && !path.isEditing && !thing.isBulkAlias) {
-					const siblings = fromPath.children;
+				const pathFrom = path.pathFrom;
+				const fromFromPath = pathFrom.pathFrom;
+				let fromThing = pathFrom.thing;
+				if (thing && fromThing && pathFrom && fromFromPath && path && !path.isEditing && !thing.isBulkAlias) {
+					const siblings = pathFrom.children;
 					let index = siblings.indexOf(thing);
 					siblings.splice(index, 1);
-					fromPath.grabOnly();
+					pathFrom.grabOnly();
 					if (siblings.length == 0) {
-						needsRebuild = fromPath.collapse();
+						needsRebuild = pathFrom.collapse();
 						if (!fromFromPath.isVisible) {
 							needsRebuild = fromFromPath.becomeHere();	// call become here before applying
 						}
@@ -585,18 +585,18 @@ export default class Hierarchy {
 		}
 	}
 
-	async path_edit_remoteCreateChildOf(fromPath: Path | null) {
-		const fromThing = fromPath?.thing;
-		if (fromThing && fromPath) {
+	async path_edit_remoteCreateChildOf(pathFrom: Path | null) {
+		const fromThing = pathFrom?.thing;
+		if (fromThing && pathFrom) {
 			const child = await this.thing_remember_runtimeCopy(fromThing.baseID, fromThing);
 			child.title = 'idea';
-			fromPath.expand();
-			await this.path_edit_remoteAddAsChild(fromPath, child, 0);
+			pathFrom.expand();
+			await this.path_edit_remoteAddAsChild(pathFrom, child, 0);
 		}
 	}
 
-	async path_edit_remoteAddAsChild(fromPath: Path, child: Thing, order: number, shouldStartEdit: boolean = true) {
-		const childPath = await this.path_remember_remoteAddAsChild(fromPath, child);
+	async path_edit_remoteAddAsChild(pathFrom: Path, child: Thing, order: number, shouldStartEdit: boolean = true) {
+		const childPath = await this.path_remember_remoteAddAsChild(pathFrom, child);
 		childPath.grabOnly();
 		childPath.relationship?.order_setTo(order);
 		signals.signal_rebuildWidgets_fromHere();
@@ -612,10 +612,10 @@ export default class Hierarchy {
 		if (rootsPath && thing && thing.title != 'roots') {	// not create roots bulk
 			await this.db.fetch_allFrom(thing.title)
 			this.relationships_refreshKnowns();
-			const childPaths = path?.childPaths;
-			if (childPaths && childPaths.length > 0) {
+			const pathsTo = path?.pathsTo;
+			if (pathsTo && pathsTo.length > 0) {
 				if (grab) {
-					childPaths[0].grabOnly()
+					pathsTo[0].grabOnly()
 				}
 				path?.expand()
 				signals.signal_rebuildWidgets_fromHere();
@@ -637,8 +637,8 @@ export default class Hierarchy {
 
 	async path_forget_remoteUpdate(path: Path) {
 		const thing = path.thing;
-		const childPaths = path.childPaths;
-		for (const childPath of childPaths) {
+		const pathsTo = path.pathsTo;
+		for (const childPath of pathsTo) {
 			this.path_forget_remoteUpdate(childPath);
 		}
 		delete this.path_byHash[path.pathString.hash()];
@@ -655,8 +655,8 @@ export default class Hierarchy {
 		}
 	}
 
-	async path_remember_remoteAddAsChild(fromPath: Path, toThing: Thing): Promise<any> {
-		const fromThing = fromPath.thing;
+	async path_remember_remoteAddAsChild(pathFrom: Path, toThing: Thing): Promise<any> {
+		const fromThing = pathFrom.thing;
 		if (fromThing && !toThing.isBulkAlias) {
 			const isBulkAlias = fromThing.isBulkAlias;
 			const idPredicateContains = Predicate.idContains;
@@ -670,8 +670,8 @@ export default class Hierarchy {
 				await this.db.thing_remember_remoteCreate(toThing);			// for everything below, need to await toThing.id fetched from dbDispatch
 			}
 			const relationship = await this.relationship_remember_remoteCreateUnique(baseID, null, idPredicateContains, fromID, toThing.id, 0, CreationOptions.getRemoteID);
-			const childPath = fromPath.appendID(relationship.id);
-			await u.paths_orders_normalize_remoteMaybe(fromPath.childPaths);		// write new order values for relationships
+			const childPath = pathFrom.appendID(relationship.id);
+			await u.paths_orders_normalize_remoteMaybe(pathFrom.pathsTo);		// write new order values for relationships
 			return childPath;
 		}
 	}
@@ -696,20 +696,20 @@ export default class Hierarchy {
 
 	async path_rebuild_remoteMoveUp(path: Path, up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const thing = this.thing_get_forPath(path);
-		const fromPath = path.fromPath;
-		const siblings = fromPath.children;
+		const pathFrom = path.pathFrom;
+		const siblings = pathFrom.children;
 		if (!siblings || siblings.length == 0) {
 			this.path_rebuild_runtimeBrowseRight(path, true, EXTREME, up);
 		} else if (thing) {
 			const index = siblings.indexOf(thing);
 			const newIndex = index.increment(!up, siblings.length);
-			if (fromPath && !OPTION) {
-				const grabPath = fromPath.appendChild(siblings[newIndex]);
+			if (pathFrom && !OPTION) {
+				const grabPath = pathFrom.appendChild(siblings[newIndex]);
 				if (get(s_layout_byClusters)) {
 					grabPath.becomeHere();
 					grabPath.grabOnly();
 				} else if (!grabPath.isVisible) {
-					fromPath.becomeHere();
+					pathFrom.becomeHere();
 				}
 				if (SHIFT) {
 					grabPath.toggleGrab();
@@ -718,12 +718,12 @@ export default class Hierarchy {
 				}
 				signals.signal_relayoutWidgets_fromHere();
 			} else if (k.allow_GraphEditing && OPTION) {
-				await u.paths_orders_normalize_remoteMaybe(fromPath.childPaths, false);
+				await u.paths_orders_normalize_remoteMaybe(pathFrom.pathsTo, false);
 				const wrapped = up ? (index == 0) : (index == siblings.length - 1);
 				const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
 				const newOrder = newIndex + goose;
 				path.relationship?.order_setTo(newOrder);
-				await u.paths_orders_normalize_remoteMaybe(fromPath.childPaths);
+				await u.paths_orders_normalize_remoteMaybe(pathFrom.pathsTo);
 				signals.signal_rebuildWidgets_fromHere();
 			}
 		}
@@ -759,13 +759,13 @@ export default class Hierarchy {
 
 	path_rebuild_runtimeBrowseRight(path: Path, RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, fromReveal: boolean = false) {
 		let needsRebuild = false;
-		const newParentPath = path.fromPath;
+		const newParentPath = path.pathFrom;
 		const childPath = path.appendChild(path.firstChild);
 		let newGrabPath: Path | null = RIGHT ? childPath : newParentPath;
 		const newGrabIsNotHere = !newGrabPath?.isHere;
 		const newHerePath = newParentPath;
 		if (RIGHT) {
-			if (path.hasChildren) {
+			if (path.hasRelationshipsTo) {
 				if (SHIFT) {
 					newGrabPath = null;
 				}
@@ -800,7 +800,7 @@ export default class Hierarchy {
 		}
 		s_title_editing.set(null);
 		newGrabPath?.grabOnly();
-		const allowToBecomeHere = (!SHIFT || path.fromPath.matchesPath(newGrabPath)) && newGrabIsNotHere; 
+		const allowToBecomeHere = (!SHIFT || path.pathFrom.matchesPath(newGrabPath)) && newGrabIsNotHere; 
 		const shouldBecomeHere = !newHerePath?.isVisible || newHerePath.isRoot;
 		if (!RIGHT && allowToBecomeHere && shouldBecomeHere && (newHerePath?.becomeHere() ?? false)) {
 			needsRebuild = true;

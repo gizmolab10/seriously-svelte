@@ -8,7 +8,7 @@
 	let childOffset = new Point(k.dot_size / -3, k.cluster_offsetY);;
 	let color = path.thing?.color ?? k.color_default;
 	let childMapRectArray: Array<ChildMapRect> = [];
-	let clusterArray: Array<NecklaceCluster>;
+	let clusterArray: Array<ClusterLayout>;
 	
 	onMount( () => {
 		layoutNecklace();
@@ -26,7 +26,7 @@
 	// 	center={center}
 	// 	zindex=ZIndex.lines
 	// 	color_background='transparent'
-	// 	radius={k.necklace_radius}
+	// 	radius={k.necklace_gap}
 	// 	color={transparentize(color, 0.8)}/>
 
 	// needs:

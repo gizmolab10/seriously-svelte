@@ -10,7 +10,7 @@
 	export let origin = new Point();
     export let thing;
     export let path;
-	const hasExtraX = !path?.isExpanded && (path?.children_relationships.length > 3);
+	const hasExtraX = !path?.isExpanded && (path?.relationships_to.length > 3);
 	const rightPadding = hasExtraX ? 22.5 : 19;
 	const priorRowHeight = k.row_height;
 	let revealCenter = new Point();

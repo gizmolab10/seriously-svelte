@@ -26,6 +26,11 @@ export enum IDTrait {
 	bulk  = '~',
 }
 
+export enum PredicateKind {
+	isRelated = 'isRelated',
+	contains  = 'contains',
+}
+
 export enum Quadrant {
 	upperRight = 1,
 	upperLeft  = 2,

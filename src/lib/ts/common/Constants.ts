@@ -12,7 +12,7 @@ export default class Constants {
 	cluster_focus_radius: number;
 	threshold_longClick: number;
 	threshold_doubleClick: number;
-	necklace_radius: number;
+	necklace_gap: number;
 	color_highlighted: string;
 	color_background: string;
     color_disabled: string;
@@ -50,13 +50,13 @@ export default class Constants {
 		this.queryString = new URLSearchParams(window.location.search);
 		this.threshold_doubleClick = 100;
 		this.threshold_longClick = 500;
-		this.cluster_focus_radius = 40;
+		this.cluster_focus_radius = 45;
 		this.height_titleAtTop = 50;
-		this.necklace_radius = 160;
 		this.thing_fontSize = 14;
 		this.halfIncrement = 0.5;
 		this.width_details = 80;
 		this.height_banner = 35;
+		this.necklace_gap = 120;
 		this.line_stretch = 25;
 		this.row_height = 20;
 		this.width_max = 200;

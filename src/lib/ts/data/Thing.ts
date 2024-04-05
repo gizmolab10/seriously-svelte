@@ -27,22 +27,22 @@ export default class Thing extends Datum {
 		this.trait = trait;
 	};
 	
-	get fields():	Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
-	get isHere():			  boolean { return (get(s_path_here).thing?.id ?? k.empty) == this.id; }
-	get idBridging():		   string { return this.isBulkAlias ? this.bulkRootID : this.id; }
-	get parents():		 Array<Thing> { return this.things_fromFor(Predicate.idContains); }
+	get parentIDs():	Array<string> { return this.parents.map(t => t.id); }
 	get parentPaths():	  Array<Path> { return this.paths_fromFor(Predicate.idContains); }
+	get parents():		 Array<Thing> { return this.things_fromFor(Predicate.idContains); }
+	get fields():	Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
+	get idBridging():		   string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get description():		   string { return this.id + ' \"' + this.title + '\"'; }
 	get titleWidth():		   number { return u.getWidthOf(this.title) + 6; }
-	get parentIDs():	Array<string> { return this.parents.map(t => t.id); }
+	get isRoot():			  boolean { return this == g.root; }
+	get isBulkAlias():		  boolean { return this.trait == IDTrait.bulk; }
 	get hasMultipleParents(): boolean { return this.parentPaths.length > 1; }
 	get isAcrossBulk():		  boolean { return this.baseID != g.hierarchy.db.baseID; }
-	get isBulkAlias():		  boolean { return this.trait == IDTrait.bulk; }
-	get isRoot():			  boolean { return this == g.root; }
+	get hasParents():		  boolean { return this.hasThings_fromFor(Predicate.idContains); }
+	get isHere():			  boolean { return (get(s_path_here).thing?.id ?? k.empty) == this.id; }
 	get hierarchy():		Hierarchy { return g.hierarchy; }
 
-	get thing_isBulk_expanded(): boolean {
-		// needed because cross db paths do not work quite right
+	get thing_isBulk_expanded(): boolean {		// cross db paths needs special attention
 		if (this.isBulkAlias) {
 			const paths = get(s_paths_expanded);
 			for (const path of paths) {
@@ -56,13 +56,14 @@ export default class Thing extends Datum {
 	
 	debugLog(message: string) { this.log(DebugFlag.things, message); }
 	log(option: DebugFlag, message: string) { debug.log_maybe(option, message + k.space + this.description); }
+	hasThings_fromFor(idPredicate: string): boolean { return this.things_fromFor(idPredicate).length > 0; }
 
 	override isInDifferentBulkThan(other: Thing): boolean {
 		return super.isInDifferentBulkThan(other) || (other.isBulkAlias && !this.isBulkAlias && this.baseID != other.title);
 	}
 
-	relationships_onceFrom(predicateID: string): Array<Relationship> {
-		return this.hierarchy.relationships_get_forPredicate_to_thing(predicateID, true, this.id);
+	relationships_onceFrom(idPredicate: string): Array<Relationship> {
+		return this.hierarchy.relationships_get_forPredicate_to_thing(idPredicate, true, this.id);
 	}
 
 	updateColorAttributes(path: Path) {
@@ -85,10 +86,10 @@ export default class Thing extends Datum {
 		}
 	}
 
-	things_fromFor(predicateID: string): Array<Thing> {
+	things_fromFor(idPredicate: string): Array<Thing> {
 		let fromThings: Array<Thing> = [];
 		if (!this.isRoot) {
-			const relationships = this.relationships_onceFrom(predicateID);
+			const relationships = this.relationships_onceFrom(idPredicate);
 			for (const relationship of relationships) {
 				const thing = relationship.fromThing;
 				if (thing) {
@@ -99,10 +100,10 @@ export default class Thing extends Datum {
 		return fromThings;
 	}
 
-	paths_fromFor(predicateID: string): Array<Path> {
+	paths_fromFor(idPredicate: string): Array<Path> {
 		let pathsByHID: {[hash: number]: Path} = {};
 		if (!this.isRoot) {
-			const relationships = this.relationships_onceFrom(predicateID);
+			const relationships = this.relationships_onceFrom(idPredicate);
 			for (const relationship of relationships) {
 				function addPath(path: Path) {
 					const fullPath = path.appendID(endID);
@@ -110,12 +111,12 @@ export default class Thing extends Datum {
 				}
 				const endID = relationship.id;		// EGADS, this is the wrong relationship; needs the next one
 				const fromThing = relationship.fromThing;
-				const fromPaths = fromThing?.paths_fromFor(predicateID) ?? [];
-				if (fromPaths.length == 0) {
+				const pathsFrom = fromThing?.paths_fromFor(idPredicate) ?? [];
+				if (pathsFrom.length == 0) {
 					addPath(g.rootPath);
 				} else {
-					for (const fromPath of fromPaths) {
-						addPath(fromPath);
+					for (const pathFrom of pathsFrom) {
+						addPath(pathFrom);
 					}
 				}
 			}
@@ -124,23 +125,23 @@ export default class Thing extends Datum {
 		return u.sort_byTitleTop(paths).reverse();
 	}
 	
-	paths_uniquelyFromFor(predicateID: string): Array<Path> {
+	paths_uniquelyFromFor(idPredicate: string): Array<Path> {
 		if (this.isRoot) {
 			return [];
 		}
 		const paths: Array<Path> = []
-		const fromThings = this.things_fromFor(predicateID) ?? [];
+		const fromThings = this.things_fromFor(idPredicate) ?? [];
 		for (const fromThing of fromThings) {
 			if (fromThing.isRoot) {
 				paths.push(g.rootPath);
 			} else {
-				const relationships = g.hierarchy.relationships_get_forPredicate_to_thing(predicateID, true, fromThing.id);
+				const relationships = g.hierarchy.relationships_get_forPredicate_to_thing(idPredicate, true, fromThing.id);
 				if (relationships.length > 0){
-					paths.push(new Path(relationships[0].id, predicateID))
+					paths.push(new Path(relationships[0].id, idPredicate, true))
 				}
 			}
 		}
-		return paths.length > 0 ? paths : predicateID != Predicate.idContains ? [] : [g.rootPath];
+		return paths.length > 0 ? paths : idPredicate != Predicate.idContains ? [] : [g.rootPath];
 	}
 
 }
