@@ -1,11 +1,12 @@
 <script lang='ts'>
-	import { g, k, u, Thing, debug, ZIndex, onMount, signals } from '../../ts/common/GlobalImports';
+	import { g, k, u, Point, Thing, debug, ZIndex, onMount, signals } from '../../ts/common/GlobalImports';
 	import { Wrapper, IDWrapper, dbDispatch, SeriouslyRange } from '../../ts/common/GlobalImports';
 	import { s_title_editing, s_paths_grabbed, s_path_clusterTools } from '../../ts/common/State';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
     export let thing;
 	export let path;
+	let position = path.isSingular ? 'position: absolute' : k.empty;
 	let padding = `0.5px 0px 0px 7px`;	// down half a pixel, 7 over to make room for drag dot
 	let originalTitle = k.empty;
 	let cursorStyle = k.empty;
@@ -16,6 +17,7 @@
 	let ghost = null;
 	let input = null;
 	let clickTimer;
+	let left = 10;
 
 	var hasChanges = () => { return originalTitle != thing.title; };
 	function handleInput(event) { thing.title = event.target.value; };
@@ -23,6 +25,8 @@
 	
 	onMount(() => {
 		titleWidth = u.getWidthOf(thing.title);
+		left = path.isSingular ? -10 - titleWidth : 10;
+		console.log(`${path.title} is ${path.isSingular ? k.empty : 'NOT '}singular`)
 		const handler = signals.handle_anySignal((IDSignal, path) => { updateInputWidth(); });
 		setTimeout(() => { updateInputWidth(); }, 100);
 		return () => { handler.disconnect() };
@@ -249,8 +253,10 @@
 		on:click={handleSingleClick}
 		on:mousedown={handleLongClick}
 		on:dblclick={handleDoubleClick}
-		style='left: 10px;
+		style='
+			{position};
 			{cursorStyle};
+			left: {left}px;
 			padding: {padding};
 			color: {thing.color};
 			width: {titleWidth}px;

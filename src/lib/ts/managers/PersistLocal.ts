@@ -112,7 +112,7 @@ class PersistLocal {
 
 	here_restore() {
 		const h = g.hierarchy;
-		g.rootPath = h.path_remember_unique();
+		g.rootPath_set(h.path_remember_unique());
 		let pathToHere = g.rootPath;
 		if (!this.ignorePaths) {
 			const herePathString = this.dbKey_read(IDPersistant.here);

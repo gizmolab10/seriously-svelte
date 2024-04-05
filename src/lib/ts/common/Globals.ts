@@ -1,8 +1,9 @@
 import { Hierarchy, debugReact, dbDispatch, persistLocal, IDPersistant } from '../common/GlobalImports';
-import { s_graphRect, s_path_here, s_show_details, s_scale_factor, s_user_graphOffset } from './State';
 import { k, u, get, Path, Rect, Point, Thing, debug, builds } from '../common/GlobalImports'
+import { s_graphRect, s_show_details, s_scale_factor, s_user_graphOffset } from './State';
 
 class Globals {
+	singularRootPath: Path;
 	hierarchy: Hierarchy;
 	rootsPath: Path;
 	rootPath: Path;
@@ -20,6 +21,11 @@ class Globals {
 		persistLocal.queryStrings_apply();
 		debug.queryStrings_apply();
 		debugReact.queryStrings_apply();
+	}
+
+	rootPath_set(path: Path) {
+		this.rootPath = path;
+		this.singularRootPath = new Path(path.pathString, path.idPredicate, true);
 	}
  
 	zoomBy(factor: number): number {

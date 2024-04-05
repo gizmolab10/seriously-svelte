@@ -162,7 +162,7 @@
 						height: {$s_graphRect.size.height}px;
 						z-index: {ZIndex.panel};'>
 					{#if $s_layout_byClusters}
-						<Clusters/>
+						<Clusters path={$s_path_here}/>
 					{:else}
 						<Tree/>
 					{/if}

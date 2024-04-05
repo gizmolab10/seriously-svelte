@@ -133,7 +133,7 @@ export default class Thing extends Datum {
 		const fromThings = this.things_fromFor(idPredicate) ?? [];
 		for (const fromThing of fromThings) {
 			if (fromThing.isRoot) {
-				paths.push(g.rootPath);
+				paths.push(g.singularRootPath);
 			} else {
 				const relationships = g.hierarchy.relationships_get_forPredicate_to_thing(idPredicate, true, fromThing.id);
 				if (relationships.length > 0){

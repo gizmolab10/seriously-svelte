@@ -16,6 +16,7 @@ export default class Layout {
 				}
 				for (const predicate of g.hierarchy.predicates) {	// and another 'contains' for parents
 					if (path.showsClusterFor(predicate)) {
+						console.log(`pointsFrom ${predicate.kind} [${path.titles}] isSingular`);
 						const paths = thing?.paths_uniquelyFromFor(predicate.id) ?? [];
 						const cluster = new ClusterLayout(predicate, false);
 						this.cluster_layout(paths, cluster, path, origin);

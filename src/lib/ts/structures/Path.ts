@@ -7,16 +7,16 @@ import { Writable } from 'svelte/store';
 export default class Path {
 	wrappers: { [type: string]: Wrapper } = {};
 	_thing: Thing | null = null;
+	isSingular: boolean;
 	idPredicate: string;
 	pathString: string;
 	hashedPath: number;
-	singular: boolean;
 
-	constructor(pathString: string = k.empty, idPredicate: string = Predicate.idContains, singular: boolean = false) {
+	constructor(pathString: string = k.empty, idPredicate: string = Predicate.idContains, isSingular: boolean = false) {
 		this.hashedPath = pathString.hash();
 		this.idPredicate = idPredicate;
 		this.pathString = pathString;
-		this.singular = singular;
+		this.isSingular = isSingular;
 		if (g.hierarchy.isAssembled) {
 			this.subscriptions_setup();			// not needed during hierarchy assembly
 		}
