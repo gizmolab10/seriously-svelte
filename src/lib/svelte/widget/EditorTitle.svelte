@@ -26,7 +26,6 @@
 	onMount(() => {
 		titleWidth = u.getWidthOf(thing.title);
 		left = path.isSingular ? -10 - titleWidth : 10;
-		console.log(`${path.title} is ${path.isSingular ? k.empty : 'NOT '}singular`)
 		const handler = signals.handle_anySignal((IDSignal, path) => { updateInputWidth(); });
 		setTimeout(() => { updateInputWidth(); }, 100);
 		return () => { handler.disconnect() };

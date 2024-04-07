@@ -28,9 +28,9 @@ class PersistLocal {
 
 	get dbType(): string { return dbDispatch.db.dbType; }
 	key_write(key: string, value: any) { localStorage[key] = JSON.stringify(value); }
+	dbKey_get_paths(key: string): Array<Path> { return this.key_get_paths(key + this.dbType); }
 	dbKey_write(key: string, value: any) { this.key_write(key + this.dbType, value); }
-	dbKey_read(key: string) { return this.key_read(key + this.dbType); }
-	dbKey_get(key: string) { return this.key_get(key + this.dbType); }
+	dbKey_read(key: string): any | null { return this.key_read(key + this.dbType); }
 
 	key_read(key: string): any | null {
 		const storedValue = localStorage[key];
@@ -41,22 +41,38 @@ class PersistLocal {
 		} 
 	}
 
-	key_get(key: string): Array<Path> {
+	key_get_paths(key: string): Array<Path> {
 		const h = g.hierarchy;
-		let paths = this.ignorePaths ? [] : this.key_read(key)?.map((e: string) => h.path_remember_unique(e)) ?? [];
-		let index = paths.length - 1;
-		while (index >= 0) {
-			const path = paths[index];
-			if (path) {
+		const pathStrings = this.key_read(key);
+		const length = pathStrings.length;
+		if (this.ignorePaths || !pathStrings || length == 0) {
+			return [];
+		}
+		let needsRewrite = false;
+		const paths: Array<Path> = [];
+		const reversed = pathStrings.reverse();
+		reversed.forEach((pathString, index) => {
+			const path = h.path_remember_createUnique(pathString);
+			if (!path) {
+				pathStrings.slice(1, length - index);
+				needsRewrite = true;
+			} else {
 				for (const id of path.ids) {
 					const relationship = h.relationship_get_forHID(id.hash());
 					if (!relationship) {
-						paths.slice(1, index);
+						pathStrings.slice(1, length - index);
+						needsRewrite = true;
+						break;
 					}
 				}
 			}
-			index--;
-		};
+			if (!needsRewrite && path) {
+				paths.push(path);
+			}
+		});
+		if (needsRewrite) {
+			this.key_write(key, pathStrings);
+		}
 		return paths;
 	}
 
@@ -97,8 +113,8 @@ class PersistLocal {
 		if (!this.pathsRestored || force) {
 			this.pathsRestored = true;
 			this.here_restore();
-			s_paths_grabbed.set(this.dbKey_get(IDPersistant.grabbed));
-			s_paths_expanded.set(this.dbKey_get(IDPersistant.expanded));
+			s_paths_grabbed.set(this.dbKey_get_paths(IDPersistant.grabbed));
+			s_paths_expanded.set(this.dbKey_get_paths(IDPersistant.expanded));
 	
 			s_paths_grabbed.subscribe((paths: Array<Path>) => {
 				this.dbKey_write(IDPersistant.grabbed, !paths ? null : paths.map(p => p.pathString));
@@ -112,12 +128,12 @@ class PersistLocal {
 
 	here_restore() {
 		const h = g.hierarchy;
-		g.rootPath_set(h.path_remember_unique());
+		g.rootPath_set(h.path_remember_createUnique());
 		let pathToHere = g.rootPath;
 		if (!this.ignorePaths) {
 			const herePathString = this.dbKey_read(IDPersistant.here);
 			if (herePathString) {
-				const herePath = h.path_remember_unique(herePathString);
+				const herePath = h.path_remember_createUnique(herePathString);
 				if (herePath) {
 					pathToHere = herePath;
 				}

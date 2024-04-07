@@ -59,6 +59,7 @@ export default class Path {
 	get revealWrapper(): Wrapper | null { return this.wrappers[IDWrapper.reveal]; }
 	get widgetWrapper(): Wrapper | null { return this.wrappers[IDWrapper.widget]; }
 	get titleRect(): Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
+	get singular(): Path { return new Path(this.pathString, this.idPredicate, true); }
 	get things(): Array<Thing | null> { return g.hierarchy?.things_get_forPath(this); }
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
@@ -180,7 +181,7 @@ export default class Path {
 	appendID(id: string): Path {
 		let ids = this.ids;
 		ids.push(id);
-		return g.hierarchy.path_remember_unique(ids.join(k.pathSeparator));
+		return g.hierarchy.path_remember_createUnique(ids.join(k.pathSeparator));
 	}
 
 	includedInPaths(paths: Array<Path>): boolean {
@@ -196,6 +197,20 @@ export default class Path {
 			case PredicateKind.isRelated: return this.hasRelationshipsTo;
 			default:					  return false;
 		}
+	}
+
+	things_get_toFor(idPredicate: string): Array<Thing> {
+		let fromThings: Array<Thing> = [];
+		if (!this.isRoot) {
+			const relationships = this.relationships_onceFrom(idPredicate);
+			for (const relationship of relationships) {
+				const thing = relationship.fromThing;
+				if (thing) {
+					fromThings.push(thing);
+				}
+			}
+		}
+		return fromThings;
 	}
 
 	idAt(back: number = 1): string {	// default 1 == last
@@ -307,7 +322,7 @@ export default class Path {
 		if (ids.length < 1) {
 			return g.rootPath;
 		}
-		return g.hierarchy.path_remember_unique(ids.join(k.pathSeparator));
+		return g.hierarchy.path_remember_createUnique(ids.join(k.pathSeparator));
 	}
 
 	appendChild(thing: Thing | null): Path {
@@ -333,8 +348,7 @@ export default class Path {
 				if ((totalWidth + crumbWidth) > thresholdWidth) {
 					break;
 				}
-				numberOfParents = thing.parents.length;
-				sum = sum * 10 + numberOfParents;
+				sum = sum * 10 + thing.parents.length;
 				totalWidth += crumbWidth;
 				array.push(thing);
 			}
@@ -431,17 +445,21 @@ export default class Path {
 	clicked_dotDrag(shiftKey: boolean) {
         if (!this.isExemplar) {
 			s_title_editing?.set(null);
+			const toThingHID = this.relationship?.toThing?.id.hash() ?? k.hid_unknown;
+			const toPaths = g.hierarchy.paths_get_forHID_ofPredicate_andThing(this.idPredicate.hash(), toThingHID) ?? [];
+			const toPath = toPaths.length == 0 ? this : toPaths[0];
 			if (get(s_layout_byClusters)) {
-				this.becomeHere();
+				toPath.becomeHere();
 			} else {
 				if (get(s_altering_parent)) {
-					g.hierarchy.path_alterMaybe(this);
-				} else if (shiftKey || this.isGrabbed) {
-					this.toggleGrab();
+					g.hierarchy.path_alterMaybe(toPath);
+				} else if (shiftKey || toPath.isGrabbed) {
+					toPath.toggleGrab();
 				} else {
-					this.grabOnly();
+					toPath.grabOnly();
 				}
 			}
+
 			signals.signal_rebuildWidgets_fromHere();
         }
 	}

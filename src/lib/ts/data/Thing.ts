@@ -29,7 +29,7 @@ export default class Thing extends Datum {
 	
 	get parentIDs():	Array<string> { return this.parents.map(t => t.id); }
 	get parentPaths():	  Array<Path> { return this.paths_fromFor(Predicate.idContains); }
-	get parents():		 Array<Thing> { return this.things_fromFor(Predicate.idContains); }
+	get parents():		 Array<Thing> { return this.things_get_fromFor(Predicate.idContains); }
 	get fields():	Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get idBridging():		   string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get description():		   string { return this.id + ' \"' + this.title + '\"'; }
@@ -56,7 +56,7 @@ export default class Thing extends Datum {
 	
 	debugLog(message: string) { this.log(DebugFlag.things, message); }
 	log(option: DebugFlag, message: string) { debug.log_maybe(option, message + k.space + this.description); }
-	hasThings_fromFor(idPredicate: string): boolean { return this.things_fromFor(idPredicate).length > 0; }
+	hasThings_fromFor(idPredicate: string): boolean { return this.things_get_fromFor(idPredicate).length > 0; }
 
 	override isInDifferentBulkThan(other: Thing): boolean {
 		return super.isInDifferentBulkThan(other) || (other.isBulkAlias && !this.isBulkAlias && this.baseID != other.title);
@@ -86,7 +86,7 @@ export default class Thing extends Datum {
 		}
 	}
 
-	things_fromFor(idPredicate: string): Array<Thing> {
+	things_get_fromFor(idPredicate: string): Array<Thing> {
 		let fromThings: Array<Thing> = [];
 		if (!this.isRoot) {
 			const relationships = this.relationships_onceFrom(idPredicate);
@@ -125,12 +125,12 @@ export default class Thing extends Datum {
 		return u.sort_byTitleTop(paths).reverse();
 	}
 	
-	paths_uniquelyFromFor(idPredicate: string): Array<Path> {
+	paths_singularUniquelyFromFor(idPredicate: string): Array<Path> {
 		if (this.isRoot) {
 			return [];
 		}
 		const paths: Array<Path> = []
-		const fromThings = this.things_fromFor(idPredicate) ?? [];
+		const fromThings = this.things_get_fromFor(idPredicate) ?? [];
 		for (const fromThing of fromThings) {
 			if (fromThing.isRoot) {
 				paths.push(g.singularRootPath);

@@ -3,11 +3,11 @@
 	import { IDLine, Quadrant, Wrapper, IDWrapper, ClusterLayout } from '../../ts/common/GlobalImports';
 	import ArrowHead from '../kit/ArrowHead.svelte';
 	import Box from '../kit/Box.svelte';
-    export let cluster: ClusterLayout;
+    export let clusterLayout: ClusterLayout;
 	export let color = k.color_default;
 	export let center = Point.zero;
 	const showArrows = false;
-	const name = `${cluster.pointsTo ? 'to' : 'from'} ${cluster.predicate.kind}`;
+	const name = `${clusterLayout?.pointsTo ? 'to' : 'from'} ${clusterLayout?.predicate.kind}`;
 	let head_start = Point.zero;
 	let head_end = Point.zero;
 	let lineWrapper: Wrapper;
@@ -24,7 +24,7 @@
 		if (line && !lineWrapper) {
 			lineWrapper = new Wrapper(line, g.rootPath, IDWrapper.line);
 		}
-		angle = cluster.angle + Math.PI/6.9;
+		angle = clusterLayout?.angle + Math.PI/6.9;
 		const focus_radius = k.cluster_focus_radius + (showArrows ? 8 : 0);
 		const length = k.necklace_gap - k.dot_size * (showArrows ? 8 : 0.4);
 		const length_rotated = new Point(length, 0).rotateBy(angle);
@@ -43,7 +43,7 @@
 
 	function updateLine(length_rotated: Point, focus_rotated: Point): [number, number] {
 		let focus_outer = focus_rotated;
-		if (cluster.predicate.directions == 2 || !cluster.pointsTo) {
+		if (clusterLayout?.predicate.directions == 2 || !clusterLayout?.pointsTo) {
 			focus_outer = focus_rotated.offsetBy(length_rotated);
 		}
 		switch (u.point_quadrant(length_rotated)) {
@@ -77,13 +77,13 @@
 		color: {color};
 		background-color: {k.color_background};
 		left: 20px;'>
-		{cluster.title}
+		{clusterLayout?.title}
 	</div>
 	{#if showArrows}
-		{#if cluster.predicate.directions == 2}
+		{#if clusterLayout?.predicate.directions == 2}
 			<ArrowHead name='to'   angle={angle} color={color} color_background={color} radius={thickness} center={head_end}/>
 			<ArrowHead name='from' angle={angle + Angles.half} color={color} color_background={color} radius={thickness} center={head_start}/>
-		{:else if cluster.pointsTo}
+		{:else if clusterLayout?.pointsTo}
 			<ArrowHead name='to'   angle={angle} color={color} color_background={color} radius={thickness} center={head_end}/>
 		{:else}
 			<ArrowHead name='from' angle={angle + Angles.half} color={color} color_background={color} radius={thickness} center={head_start}/>

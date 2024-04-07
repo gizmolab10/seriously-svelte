@@ -23,7 +23,7 @@ export default class DBDispatch {
 						this.db_set_forType(type);
 						this.queryStrings_apply();
 						await g.hierarchy.hierarchy_fetch_andBuild(type);
-						g.rootPath_set(g.hierarchy.path_remember_unique());
+						g.rootPath_set(g.hierarchy.path_remember_createUnique());
 						persistLocal.paths_restore(true);
 						s_path_clusterTools.set(null);
 						s_title_editing.set(null);

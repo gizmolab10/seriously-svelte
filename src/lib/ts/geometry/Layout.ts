@@ -2,7 +2,7 @@ import { k, g, get, Path, Rect, Size, Point, IDLine, Predicate, ChildMapRect, Cl
 import { s_layout_byClusters } from '../common/State';
 
 export default class Layout {
-	clusterArray: Array<ClusterLayout> = [];
+	clusterLayouts: Array<ClusterLayout> = [];
 	childMapRectArray: Array<ChildMapRect> = [];
 
 	constructor(path: Path, origin: Point) {
@@ -12,14 +12,13 @@ export default class Layout {
 			if (contains) {
 				const thing = path.thing;
 				if (path.hasRelationshipsTo) {
-					this.cluster_layout(pathsTo, new ClusterLayout(contains, true), path, origin);
+					this.layoutCluster(pathsTo, new ClusterLayout(contains, true), path, origin);
 				}
 				for (const predicate of g.hierarchy.predicates) {	// and another 'contains' for parents
 					if (path.showsClusterFor(predicate)) {
-						console.log(`pointsFrom ${predicate.kind} [${path.titles}] isSingular`);
-						const paths = thing?.paths_uniquelyFromFor(predicate.id) ?? [];
+						const paths = thing?.paths_singularUniquelyFromFor(predicate.id) ?? [];
 						const cluster = new ClusterLayout(predicate, false);
-						this.cluster_layout(paths, cluster, path, origin);
+						this.layoutCluster(paths, cluster, path, origin);
 					}
 				}
 			}
@@ -43,8 +42,8 @@ export default class Layout {
 		}
 	}
 
-	cluster_layout(paths: Array<Path>, cluster: ClusterLayout, path: Path, origin: Point) {
-		this.clusterArray.push(cluster);
+	layoutCluster(paths: Array<Path>, cluster: ClusterLayout, path: Path, origin: Point) {
+		this.clusterLayouts.push(cluster);
 		let index = 0;
 		const length = paths.length;
 		const start_angle = cluster.angle;
@@ -56,7 +55,7 @@ export default class Layout {
 			const height = (start_row + index) * k.row_height;
 			const angle = start_angle + Math.asin(height / radius);
 			const childOrigin = origin.offsetBy(radial.rotateBy(angle));
-			const childMapRect = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, childPath, null);
+			const childMapRect = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, childPath, path);
 			this.childMapRectArray.push(childMapRect);
 			index += 1;
 		}

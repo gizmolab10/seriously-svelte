@@ -6,7 +6,7 @@ class Exemplar extends Thing {
 	constructor() {
 		super(dbDispatch.db.baseID, 'exemplar', 'this item is selected', '#b52', '?', true);
 		const h = g.hierarchy;
-		this.path = h.path_remember_unique('exemplar');
+		this.path = h.path_remember_createUnique('exemplar')!;
 		this.isExemplar = true;
 		h.thing_remember(this);
 	}

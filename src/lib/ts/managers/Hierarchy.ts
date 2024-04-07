@@ -7,6 +7,7 @@ import DBInterface from '../db/DBInterface';
 type Relationships_ByHID = { [hid: number]: Array<Relationship> }
 
 export default class Hierarchy {
+	private paths_byHID_ofPredicate_andThing: { [hid_ofPredicate_andThing: number]: Array<Path> } = {};
 	private wrappers_byType_andHID: { [type: string]: { [hid: number]: Wrapper } } = {};
 	private relationship_byHID: { [hid: number]: Relationship } = {};
 	private predicate_byHID: { [hid: number]: Predicate } = {};
@@ -445,7 +446,7 @@ export default class Hierarchy {
 		const thing = path.thing;
 		const pathFrom = path.pathFrom;
 		const relationship = this.relationship_get_forPredicate_from_to(Predicate.idContains, otherPath.idThing, path.idThing);
-		if (pathFrom && relationship && (thing?.parents.length ?? 0) > 1) {
+		if (pathFrom && relationship && (thing?.hasParents ?? false)) {
 			this.relationship_forget(relationship);
 			if (otherPath.hasRelationshipsTo) {
 				pathFrom.order_normalizeRecursive_remoteMaybe(true);
@@ -510,6 +511,10 @@ export default class Hierarchy {
 
 	static readonly $_PATHS_$: unique symbol;
 
+	paths_get_forHID_ofPredicate_andThing(predicateHID: number, thingHID: number): Array<Path> {
+		return this.paths_byHID_ofPredicate_andThing[predicateHID + thingHID];
+	}
+
 	async paths_rebuild_traverse_remoteDelete(paths: Array<Path>) {
 		let needsRebuild = false;
 		if (get(s_path_here)) {
@@ -543,14 +548,31 @@ export default class Hierarchy {
 
 	static readonly $_PATH_$: unique symbol;
 
-	path_remember_unique(pathString: string = k.empty): Path {
+	path_remember_createUnique(pathString: string = k.empty, idPredicate: string = Predicate.idContains): Path | null {
 		const hashedPath = pathString.hash();
 		let path = this.path_byHash[hashedPath];
 		if (!path) {
-			path = new Path(pathString);
-			this.path_byHash[hashedPath] = path;
+			path = new Path(pathString, idPredicate);
+			if (this.path_remember_byHID(path, idPredicate)) {	// also by HID combination				
+				this.path_byHash[hashedPath] = path;			// remember if path is valid
+			} else {
+				return null;
+			}
 		}
 		return path;
+	}
+
+	path_remember_byHID(path: Path, idPredicate: string): boolean {		// false means path is invalid
+		if (this.things_get_forPath(path).includes(null)) {
+			console.log(`NULL within path for ${path.title}`);
+			return false;
+		}
+		const thingHID = path.thing?.id.hash() ?? k.hid_unknown;
+		const hidKey = idPredicate.hash() + thingHID;
+		const paths = this.paths_byHID_ofPredicate_andThing[hidKey] ?? [];
+		paths.push(path);
+		this.paths_byHID_ofPredicate_andThing[hidKey] = paths;
+		return true;
 	}
 
 	async path_get_roots() {		// TODO: assumes all paths created

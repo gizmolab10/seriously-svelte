@@ -8,19 +8,15 @@
 	let childOffset = new Point(k.dot_size / -3, k.cluster_offsetY);;
 	let color = path.thing?.color ?? k.color_default;
 	let childMapRectArray: Array<ChildMapRect> = [];
-	let clusterArray: Array<ClusterLayout>;
+	let clusterLayouts: Array<ClusterLayout>;
 	
 	onMount( () => {
-		layoutNecklace();
+		const layout = new Layout(path, center);
+		childMapRectArray = layout.childMapRectArray;
+		clusterLayouts = layout.clusterLayouts;
 		const handler = signals.handle_relayoutWidgets((signal_path) => {});
 		return () => { handler.disconnect() };
 	});
-	
-	function layoutNecklace() {
-		const layout = new Layout(path, center);
-		childMapRectArray = layout.childMapRectArray;
-		clusterArray = layout.clusterArray;
-	}
 	
 	// <Circle
 	// 	center={center}
@@ -38,8 +34,8 @@
 		<Widget path={map.childPath} origin={map.childOrigin.offsetBy(childOffset)}/>
 	{/each}
 {/if}
-{#if clusterArray}
-	{#each clusterArray as cluster}
-		<Arrow cluster={cluster} center={center} color={color}/>
+{#if clusterLayouts}
+	{#each clusterLayouts as clusterLayout}
+		<Arrow clusterLayout={clusterLayout} center={center} color={color}/>
 	{/each}
 {/if}

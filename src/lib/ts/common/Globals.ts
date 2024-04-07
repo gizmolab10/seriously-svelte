@@ -23,9 +23,11 @@ class Globals {
 		debugReact.queryStrings_apply();
 	}
 
-	rootPath_set(path: Path) {
-		this.rootPath = path;
-		this.singularRootPath = new Path(path.pathString, path.idPredicate, true);
+	rootPath_set(path: Path | null) {
+		if (path) {
+			this.rootPath = path;
+			this.singularRootPath = path.singular;
+		}
 	}
  
 	zoomBy(factor: number): number {
