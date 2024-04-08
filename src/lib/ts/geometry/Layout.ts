@@ -1,4 +1,4 @@
-import { k, g, get, Path, Rect, Size, Point, IDLine, Predicate, ChildMapRect, ClusterLayout } from '../common/GlobalImports';
+import { k, g, get, Path, Rect, Size, Point, Angles, IDLine, Predicate, ChildMapRect, ClusterLayout } from '../common/GlobalImports';
 import { s_layout_byClusters } from '../common/State';
 
 export default class Layout {
@@ -55,7 +55,7 @@ export default class Layout {
 			const height = (start_row + index) * k.row_height;
 			const angle = start_angle + Math.asin(height / radius);
 			const childOrigin = origin.offsetBy(radial.rotateBy(angle));
-			const childMapRect = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, childPath, path, angle);
+			const childMapRect = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, childPath, path, angle % Angles.full);
 			this.childMapRectArray.push(childMapRect);
 			index += 1;
 		}

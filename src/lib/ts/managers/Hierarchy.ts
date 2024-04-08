@@ -309,24 +309,29 @@ export default class Hierarchy {
 
 	async thing_remember_bulk_recursive_remoteRelocateRight(path: Path, newParentPath: Path) {
 		const newParent = newParentPath.thing;
+		let newThingPath: Path | null = null;
 		const thing = path.thing;
 		if (thing && newParent) {
 			const baseID = newParent.isBulkAlias ? newParent.title : newParent.baseID;
 			const newThing = await this.thing_remember_runtimeCopy(baseID, thing);
-			const newThingPath = newParentPath.appendChild(newThing);
-			await this.path_remember_remoteAddAsChild(newParentPath, newThing);
-			for (const childPath of path.pathsTo) {
-				this.thing_remember_bulk_recursive_remoteRelocateRight(childPath, newThingPath);
+			newThingPath = newParentPath.appendChild(newThing);
+			if (newThingPath) {
+				await this.path_remember_remoteAddAsChild(newParentPath, newThing);
+				for (const childPath of path.pathsTo) {
+					this.thing_remember_bulk_recursive_remoteRelocateRight(childPath, newThingPath);
+				}
+				if (!newThingPath.isExpanded) {
+					setTimeout(() => {
+						if (newThingPath) {
+							newThingPath.expand();	
+							path.collapse()
+						};
+					}, 2);
+				}
+				await this.path_forget_remoteUpdate(path);
 			}
-			if (!newThingPath.isExpanded) {
-				setTimeout(() => {
-					newThingPath.expand();	
-					path.collapse();
-				}, 2);
-			}
-			await this.path_forget_remoteUpdate(path);
-			return newThingPath;
 		}
+		return newThingPath;
 	}
 
 	static readonly $_RELATIONSHIPS_$: unique symbol;
@@ -521,23 +526,25 @@ export default class Hierarchy {
 			for (const path of paths) {
 				const thing = path.thing;
 				const pathFrom = path.pathFrom;
-				const fromFromPath = pathFrom.pathFrom;
-				let fromThing = pathFrom.thing;
-				if (thing && fromThing && pathFrom && fromFromPath && path && !path.isEditing && !thing.isBulkAlias) {
-					const siblings = pathFrom.children;
-					let index = siblings.indexOf(thing);
-					siblings.splice(index, 1);
-					pathFrom.grabOnly();
-					if (siblings.length == 0) {
-						needsRebuild = pathFrom.collapse();
-						if (!fromFromPath.isVisible) {
-							needsRebuild = fromFromPath.becomeHere();	// call become here before applying
+				if (pathFrom) {
+					const fromFromPath = pathFrom.pathFrom;
+					let fromThing = pathFrom.thing;
+					if (thing && fromThing && pathFrom && fromFromPath && path && !path.isEditing && !thing.isBulkAlias) {
+						const siblings = pathFrom.children;
+						let index = siblings.indexOf(thing);
+						siblings.splice(index, 1);
+						pathFrom.grabOnly();
+						if (siblings.length == 0) {
+							needsRebuild = pathFrom.collapse();
+							if (!fromFromPath.isVisible) {
+								needsRebuild = fromFromPath.becomeHere();	// call become here before applying
+							}
 						}
+						await path.traverse_async(async (progenyPath: Path): Promise<boolean> => {
+							await this.path_forget_remoteUpdate(progenyPath);
+							return false; // continue the traversal
+						});
 					}
-					await path.traverse_async(async (progenyPath: Path): Promise<boolean> => {
-						await this.path_forget_remoteUpdate(progenyPath);
-						return false; // continue the traversal
-					});
 				}
 			}
 			if (needsRebuild) {
@@ -719,34 +726,38 @@ export default class Hierarchy {
 	async path_rebuild_remoteMoveUp(path: Path, up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const thing = this.thing_get_forPath(path);
 		const pathFrom = path.pathFrom;
-		const siblings = pathFrom.children;
-		if (!siblings || siblings.length == 0) {
-			this.path_rebuild_runtimeBrowseRight(path, true, EXTREME, up);
-		} else if (thing) {
-			const index = siblings.indexOf(thing);
-			const newIndex = index.increment(!up, siblings.length);
-			if (pathFrom && !OPTION) {
-				const grabPath = pathFrom.appendChild(siblings[newIndex]);
-				if (get(s_layout_byClusters)) {
-					grabPath.becomeHere();
-					grabPath.grabOnly();
-				} else if (!grabPath.isVisible) {
-					pathFrom.becomeHere();
+		if (pathFrom) {
+			const siblings = pathFrom.children;
+			if (!siblings || siblings.length == 0) {
+				this.path_rebuild_runtimeBrowseRight(path, true, EXTREME, up);
+			} else if (thing) {
+				const index = siblings.indexOf(thing);
+				const newIndex = index.increment(!up, siblings.length);
+				if (pathFrom && !OPTION) {
+					const grabPath = pathFrom.appendChild(siblings[newIndex]);
+					if (grabPath) {
+						if (get(s_layout_byClusters)) {
+							grabPath.becomeHere();
+							grabPath.grabOnly();
+						} else if (!grabPath.isVisible) {
+							pathFrom.becomeHere();
+						}
+						if (SHIFT) {
+							grabPath.toggleGrab();
+						} else {
+							grabPath.grabOnly();
+						}
+						signals.signal_relayoutWidgets_fromHere();
+					}
+				} else if (k.allow_GraphEditing && OPTION) {
+					await u.paths_orders_normalize_remoteMaybe(pathFrom.pathsTo, false);
+					const wrapped = up ? (index == 0) : (index == siblings.length - 1);
+					const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
+					const newOrder = newIndex + goose;
+					path.relationship?.order_setTo(newOrder);
+					await u.paths_orders_normalize_remoteMaybe(pathFrom.pathsTo);
+					signals.signal_rebuildWidgets_fromHere();
 				}
-				if (SHIFT) {
-					grabPath.toggleGrab();
-				} else {
-					grabPath.grabOnly();
-				}
-				signals.signal_relayoutWidgets_fromHere();
-			} else if (k.allow_GraphEditing && OPTION) {
-				await u.paths_orders_normalize_remoteMaybe(pathFrom.pathsTo, false);
-				const wrapped = up ? (index == 0) : (index == siblings.length - 1);
-				const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
-				const newOrder = newIndex + goose;
-				path.relationship?.order_setTo(newOrder);
-				await u.paths_orders_normalize_remoteMaybe(pathFrom.pathsTo);
-				signals.signal_rebuildWidgets_fromHere();
 			}
 		}
 	}
@@ -766,7 +777,7 @@ export default class Hierarchy {
 					await relationship.order_setTo(order + 0.5, true);
 				}
 				this.relationships_refreshKnowns();
-				newParentPath.appendChild(thing).grabOnly();
+				newParentPath.appendChild(thing)?.grabOnly();
 				g.rootPath.order_normalizeRecursive_remoteMaybe(true);
 				if (!newParentPath.isExpanded) {
 					newParentPath.expand();
@@ -822,7 +833,8 @@ export default class Hierarchy {
 		}
 		s_title_editing.set(null);
 		newGrabPath?.grabOnly();
-		const allowToBecomeHere = (!SHIFT || path.pathFrom.matchesPath(newGrabPath)) && newGrabIsNotHere; 
+		const matches = newParentPath && newParentPath.matchesPath(newGrabPath);
+		const allowToBecomeHere = (!SHIFT || matches) && newGrabIsNotHere; 
 		const shouldBecomeHere = !newHerePath?.isVisible || newHerePath.isRoot;
 		if (!RIGHT && allowToBecomeHere && shouldBecomeHere && (newHerePath?.becomeHere() ?? false)) {
 			needsRebuild = true;

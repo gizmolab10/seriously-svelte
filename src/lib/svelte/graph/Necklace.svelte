@@ -31,7 +31,7 @@
 
 {#if childMapRectArray}
 	{#each childMapRectArray as map}
-		<Widget path={map.childPath} origin={map.childOrigin.offsetBy(childOffset)}/>
+		<Widget path={map.childPath} angle={map.angle} origin={map.childOrigin.offsetBy(childOffset)}/>
 	{/each}
 {/if}
 {#if clusterLayouts}

@@ -1,11 +1,12 @@
 <script lang='ts'>
-	import { g, k, u, Point, Thing, debug, ZIndex, onMount, signals } from '../../ts/common/GlobalImports';
-	import { Wrapper, IDWrapper, dbDispatch, SeriouslyRange } from '../../ts/common/GlobalImports';
+	import { signals, Wrapper, IDWrapper, dbDispatch, SeriouslyRange } from '../../ts/common/GlobalImports';
+	import { g, k, u, Point, Thing, debug, ZIndex, onMount, Angles } from '../../ts/common/GlobalImports';
 	import { s_title_editing, s_paths_grabbed, s_path_clusterTools } from '../../ts/common/State';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
-	export let normal = true;
+    export let angle = 0;
 	export let path;
+	let normal = angle < Angles.quarter || angle > Angles.threeQuarters;
 	let position = normal ? k.empty : 'position: absolute';
 	let padding = `0.5px 0px 0px 7px`;	// down half a pixel, 7 over to make room for drag dot
 	let thingTitle = path?.thing?.title ?? k.empty;
