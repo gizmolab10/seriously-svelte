@@ -16,7 +16,7 @@ export default class Layout {
 				}
 				for (const predicate of g.hierarchy.predicates) {	// and another 'contains' for parents
 					if (path.showsClusterFor(predicate)) {
-						const paths = thing?.paths_singularUniquelyFromFor(predicate.id) ?? [];
+						const paths = thing?.paths_uniquelyFromFor(predicate.id) ?? [];
 						const cluster = new ClusterLayout(predicate, false);
 						this.layoutCluster(paths, cluster, path, origin);
 					}
@@ -42,11 +42,11 @@ export default class Layout {
 		}
 	}
 
-	layoutCluster(paths: Array<Path>, cluster: ClusterLayout, path: Path, origin: Point) {
-		this.clusterLayouts.push(cluster);
+	layoutCluster(paths: Array<Path>, clusterLayout: ClusterLayout, path: Path, origin: Point) {
+		this.clusterLayouts.push(clusterLayout);
 		let index = 0;
 		const length = paths.length;
-		const start_angle = cluster.angle;
+		const start_angle = clusterLayout.angle;
 		const start_row = (8 - length) / 2;
 		const radius = k.necklace_gap + k.cluster_focus_radius;
 		const radial = new Point(radius, 0);
@@ -55,7 +55,7 @@ export default class Layout {
 			const height = (start_row + index) * k.row_height;
 			const angle = start_angle + Math.asin(height / radius);
 			const childOrigin = origin.offsetBy(radial.rotateBy(angle));
-			const childMapRect = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, childPath, path);
+			const childMapRect = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, childPath, path, angle);
 			this.childMapRectArray.push(childMapRect);
 			index += 1;
 		}

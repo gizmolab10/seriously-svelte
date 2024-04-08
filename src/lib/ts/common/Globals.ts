@@ -3,7 +3,6 @@ import { k, u, get, Path, Rect, Point, Thing, debug, builds } from '../common/Gl
 import { s_graphRect, s_show_details, s_scale_factor, s_user_graphOffset } from './State';
 
 class Globals {
-	singularRootPath: Path;
 	hierarchy: Hierarchy;
 	rootsPath: Path;
 	rootPath: Path;
@@ -26,7 +25,6 @@ class Globals {
 	rootPath_set(path: Path | null) {
 		if (path) {
 			this.rootPath = path;
-			this.singularRootPath = path.singular;
 		}
 	}
  

@@ -5,7 +5,6 @@
 	import SVGD3 from '../svg/SVGD3.svelte';
 	import Box from '../kit/Box.svelte';
 	export let center = new Point(0, 0);
-    export let thing;
     export let path;
 	let strokeColor = k.color_background;
 	let extraColor = k.color_background;
@@ -21,6 +20,7 @@
 	let clickTimer;
 	let left = 0;
 	let top = 0;
+    let thing;
 	
 	function mouseOver(event) { updateColorsForHover(true); }
 	function handleMouseUp() { clearTimeout(clickTimer); }

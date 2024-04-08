@@ -4,10 +4,11 @@
 	import { s_title_editing, s_paths_grabbed, s_path_clusterTools } from '../../ts/common/State';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
-    export let thing;
+	export let normal = true;
 	export let path;
-	let position = path.isSingular ? 'position: absolute' : k.empty;
+	let position = normal ? k.empty : 'position: absolute';
 	let padding = `0.5px 0px 0px 7px`;	// down half a pixel, 7 over to make room for drag dot
+	let thingTitle = path?.thing?.title ?? k.empty;
 	let originalTitle = k.empty;
 	let cursorStyle = k.empty;
 	let titleWrapper: Wrapper;
@@ -18,23 +19,28 @@
 	let input = null;
 	let clickTimer;
 	let left = 10;
+    let thing;
 
-	var hasChanges = () => { return originalTitle != thing.title; };
-	function handleInput(event) { thing.title = event.target.value; };
+	var hasChanges = () => { return originalTitle != thingTitle; };
 	function handleMouseUp() { clearTimeout(clickTimer); }
+
+	function handleInput(event) {
+		thing?.title = event.target.value;
+		thingTitle = thing?.title ?? k.empty;
+	};
 	
 	onMount(() => {
-		titleWidth = u.getWidthOf(thing.title);
-		left = path.isSingular ? -10 - titleWidth : 10;
+		titleWidth = u.getWidthOf(thingTitle);
+		left = normal ? 10 : -10 - titleWidth;
 		const handler = signals.handle_anySignal((IDSignal, path) => { updateInputWidth(); });
 		setTimeout(() => { updateInputWidth(); }, 100);
 		return () => { handler.disconnect() };
 	});
 
 	function handle_key_down(event) {
-		if (thing && path.isEditing && canAlterTitle(event)) {
+		if (thing && path?.isEditing && canAlterTitle(event)) {
 			switch (event.key) {	
-				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); g.hierarchy.path_edit_remoteCreateChildOf(path.pathFrom); break;
+				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); g.hierarchy.path_edit_remoteCreateChildOf(path?.pathFrom); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
 				default:	  signals.signal_relayoutWidgets(); break;
 			}
@@ -61,7 +67,7 @@
 		if (input && ghost) { // ghost only exists to provide its width (in pixels)
 			titleWidth = ghost.scrollWidth - 5;
 			input.style.width = `${titleWidth}px`;	// apply its width to the input element
-			// debug.log_edit(`WIDTH: ${titleWidth} ${thing.title}`);
+			// debug.log_edit(`WIDTH: ${titleWidth} ${thingTitle}`);
 		}
 	}
 
@@ -75,14 +81,14 @@
 
 	function handleBlur(event) {
 		stopAndClearEditing();
-		debug.log_edit(`BLUR ${thing.title}`);
+		debug.log_edit(`BLUR ${thingTitle}`);
 		updateInputWidth();
 	}
 
 	function handleDoubleClick(event) {
 		event.preventDefault();
 		clearClicks();
-		path.startEdit();
+		path?.startEdit();
 		input.focus();
     }
 
@@ -97,12 +103,12 @@
 	}
 
 	function handleClick(event) {
-		if (!path.isEditing) {
+		if (!path?.isEditing) {
 			event.preventDefault();
-			if (!path.isGrabbed) {
-				path.grabOnly();
-			} else if (k.allow_TitleEditing && !path.isRoot && !thing.isBulkAlias) {
-				path.startEdit();
+			if (!path?.isGrabbed) {
+				path?.grabOnly();
+			} else if (k.allow_TitleEditing && !path?.isRoot && !thing?.isBulkAlias) {
+				path?.startEdit();
 				input.focus();
 				return;
 			}
@@ -112,16 +118,16 @@
 	}
  
 	function handleLongClick(event) {
-		if (!path.isEditing) {
+		if (!path?.isEditing) {
 			event.preventDefault();
 			clearClicks();
 			clickTimer = setTimeout(() => {
 				clearClicks();
-				if (!path.isRoot) {
+				if (!path?.isRoot) {
 					if ($s_path_clusterTools == path) {
 						$s_path_clusterTools = null;
 					} else  {
-						path.grabOnly();
+						path?.grabOnly();
 						$s_path_clusterTools = path;
 					}
 					signals.signal_rebuildWidgets_fromHere();
@@ -140,33 +146,34 @@
 		//////////////////////////////////////////////////////
 
 		if (path) {
-			thing = path.thing;
+			thing = path?.thing;
 		}
 		const _ = $s_paths_grabbed;
 		const editPath = $s_title_editing;
-		if (k.allow_TitleEditing && !thing.isBulkAlias) {
-			if (path.isStoppingEdit) {
-				debug.log_edit(`STOPPING ${thing.title}`);
+		const isBulkAlias = thing?.isBulkAlias ?? false;
+		if (k.allow_TitleEditing && !isBulkAlias) {
+			if (path?.isStoppingEdit ?? false) {
+				debug.log_edit(`STOPPING ${thingTitle}`);
 				$s_title_editing = null;
 				input?.blur();
-			} else if (isEditing != path.matchesPath(editPath?.editing ?? null)) { // needs reactivity to $s_title_editing;
+			} else if (isEditing != path?.matchesPath(editPath?.editing ?? null)) { // needs reactivity to $s_title_editing;
 				if (!isEditing) {
 					input?.focus();
-					debug.log_edit(`RANGE ${thing.title}`);
+					debug.log_edit(`RANGE ${thingTitle}`);
 					applyRange();
 				} else {
-					debug.log_edit(`STOP ${thing.title}`);
+					debug.log_edit(`STOP ${thingTitle}`);
 					input?.blur();
 				}
 				isEditing = !isEditing;
 			}
 		}
-		cursorStyle = (!path.isRoot && !thing.isBulkAlias && (path.isEditing || path.isGrabbed)) ? k.empty : 'cursor: pointer';
+		cursorStyle = (!path?.isRoot && !isBulkAlias && (path?.isEditing || path?.isGrabbed)) ? k.empty : 'cursor: pointer';
 	}
 
 	function stopAndClearEditing() {
 		invokeBlurNotClearEditing();
-		if (path.isEditing) {				
+		if (path?.isEditing) {				
 			setTimeout(() => {		// eliminate infinite recursion
 				const state = $s_title_editing;
 				if (state) {
@@ -178,33 +185,33 @@
 	}
 
 	function invokeBlurNotClearEditing() {
-		if (path.isEditing && thing) {
+		if (path?.isEditing && thing) {
 			isEditing = false;
 			extractRange();
 			input?.blur();
-			if (hasChanges() && !thing.isExemplar) {
+			if (hasChanges() && !thing?.isExemplar) {
 				dbDispatch.db.thing_remoteUpdate(thing);
-				originalTitle = thing.title;		// so hasChanges will be correct
-				path.signal_relayoutWidgets();
+				originalTitle = thing?.title;		// so hasChanges will be correct
+				path?.signal_relayoutWidgets();
 			}
 		}
 	}
 
 	function handleCutOrPaste(event) {
 		extractRange();
-		path.signal_relayoutWidgets();
+		path?.signal_relayoutWidgets();
 	}
 
 	function extractRange() {
 		if (input) {
 			const end = input.selectionEnd;
 			const start = input.selectionStart;
-			path.selectionRange = new SeriouslyRange(start, end);
+			path?.selectionRange = new SeriouslyRange(start, end);
 		}
 	}
 
 	function applyRange() {
-		const range = path.selectionRange;
+		const range = path?.selectionRange;
 		if (range && input) {
 			input.setSelectionRange(range.start, range.end);
 		}
@@ -235,7 +242,7 @@
 			padding: {padding};
 			font-size: {fontSize};
 			font-family: {fontFamily};'>
-		{thing.title}
+		{thingTitle}
 	</span>
 	<input
 		type='text'
@@ -244,7 +251,7 @@
 		bind:this={input}
 		on:blur={handleBlur}
 		on:input={handleInput}
-		bind:value={thing.title}
+		bind:value={thingTitle}
 		on:cut={handleCutOrPaste}
 		on:mouseup={handleMouseUp}
 		on:keydown={handle_key_down}
@@ -257,7 +264,7 @@
 			{cursorStyle};
 			left: {left}px;
 			padding: {padding};
-			color: {thing.color};
+			color: {thing?.color};
 			width: {titleWidth}px;
 			font-size: {fontSize};
 			z-index: {ZIndex.text};

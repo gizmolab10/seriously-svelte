@@ -7,16 +7,14 @@ import { Writable } from 'svelte/store';
 export default class Path {
 	wrappers: { [type: string]: Wrapper } = {};
 	_thing: Thing | null = null;
-	isSingular: boolean;
 	idPredicate: string;
 	pathString: string;
 	hashedPath: number;
 
-	constructor(pathString: string = k.empty, idPredicate: string = Predicate.idContains, isSingular: boolean = false) {
+	constructor(pathString: string = k.empty, idPredicate: string = Predicate.idContains) {
 		this.hashedPath = pathString.hash();
 		this.idPredicate = idPredicate;
 		this.pathString = pathString;
-		this.isSingular = isSingular;
 		if (g.hierarchy.isAssembled) {
 			this.subscriptions_setup();			// not needed during hierarchy assembly
 		}
@@ -38,17 +36,17 @@ export default class Path {
 	static readonly $_PROPERTIES_$: unique symbol;
 	
 	get endID(): string { return this.idAt(); }
-	get pathFrom(): Path { return this.stripBack(); }
 	get id_count():number { return this.ids.length; }
 	get firstChild(): Thing { return this.children[0]; }
 	get isRoot(): boolean { return this.hashedPath == 0; }
+	get pathFrom(): Path | null { return this.stripBack(); }
 	get lastChild(): Thing { return this.children.slice(-1)[0]; }
 	get order(): number { return this.relationship?.order ?? -1; }
 	get isHere(): boolean { return this.matchesStore(s_path_here); }
-	get siblingPaths(): Array<Path> { return this.pathFrom.pathsTo; }
 	get isExemplar(): boolean { return this.pathString == 'exemplar'; }
 	get title(): string { return this.thing?.title ?? 'missing title'; }
 	get hashedIDs(): Array<number> { return this.ids.map(i => i.hash()); }
+	get siblingPaths(): Array<Path> { return this.pathFrom?.pathsTo ?? []; }
 	get relationship(): Relationship | null { return this.relationshipAt(); }
 	get idBridging(): string | null { return this.thing?.idBridging ?? null; }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
@@ -59,7 +57,6 @@ export default class Path {
 	get revealWrapper(): Wrapper | null { return this.wrappers[IDWrapper.reveal]; }
 	get widgetWrapper(): Wrapper | null { return this.wrappers[IDWrapper.widget]; }
 	get titleRect(): Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
-	get singular(): Path { return new Path(this.pathString, this.idPredicate, true); }
 	get things(): Array<Thing | null> { return g.hierarchy?.things_get_forPath(this); }
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
@@ -152,19 +149,16 @@ export default class Path {
 	}
 
 	get pathsTo(): Array<Path> {
-		let log = false;
 		const paths: Array<Path> = [];
 		const relationships = this.relationships_to;
 		if (relationships.length > 0) {
 			for (const relationship of relationships) {			// loop through all to relationships
 				const path = this.appendID(relationship.id);	// add each relationship's id
-				paths.push(path);								// and push onto the paths_to
-				log = log || (path.pathString.length > 120);
+				if (path) {
+					paths.push(path);							// and push onto the paths_to
+				}
 			}
 			u.paths_orders_normalize_remoteMaybe(paths);
-		}
-		if (log) {
-			console.log(`${paths.length} pathsTo: ${paths.map(p => p.titles)}`);
 		}
 		return paths;
 	}
@@ -178,7 +172,7 @@ export default class Path {
 	rect_ofWrapper(wrapper: Wrapper | null): Rect | null { return Rect.createFromDOMRect(wrapper?.component.getBoundingClientRect()); }
 	relationshipAt(back: number = 1): Relationship | null { return g.hierarchy?.relationship_get_forHID(this.idAt(back).hash()) ?? null; }
 	
-	appendID(id: string): Path {
+	appendID(id: string): Path | null {
 		let ids = this.ids;
 		ids.push(id);
 		return g.hierarchy.path_remember_createUnique(ids.join(k.pathSeparator));
@@ -200,9 +194,9 @@ export default class Path {
 	}
 
 	things_get_toFor(idPredicate: string): Array<Thing> {
+		const relationships = this.thing?.relationships_onceFrom(idPredicate);
 		let fromThings: Array<Thing> = [];
-		if (!this.isRoot) {
-			const relationships = this.relationships_onceFrom(idPredicate);
+		if (!this.isRoot && relationships) {
 			for (const relationship of relationships) {
 				const thing = relationship.fromThing;
 				if (thing) {
@@ -252,13 +246,15 @@ export default class Path {
 	isAllExpandedFrom(path: Path | null): boolean {
 		if (!this.matchesPath(path)) {
 			let tweenPath: Path = this;
-			let limit = path?.id_count ?? 0;
-			while (limit < tweenPath.id_count) {
-				tweenPath = tweenPath.stripBack();	// go backwards on this path
-				if (!tweenPath.isExpanded) {		// stop when path is not expanded
-					return false;
+			do {
+				const maybe = tweenPath.stripBack();	// go backwards on this path
+				if (maybe) {
+					tweenPath = maybe;
+					if (!tweenPath.isExpanded) {		// stop when path is not expanded
+						return false;
+					}
 				}
-			}
+			} while (tweenPath?.id_count > 0);
 		}
 		return true;
 	}
@@ -306,15 +302,17 @@ export default class Path {
 	
 	visibleParentPaths(back: number = 1): Array<Path> {
 		const paths: Array<Path> = [];
-		for (const parentPath of (this.thing?.parentPaths ?? [])) {
-			if (parentPath.stripBack(back).isVisible) {
+		const parentPaths = this.thing?.parentPaths ?? [];
+		for (const parentPath of parentPaths) {
+			const ancestorPath = parentPath.stripBack(back);
+			if (ancestorPath && ancestorPath.isVisible) {
 				paths.push(parentPath);
 			}
 		}
 		return paths;
 	}
 
-	stripBack(back: number = 1): Path {
+	stripBack(back: number = 1): Path | null {
 		if (back == 0) {
 			return this;
 		}
@@ -325,7 +323,7 @@ export default class Path {
 		return g.hierarchy.path_remember_createUnique(ids.join(k.pathSeparator));
 	}
 
-	appendChild(thing: Thing | null): Path {
+	appendChild(thing: Thing | null): Path | null {
 		const id = this.thing?.idBridging;
 		if (thing && id) {
 			const relationship = g.hierarchy?.relationship_get_forPredicate_from_to(Predicate.idContains, id, thing.id);
@@ -429,7 +427,7 @@ export default class Path {
 		// visit and expand each parent until this
 		let path: Path | null = this;
 		do {
-			path = path?.pathFrom;
+			path = path?.pathFrom ?? null;
 			if (path) {
 				if (path.isVisible) {
 					path.becomeHere();

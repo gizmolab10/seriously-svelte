@@ -107,7 +107,9 @@ export default class Thing extends Datum {
 			for (const relationship of relationships) {
 				function addPath(path: Path) {
 					const fullPath = path.appendID(endID);
-					pathsByHID[fullPath.hashedPath] = fullPath;	
+					if (fullPath) {
+						pathsByHID[fullPath.hashedPath] = fullPath;	
+					}
 				}
 				const endID = relationship.id;		// EGADS, this is the wrong relationship; needs the next one
 				const fromThing = relationship.fromThing;
@@ -125,7 +127,7 @@ export default class Thing extends Datum {
 		return u.sort_byTitleTop(paths).reverse();
 	}
 	
-	paths_singularUniquelyFromFor(idPredicate: string): Array<Path> {
+	paths_uniquelyFromFor(idPredicate: string): Array<Path> {
 		if (this.isRoot) {
 			return [];
 		}
@@ -133,11 +135,11 @@ export default class Thing extends Datum {
 		const fromThings = this.things_get_fromFor(idPredicate) ?? [];
 		for (const fromThing of fromThings) {
 			if (fromThing.isRoot) {
-				paths.push(g.singularRootPath);
+				paths.push(g.rootPath);
 			} else {
 				const relationships = g.hierarchy.relationships_get_forPredicate_to_thing(idPredicate, true, fromThing.id);
 				if (relationships.length > 0){
-					paths.push(new Path(relationships[0].id, idPredicate, true))
+					paths.push(new Path(relationships[0].id, idPredicate))
 				}
 			}
 		}

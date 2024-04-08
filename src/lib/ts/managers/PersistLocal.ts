@@ -51,7 +51,7 @@ class PersistLocal {
 		let needsRewrite = false;
 		const paths: Array<Path> = [];
 		const reversed = pathStrings.reverse();
-		reversed.forEach((pathString, index) => {
+		reversed.forEach((pathString: string, index: number) => {
 			const path = h.path_remember_createUnique(pathString);
 			if (!path) {
 				pathStrings.slice(1, length - index);

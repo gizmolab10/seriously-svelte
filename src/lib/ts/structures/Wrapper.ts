@@ -18,7 +18,7 @@ export default class Wrapper extends Identifiable {
         this.path = path;
         this.type = type;
         this.component = component;
-		path.wrapper_add(this);
+		path?.wrapper_add(this);
     }
 
 }

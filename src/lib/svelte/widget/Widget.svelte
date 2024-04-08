@@ -8,7 +8,6 @@
 	import DotReveal from './DotReveal.svelte';
 	import DotDrag from './DotDrag.svelte';
 	export let origin = new Point();
-    export let thing;
     export let path;
 	const hasExtraX = !path?.isExpanded && (path?.relationships_to.length > 3);
 	const rightPadding = hasExtraX ? 22.5 : 19;
@@ -19,19 +18,20 @@
 	let showingCluster = false;
 	let showingBorder = false;
 	let priorOrigin = origin;
+	let background = k.empty;
 	let isGrabbed = false;
 	let isEditing = false;
-	let background = k.empty;
 	let padding = k.empty;
 	let border = k.empty;
 	let height = 0;
 	let width = 0;
 	let left = 0;
 	let top = 0;
-	let widget;
+    let widget;
+	let thing;
 
 	onMount( () => {
-		if (path.thing == null) {
+		if (!path || !path.thing) {
 			console.log('bad thing');
 			u.noop();
 		}
@@ -40,13 +40,13 @@
 		}
 		updateBorderStyle();
 		updateLayout();
-		debugReact.log_mount(`WIDGET ${path.thing.description} ${path.isGrabbed}`);
+		debugReact.log_mount(`WIDGET ${thing?.description} ${path?.isGrabbed}`);
 		const handler = signals.handle_anySignal((IDSignal, id) => {
 			for (const kind of IDSignal) {
 				switch (kind) {
 					case IDSignal.relayout:
-						if (id == path.thing.id) {
-							debugReact.log_layout(`WIDGET signal ${path.thing.description}`);
+						if (id == thing?.id) {
+							debugReact.log_layout(`WIDGET signal ${thing?.description}`);
 							updateLayout()
 						}
 						break;
@@ -70,7 +70,7 @@
 	$: {
 		if (priorOrigin != origin) {
 			setTimeout(() => {
-				debugReact.log_layout(`WIDGET origin ${path.thing.description}`);
+				debugReact.log_layout(`WIDGET origin ${thing?.description}`);
 				updateLayout()
 			}, 1);
 			priorOrigin = origin;
@@ -84,7 +84,7 @@
 
 	function fullUpdate() {
 		const shallEdit = path?.isEditing;
-		const shallGrab = path?.isGrabbed || (path?.thing?.isExemplar ?? false);
+		const shallGrab = path?.isGrabbed || (thing?.isExemplar ?? false);
 		const shallShowCluster = path?.toolsGrabbed && !path?.isHere;
 		const change = (isEditing != shallEdit || isGrabbed != shallGrab || showingCluster != shallShowCluster);
 		if (change) {
@@ -98,17 +98,17 @@
 	}
 
 	function updateBorderStyle() {
-		if (!path?.thing) {
-			console.log(`no thing ${path?.titles}`)
+		if (!thing) {
+			console.log(`no thing or path`);
 		}
-		path?.thing.updateColorAttributes(path);
-		border = showingBorder ? 'border: ' + path?.thing.grabAttributes : k.empty;
+		thing?.updateColorAttributes(path);
+		border = showingBorder ? 'border: ' + thing?.grabAttributes : k.empty;
 		background = showingBorder ? 'background-color: ' + k.color_background : k.empty;
 	}
 
 	function updateLayout() {
 		const size = k.dot_size;
-		const titleWidth = path?.thing.titleWidth;
+		const titleWidth = thing?.titleWidth;
 		const delta = showingBorder ? -0.5 : 0.5;
 		width = titleWidth - 18 + (size * (path?.showsReveal ? 2 : 1.35));
 		padding = `0px ${rightPadding}px 0px 1px`;
@@ -125,7 +125,7 @@
 
 </script>
 
-<div class='widget' id='{path?.thing.title}'
+<div class='widget' id='{thing?.title}'
 	bind:this={widget}
 	style='
 		{border};
