@@ -10,7 +10,7 @@
 	export let origin = new Point();
     export let angle = 0;
     export let path;
-	const hasExtraX = !path?.isExpanded && (path?.relationships_to.length > 3);
+	const hasExtraX = !path?.isExpanded && (path?.relationships_child.length > 3);
 	const rightPadding = hasExtraX ? 22.5 : 19;
 	const priorRowHeight = k.row_height;
 	let revealCenter = new Point();
@@ -33,8 +33,7 @@
 
 	onMount( () => {
 		if (!path || !path.thing) {
-			console.log('bad thing');
-			u.noop();
+			console.log('bad path or thing');
 		}
 		if (path) {
 			thing = path.thing;
@@ -99,8 +98,9 @@
 	}
 
 	function updateBorderStyle() {
+		thing = path?.thing;
 		if (!thing) {
-			console.log(`no thing or path`);
+			console.log(`bad thing`);
 		}
 		thing?.updateColorAttributes(path);
 		border = showingBorder ? 'border: ' + thing?.grabAttributes : k.empty;

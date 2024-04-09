@@ -11,6 +11,13 @@ export default class Predicate extends RemoteIdentifiable {
 		this.kind = kind;
 	}
 
+	static id_forKind(kind: string) { return this.predicate_forKind(kind)?.id ?? `${kind} is missing`; }
+	static predicate_forKind(kind: string) { return g.hierarchy.predicate_get_forKind(kind) ?? null; }
+	static get contains(): Predicate | null { return this.predicate_forKind(Predicate.idContains); }
+	static get related(): Predicate | null { return this.predicate_forKind(Predicate.idIsRelated); }
+	static get idIsRelated(): string { return this.id_forKind(PredicateKind.isRelated); }
+	static get idContains(): string { return this.id_forKind(PredicateKind.contains); }
+
 	clusterAngle(pointsTo: boolean): number {
 		const delta = Math.PI * 0.36;
 		switch (this.id) {
@@ -20,21 +27,4 @@ export default class Predicate extends RemoteIdentifiable {
 		return 0;
 	}
 
-	static get idContains(): string {
-		const kind = PredicateKind.contains;
-		const id = g.hierarchy.predicate_get_forKind(kind)?.id;
-		if (!id) {
-			console.log(`${kind} is missing`)
-		}
-		return id!;
-	}
-
-	static get idIsRelated(): string {
-		const kind = PredicateKind.isRelated;
-		const id = g.hierarchy.predicate_get_forKind(kind)?.id;
-		if (!id) {
-			console.log(`${kind} is missing`)
-		}
-		return id!;
-	}
 }

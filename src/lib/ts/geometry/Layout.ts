@@ -1,4 +1,4 @@
-import { k, g, get, Path, Rect, Size, Point, Angles, IDLine, Predicate, ChildMapRect, ClusterLayout } from '../common/GlobalImports';
+import { g, k, u, get, Path, Rect, Size, Point, Angles, IDLine, Predicate, ChildMapRect, ClusterLayout } from '../common/GlobalImports';
 import { s_layout_byClusters } from '../common/State';
 
 export default class Layout {
@@ -6,29 +6,29 @@ export default class Layout {
 	childMapRectArray: Array<ChildMapRect> = [];
 
 	constructor(path: Path, origin: Point) {
-		const pathsTo = path.pathsTo;
+		let childPaths = path.paths_get_children;
 		if (get(s_layout_byClusters)) {
-			const contains = g.hierarchy.predicate_get_forID(Predicate.idContains);
-			if (contains) {
-				const thing = path.thing;
-				if (path.hasRelationshipsTo) {
-					this.layoutCluster(pathsTo, new ClusterLayout(contains, true), path, origin);
-				}
-				for (const predicate of g.hierarchy.predicates) {	// and another 'contains' for parents
-					if (path.showsClusterFor(predicate)) {
-						const paths = thing?.paths_uniquelyFromFor(predicate.id) ?? [];
-						const cluster = new ClusterLayout(predicate, false);
-						this.layoutCluster(paths, cluster, path, origin);
-					}
-				}
+			const idContains = Predicate.idContains;
+			if (path.hasChildRelationships) {
+				this.layoutCluster(childPaths, new ClusterLayout(idContains, true), path, origin);
 			}
+			for (const predicate of g.hierarchy.predicates) {	// and another 'idContains' for parents
+				if (path.showsClusterFor(predicate)) {
+					if (predicate.id == Predicate.idIsRelated) {
+						u.noop()
+					}
+					childPaths = path.thing?.paths_uniquelyFor(predicate.id) ?? [];
+					const cluster = new ClusterLayout(predicate.id, false);
+					this.layoutCluster(childPaths, cluster, path, origin);
+				}
+			}			
 		} else {
 			let index = 0;
 			const sizeX = k.line_stretch;
-			const length = pathsTo.length;
+			const length = childPaths.length;
 			let sumOfSiblingsAbove = -path.visibleProgeny_height() / 2; // start out negative and grow positive
 			while (index < length) {
-				const childPath = pathsTo[index];
+				const childPath = childPaths[index];
 				const childHeight = childPath.visibleProgeny_height();
 				const sizeY = sumOfSiblingsAbove + childHeight / 2;
 				const direction = this.getDirection(sizeY);

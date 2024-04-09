@@ -7,7 +7,7 @@
 	export let color = k.color_default;
 	export let center = Point.zero;
 	const showArrows = false;
-	const name = `${clusterLayout?.pointsTo ? 'to' : 'from'} ${clusterLayout?.predicate.kind}`;
+	const name = `${clusterLayout?.pointsTo ? 'child' : 'parent'} ${clusterLayout?.predicate.kind}`;
 	let head_start = Point.zero;
 	let head_end = Point.zero;
 	let lineWrapper: Wrapper;
@@ -81,12 +81,12 @@
 	</div>
 	{#if showArrows}
 		{#if clusterLayout?.predicate.directions == 2}
-			<ArrowHead name='to'   angle={angle} color={color} color_background={color} radius={thickness} center={head_end}/>
-			<ArrowHead name='from' angle={angle + Angles.half} color={color} color_background={color} radius={thickness} center={head_start}/>
+			<ArrowHead name='child'  angle={angle} color={color} color_background={color} radius={thickness} center={head_end}/>
+			<ArrowHead name='parent' angle={angle + Angles.half} color={color} color_background={color} radius={thickness} center={head_start}/>
 		{:else if clusterLayout?.pointsTo}
-			<ArrowHead name='to'   angle={angle} color={color} color_background={color} radius={thickness} center={head_end}/>
+			<ArrowHead name='child'  angle={angle} color={color} color_background={color} radius={thickness} center={head_end}/>
 		{:else}
-			<ArrowHead name='from' angle={angle + Angles.half} color={color} color_background={color} radius={thickness} center={head_start}/>
+			<ArrowHead name='parent' angle={angle + Angles.half} color={color} color_background={color} radius={thickness} center={head_start}/>
 		{/if}
 	{/if}
 </div>

@@ -41,7 +41,7 @@
 	function handle_key_down(event) {
 		if (thing && path?.isEditing && canAlterTitle(event)) {
 			switch (event.key) {	
-				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); g.hierarchy.path_edit_remoteCreateChildOf(path?.pathFrom); break;
+				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); g.hierarchy.path_edit_remoteCreateChildOf(path?.parentPath); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
 				default:	  signals.signal_relayoutWidgets(); break;
 			}

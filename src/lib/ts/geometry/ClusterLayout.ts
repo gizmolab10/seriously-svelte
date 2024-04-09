@@ -1,20 +1,20 @@
-import { Predicate } from '../common/GlobalImports';
+import { g, k, Predicate } from '../common/GlobalImports';
 
 export default class ClusterLayout {
-	predicate: Predicate;
+	idPredicate: string;
 	pointsTo: boolean
 
-	constructor(predicate: Predicate, pointsTo: boolean) {
-		this.predicate = predicate;
+	constructor(idPredicate: string, pointsTo: boolean) {
+		this.idPredicate = idPredicate;
 		this.pointsTo = pointsTo;
 	}
 
+	get predicate(): Predicate | null { return g.hierarchy.predicate_get_forID(this.idPredicate); }
+	get angle(): number | null { return this.predicate?.clusterAngle(this.pointsTo) ?? null; }
+
 	get title(): string {
-		if (!this.pointsTo && this.predicate.id == Predicate.idContains) {
-			return 'is contained by';
-		}
-		return this.predicate.kind.unCamelCase().lastWord()
+		const reversed = !this.pointsTo && this.predicate?.id == Predicate.idContains;
+		return reversed ? 'is contained by' : this.predicate?.kind.unCamelCase().lastWord() ?? k.empty;
 	}
 
-	get angle(): number { return this.predicate.clusterAngle(this.pointsTo); }
 }

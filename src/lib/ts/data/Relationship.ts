@@ -5,31 +5,28 @@ import Datum from '../structures/Datum';
 export default class Relationship extends Datum {
 	idPredicate: string;
 	dbType: string;
-	idFrom: string;
+	idParent: string;
 	order: number;
-	idTo: string;
+	idChild: string;
 
 	static get nullRelationship(): Relationship { return new Relationship(k.empty, null, k.empty, k.empty, k.empty, 0, false); }
 
-	constructor(baseID: string, id: string | null, idPredicate: string, idFrom: string, idTo: string, order = 0, isRemotelyStored: boolean) {
+	constructor(baseID: string, id: string | null, idPredicate: string, idParent: string, idChild: string, order = 0, isRemotelyStored: boolean) {
 		super(baseID, id, isRemotelyStored);
-		this.idTo = idTo; // idTo is child
-		this.idFrom = idFrom; // idFrom is parent
+		this.idChild = idChild;
+		this.idParent = idParent;
 		this.idPredicate = idPredicate;
 		this.dbType = dbDispatch.db.dbType;
 		this.order = order;
-		// if (baseID != dbDispatch.db.baseID) {
-		// 	console.log(`RELATIONSHIP off base ${this.description}`);
-		// }
 	}
 
-	get toThing(): Thing | null { return this.thing(true); }
-	get fromThing(): Thing | null { return this.thing(false); }
-	get fields(): Airtable.FieldSet { return { predicate: [this.idPredicate], from: [this.idFrom], to: [this.idTo], order: this.order }; }
-	get description(): string { return ' \"' + this.baseID + '\" ' + this.isRemotelyStored + k.space + this.order + k.space + this.id + k.space	+ this.fromThing?.description + ' => ' + this.toThing?.description; }
+	get childThing(): Thing | null { return this.thing(true); }
+	get parentThing(): Thing | null { return this.thing(false); }
+	get fields(): Airtable.FieldSet { return { predicate: [this.idPredicate], parent: [this.idParent], child: [this.idChild], order: this.order }; }
+	get description(): string { return ' \"' + this.baseID + '\" ' + this.isRemotelyStored + k.space + this.order + k.space + this.id + k.space	+ this.parentThing?.description + ' => ' + this.childThing?.description; }
 
 	get isValid(): boolean {
-		if (this.idPredicate && this.idFrom && this.idTo) {
+		if (this.idPredicate && this.idParent && this.idChild) {
 			return true;
 		}
 		return false;
@@ -39,8 +36,8 @@ export default class Relationship extends Datum {
 		debug.log_maybe(option, message + k.space + this.description);
 	}
 
-	thing(to: boolean): Thing | null {
-		const id = to ? this.idTo : this.idFrom;
+	thing(child: boolean): Thing | null {
+		const id = child ? this.idChild : this.idParent;
 		return g.hierarchy?.thing_get_forHID(id.hash()) ?? null
 	}
 

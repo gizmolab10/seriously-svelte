@@ -446,12 +446,12 @@ export default class DBFirebase implements DBInterface {
 
 	relationship_extractChangesFromRemote(relationship: Relationship, remote: RemoteRelationship) {
 		const changed = (relationship.idPredicate != remote.predicate.id ||
-			relationship.idFrom != remote.from.id ||
-			relationship.idTo != remote.to.id ||
+			relationship.idParent != remote.from.id ||
+			relationship.idChild != remote.to.id ||
 			relationship.order != remote.order)
 		if (changed) {
-			relationship.idTo = remote.to.id;
-			relationship.idFrom = remote.from.id;
+			relationship.idChild = remote.to.id;
+			relationship.idParent = remote.from.id;
 			relationship.isRemotelyStored = true;
 			relationship.idPredicate = remote.predicate.id;
 			relationship.order_setTo(remote.order + k.halfIncrement);
@@ -597,8 +597,8 @@ class RemoteRelationship implements RemoteRelationship {
 			try {
 				if (data instanceof Relationship) {
 					if (data.isValid) {
-						this.to = doc(things, data.idTo) as DocumentReference<Thing>;
-						this.from = doc(things, data.idFrom) as DocumentReference<Thing>;
+						this.to = doc(things, data.idChild) as DocumentReference<Thing>;
+						this.from = doc(things, data.idParent) as DocumentReference<Thing>;
 						this.predicate = doc(predicates, data.idPredicate) as DocumentReference<Predicate>;
 					}
 				} else {
@@ -618,9 +618,9 @@ class RemoteRelationship implements RemoteRelationship {
 	isEqualTo(relationship: Relationship | null) {
 		return relationship != null &&
 		relationship.idPredicate == this.predicate.id &&
-		relationship.idFrom == this.from.id &&
+		relationship.idParent == this.from.id &&
 		relationship.order == this.order &&
-		relationship.idTo == this.to.id;
+		relationship.idChild == this.to.id;
 	}
 
 }

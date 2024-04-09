@@ -6,7 +6,7 @@
     export let path;
 	export let center;
 	let size = k.dot_size;
-	let childrenCount = path.relationships_to.length;
+	let childrenCount = path.relationships_child.length;
 	let insideFillColor = k.color_background;
 	let tinyDotsOffset = size * -0.4 + 0.01;
 	let insidePath = svgPaths.circle(16, 6);
@@ -90,7 +90,7 @@
 			$s_path_clusterTools = null;
 			$s_altering_parent = null;
 			signals.signal_relayoutWidgets_fromHere();
-		} else if (path.hasRelationshipsTo || path.thing.isBulkAlias) {
+		} else if (path.hasChildRelationships || path.thing.isBulkAlias) {
 			g.hierarchy.path_rebuild_remoteMoveRight(path, !path.isExpanded, true, false);
 		}
 	}
@@ -154,7 +154,7 @@
 					/>
 				</div>
 			{/if}
-			{#if !path.isExpanded && path.hasRelationshipsTo}
+			{#if !path.isExpanded && path.hasChildRelationships}
 				<div class='revealTinyDots' style='
 					left:{tinyDotsOffset + 0.65}px;
 					top:{tinyDotsOffset - 0.28}px;
