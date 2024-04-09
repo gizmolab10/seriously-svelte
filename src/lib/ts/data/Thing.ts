@@ -64,20 +64,20 @@ export default class Thing extends Datum {
 		return super.isInDifferentBulkThan(other) || (other.isBulkAlias && !this.isBulkAlias && this.baseID != other.title);
 	}
 
-	relationships_twiceParentsFor(idPredicate: string): Array<Relationship> {
-		const relationships = this.relationships_onceParentsFor(idPredicate);
-		let grandparents: Array<Relationship> = [];
+	relationships_grandParentsFor(idPredicate: string): Array<Relationship> {
+		const relationships = this.relationships_immediateParentsFor(idPredicate);
+		let grandParents: Array<Relationship> = [];
 		for (const relationship of relationships) {
-			const more = relationship.parentThing?.relationships_onceParentsFor(idPredicate);
+			const more = relationship.parentThing?.relationships_immediateParentsFor(idPredicate);
 			if (more) {
-				grandparents = [...grandparents, ...more];
+				grandParents = [...grandParents, ...more];
 			}
 		}
-		return grandparents;
+		return grandParents;
 	}
 
-	relationships_onceParentsFor(idPredicate: string): Array<Relationship> {
-		return g.hierarchy.relationships_get_forPredicate_to_thing(idPredicate, true, this.id);
+	relationships_immediateParentsFor(idPredicate: string): Array<Relationship> {
+		return g.hierarchy.relationships_get_forPredicate_thing_isChild(idPredicate, this.id, true);
 	}
 
 	updateColorAttributes(path: Path) {
@@ -101,38 +101,38 @@ export default class Thing extends Datum {
 	}
 
 	things_get_parentsFor(idPredicate: string): Array<Thing> {
-		let children: Array<Thing> = [];
+		let parents: Array<Thing> = [];
 		if (!this.isRoot) {
-			const relationships = this.relationships_onceParentsFor(idPredicate);
-			for (const relationship of relationships) {
-				const thing = relationship.parentThing;
+			const parentRelationships = this.relationships_immediateParentsFor(idPredicate);
+			for (const parentRelationship of parentRelationships) {
+				const thing = parentRelationship.parentThing;
 				if (thing) {
-					children.push(thing);
+					parents.push(thing);
 				}
 			}
 		}
-		return children;
+		return parents;
 	}
 
 	paths_parentsFor(idPredicate: string): Array<Path> {
 		let pathsByHID: {[hash: number]: Path} = {};
 		if (!this.isRoot) {
-			const relationships = this.relationships_onceParentsFor(idPredicate);
-			for (const relationship of relationships) {
+			const parentRelationships = this.relationships_immediateParentsFor(idPredicate);
+			for (const parentRelationship of parentRelationships) {
+				const endID = parentRelationship.id;		// EGADS, this is the wrong parentRelationship; needs the next one
+				const grandParent = parentRelationship.parentThing;
+				const greatGrandParentPaths = grandParent?.paths_parentsFor(idPredicate) ?? [];
+				if (greatGrandParentPaths.length == 0) {
+					addPath(g.rootPath);
+				} else {
+					for (const greatGrandParentPath of greatGrandParentPaths) {
+						addPath(greatGrandParentPath);
+					}
+				}
 				function addPath(path: Path) {
 					const fullPath = path.appendID(endID);
 					if (fullPath) {
 						pathsByHID[fullPath.hashedPath] = fullPath;	
-					}
-				}
-				const endID = relationship.id;		// EGADS, this is the wrong relationship; needs the next one
-				const child = relationship.parentThing;
-				const pathsFrom = child?.paths_parentsFor(idPredicate) ?? [];
-				if (pathsFrom.length == 0) {
-					addPath(g.rootPath);
-				} else {
-					for (const parentPath of pathsFrom) {
-						addPath(parentPath);
 					}
 				}
 			}
@@ -145,17 +145,17 @@ export default class Thing extends Datum {
 		return [];
 	}
 	
-	paths_uniqueParentsFor(idPredicate: string): Array<Path> {
+	parentPathsFor(idPredicate: string): Array<Path> {
 		if (this.isRoot) {
 			return [];
 		}
 		const paths: Array<Path> = []
-		const children = this.things_get_parentsFor(idPredicate) ?? [];
-		for (const child of children) {
-			if (child.isRoot) {
+		const parents = this.things_get_parentsFor(idPredicate) ?? [];
+		for (const parent of parents) {
+			if (parent.isRoot) {
 				paths.push(g.rootPath);
 			} else {
-				const relationships = g.hierarchy.relationships_get_forPredicate_to_thing(idPredicate, true, child.id);
+				const relationships = g.hierarchy.relationships_get_forPredicate_thing_isChild(idPredicate, parent.id, true);
 				if (relationships.length > 0){
 					const pathString = relationships[0].id;
 					const path = g.hierarchy.path_remember_createUnique(pathString, idPredicate);
@@ -169,11 +169,10 @@ export default class Thing extends Datum {
 	}
 	
 	paths_uniquelyFor(predicateID: string): Array<Path> {
-		let paths: Array<Path> = this.paths_uniqueParentsFor(predicateID) ?? [];
-		if (predicateID == Predicate.idIsRelated) {
-			// TODO: create unique path for relationship
-			const titles = paths.length == 0 ? ' NOTHING' : paths.map(p => p.titles);
-			console.log(`UNIQUE \"${this.title}\" =>${titles}`);
+		let paths: Array<Path> = [];
+		switch (predicateID) {
+			case Predicate.idIsRelated:	break;		// TODO: create unique path for relationship
+			case Predicate.idContains:	return this.parentPathsFor(predicateID) ?? [];
 		}
 		return paths;
 	}

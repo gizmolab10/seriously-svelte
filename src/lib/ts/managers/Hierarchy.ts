@@ -141,7 +141,7 @@ export default class Hierarchy {
 		}
 	}
 
-	thing_to_get_forRelationshipHID(hid: number | null): Thing | null {
+	thing_child_get_forRelationshipHID(hid: number | null): Thing | null {
 		if (hid) {
 			const relationship = this.relationship_get_forHID(hid);
 			if (relationship) {
@@ -183,7 +183,7 @@ export default class Hierarchy {
 	static readonly $_THING_$: unique symbol;
 
 	async thing_remember_remoteRelocateChild(child: Thing, fromParent: Thing, toParent: Thing): Promise<any> {
-		let relationship = this.relationship_get_whereIDEqualsTo(child.id);
+		let relationship = this.relationship_get_whereID_isChild(child.id);
 		if (relationship && relationship.idParent == fromParent.id) {
 			this.relationship_forget(relationship);
 			relationship.idParent = toParent.id;
@@ -352,8 +352,8 @@ export default class Hierarchy {
 		this.relationships = [];
 	}
 
-	relationships_get_forPredicate_to_thing(idPredicate: string, child: boolean, idThing: string): Array<Relationship> {
-		const dict = child ? this.relationships_byChildHID : this.relationships_byParentHID;
+	relationships_get_forPredicate_thing_isChild(idPredicate: string, idThing: string, isChild: boolean): Array<Relationship> {
+		const dict = isChild ? this.relationships_byChildHID : this.relationships_byParentHID;
 		const hid = idThing.hash();
 		const matches = dict[hid] as Array<Relationship>; // filter out bad values (dunno what this does)
 		const array: Array<Relationship> = [];
@@ -367,8 +367,8 @@ export default class Hierarchy {
 		return array;
 	}
 
-	relationship_get_forPredicate_from_to(idPredicate: string, idParent: string, idChild: string): Relationship | null {
-		const matches = this.relationships_get_forPredicate_to_thing(idPredicate, false, idParent);
+	relationship_get_forPredicate_parent_child(idPredicate: string, idParent: string, idChild: string): Relationship | null {
+		const matches = this.relationships_get_forPredicate_thing_isChild(idPredicate, idParent, false);
 		if (Array.isArray(matches)) {
 			for (const relationship of matches) {
 				if (relationship.idChild == idChild) {
@@ -385,7 +385,7 @@ export default class Hierarchy {
 			for (const thing of this.things) {
 				const idThing = thing.id;
 				if (idThing != startingID && thing.trait != IDTrait.root && thing.baseID == baseID) {
-					let relationship = this.relationship_get_whereIDEqualsTo(idThing);
+					let relationship = this.relationship_get_whereID_isChild(idThing);
 					if (!relationship) {
 						const idPredicateContains = Predicate.idContains;
 						await this.relationship_remember_remoteCreateUnique(baseID, null, idPredicateContains,
@@ -450,7 +450,7 @@ export default class Hierarchy {
 	async relationship_forget_remoteRemove(path: Path, otherPath: Path) {
 		const thing = path.thing;
 		const parentPath = path.parentPath;
-		const relationship = this.relationship_get_forPredicate_from_to(Predicate.idContains, otherPath.idThing, path.idThing);
+		const relationship = this.relationship_get_forPredicate_parent_child(Predicate.idContains, otherPath.idThing, path.idThing);
 		if (parentPath && relationship && (thing?.hasParents ?? false)) {
 			this.relationship_forget(relationship);
 			if (otherPath.hasChildRelationships) {
@@ -476,9 +476,9 @@ export default class Hierarchy {
 		this.relationship_forget_forHID(this.relationships_byPredicateHID, relationship.idPredicate.hash(), relationship);
 	}
 
-	relationship_get_whereIDEqualsTo(idThing: string, to: boolean = true) {
+	relationship_get_whereID_isChild(idThing: string, isChild: boolean = true) {
 		const idPredicateContains = Predicate.idContains;
-		const matches = this.relationships_get_forPredicate_to_thing(idPredicateContains, to, idThing);
+		const matches = this.relationships_get_forPredicate_thing_isChild(idPredicateContains, idThing, isChild);
 		if (matches.length > 0) {
 			const relationship = matches[0];
 			return relationship;
@@ -491,7 +491,7 @@ export default class Hierarchy {
 		if (idRelationship == 'FqhFXEEnhs5qSKy1OgCG') {
 			u.noop();
 		}
-		let relationship = this.relationship_get_forPredicate_from_to(idPredicate, idParent, idChild);
+		let relationship = this.relationship_get_forPredicate_parent_child(idPredicate, idParent, idChild);
 		if (relationship) {
 			relationship.order_setTo(order);						// AND thing are updated
 		} else {
@@ -503,7 +503,7 @@ export default class Hierarchy {
 
 	async relationship_remember_remoteCreateUnique(baseID: string, idRelationship: string | null, idPredicate: string, idParent: string,
 		idChild: string, order: number, creationOptions: CreationOptions = CreationOptions.isFromRemote): Promise<any> {
-		let relationship = this.relationship_get_forPredicate_from_to(idPredicate, idParent, idChild);
+		let relationship = this.relationship_get_forPredicate_parent_child(idPredicate, idParent, idChild);
 		if (relationship) {
 			relationship.order_setTo(order, true);						// AND thing are updated
 		} else {
@@ -528,16 +528,16 @@ export default class Hierarchy {
 				const thing = path.thing;
 				const parentPath = path.parentPath;
 				if (parentPath) {
-					const grandparentPath = parentPath.parentPath;
-					if (thing && grandparentPath && !path.isEditing && !thing.isBulkAlias) {
+					const grandParentPath = parentPath.parentPath;
+					if (thing && grandParentPath && !path.isEditing && !thing.isBulkAlias) {
 						const siblings = parentPath.children;
 						let index = siblings.indexOf(thing);
 						siblings.splice(index, 1);
 						parentPath.grabOnly();
 						if (siblings.length == 0) {
 							needsRebuild = parentPath.collapse();
-							if (!grandparentPath.isVisible) {
-								needsRebuild = grandparentPath.becomeHere();	// call become here before applying
+							if (!grandParentPath.isVisible) {
+								needsRebuild = grandParentPath.becomeHere();	// call become here before applying
 							}
 						}
 						await path.traverse_async(async (progenyPath: Path): Promise<boolean> => {

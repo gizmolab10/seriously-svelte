@@ -157,7 +157,7 @@ export default class Path {
 	relationships_get_parents(parent: boolean) {
 		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
 		if (id && this.pathString != 'exemplar' && ![k.empty, 'k.id_unknown'].includes(id)) {
-			return g.hierarchy.relationships_get_forPredicate_to_thing(this.idPredicate, parent, id);
+			return g.hierarchy.relationships_get_forPredicate_thing_isChild(this.idPredicate, id, parent);
 		}
 		return [];
 	}
@@ -244,7 +244,7 @@ export default class Path {
 	}
 
 	things_get_childrenFor(idPredicate: string): Array<Thing> {
-		const relationships = this.thing?.relationships_onceParentsFor(idPredicate);
+		const relationships = this.thing?.relationships_immediateParentsFor(idPredicate);
 		let children: Array<Thing> = [];
 		if (!this.isRoot && relationships) {
 			for (const relationship of relationships) {
@@ -320,10 +320,10 @@ export default class Path {
 		return g.hierarchy.path_remember_createUnique(ids.join(k.pathSeparator));
 	}
 
-	appendChild(thing: Thing | null): Path | null {
-		const id = this.thing?.idBridging;
-		if (thing && id) {
-			const relationship = g.hierarchy?.relationship_get_forPredicate_from_to(Predicate.idContains, id, thing.id);
+	appendChild(child: Thing | null): Path | null {
+		const idParent = this.thing?.idBridging;
+		if (child && idParent) {
+			const relationship = g.hierarchy?.relationship_get_forPredicate_parent_child(Predicate.idContains, idParent, child.id);
 			if (relationship) {
 				return this.appendID(relationship.id);
 			}
