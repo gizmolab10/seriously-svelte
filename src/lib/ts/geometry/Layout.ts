@@ -14,11 +14,12 @@ export default class Layout {
 			}
 			for (const predicate of g.hierarchy.predicates) {	// and another 'idContains' for parents
 				if (path.showsClusterFor(predicate)) {
-					if (predicate.id == Predicate.idIsRelated) {
-						u.noop()
-					}
-					childPaths = path.thing?.paths_uniquelyFor(predicate.id) ?? [];
+					const idIsRelated = Predicate.idIsRelated
 					const cluster = new ClusterLayout(predicate.id, false);
+					if (predicate.id == idIsRelated && path.idPredicate != idIsRelated) {
+						return;
+					}
+					childPaths = path.paths_uniquelyFor(predicate) ?? [];
 					this.layoutCluster(childPaths, cluster, path, origin);
 				}
 			}			
@@ -46,8 +47,8 @@ export default class Layout {
 		this.clusterLayouts.push(clusterLayout);
 		let index = 0;
 		const length = paths.length;
-		const start_angle = clusterLayout.angle;
 		const start_row = (8 - length) / 2;
+		const start_angle = clusterLayout.angle;
 		const radius = k.necklace_gap + k.cluster_focus_radius;
 		const radial = new Point(radius, 0);
 		while (index < length) {

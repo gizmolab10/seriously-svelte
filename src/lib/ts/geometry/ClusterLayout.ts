@@ -10,7 +10,7 @@ export default class ClusterLayout {
 	}
 
 	get predicate(): Predicate | null { return g.hierarchy.predicate_get_forID(this.idPredicate); }
-	get angle(): number | null { return this.predicate?.clusterAngle(this.pointsTo) ?? null; }
+	get angle(): number { return this.predicate?.clusterAngle(this.pointsTo) ?? 0; }
 
 	get title(): string {
 		const reversed = !this.pointsTo && this.predicate?.id == Predicate.idContains;

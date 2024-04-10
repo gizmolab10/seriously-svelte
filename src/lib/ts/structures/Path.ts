@@ -9,10 +9,10 @@ export default class Path {
 	_thing: Thing | null = null;
 	idPredicate: string;
 	pathString: string;
-	hashedPath: number;
+	pathHash: number;
 
 	constructor(pathString: string = k.empty, idPredicate: string = Predicate.idContains) {
-		this.hashedPath = pathString.hash();
+		this.pathHash = pathString.hash();
 		this.idPredicate = idPredicate;
 		this.pathString = pathString;
 		if (g.hierarchy.isAssembled) {
@@ -38,7 +38,7 @@ export default class Path {
 	get endID(): string { return this.idAt(); }
 	get id_count():number { return this.ids.length; }
 	get firstChild(): Thing { return this.children[0]; }
-	get isRoot(): boolean { return this.hashedPath == 0; }
+	get isRoot(): boolean { return this.pathHash == 0; }
 	get parentPath(): Path | null { return this.stripBack(); }
 	get lastChild(): Thing { return this.children.slice(-1)[0]; }
 	get order(): number { return this.relationship?.order ?? -1; }
@@ -60,7 +60,7 @@ export default class Path {
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get hasParentRelationships(): boolean { return this.relationships_parent.length > 0; }
-	get predicateIDs(): Array<string> { return this.relationships.map(r => r.idPredicate); }
+	get idPredicates(): Array<string> { return this.relationships.map(r => r.idPredicate); }
 	get paths_get_children(): Array<Path> { return this.paths_get_childrenForPredicateID(); }
 	get paths_get_siblings(): Array<Path> { return this.parentPath?.paths_get_children ?? []; }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
@@ -133,9 +133,9 @@ export default class Path {
 
 	get next_siblingPath(): Path {
 		let nextPath: Path = this;
-		const hashedPath = this.hashedPath;
+		const pathHash = this.pathHash;
 		const paths = this.thing?.parentPaths ?? [];
-		const index = paths.map(p => p.hashedPath).indexOf(hashedPath);
+		const index = paths.map(p => p.pathHash).indexOf(pathHash);
 		if (index == -1) {
 			console.log(`no next for ${this.titles} of ${paths.map(p => k.newLine + p.titles)}`);
 		} else {
@@ -147,7 +147,7 @@ export default class Path {
 
 	matchesStore(store: Writable<Path | null>): boolean { return this.matchesPath(get(store)); }
 	includedInStore(store: Writable<Array<Path>>): boolean { return this.includedInPaths(get(store)); }
-	matchesPath(path: Path | null): boolean { return !path ? false : this.hashedPath == path.hashedPath; }
+	matchesPath(path: Path | null): boolean { return !path ? false : this.pathHash == path.pathHash; }
 	sharesAnID(path: Path | null): boolean { return !path ? false : this.ids.some(id => path.ids.includes(id)); }
 	includesPredicateID(idPredicate: string): boolean { return this.thing?.hasParentsFor(idPredicate) ?? false; }
 	showsClusterFor(predicate: Predicate): boolean { return this.includesPredicateID(predicate.id) && this.hasThings(predicate); }
@@ -157,7 +157,7 @@ export default class Path {
 	relationships_get_parents(parent: boolean) {
 		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
 		if (id && this.pathString != 'exemplar' && ![k.empty, 'k.id_unknown'].includes(id)) {
-			return g.hierarchy.relationships_get_forPredicate_thing_isChild(this.idPredicate, id, parent);
+			return g.hierarchy.relationships_get_forPredicateThing_isChild(this.idPredicate, id, parent);
 		}
 		return [];
 	}
@@ -165,7 +165,7 @@ export default class Path {
 	path_isAProgenyOf(path: Path): boolean {
 		let isAProgeny = false;
 		path.traverse((progenyPath: Path) => {
-			if (progenyPath.hashedPath == this.hashedPath) {
+			if (progenyPath.pathHash == this.pathHash) {
 				isAProgeny = true;
 				return true;	// stop traversal
 			}
@@ -204,6 +204,19 @@ export default class Path {
 			}
 		}
 		return paths;
+	}
+	
+	paths_uniquelyFor(predicate: Predicate): Array<Path> {
+		const idPredicate = predicate.id;
+		if (predicate.directions == 1) {
+			return this.thing?.parentPaths_for(idPredicate) ?? [];
+		} else if (this.idPredicate == idPredicate) {
+			const idContains = Predicate.idContains;
+			const some = this.thing?.parentPaths_for(idContains) ?? [];
+			const more = this.thingAt(2)?.paths_for(idContains) ?? [];
+			return [...some, ...more];
+		}
+		return [];
 	}
 
 	thingAt(back: number = 1): Thing | null {			// default 1 == last
@@ -381,12 +394,12 @@ export default class Path {
 	visibleProgeny_width(special: boolean = k.titleIsAtTop, visited: Array<number> = []): number {
 		const thing = this.thing;
 		if (thing) {
-			const hashedPath = this.hashedPath;
+			const pathHash = this.pathHash;
 			let width = special ? 0 : thing.titleWidth;
-			if (!visited.includes(hashedPath) && this.showsRelationshipsTo) {
+			if (!visited.includes(pathHash) && this.showsRelationshipsTo) {
 				let progenyWidth = 0;
 				for (const childPath of this.paths_get_children) {
-					const childProgenyWidth = childPath.visibleProgeny_width(false, [...visited, hashedPath]);
+					const childProgenyWidth = childPath.visibleProgeny_width(false, [...visited, pathHash]);
 					if (progenyWidth < childProgenyWidth) {
 						progenyWidth = childProgenyWidth;
 					}
@@ -452,8 +465,8 @@ export default class Path {
 	clicked_dotDrag(shiftKey: boolean) {
         if (!this.isExemplar) {
 			s_title_editing?.set(null);
-			const childHID = this.relationship?.childThing?.id.hash() ?? k.hid_unknown;
-			const childPaths = g.hierarchy.paths_get_forHID_ofPredicate_andThing(this.idPredicate.hash(), childHID) ?? [];
+			const idChild = this.relationship?.childThing?.id ?? k.id_unknown;
+			const childPaths = g.hierarchy.paths_get_forPredicate_andThing(this.idPredicate, idChild) ?? [];
 			const childPath = childPaths.length == 0 ? this : childPaths[0];
 			if (get(s_layout_byClusters)) {
 				childPath.becomeHere();
@@ -508,7 +521,7 @@ export default class Path {
 	}
 
 	async order_normalizeRecursive_remoteMaybe(remoteWrite: boolean, visited: Array<number> = []) {
-		const hid = this.hashedPath;
+		const hid = this.pathHash;
 		const paths_get_children = this.paths_get_children;
 		if (!visited.includes(hid) && paths_get_children && paths_get_children.length > 1) {
 			await u.paths_orders_normalize_remoteMaybe(paths_get_children, remoteWrite);

@@ -7,7 +7,6 @@ class Utilities {
 	roundToEven(n: number): number{ return Math.round(n / 2) * 2; }
 	sort_byOrder(array: Array<Path>) { return array.sort( (a: Path, b: Path) => { return a.order - b.order; }); }
 
-
 	get windowSize(): Size {
 		const scaleFactor = get(s_scale_factor);
 		return new Size(window.innerWidth / scaleFactor, window.innerHeight / scaleFactor);
@@ -37,8 +36,16 @@ class Utilities {
 		}
 	}
 
-	sort_byTitleTop(array: Array<Path>) {
-		return array.sort( (a: Path, b: Path) => {
+	strip_duplicates(paths: Array<Path>) {
+		let pathsByHID: {[hash: number]: Path} = {};
+		for (const path of paths) {
+			pathsByHID[path.pathHash] = path;
+		}
+		return Object.values(pathsByHID);
+	}
+
+	sort_byTitleTop(paths: Array<Path>) {
+		return paths.sort( (a: Path, b: Path) => {
 			const aTop = a.titleRect?.origin.y;
 			const bTop = b.titleRect?.origin.y;
 			return (!aTop || !bTop) ? 0 : aTop - bTop;

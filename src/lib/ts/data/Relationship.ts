@@ -1,6 +1,6 @@
-import { g, k, Thing, debug, dbDispatch, DebugFlag } from '../common/GlobalImports';
-import Airtable from 'airtable';
+import { g, k, Thing, debug, DebugFlag, dbDispatch, Predicate } from '../common/GlobalImports';
 import Datum from '../structures/Datum';
+import Airtable from 'airtable';
 
 export default class Relationship extends Datum {
 	idPredicate: string;
@@ -13,28 +13,20 @@ export default class Relationship extends Datum {
 
 	constructor(baseID: string, id: string | null, idPredicate: string, idParent: string, idChild: string, order = 0, isRemotelyStored: boolean) {
 		super(baseID, id, isRemotelyStored);
-		this.idChild = idChild;
-		this.idParent = idParent;
-		this.idPredicate = idPredicate;
 		this.dbType = dbDispatch.db.dbType;
+		this.idPredicate = idPredicate;
+		this.idParent = idParent;
+		this.idChild = idChild;
 		this.order = order;
 	}
 
 	get childThing(): Thing | null { return this.thing(true); }
 	get parentThing(): Thing | null { return this.thing(false); }
+	get isValid(): boolean { return !!(this.idPredicate && this.idParent && this.idChild); }
+	get predicate(): Predicate | null { return g.hierarchy.predicate_get_forID(this.idPredicate) }
 	get fields(): Airtable.FieldSet { return { predicate: [this.idPredicate], parent: [this.idParent], child: [this.idChild], order: this.order }; }
-	get description(): string { return ' \"' + this.baseID + '\" ' + this.isRemotelyStored + k.space + this.order + k.space + this.id + k.space	+ this.parentThing?.description + ' => ' + this.childThing?.description; }
-
-	get isValid(): boolean {
-		if (this.idPredicate && this.idParent && this.idChild) {
-			return true;
-		}
-		return false;
-	}
-
-	log(option: DebugFlag, message: string) {
-		debug.log_maybe(option, message + k.space + this.description);
-	}
+	get description(): string { return `BASE ${this.baseID} STORED ${this.isRemotelyStored} ORDER ${this.order} ID ${this.id} PARENT ${this.parentThing?.description} ${this.predicate?.kind} CHILD ${this.childThing?.description}`; }
+	log(option: DebugFlag, message: string) { debug.log_maybe(option, message + k.space + this.description); }
 
 	thing(child: boolean): Thing | null {
 		const id = child ? this.idChild : this.idParent;

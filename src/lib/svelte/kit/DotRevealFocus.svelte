@@ -10,8 +10,9 @@
 	}
 
 	function onClick(event) {
-		if (g.hierarchy.grabs.latestPathGrabbed(true)?.isHere) {
-			g.hierarchy.path_rebuild_remoteMoveRight(path, false, false);
+		const h = g.hierarchy;
+		if (h.grabs.latestPathGrabbed(true)?.isHere) {
+			h.path_rebuild_remoteMoveRight(path, false, false);
 		} else {
 			path.grabOnly();
 		}

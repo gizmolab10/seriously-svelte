@@ -1,4 +1,4 @@
-import { Thing, TypeDB, IDTrait, Hierarchy, Relationship } from '../common/GlobalImports';
+import { k, Thing, TypeDB, IDTrait, Hierarchy, Relationship } from '../common/GlobalImports';
 import DBInterface from './DBInterface';
 
 export default class DBLocal implements DBInterface {
@@ -25,30 +25,29 @@ export default class DBLocal implements DBInterface {
 		const idTd = 'D';
 		const idTe = 'E';
 		const idTr = 'Root';
-		const idPc = 'Pc';
-		const idPr = 'Pr';
+		const idPc = 'contains';
+		const idPr = 'related';
 		h.predicate_remember_runtimeCreateUnique(idPc, 'contains', false);
 		h.predicate_remember_runtimeCreateUnique(idPr, 'isRelated', false, 2);
-		h.thing_remember_runtimeCreateUnique('', idTa, 'a', 'red', '1', false);
-		h.thing_remember_runtimeCreateUnique('', idTc, 'c', 'blue', '3', false);
-		h.thing_remember_runtimeCreateUnique('', idTd, 'd', 'green', 'a', false);
-		h.thing_remember_runtimeCreateUnique('', idTe, 'e', 'orchid', 'a', false);
-		h.thing_remember_runtimeCreateUnique('', idTb, 'b', 'darkred', '2', false);
-		h.thing_remember_runtimeCreateUnique('', idTr, 'r', 'orange', IDTrait.root, false);
-		h.relationship_remember_runtimeCreateUnique('', 'Ra', idPc, idTr, idTa, 0);
-		h.relationship_remember_runtimeCreateUnique('', 'Rb', idPc, idTr, idTb, 1);
-		h.relationship_remember_runtimeCreateUnique('', 'Rc', idPc, idTr, idTc, 2);
-		h.relationship_remember_runtimeCreateUnique('', 'Rd', idPc, idTa, idTb, 0);
-		h.relationship_remember_runtimeCreateUnique('', 'Re', idPc, idTa, idTd, 1);
-		h.relationship_remember_runtimeCreateUnique('', 'Rf', idPc, idTa, idTe, 2);
-		h.relationship_remember_runtimeCreateUnique('', 'Rg', idPc, idTb, idTc, 1);
-		h.relationship_remember_runtimeCreateUnique('', 'Rh', idPc, idTb, idTd, 1);
-		h.relationship_remember_runtimeCreateUnique('', 'Ri', idPc, idTc, idTd, 0);
-		h.relationship_remember_runtimeCreateUnique('', 'Rj', idPc, idTd, idTe, 0);
-		h.relationship_remember_runtimeCreateUnique('', 'Rk', idPc, idTe, idTb, 1);
-		h.relationship_remember_runtimeCreateUnique('', 'Rl', idPr, idTr, idTc, 2);
-		h.relationship_remember_runtimeCreateUnique('', 'Rm', idPr, idTa, idTc, 2);
-		h.relationship_remember_runtimeCreateUnique('', 'Rn', idPr, idTb, idTe, 2);
+		h.thing_remember_runtimeCreateUnique(k.empty, idTa, 'anyone', 'red', '1', false);
+		h.thing_remember_runtimeCreateUnique(k.empty, idTc, 'calamity', 'blue', '3', false);
+		h.thing_remember_runtimeCreateUnique(k.empty, idTd, 'doorknob', 'green', 'a', false);
+		h.thing_remember_runtimeCreateUnique(k.empty, idTe, 'excellent', 'orchid', 'a', false);
+		h.thing_remember_runtimeCreateUnique(k.empty, idTb, 'boistrous', 'darkred', '2', false);
+		h.thing_remember_runtimeCreateUnique(k.empty, idTr, 'rutabegga', 'orange', IDTrait.root, false);
+		h.relationship_remember_runtimeCreateUnique(k.empty, 'Cra', idPc, idTr, idTa, 0);
+		h.relationship_remember_runtimeCreateUnique(k.empty, 'Crb', idPc, idTr, idTb, 1);
+		h.relationship_remember_runtimeCreateUnique(k.empty, 'Crc', idPc, idTr, idTc, 2);
+		h.relationship_remember_runtimeCreateUnique(k.empty, 'Cab', idPc, idTa, idTb, 0);
+		h.relationship_remember_runtimeCreateUnique(k.empty, 'Cad', idPc, idTa, idTd, 1);
+		h.relationship_remember_runtimeCreateUnique(k.empty, 'Cae', idPc, idTa, idTe, 2);
+		h.relationship_remember_runtimeCreateUnique(k.empty, 'Cbc', idPc, idTb, idTc, 1);
+		h.relationship_remember_runtimeCreateUnique(k.empty, 'Cbd', idPc, idTb, idTd, 1);
+		h.relationship_remember_runtimeCreateUnique(k.empty, 'Ccd', idPc, idTc, idTd, 0);
+		h.relationship_remember_runtimeCreateUnique(k.empty, 'Cde', idPc, idTd, idTe, 0);
+		h.relationship_remember_runtimeCreateUnique(k.empty, 'Rrc', idPr, idTr, idTc, 2);
+		h.relationship_remember_runtimeCreateUnique(k.empty, 'Rac', idPr, idTa, idTc, 2);
+		h.relationship_remember_runtimeCreateUnique(k.empty, 'Rbe', idPr, idTb, idTe, 2);
 	};
 
 	queryStrings_apply() {}

@@ -2,16 +2,16 @@ import { u } from '../common/Utilities';
 import { v4 as uuid } from 'uuid';
 
 export default class Identifiable {
-	hashedID: number;
+	idHashed: number;
 	id: string;
 
 	constructor(id: string | null) {
 		this.id = id ?? Identifiable.newID;
-		this.hashedID = this.id.hash();
+		this.idHashed = this.id.hash();
 	}
 
 	setID(id: string) {
-		this.hashedID = id.hash();
+		this.idHashed = id.hash();
 		this.id = id;
 	}
 	

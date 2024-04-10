@@ -22,12 +22,13 @@ export default class DBDispatch {
 					(async () => {
 						this.db_set_forType(type);
 						this.queryStrings_apply();
-						await g.hierarchy.hierarchy_fetch_andBuild(type);
-						g.rootPath_set(g.hierarchy.path_remember_createUnique());
+						const h = g.hierarchy;
+						await h.hierarchy_fetch_andBuild(type);
+						g.rootPath_set(h.path_remember_createUnique());
 						persistLocal.paths_restore(true);
 						s_path_clusterTools.set(null);
 						s_title_editing.set(null);
-						g.hierarchy.hierarchy_completed(startTime);
+						h.hierarchy_completed(startTime);
 						signals.signal_rebuildWidgets_fromHere();
 					})();
 				}, 1);
