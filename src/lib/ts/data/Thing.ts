@@ -70,7 +70,7 @@ export default class Thing extends Datum {
 		for (const relationship of relationships) {
 			const more = relationship.parentThing?.parentRelationships_for(idPredicate);
 			if (more) {
-				grandParents = [...grandParents, ...more];
+				grandParents = u.concatenateArrays(grandParents, more);
 			}
 		}
 		return grandParents;
@@ -112,20 +112,6 @@ export default class Thing extends Datum {
 			}
 		}
 		return parents;
-	}
-
-	uniqueParentPaths_for(idPredicate: string): Array<Path> {
-		let parentPaths: Array<Path> = [];
-		if (idPredicate == Predicate.idIsRelated) {
-			u.noop();
-		}
-		const things = this.parentThings_for(idPredicate) ?? [];
-		for (const thing of things) {
-			const paths = thing.isRoot ? [g.rootPath] : thing.parentPaths;
-			parentPaths = [...parentPaths, ...paths];
-		}
-		const purgedPaths = u.strip_falsies(parentPaths);
-		return u.strip_thingDuplicates(purgedPaths);
 	}
 
 	parentPaths_for(idPredicate: string): Array<Path> {

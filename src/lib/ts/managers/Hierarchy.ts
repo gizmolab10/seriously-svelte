@@ -494,14 +494,9 @@ export default class Hierarchy {
 		if (relationship) {
 			relationship.order_setTo(order);						// AND thing are updated
 		} else {
-			const predicate = this.predicate_forID(idPredicate);
+			// const predicate = this.predicate_forID(idPredicate);
 			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, creationOptions != CreationOptions.none);
 			this.relationship_remember(relationship);
-			if (predicate && predicate.directions == 2) {
-				const relatedID = `${idRelationship}R`
-				relationship = new Relationship(baseID, relatedID, idPredicate, idChild, idParent, order);
-				this.relationship_remember(relationship);
-			}
 		}
 		return relationship;
 	}

@@ -5,8 +5,9 @@ class Utilities {
 	noop() {}
 	ignore(event: Event) {}
 	roundToEven(n: number): number{ return Math.round(n / 2) * 2; }
-	sort_byOrder(array: Array<Path>) { return array.sort( (a: Path, b: Path) => { return a.order - b.order; }); }
+	concatenateArrays<T>(a: Array<T>, b: Array<T>) { return [...a, ...b]; }
 	strip_falsies(array: Array<any>) { return array.filter(element => !!element); }
+	sort_byOrder(array: Array<Path>) { return array.sort( (a: Path, b: Path) => { return a.order - b.order; }); }
 
 	get windowSize(): Size {
 		const scaleFactor = get(s_scale_factor);
@@ -17,6 +18,7 @@ class Utilities {
 		const hostname = window.location.hostname;
 		return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "0.0.0.0";
 	}
+
 
 	apply(startStop: (flag: boolean) => void, callback: () => void): void {
 		startStop(true);

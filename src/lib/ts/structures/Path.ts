@@ -49,7 +49,7 @@ export default class Path {
 	get relationship(): Relationship | null { return this.relationshipAt(); }
 	get idBridging(): string | null { return this.thing?.idBridging ?? null; }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
-	get childPaths(): Array<Path> { return this.childPaths_forPredicateID(); }
+	get childPaths(): Array<Path> { return this.childPaths_for(); }
 	get lineWrapper(): Wrapper | null { return this.wrappers[IDWrapper.line]; }
 	get siblingPaths(): Array<Path> { return this.parentPath?.childPaths ?? []; }
 	get titleWrapper(): Wrapper | null { return this.wrappers[IDWrapper.title]; }
@@ -63,16 +63,16 @@ export default class Path {
 	get description(): string { return `${this.idPredicate} ${this.titles.join(':')}`; }
 	get hasParentRelationships(): boolean { return this.parentRelationships.length > 0; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
+	get children(): Array<Thing> { return g.hierarchy?.things_forPaths(this.childPaths); }
 	get idPredicates(): Array<string> { return this.relationships.map(r => r.idPredicate); }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
 	get isEditing(): boolean { return this.matchesPath(get(s_title_editing)?.editing ?? null); }
-	get children(): Array<Thing> { return g.hierarchy?.things_forPaths(this.childPaths); }
-	get childRelationships(): Array<Relationship> { return this.relationships_parents(false); }
-	get parentRelationships(): Array<Relationship> { return this.relationships_parents(true); }
 	get showsChildRelationships(): boolean { return this.isExpanded && this.hasChildRelationships; }
 	get isStoppingEdit(): boolean { return this.matchesPath(get(s_title_editing)?.stopping ?? null); }
 	get titles(): Array<string> { return this.things?.map(t => ` \"${t ? t.title : 'null'}\"`) ?? []; }
 	get hasRelationships(): boolean { return this.hasParentRelationships || this.hasChildRelationships; }
+	get childRelationships(): Array<Relationship> { return this.parentRelationships_for(this.idPredicate, false); }
+	get parentRelationships(): Array<Relationship> { return this.parentRelationships_for(this.idPredicate, true); }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	get showsReveal(): boolean { return !get(s_layout_byClusters) && (this.hasChildRelationships || (this.thing?.isBulkAlias ?? false)); }
 
@@ -155,10 +155,10 @@ export default class Path {
 	rect_ofWrapper(wrapper: Wrapper | null): Rect | null { return Rect.createFromDOMRect(wrapper?.component.getBoundingClientRect()); }
 	relationshipAt(back: number = 1): Relationship | null { return g.hierarchy?.relationship_forHID(this.idAt(back).hash()) ?? null; }
 	
-	relationships_parents(parent: boolean) {
+	parentRelationships_for(idPredicate: string, parent: boolean) {
 		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
 		if (id && this.pathString != 'exemplar' && ![k.empty, 'k.id_unknown'].includes(id)) {
-			return g.hierarchy.relationships_forPredicateThingIsChild(this.idPredicate, id, parent);
+			return g.hierarchy.relationships_forPredicateThingIsChild(idPredicate, id, parent);
 		}
 		return [];
 	}
@@ -188,9 +188,24 @@ export default class Path {
 		return null;
 	}
 
-	childPaths_forPredicateID(idPredicate: string = Predicate.idContains): Array<Path> {
+	uniqueParentPaths_for(idPredicate: string): Array<Path> {
+		let parentPaths: Array<Path> = [];
+		const things = this.thing?.parentThings_for(idPredicate) ?? [];
+		for (const thing of things) {
+			const paths = thing.isRoot ? [g.rootPath] : thing.parentPaths;
+			parentPaths = u.concatenateArrays(parentPaths, paths);
+		}
+		if (idPredicate == Predicate.idIsRelated) {
+			const childPaths = this.childPaths_for(idPredicate);
+			parentPaths = u.concatenateArrays(parentPaths, childPaths);
+		}
+		const purgedPaths = u.strip_falsies(parentPaths);
+		return u.strip_thingDuplicates(purgedPaths);
+	}
+
+	childPaths_for(idPredicate: string = Predicate.idContains): Array<Path> {
 		let paths: Array<Path> = [];
-		const childRelationships = this.childRelationships;
+		const childRelationships = this.parentRelationships_for(idPredicate, false);
 		if (childRelationships.length > 0) {
 			for (const childRelationship of childRelationships) {		// loop through all child relationships
 				if (childRelationship.idPredicate == idPredicate) {
