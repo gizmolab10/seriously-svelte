@@ -91,8 +91,8 @@
 
 	function handleDoubleClick(event) {
 		clearClicks();
-		if (path?.becomeHere()) {
-			signals.signal_rebuildWidgets_fromHere();
+		if (path?.becomeFocus()) {
+			signals.signal_rebuildWidgets_fromFocus();
 		}
     }
 

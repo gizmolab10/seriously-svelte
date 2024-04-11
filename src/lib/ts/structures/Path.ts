@@ -1,6 +1,6 @@
 import { g, k, u, get, Rect, Size, Thing, debug, signals, Wrapper, IDWrapper } from '../common/GlobalImports';
 import { Predicate, TitleState, Relationship, PredicateKind, AlteringParent } from '../common/GlobalImports';
-import { s_path_here, s_paths_grabbed, s_title_editing, s_layout_byClusters } from '../common/State';
+import { s_path_focus, s_paths_grabbed, s_title_editing, s_layout_byClusters } from '../common/State';
 import { s_paths_expanded, s_path_clusterTools, s_altering_parent } from '../common/State';
 import { Writable } from 'svelte/store';
 
@@ -42,7 +42,7 @@ export default class Path {
 	get parentPath(): Path | null { return this.stripBack(); }
 	get lastChild(): Thing { return this.children.slice(-1)[0]; }
 	get order(): number { return this.relationship?.order ?? -1; }
-	get isHere(): boolean { return this.matchesStore(s_path_here); }
+	get isFocus(): boolean { return this.matchesStore(s_path_focus); }
 	get isExemplar(): boolean { return this.pathString == 'exemplar'; }
 	get title(): string { return this.thing?.title ?? 'missing title'; }
 	get ids_hashed(): Array<number> { return this.ids.map(i => i.hash()); }
@@ -87,9 +87,9 @@ export default class Path {
 	}
 
 	get isVisible(): boolean {
-		const here = get(s_path_here);
-		const incorporates = this.incorporates(here);
-		const expanded = this.isAllExpandedFrom(here);
+		const focus = get(s_path_focus);
+		const incorporates = this.incorporates(focus);
+		const expanded = this.isAllExpandedFrom(focus);
 		return incorporates && expanded;
 	}
 
@@ -427,11 +427,11 @@ export default class Path {
 		this.toggleToolsGrab();
 	}
 
-	becomeHere(): boolean {
-		const changed = !this.matchesPath(get(s_path_here));
+	becomeFocus(): boolean {
+		const changed = !this.matchesPath(get(s_path_focus));
 		s_path_clusterTools.set(null);
 		if (changed) {
-			s_path_here.set(this);
+			s_path_focus.set(this);
 			this.expand();
 		}
 		return changed;
@@ -455,21 +455,21 @@ export default class Path {
 			path = path?.parentPath ?? null;
 			if (path) {
 				if (path.isVisible) {
-					path.becomeHere();
+					path.becomeFocus();
 					return;
 				}
 				path.expand();
 			}
 		} while (!path);
 		g.rootPath.expand();
-		g.rootPath.becomeHere();
+		g.rootPath.becomeFocus();
 	}
 
 	clicked_dotDrag(shiftKey: boolean) {
         if (!this.isExemplar) {
 			s_title_editing?.set(null);
 			if (get(s_layout_byClusters)) {
-				this.becomeHere();
+				this.becomeFocus();
 			} else {
 				const childPaths = this.childPaths;
 				const childPath = childPaths.length == 0 ? this : childPaths[0];
@@ -481,7 +481,7 @@ export default class Path {
 					childPath.grabOnly();
 				}
 			}
-			signals.signal_rebuildWidgets_fromHere();
+			signals.signal_rebuildWidgets_fromFocus();
         }
 	}
 

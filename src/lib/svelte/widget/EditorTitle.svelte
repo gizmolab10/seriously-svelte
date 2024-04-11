@@ -131,7 +131,7 @@
 						path?.grabOnly();
 						$s_path_clusterTools = path;
 					}
-					signals.signal_rebuildWidgets_fromHere();
+					signals.signal_rebuildWidgets_fromFocus();
 				}
 			}, k.threshold_longClick);
 		}
@@ -179,7 +179,7 @@
 				const state = $s_title_editing;
 				if (state) {
 					state.stop()
-					signals.signal_relayoutWidgets_fromHere();
+					signals.signal_relayoutWidgets_fromFocus();
 				}
 			}, 2);
 		}

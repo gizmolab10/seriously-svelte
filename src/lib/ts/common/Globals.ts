@@ -7,7 +7,7 @@ class Globals {
 	rootsPath: Path;
 	rootPath: Path;
 	root: Thing;
-	here: Thing;
+	focus: Thing;
 
 	setup() {
 		const baseID = dbDispatch.db.baseID;

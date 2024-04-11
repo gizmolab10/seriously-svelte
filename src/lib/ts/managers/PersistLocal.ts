@@ -2,7 +2,7 @@ import { g, k, u, Path, Point, signals, dbDispatch } from '../common/GlobalImpor
 import { s_thing_fontFamily, s_show_child_graph } from '../common/State';
 import { s_show_details, s_user_graphOffset } from '../common/State';
 import { s_paths_grabbed, s_paths_expanded } from '../common/State';
-import { s_path_here, s_layout_byClusters } from '../common/State';
+import { s_path_focus, s_layout_byClusters } from '../common/State';
 
 export enum IDPersistant {
 	relationships = 'relationships',
@@ -15,13 +15,13 @@ export enum IDPersistant {
 	layout		  = 'layout',
 	origin		  = 'origin',
 	scale		  = 'scale',
-	here		  = 'here',
+	focus		  = 'focus',
 	font		  = 'font',
 	db			  = 'db',
 }
 
 class PersistLocal {
-	// for backwards compatibility with {here, grabbed, expanded} which were stored as relationship ids (not as path strings)
+	// for backwards compatibility with {focus, grabbed, expanded} which were stored as relationship ids (not as path strings)
 	usesRelationships = localStorage[IDPersistant.relationships];
 	ignorePaths = !this.usesRelationships || this.usesRelationships == 'undefined';
 	pathsRestored = false;
@@ -99,7 +99,7 @@ class PersistLocal {
 		s_show_details.subscribe((flag: boolean) => {
 			this.key_write(IDPersistant.details, flag);
 			g.graphRect_update();
-			signals.signal_relayoutWidgets_fromHere();
+			signals.signal_relayoutWidgets_fromFocus();
 		});
 		s_show_child_graph.subscribe((flag: boolean) => {
 			this.key_write(IDPersistant.show_children, flag);
@@ -112,7 +112,7 @@ class PersistLocal {
 	paths_restore(force: boolean = false) {
 		if (!this.pathsRestored || force) {
 			this.pathsRestored = true;
-			this.here_restore();
+			this.focus_restore();
 			s_paths_grabbed.set(this.dbKey_paths(IDPersistant.grabbed));
 			s_paths_expanded.set(this.dbKey_paths(IDPersistant.expanded));
 	
@@ -126,29 +126,29 @@ class PersistLocal {
 		}
 	}
 
-	here_restore() {
+	focus_restore() {
 		const h = g.hierarchy;
 		g.rootPath_set(h.path_remember_createUnique());
-		let pathToHere = g.rootPath;
+		let pathToFocus = g.rootPath;
 		if (!this.ignorePaths) {
-			const herePathString = this.dbKey_read(IDPersistant.here);
-			if (herePathString) {
-				const herePath = h.path_remember_createUnique(herePathString);
-				if (herePath) {
-					pathToHere = herePath;
+			const focusPathString = this.dbKey_read(IDPersistant.focus);
+			if (focusPathString) {
+				const focusPath = h.path_remember_createUnique(focusPathString);
+				if (focusPath) {
+					pathToFocus = focusPath;
 				}
 			}
 		}
-		let here = h.thing_forPath(pathToHere);
-		if (here == null) {
+		let focus = h.thing_forPath(pathToFocus);
+		if (focus == null) {
 			const lastGrabbedPath = h.grabs.path_lastGrabbed?.parentPath;
 			if (lastGrabbedPath) {
-				pathToHere = lastGrabbedPath;
+				pathToFocus = lastGrabbedPath;
 			}
 		}
-		pathToHere.becomeHere();
-		s_path_here.subscribe((path: Path) => {
-			this.dbKey_write(IDPersistant.here, !path ? null : path.pathString);
+		pathToFocus.becomeFocus();
+		s_path_focus.subscribe((path: Path) => {
+			this.dbKey_write(IDPersistant.focus, !path ? null : path.pathString);
 		});
 	}
 
@@ -182,7 +182,7 @@ class PersistLocal {
                     case 'settings': 
 						localStorage.clear();
 						s_paths_expanded.set([]);
-						s_path_here.set(g.rootPath);
+						s_path_focus.set(g.rootPath);
 						s_paths_grabbed.set([g.rootPath]);
 						break;
                 }

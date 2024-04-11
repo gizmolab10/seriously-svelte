@@ -11,7 +11,7 @@
 
 	function onClick(event) {
 		const h = g.hierarchy;
-		if (h.grabs.latestPathGrabbed(true)?.isHere) {
+		if (h.grabs.latestPathGrabbed(true)?.isFocus) {
 			h.path_rebuild_remoteMoveRight(path, false, false);
 		} else {
 			path.grabOnly();

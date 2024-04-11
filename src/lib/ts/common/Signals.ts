@@ -1,5 +1,5 @@
 import { Signal } from 'typed-signals';
-import { s_path_here } from './State';
+import { s_path_focus } from './State';
 import { get } from 'svelte/store';
 
 export enum IDSignal {
@@ -15,8 +15,8 @@ export class Signals {
 	signal_rebuildWidgets(value: any = null) { this.signal(IDSignal.rebuild, value); }
 	signal_relayoutWidgets(value: any = null) { this.signal(IDSignal.relayout, value); }
 	signal_alteringParent(value: any = null) { this.signal(IDSignal.alterParent, value); }
-	signal_relayoutWidgets_fromHere() { this.signal_relayoutWidgets(get(s_path_here)); }
-	signal_rebuildWidgets_fromHere() { this.signal_rebuildWidgets(get(s_path_here)); }
+	signal_relayoutWidgets_fromFocus() { this.signal_relayoutWidgets(get(s_path_focus)); }
+	signal_rebuildWidgets_fromFocus() { this.signal_rebuildWidgets(get(s_path_focus)); }
 
 	handle_rebuildWidgets(onSignal: (value: any | null) => any ) {
 		return this.handle_signalOfKind(IDSignal.rebuild, onSignal);

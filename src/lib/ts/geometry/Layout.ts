@@ -13,9 +13,6 @@ export default class Layout {
 				const id = predicate.id;
 				const parentPaths = path.uniqueParentPaths_for(id);
 				this.layoutCluster(parentPaths, path, id, origin, false);
-				if (predicate.directions == 2) {
-					console.log(`${path.description}\nrelated:\n${parentPaths.map(p => p.description).join('\n')}`);
-				}
 			}
 		} else {
 			let index = 0;

@@ -89,7 +89,7 @@
 		if (path.toolsGrabbed) {
 			$s_path_clusterTools = null;
 			$s_altering_parent = null;
-			signals.signal_relayoutWidgets_fromHere();
+			signals.signal_relayoutWidgets_fromFocus();
 		} else if (path.hasChildRelationships || path.thing.isBulkAlias) {
 			g.hierarchy.path_rebuild_remoteMoveRight(path, !path.isExpanded, true, false);
 		}

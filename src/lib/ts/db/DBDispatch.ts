@@ -29,7 +29,7 @@ export default class DBDispatch {
 						s_path_clusterTools.set(null);
 						s_title_editing.set(null);
 						h.hierarchy_completed(startTime);
-						signals.signal_rebuildWidgets_fromHere();
+						signals.signal_rebuildWidgets_fromFocus();
 					})();
 				}, 1);
 			}

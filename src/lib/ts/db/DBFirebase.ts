@@ -59,7 +59,7 @@ export default class DBFirebase implements DBInterface {
 		}
 		await this.fetch_documentsOf(TypeDatum.predicates);
 		await this.fetch_allFrom(baseID);
-		persistLocal.paths_restore(); // can paths restore happen here?
+		persistLocal.paths_restore(); // can paths restore happen focus?
 		await this.fetch_bulkAliases();		// TODO: assumes all paths created
 	}
 
@@ -263,7 +263,7 @@ export default class DBFirebase implements DBInterface {
 						}
 					}
 				}
-				signals.signal_rebuildWidgets_fromHere();
+				signals.signal_rebuildWidgets_fromFocus();
 			} catch (error) {
 				this.reportError(error);
 			}

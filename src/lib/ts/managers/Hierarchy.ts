@@ -1,7 +1,7 @@
 import { g, k, u, get, User, Path, Thing, Grabs, debug, Access, IDTool, IDTrait, signals } from '../common/GlobalImports';
 import { TypeDB, Wrapper, Predicate, Relationship, AlteringParent, CreationOptions } from '../common/GlobalImports';
 import { s_title_editing, s_altering_parent, s_layout_byClusters, s_path_clusterTools } from '../common/State';
-import { s_isBusy, s_path_here, s_db_loadTime, s_paths_grabbed, s_things_arrived } from '../common/State';
+import { s_isBusy, s_path_focus, s_db_loadTime, s_paths_grabbed, s_things_arrived } from '../common/State';
 import DBInterface from '../db/DBInterface';
 
 type Relationships_ByHID = { [hid: number]: Array<Relationship> }
@@ -64,7 +64,7 @@ export default class Hierarchy {
 				default: break;
 			}
 			s_path_clusterTools.set(null);
-			signals.signal_relayoutWidgets_fromHere();
+			signals.signal_relayoutWidgets_fromFocus();
 		}
 	}
 
@@ -80,7 +80,7 @@ export default class Hierarchy {
 			let needsRebuild = false;
 			if (!pathGrab) {
 				pathGrab = rootPath;
-				needsRebuild = rootPath.becomeHere();
+				needsRebuild = rootPath.becomeFocus();
 			}
 			if (k.allow_GraphEditing) {
 				if (pathGrab && k.allow_TitleEditing) {
@@ -99,19 +99,19 @@ export default class Hierarchy {
 			}
 			if (pathGrab) {
 				switch (key) {
-					case '/':			needsRebuild = pathGrab.becomeHere(); break;
+					case '/':			needsRebuild = pathGrab.becomeFocus(); break;
 					case 'arrowright':	event.preventDefault(); await this.path_rebuild_remoteMoveRight(pathGrab, true, SHIFT, OPTION, EXTREME); break;
 					case 'arrowleft':	event.preventDefault(); await this.path_rebuild_remoteMoveRight(pathGrab, false, SHIFT, OPTION, EXTREME); break;
 				}
 			}
 			switch (key) {
-				case '!':				needsRebuild = g.rootPath?.becomeHere(); break;
+				case '!':				needsRebuild = g.rootPath?.becomeFocus(); break;
 				case '`':               event.preventDefault(); this.latestPathGrabbed_toggleToolsCluster(); break;
 				case 'arrowup':			await this.latestPathGrabbed_rebuild_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
 				case 'arrowdown':		await this.latestPathGrabbed_rebuild_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
 			}
 			if (needsRebuild) {
-				signals.signal_rebuildWidgets_fromHere();
+				signals.signal_rebuildWidgets_fromFocus();
 			}
 		}
 	}
@@ -136,7 +136,7 @@ export default class Hierarchy {
 		const path = this.grabs.latestPathGrabbed(up);
 		if (path && !path.isRoot) {
 			s_path_clusterTools.set(path.toolsGrabbed ? null : path);
-			signals.signal_rebuildWidgets_fromHere();
+			signals.signal_rebuildWidgets_fromFocus();
 		}
 	}
 
@@ -419,9 +419,7 @@ export default class Hierarchy {
 	relationships_forPredicateHID(hid: number): Array<Relationship> { return this.relationships_byPredicateHID[hid] ?? []; }
 
 	relationship_rememberByKnown(relationships: Relationships_ByHID, relationship: Relationship, id: string) {
-		if (!id) {
-			u.noop();
-		} else {
+		if (id) {
 			const hid = id.hash();
 			let array = relationships[hid] ?? [];
 			array.push(relationship);
@@ -487,9 +485,6 @@ export default class Hierarchy {
 
 	relationship_remember_runtimeCreateUnique(baseID: string, idRelationship: string, idPredicate: string, idParent: string,
 		idChild: string, order: number, creationOptions: CreationOptions = CreationOptions.none) {
-		if (idRelationship == 'Rbe') {
-			u.noop();
-		}
 		let relationship = this.relationship_forPredicate_parent_child(idPredicate, idParent, idChild);
 		if (relationship) {
 			relationship.order_setTo(order);						// AND thing are updated
@@ -523,7 +518,7 @@ export default class Hierarchy {
 
 	async paths_rebuild_traverse_remoteDelete(paths: Array<Path>) {
 		let needsRebuild = false;
-		if (get(s_path_here)) {
+		if (get(s_path_focus)) {
 			for (const path of paths) {
 				const thing = path.thing;
 				const parentPath = path.parentPath;
@@ -537,7 +532,7 @@ export default class Hierarchy {
 						if (siblings.length == 0) {
 							needsRebuild = parentPath.collapse();
 							if (!grandParentPath.isVisible) {
-								needsRebuild = grandParentPath.becomeHere();	// call become here before applying
+								needsRebuild = grandParentPath.becomeFocus();	// call become focus before applying
 							}
 						}
 						await path.traverse_async(async (progenyPath: Path): Promise<boolean> => {
@@ -548,7 +543,7 @@ export default class Hierarchy {
 				}
 			}
 			if (needsRebuild) {
-				signals.signal_rebuildWidgets_fromHere();
+				signals.signal_rebuildWidgets_fromFocus();
 			}
 		}
 	}
@@ -596,7 +591,7 @@ export default class Hierarchy {
 				}	
 			} while (!path.matchesPath(toolsPath));
 			path.grabOnly();
-			signals.signal_relayoutWidgets_fromHere();
+			signals.signal_relayoutWidgets_fromFocus();
 			s_path_clusterTools.set(path);
 		}
 	}
@@ -615,7 +610,7 @@ export default class Hierarchy {
 		const childPath = await this.path_remember_remoteAddAsChild(parentPath, child);
 		childPath.grabOnly();
 		childPath.relationship?.order_setTo(order);
-		signals.signal_rebuildWidgets_fromHere();
+		signals.signal_rebuildWidgets_fromFocus();
 		if (shouldStartEdit) {
 			setTimeout(() => {
 				childPath.startEdit();
@@ -634,7 +629,7 @@ export default class Hierarchy {
 					childPaths[0].grabOnly()
 				}
 				path?.expand()
-				signals.signal_rebuildWidgets_fromHere();
+				signals.signal_rebuildWidgets_fromFocus();
 			}
 		}
 	}
@@ -724,17 +719,17 @@ export default class Hierarchy {
 					const grabPath = parentPath.appendChild(siblings[newIndex]);
 					if (grabPath) {
 						if (get(s_layout_byClusters)) {
-							grabPath.becomeHere();
+							grabPath.becomeFocus();
 							grabPath.grabOnly();
 						} else if (!grabPath.isVisible) {
-							parentPath.becomeHere();
+							parentPath.becomeFocus();
 						}
 						if (SHIFT) {
 							grabPath.toggleGrab();
 						} else {
 							grabPath.grabOnly();
 						}
-						signals.signal_relayoutWidgets_fromHere();
+						signals.signal_relayoutWidgets_fromFocus();
 					}
 				} else if (k.allow_GraphEditing && OPTION) {
 					await u.paths_orders_normalize_remoteMaybe(parentPath.childPaths, false);
@@ -743,7 +738,7 @@ export default class Hierarchy {
 					const newOrder = newIndex + goose;
 					path.relationship?.order_setTo(newOrder);
 					await u.paths_orders_normalize_remoteMaybe(parentPath.childPaths);
-					signals.signal_rebuildWidgets_fromHere();
+					signals.signal_rebuildWidgets_fromFocus();
 				}
 			}
 		}
@@ -770,10 +765,10 @@ export default class Hierarchy {
 					newParentPath.expand();
 				}
 				if (!newParentPath.isVisible) {
-					newParentPath.becomeHere();
+					newParentPath.becomeFocus();
 				}
 			}
-			signals.signal_rebuildWidgets_fromHere();			// so Children component will update
+			signals.signal_rebuildWidgets_fromFocus();			// so Children component will update
 		}
 	}
 
@@ -782,8 +777,8 @@ export default class Hierarchy {
 		const newParentPath = path.parentPath;
 		const childPath = path.appendChild(path.firstChild);
 		let newGrabPath: Path | null = RIGHT ? childPath : newParentPath;
-		const newGrabIsNotHere = !newGrabPath?.isHere;
-		const newHerePath = newParentPath;
+		const newGrabIsNotFocus = !newGrabPath?.isFocus;
+		const newFocusPath = newParentPath;
 		if (RIGHT) {
 			if (path.hasChildRelationships) {
 				if (SHIFT) {
@@ -796,7 +791,7 @@ export default class Hierarchy {
 		} else {
 			const rootPath = g.rootPath;
 			if (EXTREME) {
-				needsRebuild = rootPath?.becomeHere();	// tells graph to update line rects
+				needsRebuild = rootPath?.becomeFocus();	// tells graph to update line rects
 			} else {
 				if (!SHIFT) {
 					if (fromReveal) {
@@ -804,7 +799,7 @@ export default class Hierarchy {
 							needsRebuild = path.expand();
 						}
 					} else {
-						if (newGrabIsNotHere && newGrabPath && !newGrabPath.isExpanded) {
+						if (newGrabIsNotFocus && newGrabPath && !newGrabPath.isExpanded) {
 							needsRebuild = newGrabPath.expand();
 						}
 					}
@@ -821,15 +816,15 @@ export default class Hierarchy {
 		s_title_editing.set(null);
 		newGrabPath?.grabOnly();
 		const matches = newParentPath && newParentPath.matchesPath(newGrabPath);
-		const allowToBecomeHere = (!SHIFT || matches) && newGrabIsNotHere; 
-		const shouldBecomeHere = !newHerePath?.isVisible || newHerePath.isRoot;
-		if (!RIGHT && allowToBecomeHere && shouldBecomeHere && (newHerePath?.becomeHere() ?? false)) {
+		const allowToBecomeFocus = (!SHIFT || matches) && newGrabIsNotFocus; 
+		const shouldBecomeFocus = !newFocusPath?.isVisible || newFocusPath.isRoot;
+		if (!RIGHT && allowToBecomeFocus && shouldBecomeFocus && (newFocusPath?.becomeFocus() ?? false)) {
 			needsRebuild = true;
 		}
 		if (needsRebuild) {
-			signals.signal_rebuildWidgets_fromHere();
+			signals.signal_rebuildWidgets_fromFocus();
 		} else {
-			signals.signal_relayoutWidgets_fromHere();
+			signals.signal_relayoutWidgets_fromFocus();
 		}
 	}
 
@@ -847,7 +842,7 @@ export default class Hierarchy {
 						break;
 					case AlteringParent.adding:
 						await this.path_remember_remoteAddAsChild(path, toolsThing);
-						signals.signal_rebuildWidgets_fromHere();
+						signals.signal_rebuildWidgets_fromFocus();
 						break;
 				}
 			}

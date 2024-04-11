@@ -21,7 +21,7 @@ export const s_scale_factor		 = writable<number>();
 export const s_build			 = writable<number>();
 export const s_user_graphOffset	 = writable<Point>();
 export const s_graphRect		 = writable<Rect>();
-export const s_path_here		 = writable<Path>();
+export const s_path_focus		 = writable<Path>();
 
 s_altering_parent.subscribe((alteration: string | null) => {
 	if (interval) {

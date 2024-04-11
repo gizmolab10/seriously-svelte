@@ -1,6 +1,6 @@
 <script>
 	import { g, k, u, get, Path, Rect, Size, Point, Thing, TypeDB, ZIndex, signals, onMount, IDButton } from '../../ts/common/GlobalImports';
-	import { s_build, s_isBusy, s_path_here, s_db_type, s_graphRect, s_id_popupView, s_title_editing } from '../../ts/common/State';
+	import { s_build, s_isBusy, s_path_focus, s_db_type, s_graphRect, s_id_popupView, s_title_editing } from '../../ts/common/State';
 	import { Hierarchy, IDPersistant, dbDispatch, debugReact, setContext, persistLocal } from '../../ts/common/GlobalImports';
 	import { s_show_details, s_things_arrived, s_user_graphOffset, s_layout_byClusters } from '../../ts/common/State';
 	import CircularButton from '../kit/CircularButton.svelte';
@@ -132,9 +132,9 @@
 				style='
 					top: 70px;
 					z-index: {ZIndex.frontmost};
-					color: {$s_path_here.thing?.color};
+					color: {$s_path_focus.thing?.color};
 					left: 0px;'>
-				{$s_path_here.title}
+				{$s_path_focus.title}
 			</div>
 			<div class='horizontal-line'
 				style='
@@ -154,7 +154,7 @@
 		{:else if $s_id_popupView == IDButton.builds}
 			<BuildNotes/>
 		{:else if $s_id_popupView == null}
-			{#key `${$s_path_here} ${rebuilds}`}
+			{#key `${$s_path_focus} ${rebuilds}`}
 				<div class='clipper' on:wheel={handle_wheel}
 					style='top:{$s_graphRect.origin.y}px;
 						left: {$s_graphRect.origin.x}px;
@@ -162,7 +162,7 @@
 						height: {$s_graphRect.size.height}px;
 						z-index: {ZIndex.panel};'>
 					{#if $s_layout_byClusters}
-						<Clusters path={$s_path_here}/>
+						<Clusters path={$s_path_focus}/>
 					{:else}
 						<Tree/>
 					{/if}

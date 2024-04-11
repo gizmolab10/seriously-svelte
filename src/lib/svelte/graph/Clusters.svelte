@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_graphRect, s_path_here, s_user_graphOffset, s_thing_fontFamily } from '../../ts/common/State';
+	import { s_graphRect, s_path_focus, s_user_graphOffset, s_thing_fontFamily } from '../../ts/common/State';
 	import { g, k, u, Rect, Size, Point, ZIndex, transparentize } from '../../ts/common/GlobalImports';
 	import EditorTitle from '../widget/EditorTitle.svelte';
 	import Circle from '../kit/Circle.svelte';

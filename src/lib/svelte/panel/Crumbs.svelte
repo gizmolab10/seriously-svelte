@@ -1,10 +1,11 @@
 <script lang='ts'>
 	import { g, k, u, Path, Size, Point, Thing, ZIndex, signals, svgPaths, onMount, dbDispatch, Direction } from '../../ts/common/GlobalImports';
-	import { s_path_here, s_graphRect, s_show_details, s_paths_grabbed, s_path_clusterTools } from '../../ts/common/State';
+	import { s_path_focus, s_graphRect, s_show_details, s_paths_grabbed, s_path_clusterTools } from '../../ts/common/State';
 	import Crumb from '../kit/Crumb.svelte';
 	import SVGD3 from '../svg/SVGD3.svelte';
 	let ancestors: Array<Thing> = [];
 	let encodedCount = 0;
+	let trigger = 0;
 	let path: Path;
 	let count = 0;
 	let width = 0;
@@ -21,18 +22,23 @@
 	});
 
 	$: {
-		const trigger = ($s_path_here?.title ?? k.empty) + $s_graphRect + ($s_paths_grabbed?.length ?? 0);
-		if (!path || trigger || ancestors.length == 0) {
+		const needsUpdate = ($s_path_focus?.title ?? k.empty) + $s_graphRect + ($s_paths_grabbed?.length ?? 0);
+		if (!path || needsUpdate || ancestors.length == 0) {
 			const windowWidth = u.windowSize.width;
 			path = path_lastGrabbed() ?? g.rootPath;	// assure we have a path
 			[encodedCount, width, ancestors] = path.things_ancestryWithin(windowWidth - 10);
 			left = (windowWidth - width - 20) / 2;
+			const newTrigger = encodedCount * 10000 + count * 100 + left;
+			if (newTrigger != trigger) {
+				console.log('should update crumbs');
+				trigger = newTrigger;
+			}
 		}
 	}
 
 </script>
 
-{#key `${encodedCount + count + left}`}
+{#key trigger}
 	{#if left > 0}
 		<span class='left-spacer' style='display: inline-block; width: {left}px;'/>
 	{/if}
@@ -43,7 +49,7 @@
 				position: relative;
 				color: transparent;
 				left: 0px;'>
-				<SVGD3 name='crumb'
+				<SVGD3 name='dash'
 					width={size}
 					height={size}
 					position='absolute'

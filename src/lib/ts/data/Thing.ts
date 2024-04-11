@@ -1,6 +1,6 @@
 import { g, k, u, get, Path, Datum, debug, IDTrait, Predicate, Relationship } from '../common/GlobalImports';
 import { Hierarchy, DebugFlag, dbDispatch, SeriouslyRange } from '../common/GlobalImports';
-import { s_path_here, s_paths_expanded } from '../common/State';
+import { s_path_focus, s_paths_expanded } from '../common/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -39,7 +39,7 @@ export default class Thing extends Datum {
 	get hasMultipleParents(): boolean { return this.parentPaths.length > 1; }
 	get isAcrossBulk():		  boolean { return this.baseID != g.hierarchy.db.baseID; }
 	get hasParents():		  boolean { return this.hasParentsFor(Predicate.idContains); }
-	get isHere():			  boolean { return (get(s_path_here).thing?.id ?? k.empty) == this.id; }
+	get isFocus():			  boolean { return (get(s_path_focus).thing?.id ?? k.empty) == this.id; }
 
 	get thing_isBulk_expanded(): boolean {		// cross db paths needs special attention
 		if (this.isBulkAlias) {

@@ -53,7 +53,7 @@ import { svgPaths, Direction, dbDispatch, transparentize, AlteringParent } from 
     }
 
     function isDisabledFor(id: string) {
-        return ((path.isHere || thing.isBulkAlias) && (id == IDTool.add_parent)) ||
+        return ((path.isFocus || thing.isBulkAlias) && (id == IDTool.add_parent)) ||
         ((countOfVisibleParents < 2) && needsMultipleVisibleParents.includes(id));
     }
 
@@ -107,7 +107,7 @@ import { svgPaths, Direction, dbDispatch, transparentize, AlteringParent } from 
                 titleWidth = thing?.titleWidth ?? 0;
                 const hasOneParent = (thing?.parents.length ?? 0) == 1;
                 countOfVisibleParents = path.visibleParentPaths(0).length;
-                parentSensitiveColor = (hasOneParent || path.isHere) ? k.color_disabled : color ;
+                parentSensitiveColor = (hasOneParent || path.isFocus) ? k.color_disabled : color ;
                 update();
                 toggle = !toggle;
             }
