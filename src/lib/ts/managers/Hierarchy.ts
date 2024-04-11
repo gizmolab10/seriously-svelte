@@ -1,6 +1,6 @@
 import { g, k, u, get, User, Path, Thing, Grabs, debug, Access, IDTool, IDTrait, signals } from '../common/GlobalImports';
 import { TypeDB, Wrapper, Predicate, Relationship, AlteringParent, CreationOptions } from '../common/GlobalImports';
-import { s_title_editing, s_altering_parent, s_layout_byClusters, s_path_clusterTools } from '../common/State';
+import { s_title_editing, s_altering_parent, s_layout_byClusters, s_path_graphTools } from '../common/State';
 import { s_isBusy, s_path_focus, s_db_loadTime, s_paths_grabbed, s_things_arrived } from '../common/State';
 import DBInterface from '../db/DBInterface';
 
@@ -52,7 +52,7 @@ export default class Hierarchy {
 	static readonly $_EVENTS_$: unique symbol;
 
 	async handle_tool_clicked(IDButton: string, event: MouseEvent) {
-		const path = get(s_path_clusterTools);
+		const path = get(s_path_graphTools);
 		if (path) {
 			switch (IDButton) {
 				case IDTool.create: await this.path_edit_remoteCreateChildOf(path); break;
@@ -63,7 +63,7 @@ export default class Hierarchy {
 				case IDTool.more: console.log('needs more'); break;
 				default: break;
 			}
-			s_path_clusterTools.set(null);
+			s_path_graphTools.set(null);
 			signals.signal_relayoutWidgets_fromFocus();
 		}
 	}
@@ -135,7 +135,7 @@ export default class Hierarchy {
 	latestPathGrabbed_toggleGraphTools(up: boolean = true) {
 		const path = this.grabs.latestPathGrabbed(up);
 		if (path && !path.isRoot) {
-			s_path_clusterTools.set(path.toolsGrabbed ? null : path);
+			s_path_graphTools.set(path.toolsGrabbed ? null : path);
 			signals.signal_rebuildWidgets_fromFocus();
 		}
 	}
@@ -578,7 +578,7 @@ export default class Hierarchy {
 	}
 
 	async path_relayout_toolCluster_nextParent(force: boolean = false) {
-		const toolsPath = get(s_path_clusterTools);
+		const toolsPath = get(s_path_graphTools);
 		if (toolsPath) {
 			let path = toolsPath;
 			do {
@@ -592,7 +592,7 @@ export default class Hierarchy {
 			} while (!path.matchesPath(toolsPath));
 			path.grabOnly();
 			signals.signal_relayoutWidgets_fromFocus();
-			s_path_clusterTools.set(path);
+			s_path_graphTools.set(path);
 		}
 	}
 
@@ -831,11 +831,11 @@ export default class Hierarchy {
 	async path_alterMaybe(path: Path) {
 		const alteration = get(s_altering_parent);
 		if (path.things_canAlter_asParentOf_toolsGrab) {
-			const toolsPath = get(s_path_clusterTools);
+			const toolsPath = get(s_path_graphTools);
 			const toolsThing = toolsPath?.thing;
 			if (toolsPath && toolsThing) {
 				s_altering_parent.set(null);
-				s_path_clusterTools.set(null);
+				s_path_graphTools.set(null);
 				switch (alteration) {
 					case AlteringParent.deleting:
 						await this.relationship_forget_remoteRemove(toolsPath, path);

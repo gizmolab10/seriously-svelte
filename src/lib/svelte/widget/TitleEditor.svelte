@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { signals, Wrapper, IDWrapper, dbDispatch, SeriouslyRange } from '../../ts/common/GlobalImports';
 	import { g, k, u, Point, Thing, debug, ZIndex, onMount, Angles } from '../../ts/common/GlobalImports';
-	import { s_title_editing, s_paths_grabbed, s_path_clusterTools } from '../../ts/common/State';
+	import { s_title_editing, s_paths_grabbed, s_path_graphTools } from '../../ts/common/State';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
     export let angle = 0;
@@ -125,11 +125,11 @@
 			clickTimer = setTimeout(() => {
 				clearClicks();
 				if (!path?.isRoot) {
-					if ($s_path_clusterTools == path) {
-						$s_path_clusterTools = null;
+					if ($s_path_graphTools == path) {
+						$s_path_graphTools = null;
 					} else  {
 						path?.grabOnly();
-						$s_path_clusterTools = path;
+						$s_path_graphTools = path;
 					}
 					signals.signal_rebuildWidgets_fromFocus();
 				}

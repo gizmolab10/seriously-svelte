@@ -1,6 +1,6 @@
 <script>
 	import { k, u, Rect, Size, Point, Thing, debug, ZIndex, onMount, signals, svgPaths } from "../../ts/common/GlobalImports";
-	import { s_paths_grabbed, s_altering_parent, s_layout_byClusters, s_path_clusterTools } from '../../ts/common/State';
+	import { s_paths_grabbed, s_altering_parent, s_layout_byClusters, s_path_graphTools } from '../../ts/common/State';
 	import { Wrapper, Direction, onDestroy, dbDispatch, AlteringParent } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte';
 	import Box from '../kit/Box.svelte';
@@ -34,7 +34,7 @@
 		updatePaths();
 		updateColorsForHover(false);
         const handler = signals.handle_alteringParent((alteration) => {
-			const applyFlag = $s_path_clusterTools && path?.things_canAlter_asParentOf_toolsGrab;
+			const applyFlag = $s_path_graphTools && path?.things_canAlter_asParentOf_toolsGrab;
 			altering = applyFlag ? (alteration != null) : false;
 			updatePathExtra();
 			updateColors();

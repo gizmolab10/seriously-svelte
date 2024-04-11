@@ -1,7 +1,7 @@
 <script lang='ts'>
 import { g, k, u, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, signals } from '../../ts/common/GlobalImports';
 import { svgPaths, Direction, dbDispatch, transparentize, AlteringParent } from '../../ts/common/GlobalImports';
-    import { s_altering_parent, s_path_clusterTools } from '../../ts/common/State';
+    import { s_altering_parent, s_path_graphTools } from '../../ts/common/State';
     import { s_graphRect, s_show_details } from '../../ts/common/State';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
 	import CircularButton from '../kit/CircularButton.svelte';
@@ -9,12 +9,12 @@ import { svgPaths, Direction, dbDispatch, transparentize, AlteringParent } from 
 	import LabelButton from '../kit/LabelButton.svelte';
 	import DotReveal from './DotReveal.svelte';
 	import Trash from '../svg/Trash.svelte';
-    const clusterDiameter = 64;
+    const graphToolsDiameter = 64;
 	const toolDiameter = k.dot_size * 1.4;
-    const clusterRadius = clusterDiameter / 2;
+    const graphToolsRadius = graphToolsDiameter / 2;
     const needsMultipleVisibleParents = [IDTool.next, IDTool.delete_parent];
     const parentAltering = [IDTool.add_parent, IDTool.delete_parent];
-    const halfCircleViewBox = `0 0 ${clusterDiameter} ${clusterDiameter}`;
+    const halfCircleViewBox = `0 0 ${graphToolsDiameter} ${graphToolsDiameter}`;
     let hovers: { [type: string]: boolean } = {}
     let centers: { [type: string]: Point } = {}
     let countOfVisibleParents = 0;
@@ -81,7 +81,7 @@ import { svgPaths, Direction, dbDispatch, transparentize, AlteringParent } from 
 	}
 
     function setup() {
-        path = $s_path_clusterTools;
+        path = $s_path_graphTools;
         thing = path?.thing;
     }
 
@@ -99,8 +99,8 @@ import { svgPaths, Direction, dbDispatch, transparentize, AlteringParent } from 
     }
 
     $: {
-        if (!$s_path_clusterTools?.matchesPath(path) ?? false) {
-            path = $s_path_clusterTools;
+        if (!$s_path_graphTools?.matchesPath(path) ?? false) {
+            path = $s_path_graphTools;
             if (path) {
                 thing = path?.thing;
                 color = thing?.color ?? k.empty;
@@ -116,17 +116,17 @@ import { svgPaths, Direction, dbDispatch, transparentize, AlteringParent } from 
 
 	function update(): boolean {
         const rect = path?.titleRect;
-        if (rect && $s_path_clusterTools && rect.size.width != 0) {
+        if (rect && $s_path_graphTools && rect.size.width != 0) {
             const offsetReveal = new Point(-5.7, -5.5);
             const offsetTitle = titleWidth * (path.isExpanded ? 1 : 1.034);
             const offsetX = 8.8 + offsetTitle - ($s_show_details ? k.width_details : 0);
-            const offsetY = (g.titleIsAtTop ? -45 : 0) - clusterDiameter - 5.4;
+            const offsetY = (g.titleIsAtTop ? -45 : 0) - graphToolsDiameter - 5.4;
             const center = rect.centerLeft.offsetBy(new Point(offsetX, offsetY));
             left = center.x - toolDiameter;
             const y = center.y;
-            setC(IDTool.cluster,        center);
+            setC(IDTool.graphTools,        center);
             setC(IDTool.dismiss,        center.offsetBy(offsetReveal));
-            setC(IDTool.confirmation,   center.offsetEquallyBy(1 - clusterRadius));
+            setC(IDTool.confirmation,   center.offsetEquallyBy(1 - graphToolsRadius));
             setC(IDTool.delete_cancel,  center.offsetBy(new Point(1 - toolDiameter, toolDiameter - 5)));
             setC(IDTool.delete_confirm, center.offsetBy(new Point(2 - toolDiameter, 5 - toolDiameter)));
             setC(IDTool.create,         new Point(center.x + toolDiameter - 3, y - toolDiameter + 7));
@@ -160,8 +160,8 @@ import { svgPaths, Direction, dbDispatch, transparentize, AlteringParent } from 
 </style>
 
 {#key toggle}
-    {#if $s_path_clusterTools}
-        <div class='tools-cluster' style='
+    {#if $s_path_graphTools}
+        <div class='tools-graphTools' style='
             position:absolute;
             z-index: {ZIndex.lines}'>
             <TransparencyCircle
@@ -169,8 +169,8 @@ import { svgPaths, Direction, dbDispatch, transparentize, AlteringParent } from 
                 opacity=0.15
                 color={color}
                 zindex={ZIndex.lines}
-                radius={clusterRadius}
-                center={getC(IDTool.cluster)}
+                radius={graphToolsRadius}
+                center={getC(IDTool.graphTools)}
                 color_background={transparentize(k.color_background, 0.05)}/>
             {#if confirmingDelete}
                 {#if hovers[IDTool.delete_confirm]}
@@ -179,11 +179,11 @@ import { svgPaths, Direction, dbDispatch, transparentize, AlteringParent } from 
                             top:{getC(IDTool.confirmation).y}px;
                             z-index:{ZIndex.lines};'
                         viewBox={halfCircleViewBox}
-                        height={clusterDiameter}
-                        width={clusterDiameter}
+                        height={graphToolsDiameter}
+                        width={graphToolsDiameter}
                         stroke=transparent
                         fill={color}>
-                        <path d={svgPaths.halfCircle(clusterDiameter, Direction.up)}/>
+                        <path d={svgPaths.halfCircle(graphToolsDiameter, Direction.up)}/>
                     </svg>
                 {/if}
                 {#if hovers[IDTool.delete_cancel]}
@@ -192,10 +192,10 @@ import { svgPaths, Direction, dbDispatch, transparentize, AlteringParent } from 
                             top:{getC(IDTool.confirmation).y}px;
                             z-index:{ZIndex.lines};'
                         viewBox={halfCircleViewBox}
-                        height={clusterDiameter}
-                        width={clusterDiameter}
+                        height={graphToolsDiameter}
+                        width={graphToolsDiameter}
                         fill={color}>
-                        <path d={svgPaths.halfCircle(clusterDiameter, Direction.down)}/>
+                        <path d={svgPaths.halfCircle(graphToolsDiameter, Direction.down)}/>
                     </svg>
                 {/if}
                 <LabelButton
@@ -218,9 +218,9 @@ import { svgPaths, Direction, dbDispatch, transparentize, AlteringParent } from 
                         position: absolute;
                         background-color: {color};
                         z-index: {ZIndex.frontmost};
-                        width: {clusterDiameter + 1}px;
-                        top: {getC(IDTool.cluster).y + 0.5}px;
-                        left: {getC(IDTool.cluster).x - clusterRadius}px;'>
+                        width: {graphToolsDiameter + 1}px;
+                        top: {getC(IDTool.graphTools).y + 0.5}px;
+                        left: {getC(IDTool.graphTools).x - graphToolsRadius}px;'>
                 </div>
             {:else}
             <LabelButton
@@ -244,7 +244,7 @@ import { svgPaths, Direction, dbDispatch, transparentize, AlteringParent } from 
                     <path d={svgPaths.tinyDots_linear(3, 1)}/>
                 </svg>
             </LabelButton>
-            <DotReveal thing={thing} path={$s_path_clusterTools} center={getC(IDTool.dismiss)}/>
+            <DotReveal thing={thing} path={$s_path_graphTools} center={getC(IDTool.dismiss)}/>
             <TriangleButton
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.next, isFilled) }}
                 strokeColor={isDisabledFor(IDTool.next) ? k.color_disabled : parentSensitiveColor}
