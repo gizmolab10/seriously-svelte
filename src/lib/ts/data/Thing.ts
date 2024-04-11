@@ -121,7 +121,7 @@ export default class Thing extends Datum {
 		}
 		const things = this.parentThings_for(idPredicate) ?? [];
 		for (const thing of things) {
-			const paths = thing.parentPaths;
+			const paths = thing.isRoot ? [g.rootPath] : thing.parentPaths;
 			parentPaths = [...parentPaths, ...paths];
 		}
 		const purgedPaths = u.strip_falsies(parentPaths);
