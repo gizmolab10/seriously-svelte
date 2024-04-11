@@ -487,7 +487,7 @@ export default class Hierarchy {
 
 	relationship_remember_runtimeCreateUnique(baseID: string, idRelationship: string, idPredicate: string, idParent: string,
 		idChild: string, order: number, creationOptions: CreationOptions = CreationOptions.none) {
-		if (idRelationship == 'FqhFXEEnhs5qSKy1OgCG') {
+		if (idRelationship == 'Rbe') {
 			u.noop();
 		}
 		let relationship = this.relationship_forPredicate_parent_child(idPredicate, idParent, idChild);
@@ -498,7 +498,8 @@ export default class Hierarchy {
 			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, creationOptions != CreationOptions.none);
 			this.relationship_remember(relationship);
 			if (predicate && predicate.directions == 2) {
-				relationship = new Relationship(baseID, idRelationship, idPredicate, idChild, idParent, order);
+				const relatedID = `${idRelationship}R`
+				relationship = new Relationship(baseID, relatedID, idPredicate, idChild, idParent, order);
 				this.relationship_remember(relationship);
 			}
 		}

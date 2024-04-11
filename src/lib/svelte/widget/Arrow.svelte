@@ -28,7 +28,7 @@
 		const focus_radius = k.cluster_focus_radius + (showArrows ? 8 : 0);
 		const length = k.necklace_gap - k.dot_size * (showArrows ? 8 : 0.4);
 		const length_rotated = new Point(length, 0).rotateBy(angle);
-		const focus_rotated = new Point(focus_radius, 0).rotateBy(angle);
+		const focus_rotated = new Point(focus_radius, 0).rotateBy(angle - 0.05);
 		svgPath = svgPaths.line(length_rotated);
 		size = length_rotated.abs.asSize;
 		[left, top] = updateLine(length_rotated, focus_rotated);

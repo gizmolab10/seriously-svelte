@@ -103,9 +103,9 @@ export default class Thing extends Datum {
 	parentThings_for(idPredicate: string): Array<Thing> {
 		let parents: Array<Thing> = [];
 		if (!this.isRoot) {
-			const parentRelationships = this.parentRelationships_for(idPredicate);
-			for (const parentRelationship of parentRelationships) {
-				const thing = parentRelationship.parentThing;
+			const relationships = this.parentRelationships_for(idPredicate);
+			for (const relationship of relationships) {
+				const thing = relationship.parentThing;
 				if (thing) {
 					parents.push(thing);
 				}
@@ -115,9 +115,16 @@ export default class Thing extends Datum {
 	}
 
 	uniqueParentPaths_for(idPredicate: string): Array<Path> {
-		const parentPaths = this.parentPaths_for(idPredicate) ?? [];
-		const grandParentPaths = parentPaths.map(p => p.stripBack())
-		const purgedPaths = u.strip_falsies(grandParentPaths);
+		let parentPaths: Array<Path> = [];
+		if (idPredicate == Predicate.idIsRelated) {
+			u.noop();
+		}
+		const things = this.parentThings_for(idPredicate) ?? [];
+		for (const thing of things) {
+			const paths = thing.parentPaths;
+			parentPaths = [...parentPaths, ...paths];
+		}
+		const purgedPaths = u.strip_falsies(parentPaths);
 		return u.strip_thingDuplicates(purgedPaths);
 	}
 
@@ -125,16 +132,16 @@ export default class Thing extends Datum {
 		// all the paths that point to each parent of this thing
 		let paths: Array<Path> = [];
 		if (!this.isRoot) {
-			const parentRelationships = this.parentRelationships_for(idPredicate);
-			for (const parentRelationship of parentRelationships) {
-				const endID = parentRelationship.id;		// EGADS, this is the wrong parentRelationship; needs the next one
-				const grandParent = parentRelationship.parentThing;
-				const greatGrandParentPaths = grandParent?.parentPaths_for(Predicate.idContains) ?? [];
-				if (greatGrandParentPaths.length == 0) {
+			const relationships = this.parentRelationships_for(idPredicate);
+			for (const relationship of relationships) {
+				const endID = relationship.id;		// EGADS, this is the wrong relationship; needs the next one
+				const parent = relationship.parentThing;
+				const parentPaths = parent?.parentPaths_for(Predicate.idContains) ?? [];
+				if (parentPaths.length == 0) {
 					addPath(g.rootPath);
 				} else {
-					for (const greatGrandParentPath of greatGrandParentPaths) {
-						addPath(greatGrandParentPath);
+					for (const parentPath of parentPaths) {
+						addPath(parentPath);
 					}
 				}
 				function addPath(path: Path) {
