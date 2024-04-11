@@ -28,8 +28,8 @@ export default class Thing extends Datum {
 	};
 	
 	get parentIDs():	Array<string> { return this.parents.map(t => t.id); }
-	get parentPaths():	  Array<Path> { return this.paths_ofParentsFor(Predicate.idContains); }
-	get parents():		 Array<Thing> { return this.parentThings_get_for(Predicate.idContains); }
+	get parentPaths():	  Array<Path> { return this.parentPaths_for(Predicate.idContains); }
+	get parents():		 Array<Thing> { return this.parentThings_for(Predicate.idContains); }
 	get fields():	Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get idBridging():		   string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get description():		   string { return this.id + ' \"' + this.title + '\"'; }
@@ -57,7 +57,7 @@ export default class Thing extends Datum {
 	log(option: DebugFlag, message: string) { debug.log_maybe(option, message + k.space + this.description); }
 
 	hasParentsFor(idPredicate: string): boolean {
-		return this.parentThings_get_for(idPredicate).length > 0;
+		return this.parentThings_for(idPredicate).length > 0;
 	}
 
 	override isInDifferentBulkThan(other: Thing): boolean {
@@ -65,10 +65,10 @@ export default class Thing extends Datum {
 	}
 
 	relationships_grandParentsFor(idPredicate: string): Array<Relationship> {
-		const relationships = this.relationships_immediateParentsFor(idPredicate);
+		const relationships = this.parentRelationships_for(idPredicate);
 		let grandParents: Array<Relationship> = [];
 		for (const relationship of relationships) {
-			const more = relationship.parentThing?.relationships_immediateParentsFor(idPredicate);
+			const more = relationship.parentThing?.parentRelationships_for(idPredicate);
 			if (more) {
 				grandParents = [...grandParents, ...more];
 			}
@@ -76,8 +76,8 @@ export default class Thing extends Datum {
 		return grandParents;
 	}
 
-	relationships_immediateParentsFor(idPredicate: string): Array<Relationship> {
-		return g.hierarchy.relationships_get_forPredicateThing_isChild(idPredicate, this.id, true);
+	parentRelationships_for(idPredicate: string): Array<Relationship> {
+		return g.hierarchy.relationships_forPredicateThingIsChild(idPredicate, this.id, true);
 	}
 
 	updateColorAttributes(path: Path) {
@@ -100,10 +100,10 @@ export default class Thing extends Datum {
 		}
 	}
 
-	parentThings_get_for(idPredicate: string): Array<Thing> {
+	parentThings_for(idPredicate: string): Array<Thing> {
 		let parents: Array<Thing> = [];
 		if (!this.isRoot) {
-			const parentRelationships = this.relationships_immediateParentsFor(idPredicate);
+			const parentRelationships = this.parentRelationships_for(idPredicate);
 			for (const parentRelationship of parentRelationships) {
 				const thing = parentRelationship.parentThing;
 				if (thing) {
@@ -114,15 +114,22 @@ export default class Thing extends Datum {
 		return parents;
 	}
 
-	paths_ofParentsFor(idPredicate: string): Array<Path> {
-		// all the paths that point to this thing's parents
+	uniqueParentPaths_for(idPredicate: string): Array<Path> {
+		const parentPaths = this.parentPaths_for(idPredicate) ?? [];
+		const grandParentPaths = parentPaths.map(p => p.stripBack())
+		const purgedPaths = u.strip_falsies(grandParentPaths);
+		return u.strip_thingDuplicates(purgedPaths);
+	}
+
+	parentPaths_for(idPredicate: string): Array<Path> {
+		// all the paths that point to each parent of this thing
 		let paths: Array<Path> = [];
 		if (!this.isRoot) {
-			const parentRelationships = this.relationships_immediateParentsFor(idPredicate);
+			const parentRelationships = this.parentRelationships_for(idPredicate);
 			for (const parentRelationship of parentRelationships) {
 				const endID = parentRelationship.id;		// EGADS, this is the wrong parentRelationship; needs the next one
 				const grandParent = parentRelationship.parentThing;
-				const greatGrandParentPaths = grandParent?.paths_ofParentsFor(idPredicate) ?? [];
+				const greatGrandParentPaths = grandParent?.parentPaths_for(Predicate.idContains) ?? [];
 				if (greatGrandParentPaths.length == 0) {
 					addPath(g.rootPath);
 				} else {
@@ -131,53 +138,15 @@ export default class Thing extends Datum {
 					}
 				}
 				function addPath(path: Path) {
-					const fullPath = path.appendID(endID);
-					paths.push(path);
-				}
-			}
-		}
-		paths = u.strip_duplicates(paths);
-		return u.sort_byTitleTop(paths).reverse();
-	}
-	
-	paths_for(idPredicate: string): Array<Path> {
-		// all paths that point to this thing
-		let paths: Array<Path> = [];
-		const relationshipIDs = g.hierarchy.relationships_get_forPredicateThing_isChild(idPredicate, this.id, false).map(r => r.id);
-		const parentPaths = this.parentPaths_for(idPredicate);
-		for (const eid of relationshipIDs) {
-			for (const parentPath of parentPaths) {
-				const path = parentPath.appendID(eid);
-				if (path) {
-					paths.push(path);
-				}
-			}
-		}
-		return u.strip_duplicates(paths);
-	}
-	
-	parentPaths_for(idPredicate: string): Array<Path> {
-		if (this.isRoot) {
-			return [];
-		}
-		const paths: Array<Path> = []
-		const parents = this.parentThings_get_for(idPredicate) ?? [];
-		for (const parent of parents) {
-			if (parent.isRoot) {
-				paths.push(g.rootPath);
-			} else {
-				const h = g.hierarchy;
-				const relationships = h.relationships_get_forPredicateThing_isChild(idPredicate, parent.id, true);
-				if (relationships.length > 0){
-					const pathString = relationships[0].id;
-					const path = h.path_remember_createUnique(pathString, idPredicate);
-					if (path) {
-						paths.push(path)
+					const fullPath = path.uniquelyAppendID(endID);
+					if (fullPath) {
+						paths.push(fullPath);
 					}
 				}
 			}
 		}
-		return paths.length > 0 ? paths : idPredicate != Predicate.idContains ? [] : [g.rootPath];
+		paths = u.strip_hidDuplicates(paths);
+		return u.sort_byTitleTop(paths).reverse();
 	}
-
+	
 }

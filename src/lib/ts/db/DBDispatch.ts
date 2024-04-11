@@ -8,7 +8,7 @@ import { dbLocal } from './DBLocal';
 export default class DBDispatch {
 	db: DBInterface;
 	eraseDB = false;
-	db_next(forward: boolean) { this.db_changeTo(this.db_get_next(forward)); }
+	db_next(forward: boolean) { this.db_changeTo(this.db_next(forward)); }
 
 	constructor() {
 		let done = false;
@@ -71,7 +71,7 @@ export default class DBDispatch {
 		s_db_loadTime.set(db.loadTime);
 	}
 
-	db_get_next(forward: boolean): TypeDB {
+	db_next(forward: boolean): TypeDB {
 		if (forward) {
 			switch (this.db.dbType) {
 				case TypeDB.airtable: return TypeDB.local;

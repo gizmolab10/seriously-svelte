@@ -45,7 +45,7 @@ export default class DBLocal implements DBInterface {
 		h.relationship_remember_runtimeCreateUnique(k.empty, 'Cbd', idPc, idTb, idTd, 1);
 		h.relationship_remember_runtimeCreateUnique(k.empty, 'Ccd', idPc, idTc, idTd, 0);
 		h.relationship_remember_runtimeCreateUnique(k.empty, 'Cde', idPc, idTd, idTe, 0);
-		h.relationship_remember_runtimeCreateUnique(k.empty, 'Rrc', idPr, idTr, idTc, 2);
+		h.relationship_remember_runtimeCreateUnique(k.empty, 'Rrb', idPr, idTr, idTb, 2);
 		h.relationship_remember_runtimeCreateUnique(k.empty, 'Rac', idPr, idTa, idTc, 2);
 		h.relationship_remember_runtimeCreateUnique(k.empty, 'Rbe', idPr, idTb, idTe, 2);
 	};

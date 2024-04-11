@@ -6,7 +6,7 @@
     export let path;
 	export let center;
 	let size = k.dot_size;
-	let childrenCount = path.relationships_child.length;
+	let childrenCount = path.childRelationships.length;
 	let insideFillColor = k.color_background;
 	let tinyDotsOffset = size * -0.4 + 0.01;
 	let insidePath = svgPaths.circle(16, 6);
@@ -73,7 +73,7 @@
 		if (!path.showsReveal || path.toolsGrabbed) {
 			svgPath = svgPaths.circle(size, size - 1);
 		} else {
-			const goLeft = path.showsRelationshipsTo;
+			const goLeft = path.showsChildRelationships;
 			const direction = goLeft ? Direction.left : Direction.right;
 			svgPath = svgPaths.fatPolygon(size, direction);
 		}

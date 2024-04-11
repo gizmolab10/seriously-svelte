@@ -1,4 +1,4 @@
-import { k, debug, Thing, TypeDB, DebugFlag, TypeDatum, Hierarchy, Relationship, CreationOptions } from '../common/GlobalImports';
+import { k, u, debug, Thing, TypeDB, DebugFlag, TypeDatum, Hierarchy, Relationship, CreationOptions } from '../common/GlobalImports';
 import { s_things_arrived } from '../common/State';
 import DBInterface from './DBInterface';
 import Airtable from 'airtable';
@@ -149,7 +149,7 @@ export default class DBAirtable implements DBInterface {
 
 	async relationship_remoteDelete(relationship: Relationship) {
 		try {
-			this.hierarchy.relationships = this.hierarchy.relationships.filter((relationship: Relationship) => relationship.id !== relationship.id);
+			this.hierarchy.relationships = u.strip_falsies(this.hierarchy.relationships);
 			this.hierarchy.relationships_refreshKnowns(); // do first so UX updates quickly
 			await this.relationships_table.destroy(relationship.id);
 		} catch (error) {

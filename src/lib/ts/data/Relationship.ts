@@ -9,9 +9,9 @@ export default class Relationship extends Datum {
 	order: number;
 	idChild: string;
 
-	static get nullRelationship(): Relationship { return new Relationship(k.empty, null, k.empty, k.empty, k.empty, 0, false); }
+	static get nullRelationship(): Relationship { return new Relationship(k.empty, null, k.empty, k.empty, k.empty, 0); }
 
-	constructor(baseID: string, id: string | null, idPredicate: string, idParent: string, idChild: string, order = 0, isRemotelyStored: boolean) {
+	constructor(baseID: string, id: string | null, idPredicate: string, idParent: string, idChild: string, order = 0, isRemotelyStored: boolean = false) {
 		super(baseID, id, isRemotelyStored);
 		this.dbType = dbDispatch.db.dbType;
 		this.idPredicate = idPredicate;
@@ -23,14 +23,14 @@ export default class Relationship extends Datum {
 	get childThing(): Thing | null { return this.thing(true); }
 	get parentThing(): Thing | null { return this.thing(false); }
 	get isValid(): boolean { return !!(this.idPredicate && this.idParent && this.idChild); }
-	get predicate(): Predicate | null { return g.hierarchy.predicate_get_forID(this.idPredicate) }
+	get predicate(): Predicate | null { return g.hierarchy.predicate_forID(this.idPredicate) }
 	get fields(): Airtable.FieldSet { return { predicate: [this.idPredicate], parent: [this.idParent], child: [this.idChild], order: this.order }; }
 	get description(): string { return `BASE ${this.baseID} STORED ${this.isRemotelyStored} ORDER ${this.order} ID ${this.id} PARENT ${this.parentThing?.description} ${this.predicate?.kind} CHILD ${this.childThing?.description}`; }
 	log(option: DebugFlag, message: string) { debug.log_maybe(option, message + k.space + this.description); }
 
 	thing(child: boolean): Thing | null {
 		const id = child ? this.idChild : this.idParent;
-		return g.hierarchy?.thing_get_forHID(id.hash()) ?? null
+		return g.hierarchy?.thing_forHID(id.hash()) ?? null
 	}
 
 	async order_setTo(newOrder: number, remoteWrite: boolean = false) {

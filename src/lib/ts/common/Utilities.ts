@@ -6,6 +6,7 @@ class Utilities {
 	ignore(event: Event) {}
 	roundToEven(n: number): number{ return Math.round(n / 2) * 2; }
 	sort_byOrder(array: Array<Path>) { return array.sort( (a: Path, b: Path) => { return a.order - b.order; }); }
+	strip_falsies(array: Array<any>) { return array.filter(element => !!element); }
 
 	get windowSize(): Size {
 		const scaleFactor = get(s_scale_factor);
@@ -36,10 +37,21 @@ class Utilities {
 		}
 	}
 
-	strip_duplicates(paths: Array<Path>) {
+	strip_hidDuplicates(paths: Array<Path>) {
 		let pathsByHID: {[hash: number]: Path} = {};
 		for (const path of paths) {
 			pathsByHID[path.pathHash] = path;
+		}
+		return Object.values(pathsByHID);
+	}
+
+	strip_thingDuplicates(paths: Array<Path>) {
+		let pathsByHID: {[hash: number]: Path} = {};
+		for (const path of paths) {
+			const hid = path.thing?.id.hash();
+			if (hid) {
+				pathsByHID[hid] = path;
+			}
 		}
 		return Object.values(pathsByHID);
 	}

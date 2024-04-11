@@ -4,16 +4,19 @@
 	import Crumb from '../kit/Crumb.svelte';
 	import SVGD3 from '../svg/SVGD3.svelte';
 	let ancestors: Array<Thing> = [];
+	let encodedCount = 0;
 	let path: Path;
-	let size = 16;
+	let count = 0;
 	let width = 0;
+	let size = 16;
 	let left = 0;
-	let sum = 0;
 
 	function path_lastGrabbed() { return g.hierarchy.grabs.path_lastGrabbed; }
 
 	onMount( () => {
-		const handler = signals.handle_rebuildWidgets((path) => { sum += 1; });
+		const handler = signals.handle_rebuildWidgets((path) => {
+			count += 1;
+		});
 		return () => { handler.disconnect() };
 	});
 
@@ -22,14 +25,14 @@
 		if (!path || trigger || ancestors.length == 0) {
 			const windowWidth = u.windowSize.width;
 			path = path_lastGrabbed() ?? g.rootPath;	// assure we have a path
-			[sum, width, ancestors] = path.things_ancestryWithin(windowWidth - 10);
+			[encodedCount, width, ancestors] = path.things_ancestryWithin(windowWidth - 10);
 			left = (windowWidth - width - 20) / 2;
 		}
 	}
 
 </script>
 
-{#key `${sum} ${left}`}
+{#key `${encodedCount + count + left}`}
 	{#if left > 0}
 		<span class='left-spacer' style='display: inline-block; width: {left}px;'/>
 	{/if}
