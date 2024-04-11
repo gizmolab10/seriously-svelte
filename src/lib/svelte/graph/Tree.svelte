@@ -5,7 +5,7 @@
 	import { s_id_popupView, s_path_clusterTools, s_user_graphOffset } from '../../ts/common/State';
 	import { IDPersistant, IDSignal, persistLocal } from '../../ts/common/GlobalImports';
 	import DotRevealFocus from '../kit/DotRevealFocus.svelte';
-	import ToolsCluster from '../widget/ToolsCluster.svelte';
+	import GraphTools from '../widget/GraphTools.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Children from './Children.svelte';
@@ -109,6 +109,6 @@
 				<Children path={$s_path_focus} origin={origin_ofChildren}/>
 			{/if}
 		</div>
-		<ToolsCluster/>
+		<GraphTools/>
 	{/key}
 {/if}

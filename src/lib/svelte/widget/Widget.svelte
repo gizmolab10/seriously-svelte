@@ -3,8 +3,8 @@
 	import { s_layout_byClusters, s_thing_fontFamily, s_path_clusterTools } from '../../ts/common/State';
 	import { onMount, debugReact, IDSignal, IDWrapper } from '../../ts/common/GlobalImports';
 	import { s_path_focus, s_title_editing, s_paths_grabbed } from '../../ts/common/State';
-	import ToolsCluster from './ToolsCluster.svelte';
-	import EditorTitle from './EditorTitle.svelte';
+	import GraphTools from './GraphTools.svelte';
+	import TitleEditor from './TitleEditor.svelte';
 	import DotReveal from './DotReveal.svelte';
 	import DotDrag from './DotDrag.svelte';
 	export let origin = new Point();
@@ -142,7 +142,7 @@
 		border-radius: {radius}px;
 	'>
 	<DotDrag path={path}/>
-	<EditorTitle path={path} angle={angle} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
+	<TitleEditor path={path} angle={angle} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 	{#if path?.showsReveal}
 		<DotReveal path={path} center={revealCenter}/>
 	{/if}

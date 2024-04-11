@@ -4,7 +4,6 @@
 	import Crumb from '../kit/Crumb.svelte';
 	import SVGD3 from '../svg/SVGD3.svelte';
 	let ancestors: Array<Thing> = [];
-	let encodedCount = 0;
 	let trigger = 0;
 	let path: Path;
 	let count = 0;
@@ -12,27 +11,20 @@
 	let size = 16;
 	let left = 0;
 
-	function path_lastGrabbed() { return g.hierarchy.grabs.path_lastGrabbed; }
-
 	onMount( () => {
-		const handler = signals.handle_rebuildWidgets((path) => {
-			count += 1;
-		});
+		const handler = signals.handle_rebuildWidgets((path) => { count += 1; });
 		return () => { handler.disconnect() };
 	});
 
 	$: {
 		const needsUpdate = ($s_path_focus?.title ?? k.empty) + $s_graphRect + ($s_paths_grabbed?.length ?? 0);
 		if (!path || needsUpdate || ancestors.length == 0) {
+			path = g.hierarchy.grabs.path_lastGrabbed ?? g.rootPath;	// assure we have a path
 			const windowWidth = u.windowSize.width;
-			path = path_lastGrabbed() ?? g.rootPath;	// assure we have a path
+			let encodedCount = 0;
 			[encodedCount, width, ancestors] = path.things_ancestryWithin(windowWidth - 10);
 			left = (windowWidth - width - 20) / 2;
-			const newTrigger = encodedCount * 10000 + count * 100 + left;
-			if (newTrigger != trigger) {
-				console.log('should update crumbs');
-				trigger = newTrigger;
-			}
+			trigger = encodedCount * 10000 + count * 100 + left;
 		}
 	}
 

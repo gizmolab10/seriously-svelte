@@ -46,7 +46,7 @@
 			childMapRectArray = new Layout(path, childrenOrigin).childMapRectArray;
 			center = childrenOrigin.offsetBy(delta);
 		} else {
-			console.log(`not expanded, cannot layout ${path.title}`);
+			console.log(`not expanded, cannot layout ${path.description}`);
 		}
 	}
 	

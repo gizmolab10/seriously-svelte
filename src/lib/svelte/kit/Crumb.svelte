@@ -15,7 +15,6 @@
 
 	function updateColors() {
 		if (thing) {
-			console.log(`crumb update for ${path.titles}`);
 			if ($s_path_focus.idThing == thing.id) {
 				colorStyles = `background-color: ${transparentize(thing.color, 0.15)}; color: ${k.color_background}`;
 			} else {

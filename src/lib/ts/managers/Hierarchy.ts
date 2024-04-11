@@ -106,7 +106,7 @@ export default class Hierarchy {
 			}
 			switch (key) {
 				case '!':				needsRebuild = g.rootPath?.becomeFocus(); break;
-				case '`':               event.preventDefault(); this.latestPathGrabbed_toggleToolsCluster(); break;
+				case '`':               event.preventDefault(); this.latestPathGrabbed_toggleGraphTools(); break;
 				case 'arrowup':			await this.latestPathGrabbed_rebuild_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
 				case 'arrowdown':		await this.latestPathGrabbed_rebuild_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
 			}
@@ -132,7 +132,7 @@ export default class Hierarchy {
 		}
 	}
 
-	latestPathGrabbed_toggleToolsCluster(up: boolean = true) {
+	latestPathGrabbed_toggleGraphTools(up: boolean = true) {
 		const path = this.grabs.latestPathGrabbed(up);
 		if (path && !path.isRoot) {
 			s_path_clusterTools.set(path.toolsGrabbed ? null : path);
