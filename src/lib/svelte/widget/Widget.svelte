@@ -3,12 +3,12 @@
 	import { s_layout_byClusters, s_thing_fontFamily, s_path_graphTools } from '../../ts/common/State';
 	import { onMount, debugReact, IDSignal, IDWrapper } from '../../ts/common/GlobalImports';
 	import { s_path_focus, s_title_editing, s_paths_grabbed } from '../../ts/common/State';
-	import GraphTools from './GraphTools.svelte';
+	import EditingTools from '../graph/EditingTools.svelte';
 	import TitleEditor from './TitleEditor.svelte';
 	import DotReveal from './DotReveal.svelte';
 	import DotDrag from './DotDrag.svelte';
 	export let origin = new Point();
-    export let angle = 0;
+    export let clockwise_radians = 0;
     export let path;
 	const hasExtraX = !path?.isExpanded && (path?.childRelationships.length > 3);
 	const rightPadding = hasExtraX ? 22.5 : 19;
@@ -142,7 +142,7 @@
 		border-radius: {radius}px;
 	'>
 	<DotDrag path={path}/>
-	<TitleEditor path={path} angle={angle} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
+	<TitleEditor path={path} clockwise_radians={clockwise_radians} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 	{#if path?.showsReveal}
 		<DotReveal path={path} center={revealCenter}/>
 	{/if}

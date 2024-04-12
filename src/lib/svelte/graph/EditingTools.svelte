@@ -1,13 +1,13 @@
 <script lang='ts'>
-import { g, k, u, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, signals } from '../../ts/common/GlobalImports';
-import { svgPaths, Direction, dbDispatch, transparentize, AlteringParent } from '../../ts/common/GlobalImports';
+    import { g, k, u, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, signals } from '../../ts/common/GlobalImports';
+    import { svgPaths, Direction, dbDispatch, transparentize, AlteringParent } from '../../ts/common/GlobalImports';
     import { s_altering_parent, s_path_graphTools } from '../../ts/common/State';
     import { s_graphRect, s_show_details } from '../../ts/common/State';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TriangleButton from '../svg/TriangleButton.svelte';
 	import LabelButton from '../kit/LabelButton.svelte';
-	import DotReveal from './DotReveal.svelte';
+	import DotReveal from '../widget/DotReveal.svelte';
 	import Trash from '../svg/Trash.svelte';
     const graphToolsDiameter = 64;
 	const toolDiameter = k.dot_size * 1.4;

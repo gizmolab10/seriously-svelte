@@ -1,4 +1,4 @@
-import { k, get, Path, Size, Point, Angles, Quadrant, IDBrowser, getContext, setContext } from './GlobalImports';
+import { k, get, Path, Size, Point, Radians, Quadrant, IDBrowser } from './GlobalImports';
 import { s_scale_factor, s_thing_fontFamily } from './State';
 
 class Utilities {
@@ -7,11 +7,18 @@ class Utilities {
 	roundToEven(n: number): number{ return Math.round(n / 2) * 2; }
 	concatenateArrays<T>(a: Array<T>, b: Array<T>) { return [...a, ...b]; }
 	strip_falsies(array: Array<any>) { return array.filter(element => !!element); }
+	normalized_radians(radians: number) { return (radians + Radians.full) % Radians.full; }
 	sort_byOrder(array: Array<Path>) { return array.sort( (a: Path, b: Path) => { return a.order - b.order; }); }
+	quadrant_startRadian(clockwise_radians: number): number { return this.startRadian_ofQuadrant(this.quadrant_of(clockwise_radians)); }
+
+	degrees_of(clockwise_radians: number) {
+		const degrees = clockwise_radians * 180 / Math.PI;
+		return this.formatter_toFixed(1).format(degrees);
+	}
 
 	get windowSize(): Size {
-		const scaleFactor = get(s_scale_factor);
-		return new Size(window.innerWidth / scaleFactor, window.innerHeight / scaleFactor);
+		const ratio = get(s_scale_factor);
+		return new Size(window.innerWidth / ratio, window.innerHeight / ratio);
 	}
 
 	get isServerLocal(): boolean {
@@ -36,6 +43,14 @@ class Utilities {
 		if (index !== -1) {
 			from.splice(index, 1);
 		}
+	}
+
+	formatter_toFixed(precision: number) {
+		return new Intl.NumberFormat('en-US', {
+			style: 'decimal',
+			maximumFractionDigits: precision,
+			minimumFractionDigits: precision
+		});
 	}
 
 	strip_hidDuplicates(paths: Array<Path>) {
@@ -65,12 +80,23 @@ class Utilities {
 		});
 	}
 
-	angle_quadrant(angle: number): Quadrant {
-		const normalized = angle % Angles.full;
-		if (normalized.isBetween(0, Angles.quarter, true)) { return Quadrant.lowerRight; }
-		if (normalized.isBetween(Angles.quarter, Angles.half, true)) { return Quadrant.lowerLeft;}
-		if (normalized.isBetween(Angles.half, Angles.threeQuarters, true)) { return Quadrant.upperLeft;}
-		return Quadrant.upperRight;
+	startRadian_ofQuadrant(quadrant: Quadrant): number {
+		switch (quadrant) {
+			case Quadrant.upperRight: return Radians.threeQuarters;
+			case Quadrant.lowerLeft:  return Radians.quarter;
+			case Quadrant.upperLeft:  return Radians.half;
+			default:				  return 0;
+		}
+	}
+
+	quadrant_of(clockwise_radians: number): Quadrant {
+		const normalized = this.normalized_radians(clockwise_radians);
+		let quadrant = Quadrant.upperRight;
+		if (normalized.isBetween(0,				  Radians.quarter,		 true)) { quadrant = Quadrant.lowerRight; }
+		if (normalized.isBetween(Radians.quarter, Radians.half,			 true)) { quadrant = Quadrant.lowerLeft; }
+		if (normalized.isBetween(Radians.half,	  Radians.threeQuarters, true)) { quadrant = Quadrant.upperLeft; }
+		// console.log(`${this.degrees_of(normalized)} quadrant ${quadrant} from ${this.degrees_of(clockwise_radians)}`)
+		return quadrant;
 	}
 
 	getFontOf(element: HTMLElement): string {
@@ -92,14 +118,14 @@ class Utilities {
 	}
 
 	polygonPoints(radius: number, count: number, offset: number): Array<Point> {
-		const increment = Angles.full / count;
+		const increment = Radians.full / count;
 		const radial = new Point(radius, 0);
 		const points: Point[] = [];
-		let angle = offset;
+		let clockwise_radians = offset;
 		let index = count;
 		do {
-			points.push(radial.rotateBy(angle));
-			angle += increment;
+			points.push(radial.rotate_clockwiseBy(clockwise_radians));
+			clockwise_radians += increment;
 			index--;
 		} while (index > 0)
 		return points;

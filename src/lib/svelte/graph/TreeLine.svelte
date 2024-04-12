@@ -3,9 +3,9 @@
 	import { Wrapper, debugReact, IDWrapper, IDLine } from '../../ts/common/GlobalImports';
 	import Circle from '../kit/Circle.svelte';
 	import Box from '../kit/Box.svelte';
-	export let curveType: string = IDLine.up;
-	export let rect = new Rect();
     export let path;
+	export let rect = new Rect();
+	export let curveType: string = IDLine.up;
 	const debugOffset = new Point(140.5, -1.2);
 	let lineWrapper: Wrapper;
 	let origin = rect.origin;

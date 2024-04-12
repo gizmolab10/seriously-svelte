@@ -33,7 +33,7 @@
 		<Circle
 			center={center}
 			color_background='transparent'
-			radius={k.cluster_focus_radius}
+			radius={k.cluster_inside_radius}
 			color={transparentize(path.thing.color, 0.75)}/>
 		<div style='
 			position: absolute;

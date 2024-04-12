@@ -1,14 +1,14 @@
 <script lang='ts'>
 	import { k, Path, Point, ZIndex, onMount, signals, Layout, transparentize } from '../../ts/common/GlobalImports';
+	import ClusterLine from './ClusterLine.svelte';
 	import Widget from '../widget/Widget.svelte';
-	import Arrow from '../widget/Arrow.svelte';
 	import Circle from '../kit/Circle.svelte';
 	export let center = Point.zero;
     export let path;
 	let childOffset = new Point(k.dot_size / -3, k.cluster_offsetY);;
 	let color = path.thing?.color ?? k.color_default;
 	let childMapRectArray: Array<ChildMapRect> = [];
-	let clusterLayouts: Array<ClusterLayout>;
+	let clusterLayouts: Array<ClusterLayout> = [];
 	
 	onMount( () => {
 		const layout = new Layout(path, center);
@@ -31,11 +31,11 @@
 
 {#if childMapRectArray}
 	{#each childMapRectArray as map}
-		<Widget path={map.childPath} angle={map.angle} origin={map.childOrigin.offsetBy(childOffset)}/>
+		<Widget path={map.childPath} clockwise_radians={map.clockwise_radians} origin={map.childOrigin.offsetBy(childOffset)}/>
 	{/each}
 {/if}
 {#if clusterLayouts}
 	{#each clusterLayouts as clusterLayout}
-		<Arrow clusterLayout={clusterLayout} center={center} color={color}/>
+		<ClusterLine clusterLayout={clusterLayout} center={center} color={color}/>
 	{/each}
 {/if}

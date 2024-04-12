@@ -18,6 +18,7 @@ export const s_isBusy			 = writable<boolean>();
 export const s_db_type			 = writable<string>();
 export const s_thing_fontFamily	 = writable<string>();
 export const s_scale_factor		 = writable<number>();
+export const s_cluster_radians	 = writable<number>();
 export const s_build			 = writable<number>();
 export const s_user_graphOffset	 = writable<Point>();
 export const s_graphRect		 = writable<Rect>();

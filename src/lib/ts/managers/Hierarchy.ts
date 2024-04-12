@@ -768,7 +768,7 @@ export default class Hierarchy {
 					newParentPath.becomeFocus();
 				}
 			}
-			signals.signal_rebuildWidgets_fromFocus();			// so Children component will update
+			signals.signal_rebuildWidgets_fromFocus();			// so TreeChildren component will update
 		}
 	}
 

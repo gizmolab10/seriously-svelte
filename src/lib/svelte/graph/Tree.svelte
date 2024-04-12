@@ -5,10 +5,10 @@
 	import { s_id_popupView, s_path_graphTools, s_user_graphOffset } from '../../ts/common/State';
 	import { IDPersistant, IDSignal, persistLocal } from '../../ts/common/GlobalImports';
 	import DotRevealFocus from '../kit/DotRevealFocus.svelte';
-	import GraphTools from '../widget/GraphTools.svelte';
+	import EditingTools from './EditingTools.svelte';
+	import TreeChildren from './TreeChildren.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
-	import Children from './Children.svelte';
 	import Box from '../kit/Box.svelte';
 	let origin_ofFirstReveal = new Point();
 	let origin_ofChildren = new Point();
@@ -106,9 +106,9 @@
 				<DotRevealFocus path={$s_path_focus} center={origin_ofFirstReveal.offsetBy(new Point(-3, 0))}/>
 			{/if}
 			{#if $s_path_focus.isExpanded}
-				<Children path={$s_path_focus} origin={origin_ofChildren}/>
+				<TreeChildren path={$s_path_focus} origin={origin_ofChildren}/>
 			{/if}
 		</div>
-		<GraphTools/>
+		<EditingTools/>
 	{/key}
 {/if}

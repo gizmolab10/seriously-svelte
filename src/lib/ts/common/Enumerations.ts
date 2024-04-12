@@ -32,13 +32,13 @@ export enum PredicateKind {
 }
 
 export enum Quadrant {
-	upperRight = 1,
-	upperLeft  = 2,
-	lowerLeft  = 3,
-	lowerRight = 4
+	upperRight = 'ur',	// threeQuarters
+	lowerLeft  = 'll',	// quarter
+	upperLeft  = 'ul',	// half
+	lowerRight = 'lr'	// 0
 }
 
-export enum Angles {
+export enum Radians {
 	threeQuarters = Math.PI * 3 / 2,
 	quarter = Math.PI / 2,
 	full = Math.PI * 2,

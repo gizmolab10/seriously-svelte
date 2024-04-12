@@ -1,8 +1,8 @@
 import { g, k, u, Path, Point, signals, dbDispatch } from '../common/GlobalImports'
+import { s_path_focus, s_show_details, s_user_graphOffset } from '../common/State';
 import { s_thing_fontFamily, s_show_child_graph } from '../common/State';
-import { s_show_details, s_user_graphOffset } from '../common/State';
+import { s_cluster_radians, s_layout_byClusters } from '../common/State';
 import { s_paths_grabbed, s_paths_expanded } from '../common/State';
-import { s_path_focus, s_layout_byClusters } from '../common/State';
 
 export enum IDPersistant {
 	relationships = 'relationships',
@@ -12,6 +12,7 @@ export enum IDPersistant {
 	controls	  = 'controls',
 	grabbed		  = 'grabbed',
 	details		  = 'details',
+	cluster		  = 'cluster',
 	layout		  = 'layout',
 	origin		  = 'origin',
 	scale		  = 'scale',
@@ -91,10 +92,11 @@ class PersistLocal {
 		g.applyScale(!u.device_isMobile ? 1 : this.key_read(IDPersistant.scale) ?? 1);
 
 		s_show_details.set(this.key_read(IDPersistant.details) ?? false);
-		s_layout_byClusters.set(this.key_read(IDPersistant.layout) ?? false);
 		s_thing_fontFamily.set(this.key_read(IDPersistant.font) ?? 'Arial');
+		s_layout_byClusters.set(this.key_read(IDPersistant.layout) ?? false);
 		s_show_child_graph.set(this.key_read(IDPersistant.show_children) ?? true);
 		s_user_graphOffset.set(this.key_read(IDPersistant.origin) ?? new Point());
+		s_cluster_radians.set(this.key_read(IDPersistant.cluster) ?? Math.PI * -0.36);
 
 		s_show_details.subscribe((flag: boolean) => {
 			this.key_write(IDPersistant.details, flag);

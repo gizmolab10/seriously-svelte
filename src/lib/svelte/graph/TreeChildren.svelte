@@ -2,10 +2,10 @@
 	import { k, u, Rect, Size, Point, Thing, debug, signals, onMount } from '../../ts/common/GlobalImports';
 	import { IDLine, Layout, onDestroy, DebugFlag, debugReact } from '../../ts/common/GlobalImports';
 	import { s_graphRect } from '../../ts/common/State';
+	import TreeChildren from './TreeChildren.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
-	import Children from './Children.svelte';
-	import Line from '../widget/Line.svelte';
+	import TreeLine from './TreeLine.svelte';
 	export let origin = new Point();
     export let path;
 	const widgetOffset = new Point(12, (k.dot_size / -15) - 10.7);
@@ -58,9 +58,9 @@
 {#if path.isExpanded}
 	{#each childMapRectArray as map}
 		<Widget path={map.childPath} origin={map.extent.offsetBy(widgetOffset)}/>
-		<Line path={map.childPath} curveType={map.curveType} rect={map.offsetBy(lineOffset)}/>
+		<TreeLine path={map.childPath} curveType={map.curveType} rect={map.offsetBy(lineOffset)}/>
 		{#if map.childPath.showsChildRelationships}
-			<Children path={map.childPath} origin={map.childOrigin}/>
+			<TreeChildren path={map.childPath} origin={map.childOrigin}/>
 		{/if}
 	{/each}
 {/if}

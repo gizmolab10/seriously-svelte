@@ -1,8 +1,8 @@
 import { k, u, Point } from '../common/GlobalImports';
 
 export enum Direction {
-	down = Math.PI * 3 / 2,
-	up = Math.PI / 2,
+	up = Math.PI * 3 / 2,
+	down = Math.PI / 2,
 	right = Math.PI,
 	left = 0,
 }
@@ -52,8 +52,8 @@ export default class SVGPaths {
 		}
 	}
 
-	polygon(radius: number, angle: number, count: number = 3, skip: Array<number>): string {
-		const points = u.polygonPoints(radius, count, angle);
+	polygon(radius: number, clockwise_radians: number, count: number = 3, skip: Array<number>): string {
+		const points = u.polygonPoints(radius, count, clockwise_radians);
 		const center = Point.square(radius);
 		let index = count;
 		let path = 'M ';
@@ -106,7 +106,7 @@ export default class SVGPaths {
 		let offset = new Point(isOdd ? radius : 0, isOdd ? 0 : radius);2
 		while (i++ < count) {
 			path = path + this.circle(size, 2, offset.offsetBy(new Point(-0.7, 0.3)));
-			offset = offset.rotateBy(increment);
+			offset = offset.rotate_clockwiseBy(increment);
 		}
 		return path;
 	}
@@ -146,20 +146,20 @@ export default class SVGPaths {
 		const radius = Math.min(width, height) * insetRatio;
 		const offset = new Point(width / 2, height / 2);
 		const outer = new Point(radius * 1.5, 0);
-		const segmentAngle = Math.PI / vertices;
+		const segmentRadian = Math.PI / vertices;
 		const inner = new Point(radius, 0);
-		const tweak = segmentAngle / 5;
+		const tweak = segmentRadian / 5;
 		let data = [];
 		let i = 0;
 		while (i++ < vertices) {
-			const angle = direction + i * segmentAngle * 2; // multiples of one third of a circle
-			const halfWay = angle - segmentAngle;
+			const clockwise_radians = direction + i * segmentRadian * 2; // multiples of one third of a circle
+			const halfWay = clockwise_radians - segmentRadian;
 			const preceder = halfWay - tweak;
 			const follower = halfWay + tweak;
 			data.push({
-				controlOne: outer.rotateBy(preceder).offsetBy(offset),
-				controlTwo: outer.rotateBy(follower).offsetBy(offset),
-				end:		inner.rotateBy(   angle).offsetBy(offset),
+				controlOne: outer.rotate_clockwiseBy(preceder).offsetBy(offset),
+				controlTwo: outer.rotate_clockwiseBy(follower).offsetBy(offset),
+				end:		inner.rotate_clockwiseBy(   clockwise_radians).offsetBy(offset),
 			});
 		}
 		const start = data[vertices - 1].end;

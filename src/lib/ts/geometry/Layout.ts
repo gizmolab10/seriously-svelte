@@ -1,4 +1,4 @@
-import { g, k, u, get, Path, Rect, Size, Point, Angles, IDLine, Predicate, ChildMapRect, ClusterLayout } from '../common/GlobalImports';
+import { g, k, u, get, Path, Rect, Size, Point, Radians, IDLine, Predicate, ChildMapRect, ClusterLayout } from '../common/GlobalImports';
 import { s_layout_byClusters } from '../common/State';
 
 export default class Layout {
@@ -35,25 +35,47 @@ export default class Layout {
 	}
 
 	layoutCluster(paths: Array<Path>, clusterPath: Path, idPredicate: string, origin: Point, pointsTo: boolean) {
-		const length = paths.length;
-		if (length > 0) {
-			const clusterLayout = new ClusterLayout(idPredicate, pointsTo);
-			const radius = k.necklace_gap + k.cluster_focus_radius;
-			const start_angle = clusterLayout.angle;
+		const count = paths.length;
+		if (count > 0) {
+			const clusterLayout = new ClusterLayout(idPredicate, count, pointsTo);
+			const radius = k.necklace_gap + k.cluster_inside_radius;
 			const radial = new Point(radius, 0);
-			const start_row = (8 - length) / 2;
 			this.clusterLayouts.push(clusterLayout);
 			let index = 0;
-			while (index < length) {
+			while (index < count) {
 				const path = paths[index];
-				const height = (start_row + index) * k.row_height;
-				const angle = start_angle + Math.asin(height / radius);
-				const childOrigin = origin.offsetBy(radial.rotateBy(angle));
-				const map = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, path, clusterPath, angle % Angles.full);
+				const clockwise_radians = this.clockwise_radians(index, count, clusterLayout.clockwise_radians, radial, path.title);
+				const childOrigin = origin.offsetBy(radial.rotate_clockwiseBy(clockwise_radians));
+				const map = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, path, clusterPath, clockwise_radians);
 				this.childMapRectArray.push(map);
 				index += 1;
 			}
 		}
+	}
+
+	broken_clockwise_radians(index: number, count: number, radians: number, radial: Point, title: string): number {
+		const startY = radial.rotate_clockwiseBy(radians).y;			// height of radians
+		// const quadrant = u.quadrant_of(radians);						// quadrant of radians
+		const row = index - (count / 2);								// row centered around zero
+		let y = startY + (row * k.row_height);							// height of row
+		if (Math.abs(y) > radial.x) {
+			y = radial.x;
+		}
+		const delta = u.normalized_radians(Math.asin(y / radial.x));	// divide by radius and grab its arc sign
+		// const quadrantRadian = u.quadrant_startRadian(radians);		// quadrant of radians
+		// depending on the quadrant
+		// add or subtract it from radians
+		// const clockwise_radians = u.normalized_radians(quadrantRadian + delta);
+		const string = u.degrees_of(delta);
+		console.log(`index ${index} delta ${string} for \"${title}\"`);
+		return -delta;
+	}
+
+	clockwise_radians(row: number, count: number, radians: number, radial: Point): number {
+		const start_row = (8 - count) / 2;
+		const y = (start_row + row) * k.row_height;
+		const delta = Math.asin(y / radial.x);
+		return radians + delta - Math.PI * 0.136;
 	}
 
 	originForChildrenOf(childPath: Path, origin: Point, extent: Point): Point {

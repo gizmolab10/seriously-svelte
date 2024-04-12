@@ -6,7 +6,7 @@
 	export let name = k.empty;
 	export let thickness = 1;
 	export let radius = 5;
-	export let angle = 0;
+	export let clockwise_radians = 0;
 	export let color;
 	let diameter = 0;
 	let svgPath = k.empty;
@@ -14,7 +14,7 @@
 	$: {
 		diameter = radius * 2;
 		const skip = [1, 4];
-		svgPath = svgPaths.polygon(radius, angle, 5, skip);
+		svgPath = svgPaths.polygon(radius, clockwise_radians, 5, skip);
 	}
 
 </script>
