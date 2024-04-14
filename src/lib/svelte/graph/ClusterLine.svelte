@@ -56,39 +56,41 @@
 
 </script>
 
-<div class='arrow'
-	id={idDiv}
-	style='z-index: {ZIndex.lines};
-		position: absolute;
-		top: {top + center.y}px;
-		left: {left + center.x}px;'>
-	<svg class='line'
-		bind:this={line}
-		width={size.width}px
-		height={size.height}px>
-		style='z-index: ${ZIndex.lines}; position: absolute'
-		<path d={svgPath} stroke={color} fill='none'/>
-	</svg>
-	<div class='label' style='
-		left: {label_left}px;
-		white-space: nowrap;
-		position: absolute;
-		font-family: Arial;
-		top: {label_top}px;
-		font-size: 0.5em;
-		color: {color};
-		background-color: {k.color_background};
-		left: 20px;'>
-		{layout?.title}
-	</div>
-	{#if showArrowHeads}
-		{#if layout?.predicate.directions == 2}
-			<ArrowHead idDiv='child'  angle={angle} color={color} color_background={color} radius={thickness} center={arrow_end}/>
-			<ArrowHead idDiv='parent' angle={angle + Angle.half} color={color} color_background={color} radius={thickness} center={arrow_start}/>
-		{:else if layout?.pointsTo}
-			<ArrowHead idDiv='child'  angle={angle} color={color} color_background={color} radius={thickness} center={arrow_end}/>
-		{:else}
-			<ArrowHead idDiv='parent' angle={angle + Angle.half} color={color} color_background={color} radius={thickness} center={arrow_start}/>
+{#key rebuilds}
+	<div class='cluster_line'
+		id={idDiv}
+		style='z-index: {ZIndex.lines};
+			position: absolute;
+			top: {top + center.y}px;
+			left: {left + center.x}px;'>
+		<svg class='line'
+			bind:this={line}
+			width={size.width}px
+			height={size.height}px>
+			style='z-index: ${ZIndex.lines}; position: absolute'
+			<path d={svgPath} stroke={color} fill='none'/>
+		</svg>
+		<div class='label' style='
+			left: {label_left}px;
+			white-space: nowrap;
+			position: absolute;
+			font-family: Arial;
+			top: {label_top}px;
+			font-size: 0.5em;
+			color: {color};
+			background-color: {k.color_background};
+			left: 20px;'>
+			{layout?.title}
+		</div>
+		{#if showArrowHeads}
+			{#if layout?.predicate.directions == 2}
+				<ArrowHead idDiv='child'  angle={angle} color={color} color_background={color} radius={thickness} center={arrow_end}/>
+				<ArrowHead idDiv='parent' angle={angle + Angle.half} color={color} color_background={color} radius={thickness} center={arrow_start}/>
+			{:else if layout?.pointsTo}
+				<ArrowHead idDiv='child'  angle={angle} color={color} color_background={color} radius={thickness} center={arrow_end}/>
+			{:else}
+				<ArrowHead idDiv='parent' angle={angle + Angle.half} color={color} color_background={color} radius={thickness} center={arrow_start}/>
+			{/if}
 		{/if}
-	{/if}
-</div>
+	</div>
+{/key}

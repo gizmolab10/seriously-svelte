@@ -18,19 +18,15 @@
 	let greenRect: Rect;
 	let blueRect: Rect;
 	let redRect: Rect;
-	let toggle = true;
 	let focus: Thing;
+	let rebuilds = 0;
 	let height = 0;
 	let width = 0;
 	let left = 0;
 	let top = 0;
-
-	function rebuild() { toggle = !toggle; }
 	
 	onMount( () => {
-		const handler = signals.handle_relayoutWidgets((path) => {
-			updateOrigins();
-		});
+		const handler = signals.handle_relayoutWidgets((path) => { updateOrigins(); });
 		return () => { handler.disconnect() };
 	});
 	
@@ -48,7 +44,7 @@
 			focus = !$s_path_focus ? g.root : h.thing_forPath($s_path_focus);
 			offsetX_ofFirstReveal = g.titleIsAtTop ? 0 : focus?.titleWidth / 2;
 			updateOrigins();
-			rebuild();
+			rebuilds += 1;
 		}
 	}
 
@@ -85,7 +81,7 @@
 </script>
 
 {#if focus}
-	{#key toggle}
+	{#key rebuilds}
 		<div class='tree'
 			style='transform: translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px);'
 			on:keyup={u.ignore}

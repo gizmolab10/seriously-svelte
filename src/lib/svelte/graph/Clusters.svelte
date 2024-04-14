@@ -15,9 +15,11 @@
 	let center = Point.zero;
 	let size = Size.zero;
 	let titleWidth = 0;
+	let rebuilds = 0;
 	let offsetX = 0;
 
 	$: {
+		rebuilds += 1;
 		size = $s_graphRect.size;
 		const thing = path.thing;
 		center = size.dividedInHalf.asPoint;
@@ -29,7 +31,7 @@
 </script>
 
 <div class='clusters' style='transform: translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px);'>
-	{#key path}
+	{#key `${path.hashedPath} ${rebuilds}`}
 		<Circle
 			center={center}
 			color_background='transparent'

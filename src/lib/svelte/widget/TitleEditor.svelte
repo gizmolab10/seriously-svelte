@@ -31,10 +31,6 @@
 	};
 	
 	onMount(() => {
-		if (angle < 0) {
-			console.log(`TitleEditor`);
-		}
-		// console.log(`normal ${normal} ${u.quadrant_of(angle)} ${u.degrees_of(angle)} ${thingTitle}`)
 		titleWidth = u.getWidthOf(thingTitle);
 		left = normal ? 10 : -10 - titleWidth;
 		const handler = signals.handle_anySignal((IDSignal, path) => { updateInputWidth(); });

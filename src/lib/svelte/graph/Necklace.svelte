@@ -9,12 +9,13 @@
 	let color = path.thing?.color ?? k.color_default;
 	let clusterLayouts: Array<ClusterLayout> = [];
 	let childMapRects: Array<ChildMapRect> = [];
+	let rebuilds = 0;
 	
 	onMount( () => {
 		const layout = new Layout(path, center);
 		childMapRects = layout.childMapRects;
 		clusterLayouts = layout.clusterLayouts;
-		const handler = signals.handle_relayoutWidgets((signal_path) => {});	// TODO: what is this noop for?
+		const handler = signals.handle_anySignal((signal_path) => { rebuilds += 1; });
 		return () => { handler.disconnect() };
 	});
 	
@@ -29,13 +30,15 @@
 	//  hover
 </script>
 
-{#if childMapRects}
-	{#each childMapRects as map}
-		<Widget path={map.childPath} angle={map.childAngle} origin={map.childOrigin.offsetBy(childOffset)}/>
-	{/each}
-{/if}
-{#if clusterLayouts}
-	{#each clusterLayouts as clusterLayout}
-		<ClusterLine layout={clusterLayout} center={center} color={color}/>
-	{/each}
-{/if}
+{#key rebuilds}
+	{#if childMapRects}
+		{#each childMapRects as map}
+			<Widget path={map.childPath} angle={map.childAngle} origin={map.childOrigin.offsetBy(childOffset)}/>
+		{/each}
+	{/if}
+	{#if clusterLayouts}
+		{#each clusterLayouts as clusterLayout}
+			<ClusterLine layout={clusterLayout} center={center} color={color}/>
+		{/each}
+	{/if}
+{/key}

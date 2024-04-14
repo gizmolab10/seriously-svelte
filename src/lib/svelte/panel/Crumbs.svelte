@@ -4,15 +4,15 @@
 	import Crumb from '../kit/Crumb.svelte';
 	import SVGD3 from '../svg/SVGD3.svelte';
 	let ancestors: Array<Thing> = [];
+	let rebuilds = 0;
 	let trigger = 0;
 	let path: Path;
-	let count = 0;
 	let width = 0;
 	let size = 16;
 	let left = 0;
 
 	onMount( () => {
-		const handler = signals.handle_rebuildWidgets((path) => { count += 1; });
+		const handler = signals.handle_rebuildWidgets((path) => { rebuilds += 1; });
 		return () => { handler.disconnect() };
 	});
 
@@ -24,7 +24,7 @@
 			let encodedCount = 0;
 			[encodedCount, width, ancestors] = path.things_ancestryWithin(windowWidth - 10);
 			left = (windowWidth - width - 20) / 2;
-			trigger = encodedCount * 10000 + count * 100 + left;
+			trigger = encodedCount * 10000 + rebuilds * 100 + left;
 		}
 	}
 
