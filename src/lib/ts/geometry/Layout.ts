@@ -45,7 +45,7 @@ export default class Layout {
 				const childAngle = this.childAngle_for(index, count, clusterLayout, radius);
 				const childOrigin = origin.offsetBy(new Point(radius, 0).rotate_by(childAngle));
 				const map = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, path, clusterPath, childAngle);
-				console.log(`childAngle ${childAngle} ${idPredicate} \"${path.title}\"`);
+				// console.log(`childAngle ${childAngle} ${idPredicate} \"${path.title}\"`);
 				this.childMapRects.push(map);
 				index += 1;
 			}
@@ -54,7 +54,7 @@ export default class Layout {
 	}
 
 	childAngle_for(index: number, count: number, clusterLayout: ClusterLayout, radius: number): number {
-		const row = index - (count / 2);					// row centered around zero
+		const row = index - ((count - 1) / 2);					// row centered around zero
 		const radial = new Point(radius, 0);
 		const clusterAngle = clusterLayout.angle;			// depends on s_cluster_angle, predicate kind & pointsTo
 		const startY = radial.rotate_by(clusterAngle).y;	// height of clusterAngle
@@ -62,7 +62,10 @@ export default class Layout {
 		if (Math.abs(y) > radius) {
 			y = radius;
 		}
-		const angle = u.normalized_angle(-Math.asin(y / radius));	// negate arc sign for clockwise
+		let angle = u.normalized_angle(-Math.asin(y / radius));	// negate arc sign for clockwise
+		if (!clusterLayout.pointsTo && clusterLayout.idPredicate != Predicate.idIsRelated) {
+			angle = u.normalized_angle(Angle.half - angle);
+		}
 		return angle;
 	}
 
