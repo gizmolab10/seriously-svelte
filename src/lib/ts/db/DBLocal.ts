@@ -29,12 +29,12 @@ export default class DBLocal implements DBInterface {
 		const idPr = 'related';
 		h.predicate_remember_runtimeCreateUnique(idPc, 'contains', false);
 		h.predicate_remember_runtimeCreateUnique(idPr, 'isRelated', false, 2);
-		h.thing_remember_runtimeCreateUnique(k.empty, idTa, 'A -- 1 each', 'red', '1', false);
-		h.thing_remember_runtimeCreateUnique(k.empty, idTb, 'B -- 2 each', 'purple', '2', false);
-		h.thing_remember_runtimeCreateUnique(k.empty, idTc, 'C -- 1 related', 'blue', '3', false);
-		h.thing_remember_runtimeCreateUnique(k.empty, idTd, 'D -- 4 parents', 'green', 'a', false);
-		h.thing_remember_runtimeCreateUnique(k.empty, idTe, 'E -- 1 related', 'mediumvioletred', 'a', false);
-		h.thing_remember_runtimeCreateUnique(k.empty, idTr, 'R -- 1 related', 'limegreen', IDTrait.root, false);
+		h.thing_remember_runtimeCreateUnique(k.empty, idTa, 'A 1<= 3> A', 'red', '1', false);
+		h.thing_remember_runtimeCreateUnique(k.empty, idTb, 'B 2 all B', 'purple', '2', false);
+		h.thing_remember_runtimeCreateUnique(k.empty, idTc, 'C 2<= 1> C', 'blue', '3', false);
+		h.thing_remember_runtimeCreateUnique(k.empty, idTd, 'D 4< 1=>  D', 'green', 'a', false);
+		h.thing_remember_runtimeCreateUnique(k.empty, idTe, 'E 2< 1=  E', 'mediumvioletred', 'a', false);
+		h.thing_remember_runtimeCreateUnique(k.empty, idTr, 'R 1= 4> R', 'limegreen', IDTrait.root, false);
 		h.relationship_remember_runtimeCreateUnique(k.empty, 'Cra', idPc, idTr, idTa, 0);
 		h.relationship_remember_runtimeCreateUnique(k.empty, 'Crb', idPc, idTr, idTb, 1);
 		h.relationship_remember_runtimeCreateUnique(k.empty, 'Crc', idPc, idTr, idTc, 2);
@@ -49,6 +49,7 @@ export default class DBLocal implements DBInterface {
 		h.relationship_remember_runtimeCreateUnique(k.empty, 'Rrb', idPr, idTr, idTb, 2);
 		h.relationship_remember_runtimeCreateUnique(k.empty, 'Rac', idPr, idTa, idTc, 2);
 		h.relationship_remember_runtimeCreateUnique(k.empty, 'Rbe', idPr, idTb, idTe, 2);
+		h.relationship_remember_runtimeCreateUnique(k.empty, 'Rcd', idPr, idTc, idTd, 2);
 	};
 
 	queryStrings_apply() {}

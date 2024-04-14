@@ -8,7 +8,7 @@
 	import DotReveal from './DotReveal.svelte';
 	import DotDrag from './DotDrag.svelte';
 	export let origin = new Point();
-    export let clockwise_radians = 0;
+    export let angle = 0;
     export let path;
 	const hasExtraX = !path?.isExpanded && (path?.childRelationships.length > 3);
 	const rightPadding = hasExtraX ? 22.5 : 19;
@@ -142,7 +142,7 @@
 		border-radius: {radius}px;
 	'>
 	<DotDrag path={path}/>
-	<TitleEditor path={path} clockwise_radians={clockwise_radians} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
+	<TitleEditor path={path} angle={angle} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 	{#if path?.showsReveal}
 		<DotReveal path={path} center={revealCenter}/>
 	{/if}

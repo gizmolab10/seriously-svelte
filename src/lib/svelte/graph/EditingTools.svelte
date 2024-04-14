@@ -14,7 +14,7 @@
     const graphToolsRadius = graphToolsDiameter / 2;
     const needsMultipleVisibleParents = [IDTool.next, IDTool.delete_parent];
     const parentAltering = [IDTool.add_parent, IDTool.delete_parent];
-    const halfCircleViewBox = `0 0 ${graphToolsDiameter} ${graphToolsDiameter}`;
+    const half_circleViewBox = `0 0 ${graphToolsDiameter} ${graphToolsDiameter}`;
     let hovers: { [type: string]: boolean } = {}
     let centers: { [type: string]: Point } = {}
     let countOfVisibleParents = 0;
@@ -178,12 +178,12 @@
                             left:{getC(IDTool.confirmation).x}px;
                             top:{getC(IDTool.confirmation).y}px;
                             z-index:{ZIndex.lines};'
-                        viewBox={halfCircleViewBox}
+                        viewBox={half_circleViewBox}
                         height={graphToolsDiameter}
                         width={graphToolsDiameter}
                         stroke=transparent
                         fill={color}>
-                        <path d={svgPaths.halfCircle(graphToolsDiameter, Direction.up)}/>
+                        <path d={svgPaths.half_circle(graphToolsDiameter, Direction.up)}/>
                     </svg>
                 {/if}
                 {#if hovers[IDTool.delete_cancel]}
@@ -191,11 +191,11 @@
                             left:{getC(IDTool.confirmation).x}px;
                             top:{getC(IDTool.confirmation).y}px;
                             z-index:{ZIndex.lines};'
-                        viewBox={halfCircleViewBox}
+                        viewBox={half_circleViewBox}
                         height={graphToolsDiameter}
                         width={graphToolsDiameter}
                         fill={color}>
-                        <path d={svgPaths.halfCircle(graphToolsDiameter, Direction.down)}/>
+                        <path d={svgPaths.half_circle(graphToolsDiameter, Direction.down)}/>
                     </svg>
                 {/if}
                 <LabelButton
@@ -270,7 +270,7 @@
                 cursor={isDisabledFor(IDTool.add_parent) ? 'normal' : 'pointer'}
                 onClick={(event) => handleClick(IDTool.add_parent, event)}
                 strokeColor={isDisabledFor(IDTool.add_parent) ? k.color_disabled : color}
-                extraPath={svgPaths.tCross(toolDiameter, 3)}
+                extraPath={svgPaths.t_cross(toolDiameter, 3)}
                 center={getC(IDTool.add_parent)}
                 direction={Direction.left}
                 id='add_parent'
@@ -278,7 +278,7 @@
             <TriangleButton
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.create, isFilled) }}
                 onClick={(event) => handleClick(IDTool.create, event)}
-                extraPath={svgPaths.tCross(toolDiameter, 3)}
+                extraPath={svgPaths.t_cross(toolDiameter, 3)}
                 center={getC(IDTool.create)}
                 direction={Direction.right}
                 strokeColor={color}

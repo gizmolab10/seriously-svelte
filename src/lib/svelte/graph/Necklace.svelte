@@ -7,14 +7,14 @@
     export let path;
 	let childOffset = new Point(k.dot_size / -3, k.cluster_offsetY);;
 	let color = path.thing?.color ?? k.color_default;
-	let childMapRectArray: Array<ChildMapRect> = [];
 	let clusterLayouts: Array<ClusterLayout> = [];
+	let childMapRects: Array<ChildMapRect> = [];
 	
 	onMount( () => {
 		const layout = new Layout(path, center);
-		childMapRectArray = layout.childMapRectArray;
+		childMapRects = layout.childMapRects;
 		clusterLayouts = layout.clusterLayouts;
-		const handler = signals.handle_relayoutWidgets((signal_path) => {});
+		const handler = signals.handle_relayoutWidgets((signal_path) => {});	// TODO: what is this noop for?
 		return () => { handler.disconnect() };
 	});
 	
@@ -29,13 +29,13 @@
 	//  hover
 </script>
 
-{#if childMapRectArray}
-	{#each childMapRectArray as map}
-		<Widget path={map.childPath} clockwise_radians={map.clockwise_radians} origin={map.childOrigin.offsetBy(childOffset)}/>
+{#if childMapRects}
+	{#each childMapRects as map}
+		<Widget path={map.childPath} angle={map.childAngle} origin={map.childOrigin.offsetBy(childOffset)}/>
 	{/each}
 {/if}
 {#if clusterLayouts}
 	{#each clusterLayouts as clusterLayout}
-		<ClusterLine clusterLayout={clusterLayout} center={center} color={color}/>
+		<ClusterLine layout={clusterLayout} center={center} color={color}/>
 	{/each}
 {/if}

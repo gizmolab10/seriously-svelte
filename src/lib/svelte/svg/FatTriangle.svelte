@@ -7,7 +7,7 @@
 	export let fillColor;
 	export let position;
 	export let size;
-	const svgPath = svgPaths.fatPolygon(size, Direction.left);
+	const svgPath = svgPaths.fat_polygon(size, Direction.left);
 
 </script>
 

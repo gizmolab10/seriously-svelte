@@ -12,7 +12,7 @@ export default class ClusterLayout {
 	}
 
 	get predicate(): Predicate | null { return g.hierarchy.predicate_forID(this.idPredicate); }
-	get clockwise_radians(): number { return this.predicate?.clusterRadian(this.pointsTo) ?? 0; }
+	get angle(): number { return this.predicate?.clusterAngle_for(this.pointsTo) ?? 0; }
 
 	get title(): string {
 		const reversed = !this.pointsTo && this.predicate?.id == Predicate.idContains;

@@ -10,7 +10,7 @@
     export let path;
 	const widgetOffset = new Point(12, (k.dot_size / -15) - 10.7);
 	const lineOffset = new Point(-123.5, -1);
-	let childMapRectArray: Array<ChildMapRect> = [];
+	let childMapRects: Array<ChildMapRect> = [];
 	let priorTime = new Date().getTime();
 	let center = new Point();
 	
@@ -43,7 +43,7 @@
 			const delta = new Point(17.9, -2.4);
 			const height = path.visibleProgeny_halfHeight;
 			const childrenOrigin = origin.offsetByY(height);
-			childMapRectArray = new Layout(path, childrenOrigin).childMapRectArray;
+			childMapRects = new Layout(path, childrenOrigin).childMapRects;
 			center = childrenOrigin.offsetBy(delta);
 		} else {
 			console.log(`not expanded, cannot layout ${path.description}`);
@@ -56,7 +56,7 @@
 	<Circle radius=1 center={center} color=black thickness=1/>
 {/if}
 {#if path.isExpanded}
-	{#each childMapRectArray as map}
+	{#each childMapRects as map}
 		<Widget path={map.childPath} origin={map.extent.offsetBy(widgetOffset)}/>
 		<TreeLine path={map.childPath} curveType={map.curveType} rect={map.offsetBy(lineOffset)}/>
 		{#if map.childPath.showsChildRelationships}

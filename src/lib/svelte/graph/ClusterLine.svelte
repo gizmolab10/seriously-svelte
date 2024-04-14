@@ -1,21 +1,22 @@
 <script lang='ts'>
-	import { g, k, u, Rect, Size, Point, Radians, onMount, ZIndex, svgPaths } from '../../ts/common/GlobalImports';
+	import { g, k, u, Rect, Size, Point, Angle, onMount, ZIndex, svgPaths } from '../../ts/common/GlobalImports';
 	import { IDLine, Quadrant, Wrapper, IDWrapper, ClusterLayout } from '../../ts/common/GlobalImports';
 	import ArrowHead from '../kit/ArrowHead.svelte';
 	import Box from '../kit/Box.svelte';
-    export let clusterLayout: ClusterLayout;
 	export let color = k.color_default;
+    export let layout: ClusterLayout;
 	export let center = Point.zero;
+	const idDiv = `${layout?.pointsTo ? 'child' : 'parent'} ${layout?.predicate.kind}`;
 	const showArrowHeads = false;
-	const name = `${clusterLayout?.pointsTo ? 'child' : 'parent'} ${clusterLayout?.predicate.kind}`;
-	let head_start = Point.zero;
-	let head_end = Point.zero;
+	let arrow_start = Point.zero;
+	let arrow_end = Point.zero;
 	let lineWrapper: Wrapper;
-	let clockwise_radians = 0;
 	let svgPath = k.empty;
 	let size = Size.zero;
+	let label_left = 0;
 	let label_top = 0;
 	let thickness = 5;
+	let angle = 0;
 	let left = 0;
 	let top = 0;
 	let line;
@@ -24,26 +25,25 @@
 		if (line && !lineWrapper) {
 			lineWrapper = new Wrapper(line, g.rootPath, IDWrapper.line);
 		}
-		clockwise_radians = clusterLayout?.clockwise_radians;
+		angle = layout?.angle;
 		const inside_radius = k.cluster_inside_radius + (showArrowHeads ? 8 : 0);
 		const line_length = k.necklace_gap - k.dot_size * (showArrowHeads ? 8 : 0.4);
-		const line_rotated = new Point(line_length, 0).rotate_clockwiseBy(clockwise_radians);
-		const inside_rotated = new Point(inside_radius, 0).rotate_clockwiseBy(clockwise_radians);
-		svgPath = svgPaths.line(line_rotated);
+		const line_rotated = new Point(line_length, 0).rotate_by(angle);
+		const inside_rotated = new Point(inside_radius, 0).rotate_by(angle);
+		const titleWidth = u.getWidthOf(layout?.title);
 		size = line_rotated.abs.asSize;
+		const rect = new Rect(Point.zero, size);
+		const center = rect.center;
+		svgPath = svgPaths.line(line_rotated);
 		[left, top] = updateLine(line_rotated, inside_rotated);
-		[head_start, head_end] = new Rect(Point.zero, size).cornersForRadian(clockwise_radians);
-		switch (u.quadrant_of(clockwise_radians)) {
-			case Quadrant.upperRight: label_top = 20; break;
-			case Quadrant.lowerRight: label_top = 25; break;
-			case Quadrant.upperLeft:  label_top = 15; break;
-			default:				  break;
-		}
+		[arrow_start, arrow_end] = rect.cornersForAngle(angle);
+		label_left = center.x - titleWidth / 2;
+		label_top = center.y;
 	}
 
 	function updateLine(line_rotated: Point, inside_rotated: Point): [number, number] {
 		let outside_rotated = inside_rotated;
-		if (clusterLayout?.predicate.directions == 2 || !clusterLayout?.pointsTo) {
+		if (layout?.predicate.directions == 2 || !layout?.pointsTo) {
 			outside_rotated = inside_rotated.offsetBy(line_rotated);
 		}
 		switch (u.point_quadrant(line_rotated)) {
@@ -57,7 +57,7 @@
 </script>
 
 <div class='arrow'
-	id={name}
+	id={idDiv}
 	style='z-index: {ZIndex.lines};
 		position: absolute;
 		top: {top + center.y}px;
@@ -70,6 +70,7 @@
 		<path d={svgPath} stroke={color} fill='none'/>
 	</svg>
 	<div class='label' style='
+		left: {label_left}px;
 		white-space: nowrap;
 		position: absolute;
 		font-family: Arial;
@@ -78,16 +79,16 @@
 		color: {color};
 		background-color: {k.color_background};
 		left: 20px;'>
-		{clusterLayout?.title}
+		{layout?.title}
 	</div>
 	{#if showArrowHeads}
-		{#if clusterLayout?.predicate.directions == 2}
-			<ArrowHead name='child'  clockwise_radians={clockwise_radians} color={color} color_background={color} radius={thickness} center={head_end}/>
-			<ArrowHead name='parent' clockwise_radians={clockwise_radians + Radians.half} color={color} color_background={color} radius={thickness} center={head_start}/>
-		{:else if clusterLayout?.pointsTo}
-			<ArrowHead name='child'  clockwise_radians={clockwise_radians} color={color} color_background={color} radius={thickness} center={head_end}/>
+		{#if layout?.predicate.directions == 2}
+			<ArrowHead idDiv='child'  angle={angle} color={color} color_background={color} radius={thickness} center={arrow_end}/>
+			<ArrowHead idDiv='parent' angle={angle + Angle.half} color={color} color_background={color} radius={thickness} center={arrow_start}/>
+		{:else if layout?.pointsTo}
+			<ArrowHead idDiv='child'  angle={angle} color={color} color_background={color} radius={thickness} center={arrow_end}/>
 		{:else}
-			<ArrowHead name='parent' clockwise_radians={clockwise_radians + Radians.half} color={color} color_background={color} radius={thickness} center={head_start}/>
+			<ArrowHead idDiv='parent' angle={angle + Angle.half} color={color} color_background={color} radius={thickness} center={arrow_start}/>
 		{/if}
 	{/if}
 </div>

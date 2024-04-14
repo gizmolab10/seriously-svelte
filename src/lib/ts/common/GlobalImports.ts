@@ -1,4 +1,4 @@
-import { IDTrait, ZIndex, Radians, Quadrant, IDButton, IDBrowser, AlteringParent, PredicateKind } from './Enumerations';
+import { IDTrait, ZIndex, Angle, Quadrant, IDButton, IDBrowser, AlteringParent, PredicateKind } from './Enumerations';
 import { debugReact, DebugReact, ReactFlag } from '../debug/DebugReact';
 import { Rect, Size, Point, ChildMapRect } from '../geometry/Geometry';
 import { IDPersistant, persistLocal } from '../managers/PersistLocal';
@@ -38,7 +38,7 @@ export {
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactFlag,
 	g, k, u, get, builds, onMount, onDestroy, setContext, getContext,
 	User, Datum, Thing, Access, Predicate, Relationship, SeriouslyRange,
-	dbDispatch, Hierarchy, persistLocal, Quadrant, Radians, transparentize,
+	dbDispatch, Hierarchy, persistLocal, Quadrant, Angle, transparentize,
 	IDLine, IDTool, IDTrait, IDWrapper, IDButton, IDBrowser, IDPersistant,
 	ZIndex, TypeDB, TypeDatum, AlteringParent, PredicateKind, CreationOptions,
 	Rect, Size, Point, Layout, svgPaths, Direction, ChildMapRect, ClusterLayout,

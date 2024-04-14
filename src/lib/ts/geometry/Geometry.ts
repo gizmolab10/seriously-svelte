@@ -26,9 +26,9 @@ export class Point {
 	static square(length: number):	  Point { return new Point(length, length); }
 	static get zero():				  Point { return new Point();}
 
-	rotate_clockwiseBy(clockwise_radians: number): Point {
-		const cos = Math.cos(clockwise_radians);
-		const sin = Math.sin(clockwise_radians);
+	rotate_by(angle: number): Point {
+		const cos = Math.cos(angle);
+		const sin = Math.sin(angle);
 		return new Point(
 			this.x * cos + this.y * sin,
 			this.y * cos - this.x * sin
@@ -95,8 +95,8 @@ export class Rect {
 		return new Rect(origin, size)
 	}
 
-	cornersForRadian(clockwise_radians: number): [Point, Point] {
-		switch (u.quadrant_of(clockwise_radians)) {
+	cornersForAngle(angle: number): [Point, Point] {
+		switch (u.quadrant_of(angle)) {
 			case Quadrant.upperRight: return [this.bottomLeft, this.topRight];
 			case Quadrant.lowerLeft:  return [this.topRight, this.bottomLeft];
 			case Quadrant.upperLeft:  return [this.extent, this.origin];
@@ -123,22 +123,24 @@ export class Rect {
 }
 
 export class ChildMapRect extends Rect {
+	childAngle: number | null;
 	childPath: Path | null;
-	clockwise_radians: number | null;
 	child: Thing | null;
 	childOrigin: Point;
 	curveType: string;
 	path: Path | null;
 
-	constructor(curveType: string, rect: Rect, childOrigin: Point, childPath: Path | null, path: Path | null, clockwise_radians: number | null = null) {
+	constructor(curveType: string, rect: Rect, childOrigin: Point, childPath: Path | null, path: Path | null, childAngle: number | null = null) {
 		super(rect.origin.copy, rect.size.copy);
 		this.child = childPath?.thing ?? null;
 		this.childOrigin = childOrigin;
+		this.childAngle = childAngle;
 		this.childPath = childPath;
 		this.curveType = curveType;
-		this.clockwise_radians = clockwise_radians;
 		this.path = path;
-
+		if (this.childAngle < 0) {
+			console.log('BOOM!');
+		}
 		if (this.child == null) {
 			console.log('ChildMapRect: null childPath.thing');
 		}

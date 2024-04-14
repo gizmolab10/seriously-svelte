@@ -14,13 +14,13 @@ export default class SVGPaths {
         return `M${margin} ${y} L${diameter - margin} ${y}`;
     }
 
-    xCross(diameter: number, margin: number): string {
+    x_cross(diameter: number, margin: number): string {
 		const start = margin + 2;
 		const end = diameter - start;
         return `M${start} ${start} L${end} ${end} M${start} ${end} L${end} ${start}`;
     }
 
-    tCross(diameter: number, margin: number): string {
+    t_cross(diameter: number, margin: number): string {
 		const radius = diameter / 2;
 		const length = (radius - margin) * 2;
         return `M${margin + 2} ${radius} L${length + 1} ${radius} M${radius} ${margin + 2} L${radius} ${diameter - margin - 2}`;
@@ -52,8 +52,8 @@ export default class SVGPaths {
 		}
 	}
 
-	polygon(radius: number, clockwise_radians: number, count: number = 3, skip: Array<number>): string {
-		const points = u.polygonPoints(radius, count, clockwise_radians);
+	polygon(radius: number, angle: number, count: number = 3, skip: Array<number>): string {
+		const points = u.polygonPoints(radius, count, angle);
 		const center = Point.square(radius);
 		let index = count;
 		let path = 'M ';
@@ -69,7 +69,7 @@ export default class SVGPaths {
 		return path;
 	}
 
-    halfCircle(diameter: number, direction: number): string {
+    half_circle(diameter: number, direction: number): string {
 		const vertical = [Direction.up, Direction.down].includes(direction);
         const radius = diameter / 2;
 		if (vertical) {
@@ -106,7 +106,7 @@ export default class SVGPaths {
 		let offset = new Point(isOdd ? radius : 0, isOdd ? 0 : radius);2
 		while (i++ < count) {
 			path = path + this.circle(size, 2, offset.offsetBy(new Point(-0.7, 0.3)));
-			offset = offset.rotate_clockwiseBy(increment);
+			offset = offset.rotate_by(increment);
 		}
 		return path;
 	}
@@ -139,27 +139,27 @@ export default class SVGPaths {
 	}
 
 	// TODO: this only works for the default number of vertices (3)
-	fatPolygon(size: number, direction: number, vertices: number = 3): string {
+	fat_polygon(size: number, direction: number, vertices: number = 3): string {
 		const width = size;
 		const height = size;
 		const insetRatio = 0.35;
 		const radius = Math.min(width, height) * insetRatio;
 		const offset = new Point(width / 2, height / 2);
 		const outer = new Point(radius * 1.5, 0);
-		const segmentRadian = Math.PI / vertices;
+		const segmentAngle = Math.PI / vertices;
 		const inner = new Point(radius, 0);
-		const tweak = segmentRadian / 5;
+		const tweak = segmentAngle / 5;
 		let data = [];
 		let i = 0;
 		while (i++ < vertices) {
-			const clockwise_radians = direction + i * segmentRadian * 2; // multiples of one third of a circle
-			const halfWay = clockwise_radians - segmentRadian;
+			const angle = direction + i * segmentAngle * 2; // multiples of one third of a circle
+			const halfWay = angle - segmentAngle;
 			const preceder = halfWay - tweak;
 			const follower = halfWay + tweak;
 			data.push({
-				controlOne: outer.rotate_clockwiseBy(preceder).offsetBy(offset),
-				controlTwo: outer.rotate_clockwiseBy(follower).offsetBy(offset),
-				end:		inner.rotate_clockwiseBy(   clockwise_radians).offsetBy(offset),
+				controlOne: outer.rotate_by(preceder).offsetBy(offset),
+				controlTwo: outer.rotate_by(follower).offsetBy(offset),
+				end:		inner.rotate_by(   angle).offsetBy(offset),
 			});
 		}
 		const start = data[vertices - 1].end;

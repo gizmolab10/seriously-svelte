@@ -1,13 +1,12 @@
 <script lang='ts'>
 	import { signals, Wrapper, IDWrapper, dbDispatch, SeriouslyRange } from '../../ts/common/GlobalImports';
-	import { g, k, u, Point, Thing, debug, ZIndex, onMount, Radians } from '../../ts/common/GlobalImports';
+	import { g, k, u, Point, Thing, debug, ZIndex, onMount, Angle } from '../../ts/common/GlobalImports';
 	import { s_title_editing, s_paths_grabbed, s_path_graphTools } from '../../ts/common/State';
-    export let clockwise_radians = 0;
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
+    export let angle = 0;
 	export let path;
-	let normalized_radians = u.normalized_radians(clockwise_radians);
-	let normal = normalized_radians < Radians.quarter || normalized_radians > Radians.threeQuarters;
+	let normal = angle < Angle.quarter || angle > Angle.threeQuarters;
 	let position = normal ? k.empty : 'position: absolute';
 	let padding = `0.5px 0px 0px 7px`;	// down half a pixel, 7 over to make room for drag dot
 	let thingTitle = path?.thing?.title ?? k.empty;
@@ -32,7 +31,10 @@
 	};
 	
 	onMount(() => {
-		console.log(`${normal} ${u.quadrant_of(clockwise_radians)} ${thingTitle}`)
+		if (angle < 0) {
+			console.log(`TitleEditor`);
+		}
+		// console.log(`normal ${normal} ${u.quadrant_of(angle)} ${u.degrees_of(angle)} ${thingTitle}`)
 		titleWidth = u.getWidthOf(thingTitle);
 		left = normal ? 10 : -10 - titleWidth;
 		const handler = signals.handle_anySignal((IDSignal, path) => { updateInputWidth(); });

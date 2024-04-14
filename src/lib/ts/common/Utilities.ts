@@ -1,4 +1,4 @@
-import { k, get, Path, Size, Point, Radians, Quadrant, IDBrowser } from './GlobalImports';
+import { k, get, Path, Size, Point, Angle, Quadrant, IDBrowser } from './GlobalImports';
 import { s_scale_factor, s_thing_fontFamily } from './State';
 
 class Utilities {
@@ -7,12 +7,12 @@ class Utilities {
 	roundToEven(n: number): number{ return Math.round(n / 2) * 2; }
 	concatenateArrays<T>(a: Array<T>, b: Array<T>) { return [...a, ...b]; }
 	strip_falsies(array: Array<any>) { return array.filter(element => !!element); }
-	normalized_radians(radians: number) { return (radians + Radians.full) % Radians.full; }
+	normalized_angle(angle: number) { return (angle + Angle.full * 2) % Angle.full; }
 	sort_byOrder(array: Array<Path>) { return array.sort( (a: Path, b: Path) => { return a.order - b.order; }); }
-	quadrant_startRadian(clockwise_radians: number): number { return this.startRadian_ofQuadrant(this.quadrant_of(clockwise_radians)); }
+	quadrant_startAngle(angle: number): number { return this.startAngle_ofQuadrant(this.quadrant_of(angle)); }
 
-	degrees_of(clockwise_radians: number) {
-		const degrees = clockwise_radians * 180 / Math.PI;
+	degrees_of(angle: number) {
+		const degrees = this.normalized_angle(angle) * 180 / Math.PI;
 		return this.formatter_toFixed(1).format(degrees);
 	}
 
@@ -38,6 +38,13 @@ class Utilities {
 		return copiedObject;
 	}
 
+	getFontOf(element: HTMLElement): string {
+		const computedStyle: CSSStyleDeclaration = window.getComputedStyle(element);
+		const fontFamily: string = computedStyle.fontFamily;
+		const fontSize: string = computedStyle.fontSize;
+		return `${fontSize} ${fontFamily}`;
+	}
+
 	remove<T>(from: Array<T>, item: T): void {
 		const index = from.findIndex((element: T) => element === item);
 		if (index !== -1) {
@@ -61,6 +68,32 @@ class Utilities {
 		return Object.values(pathsByHID);
 	}
 
+	sort_byTitleTop(paths: Array<Path>) {
+		return paths.sort( (a: Path, b: Path) => {
+			const aTop = a.titleRect?.origin.y;
+			const bTop = b.titleRect?.origin.y;
+			return (!aTop || !bTop) ? 0 : aTop - bTop;
+		});
+	}
+
+	startAngle_ofQuadrant(quadrant: Quadrant): number {
+		switch (quadrant) {
+			case Quadrant.upperRight: return Angle.threeQuarters;
+			case Quadrant.lowerLeft:  return Angle.quarter;
+			case Quadrant.upperLeft:  return Angle.half;
+			default:				  return 0;
+		}
+	}
+
+	quadrant_of(angle: number): Quadrant {
+		const normalized = this.normalized_angle(angle);
+		let quadrant = Quadrant.upperRight;
+		if (normalized.isBetween(0,				Angle.quarter,		 true)) { quadrant = Quadrant.lowerRight; }
+		if (normalized.isBetween(Angle.quarter, Angle.half,			 true)) { quadrant = Quadrant.lowerLeft; }
+		if (normalized.isBetween(Angle.half,	Angle.threeQuarters, true)) { quadrant = Quadrant.upperLeft; }
+		return quadrant;
+	}
+
 	strip_thingDuplicates(paths: Array<Path>) {
 		let pathsByHID: {[hash: number]: Path} = {};
 		for (const path of paths) {
@@ -70,41 +103,6 @@ class Utilities {
 			}
 		}
 		return Object.values(pathsByHID);
-	}
-
-	sort_byTitleTop(paths: Array<Path>) {
-		return paths.sort( (a: Path, b: Path) => {
-			const aTop = a.titleRect?.origin.y;
-			const bTop = b.titleRect?.origin.y;
-			return (!aTop || !bTop) ? 0 : aTop - bTop;
-		});
-	}
-
-	startRadian_ofQuadrant(quadrant: Quadrant): number {
-		switch (quadrant) {
-			case Quadrant.upperRight: return Radians.threeQuarters;
-			case Quadrant.lowerLeft:  return Radians.quarter;
-			case Quadrant.upperLeft:  return Radians.half;
-			default:				  return 0;
-		}
-	}
-
-	quadrant_of(clockwise_radians: number): Quadrant {
-		const normalized = this.normalized_radians(clockwise_radians);
-		let quadrant = Quadrant.upperRight;
-		if (normalized.isBetween(0,				  Radians.quarter,		 true)) { quadrant = Quadrant.lowerRight; }
-		if (normalized.isBetween(Radians.quarter, Radians.half,			 true)) { quadrant = Quadrant.lowerLeft; }
-		if (normalized.isBetween(Radians.half,	  Radians.threeQuarters, true)) { quadrant = Quadrant.upperLeft; }
-		// console.log(`${this.degrees_of(normalized)} quadrant ${quadrant} from ${this.degrees_of(clockwise_radians)}`)
-		return quadrant;
-	}
-
-	getFontOf(element: HTMLElement): string {
-		const computedStyle: CSSStyleDeclaration = window.getComputedStyle(element);
-		const fontFamily: string = computedStyle.fontFamily;
-		const fontSize: string = computedStyle.fontSize;
-		
-		return `${fontSize} ${fontFamily}`;
 	}
 
 	point_quadrant(point: Point): Quadrant {
@@ -117,18 +115,14 @@ class Utilities {
 		}
 	}
 
-	polygonPoints(radius: number, count: number, offset: number): Array<Point> {
-		const increment = Radians.full / count;
-		const radial = new Point(radius, 0);
-		const points: Point[] = [];
-		let clockwise_radians = offset;
-		let index = count;
-		do {
-			points.push(radial.rotate_clockwiseBy(clockwise_radians));
-			clockwise_radians += increment;
-			index--;
-		} while (index > 0)
-		return points;
+	convertToObject(instance: any, fields: Array<string>): object {
+		const o: { [key: string]: any } = {};
+		for (const field of fields) {
+			if (instance.hasOwnProperty(field)) {
+				o[field] = instance[field];
+			}
+		}
+		return o;
 	}
 
 	get device_isMobile(): boolean {
@@ -152,19 +146,22 @@ class Utilities {
 		return to;
 	}
 
-	convertToObject(instance: any, fields: Array<string>): object {
-		const o: { [key: string]: any } = {};
-		for (const field of fields) {
-			if (instance.hasOwnProperty(field)) {
-				o[field] = instance[field];
-			}
-		}
-		return o;
+	polygonPoints(radius: number, count: number, offset: number): Array<Point> {
+		const increment = Angle.full / count;
+		const radial = new Point(radius, 0);
+		const points: Point[] = [];
+		let angle = offset;
+		let index = count;
+		do {
+			points.push(radial.rotate_by(angle));
+			angle += increment;
+			index--;
+		} while (index > 0)
+		return points;
 	}
 
 	get browserType(): IDBrowser {
 		const userAgent: string = navigator.userAgent;
-
 		switch (true) {
 			case /msie (\d+)/i.test(userAgent) ||
 				/trident\/.*; rv:(\d+)/i.test(userAgent):	return IDBrowser.explorer;
@@ -198,11 +195,9 @@ class Utilities {
 		element.style.position = 'absolute';
 		element.style.whiteSpace = 'pre';
 		element.textContent = s;
-		
 		document.body.appendChild(element);
 		const width: number = element.scrollWidth;
 		document.body.removeChild(element);
-
 		return width;
 	}
 

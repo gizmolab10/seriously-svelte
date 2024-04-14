@@ -1,6 +1,6 @@
 import RemoteIdentifiable from "../structures/RemoteIdentifiable";
-import { g, get, PredicateKind } from '../common/GlobalImports';
-import { s_cluster_radians } from '../common/State';
+import { g, u, get, PredicateKind } from '../common/GlobalImports';
+import { s_cluster_angle } from '../common/State';
 
 export default class Predicate extends RemoteIdentifiable {
 	directions: number;
@@ -19,13 +19,13 @@ export default class Predicate extends RemoteIdentifiable {
 	static get idIsRelated(): string { return this.id_forKind(PredicateKind.isRelated); }
 	static get idContains(): string { return this.id_forKind(PredicateKind.contains); }
 
-	clusterRadian(pointsTo: boolean): number {
-		const delta = get(s_cluster_radians);
+	clusterAngle_for(pointsTo: boolean): number {
+		const delta = get(s_cluster_angle);
 		switch (this.id) {
+			case Predicate.idContains:	return pointsTo ? delta / 2 : delta * 2.5;
 			case Predicate.idIsRelated: return -delta;
-			case Predicate.idContains: return pointsTo ? delta / 2 : delta * 2.5;
+			default:					return 0;
 		}
-		return 0;
 	}
 
 }

@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from 'svelte';
+	import { k, onMount } from '../../ts/common/GlobalImports';
 
 	let dots;
 	let edit;

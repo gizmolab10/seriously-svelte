@@ -243,7 +243,7 @@ export default class Path {
 		const things = this.things?.reverse() ?? [];
 		const array: Array<Thing> = [];
 		let distributedParentCount = 0;
-		let numberOfParents = 0;	// do not include fatPolygon separator in width of crumb of first thing
+		let numberOfParents = 0;	// do not include fat_polygon separator in width of crumb of first thing
 		let totalWidth = 0;
 		for (const thing of things) {
 			if (thing) {

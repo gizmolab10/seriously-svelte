@@ -11,7 +11,7 @@
 	export let center;
 	export let size;
 	export let id;
-	let svgPath = svgPaths.fatPolygon(size, direction);
+	let svgPath = svgPaths.fat_polygon(size, direction);
 	let extraColor = k.color_background;
 	let fillColor = k.color_background;
 	let button = null;
@@ -26,7 +26,7 @@
 	}
 	
 	$: {
-		svgPath = svgPaths.fatPolygon(size, direction);
+		svgPath = svgPaths.fat_polygon(size, direction);
 		setFillColor(false);
 	}
 

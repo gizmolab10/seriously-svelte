@@ -82,7 +82,7 @@
 			<SVGD3 name='bigger'
 				width={size}
 				height={size}
-				svgPath={svgPaths.tCross(size, 2)}
+				svgPath={svgPaths.t_cross(size, 2)}
 			/>
 		</CircularButton>
 	{/if}

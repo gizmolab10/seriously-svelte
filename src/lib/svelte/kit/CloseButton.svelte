@@ -3,7 +3,7 @@
     import { s_id_popupView } from '../../ts/common/State';
 	import SVGD3 from '../svg/SVGD3.svelte';
     export let size = 20;
-    const cross = svgPaths.xCross(size, size / 6);
+    const cross = svgPaths.x_cross(size, size / 6);
     const circle = svgPaths.circle(size, size - 2);
 </script>
 

@@ -75,12 +75,12 @@
 		} else {
 			const goLeft = path.showsChildRelationships;
 			const direction = goLeft ? Direction.left : Direction.right;
-			svgPath = svgPaths.fatPolygon(size, direction);
+			svgPath = svgPaths.fat_polygon(size, direction);
 		}
 		if (path.thing.isBulkAlias) {
 			insidePath = svgPaths.circle(size, 3);
 		} else if (path.toolsGrabbed) {
-			insidePath = svgPaths.xCross(size, 1.5);
+			insidePath = svgPaths.x_cross(size, 1.5);
 		}
 	}
 
