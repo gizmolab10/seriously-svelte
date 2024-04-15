@@ -8,7 +8,14 @@ import { dbLocal } from './DBLocal';
 export default class DBDispatch {
 	db: DBInterface;
 	eraseDB = false;
-	db_next(forward: boolean) { this.db_changeTo(this.db_next(forward)); }
+
+	queryStrings_apply() {
+		const queryStrings = k.queryString;
+		const type = queryStrings.get('db') ?? persistLocal.key_read(IDPersistant.db) ?? TypeDB.firebase;
+		this.db_changeTo_for(type);
+		this.db.queryStrings_apply();
+		s_db_type.set(type);
+	}
 
 	constructor() {
 		let done = false;
@@ -20,43 +27,31 @@ export default class DBDispatch {
 				done = true;
 				setTimeout(() => {
 					(async () => {
-						this.db_set_forType(type);
-						this.queryStrings_apply();
-						const h = g.hierarchy;
-						await h.hierarchy_fetch_andBuild(type);
-						g.rootPath_set(h.path_remember_createUnique());
-						persistLocal.paths_restore(true);
-						s_path_graphTools.set(null);
-						s_title_editing.set(null);
-						h.hierarchy_completed(startTime);
-						signals.signal_rebuildWidgets_fromFocus();
+						this.db_changeTo_type(type)
+						g.hierarchy.hierarchy_completed(startTime);
 					})();
 				}, 1);
 			}
 		});
 		s_db_type.set(TypeDB.firebase);
 	}
+
+	async db_changeTo_type(type: string) {
+		this.db_changeTo_for(type);
+		this.queryStrings_apply();
+		await g.hierarchy.hierarchy_fetch_andBuild(type);
+		persistLocal.paths_restore(true);
+		s_path_graphTools.set(null);
+		s_title_editing.set(null);
+		signals.signal_rebuildWidgets_fromFocus();
+	}
+
+	db_changeTo_next(forward: boolean) { this.db_changeTo(this.db_next_get(forward)); }
 	
-	db_set_forType(type: string) {
+	db_changeTo_for(type: string) {
 		const db = this.db_forType(type);
 		g.hierarchy = db.hierarchy;
 		this.db = db;
-	}
-
-	queryStrings_apply() {
-		const queryStrings = k.queryString;
-		const type = queryStrings.get('db') ?? persistLocal.key_read(IDPersistant.db) ?? TypeDB.firebase;
-		this.db_set_forType(type);
-		this.db.queryStrings_apply();
-		s_db_type.set(type);
-	}
-
-	db_forType(type: string): DBInterface {
-		switch (type) {
-			case TypeDB.airtable: return dbAirtable;
-			case TypeDB.firebase: return dbFirebase;
-			default:			  return dbLocal;
-		}
 	}
 
 	db_changeTo(newDBType: TypeDB) {
@@ -71,7 +66,7 @@ export default class DBDispatch {
 		s_db_loadTime.set(db.loadTime);
 	}
 
-	db_next(forward: boolean): TypeDB {
+	db_next_get(forward: boolean): TypeDB {
 		if (forward) {
 			switch (this.db.dbType) {
 				case TypeDB.airtable: return TypeDB.local;
@@ -85,6 +80,14 @@ export default class DBDispatch {
 				default:			  return TypeDB.local;
 			}
 		}		
+	}
+
+	db_forType(type: string): DBInterface {
+		switch (type) {
+			case TypeDB.airtable: return dbAirtable;
+			case TypeDB.firebase: return dbFirebase;
+			default:			  return dbLocal;
+		}
 	}
 
 }

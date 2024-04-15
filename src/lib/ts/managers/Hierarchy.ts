@@ -24,11 +24,12 @@ export default class Hierarchy {
 	private things: Array<Thing> = [];
 	relationships: Array<Relationship> = [];
 	predicates: Array<Predicate> = [];
+	root: Thing | null = null;
 	isAssembled = false;
 	db: DBInterface;
 
-	get hasNothing(): boolean { return !g.root; }
-	get idRoot(): string | null { return g.root?.id ?? null; };
+	get hasNothing(): boolean { return !this.root; }
+	get idRoot(): string | null { return this.root?.id ?? null; };
 	thing_forPath(path: Path | null): Thing | null { return path?.thing ?? null; }
 	thing_forHID(hid: number | null): Thing | null { return (!hid) ? null : this.thing_byHID[hid]; }
 
@@ -47,6 +48,7 @@ export default class Hierarchy {
 			await this.db.fetch_all();
 			await this.add_missing_removeNulls(null, this.db.baseID);
 		}
+		g.rootPath_set(this.path_remember_createUnique());
 	}
 
 	static readonly $_EVENTS_$: unique symbol;
@@ -147,13 +149,13 @@ export default class Hierarchy {
 				return this.thing_byHID[relationship.idChild.hash()];
 			}
 		}
-		return g.root;
+		return this.root;
 	}
 	
 	static readonly $_THINGS_$: unique symbol;
 
 	things_forPath(path: Path): Array<Thing | null> {
-		const root = g.root;
+		const root = this.root;
 		const things: Array<Thing | null> = root ? [root] : [];
 		for (const hid of path.ids_hashed) {
 			const thing = this.relationship_forHID(hid)?.childThing || null;
@@ -253,6 +255,7 @@ export default class Hierarchy {
 			this.things_byTrait[thing.trait] = things;
 			this.things.push(thing);
 			if (thing.trait == IDTrait.root && (thing.baseID == k.empty || thing.baseID == this.db.baseID)) {
+				this.root = thing;
 				g.root = thing;
 			}
 		}

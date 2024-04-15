@@ -20,11 +20,13 @@
 		const needsUpdate = ($s_path_focus?.title ?? k.empty) + $s_graphRect + ($s_paths_grabbed?.length ?? 0);
 		if (!path || needsUpdate || ancestors.length == 0) {
 			path = g.hierarchy.grabs.path_lastGrabbed ?? g.rootPath;	// assure we have a path
-			const windowWidth = u.windowSize.width;
-			let encodedCount = 0;
-			[encodedCount, width, ancestors] = path.things_ancestryWithin(windowWidth - 10);
-			left = (windowWidth - width - 20) / 2;
-			trigger = encodedCount * 10000 + rebuilds * 100 + left;
+			if (path) {				
+				const windowWidth = u.windowSize.width;
+				let encodedCount = 0;
+				[encodedCount, width, ancestors] = path.things_ancestryWithin(windowWidth - 10);
+				left = (windowWidth - width - 20) / 2;
+				trigger = encodedCount * 10000 + rebuilds * 100 + left;
+			}
 		}
 	}
 

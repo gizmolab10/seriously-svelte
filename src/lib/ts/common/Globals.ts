@@ -6,8 +6,8 @@ class Globals {
 	hierarchy: Hierarchy;
 	rootsPath: Path;
 	rootPath: Path;
-	root: Thing;
 	focus: Thing;
+	root: Thing;
 
 	setup() {
 		const baseID = dbDispatch.db.baseID;

@@ -21,28 +21,30 @@
 	$: {
 		rebuilds += 1;
 		size = $s_graphRect.size;
-		const thing = path.thing;
+		const thing = path?.thing;
 		center = size.dividedInHalf.asPoint;
-		titleWidth = u.getWidthOf(thing.title);
+		titleWidth = u.getWidthOf(thing?.title ?? k.empty);
 		offsetX = -k.thing_fontSize - 3 - (titleWidth / 2);
 		titleCenter = center.offsetBy(new Point(offsetX, k.cluster_offsetY));
 	}
 
 </script>
 
-<div class='clusters' style='transform: translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px);'>
-	{#key `${path.hashedPath} ${rebuilds}`}
-		<Circle
-			center={center}
-			color_background='transparent'
-			radius={k.cluster_inside_radius}
-			color={transparentize(path.thing.color, 0.75)}/>
-		<div style='
-			position: absolute;
-			top:{titleCenter.y}px;
-			left: {titleCenter.x}px;'>
-			<TitleEditor path={path} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
-		</div>
-		<Necklace path={path} center={center}/>
-	{/key}
-</div>
+{#if path}
+	<div class='clusters' style='transform: translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px);'>
+		{#key `${path.hashedPath ?? 0} ${rebuilds}`}
+			<Circle
+				center={center}
+				color_background='transparent'
+				radius={k.cluster_inside_radius}
+				color={transparentize(path.thing.color, 0.75)}/>
+			<div style='
+				position: absolute;
+				top:{titleCenter.y}px;
+				left: {titleCenter.x}px;'>
+				<TitleEditor path={path} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
+			</div>
+			<Necklace path={path} center={center}/>
+		{/key}
+	</div>
+{/if}

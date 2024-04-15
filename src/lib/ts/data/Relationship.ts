@@ -24,7 +24,7 @@ export default class Relationship extends Datum {
 	get parentThing(): Thing | null { return this.thing(false); }
 	get isValid(): boolean { return !!(this.idPredicate && this.idParent && this.idChild); }
 	get predicate(): Predicate | null { return g.hierarchy.predicate_forID(this.idPredicate) }
-	get fields(): Airtable.FieldSet { return { predicate: [this.idPredicate], parent: [this.idParent], child: [this.idChild], order: this.order }; }
+	get fields(): Airtable.FieldSet { return { predicate: [this.idPredicate], from: [this.idParent], to: [this.idChild], order: this.order }; }
 	get description(): string { return `BASE ${this.baseID} STORED ${this.isRemotelyStored} ORDER ${this.order} ID ${this.id} PARENT ${this.parentThing?.description} ${this.predicate?.kind} CHILD ${this.childThing?.description}`; }
 	log(option: DebugFlag, message: string) { debug.log_maybe(option, message + k.space + this.description); }
 

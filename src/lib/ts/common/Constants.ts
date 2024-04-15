@@ -34,6 +34,20 @@ export default class Constants {
 	allow_HorizontalScrolling: boolean;
 	queryString: URLSearchParams;
 
+	queryStrings_apply() {
+        const deny = this.queryString.get('deny');
+        if (deny) {
+            const flags = deny.split(',');
+            for (const option of flags) {
+                switch (option) {
+                    case 'editGraph': this.allow_GraphEditing = false; break;
+                    case 'editTitles': this.allow_TitleEditing = false; break;
+                    case 'horizontalScrolling': this.allow_HorizontalScrolling = false; break;
+                }
+            }
+        }
+	}
+
 	constructor() {
 		this.empty = '';
 		this.space = ' ';
@@ -71,19 +85,6 @@ export default class Constants {
 		this.cluster_offsetY = 4 - this.dot_size;
 	}
 
-	queryStrings_apply() {
-        const deny = this.queryString.get('deny');
-        if (deny) {
-            const flags = deny.split(',');
-            for (const option of flags) {
-                switch (option) {
-                    case 'editGraph': this.allow_GraphEditing = false; break;
-                    case 'editTitles': this.allow_TitleEditing = false; break;
-                    case 'horizontalScrolling': this.allow_HorizontalScrolling = false; break;
-                }
-            }
-        }
-	}
 }
 
 export let k = new Constants();

@@ -27,6 +27,32 @@ class PersistLocal {
 	ignorePaths = !this.usesRelationships || this.usesRelationships == 'undefined';
 	pathsRestored = false;
 
+	queryStrings_apply() {
+		const queryStrings = k.queryString;
+        const erase = queryStrings.get('erase');
+        const titleFlag = queryStrings.get('locate')?.split(k.comma).includes('titleAtTop') ?? false;
+		this.key_apply(IDPersistant.layout, 'clusters', (flag) => s_layout_byClusters.set(flag));
+		this.key_apply(IDPersistant.details, 'hide', (flag) => s_show_details.set(!flag), false);
+		this.key_apply(IDPersistant.controls, 'show', (flag) => k.showControls = flag);
+		this.key_write(IDPersistant.title_atTop, titleFlag);
+		k.titleIsAtTop = titleFlag;
+        if (erase) {
+            for (const option of erase.split(k.comma)) {
+                switch (option) {
+                    case 'data':
+						dbDispatch.eraseDB = true;
+						break;
+                    case 'settings': 
+						localStorage.clear();
+						s_paths_expanded.set([]);
+						s_path_focus.set(g.rootPath);
+						s_paths_grabbed.set([g.rootPath]);
+						break;
+                }
+            }
+        }
+    }
+
 	get dbType(): string { return dbDispatch.db.dbType; }
 	key_write(key: string, value: any) { localStorage[key] = JSON.stringify(value); }
 	dbKey_paths(key: string): Array<Path> { return this.key_paths(key + this.dbType); }
@@ -166,31 +192,6 @@ class PersistLocal {
 		}
 	}
 
-	queryStrings_apply() {
-		const queryStrings = k.queryString;
-        const erase = queryStrings.get('erase');
-        const titleFlag = queryStrings.get('locate')?.split(k.comma).includes('titleAtTop') ?? false;
-		this.key_apply(IDPersistant.layout, 'clusters', (flag) => s_layout_byClusters.set(flag));
-		this.key_apply(IDPersistant.details, 'hide', (flag) => s_show_details.set(!flag), false);
-		this.key_apply(IDPersistant.controls, 'show', (flag) => k.showControls = flag);
-		this.key_write(IDPersistant.title_atTop, titleFlag);
-		k.titleIsAtTop = titleFlag;
-        if (erase) {
-            for (const option of erase.split(k.comma)) {
-                switch (option) {
-                    case 'data':
-						dbDispatch.eraseDB = true;
-						break;
-                    case 'settings': 
-						localStorage.clear();
-						s_paths_expanded.set([]);
-						s_path_focus.set(g.rootPath);
-						s_paths_grabbed.set([g.rootPath]);
-						break;
-                }
-            }
-        }
-    }
 }
 
 export const persistLocal = new PersistLocal();

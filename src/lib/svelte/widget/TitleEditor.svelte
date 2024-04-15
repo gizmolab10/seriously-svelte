@@ -6,7 +6,7 @@
 	export let fontSize = '1em';
     export let angle = 0;
 	export let path;
-	let normal = angle < Angle.quarter || angle > Angle.threeQuarters;
+	let normal = angle <= Angle.quarter || angle >= Angle.threeQuarters;
 	let position = normal ? k.empty : 'position: absolute';
 	let padding = `0.5px 0px 0px 7px`;	// down half a pixel, 7 over to make room for drag dot
 	let thingTitle = path?.thing?.title ?? k.empty;

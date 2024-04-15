@@ -29,8 +29,8 @@ export default class Path {
 	}
 
 	subscriptions_setup() {
-		s_title_editing.subscribe(() => { this.thing?.updateColorAttributes(this); });
-		s_paths_grabbed.subscribe(() => { this.thing?.updateColorAttributes(this); });
+		s_title_editing.subscribe(() => { this._thing?.updateColorAttributes(this); });
+		s_paths_grabbed.subscribe(() => { this._thing?.updateColorAttributes(this); });
 	}
 	
 	static readonly $_PROPERTIES_$: unique symbol;
@@ -227,7 +227,7 @@ export default class Path {
 		if (this.pathString != k.empty && relationship) {
 			return relationship.childThing;
 		}
-		return g.root;
+		return g.hierarchy.root;	// N.B., g.root is wrong immediately after switching db type
 	}
 
 	thing_isImmediateParentOf(path: Path): boolean {

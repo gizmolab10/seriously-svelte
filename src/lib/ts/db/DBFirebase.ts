@@ -37,16 +37,16 @@ export default class DBFirebase implements DBInterface {
 	setHasData(flag: boolean) { this.hasData = flag; }
 	reportError(error: any) { console.log(error); }
 
+	queryStrings_apply() {
+		const queryStrings = k.queryString;
+		this.baseID = queryStrings.get('name') ?? queryStrings.get('dbid') ?? 'Public';
+	}
+
 	get hierarchy(): Hierarchy { 
 		if (this._hierarchy == null) {
 		this._hierarchy = new Hierarchy(this);
 }
 		return this._hierarchy!;
-	}
-
-	queryStrings_apply() {
-		const queryStrings = k.queryString;
-		this.baseID = queryStrings.get('name') ?? queryStrings.get('dbid') ?? 'Public';
 	}
 
 	static readonly $_FETCH_$: unique symbol;
