@@ -23,6 +23,7 @@ export default class Constants {
 	title_default: string;
 	id_unknown: string;
 	title_line: string;
+	exemplar: string;
 	newLine: string;
 	comma: string;
 	space: string;
@@ -54,6 +55,7 @@ export default class Constants {
 		this.comma = ',';
 		this.newLine = '\n';
 		this.pathSeparator = '::';
+		this.exemplar = 'exemplar';
 		this.id_unknown = 'unknown';
 		this.color_default = 'blue';
 		this.color_background = 'white';

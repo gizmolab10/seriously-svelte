@@ -1,15 +1,15 @@
-import { g, k, u, get, Path, Datum, debug, IDTrait, Predicate, Relationship } from '../common/GlobalImports';
-import { Hierarchy, DebugFlag, dbDispatch, SeriouslyRange } from '../common/GlobalImports';
+import { g, k, u, get, Path, Datum, debug, IDTrait, Predicate } from '../common/GlobalImports';
+import { DebugFlag, dbDispatch, Relationship, SeriouslyRange } from '../common/GlobalImports';
 import { s_path_focus, s_paths_expanded } from '../common/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
 	selectionRange = new SeriouslyRange(0, 0);
 	bulkRootID: string = k.empty;
-	needsBulkFetch = false;
 	hoverAttributes = k.empty;
 	borderAttribute = k.empty;
 	grabAttributes = k.empty;
+	needsBulkFetch = false;
 	isExemplar = false;
 	isEditing = false;
 	isGrabbed = false;

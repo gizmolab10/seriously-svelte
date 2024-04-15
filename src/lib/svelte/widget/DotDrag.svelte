@@ -118,7 +118,7 @@
 	}
 
 	function updatePaths() {
-		if ($s_layout_byClusters) {
+		if ($s_layout_byClusters && !path?.isExemplar) {
 			path_scalable = svgPaths.circle(size, size - 1);
 		} else {
 			path_scalable = svgPaths.oval(size, false);

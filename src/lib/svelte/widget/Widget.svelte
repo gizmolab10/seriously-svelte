@@ -1,15 +1,16 @@
 <script lang='ts'>
 	import { k, u, Thing, Point, debug, ZIndex, Wrapper, signals } from '../../ts/common/GlobalImports';
 	import { s_layout_byClusters, s_thing_fontFamily, s_path_graphTools } from '../../ts/common/State';
-	import { onMount, debugReact, IDSignal, IDWrapper } from '../../ts/common/GlobalImports';
 	import { s_path_focus, s_title_editing, s_paths_grabbed } from '../../ts/common/State';
+	import { onMount, debugReact, IDWrapper } from '../../ts/common/GlobalImports';
 	import EditingTools from '../graph/EditingTools.svelte';
+	import { exemplar } from '../../ts/data/Exemplar';
 	import TitleEditor from './TitleEditor.svelte';
 	import DotReveal from './DotReveal.svelte';
 	import DotDrag from './DotDrag.svelte';
-	export let origin = new Point();
+	export let origin = new Point(160, 5);
+    export let path = exemplar.path;
     export let angle = 0;
-    export let path;
 	const hasExtraX = !path?.isExpanded && (path?.childRelationships.length > 3);
 	const rightPadding = hasExtraX ? 22.5 : 19;
 	const priorRowHeight = k.row_height;
@@ -32,19 +33,17 @@
 	let thing;
 
 	onMount( () => {
-		if (!path || !path.thing) {
+		thing = path?.thing;
+		if (!path || !thing) {
 			console.log('bad path or thing');
-		}
-		if (path) {
-			thing = path.thing;
 		}
 		updateBorderStyle();
 		updateLayout();
 		debugReact.log_mount(`WIDGET ${thing?.description} ${path?.isGrabbed}`);
-		const handler = signals.handle_anySignal((IDSignal, id) => {
-			for (const kind of IDSignal) {
+		const handler = signals.handle_anySignal((kinds, id) => {
+			for (const kind of kinds) {
 				switch (kind) {
-					case IDSignal.relayout:
+					case kinds.relayout:
 						if (id == thing?.id) {
 							debugReact.log_layout(`WIDGET signal ${thing?.description}`);
 							updateLayout()
@@ -83,28 +82,33 @@
 	}
 
 	function fullUpdate() {
-		const shallEdit = path?.isEditing;
-		const shallGrab = path?.isGrabbed || (thing?.isExemplar ?? false);
-		const shallShowCluster = path?.toolsGrabbed && !path?.isFocus;
-		const change = (isEditing != shallEdit || isGrabbed != shallGrab || showingCluster != shallShowCluster);
-		if (change) {
-			showingBorder = (shallEdit || shallGrab) && !$s_layout_byClusters;
-			showingCluster = shallShowCluster;
-			isGrabbed = shallGrab;
-			isEditing = shallEdit;
-			updateBorderStyle();
-			updateLayout();
+		thing = path?.thing;
+		if (path && thing) {
+			const shallEdit = path.isEditing;
+			const shallGrab = path.isGrabbed || (thing.isExemplar ?? false);
+			const shallShowCluster = path.toolsGrabbed && !path.isFocus;
+			const change = (isEditing != shallEdit || isGrabbed != shallGrab || showingCluster != shallShowCluster);
+			if (change) {
+				const canShowBorders = !$s_layout_byClusters || path.isExemplar;
+				showingBorder = (shallEdit || shallGrab) && canShowBorders;
+				showingCluster = shallShowCluster;
+				isGrabbed = shallGrab;
+				isEditing = shallEdit;
+				updateBorderStyle();
+				updateLayout();
+			}
 		}
 	}
 
 	function updateBorderStyle() {
+		background = showingBorder ? `background-color: ${k.color_background}` : k.empty;
 		thing = path?.thing;
 		if (!thing) {
 			console.log(`bad thing`);
+		} else {			
+			thing.updateColorAttributes(path);
+			border = showingBorder ? `border: ${thing.grabAttributes}` : k.empty;
 		}
-		thing?.updateColorAttributes(path);
-		border = showingBorder ? 'border: ' + thing?.grabAttributes : k.empty;
-		background = showingBorder ? 'background-color: ' + k.color_background : k.empty;
 	}
 
 	function updateLayout() {

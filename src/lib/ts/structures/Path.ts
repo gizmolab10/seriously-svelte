@@ -15,7 +15,7 @@ export default class Path {
 		this.pathHash = pathString.hash();
 		this.idPredicate = idPredicate;
 		this.pathString = pathString;
-		if (g.hierarchy.isAssembled) {
+		if (g.hierarchy?.isAssembled) {
 			this.subscriptions_setup();			// not needed during hierarchy assembly
 		}
 	}
@@ -43,7 +43,7 @@ export default class Path {
 	get lastChild(): Thing { return this.children.slice(-1)[0]; }
 	get order(): number { return this.relationship?.order ?? -1; }
 	get isFocus(): boolean { return this.matchesStore(s_path_focus); }
-	get isExemplar(): boolean { return this.pathString == 'exemplar'; }
+	get isExemplar(): boolean { return this.pathString == k.exemplar; }
 	get title(): string { return this.thing?.title ?? 'missing title'; }
 	get ids_hashed(): Array<number> { return this.ids.map(i => i.hash()); }
 	get relationship(): Relationship | null { return this.relationshipAt(); }
@@ -82,7 +82,9 @@ export default class Path {
 	}
 	
 	get thing(): Thing | null {
-		this._thing = this.thingAt() ?? null;	// always recompute, cache is for debugging
+		if (!this._thing) {
+			this._thing = this.thingAt() ?? null;	// always recompute, cache is for debugging
+		}
 		return this._thing;
 	}
 
@@ -157,7 +159,7 @@ export default class Path {
 	
 	parentRelationships_for(idPredicate: string, parent: boolean) {
 		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
-		if (id && this.pathString != 'exemplar' && ![k.empty, 'k.id_unknown'].includes(id)) {
+		if (id && this.pathString != k.exemplar && ![k.empty, 'k.id_unknown'].includes(id)) {
 			return g.hierarchy.relationships_forPredicateThingIsChild(idPredicate, id, parent);
 		}
 		return [];

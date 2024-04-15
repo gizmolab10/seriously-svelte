@@ -13,7 +13,7 @@ export default class Predicate extends RemoteIdentifiable {
 	}
 
 	static id_forKind(kind: string) { return this.predicate_forKind(kind)?.id ?? `${kind} is missing`; }
-	static predicate_forKind(kind: string) { return g.hierarchy.predicate_forKind(kind) ?? null; }
+	static predicate_forKind(kind: string) { return g.hierarchy?.predicate_forKind(kind) ?? null; }
 	static get contains(): Predicate | null { return this.predicate_forKind(Predicate.idContains); }
 	static get related(): Predicate | null { return this.predicate_forKind(Predicate.idIsRelated); }
 	static get idIsRelated(): string { return this.id_forKind(PredicateKind.isRelated); }
