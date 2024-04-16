@@ -1,7 +1,7 @@
 import { g, k, u, get, Rect, Size, Thing, debug, signals, Wrapper, IDWrapper } from '../common/GlobalImports';
-import { Predicate, TitleState, Relationship, PredicateKind, AlteringParent } from '../common/GlobalImports';
-import { s_path_focus, s_paths_grabbed, s_title_editing, s_layout_byClusters } from '../common/State';
-import { s_paths_expanded, s_path_graphTools, s_altering_parent } from '../common/State';
+import { Predicate, TitleState, Relationship, PredicateKind, RelationshipAlteration } from '../common/GlobalImports';
+import { s_path_focus, s_paths_grabbed, s_title_editing, s_layout_byClusters } from '../state/State';
+import { s_paths_expanded, s_path_graphTools, s_alteration_state } from '../state/State';
 import { Writable } from 'svelte/store';
 
 export default class Path {
@@ -20,7 +20,7 @@ export default class Path {
 		}
 	}
 
-	signal_rebuildWidgets()  { signals.signal_rebuildWidgets(this); }
+	signal_rebuildGraph()  { signals.signal_rebuildGraph(this); }
 	signal_relayoutWidgets() { signals.signal_relayoutWidgets(this); }
 
 	wrapper_add(wrapper: Wrapper) {
@@ -123,12 +123,13 @@ export default class Path {
 	get things_canAlter_asParentOf_toolsGrab(): boolean {
 		const path_toolGrab = get(s_path_graphTools);
 		const toolThing = path_toolGrab?.thing;
+		const state = get(s_alteration_state)
 		const thing = this.thing;
-		if (toolThing && !this.matchesPath(path_toolGrab) && thing && thing != toolThing) {
+		if (state && thing && toolThing && thing != toolThing && !this.matchesPath(path_toolGrab)) {
+			const isDeleting = state.alteration == RelationshipAlteration.deleting;
 			const isParentOfTool = this.thing_isImmediateParentOf(path_toolGrab);
-			const isAProgenyOfTool = this.path_isAProgenyOf(path_toolGrab);
 			const toolIsAnAncestor = thing.parentIDs.includes(toolThing.id);
-			const isDeleting = get(s_altering_parent) == AlteringParent.deleting;
+			const isAProgenyOfTool = this.path_isAProgenyOf(path_toolGrab);
 			return isDeleting ? isParentOfTool : !(isParentOfTool || isAProgenyOfTool || toolIsAnAncestor);
 		}
 		return false;
@@ -478,7 +479,7 @@ export default class Path {
 			} else {
 				const childPaths = this.childPaths;
 				const childPath = childPaths.length == 0 ? this : childPaths[0];
-				if (get(s_altering_parent)) {
+				if (get(s_alteration_state)) {
 					g.hierarchy.path_alterMaybe(childPath);
 				} else if (shiftKey || childPath.isGrabbed) {
 					childPath.toggleGrab();
@@ -486,7 +487,7 @@ export default class Path {
 					childPath.grabOnly();
 				}
 			}
-			signals.signal_rebuildWidgets_fromFocus();
+			signals.signal_rebuildGraph_fromFocus();
         }
 	}
 

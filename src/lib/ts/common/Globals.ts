@@ -1,6 +1,6 @@
 import { Hierarchy, debugReact, dbDispatch, persistLocal, IDPersistant } from '../common/GlobalImports';
 import { k, u, get, Path, Rect, Point, Thing, debug, builds } from '../common/GlobalImports'
-import { s_graphRect, s_show_details, s_scale_factor, s_user_graphOffset } from './State';
+import { s_graphRect, s_show_details, s_scale_factor, s_user_graphOffset } from '../state/State';
 
 class Globals {
 	hierarchy: Hierarchy;

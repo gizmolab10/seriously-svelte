@@ -1,8 +1,8 @@
 import { g, k, u, Path, Point, signals, dbDispatch } from '../common/GlobalImports'
-import { s_path_focus, s_show_details, s_user_graphOffset } from '../common/State';
-import { s_thing_fontFamily, s_show_child_graph } from '../common/State';
-import { s_cluster_angle, s_layout_byClusters } from '../common/State';
-import { s_paths_grabbed, s_paths_expanded } from '../common/State';
+import { s_path_focus, s_show_details, s_user_graphOffset } from '../state/State';
+import { s_thing_fontFamily, s_show_child_graph } from '../state/State';
+import { s_cluster_angle, s_layout_byClusters } from '../state/State';
+import { s_paths_grabbed, s_paths_expanded } from '../state/State';
 
 export enum IDPersistant {
 	relationships = 'relationships',

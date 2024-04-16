@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { signals, Wrapper, IDWrapper, dbDispatch, SeriouslyRange } from '../../ts/common/GlobalImports';
 	import { g, k, u, Point, Thing, debug, ZIndex, onMount, Angle } from '../../ts/common/GlobalImports';
-	import { s_title_editing, s_paths_grabbed, s_path_graphTools } from '../../ts/common/State';
+	import { s_title_editing, s_paths_grabbed, s_path_graphTools } from '../../ts/state/State';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
     export let angle = 0;
@@ -131,7 +131,7 @@
 						path?.grabOnly();
 						$s_path_graphTools = path;
 					}
-					signals.signal_rebuildWidgets_fromFocus();
+					signals.signal_rebuildGraph_fromFocus();
 				}
 			}, k.threshold_longClick);
 		}

@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, u, Thing, Point, debug, ZIndex, Wrapper, signals } from '../../ts/common/GlobalImports';
-	import { s_layout_byClusters, s_thing_fontFamily, s_path_graphTools } from '../../ts/common/State';
-	import { s_path_focus, s_title_editing, s_paths_grabbed } from '../../ts/common/State';
+	import { s_layout_byClusters, s_thing_fontFamily, s_path_graphTools } from '../../ts/state/State';
+	import { s_path_focus, s_title_editing, s_paths_grabbed } from '../../ts/state/State';
 	import { onMount, debugReact, IDWrapper } from '../../ts/common/GlobalImports';
 	import EditingTools from '../graph/EditingTools.svelte';
 	import { exemplar } from '../../ts/data/Exemplar';

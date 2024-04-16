@@ -1,4 +1,4 @@
-export enum AlteringParent {
+export enum RelationshipAlteration {
 	deleting = 'deleting',
 	adding	 = 'adding',
 }

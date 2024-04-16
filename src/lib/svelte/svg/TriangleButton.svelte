@@ -1,6 +1,6 @@
 <script>
 	import { k, u, Size, Thing, Point, ZIndex, svgPaths, Direction, dbDispatch } from "../../ts/common/GlobalImports";
-	import { s_paths_grabbed } from '../../ts/common/State';
+	import { s_paths_grabbed } from '../../ts/state/State';
 	import SVGD3 from './SVGD3.svelte';
 	export let fillColors_closure = null;
 	export let cursor = 'pointer';

@@ -1,5 +1,5 @@
 import { k, get, Path, Size, Point, Angle, Quadrant, IDBrowser } from './GlobalImports';
-import { s_scale_factor, s_thing_fontFamily } from './State';
+import { s_scale_factor, s_thing_fontFamily } from '../state/State';
 
 class Utilities {
 	noop() {}

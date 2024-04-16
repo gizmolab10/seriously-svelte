@@ -1,7 +1,7 @@
 import { g, k, u, get, User, Path, Thing, Grabs, debug, Access, IDTool, IDTrait, signals } from '../common/GlobalImports';
-import { TypeDB, Wrapper, Predicate, Relationship, AlteringParent, CreationOptions } from '../common/GlobalImports';
-import { s_title_editing, s_altering_parent, s_layout_byClusters, s_path_graphTools } from '../common/State';
-import { s_isBusy, s_path_focus, s_db_loadTime, s_paths_grabbed, s_things_arrived } from '../common/State';
+import { DBType, Wrapper, Predicate, Relationship, RelationshipAlteration, CreationOptions } from '../common/GlobalImports';
+import { s_title_editing, s_alteration_state, s_layout_byClusters, s_path_graphTools } from '../state/State';
+import { s_isBusy, s_path_focus, s_db_loadTime, s_paths_grabbed, s_things_arrived } from '../state/State';
 import DBInterface from '../db/DBInterface';
 
 type Relationships_ByHID = { [hid: number]: Array<Relationship> }
@@ -41,7 +41,7 @@ export default class Hierarchy {
 
 	async hierarchy_fetch_andBuild(type: string) {
 		if (!this.db.hasData) {
-			if (type != TypeDB.local) {
+			if (type != DBType.local) {
 				s_isBusy.set(true);
 				s_things_arrived.set(false);
 			}
@@ -58,9 +58,9 @@ export default class Hierarchy {
 		if (path) {
 			switch (IDButton) {
 				case IDTool.create: await this.path_edit_remoteCreateChildOf(path); break;
-				case IDTool.add_parent: this.toggleAlteration(AlteringParent.adding); return;
+				case IDTool.add_parent: this.toggleAlteration(RelationshipAlteration.adding); return;
 				case IDTool.next: this.path_relayout_toolCluster_nextParent(event.altKey); return;
-				case IDTool.delete_parent: this.toggleAlteration(AlteringParent.deleting); return;
+				case IDTool.delete_parent: this.toggleAlteration(RelationshipAlteration.deleting); return;
 				case IDTool.delete_confirm: await this.paths_rebuild_traverse_remoteDelete([path]); break;
 				case IDTool.more: console.log('needs more'); break;
 				default: break;
@@ -113,7 +113,7 @@ export default class Hierarchy {
 				case 'arrowdown':		await this.latestPathGrabbed_rebuild_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
 			}
 			if (needsRebuild) {
-				signals.signal_rebuildWidgets_fromFocus();
+				signals.signal_rebuildGraph_fromFocus();
 			}
 		}
 	}
@@ -138,7 +138,7 @@ export default class Hierarchy {
 		const path = this.grabs.latestPathGrabbed(up);
 		if (path && !path.isRoot) {
 			s_path_graphTools.set(path.toolsGrabbed ? null : path);
-			signals.signal_rebuildWidgets_fromFocus();
+			signals.signal_rebuildGraph_fromFocus();
 		}
 	}
 
@@ -546,7 +546,7 @@ export default class Hierarchy {
 				}
 			}
 			if (needsRebuild) {
-				signals.signal_rebuildWidgets_fromFocus();
+				signals.signal_rebuildGraph_fromFocus();
 			}
 		}
 	}
@@ -613,7 +613,7 @@ export default class Hierarchy {
 		const childPath = await this.path_remember_remoteAddAsChild(parentPath, child);
 		childPath.grabOnly();
 		childPath.relationship?.order_setTo(order);
-		signals.signal_rebuildWidgets_fromFocus();
+		signals.signal_rebuildGraph_fromFocus();
 		if (shouldStartEdit) {
 			setTimeout(() => {
 				childPath.startEdit();
@@ -632,7 +632,7 @@ export default class Hierarchy {
 					childPaths[0].grabOnly()
 				}
 				path?.expand()
-				signals.signal_rebuildWidgets_fromFocus();
+				signals.signal_rebuildGraph_fromFocus();
 			}
 		}
 	}
@@ -741,7 +741,7 @@ export default class Hierarchy {
 					const newOrder = newIndex + goose;
 					path.relationship?.order_setTo(newOrder);
 					await u.paths_orders_normalize_remoteMaybe(parentPath.childPaths);
-					signals.signal_rebuildWidgets_fromFocus();
+					signals.signal_rebuildGraph_fromFocus();
 				}
 			}
 		}
@@ -771,7 +771,7 @@ export default class Hierarchy {
 					newParentPath.becomeFocus();
 				}
 			}
-			signals.signal_rebuildWidgets_fromFocus();			// so TreeChildren component will update
+			signals.signal_rebuildGraph_fromFocus();			// so TreeChildren component will update
 		}
 	}
 
@@ -825,27 +825,29 @@ export default class Hierarchy {
 			needsRebuild = true;
 		}
 		if (needsRebuild) {
-			signals.signal_rebuildWidgets_fromFocus();
+			signals.signal_rebuildGraph_fromFocus();
 		} else {
 			signals.signal_relayoutWidgets_fromFocus();
 		}
 	}
 
 	async path_alterMaybe(path: Path) {
-		const alteration = get(s_altering_parent);
 		if (path.things_canAlter_asParentOf_toolsGrab) {
 			const toolsPath = get(s_path_graphTools);
-			const toolsThing = toolsPath?.thing;
-			if (toolsPath && toolsThing) {
-				s_altering_parent.set(null);
+			const state = get(s_alteration_state);
+			if (state && toolsPath) {
+				s_alteration_state.set(null);
 				s_path_graphTools.set(null);
-				switch (alteration) {
-					case AlteringParent.deleting:
+				switch (state.alteration) {
+					case RelationshipAlteration.deleting:
 						await this.relationship_forget_remoteRemove(toolsPath, path);
 						break;
-					case AlteringParent.adding:
-						await this.path_remember_remoteAddAsChild(path, toolsThing);
-						signals.signal_rebuildWidgets_fromFocus();
+					case RelationshipAlteration.adding:
+						const toolsThing = toolsPath?.thing;
+						if (toolsThing) {
+							await this.path_remember_remoteAddAsChild(path, toolsThing);
+							signals.signal_rebuildGraph_fromFocus();
+						}
 						break;
 				}
 			}
@@ -911,8 +913,9 @@ export default class Hierarchy {
 		await this.relationships_removeHavingNullReferences();
 	}
 
-	toggleAlteration(alteration: AlteringParent) {
-		s_altering_parent.set((get(s_altering_parent) == alteration) ? null : alteration);
+	toggleAlteration(alteration: RelationshipAlteration) {
+		const state = get(s_alteration_state)
+		s_alteration_state.set((state?.alteration == alteration) ? null : state);
 	}
 
 }

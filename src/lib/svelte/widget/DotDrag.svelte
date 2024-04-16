@@ -1,7 +1,7 @@
 <script>
 	import { k, u, Rect, Size, Point, Thing, debug, ZIndex, onMount, signals, svgPaths } from "../../ts/common/GlobalImports";
-	import { s_paths_grabbed, s_altering_parent, s_layout_byClusters, s_path_graphTools } from '../../ts/common/State';
-	import { Wrapper, Direction, onDestroy, dbDispatch, AlteringParent } from "../../ts/common/GlobalImports";
+	import { s_paths_grabbed, s_alteration_state, s_layout_byClusters, s_path_graphTools } from '../../ts/state/State';
+	import { Wrapper, Direction, onDestroy, dbDispatch, RelationshipAlteration } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte';
 	import Box from '../kit/Box.svelte';
 	export let center = new Point(0, 0);
@@ -33,9 +33,9 @@
 		}
 		updatePaths();
 		updateColorsForHover(false);
-        const handler = signals.handle_alteringParent((alteration) => {
+        const handler = signals.handle_alterState((state) => {
 			const applyFlag = $s_path_graphTools && path?.things_canAlter_asParentOf_toolsGrab;
-			altering = applyFlag ? (alteration != null) : false;
+			altering = applyFlag ? (state != null) : false;
 			updatePathExtra();
 			updateColors();
         })
@@ -92,7 +92,7 @@
 	function handleDoubleClick(event) {
 		clearClicks();
 		if (path?.becomeFocus()) {
-			signals.signal_rebuildWidgets_fromFocus();
+			signals.signal_rebuildGraph_fromFocus();
 		}
     }
 
@@ -118,11 +118,7 @@
 	}
 
 	function updatePaths() {
-		if ($s_layout_byClusters && !path?.isExemplar) {
-			path_scalable = svgPaths.circle(size, size - 1);
-		} else {
-			path_scalable = svgPaths.oval(size, false);
-		}
+		path_scalable = svgPaths.oval(size, false);
 		updatePathExtra();
 	}
 

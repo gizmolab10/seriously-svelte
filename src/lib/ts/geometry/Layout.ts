@@ -1,5 +1,5 @@
 import { g, k, u, get, Path, Rect, Size, Point, Angle, IDLine, Predicate, ChildMapRect, ClusterLayout } from '../common/GlobalImports';
-import { s_layout_byClusters } from '../common/State';
+import { s_layout_byClusters } from '../state/State';
 
 export default class Layout {
 	clusterLayouts: Array<ClusterLayout> = [];

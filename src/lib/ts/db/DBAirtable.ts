@@ -1,5 +1,5 @@
-import { k, u, debug, Thing, TypeDB, DebugFlag, TypeDatum, Hierarchy, Relationship, CreationOptions } from '../common/GlobalImports';
-import { s_things_arrived } from '../common/State';
+import { k, u, debug, Thing, DBType, DebugFlag, DatumType, Hierarchy, Relationship, CreationOptions } from '../common/GlobalImports';
+import { s_things_arrived } from '../state/State';
 import DBInterface from './DBInterface';
 import Airtable from 'airtable';
 
@@ -18,13 +18,13 @@ export default class DBAirtable implements DBInterface {
 	baseCatalist = new Airtable({ apiKey: this.personalAccessToken }).base('apphGUCbYIEJLvRrR');
 	basePublic = new Airtable({ apiKey: this.personalAccessToken }).base('appq1IjzmiRdlZi3H');
 	base = this.basePublic;
-	relationships_table = this.base(TypeDatum.relationships);
-	predicates_table = this.base(TypeDatum.predicates);
-	things_table = this.base(TypeDatum.things);
-	access_table = this.base(TypeDatum.access);
-	users_table = this.base(TypeDatum.users);
+	relationships_table = this.base(DatumType.relationships);
+	predicates_table = this.base(DatumType.predicates);
+	things_table = this.base(DatumType.things);
+	access_table = this.base(DatumType.access);
+	users_table = this.base(DatumType.users);
 	_hierarchy: Hierarchy | null = null;
-	dbType = TypeDB.airtable;
+	dbType = DBType.airtable;
 	hasData = false;
 	loadTime = null;
 	baseID = k.empty;

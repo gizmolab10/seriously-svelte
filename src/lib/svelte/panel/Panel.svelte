@@ -1,8 +1,8 @@
 <script>
-	import { g, k, u, get, Path, Rect, Size, Point, Thing, TypeDB, ZIndex, signals, onMount, IDButton } from '../../ts/common/GlobalImports';
-	import { s_build, s_isBusy, s_path_focus, s_db_type, s_graphRect, s_id_popupView, s_title_editing } from '../../ts/common/State';
+	import { g, k, u, get, Path, Rect, Size, Point, Thing, DBType, ZIndex, signals, onMount, IDButton } from '../../ts/common/GlobalImports';
+	import { s_build, s_isBusy, s_path_focus, s_db_type, s_graphRect, s_id_popupView, s_title_editing } from '../../ts/state/State';
 	import { Hierarchy, IDPersistant, dbDispatch, debugReact, setContext, persistLocal } from '../../ts/common/GlobalImports';
-	import { s_show_details, s_things_arrived, s_user_graphOffset, s_layout_byClusters } from '../../ts/common/State';
+	import { s_show_details, s_things_arrived, s_user_graphOffset, s_layout_byClusters } from '../../ts/state/State';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import Clusters from '../graph/Clusters.svelte';
@@ -14,11 +14,13 @@
 	import Crumbs from './Crumbs.svelte';
 	let chain = ['Panel'];
 	let rebuilds = 0;
-
+	
 	window.addEventListener('resize', (event) => { g.graphRect_update(); });
-
+	
 	onMount( () => {
-		const handler = signals.handle_rebuildWidgets((path) => { rebuilds += 1; });
+		g.setup();
+		$s_isBusy = true;
+		const handler = signals.handle_rebuildGraph((path) => { rebuilds += 1; });
 		return () => { handler.disconnect() };
 	});
 
@@ -96,8 +98,8 @@
 <svelte:document on:keydown={globalHandleKeyDown}/>
 {#if $s_isBusy}
 	<p>Welcome to Seriously</p>
-	{#if $s_db_type != TypeDB.local}
-		<p>(loading your {$s_db_type} data{$s_db_type == TypeDB.firebase ? ', from ' + g.hierarchy.db.baseID : k.empty})</p>
+	{#if $s_db_type != DBType.local}
+		<p>(loading your {$s_db_type} data{$s_db_type == DBType.firebase ? ', from ' + g.hierarchy?.db.baseID : k.empty})</p>
 	{/if}
 {:else if !$s_things_arrived}
 	<p>Nothing is available.</p>

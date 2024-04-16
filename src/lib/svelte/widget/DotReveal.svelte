@@ -1,5 +1,5 @@
 <script>
-	import { s_paths_expanded, s_altering_parent, s_paths_grabbed, s_path_graphTools } from '../../ts/common/State';
+	import { s_paths_expanded, s_alteration_state, s_paths_grabbed, s_path_graphTools } from '../../ts/state/State';
 	import { g, k, u, get, Size, Thing, Point, debug, ZIndex, svgPaths, signals } from "../../ts/common/GlobalImports";
 	import { onMount, Wrapper, Direction, onDestroy, dbDispatch, IDWrapper } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte'
@@ -88,7 +88,7 @@
 		setIsHovering_updateColors(false);
 		if (path.toolsGrabbed) {
 			$s_path_graphTools = null;
-			$s_altering_parent = null;
+			$s_alteration_state = null;
 			signals.signal_relayoutWidgets_fromFocus();
 		} else if (path.hasChildRelationships || path.thing.isBulkAlias) {
 			g.hierarchy.path_rebuild_remoteMoveRight(path, !path.isExpanded, true, false);

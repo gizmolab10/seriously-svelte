@@ -1,5 +1,5 @@
 <script>
-	import { s_id_popupView } from '../../ts/common/State';
+	import { s_id_popupView } from '../../ts/state/State';
 	import CloseButton from '../kit/CloseButton.svelte';
 	import { k } from '../../ts/common/GlobalImports';
 	import HelpTopics from './HelpTopics.svelte';

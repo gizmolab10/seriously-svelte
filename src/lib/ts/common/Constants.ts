@@ -11,6 +11,7 @@ export default class Constants {
 	thing_fontSize: number;
 	cluster_offsetY: number;
 	height_titleAtTop: number;
+	graphTools_diameter: number;
 	threshold_longClick: number;
 	cluster_inside_radius: number;
 	threshold_doubleClick: number;
@@ -67,8 +68,9 @@ export default class Constants {
 		this.queryString = new URLSearchParams(window.location.search);
 		this.hid_unknown = 1000000000000;
 		this.threshold_doubleClick = 100;
-		this.threshold_longClick = 500;
 		this.cluster_inside_radius = 45;
+		this.threshold_longClick = 500;
+		this.graphTools_diameter = 64;
 		this.height_titleAtTop = 50;
 		this.thing_fontSize = 14;
 		this.halfIncrement = 0.5;

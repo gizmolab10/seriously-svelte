@@ -1,20 +1,20 @@
 <script lang='ts'>
     import { g, k, u, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, signals } from '../../ts/common/GlobalImports';
-    import { svgPaths, Direction, dbDispatch, transparentize, AlteringParent } from '../../ts/common/GlobalImports';
-    import { s_altering_parent, s_path_graphTools } from '../../ts/common/State';
-    import { s_graphRect, s_show_details } from '../../ts/common/State';
+    import { svgPaths, Direction, dbDispatch, transparentize, AlterationState, RelationshipAlteration } from '../../ts/common/GlobalImports';
+    import { s_alteration_state, s_path_graphTools } from '../../ts/state/State';
+    import { s_graphRect, s_show_details } from '../../ts/state/State';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
 	import CircularButton from '../kit/CircularButton.svelte';
 	import TriangleButton from '../svg/TriangleButton.svelte';
 	import LabelButton from '../kit/LabelButton.svelte';
 	import DotReveal from '../widget/DotReveal.svelte';
 	import Trash from '../svg/Trash.svelte';
-    const graphToolsDiameter = 64;
-	const toolDiameter = k.dot_size * 1.4;
-    const graphToolsRadius = graphToolsDiameter / 2;
+    const graphToolsDiameter = k.graphTools_diameter;
+    const half_circleViewBox = `0 0 ${graphToolsDiameter} ${graphToolsDiameter}`;
     const needsMultipleVisibleParents = [IDTool.next, IDTool.delete_parent];
     const parentAltering = [IDTool.add_parent, IDTool.delete_parent];
-    const half_circleViewBox = `0 0 ${graphToolsDiameter} ${graphToolsDiameter}`;
+    const graphToolsRadius = graphToolsDiameter / 2;
+	const toolDiameter = k.dot_size * 1.4;
     let hovers: { [type: string]: boolean } = {}
     let centers: { [type: string]: Point } = {}
     let countOfVisibleParents = 0;
@@ -44,12 +44,13 @@
 		return () => { handler.disconnect() };
     });
 
-    function alterationFor(id: string) {
-        return(id == IDTool.add_parent) ? AlteringParent.adding : AlteringParent.deleting;
+    function alterationState_for(id: string) {
+        const alteration = (id == IDTool.add_parent) ? RelationshipAlteration.adding : RelationshipAlteration.deleting;
+        return new AlterationState(alteration)
     }
 
     function isInvertedFor(id: string) {
-        return parentAltering.includes(id) && $s_altering_parent == alterationFor(id);
+        return parentAltering.includes(id) && $s_alteration_state == alterationState_for(id);
     }
 
     function isDisabledFor(id: string) {
@@ -130,7 +131,7 @@
             setC(IDTool.delete_cancel,  center.offsetBy(new Point(1 - toolDiameter, toolDiameter - 5)));
             setC(IDTool.delete_confirm, center.offsetBy(new Point(2 - toolDiameter, 5 - toolDiameter)));
             setC(IDTool.create,         new Point(center.x + toolDiameter - 3, y - toolDiameter + 7));
-            setC(IDTool.more,           new Point(center.x + 1, y + toolDiameter + 4));
+            setC(IDTool.more,           new Point(center.x, y + toolDiameter + 4));
             setC(IDTool.next,           new Point(center.x - 2, y - toolDiameter - 2));
             setC(IDTool.delete_parent,  new Point(left - 1, y + toolDiameter - 8));
             setC(IDTool.add_parent,     new Point(left - 1, y - toolDiameter + 7));
@@ -239,12 +240,12 @@
                 </svg>
                 <svg width=16
                     height=10
-                    viewBox='-2 -2 14 10'
+                    viewBox='-0.5 -2 14 10'
                     fill={hovers[IDTool.more] ? k.color_background : color}>
-                    <path d={svgPaths.tinyDots_linear(3, 1)}/>
+                    <path d={svgPaths.tinyDots_linear(7, 1)}/>
                 </svg>
             </LabelButton>
-            <DotReveal thing={thing} path={$s_path_graphTools} center={getC(IDTool.dismiss)}/>
+            <DotReveal path={$s_path_graphTools} center={getC(IDTool.dismiss)}/>
             <TriangleButton
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.next, isFilled) }}
                 strokeColor={isDisabledFor(IDTool.next) ? k.color_disabled : parentSensitiveColor}

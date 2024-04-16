@@ -1,4 +1,4 @@
-import { Path } from './GlobalImports';
+import { Path } from '../common/GlobalImports';
 
 export default class TitleState {
 	stopping: Path | null = null;

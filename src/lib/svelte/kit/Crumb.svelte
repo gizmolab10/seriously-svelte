@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, Thing, onMount, signals, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
-	import { s_path_focus } from '../../ts/common/State';
+	import { s_path_focus } from '../../ts/state/State';
     export let path;
 	const borderStyle = '1px solid';
 	let borderColor = k.color_background;
@@ -35,7 +35,7 @@
 		if (dbDispatch.db.hasData) {
 			path.grabOnly();
 			if (path.becomeFocus()) {
-				signals.signal_rebuildWidgets_fromFocus();
+				signals.signal_rebuildGraph_fromFocus();
 			}
 		}
 	}

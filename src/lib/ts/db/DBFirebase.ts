@@ -1,8 +1,8 @@
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection, onSnapshot, deleteField, getFirestore } from 'firebase/firestore';
 import { DocumentData, DocumentChange, QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
-import { g, k, u, get, Thing, debug, TypeDB, signals, IDTrait, TypeDatum, Hierarchy, DebugFlag } from '../common/GlobalImports';
+import { g, k, u, get, Thing, debug, DBType, signals, IDTrait, DatumType, Hierarchy, DebugFlag } from '../common/GlobalImports';
 import { Predicate, dbDispatch, Relationship, persistLocal, CreationOptions } from '../common/GlobalImports';
-import { s_build } from '../common/State';
+import { s_build } from '../state/State';
 import { initializeApp } from "firebase/app";
 import DBInterface from './DBInterface';
 
@@ -24,15 +24,15 @@ export default class DBFirebase implements DBInterface {
 	baseID = 'Public';
 	bulksName = 'Bulks';
 	deferSnapshots = false;
-	dbType = TypeDB.firebase;
+	dbType = DBType.firebase;
 	bulks: Array<Bulk> | null = null;
 	app = initializeApp(this.firebaseConfig);
 	predicatesCollection: CollectionReference | null = null;
 	deferredSnapshots: Array<SnapshotDeferal> = [];
 	addedRelationship: Relationship | null = null
 	_hierarchy: Hierarchy | null = null;
+	firestore = getFirestore(this.app);
 	addedThing: Thing | null = null
-	db = getFirestore(this.app);
 
 	setHasData(flag: boolean) { this.hasData = flag; }
 	reportError(error: any) { console.log(error); }
@@ -57,20 +57,20 @@ export default class DBFirebase implements DBInterface {
 		if (dbDispatch.eraseDB) {
 			await this.document_remoteDelete(baseID);
 		}
-		await this.fetch_documentsOf(TypeDatum.predicates);
+		await this.fetch_documentsOf(DatumType.predicates);
 		await this.fetch_allFrom(baseID);
 		persistLocal.paths_restore(); // can paths restore happen focus?
 		await this.fetch_bulkAliases();		// TODO: assumes all paths created
 	}
 
 	async fetch_allFrom(baseID: string) {
-		await this.fetch_documentsOf(TypeDatum.things, baseID);
-		await this.fetch_documentsOf(TypeDatum.relationships, baseID);
+		await this.fetch_documentsOf(DatumType.things, baseID);
+		await this.fetch_documentsOf(DatumType.relationships, baseID);
 	}
 		
-	async fetch_documentsOf(type: TypeDatum, baseID: string | null = null) {
+	async fetch_documentsOf(type: DatumType, baseID: string | null = null) {
 		try {
-			const collectionRef = !baseID ? collection(this.db, type) : collection(this.db, this.bulksName, baseID, type);
+			const collectionRef = !baseID ? collection(this.firestore, type) : collection(this.firestore, this.bulksName, baseID, type);
 			let querySnapshot = await getDocs(collectionRef);
 			const bulk = this.bulk_for(baseID);
 
@@ -89,10 +89,10 @@ export default class DBFirebase implements DBInterface {
 
 			if (bulk) {
 				switch (type) {
-					case TypeDatum.things:				 bulk.thingsCollection = collectionRef; break;
-					case TypeDatum.relationships: bulk.relationshipsCollection = collectionRef; break;
+					case DatumType.things:				 bulk.thingsCollection = collectionRef; break;
+					case DatumType.relationships: bulk.relationshipsCollection = collectionRef; break;
 				}
-			} else if (type == TypeDatum.predicates) {
+			} else if (type == DatumType.predicates) {
 				this.predicatesCollection = collectionRef;
 			}
 
@@ -137,7 +137,7 @@ export default class DBFirebase implements DBInterface {
 			if (rootsPath) {
 				g.rootsPath = rootsPath;
 				try {		// add bulk aliases to roots thing
-					const bulk = collection(this.db, this.bulksName);	// fetch all bulks (documents)
+					const bulk = collection(this.firestore, this.bulksName);	// fetch all bulks (documents)
 					let bulkSnapshot = await getDocs(bulk);
 					for (const bulkDoc of bulkSnapshot.docs) {
 						const baseID = bulkDoc.id;
@@ -161,7 +161,7 @@ export default class DBFirebase implements DBInterface {
 
 	static readonly $_REMOTE_$: unique symbol;
 	
-	snapshot_deferOne(baseID: string, type: TypeDatum, snapshot: QuerySnapshot) {
+	snapshot_deferOne(baseID: string, type: DatumType, snapshot: QuerySnapshot) {
 		const deferral = new SnapshotDeferal(baseID, type, snapshot);
 		this.deferredSnapshots.push(deferral);
 	}
@@ -178,7 +178,7 @@ export default class DBFirebase implements DBInterface {
 		}
 	}
 
-	setup_remoteHandler(baseID: string, type: TypeDatum, collection: CollectionReference) {
+	setup_remoteHandler(baseID: string, type: DatumType, collection: CollectionReference) {
 		onSnapshot(collection, (snapshot) => {
 			if (this.hierarchy.isAssembled) {		// u.ignore snapshots caused by data written to server
 				if (this.deferSnapshots) {
@@ -192,7 +192,7 @@ export default class DBFirebase implements DBInterface {
 		}
 	)};
 
-	async remoteHandler(baseID: string, type: TypeDatum, change: DocumentChange) {
+	async remoteHandler(baseID: string, type: DatumType, change: DocumentChange) {
 		const doc = change.doc;
 		const data = doc.data();
 		if (DBFirebase.data_isValidOfKind(type, data)) {
@@ -205,7 +205,7 @@ export default class DBFirebase implements DBInterface {
 			////////////////////
 
 			try {
-				if (type == TypeDatum.relationships) {
+				if (type == DatumType.relationships) {
 					const remoteRelationship = new RemoteRelationship(data);
 					if (remoteRelationship) {
 						let relationship = h.relationship_forHID(id.hash());
@@ -239,7 +239,7 @@ export default class DBFirebase implements DBInterface {
 							g.rootPath.order_normalizeRecursive_remoteMaybe(true);
 						}, 20);
 					}
-				} else if (type == TypeDatum.things) {
+				} else if (type == DatumType.things) {
 					const remoteThing = new RemoteThing(data);
 					let thing = h.thing_forHID(id.hash());
 					if (remoteThing) {
@@ -263,7 +263,7 @@ export default class DBFirebase implements DBInterface {
 						}
 					}
 				}
-				signals.signal_rebuildWidgets_fromFocus();
+				signals.signal_rebuildGraph_fromFocus();
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -273,28 +273,28 @@ export default class DBFirebase implements DBInterface {
 
 	static readonly $_SUBCOLLECTIONS_$: unique symbol;
 
-	async documents_firstTime_remoteCreate(type: TypeDatum, baseID: string, collectionRef: CollectionReference) {
-		const docRef = doc(this.db, this.bulksName, baseID);
+	async documents_firstTime_remoteCreate(type: DatumType, baseID: string, collectionRef: CollectionReference) {
+		const docRef = doc(this.firestore, this.bulksName, baseID);
 		await setDoc(docRef, { isReal: true }, { merge: true });
 		await updateDoc(docRef, { isReal: deleteField() });
-		if (type == TypeDatum.things) {
+		if (type == DatumType.things) {
 			await this.things_remember_firstTime_remoteCreateIn(collectionRef);
 		}
 	}
 
-	async document_remember_validated(type: TypeDatum, id: string, data: DocumentData, baseID: string) {
+	async document_remember_validated(type: DatumType, id: string, data: DocumentData, baseID: string) {
 		if (DBFirebase.data_isValidOfKind(type, data)) {
 			const h = this.hierarchy;
 			switch (type) {
-				case TypeDatum.things:		  h.thing_remember_runtimeCreate(baseID, id, data.title, data.color, data.trait, true); break;
-				case TypeDatum.predicates:	  h.predicate_remember_runtimeCreate(id, data.kind); break;
-				case TypeDatum.relationships: h.relationship_remember_runtimeCreateUnique(baseID, id, data.predicate.id, data.from.id, data.to.id, data.order, CreationOptions.isFromRemote); break;
+				case DatumType.things:		  h.thing_remember_runtimeCreate(baseID, id, data.title, data.color, data.trait, true); break;
+				case DatumType.predicates:	  h.predicate_remember_runtimeCreate(id, data.kind); break;
+				case DatumType.relationships: h.relationship_remember_runtimeCreateUnique(baseID, id, data.predicate.id, data.from.id, data.to.id, data.order, CreationOptions.isFromRemote); break;
 			}
 		}
 	}
 
 	async document_remoteDelete(name: string) {
-		const documentRef = doc(this.db, this.bulksName, name);
+		const documentRef = doc(this.firestore, this.bulksName, name);
 		await this.subcollections_remoteDeleteIn(documentRef);
 
 		try {
@@ -461,20 +461,20 @@ export default class DBFirebase implements DBInterface {
 
 	static readonly $_VALIDATION_$: unique symbol;
 
-	static data_isValidOfKind(type: TypeDatum, data: DocumentData) {
+	static data_isValidOfKind(type: DatumType, data: DocumentData) {
 		switch (type) {
-			case TypeDatum.things:		
+			case DatumType.things:		
 				const thing = data as Thing;	
 				if (!thing.title && thing.title != k.empty || !thing.color && thing.color != k.empty || !thing.trait && thing.trait != k.empty) {
 					return false;
 				}
 				break;
-			case TypeDatum.predicates:
+			case DatumType.predicates:
 				if (!data.kind) {
 					return false;
 				}
 				break;
-			case TypeDatum.relationships:
+			case DatumType.relationships:
 				const relationship = data as RemoteRelationship;
 				if (!relationship.predicate || !relationship.from || !relationship.to) {
 					return false;
@@ -490,7 +490,7 @@ export default class DBFirebase implements DBInterface {
 		await this.getUserIPAddress().then((ipAddress) => {
 			if (ipAddress != null && ipAddress != '69.181.235.85') {
 				const queryStrings = k.queryString.toString() ?? 'empty';
-				const logRef = collection(this.db, 'access_logs');
+				const logRef = collection(this.firestore, 'access_logs');
 				const item = {
 					queries: queryStrings,
 					build: get(s_build),
@@ -539,10 +539,10 @@ class Bulk {
 
 class SnapshotDeferal {
 	baseID: string;
-	type: TypeDatum;
+	type: DatumType;
 	snapshot: QuerySnapshot;
 
-	constructor(baseID: string, type: TypeDatum, snapshot: QuerySnapshot) {
+	constructor(baseID: string, type: DatumType, snapshot: QuerySnapshot) {
 		this.baseID = baseID;
 		this.type = type;
 		this.snapshot = snapshot;
@@ -603,7 +603,7 @@ class RemoteRelationship implements RemoteRelationship {
 					}
 				} else {
 					const remote = data as RemoteRelationship;
-					if (DBFirebase.data_isValidOfKind(TypeDatum.relationships, data)) {
+					if (DBFirebase.data_isValidOfKind(DatumType.relationships, data)) {
 						this.to = doc(things, remote.to.id) as DocumentReference<Thing>;
 						this.from = doc(things, remote.from.id) as DocumentReference<Thing>;
 						this.predicate = doc(predicates, remote.predicate.id) as DocumentReference<Predicate>;

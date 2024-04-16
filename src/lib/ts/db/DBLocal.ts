@@ -1,10 +1,10 @@
-import { k, Thing, TypeDB, IDTrait, Hierarchy, Relationship } from '../common/GlobalImports';
+import { k, Thing, DBType, IDTrait, Hierarchy, Relationship } from '../common/GlobalImports';
 import DBInterface from './DBInterface';
 
 export default class DBLocal implements DBInterface {
 	_hierarchy: Hierarchy | null = null;
 	baseID = 'handcrafted';
-	dbType = TypeDB.local;
+	dbType = DBType.local;
 	hasData = false;
 	loadTime = null;
 

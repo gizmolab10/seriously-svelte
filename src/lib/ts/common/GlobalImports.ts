@@ -1,12 +1,12 @@
-import { IDTrait, ZIndex, Angle, Quadrant, IDButton, IDBrowser, AlteringParent, PredicateKind } from './Enumerations';
+import { IDTrait, ZIndex, Angle, Quadrant, IDButton, IDBrowser, RelationshipAlteration, PredicateKind } from './Enumerations';
 import { debugReact, DebugReact, ReactFlag } from '../debug/DebugReact';
 import { Rect, Size, Point, ChildMapRect } from '../geometry/Geometry';
 import { IDPersistant, persistLocal } from '../managers/PersistLocal';
 import { onMount, onDestroy, setContext, getContext } from 'svelte';
 import { CreationOptions, IDLine, IDTool } from './Enumerations';
-import { debug, Debug, DebugFlag } from '../debug/Debug';
 import { Direction, svgPaths } from '../geometry/SVGPaths';
-import { TypeDB, TypeDatum } from '../db/DBInterface';
+import { debug, Debug, DebugFlag } from '../debug/Debug';
+import { DBType, DatumType } from '../db/DBInterface';
 import { SeriouslyRange } from './SeriouslyRange';
 import { IDWrapper } from '../structures/Wrapper';
 import { signals, IDSignal } from './Signals';
@@ -17,29 +17,33 @@ import { builds } from './Builds';
 import { u } from './Utilities';
 import { k } from './Constants';
 import { g } from './Globals';
-import './Extensions';
 
+import AlterationState from '../state/AlterationState';
 import ClusterLayout from '../geometry/ClusterLayout';
 import Relationship from '../data/Relationship';
 import Hierarchy from '../managers/Hierarchy';
+import TitleState from '../state/TitleState';
 import Wrapper from '../structures/Wrapper';
 import Predicate from '../data/Predicate';
 import Layout from '../geometry/Layout';
 import Datum from '../structures/Datum';
-import TitleState from './TitleState';
 import Grabs from '../managers/Grabs';
 import Path from '../structures/Path';
 import Access from '../data/Access';
 import Thing from '../data/Thing';
 import User from '../data/User';
+import './Extensions';
 
 export {
-	Path, Grabs, Wrapper, signals, IDSignal, TitleState,
+	transparentize,
+	TitleState, AlterationState,
+	Wrapper, signals, SeriouslyRange,
+	Rect, Size, Point, svgPaths, Direction,
+	Path, Grabs, dbDispatch, Hierarchy, persistLocal,
+	User, Datum, Thing, Access, Predicate, Relationship,
+	Angle, Layout, Quadrant, ChildMapRect, ClusterLayout,
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactFlag,
 	g, k, u, get, builds, onMount, onDestroy, setContext, getContext,
-	User, Datum, Thing, Access, Predicate, Relationship, SeriouslyRange,
-	dbDispatch, Hierarchy, persistLocal, Quadrant, Angle, transparentize,
-	IDLine, IDTool, IDTrait, IDWrapper, IDButton, IDBrowser, IDPersistant,
-	ZIndex, TypeDB, TypeDatum, AlteringParent, PredicateKind, CreationOptions,
-	Rect, Size, Point, Layout, svgPaths, Direction, ChildMapRect, ClusterLayout,
+	IDLine, IDTool, IDTrait, IDSignal, IDWrapper, IDButton, IDBrowser, IDPersistant,
+	ZIndex, DBType, DatumType, PredicateKind, CreationOptions, RelationshipAlteration,
 };

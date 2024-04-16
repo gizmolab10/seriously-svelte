@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { g, k, u, Path, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/GlobalImports';
 	import { IDButton, onMount, debugReact, dbDispatch, Predicate } from '../../ts/common/GlobalImports';
-	import { s_path_focus, s_graphRect, s_show_details, s_paths_grabbed } from '../../ts/common/State';
-	import { s_id_popupView, s_path_graphTools, s_user_graphOffset } from '../../ts/common/State';
+	import { s_path_focus, s_graphRect, s_show_details, s_paths_grabbed } from '../../ts/state/State';
+	import { s_id_popupView, s_path_graphTools, s_user_graphOffset } from '../../ts/state/State';
 	import { IDPersistant, IDSignal, persistLocal } from '../../ts/common/GlobalImports';
 	import DotRevealFocus from '../kit/DotRevealFocus.svelte';
 	import EditingTools from './EditingTools.svelte';
@@ -18,7 +18,6 @@
 	let greenRect: Rect;
 	let blueRect: Rect;
 	let redRect: Rect;
-	let focus: Thing;
 	let rebuilds = 0;
 	let height = 0;
 	let width = 0;
@@ -61,8 +60,9 @@
 	}
 
 	function updateOrigins() {
-		if (focus && graphRect) {
-			childrenSize = $s_path_focus.visibleProgeny_size;
+		const focusPath = $s_path_focus;
+		if (focusPath && graphRect) {
+			childrenSize = focusPath.visibleProgeny_size;
 			const offsetX = 15 + ($s_show_details ? -k.width_details : 0) - (childrenSize.width / 2) - (k.dot_size / 2.5) + offsetX_ofFirstReveal;
 			const offsetY = -1 - graphRect.origin.y;
 			origin_ofFirstReveal = graphRect.center.offsetBy(new Point(offsetX, offsetY));
@@ -80,7 +80,7 @@
 
 </script>
 
-{#if focus}
+{#if $s_path_focus}
 	{#key rebuilds}
 		<div class='tree'
 			style='transform: translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px);'

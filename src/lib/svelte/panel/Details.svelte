@@ -1,15 +1,15 @@
 <script>
-	import { k, u, TypeDB, ZIndex, IDPersistant, IDButton, Hierarchy, dbDispatch, persistLocal } from '../../ts/common/GlobalImports';
-	import { s_db_type, s_graphRect, s_db_loadTime, s_id_popupView } from '../../ts/common/State';
+	import { k, u, DBType, ZIndex, IDPersistant, IDButton, Hierarchy, dbDispatch, persistLocal } from '../../ts/common/GlobalImports';
+	import { s_db_type, s_graphRect, s_db_loadTime, s_id_popupView } from '../../ts/state/State';
 	import RadioButtons from '../kit/RadioButtons.svelte'
 	import Label from '../kit/Label.svelte';
 
 	function handle_dbTypeAt(index) { dbDispatch.db_changeTo(menuItems[index].id); }
 
 	const menuItems = [
-		{ id: TypeDB.local,	   label: 'local', action: () => { handle_dbTypeAt(0); } },
-		{ id: TypeDB.firebase, label: 'firebase', action: () => { handle_dbTypeAt(1); } },
-		{ id: TypeDB.airtable, label: 'airtable', action: () => { handle_dbTypeAt(2); } }
+		{ id: DBType.local,	   label: 'local', action: () => { handle_dbTypeAt(0); } },
+		{ id: DBType.firebase, label: 'firebase', action: () => { handle_dbTypeAt(1); } },
+		{ id: DBType.airtable, label: 'airtable', action: () => { handle_dbTypeAt(2); } }
 	];
 
 </script>

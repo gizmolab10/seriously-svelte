@@ -1,6 +1,6 @@
 import { g, k, u, get, Path, Datum, debug, IDTrait, Predicate } from '../common/GlobalImports';
 import { DebugFlag, dbDispatch, Relationship, SeriouslyRange } from '../common/GlobalImports';
-import { s_path_focus, s_paths_expanded } from '../common/State';
+import { s_path_focus, s_paths_expanded } from '../state/State';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -34,7 +34,7 @@ export default class Thing extends Datum {
 	get idBridging():		   string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get description():		   string { return this.id + ' \"' + this.title + '\"'; }
 	get titleWidth():		   number { return u.getWidthOf(this.title) + 6; }
-	get isRoot():			  boolean { return this == g.root; }
+	get isRoot():			  boolean { return this.trait == IDTrait.root; }
 	get isBulkAlias():		  boolean { return this.trait == IDTrait.bulk; }
 	get hasMultipleParents(): boolean { return this.parentPaths.length > 1; }
 	get isAcrossBulk():		  boolean { return this.baseID != g.hierarchy.db.baseID; }
