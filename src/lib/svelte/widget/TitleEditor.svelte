@@ -150,14 +150,15 @@
 			thing = path?.thing;
 		}
 		const _ = $s_paths_grabbed;
-		const editPath = $s_title_editing;
+		const titleState = $s_title_editing; // needs reactivity to s_title_editing
+		const titleState_isEditing = path && titleState && titleState.editing && path.matchesPath(titleState.editing);
 		const isBulkAlias = thing?.isBulkAlias ?? false;
 		if (k.allow_TitleEditing && !isBulkAlias) {
 			if (path?.isStoppingEdit ?? false) {
 				debug.log_edit(`STOPPING ${thingTitle}`);
 				$s_title_editing = null;
 				input?.blur();
-			} else if (isEditing != path?.matchesPath(editPath?.editing ?? null)) { // needs reactivity to $s_title_editing;
+			} else if (isEditing != titleState_isEditing) {
 				if (!isEditing) {
 					input?.focus();
 					debug.log_edit(`RANGE ${thingTitle}`);
@@ -261,6 +262,7 @@
 		on:mousedown={handleLongClick}
 		on:dblclick={handleDoubleClick}
 		style='
+			top: 0.5px;
 			{position};
 			{cursorStyle};
 			left: {left}px;

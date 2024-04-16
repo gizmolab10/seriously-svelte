@@ -27,7 +27,7 @@
 	function handleMouseOver(event) { setIsHovering_updateColors(true); }
 
 	$: {
-		if (dotReveal &&!path.matchesPath($s_path_graphTools)) {
+		if (dotReveal && !($s_path_graphTools?.matchesPath(path) ?? false)) {
 			revealWrapper = new Wrapper(dotReveal, path, IDWrapper.reveal);
 		}
 	}

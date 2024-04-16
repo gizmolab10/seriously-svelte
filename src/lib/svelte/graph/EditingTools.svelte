@@ -1,6 +1,6 @@
 <script lang='ts'>
     import { g, k, u, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, signals } from '../../ts/common/GlobalImports';
-    import { svgPaths, Direction, dbDispatch, transparentize, AlterationState, RelationshipAlteration } from '../../ts/common/GlobalImports';
+    import { svgPaths, Direction, dbDispatch, transparentize, AlterationState, Alteration } from '../../ts/common/GlobalImports';
     import { s_alteration_state, s_path_graphTools } from '../../ts/state/State';
     import { s_graphRect, s_show_details } from '../../ts/state/State';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
@@ -45,7 +45,7 @@
     });
 
     function alterationState_for(id: string) {
-        const alteration = (id == IDTool.add_parent) ? RelationshipAlteration.adding : RelationshipAlteration.deleting;
+        const alteration = (id == IDTool.add_parent) ? Alteration.adding : Alteration.deleting;
         return new AlterationState(alteration)
     }
 

@@ -30,15 +30,17 @@
 		const line_length = k.necklace_gap - k.dot_size * (showArrowHeads ? 8 : 0.4);
 		const line_rotated = new Point(line_length, 0).rotate_by(angle);
 		const inside_rotated = new Point(inside_radius, 0).rotate_by(angle);
-		const titleWidth = u.getWidthOf(layout?.title);
+		const titleWidth = u.getWidthOf(layout?.title) / -3;
+		const titleDelta = new Point(titleWidth, k.dot_size / -2);
 		size = line_rotated.abs.asSize;
 		const rect = new Rect(Point.zero, size);
 		const center = rect.center;
+		const title_origin = center.offsetBy(titleDelta);
 		svgPath = svgPaths.line(line_rotated);
 		[left, top] = updateLine(line_rotated, inside_rotated);
 		[arrow_start, arrow_end] = rect.cornersForAngle(angle);
-		label_left = center.x - titleWidth / 2;
-		label_top = center.y;
+		label_left = title_origin.x;
+		label_top = title_origin.y;
 	}
 
 	function updateLine(line_rotated: Point, inside_rotated: Point): [number, number] {
@@ -71,15 +73,14 @@
 			<path d={svgPath} stroke={color} fill='none'/>
 		</svg>
 		<div class='label' style='
+			background-color: {k.color_background};
 			left: {label_left}px;
 			white-space: nowrap;
 			position: absolute;
 			font-family: Arial;
 			top: {label_top}px;
 			font-size: 0.5em;
-			color: {color};
-			background-color: {k.color_background};
-			left: 20px;'>
+			color: {color};'>
 			{layout?.title}
 		</div>
 		{#if showArrowHeads}

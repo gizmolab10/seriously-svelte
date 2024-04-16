@@ -5,7 +5,7 @@ export default class TitleState {
 	editing: Path | null = null;
 
 	constructor(editing: Path) { this.editing = editing; }
-	get isStopping(): boolean { return this.editing != null && this.stopping != null && this.editing.matchesPath(this.stopping); }
+	get isStopping(): boolean { return !!this.editing && !!this.stopping && this.editing.matchesPath(this.stopping); }
 	stop() { this.stopping = this.editing; }
 
 }

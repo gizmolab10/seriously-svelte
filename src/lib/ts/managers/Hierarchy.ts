@@ -1,5 +1,5 @@
 import { g, k, u, get, User, Path, Thing, Grabs, debug, Access, IDTool, IDTrait, signals } from '../common/GlobalImports';
-import { DBType, Wrapper, Predicate, Relationship, RelationshipAlteration, CreationOptions } from '../common/GlobalImports';
+import { DBType, Wrapper, Predicate, Relationship, Alteration, CreationOptions } from '../common/GlobalImports';
 import { s_title_editing, s_alteration_state, s_layout_byClusters, s_path_graphTools } from '../state/State';
 import { s_isBusy, s_path_focus, s_db_loadTime, s_paths_grabbed, s_things_arrived } from '../state/State';
 import DBInterface from '../db/DBInterface';
@@ -58,9 +58,9 @@ export default class Hierarchy {
 		if (path) {
 			switch (IDButton) {
 				case IDTool.create: await this.path_edit_remoteCreateChildOf(path); break;
-				case IDTool.add_parent: this.toggleAlteration(RelationshipAlteration.adding); return;
+				case IDTool.add_parent: this.toggleAlteration(Alteration.adding); return;
 				case IDTool.next: this.path_relayout_toolCluster_nextParent(event.altKey); return;
-				case IDTool.delete_parent: this.toggleAlteration(RelationshipAlteration.deleting); return;
+				case IDTool.delete_parent: this.toggleAlteration(Alteration.deleting); return;
 				case IDTool.delete_confirm: await this.paths_rebuild_traverse_remoteDelete([path]); break;
 				case IDTool.more: console.log('needs more'); break;
 				default: break;
@@ -88,7 +88,7 @@ export default class Hierarchy {
 				if (pathGrab && k.allow_TitleEditing) {
 					switch (key) {
 						case 'd':		await this.thing_edit_remoteDuplicate(pathGrab); break;
-						case k.space:		await this.path_edit_remoteCreateChildOf(pathGrab); break;
+						case k.space:	await this.path_edit_remoteCreateChildOf(pathGrab); break;
 						case '-':		if (!COMMAND) { await this.thing_edit_remoteAddLine(pathGrab); } break;
 						case 'tab':		await this.path_edit_remoteCreateChildOf(pathGrab.parentPath); break; // Title editor also makes this call
 						case 'enter':	pathGrab.startEdit(); break;
@@ -810,7 +810,7 @@ export default class Hierarchy {
 					if (path.isExpanded) {
 						needsRebuild = path.collapse();
 						newGrabPath = this.grabs.areInvisible ? path : null;
-					} else if (!newGrabPath.matchesPath(rootPath)) {
+					} else if (!(rootPath?.matchesPath(newGrabPath) ?? false)) {
 						needsRebuild = newGrabPath.collapse();
 					}
 				}
@@ -818,7 +818,7 @@ export default class Hierarchy {
 		}
 		s_title_editing.set(null);
 		newGrabPath?.grabOnly();
-		const matches = newParentPath && newParentPath.matchesPath(newGrabPath);
+		const matches = newParentPath && newGrabPath && newGrabPath.matchesPath(newParentPath);
 		const allowToBecomeFocus = (!SHIFT || matches) && newGrabIsNotFocus; 
 		const shouldBecomeFocus = !newFocusPath?.isVisible || newFocusPath.isRoot;
 		if (!RIGHT && allowToBecomeFocus && shouldBecomeFocus && (newFocusPath?.becomeFocus() ?? false)) {
@@ -839,10 +839,10 @@ export default class Hierarchy {
 				s_alteration_state.set(null);
 				s_path_graphTools.set(null);
 				switch (state.alteration) {
-					case RelationshipAlteration.deleting:
+					case Alteration.deleting:
 						await this.relationship_forget_remoteRemove(toolsPath, path);
 						break;
-					case RelationshipAlteration.adding:
+					case Alteration.adding:
 						const toolsThing = toolsPath?.thing;
 						if (toolsThing) {
 							await this.path_remember_remoteAddAsChild(path, toolsThing);
@@ -913,7 +913,7 @@ export default class Hierarchy {
 		await this.relationships_removeHavingNullReferences();
 	}
 
-	toggleAlteration(alteration: RelationshipAlteration) {
+	toggleAlteration(alteration: Alteration) {
 		const state = get(s_alteration_state)
 		s_alteration_state.set((state?.alteration == alteration) ? null : state);
 	}

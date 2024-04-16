@@ -45,7 +45,6 @@ export default class Layout {
 				const childAngle = this.childAngle_for(index, count, clusterLayout, radius);
 				const childOrigin = origin.offsetBy(new Point(radius, 0).rotate_by(childAngle));
 				const map = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, path, clusterPath, childAngle);
-				// console.log(`childAngle ${childAngle} ${idPredicate} \"${path.title}\"`);
 				this.childMapRects.push(map);
 				index += 1;
 			}

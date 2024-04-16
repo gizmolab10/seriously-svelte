@@ -1,5 +1,5 @@
 import { g, k, u, get, Rect, Size, Thing, debug, signals, Wrapper, IDWrapper } from '../common/GlobalImports';
-import { Predicate, TitleState, Relationship, PredicateKind, RelationshipAlteration } from '../common/GlobalImports';
+import { Predicate, TitleState, Relationship, PredicateKind, Alteration } from '../common/GlobalImports';
 import { s_path_focus, s_paths_grabbed, s_title_editing, s_layout_byClusters } from '../state/State';
 import { s_paths_expanded, s_path_graphTools, s_alteration_state } from '../state/State';
 import { Writable } from 'svelte/store';
@@ -66,10 +66,10 @@ export default class Path {
 	get children(): Array<Thing> { return g.hierarchy?.things_forPaths(this.childPaths); }
 	get idPredicates(): Array<string> { return this.relationships.map(r => r.idPredicate); }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
-	get isEditing(): boolean { return this.matchesPath(get(s_title_editing)?.editing ?? null); }
+	get isEditing(): boolean { return get(s_title_editing)?.editing?.matchesPath(this) ?? false; }
 	get showsChildRelationships(): boolean { return this.isExpanded && this.hasChildRelationships; }
-	get isStoppingEdit(): boolean { return this.matchesPath(get(s_title_editing)?.stopping ?? null); }
 	get titles(): Array<string> { return this.things?.map(t => ` \"${t ? t.title : 'null'}\"`) ?? []; }
+	get isStoppingEdit(): boolean { return get(s_title_editing)?.stopping?.matchesPath(this) ?? false; }
 	get hasRelationships(): boolean { return this.hasParentRelationships || this.hasChildRelationships; }
 	get childRelationships(): Array<Relationship> { return this.parentRelationships_for(this.idPredicate, false); }
 	get parentRelationships(): Array<Relationship> { return this.parentRelationships_for(this.idPredicate, true); }
@@ -125,8 +125,8 @@ export default class Path {
 		const toolThing = path_toolGrab?.thing;
 		const state = get(s_alteration_state)
 		const thing = this.thing;
-		if (state && thing && toolThing && thing != toolThing && !this.matchesPath(path_toolGrab)) {
-			const isDeleting = state.alteration == RelationshipAlteration.deleting;
+		if (state && thing && toolThing && thing != toolThing && !(path_toolGrab?.matchesPath(this) ?? false)) {
+			const isDeleting = state.alteration == Alteration.deleting;
 			const isParentOfTool = this.thing_isImmediateParentOf(path_toolGrab);
 			const toolIsAnAncestor = thing.parentIDs.includes(toolThing.id);
 			const isAProgenyOfTool = this.path_isAProgenyOf(path_toolGrab);
@@ -149,9 +149,9 @@ export default class Path {
 		return nextPath;
 	}
 
-	matchesStore(store: Writable<Path | null>): boolean { return this.matchesPath(get(store)); }
+	matchesPath(path: Path): boolean { return this.pathHash == path.pathHash; }
 	includedInStore(store: Writable<Array<Path>>): boolean { return this.includedInPaths(get(store)); }
-	matchesPath(path: Path | null): boolean { return !path ? false : this.pathHash == path.pathHash; }
+	matchesStore(store: Writable<Path | null>): boolean { return get(store)?.matchesPath(this) ?? false; }
 	sharesAnID(path: Path | null): boolean { return !path ? false : this.ids.some(id => path.ids.includes(id)); }
 	includesPredicateID(idPredicate: string): boolean { return this.thing?.hasParentsFor(idPredicate) ?? false; }
 	showsClusterFor(predicate: Predicate): boolean { return this.includesPredicateID(predicate.id) && this.hasThings(predicate); }
@@ -350,18 +350,14 @@ export default class Path {
 		return this;
 	}
 
-	isAllExpandedFrom(path: Path | null): boolean {
-		if (!this.matchesPath(path)) {
-			let tweenPath: Path = this;
-			do {
-				const maybe = tweenPath.parentPath;	// go backwards on this path
-				if (maybe) {
-					tweenPath = maybe;
-					if (!tweenPath.isExpanded) {		// stop when path is not expanded
-						return false;
-					}
-				}
-			} while (tweenPath?.id_count > 0);
+	isAllExpandedFrom(targetPath: Path | null): boolean {
+		// visit parents along this path until encountering
+		// either the path or an unexpanded parent
+		if (targetPath && !this.matchesPath(targetPath)) {
+			const path = this.parentPath;			// visit parent of path
+			if (!path || (!path.isExpanded && !path.isAllExpandedFrom(targetPath))) {
+				return false;	// stop when no parent or parent is not expanded
+			}
 		}
 		return true;
 	}
@@ -431,7 +427,7 @@ export default class Path {
 	}
 
 	becomeFocus(): boolean {
-		const changed = !this.matchesPath(get(s_path_focus));
+		const changed = !(get(s_path_focus)?.matchesPath(this) ?? false);
 		s_path_graphTools.set(null);
 		if (changed) {
 			s_path_focus.set(this);
