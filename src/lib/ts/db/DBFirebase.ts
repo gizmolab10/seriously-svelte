@@ -79,7 +79,7 @@ export default class DBFirebase implements DBInterface {
 					await this.documents_firstTime_remoteCreate(type, baseID, collectionRef);
 					querySnapshot = await getDocs(collectionRef);
 				}
-				this.setup_remoteHandler(baseID, type, collectionRef);
+				this.setup_handle_docChanges(baseID, type, collectionRef);
 			}
 			
 			
@@ -166,33 +166,33 @@ export default class DBFirebase implements DBInterface {
 		this.deferredSnapshots.push(deferral);
 	}
 
-	snapshots_handleDeferred() {
+	handle_deferredSnapshots() {
 		this.deferSnapshots = false;
 		while (this.deferredSnapshots.length > 0) {
 			const deferral = this.deferredSnapshots.pop();
 			if (deferral) {
 				deferral.snapshot.docChanges().forEach((change) => {	// convert and remember
-					this.remoteHandler(deferral.baseID, deferral.type, change);
+					this.handle_docChanges(deferral.baseID, deferral.type, change);
 				});
 			}
 		}
 	}
 
-	setup_remoteHandler(baseID: string, type: DatumType, collection: CollectionReference) {
+	setup_handle_docChanges(baseID: string, type: DatumType, collection: CollectionReference) {
 		onSnapshot(collection, (snapshot) => {
 			if (this.hierarchy.isAssembled) {		// u.ignore snapshots caused by data written to server
 				if (this.deferSnapshots) {
 					this.snapshot_deferOne(baseID, type, snapshot);
 				} else {
 					snapshot.docChanges().forEach((change) => {	// convert and remember
-						this.remoteHandler(baseID, type, change);
+						this.handle_docChanges(baseID, type, change);
 					});
 				}
 			}
 		}
 	)};
 
-	async remoteHandler(baseID: string, type: DatumType, change: DocumentChange) {
+	async handle_docChanges(baseID: string, type: DatumType, change: DocumentChange) {
 		const doc = change.doc;
 		const data = doc.data();
 		if (DBFirebase.data_isValidOfKind(type, data)) {
@@ -333,7 +333,7 @@ export default class DBFirebase implements DBInterface {
 				thing.isRemotelyStored = true;
 				thing.setID(ref.id);			// so relationship will be correct
 				this.hierarchy.thing_remember(thing);
-				this.snapshots_handleDeferred();
+				this.handle_deferredSnapshots();
 				thing.log(DebugFlag.remote, 'CREATE T');
 			} catch (error) {
 				this.reportError(error);
@@ -408,7 +408,7 @@ export default class DBFirebase implements DBInterface {
 				relationship.isRemotelyStored = true;
 				relationship.setID(ref.id);
 				this.hierarchy.relationship_remember(relationship);
-				this.snapshots_handleDeferred();
+				this.handle_deferredSnapshots();
 				relationship.log(DebugFlag.remote, 'CREATE R');
 			} catch (error) {
 				this.reportError(error);

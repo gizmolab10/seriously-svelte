@@ -1,4 +1,4 @@
-import { k, Thing, DBType, IDTrait, Hierarchy, Relationship } from '../common/GlobalImports';
+import { Thing, DBType, IDTrait, Hierarchy, Relationship } from '../common/GlobalImports';
 import DBInterface from './DBInterface';
 
 export default class DBLocal implements DBInterface {
@@ -18,38 +18,42 @@ export default class DBLocal implements DBInterface {
 	setHasData(flag: boolean) { this.hasData = flag; }
 
 	async fetch_all() {
-		const h = this.hierarchy;
+		const idTr = 'R';
 		const idTa = 'A';
 		const idTb = 'B';
 		const idTc = 'C';
 		const idTd = 'D';
 		const idTe = 'E';
-		const idTr = 'R';
-		const idPc = 'contains';
 		const idPr = 'related';
+		const idPc = 'contains';
+		const h = this.hierarchy;
 		h.predicate_remember_runtimeCreateUnique(idPc, 'contains', false);
 		h.predicate_remember_runtimeCreateUnique(idPr, 'isRelated', false, 2);
-		h.thing_remember_runtimeCreateUnique(k.empty, idTa, 'A', 'red', '1', false);
-		h.thing_remember_runtimeCreateUnique(k.empty, idTb, 'B', 'purple', '2', false);
-		h.thing_remember_runtimeCreateUnique(k.empty, idTc, 'C', 'blue', '3', false);
-		h.thing_remember_runtimeCreateUnique(k.empty, idTd, 'D', 'green', 'a', false);
-		h.thing_remember_runtimeCreateUnique(k.empty, idTe, 'E', 'mediumvioletred', 'a', false);
-		h.thing_remember_runtimeCreateUnique(k.empty, idTr, 'R', 'limegreen', IDTrait.root, false);
-		h.relationship_remember_runtimeCreateUnique(k.empty, 'Cra', idPc, idTr, idTa, 0);
-		h.relationship_remember_runtimeCreateUnique(k.empty, 'Crb', idPc, idTr, idTb, 1);
-		h.relationship_remember_runtimeCreateUnique(k.empty, 'Crc', idPc, idTr, idTc, 2);
-		h.relationship_remember_runtimeCreateUnique(k.empty, 'Crd', idPc, idTr, idTd, 2);
-		h.relationship_remember_runtimeCreateUnique(k.empty, 'Cab', idPc, idTa, idTb, 0);
-		h.relationship_remember_runtimeCreateUnique(k.empty, 'Cad', idPc, idTa, idTd, 1);
-		h.relationship_remember_runtimeCreateUnique(k.empty, 'Cae', idPc, idTa, idTe, 2);
-		h.relationship_remember_runtimeCreateUnique(k.empty, 'Cbc', idPc, idTb, idTc, 1);
-		h.relationship_remember_runtimeCreateUnique(k.empty, 'Cbd', idPc, idTb, idTd, 1);
-		h.relationship_remember_runtimeCreateUnique(k.empty, 'Ccd', idPc, idTc, idTd, 0);
-		h.relationship_remember_runtimeCreateUnique(k.empty, 'Cde', idPc, idTd, idTe, 0);
-		h.relationship_remember_runtimeCreateUnique(k.empty, 'Rrb', idPr, idTr, idTb, 2);
-		h.relationship_remember_runtimeCreateUnique(k.empty, 'Rac', idPr, idTa, idTc, 2);
-		h.relationship_remember_runtimeCreateUnique(k.empty, 'Rbe', idPr, idTb, idTe, 2);
-		h.relationship_remember_runtimeCreateUnique(k.empty, 'Rcd', idPr, idTc, idTd, 2);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTa, 'A', 'red', 'a', false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTb, 'B', 'blue', 'b', false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTc, 'C', 'green', 'c', false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTd, 'D', 'purple', 'f', false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTe, 'E', 'mediumvioletred', 'e', false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTr, 'R', 'limegreen', IDTrait.root, false);
+		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Cra', idPc, idTr, idTa, 0);
+		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Crb', idPc, idTr, idTb, 1);
+		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Crc', idPc, idTr, idTc, 2);
+		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Crd', idPc, idTr, idTd, 3);
+		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Cre', idPc, idTr, idTe, 4);
+		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Cab', idPc, idTa, idTb, 0);
+		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Cac', idPc, idTa, idTc, 1);
+		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Cad', idPc, idTa, idTd, 2);
+		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Cae', idPc, idTa, idTe, 3);
+		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Cbc', idPc, idTb, idTc, 0);
+		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Cbd', idPc, idTb, idTd, 1);
+		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Cbe', idPc, idTb, idTe, 2);
+		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Ccd', idPc, idTc, idTd, 0);
+		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Cce', idPc, idTc, idTe, 1);
+		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Cde', idPc, idTd, idTe, 0);
+		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Rrb', idPr, idTr, idTb, 2);
+		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Rac', idPr, idTa, idTc, 2);
+		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Rbe', idPr, idTb, idTe, 2);
+		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Rcd', idPr, idTc, idTd, 2);
 	};
 
 	queryStrings_apply() {}

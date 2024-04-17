@@ -36,7 +36,7 @@
 		}
 	};
 
-	async function globalHandleKeyDown(event) {
+	async function handle_key_down(event) {
 		if ($s_title_editing)		{ return; } // let Title component consume the events
 		if (event.key == undefined)	{ alert('no key for ' + event.type); return; }
 		if (event.type == 'keydown') {
@@ -95,7 +95,7 @@
 	}
 </style>
 
-<svelte:document on:keydown={globalHandleKeyDown}/>
+<svelte:document on:keydown={handle_key_down}/>
 {#if $s_isBusy}
 	<p>Welcome to Seriously</p>
 	{#if $s_db_type != DBType.local}

@@ -68,7 +68,7 @@
         return [color, k.color_background];
     }
 
-    async function handleClick(id: string, event: MouseEvent) {
+    async function handle_click(id: string, event: MouseEvent) {
         console.log(id);
         switch (id) {
             case IDTool.delete: confirmingDelete = true; break;
@@ -203,14 +203,14 @@
                 <LabelButton
                     hover_closure={(isHovering) => { hovers[IDTool.delete_confirm] = isHovering; }}
                     color={ hovers[IDTool.delete_confirm] ? k.color_background : color}
-                    onClick={(event) => handleClick(IDTool.delete_confirm, event)}
+                    onClick={(event) => handle_click(IDTool.delete_confirm, event)}
                     center={getC(IDTool.delete_confirm)}>
                     delete
                 </LabelButton>
                 <LabelButton
                     hover_closure={(isHovering) => { hovers[IDTool.delete_cancel] = isHovering; }}
                     color={ hovers[IDTool.delete_cancel] ? k.color_background : color}
-                    onClick={(event) => handleClick(IDTool.delete_cancel, event)}
+                    onClick={(event) => handle_click(IDTool.delete_cancel, event)}
                     center={getC(IDTool.delete_cancel)}>
                     cancel
                 </LabelButton>
@@ -230,7 +230,7 @@
                 height=16
                 color={color}
                 center={getC(IDTool.more)}
-                onClick={(event) => handleClick(IDTool.more, event)}
+                onClick={(event) => handle_click(IDTool.more, event)}
                 hover_closure={(isHovering) => { hovers[IDTool.more] = isHovering; }}>
                 <svg width=18
                     height=16
@@ -251,7 +251,7 @@
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.next, isFilled) }}
                 strokeColor={isDisabledFor(IDTool.next) ? k.color_disabled : parentSensitiveColor}
                 cursor={isDisabledFor(IDTool.next) ? 'normal' : 'pointer'}
-                onClick={(event) => handleClick(IDTool.next, event)}
+                onClick={(event) => handle_click(IDTool.next, event)}
                 extraPath={svgPaths.circle(toolDiameter, 4)}
                 center={getC(IDTool.next)}
                 direction={Direction.up}
@@ -261,7 +261,7 @@
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.delete_parent, isFilled) }}
                 strokeColor={isDisabledFor(IDTool.delete_parent) ? k.color_disabled : parentSensitiveColor}
                 cursor={isDisabledFor(IDTool.delete_parent) ? 'normal' : 'pointer'}
-                onClick={(event) => handleClick(IDTool.delete_parent, event)}
+                onClick={(event) => handle_click(IDTool.delete_parent, event)}
                 extraPath={svgPaths.dash(toolDiameter, 4)}
                 center={getC(IDTool.delete_parent)}
                 direction={Direction.left}
@@ -270,7 +270,7 @@
             <TriangleButton
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.add_parent, isFilled) }}
                 cursor={isDisabledFor(IDTool.add_parent) ? 'normal' : 'pointer'}
-                onClick={(event) => handleClick(IDTool.add_parent, event)}
+                onClick={(event) => handle_click(IDTool.add_parent, event)}
                 strokeColor={isDisabledFor(IDTool.add_parent) ? k.color_disabled : color}
                 extraPath={svgPaths.t_cross(toolDiameter, 3)}
                 center={getC(IDTool.add_parent)}
@@ -279,7 +279,7 @@
                 size={toolDiameter}/>
             <TriangleButton
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.create, isFilled) }}
-                onClick={(event) => handleClick(IDTool.create, event)}
+                onClick={(event) => handle_click(IDTool.create, event)}
                 extraPath={svgPaths.t_cross(toolDiameter, 3)}
                 center={getC(IDTool.create)}
                 direction={Direction.right}
@@ -291,7 +291,7 @@
                 on:focus={u.ignore}
                 on:mouseout={() => { hovers[IDTool.delete] = false; }}
                 on:mouseover={() => { hovers[IDTool.delete] = true; }}
-                on:click={(event) => handleClick(IDTool.delete, event)}
+                on:click={(event) => handle_click(IDTool.delete, event)}
                 style='
                     left: {getC(IDTool.delete).x}px;
                     top: {getC(IDTool.delete).y}px;

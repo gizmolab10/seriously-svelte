@@ -16,8 +16,8 @@
 	let fillColor = k.color_background;
 	let button = null;
 
-	function mouseOut(event) { setFillColor(false); }
-	function mouseOver(event) { setFillColor(true); }
+	function handle_mouse_out(event) { setFillColor(false); }
+	function handle_mouse_over(event) { setFillColor(true); }
 
 	function setFillColor(isFilled) {
 		if (!!fillColors_closure) {
@@ -42,8 +42,8 @@
 	on:click={onClick}
 	on:blur={u.ignore}
 	on:focus={u.ignore}
-	on:mouseout={mouseOut}
-	on:mouseover={mouseOver}
+	on:mouseout={handle_mouse_out}
+	on:mouseover={handle_mouse_over}
 	style='
 		width: 20px;
 		height: 20px;

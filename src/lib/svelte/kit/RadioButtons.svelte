@@ -10,7 +10,7 @@
 		}
 	});
 
-	function handleSelect(id) {
+	function handle_singleClick(id) {
 		idSelected = id;
 		const selectedMenuItem = menuItems.find(menuItem => menuItem.id === idSelected);
 		if (selectedMenuItem) {
@@ -50,7 +50,7 @@
 				style='outline: none'
 				bind:group={idSelected}
 				on:keydown={handle_key_down}
-				on:change={() => handleSelect(menuItem.id) }/>
+				on:change={() => handle_singleClick(menuItem.id) }/>
 			<div class="label-text">{menuItem.label}</div>
 		</label>
 	{/each}

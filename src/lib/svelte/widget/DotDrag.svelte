@@ -22,10 +22,10 @@
 	let top = 0;
     let thing;
 	
-	function mouseOver(event) { updateColorsForHover(true); }
-	function handleMouseUp() { clearTimeout(clickTimer); }
-	function mouseOut(event) { updateColorsForHover(false); }
-	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right-
+	function handle_mouse_over(event) { updateColorsForHover(true); }
+	function handle_mouseUp() { clearTimeout(clickTimer); }
+	function handle_mouse_out(event) { updateColorsForHover(false); }
+	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right-
 
     onMount(() => {
 		if (!!path) {
@@ -82,25 +82,25 @@
 		clearTimeout(clickTimer);	// clear all previous timers
 	}
 
-	function handleLongClick(event) {
+	function handle_longClick(event) {
 		clearClicks();
 		clickTimer = setTimeout(() => {
-			handleDoubleClick(event);
+			handle_doubleClick(event);
 		}, k.threshold_longClick);
 	}
 
-	function handleDoubleClick(event) {
+	function handle_doubleClick(event) {
 		clearClicks();
 		if (path?.becomeFocus()) {
 			signals.signal_rebuildGraph_fromFocus();
 		}
     }
 
-	function handleSingleClick(event) {
+	function handle_singleClick(event) {
 		clickCount++;
 		clickTimer = setTimeout(() => {
 			if (clickCount === 1) {
-				path?.clicked_dotDrag(event.shiftKey);
+				path?.handle_singleClick_onDragDot(event.shiftKey);
 				clearClicks();
 			}
 		}, k.threshold_doubleClick);
@@ -131,13 +131,13 @@
 	on:keyup={u.ignore}
 	on:keydown={u.ignore}
 	on:keypress={u.ignore}
-	on:mouseout={mouseOut}
-	on:mouseover={mouseOver}
-	on:mouseup={handleMouseUp}
-	on:click={handleSingleClick}
-	on:mousedown={handleLongClick}
-	on:dblclick={handleDoubleClick}
-	on:contextmenu={handleContextMenu}
+	on:mouseout={handle_mouse_out}
+	on:mouseover={handle_mouse_over}
+	on:mouseup={handle_mouseUp}
+	on:click={handle_singleClick}
+	on:mousedown={handle_longClick}
+	on:dblclick={handle_doubleClick}
+	on:contextmenu={handle_context_menu}
 	style='
 		top: 2.7px;
 		border: none;

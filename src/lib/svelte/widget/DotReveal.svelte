@@ -22,9 +22,9 @@
 	let toggle = false;
 	
 	onMount( () => { setIsHovering_updateColors(false); updateScalablePaths(); });
-	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
-	function mouseOut(event) { setIsHovering_updateColors(false); }
-	function handleMouseOver(event) { setIsHovering_updateColors(true); }
+	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
+	function handle_mouse_out(event) { setIsHovering_updateColors(false); }
+	function handle_mouse_over(event) { setIsHovering_updateColors(true); }
 
 	$: {
 		if (dotReveal && !($s_path_editingTools?.matchesPath(path) ?? false)) {
@@ -84,7 +84,7 @@
 		}
 	}
 
-	function handleClick(event) {
+	function handle_click(event) {
 		setIsHovering_updateColors(false);
 		if (path.toolsGrabbed) {
 			$s_path_editingTools = null;
@@ -121,10 +121,10 @@
 			bind:this={dotReveal}
 			on:keydown={u.ignore}
 			on:keypress={u.ignore}
-			on:mouseout={mouseOut}
-			on:click={handleClick}
-			on:mouseover={handleMouseOver}
-			on:contextmenu={handleContextMenu}
+			on:mouseout={handle_mouse_out}
+			on:click={handle_click}
+			on:mouseover={handle_mouse_over}
+			on:contextmenu={handle_context_menu}
 			style='
 				width: {size}px;
 				height: {size}px;

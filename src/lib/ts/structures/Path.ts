@@ -467,20 +467,18 @@ export default class Path {
 		g.rootPath.becomeFocus();
 	}
 
-	clicked_dotDrag(shiftKey: boolean) {
+	handle_singleClick_onDragDot(shiftKey: boolean) {
         if (!this.isExemplar) {
 			s_title_editing?.set(null);
 			if (get(s_layout_byClusters)) {
 				this.becomeFocus();
 			} else {
-				const childPaths = this.childPaths;
-				const childPath = childPaths.length == 0 ? this : childPaths[0];
 				if (get(s_alteration_state)) {
 					g.hierarchy.path_alterMaybe(this);
-				} else if (shiftKey || childPath.isGrabbed) {
-					childPath.toggleGrab();
+				} else if (shiftKey || this.isGrabbed) {
+					this.toggleGrab();
 				} else {
-					childPath.grabOnly();
+					this.grabOnly();
 				}
 			}
 			signals.signal_rebuildGraph_fromFocus();

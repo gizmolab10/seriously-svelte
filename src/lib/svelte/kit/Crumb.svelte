@@ -10,8 +10,8 @@
 	let cursorStyle = k.empty;
 
 	onMount(() => { updateColors(); });
-	function mouseOver(event) { border = `${borderStyle} ${thing.color}`; }
-	function mouseOut(event) { border = `${borderStyle} ${borderColor}`; }
+	function handle_mouse_over(event) { border = `${borderStyle} ${thing.color}`; }
+	function handle_mouse_out(event) { border = `${borderStyle} ${borderColor}`; }
 
 	function updateColors() {
 		if (!!thing) {
@@ -45,8 +45,8 @@
 <button
 	on:blur={u.ignore}
 	on:focus={u.ignore}
-	on:mouseout={mouseOut}
-	on:mouseover={mouseOver}
+	on:mouseout={handle_mouse_out}
+	on:mouseover={handle_mouse_over}
 	on:click={crumb_buttonClicked}
 	style='
 		{colorStyles};

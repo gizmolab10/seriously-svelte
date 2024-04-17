@@ -23,9 +23,9 @@
     let thing;
 
 	var hasChanges = () => { return originalTitle != thingTitle; };
-	function handleMouseUp() { clearTimeout(clickTimer); }
+	function handle_mouseUp() { clearTimeout(clickTimer); }
 
-	function handleInput(event) {
+	function handle_input(event) {
 		thing?.title = event.target.value;
 		thingTitle = thing?.title ?? k.empty;
 	};
@@ -86,39 +86,33 @@
 		updateInputWidth();
 	}
 
-	function handleDoubleClick(event) {
+	function handle_doubleClick(event) {
 		event.preventDefault();
 		clearClicks();
 		path?.startEdit();
 		input.focus();
     }
 
-	function handleSingleClick(event) {
+	function handle_singleClick(event) {
 		clickCount++;
 		clickTimer = setTimeout(() => {
-			if (clickCount === 1) {
-				handleClick(event);
+			if (clickCount === 1 && !!path && !path.isEditing) {
+				event.preventDefault();
+				if (!path.isGrabbed) {
+					path.grabOnly();
+				} else if (k.allow_TitleEditing && !path.isRoot && !!thing && !thing.isBulkAlias) {
+					path.startEdit();
+					input.focus();
+					return;
+				}
+				$s_title_editing = null;
+				input.blur();
 				clearClicks();
 			}
 		}, k.threshold_doubleClick);
 	}
-
-	function handleClick(event) {
-		if (!!path && !path.isEditing) {
-			event.preventDefault();
-			if (!path.isGrabbed) {
-				path.grabOnly();
-			} else if (k.allow_TitleEditing && !path.isRoot && !!thing && !thing.isBulkAlias) {
-				path.startEdit();
-				input.focus();
-				return;
-			}
-			$s_title_editing = null;
-			input.blur();
-		}
-	}
  
-	function handleLongClick(event) {
+	function handle_longClick(event) {
 		if (!!path && !path.isEditing) {
 			event.preventDefault();
 			clearClicks();
@@ -199,7 +193,7 @@
 		}
 	}
 
-	function handleCutOrPaste(event) {
+	function handle_cut_paste(event) {
 		extractRange();
 		path?.signal_relayoutWidgets();
 	}
@@ -252,15 +246,15 @@
 		class='title'
 		bind:this={input}
 		on:blur={handleBlur}
-		on:input={handleInput}
+		on:input={handle_input}
 		bind:value={thingTitle}
-		on:cut={handleCutOrPaste}
-		on:mouseup={handleMouseUp}
+		on:cut={handle_cut_paste}
+		on:mouseup={handle_mouseUp}
 		on:keydown={handle_key_down}
-		on:paste={handleCutOrPaste}
-		on:click={handleSingleClick}
-		on:mousedown={handleLongClick}
-		on:dblclick={handleDoubleClick}
+		on:paste={handle_cut_paste}
+		on:click={handle_singleClick}
+		on:mousedown={handle_longClick}
+		on:dblclick={handle_doubleClick}
 		style='
 			top: 0.5px;
 			{position};

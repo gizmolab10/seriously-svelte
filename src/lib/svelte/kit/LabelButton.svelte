@@ -10,8 +10,8 @@
 	export let height = 16;
 	export let width = 16;
 
-	function mouseOut(event) { hover_closure(false); }
-	function mouseOver(event) { hover_closure(true); }
+	function handle_mouse_out(event) { hover_closure(false); }
+	function handle_mouse_over(event) { hover_closure(true); }
 
 </script>
 
@@ -19,8 +19,8 @@
 	on:click={onClick}
 	on:blur={u.ignore}
 	on:focus={u.ignore}
-	on:mouseout={mouseOut}
-	on:mouseover={mouseOver}
+	on:mouseout={handle_mouse_out}
+	on:mouseover={handle_mouse_over}
 	style='
 		color: {color};
 		cursor: {cursor};
