@@ -11,10 +11,10 @@ export default class Constants {
 	thing_fontSize: number;
 	cluster_offsetY: number;
 	height_titleAtTop: number;
-	editingTools_diameter: number;
 	threshold_longClick: number;
-	cluster_inside_radius: number;
 	threshold_doubleClick: number;
+	editingTools_diameter: number;
+	cluster_inside_radius: number;
 	color_highlighted: string;
 	color_background: string;
     color_disabled: string;

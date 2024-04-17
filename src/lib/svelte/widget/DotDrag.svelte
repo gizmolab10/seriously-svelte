@@ -23,9 +23,9 @@
     let thing;
 	
 	function handle_mouse_over(event) { updateColorsForHover(true); }
-	function handle_mouseUp() { clearTimeout(clickTimer); }
 	function handle_mouse_out(event) { updateColorsForHover(false); }
 	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right-
+	function handle_mouseUp() { clearTimeout(clickTimer); }
 
     onMount(() => {
 		if (!!path) {
@@ -61,13 +61,9 @@
 		updatePaths();
 	}
 
-	function updateColors() {
-		if (!!thing) {
-			thing.updateColorAttributes(path);
-			fillColor = debug.lines ? 'transparent' : path?.dotColor(isHovering != altering);
-			extraColor = path?.dotColor(!isHovering && !altering)
-			strokeColor = thing.color;
-		}
+	function clearClicks() {
+		clickCount = 0;
+		clearTimeout(clickTimer);	// clear all previous timers
 	}
 
 	function updateColorsForHover(flag) {
@@ -75,11 +71,6 @@
 			isHovering = flag;
 			updateColors();
 		}
-	}
-
-	function clearClicks() {
-		clickCount = 0;
-		clearTimeout(clickTimer);	// clear all previous timers
 	}
 
 	function handle_longClick(event) {
@@ -104,6 +95,15 @@
 				clearClicks();
 			}
 		}, k.threshold_doubleClick);
+	}
+
+	function updateColors() {
+		if (!!thing) {
+			thing.updateColorAttributes(path);
+			fillColor = debug.lines ? 'transparent' : path?.dotColor(isHovering != altering);
+			extraColor = path?.dotColor(!isHovering && !altering)
+			strokeColor = thing.color;
+		}
 	}
 
 	function updatePathExtra() {
@@ -131,11 +131,11 @@
 	on:keyup={u.ignore}
 	on:keydown={u.ignore}
 	on:keypress={u.ignore}
-	on:mouseout={handle_mouse_out}
-	on:mouseover={handle_mouse_over}
 	on:mouseup={handle_mouseUp}
 	on:click={handle_singleClick}
+	on:mouseout={handle_mouse_out}
 	on:mousedown={handle_longClick}
+	on:mouseover={handle_mouse_over}
 	on:dblclick={handle_doubleClick}
 	on:contextmenu={handle_context_menu}
 	style='

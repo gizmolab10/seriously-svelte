@@ -24,10 +24,12 @@
 	let color = k.empty;
     let titleWidth = 0;
     let rebuilds = 0;
+	let clickTimer;
 	let left = 64;
 	let thing;
     let path;
 
+    function handle_mouseUp() { clearTimeout(clickTimer); }
     function getC(type: string) { return centers[type] ?? new Point(); }
     function setC(type: string, center: Point) { return centers[type] = center; }
     function centers_isEmpty(): boolean { return Object.keys(centers).length == 0; }
@@ -44,43 +46,19 @@
 		return () => { handler.disconnect() };
     });
 
+    function isInvertedFor(id: string) {
+        return parentAltering.includes(id) && $s_alteration_state == alterationState_for(id);
+    }
+
     function alterationState_for(id: string) {
         const alteration = (id == IDTool.add_parent) ? Alteration.adding : Alteration.deleting;
         return new AlterationState(alteration)
-    }
-
-    function isInvertedFor(id: string) {
-        return parentAltering.includes(id) && $s_alteration_state == alterationState_for(id);
     }
 
     function isDisabledFor(id: string) {
         return ((path.isFocus || thing.isBulkAlias) && (id == IDTool.add_parent)) ||
         ((countOfVisibleParents < 2) && needsMultipleVisibleParents.includes(id));
     }
-
-    function fillColorsFor(id: string, isFilled: boolean): [string, string] {
-        const isDisabled = isDisabledFor(id);
-        const nextIsDisabled = isDisabled && needsMultipleVisibleParents.includes(id);
-        if (isDisabled || (isFilled == isInvertedFor(id))) {
-            const extraColor = nextIsDisabled ? k.color_disabled : isDisabled || isFilled ? parentSensitiveColor : color;
-            return [k.color_background, extraColor];
-        }
-        return [color, k.color_background];
-    }
-
-    async function handle_click(id: string, event: MouseEvent) {
-        console.log(id);
-        switch (id) {
-            case IDTool.delete: confirmingDelete = true; break;
-            case IDTool.delete_cancel: confirmingDelete = false; break;
-            default:
-                if (!!path && !path.isExemplar && !isDisabledFor(id)) {
-                    await g.hierarchy.handle_tool_clicked(id, event);
-        		}
-                break;
-        }
-        updateMaybeRedraw();
-	}
 
     function setup() {
         path = $s_path_editingTools;
@@ -115,6 +93,29 @@
             }
         }
     }
+
+    function fillColorsFor(id: string, isFilled: boolean): [string, string] {
+        const isDisabled = isDisabledFor(id);
+        const nextIsDisabled = isDisabled && needsMultipleVisibleParents.includes(id);
+        if (isDisabled || (isFilled == isInvertedFor(id))) {
+            const extraColor = nextIsDisabled ? k.color_disabled : isDisabled || isFilled ? parentSensitiveColor : color;
+            return [k.color_background, extraColor];
+        }
+        return [color, k.color_background];
+    }
+
+    async function handle_click(id: string, event: MouseEvent, isLong: boolean) {
+        switch (id) {
+            case IDTool.delete: confirmingDelete = true; break;
+            case IDTool.delete_cancel: confirmingDelete = false; break;
+            default:
+                if (!!path && !path.isExemplar && !isDisabledFor(id)) {
+                    await g.hierarchy.handle_tool_clicked(id, event, isLong);
+        		}
+                break;
+        }
+        updateMaybeRedraw();
+	}
 
 	function update(): boolean {
         const rect = path?.titleRect;
@@ -203,14 +204,14 @@
                 <LabelButton
                     hover_closure={(isHovering) => { hovers[IDTool.delete_confirm] = isHovering; }}
                     color={ hovers[IDTool.delete_confirm] ? k.color_background : color}
-                    onClick={(event) => handle_click(IDTool.delete_confirm, event)}
+                    onClick={(event, isLong) => handle_click(IDTool.delete_confirm, event, isLong)}
                     center={getC(IDTool.delete_confirm)}>
                     delete
                 </LabelButton>
                 <LabelButton
                     hover_closure={(isHovering) => { hovers[IDTool.delete_cancel] = isHovering; }}
                     color={ hovers[IDTool.delete_cancel] ? k.color_background : color}
-                    onClick={(event) => handle_click(IDTool.delete_cancel, event)}
+                    onClick={(event, isLong) => handle_click(IDTool.delete_cancel, event, isLong)}
                     center={getC(IDTool.delete_cancel)}>
                     cancel
                 </LabelButton>
@@ -230,7 +231,7 @@
                 height=16
                 color={color}
                 center={getC(IDTool.more)}
-                onClick={(event) => handle_click(IDTool.more, event)}
+                onClick={(event, isLong) => handle_click(IDTool.more, event, isLong)}
                 hover_closure={(isHovering) => { hovers[IDTool.more] = isHovering; }}>
                 <svg width=18
                     height=16
@@ -251,7 +252,7 @@
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.next, isFilled) }}
                 strokeColor={isDisabledFor(IDTool.next) ? k.color_disabled : parentSensitiveColor}
                 cursor={isDisabledFor(IDTool.next) ? 'normal' : 'pointer'}
-                onClick={(event) => handle_click(IDTool.next, event)}
+                onClick={(event, isLong) => handle_click(IDTool.next, event, isLong)}
                 extraPath={svgPaths.circle(toolDiameter, 4)}
                 center={getC(IDTool.next)}
                 direction={Direction.up}
@@ -261,7 +262,7 @@
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.delete_parent, isFilled) }}
                 strokeColor={isDisabledFor(IDTool.delete_parent) ? k.color_disabled : parentSensitiveColor}
                 cursor={isDisabledFor(IDTool.delete_parent) ? 'normal' : 'pointer'}
-                onClick={(event) => handle_click(IDTool.delete_parent, event)}
+                onClick={(event, isLong) => handle_click(IDTool.delete_parent, event, isLong)}
                 extraPath={svgPaths.dash(toolDiameter, 4)}
                 center={getC(IDTool.delete_parent)}
                 direction={Direction.left}
@@ -270,7 +271,7 @@
             <TriangleButton
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.add_parent, isFilled) }}
                 cursor={isDisabledFor(IDTool.add_parent) ? 'normal' : 'pointer'}
-                onClick={(event) => handle_click(IDTool.add_parent, event)}
+                onClick={(event, isLong) => handle_click(IDTool.add_parent, event, isLong)}
                 strokeColor={isDisabledFor(IDTool.add_parent) ? k.color_disabled : color}
                 extraPath={svgPaths.t_cross(toolDiameter, 3)}
                 center={getC(IDTool.add_parent)}
@@ -279,7 +280,7 @@
                 size={toolDiameter}/>
             <TriangleButton
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.create, isFilled) }}
-                onClick={(event) => handle_click(IDTool.create, event)}
+                onClick={(event, isLong) => handle_click(IDTool.create, event, isLong)}
                 extraPath={svgPaths.t_cross(toolDiameter, 3)}
                 center={getC(IDTool.create)}
                 direction={Direction.right}
@@ -291,7 +292,7 @@
                 on:focus={u.ignore}
                 on:mouseout={() => { hovers[IDTool.delete] = false; }}
                 on:mouseover={() => { hovers[IDTool.delete] = true; }}
-                on:click={(event) => handle_click(IDTool.delete, event)}
+                on:click={(event) => handle_click(IDTool.delete, event, isLong)}
                 style='
                     left: {getC(IDTool.delete).x}px;
                     top: {getC(IDTool.delete).y}px;

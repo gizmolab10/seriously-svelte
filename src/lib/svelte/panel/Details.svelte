@@ -1,5 +1,5 @@
 <script>
-	import { k, u, DBType, ZIndex, IDPersistant, IDButton, Hierarchy, dbDispatch, persistLocal } from '../../ts/common/GlobalImports';
+	import { k, u, DBType, ZIndex, IDPersistant, Hierarchy, dbDispatch, persistLocal } from '../../ts/common/GlobalImports';
 	import { s_db_type, s_graphRect, s_db_loadTime, s_id_popupView } from '../../ts/state/State';
 	import RadioButtons from '../kit/RadioButtons.svelte'
 	import Label from '../kit/Label.svelte';

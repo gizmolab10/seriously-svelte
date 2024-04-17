@@ -84,7 +84,7 @@
 		}
 	}
 
-	function handle_click(event) {
+	function handle_singleClick(event) {
 		setIsHovering_updateColors(false);
 		if (path.toolsGrabbed) {
 			$s_path_editingTools = null;
@@ -122,7 +122,7 @@
 			on:keydown={u.ignore}
 			on:keypress={u.ignore}
 			on:mouseout={handle_mouse_out}
-			on:click={handle_click}
+			on:click={handle_singleClick}
 			on:mouseover={handle_mouse_over}
 			on:contextmenu={handle_context_menu}
 			style='

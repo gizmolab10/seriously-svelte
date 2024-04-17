@@ -53,10 +53,11 @@ export default class Hierarchy {
 
 	static readonly $_EVENTS_$: unique symbol;
 
-	async handle_tool_clicked(IDButton: string, event: MouseEvent) {
+	async handle_tool_clicked(idButton: string, event: MouseEvent, isLong: boolean) {
+        console.log(`tool ${idButton} long ${isLong}`);
 		const path = get(s_path_editingTools);
 		if (!!path) {
-			switch (IDButton) {
+			switch (idButton) {
 				case IDTool.create: await this.path_edit_remoteCreateChildOf(path); break;
 				case IDTool.add_parent: this.toggleAlteration(Alteration.adding); return;
 				case IDTool.next: this.path_relayout_toolCluster_nextParent(event.altKey); return;
