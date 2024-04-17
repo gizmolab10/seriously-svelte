@@ -1,5 +1,5 @@
 import { g, k, DBType, signals, IDPersistant, persistLocal } from '../common/GlobalImports';
-import { s_db_type, s_isBusy, s_db_loadTime, s_title_editing, s_path_graphTools } from '../state/State';
+import { s_db_type, s_isBusy, s_db_loadTime, s_title_editing, s_path_editingTools } from '../state/State';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
@@ -41,7 +41,7 @@ export default class DBDispatch {
 		this.queryStrings_apply();
 		await g.hierarchy.hierarchy_fetch_andBuild(type);
 		persistLocal.paths_restore(true);
-		s_path_graphTools.set(null);
+		s_path_editingTools.set(null);
 		s_title_editing.set(null);
 		signals.signal_rebuildGraph_fromFocus();
 	}

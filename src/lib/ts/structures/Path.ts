@@ -1,7 +1,7 @@
 import { g, k, u, get, Rect, Size, Thing, debug, signals, Wrapper, IDWrapper } from '../common/GlobalImports';
 import { Predicate, TitleState, Relationship, PredicateKind, Alteration } from '../common/GlobalImports';
 import { s_path_focus, s_paths_grabbed, s_title_editing, s_layout_byClusters } from '../state/State';
-import { s_paths_expanded, s_path_graphTools, s_alteration_state } from '../state/State';
+import { s_paths_expanded, s_path_editingTools, s_alteration_state } from '../state/State';
 import { Writable } from 'svelte/store';
 
 export default class Path {
@@ -53,7 +53,7 @@ export default class Path {
 	get lineWrapper(): Wrapper | null { return this.wrappers[IDWrapper.line]; }
 	get siblingPaths(): Array<Path> { return this.parentPath?.childPaths ?? []; }
 	get titleWrapper(): Wrapper | null { return this.wrappers[IDWrapper.title]; }
-	get toolsGrabbed(): boolean { return this.matchesStore(s_path_graphTools); }
+	get toolsGrabbed(): boolean { return this.matchesStore(s_path_editingTools); }
 	get revealWrapper(): Wrapper | null { return this.wrappers[IDWrapper.reveal]; }
 	get widgetWrapper(): Wrapper | null { return this.wrappers[IDWrapper.widget]; }
 	get titleRect(): Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
@@ -121,7 +121,7 @@ export default class Path {
 	}
 
 	get things_canAlter_asParentOf_toolsGrab(): boolean {
-		const path_toolGrab = get(s_path_graphTools);
+		const path_toolGrab = get(s_path_editingTools);
 		const toolThing = path_toolGrab?.thing;
 		const state = get(s_alteration_state)
 		const thing = this.thing;
@@ -428,7 +428,7 @@ export default class Path {
 
 	becomeFocus(): boolean {
 		const changed = !(get(s_path_focus)?.matchesPath(this) ?? false);
-		s_path_graphTools.set(null);
+		s_path_editingTools.set(null);
 		if (changed) {
 			s_path_focus.set(this);
 			this.expand();
@@ -440,12 +440,12 @@ export default class Path {
 	}
 
 	toggleToolsGrab() {
-		const toolsPath = get(s_path_graphTools);
-		if (toolsPath) { // ignore if graphTools not in use
+		const toolsPath = get(s_path_editingTools);
+		if (toolsPath) { // ignore if editingTools not in use
 			if (this.matchesPath(toolsPath)) {
-				s_path_graphTools.set(null);
+				s_path_editingTools.set(null);
 			} else if (!this.isRoot) {
-				s_path_graphTools.set(this);
+				s_path_editingTools.set(this);
 			}
 		}
 	}
@@ -519,7 +519,7 @@ export default class Path {
 		if (paths.length == 0) {
 			rootPath.grabOnly();
 		} else {
-			this.toggleToolsGrab(); // do not show tools graphTools for root
+			this.toggleToolsGrab(); // do not show tools editingTools for root
 		}
 	}
 

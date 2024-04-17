@@ -1,5 +1,5 @@
 <script>
-	import { s_paths_expanded, s_alteration_state, s_paths_grabbed, s_path_graphTools } from '../../ts/state/State';
+	import { s_paths_expanded, s_alteration_state, s_paths_grabbed, s_path_editingTools } from '../../ts/state/State';
 	import { g, k, u, get, Size, Thing, Point, debug, ZIndex, svgPaths, signals } from "../../ts/common/GlobalImports";
 	import { onMount, Wrapper, Direction, onDestroy, dbDispatch, IDWrapper } from "../../ts/common/GlobalImports";
 	import SVGD3 from '../svg/SVGD3.svelte'
@@ -27,7 +27,7 @@
 	function handleMouseOver(event) { setIsHovering_updateColors(true); }
 
 	$: {
-		if (dotReveal && !($s_path_graphTools?.matchesPath(path) ?? false)) {
+		if (dotReveal && !($s_path_editingTools?.matchesPath(path) ?? false)) {
 			revealWrapper = new Wrapper(dotReveal, path, IDWrapper.reveal);
 		}
 	}
@@ -87,7 +87,7 @@
 	function handleClick(event) {
 		setIsHovering_updateColors(false);
 		if (path.toolsGrabbed) {
-			$s_path_graphTools = null;
+			$s_path_editingTools = null;
 			$s_alteration_state = null;
 			signals.signal_relayoutWidgets_fromFocus();
 		} else if (path.hasChildRelationships || path.thing.isBulkAlias) {
@@ -107,7 +107,7 @@
 </style>
 
 {#key toggle}
-	<div class='dotReveal' style='
+	<div class='dot-reveal' style='
 		top: {center.y}px;
 		left: {center.x}px;
 		position: absolute;
@@ -130,7 +130,7 @@
 				height: {size}px;
 			'>
 			{#key svgPath}
-				<SVGD3 name='dotReveal'
+				<SVGD3 name='svg-reveal'
 					width={size}
 					height={size}
 					stroke={strokeColor}
@@ -139,13 +139,13 @@
 				/>
 			{/key}
 			{#if hasInsidePath}
-				<div class='revealInside' style='
+				<div class='reveal-inside' style='
 					left:{insideOffset}px;
 					height:{size}px;
 					top:{insideOffset}px;
 					width:{size}px;
 					position:absolute;'>
-					<SVGD3 name='revealInside'
+					<SVGD3 name='svg-inside'
 						width={size}
 						height={size}
 						fill={insideFillColor}
@@ -155,13 +155,13 @@
 				</div>
 			{/if}
 			{#if !path.isExpanded && path.hasChildRelationships}
-				<div class='revealTinyDots' style='
+				<div class='reveal-tiny-dots' style='
 					left:{tinyDotsOffset + 0.65}px;
 					top:{tinyDotsOffset - 0.28}px;
 					height:{tinyDotsDiameter}px;
 					width:{tinyDotsDiameter}px;
 					position:absolute;'>
-					<SVGD3 name='revealTinyDots'
+					<SVGD3 name='savg-tiny-dots'
 						fill={strokeColor}
 						stroke={strokeColor}
 						width={tinyDotsDiameter}

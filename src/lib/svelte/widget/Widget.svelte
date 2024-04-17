@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, Thing, Point, debug, ZIndex, Wrapper, signals } from '../../ts/common/GlobalImports';
-	import { s_layout_byClusters, s_thing_fontFamily, s_path_graphTools } from '../../ts/state/State';
+	import { s_layout_byClusters, s_thing_fontFamily, s_path_editingTools } from '../../ts/state/State';
 	import { s_path_focus, s_title_editing, s_paths_grabbed } from '../../ts/state/State';
 	import { onMount, debugReact, IDWrapper } from '../../ts/common/GlobalImports';
 	import EditingTools from '../graph/EditingTools.svelte';
@@ -77,7 +77,7 @@
 	}
 
 	$: {
-		const _ = $s_title_editing + $s_paths_grabbed + $s_path_graphTools;
+		const _ = $s_title_editing + $s_paths_grabbed + $s_path_editingTools;
 		fullUpdate();
 	}
 

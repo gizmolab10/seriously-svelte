@@ -1,7 +1,7 @@
 <script lang='ts'>
     import { g, k, u, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, signals } from '../../ts/common/GlobalImports';
     import { svgPaths, Direction, dbDispatch, transparentize, AlterationState, Alteration } from '../../ts/common/GlobalImports';
-    import { s_alteration_state, s_path_graphTools } from '../../ts/state/State';
+    import { s_alteration_state, s_path_editingTools } from '../../ts/state/State';
     import { s_graphRect, s_show_details } from '../../ts/state/State';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
 	import CircularButton from '../kit/CircularButton.svelte';
@@ -9,11 +9,11 @@
 	import LabelButton from '../kit/LabelButton.svelte';
 	import DotReveal from '../widget/DotReveal.svelte';
 	import Trash from '../svg/Trash.svelte';
-    const graphToolsDiameter = k.graphTools_diameter;
-    const half_circleViewBox = `0 0 ${graphToolsDiameter} ${graphToolsDiameter}`;
+    const editingToolsDiameter = k.editingTools_diameter;
+    const half_circleViewBox = `0 0 ${editingToolsDiameter} ${editingToolsDiameter}`;
     const needsMultipleVisibleParents = [IDTool.next, IDTool.delete_parent];
     const parentAltering = [IDTool.add_parent, IDTool.delete_parent];
-    const graphToolsRadius = graphToolsDiameter / 2;
+    const editingToolsRadius = editingToolsDiameter / 2;
 	const toolDiameter = k.dot_size * 1.4;
     let hovers: { [type: string]: boolean } = {}
     let centers: { [type: string]: Point } = {}
@@ -83,7 +83,7 @@
 	}
 
     function setup() {
-        path = $s_path_graphTools;
+        path = $s_path_editingTools;
         thing = path?.thing;
     }
 
@@ -101,8 +101,8 @@
     }
 
     $: {
-        if (!path || (!$s_path_graphTools?.matchesPath(path) ?? false)) {
-            path = $s_path_graphTools;
+        if (!path || (!$s_path_editingTools?.matchesPath(path) ?? false)) {
+            path = $s_path_editingTools;
             if (!!path) {
                 thing = path.thing;
                 color = thing?.color ?? k.empty;
@@ -118,17 +118,17 @@
 
 	function update(): boolean {
         const rect = path?.titleRect;
-        if (rect && $s_path_graphTools && rect.size.width != 0) {
+        if (rect && $s_path_editingTools && rect.size.width != 0) {
             const offsetReveal = new Point(-5.7, -5.5);
             const offsetTitle = titleWidth * (path.isExpanded ? 1 : 1.034);
             const offsetX = 8.8 + offsetTitle - ($s_show_details ? k.width_details : 0);
-            const offsetY = (g.titleIsAtTop ? -45 : 0) - graphToolsDiameter - 5.4;
+            const offsetY = (g.titleIsAtTop ? -45 : 0) - editingToolsDiameter - 5.4;
             const center = rect.centerLeft.offsetBy(new Point(offsetX, offsetY));
             left = center.x - toolDiameter;
             const y = center.y;
-            setC(IDTool.graphTools,        center);
+            setC(IDTool.editingTools,        center);
             setC(IDTool.dismiss,        center.offsetBy(offsetReveal));
-            setC(IDTool.confirmation,   center.offsetEquallyBy(1 - graphToolsRadius));
+            setC(IDTool.confirmation,   center.offsetEquallyBy(1 - editingToolsRadius));
             setC(IDTool.delete_cancel,  center.offsetBy(new Point(1 - toolDiameter, toolDiameter - 5)));
             setC(IDTool.delete_confirm, center.offsetBy(new Point(2 - toolDiameter, 5 - toolDiameter)));
             setC(IDTool.create,         new Point(center.x + toolDiameter - 3, y - toolDiameter + 7));
@@ -162,8 +162,8 @@
 </style>
 
 {#key rebuilds}
-    {#if $s_path_graphTools?.isVisible || false}
-        <div class='tools-graphTools' style='
+    {#if $s_path_editingTools?.isVisible || false}
+        <div class='editing-tools' style='
             position:absolute;
             z-index: {ZIndex.lines}'>
             <TransparencyCircle
@@ -171,8 +171,8 @@
                 opacity=0.15
                 color={color}
                 zindex={ZIndex.lines}
-                radius={graphToolsRadius}
-                center={getC(IDTool.graphTools)}
+                radius={editingToolsRadius}
+                center={getC(IDTool.editingTools)}
                 color_background={transparentize(k.color_background, 0.05)}/>
             {#if confirmingDelete}
                 {#if hovers[IDTool.delete_confirm]}
@@ -181,11 +181,11 @@
                             top:{getC(IDTool.confirmation).y}px;
                             z-index:{ZIndex.lines};'
                         viewBox={half_circleViewBox}
-                        height={graphToolsDiameter}
-                        width={graphToolsDiameter}
+                        height={editingToolsDiameter}
+                        width={editingToolsDiameter}
                         stroke=transparent
                         fill={color}>
-                        <path d={svgPaths.half_circle(graphToolsDiameter, Direction.up)}/>
+                        <path d={svgPaths.half_circle(editingToolsDiameter, Direction.up)}/>
                     </svg>
                 {/if}
                 {#if hovers[IDTool.delete_cancel]}
@@ -194,10 +194,10 @@
                             top:{getC(IDTool.confirmation).y}px;
                             z-index:{ZIndex.lines};'
                         viewBox={half_circleViewBox}
-                        height={graphToolsDiameter}
-                        width={graphToolsDiameter}
+                        height={editingToolsDiameter}
+                        width={editingToolsDiameter}
                         fill={color}>
-                        <path d={svgPaths.half_circle(graphToolsDiameter, Direction.down)}/>
+                        <path d={svgPaths.half_circle(editingToolsDiameter, Direction.down)}/>
                     </svg>
                 {/if}
                 <LabelButton
@@ -220,9 +220,9 @@
                         position: absolute;
                         background-color: {color};
                         z-index: {ZIndex.frontmost};
-                        width: {graphToolsDiameter + 1}px;
-                        top: {getC(IDTool.graphTools).y + 0.5}px;
-                        left: {getC(IDTool.graphTools).x - graphToolsRadius}px;'>
+                        width: {editingToolsDiameter + 1}px;
+                        top: {getC(IDTool.editingTools).y + 0.5}px;
+                        left: {getC(IDTool.editingTools).x - editingToolsRadius}px;'>
                 </div>
             {:else}
             <LabelButton
@@ -246,7 +246,7 @@
                     <path d={svgPaths.tinyDots_linear(7, 1)}/>
                 </svg>
             </LabelButton>
-            <DotReveal path={$s_path_graphTools} center={getC(IDTool.dismiss)}/>
+            <DotReveal path={$s_path_editingTools} center={getC(IDTool.dismiss)}/>
             <TriangleButton
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.next, isFilled) }}
                 strokeColor={isDisabledFor(IDTool.next) ? k.color_disabled : parentSensitiveColor}

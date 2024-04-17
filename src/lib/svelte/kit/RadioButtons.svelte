@@ -39,7 +39,7 @@
 	}
 </style>
 
-<div class='radio_buttons'>
+<div class='radio-buttons'>
 	{#each menuItems as menuItem}
 		<label class="menu-item"
 			style='on:keydown={handle_key_down}'>

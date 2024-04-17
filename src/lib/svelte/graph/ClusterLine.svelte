@@ -59,20 +59,20 @@
 </script>
 
 {#key rebuilds}
-	<div class='cluster_line'
+	<div class='cluster-line'
 		id={idDiv}
 		style='z-index: {ZIndex.lines};
 			position: absolute;
 			top: {top + center.y}px;
 			left: {left + center.x}px;'>
-		<svg class='line'
+		<svg class='svg-cluster-line'
 			bind:this={line}
 			width={size.width}px
 			height={size.height}px>
 			style='z-index: ${ZIndex.lines}; position: absolute'
 			<path d={svgPath} stroke={color} fill='none'/>
 		</svg>
-		<div class='label' style='
+		<div class='label-cluster-line' style='
 			background-color: {k.color_background};
 			left: {label_left}px;
 			white-space: nowrap;

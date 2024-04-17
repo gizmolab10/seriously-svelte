@@ -11,7 +11,7 @@ export default class Constants {
 	thing_fontSize: number;
 	cluster_offsetY: number;
 	height_titleAtTop: number;
-	graphTools_diameter: number;
+	editingTools_diameter: number;
 	threshold_longClick: number;
 	cluster_inside_radius: number;
 	threshold_doubleClick: number;
@@ -70,7 +70,7 @@ export default class Constants {
 		this.threshold_doubleClick = 100;
 		this.cluster_inside_radius = 45;
 		this.threshold_longClick = 500;
-		this.graphTools_diameter = 64;
+		this.editingTools_diameter = 64;
 		this.height_titleAtTop = 50;
 		this.thing_fontSize = 14;
 		this.halfIncrement = 0.5;

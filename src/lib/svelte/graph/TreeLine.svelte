@@ -60,12 +60,12 @@
 </script>
 
 <style lang='scss'>
-	.line {
+	.svg-tree-line {
 		position: absolute;
 	}
 </style>
 
-<svg class='line'
+<svg class='svg-tree-line'
 	bind:this={line}
 	width={size.width}px
 	height={Math.max(2, size.height)}px

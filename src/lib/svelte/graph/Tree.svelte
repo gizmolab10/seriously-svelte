@@ -2,7 +2,7 @@
 	import { g, k, u, Path, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/GlobalImports';
 	import { IDButton, onMount, debugReact, dbDispatch, Predicate } from '../../ts/common/GlobalImports';
 	import { s_path_focus, s_graphRect, s_show_details, s_paths_grabbed } from '../../ts/state/State';
-	import { s_id_popupView, s_path_graphTools, s_user_graphOffset } from '../../ts/state/State';
+	import { s_id_popupView, s_path_editingTools, s_user_graphOffset } from '../../ts/state/State';
 	import { IDPersistant, IDSignal, persistLocal } from '../../ts/common/GlobalImports';
 	import DotRevealFocus from '../kit/DotRevealFocus.svelte';
 	import EditingTools from './EditingTools.svelte';
