@@ -20,7 +20,7 @@
 	function mouseOver(event) { setFillColor(true); }
 
 	function setFillColor(isFilled) {
-		if (fillColors_closure != null) {
+		if (!!fillColors_closure) {
 			[fillColor, extraColor] = fillColors_closure(isFilled);
 		}
 	}

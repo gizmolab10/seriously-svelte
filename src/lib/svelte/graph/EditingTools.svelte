@@ -21,9 +21,9 @@
     let parentSensitiveColor = k.empty;
     let confirmingDelete = false;
     let graphRect = new Rect();
-    let toggle = false;
-    let titleWidth = 0;
 	let color = k.empty;
+    let titleWidth = 0;
+    let rebuilds = 0;
 	let left = 64;
 	let thing;
     let path;
@@ -38,7 +38,7 @@
         const handler = signals.handle_relayoutWidgets((path) => {
             setTimeout(() => {
                 update();
-                toggle = !toggle;
+                rebuilds += 1;
             }, 1);      // wait for graph to relayout
         });
 		return () => { handler.disconnect() };
@@ -69,11 +69,12 @@
     }
 
     async function handleClick(id: string, event: MouseEvent) {
+        console.log(id);
         switch (id) {
             case IDTool.delete: confirmingDelete = true; break;
             case IDTool.delete_cancel: confirmingDelete = false; break;
             default:
-                if (path && !path.isExemplar && !isDisabledFor(id)) {
+                if (!!path && !path.isExemplar && !isDisabledFor(id)) {
                     await g.hierarchy.handle_tool_clicked(id, event);
         		}
                 break;
@@ -88,7 +89,7 @@
 
     function updateMaybeRedraw() {
         if (update()) {
-            toggle = !toggle;
+            rebuilds += 1;
         }
     }
 
@@ -100,17 +101,17 @@
     }
 
     $: {
-        if (!$s_path_graphTools?.matchesPath(path) ?? false) {
+        if (!path || (!$s_path_graphTools?.matchesPath(path) ?? false)) {
             path = $s_path_graphTools;
-            if (path) {
-                thing = path?.thing;
+            if (!!path) {
+                thing = path.thing;
                 color = thing?.color ?? k.empty;
                 titleWidth = thing?.titleWidth ?? 0;
                 const hasOneParent = (thing?.parents.length ?? 0) == 1;
                 countOfVisibleParents = path.visibleParentPaths(0).length;
                 parentSensitiveColor = (hasOneParent || path.isFocus) ? k.color_disabled : color ;
                 update();
-                toggle = !toggle;
+                rebuilds += 1;
             }
         }
     }
@@ -160,8 +161,8 @@
 	}
 </style>
 
-{#key toggle}
-    {#if $s_path_graphTools}
+{#key rebuilds}
+    {#if $s_path_graphTools?.isVisible || false}
         <div class='tools-graphTools' style='
             position:absolute;
             z-index: {ZIndex.lines}'>

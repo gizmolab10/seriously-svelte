@@ -8,7 +8,7 @@ export default class Grabs {
 	constructor(hierarchy: Hierarchy) {
 		this.hierarchy = hierarchy;
 		s_paths_grabbed.subscribe((paths: Array<Path>) => { // executes whenever s_paths_grabbed changes
-			if (paths && paths.length > 0 && this.hierarchy.db && this.hierarchy.db.hasData) {
+			if (!!paths && paths.length > 0 && this.hierarchy.db && this.hierarchy.db.hasData) {
 				this.grabbed = paths;
 			} else {
 				this.grabbed = null;
@@ -30,10 +30,10 @@ export default class Grabs {
 
 	get path_lastGrabbed(): Path | null {
 		const paths = get(s_paths_grabbed);
-		if (paths && paths.length > 0) {
+		if (!!paths && paths.length > 0) {
 			const path = paths.slice(-1)[0];	// does not alter paths
 			const relationshipHID = path?.relationship?.idHashed;
-			if (relationshipHID && this.hierarchy.relationship_byHID[relationshipHID] != null) {
+			if (relationshipHID && !!this.hierarchy.relationship_forHID(relationshipHID)) {
 				return path;
 			}
 		}
@@ -42,7 +42,7 @@ export default class Grabs {
 
 	latestPathGrabbed(up: boolean): Path | null {	// does not alter array
 		const paths = get(s_paths_grabbed);
-		if (paths) {
+		if (!!paths) {
 			if (up) {
 				return paths[0];
 			} else {

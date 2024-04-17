@@ -8,7 +8,7 @@
 	export let path;
 	let normal = angle <= Angle.quarter || angle >= Angle.threeQuarters;
 	let position = normal ? k.empty : 'position: absolute';
-	let padding = `0.5px 0px 0px 7px`;	// down half a pixel, 7 over to make room for drag dot
+	let padding = `0.5px 0px 0px 5px`;	// down half a pixel, 7 over to make room for drag dot
 	let thingTitle = path?.thing?.title ?? k.empty;
 	let originalTitle = k.empty;
 	let cursorStyle = k.empty;
@@ -39,9 +39,9 @@
 	});
 
 	function handle_key_down(event) {
-		if (thing && path?.isEditing && canAlterTitle(event)) {
+		if (!!thing && !!path && path.isEditing && canAlterTitle(event)) {
 			switch (event.key) {	
-				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); g.hierarchy.path_edit_remoteCreateChildOf(path?.parentPath); break;
+				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); g.hierarchy.path_edit_remoteCreateChildOf(path.parentPath); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
 				default:	  signals.signal_relayoutWidgets(); break;
 			}
@@ -104,12 +104,12 @@
 	}
 
 	function handleClick(event) {
-		if (!path?.isEditing) {
+		if (!!path && !path.isEditing) {
 			event.preventDefault();
-			if (!path?.isGrabbed) {
-				path?.grabOnly();
-			} else if (k.allow_TitleEditing && !path?.isRoot && !thing?.isBulkAlias) {
-				path?.startEdit();
+			if (!path.isGrabbed) {
+				path.grabOnly();
+			} else if (k.allow_TitleEditing && !path.isRoot && !!thing && !thing.isBulkAlias) {
+				path.startEdit();
 				input.focus();
 				return;
 			}
@@ -119,16 +119,16 @@
 	}
  
 	function handleLongClick(event) {
-		if (!path?.isEditing) {
+		if (!!path && !path.isEditing) {
 			event.preventDefault();
 			clearClicks();
 			clickTimer = setTimeout(() => {
 				clearClicks();
-				if (!path?.isRoot) {
+				if (!path.isRoot) {
 					if ($s_path_graphTools == path) {
 						$s_path_graphTools = null;
 					} else  {
-						path?.grabOnly();
+						path.grabOnly();
 						$s_path_graphTools = path;
 					}
 					signals.signal_rebuildGraph_fromFocus();
@@ -146,15 +146,15 @@
 		//													//
 		//////////////////////////////////////////////////////
 
-		if (path) {
-			thing = path?.thing;
+		if (!!path) {
+			thing = path.thing;
 		}
 		const _ = $s_paths_grabbed;
 		const titleState = $s_title_editing; // needs reactivity to s_title_editing
-		const titleState_isEditing = path && titleState && titleState.editing && path.matchesPath(titleState.editing);
-		const isBulkAlias = thing?.isBulkAlias ?? false;
+		const titleState_isEditing = !!path && !!titleState && titleState.editing && path.matchesPath(titleState.editing);
+		const isBulkAlias = !!thing && thing.isBulkAlias;
 		if (k.allow_TitleEditing && !isBulkAlias) {
-			if (path?.isStoppingEdit ?? false) {
+			if (!!path && path.isStoppingEdit ?? false) {
 				debug.log_edit(`STOPPING ${thingTitle}`);
 				$s_title_editing = null;
 				input?.blur();
@@ -170,15 +170,15 @@
 				isEditing = !isEditing;
 			}
 		}
-		cursorStyle = (!path?.isRoot && !isBulkAlias && (path?.isEditing || path?.isGrabbed)) ? k.empty : 'cursor: pointer';
+		cursorStyle = (!!path && !path.isRoot && !isBulkAlias && (path.isEditing || path.isGrabbed)) ? k.empty : 'cursor: pointer';
 	}
 
 	function stopAndClearEditing() {
 		invokeBlurNotClearEditing();
-		if (path?.isEditing) {				
+		if (!!path && path.isEditing) {				
 			setTimeout(() => {		// eliminate infinite recursion
 				const state = $s_title_editing;
-				if (state) {
+				if (!!state) {
 					state.stop()
 					signals.signal_relayoutWidgets_fromFocus();
 				}
@@ -187,14 +187,14 @@
 	}
 
 	function invokeBlurNotClearEditing() {
-		if (path?.isEditing && thing) {
+		if (!!path && path.isEditing && thing) {
 			isEditing = false;
 			extractRange();
 			input?.blur();
 			if (hasChanges() && !thing?.isExemplar) {
 				dbDispatch.db.thing_remoteUpdate(thing);
 				originalTitle = thing?.title;		// so hasChanges will be correct
-				path?.signal_relayoutWidgets();
+				path.signal_relayoutWidgets();
 			}
 		}
 	}
@@ -205,10 +205,10 @@
 	}
 
 	function extractRange() {
-		if (input) {
+		if (input && !!path) {
 			const end = input.selectionEnd;
 			const start = input.selectionStart;
-			path?.selectionRange = new SeriouslyRange(start, end);
+			path.selectionRange = new SeriouslyRange(start, end);
 		}
 	}
 

@@ -28,14 +28,14 @@
 	function handleContextMenu(event) { event.preventDefault(); } 		// Prevent the default context menu on right-
 
     onMount(() => {
-		if (path) {
+		if (!!path) {
 			thing = path.thing;
 		}
 		updatePaths();
 		updateColorsForHover(false);
         const handler = signals.handle_alterState((state) => {
-			const applyFlag = $s_path_graphTools && path?.things_canAlter_asParentOf_toolsGrab;
-			altering = applyFlag ? (state != null) : false;
+			const applyFlag = $s_path_graphTools && !!path && path.things_canAlter_asParentOf_toolsGrab;
+			altering = applyFlag ? !!state : false;
 			updatePathExtra();
 			updateColors();
         })
@@ -62,7 +62,7 @@
 	}
 
 	function updateColors() {
-		if (thing) {
+		if (!!thing) {
 			thing.updateColorAttributes(path);
 			fillColor = debug.lines ? 'transparent' : path?.dotColor(isHovering != altering);
 			extraColor = path?.dotColor(!isHovering && !altering)
@@ -107,7 +107,7 @@
 	}
 
 	function updatePathExtra() {
-		if (thing) {
+		if (!!thing) {
 			const count = thing.parents.length;		
 			if (count > 1) {
 				path_extra = svgPaths.tinyDots_linear(6, 0.5, false, count, size / 2);

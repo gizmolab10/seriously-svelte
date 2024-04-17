@@ -45,7 +45,7 @@
 	}
 
 	$: {
-		if ($s_paths_grabbed != null || path.thing != null) {
+		if (!!$s_paths_grabbed || !!path.thing) {
 			updateColors();
 			updateScalablePaths();
 		}

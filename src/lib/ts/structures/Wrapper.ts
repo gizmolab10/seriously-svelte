@@ -15,10 +15,10 @@ export default class Wrapper extends Identifiable {
 
     constructor(component: any, path: Path, type: IDWrapper) {
 		super(null);
-        this.path = path;
-        this.type = type;
         this.component = component;
-		path?.wrapper_add(this);
+        this.type = type;
+        this.path = path;
+    	path.wrapper_add(this);
     }
 
 }

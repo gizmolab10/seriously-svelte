@@ -213,7 +213,7 @@ export default class Path {
 			for (const childRelationship of childRelationships) {		// loop through all child relationships
 				if (childRelationship.idPredicate == idPredicate) {
 					const path = this.uniquelyAppendID(childRelationship.id);	// add each relationship's id
-					if (path) {
+					if (!!path) {
 						paths.push(path);								// and push onto the paths
 					}
 				}
@@ -249,7 +249,7 @@ export default class Path {
 		let numberOfParents = 0;	// do not include fat_polygon separator in width of crumb of first thing
 		let totalWidth = 0;
 		for (const thing of things) {
-			if (thing) {
+			if (!!thing) {
 				const crumbWidth = thing.crumbWidth(numberOfParents);
 				if ((totalWidth + crumbWidth) > thresholdWidth) {
 					break;
@@ -268,7 +268,7 @@ export default class Path {
 		if (!this.isRoot && relationships) {
 			for (const relationship of relationships) {
 				const thing = relationship.parentThing;
-				if (thing) {
+				if (!!thing) {
 					children.push(thing);
 				}
 			}
@@ -307,7 +307,7 @@ export default class Path {
 
 	dotColor(isInverted: boolean): string {
 		const thing = this.thing;
-		if (thing) {
+		if (!!thing) {
 			const showBorder = this.isGrabbed || this.isEditing || thing.isExemplar;
 			if (isInverted != showBorder) {
 				return thing.color;
@@ -363,7 +363,7 @@ export default class Path {
 	}
 
 	incorporates(path: Path | null): boolean {
-		if (path) {
+		if (!!path) {
 			const ids = this.ids;
 			const pathIDs = path.ids;
 			let index = 0;
@@ -380,7 +380,7 @@ export default class Path {
 
 	visibleProgeny_height(visited: Array<string> = []): number {
 		const thing = this.thing;
-		if (thing) {
+		if (!!thing) {
 			if (!visited.includes(this.pathString) && this.showsChildRelationships) {
 				let height = 0;
 				for (const childPath of this.childPaths) {
@@ -395,7 +395,7 @@ export default class Path {
 
 	visibleProgeny_width(special: boolean = k.titleIsAtTop, visited: Array<number> = []): number {
 		const thing = this.thing;
-		if (thing) {
+		if (!!thing) {
 			const pathHash = this.pathHash;
 			let width = special ? 0 : thing.titleWidth;
 			if (!visited.includes(pathHash) && this.showsChildRelationships) {
@@ -455,8 +455,8 @@ export default class Path {
 		let path: Path | null = this;
 		do {
 			path = path?.parentPath ?? null;
-			if (path) {
-				if (path.isVisible) {
+			if (!!path) {
+				if (!!path.isVisible) {
 					path.becomeFocus();
 					return;
 				}
@@ -476,7 +476,7 @@ export default class Path {
 				const childPaths = this.childPaths;
 				const childPath = childPaths.length == 0 ? this : childPaths[0];
 				if (get(s_alteration_state)) {
-					g.hierarchy.path_alterMaybe(childPath);
+					g.hierarchy.path_alterMaybe(this);
 				} else if (shiftKey || childPath.isGrabbed) {
 					childPath.toggleGrab();
 				} else {

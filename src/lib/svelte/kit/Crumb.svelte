@@ -14,7 +14,7 @@
 	function mouseOut(event) { border = `${borderStyle} ${borderColor}`; }
 
 	function updateColors() {
-		if (thing) {
+		if (!!thing) {
 			if ($s_path_focus.idThing == thing.id) {
 				colorStyles = `background-color: ${transparentize(thing.color, 0.15)}; color: ${k.color_background}`;
 			} else {

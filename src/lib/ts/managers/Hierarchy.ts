@@ -1,5 +1,5 @@
-import { g, k, u, get, User, Path, Thing, Grabs, debug, Access, IDTool, IDTrait, signals } from '../common/GlobalImports';
-import { DBType, Wrapper, Predicate, Relationship, Alteration, CreationOptions } from '../common/GlobalImports';
+import { g, k, u, get, User, Path, Thing, Grabs, debug, Access, DBType, IDTool, IDTrait, signals } from '../common/GlobalImports';
+import { Wrapper, Predicate, Relationship, Alteration, AlterationState, CreationOptions } from '../common/GlobalImports';
 import { s_title_editing, s_alteration_state, s_layout_byClusters, s_path_graphTools } from '../state/State';
 import { s_isBusy, s_path_focus, s_db_loadTime, s_paths_grabbed, s_things_arrived } from '../state/State';
 import DBInterface from '../db/DBInterface';
@@ -55,7 +55,7 @@ export default class Hierarchy {
 
 	async handle_tool_clicked(IDButton: string, event: MouseEvent) {
 		const path = get(s_path_graphTools);
-		if (path) {
+		if (!!path) {
 			switch (IDButton) {
 				case IDTool.create: await this.path_edit_remoteCreateChildOf(path); break;
 				case IDTool.add_parent: this.toggleAlteration(Alteration.adding); return;
@@ -85,7 +85,7 @@ export default class Hierarchy {
 				needsRebuild = rootPath.becomeFocus();
 			}
 			if (k.allow_GraphEditing) {
-				if (pathGrab && k.allow_TitleEditing) {
+				if (!!pathGrab && k.allow_TitleEditing) {
 					switch (key) {
 						case 'd':		await this.thing_edit_remoteDuplicate(pathGrab); break;
 						case k.space:	await this.path_edit_remoteCreateChildOf(pathGrab); break;
@@ -99,7 +99,7 @@ export default class Hierarchy {
 					case 'backspace':	await this.paths_rebuild_traverse_remoteDelete(get(s_paths_grabbed)); break;
 				}
 			}
-			if (pathGrab) {
+			if (!!pathGrab) {
 				switch (key) {
 					case '/':			needsRebuild = pathGrab.becomeFocus(); break;
 					case 'arrowright':	event.preventDefault(); await this.path_rebuild_remoteMoveRight(pathGrab, true, SHIFT, OPTION, EXTREME); break;
@@ -129,14 +129,14 @@ export default class Hierarchy {
 
 	async latestPathGrabbed_rebuild_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const path = this.grabs.latestPathGrabbed(up);
-		if (path) {
+		if (!!path) {
 			this.path_rebuild_remoteMoveUp(path, up, SHIFT, OPTION, EXTREME);
 		}
 	}
 
 	latestPathGrabbed_toggleGraphTools(up: boolean = true) {
 		const path = this.grabs.latestPathGrabbed(up);
-		if (path && !path.isRoot) {
+		if (!!path && !path.isRoot) {
 			s_path_graphTools.set(path.toolsGrabbed ? null : path);
 			signals.signal_rebuildGraph_fromFocus();
 		}
@@ -168,7 +168,7 @@ export default class Hierarchy {
 		const things = Array<Thing>();
 		for (const path of paths) {
 			const thing = this.thing_forPath(path);
-			if (thing) {
+			if (!!thing) {
 				things.push(thing);
 			}
 		}
@@ -203,7 +203,7 @@ export default class Hierarchy {
 		const parentPath = path.parentPath;
 		const parent = parentPath?.thing;
 		const thing = path.thing;
-		if (thing && parent && parentPath) {
+		if (!!thing && parent && parentPath) {
 			const order = path.order + (below ? 0.5 : -0.5);
 			const child = this.thing_runtimeCreate(thing.baseID, null, k.title_line, parent.color, k.empty, false);
 			await this.path_edit_remoteAddAsChild(parentPath, child, order, false);
@@ -240,7 +240,7 @@ export default class Hierarchy {
 		const thing = path.thing;
 		const id = thing?.id;
 		const parentPath = path.parentPath;
-		if (thing && id && parentPath) {
+		if (!!thing && id && parentPath) {
 			const sibling = await this.thing_remember_runtimeCopy(id, thing);
 			sibling.title = 'idea';
 			await this.path_edit_remoteAddAsChild(parentPath, sibling, path.order + 0.5);
@@ -285,7 +285,7 @@ export default class Hierarchy {
 
 	thing_remember_bulkRootID(baseID: string, id: string, color: string) {
 		const thing = this.thing_bulkAlias_forTitle(baseID);
-		if (thing) {
+		if (!!thing) {
 			// id is of the root thing from bulk fetch all
 			// i.e., it is the root id from another baseID
 			// need a second thing lookup by this id
@@ -313,7 +313,7 @@ export default class Hierarchy {
 		const newParent = newParentPath.thing;
 		let newThingPath: Path | null = null;
 		const thing = path.thing;
-		if (thing && newParent) {
+		if (!!thing && newParent) {
 			const baseID = newParent.isBulkAlias ? newParent.title : newParent.baseID;
 			const newThing = await this.thing_remember_runtimeCopy(baseID, thing);
 			newThingPath = newParentPath.appendChild(newThing);
@@ -527,7 +527,7 @@ export default class Hierarchy {
 				const parentPath = path.parentPath;
 				if (parentPath) {
 					const grandParentPath = parentPath.parentPath;
-					if (thing && grandParentPath && !path.isEditing && !thing.isBulkAlias) {
+					if (!!thing && grandParentPath && !path.isEditing && !thing.isBulkAlias) {
 						const siblings = parentPath.children;
 						let index = siblings.indexOf(thing);
 						siblings.splice(index, 1);
@@ -601,7 +601,7 @@ export default class Hierarchy {
 
 	async path_edit_remoteCreateChildOf(parentPath: Path | null) {
 		const thing = parentPath?.thing;
-		if (thing && parentPath) {
+		if (!!thing && parentPath) {
 			const child = await this.thing_remember_runtimeCopy(thing.baseID, thing);
 			child.title = 'idea';
 			parentPath.expand();
@@ -656,7 +656,7 @@ export default class Hierarchy {
 			this.path_forget_remoteUpdate(childPath);
 		}
 		delete this.path_byHash[path.pathString.hash()];
-		if (thing) {
+		if (!!thing) {
 			const array = this.relationships_byChildHID[thing.idHashed];
 			if (array) {
 				for (const relationship of array) {
@@ -693,7 +693,7 @@ export default class Hierarchy {
 	async path_rebuild_remoteMoveRight(path: Path, RIGHT: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean, fromReveal: boolean = false) {
 		if (!OPTION) {
 			const thing = path.thing;
-			if (thing) {
+			if (!!thing) {
 				if (RIGHT && thing.needsBulkFetch) {
 					await this.path_redraw_remoteFetchBulk_browseRight(thing, path, true);
 				} else {
@@ -715,7 +715,7 @@ export default class Hierarchy {
 			const siblings = parentPath.children;
 			if (!siblings || siblings.length == 0) {
 				this.path_rebuild_runtimeBrowseRight(path, true, EXTREME, up);
-			} else if (thing) {
+			} else if (!!thing) {
 				const index = siblings.indexOf(thing);
 				const newIndex = index.increment(!up, siblings.length);
 				if (parentPath && !OPTION) {
@@ -751,7 +751,7 @@ export default class Hierarchy {
 		const thing = path.thing;
 		const newParentPath = RIGHT ? path.path_ofNextSibling(false) : path.stripBack(2);
 		const newParent = newParentPath?.thing;
-		if (thing && newParent && newParentPath) {
+		if (!!thing && newParent && newParentPath) {
 			if (thing.isInDifferentBulkThan(newParent)) {		// should move across bulks
 				this.path_remember_bulk_remoteRelocateRight(path, newParentPath);
 			} else {
@@ -810,7 +810,7 @@ export default class Hierarchy {
 					if (path.isExpanded) {
 						needsRebuild = path.collapse();
 						newGrabPath = this.grabs.areInvisible ? path : null;
-					} else if (!(rootPath?.matchesPath(newGrabPath) ?? false)) {
+					} else if (!!rootPath && !rootPath.matchesPath(newGrabPath)) {
 						needsRebuild = newGrabPath.collapse();
 					}
 				}
@@ -843,7 +843,7 @@ export default class Hierarchy {
 						await this.relationship_forget_remoteRemove(toolsPath, path);
 						break;
 					case Alteration.adding:
-						const toolsThing = toolsPath?.thing;
+						const toolsThing = toolsPath.thing;
 						if (toolsThing) {
 							await this.path_remember_remoteAddAsChild(path, toolsThing);
 							signals.signal_rebuildGraph_fromFocus();
@@ -914,8 +914,8 @@ export default class Hierarchy {
 	}
 
 	toggleAlteration(alteration: Alteration) {
-		const state = get(s_alteration_state)
-		s_alteration_state.set((state?.alteration == alteration) ? null : state);
+		const state = get(s_alteration_state);
+		s_alteration_state.set(!!state ? null : new AlterationState(alteration));
 	}
 
 }

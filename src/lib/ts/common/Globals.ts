@@ -23,7 +23,7 @@ class Globals {
 	}
 
 	rootPath_set(path: Path | null) {
-		if (path) {
+		if (!!path) {
 			this.rootPath = path;
 		}
 	}

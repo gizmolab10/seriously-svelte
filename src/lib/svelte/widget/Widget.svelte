@@ -11,7 +11,7 @@
 	export let origin = new Point(160, 5);
     export let path = exemplar.path;
     export let angle = 0;
-	const hasExtraX = !path?.isExpanded && (path?.childRelationships.length > 3);
+	const hasExtraX = !!path && !path.isExpanded && (path.childRelationships.length > 3);
 	const rightPadding = hasExtraX ? 22.5 : 19;
 	const priorRowHeight = k.row_height;
 	let revealCenter = new Point();
@@ -83,7 +83,7 @@
 
 	function fullUpdate() {
 		thing = path?.thing;
-		if (path && thing) {
+		if (!!path && thing) {
 			const shallEdit = path.isEditing;
 			const shallGrab = path.isGrabbed || (thing.isExemplar ?? false);
 			const shallShowCluster = path.toolsGrabbed && !path.isFocus;

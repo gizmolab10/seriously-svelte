@@ -245,13 +245,13 @@ export default class DBFirebase implements DBInterface {
 					if (remoteThing) {
 						switch (change.type) {
 							case 'added':
-								if (thing || remoteThing.isEqualTo(this.addedThing) || remoteThing.trait == IDTrait.root) {
+								if (!!thing || remoteThing.isEqualTo(this.addedThing) || remoteThing.trait == IDTrait.root) {
 									return;			// do not invoke signal because nothing has changed
 								}
 								thing = h.thing_remember_runtimeCreate(baseID, id, remoteThing.title, remoteThing.color, remoteThing.trait, true);
 								break;
 							case 'removed':
-								if (thing) {
+								if (!!thing) {
 									h.thing_forget(thing);
 								}
 								break;
@@ -321,7 +321,7 @@ export default class DBFirebase implements DBInterface {
 
 	async thing_remember_remoteCreate(thing: Thing) {
 		const thingsCollection = this.bulk_for(thing.baseID)?.thingsCollection;
-		if (thingsCollection) {
+		if (!!thingsCollection) {
 			const remoteThing = new RemoteThing(thing);
 			const jsThing = { ...remoteThing };
 			thing.awaitingCreation = true;
@@ -356,7 +356,7 @@ export default class DBFirebase implements DBInterface {
 
 	async thing_remoteUpdate(thing: Thing) {
 		const thingsCollection = this.bulk_for(thing.baseID)?.thingsCollection;
-		if (thingsCollection) {
+		if (!!thingsCollection) {
 			const ref = doc(thingsCollection, thing.id) as DocumentReference<Thing>;
 			const remoteThing = new RemoteThing(thing);
 			const jsThing = { ...remoteThing };
@@ -371,7 +371,7 @@ export default class DBFirebase implements DBInterface {
 
 	async thing_remoteDelete(thing: Thing) {
 		const thingsCollection = this.bulk_for(thing.baseID)?.thingsCollection;
-		if (thingsCollection) {
+		if (!!thingsCollection) {
 			try {
 				const ref = doc(thingsCollection, thing.id) as DocumentReference<Thing>;
 				await deleteDoc(ref);
@@ -488,7 +488,7 @@ export default class DBFirebase implements DBInterface {
 
 	async recordLoginIP() {
 		await this.getUserIPAddress().then((ipAddress) => {
-			if (ipAddress != null && ipAddress != '69.181.235.85') {
+			if (!!ipAddress && ipAddress != '69.181.235.85') {
 				const queryStrings = k.queryString.toString() ?? 'empty';
 				const logRef = collection(this.firestore, 'access_logs');
 				const item = {
@@ -573,7 +573,7 @@ class RemoteThing implements RemoteThing {
 	}
 
 	isEqualTo(thing: Thing | null) {
-		return thing != null &&
+		return !!thing &&
 		thing.title == this.title &&
 		thing.trait == this.trait &&
 		thing.color == this.color;
@@ -593,7 +593,7 @@ class RemoteRelationship implements RemoteRelationship {
 		const things = dbFirebase.bulk_for(dbFirebase.baseID)?.thingsCollection;
 		const predicates = dbFirebase.predicatesCollection;
 		this.order = data.order;
-		if (things && predicates) {
+		if (!!things && predicates) {
 			try {
 				if (data instanceof Relationship) {
 					if (data.isValid) {
@@ -616,7 +616,7 @@ class RemoteRelationship implements RemoteRelationship {
 	}
 
 	isEqualTo(relationship: Relationship | null) {
-		return relationship != null &&
+		return !!relationship &&
 		relationship.idPredicate == this.predicate.id &&
 		relationship.idParent == this.from.id &&
 		relationship.order == this.order &&

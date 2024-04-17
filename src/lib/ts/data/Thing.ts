@@ -106,7 +106,7 @@ export default class Thing extends Datum {
 			const relationships = this.parentRelationships_for(idPredicate);
 			for (const relationship of relationships) {
 				const thing = relationship.parentThing;
-				if (thing) {
+				if (!!thing) {
 					parents.push(thing);
 				}
 			}
