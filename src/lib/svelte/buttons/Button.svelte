@@ -11,8 +11,7 @@
 	export let width = 16;
 	let isListening = false;
 	let isTiming = false;
-	let isLong = false;
-	let labelButton;
+	let button;
 	let clickTimer;
 
 	function handle_mouse_out(event) { hover_closure(false); }
@@ -26,11 +25,11 @@
 
 	$: {
 		// if mouse is held down, timeout will fire
-		// if not, 
-		if (!!labelButton && !isListening) {
+		// if not, handle_click will fire
+		if (!!button && !isListening) {
 			isListening = true;
-			labelButton.addEventListener('pointerup', (event) => { clearTimer(); });
-			labelButton.addEventListener('pointerdown', (event) => {
+			button.addEventListener('pointerup', (event) => { clearTimer(); });
+			button.addEventListener('pointerdown', (event) => {
 				clearTimer();
 				isTiming = true;
 				clickTimer = setTimeout(() => {
@@ -45,10 +44,10 @@
 
 </script>
 
-<button class='label-button'
+<button class='button'
+	bind:this={button}
 	on:blur={u.ignore}
 	on:focus={u.ignore}
-	bind:this={labelButton}
 	on:click={handle_click}
 	on:mouseout={handle_mouse_out}
 	on:mouseover={handle_mouse_over}

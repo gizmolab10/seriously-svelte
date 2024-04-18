@@ -3,7 +3,8 @@
 	import { s_build, s_isBusy, s_path_focus, s_db_type, s_graphRect, s_id_popupView, s_title_editing } from '../../ts/state/State';
 	import { Hierarchy, IDPersistant, dbDispatch, debugReact, setContext, persistLocal } from '../../ts/common/GlobalImports';
 	import { s_show_details, s_things_arrived, s_user_graphOffset, s_layout_byClusters } from '../../ts/state/State';
-	import CircularButton from '../kit/CircularButton.svelte';
+	import CircularButton from '../buttons/CircularButton.svelte';
+	import CrumbButtons from '../buttons/CrumbButtons.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import Clusters from '../graph/Clusters.svelte';
 	import BuildNotes from './BuildNotes.svelte';
@@ -11,7 +12,6 @@
 	import Tree from '../graph/Tree.svelte';
 	import Help from '../help/Help.svelte';
 	import Details from './Details.svelte';
-	import Crumbs from './Crumbs.svelte';
 	let chain = ['Panel'];
 	let rebuilds = 0;
 	
@@ -121,7 +121,7 @@
 			top: {k.height_banner - 2}px;'>
 		</div>
 		<div class='crumbs' style='z-index: {ZIndex.frontmost};'>
-			<Crumbs/>
+			<CrumbButtons/>
 			<div class='horizontal-line'
 				style='
 					top: 68px;

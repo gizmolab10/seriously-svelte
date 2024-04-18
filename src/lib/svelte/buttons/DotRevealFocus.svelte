@@ -1,6 +1,6 @@
 <script>
 	import { g, k, Point, debug, Direction, dbDispatch } from "../../ts/common/GlobalImports";
-	import TriangleButton from '../svg/TriangleButton.svelte';
+	import TriangleButton from '../buttons/TriangleButton.svelte';
 	export let center = new Point();
     export let path;
 	let size = k.dot_size;
@@ -9,7 +9,7 @@
 		return [debug.lines ? 'transparent' : path.dotColor(isFilled), k.empty];
 	}
 
-	function onClick(event) {
+	function onClick(event, isLong) {
 		const h = g.hierarchy;
 		if (h.grabs.latestPathGrabbed(true)?.isFocus) {
 			h.path_rebuild_remoteMoveRight(path, false, false);

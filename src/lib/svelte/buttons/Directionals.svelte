@@ -10,7 +10,7 @@
 
 	function fillColors_closure(isFilled) { return [isFilled ? 'black' : k.color_background, k.empty]; }
 
-	function onClick(event) {
+	function onClick(event, isLong) {
         const pointsUp = event.currentTarget.id == 'up';
         hit(pointsUp);
         toggle = !toggle;

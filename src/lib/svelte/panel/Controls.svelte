@@ -1,8 +1,8 @@
 <script>
 	import { g, k, u, ZIndex, signals, svgPaths, IDButton, IDPersistant, persistLocal } from '../../ts/common/GlobalImports';
 	import { s_build, s_show_details, s_id_popupView, s_layout_byClusters, s_show_child_graph } from '../../ts/state/State';
-	import CircularButton from '../kit/CircularButton.svelte';
-	import SVGD3 from '../svg/SVGD3.svelte';
+	import CircularButton from '../buttons/CircularButton.svelte';
+	import SVGD3 from '../kit/SVGD3.svelte';
 	let width = u.windowSize.width - 20;
 	let size = 16;
 

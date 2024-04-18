@@ -4,7 +4,7 @@
 	import { s_path_focus, s_graphRect, s_show_details, s_paths_grabbed } from '../../ts/state/State';
 	import { s_id_popupView, s_path_editingTools, s_user_graphOffset } from '../../ts/state/State';
 	import { IDPersistant, IDSignal, persistLocal } from '../../ts/common/GlobalImports';
-	import DotRevealFocus from '../kit/DotRevealFocus.svelte';
+	import DotRevealFocus from '../buttons/DotRevealFocus.svelte';
 	import EditingTools from './EditingTools.svelte';
 	import TreeChildren from './TreeChildren.svelte';
 	import Widget from '../widget/Widget.svelte';

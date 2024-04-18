@@ -1,14 +1,14 @@
 <script lang='ts'>
-    import { g, k, u, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, signals } from '../../ts/common/GlobalImports';
     import { svgPaths, Direction, dbDispatch, transparentize, AlterationState, Alteration } from '../../ts/common/GlobalImports';
+    import { g, k, u, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, signals } from '../../ts/common/GlobalImports';
     import { s_alteration_state, s_path_editingTools } from '../../ts/state/State';
     import { s_graphRect, s_show_details } from '../../ts/state/State';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
-	import CircularButton from '../kit/CircularButton.svelte';
-	import TriangleButton from '../svg/TriangleButton.svelte';
-	import LabelButton from '../kit/LabelButton.svelte';
+	import CircularButton from '../buttons/CircularButton.svelte';
+	import TriangleButton from '../buttons/TriangleButton.svelte';
 	import DotReveal from '../widget/DotReveal.svelte';
-	import Trash from '../svg/Trash.svelte';
+	import Button from '../buttons/Button.svelte';
+	import Trash from '../buttons/Trash.svelte';
     const editingToolsDiameter = k.editingTools_diameter;
     const half_circleViewBox = `0 0 ${editingToolsDiameter} ${editingToolsDiameter}`;
     const needsMultipleVisibleParents = [IDTool.next, IDTool.delete_parent];
@@ -17,8 +17,8 @@
 	const toolDiameter = k.dot_size * 1.4;
     let hovers: { [type: string]: boolean } = {}
     let centers: { [type: string]: Point } = {}
-    let countOfVisibleParents = 0;
     let parentSensitiveColor = k.empty;
+    let countOfVisibleParents = 0;
     let confirmingDelete = false;
     let graphRect = new Rect();
 	let color = k.empty;
@@ -201,20 +201,20 @@
                         <path d={svgPaths.half_circle(editingToolsDiameter, Direction.down)}/>
                     </svg>
                 {/if}
-                <LabelButton
+                <Button
                     hover_closure={(isHovering) => { hovers[IDTool.delete_confirm] = isHovering; }}
                     color={ hovers[IDTool.delete_confirm] ? k.color_background : color}
-                    onClick={(event, isLong) => handle_click(IDTool.delete_confirm, event, isLong)}
+                    onClick={(event, isLong) => (IDTool.delete_confirm, event, isLong)}
                     center={getC(IDTool.delete_confirm)}>
                     delete
-                </LabelButton>
-                <LabelButton
+                </Button>
+                <Button
                     hover_closure={(isHovering) => { hovers[IDTool.delete_cancel] = isHovering; }}
                     color={ hovers[IDTool.delete_cancel] ? k.color_background : color}
                     onClick={(event, isLong) => handle_click(IDTool.delete_cancel, event, isLong)}
                     center={getC(IDTool.delete_cancel)}>
                     cancel
-                </LabelButton>
+                </Button>
                 <div class='horizontal-line'
                     style='
                         height: 1px;
@@ -226,7 +226,7 @@
                         left: {getC(IDTool.editingTools).x - editingToolsRadius}px;'>
                 </div>
             {:else}
-            <LabelButton
+            <Button
                 width=18
                 height=16
                 color={color}
@@ -246,13 +246,13 @@
                     fill={hovers[IDTool.more] ? k.color_background : color}>
                     <path d={svgPaths.tinyDots_linear(7, 1)}/>
                 </svg>
-            </LabelButton>
+            </Button>
             <DotReveal path={$s_path_editingTools} center={getC(IDTool.dismiss)}/>
             <TriangleButton
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.next, isFilled) }}
                 strokeColor={isDisabledFor(IDTool.next) ? k.color_disabled : parentSensitiveColor}
-                cursor={isDisabledFor(IDTool.next) ? 'normal' : 'pointer'}
                 onClick={(event, isLong) => handle_click(IDTool.next, event, isLong)}
+                cursor={isDisabledFor(IDTool.next) ? 'normal' : 'pointer'}
                 extraPath={svgPaths.circle(toolDiameter, 4)}
                 center={getC(IDTool.next)}
                 direction={Direction.up}
@@ -261,8 +261,8 @@
             <TriangleButton
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.delete_parent, isFilled) }}
                 strokeColor={isDisabledFor(IDTool.delete_parent) ? k.color_disabled : parentSensitiveColor}
-                cursor={isDisabledFor(IDTool.delete_parent) ? 'normal' : 'pointer'}
                 onClick={(event, isLong) => handle_click(IDTool.delete_parent, event, isLong)}
+                cursor={isDisabledFor(IDTool.delete_parent) ? 'normal' : 'pointer'}
                 extraPath={svgPaths.dash(toolDiameter, 4)}
                 center={getC(IDTool.delete_parent)}
                 direction={Direction.left}
@@ -270,9 +270,9 @@
                 size={toolDiameter}/>
             <TriangleButton
                 fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.add_parent, isFilled) }}
-                cursor={isDisabledFor(IDTool.add_parent) ? 'normal' : 'pointer'}
                 onClick={(event, isLong) => handle_click(IDTool.add_parent, event, isLong)}
                 strokeColor={isDisabledFor(IDTool.add_parent) ? k.color_disabled : color}
+                cursor={isDisabledFor(IDTool.add_parent) ? 'normal' : 'pointer'}
                 extraPath={svgPaths.t_cross(toolDiameter, 3)}
                 center={getC(IDTool.add_parent)}
                 direction={Direction.left}
@@ -292,7 +292,7 @@
                 on:focus={u.ignore}
                 on:mouseout={() => { hovers[IDTool.delete] = false; }}
                 on:mouseover={() => { hovers[IDTool.delete] = true; }}
-                on:click={(event) => handle_click(IDTool.delete, event, isLong)}
+                on:click={(event) => handle_click(IDTool.delete, event, false)}
                 style='
                     left: {getC(IDTool.delete).x}px;
                     top: {getC(IDTool.delete).y}px;

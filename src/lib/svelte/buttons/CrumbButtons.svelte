@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { g, k, u, Path, Size, Point, Thing, ZIndex, signals, svgPaths, onMount, dbDispatch, Direction } from '../../ts/common/GlobalImports';
 	import { s_path_focus, s_graphRect, s_show_details, s_paths_grabbed, s_path_editingTools } from '../../ts/state/State';
-	import Crumb from '../kit/Crumb.svelte';
-	import SVGD3 from '../svg/SVGD3.svelte';
+	import CrumbButton from '../buttons/CrumbButton.svelte';
+	import SVGD3 from '../kit/SVGD3.svelte';
 	let ancestors: Array<Thing> = [];
 	let rebuilds = 0;
 	let trigger = 0;
@@ -53,6 +53,6 @@
 			</span>
 			&nbsp;&nbsp;
 		{/if}
-		<Crumb path={path.stripBack(ancestors.length - index - 1)}/>
+		<CrumbButton path={path.stripBack(ancestors.length - index - 1)}/>
 	{/each}
 {/key}
