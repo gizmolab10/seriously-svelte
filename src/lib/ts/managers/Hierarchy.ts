@@ -54,8 +54,7 @@ export default class Hierarchy {
 	static readonly $_EVENTS_$: unique symbol;
 
 	async handle_tool_clicked(idButton: string, event: MouseEvent, isLong: boolean) {
-        console.log(`tool ${idButton} long ${isLong}`);
-		const path = get(s_path_editingTools);
+        const path = get(s_path_editingTools);
 		if (!!path) {
 			switch (idButton) {
 				case IDTool.create: await this.path_edit_remoteCreateChildOf(path); break;
@@ -915,8 +914,11 @@ export default class Hierarchy {
 	}
 
 	toggleAlteration(alteration: Alteration, isRelated: boolean) {
-		const state = get(s_altering);
-		s_altering.set(!!state ? null : new AlterationState(alteration));
+		const wasAltering = get(s_altering)?.alteration;
+		const predicate = isRelated ? Predicate.isRelated : Predicate.contains;
+		const became = alteration == wasAltering ? null : new AlterationState(alteration, predicate);
+		console.log(`altering ${became?.description ?? 'nothing'}`);
+		s_altering.set(became);
 	}
 
 }

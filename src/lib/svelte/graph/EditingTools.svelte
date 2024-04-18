@@ -105,7 +105,6 @@
 	}
 
 	async function handle_click(id: string, event: MouseEvent, isLong: boolean) {
-		console.log(`handle_click ${id}`);
 		switch (id) {
 			case IDTool.delete: confirmingDelete = true; break;
 			case IDTool.delete_cancel: confirmingDelete = false; break;

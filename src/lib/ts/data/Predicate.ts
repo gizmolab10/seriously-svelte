@@ -12,12 +12,13 @@ export default class Predicate extends RemoteIdentifiable {
 		this.kind = kind;
 	}
 
-	static id_forKind(kind: string) { return this.predicate_forKind(kind)?.id ?? `${kind} is missing`; }
 	static predicate_forKind(kind: string) { return g.hierarchy?.predicate_forKind(kind) ?? null; }
-	static get contains(): Predicate | null { return this.predicate_forKind(Predicate.idContains); }
-	static get related(): Predicate | null { return this.predicate_forKind(Predicate.idIsRelated); }
+	static id_forKind(kind: string) { return this.predicate_forKind(kind)?.id ?? `${kind} is missing`; }
+	static get isRelated(): Predicate | null { return this.predicate_forKind(PredicateKind.isRelated); }
+	static get contains(): Predicate | null { return this.predicate_forKind(PredicateKind.contains); }
 	static get idIsRelated(): string { return this.id_forKind(PredicateKind.isRelated); }
 	static get idContains(): string { return this.id_forKind(PredicateKind.contains); }
+	get description(): string { return this.kind; }
 
 	clusterAngle_for(pointsTo: boolean): number {
 		const angle = get(s_cluster_angle);
