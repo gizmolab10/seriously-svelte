@@ -16,6 +16,12 @@
 	function handle_mouse_out(event) { hover_closure(false); }
 	function handle_mouse_over(event) { hover_closure(true); }
 
+	function handle_click(event) {
+		if (!clickTimer) {
+			click_closure(event, false);
+		}
+	}
+
 	function clearTimer() {
 		clearTimeout(clickTimer);
 		clickTimer = null;
@@ -26,10 +32,7 @@
 		// if not, click_closure will fire
 		if (!!button && !isListening) {
 			isListening = true;
-			button.addEventListener('pointerup', (event) => {
-				if (!clickTimer) {
-					click_closure(event, false);
-				}
+			const foo = button.addEventListener('pointerup', (event) => {
 				clearTimer();
 			});
 			button.addEventListener('pointerdown', (event) => {
@@ -50,6 +53,7 @@
 	bind:this={button}
 	on:blur={u.ignore}
 	on:focus={u.ignore}
+	on:click={handle_click}
 	on:mouseout={handle_mouse_out}
 	on:mouseover={handle_mouse_over}
 	style='

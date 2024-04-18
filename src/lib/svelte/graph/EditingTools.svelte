@@ -195,8 +195,8 @@
 							left:{getC(IDTool.confirmation).x}px;
 							top:{getC(IDTool.confirmation).y}px;
 							z-index:{ZIndex.lines};'
-						viewBox={half_circleViewBox}
 						height={editingToolsDiameter}
+						viewBox={half_circleViewBox}
 						width={editingToolsDiameter}
 						fill={color}>
 						<path d={svgPaths.half_circle(editingToolsDiameter, Direction.down)}/>
@@ -204,47 +204,48 @@
 				{/if}
 				<Button
 					hover_closure={(isHovering) => { hovers[IDTool.delete_confirm] = isHovering; }}
+					click_closure={(event, isLong) => handle_click(IDTool.delete_confirm, event, isLong)}
 					color={ hovers[IDTool.delete_confirm] ? k.color_background : color}
-					click_closure={(event, isLong) => (IDTool.delete_confirm, event, isLong)}
 					center={getC(IDTool.delete_confirm)}>
 					delete
 				</Button>
 				<Button
+					click_closure={(event, isLong) => handle_click(IDTool.delete_cancel, event, isLong)}
 					hover_closure={(isHovering) => { hovers[IDTool.delete_cancel] = isHovering; }}
 					color={ hovers[IDTool.delete_cancel] ? k.color_background : color}
-					click_closure={(event, isLong) => handle_click(IDTool.delete_cancel, event, isLong)}
 					center={getC(IDTool.delete_cancel)}>
 					cancel
 				</Button>
 				<div class='horizontal-line'
 					style='
-						height: 1px;
-						position: absolute;
-						background-color: {color};
-						z-index: {ZIndex.frontmost};
-						width: {editingToolsDiameter + 1}px;
+						left: {getC(IDTool.editingTools).x - editingToolsRadius}px;
 						top: {getC(IDTool.editingTools).y + 0.5}px;
-						left: {getC(IDTool.editingTools).x - editingToolsRadius}px;'>
+						width: {editingToolsDiameter + 1}px;
+						z-index: {ZIndex.frontmost};
+						background-color: {color};
+						position: absolute;
+						height: 1px;'>
 				</div>
 			{:else}
 			<Button
-				width=18
-				height=16
-				color={color}
-				center={getC(IDTool.more)}
 				click_closure={(event, isLong) => handle_click(IDTool.more, event, isLong)}
-				hover_closure={(isHovering) => { hovers[IDTool.more] = isHovering; }}>
+				hover_closure={(isHovering) => { hovers[IDTool.more] = isHovering; }}
+				center={getC(IDTool.more)}
+				color={color}
+				height=16
+				width=18>
 				<svg width=18
-					height=16
-					stroke={color}
+					fill={hovers[IDTool.more] ? color : 'transparent'}
 					viewBox='0 1 18 16'
-					fill={hovers[IDTool.more] ? color : 'transparent'}>
+					stroke={color}
+					height=16>
 					<path d={svgPaths.oval(18, true)}/>
 				</svg>
-				<svg width=16
-					height=10
+				<svg 
+					fill={hovers[IDTool.more] ? k.color_background : color}
 					viewBox='-0.5 -2 14 10'
-					fill={hovers[IDTool.more] ? k.color_background : color}>
+					height=10
+					width=16>
 					<path d={svgPaths.tinyDots_linear(7, 1)}/>
 				</svg>
 			</Button>

@@ -1,10 +1,10 @@
 <script>
-	import { s_paths_expanded, s_altering, s_paths_grabbed, s_path_editingTools } from '../../ts/state/State';
 	import { g, k, u, get, Size, Thing, Point, debug, ZIndex, svgPaths, signals } from "../../ts/common/GlobalImports";
 	import { onMount, Wrapper, Direction, onDestroy, dbDispatch, IDWrapper } from "../../ts/common/GlobalImports";
-	import SVGD3 from '../kit/SVGD3.svelte'
-    export let path;
+	import { s_paths_expanded, s_altering, s_paths_grabbed, s_path_editingTools } from '../../ts/state/State';
+	import SVGD3 from '../kit/SVGD3.svelte';
 	export let center;
+    export let path;
 	let size = k.dot_size;
 	let childrenCount = path.childRelationships.length;
 	let insideFillColor = k.color_background;
