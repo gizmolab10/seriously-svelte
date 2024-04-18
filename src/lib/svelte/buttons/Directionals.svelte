@@ -10,7 +10,7 @@
 
 	function fillColors_closure(isFilled) { return [isFilled ? 'black' : k.color_background, k.empty]; }
 
-	function onClick(event, isLong) {
+	function click_closure(event, isLong) {
         const pointsUp = event.currentTarget.id == 'up';
         hit(pointsUp);
         toggle = !toggle;
@@ -34,7 +34,7 @@
                 center={origin.offsetByY(-offsetY)}
                 direction={Direction.up}
                 strokeColor={'black'}
-                onClick={onClick}
+                click_closure={click_closure}
                 size={size}
                 id='up'
             />
@@ -45,7 +45,7 @@
                 center={origin.offsetByY(offsetY)}
                 direction={Direction.down}
                 strokeColor={'black'}
-                onClick={onClick}
+                click_closure={click_closure}
                 size={size}
                 id='down'
             />

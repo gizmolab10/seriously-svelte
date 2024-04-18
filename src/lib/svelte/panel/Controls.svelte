@@ -9,7 +9,7 @@
 	window.addEventListener('resize', (event) => { width = u.windowSize.width - 20; });
 	function togglePopupID(id) { $s_id_popupView = ($s_id_popupView == id) ? null : id; }
 	
-	function buttonClickedForID(id) {
+	function buttclick_closureedForID(id) {
 		switch (id) {
 			case IDButton.bigger: width = g.zoomBy(1.1) - 20; break;
 			case IDButton.smaller: width = g.zoomBy(0.9) - 20; break;
@@ -42,7 +42,7 @@
 		<CircularButton left=15
 			color='transparent'
 			borderColor='transparent'
-			onClick={() => buttonClickedForID(IDButton.details)}>
+			click_closure={() => buttclick_closureedForID(IDButton.details)}>
 			<img src='settings.svg' alt='circular button' width={size}px height={size}px/>
 		</CircularButton>
 		{#if k.showControls}
@@ -50,14 +50,14 @@
 				style='
 					left:30px;
 					background-color: {k.color_background};'
-				on:click={() => buttonClickedForID(IDButton.relations)}>
+				on:click={() => buttclick_closureedForID(IDButton.relations)}>
 				{#if $s_show_child_graph}children{:else}parents{/if}
 			</button>
 			<button class='button'
 				style='
 					left: 97px;
 					background-color: {k.color_background};'
-				on:click={() => buttonClickedForID(IDButton.layout)}>
+				on:click={() => buttclick_closureedForID(IDButton.layout)}>
 				{#if $s_layout_byClusters}clusters{:else}tree{/if}
 			</button>
 		{/if}
@@ -67,7 +67,7 @@
 			left={width - 130}
 			size={size}
 			color={k.color_background}
-			onClick={(event) => buttonClickedForID(IDButton.smaller)}>
+			click_closure={(event) => buttclick_closureedForID(IDButton.smaller)}>
 			<SVGD3 name='smaller'
 				width={size}
 				height={size}
@@ -78,7 +78,7 @@
 			size={size}
 			left={width - 105}
 			color={k.color_background}
-			onClick={(event) => buttonClickedForID(IDButton.bigger)}>
+			click_closure={(event) => buttclick_closureedForID(IDButton.bigger)}>
 			<SVGD3 name='bigger'
 				width={size}
 				height={size}
@@ -97,6 +97,6 @@
 		size={size}
 		left={width - 15}
 		color={k.color_background}
-		onClick={(event) => togglePopupID(IDButton.help)}>?
+		click_closure={(event) => togglePopupID(IDButton.help)}>?
 	</CircularButton>
 </div>

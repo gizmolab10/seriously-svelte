@@ -1,7 +1,7 @@
 import { g, k, u, get, Rect, Size, Thing, debug, signals, Wrapper, IDWrapper } from '../common/GlobalImports';
 import { Predicate, TitleState, Relationship, PredicateKind, Alteration } from '../common/GlobalImports';
 import { s_path_focus, s_paths_grabbed, s_title_editing, s_layout_byClusters } from '../state/State';
-import { s_paths_expanded, s_path_editingTools, s_alteration_state } from '../state/State';
+import { s_paths_expanded, s_path_editingTools, s_altering } from '../state/State';
 import { Writable } from 'svelte/store';
 
 export default class Path {
@@ -121,16 +121,16 @@ export default class Path {
 	}
 
 	get things_canAlter_asParentOf_toolsGrab(): boolean {
-		const path_toolGrab = get(s_path_editingTools);
-		const toolThing = path_toolGrab?.thing;
-		const state = get(s_alteration_state)
+		const alterationState = get(s_altering);
+		const path_toolsGrab = get(s_path_editingTools);
+		const toolThing = path_toolsGrab?.thing;
 		const thing = this.thing;
-		if (state && thing && toolThing && thing != toolThing && !(path_toolGrab?.matchesPath(this) ?? false)) {
-			const isDeleting = state.alteration == Alteration.deleting;
-			const isParentOfTool = this.thing_isImmediateParentOf(path_toolGrab);
+		if (alterationState	 && thing && toolThing && path_toolsGrab && thing != toolThing && !path_toolsGrab.matchesPath(this)) {
+			const isParentOfTool = this.thing_isImmediateParentOf(path_toolsGrab);
+			const isDeleting = alterationState.alteration == Alteration.deleting;
 			const toolIsAnAncestor = thing.parentIDs.includes(toolThing.id);
-			const isAProgenyOfTool = this.path_isAProgenyOf(path_toolGrab);
-			return isDeleting ? isParentOfTool : !(isParentOfTool || isAProgenyOfTool || toolIsAnAncestor);
+			const isProgenyOfTool = this.path_isAProgenyOf(path_toolsGrab);
+			return isDeleting ? isParentOfTool : !(isParentOfTool || isProgenyOfTool || toolIsAnAncestor);
 		}
 		return false;
 	}
@@ -473,7 +473,7 @@ export default class Path {
 			if (get(s_layout_byClusters)) {
 				this.becomeFocus();
 			} else {
-				if (get(s_alteration_state)) {
+				if (get(s_altering)) {
 					g.hierarchy.path_alterMaybe(this);
 				} else if (shiftKey || this.isGrabbed) {
 					this.toggleGrab();

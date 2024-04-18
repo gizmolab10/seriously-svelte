@@ -14,7 +14,7 @@ export class Signals {
 
 	signal_rebuildGraph(value: any = null) { this.signal(IDSignal.rebuild, value); }
 	signal_rebuildGraph_fromFocus() { this.signal_rebuildGraph(get(s_path_focus)); }
-	signal_alterState(value: any = null) { this.signal(IDSignal.alterState, value); }
+	signal_altering(value: any = null) { this.signal(IDSignal.alterState, value); }
 	signal_relayoutWidgets(value: any = null) { this.signal(IDSignal.relayout, value); }
 	signal_relayoutWidgets_fromFocus() { this.signal_relayoutWidgets(get(s_path_focus)); }
 
@@ -26,7 +26,7 @@ export class Signals {
 		return this.handle_signalOfKind(IDSignal.relayout, onSignal);
 	}
 
-	handle_alterState(onSignal: (value: any | null) => any ) {
+	handle_altering(onSignal: (value: any | null) => any ) {
 		return this.handle_signalOfKind(IDSignal.alterState, onSignal);
 	}
 

@@ -9,7 +9,7 @@
 		return [debug.lines ? 'transparent' : path.dotColor(isFilled), k.empty];
 	}
 
-	function onClick(event, isLong) {
+	function click_closure(event, isLong) {
 		const h = g.hierarchy;
 		if (h.grabs.latestPathGrabbed(true)?.isFocus) {
 			h.path_rebuild_remoteMoveRight(path, false, false);
@@ -30,7 +30,7 @@
 	fillColors_closure={fillColors_closure}
 	direction={Direction.right}
 	strokeColor={path.thing.color}
-	onClick={onClick}
+	click_closure={click_closure}
 	id={path.thing.title}
 	center={center}
     size={size}

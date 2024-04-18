@@ -1,6 +1,6 @@
 import { g, k, u, get, User, Path, Thing, Grabs, debug, Access, DBType, IDTool, IDTrait, signals } from '../common/GlobalImports';
 import { Wrapper, Predicate, Relationship, Alteration, AlterationState, CreationOptions } from '../common/GlobalImports';
-import { s_title_editing, s_alteration_state, s_layout_byClusters, s_path_editingTools } from '../state/State';
+import { s_title_editing, s_altering, s_layout_byClusters, s_path_editingTools } from '../state/State';
 import { s_isBusy, s_path_focus, s_db_loadTime, s_paths_grabbed, s_things_arrived } from '../state/State';
 import DBInterface from '../db/DBInterface';
 
@@ -59,9 +59,9 @@ export default class Hierarchy {
 		if (!!path) {
 			switch (idButton) {
 				case IDTool.create: await this.path_edit_remoteCreateChildOf(path); break;
-				case IDTool.add_parent: this.toggleAlteration(Alteration.adding); return;
+				case IDTool.add_parent: this.toggleAlteration(Alteration.adding, isLong); return;
 				case IDTool.next: this.path_relayout_toolCluster_nextParent(event.altKey); return;
-				case IDTool.delete_parent: this.toggleAlteration(Alteration.deleting); return;
+				case IDTool.delete_parent: this.toggleAlteration(Alteration.deleting, isLong); return;
 				case IDTool.delete_confirm: await this.paths_rebuild_traverse_remoteDelete([path]); break;
 				case IDTool.more: console.log('needs more'); break;
 				default: break;
@@ -835,9 +835,9 @@ export default class Hierarchy {
 	async path_alterMaybe(path: Path) {
 		if (path.things_canAlter_asParentOf_toolsGrab) {
 			const toolsPath = get(s_path_editingTools);
-			const state = get(s_alteration_state);
+			const state = get(s_altering);
 			if (state && toolsPath) {
-				s_alteration_state.set(null);
+				s_altering.set(null);
 				s_path_editingTools.set(null);
 				switch (state.alteration) {
 					case Alteration.deleting:
@@ -914,9 +914,9 @@ export default class Hierarchy {
 		await this.relationships_removeHavingNullReferences();
 	}
 
-	toggleAlteration(alteration: Alteration) {
-		const state = get(s_alteration_state);
-		s_alteration_state.set(!!state ? null : new AlterationState(alteration));
+	toggleAlteration(alteration: Alteration, isRelated: boolean) {
+		const state = get(s_altering);
+		s_altering.set(!!state ? null : new AlterationState(alteration));
 	}
 
 }

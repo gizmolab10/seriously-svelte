@@ -7,7 +7,7 @@
 	export let extraPath = null;
 	export let strokeColor;
 	export let direction;
-	export let onClick;
+	export let click_closure;
 	export let center;
 	export let size;
 	export let id;
@@ -59,7 +59,7 @@
 				clickTimer = setTimeout(() => {
 					if (isTiming) {
 						clearTimer();
-						onClick(event, true);
+						click_closure(event, true);
 					}
 				}, k.threshold_longClick);
 			});

@@ -33,7 +33,7 @@
 		}
 	}
 
-	function directional_buttonClicked(goLeft) {
+	function directional_buttclick_closureed(goLeft) {
 		let nextIndex = notesIndex + (10 * (goLeft ? -1 : 1));
 		if (nextIndex < 0 || (builds.notes.length - nextIndex) < 1) {
 			return;
@@ -87,7 +87,7 @@
 	<div class='modal-content'>
 		<div class='top-bar'>
 			{#key notes}
-				<Directionals hit={directional_buttonClicked} display={display}/>
+				<Directionals hit={directional_buttclick_closureed} display={display}/>
 			{/key}
 			<div class='title'>{title}</div>
 			<CloseButton size={k.dot_size * 1.5}/>

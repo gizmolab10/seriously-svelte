@@ -31,7 +31,7 @@
 		updateColors();
 	}
 
-	function crumb_buttonClicked(event) {
+	function crumb_buttclick_closureed(event) {
 		if (dbDispatch.db.hasData) {
 			path.grabOnly();
 			if (path.becomeFocus()) {
@@ -47,7 +47,7 @@
 	on:focus={u.ignore}
 	on:mouseout={handle_mouse_out}
 	on:mouseover={handle_mouse_over}
-	on:click={crumb_buttonClicked}
+	on:click={crumb_buttclick_closureed}
 	style='
 		{colorStyles};
 		{cursorStyle};
