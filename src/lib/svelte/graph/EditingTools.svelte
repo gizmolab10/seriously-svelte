@@ -122,8 +122,8 @@
 		if (rect && $s_path_editingTools && rect.size.width != 0) {
 			const offsetReveal = new Point(-5.3, -5.5);
 			const offsetTitle = titleWidth * (path.isExpanded ? 1 : 1.034);
-			const offsetX = 8.8 + offsetTitle - ($s_show_details ? k.width_details : 0);
-			const offsetY = (g.titleIsAtTop ? -45 : 0) - editingToolsDiameter - 5.4;
+			const offsetX = 10.8 + offsetTitle - ($s_show_details ? k.width_details : 0);
+			const offsetY = (g.titleIsAtTop ? -45 : 0) - editingToolsDiameter - 5.8;
 			const center = rect.centerLeft.offsetBy(new Point(offsetX, offsetY));
 			left = center.x - toolDiameter;
 			const y = center.y;
@@ -171,7 +171,7 @@
 				thickness=1
 				opacity=0.15
 				color={color}
-				zindex={ZIndex.lines}
+				zindex={ZIndex.dots}
 				radius={editingToolsRadius}
 				center={getC(IDTool.editingTools)}
 				color_background={transparentize(k.color_background, 0.05)}/>
@@ -180,7 +180,7 @@
 					<svg class='delete-confirm' style='
 							left:{getC(IDTool.confirmation).x}px;
 							top:{getC(IDTool.confirmation).y}px;
-							z-index:{ZIndex.lines};'
+							z-index:{ZIndex.tools};'
 						viewBox={half_circleViewBox}
 						height={editingToolsDiameter}
 						width={editingToolsDiameter}
@@ -193,7 +193,7 @@
 					<svg class='delete-cancel' style='
 							left:{getC(IDTool.confirmation).x}px;
 							top:{getC(IDTool.confirmation).y}px;
-							z-index:{ZIndex.lines};'
+							z-index:{ZIndex.tools};'
 						height={editingToolsDiameter}
 						viewBox={half_circleViewBox}
 						width={editingToolsDiameter}
@@ -297,7 +297,7 @@
 				style='
 					left: {getC(IDTool.delete).x}px;
 					top: {getC(IDTool.delete).y}px;
-					z-index: {ZIndex.lines};
+					z-index: {ZIndex.tools};
 					background: none;
 					cursor: pointer;
 					border: none;'>

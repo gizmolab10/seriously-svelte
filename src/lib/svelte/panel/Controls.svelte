@@ -51,14 +51,14 @@
 					left:30px;
 					background-color: {k.color_background};'
 				on:click={() => buttclick_closureedForID(IDButton.relations)}>
-				{#if $s_show_child_graph}children{:else}parents{/if}
+				{#if $s_show_child_graph}parents{:else}children{/if}
 			</button>
 			<button class='button'
 				style='
 					left: 97px;
 					background-color: {k.color_background};'
 				on:click={() => buttclick_closureedForID(IDButton.layout)}>
-				{#if $s_layout_byClusters}clusters{:else}tree{/if}
+				{#if $s_layout_byClusters}tree{:else}clusters{/if}
 			</button>
 		{/if}
 	{/if}

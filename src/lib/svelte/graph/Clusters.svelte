@@ -2,6 +2,7 @@
 	import { s_graphRect, s_path_focus, s_user_graphOffset, s_thing_fontFamily } from '../../ts/state/State';
 	import { g, k, u, Rect, Size, Point, ZIndex, transparentize } from '../../ts/common/GlobalImports';
 	import TitleEditor from '../widget/TitleEditor.svelte';
+	import EditingTools from './EditingTools.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Necklace from './Necklace.svelte'
 	export let path;
@@ -46,6 +47,7 @@
 				<TitleEditor path={path} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 			</div>
 			<Necklace path={path} center={center}/>
+			<EditingTools/>
 		{/key}
 	</div>
 {/if}

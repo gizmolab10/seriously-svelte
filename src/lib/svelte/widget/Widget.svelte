@@ -142,7 +142,6 @@
 		padding: {padding};
 		position: absolute;
 		white-space: nowrap;
-		z-index: {ZIndex.widgets};
 		border-radius: {radius}px;
 	'>
 	<DotDrag path={path}/>

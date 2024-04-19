@@ -120,18 +120,18 @@ export default class Path {
 		return false;
 	}
 
-	get things_canAlter_asParentOf_toolsGrab(): boolean {
+	get things_canAlter_asParentOf_toolsPath(): boolean {
 		const altering = get(s_altering);
 		const predicate = altering?.predicate;
 		const isRelated = predicate?.kind == PredicateKind.isRelated ?? false;
-		const path_toolsGrab = get(s_path_editingTools);
-		const toolThing = path_toolsGrab?.thing;
+		const toolsPath = get(s_path_editingTools);
+		const toolThing = toolsPath?.thing;
 		const thing = this.thing;
-		if (thing && toolThing && predicate && path_toolsGrab && thing != toolThing && !path_toolsGrab.matchesPath(this)) {
-			const isParentOfTool = this.thing_isImmediateParentOf(path_toolsGrab, predicate.id);
+		if (thing && toolThing && predicate && toolsPath && thing != toolThing && !toolsPath.matchesPath(this)) {
 			const toolIsAnAncestor = isRelated ? false : thing.parentIDs.includes(toolThing.id);
-			const isProgenyOfTool = this.path_isAProgenyOf(path_toolsGrab);
+			const isParentOfTool = this.thing_isImmediateParentOf(toolsPath, predicate.id);
 			const isDeleting = altering.alteration == Alteration.deleting;
+			const isProgenyOfTool = this.path_isAProgenyOf(toolsPath);
 			return isDeleting ? isParentOfTool : !(isParentOfTool || isProgenyOfTool || toolIsAnAncestor);
 		}
 		return false;

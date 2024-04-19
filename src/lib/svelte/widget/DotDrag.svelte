@@ -34,7 +34,7 @@
 		updatePaths();
 		updateColorsForHover(false);
         const handler = signals.handle_altering((state) => {
-			const applyFlag = $s_path_editingTools && !!path && path.things_canAlter_asParentOf_toolsGrab;
+			const applyFlag = $s_path_editingTools && !!path && path.things_canAlter_asParentOf_toolsPath;
 			altering = applyFlag ? !!state : false;
 			updatePathExtra();
 			updateColors();
@@ -148,7 +148,7 @@
 		left: {center.x}px;
 		width: {size / 2}px;
 	'>
-	<SVGD3 name='dotDrag'
+	<SVGD3 name='svg-drag'
 		width={size}
 		height={size}
 		fill={fillColor}
@@ -156,7 +156,7 @@
 		svgPath={path_scalable}
 	/>
 	{#if path_extra}
-		<SVGD3 name='dotInside'
+		<SVGD3 name='svg-dot-inside'
 			width={size}
 			height={size}
 			fill={extraColor}

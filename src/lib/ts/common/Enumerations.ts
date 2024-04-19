@@ -68,13 +68,14 @@ export enum IDBrowser  {
 const baseZIndex = 1;
 
 export enum ZIndex {
-	panel	  = baseZIndex,
-	text	  = baseZIndex + 1,
-	lines	  = baseZIndex + 2,
-	dots	  = baseZIndex + 3,
-	widgets	  = baseZIndex + 4,
-	frontmost = baseZIndex + 5,
-	tools	  = baseZIndex + 6,
+	common,
+	panel,
+	text,
+	dots,
+	lines,
+	widgets,
+	frontmost,
+	tools,
 }
 
 export enum IDTool {

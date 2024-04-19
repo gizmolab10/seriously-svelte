@@ -830,7 +830,7 @@ export default class Hierarchy {
 	}
 
 	async path_alterMaybe(path: Path) {
-		if (path.things_canAlter_asParentOf_toolsGrab) {
+		if (path.things_canAlter_asParentOf_toolsPath) {
 			const altering = get(s_altering);
 			const toolsPath = get(s_path_editingTools);
 			const idPredicate = altering?.predicate?.id;
