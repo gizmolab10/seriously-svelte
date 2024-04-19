@@ -23,7 +23,7 @@ export default class Predicate extends RemoteIdentifiable {
 	clusterAngle_for(pointsTo: boolean): number {
 		const angle = get(s_cluster_angle);
 		switch (this.id) {
-			case Predicate.idContains:	return pointsTo ? angle / 2 : angle * 2.5;
+			case Predicate.idContains:	return pointsTo ? angle / 2 : angle * 3.3;
 			case Predicate.idIsRelated: return -angle;
 			default:					return 0;
 		}

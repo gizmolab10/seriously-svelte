@@ -68,7 +68,7 @@ export default class Constants {
 		this.queryString = new URLSearchParams(window.location.search);
 		this.hid_unknown = 1000000000000;
 		this.threshold_doubleClick = 100;
-		this.cluster_inside_radius = 45;
+		this.cluster_inside_radius = 15;
 		this.threshold_longClick = 500;
 		this.editingTools_diameter = 64;
 		this.height_titleAtTop = 50;

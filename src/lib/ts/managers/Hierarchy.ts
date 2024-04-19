@@ -916,7 +916,6 @@ export default class Hierarchy {
 		const altering = get(s_altering)?.alteration;
 		const predicate = isRelated ? Predicate.isRelated : Predicate.contains;
 		const became = alteration == altering ? null : new AlterationState(alteration, predicate);
-		console.log(`altering ${became?.description ?? 'nothing'}`);
 		s_altering.set(became);
 	}
 

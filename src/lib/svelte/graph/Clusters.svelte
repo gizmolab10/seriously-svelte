@@ -28,16 +28,17 @@
 		titleCenter = center.offsetBy(new Point(offsetX, k.cluster_offsetY));
 	}
 
+	// <Circle
+	// 	center={center}
+	// 	color_background='transparent'
+	// 	radius={k.cluster_inside_radius}
+	// 	color={transparentize(path.thing.color, 0.75)}/>
+
 </script>
 
 {#if path}
 	<div class='clusters' style='transform: translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px);'>
 		{#key `${path.hashedPath ?? 0} ${rebuilds}`}
-			<Circle
-				center={center}
-				color_background='transparent'
-				radius={k.cluster_inside_radius}
-				color={transparentize(path.thing.color, 0.75)}/>
 			<div style='
 				position: absolute;
 				top:{titleCenter.y}px;

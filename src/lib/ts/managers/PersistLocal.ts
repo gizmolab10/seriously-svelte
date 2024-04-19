@@ -122,7 +122,7 @@ class PersistLocal {
 		s_layout_byClusters.set(this.key_read(IDPersistant.layout) ?? false);
 		s_show_child_graph.set(this.key_read(IDPersistant.show_children) ?? true);
 		s_user_graphOffset.set(this.key_read(IDPersistant.origin) ?? new Point());
-		s_cluster_angle.set(this.key_read(IDPersistant.cluster) ?? Math.PI * -0.36);
+		s_cluster_angle.set( Math.PI * -0.28);
 
 		s_show_details.subscribe((flag: boolean) => {
 			this.key_write(IDPersistant.details, flag);
