@@ -447,10 +447,10 @@ export default class Hierarchy {
 		}
 	}
 
-	async relationship_forget_remoteRemove(path: Path, otherPath: Path) {
+	async relationship_forget_remoteRemove(path: Path, otherPath: Path, idPredicate: string) {
 		const thing = path.thing;
 		const parentPath = path.parentPath;
-		const relationship = this.relationship_forPredicate_parent_child(Predicate.idContains, otherPath.idThing, path.idThing);
+		const relationship = this.relationship_forPredicate_parent_child(idPredicate, otherPath.idThing, path.idThing);
 		if (parentPath && relationship && (thing?.hasParents ?? false)) {
 			this.relationship_forget(relationship);
 			if (otherPath.hasChildRelationships) {
@@ -669,13 +669,11 @@ export default class Hierarchy {
 		}
 	}
 
-	async path_remember_remoteAddAsChild(parentPath: Path, childThing: Thing): Promise<any> {
+	async path_remember_remoteAddAsChild(parentPath: Path, childThing: Thing, idPredicate: string | null = null): Promise<any> {
 		const child = parentPath.thing;
 		if (child && !childThing.isBulkAlias) {
-			const isBulkAlias = child.isBulkAlias;
-			const idPredicateContains = Predicate.idContains;
-			const fromID = child.idBridging;
-			const changingBulk = isBulkAlias || childThing.baseID != this.db.baseID;
+			const id = idPredicate ?? Predicate.idContains;
+			const changingBulk = child.isBulkAlias || childThing.baseID != this.db.baseID;
 			const baseID = changingBulk ? childThing.baseID : child.baseID;
 			if (changingBulk) {
 				console.log('changingBulk');
@@ -683,7 +681,7 @@ export default class Hierarchy {
 			if (!childThing.isRemotelyStored) {	
 				await this.db.thing_remember_remoteCreate(childThing);			// for everything below, need to await childThing.id fetched from dbDispatch
 			}
-			const relationship = await this.relationship_remember_remoteCreateUnique(baseID, null, idPredicateContains, fromID, childThing.id, 0, CreationOptions.getRemoteID);
+			const relationship = await this.relationship_remember_remoteCreateUnique(baseID, null, id, child.idBridging, childThing.id, 0, CreationOptions.getRemoteID);
 			const childPath = parentPath.uniquelyAppendID(relationship.id);
 			await u.paths_orders_normalize_remoteMaybe(parentPath.childPaths);		// write new order values for relationships
 			return childPath;
@@ -833,19 +831,20 @@ export default class Hierarchy {
 
 	async path_alterMaybe(path: Path) {
 		if (path.things_canAlter_asParentOf_toolsGrab) {
+			const altering = get(s_altering);
 			const toolsPath = get(s_path_editingTools);
-			const state = get(s_altering);
-			if (state && toolsPath) {
+			const idPredicate = altering?.predicate?.id;
+			if (altering && toolsPath && idPredicate) {
 				s_altering.set(null);
 				s_path_editingTools.set(null);
-				switch (state.alteration) {
+				switch (altering.alteration) {
 					case Alteration.deleting:
-						await this.relationship_forget_remoteRemove(toolsPath, path);
+						await this.relationship_forget_remoteRemove(toolsPath, path, idPredicate);
 						break;
 					case Alteration.adding:
 						const toolsThing = toolsPath.thing;
 						if (toolsThing) {
-							await this.path_remember_remoteAddAsChild(path, toolsThing);
+							await this.path_remember_remoteAddAsChild(path, toolsThing, idPredicate);
 							signals.signal_rebuildGraph_fromFocus();
 						}
 						break;
@@ -914,9 +913,9 @@ export default class Hierarchy {
 	}
 
 	toggleAlteration(alteration: Alteration, isRelated: boolean) {
-		const wasAltering = get(s_altering)?.alteration;
+		const altering = get(s_altering)?.alteration;
 		const predicate = isRelated ? Predicate.isRelated : Predicate.contains;
-		const became = alteration == wasAltering ? null : new AlterationState(alteration, predicate);
+		const became = alteration == altering ? null : new AlterationState(alteration, predicate);
 		console.log(`altering ${became?.description ?? 'nothing'}`);
 		s_altering.set(became);
 	}

@@ -121,15 +121,17 @@ export default class Path {
 	}
 
 	get things_canAlter_asParentOf_toolsGrab(): boolean {
-		const alterationState = get(s_altering);
+		const altering = get(s_altering);
+		const predicate = altering?.predicate;
+		const isRelated = predicate?.kind == PredicateKind.isRelated ?? false;
 		const path_toolsGrab = get(s_path_editingTools);
 		const toolThing = path_toolsGrab?.thing;
 		const thing = this.thing;
-		if (alterationState	 && thing && toolThing && path_toolsGrab && thing != toolThing && !path_toolsGrab.matchesPath(this)) {
-			const isParentOfTool = this.thing_isImmediateParentOf(path_toolsGrab);
-			const isDeleting = alterationState.alteration == Alteration.deleting;
-			const toolIsAnAncestor = thing.parentIDs.includes(toolThing.id);
+		if (thing && toolThing && predicate && path_toolsGrab && thing != toolThing && !path_toolsGrab.matchesPath(this)) {
+			const isParentOfTool = this.thing_isImmediateParentOf(path_toolsGrab, predicate.id);
+			const toolIsAnAncestor = isRelated ? false : thing.parentIDs.includes(toolThing.id);
 			const isProgenyOfTool = this.path_isAProgenyOf(path_toolsGrab);
+			const isDeleting = altering.alteration == Alteration.deleting;
 			return isDeleting ? isParentOfTool : !(isParentOfTool || isProgenyOfTool || toolIsAnAncestor);
 		}
 		return false;
@@ -193,7 +195,7 @@ export default class Path {
 
 	uniqueParentPaths_for(idPredicate: string): Array<Path> {
 		let parentPaths: Array<Path> = [];
-		const things = this.thing?.parentThings_for(idPredicate) ?? [];
+		const things = this.thing?.parentThings_forID(idPredicate) ?? [];
 		for (const thing of things) {
 			const paths = thing.isRoot ? [g.rootPath] : thing.parentPaths;
 			parentPaths = u.concatenateArrays(parentPaths, paths);
@@ -233,10 +235,10 @@ export default class Path {
 		return g.hierarchy.root;	// N.B., g.root is wrong immediately after switching db type
 	}
 
-	thing_isImmediateParentOf(path: Path): boolean {
+	thing_isImmediateParentOf(path: Path, id: string): boolean {
 		const idThing = this.idThing;
 		if (idThing != k.id_unknown) {
-			const parentThings = path.thing?.parents;
+			const parentThings = path.thing?.parentThings_forID(id);
 			return parentThings?.map(t => t.id).includes(idThing) ?? false;
 		}
 		return false;
@@ -317,8 +319,8 @@ export default class Path {
 	}
 
 	visibleParentPaths(back: number = 1): Array<Path> {
-		const paths: Array<Path> = [];
 		const parentPaths = this.thing?.parentPaths ?? [];
+		const paths: Array<Path> = [];
 		for (const parentPath of parentPaths) {
 			const ancestorPath = parentPath.stripBack(back);
 			if (ancestorPath && ancestorPath.isVisible) {

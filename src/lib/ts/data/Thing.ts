@@ -29,7 +29,7 @@ export default class Thing extends Datum {
 	
 	get parentIDs():	Array<string> { return this.parents.map(t => t.id); }
 	get parentPaths():	  Array<Path> { return this.parentPaths_for(Predicate.idContains); }
-	get parents():		 Array<Thing> { return this.parentThings_for(Predicate.idContains); }
+	get parents():		 Array<Thing> { return this.parentThings_forID(Predicate.idContains); }
 	get fields():	Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get idBridging():		   string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get description():		   string { return this.id + ' \"' + this.title + '\"'; }
@@ -57,7 +57,7 @@ export default class Thing extends Datum {
 	log(option: DebugFlag, message: string) { debug.log_maybe(option, message + k.space + this.description); }
 
 	hasParentsFor(idPredicate: string): boolean {
-		return this.parentThings_for(idPredicate).length > 0;
+		return this.parentThings_forID(idPredicate).length > 0;
 	}
 
 	override isInDifferentBulkThan(other: Thing): boolean {
@@ -100,7 +100,7 @@ export default class Thing extends Datum {
 		}
 	}
 
-	parentThings_for(idPredicate: string): Array<Thing> {
+	parentThings_forID(idPredicate: string): Array<Thing> {
 		let parents: Array<Thing> = [];
 		if (!this.isRoot) {
 			const relationships = this.parentRelationships_for(idPredicate);
