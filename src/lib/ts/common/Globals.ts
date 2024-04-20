@@ -3,6 +3,7 @@ import { k, u, get, Path, Rect, Point, Thing, debug, builds } from '../common/Gl
 import { s_graphRect, s_show_details, s_scale_factor, s_user_graphOffset } from '../state/State';
 
 class Globals {
+	mouseLocation = Point.zero;
 	hierarchy: Hierarchy;
 	rootsPath: Path;
 	rootPath: Path;
@@ -20,6 +21,10 @@ class Globals {
 		persistLocal.queryStrings_apply();
 		debug.queryStrings_apply();
 		debugReact.queryStrings_apply();
+		window.addEventListener('resize', (event) => { this.graphRect_update(); });
+		window.addEventListener('mousemove', (event: MouseEvent) => {
+			this.mouseLocation = new Point(event.clientX, event.clientY);
+		});
 	}
 
 	rootPath_set(path: Path | null) {

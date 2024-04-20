@@ -15,8 +15,6 @@
 	let chain = ['Panel'];
 	let rebuilds = 0;
 	
-	window.addEventListener('resize', (event) => { g.graphRect_update(); });
-	
 	onMount( () => {
 		g.setup();
 		$s_isBusy = true;

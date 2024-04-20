@@ -1,11 +1,13 @@
 <script lang='ts'>
-	import { k, u, Rect, Size, Point, ZIndex } from '../../ts/common/GlobalImports';
+	import { g, k, u, Rect, Size, Point, ZIndex } from '../../ts/common/GlobalImports';
 	import { s_graphRect } from '../../ts/state/State';
 	export let click_closure = (event, isLong) => {};
+	export let background_color = 'transparent';
 	export let hover_closure = (flag) => {};
 	export let position = 'absolute';
 	export let center = new Point();
 	export let cursor = 'pointer';
+	export let style = k.empty;
 	export let border = 'none';
 	export let color = 'gray';
 	export let height = 16;
@@ -13,6 +15,18 @@
 	let isListening = false;
 	let clickTimer;
 	let button;
+
+	function handle_mouse_move(event) {
+		handle_hoverAt(new Point(event.x, event.y));
+		setTimeout(() => {
+			handle_hoverAt(g.mouseLocation);
+		}, 100);
+	}
+
+	function handle_hoverAt(eventLocation) {
+		const isHovering = buttonContains(eventLocation);
+		hover_closure(isHovering);
+	}
 
 	function clearTimer() {
 		clearTimeout(clickTimer);
@@ -25,14 +39,12 @@
 		}
 	}
 
-	function handle_mouse_event(event) {
+	function buttonContains(eventLocation): boolean {
 		const square = Point.square(1.5);
-		const eventLocation = new Point(event.x, event.y);
 		const buttonOrigin = new Point(button.offsetLeft, button.offsetTop).offsetBy($s_graphRect.origin).offsetBy(square);
 		const buttonSize = new Size(button.offsetWidth, button.offsetHeight).reducedBy(square.doubled);
 		const buttonRect = new Rect(buttonOrigin, buttonSize);
-		const contains = buttonRect.contains(eventLocation);
-		hover_closure(contains);
+		return buttonRect.contains(eventLocation);
 	}
 
 	$: {
@@ -59,12 +71,8 @@
 
 <button class='button'
 	bind:this={button}
-	on:blur={u.ignore}
-	on:focus={u.ignore}
 	on:click={handle_click}
-	on:mouseout={handle_mouse_event}
-	on:mouseover={handle_mouse_event}
-	on:mousemove={handle_mouse_event}
+	on:mousemove={handle_mouse_move}
 	style='
 		color: {color};
 		cursor: {cursor};
@@ -73,8 +81,8 @@
 		height: {height}px;
 		position: {position};
 		z-index: {ZIndex.dots};
-		background-color: transparent;
 		top: {center.y - height / 2}px;
-		left: {center.x - width / 2}px;'>
+		left: {center.x - width / 2}px;
+		background-color: {background_color};'>
 	<slot></slot>
 </button>
