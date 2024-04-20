@@ -1,6 +1,6 @@
 import { g, k, u, get, Rect, Size, Thing, debug, signals, Wrapper, IDWrapper } from '../common/GlobalImports';
 import { Predicate, TitleState, Relationship, PredicateKind, Alteration } from '../common/GlobalImports';
-import { s_path_focus, s_paths_grabbed, s_title_editing, s_layout_byClusters } from '../state/State';
+import { s_path_focus, s_paths_grabbed, s_title_editing, s_layout_asClusters } from '../state/State';
 import { s_paths_expanded, s_path_editingTools, s_altering } from '../state/State';
 import { Writable } from 'svelte/store';
 
@@ -74,7 +74,7 @@ export default class Path {
 	get childRelationships(): Array<Relationship> { return this.parentRelationships_for(this.idPredicate, false); }
 	get parentRelationships(): Array<Relationship> { return this.parentRelationships_for(this.idPredicate, true); }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
-	get showsReveal(): boolean { return !get(s_layout_byClusters) && (this.hasChildRelationships || (this.thing?.isBulkAlias ?? false)); }
+	get showsReveal(): boolean { return !get(s_layout_asClusters) && (this.hasChildRelationships || (this.thing?.isBulkAlias ?? false)); }
 
 	get relationships(): Array<Relationship> {
 		const relationships = this.ids_hashed.map(h => g.hierarchy?.relationship_forHID(h)) ?? [];
@@ -90,9 +90,11 @@ export default class Path {
 
 	get isVisible(): boolean {
 		const focus = get(s_path_focus);
+		const asClusters = get(s_layout_asClusters);
 		const incorporates = this.incorporates(focus);
 		const expanded = this.isAllExpandedFrom(focus);
-		return incorporates && expanded;
+		const isRelatedTo_orContains = this.isRelatedTo_orContains(focus);
+		return (incorporates && expanded) || (asClusters && isRelatedTo_orContains);
 	}
 
 	get ids(): Array<string> {
@@ -159,6 +161,16 @@ export default class Path {
 	showsClusterFor(predicate: Predicate): boolean { return this.includesPredicateID(predicate.id) && this.hasThings(predicate); }
 	rect_ofWrapper(wrapper: Wrapper | null): Rect | null { return Rect.createFromDOMRect(wrapper?.component.getBoundingClientRect()); }
 	relationshipAt(back: number = 1): Relationship | null { return g.hierarchy?.relationship_forHID(this.idAt(back).hash()) ?? null; }
+
+	isRelatedTo_orContains(path: Path): boolean {
+		// if path.thing's parents (of all predicate kinds) include this.thing
+		const id = this.thing?.id;
+		const parents = path.thing?.parents_ofAllKinds;
+		if (id && parents) {
+			return parents.filter(t => t.id == id).length > 0;
+		}
+		return false;
+	}
 	
 	parentRelationships_for(idPredicate: string, parent: boolean) {
 		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
@@ -434,7 +446,7 @@ export default class Path {
 		if (changed) {
 			s_path_focus.set(this);
 			this.expand();
-			if (get(s_layout_byClusters)) {
+			if (get(s_layout_asClusters)) {
 				this.grabOnly();
 			}
 		}
@@ -472,7 +484,7 @@ export default class Path {
 	handle_singleClick_onDragDot(shiftKey: boolean) {
         if (!this.isExemplar) {
 			s_title_editing?.set(null);
-			if (get(s_layout_byClusters)) {
+			if (get(s_layout_asClusters)) {
 				this.becomeFocus();
 			} else {
 				if (get(s_altering)) {

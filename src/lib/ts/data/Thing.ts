@@ -30,6 +30,7 @@ export default class Thing extends Datum {
 	get parentIDs():	Array<string> { return this.parents.map(t => t.id); }
 	get parentPaths():	  Array<Path> { return this.parentPaths_for(Predicate.idContains); }
 	get parents():		 Array<Thing> { return this.parentThings_forID(Predicate.idContains); }
+	get parents_ofAllKinds():	 Array<Thing> { return u.concatenateArrays(this.parents, this.parentThings_forID(Predicate.idIsRelated)); }
 	get fields():	Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get idBridging():		   string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get description():		   string { return this.id + ' \"' + this.title + '\"'; }

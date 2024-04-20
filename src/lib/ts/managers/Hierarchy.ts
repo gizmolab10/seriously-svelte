@@ -1,6 +1,6 @@
 import { g, k, u, get, User, Path, Thing, Grabs, debug, Access, DBType, IDTool, IDTrait, signals } from '../common/GlobalImports';
 import { Wrapper, Predicate, Relationship, Alteration, AlterationState, CreationOptions } from '../common/GlobalImports';
-import { s_title_editing, s_altering, s_layout_byClusters, s_path_editingTools } from '../state/State';
+import { s_title_editing, s_altering, s_layout_asClusters, s_path_editingTools } from '../state/State';
 import { s_isBusy, s_path_focus, s_db_loadTime, s_paths_grabbed, s_things_arrived } from '../state/State';
 import DBInterface from '../db/DBInterface';
 
@@ -719,10 +719,7 @@ export default class Hierarchy {
 				if (parentPath && !OPTION) {
 					const grabPath = parentPath.appendChild(siblings[newIndex]);
 					if (grabPath) {
-						if (get(s_layout_byClusters)) {
-							grabPath.becomeFocus();
-							grabPath.grabOnly();
-						} else if (!grabPath.isVisible) {
+						if (!grabPath.isVisible) {
 							parentPath.becomeFocus();
 						}
 						if (SHIFT) {
@@ -815,12 +812,17 @@ export default class Hierarchy {
 			}
 		}
 		s_title_editing.set(null);
-		newGrabPath?.grabOnly();
-		const matches = newParentPath && newGrabPath && newGrabPath.matchesPath(newParentPath);
-		const allowToBecomeFocus = (!SHIFT || matches) && newGrabIsNotFocus; 
-		const shouldBecomeFocus = !newFocusPath?.isVisible || newFocusPath.isRoot;
-		if (!RIGHT && allowToBecomeFocus && shouldBecomeFocus && (newFocusPath?.becomeFocus() ?? false)) {
-			needsRebuild = true;
+		if (newGrabPath) {
+			newGrabPath.grabOnly();
+			if (!RIGHT && newFocusPath) {
+				const newParentIsGrabbed = newParentPath && newParentPath.matchesPath(newGrabPath);
+				const canBecomeFocus = (!SHIFT || newParentIsGrabbed) && newGrabIsNotFocus;
+				const shouldBecomeFocus = newFocusPath.isRoot || !newFocusPath.isVisible;
+				const becomeFocus = canBecomeFocus && shouldBecomeFocus;
+				if (becomeFocus && newFocusPath.becomeFocus()) {
+					needsRebuild = true;
+				}
+			}
 		}
 		if (needsRebuild) {
 			signals.signal_rebuildGraph_fromFocus();

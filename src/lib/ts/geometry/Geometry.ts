@@ -8,11 +8,12 @@ export class Point {
 		this.y = y;
 	}
 
+	get asSize():					   Size { return new Size(this.x, this.y); }
 	get abs():						  Point { return new Point(Math.abs(this.x), Math.abs(this.y)); }
 	get pixelVerbose():				 string { return `${this.x}px ${this.y}px`; }
 	get verbose():					 string { return `(${this.x}, ${this.y})`; }
-	get asSize():					   Size { return new Size(this.x, this.y); }
 	get description():				 string { return `${this.x} ${this.y}`; }
+	get doubled():					  Point { return this.multipliedBy(2); }
 	get negated():					  Point { return this.multipliedBy(-1); }
 	get dividedInHalf():			  Point { return this.multipliedBy(1/2); }
 	get copy():						  Point { return new Point(this.x, this.y); }
@@ -55,11 +56,11 @@ export class Size {
 	get copy():						  Size { return new Size(this.width, this.height); }
 	expandedByX(width: number):		  Size { return new Size(this.width + width, this.height); }
 	expandedByY(height: number):	  Size { return new Size(this.width, this.height + height); }
-	reducedBy(delta: Point):		  Size { return new Size(this.width - delta.x, this.height - delta.y); }
+	expandedBy(delta: Point):		  Size { return new Size(this.width + delta.x, this.height + delta.y); }
 	multipliedBy(multiplier: number): Size { return new Size(this.width * multiplier, this.height * multiplier); }
-	expandedBy(expansion: Point):	  Size { return new Size(this.width + expansion.x, this.height + expansion.y); }
 	unionWith(size: Size):			  Size { return new Size(Math.max(this.width, size.width), Math.max(this.height, size.height)); }
 	subtracting(size: Size):		 Point { return new Point(this.width - size.width, this.height - size.height); }
+	reducedBy(delta: Point):		  Size { return this.expandedBy(delta.negated); }
 	static square(length: number):	  Size { return new Size(length, length); }
 	static get zero():				  Size { return new Size(); }
 }
@@ -73,21 +74,23 @@ export class Rect {
 		this.size = size;
 	}
 
-	get description():	   string { return `${this.origin.verbose}, ${this.size.verbose}`; }
-	get pixelVerbose():	   string { return `${this.origin.pixelVerbose}, ${this.size.pixelVerbose}`; }
-	get center():			Point { return this.origin.offsetBySize(this.size.dividedInHalf); }
-	get extent():			Point { return this.origin.offsetBySize(this.size); }		// bottom right
-	get topRight():			Point { return new Point(this.extent.x, this.origin.y); };
-	get centerTop():	 	Point { return new Point(this.center.x, this.origin.y); };
-	get bottomLeft():		Point { return new Point(this.origin.x, this.extent.y); };
-	get centerLeft():		Point { return new Point(this.origin.x, this.center.y); };
-	get centerRight():		Point { return new Point(this.extent.x, this.center.y); };
-	get centerBottom():		Point { return new Point(this.center.x, this.extent.y); };
-	get copy():			 	 Rect { return new Rect(this.origin.copy, this.size.copy); }
-	get dividedInHalf():	 Rect { return new Rect(this.origin, this.size.multipliedBy(-1/2)); }
-	offsetBy(delta: Point):	 Rect { return new Rect(this.origin.offsetBy(delta), this.size); }
-	offsetByY(y: number):	 Rect { return new Rect(this.origin.offsetByY(y), this.size); }
-	offsetByX(x: number):	 Rect { return new Rect(this.origin.offsetByX(x), this.size); }
+	get description():		 string { return `${this.origin.verbose}, ${this.size.verbose}`; }
+	get pixelVerbose():		 string { return `${this.origin.pixelVerbose}, ${this.size.pixelVerbose}`; }
+	get rangeDescription():	 string { return `(${this.origin.x} ... ${this.extent.x}), (${this.origin.y} ... ${this.extent.y})`; }
+	get center():			  Point { return this.origin.offsetBySize(this.size.dividedInHalf); }
+	get extent():			  Point { return this.origin.offsetBySize(this.size); }		// bottom right
+	get topRight():			  Point { return new Point(this.extent.x, this.origin.y); };
+	get centerTop():		  Point { return new Point(this.center.x, this.origin.y); };
+	get bottomLeft():		  Point { return new Point(this.origin.x, this.extent.y); };
+	get centerLeft():		  Point { return new Point(this.origin.x, this.center.y); };
+	get centerRight():		  Point { return new Point(this.extent.x, this.center.y); };
+	get centerBottom():		  Point { return new Point(this.center.x, this.extent.y); };
+	get copy():				   Rect { return new Rect(this.origin.copy, this.size.copy); }
+	get dividedInHalf():	   Rect { return new Rect(this.origin, this.size.multipliedBy(-1/2)); }
+	offsetBy(delta: Point):	   Rect { return new Rect(this.origin.offsetBy(delta), this.size); }
+	offsetByY(y: number):	   Rect { return new Rect(this.origin.offsetByY(y), this.size); }
+	offsetByX(x: number):	   Rect { return new Rect(this.origin.offsetByX(x), this.size); }
+	contains(point: Point): boolean { return point.x.isBetween(this.origin.x, this.extent.x, true) && point.y.isBetween(this.origin.y, this.extent.y, true); }
 
 	expandedBy(expansion: Point): Rect {
 		const size = this.size.expandedBy(expansion);

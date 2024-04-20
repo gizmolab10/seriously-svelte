@@ -1,5 +1,6 @@
 <script lang='ts'>
-	import { k, u, Point, ZIndex } from '../../ts/common/GlobalImports';
+	import { k, u, Rect, Size, Point, ZIndex } from '../../ts/common/GlobalImports';
+	import { s_graphRect } from '../../ts/state/State';
 	export let click_closure = (event, isLong) => {};
 	export let hover_closure = (flag) => {};
 	export let position = 'absolute';
@@ -13,8 +14,16 @@
 	let clickTimer;
 	let button;
 
-	function handle_mouse_out(event) { hover_closure(false); }
-	function handle_mouse_over(event) { hover_closure(true); }
+	function handle_mouse_event(event) {
+		const square = Point.square(2);
+		const buttonOrigin = new Point(button.offsetLeft, button.offsetTop).offsetBy($s_graphRect.origin).offsetBy(square);
+		const buttonSize = new Size(button.offsetWidth, button.offsetHeight).reducedBy(square.doubled);
+		const buttonRect = new Rect(buttonOrigin, buttonSize);
+		const eventLocation = new Point(event.x, event.y);
+		const contains = buttonRect.contains(eventLocation);
+		console.log(`${contains ? 'IN' : 'OUT'} ${eventLocation.verbose} RECT ${buttonRect.rangeDescription}`);
+		hover_closure(contains);
+	}
 
 	function handle_click(event) {
 		if (!clickTimer) {
@@ -54,8 +63,9 @@
 	on:blur={u.ignore}
 	on:focus={u.ignore}
 	on:click={handle_click}
-	on:mouseout={handle_mouse_out}
-	on:mouseover={handle_mouse_over}
+	on:mouseout={handle_mouse_event}
+	on:mousemove={handle_mouse_event}
+	on:mouseover={handle_mouse_event}
 	style='
 		color: {color};
 		cursor: {cursor};

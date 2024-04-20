@@ -1,7 +1,7 @@
 <script>
 	import { k, u, Rect, Size, Point, Thing, debug, ZIndex, onMount, signals } from "../../ts/common/GlobalImports";
 	import { Wrapper, svgPaths, Direction, onDestroy, dbDispatch, Alteration } from "../../ts/common/GlobalImports";
-	import { s_paths_grabbed, s_layout_byClusters, s_path_editingTools } from '../../ts/state/State';
+	import { s_paths_grabbed, s_layout_asClusters, s_path_editingTools } from '../../ts/state/State';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import Box from '../kit/Box.svelte';
 	export let center = new Point(0, 0);

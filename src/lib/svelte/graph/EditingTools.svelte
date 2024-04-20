@@ -166,7 +166,7 @@
 	{#if $s_path_editingTools?.isVisible || false}
 		<div class='editing-tools' style='
 			position:absolute;
-			z-index: {ZIndex.lines}'>
+			z-index: {ZIndex.dots}'>
 			<TransparencyCircle
 				thickness=1
 				opacity=0.15
@@ -202,8 +202,8 @@
 					</svg>
 				{/if}
 				<Button
-					hover_closure={(isHovering) => { hovers[IDTool.delete_confirm] = isHovering; }}
 					click_closure={(event, isLong) => handle_click(IDTool.delete_confirm, event, isLong)}
+					hover_closure={(isHovering) => { hovers[IDTool.delete_confirm] = isHovering; }}
 					color={ hovers[IDTool.delete_confirm] ? k.color_background : color}
 					center={getC(IDTool.delete_confirm)}>
 					delete

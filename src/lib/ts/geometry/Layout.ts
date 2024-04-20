@@ -1,5 +1,5 @@
 import { g, k, u, get, Path, Rect, Size, Point, Angle, IDLine, Predicate, ChildMapRect, ClusterLayout } from '../common/GlobalImports';
-import { s_layout_byClusters } from '../state/State';
+import { s_layout_asClusters } from '../state/State';
 
 export default class Layout {
 	clusterLayouts: Array<ClusterLayout> = [];
@@ -7,7 +7,7 @@ export default class Layout {
 
 	constructor(path: Path, origin: Point) {
 		let childPaths = path.childPaths;
-		if (get(s_layout_byClusters)) {
+		if (get(s_layout_asClusters)) {
 			this.layoutCluster(childPaths, path, Predicate.idContains, origin, true);
 			for (const predicate of g.hierarchy.predicates) {
 				const id = predicate.id;
@@ -79,10 +79,8 @@ export default class Layout {
 		const child = childPath.thing;
 		let x, y = 0;
 		if (child) {
-			y = extent.y - childPath.visibleProgeny_halfHeight + 0.5;
+			y = extent.y - childPath.visibleProgeny_halfHeight - 0.5;
 			x = origin.x + child.titleWidth + k.dot_size + k.line_stretch - 1;
-		} else {
-			console.log('LAYOUT originForChildrenOf null childPath.thing');
 		}
 		return new Point(x, y);
 	}

@@ -1,7 +1,7 @@
 import { g, k, u, Path, Point, signals, dbDispatch } from '../common/GlobalImports'
 import { s_path_focus, s_show_details, s_user_graphOffset } from '../state/State';
 import { s_thing_fontFamily, s_show_child_graph } from '../state/State';
-import { s_cluster_angle, s_layout_byClusters } from '../state/State';
+import { s_cluster_angle, s_layout_asClusters } from '../state/State';
 import { s_paths_grabbed, s_paths_expanded } from '../state/State';
 
 export enum IDPersistant {
@@ -31,7 +31,7 @@ class PersistLocal {
 		const queryStrings = k.queryString;
         const erase = queryStrings.get('erase');
         const titleFlag = queryStrings.get('locate')?.split(k.comma).includes('titleAtTop') ?? false;
-		this.key_apply(IDPersistant.layout, 'clusters', (flag) => s_layout_byClusters.set(flag));
+		this.key_apply(IDPersistant.layout, 'clusters', (flag) => s_layout_asClusters.set(flag));
 		this.key_apply(IDPersistant.details, 'hide', (flag) => s_show_details.set(!flag), false);
 		this.key_apply(IDPersistant.controls, 'show', (flag) => k.showControls = flag);
 		this.key_write(IDPersistant.title_atTop, titleFlag);
@@ -119,7 +119,7 @@ class PersistLocal {
 
 		s_show_details.set(this.key_read(IDPersistant.details) ?? false);
 		s_thing_fontFamily.set(this.key_read(IDPersistant.font) ?? 'Arial');
-		s_layout_byClusters.set(this.key_read(IDPersistant.layout) ?? false);
+		s_layout_asClusters.set(this.key_read(IDPersistant.layout) ?? false);
 		s_show_child_graph.set(this.key_read(IDPersistant.show_children) ?? true);
 		s_user_graphOffset.set(this.key_read(IDPersistant.origin) ?? new Point());
 		s_cluster_angle.set( Math.PI * -0.28);
@@ -132,7 +132,7 @@ class PersistLocal {
 		s_show_child_graph.subscribe((flag: boolean) => {
 			this.key_write(IDPersistant.show_children, flag);
 		})
-		s_layout_byClusters.subscribe((flag: boolean) => {
+		s_layout_asClusters.subscribe((flag: boolean) => {
 			this.key_write(IDPersistant.layout, flag);
 		})
 	}

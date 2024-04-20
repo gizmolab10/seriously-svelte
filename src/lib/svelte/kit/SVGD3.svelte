@@ -16,9 +16,9 @@
     onMount(() => {
         d3.select(svg)
             .append('path')
+            .attr('d', svgPath)
             .attr('fill', fill)
             .attr('stroke', stroke)
-            .attr('d', svgPath)
             .attr('stroke-width', 1)
             .attr('shape-rendering', 'geometricPrecision'); // anti-alias;
     })

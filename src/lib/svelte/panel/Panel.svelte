@@ -2,7 +2,7 @@
 	import { g, k, u, get, Path, Rect, Size, Point, Thing, DBType, ZIndex, signals, onMount, IDButton } from '../../ts/common/GlobalImports';
 	import { s_build, s_isBusy, s_path_focus, s_db_type, s_graphRect, s_id_popupView, s_title_editing } from '../../ts/state/State';
 	import { Hierarchy, IDPersistant, dbDispatch, debugReact, setContext, persistLocal } from '../../ts/common/GlobalImports';
-	import { s_show_details, s_things_arrived, s_user_graphOffset, s_layout_byClusters } from '../../ts/state/State';
+	import { s_show_details, s_things_arrived, s_user_graphOffset, s_layout_asClusters } from '../../ts/state/State';
 	import CircularButton from '../buttons/CircularButton.svelte';
 	import CrumbButtons from '../buttons/CrumbButtons.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
@@ -163,7 +163,7 @@
 						width: {$s_graphRect.size.width}px;
 						height: {$s_graphRect.size.height}px;
 						z-index: {ZIndex.panel};'>
-					{#if $s_layout_byClusters}
+					{#if $s_layout_asClusters}
 						<Clusters path={$s_path_focus}/>
 					{:else}
 						<Tree/>

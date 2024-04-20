@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, Thing, Point, debug, ZIndex, Wrapper, signals } from '../../ts/common/GlobalImports';
-	import { s_layout_byClusters, s_thing_fontFamily, s_path_editingTools } from '../../ts/state/State';
+	import { s_layout_asClusters, s_thing_fontFamily, s_path_editingTools } from '../../ts/state/State';
 	import { s_path_focus, s_title_editing, s_paths_grabbed } from '../../ts/state/State';
 	import { onMount, debugReact, IDWrapper } from '../../ts/common/GlobalImports';
 	import EditingTools from '../graph/EditingTools.svelte';
@@ -89,7 +89,7 @@
 			const shallShowCluster = path.toolsGrabbed && !path.isFocus;
 			const change = (isEditing != shallEdit || isGrabbed != shallGrab || showingCluster != shallShowCluster);
 			if (change) {
-				const canShowBorders = !$s_layout_byClusters || path.isExemplar;
+				const canShowBorders = !$s_layout_asClusters || path.isExemplar;
 				showingBorder = (shallEdit || shallGrab) && canShowBorders;
 				showingCluster = shallShowCluster;
 				isGrabbed = shallGrab;
