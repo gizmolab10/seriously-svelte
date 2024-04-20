@@ -14,15 +14,9 @@
 	let clickTimer;
 	let button;
 
-	function handle_mouse_event(event) {
-		const square = Point.square(2);
-		const buttonOrigin = new Point(button.offsetLeft, button.offsetTop).offsetBy($s_graphRect.origin).offsetBy(square);
-		const buttonSize = new Size(button.offsetWidth, button.offsetHeight).reducedBy(square.doubled);
-		const buttonRect = new Rect(buttonOrigin, buttonSize);
-		const eventLocation = new Point(event.x, event.y);
-		const contains = buttonRect.contains(eventLocation);
-		console.log(`${contains ? 'IN' : 'OUT'} ${eventLocation.verbose} RECT ${buttonRect.rangeDescription}`);
-		hover_closure(contains);
+	function clearTimer() {
+		clearTimeout(clickTimer);
+		clickTimer = null;
 	}
 
 	function handle_click(event) {
@@ -31,14 +25,19 @@
 		}
 	}
 
-	function clearTimer() {
-		clearTimeout(clickTimer);
-		clickTimer = null;
+	function handle_mouse_event(event) {
+		const square = Point.square(1.5);
+		const eventLocation = new Point(event.x, event.y);
+		const buttonOrigin = new Point(button.offsetLeft, button.offsetTop).offsetBy($s_graphRect.origin).offsetBy(square);
+		const buttonSize = new Size(button.offsetWidth, button.offsetHeight).reducedBy(square.doubled);
+		const buttonRect = new Rect(buttonOrigin, buttonSize);
+		const contains = buttonRect.contains(eventLocation);
+		hover_closure(contains);
 	}
 
 	$: {
 		// if mouse is held down, timeout will fire
-		// if not, click_closure will fire
+		// if not, handle_click will fire
 		if (!!button && !isListening) {
 			isListening = true;
 			const foo = button.addEventListener('pointerup', (event) => {
@@ -64,8 +63,8 @@
 	on:focus={u.ignore}
 	on:click={handle_click}
 	on:mouseout={handle_mouse_event}
-	on:mousemove={handle_mouse_event}
 	on:mouseover={handle_mouse_event}
+	on:mousemove={handle_mouse_event}
 	style='
 		color: {color};
 		cursor: {cursor};

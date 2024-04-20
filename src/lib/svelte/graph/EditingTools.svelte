@@ -12,7 +12,7 @@
 	const editingToolsDiameter = k.editingTools_diameter;
 	const half_circleViewBox = `0 0 ${editingToolsDiameter} ${editingToolsDiameter}`;
 	const needsMultipleVisibleParents = [IDTool.next, IDTool.delete_parent];
-	const parentAltering = [IDTool.add_parent, IDTool.delete_parent];
+	const parentAlteringIDs = [IDTool.add_parent, IDTool.delete_parent];
 	const editingToolsRadius = editingToolsDiameter / 2;
 	const toolDiameter = k.dot_size * 1.4;
 	let hovers: { [type: string]: boolean } = {}
@@ -33,6 +33,7 @@
 	function getC(type: string) { return centers[type] ?? new Point(); }
 	function setC(type: string, center: Point) { return centers[type] = center; }
 	function centers_isEmpty(): boolean { return Object.keys(centers).length == 0; }
+	function alteration_for(idTool: string) { return (idTool == IDTool.add_parent) ? Alteration.adding : Alteration.deleting; }
 
 	onMount(() => { 
 		setup();
@@ -46,13 +47,8 @@
 		return () => { handler.disconnect() };
 	});
 
-	function isInvertedFor(id: string) {
-		return parentAltering.includes(id) && $s_altering?.alteration == alterationState_for(id);
-	}
-
-	function alterationState_for(id: string) {
-		const alteration = (id == IDTool.add_parent) ? Alteration.adding : Alteration.deleting;
-		return new AlterationState(alteration)
+	function isInvertedFor(idTool: string) {
+		return parentAlteringIDs.includes(idTool) && $s_altering?.alteration == alteration_for(idTool);
 	}
 
 	function isDisabledFor(id: string) {
@@ -250,8 +246,8 @@
 			</Button>
 			<DotReveal path={$s_path_editingTools} center={getC(IDTool.dismiss)}/>
 			<TriangleButton
-				fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.next, isFilled) }}
 				strokeColor={isDisabledFor(IDTool.next) ? k.color_disabled : parentSensitiveColor}
+				hover_closure={(isFilled) => { return fillColorsFor(IDTool.next, isFilled) }}
 				click_closure={(event, isLong) => handle_click(IDTool.next, event, isLong)}
 				cursor={isDisabledFor(IDTool.next) ? 'normal' : 'pointer'}
 				extraPath={svgPaths.circle(toolDiameter, 4)}
@@ -260,8 +256,8 @@
 				size={toolDiameter}
 				id='next'/>
 			<TriangleButton
-				fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.delete_parent, isFilled) }}
 				strokeColor={isDisabledFor(IDTool.delete_parent) ? k.color_disabled : parentSensitiveColor}
+				hover_closure={(isFilled) => { return fillColorsFor(IDTool.delete_parent, isFilled) }}
 				click_closure={(event, isLong) => handle_click(IDTool.delete_parent, event, isLong)}
 				cursor={isDisabledFor(IDTool.delete_parent) ? 'normal' : 'pointer'}
 				extraPath={svgPaths.dash(toolDiameter, 4)}
@@ -270,7 +266,7 @@
 				id='delete_parent'
 				size={toolDiameter}/>
 			<TriangleButton
-				fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.add_parent, isFilled) }}
+				hover_closure={(isFilled) => { return fillColorsFor(IDTool.add_parent, isFilled) }}
 				click_closure={(event, isLong) => handle_click(IDTool.add_parent, event, isLong)}
 				strokeColor={isDisabledFor(IDTool.add_parent) ? k.color_disabled : color}
 				cursor={isDisabledFor(IDTool.add_parent) ? 'normal' : 'pointer'}
@@ -280,7 +276,7 @@
 				id='add_parent'
 				size={toolDiameter}/>
 			<TriangleButton
-				fillColors_closure={(isFilled) => { return fillColorsFor(IDTool.create, isFilled) }}
+				hover_closure={(isFilled) => { return fillColorsFor(IDTool.create, isFilled) }}
 				click_closure={(event, isLong) => handle_click(IDTool.create, event, isLong)}
 				extraPath={svgPaths.t_cross(toolDiameter, 3)}
 				center={getC(IDTool.create)}

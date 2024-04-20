@@ -5,7 +5,7 @@
     export let path;
 	let size = k.dot_size;
 
-	function fillColors_closure(isFilled) {
+	function hover_closure(isFilled) {
 		return [debug.lines ? 'transparent' : path.dotColor(isFilled), k.empty];
 	}
 
@@ -27,10 +27,10 @@
 </script>
 
 <TriangleButton
-	fillColors_closure={fillColors_closure}
-	direction={Direction.right}
 	strokeColor={path.thing.color}
+	hover_closure={hover_closure}
 	click_closure={click_closure}
+	direction={Direction.right}
 	id={path.thing.title}
 	center={center}
     size={size}

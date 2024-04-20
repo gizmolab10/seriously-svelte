@@ -8,7 +8,7 @@
     export let display;
     export let hit;
 
-	function fillColors_closure(isFilled) { return [isFilled ? 'black' : k.color_background, k.empty]; }
+	function hover_closure(isFilled) { return [isFilled ? 'black' : k.color_background, k.empty]; }
 
 	function click_closure(event, isLong) {
         const pointsUp = event.currentTarget.id == 'up';
@@ -30,22 +30,22 @@
     <div class='directionals'>
         {#if display(true)}
             <TriangleButton
-                fillColors_closure={fillColors_closure}
                 center={origin.offsetByY(-offsetY)}
+                hover_closure={hover_closure}
+                click_closure={click_closure}
                 direction={Direction.up}
                 strokeColor={'black'}
-                click_closure={click_closure}
                 size={size}
                 id='up'
             />
         {/if}
         {#if display(false)}
             <TriangleButton
-                fillColors_closure={fillColors_closure}
                 center={origin.offsetByY(offsetY)}
+                hover_closure={hover_closure}
+                click_closure={click_closure}
                 direction={Direction.down}
                 strokeColor={'black'}
-                click_closure={click_closure}
                 size={size}
                 id='down'
             />

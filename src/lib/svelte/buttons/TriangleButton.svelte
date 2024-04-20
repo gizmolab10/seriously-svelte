@@ -3,7 +3,7 @@
 	import { s_paths_grabbed } from '../../ts/state/State';
 	import Button from '../buttons/Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
-	export let fillColors_closure = null;
+	export let hover_closure = null;
 	export let cursor = 'pointer';
 	export let extraPath = null;
 	export let click_closure;
@@ -17,8 +17,8 @@
 	let svgPath = svgPaths.fat_polygon(size, direction);
 
 	function setFillColor(isFilled) {
-		if (!!fillColors_closure) {
-			[fillColor, extraColor] = fillColors_closure(isFilled);
+		if (!!hover_closure) {
+			[fillColor, extraColor] = hover_closure(isFilled);
 		}
 	}
 	
