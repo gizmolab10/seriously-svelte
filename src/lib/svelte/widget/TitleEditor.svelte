@@ -4,6 +4,7 @@
 	import { g, k, u, Point, Thing, debug, ZIndex, onMount, Angle } from '../../ts/common/GlobalImports';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
+	export let forward = true;
 	export let path;
 	let padding = `0.5px 0px 0px 5px`;	// down half a pixel, 7 over to make room for drag dot
 	let thingTitle = path?.thing?.title ?? k.empty;
@@ -211,17 +212,6 @@
 </script>
 
 <style lang='scss'>
-	.ghost {
-		position: absolute;
-		visibility: hidden;
-		white-space: pre; /* Preserve whitespace to accurately measure the width */
-	}
-	.title {
-		border: none;
-		outline: none;
-		white-space: pre;
-		position: absolute;
-	}
 	input:focus {
 		outline: none;
 	}
@@ -231,8 +221,12 @@
 	<span class="ghost" bind:this={ghost}
 		style='
 			padding: {padding};
+			position: absolute;
+			visibility: hidden;
 			font-size: {fontSize};
-			font-family: {fontFamily};'>
+			font-family: {fontFamily};
+			white-space: pre; /* Preserve whitespace to accurately measure the width */
+	'>
 		{thingTitle}
 	</span>
 	<input
@@ -252,7 +246,11 @@
 		on:dblclick={handle_doubleClick}
 		style='
 			top: 0.5px;
+			border: none;
 			{cursorStyle};
+			outline: none;
+			white-space: pre;
+			position: absolute;
 			padding: {padding};
 			position: absolute;
 			color: {thing?.color};
@@ -261,6 +259,6 @@
 			z-index: {ZIndex.text};
 			font-family: {fontFamily};
 			outline-color: {k.color_background};
-			left: {$s_layout_asClusters ? 14 : 10}px;
+			left: {$s_layout_asClusters ? (forward ? 14 : 12) : 10}px;
 		'/>
 {/key}

@@ -119,11 +119,11 @@
 		const titleWidth = thing?.titleWidth ?? 0;
 		const dragX = $s_layout_asClusters ? 3.5 : 1.5;
 		const leftForward = delta - dragX + 1;
-		const leftBackward = -(titleWidth + (path.isGrabbed ? 1 : 0));
+		const leftBackward = -(titleWidth + 19 + (path.isGrabbed ? 1 : 0));
 		width = titleWidth - 18 + (k.dot_size * (path?.showsReveal ? 2 : 1.35)) + ($s_layout_asClusters ? 18 : 0);
 		padding = `0px ${rightPadding}px 0px  ${leftPadding}px`;
 		left = origin.x + (forward ? leftForward : leftBackward);
-		dragCenter = new Point(dragX, 2.8);
+		dragCenter = new Point(forward ? dragX : titleWidth + 15, 2.8);
 		top = origin.y + delta + 0.5;
 		height = k.row_height - 1.5;
 		radius = k.row_height / 2;
@@ -151,9 +151,20 @@
 		z-index: {ZIndex.widgets};
 		border-radius: {radius}px;
 	'>
-	<DotDrag path={path} center={dragCenter}/>
-	<TitleEditor path={path} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
+	<DotDrag
+		path={path}
+		center={dragCenter}
+	/>
+	<TitleEditor
+		path={path}
+		forward={forward}
+		fontSize={k.thing_fontSize}px
+		fontFamily={$s_thing_fontFamily}
+	/>
 	{#if path?.showsReveal}
-		<DotReveal path={path} center={revealCenter}/>
+		<DotReveal
+			path={path}
+			center={revealCenter}
+		/>
 	{/if}
 </div>

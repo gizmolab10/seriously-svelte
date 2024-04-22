@@ -24,7 +24,7 @@
 	
 	function handle_mouse_over(event) { updateColorsForHover(true); }
 	function handle_mouse_out(event) { updateColorsForHover(false); }
-	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right-
+	function handle_context_menu(event) { event.preventDefault(); }		// no default context menu on right-click
 	function handle_mouseUp() { clearTimeout(clickTimer); }
 
     onMount(() => {
