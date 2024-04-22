@@ -552,13 +552,13 @@ export default class Path {
 			s_paths_expanded.update((array) => {
 				if (array) {
 					const index = array.map(e => e.pathString).indexOf(this.pathString);
-					if (expand) {
-						if (index == -1) {
-							array.push(this);	// only add if not already added
-							mutated = true;
-						}
-					} else if (index != -1) {					// only splice array when item is found
-						array.splice(index, 1);			// 2nd parameter means 'remove one item only'
+					const found = index != -1;
+					if (expand && !found) {		// only add if not already added
+						array.push(this);
+						mutated = true;
+					}
+					if (found && !expand) {		// only remove found item
+						array.splice(index, 1);	// 1 means 'remove one item only'
 						mutated = true;
 					}
 				}

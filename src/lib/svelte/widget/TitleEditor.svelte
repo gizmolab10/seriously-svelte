@@ -1,13 +1,10 @@
 <script lang='ts'>
+	import { s_title_editing, s_paths_grabbed, s_layout_asClusters, s_path_editingTools } from '../../ts/state/State';
 	import { signals, Wrapper, IDWrapper, dbDispatch, SeriouslyRange } from '../../ts/common/GlobalImports';
 	import { g, k, u, Point, Thing, debug, ZIndex, onMount, Angle } from '../../ts/common/GlobalImports';
-	import { s_title_editing, s_paths_grabbed, s_path_editingTools } from '../../ts/state/State';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
-    export let angle = 0;
 	export let path;
-	let normal = angle <= Angle.quarter || angle >= Angle.threeQuarters;
-	let position = normal ? k.empty : 'position: absolute';
 	let padding = `0.5px 0px 0px 5px`;	// down half a pixel, 7 over to make room for drag dot
 	let thingTitle = path?.thing?.title ?? k.empty;
 	let originalTitle = k.empty;
@@ -19,7 +16,6 @@
 	let ghost = null;
 	let input = null;
 	let clickTimer;
-	let left = 10;
     let thing;
 
 	var hasChanges = () => { return originalTitle != thingTitle; };
@@ -32,7 +28,6 @@
 	
 	onMount(() => {
 		titleWidth = u.getWidthOf(thingTitle);
-		left = normal ? 10 : -10 - titleWidth;
 		const handler = signals.handle_anySignal((IDSignal, path) => { updateInputWidth(); });
 		setTimeout(() => { updateInputWidth(); }, 100);
 		return () => { handler.disconnect() };
@@ -257,15 +252,15 @@
 		on:dblclick={handle_doubleClick}
 		style='
 			top: 0.5px;
-			{position};
 			{cursorStyle};
-			left: {left}px;
 			padding: {padding};
+			position: absolute;
 			color: {thing?.color};
 			width: {titleWidth}px;
 			font-size: {fontSize};
 			z-index: {ZIndex.text};
 			font-family: {fontFamily};
 			outline-color: {k.color_background};
+			left: {$s_layout_asClusters ? 14 : 10}px;
 		'/>
 {/key}

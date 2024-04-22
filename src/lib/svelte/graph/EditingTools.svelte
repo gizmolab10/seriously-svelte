@@ -9,6 +9,7 @@
 	import DotReveal from '../widget/DotReveal.svelte';
 	import Button from '../buttons/Button.svelte';
 	import Trash from '../buttons/Trash.svelte';
+	export let offset = Point.zero;
 	const editingToolsDiameter = k.editingTools_diameter;
 	const half_circleViewBox = `0 0 ${editingToolsDiameter} ${editingToolsDiameter}`;
 	const needsMultipleVisibleParents = [IDTool.next, IDTool.delete_parent];
@@ -117,10 +118,10 @@
 		const rect = path?.titleRect;
 		if (rect && $s_path_editingTools && rect.size.width != 0) {
 			const offsetReveal = new Point(-5.3, -5.5);
-			const offsetTitle = titleWidth * (path.isExpanded ? 1 : 1.034);
-			const offsetX = 10.8 + offsetTitle - ($s_show_details ? k.width_details : 0);
+			const offsetTitle = titleWidth;// * (path.isExpanded ? 1 : 1.034);
+			const offsetX = 8 + offsetTitle - ($s_show_details ? k.width_details : 0);
 			const offsetY = (g.titleIsAtTop ? -45 : 0) - editingToolsDiameter - 5.8;
-			const center = rect.centerLeft.offsetBy(new Point(offsetX, offsetY));
+			const center = rect.centerLeft.offsetBy(offset).offsetBy(new Point(offsetX, offsetY));
 			left = center.x - toolDiameter;
 			const y = center.y;
 			setC(IDTool.editingTools,   center);

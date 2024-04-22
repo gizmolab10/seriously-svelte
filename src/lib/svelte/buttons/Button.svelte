@@ -40,9 +40,8 @@
 	}
 
 	function buttonContains(eventLocation): boolean {
-		const square = Point.square(1.5);
-		const buttonOrigin = new Point(button.offsetLeft, button.offsetTop).offsetBy($s_graphRect.origin).offsetBy(square);
-		const buttonSize = new Size(button.offsetWidth, button.offsetHeight).reducedBy(square.doubled);
+		const buttonOrigin = new Point(button.offsetLeft, button.offsetTop).offsetBy($s_graphRect.origin);
+		const buttonSize = new Size(button.offsetWidth, button.offsetHeight);
 		const buttonRect = new Rect(buttonOrigin, buttonSize);
 		return buttonRect.contains(eventLocation);
 	}

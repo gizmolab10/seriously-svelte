@@ -10,11 +10,11 @@
 	let extraColor = k.color_background;
 	let fillColor = k.color_background;
 	let path_scalable = k.empty;
-	let size = k.dot_size;
-	let path_extra = null;
-	let isHovering = true;
+	let isAltering = false;
 	let isGrabbed = false;
-	let altering = false;
+	let isHovering = true;
+	let path_extra = null;
+	let size = k.dot_size;
 	let clickCount = 0;
 	let button = null;
 	let clickTimer;
@@ -35,7 +35,7 @@
 		updateColorsForHover(false);
         const handler = signals.handle_altering((state) => {
 			const applyFlag = $s_path_editingTools && !!path && path.things_canAlter_asParentOf_toolsPath;
-			altering = applyFlag ? !!state : false;
+			isAltering = applyFlag ? !!state : false;
 			updatePathExtra();
 			updateColors();
         })
@@ -100,8 +100,8 @@
 	function updateColors() {
 		if (!!thing) {
 			thing.updateColorAttributes(path);
-			fillColor = debug.lines ? 'transparent' : path?.dotColor(isHovering != altering);
-			extraColor = path?.dotColor(!isHovering && !altering)
+			fillColor = debug.lines ? 'transparent' : path?.dotColor(isHovering != isAltering);
+			extraColor = path?.dotColor(!isHovering && !isAltering)
 			strokeColor = thing.color;
 		}
 	}
@@ -118,10 +118,13 @@
 	}
 
 	function updatePaths() {
-		path_scalable = svgPaths.oval(size, false);
+		if ($s_layout_asClusters && !path?.isExemplar) {
+			path_scalable = svgPaths.circle(size, size - 1);
+		} else {
+			path_scalable = svgPaths.oval(size, false);
+		}
 		updatePathExtra();
 	}
-
 </script>
 
 <button class='dot-drag'
@@ -139,13 +142,13 @@
 	on:dblclick={handle_doubleClick}
 	on:contextmenu={handle_context_menu}
 	style='
-		top: 2.7px;
 		border: none;
 		cursor: pointer;
 		background: none;
 		height: {size}px;
-		position: absolute;
+		top: {center.y}px;
 		left: {center.x}px;
+		position: absolute;
 		width: {size / 2}px;
 	'>
 	<SVGD3 name='svg-drag'

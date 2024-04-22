@@ -33,10 +33,10 @@ export default class SVGPaths {
         return path;
     }
 
-    oval(diameter: number, horizontal: boolean = true): string {
+    oval(diameter: number, horizontal: boolean = true, eccentricity: number = 2.3): string {
         const radius = diameter / 2;
-        const width = radius - (horizontal ? 1 : 3);
-        const height = radius - (horizontal ? 3 : 1);
+        const width = radius - (horizontal ? 1 : eccentricity);
+        const height = radius - (horizontal ? eccentricity : 1);
         const doubleWidth = width * 2;
         const path = `M${radius - width} ${radius}a${width} ${height} 0 1,0 ${doubleWidth} 0a${width} ${height} 0 1,0 ${-doubleWidth} 0`;
         return path;

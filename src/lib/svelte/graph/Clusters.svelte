@@ -12,6 +12,7 @@
 	//  edit state
 	//  handle keys
 	//  lines with arrows
+	const toolsOffset = new Point(40, -3);
 	let titleCenter = Point.zero;
 	let center = Point.zero;
 	let size = Size.zero;
@@ -47,7 +48,7 @@
 				<TitleEditor path={path} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 			</div>
 			<Necklace path={path} center={center}/>
-			<EditingTools/>
+			<EditingTools offset={toolsOffset}/>
 		{/key}
 	</div>
 {/if}

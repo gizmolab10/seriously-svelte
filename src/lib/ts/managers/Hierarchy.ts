@@ -805,7 +805,7 @@ export default class Hierarchy {
 					if (path.isExpanded) {
 						needsRebuild = path.collapse();
 						newGrabPath = this.grabs.areInvisible ? path : null;
-					} else if (!!rootPath && !rootPath.matchesPath(newGrabPath)) {
+					} else if (newGrabPath.isExpanded || (!!rootPath && !rootPath.matchesPath(newGrabPath))) {
 						needsRebuild = newGrabPath.collapse();
 					}
 				}

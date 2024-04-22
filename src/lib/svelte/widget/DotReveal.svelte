@@ -6,12 +6,12 @@
 	export let center;
     export let path;
 	let size = k.dot_size;
+	let tinyDotsDiameter = size * 1.8;
+	let tinyDotsOffset = size * -0.4 + 0.01;
 	let childrenCount = path.childRelationships.length;
 	let insideFillColor = k.color_background;
-	let tinyDotsOffset = size * -0.4 + 0.01;
 	let insidePath = svgPaths.circle(16, 6);
 	let fillColor = k.color_background;
-	let tinyDotsDiameter = size * 1.8;
 	let strokeColor = path.thing.color;
 	let revealWrapper = Wrapper;
 	let hasInsidePath = false;
@@ -19,7 +19,7 @@
 	let svgPath = k.empty;
 	let insideOffset = 0;
 	let dotReveal = null;
-	let toggle = false;
+	let rebuilds = 0;
 	
 	onMount( () => { setIsHovering_updateColors(false); updateScalablePaths(); });
 	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
@@ -55,8 +55,7 @@
 		if (isHovering != hovering) {
 			isHovering = hovering;
 			updateColors();
-			// console.log('toggle');
-			toggle = !toggle;
+			rebuilds += 1;
 		}
 	}
 
@@ -87,8 +86,8 @@
 	function handle_singleClick(event) {
 		setIsHovering_updateColors(false);
 		if (path.toolsGrabbed) {
-			$s_path_editingTools = null;
 			$s_altering = null;
+			$s_path_editingTools = null;
 			signals.signal_relayoutWidgets_fromFocus();
 		} else if (path.hasChildRelationships || path.thing.isBulkAlias) {
 			g.hierarchy.path_rebuild_remoteMoveRight(path, !path.isExpanded, true, false);
@@ -106,7 +105,7 @@
 	}
 </style>
 
-{#key toggle}
+{#key rebuilds}
 	<div class='dot-reveal' style='
 		top: {center.y}px;
 		left: {center.x}px;
@@ -121,8 +120,8 @@
 			bind:this={dotReveal}
 			on:keydown={u.ignore}
 			on:keypress={u.ignore}
-			on:mouseout={handle_mouse_out}
 			on:click={handle_singleClick}
+			on:mouseout={handle_mouse_out}
 			on:mouseover={handle_mouse_over}
 			on:contextmenu={handle_context_menu}
 			style='
@@ -131,26 +130,26 @@
 			'>
 			{#key svgPath}
 				<SVGD3 name='svg-reveal'
-					width={size}
-					height={size}
+					fill={debug.lines ? 'transparent' : fillColor}
 					stroke={strokeColor}
 					svgPath={svgPath}
-					fill={debug.lines ? 'transparent' : fillColor}
+					height={size}
+					width={size}
 				/>
 			{/key}
 			{#if hasInsidePath}
 				<div class='reveal-inside' style='
 					left:{insideOffset}px;
-					height:{size}px;
 					top:{insideOffset}px;
-					width:{size}px;
-					position:absolute;'>
+					position:absolute;
+					height:{size}px;
+					width:{size}px;'>
 					<SVGD3 name='svg-inside'
-						width={size}
-						height={size}
-						fill={insideFillColor}
 						stroke={insideFillColor}
+						fill={insideFillColor}
 						svgPath={insidePath}
+						height={size}
+						width={size}
 					/>
 				</div>
 			{/if}
@@ -162,11 +161,11 @@
 					width:{tinyDotsDiameter}px;
 					position:absolute;'>
 					<SVGD3 name='savg-tiny-dots'
-						fill={strokeColor}
-						stroke={strokeColor}
-						width={tinyDotsDiameter}
-						height={tinyDotsDiameter}
 						svgPath={svgPaths.tinyDots_circular(tinyDotsDiameter, childrenCount)}
+						height={tinyDotsDiameter}
+						width={tinyDotsDiameter}
+						stroke={strokeColor}
+						fill={strokeColor}
 					/>
 				</div>
 			{/if}

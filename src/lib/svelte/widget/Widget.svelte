@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, Thing, Point, debug, ZIndex, Wrapper, signals } from '../../ts/common/GlobalImports';
+	import { k, u, Thing, Point, Angle, debug, ZIndex, Wrapper, signals } from '../../ts/common/GlobalImports';
 	import { s_layout_asClusters, s_thing_fontFamily, s_path_editingTools } from '../../ts/state/State';
 	import { s_path_focus, s_title_editing, s_paths_grabbed } from '../../ts/state/State';
 	import { onMount, debugReact, IDWrapper } from '../../ts/common/GlobalImports';
@@ -11,10 +11,13 @@
 	export let origin = new Point(160, 5);
     export let path = exemplar.path;
     export let angle = 0;
-	const hasExtraX = !!path && !path.isExpanded && (path.childRelationships.length > 3);
-	const rightPadding = hasExtraX ? 22.5 : 19;
+	const hasExtraAtLeft = !!path && !path.isExpanded && (path.childRelationships.length > 3);
+	const rightPadding = $s_layout_asClusters ? 0 : hasExtraAtLeft ? 22.5 : 19;
+	const forward = angle <= Angle.quarter || angle >= Angle.threeQuarters;
+	const leftPadding = forward ? 1 : 14;
 	const priorRowHeight = k.row_height;
 	let revealCenter = new Point();
+	let dragCenter = new Point();
 	let radius = k.dot_size / 2;
 	let widgetWrapper: Wrapper;
 	let showingCluster = false;
@@ -23,6 +26,7 @@
 	let background = k.empty;
 	let isGrabbed = false;
 	let isEditing = false;
+	let backwards = false;
 	let padding = k.empty;
 	let border = k.empty;
 	let height = 0;
@@ -89,8 +93,7 @@
 			const shallShowCluster = path.toolsGrabbed && !path.isFocus;
 			const change = (isEditing != shallEdit || isGrabbed != shallGrab || showingCluster != shallShowCluster);
 			if (change) {
-				const canShowBorders = !$s_layout_asClusters || path.isExemplar;
-				showingBorder = (shallEdit || shallGrab) && canShowBorders;
+				showingBorder = shallEdit || shallGrab;
 				showingCluster = shallShowCluster;
 				isGrabbed = shallGrab;
 				isEditing = shallEdit;
@@ -112,19 +115,22 @@
 	}
 
 	function updateLayout() {
-		const size = k.dot_size;
-		const titleWidth = thing?.titleWidth;
-		const delta = showingBorder ? -0.5 : 0.5;
-		width = titleWidth - 18 + (size * (path?.showsReveal ? 2 : 1.35));
-		padding = `0px ${rightPadding}px 0px 1px`;
+		const delta = showingBorder ? 0 : 1;
+		const titleWidth = thing?.titleWidth ?? 0;
+		const dragX = $s_layout_asClusters ? 3.5 : 1.5;
+		const leftForward = delta - dragX + 1;
+		const leftBackward = -(titleWidth + (path.isGrabbed ? 1 : 0));
+		width = titleWidth - 18 + (k.dot_size * (path?.showsReveal ? 2 : 1.35)) + ($s_layout_asClusters ? 18 : 0);
+		padding = `0px ${rightPadding}px 0px  ${leftPadding}px`;
+		left = origin.x + (forward ? leftForward : leftBackward);
+		dragCenter = new Point(dragX, 2.8);
 		top = origin.y + delta + 0.5;
 		height = k.row_height - 1.5;
-		left = origin.x + delta - 1;
 		radius = k.row_height / 2;
 		if (path?.showsReveal) {
-			const y = size / 2 - 3.8;
-			const x = size + titleWidth + (hasExtraX ? 3 : 0);
-			revealCenter = new Point(x, y);
+			const revealY = k.dot_size / 2 - 3.8;
+			const revealX = k.dot_size + titleWidth + (hasExtraAtLeft ? 3 : 0);
+			revealCenter = new Point(revealX, revealY);
 		}
 	}
 
@@ -142,10 +148,11 @@
 		padding: {padding};
 		position: absolute;
 		white-space: nowrap;
+		z-index: {ZIndex.widgets};
 		border-radius: {radius}px;
 	'>
-	<DotDrag path={path}/>
-	<TitleEditor path={path} angle={angle} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
+	<DotDrag path={path} center={dragCenter}/>
+	<TitleEditor path={path} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 	{#if path?.showsReveal}
 		<DotReveal path={path} center={revealCenter}/>
 	{/if}

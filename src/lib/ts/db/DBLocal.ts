@@ -29,12 +29,12 @@ export default class DBLocal implements DBInterface {
 		const h = this.hierarchy;
 		h.predicate_remember_runtimeCreateUnique(idPc, 'contains', false);
 		h.predicate_remember_runtimeCreateUnique(idPr, 'isRelated', false, 2);
-		h.thing_remember_runtimeCreateUnique(this.baseID, idTa, 'A', 'red', 'a', false);
-		h.thing_remember_runtimeCreateUnique(this.baseID, idTb, 'B', 'blue', 'b', false);
-		h.thing_remember_runtimeCreateUnique(this.baseID, idTc, 'C', 'green', 'c', false);
-		h.thing_remember_runtimeCreateUnique(this.baseID, idTd, 'D', 'purple', 'f', false);
-		h.thing_remember_runtimeCreateUnique(this.baseID, idTe, 'E', 'mediumvioletred', 'e', false);
-		h.thing_remember_runtimeCreateUnique(this.baseID, idTr, 'R', 'limegreen', IDTrait.root, false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTa, 'Arkane', 'red', 'a', false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTb, 'Butress', 'blue', 'b', false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTc, 'Claustrophobia', 'green', 'c', false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTd, 'Dementia', 'purple', 'f', false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTe, 'Essential', 'mediumvioletred', 'e', false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTr, 'Rutabegga', 'limegreen', IDTrait.root, false);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Cra', idPc, idTr, idTa, 0);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Crb', idPc, idTr, idTb, 1);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Crc', idPc, idTr, idTc, 2);
