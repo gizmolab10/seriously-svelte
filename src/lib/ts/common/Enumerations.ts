@@ -76,8 +76,8 @@ const baseZIndex = 1;
 export enum ZIndex {
 	common,
 	panel,
-	text,
 	lines,
+	text,
 	dots,
 	widgets,
 	frontmost,

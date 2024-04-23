@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { svgPaths, Direction, dbDispatch, transparentize, AlterationState, Alteration } from '../../ts/common/GlobalImports';
 	import { g, k, u, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, signals } from '../../ts/common/GlobalImports';
-	import { s_altering, s_path_editingTools } from '../../ts/state/State';
-	import { s_graphRect, s_show_details } from '../../ts/state/State';
+	import { s_path_editingTools, s_layout_asClusters } from '../../ts/state/State';
+	import { s_altering, s_graphRect, s_show_details } from '../../ts/state/State';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
 	import CircularButton from '../buttons/CircularButton.svelte';
 	import TriangleButton from '../buttons/TriangleButton.svelte';
@@ -117,24 +117,24 @@
 	function update(): boolean {
 		const rect = path?.titleRect;
 		if (rect && $s_path_editingTools && rect.size.width != 0) {
-			const offsetReveal = new Point(-5.3, -5.5);
-			const offsetTitle = titleWidth;// * (path.isExpanded ? 1 : 1.034);
-			const offsetX = 8 + offsetTitle - ($s_show_details ? k.width_details : 0);
-			const offsetY = (g.titleIsAtTop ? -45 : 0) - editingToolsDiameter - 5.8;
+			const offsetX = 8.5 + titleWidth - ($s_show_details ? k.width_details : 0) - ($s_layout_asClusters ? 38 : 0);
+			const offsetY = (g.titleIsAtTop ? -45 : 0) + ($s_layout_asClusters ? 3 : 0) - editingToolsDiameter - 5.8;
 			const center = rect.centerLeft.offsetBy(offset).offsetBy(new Point(offsetX, offsetY));
-			left = center.x - toolDiameter;
+			const offsetReveal = new Point(-5.3, -5.5);
+			const x = center.x;
 			const y = center.y;
+			left = x - toolDiameter;
 			setC(IDTool.editingTools,   center);
 			setC(IDTool.dismiss,		center.offsetBy(offsetReveal));
 			setC(IDTool.confirmation,   center.offsetEquallyBy(1 - editingToolsRadius));
 			setC(IDTool.delete_cancel,  center.offsetBy(new Point(1 - toolDiameter, toolDiameter - 5)));
 			setC(IDTool.delete_confirm, center.offsetBy(new Point(2 - toolDiameter, 5 - toolDiameter)));
-			setC(IDTool.create,		 	new Point(center.x + toolDiameter - 3, y - toolDiameter + 7));
-			setC(IDTool.more,			new Point(center.x + 0.9, y + toolDiameter + 3.5));
-			setC(IDTool.next,			new Point(center.x - 2, y - toolDiameter - 2));
+			setC(IDTool.create,		 	new Point(x + toolDiameter - 3, y - toolDiameter + 7));
+			setC(IDTool.more,			new Point(x + 0.9, y + toolDiameter + 3.5));
 			setC(IDTool.delete_parent,  new Point(left - 1, y + toolDiameter - 8));
 			setC(IDTool.add_parent,	 	new Point(left - 1, y - toolDiameter + 7));
-			setC(IDTool.delete,		 	new Point(center.x + 4.5, y + 3));
+			setC(IDTool.next,			new Point(x - 2, y - toolDiameter - 2));
+			setC(IDTool.delete,		 	new Point(x + 4.5, y + 3));
 			return true;
 		}
 		return false;
@@ -163,7 +163,7 @@
 	{#if $s_path_editingTools?.isVisible || false}
 		<div class='editing-tools' style='
 			position:absolute;
-			z-index: {ZIndex.dots}'>
+			z-index: {ZIndex.frontmost}'>
 			<TransparencyCircle
 				thickness=1
 				opacity=0.15

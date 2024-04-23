@@ -259,6 +259,6 @@
 			z-index: {ZIndex.text};
 			font-family: {fontFamily};
 			outline-color: {k.color_background};
-			left: {$s_layout_asClusters ? (forward ? 14 : 12) : 10}px;
+			left: {$s_layout_asClusters ? (forward ? 14 : 4) : 10}px;
 		'/>
 {/key}

@@ -119,8 +119,8 @@ export class Rect {
 		return new Rect(rightCenter.offsetByY(size.height / -2), size);
 	}
 
-	static createFromDOMRect(rect: DOMRect | null) {
-		return !rect ? null : new Rect(new Point(rect.x, rect.y), new Size(rect.width, rect.height));
+	static createFromDOMRect(domRect: DOMRect | null) {
+		return !domRect ? null : new Rect(new Point(domRect.x, domRect.y), new Size(domRect.width, domRect.height));
 	}
 
 }

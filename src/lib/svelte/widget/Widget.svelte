@@ -114,16 +114,21 @@
 		}
 	}
 
+	function extraWidth() {
+		return (k.dot_size * (path?.showsReveal ? 2 : 1.35)) +
+		($s_layout_asClusters ? forward ? 0 : -8 : -18);
+	}
+
 	function updateLayout() {
-		const delta = showingBorder ? 0 : 1;
-		const titleWidth = thing?.titleWidth ?? 0;
 		const dragX = $s_layout_asClusters ? 3.5 : 1.5;
+		const titleWidth = thing?.titleWidth ?? 0;
+		const delta = showingBorder ? 0 : 1;
 		const leftForward = delta - dragX + 1;
-		const leftBackward = -(titleWidth + 19 + (path.isGrabbed ? 1 : 0));
-		width = titleWidth - 18 + (k.dot_size * (path?.showsReveal ? 2 : 1.35)) + ($s_layout_asClusters ? 18 : 0);
-		padding = `0px ${rightPadding}px 0px  ${leftPadding}px`;
+		const leftBackward = -(titleWidth + 13 + (path.isGrabbed ? 1 : 0));
+		dragCenter = new Point(forward ? dragX : titleWidth + 7, 2.8);
 		left = origin.x + (forward ? leftForward : leftBackward);
-		dragCenter = new Point(forward ? dragX : titleWidth + 15, 2.8);
+		padding = `0px ${rightPadding}px 0px  ${leftPadding}px`;
+		width = titleWidth + extraWidth();
 		top = origin.y + delta + 0.5;
 		height = k.row_height - 1.5;
 		radius = k.row_height / 2;
