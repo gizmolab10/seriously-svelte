@@ -1,5 +1,6 @@
 import { g, k, DBType, signals, IDPersistant, persistLocal } from '../common/GlobalImports';
-import { s_db_type, s_isBusy, s_db_loadTime, s_title_editing, s_path_editingTools } from '../state/State';
+import { s_isBusy, s_db_type, s_db_loadTime, s_title_editing } from '../state/State';
+import { s_things_arrived, s_path_editingTools } from '../state/State';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
@@ -20,15 +21,12 @@ export default class DBDispatch {
 	constructor() {
 		let done = false;
 		this.db = dbFirebase;
-		const startTime = new Date().getTime();
-		s_db_loadTime.set(null);
 		s_db_type.subscribe((type: string) => {
 			if (!done || (type && this.db.dbType != type)) {
 				done = true;
 				setTimeout(() => {
 					(async () => {
-						this.db_changeTo_type(type)
-						g.hierarchy.hierarchy_completed(startTime);
+						this.db_changeTo_type(type);
 					})();
 				}, 1);
 			}
@@ -39,11 +37,38 @@ export default class DBDispatch {
 	async db_changeTo_type(type: string) {
 		this.db_changeTo_for(type);
 		this.queryStrings_apply();
-		await g.hierarchy.hierarchy_fetch_andBuild(type);
+		await this.hierarchy_fetch_andBuild(type);
 		persistLocal.paths_restore(true);
 		s_path_editingTools.set(null);
 		s_title_editing.set(null);
+		g.hierarchy.hierarchy_completed();
 		signals.signal_rebuildGraph_fromFocus();
+	}
+
+	async hierarchy_fetch_andBuild(type: string) {
+		if (!this.db.hasData) {
+			const isRemote = type != DBType.local;
+			const startTime = new Date().getTime();
+			s_db_loadTime.set(null);
+			if (isRemote) {
+				s_things_arrived.set(false);
+				s_isBusy.set(true);
+			}
+			await this.db.fetch_all();
+			await g.hierarchy.add_missing_removeNulls(null, this.db.baseID);
+			if (isRemote) {
+				this.set_loadTime(startTime);
+			}
+		}
+		g.rootPath_set(g.hierarchy.path_remember_createUnique());
+	}
+
+	set_loadTime(startTime: number) {
+		const duration = Math.trunc(((new Date().getTime()) - startTime) / 100) / 10;
+		const places = (duration == Math.trunc(duration)) ? 0 : 1;
+		const loadTime = (((new Date().getTime()) - startTime) / 1000).toFixed(places);
+		this.db.loadTime = loadTime;
+		s_db_loadTime.set(loadTime);
 	}
 
 	db_changeTo_next(forward: boolean) { this.db_changeTo(this.db_next_get(forward)); }

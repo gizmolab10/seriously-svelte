@@ -81,6 +81,7 @@
 		position: fixed;
 		height: 1px;
 		width: 110%;
+		left: 0px;
 	}
 	.vertical-line {
 		background-color: lightgray;
@@ -114,7 +115,6 @@
 			</div>
 		{/if}
 		<div class='horizontal-line' style='
-			left: 0px;
 			z-index: {ZIndex.frontmost};
 			top: {k.height_banner - 2}px;'>
 		</div>
@@ -123,7 +123,6 @@
 			<div class='horizontal-line'
 				style='
 					top: 68px;
-					left: 0px;
 					z-index: {ZIndex.frontmost};'>
 			</div>
 		</div>
@@ -139,8 +138,7 @@
 			<div class='horizontal-line'
 				style='
 					z-index: {ZIndex.frontmost};
-					top: {k.height_banner + k.height_titleAtTop + 28}px;
-					left: 0px;'>
+					top: {k.height_banner + k.height_titleAtTop + 28}px;'>
 			</div>
 		{/if}
 	{/if}

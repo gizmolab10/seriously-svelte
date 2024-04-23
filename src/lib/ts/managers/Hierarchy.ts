@@ -39,18 +39,6 @@ export default class Hierarchy {
 		this.db = db;
 	}
 
-	async hierarchy_fetch_andBuild(type: string) {
-		if (!this.db.hasData) {
-			if (type != DBType.local) {
-				s_isBusy.set(true);
-				s_things_arrived.set(false);
-			}
-			await this.db.fetch_all();
-			await this.add_missing_removeNulls(null, this.db.baseID);
-		}
-		g.rootPath_set(this.path_remember_createUnique());
-	}
-
 	static readonly $_EVENTS_$: unique symbol;
 
 	async handle_tool_clicked(idButton: string, event: MouseEvent, isLong: boolean) {
@@ -897,16 +885,11 @@ export default class Hierarchy {
 		this.wrappers_byType_andHID[wrapper.type] = dict;
 	}
 
-	hierarchy_completed(startTime: number) {
+	hierarchy_completed() {
 		this.db.setHasData(true);
 		s_things_arrived.set(true);
 		s_isBusy.set(false);
 		this.isAssembled = true;
-		const duration = Math.trunc(((new Date().getTime()) - startTime) / 100) / 10;
-		const places = (duration == Math.trunc(duration)) ? 0 : 1;
-		const loadTime = (((new Date().getTime()) - startTime) / 1000).toFixed(places);
-		this.db.loadTime = loadTime;
-		s_db_loadTime.set(loadTime);
 	}
 
 	async add_missing_removeNulls(idParent: string | null, baseID: string) {
