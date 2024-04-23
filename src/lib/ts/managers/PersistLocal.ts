@@ -1,6 +1,6 @@
-import { g, k, u, Path, Point, signals, dbDispatch } from '../common/GlobalImports'
+import { g, k, u, Path, Point, signals, dbDispatch, GraphRelations } from '../common/GlobalImports'
 import { s_path_focus, s_show_details, s_user_graphOffset } from '../state/State';
-import { s_thing_fontFamily, s_show_child_graph } from '../state/State';
+import { s_thing_fontFamily, s_graph_relations } from '../state/State';
 import { s_cluster_angle, s_layout_asClusters } from '../state/State';
 import { s_paths_grabbed, s_paths_expanded } from '../state/State';
 
@@ -8,6 +8,7 @@ export enum IDPersistant {
 	relationships = 'relationships',
 	show_children = 'show_children',
 	title_atTop   = 'title_atTop',
+	relations	  = 'relations',
 	expanded	  = 'expanded',
 	controls	  = 'controls',
 	grabbed		  = 'grabbed',
@@ -117,20 +118,20 @@ class PersistLocal {
 		k.titleIsAtTop = this.key_read(IDPersistant.title_atTop) ?? false;
 		g.applyScale(!u.device_isMobile ? 1 : this.key_read(IDPersistant.scale) ?? 1);
 
+		s_cluster_angle.set( Math.PI * -0.28);
 		s_show_details.set(this.key_read(IDPersistant.details) ?? false);
 		s_thing_fontFamily.set(this.key_read(IDPersistant.font) ?? 'Arial');
 		s_layout_asClusters.set(this.key_read(IDPersistant.layout) ?? false);
-		s_show_child_graph.set(this.key_read(IDPersistant.show_children) ?? true);
 		s_user_graphOffset.set(this.key_read(IDPersistant.origin) ?? new Point());
-		s_cluster_angle.set( Math.PI * -0.28);
+		s_graph_relations.set(this.key_read(IDPersistant.relations) ?? GraphRelations.children);
 
 		s_show_details.subscribe((flag: boolean) => {
 			this.key_write(IDPersistant.details, flag);
 			g.graphRect_update();
 			signals.signal_relayoutWidgets_fromFocus();
 		});
-		s_show_child_graph.subscribe((flag: boolean) => {
-			this.key_write(IDPersistant.show_children, flag);
+		s_graph_relations.subscribe((relations: string) => {
+			this.key_write(IDPersistant.relations, relations);
 		})
 		s_layout_asClusters.subscribe((flag: boolean) => {
 			this.key_write(IDPersistant.layout, flag);

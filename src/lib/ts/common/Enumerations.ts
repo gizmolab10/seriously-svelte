@@ -8,6 +8,12 @@ export enum LayoutStyle {
 	tree	= 'tree',
 }
 
+export enum GraphRelations {
+	children = 'children',
+	parents	 = 'parents',
+	related  = 'related',
+}
+
 export enum CreationOptions {
 	isFromRemote = 'isFrom',
 	getRemoteID	 = 'getID',
