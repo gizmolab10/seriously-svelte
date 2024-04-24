@@ -40,10 +40,13 @@
 	}
 
 	function buttonContains(eventLocation): boolean {
-		const buttonOrigin = new Point(button.offsetLeft, button.offsetTop).offsetBy($s_graphRect.origin);
-		const buttonSize = new Size(button.offsetWidth, button.offsetHeight);
-		const buttonRect = new Rect(buttonOrigin, buttonSize);
-		return buttonRect.contains(eventLocation);
+		if (button) {
+			const buttonOrigin = new Point(button.offsetLeft, button.offsetTop).offsetBy($s_graphRect.origin);
+			const buttonSize = new Size(button.offsetWidth, button.offsetHeight);
+			const buttonRect = new Rect(buttonOrigin, buttonSize);
+			return buttonRect.contains(eventLocation);
+		}
+		return false;
 	}
 
 	$: {

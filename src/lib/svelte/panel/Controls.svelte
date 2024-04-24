@@ -15,11 +15,11 @@
 			case IDButton.smaller: width = g.zoomBy(0.9) - 20; break;
 			case IDButton.details: $s_show_details = !$s_show_details; break;
 			case IDButton.layout: $s_layout_asClusters = !$s_layout_asClusters; break;
-			case IDButton.relations: $s_graph_relations = advance_graph_relations(); break;
+			case IDButton.relations: $s_graph_relations = next_graph_relations(); break;
 		}
 	}
 
-	function advance_graph_relations() {
+	function next_graph_relations() {
 		switch ($s_graph_relations) {
 			case GraphRelations.children: return GraphRelations.parents;
 			case GraphRelations.parents:  return GraphRelations.related;

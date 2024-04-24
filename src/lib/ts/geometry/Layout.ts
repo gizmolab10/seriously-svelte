@@ -16,22 +16,25 @@ export default class Layout {
 			}
 		} else {
 			let index = 0;
-			const sizeX = k.line_stretch;
 			const length = childPaths.length;
-			let sumOfSiblingsAbove = -path.visibleProgeny_height() / 2; // start out negative and grow positive
+			let sum = -path.visibleProgeny_height() / 2; // start out negative and grow positive
 			while (index < length) {
 				const childPath = childPaths[index];
-				const childHeight = childPath.visibleProgeny_height();
-				const sizeY = sumOfSiblingsAbove + childHeight / 2;
-				const direction = this.getDirection(sizeY);
-				const rect = new Rect(origin, new Size(sizeX, sizeY));
-				const childOrigin = this.originForChildrenOf(childPath, origin, rect.extent);
-				const map = new ChildMapRect(direction, rect, childOrigin, childPath, path);
-				this.childMapRects.push(map);
-				sumOfSiblingsAbove += childHeight;
+				sum += this.layoutChildren(sum, childPath, path, origin);
 				index += 1;
 			}
 		}
+	}
+
+	layoutChildren(sum: number, childPath: Path, path: Path, origin: Point) {
+		const childHeight = childPath.visibleProgeny_height();
+		const sizeY = sum + childHeight / 2;
+		const direction = this.getDirection(sizeY);
+		const rect = new Rect(origin, new Size(k.line_stretch, sizeY));
+		const childOrigin = this.originForChildrenOf(childPath, origin, rect.extent);
+		const map = new ChildMapRect(direction, rect, childOrigin, childPath, path);
+		this.childMapRects.push(map);
+		return childHeight;
 	}
 
 	layoutCluster(paths: Array<Path>, clusterPath: Path, idPredicate: string, origin: Point, pointsTo: boolean) {
@@ -66,13 +69,6 @@ export default class Layout {
 			angle = u.normalized_angle(Angle.half - angle);
 		}
 		return angle;
-	}
-
-	broken_childAngle_for(row: number, count: number, clusterAngle: number, radial: Point): number {
-		const start_row = (8 - count) / 2;
-		const y = (start_row + row) * k.row_height;
-		const delta = Math.asin(y / radial.x);
-		return u.normalized_angle(clusterAngle + delta - Math.PI * 0.136);
 	}
 
 	originForChildrenOf(childPath: Path, origin: Point, extent: Point): Point {

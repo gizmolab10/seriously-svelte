@@ -66,10 +66,10 @@ export default class Thing extends Datum {
 	}
 
 	relationships_grandParentsFor(idPredicate: string): Array<Relationship> {
-		const relationships = this.parentRelationships_for(idPredicate);
+		const relationships = this.relationships_for_to(idPredicate);
 		let grandParents: Array<Relationship> = [];
 		for (const relationship of relationships) {
-			const more = relationship.parentThing?.parentRelationships_for(idPredicate);
+			const more = relationship.parentThing?.relationships_for_to(idPredicate);
 			if (more) {
 				grandParents = u.concatenateArrays(grandParents, more);
 			}
@@ -77,7 +77,7 @@ export default class Thing extends Datum {
 		return grandParents;
 	}
 
-	parentRelationships_for(idPredicate: string): Array<Relationship> {
+	relationships_for_to(idPredicate: string): Array<Relationship> {
 		return g.hierarchy.relationships_forPredicateThingIsChild(idPredicate, this.id, true);
 	}
 
@@ -104,7 +104,7 @@ export default class Thing extends Datum {
 	parentThings_forID(idPredicate: string): Array<Thing> {
 		let parents: Array<Thing> = [];
 		if (!this.isRoot) {
-			const relationships = this.parentRelationships_for(idPredicate);
+			const relationships = this.relationships_for_to(idPredicate);
 			for (const relationship of relationships) {
 				const thing = relationship.parentThing;
 				if (!!thing) {
@@ -119,7 +119,7 @@ export default class Thing extends Datum {
 		// all the paths that point to each parent of this thing
 		let paths: Array<Path> = [];
 		if (!this.isRoot) {
-			const relationships = this.parentRelationships_for(idPredicate);
+			const relationships = this.relationships_for_to(idPredicate);
 			for (const relationship of relationships) {
 				const endID = relationship.id;		// EGADS, this is the wrong relationship; needs the next one
 				const parent = relationship.parentThing;

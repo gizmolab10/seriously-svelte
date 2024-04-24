@@ -71,8 +71,8 @@ export default class Path {
 	get titles(): Array<string> { return this.things?.map(t => ` \"${t ? t.title : 'null'}\"`) ?? []; }
 	get isStoppingEdit(): boolean { return get(s_title_editing)?.stopping?.matchesPath(this) ?? false; }
 	get hasRelationships(): boolean { return this.hasParentRelationships || this.hasChildRelationships; }
-	get childRelationships(): Array<Relationship> { return this.parentRelationships_for(this.idPredicate, false); }
-	get parentRelationships(): Array<Relationship> { return this.parentRelationships_for(this.idPredicate, true); }
+	get childRelationships(): Array<Relationship> { return this.relationships_for_to(this.idPredicate, false); }
+	get parentRelationships(): Array<Relationship> { return this.relationships_for_to(this.idPredicate, true); }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	get showsReveal(): boolean { return !get(s_layout_asClusters) && (this.hasChildRelationships || (this.thing?.isBulkAlias ?? false)); }
 
@@ -142,7 +142,7 @@ export default class Path {
 	get next_siblingPath(): Path {
 		let nextPath: Path = this;
 		const pathHash = this.pathHash;
-		const paths = this.thing?.parentPaths ?? [];
+		const paths = this.uniqueParentPaths_for(this.idPredicate) ?? [];
 		const index = paths.map(p => p.pathHash).indexOf(pathHash);
 		if (index == -1) {
 			console.log(`no next for ${this.description} of ${paths.map(p => k.newLine + p.description)}`);
@@ -172,7 +172,7 @@ export default class Path {
 		return false;
 	}
 	
-	parentRelationships_for(idPredicate: string, parent: boolean) {
+	relationships_for_to(idPredicate: string, parent: boolean) {
 		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
 		if (id && this.pathString != k.exemplar && ![k.empty, 'k.id_unknown'].includes(id)) {
 			return g.hierarchy.relationships_forPredicateThingIsChild(idPredicate, id, parent);
@@ -209,11 +209,12 @@ export default class Path {
 		let parentPaths: Array<Path> = [];
 		const things = this.thing?.parentThings_forID(idPredicate) ?? [];
 		for (const thing of things) {
-			const paths = thing.isRoot ? [g.rootPath] : thing.parentPaths;
+			const paths = thing.isRoot ? [g.rootPath] : thing.parentPaths_for(idPredicate);
 			parentPaths = u.concatenateArrays(parentPaths, paths);
 		}
 		if (idPredicate == Predicate.idIsRelated) {
-			const childPaths = this.childPaths_for(idPredicate);
+			// use rootPath to build child paths
+			const childPaths = g.rootPath.childPaths_for(idPredicate);
 			parentPaths = u.concatenateArrays(parentPaths, childPaths);
 		}
 		const purgedPaths = u.strip_falsies(parentPaths);
@@ -222,12 +223,13 @@ export default class Path {
 
 	childPaths_for(idPredicate: string = Predicate.idContains): Array<Path> {
 		let paths: Array<Path> = [];
-		const childRelationships = this.parentRelationships_for(idPredicate, false);
+		const childRelationships = this.relationships_for_to(idPredicate, false);
 		if (childRelationships.length > 0) {
 			for (const childRelationship of childRelationships) {		// loop through all child relationships
 				if (childRelationship.idPredicate == idPredicate) {
-					const path = this.uniquelyAppendID(childRelationship.id);	// add each relationship's id
+					const path = this.uniquelyAppendID(childRelationship.id); 	// add each childRelationship's id
 					if (!!path) {
+						path.idPredicate = idPredicate;
 						paths.push(path);								// and push onto the paths
 					}
 				}
@@ -277,7 +279,7 @@ export default class Path {
 	}
 
 	things_childrenFor(idPredicate: string): Array<Thing> {
-		const relationships = this.thing?.parentRelationships_for(idPredicate);
+		const relationships = this.thing?.relationships_for_to(idPredicate);
 		let children: Array<Thing> = [];
 		if (!this.isRoot && relationships) {
 			for (const relationship of relationships) {
