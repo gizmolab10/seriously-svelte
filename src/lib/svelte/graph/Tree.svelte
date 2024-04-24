@@ -40,7 +40,7 @@
 		}
 		if (focus == null || focus.id != $s_path_focus) {
 			const h = g.hierarchy;
-			focus = !$s_path_focus ? g.root : h.thing_forPath($s_path_focus);
+			focus = !$s_path_focus ? g.hierarchy.root : h.thing_forPath($s_path_focus);
 			offsetX_ofFirstReveal = g.titleIsAtTop ? 0 : focus?.titleWidth / 2;
 			updateOrigins();
 			rebuilds += 1;

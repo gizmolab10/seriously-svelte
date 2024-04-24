@@ -37,7 +37,7 @@
 	<div class='modal-content' style='z-index: {ZIndex.frontmost};'>
 		<RadioButtons menuItems={menuItems} idSelected={$s_db_type}/>
 		<br>
-		{#if $s_db_loadTime}
+		{#if $s_db_loadTime && $s_db_loadTime > 0}
 			<Label>fetch {$s_db_loadTime} s</Label>
 		{:else}
 			<br>

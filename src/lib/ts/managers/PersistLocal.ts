@@ -46,8 +46,8 @@ class PersistLocal {
                     case 'settings': 
 						localStorage.clear();
 						s_paths_expanded.set([]);
-						s_path_focus.set(g.rootPath);
-						s_paths_grabbed.set([g.rootPath]);
+						s_path_focus.set(g.hierarchy.rootPath);
+						s_paths_grabbed.set([g.hierarchy.rootPath]);
 						break;
                 }
             }
@@ -157,8 +157,8 @@ class PersistLocal {
 
 	focus_restore() {
 		const h = g.hierarchy;
-		g.rootPath_set(h.path_remember_createUnique());
-		let pathToFocus = g.rootPath;
+		h.rootPaths_setup();
+		let pathToFocus = h.rootPath;
 		if (!this.ignorePaths) {
 			const focusPathString = this.dbKey_read(IDPersistant.focus);
 			if (focusPathString) {

@@ -19,7 +19,7 @@
 	$: {
 		const needsUpdate = ($s_path_focus?.title ?? k.empty) + $s_graphRect + ($s_paths_grabbed?.length ?? 0);
 		if (!path || needsUpdate || ancestors.length == 0) {
-			path = g.hierarchy.grabs.path_lastGrabbed ?? g.rootPath;	// assure we have a path
+			path = g.hierarchy.grabs.path_lastGrabbed ?? g.hierarchy.rootPath;	// assure we have a path
 			if (!!path) {				
 				const windowWidth = u.windowSize.width;
 				let encodedCount = 0;

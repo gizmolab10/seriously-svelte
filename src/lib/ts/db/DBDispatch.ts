@@ -38,6 +38,7 @@ export default class DBDispatch {
 		this.db_changeTo_for(type);
 		this.queryStrings_apply();
 		await this.hierarchy_fetch_andBuild(type);
+		g.hierarchy.rootPaths_setup();
 		persistLocal.paths_restore(true);
 		s_path_editingTools.set(null);
 		s_title_editing.set(null);
@@ -60,7 +61,6 @@ export default class DBDispatch {
 				this.set_loadTime(startTime);
 			}
 		}
-		g.rootPath_set(g.hierarchy.path_remember_createUnique());
 	}
 
 	set_loadTime(startTime: number) {

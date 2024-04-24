@@ -131,11 +131,11 @@ export default class DBFirebase implements DBInterface {
 	}
 	
 	async fetch_bulkAliases() {
-		const root = g.root;
+		const root = g.hierarchy.root;
 		if (this.baseID == k.name_bulkAdmin && root) {
 			const rootsPath = await this.hierarchy.path_roots();		// TODO: assumes all paths created
 			if (rootsPath) {
-				g.rootsPath = rootsPath;
+				g.hierarchy.rootsPath = rootsPath;
 				try {		// add bulk aliases to roots thing
 					const bulk = collection(this.firestore, this.bulksName);	// fetch all bulks (documents)
 					let bulkSnapshot = await getDocs(bulk);
@@ -236,7 +236,7 @@ export default class DBFirebase implements DBInterface {
 						}
 						setTimeout(() => { // wait in case a thing involved in this relationship arrives in the data
 							h.relationships_refreshKnowns();
-							g.rootPath.order_normalizeRecursive_remoteMaybe(true);
+							g.hierarchy.rootPath.order_normalizeRecursive_remoteMaybe(true);
 						}, 20);
 					}
 				} else if (type == DatumType.things) {
@@ -345,7 +345,7 @@ export default class DBFirebase implements DBInterface {
 		const fields = ['title', 'color', 'trait'];
 		const root = new Thing(this.baseID, null, this.baseID, 'coral', IDTrait.root, true);
 		const thing = new Thing(this.baseID, null, 'Click this text to edit it', 'purple', k.empty, true);
-		g.root = root;
+		g.hierarchy.root = root;
 		const thingRef = await addDoc(collectionRef, u.convertToObject(thing, fields));	// N.B. these will be fetched, shortly
 		const rootRef = await addDoc(collectionRef, u.convertToObject(root, fields));		// no need to remember now
 		thing.setID(thingRef.id);

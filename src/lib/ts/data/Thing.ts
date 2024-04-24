@@ -125,7 +125,7 @@ export default class Thing extends Datum {
 				const parent = relationship.parentThing;
 				const parentPaths = parent?.parentPaths_for(Predicate.idContains) ?? [];
 				if (parentPaths.length == 0) {
-					addPath(g.rootPath);
+					addPath(g.hierarchy.rootPath);
 				} else {
 					for (const parentPath of parentPaths) {
 						addPath(parentPath);

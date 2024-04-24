@@ -23,7 +23,7 @@
 
 	$: {
 		if (line && !lineWrapper) {
-			lineWrapper = new Wrapper(line, g.rootPath, IDWrapper.line);
+			lineWrapper = new Wrapper(line, g.hierarchy.rootPath, IDWrapper.line);
 		}
 		angle = layout?.angle;
 		const inside_radius = k.cluster_inside_radius + (showArrowHeads ? 8 : 0);

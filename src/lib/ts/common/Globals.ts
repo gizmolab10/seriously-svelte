@@ -5,10 +5,6 @@ import { s_graphRect, s_show_details, s_scale_factor, s_user_graphOffset } from 
 class Globals {
 	mouseLocation = Point.zero;
 	hierarchy: Hierarchy;
-	rootsPath: Path;
-	rootPath: Path;
-	focus: Thing;
-	root: Thing;
 
 	setup() {
 		const baseID = dbDispatch.db.baseID;
@@ -25,12 +21,6 @@ class Globals {
 		window.addEventListener('mousemove', (event: MouseEvent) => {
 			this.mouseLocation = new Point(event.clientX, event.clientY);
 		});
-	}
-
-	rootPath_set(path: Path | null) {
-		if (!!path) {
-			this.rootPath = path;
-		}
 	}
  
 	zoomBy(factor: number): number {

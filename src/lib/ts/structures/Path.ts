@@ -209,12 +209,12 @@ export default class Path {
 		let parentPaths: Array<Path> = [];
 		const things = this.thing?.parentThings_forID(idPredicate) ?? [];
 		for (const thing of things) {
-			const paths = thing.isRoot ? [g.rootPath] : thing.parentPaths_for(idPredicate);
+			const paths = thing.isRoot ? [g.hierarchy.rootPath] : thing.parentPaths_for(idPredicate);
 			parentPaths = u.concatenateArrays(parentPaths, paths);
 		}
 		if (idPredicate == Predicate.idIsRelated) {
 			// use rootPath to build child paths
-			const childPaths = g.rootPath.childPaths_for(idPredicate);
+			const childPaths = g.hierarchy.rootPath.childPaths_for(idPredicate);
 			parentPaths = u.concatenateArrays(parentPaths, childPaths);
 		}
 		const purgedPaths = u.strip_falsies(parentPaths);
@@ -246,7 +246,7 @@ export default class Path {
 		if (this.pathString != k.empty && relationship) {
 			return relationship.childThing;
 		}
-		return g.hierarchy.root;	// N.B., g.root is wrong immediately after switching db type
+		return g.hierarchy.root;	// N.B., g.hierarchy.root is wrong immediately after switching db type
 	}
 
 	thing_isImmediateParentOf(path: Path, id: string): boolean {
@@ -350,7 +350,7 @@ export default class Path {
 		}
 		const ids = this.ids.slice(0, -back);
 		if (ids.length < 1) {
-			return g.rootPath;
+			return g.hierarchy.rootPath;
 		}
 		return g.hierarchy.path_remember_createUnique(ids.join(k.pathSeparator));
 	}
@@ -479,8 +479,8 @@ export default class Path {
 				path.expand();
 			}
 		} while (!path);
-		g.rootPath.expand();
-		g.rootPath.becomeFocus();
+		g.hierarchy.rootPath.expand();
+		g.hierarchy.rootPath.becomeFocus();
 	}
 
 	handle_singleClick_onDragDot(shiftKey: boolean) {
@@ -518,7 +518,7 @@ export default class Path {
 	}
 
 	ungrab() {
-		const rootPath = g.rootPath;
+		const rootPath = g.hierarchy.rootPath;
 		s_paths_grabbed.update((array) => {
 			const index = array.indexOf(this);
 			if (index != -1) {				// only splice array when item is found

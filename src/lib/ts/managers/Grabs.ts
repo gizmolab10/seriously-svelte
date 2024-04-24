@@ -49,7 +49,7 @@ export default class Grabs {
 				return paths.slice(-1)[0];
 			}
 		}
-		return g.rootPath;
+		return g.hierarchy.rootPath;
 	}
 
 }

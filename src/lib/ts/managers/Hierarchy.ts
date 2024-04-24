@@ -24,9 +24,12 @@ export default class Hierarchy {
 	private things: Array<Thing> = [];
 	relationships: Array<Relationship> = [];
 	predicates: Array<Predicate> = [];
-	root: Thing | null = null;
+	relatedRootPath: Path;
 	isAssembled = false;
 	db: DBInterface;
+	rootsPath: Path;
+	rootPath: Path;
+	root: Thing;
 
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): string | null { return this.root?.id ?? null; };
@@ -37,6 +40,14 @@ export default class Hierarchy {
 
 	constructor(db: DBInterface) {
 		this.db = db;
+	}
+
+	rootPaths_setup() {
+		const path = this.path_remember_createUnique();
+		if (!!path) {
+			this.rootPath = path;
+		}
+		this.relatedRootPath = new Path(k.empty, Predicate.idIsRelated);
 	}
 
 	static readonly $_EVENTS_$: unique symbol;
@@ -66,7 +77,7 @@ export default class Hierarchy {
 			const COMMAND = event.metaKey;
 			const EXTREME = SHIFT && OPTION;
 			const key = event.key.toLowerCase();
-			const rootPath = g.rootPath;
+			const rootPath = this.rootPath;
 			let needsRebuild = false;
 			if (!pathGrab) {
 				pathGrab = rootPath;
@@ -95,7 +106,7 @@ export default class Hierarchy {
 				}
 			}
 			switch (key) {
-				case '!':				needsRebuild = g.rootPath?.becomeFocus(); break;
+				case '!':				needsRebuild = this.rootPath?.becomeFocus(); break;
 				case '`':               event.preventDefault(); this.latestPathGrabbed_toggleEditingTools(); break;
 				case 'arrowup':			await this.latestPathGrabbed_rebuild_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
 				case 'arrowdown':		await this.latestPathGrabbed_rebuild_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
@@ -244,7 +255,6 @@ export default class Hierarchy {
 			this.things.push(thing);
 			if (thing.trait == IDTrait.root && (thing.baseID == k.empty || thing.baseID == this.db.baseID)) {
 				this.root = thing;
-				g.root = thing;
 			}
 		}
 	}
@@ -557,7 +567,7 @@ export default class Hierarchy {
 
 	async path_roots() {		// TODO: assumes all paths created
 		let rootsPath: Path | null = null;
-		const rootPath = g.rootPath;
+		const rootPath = this.rootPath;
 		for (const rootsMaybe of this.things_byTrait[IDTrait.roots]) {	// should only be one
 			if  (rootsMaybe.title == 'roots') {	// special case TODO: convert to a query string
 				return rootPath.appendChild(rootsMaybe) ?? null;
@@ -610,8 +620,7 @@ export default class Hierarchy {
 	}
 
 	async path_redraw_remoteFetchBulk_browseRight(thing: Thing, path: Path | null = null, grab: boolean = false) {
-		const rootsPath = g.rootsPath;
-		if (rootsPath && thing && thing.title != 'roots') {	// not create roots bulk
+		if (this.rootsPath && thing && thing.title != 'roots') {	// not create roots bulk
 			await this.db.fetch_allFrom(thing.title)
 			this.relationships_refreshKnowns();
 			const childPaths = path?.childPaths;
@@ -746,7 +755,7 @@ export default class Hierarchy {
 				}
 				this.relationships_refreshKnowns();
 				newParentPath.appendChild(thing)?.grabOnly();
-				g.rootPath.order_normalizeRecursive_remoteMaybe(true);
+				this.rootPath.order_normalizeRecursive_remoteMaybe(true);
 				if (!newParentPath.isExpanded) {
 					newParentPath.expand();
 				}
@@ -775,7 +784,7 @@ export default class Hierarchy {
 				return;
 			}
 		} else {
-			const rootPath = g.rootPath;
+			const rootPath = this.rootPath;
 			if (EXTREME) {
 				needsRebuild = rootPath?.becomeFocus();	// tells graph to update line rects
 			} else {
