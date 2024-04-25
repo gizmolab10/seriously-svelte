@@ -1,4 +1,5 @@
-import { g, k, Predicate } from '../common/GlobalImports';
+import { k, Predicate } from '../common/GlobalImports';
+import { h } from '../db/DBDispatch';
 
 export default class ClusterLayout {
 	idPredicate: string;
@@ -11,7 +12,7 @@ export default class ClusterLayout {
 		this.count = count;
 	}
 
-	get predicate(): Predicate | null { return g.hierarchy.predicate_forID(this.idPredicate); }
+	get predicate(): Predicate | null { return h.predicate_forID(this.idPredicate); }
 	get angle(): number { return this.predicate?.clusterAngle_for(this.pointsTo) ?? 0; }
 
 	get title(): string {

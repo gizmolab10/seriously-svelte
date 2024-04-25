@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, Path, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/GlobalImports';
+	import { k, u, Path, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/GlobalImports';
 	import { IDButton, onMount, debugReact, dbDispatch, Predicate } from '../../ts/common/GlobalImports';
 	import { s_path_focus, s_graphRect, s_show_details, s_paths_grabbed } from '../../ts/state/State';
 	import { s_id_popupView, s_path_editingTools, s_user_graphOffset } from '../../ts/state/State';
@@ -39,8 +39,7 @@
 			updateOrigins();
 		}
 		if (focus == null || focus.id != $s_path_focus) {
-			const h = g.hierarchy;
-			focus = !$s_path_focus ? g.hierarchy.root : h.thing_forPath($s_path_focus);
+			focus = !$s_path_focus ? h.root : h.thing_forPath($s_path_focus);
 			offsetX_ofFirstReveal = g.titleIsAtTop ? 0 : focus?.titleWidth / 2;
 			updateOrigins();
 			rebuilds += 1;

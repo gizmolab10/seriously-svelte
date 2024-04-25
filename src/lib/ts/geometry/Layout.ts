@@ -1,5 +1,6 @@
-import { g, k, u, get, Path, Rect, Size, Point, Angle, IDLine, Predicate, ChildMapRect, ClusterLayout } from '../common/GlobalImports';
+import { k, u, get, Path, Rect, Size, Point, Angle, IDLine, Predicate, ChildMapRect, ClusterLayout } from '../common/GlobalImports';
 import { s_layout_asClusters } from '../state/State';
+import { h } from '../db/DBDispatch';
 
 export default class Layout {
 	clusterLayouts: Array<ClusterLayout> = [];
@@ -9,7 +10,7 @@ export default class Layout {
 		let childPaths = path.childPaths;
 		if (get(s_layout_asClusters)) {
 			this.layoutCluster(childPaths, path, Predicate.idContains, origin, true);
-			for (const predicate of g.hierarchy.predicates) {
+			for (const predicate of h.predicates) {
 				const id = predicate.id;
 				const parentPaths = path.uniqueParentPaths_for(id);
 				this.layoutCluster(parentPaths, path, id, origin, false);

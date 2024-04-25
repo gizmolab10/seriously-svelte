@@ -1,10 +1,13 @@
-import { g, k, DBType, signals, IDPersistant, persistLocal } from '../common/GlobalImports';
+import { k, signals, Hierarchy, IDPersistant, persistLocal } from '../common/GlobalImports';
 import { s_isBusy, s_db_type, s_db_loadTime, s_title_editing } from '../state/State';
 import { s_things_arrived, s_path_editingTools } from '../state/State';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
+import { DBType } from './DBInterface';
 import { dbLocal } from './DBLocal';
+
+export let h: Hierarchy;
 
 export default class DBDispatch {
 	db: DBInterface;
@@ -38,11 +41,11 @@ export default class DBDispatch {
 		this.db_changeTo_for(type);
 		this.queryStrings_apply();
 		await this.hierarchy_fetch_andBuild(type);
-		g.hierarchy.rootPaths_setup();
+		h.rootPaths_setup();
 		persistLocal.paths_restore(true);
 		s_path_editingTools.set(null);
 		s_title_editing.set(null);
-		g.hierarchy.hierarchy_completed();
+		h.hierarchy_completed();
 		signals.signal_rebuildGraph_fromFocus();
 	}
 
@@ -55,8 +58,9 @@ export default class DBDispatch {
 				s_things_arrived.set(false);
 				s_isBusy.set(true);
 			}
+			h = new Hierarchy(this.db);		// create Hierarchy to fetch into
 			await this.db.fetch_all();
-			await g.hierarchy.add_missing_removeNulls(null, this.db.baseID);
+			await h.add_missing_removeNulls(null, this.db.baseID);
 			if (isRemote) {
 				this.set_loadTime(startTime);
 			}
@@ -71,13 +75,8 @@ export default class DBDispatch {
 		s_db_loadTime.set(loadTime);
 	}
 
+	db_changeTo_for(type: string) { this.db = this.db_forType(type); }
 	db_changeTo_next(forward: boolean) { this.db_changeTo(this.db_next_get(forward)); }
-	
-	db_changeTo_for(type: string) {
-		const db = this.db_forType(type);
-		g.hierarchy = db.hierarchy;
-		this.db = db;
-	}
 
 	db_changeTo(newDBType: DBType) {
 		const db = this.db_forType(newDBType);

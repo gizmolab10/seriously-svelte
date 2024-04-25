@@ -1,7 +1,8 @@
 <script lang='ts'>
-	import { g, k, u, Rect, Size, Point, Angle, onMount, ZIndex, svgPaths } from '../../ts/common/GlobalImports';
+	import { k, u, Rect, Size, Point, Angle, onMount, ZIndex, svgPaths } from '../../ts/common/GlobalImports';
 	import { IDLine, Quadrant, Wrapper, IDWrapper, ClusterLayout } from '../../ts/common/GlobalImports';
 	import ArrowHead from '../kit/ArrowHead.svelte';
+	import { h } from '../../ts/db/DBDispatch';
 	import Box from '../kit/Box.svelte';
 	export let color = k.color_default;
     export let layout: ClusterLayout;
@@ -23,7 +24,7 @@
 
 	$: {
 		if (line && !lineWrapper) {
-			lineWrapper = new Wrapper(line, g.hierarchy.rootPath, IDWrapper.line);
+			lineWrapper = new Wrapper(line, h.rootPath, IDWrapper.line);
 		}
 		angle = layout?.angle;
 		const inside_radius = k.cluster_inside_radius + (showArrowHeads ? 8 : 0);

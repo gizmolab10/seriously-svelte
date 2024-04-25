@@ -1,10 +1,13 @@
-import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection, onSnapshot, deleteField, getFirestore } from 'firebase/firestore';
-import { DocumentData, DocumentChange, QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
-import { g, k, u, get, Thing, debug, DBType, signals, IDTrait, DatumType, Hierarchy, DebugFlag } from '../common/GlobalImports';
+import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { Predicate, dbDispatch, Relationship, persistLocal, CreationOptions } from '../common/GlobalImports';
-import { s_build } from '../state/State';
+import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
+import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
+import { k, u, get, Thing, debug, signals, IDTrait, DebugFlag } from '../common/GlobalImports';
+import { DBType, DatumType } from '../db/DBInterface';
 import { initializeApp } from "firebase/app";
+import { s_build } from '../state/State';
 import DBInterface from './DBInterface';
+import { h } from '../db/DBDispatch';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
@@ -30,7 +33,6 @@ export default class DBFirebase implements DBInterface {
 	predicatesCollection: CollectionReference | null = null;
 	deferredSnapshots: Array<SnapshotDeferal> = [];
 	addedRelationship: Relationship | null = null
-	_hierarchy: Hierarchy | null = null;
 	firestore = getFirestore(this.app);
 	addedThing: Thing | null = null
 
@@ -40,13 +42,6 @@ export default class DBFirebase implements DBInterface {
 	queryStrings_apply() {
 		const queryStrings = k.queryString;
 		this.baseID = queryStrings.get('name') ?? queryStrings.get('dbid') ?? 'Public';
-	}
-
-	get hierarchy(): Hierarchy { 
-		if (this._hierarchy == null) {
-		this._hierarchy = new Hierarchy(this);
-}
-		return this._hierarchy!;
 	}
 
 	static readonly $_FETCH_$: unique symbol;
@@ -131,23 +126,23 @@ export default class DBFirebase implements DBInterface {
 	}
 	
 	async fetch_bulkAliases() {
-		const root = g.hierarchy.root;
+		const root = h.root;
 		if (this.baseID == k.name_bulkAdmin && root) {
-			const rootsPath = await this.hierarchy.path_roots();		// TODO: assumes all paths created
+			const rootsPath = await h.path_roots();		// TODO: assumes all paths created
 			if (rootsPath) {
-				g.hierarchy.rootsPath = rootsPath;
+				h.rootsPath = rootsPath;
 				try {		// add bulk aliases to roots thing
 					const bulk = collection(this.firestore, this.bulksName);	// fetch all bulks (documents)
 					let bulkSnapshot = await getDocs(bulk);
 					for (const bulkDoc of bulkSnapshot.docs) {
 						const baseID = bulkDoc.id;
 						if (baseID != this.baseID) {
-							let thing = this.hierarchy.thing_bulkAlias_forTitle(baseID);
+							let thing = h.thing_bulkAlias_forTitle(baseID);
 							if (!thing) {								// create a thing for each bulk
-								thing = this.hierarchy.thing_runtimeCreate(this.baseID, null, baseID, 'red', IDTrait.bulk, false);
-								await this.hierarchy.path_remember_remoteAddAsChild(rootsPath, thing);
+								thing = h.thing_runtimeCreate(this.baseID, null, baseID, 'red', IDTrait.bulk, false);
+								await h.path_remember_remoteAddAsChild(rootsPath, thing);
 							} else if (thing.thing_isBulk_expanded) {
-								await this.hierarchy.path_redraw_remoteFetchBulk_browseRight(thing);
+								await h.path_redraw_remoteFetchBulk_browseRight(thing);
 							}
 						}
 					}
@@ -180,7 +175,7 @@ export default class DBFirebase implements DBInterface {
 
 	setup_handle_docChanges(baseID: string, type: DatumType, collection: CollectionReference) {
 		onSnapshot(collection, (snapshot) => {
-			if (this.hierarchy.isAssembled) {		// u.ignore snapshots caused by data written to server
+			if (h.isAssembled) {		// u.ignore snapshots caused by data written to server
 				if (this.deferSnapshots) {
 					this.snapshot_deferOne(baseID, type, snapshot);
 				} else {
@@ -196,7 +191,6 @@ export default class DBFirebase implements DBInterface {
 		const doc = change.doc;
 		const data = doc.data();
 		if (DBFirebase.data_isValidOfKind(type, data)) {
-			const h = this.hierarchy;
 			const id = doc.id;
 
 			////////////////////
@@ -209,7 +203,6 @@ export default class DBFirebase implements DBInterface {
 					const remoteRelationship = new RemoteRelationship(data);
 					if (remoteRelationship) {
 						let relationship = h.relationship_forHID(id.hash());
-						const original = !relationship ? null : u.copyObject(relationship);
 						switch (change.type) {
 							case 'added':
 								if (relationship || remoteRelationship.isEqualTo(this.addedRelationship)) {
@@ -236,7 +229,7 @@ export default class DBFirebase implements DBInterface {
 						}
 						setTimeout(() => { // wait in case a thing involved in this relationship arrives in the data
 							h.relationships_refreshKnowns();
-							g.hierarchy.rootPath.order_normalizeRecursive_remoteMaybe(true);
+							h.rootPath.order_normalizeRecursive_remoteMaybe(true);
 						}, 20);
 					}
 				} else if (type == DatumType.things) {
@@ -284,7 +277,6 @@ export default class DBFirebase implements DBInterface {
 
 	async document_remember_validated(type: DatumType, id: string, data: DocumentData, baseID: string) {
 		if (DBFirebase.data_isValidOfKind(type, data)) {
-			const h = this.hierarchy;
 			switch (type) {
 				case DatumType.things:		  h.thing_remember_runtimeCreate(baseID, id, data.title, data.color, data.trait, true); break;
 				case DatumType.predicates:	  h.predicate_remember_runtimeCreate(id, data.kind); break;
@@ -332,7 +324,7 @@ export default class DBFirebase implements DBInterface {
 				thing.awaitingCreation = false;
 				thing.isRemotelyStored = true;
 				thing.setID(ref.id);			// so relationship will be correct
-				this.hierarchy.thing_remember(thing);
+				h.thing_remember(thing);
 				this.handle_deferredSnapshots();
 				thing.log(DebugFlag.remote, 'CREATE T');
 			} catch (error) {
@@ -345,7 +337,7 @@ export default class DBFirebase implements DBInterface {
 		const fields = ['title', 'color', 'trait'];
 		const root = new Thing(this.baseID, null, this.baseID, 'coral', IDTrait.root, true);
 		const thing = new Thing(this.baseID, null, 'Click this text to edit it', 'purple', k.empty, true);
-		g.hierarchy.root = root;
+		h.root = root;
 		const thingRef = await addDoc(collectionRef, u.convertToObject(thing, fields));	// N.B. these will be fetched, shortly
 		const rootRef = await addDoc(collectionRef, u.convertToObject(root, fields));		// no need to remember now
 		thing.setID(thingRef.id);
@@ -407,7 +399,7 @@ export default class DBFirebase implements DBInterface {
 				relationship.awaitingCreation = false;
 				relationship.isRemotelyStored = true;
 				relationship.setID(ref.id);
-				this.hierarchy.relationship_remember(relationship);
+				h.relationship_remember(relationship);
 				this.handle_deferredSnapshots();
 				relationship.log(DebugFlag.remote, 'CREATE R');
 			} catch (error) {

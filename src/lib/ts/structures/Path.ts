@@ -1,7 +1,8 @@
-import { g, k, u, get, Rect, Size, Thing, debug, signals, Wrapper, IDWrapper } from '../common/GlobalImports';
+import { k, u, get, Rect, Size, Thing, debug, signals, Wrapper, IDWrapper } from '../common/GlobalImports';
 import { Predicate, TitleState, Relationship, PredicateKind, Alteration } from '../common/GlobalImports';
 import { s_path_focus, s_paths_grabbed, s_title_editing, s_layout_asClusters } from '../state/State';
 import { s_paths_expanded, s_path_editingTools, s_altering } from '../state/State';
+import { h } from '../../ts/db/DBDispatch';
 import { Writable } from 'svelte/store';
 
 export default class Path {
@@ -15,7 +16,7 @@ export default class Path {
 		this.pathHash = pathString.hash();
 		this.idPredicate = idPredicate;
 		this.pathString = pathString;
-		if (g.hierarchy?.isAssembled) {
+		if (h?.isAssembled) {
 			this.subscriptions_setup();			// not needed during hierarchy assembly
 		}
 	}
@@ -25,7 +26,7 @@ export default class Path {
 
 	wrapper_add(wrapper: Wrapper) {
 		this.wrappers[wrapper.type] = wrapper;
-        g.hierarchy.wrapper_add(wrapper);
+        h.wrapper_add(wrapper);
 	}
 
 	subscriptions_setup() {
@@ -42,14 +43,15 @@ export default class Path {
 	get parentPath(): Path | null { return this.stripBack(); }
 	get lastChild(): Thing { return this.children.slice(-1)[0]; }
 	get order(): number { return this.relationship?.order ?? -1; }
+	get childPaths(): Array<Path> { return this.childPaths_for(); }
 	get isFocus(): boolean { return this.matchesStore(s_path_focus); }
 	get isExemplar(): boolean { return this.pathString == k.exemplar; }
 	get title(): string { return this.thing?.title ?? 'missing title'; }
 	get ids_hashed(): Array<number> { return this.ids.map(i => i.hash()); }
+	get things(): Array<Thing> { return h?.things_forPath(this); }
 	get relationship(): Relationship | null { return this.relationshipAt(); }
 	get idBridging(): string | null { return this.thing?.idBridging ?? null; }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
-	get childPaths(): Array<Path> { return this.childPaths_for(); }
 	get lineWrapper(): Wrapper | null { return this.wrappers[IDWrapper.line]; }
 	get siblingPaths(): Array<Path> { return this.parentPath?.childPaths ?? []; }
 	get titleWrapper(): Wrapper | null { return this.wrappers[IDWrapper.title]; }
@@ -57,13 +59,12 @@ export default class Path {
 	get revealWrapper(): Wrapper | null { return this.wrappers[IDWrapper.reveal]; }
 	get widgetWrapper(): Wrapper | null { return this.wrappers[IDWrapper.widget]; }
 	get titleRect(): Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
-	get things(): Array<Thing | null> { return g.hierarchy?.things_forPath(this); }
 	get hasChildRelationships(): boolean { return this.childRelationships.length > 0; }
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
 	get description(): string { return `${this.idPredicate} ${this.titles.join(':')}`; }
 	get hasParentRelationships(): boolean { return this.parentRelationships.length > 0; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
-	get children(): Array<Thing> { return g.hierarchy?.things_forPaths(this.childPaths); }
+	get children(): Array<Thing> { return h?.things_forPaths(this.childPaths); }
 	get idPredicates(): Array<string> { return this.relationships.map(r => r.idPredicate); }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
 	get isEditing(): boolean { return get(s_title_editing)?.editing?.matchesPath(this) ?? false; }
@@ -77,7 +78,7 @@ export default class Path {
 	get showsReveal(): boolean { return !get(s_layout_asClusters) && (this.hasChildRelationships || (this.thing?.isBulkAlias ?? false)); }
 
 	get relationships(): Array<Relationship> {
-		const relationships = this.ids_hashed.map(h => g.hierarchy?.relationship_forHID(h)) ?? [];
+		const relationships = this.ids_hashed.map(h => h?.relationship_forHID(h)) ?? [];
 		return u.strip_falsies(relationships);
 	}
 	
@@ -106,7 +107,7 @@ export default class Path {
 
 	get idThing(): string {
 		if (this.isRoot) {
-			return g.hierarchy?.idRoot ?? k.id_unknown;
+			return h?.idRoot ?? k.id_unknown;
 		}
 		return this.relationship?.idChild ?? k.id_unknown;
 	}
@@ -160,7 +161,7 @@ export default class Path {
 	includesPredicateID(idPredicate: string): boolean { return this.thing?.hasParentsFor(idPredicate) ?? false; }
 	showsClusterFor(predicate: Predicate): boolean { return this.includesPredicateID(predicate.id) && this.hasThings(predicate); }
 	rect_ofWrapper(wrapper: Wrapper | null): Rect | null { return Rect.createFromDOMRect(wrapper?.component.getBoundingClientRect()); }
-	relationshipAt(back: number = 1): Relationship | null { return g.hierarchy?.relationship_forHID(this.idAt(back).hash()) ?? null; }
+	relationshipAt(back: number = 1): Relationship | null { return h?.relationship_forHID(this.idAt(back).hash()) ?? null; }
 
 	isRelatedTo_orContains(path: Path): boolean {
 		// if path.thing's parents (of all predicate kinds) include this.thing
@@ -175,7 +176,7 @@ export default class Path {
 	relationships_for_to(idPredicate: string, parent: boolean) {
 		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
 		if (id && this.pathString != k.exemplar && ![k.empty, 'k.id_unknown'].includes(id)) {
-			return g.hierarchy.relationships_forPredicateThingIsChild(idPredicate, id, parent);
+			return h.relationships_forPredicateThingIsChild(idPredicate, id, parent);
 		}
 		return [];
 	}
@@ -209,12 +210,11 @@ export default class Path {
 		let parentPaths: Array<Path> = [];
 		const things = this.thing?.parentThings_forID(idPredicate) ?? [];
 		for (const thing of things) {
-			const paths = thing.isRoot ? [g.hierarchy.rootPath] : thing.parentPaths_for(idPredicate);
+			const paths = thing.isRoot ? [h.rootPath] : thing.parentPaths_for(idPredicate);
 			parentPaths = u.concatenateArrays(parentPaths, paths);
 		}
 		if (idPredicate == Predicate.idIsRelated) {
-			// use rootPath to build child paths
-			const childPaths = g.hierarchy.rootPath.childPaths_for(idPredicate);
+			const childPaths = this.childPaths_for(idPredicate);
 			parentPaths = u.concatenateArrays(parentPaths, childPaths);
 		}
 		const purgedPaths = u.strip_falsies(parentPaths);
@@ -223,18 +223,24 @@ export default class Path {
 
 	childPaths_for(idPredicate: string = Predicate.idContains): Array<Path> {
 		let paths: Array<Path> = [];
+		const isContains = idPredicate == Predicate.idContains;
 		const childRelationships = this.relationships_for_to(idPredicate, false);
 		if (childRelationships.length > 0) {
 			for (const childRelationship of childRelationships) {		// loop through all child relationships
 				if (childRelationship.idPredicate == idPredicate) {
-					const path = this.uniquelyAppendID(childRelationship.id); 	// add each childRelationship's id
+					let path: Path | null;
+					if (isContains) {
+						path = this.uniquelyAppendID(childRelationship.id); 	// add each childRelationship's id
+					} else {
+						path = h.path_remember_createUnique(childRelationship.id, idPredicate);
+					}
 					if (!!path) {
 						path.idPredicate = idPredicate;
 						paths.push(path);								// and push onto the paths
 					}
 				}
 			}
-			if (idPredicate == Predicate.idContains) {					// normalize order of children only
+			if (isContains) {											// normalize order of children only
 				u.paths_orders_normalize_remoteMaybe(paths);
 			}
 		}
@@ -246,7 +252,7 @@ export default class Path {
 		if (this.pathString != k.empty && relationship) {
 			return relationship.childThing;
 		}
-		return g.hierarchy.root;	// N.B., g.hierarchy.root is wrong immediately after switching db type
+		return h.root;	// N.B., h.root is wrong immediately after switching db type
 	}
 
 	thing_isImmediateParentOf(path: Path, id: string): boolean {
@@ -295,7 +301,7 @@ export default class Path {
 	uniquelyAppendID(id: string): Path | null {
 		let ids = this.ids;
 		ids.push(id);
-		return g.hierarchy.path_remember_createUnique(ids.join(k.pathSeparator));
+		return h.path_remember_createUnique(ids.join(k.pathSeparator));
 	}
 
 	includedInPaths(paths: Array<Path>): boolean {
@@ -350,15 +356,15 @@ export default class Path {
 		}
 		const ids = this.ids.slice(0, -back);
 		if (ids.length < 1) {
-			return g.hierarchy.rootPath;
+			return h.rootPath;
 		}
-		return g.hierarchy.path_remember_createUnique(ids.join(k.pathSeparator));
+		return h.path_remember_createUnique(ids.join(k.pathSeparator));
 	}
 
 	appendChild(child: Thing | null): Path | null {
 		const idParent = this.thing?.idBridging;
 		if (child && idParent) {
-			const relationship = g.hierarchy?.relationship_forPredicate_parent_child(Predicate.idContains, idParent, child.id);
+			const relationship = h?.relationship_forPredicate_parent_child(Predicate.idContains, idParent, child.id);
 			if (relationship) {
 				return this.uniquelyAppendID(relationship.id);
 			}
@@ -479,8 +485,8 @@ export default class Path {
 				path.expand();
 			}
 		} while (!path);
-		g.hierarchy.rootPath.expand();
-		g.hierarchy.rootPath.becomeFocus();
+		h.rootPath.expand();
+		h.rootPath.becomeFocus();
 	}
 
 	handle_singleClick_onDragDot(shiftKey: boolean) {
@@ -490,7 +496,7 @@ export default class Path {
 				this.becomeFocus();
 			} else {
 				if (get(s_altering)) {
-					g.hierarchy.path_alterMaybe(this);
+					h.path_alterMaybe(this);
 				} else if (shiftKey || this.isGrabbed) {
 					this.toggleGrab();
 				} else {
@@ -518,7 +524,7 @@ export default class Path {
 	}
 
 	ungrab() {
-		const rootPath = g.hierarchy.rootPath;
+		const rootPath = h.rootPath;
 		s_paths_grabbed.update((array) => {
 			const index = array.indexOf(this);
 			if (index != -1) {				// only splice array when item is found

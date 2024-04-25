@@ -1,5 +1,5 @@
 <script>
-	import { g, k, Point, debug, Direction, dbDispatch } from "../../ts/common/GlobalImports";
+	import { k, Point, debug, Direction, dbDispatch } from "../../ts/common/GlobalImports";
 	import TriangleButton from '../buttons/TriangleButton.svelte';
 	export let center = new Point();
     export let path;
@@ -10,7 +10,6 @@
 	}
 
 	function click_closure(event, isLong) {
-		const h = g.hierarchy;
 		if (h.grabs.latestPathGrabbed(true)?.isFocus) {
 			h.path_rebuild_remoteMoveRight(path, false, false);
 		} else {

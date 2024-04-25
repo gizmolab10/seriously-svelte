@@ -1,19 +1,13 @@
-import { Thing, DBType, IDTrait, Hierarchy, Relationship } from '../common/GlobalImports';
+import { Thing, IDTrait, Relationship } from '../common/GlobalImports';
 import DBInterface from './DBInterface';
+import { DBType } from './DBInterface';
+import { h } from '../db/DBDispatch';
 
 export default class DBLocal implements DBInterface {
-	_hierarchy: Hierarchy | null = null;
 	baseID = 'handcrafted';
 	dbType = DBType.local;
 	hasData = false;
 	loadTime = null;
-
-	get hierarchy(): Hierarchy { 
-		if (this._hierarchy == null) {
-			this._hierarchy = new Hierarchy(this);
-		}
-		return this._hierarchy!;
-	}
 
 	setHasData(flag: boolean) { this.hasData = flag; }
 
@@ -26,15 +20,14 @@ export default class DBLocal implements DBInterface {
 		const idTe = 'E';
 		const idPr = 'related';
 		const idPc = 'contains';
-		const h = this.hierarchy;
 		h.predicate_remember_runtimeCreateUnique(idPc, 'contains', false);
 		h.predicate_remember_runtimeCreateUnique(idPr, 'isRelated', false, 2);
 		h.thing_remember_runtimeCreateUnique(this.baseID, idTa, 'Arkane', 'red', 'a', false);
 		h.thing_remember_runtimeCreateUnique(this.baseID, idTb, 'Butress', 'blue', 'b', false);
 		h.thing_remember_runtimeCreateUnique(this.baseID, idTc, 'Claustrophobia', 'green', 'c', false);
-		h.thing_remember_runtimeCreateUnique(this.baseID, idTd, 'Dementia', 'purple', 'f', false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTd, 'Dictionary', 'purple', 'f', false);
 		h.thing_remember_runtimeCreateUnique(this.baseID, idTe, 'Essential', 'mediumvioletred', 'e', false);
-		h.thing_remember_runtimeCreateUnique(this.baseID, idTr, 'Rutabegga', 'limegreen', IDTrait.root, false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTr, 'Routine', 'limegreen', IDTrait.root, false);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Cra', idPc, idTr, idTa, 0);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Crb', idPc, idTr, idTb, 1);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Crc', idPc, idTr, idTc, 2);

@@ -1,7 +1,9 @@
 <script>
-	import { k, u, DBType, ZIndex, IDPersistant, Hierarchy, dbDispatch, persistLocal } from '../../ts/common/GlobalImports';
+	import { k, u, ZIndex, dbDispatch, Hierarchy, IDPersistant, persistLocal } from '../../ts/common/GlobalImports';
 	import { s_db_type, s_graphRect, s_db_loadTime, s_id_popupView } from '../../ts/state/State';
-	import RadioButtons from '../buttons/RadioButtons.svelte'
+	import RadioButtons from '../buttons/RadioButtons.svelte';
+	import { DBType } from '../../ts/db/DBInterface';
+	import { h } from '../../ts/db/DBDispatch';
 	import Label from '../kit/Label.svelte';
 
 	function handle_dbTypeAt(index) { dbDispatch.db_changeTo(menuItems[index].id); }

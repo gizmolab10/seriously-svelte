@@ -1,12 +1,12 @@
-import { g, k, u, get, User, Path, Thing, Grabs, debug, Access, DBType, IDTool, IDTrait, signals } from '../common/GlobalImports';
+import { k, u, get, User, Path, Thing, Grabs, debug, Access, IDTool, IDTrait, signals } from '../common/GlobalImports';
 import { Wrapper, Predicate, Relationship, Alteration, AlterationState, CreationOptions } from '../common/GlobalImports';
-import { s_title_editing, s_altering, s_layout_asClusters, s_path_editingTools } from '../state/State';
-import { s_isBusy, s_path_focus, s_db_loadTime, s_paths_grabbed, s_things_arrived } from '../state/State';
+import { s_paths_grabbed, s_things_arrived, s_path_editingTools } from '../state/State';
+import { s_isBusy, s_altering, s_path_focus, s_title_editing } from '../state/State';
 import DBInterface from '../db/DBInterface';
 
 type Relationships_ByHID = { [hid: number]: Array<Relationship> }
 
-export default class Hierarchy {
+export class Hierarchy {
 	private wrappers_byType_andHID: { [type: string]: { [hid: number]: Wrapper } } = {};
 	private relationship_byHID: { [hid: number]: Relationship } = {};
 	private predicate_byHID: { [hid: number]: Predicate } = {};
@@ -153,14 +153,22 @@ export default class Hierarchy {
 	
 	static readonly $_THINGS_$: unique symbol;
 
-	things_forPath(path: Path): Array<Thing | null> {
-		const root = this.root;
-		const things: Array<Thing | null> = root ? [root] : [];
+	things_forPath(path: Path): Array<Thing> {
+		const things: Array<Thing | null> = [];
 		for (const hid of path.ids_hashed) {
-			const thing = this.relationship_forHID(hid)?.childThing || null;
-			things.push(thing);
+			const relationship = this.relationship_forHID(hid);
+			if (relationship) {
+				if (things.length == 0) {
+					if (path.idPredicate == Predicate.idContains) {
+						things.push(this.root);					// contains paths start with root
+					} else {
+						things.push(relationship.parentThing);
+					}
+				}
+				things.push(relationship.childThing);
+			}
 		}
-		return things;
+		return u.strip_falsies(things);
 	}
 
 	things_forPaths(paths: Array<Path>): Array<Thing> {

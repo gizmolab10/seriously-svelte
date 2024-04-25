@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { s_title_editing, s_paths_grabbed, s_layout_asClusters, s_path_editingTools } from '../../ts/state/State';
 	import { signals, Wrapper, IDWrapper, dbDispatch, SeriouslyRange } from '../../ts/common/GlobalImports';
-	import { g, k, u, Point, Thing, debug, ZIndex, onMount, Angle } from '../../ts/common/GlobalImports';
+	import { k, u, Point, Thing, debug, ZIndex, onMount, Angle } from '../../ts/common/GlobalImports';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
 	export let forward = true;
@@ -37,7 +37,7 @@
 	function handle_key_down(event) {
 		if (!!thing && !!path && path.isEditing && canAlterTitle(event)) {
 			switch (event.key) {	
-				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); g.hierarchy.path_edit_remoteCreateChildOf(path.parentPath); break;
+				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); h.path_edit_remoteCreateChildOf(path.parentPath); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
 				default:	  signals.signal_relayoutWidgets(); break;
 			}

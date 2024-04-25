@@ -1,10 +1,9 @@
-import { Hierarchy, debugReact, dbDispatch, persistLocal, IDPersistant } from '../common/GlobalImports';
-import { k, u, get, Path, Rect, Point, Thing, debug, builds } from '../common/GlobalImports'
+import { k, u, get, Rect, Point, debug, builds } from '../common/GlobalImports';
+import { debugReact, dbDispatch, persistLocal, IDPersistant } from '../common/GlobalImports';
 import { s_graphRect, s_show_details, s_scale_factor, s_user_graphOffset } from '../state/State';
 
 class Globals {
 	mouseLocation = Point.zero;
-	hierarchy: Hierarchy;
 
 	setup() {
 		const baseID = dbDispatch.db.baseID;

@@ -1,6 +1,7 @@
-import { g, k, u, get, Path, Datum, debug, IDTrait, Predicate } from '../common/GlobalImports';
+import { k, u, get, Path, Datum, debug, IDTrait, Predicate } from '../common/GlobalImports';
 import { DebugFlag, dbDispatch, Relationship, SeriouslyRange } from '../common/GlobalImports';
 import { s_path_focus, s_paths_expanded } from '../state/State';
+import { h } from '../db/DBDispatch';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
@@ -38,7 +39,7 @@ export default class Thing extends Datum {
 	get isRoot():			  boolean { return this.trait == IDTrait.root; }
 	get isBulkAlias():		  boolean { return this.trait == IDTrait.bulk; }
 	get hasMultipleParents(): boolean { return this.parentPaths.length > 1; }
-	get isAcrossBulk():		  boolean { return this.baseID != g.hierarchy.db.baseID; }
+	get isAcrossBulk():		  boolean { return this.baseID != h.db.baseID; }
 	get hasParents():		  boolean { return this.hasParentsFor(Predicate.idContains); }
 	get isFocus():			  boolean { return (get(s_path_focus).thing?.id ?? k.empty) == this.id; }
 
@@ -78,7 +79,7 @@ export default class Thing extends Datum {
 	}
 
 	relationships_for_to(idPredicate: string): Array<Relationship> {
-		return g.hierarchy.relationships_forPredicateThingIsChild(idPredicate, this.id, true);
+		return h.relationships_forPredicateThingIsChild(idPredicate, this.id, true);
 	}
 
 	updateColorAttributes(path: Path) {
@@ -125,7 +126,7 @@ export default class Thing extends Datum {
 				const parent = relationship.parentThing;
 				const parentPaths = parent?.parentPaths_for(Predicate.idContains) ?? [];
 				if (parentPaths.length == 0) {
-					addPath(g.hierarchy.rootPath);
+					addPath(h.rootPath);
 				} else {
 					for (const parentPath of parentPaths) {
 						addPath(parentPath);

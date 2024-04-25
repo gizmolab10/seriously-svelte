@@ -1,13 +1,15 @@
 <script>
-	import { g, k, u, get, Path, Rect, Size, Point, Thing, DBType, ZIndex, signals, onMount, IDButton } from '../../ts/common/GlobalImports';
+	import { IDButton, Hierarchy, IDPersistant, dbDispatch, debugReact, setContext, persistLocal } from '../../ts/common/GlobalImports';
 	import { s_build, s_isBusy, s_path_focus, s_db_type, s_graphRect, s_id_popupView, s_title_editing } from '../../ts/state/State';
-	import { Hierarchy, IDPersistant, dbDispatch, debugReact, setContext, persistLocal } from '../../ts/common/GlobalImports';
+	import { g, k, u, get, Path, Rect, Size, Point, Thing, ZIndex, signals, onMount } from '../../ts/common/GlobalImports';
 	import { s_show_details, s_things_arrived, s_user_graphOffset, s_layout_asClusters } from '../../ts/state/State';
 	import CircularButton from '../buttons/CircularButton.svelte';
 	import CrumbButtons from '../buttons/CrumbButtons.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
+	import { DBType } from '../../ts/db/DBInterface';
 	import Clusters from '../graph/Clusters.svelte';
 	import BuildNotes from './BuildNotes.svelte';
+	import { h } from '../../ts/db/DBDispatch';
 	import Controls from './Controls.svelte';
 	import Tree from '../graph/Tree.svelte';
 	import Help from '../help/Help.svelte';
@@ -44,7 +46,7 @@
 				case '?': $s_id_popupView = IDButton.help; break;
 				case ']':
 				case '[': dbDispatch.db_changeTo_next(key == ']'); break;
-				default:  await g.hierarchy.handle_key_down(event); break;
+				default:  await h.handle_key_down(event); break;
 			}
 		}
 	}
@@ -98,7 +100,7 @@
 {#if $s_isBusy}
 	<p>Welcome to Seriously</p>
 	{#if $s_db_type != DBType.local}
-		<p>(loading your {$s_db_type} data{$s_db_type == DBType.firebase ? ', from ' + g.hierarchy?.db.baseID : k.empty})</p>
+		<p>(loading your {$s_db_type} data{$s_db_type == DBType.firebase ? ', from ' + h?.db.baseID : k.empty})</p>
 	{/if}
 {:else if !$s_things_arrived}
 	<p>Nothing is available.</p>

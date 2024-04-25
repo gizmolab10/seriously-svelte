@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { svgPaths, Direction, dbDispatch, transparentize, AlterationState, Alteration } from '../../ts/common/GlobalImports';
-	import { g, k, u, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, signals } from '../../ts/common/GlobalImports';
+	import { k, u, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, signals } from '../../ts/common/GlobalImports';
 	import { s_path_editingTools, s_layout_asClusters } from '../../ts/state/State';
 	import { s_altering, s_graphRect, s_show_details } from '../../ts/state/State';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
@@ -107,7 +107,7 @@
 			case IDTool.delete_cancel: confirmingDelete = false; break;
 			default:
 				if (!!path && !path.isExemplar && !isDisabledFor(id)) {
-					await g.hierarchy.handle_tool_clicked(id, event, isLong);
+					await h.handle_tool_clicked(id, event, isLong);
 				}
 				break;
 		}

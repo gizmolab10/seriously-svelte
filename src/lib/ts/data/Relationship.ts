@@ -1,4 +1,5 @@
-import { g, k, Thing, debug, DebugFlag, dbDispatch, Predicate } from '../common/GlobalImports';
+import { k, Thing, debug, DebugFlag, dbDispatch, Predicate } from '../common/GlobalImports';
+import { h } from '../../ts/db/DBDispatch';
 import Datum from '../structures/Datum';
 import Airtable from 'airtable';
 
@@ -23,14 +24,14 @@ export default class Relationship extends Datum {
 	get childThing(): Thing | null { return this.thing(true); }
 	get parentThing(): Thing | null { return this.thing(false); }
 	get isValid(): boolean { return !!(this.idPredicate && this.idParent && this.idChild); }
-	get predicate(): Predicate | null { return g.hierarchy.predicate_forID(this.idPredicate) }
+	get predicate(): Predicate | null { return h.predicate_forID(this.idPredicate) }
 	get fields(): Airtable.FieldSet { return { predicate: [this.idPredicate], from: [this.idParent], to: [this.idChild], order: this.order }; }
 	get description(): string { return `BASE ${this.baseID} STORED ${this.isRemotelyStored} ORDER ${this.order} ID ${this.id} PARENT ${this.parentThing?.description} ${this.predicate?.kind} CHILD ${this.childThing?.description}`; }
 	log(option: DebugFlag, message: string) { debug.log_maybe(option, message + k.space + this.description); }
 
 	thing(child: boolean): Thing | null {
 		const id = child ? this.idChild : this.idParent;
-		return g.hierarchy?.thing_forHID(id.hash()) ?? null
+		return h?.thing_forHID(id.hash()) ?? null
 	}
 
 	async order_setTo(newOrder: number, remoteWrite: boolean = false) {

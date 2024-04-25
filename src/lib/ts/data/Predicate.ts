@@ -1,6 +1,7 @@
 import RemoteIdentifiable from "../structures/RemoteIdentifiable";
-import { g, u, get, PredicateKind } from '../common/GlobalImports';
+import { get, PredicateKind } from '../common/GlobalImports';
 import { s_cluster_angle } from '../state/State';
+import { h } from '../../ts/db/DBDispatch';
 
 export default class Predicate extends RemoteIdentifiable {
 	directions: number;
@@ -12,7 +13,7 @@ export default class Predicate extends RemoteIdentifiable {
 		this.kind = kind;
 	}
 
-	static predicate_forKind(kind: string) { return g.hierarchy?.predicate_forKind(kind) ?? null; }
+	static predicate_forKind(kind: string) { return h?.predicate_forKind(kind) ?? null; }
 	static id_forKind(kind: string) { return this.predicate_forKind(kind)?.id ?? `${kind} is missing`; }
 	static get isRelated(): Predicate | null { return this.predicate_forKind(PredicateKind.isRelated); }
 	static get contains(): Predicate | null { return this.predicate_forKind(PredicateKind.contains); }

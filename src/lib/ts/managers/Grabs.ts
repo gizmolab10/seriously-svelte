@@ -1,14 +1,13 @@
-import { g, get, Path, Thing, Hierarchy } from "../common/GlobalImports";
+import { get, Path, Thing, Hierarchy } from "../common/GlobalImports";
 import { s_paths_grabbed } from '../state/State';
+import { h } from '../db/DBDispatch';
 
 export default class Grabs {
-	hierarchy: Hierarchy;
 	grabbed: Array<Path> | null = null;
 
 	constructor(hierarchy: Hierarchy) {
-		this.hierarchy = hierarchy;
 		s_paths_grabbed.subscribe((paths: Array<Path>) => { // executes whenever s_paths_grabbed changes
-			if (!!paths && paths.length > 0 && this.hierarchy.db && this.hierarchy.db.hasData) {
+			if (!!paths && paths.length > 0 && h.db && h.db.hasData) {
 				this.grabbed = paths;
 			} else {
 				this.grabbed = null;
@@ -16,7 +15,7 @@ export default class Grabs {
 		});
 	};
 
-	get thing_lastGrabbed(): Thing | null { return this.hierarchy.thing_forPath(this.path_lastGrabbed); }
+	get thing_lastGrabbed(): Thing | null { return h.thing_forPath(this.path_lastGrabbed); }
 
 	get areInvisible(): boolean {
 		const paths = get(s_paths_grabbed);
@@ -33,7 +32,7 @@ export default class Grabs {
 		if (!!paths && paths.length > 0) {
 			const path = paths.slice(-1)[0];	// does not alter paths
 			const relationshipHID = path?.relationship?.idHashed;
-			if (relationshipHID && !!this.hierarchy.relationship_forHID(relationshipHID)) {
+			if (relationshipHID && !!h.relationship_forHID(relationshipHID)) {
 				return path;
 			}
 		}
@@ -49,7 +48,7 @@ export default class Grabs {
 				return paths.slice(-1)[0];
 			}
 		}
-		return g.hierarchy.rootPath;
+		return h.rootPath;
 	}
 
 }

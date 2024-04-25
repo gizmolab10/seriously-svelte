@@ -6,9 +6,9 @@ import { onMount, onDestroy, setContext, getContext } from 'svelte';
 import { CreationOptions, IDLine, IDTool } from './Enumerations';
 import { Direction, svgPaths } from '../geometry/SVGPaths';
 import { debug, Debug, DebugFlag } from '../debug/Debug';
-import { DBType, DatumType } from '../db/DBInterface';
 import { SeriouslyRange } from './SeriouslyRange';
 import { IDWrapper } from '../structures/Wrapper';
+import { Hierarchy } from '../managers/Hierarchy';
 import { signals, IDSignal } from './Signals';
 import { dbDispatch } from '../db/DBDispatch';
 import { transparentize } from 'color2k';
@@ -21,7 +21,6 @@ import { g } from './Globals';
 import AlterationState from '../state/AlterationState';
 import ClusterLayout from '../geometry/ClusterLayout';
 import Relationship from '../data/Relationship';
-import Hierarchy from '../managers/Hierarchy';
 import TitleState from '../state/TitleState';
 import Wrapper from '../structures/Wrapper';
 import Predicate from '../data/Predicate';
@@ -44,6 +43,6 @@ export {
 	Angle, Layout, Quadrant, ChildMapRect, ClusterLayout,
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactFlag,
 	g, k, u, get, builds, onMount, onDestroy, setContext, getContext,
+	ZIndex, PredicateKind, GraphRelations, CreationOptions, Alteration,
 	IDLine, IDTool, IDTrait, IDSignal, IDWrapper, IDButton, IDBrowser, IDPersistant,
-	ZIndex, DBType, DatumType, PredicateKind, GraphRelations, CreationOptions, Alteration,
 };

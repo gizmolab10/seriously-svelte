@@ -1,5 +1,5 @@
 <script>
-	import { g, k, u, ZIndex, signals, svgPaths, IDButton, IDPersistant, persistLocal, GraphRelations } from '../../ts/common/GlobalImports';
+	import { k, u, ZIndex, signals, svgPaths, IDButton, IDPersistant, persistLocal, GraphRelations } from '../../ts/common/GlobalImports';
 	import { s_build, s_show_details, s_id_popupView, s_layout_asClusters, s_graph_relations } from '../../ts/state/State';
 	import CircularButton from '../buttons/CircularButton.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';

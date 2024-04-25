@@ -1,5 +1,5 @@
 <script>
-	import { g, k, u, get, Size, Thing, Point, debug, ZIndex, svgPaths, signals } from "../../ts/common/GlobalImports";
+	import { k, u, get, Size, Thing, Point, debug, ZIndex, svgPaths, signals } from "../../ts/common/GlobalImports";
 	import { onMount, Wrapper, Direction, onDestroy, dbDispatch, IDWrapper } from "../../ts/common/GlobalImports";
 	import { s_paths_expanded, s_altering, s_paths_grabbed, s_path_editingTools } from '../../ts/state/State';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -90,7 +90,7 @@
 			$s_path_editingTools = null;
 			signals.signal_relayoutWidgets_fromFocus();
 		} else if (path.hasChildRelationships || path.thing.isBulkAlias) {
-			g.hierarchy.path_rebuild_remoteMoveRight(path, !path.isExpanded, true, false);
+			h.path_rebuild_remoteMoveRight(path, !path.isExpanded, true, false);
 		}
 	}
 

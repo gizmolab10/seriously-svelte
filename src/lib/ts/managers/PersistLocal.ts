@@ -3,6 +3,7 @@ import { s_path_focus, s_show_details, s_user_graphOffset } from '../state/State
 import { s_thing_fontFamily, s_graph_relations } from '../state/State';
 import { s_cluster_angle, s_layout_asClusters } from '../state/State';
 import { s_paths_grabbed, s_paths_expanded } from '../state/State';
+import { h } from '../db/DBDispatch';
 
 export enum IDPersistant {
 	relationships = 'relationships',
@@ -46,8 +47,8 @@ class PersistLocal {
                     case 'settings': 
 						localStorage.clear();
 						s_paths_expanded.set([]);
-						s_path_focus.set(g.hierarchy.rootPath);
-						s_paths_grabbed.set([g.hierarchy.rootPath]);
+						s_path_focus.set(h.rootPath);
+						s_paths_grabbed.set([h.rootPath]);
 						break;
                 }
             }
@@ -70,7 +71,6 @@ class PersistLocal {
 	}
 
 	key_paths(key: string): Array<Path> {
-		const h = g.hierarchy;
 		const pathStrings = this.key_read(key);
 		const length = pathStrings.length;
 		if (this.ignorePaths || !pathStrings || length == 0) {
@@ -156,7 +156,6 @@ class PersistLocal {
 	}
 
 	focus_restore() {
-		const h = g.hierarchy;
 		h.rootPaths_setup();
 		let pathToFocus = h.rootPath;
 		if (!this.ignorePaths) {
