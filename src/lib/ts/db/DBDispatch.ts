@@ -33,19 +33,18 @@ export default class DBDispatch {
 				done = true;
 				setTimeout(() => {
 					(async () => {
-						this.db_changeTo_type(type);
+						this.db_setupData_forType(type);
 					})();
 				}, 1);
 			}
 		});
-		s_db_type.set(DBType.firebase);
 	}
 
-	async db_changeTo_type(type: string) {
+	async db_setupData_forType(type: string) {
 		this.db_changeTo_for(type);
 		this.queryStrings_apply();
 		await this.hierarchy_fetch_andBuild(type);
-		h.rootPaths_setup();
+		h.rootPath_setup();
 		persistLocal.paths_restore(true);
 		s_path_editingTools.set(null);
 		s_title_editing.set(null);
@@ -54,7 +53,9 @@ export default class DBDispatch {
 	}
 
 	async hierarchy_fetch_andBuild(type: string) {
-		if (!this.db.hasData) {
+		if (this.db.hasData) {
+			h = this.db.hierarchy;
+		} else {
 			const isRemote = type != DBType.local;
 			const startTime = new Date().getTime();
 			s_db_loadTime.set(null);
@@ -62,7 +63,8 @@ export default class DBDispatch {
 				s_things_arrived.set(false);
 				s_isBusy.set(true);
 			}
-			h = new Hierarchy(this.db);		// create Hierarchy to fetch into
+			this.db.hierarchy = new Hierarchy(this.db);		// create Hierarchy to fetch into
+			h = this.db.hierarchy;
 			await this.db.fetch_all();
 			await h.add_missing_removeNulls(null, this.db.baseID);
 			if (isRemote) {

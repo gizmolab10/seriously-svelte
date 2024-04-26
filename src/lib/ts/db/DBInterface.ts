@@ -1,4 +1,4 @@
-import { Thing, Relationship } from '../common/GlobalImports';
+import { Thing, Hierarchy, Relationship } from '../common/GlobalImports';
 
 export enum DBType {
 	postgres = 'postgres',
@@ -19,6 +19,7 @@ export default interface DBInterface {
 	baseID: string;
 	dbType: string;
 	hasData: boolean;
+	hierarchy: Hierarchy;
 	loadTime: string | null;
 	queryStrings_apply(): void;
 	fetch_all(): Promise<void>;

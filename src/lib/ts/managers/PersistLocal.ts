@@ -157,7 +157,7 @@ class PersistLocal {
 	}
 
 	focus_restore() {
-		h.rootPaths_setup();
+		h.rootPath_setup();
 		let pathToFocus = h.rootPath;
 		if (!this.ignorePaths) {
 			const focusPathString = this.dbKey_read(IDPersistant.focus);

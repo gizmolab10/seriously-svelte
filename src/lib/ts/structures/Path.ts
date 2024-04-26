@@ -219,10 +219,6 @@ export default class Path {
 			const paths = thing.isRoot ? [h.rootPath] : thing.parentPaths_for(idPredicate);
 			parentPaths = u.concatenateArrays(parentPaths, paths);
 		}
-		if (idPredicate == Predicate.idIsRelated) {
-			const childPaths = this.childPaths_for(idPredicate);
-			parentPaths = u.concatenateArrays(parentPaths, childPaths);
-		}
 		const purgedPaths = u.strip_falsies(parentPaths);
 		return u.strip_thingDuplicates(purgedPaths);
 	}
@@ -234,12 +230,7 @@ export default class Path {
 		if (childRelationships.length > 0) {
 			for (const childRelationship of childRelationships) {		// loop through all child relationships
 				if (childRelationship.idPredicate == idPredicate) {
-					let path: Path | null;
-					if (isContains) {
-						path = this.uniquelyAppendID(childRelationship.id); 	// add each childRelationship's id
-					} else {
-						path = h.path_remember_createUnique(childRelationship.id, idPredicate);
-					}
+					let path = this.uniquelyAppendID(childRelationship.id); 	// add each childRelationship's id
 					if (!!path) {
 						paths.push(path);								// and push onto the paths
 					}

@@ -2,6 +2,7 @@ import { k, u, get, User, Path, Thing, Grabs, debug, Access, IDTool, IDTrait, si
 import { Wrapper, Predicate, Relationship, Alteration, AlterationState, CreationOptions } from '../common/GlobalImports';
 import { s_paths_grabbed, s_things_arrived, s_path_editingTools } from '../state/State';
 import { s_isBusy, s_altering, s_path_focus, s_title_editing } from '../state/State';
+import Identifiable from "../structures/Identifiable";
 import DBInterface from '../db/DBInterface';
 
 type Relationships_ByHID = { [hid: number]: Array<Relationship> }
@@ -41,7 +42,7 @@ export class Hierarchy {
 		this.db = db;
 	}
 
-	rootPaths_setup() {
+	rootPath_setup() {
 		const path = this.path_remember_createUnique();
 		if (!!path) {
 			this.rootPath = path;
@@ -490,12 +491,20 @@ export class Hierarchy {
 		return null;
 	}
 
+	relationshipReversed_remember_runtimeCreate_maybe(baseID: string, idPredicate: string, idParent: string, idChild: string) {
+		const predicate = this.predicate_forID(idPredicate);
+		if (predicate && predicate.directions == 2) {		// create reverse relationship because related are two directional, but not stored remotely
+			const relationship = new Relationship(baseID, Identifiable.newID, idPredicate, idChild, idParent);
+			this.relationship_remember(relationship);
+		}
+	} 
+
 	relationship_remember_runtimeCreateUnique(baseID: string, idRelationship: string, idPredicate: string, idParent: string,
 		idChild: string, order: number, creationOptions: CreationOptions = CreationOptions.none) {
 		let relationship = this.relationship_forPredicate_parent_child(idPredicate, idParent, idChild);
-		if (relationship) {
-			relationship.order_setTo(order);						// AND thing are updated
-		} else {
+		relationship?.order_setTo(order);						// AND thing are updated
+		if (!relationship) {
+			this.relationshipReversed_remember_runtimeCreate_maybe(baseID, idPredicate, idParent, idChild);
 			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, creationOptions != CreationOptions.none);
 			this.relationship_remember(relationship);
 		}
@@ -508,14 +517,10 @@ export class Hierarchy {
 		if (relationship) {
 			relationship.order_setTo(order, true);						// AND thing are updated
 		} else {
-			const predicate = this.predicate_forID(idPredicate);
+			this.relationshipReversed_remember_runtimeCreate_maybe(baseID, idPredicate, idParent, idChild);
 			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, creationOptions != CreationOptions.none);
 			await this.db.relationship_remember_remoteCreate(relationship);
 			this.relationship_remember(relationship);
-			if (predicate && predicate.directions == 2) {
-				relationship = new Relationship(baseID, idRelationship, idPredicate, idChild, idParent, order);
-				this.relationship_remember(relationship);
-			}
 		}
 		return relationship;
 	}
