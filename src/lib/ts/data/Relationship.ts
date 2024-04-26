@@ -31,7 +31,7 @@ export default class Relationship extends Datum {
 
 	thing(child: boolean): Thing | null {
 		const id = child ? this.idChild : this.idParent;
-		return h?.thing_forHID(id.hash()) ?? null
+		return h.thing_forHID(id.hash()) ?? null
 	}
 
 	async order_setTo(newOrder: number, remoteWrite: boolean = false) {

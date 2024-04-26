@@ -7,6 +7,10 @@ import DBInterface from './DBInterface';
 import { DBType } from './DBInterface';
 import { dbLocal } from './DBLocal';
 
+// each db has its own hierarchy
+// when switching to another db
+// h is set to its hierarchy
+
 export let h: Hierarchy;
 
 export default class DBDispatch {

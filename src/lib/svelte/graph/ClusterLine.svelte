@@ -35,13 +35,13 @@
 		const titleDelta = new Point(titleWidth, k.dot_size / -2);
 		size = line_rotated.abs.asSize;
 		const rect = new Rect(Point.zero, size);
-		const center = rect.center;
-		const title_origin = center.offsetBy(titleDelta);
+		const titleCenter = rect.center;
+		const titleOrigin = titleCenter.offsetBy(titleDelta);
 		svgPath = svgPaths.line(line_rotated);
 		[left, top] = updateLine(line_rotated, inside_rotated);
 		[arrow_start, arrow_end] = rect.cornersForAngle(angle);
-		label_left = title_origin.x;
-		label_top = title_origin.y;
+		label_left = titleOrigin.x;
+		label_top = titleOrigin.y;
 	}
 
 	function updateLine(line_rotated: Point, inside_rotated: Point): [number, number] {

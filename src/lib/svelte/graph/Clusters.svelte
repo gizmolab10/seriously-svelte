@@ -30,12 +30,6 @@
 		titleCenter = center.offsetBy(new Point(offsetX, k.cluster_offsetY));
 	}
 
-	// <Circle
-	// 	center={center}
-	// 	color_background='transparent'
-	// 	radius={k.cluster_inside_radius}
-	// 	color={transparentize(path.thing.color, 0.75)}/>
-
 </script>
 
 {#if path}

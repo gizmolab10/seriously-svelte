@@ -24,7 +24,6 @@ export class Hierarchy {
 	private things: Array<Thing> = [];
 	relationships: Array<Relationship> = [];
 	predicates: Array<Predicate> = [];
-	relatedRootPath: Path;
 	isAssembled = false;
 	db: DBInterface;
 	rootsPath: Path;
@@ -47,7 +46,6 @@ export class Hierarchy {
 		if (!!path) {
 			this.rootPath = path;
 		}
-		this.relatedRootPath = new Path(k.empty, Predicate.idIsRelated);
 	}
 
 	static readonly $_EVENTS_$: unique symbol;
@@ -498,7 +496,6 @@ export class Hierarchy {
 		if (relationship) {
 			relationship.order_setTo(order);						// AND thing are updated
 		} else {
-			// const predicate = this.predicate_forID(idPredicate);
 			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, creationOptions != CreationOptions.none);
 			this.relationship_remember(relationship);
 		}
@@ -564,11 +561,7 @@ export class Hierarchy {
 		let path = this.path_byHash[pathHash];
 		if (!path) {
 			path = new Path(pathString, idPredicate);
-			if (this.things_forPath(path).includes(null)) {	// asure path is valid
-				return null;
-			} else {
-				this.path_byHash[pathHash] = path;
-			}
+			this.path_byHash[pathHash] = path;
 		}
 		return path;
 	}

@@ -33,6 +33,12 @@ export default class Path {
 		s_title_editing.subscribe(() => { this._thing?.updateColorAttributes(this); });
 		s_paths_grabbed.subscribe(() => { this._thing?.updateColorAttributes(this); });
 	}
+
+	static idPredicate_for(pathString: string): string {
+		const hid = pathString.split(k.pathSeparator)[0].hash();	// grab first relationship's hid
+		const relationship = h.relationship_forHID(hid);			// locate corresponding relationship
+		return relationship?.idPredicate ?? '';						// grab its predicate id
+	}
 	
 	static readonly $_PROPERTIES_$: unique symbol;
 	
@@ -42,20 +48,21 @@ export default class Path {
 	get isRoot(): boolean { return this.pathHash == 0; }
 	get parentPath(): Path | null { return this.stripBack(); }
 	get lastChild(): Thing { return this.children.slice(-1)[0]; }
+	get things(): Array<Thing> { return h.things_forPath(this); }
 	get order(): number { return this.relationship?.order ?? -1; }
-	get childPaths(): Array<Path> { return this.childPaths_for(); }
 	get isFocus(): boolean { return this.matchesStore(s_path_focus); }
 	get isExemplar(): boolean { return this.pathString == k.exemplar; }
 	get title(): string { return this.thing?.title ?? 'missing title'; }
 	get ids_hashed(): Array<number> { return this.ids.map(i => i.hash()); }
-	get things(): Array<Thing> { return h?.things_forPath(this); }
 	get relationship(): Relationship | null { return this.relationshipAt(); }
 	get idBridging(): string | null { return this.thing?.idBridging ?? null; }
 	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
 	get lineWrapper(): Wrapper | null { return this.wrappers[IDWrapper.line]; }
+	get children(): Array<Thing> { return h.things_forPaths(this.childPaths); }
 	get siblingPaths(): Array<Path> { return this.parentPath?.childPaths ?? []; }
 	get titleWrapper(): Wrapper | null { return this.wrappers[IDWrapper.title]; }
 	get toolsGrabbed(): boolean { return this.matchesStore(s_path_editingTools); }
+	get childPaths(): Array<Path> { return this.childPaths_for(this.idPredicate); }
 	get revealWrapper(): Wrapper | null { return this.wrappers[IDWrapper.reveal]; }
 	get widgetWrapper(): Wrapper | null { return this.wrappers[IDWrapper.widget]; }
 	get titleRect(): Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
@@ -64,7 +71,6 @@ export default class Path {
 	get description(): string { return `${this.idPredicate} ${this.titles.join(':')}`; }
 	get hasParentRelationships(): boolean { return this.parentRelationships.length > 0; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
-	get children(): Array<Thing> { return h?.things_forPaths(this.childPaths); }
 	get idPredicates(): Array<string> { return this.relationships.map(r => r.idPredicate); }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
 	get isEditing(): boolean { return get(s_title_editing)?.editing?.matchesPath(this) ?? false; }
@@ -78,7 +84,7 @@ export default class Path {
 	get showsReveal(): boolean { return !get(s_layout_asClusters) && (this.hasChildRelationships || (this.thing?.isBulkAlias ?? false)); }
 
 	get relationships(): Array<Relationship> {
-		const relationships = this.ids_hashed.map(h => h?.relationship_forHID(h)) ?? [];
+		const relationships = this.ids_hashed.map(hid => h.relationship_forHID(hid)) ?? [];
 		return u.strip_falsies(relationships);
 	}
 	
@@ -107,7 +113,7 @@ export default class Path {
 
 	get idThing(): string {
 		if (this.isRoot) {
-			return h?.idRoot ?? k.id_unknown;
+			return h.idRoot ?? k.id_unknown;
 		}
 		return this.relationship?.idChild ?? k.id_unknown;
 	}
@@ -161,7 +167,7 @@ export default class Path {
 	includesPredicateID(idPredicate: string): boolean { return this.thing?.hasParentsFor(idPredicate) ?? false; }
 	showsClusterFor(predicate: Predicate): boolean { return this.includesPredicateID(predicate.id) && this.hasThings(predicate); }
 	rect_ofWrapper(wrapper: Wrapper | null): Rect | null { return Rect.createFromDOMRect(wrapper?.component.getBoundingClientRect()); }
-	relationshipAt(back: number = 1): Relationship | null { return h?.relationship_forHID(this.idAt(back).hash()) ?? null; }
+	relationshipAt(back: number = 1): Relationship | null { return h.relationship_forHID(this.idAt(back).hash()) ?? null; }
 
 	isRelatedTo_orContains(path: Path): boolean {
 		// if path.thing's parents (of all predicate kinds) include this.thing
@@ -235,7 +241,6 @@ export default class Path {
 						path = h.path_remember_createUnique(childRelationship.id, idPredicate);
 					}
 					if (!!path) {
-						path.idPredicate = idPredicate;
 						paths.push(path);								// and push onto the paths
 					}
 				}
@@ -364,7 +369,7 @@ export default class Path {
 	appendChild(child: Thing | null): Path | null {
 		const idParent = this.thing?.idBridging;
 		if (child && idParent) {
-			const relationship = h?.relationship_forPredicate_parent_child(Predicate.idContains, idParent, child.id);
+			const relationship = h.relationship_forPredicate_parent_child(Predicate.idContains, idParent, child.id);
 			if (relationship) {
 				return this.uniquelyAppendID(relationship.id);
 			}

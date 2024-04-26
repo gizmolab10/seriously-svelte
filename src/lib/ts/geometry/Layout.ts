@@ -6,22 +6,22 @@ export default class Layout {
 	clusterLayouts: Array<ClusterLayout> = [];
 	childMapRects: Array<ChildMapRect> = [];
 
-	constructor(path: Path, origin: Point) {
-		let childPaths = path.childPaths;
+	constructor(focusPath: Path, origin: Point) {
+		let childPaths = focusPath.childPaths;
 		if (get(s_layout_asClusters)) {
-			this.layoutCluster(childPaths, path, Predicate.idContains, origin, true);
+			this.layoutCluster(childPaths, focusPath, Predicate.idContains, origin, true);
 			for (const predicate of h.predicates) {
 				const id = predicate.id;
-				const parentPaths = path.uniqueParentPaths_for(id);
-				this.layoutCluster(parentPaths, path, id, origin, false);
+				const parentPaths = focusPath.uniqueParentPaths_for(id);
+				this.layoutCluster(parentPaths, focusPath, id, origin, false);
 			}
 		} else {
 			let index = 0;
 			const length = childPaths.length;
-			let sum = -path.visibleProgeny_height() / 2; // start out negative and grow positive
+			let sum = -focusPath.visibleProgeny_height() / 2; // start out negative and grow positive
 			while (index < length) {
 				const childPath = childPaths[index];
-				sum += this.layoutChildren(sum, childPath, path, origin);
+				sum += this.layoutChildren(sum, childPath, focusPath, origin);
 				index += 1;
 			}
 		}
