@@ -8,12 +8,12 @@ type Relationships_ByHID = { [hid: number]: Array<Relationship> }
 
 export class Hierarchy {
 	private wrappers_byType_andHID: { [type: string]: { [hid: number]: Wrapper } } = {};
+	private path_byKind_andHash:{ [kind: string]: { [hash: number]: Path } } = {};
 	private relationship_byHID: { [hid: number]: Relationship } = {};
 	private predicate_byHID: { [hid: number]: Predicate } = {};
 	private access_byHID: { [hid: number]: Access } = {};
 	private thing_byHID: { [hid: number]: Thing } = {};
 	private user_byHID: { [hid: number]: User } = {};
-	private path_byHash: { [hash: number]: Path } = {};
 	private access_byKind: { [kind: string]: Access } = {};
 	private predicate_byKind: { [kind: string]: Predicate } = {};
 	private things_byTrait: { [trait: string]: Array<Thing> } = {};
@@ -558,10 +558,12 @@ export class Hierarchy {
 
 	path_remember_createUnique(pathString: string = k.empty, idPredicate: string = Predicate.idContains): Path | null {
 		const pathHash = pathString.hash();
-		let path = this.path_byHash[pathHash];
+		let dict = this.path_byKind_andHash[idPredicate] ?? {};
+		let path = dict[pathHash];
 		if (!path) {
 			path = new Path(pathString, idPredicate);
-			this.path_byHash[pathHash] = path;
+			dict[pathHash] = path;
+			this.path_byKind_andHash[idPredicate] = dict;
 		}
 		return path;
 	}
@@ -653,7 +655,9 @@ export class Hierarchy {
 		for (const childPath of childPaths) {
 			this.path_forget_remoteUpdate(childPath);
 		}
-		delete this.path_byHash[path.pathString.hash()];
+		let dict = this.path_byKind_andHash[path.idPredicate] ?? {};
+		delete dict[path.pathHash];
+		this.path_byKind_andHash[path.idPredicate] = dict;
 		if (!!thing) {
 			const array = this.relationships_byChildHID[thing.idHashed];
 			if (array) {

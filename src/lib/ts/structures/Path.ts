@@ -7,7 +7,7 @@ import { Writable } from 'svelte/store';
 
 export default class Path {
 	wrappers: { [type: string]: Wrapper } = {};
-	_thing: Thing | null = null;
+	private _thing: Thing | null = null;
 	idPredicate: string;
 	pathString: string;
 	pathHash: number;
