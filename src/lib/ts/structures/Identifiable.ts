@@ -1,5 +1,6 @@
 import { u } from '../common/Utilities';
 import { v4 as uuid } from 'uuid';
+import '../common/Extensions';
 
 export default class Identifiable {
 	idHashed: number;

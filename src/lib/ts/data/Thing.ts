@@ -1,5 +1,5 @@
-import { k, u, get, Path, Datum, debug, IDTrait, Predicate } from '../common/GlobalImports';
 import { DebugFlag, dbDispatch, Relationship, SeriouslyRange } from '../common/GlobalImports';
+import { k, u, get, Path, Datum, debug, IDTrait, Predicate } from '../common/GlobalImports';
 import { s_path_focus, s_paths_expanded } from '../state/State';
 import { h } from '../db/DBDispatch';
 import Airtable from 'airtable';

@@ -1,5 +1,5 @@
+import { get, dbDispatch, PredicateKind } from '../common/GlobalImports';
 import RemoteIdentifiable from "../structures/RemoteIdentifiable";
-import { get, PredicateKind } from '../common/GlobalImports';
 import { s_cluster_angle } from '../state/State';
 import { h } from '../../ts/db/DBDispatch';
 
@@ -8,7 +8,7 @@ export default class Predicate extends RemoteIdentifiable {
 	kind: string;
 
 	constructor(id: string, kind: string, isRemotelyStored: boolean = true, directions: number = 1) {
-		super(id, isRemotelyStored);
+		super(dbDispatch.db.dbType, id, isRemotelyStored);
 		this.directions = directions;
 		this.kind = kind;
 	}
