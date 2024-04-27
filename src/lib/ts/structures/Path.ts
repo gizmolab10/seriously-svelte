@@ -310,9 +310,11 @@ export default class Path {
 			const description = `${path.idPredicate} ${path.pathString}`;
 			if (path.containsMixedPredicates) {
 				alert(`predicates ${description}`);
+				return null;
 			}
 			if (path.containsReciprocals) {
 				alert(`reciprocal ${description}`);
+				return null;
 			}
 		}
 		return path;
