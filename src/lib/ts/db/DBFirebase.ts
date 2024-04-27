@@ -1,8 +1,8 @@
 import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { Predicate, dbDispatch, Relationship, persistLocal, CreationOptions } from '../common/GlobalImports';
+import { k, u, get, Thing, debug, signals, IDTrait, DebugFlag, Hierarchy } from '../common/GlobalImports';
 import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
-import { k, u, get, Thing, debug, signals, IDTrait, DebugFlag } from '../common/GlobalImports';
 import { DBType, DatumType } from '../db/DBInterface';
 import { initializeApp } from "firebase/app";
 import { s_build } from '../state/State';
@@ -26,6 +26,7 @@ export default class DBFirebase implements DBInterface {
 	hasData = false;
 	baseID = 'Public';
 	bulksName = 'Bulks';
+	hierarchy!: Hierarchy;
 	deferSnapshots = false;
 	dbType = DBType.firebase;
 	bulks: Array<Bulk> | null = null;

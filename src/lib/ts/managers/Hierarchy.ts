@@ -2,7 +2,6 @@ import { k, u, get, User, Path, Thing, Grabs, debug, Access, IDTool, IDTrait, si
 import { Wrapper, Predicate, Relationship, Alteration, AlterationState, CreationOptions } from '../common/GlobalImports';
 import { s_paths_grabbed, s_things_arrived, s_path_editingTools } from '../state/State';
 import { s_isBusy, s_altering, s_path_focus, s_title_editing } from '../state/State';
-import Identifiable from "../structures/Identifiable";
 import DBInterface from '../db/DBInterface';
 
 type Relationships_ByHID = { [hid: number]: Array<Relationship> }
@@ -26,10 +25,10 @@ export class Hierarchy {
 	relationships: Array<Relationship> = [];
 	predicates: Array<Predicate> = [];
 	isAssembled = false;
+	rootsPath!: Path;
+	rootPath!: Path;
 	db: DBInterface;
-	rootsPath: Path;
-	rootPath: Path;
-	root: Thing;
+	root!: Thing;
 
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): string | null { return this.root?.id ?? null; };
