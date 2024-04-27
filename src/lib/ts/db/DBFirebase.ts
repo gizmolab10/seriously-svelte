@@ -518,8 +518,6 @@ export default class DBFirebase implements DBInterface {
 
 }
 
-export const dbFirebase = new DBFirebase();
-
 class Bulk {
 	baseID: string = k.empty;
 	thingsCollection: CollectionReference | null = null;
@@ -616,3 +614,5 @@ class RemoteRelationship implements RemoteRelationship {
 	}
 
 }
+
+export const dbFirebase = new DBFirebase();

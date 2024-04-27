@@ -6,7 +6,7 @@ export default class Identifiable {
 	id: string;
 
 	constructor(id: string | null) {
-		this.id = id ?? Identifiable.newID;
+		this.id = id ?? Identifiable.newID();
 		this.idHashed = this.id.hash();
 	}
 
@@ -15,6 +15,6 @@ export default class Identifiable {
 		this.id = id;
 	}
 	
-	static get newID(): string { return 'NEW' + u.removeAll('-', uuid()).slice(10, 24); } // use last, most-unique bytes of uuid
+	static newID(prefix: string = 'NEW'): string { return prefix + u.removeAll('-', uuid()).slice(10, 24); } // use last, most-unique bytes of uuid
 	
 }

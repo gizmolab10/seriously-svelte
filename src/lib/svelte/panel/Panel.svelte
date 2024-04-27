@@ -4,8 +4,8 @@
 	import { g, k, u, get, Path, Rect, Size, Point, Thing, ZIndex, signals, onMount } from '../../ts/common/GlobalImports';
 	import { s_show_details, s_things_arrived, s_user_graphOffset, s_layout_asClusters } from '../../ts/state/State';
 	import CircularButton from '../buttons/CircularButton.svelte';
-	import CrumbButtons from '../buttons/CrumbButtons.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
+	import Breadcrumbs from '../panel/Breadcrumbs.svelte';
 	import { DBType } from '../../ts/db/DBInterface';
 	import Clusters from '../graph/Clusters.svelte';
 	import BuildNotes from './BuildNotes.svelte';
@@ -121,7 +121,7 @@
 			top: {k.height_banner - 2}px;'>
 		</div>
 		<div class='crumbs' style='z-index: {ZIndex.frontmost};'>
-			<CrumbButtons/>
+			<Breadcrumbs/>
 			<div class='horizontal-line'
 				style='
 					top: 68px;

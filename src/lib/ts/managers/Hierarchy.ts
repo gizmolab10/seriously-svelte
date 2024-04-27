@@ -494,7 +494,7 @@ export class Hierarchy {
 	relationshipReversed_remember_runtimeCreate_maybe(baseID: string, idPredicate: string, idParent: string, idChild: string) {
 		const predicate = this.predicate_forID(idPredicate);
 		if (predicate && predicate.directions == 2) {		// create reverse relationship because related are two directional, but not stored remotely
-			const relationship = new Relationship(baseID, Identifiable.newID, idPredicate, idChild, idParent);
+			const relationship = new Relationship(baseID, `R${idChild}${idParent}`, idPredicate, idChild, idParent);
 			this.relationship_remember(relationship);
 		}
 	} 

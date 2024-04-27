@@ -10,6 +10,7 @@ export default class Thing extends Datum {
 	hoverAttributes = k.empty;
 	borderAttribute = k.empty;
 	grabAttributes = k.empty;
+	path: Path | null = null;
 	needsBulkFetch = false;
 	isExemplar = false;
 	isEditing = false;
@@ -28,20 +29,20 @@ export default class Thing extends Datum {
 		this.trait = trait;
 	};
 	
-	get parentIDs():	Array<string> { return this.parents.map(t => t.id); }
-	get parentPaths():	  Array<Path> { return this.parentPaths_for(Predicate.idContains); }
-	get parents():		 Array<Thing> { return this.parentThings_forID(Predicate.idContains); }
-	get parents_ofAllKinds():	 Array<Thing> { return u.concatenateArrays(this.parents, this.parentThings_forID(Predicate.idIsRelated)); }
-	get fields():	Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
-	get idBridging():		   string { return this.isBulkAlias ? this.bulkRootID : this.id; }
-	get description():		   string { return this.id + ' \"' + this.title + '\"'; }
-	get titleWidth():		   number { return u.getWidthOf(this.title) + 6; }
-	get isRoot():			  boolean { return this.trait == IDTrait.root; }
-	get isBulkAlias():		  boolean { return this.trait == IDTrait.bulk; }
-	get hasMultipleParents(): boolean { return this.parentPaths.length > 1; }
-	get isAcrossBulk():		  boolean { return this.baseID != h.db.baseID; }
-	get hasParents():		  boolean { return this.hasParentsFor(Predicate.idContains); }
-	get isFocus():			  boolean { return (get(s_path_focus).thing?.id ?? k.empty) == this.id; }
+	get parentIDs():		 Array<string> { return this.parents.map(t => t.id); }
+	get parentPaths():		   Array<Path> { return this.parentPaths_for(Predicate.idContains); }
+	get parents():			  Array<Thing> { return this.parentThings_forID(Predicate.idContains); }
+	get parents_ofAllKinds(): Array<Thing> { return u.concatenateArrays(this.parents, this.parentThings_forID(Predicate.idIsRelated)); }
+	get fields():		 Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
+	get idBridging():				string { return this.isBulkAlias ? this.bulkRootID : this.id; }
+	get description():				string { return this.id + ' \"' + this.title + '\"'; }
+	get titleWidth():				number { return u.getWidthOf(this.title) + 6; }
+	get isRoot():				   boolean { return this.trait == IDTrait.root; }
+	get isBulkAlias():			   boolean { return this.trait == IDTrait.bulk; }
+	get hasMultipleParents():	   boolean { return this.parentPaths.length > 1; }
+	get isAcrossBulk():			   boolean { return this.baseID != h.db.baseID; }
+	get hasParents():			   boolean { return this.hasParentsFor(Predicate.idContains); }
+	get isFocus():				   boolean { return (get(s_path_focus).thing?.id ?? k.empty) == this.id; }
 
 	get thing_isBulk_expanded(): boolean {		// cross db paths needs special attention
 		if (this.isBulkAlias) {
@@ -116,27 +117,36 @@ export default class Thing extends Datum {
 		return parents;
 	}
 
-	parentPaths_for(idPredicate: string): Array<Path> {
+	parentPaths_for(idPredicate: string, visited: Array<string> = []): Array<Path> {
 		// all the paths that point to each parent of this thing
 		let paths: Array<Path> = [];
 		if (!this.isRoot) {
+			const isRelated = idPredicate == Predicate.idIsRelated;
+			if (isRelated) {
+				u.noop();
+			}
 			const relationships = this.relationships_for_to(idPredicate);
 			for (const relationship of relationships) {
-				const endID = relationship.id;		// EGADS, this is the wrong relationship; needs the next one
-				const parent = relationship.parentThing;
-				const parentPaths = parent?.parentPaths_for(Predicate.idContains) ?? [];
-				if (parentPaths.length == 0) {
-					addPath(h.rootPath);
+				if (isRelated) {
+					addPath(relationship.childThing?.path ?? null);
 				} else {
-					for (const parentPath of parentPaths) {
-						addPath(parentPath);
+					const parent = relationship.parentThing;
+					if (parent && !visited.includes(parent.id)) {
+						const endID = relationship.id;		// EGADS, this is the wrong relationship; needs the next one
+						const parentPaths = parent.parentPaths_for(idPredicate, u.concatenateArrays(visited, [parent.id])) ?? [];
+						if (parentPaths.length == 0) {
+							addPath(h.rootPath.uniquelyAppendID(endID));
+						} else {
+							for (const parentPath of parentPaths) {
+								addPath(parentPath.uniquelyAppendID(endID));
+							}
+						}
 					}
 				}
-				function addPath(path: Path) {
-					const fullPath = path.uniquelyAppendID(endID);
-					if (fullPath) {
-						paths.push(fullPath);
-					}
+			}
+			function addPath(path: Path | null) {
+				if (!!path) {
+					paths.push(path);
 				}
 			}
 		}

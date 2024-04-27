@@ -72,6 +72,7 @@ export default class Path {
 	get hasParentRelationships(): boolean { return this.parentRelationships.length > 0; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get idPredicates(): Array<string> { return this.relationships.map(r => r.idPredicate); }
+	get isInvalid(): boolean { return this.containsReciprocals || this.containsMixedPredicates; }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
 	get isEditing(): boolean { return get(s_title_editing)?.editing?.matchesPath(this) ?? false; }
 	get showsChildRelationships(): boolean { return this.isExpanded && this.hasChildRelationships; }
@@ -90,18 +91,14 @@ export default class Path {
 	
 	get thing(): Thing | null {
 		if (!this._thing) {
-			this._thing = this.thingAt() ?? null;	// always recompute, cache is for debugging
+			const thing = this.thingAt() ?? null;	// always recompute, cache is for debugging
+			this._thing = thing;
+			if (!!thing && !thing.path) {
+				thing.path = this;
+			}
+
 		}
 		return this._thing;
-	}
-
-	get isVisible(): boolean {
-		const focus = get(s_path_focus);
-		const asClusters = get(s_layout_asClusters);
-		const incorporates = this.incorporates(focus);
-		const expanded = this.isAllExpandedFrom(focus);
-		const isRelatedTo_orContains = this.isRelatedTo_orContains(focus);
-		return (incorporates && expanded) || (asClusters && isRelatedTo_orContains);
 	}
 
 	get ids(): Array<string> {
@@ -118,12 +115,52 @@ export default class Path {
 		return this.relationship?.idChild ?? k.id_unknown;
 	}
 
+	get isVisible(): boolean {
+		const focus = get(s_path_focus);
+		const asClusters = get(s_layout_asClusters);
+		const incorporates = this.incorporates(focus);
+		const expanded = this.isAllExpandedFrom(focus);
+		const isRelatedTo_orContains = this.isRelatedTo_orContains(focus);
+		return (incorporates && expanded) || (asClusters && isRelatedTo_orContains);
+	}
+
 	get hasGrandChildren(): boolean {
 		if (this.hasChildRelationships) {
 			for (const childPath of this.childPaths) {
 				if (childPath.hasChildRelationships) {
 					return true;
 				}
+			}
+		}
+		return false;
+	}
+
+	get containsReciprocals(): boolean {
+		let idChild: string | null =  null;
+		let idParent: string | null =  null;
+		for (const relationship of this.relationships) {
+			if (!!idParent && !!idChild) {
+				if (idParent == relationship.idChild && idChild == relationship.idParent) {
+					return true;
+				}
+			}
+			idChild = relationship.idChild;
+			idParent = relationship.idParent;
+		}
+		return false;
+	}
+
+	get containsMixedPredicates(): boolean {
+		let idPredicate: string | null = null;
+		for (const relationship of this.relationships) {
+			const relationshipIDPredicate = relationship.idPredicate;
+			if (!idPredicate) {
+				idPredicate = relationshipIDPredicate;
+			}
+			if (idPredicate &&
+				(idPredicate != this.idPredicate ||
+				![idPredicate, this.idPredicate].includes(relationshipIDPredicate))) {
+				return true;
 			}
 		}
 		return false;
@@ -230,7 +267,12 @@ export default class Path {
 		if (childRelationships.length > 0) {
 			for (const childRelationship of childRelationships) {		// loop through all child relationships
 				if (childRelationship.idPredicate == idPredicate) {
-					let path = this.uniquelyAppendID(childRelationship.id); 	// add each childRelationship's id
+					let path: Path | null;
+					if (isContains) {
+						path = this.uniquelyAppendID(childRelationship.id); 	// add each childRelationship's id
+					} else {
+						path = h.path_remember_createUnique(childRelationship.id, idPredicate);
+					}
 					if (!!path) {
 						paths.push(path);								// and push onto the paths
 					}
@@ -260,44 +302,20 @@ export default class Path {
 		return false;
 	}
 
-	things_ancestryWithin(thresholdWidth: number): [number, number, Array<Thing>] {
-		const things = this.things?.reverse() ?? [];
-		const array: Array<Thing> = [];
-		let distributedParentCount = 0;
-		let numberOfParents = 0;	// do not include fat_polygon separator in width of crumb of first thing
-		let totalWidth = 0;
-		for (const thing of things) {
-			if (!!thing) {
-				const crumbWidth = thing.crumbWidth(numberOfParents);
-				if ((totalWidth + crumbWidth) > thresholdWidth) {
-					break;
-				}
-				distributedParentCount = distributedParentCount * 10 + thing.parents.length;
-				totalWidth += crumbWidth;
-				array.push(thing);
-			}
-		}
-		return [distributedParentCount, totalWidth, array.reverse()];
-	}
-
-	things_childrenFor(idPredicate: string): Array<Thing> {
-		const relationships = this.thing?.relationships_for_to(idPredicate);
-		let children: Array<Thing> = [];
-		if (!this.isRoot && relationships) {
-			for (const relationship of relationships) {
-				const thing = relationship.parentThing;
-				if (!!thing) {
-					children.push(thing);
-				}
-			}
-		}
-		return children;
-	}
-
 	uniquelyAppendID(id: string): Path | null {
 		let ids = this.ids;
 		ids.push(id);
-		return h.path_remember_createUnique(ids.join(k.pathSeparator));
+		const path = h.path_remember_createUnique(ids.join(k.pathSeparator));
+		if (path) {
+			const description = `${path.idPredicate} ${path.pathString}`;
+			if (path.containsMixedPredicates) {
+				alert(`predicates ${description}`);
+			}
+			if (path.containsReciprocals) {
+				alert(`reciprocal ${description}`);
+			}
+		}
+		return path;
 	}
 
 	includedInPaths(paths: Array<Path>): boolean {
@@ -378,6 +396,40 @@ export default class Path {
 			}
 		}
 		return true;
+	}
+
+	things_childrenFor(idPredicate: string): Array<Thing> {
+		const relationships = this.thing?.relationships_for_to(idPredicate);
+		let children: Array<Thing> = [];
+		if (!this.isRoot && relationships) {
+			for (const relationship of relationships) {
+				const thing = relationship.parentThing;
+				if (!!thing) {
+					children.push(thing);
+				}
+			}
+		}
+		return children;
+	}
+
+	things_ancestryWithin(thresholdWidth: number): [number, number, Array<Thing>] {
+		const things = this.things?.reverse() ?? [];
+		const array: Array<Thing> = [];
+		let distributedParentCount = 0;
+		let numberOfParents = 0;	// do not include fat_polygon separator in width of crumb of first thing
+		let totalWidth = 0;
+		for (const thing of things) {
+			if (!!thing) {
+				const crumbWidth = thing.crumbWidth(numberOfParents);
+				if ((totalWidth + crumbWidth) > thresholdWidth) {
+					break;
+				}
+				distributedParentCount = distributedParentCount * 10 + thing.parents.length;
+				totalWidth += crumbWidth;
+				array.push(thing);
+			}
+		}
+		return [distributedParentCount, totalWidth, array.reverse()];
 	}
 
 	incorporates(path: Path | null): boolean {
