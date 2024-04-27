@@ -310,10 +310,12 @@ export default class Path {
 			const description = `${path.idPredicate} ${path.pathString}`;
 			if (path.containsMixedPredicates) {
 				alert(`predicates ${description}`);
+				h.path_forget(path);
 				return null;
 			}
 			if (path.containsReciprocals) {
 				alert(`reciprocal ${description}`);
+				h.path_forget(path);
 				return null;
 			}
 		}
@@ -492,8 +494,6 @@ export default class Path {
 	toggleGrab() { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }
 
 	grabOnly() {
-		// debug.log_edit(`GRAB ${this.description}`);
-		// console.log(`grabOnly ${this.description}`);
 		s_paths_grabbed.set([this]);
 		this.toggleToolsGrab();
 	}

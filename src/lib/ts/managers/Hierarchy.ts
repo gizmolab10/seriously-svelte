@@ -654,15 +654,19 @@ export class Hierarchy {
 		}
 	}
 
+	path_forget(path: Path) {
+		let dict = this.path_byKind_andHash[path.idPredicate] ?? {};
+		delete dict[path.pathHash];
+		this.path_byKind_andHash[path.idPredicate] = dict;
+	}
+
 	async path_forget_remoteUpdate(path: Path) {
 		const thing = path.thing;
 		const childPaths = path.childPaths;
 		for (const childPath of childPaths) {
 			this.path_forget_remoteUpdate(childPath);
 		}
-		let dict = this.path_byKind_andHash[path.idPredicate] ?? {};
-		delete dict[path.pathHash];
-		this.path_byKind_andHash[path.idPredicate] = dict;
+		this.path_forget(path);
 		if (!!thing) {
 			const array = this.relationships_byChildHID[thing.idHashed];
 			if (array) {
@@ -676,19 +680,16 @@ export class Hierarchy {
 		}
 	}
 
-	async path_remember_remoteAddAsChild(parentPath: Path, childThing: Thing, idPredicate: string | null = null): Promise<any> {
-		const child = parentPath.thing;
-		if (child && !childThing.isBulkAlias) {
-			const id = idPredicate ?? Predicate.idContains;
-			const changingBulk = child.isBulkAlias || childThing.baseID != this.db.baseID;
-			const baseID = changingBulk ? childThing.baseID : child.baseID;
+	async path_remember_remoteAddAsChild(parentPath: Path, childThing: Thing, idPredicate: string = Predicate.idContains): Promise<any> {
+		const parent = parentPath.thing;
+		if (parent && !childThing.isBulkAlias) {
+			const changingBulk = parent.isBulkAlias || childThing.baseID != this.db.baseID;
+			const baseID = changingBulk ? childThing.baseID : parent.baseID;
 			if (changingBulk) {
 				console.log('changingBulk');
 			}
-			if (!childThing.isRemotelyStored) {	
-				await this.db.thing_remember_remoteCreate(childThing);			// for everything below, need to await childThing.id fetched from dbDispatch
-			}
-			const relationship = await this.relationship_remember_remoteCreateUnique(baseID, null, id, child.idBridging, childThing.id, 0, CreationOptions.getRemoteID);
+			await this.db.thing_remember_remoteCreate(childThing);					// for everything below, need to await childThing.id fetched from dbDispatch
+			const relationship = await this.relationship_remember_remoteCreateUnique(baseID, null, idPredicate, parent.idBridging, childThing.id, 0, CreationOptions.getRemoteID);
 			const childPath = parentPath.uniquelyAppendID(relationship.id);
 			await u.paths_orders_normalize_remoteMaybe(parentPath.childPaths);		// write new order values for relationships
 			return childPath;

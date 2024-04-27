@@ -1,10 +1,10 @@
-import { Thing, IDTrait, Relationship } from '../common/GlobalImports';
+import { k, Thing, IDTrait, Relationship } from '../common/GlobalImports';
 import DBInterface from './DBInterface';
 import { DBType } from './DBInterface';
 import { h } from '../db/DBDispatch';
 
 export default class DBLocal implements DBInterface {
-	baseID = 'handcrafted';
+	baseID = k.baseID_local;
 	dbType = DBType.local;
 	hasData = false;
 	loadTime = null;

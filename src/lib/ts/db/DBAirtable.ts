@@ -120,7 +120,7 @@ export default class DBAirtable implements DBInterface {
 	static readonly $_RELATIONSHIP_$: unique symbol;
 
 	async relationship_remember_remoteCreate(relationship: Relationship | null) {
-		if (relationship) {
+		if (relationship && !relationship.isRemotelyStored) {
 			try {
 				const fields = await this.relationships_table.create(relationship.fields);	// insert with temporary id
 				const id = fields['id'];																										// grab permanent id

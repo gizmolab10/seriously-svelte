@@ -1,16 +1,21 @@
+import { DBType } from '../db/DBInterface';
 import Identifiable from "./Identifiable";
 
 export default class RemoteIdentifiable extends Identifiable {
 	awaitingCreation: boolean;
 	isRemotelyStored: boolean;
+	hasRemoteStorage: boolean;
 	lastWriteDate: Date;
 	needsWrite = false;
+	dbType: string;
 
-	constructor(id: string | null, isRemotelyStored: boolean) {
+	constructor(dbType: string, id: string | null, isRemotelyStored: boolean) {
 		super(id);
+		this.hasRemoteStorage = dbType != DBType.local;
 		this.isRemotelyStored = isRemotelyStored;
 		this.lastWriteDate = new Date();
 		this.awaitingCreation = false;
+		this.dbType = dbType;
 	}
 
 	updateWriteDate() { this.lastWriteDate = new Date(); }

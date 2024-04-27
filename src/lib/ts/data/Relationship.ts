@@ -5,16 +5,14 @@ import Airtable from 'airtable';
 
 export default class Relationship extends Datum {
 	idPredicate: string;
-	dbType: string;
 	idParent: string;
-	order: number;
 	idChild: string;
+	order: number;
 
 	static get nullRelationship(): Relationship { return new Relationship(k.empty, null, k.empty, k.empty, k.empty, 0); }
 
 	constructor(baseID: string, id: string | null, idPredicate: string, idParent: string, idChild: string, order = 0, isRemotelyStored: boolean = false) {
-		super(baseID, id, isRemotelyStored);
-		this.dbType = dbDispatch.db.dbType;
+		super(dbDispatch.db.dbType, baseID, id, isRemotelyStored);
 		this.idPredicate = idPredicate;
 		this.idParent = idParent;
 		this.idChild = idChild;

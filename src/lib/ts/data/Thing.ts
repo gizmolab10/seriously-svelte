@@ -15,15 +15,13 @@ export default class Thing extends Datum {
 	isExemplar = false;
 	isEditing = false;
 	isGrabbed = false;
-	dbType: string;
 	title: string;
 	color: string;
 	trait: string;
 
 	constructor(baseID: string, id: string | null, title = k.title_default, color = k.color_default, trait = 's', isRemotelyStored: boolean) {
-		super(baseID, id, isRemotelyStored);
+		super(dbDispatch.db.dbType, baseID, id, isRemotelyStored);
 		this.selectionRange = new SeriouslyRange(0, title.length);
-		this.dbType = dbDispatch.db.dbType;
 		this.title = title;
 		this.color = color;
 		this.trait = trait;
