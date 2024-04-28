@@ -10,24 +10,24 @@ export class Hierarchy {
 	private wrappers_byType_andHID: { [type: string]: { [hid: number]: Wrapper } } = {};
 	private path_byKind_andHash:{ [kind: string]: { [hash: number]: Path } } = {};
 	private relationship_byHID: { [hid: number]: Relationship } = {};
+	private things_byTrait: { [trait: string]: Array<Thing> } = {};
+	private relationships_byPredicateHID: Relationships_ByHID = {};
+	private predicate_byKind: { [kind: string]: Predicate } = {};
+	private relationships_byParentHID: Relationships_ByHID = {};
+	private relationships_byChildHID: Relationships_ByHID = {};
 	private predicate_byHID: { [hid: number]: Predicate } = {};
+	private access_byKind: { [kind: string]: Access } = {};
 	private access_byHID: { [hid: number]: Access } = {};
 	private thing_byHID: { [hid: number]: Thing } = {};
 	private user_byHID: { [hid: number]: User } = {};
-	private access_byKind: { [kind: string]: Access } = {};
-	private predicate_byKind: { [kind: string]: Predicate } = {};
-	private things_byTrait: { [trait: string]: Array<Thing> } = {};
-	private relationships_byPredicateHID: Relationships_ByHID = {};
-	private relationships_byParentHID: Relationships_ByHID = {};
-	private relationships_byChildHID: Relationships_ByHID = {};
-	private _grabs: Grabs | null = null;
+	private relationships: Array<Relationship> = [];
+	private predicates: Array<Predicate> = [];
 	private things: Array<Thing> = [];
-	relationships: Array<Relationship> = [];
-	predicates: Array<Predicate> = [];
 	isAssembled = false;
 	rootsPath!: Path;
 	rootPath!: Path;
 	db: DBInterface;
+	grabs: Grabs;
 	root!: Thing;
 
 	get hasNothing(): boolean { return !this.root; }
@@ -38,6 +38,7 @@ export class Hierarchy {
 	static readonly $_INIT_$: unique symbol;
 
 	constructor(db: DBInterface) {
+		this.grabs = new Grabs();
 		this.db = db;
 	}
 
@@ -116,13 +117,6 @@ export class Hierarchy {
 	}
 
 	static readonly $_GRABS_$: unique symbol;
-
-	get grabs(): Grabs { 
-		if (this._grabs == null) {
-			this._grabs = new Grabs(this);
-		}
-		return this._grabs!;
-	}
 
 	async latestPathGrabbed_rebuild_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const path = this.grabs.latestPathGrabbed(up);

@@ -504,9 +504,6 @@ export default class Path {
 		if (changed) {
 			s_path_focus.set(this);
 			this.expand();
-			if (get(s_layout_asClusters)) {
-				this.grabOnly();
-			}
 		}
 		return changed;
 	}

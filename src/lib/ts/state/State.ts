@@ -1,7 +1,6 @@
 import { Rect, Path, Point, TitleState, AlterationState } from '../common/GlobalImports';
 import { signals } from '../common/Signals';
 import { writable } from 'svelte/store';
-let interval : NodeJS.Timeout | null = null;
 
 export const s_altering			 = writable<AlterationState | null>();
 export const s_title_editing	 = writable<TitleState | null>();
@@ -23,6 +22,8 @@ export const s_build			 = writable<number>();
 export const s_user_graphOffset	 = writable<Point>();
 export const s_graphRect		 = writable<Rect>();
 export const s_path_focus		 = writable<Path>();
+
+let interval: NodeJS.Timeout | null = null;
 
 s_altering.subscribe((state: AlterationState | null) => {
 	if (interval) {

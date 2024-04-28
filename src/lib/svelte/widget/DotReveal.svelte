@@ -2,6 +2,7 @@
 	import { k, u, get, Size, Thing, Point, debug, ZIndex, svgPaths, signals } from "../../ts/common/GlobalImports";
 	import { onMount, Wrapper, Direction, onDestroy, dbDispatch, IDWrapper } from "../../ts/common/GlobalImports";
 	import { s_paths_expanded, s_altering, s_paths_grabbed, s_path_editingTools } from '../../ts/state/State';
+	import { h } from '../../ts/db/DBDispatch';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	export let center;
     export let path;

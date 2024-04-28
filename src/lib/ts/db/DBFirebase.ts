@@ -25,17 +25,17 @@ export default class DBFirebase implements DBInterface {
 	loadTime = null;
 	hasData = false;
 	baseID = 'Public';
+	addedThing!: Thing;
 	bulksName = 'Bulks';
+	bulks!: Array<Bulk>;
 	hierarchy!: Hierarchy;
 	deferSnapshots = false;
 	dbType = DBType.firebase;
-	bulks: Array<Bulk> | null = null;
+	addedRelationship!: Relationship;
 	app = initializeApp(this.firebaseConfig);
-	predicatesCollection: CollectionReference | null = null;
-	deferredSnapshots: Array<SnapshotDeferal> = [];
-	addedRelationship: Relationship | null = null
 	firestore = getFirestore(this.app);
-	addedThing: Thing | null = null
+	predicatesCollection!: CollectionReference;
+	deferredSnapshots: Array<SnapshotDeferal> = [];
 
 	setHasData(flag: boolean) { this.hasData = flag; }
 	reportError(error: any) { console.log(error); }

@@ -1,11 +1,11 @@
-import { get, Path, Thing, Hierarchy } from "../common/GlobalImports";
+import { get, Path, Thing } from "../common/GlobalImports";
 import { s_paths_grabbed } from '../state/State';
 import { h } from '../db/DBDispatch';
 
 export default class Grabs {
 	grabbed: Array<Path> | null = null;
 
-	constructor(hierarchy: Hierarchy) {
+	constructor() {
 		s_paths_grabbed.subscribe((paths: Array<Path>) => { // executes whenever s_paths_grabbed changes
 			if (!!paths && paths.length > 0 && h.db && h.db.hasData) {
 				this.grabbed = paths;

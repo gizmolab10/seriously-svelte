@@ -10,7 +10,6 @@ export default class Thing extends Datum {
 	hoverAttributes = k.empty;
 	borderAttribute = k.empty;
 	grabAttributes = k.empty;
-	path: Path | null = null;
 	needsBulkFetch = false;
 	isExemplar = false;
 	isEditing = false;
@@ -18,6 +17,7 @@ export default class Thing extends Datum {
 	title: string;
 	color: string;
 	trait: string;
+	path!: Path;
 
 	constructor(baseID: string, id: string | null, title = k.title_default, color = k.color_default, trait = 's', isRemotelyStored: boolean) {
 		super(dbDispatch.db.dbType, baseID, id, isRemotelyStored);
