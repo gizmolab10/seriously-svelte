@@ -3,7 +3,7 @@ export default class Constants {
 	width_max = 200;
 	row_height = 20;
 	line_stretch = 25;
-	necklace_gap = 120;
+	necklace_gap = 130;
 	height_banner = 35;
 	width_details = 80;
 	halfIncrement = 0.5;
