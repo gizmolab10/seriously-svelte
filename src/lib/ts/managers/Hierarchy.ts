@@ -21,8 +21,8 @@ export class Hierarchy {
 	private thing_byHID: { [hid: number]: Thing } = {};
 	private user_byHID: { [hid: number]: User } = {};
 	private relationships: Array<Relationship> = [];
-	private predicates: Array<Predicate> = [];
 	private things: Array<Thing> = [];
+	predicates: Array<Predicate> = [];
 	isAssembled = false;
 	rootsPath!: Path;
 	rootPath!: Path;
@@ -146,12 +146,17 @@ export class Hierarchy {
 	static readonly $_THINGS_$: unique symbol;
 
 	things_forPath(path: Path): Array<Thing> {
+		const isContains = path.idPredicate == Predicate.idContains;
 		const things: Array<Thing | null> = [];
-		for (const hid of path.ids_hashed) {
+		const hids = path.ids_hashed;
+		if (isContains && hids.length == 0) {
+			return [this.root];
+		}
+		for (const hid of hids) {
 			const relationship = this.relationship_forHID(hid);
 			if (relationship) {
 				if (things.length == 0) {
-					if (path.idPredicate == Predicate.idContains) {
+					if (isContains) {
 						things.push(this.root);					// contains paths start with root
 					} else {
 						things.push(relationship.parentThing);

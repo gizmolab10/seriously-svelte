@@ -85,6 +85,14 @@ class Utilities {
 		}
 	}
 
+	hasPositiveX(angle: number): boolean {
+		switch(this.quadrant_of(angle)) {
+			case Quadrant.upperRight: return true;
+			case Quadrant.lowerRight: return true;
+			default: return false;
+		}
+	}
+
 	quadrant_of(angle: number): Quadrant {
 		const normalized = this.normalized_angle(angle);
 		let quadrant = Quadrant.upperRight;

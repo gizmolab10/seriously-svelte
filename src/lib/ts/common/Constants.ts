@@ -2,14 +2,15 @@ export default class Constants {
 	dot_size = 13;
 	width_max = 200;
 	row_height = 20;
+	necklace_gap = 10;
 	line_stretch = 25;
-	necklace_gap = 130;
 	height_banner = 35;
 	width_details = 80;
 	halfIncrement = 0.5;
 	thing_fontSize = 14;
 	height_titleAtTop = 50;
 	threshold_longClick = 500;
+	cluster_line_length = 130;
 	cluster_inside_radius = 35;
 	editingTools_diameter = 64;
 	threshold_doubleClick = 100;
@@ -35,6 +36,7 @@ export default class Constants {
 	allow_TitleEditing = true;
 	allow_HorizontalScrolling = true;
 	queryString: URLSearchParams;
+	necklace_radius: number;
 	cluster_offsetY: number;
 
 	queryStrings_apply() {
@@ -54,6 +56,7 @@ export default class Constants {
 	constructor() {
 		this.cluster_offsetY = 4 - this.dot_size;
 		this.queryString = new URLSearchParams(window.location.search);
+		this.necklace_radius = this.cluster_inside_radius + this.cluster_line_length;
 	}
 
 }

@@ -42,14 +42,20 @@ export default class Layout {
 		const count = paths.length;
 		if (count > 0) {
 			let index = 0;
-			const radius = k.necklace_gap + k.cluster_inside_radius;
+			const radius = k.necklace_radius;
+			const radial = new Point(radius + k.necklace_gap, 0);
 			const clusterLayout = new ClusterLayout(idPredicate, count, pointsTo);
 			while (index < count) {
 				const path = paths[index];
 				const childAngle = this.childAngle_for(index, count, clusterLayout, radius);
-				const childOrigin = origin.offsetBy(new Point(radius, 0).rotate_by(childAngle));
+				const childOrigin = origin.offsetBy(radial.rotate_by(childAngle));
 				const map = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, path, clusterPath, childAngle);
 				this.childMapRects.push(map);
+				if (index == 0) {
+					clusterLayout.startAngle = childAngle;
+				} else if (index == count - 1) {
+					clusterLayout.endAngle = childAngle;
+				}
 				index += 1;
 			}
 			this.clusterLayouts.push(clusterLayout);

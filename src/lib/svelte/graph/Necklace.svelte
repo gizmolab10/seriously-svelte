@@ -1,30 +1,24 @@
 <script lang='ts'>
-	import { k, Path, Point, ZIndex, onMount, signals, Layout, transparentize } from '../../ts/common/GlobalImports';
+	import { k, Point, ZIndex, signals, onMount, Layout, ClusterLayout } from '../../ts/common/GlobalImports';
 	import ClusterLine from './ClusterLine.svelte';
+	import ClusterArc from './ClusterArc.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
 	export let center = Point.zero;
     export let path;
-	let childOffset = new Point(k.dot_size / -3, k.cluster_offsetY);;
-	let color = path.thing?.color ?? k.color_default;
+	const childOffset = new Point(k.dot_size / -3, k.cluster_offsetY);;
+	const color = path.thing?.color ?? k.color_default;
 	let clusterLayouts: Array<ClusterLayout> = [];
 	let childMapRects: Array<ChildMapRect> = [];
 	let rebuilds = 0;
 	
 	onMount( () => {
 		const layout = new Layout(path, center);
-		childMapRects = layout.childMapRects;
 		clusterLayouts = layout.clusterLayouts;
+		childMapRects = layout.childMapRects;
 		const handler = signals.handle_anySignal((signal_path) => { rebuilds += 1; });
 		return () => { handler.disconnect() };
 	});
-	
-	// <Circle
-	// 	center={center}
-	// 	zindex=ZIndex.lines
-	// 	color_background='transparent'
-	// 	radius={k.necklace_gap}
-	// 	color={transparentize(color, 0.8)}/>
 
 	// needs:
 	//  hover
@@ -39,6 +33,9 @@
 	{#if clusterLayouts}
 		{#each clusterLayouts as clusterLayout}
 			<ClusterLine layout={clusterLayout} center={center} color={color}/>
+			{#if clusterLayout.count > 1}
+				<ClusterArc layout={clusterLayout} center={center} color={color}/>
+			{/if}
 		{/each}
 	{/if}
 {/key}

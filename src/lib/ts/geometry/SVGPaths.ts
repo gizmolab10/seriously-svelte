@@ -42,6 +42,16 @@ export default class SVGPaths {
         return path;
     }
 
+	arc(center: Point, radius: number, startAngle: number, endAngle: number,  sweepFlag: number): string {
+		const radial = new Point(radius, 0);
+		const end = center.offsetBy(radial.rotate_by(endAngle));
+		const start = center.offsetBy(radial.rotate_by(startAngle));
+		const largeArcFlag = (u.normalized_angle(startAngle - endAngle) > Math.PI) ? 1 : 0;
+		const path = `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${end.x} ${end.y}`;
+		console.log(`${center.verbose} ${u.degrees_of(startAngle)} ${u.degrees_of(endAngle)}`);
+	    return path;
+	}
+
 	line(vector: Point): string {
 		const x = vector.x;
 		const y = vector.y;
@@ -93,6 +103,7 @@ export default class SVGPaths {
 		M ${x3},${y} A ${tiny},${tiny} 0 1,1 ${x4},${y} A ${tiny},${tiny} 0 1,1 ${x3},${y}
 		M ${x5},${y} A ${tiny},${tiny} 0 1,1 ${x6},${y} A ${tiny},${tiny} 0 1,1 ${x5},${y}`;
 	}
+
 
 	tinyDots_circular(size: number, count: number): string {
 		if (count == 0) {

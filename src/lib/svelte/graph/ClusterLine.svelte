@@ -28,7 +28,7 @@
 		}
 		angle = layout?.angle;
 		const inside_radius = k.cluster_inside_radius + (showArrowHeads ? 8 : 0);
-		const line_length = k.necklace_gap - k.dot_size * (showArrowHeads ? 8 : 0.4);
+		const line_length = k.cluster_line_length - k.dot_size * (showArrowHeads ? 8 : 0);
 		const line_rotated = new Point(line_length, 0).rotate_by(angle);
 		const inside_rotated = new Point(inside_radius, 0).rotate_by(angle);
 		const titleWidth = u.getWidthOf(layout?.title) / -3;
