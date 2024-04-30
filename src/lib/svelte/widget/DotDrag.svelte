@@ -108,16 +108,17 @@
 		}
 	}
 
-	function updatePathExtra() {
+	function updateExtraPaths() {
+		relatedPath = tinyDotsPath = null;
 		if (!!thing) {
 			const count = thing.parents.length;		
 			if (count > 1) {
 				tinyDotsPath = svgPaths.tinyDots_linear(6, 0.5, false, count, size / 2);
+			}
+			if (thing.hasRelated) {
 				relatedPath = svgPaths.circle(size, 3, new Point(-4.5, 0));
-				return;
 			}
 		}
-		tinyDotsPath = null;
 	}
 
 	function updatePaths() {
@@ -126,7 +127,7 @@
 		} else {
 			scalablePath = svgPaths.oval(size, false);
 		}
-		updatePathExtra();
+		updateExtraPaths();
 	}
 </script>
 
@@ -175,7 +176,7 @@
 			width={size}
 			height={size}
 			fill={relatedColor}
-			stroke={relatedColor}
+			stroke={strokeColor}
 			svgPath={relatedPath}
 		/>
 	{/if}
