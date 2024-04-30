@@ -6,14 +6,16 @@
 	import Box from '../kit/Box.svelte';
 	export let center = new Point(0, 0);
     export let path;
+	let tinyDotsColor = k.color_background;
+	let relatedColor = k.color_background;
 	let strokeColor = k.color_background;
-	let extraColor = k.color_background;
 	let fillColor = k.color_background;
-	let path_scalable = k.empty;
+	let scalablePath = k.empty;
+	let tinyDotsPath = null;
+	let relatedPath = null;
 	let isAltering = false;
 	let isGrabbed = false;
 	let isHovering = true;
-	let path_extra = null;
 	let size = k.dot_size;
 	let clickCount = 0;
 	let button = null;
@@ -101,7 +103,7 @@
 		if (!!thing) {
 			thing.updateColorAttributes(path);
 			fillColor = debug.lines ? 'transparent' : path?.dotColor(isHovering != isAltering);
-			extraColor = path?.dotColor(!isHovering && !isAltering)
+			tinyDotsColor = relatedColor = path?.dotColor(!isHovering && !isAltering);
 			strokeColor = thing.color;
 		}
 	}
@@ -110,18 +112,19 @@
 		if (!!thing) {
 			const count = thing.parents.length;		
 			if (count > 1) {
-				path_extra = svgPaths.tinyDots_linear(6, 0.5, false, count, size / 2);
+				tinyDotsPath = svgPaths.tinyDots_linear(6, 0.5, false, count, size / 2);
+				relatedPath = svgPaths.circle(size, 3, new Point(-4.5, 0));
 				return;
 			}
 		}
-		path_extra = null;
+		tinyDotsPath = null;
 	}
 
 	function updatePaths() {
 		if ($s_layout_asClusters && !path?.isExemplar) {
-			path_scalable = svgPaths.circle(size, size - 1);
+			scalablePath = svgPaths.circle(size, size - 1);
 		} else {
-			path_scalable = svgPaths.oval(size, false);
+			scalablePath = svgPaths.oval(size, false);
 		}
 		updatePathExtra();
 	}
@@ -156,15 +159,24 @@
 		height={size}
 		fill={fillColor}
 		stroke={strokeColor}
-		svgPath={path_scalable}
+		svgPath={scalablePath}
 	/>
-	{#if path_extra}
+	{#if tinyDotsPath}
 		<SVGD3 name='svg-dot-inside'
 			width={size}
 			height={size}
-			fill={extraColor}
-			stroke={extraColor}
-			svgPath={path_extra}
+			fill={tinyDotsColor}
+			stroke={tinyDotsColor}
+			svgPath={tinyDotsPath}
+		/>
+	{/if}
+	{#if relatedPath}
+		<SVGD3 name='svg-dot-related'
+			width={size}
+			height={size}
+			fill={relatedColor}
+			stroke={relatedColor}
+			svgPath={relatedPath}
 		/>
 	{/if}
 </button>

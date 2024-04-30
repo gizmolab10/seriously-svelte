@@ -69,7 +69,7 @@
 
 	function updateScalablePaths() {
 		const thing = path.thing;
-		hasInsidePath = thing.hasRelated || path.toolsGrabbed || thing.isBulkAlias;
+		hasInsidePath = path.toolsGrabbed || thing.isBulkAlias;
 		insideOffset = hasInsidePath ? 0 : -1;
 		if (!path.showsReveal || path.toolsGrabbed) {
 			svgPath = svgPaths.circle(size, size - 1);
@@ -83,7 +83,6 @@
 		} else if (hasInsidePath) {
 			insidePath = svgPaths.circle(size, 3);
 		}
-		console.log(insidePath);
 	}
 
 	function handle_singleClick(event) {

@@ -79,8 +79,8 @@ export default class Path {
 	get titles(): Array<string> { return this.things?.map(t => ` \"${t ? t.title : 'null'}\"`) ?? []; }
 	get isStoppingEdit(): boolean { return get(s_title_editing)?.stopping?.matchesPath(this) ?? false; }
 	get hasRelationships(): boolean { return this.hasParentRelationships || this.hasChildRelationships; }
-	get childRelationships(): Array<Relationship> { return this.relationships_for_to(this.idPredicate, false); }
-	get parentRelationships(): Array<Relationship> { return this.relationships_for_to(this.idPredicate, true); }
+	get childRelationships(): Array<Relationship> { return this.relationships_for_children(this.idPredicate, false); }
+	get parentRelationships(): Array<Relationship> { return this.relationships_for_children(this.idPredicate, true); }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	get showsReveal(): boolean { return !get(s_layout_asClusters) && (this.hasChildRelationships || (this.thing?.isBulkAlias ?? false)); }
 	
@@ -216,10 +216,10 @@ export default class Path {
 		return false;
 	}
 	
-	relationships_for_to(idPredicate: string, parent: boolean) {
+	relationships_for_children(idPredicate: string, child: boolean) {
 		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
 		if (id && this.pathString != k.exemplar && ![k.empty, 'k.id_unknown'].includes(id)) {
-			return h.relationships_forPredicateThingIsChild(idPredicate, id, parent);
+			return h.relationships_forPredicateThingIsChild(idPredicate, id, child);
 		}
 		return [];
 	}
@@ -263,7 +263,7 @@ export default class Path {
 	childPaths_for(idPredicate: string = Predicate.idContains): Array<Path> {
 		let paths: Array<Path> = [];
 		const isContains = idPredicate == Predicate.idContains;
-		const childRelationships = this.relationships_for_to(idPredicate, false);
+		const childRelationships = this.relationships_for_children(idPredicate, false);
 		if (childRelationships.length > 0) {
 			for (const childRelationship of childRelationships) {		// loop through all child relationships
 				if (childRelationship.idPredicate == idPredicate) {
@@ -403,7 +403,7 @@ export default class Path {
 	}
 
 	things_childrenFor(idPredicate: string): Array<Thing> {
-		const relationships = this.thing?.relationships_for_to(idPredicate);
+		const relationships = this.thing?.relationships_for_children(idPredicate);
 		let children: Array<Thing> = [];
 		if (!this.isRoot && relationships) {
 			for (const relationship of relationships) {
