@@ -37,6 +37,7 @@ export default class Thing extends Datum {
 	get titleWidth():				number { return u.getWidthOf(this.title) + 6; }
 	get isRoot():				   boolean { return this.trait == IDTrait.root; }
 	get isBulkAlias():			   boolean { return this.trait == IDTrait.bulk; }
+	get hasRelated():			   boolean { return this.parentPaths.length > 1; }
 	get hasMultipleParents():	   boolean { return this.parentPaths.length > 1; }
 	get isAcrossBulk():			   boolean { return this.baseID != h.db.baseID; }
 	get hasParents():			   boolean { return this.hasParentsFor(Predicate.idContains); }
@@ -66,10 +67,10 @@ export default class Thing extends Datum {
 	}
 
 	relationships_grandParentsFor(idPredicate: string): Array<Relationship> {
-		const relationships = this.relationships_for_to(idPredicate);
+		const relationships = this.relationships_for_to(idPredicate, true);
 		let grandParents: Array<Relationship> = [];
 		for (const relationship of relationships) {
-			const more = relationship.parentThing?.relationships_for_to(idPredicate);
+			const more = relationship.parentThing?.relationships_for_to(idPredicate, true);
 			if (more) {
 				grandParents = u.concatenateArrays(grandParents, more);
 			}
@@ -77,8 +78,16 @@ export default class Thing extends Datum {
 		return grandParents;
 	}
 
-	relationships_for_to(idPredicate: string): Array<Relationship> {
-		return h.relationships_forPredicateThingIsChild(idPredicate, this.id, true);
+	allRelationships_for(idPredicate: string): Array<Relationship> {
+		const froms = this.relationships_for_to(idPredicate, false);
+		const tos = this.relationships_for_to(idPredicate, true);
+		const all = u.concatenateArrays(froms, tos);
+		const purged = u.strip_falsies(all);
+		return u.strip_identifiableDuplicates(purged);
+	}
+
+	relationships_for_to(idPredicate: string, to: boolean): Array<Relationship> {
+		return h.relationships_forPredicateThingIsChild(idPredicate, this.id, to);
 	}
 
 	updateColorAttributes(path: Path) {
@@ -104,7 +113,7 @@ export default class Thing extends Datum {
 	parentThings_forID(idPredicate: string): Array<Thing> {
 		let parents: Array<Thing> = [];
 		if (!this.isRoot) {
-			const relationships = this.relationships_for_to(idPredicate);
+			const relationships = this.relationships_for_to(idPredicate, true);
 			for (const relationship of relationships) {
 				const thing = relationship.parentThing;
 				if (!!thing) {
@@ -123,7 +132,7 @@ export default class Thing extends Datum {
 			if (isRelated) {
 				u.noop();
 			}
-			const relationships = this.relationships_for_to(idPredicate);
+			const relationships = this.relationships_for_to(idPredicate, true);
 			for (const relationship of relationships) {
 				if (isRelated) {
 					addPath(relationship.childThing?.path ?? null);

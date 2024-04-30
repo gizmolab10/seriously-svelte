@@ -29,8 +29,7 @@ export default class SVGPaths {
     circle(width: number, diameter: number, offset: Point = new Point()): string {
         const radius = diameter / 2;
         const center = width / 2;
-        const path = `M${center + offset.x} ${center+ offset.y} m${-radius} 0a${radius} ${radius} 0 1,0 ${diameter} 0a${radius} ${radius} 0 1,0 ${-diameter} 0`;
-        return path;
+        return `M${center + offset.x} ${center+ offset.y} m${-radius} 0a${radius} ${radius} 0 1,0 ${diameter} 0a${radius} ${radius} 0 1,0 ${-diameter} 0`;
     }
 
     oval(diameter: number, horizontal: boolean = true, eccentricity: number = 2.3): string {
@@ -38,8 +37,7 @@ export default class SVGPaths {
         const width = radius - (horizontal ? 1 : eccentricity);
         const height = radius - (horizontal ? eccentricity : 1);
         const doubleWidth = width * 2;
-        const path = `M${radius - width} ${radius}a${width} ${height} 0 1,0 ${doubleWidth} 0a${width} ${height} 0 1,0 ${-doubleWidth} 0`;
-        return path;
+        return `M${radius - width} ${radius}a${width} ${height} 0 1,0 ${doubleWidth} 0a${width} ${height} 0 1,0 ${-doubleWidth} 0`;
     }
 
 	arc(center: Point, radius: number, startAngle: number, endAngle: number,  sweepFlag: number): string {
@@ -47,9 +45,7 @@ export default class SVGPaths {
 		const end = center.offsetBy(radial.rotate_by(endAngle));
 		const start = center.offsetBy(radial.rotate_by(startAngle));
 		const largeArcFlag = (u.normalized_angle(startAngle - endAngle) > Math.PI) ? 1 : 0;
-		const path = `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${end.x} ${end.y}`;
-		console.log(`${center.verbose} ${u.degrees_of(startAngle)} ${u.degrees_of(endAngle)}`);
-	    return path;
+		return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${end.x} ${end.y}`;
 	}
 
 	line(vector: Point): string {
@@ -75,8 +71,7 @@ export default class SVGPaths {
 				path = path + `${point.x} ${point.y}${separator}`
 			}
 		}
-		path = path + ' Z';
-		return path;
+		return path + ' Z';
 	}
 
     half_circle(diameter: number, direction: number): string {
@@ -143,10 +138,7 @@ export default class SVGPaths {
 		} else {
 			paths = pairs.map(p => `M ${other},${p[0]} A ${tiny},${tiny} 0 1,1 ${other},${p[1]} A ${tiny},${tiny} 0 1,1 ${other},${p[0]}`);
 		}
-		const path = paths.join(k.space);
-		const last = pairs[max - 1][1];
-		// console.log('count: ' + count + ', gap: ' + gap + ', last: ' + last + ', stretch: ' + (last - gap / 2));
-		return path;
+		return paths.join(k.space);
 	}
 
 	// TODO: this only works for the default number of vertices (3)
@@ -175,9 +167,7 @@ export default class SVGPaths {
 		}
 		const start = data[vertices - 1].end;
 		const arcs = data.map(d => `C${d.controlOne.description} ${d.controlTwo.description} ${d.end.description}`);
-		const path = 'M' + start.description+ k.comma + arcs.join(k.space) + 'Z';
-		// console.log(path);
-		return path;
+		return 'M' + start.description+ k.comma + arcs.join(k.space) + 'Z';
 	}
 
 }

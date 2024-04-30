@@ -1,5 +1,6 @@
 import { k, get, Path, Size, Point, Angle, Quadrant, IDBrowser } from './GlobalImports';
 import { s_scale_factor, s_thing_fontFamily } from '../state/State';
+import Identifiable from "../structures/Identifiable";
 
 class Utilities {
 	noop() {}
@@ -100,6 +101,17 @@ class Utilities {
 		if (normalized.isBetween(Angle.quarter, Angle.half,			 true)) { quadrant = Quadrant.lowerLeft; }
 		if (normalized.isBetween(Angle.half,	Angle.threeQuarters, true)) { quadrant = Quadrant.upperLeft; }
 		return quadrant;
+	}
+
+	strip_identifiableDuplicates<Identifiable>(identifiables: Array<Identifiable>) {
+		let identifiablesByHID: {[hash: number]: Identifiable} = {};
+		for (const identifiable of identifiables) {
+			const hid = identifiable.idHashed;
+			if (hid) {
+				identifiablesByHID[hid] = identifiable;
+			}
+		}
+		return Object.values(identifiablesByHID);
 	}
 
 	strip_thingDuplicates(paths: Array<Path>) {

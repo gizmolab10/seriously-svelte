@@ -72,8 +72,8 @@ export default class Path {
 	get hasParentRelationships(): boolean { return this.parentRelationships.length > 0; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get idPredicates(): Array<string> { return this.relationships.map(r => r.idPredicate); }
-	get isInvalid(): boolean { return this.containsReciprocals || this.containsMixedPredicates; }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
+	get isInvalid(): boolean { return this.containsReciprocals || this.containsMixedPredicates; }
 	get isEditing(): boolean { return get(s_title_editing)?.editing?.matchesPath(this) ?? false; }
 	get showsChildRelationships(): boolean { return this.isExpanded && this.hasChildRelationships; }
 	get titles(): Array<string> { return this.things?.map(t => ` \"${t ? t.title : 'null'}\"`) ?? []; }
@@ -83,7 +83,7 @@ export default class Path {
 	get parentRelationships(): Array<Relationship> { return this.relationships_for_to(this.idPredicate, true); }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	get showsReveal(): boolean { return !get(s_layout_asClusters) && (this.hasChildRelationships || (this.thing?.isBulkAlias ?? false)); }
-
+	
 	get relationships(): Array<Relationship> {
 		const relationships = this.ids_hashed.map(hid => h.relationship_forHID(hid)) ?? [];
 		return u.strip_falsies(relationships);

@@ -1,6 +1,6 @@
 <script>
-	import { k, u, get, Size, Thing, Point, debug, ZIndex, svgPaths, signals } from "../../ts/common/GlobalImports";
-	import { onMount, Wrapper, Direction, onDestroy, dbDispatch, IDWrapper } from "../../ts/common/GlobalImports";
+	import { k, u, get, Size, Thing, Point, debug, ZIndex, onMount, signals, svgPaths } from "../../ts/common/GlobalImports";
+	import { Wrapper, IDWrapper, Direction, onDestroy, dbDispatch, Predicate } from "../../ts/common/GlobalImports";
 	import { s_paths_expanded, s_altering, s_paths_grabbed, s_path_editingTools } from '../../ts/state/State';
 	import { h } from '../../ts/db/DBDispatch';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -68,7 +68,8 @@
 	}
 
 	function updateScalablePaths() {
-		hasInsidePath = path.toolsGrabbed || path.thing.isBulkAlias;
+		const thing = path.thing;
+		hasInsidePath = thing.hasRelated || path.toolsGrabbed || thing.isBulkAlias;
 		insideOffset = hasInsidePath ? 0 : -1;
 		if (!path.showsReveal || path.toolsGrabbed) {
 			svgPath = svgPaths.circle(size, size - 1);
@@ -77,11 +78,12 @@
 			const direction = goLeft ? Direction.left : Direction.right;
 			svgPath = svgPaths.fat_polygon(size, direction);
 		}
-		if (path.thing.isBulkAlias) {
-			insidePath = svgPaths.circle(size, 3);
-		} else if (path.toolsGrabbed) {
+		if (path.toolsGrabbed) {
 			insidePath = svgPaths.x_cross(size, 1.5);
+		} else if (hasInsidePath) {
+			insidePath = svgPaths.circle(size, 3);
 		}
+		console.log(insidePath);
 	}
 
 	function handle_singleClick(event) {
@@ -155,13 +157,13 @@
 				</div>
 			{/if}
 			{#if !path.isExpanded && path.hasChildRelationships}
-				<div class='reveal-tiny-dots' style='
+				<div class='outside-tiny-dots' style='
 					left:{tinyDotsOffset + 0.65}px;
 					top:{tinyDotsOffset - 0.28}px;
 					height:{tinyDotsDiameter}px;
 					width:{tinyDotsDiameter}px;
 					position:absolute;'>
-					<SVGD3 name='savg-tiny-dots'
+					<SVGD3 name='svg-tiny-dots'
 						svgPath={svgPaths.tinyDots_circular(tinyDotsDiameter, childrenCount)}
 						height={tinyDotsDiameter}
 						width={tinyDotsDiameter}
