@@ -3,8 +3,9 @@
 	export let layout: ClusterLayout;
 	export let center = Point.zero;
 	export let color = 'red';
-	const radius = k.necklace_radius;
-	const diameter = radius * 2;
+	const offset = k.necklace_gap;
+	const radius = k.necklace_radius + offset;
+	const breadth = (radius) * 2;
 	let arcCenter = Point.square(radius);
 	let arcPath = k.empty;
 	let rebuilds = 0;
@@ -13,14 +14,16 @@
 
 {#key rebuilds}
 	<svg class='cluster-arc' 
-    viewBox='0 0 {diameter} {diameter}'
-	style='
-		position: absolute;
-		width: {diameter}px;
-		height: {diameter}px;
-		zindex: {ZIndex.frontmost};
-		top: {center.y - radius}px;
-		left: {center.x - radius}px;'>
-		<path stroke={color} fill={k.color_background} d={layout.arcPath}/>
+		viewBox='{-offset} {-offset} {breadth} {breadth}'
+		style='
+			position: absolute;
+			width: {breadth}px;
+			height: {breadth}px;
+			zindex: {ZIndex.frontmost};
+			top: {center.y - radius}px;
+			left: {center.x - radius}px;'>
+		{#each layout.arcPaths as path}
+			<path stroke={color} fill=transparent d={path}/>
+		{/each}
 	</svg>
 {/key}

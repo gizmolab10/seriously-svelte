@@ -26,7 +26,7 @@
 		if (line && !lineWrapper) {
 			lineWrapper = new Wrapper(line, h.rootPath, IDWrapper.line);
 		}
-		angle = layout?.angle;
+		angle = layout?.line_angle;
 		const inside_radius = k.cluster_inside_radius + (showArrowHeads ? 8 : 0);
 		const line_length = k.cluster_line_length - k.dot_size * (showArrowHeads ? 8 : 0);
 		const line_rotated = new Point(line_length, 0).rotate_by(angle);

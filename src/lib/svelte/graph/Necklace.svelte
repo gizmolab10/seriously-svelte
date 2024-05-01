@@ -25,7 +25,7 @@
 </script>
 
 {#key rebuilds}
-	{#if childMapRects}
+	{#if !!childMapRects}
 		{#each childMapRects as map}
 			<Widget path={map.childPath} angle={map.childAngle} origin={map.childOrigin.offsetBy(childOffset)}/>
 		{/each}

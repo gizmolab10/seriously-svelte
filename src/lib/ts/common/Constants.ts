@@ -2,7 +2,7 @@ export default class Constants {
 	dot_size = 13;
 	width_max = 200;
 	row_height = 20;
-	necklace_gap = 10;
+	necklace_gap = 20;
 	line_stretch = 25;
 	height_banner = 35;
 	width_details = 80;

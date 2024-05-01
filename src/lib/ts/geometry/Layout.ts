@@ -52,9 +52,9 @@ export default class Layout {
 				const map = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, path, clusterPath, childAngle);
 				this.childMapRects.push(map);
 				if (index == 0) {
-					clusterLayout.startAngle = childAngle;
+					clusterLayout.start_angle = childAngle;
 				} else if (index == count - 1) {
-					clusterLayout.endAngle = childAngle;
+					clusterLayout.end_angle = childAngle;
 				}
 				index += 1;
 			}
@@ -65,7 +65,7 @@ export default class Layout {
 	childAngle_for(index: number, count: number, clusterLayout: ClusterLayout, radius: number): number {
 		const row = index - ((count - 1) / 2);					// row centered around zero
 		const radial = new Point(radius, 0);
-		const clusterAngle = clusterLayout.angle;			// depends on s_cluster_angle, predicate kind & pointsTo
+		const clusterAngle = clusterLayout.line_angle;			// depends on s_cluster_angle, predicate kind & pointsTo
 		const startY = radial.rotate_by(clusterAngle).y;	// height of clusterAngle
 		let y = startY + (row * k.row_height);				// height of row
 		let unfit = false;

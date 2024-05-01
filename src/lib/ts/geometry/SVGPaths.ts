@@ -40,7 +40,7 @@ export default class SVGPaths {
         return `M${radius - width} ${radius}a${width} ${height} 0 1,0 ${doubleWidth} 0a${width} ${height} 0 1,0 ${-doubleWidth} 0`;
     }
 
-	arc(center: Point, radius: number, startAngle: number, endAngle: number,  sweepFlag: number): string {
+	arc(center: Point, radius: number, startAngle: number, endAngle: number, sweepFlag: number): string {
 		const radial = new Point(radius, 0);
 		const end = center.offsetBy(radial.rotate_by(endAngle));
 		const start = center.offsetBy(radial.rotate_by(startAngle));
