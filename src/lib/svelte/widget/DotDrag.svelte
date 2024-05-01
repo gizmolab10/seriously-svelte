@@ -176,7 +176,7 @@
 			width={size}
 			height={size}
 			fill={relatedColor}
-			stroke={strokeColor}
+			stroke={$s_layout_asClusters ? relatedColor : strokeColor}
 			svgPath={relatedPath}
 		/>
 	{/if}

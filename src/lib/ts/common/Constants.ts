@@ -2,7 +2,7 @@ export default class Constants {
 	dot_size = 13;
 	width_max = 200;
 	row_height = 20;
-	necklace_gap = 20;
+	necklace_gap = 15;
 	line_stretch = 25;
 	height_banner = 35;
 	width_details = 80;
@@ -10,7 +10,7 @@ export default class Constants {
 	thing_fontSize = 14;
 	height_titleAtTop = 50;
 	threshold_longClick = 500;
-	cluster_line_length = 130;
+	cluster_line_length = 110;
 	cluster_inside_radius = 35;
 	editingTools_diameter = 64;
 	threshold_doubleClick = 100;
