@@ -27,12 +27,12 @@
 			lineWrapper = new Wrapper(line, h.rootPath, IDWrapper.line);
 		}
 		angle = layout?.line_angle;
-		const inside_radius = k.cluster_inside_radius + (showArrowHeads ? 8 : 0);
+		const line_rotated = layout?.line_rotated;
+		const title_width = u.getWidthOf(layout?.title) / -3;
 		const line_length = k.cluster_line_length - k.dot_size * (showArrowHeads ? 8 : 0);
-		const line_rotated = new Point(line_length, 0).rotate_by(angle);
-		const inside_rotated = new Point(inside_radius, 0).rotate_by(angle);
-		const titleWidth = u.getWidthOf(layout?.title) / -3;
-		const titleDelta = new Point(titleWidth, k.dot_size / -2);
+		const inside_radius = k.cluster_inside_radius + (showArrowHeads ? 8 : 0);
+		const inside_rotated = Point.polarVector(inside_radius, angle);
+		const titleDelta = new Point(title_width, k.dot_size / -2);
 		size = line_rotated.abs.asSize;
 		const rect = new Rect(Point.zero, size);
 		const titleCenter = rect.center;

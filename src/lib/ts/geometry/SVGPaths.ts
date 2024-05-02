@@ -86,20 +86,6 @@ export default class SVGPaths {
 		}
     }
 
-	ellipses(tiny: number, gap: number): string {
-		const x = 1;
-		const y = 6;
-		const x2 = x + tiny * 2;
-		const x3 = x2 + gap + tiny;
-		const x4 = x3 + 2 * tiny;
-		const x5 = x4 + gap + tiny;
-		const x6 = x5 + 2 * tiny;
-		return `M ${x},${y} A ${tiny},${tiny} 0 1,1 ${x2},${y} A ${tiny},${tiny} 0 1,1 ${x},${y}
-		M ${x3},${y} A ${tiny},${tiny} 0 1,1 ${x4},${y} A ${tiny},${tiny} 0 1,1 ${x3},${y}
-		M ${x5},${y} A ${tiny},${tiny} 0 1,1 ${x6},${y} A ${tiny},${tiny} 0 1,1 ${x5},${y}`;
-	}
-
-
 	tinyDots_circular(size: number, count: number): string {
 		if (count == 0) {
 			return k.empty;
@@ -117,7 +103,7 @@ export default class SVGPaths {
 		return path;
 	}
 
-	tinyDots_linear(stretch: number, tiny: number, horizontal: boolean = true, count: number = 3, other: number = 6): string {
+	ellipses(stretch: number, tiny: number, horizontal: boolean = true, count: number = 3, other: number = 6): string {
 		const max = Math.min(4, count);
 		const gap = stretch / (max - 1) - tiny;
 		let a = 2.5 + ((max > 2) ? 0 : 0.5);

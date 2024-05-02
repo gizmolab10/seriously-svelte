@@ -8,6 +8,17 @@ export enum LayoutStyle {
 	tree	= 'tree',
 }
 
+export enum PredicateKind {
+	isRelated = 'isRelated',
+	contains  = 'contains',
+}
+
+export enum ArcKind {
+	start = 'start',
+	main = 'main',
+	gap = 'gap',
+}
+
 export enum GraphRelations {
 	children = 'children',
 	parents	 = 'parents',
@@ -30,11 +41,6 @@ export enum IDTrait {
 	roots = '^',
 	root  = '!',
 	bulk  = '~',
-}
-
-export enum PredicateKind {
-	isRelated = 'isRelated',
-	contains  = 'contains',
 }
 
 export enum Quadrant {
@@ -70,8 +76,6 @@ export enum IDBrowser  {
 	opera	 = 'opera',
 	orion	 = 'orion',
 }
-
-const baseZIndex = 1;
 
 export enum ZIndex {
 	common,

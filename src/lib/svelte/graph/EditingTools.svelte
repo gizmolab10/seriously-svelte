@@ -243,7 +243,7 @@
 					viewBox='-0.5 -2 14 10'
 					height=10
 					width=16>
-					<path d={svgPaths.tinyDots_linear(7, 1)}/>
+					<path d={svgPaths.ellipses(7, 1)}/>
 				</svg>
 			</Button>
 			<DotReveal path={$s_path_editingTools} center={getC(IDTool.dismiss)}/>

@@ -1,13 +1,13 @@
 <script lang='ts'>
 	import { k, Point, ZIndex, ClusterLayout } from '../../ts/common/GlobalImports';
+	import { ArcKind } from '../../ts/common/Enumerations';
 	export let layout: ClusterLayout;
 	export let center = Point.zero;
 	export let color = 'red';
 	const offset = k.necklace_gap;
 	const radius = k.necklace_radius + offset;
-	const breadth = (radius) * 2;
-	let arcCenter = Point.square(radius);
-	let arcPath = k.empty;
+	const breadth = radius * 2;
+	let keyedArcPaths = layout.keyedArcPaths;
 	let rebuilds = 0;
 
 </script>
@@ -22,7 +22,11 @@
 			zindex: {ZIndex.frontmost};
 			top: {center.y - radius}px;
 			left: {center.x - radius}px;'>
-		{#each layout.arcPaths as path}
+		{#each keyedArcPaths[ArcKind.main] as path}
+			<path stroke={color} fill=transparent d={path}/>
+		{/each}
+		<path stroke={k.color_background} fill={k.color_background} d={keyedArcPaths[ArcKind.gap][0]}/>
+		{#each keyedArcPaths[ArcKind.start] as path}
 			<path stroke={color} fill=transparent d={path}/>
 		{/each}
 	</svg>
