@@ -31,13 +31,23 @@ class PersistLocal {
 
 	queryStrings_apply() {
 		const queryStrings = k.queryString;
+		const show = queryStrings.get('show');
         const erase = queryStrings.get('erase');
-        const titleFlag = queryStrings.get('locate')?.split(k.comma).includes('titleAtTop') ?? false;
 		this.key_apply(IDPersistant.layout, 'clusters', (flag) => s_layout_asClusters.set(flag));
 		this.key_apply(IDPersistant.details, 'hide', (flag) => s_show_details.set(!flag), false);
 		this.key_apply(IDPersistant.controls, 'show', (flag) => k.showControls = flag);
-		this.key_write(IDPersistant.title_atTop, titleFlag);
-		k.titleIsAtTop = titleFlag;
+        if (show) {
+			for (const option of show.split(k.comma)) {
+				switch (option) {
+					case 'controls':
+						k.showControls = true;
+					case 'titleAtTop':
+						this.key_write(IDPersistant.title_atTop, true);
+						k.titleIsAtTop = true;
+						break;
+				}
+			}
+		}
         if (erase) {
             for (const option of erase.split(k.comma)) {
                 switch (option) {

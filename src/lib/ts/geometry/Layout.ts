@@ -11,8 +11,13 @@ export default class Layout {
 		if (get(s_layout_asClusters)) {
 			this.layoutCluster(childPaths, focusPath, Predicate.idContains, origin, true);
 			for (const predicate of h.predicates) {
+				let parentPaths: Array<Path> = [];
 				const id = predicate.id;
-				const parentPaths = focusPath.uniqueParentPaths_for(id);
+				if (predicate.isContains) {
+					parentPaths = focusPath.uniqueParentPaths_for(id);
+				} else {
+					parentPaths = focusPath.relatedThings.map(t => t.containsPath);
+				}
 				this.layoutCluster(parentPaths, focusPath, id, origin, false);
 			}
 		} else {

@@ -357,8 +357,8 @@ export class Hierarchy {
 		this.relationships = [];
 	}
 
-	relationships_forPredicateThingIsChild(idPredicate: string, idThing: string, isChild: boolean): Array<Relationship> {
-		const dict = isChild ? this.relationships_byChildHID : this.relationships_byParentHID;
+	relationships_forPredicateThingIsChild(idPredicate: string, idThing: string, isChildOf: boolean): Array<Relationship> {
+		const dict = isChildOf ? this.relationships_byChildHID : this.relationships_byParentHID;
 		const hid = idThing.hash();
 		const matches = dict[hid] as Array<Relationship>; // filter out bad values (dunno what this does)
 		const array: Array<Relationship> = [];

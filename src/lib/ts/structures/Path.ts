@@ -7,7 +7,7 @@ import { Writable } from 'svelte/store';
 
 export default class Path {
 	wrappers: { [type: string]: Wrapper } = {};
-	private _thing: Thing | null = null;
+	_thing: Thing | null = null;
 	idPredicate: string;
 	pathString: string;
 	pathHash: number;
@@ -79,11 +79,12 @@ export default class Path {
 	get titles(): Array<string> { return this.things?.map(t => ` \"${t ? t.title : 'null'}\"`) ?? []; }
 	get isStoppingEdit(): boolean { return get(s_title_editing)?.stopping?.matchesPath(this) ?? false; }
 	get hasRelationships(): boolean { return this.hasParentRelationships || this.hasChildRelationships; }
-	get childRelationships(): Array<Relationship> { return this.relationships_for_children(this.idPredicate, false); }
-	get parentRelationships(): Array<Relationship> { return this.relationships_for_children(this.idPredicate, true); }
+	get relatedThings(): Array<Thing> { return this.thing?.things_bothWays_for(Predicate.idIsRelated) ?? []; }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
+	get childRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, false); }
+	get parentRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, true); }
 	get showsReveal(): boolean { return !get(s_layout_asClusters) && (this.hasChildRelationships || (this.thing?.isBulkAlias ?? false)); }
-	
+
 	get relationships(): Array<Relationship> {
 		const relationships = this.ids_hashed.map(hid => h.relationship_forHID(hid)) ?? [];
 		return u.strip_falsies(relationships);
@@ -93,8 +94,8 @@ export default class Path {
 		if (!this._thing) {
 			const thing = this.thingAt() ?? null;	// always recompute, cache is for debugging
 			this._thing = thing;
-			if (!!thing && !thing.path) {
-				thing.path = this;
+			if (!!thing && !thing.containsPath) {
+				thing.containsPath = this;
 			}
 
 		}
@@ -216,10 +217,10 @@ export default class Path {
 		return false;
 	}
 	
-	relationships_for_children(idPredicate: string, child: boolean) {
+	relationships_for_isChildOf(idPredicate: string, isChildOf: boolean) {
 		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
 		if (id && this.pathString != k.exemplar && ![k.empty, 'k.id_unknown'].includes(id)) {
-			return h.relationships_forPredicateThingIsChild(idPredicate, id, child);
+			return h.relationships_forPredicateThingIsChild(idPredicate, id, isChildOf);
 		}
 		return [];
 	}
@@ -263,7 +264,7 @@ export default class Path {
 	childPaths_for(idPredicate: string = Predicate.idContains): Array<Path> {
 		let paths: Array<Path> = [];
 		const isContains = idPredicate == Predicate.idContains;
-		const childRelationships = this.relationships_for_children(idPredicate, false);
+		const childRelationships = this.relationships_for_isChildOf(idPredicate, false);
 		if (childRelationships.length > 0) {
 			for (const childRelationship of childRelationships) {		// loop through all child relationships
 				if (childRelationship.idPredicate == idPredicate) {
@@ -403,7 +404,7 @@ export default class Path {
 	}
 
 	things_childrenFor(idPredicate: string): Array<Thing> {
-		const relationships = this.thing?.relationships_for_children(idPredicate);
+		const relationships = this.thing?.relationships_for_isChildOf(idPredicate, true);
 		let children: Array<Thing> = [];
 		if (!this.isRoot && relationships) {
 			for (const relationship of relationships) {

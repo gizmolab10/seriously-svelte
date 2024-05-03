@@ -19,6 +19,8 @@ export default class Predicate extends RemoteIdentifiable {
 	static get contains(): Predicate | null { return this.predicate_forKind(PredicateKind.contains); }
 	static get idIsRelated(): string { return this.id_forKind(PredicateKind.isRelated); }
 	static get idContains(): string { return this.id_forKind(PredicateKind.contains); }
+	get isContains(): boolean { return this.kind == PredicateKind.contains; }
+	get isRelated(): boolean { return this.kind == PredicateKind.isRelated; }
 	get description(): string { return this.kind; }
 
 	clusterAngle_for(pointsTo: boolean): number {

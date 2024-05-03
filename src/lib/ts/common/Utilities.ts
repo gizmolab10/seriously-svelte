@@ -6,11 +6,15 @@ class Utilities {
 	noop() {}
 	ignore(event: Event) {}
 	roundToEven(n: number): number{ return Math.round(n / 2) * 2; }
-	concatenateArrays<T>(a: Array<T>, b: Array<T>) { return [...a, ...b]; }
-	strip_falsies(array: Array<any>) { return array.filter(element => !!element); }
 	normalized_angle(angle: number) { return (angle + Angle.full * 2) % Angle.full; }
-	sort_byOrder(array: Array<Path>) { return array.sort( (a: Path, b: Path) => { return a.order - b.order; }); }
+	concatenateArrays<T>(a: Array<any>, b: Array<any>): Array<any> { return [...a, ...b]; }
+	strip_falsies(array: Array<any>): Array<any> { return array.filter(element => !!element); }
 	quadrant_startAngle(angle: number): number { return this.startAngle_ofQuadrant(this.quadrant_of(angle)); }
+	sort_byOrder(array: Array<Path>) { return array.sort( (a: Path, b: Path) => { return a.order - b.order; }); }
+
+	uniquely_concatenateArrays<T>(a: Array<any>, b: Array<any>): Array<any> {
+		return this.strip_identifiableDuplicates(this.strip_falsies(this.concatenateArrays(a, b)));
+	}
 
 	degrees_of(angle: number) {
 		const degrees = this.normalized_angle(angle) * 180 / Math.PI;
@@ -103,7 +107,7 @@ class Utilities {
 		return quadrant;
 	}
 
-	strip_identifiableDuplicates<Identifiable>(identifiables: Array<Identifiable>) {
+	strip_identifiableDuplicates(identifiables: Array<Identifiable>): Array<Identifiable> {
 		let identifiablesByHID: {[hash: number]: Identifiable} = {};
 		for (const identifiable of identifiables) {
 			const hid = identifiable.idHashed;

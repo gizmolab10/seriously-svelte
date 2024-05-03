@@ -11,13 +11,13 @@ export default class Thing extends Datum {
 	borderAttribute = k.empty;
 	grabAttributes = k.empty;
 	needsBulkFetch = false;
+	containsPath!: Path;
 	isExemplar = false;
 	isEditing = false;
 	isGrabbed = false;
 	title: string;
 	color: string;
 	trait: string;
-	path!: Path;
 
 	constructor(baseID: string, id: string | null, title = k.title_default, color = k.color_default, trait = 's', isRemotelyStored: boolean) {
 		super(dbDispatch.db.dbType, baseID, id, isRemotelyStored);
@@ -30,7 +30,7 @@ export default class Thing extends Datum {
 	get parentIDs():		 Array<string> { return this.parents.map(t => t.id); }
 	get parentPaths():		   Array<Path> { return this.parentPaths_for(Predicate.idContains); }
 	get parents():			  Array<Thing> { return this.parentThings_forID(Predicate.idContains); }
-	get parents_ofAllKinds(): Array<Thing> { return u.concatenateArrays(this.parents, this.parentThings_forID(Predicate.idIsRelated)); }
+	get parents_ofAllKinds(): Array<Thing> { return u.uniquely_concatenateArrays(this.parents, this.parentThings_forID(Predicate.idIsRelated)); }
 	get fields():		 Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get idBridging():				string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get description():				string { return this.id + ' \"' + this.title + '\"'; }
@@ -41,7 +41,7 @@ export default class Thing extends Datum {
 	get isAcrossBulk():			   boolean { return this.baseID != h.db.baseID; }
 	get hasParents():			   boolean { return this.hasParentsFor(Predicate.idContains); }
 	get isFocus():				   boolean { return (get(s_path_focus).thing?.id ?? k.empty) == this.id; }
-	get hasRelated():			   boolean { return this.relationships_for_all(Predicate.idIsRelated).length > 0; }
+	get hasRelated():			   boolean { return this.relationships_bothWays_for(Predicate.idIsRelated).length > 0; }
 
 	get thing_isBulk_expanded(): boolean {		// cross db paths needs special attention
 		if (this.isBulkAlias) {
@@ -67,27 +67,31 @@ export default class Thing extends Datum {
 	}
 
 	relationships_grandParentsFor(idPredicate: string): Array<Relationship> {
-		const relationships = this.relationships_for_children(idPredicate, true);
+		const relationships = this.relationships_for_isChildOf(idPredicate, true);
 		let grandParents: Array<Relationship> = [];
 		for (const relationship of relationships) {
-			const more = relationship.parentThing?.relationships_for_children(idPredicate, true);
+			const more = relationship.parentThing?.relationships_for_isChildOf(idPredicate, true);
 			if (more) {
-				grandParents = u.concatenateArrays(grandParents, more);
+				grandParents = u.uniquely_concatenateArrays(grandParents, more);
 			}
 		}
 		return grandParents;
 	}
 
-	relationships_for_all(idPredicate: string): Array<Relationship> {
-		const children = this.relationships_for_children(idPredicate, true);
-		const parents = this.relationships_for_children(idPredicate, false);
-		const all = u.concatenateArrays(parents, children);
-		const purged = u.strip_falsies(all);
-		return u.strip_identifiableDuplicates(purged);
+	things_bothWays_for(idPredicate: string): Array<Thing> {
+		const parents = this.relationships_for_isChildOf(idPredicate, true).map(r => r.parentThing);
+		const children = this.relationships_for_isChildOf(idPredicate, false).map(r => r.childThing);
+		return u.uniquely_concatenateArrays(parents, children);
 	}
 
-	relationships_for_children(idPredicate: string, to: boolean): Array<Relationship> {
-		return h.relationships_forPredicateThingIsChild(idPredicate, this.id, to);
+	relationships_bothWays_for(idPredicate: string): Array<Relationship> {
+		const children = this.relationships_for_isChildOf(idPredicate, true);
+		const parents = this.relationships_for_isChildOf(idPredicate, false);
+		return u.uniquely_concatenateArrays(parents, children);
+	}
+
+	relationships_for_isChildOf(idPredicate: string, isChildOf: boolean): Array<Relationship> {
+		return h.relationships_forPredicateThingIsChild(idPredicate, this.id, isChildOf);
 	}
 
 	updateColorAttributes(path: Path) {
@@ -113,7 +117,7 @@ export default class Thing extends Datum {
 	parentThings_forID(idPredicate: string): Array<Thing> {
 		let parents: Array<Thing> = [];
 		if (!this.isRoot) {
-			const relationships = this.relationships_for_children(idPredicate, true);
+			const relationships = this.relationships_for_isChildOf(idPredicate, true);
 			for (const relationship of relationships) {
 				const thing = relationship.parentThing;
 				if (!!thing) {
@@ -129,18 +133,15 @@ export default class Thing extends Datum {
 		let paths: Array<Path> = [];
 		if (!this.isRoot) {
 			const isRelated = idPredicate == Predicate.idIsRelated;
-			if (isRelated) {
-				u.noop();
-			}
-			const relationships = this.relationships_for_children(idPredicate, true);
+			const relationships = this.relationships_for_isChildOf(idPredicate, true);
 			for (const relationship of relationships) {
 				if (isRelated) {
-					addPath(relationship.childThing?.path ?? null);
+					addPath(relationship.childThing?.containsPath ?? null);
 				} else {
 					const parent = relationship.parentThing;
 					if (parent && !visited.includes(parent.id)) {
 						const endID = relationship.id;		// EGADS, this is the wrong relationship; needs the next one
-						const parentPaths = parent.parentPaths_for(idPredicate, u.concatenateArrays(visited, [parent.id])) ?? [];
+						const parentPaths = parent.parentPaths_for(idPredicate, u.uniquely_concatenateArrays(visited, [parent.id])) ?? [];
 						if (parentPaths.length == 0) {
 							addPath(h.rootPath.uniquelyAppendID(endID));
 						} else {
