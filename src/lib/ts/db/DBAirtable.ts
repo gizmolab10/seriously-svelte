@@ -107,11 +107,11 @@ export default class DBAirtable implements DBInterface {
 
 			for (const record of records) {
 				const id = record.id as string;
-				const tos = record.fields.to as (Array<string>);
 				const order = record.fields.order as number;
-				const froms = record.fields.from as (Array<string>);
+				const parents = record.fields.parent as (Array<string>);
+				const children = record.fields.child as (Array<string>);
 				const predicates = record.fields.predicate as (Array<string>);
-				h.relationship_remember_runtimeCreateUnique(k.empty, id, predicates[0], froms[0], tos[0], order, CreationOptions.isFromRemote);
+				h.relationship_remember_runtimeCreateUnique(k.empty, id, predicates[0], parents[0], children[0], order, CreationOptions.isFromRemote);
 			}
 		} catch (error) {
 			debug.log_error(this.relationships_errorMessage + error);
@@ -144,7 +144,7 @@ export default class DBAirtable implements DBInterface {
 
 	async relationship_remoteDelete(relationship: Relationship) {
 		try {
-			h.relationships = u.strip_falsies(h.relationships);
+			h.relationships = u.strip_invalid(h.relationships);
 			h.relationships_refreshKnowns(); // do first so UX updates quickly
 			await this.relationships_table.destroy(relationship.id);
 		} catch (error) {
@@ -161,7 +161,8 @@ export default class DBAirtable implements DBInterface {
 			for (const record of records) {
 				const id = record.id as string; // do not yet need this
 				const kind = record.fields.kind as string;
-				h.predicate_remember_runtimeCreate(id, kind);
+				const isBidirectional = record.fields.isBidirectional as boolean;
+				h.predicate_remember_runtimeCreate(id, kind, isBidirectional);
 			}
 
 		} catch (error) {

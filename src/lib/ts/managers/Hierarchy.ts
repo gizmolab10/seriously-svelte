@@ -20,8 +20,8 @@ export class Hierarchy {
 	private access_byHID: { [hid: number]: Access } = {};
 	private thing_byHID: { [hid: number]: Thing } = {};
 	private user_byHID: { [hid: number]: User } = {};
-	private relationships: Array<Relationship> = [];
 	private things: Array<Thing> = [];
+	relationships: Array<Relationship> = [];
 	predicates: Array<Predicate> = [];
 	isAssembled = false;
 	rootsPath!: Path;
@@ -74,44 +74,47 @@ export class Hierarchy {
 			const OPTION = event.altKey;
 			const SHIFT = event.shiftKey;
 			const COMMAND = event.metaKey;
+			const rootPath = this.rootPath;
 			const EXTREME = SHIFT && OPTION;
 			const key = event.key.toLowerCase();
-			const rootPath = this.rootPath;
+			const modifiers = ['alt', 'meta', 'shift', 'control']
 			let needsRebuild = false;
-			if (!pathGrab) {
-				pathGrab = rootPath;
-				needsRebuild = rootPath.becomeFocus();
-			}
-			if (k.allow_GraphEditing) {
-				if (!!pathGrab && k.allow_TitleEditing) {
+			if (!modifiers.includes(key)) {		// ignore modifier-key-only events
+				if (!pathGrab) {
+					pathGrab = rootPath;
+					needsRebuild = rootPath.becomeFocus();
+				}
+				if (k.allow_GraphEditing) {
+					if (!!pathGrab && k.allow_TitleEditing) {
+						switch (key) {
+							case 'd':		await this.thing_edit_remoteDuplicate(pathGrab); break;
+							case k.space:	await this.path_edit_remoteCreateChildOf(pathGrab); break;
+							case '-':		if (!COMMAND) { await this.thing_edit_remoteAddLine(pathGrab); } break;
+							case 'tab':		await this.path_edit_remoteCreateChildOf(pathGrab.parentPath); break; // Title editor also makes this call
+							case 'enter':	pathGrab.startEdit(); break;
+						}
+					}
 					switch (key) {
-						case 'd':		await this.thing_edit_remoteDuplicate(pathGrab); break;
-						case k.space:	await this.path_edit_remoteCreateChildOf(pathGrab); break;
-						case '-':		if (!COMMAND) { await this.thing_edit_remoteAddLine(pathGrab); } break;
-						case 'tab':		await this.path_edit_remoteCreateChildOf(pathGrab.parentPath); break; // Title editor also makes this call
-						case 'enter':	pathGrab.startEdit(); break;
+						case 'delete':
+						case 'backspace':	await this.paths_rebuild_traverse_remoteDelete(get(s_paths_grabbed)); break;
+					}
+				}
+				if (!!pathGrab) {
+					switch (key) {
+						case '/':			needsRebuild = pathGrab.becomeFocus(); break;
+						case 'arrowright':	event.preventDefault(); await this.path_rebuild_remoteMoveRight(pathGrab, true, SHIFT, OPTION, EXTREME); break;
+						case 'arrowleft':	event.preventDefault(); await this.path_rebuild_remoteMoveRight(pathGrab, false, SHIFT, OPTION, EXTREME); break;
 					}
 				}
 				switch (key) {
-					case 'delete':
-					case 'backspace':	await this.paths_rebuild_traverse_remoteDelete(get(s_paths_grabbed)); break;
+					case '!':				needsRebuild = this.rootPath?.becomeFocus(); break;
+					case '`':               event.preventDefault(); this.latestPathGrabbed_toggleEditingTools(); break;
+					case 'arrowup':			await this.latestPathGrabbed_rebuild_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
+					case 'arrowdown':		await this.latestPathGrabbed_rebuild_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
 				}
-			}
-			if (!!pathGrab) {
-				switch (key) {
-					case '/':			needsRebuild = pathGrab.becomeFocus(); break;
-					case 'arrowright':	event.preventDefault(); await this.path_rebuild_remoteMoveRight(pathGrab, true, SHIFT, OPTION, EXTREME); break;
-					case 'arrowleft':	event.preventDefault(); await this.path_rebuild_remoteMoveRight(pathGrab, false, SHIFT, OPTION, EXTREME); break;
+				if (needsRebuild) {
+					signals.signal_rebuildGraph_fromFocus();
 				}
-			}
-			switch (key) {
-				case '!':				needsRebuild = this.rootPath?.becomeFocus(); break;
-				case '`':               event.preventDefault(); this.latestPathGrabbed_toggleEditingTools(); break;
-				case 'arrowup':			await this.latestPathGrabbed_rebuild_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
-				case 'arrowdown':		await this.latestPathGrabbed_rebuild_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
-			}
-			if (needsRebuild) {
-				signals.signal_rebuildGraph_fromFocus();
 			}
 		}
 	}
@@ -159,13 +162,13 @@ export class Hierarchy {
 					if (isContains) {
 						things.push(this.root);					// contains paths start with root
 					} else {
-						things.push(relationship.parentThing);
+						things.push(relationship.parent);
 					}
 				}
-				things.push(relationship.childThing);
+				things.push(relationship.child);
 			}
 		}
-		return u.strip_falsies(things);
+		return u.strip_invalid(things);
 	}
 
 	things_forPaths(paths: Array<Path>): Array<Thing> {
@@ -199,8 +202,8 @@ export class Hierarchy {
 
 	thing_forget(thing: Thing) {
 		delete this.thing_byHID[thing.idHashed];
-		this.things = u.strip_falsies(this.things);
-		this.things_byTrait[thing.trait] = u.strip_falsies(this.things_byTrait[thing.trait]);
+		this.things = u.strip_invalid(this.things);
+		this.things_byTrait[thing.trait] = u.strip_invalid(this.things_byTrait[thing.trait]);
 	}
 
 	async thing_edit_remoteAddLine(path: Path, below: boolean = true) {
@@ -404,8 +407,8 @@ export class Hierarchy {
 	async relationships_removeHavingNullReferences() {
 		const array = Array<Relationship>();
 		for (const relationship of this.relationships) {
-			const thingTo = relationship.childThing;
-			const thingFrom = relationship.parentThing;
+			const thingTo = relationship.child;
+			const thingFrom = relationship.parent;
 			if (!thingTo || !thingFrom) {
 				array.push(relationship);
 				await this.db.relationship_remoteDelete(relationship);
@@ -429,7 +432,7 @@ export class Hierarchy {
 			const hid = id.hash();
 			let array = relationships[hid] ?? [];
 			array.push(relationship);
-			if (!relationship.childThing) {
+			if (!relationship.child) {
 				console.log('missing CHILD thing');
 			}
 			relationships[hid] = array;
@@ -437,10 +440,10 @@ export class Hierarchy {
 	}
 	
 	relationship_remember(relationship: Relationship) {
-		// console.log(`RELATIONSHIP ${relationship.parentThing?.title} => ${relationship.childThing?.title}`);
+		// console.log(`RELATIONSHIP ${relationship.parent?.title} => ${relationship.child?.title}`);
 		if (!this.relationship_byHID[relationship.idHashed]) {
 			if (relationship.baseID != this.db.baseID) {
-				debug.log_error(`RELATIONSHIP off base: ${relationship.baseID} ${relationship.parentThing?.description} => ${relationship.childThing?.description}`);
+				debug.log_error(`RELATIONSHIP off base: ${relationship.baseID} ${relationship.parent?.description} => ${relationship.child?.description}`);
 			}
 			this.relationships.push(relationship);
 			this.relationship_byHID[relationship.idHashed] = relationship;
@@ -491,7 +494,7 @@ export class Hierarchy {
 
 	relationshipReversed_remember_runtimeCreate_maybe(baseID: string, idPredicate: string, idParent: string, idChild: string) {
 		const predicate = this.predicate_forID(idPredicate);
-		if (predicate && predicate.directions == 2) {		// create reverse relationship because related are two directional, but not stored remotely
+		if (predicate && predicate.isBidirectional) {		// create reverse relationship because related are two directional, but not stored remotely
 			const relationship = new Relationship(baseID, `R${idChild}${idParent}`, idPredicate, idChild, idParent);
 			this.relationship_remember(relationship);
 		}
@@ -500,7 +503,7 @@ export class Hierarchy {
 	relationship_remember_runtimeCreateUnique(baseID: string, idRelationship: string, idPredicate: string, idParent: string,
 		idChild: string, order: number, creationOptions: CreationOptions = CreationOptions.none) {
 		let relationship = this.relationship_forPredicate_parent_child(idPredicate, idParent, idChild);
-		relationship?.order_setTo(order);						// AND thing are updated
+		relationship?.order_setTo_remoteMaybe(order);
 		if (!relationship) {
 			this.relationshipReversed_remember_runtimeCreate_maybe(baseID, idPredicate, idParent, idChild);
 			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, creationOptions != CreationOptions.none);
@@ -513,7 +516,7 @@ export class Hierarchy {
 		idChild: string, order: number, creationOptions: CreationOptions = CreationOptions.isFromRemote): Promise<any> {
 		let relationship = this.relationship_forPredicate_parent_child(idPredicate, idParent, idChild);
 		if (relationship) {
-			relationship.order_setTo(order, true);						// AND thing are updated
+			relationship.order_setTo_remoteMaybe(order, true);
 		} else {
 			this.relationshipReversed_remember_runtimeCreate_maybe(baseID, idPredicate, idParent, idChild);
 			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, creationOptions != CreationOptions.none);
@@ -616,7 +619,7 @@ export class Hierarchy {
 	async path_edit_remoteAddAsChild(parentPath: Path, child: Thing, order: number, shouldStartEdit: boolean = true) {
 		const childPath = await this.path_remember_remoteAddAsChild(parentPath, child);
 		childPath.grabOnly();
-		childPath.relationship?.order_setTo(order);
+		childPath.relationship?.order_setTo_remoteMaybe(order);
 		signals.signal_rebuildGraph_fromFocus();
 		if (shouldStartEdit) {
 			setTimeout(() => {
@@ -678,16 +681,16 @@ export class Hierarchy {
 		}
 	}
 
-	async path_remember_remoteAddAsChild(parentPath: Path, childThing: Thing, idPredicate: string = Predicate.idContains): Promise<any> {
+	async path_remember_remoteAddAsChild(parentPath: Path, child: Thing, idPredicate: string = Predicate.idContains): Promise<any> {
 		const parent = parentPath.thing;
-		if (parent && !childThing.isBulkAlias) {
-			const changingBulk = parent.isBulkAlias || childThing.baseID != this.db.baseID;
-			const baseID = changingBulk ? childThing.baseID : parent.baseID;
+		if (parent && !child.isBulkAlias) {
+			const changingBulk = parent.isBulkAlias || child.baseID != this.db.baseID;
+			const baseID = changingBulk ? child.baseID : parent.baseID;
 			if (changingBulk) {
 				console.log('changingBulk');
 			}
-			await this.db.thing_remember_remoteCreate(childThing);					// for everything below, need to await childThing.id fetched from dbDispatch
-			const relationship = await this.relationship_remember_remoteCreateUnique(baseID, null, idPredicate, parent.idBridging, childThing.id, 0, CreationOptions.getRemoteID);
+			await this.db.thing_remember_remoteCreate(child);					// for everything below, need to await child.id fetched from dbDispatch
+			const relationship = await this.relationship_remember_remoteCreateUnique(baseID, null, idPredicate, parent.idBridging, child.id, 0, CreationOptions.getRemoteID);
 			const childPath = parentPath.uniquelyAppendID(relationship.id);
 			await u.paths_orders_normalize_remoteMaybe(parentPath.childPaths);		// write new order values for relationships
 			return childPath;
@@ -740,7 +743,7 @@ export class Hierarchy {
 					const wrapped = up ? (index == 0) : (index == siblings.length - 1);
 					const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
 					const newOrder = newIndex + goose;
-					path.relationship?.order_setTo(newOrder);
+					path.relationship?.order_setTo_remoteMaybe(newOrder);
 					await u.paths_orders_normalize_remoteMaybe(parentPath.childPaths);
 					signals.signal_rebuildGraph_fromFocus();
 				}
@@ -760,7 +763,7 @@ export class Hierarchy {
 				if (relationship) {
 					const order = RIGHT ? relationship.order : 0;
 					relationship.idParent = newParent.id;
-					await relationship.order_setTo(order + 0.5, true);
+					await relationship.order_setTo_remoteMaybe(order + 0.5, true);
 				}
 				this.relationships_refreshKnowns();
 				newParentPath.appendChild(thing)?.grabOnly();
@@ -872,14 +875,14 @@ export class Hierarchy {
 		this.predicates.push(predicate);
 	}
 
-	predicate_remember_runtimeCreateUnique(id: string, kind: string, isRemotelyStored: boolean = true, directions: number = 1) {
+	predicate_remember_runtimeCreateUnique(id: string, kind: string, isBidirectional: boolean, isRemotelyStored: boolean = true) {
 		if (!this.predicate_forID(id)) {
-			this.predicate_remember_runtimeCreate(id, kind, isRemotelyStored, directions);
+			this.predicate_remember_runtimeCreate(id, kind, isBidirectional, isRemotelyStored);
 		}
 	}
 
-	predicate_remember_runtimeCreate(id: string, kind: string, isRemotelyStored: boolean = true, directions: number = 1) {
-		this.predicate_remember(new Predicate(id, kind, isRemotelyStored, directions));
+	predicate_remember_runtimeCreate(id: string, kind: string, isBidirectional: boolean, isRemotelyStored: boolean = true) {
+		this.predicate_remember(new Predicate(id, kind, isBidirectional, isRemotelyStored));
 	}
 
 	access_runtimeCreate(idAccess: string, kind: string) {

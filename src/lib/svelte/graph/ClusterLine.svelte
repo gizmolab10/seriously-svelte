@@ -46,7 +46,7 @@
 
 	function updateLine(line_rotated: Point, inside_rotated: Point): [number, number] {
 		let outside_rotated = inside_rotated;
-		if (layout?.predicate.directions == 2 || !layout?.pointsTo) {
+		if (layout?.predicate.isBidirectional || !layout?.pointsTo) {
 			outside_rotated = inside_rotated.offsetBy(line_rotated);
 		}
 		switch (u.point_quadrant(line_rotated)) {
@@ -85,7 +85,7 @@
 			{layout?.title}
 		</div>
 		{#if showArrowHeads}
-			{#if layout?.predicate.directions == 2}
+			{#if layout?.predicate.isBidirectional}
 				<ArrowHead idDiv='child'  angle={angle} color={color} color_background={color} radius={thickness} center={arrow_end}/>
 				<ArrowHead idDiv='parent' angle={angle + Angle.half} color={color} color_background={color} radius={thickness} center={arrow_start}/>
 			{:else if layout?.pointsTo}

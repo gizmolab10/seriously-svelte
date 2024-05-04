@@ -142,8 +142,8 @@ export class ChildMapRect extends Rect {
 		this.childPath = childPath;
 		this.curveType = curveType;
 		this.path = path;
-		if (this.child == null) {
-			console.log('ChildMapRect: null childPath.thing');
+		if (!this.child) {
+			console.log('Geometry ChildMapRect ... has no child');
 		}
 	}
 }

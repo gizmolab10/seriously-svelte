@@ -4,12 +4,12 @@ import { s_cluster_angle } from '../state/State';
 import { h } from '../../ts/db/DBDispatch';
 
 export default class Predicate extends RemoteIdentifiable {
-	directions: number;
+	isBidirectional: boolean;
 	kind: string;
 
-	constructor(id: string, kind: string, isRemotelyStored: boolean = true, directions: number = 1) {
+	constructor(id: string, kind: string, isBidirectional: boolean, isRemotelyStored: boolean = true) {
 		super(dbDispatch.db.dbType, id, isRemotelyStored);
-		this.directions = directions;
+		this.isBidirectional = isBidirectional;
 		this.kind = kind;
 	}
 
@@ -19,17 +19,11 @@ export default class Predicate extends RemoteIdentifiable {
 	static get contains(): Predicate | null { return this.predicate_forKind(PredicateKind.contains); }
 	static get idIsRelated(): string { return this.id_forKind(PredicateKind.isRelated); }
 	static get idContains(): string { return this.id_forKind(PredicateKind.contains); }
-	get isContains(): boolean { return this.kind == PredicateKind.contains; }
-	get isRelated(): boolean { return this.kind == PredicateKind.isRelated; }
 	get description(): string { return this.kind; }
 
 	clusterAngle_for(pointsTo: boolean): number {
 		const angle = get(s_cluster_angle);
-		switch (this.id) {
-			case Predicate.idContains:	return pointsTo ? angle / 2 : angle * 3.3;
-			case Predicate.idIsRelated: return -angle;
-			default:					return 0;
-		}
+		return this.isBidirectional ? -angle : pointsTo ? angle / 2 : angle * 3.3;
 	}
 
 }

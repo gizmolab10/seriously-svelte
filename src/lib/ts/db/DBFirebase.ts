@@ -209,7 +209,7 @@ export default class DBFirebase implements DBInterface {
 								if (relationship || remoteRelationship.isEqualTo(this.addedRelationship)) {
 									return;
 								}
-								relationship = h.relationship_remember_runtimeCreateUnique(baseID, id, remoteRelationship.predicate.id, remoteRelationship.from.id, remoteRelationship.to.id, remoteRelationship.order, CreationOptions.isFromRemote);
+								relationship = h.relationship_remember_runtimeCreateUnique(baseID, id, remoteRelationship.predicate.id, remoteRelationship.parent.id, remoteRelationship.child.id, remoteRelationship.order, CreationOptions.isFromRemote);
 								break;
 							default:
 								if (!relationship) {
@@ -279,9 +279,9 @@ export default class DBFirebase implements DBInterface {
 	async document_remember_validated(type: DatumType, id: string, data: DocumentData, baseID: string) {
 		if (DBFirebase.data_isValidOfKind(type, data)) {
 			switch (type) {
+				case DatumType.predicates:	  h.predicate_remember_runtimeCreate(id, data.kind, data.isBidirectional); break;
 				case DatumType.things:		  h.thing_remember_runtimeCreate(baseID, id, data.title, data.color, data.trait, true); break;
-				case DatumType.predicates:	  h.predicate_remember_runtimeCreate(id, data.kind); break;
-				case DatumType.relationships: h.relationship_remember_runtimeCreateUnique(baseID, id, data.predicate.id, data.from.id, data.to.id, data.order, CreationOptions.isFromRemote); break;
+				case DatumType.relationships: h.relationship_remember_runtimeCreateUnique(baseID, id, data.predicate.id, data.parent.id, data.child.id, data.order, CreationOptions.isFromRemote); break;
 			}
 		}
 	}
@@ -439,15 +439,15 @@ export default class DBFirebase implements DBInterface {
 
 	relationship_extractChangesFromRemote(relationship: Relationship, remote: RemoteRelationship) {
 		const changed = (relationship.idPredicate != remote.predicate.id ||
-			relationship.idParent != remote.from.id ||
-			relationship.idChild != remote.to.id ||
+			relationship.idParent != remote.parent.id ||
+			relationship.idChild != remote.child.id ||
 			relationship.order != remote.order)
 		if (changed) {
-			relationship.idChild = remote.to.id;
-			relationship.idParent = remote.from.id;
+			relationship.idChild = remote.child.id;
+			relationship.idParent = remote.parent.id;
 			relationship.isRemotelyStored = true;
 			relationship.idPredicate = remote.predicate.id;
-			relationship.order_setTo(remote.order + k.halfIncrement);
+			relationship.order_setTo_remoteMaybe(remote.order + k.halfIncrement);
 		}
 		return changed;
 	}
@@ -469,7 +469,7 @@ export default class DBFirebase implements DBInterface {
 				break;
 			case DatumType.relationships:
 				const relationship = data as RemoteRelationship;
-				if (!relationship.predicate || !relationship.from || !relationship.to) {
+				if (!relationship.predicate || !relationship.parent || !relationship.child) {
 					return false;
 				}
 				break;
@@ -573,8 +573,8 @@ class RemoteThing implements RemoteThing {
 
 interface RemoteRelationship {
 	order: number;
-	to: DocumentReference<Thing, DocumentData>;
-	from: DocumentReference<Thing, DocumentData>;
+	child: DocumentReference<Thing, DocumentData>;
+	parent: DocumentReference<Thing, DocumentData>;
 	predicate: DocumentReference<Predicate, DocumentData>;
 }
 
@@ -588,15 +588,15 @@ class RemoteRelationship implements RemoteRelationship {
 			try {
 				if (data instanceof Relationship) {
 					if (data.isValid) {
-						this.to = doc(things, data.idChild) as DocumentReference<Thing>;
-						this.from = doc(things, data.idParent) as DocumentReference<Thing>;
+						this.child = doc(things, data.idChild) as DocumentReference<Thing>;
+						this.parent = doc(things, data.idParent) as DocumentReference<Thing>;
 						this.predicate = doc(predicates, data.idPredicate) as DocumentReference<Predicate>;
 					}
 				} else {
 					const remote = data as RemoteRelationship;
 					if (DBFirebase.data_isValidOfKind(DatumType.relationships, data)) {
-						this.to = doc(things, remote.to.id) as DocumentReference<Thing>;
-						this.from = doc(things, remote.from.id) as DocumentReference<Thing>;
+						this.child = doc(things, remote.child.id) as DocumentReference<Thing>;
+						this.parent = doc(things, remote.parent.id) as DocumentReference<Thing>;
 						this.predicate = doc(predicates, remote.predicate.id) as DocumentReference<Predicate>;
 					}
 				}
@@ -609,9 +609,9 @@ class RemoteRelationship implements RemoteRelationship {
 	isEqualTo(relationship: Relationship | null) {
 		return !!relationship &&
 		relationship.idPredicate == this.predicate.id &&
-		relationship.idParent == this.from.id &&
-		relationship.order == this.order &&
-		relationship.idChild == this.to.id;
+		relationship.idParent == this.parent.id &&
+		relationship.idChild == this.child.id &&
+		relationship.order == this.order;
 	}
 
 }

@@ -27,21 +27,29 @@ export default class Thing extends Datum {
 		this.trait = trait;
 	};
 	
-	get parentIDs():		 Array<string> { return this.parents.map(t => t.id); }
-	get parentPaths():		   Array<Path> { return this.parentPaths_for(Predicate.idContains); }
-	get parents():			  Array<Thing> { return this.parentThings_forID(Predicate.idContains); }
-	get parents_ofAllKinds(): Array<Thing> { return u.uniquely_concatenateArrays(this.parents, this.parentThings_forID(Predicate.idIsRelated)); }
-	get fields():		 Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
-	get idBridging():				string { return this.isBulkAlias ? this.bulkRootID : this.id; }
-	get description():				string { return this.id + ' \"' + this.title + '\"'; }
-	get titleWidth():				number { return u.getWidthOf(this.title) + 6; }
-	get isRoot():				   boolean { return this.trait == IDTrait.root; }
-	get isBulkAlias():			   boolean { return this.trait == IDTrait.bulk; }
-	get hasMultipleParents():	   boolean { return this.parentPaths.length > 1; }
-	get isAcrossBulk():			   boolean { return this.baseID != h.db.baseID; }
-	get hasParents():			   boolean { return this.hasParentsFor(Predicate.idContains); }
-	get isFocus():				   boolean { return (get(s_path_focus).thing?.id ?? k.empty) == this.id; }
-	get hasRelated():			   boolean { return this.relationships_bothWays_for(Predicate.idIsRelated).length > 0; }
+	get parentIDs():	Array<string> { return this.parents.map(t => t.id); }
+	get parentPaths():	  Array<Path> { return this.parentPaths_for(Predicate.idContains); }
+	get parents():		 Array<Thing> { return this.parents_forID(Predicate.idContains); }
+	get fields():	Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
+	get idBridging():		   string { return this.isBulkAlias ? this.bulkRootID : this.id; }
+	get description():		   string { return this.id + ' \"' + this.title + '\"'; }
+	get titleWidth():		   number { return u.getWidthOf(this.title) + 6; }
+	get isRoot():			  boolean { return this.trait == IDTrait.root; }
+	get isBulkAlias():		  boolean { return this.trait == IDTrait.bulk; }
+	get hasMultipleParents(): boolean { return this.parentPaths.length > 1; }
+	get isAcrossBulk():		  boolean { return this.baseID != h.db.baseID; }
+	get hasParents():		  boolean { return this.hasParentsFor(Predicate.idContains); }
+	get isFocus():			  boolean { return (get(s_path_focus).thing?.id ?? k.empty) == this.id; }
+	get hasRelated():		  boolean { return this.relationships_bidirectional_for(Predicate.idIsRelated).length > 0; }
+
+	get parents_ofAllKinds(): Array<Thing> {
+		let parents: Array<Thing> = [];
+		for (const predicate of h.predicates) {
+			const more = this.parents_forID(predicate.id)
+			parents = u.uniquely_concatenateArrays(parents, more);
+		}
+		return parents;
+	}
 
 	get thing_isBulk_expanded(): boolean {		// cross db paths needs special attention
 		if (this.isBulkAlias) {
@@ -59,7 +67,7 @@ export default class Thing extends Datum {
 	log(option: DebugFlag, message: string) { debug.log_maybe(option, message + k.space + this.description); }
 
 	hasParentsFor(idPredicate: string): boolean {
-		return this.parentThings_forID(idPredicate).length > 0;
+		return this.parents_forID(idPredicate).length > 0;
 	}
 
 	override isInDifferentBulkThan(other: Thing): boolean {
@@ -70,7 +78,7 @@ export default class Thing extends Datum {
 		const relationships = this.relationships_for_isChildOf(idPredicate, true);
 		let grandParents: Array<Relationship> = [];
 		for (const relationship of relationships) {
-			const more = relationship.parentThing?.relationships_for_isChildOf(idPredicate, true);
+			const more = relationship.parent?.relationships_for_isChildOf(idPredicate, true);
 			if (more) {
 				grandParents = u.uniquely_concatenateArrays(grandParents, more);
 			}
@@ -78,13 +86,13 @@ export default class Thing extends Datum {
 		return grandParents;
 	}
 
-	things_bothWays_for(idPredicate: string): Array<Thing> {
-		const parents = this.relationships_for_isChildOf(idPredicate, true).map(r => r.parentThing);
-		const children = this.relationships_for_isChildOf(idPredicate, false).map(r => r.childThing);
+	things_bidirectional_for(idPredicate: string): Array<Thing> {
+		const parents = this.relationships_for_isChildOf(idPredicate, true).map(r => r.parent);
+		const children = this.relationships_for_isChildOf(idPredicate, false).map(r => r.child);
 		return u.uniquely_concatenateArrays(parents, children);
 	}
 
-	relationships_bothWays_for(idPredicate: string): Array<Relationship> {
+	relationships_bidirectional_for(idPredicate: string): Array<Relationship> {
 		const children = this.relationships_for_isChildOf(idPredicate, true);
 		const parents = this.relationships_for_isChildOf(idPredicate, false);
 		return u.uniquely_concatenateArrays(parents, children);
@@ -114,12 +122,12 @@ export default class Thing extends Datum {
 		}
 	}
 
-	parentThings_forID(idPredicate: string): Array<Thing> {
+	parents_forID(idPredicate: string): Array<Thing> {
 		let parents: Array<Thing> = [];
 		if (!this.isRoot) {
 			const relationships = this.relationships_for_isChildOf(idPredicate, true);
 			for (const relationship of relationships) {
-				const thing = relationship.parentThing;
+				const thing = relationship.parent;
 				if (!!thing) {
 					parents.push(thing);
 				}
@@ -136,9 +144,9 @@ export default class Thing extends Datum {
 			const relationships = this.relationships_for_isChildOf(idPredicate, true);
 			for (const relationship of relationships) {
 				if (isRelated) {
-					addPath(relationship.childThing?.containsPath ?? null);
+					addPath(relationship.child?.containsPath ?? null);
 				} else {
-					const parent = relationship.parentThing;
+					const parent = relationship.parent;
 					if (parent && !visited.includes(parent.id)) {
 						const endID = relationship.id;		// EGADS, this is the wrong relationship; needs the next one
 						const parentPaths = parent.parentPaths_for(idPredicate, u.uniquely_concatenateArrays(visited, [parent.id])) ?? [];

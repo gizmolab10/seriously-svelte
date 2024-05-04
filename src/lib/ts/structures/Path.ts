@@ -66,6 +66,7 @@ export default class Path {
 	get revealWrapper(): Wrapper | null { return this.wrappers[IDWrapper.reveal]; }
 	get widgetWrapper(): Wrapper | null { return this.wrappers[IDWrapper.widget]; }
 	get titleRect(): Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
+	get predicate(): Predicate | null { return h.predicate_forID(this.idPredicate) }
 	get hasChildRelationships(): boolean { return this.childRelationships.length > 0; }
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
 	get description(): string { return `${this.idPredicate} ${this.titles.join(':')}`; }
@@ -79,7 +80,7 @@ export default class Path {
 	get titles(): Array<string> { return this.things?.map(t => ` \"${t ? t.title : 'null'}\"`) ?? []; }
 	get isStoppingEdit(): boolean { return get(s_title_editing)?.stopping?.matchesPath(this) ?? false; }
 	get hasRelationships(): boolean { return this.hasParentRelationships || this.hasChildRelationships; }
-	get relatedThings(): Array<Thing> { return this.thing?.things_bothWays_for(Predicate.idIsRelated) ?? []; }
+	get relatedThings(): Array<Thing> { return this.thing?.things_bidirectional_for(Predicate.idIsRelated) ?? []; }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	get childRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, false); }
 	get parentRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, true); }
@@ -87,7 +88,7 @@ export default class Path {
 
 	get relationships(): Array<Relationship> {
 		const relationships = this.ids_hashed.map(hid => h.relationship_forHID(hid)) ?? [];
-		return u.strip_falsies(relationships);
+		return u.strip_invalid(relationships);
 	}
 	
 	get thing(): Thing | null {
@@ -250,9 +251,21 @@ export default class Path {
 		return null;
 	}
 
+	containingPaths_for(predicate: Predicate): Array<Path> {
+		if (predicate) {
+			if (!predicate.isBidirectional) {
+				return this.uniqueParentPaths_for(predicate.id);
+			} else {
+				const things = this.thing?.things_bidirectional_for(predicate.id) ?? [];
+				return things.map(t => t.containsPath);
+			}
+		}
+		return [];
+	}
+
 	uniqueParentPaths_for(idPredicate: string): Array<Path> {
 		let parentPaths: Array<Path> = [];
-		const things = this.thing?.parentThings_forID(idPredicate) ?? [];
+		const things = this.thing?.parents_forID(idPredicate) ?? [];
 		for (const thing of things) {
 			const paths = thing.isRoot ? [h.rootPath] : thing.parentPaths_for(idPredicate);
 			parentPaths = u.concatenateArrays(parentPaths, paths);
@@ -289,7 +302,7 @@ export default class Path {
 	thingAt(back: number = 1): Thing | null {			// default 1 == last
 		const relationship = this.relationshipAt(back);
 		if (this.pathString != k.empty && relationship) {
-			return relationship.childThing;
+			return relationship.child;
 		}
 		return h.root;	// N.B., h.root is wrong immediately after switching db type
 	}
@@ -297,8 +310,8 @@ export default class Path {
 	thing_isImmediateParentOf(path: Path, id: string): boolean {
 		const idThing = this.idThing;
 		if (idThing != k.id_unknown) {
-			const parentThings = path.thing?.parentThings_forID(id);
-			return parentThings?.map(t => t.id).includes(idThing) ?? false;
+			const parents = path.thing?.parents_forID(id);
+			return parents?.map(t => t.id).includes(idThing) ?? false;
 		}
 		return false;
 	}
@@ -308,14 +321,14 @@ export default class Path {
 		ids.push(id);
 		const path = h.path_remember_createUnique(ids.join(k.pathSeparator));
 		if (path) {
-			const description = `${path.idPredicate} ${path.pathString}`;
+			const description = `${path.predicate?.description} ${path.titles}`;
 			if (path.containsMixedPredicates) {
-				alert(`predicates ${description}`);
+				console.log(`predicates ${description}`);
 				h.path_forget(path);
 				return null;
 			}
 			if (path.containsReciprocals) {
-				alert(`reciprocal ${description}`);
+				console.log(`reciprocal ${description}`);
 				h.path_forget(path);
 				return null;
 			}
@@ -408,7 +421,7 @@ export default class Path {
 		let children: Array<Thing> = [];
 		if (!this.isRoot && relationships) {
 			for (const relationship of relationships) {
-				const thing = relationship.parentThing;
+				const thing = relationship.parent;
 				if (!!thing) {
 					children.push(thing);
 				}

@@ -19,12 +19,12 @@ export default class Relationship extends Datum {
 		this.order = order;
 	}
 
-	get childThing(): Thing | null { return this.thing(true); }
-	get parentThing(): Thing | null { return this.thing(false); }
-	get isValid(): boolean { return !!(this.idPredicate && this.idParent && this.idChild); }
+	get child(): Thing | null { return this.thing(true); }
+	get parent(): Thing | null { return this.thing(false); }
 	get predicate(): Predicate | null { return h.predicate_forID(this.idPredicate) }
-	get fields(): Airtable.FieldSet { return { predicate: [this.idPredicate], from: [this.idParent], to: [this.idChild], order: this.order }; }
-	get description(): string { return `BASE ${this.baseID} STORED ${this.isRemotelyStored} ORDER ${this.order} ID ${this.id} PARENT ${this.parentThing?.description} ${this.predicate?.kind} CHILD ${this.childThing?.description}`; }
+	get isValid(): boolean { return !!(this.idPredicate && this.idParent && this.idChild); }
+	get fields(): Airtable.FieldSet { return { predicate: [this.idPredicate], parent: [this.idParent], child: [this.idChild], order: this.order }; }
+	get description(): string { return `BASE ${this.baseID} STORED ${this.isRemotelyStored} ORDER ${this.order} ID ${this.id} PARENT ${this.parent?.description} ${this.predicate?.kind} CHILD ${this.child?.description}`; }
 	log(option: DebugFlag, message: string) { debug.log_maybe(option, message + k.space + this.description); }
 
 	thing(child: boolean): Thing | null {
@@ -32,7 +32,7 @@ export default class Relationship extends Datum {
 		return h.thing_forHID(id.hash()) ?? null
 	}
 
-	async order_setTo(newOrder: number, remoteWrite: boolean = false) {
+	async order_setTo_remoteMaybe(newOrder: number, remoteWrite: boolean = false) {
 		if (Math.abs(this.order - newOrder) > 0.001) {
 			this.order = newOrder;
 			if (remoteWrite) {

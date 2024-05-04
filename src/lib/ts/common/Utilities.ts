@@ -11,9 +11,10 @@ class Utilities {
 	strip_falsies(array: Array<any>): Array<any> { return array.filter(element => !!element); }
 	quadrant_startAngle(angle: number): number { return this.startAngle_ofQuadrant(this.quadrant_of(angle)); }
 	sort_byOrder(array: Array<Path>) { return array.sort( (a: Path, b: Path) => { return a.order - b.order; }); }
+	strip_invalid(array: Array<any>): Array<any> { return this.strip_identifiableDuplicates(this.strip_falsies(array)); }
 
 	uniquely_concatenateArrays<T>(a: Array<any>, b: Array<any>): Array<any> {
-		return this.strip_identifiableDuplicates(this.strip_falsies(this.concatenateArrays(a, b)));
+		return this.strip_invalid(this.concatenateArrays(a, b));
 	}
 
 	degrees_of(angle: number) {
@@ -204,7 +205,7 @@ class Utilities {
 			array.forEach(async (path, index) => {
 				if (path.order != index) {
 					await (async () => {
-						await path.relationship?.order_setTo(index, remoteWrite);
+						await path.relationship?.order_setTo_remoteMaybe(index, remoteWrite);
 					})();
 				}
 			});
