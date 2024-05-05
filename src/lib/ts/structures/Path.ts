@@ -92,13 +92,13 @@ export default class Path {
 	}
 	
 	get thing(): Thing | null {
-		if (!this._thing) {
-			const thing = this.thingAt() ?? null;	// always recompute, cache is for debugging
+		let thing = this._thing;
+		if (!thing) {
+			thing = this.thingAt(1) ?? null;	// always recompute, cache is for debugging
 			this._thing = thing;
-			if (!!thing && !thing.containsPath) {
-				thing.containsPath = this;
-			}
-
+		}
+		if (!!thing && !thing.ancestry) {
+			thing.ancestry = this;
 		}
 		return this._thing;
 	}
@@ -251,16 +251,16 @@ export default class Path {
 		return null;
 	}
 
-	containingPaths_for(predicate: Predicate): Array<Path> {
+	ancestries_for(predicate: Predicate): Array<Path> {
+		let containing: Array<Path> = [];
 		if (predicate) {
-			if (!predicate.isBidirectional) {
-				return this.uniqueParentPaths_for(predicate.id);
+			if (predicate.isBidirectional) {
+				containing = this.thing?.ancestries_bidirectional_for(predicate) ?? [];
 			} else {
-				const things = this.thing?.things_bidirectional_for(predicate.id) ?? [];
-				return things.map(t => t.containsPath);
+				containing = this.uniqueParentPaths_for(predicate.id);
 			}
 		}
-		return [];
+		return containing;
 	}
 
 	uniqueParentPaths_for(idPredicate: string): Array<Path> {
@@ -299,7 +299,7 @@ export default class Path {
 		return paths;
 	}
 
-	thingAt(back: number = 1): Thing | null {			// default 1 == last
+	thingAt(back: number): Thing | null {			// 1 == last
 		const relationship = this.relationshipAt(back);
 		if (this.pathString != k.empty && relationship) {
 			return relationship.child;

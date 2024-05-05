@@ -44,11 +44,10 @@ export default class DBDispatch {
 		this.db_changeTo_for(type);
 		this.queryStrings_apply();
 		await this.hierarchy_fetch_andBuild(type);
-		h.rootPath_setup();
 		persistLocal.paths_restore(true);
 		s_path_editingTools.set(null);
 		s_title_editing.set(null);
-		h.hierarchy_completed();
+		h.hierarchy_markAsCompleted();
 		signals.signal_rebuildGraph_fromFocus();
 	}
 
@@ -63,10 +62,11 @@ export default class DBDispatch {
 				s_things_arrived.set(false);
 				s_isBusy.set(true);
 			}
-			this.db.hierarchy = new Hierarchy(this.db);		// create Hierarchy to fetch into
-			h = this.db.hierarchy;
+			h = this.db.hierarchy = new Hierarchy(this.db);		// create Hierarchy to fetch into
 			await this.db.fetch_all();
 			await h.add_missing_removeNulls(null, this.db.baseID);
+			h.rootPath_setup();
+			h.build_ancestries();
 			if (isRemote) {
 				this.set_loadTime(startTime);
 			}

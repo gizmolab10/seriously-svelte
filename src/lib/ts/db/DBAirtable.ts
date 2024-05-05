@@ -159,9 +159,10 @@ export default class DBAirtable implements DBInterface {
 			const records = await this.predicates_table.select().all()
 
 			for (const record of records) {
+				const fields = record.fields;
 				const id = record.id as string; // do not yet need this
-				const kind = record.fields.kind as string;
-				const isBidirectional = record.fields.isBidirectional as boolean;
+				const kind = fields.kind as string;
+				const isBidirectional = fields.isBidirectional as boolean ?? false;
 				h.predicate_remember_runtimeCreate(id, kind, isBidirectional);
 			}
 

@@ -11,7 +11,7 @@ export default class Layout {
 		if (get(s_layout_asClusters)) {
 			this.layoutCluster(childPaths, focusPath, Predicate.idContains, origin, true);
 			for (const predicate of h.predicates) {
-				let paths = focusPath.containingPaths_for(predicate);
+				let paths = focusPath.ancestries_for(predicate);
 				this.layoutCluster(paths, focusPath, predicate.id, origin, false);
 			}
 		} else {
@@ -52,10 +52,11 @@ export default class Layout {
 				this.childMapRects.push(map);
 				if (index == 0) {
 					clusterLayout.start_angle = childAngle;
-				} else if (index == count - 1) {
-					clusterLayout.end_angle = childAngle;
 				}
 				index += 1;
+				if (index == count) {
+					clusterLayout.end_angle = childAngle;
+				}
 			}
 			this.clusterLayouts.push(clusterLayout);
 		}

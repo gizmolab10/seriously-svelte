@@ -906,11 +906,17 @@ export class Hierarchy {
 		this.wrappers_byType_andHID[wrapper.type] = dict;
 	}
 
-	hierarchy_completed() {
+	hierarchy_markAsCompleted() {
 		this.db.setHasData(true);
 		s_things_arrived.set(true);
 		s_isBusy.set(false);
 		this.isAssembled = true;
+	}
+
+	build_ancestries() {
+		for (const thing of this.things) {
+			thing.build_ancestries();
+		}
 	}
 
 	async add_missing_removeNulls(idParent: string | null, baseID: string) {

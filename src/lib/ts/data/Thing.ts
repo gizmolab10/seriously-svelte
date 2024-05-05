@@ -11,7 +11,7 @@ export default class Thing extends Datum {
 	borderAttribute = k.empty;
 	grabAttributes = k.empty;
 	needsBulkFetch = false;
-	containsPath!: Path;
+	ancestry!: Path;
 	isExemplar = false;
 	isEditing = false;
 	isGrabbed = false;
@@ -86,6 +86,30 @@ export default class Thing extends Datum {
 		return grandParents;
 	}
 
+	build_ancestries() {
+		if (!this.ancestry) {
+			const relationships = this.relationships_for_isChildOf(Predicate.idContains, true);
+			if (!relationships || relationships.length == 0) {
+				this.ancestry = h.rootPath;
+			} else {
+				const relationship = relationships[0];
+				const parent = relationship.parent;
+				if (parent) {
+					parent.build_ancestries();
+					const path = parent.ancestry?.uniquelyAppendID(relationship.id);
+					if (path) {
+						this.ancestry = path;
+					}
+				}
+			}
+		}
+	}
+
+	ancestries_bidirectional_for(predicate: Predicate): Array<Path> {
+		let relationships = this.relationships_for_isChildOf(predicate.id, false);
+		return u.strip_invalid(relationships).map(r => r.child.ancestry);
+	}
+
 	things_bidirectional_for(idPredicate: string): Array<Thing> {
 		const parents = this.relationships_for_isChildOf(idPredicate, true).map(r => r.parent);
 		const children = this.relationships_for_isChildOf(idPredicate, false).map(r => r.child);
@@ -144,7 +168,7 @@ export default class Thing extends Datum {
 			const relationships = this.relationships_for_isChildOf(idPredicate, true);
 			for (const relationship of relationships) {
 				if (isRelated) {
-					addPath(relationship.child?.containsPath ?? null);
+					addPath(relationship.child?.ancestry ?? null);
 				} else {
 					const parent = relationship.parent;
 					if (parent && !visited.includes(parent.id)) {
