@@ -26,7 +26,7 @@
 	let top = 0;
 	
 	onMount( () => {
-		const handler = signals.handle_relayoutWidgets((path) => { updateOrigins(); });
+		const handler = signals.handle_relayoutWidgets(0, (path) => { updateOrigins(); });
 		return () => { handler.disconnect() };
 	});
 	

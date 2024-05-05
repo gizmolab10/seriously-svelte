@@ -40,11 +40,9 @@
 	onMount(() => { 
 		setup();
 		setTimeout(() => { updateMaybeRedraw(); }, 20);	
-		const handler = signals.handle_relayoutWidgets((path) => {
-			setTimeout(() => {
-				update();
-				rebuilds += 1;
-			}, 1);	  // wait for graph to relayout
+		const handler = signals.handle_relayoutWidgets(2, (path) => {	// priority assures layout is finished
+			update();
+			rebuilds += 1;
 		});
 		return () => { handler.disconnect() };
 	});

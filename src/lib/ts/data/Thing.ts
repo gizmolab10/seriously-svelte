@@ -86,20 +86,23 @@ export default class Thing extends Datum {
 		return grandParents;
 	}
 
-	build_ancestries() {
-		if (!this.ancestry) {
+	ancestry_setTo(ancestry: Path) {
+		h.path_forget(this.ancestry);
+		this.ancestry = ancestry;
+	}
+
+	ancestries_rebuildForSubtree() {		// for this and its subtree
+		if (this.isRoot) {
+			// if root, use root path
+			this.ancestry_setTo(h.rootPath);
+		} else {
+			// if not, use parent.ancestry and append id of isChildOf relationship
 			const relationships = this.relationships_for_isChildOf(Predicate.idContains, true);
-			if (!relationships || relationships.length == 0) {
-				this.ancestry = h.rootPath;
-			} else {
+			if (relationships && relationships.length > 0) {
 				const relationship = relationships[0];
-				const parent = relationship.parent;
-				if (parent) {
-					parent.build_ancestries();
-					const path = parent.ancestry?.uniquelyAppendID(relationship.id);
-					if (path) {
-						this.ancestry = path;
-					}
+				const path = relationship.parent?.ancestry?.uniquelyAppendID(relationship.id);
+				if (path) {
+					this.ancestry_setTo(path);
 				}
 			}
 		}

@@ -22,16 +22,14 @@
 	
 	onMount( () => {
 		layoutChildren();
-		const handler = signals.handle_relayoutWidgets((signal_path) => {
+		const handler = signals.handle_relayoutWidgets(1, (signal_path) => {
 			const now = new Date().getTime();
 			if (path.isExpanded &&
 				((now - priorTime) > 100) &&
 				(!signal_path || signal_path.matchesPath(path))) {
 				priorTime = now;
 				debugReact.log_origins(origin.x + ' before timeout');
-				setTimeout(async () => {	// delay until all other handlers for this signal are done TODO: WHY?
-					layoutChildren();
-				}, 1);
+				layoutChildren();
 			}
 		});
 		return () => { handler.disconnect() };

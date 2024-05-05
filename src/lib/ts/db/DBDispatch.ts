@@ -66,7 +66,7 @@ export default class DBDispatch {
 			await this.db.fetch_all();
 			await h.add_missing_removeNulls(null, this.db.baseID);
 			h.rootPath_setup();
-			h.build_ancestries();
+			h.paths_rebuildAll();
 			if (isRemote) {
 				this.set_loadTime(startTime);
 			}

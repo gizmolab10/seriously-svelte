@@ -13,7 +13,9 @@
 	let left = 0;
 
 	onMount( () => {
-		const handler = signals.handle_rebuildGraph((path) => { rebuilds += 1; });
+		const handler = signals.handle_rebuildGraph(2, (path) => {
+			rebuilds += 1;
+		});
 		return () => { handler.disconnect() };
 	});
 

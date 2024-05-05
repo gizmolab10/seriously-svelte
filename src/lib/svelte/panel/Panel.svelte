@@ -20,7 +20,9 @@
 	onMount( () => {
 		g.setup();
 		$s_isBusy = true;
-		const handler = signals.handle_rebuildGraph((path) => { rebuilds += 1; });
+		const handler = signals.handle_rebuildGraph(1, (path) => {
+			rebuilds += 1;
+		});
 		return () => { handler.disconnect() };
 	});
 

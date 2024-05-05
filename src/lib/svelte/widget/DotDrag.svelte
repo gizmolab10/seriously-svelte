@@ -38,7 +38,7 @@
         const handler = signals.handle_altering((state) => {
 			const applyFlag = $s_path_editingTools && !!path && path.things_canAlter_asParentOf_toolsPath;
 			isAltering = applyFlag ? !!state : false;
-			updatePathExtra();
+			updateExtraPaths();
 			updateColors();
         })
 		return () => { handler.disconnect() };

@@ -72,11 +72,10 @@
 	
 	$: {
 		if (priorOrigin != origin) {
+			priorOrigin = origin;
 			setTimeout(() => {
-				debugReact.log_layout(`WIDGET origin ${thing?.description}`);
 				updateLayout()
 			}, 1);
-			priorOrigin = origin;
 		}
 	}
 

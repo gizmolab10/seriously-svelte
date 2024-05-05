@@ -32,6 +32,7 @@ export class Hierarchy {
 
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): string | null { return this.root?.id ?? null; };
+	paths_rebuildAll() { this.root.ancestries_rebuildForSubtree(); }
 	thing_forPath(path: Path | null): Thing | null { return path?.thing ?? null; }
 	thing_forHID(hid: number | null): Thing | null { return (!hid) ? null : this.thing_byHID[hid]; }
 
@@ -40,6 +41,9 @@ export class Hierarchy {
 	constructor(db: DBInterface) {
 		this.grabs = new Grabs();
 		this.db = db;
+		signals.handle_rebuildGraph(0, (path) => {
+			path.thing?.ancestries_rebuildForSubtree();
+		});
 	}
 
 	rootPath_setup() {
@@ -562,6 +566,14 @@ export class Hierarchy {
 
 	static readonly $_PATH_$: unique symbol;
 
+	path_forget(path: Path | null) {
+		if (!!path) {
+			let dict = this.path_byKind_andHash[path.idPredicate] ?? {};
+			delete dict[path.pathHash];
+			this.path_byKind_andHash[path.idPredicate] = dict;
+		}
+	}
+
 	path_remember_createUnique(pathString: string = k.empty, idPredicate: string = Predicate.idContains): Path | null {
 		const pathHash = pathString.hash();
 		let dict = this.path_byKind_andHash[idPredicate] ?? {};
@@ -653,12 +665,6 @@ export class Hierarchy {
 				newParentPath.grabOnly();
 			}
 		}
-	}
-
-	path_forget(path: Path) {
-		let dict = this.path_byKind_andHash[path.idPredicate] ?? {};
-		delete dict[path.pathHash];
-		this.path_byKind_andHash[path.idPredicate] = dict;
 	}
 
 	async path_forget_remoteUpdate(path: Path) {
@@ -911,12 +917,6 @@ export class Hierarchy {
 		s_things_arrived.set(true);
 		s_isBusy.set(false);
 		this.isAssembled = true;
-	}
-
-	build_ancestries() {
-		for (const thing of this.things) {
-			thing.build_ancestries();
-		}
 	}
 
 	async add_missing_removeNulls(idParent: string | null, baseID: string) {
