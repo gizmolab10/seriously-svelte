@@ -32,7 +32,7 @@ export class Hierarchy {
 
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): string | null { return this.root?.id ?? null; };
-	paths_rebuildAll() { this.root.ancestries_rebuildForSubtree(); }
+	paths_rebuildAll() { this.root.onePaths_rebuildForSubtree(); }
 	thing_forPath(path: Path | null): Thing | null { return path?.thing ?? null; }
 	thing_forHID(hid: number | null): Thing | null { return (!hid) ? null : this.thing_byHID[hid]; }
 
@@ -42,7 +42,7 @@ export class Hierarchy {
 		this.grabs = new Grabs();
 		this.db = db;
 		signals.handle_rebuildGraph(0, (path) => {
-			path.thing?.ancestries_rebuildForSubtree();
+			path.thing?.onePaths_rebuildForSubtree();
 		});
 	}
 
@@ -509,7 +509,7 @@ export class Hierarchy {
 		let relationship = this.relationship_forPredicate_parent_child(idPredicate, idParent, idChild);
 		relationship?.order_setTo_remoteMaybe(order);
 		if (!relationship) {
-			this.relationshipReversed_remember_runtimeCreate_maybe(baseID, idPredicate, idParent, idChild);
+			// this.relationshipReversed_remember_runtimeCreate_maybe(baseID, idPredicate, idParent, idChild);
 			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, creationOptions != CreationOptions.none);
 			this.relationship_remember(relationship);
 		}
@@ -603,15 +603,15 @@ export class Hierarchy {
 		const toolsPath = get(s_path_editingTools);
 		if (toolsPath) {
 			let path = toolsPath;
-			do {
-				path = path.next_siblingPath;
-				if (path.isVisible) {
-					break;
-				} else if (force) {
-					await path.assureIsVisible();
-					break;
-				}	
-			} while (!path.matchesPath(toolsPath));
+			// do {
+			// 	path = path.next_siblingPath;
+			// 	if (path.isVisible) {
+			// 		break;
+			// 	} else if (force) {
+			// 		await path.assureIsVisible();
+			// 		break;
+			// 	}	
+			// } while (!path.matchesPath(toolsPath));
 			path.grabOnly();
 			signals.signal_relayoutWidgets_fromFocus();
 			s_path_editingTools.set(path);

@@ -8,7 +8,7 @@
 	import TitleEditor from './TitleEditor.svelte';
 	import DotReveal from './DotReveal.svelte';
 	import DotDrag from './DotDrag.svelte';
-    export let path = exemplar.ancestry;
+    export let path = exemplar.onePath;
 	export let origin = new Point(160, 5);
     export let angle = 0;
 	const hasExtraAtLeft = !!path && !path.isExpanded && (path.childRelationships.length > 3);

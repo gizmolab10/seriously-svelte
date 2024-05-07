@@ -40,7 +40,7 @@
 	onMount(() => { 
 		setup();
 		setTimeout(() => { updateMaybeRedraw(); }, 20);	
-		const handler = signals.handle_relayoutWidgets(2, (path) => {	// priority assures layout is finished
+		const handler = signals.handle_relayoutWidgets(2, (path) => {	// priority of 2 assures layout is finished
 			update();
 			rebuilds += 1;
 		});

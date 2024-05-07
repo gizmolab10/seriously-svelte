@@ -97,8 +97,8 @@ export default class Path {
 			thing = this.thingAt(1) ?? null;	// always recompute, cache is for debugging
 			this._thing = thing;
 		}
-		if (!!thing && !thing.ancestry) {
-			thing.ancestry = this;
+		if (!!thing && !thing.onePath) {
+			thing.onePath = this;
 		}
 		return this._thing;
 	}
@@ -185,20 +185,6 @@ export default class Path {
 		return false;
 	}
 
-	get next_siblingPath(): Path {
-		let nextPath: Path = this;
-		const pathHash = this.pathHash;
-		const paths = this.uniqueParentPaths_for(this.idPredicate) ?? [];
-		const index = paths.map(p => p.pathHash).indexOf(pathHash);
-		if (index == -1) {
-			console.log(`no next for ${this.description} of ${paths.map(p => k.newLine + p.description)}`);
-		} else {
-			const next = index.increment(true, paths.length)
-			nextPath = paths[next];
-		}
-		return nextPath;
-	}
-
 	matchesPath(path: Path): boolean { return this.pathHash == path.pathHash; }
 	includedInStore(store: Writable<Array<Path>>): boolean { return this.includedInPaths(get(store)); }
 	matchesStore(store: Writable<Path | null>): boolean { return get(store)?.matchesPath(this) ?? false; }
@@ -249,29 +235,6 @@ export default class Path {
 			return array[siblingIndex];
 		}
 		return null;
-	}
-
-	ancestries_for(predicate: Predicate): Array<Path> {
-		let containing: Array<Path> = [];
-		if (predicate) {
-			if (predicate.isBidirectional) {
-				containing = this.thing?.ancestries_bidirectional_for(predicate) ?? [];
-			} else {
-				containing = this.uniqueParentPaths_for(predicate.id);
-			}
-		}
-		return containing;
-	}
-
-	uniqueParentPaths_for(idPredicate: string): Array<Path> {
-		let parentPaths: Array<Path> = [];
-		const things = this.thing?.parents_forID(idPredicate) ?? [];
-		for (const thing of things) {
-			const paths = thing.isRoot ? [h.rootPath] : thing.parentPaths_for(idPredicate);
-			parentPaths = u.concatenateArrays(parentPaths, paths);
-		}
-		const purgedPaths = u.strip_falsies(parentPaths);
-		return u.strip_thingDuplicates(purgedPaths);
 	}
 
 	childPaths_for(idPredicate: string = Predicate.idContains): Array<Path> {

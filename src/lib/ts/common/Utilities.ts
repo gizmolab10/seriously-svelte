@@ -7,13 +7,13 @@ class Utilities {
 	ignore(event: Event) {}
 	roundToEven(n: number): number{ return Math.round(n / 2) * 2; }
 	normalized_angle(angle: number) { return (angle + Angle.full * 2) % Angle.full; }
-	concatenateArrays<T>(a: Array<any>, b: Array<any>): Array<any> { return [...a, ...b]; }
+	concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return [...a, ...b]; }
 	strip_falsies(array: Array<any>): Array<any> { return array.filter(element => !!element); }
 	quadrant_startAngle(angle: number): number { return this.startAngle_ofQuadrant(this.quadrant_of(angle)); }
 	sort_byOrder(array: Array<Path>) { return array.sort( (a: Path, b: Path) => { return a.order - b.order; }); }
 	strip_invalid(array: Array<any>): Array<any> { return this.strip_identifiableDuplicates(this.strip_falsies(array)); }
 
-	uniquely_concatenateArrays<T>(a: Array<any>, b: Array<any>): Array<any> {
+	uniquely_concatenateArrays(a: Array<any>, b: Array<any>): Array<any> {
 		return this.strip_invalid(this.concatenateArrays(a, b));
 	}
 
@@ -66,14 +66,6 @@ class Utilities {
 		});
 	}
 
-	strip_hidDuplicates(paths: Array<Path>) {
-		let pathsByHID: {[hash: number]: Path} = {};
-		for (const path of paths) {
-			pathsByHID[path.pathHash] = path;
-		}
-		return Object.values(pathsByHID);
-	}
-
 	sort_byTitleTop(paths: Array<Path>) {
 		return paths.sort( (a: Path, b: Path) => {
 			const aTop = a.titleRect?.origin.y;
@@ -106,6 +98,14 @@ class Utilities {
 		if (normalized.isBetween(Angle.quarter, Angle.half,			 true)) { quadrant = Quadrant.lowerLeft; }
 		if (normalized.isBetween(Angle.half,	Angle.threeQuarters, true)) { quadrant = Quadrant.upperLeft; }
 		return quadrant;
+	}
+
+	strip_hidDuplicates(paths: Array<Path>) {
+		let pathsByHID: {[hash: number]: Path} = {};
+		for (const path of paths) {
+			pathsByHID[path.pathHash] = path;
+		}
+		return Object.values(pathsByHID);
 	}
 
 	strip_identifiableDuplicates(identifiables: Array<Identifiable>): Array<Identifiable> {

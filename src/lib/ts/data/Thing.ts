@@ -11,10 +11,10 @@ export default class Thing extends Datum {
 	borderAttribute = k.empty;
 	grabAttributes = k.empty;
 	needsBulkFetch = false;
-	ancestry!: Path;
 	isExemplar = false;
 	isEditing = false;
 	isGrabbed = false;
+	onePath!: Path;
 	title: string;
 	color: string;
 	trait: string;
@@ -28,7 +28,7 @@ export default class Thing extends Datum {
 	};
 	
 	get parentIDs():	Array<string> { return this.parents.map(t => t.id); }
-	get parentPaths():	  Array<Path> { return this.parentPaths_for(Predicate.idContains); }
+	get parentPaths():	  Array<Path> { return this.parentPaths_for(Predicate.contains); }
 	get parents():		 Array<Thing> { return this.parents_forID(Predicate.idContains); }
 	get fields():	Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get idBridging():		   string { return this.isBulkAlias ? this.bulkRootID : this.id; }
@@ -62,6 +62,21 @@ export default class Thing extends Datum {
 		}
 		return false;
 	}
+
+	get onePath_derived(): Path | null {
+		let onePath: Path | null = null;
+		if (this.isRoot) {			// if root, use root path
+			onePath = h.rootPath;
+		} else {					// if not, use parent.onePath and append id of isChildOf relationship
+			const relationships = this.relationships_for_isChildOf(Predicate.idContains, true);
+			if (relationships && relationships.length > 0) {
+				const relationship = relationships[0];
+				const aParentPath = relationship.parent?.onePath;
+				onePath = aParentPath?.uniquelyAppendID(relationship.id) ?? null;
+			}
+		}
+		return onePath;
+	}
 	
 	debugLog(message: string) { this.log(DebugFlag.things, message); }
 	log(option: DebugFlag, message: string) { debug.log_maybe(option, message + k.space + this.description); }
@@ -84,33 +99,6 @@ export default class Thing extends Datum {
 			}
 		}
 		return grandParents;
-	}
-
-	ancestry_setTo(ancestry: Path) {
-		h.path_forget(this.ancestry);
-		this.ancestry = ancestry;
-	}
-
-	ancestries_rebuildForSubtree() {		// for this and its subtree
-		if (this.isRoot) {
-			// if root, use root path
-			this.ancestry_setTo(h.rootPath);
-		} else {
-			// if not, use parent.ancestry and append id of isChildOf relationship
-			const relationships = this.relationships_for_isChildOf(Predicate.idContains, true);
-			if (relationships && relationships.length > 0) {
-				const relationship = relationships[0];
-				const path = relationship.parent?.ancestry?.uniquelyAppendID(relationship.id);
-				if (path) {
-					this.ancestry_setTo(path);
-				}
-			}
-		}
-	}
-
-	ancestries_bidirectional_for(predicate: Predicate): Array<Path> {
-		let relationships = this.relationships_for_isChildOf(predicate.id, false);
-		return u.strip_invalid(relationships).map(r => r.child.ancestry);
 	}
 
 	things_bidirectional_for(idPredicate: string): Array<Thing> {
@@ -163,20 +151,55 @@ export default class Thing extends Datum {
 		return parents;
 	}
 
-	parentPaths_for(idPredicate: string, visited: Array<string> = []): Array<Path> {
+	onePaths_rebuildForSubtree() {		// set onePath for this and all its progeny
+		const onePath = this.onePath_derived;
+		if (onePath) {
+			if (this.onePath != onePath) {
+				h.path_forget(this.onePath);
+				this.onePath = onePath;
+			}
+			for (const child of onePath.children) {
+				child.onePaths_rebuildForSubtree();
+			}
+		}
+	}
+
+	onePaths_for(predicate: Predicate): Array<Path> {
+		if (predicate) {
+			const id = predicate.id;
+			if (predicate.isBidirectional) {
+				return this.things_bidirectional_for(id).map(t => t.onePath);
+			} else {;
+				return this.uniqueParentPaths_for(predicate);
+			}
+		}
+		return [];
+	}
+
+	uniqueParentPaths_for(predicate: Predicate): Array<Path> {
+		let parentPaths: Array<Path> = [];
+		const parents = this.parents_forID(predicate.id) ?? [];
+		for (const parent of parents) {
+			const morePaths = parent.isRoot ? [h.rootPath] : parent.parentPaths_for(predicate);
+			parentPaths = u.concatenateArrays(parentPaths, morePaths);
+		}
+		return u.strip_thingDuplicates(u.strip_falsies(parentPaths));
+	}
+
+	parentPaths_for(predicate: Predicate | null, visited: Array<string> = []): Array<Path> {
 		// all the paths that point to each parent of this thing
 		let paths: Array<Path> = [];
-		if (!this.isRoot) {
-			const isRelated = idPredicate == Predicate.idIsRelated;
-			const relationships = this.relationships_for_isChildOf(idPredicate, true);
+		if (!this.isRoot && predicate) {
+			const isBidirectional = predicate.isBidirectional;
+			const relationships = this.relationships_for_isChildOf(predicate.id, true);
 			for (const relationship of relationships) {
-				if (isRelated) {
-					addPath(relationship.child?.ancestry ?? null);
+				if (isBidirectional) {
+					addPath(relationship.child?.onePath ?? null);
 				} else {
 					const parent = relationship.parent;
 					if (parent && !visited.includes(parent.id)) {
 						const endID = relationship.id;		// EGADS, this is the wrong relationship; needs the next one
-						const parentPaths = parent.parentPaths_for(idPredicate, u.uniquely_concatenateArrays(visited, [parent.id])) ?? [];
+						const parentPaths = parent.parentPaths_for(predicate, u.uniquely_concatenateArrays(visited, [parent.id])) ?? [];
 						if (parentPaths.length == 0) {
 							addPath(h.rootPath.uniquelyAppendID(endID));
 						} else {
@@ -187,13 +210,13 @@ export default class Thing extends Datum {
 					}
 				}
 			}
+			paths = u.strip_hidDuplicates(paths);
 			function addPath(path: Path | null) {
 				if (!!path) {
 					paths.push(path);
 				}
 			}
 		}
-		paths = u.strip_hidDuplicates(paths);
 		return u.sort_byTitleTop(paths).reverse();
 	}
 	
