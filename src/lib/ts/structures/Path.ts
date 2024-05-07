@@ -479,8 +479,13 @@ export default class Path {
 		const changed = !(get(s_path_focus)?.matchesPath(this) ?? false);
 		s_path_editingTools.set(null);
 		if (changed) {
+			const grabbedPath = h.grabs.latestPathGrabbed(true)
 			s_path_focus.set(this);
 			this.expand();
+			if (!!grabbedPath && !grabbedPath.isVisible) {
+				grabbedPath.ungrab()
+				this.grab();
+			}
 		}
 		return changed;
 	}

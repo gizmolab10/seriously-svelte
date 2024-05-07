@@ -695,7 +695,9 @@ export class Hierarchy {
 			if (changingBulk) {
 				console.log('changingBulk');
 			}
-			await this.db.thing_remember_remoteCreate(child);					// for everything below, need to await child.id fetched from dbDispatch
+			if (!child.isRemotelyStored) {
+				await this.db.thing_remember_remoteCreate(child);					// for everything below, need to await child.id fetched from dbDispatch
+			}
 			const relationship = await this.relationship_remember_remoteCreateUnique(baseID, null, idPredicate, parent.idBridging, child.id, 0, CreationOptions.getRemoteID);
 			const childPath = parentPath.uniquelyAppendID(relationship.id);
 			await u.paths_orders_normalize_remoteMaybe(parentPath.childPaths);		// write new order values for relationships
@@ -722,10 +724,11 @@ export class Hierarchy {
 	}
 
 	async path_rebuild_remoteMoveUp(path: Path, up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
-		const thing = this.thing_forPath(path);
 		const parentPath = path.parentPath;
 		if (parentPath) {
+			let needsRebuild = false;
 			const siblings = parentPath.children;
+			const thing = this.thing_forPath(path);
 			if (!siblings || siblings.length == 0) {
 				this.path_rebuild_runtimeBrowseRight(path, true, EXTREME, up);
 			} else if (!!thing) {
@@ -735,7 +738,7 @@ export class Hierarchy {
 					const grabPath = parentPath.appendChild(siblings[newIndex]);
 					if (grabPath) {
 						if (!grabPath.isVisible) {
-							parentPath.becomeFocus();
+							needsRebuild = parentPath.becomeFocus();
 						}
 						if (SHIFT) {
 							grabPath.toggleGrab();
@@ -745,12 +748,15 @@ export class Hierarchy {
 						signals.signal_relayoutWidgets_fromFocus();
 					}
 				} else if (k.allow_GraphEditing && OPTION) {
+					needsRebuild = true;
 					await u.paths_orders_normalize_remoteMaybe(parentPath.childPaths, false);
 					const wrapped = up ? (index == 0) : (index == siblings.length - 1);
 					const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
 					const newOrder = newIndex + goose;
 					path.relationship?.order_setTo_remoteMaybe(newOrder);
 					await u.paths_orders_normalize_remoteMaybe(parentPath.childPaths);
+				}
+				if (needsRebuild) {
 					signals.signal_rebuildGraph_fromFocus();
 				}
 			}
