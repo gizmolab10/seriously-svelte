@@ -9,6 +9,7 @@ export enum IDPersistant {
 	relationships = 'relationships',
 	show_children = 'show_children',
 	title_atTop   = 'title_atTop',
+	arrowheads	  = 'arrowheads',
 	relations	  = 'relations',
 	expanded	  = 'expanded',
 	controls	  = 'controls',
@@ -31,38 +32,45 @@ class PersistLocal {
 
 	queryStrings_apply() {
 		const queryStrings = k.queryString;
-		const show = queryStrings.get('show');
-        const erase = queryStrings.get('erase');
+		const shownNames = queryStrings.get('show')?.split(k.comma) ?? [];
+		const hiddenNames = queryStrings.get('hide')?.split(k.comma) ?? [];
+        const eraseOptions = queryStrings.get('erase')?.split(k.comma) ?? [];
+		const shown = Object.fromEntries(shownNames.map(s => [s, true]) ?? {});
+		const hidden = Object.fromEntries(hiddenNames.map(s => [s, false]) ?? {});
+		const keyedFlags: { [key: string]: boolean } = {...shown, ...hidden};
 		this.key_apply(IDPersistant.layout, 'clusters', (flag) => s_layout_asClusters.set(flag));
-		this.key_apply(IDPersistant.details, 'hide', (flag) => s_show_details.set(!flag), false);
-		this.key_apply(IDPersistant.controls, 'show', (flag) => k.showControls = flag);
-        if (show) {
-			for (const option of show.split(k.comma)) {
-				switch (option) {
-					case 'controls':
-						k.showControls = true;
-					case 'titleAtTop':
-						this.key_write(IDPersistant.title_atTop, true);
-						k.titleIsAtTop = true;
-						break;
-				}
+		for (const [name, flag] of Object.entries(keyedFlags)) {
+			switch (name) {
+				case 'details':
+					s_show_details.set(flag);
+					break;
+				case 'controls':
+					k.show_controls = flag;
+					this.key_write(IDPersistant.controls, flag);
+					break;
+				case 'arrowheads':
+					k.show_arrowheads = flag;
+					this.key_write(IDPersistant.arrowheads, flag);
+					break;
+				case 'titleAtTop':
+					k.show_titleAtTop = flag;
+					this.key_write(IDPersistant.title_atTop, flag);
+					break;
 			}
 		}
-        if (erase) {
-            for (const option of erase.split(k.comma)) {
-                switch (option) {
-                    case 'data':
-						dbDispatch.eraseDB = true;
-						break;
-                    case 'settings': 
-						localStorage.clear();
-						s_paths_expanded.set([]);
-						s_path_focus.set(h.rootPath);
-						s_paths_grabbed.set([h.rootPath]);
-						break;
-                }
-            }
-        }
+		for (const option of eraseOptions) {
+			switch (option) {
+				case 'data':
+					dbDispatch.eraseDB = true;
+					break;
+				case 'settings': 
+					localStorage.clear();
+					s_paths_expanded.set([]);
+					s_path_focus.set(h.rootPath);
+					s_paths_grabbed.set([h.rootPath]);
+					break;
+			}
+		}
     }
 
 	get dbType(): string { return dbDispatch.db.dbType; }
@@ -125,8 +133,9 @@ class PersistLocal {
 			this.key_write(IDPersistant.relationships, true);
 		}
 		this.key_write(IDPersistant.title_atTop, false);
-		k.showControls = this.key_read(IDPersistant.controls) ?? false;
-		k.titleIsAtTop = this.key_read(IDPersistant.title_atTop) ?? false;
+		k.show_controls = this.key_read(IDPersistant.controls) ?? true;
+		k.show_arrowheads = this.key_read(IDPersistant.arrowheads) ?? false;
+		k.show_titleAtTop = this.key_read(IDPersistant.title_atTop) ?? false;
 		g.applyScale(!u.device_isMobile ? 1 : this.key_read(IDPersistant.scale) ?? 1);
 
 		s_cluster_angle.set( Math.PI * -0.28);

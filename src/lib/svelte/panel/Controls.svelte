@@ -53,7 +53,7 @@
 			click_closure={() => button_closure_forID(IDButton.details)}>
 			<img src='settings.svg' alt='circular button' width={size}px height={size}px/>
 		</CircularButton>
-		{#if k.showControls}
+		{#if k.show_controls}
 			<button class='button'
 				style='
 					left:30px;

@@ -444,7 +444,7 @@ export default class Path {
 		return 0;
 	}
 
-	visibleProgeny_width(special: boolean = k.titleIsAtTop, visited: Array<number> = []): number {
+	visibleProgeny_width(special: boolean = k.show_titleAtTop, visited: Array<number> = []): number {
 		const thing = this.thing;
 		if (!!thing) {
 			const pathHash = this.pathHash;

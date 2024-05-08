@@ -8,7 +8,7 @@
     export let layout: ClusterLayout;
 	export let center = Point.zero;
 	const idDiv = `${layout?.pointsTo ? 'child' : 'parent'} ${layout?.predicate.kind}`;
-	const showArrowHeads = false;
+	const show_arrowheads = k.show_arrowheads;
 	let arrow_start = Point.zero;
 	let arrow_end = Point.zero;
 	let lineWrapper: Wrapper;
@@ -29,8 +29,8 @@
 		angle = layout?.line_angle;
 		const line_rotated = layout?.line_rotated;
 		const title_width = u.getWidthOf(layout?.title) / -3;
-		const line_length = k.cluster_line_length - k.dot_size * (showArrowHeads ? 8 : 0);
-		const inside_radius = k.cluster_inside_radius + (showArrowHeads ? 8 : 0);
+		const line_length = k.cluster_line_length - k.dot_size * (show_arrowheads ? 8 : 0);
+		const inside_radius = k.cluster_inside_radius + (show_arrowheads ? 8 : 0);
 		const inside_rotated = Point.polarVector(inside_radius, angle);
 		const titleDelta = new Point(title_width, k.dot_size / -2);
 		size = line_rotated.abs.asSize;
@@ -84,7 +84,7 @@
 			color: {color};'>
 			{layout?.title}
 		</div>
-		{#if showArrowHeads}
+		{#if show_arrowheads}
 			{#if layout?.predicate.isBidirectional}
 				<ArrowHead idDiv='child'  angle={angle} color={color} color_background={color} radius={thickness} center={arrow_end}/>
 				<ArrowHead idDiv='parent' angle={angle + Angle.half} color={color} color_background={color} radius={thickness} center={arrow_start}/>

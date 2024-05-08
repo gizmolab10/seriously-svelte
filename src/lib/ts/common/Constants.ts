@@ -30,8 +30,9 @@ export default class Constants {
 	comma = ',';
 	space = ' ';
 	empty = '';
-	titleIsAtTop = false;
-	showControls = false;
+	show_titleAtTop = false;
+	show_controls = false;
+	show_arrowheads = false;
 	allow_GraphEditing = true;
 	allow_TitleEditing = true;
 	allow_HorizontalScrolling = true;

@@ -41,7 +41,7 @@
 		}
 		if (focus == null || focus.id != $s_path_focus) {
 			focus = !$s_path_focus ? h.root : h.thing_forPath($s_path_focus);
-			offsetX_ofFirstReveal = k.titleIsAtTop ? 0 : focus?.titleWidth / 2;
+			offsetX_ofFirstReveal = k.show_titleAtTop ? 0 : focus?.titleWidth / 2;
 			updateOrigins();
 			rebuilds += 1;
 		}
@@ -93,7 +93,7 @@
 				<Box rect={blueRect} color={k.color_default}/>
 				<Box rect={greenRect} color=green half={true}/>
 			{/if}
-			{#if !k.titleIsAtTop}
+			{#if !k.show_titleAtTop}
 				<Widget path={$s_path_focus} origin={origin_ofFirstReveal.offsetBy(new Point(-23 - offsetX_ofFirstReveal, -9))}/>
 			{:else}
 				{#if $s_path_focus.isGrabbed}

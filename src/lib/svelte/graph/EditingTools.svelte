@@ -117,7 +117,7 @@
 		const rect = path?.titleRect;
 		if (rect && $s_path_editingTools && rect.size.width != 0) {
 			const offsetX = 8.5 + titleWidth - ($s_show_details ? k.width_details : 0) - ($s_layout_asClusters ? 38 : 0);
-			const offsetY = (k.titleIsAtTop ? -45 : 0) + ($s_layout_asClusters ? 3 : 0) - editingToolsDiameter - 5.8;
+			const offsetY = (k.show_titleAtTop ? -45 : 0) + ($s_layout_asClusters ? 3 : 0) - editingToolsDiameter - 5.8;
 			const center = rect.centerLeft.offsetBy(offset).offsetBy(new Point(offsetX, offsetY));
 			const offsetReveal = new Point(-5.3, -5.5);
 			const x = center.x;

@@ -130,7 +130,7 @@
 					z-index: {ZIndex.frontmost};'>
 			</div>
 		</div>
-		{#if k.titleIsAtTop}
+		{#if k.show_titleAtTop}
 			<div class='top-title'
 				style='
 					top: 70px;
