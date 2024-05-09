@@ -1,4 +1,4 @@
-import { k, u, get, Path, Rect, Size, Point, Angle, IDLine, Predicate, ChildMapRect, ClusterLayout } from '../common/GlobalImports';
+import { k, u, get, Ancestry, Rect, Size, Point, Angle, IDLine, Predicate, ChildMapRect, ClusterLayout } from '../common/GlobalImports';
 import { s_layout_asClusters } from '../state/State';
 import { h } from '../db/DBDispatch';
 
@@ -6,49 +6,49 @@ export default class Layout {
 	clusterLayouts: Array<ClusterLayout> = [];
 	childMapRects: Array<ChildMapRect> = [];
 
-	constructor(focusPath: Path, origin: Point) {
-		let childPaths = focusPath.childPaths;
+	constructor(focusAncestry: Ancestry, origin: Point) {
+		let childAncestries = focusAncestry.childAncestries;
 		if (get(s_layout_asClusters)) {
-			this.layoutCluster(childPaths, focusPath, Predicate.idContains, origin, true);
+			this.layoutCluster(childAncestries, focusAncestry, Predicate.idContains, origin, true);
 			for (const predicate of h.predicates) {
-				let paths = focusPath.thing?.onePaths_for(predicate) ?? [];
-				this.layoutCluster(paths, focusPath, predicate.id, origin, false);
+				let ancestries = focusAncestry.thing?.oneAncestries_for(predicate) ?? [];
+				this.layoutCluster(ancestries, focusAncestry, predicate.id, origin, false);
 			}
 		} else {
 			let index = 0;
-			const length = childPaths.length;
-			let sum = -focusPath.visibleProgeny_height() / 2; // start out negative and grow positive
+			const length = childAncestries.length;
+			let sum = -focusAncestry.visibleProgeny_height() / 2; // start out negative and grow positive
 			while (index < length) {
-				const childPath = childPaths[index];
-				sum += this.layoutChildren(sum, childPath, focusPath, origin);
+				const childAncestry = childAncestries[index];
+				sum += this.layoutChildren(sum, childAncestry, focusAncestry, origin);
 				index += 1;
 			}
 		}
 	}
 
-	layoutChildren(sum: number, childPath: Path, path: Path, origin: Point) {
-		const childHeight = childPath.visibleProgeny_height();
+	layoutChildren(sum: number, childAncestry: Ancestry, ancestry: Ancestry, origin: Point) {
+		const childHeight = childAncestry.visibleProgeny_height();
 		const sizeY = sum + childHeight / 2;
 		const direction = this.getDirection(sizeY);
 		const rect = new Rect(origin, new Size(k.line_stretch, sizeY));
-		const childOrigin = this.originForChildrenOf(childPath, origin, rect.extent);
-		const map = new ChildMapRect(direction, rect, childOrigin, childPath, path);
+		const childOrigin = this.originForChildrenOf(childAncestry, origin, rect.extent);
+		const map = new ChildMapRect(direction, rect, childOrigin, childAncestry, ancestry);
 		this.childMapRects.push(map);
 		return childHeight;
 	}
 
-	layoutCluster(paths: Array<Path>, clusterPath: Path, idPredicate: string, origin: Point, pointsTo: boolean) {
-		const count = paths.length;
+	layoutCluster(ancestries: Array<Ancestry>, clusterPath: Ancestry, idPredicate: string, origin: Point, pointsTo: boolean) {
+		const count = ancestries.length;
 		if (count > 0) {
 			let index = 0;
 			const radius = k.necklace_radius;
 			const radial = new Point(radius + k.necklace_gap, 0);
 			const clusterLayout = new ClusterLayout(idPredicate, count, pointsTo);
 			while (index < count) {
-				const path = paths[index];
+				const ancestry = ancestries[index];
 				const childAngle = this.childAngle_for(index, count, clusterLayout, radius);
 				const childOrigin = origin.offsetBy(radial.rotate_by(childAngle));
-				const map = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, path, clusterPath, childAngle);
+				const map = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, ancestry, clusterPath, childAngle);
 				this.childMapRects.push(map);
 				if (index == 0) {
 					clusterLayout.start_angle = childAngle;
@@ -86,11 +86,11 @@ export default class Layout {
 		return angle;
 	}
 
-	originForChildrenOf(childPath: Path, origin: Point, extent: Point): Point {
-		const child = childPath.thing;
+	originForChildrenOf(childAncestry: Ancestry, origin: Point, extent: Point): Point {
+		const child = childAncestry.thing;
 		let x, y = 0;
 		if (child) {
-			y = extent.y - childPath.visibleProgeny_halfHeight - 0.5;
+			y = extent.y - childAncestry.visibleProgeny_halfHeight - 0.5;
 			x = origin.x + child.titleWidth + k.dot_size + k.line_stretch - 1;
 		}
 		return new Point(x, y);

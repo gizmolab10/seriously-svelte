@@ -1,5 +1,5 @@
 import { Signal } from 'typed-signals';
-import { s_path_focus } from '../state/State';
+import { s_ancestry_focus } from '../state/State';
 import { get } from 'svelte/store';
 
 export enum IDSignal {
@@ -14,10 +14,10 @@ export class Signals {
 	handler = new Signal<(signalKind: Array<IDSignal>, value: any, priority: number) => void>();
 
 	signal_rebuildGraph(value: any = null) { this.signal(IDSignal.rebuild, value); }
-	signal_rebuildGraph_fromFocus() { this.signal_rebuildGraph(get(s_path_focus)); }
+	signal_rebuildGraph_fromFocus() { this.signal_rebuildGraph(get(s_ancestry_focus)); }
 	signal_altering(value: any = null) { this.signal(IDSignal.alterState, value); }
 	signal_relayoutWidgets(value: any = null) { this.signal(IDSignal.relayout, value); }
-	signal_relayoutWidgets_fromFocus() { this.signal_relayoutWidgets(get(s_path_focus)); }
+	signal_relayoutWidgets_fromFocus() { this.signal_relayoutWidgets(get(s_ancestry_focus)); }
 
 	handle_rebuildGraph(priority: number, onSignal: (value: any | null) => any ) {
 		return this.handle_signalOfKind(priority, IDSignal.rebuild, onSignal);

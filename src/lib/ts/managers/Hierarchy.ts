@@ -1,14 +1,14 @@
-import { k, u, get, User, Path, Thing, Grabs, debug, Access, IDTool, IDTrait, signals } from '../common/GlobalImports';
+import { k, u, get, User, Ancestry, Thing, Grabs, debug, Access, IDTool, IDTrait, signals } from '../common/GlobalImports';
 import { Wrapper, Predicate, Relationship, Alteration, AlterationState, CreationOptions } from '../common/GlobalImports';
-import { s_paths_grabbed, s_things_arrived, s_path_editingTools } from '../state/State';
-import { s_isBusy, s_altering, s_path_focus, s_title_editing } from '../state/State';
+import { s_ancestries_grabbed, s_things_arrived, s_ancestry_editingTools } from '../state/State';
+import { s_isBusy, s_altering, s_ancestry_focus, s_title_editing } from '../state/State';
 import DBInterface from '../db/DBInterface';
 
 type Relationships_ByHID = { [hid: number]: Array<Relationship> }
 
 export class Hierarchy {
 	private wrappers_byType_andHID: { [type: string]: { [hid: number]: Wrapper } } = {};
-	private path_byKind_andHash:{ [kind: string]: { [hash: number]: Path } } = {};
+	private ancestry_byKind_andHash:{ [kind: string]: { [hash: number]: Ancestry } } = {};
 	private relationship_byHID: { [hid: number]: Relationship } = {};
 	private things_byTrait: { [trait: string]: Array<Thing> } = {};
 	private relationships_byPredicateHID: Relationships_ByHID = {};
@@ -24,16 +24,16 @@ export class Hierarchy {
 	relationships: Array<Relationship> = [];
 	predicates: Array<Predicate> = [];
 	isAssembled = false;
-	rootsPath!: Path;
-	rootPath!: Path;
+	rootsAncestry!: Ancestry;
+	rootAncestry!: Ancestry;
 	db: DBInterface;
 	grabs: Grabs;
 	root!: Thing;
 
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): string | null { return this.root?.id ?? null; };
-	paths_rebuildAll() { this.root.onePaths_rebuildForSubtree(); }
-	thing_forPath(path: Path | null): Thing | null { return path?.thing ?? null; }
+	ancestries_rebuildAll() { this.root.oneAncestries_rebuildForSubtree(); }
+	thing_forAncestry(ancestry: Ancestry | null): Thing | null { return ancestry?.thing ?? null; }
 	thing_forHID(hid: number | null): Thing | null { return (!hid) ? null : this.thing_byHID[hid]; }
 
 	static readonly $_INIT_$: unique symbol;
@@ -41,80 +41,80 @@ export class Hierarchy {
 	constructor(db: DBInterface) {
 		this.grabs = new Grabs();
 		this.db = db;
-		signals.handle_rebuildGraph(0, (path) => {
-			path.thing?.onePaths_rebuildForSubtree();
+		signals.handle_rebuildGraph(0, (ancestry) => {
+			ancestry.thing?.oneAncestries_rebuildForSubtree();
 		});
 	}
 
-	rootPath_setup() {
-		const path = this.path_remember_createUnique();
-		if (!!path) {
-			this.rootPath = path;
+	rootAncestry_setup() {
+		const ancestry = this.ancestry_remember_createUnique();
+		if (!!ancestry) {
+			this.rootAncestry = ancestry;
 		}
 	}
 
 	static readonly $_EVENTS_$: unique symbol;
 
 	async handle_tool_clicked(idButton: string, event: MouseEvent, isLong: boolean) {
-        const path = get(s_path_editingTools);
-		if (!!path) {
+        const ancestry = get(s_ancestry_editingTools);
+		if (!!ancestry) {
 			switch (idButton) {
-				case IDTool.create: await this.path_edit_remoteCreateChildOf(path); break;
+				case IDTool.create: await this.ancestry_edit_remoteCreateChildOf(ancestry); break;
 				case IDTool.add_parent: this.toggleAlteration(Alteration.adding, isLong); return;
-				case IDTool.next: this.path_relayout_toolCluster_nextParent(event.altKey); return;
+				case IDTool.next: this.ancestry_relayout_toolCluster_nextParent(event.altKey); return;
 				case IDTool.delete_parent: this.toggleAlteration(Alteration.deleting, isLong); return;
-				case IDTool.delete_confirm: await this.paths_rebuild_traverse_remoteDelete([path]); break;
+				case IDTool.delete_confirm: await this.ancestries_rebuild_traverse_remoteDelete([ancestry]); break;
 				case IDTool.more: console.log('needs more'); break;
 				default: break;
 			}
-			s_path_editingTools.set(null);
+			s_ancestry_editingTools.set(null);
 			signals.signal_relayoutWidgets_fromFocus();
 		}
 	}
 
 	async handle_key_down(event: KeyboardEvent) {
-		let pathGrab = this.grabs.latestPathGrabbed(true);
+		let ancestryGrab = this.grabs.latestAncestryGrabbed(true);
 		if (event.type == 'keydown') {
 			const OPTION = event.altKey;
 			const SHIFT = event.shiftKey;
 			const COMMAND = event.metaKey;
-			const rootPath = this.rootPath;
+			const rootAncestry = this.rootAncestry;
 			const EXTREME = SHIFT && OPTION;
 			const key = event.key.toLowerCase();
 			const modifiers = ['alt', 'meta', 'shift', 'control']
 			let needsRebuild = false;
 			if (!modifiers.includes(key)) {		// ignore modifier-key-only events
-				if (!pathGrab) {
-					pathGrab = rootPath;
-					needsRebuild = rootPath.becomeFocus();
+				if (!ancestryGrab) {
+					ancestryGrab = rootAncestry;
+					needsRebuild = rootAncestry.becomeFocus();
 				}
 				if (k.allow_GraphEditing) {
-					if (!!pathGrab && k.allow_TitleEditing) {
+					if (!!ancestryGrab && k.allow_TitleEditing) {
 						switch (key) {
-							case 'd':		await this.thing_edit_remoteDuplicate(pathGrab); break;
-							case k.space:	await this.path_edit_remoteCreateChildOf(pathGrab); break;
-							case '-':		if (!COMMAND) { await this.thing_edit_remoteAddLine(pathGrab); } break;
-							case 'tab':		await this.path_edit_remoteCreateChildOf(pathGrab.parentPath); break; // Title editor also makes this call
-							case 'enter':	pathGrab.startEdit(); break;
+							case 'd':		await this.thing_edit_remoteDuplicate(ancestryGrab); break;
+							case k.space:	await this.ancestry_edit_remoteCreateChildOf(ancestryGrab); break;
+							case '-':		if (!COMMAND) { await this.thing_edit_remoteAddLine(ancestryGrab); } break;
+							case 'tab':		await this.ancestry_edit_remoteCreateChildOf(ancestryGrab.parentAncestry); break; // Title editor also makes this call
+							case 'enter':	ancestryGrab.startEdit(); break;
 						}
 					}
 					switch (key) {
 						case 'delete':
-						case 'backspace':	await this.paths_rebuild_traverse_remoteDelete(get(s_paths_grabbed)); break;
+						case 'backspace':	await this.ancestries_rebuild_traverse_remoteDelete(get(s_ancestries_grabbed)); break;
 					}
 				}
-				if (!!pathGrab) {
+				if (!!ancestryGrab) {
 					switch (key) {
-						case '/':			needsRebuild = pathGrab.becomeFocus(); break;
-						case 'arrowright':	event.preventDefault(); await this.path_rebuild_remoteMoveRight(pathGrab, true, SHIFT, OPTION, EXTREME); break;
-						case 'arrowleft':	event.preventDefault(); await this.path_rebuild_remoteMoveRight(pathGrab, false, SHIFT, OPTION, EXTREME); break;
+						case '/':			needsRebuild = ancestryGrab.becomeFocus(); break;
+						case 'arrowright':	event.preventDefault(); await this.ancestry_rebuild_remoteMoveRight(ancestryGrab, true, SHIFT, OPTION, EXTREME); break;
+						case 'arrowleft':	event.preventDefault(); await this.ancestry_rebuild_remoteMoveRight(ancestryGrab, false, SHIFT, OPTION, EXTREME); break;
 					}
 				}
 				switch (key) {
-					case '!':				needsRebuild = this.rootPath?.becomeFocus(); break;
-					case '`':               event.preventDefault(); this.latestPathGrabbed_toggleEditingTools(); break;
-					case 'arrowup':			await this.latestPathGrabbed_rebuild_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
-					case 'arrowdown':		await this.latestPathGrabbed_rebuild_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
+					case '!':				needsRebuild = this.rootAncestry?.becomeFocus(); break;
+					case '`':               event.preventDefault(); this.latestAncestryGrabbed_toggleEditingTools(); break;
+					case 'arrowup':			await this.latestAncestryGrabbed_rebuild_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
+					case 'arrowdown':		await this.latestAncestryGrabbed_rebuild_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
 				}
 				if (needsRebuild) {
 					signals.signal_rebuildGraph_fromFocus();
@@ -125,17 +125,17 @@ export class Hierarchy {
 
 	static readonly $_GRABS_$: unique symbol;
 
-	async latestPathGrabbed_rebuild_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
-		const path = this.grabs.latestPathGrabbed(up);
-		if (!!path) {
-			this.path_rebuild_remoteMoveUp(path, up, SHIFT, OPTION, EXTREME);
+	async latestAncestryGrabbed_rebuild_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
+		const ancestry = this.grabs.latestAncestryGrabbed(up);
+		if (!!ancestry) {
+			this.ancestry_rebuild_remoteMoveUp(ancestry, up, SHIFT, OPTION, EXTREME);
 		}
 	}
 
-	latestPathGrabbed_toggleEditingTools(up: boolean = true) {
-		const path = this.grabs.latestPathGrabbed(up);
-		if (!!path && !path.isRoot) {
-			s_path_editingTools.set(path.toolsGrabbed ? null : path);
+	latestAncestryGrabbed_toggleEditingTools(up: boolean = true) {
+		const ancestry = this.grabs.latestAncestryGrabbed(up);
+		if (!!ancestry && !ancestry.isRoot) {
+			s_ancestry_editingTools.set(ancestry.toolsGrabbed ? null : ancestry);
 			signals.signal_rebuildGraph_fromFocus();
 		}
 	}
@@ -152,10 +152,10 @@ export class Hierarchy {
 	
 	static readonly $_THINGS_$: unique symbol;
 
-	things_forPath(path: Path): Array<Thing> {
-		const isContains = path.idPredicate == Predicate.idContains;
+	things_forAncestry(ancestry: Ancestry): Array<Thing> {
+		const isContains = ancestry.idPredicate == Predicate.idContains;
 		const things: Array<Thing | null> = [];
-		const hids = path.ids_hashed;
+		const hids = ancestry.ids_hashed;
 		if (isContains && hids.length == 0) {
 			return [this.root];
 		}
@@ -164,7 +164,7 @@ export class Hierarchy {
 			if (relationship) {
 				if (things.length == 0) {
 					if (isContains) {
-						things.push(this.root);					// contains paths start with root
+						things.push(this.root);					// contains ancestries start with root
 					} else {
 						things.push(relationship.parent);
 					}
@@ -175,10 +175,10 @@ export class Hierarchy {
 		return u.strip_invalid(things);
 	}
 
-	things_forPaths(paths: Array<Path>): Array<Thing> {
+	things_forAncestries(ancestries: Array<Ancestry>): Array<Thing> {
 		const things = Array<Thing>();
-		for (const path of paths) {
-			const thing = this.thing_forPath(path);
+		for (const ancestry of ancestries) {
+			const thing = this.thing_forAncestry(ancestry);
 			if (!!thing) {
 				things.push(thing);
 			}
@@ -210,14 +210,14 @@ export class Hierarchy {
 		this.things_byTrait[thing.trait] = u.strip_invalid(this.things_byTrait[thing.trait]);
 	}
 
-	async thing_edit_remoteAddLine(path: Path, below: boolean = true) {
-		const parentPath = path.parentPath;
-		const parent = parentPath?.thing;
-		const thing = path.thing;
-		if (!!thing && parent && parentPath) {
-			const order = path.order + (below ? 0.5 : -0.5);
+	async thing_edit_remoteAddLine(ancestry: Ancestry, below: boolean = true) {
+		const parentAncestry = ancestry.parentAncestry;
+		const parent = parentAncestry?.thing;
+		const thing = ancestry.thing;
+		if (!!thing && parent && parentAncestry) {
+			const order = ancestry.order + (below ? 0.5 : -0.5);
 			const child = this.thing_runtimeCreate(thing.baseID, null, k.title_line, parent.color, k.empty, false);
-			await this.path_edit_remoteAddAsChild(parentPath, child, order, false);
+			await this.ancestry_edit_remoteAddAsChild(parentAncestry, child, order, false);
 		}
 	}
 
@@ -247,14 +247,14 @@ export class Hierarchy {
 		return newThing;
 	}
 
-	async thing_edit_remoteDuplicate(path: Path) {
-		const thing = path.thing;
+	async thing_edit_remoteDuplicate(ancestry: Ancestry) {
+		const thing = ancestry.thing;
 		const id = thing?.id;
-		const parentPath = path.parentPath;
-		if (!!thing && id && parentPath) {
+		const parentAncestry = ancestry.parentAncestry;
+		if (!!thing && id && parentAncestry) {
 			const sibling = await this.thing_remember_runtimeCopy(id, thing);
 			sibling.title = 'idea';
-			await this.path_edit_remoteAddAsChild(parentPath, sibling, path.order + 0.5);
+			await this.ancestry_edit_remoteAddAsChild(parentAncestry, sibling, ancestry.order + 0.5);
 		}
 	}
 
@@ -319,31 +319,31 @@ export class Hierarchy {
 		return null;
 	}
 
-	async thing_remember_bulk_recursive_remoteRelocateRight(path: Path, newParentPath: Path) {
-		const newParent = newParentPath.thing;
-		let newThingPath: Path | null = null;
-		const thing = path.thing;
+	async thing_remember_bulk_recursive_remoteRelocateRight(ancestry: Ancestry, newParentAncestry: Ancestry) {
+		const newParent = newParentAncestry.thing;
+		let newThingAncestry: Ancestry | null = null;
+		const thing = ancestry.thing;
 		if (!!thing && newParent) {
 			const baseID = newParent.isBulkAlias ? newParent.title : newParent.baseID;
 			const newThing = await this.thing_remember_runtimeCopy(baseID, thing);
-			newThingPath = newParentPath.appendChild(newThing);
-			if (newThingPath) {
-				await this.path_remember_remoteAddAsChild(newParentPath, newThing);
-				for (const childPath of path.childPaths) {
-					this.thing_remember_bulk_recursive_remoteRelocateRight(childPath, newThingPath);
+			newThingAncestry = newParentAncestry.appendChild(newThing);
+			if (newThingAncestry) {
+				await this.ancestry_remember_remoteAddAsChild(newParentAncestry, newThing);
+				for (const childAncestry of ancestry.childAncestries) {
+					this.thing_remember_bulk_recursive_remoteRelocateRight(childAncestry, newThingAncestry);
 				}
-				if (!newThingPath.isExpanded) {
+				if (!newThingAncestry.isExpanded) {
 					setTimeout(() => {
-						if (newThingPath) {
-							newThingPath.expand();	
-							path.collapse()
+						if (newThingAncestry) {
+							newThingAncestry.expand();	
+							ancestry.collapse()
 						};
 					}, 2);
 				}
-				await this.path_forget_remoteUpdate(path);
+				await this.ancestry_forget_remoteUpdate(ancestry);
 			}
 		}
-		return newThingPath;
+		return newThingAncestry;
 	}
 
 	static readonly $_RELATIONSHIPS_$: unique symbol;
@@ -457,16 +457,16 @@ export class Hierarchy {
 		}
 	}
 
-	async relationship_forget_remoteRemove(path: Path, otherPath: Path, idPredicate: string) {
-		const thing = path.thing;
-		const parentPath = path.parentPath;
-		const relationship = this.relationship_forPredicate_parent_child(idPredicate, otherPath.idThing, path.idThing);
-		if (parentPath && relationship && (thing?.hasParents ?? false)) {
+	async relationship_forget_remoteRemove(ancestry: Ancestry, otherAncestry: Ancestry, idPredicate: string) {
+		const thing = ancestry.thing;
+		const parentAncestry = ancestry.parentAncestry;
+		const relationship = this.relationship_forPredicate_parent_child(idPredicate, otherAncestry.idThing, ancestry.idThing);
+		if (parentAncestry && relationship && (thing?.hasParents ?? false)) {
 			this.relationship_forget(relationship);
-			if (otherPath.hasChildRelationships) {
-				parentPath.order_normalizeRecursive_remoteMaybe(true);
+			if (otherAncestry.hasChildRelationships) {
+				parentAncestry.order_normalizeRecursive_remoteMaybe(true);
 			} else {
-				otherPath.collapse();
+				otherAncestry.collapse();
 			}
 			await this.db.relationship_remoteDelete(relationship);
 		}
@@ -530,29 +530,29 @@ export class Hierarchy {
 		return relationship;
 	}
 
-	static readonly $_PATHS_$: unique symbol;
+	static readonly $_ANCESTRIES_$: unique symbol;
 
-	async paths_rebuild_traverse_remoteDelete(paths: Array<Path>) {
+	async ancestries_rebuild_traverse_remoteDelete(ancestries: Array<Ancestry>) {
 		let needsRebuild = false;
-		if (get(s_path_focus)) {
-			for (const path of paths) {
-				const thing = path.thing;
-				const parentPath = path.parentPath;
-				if (parentPath) {
-					const grandParentPath = parentPath.parentPath;
-					if (!!thing && grandParentPath && !path.isEditing && !thing.isBulkAlias) {
-						const siblings = parentPath.children;
+		if (get(s_ancestry_focus)) {
+			for (const ancestry of ancestries) {
+				const thing = ancestry.thing;
+				const parentAncestry = ancestry.parentAncestry;
+				if (parentAncestry) {
+					const grandParentAncestry = parentAncestry.parentAncestry;
+					if (!!thing && grandParentAncestry && !ancestry.isEditing && !thing.isBulkAlias) {
+						const siblings = parentAncestry.children;
 						let index = siblings.indexOf(thing);
 						siblings.splice(index, 1);
-						parentPath.grabOnly();
+						parentAncestry.grabOnly();
 						if (siblings.length == 0) {
-							needsRebuild = parentPath.collapse();
-							if (!grandParentPath.isVisible) {
-								needsRebuild = grandParentPath.becomeFocus();	// call become focus before applying
+							needsRebuild = parentAncestry.collapse();
+							if (!grandParentAncestry.isVisible) {
+								needsRebuild = grandParentAncestry.becomeFocus();	// call become focus before applying
 							}
 						}
-						await path.traverse_async(async (progenyPath: Path): Promise<boolean> => {
-							await this.path_forget_remoteUpdate(progenyPath);
+						await ancestry.traverse_async(async (progenyAncestry: Ancestry): Promise<boolean> => {
+							await this.ancestry_forget_remoteUpdate(progenyAncestry);
 							return false; // continue the traversal
 						});
 					}
@@ -564,116 +564,116 @@ export class Hierarchy {
 		}
 	}
 
-	static readonly $_PATH_$: unique symbol;
+	static readonly $_ANCESTRY_$: unique symbol;
 
-	path_forget(path: Path | null) {
-		if (!!path) {
-			let dict = this.path_byKind_andHash[path.idPredicate] ?? {};
-			delete dict[path.pathHash];
-			this.path_byKind_andHash[path.idPredicate] = dict;
+	ancestry_forget(ancestry: Ancestry | null) {
+		if (!!ancestry) {
+			let dict = this.ancestry_byKind_andHash[ancestry.idPredicate] ?? {};
+			delete dict[ancestry.ancestryHash];
+			this.ancestry_byKind_andHash[ancestry.idPredicate] = dict;
 		}
 	}
 
-	path_remember_createUnique(pathString: string = k.empty, idPredicate: string = Predicate.idContains): Path | null {
-		const pathHash = pathString.hash();
-		let dict = this.path_byKind_andHash[idPredicate] ?? {};
-		let path = dict[pathHash];
-		if (!path) {
-			path = new Path(pathString, idPredicate);
-			dict[pathHash] = path;
-			this.path_byKind_andHash[idPredicate] = dict;
+	ancestry_remember_createUnique(ancestryString: string = k.empty, idPredicate: string = Predicate.idContains): Ancestry | null {
+		const ancestryHash = ancestryString.hash();
+		let dict = this.ancestry_byKind_andHash[idPredicate] ?? {};
+		let ancestry = dict[ancestryHash];
+		if (!ancestry) {
+			ancestry = new Ancestry(ancestryString, idPredicate);
+			dict[ancestryHash] = ancestry;
+			this.ancestry_byKind_andHash[idPredicate] = dict;
 		}
-		return path;
+		return ancestry;
 	}
 
-	async path_roots() {		// TODO: assumes all paths created
-		let rootsPath: Path | null = null;
-		const rootPath = this.rootPath;
+	async ancestry_roots() {		// TODO: assumes all ancestries created
+		let rootsAncestry: Ancestry | null = null;
+		const rootAncestry = this.rootAncestry;
 		for (const rootsMaybe of this.things_byTrait[IDTrait.roots]) {	// should only be one
 			if  (rootsMaybe.title == 'roots') {	// special case TODO: convert to a query string
-				return rootPath.appendChild(rootsMaybe) ?? null;
+				return rootAncestry.appendChild(rootsMaybe) ?? null;
 			}
 		}
 		const roots = this.thing_runtimeCreate(this.db.baseID, null, 'roots', 'red', IDTrait.roots, false);
-		await this.path_remember_remoteAddAsChild(rootPath, roots).then((path) => { rootsPath = path; });
-		return rootsPath;
+		await this.ancestry_remember_remoteAddAsChild(rootAncestry, roots).then((ancestry) => { rootsAncestry = ancestry; });
+		return rootsAncestry;
 	}
 
-	async path_relayout_toolCluster_nextParent(force: boolean = false) {
-		const toolsPath = get(s_path_editingTools);
-		if (toolsPath) {
-			let path = toolsPath;
+	async ancestry_relayout_toolCluster_nextParent(force: boolean = false) {
+		const toolsAncestry = get(s_ancestry_editingTools);
+		if (toolsAncestry) {
+			let ancestry = toolsAncestry;
 			// do {
-			// 	path = path.next_siblingPath;
-			// 	if (path.isVisible) {
+			// 	ancestry = ancestry.next_siblingAncestry;
+			// 	if (ancestry.isVisible) {
 			// 		break;
 			// 	} else if (force) {
-			// 		await path.assureIsVisible();
+			// 		await ancestry.assureIsVisible();
 			// 		break;
 			// 	}	
-			// } while (!path.matchesPath(toolsPath));
-			path.grabOnly();
+			// } while (!ancestry.matchesAncestry(toolsAncestry));
+			ancestry.grabOnly();
 			signals.signal_relayoutWidgets_fromFocus();
-			s_path_editingTools.set(path);
+			s_ancestry_editingTools.set(ancestry);
 		}
 	}
 
-	async path_edit_remoteCreateChildOf(parentPath: Path | null) {
-		const thing = parentPath?.thing;
-		if (!!thing && parentPath) {
+	async ancestry_edit_remoteCreateChildOf(parentAncestry: Ancestry | null) {
+		const thing = parentAncestry?.thing;
+		if (!!thing && parentAncestry) {
 			const child = await this.thing_remember_runtimeCopy(thing.baseID, thing);
 			child.title = 'idea';
-			parentPath.expand();
-			await this.path_edit_remoteAddAsChild(parentPath, child, 0);
+			parentAncestry.expand();
+			await this.ancestry_edit_remoteAddAsChild(parentAncestry, child, 0);
 		}
 	}
 
-	async path_edit_remoteAddAsChild(parentPath: Path, child: Thing, order: number, shouldStartEdit: boolean = true) {
-		const childPath = await this.path_remember_remoteAddAsChild(parentPath, child);
-		childPath.grabOnly();
-		childPath.relationship?.order_setTo_remoteMaybe(order);
+	async ancestry_edit_remoteAddAsChild(parentAncestry: Ancestry, child: Thing, order: number, shouldStartEdit: boolean = true) {
+		const childAncestry = await this.ancestry_remember_remoteAddAsChild(parentAncestry, child);
+		childAncestry.grabOnly();
+		childAncestry.relationship?.order_setTo_remoteMaybe(order);
 		signals.signal_rebuildGraph_fromFocus();
 		if (shouldStartEdit) {
 			setTimeout(() => {
-				childPath.startEdit();
+				childAncestry.startEdit();
 			}, 20);
 		}
 	}
 
-	async path_redraw_remoteFetchBulk_browseRight(thing: Thing, path: Path | null = null, grab: boolean = false) {
-		if (this.rootsPath && thing && thing.title != 'roots') {	// not create roots bulk
+	async ancestry_redraw_remoteFetchBulk_browseRight(thing: Thing, ancestry: Ancestry | null = null, grab: boolean = false) {
+		if (this.rootsAncestry && thing && thing.title != 'roots') {	// not create roots bulk
 			await this.db.fetch_allFrom(thing.title)
 			this.relationships_refreshKnowns();
-			const childPaths = path?.childPaths;
-			if (childPaths && childPaths.length > 0) {
+			const childAncestries = ancestry?.childAncestries;
+			if (childAncestries && childAncestries.length > 0) {
 				if (grab) {
-					childPaths[0].grabOnly()
+					childAncestries[0].grabOnly()
 				}
-				path?.expand()
+				ancestry?.expand()
 				signals.signal_rebuildGraph_fromFocus();
 			}
 		}
 	}
 
-	async path_remember_bulk_remoteRelocateRight(path: Path, newParentPath: Path) {
-		const newThingPath = await this.thing_remember_bulk_recursive_remoteRelocateRight(path, newParentPath);
-		if (newThingPath) {
-			newParentPath.signal_relayoutWidgets();
-			if (newParentPath.isExpanded) {
-				newThingPath.grabOnly();
+	async ancestry_remember_bulk_remoteRelocateRight(ancestry: Ancestry, newParentAncestry: Ancestry) {
+		const newThingAncestry = await this.thing_remember_bulk_recursive_remoteRelocateRight(ancestry, newParentAncestry);
+		if (newThingAncestry) {
+			newParentAncestry.signal_relayoutWidgets();
+			if (newParentAncestry.isExpanded) {
+				newThingAncestry.grabOnly();
 			} else {
-				newParentPath.grabOnly();
+				newParentAncestry.grabOnly();
 			}
 		}
 	}
 
-	async path_forget_remoteUpdate(path: Path) {
-		const thing = path.thing;
-		const childPaths = path.childPaths;
-		for (const childPath of childPaths) {
-			this.path_forget_remoteUpdate(childPath);
+	async ancestry_forget_remoteUpdate(ancestry: Ancestry) {
+		const thing = ancestry.thing;
+		const childAncestries = ancestry.childAncestries;
+		for (const childAncestry of childAncestries) {
+			this.ancestry_forget_remoteUpdate(childAncestry);
 		}
-		this.path_forget(path);
+		this.ancestry_forget(ancestry);
 		if (!!thing) {
 			const array = this.relationships_byChildHID[thing.idHashed];
 			if (array) {
@@ -687,8 +687,8 @@ export class Hierarchy {
 		}
 	}
 
-	async path_remember_remoteAddAsChild(parentPath: Path, child: Thing, idPredicate: string = Predicate.idContains): Promise<any> {
-		const parent = parentPath.thing;
+	async ancestry_remember_remoteAddAsChild(parentAncestry: Ancestry, child: Thing, idPredicate: string = Predicate.idContains): Promise<any> {
+		const parent = parentAncestry.thing;
 		if (parent && !child.isBulkAlias) {
 			const changingBulk = parent.isBulkAlias || child.baseID != this.db.baseID;
 			const baseID = changingBulk ? child.baseID : parent.baseID;
@@ -699,62 +699,62 @@ export class Hierarchy {
 				await this.db.thing_remember_remoteCreate(child);					// for everything below, need to await child.id fetched from dbDispatch
 			}
 			const relationship = await this.relationship_remember_remoteCreateUnique(baseID, null, idPredicate, parent.idBridging, child.id, 0, CreationOptions.getRemoteID);
-			const childPath = parentPath.uniquelyAppendID(relationship.id);
-			await u.paths_orders_normalize_remoteMaybe(parentPath.childPaths);		// write new order values for relationships
-			return childPath;
+			const childAncestry = parentAncestry.uniquelyAppendID(relationship.id);
+			await u.ancestries_orders_normalize_remoteMaybe(parentAncestry.childAncestries);		// write new order values for relationships
+			return childAncestry;
 		}
 	}
 
-	async path_rebuild_remoteMoveRight(path: Path, RIGHT: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean, fromReveal: boolean = false) {
+	async ancestry_rebuild_remoteMoveRight(ancestry: Ancestry, RIGHT: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean, fromReveal: boolean = false) {
 		if (!OPTION) {
-			const thing = path.thing;
+			const thing = ancestry.thing;
 			if (!!thing) {
 				if (RIGHT && thing.needsBulkFetch) {
-					await this.path_redraw_remoteFetchBulk_browseRight(thing, path, true);
+					await this.ancestry_redraw_remoteFetchBulk_browseRight(thing, ancestry, true);
 				} else {
-					this.path_rebuild_runtimeBrowseRight(path, RIGHT, SHIFT, EXTREME, fromReveal);
+					this.ancestry_rebuild_runtimeBrowseRight(ancestry, RIGHT, SHIFT, EXTREME, fromReveal);
 				}
 			}
 		} else if (k.allow_GraphEditing) {
-			const grab = this.grabs.latestPathGrabbed(true);
+			const grab = this.grabs.latestAncestryGrabbed(true);
 			if (grab) {
-				await this.path_rebuild_remoteRelocateRight(grab, RIGHT, EXTREME);
+				await this.ancestry_rebuild_remoteRelocateRight(grab, RIGHT, EXTREME);
 			}
 		}
 	}
 
-	async path_rebuild_remoteMoveUp(path: Path, up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
-		const parentPath = path.parentPath;
-		if (parentPath) {
+	async ancestry_rebuild_remoteMoveUp(ancestry: Ancestry, up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
+		const parentAncestry = ancestry.parentAncestry;
+		if (parentAncestry) {
 			let needsRebuild = false;
-			const siblings = parentPath.children;
-			const thing = this.thing_forPath(path);
+			const siblings = parentAncestry.children;
+			const thing = this.thing_forAncestry(ancestry);
 			if (!siblings || siblings.length == 0) {
-				this.path_rebuild_runtimeBrowseRight(path, true, EXTREME, up);
+				this.ancestry_rebuild_runtimeBrowseRight(ancestry, true, EXTREME, up);
 			} else if (!!thing) {
 				const index = siblings.indexOf(thing);
 				const newIndex = index.increment(!up, siblings.length);
-				if (parentPath && !OPTION) {
-					const grabPath = parentPath.appendChild(siblings[newIndex]);
-					if (grabPath) {
-						if (!grabPath.isVisible) {
-							needsRebuild = parentPath.becomeFocus();
+				if (parentAncestry && !OPTION) {
+					const grabAncestry = parentAncestry.appendChild(siblings[newIndex]);
+					if (grabAncestry) {
+						if (!grabAncestry.isVisible) {
+							needsRebuild = parentAncestry.becomeFocus();
 						}
 						if (SHIFT) {
-							grabPath.toggleGrab();
+							grabAncestry.toggleGrab();
 						} else {
-							grabPath.grabOnly();
+							grabAncestry.grabOnly();
 						}
 						signals.signal_relayoutWidgets_fromFocus();
 					}
 				} else if (k.allow_GraphEditing && OPTION) {
 					needsRebuild = true;
-					await u.paths_orders_normalize_remoteMaybe(parentPath.childPaths, false);
+					await u.ancestries_orders_normalize_remoteMaybe(parentAncestry.childAncestries, false);
 					const wrapped = up ? (index == 0) : (index == siblings.length - 1);
 					const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
 					const newOrder = newIndex + goose;
-					path.relationship?.order_setTo_remoteMaybe(newOrder);
-					await u.paths_orders_normalize_remoteMaybe(parentPath.childPaths);
+					ancestry.relationship?.order_setTo_remoteMaybe(newOrder);
+					await u.ancestries_orders_normalize_remoteMaybe(parentAncestry.childAncestries);
 				}
 				if (needsRebuild) {
 					signals.signal_rebuildGraph_fromFocus();
@@ -763,84 +763,84 @@ export class Hierarchy {
 		}
 	}
 
-	async path_rebuild_remoteRelocateRight(path: Path, RIGHT: boolean, EXTREME: boolean) {
-		const thing = path.thing;
-		const newParentPath = RIGHT ? path.path_ofNextSibling(false) : path.stripBack(2);
-		const newParent = newParentPath?.thing;
-		if (!!thing && newParent && newParentPath) {
+	async ancestry_rebuild_remoteRelocateRight(ancestry: Ancestry, RIGHT: boolean, EXTREME: boolean) {
+		const thing = ancestry.thing;
+		const newParentAncestry = RIGHT ? ancestry.ancestry_ofNextSibling(false) : ancestry.stripBack(2);
+		const newParent = newParentAncestry?.thing;
+		if (!!thing && newParent && newParentAncestry) {
 			if (thing.isInDifferentBulkThan(newParent)) {		// should move across bulks
-				this.path_remember_bulk_remoteRelocateRight(path, newParentPath);
+				this.ancestry_remember_bulk_remoteRelocateRight(ancestry, newParentAncestry);
 			} else {
-				const relationship = path.relationship;
+				const relationship = ancestry.relationship;
 				if (relationship) {
 					const order = RIGHT ? relationship.order : 0;
 					relationship.idParent = newParent.id;
 					await relationship.order_setTo_remoteMaybe(order + 0.5, true);
 				}
 				this.relationships_refreshKnowns();
-				newParentPath.appendChild(thing)?.grabOnly();
-				this.rootPath.order_normalizeRecursive_remoteMaybe(true);
-				if (!newParentPath.isExpanded) {
-					newParentPath.expand();
+				newParentAncestry.appendChild(thing)?.grabOnly();
+				this.rootAncestry.order_normalizeRecursive_remoteMaybe(true);
+				if (!newParentAncestry.isExpanded) {
+					newParentAncestry.expand();
 				}
-				if (!newParentPath.isVisible) {
-					newParentPath.becomeFocus();
+				if (!newParentAncestry.isVisible) {
+					newParentAncestry.becomeFocus();
 				}
 			}
 			signals.signal_rebuildGraph_fromFocus();			// so TreeChildren component will update
 		}
 	}
 
-	path_rebuild_runtimeBrowseRight(path: Path, RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, fromReveal: boolean = false) {
+	ancestry_rebuild_runtimeBrowseRight(ancestry: Ancestry, RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, fromReveal: boolean = false) {
 		let needsRebuild = false;
-		const newParentPath = path.parentPath;
-		const childPath = path.appendChild(path.firstChild);
-		let newGrabPath: Path | null = RIGHT ? childPath : newParentPath;
-		const newGrabIsNotFocus = !newGrabPath?.isFocus;
-		const newFocusPath = newParentPath;
+		const newParentAncestry = ancestry.parentAncestry;
+		const childAncestry = ancestry.appendChild(ancestry.firstChild);
+		let newGrabAncestry: Ancestry | null = RIGHT ? childAncestry : newParentAncestry;
+		const newGrabIsNotFocus = !newGrabAncestry?.isFocus;
+		const newFocusAncestry = newParentAncestry;
 		if (RIGHT) {
-			if (path.hasChildRelationships) {
+			if (ancestry.hasChildRelationships) {
 				if (SHIFT) {
-					newGrabPath = null;
+					newGrabAncestry = null;
 				}
-				needsRebuild = path.expand();
+				needsRebuild = ancestry.expand();
 			} else {
 				return;
 			}
 		} else {
-			const rootPath = this.rootPath;
+			const rootAncestry = this.rootAncestry;
 			if (EXTREME) {
-				needsRebuild = rootPath?.becomeFocus();	// tells graph to update line rects
+				needsRebuild = rootAncestry?.becomeFocus();	// tells graph to update line rects
 			} else {
 				if (!SHIFT) {
 					if (fromReveal) {
-						if (!path.isExpanded) {
-							needsRebuild = path.expand();
+						if (!ancestry.isExpanded) {
+							needsRebuild = ancestry.expand();
 						}
 					} else {
-						if (newGrabIsNotFocus && newGrabPath && !newGrabPath.isExpanded) {
-							needsRebuild = newGrabPath.expand();
+						if (newGrabIsNotFocus && newGrabAncestry && !newGrabAncestry.isExpanded) {
+							needsRebuild = newGrabAncestry.expand();
 						}
 					}
-				} else if (newGrabPath) { 
-					if (path.isExpanded) {
-						needsRebuild = path.collapse();
-						newGrabPath = this.grabs.areInvisible ? path : null;
-					} else if (newGrabPath.isExpanded || (!!rootPath && !rootPath.matchesPath(newGrabPath))) {
-						needsRebuild = newGrabPath.collapse();
+				} else if (newGrabAncestry) { 
+					if (ancestry.isExpanded) {
+						needsRebuild = ancestry.collapse();
+						newGrabAncestry = this.grabs.areInvisible ? ancestry : null;
+					} else if (newGrabAncestry.isExpanded || (!!rootAncestry && !rootAncestry.matchesAncestry(newGrabAncestry))) {
+						needsRebuild = newGrabAncestry.collapse();
 					}
 				}
 			}
 		}
 		s_title_editing.set(null);
-		if (newGrabPath) {
-			newGrabPath.grabOnly();
-			if (!RIGHT && newFocusPath) {
-				const newParentIsGrabbed = newParentPath && newParentPath.matchesPath(newGrabPath);
+		if (newGrabAncestry) {
+			newGrabAncestry.grabOnly();
+			if (!RIGHT && newFocusAncestry) {
+				const newParentIsGrabbed = newParentAncestry && newParentAncestry.matchesAncestry(newGrabAncestry);
 				const canBecomeFocus = (!SHIFT || newParentIsGrabbed) && newGrabIsNotFocus;
-				const shouldBecomeFocus = newFocusPath.isRoot || !newFocusPath.isVisible;
+				const shouldBecomeFocus = newFocusAncestry.isRoot || !newFocusAncestry.isVisible;
 				const becomeFocus = canBecomeFocus && shouldBecomeFocus;
-				if (becomeFocus && newFocusPath.becomeFocus()) {
+				if (becomeFocus && newFocusAncestry.becomeFocus()) {
 					needsRebuild = true;
 				}
 			}
@@ -852,22 +852,22 @@ export class Hierarchy {
 		}
 	}
 
-	async path_alterMaybe(path: Path) {
-		if (path.things_canAlter_asParentOf_toolsPath) {
+	async ancestry_alterMaybe(ancestry: Ancestry) {
+		if (ancestry.things_canAlter_asParentOf_toolsAncestry) {
 			const altering = get(s_altering);
-			const toolsPath = get(s_path_editingTools);
+			const toolsAncestry = get(s_ancestry_editingTools);
 			const idPredicate = altering?.predicate?.id;
-			if (altering && toolsPath && idPredicate) {
+			if (altering && toolsAncestry && idPredicate) {
 				s_altering.set(null);
-				s_path_editingTools.set(null);
+				s_ancestry_editingTools.set(null);
 				switch (altering.alteration) {
 					case Alteration.deleting:
-						await this.relationship_forget_remoteRemove(toolsPath, path, idPredicate);
+						await this.relationship_forget_remoteRemove(toolsAncestry, ancestry, idPredicate);
 						break;
 					case Alteration.adding:
-						const toolsThing = toolsPath.thing;
+						const toolsThing = toolsAncestry.thing;
 						if (toolsThing) {
-							await this.path_remember_remoteAddAsChild(path, toolsThing, idPredicate);
+							await this.ancestry_remember_remoteAddAsChild(ancestry, toolsThing, idPredicate);
 							signals.signal_rebuildGraph_fromFocus();
 						}
 						break;
@@ -911,8 +911,8 @@ export class Hierarchy {
 	static readonly $_OTHER_$: unique symbol;
 
 	wrapper_add(wrapper: Wrapper) {
-		const path = wrapper.path
-		const hash = path.pathHash;
+		const ancestry = wrapper.ancestry
+		const hash = ancestry.ancestryHash;
 		const dict = this.wrappers_byType_andHID[wrapper.type] ?? {};
 		dict[hash] = wrapper;
 		this.wrappers_byType_andHID[wrapper.type] = dict;

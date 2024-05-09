@@ -1,54 +1,54 @@
-import { get, Path, Thing } from "../common/GlobalImports";
-import { s_paths_grabbed } from '../state/State';
+import { get, Ancestry, Thing } from "../common/GlobalImports";
+import { s_ancestries_grabbed } from '../state/State';
 import { h } from '../db/DBDispatch';
 
 export default class Grabs {
-	grabbed: Array<Path> | null = null;
+	grabbed: Array<Ancestry> | null = null;
 
 	constructor() {
-		s_paths_grabbed.subscribe((paths: Array<Path>) => { // executes whenever s_paths_grabbed changes
-			if (!!paths && paths.length > 0 && h.db && h.db.hasData) {
-				this.grabbed = paths;
+		s_ancestries_grabbed.subscribe((ancestries: Array<Ancestry>) => { // executes whenever s_ancestries_grabbed changes
+			if (!!ancestries && ancestries.length > 0 && h.db && h.db.hasData) {
+				this.grabbed = ancestries;
 			} else {
 				this.grabbed = null;
 			}
 		});
 	};
 
-	get thing_lastGrabbed(): Thing | null { return h.thing_forPath(this.path_lastGrabbed); }
+	get thing_lastGrabbed(): Thing | null { return h.thing_forAncestry(this.ancestry_lastGrabbed); }
 
 	get areInvisible(): boolean {
-		const paths = get(s_paths_grabbed);
-		for (const path of paths) {
-			if (!path.isVisible) {
+		const ancestries = get(s_ancestries_grabbed);
+		for (const ancestry of ancestries) {
+			if (!ancestry.isVisible) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	get path_lastGrabbed(): Path | null {
-		const paths = get(s_paths_grabbed);
-		if (!!paths && paths.length > 0) {
-			const path = paths.slice(-1)[0];	// does not alter paths
-			const relationshipHID = path?.relationship?.idHashed;
+	get ancestry_lastGrabbed(): Ancestry | null {
+		const ancestries = get(s_ancestries_grabbed);
+		if (!!ancestries && ancestries.length > 0) {
+			const ancestry = ancestries.slice(-1)[0];	// does not alter ancestries
+			const relationshipHID = ancestry?.relationship?.idHashed;
 			if (relationshipHID && !!h.relationship_forHID(relationshipHID)) {
-				return path;
+				return ancestry;
 			}
 		}
 		return null;
 	}
 
-	latestPathGrabbed(up: boolean): Path | null {	// does not alter array
-		const paths = get(s_paths_grabbed);
-		if (!!paths) {
+	latestAncestryGrabbed(up: boolean): Ancestry | null {	// does not alter array
+		const ancestries = get(s_ancestries_grabbed);
+		if (!!ancestries) {
 			if (up) {
-				return paths[0];
+				return ancestries[0];
 			} else {
-				return paths.slice(-1)[0];
+				return ancestries.slice(-1)[0];
 			}
 		}
-		return h.rootPath;
+		return h.rootAncestry;
 	}
 
 }

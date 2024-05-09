@@ -24,7 +24,7 @@
 
 	$: {
 		if (line && !lineWrapper) {
-			lineWrapper = new Wrapper(line, h.rootPath, IDWrapper.line);
+			lineWrapper = new Wrapper(line, h.rootAncestry, IDWrapper.line);
 		}
 		angle = layout?.line_angle;
 		const line_rotated = layout?.line_rotated;

@@ -45,13 +45,13 @@ export default class ClusterLayout {
 
 	get keyedArcPaths(): { [key: string]: Array<string>} {
 		let dict: { [key: string]: Array<string>} = {};
-		dict[ArcKind.start] = this.arcStartPaths;
+		dict[ArcKind.start] = this.arcStartAncestries;
 		dict[ArcKind.main] = this.arcMainPaths;
 		dict[ArcKind.gap] = [this.arcGapPath];
 		return dict;
 	}
 
-	get arcStartPaths() {
+	get arcStartAncestries() {
 		const radius = k.necklace_gap / 2;
 		const origin = this.arc_line_intersect;
 		const offset = Point.square(radius - 0.4);

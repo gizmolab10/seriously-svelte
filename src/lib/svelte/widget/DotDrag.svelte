@@ -1,5 +1,5 @@
 <script>
-	import { s_paths_grabbed, s_layout_asClusters, s_path_editingTools } from '../../ts/state/State';
+	import { s_ancestries_grabbed, s_layout_asClusters, s_ancestry_editingTools } from '../../ts/state/State';
 	import { onDestroy, dbDispatch, Alteration, createPopper } from '../../ts/common/GlobalImports';
 	import { Wrapper, onMount, signals, svgPaths, Direction } from '../../ts/common/GlobalImports';
 	import { k, u, Rect, Size, Point, Thing, debug, ZIndex } from '../../ts/common/GlobalImports';
@@ -7,7 +7,7 @@
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import Box from '../kit/Box.svelte';
 	export let center = new Point(0, 0);
-    export let path;
+    export let ancestry;
 	let tinyDotsColor = k.color_background;
 	let relatedColor = k.color_background;
 	let strokeColor = k.color_background;
@@ -19,7 +19,7 @@
 	let size = k.dot_size;
 	let clickCount = 0;
 	let tinyDotsPath;
-	let relatedPath;
+	let relatedAncestry;
 	let clickTimer;
 	let left = 0;
 	let top = 0;
@@ -32,14 +32,14 @@
 	function handle_mouseUp() { clearTimeout(clickTimer); }
 
     onMount(() => {
-		if (!!path) {
-			thing = path.thing;
+		if (!!ancestry) {
+			thing = ancestry.thing;
 		}
-		updatePaths();
+		updateAncestries();
 		updateColorsForHover(false);
 		popper = createPopper(button, tooltip, { placement: 'bottom' });
         const handler = signals.handle_altering((state) => {
-			const applyFlag = $s_path_editingTools && !!path && path.things_canAlter_asParentOf_toolsPath;
+			const applyFlag = $s_ancestry_editingTools && !!ancestry && ancestry.things_canAlter_asParentOf_toolsAncestry;
 			isAltering = applyFlag ? !!state : false;
 			updateExtraPaths();
 			updateColors();
@@ -48,8 +48,8 @@
 	});
 
 	$: {
-		const grabbedPaths = $s_paths_grabbed;		// use state variable for react logic
-		const grabbed = path?.includedInPaths(grabbedPaths);
+		const grabbedAncestries = $s_ancestries_grabbed;		// use state variable for react logic
+		const grabbed = ancestry?.includedInAncestries(grabbedAncestries);
 		if (isGrabbed != grabbed) {
 			isGrabbed = grabbed;
 			updateColors();
@@ -63,7 +63,7 @@
 
 	$: {
 		const _ = k.dot_size;
-		updatePaths();
+		updateAncestries();
 	}
 
 	function clearClicks() {
@@ -98,7 +98,7 @@
 
 	function handle_doubleClick(event) {
 		clearClicks();
-		if (path?.becomeFocus()) {
+		if (ancestry?.becomeFocus()) {
 			signals.signal_rebuildGraph_fromFocus();
 		}
     }
@@ -107,7 +107,7 @@
 		clickCount++;
 		clickTimer = setTimeout(() => {
 			if (clickCount === 1) {
-				path?.handle_singleClick_onDragDot(event.shiftKey);
+				ancestry?.handle_singleClick_onDragDot(event.shiftKey);
 				clearClicks();
 			}
 		}, k.threshold_doubleClick);
@@ -115,28 +115,28 @@
 
 	function updateColors() {
 		if (!!thing) {
-			thing.updateColorAttributes(path);
-			fillColor = debug.lines ? 'transparent' : path?.dotColor(isHovering != isAltering);
-			tinyDotsColor = relatedColor = path?.dotColor(!isHovering && !isAltering);
+			thing.updateColorAttributes(ancestry);
+			fillColor = debug.lines ? 'transparent' : ancestry?.dotColor(isHovering != isAltering);
+			tinyDotsColor = relatedColor = ancestry?.dotColor(!isHovering && !isAltering);
 			strokeColor = thing.color;
 		}
 	}
 
 	function updateExtraPaths() {
-		relatedPath = tinyDotsPath = null;
+		relatedAncestry = tinyDotsPath = null;
 		if (!!thing) {
 			const count = thing.parents.length;		
 			if (count > 1) {
 				tinyDotsPath = svgPaths.ellipses(6, 0.5, false, count, size / 2);
 			}
 			if (thing.hasRelated) {
-				relatedPath = svgPaths.circle(size, 3, new Point(-4.5, 0));
+				relatedAncestry = svgPaths.circle(size, 3, new Point(-4.5, 0));
 			}
 		}
 	}
 
-	function updatePaths() {
-		if ($s_layout_asClusters && !path?.isExemplar) {
+	function updateAncestries() {
+		if ($s_layout_asClusters && !ancestry?.isExemplar) {
 			scalablePath = svgPaths.circle(size, size - 1);
 		} else {
 			scalablePath = svgPaths.oval(size, false);
@@ -188,13 +188,13 @@
 			svgPath={tinyDotsPath}
 		/>
 	{/if}
-	{#if relatedPath}
+	{#if relatedAncestry}
 		<SVGD3 name='svg-dot-related'
 			width={size}
 			height={size}
 			fill={relatedColor}
 			stroke={$s_layout_asClusters ? relatedColor : strokeColor}
-			svgPath={relatedPath}
+			svgPath={relatedAncestry}
 		/>
 	{/if}
 </button>

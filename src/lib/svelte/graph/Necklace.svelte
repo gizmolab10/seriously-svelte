@@ -5,18 +5,18 @@
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
 	export let center = Point.zero;
-    export let path;
+    export let ancestry;
 	const childOffset = new Point(k.dot_size / -3, k.cluster_offsetY);;
-	const color = path.thing?.color ?? k.color_default;
+	const color = ancestry.thing?.color ?? k.color_default;
 	let clusterLayouts: Array<ClusterLayout> = [];
 	let childMapRects: Array<ChildMapRect> = [];
 	let rebuilds = 0;
 	
 	onMount( () => {
-		const layout = new Layout(path, center);
+		const layout = new Layout(ancestry, center);
 		clusterLayouts = layout.clusterLayouts;
 		childMapRects = layout.childMapRects;
-		const handler = signals.handle_anySignal((signal_path) => { rebuilds += 1; });
+		const handler = signals.handle_anySignal((signal_ancestry) => { rebuilds += 1; });
 		return () => { handler.disconnect() };
 	});
 
@@ -27,7 +27,7 @@
 {#key rebuilds}
 	{#if !!childMapRects}
 		{#each childMapRects as map}
-			<Widget path={map.childPath} angle={map.childAngle} origin={map.childOrigin.offsetBy(childOffset)}/>
+			<Widget ancestry={map.childAncestry} angle={map.childAngle} origin={map.childOrigin.offsetBy(childOffset)}/>
 		{/each}
 	{/if}
 	{#if clusterLayouts}

@@ -1,21 +1,21 @@
 import { k, u, get, Rect, Size, Thing, debug, signals, Wrapper, IDWrapper } from '../common/GlobalImports';
 import { Predicate, TitleState, Relationship, PredicateKind, Alteration } from '../common/GlobalImports';
-import { s_path_focus, s_paths_grabbed, s_title_editing, s_layout_asClusters } from '../state/State';
-import { s_paths_expanded, s_path_editingTools, s_altering } from '../state/State';
-import { h } from '../../ts/db/DBDispatch';
+import { s_ancestry_focus, s_ancestries_grabbed, s_title_editing, s_layout_asClusters } from '../state/State';
+import { s_ancestries_expanded, s_ancestry_editingTools, s_altering } from '../state/State';
+import { h } from '../db/DBDispatch';
 import { Writable } from 'svelte/store';
 
-export default class Path {
+export default class Ancestry {
 	wrappers: { [type: string]: Wrapper } = {};
 	_thing: Thing | null = null;
 	idPredicate: string;
-	pathString: string;
-	pathHash: number;
+	ancestryString: string;
+	ancestryHash: number;
 
-	constructor(pathString: string = k.empty, idPredicate: string = Predicate.idContains) {
-		this.pathHash = pathString.hash();
+	constructor(ancestryString: string = k.empty, idPredicate: string = Predicate.idContains) {
+		this.ancestryHash = ancestryString.hash();
 		this.idPredicate = idPredicate;
-		this.pathString = pathString;
+		this.ancestryString = ancestryString;
 		if (h?.isAssembled) {
 			this.subscriptions_setup();			// not needed during hierarchy assembly
 		}
@@ -31,11 +31,11 @@ export default class Path {
 
 	subscriptions_setup() {
 		s_title_editing.subscribe(() => { this._thing?.updateColorAttributes(this); });
-		s_paths_grabbed.subscribe(() => { this._thing?.updateColorAttributes(this); });
+		s_ancestries_grabbed.subscribe(() => { this._thing?.updateColorAttributes(this); });
 	}
 
-	static idPredicate_for(pathString: string): string {
-		const hid = pathString.split(k.pathSeparator)[0].hash();	// grab first relationship's hid
+	static idPredicate_for(ancestryString: string): string {
+		const hid = ancestryString.split(k.ancestrySeparator)[0].hash();	// grab first relationship's hid
 		const relationship = h.relationship_forHID(hid);			// locate corresponding relationship
 		return relationship?.idPredicate ?? '';						// grab its predicate id
 	}
@@ -45,24 +45,24 @@ export default class Path {
 	get endID(): string { return this.idAt(); }
 	get id_count():number { return this.ids.length; }
 	get firstChild(): Thing { return this.children[0]; }
-	get isRoot(): boolean { return this.pathHash == 0; }
-	get parentPath(): Path | null { return this.stripBack(); }
+	get isRoot(): boolean { return this.ancestryHash == 0; }
+	get parentAncestry(): Ancestry | null { return this.stripBack(); }
 	get lastChild(): Thing { return this.children.slice(-1)[0]; }
-	get things(): Array<Thing> { return h.things_forPath(this); }
+	get things(): Array<Thing> { return h.things_forAncestry(this); }
 	get order(): number { return this.relationship?.order ?? -1; }
-	get isFocus(): boolean { return this.matchesStore(s_path_focus); }
-	get isExemplar(): boolean { return this.pathString == k.exemplar; }
+	get isFocus(): boolean { return this.matchesStore(s_ancestry_focus); }
+	get isExemplar(): boolean { return this.ancestryString == k.exemplar; }
 	get title(): string { return this.thing?.title ?? 'missing title'; }
 	get ids_hashed(): Array<number> { return this.ids.map(i => i.hash()); }
 	get relationship(): Relationship | null { return this.relationshipAt(); }
 	get idBridging(): string | null { return this.thing?.idBridging ?? null; }
-	get isGrabbed(): boolean { return this.includedInStore(s_paths_grabbed); }
+	get isGrabbed(): boolean { return this.includedInStore(s_ancestries_grabbed); }
 	get lineWrapper(): Wrapper | null { return this.wrappers[IDWrapper.line]; }
-	get children(): Array<Thing> { return h.things_forPaths(this.childPaths); }
-	get siblingPaths(): Array<Path> { return this.parentPath?.childPaths ?? []; }
+	get children(): Array<Thing> { return h.things_forAncestries(this.childAncestries); }
+	get siblingAncestries(): Array<Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
 	get titleWrapper(): Wrapper | null { return this.wrappers[IDWrapper.title]; }
-	get toolsGrabbed(): boolean { return this.matchesStore(s_path_editingTools); }
-	get childPaths(): Array<Path> { return this.childPaths_for(this.idPredicate); }
+	get toolsGrabbed(): boolean { return this.matchesStore(s_ancestry_editingTools); }
+	get childAncestries(): Array<Ancestry> { return this.childAncestries_for(this.idPredicate); }
 	get revealWrapper(): Wrapper | null { return this.wrappers[IDWrapper.reveal]; }
 	get widgetWrapper(): Wrapper | null { return this.wrappers[IDWrapper.widget]; }
 	get titleRect(): Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
@@ -73,12 +73,12 @@ export default class Path {
 	get hasParentRelationships(): boolean { return this.parentRelationships.length > 0; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get idPredicates(): Array<string> { return this.relationships.map(r => r.idPredicate); }
-	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_paths_expanded); }
+	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_ancestries_expanded); }
 	get isInvalid(): boolean { return this.containsReciprocals || this.containsMixedPredicates; }
-	get isEditing(): boolean { return get(s_title_editing)?.editing?.matchesPath(this) ?? false; }
+	get isEditing(): boolean { return get(s_title_editing)?.editing?.matchesAncestry(this) ?? false; }
 	get showsChildRelationships(): boolean { return this.isExpanded && this.hasChildRelationships; }
 	get titles(): Array<string> { return this.things?.map(t => ` \"${t ? t.title : 'null'}\"`) ?? []; }
-	get isStoppingEdit(): boolean { return get(s_title_editing)?.stopping?.matchesPath(this) ?? false; }
+	get isStoppingEdit(): boolean { return get(s_title_editing)?.stopping?.matchesAncestry(this) ?? false; }
 	get hasRelationships(): boolean { return this.hasParentRelationships || this.hasChildRelationships; }
 	get relatedThings(): Array<Thing> { return this.thing?.things_bidirectional_for(Predicate.idIsRelated) ?? []; }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
@@ -97,8 +97,8 @@ export default class Path {
 			thing = this.thingAt(1) ?? null;	// always recompute, cache is for debugging
 			this._thing = thing;
 		}
-		if (!!thing && !thing.onePath) {
-			thing.onePath = this;
+		if (!!thing && !thing.oneAncestry) {
+			thing.oneAncestry = this;
 		}
 		return this._thing;
 	}
@@ -107,7 +107,7 @@ export default class Path {
 		if (this.isRoot) {
 			return [];
 		}
-		return this.pathString.split(k.pathSeparator);
+		return this.ancestryString.split(k.ancestrySeparator);
 	}
 
 	get idThing(): string {
@@ -118,7 +118,7 @@ export default class Path {
 	}
 
 	get isVisible(): boolean {
-		const focus = get(s_path_focus);
+		const focus = get(s_ancestry_focus);
 		const asClusters = get(s_layout_asClusters);
 		const incorporates = this.incorporates(focus);
 		const expanded = this.isAllExpandedFrom(focus);
@@ -128,8 +128,8 @@ export default class Path {
 
 	get hasGrandChildren(): boolean {
 		if (this.hasChildRelationships) {
-			for (const childPath of this.childPaths) {
-				if (childPath.hasChildRelationships) {
+			for (const childAncestry of this.childAncestries) {
+				if (childAncestry.hasChildRelationships) {
 					return true;
 				}
 			}
@@ -168,36 +168,36 @@ export default class Path {
 		return false;
 	}
 
-	get things_canAlter_asParentOf_toolsPath(): boolean {
+	get things_canAlter_asParentOf_toolsAncestry(): boolean {
 		const altering = get(s_altering);
 		const predicate = altering?.predicate;
 		const isRelated = predicate?.kind == PredicateKind.isRelated ?? false;
-		const toolsPath = get(s_path_editingTools);
-		const toolThing = toolsPath?.thing;
+		const toolsAncestry = get(s_ancestry_editingTools);
+		const toolThing = toolsAncestry?.thing;
 		const thing = this.thing;
-		if (thing && toolThing && predicate && toolsPath && thing != toolThing && !toolsPath.matchesPath(this)) {
+		if (thing && toolThing && predicate && toolsAncestry && thing != toolThing && !toolsAncestry.matchesAncestry(this)) {
 			const toolIsAnAncestor = isRelated ? false : thing.parentIDs.includes(toolThing.id);
-			const isParentOfTool = this.thing_isImmediateParentOf(toolsPath, predicate.id);
+			const isParentOfTool = this.thing_isImmediateParentOf(toolsAncestry, predicate.id);
 			const isDeleting = altering.alteration == Alteration.deleting;
-			const isProgenyOfTool = this.path_isAProgenyOf(toolsPath);
+			const isProgenyOfTool = this.ancestry_isAProgenyOf(toolsAncestry);
 			return isDeleting ? isParentOfTool : !(isParentOfTool || isProgenyOfTool || toolIsAnAncestor);
 		}
 		return false;
 	}
 
-	matchesPath(path: Path): boolean { return this.pathHash == path.pathHash; }
-	includedInStore(store: Writable<Array<Path>>): boolean { return this.includedInPaths(get(store)); }
-	matchesStore(store: Writable<Path | null>): boolean { return get(store)?.matchesPath(this) ?? false; }
-	sharesAnID(path: Path | null): boolean { return !path ? false : this.ids.some(id => path.ids.includes(id)); }
+	matchesAncestry(ancestry: Ancestry): boolean { return this.ancestryHash == ancestry.ancestryHash; }
+	includedInStore(store: Writable<Array<Ancestry>>): boolean { return this.includedInAncestries(get(store)); }
+	matchesStore(store: Writable<Ancestry | null>): boolean { return get(store)?.matchesAncestry(this) ?? false; }
+	sharesAnID(ancestry: Ancestry | null): boolean { return !ancestry ? false : this.ids.some(id => ancestry.ids.includes(id)); }
 	includesPredicateID(idPredicate: string): boolean { return this.thing?.hasParentsFor(idPredicate) ?? false; }
 	showsClusterFor(predicate: Predicate): boolean { return this.includesPredicateID(predicate.id) && this.hasThings(predicate); }
 	rect_ofWrapper(wrapper: Wrapper | null): Rect | null { return Rect.createFromDOMRect(wrapper?.component.getBoundingClientRect()); }
 	relationshipAt(back: number = 1): Relationship | null { return h.relationship_forHID(this.idAt(back).hash()) ?? null; }
 
-	isRelatedTo_orContains(path: Path): boolean {
-		// if path.thing's parents (of all predicate kinds) include this.thing
+	isRelatedTo_orContains(ancestry: Ancestry): boolean {
+		// if ancestry.thing's parents (of all predicate kinds) include this.thing
 		const id = this.thing?.id;
-		const parents = path.thing?.parents_ofAllKinds;
+		const parents = ancestry.thing?.parents_ofAllKinds;
 		if (id && parents) {
 			return parents.filter(t => t.id == id).length > 0;
 		}
@@ -206,16 +206,16 @@ export default class Path {
 	
 	relationships_for_isChildOf(idPredicate: string, isChildOf: boolean) {
 		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
-		if (id && this.pathString != k.exemplar && ![k.empty, 'k.id_unknown'].includes(id)) {
+		if (id && this.ancestryString != k.exemplar && ![k.empty, 'k.id_unknown'].includes(id)) {
 			return h.relationships_forPredicateThingIsChild(idPredicate, id, isChildOf);
 		}
 		return [];
 	}
 
-	path_isAProgenyOf(path: Path): boolean {
+	ancestry_isAProgenyOf(ancestry: Ancestry): boolean {
 		let isAProgeny = false;
-		path.traverse((progenyPath: Path) => {
-			if (progenyPath.pathHash == this.pathHash) {
+		ancestry.traverse((progenyAncestry: Ancestry) => {
+			if (progenyAncestry.ancestryHash == this.ancestryHash) {
 				isAProgeny = true;
 				return true;	// stop traversal
 			}
@@ -224,9 +224,9 @@ export default class Path {
 		return isAProgeny;
 	}
 
-	path_ofNextSibling(increment: boolean): Path | null {
-		const array = this.siblingPaths;
-		const index = array.map(p => p.pathString).indexOf(this.pathString);
+	ancestry_ofNextSibling(increment: boolean): Ancestry | null {
+		const array = this.siblingAncestries;
+		const index = array.map(p => p.ancestryString).indexOf(this.ancestryString);
 		if (index != -1) {
 			let siblingIndex = index.increment(increment, array.length)
 			if (index == 0) {
@@ -237,72 +237,72 @@ export default class Path {
 		return null;
 	}
 
-	childPaths_for(idPredicate: string = Predicate.idContains): Array<Path> {
-		let paths: Array<Path> = [];
+	childAncestries_for(idPredicate: string = Predicate.idContains): Array<Ancestry> {
+		let ancestries: Array<Ancestry> = [];
 		const isContains = idPredicate == Predicate.idContains;
 		const childRelationships = this.relationships_for_isChildOf(idPredicate, false);
 		if (childRelationships.length > 0) {
 			for (const childRelationship of childRelationships) {		// loop through all child relationships
 				if (childRelationship.idPredicate == idPredicate) {
-					let path: Path | null;
+					let ancestry: Ancestry | null;
 					if (isContains) {
-						path = this.uniquelyAppendID(childRelationship.id); 	// add each childRelationship's id
+						ancestry = this.uniquelyAppendID(childRelationship.id); 	// add each childRelationship's id
 					} else {
-						path = h.path_remember_createUnique(childRelationship.id, idPredicate);
+						ancestry = h.ancestry_remember_createUnique(childRelationship.id, idPredicate);
 					}
-					if (!!path) {
-						paths.push(path);								// and push onto the paths
+					if (!!ancestry) {
+						ancestries.push(ancestry);								// and push onto the ancestries
 					}
 				}
 			}
 			if (isContains) {											// normalize order of children only
-				u.paths_orders_normalize_remoteMaybe(paths);
+				u.ancestries_orders_normalize_remoteMaybe(ancestries);
 			}
 		}
-		return paths;
+		return ancestries;
 	}
 
 	thingAt(back: number): Thing | null {			// 1 == last
 		const relationship = this.relationshipAt(back);
-		if (this.pathString != k.empty && relationship) {
+		if (this.ancestryString != k.empty && relationship) {
 			return relationship.child;
 		}
 		return h.root;	// N.B., h.root is wrong immediately after switching db type
 	}
 
-	thing_isImmediateParentOf(path: Path, id: string): boolean {
+	thing_isImmediateParentOf(ancestry: Ancestry, id: string): boolean {
 		const idThing = this.idThing;
 		if (idThing != k.id_unknown) {
-			const parents = path.thing?.parents_forID(id);
+			const parents = ancestry.thing?.parents_forID(id);
 			return parents?.map(t => t.id).includes(idThing) ?? false;
 		}
 		return false;
 	}
 
-	uniquelyAppendID(id: string): Path | null {
+	uniquelyAppendID(id: string): Ancestry | null {
 		let ids = this.ids;
 		ids.push(id);
-		const path = h.path_remember_createUnique(ids.join(k.pathSeparator));
-		if (path) {
-			const description = `${path.predicate?.description} ${path.titles}`;
-			if (path.containsMixedPredicates) {
+		const ancestry = h.ancestry_remember_createUnique(ids.join(k.ancestrySeparator));
+		if (ancestry) {
+			const description = `${ancestry.predicate?.description} ${ancestry.titles}`;
+			if (ancestry.containsMixedPredicates) {
 				console.log(`predicates ${description}`);
-				h.path_forget(path);
+				h.ancestry_forget(ancestry);
 				return null;
 			}
-			if (path.containsReciprocals) {
+			if (ancestry.containsReciprocals) {
 				console.log(`reciprocal ${description}`);
-				h.path_forget(path);
+				h.ancestry_forget(ancestry);
 				return null;
 			}
 		}
-		return path;
+		return ancestry;
 	}
 
-	includedInPaths(paths: Array<Path>): boolean {
-		return (paths?.filter(p => {
-			const path = p as Path;
-			return path && path.matchesPath(this);
+	includedInAncestries(ancestries: Array<Ancestry>): boolean {
+		return (ancestries?.filter(p => {
+			const ancestry = p as Ancestry;
+			return ancestry && ancestry.matchesAncestry(this);
 		}).length > 0) ?? false;
 	}
 
@@ -333,30 +333,30 @@ export default class Path {
 		return k.color_background;
 	}
 
-	visibleParentPaths(back: number = 1): Array<Path> {
-		const parentPaths = this.thing?.parentPaths ?? [];
-		const paths: Array<Path> = [];
-		for (const parentPath of parentPaths) {
-			const ancestorPath = parentPath.stripBack(back);
-			if (ancestorPath && ancestorPath.isVisible) {
-				paths.push(parentPath);
+	visibleParentAncestries(back: number = 1): Array<Ancestry> {
+		const parentAncestries = this.thing?.parentAncestries ?? [];
+		const ancestries: Array<Ancestry> = [];
+		for (const parentAncestry of parentAncestries) {
+			const ancestorAncestry = parentAncestry.stripBack(back);
+			if (ancestorAncestry && ancestorAncestry.isVisible) {
+				ancestries.push(parentAncestry);
 			}
 		}
-		return paths;
+		return ancestries;
 	}
 
-	stripBack(back: number = 1): Path | null {
+	stripBack(back: number = 1): Ancestry | null {
 		if (back == 0) {
 			return this;
 		}
 		const ids = this.ids.slice(0, -back);
 		if (ids.length < 1) {
-			return h.rootPath;
+			return h.rootAncestry;
 		}
-		return h.path_remember_createUnique(ids.join(k.pathSeparator));
+		return h.ancestry_remember_createUnique(ids.join(k.ancestrySeparator));
 	}
 
-	appendChild(child: Thing | null): Path | null {
+	appendChild(child: Thing | null): Ancestry | null {
 		const idParent = this.thing?.idBridging;
 		if (child && idParent) {
 			const relationship = h.relationship_forPredicate_parent_child(Predicate.idContains, idParent, child.id);
@@ -367,12 +367,12 @@ export default class Path {
 		return this;
 	}
 
-	isAllExpandedFrom(targetPath: Path | null): boolean {
-		// visit parents along this path until encountering
-		// either the path or an unexpanded parent
-		if (targetPath && !this.matchesPath(targetPath)) {
-			const path = this.parentPath;			// visit parent of path
-			if (!path || (!path.isExpanded && !path.isAllExpandedFrom(targetPath))) {
+	isAllExpandedFrom(targetAncestry: Ancestry | null): boolean {
+		// visit parents along this ancestry until encountering
+		// either the ancestry or an unexpanded parent
+		if (targetAncestry && !this.matchesAncestry(targetAncestry)) {
+			const ancestry = this.parentAncestry;			// visit parent of ancestry
+			if (!ancestry || (!ancestry.isExpanded && !ancestry.isAllExpandedFrom(targetAncestry))) {
 				return false;	// stop when no parent or parent is not expanded
 			}
 		}
@@ -413,13 +413,13 @@ export default class Path {
 		return [distributedParentCount, totalWidth, array.reverse()];
 	}
 
-	incorporates(path: Path | null): boolean {
-		if (!!path) {
+	incorporates(ancestry: Ancestry | null): boolean {
+		if (!!ancestry) {
 			const ids = this.ids;
-			const pathIDs = path.ids;
+			const ancestryIDs = ancestry.ids;
 			let index = 0;
-			while (index < pathIDs.length) {
-				if (ids[index] != pathIDs[index]) {
+			while (index < ancestryIDs.length) {
+				if (ids[index] != ancestryIDs[index]) {
 					return false;
 				}
 				index++;
@@ -432,10 +432,10 @@ export default class Path {
 	visibleProgeny_height(visited: Array<string> = []): number {
 		const thing = this.thing;
 		if (!!thing) {
-			if (!visited.includes(this.pathString) && this.showsChildRelationships) {
+			if (!visited.includes(this.ancestryString) && this.showsChildRelationships) {
 				let height = 0;
-				for (const childPath of this.childPaths) {
-					height += childPath.visibleProgeny_height([...visited, this.pathString]);
+				for (const childAncestry of this.childAncestries) {
+					height += childAncestry.visibleProgeny_height([...visited, this.ancestryString]);
 				}
 				return Math.max(height, k.row_height);
 			}
@@ -447,12 +447,12 @@ export default class Path {
 	visibleProgeny_width(special: boolean = k.show_titleAtTop, visited: Array<number> = []): number {
 		const thing = this.thing;
 		if (!!thing) {
-			const pathHash = this.pathHash;
+			const ancestryHash = this.ancestryHash;
 			let width = special ? 0 : thing.titleWidth;
-			if (!visited.includes(pathHash) && this.showsChildRelationships) {
+			if (!visited.includes(ancestryHash) && this.showsChildRelationships) {
 				let progenyWidth = 0;
-				for (const childPath of this.childPaths) {
-					const childProgenyWidth = childPath.visibleProgeny_width(false, [...visited, pathHash]);
+				for (const childAncestry of this.childAncestries) {
+					const childProgenyWidth = childAncestry.visibleProgeny_width(false, [...visited, ancestryHash]);
 					if (progenyWidth < childProgenyWidth) {
 						progenyWidth = childProgenyWidth;
 					}
@@ -471,19 +471,19 @@ export default class Path {
 	toggleGrab() { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }
 
 	grabOnly() {
-		s_paths_grabbed.set([this]);
+		s_ancestries_grabbed.set([this]);
 		this.toggleToolsGrab();
 	}
 
 	becomeFocus(): boolean {
-		const changed = !(get(s_path_focus)?.matchesPath(this) ?? false);
-		s_path_editingTools.set(null);
+		const changed = !(get(s_ancestry_focus)?.matchesAncestry(this) ?? false);
+		s_ancestry_editingTools.set(null);
 		if (changed) {
-			const grabbedPath = h.grabs.latestPathGrabbed(true)
-			s_path_focus.set(this);
+			const grabbedAncestry = h.grabs.latestAncestryGrabbed(true)
+			s_ancestry_focus.set(this);
 			this.expand();
-			if (!!grabbedPath && !grabbedPath.isVisible) {
-				grabbedPath.ungrab()
+			if (!!grabbedAncestry && !grabbedAncestry.isVisible) {
+				grabbedAncestry.ungrab()
 				this.grab();
 			}
 		}
@@ -491,31 +491,31 @@ export default class Path {
 	}
 
 	toggleToolsGrab() {
-		const toolsPath = get(s_path_editingTools);
-		if (toolsPath) { // ignore if editingTools not in use
-			if (this.matchesPath(toolsPath)) {
-				s_path_editingTools.set(null);
+		const toolsAncestry = get(s_ancestry_editingTools);
+		if (toolsAncestry) { // ignore if editingTools not in use
+			if (this.matchesAncestry(toolsAncestry)) {
+				s_ancestry_editingTools.set(null);
 			} else if (!this.isRoot) {
-				s_path_editingTools.set(this);
+				s_ancestry_editingTools.set(this);
 			}
 		}
 	}
 
 	async assureIsVisible() {
 		// visit and expand each parent until this
-		let path: Path | null = this;
+		let ancestry: Ancestry | null = this;
 		do {
-			path = path?.parentPath ?? null;
-			if (!!path) {
-				if (!!path.isVisible) {
-					path.becomeFocus();
+			ancestry = ancestry?.parentAncestry ?? null;
+			if (!!ancestry) {
+				if (!!ancestry.isVisible) {
+					ancestry.becomeFocus();
 					return;
 				}
-				path.expand();
+				ancestry.expand();
 			}
-		} while (!path);
-		h.rootPath.expand();
-		h.rootPath.becomeFocus();
+		} while (!ancestry);
+		h.rootAncestry.expand();
+		h.rootAncestry.becomeFocus();
 	}
 
 	handle_singleClick_onDragDot(shiftKey: boolean) {
@@ -525,7 +525,7 @@ export default class Path {
 				this.becomeFocus();
 			} else {
 				if (get(s_altering)) {
-					h.path_alterMaybe(this);
+					h.ancestry_alterMaybe(this);
 				} else if (shiftKey || this.isGrabbed) {
 					this.toggleGrab();
 				} else {
@@ -537,7 +537,7 @@ export default class Path {
 	}
 
 	grab() {
-		s_paths_grabbed.update((array) => {
+		s_ancestries_grabbed.update((array) => {
 			if (!!array) {
 				const index = array.indexOf(this);
 				if (array.length == 0) {
@@ -555,34 +555,34 @@ export default class Path {
 	}
 
 	ungrab() {
-		const rootPath = h.rootPath;
-		s_paths_grabbed.update((array) => {
+		const rootAncestry = h.rootAncestry;
+		s_ancestries_grabbed.update((array) => {
 			if (!!array) {
 				const index = array.indexOf(this);
 				if (index != -1) {				// only splice array when item is found
 					array.splice(index, 1);		// 2nd parameter means remove one item only
 				}
 				if (array.length == 0) {
-					array.push(rootPath);
+					array.push(rootAncestry);
 				}
 			}
 			return array;
 		});
-		let paths = get(s_paths_grabbed) ?? [];
-		if (paths.length == 0) {
-			rootPath.grabOnly();
+		let ancestries = get(s_ancestries_grabbed) ?? [];
+		if (ancestries.length == 0) {
+			rootAncestry.grabOnly();
 		} else {
 			this.toggleToolsGrab(); // do not show tools editingTools for root
 		}
 	}
 
 	async order_normalizeRecursive_remoteMaybe(remoteWrite: boolean, visited: Array<number> = []) {
-		const hid = this.pathHash;
-		const childPaths = this.childPaths;
-		if (!visited.includes(hid) && childPaths && childPaths.length > 1) {
-			await u.paths_orders_normalize_remoteMaybe(childPaths, remoteWrite);
-			for (const childPath of childPaths) {
-				childPath.order_normalizeRecursive_remoteMaybe(remoteWrite, [...visited, hid]);
+		const hid = this.ancestryHash;
+		const childAncestries = this.childAncestries;
+		if (!visited.includes(hid) && childAncestries && childAncestries.length > 1) {
+			await u.ancestries_orders_normalize_remoteMaybe(childAncestries, remoteWrite);
+			for (const childAncestry of childAncestries) {
+				childAncestry.order_normalizeRecursive_remoteMaybe(remoteWrite, [...visited, hid]);
 			}
 		}
 	}
@@ -590,9 +590,9 @@ export default class Path {
 	expanded_setTo(expand: boolean) {
 		let mutated = false;
 		if (!this.isRoot) {
-			s_paths_expanded.update((array) => {
+			s_ancestries_expanded.update((array) => {
 				if (array) {
-					const index = array.map(e => e.pathString).indexOf(this.pathString);
+					const index = array.map(e => e.ancestryString).indexOf(this.ancestryString);
 					const found = index != -1;
 					if (expand && !found) {		// only add if not already added
 						array.push(this);
@@ -617,18 +617,18 @@ export default class Path {
 		}
 	}
 
-	async traverse_async(applyTo: (path: Path) => Promise<boolean>) {
+	async traverse_async(applyTo: (ancestry: Ancestry) => Promise<boolean>) {
 		if (!await applyTo(this)) {
-			for (const childPath of this.childPaths) {
-				await childPath.traverse_async(applyTo);
+			for (const childAncestry of this.childAncestries) {
+				await childAncestry.traverse_async(applyTo);
 			}
 		}
 	}
 
-	traverse(applyTo: (path: Path) => boolean) {
+	traverse(applyTo: (ancestry: Ancestry) => boolean) {
 		if (!applyTo(this)) {
-			for (const childPath of this.childPaths) {
-				childPath.traverse(applyTo);
+			for (const childAncestry of this.childAncestries) {
+				childAncestry.traverse(applyTo);
 			}
 		}
 	}

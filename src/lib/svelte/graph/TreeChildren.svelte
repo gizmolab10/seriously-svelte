@@ -7,7 +7,7 @@
 	import Circle from '../kit/Circle.svelte';
 	import TreeLine from './TreeLine.svelte';
 	export let origin = new Point();
-    export let path;
+    export let ancestry;
 	const widgetOffset = new Point(12, (k.dot_size / -15) - 11.5);
 	const lineOffset = new Point(-122.5, -1);
 	let childMapRects: Array<ChildMapRect> = [];
@@ -22,11 +22,11 @@
 	
 	onMount( () => {
 		layoutChildren();
-		const handler = signals.handle_relayoutWidgets(1, (signal_path) => {
+		const handler = signals.handle_relayoutWidgets(1, (signal_ancestry) => {
 			const now = new Date().getTime();
-			if (path.isExpanded &&
+			if (ancestry.isExpanded &&
 				((now - priorTime) > 100) &&
-				(!signal_path || signal_path.matchesPath(path))) {
+				(!signal_ancestry || signal_ancestry.matchesAncestry(ancestry))) {
 				priorTime = now;
 				debugReact.log_origins(origin.x + ' before timeout');
 				layoutChildren();
@@ -36,15 +36,15 @@
 	});
 	
 	function layoutChildren() {
-		if (path.isExpanded) {
+		if (ancestry.isExpanded) {
 			debugReact.log_origins(origin.x + ' children layout');
 			const delta = new Point(17.9, -2.4);
-			const height = path.visibleProgeny_halfHeight;
+			const height = ancestry.visibleProgeny_halfHeight;
 			const childrenOrigin = origin.offsetByY(height);
-			childMapRects = new Layout(path, childrenOrigin).childMapRects;
+			childMapRects = new Layout(ancestry, childrenOrigin).childMapRects;
 			center = childrenOrigin.offsetBy(delta);
 		} else {
-			console.log(`not expanded, cannot layout ${path.description}`);
+			console.log(`not expanded, cannot layout ${ancestry.description}`);
 		}
 	}
 	
@@ -53,12 +53,12 @@
 {#if debug.lines}
 	<Circle radius=1 center={center} color=black thickness=1/>
 {/if}
-{#if path.isExpanded}
+{#if ancestry.isExpanded}
 	{#each childMapRects as map}
-		<Widget path={map.childPath} origin={map.extent.offsetBy(widgetOffset)}/>
-		<TreeLine path={map.childPath} curveType={map.curveType} rect={map.offsetBy(lineOffset)}/>
-		{#if map.childPath.showsChildRelationships}
-			<TreeChildren path={map.childPath} origin={map.childOrigin}/>
+		<Widget ancestry={map.childAncestry} origin={map.extent.offsetBy(widgetOffset)}/>
+		<TreeLine ancestry={map.childAncestry} curveType={map.curveType} rect={map.offsetBy(lineOffset)}/>
+		{#if map.childAncestry.showsChildRelationships}
+			<TreeChildren ancestry={map.childAncestry} origin={map.childOrigin}/>
 		{/if}
 	{/each}
 {/if}

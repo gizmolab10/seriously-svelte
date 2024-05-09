@@ -3,7 +3,7 @@ import { debugReact, dbDispatch, persistLocal, IDPersistant } from '../common/Gl
 import { s_graphRect, s_show_details, s_scale_factor, s_user_graphOffset } from '../state/State';
 
 class Globals {
-	mouseLocation = Point.zero;
+	mouseLocation!: Point;
 
 	setup() {
 		const baseID = dbDispatch.db.baseID;

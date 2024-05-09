@@ -30,7 +30,7 @@ import Predicate from '../data/Predicate';
 import Layout from '../geometry/Layout';
 import Datum from '../structures/Datum';
 import Grabs from '../managers/Grabs';
-import Path from '../structures/Path';
+import Ancestry from '../structures/Ancestry';
 import Access from '../data/Access';
 import Thing from '../data/Thing';
 import User from '../data/User';
@@ -41,7 +41,7 @@ export {
 	Wrapper, signals, SeriouslyRange,
 	Rect, Size, Point, svgPaths, Direction,
 	transparentize, interact, muuri, createPopper,
-	Path, Grabs, dbDispatch, Hierarchy, persistLocal,
+	Ancestry, Grabs, dbDispatch, Hierarchy, persistLocal,
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Angle, Layout, Quadrant, ChildMapRect, ClusterLayout,
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactFlag,

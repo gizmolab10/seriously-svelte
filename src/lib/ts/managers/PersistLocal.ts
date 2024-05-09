@@ -1,8 +1,8 @@
-import { g, k, u, Path, Point, signals, dbDispatch, GraphRelations } from '../common/GlobalImports'
-import { s_path_focus, s_show_details, s_user_graphOffset } from '../state/State';
+import { g, k, u, Ancestry, Point, signals, dbDispatch, GraphRelations } from '../common/GlobalImports'
+import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/State';
 import { s_thing_fontFamily, s_graph_relations } from '../state/State';
 import { s_cluster_angle, s_layout_asClusters } from '../state/State';
-import { s_paths_grabbed, s_paths_expanded } from '../state/State';
+import { s_ancestries_grabbed, s_ancestries_expanded } from '../state/State';
 import { h } from '../db/DBDispatch';
 
 export enum IDPersistant {
@@ -25,10 +25,10 @@ export enum IDPersistant {
 }
 
 class PersistLocal {
-	// for backwards compatibility with {focus, grabbed, expanded} which were stored as relationship ids (not as path strings)
+	// for backwards compatibility with {focus, grabbed, expanded} which were stored as relationship ids (not as ancestry strings)
 	usesRelationships = localStorage[IDPersistant.relationships];
-	ignorePaths = !this.usesRelationships || this.usesRelationships == 'undefined';
-	pathsRestored = false;
+	ignoreAncestries = !this.usesRelationships || this.usesRelationships == 'undefined';
+	ancestriesRestored = false;
 
 	queryStrings_apply() {
 		const queryStrings = k.queryString;
@@ -65,9 +65,9 @@ class PersistLocal {
 					break;
 				case 'settings': 
 					localStorage.clear();
-					s_paths_expanded.set([]);
-					s_path_focus.set(h.rootPath);
-					s_paths_grabbed.set([h.rootPath]);
+					s_ancestries_expanded.set([]);
+					s_ancestry_focus.set(h.rootAncestry);
+					s_ancestries_grabbed.set([h.rootAncestry]);
 					break;
 			}
 		}
@@ -75,7 +75,7 @@ class PersistLocal {
 
 	get dbType(): string { return dbDispatch.db.dbType; }
 	key_write(key: string, value: any) { localStorage[key] = JSON.stringify(value); }
-	dbKey_paths(key: string): Array<Path> { return this.key_paths(key + this.dbType); }
+	dbKey_ancestries(key: string): Array<Ancestry> { return this.key_ancestries(key + this.dbType); }
 	dbKey_write(key: string, value: any) { this.key_write(key + this.dbType, value); }
 	dbKey_read(key: string): any | null { return this.key_read(key + this.dbType); }
 
@@ -88,39 +88,39 @@ class PersistLocal {
 		} 
 	}
 
-	key_paths(key: string): Array<Path> {
-		const pathStrings = this.key_read(key);
-		const length = pathStrings.length;
-		if (this.ignorePaths || !pathStrings || length == 0) {
+	key_ancestries(key: string): Array<Ancestry> {
+		const ancestryStrings = this.key_read(key);
+		const length = ancestryStrings.length;
+		if (this.ignoreAncestries || !ancestryStrings || length == 0) {
 			return [];
 		}
 		let needsRewrite = false;
-		const paths: Array<Path> = [];
-		const reversed = pathStrings.reverse();
-		reversed.forEach((pathString: string, index: number) => {
-			const id = Path.idPredicate_for(pathString);
-			const path = h.path_remember_createUnique(pathString, id);
-			if (!path) {
-				pathStrings.slice(1, length - index);
+		const ancestries: Array<Ancestry> = [];
+		const reversed = ancestryStrings.reverse();
+		reversed.forEach((ancestryString: string, index: number) => {
+			const id = Ancestry.idPredicate_for(ancestryString);
+			const ancestry = h.ancestry_remember_createUnique(ancestryString, id);
+			if (!ancestry) {
+				ancestryStrings.slice(1, length - index);
 				needsRewrite = true;
 			} else {
-				for (const id of path.ids) {
+				for (const id of ancestry.ids) {
 					const relationship = h.relationship_forHID(id.hash());
 					if (!relationship) {
-						pathStrings.slice(1, length - index);
+						ancestryStrings.slice(1, length - index);
 						needsRewrite = true;
 						break;
 					}
 				}
 			}
-			if (!needsRewrite && path) {
-				paths.push(path);
+			if (!needsRewrite && ancestry) {
+				ancestries.push(ancestry);
 			}
 		});
 		if (needsRewrite) {
-			this.key_write(key, pathStrings);
+			this.key_write(key, ancestryStrings);
 		}
-		return paths;
+		return ancestries;
 	}
 
 	restore() {
@@ -129,7 +129,7 @@ class PersistLocal {
 		// this.key_write(IDPersistant.row_height, 20);
 		// this.key_write(IDPersistant.dot_size, 13);
 
-		if (this.ignorePaths) {
+		if (this.ignoreAncestries) {
 			this.key_write(IDPersistant.relationships, true);
 		}
 		this.key_write(IDPersistant.title_atTop, false);
@@ -158,45 +158,45 @@ class PersistLocal {
 		})
 	}
 
-	paths_restore(force: boolean = false) {
-		if (!this.pathsRestored || force) {
-			this.pathsRestored = true;
+	ancestries_restore(force: boolean = false) {
+		if (!this.ancestriesRestored || force) {
+			this.ancestriesRestored = true;
 			this.focus_restore();
-			s_paths_grabbed.set(this.dbKey_paths(IDPersistant.grabbed));
-			s_paths_expanded.set(this.dbKey_paths(IDPersistant.expanded));
+			s_ancestries_grabbed.set(this.dbKey_ancestries(IDPersistant.grabbed));
+			s_ancestries_expanded.set(this.dbKey_ancestries(IDPersistant.expanded));
 	
-			s_paths_grabbed.subscribe((paths: Array<Path>) => {
-				this.dbKey_write(IDPersistant.grabbed, !paths ? null : paths.map(p => p.pathString));
+			s_ancestries_grabbed.subscribe((ancestries: Array<Ancestry>) => {
+				this.dbKey_write(IDPersistant.grabbed, !ancestries ? null : ancestries.map(p => p.ancestryString));
 			});
 	
-			s_paths_expanded.subscribe((paths: Array<Path>) => {
-				this.dbKey_write(IDPersistant.expanded, !paths ? null : paths.map(p => p.pathString));
+			s_ancestries_expanded.subscribe((ancestries: Array<Ancestry>) => {
+				this.dbKey_write(IDPersistant.expanded, !ancestries ? null : ancestries.map(p => p.ancestryString));
 			});
 		}
 	}
 
 	focus_restore() {
-		h.rootPath_setup();
-		let pathToFocus = h.rootPath;
-		if (!this.ignorePaths) {
-			const focusPathString = this.dbKey_read(IDPersistant.focus);
-			if (focusPathString) {
-				const focusPath = h.path_remember_createUnique(focusPathString);
-				if (focusPath) {
-					pathToFocus = focusPath;
+		h.rootAncestry_setup();
+		let ancestryToFocus = h.rootAncestry;
+		if (!this.ignoreAncestries) {
+			const focusAncestryString = this.dbKey_read(IDPersistant.focus);
+			if (focusAncestryString) {
+				const focusAncestry = h.ancestry_remember_createUnique(focusAncestryString);
+				if (focusAncestry) {
+					ancestryToFocus = focusAncestry;
 				}
 			}
 		}
-		let focus = h.thing_forPath(pathToFocus);
+		let focus = h.thing_forAncestry(ancestryToFocus);
 		if (focus == null) {
-			const lastGrabbedPath = h.grabs.path_lastGrabbed?.parentPath;
-			if (lastGrabbedPath) {
-				pathToFocus = lastGrabbedPath;
+			const lastGrabbedAncestry = h.grabs.ancestry_lastGrabbed?.parentAncestry;
+			if (lastGrabbedAncestry) {
+				ancestryToFocus = lastGrabbedAncestry;
 			}
 		}
-		pathToFocus.becomeFocus();
-		s_path_focus.subscribe((path: Path) => {
-			this.dbKey_write(IDPersistant.focus, !path ? null : path.pathString);
+		ancestryToFocus.becomeFocus();
+		s_ancestry_focus.subscribe((ancestry: Ancestry) => {
+			this.dbKey_write(IDPersistant.focus, !ancestry ? null : ancestry.ancestryString);
 		});
 	}
 

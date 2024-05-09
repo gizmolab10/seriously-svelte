@@ -1,6 +1,6 @@
 <script>
 	import { k, u, Size, Thing, Point, ZIndex, svgPaths, Direction, dbDispatch } from "../../ts/common/GlobalImports";
-	import { s_paths_grabbed } from '../../ts/state/State';
+	import { s_ancestries_grabbed } from '../../ts/state/State';
 	import Button from '../buttons/Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	export let hover_closure = null;
@@ -28,7 +28,7 @@
 	}
 
 	$: {
-		const _ = $s_paths_grabbed;
+		const _ = $s_ancestries_grabbed;
 		setFillColor(false);
 	}
 

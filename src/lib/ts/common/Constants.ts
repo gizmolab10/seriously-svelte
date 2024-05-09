@@ -25,7 +25,7 @@ export default class Constants {
     color_default = 'blue';
 	id_unknown = 'unknown';
 	exemplar = 'exemplar';
-	pathSeparator = '::';
+	ancestrySeparator = '::';
 	newLine = '\n';
 	comma = ',';
 	space = ' ';

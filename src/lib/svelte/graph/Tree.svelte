@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { k, u, Path, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/GlobalImports';
+	import { k, u, Ancestry, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/GlobalImports';
 	import { IDButton, onMount, debugReact, dbDispatch, Predicate } from '../../ts/common/GlobalImports';
-	import { s_path_focus, s_graphRect, s_show_details, s_paths_grabbed } from '../../ts/state/State';
-	import { s_id_popupView, s_path_editingTools, s_user_graphOffset } from '../../ts/state/State';
+	import { s_ancestry_focus, s_graphRect, s_show_details, s_ancestries_grabbed } from '../../ts/state/State';
+	import { s_id_popupView, s_ancestry_editingTools, s_user_graphOffset } from '../../ts/state/State';
 	import { IDPersistant, IDSignal, persistLocal } from '../../ts/common/GlobalImports';
 	import DotRevealFocus from '../buttons/DotRevealFocus.svelte';
 	import EditingTools from './EditingTools.svelte';
@@ -26,7 +26,7 @@
 	let top = 0;
 	
 	onMount( () => {
-		const handler = signals.handle_relayoutWidgets(0, (path) => { updateOrigins(); });
+		const handler = signals.handle_relayoutWidgets(0, (ancestry) => { updateOrigins(); });
 		return () => { handler.disconnect() };
 	});
 	
@@ -39,8 +39,8 @@
 			top = graphRect.origin.y;
 			updateOrigins();
 		}
-		if (focus == null || focus.id != $s_path_focus) {
-			focus = !$s_path_focus ? h.root : h.thing_forPath($s_path_focus);
+		if (focus == null || focus.id != $s_ancestry_focus) {
+			focus = !$s_ancestry_focus ? h.root : h.thing_forAncestry($s_ancestry_focus);
 			offsetX_ofFirstReveal = k.show_titleAtTop ? 0 : focus?.titleWidth / 2;
 			updateOrigins();
 			rebuilds += 1;
@@ -56,13 +56,13 @@
 	function rectOfChildren(): Rect {
 		const delta = new Point(9, -2);
 		const origin = graphRect.origin.offsetBy(delta).offsetBy(origin_ofChildren);
-		return new Rect(origin, $s_path_focus.visibleProgeny_size.expandedByX(3));
+		return new Rect(origin, $s_ancestry_focus.visibleProgeny_size.expandedByX(3));
 	}
 
 	function updateOrigins() {
-		const focusPath = $s_path_focus;
-		if (focusPath && graphRect) {
-			childrenSize = focusPath.visibleProgeny_size;
+		const focusAncestry = $s_ancestry_focus;
+		if (focusAncestry && graphRect) {
+			childrenSize = focusAncestry.visibleProgeny_size;
 			const offsetX = 15 + ($s_show_details ? -k.width_details : 0) - (childrenSize.width / 2) - (k.dot_size / 2.5) + offsetX_ofFirstReveal;
 			const offsetY = -1 - graphRect.origin.y;
 			origin_ofFirstReveal = graphRect.center.offsetBy(new Point(offsetX, offsetY));
@@ -80,7 +80,7 @@
 
 </script>
 
-{#if $s_path_focus}
+{#if $s_ancestry_focus}
 	{#key rebuilds}
 		<div class='tree'
 			style='transform: translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px);'
@@ -94,15 +94,15 @@
 				<Box rect={greenRect} color=green half={true}/>
 			{/if}
 			{#if !k.show_titleAtTop}
-				<Widget path={$s_path_focus} origin={origin_ofFirstReveal.offsetBy(new Point(-23 - offsetX_ofFirstReveal, -9))}/>
+				<Widget ancestry={$s_ancestry_focus} origin={origin_ofFirstReveal.offsetBy(new Point(-23 - offsetX_ofFirstReveal, -9))}/>
 			{:else}
-				{#if $s_path_focus.isGrabbed}
+				{#if $s_ancestry_focus.isGrabbed}
 					<Circle radius=10 center={origin_ofFirstReveal.offsetBy(new Point(-1, 1))} color={focus.color} thickness=1/>
 				{/if}
-				<DotRevealFocus path={$s_path_focus} center={origin_ofFirstReveal.offsetBy(new Point(-3, 0))}/>
+				<DotRevealFocus ancestry={$s_ancestry_focus} center={origin_ofFirstReveal.offsetBy(new Point(-3, 0))}/>
 			{/if}
-			{#if $s_path_focus.isExpanded}
-				<TreeChildren path={$s_path_focus} origin={origin_ofChildren}/>
+			{#if $s_ancestry_focus.isExpanded}
+				<TreeChildren ancestry={$s_ancestry_focus} origin={origin_ofChildren}/>
 			{/if}
 		</div>
 		<EditingTools/>

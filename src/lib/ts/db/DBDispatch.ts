@@ -1,6 +1,6 @@
 import { k, signals, Hierarchy, IDPersistant, persistLocal } from '../common/GlobalImports';
 import { s_isBusy, s_db_type, s_db_loadTime, s_title_editing } from '../state/State';
-import { s_things_arrived, s_path_editingTools } from '../state/State';
+import { s_things_arrived, s_ancestry_editingTools } from '../state/State';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
@@ -44,8 +44,8 @@ export default class DBDispatch {
 		this.db_changeTo_for(type);
 		this.queryStrings_apply();
 		await this.hierarchy_fetch_andBuild(type);
-		persistLocal.paths_restore(true);
-		s_path_editingTools.set(null);
+		persistLocal.ancestries_restore(true);
+		s_ancestry_editingTools.set(null);
 		s_title_editing.set(null);
 		h.hierarchy_markAsCompleted();
 		signals.signal_rebuildGraph_fromFocus();
@@ -65,8 +65,8 @@ export default class DBDispatch {
 			h = this.db.hierarchy = new Hierarchy(this.db);		// create Hierarchy to fetch into
 			await this.db.fetch_all();
 			await h.add_missing_removeNulls(null, this.db.baseID);
-			h.rootPath_setup();
-			h.paths_rebuildAll();
+			h.rootAncestry_setup();
+			h.ancestries_rebuildAll();
 			if (isRemote) {
 				this.set_loadTime(startTime);
 			}

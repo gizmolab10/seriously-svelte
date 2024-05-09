@@ -1,4 +1,4 @@
-import { k, get, Path, Size, Point, Angle, Quadrant, IDBrowser } from './GlobalImports';
+import { k, get, Ancestry, Size, Point, Angle, Quadrant, IDBrowser } from './GlobalImports';
 import { s_scale_factor, s_thing_fontFamily } from '../state/State';
 import Identifiable from "../structures/Identifiable";
 
@@ -10,7 +10,7 @@ class Utilities {
 	concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return [...a, ...b]; }
 	strip_falsies(array: Array<any>): Array<any> { return array.filter(element => !!element); }
 	quadrant_startAngle(angle: number): number { return this.startAngle_ofQuadrant(this.quadrant_of(angle)); }
-	sort_byOrder(array: Array<Path>) { return array.sort( (a: Path, b: Path) => { return a.order - b.order; }); }
+	sort_byOrder(array: Array<Ancestry>) { return array.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
 	strip_invalid(array: Array<any>): Array<any> { return this.strip_identifiableDuplicates(this.strip_falsies(array)); }
 
 	uniquely_concatenateArrays(a: Array<any>, b: Array<any>): Array<any> {
@@ -66,8 +66,8 @@ class Utilities {
 		});
 	}
 
-	sort_byTitleTop(paths: Array<Path>) {
-		return paths.sort( (a: Path, b: Path) => {
+	sort_byTitleTop(ancestries: Array<Ancestry>) {
+		return ancestries.sort( (a: Ancestry, b: Ancestry) => {
 			const aTop = a.titleRect?.origin.y;
 			const bTop = b.titleRect?.origin.y;
 			return (!aTop || !bTop) ? 0 : aTop - bTop;
@@ -100,12 +100,12 @@ class Utilities {
 		return quadrant;
 	}
 
-	strip_hidDuplicates(paths: Array<Path>) {
-		let pathsByHID: {[hash: number]: Path} = {};
-		for (const path of paths) {
-			pathsByHID[path.pathHash] = path;
+	strip_hidDuplicates(ancestries: Array<Ancestry>) {
+		let ancestriesByHID: {[hash: number]: Ancestry} = {};
+		for (const ancestry of ancestries) {
+			ancestriesByHID[ancestry.ancestryHash] = ancestry;
 		}
-		return Object.values(pathsByHID);
+		return Object.values(ancestriesByHID);
 	}
 
 	strip_identifiableDuplicates(identifiables: Array<Identifiable>): Array<Identifiable> {
@@ -119,15 +119,15 @@ class Utilities {
 		return Object.values(identifiablesByHID);
 	}
 
-	strip_thingDuplicates(paths: Array<Path>) {
-		let pathsByHID: {[hash: number]: Path} = {};
-		for (const path of paths) {
-			const hid = path.thing?.id.hash();
+	strip_thingDuplicates(ancestries: Array<Ancestry>) {
+		let ancestriesByHID: {[hash: number]: Ancestry} = {};
+		for (const ancestry of ancestries) {
+			const hid = ancestry.thing?.id.hash();
 			if (hid) {
-				pathsByHID[hid] = path;
+				ancestriesByHID[hid] = ancestry;
 			}
 		}
-		return Object.values(pathsByHID);
+		return Object.values(ancestriesByHID);
 	}
 
 	point_quadrant(point: Point): Quadrant {
@@ -199,13 +199,13 @@ class Utilities {
 		}
 	}
 
-	async paths_orders_normalize_remoteMaybe(array: Array<Path>, remoteWrite: boolean = true) {
+	async ancestries_orders_normalize_remoteMaybe(array: Array<Ancestry>, remoteWrite: boolean = true) {
 		this.sort_byOrder(array);
 		await (async () => {
-			array.forEach(async (path, index) => {
-				if (path.order != index) {
+			array.forEach(async (ancestry, index) => {
+				if (ancestry.order != index) {
 					await (async () => {
-						await path.relationship?.order_setTo_remoteMaybe(index, remoteWrite);
+						await ancestry.relationship?.order_setTo_remoteMaybe(index, remoteWrite);
 					})();
 				}
 			});

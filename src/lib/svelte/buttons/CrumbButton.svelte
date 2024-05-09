@@ -1,11 +1,11 @@
 <script lang='ts'>
 	import { k, u, Thing, onMount, signals, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
-	import { s_path_focus } from '../../ts/state/State';
-    export let path;
+	import { s_ancestry_focus } from '../../ts/state/State';
+    export let ancestry;
 	const borderStyle = '1px solid';
 	let borderColor = k.color_background;
 	let border = `${borderStyle} ${borderColor}`;
-	let thing: Thing = path.thing;
+	let thing: Thing = ancestry.thing;
 	let colorStyles = k.empty;
 	let cursorStyle = k.empty;
 
@@ -15,26 +15,26 @@
 
 	function updateColors() {
 		if (!!thing) {
-			if ($s_path_focus.idThing == thing.id) {
+			if ($s_ancestry_focus.idThing == thing.id) {
 				colorStyles = `background-color: ${transparentize(thing.color, 0.15)}; color: ${k.color_background}`;
 			} else {
 				colorStyles = `background-color: ${k.color_background}; color: ${thing.color}`;
 			}
-			cursorStyle = !path.isGrabbed && path.hasChildRelationships ? 'cursor: pointer' : k.empty;
-			borderColor = path.isGrabbed ? thing.color : k.color_background;
+			cursorStyle = !ancestry.isGrabbed && ancestry.hasChildRelationships ? 'cursor: pointer' : k.empty;
+			borderColor = ancestry.isGrabbed ? thing.color : k.color_background;
 			border = `${borderStyle} ${borderColor}`;
 		}
 	};
 
 	$: {
-		thing = path.thing;
+		thing = ancestry.thing;
 		updateColors();
 	}
 
 	function crumb_buttclick_closureed(event) {
 		if (dbDispatch.db.hasData) {
-			path.grabOnly();
-			if (path.becomeFocus()) {
+			ancestry.grabOnly();
+			if (ancestry.becomeFocus()) {
 				signals.signal_rebuildGraph_fromFocus();
 			}
 		}

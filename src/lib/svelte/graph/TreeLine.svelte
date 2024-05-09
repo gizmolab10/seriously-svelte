@@ -1,9 +1,9 @@
 <script lang='ts'>
-	import { k, Path, Rect, Size, Point, debug, onMount, ZIndex, svgPaths } from '../../ts/common/GlobalImports';
+	import { k, Ancestry, Rect, Size, Point, debug, onMount, ZIndex, svgPaths } from '../../ts/common/GlobalImports';
 	import { Wrapper, debugReact, IDWrapper, IDLine } from '../../ts/common/GlobalImports';
 	import Circle from '../kit/Circle.svelte';
 	import Box from '../kit/Box.svelte';
-    export let path;
+    export let ancestry;
 	export let rect = new Rect();
 	export let curveType: string = IDLine.up;
 	const debugOffset = new Point(140.5, -1.2);
@@ -17,7 +17,7 @@
 
 	$: {
 		if (line) {
-			lineWrapper = new Wrapper(line, path, IDWrapper.line);
+			lineWrapper = new Wrapper(line, ancestry, IDWrapper.line);
 		}
 	}
 
@@ -27,7 +27,7 @@
 
 	$: {
 		if (k.dot_size > 0) {
-			// debugReact.log_origins(`LINE ${path.thing.description}`);
+			// debugReact.log_origins(`LINE ${ancestry.thing.description}`);
 			switch (curveType) {
 				case IDLine.up:
 					origin = rect.origin;
@@ -72,7 +72,7 @@
 	style='z-index: {ZIndex.lines};
 		top: {origin.y - Math.max(1, size.height)}px;
 		left: {origin.x + 142}px;'>
-	<path d={svgPath} stroke={path.thing.color} fill='none'/>
+	<path d={svgPath} stroke={ancestry.thing.color} fill='none'/>
 </svg>
 {#if debug.lines}
 	<Circle radius=1 center={rect.extent.offsetBy(debugOffset)} color=black thickness=1/>

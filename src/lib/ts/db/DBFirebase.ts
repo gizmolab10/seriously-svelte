@@ -55,8 +55,8 @@ export default class DBFirebase implements DBInterface {
 		}
 		await this.fetch_documentsOf(DatumType.predicates);
 		await this.fetch_allFrom(baseID);
-		persistLocal.paths_restore(); // can paths restore happen focus?
-		await this.fetch_bulkAliases();		// TODO: assumes all paths created
+		persistLocal.ancestries_restore(); // can ancestries restore happen focus?
+		await this.fetch_bulkAliases();		// TODO: assumes all ancestries created
 	}
 
 	async fetch_allFrom(baseID: string) {
@@ -129,9 +129,9 @@ export default class DBFirebase implements DBInterface {
 	async fetch_bulkAliases() {
 		const root = h.root;
 		if (this.baseID == k.name_bulkAdmin && root) {
-			const rootsPath = await h.path_roots();		// TODO: assumes all paths created
-			if (rootsPath) {
-				h.rootsPath = rootsPath;
+			const rootsAncestry = await h.ancestry_roots();		// TODO: assumes all ancestries created
+			if (rootsAncestry) {
+				h.rootsAncestry = rootsAncestry;
 				try {		// add bulk aliases to roots thing
 					const bulk = collection(this.firestore, this.bulksName);	// fetch all bulks (documents)
 					let bulkSnapshot = await getDocs(bulk);
@@ -141,9 +141,9 @@ export default class DBFirebase implements DBInterface {
 							let thing = h.thing_bulkAlias_forTitle(baseID);
 							if (!thing) {								// create a thing for each bulk
 								thing = h.thing_runtimeCreate(this.baseID, null, baseID, 'red', IDTrait.bulk, false);
-								await h.path_remember_remoteAddAsChild(rootsPath, thing);
+								await h.ancestry_remember_remoteAddAsChild(rootsAncestry, thing);
 							} else if (thing.thing_isBulk_expanded) {
-								await h.path_redraw_remoteFetchBulk_browseRight(thing);
+								await h.ancestry_redraw_remoteFetchBulk_browseRight(thing);
 							}
 						}
 					}
@@ -230,7 +230,7 @@ export default class DBFirebase implements DBInterface {
 						}
 						setTimeout(() => { // wait in case a thing involved in this relationship arrives in the data
 							h.relationships_refreshKnowns();
-							h.rootPath.order_normalizeRecursive_remoteMaybe(true);
+							h.rootAncestry.order_normalizeRecursive_remoteMaybe(true);
 						}, 20);
 					}
 				} else if (type == DatumType.things) {

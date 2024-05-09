@@ -1,32 +1,32 @@
 <script lang='ts'>
-	import { k, u, Path, Size, Point, Thing, ZIndex, signals, svgPaths, onMount, dbDispatch, Direction } from '../../ts/common/GlobalImports';
-	import { s_path_focus, s_graphRect, s_show_details, s_paths_grabbed, s_path_editingTools } from '../../ts/state/State';
+	import { k, u, Ancestry, Size, Point, Thing, ZIndex, signals, svgPaths, onMount, dbDispatch, Direction } from '../../ts/common/GlobalImports';
+	import { s_ancestry_focus, s_graphRect, s_show_details, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/State';
 	import CrumbButton from '../buttons/CrumbButton.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	let ancestors: Array<Thing> = [];
 	let rebuilds = 0;
 	let trigger = 0;
-	let path: Path;
+	let ancestry: Ancestry;
 	let width = 0;
 	let size = 16;
 	let left = 0;
 
 	onMount( () => {
-		const handler = signals.handle_rebuildGraph(2, (path) => {
+		const handler = signals.handle_rebuildGraph(2, (ancestry) => {
 			rebuilds += 1;
 		});
 		return () => { handler.disconnect() };
 	});
 
 	$: {
-		const needsUpdate = ($s_path_focus?.title ?? k.empty) + $s_graphRect + ($s_paths_grabbed?.length ?? 0);
-		if (!path || needsUpdate || ancestors.length == 0) {
-			path = h.grabs.path_lastGrabbed ?? h.rootPath;	// assure we have a path
-			if (!!path) {				
+		const needsUpdate = ($s_ancestry_focus?.title ?? k.empty) + $s_graphRect + ($s_ancestries_grabbed?.length ?? 0);
+		if (!ancestry || needsUpdate || ancestors.length == 0) {
+			ancestry = h.grabs.ancestry_lastGrabbed ?? h.rootAncestry;	// assure we have a ancestry
+			if (!!ancestry) {				
 				const windowWidth = u.windowSize.width;
 				let encodedCount = 0;
-				[encodedCount, width, ancestors] = path.things_ancestryWithin(windowWidth - 10);
+				[encodedCount, width, ancestors] = ancestry.things_ancestryWithin(windowWidth - 10);
 				left = (windowWidth - width - 20) / 2;
 				trigger = encodedCount * 10000 + rebuilds * 100 + left;
 			}
@@ -56,6 +56,6 @@
 			</span>
 			&nbsp;&nbsp;
 		{/if}
-		<CrumbButton path={path.stripBack(ancestors.length - index - 1)}/>
+		<CrumbButton ancestry={ancestry.stripBack(ancestors.length - index - 1)}/>
 	{/each}
 {/key}

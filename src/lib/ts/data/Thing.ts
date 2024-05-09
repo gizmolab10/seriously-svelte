@@ -1,6 +1,6 @@
 import { DebugFlag, dbDispatch, Relationship, SeriouslyRange } from '../common/GlobalImports';
-import { k, u, get, Path, Datum, debug, IDTrait, Predicate } from '../common/GlobalImports';
-import { s_path_focus, s_paths_expanded } from '../state/State';
+import { k, u, get, Ancestry, Datum, debug, IDTrait, Predicate } from '../common/GlobalImports';
+import { s_ancestry_focus, s_ancestries_expanded } from '../state/State';
 import { h } from '../db/DBDispatch';
 import Airtable from 'airtable';
 
@@ -10,11 +10,11 @@ export default class Thing extends Datum {
 	hoverAttributes = k.empty;
 	borderAttribute = k.empty;
 	grabAttributes = k.empty;
+	oneAncestry!: Ancestry;
 	needsBulkFetch = false;
 	isExemplar = false;
 	isEditing = false;
 	isGrabbed = false;
-	onePath!: Path;
 	title: string;
 	color: string;
 	trait: string;
@@ -27,20 +27,20 @@ export default class Thing extends Datum {
 		this.trait = trait;
 	};
 	
-	get parentIDs():	Array<string> { return this.parents.map(t => t.id); }
-	get parentPaths():	  Array<Path> { return this.parentPaths_for(Predicate.contains); }
-	get parents():		 Array<Thing> { return this.parents_forID(Predicate.idContains); }
-	get fields():	Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
-	get idBridging():		   string { return this.isBulkAlias ? this.bulkRootID : this.id; }
-	get description():		   string { return this.id + ' \"' + this.title + '\"'; }
-	get titleWidth():		   number { return u.getWidthOf(this.title) + 6; }
-	get isRoot():			  boolean { return this.trait == IDTrait.root; }
-	get isBulkAlias():		  boolean { return this.trait == IDTrait.bulk; }
-	get hasMultipleParents(): boolean { return this.parentPaths.length > 1; }
-	get isAcrossBulk():		  boolean { return this.baseID != h.db.baseID; }
-	get hasParents():		  boolean { return this.hasParentsFor(Predicate.idContains); }
-	get isFocus():			  boolean { return (get(s_path_focus).thing?.id ?? k.empty) == this.id; }
-	get hasRelated():		  boolean { return this.relationships_bidirectional_for(Predicate.idIsRelated).length > 0; }
+	get parentIDs():		  Array<string> { return this.parents.map(t => t.id); }
+	get parentAncestries(): Array<Ancestry> { return this.parentAncestries_for(Predicate.contains); }
+	get parents():			   Array<Thing> { return this.parents_forID(Predicate.idContains); }
+	get fields():		  Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
+	get idBridging():				 string { return this.isBulkAlias ? this.bulkRootID : this.id; }
+	get description():				 string { return this.id + ' \"' + this.title + '\"'; }
+	get titleWidth():				 number { return u.getWidthOf(this.title) + 6; }
+	get isRoot():					boolean { return this.trait == IDTrait.root; }
+	get isBulkAlias():				boolean { return this.trait == IDTrait.bulk; }
+	get hasMultipleParents():		boolean { return this.parentAncestries.length > 1; }
+	get isAcrossBulk():				boolean { return this.baseID != h.db.baseID; }
+	get hasParents():				boolean { return this.hasParentsFor(Predicate.idContains); }
+	get isFocus():					boolean { return (get(s_ancestry_focus).thing?.id ?? k.empty) == this.id; }
+	get hasRelated():				boolean { return this.relationships_bidirectional_for(Predicate.idIsRelated).length > 0; }
 
 	get parents_ofAllKinds(): Array<Thing> {
 		let parents: Array<Thing> = [];
@@ -51,11 +51,11 @@ export default class Thing extends Datum {
 		return parents;
 	}
 
-	get thing_isBulk_expanded(): boolean {		// cross db paths needs special attention
+	get thing_isBulk_expanded(): boolean {		// cross db ancestries needs special attention
 		if (this.isBulkAlias) {
-			const paths = get(s_paths_expanded);
-			for (const path of paths) {
-				if (this.id == path.thing?.id) {
+			const ancestries = get(s_ancestries_expanded);
+			for (const ancestry of ancestries) {
+				if (this.id == ancestry.thing?.id) {
 					return true;
 				}
 			}
@@ -63,19 +63,19 @@ export default class Thing extends Datum {
 		return false;
 	}
 
-	get onePath_derived(): Path | null {
-		let onePath: Path | null = null;
-		if (this.isRoot) {			// if root, use root path
-			onePath = h.rootPath;
-		} else {					// if not, use parent.onePath and append id of isChildOf relationship
+	get oneAncestry_derived(): Ancestry | null {
+		let oneAncestry: Ancestry | null = null;
+		if (this.isRoot) {			// if root, use root ancestry
+			oneAncestry = h.rootAncestry;
+		} else {					// if not, use parent.oneAncestry and append id of isChildOf relationship
 			const relationships = this.relationships_for_isChildOf(Predicate.idContains, true);
 			if (relationships && relationships.length > 0) {
 				const relationship = relationships[0];
-				const aParentPath = relationship.parent?.onePath;
-				onePath = aParentPath?.uniquelyAppendID(relationship.id) ?? null;
+				const aParentAncestry = relationship.parent?.oneAncestry;
+				oneAncestry = aParentAncestry?.uniquelyAppendID(relationship.id) ?? null;
 			}
 		}
-		return onePath;
+		return oneAncestry;
 	}
 	
 	debugLog(message: string) { this.log(DebugFlag.things, message); }
@@ -117,10 +117,10 @@ export default class Thing extends Datum {
 		return h.relationships_forPredicateThingIsChild(idPredicate, this.id, isChildOf);
 	}
 
-	updateColorAttributes(path: Path) {
-		const border = (path.isEditing ? 'dashed' : 'solid') + ' 1px ';
-		const hover = border + path.dotColor(true);
-		const grab = border + path.dotColor(false);
+	updateColorAttributes(ancestry: Ancestry) {
+		const border = (ancestry.isEditing ? 'dashed' : 'solid') + ' 1px ';
+		const hover = border + ancestry.dotColor(true);
+		const grab = border + ancestry.dotColor(false);
 		this.borderAttribute = border;
 		this.hoverAttributes = hover;
 		this.grabAttributes = grab;
@@ -151,73 +151,73 @@ export default class Thing extends Datum {
 		return parents;
 	}
 
-	onePaths_rebuildForSubtree() {		// set onePath for this and all its progeny
-		const onePath = this.onePath_derived;
-		if (onePath) {
-			if (this.onePath != onePath) {
-				h.path_forget(this.onePath);
-				this.onePath = onePath;
+	oneAncestries_rebuildForSubtree() {		// set oneAncestry for this and all its progeny
+		const oneAncestry = this.oneAncestry_derived;
+		if (oneAncestry) {
+			if (this.oneAncestry != oneAncestry) {
+				h.ancestry_forget(this.oneAncestry);
+				this.oneAncestry = oneAncestry;
 			}
-			for (const child of onePath.children) {
-				child.onePaths_rebuildForSubtree();
+			for (const child of oneAncestry.children) {
+				child.oneAncestries_rebuildForSubtree();
 			}
 		}
 	}
 
-	onePaths_for(predicate: Predicate): Array<Path> {
+	oneAncestries_for(predicate: Predicate): Array<Ancestry> {
 		if (predicate) {
 			const id = predicate.id;
 			if (predicate.isBidirectional) {
-				return this.things_bidirectional_for(id).map(t => t.onePath);
+				return this.things_bidirectional_for(id).map(t => t.oneAncestry);
 			} else {;
-				return this.uniqueParentPaths_for(predicate);
+				return this.uniqueParentAncestries_for(predicate);
 			}
 		}
 		return [];
 	}
 
-	uniqueParentPaths_for(predicate: Predicate): Array<Path> {
-		let parentPaths: Array<Path> = [];
+	uniqueParentAncestries_for(predicate: Predicate): Array<Ancestry> {
+		let parentAncestries: Array<Ancestry> = [];
 		const parents = this.parents_forID(predicate.id) ?? [];
 		for (const parent of parents) {
-			const morePaths = parent.isRoot ? [h.rootPath] : parent.parentPaths_for(predicate);
-			parentPaths = u.concatenateArrays(parentPaths, morePaths);
+			const moreAncestries = parent.isRoot ? [h.rootAncestry] : parent.parentAncestries_for(predicate);
+			parentAncestries = u.concatenateArrays(parentAncestries, moreAncestries);
 		}
-		return u.strip_thingDuplicates(u.strip_falsies(parentPaths));
+		return u.strip_thingDuplicates(u.strip_falsies(parentAncestries));
 	}
 
-	parentPaths_for(predicate: Predicate | null, visited: Array<string> = []): Array<Path> {
-		// all the paths that point to each parent of this thing
-		let paths: Array<Path> = [];
+	parentAncestries_for(predicate: Predicate | null, visited: Array<string> = []): Array<Ancestry> {
+		// all the ancestries that point to each parent of this thing
+		let ancestries: Array<Ancestry> = [];
 		if (!this.isRoot && predicate) {
 			const isBidirectional = predicate.isBidirectional;
 			const relationships = this.relationships_for_isChildOf(predicate.id, true);
 			for (const relationship of relationships) {
 				if (isBidirectional) {
-					addPath(relationship.child?.onePath ?? null);
+					addAncestry(relationship.child?.oneAncestry ?? null);
 				} else {
 					const parent = relationship.parent;
 					if (parent && !visited.includes(parent.id)) {
 						const endID = relationship.id;		// EGADS, this is the wrong relationship; needs the next one
-						const parentPaths = parent.parentPaths_for(predicate, u.uniquely_concatenateArrays(visited, [parent.id])) ?? [];
-						if (parentPaths.length == 0) {
-							addPath(h.rootPath.uniquelyAppendID(endID));
+						const parentAncestries = parent.parentAncestries_for(predicate, u.uniquely_concatenateArrays(visited, [parent.id])) ?? [];
+						if (parentAncestries.length == 0) {
+							addAncestry(h.rootAncestry.uniquelyAppendID(endID));
 						} else {
-							for (const parentPath of parentPaths) {
-								addPath(parentPath.uniquelyAppendID(endID));
+							for (const parentAncestry of parentAncestries) {
+								addAncestry(parentAncestry.uniquelyAppendID(endID));
 							}
 						}
 					}
 				}
 			}
-			paths = u.strip_hidDuplicates(paths);
-			function addPath(path: Path | null) {
-				if (!!path) {
-					paths.push(path);
+			ancestries = u.strip_hidDuplicates(ancestries);
+			function addAncestry(ancestry: Ancestry | null) {
+				if (!!ancestry) {
+					ancestries.push(ancestry);
 				}
 			}
 		}
-		return u.sort_byTitleTop(paths).reverse();
+		return u.sort_byTitleTop(ancestries).reverse();
 	}
 	
 }

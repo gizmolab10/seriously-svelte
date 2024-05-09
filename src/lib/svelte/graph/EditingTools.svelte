@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { svgPaths, Direction, dbDispatch, transparentize, AlterationState, Alteration } from '../../ts/common/GlobalImports';
 	import { k, u, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, signals } from '../../ts/common/GlobalImports';
-	import { s_path_editingTools, s_layout_asClusters } from '../../ts/state/State';
+	import { s_ancestry_editingTools, s_layout_asClusters } from '../../ts/state/State';
 	import { s_altering, s_graphRect, s_show_details } from '../../ts/state/State';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
 	import CircularButton from '../buttons/CircularButton.svelte';
@@ -29,7 +29,7 @@
 	let clickTimer;
 	let left = 64;
 	let thing;
-	let path;
+	let ancestry;
 
 	function handle_mouseUp() { clearTimeout(clickTimer); }
 	function getC(type: string) { return centers[type] ?? new Point(); }
@@ -40,7 +40,7 @@
 	onMount(() => { 
 		setup();
 		setTimeout(() => { updateMaybeRedraw(); }, 20);	
-		const handler = signals.handle_relayoutWidgets(2, (path) => {	// priority of 2 assures layout is finished
+		const handler = signals.handle_relayoutWidgets(2, (ancestry) => {	// priority of 2 assures layout is finished
 			update();
 			rebuilds += 1;
 		});
@@ -52,13 +52,13 @@
 	}
 
 	function isDisabledFor(id: string) {
-		return ((path.isFocus || thing.isBulkAlias) && (id == IDTool.add_parent)) ||
+		return ((ancestry.isFocus || thing.isBulkAlias) && (id == IDTool.add_parent)) ||
 		((countOfVisibleParents < 2) && needsMultipleVisibleParents.includes(id));
 	}
 
 	function setup() {
-		path = $s_path_editingTools;
-		thing = path?.thing;
+		ancestry = $s_ancestry_editingTools;
+		thing = ancestry?.thing;
 	}
 
 	function updateMaybeRedraw() {
@@ -75,15 +75,15 @@
 	}
 
 	$: {
-		if (!path || (!$s_path_editingTools?.matchesPath(path) ?? false)) {
-			path = $s_path_editingTools;
-			if (!!path) {
-				thing = path.thing;
+		if (!ancestry || (!$s_ancestry_editingTools?.matchesAncestry(ancestry) ?? false)) {
+			ancestry = $s_ancestry_editingTools;
+			if (!!ancestry) {
+				thing = ancestry.thing;
 				color = thing?.color ?? k.empty;
 				titleWidth = thing?.titleWidth ?? 0;
 				const hasOneParent = (thing?.parents.length ?? 0) == 1;
-				countOfVisibleParents = path.visibleParentPaths(0).length;
-				parentSensitiveColor = (hasOneParent || path.isFocus) ? k.color_disabled : color ;
+				countOfVisibleParents = ancestry.visibleParentAncestries(0).length;
+				parentSensitiveColor = (hasOneParent || ancestry.isFocus) ? k.color_disabled : color ;
 				update();
 				rebuilds += 1;
 			}
@@ -105,7 +105,7 @@
 			case IDTool.delete: confirmingDelete = true; break;
 			case IDTool.delete_cancel: confirmingDelete = false; break;
 			default:
-				if (!!path && !path.isExemplar && !isDisabledFor(id)) {
+				if (!!ancestry && !ancestry.isExemplar && !isDisabledFor(id)) {
 					await h.handle_tool_clicked(id, event, isLong);
 				}
 				break;
@@ -114,8 +114,8 @@
 	}
 
 	function update(): boolean {
-		const rect = path?.titleRect;
-		if (rect && $s_path_editingTools && rect.size.width != 0) {
+		const rect = ancestry?.titleRect;
+		if (rect && $s_ancestry_editingTools && rect.size.width != 0) {
 			const offsetX = 8.5 + titleWidth - ($s_show_details ? k.width_details : 0) - ($s_layout_asClusters ? 38 : 0);
 			const offsetY = (k.show_titleAtTop ? -45 : 0) + ($s_layout_asClusters ? 3 : 0) - editingToolsDiameter - 5.8;
 			const center = rect.centerLeft.offsetBy(offset).offsetBy(new Point(offsetX, offsetY));
@@ -159,7 +159,7 @@
 </style>
 
 {#key rebuilds}
-	{#if $s_path_editingTools?.isVisible || false}
+	{#if $s_ancestry_editingTools?.isVisible || false}
 		<div class='editing-tools' style='
 			position:absolute;
 			z-index: {ZIndex.frontmost}'>
@@ -182,7 +182,7 @@
 						width={editingToolsDiameter}
 						stroke=transparent
 						fill={color}>
-						<path d={svgPaths.half_circle(editingToolsDiameter, Direction.up)}/>
+						<ancestry d={svgPaths.half_circle(editingToolsDiameter, Direction.up)}/>
 					</svg>
 				{/if}
 				{#if hovers[IDTool.delete_cancel]}
@@ -194,7 +194,7 @@
 						viewBox={half_circleViewBox}
 						width={editingToolsDiameter}
 						fill={color}>
-						<path d={svgPaths.half_circle(editingToolsDiameter, Direction.down)}/>
+						<ancestry d={svgPaths.half_circle(editingToolsDiameter, Direction.down)}/>
 					</svg>
 				{/if}
 				<Button
@@ -234,17 +234,17 @@
 					viewBox='0 1 18 16'
 					stroke={color}
 					height=16>
-					<path d={svgPaths.oval(18, true)}/>
+					<ancestry d={svgPaths.oval(18, true)}/>
 				</svg>
 				<svg 
 					fill={hovers[IDTool.more] ? k.color_background : color}
 					viewBox='-0.5 -2 14 10'
 					height=10
 					width=16>
-					<path d={svgPaths.ellipses(7, 1)}/>
+					<ancestry d={svgPaths.ellipses(7, 1)}/>
 				</svg>
 			</Button>
-			<DotReveal path={$s_path_editingTools} center={getC(IDTool.dismiss)}/>
+			<DotReveal ancestry={$s_ancestry_editingTools} center={getC(IDTool.dismiss)}/>
 			<TriangleButton
 				strokeColor={isDisabledFor(IDTool.next) ? k.color_disabled : parentSensitiveColor}
 				hover_closure={(isFilled) => { return fillColorsFor(IDTool.next, isFilled) }}

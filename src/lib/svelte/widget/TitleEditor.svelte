@@ -1,13 +1,13 @@
 <script lang='ts'>
-	import { s_title_editing, s_paths_grabbed, s_layout_asClusters, s_path_editingTools } from '../../ts/state/State';
+	import { s_title_editing, s_ancestries_grabbed, s_layout_asClusters, s_ancestry_editingTools } from '../../ts/state/State';
 	import { signals, Wrapper, IDWrapper, dbDispatch, SeriouslyRange } from '../../ts/common/GlobalImports';
 	import { k, u, Point, Thing, debug, ZIndex, onMount, Angle } from '../../ts/common/GlobalImports';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
 	export let forward = true;
-	export let path;
+	export let ancestry;
 	let padding = `0.5px 0px 0px 5px`;	// down half a pixel, 7 over to make room for drag dot
-	let thingTitle = path?.thing?.title ?? k.empty;
+	let thingTitle = ancestry?.thing?.title ?? k.empty;
 	let originalTitle = k.empty;
 	let cursorStyle = k.empty;
 	let titleWrapper: Wrapper;
@@ -29,15 +29,15 @@
 	
 	onMount(() => {
 		titleWidth = u.getWidthOf(thingTitle);
-		const handler = signals.handle_anySignal((IDSignal, path) => { updateInputWidth(); });
+		const handler = signals.handle_anySignal((IDSignal, ancestry) => { updateInputWidth(); });
 		setTimeout(() => { updateInputWidth(); }, 100);
 		return () => { handler.disconnect() };
 	});
 
 	function handle_key_down(event) {
-		if (!!thing && !!path && path.isEditing && canAlterTitle(event)) {
+		if (!!thing && !!ancestry && ancestry.isEditing && canAlterTitle(event)) {
 			switch (event.key) {	
-				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); h.path_edit_remoteCreateChildOf(path.parentPath); break;
+				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); h.ancestry_edit_remoteCreateChildOf(ancestry.parentAncestry); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
 				default:	  signals.signal_relayoutWidgets(); break;
 			}
@@ -56,7 +56,7 @@
 
 	$: {
 		if (input && !titleWrapper) {
-			titleWrapper = new Wrapper(input, path, IDWrapper.title);
+			titleWrapper = new Wrapper(input, ancestry, IDWrapper.title);
 		}
 	}
 
@@ -85,19 +85,19 @@
 	function handle_doubleClick(event) {
 		event.preventDefault();
 		clearClicks();
-		path?.startEdit();
+		ancestry?.startEdit();
 		input.focus();
     }
 
 	function handle_singleClick(event) {
 		clickCount++;
 		clickTimer = setTimeout(() => {
-			if (clickCount === 1 && !!path && !path.isEditing) {
+			if (clickCount === 1 && !!ancestry && !ancestry.isEditing) {
 				event.preventDefault();
-				if (!path.isGrabbed) {
-					path.grabOnly();
-				} else if (k.allow_TitleEditing && !path.isRoot && !!thing && !thing.isBulkAlias) {
-					path.startEdit();
+				if (!ancestry.isGrabbed) {
+					ancestry.grabOnly();
+				} else if (k.allow_TitleEditing && !ancestry.isRoot && !!thing && !thing.isBulkAlias) {
+					ancestry.startEdit();
 					input.focus();
 					return;
 				}
@@ -109,17 +109,17 @@
 	}
  
 	function handle_longClick(event) {
-		if (!!path && !path.isEditing) {
+		if (!!ancestry && !ancestry.isEditing) {
 			event.preventDefault();
 			clearClicks();
 			clickTimer = setTimeout(() => {
 				clearClicks();
-				if (!path.isRoot) {
-					if ($s_path_editingTools == path) {
-						$s_path_editingTools = null;
+				if (!ancestry.isRoot) {
+					if ($s_ancestry_editingTools == ancestry) {
+						$s_ancestry_editingTools = null;
 					} else  {
-						path.grabOnly();
-						$s_path_editingTools = path;
+						ancestry.grabOnly();
+						$s_ancestry_editingTools = ancestry;
 					}
 					signals.signal_rebuildGraph_fromFocus();
 				}
@@ -136,15 +136,15 @@
 		//													//
 		//////////////////////////////////////////////////////
 
-		if (!!path) {
-			thing = path.thing;
+		if (!!ancestry) {
+			thing = ancestry.thing;
 		}
-		const _ = $s_paths_grabbed;
+		const _ = $s_ancestries_grabbed;
 		const titleState = $s_title_editing; // needs reactivity to s_title_editing
-		const titleState_isEditing = !!path && !!titleState && titleState.editing && path.matchesPath(titleState.editing);
+		const titleState_isEditing = !!ancestry && !!titleState && titleState.editing && ancestry.matchesAncestry(titleState.editing);
 		const isBulkAlias = !!thing && thing.isBulkAlias;
 		if (k.allow_TitleEditing && !isBulkAlias) {
-			if (!!path && path.isStoppingEdit ?? false) {
+			if (!!ancestry && ancestry.isStoppingEdit ?? false) {
 				debug.log_edit(`STOPPING ${thingTitle}`);
 				$s_title_editing = null;
 				input?.blur();
@@ -160,12 +160,12 @@
 				isEditing = !isEditing;
 			}
 		}
-		cursorStyle = (!!path && !path.isRoot && !isBulkAlias && (path.isEditing || path.isGrabbed)) ? k.empty : 'cursor: pointer';
+		cursorStyle = (!!ancestry && !ancestry.isRoot && !isBulkAlias && (ancestry.isEditing || ancestry.isGrabbed)) ? k.empty : 'cursor: pointer';
 	}
 
 	function stopAndClearEditing() {
 		invokeBlurNotClearEditing();
-		if (!!path && path.isEditing) {				
+		if (!!ancestry && ancestry.isEditing) {				
 			setTimeout(() => {		// eliminate infinite recursion
 				const state = $s_title_editing;
 				if (!!state) {
@@ -177,33 +177,33 @@
 	}
 
 	function invokeBlurNotClearEditing() {
-		if (!!path && path.isEditing && thing) {
+		if (!!ancestry && ancestry.isEditing && thing) {
 			isEditing = false;
 			extractRange();
 			input?.blur();
 			if (hasChanges() && !thing?.isExemplar) {
 				dbDispatch.db.thing_remoteUpdate(thing);
 				originalTitle = thing?.title;		// so hasChanges will be correct
-				path.signal_relayoutWidgets();
+				ancestry.signal_relayoutWidgets();
 			}
 		}
 	}
 
 	function handle_cut_paste(event) {
 		extractRange();
-		path?.signal_relayoutWidgets();
+		ancestry?.signal_relayoutWidgets();
 	}
 
 	function extractRange() {
-		if (input && !!path) {
+		if (input && !!ancestry) {
 			const end = input.selectionEnd;
 			const start = input.selectionStart;
-			path.selectionRange = new SeriouslyRange(start, end);
+			ancestry.selectionRange = new SeriouslyRange(start, end);
 		}
 	}
 
 	function applyRange() {
-		const range = path?.selectionRange;
+		const range = ancestry?.selectionRange;
 		if (range && input) {
 			input.setSelectionRange(range.start, range.end);
 		}

@@ -1,4 +1,4 @@
-import { Path } from '../common/GlobalImports';
+import { Ancestry } from '../common/GlobalImports';
 import Identifiable from "./Identifiable";
 
 export enum IDWrapper {
@@ -11,14 +11,14 @@ export enum IDWrapper {
 export default class Wrapper extends Identifiable {
     type: IDWrapper;
     component: any;
-    path: Path;
+    ancestry: Ancestry;
 
-    constructor(component: any, path: Path, type: IDWrapper) {
+    constructor(component: any, ancestry: Ancestry, type: IDWrapper) {
 		super(null);
         this.component = component;
         this.type = type;
-        this.path = path;
-    	path.wrapper_add(this);
+        this.ancestry = ancestry;
+    	ancestry.wrapper_add(this);
     }
 
 }

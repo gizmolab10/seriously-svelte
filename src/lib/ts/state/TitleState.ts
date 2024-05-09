@@ -1,11 +1,11 @@
-import { Path } from '../common/GlobalImports';
+import { Ancestry } from '../common/GlobalImports';
 
 export default class TitleState {
-	stopping!: Path;
-	editing!: Path;
+	stopping!: Ancestry;
+	editing!: Ancestry;
 
-	constructor(editing: Path) { this.editing = editing; }
-	get isStopping(): boolean { return !!this.editing && !!this.stopping && this.editing.matchesPath(this.stopping); }
+	constructor(editing: Ancestry) { this.editing = editing; }
+	get isStopping(): boolean { return !!this.editing && !!this.stopping && this.editing.matchesAncestry(this.stopping); }
 	stop() { this.stopping = this.editing; }
 
 }
