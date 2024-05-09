@@ -1,15 +1,5 @@
 {
 	"compilerOptions": {
-		"importsNotUsedAsValues": "error",
-		"isolatedModules": true,
-		"lib": [
-			"esnext",
-			"DOM",
-			"DOM.Iterable"
-		],
-		"moduleResolution": "node",
-		"module": "esnext",
-		"noEmit": true,
 		"paths": {
 			"$lib": [
 				"../src/lib"
@@ -22,7 +12,17 @@
 			"..",
 			"./types"
 		],
+		"importsNotUsedAsValues": "error",
+		"isolatedModules": true,
 		"preserveValueImports": true,
+		"lib": [
+			"esnext",
+			"DOM",
+			"DOM.Iterable"
+		],
+		"moduleResolution": "node",
+		"module": "esnext",
+		"noEmit": true,
 		"target": "esnext"
 	},
 	"include": [

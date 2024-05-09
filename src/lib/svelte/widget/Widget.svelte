@@ -8,9 +8,9 @@
 	import TitleEditor from './TitleEditor.svelte';
 	import DotReveal from './DotReveal.svelte';
 	import DotDrag from './DotDrag.svelte';
-    export let path = exemplar.onePath;
 	export let origin = new Point(160, 5);
     export let angle = 0;
+    export let path;
 	const hasExtraAtLeft = !!path && !path.isExpanded && (path.childRelationships.length > 3);
 	const rightPadding = $s_layout_asClusters ? 0 : hasExtraAtLeft ? 22.5 : 19;
 	const forward = angle <= Angle.quarter || angle >= Angle.threeQuarters;

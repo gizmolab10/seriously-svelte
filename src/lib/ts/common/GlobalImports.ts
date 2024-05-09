@@ -4,19 +4,22 @@ import { Rect, Size, Point, ChildMapRect } from '../geometry/Geometry';
 import { IDPersistant, persistLocal } from '../managers/PersistLocal';
 import { onMount, onDestroy, setContext, getContext } from 'svelte';
 import { CreationOptions, IDLine, IDTool } from './Enumerations';
+import { SeriouslyRange } from '../structures/SeriouslyRange';
 import { Direction, svgPaths } from '../geometry/SVGPaths';
 import { debug, Debug, DebugFlag } from '../debug/Debug';
-import { SeriouslyRange } from './SeriouslyRange';
 import { IDWrapper } from '../structures/Wrapper';
 import { Hierarchy } from '../managers/Hierarchy';
 import { signals, IDSignal } from './Signals';
+import { createPopper } from '@popperjs/core';
 import { dbDispatch } from '../db/DBDispatch';
 import { transparentize } from 'color2k';
 import { get } from 'svelte/store';
 import { builds } from './Builds';
+import interact from 'interactjs';
 import { u } from './Utilities';
 import { k } from './Constants';
 import { g } from './Globals';
+import muuri from 'muuri';
 
 import AlterationState from '../state/AlterationState';
 import ClusterLayout from '../geometry/ClusterLayout';
@@ -34,10 +37,10 @@ import User from '../data/User';
 import './Extensions';
 
 export {
-	transparentize,
 	TitleState, AlterationState,
 	Wrapper, signals, SeriouslyRange,
 	Rect, Size, Point, svgPaths, Direction,
+	transparentize, interact, muuri, createPopper,
 	Path, Grabs, dbDispatch, Hierarchy, persistLocal,
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Angle, Layout, Quadrant, ChildMapRect, ClusterLayout,

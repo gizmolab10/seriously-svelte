@@ -538,14 +538,16 @@ export default class Path {
 
 	grab() {
 		s_paths_grabbed.update((array) => {
-			const index = array.indexOf(this);
-			if (array.length == 0) {
-				array.push(this);
-			} else if (index != array.length - 1) {	// not already last?
-				if (index != -1) {					// found: remove
-					array.splice(index, 1);
+			if (!!array) {
+				const index = array.indexOf(this);
+				if (array.length == 0) {
+					array.push(this);
+				} else if (index != array.length - 1) {	// not already last?
+					if (index != -1) {					// found: remove
+						array.splice(index, 1);
+					}
+					array.push(this);					// always add last
 				}
-				array.push(this);					// always add last
 			}
 			return array;
 		});
@@ -555,16 +557,18 @@ export default class Path {
 	ungrab() {
 		const rootPath = h.rootPath;
 		s_paths_grabbed.update((array) => {
-			const index = array.indexOf(this);
-			if (index != -1) {				// only splice array when item is found
-				array.splice(index, 1);		// 2nd parameter means remove one item only
-			}
-			if (array.length == 0) {
-				array.push(rootPath);
+			if (!!array) {
+				const index = array.indexOf(this);
+				if (index != -1) {				// only splice array when item is found
+					array.splice(index, 1);		// 2nd parameter means remove one item only
+				}
+				if (array.length == 0) {
+					array.push(rootPath);
+				}
 			}
 			return array;
 		});
-		let paths = get(s_paths_grabbed);
+		let paths = get(s_paths_grabbed) ?? [];
 		if (paths.length == 0) {
 			rootPath.grabOnly();
 		} else {

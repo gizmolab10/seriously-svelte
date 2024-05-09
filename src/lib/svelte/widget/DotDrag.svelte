@@ -1,7 +1,9 @@
 <script>
-	import { k, u, Rect, Size, Point, Thing, debug, ZIndex, onMount, signals } from "../../ts/common/GlobalImports";
-	import { Wrapper, svgPaths, Direction, onDestroy, dbDispatch, Alteration } from "../../ts/common/GlobalImports";
 	import { s_paths_grabbed, s_layout_asClusters, s_path_editingTools } from '../../ts/state/State';
+	import { onDestroy, dbDispatch, Alteration, createPopper } from '../../ts/common/GlobalImports';
+	import { Wrapper, onMount, signals, svgPaths, Direction } from '../../ts/common/GlobalImports';
+	import { k, u, Rect, Size, Point, Thing, debug, ZIndex } from '../../ts/common/GlobalImports';
+	import Tooltip from '../kit/Tooltip.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import Box from '../kit/Box.svelte';
 	export let center = new Point(0, 0);
@@ -11,21 +13,21 @@
 	let strokeColor = k.color_background;
 	let fillColor = k.color_background;
 	let scalablePath = k.empty;
-	let tinyDotsPath = null;
-	let relatedPath = null;
 	let isAltering = false;
 	let isGrabbed = false;
 	let isHovering = true;
 	let size = k.dot_size;
 	let clickCount = 0;
-	let button = null;
+	let tinyDotsPath;
+	let relatedPath;
 	let clickTimer;
 	let left = 0;
 	let top = 0;
+	let tooltip;
+	let popper;
+	let button;
     let thing;
-	
-	function handle_mouse_over(event) { updateColorsForHover(true); }
-	function handle_mouse_out(event) { updateColorsForHover(false); }
+
 	function handle_context_menu(event) { event.preventDefault(); }		// no default context menu on right-click
 	function handle_mouseUp() { clearTimeout(clickTimer); }
 
@@ -35,6 +37,7 @@
 		}
 		updatePaths();
 		updateColorsForHover(false);
+		popper = createPopper(button, tooltip, { placement: 'bottom' });
         const handler = signals.handle_altering((state) => {
 			const applyFlag = $s_path_editingTools && !!path && path.things_canAlter_asParentOf_toolsPath;
 			isAltering = applyFlag ? !!state : false;
@@ -66,6 +69,17 @@
 	function clearClicks() {
 		clickCount = 0;
 		clearTimeout(clickTimer);	// clear all previous timers
+	}
+	
+	function handle_mouse_out(event) {
+		updateColorsForHover(false);
+		// tooltip.removeAttribute('data-show');
+	}
+
+	function handle_mouse_over(event) {
+		updateColorsForHover(true);
+		// tooltip.setAttribute('data-show', '');
+		// popper.update();
 	}
 
 	function updateColorsForHover(flag) {
@@ -129,6 +143,9 @@
 		}
 		updateExtraPaths();
 	}
+
+	// <Tooltip color={strokeColor} bind:this={tooltip}>This is a drag dot</Tooltip>
+
 </script>
 
 <button class='dot-drag'
