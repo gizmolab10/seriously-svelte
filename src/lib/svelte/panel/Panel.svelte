@@ -8,12 +8,12 @@
 	import Breadcrumbs from '../panel/Breadcrumbs.svelte';
 	import { DBType } from '../../ts/db/DBInterface';
 	import Clusters from '../graph/Clusters.svelte';
+	import Details from '../details/Details.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import Controls from './Controls.svelte';
 	import Tree from '../graph/Tree.svelte';
 	import Help from '../help/Help.svelte';
-	import Details from './Details.svelte';
 	let chain = ['Panel'];
 	let rebuilds = 0;
 	
