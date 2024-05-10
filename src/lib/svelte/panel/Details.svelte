@@ -37,7 +37,7 @@
 		top: {$s_graphRect.origin.y}px;
 		height: {$s_graphRect.size.height}px;'>
 	<div class='modal-content' style='z-index: {ZIndex.frontmost};'>
-		<RadioButtons menuItems={menuItems} idSelected={$s_db_type}/>
+		<RadioButtons menuItems={menuItems} idSelected={$s_db_type} fitWithin={k.width_details}/>
 		<br>
 		{#if $s_db_loadTime && $s_db_loadTime > 0}
 			<Label>fetch {$s_db_loadTime} s</Label>

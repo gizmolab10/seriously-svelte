@@ -5,7 +5,7 @@ export default class Constants {
 	necklace_gap = 15;
 	line_stretch = 25;
 	height_banner = 35;
-	width_details = 80;
+	width_details = 200;
 	halfIncrement = 0.5;
 	thing_fontSize = 14;
 	height_titleAtTop = 50;
