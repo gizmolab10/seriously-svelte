@@ -8,10 +8,21 @@
 	let thing: Thing = ancestry.thing;
 	let colorStyles = k.empty;
 	let cursorStyle = k.empty;
+	let rebuilds = 0;
 
-	onMount(() => { updateColors(); });
 	function handle_mouse_over(event) { border = `${borderStyle} ${thing.color}`; }
 	function handle_mouse_out(event) { border = `${borderStyle} ${borderColor}`; }
+
+	onMount(() => {
+		updateColors();
+		const handleChanges = signals.hangle_thingChanged(0, thing.id, (value: any) => {
+			updateColors();
+			rebuilds += 1;
+		});
+		return () => {
+			handleChanges.disconnect();
+		};
+	});
 
 	function updateColors() {
 		if (!!thing) {
@@ -42,18 +53,20 @@
 
 </script>
 
-<button
-	on:blur={u.ignore}
-	on:focus={u.ignore}
-	on:mouseout={handle_mouse_out}
-	on:mouseover={handle_mouse_over}
-	on:click={crumb_buttmouse_click_closureed}
-	style='
-		{colorStyles};
-		{cursorStyle};
-		border:{border};
-		border-radius: 1em;'>
-		<div style='padding:0px 0px 1px 0px; {cursorStyle};'>
-			{thing?.title.injectElipsisAt()}
-		</div>
-</button>
+{#key rebuilds}
+	<button
+		on:blur={u.ignore}
+		on:focus={u.ignore}
+		on:mouseout={handle_mouse_out}
+		on:mouseover={handle_mouse_over}
+		on:click={crumb_buttmouse_click_closureed}
+		style='
+			{colorStyles};
+			{cursorStyle};
+			border:{border};
+			border-radius: 1em;'>
+			<div style='padding:0px 0px 1px 0px; {cursorStyle};'>
+				{thing?.title.injectElipsisAt()}
+			</div>
+	</button>
+{/key}

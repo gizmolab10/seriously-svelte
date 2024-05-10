@@ -226,6 +226,35 @@ class Utilities {
 		return width;
 	}
 
+	colorToHex(color: string): string {
+		// Create a dummy element to apply the color and read it back
+		const dummyElement = document.createElement("div");
+		dummyElement.style.color = color;
+		document.body.appendChild(dummyElement);
+
+		// Use getComputedStyle to get the color value in rgb/rgba format
+		const computedColor = getComputedStyle(dummyElement).color;
+		document.body.removeChild(dummyElement);
+
+		// Convert RGB/RGBA string to hex
+		const rgb = computedColor.match(/\d+/g); // Extract numerical values for RGB
+
+		if (!rgb) {
+			throw new Error("Invalid color input");
+		}
+
+		let hexColor = "#";
+		for (let i = 0; i < 3; i++) { // Only need RGB parts for hex
+			let hexComponent = parseInt(rgb[i]).toString(16);
+			if (hexComponent.length === 1) {
+				hexComponent = "0" + hexComponent; // Padding
+			}
+			hexColor += hexComponent;
+		}
+
+		return hexColor;
+	}
+
 }
 
 export const u = new Utilities();

@@ -29,6 +29,7 @@
 	let backwards = false;
 	let padding = k.empty;
 	let border = k.empty;
+	let rebuilds = 0;
 	let height = 0;
 	let width = 0;
 	let left = 0;
@@ -44,7 +45,7 @@
 		updateBorderStyle();
 		updateLayout();
 		debugReact.log_mount(`WIDGET ${thing?.description} ${ancestry?.isGrabbed}`);
-		const handler = signals.handle_anySignal((kinds, id) => {
+		const handleAny = signals.handle_anySignal((kinds, id) => {
 			for (const kind of kinds) {
 				switch (kind) {
 					case kinds.relayout:
@@ -58,9 +59,15 @@
 						break;
 				}
 			}
-	
 		});
-		return () => { handler.disconnect() };
+		const handleChanges = signals.hangle_thingChanged(0, thing.id, (value: any) => {
+			updateBorderStyle();
+			rebuilds += 1;
+		});
+		return () => {
+			handleAny.disconnect()
+			handleChanges.disconnect();
+		};
 	});
 
 
@@ -140,35 +147,37 @@
 
 </script>
 
-<div class='widget' id='{thing?.title}'
-	bind:this={widget}
-	style='
-		{border};
-		{background};
-		top: {top}px;
-		left: {left}px;
-		width: {width}px;
-		height: {height}px;
-		padding: {padding};
-		position: absolute;
-		white-space: nowrap;
-		z-index: {ZIndex.widgets};
-		border-radius: {radius}px;
-	'>
-	<DotDrag
-		ancestry={ancestry}
-		center={dragCenter}
-	/>
-	<TitleEditor
-		ancestry={ancestry}
-		forward={forward}
-		fontSize={k.thing_fontSize}px
-		fontFamily={$s_thing_fontFamily}
-	/>
-	{#if ancestry?.showsReveal}
-		<DotReveal
+{#key rebuilds}
+	<div class='widget' id='{thing?.title}'
+		bind:this={widget}
+		style='
+			{border};
+			{background};
+			top: {top}px;
+			left: {left}px;
+			width: {width}px;
+			height: {height}px;
+			padding: {padding};
+			position: absolute;
+			white-space: nowrap;
+			z-index: {ZIndex.widgets};
+			border-radius: {radius}px;
+		'>
+		<DotDrag
 			ancestry={ancestry}
-			center={revealCenter}
+			center={dragCenter}
 		/>
-	{/if}
-</div>
+		<TitleEditor
+			forward={forward}
+			ancestry={ancestry}
+			fontSize={k.thing_fontSize}px
+			fontFamily={$s_thing_fontFamily}
+		/>
+		{#if ancestry?.showsReveal}
+			<DotReveal
+				ancestry={ancestry}
+				center={revealCenter}
+			/>
+		{/if}
+	</div>
+{/key}

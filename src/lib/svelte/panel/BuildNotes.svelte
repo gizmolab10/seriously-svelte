@@ -45,7 +45,7 @@
 </script>
 
 <style>
-	.modal-overlay {
+	.notes-modal-overlay {
 		background-color: rgba(0, 0, 0, 0.1);
 		justify-content: center;
 		align-items: center;
@@ -56,7 +56,7 @@
 		left: 0;
 		top: 0;
 	}
-	.modal-content {
+	.notes-modal-content {
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 		background-color: #fff;
 		border-radius: 4px;
@@ -83,8 +83,8 @@
 </style>
 
 <svelte:document on:keydown={handle_key_down} />
-<div class='modal-overlay'>
-	<div class='modal-content'>
+<div class='notes-modal-overlay'>
+	<div class='notes-modal-content'>
 		<div class='top-bar'>
 			{#key notes}
 				<Directionals hit={directional_buttmouse_click_closureed} display={display}/>

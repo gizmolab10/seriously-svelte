@@ -5,18 +5,24 @@
 	import { h } from '../../ts/db/DBDispatch';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	let ancestors: Array<Thing> = [];
+	let ancestry: Ancestry;
 	let rebuilds = 0;
 	let trigger = 0;
-	let ancestry: Ancestry;
 	let width = 0;
 	let size = 16;
 	let left = 0;
 
 	onMount( () => {
-		const handler = signals.handle_rebuildGraph(2, (ancestry) => {
+		const handleRebuild = signals.handle_rebuildGraph(2, (ancestry) => {
 			rebuilds += 1;
 		});
-		return () => { handler.disconnect() };
+		const handleChanges = signals.hangle_thingChanged(0, -1, (value: any) => {
+			rebuilds += 1;
+		});
+		return () => {
+			handleChanges.disconnect();
+			handleRebuild.disconnect();
+		};
 	});
 
 	$: {
@@ -26,7 +32,7 @@
 			if (!!ancestry) {				
 				const windowWidth = u.windowSize.width;
 				let encodedCount = 0;
-				[encodedCount, width, ancestors] = ancestry.things_ancestryWithin(windowWidth - 10);
+				[encodedCount, width, ancestors] = ancestry.ancestorsWithin(windowWidth - 10);
 				left = (windowWidth - width - 20) / 2;
 				trigger = encodedCount * 10000 + rebuilds * 100 + left;
 			}

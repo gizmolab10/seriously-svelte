@@ -16,34 +16,11 @@
 
 </script>
 
-<style>
-	.modal-overlay {
-		left: 0;
-		position: fixed;
-		justify-content: center;
-	}
-	.modal-content {
-		padding: 10px;
-		font-size: 0.8em;
-		position: relative;
-		background-color: #fff;
-	}
-</style>
-
-<div class='modal-overlay'
-	style='
-		width: {k.width_details}px;
-		z-index: {ZIndex.frontmost};
-		top: {$s_graphRect.origin.y}px;
-		height: {$s_graphRect.size.height}px;'>
-	<div class='modal-content' style='z-index: {ZIndex.frontmost};'>
-		<RadioButtons menuItems={menuItems} idSelected={$s_db_type} fitWithin={k.width_details}/>
-		<br>
-		{#if $s_db_loadTime && $s_db_loadTime > 0}
-			<Label>fetch {$s_db_loadTime} s</Label>
-		{:else}
-			<br>
-		{/if}
-		<br>
-	</div>
-</div>
+<RadioButtons menuItems={menuItems} idSelected={$s_db_type} fitWithin={k.width_details}/>
+<br>
+{#if $s_db_loadTime && $s_db_loadTime > 0}
+	<Label>fetch {$s_db_loadTime} s</Label>
+{:else}
+	<br>
+{/if}
+<br>

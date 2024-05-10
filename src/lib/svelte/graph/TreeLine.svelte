@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, Ancestry, Rect, Size, Point, debug, onMount, ZIndex, svgPaths } from '../../ts/common/GlobalImports';
+	import { k, Ancestry, Rect, Size, Point, debug, onMount, ZIndex, signals, svgPaths } from '../../ts/common/GlobalImports';
 	import { Wrapper, debugReact, IDWrapper, IDLine } from '../../ts/common/GlobalImports';
 	import Circle from '../kit/Circle.svelte';
 	import Box from '../kit/Box.svelte';
@@ -13,7 +13,17 @@
 	let viewBox = new Rect();
 	let svgPath = k.empty;
 	let size = new Size();
+	let rebuilds = 0;
 	let line;
+
+	onMount(() => {
+		const handleChanges = signals.hangle_thingChanged(0, ancestry.thing.id, (value: any) => {
+			rebuilds += 1;
+		});
+		return () => {
+			handleChanges.disconnect();
+		};
+	});
 
 	$: {
 		if (line) {
@@ -65,15 +75,17 @@
 	}
 </style>
 
-<svg class='svg-tree-line'
-	bind:this={line}
-	width={size.width}px
-	height={Math.max(2, size.height)}px
-	style='z-index: {ZIndex.lines};
-		top: {origin.y - Math.max(1, size.height)}px;
-		left: {origin.x + 142}px;'>
-	<path d={svgPath} stroke={ancestry.thing.color} fill='none'/>
-</svg>
-{#if debug.lines}
-	<Circle radius=1 center={rect.extent.offsetBy(debugOffset)} color=black thickness=1/>
-{/if}
+{#key rebuilds}
+	<svg class='svg-tree-line'
+		bind:this={line}
+		width={size.width}px
+		height={Math.max(2, size.height)}px
+		style='z-index: {ZIndex.lines};
+			top: {origin.y - Math.max(1, size.height)}px;
+			left: {origin.x + 142}px;'>
+		<path d={svgPath} stroke={ancestry.thing.color} fill='none'/>
+	</svg>
+	{#if debug.lines}
+		<Circle radius=1 center={rect.extent.offsetBy(debugOffset)} color=black thickness=1/>
+	{/if}
+{/key}

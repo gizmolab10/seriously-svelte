@@ -11,6 +11,7 @@ class Builds {
 
 	constructor() {
 		this.notes = {
+			95 : ['May 10, 2024', 'add color editing'],
 			94 : ['May 4, 2024', 'replace to/from with child/parent and directions with isBidirectional'],
 			93 : ['May 2, 2024', 'convert cluster arc into a bracket ( { )'],
 			92 : ['April 29, 2024', 'assure things fit in cluster, show cluster arc'],

@@ -48,7 +48,7 @@ export default class Ancestry {
 	get isRoot(): boolean { return this.ancestryHash == 0; }
 	get parentAncestry(): Ancestry | null { return this.stripBack(); }
 	get lastChild(): Thing { return this.children.slice(-1)[0]; }
-	get things(): Array<Thing> { return h.things_forAncestry(this); }
+	get ancestors(): Array<Thing> { return h.things_forAncestry(this); }
 	get order(): number { return this.relationship?.order ?? -1; }
 	get isFocus(): boolean { return this.matchesStore(s_ancestry_focus); }
 	get isExemplar(): boolean { return this.ancestryString == k.exemplar; }
@@ -77,7 +77,7 @@ export default class Ancestry {
 	get isInvalid(): boolean { return this.containsReciprocals || this.containsMixedPredicates; }
 	get isEditing(): boolean { return get(s_title_editing)?.editing?.matchesAncestry(this) ?? false; }
 	get showsChildRelationships(): boolean { return this.isExpanded && this.hasChildRelationships; }
-	get titles(): Array<string> { return this.things?.map(t => ` \"${t ? t.title : 'null'}\"`) ?? []; }
+	get titles(): Array<string> { return this.ancestors?.map(t => ` \"${t ? t.title : 'null'}\"`) ?? []; }
 	get isStoppingEdit(): boolean { return get(s_title_editing)?.stopping?.matchesAncestry(this) ?? false; }
 	get hasRelationships(): boolean { return this.hasParentRelationships || this.hasChildRelationships; }
 	get relatedThings(): Array<Thing> { return this.thing?.things_bidirectional_for(Predicate.idIsRelated) ?? []; }
@@ -384,33 +384,33 @@ export default class Ancestry {
 		let children: Array<Thing> = [];
 		if (!this.isRoot && relationships) {
 			for (const relationship of relationships) {
-				const thing = relationship.parent;
-				if (!!thing) {
-					children.push(thing);
+				const parent = relationship.parent;
+				if (!!parent) {
+					children.push(parent);
 				}
 			}
 		}
 		return children;
 	}
 
-	things_ancestryWithin(thresholdWidth: number): [number, number, Array<Thing>] {
-		const things = this.things?.reverse() ?? [];
-		const array: Array<Thing> = [];
+	ancestorsWithin(thresholdWidth: number): [number, number, Array<Thing>] {
+		const ancestors = this.ancestors?.reverse() ?? [];
+		const ancestorsThatFit: Array<Thing> = [];
 		let distributedParentCount = 0;
 		let numberOfParents = 0;	// do not include fat_polygon separator in width of crumb of first thing
 		let totalWidth = 0;
-		for (const thing of things) {
-			if (!!thing) {
-				const crumbWidth = thing.crumbWidth(numberOfParents);
+		for (const ancestor of ancestors) {
+			if (!!ancestor) {
+				const crumbWidth = ancestor.crumbWidth(numberOfParents);
 				if ((totalWidth + crumbWidth) > thresholdWidth) {
 					break;
 				}
-				distributedParentCount = distributedParentCount * 10 + thing.parents.length;
+				distributedParentCount = distributedParentCount * 10 + ancestor.parents.length;
 				totalWidth += crumbWidth;
-				array.push(thing);
+				ancestorsThatFit.push(ancestor);
 			}
 		}
-		return [distributedParentCount, totalWidth, array.reverse()];
+		return [distributedParentCount, totalWidth, ancestorsThatFit.reverse()];
 	}
 
 	incorporates(ancestry: Ancestry | null): boolean {

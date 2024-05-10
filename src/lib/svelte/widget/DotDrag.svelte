@@ -17,10 +17,11 @@
 	let isGrabbed = false;
 	let isHovering = true;
 	let size = k.dot_size;
-	let clickCount = 0;
-	let tinyDotsPath;
-	let relatedAncestry;
 	let mouse_click_timer;
+	let relatedAncestry;
+	let clickCount = 0;
+	let rebuilds = 0;
+	let tinyDotsPath;
 	let left = 0;
 	let top = 0;
 	let tooltip;
@@ -38,13 +39,20 @@
 		updateAncestries();
 		updateColorsForHover(false);
 		popper = createPopper(button, tooltip, { placement: 'bottom' });
-        const handler = signals.handle_altering((state) => {
+        const handleAltering = signals.handle_altering((state) => {
 			const applyFlag = $s_ancestry_editingTools && !!ancestry && ancestry.things_canAlter_asParentOf_toolsAncestry;
 			isAltering = applyFlag ? !!state : false;
 			updateExtraPaths();
 			updateColors();
-        })
-		return () => { handler.disconnect() };
+        });
+		const handleChanges = signals.hangle_thingChanged(1, thing?.id ?? null, (value) => {
+			updateColorsForHover(false);
+			rebuilds += 1;
+		});
+		return () => {
+			handleChanges.disconnect();
+			handleAltering.disconnect();
+		};
 	});
 
 	$: {
@@ -148,53 +156,55 @@
 
 </script>
 
-<button class='dot-drag'
-	bind:this={button}
-	on:blur={u.ignore}
-	on:focus={u.ignore}
-	on:keyup={u.ignore}
-	on:keydown={u.ignore}
-	on:keypress={u.ignore}
-	on:mouseup={handle_mouse_up}
-	on:click={handle_singleClick}
-	on:mouseout={handle_mouse_out}
-	on:mousedown={handle_longClick}
-	on:mouseover={handle_mouse_over}
-	on:dblclick={handle_doubleClick}
-	on:contextmenu={handle_context_menu}
-	style='
-		border: none;
-		cursor: pointer;
-		background: none;
-		height: {size}px;
-		top: {center.y}px;
-		left: {center.x}px;
-		position: absolute;
-		width: {size / 2}px;
-	'>
-	<SVGD3 name='svg-drag'
-		width={size}
-		height={size}
-		fill={fillColor}
-		stroke={strokeColor}
-		svgPath={scalablePath}
-	/>
-	{#if tinyDotsPath}
-		<SVGD3 name='svg-dot-inside'
+{#key rebuilds}
+	<button class='dot-drag'
+		bind:this={button}
+		on:blur={u.ignore}
+		on:focus={u.ignore}
+		on:keyup={u.ignore}
+		on:keydown={u.ignore}
+		on:keypress={u.ignore}
+		on:mouseup={handle_mouse_up}
+		on:click={handle_singleClick}
+		on:mouseout={handle_mouse_out}
+		on:mousedown={handle_longClick}
+		on:mouseover={handle_mouse_over}
+		on:dblclick={handle_doubleClick}
+		on:contextmenu={handle_context_menu}
+		style='
+			border: none;
+			cursor: pointer;
+			background: none;
+			height: {size}px;
+			top: {center.y}px;
+			left: {center.x}px;
+			position: absolute;
+			width: {size / 2}px;
+		'>
+		<SVGD3 name='svg-drag'
 			width={size}
 			height={size}
-			fill={tinyDotsColor}
-			stroke={tinyDotsColor}
-			svgPath={tinyDotsPath}
+			fill={fillColor}
+			stroke={strokeColor}
+			svgPath={scalablePath}
 		/>
-	{/if}
-	{#if relatedAncestry}
-		<SVGD3 name='svg-dot-related'
-			width={size}
-			height={size}
-			fill={relatedColor}
-			stroke={$s_layout_asClusters ? relatedColor : strokeColor}
-			svgPath={relatedAncestry}
-		/>
-	{/if}
-</button>
+		{#if tinyDotsPath}
+			<SVGD3 name='svg-dot-inside'
+				width={size}
+				height={size}
+				fill={tinyDotsColor}
+				stroke={tinyDotsColor}
+				svgPath={tinyDotsPath}
+			/>
+		{/if}
+		{#if relatedAncestry}
+			<SVGD3 name='svg-dot-related'
+				width={size}
+				height={size}
+				fill={relatedColor}
+				stroke={$s_layout_asClusters ? relatedColor : strokeColor}
+				svgPath={relatedAncestry}
+			/>
+		{/if}
+	</button>
+{/key}

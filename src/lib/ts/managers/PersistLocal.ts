@@ -90,7 +90,7 @@ class PersistLocal {
 
 	key_ancestries(key: string): Array<Ancestry> {
 		const ancestryStrings = this.key_read(key);
-		const length = ancestryStrings.length;
+		const length = ancestryStrings?.length ?? 0;
 		if (this.ignoreAncestries || !ancestryStrings || length == 0) {
 			return [];
 		}
