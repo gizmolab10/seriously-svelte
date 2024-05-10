@@ -16,11 +16,11 @@
 	let clickCount = 0;
 	let ghost = null;
 	let input = null;
-	let clickTimer;
+	let mouse_click_timer;
     let thing;
 
 	var hasChanges = () => { return originalTitle != thingTitle; };
-	function handle_mouseUp() { clearTimeout(clickTimer); }
+	function handle_mouse_up() { clearTimeout(mouse_click_timer); }
 
 	function handle_input(event) {
 		thing?.title = event.target.value;
@@ -46,7 +46,7 @@
 
 	function clearClicks() {
 		clickCount = 0;
-		clearTimeout(clickTimer);	// clear all previous timers
+		clearTimeout(mouse_click_timer);	// clear all previous timers
 	}
 
 	$: {
@@ -91,7 +91,7 @@
 
 	function handle_singleClick(event) {
 		clickCount++;
-		clickTimer = setTimeout(() => {
+		mouse_click_timer = setTimeout(() => {
 			if (clickCount === 1 && !!ancestry && !ancestry.isEditing) {
 				event.preventDefault();
 				if (!ancestry.isGrabbed) {
@@ -112,7 +112,7 @@
 		if (!!ancestry && !ancestry.isEditing) {
 			event.preventDefault();
 			clearClicks();
-			clickTimer = setTimeout(() => {
+			mouse_click_timer = setTimeout(() => {
 				clearClicks();
 				if (!ancestry.isRoot) {
 					if ($s_ancestry_editingTools == ancestry) {
@@ -238,7 +238,7 @@
 		on:input={handle_input}
 		bind:value={thingTitle}
 		on:cut={handle_cut_paste}
-		on:mouseup={handle_mouseUp}
+		on:mouseup={handle_mouse_up}
 		on:keydown={handle_key_down}
 		on:paste={handle_cut_paste}
 		on:click={handle_singleClick}

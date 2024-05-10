@@ -31,7 +31,7 @@
 		updateColors();
 	}
 
-	function crumb_buttclick_closureed(event) {
+	function crumb_buttmouse_click_closureed(event) {
 		if (dbDispatch.db.hasData) {
 			ancestry.grabOnly();
 			if (ancestry.becomeFocus()) {
@@ -47,7 +47,7 @@
 	on:focus={u.ignore}
 	on:mouseout={handle_mouse_out}
 	on:mouseover={handle_mouse_over}
-	on:click={crumb_buttclick_closureed}
+	on:click={crumb_buttmouse_click_closureed}
 	style='
 		{colorStyles};
 		{cursorStyle};

@@ -10,7 +10,7 @@
 
 	function hover_closure(isFilled) { return [isFilled ? 'black' : k.color_background, k.empty]; }
 
-	function click_closure(event, isLong) {
+	function mouse_click_closure(event, isLong) {
         const pointsUp = event.currentTarget.id == 'up';
         hit(pointsUp);
         rebuilds += 1;
@@ -32,7 +32,7 @@
             <TriangleButton
                 center={origin.offsetByY(-offsetY)}
                 hover_closure={hover_closure}
-                click_closure={click_closure}
+                mouse_click_closure={mouse_click_closure}
                 direction={Direction.up}
                 strokeColor={'black'}
                 size={size}
@@ -43,7 +43,7 @@
             <TriangleButton
                 center={origin.offsetByY(offsetY)}
                 hover_closure={hover_closure}
-                click_closure={click_closure}
+                mouse_click_closure={mouse_click_closure}
                 direction={Direction.down}
                 strokeColor={'black'}
                 size={size}

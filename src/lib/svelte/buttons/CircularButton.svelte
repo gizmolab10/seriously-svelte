@@ -3,14 +3,14 @@
 	export let borderColor = '#333';
 	export let textColor = '#400';
 	export let color = '#ccc';
-	export let click_closure = null;
+	export let mouse_click_closure = null;
 	export let size = 14;
 	export let left = 7;
 	export let top = 7;
 </script>
 
 <div
-	on:click={click_closure}
+	on:click={mouse_click_closure}
 	on:keypress={u.ignore}
 	style='
 		top: {top}px;

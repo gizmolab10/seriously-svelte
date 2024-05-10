@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { g, k, u, Rect, Size, Point, ZIndex } from '../../ts/common/GlobalImports';
 	import { s_graphRect } from '../../ts/state/State';
-	export let click_closure = (event, isLong) => {};
+	export let mouse_click_closure = (event, isLong) => {};
 	export let background_color = 'transparent';
 	export let hover_closure = (flag) => {};
 	export let position = 'absolute';
@@ -13,7 +13,7 @@
 	export let height = 16;
 	export let width = 16;
 	let isListening = false;
-	let clickTimer;
+	let mouse_click_timer;
 	let button;
 
 	function handle_mouse_move(event) {
@@ -29,13 +29,13 @@
 	}
 
 	function clearTimer() {
-		clearTimeout(clickTimer);
-		clickTimer = null;
+		clearTimeout(mouse_click_timer);
+		mouse_click_timer = null;
 	}
 
-	function handle_click(event) {
-		if (!clickTimer) {
-			click_closure(event, false);
+	function handle_mouse_click(event) {
+		if (!mouse_click_timer) {
+			mouse_click_closure(event, false);
 		}
 	}
 
@@ -51,7 +51,7 @@
 
 	$: {
 		// if mouse is held down, timeout will fire
-		// if not, handle_click will fire
+		// if not, handle_mouse_click will fire
 		if (!!button && !isListening) {
 			isListening = true;
 			const foo = button.addEventListener('pointerup', (event) => {
@@ -59,10 +59,10 @@
 			});
 			button.addEventListener('pointerdown', (event) => {
 				clearTimer();
-				clickTimer = setTimeout(() => {
-					if (clickTimer) {
+				mouse_click_timer = setTimeout(() => {
+					if (mouse_click_timer) {
 						clearTimer();
-						click_closure(event, true);
+						mouse_click_closure(event, true);
 					}
 				}, k.threshold_longClick);
 			});
@@ -73,7 +73,7 @@
 
 <button class='button'
 	bind:this={button}
-	on:click={handle_click}
+	on:click={handle_mouse_click}
 	on:mousemove={handle_mouse_move}
 	style='
 		color: {color};

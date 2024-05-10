@@ -20,7 +20,7 @@
 	let clickCount = 0;
 	let tinyDotsPath;
 	let relatedAncestry;
-	let clickTimer;
+	let mouse_click_timer;
 	let left = 0;
 	let top = 0;
 	let tooltip;
@@ -29,7 +29,7 @@
     let thing;
 
 	function handle_context_menu(event) { event.preventDefault(); }		// no default context menu on right-click
-	function handle_mouseUp() { clearTimeout(clickTimer); }
+	function handle_mouse_up() { clearTimeout(mouse_click_timer); }
 
     onMount(() => {
 		if (!!ancestry) {
@@ -68,7 +68,7 @@
 
 	function clearClicks() {
 		clickCount = 0;
-		clearTimeout(clickTimer);	// clear all previous timers
+		clearTimeout(mouse_click_timer);	// clear all previous timers
 	}
 	
 	function handle_mouse_out(event) {
@@ -91,7 +91,7 @@
 
 	function handle_longClick(event) {
 		clearClicks();
-		clickTimer = setTimeout(() => {
+		mouse_click_timer = setTimeout(() => {
 			handle_doubleClick(event);
 		}, k.threshold_longClick);
 	}
@@ -105,7 +105,7 @@
 
 	function handle_singleClick(event) {
 		clickCount++;
-		clickTimer = setTimeout(() => {
+		mouse_click_timer = setTimeout(() => {
 			if (clickCount === 1) {
 				ancestry?.handle_singleClick_onDragDot(event.shiftKey);
 				clearClicks();
@@ -155,7 +155,7 @@
 	on:keyup={u.ignore}
 	on:keydown={u.ignore}
 	on:keypress={u.ignore}
-	on:mouseup={handle_mouseUp}
+	on:mouseup={handle_mouse_up}
 	on:click={handle_singleClick}
 	on:mouseout={handle_mouse_out}
 	on:mousedown={handle_longClick}

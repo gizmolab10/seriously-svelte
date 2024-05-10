@@ -50,7 +50,7 @@
 		<CircularButton left=15
 			color='transparent'
 			borderColor='transparent'
-			click_closure={() => button_closure_forID(IDButton.details)}>
+			mouse_click_closure={() => button_closure_forID(IDButton.details)}>
 			<img src='settings.svg' alt='circular button' width={size}px height={size}px/>
 		</CircularButton>
 		{#if k.show_controls}
@@ -75,7 +75,7 @@
 			left={width - 130}
 			size={size}
 			color={k.color_background}
-			click_closure={(event) => button_closure_forID(IDButton.smaller)}>
+			mouse_click_closure={(event) => button_closure_forID(IDButton.smaller)}>
 			<SVGD3 name='smaller'
 				width={size}
 				height={size}
@@ -86,7 +86,7 @@
 			size={size}
 			left={width - 105}
 			color={k.color_background}
-			click_closure={(event) => button_closure_forID(IDButton.bigger)}>
+			mouse_click_closure={(event) => button_closure_forID(IDButton.bigger)}>
 			<SVGD3 name='bigger'
 				width={size}
 				height={size}
@@ -105,6 +105,6 @@
 		size={size}
 		left={width - 15}
 		color={k.color_background}
-		click_closure={(event) => togglePopupID(IDButton.help)}>?
+		mouse_click_closure={(event) => togglePopupID(IDButton.help)}>?
 	</CircularButton>
 </div>

@@ -364,16 +364,16 @@ export default class Ancestry {
 				return this.uniquelyAppendID(relationship.id);
 			}
 		}
-		return this;
+		return null;
 	}
 
 	isAllExpandedFrom(targetAncestry: Ancestry | null): boolean {
-		// visit parents along this ancestry until encountering
-		// either the ancestry or an unexpanded parent
+		// visit ancestors until encountering
+		// either this ancestry (???) or an unexpanded parent
 		if (targetAncestry && !this.matchesAncestry(targetAncestry)) {
 			const ancestry = this.parentAncestry;			// visit parent of ancestry
 			if (!ancestry || (!ancestry.isExpanded && !ancestry.isAllExpandedFrom(targetAncestry))) {
-				return false;	// stop when no parent or parent is not expanded
+				return false;	// stop when no ancestor or ancestor is not expanded
 			}
 		}
 		return true;

@@ -6,7 +6,7 @@
 	export let hover_closure = null;
 	export let cursor = 'pointer';
 	export let extraPath = null;
-	export let click_closure;
+	export let mouse_click_closure;
 	export let strokeColor;
 	export let direction;
 	export let center;
@@ -41,7 +41,7 @@
 <Button
 	hover_closure={(isHovering) => { setFillColor(isHovering); }}
 	center={center.offsetBy(new Point(3, 2))}
-	click_closure={click_closure}
+	mouse_click_closure={mouse_click_closure}
 	cursor={cursor}
 	height='20'
 	width='20'>

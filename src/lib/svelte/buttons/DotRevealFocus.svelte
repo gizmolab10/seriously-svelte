@@ -9,7 +9,7 @@
 		return [debug.lines ? 'transparent' : ancestry.dotColor(isFilled), k.empty];
 	}
 
-	function click_closure(event, isLong) {
+	function mouse_click_closure(event, isLong) {
 		if (h.grabs.latestAncestryGrabbed(true)?.isFocus) {
 			h.ancestry_rebuild_remoteMoveRight(ancestry, false, false);
 		} else {
@@ -28,7 +28,7 @@
 <TriangleButton
 	strokeColor={ancestry.thing.color}
 	hover_closure={hover_closure}
-	click_closure={click_closure}
+	mouse_click_closure={mouse_click_closure}
 	direction={Direction.right}
 	id={ancestry.thing.title}
 	center={center}

@@ -4,14 +4,14 @@
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import EditingTools from './EditingTools.svelte';
 	import Circle from '../kit/Circle.svelte';
-	import Necklace from './Necklace.svelte'
+	import Necklace from './Necklace.svelte';
 	export let ancestry;
 	// needs:
-	//  hover
-	//  necklace
-	//  edit state
-	//  handle keys
-	//  lines with arrows
+	//	rotation
+	//	arrowheads
+	//	handle keys
+	//	lines: selection & hover
+	//	edit titles (keydown terminates edit)
 	const toolsOffset = new Point(40, -3);
 	let titleCenter = Point.zero;
 	let center = Point.zero;

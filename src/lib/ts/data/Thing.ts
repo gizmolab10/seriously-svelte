@@ -187,7 +187,7 @@ export default class Thing extends Datum {
 	}
 
 	parentAncestries_for(predicate: Predicate | null, visited: Array<string> = []): Array<Ancestry> {
-		// all the ancestries that point to each parent of this thing
+		// the ancestry of each parent [of this thing]
 		let ancestries: Array<Ancestry> = [];
 		if (!this.isRoot && predicate) {
 			const isBidirectional = predicate.isBidirectional;
