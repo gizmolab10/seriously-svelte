@@ -8,7 +8,9 @@
 	let rebuilds = 0;
     const size = 20;
 
-	function hover_closure(isFilled) { return [isFilled ? 'black' : k.color_background, k.empty]; }
+	function hover_closure(isFilled) {
+        return [isFilled ? 'black' : k.color_background, k.empty];
+    }
 
 	function mouse_click_closure(event, isLong) {
         const pointsUp = event.currentTarget.id == 'up';

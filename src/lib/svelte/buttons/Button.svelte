@@ -24,7 +24,7 @@
 	}
 
 	function handle_hoverAt(eventLocation) {
-		const isHovering = buttonContains(eventLocation);
+		const isHovering = u.hitTestFor(button, eventLocation);
 		hover_closure(isHovering);
 	}
 
@@ -37,16 +37,6 @@
 		if (!mouse_click_timer) {
 			mouse_click_closure(event, false);
 		}
-	}
-
-	function buttonContains(eventLocation): boolean {
-		if (button) {
-			const buttonOrigin = new Point(button.offsetLeft, button.offsetTop).offsetBy($s_graphRect.origin);
-			const buttonSize = new Size(button.offsetWidth, button.offsetHeight);
-			const buttonRect = new Rect(buttonOrigin, buttonSize);
-			return buttonRect.contains(eventLocation);
-		}
-		return false;
 	}
 
 	$: {

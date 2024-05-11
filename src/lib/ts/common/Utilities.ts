@@ -1,4 +1,4 @@
-import { k, get, Ancestry, Size, Point, Angle, Quadrant, IDBrowser } from './GlobalImports';
+import { k, get, Rect, Size, Point, Angle, Quadrant, IDBrowser, Ancestry } from './GlobalImports';
 import { s_scale_factor, s_thing_fontFamily } from '../state/State';
 import Identifiable from "../structures/Identifiable";
 
@@ -12,6 +12,10 @@ class Utilities {
 	quadrant_startAngle(angle: number): number { return this.startAngle_ofQuadrant(this.quadrant_of(angle)); }
 	sort_byOrder(array: Array<Ancestry>) { return array.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
 	strip_invalid(array: Array<any>): Array<any> { return this.strip_identifiableDuplicates(this.strip_falsies(array)); }
+
+	boundingRectFor(element: HTMLElement): Rect | null{
+		return Rect.createFromDOMRect(element.getBoundingClientRect());
+	}
 
 	uniquely_concatenateArrays(a: Array<any>, b: Array<any>): Array<any> {
 		return this.strip_invalid(this.concatenateArrays(a, b));
@@ -56,6 +60,14 @@ class Utilities {
 		if (index !== -1) {
 			from.splice(index, 1);
 		}
+	}
+
+	hitTestFor(element: HTMLElement | null, at: Point): boolean {
+		if (element) {
+			const elementRect = this.boundingRectFor(element);
+			return elementRect?.contains(at) ?? false;
+		}
+		return false;
 	}
 
 	formatter_toFixed(precision: number) {
