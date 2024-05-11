@@ -113,21 +113,21 @@
 			<Details/>
 			<div class='vertical-line' style='
 				left: {k.width_details}px;
-				z-index: {ZIndex.frontmost};
+				z-index: {ZIndex.lines};
 				top: {$s_graphRect.origin.y}px;
 				height: {$s_graphRect.size.height}px;'>
 			</div>
 		{/if}
 		<div class='horizontal-line' style='
-			z-index: {ZIndex.frontmost};
+			z-index: {ZIndex.lines};
 			top: {k.height_banner - 2}px;'>
 		</div>
-		<div class='crumbs' style='z-index: {ZIndex.frontmost};'>
+		<div class='breadcrumbs' style='z-index: {ZIndex.frontmost};'>
 			<Breadcrumbs/>
 			<div class='horizontal-line'
 				style='
 					top: 68px;
-					z-index: {ZIndex.frontmost};'>
+					z-index: {ZIndex.lines};'>
 			</div>
 		</div>
 		{#if k.show_titleAtTop}
@@ -141,7 +141,7 @@
 			</div>
 			<div class='horizontal-line'
 				style='
-					z-index: {ZIndex.frontmost};
+					z-index: {ZIndex.lines};
 					top: {k.height_banner + k.height_titleAtTop + 28}px;'>
 			</div>
 		{/if}

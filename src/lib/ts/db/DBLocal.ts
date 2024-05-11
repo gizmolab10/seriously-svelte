@@ -7,6 +7,7 @@ export default class DBLocal implements DBInterface {
 	baseID = k.baseID_local;
 	dbType = DBType.local;
 	hierarchy!: Hierarchy;
+	isRemote = false;
 	hasData = false;
 	loadTime = null;
 

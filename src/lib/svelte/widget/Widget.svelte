@@ -60,7 +60,7 @@
 				}
 			}
 		});
-		const handleChanges = signals.hangle_thingChanged(0, thing.id, (value: any) => {
+		const handleChanges = signals.hangle_thingChanged(0, thing?.id ?? k.empty, (value: any) => {
 			updateBorderStyle();
 			rebuilds += 1;
 		});
@@ -130,7 +130,7 @@
 		const titleWidth = thing?.titleWidth ?? 0;
 		const delta = showingBorder ? 0 : 1;
 		const leftForward = delta - dragX + 1;
-		const leftBackward = -(titleWidth + 13 + (ancestry.isGrabbed ? 1 : 0));
+		const leftBackward = -(titleWidth + 13 + ((ancestry?.isGrabbed ?? false) ? 1 : 0));
 		dragCenter = new Point(forward ? dragX : titleWidth + 7, 2.8);
 		left = origin.x + (forward ? leftForward : leftBackward);
 		padding = `0px ${rightPadding}px 0px  ${leftPadding}px`;

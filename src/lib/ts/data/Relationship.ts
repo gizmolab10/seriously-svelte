@@ -45,7 +45,7 @@ export default class Relationship extends Datum {
 		if (!this.awaitingCreation) {
 			if (this.isRemotelyStored) {
 				await dbDispatch.db.relationship_remoteUpdate(this);
-			} else {
+			} else if (dbDispatch.db.isRemote) {
 				await dbDispatch.db.relationship_remember_remoteCreate(this);
 			}
 		}

@@ -28,6 +28,7 @@ export default class DBAirtable implements DBInterface {
 	dbType = DBType.airtable;
 	hierarchy!: Hierarchy;
 	baseID = k.empty;
+	isRemote = true;
 	hasData = false;
 	loadTime = null;
 

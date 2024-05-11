@@ -19,6 +19,7 @@ export default interface DBInterface {
 	baseID: string;
 	dbType: string;
 	hasData: boolean;
+	isRemote: boolean;
 	hierarchy: Hierarchy;
 	loadTime: string | null;
 	queryStrings_apply(): void;

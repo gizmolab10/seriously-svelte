@@ -24,6 +24,7 @@ export default class DBFirebase implements DBInterface {
 
 	loadTime = null;
 	hasData = false;
+	isRemote = true;
 	baseID = 'Public';
 	addedThing!: Thing;
 	bulksName = 'Bulks';

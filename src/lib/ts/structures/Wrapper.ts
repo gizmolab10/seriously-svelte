@@ -18,7 +18,10 @@ export default class Wrapper extends Identifiable {
         this.component = component;
         this.type = type;
         this.ancestry = ancestry;
-    	ancestry.wrapper_add(this);
+        if (!ancestry) {
+            console.log('ick!');
+        }
+    	ancestry?.wrapper_add(this);
     }
 
 }

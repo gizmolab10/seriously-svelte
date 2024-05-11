@@ -55,10 +55,9 @@ export default class DBDispatch {
 		if (this.db.hasData) {
 			h = this.db.hierarchy;
 		} else {
-			const isRemote = type != DBType.local;
 			const startTime = new Date().getTime();
 			s_db_loadTime.set(null);
-			if (isRemote) {
+			if (this.db.isRemote) {
 				s_things_arrived.set(false);
 				s_isBusy.set(true);
 			}
@@ -67,7 +66,7 @@ export default class DBDispatch {
 			await h.add_missing_removeNulls(null, this.db.baseID);
 			h.rootAncestry_setup();
 			h.ancestries_rebuildAll();
-			if (isRemote) {
+			if (this.db.isRemote) {
 				this.set_loadTime(startTime);
 			}
 		}

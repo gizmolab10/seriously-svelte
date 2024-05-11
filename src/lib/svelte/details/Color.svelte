@@ -1,10 +1,11 @@
 <script>
-	import { u, onMount, signals } from '../../ts/common/GlobalImports';
+	import { k, u, ZIndex, onMount, signals } from '../../ts/common/GlobalImports';
 	import { s_ancestries_grabbed } from '../../ts/state/State';
 	import ColorPicker from 'svelte-awesome-color-picker';
-	let colorAsHEX = '#ff00ff';
-	const left = 100;
-	const top = 50;
+	const selectorSize = k.dot_size;
+	const pickerSize = 100;
+	let colorAsHEX = '#F0F';
+	let persistenceTimer;
 	let thing;
 
 	$: { updateFor($s_ancestries_grabbed); }
@@ -24,16 +25,30 @@
 		event.preventDefault();
 		thing.color = event.detail.hex;
 		signals.signal_thingChanged(thing.id);
+		if (!!persistenceTimer) {
+			clearTimeout(persistenceTimer);		// each color change discards and restarts the timer
+			persistenceTimer = null;
+		}
+		persistenceTimer = setTimeout(() => {
+			(async () => {
+				await thing.remoteWrite();
+			})();
+		}, 100);		// tenth second delay
 	}
 
 </script>
 
 {#key colorAsHEX}
-	<div style='top:{top + 5}px; left:40px; position:absolute;'>
+	<div style='top:55px; left:10.5px; position:absolute;'>
 		<ColorPicker
 			hex={colorAsHEX}
-			atRight=0
+			label='color of "{thing.title}"'
 			on:input={handleColorChange}
-			label='color of selection'/>
+			--input-size='{selectorSize}px'
+			--picker-width='{pickerSize}px'
+			--picker-height='{pickerSize}px'
+			--slider-width='{selectorSize}px'
+			--picker-z-index='{ZIndex.frontmost}'
+			--picker-indicator-size='{selectorSize}px'/>
 	</div>
 {/key}

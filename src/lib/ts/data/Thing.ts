@@ -89,6 +89,16 @@ export default class Thing extends Datum {
 		return super.isInDifferentBulkThan(other) || (other.isBulkAlias && !this.isBulkAlias && this.baseID != other.title);
 	}
 
+	async remoteWrite() {
+		if (!this.awaitingCreation) {
+			if (this.isRemotelyStored) {
+				await dbDispatch.db.thing_remoteUpdate(this);
+			} else if (dbDispatch.db.isRemote) {
+				await dbDispatch.db.thing_remember_remoteCreate(this);
+			}
+		}
+	}
+
 	relationships_grandParentsFor(idPredicate: string): Array<Relationship> {
 		const relationships = this.relationships_for_isChildOf(idPredicate, true);
 		let grandParents: Array<Relationship> = [];

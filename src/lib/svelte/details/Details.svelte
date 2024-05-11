@@ -1,7 +1,6 @@
 <script>
 	import { s_graphRect, s_db_loadTime } from '../../ts/state/State';
 	import { k, u, ZIndex } from '../../ts/common/GlobalImports';
-	import Label from '../kit/Label.svelte';
 	import Color from './Color.svelte';
 	import Data from './Data.svelte';
 </script>
@@ -30,9 +29,14 @@
 	<div class='details-modal-content' style='z-index: {ZIndex.frontmost};'>
 		<Data/>
 		{#if $s_db_loadTime && $s_db_loadTime > 0}
-			<Label style='top: 40px; left: 160px;'>
+			<div style='
+				top: 31px;
+				left: 60px;
+				color: #333;
+				font-size: 11px;
+				position: absolute;'>
 				fetch took {$s_db_loadTime} s
-			</Label>
+			</div>
 		{/if}
 		<div class='horizontal-line'
 			style='

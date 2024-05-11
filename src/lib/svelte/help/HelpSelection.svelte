@@ -10,7 +10,7 @@
 
 <div>
 	<div class='centered-container'>
-		<Widget/>
+		<Widget ancestry={exemplar.oneAncestry}/>
 	</div>
 	<br>
 	<br>
