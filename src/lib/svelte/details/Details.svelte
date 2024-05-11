@@ -1,8 +1,9 @@
 <script>
+	import { s_graphRect, s_db_loadTime } from '../../ts/state/State';
 	import { k, u, ZIndex } from '../../ts/common/GlobalImports';
-	import { s_graphRect } from '../../ts/state/State';
-	import ColorPicker from './ColorPicker.svelte';
-	import DataSource from './DataSource.svelte';
+	import Label from '../kit/Label.svelte';
+	import Color from './Color.svelte';
+	import Data from './Data.svelte';
 </script>
 
 <style>
@@ -27,7 +28,12 @@
 		top: {$s_graphRect.origin.y}px;
 		height: {$s_graphRect.size.height}px;'>
 	<div class='details-modal-content' style='z-index: {ZIndex.frontmost};'>
-		<DataSource/>
+		<Data/>
+		{#if $s_db_loadTime && $s_db_loadTime > 0}
+			<Label style='top: 40px; left: 160px;'>
+				fetch took {$s_db_loadTime} s
+			</Label>
+		{/if}
 		<div class='horizontal-line'
 			style='
 				background-color: lightgray;
@@ -35,9 +41,9 @@
 				width: {k.width_details}px;
 				position: absolute;
 				height: 1px;
-				top: 40px;
+				top: 50px;
 				left: 0px;'>
 		</div>
-		<ColorPicker/>
+		<Color/>
 	</div>
 </div>

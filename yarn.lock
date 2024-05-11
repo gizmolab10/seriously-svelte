@@ -520,6 +520,25 @@
   resolved "https://registry.yarnpkg.com/@firebase/webchannel-wrapper/-/webchannel-wrapper-0.10.5.tgz#cd9897680d0a2f1bce8d8c23a590e5874f4617c5"
   integrity sha512-eSkJsnhBWv5kCTSU1tSUVl9mpFu+5NXXunZc83le8GMjMlsWwQArSc7cJJ4yl+aDFY0NGLi0AjZWMn1axOrkRg==
 
+"@floating-ui/core@^1.2.6":
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/@floating-ui/core/-/core-1.6.1.tgz#a4e6fef1b069cda533cbc7a4998c083a37f37573"
+  integrity sha512-42UH54oPZHPdRHdw6BgoBD6cg/eVTmVrFcgeRDM3jbO7uxSoipVcmcIGFcA5jmOHO5apcyvBhkSKES3fQJnu7A==
+  dependencies:
+    "@floating-ui/utils" "^0.2.0"
+
+"@floating-ui/dom@1.2.8":
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/@floating-ui/dom/-/dom-1.2.8.tgz#aee0f6ccc0787ab8fe741487a6e5e95b7b125375"
+  integrity sha512-XLwhYV90MxiHDq6S0rzFZj00fnDM+A1R9jhSioZoMsa7G0Q0i+Q4x40ajR8FHSdYDE1bgjG45mIWe6jtv9UPmg==
+  dependencies:
+    "@floating-ui/core" "^1.2.6"
+
+"@floating-ui/utils@^0.2.0":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@floating-ui/utils/-/utils-0.2.2.tgz#d8bae93ac8b815b2bd7a98078cf91e2724ef11e5"
+  integrity sha512-J4yDIIthosAsRZ5CPYP/jQvUAQtlZTTD/4suA08/FEnlxqW3sKS9iAhgsa9VYLZ6vDHn/ixJgIqRQPotoBjxIw==
+
 "@grpc/grpc-js@~1.9.0":
   version "1.9.13"
   resolved "https://registry.yarnpkg.com/@grpc/grpc-js/-/grpc-js-1.9.13.tgz#ad9b7dbb6089c462469653c809996f13e46aa1cd"
@@ -754,6 +773,11 @@
   resolved "https://registry.yarnpkg.com/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.17.0.tgz#3b8ec9d6a7eccca80dd1f16fe444abe128a2ec08"
   integrity sha512-ve+D8t1prRSRnF2S3pyDtTXDlvW1Pngbz76tjgYFQW1jxVSysmQCZfPoDAo4WP+Ano8zeYp85LsArZBI12HfwQ==
 
+"@stitches/core@1.2.8":
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/@stitches/core/-/core-1.2.8.tgz#dce3b8fdc764fbc6dbea30c83b73bfb52cf96173"
+  integrity sha512-Gfkvwk9o9kE9r9XNBmJRfV8zONvXThnm1tcuojL04Uy5uRyqg93DC83lDebl0rocZCfKSjUv+fWYtMQmEDJldg==
+
 "@sveltejs/kit@^1.20.4":
   version "1.30.3"
   resolved "https://registry.yarnpkg.com/@sveltejs/kit/-/kit-1.30.3.tgz#3e1d57283352bcc6900592171139f1ff97d4e85f"
@@ -792,6 +816,24 @@
     magic-string "^0.30.3"
     svelte-hmr "^0.15.3"
     vitefu "^0.2.4"
+
+"@svelteuidev/composables@^0.15.6":
+  version "0.15.6"
+  resolved "https://registry.yarnpkg.com/@svelteuidev/composables/-/composables-0.15.6.tgz#18d8b2eba7aed5474878cb50f90ab1280f3e727b"
+  integrity sha512-uWlImPhLjvdI0uCMFrVxt4h0jcxX69RlImHaoDSQBMyArQHoSMb3fjdTNTAte8n9F2Oq0yqrncloybBcs7TDKA==
+
+"@svelteuidev/core@^0.15.6":
+  version "0.15.6"
+  resolved "https://registry.yarnpkg.com/@svelteuidev/core/-/core-0.15.6.tgz#0f3ce28e911129e38b6cced6fa2f095085fd2169"
+  integrity sha512-6UaoyVW/8G+2wi9h4SjnJdJe9G6aefZo5S4Rg9M8AKl2QfzKe45ZElcO8L8MgzHUnGTx0LPkwePJUVlWHjBuOg==
+  dependencies:
+    "@floating-ui/dom" "1.2.8"
+    "@stitches/core" "1.2.8"
+
+"@svelteuidev/motion@^0.15.6":
+  version "0.15.6"
+  resolved "https://registry.yarnpkg.com/@svelteuidev/motion/-/motion-0.15.6.tgz#90341e7b04492e10508a006f0334c48b2f9a4615"
+  integrity sha512-GeaUnmdi5sGaEJ1KCeEUZPleyVDuRh4xwFtW6xt/vab2t0q8yQeBojrk956b5HeuekajuNqAqkgbUr2UMtVVKg==
 
 "@tsconfig/node10@^1.0.7":
   version "1.0.9"
@@ -946,6 +988,24 @@
   dependencies:
     "@types/node" "*"
     "@types/webidl-conversions" "*"
+
+"@wx/core-locales@1.1.3":
+  version "1.1.3"
+  resolved "https://npm.svar.dev/@wx%2fcore-locales/-/core-locales-1.1.3.tgz#e3cd9cf38b8297fcc4d2eabcad649f4bb1a4c1f8"
+  integrity sha512-BjF7p44DNO4gDJeYOX19quggR9Uk4EIB4H3E1D6aSrCrnPPPaLOrv+XEYuzWP73eMeV+PIdKQN+NGbaonEY88w==
+
+"@wx/lib-dom@^0.5.0":
+  version "0.5.1"
+  resolved "https://npm.svar.dev/@wx%2flib-dom/-/lib-dom-0.5.1.tgz#e253068c1e65251a0d9ef55363a0241ea41874bd"
+  integrity sha512-AczK41oXbRH4pDTPUQgBde/PcVnZwpjQn6GfXMQfAcMrGo0uoXviNSucQopdodSG6cmcOH4ynPiFmrpZSCr0BA==
+
+"@wx/svelte-core@^1.1.3":
+  version "1.1.3"
+  resolved "https://npm.svar.dev/@wx%2fsvelte-core/-/svelte-core-1.1.3.tgz#a678f78c19d99552e327159be88e79e2af816117"
+  integrity sha512-KX4VeHPGpQ34+hNZ68V/irBchgYZxzSf/ccp5nRcuIPbBkP5YwuRle4ju8B0KE3UjJ/Yy3a6j3FcUgy6luqtCA==
+  dependencies:
+    "@wx/core-locales" "1.1.3"
+    "@wx/lib-dom" "^0.5.0"
 
 abort-controller@^3.0.0:
   version "3.0.0"
@@ -1168,6 +1228,11 @@ color2k@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/color2k/-/color2k-2.0.3.tgz#a771244f6b6285541c82aa65ff0a0c624046e533"
   integrity sha512-zW190nQTIoXcGCaU08DvVNFTmQhUpnJfVuAKfWqUQkflXKpaDdpaYoM0iluLS9lgJNHyBF58KKA2FBEwkD7wog==
+
+colord@^2.9.3:
+  version "2.9.3"
+  resolved "https://registry.yarnpkg.com/colord/-/colord-2.9.3.tgz#4f8ce919de456f1d5c1c368c307fe20f3e59fb43"
+  integrity sha512-jeC1axXpnb0/2nn/Y1LPuLdgXBLH7aDcHu4KEKfqw3CUhX7ZpfBSlPKyqXE6btIgEzfWtrX3/tyBCaCvXvMkOw==
 
 colors@^1.1.2:
   version "1.4.0"
@@ -2641,6 +2706,19 @@ supports-color@^7.0.0:
   integrity sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==
   dependencies:
     has-flag "^4.0.0"
+
+svelte-awesome-color-picker@^3.0.6:
+  version "3.0.6"
+  resolved "https://registry.yarnpkg.com/svelte-awesome-color-picker/-/svelte-awesome-color-picker-3.0.6.tgz#4b74b177efb8c2846d4a4db0f9283fc1edeaee02"
+  integrity sha512-lkyT9+78mpvzUm6yZLh2RKGHJn9U/XOZsc+WrCZVPaNTRnleled3dwR+EX0SgiAeFV7V/ieK3bu4wpgU0HRFlQ==
+  dependencies:
+    colord "^2.9.3"
+    svelte-awesome-slider "^1.1.0"
+
+svelte-awesome-slider@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/svelte-awesome-slider/-/svelte-awesome-slider-1.1.0.tgz#34c46b1e04860f1a88dd12184f7d2c2dc4c9156d"
+  integrity sha512-MgY6ZdBON42HVZqNWNjq2HOgyDlC35q0TNbV/YO1l1/bcb5yhM8EE97h1AJ/7F6t6sLzXhQ3qPf5nGyCdDSnCg==
 
 svelte-hmr@^0.15.3:
   version "0.15.3"

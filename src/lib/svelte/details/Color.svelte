@@ -1,10 +1,11 @@
 <script>
 	import { u, onMount, signals } from '../../ts/common/GlobalImports';
 	import { s_ancestries_grabbed } from '../../ts/state/State';
-	export let thing;
-	let color = '#ff0000';
+	import ColorPicker from 'svelte-awesome-color-picker';
+	let colorAsHEX = '#ff00ff';
 	const left = 100;
 	const top = 50;
+	let thing;
 
 	$: { updateFor($s_ancestries_grabbed); }
 	onMount(() => { updateFor($s_ancestries_grabbed); })
@@ -14,29 +15,25 @@
 			const grabbed = grabs[0].thing;
 			if (!!grabbed && grabbed != thing) {
 				thing = grabbed;
-				color = u.colorToHex(thing.color);
+				colorAsHEX = u.colorToHex(thing.color);
 			}
 		}
 	}
 
 	function handleColorChange(event) {
 		event.preventDefault();
-		thing.color = event.target.value;
+		thing.color = event.detail.hex;
 		signals.signal_thingChanged(thing.id);
 	}
 
 </script>
 
-{#key color}
-	<div style='top:{top + 5}px; left:40px; position:absolute;'>color of selection:</div>
-	<input class='color-input'
-		style='
-			top: {top}px;
-			cursor: pointer;
-			position: absolute;
-			left: {left + 39}px;'
-		on:input={handleColorChange}
-		bind:value={color}
-		id='color-picker'
-		type='color'>
+{#key colorAsHEX}
+	<div style='top:{top + 5}px; left:40px; position:absolute;'>
+		<ColorPicker
+			hex={colorAsHEX}
+			atRight=0
+			on:input={handleColorChange}
+			label='color of selection'/>
+	</div>
 {/key}

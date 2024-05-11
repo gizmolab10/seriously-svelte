@@ -29,12 +29,10 @@
 			totalWidth += width + 25;
 		}
 		if (totalWidth <= fitWithin) {
-			style = `
-				display: flex; /* Use Flexbox to align children horizontally */
-				flex-direction: row; /* Align children in a row */
-				align-items: center; /* Align items vertically in the center */
-				justify-content: space-around; /* Distribute space around items */
-			`;
+			style = `display: flex;
+				flex-direction: row;
+				align-items: center;
+				justify-content: space-around;`;
 		}
 	}
 
@@ -45,11 +43,11 @@
 		cursor: pointer;
 	}
 	.menu-item {
-		position: relative;
-		left: -3px;
-		display: flex;
 		align-items: center;
+		position: relative;
 		cursor: pointer;
+		display: flex;
+		left: -3px;
 	}
 	.label-text {
 		position: relative;

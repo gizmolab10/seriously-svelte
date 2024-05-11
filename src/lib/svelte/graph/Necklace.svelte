@@ -7,7 +7,7 @@
 	export let center = Point.zero;
     export let ancestry;
 	const childOffset = new Point(k.dot_size / -3, k.cluster_offsetY);;
-	const color = ancestry.thing?.color ?? k.color_default;
+	let color = ancestry.thing?.color ?? k.color_default;
 	let clusterLayouts: Array<ClusterLayout> = [];
 	let childMapRects: Array<ChildMapRect> = [];
 	let rebuilds = 0;
@@ -16,8 +16,17 @@
 		const layout = new Layout(ancestry, center);
 		clusterLayouts = layout.clusterLayouts;
 		childMapRects = layout.childMapRects;
-		const handler = signals.handle_anySignal((signal_ancestry) => { rebuilds += 1; });
-		return () => { handler.disconnect() };
+		const handleAny = signals.handle_anySignal((signal_ancestry) => {
+			rebuilds += 1;
+		});
+		const handleChanges = signals.hangle_thingChanged(0, ancestry.thing?.id, (value: any) => {
+			color = ancestry.thing?.color ?? k.color_default;
+			rebuilds += 1;
+		});
+		return () => {
+			handleAny.disconnect()
+			handleChanges.disconnect();
+		};
 	});
 
 	// needs:

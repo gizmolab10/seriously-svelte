@@ -1,4 +1,5 @@
 <script>
+export let style='';
 </script>
 
 <style>
@@ -8,4 +9,4 @@
 	}
 </style>
 
-<slot></slot>
+<slot style={style}></slot>
