@@ -40,10 +40,10 @@
 		{/each}
 	{/if}
 	{#if clusterLayouts}
-		{#each clusterLayouts as clusterLayout}
-			<ClusterLine layout={clusterLayout} center={center} color={color}/>
-			{#if clusterLayout.count > 1}
-				<ClusterArc layout={clusterLayout} center={center} color={color}/>
+		{#each clusterLayouts as cluster_layout}
+			<ClusterLine cluster_layout={cluster_layout} center={center} color={color}/>
+			{#if cluster_layout.count > 1}
+				<ClusterArc cluster_layout={cluster_layout} center={center} color={color}/>
 			{/if}
 		{/each}
 	{/if}

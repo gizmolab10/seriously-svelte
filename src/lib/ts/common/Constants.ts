@@ -1,7 +1,7 @@
 export default class Constants {
 	dot_size = 13;
 	width_max = 200;
-	necklace_gap = 15;	// TODO: target: 12
+	necklace_gap = 12;	// TODO: target: 12
 	line_stretch = 25;
 	height_banner = 35;
 	width_details = 200;

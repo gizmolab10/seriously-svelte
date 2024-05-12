@@ -4,10 +4,10 @@
 	import ArrowHead from '../kit/ArrowHead.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import Box from '../kit/Box.svelte';
-	export let color = k.color_default;
-    export let layout: ClusterLayout;
 	export let center = Point.zero;
-	const idDiv = `${layout?.points_out ? 'child' : 'parent'} ${layout?.predicate.kind}`;
+	export let color = k.color_default;
+    export let cluster_layout: ClusterLayout;
+	const idDiv = `${cluster_layout?.points_out ? 'child' : 'parent'} ${cluster_layout?.predicate?.kind}`;
 	const show_arrowheads = k.show_arrowheads;
 	let arrow_start = Point.zero;
 	let arrow_end = Point.zero;
@@ -26,10 +26,9 @@
 		if (line && !lineWrapper) {
 			lineWrapper = new Wrapper(line, h.rootAncestry, IDWrapper.line);
 		}
-		angle = layout?.line_angle;
-		const line_rotated = layout?.line_rotated;
-		const title_width = u.getWidthOf(layout?.line_title) / -3;
-		const line_length = k.cluster_line_length - k.dot_size * (show_arrowheads ? 8 : 0);
+		angle = cluster_layout?.line_angle;
+		const line_rotated = cluster_layout?.line_rotated;
+		const title_width = u.getWidthOf(cluster_layout?.line_title) / -3;
 		const inside_radius = k.cluster_inside_radius + (show_arrowheads ? 8 : 0);
 		const inside_rotated = Point.fromPolar(inside_radius, angle);
 		const titleDelta = new Point(title_width, k.dot_size / -2);
@@ -46,7 +45,7 @@
 
 	function updateLine(line_rotated: Point, inside_rotated: Point): [number, number] {
 		let outside_rotated = inside_rotated;
-		if (layout?.predicate.isBidirectional || !layout?.points_out) {
+		if (cluster_layout?.predicate?.isBidirectional || !cluster_layout?.points_out) {
 			outside_rotated = inside_rotated.offsetBy(line_rotated);
 		}
 		switch (u.point_quadrant(line_rotated)) {
@@ -82,13 +81,13 @@
 			top: {label_top}px;
 			font-size: 0.5em;
 			color: {color};'>
-			{layout?.line_title}
+			{cluster_layout?.line_title}
 		</div>
 		{#if show_arrowheads}
-			{#if layout?.predicate.isBidirectional}
+			{#if cluster_layout?.predicate?.isBidirectional}
 				<ArrowHead idDiv='child'  angle={angle} color={color} color_background={color} radius={thickness} center={arrow_end}/>
 				<ArrowHead idDiv='parent' angle={angle + Angle.half} color={color} color_background={color} radius={thickness} center={arrow_start}/>
-			{:else if layout?.points_out}
+			{:else if cluster_layout?.points_out}
 				<ArrowHead idDiv='child'  angle={angle} color={color} color_background={color} radius={thickness} center={arrow_end}/>
 			{:else}
 				<ArrowHead idDiv='parent' angle={angle + Angle.half} color={color} color_background={color} radius={thickness} center={arrow_start}/>

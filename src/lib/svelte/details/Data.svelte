@@ -5,7 +5,7 @@
 	import { DBType } from '../../ts/db/DBInterface';
 	import { h } from '../../ts/db/DBDispatch';
 
-	function handle_dbTypeAt(index) { dbDispatch.db_changeTo(menuItems[index].id); }
+	function handle_dbTypeAt(index) { dbDispatch.db_change_toType(menuItems[index].id); }
 
 	const menuItems = [
 		{ id: DBType.local,	   label: 'local', action: () => { handle_dbTypeAt(0); } },

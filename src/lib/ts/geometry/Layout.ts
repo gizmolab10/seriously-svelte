@@ -9,10 +9,12 @@ export default class Layout {
 	constructor(focusAncestry: Ancestry, origin: Point) {
 		let childAncestries = focusAncestry.childAncestries;
 		if (get(s_layout_asClusters)) {
-			this.cluster_layout(childAncestries, focusAncestry, Predicate.idContains, origin, true);
+			let points_out = true;
+			this.cluster_layout(childAncestries, focusAncestry, Predicate.contains, origin, points_out);
+			points_out = false;
 			for (const predicate of h.predicates) {
-				let ancestries = focusAncestry.thing?.oneAncestries_for(predicate) ?? [];
-				this.cluster_layout(ancestries, focusAncestry, predicate.id, origin, false);
+				let oneAncestries = focusAncestry.thing?.oneAncestries_for(predicate) ?? [];
+				this.cluster_layout(oneAncestries, focusAncestry, predicate, origin, points_out);
 			}
 		} else {
 			let index = 0;
@@ -37,18 +39,18 @@ export default class Layout {
 		return childHeight;
 	}
 
-	cluster_layout(ancestries: Array<Ancestry>, clusterPath: Ancestry, idPredicate: string, origin: Point, points_out: boolean) {
+	cluster_layout(ancestries: Array<Ancestry>, cluster_ancestry: Ancestry, predicate: Predicate | null, origin: Point, points_out: boolean) {
 		const count = ancestries.length;
-		if (count > 0) {
+		if (count > 0 && !!predicate) {
 			let index = 0;
 			const radius = k.necklace_radius;
 			const radial = new Point(radius + k.necklace_gap, 0);
-			const clusterLayout = new ClusterLayout(idPredicate, count, points_out);
+			const clusterLayout = new ClusterLayout(predicate, count, points_out);
 			while (index < count) {
 				const ancestry = ancestries[index];
 				const childAngle = this.childAngle_for(index, count, clusterLayout, radius);
 				const childOrigin = origin.offsetBy(radial.rotate_by(childAngle));
-				const map = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, ancestry, clusterPath, childAngle);
+				const map = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, ancestry, cluster_ancestry, childAngle);
 				this.childMapRects.push(map);
 				if (index == 0) {
 					clusterLayout.start_angle = childAngle;
@@ -75,7 +77,7 @@ export default class Layout {
 		}
 		let ratio = y / radius;
 		let angle = u.normalized_angle(-Math.asin(ratio));	// negate arc sign for clockwise
-		if (!clusterLayout.points_out && clusterLayout.idPredicate != Predicate.idIsRelated) {
+		if (!clusterLayout.points_out && clusterLayout.predicate?.id != Predicate.idIsRelated) {
 			angle = u.normalized_angle(Angle.half - angle);
 		}
 		if (unfit) {

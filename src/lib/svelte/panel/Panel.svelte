@@ -47,7 +47,7 @@
 				case 'c': g.graphOffset_setTo(new Point()); break;
 				case '?': $s_id_popupView = IDButton.help; break;
 				case ']':
-				case '[': dbDispatch.db_changeTo_next(key == ']'); break;
+				case '[': dbDispatch.db_change_toNext(key == ']'); break;
 				default:  await h.handle_key_down(event); break;
 			}
 		}
