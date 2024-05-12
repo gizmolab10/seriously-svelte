@@ -21,9 +21,9 @@ export default class Predicate extends RemoteIdentifiable {
 	static get idContains(): string { return this.id_forKind(PredicateKind.contains); }
 	get description(): string { return this.kind; }
 
-	clusterAngle_for(pointsTo: boolean): number {
+	clusterAngle_for(points_out: boolean): number {
 		const angle = get(s_cluster_angle);
-		return this.isBidirectional ? -angle : pointsTo ? angle / 2 : angle * 3.3;
+		return this.isBidirectional ? -angle : points_out ? angle / 2 : angle * 3.3;
 	}
 
 }

@@ -95,7 +95,7 @@ class Utilities {
 		}
 	}
 
-	hasPositiveX(angle: number): boolean {
+	angle_hasPositiveX(angle: number): boolean {
 		switch(this.quadrant_of(angle)) {
 			case Quadrant.upperRight: return true;
 			case Quadrant.lowerRight: return true;

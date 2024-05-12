@@ -37,13 +37,13 @@ export default class Layout {
 		return childHeight;
 	}
 
-	layoutCluster(ancestries: Array<Ancestry>, clusterPath: Ancestry, idPredicate: string, origin: Point, pointsTo: boolean) {
+	layoutCluster(ancestries: Array<Ancestry>, clusterPath: Ancestry, idPredicate: string, origin: Point, points_out: boolean) {
 		const count = ancestries.length;
 		if (count > 0) {
 			let index = 0;
 			const radius = k.necklace_radius;
 			const radial = new Point(radius + k.necklace_gap, 0);
-			const clusterLayout = new ClusterLayout(idPredicate, count, pointsTo);
+			const clusterLayout = new ClusterLayout(idPredicate, count, points_out);
 			while (index < count) {
 				const ancestry = ancestries[index];
 				const childAngle = this.childAngle_for(index, count, clusterLayout, radius);
@@ -65,7 +65,7 @@ export default class Layout {
 	childAngle_for(index: number, count: number, clusterLayout: ClusterLayout, radius: number): number {
 		const row = index - ((count - 1) / 2);					// row centered around zero
 		const radial = new Point(radius, 0);
-		const clusterAngle = clusterLayout.line_angle;			// depends on s_cluster_angle, predicate kind & pointsTo
+		const clusterAngle = clusterLayout.line_angle;			// depends on s_cluster_angle, predicate kind & points_out
 		const startY = radial.rotate_by(clusterAngle).y;	// height of clusterAngle
 		let y = startY + (row * k.row_height);				// height of row
 		let unfit = false;
@@ -75,7 +75,7 @@ export default class Layout {
 		}
 		let ratio = y / radius;
 		let angle = u.normalized_angle(-Math.asin(ratio));	// negate arc sign for clockwise
-		if (!clusterLayout.pointsTo && clusterLayout.idPredicate != Predicate.idIsRelated) {
+		if (!clusterLayout.points_out && clusterLayout.idPredicate != Predicate.idIsRelated) {
 			angle = u.normalized_angle(Angle.half - angle);
 		}
 		if (unfit) {

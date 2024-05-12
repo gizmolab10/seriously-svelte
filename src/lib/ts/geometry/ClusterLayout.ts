@@ -3,92 +3,89 @@ import { ArcKind } from '../common/Enumerations';
 import { h } from '../db/DBDispatch';
 
 export default class ClusterLayout {
+	line_length = k.cluster_line_length - k.necklace_gap / 2;
 	predicate: Predicate | null;
-	radius = k.necklace_radius;
-	arc_line_intersect: Point;
 	necklace_center: Point;
 	line_rotated: Point;
 	idPredicate: string;
+	points_out: boolean;
+	fork_origin: Point;
 	line_angle: number;
-	pointsTo: boolean;
 	start_angle = 0;
 	count: number;
 	end_angle = 0;
 
-	constructor(idPredicate: string, count: number, pointsTo: boolean) {
-		this.predicate = h.predicate_forID(idPredicate);
-		this.line_angle = this.predicate?.clusterAngle_for(pointsTo) ?? 0;
-		this.line_rotated = Point.polarVector(this.line_length, this.line_angle);
-		this.necklace_center = Point.square(this.radius)
+	constructor(idPredicate: string, count: number, points_out: boolean) {
+		const predicate = h.predicate_forID(idPredicate);
+		const angle = predicate?.clusterAngle_for(points_out) ?? 0;
+		const fork_offset = Point.fromPolar(k.necklace_radius, angle);
+		this.line_rotated = Point.fromPolar(this.line_length, angle);
+		this.necklace_center = Point.square(k.necklace_radius)
 		this.idPredicate = idPredicate;
-		this.pointsTo = pointsTo;
+		this.points_out = points_out;
+		this.predicate = predicate;
+		this.line_angle = angle
 		this.count = count;
-		const mysteryOffset = Point.square(-7);
-		const distance_toGap = k.cluster_line_length + 35;
-		const line_rotated = Point.polarVector(distance_toGap, this.line_angle);
-		this.arc_line_intersect = this.necklace_center.offsetBy(mysteryOffset).offsetBy(line_rotated);
+		this.fork_origin = this.necklace_center.offsetBy(fork_offset).offsetBy(Point.square(-7));
 	}
 
-	get line_length(): number { return k.cluster_line_length - k.necklace_gap / 2; }
-
-	get arcGapPath() {
+	get gap_svgPath() {
 		const breadth = k.necklace_gap;
-		return svgPaths.circle(breadth, breadth, this.arc_line_intersect);
+		return svgPaths.circle(breadth, breadth, this.fork_origin);
 	}
 
-	get title(): string {
-		const reversed = !this.pointsTo && this.predicate?.id == Predicate.idContains;
+	get line_title(): string {
+		const reversed = !this.points_out && this.predicate?.id == Predicate.idContains;
 		const shortened = this.predicate?.kind.unCamelCase().lastWord() ?? k.empty;
-		const other = this.pointsTo ? `${shortened} ${this.count}` : `${this.count} ${shortened}`
+		const other = this.points_out ? `${shortened} ${this.count}` : `${this.count} ${shortened}`
 		return reversed ? `is contained by ${this.count}` : other;
 	}
 
-	get keyedArcPaths(): { [key: string]: Array<string>} {
+	get arc_keyed_svgPaths(): { [key: string]: Array<string>} {
 		let dict: { [key: string]: Array<string>} = {};
-		dict[ArcKind.start] = this.arcStartAncestries;
-		dict[ArcKind.main] = this.arcMainPaths;
-		dict[ArcKind.gap] = [this.arcGapPath];
+		dict[ArcKind.main] = this.main_svgPaths;
+		dict[ArcKind.fork] = this.fork_svgPaths;
+		dict[ArcKind.gap] = [this.gap_svgPath];
 		return dict;
 	}
 
-	get arcStartAncestries() {
-		const radius = k.necklace_gap / 2;
-		const origin = this.arc_line_intersect;
-		const offset = Point.square(radius - 0.4);
+	get fork_svgPaths() {
+		const fork_radius = k.necklace_gap / 2;
+		const fork_offset = Point.square(fork_radius - 0.4);
 		const angle_a = this.line_angle - Angle.threeQuarters / 2;
 		const angle_b = this.line_angle + Angle.threeQuarters / 2;
-		const offset_a = Point.polarVector(radius + 3.6, angle_a).offsetBy(offset);
-		const offset_b = Point.polarVector(radius + 3.6, angle_b).offsetBy(offset);
-		const first = svgPaths.arc(origin.offsetBy(offset_a), radius, this.line_angle + Angle.quarter, this.line_angle, 1);
-		const second = svgPaths.arc(origin.offsetBy(offset_b), radius, this.line_angle, this.line_angle - Angle.quarter, 1);
+		const offset_a = Point.fromPolar(fork_radius + 3.6, angle_a).offsetBy(fork_offset);
+		const offset_b = Point.fromPolar(fork_radius + 3.6, angle_b).offsetBy(fork_offset);
+		const first = svgPaths.arc(this.fork_origin.offsetBy(offset_a), fork_radius, this.line_angle + Angle.quarter, this.line_angle, 1);
+		const second = svgPaths.arc(this.fork_origin.offsetBy(offset_b), fork_radius, this.line_angle, this.line_angle - Angle.quarter, 1);
 		return [first, second];
 	}
 
-	get arcMainPaths(): Array<string> {
-		const hasPositiveX = u.hasPositiveX(this.line_angle);
-		const bigArc_path = this.bigArc_path(hasPositiveX);
-		const end_smallArc_path = this.smallArc_path(this.end_angle, hasPositiveX, false);
-		const start_smallArc_path = this.smallArc_path(this.start_angle, hasPositiveX, true);
-		return [start_smallArc_path, bigArc_path, end_smallArc_path];
+	get main_svgPaths(): Array<string> {
+		const x_isPositive = u.angle_hasPositiveX(this.line_angle);
+		const big_svgPath = this.big_svgPath(x_isPositive);
+		const end_small_svgPath = this.small_svgPath(this.end_angle, x_isPositive, false);
+		const start_small_svgPath = this.small_svgPath(this.start_angle, x_isPositive, true);
+		return [start_small_svgPath, big_svgPath, end_small_svgPath];
 	}
 
-	bigArc_path(hasPositiveX: boolean) {
-		if (hasPositiveX) {
-			return svgPaths.arc(this.necklace_center, this.radius, this.start_angle, this.end_angle, 1);
+	big_svgPath(x_isPositive: boolean) {
+		if (x_isPositive) {
+			return svgPaths.arc(this.necklace_center, k.necklace_radius, this.start_angle, this.end_angle, 1);
 		} else {
-			return svgPaths.arc(this.necklace_center, this.radius, this.end_angle, this.start_angle, 1);
+			return svgPaths.arc(this.necklace_center, k.necklace_radius, this.end_angle, this.start_angle, 1);
 		}
 	}
 
-	smallArc_path(arc_angle: number, hasPositiveX: boolean, advance: boolean) {
-		const smallArc_radius = k.necklace_gap;
-		const necklace_center = Point.square(this.radius);
-		const ratio = (hasPositiveX == advance) ? -1 : 1.4;
-		const extended_radius = this.radius + smallArc_radius;
-		const smallArc_center = necklace_center.offsetBy(Point.polarVector(extended_radius, arc_angle));
+	small_svgPath(arc_angle: number, x_isPositive: boolean, advance: boolean) {
+		const arc_small_radius = k.necklace_gap;
+		const center = Point.square(k.necklace_radius);
+		const ratio = (x_isPositive == advance) ? -1 : 1.4;
+		const extended_radius = k.necklace_radius + arc_small_radius;
+		const smallArc_center = center.offsetBy(Point.fromPolar(extended_radius, arc_angle));
 		const startAngle = u.normalized_angle(arc_angle + (Math.PI * ratio));
 		const endAngle = u.normalized_angle(startAngle - (Math.PI / 2.5));
-		return svgPaths.arc(smallArc_center, smallArc_radius, startAngle, endAngle, 1);
+		return svgPaths.arc(smallArc_center, arc_small_radius, startAngle, endAngle, 1);
 	}
 
 }

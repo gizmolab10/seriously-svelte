@@ -26,7 +26,7 @@ export class Point {
 	offsetEquallyBy(offset: number):	 Point { return this.offsetBy(Point.square(offset)); }
 	static square(length: number):		 Point { return new Point(length, length); }
 	static get zero():					 Point { return new Point();}
-	static polarVector(r: number, phi: number) { return new Point(r, 0).rotate_by(phi); }
+	static fromPolar(r: number, phi: number) { return new Point(r, 0).rotate_by(phi); }
 
 	rotate_by(angle: number): Point {
 		const cos = Math.cos(angle);

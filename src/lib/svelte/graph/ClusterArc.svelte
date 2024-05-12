@@ -7,7 +7,7 @@
 	const offset = k.necklace_gap;
 	const radius = k.necklace_radius + offset;
 	const breadth = radius * 2;
-	let keyedArcPaths = layout.keyedArcPaths;
+	let arc_keyed_svgPaths = layout.arc_keyed_svgPaths;
 	let rebuilds = 0;
 
 </script>
@@ -22,11 +22,11 @@
 			zindex: {ZIndex.frontmost};
 			top: {center.y - radius}px;
 			left: {center.x - radius}px;'>
-		{#each keyedArcPaths[ArcKind.main] as path}
+		{#each arc_keyed_svgPaths[ArcKind.main] as path}
 			<path stroke={color} fill=transparent d={path}/>
 		{/each}
-		<path stroke={k.color_background} fill={k.color_background} d={keyedArcPaths[ArcKind.gap][0]}/>
-		{#each keyedArcPaths[ArcKind.start] as path}
+		<path stroke={k.color_background} fill={k.color_background} d={arc_keyed_svgPaths[ArcKind.gap][0]}/>
+		{#each arc_keyed_svgPaths[ArcKind.fork] as path}
 			<path stroke={color} fill=transparent d={path}/>
 		{/each}
 	</svg>
