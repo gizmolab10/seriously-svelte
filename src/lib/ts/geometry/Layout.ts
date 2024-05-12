@@ -9,10 +9,10 @@ export default class Layout {
 	constructor(focusAncestry: Ancestry, origin: Point) {
 		let childAncestries = focusAncestry.childAncestries;
 		if (get(s_layout_asClusters)) {
-			this.layoutCluster(childAncestries, focusAncestry, Predicate.idContains, origin, true);
+			this.cluster_layout(childAncestries, focusAncestry, Predicate.idContains, origin, true);
 			for (const predicate of h.predicates) {
 				let ancestries = focusAncestry.thing?.oneAncestries_for(predicate) ?? [];
-				this.layoutCluster(ancestries, focusAncestry, predicate.id, origin, false);
+				this.cluster_layout(ancestries, focusAncestry, predicate.id, origin, false);
 			}
 		} else {
 			let index = 0;
@@ -20,13 +20,13 @@ export default class Layout {
 			let sum = -focusAncestry.visibleProgeny_height() / 2; // start out negative and grow positive
 			while (index < length) {
 				const childAncestry = childAncestries[index];
-				sum += this.layoutChildren(sum, childAncestry, focusAncestry, origin);
+				sum += this.tree_layout(sum, childAncestry, focusAncestry, origin);
 				index += 1;
 			}
 		}
 	}
 
-	layoutChildren(sum: number, childAncestry: Ancestry, ancestry: Ancestry, origin: Point) {
+	tree_layout(sum: number, childAncestry: Ancestry, ancestry: Ancestry, origin: Point) {
 		const childHeight = childAncestry.visibleProgeny_height();
 		const sizeY = sum + childHeight / 2;
 		const direction = this.getDirection(sizeY);
@@ -37,7 +37,7 @@ export default class Layout {
 		return childHeight;
 	}
 
-	layoutCluster(ancestries: Array<Ancestry>, clusterPath: Ancestry, idPredicate: string, origin: Point, points_out: boolean) {
+	cluster_layout(ancestries: Array<Ancestry>, clusterPath: Ancestry, idPredicate: string, origin: Point, points_out: boolean) {
 		const count = ancestries.length;
 		if (count > 0) {
 			let index = 0;
@@ -63,11 +63,11 @@ export default class Layout {
 	}
 
 	childAngle_for(index: number, count: number, clusterLayout: ClusterLayout, radius: number): number {
-		const row = index - ((count - 1) / 2);					// row centered around zero
+		const row = index - ((count - 1) / 2);				// row centered around zero
 		const radial = new Point(radius, 0);
-		const clusterAngle = clusterLayout.line_angle;			// depends on s_cluster_angle, predicate kind & points_out
+		const clusterAngle = clusterLayout.line_angle;		// depends on s_cluster_angle, predicate kind & points_out
 		const startY = radial.rotate_by(clusterAngle).y;	// height of clusterAngle
-		let y = startY + (row * k.row_height);				// height of row
+		let y = startY + (row * (k.row_height - 2));		// height of row
 		let unfit = false;
 		if (Math.abs(y) > radius) {
 			unfit = true;

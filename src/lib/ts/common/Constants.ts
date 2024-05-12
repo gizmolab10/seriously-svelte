@@ -55,7 +55,7 @@ export default class Constants {
 	}
 
 	constructor() {
-		this.row_height = this.dot_size + 7;	// TODO: target: 4
+		this.row_height = this.dot_size + 7;
 		this.cluster_offsetY = 4 - this.dot_size;
 		this.queryString = new URLSearchParams(window.location.search);
 		this.necklace_radius = this.cluster_inside_radius + this.cluster_line_length;
