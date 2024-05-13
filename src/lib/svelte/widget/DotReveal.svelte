@@ -11,7 +11,7 @@
 	let tinyDotsOffset = size * -0.4 + 0.01;
 	let childrenCount = ancestry.childRelationships.length;
 	let insideFillColor = k.color_background;
-	let insidePath = svgPaths.circle(16, 6);
+	let insidePath = svgPaths.circle_atOffset(16, 6);
 	let fillColor = k.color_background;
 	let strokeColor = ancestry.thing.color;
 	let revealWrapper = Wrapper;
@@ -72,7 +72,7 @@
 		hasInsidePath = ancestry.toolsGrabbed || thing.isBulkAlias;
 		insideOffset = hasInsidePath ? 0 : -1;
 		if (!ancestry.showsReveal || ancestry.toolsGrabbed) {
-			svgPath = svgPaths.circle(size, size - 1);
+			svgPath = svgPaths.circle_atOffset(size, size - 1);
 		} else {
 			const goLeft = ancestry.showsChildRelationships;
 			const direction = goLeft ? Direction.left : Direction.right;
@@ -81,7 +81,7 @@
 		if (ancestry.toolsGrabbed) {
 			insidePath = svgPaths.x_cross(size, 1.5);
 		} else if (hasInsidePath) {
-			insidePath = svgPaths.circle(size, 3);
+			insidePath = svgPaths.circle_atOffset(size, 3);
 		}
 	}
 

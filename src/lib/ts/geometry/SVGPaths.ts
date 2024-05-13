@@ -26,10 +26,14 @@ export default class SVGPaths {
         return `M${margin + 2} ${radius} L${length + 1} ${radius} M${radius} ${margin + 2} L${radius} ${diameter - margin - 2}`;
     }
 
-    circle(width: number, diameter: number, offset: Point = new Point()): string {
-        const radius = diameter / 2;
-        const center = width / 2;
-        return `M${center + offset.x} ${center+ offset.y} m${-radius} 0a${radius} ${radius} 0 1,0 ${diameter} 0a${radius} ${radius} 0 1,0 ${-diameter} 0`;
+    circle_atOffset(width: number, diameter: number, offset: Point = new Point()): string {
+        const center = offset.offsetEquallyBy(width / 2);
+		return this.circle(center, diameter / 2);
+    }
+
+    circle(center: Point, radius: number): string {
+		const diameter = radius * 2;
+        return `M${center.x} ${center.y} m${-radius} 0a${radius} ${radius} 0 1,0 ${diameter} 0a${radius} ${radius} 0 1,0 ${-diameter} 0`;
     }
 
     oval(diameter: number, horizontal: boolean = true, eccentricity: number = 2.3): string {

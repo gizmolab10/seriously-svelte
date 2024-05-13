@@ -138,14 +138,14 @@
 				tinyDotsPath = svgPaths.ellipses(6, 0.5, false, count, size / 2);
 			}
 			if (thing.hasRelated) {
-				relatedAncestry = svgPaths.circle(size, 3, new Point(-4.5, 0));
+				relatedAncestry = svgPaths.circle_atOffset(size, 3, new Point(-4.5, 0));
 			}
 		}
 	}
 
 	function updateAncestries() {
 		if ($s_layout_asClusters && !ancestry?.isExemplar) {
-			scalablePath = svgPaths.circle(size, size - 1);
+			scalablePath = svgPaths.circle_atOffset(size, size - 1);
 		} else {
 			scalablePath = svgPaths.oval(size, false);
 		}

@@ -8,9 +8,9 @@ export default class Constants {
 	halfIncrement = 0.5;
 	thing_fontSize = 14;
 	height_titleAtTop = 50;
-	cluster_line_length = 80;
+	cluster_arc_radius = 100;
 	threshold_longClick = 500;
-	cluster_inside_radius = 35;
+	cluster_inside_radius = 30;
 	editingTools_diameter = 64;
 	threshold_doubleClick = 100;
 	hid_unknown = 1000000000000;
@@ -21,10 +21,10 @@ export default class Constants {
     color_disabled = 'lightGray';
 	baseID_local = 'handcrafted';
 	color_background = 'white';
+	ancestrySeparator = '::';
     color_default = 'blue';
 	id_unknown = 'unknown';
 	exemplar = 'exemplar';
-	ancestrySeparator = '::';
 	newLine = '\n';
 	comma = ',';
 	space = ' ';
@@ -36,7 +36,7 @@ export default class Constants {
 	allow_TitleEditing = true;
 	allow_HorizontalScrolling = true;
 	queryString: URLSearchParams;
-	necklace_radius: number;
+	cluster_line_length: number;
 	cluster_offsetY: number;
 	row_height: number;
 
@@ -58,7 +58,7 @@ export default class Constants {
 		this.row_height = this.dot_size + 7;
 		this.cluster_offsetY = 4 - this.dot_size;
 		this.queryString = new URLSearchParams(window.location.search);
-		this.necklace_radius = this.cluster_inside_radius + this.cluster_line_length;
+		this.cluster_line_length = this.cluster_arc_radius - this.cluster_inside_radius;
 	}
 
 }

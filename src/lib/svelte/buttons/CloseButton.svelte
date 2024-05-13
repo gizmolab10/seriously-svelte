@@ -4,7 +4,7 @@
 	import SVGD3 from '../kit/SVGD3.svelte';
     export let size = 20;
     const cross = svgPaths.x_cross(size, size / 6);
-    const circle = svgPaths.circle(size, size - 2);
+    const circle = svgPaths.circle_atOffset(size, size - 2);
 </script>
 
 <style>

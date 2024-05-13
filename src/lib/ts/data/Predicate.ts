@@ -1,4 +1,4 @@
-import { get, dbDispatch, PredicateKind } from '../common/GlobalImports';
+import { u, get, dbDispatch, PredicateKind } from '../common/GlobalImports';
 import RemoteIdentifiable from "../structures/RemoteIdentifiable";
 import { s_cluster_angle } from '../state/State';
 import { h } from '../../ts/db/DBDispatch';
@@ -21,9 +21,9 @@ export default class Predicate extends RemoteIdentifiable {
 	static get idContains(): string { return this.id_forKind(PredicateKind.contains); }
 	get description(): string { return this.kind; }
 
-	cluster_angle_for(points_out: boolean): number {
+	angle_ofLine_for(points_out: boolean): number {
 		const angle = get(s_cluster_angle);
-		return this.isBidirectional ? -angle : points_out ? angle / 2 : angle * 3.3;
+		return u.normalized_angle(this.isBidirectional ? -angle : points_out ? angle / 2 : angle * 3.3);
 	}
 
 }

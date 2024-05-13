@@ -5,10 +5,13 @@
 	export let center = Point.zero;
 	export let color = 'red';
 	const offset = k.necklace_gap;
-	const radius = k.necklace_radius + offset;
+	const radius = k.cluster_arc_radius + offset;
 	const breadth = radius * 2;
 	let arc_keyed_svgPaths = cluster_layout.arc_keyed_svgPaths;
 	let rebuilds = 0;
+		// {#each arc_keyed_svgPaths[ArcKind.fork] as path}
+		// 	<path stroke={color} fill=transparent d={path}/>
+		// {/each}
 
 </script>
 
@@ -26,8 +29,5 @@
 			<path stroke={color} fill=transparent d={path}/>
 		{/each}
 		<path stroke={color} fill={k.color_background} d={arc_keyed_svgPaths[ArcKind.gap][0]}/>
-		{#each arc_keyed_svgPaths[ArcKind.fork] as path}
-			<path stroke={color} fill=transparent d={path}/>
-		{/each}
 	</svg>
 {/key}

@@ -7,15 +7,17 @@
 	export let center = Point.zero;
 	export let color = k.color_default;
     export let cluster_layout: ClusterLayout;
-	const idDiv = `${cluster_layout?.points_out ? 'child' : 'parent'} ${cluster_layout?.predicate?.kind}`;
 	const show_arrowheads = k.show_arrowheads;
+	const idDiv = `${cluster_layout?.points_out ? 'child' : 'parent'} ${cluster_layout?.predicate?.kind}`;
+	let style = `position: absolute; z-index: ${ZIndex.lines};`;
+	let title_origin = Point.zero;
+	let line_origin = Point.zero;
 	let arrow_start = Point.zero;
 	let arrow_end = Point.zero;
 	let lineWrapper: Wrapper;
 	let svgPath = k.empty;
+	let viewBox = k.empty;
 	let size = Size.zero;
-	let label_left = 0;
-	let label_top = 0;
 	let thickness = 5;
 	let angle = 0;
 	let left = 0;
@@ -26,63 +28,62 @@
 		if (line && !lineWrapper) {
 			lineWrapper = new Wrapper(line, h.rootAncestry, IDWrapper.line);
 		}
-		angle = cluster_layout?.line_angle;
-		const line_rotated = cluster_layout?.line_rotated;
-		const title_width = u.getWidthOf(cluster_layout?.line_title) / -3;
+		angle = cluster_layout?.angle_ofLine;
+		const line_tip = cluster_layout?.line_tip;
 		const inside_radius = k.cluster_inside_radius + (show_arrowheads ? 8 : 0);
 		const inside_rotated = Point.fromPolar(inside_radius, angle);
-		const titleDelta = new Point(title_width, k.dot_size / -2);
-		size = line_rotated.abs.asSize;
+		const line_offset = updateLine(line_tip, inside_rotated);
+		const title_x = u.getWidthOf(cluster_layout?.line_title) / -2.5;
+		const title_offset = new Point(title_x, k.dot_size / -3);
+		size = line_tip.abs.asSize;
 		const rect = new Rect(Point.zero, size);
-		const titleCenter = rect.center;
-		const titleOrigin = titleCenter.offsetBy(titleDelta);
-		svgPath = svgPaths.line(line_rotated);
-		[left, top] = updateLine(line_rotated, inside_rotated);
+		line_origin = center.offsetBy(line_offset);
+		svgPath = svgPaths.line(line_tip);
+		viewBox = `0, 0, ${size.width}, ${size.height}`;
+		title_origin = rect.center.offsetBy(title_offset);
 		[arrow_start, arrow_end] = rect.cornersForAngle(angle);
-		label_left = titleOrigin.x;
-		label_top = titleOrigin.y;
 	}
 
-	function updateLine(line_rotated: Point, inside_rotated: Point): [number, number] {
+	function updateLine(line_tip: Point, inside_rotated: Point): [number, number] {
 		let outside_rotated = inside_rotated;
 		if (cluster_layout?.predicate?.isBidirectional || !cluster_layout?.points_out) {
-			outside_rotated = inside_rotated.offsetBy(line_rotated);
+			outside_rotated = inside_rotated.offsetBy(line_tip);
 		}
-		switch (u.point_quadrant(line_rotated)) {
-			case Quadrant.upperRight: return [ inside_rotated.x,  inside_rotated.y];
-			case Quadrant.lowerRight: return [ inside_rotated.x, outside_rotated.y];
-			case Quadrant.upperLeft:  return [outside_rotated.x,  inside_rotated.y];
-			default:				  return [outside_rotated.x, outside_rotated.y];		
+		switch (u.point_quadrant(line_tip)) {
+			case Quadrant.upperRight: return new Point( inside_rotated.x,  inside_rotated.y);
+			case Quadrant.lowerRight: return new Point( inside_rotated.x, outside_rotated.y);
+			case Quadrant.upperLeft:  return new Point(outside_rotated.x,  inside_rotated.y);
+			default:				  return new Point(outside_rotated.x, outside_rotated.y);		
 		}
 	}
+
+		// <div class='cluster-line-label' style='
+		// 	background-color: {k.color_background};
+		// 	left: {title_origin.x}px;
+		// 	top: {title_origin.y}px;
+		// 	white-space: nowrap;
+		// 	position: absolute;
+		// 	font-family: Arial;
+		// 	font-size: 0.5em;
+		// 	color: {color};'>
+		// 	{cluster_layout?.line_title}
+		// </div>
 
 </script>
 
 {#key rebuilds}
-	<div class='cluster-line'
-		id={idDiv}
-		style='z-index: {ZIndex.lines};
-			position: absolute;
-			top: {top + center.y}px;
-			left: {left + center.x}px;'>
+	<div class='cluster-line' id={idDiv}
+		style='position: absolute;
+			top: {line_origin.y}px;
+			left: {line_origin.x}px;
+			z-index: {ZIndex.lines};'>
 		<svg class='svg-cluster-line'
 			bind:this={line}
+			viewBox={viewBox}
 			width={size.width}px
 			height={size.height}px>
-			style='z-index: ${ZIndex.lines}; position: absolute'
 			<path d={svgPath} stroke={color} fill='none'/>
 		</svg>
-		<div class='label-cluster-line' style='
-			background-color: {k.color_background};
-			left: {label_left}px;
-			white-space: nowrap;
-			position: absolute;
-			font-family: Arial;
-			top: {label_top}px;
-			font-size: 0.5em;
-			color: {color};'>
-			{cluster_layout?.line_title}
-		</div>
 		{#if show_arrowheads}
 			{#if cluster_layout?.predicate?.isBidirectional}
 				<ArrowHead idDiv='child'  angle={angle} color={color} color_background={color} radius={thickness} center={arrow_end}/>

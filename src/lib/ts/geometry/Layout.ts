@@ -43,7 +43,7 @@ export default class Layout {
 		const count = ancestries.length;
 		if (count > 0 && !!predicate) {
 			let index = 0;
-			const radius = k.necklace_radius;
+			const radius = k.cluster_arc_radius;
 			const radial = new Point(radius + k.necklace_gap, 0);
 			const clusterLayout = new ClusterLayout(predicate, count, points_out);
 			while (index < count) {
@@ -53,11 +53,11 @@ export default class Layout {
 				const map = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, ancestry, cluster_ancestry, childAngle);
 				this.childMapRects.push(map);
 				if (index == 0) {
-					clusterLayout.start_angle = childAngle;
+					clusterLayout.angle_atStart = childAngle;
 				}
 				index += 1;
 				if (index == count) {
-					clusterLayout.end_angle = childAngle;
+					clusterLayout.angle_atEnd = childAngle;
 				}
 			}
 			this.clusterLayouts.push(clusterLayout);
@@ -67,7 +67,7 @@ export default class Layout {
 	childAngle_for(index: number, count: number, clusterLayout: ClusterLayout, radius: number): number {
 		const row = index - ((count - 1) / 2);				// row centered around zero
 		const radial = new Point(radius, 0);
-		const clusterAngle = clusterLayout.line_angle;		// depends on s_cluster_angle, predicate kind & points_out
+		const clusterAngle = clusterLayout.angle_ofLine;	// depends on s_cluster_angle, predicate kind & points_out
 		const startY = radial.rotate_by(clusterAngle).y;	// height of clusterAngle
 		let y = startY + (row * (k.row_height - 2));		// height of row
 		let unfit = false;
@@ -76,16 +76,16 @@ export default class Layout {
 			y = radius - (y % radius);
 		}
 		let ratio = y / radius;
-		let angle = u.normalized_angle(-Math.asin(ratio));	// negate arc sign for clockwise
+		let angle = -Math.asin(ratio);	// negate arc sign for clockwise
 		if (!clusterLayout.points_out && clusterLayout.predicate?.id != Predicate.idIsRelated) {
-			angle = u.normalized_angle(Angle.half - angle);
+			angle = Angle.half - angle;
 		}
 		if (unfit) {
 			const quadrant = u.quadrant_of(angle);
 			const pivot = u.startAngle_ofQuadrant(quadrant);
-			angle = u.normalized_angle(-angle - Angle.quarter + pivot);
+			angle = pivot - Angle.quarter - angle;
 		}
-		return angle;
+		return u.normalized_angle(angle);
 	}
 
 	originForChildrenOf(childAncestry: Ancestry, origin: Point, extent: Point): Point {

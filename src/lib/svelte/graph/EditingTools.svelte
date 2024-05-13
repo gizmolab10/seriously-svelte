@@ -250,7 +250,7 @@
 				hover_closure={(isFilled) => { return fillColorsFor(IDTool.next, isFilled) }}
 				mouse_click_closure={(event, isLong) => handle_mouse_click(IDTool.next, event, isLong)}
 				cursor={isDisabledFor(IDTool.next) ? 'normal' : 'pointer'}
-				extraPath={svgPaths.circle(toolDiameter, 4)}
+				extraPath={svgPaths.circle_atOffset(toolDiameter, 4)}
 				center={getC(IDTool.next)}
 				direction={Direction.up}
 				size={toolDiameter}
