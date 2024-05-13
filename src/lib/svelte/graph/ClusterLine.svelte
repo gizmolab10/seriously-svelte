@@ -33,7 +33,7 @@
 		const inside_radius = k.cluster_inside_radius + (show_arrowheads ? 8 : 0);
 		const inside_rotated = Point.fromPolar(inside_radius, angle);
 		const line_offset = updateLine(line_tip, inside_rotated);
-		const title_x = u.getWidthOf(cluster_layout?.line_title) / -2.5;
+		const title_x = u.getWidthOf(cluster_layout?.line_title) / -3;
 		const title_offset = new Point(title_x, k.dot_size / -3);
 		size = line_tip.abs.asSize;
 		const rect = new Rect(Point.zero, size);
@@ -57,18 +57,6 @@
 		}
 	}
 
-		// <div class='cluster-line-label' style='
-		// 	background-color: {k.color_background};
-		// 	left: {title_origin.x}px;
-		// 	top: {title_origin.y}px;
-		// 	white-space: nowrap;
-		// 	position: absolute;
-		// 	font-family: Arial;
-		// 	font-size: 0.5em;
-		// 	color: {color};'>
-		// 	{cluster_layout?.line_title}
-		// </div>
-
 </script>
 
 {#key rebuilds}
@@ -84,6 +72,17 @@
 			height={size.height}px>
 			<path d={svgPath} stroke={color} fill='none'/>
 		</svg>
+		<div class='cluster-line-label' style='
+			background-color: {k.color_background};
+			left: {title_origin.x}px;
+			top: {title_origin.y}px;
+			white-space: nowrap;
+			position: absolute;
+			font-family: Arial;
+			font-size: 0.5em;
+			color: {color};'>
+			{cluster_layout?.line_title}
+		</div>
 		{#if show_arrowheads}
 			{#if cluster_layout?.predicate?.isBidirectional}
 				<ArrowHead idDiv='child'  angle={angle} color={color} color_background={color} radius={thickness} center={arrow_end}/>

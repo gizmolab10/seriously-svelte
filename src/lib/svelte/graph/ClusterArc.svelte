@@ -9,9 +9,6 @@
 	const breadth = radius * 2;
 	let arc_keyed_svgPaths = cluster_layout.arc_keyed_svgPaths;
 	let rebuilds = 0;
-		// {#each arc_keyed_svgPaths[ArcKind.fork] as path}
-		// 	<path stroke={color} fill=transparent d={path}/>
-		// {/each}
 
 </script>
 
@@ -28,6 +25,9 @@
 		{#each arc_keyed_svgPaths[ArcKind.main] as path}
 			<path stroke={color} fill=transparent d={path}/>
 		{/each}
-		<path stroke={color} fill={k.color_background} d={arc_keyed_svgPaths[ArcKind.gap][0]}/>
+		<path stroke={k.color_background} fill={k.color_background} d={arc_keyed_svgPaths[ArcKind.gap][0]}/>
+		{#each arc_keyed_svgPaths[ArcKind.fork] as path}
+			<path stroke={color} fill=transparent d={path}/>
+		{/each}
 	</svg>
 {/key}
