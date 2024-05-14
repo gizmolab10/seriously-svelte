@@ -43,6 +43,7 @@ export default class DBDispatch {
 	async db_setupData_forType(type: string) {
 		this.db_changeTypeTo_for(type);
 		this.queryStrings_apply();
+		debug.log_beat('db_setupData_forType start');
 		await this.hierarchy_fetch_andBuild(type);
 		persistLocal.ancestries_restore(true);
 		s_ancestry_editingTools.set(null);
