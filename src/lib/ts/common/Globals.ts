@@ -6,10 +6,12 @@ class Globals {
 	mouseLocation!: Point;
 
 	setup() {
+		const dbType = dbDispatch.db.dbType;
 		const baseID = dbDispatch.db.baseID;
-		const name = baseID ? (baseID! + ', ') : k.empty;
 		const host = u.isServerLocal ? 'local' : 'remote';
-		document.title = `Seriously (${host}, ${name}${u.browserType}, α)`;
+		const db_name = dbType ? (dbType! + ', ') : k.empty;
+		const base_name = baseID ? (baseID! + ', ') : k.empty;
+		document.title = `Seriously (${host}, ${db_name}${base_name}${u.browserType}, α)`;
 		builds.setup();
 		persistLocal.restore();
 		k.queryStrings_apply();

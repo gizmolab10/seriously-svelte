@@ -1,21 +1,21 @@
+import { s_ancestry_focus, s_ancestries_grabbed, s_title_editing, s_layout_asClusters } from '../state/State';
 import { k, u, get, Rect, Size, Thing, debug, signals, Wrapper, IDWrapper } from '../common/GlobalImports';
 import { Predicate, TitleState, Relationship, PredicateKind, Alteration } from '../common/GlobalImports';
-import { s_ancestry_focus, s_ancestries_grabbed, s_title_editing, s_layout_asClusters } from '../state/State';
 import { s_ancestries_expanded, s_ancestry_editingTools, s_altering } from '../state/State';
-import { h } from '../db/DBDispatch';
 import { Writable } from 'svelte/store';
+import { h } from '../db/DBDispatch';
 
 export default class Ancestry {
 	wrappers: { [type: string]: Wrapper } = {};
 	_thing: Thing | null = null;
-	idPredicate: string;
 	ancestryString: string;
 	ancestryHash: number;
+	idPredicate: string;
 
 	constructor(ancestryString: string = k.empty, idPredicate: string = Predicate.idContains) {
 		this.ancestryHash = ancestryString.hash();
-		this.idPredicate = idPredicate;
 		this.ancestryString = ancestryString;
+		this.idPredicate = idPredicate;
 		if (h?.isAssembled) {
 			this.subscriptions_setup();			// not needed during hierarchy assembly
 		}

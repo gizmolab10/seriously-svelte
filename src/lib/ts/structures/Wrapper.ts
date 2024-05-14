@@ -14,7 +14,7 @@ export default class Wrapper extends Identifiable {
     ancestry: Ancestry;
 
     constructor(component: any, ancestry: Ancestry, type: IDWrapper) {
-		super(null);
+		super();
         this.component = component;
         this.type = type;
         this.ancestry = ancestry;
