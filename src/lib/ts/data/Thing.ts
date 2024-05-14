@@ -1,5 +1,5 @@
+import { k, u, get, Datum, debug, IDTrait, Ancestry, Predicate } from '../common/GlobalImports';
 import { DebugFlag, dbDispatch, Relationship, SeriouslyRange } from '../common/GlobalImports';
-import { k, u, get, Ancestry, Datum, debug, IDTrait, Predicate } from '../common/GlobalImports';
 import { s_ancestry_focus, s_ancestries_expanded } from '../state/State';
 import { h } from '../db/DBDispatch';
 import Airtable from 'airtable';

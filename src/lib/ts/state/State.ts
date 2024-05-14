@@ -1,4 +1,4 @@
-import { Rect, Ancestry, Point, TitleState, AlterationState } from '../common/GlobalImports';
+import { Rect, Point, Ancestry, TitleState, AlterationState } from '../common/GlobalImports';
 import { signals } from '../common/Signals';
 import { writable } from 'svelte/store';
 

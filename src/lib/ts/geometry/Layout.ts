@@ -1,4 +1,4 @@
-import { k, u, get, Ancestry, Rect, Size, Point, Angle, IDLine, Predicate, ChildMapRect, ClusterLayout } from '../common/GlobalImports';
+import { k, u, get, Rect, Size, Point, Angle, IDLine, Ancestry, Predicate, ChildMapRect, ClusterLayout } from '../common/GlobalImports';
 import { s_layout_asClusters } from '../state/State';
 import { h } from '../db/DBDispatch';
 

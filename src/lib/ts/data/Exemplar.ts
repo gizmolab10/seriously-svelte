@@ -1,4 +1,4 @@
-import { k, Ancestry, Thing } from '../common/GlobalImports'
+import { k, Thing, Ancestry } from '../common/GlobalImports'
 
 class Exemplar extends Thing {
 

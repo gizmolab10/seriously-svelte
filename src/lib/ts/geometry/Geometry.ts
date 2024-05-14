@@ -1,4 +1,4 @@
-import { u, Ancestry, Thing, Quadrant } from '../common/GlobalImports'
+import { u, Thing, Quadrant, Ancestry } from '../common/GlobalImports'
 
 export class Point {
 	x: number;

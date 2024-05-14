@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, Ancestry, Size, Point, Thing, ZIndex, signals, svgPaths, onMount, dbDispatch, Direction } from '../../ts/common/GlobalImports';
+	import { k, u, Size, Point, Thing, ZIndex, signals, svgPaths, onMount, Ancestry, dbDispatch, Direction } from '../../ts/common/GlobalImports';
 	import { s_ancestry_focus, s_graphRect, s_show_details, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/State';
 	import CrumbButton from '../buttons/CrumbButton.svelte';
 	import { h } from '../../ts/db/DBDispatch';
