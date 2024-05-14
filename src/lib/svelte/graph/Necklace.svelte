@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, Point, ZIndex, signals, onMount, Layout, ClusterLayout } from '../../ts/common/GlobalImports';
+	import { k, Point, ZIndex, signals, onMount, Layout, debugReact, ClusterLayout } from '../../ts/common/GlobalImports';
 	import ClusterLine from './ClusterLine.svelte';
 	import ClusterArc from './ClusterArc.svelte';
 	import Widget from '../widget/Widget.svelte';
