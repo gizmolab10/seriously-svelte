@@ -8,22 +8,16 @@ export default class Layout {
 
 	constructor(focusAncestry: Ancestry, origin: Point) {
 		let childAncestries = focusAncestry.childAncestries;
-		if (get(s_layout_asClusters)) {
-			let points_out = true;
-			this.cluster_layout(childAncestries, focusAncestry, Predicate.contains, origin, points_out);
-			points_out = false;
-			for (const predicate of h.predicates) {
-				let oneAncestries = focusAncestry.thing?.oneAncestries_for(predicate) ?? [];
-				this.cluster_layout(oneAncestries, focusAncestry, predicate, origin, points_out);
+		if (!get(s_layout_asClusters)) {
+			let sum = -focusAncestry.visibleProgeny_height() / 2; // start out negative and grow positive
+			for (const childAncestry of childAncestries) {
+				sum += this.tree_layout(sum, childAncestry, focusAncestry, origin);
 			}
 		} else {
-			let index = 0;
-			const length = childAncestries.length;
-			let sum = -focusAncestry.visibleProgeny_height() / 2; // start out negative and grow positive
-			while (index < length) {
-				const childAncestry = childAncestries[index];
-				sum += this.tree_layout(sum, childAncestry, focusAncestry, origin);
-				index += 1;
+			this.cluster_layout(childAncestries, focusAncestry, Predicate.contains, origin, true);
+			for (const predicate of h.predicates) {
+				let oneAncestries = focusAncestry.thing?.oneAncestries_for(predicate) ?? [];
+				this.cluster_layout(oneAncestries, focusAncestry, predicate, origin, false);
 			}
 		}
 	}
