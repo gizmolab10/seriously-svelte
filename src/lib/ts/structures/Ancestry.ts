@@ -478,18 +478,15 @@ export default class Ancestry {
 	becomeFocus(): boolean {
 		const changed = !(get(s_ancestry_focus)?.matchesAncestry(this) ?? false);
 		s_ancestry_editingTools.set(null);
-		debug.log_remote('becomeFocus 1');
 		if (changed) {
 			const grabbedAncestry = h.grabs.latestAncestryGrabbed(true)
 			s_ancestry_focus.set(this);
-			debug.log_remote('becomeFocus changed');
 			this.expand();
 			if (!!grabbedAncestry && !grabbedAncestry.isVisible) {
 				grabbedAncestry.ungrab()
 				this.grab();
 			}
 		}
-		debug.log_remote('becomeFocus 2');
 		return changed;
 	}
 

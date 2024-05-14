@@ -1,4 +1,4 @@
-import { k, u, get, User, Ancestry, Thing, Grabs, debug, Access, IDTool, IDTrait, signals } from '../common/GlobalImports';
+import { k, u, get, User, Thing, Grabs, debug, Access, IDTool, IDTrait, signals, Ancestry } from '../common/GlobalImports';
 import { Wrapper, Predicate, Relationship, Alteration, AlterationState, CreationOptions } from '../common/GlobalImports';
 import { s_ancestries_grabbed, s_things_arrived, s_ancestry_editingTools } from '../state/State';
 import { s_isBusy, s_altering, s_ancestry_focus, s_title_editing } from '../state/State';
