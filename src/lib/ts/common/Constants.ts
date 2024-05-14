@@ -4,11 +4,11 @@ export default class Constants {
 	necklace_gap = 12;	// TODO: target: 12
 	line_stretch = 25;
 	height_banner = 35;
-	width_details = 200;
 	halfIncrement = 0.5;
 	thing_fontSize = 14;
+	width_details = 200;
 	height_titleAtTop = 50;
-	cluster_arc_radius = 100;
+	cluster_arc_radius = 120;
 	threshold_longClick = 500;
 	cluster_inside_radius = 30;
 	editingTools_diameter = 64;
