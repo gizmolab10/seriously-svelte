@@ -6,12 +6,6 @@ class Globals {
 	mouseLocation!: Point;
 
 	setup() {
-		const dbType = dbDispatch.db.dbType;
-		const baseID = dbDispatch.db.baseID;
-		const host = u.isServerLocal ? 'local' : 'remote';
-		const db_name = dbType ? (dbType! + ', ') : k.empty;
-		const base_name = baseID ? (baseID! + ', ') : k.empty;
-		document.title = `Seriously (${host}, ${db_name}${base_name}${u.browserType}, α)`;
 		builds.setup();
 		persistLocal.restore();
 		k.queryStrings_apply();
@@ -26,7 +20,16 @@ class Globals {
 			// alert('mousedown');
 		});
 	}
- 
+
+	get siteTitle(): string {
+		const dbType = dbDispatch.db.dbType;
+		const baseID = dbDispatch.db.baseID;
+		const host = u.isServerLocal ? 'local' : 'remote';
+		const db_name = dbType ? (dbType! + ', ') : k.empty;
+		const base_name = baseID ? (baseID! + ', ') : k.empty;
+		return `Seriously (${host}, ${db_name}${base_name}${u.browserType}, α)`;
+	}
+
 	zoomBy(factor: number): number {
 		const zoomContainer = document.documentElement;
 		const currentScale = parseFloat(getComputedStyle(zoomContainer).getPropertyValue('zoom')) || 1;

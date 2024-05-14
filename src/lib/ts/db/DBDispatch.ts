@@ -1,4 +1,4 @@
-import { k, signals, Hierarchy, IDPersistant, persistLocal } from '../common/GlobalImports';
+import { g, k, signals, Hierarchy, IDPersistant, persistLocal } from '../common/GlobalImports';
 import { s_isBusy, s_db_type, s_db_loadTime, s_title_editing } from '../state/State';
 import { s_things_arrived, s_ancestry_editingTools } from '../state/State';
 import { dbFirebase } from './DBFirebase';
