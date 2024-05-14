@@ -1,4 +1,4 @@
-import { g, k, signals, Hierarchy, IDPersistant, persistLocal } from '../common/GlobalImports';
+import { g, k, debug, signals, Hierarchy, IDPersistant, persistLocal } from '../common/GlobalImports';
 import { s_isBusy, s_db_type, s_db_loadTime, s_title_editing } from '../state/State';
 import { s_things_arrived, s_ancestry_editingTools } from '../state/State';
 import { dbFirebase } from './DBFirebase';
@@ -43,11 +43,14 @@ export default class DBDispatch {
 	async db_setupData_forType(type: string) {
 		this.db_changeTypeTo_for(type);
 		this.queryStrings_apply();
+		debug.log_remote('db_setupData_forType 1');
 		await this.hierarchy_fetch_andBuild(type);
+		debug.log_remote('db_setupData_forType 2');
 		persistLocal.ancestries_restore(true);
 		s_ancestry_editingTools.set(null);
 		s_title_editing.set(null);
 		h.hierarchy_markAsCompleted();
+		debug.log_remote('db_setupData_forType 3');
 		signals.signal_rebuildGraph_fromFocus();
 	}
 
