@@ -43,18 +43,15 @@ export default class DBDispatch {
 	async db_setupData_forType(type: string) {
 		this.db_changeTypeTo_for(type);
 		this.queryStrings_apply();
-		debug.log_beat('db_setupData_forType start');
 		await this.hierarchy_fetch_andBuild(type);
-		debug.log_beat('db_setupData_forType 1');
 		persistLocal.ancestries_restore(true);
-		debug.log_beat('db_setupData_forType 2');
 		s_ancestry_editingTools.set(null);
 		s_title_editing.set(null);
 		h.hierarchy_markAsCompleted();
-		debug.log_beat('db_setupData_forType 3');
 		signals.signal_rebuildGraph_fromFocus();
+		debug.log_beat('db_setupData_forType before timeout');
 		setTimeout(() => {
-			debug.log_beat('db_setupData_forType end');
+			debug.log_beat('db_setupData_forType after');
 		}, 1);
 	}
 
