@@ -31,8 +31,8 @@
 		angle = cluster_layout?.angle_ofLine;
 		const line_tip = cluster_layout?.line_tip;
 		const inside_radius = k.cluster_inside_radius + (show_arrowheads ? 8 : 0);
-		const inside_rotated = Point.fromPolar(inside_radius, angle);
-		const line_offset = updateLine(line_tip, inside_rotated);
+		const inside_tip = Point.fromPolar(inside_radius, angle);
+		const line_offset = line_updated(line_tip, inside_tip);
 		const title_x = u.getWidthOf(cluster_layout?.line_title) / -3;
 		const title_offset = new Point(title_x, k.dot_size / -3);
 		size = line_tip.abs.asSize;
@@ -44,16 +44,16 @@
 		[arrow_start, arrow_end] = rect.cornersForAngle(angle);
 	}
 
-	function updateLine(line_tip: Point, inside_rotated: Point): [number, number] {
-		let outside_rotated = inside_rotated;
+	function line_updated(line_tip: Point, inside_tip: Point): [number, number] {
+		let outside_tip = inside_tip;
 		if (cluster_layout?.predicate?.isBidirectional || !cluster_layout?.points_out) {
-			outside_rotated = inside_rotated.offsetBy(line_tip);
+			outside_tip = inside_tip.offsetBy(line_tip);
 		}
 		switch (u.point_quadrant(line_tip)) {
-			case Quadrant.upperRight: return new Point( inside_rotated.x,  inside_rotated.y);
-			case Quadrant.lowerRight: return new Point( inside_rotated.x, outside_rotated.y);
-			case Quadrant.upperLeft:  return new Point(outside_rotated.x,  inside_rotated.y);
-			default:				  return new Point(outside_rotated.x, outside_rotated.y);		
+			case Quadrant.upperRight: return new Point( inside_tip.x,  inside_tip.y);
+			case Quadrant.lowerRight: return new Point( inside_tip.x, outside_tip.y);
+			case Quadrant.upperLeft:  return new Point(outside_tip.x,  inside_tip.y);
+			default:				  return new Point(outside_tip.x, outside_tip.y);		
 		}
 	}
 

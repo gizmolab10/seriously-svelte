@@ -22,8 +22,10 @@ export default class Predicate extends RemoteIdentifiable {
 	get description(): string { return this.kind; }
 
 	angle_ofLine_for(points_out: boolean): number {
+		const tweak = Math.PI * 1 / 4;
 		const angle = get(s_cluster_angle);
-		return u.normalized_angle(this.isBidirectional ? Angle.quarter : points_out ? -angle : Angle.half + angle);
+		
+		return u.normalized_angle(this.isBidirectional ? angle + Angle.half + tweak : points_out ? angle : angle + Angle.half - tweak);
 	}
 
 }

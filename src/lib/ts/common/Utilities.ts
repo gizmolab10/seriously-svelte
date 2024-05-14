@@ -9,7 +9,7 @@ class Utilities {
 	normalized_angle(angle: number) { return (angle + Angle.full * 2) % Angle.full; }
 	concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return [...a, ...b]; }
 	strip_falsies(array: Array<any>): Array<any> { return array.filter(element => !!element); }
-	quadrant_startAngle(angle: number): number { return this.startAngle_ofQuadrant(this.quadrant_of(angle)); }
+	quadrant_startAngle(angle: number): number { return this.startAngle_ofQuadrant(this.quadrant_ofNotNormalized(angle)); }
 	sort_byOrder(array: Array<Ancestry>) { return array.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
 	strip_invalid(array: Array<any>): Array<any> { return this.strip_identifiableDuplicates(this.strip_falsies(array)); }
 
@@ -96,14 +96,14 @@ class Utilities {
 	}
 
 	angle_hasPositiveX(angle: number): boolean {
-		switch(this.quadrant_of(angle)) {
+		switch(this.quadrant_ofNotNormalized(angle)) {
 			case Quadrant.upperRight: return true;
 			case Quadrant.lowerRight: return true;
 			default: return false;
 		}
 	}
 
-	quadrant_of(angle: number): Quadrant {
+	quadrant_ofNotNormalized(angle: number): Quadrant {
 		const normalized = this.normalized_angle(angle);
 		let quadrant = Quadrant.upperRight;
 		if (normalized.isBetween(0,				Angle.quarter,		 true)) { quadrant = Quadrant.lowerRight; }

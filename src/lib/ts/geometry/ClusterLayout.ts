@@ -76,7 +76,7 @@ export default class ClusterLayout {
 		const ratio = fork_radius / arc_radius / 2;
 		const angle = Math.asin(ratio) * 2;
 		const delta = arc_radius * (1 - Math.cos(angle));
-		return delta / Math.sqrt(2);
+		return delta / Math.sqrt(1.5);
 	}
 
 	fork_svgPath(forwards: boolean) {

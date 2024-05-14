@@ -5,9 +5,9 @@
 	export let center = Point.zero;
 	export let color = 'red';
 	const offset = k.necklace_gap;
+	const arc_keyed_svgPaths = cluster_layout.arc_keyed_svgPaths;
 	const radius = k.cluster_arc_radius + offset;
 	const breadth = radius * 2;
-	let arc_keyed_svgPaths = cluster_layout.arc_keyed_svgPaths;
 	let rebuilds = 0;
 
 </script>

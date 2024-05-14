@@ -100,7 +100,7 @@ export class Rect {
 	}
 
 	cornersForAngle(angle: number): [Point, Point] {
-		switch (u.quadrant_of(angle)) {
+		switch (u.quadrant_ofNotNormalized(angle)) {
 			case Quadrant.upperRight: return [this.bottomLeft, this.topRight];
 			case Quadrant.lowerLeft:  return [this.topRight, this.bottomLeft];
 			case Quadrant.upperLeft:  return [this.extent, this.origin];

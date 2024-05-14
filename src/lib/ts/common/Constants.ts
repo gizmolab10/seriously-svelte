@@ -1,14 +1,14 @@
 export default class Constants {
 	dot_size = 13;
 	width_max = 200;
-	necklace_gap = 12;	// TODO: target: 12
+	necklace_gap = 12;
 	line_stretch = 25;
 	height_banner = 35;
 	halfIncrement = 0.5;
 	thing_fontSize = 14;
 	width_details = 200;
 	height_titleAtTop = 50;
-	cluster_arc_radius = 120;
+	cluster_arc_radius = 130;
 	threshold_longClick = 500;
 	cluster_inside_radius = 30;
 	editingTools_diameter = 64;

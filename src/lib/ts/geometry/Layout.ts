@@ -64,20 +64,26 @@ export default class Layout {
 		const clusterAngle = clusterLayout.angle_ofLine;	// depends on s_cluster_angle, predicate kind & points_out
 		const startY = radial.rotate_by(clusterAngle).y;	// height of clusterAngle
 		let y = startY + (row * (k.row_height - 2));		// height of row
+		const isLower = y >= 0;
 		let unfit = false;
 		if (Math.abs(y) > radius) {
 			unfit = true;
-			y = radius - (y % radius);
+			if (isLower) {
+				y = radius - (y % radius);
+			} else {
+				y = (-y % radius) - radius;
+			}
 		}
 		let ratio = y / radius;
 		let angle = -Math.asin(ratio);	// negate arc sign for clockwise
-		if (!clusterLayout.points_out && clusterLayout.predicate?.id != Predicate.idIsRelated) {
+		if (!clusterLayout.points_out || clusterLayout.predicate?.isBidirectional) {
 			angle = Angle.half - angle;
 		}
 		if (unfit) {
-			const quadrant = u.quadrant_of(angle);
+			const adjustment = isLower ? Angle.threeQuarters : Angle.quarter;
+			const quadrant = u.quadrant_ofNotNormalized(angle);
 			const pivot = u.startAngle_ofQuadrant(quadrant);
-			angle = pivot - Angle.quarter - angle;
+			angle = pivot + adjustment - angle;
 		}
 		return u.normalized_angle(angle);
 	}

@@ -58,7 +58,7 @@ export default class SVGPaths {
 		if (x >= 0 && y >= 0)		{ return `M 0 0 L ${x} ${y}`;
 		} else if (x >= 0 && y < 0)	{ return `M 0 ${-y} L ${x} 0`;
 		} else if (x < 0 && y >= 0)	{ return `M ${-x} 0 L 0 ${y}`;
-		} else						{ return `M ${x} ${y} L 0 0`;
+		} else						{ return `M ${-x} ${-y} L 0 0`;
 		}
 	}
 
@@ -101,7 +101,7 @@ export default class SVGPaths {
 		const increment = Math.PI * 2 / count;
 		let offset = new Point(isOdd ? radius : 0, isOdd ? 0 : radius);2
 		while (i++ < count) {
-			path = path + this.circle(size, 2, offset.offsetBy(new Point(-0.7, 0.3)));
+			path = path + this.circle_atOffset(size, 2, offset.offsetBy(new Point(-0.7, 0.3)));
 			offset = offset.rotate_by(increment);
 		}
 		return path;
