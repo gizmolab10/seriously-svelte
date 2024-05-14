@@ -481,12 +481,14 @@ export default class Ancestry {
 		if (changed) {
 			const grabbedAncestry = h.grabs.latestAncestryGrabbed(true)
 			s_ancestry_focus.set(this);
+			debug.log_remote('becomeFocus 1');
 			this.expand();
 			if (!!grabbedAncestry && !grabbedAncestry.isVisible) {
 				grabbedAncestry.ungrab()
 				this.grab();
 			}
 		}
+		debug.log_remote('becomeFocus 2');
 		return changed;
 	}
 
