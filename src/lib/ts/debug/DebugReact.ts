@@ -1,6 +1,6 @@
 import { k } from '../../ts/common/Constants';
 
-export enum ReactFlag {
+export enum ReactKind {
 	mount	= 'mount',
 	layout	= 'layout',
 	origins = 'origins',
@@ -8,28 +8,28 @@ export enum ReactFlag {
 }
 
 export class DebugReact {
-	flags: Array<ReactFlag>;
-	constructor(flags: Array<ReactFlag>) { this.flags = flags; }
-	hasOption(option: ReactFlag) { return this.flags.includes(option); }
-	log_layout(message: string) { this.log_maybe(ReactFlag.layout, message) }
-	log_origins(message: string) { this.log_maybe(ReactFlag.origins, message) }
-	log_rebuild(message: string) { this.log_maybe(ReactFlag.rebuild, message) }
-	log_mount(message: string) { this.log_maybe(ReactFlag.mount, message) }
-	log_maybe(option: ReactFlag, message: string) { if (this.hasOption(option)) { console.log(option + ' ' + message); }}
-	get layout(): boolean { return this.hasOption(ReactFlag.layout); }
-	get mount(): boolean { return this.hasOption(ReactFlag.mount); }
+	kinds: Array<ReactKind>;
+	get mount(): boolean { return this.hasKind(ReactKind.mount); }
+	get layout(): boolean { return this.hasKind(ReactKind.layout); }
+	constructor(kinds: Array<ReactKind>) { this.kinds = kinds; }
+	hasKind(kind: ReactKind) { return this.kinds.includes(kind); }
+	log_mount(message: string) { this.log_maybe(ReactKind.mount, message) }
+	log_layout(message: string) { this.log_maybe(ReactKind.layout, message) }
+	log_origins(message: string) { this.log_maybe(ReactKind.origins, message) }
+	log_rebuild(message: string) { this.log_maybe(ReactKind.rebuild, message) }
+	log_maybe(kind: ReactKind, message: string) { if (this.hasKind(kind)) { console.log(kind + ' ' + message); }}
 
 	queryStrings_apply() {
 		const queryStrings = k.queryString;
 		const debug = queryStrings.get('react');
 		if (debug) {
-			const flags = debug.split(',');
-			for (const option of flags) {
-				switch (option) {
-					case 'mount': this.flags.push(ReactFlag.mount); break;
-					case 'layout': this.flags.push(ReactFlag.layout); break;
-					case 'origins': this.flags.push(ReactFlag.origins); break;
-					case 'rebuild': this.flags.push(ReactFlag.rebuild); break;
+			const kinds = debug.split(',');
+			for (const kind of kinds) {
+				switch (kind) {
+					case 'mount': this.kinds.push(ReactKind.mount); break;
+					case 'layout': this.kinds.push(ReactKind.layout); break;
+					case 'origins': this.kinds.push(ReactKind.origins); break;
+					case 'rebuild': this.kinds.push(ReactKind.rebuild); break;
 				}
 			}
 		}

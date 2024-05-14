@@ -13,6 +13,7 @@
 	let rebuilds = 0;
 	
 	onMount( () => {
+		debugReact.log_mount(`NECKLACE`);
 		const layout = new Layout(ancestry, center);
 		clusterLayouts = layout.clusterLayouts;
 		childMapRects = layout.childMapRects;

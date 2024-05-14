@@ -20,6 +20,7 @@
 	onMount( () => {
 		g.setup();
 		$s_isBusy = true;
+		debugReact.log_mount(`PANEL`);
 		const handler = signals.handle_rebuildGraph(1, (ancestry) => {
 			rebuilds += 1;
 		});

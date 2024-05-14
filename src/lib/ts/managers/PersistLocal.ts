@@ -1,4 +1,4 @@
-import { g, k, u, Point, debug, signals, Ancestry, dbDispatch, GraphRelations } from '../common/GlobalImports'
+import { g, k, u, Point, signals, Ancestry, dbDispatch, GraphRelations } from '../common/GlobalImports'
 import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/State';
 import { s_thing_fontFamily, s_graph_relations } from '../state/State';
 import { s_cluster_angle, s_layout_asClusters } from '../state/State';
@@ -196,7 +196,6 @@ class PersistLocal {
 		}
 		ancestryToFocus.becomeFocus();
 		s_ancestry_focus.subscribe((ancestry: Ancestry) => {
-			debug.log_beat('s_ancestry_focus subscribe');
 			this.dbKey_write(IDPersistant.focus, !ancestry ? null : ancestry.ancestryString);
 		});
 	}
