@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { k, Point, ZIndex, signals, onMount, Layout, debugReact, ClusterLayout, transparentize } from '../../ts/common/GlobalImports';
+	import NecklaceRing from './NecklaceRing.svelte';
 	import ClusterLine from './ClusterLine.svelte';
 	import ClusterArc from './ClusterArc.svelte';
 	import Widget from '../widget/Widget.svelte';
-	import Circle from '../kit/Circle.svelte';
 	export let center = Point.zero;
     export let ancestry;
 	const childOffset = new Point(k.dot_size / -3, k.cluster_offsetY);;
@@ -35,13 +35,7 @@
 </script>
 
 {#key rebuilds}
-	<Circle class='necklace-ring'
-		thickness=30
-		center={center}
-		zindex=ZIndex.lines
-		color_background='transparent'
-		radius={k.cluster_arc_radius}
-		color={transparentize(color, 0.97)}/>
+	<NecklaceRing color={color} center={center}/>
 	{#if !!childMapRects}
 		{#each childMapRects as map}
 			<Widget ancestry={map.childAncestry} angle={map.childAngle} origin={map.childOrigin.offsetBy(childOffset)}/>

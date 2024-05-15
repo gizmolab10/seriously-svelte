@@ -22,11 +22,11 @@ export default class ClusterLayout {
 		const angle = predicate?.angle_ofLine_for(points_out) ?? 0;
 		const fork_backoff = this.fork_adjustment(tiny_radius, arc_radius);
 		const fork_fromCenter = Point.fromPolar(arc_radius, angle);
-		const fork_radius = (tiny_radius - fork_backoff);
-		const tip_radius = k.cluster_line_length - fork_radius;
 		const fork_center = center.offsetBy(fork_fromCenter);
+		const fork_radius = (tiny_radius - fork_backoff);
+		const line_radius = k.cluster_line_length - fork_radius;
 
-		this.line_tip = Point.fromPolar(tip_radius, angle);
+		this.line_tip = Point.fromPolar(line_radius, angle);
 		this.fork_backoff = fork_backoff;
 		this.fork_radius = fork_radius;
 		this.fork_center = fork_center;
