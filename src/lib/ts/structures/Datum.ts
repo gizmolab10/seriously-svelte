@@ -1,10 +1,11 @@
 import RemoteIdentifiable from "./RemoteIdentifiable";
+import { idDefault } from "./Identifiable";
 import { DebugFlag } from '../debug/Debug';
 
 export default class Datum extends RemoteIdentifiable {
 	baseID: string;
 
-	constructor(dbType: string, baseID: string, id: string | null, isRemotelyStored: boolean) {
+	constructor(dbType: string, baseID: string, id: string = idDefault, isRemotelyStored: boolean) {
 		super(dbType, id, isRemotelyStored);
 		this.baseID = baseID;
 	}

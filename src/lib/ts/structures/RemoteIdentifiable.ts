@@ -1,4 +1,5 @@
 import { DBType } from '../db/DBInterface';
+import { idDefault } from "./Identifiable";
 import Identifiable from "./Identifiable";
 
 export default class RemoteIdentifiable extends Identifiable {
@@ -9,7 +10,7 @@ export default class RemoteIdentifiable extends Identifiable {
 	needsWrite = false;
 	dbType: string;
 
-	constructor(dbType: string, id: string | null, isRemotelyStored: boolean) {
+	constructor(dbType: string, id: string  = idDefault, isRemotelyStored: boolean) {
 		super(id);
 		this.hasRemoteStorage = dbType != DBType.local;
 		this.isRemotelyStored = isRemotelyStored;

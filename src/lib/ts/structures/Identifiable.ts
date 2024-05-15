@@ -20,4 +20,4 @@ export default class Identifiable {
 	
 }
 
-const idDefault = Identifiable.newID();
+export const idDefault = Identifiable.newID();

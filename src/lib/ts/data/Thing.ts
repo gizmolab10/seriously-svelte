@@ -1,6 +1,7 @@
 import { k, u, get, Datum, debug, IDTrait, Ancestry, Predicate } from '../common/GlobalImports';
 import { DebugFlag, dbDispatch, Relationship, SeriouslyRange } from '../common/GlobalImports';
 import { s_ancestry_focus, s_ancestries_expanded } from '../state/State';
+import { idDefault } from "../structures/Identifiable";
 import { h } from '../db/DBDispatch';
 import Airtable from 'airtable';
 
@@ -19,7 +20,7 @@ export default class Thing extends Datum {
 	color: string;
 	trait: string;
 
-	constructor(baseID: string, id: string | null, title = k.title_default, color = k.color_default, trait = 's', isRemotelyStored: boolean) {
+	constructor(baseID: string, id: string = idDefault, title = k.title_default, color = k.color_default, trait = 's', isRemotelyStored: boolean) {
 		super(dbDispatch.db.dbType, baseID, id, isRemotelyStored);
 		this.selectionRange = new SeriouslyRange(0, title.length);
 		this.title = title;

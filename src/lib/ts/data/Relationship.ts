@@ -1,6 +1,7 @@
 import { k, Thing, debug, DebugFlag, dbDispatch, Predicate } from '../common/GlobalImports';
-import { h } from '../../ts/db/DBDispatch';
+import { idDefault } from "../structures/Identifiable";
 import Datum from '../structures/Datum';
+import { h } from '../db/DBDispatch';
 import Airtable from 'airtable';
 
 export default class Relationship extends Datum {
@@ -11,7 +12,7 @@ export default class Relationship extends Datum {
 
 	static get nullRelationship(): Relationship { return new Relationship(k.empty, null, k.empty, k.empty, k.empty, 0); }
 
-	constructor(baseID: string, id: string | null, idPredicate: string, idParent: string, idChild: string, order = 0, isRemotelyStored: boolean = false) {
+	constructor(baseID: string, id: string = idDefault, idPredicate: string, idParent: string, idChild: string, order = 0, isRemotelyStored: boolean = false) {
 		super(dbDispatch.db.dbType, baseID, id, isRemotelyStored);
 		this.idPredicate = idPredicate;
 		this.idParent = idParent;
