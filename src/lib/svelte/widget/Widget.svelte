@@ -3,8 +3,8 @@
 	import { s_layout_asClusters, s_thing_fontFamily, s_ancestry_editingTools } from '../../ts/state/State';
 	import { s_ancestry_focus, s_title_editing, s_ancestries_grabbed } from '../../ts/state/State';
 	import { onMount, debugReact, IDWrapper } from '../../ts/common/GlobalImports';
-	import EditingTools from '../graph/EditingTools.svelte';
 	import { exemplar } from '../../ts/data/Exemplar';
+	import EditingTools from './EditingTools.svelte';
 	import TitleEditor from './TitleEditor.svelte';
 	import DotReveal from './DotReveal.svelte';
 	import DotDrag from './DotDrag.svelte';

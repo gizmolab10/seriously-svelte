@@ -35,7 +35,7 @@
 </script>
 
 {#key rebuilds}
-	<Circle
+	<Circle class='necklace-ring'
 		thickness=30
 		center={center}
 		zindex=ZIndex.lines

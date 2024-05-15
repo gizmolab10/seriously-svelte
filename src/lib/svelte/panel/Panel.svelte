@@ -6,13 +6,13 @@
 	import CircularButton from '../buttons/CircularButton.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import Breadcrumbs from '../panel/Breadcrumbs.svelte';
+	import Clusters from '../clusters/Clusters.svelte';
 	import { DBType } from '../../ts/db/DBInterface';
-	import Clusters from '../graph/Clusters.svelte';
 	import Details from '../details/Details.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import Controls from './Controls.svelte';
-	import Tree from '../graph/Tree.svelte';
+	import Tree from '../tree/Tree.svelte';
 	import Help from '../help/Help.svelte';
 	let chain = ['Panel'];
 	let rebuilds = 0;

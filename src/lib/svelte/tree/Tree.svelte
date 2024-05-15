@@ -5,7 +5,7 @@
 	import { s_id_popupView, s_ancestry_editingTools, s_user_graphOffset } from '../../ts/state/State';
 	import { IDPersistant, IDSignal, persistLocal } from '../../ts/common/GlobalImports';
 	import DotRevealFocus from '../buttons/DotRevealFocus.svelte';
-	import EditingTools from './EditingTools.svelte';
+	import EditingTools from '../widget/EditingTools.svelte';
 	import TreeChildren from './TreeChildren.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import { h } from '../../ts/db/DBDispatch';

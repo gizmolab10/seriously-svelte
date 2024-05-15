@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { s_graphRect, s_ancestry_focus, s_user_graphOffset, s_thing_fontFamily } from '../../ts/state/State';
 	import { k, u, Rect, Size, Point, ZIndex, transparentize } from '../../ts/common/GlobalImports';
+	import EditingTools from '../widget/EditingTools.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
-	import EditingTools from './EditingTools.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Necklace from './Necklace.svelte';
 	export let ancestry;
