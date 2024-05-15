@@ -16,9 +16,6 @@ class Globals {
 		window.addEventListener('mousemove', (event: MouseEvent) => {
 			this.mouseLocation = new Point(event.clientX, event.clientY);
 		});
-		window.addEventListener('mousedown', (event: MouseEvent) => {
-			// alert('mousedown');
-		});
 	}
 
 	get siteTitle(): string {

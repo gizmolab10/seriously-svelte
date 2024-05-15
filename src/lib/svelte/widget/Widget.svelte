@@ -110,7 +110,7 @@
 	}
 
 	function updateBorderStyle() {
-		background = showingBorder ? `background-color: ${k.color_background}` : k.empty;
+		background = (showingBorder || $s_layout_asClusters) ? `background-color: ${k.color_background}` : k.empty;
 		thing = ancestry?.thing;
 		if (!thing) {
 			console.log(`bad thing`);
@@ -152,6 +152,7 @@
 		bind:this={widget}
 		style='
 			{border};
+			{background};
 			top: {top}px;
 			left: {left}px;
 			width: {width}px;
@@ -161,7 +162,6 @@
 			white-space: nowrap;
 			z-index: {ZIndex.widgets};
 			border-radius: {radius}px;
-			background-color: {k.color_background};
 		'>
 		<DotDrag
 			ancestry={ancestry}
