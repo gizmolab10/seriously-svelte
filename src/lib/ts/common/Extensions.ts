@@ -2,6 +2,7 @@ declare global {
 	interface Number {
 		increment(increment: boolean, length: number): number;
 		isBetween(a: number, b: number, inclusive: boolean): boolean;
+		isClocklyBetween(a: number, b: number, limit: number): boolean;
 	}
 	interface String {
 		injectElipsisAt(at: number): string;
@@ -84,6 +85,18 @@ Object.defineProperty(Number.prototype, 'isBetween', {
 			max = Math.max(a, b);
 
 		return inclusive ? this >= min && this <= max : this > min && this < max;
+	},
+	enumerable: false,
+	writable: false,
+	configurable: false
+});
+
+Object.defineProperty(Number.prototype, 'isClocklyBetween', {
+	value: function(a: number, b: number, limit: number): boolean {
+		const cycled: number = this - limit;
+		var min = Math.min(a, b),
+			max = Math.max(a, b);
+		return this.isBetween(min, max) || cycled.isBetween(min, max);
 	},
 	enumerable: false,
 	writable: false,

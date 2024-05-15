@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, Point, ZIndex, signals, onMount, Layout, debugReact, ClusterLayout } from '../../ts/common/GlobalImports';
+	import { k, Point, ZIndex, signals, onMount, Layout, debugReact, ClusterLayout, transparentize } from '../../ts/common/GlobalImports';
 	import ClusterLine from './ClusterLine.svelte';
 	import ClusterArc from './ClusterArc.svelte';
 	import Widget from '../widget/Widget.svelte';
@@ -35,6 +35,13 @@
 </script>
 
 {#key rebuilds}
+	<Circle
+		thickness=30
+		center={center}
+		zindex=ZIndex.lines
+		color_background='transparent'
+		radius={k.cluster_arc_radius}
+		color={transparentize(color, 0.97)}/>
 	{#if !!childMapRects}
 		{#each childMapRects as map}
 			<Widget ancestry={map.childAncestry} angle={map.childAngle} origin={map.childOrigin.offsetBy(childOffset)}/>

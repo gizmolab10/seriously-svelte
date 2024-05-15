@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, Size, Point, Thing, ZIndex, signals, svgPaths, onMount, Ancestry, dbDispatch, Direction } from '../../ts/common/GlobalImports';
+	import { k, u, Size, Point, Thing, ZIndex, signals, svgPaths, onMount, Ancestry, debugReact, dbDispatch, Direction } from '../../ts/common/GlobalImports';
 	import { s_ancestry_focus, s_graphRect, s_show_details, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/State';
 	import CrumbButton from '../buttons/CrumbButton.svelte';
 	import { h } from '../../ts/db/DBDispatch';
@@ -13,6 +13,7 @@
 	let left = 0;
 
 	onMount( () => {
+		debugReact.log_mount(`BREADCRUMBS`);
 		const handleRebuild = signals.handle_rebuildGraph(2, (ancestry) => {
 			rebuilds += 1;
 		});

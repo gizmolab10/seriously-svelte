@@ -20,8 +20,8 @@
 		border-radius: 50%;
 		width: {diameter}px;
 		height: {diameter}px;
-		top: {center.y - radius}px;
-		left: {center.x - radius}px;
 		border: {thickness}px solid {color};
-		background-color: {color_background};'>
+		background-color: {color_background};
+		top: {center.y - radius - thickness}px;
+		left: {center.x - radius - thickness}px;'>
 </div>

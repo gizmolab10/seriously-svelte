@@ -33,13 +33,14 @@
 		const inside_radius = k.cluster_inside_radius + (show_arrowheads ? 8 : 0);
 		const inside_tip = Point.fromPolar(inside_radius, angle);
 		const line_offset = line_updated(line_tip, inside_tip);
-		const title_x = u.getWidthOf(cluster_layout?.line_title) / -3;
-		const title_offset = new Point(title_x, k.dot_size / -3);
 		size = line_tip.abs.asSize;
 		const rect = new Rect(Point.zero, size);
 		line_origin = center.offsetBy(line_offset);
 		svgPath = svgPaths.line(line_tip);
 		viewBox = `0, 0, ${size.width}, ${size.height}`;
+		const title_x = u.getWidthOf(cluster_layout?.line_title) / -3;
+		const title_y = k.dot_size / (u.isAlmost_horizontal(angle) ? 2 : -3);
+		const title_offset = new Point(title_x, title_y);
 		title_origin = rect.center.offsetBy(title_offset);
 		[arrow_start, arrow_end] = rect.cornersForAngle(angle);
 	}

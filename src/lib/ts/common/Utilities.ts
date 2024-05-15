@@ -22,7 +22,7 @@ class Utilities {
 	}
 
 	degrees_of(angle: number) {
-		const degrees = this.normalized_angle(angle) * 180 / Math.PI;
+		const degrees = this.normalized_angle(angle) * 180 / Angle.half;
 		return this.formatter_toFixed(1).format(degrees);
 	}
 
@@ -110,6 +110,18 @@ class Utilities {
 		if (normalized.isBetween(Angle.quarter, Angle.half,			 true)) { quadrant = Quadrant.lowerLeft; }
 		if (normalized.isBetween(Angle.half,	Angle.threeQuarters, true)) { quadrant = Quadrant.upperLeft; }
 		return quadrant;
+	}
+
+	/// TODO this in between needs clock arithmetic (an extra parameter: clock's interval)
+
+	isAlmost_horizontal(angle: number, almost: number = (Angle.half / 10)): boolean {
+		for (const horizontal of [Angle.half, Angle.full]) {
+			const delta = this.normalized_angle(angle - horizontal);
+			if (delta.isClocklyBetween(-almost, almost, Angle.full)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	strip_hidDuplicates(ancestries: Array<Ancestry>) {

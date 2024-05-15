@@ -152,7 +152,6 @@
 		bind:this={widget}
 		style='
 			{border};
-			{background};
 			top: {top}px;
 			left: {left}px;
 			width: {width}px;
@@ -162,6 +161,7 @@
 			white-space: nowrap;
 			z-index: {ZIndex.widgets};
 			border-radius: {radius}px;
+			background-color: {k.color_background};
 		'>
 		<DotDrag
 			ancestry={ancestry}

@@ -38,7 +38,7 @@
 
 </script>
 
-{#key colorAsHEX}
+{#key thing.id}
 	<div style='top:55px; left:10.5px; position:absolute;'>
 		<ColorPicker
 			hex={colorAsHEX}

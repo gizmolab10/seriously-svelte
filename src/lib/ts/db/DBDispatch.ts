@@ -51,7 +51,7 @@ export default class DBDispatch {
 		signals.signal_rebuildGraph_fromFocus();
 		debug.log_beat('db_setupData_forType before timeout');
 		setTimeout(() => {
-			debug.log_beat('db_setupData_forType after');
+			debug.log_beat('db_setupData_forType after timeout');
 		}, 1);
 	}
 
