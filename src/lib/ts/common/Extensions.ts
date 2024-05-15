@@ -1,5 +1,6 @@
 declare global {
 	interface Number {
+		normalize(value: number): number;
 		increment(increment: boolean, length: number): number;
 		isBetween(a: number, b: number, inclusive: boolean): boolean;
 		isClocklyBetween(a: number, b: number, limit: number): boolean;
@@ -16,8 +17,8 @@ Object.defineProperty(String.prototype, 'unCamelCase', {
 	value: function(): string {
 		return this.replace(/([A-Z])/g, ' $1').toLowerCase();
 	},
-	enumerable: false, // Set enumerable to false to avoid unintended behavior
 	writable: false, // Set writable to false to prevent the method to be overwritten
+	enumerable: false, // Set enumerable to false to avoid unintended behavior
 	configurable: false // Set configurable to false to prevent redefinition of the property
 });
 
@@ -25,9 +26,9 @@ Object.defineProperty(String.prototype, 'lastWord', {
 	value: function(): string {
 		return this.split(' ').slice(-1)[0];
 	},
-	enumerable: false, // Set enumerable to false to avoid unintended behavior
-	writable: false, // Set writable to false to prevent the method to be overwritten
-	configurable: false // Set configurable to false to prevent redefinition of the property
+	writable: false,
+	enumerable: false,
+	configurable: false
 });
 
 Object.defineProperty(String.prototype, 'injectElipsisAt', {
@@ -39,8 +40,8 @@ Object.defineProperty(String.prototype, 'injectElipsisAt', {
 		}
 		return injected;
 	},
-	enumerable: false,
 	writable: false,
+	enumerable: false,
 	configurable: false
 });
 
@@ -74,8 +75,8 @@ Object.defineProperty(Number.prototype, 'increment', {
 		}
 		return result;
 	},
-	enumerable: false,
 	writable: false,
+	enumerable: false,
 	configurable: false
 });
 
@@ -86,20 +87,37 @@ Object.defineProperty(Number.prototype, 'isBetween', {
 
 		return inclusive ? this >= min && this <= max : this > min && this < max;
 	},
-	enumerable: false,
 	writable: false,
+	enumerable: false,
 	configurable: false
 });
 
 Object.defineProperty(Number.prototype, 'isClocklyBetween', {
 	value: function(a: number, b: number, limit: number): boolean {
-		const cycled: number = this - limit;
+		const value = limit.normalize(this)
+		const cycled: number = value - limit;
 		var min = Math.min(a, b),
 			max = Math.max(a, b);
 		return this.isBetween(min, max) || cycled.isBetween(min, max);
 	},
-	enumerable: false,
 	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(Number.prototype, 'normalize', {
+	value: function(value: number): number {
+		let result = value;
+		while (result < 0) {
+			result += this;
+		}
+		while (result > this) {
+			result -= this;
+		}
+		return result;
+	},
+	writable: false,
+	enumerable: false,
 	configurable: false
 });
 

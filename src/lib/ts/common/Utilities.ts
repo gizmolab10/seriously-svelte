@@ -6,7 +6,7 @@ class Utilities {
 	noop() {}
 	ignore(event: Event) {}
 	roundToEven(n: number): number{ return Math.round(n / 2) * 2; }
-	normalized_angle(angle: number) { return (angle + Angle.full * 2) % Angle.full; }
+	normalized_angle(angle: number) { return Angle.full.normalize(angle); }
 	concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return [...a, ...b]; }
 	strip_falsies(array: Array<any>): Array<any> { return array.filter(element => !!element); }
 	quadrant_startAngle(angle: number): number { return this.startAngle_ofQuadrant(this.quadrant_ofNotNormalized(angle)); }
