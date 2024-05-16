@@ -58,7 +58,7 @@
 					height={size}
 					position='absolute'
 					stroke={ancestors[index].color}
-					svgPath={svgPaths.dash(size, 0)}
+					scalablePath={svgPaths.dash(size, 0)}
 				/>
 			</span>
 			&nbsp;&nbsp;

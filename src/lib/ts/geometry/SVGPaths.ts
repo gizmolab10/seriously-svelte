@@ -31,9 +31,18 @@ export default class SVGPaths {
 		return this.circle(center, diameter / 2);
     }
 
-    circle(center: Point, radius: number): string {
-		const diameter = radius * 2;
-        return `M${center.x} ${center.y} m${-radius} 0a${radius} ${radius} 0 1,0 ${diameter} 0a${radius} ${radius} 0 1,0 ${-diameter} 0`;
+	ring(center: Point, radius: number, thickness: number): string {
+		return `
+			${this.circle(center, radius, true)}
+			${this.circle(center.offsetByX(center.x * 2), radius - thickness, false)}`;
+	}
+
+    circle(center: Point, radius: number, clockwise: boolean = true): string {
+		const direction = clockwise ? 0 : 1;
+		const diameter = radius * 2 * (clockwise ? 1 : -1);
+        return `M${center.x - radius} ${center.y}
+			a${radius} ${radius} 0 0 ${direction} ${ diameter} 0
+			a${radius} ${radius} 0 0 ${direction} ${-diameter} 0`;
     }
 
     oval(diameter: number, horizontal: boolean = true, eccentricity: number = 2.3): string {
@@ -51,6 +60,18 @@ export default class SVGPaths {
 		const largeArcFlag = (u.normalized_angle(startAngle - endAngle) > Math.PI) ? 1 : 0;
 		return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${end.x} ${end.y}`;
 	}
+
+    half_circle(diameter: number, direction: number): string {
+		const vertical = [Direction.up, Direction.down].includes(direction);
+        const radius = diameter / 2;
+		if (vertical) {
+			const up = direction == Direction.up;
+        	return `M ${up ? 0 : diameter} ${radius} A ${radius} ${radius} 0 0 1 ${radius + (up ? radius : -radius)} ${radius}`;
+		} else {
+			const left = direction == Direction.right;
+        	return `M ${radius} ${left ? 0 : diameter} A ${radius} ${radius} 0 0 1 ${radius} ${left ? (radius * 2) : 0}`;
+		}
+    }
 
 	line(vector: Point): string {
 		const x = vector.x;
@@ -77,18 +98,6 @@ export default class SVGPaths {
 		}
 		return path + ' Z';
 	}
-
-    half_circle(diameter: number, direction: number): string {
-		const vertical = [Direction.up, Direction.down].includes(direction);
-        const radius = diameter / 2;
-		if (vertical) {
-			const up = direction == Direction.up;
-        	return `M ${up ? 0 : diameter} ${radius} A ${radius} ${radius} 0 0 1 ${radius + (up ? radius : -radius)} ${radius}`;
-		} else {
-			const left = direction == Direction.right;
-        	return `M ${radius} ${left ? 0 : diameter} A ${radius} ${radius} 0 0 1 ${radius} ${left ? (radius * 2) : 0}`;
-		}
-    }
 
 	tinyDots_circular(size: number, count: number): string {
 		if (count == 0) {

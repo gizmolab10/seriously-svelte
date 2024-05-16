@@ -15,7 +15,7 @@
 	let arrow_start = Point.zero;
 	let arrow_end = Point.zero;
 	let lineWrapper: Wrapper;
-	let svgPath = k.empty;
+	let scalablePath = k.empty;
 	let viewBox = k.empty;
 	let size = Size.zero;
 	let thickness = 5;
@@ -36,7 +36,7 @@
 		size = line_tip.abs.asSize;
 		const rect = new Rect(Point.zero, size);
 		line_origin = center.offsetBy(line_offset);
-		svgPath = svgPaths.line(line_tip);
+		scalablePath = svgPaths.line(line_tip);
 		viewBox = `0, 0, ${size.width}, ${size.height}`;
 		const title_x = u.getWidthOf(cluster_layout?.line_title) / -3;
 		const title_y = k.dot_size / (u.isAlmost_horizontal(angle) ? 2 : -3);
@@ -78,7 +78,7 @@
 			viewBox={viewBox}
 			width={size.width}px
 			height={size.height}px>
-			<path d={svgPath} stroke={color} fill='none'/>
+			<path d={scalablePath} stroke={color} fill='none'/>
 		</svg>
 		<div class='cluster-line-label' style='
 			background-color: {k.color_background};

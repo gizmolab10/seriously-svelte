@@ -11,7 +11,7 @@
 	let origin = rect.origin;
 	let extent = rect.extent;
 	let viewBox = new Rect();
-	let svgPath = k.empty;
+	let scalablePath = k.empty;
 	let size = new Size();
 	let rebuilds = 0;
 	let line;
@@ -51,7 +51,7 @@
 					origin = rect.centerLeft.offsetByY(-0.5);
 					extent = rect.centerRight.offsetBy(new Point(0.5, -0.5));
 					size = origin.distanceTo(extent).asSize;
-					svgPath = svgPaths.line(new Point(size.width, 0));
+					scalablePath = svgPaths.line(new Point(size.width, 0));
 					break;
 			}
 			if (curveType != IDLine.flat) {
@@ -62,7 +62,7 @@
 				const extentY = curveType == IDLine.up   ? 1 : size.height;
 				const boxSize = new Size(size.width, (noHeight ? 2 : size.height));
 				viewBox = new Rect(origin, boxSize);
-				svgPath = 'M0 ' + originY + 'A' + size.description + ' 0 0 ' + flag + k.space + size.width + k.space + extentY;
+				scalablePath = 'M0 ' + originY + 'A' + size.description + ' 0 0 ' + flag + k.space + size.width + k.space + extentY;
 			}
 		}
 	}
@@ -83,7 +83,7 @@
 		style='z-index: {ZIndex.lines};
 			top: {origin.y - Math.max(1, size.height)}px;
 			left: {origin.x + 142}px;'>
-		<path d={svgPath} stroke={ancestry.thing.color} fill='none'/>
+		<path d={scalablePath} stroke={ancestry.thing.color} fill='none'/>
 	</svg>
 	{#if debug.lines}
 		<Circle radius=1 center={rect.extent.offsetBy(debugOffset)} color=black thickness=1/>

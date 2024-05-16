@@ -14,7 +14,7 @@
 	export let id;
 	let fillColor = k.color_background;
 	let extraColor = k.color_background;
-	let svgPath = svgPaths.fat_polygon(size, direction);
+	let scalablePath = svgPaths.fat_polygon(size, direction);
 
 	function setFillColor(isFilled) {
 		if (!!hover_closure) {
@@ -23,7 +23,7 @@
 	}
 	
 	$: {
-		svgPath = svgPaths.fat_polygon(size, direction);
+		scalablePath = svgPaths.fat_polygon(size, direction);
 		setFillColor(false);
 	}
 
@@ -47,7 +47,7 @@
 	width='20'>
 	<SVGD3 name='triangle'
 		stroke={strokeColor}
-		svgPath={svgPath}
+		scalablePath={scalablePath}
 		fill={fillColor}
 		height={size}
 		width={size}
@@ -55,7 +55,7 @@
 	{#if extraPath}
 		<SVGD3 name='triangleInside'
 			stroke={extraColor}
-			svgPath={extraPath}
+			scalablePath={extraPath}
 			fill={extraColor}
 			height={size}
 			width={size}

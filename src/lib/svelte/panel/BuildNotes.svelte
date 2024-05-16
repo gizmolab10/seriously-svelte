@@ -1,6 +1,6 @@
 <script>
 	import { k, builds, onMount, ZIndex } from '../../ts/common/GlobalImports';
-	import Directionals from '../buttons/Directionals.svelte'
+	import DirectionalButtons from '../buttons/DirectionalButtons.svelte'
 	import CloseButton from '../buttons/CloseButton.svelte'
 	import { s_id_popupView } from '../../ts/state/State';
 	const indexedNotes = Object.entries(builds.notes).reverse();
@@ -87,7 +87,7 @@
 	<div class='notes-modal-content'>
 		<div class='top-bar'>
 			{#key notes}
-				<Directionals hit={directional_buttmouse_click_closureed} display={display}/>
+				<DirectionalButtons hit={directional_buttmouse_click_closureed} display={display}/>
 			{/key}
 			<div class='title'>{title}</div>
 			<CloseButton size={k.dot_size * 1.5}/>

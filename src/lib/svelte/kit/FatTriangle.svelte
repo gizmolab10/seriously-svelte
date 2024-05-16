@@ -7,7 +7,7 @@
 	export let fillColor;
 	export let position;
 	export let size;
-	const svgPath = svgPaths.fat_polygon(size, Direction.left);
+	const scalablePath = svgPaths.fat_polygon(size, Direction.left);
 
 </script>
 
@@ -17,7 +17,7 @@
 	fill={fillColor}
 	position={position}
 	stroke={strokeColor}
-	svgPath={svgPath}
+	scalablePath={scalablePath}
 />
 {#if extraPath}
 	<SVGD3 name='fatTriangleInside'
@@ -25,7 +25,7 @@
 		height={size}
 		fill={extraColor}
 		stroke={extraColor}
-		svgPath={extraPath}
+		scalablePath={extraPath}
 		x={size / 4}
 	/>
 {/if}

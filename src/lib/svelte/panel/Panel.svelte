@@ -3,7 +3,7 @@
 	import { s_build, s_isBusy, s_ancestry_focus, s_db_type, s_graphRect, s_id_popupView, s_title_editing } from '../../ts/state/State';
 	import { g, k, u, get, Rect, Size, Point, Thing, debug, ZIndex, signals, onMount, Ancestry } from '../../ts/common/GlobalImports';
 	import { s_show_details, s_things_arrived, s_user_graphOffset, s_layout_asClusters } from '../../ts/state/State';
-	import CircularButton from '../buttons/CircularButton.svelte';
+	import CircleButton from '../buttons/CircleButton.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import Breadcrumbs from '../panel/Breadcrumbs.svelte';
 	import Clusters from '../clusters/Clusters.svelte';

@@ -17,7 +17,7 @@
 	let revealWrapper = Wrapper;
 	let hasInsidePath = false;
 	let isHovering = false;
-	let svgPath = k.empty;
+	let scalablePath = k.empty;
 	let insideOffset = 0;
 	let dotReveal = null;
 	let rebuilds = 0;
@@ -72,11 +72,11 @@
 		hasInsidePath = ancestry.toolsGrabbed || thing.isBulkAlias;
 		insideOffset = hasInsidePath ? 0 : -1;
 		if (!ancestry.showsReveal || ancestry.toolsGrabbed) {
-			svgPath = svgPaths.circle_atOffset(size, size - 1);
+			scalablePath = svgPaths.circle_atOffset(size, size - 1);
 		} else {
 			const goLeft = ancestry.showsChildRelationships;
 			const direction = goLeft ? Direction.left : Direction.right;
-			svgPath = svgPaths.fat_polygon(size, direction);
+			scalablePath = svgPaths.fat_polygon(size, direction);
 		}
 		if (ancestry.toolsGrabbed) {
 			insidePath = svgPaths.x_cross(size, 1.5);
@@ -130,11 +130,11 @@
 				width: {size}px;
 				height: {size}px;
 			'>
-			{#key svgPath}
+			{#key scalablePath}
 				<SVGD3 name='svg-reveal'
 					fill={debug.lines ? 'transparent' : fillColor}
 					stroke={strokeColor}
-					svgPath={svgPath}
+					scalablePath={scalablePath}
 					height={size}
 					width={size}
 				/>
@@ -149,7 +149,7 @@
 					<SVGD3 name='svg-inside'
 						stroke={insideFillColor}
 						fill={insideFillColor}
-						svgPath={insidePath}
+						scalablePath={insidePath}
 						height={size}
 						width={size}
 					/>
@@ -163,7 +163,7 @@
 					width:{tinyDotsDiameter}px;
 					position:absolute;'>
 					<SVGD3 name='svg-tiny-dots'
-						svgPath={svgPaths.tinyDots_circular(tinyDotsDiameter, childrenCount)}
+						scalablePath={svgPaths.tinyDots_circular(tinyDotsDiameter, childrenCount)}
 						height={tinyDotsDiameter}
 						width={tinyDotsDiameter}
 						stroke={strokeColor}

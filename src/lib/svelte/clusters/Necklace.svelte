@@ -35,7 +35,6 @@
 </script>
 
 {#key rebuilds}
-	<NecklaceRing color={color} center={center}/>
 	{#if !!childMapRects}
 		{#each childMapRects as map}
 			<Widget ancestry={map.childAncestry} angle={map.childAngle} origin={map.childOrigin.offsetBy(childOffset)}/>
@@ -49,4 +48,5 @@
 			{/if}
 		{/each}
 	{/if}
+	<NecklaceRing color={color} center={center} thing={ancestry.thing}/>
 {/key}

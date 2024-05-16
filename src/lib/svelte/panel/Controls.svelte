@@ -1,7 +1,7 @@
 <script>
 	import { k, u, ZIndex, signals, svgPaths, IDButton, IDPersistant, persistLocal, GraphRelations } from '../../ts/common/GlobalImports';
 	import { s_build, s_show_details, s_id_popupView, s_layout_asClusters, s_graph_relations } from '../../ts/state/State';
-	import CircularButton from '../buttons/CircularButton.svelte';
+	import CircleButton from '../buttons/CircleButton.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	let width = u.windowSize.width - 20;
 	let size = 16;
@@ -47,12 +47,12 @@
 		z-index: {ZIndex.frontmost};
 		height: `${k.height_banner - 2}px`;'>
 	{#if !$s_id_popupView}
-		<CircularButton left=15
+		<CircleButton left=15
 			color='transparent'
 			borderColor='transparent'
 			mouse_click_closure={() => button_closure_forID(IDButton.details)}>
 			<img src='settings.svg' alt='circular button' width={size}px height={size}px/>
-		</CircularButton>
+		</CircleButton>
 		{#if k.show_controls}
 			<button class='button'
 				style='
@@ -71,7 +71,7 @@
 		{/if}
 	{/if}
 	{#if u.device_isMobile}
-		<CircularButton
+		<CircleButton
 			left={width - 130}
 			size={size}
 			color={k.color_background}
@@ -79,10 +79,10 @@
 			<SVGD3 name='smaller'
 				width={size}
 				height={size}
-				svgPath={svgPaths.dash(size, 2)}
+				scalablePath={svgPaths.dash(size, 2)}
 			/>
-		</CircularButton>
-		<CircularButton
+		</CircleButton>
+		<CircleButton
 			size={size}
 			left={width - 105}
 			color={k.color_background}
@@ -90,9 +90,9 @@
 			<SVGD3 name='bigger'
 				width={size}
 				height={size}
-				svgPath={svgPaths.t_cross(size, 2)}
+				scalablePath={svgPaths.t_cross(size, 2)}
 			/>
-		</CircularButton>
+		</CircleButton>
 	{/if}
 	<button class='button'
 		style='
@@ -101,10 +101,10 @@
 		on:click={() => togglePopupID(IDButton.builds)}>
 		build {$s_build}
 	</button>
-	<CircularButton
+	<CircleButton
 		size={size}
 		left={width - 15}
 		color={k.color_background}
 		mouse_click_closure={(event) => togglePopupID(IDButton.help)}>?
-	</CircularButton>
+	</CircleButton>
 </div>

@@ -4,11 +4,11 @@
 	import { s_ancestry_editingTools, s_layout_asClusters } from '../../ts/state/State';
 	import { s_altering, s_graphRect, s_show_details } from '../../ts/state/State';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
-	import CircularButton from '../buttons/CircularButton.svelte';
+	import CircleButton from '../buttons/CircleButton.svelte';
 	import TriangleButton from '../buttons/TriangleButton.svelte';
 	import DotReveal from '../widget/DotReveal.svelte';
 	import Button from '../buttons/Button.svelte';
-	import Trash from '../buttons/Trash.svelte';
+	import TrashButton from '../buttons/TrashButton.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	export let offset = Point.zero;
 	const editingToolsDiameter = k.editingTools_diameter;
@@ -297,7 +297,7 @@
 					background: none;
 					cursor: pointer;
 					border: none;'>
-				<Trash color={color} invert={hovers[IDTool.delete]}/>
+				<TrashButton color={color} invert={hovers[IDTool.delete]}/>
 			</button>
 			{/if}
 		</div>

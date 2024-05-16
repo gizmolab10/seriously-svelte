@@ -1,9 +1,9 @@
 <script>
 	import { u } from '../../ts/common/GlobalImports';
+	export let mouse_click_closure = null;
 	export let borderColor = '#333';
 	export let textColor = '#400';
 	export let color = '#ccc';
-	export let mouse_click_closure = null;
 	export let size = 14;
 	export let left = 7;
 	export let top = 7;
