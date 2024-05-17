@@ -23,7 +23,7 @@ export default class ClusterLayout {
 		const fork_backoff = this.fork_adjustment(tiny_radius, arc_radius);
 		const fork_fromCenter = Point.fromPolar(arc_radius, angle);
 		const fork_center = center.offsetBy(fork_fromCenter);
-		const fork_radius = (tiny_radius - fork_backoff);
+		const fork_radius = tiny_radius - fork_backoff;
 		const line_radius = k.cluster_line_length - fork_radius;
 
 		this.line_tip = Point.fromPolar(line_radius, angle);

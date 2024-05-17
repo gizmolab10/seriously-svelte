@@ -17,9 +17,7 @@
 	let borderColor = transparentize(color, transparency);
 	let fillColor = transparentize(color, transparency);
 	let border = `${borderStyle} ${borderColor}`;
-	let scalableLinePath = k.empty;
 	let angle = $s_necklace_angle;
-	let ringLineOrigin = center;
 	let colorStyles = k.empty;
 	let cursorStyle = k.empty;
 	let isHovering = false;
@@ -38,12 +36,6 @@
 		if (hitTest($s_mouse_location)) {
 			$s_necklace_dragStart = $s_mouse_location;
 		}
-	}
-
-	$: {
-		const radial = new Point(radius + thickness, 0);
-		const rotated = radial.rotate_by($s_necklace_angle);
-		scalableLinePath = svgPaths.line(rotated);
 	}
 
 	function setupChangesHandler() {
@@ -67,16 +59,22 @@
 		return false;
 	}
 
+	function updateLineOriginForAngle() {
+		ringLineOrigin = center;
+	}
+
 	function handle_mouse_movedTo(mouseLocation) {
 		const hit = hitTest(mouseLocation);
-		if (!$s_necklace_dragStart) {
+		if (!$s_necklace_dragStart) {		// hover
 			transparency = hit ? 0.9 : 0.97;
 			updateColors();
 			rebuilds += 1;
-		} else {
-			const vector = $s_necklace_dragStart.distanceTo(mouseLocation);
-			if (!vector.almostZero(1)) {
-				angle += vector.angle;
+		} else {							// rotate
+			const mouseAngle = center.distanceTo(mouseLocation).angle;
+			const startAngle = center.distanceTo($s_necklace_dragStart).angle;
+			const rotation = mouseAngle - startAngle;
+			if (!Math.abs(rotation) < 0.1) {
+				angle += rotation;
 				$s_necklace_angle = angle;
 				$s_necklace_dragStart = mouseLocation;
 				signals.signal_rebuildGraph_fromFocus();
@@ -112,11 +110,4 @@
 			left: {ringOrigin.x}px;'>
 		<svg class= 'svg-ring-button' fill={fillColor} viewBox={viewBox}><path d={scalableRingPath}></svg>
 	</div>
-		<div class= 'ring-line'
-			style='
-				position: absolute;
-				top: {ringLineOrigin.y}px;
-				left: {ringLineOrigin.x}px;'>
-			<svg class= 'svg-ring-line' stroke=black><path d={scalableLinePath}></svg>
-		</div>
 {/key}

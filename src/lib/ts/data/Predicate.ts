@@ -24,7 +24,6 @@ export default class Predicate extends RemoteIdentifiable {
 	angle_ofLine_for(points_out: boolean): number {
 		const tweak = Math.PI * 1 / 4;
 		const angle = get(s_necklace_angle);
-		
 		return u.normalized_angle(this.isBidirectional ? angle + Angle.half + tweak : points_out ? angle : angle + Angle.half - tweak);
 	}
 
