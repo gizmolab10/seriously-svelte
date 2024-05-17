@@ -1,7 +1,7 @@
 <script>
 	import { k, u, ZIndex, dbDispatch, Hierarchy, IDPersistant, persistLocal } from '../../ts/common/GlobalImports';
-	import { s_db_type, s_graphRect, s_id_popupView } from '../../ts/state/State';
 	import RadioButtons from '../buttons/RadioButtons.svelte';
+	import { s_db_type } from '../../ts/state/State';
 	import { DBType } from '../../ts/db/DBInterface';
 	import { h } from '../../ts/db/DBDispatch';
 

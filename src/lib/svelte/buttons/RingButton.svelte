@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, Thing, Point, ZIndex, onMount, signals, svgPaths, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
-	import { s_graphRect, s_necklace_angle, s_mouse_location, s_necklace_dragStart } from '../../ts/state/State';
+	import { s_graphRect, s_necklace_angle, s_mouse_location, s_necklace_dragStart, s_user_graphOffset } from '../../ts/state/State';
 	export let zindex = ZIndex.dots;
 	export let center = Point.zero;
 	export let color = 'k.empty';
@@ -11,12 +11,15 @@
 	const borderStyle = '1px solid';
 	const diameter = (radius + thickness) * 2;
 	const viewBox = `${-thickness}, ${-thickness}, ${diameter}, ${diameter}`;
+	const ringOrigin = center.offsetBy(Point.square(radius + thickness).negated);
+	const scalableRingPath = svgPaths.ring(Point.square(radius), radius + thickness, thickness);
 	let transparency = 0.97;
-	let scalablePath = svgPaths.ring(Point.square(radius), radius + thickness, thickness);
 	let borderColor = transparentize(color, transparency);
 	let fillColor = transparentize(color, transparency);
 	let border = `${borderStyle} ${borderColor}`;
+	let scalableLinePath = k.empty;
 	let angle = $s_necklace_angle;
+	let ringLineOrigin = center;
 	let colorStyles = k.empty;
 	let cursorStyle = k.empty;
 	let isHovering = false;
@@ -37,6 +40,12 @@
 		}
 	}
 
+	$: {
+		const radial = new Point(radius + thickness, 0);
+		const rotated = radial.rotate_by($s_necklace_angle);
+		scalableLinePath = svgPaths.line(rotated);
+	}
+
 	function setupChangesHandler() {
 		const handleChanges = signals.hangle_thingChanged(0, thing.id, (value: any) => {
 			updateColors();
@@ -47,7 +56,7 @@
  
 	function hitTest(mouseLocation): boolean {
 		if (mouseLocation) {
-			const mainOffset = $s_graphRect.origin.offsetBy(Point.square(-thickness));
+			const mainOffset = $s_graphRect.origin.offsetBy($s_user_graphOffset);
 			const locationInWindow = mainOffset.offsetBy(center);
 			const offCenter = locationInWindow.distanceTo(mouseLocation);
 			const radial = offCenter.magnitude;
@@ -99,8 +108,15 @@
 			position: absolute;
 			width: {diameter}px;
 			height: {diameter}px;
-			top: {center.y - radius - thickness}px;
-			left: {center.x - radius - thickness}px;'>
-		<svg class= 'svg-ring-button' fill={fillColor} viewBox={viewBox}><path d={scalablePath}></svg>
+			top: {ringOrigin.y}px;
+			left: {ringOrigin.x}px;'>
+		<svg class= 'svg-ring-button' fill={fillColor} viewBox={viewBox}><path d={scalableRingPath}></svg>
 	</div>
+		<div class= 'ring-line'
+			style='
+				position: absolute;
+				top: {ringLineOrigin.y}px;
+				left: {ringLineOrigin.x}px;'>
+			<svg class= 'svg-ring-line' stroke=black><path d={scalableLinePath}></svg>
+		</div>
 {/key}

@@ -9,6 +9,10 @@ export enum Direction {
 
 export default class SVGPaths {
 
+	ring(center: Point, radius: number, thickness: number): string {
+		return `${this.circle(center, radius, true)} ${this.circle(center.offsetByX(center.x * 2), radius - thickness, false)}`;
+	}
+
     dash(diameter: number, margin: number): string {
 		const y = diameter / 2;
         return `M${margin} ${y} L${diameter - margin} ${y}`;
@@ -31,18 +35,10 @@ export default class SVGPaths {
 		return this.circle(center, diameter / 2);
     }
 
-	ring(center: Point, radius: number, thickness: number): string {
-		return `
-			${this.circle(center, radius, true)}
-			${this.circle(center.offsetByX(center.x * 2), radius - thickness, false)}`;
-	}
-
     circle(center: Point, radius: number, clockwise: boolean = true): string {
 		const direction = clockwise ? 0 : 1;
 		const diameter = radius * 2 * (clockwise ? 1 : -1);
-        return `M${center.x - radius} ${center.y}
-			a${radius} ${radius} 0 0 ${direction} ${ diameter} 0
-			a${radius} ${radius} 0 0 ${direction} ${-diameter} 0`;
+        return `M${center.x - radius} ${center.y} a${radius} ${radius} 0 0 ${direction} ${ diameter} 0 a${radius} ${radius} 0 0 ${direction} ${-diameter} 0`;
     }
 
     oval(diameter: number, horizontal: boolean = true, eccentricity: number = 2.3): string {
