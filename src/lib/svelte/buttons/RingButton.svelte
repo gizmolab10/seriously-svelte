@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, Thing, Point, ZIndex, onMount, signals, svgPaths, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
-	import { s_necklace_angle, s_mouse_location } from '../../ts/state/State';
+	import { s_graphRect, s_necklace_angle, s_mouse_location, s_necklace_dragStart } from '../../ts/state/State';
 	export let zindex = ZIndex.dots;
 	export let center = Point.zero;
 	export let color = 'k.empty';
@@ -16,7 +16,6 @@
 	let borderColor = transparentize(color, transparency);
 	let fillColor = transparentize(color, transparency);
 	let border = `${borderStyle} ${borderColor}`;
-	let dragStart: Point | null = null;
 	let angle = $s_necklace_angle;
 	let colorStyles = k.empty;
 	let cursorStyle = k.empty;
@@ -25,13 +24,18 @@
 	let ringButton;
 
 	$: { handle_mouse_movedTo($s_mouse_location); }
-	function handle_mouse_up(event) { dragStart = null; }
-	function handle_mouse_down(event) { dragStart = u.location_ofMouseEvent(event); }
+	function handle_mouse_up(event) { $s_necklace_dragStart = null; }
 
 	onMount(() => {
 		updateColors();
 		return setupChangesHandler();
 	});
+
+	function handle_mouse_down(event) {
+		if (hitTest($s_mouse_location)) {
+			$s_necklace_dragStart = $s_mouse_location;
+		}
+	}
 
 	function setupChangesHandler() {
 		const handleChanges = signals.hangle_thingChanged(0, thing.id, (value: any) => {
@@ -40,19 +44,34 @@
 		});
 		return () => { handleChanges.disconnect(); };
 	}
+ 
+	function hitTest(mouseLocation): boolean {
+		if (mouseLocation) {
+			const mainOffset = $s_graphRect.origin.offsetBy(Point.square(-thickness));
+			const locationInWindow = mainOffset.offsetBy(center);
+			const offCenter = locationInWindow.distanceTo(mouseLocation);
+			const radial = offCenter.magnitude;
+			if (radial.isBetween(radius, radius + thickness)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	function handle_mouse_movedTo(mouseLocation) {
-		if (!!dragStart) {
-			const vector = dragStart.distanceTo(mouseLocation);
+		const hit = hitTest(mouseLocation);
+		if (!$s_necklace_dragStart) {
+			transparency = hit ? 0.9 : 0.97;
+			updateColors();
+			rebuilds += 1;
+		} else {
+			const vector = $s_necklace_dragStart.distanceTo(mouseLocation);
 			if (!vector.almostZero(1)) {
-				dragStart = mouseLocation;
 				angle += vector.angle;
 				$s_necklace_angle = angle;
-				console.log(u.degrees_of(angle));
+				$s_necklace_dragStart = mouseLocation;
 				signals.signal_rebuildGraph_fromFocus();
 			}
-		} else {
-			// hover
 		}
 	}
 

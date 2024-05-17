@@ -100,80 +100,81 @@
 </style>
 
 <svelte:document on:keydown={handle_key_down}/>
-{#if $s_isBusy}
-	<p>Welcome to Seriously</p>
-	{#if $s_db_type != DBType.local}
-		<p>(loading your {$s_db_type} data{$s_db_type == DBType.firebase ? ', from ' + h?.db.baseID : k.empty})</p>
-	{/if}
-{:else if !$s_things_arrived}
-	<p>Nothing is available.</p>
-{:else}
-	<Controls/>
-	{#if $s_id_popupView == null}
-		{#if $s_show_details}
-			<Details/>
-			<div class='vertical-line' style='
-				left: {k.width_details}px;
-				z-index: {ZIndex.lines};
-				top: {$s_graphRect.origin.y}px;
-				height: {$s_graphRect.size.height}px;'>
-			</div>
+<div style='{k.prevent_selection_style};'>
+	{#if $s_isBusy}
+		<p>Welcome to Seriously</p>
+		{#if $s_db_type != DBType.local}
+			<p>(loading your {$s_db_type} data{$s_db_type == DBType.firebase ? ', from ' + h?.db.baseID : k.empty})</p>
 		{/if}
-		<div class='horizontal-line' style='
-			z-index: {ZIndex.lines};
-			top: {k.height_banner - 2}px;'>
-		</div>
-		<div class='breadcrumbs' style='z-index: {ZIndex.frontmost};'>
-			<Breadcrumbs/>
-			<div class='horizontal-line'
-				style='
-					top: 68px;
-					z-index: {ZIndex.lines};'>
-			</div>
-		</div>
-		{#if k.show_titleAtTop}
-			<div class='top-title'
-				style='
-					top: 70px;
-					z-index: {ZIndex.frontmost};
-					color: {$s_ancestry_focus.thing?.color};
-					left: 0px;'>
-				{$s_ancestry_focus.title}
-			</div>
-			<div class='horizontal-line'
-				style='
+	{:else if !$s_things_arrived}
+		<p>Nothing is available.</p>
+	{:else}
+		<Controls/>
+		{#if $s_id_popupView == null}
+			{#if $s_show_details}
+				<Details/>
+				<div class='vertical-line' style='
+					left: {k.width_details}px;
 					z-index: {ZIndex.lines};
-					top: {k.height_banner + k.height_titleAtTop + 28}px;'>
-			</div>
-		{/if}
-	{/if}
-	<div class='right-side'
-		style='
-			height: 100%;
-			position: fixed;
-			z-index: {ZIndex.panel};
-			{k.prevent_selection_style};
-			left: {$s_show_details ? k.width_details : 0}px;'>
-		{#if $s_id_popupView == IDButton.help}
-			<Help/>
-		{:else if $s_id_popupView == IDButton.builds}
-			<BuildNotes/>
-		{:else if $s_id_popupView == null}
-			{#key `${$s_ancestry_focus} ${rebuilds}`}
-				<div class='clipper' on:wheel={handle_wheel}
-					style='
-						top:{$s_graphRect.origin.y}px;
-						left: {$s_graphRect.origin.x}px;
-						width: {$s_graphRect.size.width}px;
-						height: {$s_graphRect.size.height}px;
-						z-index: {ZIndex.panel};'>
-					{#if $s_layout_asClusters}
-						<Clusters ancestry={$s_ancestry_focus}/>
-					{:else}
-						<Tree/>
-					{/if}
+					top: {$s_graphRect.origin.y}px;
+					height: {$s_graphRect.size.height}px;'>
 				</div>
-			{/key}
+			{/if}
+			<div class='horizontal-line' style='
+				z-index: {ZIndex.lines};
+				top: {k.height_banner - 2}px;'>
+			</div>
+			<div class='breadcrumbs' style='z-index: {ZIndex.frontmost};'>
+				<Breadcrumbs/>
+				<div class='horizontal-line'
+					style='
+						top: 68px;
+						z-index: {ZIndex.lines};'>
+				</div>
+			</div>
+			{#if k.show_titleAtTop}
+				<div class='top-title'
+					style='
+						top: 70px;
+						z-index: {ZIndex.frontmost};
+						color: {$s_ancestry_focus.thing?.color};
+						left: 0px;'>
+					{$s_ancestry_focus.title}
+				</div>
+				<div class='horizontal-line'
+					style='
+						z-index: {ZIndex.lines};
+						top: {k.height_banner + k.height_titleAtTop + 28}px;'>
+				</div>
+			{/if}
 		{/if}
-	</div>
-{/if}
+		<div class='right-side'
+			style='
+				height: 100%;
+				position: fixed;
+				z-index: {ZIndex.panel};
+				left: {$s_show_details ? k.width_details : 0}px;'>
+			{#if $s_id_popupView == IDButton.help}
+				<Help/>
+			{:else if $s_id_popupView == IDButton.builds}
+				<BuildNotes/>
+			{:else if $s_id_popupView == null}
+				{#key `${$s_ancestry_focus} ${rebuilds}`}
+					<div class='clipper' on:wheel={handle_wheel}
+						style='
+							top:{$s_graphRect.origin.y}px;
+							left: {$s_graphRect.origin.x}px;
+							width: {$s_graphRect.size.width}px;
+							height: {$s_graphRect.size.height}px;
+							z-index: {ZIndex.panel};'>
+						{#if $s_layout_asClusters}
+							<Clusters ancestry={$s_ancestry_focus}/>
+						{:else}
+							<Tree/>
+						{/if}
+					</div>
+				{/key}
+			{/if}
+		</div>
+	{/if}
+</div>
