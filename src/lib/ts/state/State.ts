@@ -18,9 +18,10 @@ export const s_db_type				 = writable<string>();
 export const s_graph_relations		 = writable<string>();
 export const s_thing_fontFamily		 = writable<string>();
 export const s_scale_factor			 = writable<number>();
-export const s_cluster_angle		 = writable<number>();
+export const s_necklace_angle		 = writable<number>();
 export const s_build				 = writable<number>();
 export const s_user_graphOffset		 = writable<Point>();
+export const s_mouse_location		 = writable<Point>();
 export const s_graphRect			 = writable<Rect>();
 
 let interval: NodeJS.Timeout | null = null;

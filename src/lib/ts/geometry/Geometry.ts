@@ -9,7 +9,9 @@ export class Point {
 	}
 
 	get asSize():					    Size { return new Size(this.x, this.y); }
-	get abs():						   Point { return new Point(Math.abs(this.x), Math.abs(this.y)); }
+	get angle():					  number { return Math.atan(this.x / this.y); }
+	get magnitude():				  number { return Math.sqrt(this.x * this.x + this.y * this.y); }
+	get toPolar():	{r: number, phi: number} { return {r: this.magnitude, phi: this.angle}; }
 	get pixelVerbose():				  string { return `${this.x}px ${this.y}px`; }
 	get verbose():					  string { return `(${this.x}, ${this.y})`; }
 	get description():				  string { return `${this.x} ${this.y}`; }
@@ -17,13 +19,15 @@ export class Point {
 	get negated():					   Point { return this.multipliedBy(-1); }
 	get dividedInHalf():			   Point { return this.multipliedBy(1/2); }
 	get copy():						   Point { return new Point(this.x, this.y); }
+	get abs():						   Point { return new Point(Math.abs(this.x), Math.abs(this.y)); }
 	offsetByX(x: number):			   Point { return new Point(this.x + x, this.y); }
 	offsetByY(y: number):			   Point { return new Point(this.x, this.y + y); }
+	offsetEquallyBy(offset: number):   Point { return this.offsetBy(Point.square(offset)); }
 	offsetBy(point: Point):			   Point { return new Point(this.x + point.x, this.y + point.y); }
+	distanceTo(point: Point):		   Point { return new Point(point.x - this.x, point.y - this.y); }
 	multipliedBy(multiplier: number):  Point { return new Point(this.x * multiplier, this.y * multiplier) }
 	offsetBySize(size: Size):		   Point { return new Point(this.x + size.width, this.y + size.height); }
-	distanceTo(point: Point):		   Point { return new Point(Math.abs(point.x - this.x), Math.abs(point.y - this.y)) }
-	offsetEquallyBy(offset: number):   Point { return this.offsetBy(Point.square(offset)); }
+	almostZero(almost: number):		 boolean { return Math.abs(this.x) <= almost && Math.abs(this.y) <= almost; }
 	static square(length: number):	   Point { return new Point(length, length); }
 	static get zero():				   Point { return new Point();}
 	static fromPolar(r: number, phi: number) { return new Point(r, 0).rotate_by(phi); }

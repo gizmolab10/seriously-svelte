@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, Rect, Size, Point, ZIndex } from '../../ts/common/GlobalImports';
+	import { g, k, u, Rect, Size, Point, ZIndex, onMount } from '../../ts/common/GlobalImports';
 	import { s_graphRect } from '../../ts/state/State';
 	export let mouse_click_closure = (event, isLong) => {};
 	export let background_color = 'transparent';
@@ -12,19 +12,13 @@
 	export let color = 'gray';
 	export let height = 16;
 	export let width = 16;
+	let mouseLocation = Point.zero;
 	let isListening = false;
 	let mouse_click_timer;
 	let button;
 
-	function handle_mouse_move(event) {
-		handle_hoverAt(new Point(event.x, event.y));
-		setTimeout(() => {
-			handle_hoverAt(g.mouseLocation);
-		}, 100);
-	}
-
-	function handle_hoverAt(eventLocation) {
-		const isHovering = u.hitTestFor(button, eventLocation);
+	$: {
+		const isHovering = u.hitTestFor(button, $s_mouse_location);
 		hover_closure(isHovering);
 	}
 
@@ -64,7 +58,6 @@
 <button class='button'
 	bind:this={button}
 	on:click={handle_mouse_click}
-	on:mousemove={handle_mouse_move}
 	style='
 		color: {color};
 		cursor: {cursor};

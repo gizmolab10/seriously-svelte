@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, Point, ZIndex, signals, onMount, Layout, debugReact, ClusterLayout, transparentize } from '../../ts/common/GlobalImports';
-	import NecklaceRing from './NecklaceRing.svelte';
+	import RingButton from '../buttons/RingButton.svelte';
 	import ClusterLine from './ClusterLine.svelte';
 	import ClusterArc from './ClusterArc.svelte';
 	import Widget from '../widget/Widget.svelte';
@@ -48,5 +48,11 @@
 			{/if}
 		{/each}
 	{/if}
-	<NecklaceRing color={color} center={center} thing={ancestry.thing}/>
+	<RingButton name='necklace-ring'
+		color={color}
+		thickness={30}
+		center={center}
+		zindex={ZIndex.lines}
+		thing={ancestry.thing}
+		radius={k.cluster_arc_radius}/>
 {/key}

@@ -253,6 +253,7 @@
 			position: absolute;
 			padding: {padding};
 			position: absolute;
+			{k.prevent_selection};
 			color: {thing?.color};
 			width: {titleWidth}px;
 			font-size: {fontSize};

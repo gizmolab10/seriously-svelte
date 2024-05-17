@@ -1,7 +1,7 @@
 import { g, k, u, Point, signals, Ancestry, dbDispatch, GraphRelations } from '../common/GlobalImports'
 import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/State';
 import { s_thing_fontFamily, s_graph_relations } from '../state/State';
-import { s_cluster_angle, s_layout_asClusters } from '../state/State';
+import { s_necklace_angle, s_layout_asClusters } from '../state/State';
 import { s_ancestries_grabbed, s_ancestries_expanded } from '../state/State';
 import { h } from '../db/DBDispatch';
 
@@ -138,7 +138,7 @@ class PersistLocal {
 		k.show_titleAtTop = this.key_read(IDPersistant.title_atTop) ?? false;
 		g.applyScale(!u.device_isMobile ? 1 : this.key_read(IDPersistant.scale) ?? 1);
 
-		s_cluster_angle.set(Math.PI / 20);
+		s_necklace_angle.set(Math.PI / 20);
 		s_show_details.set(this.key_read(IDPersistant.details) ?? false);
 		s_thing_fontFamily.set(this.key_read(IDPersistant.font) ?? 'Arial');
 		s_layout_asClusters.set(this.key_read(IDPersistant.layout) ?? false);

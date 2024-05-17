@@ -50,14 +50,14 @@
 				case IDLine.flat:
 					origin = rect.centerLeft.offsetByY(-0.5);
 					extent = rect.centerRight.offsetBy(new Point(0.5, -0.5));
-					size = origin.distanceTo(extent).asSize;
+					size = origin.distanceTo(extent).abs.asSize;
 					scalablePath = svgPaths.line(new Point(size.width, 0));
 					break;
 			}
 			if (curveType != IDLine.flat) {
 				let flag = (curveType == IDLine.down) ? 0 : 1;
 				const noHeight = origin.y == extent.y;
-				size = origin.distanceTo(extent).asSize;
+				size = origin.distanceTo(extent).abs.asSize;
 				const originY = curveType == IDLine.down ? 1 : size.height;
 				const extentY = curveType == IDLine.up   ? 1 : size.height;
 				const boxSize = new Size(size.width, (noHeight ? 2 : size.height));

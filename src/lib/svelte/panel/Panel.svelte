@@ -159,7 +159,8 @@
 		{:else if $s_id_popupView == null}
 			{#key `${$s_ancestry_focus} ${rebuilds}`}
 				<div class='clipper' on:wheel={handle_wheel}
-					style='top:{$s_graphRect.origin.y}px;
+					style='{k.prevent_selection};
+						top:{$s_graphRect.origin.y}px;
 						left: {$s_graphRect.origin.x}px;
 						width: {$s_graphRect.size.width}px;
 						height: {$s_graphRect.size.height}px;

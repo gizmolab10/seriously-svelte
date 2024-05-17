@@ -72,8 +72,8 @@
 	{/if}
 	{#if u.device_isMobile}
 		<CircleButton
-			left={width - 130}
 			size={size}
+			left={width - 130}
 			color={k.color_background}
 			mouse_click_closure={(event) => button_closure_forID(IDButton.smaller)}>
 			<SVGD3 name='smaller'

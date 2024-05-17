@@ -61,7 +61,7 @@ export default class Layout {
 	childAngle_for(index: number, count: number, clusterLayout: ClusterLayout, radius: number): number {
 		const row = index - ((count - 1) / 2);				// row centered around zero
 		const radial = new Point(radius, 0);
-		const clusterAngle = clusterLayout.angle_ofLine;	// depends on s_cluster_angle, predicate kind & points_out
+		const clusterAngle = clusterLayout.angle_ofLine;	// depends on s_necklace_angle, predicate kind & points_out
 		const startY = radial.rotate_by(clusterAngle).y;	// height of clusterAngle
 		let y = startY + (row * (k.row_height - 2));		// height of row
 		const isLower = y >= 0;
