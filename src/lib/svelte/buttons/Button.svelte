@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, u, Rect, Size, Point, ZIndex, onMount } from '../../ts/common/GlobalImports';
-	import { s_graphRect } from '../../ts/state/State';
+	import { s_graphRect, s_mouse_location } from '../../ts/state/State';
 	export let mouse_click_closure = (event, isLong) => {};
 	export let background_color = 'transparent';
 	export let hover_closure = (flag) => {};
