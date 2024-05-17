@@ -147,11 +147,13 @@
 			</div>
 		{/if}
 	{/if}
-	<div class='right-side' style='
-		left: {$s_show_details ? k.width_details : 0}px;
-		z-index: {ZIndex.panel};
-		position: fixed;
-		height: 100%;'>
+	<div class='right-side'
+		style='
+			height: 100%;
+			position: fixed;
+			z-index: {ZIndex.panel};
+			{k.prevent_selection_style};
+			left: {$s_show_details ? k.width_details : 0}px;'>
 		{#if $s_id_popupView == IDButton.help}
 			<Help/>
 		{:else if $s_id_popupView == IDButton.builds}
@@ -159,7 +161,7 @@
 		{:else if $s_id_popupView == null}
 			{#key `${$s_ancestry_focus} ${rebuilds}`}
 				<div class='clipper' on:wheel={handle_wheel}
-					style='{k.prevent_selection};
+					style='
 						top:{$s_graphRect.origin.y}px;
 						left: {$s_graphRect.origin.x}px;
 						width: {$s_graphRect.size.width}px;

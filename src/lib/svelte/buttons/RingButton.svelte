@@ -24,27 +24,21 @@
 	let rebuilds = 0;
 	let ringButton;
 
+	$: { handle_mouse_movedTo($s_mouse_location); }
+	function handle_mouse_up(event) { dragStart = null; }
+	function handle_mouse_down(event) { dragStart = u.location_ofMouseEvent(event); }
+
 	onMount(() => {
 		updateColors();
+		return setupChangesHandler();
+	});
+
+	function setupChangesHandler() {
 		const handleChanges = signals.hangle_thingChanged(0, thing.id, (value: any) => {
 			updateColors();
 			rebuilds += 1;
 		});
-		return () => {
-			handleChanges.disconnect();
-		};
-	});
-
-	$: { handle_mouse_movedTo($s_mouse_location); }
-
-	function pointForEvent(event) { return new Point(event.clientX, event.clientY); }
-
-	function handle_mouse_up(event) {
-		dragStart = null;
-	}
-
-	function handle_mouse_down(event) {
-		dragStart = pointForEvent(event);
+		return () => { handleChanges.disconnect(); };
 	}
 
 	function handle_mouse_movedTo(mouseLocation) {

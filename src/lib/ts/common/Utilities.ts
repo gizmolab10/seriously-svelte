@@ -9,6 +9,7 @@ class Utilities {
 	normalized_angle(angle: number) { return Angle.full.normalize(angle); }
 	concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return [...a, ...b]; }
 	strip_falsies(array: Array<any>): Array<any> { return array.filter(element => !!element); }
+	location_ofMouseEvent(event: MouseEvent) { return new Point(event.clientX, event.clientY); }
 	quadrant_startAngle(angle: number): number { return this.startAngle_ofQuadrant(this.quadrant_ofNotNormalized(angle)); }
 	sort_byOrder(array: Array<Ancestry>) { return array.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
 	strip_invalid(array: Array<any>): Array<any> { return this.strip_identifiableDuplicates(this.strip_falsies(array)); }

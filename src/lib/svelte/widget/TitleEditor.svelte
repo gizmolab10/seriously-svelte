@@ -253,12 +253,12 @@
 			position: absolute;
 			padding: {padding};
 			position: absolute;
-			{k.prevent_selection};
 			color: {thing?.color};
 			width: {titleWidth}px;
 			font-size: {fontSize};
 			z-index: {ZIndex.text};
 			font-family: {fontFamily};
+			{k.prevent_selection_style};
 			outline-color: {k.color_background};
 			left: {$s_layout_asClusters ? (forward ? 14 : 4) : 10}px;
 		'/>
