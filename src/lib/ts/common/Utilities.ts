@@ -104,6 +104,14 @@ class Utilities {
 		}
 	}
 
+	angle_tiltsUp(angle: number): boolean {
+		switch(this.quadrant_ofNotNormalized(angle)) {
+			case Quadrant.upperRight: return true;
+			case Quadrant.lowerLeft: return true;
+			default: return false;
+		}
+	}
+
 	quadrant_ofNotNormalized(angle: number): Quadrant {
 		const normalized = this.normalized_angle(angle);
 		let quadrant = Quadrant.upperRight;

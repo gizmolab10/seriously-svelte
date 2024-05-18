@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, Thing, Point, ZIndex, onMount, signals, svgPaths, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
-	import { s_graphRect, s_necklace_angle, s_mouse_location, s_necklace_dragStart, s_user_graphOffset } from '../../ts/state/State';
+	import { s_graphRect, s_necklace_angle, s_mouse_location, s_necklace_priorAngle, s_user_graphOffset } from '../../ts/state/State';
 	export let zindex = ZIndex.dots;
 	export let center = Point.zero;
 	export let color = 'k.empty';
@@ -13,19 +13,22 @@
 	const viewBox = `${-thickness}, ${-thickness}, ${diameter}, ${diameter}`;
 	const ringOrigin = center.offsetBy(Point.square(radius + thickness).negated);
 	const scalableRingPath = svgPaths.ring(Point.square(radius), radius + thickness, thickness);
-	let transparency = 0.97;
-	let borderColor = transparentize(color, transparency);
-	let fillColor = transparentize(color, transparency);
-	let border = `${borderStyle} ${borderColor}`;
-	let angle = $s_necklace_angle;
+	let borderColor = k.empty;
 	let colorStyles = k.empty;
 	let cursorStyle = k.empty;
+	let fillColor = k.empty;
+	let transparency = 0.97;
 	let isHovering = false;
+	let border = k.empty;
 	let rebuilds = 0;
 	let ringButton;
 
 	$: { handle_mouse_movedTo($s_mouse_location); }
-	function handle_mouse_up(event) { $s_necklace_dragStart = null; }
+	function angleFor(offset: Point): number { return center.distanceTo(offset).angle; }
+
+	function handle_mouse_up(event) {
+		$s_necklace_priorAngle = null;
+	}
 
 	onMount(() => {
 		updateColors();
@@ -34,7 +37,7 @@
 
 	function handle_mouse_down(event) {
 		if (hitTest($s_mouse_location)) {
-			$s_necklace_dragStart = $s_mouse_location;
+			$s_necklace_priorAngle = angleFor($s_mouse_location);
 		}
 	}
 
@@ -45,6 +48,14 @@
 		});
 		return () => { handleChanges.disconnect(); };
 	}
+
+	function updateColors() {
+		fillColor = transparentize(color, transparency);
+		// colorStyles = `background-color: ${transparentize(borderColor, 0.15)}; color: ${k.color_background}`;
+		// cursorStyle = isHovering ? 'cursor: pointer' : k.empty;
+		// borderColor = isHovering ? color : k.color_background;
+		// border = `${borderStyle} ${borderColor}`;
+	};
  
 	function hitTest(mouseLocation): boolean {
 		if (mouseLocation) {
@@ -59,36 +70,27 @@
 		return false;
 	}
 
-	function updateLineOriginForAngle() {
-		ringLineOrigin = center;
-	}
-
 	function handle_mouse_movedTo(mouseLocation) {
 		const hit = hitTest(mouseLocation);
-		if (!$s_necklace_dragStart) {		// hover
+		const angle = $s_necklace_priorAngle;
+		if (!angle) {		// hover
 			transparency = hit ? 0.9 : 0.97;
-			updateColors();
-			rebuilds += 1;
 		} else {							// rotate
-			const mouseAngle = center.distanceTo(mouseLocation).angle;
-			const startAngle = center.distanceTo($s_necklace_dragStart).angle;
-			const rotation = mouseAngle - startAngle;
-			if (!Math.abs(rotation) < 0.1) {
-				angle += rotation;
-				$s_necklace_angle = angle;
-				$s_necklace_dragStart = mouseLocation;
+			transparency = 0.9;
+			const mouseAngle = angleFor(mouseLocation);
+			const rotation = u.normalized_angle(mouseAngle - angle);
+			if (!Math.abs(rotation) < 0.05) {
+				$s_necklace_angle = u.normalized_angle($s_necklace_angle + rotation);
+				$s_necklace_priorAngle = mouseAngle;
 				signals.signal_rebuildGraph_fromFocus();
 			}
+			if (!$s_necklace_priorAngle) {
+				console.log('UP');
+			}
 		}
+		updateColors();
+		rebuilds += 1;
 	}
-
-	function updateColors() {
-		colorStyles = `background-color: ${transparentize(borderColor, 0.15)}; color: ${k.color_background}`;
-		cursorStyle = isHovering ? 'cursor: pointer' : k.empty;
-		borderColor = isHovering ? color : k.color_background;
-		fillColor = transparentize(color, transparency);
-		border = `${borderStyle} ${borderColor}`;
-	};
 			// {colorStyles};
 			// {cursorStyle};
 			// border:{border};

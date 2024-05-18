@@ -1,4 +1,5 @@
-import { k, u, Point, Angle, svgPaths, Ancestry, Predicate } from '../common/GlobalImports';
+import { k, u, get, Point, Angle, svgPaths, Predicate } from '../common/GlobalImports';
+import { s_necklace_angle } from '../state/State';
 import { ArcKind } from '../common/Enumerations';
 
 export default class ClusterLayout {
@@ -15,11 +16,12 @@ export default class ClusterLayout {
 	arc_radius = 0;
 	count: number;
 
+	// created each time ring is tiniest bit rotated!
 	constructor(predicate: Predicate | null, count: number, points_out: boolean) {
 		const arc_radius = k.cluster_arc_radius;
 		const center = Point.square(arc_radius);
 		const tiny_radius = k.necklace_gap * (0.5 + count / 6);
-		const angle = predicate?.angle_ofLine_for(points_out) ?? 0;
+		const angle = this.angle_ofLine_for(predicate, points_out) ?? 0;
 		const fork_backoff = this.fork_adjustment(tiny_radius, arc_radius);
 		const fork_fromCenter = Point.fromPolar(arc_radius, angle);
 		const fork_center = center.offsetBy(fork_fromCenter);
@@ -50,7 +52,7 @@ export default class ClusterLayout {
 	}
 
 	get main_svgPaths(): Array<string> {
-		const x_isPositive = u.angle_hasPositiveX(this.angle_ofLine);
+		const x_isPositive = u.angle_tiltsUp(this.angle_ofLine);
 		const big_svgPath = this.big_svgPath(x_isPositive);
 		const end_small_svgPath = this.small_svgPath(this.angle_atEnd, x_isPositive, false);
 		const start_small_svgPath = this.small_svgPath(this.angle_atStart, x_isPositive, true);
@@ -98,6 +100,25 @@ export default class ClusterLayout {
 		const distanceTo_arc_small_center = this.arc_radius + arc_small_radius;
 		const center_small = center.offsetBy(Point.fromPolar(distanceTo_arc_small_center, arc_angle));
 		return svgPaths.arc(center_small, arc_small_radius, 1, angle_start, angle_end);
+	}
+
+	angle_ofLine_for(predicate: Predicate | null, points_out: boolean): number | null {
+		// returns one of three angles: 1) necklace_angle 2) opposite+ 3) opposite-tweak
+		if (!!predicate) {
+			const tweak = Math.PI / 4;		// 45 degrees: added or subtracted -> opposite
+			const necklace_angle = get(s_necklace_angle);
+			const opposite = necklace_angle + Angle.half;
+			const raw = predicate.isBidirectional ?
+				opposite + tweak :
+				points_out ? necklace_angle :	// one directional, use global
+				opposite - tweak;
+			const angle = u.normalized_angle(raw);
+			if (!predicate.isBidirectional) {
+				console.log(`predicate line angle ${u.degrees_of(necklace_angle)}`);
+			}
+			return angle;
+		}
+		return null;
 	}
 
 }

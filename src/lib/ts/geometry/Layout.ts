@@ -43,16 +43,11 @@ export default class Layout {
 			while (index < count) {
 				const ancestry = ancestries[index];
 				const childAngle = this.childAngle_for(index, count, clusterLayout, radius);
+				// console.log(`${index} ${predicate.kind} ${u.degrees_of(childAngle)}`);
 				const childOrigin = origin.offsetBy(radial.rotate_by(childAngle));
 				const map = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, ancestry, cluster_ancestry, childAngle);
 				this.childMapRects.push(map);
-				if (index == 0) {
-					clusterLayout.angle_atStart = childAngle;
-				}
 				index += 1;
-				if (index == count) {
-					clusterLayout.angle_atEnd = childAngle;
-				}
 			}
 			this.clusterLayouts.push(clusterLayout);
 		}
@@ -61,8 +56,39 @@ export default class Layout {
 	childAngle_for(index: number, count: number, clusterLayout: ClusterLayout, radius: number): number {
 		const row = index - ((count - 1) / 2);				// row centered around zero
 		const radial = new Point(radius, 0);
-		const clusterAngle = clusterLayout.angle_ofLine;	// depends on s_necklace_angle, predicate kind & points_out
-		const startY = radial.rotate_by(clusterAngle).y;	// height of clusterAngle
+		const angle_ofLine = clusterLayout.angle_ofLine;	// depends on s_necklace_angle, predicate kind & points_out
+		const startY = radial.rotate_by(angle_ofLine).y;	// height of angle_ofLine
+		let y = startY + (row * (k.row_height - 2));		// height of row
+		const isLower = y >= 0;
+		let unfit = false;
+		if (Math.abs(y) > radius) {
+			unfit = true;
+			if (isLower) {
+				y = radius - (y % radius);
+				console.log(`lower`)
+			} else {
+				y = (-y % radius) - radius;
+			}
+		}
+		let ratio = y / radius;
+		let angle = -Math.asin(ratio);	// negate arc sign for clockwise
+		if (!clusterLayout.points_out || clusterLayout.predicate?.isBidirectional) {
+			angle = Angle.half - angle;
+		}
+		angle = u.normalized_angle(angle);
+		if (index == 0) {
+			clusterLayout.angle_atStart = angle;
+		} else if (index == count - 1) {
+			clusterLayout.angle_atEnd = angle;
+		}
+		return angle;
+	}
+
+	xchildAngle_for(index: number, count: number, clusterLayout: ClusterLayout, radius: number): number {
+		const row = index - ((count - 1) / 2);				// row centered around zero
+		const radial = new Point(radius, 0);
+		const angle_ofLine = clusterLayout.angle_ofLine;	// depends on s_necklace_angle, predicate kind & points_out
+		const startY = radial.rotate_by(angle_ofLine).y;	// height of angle_ofLine
 		let y = startY + (row * (k.row_height - 2));		// height of row
 		const isLower = y >= 0;
 		let unfit = false;
@@ -85,7 +111,13 @@ export default class Layout {
 			const pivot = u.startAngle_ofQuadrant(quadrant);
 			angle = pivot + adjustment - angle;
 		}
-		return u.normalized_angle(angle);
+		angle = u.normalized_angle(angle);
+		if (index == 0) {
+			clusterLayout.angle_atStart = angle;
+		} else if (index == count - 1) {
+			clusterLayout.angle_atEnd = angle;
+		}
+		return angle;
 	}
 
 	originForChildrenOf(childAncestry: Ancestry, origin: Point, extent: Point): Point {
