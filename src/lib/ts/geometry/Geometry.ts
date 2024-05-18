@@ -131,12 +131,12 @@ export class Rect {
 }
 
 export class ChildMapRect extends Rect {
-	childAngle: number | null;
 	childAncestry: Ancestry | null;
+	childAngle: number | null;
+	ancestry: Ancestry | null;
 	child: Thing | null;
 	childOrigin: Point;
 	curveType: string;
-	ancestry: Ancestry | null;
 
 	constructor(curveType: string, rect: Rect, childOrigin: Point, childAncestry: Ancestry | null, ancestry: Ancestry | null, childAngle: number | null = null) {
 		super(rect.origin.copy, rect.size.copy);
