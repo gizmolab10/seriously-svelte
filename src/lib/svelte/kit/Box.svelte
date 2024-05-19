@@ -15,7 +15,7 @@
         border: 1px dashed {color};
 '>
 </div>
-{#if half == true}
+{#if half}
     <div
         style='
             position: absolute;

@@ -71,26 +71,27 @@
 
 {#key rebuilds}
 	<div class='cluster-line' id={idDiv}
-		style='position: absolute;
-			top: {line_origin.y}px;
+		style='z-index: {ZIndex.lines};
 			left: {line_origin.x}px;
-			z-index: {ZIndex.lines};'>
+			top: {line_origin.y}px;
+			position: absolute;'>
 		<svg class='svg-cluster-line'
-			bind:this={line}
-			viewBox={viewBox}
+			height={size.height}px
 			width={size.width}px
-			height={size.height}px>
+			viewBox={viewBox}
+			bind:this={line}>
 			<path d={scalablePath} stroke={color} fill='none'/>
 		</svg>
-		<div class='cluster-line-label' style='
-			background-color: {k.color_background};
-			left: {title_origin.x}px;
-			top: {title_origin.y}px;
-			white-space: nowrap;
-			position: absolute;
-			font-family: Arial;
-			font-size: 0.5em;
-			color: {color};'>
+		<div class='cluster-line-label'
+			style='
+				background-color: {k.color_background};
+				left: {title_origin.x}px;
+				top: {title_origin.y}px;
+				white-space: nowrap;
+				position: absolute;
+				font-family: Arial;
+				font-size: 0.5em;
+				color: {color};'>
 			{cluster_layout?.line_title}
 		</div>
 		{#if show_arrowheads}

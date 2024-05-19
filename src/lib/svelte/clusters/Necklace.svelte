@@ -33,17 +33,19 @@
 	// needs:
 	//  hover
 
-	// {#if !!childMapRects}
-	// 	{#each childMapRects as map}
-	// 		<Widget ancestry={map.childAncestry} angle={map.childAngle} origin={map.childOrigin.offsetBy(childOffset)}/>
-	// 	{/each}
-	// {/if}
 </script>
 
 {#key rebuilds}
-	{#if clusterLayouts}
+	{#if !!childMapRects}
+		{#each childMapRects as map}
+			<Widget ancestry={map.childAncestry} angle={map.childAngle} origin={map.childOrigin.offsetBy(childOffset)}/>
+		{/each}
+	{/if}
+	{#if !!clusterLayouts}
 		{#each clusterLayouts as cluster_layout}
-			<ClusterLine cluster_layout={cluster_layout} center={center} color={color}/>
+			{#if cluster_layout.count > 0}
+				<ClusterLine cluster_layout={cluster_layout} center={center} color={color}/>
+			{/if}
 			{#if cluster_layout.count > 1}
 				<ClusterArc cluster_layout={cluster_layout} center={center} color={color}/>
 			{/if}

@@ -1,9 +1,12 @@
-import { k, u, get, Point, Angle, svgPaths, Predicate } from '../common/GlobalImports';
+import { k, u, get, Angle, IDLine, svgPaths, Ancestry, Predicate } from '../common/GlobalImports';
+import { Rect, Point, ChildMapRect } from '../geometry/Geometry';
 import { s_necklace_angle } from '../state/State';
 import { ArcKind } from '../common/Enumerations';
 
 export default class ClusterLayout {
+	ancestries: Array<Ancestry> = [];
 	predicate: Predicate | null;
+	cluster_ancestry: Ancestry;
 	necklace_center: Point;
 	angle_ofLine: number;
 	fork_backoff: number;
@@ -17,7 +20,8 @@ export default class ClusterLayout {
 	count: number;
 
 	// created each time ring is tiniest bit rotated!
-	constructor(predicate: Predicate | null, count: number, points_out: boolean) {
+	constructor(cluster_ancestry: Ancestry, ancestries: Array<Ancestry>, predicate: Predicate | null, points_out: boolean) {
+		const count = ancestries.length;
 		const arc_radius = k.cluster_arc_radius;
 		const center = Point.square(arc_radius);
 		const tiny_radius = k.necklace_gap * (0.5 + count / 6);
@@ -29,15 +33,36 @@ export default class ClusterLayout {
 		const line_radius = k.cluster_line_length - fork_radius;
 
 		this.line_tip = Point.fromPolar(line_radius, angle);
+		this.cluster_ancestry = cluster_ancestry;
 		this.fork_backoff = fork_backoff;
 		this.fork_radius = fork_radius;
 		this.fork_center = fork_center;
 		this.necklace_center = center;
+		this.ancestries = ancestries;
 		this.arc_radius = arc_radius;
 		this.points_out = points_out;
 		this.predicate = predicate;
 		this.angle_ofLine = angle;
 		this.count = count;
+	}
+
+	childMapRects(origin: Point): Array<ChildMapRect>  {
+		let array: Array<ChildMapRect> = [];
+		const count = this.ancestries.length;
+		if (count > 0 && !!this.predicate) {
+			let index = 0;
+			const radius = k.cluster_arc_radius;
+			const radial = new Point(radius + k.necklace_gap, 0);
+			while (index < count) {
+				const ancestry = this.ancestries[index];
+				const childAngle = this.angle_ofChild_for(index, count, radius);
+				const childOrigin = origin.offsetBy(radial.rotate_by(childAngle));
+				const map = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, ancestry, this.cluster_ancestry, childAngle);
+				array.push(map);
+				index += 1;
+			}
+		}
+		return array;
 	}
 
 	get gap_svgPath() { return svgPaths.circle(this.fork_center, this.fork_radius - 0.5); }
@@ -118,7 +143,7 @@ export default class ClusterLayout {
 		return null;
 	}
 
-	childAngle_for(index: number, count: number, radius: number): number {
+	angle_ofChild_for(index: number, count: number, radius: number): number {
 		const row = index - ((count - 1) / 2);				// row centered around zero
 		const radial = new Point(radius, 0);
 		const angle_ofLine = this.angle_ofLine;	// depends on s_necklace_angle, predicate kind & points_out

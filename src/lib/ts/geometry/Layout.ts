@@ -8,21 +8,28 @@ export default class Layout {
 
 	constructor(focusAncestry: Ancestry, origin: Point) {
 		let childAncestries = focusAncestry.childAncestries;
-		if (!get(s_layout_asClusters)) {
-			let sum = -focusAncestry.visibleProgeny_height() / 2; // start out negative and grow positive
-			for (const childAncestry of childAncestries) {
-				sum += this.tree_layout(sum, childAncestry, focusAncestry, origin);
-			}
-		} else {
-			this.cluster_layout(childAncestries, focusAncestry, Predicate.contains, origin, true);
+		if (get(s_layout_asClusters)) {
+			this.cluster_layout(focusAncestry, childAncestries, Predicate.contains, origin, true);
 			for (const predicate of h.predicates) {
 				let oneAncestries = focusAncestry.thing?.oneAncestries_for(predicate) ?? [];
-				this.cluster_layout(oneAncestries, focusAncestry, predicate, origin, false);
+				this.cluster_layout(focusAncestry, oneAncestries, predicate, origin, false);
+			}
+		} else {
+			let sum = -focusAncestry.visibleProgeny_height() / 2; // start out negative and grow positive
+			for (const childAncestry of childAncestries) {
+				sum += this.tree_layout(sum, focusAncestry, childAncestry, origin);
 			}
 		}
 	}
 
-	tree_layout(sum: number, childAncestry: Ancestry, ancestry: Ancestry, origin: Point) {
+	cluster_layout(cluster_ancestry: Ancestry, ancestries: Array<Ancestry>, predicate: Predicate | null, origin: Point, points_out: boolean) {
+		const clusterLayout = new ClusterLayout(cluster_ancestry, ancestries, predicate, points_out);
+		const clusterMaps = clusterLayout.childMapRects(origin);
+		this.childMapRects = u.concatenateArrays(this.childMapRects, clusterMaps);
+		this.clusterLayouts.push(clusterLayout);
+	}
+
+	tree_layout(sum: number, ancestry: Ancestry, childAncestry: Ancestry, origin: Point) {
 		const childHeight = childAncestry.visibleProgeny_height();
 		const sizeY = sum + childHeight / 2;
 		const direction = this.getDirection(sizeY);
@@ -31,25 +38,6 @@ export default class Layout {
 		const map = new ChildMapRect(direction, rect, childOrigin, childAncestry, ancestry);
 		this.childMapRects.push(map);
 		return childHeight;
-	}
-
-	cluster_layout(ancestries: Array<Ancestry>, cluster_ancestry: Ancestry, predicate: Predicate | null, origin: Point, points_out: boolean) {
-		const count = ancestries.length;
-		if (count > 0 && !!predicate) {
-			let index = 0;
-			const radius = k.cluster_arc_radius;
-			const radial = new Point(radius + k.necklace_gap, 0);
-			const clusterLayout = new ClusterLayout(predicate, count, points_out);
-			while (index < count) {
-				const ancestry = ancestries[index];
-				const childAngle = clusterLayout.childAngle_for(index, count, radius);
-				const childOrigin = origin.offsetBy(radial.rotate_by(childAngle));
-				const map = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, ancestry, cluster_ancestry, childAngle);
-				this.childMapRects.push(map);
-				index += 1;
-			}
-			this.clusterLayouts.push(clusterLayout);
-		}
 	}
 
 	originForChildrenOf(childAncestry: Ancestry, origin: Point, extent: Point): Point {
