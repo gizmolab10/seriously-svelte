@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, Point, ZIndex, onMount, ClusterLayout } from '../../ts/common/GlobalImports';
+	import { k, Point, ZIndex, ClusterLayout } from '../../ts/common/GlobalImports';
 	import { ArcKind } from '../../ts/common/Enumerations';
 	export let clusterLayout: ClusterLayout;
 	export let center = Point.zero;
@@ -9,11 +9,7 @@
 	const radius = k.cluster_arc_radius + offset;
 	const breadth = radius * 2;
 
-	onMount(() => {
-		console.log(`MOUNT ARC`);
-	});
-
-	</script>
+</script>
 
 <svg class='cluster-arc' 
 	viewBox='{-offset} {-offset} {breadth} {breadth}'
