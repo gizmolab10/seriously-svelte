@@ -1,12 +1,13 @@
+import { s_graphRect, s_show_details, s_scale_factor, s_rebuild_count } from '../state/State';
 import { k, u, get, Rect, Point, debug, builds, debugReact } from '../common/GlobalImports';
-import { dbDispatch, persistLocal, IDPersistant } from '../common/GlobalImports';
-import { s_graphRect, s_show_details, s_scale_factor } from '../state/State';
 import { s_mouse_up_count, s_mouse_location, s_user_graphOffset } from '../state/State';
+import { dbDispatch, persistLocal, IDPersistant } from '../common/GlobalImports';
 
 class Globals {
 
 	setup() {
 		builds.setup();
+		s_rebuild_count.set(0);
 		s_mouse_up_count.set(0);
 		persistLocal.restore();
 		k.queryStrings_apply();

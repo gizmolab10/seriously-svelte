@@ -19,6 +19,7 @@ export const s_db_type				 = writable<string>();
 export const s_graph_relations		 = writable<string>();
 export const s_thing_fontFamily		 = writable<string>();
 export const s_mouse_up_count		 = writable<number>();
+export const s_rebuild_count		 = writable<number>();
 export const s_scale_factor			 = writable<number>();
 export const s_necklace_angle		 = writable<number>();
 export const s_build				 = writable<number>();
