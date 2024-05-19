@@ -35,10 +35,11 @@
 {#if ancestry}
 	<div class='clusters' style='transform: translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px);'>
 		{#key `${ancestry.hashedAncestry ?? 0} ${rebuilds}`}
-			<div style='
-				position: absolute;
-				top:{titleCenter.y}px;
-				left: {titleCenter.x}px;'>
+			<div class='necklace-focus'
+				style='
+					position: absolute;
+					top:{titleCenter.y}px;
+					left: {titleCenter.x}px;'>
 				<TitleEditor ancestry={ancestry} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 			</div>
 			<Necklace ancestry={ancestry} center={center}/>

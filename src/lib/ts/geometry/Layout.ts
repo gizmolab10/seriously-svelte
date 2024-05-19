@@ -3,8 +3,8 @@ import { s_layout_asClusters } from '../state/State';
 import { h } from '../db/DBDispatch';
 
 export default class Layout {
-	clusterLayouts: Array<ClusterLayout> = [];
 	childMapRects: Array<ChildMapRect> = [];
+	clusterLayouts: Array<ClusterLayout> = [];
 
 	constructor(focusAncestry: Ancestry, origin: Point) {
 		let childAncestries = focusAncestry.childAncestries;

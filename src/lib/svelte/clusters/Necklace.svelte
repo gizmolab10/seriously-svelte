@@ -1,22 +1,29 @@
 <script lang='ts'>
-	import { k, Point, ZIndex, signals, onMount, Layout, debugReact, ClusterLayout, transparentize } from '../../ts/common/GlobalImports';
+	import { k, u, Point, ZIndex, signals, onMount, Predicate, debugReact } from '../../ts/common/GlobalImports';
+	import { ChildMapRect, ClusterLayout, transparentize } from '../../ts/common/GlobalImports';
 	import RingButton from '../buttons/RingButton.svelte';
 	import ClusterLine from './ClusterLine.svelte';
 	import ClusterArc from './ClusterArc.svelte';
 	import Widget from '../widget/Widget.svelte';
+	import { h } from '../../ts/db/DBDispatch';
 	export let center = Point.zero;
     export let ancestry;
-	const childOffset = new Point(k.dot_size / -3, k.cluster_offsetY);;
+	const childOffset = new Point(k.dot_size / -3, k.cluster_offsetY);
 	let color = ancestry.thing?.color ?? k.color_default;
 	let clusterLayouts: Array<ClusterLayout> = [];
 	let childMapRects: Array<ChildMapRect> = [];
 	let rebuilds = 0;
 	
 	onMount( () => {
-		debugReact.log_mount(`NECKLACE`);
-		const layout = new Layout(ancestry, center);
-		clusterLayouts = layout.clusterLayouts;
-		childMapRects = layout.childMapRects;
+		console.log(`MOUNT NECKLACE for ${ancestry.title}`);
+		let childAncestries = ancestry.childAncestries;
+		layout(childAncestries, Predicate.contains, true);
+		for (const predicate of h.predicates) {
+			let oneAncestries = ancestry.thing?.oneAncestries_for(predicate) ?? [];
+			layout(oneAncestries, predicate, false);
+		}
+		rebuilds += 1;
+		console.log(`LAYOUTS ${clusterLayouts.length} at  ${center.verbose}`);
 		const handleAny = signals.handle_anySignal((signal_ancestry) => {
 			rebuilds += 1;
 		});
@@ -30,32 +37,39 @@
 		};
 	});
 
+	function layout(ancestries: Array<Ancestry>, predicate: Predicate | null, points_out: boolean) {
+		const clusterLayout = new ClusterLayout(ancestry, ancestries, predicate, points_out);
+		clusterLayouts.push(clusterLayout);
+		const clusterMapRects = clusterLayout.childMapRects(center);
+		childMapRects = u.concatenateArrays(childMapRects, clusterMapRects);
+	}
+
+			// {#if cluster.count > 0}
+			// 	{#if cluster.count > 1}
+			// 	{/if}
+			// {/if}
 	// needs:
 	//  hover
 
 </script>
 
 {#key rebuilds}
-	{#if !!childMapRects}
+	<div class='necklace-widgets'>
 		{#each childMapRects as map}
 			<Widget ancestry={map.childAncestry} angle={map.childAngle} origin={map.childOrigin.offsetBy(childOffset)}/>
 		{/each}
-	{/if}
-	{#if !!clusterLayouts}
-		{#each clusterLayouts as cluster_layout}
-			{#if cluster_layout.count > 0}
-				<ClusterLine cluster_layout={cluster_layout} center={center} color={color}/>
-			{/if}
-			{#if cluster_layout.count > 1}
-				<ClusterArc cluster_layout={cluster_layout} center={center} color={color}/>
-			{/if}
+	</div>
+	<div class='cluster-lines'>
+		{#each clusterLayouts as cluster}
+			<ClusterLine clusterLayout={cluster} center={center} color={color}/>
+			<ClusterArc clusterLayout={cluster} center={center} color={color}/>
 		{/each}
-	{/if}
+	</div>
 	<RingButton name='necklace-ring'
-		color={color}
-		thickness={30}
-		center={center}
-		zindex={ZIndex.lines}
+		radius={k.cluster_arc_radius}
 		thing={ancestry.thing}
-		radius={k.cluster_arc_radius}/>
+		zindex={ZIndex.lines}
+		center={center}
+		thickness={30}
+		color={color}/>
 {/key}

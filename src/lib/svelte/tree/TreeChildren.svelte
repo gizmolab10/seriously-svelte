@@ -1,6 +1,6 @@
 <script lang=ts>
-	import { k, u, Rect, Size, Point, Thing, debug, signals, onMount } from '../../ts/common/GlobalImports';
-	import { IDLine, Layout, onDestroy, DebugFlag, debugReact } from '../../ts/common/GlobalImports';
+	import { k, u, Rect, Size, Point, Thing, debug, IDLine, onMount } from '../../ts/common/GlobalImports';
+	import { signals, onDestroy, DebugFlag, debugReact, TreeLayout } from '../../ts/common/GlobalImports';
 	import { s_graphRect } from '../../ts/state/State';
 	import TreeChildren from './TreeChildren.svelte';
 	import Widget from '../widget/Widget.svelte';
@@ -16,12 +16,12 @@
 	
 	$: {
 		if ($s_graphRect) {
-			layoutChildren()
+			layout()
 		}
 	}
 	
 	onMount( () => {
-		layoutChildren();
+		layout();
 		const handler = signals.handle_relayoutWidgets(1, (signal_ancestry) => {
 			const now = new Date().getTime();
 			if (ancestry.isExpanded &&
@@ -29,36 +29,42 @@
 				(!signal_ancestry || signal_ancestry.matchesAncestry(ancestry))) {
 				priorTime = now;
 				debugReact.log_origins(origin.x + ' before timeout');
-				layoutChildren();
+				layout();
 			}
 		});
 		return () => { handler.disconnect() };
 	});
 	
-	function layoutChildren() {
+	function layout() {
 		if (ancestry.isExpanded) {
 			debugReact.log_origins(origin.x + ' children layout');
-			const delta = new Point(17.9, -2.4);
 			const height = ancestry.visibleProgeny_halfHeight;
+			const childAncestries = ancestry.childAncestries;
 			const childrenOrigin = origin.offsetByY(height);
-			childMapRects = new Layout(ancestry, childrenOrigin).childMapRects;
-			center = childrenOrigin.offsetBy(delta);
+			let sum = -ancestry.visibleProgeny_height() / 2; // start out negative and grow positive
+			for (const childAncestry of childAncestries) {
+				const tree_layout = new TreeLayout(sum, ancestry, childAncestry, childrenOrigin);
+				childMapRects = u.concatenateArrays(childMapRects, tree_layout.childMapRects);
+				sum += tree_layout.childHeight;
+			}
+			center = childrenOrigin.offsetBy(new Point(17.9, -2.4));
 		} else {
 			console.log(`not expanded, cannot layout ${ancestry.description}`);
 		}
 	}
-	
 </script>
 
 {#if debug.lines}
 	<Circle radius=1 center={center} color=black thickness=1/>
 {/if}
 {#if ancestry.isExpanded}
-	{#each childMapRects as map}
-		<Widget ancestry={map.childAncestry} origin={map.extent.offsetBy(widgetOffset)}/>
-		<TreeLine ancestry={map.childAncestry} curveType={map.curveType} rect={map.offsetBy(lineOffset)}/>
-		{#if map.childAncestry.showsChildRelationships}
-			<TreeChildren ancestry={map.childAncestry} origin={map.childOrigin}/>
-		{/if}
-	{/each}
+	<div class='tree-children'>
+		{#each childMapRects as map}
+			<Widget ancestry={map.childAncestry} origin={map.extent.offsetBy(widgetOffset)}/>
+			<TreeLine ancestry={map.childAncestry} curveType={map.curveType} rect={map.offsetBy(lineOffset)}/>
+			{#if map.childAncestry.showsChildRelationships}
+				<TreeChildren ancestry={map.childAncestry} origin={map.childOrigin}/>
+			{/if}
+		{/each}
+	</div>
 {/if}

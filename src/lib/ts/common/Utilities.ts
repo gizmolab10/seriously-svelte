@@ -163,7 +163,7 @@ class Utilities {
 		return Object.values(ancestriesByHID);
 	}
 
-	point_quadrant(point: Point): Quadrant {
+	quadrant_ofPoint(point: Point): Quadrant {
 		const x = point.x;
 		const y = point.y;
 		if		  (x >= 0 && y <  0) { return Quadrant.upperRight;
