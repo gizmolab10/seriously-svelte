@@ -20,6 +20,7 @@ export enum IDPersistant {
 	origin		  = 'origin',
 	scale		  = 'scale',
 	focus		  = 'focus',
+	angle		  = 'angle',
 	font		  = 'font',
 	db			  = 'db',
 }
@@ -138,24 +139,27 @@ class PersistLocal {
 		k.show_titleAtTop = this.key_read(IDPersistant.title_atTop) ?? false;
 		g.applyScale(!u.device_isMobile ? 1 : this.key_read(IDPersistant.scale) ?? 1);
 
-		s_necklace_angle.set(0);//Math.PI / 20);
+		s_necklace_angle.set(this.key_read(IDPersistant.angle) ?? 0);
 		s_show_details.set(this.key_read(IDPersistant.details) ?? false);
 		s_thing_fontFamily.set(this.key_read(IDPersistant.font) ?? 'Arial');
 		s_layout_asClusters.set(this.key_read(IDPersistant.layout) ?? false);
 		s_user_graphOffset.set(this.key_read(IDPersistant.origin) ?? new Point());
 		s_graph_relations.set(this.key_read(IDPersistant.relations) ?? GraphRelations.children);
 
-		s_show_details.subscribe((flag: boolean) => {
-			this.key_write(IDPersistant.details, flag);
-			g.graphRect_update();
-			signals.signal_relayoutWidgets_fromFocus();
-		});
+		s_necklace_angle.subscribe((angle: number) => {
+			this.key_write(IDPersistant.angle, angle);
+		})
 		s_graph_relations.subscribe((relations: string) => {
 			this.key_write(IDPersistant.relations, relations);
 		})
 		s_layout_asClusters.subscribe((flag: boolean) => {
 			this.key_write(IDPersistant.layout, flag);
 		})
+		s_show_details.subscribe((flag: boolean) => {
+			this.key_write(IDPersistant.details, flag);
+			g.graphRect_update();
+			signals.signal_relayoutWidgets_fromFocus();
+		});
 	}
 
 	ancestries_restore(force: boolean = false) {

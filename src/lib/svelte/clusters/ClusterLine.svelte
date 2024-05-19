@@ -8,7 +8,8 @@
 	export let color = k.color_default;
     export let cluster_layout: ClusterLayout;
 	const show_arrowheads = k.show_arrowheads;
-	const idDiv = `${cluster_layout?.points_out ? 'child' : 'parent'} ${cluster_layout?.predicate?.kind}`;
+	const predicate = cluster_layout?.predicate;
+	const idDiv = `${cluster_layout?.points_out ? 'child' : 'parent'} ${predicate?.kind}`;
 	let style = `position: absolute; z-index: ${ZIndex.lines};`;
 	let title_origin = Point.zero;
 	let line_origin = Point.zero;
@@ -35,8 +36,8 @@
 		const line_offset = line_updated(inside_tip, line_tip);
 		size = line_tip.abs.asSize;
 		const rect = new Rect(Point.zero, size);
-		line_origin = center.offsetBy(line_offset);
 		scalablePath = svgPaths.line(line_tip);
+		line_origin = center.offsetBy(line_offset);
 		viewBox = `0, 0, ${size.width}, ${size.height}`;
 		const title_x = u.getWidthOf(cluster_layout?.line_title) / -3;
 		const title_y = k.dot_size / (u.isAlmost_horizontal(angle) ? 2 : -3);
@@ -49,10 +50,11 @@
 		let point = Point.zero;
 		let outside_tip = inside_tip;
 		const quadrant = u.point_quadrant(line_tip);
-		if (cluster_layout?.predicate?.isBidirectional || !cluster_layout?.points_out) {
+		const isTiltedUp = [Quadrant.lowerLeft, Quadrant.upperRight].includes(quadrant);
+		if (!isTiltedUp) {
 			outside_tip = inside_tip.offsetBy(line_tip);
 		}
-		if ([Quadrant.lowerLeft, Quadrant.upperRight].includes(quadrant)) {		// rectangle origin.y is wrong
+		if (isTiltedUp) {		// rectangle origin.y is wrong
 			const y = line_tip.abs.asSize.height;
 			outside_tip = outside_tip.offsetByY(-y);
 		}
@@ -92,7 +94,7 @@
 			{cluster_layout?.line_title}
 		</div>
 		{#if show_arrowheads}
-			{#if cluster_layout?.predicate?.isBidirectional}
+			{#if predicate?.isBidirectional}
 				<ArrowHead idDiv='child'  angle={angle} color={color} color_background={color} radius={thickness} center={arrow_end}/>
 				<ArrowHead idDiv='parent' angle={angle + Angle.half} color={color} color_background={color} radius={thickness} center={arrow_start}/>
 			{:else if cluster_layout?.points_out}

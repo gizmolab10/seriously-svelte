@@ -12,7 +12,6 @@ import { Hierarchy } from '../managers/Hierarchy';
 import { signals, IDSignal } from './Signals';
 import { createPopper } from '@popperjs/core';
 import { dbDispatch } from '../db/DBDispatch';
-import Anglular from '../structures/Anglular';
 import { transparentize } from 'color2k';
 import { get } from 'svelte/store';
 import { builds } from './Builds';
@@ -42,10 +41,10 @@ export {
 	Wrapper, signals, SeriouslyRange,
 	Rect, Size, Point, svgPaths, Direction,
 	transparentize, interact, muuri, createPopper,
-	Ancestry, Grabs, dbDispatch, Hierarchy, persistLocal,
 	User, Datum, Thing, Access, Predicate, Relationship,
+	Ancestry, Grabs, dbDispatch, Hierarchy, persistLocal,
+	Angle, Layout, Quadrant, ChildMapRect, ClusterLayout,
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactKind,
-	Angle, Layout, Quadrant, Anglular, ChildMapRect, ClusterLayout,
 	g, k, u, get, builds, onMount, onDestroy, setContext, getContext,
 	ZIndex, PredicateKind, GraphRelations, CreationOptions, Alteration,
 	IDLine, IDTool, IDTrait, IDSignal, IDWrapper, IDButton, IDBrowser, IDPersistant,

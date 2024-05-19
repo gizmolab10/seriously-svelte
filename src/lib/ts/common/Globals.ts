@@ -1,12 +1,13 @@
 import { k, u, get, Rect, Point, debug, builds, debugReact } from '../common/GlobalImports';
 import { dbDispatch, persistLocal, IDPersistant } from '../common/GlobalImports';
 import { s_graphRect, s_show_details, s_scale_factor } from '../state/State';
-import { s_mouse_location, s_user_graphOffset } from '../state/State';
+import { s_mouse_up_count, s_mouse_location, s_user_graphOffset } from '../state/State';
 
 class Globals {
 
 	setup() {
 		builds.setup();
+		s_mouse_up_count.set(0);
 		persistLocal.restore();
 		k.queryStrings_apply();
 		persistLocal.queryStrings_apply();
@@ -14,6 +15,10 @@ class Globals {
 		debugReact.queryStrings_apply();
 		window.addEventListener('resize', (event) => {
 			this.graphRect_update();
+		});
+		window.addEventListener('mouseup', (event: MouseEvent) => {
+			event.stopPropagation();
+			s_mouse_up_count.set(get(s_mouse_up_count) + 1);
 		});
 		window.addEventListener('mousemove', (event: MouseEvent) => {
 			event.stopPropagation();

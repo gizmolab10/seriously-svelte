@@ -113,12 +113,40 @@ export default class ClusterLayout {
 				points_out ? necklace_angle :	// one directional, use global
 				opposite - tweak;
 			const angle = u.normalized_angle(raw);
-			if (!predicate.isBidirectional) {
-				console.log(`predicate line angle ${u.degrees_of(necklace_angle)}`);
-			}
 			return angle;
 		}
 		return null;
+	}
+
+	childAngle_for(index: number, count: number, radius: number): number {
+		const row = index - ((count - 1) / 2);				// row centered around zero
+		const radial = new Point(radius, 0);
+		const angle_ofLine = this.angle_ofLine;	// depends on s_necklace_angle, predicate kind & points_out
+		const startY = radial.rotate_by(angle_ofLine).y;	// height of angle_ofLine
+		let y = startY + (row * (k.row_height - 2));		// height of row
+		const isLower = y >= 0;
+		let unfit = false;
+		if (Math.abs(y) > radius) {
+			unfit = true;
+			if (isLower) {
+				y = radius - (y % radius);
+				// console.log(`lower`)
+			} else {
+				y = (-y % radius) - radius;
+			}
+		}
+		let ratio = y / radius;
+		let angle = -Math.asin(ratio);	// negate arc sign for clockwise
+		if (!this.points_out || this.predicate?.isBidirectional) {
+			angle = Angle.half - angle;
+		}
+		angle = u.normalized_angle(angle);
+		if (index == 0) {
+			this.angle_atStart = angle;
+		} else if (index == count - 1) {
+			this.angle_atEnd = angle;
+		}
+		return angle;
 	}
 
 }
