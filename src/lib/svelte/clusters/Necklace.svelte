@@ -16,7 +16,6 @@
 	let rebuilds = 0;
 	
 	onMount( () => {
-		console.log(`MOUNT NECKLACE for ${ancestry.title}`);
 		let childAncestries = ancestry.childAncestries;
 		layout(childAncestries, Predicate.contains, true);
 		for (const predicate of h.predicates) {
@@ -24,7 +23,6 @@
 			layout(oneAncestries, predicate, false);
 		}
 		rebuilds += 1;
-		console.log(`LAYOUTS ${clusterLayouts.length} at  ${center.verbose}`);
 		const handleAny = signals.handle_anySignal((signal_ancestry) => {
 			rebuilds += 1;
 		});

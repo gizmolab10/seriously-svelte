@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { k, u, Rect, Size, Point, Angle, onMount, ZIndex, svgPaths } from '../../ts/common/GlobalImports';
 	import { IDLine, Quadrant, Wrapper, IDWrapper, ClusterLayout } from '../../ts/common/GlobalImports';
+	import { k, u, Rect, Size, Point, Angle, ZIndex, svgPaths } from '../../ts/common/GlobalImports';
 	import ArrowHead from '../kit/ArrowHead.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import Box from '../kit/Box.svelte';
@@ -24,10 +24,6 @@
 	let left = 0;
 	let top = 0;
 	let line;
-
-	onMount(() => {
-		console.log(`MOUNT LINE`);
-	});
 
 	$: {
 		if (line && !lineWrapper) {
