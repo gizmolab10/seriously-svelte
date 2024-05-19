@@ -35,7 +35,7 @@ export default class Ancestry {
 	}
 
 	static idPredicate_for(ancestryString: string): string {
-		const hid = ancestryString.split(k.ancestrySeparator)[0].hash();	// grab first relationship's hid
+		const hid = ancestryString.split(k.genericSeparator)[0].hash();	// grab first relationship's hid
 		const relationship = h.relationship_forHID(hid);			// locate corresponding relationship
 		return relationship?.idPredicate ?? '';						// grab its predicate id
 	}
@@ -107,7 +107,7 @@ export default class Ancestry {
 		if (this.isRoot) {
 			return [];
 		}
-		return this.ancestryString.split(k.ancestrySeparator);
+		return this.ancestryString.split(k.genericSeparator);
 	}
 
 	get idThing(): string {
@@ -282,7 +282,7 @@ export default class Ancestry {
 	uniquelyAppendID(id: string): Ancestry | null {
 		let ids = this.ids;
 		ids.push(id);
-		const ancestry = h.ancestry_remember_createUnique(ids.join(k.ancestrySeparator));
+		const ancestry = h.ancestry_remember_createUnique(ids.join(k.genericSeparator));
 		if (ancestry) {
 			const description = `${ancestry.predicate?.description} ${ancestry.titles}`;
 			if (ancestry.containsMixedPredicates) {
@@ -353,7 +353,7 @@ export default class Ancestry {
 		if (ids.length < 1) {
 			return h.rootAncestry;
 		}
-		return h.ancestry_remember_createUnique(ids.join(k.ancestrySeparator));
+		return h.ancestry_remember_createUnique(ids.join(k.genericSeparator));
 	}
 
 	appendChild(child: Thing | null): Ancestry | null {

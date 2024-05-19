@@ -1,33 +1,31 @@
 <script lang='ts'>
-	import { k, Rect, Size, Point, debug, onMount, ZIndex, signals, svgPaths } from '../../ts/common/GlobalImports';
+	import { k, Rect, Size, Point, debug, ZIndex, signals, svgPaths } from '../../ts/common/GlobalImports';
 	import { Wrapper, Ancestry, debugReact, IDWrapper, IDLine } from '../../ts/common/GlobalImports';
+	import { s_thing_changed } from '../../ts/state/State';
 	import Circle from '../kit/Circle.svelte';
 	import Box from '../kit/Box.svelte';
     export let ancestry;
 	export let rect = new Rect();
 	export let curveType: string = IDLine.up;
 	const debugOffset = new Point(140.5, -1.2);
+	let scalablePath = k.empty;
 	let lineWrapper: Wrapper;
 	let origin = rect.origin;
 	let extent = rect.extent;
 	let viewBox = new Rect();
-	let scalablePath = k.empty;
 	let size = new Size();
 	let rebuilds = 0;
 	let line;
 
-	onMount(() => {
-		const handleChanges = signals.hangle_thingChanged(0, ancestry.thing.id, (value: any) => {
-			rebuilds += 1;
-		});
-		return () => {
-			handleChanges.disconnect();
-		};
-	});
-
 	$: {
 		if (line) {
 			lineWrapper = new Wrapper(line, ancestry, IDWrapper.line);
+		}
+	}
+
+	$: {
+		if (ancestry.thing.id == $s_thing_changed.split(k.genericSeparator)[0]) {
+			rebuilds += 1;
 		}
 	}
 

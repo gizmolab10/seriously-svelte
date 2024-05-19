@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import { k, u, Point, ZIndex, signals, onMount, Predicate, debugReact } from '../../ts/common/GlobalImports';
 	import { ChildMapRect, ClusterLayout, transparentize } from '../../ts/common/GlobalImports';
+	import { s_thing_changed } from '../../ts/state/State';
 	import RingButton from '../buttons/RingButton.svelte';
 	import ClusterLine from './ClusterLine.svelte';
 	import ClusterArc from './ClusterArc.svelte';
@@ -27,15 +28,17 @@
 		const handleAny = signals.handle_anySignal((signal_ancestry) => {
 			rebuilds += 1;
 		});
-		const handleChanges = signals.hangle_thingChanged(0, ancestry.thing?.id, (value: any) => {
-			color = ancestry.thing?.color ?? k.color_default;
-			rebuilds += 1;
-		});
 		return () => {
-			handleAny.disconnect()
-			handleChanges.disconnect();
+			handleAny.disconnect();
 		};
 	});
+
+	$: {
+		if (ancestry.thing.id == $s_thing_changed.split(k.genericSeparator)[0]) {
+			color = ancestry.thing?.color ?? k.color_default;
+			rebuilds += 1;
+		}
+	}
 
 	function layout(ancestries: Array<Ancestry>, predicate: Predicate | null, points_out: boolean) {
 		const clusterLayout = new ClusterLayout(ancestry, ancestries, predicate, points_out);

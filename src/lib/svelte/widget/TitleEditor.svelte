@@ -1,22 +1,24 @@
 <script lang='ts'>
-	import { s_title_editing, s_ancestries_grabbed, s_layout_asClusters, s_ancestry_editingTools } from '../../ts/state/State';
 	import { signals, Wrapper, IDWrapper, dbDispatch, SeriouslyRange } from '../../ts/common/GlobalImports';
 	import { k, u, Point, Thing, debug, ZIndex, onMount, Angle } from '../../ts/common/GlobalImports';
+	import { s_thing_changed, s_title_editing, s_ancestries_grabbed } from '../../ts/state/State';
+	import { s_layout_asClusters, s_ancestry_editingTools } from '../../ts/state/State';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
 	export let forward = true;
 	export let ancestry;
 	let padding = `0.5px 0px 0px 5px`;	// down half a pixel, 7 over to make room for drag dot
 	let thingTitle = ancestry?.thing?.title ?? k.empty;
+    let color = ancestry.thing?.color;
 	let originalTitle = k.empty;
 	let cursorStyle = k.empty;
 	let titleWrapper: Wrapper;
+	let mouse_click_timer;
 	let isEditing = false;
 	let titleWidth = 0;
 	let clickCount = 0;
 	let ghost = null;
 	let input = null;
-	let mouse_click_timer;
     let thing;
 
 	var hasChanges = () => { return originalTitle != thingTitle; };
@@ -57,6 +59,12 @@
 	$: {
 		if (input && !titleWrapper) {
 			titleWrapper = new Wrapper(input, ancestry, IDWrapper.title);
+		}
+	}
+
+	$: {
+		if (ancestry.thing?.id == $s_thing_changed.split(k.genericSeparator)[0]) {
+			color = thing?.color;
 		}
 	}
 
@@ -249,11 +257,11 @@
 			border: none;
 			{cursorStyle};
 			outline: none;
+			color: {color};
 			white-space: pre;
 			position: absolute;
 			padding: {padding};
 			position: absolute;
-			color: {thing?.color};
 			width: {titleWidth}px;
 			font-size: {fontSize};
 			z-index: {ZIndex.text};

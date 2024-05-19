@@ -22,7 +22,7 @@ export default class Constants {
     color_disabled = 'lightGray';
 	baseID_local = 'handcrafted';
 	color_background = 'white';
-	ancestrySeparator = '::';
+	genericSeparator = '::';
     color_default = 'blue';
 	id_unknown = 'unknown';
 	exemplar = 'exemplar';

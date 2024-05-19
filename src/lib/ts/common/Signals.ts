@@ -14,7 +14,6 @@ export class Signals {
 	highestPriorities: { [kind: string]: number } = {}
 	handler = new Signal<(signalKind: Array<IDSignal>, value: any, priority: number) => void>();
 
-	signal_thingChanged(idThing: string) { this.signal(IDSignal.thing, idThing); }
 	signal_rebuildGraph(value: any = null) { this.signal(IDSignal.rebuild, value); }
 	signal_rebuildGraph_fromFocus() { this.signal_rebuildGraph(get(s_ancestry_focus)); }
 	signal_altering(value: any = null) { this.signal(IDSignal.alterState, value); }
@@ -38,15 +37,6 @@ export class Signals {
 			onSignal(signalKind, value);
 		});
 	}
-
-	hangle_thingChanged(priority: number, idThing: string, onSignal: (value: any | null) => any) {
-		function onlyMatching(value: any | null) {
-			if (!value || value == idThing || value == -1) {
-				onSignal(value);
-			}
-		}
-		return this.handle_signalOfKind(priority, IDSignal.thing, onlyMatching);
-	};
 
 	handle_signalOfKind(priority: number, kind: IDSignal, onSignal: (value: any | null) => any ) {
 		const highestPriority = this.highestPriorities[kind];

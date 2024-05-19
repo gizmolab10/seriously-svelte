@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import { k, u, Thing, Point, ZIndex, onMount, signals, svgPaths, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
-	import { s_graphRect, s_necklace_angle, s_mouse_up_count, s_mouse_location, s_necklace_priorAngle, s_user_graphOffset } from '../../ts/state/State';
+	import { s_ancestry_focus, s_mouse_location, s_necklace_priorAngle, s_user_graphOffset } from '../../ts/state/State';
+	import { s_graphRect, s_thing_changed, s_necklace_angle, s_mouse_up_count, } from '../../ts/state/State';
 	export let zindex = ZIndex.dots;
 	export let center = Point.zero;
 	export let color = 'k.empty';
@@ -24,13 +25,15 @@
 	let rebuilds = 0;
 	let ringButton;
 
+	onMount(() => { updateColors(); });
 	$: { handle_mouse_movedTo($s_mouse_location); }
 	function angleFor(offset: Point): number { return center.distanceTo(offset).angle; }
-	
-	onMount(() => {
-		updateColors();
-		return setupChangesHandler();
-	});
+
+	$: {
+		if ($s_ancestry_focus.thing.id == $s_thing_changed.split(k.genericSeparator)[0]) {
+			updateColors();
+		}
+	}
 
 	$: {
 		if (mouse_up_count != $s_mouse_up_count) {
@@ -45,16 +48,9 @@
 		}
 	}
 
-	function setupChangesHandler() {
-		const handleChanges = signals.hangle_thingChanged(0, thing.id, (value: any) => {
-			updateColors();
-			rebuilds += 1;
-		});
-		return () => { handleChanges.disconnect(); };
-	}
-
 	function updateColors() {
 		fillColor = transparentize(color, transparency);
+		rebuilds += 1;
 		// colorStyles = `background-color: ${transparentize(borderColor, 0.15)}; color: ${k.color_background}`;
 		// cursorStyle = isHovering ? 'cursor: pointer' : k.empty;
 		// borderColor = isHovering ? color : k.color_background;
@@ -93,7 +89,6 @@
 			}
 		}
 		updateColors();
-		rebuilds += 1;
 	}
 			// {colorStyles};
 			// {cursorStyle};

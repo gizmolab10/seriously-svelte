@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { k, u, Thing, Point, Angle, debug, ZIndex, Wrapper, signals } from '../../ts/common/GlobalImports';
+	import { s_thing_changed, s_title_editing, s_ancestry_focus, s_ancestries_grabbed } from '../../ts/state/State';
 	import { s_layout_asClusters, s_thing_fontFamily, s_ancestry_editingTools } from '../../ts/state/State';
-	import { s_ancestry_focus, s_title_editing, s_ancestries_grabbed } from '../../ts/state/State';
-	import { onMount, debugReact, IDWrapper } from '../../ts/common/GlobalImports';
+	import { k, u, Thing, Point, Angle, debug, ZIndex, Wrapper } from '../../ts/common/GlobalImports';
+	import { signals, onMount, debugReact, IDWrapper } from '../../ts/common/GlobalImports';
 	import { exemplar } from '../../ts/data/Exemplar';
 	import EditingTools from './EditingTools.svelte';
 	import TitleEditor from './TitleEditor.svelte';
@@ -60,16 +60,17 @@
 				}
 			}
 		});
-		const handleChanges = signals.hangle_thingChanged(0, thing?.id ?? k.empty, (value: any) => {
-			updateBorderStyle();
-			rebuilds += 1;
-		});
 		return () => {
-			handleAny.disconnect()
-			handleChanges.disconnect();
+			handleAny.disconnect();
 		};
 	});
 
+	$: {
+		if (thing?.id == $s_thing_changed.split(k.genericSeparator)[0]) {
+			updateBorderStyle();
+			rebuilds += 1;
+		}
+	}
 
 	$: {
 		if (widget) {

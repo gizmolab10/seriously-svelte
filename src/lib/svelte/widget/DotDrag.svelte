@@ -1,5 +1,5 @@
 <script>
-	import { s_ancestries_grabbed, s_layout_asClusters, s_ancestry_editingTools } from '../../ts/state/State';
+	import { s_thing_changed, s_layout_asClusters, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/State';
 	import { onDestroy, dbDispatch, Alteration, createPopper } from '../../ts/common/GlobalImports';
 	import { Wrapper, onMount, signals, svgPaths, Direction } from '../../ts/common/GlobalImports';
 	import { k, u, Rect, Size, Point, Thing, debug, ZIndex } from '../../ts/common/GlobalImports';
@@ -45,15 +45,17 @@
 			updateExtraPaths();
 			updateColors();
         });
-		const handleChanges = signals.hangle_thingChanged(1, thing?.id ?? null, (value) => {
-			updateColorsForHover(false);
-			rebuilds += 1;
-		});
 		return () => {
-			handleChanges.disconnect();
 			handleAltering.disconnect();
 		};
 	});
+
+	$: {
+		if (thing?.id == $s_thing_changed.split(k.genericSeparator)[0]) {
+			updateColorsForHover(false);
+			rebuilds += 1;
+		}
+	}
 
 	$: {
 		const grabbedAncestries = $s_ancestries_grabbed;		// use state variable for react logic

@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, Thing, onMount, signals, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
-	import { s_ancestry_focus } from '../../ts/state/State';
+	import { s_thing_changed, s_ancestry_focus } from '../../ts/state/State';
     export let ancestry;
 	const borderStyle = '1px solid';
 	let borderColor = k.color_background;
@@ -10,19 +10,20 @@
 	let cursorStyle = k.empty;
 	let rebuilds = 0;
 
-	function handle_mouse_over(event) { border = `${borderStyle} ${thing.color}`; }
+	onMount(() => { updateColors(); });
 	function handle_mouse_out(event) { border = `${borderStyle} ${borderColor}`; }
+	function handle_mouse_over(event) { border = `${borderStyle} ${thing.color}`; }
 
-	onMount(() => {
+	$: {
+		thing = ancestry.thing;
 		updateColors();
-		const handleChanges = signals.hangle_thingChanged(0, thing.id, (value: any) => {
+	}
+
+	$: {
+		if (ancestry.thing.id == $s_thing_changed.split(k.genericSeparator)[0]) {
 			updateColors();
-			rebuilds += 1;
-		});
-		return () => {
-			handleChanges.disconnect();
-		};
-	});
+		}
+	}
 
 	function updateColors() {
 		if (!!thing) {
@@ -35,12 +36,8 @@
 			borderColor = ancestry.isGrabbed ? thing.color : k.color_background;
 			border = `${borderStyle} ${borderColor}`;
 		}
+		rebuilds += 1;
 	};
-
-	$: {
-		thing = ancestry.thing;
-		updateColors();
-	}
 
 	function crumb_buttmouse_click_closureed(event) {
 		if (dbDispatch.db.hasData) {

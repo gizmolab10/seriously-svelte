@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, Size, Point, Thing, ZIndex, signals, svgPaths, onMount, Ancestry, debugReact, dbDispatch, Direction } from '../../ts/common/GlobalImports';
-	import { s_ancestry_focus, s_graphRect, s_show_details, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/State';
+	import { s_graphRect, s_show_details, s_thing_changed, s_ancestry_focus, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/State';
 	import CrumbButton from '../buttons/CrumbButton.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -17,14 +17,15 @@
 		const handleRebuild = signals.handle_rebuildGraph(2, (ancestry) => {
 			rebuilds += 1;
 		});
-		const handleChanges = signals.hangle_thingChanged(0, -1, (value: any) => {
-			rebuilds += 1;
-		});
 		return () => {
-			handleChanges.disconnect();
 			handleRebuild.disconnect();
 		};
 	});
+
+	$: {
+		const _ = $s_thing_changed;
+		rebuilds += 1;
+	}
 
 	$: {
 		const needsUpdate = ($s_ancestry_focus?.title ?? k.empty) + $s_graphRect + ($s_ancestries_grabbed?.length ?? 0);
