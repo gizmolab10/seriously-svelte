@@ -17,15 +17,11 @@ export default class Layout {
 		} else {
 			let sum = -focusAncestry.visibleProgeny_height() / 2; // start out negative and grow positive
 			for (const childAncestry of childAncestries) {
-				sum += this.tree_layout(sum, focusAncestry, childAncestry, origin);
+				const tree_layout = new TreeLayout(sum, focusAncestry, childAncestry, origin);
+				this.childMapRects = u.concatenateArrays(this.childMapRects, tree_layout.childMapRects);
+				sum += tree_layout.childHeight;
 			}
 		}
-	}
-
-	tree_layout(sum: number, ancestry: Ancestry, childAncestry: Ancestry, origin: Point) {
-		const tree_layout = new TreeLayout(sum, ancestry, childAncestry, origin);
-		this.childMapRects = u.concatenateArrays(this.childMapRects, tree_layout.childMapRects);
-		return tree_layout.childHeight;
 	}
 
 	cluster_layout(cluster_ancestry: Ancestry, ancestries: Array<Ancestry>, predicate: Predicate | null, origin: Point, points_out: boolean) {
