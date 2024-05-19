@@ -40,9 +40,8 @@
 
 	function layout(ancestries: Array<Ancestry>, predicate: Predicate | null, points_out: boolean) {
 		const clusterLayout = new ClusterLayout(ancestry, ancestries, predicate, points_out);
+		childMapRects = u.concatenateArrays(childMapRects, clusterLayout.childMapRects(center));
 		clusterLayouts.push(clusterLayout);
-		const clusterMapRects = clusterLayout.childMapRects(center);
-		childMapRects = u.concatenateArrays(childMapRects, clusterMapRects);
 	}
 
 			// {#if cluster.count > 0}

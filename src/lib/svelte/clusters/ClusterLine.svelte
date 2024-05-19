@@ -15,8 +15,8 @@
 	let line_origin = Point.zero;
 	let arrow_start = Point.zero;
 	let arrow_end = Point.zero;
-	let lineWrapper: Wrapper;
 	let scalablePath = k.empty;
+	let lineWrapper: Wrapper;
 	let viewBox = k.empty;
 	let size = Size.zero;
 	let thickness = 5;
@@ -30,41 +30,31 @@
 			lineWrapper = new Wrapper(line, h.rootAncestry, IDWrapper.line);
 		}
 		angle = clusterLayout?.angle_ofLine;
-		const line_tip = clusterLayout?.line_tip;
 		const inside_radius = k.cluster_inside_radius + (show_arrowheads ? 8 : 0);
 		const inside_tip = Point.fromPolar(inside_radius, angle);
-		const line_offset = line_updated(inside_tip, line_tip);
+		const line_tip = clusterLayout?.line_tip;
 		size = line_tip.abs.asSize;
-		const rect = new Rect(Point.zero, size);
 		scalablePath = svgPaths.line(line_tip);
-		line_origin = center.offsetBy(line_offset);
 		viewBox = `0, 0, ${size.width}, ${size.height}`;
+		line_origin = line_origin_using(inside_tip, line_tip);
 		const title_x = u.getWidthOf(clusterLayout?.line_title) / -3;
 		const title_y = k.dot_size / (u.isAlmost_horizontal(angle) ? 2 : -3);
 		const title_offset = new Point(title_x, title_y);
+		const rect = new Rect(Point.zero, size);
 		title_origin = rect.center.offsetBy(title_offset);
 		[arrow_start, arrow_end] = rect.cornersForAngle(angle);
 	}
 
-	function line_updated(inside_tip: Point, line_tip: Point): Point {
-		let point = Point.zero;
-		let outside_tip = inside_tip;
+	function line_origin_using(inside_tip: Point, line_tip: Point): Point {
+		let offset = inside_tip;
 		const quadrant = u.quadrant_ofPoint(line_tip);
-		const isTiltedUp = [Quadrant.lowerLeft, Quadrant.upperRight].includes(quadrant);
-		if (!isTiltedUp) {
-			outside_tip = inside_tip.offsetBy(line_tip);
-		}
-		if (isTiltedUp) {		// rectangle origin.y is wrong
-			const y = line_tip.abs.asSize.height;
-			outside_tip = outside_tip.offsetByY(-y);
-		}
+		const isTiltedDown = [Quadrant.lowerRight, Quadrant.upperLeft].includes(quadrant);
 		switch (quadrant) {
-			case Quadrant.upperRight: point = new Point( inside_tip.x,  inside_tip.y);
-			case Quadrant.lowerRight: point = new Point( inside_tip.x, outside_tip.y);
-			case Quadrant.upperLeft:  point = new Point(outside_tip.x,  inside_tip.y);
-			default:				  point = new Point(outside_tip.x, outside_tip.y);		
+			case Quadrant.upperRight: offset = inside_tip.offsetByY(line_tip.y); break;
+			case Quadrant.lowerLeft:  offset = inside_tip.offsetByX(line_tip.x); break;
+			case Quadrant.upperLeft:  offset = line_tip.offsetBy(inside_tip); break;
 		}
-		return point;
+		return center.offsetBy(offset);
 	}
 
 </script>

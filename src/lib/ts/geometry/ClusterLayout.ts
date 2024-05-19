@@ -25,14 +25,14 @@ export default class ClusterLayout {
 		const arc_radius = k.cluster_arc_radius;
 		const center = Point.square(arc_radius);
 		const tiny_radius = k.necklace_gap * (0.5 + count / 6);
-		const angle = this.angle_ofLine_for(predicate, points_out) ?? 0;
+		const line_angle = this.canonical_angle_ofLine_for(predicate, points_out) ?? 0;
 		const fork_backoff = this.fork_adjustment(tiny_radius, arc_radius);
-		const fork_fromCenter = Point.fromPolar(arc_radius, angle);
+		const fork_fromCenter = Point.fromPolar(arc_radius, line_angle);
 		const fork_center = center.offsetBy(fork_fromCenter);
 		const fork_radius = tiny_radius - fork_backoff;
 		const line_radius = k.cluster_line_length - fork_radius;
 
-		this.line_tip = Point.fromPolar(line_radius, angle);
+		this.line_tip = Point.fromPolar(line_radius, line_angle);
 		this.cluster_ancestry = cluster_ancestry;
 		this.fork_backoff = fork_backoff;
 		this.fork_radius = fork_radius;
@@ -42,7 +42,7 @@ export default class ClusterLayout {
 		this.arc_radius = arc_radius;
 		this.points_out = points_out;
 		this.predicate = predicate;
-		this.angle_ofLine = angle;
+		this.angle_ofLine = line_angle;
 		this.count = count;
 	}
 
@@ -101,8 +101,8 @@ export default class ClusterLayout {
 
 	fork_adjustment(fork_radius: number, arc_radius: number): number {
 		const ratio = fork_radius / arc_radius / 2;
-		const angle = Math.asin(ratio) * 2;
-		const delta = arc_radius * (1 - Math.cos(angle));
+		const fork_angle = Math.asin(ratio) * 2;
+		const delta = arc_radius * (1 - Math.cos(fork_angle));
 		return delta / Math.sqrt(1.5);
 	}
 
@@ -127,7 +127,7 @@ export default class ClusterLayout {
 		return svgPaths.arc(center_small, arc_small_radius, 1, angle_start, angle_end);
 	}
 
-	angle_ofLine_for(predicate: Predicate | null, points_out: boolean): number | null {
+	canonical_angle_ofLine_for(predicate: Predicate | null, points_out: boolean): number | null {
 		// returns one of three angles: 1) necklace_angle 2) opposite+ 3) opposite-tweak
 		if (!!predicate) {
 			const tweak = Math.PI / 4;		// 45 degrees: added or subtracted -> opposite
@@ -137,8 +137,7 @@ export default class ClusterLayout {
 				opposite + tweak :
 				points_out ? necklace_angle :	// one directional, use global
 				opposite - tweak;
-			const angle = u.normalized_angle(raw);
-			return angle;
+			return u.normalized_angle(raw);
 		}
 		return null;
 	}
@@ -161,17 +160,17 @@ export default class ClusterLayout {
 			}
 		}
 		let ratio = y / radius;
-		let angle = -Math.asin(ratio);	// negate arc sign for clockwise
+		let child_angle = -Math.asin(ratio);	// negate arc sign for clockwise
 		if (!this.points_out || this.predicate?.isBidirectional) {
-			angle = Angle.half - angle;
+			child_angle = Angle.half - child_angle;
 		}
-		angle = u.normalized_angle(angle);
+		child_angle = u.normalized_angle(child_angle);
 		if (index == 0) {
-			this.angle_atStart = angle;
+			this.angle_atStart = child_angle;
 		} else if (index == count - 1) {
-			this.angle_atEnd = angle;
+			this.angle_atEnd = child_angle;
 		}
-		return angle;
+		return child_angle;
 	}
 
 }
