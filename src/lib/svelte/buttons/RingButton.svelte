@@ -26,33 +26,10 @@
 	let ringButton;
 
 	onMount(() => { updateColors(); });
-	function angleFor(offset: Point): number { return offset.angle; }
 
 	$: {
 		if ($s_ancestry_focus.thing.id == $s_thing_changed.split(k.genericSeparator)[0]) {
 			updateColors();
-		}
-	}
-
-	$: {
-		const location = $s_mouse_location;
-		if (!!location) {
-			handle_mouse_movedTo(distance_fromCenter_of(location));
-		}
-	}
-
-	$: {
-		if (mouse_up_count != $s_mouse_up_count) {
-			mouse_up_count = $s_mouse_up_count;
-			console.log('UP');
-			g.ring_priorAngle = g.ring_startAngle = null;
-		}
-	}
-
-	function handle_mouse_down(event) {
-		const offCenter = distance_fromCenter_of($s_mouse_location);
-		if (hitTest(offCenter)) {
-			g.ring_priorAngle = g.ring_startAngle = angleFor(offCenter);
 		}
 	}
 
@@ -61,39 +38,61 @@
 		rebuilds += 1;
 	}
 
-	function distance_fromCenter_of(location: Point): Point {
-		const mainOffset = $s_graphRect.origin.offsetBy($s_user_graphOffset);
-		return mainOffset.offsetBy(center).distanceTo(location);
+	$: {
+		const from_center = distance_fromCenter_of($s_mouse_location);
+		handle_mouse_movedTo(from_center);
+	}
+
+	function distance_fromCenter_of(location?: Point): Point | null {
+		if (!!location) {
+			const mainOffset = $s_graphRect.origin.offsetBy($s_user_graphOffset);
+			return mainOffset.offsetBy(center).distanceTo(location);
+		}
+		return null
+	}
+
+	$: {
+		if (mouse_up_count != $s_mouse_up_count) {
+			mouse_up_count = $s_mouse_up_count;
+			g.ring_priorAngle = g.ring_startAngle = null;
+		}
+	}
+
+	function handle_mouse_down(event) {
+		const from_center = distance_fromCenter_of($s_mouse_location);
+		if (hitTest(from_center)) {
+			g.ring_priorAngle = g.ring_startAngle = from_center.angle;
+		}
 	}
  
-	function hitTest(offCenter: Point): boolean {
-		const radial = offCenter.magnitude;
-		if (radial.isBetween(radius, radius + thickness)) {
-			return true;
+	function hitTest(from_center?: Point): boolean {
+		if (!!from_center) {
+			const radial = from_center.magnitude;
+			if (radial.isBetween(radius, radius + thickness)) {
+				return true;
+			}
 		}
 		return false;
 	}
 
-	function handle_mouse_movedTo(offCenter: Point) {
-		if (g.ring_priorAngle == null) {		// hover
-			const hit = hitTest(offCenter);
-			transparency = hit ? 0.9 : 0.97;
-		} else {							// rotate
-			transparency = 0.9;
-			const mouseAngle = angleFor(offCenter);
-			const rotation = u.normalized_angle(mouseAngle - g.ring_priorAngle);
-			if (Math.abs(rotation) >= Math.PI / 180) {		// minimum one degree changes
-				$s_ring_angle = u.normalized_angle(g.ring_startAngle + mouseAngle);
-				g.ring_priorAngle = mouseAngle;
-				console.log(`${u.degrees_of(mouseAngle)} ${offCenter.verbose}`);
-				signals.signal_rebuildGraph_fromFocus();	// VITAL: this component gets replaced, losing all its state
+	function handle_mouse_movedTo(from_center?: Point) {
+		if (!!from_center) {
+			if (g.ring_priorAngle == null) {		// hover
+				const hit = hitTest(from_center);
+				transparency = hit ? 0.9 : 0.97;
+			} else {								// rotate
+				transparency = 0.9;
+				const mouseAngle = from_center.angle;
+				const rotation = u.normalized_angle(mouseAngle - g.ring_priorAngle);
+				if (Math.abs(rotation) >= Math.PI / 180) {		// minimum one degree changes
+					$s_ring_angle = u.normalized_angle(g.ring_startAngle + mouseAngle);
+					g.ring_priorAngle = mouseAngle;
+					signals.signal_rebuildGraph_fromFocus();	// VITAL: this component gets replaced, losing all its state
+				}
 			}
+			updateColors();
 		}
-		updateColors();
 	}
-			// {colorStyles};
-			// {cursorStyle};
-			// border:{border};
 
 </script>
 

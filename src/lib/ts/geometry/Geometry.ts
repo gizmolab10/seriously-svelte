@@ -9,7 +9,7 @@ export class Point {
 	}
 
 	get asSize():					    Size { return new Size(this.x, this.y); }
-	get angle():					  number { return Math.atan(this.x / this.y); }
+	get angle():					  number { return Math.atan2(this.x, this.y); }
 	get magnitude():				  number { return Math.sqrt(this.x * this.x + this.y * this.y); }
 	get toPolar():	{r: number, phi: number} { return {r: this.magnitude, phi: this.angle}; }
 	get pixelVerbose():				  string { return `${this.x}px ${this.y}px`; }
