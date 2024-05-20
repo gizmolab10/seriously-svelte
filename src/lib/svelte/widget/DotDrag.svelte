@@ -12,7 +12,7 @@
 	let relatedColor = k.color_background;
 	let strokeColor = k.color_background;
 	let fillColor = k.color_background;
-	let scalablePath = k.empty;
+	let dragDotPath = k.empty;
 	let isAltering = false;
 	let isGrabbed = false;
 	let isHovering = true;
@@ -147,9 +147,9 @@
 
 	function updateAncestries() {
 		if ($s_layout_asClusters && !ancestry?.isExemplar) {
-			scalablePath = svgPaths.circle_atOffset(size, size - 1);
+			dragDotPath = svgPaths.circle_atOffset(size, size - 1);
 		} else {
-			scalablePath = svgPaths.oval(size, false);
+			dragDotPath = svgPaths.oval(size, false);
 		}
 		updateExtraPaths();
 	}
@@ -188,7 +188,7 @@
 			height={size}
 			fill={fillColor}
 			stroke={strokeColor}
-			scalablePath={scalablePath}
+			scalablePath={dragDotPath}
 		/>
 		{#if tinyDotsPath}
 			<SVGD3 name='svg-dot-inside'

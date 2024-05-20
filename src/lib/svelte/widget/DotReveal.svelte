@@ -17,7 +17,7 @@
 	let revealWrapper = Wrapper;
 	let hasInsidePath = false;
 	let isHovering = false;
-	let scalablePath = k.empty;
+	let revealDotPath = k.empty;
 	let insideOffset = 0;
 	let dotReveal = null;
 	let rebuilds = 0;
@@ -72,11 +72,11 @@
 		hasInsidePath = ancestry.toolsGrabbed || thing.isBulkAlias;
 		insideOffset = hasInsidePath ? 0 : -1;
 		if (!ancestry.showsReveal || ancestry.toolsGrabbed) {
-			scalablePath = svgPaths.circle_atOffset(size, size - 1);
+			revealDotPath = svgPaths.circle_atOffset(size, size - 1);
 		} else {
 			const goLeft = ancestry.showsChildRelationships;
 			const direction = goLeft ? Direction.left : Direction.right;
-			scalablePath = svgPaths.fat_polygon(size, direction);
+			revealDotPath = svgPaths.fat_polygon(size, direction);
 		}
 		if (ancestry.toolsGrabbed) {
 			insidePath = svgPaths.x_cross(size, 1.5);
@@ -130,11 +130,11 @@
 				width: {size}px;
 				height: {size}px;
 			'>
-			{#key scalablePath}
+			{#key revealDotPath}
 				<SVGD3 name='svg-reveal'
 					fill={debug.lines ? 'transparent' : fillColor}
 					stroke={strokeColor}
-					scalablePath={scalablePath}
+					scalablePath={revealDotPath}
 					height={size}
 					width={size}
 				/>

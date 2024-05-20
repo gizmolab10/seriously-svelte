@@ -8,11 +8,11 @@
 	export let rect = new Rect();
 	export let curveType: string = IDLine.up;
 	const debugOffset = new Point(140.5, -1.2);
-	let scalablePath = k.empty;
 	let lineWrapper: Wrapper;
 	let origin = rect.origin;
 	let extent = rect.extent;
 	let viewBox = new Rect();
+	let linePath = k.empty;
 	let size = new Size();
 	let rebuilds = 0;
 	let line;
@@ -49,7 +49,7 @@
 					origin = rect.centerLeft.offsetByY(-0.5);
 					extent = rect.centerRight.offsetBy(new Point(0.5, -0.5));
 					size = origin.distanceTo(extent).abs.asSize;
-					scalablePath = svgPaths.line(new Point(size.width, 0));
+					linePath = svgPaths.line(new Point(size.width, 0));
 					break;
 			}
 			if (curveType != IDLine.flat) {
@@ -60,7 +60,7 @@
 				const extentY = curveType == IDLine.up   ? 1 : size.height;
 				const boxSize = new Size(size.width, (noHeight ? 2 : size.height));
 				viewBox = new Rect(origin, boxSize);
-				scalablePath = 'M0 ' + originY + 'A' + size.description + ' 0 0 ' + flag + k.space + size.width + k.space + extentY;
+				linePath = 'M0 ' + originY + 'A' + size.description + ' 0 0 ' + flag + k.space + size.width + k.space + extentY;
 			}
 		}
 	}
@@ -81,7 +81,7 @@
 		style='z-index: {ZIndex.lines};
 			top: {origin.y - Math.max(1, size.height)}px;
 			left: {origin.x + 142}px;'>
-		<path d={scalablePath} stroke={ancestry.thing.color} fill='none'/>
+		<path d={linePath} stroke={ancestry.thing.color} fill='none'/>
 	</svg>
 	{#if debug.lines}
 		<Circle radius=1 center={rect.extent.offsetBy(debugOffset)} color=black thickness=1/>

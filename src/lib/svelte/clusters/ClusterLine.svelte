@@ -15,8 +15,8 @@
 	let line_origin = Point.zero;
 	let arrow_start = Point.zero;
 	let arrow_end = Point.zero;
-	let scalablePath = k.empty;
 	let lineWrapper: Wrapper;
+	let linePath = k.empty;
 	let viewBox = k.empty;
 	let size = Size.zero;
 	let thickness = 5;
@@ -34,7 +34,7 @@
 		const inside_tip = Point.fromPolar(inside_radius, angle);
 		const line_tip = clusterLayout?.line_tip;
 		size = line_tip.abs.asSize;
-		scalablePath = svgPaths.line(line_tip);
+		linePath = svgPaths.line(line_tip);
 		viewBox = `0, 0, ${size.width}, ${size.height}`;
 		line_origin = line_origin_using(inside_tip, line_tip);
 		const title_x = u.getWidthOf(clusterLayout?.line_title) / -3;
@@ -45,16 +45,15 @@
 		[arrow_start, arrow_end] = rect.cornersForAngle(angle);
 	}
 
-	function line_origin_using(inside_tip: Point, line_tip: Point): Point {
-		let offset = inside_tip;
-		const quadrant = u.quadrant_ofPoint(line_tip);
-		const isTiltedDown = [Quadrant.lowerRight, Quadrant.upperLeft].includes(quadrant);
+	function line_origin_using(start: Point, end: Point): Point {
+		const quadrant = u.quadrant_ofPoint(end);
+		let fromCenter = start;
 		switch (quadrant) {
-			case Quadrant.upperRight: offset = inside_tip.offsetByY(line_tip.y); break;
-			case Quadrant.lowerLeft:  offset = inside_tip.offsetByX(line_tip.x); break;
-			case Quadrant.upperLeft:  offset = line_tip.offsetBy(inside_tip); break;
+			case Quadrant.upperRight: fromCenter = start.offsetByY(end.y); break;
+			case Quadrant.lowerLeft:  fromCenter = start.offsetByX(end.x); break;
+			case Quadrant.upperLeft:  fromCenter = end.offsetBy(start); break;
 		}
-		return center.offsetBy(offset);
+		return center.offsetBy(fromCenter);
 	}
 
 </script>
@@ -69,7 +68,7 @@
 		width={size.width}px
 		viewBox={viewBox}
 		bind:this={line}>
-		<path d={scalablePath} stroke={color} fill='none'/>
+		<path d={linePath} stroke={color} fill='none'/>
 	</svg>
 	<div class='cluster-line-label'
 		style='

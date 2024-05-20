@@ -4,9 +4,9 @@
 	import Button from '../buttons/Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	export let hover_closure = null;
+	export let mouse_click_closure;
 	export let cursor = 'pointer';
 	export let extraPath = null;
-	export let mouse_click_closure;
 	export let strokeColor;
 	export let direction;
 	export let center;
@@ -14,7 +14,7 @@
 	export let id;
 	let fillColor = k.color_background;
 	let extraColor = k.color_background;
-	let scalablePath = svgPaths.fat_polygon(size, direction);
+	let trianglePath = svgPaths.fat_polygon(size, direction);
 
 	function setFillColor(isFilled) {
 		if (!!hover_closure) {
@@ -23,7 +23,7 @@
 	}
 	
 	$: {
-		scalablePath = svgPaths.fat_polygon(size, direction);
+		trianglePath = svgPaths.fat_polygon(size, direction);
 		setFillColor(false);
 	}
 
@@ -47,7 +47,7 @@
 	width='20'>
 	<SVGD3 name='triangle'
 		stroke={strokeColor}
-		scalablePath={scalablePath}
+		scalablePath={trianglePath}
 		fill={fillColor}
 		height={size}
 		width={size}

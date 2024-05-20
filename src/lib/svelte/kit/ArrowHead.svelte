@@ -9,12 +9,12 @@
 	export let angle = 0;
 	export let color;
 	let diameter = 0;
-	let scalablePath = k.empty;
+	let arrowheadPath = k.empty;
 
 	$: {
 		diameter = radius * 2;
 		const skip = [1, 4];
-		scalablePath = svgPaths.polygon(radius, angle, 5, skip);
+		arrowheadPath = svgPaths.polygon(radius, angle, 5, skip);
 	}
 
 </script>
@@ -29,5 +29,5 @@
 		width={diameter * 2}px
 		height={diameter * 2}px>
 		style='z-index: {ZIndex.lines}; position: absolute'
-		<path d={scalablePath} stroke={color} fill={color_background}/>
+		<path d={arrowheadPath} stroke={color} fill={color_background}/>
 </div>
