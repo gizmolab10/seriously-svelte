@@ -1,6 +1,7 @@
 declare global {
 	interface Number {
 		normalize(value: number): number;
+		add_angle_normalized(angle: number): number;
 		increment(increment: boolean, length: number): number;
 		isBetween(a: number, b: number, inclusive: boolean): boolean;
 		isClocklyBetween(a: number, b: number, limit: number): boolean;
@@ -74,6 +75,15 @@ Object.defineProperty(Number.prototype, 'increment', {
 			result = max;
 		}
 		return result;
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(Number.prototype, 'add_angle_normalized', {
+	value: function(angle: number): number {
+		return (Math.PI * 2).normalize(this + angle);
 	},
 	writable: false,
 	enumerable: false,

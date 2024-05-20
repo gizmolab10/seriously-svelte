@@ -3,10 +3,10 @@
     import TriangleButton from './TriangleButton.svelte'
     export let display;
     export let hit;
+    const buttonSize = 20;
+    const offsetY = buttonSize / 2 - 1;
     const origin = new Point(26, 27);
-    const offsetY = size / 2 - 1;
 	let rebuilds = 0;
-    const size = 20;
 
 	function hover_closure(isFilled) {
         return [isFilled ? 'black' : k.color_background, k.empty];
@@ -32,23 +32,23 @@
     <div class='directionals'>
         {#if display(true)}
             <TriangleButton
+                mouse_click_closure={mouse_click_closure}
                 center={origin.offsetByY(-offsetY)}
                 hover_closure={hover_closure}
-                mouse_click_closure={mouse_click_closure}
                 direction={Direction.up}
                 strokeColor={'black'}
-                size={size}
+                size={buttonSize}
                 id='up'
             />
         {/if}
         {#if display(false)}
             <TriangleButton
+                mouse_click_closure={mouse_click_closure}
                 center={origin.offsetByY(offsetY)}
                 hover_closure={hover_closure}
-                mouse_click_closure={mouse_click_closure}
                 direction={Direction.down}
                 strokeColor={'black'}
-                size={size}
+                size={buttonSize}
                 id='down'
             />
         {/if}

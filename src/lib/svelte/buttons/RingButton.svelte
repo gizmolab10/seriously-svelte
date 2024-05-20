@@ -61,7 +61,9 @@
 	function handle_mouse_down(event) {
 		const from_center = distance_fromCenter_of($s_mouse_location);
 		if (hitTest(from_center)) {
-			g.ring_priorAngle = g.ring_startAngle = from_center.angle;
+			const mouseAngle = from_center.angle;
+			g.ring_priorAngle = mouseAngle;
+			g.ring_startAngle = mouseAngle.add_angle_normalized(-$s_ring_angle);
 		}
 	}
  
@@ -83,9 +85,9 @@
 			} else {								// rotate
 				transparency = 0.9;
 				const mouseAngle = from_center.angle;
-				const rotation = u.normalized_angle(mouseAngle - g.ring_priorAngle);
-				if (Math.abs(rotation) >= Math.PI / 180) {		// minimum one degree changes
-					$s_ring_angle = u.normalized_angle(g.ring_startAngle + mouseAngle);
+				const delta = mouseAngle.add_angle_normalized(-g.ring_priorAngle);
+				if (Math.abs(delta) >= Math.PI / 180) {		// minimum one degree changes
+					$s_ring_angle = mouseAngle.add_angle_normalized(-g.ring_startAngle);
 					g.ring_priorAngle = mouseAngle;
 					signals.signal_rebuildGraph_fromFocus();	// VITAL: this component gets replaced, losing all its state
 				}

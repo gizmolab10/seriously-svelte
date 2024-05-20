@@ -3,17 +3,18 @@
 	import DirectionalButtons from '../buttons/DirectionalButtons.svelte'
 	import CloseButton from '../buttons/CloseButton.svelte'
 	import { s_id_popupView } from '../../ts/state/State';
-	const indexedNotes = Object.entries(builds.notes).reverse();
+	const notesIndexed = Object.entries(builds.notes).reverse();
+	const notesLimit = notesIndexed.length - 1;
+	let title = k.empty;
 	let notesIndex = 0;
 	let notes = [];
-	let title = k.empty;
 	
 	onMount(() => { updateNotes(); })
-    function display(goLeft) { return shouldEnable(goLeft) ? 'block' : 'none'; }
+    function display(pointsUp) { return shouldEnable(pointsUp) ? 'block' : 'none'; }
 
 	function updateNotes() {
-		const end = Math.min(indexedNotes.length, notesIndex + 10);
-		notes = indexedNotes.slice(notesIndex, end);
+		const end = Math.min(notesLimit, notesIndex + 10);
+		notes = notesIndexed.slice(notesIndex, end);
 		const suffix = notesIndex < 10 ? ' (10 most recent)' : k.empty;
 		title = `Seriously Build Notes${suffix}`;
 	}
@@ -25,17 +26,17 @@
 		}
 	}
 
-	function shouldEnable(goLeft) {
-		if (goLeft) {
+	function shouldEnable(pointsUp) {
+		if (pointsUp) {
 			return notesIndex >= 0;
 		} else {
-			return (builds.notes.length - notesIndex) > 0;
+			return (notesLimit - notesIndex) > 0;
 		}
 	}
 
-	function directional_buttmouse_click_closureed(goLeft) {
-		let nextIndex = notesIndex + (10 * (goLeft ? -1 : 1));
-		if (nextIndex < 0 || (builds.notes.length - nextIndex) < 1) {
+	function directional_hit_handler(pointsUp) {
+		let nextIndex = notesIndex + (10 * (pointsUp ? -1 : 1));
+		if (nextIndex < 0 || (notesLimit - nextIndex) < 1) {
 			return;
 		}
 		notesIndex = nextIndex;
@@ -87,7 +88,7 @@
 	<div class='notes-modal-content'>
 		<div class='top-bar'>
 			{#key notes}
-				<DirectionalButtons hit={directional_buttmouse_click_closureed} display={display}/>
+				<DirectionalButtons hit={directional_hit_handler} display={display}/>
 			{/key}
 			<div class='title'>{title}</div>
 			<CloseButton size={k.dot_size * 1.5}/>
