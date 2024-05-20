@@ -55,6 +55,7 @@ export enum Angle {
 	quarter = Math.PI / 2,
 	full = Math.PI * 2,
 	half = Math.PI,
+	zero = 0,
 }
 
 export enum IDButton {

@@ -5,6 +5,8 @@ import { dbDispatch, persistLocal, IDPersistant } from '../common/GlobalImports'
 
 class Globals {
 	rebuild_count = 0;
+	ring_startAngle: number | null = null;
+	ring_priorAngle: number | null = null;
 
 	setup() {
 		builds.setup();

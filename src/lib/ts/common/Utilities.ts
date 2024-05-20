@@ -10,7 +10,7 @@ class Utilities {
 	concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return [...a, ...b]; }
 	strip_falsies(array: Array<any>): Array<any> { return array.filter(element => !!element); }
 	location_ofMouseEvent(event: MouseEvent) { return new Point(event.clientX, event.clientY); }
-	quadrant_startAngle(angle: number): number { return this.startAngle_ofQuadrant(this.quadrant_ofNotNormalized(angle)); }
+	quadrant_startAngle(angle: number): number { return this.startAngle_ofQuadrant(this.quadrant_ofNotNormalized_angle(angle)); }
 	sort_byOrder(array: Array<Ancestry>) { return array.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
 	strip_invalid(array: Array<any>): Array<any> { return this.strip_identifiableDuplicates(this.strip_falsies(array)); }
 
@@ -25,6 +25,11 @@ class Utilities {
 	degrees_of(angle: number) {
 		const degrees = this.normalized_angle(angle) * 180 / Angle.half;
 		return this.formatter_toFixed(1).format(degrees);
+	}
+
+	angle_tiltsUp(rawAngle: number): boolean {
+		const angle = this.quadrant_ofNotNormalized_angle(rawAngle);
+		return [Quadrant.upperRight, Quadrant.lowerLeft].includes(angle);
 	}
 
 	get windowSize(): Size {
@@ -97,22 +102,14 @@ class Utilities {
 	}
 
 	angle_hasPositiveX(angle: number): boolean {
-		switch(this.quadrant_ofNotNormalized(angle)) {
+		switch(this.quadrant_ofNotNormalized_angle(angle)) {
 			case Quadrant.upperRight: return true;
 			case Quadrant.lowerRight: return true;
 			default: return false;
 		}
 	}
 
-	angle_tiltsUp(angle: number): boolean {
-		switch(this.quadrant_ofNotNormalized(angle)) {
-			case Quadrant.upperRight: return true;
-			case Quadrant.lowerLeft: return true;
-			default: return false;
-		}
-	}
-
-	quadrant_ofNotNormalized(angle: number): Quadrant {
+	quadrant_ofNotNormalized_angle(angle: number): Quadrant {
 		const normalized = this.normalized_angle(angle);
 		let quadrant = Quadrant.upperRight;
 		if (normalized.isBetween(0,				Angle.quarter,		 true)) { quadrant = Quadrant.lowerRight; }
@@ -120,9 +117,7 @@ class Utilities {
 		if (normalized.isBetween(Angle.half,	Angle.threeQuarters, true)) { quadrant = Quadrant.upperLeft; }
 		return quadrant;
 	}
-
-	/// TODO this in between needs clock arithmetic (an extra parameter: clock's interval)
-
+	
 	isAlmost_horizontal(angle: number, almost: number = (Angle.half / 10)): boolean {
 		for (const horizontal of [Angle.half, Angle.full]) {
 			const delta = this.normalized_angle(angle - horizontal);

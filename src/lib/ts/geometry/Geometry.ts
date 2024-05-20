@@ -25,6 +25,7 @@ export class Point {
 	offsetEquallyBy(offset: number):   Point { return this.offsetBy(Point.square(offset)); }
 	offsetBy(point: Point):			   Point { return new Point(this.x + point.x, this.y + point.y); }
 	distanceTo(point: Point):		   Point { return new Point(point.x - this.x, point.y - this.y); }
+	distanceFrom(point: Point):		   Point { return new Point(this.x - point.x, this.y - point.y); }
 	multipliedBy(multiplier: number):  Point { return new Point(this.x * multiplier, this.y * multiplier) }
 	offsetBySize(size: Size):		   Point { return new Point(this.x + size.width, this.y + size.height); }
 	almostZero(almost: number):		 boolean { return Math.abs(this.x) <= almost && Math.abs(this.y) <= almost; }
@@ -99,12 +100,12 @@ export class Rect {
 
 	expandedBy(expansion: Point): Rect {
 		const size = this.size.expandedBy(expansion);
-		const origin = this.origin.offsetBy(expansion.negated);
+		const origin = this.origin.distanceFrom(expansion);
 		return new Rect(origin, size)
 	}
 
 	cornersForAngle(angle: number): [Point, Point] {
-		switch (u.quadrant_ofNotNormalized(angle)) {
+		switch (u.quadrant_ofNotNormalized_angle(angle)) {
 			case Quadrant.upperRight: return [this.bottomLeft, this.topRight];
 			case Quadrant.lowerLeft:  return [this.topRight, this.bottomLeft];
 			case Quadrant.upperLeft:  return [this.extent, this.origin];
@@ -113,11 +114,11 @@ export class Rect {
 	}
 
 	static createExtentRect(origin: Point, extent: Point) {
-		return new Rect(origin, extent.offsetBy(origin.negated).asSize);
+		return new Rect(origin, extent.distanceFrom(origin).asSize);
 	}
 
 	static createCenterRect(center: Point, size: Size) {
-		return new Rect(center.offsetBy(size.asPoint.negated.dividedInHalf), size);
+		return new Rect(center.distanceFrom(size.asPoint.dividedInHalf), size);
 	}
 
 	static createRightCenterRect(rightCenter: Point, size: Size) {

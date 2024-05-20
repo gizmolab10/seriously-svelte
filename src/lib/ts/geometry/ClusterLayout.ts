@@ -1,6 +1,6 @@
 import { k, u, get, Angle, IDLine, svgPaths, Ancestry, Predicate } from '../common/GlobalImports';
 import { Rect, Point, ChildMapRect } from '../geometry/Geometry';
-import { s_necklace_angle } from '../state/State';
+import { s_ring_angle } from '../state/State';
 import { ArcKind } from '../common/Enumerations';
 
 export default class ClusterLayout {
@@ -77,10 +77,10 @@ export default class ClusterLayout {
 	}
 
 	get main_svgPaths(): Array<string> {
-		const x_isPositive = u.angle_tiltsUp(this.angle_ofLine);
-		const big_svgPath = this.big_svgPath(x_isPositive);
-		const end_small_svgPath = this.small_svgPath(this.angle_atEnd, x_isPositive, false);
-		const start_small_svgPath = this.small_svgPath(this.angle_atStart, x_isPositive, true);
+		const angle_tiltsUp = u.angle_tiltsUp(this.angle_ofLine);
+		const big_svgPath = this.big_svgPath(angle_tiltsUp);
+		const end_small_svgPath = this.small_svgPath(this.angle_atEnd, angle_tiltsUp, false);
+		const start_small_svgPath = this.small_svgPath(this.angle_atStart, angle_tiltsUp, true);
 		return [start_small_svgPath, big_svgPath, end_small_svgPath];
 	}
 
@@ -93,10 +93,10 @@ export default class ClusterLayout {
 		return `${this.count} ${shortened}`;
 	}
 
-	big_svgPath(x_isPositive: boolean) {
+	big_svgPath(angle_tiltsUp: boolean) {
 		return svgPaths.arc(this.necklace_center, this.arc_radius, 1, 
-			x_isPositive ? this.angle_atStart : this.angle_atEnd,
-			x_isPositive ? this.angle_atEnd : this.angle_atStart);
+			angle_tiltsUp ? this.angle_atStart : this.angle_atEnd,
+			angle_tiltsUp ? this.angle_atEnd : this.angle_atStart);
 	}
 
 	fork_adjustment(fork_radius: number, arc_radius: number): number {
@@ -131,7 +131,7 @@ export default class ClusterLayout {
 		// returns one of three angles: 1) necklace_angle 2) opposite+ 3) opposite-tweak
 		if (!!predicate) {
 			const tweak = Math.PI / 4;		// 45 degrees: added or subtracted -> opposite
-			const necklace_angle = get(s_necklace_angle);
+			const necklace_angle = get(s_ring_angle);
 			const opposite = necklace_angle + Angle.half;
 			const raw = predicate.isBidirectional ?
 				opposite + tweak :
@@ -145,7 +145,7 @@ export default class ClusterLayout {
 	angle_ofChild_for(index: number, count: number, radius: number): number {
 		const row = index - ((count - 1) / 2);				// row centered around zero
 		const radial = new Point(radius, 0);
-		const angle_ofLine = this.angle_ofLine;	// depends on s_necklace_angle, predicate kind & points_out
+		const angle_ofLine = this.angle_ofLine;	// depends on s_ring_angle, predicate kind & points_out
 		const startY = radial.rotate_by(angle_ofLine).y;	// height of angle_ofLine
 		let y = startY + (row * (k.row_height - 2));		// height of row
 		const isLower = y >= 0;
@@ -166,9 +166,9 @@ export default class ClusterLayout {
 		}
 		child_angle = u.normalized_angle(child_angle);
 		if (index == 0) {
-			this.angle_atStart = child_angle;
-		} else if (index == count - 1) {
 			this.angle_atEnd = child_angle;
+		} else if (index == count - 1) {
+			this.angle_atStart = child_angle;
 		}
 		return child_angle;
 	}

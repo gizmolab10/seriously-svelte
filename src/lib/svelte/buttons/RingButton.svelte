@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { k, u, Thing, Point, ZIndex, onMount, signals, svgPaths, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
-	import { s_ancestry_focus, s_mouse_location, s_necklace_priorAngle, s_user_graphOffset } from '../../ts/state/State';
-	import { s_graphRect, s_thing_changed, s_necklace_angle, s_mouse_up_count, } from '../../ts/state/State';
+	import { g, k, u, Thing, Point, ZIndex, onMount, signals, svgPaths, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
+	import { s_graphRect, s_thing_changed, s_ring_angle, s_mouse_up_count, } from '../../ts/state/State';
+	import { s_ancestry_focus, s_mouse_location, s_user_graphOffset } from '../../ts/state/State';
 	export let zindex = ZIndex.dots;
 	export let center = Point.zero;
 	export let color = 'k.empty';
@@ -12,7 +12,7 @@
 	const borderStyle = '1px solid';
 	const diameter = (radius + thickness) * 2;
 	const viewBox = `${-thickness}, ${-thickness}, ${diameter}, ${diameter}`;
-	const ringOrigin = center.offsetBy(Point.square(radius + thickness).negated);
+	const ringOrigin = center.distanceFrom(Point.square(radius + thickness));
 	const scalableRingPath = svgPaths.ring(Point.square(radius), radius + thickness, thickness);
 	let mouse_up_count = $s_mouse_up_count;
 	let borderColor = k.empty;
@@ -26,8 +26,7 @@
 	let ringButton;
 
 	onMount(() => { updateColors(); });
-	$: { handle_mouse_movedTo($s_mouse_location); }
-	function angleFor(offset: Point): number { return center.distanceTo(offset).angle; }
+	function angleFor(offset: Point): number { return offset.angle; }
 
 	$: {
 		if ($s_ancestry_focus.thing.id == $s_thing_changed.split(k.genericSeparator)[0]) {
@@ -36,56 +35,58 @@
 	}
 
 	$: {
+		const location = $s_mouse_location;
+		if (!!location) {
+			handle_mouse_movedTo(distance_fromCenter_of(location));
+		}
+	}
+
+	$: {
 		if (mouse_up_count != $s_mouse_up_count) {
 			mouse_up_count = $s_mouse_up_count;
-			$s_necklace_priorAngle = null;
+			console.log('UP');
+			g.ring_priorAngle = g.ring_startAngle = null;
 		}
 	}
 
 	function handle_mouse_down(event) {
-		if (hitTest($s_mouse_location)) {
-			$s_necklace_priorAngle = angleFor($s_mouse_location);
+		const offCenter = distance_fromCenter_of($s_mouse_location);
+		if (hitTest(offCenter)) {
+			g.ring_priorAngle = g.ring_startAngle = angleFor(offCenter);
 		}
 	}
 
 	function updateColors() {
 		fillColor = transparentize(color, transparency);
 		rebuilds += 1;
-		// colorStyles = `background-color: ${transparentize(borderColor, 0.15)}; color: ${k.color_background}`;
-		// cursorStyle = isHovering ? 'cursor: pointer' : k.empty;
-		// borderColor = isHovering ? color : k.color_background;
-		// border = `${borderStyle} ${borderColor}`;
-	};
+	}
+
+	function distance_fromCenter_of(location: Point): Point {
+		const mainOffset = $s_graphRect.origin.offsetBy($s_user_graphOffset);
+		return mainOffset.offsetBy(center).distanceTo(location);
+	}
  
-	function hitTest(mouseLocation): boolean {
-		if (mouseLocation) {
-			const mainOffset = $s_graphRect.origin.offsetBy($s_user_graphOffset);
-			const locationInWindow = mainOffset.offsetBy(center);
-			const offCenter = locationInWindow.distanceTo(mouseLocation);
-			const radial = offCenter.magnitude;
-			if (radial.isBetween(radius, radius + thickness)) {
-				return true;
-			}
+	function hitTest(offCenter: Point): boolean {
+		const radial = offCenter.magnitude;
+		if (radial.isBetween(radius, radius + thickness)) {
+			return true;
 		}
 		return false;
 	}
 
-	function handle_mouse_movedTo(mouseLocation) {
-		const hit = hitTest(mouseLocation);
-		const priorAngle = $s_necklace_priorAngle;
-		if (priorAngle == null) {		// hover
+	function handle_mouse_movedTo(offCenter: Point) {
+		if (g.ring_priorAngle == null) {		// hover
+			const hit = hitTest(offCenter);
 			transparency = hit ? 0.9 : 0.97;
 		} else {							// rotate
 			transparency = 0.9;
-			const mouseAngle = angleFor(mouseLocation);
-			const rotation = u.normalized_angle(mouseAngle - priorAngle);
-			if (Math.abs(rotation) >= 0.05) {
-				$s_necklace_angle = u.normalized_angle($s_necklace_angle + rotation);
-				$s_necklace_priorAngle = mouseAngle;
-				signals.signal_rebuildGraph_fromFocus();
-				if (Math.abs(priorAngle - $s_necklace_angle) > 10) {
-					console.log(`handle_mouse_movedTo ${u.degrees_of($s_necklace_angle)}`);
-				}
+			const mouseAngle = angleFor(offCenter);
+			const rotation = u.normalized_angle(mouseAngle - g.ring_priorAngle);
+			if (Math.abs(rotation) >= Math.PI / 180) {		// minimum one degree changes
+				$s_ring_angle = u.normalized_angle(g.ring_startAngle + mouseAngle);
+				g.ring_priorAngle = mouseAngle;
+				console.log(`${u.degrees_of(mouseAngle)} ${offCenter.verbose}`);
+				signals.signal_rebuildGraph_fromFocus();	// VITAL: this component gets replaced, losing all its state
 			}
 		}
 		updateColors();
