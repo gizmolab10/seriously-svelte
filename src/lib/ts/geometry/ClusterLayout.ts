@@ -25,7 +25,7 @@ export default class ClusterLayout {
 		const arc_radius = k.cluster_arc_radius;
 		const center = Point.square(arc_radius);
 		const tiny_radius = k.necklace_gap * (0.5 + count / 6);
-		const line_angle = this.canonical_angle_ofLine_for(predicate, points_out) ?? 0;
+		const line_angle = this.lineAngle_for(predicate, points_out) ?? 0;
 		const fork_backoff = this.fork_adjustment(tiny_radius, arc_radius);
 		const fork_fromCenter = Point.fromPolar(arc_radius, line_angle);
 		const fork_center = center.offsetBy(fork_fromCenter);
@@ -37,16 +37,18 @@ export default class ClusterLayout {
 		this.fork_backoff = fork_backoff;
 		this.fork_radius = fork_radius;
 		this.fork_center = fork_center;
+		this.angle_ofLine = line_angle;
 		this.necklace_center = center;
 		this.ancestries = ancestries;
 		this.arc_radius = arc_radius;
 		this.points_out = points_out;
 		this.predicate = predicate;
-		this.angle_ofLine = line_angle;
 		this.count = count;
 	}
+	
+	static readonly $_ANGLES_$: unique symbol;
 
-	childMapRects(origin: Point): Array<ChildMapRect>  {
+	childMapRects(center: Point): Array<ChildMapRect>  {
 		let array: Array<ChildMapRect> = [];
 		const count = this.ancestries.length;
 		if (count > 0 && !!this.predicate) {
@@ -56,7 +58,7 @@ export default class ClusterLayout {
 			while (index < count) {
 				const ancestry = this.ancestries[index];
 				const childAngle = this.angle_ofChild_for(index, count, radius);
-				const childOrigin = origin.offsetBy(radial.rotate_by(childAngle));
+				const childOrigin = center.offsetBy(radial.rotate_by(childAngle));
 				const map = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, ancestry, this.cluster_ancestry, childAngle);
 				array.push(map);
 				index += 1;
@@ -64,6 +66,43 @@ export default class ClusterLayout {
 		}
 		return array;
 	}
+
+	angle_ofChild_for(index: number, count: number, radius: number): number {
+		const row = index - ((count - 1) / 2);				// row centered around zero
+		const radial = new Point(radius, 0);
+		const angle_ofLine = this.angle_ofLine;				// points at middle widget
+		const rotated = radial.rotate_by(angle_ofLine);
+		const startY = rotated.y;							// height of angle_ofLine
+		let y = startY + (row * (k.row_height - 2));		// height of row
+		let child_angle = -Math.asin(y / radius);			// negate arc sign for clockwise
+		if (rotated.x < 0) {
+			child_angle = Angle.half - child_angle
+		}
+		child_angle = u.normalized_angle(child_angle);
+		if (index == 0) {
+			this.angle_atEnd = child_angle;
+		} else if (index == count - 1) {
+			this.angle_atStart = child_angle;
+		}
+		return child_angle;
+	}
+
+	lineAngle_for(predicate: Predicate | null, points_out: boolean): number | null {
+		// returns one of three angles: 1) necklace_angle 2) opposite+ 3) opposite-tweak
+		if (!!predicate) {
+			const tweak = Math.PI / 4;		// 45 degrees: added or subtracted -> opposite
+			const necklace_angle = get(s_ring_angle);
+			const opposite = necklace_angle + Angle.half;
+			const raw = predicate.isBidirectional ?
+				opposite + tweak :
+				points_out ? necklace_angle :	// one directional, use global
+				opposite - tweak;
+			return u.normalized_angle(raw);
+		}
+		return null;
+	}
+	
+	static readonly $_SVGS_$: unique symbol;
 
 	get gap_svgPath() { return svgPaths.circle(this.fork_center, this.fork_radius - 0.5); }
 	get fork_svgPaths() { return [this.fork_svgPath(false), this.fork_svgPath(true)]; }
@@ -125,52 +164,6 @@ export default class ClusterLayout {
 		const distanceTo_arc_small_center = this.arc_radius + arc_small_radius;
 		const center_small = center.offsetBy(Point.fromPolar(distanceTo_arc_small_center, arc_angle));
 		return svgPaths.arc(center_small, arc_small_radius, 1, angle_start, angle_end);
-	}
-
-	canonical_angle_ofLine_for(predicate: Predicate | null, points_out: boolean): number | null {
-		// returns one of three angles: 1) necklace_angle 2) opposite+ 3) opposite-tweak
-		if (!!predicate) {
-			const tweak = Math.PI / 4;		// 45 degrees: added or subtracted -> opposite
-			const necklace_angle = get(s_ring_angle);
-			const opposite = necklace_angle + Angle.half;
-			const raw = predicate.isBidirectional ?
-				opposite + tweak :
-				points_out ? necklace_angle :	// one directional, use global
-				opposite - tweak;
-			return u.normalized_angle(raw);
-		}
-		return null;
-	}
-
-	angle_ofChild_for(index: number, count: number, radius: number): number {
-		const row = index - ((count - 1) / 2);				// row centered around zero
-		const radial = new Point(radius, 0);
-		const angle_ofLine = this.angle_ofLine;	// depends on s_ring_angle, predicate kind & points_out
-		const startY = radial.rotate_by(angle_ofLine).y;	// height of angle_ofLine
-		let y = startY + (row * (k.row_height - 2));		// height of row
-		const isLower = y >= 0;
-		let unfit = false;
-		if (Math.abs(y) > radius) {
-			unfit = true;
-			if (isLower) {
-				y = radius - (y % radius);
-				// console.log(`lower`)
-			} else {
-				y = (-y % radius) - radius;
-			}
-		}
-		let ratio = y / radius;
-		let child_angle = -Math.asin(ratio);	// negate arc sign for clockwise
-		if (!this.points_out || this.predicate?.isBidirectional) {
-			child_angle = Angle.half - child_angle;
-		}
-		child_angle = u.normalized_angle(child_angle);
-		if (index == 0) {
-			this.angle_atEnd = child_angle;
-		} else if (index == count - 1) {
-			this.angle_atStart = child_angle;
-		}
-		return child_angle;
 	}
 
 }

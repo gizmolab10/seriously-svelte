@@ -61,8 +61,12 @@
 	</div>
 	<div class='cluster-lines'>
 		{#each clusterLayouts as cluster}
-			<ClusterLine clusterLayout={cluster} center={center} color={color}/>
-			<ClusterArc clusterLayout={cluster} center={center} color={color}/>
+			{#if cluster.count > 0}
+				<ClusterLine clusterLayout={cluster} center={center} color={color}/>
+				{#if cluster.count > 1}
+					<ClusterArc clusterLayout={cluster} center={center} color={color}/>
+				{/if}
+			{/if}
 		{/each}
 	</div>
 	<RingButton name='necklace-ring'
