@@ -68,21 +68,38 @@ export default class ClusterLayout {
 	}
 
 	angle_ofChild_for(index: number, count: number, radius: number): number {
-		const row = index - ((count - 1) / 2);				// row centered around zero
+		const row = index - ((count - 1) / 2);			// row centered around zero
 		const radial = new Point(radius, 0);
-		const angle_ofLine = this.angle_ofLine;				// points at middle widget
+		const angle_ofLine = this.angle_ofLine;			// points at middle widget
 		const rotated = radial.rotate_by(angle_ofLine);
-		const startY = rotated.y;							// height of angle_ofLine
-		let y = startY + (row * (k.row_height - 2));		// height of row
-		let child_angle = -Math.asin(y / radius);			// negate arc sign for clockwise
-		if (rotated.x < 0) {
-			child_angle = Angle.half - child_angle
+		const startY = rotated.y;						// height of angle_ofLine
+		let y = startY + (row * (k.row_height - 2));	// height of row
+		let unfit = false;
+		if (Math.abs(y) > radius) {
+			unfit = true;
+			if (y > 0) {
+				y = radius - (y % radius);				// swing around bottom
+			} else {
+				y = (-y % radius) - radius;				// swing around top
+			}
+		}
+		let child_angle = -Math.asin(y / radius);		// negate arc sign for clockwise
+		if (unfit != rotated.x < 0) {
+			child_angle = Angle.half - child_angle		// compensate for arc sin limitations
 		}
 		child_angle = u.normalized_angle(child_angle);
-		if (index == 0) {
-			this.angle_atEnd = child_angle;
-		} else if (index == count - 1) {
-			this.angle_atStart = child_angle;
+		if (y < 0) {
+			if (index == 0) {
+				this.angle_atEnd = child_angle;
+			} else if (index == count - 1) {
+				this.angle_atStart = child_angle;
+			}
+		} else {
+			if (index == 0) {
+				this.angle_atStart = child_angle;
+			} else if (index == count - 1) {
+				this.angle_atEnd = child_angle;
+			}
 		}
 		return child_angle;
 	}
