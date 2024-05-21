@@ -37,7 +37,7 @@
     let widget;
 	let thing;
 
-	onMount( () => {
+	onMount(() => {
 		thing = ancestry?.thing;
 		if (!ancestry || !thing) {
 			console.log('bad ancestry or thing');

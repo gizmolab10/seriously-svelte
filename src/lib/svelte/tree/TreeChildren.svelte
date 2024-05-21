@@ -14,13 +14,9 @@
 	let priorTime = new Date().getTime();
 	let center = new Point();
 	
-	$: {
-		if ($s_graphRect) {
-			layout()
-		}
-	}
-	
-	onMount( () => {
+	onDestroy(() => { childMapRects = []; });
+
+	onMount(() => {
 		layout();
 		const handler = signals.handle_relayoutWidgets(1, (signal_ancestry) => {
 			const now = new Date().getTime();
@@ -34,6 +30,12 @@
 		});
 		return () => { handler.disconnect() };
 	});
+	
+	$: {
+		if ($s_graphRect) {
+			layout()
+		}
+	}
 	
 	function layout() {
 		if (ancestry.isExpanded) {

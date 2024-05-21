@@ -151,4 +151,9 @@ export class ChildMapRect extends Rect {
 			console.log('Geometry ChildMapRect ... has no child');
 		}
 	}
+
+	destroy() {
+		this.ancestry = null;
+		this.childAncestry = null;
+	}
 }

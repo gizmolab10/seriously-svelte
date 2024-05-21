@@ -17,7 +17,7 @@
 	let chain = ['Panel'];
 	let rebuilds = 0;
 	
-	onMount( () => {
+	onMount(() => {
 		g.setup();
 		$s_isBusy = true;
 		const handler = signals.handle_rebuildGraph(1, (ancestry) => {
@@ -168,7 +168,7 @@
 							height: {$s_graphRect.size.height}px;
 							z-index: {ZIndex.panel};'>
 						{#if $s_layout_asClusters}
-							<Clusters ancestry={$s_ancestry_focus}/>
+							<Clusters/>
 						{:else}
 							<Tree/>
 						{/if}

@@ -25,7 +25,7 @@
 	let left = 0;
 	let top = 0;
 	
-	onMount( () => {
+	onMount(() => {
 		const handler = signals.handle_relayoutWidgets(0, (ancestry) => { updateOrigins(); });
 		return () => { handler.disconnect() };
 	});

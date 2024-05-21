@@ -5,7 +5,6 @@
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Necklace from './Necklace.svelte';
-	export let ancestry;
 	// needs:
 	//	rotation
 	//	arrowheads
@@ -13,6 +12,7 @@
 	//	lines: selection & hover
 	//	edit titles (keydown terminates edit)
 	const toolsOffset = new Point(40, -3);
+	const ancestry = $s_ancestry_focus;
 	let titleCenter = Point.zero;
 	let center = Point.zero;
 	let size = Size.zero;
@@ -42,7 +42,7 @@
 					left: {titleCenter.x}px;'>
 				<TitleEditor ancestry={ancestry} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 			</div>
-			<Necklace ancestry={ancestry} center={center}/>
+			<Necklace center={center}/>
 			<EditingTools offset={toolsOffset}/>
 		{/key}
 	</div>

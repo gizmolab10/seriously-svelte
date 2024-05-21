@@ -5,7 +5,7 @@
 	export let menuItems;
 	let style = k.empty;
 
-	onMount( () => {
+	onMount(() => {
 		determineStyle();
 		if (!idSelected && menuItems.length > 0) {
 			idSelected = menuItems[0].id;	// Initialize idSelected to the id of the first menuItem

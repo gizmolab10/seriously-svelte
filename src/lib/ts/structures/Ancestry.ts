@@ -7,6 +7,7 @@ import { h } from '../db/DBDispatch';
 
 export default class Ancestry {
 	wrappers: { [type: string]: Wrapper } = {};
+	unsubscribe: any;
 	_thing: Thing | null = null;
 	ancestryString: string;
 	ancestryHash: number;
@@ -17,8 +18,13 @@ export default class Ancestry {
 		this.ancestryString = ancestryString;
 		this.idPredicate = idPredicate;
 		if (h?.isAssembled) {
-			this.subscriptions_setup();			// not needed during hierarchy assembly
+			this.unsubscribe = this.subscriptions_setup();			// not needed during hierarchy assembly
 		}
+	}
+
+	destroy() {
+		this.unsubscribe();
+		this._thing = null
 	}
 
 	signal_rebuildGraph()  { signals.signal_rebuildGraph(this); }
@@ -30,8 +36,12 @@ export default class Ancestry {
 	}
 
 	subscriptions_setup() {
-		s_title_editing.subscribe(() => { this._thing?.updateColorAttributes(this); });
-		s_ancestries_grabbed.subscribe(() => { this._thing?.updateColorAttributes(this); });
+		const title_unsubscribe = s_title_editing.subscribe(() => { this._thing?.updateColorAttributes(this); });
+		const grab_unsubscribe = s_ancestries_grabbed.subscribe(() => { this._thing?.updateColorAttributes(this); });
+		return () => {
+			title_unsubscribe();
+			grab_unsubscribe();
+		}
 	}
 
 	static idPredicate_for(ancestryString: string): string {

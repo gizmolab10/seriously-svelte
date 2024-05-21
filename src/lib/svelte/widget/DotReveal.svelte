@@ -22,7 +22,7 @@
 	let dotReveal = null;
 	let rebuilds = 0;
 	
-	onMount( () => { setIsHovering_updateColors(false); updateScalablePaths(); });
+	onMount(() => { setIsHovering_updateColors(false); updateScalablePaths(); });
 	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
 	function handle_mouse_out(event) { setIsHovering_updateColors(false); }
 	function handle_mouse_over(event) { setIsHovering_updateColors(true); }

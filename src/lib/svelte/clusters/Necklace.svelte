@@ -1,21 +1,21 @@
 <script lang='ts'>
-	import { k, u, Point, ZIndex, signals, onMount, Predicate, debugReact } from '../../ts/common/GlobalImports';
-	import { ChildMapRect, ClusterLayout, transparentize } from '../../ts/common/GlobalImports';
-	import { s_thing_changed } from '../../ts/state/State';
+	import { k, u, Point, ZIndex, signals, onMount, onDestroy, Predicate } from '../../ts/common/GlobalImports';
+	import { debugReact, ChildMapRect, ClusterLayout, transparentize } from '../../ts/common/GlobalImports';
+	import { s_thing_changed, s_ancestry_focus } from '../../ts/state/State';
 	import RingButton from '../buttons/RingButton.svelte';
 	import ClusterLine from './ClusterLine.svelte';
 	import ClusterArc from './ClusterArc.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	export let center = Point.zero;
-    export let ancestry;
+    const ancestry = $s_ancestry_focus;
 	const childOffset = new Point(k.dot_size / -3, k.cluster_offsetY);
 	let color = ancestry.thing?.color ?? k.color_default;
 	let clusterLayouts: Array<ClusterLayout> = [];
 	let childMapRects: Array<ChildMapRect> = [];
 	let rebuilds = 0;
 	
-	onMount( () => {
+	onMount(() => {
 		let childAncestries = ancestry.childAncestries;
 		layout(childAncestries, Predicate.contains, true);
 		for (const predicate of h.predicates) {
@@ -29,6 +29,12 @@
 		return () => {
 			handleAny.disconnect();
 		};
+	});
+
+	onDestroy(() => {
+		clusterLayouts.forEach(l => l.destroy());
+		clusterLayouts = [];
+		childMapRects = [];
 	});
 
 	$: {

@@ -6,9 +6,9 @@ import { ArcKind } from '../common/Enumerations';
 // for a cluster, compute svg paths and positions for line and children
 
 export default class ClusterLayout {
+	cluster_ancestry: Ancestry | null;
 	ancestries: Array<Ancestry> = [];
 	predicate: Predicate | null;
-	cluster_ancestry: Ancestry;
 	necklace_center: Point;
 	angle_ofLine: number;
 	fork_backoff: number;
@@ -45,6 +45,11 @@ export default class ClusterLayout {
 		this.points_out = points_out;
 		this.predicate = predicate;
 		this.count = count;
+	}
+
+	destroy() {
+		this.ancestries = [];
+		this.cluster_ancestry = null;
 	}
 	
 	static readonly $_ANGLES_$: unique symbol;
@@ -94,12 +99,10 @@ export default class ClusterLayout {
 				this.angle_atEnd = child_angle;
 			} else {
 				this.angle_atStart = child_angle;
-				console.log(`start is ${child_angle}`);
 			}
 		} else if (index == count - 1) {
 			if (startY < 0) {
 				this.angle_atStart = child_angle;
-				console.log(`start is ${child_angle}`);
 			} else {
 				this.angle_atEnd = child_angle;
 			}

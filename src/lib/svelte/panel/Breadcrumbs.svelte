@@ -12,7 +12,7 @@
 	let size = 16;
 	let left = 0;
 
-	onMount( () => {
+	onMount(() => {
 		debugReact.log_mount(`BREADCRUMBS`);
 		const handleRebuild = signals.handle_rebuildGraph(2, (ancestry) => {
 			rebuilds += 1;

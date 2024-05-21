@@ -79,17 +79,17 @@
 
 	function handle_mouse_movedTo(from_center?: Point) {
 		if (!!from_center) {
-			if (g.ring_priorAngle == null) {		// hover
+			if (g.ring_priorAngle == null) {					// hover
 				const hit = hitTest(from_center);
 				transparency = hit ? 0.9 : 0.97;
-			} else {								// rotate
+			} else {											// rotate
 				transparency = 0.9;
 				const mouseAngle = from_center.angle;
 				const delta = mouseAngle.add_angle_normalized(-g.ring_priorAngle);
-				if (Math.abs(delta) >= Math.PI / 180) {		// minimum one degree changes
+				if (Math.abs(delta) >= Math.PI / 36) {			// minimum five degree changes
 					$s_ring_angle = mouseAngle.add_angle_normalized(-g.ring_startAngle);
 					g.ring_priorAngle = mouseAngle;
-					signals.signal_rebuildGraph_fromFocus();	// VITAL: this component gets replaced, losing all its state
+					signals.signal_rebuildGraph_fromFocus();	// reinitializes all component variables
 				}
 			}
 			updateColors();

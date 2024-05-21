@@ -4,9 +4,10 @@ import { h } from '../db/DBDispatch';
 
 export default class Grabs {
 	grabbed: Array<Ancestry> | null = null;
+	unsubscribe: any;
 
 	constructor() {
-		s_ancestries_grabbed.subscribe((ancestries: Array<Ancestry>) => { // executes whenever s_ancestries_grabbed changes
+		this.unsubscribe = s_ancestries_grabbed.subscribe((ancestries: Array<Ancestry>) => { // executes whenever s_ancestries_grabbed changes
 			if (!!ancestries && ancestries.length > 0 && h.db && h.db.hasData) {
 				this.grabbed = ancestries;
 			} else {
@@ -15,6 +16,7 @@ export default class Grabs {
 		});
 	};
 
+	destroy() { this.unsubscribe(); }
 	get thing_lastGrabbed(): Thing | null { return h.thing_forAncestry(this.ancestry_lastGrabbed); }
 
 	get areInvisible(): boolean {
