@@ -1,14 +1,18 @@
 <script>
 	import { k, u, ZIndex, signals, svgPaths, IDButton, IDPersistant, persistLocal, GraphRelations } from '../../ts/common/GlobalImports';
-	import { s_build, s_show_details, s_id_popupView, s_layout_asClusters, s_graph_relations } from '../../ts/state/State';
+	import { s_build, s_show_details, s_id_popupView, s_resize_count, s_layout_asClusters, s_graph_relations } from '../../ts/state/State';
 	import CircleButton from '../buttons/CircleButton.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	let width = u.windowSize.width - 20;
 	let size = 16;
 
-	window.addEventListener('resize', (event) => { width = u.windowSize.width - 20; });
 	function togglePopupID(id) { $s_id_popupView = ($s_id_popupView == id) ? null : id; }
 	
+	$: {
+		const _ = $s_resize_count;
+		width = u.windowSize.width - 20;
+	}
+
 	function button_closure_forID(id) {
 		switch (id) {
 			case IDButton.bigger: width = g.zoomBy(1.1) - 20; break;

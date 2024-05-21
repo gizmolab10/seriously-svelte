@@ -86,7 +86,7 @@
 				transparency = 0.9;
 				const mouseAngle = from_center.angle;
 				const delta = mouseAngle.add_angle_normalized(-g.ring_priorAngle);
-				if (Math.abs(delta) >= Math.PI / 36) {			// minimum five degree changes
+				if (Math.abs(delta) >= Math.PI / 90) {			// minimum two degree changes
 					$s_ring_angle = mouseAngle.add_angle_normalized(-g.ring_startAngle);
 					g.ring_priorAngle = mouseAngle;
 					signals.signal_rebuildGraph_fromFocus();	// reinitializes all component variables

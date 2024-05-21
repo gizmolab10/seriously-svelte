@@ -7,11 +7,11 @@ import { h } from '../db/DBDispatch';
 
 export default class Ancestry {
 	wrappers: { [type: string]: Wrapper } = {};
-	unsubscribe: any;
 	_thing: Thing | null = null;
 	ancestryString: string;
 	ancestryHash: number;
 	idPredicate: string;
+	unsubscribe: any;
 
 	constructor(ancestryString: string = k.empty, idPredicate: string = Predicate.idContains) {
 		this.ancestryHash = ancestryString.hash();
@@ -24,7 +24,13 @@ export default class Ancestry {
 
 	destroy() {
 		this.unsubscribe();
-		this._thing = null
+		const thing = this._thing;
+		if (!!thing) {
+			if (thing.oneAncestry === this) {
+				thing.oneAncestry = null
+			}
+			this._thing = null;
+		}
 	}
 
 	signal_rebuildGraph()  { signals.signal_rebuildGraph(this); }

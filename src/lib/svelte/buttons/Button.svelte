@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, Rect, Size, Point, ZIndex, onMount } from '../../ts/common/GlobalImports';
+	import { g, k, u, Rect, Size, Point, ZIndex, onMount, onDestroy } from '../../ts/common/GlobalImports';
 	import { s_mouse_location } from '../../ts/state/State';
 	export let mouse_click_closure = (event, isLong) => {};
 	export let background_color = 'transparent';
@@ -13,8 +13,8 @@
 	export let height = 16;
 	export let width = 16;
 	let mouseLocation = Point.zero;
-	let isListening = false;
 	let mouse_click_timer;
+	let unsubscribe;
 	let button;
 
 	$: {
@@ -33,15 +33,14 @@
 		}
 	}
 
-	$: {
+	onMount(() => {
 		// if mouse is held down, timeout will fire
 		// if not, handle_mouse_click will fire
-		if (!!button && !isListening) {
-			isListening = true;
-			const foo = button.addEventListener('pointerup', (event) => {
+		if (!!button) {
+			const upUnsubscribe = button.addEventListener('pointerup', (event) => {
 				clearTimer();
 			});
-			button.addEventListener('pointerdown', (event) => {
+			const downUnsubscribe = button.addEventListener('pointerdown', (event) => {
 				clearTimer();
 				mouse_click_timer = setTimeout(() => {
 					if (mouse_click_timer) {
@@ -50,8 +49,16 @@
 					}
 				}, k.threshold_longClick);
 			});
+			unsubscribe = () => {
+				upUnsubscribe();
+				downUnsubscribe();
+			}
 		}
-	}
+	})
+
+	onDestroy(() => {
+		unsubscribe();
+	})
 
 </script>
 
