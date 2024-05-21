@@ -7,11 +7,11 @@
 	export let mouse_click_closure;
 	export let cursor = 'pointer';
 	export let extraPath = null;
+	export let name = k.empty;
 	export let strokeColor;
 	export let direction;
 	export let center;
 	export let size;
-	export let id;
 	let fillColor = k.color_background;
 	let extraColor = k.color_background;
 	let trianglePath = svgPaths.fat_polygon(size, direction);
@@ -43,6 +43,7 @@
 	center={center.offsetBy(new Point(3, 2))}
 	mouse_click_closure={mouse_click_closure}
 	cursor={cursor}
+	name={name}
 	height='20'
 	width='20'>
 	<SVGD3 name='triangle'

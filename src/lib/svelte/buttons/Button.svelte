@@ -7,8 +7,9 @@
 	export let position = 'absolute';
 	export let center = new Point();
 	export let cursor = 'pointer';
-	export let style = k.empty;
 	export let border = 'none';
+	export let style = k.empty;
+	export let name = k.empty;
 	export let color = 'gray';
 	export let height = 16;
 	export let width = 16;
@@ -16,6 +17,31 @@
 	let mouse_click_timer;
 	let unsubscribe;
 	let button;
+
+	onDestroy(() => { unsubscribe(); })
+
+	onMount(() => {
+		// if mouse is held down, timeout will fire
+		// if not, handle_mouse_click will fire
+		if (!!button) {
+			function handle_pointer_up(event) { clearTimer(); }
+			function handle_pointer_down(event) {
+				clearTimer();
+				mouse_click_timer = setTimeout(() => {
+					if (mouse_click_timer) {
+						clearTimer();
+						mouse_click_closure(event, true);
+					}
+				}, k.threshold_longClick);
+			}
+			button.addEventListener('pointerup', handle_pointer_up);
+			button.addEventListener('pointerdown', handle_pointer_down);
+			unsubscribe = () => {
+				button.removeEventListener('pointerup', handle_pointer_up);
+				button.removeEventListener('pointerdown', handle_pointer_down);
+			}
+		}
+	})
 
 	$: {
 		const isHovering = u.hitTestFor(button, $s_mouse_location);
@@ -33,36 +59,9 @@
 		}
 	}
 
-	onMount(() => {
-		// if mouse is held down, timeout will fire
-		// if not, handle_mouse_click will fire
-		if (!!button) {
-			const upUnsubscribe = button.addEventListener('pointerup', (event) => {
-				clearTimer();
-			});
-			const downUnsubscribe = button.addEventListener('pointerdown', (event) => {
-				clearTimer();
-				mouse_click_timer = setTimeout(() => {
-					if (mouse_click_timer) {
-						clearTimer();
-						mouse_click_closure(event, true);
-					}
-				}, k.threshold_longClick);
-			});
-			unsubscribe = () => {
-				upUnsubscribe();
-				downUnsubscribe();
-			}
-		}
-	})
-
-	onDestroy(() => {
-		unsubscribe();
-	})
-
 </script>
 
-<button class='button'
+<button class='button' id={name}
 	bind:this={button}
 	on:click={handle_mouse_click}
 	style='

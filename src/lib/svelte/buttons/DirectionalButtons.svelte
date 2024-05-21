@@ -38,7 +38,7 @@
                 direction={Direction.up}
                 strokeColor={'black'}
                 size={buttonSize}
-                id='up'
+                name='up'
             />
         {/if}
         {#if display(false)}
@@ -49,7 +49,7 @@
                 direction={Direction.down}
                 strokeColor={'black'}
                 size={buttonSize}
-                id='down'
+                name='down'
             />
         {/if}
     </div>
