@@ -83,7 +83,7 @@
 				const hit = hitTest(from_center);
 				transparency = hit ? 0.9 : 0.97;
 			} else {											// rotate
-				transparency = 0.9;
+				transparency = 0.97;
 				const mouseAngle = from_center.angle;
 				const delta = mouseAngle.add_angle_normalized(-g.ring_priorAngle);
 				if (Math.abs(delta) >= Math.PI / 90) {			// minimum two degree changes

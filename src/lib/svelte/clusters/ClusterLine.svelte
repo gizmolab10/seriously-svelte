@@ -34,15 +34,29 @@
 		const inside_tip = Point.fromPolar(inside_radius, angle);
 		const line_tip = clusterLayout?.line_tip;
 		size = line_tip.abs.asSize;
+		const rect = new Rect(Point.zero, size);
 		linePath = svgPaths.line(line_tip);
 		viewBox = `0, 0, ${size.width}, ${size.height}`;
 		line_origin = line_origin_using(inside_tip, line_tip);
-		const title_x = u.getWidthOf(clusterLayout?.line_title) / -3;
-		const title_y = k.dot_size / (u.isAlmost_horizontal(angle) ? 2 : -3);
-		const title_offset = new Point(title_x, title_y);
-		const rect = new Rect(Point.zero, size);
-		title_origin = rect.center.offsetBy(title_offset);
+		title_origin = title_origin_for(angle, rect);
 		[arrow_start, arrow_end] = rect.cornersForAngle(angle);
+	}
+
+	function title_origin_for(angle: number, rect: Rect): Point {
+		const quadrant = u.quadrant_ofNotNormalized_angle(angle);
+		let multiplier = -1.5;
+		if (u.isAlmost_horizontal(angle)) {
+			switch (quadrant) {
+				case Quadrant.lowerRight: multiplier = -1.5; break;
+				case Quadrant.upperRight: multiplier = 0.5; break;
+				case Quadrant.lowerLeft: multiplier = -1.5; break;
+				case Quadrant.upperLeft: multiplier = 0.5; break;
+			}
+		}
+		const title_y = k.dot_size * multiplier;
+		const title_x = u.getWidthOf(clusterLayout?.line_title) / -3;
+		const title_offset = new Point(title_x, title_y);
+		return rect.center.offsetBy(title_offset);
 	}
 
 	function line_origin_using(start: Point, end: Point): Point {
