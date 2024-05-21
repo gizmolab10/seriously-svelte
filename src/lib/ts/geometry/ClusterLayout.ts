@@ -3,6 +3,8 @@ import { Rect, Point, ChildMapRect } from '../geometry/Geometry';
 import { s_ring_angle } from '../state/State';
 import { ArcKind } from '../common/Enumerations';
 
+// for a cluster, compute svg paths and positions for line and children
+
 export default class ClusterLayout {
 	ancestries: Array<Ancestry> = [];
 	predicate: Predicate | null;
@@ -19,7 +21,6 @@ export default class ClusterLayout {
 	arc_radius = 0;
 	count: number;
 
-	// created each time ring is tiniest bit rotated!
 	constructor(cluster_ancestry: Ancestry, ancestries: Array<Ancestry>, predicate: Predicate | null, points_out: boolean) {
 		const count = ancestries.length;
 		const arc_radius = k.cluster_arc_radius;
@@ -88,16 +89,18 @@ export default class ClusterLayout {
 			child_angle = Angle.half - child_angle		// compensate for arc sin limitations
 		}
 		child_angle = u.normalized_angle(child_angle);
-		if (y < 0) {
-			if (index == 0) {
+		if (index == 0) {
+			if (startY < 0) {
 				this.angle_atEnd = child_angle;
-			} else if (index == count - 1) {
+			} else {
 				this.angle_atStart = child_angle;
+				console.log(`start is ${child_angle}`);
 			}
-		} else {
-			if (index == 0) {
+		} else if (index == count - 1) {
+			if (startY < 0) {
 				this.angle_atStart = child_angle;
-			} else if (index == count - 1) {
+				console.log(`start is ${child_angle}`);
+			} else {
 				this.angle_atEnd = child_angle;
 			}
 		}

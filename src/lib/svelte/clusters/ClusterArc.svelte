@@ -20,11 +20,11 @@
 		zindex: {ZIndex.frontmost};
 		top: {center.y - radius}px;
 		left: {center.x - radius}px;'>
-	{#each arc_keyed_svgPaths[ArcKind.main] as path}
-		<path stroke={color} fill=transparent d={path}/>
+	{#each arc_keyed_svgPaths[ArcKind.main]   as mainPath}
+		<path stroke={color} fill=transparent d={mainPath}/>
 	{/each}
 	<path stroke={k.color_background} fill={k.color_background} d={arc_keyed_svgPaths[ArcKind.gap][0]}/>
-	{#each arc_keyed_svgPaths[ArcKind.fork] as path}
-		<path stroke={color} fill=transparent d={path}/>
+	{#each arc_keyed_svgPaths[ArcKind.fork]   as forkPath}
+		<path stroke={color} fill=transparent d={forkPath}/>
 	{/each}
 </svg>

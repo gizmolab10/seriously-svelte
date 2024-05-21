@@ -9,6 +9,7 @@ button, svg {
 	}
 }
 
-div {
-	cursor: default;
-}
+div { cursor: default; }
+
+/* override inline to eliminate unwanted vertical displacements */
+svg { display: block; }
