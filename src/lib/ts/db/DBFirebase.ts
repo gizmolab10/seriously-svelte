@@ -141,7 +141,7 @@ export default class DBFirebase implements DBInterface {
 						if (baseID != this.baseID) {
 							let thing = h.thing_bulkAlias_forTitle(baseID);
 							if (!thing) {								// create a thing for each bulk
-								thing = h.thing_runtimeCreate(this.baseID, null, baseID, 'red', IDTrait.bulk, false);
+								thing = h.thing_runtimeCreate(this.baseID, undefined, baseID, 'red', IDTrait.bulk, false);
 								await h.ancestry_remember_remoteAddAsChild(rootsAncestry, thing);
 							} else if (thing.thing_isBulk_expanded) {
 								await h.ancestry_redraw_remoteFetchBulk_browseRight(thing);
@@ -337,8 +337,8 @@ export default class DBFirebase implements DBInterface {
 
 	async things_remember_firstTime_remoteCreateIn(collectionRef: CollectionReference) {
 		const fields = ['title', 'color', 'trait'];
-		const root = new Thing(this.baseID, null, this.baseID, 'coral', IDTrait.root, true);
-		const thing = new Thing(this.baseID, null, 'Click this text to edit it', 'purple', k.empty, true);
+		const root = new Thing(this.baseID, undefined, this.baseID, 'coral', IDTrait.root, true);
+		const thing = new Thing(this.baseID, undefined, 'Click this text to edit it', 'purple', k.empty, true);
 		h.root = root;
 		const thingRef = await addDoc(collectionRef, u.convertToObject(thing, fields));	// N.B. these will be fetched, shortly
 		const rootRef = await addDoc(collectionRef, u.convertToObject(root, fields));		// no need to remember now

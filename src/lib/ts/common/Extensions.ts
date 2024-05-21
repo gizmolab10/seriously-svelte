@@ -108,7 +108,7 @@ Object.defineProperty(Number.prototype, 'isClocklyBetween', {
 		const cycled: number = value - limit;
 		var min = Math.min(a, b),
 			max = Math.max(a, b);
-		return this.isBetween(min, max) || cycled.isBetween(min, max);
+		return this.isBetween(min, max, true) || cycled.isBetween(min, max, true);
 	},
 	writable: false,
 	enumerable: false,

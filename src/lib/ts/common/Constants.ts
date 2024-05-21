@@ -8,7 +8,7 @@ export default class Constants {
 	thing_fontSize = 14;
 	width_details = 200;
 	height_titleAtTop = 50;
-	cluster_arc_radius = 130;
+	cluster_arc_radius = 250;
 	threshold_longClick = 500;
 	cluster_inside_radius = 30;
 	editingTools_diameter = 64;

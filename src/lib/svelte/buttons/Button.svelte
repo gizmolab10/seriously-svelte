@@ -8,7 +8,6 @@
 	export let center = new Point();
 	export let cursor = 'pointer';
 	export let border = 'none';
-	export let style = k.empty;
 	export let name = k.empty;
 	export let color = 'gray';
 	export let height = 16;

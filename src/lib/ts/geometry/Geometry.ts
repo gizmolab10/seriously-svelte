@@ -1,4 +1,5 @@
-import { u, Thing, Quadrant, Ancestry } from '../common/GlobalImports'
+import { Quadrant } from '../common/Enumerations';
+import { u } from '../common/Utilities';
 
 export class Point {
 	x: number;
@@ -129,31 +130,4 @@ export class Rect {
 		return !domRect ? null : new Rect(new Point(domRect.x, domRect.y), new Size(domRect.width, domRect.height));
 	}
 
-}
-
-export class ChildMapRect extends Rect {
-	childAncestry: Ancestry | null;
-	childAngle: number | null;
-	ancestry: Ancestry | null;
-	child: Thing | null;
-	childOrigin: Point;
-	curveType: string;
-
-	constructor(curveType: string, rect: Rect, childOrigin: Point, childAncestry: Ancestry | null, ancestry: Ancestry | null, childAngle: number | null = null) {
-		super(rect.origin.copy, rect.size.copy);
-		this.child = childAncestry?.thing ?? null;
-		this.childOrigin = childOrigin;
-		this.childAngle = childAngle;
-		this.childAncestry = childAncestry;
-		this.curveType = curveType;
-		this.ancestry = ancestry;
-		if (!this.child) {
-			console.log('Geometry ChildMapRect ... has no child');
-		}
-	}
-
-	destroy() {
-		this.ancestry = null;
-		this.childAncestry = null;
-	}
 }

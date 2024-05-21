@@ -2,12 +2,9 @@
 	import { g, k, u, Thing, Point, ZIndex, onMount, signals, svgPaths, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
 	import { s_graphRect, s_thing_changed, s_ring_angle, s_mouse_up_count, } from '../../ts/state/State';
 	import { s_ancestry_focus, s_mouse_location, s_user_graphOffset } from '../../ts/state/State';
-	export let zindex = ZIndex.dots;
 	export let center = Point.zero;
 	export let color = 'k.empty';
-	export let name = k.empty;
 	export let thickness = 0;
-	export let thing: Thing;
 	export let radius = 0;
 	const borderStyle = '1px solid';
 	const diameter = (radius + thickness) * 2;

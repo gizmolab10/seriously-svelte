@@ -4,7 +4,6 @@
 	export let zindex = ZIndex.dots;
 	export let center = Point.zero;
 	export let idDiv = k.empty;
-	export let thickness = 1;
 	export let radius = 5;
 	export let angle = 0;
 	export let color;

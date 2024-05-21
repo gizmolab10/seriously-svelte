@@ -62,17 +62,9 @@
 		font-size: 3em;
 		width: 100%;
 	}
-	.crumbs {
+	.breadcrumbs {
 		position: fixed;
 		top: 41px;
-	}
-	.build {
-		border-radius: 1em;
-		position: absolute;
-		border: 1px solid;
-		cursor: pointer;
-		left: 35px;
-		top: -2px;
 	}
 	.top-title {
 		text-align: center;

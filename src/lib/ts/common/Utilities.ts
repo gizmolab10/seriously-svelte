@@ -1,6 +1,10 @@
-import { k, get, Rect, Size, Point, Angle, Quadrant, IDBrowser, Ancestry } from './GlobalImports';
 import { s_scale_factor, s_thing_fontFamily } from '../state/State';
+import { Angle, Quadrant, IDBrowser } from './Enumerations';
+import { Rect, Size, Point } from '../geometry/Geometry';
 import Identifiable from "../structures/Identifiable";
+import Ancestry from '../structures/Ancestry';
+import { get } from 'svelte/store';
+import { k } from './Constants';
 
 class Utilities {
 	noop() {}
@@ -194,7 +198,7 @@ class Utilities {
 		var length = from.length;
 		do {
 			length = to.length;
-			to = to.replace(item, k.empty);
+			to = to.replace(item, '');
 		} while (length != to.length)
 		return to;
 	}

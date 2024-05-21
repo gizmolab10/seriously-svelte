@@ -1,6 +1,7 @@
 import { g, k, debug, signals, Hierarchy, IDPersistant, persistLocal } from '../common/GlobalImports';
 import { s_isBusy, s_db_type, s_db_loadTime, s_title_editing } from '../state/State';
 import { s_things_arrived, s_ancestry_editingTools } from '../state/State';
+import { idDefault } from "../structures/Identifiable";
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
@@ -67,7 +68,7 @@ export default class DBDispatch {
 			}
 			h = this.db.hierarchy = new Hierarchy(this.db);		// create Hierarchy to fetch into
 			await this.db.fetch_all();
-			await h.add_missing_removeNulls(null, this.db.baseID);
+			await h.add_missing_removeNulls(idDefault, this.db.baseID);
 			h.rootAncestry_setup();
 			h.ancestries_rebuildAll();
 			if (this.db.isRemote) {

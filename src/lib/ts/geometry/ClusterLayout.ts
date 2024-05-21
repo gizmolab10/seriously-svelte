@@ -1,7 +1,7 @@
-import { k, u, get, Angle, IDLine, svgPaths, Ancestry, Predicate } from '../common/GlobalImports';
-import { Rect, Point, ChildMapRect } from '../geometry/Geometry';
-import { s_ring_angle } from '../state/State';
+import { k, u, get, Angle, IDLine, svgPaths, Ancestry, Predicate, ChildMapRect } from '../common/GlobalImports';
+import { Rect, Point } from '../geometry/Geometry';
 import { ArcKind } from '../common/Enumerations';
+import { s_ring_angle } from '../state/State';
 
 // for a cluster, compute svg paths and positions for line and children
 
@@ -25,7 +25,7 @@ export default class ClusterLayout {
 		const count = ancestries.length;
 		const arc_radius = k.cluster_arc_radius;
 		const center = Point.square(arc_radius);
-		const tiny_radius = k.necklace_gap * (0.5 + count / 6);
+		const tiny_radius = k.necklace_gap / 2;
 		const line_angle = this.lineAngle_for(predicate, points_out) ?? 0;
 		const fork_backoff = this.fork_adjustment(tiny_radius, arc_radius);
 		const fork_fromCenter = Point.fromPolar(arc_radius, line_angle);
@@ -117,9 +117,9 @@ export default class ClusterLayout {
 			const necklace_angle = get(s_ring_angle);
 			const opposite = necklace_angle + Angle.half;
 			const raw = predicate.isBidirectional ?
-				opposite + tweak :
+				opposite - tweak :
 				points_out ? necklace_angle :	// one directional, use global
-				opposite - tweak;
+				opposite + tweak;
 			return u.normalized_angle(raw);
 		}
 		return null;
