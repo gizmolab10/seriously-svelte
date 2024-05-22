@@ -63,7 +63,6 @@
 		width: {width}px;
 		height: {height}px;
 		position: {position};
-		z-index: {ZIndex.dots};
 		top: {center.y - height / 2}px;
 		left: {center.x - width / 2}px;'>
 	<slot></slot>

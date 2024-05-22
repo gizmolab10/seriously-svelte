@@ -85,8 +85,9 @@ export enum ZIndex {
 	text,
 	dots,
 	widgets,
-	frontmost,
 	tools,
+	tool_buttons,
+	frontmost,
 }
 
 export enum IDTool {

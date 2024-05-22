@@ -7,8 +7,10 @@
 	export let hover_closure = (flag) => {};
 	export let position = 'absolute';
 	export let center = new Point();
+	export let zindex = ZIndex.dots;
 	export let cursor = 'pointer';
 	export let border = 'none';
+	export let style = k.empty;
 	export let name = k.empty;
 	export let color = 'gray';
 	export let height = 16;
@@ -24,9 +26,9 @@
 		cursor: {cursor};
 		border: {border};
 		width: {width}px;
+		z-index: {zindex};
 		height: {height}px;
 		position: {position};
-		z-index: {ZIndex.dots};
 		background-color: {background_color};'>
 	<MouseObserver
 		center={center}

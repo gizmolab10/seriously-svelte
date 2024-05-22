@@ -162,7 +162,7 @@
 	{#if $s_ancestry_editingTools?.isVisible || false}
 		<div class='editing-tools' style='
 			position:absolute;
-			z-index: {ZIndex.frontmost}'>
+			z-index: {ZIndex.tools}'>
 			<TransparencyCircle
 				thickness=1
 				opacity=0.15
@@ -176,10 +176,10 @@
 					<svg class='delete-confirm' style='
 							left:{getC(IDTool.confirmation).x}px;
 							top:{getC(IDTool.confirmation).y}px;
-							z-index:{ZIndex.tools};'
-						viewBox={half_circleViewBox}
+							z-index:{ZIndex.tool_buttons};'
 						height={editingToolsDiameter}
 						width={editingToolsDiameter}
+						viewBox={half_circleViewBox}
 						stroke=transparent
 						fill={color}>
 						<path d={svgPaths.half_circle(editingToolsDiameter, Direction.up)}/>
@@ -189,7 +189,7 @@
 					<svg class='delete-cancel' style='
 							left:{getC(IDTool.confirmation).x}px;
 							top:{getC(IDTool.confirmation).y}px;
-							z-index:{ZIndex.tools};'
+							z-index:{ZIndex.tool_buttons};'
 						height={editingToolsDiameter}
 						viewBox={half_circleViewBox}
 						width={editingToolsDiameter}
@@ -204,8 +204,12 @@
 					center={getC(IDTool.delete_confirm)}
 					height={editingToolsDiameter / 2}
 					width={editingToolsDiameter}
+					zindex={ZIndex.frontmost}
 					name='delete'>
-					<div style='top: 11px; left: 13px; position: absolute;'>
+					<div style='
+						top: 11px;
+						left: 13px;
+						position: absolute;'>
 						delete
 					</div>
 				</Button>
@@ -216,8 +220,12 @@
 					center={getC(IDTool.delete_cancel)}
 					height={editingToolsDiameter / 2}
 					width={editingToolsDiameter}
+					zindex={ZIndex.frontmost}
 					name='cancel'>
-					<div style='top: 4px; left: 13px; position: absolute;'>
+					<div style='
+						top: 4px;
+						left: 13px;
+						position: absolute;'>
 						cancel
 					</div>
 				</Button>
@@ -236,6 +244,7 @@
 					mouse_click_closure={(event, isLong) => handle_mouse_click(IDTool.more, event, isLong)}
 					hover_closure={(isHovering) => { handle_hover_for(IDTool.more, isHovering); }}
 					center={getC(IDTool.more)}
+					zindex={ZIndex.tool_buttons}
 					color={color}
 					name='more'
 					height=16
