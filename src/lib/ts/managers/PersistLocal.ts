@@ -1,7 +1,7 @@
 import { g, k, u, Point, signals, Ancestry, dbDispatch, GraphRelations } from '../common/GlobalImports'
+import { s_ring_angle, s_cluster_arc_radius, s_layout_asClusters } from '../state/State';
 import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/State';
 import { s_thing_fontFamily, s_graph_relations } from '../state/State';
-import { s_ring_angle, s_layout_asClusters } from '../state/State';
 import { s_ancestries_grabbed, s_ancestries_expanded } from '../state/State';
 import { h } from '../db/DBDispatch';
 
@@ -9,6 +9,7 @@ export enum IDPersistant {
 	relationships = 'relationships',
 	show_children = 'show_children',
 	title_atTop   = 'title_atTop',
+	cluster_arc	  = 'cluster_arc',
 	arrowheads	  = 'arrowheads',
 	relations	  = 'relations',
 	expanded	  = 'expanded',
@@ -89,6 +90,18 @@ class PersistLocal {
 		} 
 	}
 
+	key_apply(key: string, matching: string, apply: (flag: boolean) => void, persist: boolean = true) {
+		const queryStrings = k.queryString;
+        const value = queryStrings.get(key);
+		if (value) {
+			const flag = (value === matching);
+			apply(flag);
+			if (persist) {
+				this.key_write(key, flag);
+			}
+		}
+	}
+
 	key_ancestries(key: string): Array<Ancestry> {
 		const ancestryStrings = this.key_read(key);
 		const length = ancestryStrings?.length ?? 0;
@@ -143,6 +156,7 @@ class PersistLocal {
 		s_show_details.set(this.key_read(IDPersistant.details) ?? false);
 		s_thing_fontFamily.set(this.key_read(IDPersistant.font) ?? 'Arial');
 		s_layout_asClusters.set(this.key_read(IDPersistant.layout) ?? false);
+		s_cluster_arc_radius.set(this.key_read(IDPersistant.cluster_arc) ?? 130);
 		s_user_graphOffset.set(this.key_read(IDPersistant.origin) ?? new Point());
 		s_graph_relations.set(this.key_read(IDPersistant.relations) ?? GraphRelations.children);
 
@@ -202,18 +216,6 @@ class PersistLocal {
 		s_ancestry_focus.subscribe((ancestry: Ancestry) => {
 			this.dbKey_write(IDPersistant.focus, !ancestry ? null : ancestry.ancestryString);
 		});
-	}
-
-	key_apply(key: string, matching: string, apply: (flag: boolean) => void, persist: boolean = true) {
-		const queryStrings = k.queryString;
-        const value = queryStrings.get(key);
-		if (value) {
-			const flag = (value === matching);
-			apply(flag);
-			if (persist) {
-				this.key_write(key, flag);
-			}
-		}
 	}
 
 }

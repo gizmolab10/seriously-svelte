@@ -2,9 +2,12 @@
 	import { g, k, u, Thing, Point, ZIndex, onMount, signals, svgPaths, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
 	import { s_graphRect, s_thing_changed, s_ring_angle, s_mouse_up_count, } from '../../ts/state/State';
 	import { s_ancestry_focus, s_mouse_location, s_user_graphOffset } from '../../ts/state/State';
+	export let zindex = ZIndex.dots;
 	export let center = Point.zero;
 	export let color = 'k.empty';
+	export let name = k.empty;
 	export let thickness = 0;
+	export let thing: Thing;
 	export let radius = 0;
 	const borderStyle = '1px solid';
 	const diameter = (radius + thickness) * 2;
@@ -74,6 +77,13 @@
 		return false;
 	}
 
+	function handle_mouse_doubleClick(event) {
+		const from_center = distance_fromCenter_of($s_mouse_location);
+		if (hitTest(from_center)) {
+			g.ring_radiusOffset = from_center;
+		}
+	}
+
 	function handle_mouse_movedTo(from_center?: Point) {
 		if (!!from_center) {
 			if (g.ring_priorAngle == null) {					// hover
@@ -101,6 +111,7 @@
 		on:focus={u.ignore}
 		bind:this={ringButton}
 		on:mousedown={handle_mouse_down}
+		on:dblclick={handle_mouse_doubleClick}
 		style='
 			position: absolute;
 			width: {diameter}px;

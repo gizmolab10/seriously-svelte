@@ -1,7 +1,7 @@
-import { k, u, get, Angle, IDLine, svgPaths, Ancestry, Predicate, ChildMapRect } from '../common/GlobalImports';
+import { g, k, u, get, Angle, IDLine, svgPaths, Ancestry, Predicate, ChildMapRect } from '../common/GlobalImports';
+import { s_ring_angle, s_cluster_arc_radius } from '../state/State';
 import { Rect, Point } from '../geometry/Geometry';
 import { ArcKind } from '../common/Enumerations';
-import { s_ring_angle } from '../state/State';
 
 // for a cluster, compute svg paths and positions for line and children
 
@@ -22,8 +22,7 @@ export default class ClusterLayout {
 	count: number;
 
 	constructor(cluster_ancestry: Ancestry, ancestries: Array<Ancestry>, predicate: Predicate | null, points_out: boolean) {
-		const count = ancestries.length;
-		const arc_radius = k.cluster_arc_radius;
+		const arc_radius = get(s_cluster_arc_radius);
 		const center = Point.square(arc_radius);
 		const tiny_radius = k.necklace_gap / 2;
 		const line_angle = this.lineAngle_for(predicate, points_out) ?? 0;
@@ -31,7 +30,7 @@ export default class ClusterLayout {
 		const fork_fromCenter = Point.fromPolar(arc_radius, line_angle);
 		const fork_center = center.offsetBy(fork_fromCenter);
 		const fork_radius = tiny_radius - fork_backoff;
-		const line_radius = k.cluster_line_length - fork_radius;
+		const line_radius = arc_radius - k.cluster_inside_radius - fork_radius;
 
 		this.line_tip = Point.fromPolar(line_radius, line_angle);
 		this.cluster_ancestry = cluster_ancestry;
@@ -39,12 +38,12 @@ export default class ClusterLayout {
 		this.fork_radius = fork_radius;
 		this.fork_center = fork_center;
 		this.angle_ofLine = line_angle;
+		this.count = ancestries.length;
 		this.necklace_center = center;
 		this.ancestries = ancestries;
 		this.arc_radius = arc_radius;
 		this.points_out = points_out;
 		this.predicate = predicate;
-		this.count = count;
 	}
 
 	destroy() {
@@ -59,7 +58,7 @@ export default class ClusterLayout {
 		const count = this.ancestries.length;
 		if (count > 0 && !!this.predicate) {
 			let index = 0;
-			const radius = k.cluster_arc_radius;
+			const radius = this.arc_radius;
 			const radial = new Point(radius + k.necklace_gap, 0);
 			while (index < count) {
 				const ancestry = this.ancestries[index];

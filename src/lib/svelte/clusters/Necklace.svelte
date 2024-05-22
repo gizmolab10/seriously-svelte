@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { k, u, Point, ZIndex, signals, onMount, onDestroy, Predicate } from '../../ts/common/GlobalImports';
+	import { g, k, u, Point, ZIndex, signals, onMount, onDestroy, Predicate } from '../../ts/common/GlobalImports';
 	import { debugReact, ChildMapRect, ClusterLayout, transparentize } from '../../ts/common/GlobalImports';
-	import { s_thing_changed, s_ancestry_focus } from '../../ts/state/State';
+	import { s_thing_changed, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/State';
 	import RingButton from '../buttons/RingButton.svelte';
 	import ClusterLine from './ClusterLine.svelte';
 	import ClusterArc from './ClusterArc.svelte';
@@ -76,7 +76,7 @@
 		{/each}
 	</div>
 	<RingButton name='necklace-ring'
-		radius={k.cluster_arc_radius}
+		radius={$s_cluster_arc_radius}
 		thing={ancestry.thing}
 		zindex={ZIndex.lines}
 		center={center}

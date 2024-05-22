@@ -18,6 +18,7 @@ export const s_db_type				 = writable<string>();
 export const s_thing_changed		 = writable<string>();
 export const s_graph_relations		 = writable<string>();
 export const s_thing_fontFamily		 = writable<string>();
+export const s_cluster_arc_radius	 = writable<number>();
 export const s_mouse_up_count		 = writable<number>();
 export const s_rebuild_count		 = writable<number>();
 export const s_resize_count			 = writable<number>();

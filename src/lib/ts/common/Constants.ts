@@ -8,7 +8,6 @@ export default class Constants {
 	thing_fontSize = 14;
 	width_details = 200;
 	height_titleAtTop = 50;
-	cluster_arc_radius = 250;
 	threshold_longClick = 500;
 	cluster_inside_radius = 30;
 	editingTools_diameter = 64;
@@ -37,7 +36,6 @@ export default class Constants {
 	allow_TitleEditing = true;
 	allow_HorizontalScrolling = true;
 	queryString: URLSearchParams;
-	cluster_line_length: number;
 	cluster_offsetY: number;
 	row_height: number;
 
@@ -59,7 +57,6 @@ export default class Constants {
 		this.row_height = this.dot_size + 7;
 		this.cluster_offsetY = 4 - this.dot_size;
 		this.queryString = new URLSearchParams(window.location.search);
-		this.cluster_line_length = this.cluster_arc_radius - this.cluster_inside_radius;
 	}
 
 }
