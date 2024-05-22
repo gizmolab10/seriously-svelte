@@ -5,9 +5,9 @@ import { dbDispatch, persistLocal, IDPersistant } from '../common/GlobalImports'
 
 class Globals {
 	rebuild_count = 0;
-	ring_startAngle: number | null = null;
-	ring_priorAngle: number | null = null;
-	ring_radiusOffset: number | null = null;
+	ring_startAngle: number | null = null;		// angle at location of mouse DOWN
+	ring_priorAngle: number | null = null;		// angle at location of previous mouse MOVE
+	ring_radiusOffset: number | null = null;	// distance from arc radius to location of mouse DOWN
 
 	setup() {
 		builds.setup();

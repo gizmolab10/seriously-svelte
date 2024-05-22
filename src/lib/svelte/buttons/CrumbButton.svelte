@@ -39,7 +39,7 @@
 		rebuilds += 1;
 	};
 
-	function crumb_buttmouse_click_closureed(event) {
+	function mouse_click_closure(event) {
 		if (dbDispatch.db.hasData) {
 			ancestry.grabOnly();
 			if (ancestry.becomeFocus()) {
@@ -56,7 +56,7 @@
 		on:focus={u.ignore}
 		on:mouseout={handle_mouse_out}
 		on:mouseover={handle_mouse_over}
-		on:click={crumb_buttmouse_click_closureed}
+		on:click={mouse_click_closure}
 		style='
 			{colorStyles};
 			{cursorStyle};

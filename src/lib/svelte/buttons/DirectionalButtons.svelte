@@ -13,7 +13,8 @@
     }
 
 	function mouse_click_closure(event, isLong) {
-        const pointsUp = event.currentTarget.id == 'up';
+        const target = event.currentTarget;
+        const pointsUp = target.id == 'up';
         hit(pointsUp);
         rebuilds += 1;
 	}

@@ -8,8 +8,8 @@
 	import TriangleButton from '../buttons/TriangleButton.svelte';
 	import DotReveal from '../widget/DotReveal.svelte';
 	import Button from '../buttons/Button.svelte';
-	import TrashButton from '../buttons/TrashButton.svelte';
 	import { h } from '../../ts/db/DBDispatch';
+	import Trash from '../kit/Trash.svelte';
 	export let offset = Point.zero;
 	const editingToolsDiameter = k.editingTools_diameter;
 	const half_circleViewBox = `0 0 ${editingToolsDiameter} ${editingToolsDiameter}`;
@@ -35,11 +35,12 @@
 	function getC(type: string) { return centers[type] ?? new Point(); }
 	function setC(type: string, center: Point) { return centers[type] = center; }
 	function centers_isEmpty(): boolean { return Object.keys(centers).length == 0; }
+	function handle_hover_for(key: string, isHovering: boolean) { hovers[key] = isHovering; }
 	function alteration_for(idTool: string) { return (idTool == IDTool.add_parent) ? Alteration.adding : Alteration.deleting; }
 
 	onMount(() => { 
 		setup();
-		setTimeout(() => { updateMaybeRedraw(); }, 20);	
+		setTimeout(() => { update_maybeRedraw(); }, 20);	
 		const handler = signals.handle_relayoutWidgets(2, (ancestry) => {	// priority of 2 assures layout is finished
 			update();
 			rebuilds += 1;
@@ -61,8 +62,8 @@
 		thing = ancestry?.thing;
 	}
 
-	function updateMaybeRedraw() {
-		if (update()) {
+	function update_maybeRedraw(force: boolean = false) {
+		if (update() || force) {
 			rebuilds += 1;
 		}
 	}
@@ -70,7 +71,7 @@
 	$: {
 		if (graphRect != $s_graphRect) {
 			graphRect = $s_graphRect;
-			updateMaybeRedraw();
+			update_maybeRedraw();
 		}
 	}
 
@@ -84,8 +85,7 @@
 				const hasOneParent = (thing?.parents.length ?? 0) == 1;
 				countOfVisibleParents = ancestry.visibleParentAncestries(0).length;
 				parentSensitiveColor = (hasOneParent || ancestry.isFocus) ? k.color_disabled : color ;
-				update();
-				rebuilds += 1;
+				update_maybeRedraw(true);
 			}
 		}
 	}
@@ -110,7 +110,7 @@
 				}
 				break;
 		}
-		updateMaybeRedraw();
+		update_maybeRedraw();
 	}
 
 	function update(): boolean {
@@ -126,13 +126,13 @@
 			setC(IDTool.editingTools,   center);
 			setC(IDTool.dismiss,		center.offsetBy(offsetReveal));
 			setC(IDTool.confirmation,   center.offsetEquallyBy(1 - editingToolsRadius));
-			setC(IDTool.delete_cancel,  center.offsetBy(new Point(1 - toolDiameter, toolDiameter - 5)));
-			setC(IDTool.delete_confirm, center.offsetBy(new Point(2 - toolDiameter, 5 - toolDiameter)));
-			setC(IDTool.create,		 	new Point(x + toolDiameter - 3, y - toolDiameter + 7));
+			setC(IDTool.delete_cancel,  center.offsetBy(new Point(19 - toolDiameter, -1 + toolDiameter)));
+			setC(IDTool.delete_confirm, center.offsetBy(new Point(20 - toolDiameter, 3 - toolDiameter)));
+			setC(IDTool.create,		 	new Point(x + 1 + toolDiameter, y - toolDiameter + 8));
 			setC(IDTool.more,			new Point(x + 0.9, y + toolDiameter + 3.5));
-			setC(IDTool.delete_parent,  new Point(left - 1, y + toolDiameter - 8));
-			setC(IDTool.add_parent,	 	new Point(left - 1, y - toolDiameter + 7));
-			setC(IDTool.next,			new Point(x - 2, y - toolDiameter - 2));
+			setC(IDTool.delete_parent,  new Point(left + 2, y + toolDiameter - 5));
+			setC(IDTool.add_parent,	 	new Point(left + 2, y - toolDiameter + 8));
+			setC(IDTool.next,			new Point(x + 2, y - toolDiameter - 2));
 			setC(IDTool.delete,		 	new Point(x + 4.5, y + 3));
 			return true;
 		}
@@ -182,7 +182,7 @@
 						width={editingToolsDiameter}
 						stroke=transparent
 						fill={color}>
-						<ancestry d={svgPaths.half_circle(editingToolsDiameter, Direction.up)}/>
+						<path d={svgPaths.half_circle(editingToolsDiameter, Direction.up)}/>
 					</svg>
 				{/if}
 				{#if hovers[IDTool.delete_cancel]}
@@ -194,22 +194,32 @@
 						viewBox={half_circleViewBox}
 						width={editingToolsDiameter}
 						fill={color}>
-						<ancestry d={svgPaths.half_circle(editingToolsDiameter, Direction.down)}/>
+						<path d={svgPaths.half_circle(editingToolsDiameter, Direction.down)}/>
 					</svg>
 				{/if}
 				<Button
 					mouse_click_closure={(event, isLong) => handle_mouse_click(IDTool.delete_confirm, event, isLong)}
-					hover_closure={(isHovering) => { hovers[IDTool.delete_confirm] = isHovering; }}
+					hover_closure={(isHovering) => { handle_hover_for(IDTool.delete_confirm, isHovering); }}
 					color={ hovers[IDTool.delete_confirm] ? k.color_background : color}
-					center={getC(IDTool.delete_confirm)}>
-					delete
+					center={getC(IDTool.delete_confirm)}
+					height={editingToolsDiameter / 2}
+					width={editingToolsDiameter}
+					name='delete'>
+					<div style='top: 11px; left: 13px; position: absolute;'>
+						delete
+					</div>
 				</Button>
 				<Button
 					mouse_click_closure={(event, isLong) => handle_mouse_click(IDTool.delete_cancel, event, isLong)}
-					hover_closure={(isHovering) => { hovers[IDTool.delete_cancel] = isHovering; }}
+					hover_closure={(isHovering) => { handle_hover_for(IDTool.delete_cancel, isHovering); }}
 					color={ hovers[IDTool.delete_cancel] ? k.color_background : color}
-					center={getC(IDTool.delete_cancel)}>
-					cancel
+					center={getC(IDTool.delete_cancel)}
+					height={editingToolsDiameter / 2}
+					width={editingToolsDiameter}
+					name='cancel'>
+					<div style='top: 4px; left: 13px; position: absolute;'>
+						cancel
+					</div>
 				</Button>
 				<div class='horizontal-line'
 					style='
@@ -222,83 +232,84 @@
 						height: 1px;'>
 				</div>
 			{:else}
-			<Button
-				mouse_click_closure={(event, isLong) => handle_mouse_click(IDTool.more, event, isLong)}
-				hover_closure={(isHovering) => { hovers[IDTool.more] = isHovering; }}
-				center={getC(IDTool.more)}
-				color={color}
-				height=16
-				width=18>
-				<svg width=18
-					fill={hovers[IDTool.more] ? color : 'transparent'}
-					viewBox='0 1 18 16'
-					stroke={color}
-					height=16>
-					<ancestry d={svgPaths.oval(18, true)}/>
-				</svg>
-				<svg 
-					fill={hovers[IDTool.more] ? k.color_background : color}
-					viewBox='-0.5 -2 14 10'
-					height=10
-					width=16>
-					<ancestry d={svgPaths.ellipses(7, 1)}/>
-				</svg>
-			</Button>
-			<DotReveal ancestry={$s_ancestry_editingTools} center={getC(IDTool.dismiss)}/>
-			<TriangleButton
-				strokeColor={isDisabledFor(IDTool.next) ? k.color_disabled : parentSensitiveColor}
-				hover_closure={(isFilled) => { return fillColorsFor(IDTool.next, isFilled) }}
-				mouse_click_closure={(event, isLong) => handle_mouse_click(IDTool.next, event, isLong)}
-				cursor={isDisabledFor(IDTool.next) ? 'normal' : 'pointer'}
-				extraPath={svgPaths.circle_atOffset(toolDiameter, 4)}
-				center={getC(IDTool.next)}
-				direction={Direction.up}
-				size={toolDiameter}
-				id='next'/>
-			<TriangleButton
-				strokeColor={isDisabledFor(IDTool.delete_parent) ? k.color_disabled : parentSensitiveColor}
-				hover_closure={(isFilled) => { return fillColorsFor(IDTool.delete_parent, isFilled) }}
-				mouse_click_closure={(event, isLong) => handle_mouse_click(IDTool.delete_parent, event, isLong)}
-				cursor={isDisabledFor(IDTool.delete_parent) ? 'normal' : 'pointer'}
-				extraPath={svgPaths.dash(toolDiameter, 4)}
-				center={getC(IDTool.delete_parent)}
-				direction={Direction.left}
-				id='delete_parent'
-				size={toolDiameter}/>
-			<TriangleButton
-				hover_closure={(isFilled) => { return fillColorsFor(IDTool.add_parent, isFilled) }}
-				mouse_click_closure={(event, isLong) => handle_mouse_click(IDTool.add_parent, event, isLong)}
-				strokeColor={isDisabledFor(IDTool.add_parent) ? k.color_disabled : color}
-				cursor={isDisabledFor(IDTool.add_parent) ? 'normal' : 'pointer'}
-				extraPath={svgPaths.t_cross(toolDiameter, 3)}
-				center={getC(IDTool.add_parent)}
-				direction={Direction.left}
-				id='add_parent'
-				size={toolDiameter}/>
-			<TriangleButton
-				hover_closure={(isFilled) => { return fillColorsFor(IDTool.create, isFilled) }}
-				mouse_click_closure={(event, isLong) => handle_mouse_click(IDTool.create, event, isLong)}
-				extraPath={svgPaths.t_cross(toolDiameter, 3)}
-				center={getC(IDTool.create)}
-				direction={Direction.right}
-				strokeColor={color}
-				size={toolDiameter}
-				id='add'/>
-			<button id='delete'
-				on:blur={u.ignore}
-				on:focus={u.ignore}
-				on:mouseout={() => { hovers[IDTool.delete] = false; }}
-				on:mouseover={() => { hovers[IDTool.delete] = true; }}
-				on:click={(event) => handle_mouse_click(IDTool.delete, event, false)}
-				style='
-					left: {getC(IDTool.delete).x}px;
-					top: {getC(IDTool.delete).y}px;
-					z-index: {ZIndex.tools};
-					background: none;
-					cursor: pointer;
-					border: none;'>
-				<TrashButton color={color} invert={hovers[IDTool.delete]}/>
-			</button>
+				<Button
+					mouse_click_closure={(event, isLong) => handle_mouse_click(IDTool.more, event, isLong)}
+					hover_closure={(isHovering) => { handle_hover_for(IDTool.more, isHovering); }}
+					center={getC(IDTool.more)}
+					color={color}
+					name='more'
+					height=16
+					width=18>
+					<svg width=18
+						fill={hovers[IDTool.more] ? color : 'transparent'}
+						viewBox='0 1 18 16'
+						stroke={color}
+						height=16>
+						<path d={svgPaths.oval(18, true)}/>
+					</svg>
+					<svg 
+						fill={hovers[IDTool.more] ? k.color_background : color}
+						viewBox='-0.5 -2 14 10'
+						height=10
+						width=16>
+						<path d={svgPaths.ellipses(7, 1)}/>
+					</svg>
+				</Button>
+				<DotReveal ancestry={$s_ancestry_editingTools} center={getC(IDTool.dismiss)}/>
+				<TriangleButton
+					strokeColor={isDisabledFor(IDTool.next) ? k.color_disabled : parentSensitiveColor}
+					hover_closure={(isHovering) => { return fillColorsFor(IDTool.next, isHovering) }}
+					mouse_click_closure={(event, isLong) => handle_mouse_click(IDTool.next, event, isLong)}
+					cursor={isDisabledFor(IDTool.next) ? 'normal' : 'pointer'}
+					extraPath={svgPaths.circle_atOffset(toolDiameter, 4)}
+					center={getC(IDTool.next)}
+					direction={Direction.up}
+					size={toolDiameter}
+					name='next'/>
+				<TriangleButton
+					strokeColor={isDisabledFor(IDTool.delete_parent) ? k.color_disabled : parentSensitiveColor}
+					hover_closure={(isHovering) => { return fillColorsFor(IDTool.delete_parent, isHovering) }}
+					mouse_click_closure={(event, isLong) => handle_mouse_click(IDTool.delete_parent, event, isLong)}
+					cursor={isDisabledFor(IDTool.delete_parent) ? 'normal' : 'pointer'}
+					extraPath={svgPaths.dash(toolDiameter, 4)}
+					center={getC(IDTool.delete_parent)}
+					direction={Direction.left}
+					name='delete_parent'
+					size={toolDiameter}/>
+				<TriangleButton
+					hover_closure={(isHovering) => { return fillColorsFor(IDTool.add_parent, isHovering) }}
+					mouse_click_closure={(event, isLong) => handle_mouse_click(IDTool.add_parent, event, isLong)}
+					strokeColor={isDisabledFor(IDTool.add_parent) ? k.color_disabled : color}
+					cursor={isDisabledFor(IDTool.add_parent) ? 'normal' : 'pointer'}
+					extraPath={svgPaths.t_cross(toolDiameter, 3)}
+					center={getC(IDTool.add_parent)}
+					direction={Direction.left}
+					size={toolDiameter}
+					name='add_parent'/>
+				<TriangleButton
+					hover_closure={(isHovering) => { return fillColorsFor(IDTool.create, isHovering) }}
+					mouse_click_closure={(event, isLong) => handle_mouse_click(IDTool.create, event, isLong)}
+					extraPath={svgPaths.t_cross(toolDiameter, 3)}
+					center={getC(IDTool.create)}
+					direction={Direction.right}
+					strokeColor={color}
+					size={toolDiameter}
+					name='add'/>
+				<button id='delete'
+					on:blur={u.ignore}
+					on:focus={u.ignore}
+					on:mouseout={() => { hovers[IDTool.delete] = false; }}
+					on:mouseover={() => { hovers[IDTool.delete] = true; }}
+					on:click={(event) => handle_mouse_click(IDTool.delete, event, false)}
+					style='
+						left: {getC(IDTool.delete).x}px;
+						top: {getC(IDTool.delete).y}px;
+						z-index: {ZIndex.tools};
+						background: none;
+						cursor: pointer;
+						border: none;'>
+					<Trash color={color} invert={hovers[IDTool.delete]}/>
+				</button>
 			{/if}
 		</div>
 	{/if}

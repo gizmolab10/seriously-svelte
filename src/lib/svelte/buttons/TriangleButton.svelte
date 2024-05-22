@@ -40,7 +40,7 @@
 
 <Button
 	hover_closure={(isHovering) => { setFillColor(isHovering); }}
-	center={center.offsetBy(new Point(3, 2))}
+	center={center}
 	mouse_click_closure={mouse_click_closure}
 	cursor={cursor}
 	name={name}
