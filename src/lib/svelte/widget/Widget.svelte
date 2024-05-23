@@ -127,12 +127,13 @@
 	}
 
 	function updateLayout() {
+		const delta = showingBorder ? 0 : 1;
 		const dragX = $s_layout_asClusters ? 3.5 : 1.5;
 		const titleWidth = thing?.titleWidth ?? 0;
-		const delta = showingBorder ? 0 : 1;
+		const x = forward ? dragX : titleWidth + 7;
 		const leftForward = delta - dragX + 1;
-		const leftBackward = -(titleWidth + 13 + ((ancestry?.isGrabbed ?? false) ? 1 : 0));
-		dragCenter = new Point(forward ? dragX : titleWidth + 7, 2.8);
+		const leftBackward = -(titleWidth + 13 + ((ancestry?.isGrabbed ?? false) ? 1 : 0));		
+		dragCenter = Point.square(k.dot_size / 2).offsetBy(new Point(x, 2.8));
 		left = origin.x + (forward ? leftForward : leftBackward);
 		padding = `0px ${rightPadding}px 0px  ${leftPadding}px`;
 		width = titleWidth + extraWidth();

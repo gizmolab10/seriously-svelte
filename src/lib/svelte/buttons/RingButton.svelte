@@ -115,7 +115,6 @@
 		width={diameter}
 		height={diameter}
 		name='ring-button'
-		detect_mouseDown={true}
 		mouse_click_closure={mouse_click_closure}>
 		<svg class= 'svg-ring-button' fill={fillColor} viewBox={viewBox}><path d={svg_ringPath}></svg>
 	</Mouse>
