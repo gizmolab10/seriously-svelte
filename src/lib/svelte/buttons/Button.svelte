@@ -19,24 +19,25 @@
 
 </script>
 
-<button class='button' id={name}
-	bind:this={button}
-	style='
-		color: {color};
-		cursor: {cursor};
-		border: {border};
-		width: {width}px;
-		z-index: {zindex};
-		height: {height}px;
-		position: {position};
-		background-color: {background_color};'>
-	<Mouse
-		mouse_click_closure={mouse_click_closure}
-		hover_closure={hover_closure}
-		center={center}
-		height={height}
-		width={width}
-		name={name}>
-		<slot></slot>
-	</Mouse>
-</button>
+<Mouse
+	name={name}
+	width={width}
+	height={height}
+	center={center}
+	hover_closure={hover_closure}
+	mouse_click_closure={mouse_click_closure}
+	>
+	<button class='button' id={name}
+		bind:this={button}
+		style='
+			color: {color};
+			cursor: {cursor};
+			border: {border};
+			width: {width}px;
+			z-index: {zindex};
+			height: {height}px;
+			position: {position};
+			background-color: {background_color};'>
+			<slot></slot>
+	</button>
+</Mouse>

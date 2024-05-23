@@ -1,5 +1,5 @@
 <script>
-    import { k, Point, Direction } from '../../ts/common/GlobalImports';
+    import { k, Point, MouseData, Direction } from '../../ts/common/GlobalImports';
     import TriangleButton from './TriangleButton.svelte'
     export let display;
     export let hit;
@@ -12,11 +12,13 @@
         return [isFilled ? 'black' : k.color_background, k.empty];
     }
 
-	function mouse_click_closure(event, isLong, isUp, isDouble) {
-        const target = event.currentTarget;
-        const pointsUp = target.id == 'up';
-        hit(pointsUp);
-        rebuilds += 1;
+	function mouse_click_closure(mouseData) {
+        const target = mouseData.element;
+        if (!!target && (mouseData.isUp || mouseData.isLong)) {
+            const pointsUp = target.id == 'up';
+            hit(pointsUp, mouseData.isLong);
+            rebuilds += 1;
+        }
 	}
 
 </script>

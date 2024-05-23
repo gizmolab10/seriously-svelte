@@ -34,12 +34,16 @@
 		}
 	}
 
-	function directional_hit_handler(pointsUp) {
-		let nextIndex = notesIndex + (10 * (pointsUp ? -1 : 1));
-		if (nextIndex < 0 || (notesLimit - nextIndex) < 1) {
-			return;
+	function directional_hit_handler(pointsUp, isLong) {
+		if (isLong) {
+			notesIndex = pointsUp ? 0 : notesLimit - 10;
+		} else {			
+			let nextIndex = notesIndex + (10 * (pointsUp ? -1 : 1));
+			if (nextIndex < 0 || (notesLimit - nextIndex) < 1) {
+				return;
+			}
+			notesIndex = nextIndex;
 		}
-		notesIndex = nextIndex;
 		updateNotes();
 	}
 

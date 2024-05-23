@@ -40,8 +40,8 @@
 
 <Button
 	hover_closure={(isHovering) => { setFillColor(isHovering); }}
-	center={center}
 	mouse_click_closure={mouse_click_closure}
+	center={center}
 	cursor={cursor}
 	name={name}
 	height='20'

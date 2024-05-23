@@ -1,9 +1,10 @@
 <script>
+	import { Wrapper, IDWrapper, MouseData, Direction, onDestroy, dbDispatch, Predicate } from "../../ts/common/GlobalImports";
 	import { k, u, get, Size, Thing, Point, debug, ZIndex, onMount, signals, svgPaths } from "../../ts/common/GlobalImports";
-	import { Wrapper, IDWrapper, Direction, onDestroy, dbDispatch, Predicate } from "../../ts/common/GlobalImports";
 	import { s_ancestries_expanded, s_altering, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/State';
 	import { h } from '../../ts/db/DBDispatch';
 	import SVGD3 from '../kit/SVGD3.svelte';
+	import Mouse from '../kit/Mouse.svelte';
 	export let center;
     export let ancestry;
 	let size = k.dot_size;
@@ -22,10 +23,10 @@
 	let dotReveal = null;
 	let rebuilds = 0;
 	
-	onMount(() => { setIsHovering_updateColors(false); updateScalablePaths(); });
 	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
-	function handle_mouse_out(event) { setIsHovering_updateColors(false); }
-	function handle_mouse_over(event) { setIsHovering_updateColors(true); }
+	onMount(() => { setIsHovering_updateColors(false); updateScalablePaths(); });
+	function hover_closure(isHovering) { setIsHovering_updateColors(isHovering); }
+
 
 	$: {
 		if (dotReveal && !($s_ancestry_editingTools?.matchesAncestry(ancestry) ?? false)) {
@@ -52,11 +53,16 @@
 		}
 	}
 
-	function setIsHovering_updateColors(hovering) {
-		if (isHovering != hovering) {
-			isHovering = hovering;
-			updateColors();
-			rebuilds += 1;
+	function mouse_click_closure(mouseData) {
+		if (mouseData.isUp) {
+			setIsHovering_updateColors(false);
+			if (ancestry.toolsGrabbed) {
+				$s_altering = null;
+				$s_ancestry_editingTools = null;
+				signals.signal_relayoutWidgets_fromFocus();
+			} else if (ancestry.hasChildRelationships || ancestry.thing.isBulkAlias) {
+				h.ancestry_rebuild_remoteMoveRight(ancestry, !ancestry.isExpanded, true, false);
+			}
 		}
 	}
 
@@ -65,6 +71,14 @@
 		const collapsedOrGrabbed = !ancestry.isExpanded || ancestry.isGrabbed;
 		fillColor = ancestry.dotColor(collapsedOrGrabbed != isHovering, ancestry);
 		insideFillColor = ancestry.dotColor(collapsedOrGrabbed == isHovering, ancestry);
+	}
+
+	function setIsHovering_updateColors(hovering) {
+		if (isHovering != hovering) {
+			isHovering = hovering;
+			updateColors();
+			rebuilds += 1;
+		}
 	}
 
 	function updateScalablePaths() {
@@ -85,17 +99,6 @@
 		}
 	}
 
-	function handle_singleClick(event) {
-		setIsHovering_updateColors(false);
-		if (ancestry.toolsGrabbed) {
-			$s_altering = null;
-			$s_ancestry_editingTools = null;
-			signals.signal_relayoutWidgets_fromFocus();
-		} else if (ancestry.hasChildRelationships || ancestry.thing.isBulkAlias) {
-			h.ancestry_rebuild_remoteMoveRight(ancestry, !ancestry.isExpanded, true, false);
-		}
-	}
-
 </script>
 
 <style>
@@ -108,23 +111,17 @@
 </style>
 
 {#key rebuilds}
-	<div class='dot-reveal' style='
-		top: {center.y}px;
-		left: {center.x}px;
-		position: absolute;
-		width: {size}px;
-		z-index: {ZIndex.dots};
-		height: {size}px;'>
+	<Mouse
+		width={size}
+		height={size}
+		center={center}
+		name='dot-reveal-mouse'
+		hover_closure={hover_closure}
+		mouse_click_closure={mouse_click_closure}>
 		<button class='dot'
-			on:blur={u.ignore}
-			on:focus={u.ignore}
-			on:keyup={u.ignore}
 			bind:this={dotReveal}
-			on:keydown={u.ignore}
-			on:keypress={u.ignore}
-			on:click={handle_singleClick}
-			on:mouseout={handle_mouse_out}
-			on:mouseover={handle_mouse_over}
+			hover_closure={hover_closure}
+			mouse_click_closure={mouse_click_closure}
 			on:contextmenu={handle_context_menu}
 			style='
 				width: {size}px;
@@ -172,5 +169,5 @@
 				</div>
 			{/if}
 		</button>
-	</div>
+	</Mouse>
 {/key}

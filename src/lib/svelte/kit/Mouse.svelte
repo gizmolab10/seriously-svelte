@@ -39,7 +39,7 @@
 
 	function handle_pointerUp(event) {
 		if (detect_mouseUp) {
-			mouse_click_closure(MouseData.up(event));
+			mouse_click_closure(MouseData.up(mouse));
 			clearTimeout(mouse_doubleClick_timer);
 			clearTimeout(mouse_longClick_timer);
 			mouse_doubleClick_timer = null;
@@ -49,12 +49,12 @@
 	
 	function handle_pointerDown(event) {
 		if (detect_mouseDown && clickCount == 0) {
-			mouse_click_closure(MouseData.down(event));
+			mouse_click_closure(MouseData.down(mouse));
 		}
 		clickCount++;
 		if (detect_longClick && !mouse_longClick_timer) {
 			mouse_longClick_timer = setTimeout(() => {
-				mouse_click_closure(MouseData.long(event));
+				mouse_click_closure(MouseData.long(mouse));
 				clearTimeout(mouse_longClick_timer);
 				mouse_longClick_timer = null;
 				clickCount = 0;
@@ -62,7 +62,7 @@
 		}
 		if (detect_doubleClick && !mouse_doubleClick_timer) {
 			mouse_doubleClick_timer = setTimeout(() => {
-				mouse_click_closure(MouseData.clicks(event, clickCount));
+				mouse_click_closure(MouseData.clicks(mouse, clickCount));
 				clearTimeout(mouse_doubleClick_timer);
 				mouse_doubleClick_timer = null;
 				clickCount = 0;
