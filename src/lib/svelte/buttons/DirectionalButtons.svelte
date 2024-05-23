@@ -12,7 +12,7 @@
         return [isFilled ? 'black' : k.color_background, k.empty];
     }
 
-	function mouse_click_closure(event, isLong) {
+	function mouse_click_closure(event, isLong, isUp, isDouble) {
         const target = event.currentTarget;
         const pointsUp = target.id == 'up';
         hit(pointsUp);

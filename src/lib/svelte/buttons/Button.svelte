@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { g, k, u, Rect, Size, Point, ZIndex, onMount, onDestroy } from '../../ts/common/GlobalImports';
 	import { s_mouse_location } from '../../ts/state/State';
-	import MouseObserver from '../kit/MouseObserver.svelte';
-	export let mouse_click_closure = (event, isLong) => {};
+	import Mouse from '../kit/Mouse.svelte';
+	export let mouse_click_closure = (event, isLong, isUp, isDouble) => {};
 	export let background_color = 'transparent';
 	export let hover_closure = (flag) => {};
 	export let position = 'absolute';
@@ -30,7 +30,7 @@
 		height: {height}px;
 		position: {position};
 		background-color: {background_color};'>
-	<MouseObserver
+	<Mouse
 		center={center}
 		mouse_click_closure={mouse_click_closure}
 		hover_closure={hover_closure}
@@ -38,5 +38,5 @@
 		width={width}
 		name={name}>
 		<slot></slot>
-	</MouseObserver>
+	</Mouse>
 </button>

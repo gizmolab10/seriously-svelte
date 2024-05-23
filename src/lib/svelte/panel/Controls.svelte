@@ -83,7 +83,7 @@
 			<SVGD3 name='smaller'
 				width={size}
 				height={size}
-				scalablePath={svgPaths.dash(size, 2)}
+				svg_path={svgPaths.dash(size, 2)}
 			/>
 		</CircleButton>
 		<CircleButton
@@ -94,7 +94,7 @@
 			<SVGD3 name='bigger'
 				width={size}
 				height={size}
-				scalablePath={svgPaths.t_cross(size, 2)}
+				svg_path={svgPaths.t_cross(size, 2)}
 			/>
 		</CircleButton>
 	{/if}

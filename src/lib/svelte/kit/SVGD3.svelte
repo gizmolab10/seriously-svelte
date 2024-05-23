@@ -3,7 +3,7 @@
     import * as d3 from 'd3';
     export let position = 'absolute';
     export let zIndex = ZIndex.dots;
-    export let scalablePath = k.empty;
+    export let svg_path = k.empty;
     export let stroke = 'black';
     export let name = 'SVGD3';
     export let fill = 'none';
@@ -16,8 +16,8 @@
     onMount(() => {
         d3.select(svg)
             .append('path')
-            .attr('d', scalablePath)
             .attr('fill', fill)
+            .attr('d', svg_path)
             .attr('stroke', stroke)
             .attr('stroke-width', 1)
             .attr('shape-rendering', 'geometricPrecision'); // anti-alias;
@@ -28,8 +28,8 @@
             d3.select(svg)
                 .select('path')
                 .attr('fill', fill)
+                .attr('d', svg_path)
                 .attr('stroke', stroke)
-                .attr('d', scalablePath)
                 .attr('stroke-width', 1)
                 .attr('shape-rendering', 'geometricPrecision') // anti-alias
             svg = svg;

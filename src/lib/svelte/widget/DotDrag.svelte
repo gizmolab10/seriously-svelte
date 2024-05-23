@@ -188,7 +188,7 @@
 			height={size}
 			fill={fillColor}
 			stroke={strokeColor}
-			scalablePath={dragDotPath}
+			svg_path={dragDotPath}
 		/>
 		{#if tinyDotsPath}
 			<SVGD3 name='svg-dot-inside'
@@ -196,7 +196,7 @@
 				height={size}
 				fill={tinyDotsColor}
 				stroke={tinyDotsColor}
-				scalablePath={tinyDotsPath}
+				svg_path={tinyDotsPath}
 			/>
 		{/if}
 		{#if relatedAncestry}
@@ -204,8 +204,8 @@
 				width={size}
 				height={size}
 				fill={relatedColor}
+				svg_path={relatedAncestry}
 				stroke={$s_layout_asClusters ? relatedColor : strokeColor}
-				scalablePath={relatedAncestry}
 			/>
 		{/if}
 	</button>

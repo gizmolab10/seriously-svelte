@@ -17,7 +17,7 @@
 	fill={fillColor}
 	position={position}
 	stroke={strokeColor}
-	scalablePath={trianglePath}
+	svg_path={trianglePath}
 />
 {#if extraPath}
 	<SVGD3 name='fatTriangleInside'
@@ -25,7 +25,7 @@
 		height={size}
 		fill={extraColor}
 		stroke={extraColor}
-		scalablePath={extraPath}
+		svg_path={extraPath}
 		x={size / 4}
 	/>
 {/if}

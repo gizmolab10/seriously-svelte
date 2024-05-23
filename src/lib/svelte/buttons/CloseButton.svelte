@@ -21,11 +21,11 @@
     <SVGD3 name='close'
 		width={size}
 		height={size}
-		scalablePath={circle}
+		svg_path={circle}
 	/>
     <SVGD3 name='closeInside'
 		width={size}
 		height={size}
-		scalablePath={cross}
+		svg_path={cross}
 	/>
 </div>

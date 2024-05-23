@@ -2,6 +2,7 @@
 	import { g, k, u, Thing, Point, ZIndex, onMount, signals, svgPaths, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
 	import { s_thing_changed, s_ancestry_focus, s_ring_angle, s_cluster_arc_radius } from '../../ts/state/State';
 	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/State';
+	import Mouse from '../kit/Mouse.svelte';
 	export let zindex = ZIndex.dots;
 	export let center = Point.zero;
 	export let color = 'k.empty';
@@ -13,7 +14,7 @@
 	const diameter = (radius + thickness) * 2;
 	const viewBox = `${-thickness}, ${-thickness}, ${diameter}, ${diameter}`;
 	const ringOrigin = center.distanceFrom(Point.square(radius + thickness));
-	const scalableRingPath = svgPaths.ring(Point.square(radius), radius + thickness, thickness);
+	const svg_ringPath = svgPaths.ring(Point.square(radius), radius + thickness, thickness);
 	let mouse_up_count = $s_mouse_up_count;
 	let borderColor = k.empty;
 	let colorStyles = k.empty;
@@ -22,10 +23,15 @@
 	let transparency = 0.97;
 	let isHovering = false;
 	let border = k.empty;
-	let rebuilds = 0;
+	let rebuilds = 0
 	let ringButton;
 
 	onMount(() => { updateColors(); });
+
+	$: {	// core functionality
+		const from_center = distance_fromCenter_of($s_mouse_location);
+		handle_mouse_movedTo(from_center);
+	}
 
 	$: {
 		if ($s_ancestry_focus.thing.id == $s_thing_changed.split(k.genericSeparator)[0]) {
@@ -46,12 +52,29 @@
 		return null
 	}
 
-	$: {
-		if (mouse_up_count != $s_mouse_up_count) {
-			mouse_up_count = $s_mouse_up_count;
+	function mouse_click_closure(event, isUp, isLong, isDouble) {
+		if (isUp) {
 			g.ring_priorAngle = g.ring_startAngle = g.ring_radiusOffset = null;
+		} else {
+			if (!isDouble) {
+				const from_center = distance_fromCenter_of($s_mouse_location);
+				if (hitTest(from_center)) {
+					const mouseAngle = from_center.angle;
+					g.ring_priorAngle = mouseAngle;
+					g.ring_startAngle = mouseAngle.add_angle_normalized(-$s_ring_angle);
+				}
+			}
 		}
 	}
+		
+	function hover_closure(flag) {
+		if (flag) {
+			const from_center = distance_fromCenter_of($s_mouse_location);
+			if (hitTest(from_center)) {
+	
+			}
+		}
+	};
 
 	function handle_mouse_down(event) {
 		const from_center = distance_fromCenter_of($s_mouse_location);
@@ -70,18 +93,6 @@
 			}
 		}
 		return false;
-	}
-
-	function handle_mouse_longClick(event) {
-		const from_center = distance_fromCenter_of($s_mouse_location);
-		if (hitTest(from_center)) {
-			g.ring_radiusOffset = from_center;
-		}
-	}
-
-	$: {
-		const from_center = distance_fromCenter_of($s_mouse_location);
-		handle_mouse_movedTo(from_center);
 	}
 
 	function handle_mouse_movedTo(from_center?: Point) {
@@ -107,17 +118,13 @@
 </script>
 
 {#key rebuilds}
-	<div class= 'ring-button'
-		on:blur={u.ignore}
-		on:focus={u.ignore}
-		bind:this={ringButton}
-		on:mousedown={handle_mouse_down}
-		style='
-			position: absolute;
-			width: {diameter}px;
-			height: {diameter}px;
-			top: {ringOrigin.y}px;
-			left: {ringOrigin.x}px;'>
-		<svg class= 'svg-ring-button' fill={fillColor} viewBox={viewBox}><path d={scalableRingPath}></svg>
-	</div>
+	<Mouse
+		center={center}
+		width={diameter}
+		height={diameter}
+		name='ring-button'
+		detect_mouseDown={true}
+		mouse_click_closure={mouse_click_closure}>
+		<svg class= 'svg-ring-button' fill={fillColor} viewBox={viewBox}><path d={svg_ringPath}></svg>
+	</Mouse>
 {/key}

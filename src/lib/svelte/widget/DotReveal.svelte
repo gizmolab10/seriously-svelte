@@ -133,8 +133,8 @@
 			{#key revealDotPath}
 				<SVGD3 name='svg-reveal'
 					fill={debug.lines ? 'transparent' : fillColor}
+					svg_path={revealDotPath}
 					stroke={strokeColor}
-					scalablePath={revealDotPath}
 					height={size}
 					width={size}
 				/>
@@ -149,7 +149,7 @@
 					<SVGD3 name='svg-inside'
 						stroke={insideFillColor}
 						fill={insideFillColor}
-						scalablePath={insidePath}
+						svg_path={insidePath}
 						height={size}
 						width={size}
 					/>
@@ -163,7 +163,7 @@
 					width:{tinyDotsDiameter}px;
 					position:absolute;'>
 					<SVGD3 name='svg-tiny-dots'
-						scalablePath={svgPaths.tinyDots_circular(tinyDotsDiameter, childrenCount)}
+						svg_path={svgPaths.tinyDots_circular(tinyDotsDiameter, childrenCount)}
 						height={tinyDotsDiameter}
 						width={tinyDotsDiameter}
 						stroke={strokeColor}
