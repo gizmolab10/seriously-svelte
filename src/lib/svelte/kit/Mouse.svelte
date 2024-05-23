@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { g, k, u, Rect, Size, Point, ZIndex, onMount } from '../../ts/common/GlobalImports';
+	import { g, k, u, Rect, Size, Point, ZIndex, onMount, MouseData } from '../../ts/common/GlobalImports';
 	import { s_mouse_location } from '../../ts/state/State';
-	export let mouse_click_closure = (event, isUp, isLong, isDouble) => {};
+	export let mouse_click_closure = (mouseDataå) => {};
 	export let hover_closure = (flag) => {};
 	export let detect_mouseDown = false;
 	export let detect_longClick = false;
@@ -35,32 +35,33 @@
 		}
 	}
 
-	function signal_mouse(isUp: boolean, isLong: boolean, isDouble: boolean) {
-		mouse_click_closure(event, isUp, isLong, isDouble);
-		clearTimers();
-		clearClicks();
-	}
-
 	function handle_pointerUp(event) {
-		if (!mouse_click_timer && !mouse_longClick_timer) {
-			signal_mouse(true, false, false);
+		if (!mouse_click_timer && !mouse_longClick_timer && clickCount == 0) {
+			mouse_click_closure(MouseData.up(event));
 		}
 	}
 	
 	function handle_pointerDown(event) {
 		if (detect_mouseDown && clickCount == 0) {
-			mouse_click_closure(event, false, false, false);
+			mouse_click_closure(MouseData.down(event));
 		}
 		clickCount++;
-		mouse_click_timer = setTimeout(() => {
-			const isDouble = clickCount > 1;
-			signal_mouse(false, false, isDouble);
-		}, k.threshold_doubleClick);
-		if (detect_longClick) {
-			mouse_longClick_timer = setTimeout(() => {
-				signal_mouse(false, true, false);
-			}, k.threshold_longClick);
+		if (!mouse_click_timer && !mouse_longClick_timer) {
+			mouse_click_timer = setTimeout(() => {
+				signal_done(MouseData.clicks(event, clickCount));
+			}, k.threshold_doubleClick);
+			if (detect_longClick) {
+				mouse_longClick_timer = setTimeout(() => {
+					signal_done(MouseData.long(event));
+				}, k.threshold_longClick);
+			}
 		}
+	}
+
+	function signal_done(mouseData: MouseData) {
+		mouse_click_closure(mouseData);
+		clearTimers();
+		clearClicks();
 	}
 
 	function clearClicks() {

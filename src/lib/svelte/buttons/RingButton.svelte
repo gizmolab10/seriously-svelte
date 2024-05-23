@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, Thing, Point, ZIndex, onMount, signals, svgPaths, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
+	import { g, k, u, Thing, Point, ZIndex, onMount, signals, svgPaths, MouseData, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
 	import { s_thing_changed, s_ancestry_focus, s_ring_angle, s_cluster_arc_radius } from '../../ts/state/State';
 	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/State';
 	import Mouse from '../kit/Mouse.svelte';
@@ -44,20 +44,14 @@
 		rebuilds += 1;
 	}
 
-	function distance_fromCenter_of(location?: Point): Point | null {
-		if (!!location) {
-			const mainOffset = $s_graphRect.origin.offsetBy($s_user_graphOffset);
-			return mainOffset.offsetBy(center).distanceTo(location);
-		}
-		return null
-	}
-
-	function mouse_click_closure(event, isUp, isLong, isDouble) {
-		if (isUp) {
+	function mouse_click_closure(mouseData: MouseData) {
+		if (mouseData.isUp) {
 			g.ring_priorAngle = g.ring_startAngle = g.ring_radiusOffset = null;
-		} else {
-			if (!isDouble) {
-				const from_center = distance_fromCenter_of($s_mouse_location);
+		} else if (!mouseData.isDown) {
+			const from_center = distance_fromCenter_of($s_mouse_location);
+			if (mouseData.isDouble) {
+				g.ring_radiusOffset = from_center.magnitude - $s_cluster_arc_radius;
+			} else {
 				if (hitTest(from_center)) {
 					const mouseAngle = from_center.angle;
 					g.ring_priorAngle = mouseAngle;
@@ -66,38 +60,15 @@
 			}
 		}
 	}
-		
-	function hover_closure(flag) {
-		if (flag) {
-			const from_center = distance_fromCenter_of($s_mouse_location);
-			if (hitTest(from_center)) {
-	
-			}
-		}
-	};
-
-	function handle_mouse_down(event) {
-		const from_center = distance_fromCenter_of($s_mouse_location);
-		if (hitTest(from_center)) {
-			const mouseAngle = from_center.angle;
-			g.ring_priorAngle = mouseAngle;
-			g.ring_startAngle = mouseAngle.add_angle_normalized(-$s_ring_angle);
-		}
-	}
- 
-	function hitTest(from_center?: Point): boolean {
-		if (!!from_center) {
-			const radial = from_center.magnitude;
-			if (radial.isBetween(radius, radius + thickness)) {
-				return true;
-			}
-		}
-		return false;
-	}
 
 	function handle_mouse_movedTo(from_center?: Point) {
 		if (!!from_center) {
 			if (g.ring_radiusOffset != null) {					// expand / shrink
+				const movement = from_center.magnitude - $s_cluster_arc_radius - g.ring_radiusOffset;
+				if (movement) {
+					$s_cluster_arc_radius += movement;
+					signals.signal_rebuildGraph_fromFocus();	// reinitializes all component variables
+				}
 			} else if (g.ring_priorAngle != null) {				// rotate
 				transparency = 0.97;
 				const mouseAngle = from_center.angle;
@@ -108,11 +79,32 @@
 					signals.signal_rebuildGraph_fromFocus();	// reinitializes all component variables
 				}
 			} else {											// hover
+				const prior = transparency;
 				const hit = hitTest(from_center);
 				transparency = hit ? 0.9 : 0.97;
+				if (prior != transparency) {
+					updateColors();
+				}
 			}
-			updateColors();
 		}
+	}
+
+	function distance_fromCenter_of(location?: Point): Point | null {
+		if (!!location) {
+			const mainOffset = $s_graphRect.origin.offsetBy($s_user_graphOffset);
+			return mainOffset.offsetBy(center).distanceTo(location);
+		}
+		return null
+	}
+ 
+	function hitTest(from_center?: Point): boolean {
+		if (!!from_center) {
+			const radial = from_center.magnitude;
+			if (radial.isBetween(radius, radius + thickness)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 </script>

@@ -26,6 +26,7 @@ import ClusterLayout from '../geometry/ClusterLayout';
 import ChildMapRect from '../geometry/ChildMapRect';
 import TreeLayout from '../geometry/TreeLayout';
 import Relationship from '../data/Relationship';
+import MouseData from '../structures/MouseData';
 import Ancestry from '../structures/Ancestry';
 import TitleState from '../state/TitleState';
 import Wrapper from '../structures/Wrapper';
@@ -39,8 +40,8 @@ import './Extensions';
 
 export {
 	TitleState, AlterationState,
-	Wrapper, signals, SeriouslyRange,
 	Rect, Size, Point, svgPaths, Direction,
+	Wrapper, signals, MouseData, SeriouslyRange,
 	transparentize, interact, muuri, createPopper,
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Ancestry, Grabs, dbDispatch, Hierarchy, persistLocal,

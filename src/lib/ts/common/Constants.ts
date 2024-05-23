@@ -8,10 +8,10 @@ export default class Constants {
 	thing_fontSize = 14;
 	width_details = 200;
 	height_titleAtTop = 50;
-	threshold_longClick = 500;
+	threshold_longClick = 800;
 	cluster_inside_radius = 30;
 	editingTools_diameter = 64;
-	threshold_doubleClick = 100;
+	threshold_doubleClick = 300;
 	hid_unknown = 1000000000000;
 	prevent_selection_style = '-webkit-user-select: none; user-select: none; -moz-user-select: none;';
 	title_default = 'Please, enter a title';

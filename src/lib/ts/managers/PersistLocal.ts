@@ -160,11 +160,11 @@ class PersistLocal {
 		s_user_graphOffset.set(this.key_read(IDPersistant.origin) ?? new Point());
 		s_graph_relations.set(this.key_read(IDPersistant.relations) ?? GraphRelations.children);
 
-		s_ring_angle.subscribe((angle: number) => {
-			this.key_write(IDPersistant.angle, angle);
-		})
 		s_graph_relations.subscribe((relations: string) => {
 			this.key_write(IDPersistant.relations, relations);
+		})
+		s_cluster_arc_radius.subscribe((radius: number) => {
+			this.key_write(IDPersistant.cluster_arc, radius);
 		})
 		s_layout_asClusters.subscribe((flag: boolean) => {
 			this.key_write(IDPersistant.layout, flag);
@@ -174,6 +174,9 @@ class PersistLocal {
 			g.graphRect_update();
 			signals.signal_relayoutWidgets_fromFocus();
 		});
+		s_ring_angle.subscribe((angle: number) => {
+			this.key_write(IDPersistant.angle, angle);
+		})
 	}
 
 	ancestries_restore(force: boolean = false) {

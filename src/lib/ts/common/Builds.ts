@@ -11,6 +11,7 @@ class Builds {
 
 	constructor() {
 		this.notes = {
+			98 : ['May 23, 2024', 'double-click drag to alter ring button radius'],
 			97 : ['May 20, 2024', 'cluster rotation perfected, improved memory usage'],
 			96 : ['May 14, 2024', 'nearly perfect cluster curly braces, new cluster line angles'],
 			95 : ['May 10, 2024', 'add color editing'],

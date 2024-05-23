@@ -1,8 +1,9 @@
 <script lang='ts'>
-	import { s_graphRect, s_ancestry_focus, s_user_graphOffset, s_thing_fontFamily } from '../../ts/state/State';
+	import { s_graphRect, s_ancestry_focus, s_user_graphOffset, s_thing_fontFamily, s_cluster_arc_radius } from '../../ts/state/State';
 	import { k, u, Rect, Size, Point, ZIndex, transparentize } from '../../ts/common/GlobalImports';
 	import EditingTools from '../widget/EditingTools.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
+	import RingButton from '../buttons/RingButton.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Necklace from './Necklace.svelte';
 	// needs:
@@ -43,6 +44,13 @@
 				<TitleEditor ancestry={ancestry} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 			</div>
 			<Necklace center={center}/>
+			<RingButton name='necklace-ring'
+				color={ancestry.thing?.color ?? k.color_default}
+				radius={$s_cluster_arc_radius}
+				thing={ancestry.thing}
+				zindex={ZIndex.lines}
+				center={center}
+				thickness={30}/>
 			<EditingTools offset={toolsOffset}/>
 		{/key}
 	</div>

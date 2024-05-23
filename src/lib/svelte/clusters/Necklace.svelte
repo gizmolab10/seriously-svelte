@@ -2,7 +2,6 @@
 	import { g, k, u, Point, ZIndex, signals, onMount, onDestroy, Predicate } from '../../ts/common/GlobalImports';
 	import { debugReact, ChildMapRect, ClusterLayout, transparentize } from '../../ts/common/GlobalImports';
 	import { s_thing_changed, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/State';
-	import RingButton from '../buttons/RingButton.svelte';
 	import ClusterLine from './ClusterLine.svelte';
 	import ClusterArc from './ClusterArc.svelte';
 	import Widget from '../widget/Widget.svelte';
@@ -75,11 +74,4 @@
 			{/if}
 		{/each}
 	</div>
-	<RingButton name='necklace-ring'
-		radius={$s_cluster_arc_radius}
-		thing={ancestry.thing}
-		zindex={ZIndex.lines}
-		center={center}
-		thickness={30}
-		color={color}/>
 {/key}
