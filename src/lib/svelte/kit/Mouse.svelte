@@ -9,17 +9,19 @@
 	export let detect_mouseUp = true;
 	export let position = 'absolute';
 	export let center = new Point();
+	export let align_left = true;
 	export let style = k.empty;
 	export let name = k.empty;
 	export let height = 16;
 	export let width = 16;
-	let clickCount = 0;
 	let mouse;
+	let clickCount = 0;
 	let mouse_longClick_timer;
 	let mouse_doubleClick_timer;
 	let mouse_location = Point.zero;
 
 	onMount(() => {
+		setupStyle();
 		if (!!mouse) {
 			mouse.addEventListener('pointerup', handle_pointerUp);
 			mouse.addEventListener('pointerdown', handle_pointerDown);
@@ -29,6 +31,11 @@
 			}
 		}
 	});
+
+	$: {
+		const _ = center;
+		setupStyle();
+	}
 
 	$: {
 		if (!!mouse && !!$s_mouse_location && mouse_location != $s_mouse_location) {
@@ -71,16 +78,24 @@
 		}
 	}
 
+	function setupStyle() {
+		const x = center.x - width / 2;
+		style = `${style} 
+			width: ${width}px;
+			height: ${height}px;
+			position: ${position};
+			top: ${center.y - height / 2}px;`
+		if (align_left) {
+			style = `${style} left: ${x}px;`
+		} else {
+			style = `${style} right: ${-x}px;`
+		}
+	}
+
 </script>
 
 <div class='mouse-observer' id={name}
 	bind:this={mouse}
-	style='
-		{style}
-		width: {width}px;
-		height: {height}px;
-		position: {position};
-		top: {center.y - height / 2}px;
-		left: {center.x - width / 2}px;'>
+	style={style}>
 	<slot></slot>
 </div>

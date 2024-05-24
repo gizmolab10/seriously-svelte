@@ -11,16 +11,16 @@
 	let tinyDotsDiameter = size * 1.8;
 	let tinyDotsOffset = size * -0.4 + 0.01;
 	let childrenCount = ancestry.childRelationships.length;
-	let insideFillColor = k.color_background;
 	let insidePath = svgPaths.circle_atOffset(16, 6);
-	let fillColor = k.color_background;
+	let insideFillColor = k.color_background;
 	let strokeColor = ancestry.thing.color;
+	let fillColor = k.color_background;
 	let revealWrapper = Wrapper;
+	let revealDotPath = k.empty;
 	let hasInsidePath = false;
 	let isHovering = false;
-	let revealDotPath = k.empty;
-	let insideOffset = 0;
 	let dotReveal = null;
+	let insideOffset = 0;
 	let rebuilds = 0;
 	
 	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
