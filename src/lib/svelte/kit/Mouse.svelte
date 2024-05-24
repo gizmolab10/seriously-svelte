@@ -55,6 +55,7 @@
 			clearTimeout(mouse_longClick_timer);
 			mouse_doubleClick_timer = null;
 			mouse_longClick_timer = null;
+			clickCount = 0;
 		}
 	}
 	
@@ -83,21 +84,18 @@
 
 	function setupStyle() {
 		const x = center.x - width / 2;
+		const horizontal = align_left ? `left: ${x}` : `right: ${-x}`;
 		style = `${style} 
 			width: ${width}px;
 			height: ${height}px;
 			position: ${position};
-			top: ${center.y - height / 2}px;`
-		if (align_left) {
-			style = `${style} left: ${x}px;`
-		} else {
-			style = `${style} right: ${-x}px;`
-		}
+			top: ${center.y - height / 2}px;
+			${horizontal}px;`;
 	}
 
 </script>
 
-<div class='mouse-observer' id={name}
+<div class='mouse' id={name}
 	bind:this={mouse}
 	style={style}>
 	<slot></slot>

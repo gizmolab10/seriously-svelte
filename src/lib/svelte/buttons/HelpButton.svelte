@@ -5,7 +5,7 @@
 	export let hover_closure = (flag) => {};
 	export let name = k.empty;
 
-	function mouse_closure(mouseData) {
+	function closure(mouseData) {
 
 	}
 

@@ -9,12 +9,11 @@
 	export let zindex = ZIndex.dots;
 	export let cursor = 'pointer';
 	export let border = 'none';
+	export let color = 'black';
 	export let style = k.empty;
 	export let name = k.empty;
-	export let color = 'gray';
 	export let height = 16;
 	export let width = 16;
-	let button;
 
 </script>
 
@@ -25,7 +24,6 @@
 	center={center}
 	closure={closure}>
 	<button class='button' id={name}
-		bind:this={button}
 		style='
 			color: {color};
 			cursor: {cursor};
@@ -34,7 +32,8 @@
 			z-index: {zindex};
 			height: {height}px;
 			position: {position};
+			border-radius: {height / 2}px;
 			background-color: {background_color};'>
-			<slot></slot>
+		<slot></slot>
 	</button>
 </Mouse>

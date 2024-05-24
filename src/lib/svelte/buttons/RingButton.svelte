@@ -44,7 +44,7 @@
 		rebuilds += 1;
 	}
 
-	function mouse_closure(mouseData: MouseData) {
+	function closure(mouseData: MouseData) {
 		if (mouseData.isUp) {
 			g.ring_priorAngle = g.ring_startAngle = g.ring_radiusOffset = null;
 		} else if (!mouseData.isDown) {
@@ -115,7 +115,7 @@
 		width={diameter}
 		height={diameter}
 		name='ring-button'
-		closure={mouse_closure}>
+		closure={closure}>
 		<svg class= 'svg-ring-button' fill={fillColor} viewBox={viewBox}><path d={svg_ringPath}></svg>
 	</Mouse>
 {/key}

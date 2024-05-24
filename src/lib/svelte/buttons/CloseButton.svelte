@@ -9,7 +9,7 @@
     const cross = svgPaths.x_cross(size, size / 6);
     const circle = svgPaths.circle_atOffset(size, size - 2);
 
-	function mouse_closure(mouseData) {
+	function closure(mouseData) {
 		if (mouseData.isHover) {
 			const isHovering = !mouseData.isOut;
 			fill = isHovering ? 'black' : 'white';
@@ -34,7 +34,7 @@
 	height={size}
 	align_left={false}
 	name='close-button'
-	closure={mouse_closure}
+	closure={closure}
 	center={new Point(0, size)}>
     <SVGD3 name='close'
 		fill={fill}

@@ -51,7 +51,7 @@
 		}
 	}
 
-	function mouse_closure(mouseData) {
+	function closure(mouseData) {
 		if (mouseData.isHover) {
 			setIsHovering_updateColors(!mouseData.isOut);
 		} else if (mouseData.isUp) {
@@ -116,7 +116,7 @@
 		height={size}
 		center={center}
 		name='dot-reveal-mouse'
-		closure={mouse_closure}>
+		closure={closure}>
 		<button class='dot'
 			bind:this={dotReveal}
 			on:contextmenu={handle_context_menu}

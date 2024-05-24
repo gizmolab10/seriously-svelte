@@ -4,7 +4,6 @@
 	import { s_ancestry_editingTools, s_layout_asClusters } from '../../ts/state/State';
 	import { s_altering, s_graphRect, s_show_details } from '../../ts/state/State';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
-	import CircleButton from '../buttons/CircleButton.svelte';
 	import TriangleButton from '../buttons/TriangleButton.svelte';
 	import DotReveal from '../widget/DotReveal.svelte';
 	import Button from '../buttons/Button.svelte';

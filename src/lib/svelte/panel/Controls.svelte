@@ -1,13 +1,15 @@
 <script>
 	import { k, u, Point, ZIndex, signals, svgPaths, IDButton, IDPersistant, persistLocal, GraphRelations } from '../../ts/common/GlobalImports';
 	import { s_build, s_show_details, s_id_popupView, s_resize_count, s_layout_asClusters, s_graph_relations } from '../../ts/state/State';
-	import CircleButton from '../buttons/CircleButton.svelte';
+	import Button from '../buttons/Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
-	const top = k.dot_size + 2.5;
+	const top = k.dot_size / 2 + 2;
 	let width = u.windowSize.width - 20;
 	let size = 16;
 
-	function togglePopupID(id) { $s_id_popupView = ($s_id_popupView == id) ? null : id; }
+	function togglePopupID(id) {
+		$s_id_popupView = ($s_id_popupView == id) ? null : id;
+	}
 	
 	$: {
 		const _ = $s_resize_count;
@@ -15,13 +17,16 @@
 	}
 
 	function button_closure_forID(mouseData, id) {
-		if (mouseData.isDown) {
+		if (mouseData.isHover) {
+
+		} else if (mouseData.isDown) {
 			switch (id) {
 				case IDButton.bigger: width = g.zoomBy(1.1) - 20; break;
 				case IDButton.smaller: width = g.zoomBy(0.9) - 20; break;
 				case IDButton.details: $s_show_details = !$s_show_details; break;
 				case IDButton.layout: $s_layout_asClusters = !$s_layout_asClusters; break;
 				case IDButton.relations: $s_graph_relations = next_graph_relations(); break;
+				default: togglePopupID(id); break;
 			}
 		}
 	}
@@ -36,16 +41,6 @@
 
 </script>
 
-<style>
-	.button {
-		border-radius: 1em;
-		position: fixed;
-		border: 1px solid;
-		cursor: pointer;
-		top: 7px;
-	}
-</style>
-
 <div class='controls'
 	style='
 		top: 9px;
@@ -54,33 +49,35 @@
 		z-index: {ZIndex.frontmost};
 		height: `${k.height_banner - 2}px`;'>
 	{#if !$s_id_popupView}
-		<CircleButton
+		<Button name='details'
 			color='transparent'
-			borderColor='transparent'
-			center={new Point(20, top - 1)}
+			center={new Point(10, top - 2)}
 			closure={(mouseData) => button_closure_forID(mouseData, IDButton.details)}>
 			<img src='settings.svg' alt='circular button' width={size}px height={size}px/>
-		</CircleButton>
+		</Button>
 		{#if k.show_controls}
-			<button class='button' id='relations-button'
-				style='
-					left:30px;
-					background-color: {k.color_background};'
-				on:click={() => button_closure_forID(IDButton.relations)}>
+			<Button name='relations-button'
+				width=65
+				height={size + 4}
+				border='solid 1px'
+				center={new Point(65, 8)}
+				background_color={k.color_background}
+				closure={(mouseData) => button_closure_forID(mouseData, IDButton.relations)}>
 				{$s_graph_relations}
-			</button>
-			<button class='button' id='layout-button'
-				style='
-					left: 97px;
-					background-color: {k.color_background};'
-				on:click={() => button_closure_forID(IDButton.layout)}>
+			</Button>
+			<Button name='layout-button'
+				width=65
+				height={size + 4}
+				border='solid 1px'
+				center={new Point(140, 8)}
+				background_color={k.color_background}
+				closure={(mouseData) => button_closure_forID(mouseData, IDButton.layout)}>
 				{#if $s_layout_asClusters}tree{:else}clusters{/if}
-			</button>
+			</Button>
 		{/if}
 	{/if}
 	{#if u.device_isMobile}
-		<CircleButton
-			size={size}
+		<Button
 			color={k.color_background}
 			center={new Point(width - 130, top)}
 			closure={(mouseData) => button_closure_forID(mouseData. IDButton.smaller)}>
@@ -89,9 +86,8 @@
 				height={size}
 				svg_path={svgPaths.dash(size, 2)}
 			/>
-		</CircleButton>
-		<CircleButton
-			size={size}
+		</Button>
+		<Button
 			color={k.color_background}
 			center={new Point(width - 105, top)}
 			closure={(mouseData) => button_closure_forID(mouseData, IDButton.bigger)}>
@@ -100,19 +96,25 @@
 				height={size}
 				svg_path={svgPaths.t_cross(size, 2)}
 			/>
-		</CircleButton>
+		</Button>
 	{/if}
-	<button class='button'
-		style='
-			left: {width - 90}px;
-			background-color: {k.color_background};'
-		on:click={() => togglePopupID(IDButton.builds)}>
+	<Button name='builds'
+		width=65
+		height={size + 4}
+		border='solid 1px'
+		center={new Point(width - 50, 8)}
+		background_color={k.color_background}
+		closure={(mouseData) => button_closure_forID(mouseData, IDButton.builds)}>
 		build {$s_build}
-	</button>
-	<CircleButton
-		size={size}
-		color={k.color_background}
+	</Button>
+	<Button name='help'
+		color='black'
+		width={size + 4}
+		height={size + 4}
+		border='solid 1px'
 		center={new Point(width, top)}
-		closure={(mouseData) => togglePopupID(mouseData, IDButton.help)}>?
-	</CircleButton>
+		background_color={k.color_background}
+		closure={(mouseData) => button_closure_forID(mouseData, IDButton.help)}>
+		<div style='top:2px; left:5.5px; position:absolute;'>?</div>
+	</Button>
 </div>

@@ -77,7 +77,7 @@
 		}
 	}
 
-	function mouse_closure(mouseData) {
+	function closure(mouseData) {
 		if (mouseData.isHover) {
 			updateColorsForHover(!mouseData.isOut);
 		} else if (mouseData.isUp) {
@@ -130,7 +130,7 @@
 		height={size}
 		center={center}
 		name='dot-drag-mouse'
-		closure={mouse_closure}>
+		closure={closure}>
 		<button class='dot-drag'
 			bind:this={button}
 			on:contextmenu={handle_context_menu}
