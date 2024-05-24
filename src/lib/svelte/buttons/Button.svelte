@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, Point, ZIndex, MouseData } from '../../ts/common/GlobalImports';
+	import { g, k, u, Point, ZIndex } from '../../ts/common/GlobalImports';
 	import { s_mouse_location } from '../../ts/state/State';
 	import Mouse from '../kit/Mouse.svelte';
 	export let mouse_click_closure = (mouseData) => {};

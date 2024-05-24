@@ -9,13 +9,14 @@
 	export let detect_mouseUp = true;
 	export let position = 'absolute';
 	export let center = new Point();
+	export let style = k.empty;
 	export let name = k.empty;
 	export let height = 16;
 	export let width = 16;
 	let clickCount = 0;
 	let mouse;
-	let mouse_doubleClick_timer;
 	let mouse_longClick_timer;
+	let mouse_doubleClick_timer;
 	let mouse_location = Point.zero;
 
 	onMount(() => {
@@ -75,6 +76,7 @@
 <div class='mouse-observer' id={name}
 	bind:this={mouse}
 	style='
+		{style}
 		width: {width}px;
 		height: {height}px;
 		position: {position};

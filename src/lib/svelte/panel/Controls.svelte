@@ -1,8 +1,9 @@
 <script>
-	import { k, u, ZIndex, signals, svgPaths, IDButton, IDPersistant, persistLocal, GraphRelations } from '../../ts/common/GlobalImports';
+	import { k, u, Point, ZIndex, signals, svgPaths, IDButton, IDPersistant, persistLocal, GraphRelations } from '../../ts/common/GlobalImports';
 	import { s_build, s_show_details, s_id_popupView, s_resize_count, s_layout_asClusters, s_graph_relations } from '../../ts/state/State';
 	import CircleButton from '../buttons/CircleButton.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
+	const top = k.dot_size + 2.5;
 	let width = u.windowSize.width - 20;
 	let size = 16;
 
@@ -51,21 +52,22 @@
 		z-index: {ZIndex.frontmost};
 		height: `${k.height_banner - 2}px`;'>
 	{#if !$s_id_popupView}
-		<CircleButton left=15
+		<CircleButton
 			color='transparent'
 			borderColor='transparent'
-			mouse_click_closure={() => button_closure_forID(IDButton.details)}>
+			center={new Point(20, top - 1)}
+			mouse_click_closure={(mouseData) => button_closure_forID(IDButton.details)}>
 			<img src='settings.svg' alt='circular button' width={size}px height={size}px/>
 		</CircleButton>
 		{#if k.show_controls}
-			<button class='button'
+			<button class='button' id='relations-button'
 				style='
 					left:30px;
 					background-color: {k.color_background};'
 				on:click={() => button_closure_forID(IDButton.relations)}>
 				{$s_graph_relations}
 			</button>
-			<button class='button'
+			<button class='button' id='layout-button'
 				style='
 					left: 97px;
 					background-color: {k.color_background};'
@@ -77,9 +79,9 @@
 	{#if u.device_isMobile}
 		<CircleButton
 			size={size}
-			left={width - 130}
 			color={k.color_background}
-			mouse_click_closure={(event) => button_closure_forID(IDButton.smaller)}>
+			center={new Point(width - 130, top)}
+			mouse_click_closure={(mouseData) => button_closure_forID(IDButton.smaller)}>
 			<SVGD3 name='smaller'
 				width={size}
 				height={size}
@@ -88,9 +90,9 @@
 		</CircleButton>
 		<CircleButton
 			size={size}
-			left={width - 105}
 			color={k.color_background}
-			mouse_click_closure={(event) => button_closure_forID(IDButton.bigger)}>
+			center={new Point(width - 105, top)}
+			mouse_click_closure={(mouseData) => button_closure_forID(IDButton.bigger)}>
 			<SVGD3 name='bigger'
 				width={size}
 				height={size}
@@ -107,8 +109,8 @@
 	</button>
 	<CircleButton
 		size={size}
-		left={width - 15}
 		color={k.color_background}
-		mouse_click_closure={(event) => togglePopupID(IDButton.help)}>?
+		center={new Point(width, top)}
+		mouse_click_closure={(mouseData) => togglePopupID(IDButton.help)}>?
 	</CircleButton>
 </div>

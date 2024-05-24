@@ -1,5 +1,5 @@
 <script>
-    import { k, Point, MouseData, Direction } from '../../ts/common/GlobalImports';
+    import { k, Point, Direction } from '../../ts/common/GlobalImports';
     import TriangleButton from './TriangleButton.svelte'
     export let display;
     export let hit;

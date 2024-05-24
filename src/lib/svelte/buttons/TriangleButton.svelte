@@ -3,8 +3,8 @@
 	import { s_ancestries_grabbed } from '../../ts/state/State';
 	import Button from '../buttons/Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
+	export let mouse_click_closure = (mouseData) => {};
 	export let hover_closure = null;
-	export let mouse_click_closure;
 	export let cursor = 'pointer';
 	export let extraPath = null;
 	export let name = k.empty;
