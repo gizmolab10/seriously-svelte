@@ -39,7 +39,7 @@
 		rebuilds += 1;
 	};
 
-	function mouse_click_closure(event) {
+	function mouse_closure(event) {
 		if (dbDispatch.db.hasData) {
 			ancestry.grabOnly();
 			if (ancestry.becomeFocus()) {
@@ -56,7 +56,7 @@
 		on:focus={u.ignore}
 		on:mouseout={handle_mouse_out}
 		on:mouseover={handle_mouse_over}
-		on:click={mouse_click_closure}
+		on:click={mouse_closure}
 		style='
 			{colorStyles};
 			{cursorStyle};

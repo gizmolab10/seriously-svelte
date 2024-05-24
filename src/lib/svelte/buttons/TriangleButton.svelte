@@ -3,7 +3,7 @@
 	import { s_ancestries_grabbed } from '../../ts/state/State';
 	import Button from '../buttons/Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
-	export let mouse_click_closure = (mouseData) => {};
+	export let mouse_closure = (mouseData) => {};
 	export let hover_closure = null;
 	export let cursor = 'pointer';
 	export let extraPath = null;
@@ -15,12 +15,6 @@
 	let fillColor = k.color_background;
 	let extraColor = k.color_background;
 	let trianglePath = svgPaths.fat_polygon(size, direction);
-
-	function setFillColor(isFilled) {
-		if (!!hover_closure) {
-			[fillColor, extraColor] = hover_closure(isFilled);
-		}
-	}
 	
 	$: {
 		trianglePath = svgPaths.fat_polygon(size, direction);
@@ -32,6 +26,20 @@
 		setFillColor(false);
 	}
 
+	function setFillColor(isFilled) {
+		if (!!hover_closure) {
+			[fillColor, extraColor] = hover_closure(isFilled);
+		}
+	}
+
+	function closure(mouseData) {
+		if (mouseData.isHover) {
+			setFillColor(!mouseData.isOut);
+		} else {
+			mouse_closure(mouseData);
+		}
+	}
+
 	// style='
 	// 	display: block;;
 	// 	background: none;
@@ -39,8 +47,7 @@
 </script>
 
 <Button
-	hover_closure={(isHovering) => { setFillColor(isHovering); }}
-	mouse_click_closure={mouse_click_closure}
+	closure={closure}
 	center={center}
 	cursor={cursor}
 	name={name}

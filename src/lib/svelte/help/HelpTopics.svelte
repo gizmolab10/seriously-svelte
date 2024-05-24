@@ -1,5 +1,7 @@
 <script>
 	import { k, onMount } from '../../ts/common/GlobalImports';
+	import Button from '../buttons/Button.svelte';
+	import Mouse from '../kit/Mouse.svelte';
 
 	let dots;
 	let edit;
@@ -16,6 +18,25 @@
 	let showingFocus = false;
 	let showingBrowse = false;
 	let showingSelection = true;
+
+	onMount(() => {
+		import('/src/lib/svelte/help/HelpDots.svelte').then(module => {
+			dots = module.default;
+		});
+		import('/src/lib/svelte/help/HelpEdit.svelte').then(module => {
+			edit = module.default;
+		});
+		import('/src/lib/svelte/help/HelpFocus.svelte').then(module => {
+			focus = module.default;
+		});
+		import('/src/lib/svelte/help/HelpBrowse.svelte').then(module => {
+			browse = module.default;
+		});
+		import('/src/lib/svelte/help/HelpSelection.svelte').then(module => {
+			selection = module.default;
+		});
+		updateTitles();
+	});
 
 	const updateTitles = () => {
 		dotsTitle = showingDots ? 'How the <b>Dots</b> work' : 'Dots';
@@ -70,24 +91,6 @@
 		updateTitles();
 	};
 
-	onMount(() => {
-		import('/src/lib/svelte/help/HelpDots.svelte').then(module => {
-			dots = module.default;
-		});
-		import('/src/lib/svelte/help/HelpEdit.svelte').then(module => {
-			edit = module.default;
-		});
-		import('/src/lib/svelte/help/HelpFocus.svelte').then(module => {
-			focus = module.default;
-		});
-		import('/src/lib/svelte/help/HelpBrowse.svelte').then(module => {
-			browse = module.default;
-		});
-		import('/src/lib/svelte/help/HelpSelection.svelte').then(module => {
-			selection = module.default;
-		});
-		updateTitles();
-	});
 </script>
 
 <style>

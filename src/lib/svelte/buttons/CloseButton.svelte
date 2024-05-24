@@ -5,17 +5,16 @@
 	import SVGD3 from '../kit/SVGD3.svelte';
     export let size = 20;
 	let fill = 'white';
-	let stroke = 'white';
+	let stroke = 'black';
     const cross = svgPaths.x_cross(size, size / 6);
     const circle = svgPaths.circle_atOffset(size, size - 2);
 
-	function hover_closure(isHovering) {
-		fill = isHovering ? 'black' : 'white';
-		stroke = isHovering ? 'white' : 'black';
-	}
-
-	function mouse_click_closure(mouseData) {
-		if (mouseData.isDown) {
+	function mouse_closure(mouseData) {
+		if (mouseData.isHover) {
+			const isHovering = !mouseData.isOut;
+			fill = isHovering ? 'black' : 'white';
+			stroke = isHovering ? 'white' : 'black';
+		} else if (mouseData.isDown) {
 			$s_id_popupView = null;
 		}
 	}
@@ -35,9 +34,8 @@
 	height={size}
 	align_left={false}
 	name='close-button'
-	center={new Point(0, size)}
-	hover_closure={hover_closure}
-	mouse_click_closure={mouse_click_closure}>
+	closure={mouse_closure}
+	center={new Point(0, size)}>
     <SVGD3 name='close'
 		fill={fill}
 		width={size}

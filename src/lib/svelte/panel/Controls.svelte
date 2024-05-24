@@ -14,13 +14,15 @@
 		width = u.windowSize.width - 20;
 	}
 
-	function button_closure_forID(id) {
-		switch (id) {
-			case IDButton.bigger: width = g.zoomBy(1.1) - 20; break;
-			case IDButton.smaller: width = g.zoomBy(0.9) - 20; break;
-			case IDButton.details: $s_show_details = !$s_show_details; break;
-			case IDButton.layout: $s_layout_asClusters = !$s_layout_asClusters; break;
-			case IDButton.relations: $s_graph_relations = next_graph_relations(); break;
+	function button_closure_forID(mouseData, id) {
+		if (mouseData.isDown) {
+			switch (id) {
+				case IDButton.bigger: width = g.zoomBy(1.1) - 20; break;
+				case IDButton.smaller: width = g.zoomBy(0.9) - 20; break;
+				case IDButton.details: $s_show_details = !$s_show_details; break;
+				case IDButton.layout: $s_layout_asClusters = !$s_layout_asClusters; break;
+				case IDButton.relations: $s_graph_relations = next_graph_relations(); break;
+			}
 		}
 	}
 
@@ -56,7 +58,7 @@
 			color='transparent'
 			borderColor='transparent'
 			center={new Point(20, top - 1)}
-			mouse_click_closure={(mouseData) => button_closure_forID(IDButton.details)}>
+			closure={(mouseData) => button_closure_forID(mouseData, IDButton.details)}>
 			<img src='settings.svg' alt='circular button' width={size}px height={size}px/>
 		</CircleButton>
 		{#if k.show_controls}
@@ -81,7 +83,7 @@
 			size={size}
 			color={k.color_background}
 			center={new Point(width - 130, top)}
-			mouse_click_closure={(mouseData) => button_closure_forID(IDButton.smaller)}>
+			closure={(mouseData) => button_closure_forID(mouseData. IDButton.smaller)}>
 			<SVGD3 name='smaller'
 				width={size}
 				height={size}
@@ -92,7 +94,7 @@
 			size={size}
 			color={k.color_background}
 			center={new Point(width - 105, top)}
-			mouse_click_closure={(mouseData) => button_closure_forID(IDButton.bigger)}>
+			closure={(mouseData) => button_closure_forID(mouseData, IDButton.bigger)}>
 			<SVGD3 name='bigger'
 				width={size}
 				height={size}
@@ -111,6 +113,6 @@
 		size={size}
 		color={k.color_background}
 		center={new Point(width, top)}
-		mouse_click_closure={(mouseData) => togglePopupID(IDButton.help)}>?
+		closure={(mouseData) => togglePopupID(mouseData, IDButton.help)}>?
 	</CircleButton>
 </div>

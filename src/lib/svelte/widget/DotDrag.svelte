@@ -30,7 +30,6 @@
     let thing;
 
 	function handle_context_menu(event) { event.preventDefault(); }		// no default context menu on right-click
-	function hover_closure(isHovering) { updateColorsForHover(isHovering); }
 
     onMount(() => {
 		if (!!ancestry) {
@@ -78,8 +77,10 @@
 		}
 	}
 
-	function mouse_click_closure(mouseData) {
-		if (mouseData.isUp) {
+	function mouse_closure(mouseData) {
+		if (mouseData.isHover) {
+			updateColorsForHover(!mouseData.isOut);
+		} else if (mouseData.isUp) {
 			ancestry?.handle_singleClick_onDragDot(mouseData.event.shiftKey);
 		} else if (mouseData.isLong) {
 			if (ancestry?.becomeFocus()) {
@@ -129,8 +130,7 @@
 		height={size}
 		center={center}
 		name='dot-drag-mouse'
-		hover_closure={hover_closure}
-		mouse_click_closure={mouse_click_closure}>
+		closure={mouse_closure}>
 		<button class='dot-drag'
 			bind:this={button}
 			on:contextmenu={handle_context_menu}

@@ -4,17 +4,17 @@
     export let display;
     export let hit;
     const buttonSize = 20;
-    const offsetY = buttonSize / 2 - 1;
     const origin = new Point(26, 27);
+    const offsetY = buttonSize / 2 - 1;
 	let rebuilds = 0;
 
 	function hover_closure(isFilled) {
         return [isFilled ? 'black' : k.color_background, k.empty];
     }
 
-	function mouse_click_closure(mouseData) {
+	function mouse_closure(mouseData) {
         const target = mouseData.element;
-        if (!!target && (mouseData.isUp || mouseData.isLong)) {
+        if (!mouseData.isHover && !!target && (mouseData.isUp || mouseData.isLong)) {
             const pointsUp = target.id == 'up';
             hit(pointsUp, mouseData.isLong);
             rebuilds += 1;
@@ -35,8 +35,8 @@
     <div class='directionals'>
         {#if display(true)}
             <TriangleButton
-                mouse_click_closure={mouse_click_closure}
                 center={origin.offsetByY(-offsetY)}
+                mouse_closure={mouse_closure}
                 hover_closure={hover_closure}
                 direction={Direction.up}
                 strokeColor={'black'}
@@ -46,8 +46,8 @@
         {/if}
         {#if display(false)}
             <TriangleButton
-                mouse_click_closure={mouse_click_closure}
                 center={origin.offsetByY(offsetY)}
+                mouse_closure={mouse_closure}
                 hover_closure={hover_closure}
                 direction={Direction.down}
                 strokeColor={'black'}

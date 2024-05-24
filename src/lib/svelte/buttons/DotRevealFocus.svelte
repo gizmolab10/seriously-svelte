@@ -9,17 +9,13 @@
 		return [debug.lines ? 'transparent' : ancestry.dotColor(isFilled), k.empty];
 	}
 
-	function mouse_click_closure(event, isLong) {
-		if (h.grabs.latestAncestryGrabbed(true)?.isFocus) {
-			h.ancestry_rebuild_remoteMoveRight(ancestry, false, false);
-		} else {
-			ancestry.grabOnly();
-		}
-	}
-
-	$: {
-		if (k.dot_size > 0) {
-			size = k.dot_size;
+	function mouse_closure(mouseData) {
+		if (!mouseData.isHover) {
+			if (h.grabs.latestAncestryGrabbed(true)?.isFocus) {
+				h.ancestry_rebuild_remoteMoveRight(ancestry, false, false);
+			} else {
+				ancestry.grabOnly();
+			}
 		}
 	}
 
@@ -28,9 +24,9 @@
 <TriangleButton
 	strokeColor={ancestry.thing.color}
 	hover_closure={hover_closure}
-	mouse_click_closure={mouse_click_closure}
 	direction={Direction.right}
 	id={ancestry.thing.title}
+	closure={mouse_closure}
 	center={center}
     size={size}
 />

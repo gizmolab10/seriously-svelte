@@ -2,9 +2,8 @@
 	import { g, k, u, Point, ZIndex } from '../../ts/common/GlobalImports';
 	import { s_mouse_location } from '../../ts/state/State';
 	import Mouse from '../kit/Mouse.svelte';
-	export let mouse_click_closure = (mouseData) => {};
 	export let background_color = 'transparent';
-	export let hover_closure = (flag) => {};
+	export let closure = (mouseData) => {};
 	export let position = 'absolute';
 	export let center = new Point();
 	export let zindex = ZIndex.dots;
@@ -24,9 +23,7 @@
 	width={width}
 	height={height}
 	center={center}
-	hover_closure={hover_closure}
-	mouse_click_closure={mouse_click_closure}
-	>
+	closure={closure}>
 	<button class='button' id={name}
 		bind:this={button}
 		style='

@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { svgPaths, Direction, dbDispatch, transparentize, AlterationState, Alteration } from '../../ts/common/GlobalImports';
-	import { k, u, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, signals } from '../../ts/common/GlobalImports';
+	import { MouseData, Direction, dbDispatch, Alteration, transparentize, AlterationState } from '../../ts/common/GlobalImports';
+	import { k, u, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, svgPaths, signals } from '../../ts/common/GlobalImports';
 	import { s_ancestry_editingTools, s_layout_asClusters } from '../../ts/state/State';
 	import { s_altering, s_graphRect, s_show_details } from '../../ts/state/State';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
@@ -31,7 +31,6 @@
 	let thing;
 	let ancestry;
 
-	function handle_mouse_up() { clearTimeout(mouse_click_timer); }
 	function getC(type: string) { return centers[type] ?? new Point(); }
 	function setC(type: string, center: Point) { return centers[type] = center; }
 	function centers_isEmpty(): boolean { return Object.keys(centers).length == 0; }
@@ -100,17 +99,21 @@
 		return [color, k.color_background];
 	}
 
-	async function handle_mouse_click(id: string, event: MouseEvent, isLong: boolean) {
-		switch (id) {
-			case IDTool.delete: confirmingDelete = true; break;
-			case IDTool.delete_cancel: confirmingDelete = false; break;
-			default:
-				if (!!ancestry && !ancestry.isExemplar && !isDisabledFor(id)) {
-					await h.handle_tool_clicked(id, event, isLong);
-				}
-				break;
+	async function handle_mouse_event(mouseData: MouseData, id: string) {
+		if (mouseData.isHover) {
+			handle_hover_for(IDTool.delete_confirm, !mouseData.isOut);;
+		} else {
+			switch (id) {
+				case IDTool.delete: confirmingDelete = true; break;
+				case IDTool.delete_cancel: confirmingDelete = false; break;
+				default:
+					if (!!ancestry && !ancestry.isExemplar && !isDisabledFor(id)) {
+						await h.handle_tool_clicked(id, mouseData.event, mouseData.isLong);
+					}
+					break;
+			}
+			update_maybeRedraw();
 		}
-		update_maybeRedraw();
 	}
 
 	function update(): boolean {
@@ -119,7 +122,7 @@
 			const offsetX = 8.5 + titleWidth - ($s_show_details ? k.width_details : 0) - ($s_layout_asClusters ? 38 : 0);
 			const offsetY = (k.show_titleAtTop ? -45 : 0) + ($s_layout_asClusters ? 3 : 0) - editingToolsDiameter - 5.8;
 			const center = rect.centerLeft.offsetBy(offset).offsetBy(new Point(offsetX, offsetY));
-			const offsetReveal = new Point(-5.3, -5.5);
+			const offsetReveal = new Point(1, 1.5);
 			const x = center.x;
 			const y = center.y;
 			left = x - toolDiameter;
@@ -198,8 +201,7 @@
 					</svg>
 				{/if}
 				<Button
-					mouse_click_closure={(event, isLong, isUp, isDouble) => handle_mouse_click(IDTool.delete_confirm, event, isLong)}
-					hover_closure={(isHovering) => { handle_hover_for(IDTool.delete_confirm, isHovering); }}
+					closure={(mouseData) => handle_mouse_event(mouseData, IDTool.delete_confirm)}
 					color={ hovers[IDTool.delete_confirm] ? k.color_background : color}
 					center={getC(IDTool.delete_confirm)}
 					height={editingToolsDiameter / 2}
@@ -214,8 +216,7 @@
 					</div>
 				</Button>
 				<Button
-					mouse_click_closure={(event, isLong, isUp, isDouble) => handle_mouse_click(IDTool.delete_cancel, event, isLong)}
-					hover_closure={(isHovering) => { handle_hover_for(IDTool.delete_cancel, isHovering); }}
+					closure={(mouseData) => handle_mouse_event(mouseData, IDTool.delete_cancel)}
 					color={ hovers[IDTool.delete_cancel] ? k.color_background : color}
 					center={getC(IDTool.delete_cancel)}
 					height={editingToolsDiameter / 2}
@@ -241,10 +242,9 @@
 				</div>
 			{:else}
 				<Button
-					mouse_click_closure={(event, isLong, isUp, isDouble) => handle_mouse_click(IDTool.more, event, isLong)}
-					hover_closure={(isHovering) => { handle_hover_for(IDTool.more, isHovering); }}
-					center={getC(IDTool.more)}
+					closure={(mouseData) => handle_mouse_event(mouseData, IDTool.more)}
 					zindex={ZIndex.tool_buttons}
+					center={getC(IDTool.more)}
 					color={color}
 					name='more'
 					height=16
@@ -268,7 +268,7 @@
 				<TriangleButton
 					strokeColor={isDisabledFor(IDTool.next) ? k.color_disabled : parentSensitiveColor}
 					hover_closure={(isHovering) => { return fillColorsFor(IDTool.next, isHovering) }}
-					mouse_click_closure={(event, isLong, isUp, isDouble) => handle_mouse_click(IDTool.next, event, isLong)}
+					mouse_closure={(mouseData) => handle_mouse_event(mouseData, IDTool.next)}
 					cursor={isDisabledFor(IDTool.next) ? 'normal' : 'pointer'}
 					extraPath={svgPaths.circle_atOffset(toolDiameter, 4)}
 					center={getC(IDTool.next)}
@@ -278,7 +278,7 @@
 				<TriangleButton
 					strokeColor={isDisabledFor(IDTool.delete_parent) ? k.color_disabled : parentSensitiveColor}
 					hover_closure={(isHovering) => { return fillColorsFor(IDTool.delete_parent, isHovering) }}
-					mouse_click_closure={(event, isLong, isUp, isDouble) => handle_mouse_click(IDTool.delete_parent, event, isLong)}
+					mouse_closure={(mouseData) => handle_mouse_event(mouseData, IDTool.delete_parent)}
 					cursor={isDisabledFor(IDTool.delete_parent) ? 'normal' : 'pointer'}
 					extraPath={svgPaths.dash(toolDiameter, 4)}
 					center={getC(IDTool.delete_parent)}
@@ -287,7 +287,7 @@
 					size={toolDiameter}/>
 				<TriangleButton
 					hover_closure={(isHovering) => { return fillColorsFor(IDTool.add_parent, isHovering) }}
-					mouse_click_closure={(event, isLong, isUp, isDouble) => handle_mouse_click(IDTool.add_parent, event, isLong)}
+					mouse_closure={(mouseData) => handle_mouse_event(mouseData, IDTool.add_parent)}
 					strokeColor={isDisabledFor(IDTool.add_parent) ? k.color_disabled : color}
 					cursor={isDisabledFor(IDTool.add_parent) ? 'normal' : 'pointer'}
 					extraPath={svgPaths.t_cross(toolDiameter, 3)}
@@ -297,7 +297,7 @@
 					name='add_parent'/>
 				<TriangleButton
 					hover_closure={(isHovering) => { return fillColorsFor(IDTool.create, isHovering) }}
-					mouse_click_closure={(event, isLong, isUp, isDouble) => handle_mouse_click(IDTool.create, event, isLong)}
+					mouse_closure={(mouseData) => handle_mouse_event(mouseData, IDTool.create)}
 					extraPath={svgPaths.t_cross(toolDiameter, 3)}
 					center={getC(IDTool.create)}
 					direction={Direction.right}
@@ -309,7 +309,7 @@
 					on:focus={u.ignore}
 					on:mouseout={() => { hovers[IDTool.delete] = false; }}
 					on:mouseover={() => { hovers[IDTool.delete] = true; }}
-					on:click={(event) => handle_mouse_click(IDTool.delete, event, false)}
+					on:click={(event) => handle_mouse_event(mouseData, IDTool.delete, event, false)}
 					style='
 						left: {getC(IDTool.delete).x}px;
 						top: {getC(IDTool.delete).y}px;

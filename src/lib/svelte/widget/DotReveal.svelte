@@ -25,8 +25,6 @@
 	
 	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
 	onMount(() => { setIsHovering_updateColors(false); updateScalablePaths(); });
-	function hover_closure(isHovering) { setIsHovering_updateColors(isHovering); }
-
 
 	$: {
 		if (dotReveal && !($s_ancestry_editingTools?.matchesAncestry(ancestry) ?? false)) {
@@ -53,8 +51,10 @@
 		}
 	}
 
-	function mouse_click_closure(mouseData) {
-		if (mouseData.isUp) {
+	function mouse_closure(mouseData) {
+		if (mouseData.isHover) {
+			setIsHovering_updateColors(!mouseData.isOut);
+		} else if (mouseData.isUp) {
 			setIsHovering_updateColors(false);
 			if (ancestry.toolsGrabbed) {
 				$s_altering = null;
@@ -116,12 +116,9 @@
 		height={size}
 		center={center}
 		name='dot-reveal-mouse'
-		hover_closure={hover_closure}
-		mouse_click_closure={mouse_click_closure}>
+		closure={mouse_closure}>
 		<button class='dot'
 			bind:this={dotReveal}
-			hover_closure={hover_closure}
-			mouse_click_closure={mouse_click_closure}
 			on:contextmenu={handle_context_menu}
 			style='
 				width: {size}px;

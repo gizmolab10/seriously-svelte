@@ -1,8 +1,7 @@
 <script>
 	import { u, Point } from '../../ts/common/GlobalImports';
 	import Mouse from '../kit/Mouse.svelte';
-	export let mouse_click_closure = (mouseData) => {};
-	export let hover_closure = (isHovering) => {};
+	export let closure = (mouseData) => {};
 	export let center = Point.square(7);
 	export let borderColor = '#333';
 	export let textColor = '#400';
@@ -14,12 +13,11 @@
 	width={size}
 	height={size}
 	center={center}
+	closure={closure}
 	name='circle-button'
 	detect_mouseDown={false}
 	detect_longClick={false}
 	detect_doubleClick={false}
-	hover_closure={hover_closure}
-	mouse_click_closure={mouse_click_closure}
 	style='
 		display: flex;
 		cursor: pointer;

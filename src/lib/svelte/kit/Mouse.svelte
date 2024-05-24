@@ -1,14 +1,14 @@
 <script lang='ts'>
 	import { g, k, u, Rect, Size, Point, ZIndex, onMount, MouseData } from '../../ts/common/GlobalImports';
 	import { s_mouse_location } from '../../ts/state/State';
-	export let mouse_click_closure = (mouseData) => {};
-	export let hover_closure = (isHovering) => {};
+	export let closure = (mouseData) => {};
 	export let detect_doubleClick = true;
 	export let detect_longClick = true;
 	export let detect_mouseDown = true;
 	export let detect_mouseUp = true;
 	export let position = 'absolute';
 	export let center = new Point();
+	export let isHovering = false;
 	export let align_left = true;
 	export let style = k.empty;
 	export let name = k.empty;
@@ -40,14 +40,17 @@
 	$: {
 		if (!!mouse && !!$s_mouse_location && mouse_location != $s_mouse_location) {
 			mouse_location = $s_mouse_location
-			const isHovering = u.hitTestFor(mouse, mouse_location);
-			hover_closure(isHovering);
+			const hit = u.hitTestFor(mouse, mouse_location);
+			if (isHovering != hit) {
+				isHovering = hit;
+				closure(MouseData.hover(null, mouse, isHovering));
+			}
 		}
 	}
 
 	function handle_pointerUp(event) {
 		if (detect_mouseUp) {
-			mouse_click_closure(MouseData.up(mouse));
+			closure(MouseData.up(event, mouse));
 			clearTimeout(mouse_doubleClick_timer);
 			clearTimeout(mouse_longClick_timer);
 			mouse_doubleClick_timer = null;
@@ -57,12 +60,12 @@
 	
 	function handle_pointerDown(event) {
 		if (detect_mouseDown && clickCount == 0) {
-			mouse_click_closure(MouseData.down(mouse));
+			closure(MouseData.down(event, mouse));
 		}
 		clickCount++;
 		if (detect_longClick && !mouse_longClick_timer) {
 			mouse_longClick_timer = setTimeout(() => {
-				mouse_click_closure(MouseData.long(mouse));
+				closure(MouseData.long(event, mouse));
 				clearTimeout(mouse_longClick_timer);
 				mouse_longClick_timer = null;
 				clickCount = 0;
@@ -70,7 +73,7 @@
 		}
 		if (detect_doubleClick && !mouse_doubleClick_timer) {
 			mouse_doubleClick_timer = setTimeout(() => {
-				mouse_click_closure(MouseData.clicks(mouse, clickCount));
+				closure(MouseData.clicks(event, mouse, clickCount));
 				clearTimeout(mouse_doubleClick_timer);
 				mouse_doubleClick_timer = null;
 				clickCount = 0;
