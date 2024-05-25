@@ -23,9 +23,9 @@
 
 	function handleColorChange(event) {
 		event.preventDefault();
-		g.rebuild_count += 1;
+		e.rebuild_count += 1;
 		thing.color = event.detail.hex;
-		$s_thing_changed = `${thing.id}${k.genericSeparator}${g.rebuild_count}`;
+		$s_thing_changed = `${thing.id}${k.genericSeparator}${e.rebuild_count}`;
 		if (!!persistenceTimer) {
 			clearTimeout(persistenceTimer);		// each color change discards and restarts the timer
 			persistenceTimer = null;
