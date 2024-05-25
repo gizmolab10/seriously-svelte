@@ -24,13 +24,7 @@ export default class Ancestry {
 
 	destroy() {
 		this.unsubscribe();
-		const thing = this._thing;
-		if (!!thing) {
-			if (thing.oneAncestry === this) {
-				thing.oneAncestry = null
-			}
-			this._thing = null;
-		}
+		this._thing = null;
 	}
 
 	signal_rebuildGraph()  { signals.signal_rebuildGraph(this); }

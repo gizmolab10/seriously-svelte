@@ -8,9 +8,7 @@ export default class Relationship extends Datum {
 	idPredicate: string;
 	idParent: string;
 	idChild: string;
-	order: number;
-
-	static get nullRelationship(): Relationship { return new Relationship(k.empty, null, k.empty, k.empty, k.empty, 0); }
+	order: number; 
 
 	constructor(baseID: string, id: string = idDefault, idPredicate: string, idParent: string, idChild: string, order = 0, isRemotelyStored: boolean = false) {
 		super(dbDispatch.db.dbType, baseID, id, isRemotelyStored);

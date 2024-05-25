@@ -899,13 +899,13 @@ export class Hierarchy {
 	}
 
 	access_runtimeCreate(idAccess: string, kind: string) {
-		const access = new Access(idAccess, kind);
-		this.access_byKind[kind] = access;
+		const access = new Access(this.db.dbType, idAccess, kind);
 		this.access_byHID[idAccess.hash()] = access;
+		this.access_byKind[kind] = access;
 	}
 
 	user_runtimeCreate(id: string, name: string, email: string, phone: string) {
-		const user = new User(id, name, email, phone);
+		const user = new User(this.db.dbType, id, name, email, phone);
 		this.user_byHID[id.hash()] = user;
 	}
 

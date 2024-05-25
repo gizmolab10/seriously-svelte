@@ -10,6 +10,8 @@
 	export let thickness = 0;
 	export let thing: Thing;
 	export let radius = 0;
+	const bold = 0.95;
+	const faint = 0.98;
 	const borderStyle = '1px solid';
 	const diameter = (radius + thickness) * 2;
 	const viewBox = `${-thickness}, ${-thickness}, ${diameter}, ${diameter}`;
@@ -19,8 +21,8 @@
 	let borderColor = k.empty;
 	let colorStyles = k.empty;
 	let cursorStyle = k.empty;
+	let transparency = faint;
 	let fillColor = k.empty;
-	let transparency = 0.98;
 	let isHovering = false;
 	let border = k.empty;
 	let rebuilds = 0
@@ -68,16 +70,16 @@
 			if (mouseData.isDouble) {
 				e.ring_radiusOffset = from_center.magnitude - $s_cluster_arc_radius;
 			} else if (mouseData.isUp) {
-				transparency = hit ? 0.9 : 0.98;
+				transparency = hit ? bold : faint;
 				e.ring_priorAngle = e.ring_startAngle = e.ring_radiusOffset = null;
 			} else if (hitTest(from_center)) {
 				const mouseAngle = from_center.angle;
 				e.ring_priorAngle = mouseAngle;
 				e.ring_startAngle = mouseAngle.add_angle_normalized(-$s_ring_angle);
 			}
-			transparency = 0.98;
+			transparency = faint;
 		} else if (!e.ring_startAngle && !e.ring_radiusOffset) {
-			transparency = hit ? 0.9 : 0.98;
+			transparency = hit ? bold : faint;
 		}
 		if (prior != transparency) {
 			updateColors();

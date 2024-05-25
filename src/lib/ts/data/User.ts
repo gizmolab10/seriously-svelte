@@ -5,8 +5,8 @@ export default class User extends RemoteIdentifiable {
 	email: string;
 	phone: string;
 
-	constructor(id: string, name: string, email: string, phone: string, isRemotelyStored: boolean = false) {
-		super(id, isRemotelyStored);
+	constructor(dbType: string, id: string, name: string, email: string, phone: string, isRemotelyStored: boolean = false) {
+		super(dbType, id, isRemotelyStored);
 		this.name = name;
 		this.email = email;
 		this.phone = phone;
