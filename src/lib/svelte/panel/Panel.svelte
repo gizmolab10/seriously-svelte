@@ -1,7 +1,7 @@
 <script>
+	import { e, g, k, u, get, Rect, Size, Point, Thing, debug, ZIndex, signals, onMount, Ancestry } from '../../ts/common/GlobalImports';
 	import { IDButton, Hierarchy, IDPersistant, dbDispatch, debugReact, setContext, persistLocal } from '../../ts/common/GlobalImports';
 	import { s_build, s_isBusy, s_ancestry_focus, s_db_type, s_graphRect, s_id_popupView, s_title_editing } from '../../ts/state/State';
-	import { g, k, u, get, Rect, Size, Point, Thing, debug, ZIndex, signals, onMount, Ancestry } from '../../ts/common/GlobalImports';
 	import { s_show_details, s_things_arrived, s_user_graphOffset, s_layout_asClusters } from '../../ts/state/State';
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import Breadcrumbs from '../panel/Breadcrumbs.svelte';
@@ -11,6 +11,7 @@
 	import BuildNotes from './BuildNotes.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import Controls from './Controls.svelte';
+	import Mouse from '../kit/Mouse.svelte';
 	import Tree from '../tree/Tree.svelte';
 	import Help from '../help/Help.svelte';
 	let chain = ['Panel'];
@@ -36,7 +37,13 @@
 			g.graphOffset_setTo(newOffset);
 			rebuilds += 1;
 		}
-	};
+	}
+
+	function mouseClosure(mouseData) {
+		if (mouseData.isUp) {
+			e.clearRingData();
+		}
+	}
 
 	async function handle_key_down(event) {
 		if ($s_title_editing)		{ return; } // let Title component consume the events
@@ -158,11 +165,13 @@
 							width: {$s_graphRect.size.width}px;
 							height: {$s_graphRect.size.height}px;
 							z-index: {ZIndex.panel};'>
-						{#if $s_layout_asClusters}
-							<Clusters/>
-						{:else}
-							<Tree/>
-						{/if}
+						<Mouse closure={mouseClosure}>
+							{#if $s_layout_asClusters}
+								<Clusters/>
+							{:else}
+								<Tree/>
+							{/if}
+						</Mouse>
 					</div>
 				{/key}
 			{/if}

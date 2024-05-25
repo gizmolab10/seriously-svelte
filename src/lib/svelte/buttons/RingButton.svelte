@@ -17,14 +17,8 @@
 	const viewBox = `${-thickness}, ${-thickness}, ${diameter}, ${diameter}`;
 	const ringOrigin = center.distanceFrom(Point.square(radius + thickness));
 	const svg_ringPath = svgPaths.ring(Point.square(radius), radius + thickness, thickness);
-	let mouse_up_count = $s_mouse_up_count;
-	let borderColor = k.empty;
-	let colorStyles = k.empty;
-	let cursorStyle = k.empty;
 	let transparency = faint;
 	let fillColor = k.empty;
-	let isHovering = false;
-	let border = k.empty;
 	let rebuilds = 0
 	let ringButton;
 
@@ -41,47 +35,59 @@
 		}
 	}
 
-	$: {
+	$: {	// follow mouse movement
 		const from_center = distance_fromCenter_of($s_mouse_location);
 		if (!!from_center) {
+			let sendSignal = false;
 			if (e.ring_radiusOffset != null) {					// expand / shrink
 				const movement = from_center.magnitude - $s_cluster_arc_radius - e.ring_radiusOffset;
 				if (movement) {
+					sendSignal = true;
 					$s_cluster_arc_radius += movement;
-					signals.signal_rebuildGraph_fromFocus();	// reinitializes all component variables
 				}
-			} else if (e.ring_priorAngle != null) {				// rotate
+			}
+			if (e.ring_priorAngle != null) {					// rotate
 				const mouseAngle = from_center.angle;
 				const delta = mouseAngle.add_angle_normalized(-e.ring_priorAngle);
 				if (Math.abs(delta) >= Math.PI / 90) {			// minimum two degree changes
-					$s_ring_angle = mouseAngle.add_angle_normalized(-e.ring_startAngle);
+					sendSignal = true;
 					e.ring_priorAngle = mouseAngle;
-					signals.signal_rebuildGraph_fromFocus();	// reinitializes all component variables
+					$s_ring_angle = mouseAngle.add_angle_normalized(-e.ring_startAngle);
 				}
+			}
+			if (!!sendSignal) {
+				e.ring_cursor = 'move';
+				signals.signal_rebuildGraph_fromFocus();		// destroys this component (variables wiped)
 			}
 		}
 	}
 
 	function closure(mouseData: MouseData) {
 		const from_center = distance_fromCenter_of($s_mouse_location);
+		const priorTransparency = transparency;
 		const hit = hitTest(from_center);
-		const prior = transparency;
 		if (!mouseData.isHover) {
 			if (mouseData.isDouble) {
+				e.ring_cursor = 'move';
 				e.ring_radiusOffset = from_center.magnitude - $s_cluster_arc_radius;
 			} else if (mouseData.isUp) {
+				e.ring_cursor = 'normal';
 				transparency = hit ? bold : faint;
-				e.ring_priorAngle = e.ring_startAngle = e.ring_radiusOffset = null;
-			} else if (hitTest(from_center)) {
-				const mouseAngle = from_center.angle;
-				e.ring_priorAngle = mouseAngle;
-				e.ring_startAngle = mouseAngle.add_angle_normalized(-$s_ring_angle);
+				e.clearRingData();
+			} else {
+				if (hitTest(from_center)) {
+					e.ring_cursor = 'move';
+					const mouseAngle = from_center.angle;
+					e.ring_priorAngle = mouseAngle;
+					e.ring_startAngle = mouseAngle.add_angle_normalized(-$s_ring_angle);
+				}
 			}
 			transparency = faint;
 		} else if (!e.ring_startAngle && !e.ring_radiusOffset) {
+			e.ring_cursor = hit ? 'pointer' : 'normal';
 			transparency = hit ? bold : faint;
 		}
-		if (prior != transparency) {
+		if (transparency != priorTransparency) {
 			updateColors();
 		}
 	}
@@ -111,8 +117,9 @@
 		center={center}
 		width={diameter}
 		height={diameter}
-		name='ring-button'
 		closure={closure}
+		name='ring-button'
+		cursor={e.ring_cursor}
 		detect_longClick={false}>
 		<svg class= 'svg-ring-button' fill={fillColor} viewBox={viewBox}><path d={svg_ringPath}></svg>
 	</Mouse>

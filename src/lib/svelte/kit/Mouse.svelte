@@ -9,11 +9,13 @@
 	export let position = 'absolute';
 	export let center = new Point();
 	export let align_left = true;
+	export let cursor = 'normal';
+	export let name = 'generic';
 	export let style = k.empty;
-	export let name = k.empty;
 	export let height = 16;
 	export let width = 16;
 	let mouse;
+	let mouse_style = style;
 	let mouse_longClick_timer;
 	let mouse_doubleClick_timer;
 	let mouse_priorLocation = Point.zero;
@@ -54,24 +56,24 @@
 	}
 	
 	function handle_pointerDown(event) {
-		if (detect_mouseDown && e.mouse_click_count == 0) {
+		if (detect_mouseDown && e.mouseClickCount_forName(name) == 0) {
 			closure(MouseData.down(event, mouse));
 		}
-		e.mouse_click_count++;
+		e.incrementMouseClickCount_forName(name);
 		if (detect_longClick && !mouse_longClick_timer) {
 			mouse_longClick_timer = setTimeout(() => {
 				closure(MouseData.long(event, mouse));
+				e.setMouseClickCount_forName(name, 0);
 				clearTimeout(mouse_longClick_timer);
 				mouse_longClick_timer = null;
-				e.mouse_click_count = 0;
 			}, k.threshold_longClick);
 		}
 		if (detect_doubleClick && !mouse_doubleClick_timer) {
 			mouse_doubleClick_timer = setTimeout(() => {
-				closure(MouseData.clicks(event, mouse, e.mouse_click_count));
+				closure(MouseData.clicks(event, mouse, e.mouseClickCount_forName(name)));
+				e.setMouseClickCount_forName(name, 0);
 				clearTimeout(mouse_doubleClick_timer);
 				mouse_doubleClick_timer = null;
-				e.mouse_click_count = 0;
 			}, k.threshold_doubleClick);
 		}
 	}
@@ -79,8 +81,9 @@
 	function setupStyle() {
 		const x = center.x - width / 2;
 		const horizontal = align_left ? `left: ${x}` : `right: ${-x}`;
-		style = `${style}
+		mouse_style = `${style}
 			${horizontal}px;
+			cursor: ${cursor};
 			width: ${width}px;
 			height: ${height}px;
 			position: ${position};
@@ -90,7 +93,7 @@
 </script>
 
 <div class='mouse' id={name}
-	bind:this={mouse}
-	style={style}>
+	style={mouse_style}
+	bind:this={mouse}>
 	<slot></slot>
 </div>

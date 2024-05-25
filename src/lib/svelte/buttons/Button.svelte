@@ -22,6 +22,7 @@
 	width={width}
 	height={height}
 	center={center}
+	cursor={cursor}
 	closure={closure}>
 	<button class='button' id={name}
 		style='
