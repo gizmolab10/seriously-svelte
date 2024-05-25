@@ -1,9 +1,9 @@
-import { s_thing_changed, s_resize_count, s_mouse_up_count, s_mouse_location, s_user_graphOffset } from '../state/Stores';
-import { s_graphRect, s_show_details, s_scale_factor, s_rebuild_count, s_cluster_arc_radius } from '../state/Stores';
-import { k, s, u, get, Rect, Point, debug, builds, debugReact } from '../common/GlobalImports';
+import { s_thing_changed, s_resize_count, s_mouse_up_count, s_mouse_location, s_user_graphOffset } from './Stores';
+import { k, u, get, Rect, Point, debug, builds, debugReact } from '../common/GlobalImports';
+import { s_graphRect, s_show_details, s_scale_factor, s_rebuild_count } from './Stores';
 import { dbDispatch, persistLocal, IDPersistant } from '../common/GlobalImports';
 
-class Globals {
+class Global {
 
 	setup() {
 		builds.setup();
@@ -78,4 +78,4 @@ class Globals {
 
 }
 
-export let g = new Globals();
+export let g = new Global();

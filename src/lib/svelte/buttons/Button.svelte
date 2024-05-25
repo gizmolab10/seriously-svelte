@@ -26,15 +26,15 @@
 	closure={closure}>
 	<button class='button' id={name}
 		style='
-			color: {color};
-			cursor: {cursor};
-			border: {border};
-			width: {width}px;
-			z-index: {zindex};
-			height: {height}px;
-			position: {position};
-			border-radius: {height / 2}px;
-			background-color: {background_color};'>
+			color:{color};
+			cursor:{cursor};
+			border:{border};
+			width:{width}px;
+			z-index:{zindex};
+			height:{height}px;
+			position:{position};
+			border-radius:{height / 2}px;
+			background-color:{background_color};'>
 		<slot></slot>
 	</button>
 </Mouse>

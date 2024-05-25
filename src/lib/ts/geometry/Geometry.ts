@@ -1,5 +1,5 @@
 import { Quadrant } from '../common/Enumerations';
-import { u } from '../common/Utilities';
+import { u } from '../managers/Utilities';
 
 export class Point {
 	x: number;

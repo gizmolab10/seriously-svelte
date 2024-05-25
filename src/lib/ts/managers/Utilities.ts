@@ -1,10 +1,10 @@
 import { s_scale_factor, s_thing_fontFamily } from '../state/Stores';
-import { Angle, Quadrant, IDBrowser } from './Enumerations';
+import { Angle, Quadrant, IDBrowser } from '../common/Enumerations';
 import { Rect, Size, Point } from '../geometry/Geometry';
 import Identifiable from "../structures/Identifiable";
 import Ancestry from '../structures/Ancestry';
+import { k } from '../common/Constants';
 import { get } from 'svelte/store';
-import { k } from './Constants';
 
 class Utilities {
 	noop() {}
