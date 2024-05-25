@@ -1,5 +1,5 @@
 <script>
-	import { s, g, k, u, get, Rect, Size, Point, Thing, debug, ZIndex, signals, onMount, Ancestry } from '../../ts/common/GlobalImports';
+	import { g, k, s, u, get, Rect, Size, Point, Thing, debug, ZIndex, signals, onMount, Ancestry } from '../../ts/common/GlobalImports';
 	import { IDButton, Hierarchy, IDPersistant, dbDispatch, debugReact, setContext, persistLocal } from '../../ts/common/GlobalImports';
 	import { s_build, s_isBusy, s_ancestry_focus, s_db_type, s_graphRect, s_id_popupView, s_title_editing } from '../../ts/state/Stores';
 	import { s_show_details, s_things_arrived, s_user_graphOffset, s_layout_asClusters } from '../../ts/state/Stores';
@@ -39,12 +39,6 @@
 		}
 	}
 
-	function mouseClosure(mouseData) {
-		if (mouseData.isUp) {
-			s.clearRingData();
-		}
-	}
-
 	async function handle_key_down(event) {
 		if ($s_title_editing)		{ return; } // let Title component consume the events
 		if (event.key == undefined)	{ alert('no key for ' + event.type); return; }
@@ -57,6 +51,12 @@
 				case '[': dbDispatch.db_change_toNext(key == ']'); break;
 				default:  await h.handle_key_down(event); break;
 			}
+		}
+	}
+
+	function mouseClosure(mouseData) {
+		if (mouseData.isUp) {
+			s.resetRingState();
 		}
 	}
 

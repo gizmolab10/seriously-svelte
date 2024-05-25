@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s, k, u, Thing, Point, ZIndex, onMount, signals, svgPaths, MouseData, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
+	import { k, s, u, Thing, Point, ZIndex, onMount, signals, svgPaths, MouseData, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
 	import { s_thing_changed, s_ancestry_focus, s_ring_angle, s_cluster_arc_radius } from '../../ts/state/Stores';
 	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/Stores';
 	import Mouse from '../kit/Mouse.svelte';
@@ -68,18 +68,18 @@
 		const hit = hitTest(from_center);
 		if (!mouseData.isHover) {
 			if (mouseData.isDouble) {
-				s.ring_cursor = 'move';
 				s.ring_radiusOffset = from_center.magnitude - $s_cluster_arc_radius;
+				s.ring_cursor = 'move';
 			} else if (mouseData.isUp) {
-				s.ring_cursor = 'normal';
 				transparency = hit ? bold : faint;
-				s.clearRingData();
+				s.ring_cursor = 'normal';
+				s.resetRingState();
 			} else {
 				if (hitTest(from_center)) {
-					s.ring_cursor = 'move';
 					const mouseAngle = from_center.angle;
 					s.ring_priorAngle = mouseAngle;
 					s.ring_startAngle = mouseAngle.add_angle_normalized(-$s_ring_angle);
+					s.ring_cursor = 'move';
 				}
 			}
 			transparency = faint;

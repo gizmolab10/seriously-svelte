@@ -49,6 +49,6 @@ export {
 	Angle, Quadrant, TreeLayout, ChildMapRect, ClusterLayout,
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactKind,
 	ZIndex, PredicateKind, GraphRelations, CreationOptions, Alteration,
-	s, g, k, u, get, builds, onMount, onDestroy, setContext, getContext,
+	g, k, s, u, get, builds, onMount, onDestroy, setContext, getContext,
 	IDLine, IDTool, IDTrait, IDSignal, IDWrapper, IDButton, IDBrowser, IDPersistant,
 };

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s, k, u, Rect, Size, Point, ZIndex, onMount, MouseData } from '../../ts/common/GlobalImports';
+	import { k, s, u, Rect, Size, Point, ZIndex, onMount, MouseData } from '../../ts/common/GlobalImports';
 	import { s_mouse_location } from '../../ts/state/Stores';
 	export let closure = (mouseData) => {};
 	export let detect_doubleClick = true;
