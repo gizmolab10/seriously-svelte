@@ -1,7 +1,7 @@
 import { k, u, get, User, Thing, Grabs, debug, Access, IDTool, IDTrait, signals, Ancestry } from '../common/GlobalImports';
 import { Wrapper, Predicate, Relationship, Alteration, AlterationState, CreationOptions } from '../common/GlobalImports';
-import { s_ancestries_grabbed, s_things_arrived, s_ancestry_editingTools } from '../state/State';
-import { s_isBusy, s_altering, s_ancestry_focus, s_title_editing } from '../state/State';
+import { s_ancestries_grabbed, s_things_arrived, s_ancestry_editingTools } from '../state/Stores';
+import { s_isBusy, s_altering, s_ancestry_focus, s_title_editing } from '../state/Stores';
 import { idDefault } from "../structures/Identifiable";
 import DBInterface from '../db/DBInterface';
 
@@ -298,7 +298,7 @@ export class Hierarchy {
 		const thing = this.thing_bulkAlias_forTitle(baseID);
 		if (!!thing) {
 			// id is of the root thing from bulk fetch all
-			// i.e., it is the root id from another baseID
+			// i.s., it is the root id from another baseID
 			// need a second thing lookup by this id
 			// so children relationships will work
 			this.thing_byHID[id.hash()] = thing;

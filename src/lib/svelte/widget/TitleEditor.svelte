@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { signals, Wrapper, IDWrapper, dbDispatch, SeriouslyRange } from '../../ts/common/GlobalImports';
 	import { k, u, Point, Thing, debug, ZIndex, onMount, Angle } from '../../ts/common/GlobalImports';
-	import { s_thing_changed, s_title_editing, s_ancestries_grabbed } from '../../ts/state/State';
-	import { s_layout_asClusters, s_ancestry_editingTools } from '../../ts/state/State';
+	import { s_thing_changed, s_title_editing, s_ancestries_grabbed } from '../../ts/state/Stores';
+	import { s_layout_asClusters, s_ancestry_editingTools } from '../../ts/state/Stores';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
 	export let forward = true;

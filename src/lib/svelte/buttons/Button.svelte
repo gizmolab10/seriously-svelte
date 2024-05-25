@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, u, Point, ZIndex } from '../../ts/common/GlobalImports';
-	import { s_mouse_location } from '../../ts/state/State';
+	import { s_mouse_location } from '../../ts/state/Stores';
 	import Mouse from '../kit/Mouse.svelte';
 	export let background_color = 'transparent';
 	export let closure = (mouseData) => {};

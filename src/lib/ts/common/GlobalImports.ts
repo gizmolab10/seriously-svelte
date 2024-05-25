@@ -13,7 +13,7 @@ import { Hierarchy } from '../managers/Hierarchy';
 import { createPopper } from '@popperjs/core';
 import { dbDispatch } from '../db/DBDispatch';
 import { transparentize } from 'color2k';
-import { e } from '../managers/Events';
+import { s } from '../state/State';
 import { get } from 'svelte/store';
 import { builds } from './Builds';
 import { u } from './Utilities';
@@ -49,6 +49,6 @@ export {
 	Angle, Quadrant, TreeLayout, ChildMapRect, ClusterLayout,
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactKind,
 	ZIndex, PredicateKind, GraphRelations, CreationOptions, Alteration,
-	e, g, k, u, get, builds, onMount, onDestroy, setContext, getContext,
+	s, g, k, u, get, builds, onMount, onDestroy, setContext, getContext,
 	IDLine, IDTool, IDTrait, IDSignal, IDWrapper, IDButton, IDBrowser, IDPersistant,
 };

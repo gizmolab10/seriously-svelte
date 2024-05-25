@@ -1,5 +1,5 @@
 <script>
-	import { s_thing_changed, s_layout_asClusters, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/State';
+	import { s_thing_changed, s_layout_asClusters, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/Stores';
 	import { onDestroy, dbDispatch, Alteration, createPopper } from '../../ts/common/GlobalImports';
 	import { Wrapper, onMount, signals, svgPaths, Direction } from '../../ts/common/GlobalImports';
 	import { k, u, Rect, Size, Point, Thing, debug, ZIndex } from '../../ts/common/GlobalImports';

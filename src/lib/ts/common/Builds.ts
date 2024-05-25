@@ -1,4 +1,4 @@
-import { s_build } from '../state/State';
+import { s_build } from '../state/Stores';
 
 class Builds {
 	notes: { [id: number]: Array<string> } = {};

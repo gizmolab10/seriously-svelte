@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, Rect, Size, Point, debug, ZIndex, signals, svgPaths } from '../../ts/common/GlobalImports';
 	import { Wrapper, Ancestry, debugReact, IDWrapper, IDLine } from '../../ts/common/GlobalImports';
-	import { s_thing_changed } from '../../ts/state/State';
+	import { s_thing_changed } from '../../ts/state/Stores';
 	import Circle from '../kit/Circle.svelte';
 	import Box from '../kit/Box.svelte';
     export let ancestry;

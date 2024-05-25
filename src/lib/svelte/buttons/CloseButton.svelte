@@ -1,6 +1,6 @@
 <script>
 	import { u, Size, Point, ZIndex, svgPaths } from '../../ts/common/GlobalImports';
-    import { s_id_popupView } from '../../ts/state/State';
+    import { s_id_popupView } from '../../ts/state/Stores';
 	import Mouse from '../kit/Mouse.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
     export let size = 20;

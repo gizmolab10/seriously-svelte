@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, Thing, onMount, signals, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
-	import { s_thing_changed, s_ancestry_focus } from '../../ts/state/State';
+	import { s_thing_changed, s_ancestry_focus } from '../../ts/state/Stores';
     export let ancestry;
 	const borderStyle = '1px solid';
 	let borderColor = k.color_background;

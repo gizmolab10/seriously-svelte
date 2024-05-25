@@ -1,8 +1,8 @@
 import { g, k, u, Point, signals, Ancestry, dbDispatch, GraphRelations } from '../common/GlobalImports'
-import { s_ring_angle, s_cluster_arc_radius, s_layout_asClusters } from '../state/State';
-import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/State';
-import { s_thing_fontFamily, s_graph_relations } from '../state/State';
-import { s_ancestries_grabbed, s_ancestries_expanded } from '../state/State';
+import { s_ring_angle, s_cluster_arc_radius, s_layout_asClusters } from '../state/Stores';
+import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/Stores';
+import { s_thing_fontFamily, s_graph_relations } from '../state/Stores';
+import { s_ancestries_grabbed, s_ancestries_expanded } from '../state/Stores';
 import { h } from '../db/DBDispatch';
 
 export enum IDPersistant {

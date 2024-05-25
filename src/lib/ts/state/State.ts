@@ -1,48 +1,17 @@
-import { Rect, Point, Ancestry, TitleState, AlterationState } from '../common/GlobalImports';
-import { writable } from 'svelte/store';
-import { signals } from './Signals';
 
-export const s_altering				 = writable<AlterationState | null>();
-export const s_title_editing		 = writable<TitleState | null>();
-export const s_ancestry_editingTools = writable<Ancestry | null>();
-export const s_ancestries_expanded	 = writable<Array<Ancestry>>();
-export const s_ancestries_grabbed	 = writable<Array<Ancestry>>();
-export const s_db_loadTime 			 = writable<string | null>();
-export const s_id_popupView			 = writable<string | null>();
-export const s_ancestry_focus		 = writable<Ancestry>();
-export const s_layout_asClusters	 = writable<boolean>();
-export const s_things_arrived		 = writable<boolean>();
-export const s_show_details			 = writable<boolean>();
-export const s_isBusy				 = writable<boolean>();
-export const s_db_type				 = writable<string>();
-export const s_thing_changed		 = writable<string>();
-export const s_graph_relations		 = writable<string>();
-export const s_thing_fontFamily		 = writable<string>();
-export const s_cluster_arc_radius	 = writable<number>();
-export const s_mouse_up_count		 = writable<number>();
-export const s_rebuild_count		 = writable<number>();
-export const s_resize_count			 = writable<number>();
-export const s_scale_factor			 = writable<number>();
-export const s_ring_angle			 = writable<number>();
-export const s_build				 = writable<number>();
-export const s_user_graphOffset		 = writable<Point>();
-export const s_mouse_location		 = writable<Point>();
-export const s_graphRect			 = writable<Rect>();
+class State {
+	rebuild_count = 0;
+	ring_cursor = 'normal';
+	ring_startAngle: number | null = null;		// angle at location of mouse DOWN
+	ring_priorAngle: number | null = null;		// angle at location of previous mouse MOVE
+	ring_radiusOffset: number | null = null;	// distance from arc radius to location of mouse DOWN
+	mouse_click_counts: {[name: string]: number} = {};
 
-let interval: NodeJS.Timeout | null = null;
+	mouseClickCount_forName(name: string) { return this.mouse_click_counts[name]; }
+	incrementMouseClickCount_forName(name: string) { this.mouse_click_counts[name] += 1; }
+	clearRingData() { this.ring_priorAngle = this.ring_startAngle = this.ring_radiusOffset = null; }
+	setMouseClickCount_forName(name: string, count: number) { this.mouse_click_counts[name] = count; }
 
-s_altering.subscribe((state: AlterationState | null) => {
-	if (interval) {
-		clearInterval(interval);
-		interval = null;
-	}
-	if (state) {
-		let blink = true;
-		interval = setInterval(() => {
-			signals.signal_altering(blink ? state : null);
-			blink = !blink;
-		}, 500)
-	} else {
-		signals.signal_altering(null);
-	}
-})
+}
+
+export let s = new State();

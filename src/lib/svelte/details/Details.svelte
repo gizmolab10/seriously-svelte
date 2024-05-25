@@ -1,5 +1,5 @@
 <script>
-	import { s_graphRect, s_db_loadTime } from '../../ts/state/State';
+	import { s_graphRect, s_db_loadTime } from '../../ts/state/Stores';
 	import { k, u, ZIndex } from '../../ts/common/GlobalImports';
 	import Color from './Color.svelte';
 	import Data from './Data.svelte';

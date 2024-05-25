@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { e, k, u, Rect, Size, Point, ZIndex, onMount, MouseData } from '../../ts/common/GlobalImports';
-	import { s_mouse_location } from '../../ts/state/State';
+	import { s, k, u, Rect, Size, Point, ZIndex, onMount, MouseData } from '../../ts/common/GlobalImports';
+	import { s_mouse_location } from '../../ts/state/Stores';
 	export let closure = (mouseData) => {};
 	export let detect_doubleClick = true;
 	export let detect_longClick = true;
@@ -56,22 +56,22 @@
 	}
 	
 	function handle_pointerDown(event) {
-		if (detect_mouseDown && e.mouseClickCount_forName(name) == 0) {
+		if (detect_mouseDown && s.mouseClickCount_forName(name) == 0) {
 			closure(MouseData.down(event, mouse));
 		}
-		e.incrementMouseClickCount_forName(name);
+		s.incrementMouseClickCount_forName(name);
 		if (detect_longClick && !mouse_longClick_timer) {
 			mouse_longClick_timer = setTimeout(() => {
 				closure(MouseData.long(event, mouse));
-				e.setMouseClickCount_forName(name, 0);
+				s.setMouseClickCount_forName(name, 0);
 				clearTimeout(mouse_longClick_timer);
 				mouse_longClick_timer = null;
 			}, k.threshold_longClick);
 		}
 		if (detect_doubleClick && !mouse_doubleClick_timer) {
 			mouse_doubleClick_timer = setTimeout(() => {
-				closure(MouseData.clicks(event, mouse, e.mouseClickCount_forName(name)));
-				e.setMouseClickCount_forName(name, 0);
+				closure(MouseData.clicks(event, mouse, s.mouseClickCount_forName(name)));
+				s.setMouseClickCount_forName(name, 0);
 				clearTimeout(mouse_doubleClick_timer);
 				mouse_doubleClick_timer = null;
 			}, k.threshold_doubleClick);

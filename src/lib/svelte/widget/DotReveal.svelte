@@ -1,7 +1,7 @@
 <script>
 	import { Wrapper, IDWrapper, MouseData, Direction, onDestroy, dbDispatch, Predicate } from "../../ts/common/GlobalImports";
 	import { k, u, get, Size, Thing, Point, debug, ZIndex, onMount, signals, svgPaths } from "../../ts/common/GlobalImports";
-	import { s_ancestries_expanded, s_altering, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/State';
+	import { s_ancestries_expanded, s_altering, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/Stores';
 	import { h } from '../../ts/db/DBDispatch';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import Mouse from '../kit/Mouse.svelte';

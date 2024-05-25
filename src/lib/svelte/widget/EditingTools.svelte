@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { MouseData, Direction, dbDispatch, Alteration, transparentize, AlterationState } from '../../ts/common/GlobalImports';
 	import { k, u, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, svgPaths, signals } from '../../ts/common/GlobalImports';
-	import { s_ancestry_editingTools, s_layout_asClusters } from '../../ts/state/State';
-	import { s_altering, s_graphRect, s_show_details } from '../../ts/state/State';
+	import { s_ancestry_editingTools, s_layout_asClusters } from '../../ts/state/Stores';
+	import { s_altering, s_graphRect, s_show_details } from '../../ts/state/Stores';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
 	import TriangleButton from '../buttons/TriangleButton.svelte';
 	import DotReveal from '../widget/DotReveal.svelte';

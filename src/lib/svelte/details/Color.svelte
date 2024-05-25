@@ -1,6 +1,6 @@
 <script>
 	import { g, k, u, ZIndex, onMount, signals } from '../../ts/common/GlobalImports';
-	import { s_thing_changed, s_ancestries_grabbed } from '../../ts/state/State';
+	import { s_thing_changed, s_ancestries_grabbed } from '../../ts/state/Stores';
 	import ColorPicker from 'svelte-awesome-color-picker';
 	const selectorSize = k.dot_size;
 	const pickerSize = 100;
@@ -23,9 +23,9 @@
 
 	function handleColorChange(event) {
 		event.preventDefault();
-		e.rebuild_count += 1;
+		s.rebuild_count += 1;
 		thing.color = event.detail.hex;
-		$s_thing_changed = `${thing.id}${k.genericSeparator}${e.rebuild_count}`;
+		$s_thing_changed = `${thing.id}${k.genericSeparator}${s.rebuild_count}`;
 		if (!!persistenceTimer) {
 			clearTimeout(persistenceTimer);		// each color change discards and restarts the timer
 			persistenceTimer = null;

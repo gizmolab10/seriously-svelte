@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { e, k, u, Thing, Point, ZIndex, onMount, signals, svgPaths, MouseData, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
-	import { s_thing_changed, s_ancestry_focus, s_ring_angle, s_cluster_arc_radius } from '../../ts/state/State';
-	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/State';
+	import { s, k, u, Thing, Point, ZIndex, onMount, signals, svgPaths, MouseData, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
+	import { s_thing_changed, s_ancestry_focus, s_ring_angle, s_cluster_arc_radius } from '../../ts/state/Stores';
+	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/Stores';
 	import Mouse from '../kit/Mouse.svelte';
 	export let zindex = ZIndex.dots;
 	export let center = Point.zero;
@@ -39,24 +39,24 @@
 		const from_center = distance_fromCenter_of($s_mouse_location);
 		if (!!from_center) {
 			let sendSignal = false;
-			if (e.ring_radiusOffset != null) {					// expand / shrink
-				const movement = from_center.magnitude - $s_cluster_arc_radius - e.ring_radiusOffset;
+			if (s.ring_radiusOffset != null) {					// expand / shrink
+				const movement = from_center.magnitude - $s_cluster_arc_radius - s.ring_radiusOffset;
 				if (movement) {
 					sendSignal = true;
 					$s_cluster_arc_radius += movement;
 				}
 			}
-			if (e.ring_priorAngle != null) {					// rotate
+			if (s.ring_priorAngle != null) {					// rotate
 				const mouseAngle = from_center.angle;
-				const delta = mouseAngle.add_angle_normalized(-e.ring_priorAngle);
+				const delta = mouseAngle.add_angle_normalized(-s.ring_priorAngle);
 				if (Math.abs(delta) >= Math.PI / 90) {			// minimum two degree changes
 					sendSignal = true;
-					e.ring_priorAngle = mouseAngle;
-					$s_ring_angle = mouseAngle.add_angle_normalized(-e.ring_startAngle);
+					s.ring_priorAngle = mouseAngle;
+					$s_ring_angle = mouseAngle.add_angle_normalized(-s.ring_startAngle);
 				}
 			}
 			if (!!sendSignal) {
-				e.ring_cursor = 'move';
+				s.ring_cursor = 'move';
 				signals.signal_rebuildGraph_fromFocus();		// destroys this component (variables wiped)
 			}
 		}
@@ -68,23 +68,23 @@
 		const hit = hitTest(from_center);
 		if (!mouseData.isHover) {
 			if (mouseData.isDouble) {
-				e.ring_cursor = 'move';
-				e.ring_radiusOffset = from_center.magnitude - $s_cluster_arc_radius;
+				s.ring_cursor = 'move';
+				s.ring_radiusOffset = from_center.magnitude - $s_cluster_arc_radius;
 			} else if (mouseData.isUp) {
-				e.ring_cursor = 'normal';
+				s.ring_cursor = 'normal';
 				transparency = hit ? bold : faint;
-				e.clearRingData();
+				s.clearRingData();
 			} else {
 				if (hitTest(from_center)) {
-					e.ring_cursor = 'move';
+					s.ring_cursor = 'move';
 					const mouseAngle = from_center.angle;
-					e.ring_priorAngle = mouseAngle;
-					e.ring_startAngle = mouseAngle.add_angle_normalized(-$s_ring_angle);
+					s.ring_priorAngle = mouseAngle;
+					s.ring_startAngle = mouseAngle.add_angle_normalized(-$s_ring_angle);
 				}
 			}
 			transparency = faint;
-		} else if (!e.ring_startAngle && !e.ring_radiusOffset) {
-			e.ring_cursor = hit ? 'pointer' : 'normal';
+		} else if (!s.ring_startAngle && !s.ring_radiusOffset) {
+			s.ring_cursor = hit ? 'pointer' : 'normal';
 			transparency = hit ? bold : faint;
 		}
 		if (transparency != priorTransparency) {
@@ -119,7 +119,7 @@
 		height={diameter}
 		closure={closure}
 		name='ring-button'
-		cursor={e.ring_cursor}
+		cursor={s.ring_cursor}
 		detect_longClick={false}>
 		<svg class= 'svg-ring-button' fill={fillColor} viewBox={viewBox}><path d={svg_ringPath}></svg>
 	</Mouse>
