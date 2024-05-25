@@ -14,11 +14,11 @@ import { createPopper } from '@popperjs/core';
 import { dbDispatch } from '../db/DBDispatch';
 import { u } from '../managers/Utilities';
 import { transparentize } from 'color2k';
-import { s } from '../state/State';
+import { g } from '../state/Global';
 import { get } from 'svelte/store';
+import { s } from '../state/State';
 import { builds } from './Builds';
 import { k } from './Constants';
-import { g } from '../state/Global';
 
 import AlterationState from '../state/AlterationState';
 import ClusterLayout from '../geometry/ClusterLayout';

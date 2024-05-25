@@ -19,7 +19,7 @@
 	function button_closure_forID(mouseData, id) {
 		if (mouseData.isHover) {
 
-		} else if (mouseData.isDown) {
+		} else if (mouseData.isUp) {
 			switch (id) {
 				case IDButton.bigger: width = g.zoomBy(1.1) - 20; break;
 				case IDButton.smaller: width = g.zoomBy(0.9) - 20; break;

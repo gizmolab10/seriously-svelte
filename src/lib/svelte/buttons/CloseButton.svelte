@@ -14,7 +14,7 @@
 			const isHovering = !mouseData.isOut;
 			fill = isHovering ? 'black' : 'white';
 			stroke = isHovering ? 'white' : 'black';
-		} else if (mouseData.isDown) {
+		} else if (mouseData.isUp) {
 			$s_id_popupView = null;
 		}
 	}
@@ -32,9 +32,9 @@
 <Mouse
 	width={size}
 	height={size}
+	closure={closure}
 	align_left={false}
 	name='close-button'
-	closure={closure}
 	center={new Point(0, size)}>
     <SVGD3 name='close'
 		fill={fill}
