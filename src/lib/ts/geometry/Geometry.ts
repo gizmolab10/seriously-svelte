@@ -97,12 +97,18 @@ export class Rect {
 	offsetBy(delta: Point):	   Rect { return new Rect(this.origin.offsetBy(delta), this.size); }
 	offsetByY(y: number):	   Rect { return new Rect(this.origin.offsetByY(y), this.size); }
 	offsetByX(x: number):	   Rect { return new Rect(this.origin.offsetByX(x), this.size); }
-	contains(point: Point): boolean { return point.x.isBetween(this.origin.x, this.extent.x, true) && point.y.isBetween(this.origin.y, this.extent.y, true); }
 
 	expandedBy(expansion: Point): Rect {
 		const size = this.size.expandedBy(expansion);
 		const origin = this.origin.distanceFrom(expansion);
 		return new Rect(origin, size)
+	}
+
+	contains(point: Point): boolean {
+		const origin = this.origin;
+		const extent = this.extent;
+		return point.x.isBetween(origin.x, extent.x, true) && 
+			   point.y.isBetween(origin.y, extent.y, true);
 	}
 
 	cornersForAngle(angle: number): [Point, Point] {

@@ -268,7 +268,7 @@
 					strokeColor={isDisabledFor(IDTool.next) ? k.color_disabled : parentSensitiveColor}
 					hover_closure={(isHovering) => { return fillColorsFor(IDTool.next, isHovering) }}
 					mouse_closure={(mouseData) => handle_mouse_event(mouseData, IDTool.next)}
-					cursor={isDisabledFor(IDTool.next) ? 'normal' : 'pointer'}
+					cursor={isDisabledFor(IDTool.next) ? k.cursor_default : 'pointer'}
 					extraPath={svgPaths.circle_atOffset(toolDiameter, 4)}
 					center={getC(IDTool.next)}
 					direction={Direction.up}
@@ -278,7 +278,7 @@
 					strokeColor={isDisabledFor(IDTool.delete_parent) ? k.color_disabled : parentSensitiveColor}
 					hover_closure={(isHovering) => { return fillColorsFor(IDTool.delete_parent, isHovering) }}
 					mouse_closure={(mouseData) => handle_mouse_event(mouseData, IDTool.delete_parent)}
-					cursor={isDisabledFor(IDTool.delete_parent) ? 'normal' : 'pointer'}
+					cursor={isDisabledFor(IDTool.delete_parent) ? k.cursor_default : 'pointer'}
 					extraPath={svgPaths.dash(toolDiameter, 4)}
 					center={getC(IDTool.delete_parent)}
 					direction={Direction.left}
@@ -288,7 +288,7 @@
 					hover_closure={(isHovering) => { return fillColorsFor(IDTool.add_parent, isHovering) }}
 					mouse_closure={(mouseData) => handle_mouse_event(mouseData, IDTool.add_parent)}
 					strokeColor={isDisabledFor(IDTool.add_parent) ? k.color_disabled : color}
-					cursor={isDisabledFor(IDTool.add_parent) ? 'normal' : 'pointer'}
+					cursor={isDisabledFor(IDTool.add_parent) ? k.cursor_default : 'pointer'}
 					extraPath={svgPaths.t_cross(toolDiameter, 3)}
 					center={getC(IDTool.add_parent)}
 					direction={Direction.left}

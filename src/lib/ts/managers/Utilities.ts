@@ -14,18 +14,12 @@ class Utilities {
 	concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return [...a, ...b]; }
 	strip_falsies(array: Array<any>): Array<any> { return array.filter(element => !!element); }
 	location_ofMouseEvent(event: MouseEvent) { return new Point(event.clientX, event.clientY); }
-	quadrant_startAngle(angle: number): number { return this.startAngle_ofQuadrant(this.quadrant_ofNotNormalized_angle(angle)); }
-	sort_byOrder(array: Array<Ancestry>) { return array.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
 	strip_invalid(array: Array<any>): Array<any> { return this.strip_identifiableDuplicates(this.strip_falsies(array)); }
-
-	boundingRectFor(element: HTMLElement): Rect | null{
-		return Rect.createFromDOMRect(element.getBoundingClientRect());
-	}
-
-	uniquely_concatenateArrays(a: Array<any>, b: Array<any>): Array<any> {
-		return this.strip_invalid(this.concatenateArrays(a, b));
-	}
-
+	sort_byOrder(array: Array<Ancestry>) { return array.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
+	quadrant_startAngle(angle: number): number { return this.startAngle_ofQuadrant(this.quadrant_ofNotNormalized_angle(angle)); }
+	uniquely_concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return this.strip_invalid(this.concatenateArrays(a, b)); }
+	boundingRectFor(element: HTMLElement | null): Rect | null { return !element ? null : Rect.createFromDOMRect(element.getBoundingClientRect()); }
+	
 	degrees_of(angle: number) {
 		const degrees = this.normalized_angle(angle) * 180 / Angle.half;
 		return this.formatter_toFixed(1).format(degrees);
@@ -44,6 +38,11 @@ class Utilities {
 	get isServerLocal(): boolean {
 		const hostname = window.location.hostname;
 		return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "0.0.0.0";
+	}
+
+	rect_forElement_contains(element: HTMLElement | null, point: Point): boolean {
+		const rect = this.boundingRectFor(element);
+		return rect?.contains(point) ?? false;
 	}
 
 	apply(startStop: (flag: boolean) => void, callback: () => void): void {
@@ -70,14 +69,6 @@ class Utilities {
 		if (index !== -1) {
 			from.splice(index, 1);
 		}
-	}
-
-	hitTestFor(element: HTMLElement | null, at: Point): boolean {
-		if (element) {
-			const elementRect = this.boundingRectFor(element);
-			return elementRect?.contains(at) ?? false;
-		}
-		return false;
 	}
 
 	formatter_toFixed(precision: number) {

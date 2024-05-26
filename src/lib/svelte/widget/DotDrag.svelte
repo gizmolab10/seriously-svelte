@@ -36,7 +36,7 @@
 			thing = ancestry.thing;
 		}
 		updateAncestries();
-		updateColorsForHover(false);
+		setIsHovering_updateColors(false);
 		popper = createPopper(button, tooltip, { placement: 'bottom' });
         const handleAltering = signals.handle_altering((state) => {
 			const applyFlag = $s_ancestry_editingTools && !!ancestry && ancestry.things_canAlter_asParentOf_toolsAncestry;
@@ -51,7 +51,7 @@
 
 	$: {
 		if (thing?.id == $s_thing_changed.split(k.genericSeparator)[0]) {
-			updateColorsForHover(false);
+			setIsHovering_updateColors(false);
 			rebuilds += 1;
 		}
 	}
@@ -70,16 +70,16 @@
 		updateColors();
 	}
 
-	function updateColorsForHover(flag) {
-		if (isHovering != flag) {
-			isHovering = flag;
+	function setIsHovering_updateColors(hovering) {
+		if (isHovering != hovering) {
+			isHovering = hovering;
 			updateColors();
 		}
 	}
 
 	function closure(mouseData) {
 		if (mouseData.isHover) {
-			updateColorsForHover(!mouseData.isOut);
+			setIsHovering_updateColors(!mouseData.isOut);
 		} else if (mouseData.isUp) {
 			ancestry?.handle_singleClick_onDragDot(mouseData.event.shiftKey);
 		} else if (mouseData.isLong) {
@@ -129,9 +129,9 @@
 		width={size}
 		height={size}
 		center={center}
-		name='dot-drag-mouse'
-		closure={closure}>
-		<button class='dot-drag'
+		closure={closure}
+		name='drag-mouse'>
+		<button class='drag-button'
 			bind:this={button}
 			on:contextmenu={handle_context_menu}
 			style='
@@ -142,7 +142,7 @@
 				position: absolute;
 				width: {size / 2}px;
 			'>
-			<SVGD3 name='svg-drag'
+			<SVGD3 name='drag-svg'
 				width={size}
 				height={size}
 				fill={fillColor}

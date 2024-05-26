@@ -3,6 +3,7 @@
     import { s_id_popupView } from '../../ts/state/Stores';
 	import Mouse from '../kit/Mouse.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
+    export let name = 'generic close';
     export let size = 20;
 	let fill = 'white';
 	let stroke = 'black';
@@ -21,20 +22,13 @@
 
 </script>
 
-<style>
-	.close-button {
-		border: 0px;
-		cursor: pointer;
-		position: absolute;
-	}
-</style>
-
 <Mouse
+	name={name}
 	width={size}
 	height={size}
+	cursor='pointer'
 	closure={closure}
 	align_left={false}
-	name='close-button'
 	center={new Point(0, size)}>
     <SVGD3 name='close'
 		fill={fill}

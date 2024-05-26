@@ -69,12 +69,13 @@
 	function updateColors() {
 		ancestry.thing.updateColorAttributes(ancestry);
 		const collapsedOrGrabbed = !ancestry.isExpanded || ancestry.isGrabbed;
-		fillColor = ancestry.dotColor(collapsedOrGrabbed != isHovering, ancestry);
-		insideFillColor = ancestry.dotColor(collapsedOrGrabbed == isHovering, ancestry);
+		fillColor = ancestry.dotColor(collapsedOrGrabbed != isHovering);
+		insideFillColor = ancestry.dotColor(collapsedOrGrabbed == isHovering);
 	}
 
 	function setIsHovering_updateColors(hovering) {
 		if (isHovering != hovering) {
+			console.log(`HOVER ${hovering} ${ancestry.title}`)
 			isHovering = hovering;
 			updateColors();
 			rebuilds += 1;
@@ -101,67 +102,68 @@
 
 </script>
 
-<style>
-	.dot {
-		border: none;
-		cursor: pointer;
-		background: none;
-		position: absolute;
-	}
-</style>
-
 {#key rebuilds}
 	<Mouse
 		width={size}
 		height={size}
 		center={center}
-		name='dot-reveal-mouse'
+		name={`reveal ${ancestry.ancestryString}`}
 		closure={closure}>
-		<button class='dot'
+		<button
+			class='reveal-button'
 			bind:this={dotReveal}
 			on:contextmenu={handle_context_menu}
 			style='
+				border: none;
+				cursor: pointer;
 				width: {size}px;
 				height: {size}px;
-			'>
+				background: none;
+				position: absolute;
+				background-color: transparent;'>
 			{#key revealDotPath}
-				<SVGD3 name='svg-reveal'
-					fill={debug.lines ? 'transparent' : fillColor}
-					svg_path={revealDotPath}
-					stroke={strokeColor}
-					height={size}
+				<SVGD3
 					width={size}
+					height={size}
+					name='reveal-svg'
+					stroke={strokeColor}
+					svg_path={revealDotPath}
+					fill={debug.lines ? 'transparent' : fillColor}
 				/>
 			{/key}
 			{#if hasInsidePath}
-				<div class='reveal-inside' style='
-					left:{insideOffset}px;
-					top:{insideOffset}px;
-					position:absolute;
-					height:{size}px;
-					width:{size}px;'>
-					<SVGD3 name='svg-inside'
-						stroke={insideFillColor}
-						fill={insideFillColor}
-						svg_path={insidePath}
-						height={size}
+				<div class='reveal-inside'
+					style='
+						width:{size}px;
+						height:{size}px;
+						position:absolute;
+						top:{insideOffset}px;
+						left:{insideOffset}px;'>
+					<SVGD3
 						width={size}
+						height={size}
+						name='svg-inside'
+						svg_path={insidePath}
+						fill={insideFillColor}
+						stroke={insideFillColor}
 					/>
 				</div>
 			{/if}
 			{#if !ancestry.isExpanded && ancestry.hasChildRelationships}
-				<div class='outside-tiny-dots' style='
-					left:{tinyDotsOffset + 0.65}px;
-					top:{tinyDotsOffset - 0.28}px;
-					height:{tinyDotsDiameter}px;
-					width:{tinyDotsDiameter}px;
-					position:absolute;'>
-					<SVGD3 name='svg-tiny-dots'
-						svg_path={svgPaths.tinyDots_circular(tinyDotsDiameter, childrenCount)}
-						height={tinyDotsDiameter}
-						width={tinyDotsDiameter}
-						stroke={strokeColor}
+				<div class='outside-tiny-dots'
+					style='
+						position:absolute;
+						width:{tinyDotsDiameter}px;
+						height:{tinyDotsDiameter}px;
+						top:{tinyDotsOffset - 0.28}px;
+						left:{tinyDotsOffset + 0.65}px;'>
+					<SVGD3
 						fill={strokeColor}
+						stroke={strokeColor}
+						name='svg-tiny-dots'
+						width={tinyDotsDiameter}
+						height={tinyDotsDiameter}
+						svg_path={svgPaths.tinyDots_circular(tinyDotsDiameter, childrenCount)}
 					/>
 				</div>
 			{/if}

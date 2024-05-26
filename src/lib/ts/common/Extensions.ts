@@ -92,10 +92,9 @@ Object.defineProperty(Number.prototype, 'add_angle_normalized', {
 
 Object.defineProperty(Number.prototype, 'isBetween', {
 	value: function(a: number, b: number, inclusive: boolean): boolean {
-		var min = Math.min(a, b),
-			max = Math.max(a, b);
-
-		return inclusive ? this >= min && this <= max : this > min && this < max;
+		const min = Math.min(a, b),
+			  max = Math.max(a, b);
+		return inclusive ? (this >= min && this <= max) : (this > min && this < max);
 	},
 	writable: false,
 	enumerable: false,

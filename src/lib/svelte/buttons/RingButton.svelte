@@ -3,7 +3,7 @@
 	import { s_thing_changed, s_ancestry_focus, s_ring_angle, s_cluster_arc_radius } from '../../ts/state/Stores';
 	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/Stores';
 	import Mouse from '../kit/Mouse.svelte';
-	export let zindex = ZIndex.dots;
+	export let zindex = ZIndex.panel;
 	export let center = Point.zero;
 	export let color = 'k.empty';
 	export let name = k.empty;
@@ -72,7 +72,7 @@
 				s.ring_cursor = 'move';
 			} else if (mouseData.isUp) {
 				transparency = hit ? bold : faint;
-				s.ring_cursor = 'normal';
+				s.ring_cursor = k.cursor_default;
 				s.resetRingState();
 			} else {
 				if (hitTest(from_center)) {
@@ -84,7 +84,7 @@
 			}
 			transparency = faint;
 		} else if (!s.ring_startAngle && !s.ring_radiusOffset) {
-			s.ring_cursor = hit ? 'pointer' : 'normal';
+			s.ring_cursor = hit ? 'pointer' : k.cursor_default;
 			transparency = hit ? bold : faint;
 		}
 		if (transparency != priorTransparency) {
@@ -115,12 +115,17 @@
 {#key rebuilds}
 	<Mouse
 		center={center}
+		zindex={zindex}
 		width={diameter}
 		height={diameter}
 		closure={closure}
 		name='ring-button'
 		cursor={s.ring_cursor}
 		detect_longClick={false}>
-		<svg class= 'svg-ring-button' fill={fillColor} viewBox={viewBox}><path d={svg_ringPath}></svg>
+		<svg class= 'svg-ring-button'
+			fill={fillColor}
+			viewBox={viewBox}>
+			<path d={svg_ringPath}>
+		</svg>
 	</Mouse>
 {/key}

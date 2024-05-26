@@ -49,13 +49,6 @@
 		clusterLayouts.push(clusterLayout);
 	}
 
-			// {#if cluster.count > 0}
-			// 	{#if cluster.count > 1}
-			// 	{/if}
-			// {/if}
-	// needs:
-	//  hover
-
 </script>
 
 {#key rebuilds}
@@ -64,7 +57,7 @@
 			<Widget ancestry={map.childAncestry} angle={map.childAngle} origin={map.childOrigin.offsetBy(childOffset)}/>
 		{/each}
 	</div>
-	<div class='cluster-lines'>
+	<div class='lines-and-arcs'>
 		{#each clusterLayouts as cluster}
 			{#if cluster.count > 0}
 				<ClusterLine clusterLayout={cluster} center={center} color={color}/>

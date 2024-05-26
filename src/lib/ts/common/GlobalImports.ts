@@ -23,6 +23,7 @@ import { k } from './Constants';
 import AlterationState from '../state/AlterationState';
 import ClusterLayout from '../geometry/ClusterLayout';
 import ChildMapRect from '../geometry/ChildMapRect';
+import Appearance from '../structures/Appearance';
 import TreeLayout from '../geometry/TreeLayout';
 import Relationship from '../data/Relationship';
 import MouseData from '../structures/MouseData';
@@ -42,10 +43,10 @@ import './Extensions';
 export {
 	TitleState, AlterationState,
 	Rect, Size, Point, svgPaths, Direction,
-	Wrapper, signals, MouseData, SeriouslyRange,
 	transparentize, interact, muuri, createPopper,
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Ancestry, Grabs, dbDispatch, Hierarchy, persistLocal,
+	Wrapper, signals, MouseData, Appearance, SeriouslyRange,
 	Angle, Quadrant, TreeLayout, ChildMapRect, ClusterLayout,
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactKind,
 	ZIndex, PredicateKind, GraphRelations, CreationOptions, Alteration,

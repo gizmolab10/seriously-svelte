@@ -95,7 +95,7 @@
 				<DirectionalButtons hit={directional_hit_handler} display={display}/>
 			{/key}
 			<div class='title'>{title}</div>
-			<CloseButton size={k.dot_size * 1.5}/>
+			<CloseButton name='builds close' size={k.dot_size * 1.5}/>
 		</div>
 		<br>
 		<table>

@@ -1,24 +1,24 @@
 <script lang='ts'>
 	import { k, s, u, Rect, Size, Point, ZIndex, onMount, MouseData } from '../../ts/common/GlobalImports';
 	import { s_mouse_location } from '../../ts/state/Stores';
+	export let hover_closure = () => {flag: boolean};
 	export let closure = (mouseData) => {};
+	export let cursor = k.cursor_default;
 	export let detect_doubleClick = true;
 	export let detect_longClick = true;
 	export let detect_mouseDown = true;
 	export let detect_mouseUp = true;
 	export let position = 'absolute';
+	export let zindex = ZIndex.dots;
 	export let center = new Point();
 	export let align_left = true;
-	export let cursor = 'normal';
 	export let name = 'generic';
-	export let style = k.empty;
 	export let height = 16;
 	export let width = 16;
 	let mouse;
-	let mouse_style = style;
+	let style = k.empty;
 	let mouse_longClick_timer;
 	let mouse_doubleClick_timer;
-	let mouse_priorLocation = Point.zero;
 
 	onMount(() => {
 		setupStyle();
@@ -38,10 +38,13 @@
 	}
 
 	$: {
-		if (!!mouse && !!$s_mouse_location && mouse_priorLocation != $s_mouse_location) {
-			mouse_priorLocation = $s_mouse_location;
-			const isHovering = u.hitTestFor(mouse, $s_mouse_location);
-			closure(MouseData.hover(null, mouse, isHovering));
+		if (!!mouse && !!$s_mouse_location) {
+			const wasHit = s.mouseHit_forName(name);
+			const isHit = u.rect_forElement_contains(mouse, $s_mouse_location);
+			if (isHit != wasHit) {
+				s.setMouseHit_forName(name, isHit);
+				closure(MouseData.hover(null, mouse, isHit));	// use null event
+			}
 		}
 	}
 
@@ -81,7 +84,7 @@
 	function setupStyle() {
 		const x = center.x - width / 2;
 		const horizontal = align_left ? `left: ${x}` : `right: ${-x}`;
-		mouse_style = `${style}
+		style = `
 			${horizontal}px;
 			cursor: ${cursor};
 			width: ${width}px;
@@ -93,7 +96,7 @@
 </script>
 
 <div class='mouse' id={name}
-	style={mouse_style}
+	style={style}
 	bind:this={mouse}>
 	<slot></slot>
 </div>

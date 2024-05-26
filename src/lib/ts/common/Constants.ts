@@ -20,7 +20,9 @@ export default class Constants {
 	color_highlighted = '#9e7daa';
     color_disabled = 'lightGray';
 	baseID_local = 'handcrafted';
+	color_defaultText = 'black';
 	color_background = 'white';
+	cursor_default = 'normal';
 	genericSeparator = '::';
     color_default = 'blue';
 	id_unknown = 'unknown';

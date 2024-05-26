@@ -1,19 +1,36 @@
 <script lang='ts'>
-	import { g, k, u, Point, ZIndex } from '../../ts/common/GlobalImports';
+	import { g, k, s, u, Point, ZIndex, onMount, Appearance } from '../../ts/common/GlobalImports';
 	import { s_mouse_location } from '../../ts/state/Stores';
 	import Mouse from '../kit/Mouse.svelte';
-	export let background_color = 'transparent';
+	export let background_color = k.color_background;
 	export let closure = (mouseData) => {};
 	export let position = 'absolute';
 	export let center = new Point();
 	export let zindex = ZIndex.dots;
-	export let cursor = 'pointer';
 	export let border = 'none';
 	export let color = 'black';
 	export let style = k.empty;
 	export let name = k.empty;
 	export let height = 16;
 	export let width = 16;
+
+	function update() { updateFor(s.appearance_forName(name)); }
+	onMount(() => { update(); })
+	$: { update(); }
+
+	function updateFor(appearance: Appearance) {
+		if (!!appearance) {
+			color = appearance.color;
+			background_color = appearance.background_color;
+		}
+	}
+
+	function button_closure(mouseData) {
+		closure(mouseData);
+		if (mouseData.isHover) {
+			update();
+		}
+	}
 
 </script>
 
@@ -22,12 +39,11 @@
 	width={width}
 	height={height}
 	center={center}
-	cursor={cursor}
-	closure={closure}>
+	closure={button_closure}>
 	<button class='button' id={name}
 		style='
 			color:{color};
-			cursor:{cursor};
+			cursor:pointer;
 			border:{border};
 			width:{width}px;
 			z-index:{zindex};

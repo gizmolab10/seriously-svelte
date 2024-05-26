@@ -138,13 +138,11 @@ export default class Thing extends Datum {
 	}
 
 	crumbWidth(numberOfParents: number): number {
-		const none = this.titleWidth + 10;
-		const one = none + 11;
-		const multiple = one + 7;
+		const forNone = this.titleWidth + 10;
 		switch (numberOfParents) {
-			case 0: return none;
-			case 1: return one;
-			default: return multiple;
+			case 0:	 return forNone;
+			case 1:	 return forNone + 11;
+			default: return forNone + 18;
 		}
 	}
 

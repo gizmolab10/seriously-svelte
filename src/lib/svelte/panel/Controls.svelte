@@ -1,5 +1,5 @@
 <script>
-	import { k, u, Point, ZIndex, signals, svgPaths, IDButton, IDPersistant, persistLocal, GraphRelations } from '../../ts/common/GlobalImports';
+	import { k, s, u, Point, ZIndex, signals, svgPaths, IDButton, Appearance, IDPersistant, persistLocal, GraphRelations } from '../../ts/common/GlobalImports';
 	import { s_build, s_show_details, s_id_popupView, s_resize_count, s_layout_asClusters, s_graph_relations } from '../../ts/state/Stores';
 	import Button from '../buttons/Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -18,7 +18,13 @@
 
 	function button_closure_forID(mouseData, id) {
 		if (mouseData.isHover) {
-
+			const out = mouseData.isOut;
+			const appearance = new Appearance(
+				out ? 'black' : k.color_background,
+				out ? k.color_background : 'black',
+				out ? k.cursor_default : 'pointer'
+			);
+			s.setAppearance_forName(id, appearance);
 		} else if (mouseData.isUp) {
 			switch (id) {
 				case IDButton.bigger: width = g.zoomBy(1.1) - 20; break;
@@ -45,7 +51,7 @@
 	style='
 		top: 9px;
 		left: 0px;
-		position: fixed;
+		position: absolute;
 		z-index: {ZIndex.frontmost};
 		height: `${k.height_banner - 2}px`;'>
 	{#if !$s_id_popupView}
@@ -56,29 +62,26 @@
 			<img src='settings.svg' alt='circular button' width={size}px height={size}px/>
 		</Button>
 		{#if k.show_controls}
-			<Button name='relations-button'
+			<Button name={IDButton.relations}
 				width=65
 				height={size + 4}
 				border='solid 1px'
 				center={new Point(65, 8)}
-				background_color={k.color_background}
 				closure={(mouseData) => button_closure_forID(mouseData, IDButton.relations)}>
 				{$s_graph_relations}
 			</Button>
-			<Button name='layout-button'
+			<Button name={IDButton.layout}
 				width=65
 				height={size + 4}
 				border='solid 1px'
 				center={new Point(140, 8)}
-				background_color={k.color_background}
 				closure={(mouseData) => button_closure_forID(mouseData, IDButton.layout)}>
 				{#if $s_layout_asClusters}tree{:else}clusters{/if}
 			</Button>
 		{/if}
 	{/if}
 	{#if u.device_isMobile}
-		<Button
-			color={k.color_background}
+		<Button name={IDButton.smaller}
 			center={new Point(width - 130, top)}
 			closure={(mouseData) => button_closure_forID(mouseData. IDButton.smaller)}>
 			<SVGD3 name='smaller'
@@ -87,8 +90,7 @@
 				svg_path={svgPaths.dash(size, 2)}
 			/>
 		</Button>
-		<Button
-			color={k.color_background}
+		<Button name={IDButton.bigger}
 			center={new Point(width - 105, top)}
 			closure={(mouseData) => button_closure_forID(mouseData, IDButton.bigger)}>
 			<SVGD3 name='bigger'
@@ -98,23 +100,25 @@
 			/>
 		</Button>
 	{/if}
-	<Button name='builds'
+	<Button name={IDButton.builds}
 		width=65
 		height={size + 4}
 		border='solid 1px'
 		center={new Point(width - 50, 8)}
-		background_color={k.color_background}
 		closure={(mouseData) => button_closure_forID(mouseData, IDButton.builds)}>
 		build {$s_build}
 	</Button>
-	<Button name='help'
-		color='black'
+	<Button name={IDButton.help}
 		width={size + 4}
 		height={size + 4}
 		border='solid 1px'
 		center={new Point(width, top)}
-		background_color={k.color_background}
 		closure={(mouseData) => button_closure_forID(mouseData, IDButton.help)}>
-		<div style='top:2px; left:5.5px; position:absolute;'>?</div>
+		<span
+			style='top:2px;
+				left:5.5px;
+				position:absolute;'>
+			?
+		</span>
 	</Button>
 </div>
