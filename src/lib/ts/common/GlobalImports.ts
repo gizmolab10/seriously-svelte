@@ -25,6 +25,7 @@ import ChildMapRect from '../geometry/ChildMapRect';
 import Relationship from '../data/Relationship';
 import TreeLayout from '../geometry/TreeLayout';
 import Appearance from '../state/Appearance';
+import Alteration from '../state/Alteration';
 import Ancestry from '../managers/Ancestry';
 import Wrapper from './Wrapper';
 import Predicate from '../data/Predicate';
@@ -40,7 +41,7 @@ import muuri from 'muuri';
 import './Extensions';
 
 export {
-	Title,
+	Title, Alteration,
 	Rect, Size, Point, svgPaths, Direction,
 	transparentize, interact, muuri, createPopper,
 	User, Datum, Thing, Access, Predicate, Relationship,
