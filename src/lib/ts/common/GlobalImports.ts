@@ -12,7 +12,7 @@ import { IDWrapper } from './Wrapper';
 import { Hierarchy } from '../managers/Hierarchy';
 import { createPopper } from '@popperjs/core';
 import { dbDispatch } from '../db/DBDispatch';
-import { u } from '../managers/Utilities';
+import { u } from './Utilities';
 import { transparentize } from 'color2k';
 import { g } from '../state/Global';
 import { get } from 'svelte/store';

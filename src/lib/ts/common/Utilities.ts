@@ -1,9 +1,9 @@
 import { s_scale_factor, s_thing_fontFamily } from '../state/Stores';
-import { Angle, Quadrant, IDBrowser } from '../common/Enumerations';
+import { Angle, Quadrant, IDBrowser } from './Enumerations';
 import { Rect, Size, Point } from '../geometry/Geometry';
 import Identifiable from "../data/Identifiable";
-import Ancestry from './Ancestry';
-import { k } from '../common/Constants';
+import Ancestry from '../managers/Ancestry';
+import { k } from './Constants';
 import { get } from 'svelte/store';
 
 class Utilities {
