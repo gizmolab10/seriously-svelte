@@ -43,6 +43,7 @@
 					left: {titleCenter.x}px;'>
 				<TitleEditor ancestry={ancestry} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 			</div>
+			<Necklace center={center}/>
 			<RingButton name='necklace-ring'
 				color={ancestry.thing?.color ?? k.color_default}
 				radius={$s_cluster_arc_radius}
@@ -50,7 +51,6 @@
 				zindex={ZIndex.lines}
 				center={center}
 				thickness={30}/>
-			<Necklace center={center}/>
 			<EditingTools offset={toolsOffset}/>
 		{/key}
 	</div>

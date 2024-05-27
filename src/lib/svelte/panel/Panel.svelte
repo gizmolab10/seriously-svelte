@@ -54,12 +54,6 @@
 		}
 	}
 
-	function mouseClosure(mouseData) {
-		if (mouseData.isUp) {
-			s.resetRingState();
-		}
-	}
-
 </script>
 
 <style>
@@ -165,13 +159,11 @@
 							width: {$s_graphRect.size.width}px;
 							height: {$s_graphRect.size.height}px;
 							z-index: {ZIndex.panel};'>
-						<Mouse closure={mouseClosure}>
-							{#if $s_layout_asClusters}
-								<Clusters/>
-							{:else}
-								<Tree/>
-							{/if}
-						</Mouse>
+						{#if $s_layout_asClusters}
+							<Clusters/>
+						{:else}
+							<Tree/>
+						{/if}
 					</div>
 				{/key}
 			{/if}

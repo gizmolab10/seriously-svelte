@@ -1,30 +1,31 @@
 <script>
-	import { Wrapper, IDWrapper, MouseData, Direction, onDestroy, dbDispatch, Predicate } from "../../ts/common/GlobalImports";
-	import { k, u, get, Size, Thing, Point, debug, ZIndex, onMount, signals, svgPaths } from "../../ts/common/GlobalImports";
+	import { k, u, get, Size, Thing, Point, debug, ZIndex, onMount, signals, svgPaths } from '../../ts/common/GlobalImports';
 	import { s_ancestries_expanded, s_altering, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/Stores';
+	import { Wrapper, IDWrapper, Direction, onDestroy, dbDispatch, Predicate } from '../../ts/common/GlobalImports';
 	import { h } from '../../ts/db/DBDispatch';
 	import SVGD3 from '../kit/SVGD3.svelte';
-	import Mouse from '../kit/Mouse.svelte';
 	export let center;
     export let ancestry;
 	let size = k.dot_size;
 	let tinyDotsDiameter = size * 1.8;
 	let tinyDotsOffset = size * -0.4 + 0.01;
 	let childrenCount = ancestry.childRelationships.length;
-	let insidePath = svgPaths.circle_atOffset(16, 6);
 	let insideFillColor = k.color_background;
-	let strokeColor = ancestry.thing.color;
+	let insidePath = svgPaths.circle_atOffset(16, 6);
 	let fillColor = k.color_background;
+	let strokeColor = ancestry.thing.color;
 	let revealWrapper = Wrapper;
-	let revealDotPath = k.empty;
 	let hasInsidePath = false;
 	let isHovering = false;
-	let dotReveal = null;
+	let revealDotPath = k.empty;
 	let insideOffset = 0;
+	let dotReveal = null;
 	let rebuilds = 0;
 	
-	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
 	onMount(() => { setIsHovering_updateColors(false); updateScalablePaths(); });
+	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
+	function handle_mouse_out(event) { setIsHovering_updateColors(false); }
+	function handle_mouse_over(event) { setIsHovering_updateColors(true); }
 
 	$: {
 		if (dotReveal && !($s_ancestry_editingTools?.matchesAncestry(ancestry) ?? false)) {
@@ -51,35 +52,19 @@
 		}
 	}
 
-	function closure(mouseData) {
-		if (mouseData.isHover) {
-			setIsHovering_updateColors(!mouseData.isOut);
-		} else if (mouseData.isUp) {
-			setIsHovering_updateColors(false);
-			if (ancestry.toolsGrabbed) {
-				$s_altering = null;
-				$s_ancestry_editingTools = null;
-				signals.signal_relayoutWidgets_fromFocus();
-			} else if (ancestry.hasChildRelationships || ancestry.thing.isBulkAlias) {
-				h.ancestry_rebuild_remoteMoveRight(ancestry, !ancestry.isExpanded, true, false);
-			}
+	function setIsHovering_updateColors(hovering) {
+		if (isHovering != hovering) {
+			isHovering = hovering;
+			updateColors();
+			rebuilds += 1;
 		}
 	}
 
 	function updateColors() {
 		ancestry.thing.updateColorAttributes(ancestry);
 		const collapsedOrGrabbed = !ancestry.isExpanded || ancestry.isGrabbed;
-		fillColor = ancestry.dotColor(collapsedOrGrabbed != isHovering);
-		insideFillColor = ancestry.dotColor(collapsedOrGrabbed == isHovering);
-	}
-
-	function setIsHovering_updateColors(hovering) {
-		if (isHovering != hovering) {
-			console.log(`HOVER ${hovering} ${ancestry.title}`)
-			isHovering = hovering;
-			updateColors();
-			rebuilds += 1;
-		}
+		fillColor = ancestry.dotColor(collapsedOrGrabbed != isHovering, ancestry);
+		insideFillColor = ancestry.dotColor(collapsedOrGrabbed == isHovering, ancestry);
 	}
 
 	function updateScalablePaths() {
@@ -100,73 +85,92 @@
 		}
 	}
 
+	function handle_singleClick(event) {
+		setIsHovering_updateColors(false);
+		if (ancestry.toolsGrabbed) {
+			$s_altering = null;
+			$s_ancestry_editingTools = null;
+			signals.signal_relayoutWidgets_fromFocus();
+		} else if (ancestry.hasChildRelationships || ancestry.thing.isBulkAlias) {
+			h.ancestry_rebuild_remoteMoveRight(ancestry, !ancestry.isExpanded, true, false);
+		}
+	}
+
 </script>
 
+<style>
+	.dot {
+		border: none;
+		cursor: pointer;
+		background: none;
+		position: absolute;
+	}
+</style>
+
 {#key rebuilds}
-	<Mouse
-		width={size}
-		height={size}
-		center={center}
-		name={`reveal ${ancestry.ancestryString}`}
-		closure={closure}>
-		<button
-			class='reveal-button'
+	<div class='dot-reveal' style='
+		top: {center.y}px;
+		left: {center.x}px;
+		position: absolute;
+		width: {size}px;
+		z-index: {ZIndex.dots};
+		height: {size}px;'>
+		<button class='dot'
+			on:blur={u.ignore}
+			on:focus={u.ignore}
+			on:keyup={u.ignore}
 			bind:this={dotReveal}
+			on:keydown={u.ignore}
+			on:keypress={u.ignore}
+			on:click={handle_singleClick}
+			on:mouseout={handle_mouse_out}
+			on:mouseover={handle_mouse_over}
 			on:contextmenu={handle_context_menu}
 			style='
-				border: none;
-				cursor: pointer;
 				width: {size}px;
 				height: {size}px;
-				background: none;
-				position: absolute;
-				background-color: transparent;'>
+			'>
 			{#key revealDotPath}
-				<SVGD3
-					width={size}
-					height={size}
-					name='reveal-svg'
-					stroke={strokeColor}
-					svg_path={revealDotPath}
+				<SVGD3 name='svg-reveal'
 					fill={debug.lines ? 'transparent' : fillColor}
+					svg_path={revealDotPath}
+					stroke={strokeColor}
+					height={size}
+					width={size}
 				/>
 			{/key}
 			{#if hasInsidePath}
-				<div class='reveal-inside'
-					style='
-						width:{size}px;
-						height:{size}px;
-						position:absolute;
-						top:{insideOffset}px;
-						left:{insideOffset}px;'>
-					<SVGD3
-						width={size}
-						height={size}
-						name='svg-inside'
-						svg_path={insidePath}
-						fill={insideFillColor}
+				<div class='reveal-inside' style='
+					left:{insideOffset}px;
+					top:{insideOffset}px;
+					position:absolute;
+					height:{size}px;
+					width:{size}px;'>
+					<SVGD3 name='svg-inside'
 						stroke={insideFillColor}
+						fill={insideFillColor}
+						svg_path={insidePath}
+						height={size}
+						width={size}
 					/>
 				</div>
 			{/if}
 			{#if !ancestry.isExpanded && ancestry.hasChildRelationships}
-				<div class='outside-tiny-dots'
-					style='
-						position:absolute;
-						width:{tinyDotsDiameter}px;
-						height:{tinyDotsDiameter}px;
-						top:{tinyDotsOffset - 0.28}px;
-						left:{tinyDotsOffset + 0.65}px;'>
-					<SVGD3
-						fill={strokeColor}
-						stroke={strokeColor}
-						name='svg-tiny-dots'
-						width={tinyDotsDiameter}
-						height={tinyDotsDiameter}
+				<div class='outside-tiny-dots' style='
+					left:{tinyDotsOffset + 0.65}px;
+					top:{tinyDotsOffset - 0.28}px;
+					height:{tinyDotsDiameter}px;
+					width:{tinyDotsDiameter}px;
+					position:absolute;'>
+					<SVGD3 name='svg-tiny-dots'
 						svg_path={svgPaths.tinyDots_circular(tinyDotsDiameter, childrenCount)}
+						height={tinyDotsDiameter}
+						width={tinyDotsDiameter}
+						stroke={strokeColor}
+						fill={strokeColor}
 					/>
 				</div>
 			{/if}
 		</button>
-	</Mouse>
+	</div>
 {/key}

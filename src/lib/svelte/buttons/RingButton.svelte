@@ -23,7 +23,7 @@
 	let ringButton;
 
 	onMount(() => { updateColors(); });
-
+	
 	function updateColors() {
 		fillColor = transparentize(color, transparency);
 		rebuilds += 1;
@@ -35,12 +35,18 @@
 		}
 	}
 
-	$: {	// follow mouse movement
-		const from_center = distance_fromCenter_of($s_mouse_location);
+	$: {
+
+		//////////////////
+		// adjust state //
+		//////////////////
+
+		const from_center = distance_fromCenter_of($s_mouse_location);	// use store, to react
 		if (!!from_center) {
 			let sendSignal = false;
 			if (s.ring_radiusOffset != null) {					// expand / shrink
-				const movement = from_center.magnitude - $s_cluster_arc_radius - s.ring_radiusOffset;
+				const distance = Math.max(k.cluster_inside_radius * 4, from_center.magnitude);
+				const movement = distance - $s_cluster_arc_radius - s.ring_radiusOffset;
 				if (movement) {
 					sendSignal = true;
 					$s_cluster_arc_radius += movement;
@@ -55,7 +61,7 @@
 					$s_ring_angle = mouseAngle.add_angle_normalized(-s.ring_startAngle);
 				}
 			}
-			if (!!sendSignal) {
+			if (sendSignal) {
 				s.ring_cursor = 'move';
 				signals.signal_rebuildGraph_fromFocus();		// destroys this component (variables wiped)
 			}
@@ -63,19 +69,33 @@
 	}
 
 	function closure(mouseData: MouseData) {
-		const from_center = distance_fromCenter_of($s_mouse_location);
+
+		/////////////////////////////
+		// setup or teardown state //
+		/////////////////////////////
+		
 		const priorTransparency = transparency;
-		const hit = hitTest(from_center);
+		const hit = isOnRing();
 		if (!mouseData.isHover) {
+			const from_center = distance_fromCenter_of($s_mouse_location);
 			if (mouseData.isDouble) {
+
+				// begin expand / shrink
+
 				s.ring_radiusOffset = from_center.magnitude - $s_cluster_arc_radius;
 				s.ring_cursor = 'move';
 			} else if (mouseData.isUp) {
+
+				// end
+
 				transparency = hit ? bold : faint;
 				s.ring_cursor = k.cursor_default;
 				s.resetRingState();
 			} else {
-				if (hitTest(from_center)) {
+				if (hit) {
+
+					// begin rotate
+
 					const mouseAngle = from_center.angle;
 					s.ring_priorAngle = mouseAngle;
 					s.ring_startAngle = mouseAngle.add_angle_normalized(-$s_ring_angle);
@@ -84,8 +104,11 @@
 			}
 			transparency = faint;
 		} else if (!s.ring_startAngle && !s.ring_radiusOffset) {
-			s.ring_cursor = hit ? 'pointer' : k.cursor_default;
+
+			// hover
+
 			transparency = hit ? bold : faint;
+			s.ring_cursor = hit ? 'pointer' : k.cursor_default;
 		}
 		if (transparency != priorTransparency) {
 			updateColors();
@@ -100,12 +123,11 @@
 		return null
 	}
  
-	function hitTest(from_center?: Point): boolean {
-		if (!!from_center) {
-			const radial = from_center.magnitude;
-			if (radial.isBetween(radius, radius + thickness)) {
-				return true;
-			}
+	function isOnRing(from_center?: Point = null): boolean {
+		const vector = from_center ?? distance_fromCenter_of($s_mouse_location);
+		const distance = vector.offsetEquallyBy(10).magnitude;
+		if (!!distance && distance.isBetween(radius, radius + thickness)) {
+			return true;
 		}
 		return false;
 	}
@@ -121,7 +143,8 @@
 		closure={closure}
 		name='ring-button'
 		cursor={s.ring_cursor}
-		detect_longClick={false}>
+		detect_longClick={false}
+		hover_closure={isOnRing}>
 		<svg class= 'svg-ring-button'
 			fill={fillColor}
 			viewBox={viewBox}>

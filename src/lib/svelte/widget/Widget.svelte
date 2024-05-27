@@ -134,7 +134,7 @@
 		const leftForward = delta - dragX + 1;
 		const dotCenter = Point.square(k.dot_size / 2)
 		const leftBackward = -(titleWidth + 13 + ((ancestry?.isGrabbed ?? false) ? 1 : 0));		
-		dragCenter = new Point(x, 2.8).offsetBy(dotCenter);
+		dragCenter = Point.square(k.dot_size / 2).offsetBy(new Point(x - 7, -3.5));
 		left = origin.x + (forward ? leftForward : leftBackward);
 		padding = `0px ${rightPadding}px 0px  ${leftPadding}px`;
 		width = titleWidth + extraWidth();
@@ -144,7 +144,7 @@
 		if (ancestry?.showsReveal) {
 			const revealY = k.dot_size / 2 - 3.8;
 			const revealX = k.dot_size + titleWidth + (hasExtraAtLeft ? 3 : 0);
-			revealCenter = new Point(revealX, revealY).offsetBy(dotCenter);
+			revealCenter = new Point(revealX, revealY);
 		}
 	}
 

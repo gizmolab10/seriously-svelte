@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, s, u, Rect, Size, Point, ZIndex, onMount, MouseData } from '../../ts/common/GlobalImports';
 	import { s_mouse_location } from '../../ts/state/Stores';
-	export let hover_closure = () => {flag: boolean};
+	export let hover_closure: () => {flag: boolean} | null = null;
 	export let closure = (mouseData) => {};
 	export let cursor = k.cursor_default;
 	export let detect_doubleClick = true;
@@ -39,8 +39,12 @@
 
 	$: {
 		if (!!mouse && !!$s_mouse_location) {
+			const vagueHit = u.rect_forElement_contains(mouse, $s_mouse_location);
 			const wasHit = s.mouseHit_forName(name);
-			const isHit = u.rect_forElement_contains(mouse, $s_mouse_location);
+			let isHit = vagueHit;
+			if (!!hover_closure) {
+				isHit = hover_closure();	// ask containing component
+			}
 			if (isHit != wasHit) {
 				s.setMouseHit_forName(name, isHit);
 				closure(MouseData.hover(null, mouse, isHit));	// use null event

@@ -5,7 +5,6 @@
 	import { k, u, Rect, Size, Point, Thing, debug, ZIndex } from '../../ts/common/GlobalImports';
 	import Tooltip from '../kit/Tooltip.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
-	import Mouse from '../kit/Mouse.svelte';
 	import Box from '../kit/Box.svelte';
 	export let center = new Point(0, 0);
     export let ancestry;
@@ -20,6 +19,7 @@
 	let size = k.dot_size;
 	let mouse_click_timer;
 	let relatedAncestry;
+	let clickCount = 0;
 	let rebuilds = 0;
 	let tinyDotsPath;
 	let left = 0;
@@ -30,13 +30,14 @@
     let thing;
 
 	function handle_context_menu(event) { event.preventDefault(); }		// no default context menu on right-click
+	function handle_mouse_up() { clearTimeout(mouse_click_timer); }
 
     onMount(() => {
 		if (!!ancestry) {
 			thing = ancestry.thing;
 		}
 		updateAncestries();
-		setIsHovering_updateColors(false);
+		updateColorsForHover(false);
 		popper = createPopper(button, tooltip, { placement: 'bottom' });
         const handleAltering = signals.handle_altering((state) => {
 			const applyFlag = $s_ancestry_editingTools && !!ancestry && ancestry.things_canAlter_asParentOf_toolsAncestry;
@@ -51,7 +52,7 @@
 
 	$: {
 		if (thing?.id == $s_thing_changed.split(k.genericSeparator)[0]) {
-			setIsHovering_updateColors(false);
+			updateColorsForHover(false);
 			rebuilds += 1;
 		}
 	}
@@ -70,23 +71,56 @@
 		updateColors();
 	}
 
-	function setIsHovering_updateColors(hovering) {
-		if (isHovering != hovering) {
-			isHovering = hovering;
+	$: {
+		const _ = k.dot_size;
+		updateAncestries();
+	}
+
+	function clearClicks() {
+		clickCount = 0;
+		clearTimeout(mouse_click_timer);	// clear all previous timers
+	}
+	
+	function handle_mouse_out(event) {
+		updateColorsForHover(false);
+		// tooltip.removeAttribute('data-show');
+	}
+
+	function handle_mouse_over(event) {
+		updateColorsForHover(true);
+		// tooltip.setAttribute('data-show', '');
+		// popper.update();
+	}
+
+	function updateColorsForHover(flag) {
+		if (isHovering != flag) {
+			isHovering = flag;
 			updateColors();
 		}
 	}
 
-	function closure(mouseData) {
-		if (mouseData.isHover) {
-			setIsHovering_updateColors(!mouseData.isOut);
-		} else if (mouseData.isUp) {
-			ancestry?.handle_singleClick_onDragDot(mouseData.event.shiftKey);
-		} else if (mouseData.isLong) {
-			if (ancestry?.becomeFocus()) {
-				signals.signal_rebuildGraph_fromFocus();
-			}
+	function handle_longClick(event) {
+		clearClicks();
+		mouse_click_timer = setTimeout(() => {
+			handle_doubleClick(event);
+		}, k.threshold_longClick);
+	}
+
+	function handle_doubleClick(event) {
+		clearClicks();
+		if (ancestry?.becomeFocus()) {
+			signals.signal_rebuildGraph_fromFocus();
 		}
+    }
+
+	function handle_singleClick(event) {
+		clickCount++;
+		mouse_click_timer = setTimeout(() => {
+			if (clickCount === 1) {
+				ancestry?.handle_singleClick_onDragDot(event.shiftKey);
+				clearClicks();
+			}
+		}, k.threshold_doubleClick);
 	}
 
 	function updateColors() {
@@ -125,48 +159,54 @@
 </script>
 
 {#key rebuilds}
-	<Mouse
-		width={size}
-		height={size}
-		center={center}
-		closure={closure}
-		name='drag-mouse'>
-		<button class='drag-button'
-			bind:this={button}
-			on:contextmenu={handle_context_menu}
-			style='
-				border: none;
-				cursor: pointer;
-				background: none;
-				height: {size}px;
-				position: absolute;
-				width: {size / 2}px;
-			'>
-			<SVGD3 name='drag-svg'
+	<button class='dot-drag'
+		bind:this={button}
+		on:blur={u.ignore}
+		on:focus={u.ignore}
+		on:keyup={u.ignore}
+		on:keydown={u.ignore}
+		on:keypress={u.ignore}
+		on:mouseup={handle_mouse_up}
+		on:click={handle_singleClick}
+		on:mouseout={handle_mouse_out}
+		on:mousedown={handle_longClick}
+		on:mouseover={handle_mouse_over}
+		on:dblclick={handle_doubleClick}
+		on:contextmenu={handle_context_menu}
+		style='
+			border: none;
+			cursor: pointer;
+			background: none;
+			height: {size}px;
+			top: {center.y}px;
+			left: {center.x}px;
+			position: absolute;
+			width: {size / 2}px;
+		'>
+		<SVGD3 name='svg-drag'
+			width={size}
+			height={size}
+			fill={fillColor}
+			stroke={strokeColor}
+			svg_path={dragDotPath}
+		/>
+		{#if tinyDotsPath}
+			<SVGD3 name='svg-dot-inside'
 				width={size}
 				height={size}
-				fill={fillColor}
-				stroke={strokeColor}
-				svg_path={dragDotPath}
+				fill={tinyDotsColor}
+				stroke={tinyDotsColor}
+				svg_path={tinyDotsPath}
 			/>
-			{#if tinyDotsPath}
-				<SVGD3 name='svg-dot-inside'
-					width={size}
-					height={size}
-					fill={tinyDotsColor}
-					stroke={tinyDotsColor}
-					svg_path={tinyDotsPath}
-				/>
-			{/if}
-			{#if relatedAncestry}
-				<SVGD3 name='svg-dot-related'
-					width={size}
-					height={size}
-					fill={relatedColor}
-					svg_path={relatedAncestry}
-					stroke={$s_layout_asClusters ? relatedColor : strokeColor}
-				/>
-			{/if}
-		</button>
-	</Mouse>
+		{/if}
+		{#if relatedAncestry}
+			<SVGD3 name='svg-dot-related'
+				width={size}
+				height={size}
+				fill={relatedColor}
+				svg_path={relatedAncestry}
+				stroke={$s_layout_asClusters ? relatedColor : strokeColor}
+			/>
+		{/if}
+	</button>
 {/key}
