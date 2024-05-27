@@ -74,8 +74,9 @@
 		// setup or teardown state //
 		/////////////////////////////
 		
-		const priorTransparency = transparency;
+		let refresh = false;
 		const hit = isOnRing();
+		const priorTransparency = transparency;
 		if (!mouseData.isHover) {
 			const from_center = distance_fromCenter_of($s_mouse_location);
 			if (mouseData.isDouble) {
@@ -91,6 +92,7 @@
 				transparency = hit ? bold : faint;
 				s.ring_cursor = k.cursor_default;
 				s.resetRingState();
+				refresh = true;
 			} else {
 				if (hit) {
 
@@ -110,7 +112,7 @@
 			transparency = hit ? bold : faint;
 			s.ring_cursor = hit ? 'pointer' : k.cursor_default;
 		}
-		if (transparency != priorTransparency) {
+		if (refresh || (transparency != priorTransparency)) {
 			updateColors();
 		}
 	}

@@ -23,6 +23,8 @@
 	//////////////////////////////////////////
 	// IMPORTANT:	   can HANG if...		//
 	// containment hierarchy includes Mouse //
+	//		perhaps due to contention		//
+	// 		over mouse move events			//
 	//////////////////////////////////////////
 
 	onMount(() => {
@@ -42,7 +44,7 @@
 		setupStyle();
 	}
 
-	$: {
+	$: {	// movement
 		if (!!mouse && !!$s_mouse_location) {
 			const vagueHit = u.rect_forElement_contains(mouse, $s_mouse_location);
 			const wasHit = s.mouseHit_forName(name);
@@ -59,6 +61,9 @@
 
 	function handle_pointerUp(event) {
 		if (detect_mouseUp) {
+
+			// teardown timers and call closure
+		
 			closure(MouseData.up(event, mouse));
 			clearTimeout(mouse_doubleClick_timer);
 			clearTimeout(mouse_longClick_timer);
@@ -69,22 +74,29 @@
 	
 	function handle_pointerDown(event) {
 		if (detect_mouseDown && s.mouseClickCount_forName(name) == 0) {
+
+			// call down closure
+
 			closure(MouseData.down(event, mouse));
 		}
 		s.incrementMouseClickCount_forName(name);
 		if (detect_longClick && !mouse_longClick_timer) {
+
+			// setup timer to call long-click closure
+
 			mouse_longClick_timer = setTimeout(() => {
 				closure(MouseData.long(event, mouse));
 				s.setMouseClickCount_forName(name, 0);
-				clearTimeout(mouse_longClick_timer);
 				mouse_longClick_timer = null;
 			}, k.threshold_longClick);
 		}
 		if (detect_doubleClick && !mouse_doubleClick_timer) {
+
+			// setup timer to call double-click closure
+
 			mouse_doubleClick_timer = setTimeout(() => {
 				closure(MouseData.clicks(event, mouse, s.mouseClickCount_forName(name)));
 				s.setMouseClickCount_forName(name, 0);
-				clearTimeout(mouse_doubleClick_timer);
 				mouse_doubleClick_timer = null;
 			}, k.threshold_doubleClick);
 		}
