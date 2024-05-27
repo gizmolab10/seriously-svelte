@@ -1,8 +1,8 @@
 import { k, u, get, User, Thing, Grabs, debug, Access, IDTool, IDTrait, signals, Ancestry } from '../common/GlobalImports';
-import { Wrapper, Predicate, Relationship, Alteration, AlterationState, CreationOptions } from '../common/GlobalImports';
+import { Wrapper, Predicate, Relationship, AlterationType, Alteration, CreationOptions } from '../common/GlobalImports';
 import { s_ancestries_grabbed, s_things_arrived, s_ancestry_editingTools } from '../state/Stores';
 import { s_isBusy, s_altering, s_ancestry_focus, s_title_editing } from '../state/Stores';
-import { idDefault } from "../structures/Identifiable";
+import { idDefault } from "../data/Identifiable";
 import DBInterface from '../db/DBInterface';
 
 type Relationships_ByHID = { [hid: number]: Array<Relationship> }
@@ -61,9 +61,9 @@ export class Hierarchy {
 		if (!!ancestry) {
 			switch (idButton) {
 				case IDTool.create: await this.ancestry_edit_remoteCreateChildOf(ancestry); break;
-				case IDTool.add_parent: this.toggleAlteration(Alteration.adding, isLong); return;
+				case IDTool.add_parent: this.toggleAlteration(AlterationType.adding, isLong); return;
 				case IDTool.next: this.ancestry_relayout_toolCluster_nextParent(event.altKey); return;
-				case IDTool.delete_parent: this.toggleAlteration(Alteration.deleting, isLong); return;
+				case IDTool.delete_parent: this.toggleAlteration(AlterationType.deleting, isLong); return;
 				case IDTool.delete_confirm: await this.ancestries_rebuild_traverse_remoteDelete([ancestry]); break;
 				case IDTool.more: console.log('needs more'); break;
 				default: break;
@@ -862,10 +862,10 @@ export class Hierarchy {
 				s_altering.set(null);
 				s_ancestry_editingTools.set(null);
 				switch (altering.alteration) {
-					case Alteration.deleting:
+					case AlterationType.deleting:
 						await this.relationship_forget_remoteRemove(toolsAncestry, ancestry, idPredicate);
 						break;
-					case Alteration.adding:
+					case AlterationType.adding:
 						const toolsThing = toolsAncestry.thing;
 						if (toolsThing) {
 							await this.ancestry_remember_remoteAddAsChild(ancestry, toolsThing, idPredicate);
@@ -931,10 +931,10 @@ export class Hierarchy {
 		await this.relationships_removeHavingNullReferences();
 	}
 
-	toggleAlteration(alteration: Alteration, isRelated: boolean) {
+	toggleAlteration(alteration: AlterationType, isRelated: boolean) {
 		const altering = get(s_altering)?.alteration;
 		const predicate = isRelated ? Predicate.isRelated : Predicate.contains;
-		const became = alteration == altering ? null : new AlterationState(alteration, predicate);
+		const became = alteration == altering ? null : new Alteration(alteration, predicate);
 		s_altering.set(became);
 	}
 

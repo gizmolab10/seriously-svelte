@@ -1,9 +1,9 @@
-import { Rect, Point, Ancestry, TitleState, AlterationState } from '../common/GlobalImports';
+import { Rect, Point, Ancestry, Title, Alteration } from '../common/GlobalImports';
 import { writable } from 'svelte/store';
 import { signals } from './Signals';
 
-export const s_altering				 = writable<AlterationState | null>();
-export const s_title_editing		 = writable<TitleState | null>();
+export const s_altering				 = writable<Alteration | null>();
+export const s_title_editing		 = writable<Title | null>();
 export const s_ancestry_editingTools = writable<Ancestry | null>();
 export const s_ancestries_expanded	 = writable<Array<Ancestry>>();
 export const s_ancestries_grabbed	 = writable<Array<Ancestry>>();
@@ -31,7 +31,7 @@ export const s_graphRect			 = writable<Rect>();
 
 let interval: NodeJS.Timeout | null = null;
 
-s_altering.subscribe((state: AlterationState | null) => {
+s_altering.subscribe((state: Alteration | null) => {
 	if (interval) {
 		clearInterval(interval);
 		interval = null;

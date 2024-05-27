@@ -1,4 +1,4 @@
-import RemoteIdentifiable from "../structures/RemoteIdentifiable";
+import RemoteIdentifiable from "./RemoteIdentifiable";
 
 export default class Access extends RemoteIdentifiable {
 	kind: string;

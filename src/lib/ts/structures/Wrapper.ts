@@ -1,5 +1,5 @@
 import { Ancestry } from '../common/GlobalImports';
-import Identifiable from "./Identifiable";
+import Identifiable from "../data/Identifiable";
 
 export enum IDWrapper {
 	widget	= 'widget',

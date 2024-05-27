@@ -10,7 +10,7 @@
 	export let thickness = 0;
 	export let thing: Thing;
 	export let radius = 0;
-	const bold = 0.95;
+	const bold = 0.97;
 	const faint = 0.98;
 	const borderStyle = '1px solid';
 	const diameter = (radius + thickness) * 2;

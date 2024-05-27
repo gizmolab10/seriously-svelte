@@ -11,4 +11,4 @@
 
 </script>
 
-<Button/>
+<Button name={name}/>

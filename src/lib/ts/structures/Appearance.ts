@@ -1,4 +1,4 @@
-import { k } from '../common/GlobalImports';
+import { k } from '../common/Constants';
 
 export default class Appearance {
 	background_color = 'transparent';

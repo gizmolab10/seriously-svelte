@@ -1,4 +1,4 @@
-import { Angle, IDTrait, ZIndex, Quadrant, IDButton, IDBrowser, Alteration, PredicateKind, GraphRelations } from './Enumerations';
+import { Angle, IDTrait, ZIndex, Quadrant, IDButton, IDBrowser, AlterationType, PredicateKind, GraphRelations } from './Enumerations';
 import { debugReact, DebugReact, ReactKind } from '../debug/DebugReact';
 import { IDPersistant, persistLocal } from '../managers/PersistLocal';
 import { onMount, onDestroy, setContext, getContext } from 'svelte';
@@ -20,18 +20,18 @@ import { s } from '../state/State';
 import { builds } from './Builds';
 import { k } from './Constants';
 
-import AlterationState from '../state/AlterationState';
 import ClusterLayout from '../geometry/ClusterLayout';
 import ChildMapRect from '../geometry/ChildMapRect';
 import Appearance from '../structures/Appearance';
-import TreeLayout from '../geometry/TreeLayout';
 import Relationship from '../data/Relationship';
-import MouseData from '../structures/MouseData';
-import Ancestry from '../structures/Ancestry';
-import TitleState from '../state/TitleState';
+import TreeLayout from '../geometry/TreeLayout';
+import Alteration from '../state/Alteration';
+import Title from '../state/Title';
+import Mouse from '../structures/MouseData';
+import Ancestry from '../managers/Ancestry';
 import Wrapper from '../structures/Wrapper';
 import Predicate from '../data/Predicate';
-import Datum from '../structures/Datum';
+import Datum from '../data/Datum';
 import Grabs from '../managers/Grabs';
 import Access from '../data/Access';
 import Thing from '../data/Thing';
@@ -41,15 +41,15 @@ import muuri from 'muuri';
 import './Extensions';
 
 export {
-	TitleState, AlterationState,
+	Title, Alteration,
 	Rect, Size, Point, svgPaths, Direction,
 	transparentize, interact, muuri, createPopper,
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Ancestry, Grabs, dbDispatch, Hierarchy, persistLocal,
-	Wrapper, signals, MouseData, Appearance, SeriouslyRange,
+	Wrapper, signals, Mouse, Appearance, SeriouslyRange,
 	Angle, Quadrant, TreeLayout, ChildMapRect, ClusterLayout,
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactKind,
-	ZIndex, PredicateKind, GraphRelations, CreationOptions, Alteration,
+	ZIndex, PredicateKind, GraphRelations, CreationOptions, AlterationType,
 	g, k, s, u, get, builds, onMount, onDestroy, setContext, getContext,
 	IDLine, IDTool, IDTrait, IDSignal, IDWrapper, IDButton, IDBrowser, IDPersistant,
 };

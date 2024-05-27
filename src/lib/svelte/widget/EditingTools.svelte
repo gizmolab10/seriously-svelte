@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { MouseData, Direction, dbDispatch, Alteration, transparentize, AlterationState } from '../../ts/common/GlobalImports';
+	import { Mouse, Direction, dbDispatch, AlterationType, transparentize, Alteration } from '../../ts/common/GlobalImports';
 	import { k, u, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, svgPaths, signals } from '../../ts/common/GlobalImports';
 	import { s_ancestry_editingTools, s_layout_asClusters } from '../../ts/state/Stores';
 	import { s_altering, s_graphRect, s_show_details } from '../../ts/state/Stores';
@@ -34,7 +34,7 @@
 	function setC(type: string, center: Point) { return centers[type] = center; }
 	function centers_isEmpty(): boolean { return Object.keys(centers).length == 0; }
 	function handle_hover_for(key: string, isHovering: boolean) { hovers[key] = isHovering; }
-	function alteration_for(idTool: string) { return (idTool == IDTool.add_parent) ? Alteration.adding : Alteration.deleting; }
+	function alteration_for(idTool: string) { return (idTool == IDTool.add_parent) ? AlterationType.adding : AlterationType.deleting; }
 
 	onMount(() => { 
 		setup();
@@ -98,7 +98,7 @@
 		return [color, k.color_background];
 	}
 
-	async function handle_mouse_event(mouseData: MouseData, id: string) {
+	async function handle_mouse_event(mouseData: Mouse, id: string) {
 		if (mouseData.isHover) {
 			handle_hover_for(IDTool.delete_confirm, !mouseData.isOut);;
 		} else {

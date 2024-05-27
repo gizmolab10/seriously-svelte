@@ -1,6 +1,6 @@
 import { s_ancestry_focus, s_ancestries_grabbed, s_title_editing, s_layout_asClusters } from '../state/Stores';
 import { k, u, get, Rect, Size, Thing, debug, signals, Wrapper, IDWrapper } from '../common/GlobalImports';
-import { Predicate, TitleState, Relationship, PredicateKind, Alteration } from '../common/GlobalImports';
+import { Predicate, Title, Relationship, PredicateKind, AlterationType } from '../common/GlobalImports';
 import { s_ancestries_expanded, s_ancestry_editingTools, s_altering } from '../state/Stores';
 import { Writable } from 'svelte/store';
 import { h } from '../db/DBDispatch';
@@ -188,7 +188,7 @@ export default class Ancestry {
 		if (thing && toolThing && predicate && toolsAncestry && thing != toolThing && !toolsAncestry.matchesAncestry(this)) {
 			const toolIsAnAncestor = isRelated ? false : thing.parentIDs.includes(toolThing.id);
 			const isParentOfTool = this.thing_isImmediateParentOf(toolsAncestry, predicate.id);
-			const isDeleting = altering.alteration == Alteration.deleting;
+			const isDeleting = altering.alteration == AlterationType.deleting;
 			const isProgenyOfTool = this.ancestry_isAProgenyOf(toolsAncestry);
 			return isDeleting ? isParentOfTool : !(isParentOfTool || isProgenyOfTool || toolIsAnAncestor);
 		}
@@ -623,7 +623,7 @@ export default class Ancestry {
 		if (!this.isRoot && k.allow_TitleEditing) {
 			debug.log_edit(`EDIT ${this.description}`)
 			this.grabOnly();
-			s_title_editing.set(new TitleState(this));
+			s_title_editing.set(new Title(this));
 		}
 	}
 

@@ -1,5 +1,5 @@
-import RemoteIdentifiable from "./RemoteIdentifiable";
-import { idDefault } from "./Identifiable";
+import RemoteIdentifiable from './RemoteIdentifiable';
+import { idDefault } from './Identifiable';
 import { DebugFlag } from '../debug/Debug';
 
 export default class Datum extends RemoteIdentifiable {

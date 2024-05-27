@@ -1,4 +1,4 @@
-export enum Alteration {
+export enum AlterationType {
 	deleting = 'deleting',
 	adding	 = 'adding',
 }

@@ -1,10 +1,10 @@
-import { Predicate, Alteration } from '../common/GlobalImports';
+import { Predicate, AlterationType } from '../common/GlobalImports';
 
-export default class AlterationState {
-	alteration: Alteration;
+export default class Alteration {
+	alteration: AlterationType;
 	predicate: Predicate | null;
 
-	constructor(alteration: Alteration, predicate: Predicate | null) {
+	constructor(alteration: AlterationType, predicate: Predicate | null) {
 		this.predicate = predicate ?? Predicate.contains;
 		this.alteration = alteration;
 	}

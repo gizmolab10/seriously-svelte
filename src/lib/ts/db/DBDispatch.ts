@@ -1,7 +1,7 @@
 import { g, k, debug, signals, Hierarchy, IDPersistant, persistLocal } from '../common/GlobalImports';
 import { s_isBusy, s_db_type, s_db_loadTime, s_title_editing } from '../state/Stores';
 import { s_things_arrived, s_ancestry_editingTools } from '../state/Stores';
-import { idDefault } from "../structures/Identifiable";
+import { idDefault } from "../data/Identifiable";
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, s, u, Rect, Size, Point, ZIndex, onMount, MouseData } from '../../ts/common/GlobalImports';
+	import { k, s, u, Rect, Size, Point, ZIndex, onMount, Mouse } from '../../ts/common/GlobalImports';
 	import { s_mouse_location } from '../../ts/state/Stores';
 	export let hover_closure: () => {flag: boolean} | null = null;
 	export let closure = (mouseData) => {};
@@ -10,7 +10,7 @@
 	export let detect_mouseUp = true;
 	export let position = 'absolute';
 	export let zindex = ZIndex.dots;
-	export let center = new Point();
+	export let center: Point | null;
 	export let align_left = true;
 	export let name = 'generic';
 	export let height = 16;
@@ -54,7 +54,7 @@
 			}
 			if (isHit != wasHit) {
 				s.setMouseHit_forName(name, isHit);
-				closure(MouseData.hover(null, mouse, isHit));	// use null event
+				closure(Mouse.hover(null, mouse, isHit));	// use null event
 			}
 		}
 	}
@@ -64,7 +64,7 @@
 
 			// teardown timers and call closure
 		
-			closure(MouseData.up(event, mouse));
+			closure(Mouse.up(event, mouse));
 			clearTimeout(mouse_doubleClick_timer);
 			clearTimeout(mouse_longClick_timer);
 			mouse_doubleClick_timer = null;
@@ -77,7 +77,7 @@
 
 			// call down closure
 
-			closure(MouseData.down(event, mouse));
+			closure(Mouse.down(event, mouse));
 		}
 		s.incrementMouseClickCount_forName(name);
 		if (detect_longClick && !mouse_longClick_timer) {
@@ -85,7 +85,7 @@
 			// setup timer to call long-click closure
 
 			mouse_longClick_timer = setTimeout(() => {
-				closure(MouseData.long(event, mouse));
+				closure(Mouse.long(event, mouse));
 				s.setMouseClickCount_forName(name, 0);
 				mouse_longClick_timer = null;
 			}, k.threshold_longClick);
@@ -95,7 +95,7 @@
 			// setup timer to call double-click closure
 
 			mouse_doubleClick_timer = setTimeout(() => {
-				closure(MouseData.clicks(event, mouse, s.mouseClickCount_forName(name)));
+				closure(Mouse.clicks(event, mouse, s.mouseClickCount_forName(name)));
 				s.setMouseClickCount_forName(name, 0);
 				mouse_doubleClick_timer = null;
 			}, k.threshold_doubleClick);
@@ -103,15 +103,13 @@
 	}
 
 	function setupStyle() {
-		const x = center.x - width / 2;
-		const horizontal = align_left ? `left: ${x}` : `right: ${-x}`;
-		style = `
-			${horizontal}px;
-			cursor: ${cursor};
-			width: ${width}px;
-			height: ${height}px;
-			position: ${position};
-			top: ${center.y - height / 2}px;`.removeWhiteSpace();
+		style = `cursor: ${cursor}; width: ${width}px; height: ${height}px; position: ${position};`;
+		if (!!center) {
+			const x = center.x - width / 2;
+			const horizontal = align_left ? `left: ${x}` : `right: ${-x}`;
+			style = `${style}}; ${horizontal}px; top: ${center.y - height / 2}px;`;
+		}
+		style = style.removeWhiteSpace();
 	}
 
 </script>

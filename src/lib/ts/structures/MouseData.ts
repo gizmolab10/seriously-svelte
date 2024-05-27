@@ -24,5 +24,4 @@ export default class MouseData {
 	static long(event: Event | null, element: HTMLElement) { return new MouseData(event, element, false, false, false, false, false, true); }
 	static hover(event: Event | null, element: HTMLElement, isHovering: boolean) { return new MouseData(event, element, true, !isHovering, false, false, false, false); }
 	static clicks(event: Event | null, element: HTMLElement, clickCount: number) { return new MouseData(event, element, false, false, false, false, clickCount > 1, false); }
-
 }

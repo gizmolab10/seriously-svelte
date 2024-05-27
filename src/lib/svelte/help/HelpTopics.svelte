@@ -114,11 +114,11 @@
 </style>
 
 <div class='help-buttons'>
-	<button class:selected={showingSelection} on:click={showSelection}>{@html selectionTitle}</button>
-	<button class:selected={showingBrowse} on:click={showBrowse}>{@html browseTitle}</button>
-	<button class:selected={showingFocus} on:click={showFocus}>{@html focusTitle}</button>
-	<button class:selected={showingEdit} on:click={showEdit}>{@html editTitle}</button>
-	<button class:selected={showingDots} on:click={showDots}>{@html dotsTitle}</button>
+	<Button position=relative name={showingSelection} on:click={showSelection}>{@html selectionTitle}</Button>
+	<Button position=relative name={showingBrowse} on:click={showBrowse}>{@html browseTitle}</Button>
+	<Button position=relative name={showingFocus} on:click={showFocus}>{@html focusTitle}</Button>
+	<Button position=relative name={showingEdit} on:click={showEdit}>{@html editTitle}</Button>
+	<Button position=relative name={showingDots} on:click={showDots}>{@html dotsTitle}</Button>
 </div>
 {#if showingSelection && selection}
 	<svelte:component this={selection} />
