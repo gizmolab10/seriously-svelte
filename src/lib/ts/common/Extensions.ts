@@ -8,6 +8,7 @@ declare global {
 	}
 	interface String {
 		injectElipsisAt(at: number): string;
+		removeWhiteSpace(): string;
 		unCamelCase(): string;
 		lastWord(): string;
 		hash(): number;
@@ -21,6 +22,15 @@ Object.defineProperty(String.prototype, 'unCamelCase', {
 	writable: false, // Set writable to false to prevent the method to be overwritten
 	enumerable: false, // Set enumerable to false to avoid unintended behavior
 	configurable: false // Set configurable to false to prevent redefinition of the property
+});
+
+Object.defineProperty(String.prototype, 'removeWhiteSpace', {
+	value: function(): string {
+		return this.split('\n').join(' ').split('\t').join('');
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
 });
 
 Object.defineProperty(String.prototype, 'lastWord', {

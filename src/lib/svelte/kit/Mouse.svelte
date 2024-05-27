@@ -20,6 +20,11 @@
 	let mouse_longClick_timer;
 	let mouse_doubleClick_timer;
 
+	//////////////////////////////////////////
+	// IMPORTANT:	   can HANG if...		//
+	// containment hierarchy includes Mouse //
+	//////////////////////////////////////////
+
 	onMount(() => {
 		setupStyle();
 		if (!!mouse) {
@@ -94,12 +99,14 @@
 			width: ${width}px;
 			height: ${height}px;
 			position: ${position};
-			top: ${center.y - height / 2}px;`;
+			top: ${center.y - height / 2}px;`.removeWhiteSpace();
 	}
 
 </script>
 
-<div class='mouse' id={name}
+<div
+	id={name}
+	class='mouse'
 	style={style}
 	bind:this={mouse}>
 	<slot></slot>
