@@ -5,7 +5,6 @@
 	import SVGD3 from '../kit/SVGD3.svelte';
 	export let mouse_closure = (mouseData) => {};
 	export let hover_closure = null;
-	export let cursor = 'pointer';
 	export let extraPath = null;
 	export let name = k.empty;
 	export let strokeColor;
@@ -49,7 +48,6 @@
 <Button
 	closure={closure}
 	center={center}
-	cursor={cursor}
 	name={name}
 	height='20'
 	width='20'>

@@ -1,5 +1,5 @@
 import { k, u, get, User, Thing, Grabs, debug, Access, IDTool, IDTrait, signals, Ancestry } from '../common/GlobalImports';
-import { Wrapper, Predicate, Relationship, AlterationType, Alteration, CreationOptions } from '../common/GlobalImports';
+import { Wrapper, Predicate, Relationship, AlterationType, CreationOptions } from '../common/GlobalImports';
 import { s_ancestries_grabbed, s_things_arrived, s_ancestry_editingTools } from '../state/Stores';
 import { s_isBusy, s_altering, s_ancestry_focus, s_title_editing } from '../state/Stores';
 import { idDefault } from "../data/Identifiable";

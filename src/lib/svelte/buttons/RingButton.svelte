@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { k, s, u, Thing, Point, ZIndex, onMount, signals, svgPaths, MouseData, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
+	import { k, s, u, Thing, Point, ZIndex, onMount, signals, svgPaths, Mouse, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
 	import { s_thing_changed, s_ancestry_focus, s_ring_angle, s_cluster_arc_radius } from '../../ts/state/Stores';
 	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/Stores';
-	import Mouse from '../kit/Mouse.svelte';
+	import MouseButton from '../buttons/MouseButton.svelte';
 	export let zindex = ZIndex.panel;
 	export let center = Point.zero;
 	export let color = 'k.empty';
@@ -68,7 +68,7 @@
 		}
 	}
 
-	function closure(mouseData: MouseData) {
+	function closure(mouseData: Mouse) {
 
 		/////////////////////////////
 		// setup or teardown state //
@@ -137,7 +137,7 @@
 </script>
 
 {#key rebuilds}
-	<Mouse
+	<MouseButton
 		center={center}
 		zindex={zindex}
 		width={diameter}
@@ -152,5 +152,5 @@
 			viewBox={viewBox}>
 			<path d={svg_ringPath}>
 		</svg>
-	</Mouse>
+	</MouseButton>
 {/key}

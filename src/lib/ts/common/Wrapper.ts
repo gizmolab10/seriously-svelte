@@ -1,4 +1,4 @@
-import { Ancestry } from '../common/GlobalImports';
+import { Ancestry } from './GlobalImports';
 import Identifiable from "../data/Identifiable";
 
 export enum IDWrapper {

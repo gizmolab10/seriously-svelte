@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { Mouse, Direction, dbDispatch, AlterationType, transparentize, Alteration } from '../../ts/common/GlobalImports';
+	import { MouseButton, Direction, dbDispatch, AlterationType, transparentize, Alteration } from '../../ts/common/GlobalImports';
 	import { k, u, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, svgPaths, signals } from '../../ts/common/GlobalImports';
 	import { s_ancestry_editingTools, s_layout_asClusters } from '../../ts/state/Stores';
 	import { s_altering, s_graphRect, s_show_details } from '../../ts/state/Stores';
@@ -98,7 +98,7 @@
 		return [color, k.color_background];
 	}
 
-	async function handle_mouse_event(mouseData: Mouse, id: string) {
+	async function handle_mouse_event(mouseData: MouseButton, id: string) {
 		if (mouseData.isHover) {
 			handle_hover_for(IDTool.delete_confirm, !mouseData.isOut);;
 		} else {

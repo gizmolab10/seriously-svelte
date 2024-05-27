@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, s, u, Rect, Size, Point, ZIndex, onMount, Mouse } from '../../ts/common/GlobalImports';
+	import { k, s, u, Rect, Size, Point, Mouse, ZIndex, onMount } from '../../ts/common/GlobalImports';
 	import { s_mouse_location } from '../../ts/state/Stores';
 	export let hover_closure: () => {flag: boolean} | null = null;
 	export let closure = (mouseData) => {};
@@ -22,7 +22,7 @@
 
 	//////////////////////////////////////////
 	// IMPORTANT:	   can HANG if...		//
-	// containment hierarchy includes Mouse //
+	// containment hierarchy includes MouseButton //
 	//		perhaps due to contention		//
 	// 		over mouse move events			//
 	//////////////////////////////////////////
@@ -54,7 +54,7 @@
 			}
 			if (isHit != wasHit) {
 				s.setMouseHit_forName(name, isHit);
-				closure(Mouse.hover(null, mouse, isHit));	// use null event
+				closure(MouseButton.hover(null, mouse, isHit));	// use null event
 			}
 		}
 	}
@@ -64,7 +64,7 @@
 
 			// teardown timers and call closure
 		
-			closure(Mouse.up(event, mouse));
+			closure(MouseButton.up(event, mouse));
 			clearTimeout(mouse_doubleClick_timer);
 			clearTimeout(mouse_longClick_timer);
 			mouse_doubleClick_timer = null;
@@ -77,7 +77,7 @@
 
 			// call down closure
 
-			closure(Mouse.down(event, mouse));
+			closure(MouseButton.down(event, mouse));
 		}
 		s.incrementMouseClickCount_forName(name);
 		if (detect_longClick && !mouse_longClick_timer) {
@@ -85,7 +85,7 @@
 			// setup timer to call long-click closure
 
 			mouse_longClick_timer = setTimeout(() => {
-				closure(Mouse.long(event, mouse));
+				closure(MouseButton.long(event, mouse));
 				s.setMouseClickCount_forName(name, 0);
 				mouse_longClick_timer = null;
 			}, k.threshold_longClick);
@@ -95,7 +95,7 @@
 			// setup timer to call double-click closure
 
 			mouse_doubleClick_timer = setTimeout(() => {
-				closure(Mouse.clicks(event, mouse, s.mouseClickCount_forName(name)));
+				closure(MouseButton.clicks(event, mouse, s.mouseClickCount_forName(name)));
 				s.setMouseClickCount_forName(name, 0);
 				mouse_doubleClick_timer = null;
 			}, k.threshold_doubleClick);

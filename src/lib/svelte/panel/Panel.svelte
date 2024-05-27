@@ -3,6 +3,7 @@
 	import { IDButton, Hierarchy, IDPersistant, dbDispatch, debugReact, setContext, persistLocal } from '../../ts/common/GlobalImports';
 	import { s_build, s_isBusy, s_ancestry_focus, s_db_type, s_graphRect, s_id_popupView, s_title_editing } from '../../ts/state/Stores';
 	import { s_show_details, s_things_arrived, s_user_graphOffset, s_layout_asClusters } from '../../ts/state/Stores';
+	import MouseButton from '../buttons/MouseButton.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import Breadcrumbs from '../panel/Breadcrumbs.svelte';
 	import Clusters from '../clusters/Clusters.svelte';
@@ -11,7 +12,6 @@
 	import BuildNotes from './BuildNotes.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import Controls from './Controls.svelte';
-	import Mouse from '../kit/Mouse.svelte';
 	import Tree from '../tree/Tree.svelte';
 	import Help from '../help/Help.svelte';
 	let chain = ['Panel'];

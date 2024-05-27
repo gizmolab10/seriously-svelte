@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { g, k, s, u, Point, ZIndex, onMount, Appearance } from '../../ts/common/GlobalImports';
 	import { s_mouse_location } from '../../ts/state/Stores';
-	import Mouse from '../kit/Mouse.svelte';
+	import MouseButton from '../buttons/MouseButton.svelte';
 	export let background_color = k.color_background;
 	export let closure = (mouseData) => {};
 	export let position = 'absolute';
@@ -34,7 +34,7 @@
 
 </script>
 
-<Mouse
+<MouseButton
 	name={name}
 	width={width}
 	height={height}
@@ -53,4 +53,4 @@
 			background-color:{background_color};'>
 		<slot></slot>
 	</button>
-</Mouse>
+</MouseButton>
