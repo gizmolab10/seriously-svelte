@@ -6,7 +6,6 @@ import { dbDispatch, persistLocal, IDPersistant } from '../common/GlobalImports'
 class Global {
 
 	setup() {
-		builds.setup();
 		s_resize_count.set(0);
 		s_rebuild_count.set(0);
 		persistLocal.restore();

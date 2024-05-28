@@ -1,7 +1,7 @@
 <script>
 	import { g, k, s, u, get, Rect, Size, Point, Thing, debug, ZIndex, signals, onMount, Ancestry } from '../../ts/common/GlobalImports';
 	import { IDButton, Hierarchy, IDPersistant, dbDispatch, debugReact, setContext, persistLocal } from '../../ts/common/GlobalImports';
-	import { s_build, s_isBusy, s_ancestry_focus, s_db_type, s_graphRect, s_id_popupView, s_title_editing } from '../../ts/state/Stores';
+	import { s_isBusy, s_ancestry_focus, s_db_type, s_graphRect, s_id_popupView, s_title_editing } from '../../ts/state/Stores';
 	import { s_show_details, s_things_arrived, s_user_graphOffset, s_layout_asClusters } from '../../ts/state/Stores';
 	import MouseButton from '../buttons/MouseButton.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
@@ -62,10 +62,6 @@
 		font-size: 3em;
 		width: 100%;
 	}
-	.breadcrumbs {
-		position: fixed;
-		top: 41px;
-	}
 	.top-title {
 		text-align: center;
 		position: fixed;
@@ -114,13 +110,19 @@
 			{/if}
 			<div class='horizontal-line' style='
 				z-index: {ZIndex.lines};
-				top: {k.height_banner - 2}px;'>
+				top: {k.height_banner}px;'>
 			</div>
-			<div class='breadcrumbs' style='z-index: {ZIndex.frontmost};'>
+			<div class='breadcrumbs'
+				style='left:0px;
+					position: absolute;
+					top:{k.height_banner}px;
+					z-index: {ZIndex.frontmost};
+					width:{u.windowSize.width}px;
+					height:{k.height_breadcrumbs}px;'>
 				<Breadcrumbs/>
 				<div class='horizontal-line'
 					style='
-						top: 68px;
+						top: {k.height_banner + k.height_breadcrumbs}px;
 						z-index: {ZIndex.lines};'>
 				</div>
 			</div>
@@ -136,7 +138,7 @@
 				<div class='horizontal-line'
 					style='
 						z-index: {ZIndex.lines};
-						top: {k.height_banner + k.height_titleAtTop + 28}px;'>
+						top: {k.height_banner + k.height_titleAtTop}px;'>
 				</div>
 			{/if}
 		{/if}

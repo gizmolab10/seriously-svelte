@@ -5,7 +5,6 @@ import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } f
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
 import { DBType, DatumType } from '../db/DBInterface';
 import { initializeApp } from "firebase/app";
-import { s_build } from '../state/Stores';
 import DBInterface from './DBInterface';
 import { h } from '../db/DBDispatch';
 
@@ -487,7 +486,7 @@ export default class DBFirebase implements DBInterface {
 				const logRef = collection(this.firestore, 'access_logs');
 				const item = {
 					queries: queryStrings,
-					build: get(s_build),
+					build: k.build_number,
 					ipAddress: ipAddress,
 					timestamp: serverTimestamp(),
 				}

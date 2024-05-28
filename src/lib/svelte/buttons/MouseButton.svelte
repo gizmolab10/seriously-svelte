@@ -13,28 +13,33 @@
 	export let center: Point | null;
 	export let align_left = true;
 	export let name = 'generic';
-	export let height = 16;
-	export let width = 16;
-	let mouse;
+	export let height = k.default_buttonSize;
+	export let width = k.default_buttonSize;
+	let mouse_button;
 	let style = k.empty;
 	let mouse_longClick_timer;
 	let mouse_doubleClick_timer;
 
-	//////////////////////////////////////////
-	// IMPORTANT:	   can HANG if...		//
-	// containment hierarchy includes MouseButton //
-	//		perhaps due to contention		//
-	// 		over mouse move events			//
-	//////////////////////////////////////////
+	/////////////////////////////////////
+	//								   //
+	//		IMPORTANT: can HANG!	   //
+	//								   //
+	//   if this component's		   //
+	//   containment hierarchy		   //
+	//   includes another MouseButton, //
+	//   may be due to contention	   //
+	//   over mouse move events		   //
+	//								   //
+	/////////////////////////////////////
 
 	onMount(() => {
 		setupStyle();
-		if (!!mouse) {
-			mouse.addEventListener('pointerup', handle_pointerUp);
-			mouse.addEventListener('pointerdown', handle_pointerDown);
+		if (!!mouse_button) {
+			mouse_button.addEventListener('pointerup', handle_pointerUp);
+			mouse_button.addEventListener('pointerdown', handle_pointerDown);
 			return () => {
-				mouse.removeEventListener('pointerup', handle_pointerUp);
-				mouse.removeEventListener('pointerdown', handle_pointerDown);
+				mouse_button.removeEventListener('pointerup', handle_pointerUp);
+				mouse_button.removeEventListener('pointerdown', handle_pointerDown);
 			}
 		}
 	});
@@ -45,8 +50,8 @@
 	}
 
 	$: {	// movement
-		if (!!mouse && !!$s_mouse_location) {
-			const vagueHit = u.rect_forElement_contains(mouse, $s_mouse_location);
+		if (!!mouse_button && !!$s_mouse_location) {
+			const vagueHit = u.rect_forElement_contains(mouse_button, $s_mouse_location);
 			const wasHit = s.mouseHit_forName(name);
 			let isHit = vagueHit;
 			if (!!hover_closure) {
@@ -54,7 +59,7 @@
 			}
 			if (isHit != wasHit) {
 				s.setMouseHit_forName(name, isHit);
-				closure(MouseButton.hover(null, mouse, isHit));	// use null event
+				closure(Mouse.hover(null, mouse_button, isHit));	// use null event
 			}
 		}
 	}
@@ -64,7 +69,7 @@
 
 			// teardown timers and call closure
 		
-			closure(MouseButton.up(event, mouse));
+			closure(Mouse.up(event, mouse_button));
 			clearTimeout(mouse_doubleClick_timer);
 			clearTimeout(mouse_longClick_timer);
 			mouse_doubleClick_timer = null;
@@ -77,7 +82,7 @@
 
 			// call down closure
 
-			closure(MouseButton.down(event, mouse));
+			closure(Mouse.down(event, mouse_button));
 		}
 		s.incrementMouseClickCount_forName(name);
 		if (detect_longClick && !mouse_longClick_timer) {
@@ -85,7 +90,7 @@
 			// setup timer to call long-click closure
 
 			mouse_longClick_timer = setTimeout(() => {
-				closure(MouseButton.long(event, mouse));
+				closure(Mouse.long(event, mouse_button));
 				s.setMouseClickCount_forName(name, 0);
 				mouse_longClick_timer = null;
 			}, k.threshold_longClick);
@@ -95,7 +100,7 @@
 			// setup timer to call double-click closure
 
 			mouse_doubleClick_timer = setTimeout(() => {
-				closure(MouseButton.clicks(event, mouse, s.mouseClickCount_forName(name)));
+				closure(Mouse.clicks(event, mouse_button, s.mouseClickCount_forName(name)));
 				s.setMouseClickCount_forName(name, 0);
 				mouse_doubleClick_timer = null;
 			}, k.threshold_doubleClick);
@@ -107,17 +112,15 @@
 		if (!!center) {
 			const x = center.x - width / 2;
 			const horizontal = align_left ? `left: ${x}` : `right: ${-x}`;
-			style = `${style}}; ${horizontal}px; top: ${center.y - height / 2}px;`;
+			style = `${style} ${horizontal}px; top: ${center.y - height / 2}px;`;
 		}
-		style = style.removeWhiteSpace();
 	}
 
 </script>
 
-<div
+<div class='mouse-button'
 	id={name}
-	class='mouse'
 	style={style}
-	bind:this={mouse}>
+	bind:this={mouse_button}>
 	<slot></slot>
 </div>

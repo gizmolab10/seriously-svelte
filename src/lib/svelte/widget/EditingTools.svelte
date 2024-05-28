@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { MouseButton, Direction, dbDispatch, AlterationType, transparentize, Alteration } from '../../ts/common/GlobalImports';
-	import { k, u, Rect, Size, Point, IDTool, ZIndex, onMount, Wrapper, svgPaths, signals } from '../../ts/common/GlobalImports';
+	import { svgPaths, Direction, dbDispatch, Appearance, Alteration, AlterationType, transparentize } from '../../ts/common/GlobalImports';
+	import { k, s, u, Rect, Size, Point, Mouse, IDTool, ZIndex, onMount, Wrapper, signals } from '../../ts/common/GlobalImports';
 	import { s_ancestry_editingTools, s_layout_asClusters } from '../../ts/state/Stores';
 	import { s_altering, s_graphRect, s_show_details } from '../../ts/state/Stores';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
@@ -16,25 +16,23 @@
 	const parentAlteringIDs = [IDTool.add_parent, IDTool.delete_parent];
 	const editingToolsRadius = editingToolsDiameter / 2;
 	const toolDiameter = k.dot_size * 1.4;
-	let hovers: { [type: string]: boolean } = {}
-	let centers: { [type: string]: Point } = {}
+	let isHovering_byID: { [id: string]: boolean } = {}
+	let centers_byID: { [id: string]: Point } = {}
 	let parentSensitiveColor = k.empty;
 	let countOfVisibleParents = 0;
 	let confirmingDelete = false;
 	let graphRect = new Rect();
+	let mouse_click_timer;
 	let color = k.empty;
 	let titleWidth = 0;
 	let rebuilds = 0;
-	let mouse_click_timer;
 	let left = 64;
 	let thing;
 	let ancestry;
 
-	function getC(type: string) { return centers[type] ?? new Point(); }
-	function setC(type: string, center: Point) { return centers[type] = center; }
-	function centers_isEmpty(): boolean { return Object.keys(centers).length == 0; }
-	function handle_hover_for(key: string, isHovering: boolean) { hovers[key] = isHovering; }
-	function alteration_for(idTool: string) { return (idTool == IDTool.add_parent) ? AlterationType.adding : AlterationType.deleting; }
+	function getC(id: string) { return centers_byID[id] ?? new Point(); }
+	function setC(id: string, center: Point) { return centers_byID[id] = center; }
+	function alteration_forID(id: string) { return (id == IDTool.add_parent) ? AlterationType.adding : AlterationType.deleting; }
 
 	onMount(() => { 
 		setup();
@@ -46,8 +44,8 @@
 		return () => { handler.disconnect() };
 	});
 
-	function isInvertedFor(idTool: string) {
-		return parentAlteringIDs.includes(idTool) && $s_altering?.alteration == alteration_for(idTool);
+	function isInvertedFor(id: string) {
+		return parentAlteringIDs.includes(id) && $s_altering?.alteration == alteration_forID(id);
 	}
 
 	function isDisabledFor(id: string) {
@@ -98,16 +96,28 @@
 		return [color, k.color_background];
 	}
 
-	async function handle_mouse_event(mouseData: MouseButton, id: string) {
+	async function handle_delete_event(event) {
+		if (!isDisabledFor(IDTool.delete)) {
+			confirmingDelete = true;
+		}
+	}
+
+	async function handle_mouse_data(mouseData: Mouse, id: string) {
 		if (mouseData.isHover) {
-			handle_hover_for(IDTool.delete_confirm, !mouseData.isOut);;
+			const hovering = !mouseData.isOut;
+			isHovering_byID[id] = hovering;
+			const appearance = new Appearance(
+				hovering ? k.color_background : color,
+				hovering ? color : k.color_background,
+				hovering ? 'pointer' : k.cursor_default
+			);
+			s.setAppearance_forName(id, appearance);
 		} else {
 			switch (id) {
-				case IDTool.delete: confirmingDelete = true; break;
 				case IDTool.delete_cancel: confirmingDelete = false; break;
 				default:
-					if (!!ancestry && !ancestry.isExemplar && !isDisabledFor(id)) {
-						await h.handle_tool_clicked(id, mouseData.event, mouseData.isLong);
+					if (!isDisabledFor(id)) {
+						await h.handle_tool_clicked(id, mouseData);
 					}
 					break;
 			}
@@ -120,22 +130,22 @@
 		if (rect && $s_ancestry_editingTools && rect.size.width != 0) {
 			const offsetX = 8.5 + titleWidth - ($s_show_details ? k.width_details : 0) - ($s_layout_asClusters ? 38 : 0);
 			const offsetY = (k.show_titleAtTop ? -45 : 0) + ($s_layout_asClusters ? 3 : 0) - editingToolsDiameter - 5.8;
-			const center = rect.centerLeft.offsetBy(offset).offsetBy(new Point(offsetX, offsetY));
-			const offsetReveal = new Point(1, 1.5);
+			const center = rect.centerLeft.offsetBy(offset).offsetByXY(offsetX, offsetY);
+			const offsetReveal = Point.square(-5.5);
 			const x = center.x;
 			const y = center.y;
 			left = x - toolDiameter;
 			setC(IDTool.editingTools,   center);
 			setC(IDTool.dismiss,		center.offsetBy(offsetReveal));
 			setC(IDTool.confirmation,   center.offsetEquallyBy(1 - editingToolsRadius));
-			setC(IDTool.delete_cancel,  center.offsetBy(new Point(19 - toolDiameter, -1 + toolDiameter)));
-			setC(IDTool.delete_confirm, center.offsetBy(new Point(20 - toolDiameter, 3 - toolDiameter)));
-			setC(IDTool.create,		 	new Point(x + 1 + toolDiameter, y - toolDiameter + 8));
-			setC(IDTool.more,			new Point(x + 0.9, y + toolDiameter + 3.5));
-			setC(IDTool.delete_parent,  new Point(left + 2, y + toolDiameter - 5));
-			setC(IDTool.add_parent,	 	new Point(left + 2, y - toolDiameter + 8));
-			setC(IDTool.next,			new Point(x + 2, y - toolDiameter - 2));
-			setC(IDTool.delete,		 	new Point(x + 4.5, y + 3));
+			setC(IDTool.delete_cancel,  center.offsetByXY(19 - toolDiameter, -1 + toolDiameter));
+			setC(IDTool.delete_confirm, center.offsetByXY(20 - toolDiameter, 3 - toolDiameter));
+			setC(IDTool.create,		 	center.offsetByXY(1 + toolDiameter, 8 - toolDiameter));
+			setC(IDTool.delete_parent,  center.offsetByXY(2 - toolDiameter, toolDiameter - 5));
+			setC(IDTool.add_parent,	 	center.offsetByXY(2 - toolDiameter, 8 - toolDiameter));
+			setC(IDTool.more,			center.offsetByXY(0.9, toolDiameter + 3.5));
+			setC(IDTool.next,			center.offsetByXY(2, -toolDiameter - 2));
+			setC(IDTool.delete,		 	center.offsetByXY(5.5, 3));
 			return true;
 		}
 		return false;
@@ -174,7 +184,7 @@
 				center={getC(IDTool.editingTools)}
 				color_background={transparentize(k.color_background, 0.05)}/>
 			{#if confirmingDelete}
-				{#if hovers[IDTool.delete_confirm]}
+				{#if isHovering_byID[IDTool.delete_confirm]}
 					<svg class='delete-confirm' style='
 							left:{getC(IDTool.confirmation).x}px;
 							top:{getC(IDTool.confirmation).y}px;
@@ -187,7 +197,7 @@
 						<path d={svgPaths.half_circle(editingToolsDiameter, Direction.up)}/>
 					</svg>
 				{/if}
-				{#if hovers[IDTool.delete_cancel]}
+				{#if isHovering_byID[IDTool.delete_cancel]}
 					<svg class='delete-cancel' style='
 							left:{getC(IDTool.confirmation).x}px;
 							top:{getC(IDTool.confirmation).y}px;
@@ -200,8 +210,8 @@
 					</svg>
 				{/if}
 				<Button
-					closure={(mouseData) => handle_mouse_event(mouseData, IDTool.delete_confirm)}
-					color={ hovers[IDTool.delete_confirm] ? k.color_background : color}
+					closure={(mouseData) => handle_mouse_data(mouseData, IDTool.delete_confirm)}
+					color={isHovering_byID[IDTool.delete_confirm] ? k.color_background : color}
 					center={getC(IDTool.delete_confirm)}
 					height={editingToolsDiameter / 2}
 					width={editingToolsDiameter}
@@ -215,8 +225,8 @@
 					</div>
 				</Button>
 				<Button
-					closure={(mouseData) => handle_mouse_event(mouseData, IDTool.delete_cancel)}
-					color={ hovers[IDTool.delete_cancel] ? k.color_background : color}
+					closure={(mouseData) => handle_mouse_data(mouseData, IDTool.delete_cancel)}
+					color={isHovering_byID[IDTool.delete_cancel] ? k.color_background : color}
 					center={getC(IDTool.delete_cancel)}
 					height={editingToolsDiameter / 2}
 					width={editingToolsDiameter}
@@ -241,25 +251,24 @@
 				</div>
 			{:else}
 				<Button
-					closure={(mouseData) => handle_mouse_event(mouseData, IDTool.more)}
+					closure={(mouseData) => handle_mouse_data(mouseData, IDTool.more)}
+					color={isHovering_byID[IDTool.more] ? k.color_background : color}
+					height={k.default_buttonSize}
 					zindex={ZIndex.tool_buttons}
 					center={getC(IDTool.more)}
-					color={color}
 					name='more'
-					height=16
 					width=18>
 					<svg width=18
-						fill={hovers[IDTool.more] ? color : 'transparent'}
-						viewBox='0 1 18 16'
 						stroke={color}
-						height=16>
+						viewBox='0 1 18 16'
+						height={k.default_buttonSize}
+						fill={isHovering_byID[IDTool.more] ? color : 'transparent'}>
 						<path d={svgPaths.oval(18, true)}/>
 					</svg>
-					<svg 
-						fill={hovers[IDTool.more] ? k.color_background : color}
+					<svg height=10
 						viewBox='-0.5 -2 14 10'
-						height=10
-						width=16>
+						width={k.default_buttonSize}
+						fill={isHovering_byID[IDTool.more] ? k.color_background : color}>
 						<path d={svgPaths.ellipses(7, 1)}/>
 					</svg>
 				</Button>
@@ -267,8 +276,7 @@
 				<TriangleButton
 					strokeColor={isDisabledFor(IDTool.next) ? k.color_disabled : parentSensitiveColor}
 					hover_closure={(isHovering) => { return fillColorsFor(IDTool.next, isHovering) }}
-					mouse_closure={(mouseData) => handle_mouse_event(mouseData, IDTool.next)}
-					cursor={isDisabledFor(IDTool.next) ? k.cursor_default : 'pointer'}
+					mouse_closure={(mouseData) => handle_mouse_data(mouseData, IDTool.next)}
 					extraPath={svgPaths.circle_atOffset(toolDiameter, 4)}
 					center={getC(IDTool.next)}
 					direction={Direction.up}
@@ -277,8 +285,7 @@
 				<TriangleButton
 					strokeColor={isDisabledFor(IDTool.delete_parent) ? k.color_disabled : parentSensitiveColor}
 					hover_closure={(isHovering) => { return fillColorsFor(IDTool.delete_parent, isHovering) }}
-					mouse_closure={(mouseData) => handle_mouse_event(mouseData, IDTool.delete_parent)}
-					cursor={isDisabledFor(IDTool.delete_parent) ? k.cursor_default : 'pointer'}
+					mouse_closure={(mouseData) => handle_mouse_data(mouseData, IDTool.delete_parent)}
 					extraPath={svgPaths.dash(toolDiameter, 4)}
 					center={getC(IDTool.delete_parent)}
 					direction={Direction.left}
@@ -286,9 +293,8 @@
 					size={toolDiameter}/>
 				<TriangleButton
 					hover_closure={(isHovering) => { return fillColorsFor(IDTool.add_parent, isHovering) }}
-					mouse_closure={(mouseData) => handle_mouse_event(mouseData, IDTool.add_parent)}
+					mouse_closure={(mouseData) => handle_mouse_data(mouseData, IDTool.add_parent)}
 					strokeColor={isDisabledFor(IDTool.add_parent) ? k.color_disabled : color}
-					cursor={isDisabledFor(IDTool.add_parent) ? k.cursor_default : 'pointer'}
 					extraPath={svgPaths.t_cross(toolDiameter, 3)}
 					center={getC(IDTool.add_parent)}
 					direction={Direction.left}
@@ -296,7 +302,7 @@
 					name='add_parent'/>
 				<TriangleButton
 					hover_closure={(isHovering) => { return fillColorsFor(IDTool.create, isHovering) }}
-					mouse_closure={(mouseData) => handle_mouse_event(mouseData, IDTool.create)}
+					mouse_closure={(mouseData) => handle_mouse_data(mouseData, IDTool.create)}
 					extraPath={svgPaths.t_cross(toolDiameter, 3)}
 					center={getC(IDTool.create)}
 					direction={Direction.right}
@@ -306,9 +312,9 @@
 				<button id='delete'
 					on:blur={u.ignore}
 					on:focus={u.ignore}
-					on:mouseout={() => { hovers[IDTool.delete] = false; }}
-					on:mouseover={() => { hovers[IDTool.delete] = true; }}
-					on:click={(event) => handle_mouse_event(mouseData, IDTool.delete, event, false)}
+					on:mouseout={() => { isHovering_byID[IDTool.delete] = false; }}
+					on:mouseover={() => { isHovering_byID[IDTool.delete] = true; }}
+					on:click={(event) => handle_delete_event(event)}
 					style='
 						left: {getC(IDTool.delete).x}px;
 						top: {getC(IDTool.delete).y}px;
@@ -316,7 +322,7 @@
 						background: none;
 						cursor: pointer;
 						border: none;'>
-					<Trash color={color} invert={hovers[IDTool.delete]}/>
+					<Trash color={color} invert={isHovering_byID[IDTool.delete]}/>
 				</button>
 			{/if}
 		</div>

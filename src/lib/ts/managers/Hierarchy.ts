@@ -1,4 +1,4 @@
-import { k, u, get, User, Thing, Grabs, debug, Access, IDTool, IDTrait, signals, Ancestry } from '../common/GlobalImports';
+import { k, u, get, User, Thing, Grabs, debug, Mouse, Access, IDTool, IDTrait, signals, Ancestry } from '../common/GlobalImports';
 import { Wrapper, Predicate, Alteration, Relationship, AlterationType, CreationOptions } from '../common/GlobalImports';
 import { s_ancestries_grabbed, s_things_arrived, s_ancestry_editingTools } from '../state/Stores';
 import { s_isBusy, s_altering, s_ancestry_focus, s_title_editing } from '../state/Stores';
@@ -56,16 +56,17 @@ export class Hierarchy {
 
 	static readonly $_EVENTS_$: unique symbol;
 
-	async handle_tool_clicked(idButton: string, event: MouseEvent, isLong: boolean) {
+	async handle_tool_clicked(idButton: string, mouseData: Mouse) {
+		const event: MouseEvent | null = mouseData.event as MouseEvent;
         const ancestry = get(s_ancestry_editingTools);
-		if (!!ancestry) {
+		if (!!ancestry && !mouseData.isUp) {
 			switch (idButton) {
-				case IDTool.create: await this.ancestry_edit_remoteCreateChildOf(ancestry); break;
-				case IDTool.add_parent: this.toggleAlteration(AlterationType.adding, isLong); return;
-				case IDTool.next: this.ancestry_relayout_toolCluster_nextParent(event.altKey); return;
-				case IDTool.delete_parent: this.toggleAlteration(AlterationType.deleting, isLong); return;
-				case IDTool.delete_confirm: await this.ancestries_rebuild_traverse_remoteDelete([ancestry]); break;
 				case IDTool.more: console.log('needs more'); break;
+				case IDTool.create: await this.ancestry_edit_remoteCreateChildOf(ancestry); break;
+				case IDTool.next: this.ancestry_relayout_toolCluster_nextParent(event.altKey); return;
+				case IDTool.add_parent: this.toggleAlteration(AlterationType.adding, mouseData.isLong); return;
+				case IDTool.delete_confirm: await this.ancestries_rebuild_traverse_remoteDelete([ancestry]); break;
+				case IDTool.delete_parent: this.toggleAlteration(AlterationType.deleting, mouseData.isLong); return;
 				default: break;
 			}
 			s_ancestry_editingTools.set(null);

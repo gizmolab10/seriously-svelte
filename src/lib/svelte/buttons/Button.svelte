@@ -3,6 +3,8 @@
 	import { s_mouse_location } from '../../ts/state/Stores';
 	import MouseButton from '../buttons/MouseButton.svelte';
 	export let background_color = k.color_background;
+	export let height = k.default_buttonSize;
+	export let width = k.default_buttonSize;
 	export let closure = (mouseData) => {};
 	export let position = 'absolute';
 	export let center = new Point();
@@ -11,12 +13,31 @@
 	export let color = 'black';
 	export let style = k.empty;
 	export let name = k.empty;
-	export let height = 16;
-	export let width = 16;
+	let currentStyle = style;
 
-	function update() { updateFor(s.appearance_forName(name)); }
 	onMount(() => { update(); })
 	$: { update(); }
+	
+	function update() {
+		updateFor(s.appearance_forName(name));
+		updateStyle();
+	}
+	
+	function updateStyle() {
+		if (style.length == 0) {
+			currentStyle=`
+				color:${color};
+				cursor:pointer;
+				border:${border};
+				width:${width}px;
+				z-index:${zindex};
+				height:${height}px;
+				position:${position};
+				border-radius:${height / 2}px;
+				background-color:${background_color};
+			`.removeWhiteSpace()
+		}
+	}
 
 	function updateFor(appearance: Appearance) {
 		if (!!appearance) {
@@ -40,17 +61,7 @@
 	height={height}
 	center={center}
 	closure={button_closure}>
-	<button class='button' id={name}
-		style='
-			color:{color};
-			cursor:pointer;
-			border:{border};
-			width:{width}px;
-			z-index:{zindex};
-			height:{height}px;
-			position:{position};
-			border-radius:{height / 2}px;
-			background-color:{background_color};'>
+	<button class='button' id={name} style={currentStyle}>
 		<slot></slot>
 	</button>
 </MouseButton>

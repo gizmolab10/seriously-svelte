@@ -1,11 +1,11 @@
 <script>
 	import { k, s, u, Point, ZIndex, signals, svgPaths, IDButton, Appearance, IDPersistant, persistLocal, GraphRelations } from '../../ts/common/GlobalImports';
-	import { s_build, s_show_details, s_id_popupView, s_resize_count, s_layout_asClusters, s_graph_relations } from '../../ts/state/Stores';
+	import { s_show_details, s_id_popupView, s_resize_count, s_layout_asClusters, s_graph_relations } from '../../ts/state/Stores';
 	import Button from '../buttons/Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	const top = k.dot_size / 2 + 2;
 	let width = u.windowSize.width - 20;
-	let size = 16;
+	let size = k.default_buttonSize;
 
 	function togglePopupID(id) {
 		$s_id_popupView = ($s_id_popupView == id) ? null : id;
@@ -106,7 +106,7 @@
 		border='solid 1px'
 		center={new Point(width - 50, 8)}
 		closure={(mouseData) => button_closure_forID(mouseData, IDButton.builds)}>
-		build {$s_build}
+		{'build ' + k.build_number}
 	</Button>
 	<Button name={IDButton.help}
 		width={size + 4}

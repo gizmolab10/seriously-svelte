@@ -5,11 +5,12 @@
 	import { h } from '../../ts/db/DBDispatch';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	let ancestors: Array<Thing> = [];
+	let styles: Array<string> = [];
 	let ancestry: Ancestry;
 	let rebuilds = 0;
 	let trigger = 0;
 	let width = 0;
-	let size = 16;
+	let size = k.default_buttonSize;
 	let left = 0;
 
 	onMount(() => {
@@ -37,7 +38,17 @@
 				[encodedCount, width, ancestors] = ancestry.ancestorsWithin(windowWidth - 10);
 				left = (windowWidth - width - 20) / 2;
 				trigger = encodedCount * 10000 + rebuilds * 100 + left;
+				setupStyles();
 			}
+		}
+	}
+
+	function setupStyles() {
+		let sum = left;
+		styles = [];
+		for (const ancestor of ancestors) {
+			sum += u.getWidthOf(ancestor.title) + size * 2;
+			styles.push(`left:{sum}px;`);
 		}
 	}
 
@@ -47,10 +58,10 @@
 	{#if left > 0}
 		<span class='left-spacer' style='display: inline-block; width: {left}px;'/>
 	{/if}
-	{#each ancestors.map(thing => thing.parents.length) as count, index}
+	{#each ancestors as ancestor, index}
 		{#if index > 0}
 			<span class='crumb-separator' style='
-				top:{size / 5}px;
+				top:{size / 2 + 1}px;
 				position: relative;
 				color: transparent;
 				left: 0px;'>
@@ -58,12 +69,12 @@
 					width={size}
 					height={size}
 					position='absolute'
-					stroke={ancestors[index].color}
+					stroke={ancestor.color}
 					svg_path={svgPaths.dash(size, 0)}
 				/>
 			</span>
 			&nbsp;&nbsp;
 		{/if}
-		<CrumbButton ancestry={ancestry.stripBack(ancestors.length - index - 1)}/>
+		<CrumbButton style={styles[index]} ancestry={ancestry.stripBack(ancestors.length - index - 1)}/>
 	{/each}
 {/key}

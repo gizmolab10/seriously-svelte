@@ -28,7 +28,7 @@
 		center = size.dividedInHalf.asPoint;
 		titleWidth = u.getWidthOf(thing?.title ?? k.empty);
 		offsetX = -k.thing_fontSize - 3 - (titleWidth / 2);
-		titleCenter = center.offsetBy(new Point(offsetX, k.cluster_offsetY));
+		titleCenter = center.offsetByXY(offsetX, k.cluster_offsetY);
 	}
 
 </script>

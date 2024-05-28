@@ -32,7 +32,8 @@
 			style = `display: flex;
 				flex-direction: row;
 				align-items: center;
-				justify-content: space-around;`.removeWhiteSpace();
+				justify-content: space-around;
+			`.removeWhiteSpace();
 		}
 	}
 
