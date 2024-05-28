@@ -156,22 +156,19 @@ export class Hierarchy {
 
 	things_forAncestry(ancestry: Ancestry): Array<Thing> {
 		const isContains = ancestry.idPredicate == Predicate.idContains;
-		const things: Array<Thing | null> = [];
+		let things: Array<Thing | null> = isContains ? [this.root] : [];
 		const hids = ancestry.ids_hashed;
-		if (isContains && hids.length == 0) {
-			return [this.root];
-		}
-		for (const hid of hids) {
-			const relationship = this.relationship_forHID(hid);
-			if (relationship) {
-				if (things.length == 0) {
-					if (isContains) {
-						things.push(this.root);					// contains ancestries start with root
-					} else {
-						things.push(relationship.parent);
+		if (!isContains || hids.length != 0) {
+			for (const hid of hids) {
+				const relationship = this.relationship_forHID(hid);
+				if (relationship) {
+					if (things.length == 0) {
+						if (!isContains) {
+							things.push(relationship.parent);
+						}
 					}
+					things.push(relationship.child);
 				}
-				things.push(relationship.child);
 			}
 		}
 		return u.strip_invalid(things);

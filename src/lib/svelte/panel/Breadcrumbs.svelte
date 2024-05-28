@@ -46,8 +46,12 @@
 	function setupStyles() {
 		let sum = left;
 		lefts = [];
+		// const complete = [h.rootAncestry, ...ancestors];
 		for (const ancestor of ancestors) {
-			sum += u.getWidthOf(ancestor.title) + size * 2;
+			const title = ancestor.title;
+			const width = u.getWidthOf(title);
+			sum += width + size * 2;
+			console.log(`${width} ${sum} ${title}`);
 			lefts.push(sum);
 		}
 	}
@@ -56,15 +60,15 @@
 
 {#key trigger}
 	{#if left > 0}
-		<span class='left-spacer' style='display: inline-block; width: {left}px;'/>
+		<div class='left-spacer' style='display: inline-block; width: {left}px;'/>
 	{/if}
 	{#each ancestors as ancestor, index}
 		{#if index > 0}
-			<span class='crumb-separator' style='
+			<div class='crumb-separator' style='
+				color:transparent;
+				position:absolute;
 				top:{size / 2 + 1}px;
-				position: relative;
-				color: transparent;
-				left: 0px;'>
+				left:{lefts[index] - 40}px;'>
 				<SVGD3 name='dash'
 					width={size}
 					height={size}
@@ -72,7 +76,7 @@
 					stroke={ancestor.color}
 					svg_path={svgPaths.dash(size, 0)}
 				/>
-			</span>
+			</div>
 			&nbsp;&nbsp;
 		{/if}
 		<CrumbButton left={lefts[index]} ancestry={ancestry.stripBack(ancestors.length - index - 1)}/>
