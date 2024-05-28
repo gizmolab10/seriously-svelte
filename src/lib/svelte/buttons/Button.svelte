@@ -7,13 +7,14 @@
 	export let width = k.default_buttonSize;
 	export let closure = (mouseData) => {};
 	export let position = 'absolute';
+	export let border_thickness = 1;
 	export let center = new Point();
 	export let zindex = ZIndex.dots;
-	export let border = 'none';
 	export let color = 'black';
 	export let style = k.empty;
 	export let name = k.empty;
 	let currentStyle = style;
+	let border = k.empty;
 
 	onMount(() => { update(); })
 	$: { update(); }
@@ -25,11 +26,12 @@
 	
 	function updateStyle() {
 		if (style.length == 0) {
+			border = border_thickness == 0 ? 'none' : `solid ${border_thickness}px`;
 			currentStyle=`
 				color:${color};
 				cursor:pointer;
-				border:${border};
 				width:${width}px;
+				border:${border};
 				z-index:${zindex};
 				height:${height}px;
 				position:${position};

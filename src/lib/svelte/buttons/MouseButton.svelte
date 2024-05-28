@@ -51,9 +51,9 @@
 
 	$: {	// movement
 		if (!!mouse_button && !!$s_mouse_location) {
-			const vagueHit = u.rect_forElement_contains(mouse_button, $s_mouse_location);
+			const isElementHit = u.rect_forElement_contains(mouse_button, $s_mouse_location);
 			const wasHit = s.mouseHit_forName(name);
-			let isHit = vagueHit;
+			let isHit = isElementHit;
 			if (!!hover_closure) {
 				isHit = hover_closure();	// ask containing component
 			}

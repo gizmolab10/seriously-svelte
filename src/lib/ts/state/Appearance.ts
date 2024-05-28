@@ -11,4 +11,11 @@ export default class Appearance {
 		this.color = color;
 	}
 
+	static out_withColor(isOut: boolean, color: string) {
+		return new Appearance(
+			isOut ? color : k.color_background,
+			isOut ? k.color_background : color,
+			isOut ? k.cursor_default : 'pointer'
+		) }
+
 }

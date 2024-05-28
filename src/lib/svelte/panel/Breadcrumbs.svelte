@@ -5,7 +5,7 @@
 	import { h } from '../../ts/db/DBDispatch';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	let ancestors: Array<Thing> = [];
-	let styles: Array<string> = [];
+	let lefts: Array<string> = [];
 	let ancestry: Ancestry;
 	let rebuilds = 0;
 	let trigger = 0;
@@ -45,10 +45,10 @@
 
 	function setupStyles() {
 		let sum = left;
-		styles = [];
+		lefts = [];
 		for (const ancestor of ancestors) {
 			sum += u.getWidthOf(ancestor.title) + size * 2;
-			styles.push(`left:{sum}px;`);
+			lefts.push(sum);
 		}
 	}
 
@@ -75,6 +75,6 @@
 			</span>
 			&nbsp;&nbsp;
 		{/if}
-		<CrumbButton style={styles[index]} ancestry={ancestry.stripBack(ancestors.length - index - 1)}/>
+		<CrumbButton left={lefts[index]} ancestry={ancestry.stripBack(ancestors.length - index - 1)}/>
 	{/each}
 {/key}

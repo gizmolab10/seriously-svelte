@@ -3,9 +3,11 @@
 	import { s_show_details, s_id_popupView, s_resize_count, s_layout_asClusters, s_graph_relations } from '../../ts/state/Stores';
 	import Button from '../buttons/Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
-	const top = k.dot_size / 2 + 2;
-	let width = u.windowSize.width - 20;
+	const details_top = k.dot_size / 2;
+	const top = (k.dot_size + 3) / 2;
+	const lefts = [10, 65, 137];
 	let size = k.default_buttonSize;
+	let width = u.windowSize.width - 20;
 
 	function togglePopupID(id) {
 		$s_id_popupView = ($s_id_popupView == id) ? null : id;
@@ -19,11 +21,7 @@
 	function button_closure_forID(mouseData, id) {
 		if (mouseData.isHover) {
 			const out = mouseData.isOut;
-			const appearance = new Appearance(
-				out ? 'black' : k.color_background,
-				out ? k.color_background : 'black',
-				out ? k.cursor_default : 'pointer'
-			);
+			const appearance = Appearance.out_withColor(out, 'black');
 			s.setAppearance_forName(id, appearance);
 		} else if (mouseData.isUp) {
 			switch (id) {
@@ -57,7 +55,8 @@
 	{#if !$s_id_popupView}
 		<Button name='details'
 			color='transparent'
-			center={new Point(10, top - 2)}
+			border_thickness=0
+			center={new Point(lefts[0], details_top)}
 			closure={(mouseData) => button_closure_forID(mouseData, IDButton.details)}>
 			<img src='settings.svg' alt='circular button' width={size}px height={size}px/>
 		</Button>
@@ -65,16 +64,14 @@
 			<Button name={IDButton.relations}
 				width=65
 				height={size + 4}
-				border='solid 1px'
-				center={new Point(65, 8)}
+				center={new Point(lefts[1], top)}
 				closure={(mouseData) => button_closure_forID(mouseData, IDButton.relations)}>
 				{$s_graph_relations}
 			</Button>
 			<Button name={IDButton.layout}
 				width=65
 				height={size + 4}
-				border='solid 1px'
-				center={new Point(140, 8)}
+				center={new Point(lefts[2], top)}
 				closure={(mouseData) => button_closure_forID(mouseData, IDButton.layout)}>
 				{#if $s_layout_asClusters}tree{:else}clusters{/if}
 			</Button>
@@ -103,15 +100,13 @@
 	<Button name={IDButton.builds}
 		width=65
 		height={size + 4}
-		border='solid 1px'
-		center={new Point(width - 50, 8)}
+		center={new Point(width - 50, top)}
 		closure={(mouseData) => button_closure_forID(mouseData, IDButton.builds)}>
 		{'build ' + k.build_number}
 	</Button>
 	<Button name={IDButton.help}
 		width={size + 4}
 		height={size + 4}
-		border='solid 1px'
 		center={new Point(width, top)}
 		closure={(mouseData) => button_closure_forID(mouseData, IDButton.help)}>
 		<span

@@ -1,17 +1,18 @@
 <script lang='ts'>
-	import { k, u, Thing, onMount, signals, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
+	import { k, s, u, Thing, onMount, signals, dbDispatch, Appearance, transparentize } from '../../ts/common/GlobalImports';
 	import { s_thing_changed, s_ancestry_focus } from '../../ts/state/Stores';
 	import Button from '../buttons/Button.svelte';
+	export let left = 0;
     export let ancestry;
-	export let style = k.empty;
 	const borderStyle = '1px solid';
 	let borderColor = k.color_background;
 	let border = `${borderStyle} ${borderColor}`;
+	let width = k.default_buttonSize * 2;
 	let thing: Thing = ancestry.thing;
 	let title: string = thing.title;
-	let colorStyles = k.empty;
 	let cursorStyle = k.empty;
-	let titleWidth = k.default_buttonSize;
+	let colorStyles = k.empty;
+	let style = k.empty;
 	let name = k.empty;
 	let rebuilds = 0;
 
@@ -20,7 +21,7 @@
 	$: {
 		thing = ancestry.thing;
 		title = thing.title;
-		titleWidth = u.getWidthOf(title) ?? k.default_buttonSize;
+		width = u.getWidthOf(title) ?? 0;
 		name = `crumb (for ${title ?? 'unknown'})`
 		updateColors();
 	}
@@ -47,23 +48,28 @@
 	}
 
 	function updateStyle() {
-		style=`{style}
+		style=`
 			${colorStyles};
 			${cursorStyle};
 			border:${border};
 			border-radius: 1em;
-			display:inline-block;
 		`.removeWhiteSpace();
 	}
 
 	function closure(mouseData) {
 		if (dbDispatch.db.hasData) {
 			if (mouseData.isHover) {
+				const appearance = Appearance.out_withColor(mouseData.isOut, thing.color);
+				s.setAppearance_forName(name, appearance);
 				if (mouseData.isOut) {
+					cursorStyle = k.empty;
 					border = `${borderStyle} ${borderColor}`;
 				} else {
+					cursorStyle = 'cursor: pointer';
 					border = `${borderStyle} ${thing.color}`;
 				}
+				updateStyle();
+				rebuilds += 1;
 			} else if (mouseData.isUp) {
 				ancestry.grabOnly();
 				if (ancestry.becomeFocus()) {
@@ -78,15 +84,17 @@
 {#key rebuilds}
 	<div class='crumb-button'
 		style='
-			position: relative;
-			width:{titleWidth}px;
-			display: inline-block;
-			height:{k.default_buttonSize}px;'>
+			top:14px;
+			left:{left}px;
+			width:{width}px;
+			position: absolute;
+			height:{k.default_buttonSize}px;
+			padding-right: {k.default_buttonSize / 2}px;'>
 		<Button
 			name={name}
 			style={style}
+			width={width}
 			closure={closure}
-			width={titleWidth}
 			position='absolute'>
 			<div style='padding:0px 0px 1px 0px;'>
 				{title.injectElipsisAt()}
