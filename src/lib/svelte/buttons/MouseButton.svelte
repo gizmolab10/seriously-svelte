@@ -54,7 +54,7 @@
 			}
 			if (isHit != wasHit) {
 				s.setMouseHit_forName(name, isHit);
-				closure(MouseButton.hover(null, mouse, isHit));	// use null event
+				closure(Mouse.hover(null, mouse, isHit));	// use null event
 			}
 		}
 	}
@@ -64,7 +64,7 @@
 
 			// teardown timers and call closure
 		
-			closure(MouseButton.up(event, mouse));
+			closure(Mouse.up(event, mouse));
 			clearTimeout(mouse_doubleClick_timer);
 			clearTimeout(mouse_longClick_timer);
 			mouse_doubleClick_timer = null;
@@ -77,7 +77,7 @@
 
 			// call down closure
 
-			closure(MouseButton.down(event, mouse));
+			closure(Mouse.down(event, mouse));
 		}
 		s.incrementMouseClickCount_forName(name);
 		if (detect_longClick && !mouse_longClick_timer) {
@@ -85,7 +85,7 @@
 			// setup timer to call long-click closure
 
 			mouse_longClick_timer = setTimeout(() => {
-				closure(MouseButton.long(event, mouse));
+				closure(Mouse.long(event, mouse));
 				s.setMouseClickCount_forName(name, 0);
 				mouse_longClick_timer = null;
 			}, k.threshold_longClick);
@@ -95,7 +95,7 @@
 			// setup timer to call double-click closure
 
 			mouse_doubleClick_timer = setTimeout(() => {
-				closure(MouseButton.clicks(event, mouse, s.mouseClickCount_forName(name)));
+				closure(Mouse.clicks(event, mouse, s.mouseClickCount_forName(name)));
 				s.setMouseClickCount_forName(name, 0);
 				mouse_doubleClick_timer = null;
 			}, k.threshold_doubleClick);
