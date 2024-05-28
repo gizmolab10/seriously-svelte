@@ -12,16 +12,6 @@
 	let size = 16;
 	let left = 0;
 
-	onMount(() => {
-		debugReact.log_mount(`BREADCRUMBS`);
-		const handleRebuild = signals.handle_rebuildGraph(2, (ancestry) => {
-			rebuilds += 1;
-		});
-		return () => {
-			handleRebuild.disconnect();
-		};
-	});
-
 	$: {
 		const _ = $s_thing_changed;
 		rebuilds += 1;
