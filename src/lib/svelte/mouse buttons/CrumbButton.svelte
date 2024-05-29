@@ -4,7 +4,7 @@
 	import Button from './Button.svelte';
 	export let left = 0;
     export let ancestry;
-	export let center = new Point();
+	export let center = Point.zero;
 	const borderStyle = '1px solid';
 	let borderColor = k.color_background;
 	let border = `${borderStyle} ${borderColor}`;

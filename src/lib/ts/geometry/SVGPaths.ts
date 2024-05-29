@@ -30,7 +30,7 @@ export default class SVGPaths {
         return `M${margin + 2} ${radius} L${length + 1} ${radius} M${radius} ${margin + 2} L${radius} ${diameter - margin - 2}`;
     }
 
-    circle_atOffset(width: number, diameter: number, offset: Point = new Point()): string {
+    circle_atOffset(width: number, diameter: number, offset: Point = Point.zero): string {
         const center = offset.offsetEquallyBy(width / 2);
 		return this.circle(center, diameter / 2);
     }

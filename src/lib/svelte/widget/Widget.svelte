@@ -16,8 +16,8 @@
 	const forward = angle <= Angle.quarter || angle >= Angle.threeQuarters;
 	const leftPadding = forward ? 1 : 14;
 	const priorRowHeight = k.row_height;
-	let revealCenter = new Point();
-	let dragCenter = new Point();
+	let revealCenter = Point.zero;
+	let dragCenter = Point.zero;
 	let radius = k.dot_size / 2;
 	let widgetWrapper: Wrapper;
 	let showingCluster = false;

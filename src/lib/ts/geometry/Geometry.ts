@@ -77,7 +77,7 @@ export class Rect {
 	origin: Point;
 	size: Size;
 
-	constructor(origin: Point = new Point(), size: Size = new Size()) {
+	constructor(origin: Point = Point.zero, size: Size = Size.zero) {
 		this.origin = origin;
 		this.size = size;
 	}

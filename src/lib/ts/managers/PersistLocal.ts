@@ -157,7 +157,7 @@ class PersistLocal {
 		s_thing_fontFamily.set(this.key_read(IDPersistant.font) ?? 'Arial');
 		s_layout_asClusters.set(this.key_read(IDPersistant.layout) ?? false);
 		s_cluster_arc_radius.set(this.key_read(IDPersistant.cluster_arc) ?? 130);
-		s_user_graphOffset.set(this.key_read(IDPersistant.origin) ?? new Point());
+		s_user_graphOffset.set(this.key_read(IDPersistant.origin) ?? Point.zero);
 		s_graph_relations.set(this.key_read(IDPersistant.relations) ?? GraphRelations.children);
 
 		s_graph_relations.subscribe((relations: string) => {

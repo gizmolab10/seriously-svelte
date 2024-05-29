@@ -20,21 +20,17 @@
 	let mouse_longClick_timer;
 	let mouse_doubleClick_timer;
 
-	//////////////////////////////////
-	//								//
-	//	handles: clicks, move, up	//
-	//	used by: panel & help		//
-	//	mutates ts state:			//
-	//	  State, Mouse, Appearance	//
-	//								//
-	//	-------------------------	//
-	//								//
-	//	IMPORTANT: can HANG!		//
-	//								//
-	//    enclosing can interfere	//
-	//	  with move events			//
-	//								//
-	//////////////////////////////////
+	////////////////////////////////////////
+	//									  //
+	//	handles: clicks, move & up		  //
+	//	used by: help & all in panel	  //
+	//									  //
+	//	requires: center, width, height,  //
+	//		closure & name				  //
+	//	mutates 3 ts state classes:		  //
+	//		State, Mouse & Appearance	  //
+	//									  //
+	////////////////////////////////////////
 
 	onMount(() => {
 		setupStyle();

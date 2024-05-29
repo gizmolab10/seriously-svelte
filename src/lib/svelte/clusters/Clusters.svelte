@@ -14,6 +14,8 @@
 	//	edit titles (keydown terminates edit)
 	const toolsOffset = new Point(40, -3);
 	const ancestry = $s_ancestry_focus;
+	const thing = ancestry?.thing;
+	const color = thing?.color ?? k.color_default;
 	let titleCenter = Point.zero;
 	let center = Point.zero;
 	let size = Size.zero;
@@ -22,13 +24,12 @@
 	let offsetX = 0;
 
 	$: {
-		rebuilds += 1;
 		size = $s_graphRect.size;
-		const thing = ancestry?.thing;
 		center = size.dividedInHalf.asPoint;
 		titleWidth = u.getWidthOf(thing?.title ?? k.empty);
 		offsetX = -k.thing_fontSize - 3 - (titleWidth / 2);
 		titleCenter = center.offsetByXY(offsetX, k.cluster_offsetY);
+		rebuilds += 1;
 	}
 
 </script>
@@ -44,13 +45,14 @@
 				<TitleEditor ancestry={ancestry} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 			</div>
 			<Necklace center={center}/>
-			<RingButton name='necklace-ring'
-				color={ancestry.thing?.color ?? k.color_default}
+			<RingButton
 				radius={$s_cluster_arc_radius}
 				thing={ancestry.thing}
 				zindex={ZIndex.lines}
+				name='necklace-ring'
 				center={center}
-				thickness={30}/>
+				thickness={30}
+				color={color}/>
 			<EditingTools offset={toolsOffset}/>
 		{/key}
 	</div>

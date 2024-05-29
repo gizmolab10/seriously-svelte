@@ -11,9 +11,9 @@
 	import { h } from '../../ts/db/DBDispatch';
 	import Circle from '../kit/Circle.svelte';
 	import Box from '../kit/Box.svelte';
-	let origin_ofFirstReveal = new Point();
-	let origin_ofChildren = new Point();
-	let childrenSize = new Point();
+	let origin_ofFirstReveal = Point.zero;
+	let origin_ofChildren = Point.zero;
+	let childrenSize = Point.zero;
 	let offsetX_ofFirstReveal = 0;
 	let graphRect: Rect;
 	let greenRect: Rect;

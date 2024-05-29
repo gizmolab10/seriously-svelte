@@ -1,7 +1,7 @@
 <script>
 	import { k, Point, debug, Direction, dbDispatch } from "../../ts/common/GlobalImports";
 	import TriangleButton from '../mouse buttons/TriangleButton.svelte';
-	export let center = new Point();
+	export let center = Point.zero;
     export let ancestry;
 	let size = k.dot_size;
 

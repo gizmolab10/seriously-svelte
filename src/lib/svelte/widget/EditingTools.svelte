@@ -30,7 +30,7 @@
 	let thing;
 	let ancestry;
 
-	function getC(id: string) { return centers_byID[id] ?? new Point(); }
+	function getC(id: string) { return centers_byID[id] ?? Point.zero; }
 	function setC(id: string, center: Point) { return centers_byID[id] = center; }
 	function alteration_forID(id: string) { return (id == IDTool.add_parent) ? AlterationType.adding : AlterationType.deleting; }
 
@@ -104,14 +104,9 @@
 
 	async function handle_mouse_data(mouseData: Mouse, id: string) {
 		if (mouseData.isHover) {
-			const hovering = !mouseData.isOut;
-			isHovering_byID[id] = hovering;
-			const appearance = new Appearance(
-				hovering ? k.color_background : color,
-				hovering ? color : k.color_background,
-				hovering ? 'pointer' : k.cursor_default
-			);
-			s.setAppearance_forName(id, appearance);
+			const isOut = mouseData.isOut;
+			isHovering_byID[id] = !isOut;
+			s.setAppearance_forName(id, Appearance.out_withColor(isOut, color, 'pointer'));
 		} else {
 			switch (id) {
 				case IDTool.delete_cancel: confirmingDelete = false; break;
@@ -256,6 +251,7 @@
 					height={k.default_buttonSize}
 					zindex={ZIndex.tool_buttons}
 					center={getC(IDTool.more)}
+					border_thickness=0
 					name='more'
 					width=18>
 					<svg width=18

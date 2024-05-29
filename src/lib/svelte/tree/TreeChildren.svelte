@@ -6,13 +6,13 @@
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import TreeLine from './TreeLine.svelte';
-	export let origin = new Point();
+	export let origin = Point.zero;
     export let ancestry;
 	const widgetOffset = new Point(12, (k.dot_size / -15) - 11.5);
 	const lineOffset = new Point(-122.5, -1);
 	let childMapRects: Array<ChildMapRect> = [];
 	let priorTime = new Date().getTime();
-	let center = new Point();
+	let center = Point.zero;
 	
 	onDestroy(() => { childMapRects = []; });
 

@@ -13,7 +13,7 @@
 	let extent = rect.extent;
 	let viewBox = new Rect();
 	let linePath = k.empty;
-	let size = new Size();
+	let size = Size.zero;
 	let rebuilds = 0;
 	let line;
 

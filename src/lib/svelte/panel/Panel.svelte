@@ -1,8 +1,8 @@
 <script>
 	import { g, k, s, u, get, Rect, Size, Point, Thing, debug, ZIndex, signals, onMount, Ancestry } from '../../ts/common/GlobalImports';
 	import { IDButton, Hierarchy, IDPersistant, dbDispatch, debugReact, setContext, persistLocal } from '../../ts/common/GlobalImports';
-	import { s_isBusy, s_ancestry_focus, s_db_type, s_graphRect, s_id_popupView, s_title_editing } from '../../ts/state/Stores';
-	import { s_show_details, s_things_arrived, s_user_graphOffset, s_layout_asClusters } from '../../ts/state/Stores';
+	import { s_isBusy, s_db_type, s_graphRect, s_id_popupView, s_title_editing, s_show_details } from '../../ts/state/Stores';
+	import { s_things_arrived, s_ancestry_focus, s_user_graphOffset, s_layout_asClusters } from '../../ts/state/Stores';
 	import MouseButton from '../mouse buttons/MouseButton.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import Breadcrumbs from '../panel/Breadcrumbs.svelte';
@@ -45,7 +45,7 @@
 		if (event.type == 'keydown') {
 			const key = event.key;
 			switch (key) {
-				case 'c': g.graphOffset_setTo(new Point()); break;
+				case 'c': g.graphOffset_setTo(Point.zero); break;
 				case '?': $s_id_popupView = IDButton.help; break;
 				case ']':
 				case '[': dbDispatch.db_change_toNext(key == ']'); break;
