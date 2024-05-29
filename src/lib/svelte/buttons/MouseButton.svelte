@@ -2,6 +2,8 @@
 	import { k, s, u, Rect, Size, Point, Mouse, ZIndex, onMount } from '../../ts/common/GlobalImports';
 	import { s_mouse_location } from '../../ts/state/Stores';
 	export let hover_closure: () => {flag: boolean} | null = null;
+	export let height = k.default_buttonSize;
+	export let width = k.default_buttonSize;
 	export let closure = (mouseData) => {};
 	export let cursor = k.cursor_default;
 	export let detect_doubleClick = true;
@@ -13,8 +15,6 @@
 	export let center: Point | null;
 	export let align_left = true;
 	export let name = 'generic';
-	export let height = k.default_buttonSize;
-	export let width = k.default_buttonSize;
 	let mouse_button;
 	let style = k.empty;
 	let mouse_longClick_timer;

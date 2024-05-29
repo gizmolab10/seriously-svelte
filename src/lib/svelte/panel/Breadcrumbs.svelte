@@ -48,7 +48,7 @@
 		lefts = [sum];
 		for (const ancestor of ancestors) {
 			const title = ancestor.title;
-			const width = u.getWidthOf(title) + 28;
+			const width = u.getWidthOf(title) * 0.98 + 26;
 			console.log(`${sum} ${width} ${title}`);
 			sum += width;
 			lefts.push(sum);
@@ -65,7 +65,7 @@
 					color:transparent;
 					position:absolute;
 					top:{size / 2 + 1}px;
-					left:{lefts[index] - 24}px;'
+					left:{lefts[index] - 15}px;'
 				>
 				<SVGD3 name='dash'
 					width={size}

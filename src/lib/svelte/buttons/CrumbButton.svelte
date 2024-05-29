@@ -16,14 +16,16 @@
 	let style = k.empty;
 	let name = k.empty;
 	let rebuilds = 0;
+	let width = 0;
 
 	onMount(() => { updateColors(); });
 
 	$: {
 		thing = ancestry.thing;
 		title = thing.title;
+		width = u.getWidthOf(thing.title);
 		name = `crumb (for ${title ?? 'unknown'})`
-		center = new Point(left, height - 1);
+		center = new Point(left + width / 2, height - 1);
 		updateColors();
 	}
 
@@ -83,9 +85,10 @@
 </script>
 
 {#key rebuilds}
-`	<Button
+	<Button
 		name={name}
 		style={style}
+		width={width}
 		center={center}
 		closure={closure}
 		position='absolute'>
