@@ -5,7 +5,6 @@
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;
 	export let closure = (mouseData) => {};
-	export let cursor = k.cursor_default;
 	export let detect_doubleClick = true;
 	export let detect_longClick = true;
 	export let detect_mouseDown = true;
@@ -108,7 +107,7 @@
 	}
 
 	function setupStyle() {
-		style = `cursor: ${cursor}; width: ${width}px; height: ${height}px; position: ${position};`;
+		style = `width: ${width}px; height: ${height}px; position: ${position};`;
 		if (!!center) {
 			const x = center.x - width / 2;
 			const horizontal = align_left ? `left: ${x}` : `right: ${-x}`;

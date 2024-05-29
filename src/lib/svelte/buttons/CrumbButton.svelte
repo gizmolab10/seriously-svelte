@@ -42,7 +42,7 @@
 			} else {
 				colorStyles = `background-color: ${k.color_background}; color: ${thing.color}`;
 			}
-			cursorStyle = !ancestry.isGrabbed && ancestry.hasChildRelationships ? 'cursor: pointer' : k.empty;
+			cursorStyle = !ancestry.isGrabbed && ancestry.hasChildRelationships ? 'cursor: pointer;' : k.empty;
 			borderColor = ancestry.isGrabbed ? thing.color : k.color_background;
 			border = `${borderStyle} ${borderColor}`;
 			updateStyle();
@@ -65,10 +65,8 @@
 				const appearance = Appearance.out_withColor(mouseData.isOut, thing.color);
 				s.setAppearance_forName(name, appearance);
 				if (mouseData.isOut) {
-					cursorStyle = k.empty;
 					border = `${borderStyle} ${borderColor}`;
 				} else {
-					cursorStyle = 'cursor: pointer';
 					border = `${borderStyle} ${thing.color}`;
 				}
 				updateStyle();
@@ -92,7 +90,7 @@
 		center={center}
 		closure={closure}
 		position='absolute'>
-		<div style='padding:1px 0px 0px 0px;'>
+		<div style='padding:1px 0px 0px 0px; {cursorStyle}'>
 			{title.injectElipsisAt()}
 		</div>
 	</Button>
