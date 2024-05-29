@@ -47,7 +47,7 @@
 					break;
 				case IDLine.flat:
 					origin = rect.centerLeft.offsetByY(-0.5);
-					extent = rect.centerRight.offsetBy(new Point(0.5, -0.5));
+					extent = rect.centerRight.offsetByXY(0.5, -0.5);
 					size = origin.distanceTo(extent).abs.asSize;
 					linePath = svgPaths.line(new Point(size.width, 0));
 					break;

@@ -24,7 +24,6 @@ export const s_rebuild_count		 = writable<number>();
 export const s_resize_count			 = writable<number>();
 export const s_scale_factor			 = writable<number>();
 export const s_ring_angle			 = writable<number>();
-export const s_build				 = writable<number>();
 export const s_user_graphOffset		 = writable<Point>();
 export const s_mouse_location		 = writable<Point>();
 export const s_graphRect			 = writable<Rect>();

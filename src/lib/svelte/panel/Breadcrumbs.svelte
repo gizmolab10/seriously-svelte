@@ -5,11 +5,12 @@
 	import { h } from '../../ts/db/DBDispatch';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	let ancestors: Array<Thing> = [];
+	let size = k.default_buttonSize;
+	let lefts: Array<string> = [];
 	let ancestry: Ancestry;
 	let rebuilds = 0;
 	let trigger = 0;
 	let width = 0;
-	let size = 16;
 	let left = 0;
 
 	$: {
@@ -27,33 +28,44 @@
 				[encodedCount, width, ancestors] = ancestry.ancestorsWithin(windowWidth - 10);
 				left = (windowWidth - width - 20) / 2;
 				trigger = encodedCount * 10000 + rebuilds * 100 + left;
+				setupLefts();
 			}
+		}
+	}
+
+	function setupLefts() {
+		let sum = left;
+		lefts = [sum];
+		for (const ancestor of ancestors) {
+			const title = ancestor.title;
+			const width = u.getWidthOf(title) * 0.98 + 26;
+			console.log(`${sum} ${width} ${title}`);
+			sum += width;
+			lefts.push(sum);
 		}
 	}
 
 </script>
 
 {#key trigger}
-	{#if left > 0}
-		<span class='left-spacer' style='display: inline-block; width: {left}px;'/>
-	{/if}
-	{#each ancestors.map(thing => thing.parents.length) as count, index}
+	{#each ancestors as ancestor, index}
 		{#if index > 0}
-			<span class='crumb-separator' style='
-				top:{size / 5}px;
-				position: relative;
-				color: transparent;
-				left: 0px;'>
+			<div class='crumb-separator'
+				style='
+					color:transparent;
+					position:absolute;
+					top:{size / 2 + 1}px;
+					left:{lefts[index] - 15}px;'
+				>
 				<SVGD3 name='dash'
 					width={size}
 					height={size}
 					position='absolute'
-					stroke={ancestors[index].color}
+					stroke={ancestor.color}
 					svg_path={svgPaths.dash(size, 0)}
 				/>
-			</span>
-			&nbsp;&nbsp;
+			</div>
 		{/if}
-		<CrumbButton ancestry={ancestry.stripBack(ancestors.length - index - 1)}/>
+		<CrumbButton left={lefts[index]} ancestry={ancestry.stripBack(ancestors.length - index - 1)}/>
 	{/each}
 {/key}

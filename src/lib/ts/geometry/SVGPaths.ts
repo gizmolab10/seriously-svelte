@@ -106,7 +106,7 @@ export default class SVGPaths {
 		const increment = Math.PI * 2 / count;
 		let offset = new Point(isOdd ? radius : 0, isOdd ? 0 : radius);2
 		while (i++ < count) {
-			path = path + this.circle_atOffset(size, 2, offset.offsetBy(new Point(-0.7, 0.3)));
+			path = path + this.circle_atOffset(size, 2, offset.offsetByXY(-0.7, 0.3));
 			offset = offset.rotate_by(increment);
 		}
 		return path;

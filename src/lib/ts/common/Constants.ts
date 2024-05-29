@@ -1,3 +1,5 @@
+import { builds } from './Builds';
+
 export default class Constants {
 	dot_size = 13;
 	width_max = 200;
@@ -8,6 +10,8 @@ export default class Constants {
 	thing_fontSize = 14;
 	width_details = 200;
 	height_titleAtTop = 50;
+	default_buttonSize = 16;
+	height_breadcrumbs = 33;
 	threshold_longClick = 800;
 	cluster_inside_radius = 30;
 	editingTools_diameter = 64;
@@ -39,6 +43,7 @@ export default class Constants {
 	allow_HorizontalScrolling = true;
 	queryString: URLSearchParams;
 	cluster_offsetY: number;
+	build_number: number;
 	row_height: number;
 
 	queryStrings_apply() {
@@ -56,6 +61,7 @@ export default class Constants {
 	}
 
 	constructor() {
+		this.build_number = builds.latest;
 		this.row_height = this.dot_size + 7;
 		this.cluster_offsetY = 4 - this.dot_size;
 		this.queryString = new URLSearchParams(window.location.search);

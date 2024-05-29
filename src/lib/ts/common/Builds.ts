@@ -1,12 +1,11 @@
-import { s_build } from '../state/Stores';
+import { k } from './Constants';
 
 class Builds {
 	notes: { [id: number]: Array<string> } = {};
 
-	setup() {
+	get latest(): number {
 		const keys = Object.keys(this.notes);
-		const top = keys.slice(-1);
-		s_build.set(Number(top));
+		return keys.slice(-1);
 	}
 
 	constructor() {

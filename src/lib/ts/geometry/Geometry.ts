@@ -23,7 +23,8 @@ export class Point {
 	get abs():						   Point { return new Point(Math.abs(this.x), Math.abs(this.y)); }
 	offsetByX(x: number):			   Point { return new Point(this.x + x, this.y); }
 	offsetByY(y: number):			   Point { return new Point(this.x, this.y + y); }
-	offsetEquallyBy(offset: number):   Point { return this.offsetBy(Point.square(offset)); }
+	offsetByXY(x: number, y: number):  Point { return new Point(this.x + x, this.y + y); }
+	offsetEquallyBy(offset: number):   Point { return new Point(this.x + offset, this.y + offset); }
 	offsetBy(point: Point):			   Point { return new Point(this.x + point.x, this.y + point.y); }
 	distanceTo(point: Point):		   Point { return new Point(point.x - this.x, point.y - this.y); }
 	distanceFrom(point: Point):		   Point { return new Point(this.x - point.x, this.y - point.y); }

@@ -6,6 +6,10 @@ i {
 	color: #b52;
 }
 
+.centered-container {
+	position: absolute;
+}
+
 .help-ul {
 	line-height: 1.2;
 	list-style-type: number;
@@ -36,20 +40,4 @@ i {
 	position: relative;
 	background-color: #fff;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.close-button {
-	top: 10px;
-	right: 10px;
-	color: #000;
-	cursor: pointer;
-	border-radius: 50%;
-	position: absolute;
-	text-align: center;
-	display: inline-block;
-	border: 1px solid black;
-}
-
-.centered-container {
-	position: absolute;
 }

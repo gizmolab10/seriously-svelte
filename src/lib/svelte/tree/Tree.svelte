@@ -65,7 +65,7 @@
 			childrenSize = focusAncestry.visibleProgeny_size;
 			const offsetX = 15 + ($s_show_details ? -k.width_details : 0) - (childrenSize.width / 2) - (k.dot_size / 2.5) + offsetX_ofFirstReveal;
 			const offsetY = -1 - graphRect.origin.y;
-			origin_ofFirstReveal = graphRect.center.offsetBy(new Point(offsetX, offsetY));
+			origin_ofFirstReveal = graphRect.center.offsetByXY(offsetX, offsetY);
 			if (u.device_isMobile) {
 				origin_ofFirstReveal.x = 25;
 			}
@@ -94,12 +94,12 @@
 				<Box rect={greenRect} color=green half={true}/>
 			{/if}
 			{#if !k.show_titleAtTop}
-				<Widget ancestry={$s_ancestry_focus} origin={origin_ofFirstReveal.offsetBy(new Point(-23 - offsetX_ofFirstReveal, -9))}/>
+				<Widget ancestry={$s_ancestry_focus} origin={origin_ofFirstReveal.offsetByXY(-23 - offsetX_ofFirstReveal, -9)}/>
 			{:else}
 				{#if $s_ancestry_focus.isGrabbed}
-					<Circle radius=10 center={origin_ofFirstReveal.offsetBy(new Point(-1, 1))} color={focus.color} thickness=1/>
+					<Circle radius=10 center={origin_ofFirstReveal.offsetByXY(-1, 1)} color={focus.color} thickness=1/>
 				{/if}
-				<DotRevealFocus ancestry={$s_ancestry_focus} center={origin_ofFirstReveal.offsetBy(new Point(-3, 0))}/>
+				<DotRevealFocus ancestry={$s_ancestry_focus} center={origin_ofFirstReveal.offsetByXY(-3, 0)}/>
 			{/if}
 			{#if $s_ancestry_focus.isExpanded}
 				<TreeChildren ancestry={$s_ancestry_focus} origin={origin_ofChildren}/>

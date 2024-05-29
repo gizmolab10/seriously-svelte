@@ -49,7 +49,7 @@
 				childMapRects = u.concatenateArrays(childMapRects, tree_layout.childMapRects);
 				sum += tree_layout.childHeight;
 			}
-			center = childrenOrigin.offsetBy(new Point(17.9, -2.4));
+			center = childrenOrigin.offsetByXY(17.9, -2.4);
 		} else {
 			console.log(`not expanded, cannot layout ${ancestry.description}`);
 		}
