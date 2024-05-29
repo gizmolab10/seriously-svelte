@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, s, u, Point, ZIndex, onMount, Appearance } from '../../ts/common/GlobalImports';
-	import MouseButton from '../buttons/MouseButton.svelte';
+	import MouseButton from './MouseButton.svelte';
 	export let background_color = k.color_background;
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;

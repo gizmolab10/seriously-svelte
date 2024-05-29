@@ -1,7 +1,7 @@
 <script>
 	import { k, onMount } from '../../ts/common/GlobalImports';
-	import MouseButton from '../buttons/MouseButton.svelte';
-	import Button from '../buttons/Button.svelte';
+	import MouseButton from '../mouse buttons/MouseButton.svelte';
+	import Button from '../mouse buttons/Button.svelte';
 
 	let dots;
 	let edit;

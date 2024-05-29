@@ -2,7 +2,7 @@
 	import { k, s, u, Thing, Point, ZIndex, onMount, signals, svgPaths, Mouse, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
 	import { s_thing_changed, s_ancestry_focus, s_ring_angle, s_cluster_arc_radius } from '../../ts/state/Stores';
 	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/Stores';
-	import MouseButton from '../buttons/MouseButton.svelte';
+	import MouseButton from './MouseButton.svelte';
 	export let zindex = ZIndex.panel;
 	export let center = Point.zero;
 	export let color = 'k.empty';

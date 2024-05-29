@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, s, u, Point, Thing, onMount, signals, dbDispatch, Appearance, transparentize } from '../../ts/common/GlobalImports';
 	import { s_thing_changed, s_ancestry_focus } from '../../ts/state/Stores';
-	import Button from '../buttons/Button.svelte';
+	import Button from './Button.svelte';
 	export let left = 0;
     export let ancestry;
 	export let center = new Point();

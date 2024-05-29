@@ -3,7 +3,7 @@
 	import { k, u, Rect, Size, Point, ZIndex, transparentize } from '../../ts/common/GlobalImports';
 	import EditingTools from '../widget/EditingTools.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
-	import RingButton from '../buttons/RingButton.svelte';
+	import RingButton from '../mouse buttons/RingButton.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Necklace from './Necklace.svelte';
 	// needs:

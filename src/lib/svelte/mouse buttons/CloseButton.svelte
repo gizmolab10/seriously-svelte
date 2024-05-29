@@ -1,6 +1,6 @@
 <script>
 	import { u, Size, Point, ZIndex, svgPaths } from '../../ts/common/GlobalImports';
-	import MouseButton from '../buttons/MouseButton.svelte';
+	import MouseButton from './MouseButton.svelte';
     import { s_id_popupView } from '../../ts/state/Stores';
 	import SVGD3 from '../kit/SVGD3.svelte';
     export let name = 'generic close';

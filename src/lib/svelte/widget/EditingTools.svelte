@@ -4,9 +4,9 @@
 	import { s_ancestry_editingTools, s_layout_asClusters } from '../../ts/state/Stores';
 	import { s_altering, s_graphRect, s_show_details } from '../../ts/state/Stores';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
-	import TriangleButton from '../buttons/TriangleButton.svelte';
+	import TriangleButton from '../mouse buttons/TriangleButton.svelte';
+	import Button from '../mouse buttons/Button.svelte';
 	import DotReveal from '../widget/DotReveal.svelte';
-	import Button from '../buttons/Button.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import Trash from '../kit/Trash.svelte';
 	export let offset = Point.zero;
