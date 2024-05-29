@@ -12,6 +12,7 @@
 	export let position = 'absolute';
 	export let zindex = ZIndex.dots;
 	export let center: Point | null;
+	export let cursor = 'pointer';
 	export let align_left = true;
 	export let name = 'generic';
 	let mouse_button;
@@ -107,7 +108,7 @@
 	}
 
 	function setupStyle() {
-		style = `width: ${width}px; height: ${height}px; position: ${position};`;
+		style = `cursor: ${cursor}; width: ${width}px; height: ${height}px; position: ${position};`;
 		if (!!center) {
 			const x = center.x - width / 2;
 			const horizontal = align_left ? `left: ${x}` : `right: ${-x}`;

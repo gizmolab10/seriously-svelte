@@ -39,7 +39,6 @@
 		for (const ancestor of ancestors) {
 			const title = ancestor.title;
 			const width = u.getWidthOf(title) * 0.98 + 26;
-			console.log(`${sum} ${width} ${title}`);
 			sum += width;
 			lefts.push(sum);
 		}

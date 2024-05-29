@@ -39,10 +39,6 @@
 		}
 	}
 
-	// style='
-	// 	display: block;;
-	// 	background: none;
-	// '
 </script>
 
 <Button
