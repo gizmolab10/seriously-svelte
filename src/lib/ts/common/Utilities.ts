@@ -133,13 +133,19 @@ class Utilities {
 
 	strip_identifiableDuplicates(identifiables: Array<Identifiable>): Array<Identifiable> {
 		let identifiablesByHID: {[hash: number]: Identifiable} = {};
+		let uniqueIdentifiables: Array<Identifiable> = [];
 		for (const identifiable of identifiables) {
 			const hid = identifiable.idHashed;
 			if (hid) {
 				identifiablesByHID[hid] = identifiable;
 			}
 		}
-		return Object.values(identifiablesByHID);
+		for (const identifiable of identifiables) {
+			if (identifiable == identifiablesByHID[identifiable.idHashed]) {
+				uniqueIdentifiables.push(identifiable)
+			}
+		}
+		return uniqueIdentifiables;
 	}
 
 	strip_thingDuplicates(ancestries: Array<Ancestry>) {

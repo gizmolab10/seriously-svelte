@@ -47,7 +47,7 @@
 			if (s.ring_radiusOffset != null) {					// expand / shrink
 				const distance = Math.max(k.cluster_inside_radius * 4, from_center.magnitude);
 				const movement = distance - $s_cluster_arc_radius - s.ring_radiusOffset;
-				if (movement) {
+				if (Math.abs(movement) > 5) {
 					sendSignal = true;
 					$s_cluster_arc_radius += movement;
 				}

@@ -294,14 +294,11 @@ export default class Ancestry {
 		ids.push(id);
 		const ancestry = h.ancestry_remember_createUnique(ids.join(k.genericSeparator));
 		if (ancestry) {
-			const description = `${ancestry.predicate?.description} ${ancestry.titles}`;
 			if (ancestry.containsMixedPredicates) {
-				console.log(`predicates ${description}`);
 				h.ancestry_forget(ancestry);
 				return null;
 			}
 			if (ancestry.containsReciprocals) {
-				console.log(`reciprocal ${description}`);
 				h.ancestry_forget(ancestry);
 				return null;
 			}

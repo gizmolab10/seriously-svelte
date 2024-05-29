@@ -1,13 +1,14 @@
 <script lang='ts'>
-	import { k, s, u, Thing, onMount, signals, dbDispatch, Appearance, transparentize } from '../../ts/common/GlobalImports';
+	import { k, s, u, Point, Thing, onMount, signals, dbDispatch, Appearance, transparentize } from '../../ts/common/GlobalImports';
 	import { s_thing_changed, s_ancestry_focus } from '../../ts/state/Stores';
 	import Button from '../buttons/Button.svelte';
 	export let left = 0;
     export let ancestry;
+	export let center = new Point();
 	const borderStyle = '1px solid';
 	let borderColor = k.color_background;
 	let border = `${borderStyle} ${borderColor}`;
-	let width = k.default_buttonSize * 2;
+	let height = k.default_buttonSize;
 	let thing: Thing = ancestry.thing;
 	let title: string = thing.title;
 	let cursorStyle = k.empty;
@@ -21,8 +22,8 @@
 	$: {
 		thing = ancestry.thing;
 		title = thing.title;
-		width = u.getWidthOf(title) ?? 0;
 		name = `crumb (for ${title ?? 'unknown'})`
+		center = new Point(left, height - 1);
 		updateColors();
 	}
 
@@ -82,23 +83,14 @@
 </script>
 
 {#key rebuilds}
-	<div class='crumb-button'
-		style='
-			top:14px;
-			left:{left}px;
-			width:{width}px;
-			position: absolute;
-			height:{k.default_buttonSize}px;
-			padding-right: {k.default_buttonSize / 2}px;'>
-		<Button
-			name={name}
-			style={style}
-			width={width}
-			closure={closure}
-			position='absolute'>
-			<div style='padding:0px 0px 1px 0px;'>
-				{title.injectElipsisAt()}
-			</div>
-		</Button>
-	</div>
+`	<Button
+		name={name}
+		style={style}
+		center={center}
+		closure={closure}
+		position='absolute'>
+		<div style='padding:1px 0px 0px 0px;'>
+			{title.injectElipsisAt()}
+		</div>
+	</Button>
 {/key}
