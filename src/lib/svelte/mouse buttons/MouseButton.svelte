@@ -20,17 +20,21 @@
 	let mouse_longClick_timer;
 	let mouse_doubleClick_timer;
 
-	/////////////////////////////////////
-	//								   //
-	//		IMPORTANT: can HANG!	   //
-	//								   //
-	//   if this component's		   //
-	//   containment hierarchy		   //
-	//   includes another MouseButton, //
-	//   may be due to contention	   //
-	//   over mouse_button move events		   //
-	//								   //
-	/////////////////////////////////////
+	//////////////////////////////////
+	//								//
+	//	handles: clicks, move, up	//
+	//	used by: panel & help		//
+	//	mutates ts state:			//
+	//	  State, Mouse, Appearance	//
+	//								//
+	//	-------------------------	//
+	//								//
+	//	IMPORTANT: can HANG!		//
+	//								//
+	//    enclosing can interfere	//
+	//	  with move events			//
+	//								//
+	//////////////////////////////////
 
 	onMount(() => {
 		setupStyle();

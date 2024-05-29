@@ -21,7 +21,7 @@
 	function button_closure_forID(mouseData, id) {
 		if (mouseData.isHover) {
 			const out = mouseData.isOut;
-			const appearance = Appearance.out_withColor(out, 'black');
+			const appearance = Appearance.out_withColor(out, 'black', 'pointer');
 			s.setAppearance_forName(id, appearance);
 		} else if (mouseData.isUp) {
 			switch (id) {

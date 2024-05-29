@@ -11,7 +11,6 @@
 	let height = k.default_buttonSize;
 	let thing: Thing = ancestry.thing;
 	let title: string = thing.title;
-	let cursorStyle = k.empty;
 	let colorStyles = k.empty;
 	let style = k.empty;
 	let name = k.empty;
@@ -42,7 +41,6 @@
 			} else {
 				colorStyles = `background-color: ${k.color_background}; color: ${thing.color}`;
 			}
-			cursorStyle = !ancestry.isGrabbed && ancestry.hasChildRelationships ? 'cursor: pointer;' : k.empty;
 			borderColor = ancestry.isGrabbed ? thing.color : k.color_background;
 			border = `${borderStyle} ${borderColor}`;
 			updateStyle();
@@ -53,22 +51,23 @@
 	function updateStyle() {
 		style=`
 			${colorStyles};
-			${cursorStyle};
 			border:${border};
 			border-radius: 1em;
+			cursor:{s.appearance_forName(name).cursor};
 		`.removeWhiteSpace();
 	}
 
 	function closure(mouseData) {
 		if (dbDispatch.db.hasData) {
 			if (mouseData.isHover) {
-				const appearance = Appearance.out_withColor(mouseData.isOut, thing.color);
-				s.setAppearance_forName(name, appearance);
 				if (mouseData.isOut) {
 					border = `${borderStyle} ${borderColor}`;
 				} else {
 					border = `${borderStyle} ${thing.color}`;
 				}
+				const cursor = !ancestry.isGrabbed && ancestry.hasChildRelationships ? 'pointer' : k.cursor_default;
+				const appearance = Appearance.out_withColor(mouseData.isOut, thing.color, cursor);
+				s.setAppearance_forName(name, appearance);
 				updateStyle();
 				rebuilds += 1;
 			} else if (mouseData.isUp) {
@@ -90,7 +89,7 @@
 		center={center}
 		closure={closure}
 		position='absolute'>
-		<div style='padding:1px 0px 0px 0px; {cursorStyle}'>
+		<div style='padding:1px 0px 0px 0px; cursor:{s.appearance_forName(name).cursor};'>
 			{title.injectElipsisAt()}
 		</div>
 	</Button>
