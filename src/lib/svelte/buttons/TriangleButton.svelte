@@ -46,6 +46,7 @@
 </script>
 
 <Button
+	border_thickness=0
 	closure={closure}
 	center={center}
 	name={name}
