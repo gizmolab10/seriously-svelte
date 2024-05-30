@@ -1,4 +1,4 @@
-import { Angle, IDTrait, ZIndex, Quadrant, IDButton, IDBrowser, AlterationType, PredicateKind, GraphRelations } from './Enumerations';
+import { Angle, IDTrait, ZIndex, Quadrant, IDButton, IDBrowser, Transparency, AlterationType, PredicateKind, GraphRelations } from './Enumerations';
 import { debugReact, DebugReact, ReactKind } from '../debug/DebugReact';
 import { IDPersistant, persistLocal } from '../managers/PersistLocal';
 import { onMount, onDestroy, setContext, getContext } from 'svelte';
@@ -50,6 +50,6 @@ export {
 	Angle, Quadrant, TreeLayout, ChildMapRect, ClusterLayout,
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactKind,
 	g, k, s, u, get, builds, onMount, onDestroy, setContext, getContext,
-	ZIndex, PredicateKind, GraphRelations, CreationOptions, AlterationType,
 	IDLine, IDTool, IDTrait, IDSignal, IDWrapper, IDButton, IDBrowser, IDPersistant,
+	ZIndex, Transparency, PredicateKind, GraphRelations, CreationOptions, AlterationType,
 };

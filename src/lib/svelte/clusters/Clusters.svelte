@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { s_graphRect, s_ancestry_focus, s_user_graphOffset, s_thing_fontFamily, s_cluster_arc_radius } from '../../ts/state/Stores';
-	import { k, u, Rect, Size, Point, ZIndex, transparentize } from '../../ts/common/GlobalImports';
+	import { s_graphRect, s_ancestry_focus, s_mouse_up_count, s_user_graphOffset, s_thing_fontFamily, s_cluster_arc_radius } from '../../ts/state/Stores';
+	import { k, s, u, Rect, Size, Point, ZIndex, transparentize } from '../../ts/common/GlobalImports';
 	import EditingTools from '../widget/EditingTools.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import RingButton from '../mouse buttons/RingButton.svelte';
@@ -12,10 +12,12 @@
 	//	handle keys
 	//	lines: selection & hover
 	//	edit titles (keydown terminates edit)
-	const toolsOffset = new Point(40, -3);
+	const necklace_name = 'necklace-ring';
 	const ancestry = $s_ancestry_focus;
 	const thing = ancestry?.thing;
+	const toolsOffset = new Point(40, -3);
 	const color = thing?.color ?? k.color_default;
+	let mouse_up_count = $s_mouse_up_count;
 	let titleCenter = Point.zero;
 	let center = Point.zero;
 	let size = Size.zero;
@@ -30,6 +32,14 @@
 		offsetX = -k.thing_fontSize - 3 - (titleWidth / 2);
 		titleCenter = center.offsetByXY(offsetX, k.cluster_offsetY);
 		rebuilds += 1;
+	}
+
+	$: {
+		if (mouse_up_count != $s_mouse_up_count) {
+			mouse_up_count = $s_mouse_up_count;
+			s.reset_ringState_forName(necklace_name);
+			rebuilds += 1;
+		}
 	}
 
 </script>
@@ -49,7 +59,7 @@
 				radius={$s_cluster_arc_radius}
 				thing={ancestry.thing}
 				zindex={ZIndex.lines}
-				name='necklace-ring'
+				name={necklace_name}
 				center={center}
 				thickness={30}
 				color={color}/>

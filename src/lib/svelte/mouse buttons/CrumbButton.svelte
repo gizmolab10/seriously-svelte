@@ -11,6 +11,7 @@
 	let height = k.default_buttonSize;
 	let thing: Thing = ancestry.thing;
 	let title: string = thing.title;
+	let appearance!: Appearance;
 	let colorStyles = k.empty;
 	let style = k.empty;
 	let name = k.empty;
@@ -24,6 +25,7 @@
 		title = thing.title;
 		width = u.getWidthOf(thing.title);
 		name = `crumb (for ${title ?? 'unknown'})`
+		appearance = s.appearance_forName(name);
 		center = new Point(left + width / 2, height - 1);
 		updateColors();
 	}
@@ -53,7 +55,7 @@
 			${colorStyles};
 			border:${border};
 			border-radius: 1em;
-			cursor:{s.appearance_forName(name).cursor};
+			cursor:{appearance.cursor};
 		`.removeWhiteSpace();
 	}
 
@@ -66,8 +68,7 @@
 					border = `${borderStyle} ${thing.color}`;
 				}
 				const cursor = !ancestry.isGrabbed && ancestry.hasChildRelationships ? 'pointer' : k.cursor_default;
-				const appearance = Appearance.out_withColor(mouseData.isOut, thing.color, cursor);
-				s.setAppearance_forName(name, appearance);
+				appearance.update(mouseData.isOut, thing.color, cursor);
 				updateStyle();
 				rebuilds += 1;
 			} else if (mouseData.isUp) {
@@ -89,7 +90,7 @@
 		center={center}
 		closure={closure}
 		position='absolute'>
-		<div style='padding:1px 0px 0px 0px; cursor:{s.appearance_forName(name).cursor};'>
+		<div style='padding:1px 0px 0px 0px; cursor:{appearance.cursor};'>
 			{title.injectElipsisAt()}
 		</div>
 	</Button>

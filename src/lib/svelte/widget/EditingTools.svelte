@@ -106,7 +106,7 @@
 		if (mouseData.isHover) {
 			const isOut = mouseData.isOut;
 			isHovering_byID[id] = !isOut;
-			s.setAppearance_forName(id, Appearance.out_withColor(isOut, color, 'pointer'));
+			s.appearance_forName(id).update(isOut, color, 'pointer');
 		} else {
 			switch (id) {
 				case IDTool.delete_cancel: confirmingDelete = false; break;

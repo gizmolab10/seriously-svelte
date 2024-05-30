@@ -15,10 +15,11 @@
 	export let cursor = 'pointer';
 	export let align_left = true;
 	export let name = 'generic';
-	let mouse_button;
-	let style = k.empty;
-	let mouse_longClick_timer;
+	const mouseState = s.mouseState_forName(name);
 	let mouse_doubleClick_timer;
+	let mouse_longClick_timer;
+	let style = k.empty;
+	let mouse_button;
 
 	////////////////////////////////////////
 	//									  //
@@ -52,13 +53,13 @@
 	$: {	// movement
 		if (!!mouse_button && !!$s_mouse_location) {
 			const isElementHit = u.rect_forElement_contains(mouse_button, $s_mouse_location);
-			const wasHit = s.mouseHit_forName(name);
+			const wasHit = mouseState.hit;
 			let isHit = isElementHit;
 			if (!!hover_closure) {
 				isHit = hover_closure();	// ask containing component
 			}
 			if (isHit != wasHit) {
-				s.setMouseHit_forName(name, isHit);
+				mouseState.hit = isHit;
 				closure(Mouse.hover(null, mouse_button, isHit));	// use null event
 			}
 		}
@@ -78,21 +79,21 @@
 	}
 	
 	function handle_pointerDown(event) {
-		if (detect_mouseDown && s.mouseClickCount_forName(name) == 0) {
+		if (detect_mouseDown && mouseState.clicks == 0) {
 
 			// call down closure
 
 			closure(Mouse.down(event, mouse_button));
 		}
-		s.incrementMouseClickCount_forName(name);
+		mouseState.clicks += 1;
 		if (detect_longClick && !mouse_longClick_timer) {
 
 			// setup timer to call long-click closure
 
 			mouse_longClick_timer = setTimeout(() => {
 				closure(Mouse.long(event, mouse_button));
-				s.setMouseClickCount_forName(name, 0);
 				mouse_longClick_timer = null;
+				mouseState.clicks = 0;
 			}, k.threshold_longClick);
 		}
 		if (detect_doubleClick && !mouse_doubleClick_timer) {
@@ -100,9 +101,9 @@
 			// setup timer to call double-click closure
 
 			mouse_doubleClick_timer = setTimeout(() => {
-				closure(Mouse.clicks(event, mouse_button, s.mouseClickCount_forName(name)));
-				s.setMouseClickCount_forName(name, 0);
+				closure(Mouse.clicks(event, mouse_button, mouseState.clicks));
 				mouse_doubleClick_timer = null;
+				mouseState.clicks = 0;
 			}, k.threshold_doubleClick);
 		}
 	}

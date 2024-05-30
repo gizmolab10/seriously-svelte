@@ -20,9 +20,7 @@
 
 	function button_closure_forID(mouseData, id) {
 		if (mouseData.isHover) {
-			const out = mouseData.isOut;
-			const appearance = Appearance.out_withColor(out, 'black', 'pointer');
-			s.setAppearance_forName(id, appearance);
+			s.appearance_forName(id).update(mouseData.isOut, 'black', 'pointer');
 		} else if (mouseData.isUp) {
 			switch (id) {
 				case IDButton.bigger: width = g.zoomBy(1.1) - 20; break;

@@ -13,6 +13,11 @@ export enum PredicateKind {
 	contains  = 'contains',
 }
 
+export enum Transparency {
+	faint = 0.98,
+	bold  = 0.93
+}
+
 export enum ArcKind {
 	main = 'main',
 	fork = 'fork',

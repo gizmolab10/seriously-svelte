@@ -11,11 +11,10 @@ export default class Appearance {
 		this.color = color;
 	}
 
-	static out_withColor(isOut: boolean, color: string, cursor: string) {
-		return new Appearance(
-			isOut ? color : k.color_background,
-			isOut ? k.color_background : color,
-			isOut ? k.cursor_default : cursor
-		) }
+	update(isOut: boolean, color: string, cursor: string) {
+		this.background_color = isOut ? color : k.color_background;
+		this.cursor = isOut ? k.color_background : color,
+		this.color = isOut ? k.cursor_default : cursor
+	}
 
 }
