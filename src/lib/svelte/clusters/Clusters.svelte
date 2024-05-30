@@ -52,19 +52,19 @@
 </script>
 
 {#if ancestry}
-	{#key rebuilds}
-		<div class='clusters'
-			bind:this={clusters}
-			style='cursor:ringState.cursor; transform:translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px);'>
-			{#key ancestry.hashedAncestry}
-				<div class='necklace-focus'
-					style='
-						position: absolute;
-						top:{titleCenter.y}px;
-						left: {titleCenter.x}px;'>
-					<TitleEditor ancestry={ancestry} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
-				</div>
-				<Necklace center={center}/>
+	<div class='clusters'
+		bind:this={clusters}
+		style='cursor:ringState.cursor; transform:translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px);'>
+		{#key ancestry.hashedAncestry}
+			<div class='necklace-focus'
+				style='
+					position: absolute;
+					top:{titleCenter.y}px;
+					left: {titleCenter.x}px;'>
+				<TitleEditor ancestry={ancestry} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
+			</div>
+			<Necklace center={center}/>
+			{#key rebuilds}
 				<RingButton
 					radius={$s_cluster_arc_radius}
 					thing={ancestry.thing}
@@ -75,6 +75,6 @@
 					color={color}/>
 				<EditingTools offset={toolsOffset}/>
 			{/key}
-		</div>
-	{/key}
+		{/key}
+	</div>
 {/if}

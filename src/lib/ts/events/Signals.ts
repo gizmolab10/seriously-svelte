@@ -1,4 +1,4 @@
-import { s_ancestry_focus } from './Stores';
+import { s_ancestry_focus } from '../state/Stores';
 import { Signal } from 'typed-signals';
 import { get } from 'svelte/store';
 

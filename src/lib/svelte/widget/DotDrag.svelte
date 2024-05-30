@@ -182,6 +182,7 @@
 			left: {center.x}px;
 			position: absolute;
 			width: {size / 2}px;
+			z-index: {ZIndex.dots};
 		'>
 		<SVGD3 name='svg-drag'
 			width={size}

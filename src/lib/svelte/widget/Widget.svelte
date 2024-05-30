@@ -160,11 +160,10 @@
 			left: {left}px;
 			width: {width}px;
 			height: {height}px;
-			padding: {padding};
 			position: absolute;
-			white-space: nowrap;
-			z-index: {ZIndex.widgets};
+			padding: {padding};
 			border-radius: {radius}px;
+			z-index: {ZIndex.widgets};
 		'>
 		<DotDrag
 			ancestry={ancestry}

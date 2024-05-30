@@ -1,6 +1,6 @@
 import { Rect, Point, Ancestry, Title, Alteration } from '../common/GlobalImports';
 import { writable } from 'svelte/store';
-import { signals } from './Signals';
+import { signals } from '../events/Signals';
 
 export const s_altering				 = writable<Alteration | null>();
 export const s_title_editing		 = writable<Title | null>();

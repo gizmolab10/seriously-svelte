@@ -108,13 +108,14 @@
 </style>
 
 {#key rebuilds}
-	<div class='dot-reveal' style='
-		top: {center.y}px;
-		left: {center.x}px;
-		position: absolute;
-		width: {size}px;
-		z-index: {ZIndex.dots};
-		height: {size}px;'>
+	<div class='dot-reveal'
+		style='
+			width: {size}px;
+			height: {size}px;
+			top: {center.y}px;
+			left: {center.x}px;
+			position: absolute;
+			z-index: {ZIndex.dots};'>
 		<button class='dot'
 			on:blur={u.ignore}
 			on:focus={u.ignore}

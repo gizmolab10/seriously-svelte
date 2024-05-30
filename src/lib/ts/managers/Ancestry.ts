@@ -1,6 +1,6 @@
 import { s_ancestry_focus, s_ancestries_grabbed, s_title_editing, s_layout_asClusters } from '../state/Stores';
-import { k, u, get, Rect, Size, Thing, debug, signals, Wrapper, IDWrapper } from '../common/GlobalImports';
-import { Predicate, Title, Relationship, PredicateKind, AlterationType } from '../common/GlobalImports';
+import { IDWrapper, Predicate, Relationship, PredicateKind, AlterationType } from '../common/GlobalImports';
+import { k, u, get, Rect, Size, Thing, Title, debug, signals, Wrapper } from '../common/GlobalImports';
 import { s_ancestries_expanded, s_ancestry_editingTools, s_altering } from '../state/Stores';
 import { Writable } from 'svelte/store';
 import { h } from '../db/DBDispatch';
