@@ -12,9 +12,9 @@ export default class Appearance {
 	}
 
 	update(isOut: boolean, color: string, cursor: string) {
-		this.background_color = isOut ? color : k.color_background;
-		this.cursor = isOut ? k.color_background : color,
-		this.color = isOut ? k.cursor_default : cursor
+		this.background_color = isOut ? k.color_background : color;
+		this.color = isOut ? color : k.color_background;
+		this.cursor = isOut ? k.cursor_default : cursor;
 	}
 
 }
