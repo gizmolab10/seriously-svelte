@@ -60,6 +60,7 @@
 			if (sendSignal) {
 				ringState.transparency = bold;
 				ringState.cursor = 'move';
+				ringState.isHit = true;
 				rebuilds += 1;
 				signals.signal_rebuildGraph_fromFocus();		// destroys this component (variables wiped)
 			}
@@ -72,33 +73,36 @@
 		// setup or teardown state //
 		/////////////////////////////
 
-		const priorTransparency = ringState.transparency;
-		let newTransparency = priorTransparency;
-		const hit = isOnRing();
+		const hit = hover_closure();
 		if (!mouseData.isHover) {
 			const from_center = distance_fromCenter_of($s_mouse_location);
 			if (mouseData.isDouble) {
 
 				// begin resize
 
-				newTransparency = bold;
-				ringState.radiusOffset = from_center.magnitude - $s_cluster_arc_radius;
+				ringState.isHit = true;
 				ringState.cursor = 'move';
+				ringState.transparency = bold;
+				ringState.radiusOffset = from_center.magnitude - $s_cluster_arc_radius;
+				rebuilds += 1;
 			} else if (mouseData.isUp) {
 
 				// end rotate and resize
 
-				newTransparency = faint;
-				s.reset_ringState_forName(name);
+				ringState.reset();
+				rebuilds += 1;
 			} else if (hit) {
+				const mouseAngle = from_center.angle;
 
 				// begin rotate
 
-				newTransparency = bold;
-				const mouseAngle = from_center.angle;
+				ringState.isHit = true;
+				ringState.cursor = 'move';
+				ringState.transparency = bold;
 				ringState.priorAngle = mouseAngle;
 				ringState.startAngle = mouseAngle.add_angle_normalized(-$s_ring_angle);
-				ringState.cursor = 'move';
+				rebuilds += 1;
+				
 			}
 		} else if (!ringState.startAngle && !ringState.radiusOffset) {
 
@@ -106,9 +110,6 @@
 
 			ringState.transparency = hit ? bold : faint;
 			ringState.cursor = hit ? 'pointer' : k.cursor_default;
-		}
-		if (newTransparency != priorTransparency) {
-			ringState.transparency = newTransparency
 			rebuilds += 1;
 		}
 	}
@@ -121,9 +122,9 @@
 		return null
 	}
  
-	function isOnRing(from_center?: Point = null): boolean {
-		const vector = from_center ?? distance_fromCenter_of($s_mouse_location);
-		const distance = vector.offsetEquallyBy(10).magnitude;
+	function hover_closure(): boolean {
+		const vector = distance_fromCenter_of($s_mouse_location);
+		const distance = vector.magnitude;
 		if (!!distance && distance.isBetween(radius, radius + thickness)) {
 			return true;
 		}
@@ -142,11 +143,12 @@
 		closure={closure}
 		cursor={ringState.cursor}
 		detect_longClick={false}
-		hover_closure={isOnRing}>
+		hover_closure={hover_closure}>
 		<svg
 			viewBox={viewBox}
 			class= 'svg-ring-button'
-			fill={transparentize(color, ringState.transparency)}>
+			fill={transparentize(color, ringState.transparency)}
+			stroke={transparentize(color, ringState.isHit ? 0.8 : 1)}>
 			<path d={svg_ringPath}>
 		</svg>
 	</MouseButton>

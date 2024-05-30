@@ -5,11 +5,19 @@ type RingState_byName = {[name: string]: RingState};
 type MouseState_byName = {[name: string]: MouseState};
 
 class RingState {
+	isHit = false;
 	cursor = k.cursor_default;
 	transparency = Transparency.faint;
 	startAngle: number | null = null;		// angle at location of mouse DOWN
 	priorAngle: number | null = null;		// angle at location of previous mouse MOVE
 	radiusOffset: number | null = null;		// distance from arc radius to location of mouse DOWN
+
+	reset() {
+		this.isHit = false;
+		this.cursor = k.cursor_default;
+		this.transparency = Transparency.faint;
+		this.priorAngle = this.startAngle = this.radiusOffset = null;
+	}
 }
 
 class State {
@@ -30,13 +38,6 @@ class State {
 	ringState_byName: RingState_byName = {};
 	mouseState_byName: MouseState_byName = {};
 	appearance_byName: {[name: string]: Appearance} = {};
-
-	reset_ringState_forName(name: string) {
-		const state = this.ringState_forName(name);
-		state.cursor = k.cursor_default;
-		state.transparency = Transparency.faint;
-		state.priorAngle = state.startAngle = state.radiusOffset = null;
-	}
 
 	ringState_forName(name: string): RingState {
 		let state = this.ringState_byName[name];
