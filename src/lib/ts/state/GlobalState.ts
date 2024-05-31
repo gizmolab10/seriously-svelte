@@ -3,7 +3,7 @@ import { s_graphRect, s_show_details, s_scale_factor, s_rebuild_count } from './
 import { k, u, get, Rect, Point, debug, debugReact } from '../common/GlobalImports';
 import { dbDispatch, persistLocal, IDPersistant } from '../common/GlobalImports';
 
-class Global {
+class GlobalState {
 
 	setup() {
 		s_resize_count.set(0);
@@ -77,4 +77,4 @@ class Global {
 
 }
 
-export let g = new Global();
+export let g = new GlobalState();

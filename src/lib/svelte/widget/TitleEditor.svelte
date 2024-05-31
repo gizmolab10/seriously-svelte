@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { dbDispatch, SeriouslyRange, AssociatedSvelte, SvelteComponentType } from '../../ts/common/GlobalImports';
+	import { dbDispatch, SeriouslyRange, SvelteWrapper, SvelteComponentType } from '../../ts/common/GlobalImports';
 	import { k, u, Point, Thing, debug, Angle, ZIndex, onMount, signals } from '../../ts/common/GlobalImports';
 	import { s_thing_changed, s_title_editing, s_ancestries_grabbed } from '../../ts/state/Stores';
 	import { s_layout_asClusters, s_ancestry_editingTools } from '../../ts/state/Stores';
@@ -10,9 +10,9 @@
 	let padding = `0.5px 0px 0px 5px`;	// down half a pixel, 7 over to make room for drag dot
 	let thingTitle = ancestry?.thing?.title ?? k.empty;
     let color = ancestry.thing?.color;
+	let titleWrapper: SvelteWrapper;
 	let originalTitle = k.empty;
 	let cursorStyle = k.empty;
-	let titleWrapper: AssociatedSvelte;
 	let mouse_click_timer;
 	let isEditing = false;
 	let titleWidth = 0;
@@ -58,7 +58,7 @@
 
 	$: {
 		if (input && !titleWrapper) {
-			titleWrapper = new AssociatedSvelte(input, ancestry, SvelteComponentType.title);
+			titleWrapper = new SvelteWrapper(input, ancestry, SvelteComponentType.title);
 		}
 	}
 

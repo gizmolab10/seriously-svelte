@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { s_thing_changed, s_title_editing, s_ancestry_focus, s_ancestries_grabbed } from '../../ts/state/Stores';
-	import { k, u, Thing, Point, Angle, debug, ZIndex, AssociatedSvelte } from '../../ts/common/GlobalImports';
+	import { k, u, Thing, Point, Angle, debug, ZIndex, SvelteWrapper } from '../../ts/common/GlobalImports';
 	import { s_layout_asClusters, s_thing_fontFamily, s_ancestry_editingTools } from '../../ts/state/Stores';
 	import { signals, onMount, debugReact, SvelteComponentType } from '../../ts/common/GlobalImports';
 	import { exemplar } from '../../ts/data/Exemplar';
@@ -16,10 +16,10 @@
 	const forward = angle <= Angle.quarter || angle >= Angle.threeQuarters;
 	const leftPadding = forward ? 1 : 14;
 	const priorRowHeight = k.row_height;
+	let widgetWrapper: SvelteWrapper;
 	let revealCenter = Point.zero;
 	let dragCenter = Point.zero;
 	let radius = k.dot_size / 2;
-	let widgetWrapper: AssociatedSvelte;
 	let showingCluster = false;
 	let showingBorder = false;
 	let priorOrigin = origin;
@@ -74,7 +74,7 @@
 
 	$: {
 		if (widget) {
-			widgetWrapper = new AssociatedSvelte(widget, ancestry, SvelteComponentType.widget);
+			widgetWrapper = new SvelteWrapper(widget, ancestry, SvelteComponentType.widget);
 		}
 	}
 	

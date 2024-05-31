@@ -1,5 +1,5 @@
 import { k, u, get, User, Thing, Grabs, debug, MouseData, Access, IDTool, IDTrait, signals, Ancestry } from '../common/GlobalImports';
-import { AssociatedSvelte, Predicate, Alteration, Relationship, AlterationType, CreationOptions } from '../common/GlobalImports';
+import { Predicate, SvelteWrapper, Relationship, CreationOptions, AlterationType, AlterationState } from '../common/GlobalImports';
 import { s_ancestries_grabbed, s_things_arrived, s_ancestry_editingTools } from '../state/Stores';
 import { s_isBusy, s_altering, s_ancestry_focus, s_title_editing } from '../state/Stores';
 import { idDefault } from "../data/Identifiable";
@@ -8,7 +8,7 @@ import DBInterface from '../db/DBInterface';
 type Relationships_ByHID = { [hid: number]: Array<Relationship> }
 
 export class Hierarchy {
-	private wrappers_byType_andHID: { [type: string]: { [hid: number]: AssociatedSvelte } } = {};
+	private wrappers_byType_andHID: { [type: string]: { [hid: number]: SvelteWrapper } } = {};
 	private ancestry_byKind_andHash:{ [kind: string]: { [hash: number]: Ancestry } } = {};
 	private relationship_byHID: { [hid: number]: Relationship } = {};
 	private things_byTrait: { [trait: string]: Array<Thing> } = {};
@@ -909,7 +909,7 @@ export class Hierarchy {
 
 	static readonly $_OTHER_$: unique symbol;
 
-	wrapper_add(wrapper: AssociatedSvelte) {
+	wrapper_add(wrapper: SvelteWrapper) {
 		const type = wrapper.type;
 		const array = this.wrappers_byType_andHID;
 		const dict = array[type] ?? {};
@@ -933,7 +933,7 @@ export class Hierarchy {
 	toggleAlteration(alteration: AlterationType, isRelated: boolean) {
 		const altering = get(s_altering)?.alteration;
 		const predicate = isRelated ? Predicate.isRelated : Predicate.contains;
-		const became = alteration == altering ? null : new Alteration(alteration, predicate);
+		const became = alteration == altering ? null : new AlterationState(alteration, predicate);
 		s_altering.set(became);
 	}
 

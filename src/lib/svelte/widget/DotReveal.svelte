@@ -1,5 +1,5 @@
 <script>
-	import { Direction, onDestroy, dbDispatch, Predicate, AssociatedSvelte, SvelteComponentType } from '../../ts/common/GlobalImports';
+	import { Direction, onDestroy, dbDispatch, Predicate, SvelteWrapper, SvelteComponentType } from '../../ts/common/GlobalImports';
 	import { s_ancestries_expanded, s_altering, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/Stores';
 	import { k, u, get, Size, Thing, Point, debug, ZIndex, onMount, signals, svgPaths } from '../../ts/common/GlobalImports';
 	import { h } from '../../ts/db/DBDispatch';
@@ -14,7 +14,7 @@
 	let insidePath = svgPaths.circle_atOffset(16, 6);
 	let fillColor = k.color_background;
 	let strokeColor = ancestry.thing.color;
-	let revealWrapper = AssociatedSvelte;
+	let revealWrapper = SvelteWrapper;
 	let hasInsidePath = false;
 	let isHovering = false;
 	let revealDotPath = k.empty;
@@ -29,7 +29,7 @@
 
 	$: {
 		if (dotReveal && !($s_ancestry_editingTools?.matchesAncestry(ancestry) ?? false)) {
-			revealWrapper = new AssociatedSvelte(dotReveal, ancestry, SvelteComponentType.reveal);
+			revealWrapper = new SvelteWrapper(dotReveal, ancestry, SvelteComponentType.reveal);
 		}
 	}
 

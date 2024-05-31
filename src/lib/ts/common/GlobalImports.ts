@@ -13,21 +13,21 @@ import { Hierarchy } from '../managers/Hierarchy';
 import { createPopper } from '@popperjs/core';
 import { dbDispatch } from '../db/DBDispatch';
 import { transparentize } from 'color2k';
-import { s } from '../state/UIState';
-import { g } from '../state/Global';
+import { g } from '../state/GlobalState';
+import { s } from '../state/UXState';
 import { get } from 'svelte/store';
 import { builds } from './Builds';
 import { u } from './Utilities';
 import { k } from './Constants';
 
+import ButtonAppearance from '../state/ButtonAppearance';
+import AlterationState from '../state/AlterationState';
 import ClusterLayout from '../geometry/ClusterLayout';
 import ChildMapRect from '../geometry/ChildMapRect';
-import AssociatedSvelte from './AssociatedSvelte';
-import Relationship from '../data/Relationship';
 import TreeLayout from '../geometry/TreeLayout';
-import ButtonAppearance from '../state/ButtonAppearance';
+import Relationship from '../data/Relationship';
 import TitleState from '../state/TitleState';
-import Alteration from '../state/Alteration';
+import SvelteWrapper from './SvelteWrapper';
 import Ancestry from '../managers/Ancestry';
 import MouseData from '../events/MouseData';
 import RingState from '../state/RingState';
@@ -42,15 +42,17 @@ import muuri from 'muuri';
 import './Extensions';
 
 export {
+	g, k, s, u, builds,
 	Rect, Size, Point, svgPaths, Direction,
-	transparentize, interact, muuri, createPopper,
+	RingState, TitleState, AlterationState,
+	muuri, interact, createPopper, transparentize,
+	get, onMount, onDestroy, setContext, getContext,
+	AlterationType, SvelteWrapper, SvelteComponentType,
 	User, Datum, Thing, Access, Predicate, Relationship,
-	Ancestry, Grabs, dbDispatch, Hierarchy, persistLocal,
+	Grabs, dbDispatch, Ancestry, Hierarchy, persistLocal,
+	MouseData, signals, ButtonAppearance, SeriouslyRange,
 	ZIndex, PredicateKind, GraphRelations, CreationOptions,
 	Angle, Quadrant, TreeLayout, ChildMapRect, ClusterLayout,
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactKind,
-	TitleState, Alteration, AlterationType, SvelteComponentType,
-	g, k, s, u, get, builds, onMount, onDestroy, setContext, getContext,
 	IDLine, IDTool, IDTrait, IDSignal, IDButton, IDBrowser, IDPersistant,
-	RingState, MouseData, signals, ButtonAppearance, SeriouslyRange, AssociatedSvelte,
 };

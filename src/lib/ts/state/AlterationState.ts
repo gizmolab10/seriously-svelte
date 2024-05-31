@@ -1,6 +1,6 @@
 import { Predicate, AlterationType } from '../common/GlobalImports';
 
-export default class Alteration {
+export default class AlterationState {
 	alteration: AlterationType;
 	predicate: Predicate | null;
 

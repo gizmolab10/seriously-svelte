@@ -3,7 +3,7 @@ import Identifiable from "../data/Identifiable";
 
 // Ancestry sometimes needs to access and or alter an associated svelte component
 
-export default class AssociatedSvelte extends Identifiable {
+export default class SvelteWrapper extends Identifiable {
     type: SvelteComponentType;
     ancestry: Ancestry;
     component: any;
