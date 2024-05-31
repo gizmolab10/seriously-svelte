@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, s, u, Rect, Size, Point, Mouse, ZIndex, onMount } from '../../ts/common/GlobalImports';
+	import { k, s, u, Rect, Size, Point, MouseData, ZIndex, onMount } from '../../ts/common/GlobalImports';
 	import { s_mouse_location } from '../../ts/state/Stores';
 	export let hover_closure: () => {flag: boolean} | null = null;
 	export let height = k.default_buttonSize;
@@ -21,17 +21,17 @@
 	let style = k.empty;
 	let mouse_button;
 
-	////////////////////////////////////////
-	//									  //
-	//	handles: clicks, move & up		  //
-	//	used by: help & all in panel	  //
-	//									  //
-	//	requires: center, width, height,  //
-	//		closure, name (& optional)	  //
-	//	mutates 3 ts state classes:		  //
-	//		State, Mouse & Appearance	  //
-	//									  //
-	////////////////////////////////////////
+	//////////////////////////////////////////
+	//										//
+	//	handles: clicks, move & up			//
+	//	used by: help & all in panel		//
+	//										//
+	//	requires: center, width, height,	//
+	//		closure, name (& optional)		//
+	//	mutates 3 ts state classes:			//
+	//		State, MouseData & Appearance	//
+	//										//
+	//////////////////////////////////////////
 
 	onMount(() => {
 		setupStyle();
@@ -60,7 +60,7 @@
 			}
 			if (isHit != wasHit) {
 				mouseState.hit = isHit;
-				closure(Mouse.hover(null, mouse_button, isHit));	// use null event
+				closure(MouseData.hover(null, mouse_button, isHit));	// use null event
 			}
 		}
 	}
@@ -70,7 +70,7 @@
 
 			// teardown timers and call closure
 		
-			closure(Mouse.up(event, mouse_button));
+			closure(MouseData.up(event, mouse_button));
 			clearTimeout(mouse_doubleClick_timer);
 			clearTimeout(mouse_longClick_timer);
 			mouse_doubleClick_timer = null;
@@ -83,7 +83,7 @@
 
 			// call down closure
 
-			closure(Mouse.down(event, mouse_button));
+			closure(MouseData.down(event, mouse_button));
 		}
 		mouseState.clicks += 1;
 		if (detect_longClick && !mouse_longClick_timer) {
@@ -91,7 +91,7 @@
 			// setup timer to call long-click closure
 
 			mouse_longClick_timer = setTimeout(() => {
-				closure(Mouse.long(event, mouse_button));
+				closure(MouseData.long(event, mouse_button));
 				mouse_longClick_timer = null;
 				mouseState.clicks = 0;
 			}, k.threshold_longClick);
@@ -101,7 +101,7 @@
 			// setup timer to call double-click closure
 
 			mouse_doubleClick_timer = setTimeout(() => {
-				closure(Mouse.clicks(event, mouse_button, mouseState.clicks));
+				closure(MouseData.clicks(event, mouse_button, mouseState.clicks));
 				mouse_doubleClick_timer = null;
 				mouseState.clicks = 0;
 			}, k.threshold_doubleClick);

@@ -13,9 +13,9 @@ import { Hierarchy } from '../managers/Hierarchy';
 import { createPopper } from '@popperjs/core';
 import { dbDispatch } from '../db/DBDispatch';
 import { transparentize } from 'color2k';
+import { s } from '../state/UIState';
 import { g } from '../state/Global';
 import { get } from 'svelte/store';
-import { s } from '../state/State';
 import { builds } from './Builds';
 import { u } from './Utilities';
 import { k } from './Constants';
@@ -26,17 +26,17 @@ import AssociatedSvelte from './AssociatedSvelte';
 import Relationship from '../data/Relationship';
 import TreeLayout from '../geometry/TreeLayout';
 import Appearance from '../state/Appearance';
+import TitleState from '../state/TitleState';
 import Alteration from '../state/Alteration';
 import Ancestry from '../managers/Ancestry';
+import MouseData from '../events/MouseData';
+import RingState from '../state/RingState';
 import Predicate from '../data/Predicate';
 import Grabs from '../managers/Grabs';
 import Access from '../data/Access';
-import Title from '../state/Title';
-import Mouse from '../events/Mouse';
 import interact from 'interactjs';
 import Thing from '../data/Thing';
 import Datum from '../data/Datum';
-import Ring from '../state/Ring';
 import User from '../data/User';
 import muuri from 'muuri';
 import './Extensions';
@@ -47,10 +47,10 @@ export {
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Ancestry, Grabs, dbDispatch, Hierarchy, persistLocal,
 	ZIndex, PredicateKind, GraphRelations, CreationOptions,
-	Title, Alteration, AlterationType, SvelteComponentType,
 	Angle, Quadrant, TreeLayout, ChildMapRect, ClusterLayout,
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactKind,
-	Ring, Mouse, signals, Appearance, SeriouslyRange, AssociatedSvelte,
+	TitleState, Alteration, AlterationType, SvelteComponentType,
 	g, k, s, u, get, builds, onMount, onDestroy, setContext, getContext,
 	IDLine, IDTool, IDTrait, IDSignal, IDButton, IDBrowser, IDPersistant,
+	RingState, MouseData, signals, Appearance, SeriouslyRange, AssociatedSvelte,
 };

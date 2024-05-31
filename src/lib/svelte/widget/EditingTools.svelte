@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { svgPaths, Direction, dbDispatch, Appearance, Alteration, AlterationType, transparentize } from '../../ts/common/GlobalImports';
-	import { k, s, u, Rect, Size, Point, Mouse, IDTool, ZIndex, onMount, AssociatedSvelte, signals } from '../../ts/common/GlobalImports';
+	import { k, s, u, Rect, Size, Point, MouseData, IDTool, ZIndex, onMount, AssociatedSvelte, signals } from '../../ts/common/GlobalImports';
 	import { s_ancestry_editingTools, s_layout_asClusters } from '../../ts/state/Stores';
 	import { s_altering, s_graphRect, s_show_details } from '../../ts/state/Stores';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
@@ -102,7 +102,7 @@
 		}
 	}
 
-	async function handle_mouse_data(mouseData: Mouse, id: string) {
+	async function handle_mouse_data(mouseData: MouseData, id: string) {
 		if (mouseData.isHover) {
 			const isOut = mouseData.isOut;
 			isHovering_byID[id] = !isOut;

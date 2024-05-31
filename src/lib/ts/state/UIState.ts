@@ -1,7 +1,7 @@
-import { k, Ring, Appearance } from '../common/GlobalImports';
+import { k, RingState, Appearance } from '../common/GlobalImports';
 
-type RingState_byName = {[name: string]: Ring};
 type MouseState = {clicks: number, hit: boolean};
+type RingState_byName = {[name: string]: RingState};
 type MouseState_byName = {[name: string]: MouseState};
 
 
@@ -24,10 +24,10 @@ class State {
 	mouseState_byName: MouseState_byName = {};
 	appearance_byName: {[name: string]: Appearance} = {};
 
-	ringState_forName(name: string): Ring {
+	ringState_forName(name: string): RingState {
 		let state = this.ringState_byName[name];
 		if (!state) {
-			state = new Ring(name);
+			state = new RingState(name);
 			this.ringState_byName[name] = state;
 		}
 		return state;

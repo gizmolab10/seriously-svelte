@@ -1,6 +1,6 @@
-import { Predicate, Relationship, PredicateKind, AlterationType, SvelteComponentType } from '../common/GlobalImports';
+import { k, u, get, Rect, Size, Thing, debug, signals, TitleState, Predicate, Relationship } from '../common/GlobalImports';
 import { s_ancestry_focus, s_ancestries_grabbed, s_title_editing, s_layout_asClusters } from '../state/Stores';
-import { k, u, get, Rect, Size, Thing, Title, debug, signals, AssociatedSvelte } from '../common/GlobalImports';
+import { PredicateKind, AlterationType, AssociatedSvelte, SvelteComponentType } from '../common/GlobalImports';
 import { s_ancestries_expanded, s_ancestry_editingTools, s_altering } from '../state/Stores';
 import { Writable } from 'svelte/store';
 import { h } from '../db/DBDispatch';
@@ -620,7 +620,7 @@ export default class Ancestry {
 		if (!this.isRoot && k.allow_TitleEditing) {
 			debug.log_edit(`EDIT ${this.description}`)
 			this.grabOnly();
-			s_title_editing.set(new Title(this));
+			s_title_editing.set(new TitleState(this));
 		}
 	}
 

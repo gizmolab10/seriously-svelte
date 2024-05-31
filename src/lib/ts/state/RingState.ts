@@ -1,6 +1,6 @@
 import { k } from '../common/GlobalImports';
 
-export default class Ring {
+export default class RingState {
 	name = k.empty;
 	isHovering = false;
 	startAngle: number | null = null;		// angle at location of mouse DOWN

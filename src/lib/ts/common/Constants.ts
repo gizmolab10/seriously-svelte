@@ -53,7 +53,7 @@ export default class Constants {
 			<polygon points="44,24 38,18 38,30" fill="black"/>
 		</svg>`;
 
-		queryStrings_apply() {
+	queryStrings_apply() {
         const deny = this.queryString.get('deny');
         if (deny) {
             const flags = deny.split(',');

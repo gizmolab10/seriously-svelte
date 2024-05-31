@@ -1,4 +1,4 @@
-import { k, u, get, User, Thing, Grabs, debug, Mouse, Access, IDTool, IDTrait, signals, Ancestry } from '../common/GlobalImports';
+import { k, u, get, User, Thing, Grabs, debug, MouseData, Access, IDTool, IDTrait, signals, Ancestry } from '../common/GlobalImports';
 import { AssociatedSvelte, Predicate, Alteration, Relationship, AlterationType, CreationOptions } from '../common/GlobalImports';
 import { s_ancestries_grabbed, s_things_arrived, s_ancestry_editingTools } from '../state/Stores';
 import { s_isBusy, s_altering, s_ancestry_focus, s_title_editing } from '../state/Stores';
@@ -56,7 +56,7 @@ export class Hierarchy {
 
 	static readonly $_EVENTS_$: unique symbol;
 
-	async handle_tool_clicked(idButton: string, mouseData: Mouse) {
+	async handle_tool_clicked(idButton: string, mouseData: MouseData) {
 		const event: MouseEvent | null = mouseData.event as MouseEvent;
         const ancestry = get(s_ancestry_editingTools);
 		if (!!ancestry && !mouseData.isUp) {
@@ -96,7 +96,7 @@ export class Hierarchy {
 							case 'd':		await this.thing_edit_remoteDuplicate(ancestryGrab); break;
 							case k.space:	await this.ancestry_edit_remoteCreateChildOf(ancestryGrab); break;
 							case '-':		if (!COMMAND) { await this.thing_edit_remoteAddLine(ancestryGrab); } break;
-							case 'tab':		await this.ancestry_edit_remoteCreateChildOf(ancestryGrab.parentAncestry); break; // Title editor also makes this call
+							case 'tab':		await this.ancestry_edit_remoteCreateChildOf(ancestryGrab.parentAncestry); break; // TitleState editor also makes this call
 							case 'enter':	ancestryGrab.startEdit(); break;
 						}
 					}
