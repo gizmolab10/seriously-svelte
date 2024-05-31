@@ -1,6 +1,6 @@
 import { k } from '../common/Constants';
 
-export default class Appearance {
+export default class ButtonAppearance {
 	background_color = 'transparent';
 	color = k.color_defaultText;
 	cursor = k.cursor_default;

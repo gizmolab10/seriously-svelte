@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, s, u, Point, ZIndex, onMount, Appearance } from '../../ts/common/GlobalImports';
+	import { g, k, s, u, Point, ZIndex, onMount, ButtonAppearance } from '../../ts/common/GlobalImports';
 	import MouseButton from './MouseButton.svelte';
 	export let background_color = k.color_background;
 	export let height = k.default_buttonSize;
@@ -40,7 +40,7 @@
 		}
 	}
 
-	function updateFor(appearance: Appearance) {
+	function updateFor(appearance: ButtonAppearance) {
 		if (!!appearance) {
 			color = appearance.color;
 			background_color = appearance.background_color;

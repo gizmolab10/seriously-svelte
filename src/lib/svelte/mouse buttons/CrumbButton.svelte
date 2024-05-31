@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, s, u, Point, Thing, onMount, signals, dbDispatch, Appearance, transparentize } from '../../ts/common/GlobalImports';
+	import { k, s, u, Point, Thing, onMount, signals, dbDispatch, ButtonAppearance, transparentize } from '../../ts/common/GlobalImports';
 	import { s_thing_changed, s_ancestry_focus } from '../../ts/state/Stores';
 	import Button from './Button.svelte';
 	export let left = 0;
@@ -11,7 +11,7 @@
 	let height = k.default_buttonSize;
 	let thing: Thing = ancestry.thing;
 	let title: string = thing.title;
-	let appearance!: Appearance;
+	let appearance!: ButtonAppearance;
 	let colorStyles = k.empty;
 	let style = k.empty;
 	let name = k.empty;

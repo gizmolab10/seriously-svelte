@@ -25,7 +25,7 @@ import ChildMapRect from '../geometry/ChildMapRect';
 import AssociatedSvelte from './AssociatedSvelte';
 import Relationship from '../data/Relationship';
 import TreeLayout from '../geometry/TreeLayout';
-import Appearance from '../state/Appearance';
+import ButtonAppearance from '../state/ButtonAppearance';
 import TitleState from '../state/TitleState';
 import Alteration from '../state/Alteration';
 import Ancestry from '../managers/Ancestry';
@@ -52,5 +52,5 @@ export {
 	TitleState, Alteration, AlterationType, SvelteComponentType,
 	g, k, s, u, get, builds, onMount, onDestroy, setContext, getContext,
 	IDLine, IDTool, IDTrait, IDSignal, IDButton, IDBrowser, IDPersistant,
-	RingState, MouseData, signals, Appearance, SeriouslyRange, AssociatedSvelte,
+	RingState, MouseData, signals, ButtonAppearance, SeriouslyRange, AssociatedSvelte,
 };

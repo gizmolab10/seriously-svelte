@@ -26,11 +26,7 @@
 	let offsetX = 0;
 	let clusters;
 
-	$: {
-		if (!!clusters) {
-			clusters.style.cursor = ringState.cursor;
-		}
-	}
+	$: { cursor_closure(); }
 
 	$: {
 		if (mouse_up_count != $s_mouse_up_count) {
@@ -49,6 +45,12 @@
 		rebuilds += 1;
 	}
 
+	function cursor_closure() {
+		if (!!clusters) {
+			clusters.style.cursor = ringState.cursor;
+		}
+	}
+
 </script>
 
 {#if $s_ancestry_focus}
@@ -57,7 +59,7 @@
 			bind:this={clusters}
 			style='transform:translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px);'>
 			{#key $s_ancestry_focus.hashedAncestry}
-				<div class='necklace-focus'
+				<div class='cluster-focus'
 					style='
 						position: absolute;
 						top:{titleCenter.y}px;
@@ -73,7 +75,8 @@
 						center={center}
 						name={necklace_name}
 						zindex={ZIndex.lines}
-						radius={$s_cluster_arc_radius}/>
+						radius={$s_cluster_arc_radius}
+						cursor_closure={cursor_closure}/>
 					<EditingTools offset={toolsOffset}/>
 				{/key}
 			{/key}

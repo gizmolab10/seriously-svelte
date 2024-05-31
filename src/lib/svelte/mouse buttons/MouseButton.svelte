@@ -29,7 +29,7 @@
 	//	requires: center, width, height,	//
 	//		closure, name (& optional)		//
 	//	mutates 3 ts state classes:			//
-	//		State, MouseData & Appearance	//
+	//		State, MouseData & ButtonAppearance	//
 	//										//
 	//////////////////////////////////////////
 

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { svgPaths, Direction, dbDispatch, Appearance, Alteration, AlterationType, transparentize } from '../../ts/common/GlobalImports';
+	import { svgPaths, Direction, dbDispatch, ButtonAppearance, Alteration, AlterationType, transparentize } from '../../ts/common/GlobalImports';
 	import { k, s, u, Rect, Size, Point, MouseData, IDTool, ZIndex, onMount, AssociatedSvelte, signals } from '../../ts/common/GlobalImports';
 	import { s_ancestry_editingTools, s_layout_asClusters } from '../../ts/state/Stores';
 	import { s_altering, s_graphRect, s_show_details } from '../../ts/state/Stores';

@@ -1,5 +1,5 @@
 <script>
-	import { k, s, u, Point, ZIndex, signals, svgPaths, IDButton, Appearance, IDPersistant, persistLocal, GraphRelations } from '../../ts/common/GlobalImports';
+	import { k, s, u, Point, ZIndex, signals, svgPaths, IDButton, ButtonAppearance, IDPersistant, persistLocal, GraphRelations } from '../../ts/common/GlobalImports';
 	import { s_show_details, s_id_popupView, s_resize_count, s_layout_asClusters, s_graph_relations } from '../../ts/state/Stores';
 	import Button from '../mouse buttons/Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';

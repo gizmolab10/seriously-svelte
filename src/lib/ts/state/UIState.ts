@@ -1,4 +1,4 @@
-import { k, RingState, Appearance } from '../common/GlobalImports';
+import { k, RingState, ButtonAppearance } from '../common/GlobalImports';
 
 type MouseState = {clicks: number, hit: boolean};
 type RingState_byName = {[name: string]: RingState};
@@ -22,7 +22,7 @@ class State {
 	rebuild_count = 0;
 	ringState_byName: RingState_byName = {};
 	mouseState_byName: MouseState_byName = {};
-	appearance_byName: {[name: string]: Appearance} = {};
+	appearance_byName: {[name: string]: ButtonAppearance} = {};
 
 	ringState_forName(name: string): RingState {
 		let state = this.ringState_byName[name];
@@ -42,10 +42,10 @@ class State {
 		return state;
 	}
 
-	appearance_forName(name: string): Appearance {
+	appearance_forName(name: string): ButtonAppearance {
 		let appearance = this.appearance_byName[name];
 		if (!appearance) {
-			appearance = new Appearance(k.color_defaultText, 'transparent', k.cursor_default);
+			appearance = new ButtonAppearance(k.color_defaultText, 'transparent', k.cursor_default);
 			this.appearance_byName[name] = appearance;
 		}
 		return appearance;
