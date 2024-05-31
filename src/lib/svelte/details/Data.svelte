@@ -1,7 +1,7 @@
 <script>
 	import { k, u, ZIndex, dbDispatch, Hierarchy, IDPersistant, persistLocal } from '../../ts/common/GlobalImports';
 	import RadioButtons from '../buttons/RadioButtons.svelte';
-	import { s_db_type } from '../../ts/state/Stores';
+	import { s_db_type } from '../../ts/state/ReactiveState';
 	import { DBType } from '../../ts/db/DBInterface';
 	import { h } from '../../ts/db/DBDispatch';
 

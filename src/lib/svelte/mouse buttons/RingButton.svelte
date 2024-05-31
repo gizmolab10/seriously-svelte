@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, s, u, Thing, Point, ZIndex, signals, svgPaths, MouseData, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
-	import { s_thing_changed, s_ancestry_focus, s_ring_angle, s_cluster_arc_radius } from '../../ts/state/Stores';
-	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/Stores';
+	import { s_thing_changed, s_ancestry_focus, s_ring_angle, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
+	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/ReactiveState';
 	import MouseButton from './MouseButton.svelte';
 	export let cursor_closure = () => {};
 	export let zindex = ZIndex.panel;

@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, s, u, Rect, Size, Point, MouseData, ZIndex, onMount } from '../../ts/common/GlobalImports';
-	import { s_mouse_location } from '../../ts/state/Stores';
+	import { s_mouse_location } from '../../ts/state/ReactiveState';
 	export let hover_closure: () => {flag: boolean} | null = null;
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;

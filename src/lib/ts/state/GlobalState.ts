@@ -1,5 +1,5 @@
-import { s_thing_changed, s_resize_count, s_mouse_up_count, s_mouse_location, s_user_graphOffset } from './Stores';
-import { s_graphRect, s_show_details, s_scale_factor, s_rebuild_count } from './Stores';
+import { s_graphRect, s_show_details, s_scale_factor, s_resize_count, s_rebuild_count } from './ReactiveState';
+import { s_thing_changed, s_mouse_up_count, s_mouse_location, s_user_graphOffset } from './ReactiveState';
 import { k, u, get, Rect, Point, debug, debugReact } from '../common/GlobalImports';
 import { dbDispatch, persistLocal, IDPersistant } from '../common/GlobalImports';
 

@@ -1,8 +1,8 @@
 <script lang='ts'>
+	import { s_ancestry_focus, s_graphRect, s_show_details, s_ancestries_grabbed } from '../../ts/state/ReactiveState';
 	import { k, u, Rect, Size, Point, Thing, ZIndex, debug, signals, Ancestry } from '../../ts/common/GlobalImports';
+	import { s_id_popupView, s_ancestry_editingTools, s_user_graphOffset } from '../../ts/state/ReactiveState';
 	import { IDButton, onMount, debugReact, dbDispatch, Predicate } from '../../ts/common/GlobalImports';
-	import { s_ancestry_focus, s_graphRect, s_show_details, s_ancestries_grabbed } from '../../ts/state/Stores';
-	import { s_id_popupView, s_ancestry_editingTools, s_user_graphOffset } from '../../ts/state/Stores';
 	import { IDPersistant, IDSignal, persistLocal } from '../../ts/common/GlobalImports';
 	import DotRevealFocus from '../buttons/DotRevealFocus.svelte';
 	import EditingTools from '../widget/EditingTools.svelte';

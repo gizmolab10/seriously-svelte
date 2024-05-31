@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, Point, ZIndex, onMount, ClusterLayout } from '../../ts/common/GlobalImports';
-	import { s_cluster_arc_radius } from '../../ts/state/Stores';
+	import { s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { ArcKind } from '../../ts/common/Enumerations';
 	export let clusterLayout: ClusterLayout;
 	export let center = Point.zero;

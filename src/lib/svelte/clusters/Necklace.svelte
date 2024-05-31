@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { g, k, s, u, Point, ZIndex, signals, onMount, onDestroy, Predicate } from '../../ts/common/GlobalImports';
 	import { debugReact, ChildMapRect, ClusterLayout, transparentize } from '../../ts/common/GlobalImports';
-	import { s_thing_changed, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/Stores';
+	import { s_thing_changed, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import ClusterLine from './ClusterLine.svelte';
 	import ClusterArc from './ClusterArc.svelte';
 	import Widget from '../widget/Widget.svelte';

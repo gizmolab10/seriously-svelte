@@ -1,4 +1,4 @@
-import { s_scale_factor, s_thing_fontFamily } from '../state/Stores';
+import { s_scale_factor, s_thing_fontFamily } from '../state/ReactiveState';
 import { Angle, Quadrant, IDBrowser } from './Enumerations';
 import { Rect, Size, Point } from '../geometry/Geometry';
 import Identifiable from "../data/Identifiable";

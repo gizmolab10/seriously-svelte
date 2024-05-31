@@ -1,6 +1,6 @@
 <script lang='ts'>
+	import { s_graphRect, s_show_details, s_thing_changed, s_ancestry_focus, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/ReactiveState';
 	import { k, u, Size, Point, Thing, ZIndex, signals, svgPaths, onMount, Ancestry, debugReact, dbDispatch, Direction } from '../../ts/common/GlobalImports';
-	import { s_graphRect, s_show_details, s_thing_changed, s_ancestry_focus, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/Stores';
 	import CrumbButton from '../mouse buttons/CrumbButton.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import SVGD3 from '../kit/SVGD3.svelte';

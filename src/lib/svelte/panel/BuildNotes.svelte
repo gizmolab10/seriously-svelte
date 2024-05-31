@@ -1,8 +1,8 @@
 <script>
 	import { k, builds, onMount, ZIndex } from '../../ts/common/GlobalImports';
 	import DirectionalButtons from '../mouse buttons/DirectionalButtons.svelte'
-	import CloseButton from '../mouse buttons/CloseButton.svelte'
-	import { s_id_popupView } from '../../ts/state/Stores';
+	import { s_id_popupView } from '../../ts/state/ReactiveState';
+	import CloseButton from '../mouse buttons/CloseButton.svelte';
 	const notesIndexed = Object.entries(builds.notes).reverse();
 	const notesLimit = notesIndexed.length - 1;
 	let title = k.empty;

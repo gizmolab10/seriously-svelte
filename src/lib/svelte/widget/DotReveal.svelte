@@ -1,6 +1,6 @@
 <script>
 	import { Direction, onDestroy, dbDispatch, Predicate, SvelteWrapper, SvelteComponentType } from '../../ts/common/GlobalImports';
-	import { s_ancestries_expanded, s_altering, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/Stores';
+	import { s_ancestries_expanded, s_altering, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/ReactiveState';
 	import { k, u, get, Size, Thing, Point, debug, ZIndex, onMount, signals, svgPaths } from '../../ts/common/GlobalImports';
 	import { h } from '../../ts/db/DBDispatch';
 	import SVGD3 from '../kit/SVGD3.svelte';

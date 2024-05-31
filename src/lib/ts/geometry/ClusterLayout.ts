@@ -1,5 +1,5 @@
 import { g, k, u, get, Angle, IDLine, svgPaths, Ancestry, Predicate, ChildMapRect } from '../common/GlobalImports';
-import { s_ring_angle, s_cluster_arc_radius } from '../state/Stores';
+import { s_ring_angle, s_cluster_arc_radius } from '../state/ReactiveState';
 import { Rect, Point } from '../geometry/Geometry';
 import { ArcKind } from '../common/Enumerations';
 

@@ -1,5 +1,5 @@
 import { get, Thing, Ancestry } from "../common/GlobalImports";
-import { s_ancestries_grabbed } from '../state/Stores';
+import { s_ancestries_grabbed } from '../state/ReactiveState';
 import { h } from '../db/DBDispatch';
 
 export default class Grabs {

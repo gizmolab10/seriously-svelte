@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { dbDispatch, SeriouslyRange, SvelteWrapper, SvelteComponentType } from '../../ts/common/GlobalImports';
 	import { k, u, Point, Thing, debug, Angle, ZIndex, onMount, signals } from '../../ts/common/GlobalImports';
-	import { s_thing_changed, s_title_editing, s_ancestries_grabbed } from '../../ts/state/Stores';
-	import { s_layout_asClusters, s_ancestry_editingTools } from '../../ts/state/Stores';
+	import { s_thing_changed, s_title_editing, s_ancestries_grabbed } from '../../ts/state/ReactiveState';
+	import { s_layout_asClusters, s_ancestry_editingTools } from '../../ts/state/ReactiveState';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
 	export let forward = true;

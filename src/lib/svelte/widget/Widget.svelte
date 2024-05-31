@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { s_thing_changed, s_title_editing, s_ancestry_focus, s_ancestries_grabbed } from '../../ts/state/Stores';
+	import { s_thing_changed, s_title_editing, s_ancestry_focus, s_ancestries_grabbed } from '../../ts/state/ReactiveState';
+	import { s_layout_asClusters, s_thing_fontFamily, s_ancestry_editingTools } from '../../ts/state/ReactiveState';
 	import { k, u, Thing, Point, Angle, debug, ZIndex, SvelteWrapper } from '../../ts/common/GlobalImports';
-	import { s_layout_asClusters, s_thing_fontFamily, s_ancestry_editingTools } from '../../ts/state/Stores';
 	import { signals, onMount, debugReact, SvelteComponentType } from '../../ts/common/GlobalImports';
 	import { exemplar } from '../../ts/data/Exemplar';
 	import EditingTools from './EditingTools.svelte';

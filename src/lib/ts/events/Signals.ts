@@ -1,4 +1,4 @@
-import { s_ancestry_focus } from '../state/Stores';
+import { s_ancestry_focus } from '../state/ReactiveState';
 import { Signal } from 'typed-signals';
 import { get } from 'svelte/store';
 
