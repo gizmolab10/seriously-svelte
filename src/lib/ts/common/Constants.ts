@@ -26,7 +26,7 @@ export default class Constants {
 	baseID_local = 'handcrafted';
 	color_defaultText = 'black';
 	color_background = 'white';
-	cursor_default = 'normal';
+	cursor_default = 'default';
 	genericSeparator = '::';
     color_default = 'blue';
 	id_unknown = 'unknown';
@@ -45,8 +45,15 @@ export default class Constants {
 	cluster_offsetY: number;
 	build_number: number;
 	row_height: number;
+	
+	rotateSVG = `
+		<svg width="48px" height="48px" viewBox="0 0 48 48">
+			<circle cx="24" cy="24" r="20" stroke="black" stroke-width="2" fill="none" />
+			<path d="M 4,24 a 20,20 0 0,1 40,0" fill="none" stroke="black" stroke-width="2"/>
+			<polygon points="44,24 38,18 38,30" fill="black"/>
+		</svg>`;
 
-	queryStrings_apply() {
+		queryStrings_apply() {
         const deny = this.queryString.get('deny');
         if (deny) {
             const flags = deny.split(',');

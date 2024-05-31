@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { signals, Wrapper, IDWrapper, dbDispatch, SeriouslyRange } from '../../ts/common/GlobalImports';
-	import { k, u, Point, Thing, debug, ZIndex, onMount, Angle } from '../../ts/common/GlobalImports';
+	import { dbDispatch, SeriouslyRange, AssociatedSvelte, SvelteComponentType } from '../../ts/common/GlobalImports';
+	import { k, u, Point, Thing, debug, Angle, ZIndex, onMount, signals } from '../../ts/common/GlobalImports';
 	import { s_thing_changed, s_title_editing, s_ancestries_grabbed } from '../../ts/state/Stores';
 	import { s_layout_asClusters, s_ancestry_editingTools } from '../../ts/state/Stores';
 	export let fontFamily = 'Arial';
@@ -12,7 +12,7 @@
     let color = ancestry.thing?.color;
 	let originalTitle = k.empty;
 	let cursorStyle = k.empty;
-	let titleWrapper: Wrapper;
+	let titleWrapper: AssociatedSvelte;
 	let mouse_click_timer;
 	let isEditing = false;
 	let titleWidth = 0;
@@ -58,7 +58,7 @@
 
 	$: {
 		if (input && !titleWrapper) {
-			titleWrapper = new Wrapper(input, ancestry, IDWrapper.title);
+			titleWrapper = new AssociatedSvelte(input, ancestry, SvelteComponentType.title);
 		}
 	}
 

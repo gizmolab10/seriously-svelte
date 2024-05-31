@@ -1,12 +1,12 @@
+import { Predicate, Relationship, PredicateKind, AlterationType, SvelteComponentType } from '../common/GlobalImports';
 import { s_ancestry_focus, s_ancestries_grabbed, s_title_editing, s_layout_asClusters } from '../state/Stores';
-import { IDWrapper, Predicate, Relationship, PredicateKind, AlterationType } from '../common/GlobalImports';
-import { k, u, get, Rect, Size, Thing, Title, debug, signals, Wrapper } from '../common/GlobalImports';
+import { k, u, get, Rect, Size, Thing, Title, debug, signals, AssociatedSvelte } from '../common/GlobalImports';
 import { s_ancestries_expanded, s_ancestry_editingTools, s_altering } from '../state/Stores';
 import { Writable } from 'svelte/store';
 import { h } from '../db/DBDispatch';
 
 export default class Ancestry {
-	wrappers: { [type: string]: Wrapper } = {};
+	wrappers: { [type: string]: AssociatedSvelte } = {};
 	_thing: Thing | null = null;
 	ancestryString: string;
 	ancestryHash: number;
@@ -30,7 +30,7 @@ export default class Ancestry {
 	signal_rebuildGraph()  { signals.signal_rebuildGraph(this); }
 	signal_relayoutWidgets() { signals.signal_relayoutWidgets(this); }
 
-	wrapper_add(wrapper: Wrapper) {
+	wrapper_add(wrapper: AssociatedSvelte) {
 		this.wrappers[wrapper.type] = wrapper;
         h.wrapper_add(wrapper);
 	}
@@ -66,10 +66,10 @@ export default class Ancestry {
 	get ids_hashed(): Array<number> { return this.ids.map(i => i.hash()); }
 	get relationship(): Relationship | null { return this.relationshipAt(); }
 	get idBridging(): string | null { return this.thing?.idBridging ?? null; }
-	get lineWrapper(): Wrapper | null { return this.wrappers[IDWrapper.line]; }
-	get titleWrapper(): Wrapper | null { return this.wrappers[IDWrapper.title]; }
-	get revealWrapper(): Wrapper | null { return this.wrappers[IDWrapper.reveal]; }
-	get widgetWrapper(): Wrapper | null { return this.wrappers[IDWrapper.widget]; }
+	get lineWrapper(): AssociatedSvelte | null { return this.wrappers[SvelteComponentType.line]; }
+	get titleWrapper(): AssociatedSvelte | null { return this.wrappers[SvelteComponentType.title]; }
+	get revealWrapper(): AssociatedSvelte | null { return this.wrappers[SvelteComponentType.reveal]; }
+	get widgetWrapper(): AssociatedSvelte | null { return this.wrappers[SvelteComponentType.widget]; }
 	get isGrabbed(): boolean { return this.includedInStore(s_ancestries_grabbed); }
 	get titleRect(): Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
 	get predicate(): Predicate | null { return h.predicate_forID(this.idPredicate) }
@@ -202,7 +202,7 @@ export default class Ancestry {
 	relationshipAt(back: number = 1): Relationship | null { return h.relationship_forHID(this.idAt(back).hash()) ?? null; }
 	sharesAnID(ancestry: Ancestry | null): boolean { return !ancestry ? false : this.ids.some(id => ancestry.ids.includes(id)); }
 	showsClusterFor(predicate: Predicate): boolean { return this.includesPredicateID(predicate.id) && this.hasThings(predicate); }
-	rect_ofWrapper(wrapper: Wrapper | null): Rect | null { return Rect.createFromDOMRect(wrapper?.component.getBoundingClientRect()); }
+	rect_ofWrapper(wrapper: AssociatedSvelte | null): Rect | null { return Rect.createFromDOMRect(wrapper?.component.getBoundingClientRect()); }
 
 	isRelatedTo_orContains(ancestry: Ancestry): boolean {
 		// if ancestry.thing's parents (of all predicate kinds) include this.thing

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { IDLine, Quadrant, Wrapper, IDWrapper, ClusterLayout } from '../../ts/common/GlobalImports';
+	import { IDLine, Quadrant, AssociatedSvelte, SvelteComponentType, ClusterLayout } from '../../ts/common/GlobalImports';
 	import { k, u, Rect, Size, Point, Angle, ZIndex, svgPaths } from '../../ts/common/GlobalImports';
 	import ArrowHead from '../kit/ArrowHead.svelte';
 	import { h } from '../../ts/db/DBDispatch';
@@ -15,7 +15,7 @@
 	let line_origin = Point.zero;
 	let arrow_start = Point.zero;
 	let arrow_end = Point.zero;
-	let lineWrapper: Wrapper;
+	let lineWrapper: AssociatedSvelte;
 	let linePath = k.empty;
 	let viewBox = k.empty;
 	let size = Size.zero;
@@ -27,7 +27,7 @@
 
 	$: {
 		if (line && !lineWrapper) {
-			lineWrapper = new Wrapper(line, h.rootAncestry, IDWrapper.line);
+			lineWrapper = new AssociatedSvelte(line, h.rootAncestry, SvelteComponentType.line);
 		}
 		angle = clusterLayout?.angle_ofLine;
 		const inside_radius = k.cluster_inside_radius + (show_arrowheads ? 8 : 0);

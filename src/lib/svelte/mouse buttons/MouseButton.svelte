@@ -27,7 +27,7 @@
 	//	used by: help & all in panel	  //
 	//									  //
 	//	requires: center, width, height,  //
-	//		closure & name				  //
+	//		closure, name (& optional)	  //
 	//	mutates 3 ts state classes:		  //
 	//		State, Mouse & Appearance	  //
 	//									  //

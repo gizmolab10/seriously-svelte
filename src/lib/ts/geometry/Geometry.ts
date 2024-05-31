@@ -20,6 +20,9 @@ export class Point {
 	get negated():					   Point { return this.multipliedBy(-1); }
 	get dividedInHalf():			   Point { return this.multipliedBy(1/2); }
 	get copy():						   Point { return new Point(this.x, this.y); }
+	get swap():						   Point { return new Point(this.y, this.x); }
+	get negateY():					   Point { return new Point(this.x, -this.y); }
+	get negateX():					   Point { return new Point(-this.x, this.y); }
 	get abs():						   Point { return new Point(Math.abs(this.x), Math.abs(this.y)); }
 	offsetByX(x: number):			   Point { return new Point(this.x + x, this.y); }
 	offsetByY(y: number):			   Point { return new Point(this.x, this.y + y); }
@@ -31,9 +34,9 @@ export class Point {
 	multipliedBy(multiplier: number):  Point { return new Point(this.x * multiplier, this.y * multiplier) }
 	offsetBySize(size: Size):		   Point { return new Point(this.x + size.width, this.y + size.height); }
 	almostZero(almost: number):		 boolean { return Math.abs(this.x) <= almost && Math.abs(this.y) <= almost; }
+	static fromPolar(r: number, phi: number) { return new Point(r, 0).rotate_by(phi); }
 	static square(length: number):	   Point { return new Point(length, length); }
 	static get zero():				   Point { return new Point();}
-	static fromPolar(r: number, phi: number) { return new Point(r, 0).rotate_by(phi); }
 
 	rotate_by(angle: number): Point {
 		const cos = Math.cos(angle);
@@ -62,6 +65,7 @@ export class Size {
 	get dividedInHalf():			  Size { return this.multipliedBy(1/2); }
 	get negated():					  Size { return this.multipliedBy(-1); }
 	get copy():						  Size { return new Size(this.width, this.height); }
+	get swap():						  Size { return new Size(this.height, this.width); }
 	expandedByX(width: number):		  Size { return new Size(this.width + width, this.height); }
 	expandedByY(height: number):	  Size { return new Size(this.width, this.height + height); }
 	expandedBy(delta: Point):		  Size { return new Size(this.width + delta.x, this.height + delta.y); }

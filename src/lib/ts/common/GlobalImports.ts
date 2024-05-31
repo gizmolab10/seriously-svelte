@@ -1,4 +1,5 @@
-import { Angle, IDTrait, ZIndex, Quadrant, IDButton, IDBrowser, Transparency, AlterationType, PredicateKind, GraphRelations } from './Enumerations';
+import { PredicateKind, GraphRelations, AlterationType, SvelteComponentType } from './Enumerations';
+import { Angle, IDTrait, ZIndex, Quadrant, IDButton, IDBrowser } from './Enumerations';
 import { debugReact, DebugReact, ReactKind } from '../debug/DebugReact';
 import { IDPersistant, persistLocal } from '../managers/PersistLocal';
 import { onMount, onDestroy, setContext, getContext } from 'svelte';
@@ -12,7 +13,6 @@ import { Hierarchy } from '../managers/Hierarchy';
 import { createPopper } from '@popperjs/core';
 import { dbDispatch } from '../db/DBDispatch';
 import { transparentize } from 'color2k';
-import { IDWrapper } from './Wrapper';
 import { g } from '../state/Global';
 import { get } from 'svelte/store';
 import { s } from '../state/State';
@@ -22,6 +22,7 @@ import { k } from './Constants';
 
 import ClusterLayout from '../geometry/ClusterLayout';
 import ChildMapRect from '../geometry/ChildMapRect';
+import AssociatedSvelte from './AssociatedSvelte';
 import Relationship from '../data/Relationship';
 import TreeLayout from '../geometry/TreeLayout';
 import Appearance from '../state/Appearance';
@@ -35,21 +36,21 @@ import Mouse from '../events/Mouse';
 import interact from 'interactjs';
 import Thing from '../data/Thing';
 import Datum from '../data/Datum';
-import Wrapper from './Wrapper';
+import Ring from '../state/Ring';
 import User from '../data/User';
 import muuri from 'muuri';
 import './Extensions';
 
 export {
-	Title, Alteration,
 	Rect, Size, Point, svgPaths, Direction,
 	transparentize, interact, muuri, createPopper,
 	User, Datum, Thing, Access, Predicate, Relationship,
-	Wrapper, signals, Mouse, Appearance, SeriouslyRange,
 	Ancestry, Grabs, dbDispatch, Hierarchy, persistLocal,
+	ZIndex, PredicateKind, GraphRelations, CreationOptions,
+	Title, Alteration, AlterationType, SvelteComponentType,
 	Angle, Quadrant, TreeLayout, ChildMapRect, ClusterLayout,
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactKind,
+	Ring, Mouse, signals, Appearance, SeriouslyRange, AssociatedSvelte,
 	g, k, s, u, get, builds, onMount, onDestroy, setContext, getContext,
-	IDLine, IDTool, IDTrait, IDSignal, IDWrapper, IDButton, IDBrowser, IDPersistant,
-	ZIndex, Transparency, PredicateKind, GraphRelations, CreationOptions, AlterationType,
+	IDLine, IDTool, IDTrait, IDSignal, IDButton, IDBrowser, IDPersistant,
 };

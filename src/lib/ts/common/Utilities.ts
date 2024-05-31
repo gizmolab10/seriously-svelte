@@ -145,7 +145,7 @@ class Utilities {
 				uniqueIdentifiables.push(identifiable)
 			}
 		}
-		return uniqueIdentifiables;
+		return Object.values(identifiablesByHID);
 	}
 
 	strip_thingDuplicates(ancestries: Array<Ancestry>) {

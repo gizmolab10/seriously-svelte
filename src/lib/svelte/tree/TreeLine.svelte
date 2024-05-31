@@ -1,6 +1,6 @@
 <script lang='ts'>
+	import { AssociatedSvelte, Ancestry, debugReact, SvelteComponentType, IDLine } from '../../ts/common/GlobalImports';
 	import { k, Rect, Size, Point, debug, ZIndex, signals, svgPaths } from '../../ts/common/GlobalImports';
-	import { Wrapper, Ancestry, debugReact, IDWrapper, IDLine } from '../../ts/common/GlobalImports';
 	import { s_thing_changed } from '../../ts/state/Stores';
 	import Circle from '../kit/Circle.svelte';
 	import Box from '../kit/Box.svelte';
@@ -8,7 +8,7 @@
 	export let rect = new Rect();
 	export let curveType: string = IDLine.up;
 	const debugOffset = new Point(140.5, -1.2);
-	let lineWrapper: Wrapper;
+	let lineWrapper: AssociatedSvelte;
 	let origin = rect.origin;
 	let extent = rect.extent;
 	let viewBox = new Rect();
@@ -19,7 +19,7 @@
 
 	$: {
 		if (line) {
-			lineWrapper = new Wrapper(line, ancestry, IDWrapper.line);
+			lineWrapper = new AssociatedSvelte(line, ancestry, SvelteComponentType.line);
 		}
 	}
 

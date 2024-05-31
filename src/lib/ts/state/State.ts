@@ -1,24 +1,9 @@
-import { k, Appearance, Transparency } from '../common/GlobalImports';
+import { k, Ring, Appearance } from '../common/GlobalImports';
 
+type RingState_byName = {[name: string]: Ring};
 type MouseState = {clicks: number, hit: boolean};
-type RingState_byName = {[name: string]: RingState};
 type MouseState_byName = {[name: string]: MouseState};
 
-class RingState {
-	isHit = false;
-	cursor = k.cursor_default;
-	transparency = Transparency.faint;
-	startAngle: number | null = null;		// angle at location of mouse DOWN
-	priorAngle: number | null = null;		// angle at location of previous mouse MOVE
-	radiusOffset: number | null = null;		// distance from arc radius to location of mouse DOWN
-
-	reset() {
-		this.isHit = false;
-		this.cursor = k.cursor_default;
-		this.transparency = Transparency.faint;
-		this.priorAngle = this.startAngle = this.radiusOffset = null;
-	}
-}
 
 class State {
 
@@ -39,10 +24,10 @@ class State {
 	mouseState_byName: MouseState_byName = {};
 	appearance_byName: {[name: string]: Appearance} = {};
 
-	ringState_forName(name: string): RingState {
+	ringState_forName(name: string): Ring {
 		let state = this.ringState_byName[name];
 		if (!state) {
-			state = new RingState();
+			state = new Ring(name);
 			this.ringState_byName[name] = state;
 		}
 		return state;

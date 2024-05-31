@@ -113,6 +113,8 @@
 	}
 </style>
 
+// needs name, closure, center, width, height and cursor
+
 <div class='help-buttons'>
 	<Button position=relative name={showingSelection} on:click={showSelection}>{@html selectionTitle}</Button>
 	<Button position=relative name={showingBrowse} on:click={showBrowse}>{@html browseTitle}</Button>

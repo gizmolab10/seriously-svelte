@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { s_thing_changed, s_title_editing, s_ancestry_focus, s_ancestries_grabbed } from '../../ts/state/Stores';
+	import { k, u, Thing, Point, Angle, debug, ZIndex, AssociatedSvelte } from '../../ts/common/GlobalImports';
 	import { s_layout_asClusters, s_thing_fontFamily, s_ancestry_editingTools } from '../../ts/state/Stores';
-	import { k, u, Thing, Point, Angle, debug, ZIndex, Wrapper } from '../../ts/common/GlobalImports';
-	import { signals, onMount, debugReact, IDWrapper } from '../../ts/common/GlobalImports';
+	import { signals, onMount, debugReact, SvelteComponentType } from '../../ts/common/GlobalImports';
 	import { exemplar } from '../../ts/data/Exemplar';
 	import EditingTools from './EditingTools.svelte';
 	import TitleEditor from './TitleEditor.svelte';
@@ -19,7 +19,7 @@
 	let revealCenter = Point.zero;
 	let dragCenter = Point.zero;
 	let radius = k.dot_size / 2;
-	let widgetWrapper: Wrapper;
+	let widgetWrapper: AssociatedSvelte;
 	let showingCluster = false;
 	let showingBorder = false;
 	let priorOrigin = origin;
@@ -74,7 +74,7 @@
 
 	$: {
 		if (widget) {
-			widgetWrapper = new Wrapper(widget, ancestry, IDWrapper.widget);
+			widgetWrapper = new AssociatedSvelte(widget, ancestry, SvelteComponentType.widget);
 		}
 	}
 	

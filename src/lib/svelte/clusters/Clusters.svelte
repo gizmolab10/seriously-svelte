@@ -11,20 +11,34 @@
 	//	handle keys
 	//	lines: selection & hover
 	//	edit titles (keydown terminates edit)
-	const ancestry = $s_ancestry_focus;
-	const thing = ancestry?.thing;
 	const necklace_name = 'necklace-ring';
 	const toolsOffset = new Point(40, -3);
+	const thing = $s_ancestry_focus?.thing;
 	const color = thing?.color ?? k.color_default;
 	const ringState = s.ringState_forName(necklace_name);
 	let mouse_up_count = $s_mouse_up_count;
 	let titleCenter = Point.zero;
 	let center = Point.zero;
+	let ring_rebuilds = 0;
 	let size = Size.zero;
 	let titleWidth = 0;
 	let rebuilds = 0;
 	let offsetX = 0;
 	let clusters;
+
+	$: {
+		if (!!clusters) {
+			clusters.style.cursor = ringState.cursor;
+		}
+	}
+
+	$: {
+		if (mouse_up_count != $s_mouse_up_count) {
+			mouse_up_count = $s_mouse_up_count;
+			ringState.reset();
+			ring_rebuilds += 1;
+		}
+	}
 
 	$: {
 		size = $s_graphRect.size;
@@ -35,46 +49,34 @@
 		rebuilds += 1;
 	}
 
-	$: {
-		if (mouse_up_count != $s_mouse_up_count) {
-			mouse_up_count = $s_mouse_up_count;
-			ringState.reset();
-			rebuilds += 1;
-		}
-	}
-
-	$: {
-		if (!!clusters) {
-			clusters.style.cursor = ringState.cursor;
-		}
-	}
-
 </script>
 
-{#if ancestry}
-	<div class='clusters'
-		bind:this={clusters}
-		style='cursor:ringState.cursor; transform:translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px);'>
-		{#key ancestry.hashedAncestry}
-			<div class='necklace-focus'
-				style='
-					position: absolute;
-					top:{titleCenter.y}px;
-					left: {titleCenter.x}px;'>
-				<TitleEditor ancestry={ancestry} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
-			</div>
-			<Necklace center={center}/>
-			{#key rebuilds}
-				<RingButton
-					radius={$s_cluster_arc_radius}
-					thing={ancestry.thing}
-					zindex={ZIndex.lines}
-					name={necklace_name}
-					center={center}
-					thickness={30}
-					color={color}/>
-				<EditingTools offset={toolsOffset}/>
+{#if $s_ancestry_focus}
+	{#key rebuilds}
+		<div class='clusters'
+			bind:this={clusters}
+			style='transform:translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px);'>
+			{#key $s_ancestry_focus.hashedAncestry}
+				<div class='necklace-focus'
+					style='
+						position: absolute;
+						top:{titleCenter.y}px;
+						left: {titleCenter.x}px;'>
+					<TitleEditor ancestry={$s_ancestry_focus} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
+				</div>
+				<Necklace center={center}/>
+				{#key ring_rebuilds}
+					<RingButton
+						color={color}
+						thing={thing}
+						thickness={30}
+						center={center}
+						name={necklace_name}
+						zindex={ZIndex.lines}
+						radius={$s_cluster_arc_radius}/>
+					<EditingTools offset={toolsOffset}/>
+				{/key}
 			{/key}
-		{/key}
-	</div>
+		</div>
+	{/key}
 {/if}

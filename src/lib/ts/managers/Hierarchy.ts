@@ -1,5 +1,5 @@
 import { k, u, get, User, Thing, Grabs, debug, Mouse, Access, IDTool, IDTrait, signals, Ancestry } from '../common/GlobalImports';
-import { Wrapper, Predicate, Alteration, Relationship, AlterationType, CreationOptions } from '../common/GlobalImports';
+import { AssociatedSvelte, Predicate, Alteration, Relationship, AlterationType, CreationOptions } from '../common/GlobalImports';
 import { s_ancestries_grabbed, s_things_arrived, s_ancestry_editingTools } from '../state/Stores';
 import { s_isBusy, s_altering, s_ancestry_focus, s_title_editing } from '../state/Stores';
 import { idDefault } from "../data/Identifiable";
@@ -8,7 +8,7 @@ import DBInterface from '../db/DBInterface';
 type Relationships_ByHID = { [hid: number]: Array<Relationship> }
 
 export class Hierarchy {
-	private wrappers_byType_andHID: { [type: string]: { [hid: number]: Wrapper } } = {};
+	private wrappers_byType_andHID: { [type: string]: { [hid: number]: AssociatedSvelte } } = {};
 	private ancestry_byKind_andHash:{ [kind: string]: { [hash: number]: Ancestry } } = {};
 	private relationship_byHID: { [hid: number]: Relationship } = {};
 	private things_byTrait: { [trait: string]: Array<Thing> } = {};
@@ -909,12 +909,13 @@ export class Hierarchy {
 
 	static readonly $_OTHER_$: unique symbol;
 
-	wrapper_add(wrapper: Wrapper) {
-		const ancestry = wrapper.ancestry
-		const hash = ancestry.ancestryHash;
-		const dict = this.wrappers_byType_andHID[wrapper.type] ?? {};
+	wrapper_add(wrapper: AssociatedSvelte) {
+		const type = wrapper.type;
+		const array = this.wrappers_byType_andHID;
+		const dict = array[type] ?? {};
+		const hash = wrapper.ancestry.ancestryHash;
 		dict[hash] = wrapper;
-		this.wrappers_byType_andHID[wrapper.type] = dict;
+		array[type] = dict;
 	}
 
 	hierarchy_markAsCompleted() {

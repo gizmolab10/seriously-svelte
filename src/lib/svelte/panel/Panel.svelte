@@ -32,8 +32,7 @@
 		const offsetX = canScroll ? -event.deltaX : 0;
 		const offsetY = -event.deltaY;
 		if (Math.abs(offsetX) > 1 || Math.abs(offsetY) > 1) {
-			const offset = $s_user_graphOffset;
-			const newOffset = new Point(offset.x + offsetX, offset.y + offsetY);
+			const newOffset = $s_user_graphOffset.offsetByXY(offsetX, offsetY);
 			g.graphOffset_setTo(newOffset);
 			rebuilds += 1;
 		}

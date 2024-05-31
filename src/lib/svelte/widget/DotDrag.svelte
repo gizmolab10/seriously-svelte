@@ -1,12 +1,12 @@
 <script>
 	import { s_thing_changed, s_layout_asClusters, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/Stores';
 	import { onDestroy, dbDispatch, AlterationType, createPopper } from '../../ts/common/GlobalImports';
-	import { Wrapper, onMount, signals, svgPaths, Direction } from '../../ts/common/GlobalImports';
+	import { AssociatedSvelte, onMount, signals, svgPaths, Direction } from '../../ts/common/GlobalImports';
 	import { k, u, Rect, Size, Point, Thing, debug, ZIndex } from '../../ts/common/GlobalImports';
 	import Tooltip from '../kit/Tooltip.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import Box from '../kit/Box.svelte';
-	export let center = new Point(0, 0);
+	export let center = Point.zero;
     export let ancestry;
 	let tinyDotsColor = k.color_background;
 	let relatedColor = k.color_background;
