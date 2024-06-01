@@ -87,7 +87,7 @@ export class Rect {
 	}
 
 	get description():		 string { return `${this.origin.verbose}, ${this.size.verbose}`; }
-	get pixelVerbose():		 string { return `${this.origin.pixelVerbose}, ${this.size.pixelVerbose}`; }
+	get pixelVerbose():		 string { return `${this.origin.pixelVerbose} ${this.size.pixelVerbose}`; }
 	get rangeDescription():	 string { return `(${this.origin.x} ... ${this.extent.x}), (${this.origin.y} ... ${this.extent.y})`; }
 	get center():			  Point { return this.origin.offsetBySize(this.size.dividedInHalf); }
 	get extent():			  Point { return this.origin.offsetBySize(this.size); }		// bottom right

@@ -122,25 +122,26 @@
 	}
 
 	function extraWidth() {
-		return (k.dot_size * (ancestry?.showsReveal ? 2 : 1.35)) +
-		($s_layout_asClusters ? forward ? 0 : -8 : -18);
+		const multiplier = ancestry?.showsReveal ? 2 : 1.35;
+		const clustersAdjustment = $s_layout_asClusters ? forward ? 0 : -8 : -18;
+		return (k.dot_size * multiplier) + clustersAdjustment;
 	}
 
 	function updateLayout() {
-		const delta = showingBorder ? 0 : 1;
 		const dragX = $s_layout_asClusters ? 3.5 : 1.5;
 		const titleWidth = thing?.titleWidth ?? 0;
-		const x = forward ? dragX : titleWidth + 7;
-		const leftForward = delta - dragX + 1;
+		const delta = showingBorder ? 1.5 : 2;
+		const leftForward = delta - dragX;
 		const dotCenter = Point.square(k.dot_size / 2)
+		const x = forward ? dragX : titleWidth + delta + 5;
 		const leftBackward = -(titleWidth + 13 + ((ancestry?.isGrabbed ?? false) ? 1 : 0));		
 		dragCenter = Point.square(k.dot_size / 2).offsetByXY(x - 7, -3.5);
-		left = origin.x + (forward ? leftForward : leftBackward);
+		left = origin.x + delta + (forward ? leftForward : leftBackward);
 		padding = `0px ${rightPadding}px 0px  ${leftPadding}px`;
 		width = titleWidth + extraWidth();
-		top = origin.y + delta + 0.5;
 		height = k.row_height - 1.5;
 		radius = k.row_height / 2;
+		top = origin.y + (showingBorder ? 0 : 1);
 		if (ancestry?.showsReveal) {
 			const revealY = k.dot_size / 2 - 3.8;
 			const revealX = k.dot_size + titleWidth + (hasExtraAtLeft ? 3 : 0);

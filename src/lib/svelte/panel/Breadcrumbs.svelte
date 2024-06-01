@@ -10,7 +10,6 @@
 	let ancestry: Ancestry;
 	let rebuilds = 0;
 	let trigger = 0;
-	let width = 0;
 	let left = 0;
 
 	$: {
@@ -23,24 +22,11 @@
 		if (!ancestry || needsUpdate || ancestors.length == 0) {
 			ancestry = h.grabs.ancestry_lastGrabbed ?? h.rootAncestry;	// assure we have a ancestry
 			if (!!ancestry) {				
-				const windowWidth = u.windowSize.width;
 				let encodedCount = 0;
-				[encodedCount, width, ancestors] = ancestry.ancestorsWithin(windowWidth - 10);
-				left = (windowWidth - width - 20) / 2;
+				const windowWidth = u.windowSize.width;
+				[encodedCount, left, ancestors, lefts] = ancestry.ancestorsWithin(windowWidth - 10);
 				trigger = encodedCount * 10000 + rebuilds * 100 + left;
-				setupLefts();
 			}
-		}
-	}
-
-	function setupLefts() {
-		let sum = left;
-		lefts = [sum];
-		for (const ancestor of ancestors) {
-			const title = ancestor.title;
-			const width = u.getWidthOf(title) * 0.98 + 26;
-			sum += width;
-			lefts.push(sum);
 		}
 	}
 

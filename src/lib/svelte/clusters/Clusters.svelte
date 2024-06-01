@@ -47,7 +47,7 @@
 
 	function cursor_closure() {
 		if (!!clusters) {
-			clusters.style.cursor = ringState.cursor;
+			clusters.style.cursor = `${ringState.cursor} !important`;
 		}
 	}
 
@@ -71,8 +71,8 @@
 					<RingButton
 						color={color}
 						thing={thing}
-						thickness={30}
 						center={center}
+						ring_width={30}
 						name={necklace_name}
 						zindex={ZIndex.lines}
 						radius={$s_cluster_arc_radius}

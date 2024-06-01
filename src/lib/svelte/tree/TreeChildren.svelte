@@ -38,6 +38,7 @@
 	}
 	
 	function layout() {
+		childMapRects = [];
 		if (ancestry.isExpanded) {
 			debugReact.log_origins(origin.x + ' children layout');
 			const height = ancestry.visibleProgeny_halfHeight;

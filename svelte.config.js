@@ -5,7 +5,7 @@ const config = {
   preprocess: vitePreprocess(),
   preprocess: sveltePreprocess({
     scss: {
-      prependData: '@use "src/styles/variables.scss";'
+      prependData: ''
     }
   })
 }

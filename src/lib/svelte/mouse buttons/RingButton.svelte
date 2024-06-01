@@ -8,15 +8,16 @@
 	export let center = Point.zero;
 	export let color = 'k.empty';
 	export let name = 'k.empty';
-	export let thickness = 0;
+	export let ring_width = 0;
 	export let thing: Thing;
 	export let radius = 0;
+	const outer_radius = radius + ring_width;
 	const borderStyle = '1px solid';
-	const diameter = (radius + thickness) * 2;
+	const diameter = outer_radius * 2;
 	const ringState = s.ringState_forName(name);
-	const viewBox = `${-thickness}, ${-thickness}, ${diameter}, ${diameter}`;
-	const ringOrigin = center.distanceFrom(Point.square(radius + thickness));
-	const svg_ringPath = svgPaths.ring(Point.square(radius), radius + thickness, thickness);
+	const viewBox = `${-ring_width}, ${-ring_width}, ${diameter}, ${diameter}`;
+	const ringOrigin = center.distanceFrom(Point.square(outer_radius));
+	const svg_ringPath = svgPaths.ring(Point.square(radius), outer_radius, ring_width);
 	let rebuilds = 0
 	let ringButton;
 
@@ -112,7 +113,7 @@
 	function determine_isHovering(): boolean {
 		const vector = distance_fromCenter_of($s_mouse_location);
 		const distance = vector.magnitude;
-		if (!!distance && distance.isBetween(radius, radius + thickness)) {
+		if (!!distance && distance.isBetween(radius, outer_radius)) {
 			return true;
 		}
 		return false;

@@ -28,12 +28,10 @@
 	});
 
 	function handle_wheel(event) {
-		const canScroll = k.allow_HorizontalScrolling;
-		const offsetX = canScroll ? -event.deltaX : 0;
-		const offsetY = -event.deltaY;
-		if (Math.abs(offsetX) > 1 || Math.abs(offsetY) > 1) {
-			const newOffset = $s_user_graphOffset.offsetByXY(offsetX, offsetY);
-			g.graphOffset_setTo(newOffset);
+		const userOffset = $s_user_graphOffset;
+		const delta = new Point(-event.deltaX, -event.deltaY);
+		if (!!userOffset && k.allow_HorizontalScrolling && delta.magnitude > 1) {
+			persistLocal.graphOffset_setTo(userOffset.offsetBy(delta));
 			rebuilds += 1;
 		}
 	}
@@ -44,7 +42,7 @@
 		if (event.type == 'keydown') {
 			const key = event.key;
 			switch (key) {
-				case 'c': g.graphOffset_setTo(Point.zero); break;
+				case 'c': persistLocal.graphOffset_setTo(Point.zero); break;
 				case '?': $s_id_popupView = IDButton.help; break;
 				case ']':
 				case '[': dbDispatch.db_change_toNext(key == ']'); break;

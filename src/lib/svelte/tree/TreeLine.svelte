@@ -35,7 +35,6 @@
 
 	$: {
 		if (k.dot_size > 0) {
-			// debugReact.log_origins(`LINE ${ancestry.thing.description}`);
 			switch (curveType) {
 				case IDLine.up:
 					origin = rect.origin;
@@ -48,39 +47,38 @@
 				case IDLine.flat:
 					origin = rect.centerLeft.offsetByY(-0.5);
 					extent = rect.centerRight.offsetByXY(0.5, -0.5);
-					size = origin.distanceTo(extent).abs.asSize;
-					linePath = svgPaths.line(new Point(size.width, 0));
+					linePath = svgPaths.line(origin.distanceTo(extent));
 					break;
 			}
+			const vector = origin.distanceTo(extent);
+			size = vector.abs.asSize;
 			if (curveType != IDLine.flat) {
-				let flag = (curveType == IDLine.down) ? 0 : 1;
-				const noHeight = origin.y == extent.y;
-				size = origin.distanceTo(extent).abs.asSize;
+				const noHeight = vector.y == 0;
+				const flag = (curveType == IDLine.down) ? 0 : 1;
 				const originY = curveType == IDLine.down ? 1 : size.height;
 				const extentY = curveType == IDLine.up   ? 1 : size.height;
-				const boxSize = new Size(size.width, (noHeight ? 2 : size.height));
-				viewBox = new Rect(origin, boxSize);
-				linePath = 'M0 ' + originY + 'A' + size.description + ' 0 0 ' + flag + k.space + size.width + k.space + extentY;
+				linePath = `M0 ${originY} A ${size.description} 0 0 ${flag} ${size.width} ${extentY}`;
 			}
+			const boxSize = new Size(size.width, Math.max(2, size.height));
+			viewBox = new Rect(origin, boxSize);
 		}
 	}
 
 </script>
 
-<style lang='scss'>
-	.svg-tree-line {
-		position: absolute;
-	}
-</style>
-
 {#key rebuilds}
-	<svg class='svg-tree-line'
+	<svg
 		bind:this={line}
+		id={ancestry.title}
 		width={size.width}px
+		class={'svg-tree-line'}
+		viewBox={viewBox.verbose}
 		height={Math.max(2, size.height)}px
 		style='z-index: {ZIndex.lines};
-			top: {origin.y - Math.max(1, size.height)}px;
-			left: {origin.x + 142}px;'>
+			top: {origin.y - size.height}px;
+			left: {origin.x + 142}px;
+			position: absolute;
+			stroke-width:1px;'>
 		<path d={linePath} stroke={ancestry.thing.color} fill='none'/>
 	</svg>
 	{#if debug.lines}

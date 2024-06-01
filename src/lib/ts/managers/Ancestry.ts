@@ -400,24 +400,31 @@ export default class Ancestry {
 		return children;
 	}
 
-	ancestorsWithin(thresholdWidth: number): [number, number, Array<Thing>] {
+	ancestorsWithin(thresholdWidth: number): [number, number, Array<Thing>, Array<number>] {
 		const ancestors = this.ancestors?.reverse() ?? [];
 		const ancestorsThatFit: Array<Thing> = [];
 		let distributedParentCount = 0;
 		let numberOfParents = 0;	// do not include fat_polygon separator in width of crumb of first thing
 		let totalWidth = 0;
-		for (const ancestor of ancestors) {
+		for (const ancestor of ancestors) {	// ancestors is root last
 			if (!!ancestor) {
 				const crumbWidth = ancestor.crumbWidth(numberOfParents);
 				if ((totalWidth + crumbWidth) > thresholdWidth) {
 					break;
 				}
 				distributedParentCount = distributedParentCount * 10 + ancestor.parents.length;
-				totalWidth += crumbWidth;
 				ancestorsThatFit.push(ancestor);
+				totalWidth += crumbWidth;
 			}
 		}
-		return [distributedParentCount, totalWidth, ancestorsThatFit.reverse()];
+		let sum = totalWidth;
+		let lefts = [totalWidth];
+		const left = (thresholdWidth - totalWidth - 20) / 2;
+		for (const ancestor of ancestors) {
+			sum += u.getWidthOf(ancestor.title) * 0.98 + 26;
+			lefts.push(sum);
+		}
+		return [distributedParentCount, left, ancestorsThatFit.reverse(), lefts.reverse()];
 	}
 
 	incorporates(ancestry: Ancestry | null): boolean {

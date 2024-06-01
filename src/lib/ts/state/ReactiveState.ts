@@ -1,5 +1,4 @@
 import { Rect, Point, Ancestry, TitleState, AlterationState } from '../common/GlobalImports';
-import { signals } from '../events/Signals';
 import { writable } from 'svelte/store';
 
 export const s_altering				 = writable<AlterationState | null>();
@@ -27,21 +26,3 @@ export const s_ring_angle			 = writable<number>();
 export const s_user_graphOffset		 = writable<Point>();
 export const s_mouse_location		 = writable<Point>();
 export const s_graphRect			 = writable<Rect>();
-
-let interval: NodeJS.Timeout | null = null;
-
-s_altering.subscribe((state: AlterationState | null) => {
-	if (interval) {
-		clearInterval(interval);
-		interval = null;
-	}
-	if (state) {
-		let blink = true;
-		interval = setInterval(() => {
-			signals.signal_altering(blink ? state : null);
-			blink = !blink;
-		}, 500)
-	} else {
-		signals.signal_altering(null);
-	}
-})

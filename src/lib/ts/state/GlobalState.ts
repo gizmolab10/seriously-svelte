@@ -1,7 +1,7 @@
-import { s_graphRect, s_show_details, s_scale_factor, s_resize_count, s_rebuild_count } from './ReactiveState';
-import { s_thing_changed, s_mouse_up_count, s_mouse_location, s_user_graphOffset } from './ReactiveState';
-import { k, u, get, Rect, Point, debug, debugReact } from '../common/GlobalImports';
-import { dbDispatch, persistLocal, IDPersistant } from '../common/GlobalImports';
+import { s_graphRect, s_altering, s_show_details, s_scale_factor, s_thing_changed } from './ReactiveState';
+import { s_resize_count, s_rebuild_count, s_mouse_up_count, s_mouse_location } from './ReactiveState';
+import { dbDispatch, persistLocal, IDPersistant, AlterationState } from '../common/GlobalImports';
+import { k, u, get, Rect, Point, debug, signals, debugReact } from '../common/GlobalImports';
 
 class GlobalState {
 
@@ -15,6 +15,11 @@ class GlobalState {
 		persistLocal.queryStrings_apply();
 		debug.queryStrings_apply();
 		debugReact.queryStrings_apply();
+		this.events_subscribe();
+		this.alterationState_subscribe();
+	}
+
+	events_subscribe() {
 		window.addEventListener('resize', (event) => {
 			s_resize_count.set(get(s_resize_count) + 1)
 			this.graphRect_update();
@@ -27,6 +32,26 @@ class GlobalState {
 			event.stopPropagation();
 			s_mouse_location.set(new Point(event.clientX, event.clientY));
 		});
+	}
+
+	alterationState_subscribe() {
+		let interval: NodeJS.Timeout | null = null;
+
+		s_altering.subscribe((state: AlterationState | null) => {
+			if (interval) {
+				clearInterval(interval);
+				interval = null;
+			}
+			if (state) {
+				let blink = true;
+				interval = setInterval(() => {
+					signals.signal_altering(blink ? state : null);
+					blink = !blink;
+				}, 500)
+			} else {
+				signals.signal_altering(null);
+			}
+		})
 	}
 
 	get siteTitle(): string {
@@ -58,21 +83,12 @@ class GlobalState {
 	}
 
 	graphRect_update() {
-		const top = k.show_titleAtTop ? 114 : 69;							// height of content above the graph
+		const top = k.show_titleAtTop ? 114 : 69;						// height of content above the graph
 		const left = get(s_show_details) ? k.width_details : 0;			// width of details
 		const originOfGraph = new Point(left, top);
 		const sizeOfGraph = u.windowSize.reducedBy(originOfGraph);		// account for origin
 		const rect = new Rect(originOfGraph, sizeOfGraph);
 		s_graphRect.set(rect);											// used by Panel and Graph_Tree
-	}
-
-	graphOffset_setTo(origin: Point): boolean {
-		if (get(s_user_graphOffset) != origin) {
-			persistLocal.key_write(IDPersistant.origin, origin);
-			s_user_graphOffset.set(origin);
-			return true;
-		}
-		return false;
 	}
 
 }

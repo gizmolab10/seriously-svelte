@@ -1,4 +1,4 @@
-import { g, k, u, Point, signals, Ancestry, dbDispatch, GraphRelations } from '../common/GlobalImports'
+import { g, k, u, get, Point, signals, Ancestry, dbDispatch, GraphRelations } from '../common/GlobalImports'
 import { s_ring_angle, s_cluster_arc_radius, s_layout_asClusters } from '../state/ReactiveState';
 import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/ReactiveState';
 import { s_ancestries_grabbed, s_ancestries_expanded } from '../state/ReactiveState';
@@ -151,32 +151,14 @@ class PersistLocal {
 		k.show_arrowheads = this.key_read(IDPersistant.arrowheads) ?? false;
 		k.show_titleAtTop = this.key_read(IDPersistant.title_atTop) ?? false;
 		g.applyScale(!u.device_isMobile ? 1 : this.key_read(IDPersistant.scale) ?? 1);
-
 		s_ring_angle.set(this.key_read(IDPersistant.angle) ?? 0);
 		s_show_details.set(this.key_read(IDPersistant.details) ?? false);
 		s_thing_fontFamily.set(this.key_read(IDPersistant.font) ?? 'Arial');
 		s_layout_asClusters.set(this.key_read(IDPersistant.layout) ?? false);
 		s_cluster_arc_radius.set(this.key_read(IDPersistant.cluster_arc) ?? 130);
-		s_user_graphOffset.set(this.key_read(IDPersistant.origin) ?? Point.zero);
 		s_graph_relations.set(this.key_read(IDPersistant.relations) ?? GraphRelations.children);
-
-		s_graph_relations.subscribe((relations: string) => {
-			this.key_write(IDPersistant.relations, relations);
-		})
-		s_cluster_arc_radius.subscribe((radius: number) => {
-			this.key_write(IDPersistant.cluster_arc, radius);
-		})
-		s_layout_asClusters.subscribe((flag: boolean) => {
-			this.key_write(IDPersistant.layout, flag);
-		})
-		s_show_details.subscribe((flag: boolean) => {
-			this.key_write(IDPersistant.details, flag);
-			g.graphRect_update();
-			signals.signal_relayoutWidgets_fromFocus();
-		});
-		s_ring_angle.subscribe((angle: number) => {
-			this.key_write(IDPersistant.angle, angle);
-		})
+		this.graphOffset_restore();
+		this.reactivity_subscribe()
 	}
 
 	ancestries_restore(force: boolean = false) {
@@ -219,6 +201,44 @@ class PersistLocal {
 		s_ancestry_focus.subscribe((ancestry: Ancestry) => {
 			this.dbKey_write(IDPersistant.focus, !ancestry ? null : ancestry.ancestryString);
 		});
+	}
+
+	reactivity_subscribe() {
+		s_graph_relations.subscribe((relations: string) => {
+			this.key_write(IDPersistant.relations, relations);
+		})
+		s_cluster_arc_radius.subscribe((radius: number) => {
+			this.key_write(IDPersistant.cluster_arc, radius);
+		})
+		s_layout_asClusters.subscribe((flag: boolean) => {
+			this.key_write(IDPersistant.layout, flag);
+		})
+		s_show_details.subscribe((flag: boolean) => {
+			this.key_write(IDPersistant.details, flag);
+			g.graphRect_update();
+			signals.signal_relayoutWidgets_fromFocus();
+		});
+		s_ring_angle.subscribe((angle: number) => {
+			this.key_write(IDPersistant.angle, angle);
+		})
+	}
+
+	graphOffset_restore() {
+		let offset = Point.zero;
+		const stored = this.key_read(IDPersistant.origin);
+		if (!!stored) {
+			offset = new Point(stored.x, stored.y);
+		}
+		s_user_graphOffset.set(offset);
+	}
+
+	graphOffset_setTo(origin: Point): boolean {
+		if (get(s_user_graphOffset) != origin) {
+			persistLocal.key_write(IDPersistant.origin, origin);
+			s_user_graphOffset.set(origin);
+			return true;
+		}
+		return false;
 	}
 
 }

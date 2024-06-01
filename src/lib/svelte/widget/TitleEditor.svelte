@@ -19,6 +19,7 @@
 	let clickCount = 0;
 	let ghost = null;
 	let input = null;
+	let top = 0;
     let thing;
 
 	var hasChanges = () => { return originalTitle != thingTitle; };
@@ -147,7 +148,7 @@
 		if (!!ancestry) {
 			thing = ancestry.thing;
 		}
-		const _ = $s_ancestries_grabbed;
+		const hasGrabbed = $s_ancestries_grabbed.length > 0;
 		const titleState = $s_title_editing; // needs reactivity to s_title_editing
 		const titleState_isEditing = !!ancestry && !!titleState && titleState.editing && ancestry.matchesAncestry(titleState.editing);
 		const isBulkAlias = !!thing && thing.isBulkAlias;
@@ -155,6 +156,7 @@
 			if (!!ancestry && ancestry.isStoppingEdit ?? false) {
 				debug.log_edit(`STOPPING ${thingTitle}`);
 				$s_title_editing = null;
+				top = hasGrabbed ? 2 : 0.5;
 				input?.blur();
 			} else if (isEditing != titleState_isEditing) {
 				if (!isEditing) {
@@ -253,7 +255,7 @@
 		on:mousedown={handle_longClick}
 		on:dblclick={handle_doubleClick}
 		style='
-			top: 0.5px;
+			top: {top}px;
 			border: none;
 			{cursorStyle};
 			outline: none;
