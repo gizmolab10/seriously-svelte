@@ -23,7 +23,7 @@
 	$: {
 		thing = ancestry.thing;
 		title = thing.title;
-		width = u.getWidthOf(thing.title);
+		width = thing.titleWidth;
 		name = `crumb (for ${title ?? 'unknown'})`
 		appearance = s.appearance_forName(name);
 		center = new Point(left + width / 2, height - 1);

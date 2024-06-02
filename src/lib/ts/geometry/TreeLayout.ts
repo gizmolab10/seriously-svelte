@@ -20,7 +20,7 @@ export default class TreeLayout {
 		let x, y = 0;
 		if (child) {
 			y = extent.y - childAncestry.visibleProgeny_halfHeight - 0.5;
-			x = origin.x + child.titleWidth + k.dot_size + k.line_stretch - 1;
+			x = origin.x + child.titleWidth + k.dot_size + k.line_stretch + 5;
 		}
 		return new Point(x, y);
 	}

@@ -39,8 +39,8 @@
 	$: {
 		size = $s_graphRect.size;
 		center = size.dividedInHalf.asPoint;
-		titleWidth = u.getWidthOf(thing?.title ?? k.empty);
-		offsetX = -k.thing_fontSize - 3 - (titleWidth / 2);
+		titleWidth = thing?.titleWidth ?? 0;
+		offsetX = -k.thing_fontSize - (titleWidth / 2);
 		titleCenter = center.offsetByXY(offsetX, k.cluster_offsetY);
 		rebuilds += 1;
 	}

@@ -41,7 +41,7 @@
 		}
 		if (focus == null || focus.id != $s_ancestry_focus) {
 			focus = !$s_ancestry_focus ? h.root : h.thing_forAncestry($s_ancestry_focus);
-			offsetX_ofFirstReveal = k.show_titleAtTop ? 0 : focus?.titleWidth / 2;
+			offsetX_ofFirstReveal = k.show_titleAtTop ? 0 : 3 + focus?.titleWidth / 2;
 			updateOrigins();
 			rebuilds += 1;
 		}

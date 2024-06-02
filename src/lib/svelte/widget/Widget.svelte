@@ -133,18 +133,18 @@
 		const delta = showingBorder ? 1.5 : 2;
 		const leftForward = delta - dragX;
 		const dotCenter = Point.square(k.dot_size / 2)
-		const x = forward ? dragX : titleWidth + delta + 5;
-		const leftBackward = -(titleWidth + 13 + ((ancestry?.isGrabbed ?? false) ? 1 : 0));		
+		const x = forward ? dragX : titleWidth + delta + 11;
+		const leftBackward = -(titleWidth + 19 + ((ancestry?.isGrabbed ?? false) ? 1 : 0));		
 		dragCenter = Point.square(k.dot_size / 2).offsetByXY(x - 7, -3.5);
 		left = origin.x + delta + (forward ? leftForward : leftBackward);
 		padding = `0px ${rightPadding}px 0px  ${leftPadding}px`;
-		width = titleWidth + extraWidth();
+		width = titleWidth + extraWidth() + 6;
 		height = k.row_height - 1.5;
 		radius = k.row_height / 2;
 		top = origin.y + (showingBorder ? 0 : 1);
 		if (ancestry?.showsReveal) {
 			const revealY = k.dot_size / 2 - 3.8;
-			const revealX = k.dot_size + titleWidth + (hasExtraAtLeft ? 3 : 0);
+			const revealX = k.dot_size + titleWidth + (hasExtraAtLeft ? 9 : 6);
 			revealCenter = new Point(revealX, revealY);
 		}
 	}

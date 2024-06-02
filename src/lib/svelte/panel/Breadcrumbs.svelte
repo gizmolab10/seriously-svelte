@@ -22,10 +22,11 @@
 		if (!ancestry || needsUpdate || ancestors.length == 0) {
 			ancestry = h.grabs.ancestry_lastGrabbed ?? h.rootAncestry;	// assure we have a ancestry
 			if (!!ancestry) {				
-				let encodedCount = 0;
 				const windowWidth = u.windowSize.width;
-				[encodedCount, left, ancestors, lefts] = ancestry.ancestorsWithin(windowWidth - 10);
-				trigger = encodedCount * 10000 + rebuilds * 100 + left;
+				let encodedCount = 0;	// encoded as one parent count per digit (base 10)
+				[ancestors, lefts, encodedCount] = ancestry.ancestorsWithin(windowWidth - 10);
+				left = lefts[0];
+				trigger = encodedCount * 10000 + rebuilds * 100 + left;		// re-render HTML when this value changes
 			}
 		}
 	}

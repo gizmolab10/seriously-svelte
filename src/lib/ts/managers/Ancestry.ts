@@ -400,31 +400,31 @@ export default class Ancestry {
 		return children;
 	}
 
-	ancestorsWithin(thresholdWidth: number): [number, number, Array<Thing>, Array<number>] {
-		const ancestors = this.ancestors?.reverse() ?? [];
-		const ancestorsThatFit: Array<Thing> = [];
-		let distributedParentCount = 0;
-		let numberOfParents = 0;	// do not include fat_polygon separator in width of crumb of first thing
+	ancestorsWithin(thresholdWidth: number): [Array<Thing>, Array<number>, number] {
+		let things = this.ancestors.reverse() ?? [];
+		const ancestors: Array<Thing> = [];
+		let count = 0;
 		let totalWidth = 0;
-		for (const ancestor of ancestors) {	// ancestors is root last
-			if (!!ancestor) {
-				const crumbWidth = ancestor.crumbWidth(numberOfParents);
+		for (const thing of things) {	// things is root last
+			if (!!thing) {
+				const crumbWidth = thing.titleWidth;
 				if ((totalWidth + crumbWidth) > thresholdWidth) {
 					break;
 				}
-				distributedParentCount = distributedParentCount * 10 + ancestor.parents.length;
-				ancestorsThatFit.push(ancestor);
 				totalWidth += crumbWidth;
+				ancestors.push(thing);
+				count = count * 10 + thing.parents.length;
+				console.log(`${totalWidth} ${thing.title}`)
 			}
 		}
-		let sum = totalWidth;
-		let lefts = [totalWidth];
 		const left = (thresholdWidth - totalWidth - 20) / 2;
-		for (const ancestor of ancestors) {
-			sum += u.getWidthOf(ancestor.title) * 0.98 + 26;
+		let sum = left;
+		let lefts = [left];
+		for (const thing of things.reverse()) {
+			sum += thing.titleWidth * 0.98 + 26;
 			lefts.push(sum);
 		}
-		return [distributedParentCount, left, ancestorsThatFit.reverse(), lefts.reverse()];
+		return [ancestors, lefts, count];
 	}
 
 	incorporates(ancestry: Ancestry | null): boolean {
@@ -462,7 +462,7 @@ export default class Ancestry {
 		const thing = this.thing;
 		if (!!thing) {
 			const ancestryHash = this.ancestryHash;
-			let width = special ? 0 : thing.titleWidth;
+			let width = special ? 0 : (thing.titleWidth + 6);
 			if (!visited.includes(ancestryHash) && this.showsChildRelationships) {
 				let progenyWidth = 0;
 				for (const childAncestry of this.childAncestries) {

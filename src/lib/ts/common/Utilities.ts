@@ -12,7 +12,6 @@ class Utilities {
 	roundToEven(n: number): number{ return Math.round(n / 2) * 2; }
 	normalized_angle(angle: number) { return Angle.full.normalize(angle); }
 	concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return [...a, ...b]; }
-	strip_falsies(array: Array<any>): Array<any> { return array.filter(element => !!element); }
 	location_ofMouseEvent(event: MouseEvent) { return new Point(event.clientX, event.clientY); }
 	strip_invalid(array: Array<any>): Array<any> { return this.strip_identifiableDuplicates(this.strip_falsies(array)); }
 	sort_byOrder(array: Array<Ancestry>) { return array.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
@@ -131,6 +130,16 @@ class Utilities {
 		return Object.values(ancestriesByHID);
 	}
 
+	strip_falsies(array: Array<any>): Array<any> {
+		let truthies: Array<any> = [];
+		for (const element of array) {
+			if (!!element) {
+				truthies.push(element);
+			}
+		}
+		return truthies;
+	}
+
 	strip_identifiableDuplicates(identifiables: Array<Identifiable>): Array<Identifiable> {
 		let identifiablesByHID: {[hash: number]: Identifiable} = {};
 		let uniqueIdentifiables: Array<Identifiable> = [];
@@ -145,7 +154,7 @@ class Utilities {
 				uniqueIdentifiables.push(identifiable)
 			}
 		}
-		return Object.values(identifiablesByHID);
+		return uniqueIdentifiables;
 	}
 
 	strip_thingDuplicates(ancestries: Array<Ancestry>) {

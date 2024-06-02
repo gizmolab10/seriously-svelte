@@ -34,7 +34,7 @@ export default class Thing extends Datum {
 	get fields():		  Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
 	get idBridging():				 string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get description():				 string { return this.id + ' \"' + this.title + '\"'; }
-	get titleWidth():				 number { return u.getWidthOf(this.title) + 6; }
+	get titleWidth():				 number { return u.getWidthOf(this.title); }
 	get isRoot():					boolean { return this.trait == IDTrait.root; }
 	get isBulkAlias():				boolean { return this.trait == IDTrait.bulk; }
 	get hasMultipleParents():		boolean { return this.parentAncestries.length > 1; }

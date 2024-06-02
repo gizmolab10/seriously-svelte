@@ -31,7 +31,7 @@
 	};
 	
 	onMount(() => {
-		titleWidth = u.getWidthOf(thingTitle);
+		titleWidth = ancestry?.thing?.titleWidth + 6;
 		const handler = signals.handle_anySignal((IDSignal, ancestry) => { updateInputWidth(); });
 		setTimeout(() => { updateInputWidth(); }, 100);
 		return () => { handler.disconnect() };
