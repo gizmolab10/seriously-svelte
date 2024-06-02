@@ -24,7 +24,7 @@
 			if (!!ancestry) {				
 				const windowWidth = u.windowSize.width;
 				let encodedCount = 0;	// encoded as one parent count per digit (base 10)
-				[ancestors, lefts, encodedCount] = ancestry.ancestorsWithin(windowWidth - 10);
+				[ancestors, lefts, encodedCount] = ancestry.layout_ancestors_within(windowWidth - 10);
 				left = lefts[0];
 				trigger = encodedCount * 10000 + rebuilds * 100 + left;		// re-render HTML when this value changes
 			}

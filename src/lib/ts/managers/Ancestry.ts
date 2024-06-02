@@ -400,7 +400,7 @@ export default class Ancestry {
 		return children;
 	}
 
-	ancestorsWithin(thresholdWidth: number): [Array<Thing>, Array<number>, number] {
+	layout_ancestors_within(thresholdWidth: number): [Array<Thing>, Array<number>, number] {
 		let things = this.ancestors.reverse() ?? [];
 		const ancestors: Array<Thing> = [];
 		let count = 0;
@@ -414,7 +414,6 @@ export default class Ancestry {
 				totalWidth += crumbWidth;
 				ancestors.push(thing);
 				count = count * 10 + thing.parents.length;
-				console.log(`${totalWidth} ${thing.title}`)
 			}
 		}
 		const left = (thresholdWidth - totalWidth - 20) / 2;

@@ -6,14 +6,23 @@
 	export let width = k.default_buttonSize;
 	export let closure = (mouseData) => {};
 	export let position = 'absolute';
+	export let zindex = ZIndex.dots;
 	export let border_thickness = 1;
 	export let center = Point.zero;
-	export let zindex = ZIndex.dots;
 	export let color = 'black';
 	export let style = k.empty;
 	export let name = k.empty;
 	let currentStyle = style;
 	let border = k.empty;
+
+	//////////////////////////////////////
+	//									//
+	//	  container for MouseButton		//
+	//									//
+	//	adds: color, background_color,	//
+	//	style, & border_thickness		//
+	//									//
+	//////////////////////////////////////
 
 	onMount(() => { update(); })
 	$: { update(); }
@@ -49,7 +58,7 @@
 
 	function button_closure(mouseData) {
 		closure(mouseData);
-		if (mouseData.isHover) {
+		if (mouseData.isHover) {	// NOT the same as isHovering
 			update();
 		}
 	}
@@ -62,7 +71,7 @@
 	height={height}
 	center={center}
 	closure={button_closure}>
-	<button class='button' id={name} style={currentStyle}>
+	<button class='button' id={'button-for-' + name} style={currentStyle}>
 		<slot></slot>
 	</button>
 </MouseButton>

@@ -1,6 +1,5 @@
 <script>
 	import { k, onMount } from '../../ts/common/GlobalImports';
-	import MouseButton from '../mouse buttons/MouseButton.svelte';
 	import Button from '../mouse buttons/Button.svelte';
 
 	let dots;
@@ -36,6 +35,7 @@
 			selection = module.default;
 		});
 		updateTitles();
+		layout_helpButtons();
 	});
 
 	const updateTitles = () => {
@@ -91,6 +91,20 @@
 		updateTitles();
 	};
 
+	function closure(element, mouseData) {
+		switch (element) {
+			case dots: showDots(); break;
+			case edit: showEdit(); break;
+			case focus: showFocus(); break;
+			case browse: showBrowse(); break;
+			case selection: showSelection(); break;
+		}
+	}
+
+	function layout_helpButtons() {
+
+	}
+
 </script>
 
 <style>
@@ -116,11 +130,11 @@
 // needs name, closure, center, width, height and cursor
 
 <div class='help-buttons'>
-	<Button position=relative name={showingSelection} on:click={showSelection}>{@html selectionTitle}</Button>
-	<Button position=relative name={showingBrowse} on:click={showBrowse}>{@html browseTitle}</Button>
-	<Button position=relative name={showingFocus} on:click={showFocus}>{@html focusTitle}</Button>
-	<Button position=relative name={showingEdit} on:click={showEdit}>{@html editTitle}</Button>
-	<Button position=relative name={showingDots} on:click={showDots}>{@html dotsTitle}</Button>
+	<Button name={showingSelection} closure={mouseData => closure(mouseData, selection)}>{@html selectionTitle}</Button>
+	<Button name={showingBrowse} closure={mouseData => closure(mouseData, browse)}>{@html browseTitle}</Button>
+	<Button name={showingFocus} closure={mouseData => closure(mouseData, focus)}>{@html focusTitle}</Button>
+	<Button name={showingEdit} closure={mouseData => closure(mouseData, edit)}>{@html editTitle}</Button>
+	<Button name={showingDots} closure={mouseData => closure(mouseData, dots)}>{@html dotsTitle}</Button>
 </div>
 {#if showingSelection && selection}
 	<svelte:component this={selection} />
