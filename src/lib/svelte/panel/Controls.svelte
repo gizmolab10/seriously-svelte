@@ -1,5 +1,5 @@
 <script>
-	import { k, s, u, Point, ZIndex, signals, svgPaths, IDButton, ButtonAppearance, IDPersistant, persistLocal, GraphRelations } from '../../ts/common/GlobalImports';
+	import { g, k, s, u, Point, ZIndex, signals, svgPaths, IDButton, ButtonAppearance, IDPersistant, persistLocal, GraphRelations } from '../../ts/common/GlobalImports';
 	import { s_show_details, s_id_popupView, s_resize_count, s_layout_asClusters, s_graph_relations } from '../../ts/state/ReactiveState';
 	import Button from '../mouse buttons/Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -9,28 +9,11 @@
 	let size = k.default_buttonSize;
 	let width = u.windowSize.width - 20;
 
-	function togglePopupID(id) {
-		$s_id_popupView = ($s_id_popupView == id) ? null : id;
-	}
+	function togglePopupID(id) { $s_id_popupView = ($s_id_popupView == id) ? null : id; }
 	
 	$: {
 		const _ = $s_resize_count;
 		width = u.windowSize.width - 20;
-	}
-
-	function button_closure_forID(mouseData, id) {
-		if (mouseData.isHover) {
-			s.appearance_forName(id).update(mouseData.isOut, 'black', 'pointer');
-		} else if (mouseData.isUp) {
-			switch (id) {
-				case IDButton.bigger: width = g.zoomBy(1.1) - 20; break;
-				case IDButton.smaller: width = g.zoomBy(0.9) - 20; break;
-				case IDButton.details: $s_show_details = !$s_show_details; break;
-				case IDButton.layout: $s_layout_asClusters = !$s_layout_asClusters; break;
-				case IDButton.relations: $s_graph_relations = next_graph_relations(); break;
-				default: togglePopupID(id); break;
-			}
-		}
 	}
 
 	function next_graph_relations() {
@@ -38,6 +21,22 @@
 			case GraphRelations.children: return GraphRelations.parents;
 			case GraphRelations.parents:  return GraphRelations.related;
 			default:					  return GraphRelations.children;
+		}
+	}
+
+	function button_closure_forID(mouseData, id) {
+		if (mouseData.isHover) {
+			s.appearance_forName(id).update(mouseData.isOut, 'black', 'pointer');
+		} else if (mouseData.isUp) {
+			switch (id) {
+				case IDButton.help: g.open_tabFor(k.help_url); break;
+				case IDButton.bigger: width = g.zoomBy(1.1) - 20; break;
+				case IDButton.smaller: width = g.zoomBy(0.9) - 20; break;
+				case IDButton.details: $s_show_details = !$s_show_details; break;
+				case IDButton.layout: $s_layout_asClusters = !$s_layout_asClusters; break;
+				case IDButton.relations: $s_graph_relations = next_graph_relations(); break;
+				default: togglePopupID(id); break;
+			}
 		}
 	}
 

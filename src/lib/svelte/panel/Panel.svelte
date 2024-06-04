@@ -13,7 +13,6 @@
 	import { h } from '../../ts/db/DBDispatch';
 	import Controls from './Controls.svelte';
 	import Tree from '../tree/Tree.svelte';
-	import Help from '../help/Help.svelte';
 	let chain = ['Panel'];
 	let rebuilds = 0;
 	
@@ -43,7 +42,7 @@
 			const key = event.key;
 			switch (key) {
 				case 'c': persistLocal.graphOffset_setTo(Point.zero); break;
-				case '?': $s_id_popupView = IDButton.help; break;
+				case '?': g.open_tabFor(k.help_url); break;
 				case ']':
 				case '[': dbDispatch.db_change_toNext(key == ']'); break;
 				default:  await h.handle_key_down(event); break;
@@ -145,9 +144,7 @@
 				position: fixed;
 				z-index: {ZIndex.panel};
 				left: {$s_show_details ? k.width_details : 0}px;'>
-			{#if $s_id_popupView == IDButton.help}
-				<Help/>
-			{:else if $s_id_popupView == IDButton.builds}
+			{#if $s_id_popupView == IDButton.builds}
 				<BuildNotes/>
 			{:else if $s_id_popupView == null}
 				{#key `${$s_ancestry_focus} ${rebuilds}`}

@@ -17,6 +17,7 @@ export default class Constants {
 	editingTools_diameter = 64;
 	threshold_doubleClick = 300;
 	hid_unknown = 1000000000000;
+	help_url = 'https://help-webseriously.netlify.app';
 	prevent_selection_style = '-webkit-user-select: none; user-select: none; -moz-user-select: none;';
 	title_default = 'Please, enter a title';
 	title_line = '------------------------';

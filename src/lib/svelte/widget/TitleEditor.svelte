@@ -7,7 +7,7 @@
 	export let fontSize = '1em';
 	export let forward = true;
 	export let ancestry;
-	let padding = `0.5px 0px 0px 5px`;	// down half a pixel, 7 over to make room for drag dot
+	let padding = `0px 0px 0px 8.5px`;	// 8.5 over to make room for drag dot
 	let thingTitle = ancestry?.thing?.title ?? k.empty;
     let color = ancestry.thing?.color;
 	let titleWrapper: SvelteWrapper;

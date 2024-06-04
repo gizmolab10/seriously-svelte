@@ -36,7 +36,7 @@
 		if (!!ancestry) {
 			thing = ancestry.thing;
 		}
-		updateAncestries();
+		updateSVGPaths();
 		updateColorsForHover(false);
 		popper = createPopper(button, tooltip, { placement: 'bottom' });
         const handleAltering = signals.handle_altering((state) => {
@@ -73,12 +73,17 @@
 
 	$: {
 		const _ = k.dot_size;
-		updateAncestries();
+		updateSVGPaths();
 	}
 
 	function clearClicks() {
 		clickCount = 0;
 		clearTimeout(mouse_click_timer);	// clear all previous timers
+	}
+
+	function updateSVGPaths() {
+		dragDotPath = svgPaths.circle_atOffset(size, size - 1);
+		updateExtraPaths();
 	}
 	
 	function handle_mouse_out(event) {
@@ -143,15 +148,6 @@
 				relatedAncestry = svgPaths.circle_atOffset(size, 3, new Point(-4.5, 0));
 			}
 		}
-	}
-
-	function updateAncestries() {
-		if ($s_layout_asClusters && !ancestry?.isExemplar) {
-			dragDotPath = svgPaths.circle_atOffset(size, size - 1);
-		} else {
-			dragDotPath = svgPaths.oval(size, false);
-		}
-		updateExtraPaths();
 	}
 
 	// <Tooltip color={strokeColor} bind:this={tooltip}>This is a drag dot</Tooltip>

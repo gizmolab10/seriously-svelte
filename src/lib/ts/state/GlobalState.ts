@@ -5,6 +5,17 @@ import { k, u, get, Rect, Point, debug, signals, debugReact } from '../common/Gl
 
 class GlobalState {
 
+	open_tabFor(url: string) { window.open(url, 'help-webseriously')?.focus(); }
+
+	get siteTitle(): string {
+		const dbType = dbDispatch.db.dbType;
+		const baseID = dbDispatch.db.baseID;
+		const host = u.isServerLocal ? 'local' : 'remote';
+		const db_name = dbType ? (dbType! + ', ') : k.empty;
+		const base_name = baseID ? (baseID! + ', ') : k.empty;
+		return `Seriously (${host}, ${db_name}${base_name}${u.browserType}, α)`;
+	}
+
 	setup() {
 		s_resize_count.set(0);
 		s_rebuild_count.set(0);
@@ -15,11 +26,11 @@ class GlobalState {
 		persistLocal.queryStrings_apply();
 		debug.queryStrings_apply();
 		debugReact.queryStrings_apply();
-		this.events_subscribe();
-		this.alterationState_subscribe();
+		this.subscribeTo_events();
+		this.subscribeTo_alterationState();
 	}
 
-	events_subscribe() {
+	subscribeTo_events() {
 		window.addEventListener('resize', (event) => {
 			s_resize_count.set(get(s_resize_count) + 1)
 			this.graphRect_update();
@@ -34,7 +45,7 @@ class GlobalState {
 		});
 	}
 
-	alterationState_subscribe() {
+	subscribeTo_alterationState() {
 		let interval: NodeJS.Timeout | null = null;
 
 		s_altering.subscribe((state: AlterationState | null) => {
@@ -52,15 +63,6 @@ class GlobalState {
 				signals.signal_altering(null);
 			}
 		})
-	}
-
-	get siteTitle(): string {
-		const dbType = dbDispatch.db.dbType;
-		const baseID = dbDispatch.db.baseID;
-		const host = u.isServerLocal ? 'local' : 'remote';
-		const db_name = dbType ? (dbType! + ', ') : k.empty;
-		const base_name = baseID ? (baseID! + ', ') : k.empty;
-		return `Seriously (${host}, ${db_name}${base_name}${u.browserType}, α)`;
 	}
 
 	zoomBy(factor: number): number {

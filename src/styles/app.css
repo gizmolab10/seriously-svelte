@@ -9,5 +9,6 @@ button, svg {
 	}
 }
 
-/* override inline to eliminate unwanted vertical displacements */
-svg { display: block; }
+
+svg { display: block; }		/* override inline to eliminate unwanted vertical displacements */
+div { user-select: text; }

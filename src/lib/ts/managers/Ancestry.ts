@@ -534,16 +534,10 @@ export default class Ancestry {
 	handle_singleClick_onDragDot(shiftKey: boolean) {
         if (!this.isExemplar) {
 			s_title_editing?.set(null);
-			if (get(s_layout_asClusters)) {
-				this.becomeFocus();
+			if (get(s_altering)) {
+				h.ancestry_alterMaybe(this);
 			} else {
-				if (get(s_altering)) {
-					h.ancestry_alterMaybe(this);
-				} else if (shiftKey || this.isGrabbed) {
-					this.toggleGrab();
-				} else {
-					this.grabOnly();
-				}
+				this.becomeFocus();
 			}
 			signals.signal_rebuildGraph_fromFocus();
         }

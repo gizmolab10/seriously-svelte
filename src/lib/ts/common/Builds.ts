@@ -3,13 +3,14 @@ import { k } from './Constants';
 class Builds {
 	notes: { [id: number]: Array<string> } = {};
 
-	get latest(): number {
+	get latest() {
 		const keys = Object.keys(this.notes);
-		return keys.slice(-1);
+		return keys.slice(-1)[0];
 	}
 
 	constructor() {
 		this.notes = {
+			99 : ['June 4, 2024', 'expand help content and move to help-webseriously.netlify.app'],
 			98 : ['May 23, 2024', 'double-click drag to alter ring button radius'],
 			97 : ['May 20, 2024', 'cluster rotation perfected, improved memory usage'],
 			96 : ['May 14, 2024', 'nearly perfect cluster curly braces, new cluster line angles'],
