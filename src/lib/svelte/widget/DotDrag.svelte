@@ -3,6 +3,7 @@
 	import { SvelteWrapper, onMount, signals, svgPaths, Direction } from '../../ts/common/GlobalImports';
 	import { onDestroy, dbDispatch, AlterationType, createPopper } from '../../ts/common/GlobalImports';
 	import { k, u, Rect, Size, Point, Thing, debug, ZIndex } from '../../ts/common/GlobalImports';
+	import MouseButton from './MouseButton.svelte';
 	import Tooltip from '../kit/Tooltip.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import Box from '../kit/Box.svelte';
