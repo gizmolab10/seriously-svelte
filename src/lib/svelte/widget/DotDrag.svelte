@@ -35,7 +35,6 @@
     let thing;
 
 	function handle_context_menu(event) { event.preventDefault(); }		// no default context menu on right-click
-	function handle_mouse_up() { clearTimeout(mouse_click_timer); }
 
     onMount(() => {
 		if (!!ancestry) {
@@ -154,9 +153,19 @@
 		/////////////////////////////
 		// setup or teardown state //
 		/////////////////////////////
+
+		if (mouseData.isUp) {
+			ancestry?.handle_singleClick_onDragDot(mouseData.event.shiftKey);
+		}
 	}
 
 	// <Tooltip color={strokeColor} bind:this={tooltip}>This is a drag dot</Tooltip>
+		// on:click={handle_singleClick}
+		// on:mouseout={handle_mouse_out}
+		// on:mousedown={handle_longClick}
+		// on:mouseover={handle_mouse_over}
+		// on:dblclick={handle_doubleClick}
+		// on:contextmenu={handle_context_menu}
 
 </script>
 
