@@ -155,10 +155,10 @@
 	<MouseButton
 		name={name}
 		center={center}
-		zindex={zindex}
 		width={diameter}
 		height={diameter}
 		closure={closure}
+		zindex={ZIndex.dots}
 		detect_longClick={false}
 		cursor={ringState.cursor}
 		hover_closure={determine_isHovering}>
