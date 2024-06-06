@@ -25,9 +25,9 @@
 	let background = k.empty;
 	let widgetName = k.empty;
 	let revealName = k.empty;
-	let dragName = k.empty;
 	let widgetData = k.empty;
 	let revealData = k.empty;
+	let dragName = k.empty;
 	let dragData = k.empty;
 	let isGrabbed = false;
 	let isEditing = false;
