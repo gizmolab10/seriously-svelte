@@ -163,39 +163,11 @@
 {#key rebuilds}
 	<Button
 		name={name}
+		height={size}
 		center={center}
-		width={diameter}
-		height={diameter}
+		width={size / 2}
 		closure={closure}
-		border_thickness=0
-		zindex={ZIndex.dots}
-		cursor={dragState.cursor}>
-	</Button>
-	<button class='dot-drag'
-		bind:this={button}
-		on:blur={u.ignore}
-		on:focus={u.ignore}
-		on:keyup={u.ignore}
-		on:keydown={u.ignore}
-		on:keypress={u.ignore}
-		on:mouseup={handle_mouse_up}
-		on:click={handle_singleClick}
-		on:mouseout={handle_mouse_out}
-		on:mousedown={handle_longClick}
-		on:mouseover={handle_mouse_over}
-		on:dblclick={handle_doubleClick}
-		on:contextmenu={handle_context_menu}
-		style='
-			border: none;
-			cursor: pointer;
-			background: none;
-			height: {size}px;
-			top: {center.y}px;
-			left: {center.x}px;
-			position: absolute;
-			width: {size / 2}px;
-			z-index: {ZIndex.dots};
-		'>
+		border_thickness=0>
 		<SVGD3 name='svg-drag'
 			width={size}
 			height={size}
@@ -221,5 +193,5 @@
 				stroke={$s_layout_asClusters ? relatedColor : strokeColor}
 			/>
 		{/if}
-	</button>
+	</Button>
 {/key}
