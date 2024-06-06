@@ -70,6 +70,13 @@
 		};
 	});
 
+	function updateNames() {
+		const title = thing?.title ?? k.unknown;
+		widgetName = `widget ${title}`;
+		revealName = `reveal ${title}`;
+		dragName = `drag ${title}`;
+	}
+
 	$: {
 		if (thing?.id == $s_thing_changed.split(k.genericSeparator)[0]) {
 			updateBorderStyle();
