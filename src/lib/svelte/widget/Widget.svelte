@@ -141,14 +141,14 @@
 	}
 
 	function updateLayout() {
-		const dragX = 3.5;
+		const dragX = 2.5;
 		const titleWidth = thing?.titleWidth ?? 0;
 		const delta = showingBorder ? 1.5 : 2;
 		const leftForward = delta - dragX;
 		const dotCenter = Point.square(k.dot_size / 2)
 		const x = forward ? dragX : titleWidth + delta + 11;
 		const leftBackward = -(titleWidth + 19 + ((ancestry?.isGrabbed ?? false) ? 1 : 0));		
-		dragCenter = Point.square(k.dot_size / 2).offsetByXY(x - 5, dragX - 1);
+		dragCenter = Point.square(k.dot_size / 2).offsetByXY(x - 5, 1.5);
 		left = origin.x + delta + (forward ? leftForward : leftBackward);
 		padding = `0px ${rightPadding}px 0px  ${leftPadding}px`;
 		width = titleWidth + extraWidth() + 6;
