@@ -95,7 +95,7 @@
 		</Button>
 	{/if}
 	<Button name={IDButton.builds}
-		width=65
+		width=75
 		height={size + 4}
 		center={new Point(width - 50, top)}
 		closure={(mouseData) => button_closure_forID(mouseData, IDButton.builds)}>
