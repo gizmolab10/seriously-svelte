@@ -12,7 +12,7 @@
     export let ancestry;
 	const radius = k.dot_size;
 	const diameter = radius * 2;
-	const dragState = s.dragState_forName(name);
+	const dragState = s.mouseState_forName(name);
 	let tinyDotsColor = k.color_background;
 	let relatedColor = k.color_background;
 	let strokeColor = k.color_background;
