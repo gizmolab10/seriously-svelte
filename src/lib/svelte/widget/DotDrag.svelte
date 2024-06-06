@@ -167,6 +167,7 @@
 		width={diameter}
 		height={diameter}
 		closure={closure}
+		border_thickness=0
 		zindex={ZIndex.dots}
 		cursor={dragState.cursor}>
 	</Button>
