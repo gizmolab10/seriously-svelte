@@ -113,7 +113,7 @@
 					position: absolute;
 					top:{k.height_banner}px;
 					z-index: {ZIndex.frontmost};
-					width:{u.windowSize.width}px;
+					width:{g.windowSize.width}px;
 					height:{k.height_breadcrumbs}px;'>
 				<Breadcrumbs/>
 				<div class='horizontal-line'

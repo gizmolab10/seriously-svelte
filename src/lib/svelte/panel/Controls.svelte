@@ -7,13 +7,13 @@
 	const top = (k.dot_size + 3) / 2;
 	const lefts = [10, 65, 137];
 	let size = k.default_buttonSize;
-	let width = u.windowSize.width - 20;
+	let width = g.windowSize.width - 20;
 
 	function togglePopupID(id) { $s_id_popupView = ($s_id_popupView == id) ? null : id; }
 	
 	$: {
 		const _ = $s_resize_count;
-		width = u.windowSize.width - 20;
+		width = g.windowSize.width - 20;
 	}
 
 	function next_graph_relations() {
@@ -29,7 +29,7 @@
 			s.appearance_forName(id).update(mouseData.isOut, 'black', 'pointer');
 		} else if (mouseData.isUp) {
 			switch (id) {
-				case IDButton.help: g.open_tabFor(k.help_url); break;
+				case IDButton.help: g.showHelp(); break;
 				case IDButton.bigger: width = g.zoomBy(1.1) - 20; break;
 				case IDButton.smaller: width = g.zoomBy(0.9) - 20; break;
 				case IDButton.details: $s_show_details = !$s_show_details; break;

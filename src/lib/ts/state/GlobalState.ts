@@ -1,19 +1,34 @@
 import { s_graphRect, s_altering, s_show_details, s_scale_factor, s_thing_changed } from './ReactiveState';
 import { s_resize_count, s_rebuild_count, s_mouse_up_count, s_mouse_location } from './ReactiveState';
+import { k, u, get, Rect, Size, Point, debug, signals, debugReact } from '../common/GlobalImports';
 import { dbDispatch, persistLocal, IDPersistant, AlterationState } from '../common/GlobalImports';
-import { k, u, get, Rect, Point, debug, signals, debugReact } from '../common/GlobalImports';
 
 class GlobalState {
 
 	open_tabFor(url: string) { window.open(url, 'help-webseriously')?.focus(); }
 
+	get windowSize(): Size {
+		const ratio = get(s_scale_factor);
+		return new Size(window.innerWidth / ratio, window.innerHeight / ratio);
+	}
+
+	get isServerLocal(): boolean {
+		const hostname = window.location.hostname;
+		return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "0.0.0.0";
+	}
+
 	get siteTitle(): string {
 		const dbType = dbDispatch.db.dbType;
 		const baseID = dbDispatch.db.baseID;
-		const host = u.isServerLocal ? 'local' : 'remote';
+		const host = this.isServerLocal ? 'local' : 'remote';
 		const db_name = dbType ? (dbType! + ', ') : k.empty;
 		const base_name = baseID ? (baseID! + ', ') : k.empty;
 		return `Seriously (${host}, ${db_name}${base_name}${u.browserType}, α)`;
+	}
+
+	showHelp() {
+		const url = this.isServerLocal ? k.local_help_url : k.remote_help_url;
+		this.open_tabFor(url);
 	}
 
 	setup() {
@@ -71,7 +86,7 @@ class GlobalState {
 		const scale = currentScale * factor;
 		persistLocal.key_write(IDPersistant.scale, scale);
 		this.applyScale(scale);
-		return u.windowSize.width;
+		return this.windowSize.width;
 	}
 
 	applyScale(scale: number) {
@@ -88,7 +103,7 @@ class GlobalState {
 		const top = k.show_titleAtTop ? 114 : 69;						// height of content above the graph
 		const left = get(s_show_details) ? k.width_details : 0;			// width of details
 		const originOfGraph = new Point(left, top);
-		const sizeOfGraph = u.windowSize.reducedBy(originOfGraph);		// account for origin
+		const sizeOfGraph = this.windowSize.reducedBy(originOfGraph);		// account for origin
 		const rect = new Rect(originOfGraph, sizeOfGraph);
 		s_graphRect.set(rect);											// used by Panel and Graph_Tree
 	}

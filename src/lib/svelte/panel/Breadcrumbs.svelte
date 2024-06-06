@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { s_graphRect, s_show_details, s_thing_changed, s_ancestry_focus, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/ReactiveState';
-	import { k, u, Size, Point, Thing, ZIndex, signals, svgPaths, onMount, Ancestry, debugReact, dbDispatch, Direction } from '../../ts/common/GlobalImports';
+	import { g, k, u, Size, Point, Thing, ZIndex, signals, svgPaths, onMount, Ancestry, debugReact, dbDispatch, Direction } from '../../ts/common/GlobalImports';
 	import CrumbButton from '../mouse buttons/CrumbButton.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -22,7 +22,7 @@
 		if (!ancestry || needsUpdate || ancestors.length == 0) {
 			ancestry = h.grabs.ancestry_lastGrabbed ?? h.rootAncestry;	// assure we have a ancestry
 			if (!!ancestry) {				
-				const windowWidth = u.windowSize.width;
+				const windowWidth = g.windowSize.width;
 				let encodedCount = 0;	// encoded as one parent count per digit (base 10)
 				[ancestors, lefts, encodedCount] = ancestry.layout_ancestors_within(windowWidth - 10);
 				left = lefts[0];

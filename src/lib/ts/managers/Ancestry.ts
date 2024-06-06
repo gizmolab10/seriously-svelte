@@ -62,7 +62,6 @@ export default class Ancestry {
 	get ancestors(): Array<Thing> { return h.things_forAncestry(this); }
 	get title(): string { return this.thing?.title ?? 'missing title'; }
 	get isFocus(): boolean { return this.matchesStore(s_ancestry_focus); }
-	get isExemplar(): boolean { return this.ancestryString == k.exemplar; }
 	get ids_hashed(): Array<number> { return this.ids.map(i => i.hash()); }
 	get relationship(): Relationship | null { return this.relationshipAt(); }
 	get idBridging(): string | null { return this.thing?.idBridging ?? null; }
@@ -216,7 +215,7 @@ export default class Ancestry {
 	
 	relationships_for_isChildOf(idPredicate: string, isChildOf: boolean) {
 		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
-		if (id && this.ancestryString != k.exemplar && ![k.empty, 'k.id_unknown'].includes(id)) {
+		if (id && ![k.empty, 'k.id_unknown'].includes(id)) {
 			return h.relationships_forPredicateThingIsChild(idPredicate, id, isChildOf);
 		}
 		return [];
@@ -332,7 +331,7 @@ export default class Ancestry {
 	dotColor(isInverted: boolean): string {
 		const thing = this.thing;
 		if (!!thing) {
-			const showBorder = this.isGrabbed || this.isEditing || thing.isExemplar;
+			const showBorder = this.isGrabbed || this.isEditing;
 			if (isInverted != showBorder) {
 				return thing.color;
 			}
@@ -532,15 +531,19 @@ export default class Ancestry {
 	}
 
 	handle_singleClick_onDragDot(shiftKey: boolean) {
-        if (!this.isExemplar) {
-			s_title_editing?.set(null);
+		s_title_editing?.set(null);
+		if (get(s_layout_asClusters)) {
+			this.becomeFocus();
+		} else {
 			if (get(s_altering)) {
 				h.ancestry_alterMaybe(this);
+			} else if (shiftKey || this.isGrabbed) {
+				this.toggleGrab();
 			} else {
-				this.becomeFocus();
+				this.grabOnly();
 			}
-			signals.signal_rebuildGraph_fromFocus();
-        }
+		}
+		signals.signal_rebuildGraph_fromFocus();
 	}
 
 	grab() {

@@ -3,8 +3,8 @@ import { Angle, Quadrant, IDBrowser } from './Enumerations';
 import { Rect, Size, Point } from '../geometry/Geometry';
 import Identifiable from "../data/Identifiable";
 import Ancestry from '../managers/Ancestry';
-import { k } from './Constants';
 import { get } from 'svelte/store';
+import { k } from './Constants';
 
 class Utilities {
 	noop() {}
@@ -27,16 +27,6 @@ class Utilities {
 	angle_tiltsUp(rawAngle: number): boolean {
 		const angle = this.quadrant_ofNotNormalized_angle(rawAngle);
 		return [Quadrant.upperRight, Quadrant.lowerLeft].includes(angle);
-	}
-
-	get windowSize(): Size {
-		const ratio = get(s_scale_factor);
-		return new Size(window.innerWidth / ratio, window.innerHeight / ratio);
-	}
-
-	get isServerLocal(): boolean {
-		const hostname = window.location.hostname;
-		return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "0.0.0.0";
 	}
 
 	rect_forElement_contains(element: HTMLElement | null, point: Point): boolean {

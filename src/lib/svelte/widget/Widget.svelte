@@ -3,7 +3,6 @@
 	import { s_layout_asClusters, s_thing_fontFamily, s_ancestry_editingTools } from '../../ts/state/ReactiveState';
 	import { k, u, Thing, Point, Angle, debug, ZIndex, SvelteWrapper } from '../../ts/common/GlobalImports';
 	import { signals, onMount, debugReact, SvelteComponentType } from '../../ts/common/GlobalImports';
-	import { exemplar } from '../../ts/data/Exemplar';
 	import EditingTools from './EditingTools.svelte';
 	import TitleEditor from './TitleEditor.svelte';
 	import DotReveal from './DotReveal.svelte';
@@ -96,7 +95,7 @@
 		thing = ancestry?.thing;
 		if (!!ancestry && thing) {
 			const shallEdit = ancestry.isEditing;
-			const shallGrab = ancestry.isGrabbed || (thing.isExemplar ?? false);
+			const shallGrab = ancestry.isGrabbed;
 			const shallShowCluster = ancestry.toolsGrabbed && !ancestry.isFocus;
 			const change = (isEditing != shallEdit || isGrabbed != shallGrab || showingCluster != shallShowCluster);
 			if (change) {

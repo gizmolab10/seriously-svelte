@@ -42,7 +42,7 @@
         const handleAltering = signals.handle_altering((state) => {
 			const applyFlag = $s_ancestry_editingTools && !!ancestry && ancestry.things_canAlter_asParentOf_toolsAncestry;
 			isAltering = applyFlag ? !!state : false;
-			updateExtraPaths();
+			updateExtraSVGPaths();
 			updateColors();
         });
 		return () => {
@@ -66,24 +66,9 @@
 		}
 	}
 
-	$: {
-		const _ = thing;
-		updateColors();
-	}
-
-	$: {
-		const _ = k.dot_size;
-		updateSVGPaths();
-	}
-
 	function clearClicks() {
 		clickCount = 0;
 		clearTimeout(mouse_click_timer);	// clear all previous timers
-	}
-
-	function updateSVGPaths() {
-		dragDotPath = svgPaths.circle_atOffset(size, size - 1);
-		updateExtraPaths();
 	}
 	
 	function handle_mouse_out(event) {
@@ -102,6 +87,15 @@
 			isHovering = flag;
 			updateColors();
 		}
+	}
+
+	function updateSVGPaths() {
+		if ($s_layout_asClusters) {
+			dragDotPath = svgPaths.circle_atOffset(size, size - 1);
+		} else {
+			dragDotPath = svgPaths.oval(size, false);
+		}
+		updateExtraSVGPaths();
 	}
 
 	function handle_longClick(event) {
@@ -137,7 +131,7 @@
 		}
 	}
 
-	function updateExtraPaths() {
+	function updateExtraSVGPaths() {
 		relatedAncestry = tinyDotsPath = null;
 		if (!!thing) {
 			const count = thing.parents.length;		

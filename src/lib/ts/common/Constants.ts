@@ -17,7 +17,8 @@ export default class Constants {
 	editingTools_diameter = 64;
 	threshold_doubleClick = 300;
 	hid_unknown = 1000000000000;
-	help_url = 'https://help-webseriously.netlify.app';
+	local_help_url = 'http://localhost:8000/README.html';
+	remote_help_url = 'https://help-webseriously.netlify.app';
 	prevent_selection_style = '-webkit-user-select: none; user-select: none; -moz-user-select: none;';
 	title_default = 'Please, enter a title';
 	title_line = '------------------------';
@@ -31,7 +32,6 @@ export default class Constants {
 	genericSeparator = '::';
     color_default = 'blue';
 	id_unknown = 'unknown';
-	exemplar = 'exemplar';
 	newLine = '\n';
 	comma = ',';
 	space = ' ';
@@ -44,7 +44,7 @@ export default class Constants {
 	allow_HorizontalScrolling = true;
 	queryString: URLSearchParams;
 	cluster_offsetY: number;
-	build_number: number;
+	build_number: string;
 	row_height: number;
 	
 	rotateSVG = `

@@ -191,7 +191,7 @@
 			isEditing = false;
 			extractRange();
 			input?.blur();
-			if (hasChanges() && !thing?.isExemplar) {
+			if (hasChanges()) {
 				dbDispatch.db.thing_remoteUpdate(thing);
 				originalTitle = thing?.title;		// so hasChanges will be correct
 				ancestry.signal_relayoutWidgets();

@@ -13,7 +13,6 @@ export default class Thing extends Datum {
 	grabAttributes = k.empty;
 	oneAncestry!: Ancestry;
 	needsBulkFetch = false;
-	isExemplar = false;
 	isEditing = false;
 	isGrabbed = false;
 	title: string;

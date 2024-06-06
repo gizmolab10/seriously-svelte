@@ -25,9 +25,9 @@ export default class DBLocal implements DBInterface {
 		h.predicate_remember_runtimeCreateUnique(idPc, 'contains', false, false);
 		h.predicate_remember_runtimeCreateUnique(idPr, 'isRelated', true, false);
 		h.thing_remember_runtimeCreateUnique(this.baseID, idTa, 'Arkane', 'red', 'a', false);
-		h.thing_remember_runtimeCreateUnique(this.baseID, idTb, 'Butress', 'blue', 'b', false);
-		h.thing_remember_runtimeCreateUnique(this.baseID, idTc, 'Claustrophobia', 'green', 'c', false);
-		h.thing_remember_runtimeCreateUnique(this.baseID, idTd, 'Dichotomy', 'purple', 'f', false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTb, 'Biome', 'blue', 'b', false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTc, 'Clarity', '#d96726', 'c', false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTd, 'Delicious', 'purple', 'f', false);
 		h.thing_remember_runtimeCreateUnique(this.baseID, idTe, 'Essential', 'mediumvioletred', 's', false);
 		h.thing_remember_runtimeCreateUnique(this.baseID, idTr, 'Routine', 'limegreen', IDTrait.root, false);
 		// h.thing_remember_runtimeCreateUnique(this.baseID, idTa, 'AAA', 'red', 'a', false);
