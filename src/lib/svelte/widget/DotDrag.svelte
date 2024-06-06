@@ -8,7 +8,9 @@
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import Box from '../kit/Box.svelte';
 	export let center = Point.zero;
+	export let name = 'k.empty';
     export let ancestry;
+	const ringState = s.ringState_forName(name);
 	let tinyDotsColor = k.color_background;
 	let relatedColor = k.color_background;
 	let strokeColor = k.color_background;
@@ -150,6 +152,17 @@
 </script>
 
 {#key rebuilds}
+	<MouseButton
+		name={name}
+		center={center}
+		zindex={zindex}
+		width={diameter}
+		height={diameter}
+		closure={closure}
+		detect_longClick={false}
+		cursor={ringState.cursor}
+		hover_closure={determine_isHovering}>
+	</MouseButton>
 	<button class='dot-drag'
 		bind:this={button}
 		on:blur={u.ignore}
