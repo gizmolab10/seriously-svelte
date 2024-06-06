@@ -148,7 +148,7 @@
 		const dotCenter = Point.square(k.dot_size / 2)
 		const x = forward ? dragX : titleWidth + delta + 15;
 		const leftBackward = -(titleWidth + 19 + ((ancestry?.isGrabbed ?? false) ? 1 : 0));		
-		dragCenter = Point.square(k.dot_size / 2).offsetByXY(x - 5, 2.5);
+		dragCenter = Point.square(k.dot_size / 2).offsetByXY(x - 5, 2.6);
 		left = origin.x + delta + (forward ? leftForward : leftBackward);
 		padding = `0px ${rightPadding}px 0px  ${leftPadding}px`;
 		width = titleWidth + extraWidth() + 6;
