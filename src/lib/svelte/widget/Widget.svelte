@@ -136,7 +136,7 @@
 
 	function extraWidth() {
 		const multiplier = ancestry?.showsReveal ? 2 : 1.35;
-		const clustersAdjustment = $s_layout_asClusters ? forward ? 10 : -10 : -18;
+		const clustersAdjustment = $s_layout_asClusters ? forward ? 10 : -6 : -18;
 		return (k.dot_size * multiplier) + clustersAdjustment;
 	}
 
