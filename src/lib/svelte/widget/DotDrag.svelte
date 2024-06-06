@@ -3,7 +3,7 @@
 	import { k, s, u, Rect, Size, Point, Thing, debug, ZIndex, onMount } from '../../ts/common/GlobalImports';
 	import { signals, svgPaths, Direction, MouseData, SvelteWrapper } from '../../ts/common/GlobalImports';
 	import { dbDispatch, AlterationType, createPopper } from '../../ts/common/GlobalImports';
-	import MouseButton from '../mouse buttons/MouseButton.svelte';
+	import Button from '../mouse buttons/Button.svelte';
 	import Tooltip from '../kit/Tooltip.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import Box from '../kit/Box.svelte';
@@ -155,32 +155,22 @@
 		// setup or teardown state //
 		/////////////////////////////
 	}
- 
-	function determine_isHovering() {
-		const vector = distance_fromCenter_of($s_mouse_location);
-		const distance = vector.magnitude;
-		if (!!distance && distance.isBetween(radius, outer_radius)) {
-			return true;
-		}
-		return false;
-	}
 
 	// <Tooltip color={strokeColor} bind:this={tooltip}>This is a drag dot</Tooltip>
 
 </script>
 
 {#key rebuilds}
-	<MouseButton
+	<Button
 		name={name}
 		center={center}
 		width={diameter}
 		height={diameter}
 		closure={closure}
 		zindex={ZIndex.dots}
-		detect_longClick={false}
 		cursor={dragState.cursor}
 		hover_closure={determine_isHovering}>
-	</MouseButton>
+	</Button>
 	<button class='dot-drag'
 		bind:this={button}
 		on:blur={u.ignore}
