@@ -6,8 +6,8 @@
 	export let radius = 0;
 	export let thing: Thing;
 	export let ring_width = 0;
-	export let name = 'k.empty';
-	export let color = 'k.empty';
+	export let name = k.empty;
+	export let color = k.empty;
 	export let center = Point.zero;
 	export let zindex = ZIndex.panel;
 	export let cursor_closure = () => {};

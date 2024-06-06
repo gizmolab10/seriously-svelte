@@ -10,7 +10,9 @@
 	export let center = Point.zero;
 	export let name = 'k.empty';
     export let ancestry;
-	const ringState = s.ringState_forName(name);
+	const radius = k.dot_size;
+	const diameter = radius * 2;
+	const dragState = s.dragState_forName(name);
 	let tinyDotsColor = k.color_background;
 	let relatedColor = k.color_background;
 	let strokeColor = k.color_background;
@@ -160,7 +162,7 @@
 		closure={closure}
 		zindex={ZIndex.dots}
 		detect_longClick={false}
-		cursor={ringState.cursor}
+		cursor={dragState.cursor}
 		hover_closure={determine_isHovering}>
 	</MouseButton>
 	<button class='dot-drag'
