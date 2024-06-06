@@ -131,7 +131,7 @@
 		name={name}
 		height={size}
 		center={center}
-		width={size / 2}
+		width={size}
 		closure={closure}
 		border_thickness=0>
 		<SVGD3 name='svg-drag'
