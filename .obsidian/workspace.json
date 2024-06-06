@@ -157,6 +157,8 @@
   },
   "active": "fa319b5627849d85",
   "lastOpenFiles": [
+    "aside/2024/June/help.webseriously/HelpButton.svelte",
+    "src/lib/HelpButton.svelte",
     "aside/2024/June/help.webseriously/netlify.toml",
     "aside/2024/June/help.webseriously",
     "help/actions/dots.md",
@@ -190,7 +192,6 @@
     "help/images/panel.png",
     "netlify.toml.sb-eac59542-oe9Jq1",
     "help/images",
-    "help/actions",
     "20231214-TODO.md"
   ]
 }
