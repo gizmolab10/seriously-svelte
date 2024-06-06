@@ -168,8 +168,7 @@
 		height={diameter}
 		closure={closure}
 		zindex={ZIndex.dots}
-		cursor={dragState.cursor}
-		hover_closure={determine_isHovering}>
+		cursor={dragState.cursor}>
 	</Button>
 	<button class='dot-drag'
 		bind:this={button}
