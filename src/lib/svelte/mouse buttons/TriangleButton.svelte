@@ -1,8 +1,8 @@
 <script>
 	import { k, u, Size, Thing, Point, ZIndex, svgPaths, Direction, dbDispatch } from "../../ts/common/GlobalImports";
 	import { s_ancestries_grabbed } from '../../ts/state/Stores';
-	import Button from '../mouse buttons/Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
+	import Button from './Button.svelte';
 	export let mouse_closure = (mouseData) => {};
 	export let hover_closure = null;
 	export let extraPath = null;
