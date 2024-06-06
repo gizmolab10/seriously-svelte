@@ -3,20 +3,20 @@
 	import { s_thing_changed, s_ancestry_focus, s_ring_angle, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/ReactiveState';
 	import MouseButton from './MouseButton.svelte';
-	export let cursor_closure = () => {};
-	export let zindex = ZIndex.panel;
-	export let center = Point.zero;
-	export let color = 'k.empty';
-	export let name = 'k.empty';
-	export let ring_width = 0;
-	export let thing: Thing;
 	export let radius = 0;
-	const outer_radius = radius + ring_width;
-	const borderStyle = '1px solid';
-	const diameter = outer_radius * 2;
+	export let thing: Thing;
+	export let ring_width = 0;
+	export let name = 'k.empty';
+	export let color = 'k.empty';
+	export let center = Point.zero;
+	export let zindex = ZIndex.panel;
+	export let cursor_closure = () => {};
 	const ringState = s.ringState_forName(name);
-	const viewBox = `${-ring_width}, ${-ring_width}, ${diameter}, ${diameter}`;
+	const outer_radius = radius + ring_width;
+	const diameter = outer_radius * 2;
+	const borderStyle = '1px solid';
 	const ringOrigin = center.distanceFrom(Point.square(outer_radius));
+	const viewBox = `${-ring_width}, ${-ring_width}, ${diameter}, ${diameter}`;
 	const svg_ringPath = svgPaths.ring(Point.square(radius), outer_radius, ring_width);
 	let rebuilds = 0
 	let ringButton;
@@ -57,7 +57,7 @@
 			}
 			if (sendSignal) {
 				rebuilds += 1;
-				signals.signal_rebuildGraph_fromFocus();		// destroys this component (variables wiped)
+				signals.signal_relayoutWidgets_fromFocus();		// destroys this component (variables wiped)
 			}
 		}
 	}

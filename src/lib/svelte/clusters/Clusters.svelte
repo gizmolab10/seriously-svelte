@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { s_graphRect, s_ancestry_focus, s_mouse_up_count, s_user_graphOffset, s_thing_fontFamily, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
-	import { k, s, u, Rect, Size, Point, ZIndex, transparentize } from '../../ts/common/GlobalImports';
+	import { k, s, u, Rect, Size, Point, ZIndex, onMount, signals, transparentize } from '../../ts/common/GlobalImports';
+	import RingButton from '../mouse buttons/RingButton.svelte';
 	import EditingTools from '../widget/EditingTools.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
-	import RingButton from '../mouse buttons/RingButton.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Necklace from './Necklace.svelte';
 	// needs:
@@ -27,6 +27,11 @@
 	let clusters;
 
 	$: { cursor_closure(); }
+	
+	onMount(() => {
+		const handler = signals.handle_relayoutWidgets(0, (ancestry) => { rebuilds += 1; });
+		return () => { handler.disconnect() };
+	});
 
 	$: {
 		if (mouse_up_count != $s_mouse_up_count) {
