@@ -71,7 +71,7 @@
 	});
 
 	function updateNames() {
-		const title = thing?.title ?? k.unknown;
+		const title = thing?.title ?? thing?.id ?? k.unknown;
 		widgetName = `widget ${title}`;
 		revealName = `reveal ${title}`;
 		dragName = `drag ${title}`;
