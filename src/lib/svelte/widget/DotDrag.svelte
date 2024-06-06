@@ -155,7 +155,7 @@
 		/////////////////////////////
 
 		if (mouseData.isHover) {
-			updateColorsForHover(mouseData.isOut);
+			updateColorsForHover(!mouseData.isOut);
 		} else if (mouseData.isUp) {
 			ancestry?.handle_singleClick_onDragDot(mouseData.event.shiftKey);
 		}
