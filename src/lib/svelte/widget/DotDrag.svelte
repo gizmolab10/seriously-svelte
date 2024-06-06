@@ -149,6 +149,13 @@
 		}
 	}
 
+	function closure(mouseData: MouseData) {
+
+		/////////////////////////////
+		// setup or teardown state //
+		/////////////////////////////
+	}
+
 	// <Tooltip color={strokeColor} bind:this={tooltip}>This is a drag dot</Tooltip>
 
 </script>
