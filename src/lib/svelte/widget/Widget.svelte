@@ -141,7 +141,7 @@
 	}
 
 	function updateLayout() {
-		const dragX = 2.5;
+		const dragX = 12.5;
 		const titleWidth = thing?.titleWidth ?? 0;
 		const delta = showingBorder ? 1.5 : 2;
 		const leftForward = delta - dragX;
