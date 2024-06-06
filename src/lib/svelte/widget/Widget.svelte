@@ -151,7 +151,7 @@
 		dragCenter = Point.square(k.dot_size / 2).offsetByXY(x - 5, 2.6);
 		left = origin.x + delta + (forward ? leftForward : leftBackward);
 		padding = `0px ${rightPadding}px 0px  ${leftPadding}px`;
-		width = titleWidth + extraWidth() + 12;
+		width = titleWidth + extraWidth() + 13;
 		height = k.row_height - 1.5;
 		radius = k.row_height / 2;
 		top = origin.y + (showingBorder ? 0 : 1);
