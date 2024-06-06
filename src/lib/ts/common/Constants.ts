@@ -31,7 +31,7 @@ export default class Constants {
 	cursor_default = 'default';
 	genericSeparator = '::';
     color_default = 'blue';
-	id_unknown = 'unknown';
+	unknown = 'unknown';
 	newLine = '\n';
 	comma = ',';
 	space = ' ';

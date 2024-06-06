@@ -121,9 +121,9 @@ export default class Ancestry {
 
 	get idThing(): string {
 		if (this.isRoot) {
-			return h.idRoot ?? k.id_unknown;
+			return h.idRoot ?? k.unknown;
 		}
-		return this.relationship?.idChild ?? k.id_unknown;
+		return this.relationship?.idChild ?? k.unknown;
 	}
 
 	get isVisible(): boolean {
@@ -215,7 +215,7 @@ export default class Ancestry {
 	
 	relationships_for_isChildOf(idPredicate: string, isChildOf: boolean) {
 		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
-		if (id && ![k.empty, 'k.id_unknown'].includes(id)) {
+		if (id && ![k.empty, 'k.unknown'].includes(id)) {
 			return h.relationships_forPredicateThingIsChild(idPredicate, id, isChildOf);
 		}
 		return [];
@@ -281,7 +281,7 @@ export default class Ancestry {
 
 	thing_isImmediateParentOf(ancestry: Ancestry, id: string): boolean {
 		const idThing = this.idThing;
-		if (idThing != k.id_unknown) {
+		if (idThing != k.unknown) {
 			const parents = ancestry.thing?.parents_forID(id);
 			return parents?.map(t => t.id).includes(idThing) ?? false;
 		}
