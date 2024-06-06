@@ -97,7 +97,7 @@
 	<Button name={IDButton.builds}
 		width=75
 		height={size + 4}
-		center={new Point(width - 50, top)}
+		center={new Point(width - 55, top)}
 		closure={(mouseData) => button_closure_forID(mouseData, IDButton.builds)}>
 		{'build ' + k.build_number}
 	</Button>
