@@ -18,7 +18,7 @@ export default class Constants {
 	threshold_doubleClick = 300;
 	hid_unknown = 1000000000000;
 	local_help_url = 'http://localhost:8000/README.html';
-	remote_help_url = 'https://help-webseriously.netlify.app';
+	remote_help_url = 'https://help-webseriously.netlify.app/README.html';
 	prevent_selection_style = '-webkit-user-select: none; user-select: none; -moz-user-select: none;';
 	title_default = 'Please, enter a title';
 	title_line = '------------------------';
