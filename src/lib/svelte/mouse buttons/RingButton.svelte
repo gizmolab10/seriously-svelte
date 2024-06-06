@@ -62,7 +62,7 @@
 		}
 	}
 
-	function closure(mouseData: MouseData) {
+	function closure(mouseData) {
 
 		/////////////////////////////
 		// setup or teardown state //
