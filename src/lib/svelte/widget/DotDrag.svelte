@@ -156,7 +156,7 @@
 		/////////////////////////////
 	}
  
-	function determine_isHovering(): boolean {
+	function determine_isHovering() {
 		const vector = distance_fromCenter_of($s_mouse_location);
 		const distance = vector.magnitude;
 		if (!!distance && distance.isBetween(radius, outer_radius)) {
