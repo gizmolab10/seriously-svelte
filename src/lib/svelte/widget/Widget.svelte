@@ -136,7 +136,7 @@
 
 	function extraWidth() {
 		const multiplier = ancestry?.showsReveal ? 2 : 1.35;
-		const clustersAdjustment = $s_layout_asClusters ? forward ? 10 : -6 : -16;
+		const clustersAdjustment = $s_layout_asClusters ? forward ? 16 : 0 : -10;
 		return (k.dot_size * multiplier) + clustersAdjustment;
 	}
 
@@ -151,7 +151,7 @@
 		dragCenter = Point.square(k.dot_size / 2).offsetByXY(x - 5, 2.6);
 		left = origin.x + delta + (forward ? leftForward : leftBackward);
 		padding = `0px ${rightPadding}px 0px  ${leftPadding}px`;
-		width = titleWidth + extraWidth() + 6;
+		width = titleWidth + extraWidth();
 		height = k.row_height - 1.5;
 		radius = k.row_height / 2;
 		top = origin.y + (showingBorder ? 0 : 1);
