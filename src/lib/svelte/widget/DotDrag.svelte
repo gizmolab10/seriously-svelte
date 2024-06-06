@@ -24,7 +24,6 @@
 	let size = k.dot_size;
 	let mouse_click_timer;
 	let relatedAncestry;
-	let clickCount = 0;
 	let rebuilds = 0;
 	let tinyDotsPath;
 	let left = 0;
@@ -70,22 +69,6 @@
 		}
 	}
 
-	function clearClicks() {
-		clickCount = 0;
-		clearTimeout(mouse_click_timer);	// clear all previous timers
-	}
-	
-	function handle_mouse_out(event) {
-		updateColorsForHover(false);
-		// tooltip.removeAttribute('data-show');
-	}
-
-	function handle_mouse_over(event) {
-		updateColorsForHover(true);
-		// tooltip.setAttribute('data-show', '');
-		// popper.update();
-	}
-
 	function updateColorsForHover(flag) {
 		if (isHovering != flag) {
 			isHovering = flag;
@@ -100,30 +83,6 @@
 			dragDotPath = svgPaths.oval(size, false);
 		}
 		updateExtraSVGPaths();
-	}
-
-	function handle_longClick(event) {
-		clearClicks();
-		mouse_click_timer = setTimeout(() => {
-			handle_doubleClick(event);
-		}, k.threshold_longClick);
-	}
-
-	function handle_doubleClick(event) {
-		clearClicks();
-		if (ancestry?.becomeFocus()) {
-			signals.signal_rebuildGraph_fromFocus();
-		}
-    }
-
-	function handle_singleClick(event) {
-		clickCount++;
-		mouse_click_timer = setTimeout(() => {
-			if (clickCount === 1) {
-				ancestry?.handle_singleClick_onDragDot(event.shiftKey);
-				clearClicks();
-			}
-		}, k.threshold_doubleClick);
 	}
 
 	function updateColors() {
@@ -149,25 +108,21 @@
 	}
 
 	function closure(mouseData) {
-
-		/////////////////////////////
-		// setup or teardown state //
-		/////////////////////////////
-
 		if (mouseData.isHover) {
 			updateColorsForHover(!mouseData.isOut);
+			if (mouseData.isOut) {
+				// tooltip.setAttribute('data-show', '');
+				// popper.update();
+			} else {
+				// tooltip.removeAttribute('data-show');
+			}
 		} else if (mouseData.isUp) {
 			ancestry?.handle_singleClick_onDragDot(mouseData.event.shiftKey);
 		}
 	}
 
 	// <Tooltip color={strokeColor} bind:this={tooltip}>This is a drag dot</Tooltip>
-		// on:click={handle_singleClick}
-		// on:mouseout={handle_mouse_out}
-		// on:mousedown={handle_longClick}
-		// on:mouseover={handle_mouse_over}
-		// on:dblclick={handle_doubleClick}
-		// on:contextmenu={handle_context_menu}
+	// on:contextmenu={handle_context_menu}
 
 </script>
 
