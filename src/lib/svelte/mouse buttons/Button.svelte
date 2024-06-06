@@ -7,7 +7,7 @@
 	export let closure = (mouseData) => {};
 	export let position = 'absolute';
 	export let zindex = ZIndex.dots;
-	export let border_thickness = 1;
+	export let border_thickness = 0;
 	export let center = Point.zero;
 	export let color = 'black';
 	export let style = k.empty;
