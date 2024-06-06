@@ -172,7 +172,7 @@
 			z-index: {ZIndex.widgets};
 		'>
 		<DotDrag
-			name={}
+			name={dragName}
 			ancestry={ancestry}
 			center={dragCenter}
 		/>
