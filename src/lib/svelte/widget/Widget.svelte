@@ -43,10 +43,7 @@
 	let thing;
 
 	onMount(() => {
-		thing = ancestry?.thing;
-		if (!ancestry || !thing) {
-			console.log('bad ancestry or thing');
-		}
+		update_fromAncestry();
 		updateBorderStyle();
 		updateLayout();
 		debugReact.log_mount(`WIDGET ${thing?.description} ${ancestry?.isGrabbed}`);
@@ -70,11 +67,15 @@
 		};
 	});
 
-	function updateNames() {
+	function update_fromAncestry() {
+		thing = ancestry?.thing;
 		const title = thing?.title ?? thing?.id ?? k.unknown;
 		widgetName = `widget ${title}`;
 		revealName = `reveal ${title}`;
 		dragName = `drag ${title}`;
+		if (!ancestry || !thing) {
+			console.log('bad ancestry or thing');
+		}
 	}
 
 	$: {
@@ -164,7 +165,7 @@
 </script>
 
 {#key rebuilds}
-	<div class='widget' id='{thing?.title}'
+	<div class='widget' id='{widgetName}'
 		bind:this={widget}
 		style='
 			{border};
