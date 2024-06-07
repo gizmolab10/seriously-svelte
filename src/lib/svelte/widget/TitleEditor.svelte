@@ -19,7 +19,6 @@
 	let clickCount = 0;
 	let ghost = null;
 	let input = null;
-	let top = 0;
     let thing;
 
 	var hasChanges = () => { return originalTitle != thingTitle; };
@@ -156,7 +155,6 @@
 			if (!!ancestry && ancestry.isStoppingEdit ?? false) {
 				debug.log_edit(`STOPPING ${thingTitle}`);
 				$s_title_editing = null;
-				top = hasGrabbed ? 2 : 0.5;
 				input?.blur();
 			} else if (isEditing != titleState_isEditing) {
 				if (!isEditing) {
@@ -255,7 +253,7 @@
 		on:mousedown={handle_longClick}
 		on:dblclick={handle_doubleClick}
 		style='
-			top: {top}px;
+			top: 0.5px;
 			border: none;
 			{cursorStyle};
 			outline: none;

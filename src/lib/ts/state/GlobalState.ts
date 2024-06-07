@@ -26,6 +26,17 @@ class GlobalState {
 		return `Seriously (${host}, ${db_name}${base_name}${u.browserType}, α)`;
 	}
 
+	get device_isMobile(): boolean {
+		const userAgent = navigator.userAgent;
+		if (/android/i.test(userAgent) || /iPhone|iPad|iPod/i.test(userAgent)) {    // Check for phones
+			return true;
+		}
+		if (/iPad|Android|Touch/i.test(userAgent) && !(window as any).MSStream) {    // Check for tablets
+			return true;
+		}
+		return false;
+	}
+
 	showHelp() {
 		const url = this.isServerLocal ? k.local_help_url : k.remote_help_url;
 		this.open_tabFor(url);

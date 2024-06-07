@@ -9,8 +9,8 @@
 		return [debug.lines ? 'transparent' : ancestry.dotColor(isFilled), k.empty];
 	}
 
-	function mouse_closure(mouseData) {
-		if (!mouseData.isHover) {
+	function mouse_closure(mouseState) {
+		if (!mouseState.isHover) {
 			if (h.grabs.latestAncestryGrabbed(true)?.isFocus) {
 				h.ancestry_rebuild_remoteMoveRight(ancestry, false, false);
 			} else {

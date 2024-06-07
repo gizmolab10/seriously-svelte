@@ -1,4 +1,4 @@
-import { g, k, u, get, Point, signals, Ancestry, dbDispatch, GraphRelations } from '../common/GlobalImports'
+import { g, k, get, Point, signals, Ancestry, dbDispatch, GraphRelations } from '../common/GlobalImports'
 import { s_ring_angle, s_cluster_arc_radius, s_layout_asClusters } from '../state/ReactiveState';
 import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/ReactiveState';
 import { s_ancestries_grabbed, s_ancestries_expanded } from '../state/ReactiveState';
@@ -150,7 +150,7 @@ class PersistLocal {
 		k.show_controls = this.key_read(IDPersistant.controls) ?? true;
 		k.show_arrowheads = this.key_read(IDPersistant.arrowheads) ?? false;
 		k.show_titleAtTop = this.key_read(IDPersistant.title_atTop) ?? false;
-		g.applyScale(!u.device_isMobile ? 1 : this.key_read(IDPersistant.scale) ?? 1);
+		g.applyScale(!g.device_isMobile ? 1 : this.key_read(IDPersistant.scale) ?? 1);
 		s_ring_angle.set(this.key_read(IDPersistant.angle) ?? 0);
 		s_show_details.set(this.key_read(IDPersistant.details) ?? false);
 		s_thing_fontFamily.set(this.key_read(IDPersistant.font) ?? 'Arial');

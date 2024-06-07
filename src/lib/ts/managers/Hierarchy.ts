@@ -1,4 +1,4 @@
-import { k, u, get, User, Thing, Grabs, debug, MouseData, Access, IDTool, IDTrait, signals, Ancestry } from '../common/GlobalImports';
+import { k, u, get, User, Thing, Grabs, debug, MouseState, Access, IDTool, IDTrait, signals, Ancestry } from '../common/GlobalImports';
 import { Predicate, SvelteWrapper, Relationship, CreationOptions, AlterationType, AlterationState } from '../common/GlobalImports';
 import { s_ancestries_grabbed, s_things_arrived, s_ancestry_editingTools } from '../state/ReactiveState';
 import { s_isBusy, s_altering, s_ancestry_focus, s_title_editing } from '../state/ReactiveState';
@@ -56,17 +56,17 @@ export class Hierarchy {
 
 	static readonly $_EVENTS_$: unique symbol;
 
-	async handle_tool_clicked(idButton: string, mouseData: MouseData) {
-		const event: MouseEvent | null = mouseData.event as MouseEvent;
+	async handle_tool_clicked(idButton: string, mouseState: MouseState) {
+		const event: MouseEvent | null = mouseState.event as MouseEvent;
         const ancestry = get(s_ancestry_editingTools);
-		if (!!ancestry && !mouseData.isUp) {
+		if (!!ancestry && !mouseState.isUp) {
 			switch (idButton) {
 				case IDTool.more: console.log('needs more'); break;
 				case IDTool.create: await this.ancestry_edit_remoteCreateChildOf(ancestry); break;
 				case IDTool.next: this.ancestry_relayout_toolCluster_nextParent(event.altKey); return;
-				case IDTool.add_parent: this.toggleAlteration(AlterationType.adding, mouseData.isLong); return;
+				case IDTool.add_parent: this.toggleAlteration(AlterationType.adding, mouseState.isLong); return;
 				case IDTool.delete_confirm: await this.ancestries_rebuild_traverse_remoteDelete([ancestry]); break;
-				case IDTool.delete_parent: this.toggleAlteration(AlterationType.deleting, mouseData.isLong); return;
+				case IDTool.delete_parent: this.toggleAlteration(AlterationType.deleting, mouseState.isLong); return;
 				default: break;
 			}
 			s_ancestry_editingTools.set(null);

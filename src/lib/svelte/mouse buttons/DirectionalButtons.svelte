@@ -12,11 +12,11 @@
         return [isFilled ? 'black' : k.color_background, k.empty];
     }
 
-	function mouse_closure(mouseData) {
-        const target = mouseData.element;
-        if (!mouseData.isHover && !!target && (mouseData.isUp || mouseData.isLong)) {
+	function mouse_closure(mouseState) {
+        const target = mouseState.element;
+        if (!mouseState.isHover && !!target && (mouseState.isUp || mouseState.isLong)) {
             const pointsUp = target.id == 'up';
-            hit(pointsUp, mouseData.isLong);
+            hit(pointsUp, mouseState.isLong);
             rebuilds += 1;
         }
 	}

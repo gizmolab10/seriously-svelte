@@ -20,16 +20,16 @@ import { builds } from './Builds';
 import { u } from './Utilities';
 import { k } from './Constants';
 
-import ButtonAppearance from '../state/ButtonAppearance';
+import ButtonState from '../state/ButtonState';
 import AlterationState from '../state/AlterationState';
 import ClusterLayout from '../geometry/ClusterLayout';
 import ChildMapRect from '../geometry/ChildMapRect';
 import TreeLayout from '../geometry/TreeLayout';
 import Relationship from '../data/Relationship';
 import TitleState from '../state/TitleState';
+import MouseState from '../state/MouseState';
 import SvelteWrapper from './SvelteWrapper';
 import Ancestry from '../managers/Ancestry';
-import MouseData from '../events/MouseData';
 import RingState from '../state/RingState';
 import Predicate from '../data/Predicate';
 import Grabs from '../managers/Grabs';
@@ -50,7 +50,7 @@ export {
 	AlterationType, SvelteWrapper, SvelteComponentType,
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Grabs, dbDispatch, Ancestry, Hierarchy, persistLocal,
-	MouseData, signals, ButtonAppearance, SeriouslyRange,
+	MouseState, signals, ButtonState, SeriouslyRange,
 	ZIndex, PredicateKind, GraphRelations, CreationOptions,
 	Angle, Quadrant, TreeLayout, ChildMapRect, ClusterLayout,
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactKind,

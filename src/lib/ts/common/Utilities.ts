@@ -1,6 +1,6 @@
-import { s_scale_factor, s_thing_fontFamily } from '../state/ReactiveState';
 import { Angle, Quadrant, IDBrowser } from './Enumerations';
-import { Rect, Size, Point } from '../geometry/Geometry';
+import { s_thing_fontFamily } from '../state/ReactiveState';
+import { Rect, Point } from '../geometry/Geometry';
 import Identifiable from "../data/Identifiable";
 import Ancestry from '../managers/Ancestry';
 import { get } from 'svelte/store';
@@ -176,17 +176,6 @@ class Utilities {
 			}
 		}
 		return o;
-	}
-
-	get device_isMobile(): boolean {
-		const userAgent = navigator.userAgent;
-		if (/android/i.test(userAgent) || /iPhone|iPad|iPod/i.test(userAgent)) {    // Check for phones
-			return true;
-		}
-		if (/iPad|Android|Touch/i.test(userAgent) && !(window as any).MSStream) {    // Check for tablets
-			return true;
-		}
-		return false;
 	}
 
 	removeAll(item: string, from: string): string {

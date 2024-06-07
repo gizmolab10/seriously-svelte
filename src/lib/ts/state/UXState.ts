@@ -1,28 +1,30 @@
-import { k, RingState, ButtonAppearance } from '../common/GlobalImports';
+import { k, RingState, ButtonState } from '../common/GlobalImports';
 
 type MouseState = {clicks: number, hit: boolean};
 type RingState_byName = {[name: string]: RingState};
-type MouseState_byName = {[name: string]: MouseState};
+type MouseState_byName = {[name: string]: MouseState};		// defined above
 
 
 class State {
 
-	//////////////////////////////////////
-	//									//
-	//	repository of state for			//
-	//	transient svelte components		//
-	//	that need to store state		//
-	//	somewhere outside themselves	//
-	//									//
-	//	MouseButton, its containers,	//
-	//	  like EditingTools & Controls	//
-	//									//
-	//////////////////////////////////////
+	//////////////////////////////
+	//							//
+	//	preservation of state	//
+	//	external to transient	//
+	//	svelte components		//
+	//							//
+	//  this allows them to be	//
+	//	deleted by their own	//
+	//	event handling			//
+	//							//
+	//	all the buttons use it	//
+	//							//
+	//////////////////////////////
 
 	rebuild_count = 0;
 	ringState_byName: RingState_byName = {};
 	mouseState_byName: MouseState_byName = {};
-	appearance_byName: {[name: string]: ButtonAppearance} = {};
+	buttonState_byName: {[name: string]: ButtonState} = {};
 
 	ringState_forName(name: string): RingState {
 		let state = this.ringState_byName[name];
@@ -42,11 +44,11 @@ class State {
 		return state;
 	}
 
-	appearance_forName(name: string): ButtonAppearance {
-		let appearance = this.appearance_byName[name];
+	buttonState_forName(name: string): ButtonState {
+		let appearance = this.buttonState_byName[name];
 		if (!appearance) {
-			appearance = new ButtonAppearance(k.color_defaultText, 'transparent', k.cursor_default);
-			this.appearance_byName[name] = appearance;
+			appearance = new ButtonState(k.color_defaultText, 'transparent', k.cursor_default);
+			this.buttonState_byName[name] = appearance;
 		}
 		return appearance;
 	}

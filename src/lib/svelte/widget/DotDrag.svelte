@@ -1,7 +1,7 @@
 <script>
 	import { s_thing_changed, s_layout_asClusters, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/ReactiveState';
 	import { k, s, u, Rect, Size, Point, Thing, debug, ZIndex, onMount } from '../../ts/common/GlobalImports';
-	import { signals, svgPaths, Direction, MouseData, SvelteWrapper } from '../../ts/common/GlobalImports';
+	import { signals, svgPaths, Direction, MouseState, SvelteWrapper } from '../../ts/common/GlobalImports';
 	import { dbDispatch, AlterationType, createPopper } from '../../ts/common/GlobalImports';
 	import Button from '../mouse buttons/Button.svelte';
 	import Tooltip from '../kit/Tooltip.svelte';
@@ -69,13 +69,6 @@
 		}
 	}
 
-	function updateColorsForHover(flag) {
-		if (isHovering != flag) {
-			isHovering = flag;
-			updateColors();
-		}
-	}
-
 	function updateSVGPaths() {
 		if ($s_layout_asClusters) {
 			dragDotPath = svgPaths.circle_atOffset(size, size - 1);
@@ -83,15 +76,6 @@
 			dragDotPath = svgPaths.oval(size, false);
 		}
 		updateExtraSVGPaths();
-	}
-
-	function updateColors() {
-		if (!!thing) {
-			thing.updateColorAttributes(ancestry);
-			fillColor = debug.lines ? 'transparent' : ancestry?.dotColor(isHovering != isAltering);
-			tinyDotsColor = relatedColor = ancestry?.dotColor(!isHovering && !isAltering);
-			strokeColor = thing.color;
-		}
 	}
 
 	function updateExtraSVGPaths() {
@@ -107,17 +91,34 @@
 		}
 	}
 
-	function closure(mouseData) {
-		if (mouseData.isHover) {
-			updateColorsForHover(!mouseData.isOut);
-			if (mouseData.isOut) {
+	function updateColors() {
+		if (!!thing) {
+			thing.updateColorAttributes(ancestry);
+			fillColor = debug.lines ? 'transparent' : ancestry?.dotColor(isHovering != isAltering);
+			tinyDotsColor = relatedColor = ancestry?.dotColor(!isHovering && !isAltering);
+			strokeColor = thing.color;
+		}
+	}
+
+	function updateColorsForHover(flag) {
+		if (isHovering != flag) {
+			isHovering = flag;
+			updateColors();
+		}
+	}
+
+	function closure(mouseState) {
+		if (mouseState.isHover) {
+			const beginHovering = !mouseState.isOut;
+			updateColorsForHover(beginHovering);
+			if (beginHovering) {
 				// tooltip.setAttribute('data-show', '');
 				// popper.update();
 			} else {
 				// tooltip.removeAttribute('data-show');
 			}
-		} else if (mouseData.isUp) {
-			ancestry?.handle_singleClick_onDragDot(mouseData.event.shiftKey);
+		} else if (mouseState.isUp) {
+			ancestry?.handle_singleClick_onDragDot(mouseState.event.shiftKey);
 		}
 	}
 
@@ -129,9 +130,9 @@
 {#key rebuilds}
 	<Button
 		name={name}
+		width={size}
 		height={size}
 		center={center}
-		width={size}
 		closure={closure}
 		border_thickness=0>
 		<SVGD3 name='svg-drag'

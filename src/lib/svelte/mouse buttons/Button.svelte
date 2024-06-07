@@ -1,10 +1,10 @@
 <script lang='ts'>
-	import { g, k, s, u, Point, ZIndex, onMount, ButtonAppearance } from '../../ts/common/GlobalImports';
+	import { g, k, s, u, Point, ZIndex, onMount, ButtonState } from '../../ts/common/GlobalImports';
 	import MouseButton from './MouseButton.svelte';
 	export let background_color = k.color_background;
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;
-	export let closure = (mouseData) => {};
+	export let closure = (mouseState) => {};
 	export let position = 'absolute';
 	export let border_thickness = 1;
 	export let zindex = ZIndex.dots;
@@ -27,11 +27,6 @@
 	onMount(() => { update(); })
 	$: { update(); }
 	
-	function update() {
-		updateFor(s.appearance_forName(name));
-		updateStyle();
-	}
-	
 	function updateStyle() {
 		if (style.length == 0) {
 			border = border_thickness == 0 ? 'none' : `solid ${border_thickness}px`;
@@ -49,16 +44,22 @@
 		}
 	}
 
-	function updateFor(appearance: ButtonAppearance) {
-		if (!!appearance) {
-			color = appearance.color;
-			background_color = appearance.background_color;
+	function updateState() {
+		const state = s.buttonState_forName(name);
+		if (!!state) {
+			color = state.color;
+			background_color = state.background_color;
 		}
 	}
+	
+	function update() {
+		updateState();
+		updateStyle();
+	}
 
-	function button_closure(mouseData) {
-		closure(mouseData);
-		if (mouseData.isHover) {	// NOT the same as isHovering
+	function button_closure(mouseState) {
+		closure(mouseState);
+		if (mouseState.isHover) {	// NOT the same as isHovering
 			update();
 		}
 	}

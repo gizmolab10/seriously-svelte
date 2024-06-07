@@ -3,7 +3,7 @@
 	import { s_ancestries_grabbed } from '../../ts/state/ReactiveState';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import Button from './Button.svelte';
-	export let mouse_closure = (mouseData) => {};
+	export let mouse_closure = (mouseState) => {};
 	export let hover_closure = null;
 	export let extraPath = null;
 	export let name = k.empty;
@@ -31,11 +31,11 @@
 		}
 	}
 
-	function closure(mouseData) {
-		if (mouseData.isHover) {
-			setFillColor(!mouseData.isOut);
+	function closure(mouseState) {
+		if (mouseState.isHover) {
+			setFillColor(!mouseState.isOut);
 		} else {
-			mouse_closure(mouseData);
+			mouse_closure(mouseState);
 		}
 	}
 

@@ -1,6 +1,11 @@
 import { k } from '../common/Constants';
 
-export default class ButtonAppearance {
+// data about buttons that has to persist 
+// while the button itself is replaced
+// this allows them to change the context
+// around them without losing their appearance
+
+export default class ButtonState {
 	background_color = 'transparent';
 	color = k.color_defaultText;
 	cursor = k.cursor_default;

@@ -157,6 +157,10 @@
   },
   "active": "fa319b5627849d85",
   "lastOpenFiles": [
+    "src/lib/ts/state/MouseState.ts",
+    "src/lib/ts/state/ButtonState.ts",
+    "src/lib/ts/state/MuoseState.ts",
+    "src/lib/ts/state/MouseData.ts",
     "aside/2024/June/help.webseriously/HelpButton.svelte",
     "src/lib/HelpButton.svelte",
     "aside/2024/June/help.webseriously/netlify.toml",
@@ -186,12 +190,8 @@
     "help/images/breadcrumbs.png",
     "help/images/controls.png",
     "help/looks/top",
-    "help/looks/graph",
-    "help/looks",
     "help/images/top.png",
     "help/images/panel.png",
-    "netlify.toml.sb-eac59542-oe9Jq1",
-    "help/images",
     "20231214-TODO.md"
   ]
 }

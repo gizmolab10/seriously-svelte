@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { s_ancestry_focus, s_graphRect, s_show_details, s_ancestries_grabbed } from '../../ts/state/ReactiveState';
-	import { k, u, Rect, Size, Point, Thing, ZIndex, debug, signals, Ancestry } from '../../ts/common/GlobalImports';
+	import { g, k, u, Rect, Size, Point, Thing, ZIndex, debug, signals, Ancestry } from '../../ts/common/GlobalImports';
 	import { s_id_popupView, s_ancestry_editingTools, s_user_graphOffset } from '../../ts/state/ReactiveState';
 	import { IDButton, onMount, debugReact, dbDispatch, Predicate } from '../../ts/common/GlobalImports';
 	import { IDPersistant, IDSignal, persistLocal } from '../../ts/common/GlobalImports';
@@ -66,7 +66,7 @@
 			const offsetX = 15 + ($s_show_details ? -k.width_details : 0) - (childrenSize.width / 2) - (k.dot_size / 2.5) + offsetX_ofFirstReveal;
 			const offsetY = -1 - graphRect.origin.y;
 			origin_ofFirstReveal = graphRect.center.offsetByXY(offsetX, offsetY);
-			if (u.device_isMobile) {
+			if (g.device_isMobile) {
 				origin_ofFirstReveal.x = 25;
 			}
 			const toChildren = new Point(-41.2 + k.line_stretch - (k.dot_size / 2) + offsetX_ofFirstReveal, (k.dot_size / 2) -(childrenSize.height / 2) - 4);

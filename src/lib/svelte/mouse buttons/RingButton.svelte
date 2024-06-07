@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, s, u, Thing, Point, ZIndex, signals, svgPaths, MouseData, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
+	import { k, s, u, Thing, Point, ZIndex, signals, svgPaths, MouseState, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
 	import { s_thing_changed, s_ancestry_focus, s_ring_angle, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/ReactiveState';
 	import MouseButton from './MouseButton.svelte';
@@ -62,22 +62,22 @@
 		}
 	}
 
-	function closure(mouseData) {
+	function closure(mouseState) {
 
 		/////////////////////////////
 		// setup or teardown state //
 		/////////////////////////////
 
 		ringState.isHovering = determine_isHovering();
-		if (!mouseData.isHover) {
+		if (!mouseState.isHover) {
 			const from_center = distance_fromCenter_of($s_mouse_location);
-			if (mouseData.isDouble) {
+			if (mouseState.isDouble) {
 
 				// begin resize
 
 				ringState.radiusOffset = from_center.magnitude - $s_cluster_arc_radius;
 				rebuilds += 1;
-			} else if (mouseData.isUp) {
+			} else if (mouseState.isUp) {
 
 				// end rotate and resize
 

@@ -1,10 +1,10 @@
 <script lang='ts'>
-	import { k, s, u, Rect, Size, Point, MouseData, ZIndex, onMount } from '../../ts/common/GlobalImports';
+	import { k, s, u, Rect, Size, Point, MouseState, ZIndex, onMount } from '../../ts/common/GlobalImports';
 	import { s_mouse_location } from '../../ts/state/ReactiveState';
 	export let hover_closure: () => {flag: boolean} | null = null;
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;
-	export let closure = (mouseData) => {};
+	export let closure = (mouseState) => {};
 	export let detect_doubleClick = true;
 	export let detect_longClick = true;
 	export let detect_mouseDown = true;
@@ -29,8 +29,8 @@
 	//		closure & name					//
 	//										//
 	//	mutates three ts state classes:		//
-	//		UXState, MouseData &			//
-	//		ButtonAppearance				//
+	//		UXState, MouseState &			//
+	//		ButtonState				//
 	//										//
 	//////////////////////////////////////////
 
@@ -53,15 +53,15 @@
 
 	$: {	// movement
 		if (!!mouse_button && !!$s_mouse_location) {
-			const isElementHit = u.rect_forElement_contains(mouse_button, $s_mouse_location);
-			const wasHit = mouseState.hit;
-			let isHit = isElementHit;
-			if (!!hover_closure) {
-				isHit = hover_closure();	// ask containing component
+			let isHit = false;
+			if (!hover_closure) {			// is mouse inside this element's bounding rect
+				isHit = u.rect_forElement_contains(mouse_button, $s_mouse_location);
+			} else {						// if this element's hover shape is not its bounding rect
+				isHit = hover_closure();	// let container component decide
 			}
-			if (isHit != wasHit) {
+			if (mouseState.hit != isHit) {
 				mouseState.hit = isHit;
-				closure(MouseData.hover(null, mouse_button, isHit));	// use null event
+				closure(MouseState.hover(null, mouse_button, isHit));	// pass a null event
 			}
 		}
 	}
@@ -71,7 +71,7 @@
 
 			// teardown timers and call closure
 		
-			closure(MouseData.up(event, mouse_button));
+			closure(MouseState.up(event, mouse_button));
 			clearTimeout(mouse_doubleClick_timer);
 			clearTimeout(mouse_longClick_timer);
 			mouse_doubleClick_timer = null;
@@ -84,7 +84,7 @@
 
 			// call down closure
 
-			closure(MouseData.down(event, mouse_button));
+			closure(MouseState.down(event, mouse_button));
 		}
 		mouseState.clicks += 1;
 		if (detect_longClick && !mouse_longClick_timer) {
@@ -92,7 +92,7 @@
 			// setup timer to call long-click closure
 
 			mouse_longClick_timer = setTimeout(() => {
-				closure(MouseData.long(event, mouse_button));
+				closure(MouseState.long(event, mouse_button));
 				mouse_longClick_timer = null;
 				mouseState.clicks = 0;
 			}, k.threshold_longClick);
@@ -102,7 +102,7 @@
 			// setup timer to call double-click closure
 
 			mouse_doubleClick_timer = setTimeout(() => {
-				closure(MouseData.clicks(event, mouse_button, mouseState.clicks));
+				closure(MouseState.clicks(event, mouse_button, mouseState.clicks));
 				mouse_doubleClick_timer = null;
 				mouseState.clicks = 0;
 			}, k.threshold_doubleClick);

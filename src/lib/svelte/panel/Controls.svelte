@@ -1,5 +1,5 @@
 <script>
-	import { g, k, s, u, Point, ZIndex, signals, svgPaths, IDButton, ButtonAppearance, IDPersistant, persistLocal, GraphRelations } from '../../ts/common/GlobalImports';
+	import { g, k, s, u, Point, ZIndex, signals, svgPaths, IDButton, ButtonState, IDPersistant, persistLocal, GraphRelations } from '../../ts/common/GlobalImports';
 	import { s_show_details, s_id_popupView, s_resize_count, s_layout_asClusters, s_graph_relations } from '../../ts/state/ReactiveState';
 	import Button from '../mouse buttons/Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -24,10 +24,10 @@
 		}
 	}
 
-	function button_closure_forID(mouseData, id) {
-		if (mouseData.isHover) {
-			s.appearance_forName(id).update(mouseData.isOut, 'black', 'pointer');
-		} else if (mouseData.isUp) {
+	function button_closure_forID(mouseState, id) {
+		if (mouseState.isHover) {
+			s.buttonState_forName(id).update(mouseState.isOut, 'black', 'pointer');
+		} else if (mouseState.isUp) {
 			switch (id) {
 				case IDButton.help: g.showHelp(); break;
 				case IDButton.bigger: width = g.zoomBy(1.1) - 20; break;
@@ -54,7 +54,7 @@
 			color='transparent'
 			border_thickness=0
 			center={new Point(lefts[0], details_top)}
-			closure={(mouseData) => button_closure_forID(mouseData, IDButton.details)}>
+			closure={(mouseState) => button_closure_forID(mouseState, IDButton.details)}>
 			<img src='settings.svg' alt='circular button' width={size}px height={size}px/>
 		</Button>
 		{#if k.show_controls}
@@ -62,22 +62,22 @@
 				width=65
 				height={size + 4}
 				center={new Point(lefts[1], top)}
-				closure={(mouseData) => button_closure_forID(mouseData, IDButton.relations)}>
+				closure={(mouseState) => button_closure_forID(mouseState, IDButton.relations)}>
 				{$s_graph_relations}
 			</Button>
 			<Button name={IDButton.layout}
 				width=65
 				height={size + 4}
 				center={new Point(lefts[2], top)}
-				closure={(mouseData) => button_closure_forID(mouseData, IDButton.layout)}>
+				closure={(mouseState) => button_closure_forID(mouseState, IDButton.layout)}>
 				{#if $s_layout_asClusters}tree{:else}clusters{/if}
 			</Button>
 		{/if}
 	{/if}
-	{#if u.device_isMobile}
+	{#if g.device_isMobile}
 		<Button name={IDButton.smaller}
 			center={new Point(width - 130, top)}
-			closure={(mouseData) => button_closure_forID(mouseData. IDButton.smaller)}>
+			closure={(mouseState) => button_closure_forID(mouseState. IDButton.smaller)}>
 			<SVGD3 name='smaller'
 				width={size}
 				height={size}
@@ -86,7 +86,7 @@
 		</Button>
 		<Button name={IDButton.bigger}
 			center={new Point(width - 105, top)}
-			closure={(mouseData) => button_closure_forID(mouseData, IDButton.bigger)}>
+			closure={(mouseState) => button_closure_forID(mouseState, IDButton.bigger)}>
 			<SVGD3 name='bigger'
 				width={size}
 				height={size}
@@ -98,14 +98,14 @@
 		width=75
 		height={size + 4}
 		center={new Point(width - 55, top)}
-		closure={(mouseData) => button_closure_forID(mouseData, IDButton.builds)}>
+		closure={(mouseState) => button_closure_forID(mouseState, IDButton.builds)}>
 		{'build ' + k.build_number}
 	</Button>
 	<Button name={IDButton.help}
 		width={size + 4}
 		height={size + 4}
 		center={new Point(width, top)}
-		closure={(mouseData) => button_closure_forID(mouseData, IDButton.help)}>
+		closure={(mouseState) => button_closure_forID(mouseState, IDButton.help)}>
 		<span
 			style='top:2px;
 				left:5.5px;
