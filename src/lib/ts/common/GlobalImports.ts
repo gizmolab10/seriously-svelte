@@ -1,5 +1,5 @@
 import { PredicateKind, GraphRelations, AlterationType, SvelteComponentType } from './Enumerations';
-import { Angle, IDTrait, ZIndex, Quadrant, IDButton, IDBrowser } from './Enumerations';
+import { Angle, IDTrait, ZIndex, Quadrant, IDButton, IDBrowser, ElementType } from './Enumerations';
 import { debugReact, DebugReact, ReactKind } from '../debug/DebugReact';
 import { IDPersistant, persistLocal } from '../managers/PersistLocal';
 import { onMount, onDestroy, setContext, getContext } from 'svelte';
@@ -20,7 +20,7 @@ import { builds } from './Builds';
 import { u } from './Utilities';
 import { k } from './Constants';
 
-import ButtonState from '../state/ButtonState';
+import ElementState from '../state/ElementState';
 import AlterationState from '../state/AlterationState';
 import ClusterLayout from '../geometry/ClusterLayout';
 import ChildMapRect from '../geometry/ChildMapRect';
@@ -47,12 +47,12 @@ export {
 	RingState, TitleState, AlterationState,
 	muuri, interact, createPopper, transparentize,
 	get, onMount, onDestroy, setContext, getContext,
-	AlterationType, SvelteWrapper, SvelteComponentType,
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Grabs, dbDispatch, Ancestry, Hierarchy, persistLocal,
-	MouseState, signals, ButtonState, SeriouslyRange,
+	MouseState, signals, ElementState, SeriouslyRange,
 	ZIndex, PredicateKind, GraphRelations, CreationOptions,
 	Angle, Quadrant, TreeLayout, ChildMapRect, ClusterLayout,
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactKind,
+	ElementType, AlterationType, SvelteWrapper, SvelteComponentType,
 	IDLine, IDTool, IDTrait, IDSignal, IDButton, IDBrowser, IDPersistant,
 };

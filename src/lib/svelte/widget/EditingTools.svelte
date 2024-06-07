@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, s, u, Rect, Size, Point, MouseState, IDTool, ZIndex, onMount, signals,  svgPaths, Direction } from '../../ts/common/GlobalImports';
-	import {dbDispatch, SvelteWrapper, ButtonState, AlterationState, AlterationType, transparentize } from '../../ts/common/GlobalImports';
+	import {dbDispatch, SvelteWrapper, ElementType, ElementState, AlterationState, AlterationType, transparentize } from '../../ts/common/GlobalImports';
 	import { s_ancestry_editingTools, s_layout_asClusters } from '../../ts/state/ReactiveState';
 	import { s_altering, s_graphRect, s_show_details } from '../../ts/state/ReactiveState';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
@@ -27,8 +27,8 @@
 	let titleWidth = 0;
 	let rebuilds = 0;
 	let left = 64;
-	let thing;
 	let ancestry;
+	let thing;
 
 	function getC(id: string) { return centers_byID[id] ?? Point.zero; }
 	function setC(id: string, center: Point) { return centers_byID[id] = center; }
@@ -105,8 +105,9 @@
 	async function handle_mouse_data(mouseState: MouseState, id: string) {
 		if (mouseState.isHover) {
 			const isOut = mouseState.isOut;
+			const elementState = s.elementState_forType(id, ancestry, ElementType.tool)
 			isHovering_byID[id] = !isOut;
-			s.buttonState_forName(id).update(isOut, color, 'pointer');
+			elementState.update(isOut, color, 'pointer');
 		} else {
 			switch (id) {
 				case IDTool.delete_cancel: confirmingDelete = false; break;

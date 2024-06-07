@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, s, u, Point, Thing, onMount, signals, dbDispatch, ButtonState, transparentize } from '../../ts/common/GlobalImports';
+	import { k, s, u, Point, Thing, onMount, signals, dbDispatch, ElementType, ElementState, transparentize } from '../../ts/common/GlobalImports';
 	import { s_thing_changed, s_ancestry_focus } from '../../ts/state/ReactiveState';
 	import Button from './Button.svelte';
 	export let left = 0;
@@ -11,7 +11,7 @@
 	let height = k.default_buttonSize;
 	let thing: Thing = ancestry.thing;
 	let title: string = thing.title;
-	let buttonState!: ButtonState;
+	let elementState!: ElementState;
 	let colorStyles = k.empty;
 	let style = k.empty;
 	let name = k.empty;
@@ -25,7 +25,7 @@
 		title = thing.title;
 		width = thing.titleWidth;
 		name = `crumb (for ${title ?? 'unknown'})`
-		buttonState = s.buttonState_forName(name);
+		elementState = s.elementState_forType(name, ancestry, ElementType.crumb);
 		center = new Point(left + width / 2, height - 1);
 		updateColors();
 	}
@@ -55,7 +55,7 @@
 			${colorStyles};
 			border:${border};
 			border-radius: 1em;
-			cursor:{buttonState.cursor};
+			cursor:{elementState.cursor};
 		`.removeWhiteSpace();
 	}
 
@@ -68,7 +68,7 @@
 					border = `${borderStyle} ${thing.color}`;
 				}
 				const cursor = !ancestry.isGrabbed && ancestry.hasChildRelationships ? 'pointer' : k.cursor_default;
-				buttonState.update(mouseState.isOut, thing.color, cursor);
+				elementState.update(mouseState.isOut, thing.color, cursor);
 				updateStyle();
 				rebuilds += 1;
 			} else if (mouseState.isUp) {
@@ -90,7 +90,7 @@
 		center={center}
 		closure={closure}
 		position='absolute'>
-		<div style='padding:1px 0px 0px 0px; cursor:{buttonState.cursor};'>
+		<div style='padding:1px 0px 0px 0px; cursor:{elementState.cursor};'>
 			{title.injectElipsisAt()}
 		</div>
 	</Button>

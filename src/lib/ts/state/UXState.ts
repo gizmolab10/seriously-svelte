@@ -1,4 +1,5 @@
-import { k, RingState, ButtonState } from '../common/GlobalImports';
+import { k, RingState, ElementType, ElementState } from '../common/GlobalImports';
+import Identifiable from "../data/Identifiable";
 
 type MouseState = {clicks: number, hit: boolean};
 type RingState_byName = {[name: string]: RingState};
@@ -24,7 +25,7 @@ class State {
 	rebuild_count = 0;
 	ringState_byName: RingState_byName = {};
 	mouseState_byName: MouseState_byName = {};
-	buttonState_byName: {[name: string]: ButtonState} = {};
+	elementState_byName: {[name: string]: ElementState} = {};
 
 	ringState_forName(name: string): RingState {
 		let state = this.ringState_byName[name];
@@ -44,13 +45,25 @@ class State {
 		return state;
 	}
 
-	buttonState_forName(name: string): ButtonState {
-		let appearance = this.buttonState_byName[name];
-		if (!appearance) {
-			appearance = new ButtonState(k.color_defaultText, 'transparent', k.cursor_default);
-			this.buttonState_byName[name] = appearance;
+	elementState_forName(name: string): ElementState {
+		let elementState = this.elementState_byName[name];
+		if (!elementState) {
+			elementState = new ElementState(k.color_defaultText, 'transparent', k.cursor_default);
+			this.elementState_byName[name] = elementState;
 		}
-		return appearance;
+		return elementState;
+	}
+
+	elementState_forAncestry(name: string, identifiable: Identifiable): ElementState {
+		let elementState = this.elementState_forName(name);
+		elementState.identifiable = identifiable;
+		return elementState;
+	}
+
+	elementState_forType(name: string, identifiable: Identifiable, type: ElementType): ElementState {
+		let elementState = this.elementState_forAncestry(name, identifiable);
+		elementState.type = type;
+		return elementState;
 	}
 
 }

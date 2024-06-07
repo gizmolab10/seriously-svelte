@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, s, u, Point, ZIndex, onMount, ButtonState } from '../../ts/common/GlobalImports';
+	import { g, k, s, u, Point, ZIndex, onMount, ElementState } from '../../ts/common/GlobalImports';
 	import MouseButton from './MouseButton.svelte';
 	export let background_color = k.color_background;
 	export let height = k.default_buttonSize;
@@ -33,8 +33,8 @@
 			currentStyle=`
 				color:${color};
 				cursor:pointer;
-				width:${width}px;
 				border:${border};
+				width:${width}px;
 				z-index:${zindex};
 				height:${height}px;
 				position:${position};
@@ -45,11 +45,9 @@
 	}
 
 	function updateState() {
-		const state = s.buttonState_forName(name);
-		if (!!state) {
-			color = state.color;
-			background_color = state.background_color;
-		}
+		const elementState = s.elementState_forName(name);
+		color = elementState.color;
+		background_color = elementState.fill;
 	}
 	
 	function update() {

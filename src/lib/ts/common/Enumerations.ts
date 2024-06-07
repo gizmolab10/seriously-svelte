@@ -65,6 +65,16 @@ export enum Angle {
 	zero = 0,
 }
 
+export enum ElementType {
+	generic	= 'generic',
+	control	= 'control',
+	widget	= 'widget',
+	reveal	= 'reveal',
+	crumb	= 'crumb',
+	tool	= 'tool',
+	drag	= 'drag',
+}
+
 export enum IDButton {
 	details		= 'show details view',
 	builds		= 'show build notes',

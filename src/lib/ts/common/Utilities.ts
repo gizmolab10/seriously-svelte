@@ -115,7 +115,7 @@ class Utilities {
 	strip_hidDuplicates(ancestries: Array<Ancestry>) {
 		let ancestriesByHID: {[hash: number]: Ancestry} = {};
 		for (const ancestry of ancestries) {
-			ancestriesByHID[ancestry.ancestryHash] = ancestry;
+			ancestriesByHID[ancestry.idHashed] = ancestry;
 		}
 		return Object.values(ancestriesByHID);
 	}

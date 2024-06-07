@@ -30,7 +30,7 @@
 	//										//
 	//	mutates three ts state classes:		//
 	//		UXState, MouseState &			//
-	//		ButtonState				//
+	//		ElementState					//
 	//										//
 	//////////////////////////////////////////
 

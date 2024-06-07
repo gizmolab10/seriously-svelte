@@ -1,8 +1,8 @@
 <script>
 	import { s_thing_changed, s_layout_asClusters, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/ReactiveState';
+	import { signals, svgPaths, Direction, ElementType, MouseState, dbDispatch } from '../../ts/common/GlobalImports';
 	import { k, s, u, Rect, Size, Point, Thing, debug, ZIndex, onMount } from '../../ts/common/GlobalImports';
-	import { signals, svgPaths, Direction, MouseState, SvelteWrapper } from '../../ts/common/GlobalImports';
-	import { dbDispatch, AlterationType, createPopper } from '../../ts/common/GlobalImports';
+	import { createPopper, SvelteWrapper, AlterationType } from '../../ts/common/GlobalImports';
 	import Button from '../mouse buttons/Button.svelte';
 	import Tooltip from '../kit/Tooltip.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -12,7 +12,7 @@
     export let ancestry;
 	const radius = k.dot_size;
 	const diameter = radius * 2;
-	const dragState = s.mouseState_forName(name);
+	const elementState = s.elementState_forType(name, ancestry, ElementType.drag);
 	let tinyDotsColor = k.color_background;
 	let relatedColor = k.color_background;
 	let strokeColor = k.color_background;
@@ -23,9 +23,10 @@
 	let isHovering = true;
 	let size = k.dot_size;
 	let mouse_click_timer;
-	let relatedAncestry;
-	let rebuilds = 0;
+	let isRelatedPath;
 	let tinyDotsPath;
+	let rebuilds = 0;
+	let redraws = 0;
 	let left = 0;
 	let top = 0;
 	let tooltip;
@@ -61,8 +62,7 @@
 	}
 
 	$: {
-		const grabbedAncestries = $s_ancestries_grabbed;		// use state variable for react logic
-		const grabbed = ancestry?.includedInAncestries(grabbedAncestries);
+		const grabbed = ancestry?.isGrabbed;
 		if (isGrabbed != grabbed) {
 			isGrabbed = grabbed;
 			updateColors();
@@ -79,16 +79,22 @@
 	}
 
 	function updateExtraSVGPaths() {
-		relatedAncestry = tinyDotsPath = null;
+		isRelatedPath = tinyDotsPath = null;
 		if (!!thing) {
 			const count = thing.parents.length;		
 			if (count > 1) {
 				tinyDotsPath = svgPaths.ellipses(6, 0.5, false, count, size / 2);
 			}
 			if (thing.hasRelated) {
-				relatedAncestry = svgPaths.circle_atOffset(size, 3, new Point(-4.5, 0));
+				isRelatedPath = svgPaths.circle_atOffset(size, 3, new Point(-4.5, 0));
 			}
 		}
+	}
+
+	function updateColorsForHover(isHovering) {
+		const cursor = !ancestry.isGrabbed && ancestry.hasChildRelationships ? 'pointer' : k.cursor_default;
+		elementState.update(!isHovering, thing.color, cursor);
+		redraws += 1;
 	}
 
 	function updateColors() {
@@ -100,23 +106,9 @@
 		}
 	}
 
-	function updateColorsForHover(flag) {
-		if (isHovering != flag) {
-			isHovering = flag;
-			updateColors();
-		}
-	}
-
 	function closure(mouseState) {
 		if (mouseState.isHover) {
-			const beginHovering = !mouseState.isOut;
-			updateColorsForHover(beginHovering);
-			if (beginHovering) {
-				// tooltip.setAttribute('data-show', '');
-				// popper.update();
-			} else {
-				// tooltip.removeAttribute('data-show');
-			}
+			updateColorsForHover(!mouseState.isOut);
 		} else if (mouseState.isUp) {
 			ancestry?.handle_singleClick_onDragDot(mouseState.event.shiftKey);
 		}
@@ -135,30 +127,42 @@
 		center={center}
 		closure={closure}
 		border_thickness=0>
-		<SVGD3 name='svg-drag'
-			width={size}
-			height={size}
-			fill={fillColor}
-			stroke={strokeColor}
-			svg_path={dragDotPath}
-		/>
-		{#if tinyDotsPath}
-			<SVGD3 name='svg-dot-inside'
-				width={size}
-				height={size}
-				fill={tinyDotsColor}
-				stroke={tinyDotsColor}
-				svg_path={tinyDotsPath}
-			/>
-		{/if}
-		{#if relatedAncestry}
-			<SVGD3 name='svg-dot-related'
-				width={size}
-				height={size}
-				fill={relatedColor}
-				svg_path={relatedAncestry}
-				stroke={$s_layout_asClusters ? relatedColor : strokeColor}
-			/>
-		{/if}
+		{#key redraws}
+			<div id={'inner-div-for-' + name}
+				style='
+					top:0px;
+					left:0px;
+					width:{size}px;
+					height:{size}px;
+					position:absolute;
+					z-index:{ZIndex.dots};
+					cursor:{elementState.cursor};'>
+				<SVGD3 name='svg-drag'
+					width={size}
+					height={size}
+					svg_path={dragDotPath}
+					fill={elementState.fill}
+					stroke={elementState.color}
+				/>
+				{#if tinyDotsPath}
+					<SVGD3 name='svg-dot-inside'
+						width={size}
+						height={size}
+						fill={elementState.color}
+						stroke={elementState.color}
+						svg_path={tinyDotsPath}
+					/>
+				{/if}
+				{#if isRelatedPath}
+					<SVGD3 name='svg-dot-related'
+						width={size}
+						height={size}
+						fill={k.color_background}
+						svg_path={isRelatedPath}
+						stroke={$s_layout_asClusters ? thing.color : elementState.color}
+					/>
+				{/if}
+			</div>
+		{/key}
 	</Button>
 {/key}

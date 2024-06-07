@@ -2,20 +2,23 @@ import { k, u, get, Rect, Size, Thing, debug, signals, TitleState, Predicate, Re
 import { s_ancestry_focus, s_ancestries_grabbed, s_title_editing, s_layout_asClusters } from '../state/ReactiveState';
 import { PredicateKind, AlterationType, SvelteWrapper, SvelteComponentType } from '../common/GlobalImports';
 import { s_ancestries_expanded, s_ancestry_editingTools, s_altering } from '../state/ReactiveState';
+import Identifiable from "../data/Identifiable";
 import { Writable } from 'svelte/store';
 import { h } from '../db/DBDispatch';
 
-export default class Ancestry {
+export default class Ancestry extends Identifiable {
 	wrappers: { [type: string]: SvelteWrapper } = {};
 	_thing: Thing | null = null;
-	ancestryString: string;
-	ancestryHash: number;
 	idPredicate: string;
 	unsubscribe: any;
 
+	// id is the ancestry string 
+	// composed of ids of each relationship
+	// NOTE: first relationship's parent is always the root
+	//   "   idPredicate is from the last relationship
+
 	constructor(ancestryString: string = k.empty, idPredicate: string = Predicate.idContains) {
-		this.ancestryHash = ancestryString.hash();
-		this.ancestryString = ancestryString;
+		super(ancestryString);
 		this.idPredicate = idPredicate;
 		if (h?.isAssembled) {
 			this.unsubscribe = this.subscriptions_setup();			// not needed during hierarchy assembly
@@ -44,8 +47,8 @@ export default class Ancestry {
 		}
 	}
 
-	static idPredicate_for(ancestryString: string): string {
-		const hid = ancestryString.split(k.genericSeparator)[0].hash();	// grab first relationship's hid
+	static idPredicate_for(id: string): string {
+		const hid = id.split(k.genericSeparator)[0].hash();	// grab first relationship's hid
 		const relationship = h.relationship_forHID(hid);			// locate corresponding relationship
 		return relationship?.idPredicate ?? '';						// grab its predicate id
 	}
@@ -55,7 +58,7 @@ export default class Ancestry {
 	get endID(): string { return this.idAt(); }
 	get id_count():number { return this.ids.length; }
 	get firstChild(): Thing { return this.children[0]; }
-	get isRoot(): boolean { return this.ancestryHash == 0; }
+	get isRoot(): boolean { return this.idHashed == 0; }
 	get lastChild(): Thing { return this.children.slice(-1)[0]; }
 	get order(): number { return this.relationship?.order ?? -1; }
 	get parentAncestry(): Ancestry | null { return this.stripBack(); }
@@ -65,11 +68,6 @@ export default class Ancestry {
 	get ids_hashed(): Array<number> { return this.ids.map(i => i.hash()); }
 	get relationship(): Relationship | null { return this.relationshipAt(); }
 	get idBridging(): string | null { return this.thing?.idBridging ?? null; }
-	get lineWrapper(): SvelteWrapper | null { return this.wrappers[SvelteComponentType.line]; }
-	get titleWrapper(): SvelteWrapper | null { return this.wrappers[SvelteComponentType.title]; }
-	get revealWrapper(): SvelteWrapper | null { return this.wrappers[SvelteComponentType.reveal]; }
-	get widgetWrapper(): SvelteWrapper | null { return this.wrappers[SvelteComponentType.widget]; }
-	get isGrabbed(): boolean { return this.includedInStore(s_ancestries_grabbed); }
 	get titleRect(): Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
 	get predicate(): Predicate | null { return h.predicate_forID(this.idPredicate) }
 	get toolsGrabbed(): boolean { return this.matchesStore(s_ancestry_editingTools); }
@@ -80,15 +78,20 @@ export default class Ancestry {
 	get hasParentRelationships(): boolean { return this.parentRelationships.length > 0; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get idPredicates(): Array<string> { return this.relationships.map(r => r.idPredicate); }
+	get lineWrapper(): SvelteWrapper | null { return this.wrappers[SvelteComponentType.line]; }
+	get isGrabbed(): boolean { return this.includedInStore_ofAncestries(s_ancestries_grabbed); }
 	get isInvalid(): boolean { return this.containsReciprocals || this.containsMixedPredicates; }
 	get childAncestries(): Array<Ancestry> { return this.childAncestries_for(this.idPredicate); }
+	get titleWrapper(): SvelteWrapper | null { return this.wrappers[SvelteComponentType.title]; }
+	get revealWrapper(): SvelteWrapper | null { return this.wrappers[SvelteComponentType.reveal]; }
+	get widgetWrapper(): SvelteWrapper | null { return this.wrappers[SvelteComponentType.widget]; }
 	get siblingAncestries(): Array<Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
 	get showsChildRelationships(): boolean { return this.isExpanded && this.hasChildRelationships; }
-	get isExpanded(): boolean { return this.isRoot || this.includedInStore(s_ancestries_expanded); }
 	get isEditing(): boolean { return get(s_title_editing)?.editing?.matchesAncestry(this) ?? false; }
 	get hasRelationships(): boolean { return this.hasParentRelationships || this.hasChildRelationships; }
 	get titles(): Array<string> { return this.ancestors?.map(t => ` \"${t ? t.title : 'null'}\"`) ?? []; }
 	get isStoppingEdit(): boolean { return get(s_title_editing)?.stopping?.matchesAncestry(this) ?? false; }
+	get isExpanded(): boolean { return this.isRoot || this.includedInStore_ofAncestries(s_ancestries_expanded); }
 	get relatedThings(): Array<Thing> { return this.thing?.things_bidirectional_for(Predicate.idIsRelated) ?? []; }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	get childRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, false); }
@@ -116,7 +119,7 @@ export default class Ancestry {
 		if (this.isRoot) {
 			return [];
 		}
-		return this.ancestryString.split(k.genericSeparator);
+		return this.id.split(k.genericSeparator);
 	}
 
 	get idThing(): string {
@@ -194,10 +197,10 @@ export default class Ancestry {
 		return false;
 	}
 
-	matchesAncestry(ancestry: Ancestry): boolean { return this.ancestryHash == ancestry.ancestryHash; }
-	includedInStore(store: Writable<Array<Ancestry>>): boolean { return this.includedInAncestries(get(store)); }
+	matchesAncestry(ancestry: Ancestry): boolean { return this.idHashed == ancestry.idHashed; }
 	includesPredicateID(idPredicate: string): boolean { return this.thing?.hasParentsFor(idPredicate) ?? false; }
 	matchesStore(store: Writable<Ancestry | null>): boolean { return get(store)?.matchesAncestry(this) ?? false; }
+	includedInStore_ofAncestries(store: Writable<Array<Ancestry>>): boolean { return this.includedInAncestries(get(store)); }
 	relationshipAt(back: number = 1): Relationship | null { return h.relationship_forHID(this.idAt(back).hash()) ?? null; }
 	sharesAnID(ancestry: Ancestry | null): boolean { return !ancestry ? false : this.ids.some(id => ancestry.ids.includes(id)); }
 	showsClusterFor(predicate: Predicate): boolean { return this.includesPredicateID(predicate.id) && this.hasThings(predicate); }
@@ -224,7 +227,7 @@ export default class Ancestry {
 	ancestry_isAProgenyOf(ancestry: Ancestry): boolean {
 		let isAProgeny = false;
 		ancestry.traverse((progenyAncestry: Ancestry) => {
-			if (progenyAncestry.ancestryHash == this.ancestryHash) {
+			if (progenyAncestry.idHashed == this.idHashed) {
 				isAProgeny = true;
 				return true;	// stop traversal
 			}
@@ -235,7 +238,7 @@ export default class Ancestry {
 
 	ancestry_ofNextSibling(increment: boolean): Ancestry | null {
 		const array = this.siblingAncestries;
-		const index = array.map(p => p.ancestryString).indexOf(this.ancestryString);
+		const index = array.map(p => p.id).indexOf(this.id);
 		if (index != -1) {
 			let siblingIndex = index.increment(increment, array.length)
 			if (index == 0) {
@@ -273,7 +276,7 @@ export default class Ancestry {
 
 	thingAt(back: number): Thing | null {			// 1 == last
 		const relationship = this.relationshipAt(back);
-		if (this.ancestryString != k.empty && relationship) {
+		if (this.id != k.empty && relationship) {
 			return relationship.child;
 		}
 		return h.root;	// N.B., h.root is wrong immediately after switching db type
@@ -444,10 +447,10 @@ export default class Ancestry {
 	visibleProgeny_height(visited: Array<string> = []): number {
 		const thing = this.thing;
 		if (!!thing) {
-			if (!visited.includes(this.ancestryString) && this.showsChildRelationships) {
+			if (!visited.includes(this.id) && this.showsChildRelationships) {
 				let height = 0;
 				for (const childAncestry of this.childAncestries) {
-					height += childAncestry.visibleProgeny_height([...visited, this.ancestryString]);
+					height += childAncestry.visibleProgeny_height([...visited, this.id]);
 				}
 				return Math.max(height, k.row_height);
 			}
@@ -459,12 +462,12 @@ export default class Ancestry {
 	visibleProgeny_width(special: boolean = k.show_titleAtTop, visited: Array<number> = []): number {
 		const thing = this.thing;
 		if (!!thing) {
-			const ancestryHash = this.ancestryHash;
+			const idHashed = this.idHashed;
 			let width = special ? 0 : (thing.titleWidth + 6);
-			if (!visited.includes(ancestryHash) && this.showsChildRelationships) {
+			if (!visited.includes(idHashed) && this.showsChildRelationships) {
 				let progenyWidth = 0;
 				for (const childAncestry of this.childAncestries) {
-					const childProgenyWidth = childAncestry.visibleProgeny_width(false, [...visited, ancestryHash]);
+					const childProgenyWidth = childAncestry.visibleProgeny_width(false, [...visited, idHashed]);
 					if (progenyWidth < childProgenyWidth) {
 						progenyWidth = childProgenyWidth;
 					}
@@ -587,7 +590,7 @@ export default class Ancestry {
 	}
 
 	async order_normalizeRecursive_remoteMaybe(remoteWrite: boolean, visited: Array<number> = []) {
-		const hid = this.ancestryHash;
+		const hid = this.idHashed;
 		const childAncestries = this.childAncestries;
 		if (!visited.includes(hid) && childAncestries && childAncestries.length > 1) {
 			await u.ancestries_orders_normalize_remoteMaybe(childAncestries, remoteWrite);
@@ -602,7 +605,7 @@ export default class Ancestry {
 		if (!this.isRoot) {
 			s_ancestries_expanded.update((array) => {
 				if (array) {
-					const index = array.map(s => s.ancestryString).indexOf(this.ancestryString);
+					const index = array.map(s => s.id).indexOf(this.id);
 					const found = index != -1;
 					if (expand && !found) {		// only add if not already added
 						array.push(this);

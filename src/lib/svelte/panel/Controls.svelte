@@ -1,5 +1,5 @@
 <script>
-	import { g, k, s, u, Point, ZIndex, signals, svgPaths, IDButton, ButtonState, IDPersistant, persistLocal, GraphRelations } from '../../ts/common/GlobalImports';
+	import { g, k, s, u, Point, ZIndex, signals, svgPaths, IDButton, ElementType, ElementState, IDPersistant, persistLocal, GraphRelations } from '../../ts/common/GlobalImports';
 	import { s_show_details, s_id_popupView, s_resize_count, s_layout_asClusters, s_graph_relations } from '../../ts/state/ReactiveState';
 	import Button from '../mouse buttons/Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -26,7 +26,8 @@
 
 	function button_closure_forID(mouseState, id) {
 		if (mouseState.isHover) {
-			s.buttonState_forName(id).update(mouseState.isOut, 'black', 'pointer');
+			const elementState = s.elementState_forType(id, null, ElementType.control);
+			elementState.update(mouseState.isOut, 'black', 'pointer');
 		} else if (mouseState.isUp) {
 			switch (id) {
 				case IDButton.help: g.showHelp(); break;

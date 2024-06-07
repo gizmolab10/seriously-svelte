@@ -103,25 +103,25 @@ class PersistLocal {
 	}
 
 	key_ancestries(key: string): Array<Ancestry> {
-		const ancestryStrings = this.key_read(key);
-		const length = ancestryStrings?.length ?? 0;
-		if (this.ignoreAncestries || !ancestryStrings || length == 0) {
+		const ids = this.key_read(key);
+		const length = ids?.length ?? 0;
+		if (this.ignoreAncestries || !ids || length == 0) {
 			return [];
 		}
 		let needsRewrite = false;
 		const ancestries: Array<Ancestry> = [];
-		const reversed = ancestryStrings.reverse();
-		reversed.forEach((ancestryString: string, index: number) => {
-			const id = Ancestry.idPredicate_for(ancestryString);
-			const ancestry = h.ancestry_remember_createUnique(ancestryString, id);
+		const reversed = ids.reverse();
+		reversed.forEach((id: string, index: number) => {
+			const predicateID = Ancestry.idPredicate_for(id);
+			const ancestry = h.ancestry_remember_createUnique(id, predicateID);
 			if (!ancestry) {
-				ancestryStrings.slice(1, length - index);
+				ids.slice(1, length - index);
 				needsRewrite = true;
 			} else {
 				for (const id of ancestry.ids) {
 					const relationship = h.relationship_forHID(id.hash());
 					if (!relationship) {
-						ancestryStrings.slice(1, length - index);
+						ids.slice(1, length - index);
 						needsRewrite = true;
 						break;
 					}
@@ -132,7 +132,7 @@ class PersistLocal {
 			}
 		});
 		if (needsRewrite) {
-			this.key_write(key, ancestryStrings);
+			this.key_write(key, ids);
 		}
 		return ancestries;
 	}
@@ -169,11 +169,11 @@ class PersistLocal {
 			s_ancestries_expanded.set(this.dbKey_ancestries(IDPersistant.expanded));
 	
 			s_ancestries_grabbed.subscribe((ancestries: Array<Ancestry>) => {
-				this.dbKey_write(IDPersistant.grabbed, !ancestries ? null : ancestries.map(p => p.ancestryString));
+				this.dbKey_write(IDPersistant.grabbed, !ancestries ? null : ancestries.map(p => p.id));
 			});
 	
 			s_ancestries_expanded.subscribe((ancestries: Array<Ancestry>) => {
-				this.dbKey_write(IDPersistant.expanded, !ancestries ? null : ancestries.map(p => p.ancestryString));
+				this.dbKey_write(IDPersistant.expanded, !ancestries ? null : ancestries.map(p => p.id));
 			});
 		}
 	}
@@ -182,9 +182,9 @@ class PersistLocal {
 		h.rootAncestry_setup();
 		let ancestryToFocus = h.rootAncestry;
 		if (!this.ignoreAncestries) {
-			const focusAncestryString = this.dbKey_read(IDPersistant.focus);
-			if (focusAncestryString) {
-				const focusAncestry = h.ancestry_remember_createUnique(focusAncestryString);
+			const focusid = this.dbKey_read(IDPersistant.focus);
+			if (focusid) {
+				const focusAncestry = h.ancestry_remember_createUnique(focusid);
 				if (focusAncestry) {
 					ancestryToFocus = focusAncestry;
 				}
@@ -199,7 +199,7 @@ class PersistLocal {
 		}
 		ancestryToFocus.becomeFocus();
 		s_ancestry_focus.subscribe((ancestry: Ancestry) => {
-			this.dbKey_write(IDPersistant.focus, !ancestry ? null : ancestry.ancestryString);
+			this.dbKey_write(IDPersistant.focus, !ancestry ? null : ancestry.id);
 		});
 	}
 

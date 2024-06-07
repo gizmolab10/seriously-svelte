@@ -568,18 +568,18 @@ export class Hierarchy {
 	ancestry_forget(ancestry: Ancestry | null) {
 		if (!!ancestry) {
 			let dict = this.ancestry_byKind_andHash[ancestry.idPredicate] ?? {};
-			delete dict[ancestry.ancestryHash];
+			delete dict[ancestry.idHashed];
 			this.ancestry_byKind_andHash[ancestry.idPredicate] = dict;
 		}
 	}
 
-	ancestry_remember_createUnique(ancestryString: string = k.empty, idPredicate: string = Predicate.idContains): Ancestry | null {
-		const ancestryHash = ancestryString.hash();
+	ancestry_remember_createUnique(id: string = k.empty, idPredicate: string = Predicate.idContains): Ancestry | null {
+		const idHashed = id.hash();
 		let dict = this.ancestry_byKind_andHash[idPredicate] ?? {};
-		let ancestry = dict[ancestryHash];
+		let ancestry = dict[idHashed];
 		if (!ancestry) {
-			ancestry = new Ancestry(ancestryString, idPredicate);
-			dict[ancestryHash] = ancestry;
+			ancestry = new Ancestry(id, idPredicate);
+			dict[idHashed] = ancestry;
 			this.ancestry_byKind_andHash[idPredicate] = dict;
 		}
 		return ancestry;
@@ -913,7 +913,7 @@ export class Hierarchy {
 		const type = wrapper.type;
 		const array = this.wrappers_byType_andHID;
 		const dict = array[type] ?? {};
-		const hash = wrapper.ancestry.ancestryHash;
+		const hash = wrapper.ancestry.idHashed;
 		dict[hash] = wrapper;
 		array[type] = dict;
 	}
