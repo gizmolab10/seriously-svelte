@@ -42,7 +42,7 @@ export default class Constants {
 	allow_GraphEditing = true;
 	allow_TitleEditing = true;
 	allow_HorizontalScrolling = true;
-	queryString: URLSearchParams;
+	queryStrings: URLSearchParams;
 	cluster_offsetY: number;
 	build_number: string;
 	row_height: number;
@@ -55,7 +55,7 @@ export default class Constants {
 		</svg>`;
 
 	queryStrings_apply() {
-        const deny = this.queryString.get('deny');
+        const deny = this.queryStrings.get('deny');
         if (deny) {
             const flags = deny.split(',');
             for (const option of flags) {
@@ -72,7 +72,7 @@ export default class Constants {
 		this.build_number = builds.latest;
 		this.row_height = this.dot_size + 7;
 		this.cluster_offsetY = 4 - this.dot_size;
-		this.queryString = new URLSearchParams(window.location.search);
+		this.queryStrings = new URLSearchParams(window.location.search);
 	}
 
 }

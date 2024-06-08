@@ -33,7 +33,7 @@ class PersistLocal {
 	ancestriesRestored = false;
 
 	queryStrings_apply() {
-		const queryStrings = k.queryString;
+		const queryStrings = k.queryStrings;
 		const shownNames = queryStrings.get('show')?.split(k.comma) ?? [];
 		const hiddenNames = queryStrings.get('hide')?.split(k.comma) ?? [];
         const eraseOptions = queryStrings.get('erase')?.split(k.comma) ?? [];
@@ -91,7 +91,7 @@ class PersistLocal {
 	}
 
 	key_apply(key: string, matching: string, apply: (flag: boolean) => void, persist: boolean = true) {
-		const queryStrings = k.queryString;
+		const queryStrings = k.queryStrings;
         const value = queryStrings.get(key);
 		if (value) {
 			const flag = (value === matching);
@@ -139,7 +139,7 @@ class PersistLocal {
 
 	restore() {
 		// localStorage.clear();
-		// const isLocal = u.isServerLocal;
+		// const isLocal = g.isServerLocal;
 		// this.key_write(IDPersistant.row_height, 20);
 		// this.key_write(IDPersistant.dot_size, 13);
 

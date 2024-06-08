@@ -1,9 +1,10 @@
 <script>
-	import { k, u, Size, Thing, Point, ZIndex, svgPaths, Direction, dbDispatch } from "../../ts/common/GlobalImports";
+	import { k, u, Size, Thing, Point, ZIndex, svgPaths, ElementState, Direction, dbDispatch } from "../../ts/common/GlobalImports";
 	import { s_ancestries_grabbed } from '../../ts/state/ReactiveState';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import Button from './Button.svelte';
 	export let mouse_closure = (mouseState) => {};
+	export let elementState = ElementState.none;
 	export let hover_closure = null;
 	export let extraPath = null;
 	export let name = k.empty;
@@ -42,6 +43,7 @@
 </script>
 
 <Button
+	elementState={elementState}
 	border_thickness=0
 	closure={closure}
 	center={center}

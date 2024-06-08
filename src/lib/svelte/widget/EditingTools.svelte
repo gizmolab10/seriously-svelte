@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { k, s, u, Rect, Size, Point, MouseState, IDTool, ZIndex, onMount, signals,  svgPaths, Direction } from '../../ts/common/GlobalImports';
-	import {dbDispatch, SvelteWrapper, ElementType, ElementState, AlterationState, AlterationType, transparentize } from '../../ts/common/GlobalImports';
+	import { k, s, u, Rect, Size, Point, MouseState, IDTool, ZIndex, onMount, signals, svgPaths, Direction, dbDispatch } from '../../ts/common/GlobalImports';
+	import { ElementType, ElementState, AlterationState, AlterationType, SvelteWrapper, transparentize } from '../../ts/common/GlobalImports';
 	import { s_ancestry_editingTools, s_layout_asClusters } from '../../ts/state/ReactiveState';
 	import { s_altering, s_graphRect, s_show_details } from '../../ts/state/ReactiveState';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
@@ -10,14 +10,14 @@
 	import { h } from '../../ts/db/DBDispatch';
 	import Trash from '../kit/Trash.svelte';
 	export let offset = Point.zero;
-	const editingToolsDiameter = k.editingTools_diameter;
-	const half_circleViewBox = `0 0 ${editingToolsDiameter} ${editingToolsDiameter}`;
-	const needsMultipleVisibleParents = [IDTool.next, IDTool.delete_parent];
-	const parentAlteringIDs = [IDTool.add_parent, IDTool.delete_parent];
-	const editingToolsRadius = editingToolsDiameter / 2;
 	const toolDiameter = k.dot_size * 1.4;
-	let isHovering_byID: { [id: string]: boolean } = {}
-	let centers_byID: { [id: string]: Point } = {}
+	const editingToolsRadius = k.editingTools_diameter / 2;
+	const parentAlteringIDs = [IDTool.add_parent, IDTool.delete_parent];
+	const needsMultipleVisibleParents = [IDTool.next, IDTool.delete_parent];
+	const half_circleViewBox = `0 0 ${k.editingTools_diameter} ${k.editingTools_diameter}`;
+	let elementStates_byID: { [id: string]: ElementState } = {};
+	let isHovering_byID: { [id: string]: boolean } = {};
+	let centers_byID: { [id: string]: Point } = {};
 	let parentSensitiveColor = k.empty;
 	let countOfVisibleParents = 0;
 	let confirmingDelete = false;
@@ -29,13 +29,11 @@
 	let left = 64;
 	let ancestry;
 	let thing;
-
 	function getC(id: string) { return centers_byID[id] ?? Point.zero; }
 	function setC(id: string, center: Point) { return centers_byID[id] = center; }
 	function alteration_forID(id: string) { return (id == IDTool.add_parent) ? AlterationType.adding : AlterationType.deleting; }
 
 	onMount(() => { 
-		setup();
 		setTimeout(() => { update_maybeRedraw(); }, 20);	
 		const handler = signals.handle_relayoutWidgets(2, (ancestry) => {	// priority of 2 assures layout is finished
 			update();
@@ -53,9 +51,15 @@
 		((countOfVisibleParents < 2) && needsMultipleVisibleParents.includes(id));
 	}
 
-	function setup() {
-		ancestry = $s_ancestry_editingTools;
-		thing = ancestry?.thing;
+	function setupElementStates() {
+		if (!!ancestry) {
+			const ids = [IDTool.delete_cancel, IDTool.delete_confirm, IDTool.more];
+			for (const id of ids) {
+				const elementState = s.elementState_for(ancestry, ElementType.tool, id);
+				elementState.set_forHovering(color, 'pointer');
+				elementStates_byID[id] = elementState;
+			}		
+		}
 	}
 
 	function update_maybeRedraw(force: boolean = false) {
@@ -81,6 +85,7 @@
 				const hasOneParent = (thing?.parents.length ?? 0) == 1;
 				countOfVisibleParents = ancestry.visibleParentAncestries(0).length;
 				parentSensitiveColor = (hasOneParent || ancestry.isFocus) ? k.color_disabled : color ;
+				setupElementStates();
 				update_maybeRedraw(true);
 			}
 		}
@@ -105,9 +110,9 @@
 	async function handle_mouse_data(mouseState: MouseState, id: string) {
 		if (mouseState.isHover) {
 			const isOut = mouseState.isOut;
-			const elementState = s.elementState_forType(id, ancestry, ElementType.tool)
+			const elementState = elementStates_byID[id];
+			elementState.setIsOut(isOut);
 			isHovering_byID[id] = !isOut;
-			elementState.update(isOut, color, 'pointer');
 		} else {
 			switch (id) {
 				case IDTool.delete_cancel: confirmingDelete = false; break;
@@ -125,7 +130,7 @@
 		const rect = ancestry?.titleRect;
 		if (rect && $s_ancestry_editingTools && rect.size.width != 0) {
 			const offsetX = 8.5 + titleWidth - ($s_show_details ? k.width_details : 0) - ($s_layout_asClusters ? 38 : 0);
-			const offsetY = (k.show_titleAtTop ? -45 : 0) + ($s_layout_asClusters ? 3 : 0) - editingToolsDiameter - 5.8;
+			const offsetY = (k.show_titleAtTop ? -45 : 0) + ($s_layout_asClusters ? 3 : 0) - k.editingTools_diameter - 5.8;
 			const center = rect.centerLeft.offsetBy(offset).offsetByXY(offsetX, offsetY);
 			const offsetReveal = Point.square(-5.5);
 			const x = center.x;
@@ -185,12 +190,12 @@
 							left:{getC(IDTool.confirmation).x}px;
 							top:{getC(IDTool.confirmation).y}px;
 							z-index:{ZIndex.tool_buttons};'
-						height={editingToolsDiameter}
-						width={editingToolsDiameter}
+						height={k.editingTools_diameter}
+						width={k.editingTools_diameter}
 						viewBox={half_circleViewBox}
 						stroke=transparent
 						fill={color}>
-						<path d={svgPaths.half_circle(editingToolsDiameter, Direction.up)}/>
+						<path d={svgPaths.half_circle(k.editingTools_diameter, Direction.up)}/>
 					</svg>
 				{/if}
 				{#if isHovering_byID[IDTool.delete_cancel]}
@@ -198,19 +203,20 @@
 							left:{getC(IDTool.confirmation).x}px;
 							top:{getC(IDTool.confirmation).y}px;
 							z-index:{ZIndex.tool_buttons};'
-						height={editingToolsDiameter}
+						height={k.editingTools_diameter}
 						viewBox={half_circleViewBox}
-						width={editingToolsDiameter}
+						width={k.editingTools_diameter}
 						fill={color}>
-						<path d={svgPaths.half_circle(editingToolsDiameter, Direction.down)}/>
+						<path d={svgPaths.half_circle(k.editingTools_diameter, Direction.down)}/>
 					</svg>
 				{/if}
 				<Button
 					closure={(mouseState) => handle_mouse_data(mouseState, IDTool.delete_confirm)}
 					color={isHovering_byID[IDTool.delete_confirm] ? k.color_background : color}
+					elementState={elementStates_byID[IDTool.delete_confirm]}
 					center={getC(IDTool.delete_confirm)}
-					height={editingToolsDiameter / 2}
-					width={editingToolsDiameter}
+					height={k.editingTools_diameter / 2}
+					width={k.editingTools_diameter}
 					zindex={ZIndex.frontmost}
 					name='delete'>
 					<div style='
@@ -221,11 +227,12 @@
 					</div>
 				</Button>
 				<Button
-					closure={(mouseState) => handle_mouse_data(mouseState, IDTool.delete_cancel)}
+					closure={(mouseState) => handle_mouse_data(mouseState, IDTool.delete_cancel, )}
 					color={isHovering_byID[IDTool.delete_cancel] ? k.color_background : color}
+					elementState={elementStates_byID[IDTool.delete_cancel]}
 					center={getC(IDTool.delete_cancel)}
-					height={editingToolsDiameter / 2}
-					width={editingToolsDiameter}
+					height={k.editingTools_diameter / 2}
+					width={k.editingTools_diameter}
 					zindex={ZIndex.frontmost}
 					name='cancel'>
 					<div style='
@@ -239,7 +246,7 @@
 					style='
 						left: {getC(IDTool.editingTools).x - editingToolsRadius}px;
 						top: {getC(IDTool.editingTools).y + 0.5}px;
-						width: {editingToolsDiameter + 1}px;
+						width: {k.editingTools_diameter + 1}px;
 						z-index: {ZIndex.frontmost};
 						background-color: {color};
 						position: absolute;
@@ -249,6 +256,7 @@
 				<Button
 					closure={(mouseState) => handle_mouse_data(mouseState, IDTool.more)}
 					color={isHovering_byID[IDTool.more] ? k.color_background : color}
+					elementState={elementStates_byID[IDTool.more]}
 					height={k.default_buttonSize}
 					zindex={ZIndex.tool_buttons}
 					center={getC(IDTool.more)}

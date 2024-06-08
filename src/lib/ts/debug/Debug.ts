@@ -26,7 +26,7 @@ export class Debug {
 	get lines(): boolean { return this.hasOption(DebugFlag.lines); }
 
 	queryStrings_apply() {
-		const queryStrings = k.queryString;
+		const queryStrings = k.queryStrings;
 		const debug = queryStrings.get('debug');
 		if (debug) {
 			const flags = debug.split(',');

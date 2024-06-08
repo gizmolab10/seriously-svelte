@@ -1,4 +1,4 @@
-import { k, ElementType } from '../common/GlobalImports';
+import { k, IDTool, Ancestry, ElementType } from '../common/GlobalImports';
 import Identifiable from "../data/Identifiable";
 
 // data about html elements that has to persist 
@@ -8,34 +8,30 @@ import Identifiable from "../data/Identifiable";
 // without losing their appearance
 
 export default class ElementState {
-	fill = 'transparent';
+	hoverCursor = k.cursor_default;
 	identifiable!: Identifiable;
-	color = k.color_defaultText;
-	cursor = k.cursor_default;
-	type!: ElementType;
+	hoverColor = 'transparent';
+	type = ElementType.tool;
+	auxiliary = k.empty;
+	isOut = true;
 
-	constructor(color: string, fill: string, cursor: string) {
-		this.fill = fill;
-		this.cursor = cursor;
-		this.color = color;
+	constructor(identifiable: Identifiable, type: ElementType, auxiliary: IDTool) {
+		this.identifiable = identifiable;
+		this.auxiliary = auxiliary;
+		this.type = type;
 	}
 
-	update(isOut: boolean, color: string, cursor: string) {
-		this.fill = isOut ? k.color_background : color;
-		this.color = isOut ? color : k.color_background;
-		this.cursor = isOut ? k.cursor_default : cursor;
+	set_forHovering(hoverColor: string, hoverCursor: string) {
+		this.hoverCursor = hoverCursor;
+		this.hoverColor = hoverColor;
 	}
 
-	cursor_forType(type: ElementType) {
-
-	}
-
-	color_forType(type: ElementType) {
-
-	}
-
-	fill_forType(type: ElementType) {
-
-	}
+	get stroke(): string { return this.isOut ? this.hoverColor : k.color_background; }
+	get cursor(): string { return this.isOut ? k.cursor_default : this.hoverCursor; }
+	get ancestry(): Ancestry | null { return this.identifiable as Ancestry ?? null; }
+	get fill(): string { return this.isOut ? k.color_background : this.hoverColor; }
+	setIsOut(isOut: boolean) { this.isOut = isOut; }
+	get border(): string { return k.empty; }
+	static none() { return {}; }
 
 }

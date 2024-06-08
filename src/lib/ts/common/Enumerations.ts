@@ -119,4 +119,5 @@ export enum IDTool {
 	create    		= 'create',
 	next			= 'next',
 	more			= 'more',
+	none			= 'none',
 }

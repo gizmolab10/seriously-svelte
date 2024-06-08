@@ -20,7 +20,7 @@ export class DebugReact {
 	log_maybe(kind: ReactKind, message: string) { if (this.hasKind(kind)) { console.log(kind + ' ' + message); }}
 
 	queryStrings_apply() {
-		const queryStrings = k.queryString;
+		const queryStrings = k.queryStrings;
 		const debug = queryStrings.get('react');
 		if (debug) {
 			const kinds = debug.split(',');

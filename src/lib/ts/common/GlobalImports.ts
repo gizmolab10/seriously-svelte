@@ -20,10 +20,10 @@ import { builds } from './Builds';
 import { u } from './Utilities';
 import { k } from './Constants';
 
-import ElementState from '../state/ElementState';
 import AlterationState from '../state/AlterationState';
 import ClusterLayout from '../geometry/ClusterLayout';
 import ChildMapRect from '../geometry/ChildMapRect';
+import ElementState from '../state/ElementState';
 import TreeLayout from '../geometry/TreeLayout';
 import Relationship from '../data/Relationship';
 import TitleState from '../state/TitleState';
@@ -47,9 +47,9 @@ export {
 	RingState, TitleState, AlterationState,
 	muuri, interact, createPopper, transparentize,
 	get, onMount, onDestroy, setContext, getContext,
+	signals, MouseState, ElementState, SeriouslyRange,
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Grabs, dbDispatch, Ancestry, Hierarchy, persistLocal,
-	MouseState, signals, ElementState, SeriouslyRange,
 	ZIndex, PredicateKind, GraphRelations, CreationOptions,
 	Angle, Quadrant, TreeLayout, ChildMapRect, ClusterLayout,
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactKind,

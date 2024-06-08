@@ -41,7 +41,7 @@ export default class DBFirebase implements DBInterface {
 	reportError(error: any) { console.log(error); }
 
 	queryStrings_apply() {
-		const queryStrings = k.queryString;
+		const queryStrings = k.queryStrings;
 		this.baseID = queryStrings.get('name') ?? queryStrings.get('dbid') ?? 'Public';
 	}
 
@@ -482,7 +482,7 @@ export default class DBFirebase implements DBInterface {
 	async recordLoginIP() {
 		await this.getUserIPAddress().then((ipAddress) => {
 			if (!!ipAddress && ipAddress != '69.181.235.85') {
-				const queryStrings = k.queryString.toString() ?? 'empty';
+				const queryStrings = k.queryStrings.toString() ?? 'empty';
 				const logRef = collection(this.firestore, 'access_logs');
 				const item = {
 					queries: queryStrings,

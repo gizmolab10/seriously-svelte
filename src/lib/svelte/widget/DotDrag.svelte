@@ -1,7 +1,7 @@
 <script>
 	import { s_thing_changed, s_layout_asClusters, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/ReactiveState';
+	import { k, s, u, Rect, Size, Point, Thing, debug, ZIndex, IDTool, onMount } from '../../ts/common/GlobalImports';
 	import { signals, svgPaths, Direction, ElementType, MouseState, dbDispatch } from '../../ts/common/GlobalImports';
-	import { k, s, u, Rect, Size, Point, Thing, debug, ZIndex, onMount } from '../../ts/common/GlobalImports';
 	import { createPopper, SvelteWrapper, AlterationType } from '../../ts/common/GlobalImports';
 	import Button from '../mouse buttons/Button.svelte';
 	import Tooltip from '../kit/Tooltip.svelte';
@@ -12,7 +12,7 @@
     export let ancestry;
 	const radius = k.dot_size;
 	const diameter = radius * 2;
-	const elementState = s.elementState_forType(name, ancestry, ElementType.drag);
+	const elementState = s.elementState_for(ancestry, ElementType.drag, IDTool.none);
 	let tinyDotsColor = k.color_background;
 	let relatedColor = k.color_background;
 	let strokeColor = k.color_background;
@@ -41,7 +41,7 @@
 			thing = ancestry.thing;
 		}
 		updateSVGPaths();
-		updateColorsForHover(false);
+		updateColorsForHover(true);
 		popper = createPopper(button, tooltip, { placement: 'bottom' });
         const handleAltering = signals.handle_altering((state) => {
 			const applyFlag = $s_ancestry_editingTools && !!ancestry && ancestry.things_canAlter_asParentOf_toolsAncestry;
@@ -56,7 +56,7 @@
 
 	$: {
 		if (thing?.id == $s_thing_changed.split(k.genericSeparator)[0]) {
-			updateColorsForHover(false);
+			updateColorsForHover(true);
 			rebuilds += 1;
 		}
 	}
@@ -91,9 +91,10 @@
 		}
 	}
 
-	function updateColorsForHover(isHovering) {
+	function updateColorsForHover(isOut) {
 		const cursor = !ancestry.isGrabbed && ancestry.hasChildRelationships ? 'pointer' : k.cursor_default;
-		elementState.update(!isHovering, thing.color, cursor);
+		elementState.set_forHovering(thing.color, cursor);
+		elementState.setIsOut(isOut);
 		redraws += 1;
 	}
 
@@ -108,7 +109,7 @@
 
 	function closure(mouseState) {
 		if (mouseState.isHover) {
-			updateColorsForHover(!mouseState.isOut);
+			updateColorsForHover(mouseState.isOut);
 		} else if (mouseState.isUp) {
 			ancestry?.handle_singleClick_onDragDot(mouseState.event.shiftKey);
 		}
@@ -126,7 +127,9 @@
 		height={size}
 		center={center}
 		closure={closure}
-		border_thickness=0>
+		border_thickness=0
+		dynamic_background={false}
+		elementState={elementState}>
 		{#key redraws}
 			<div id={'inner-div-for-' + name}
 				style='
@@ -142,24 +145,24 @@
 					height={size}
 					svg_path={dragDotPath}
 					fill={elementState.fill}
-					stroke={elementState.color}
+					stroke={elementState.stroke}
 				/>
 				{#if tinyDotsPath}
 					<SVGD3 name='svg-dot-inside'
 						width={size}
 						height={size}
-						fill={elementState.color}
-						stroke={elementState.color}
 						svg_path={tinyDotsPath}
+						fill={elementState.stroke}
+						stroke={elementState.stroke}
 					/>
 				{/if}
 				{#if isRelatedPath}
 					<SVGD3 name='svg-dot-related'
 						width={size}
 						height={size}
-						fill={k.color_background}
 						svg_path={isRelatedPath}
-						stroke={$s_layout_asClusters ? thing.color : elementState.color}
+						fill={k.color_background}
+						stroke={$s_layout_asClusters ? thing.color : elementState.stroke}
 					/>
 				{/if}
 			</div>

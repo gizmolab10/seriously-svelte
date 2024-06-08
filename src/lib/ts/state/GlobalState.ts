@@ -7,6 +7,11 @@ class GlobalState {
 
 	open_tabFor(url: string) { window.open(url, 'help-webseriously')?.focus(); }
 
+	showHelp() {
+		const url = this.isServerLocal ? k.local_help_url : k.remote_help_url;
+		this.open_tabFor(url);
+	}
+
 	get windowSize(): Size {
 		const ratio = get(s_scale_factor);
 		return new Size(window.innerWidth / ratio, window.innerHeight / ratio);
@@ -35,11 +40,6 @@ class GlobalState {
 			return true;
 		}
 		return false;
-	}
-
-	showHelp() {
-		const url = this.isServerLocal ? k.local_help_url : k.remote_help_url;
-		this.open_tabFor(url);
 	}
 
 	setup() {

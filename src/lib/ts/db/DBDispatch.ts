@@ -19,7 +19,7 @@ export default class DBDispatch {
 	eraseDB = false;
 
 	queryStrings_apply() {
-		const queryStrings = k.queryString;
+		const queryStrings = k.queryStrings;
 		const type = queryStrings.get('db') ?? persistLocal.key_read(IDPersistant.db) ?? DBType.firebase;
 		this.db_changeTypeTo_for(type);
 		this.db.queryStrings_apply();

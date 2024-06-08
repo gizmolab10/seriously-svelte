@@ -1,10 +1,8 @@
-import { k, RingState, ElementType, ElementState } from '../common/GlobalImports';
+import { k, IDTool, RingState, MouseState, ElementType, ElementState } from '../common/GlobalImports';
 import Identifiable from "../data/Identifiable";
 
-type MouseState = {clicks: number, hit: boolean};
-type RingState_byName = {[name: string]: RingState};
-type MouseState_byName = {[name: string]: MouseState};		// defined above
-
+export type RingState_byName = { [name: string]: RingState };
+export type MouseState_byName = { [name: string]: MouseState };
 
 class State {
 
@@ -27,6 +25,22 @@ class State {
 	mouseState_byName: MouseState_byName = {};
 	elementState_byName: {[name: string]: ElementState} = {};
 
+	elementState_forName(name: string): ElementState { return this.elementState_byName[name]; }
+
+	nameFrom(identifiable: Identifiable, type: ElementType, tool: IDTool): string {
+		return `${type}-${tool}-${identifiable.id}`;
+	}
+
+	elementState_for(identifiable: Identifiable, type: ElementType, tool: IDTool): ElementState {
+		const name = this.nameFrom(identifiable, type, tool);
+		let elementState = this.elementState_forName(name);
+		if (!elementState) {
+			elementState = new ElementState(identifiable, type, tool);
+			this.elementState_byName[name] = elementState;
+		}
+		return elementState;
+	}
+
 	ringState_forName(name: string): RingState {
 		let state = this.ringState_byName[name];
 		if (!state) {
@@ -43,27 +57,6 @@ class State {
 			this.mouseState_byName[name] = state;
 		}
 		return state;
-	}
-
-	elementState_forName(name: string): ElementState {
-		let elementState = this.elementState_byName[name];
-		if (!elementState) {
-			elementState = new ElementState(k.color_defaultText, 'transparent', k.cursor_default);
-			this.elementState_byName[name] = elementState;
-		}
-		return elementState;
-	}
-
-	elementState_forAncestry(name: string, identifiable: Identifiable): ElementState {
-		let elementState = this.elementState_forName(name);
-		elementState.identifiable = identifiable;
-		return elementState;
-	}
-
-	elementState_forType(name: string, identifiable: Identifiable, type: ElementType): ElementState {
-		let elementState = this.elementState_forAncestry(name, identifiable);
-		elementState.type = type;
-		return elementState;
 	}
 
 }
