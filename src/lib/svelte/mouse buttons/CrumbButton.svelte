@@ -70,7 +70,7 @@
 				}
 				const cursor = !ancestry.isGrabbed && ancestry.hasChildRelationships ? 'pointer' : k.cursor_default;
 				elementState.set_forHovering(thing.color, cursor);
-				elementState.setIsOut(mouseState.isOut);
+				elementState.isOut = mouseState.isOut;
 				updateStyle();
 				rebuilds += 1;
 			} else if (mouseState.isUp) {

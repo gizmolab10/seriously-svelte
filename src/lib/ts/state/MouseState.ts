@@ -1,6 +1,6 @@
 export default class MouseState {
-	element: HTMLElement;
-	event: Event | null;
+	element: HTMLElement | null;	// null means mouse button (not really a button)
+	event: Event | null;			// null means mouse movement from global state
 	isDouble: boolean;
 	isHover: boolean;
 	isLong: boolean;
@@ -8,10 +8,13 @@ export default class MouseState {
 	isOut: boolean;
 	isUp: boolean;
 
-	// encapsulate relevant event properties
-	// that svelte components pay attention to
+	//////////////////////////////////////////////////
+	//	encapsulate relevant event properties		//
+	//	that buttons and widgets pay attention to	//
+	//	isOut is also reflected in ElementState		//
+	//////////////////////////////////////////////////
 
-	constructor(event: Event | null, element: HTMLElement, isHover: boolean, isOut: boolean, isDown: boolean, isUp: boolean, isDouble: boolean, isLong: boolean) {
+	constructor(event: Event | null, element: HTMLElement | null, isHover: boolean, isOut: boolean, isDown: boolean, isUp: boolean, isDouble: boolean, isLong: boolean) {
 		this.isDouble = isDouble;
 		this.element = element;
 		this.isHover = isHover;
@@ -22,6 +25,7 @@ export default class MouseState {
 		this.isUp = isUp;
 	}
 
+	static empty() { return new MouseState(null, null, false, false, false, true, false, false); }
 	static up(event: Event | null, element: HTMLElement) { return new MouseState(event, element, false, false, false, true, false, false); }
 	static down(event: Event | null, element: HTMLElement) { return new MouseState(event, element, false, false, true, false, false, false); }
 	static long(event: Event | null, element: HTMLElement) { return new MouseState(event, element, false, false, false, false, false, true); }

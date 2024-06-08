@@ -11,10 +11,10 @@
 	export let center = Point.zero;
 	export let zindex = ZIndex.panel;
 	export let cursor_closure = () => {};
-	const ringState = s.ringState_forName(name);
 	const outer_radius = radius + ring_width;
 	const diameter = outer_radius * 2;
 	const borderStyle = '1px solid';
+	const ringState = s.ringState_forName(name);
 	const ringOrigin = center.distanceFrom(Point.square(outer_radius));
 	const viewBox = `${-ring_width}, ${-ring_width}, ${diameter}, ${diameter}`;
 	const svg_ringPath = svgPaths.ring(Point.square(radius), outer_radius, ring_width);
@@ -132,7 +132,7 @@
 			closure={closure}
 			detect_longClick={false}
 			cursor={ringState.cursor}
-			hover_closure={determine_isHovering}>
+			detectHit_closure={determine_isHovering}>
 			<svg
 				viewBox={viewBox}
 				class= 'svg-ring-button'

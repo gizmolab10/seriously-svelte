@@ -109,10 +109,10 @@
 
 	async function handle_mouse_data(mouseState: MouseState, id: string) {
 		if (mouseState.isHover) {
-			const isOut = mouseState.isOut;
 			const elementState = elementStates_byID[id];
-			elementState.setIsOut(isOut);
+			const isOut = mouseState.isOut;
 			isHovering_byID[id] = !isOut;
+			elementState.isOut = isOut;
 		} else {
 			switch (id) {
 				case IDTool.delete_cancel: confirmingDelete = false; break;

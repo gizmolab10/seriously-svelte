@@ -6,7 +6,7 @@
 	export let width = k.default_buttonSize;
 	export let closure = (mouseState) => {};
 	export let elementState: ElementState;
-	export let dynamic_background = true;
+	export let colors_are_dynamic = true;
 	export let position = 'absolute';
 	export let border_thickness = 1;
 	export let zindex = ZIndex.dots;
@@ -47,13 +47,9 @@
 	}
 
 	function update_fromState() {
-		if (!elementState) {
-			console.log('bad state of affairs');
-		} else {
+		if (colors_are_dynamic) {
 			color = elementState.stroke;
-			if (dynamic_background) {
-				background_color = elementState.fill;
-			}
+			background_color = elementState.fill;
 		}
 	}
 	

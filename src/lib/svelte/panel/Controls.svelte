@@ -17,7 +17,7 @@
 	onMount(() => {
 		const ids = [IDButton.details, IDButton.relations, IDButton.layout, IDButton.smaller, IDButton.bigger, IDButton.builds, IDButton.help];
 		for (const id of ids) {
-			const elementState = s.elementState_for(new Identifiable(id), ElementType.controls, id);
+			const elementState = s.elementState_for(new Identifiable(id), ElementType.control, id);
 			elementState.set_forHovering('black', 'pointer');
 			elementStates_byID[id] = elementState;
 		}
@@ -38,7 +38,7 @@
 
 	function button_closure_forID(mouseState, id) {
 		if (mouseState.isHover) {
-			elementStates_byID[id].setIsOut(mouseState.isOut);
+			elementStates_byID[id].isOut = mouseState.isOut;
 		} else if (mouseState.isUp) {
 			switch (id) {
 				case IDButton.help: g.showHelp(); break;
@@ -66,6 +66,7 @@
 			<Button name='details'
 				color='transparent'
 				border_thickness=0
+				colors_are_dynamic={false}
 				center={new Point(lefts[0], details_top)}
 				elementState={elementStates_byID[IDButton.details]}
 				closure={(mouseState) => button_closure_forID(mouseState, IDButton.details)}>

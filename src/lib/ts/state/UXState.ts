@@ -1,29 +1,27 @@
 import { k, IDTool, RingState, MouseState, ElementType, ElementState } from '../common/GlobalImports';
 import Identifiable from "../data/Identifiable";
 
-export type RingState_byName = { [name: string]: RingState };
 export type MouseState_byName = { [name: string]: MouseState };
+export type RingState_byName = { [name: string]: RingState };
 
 class State {
 
-	//////////////////////////////
-	//							//
-	//	preservation of state	//
-	//	external to transient	//
-	//	svelte components		//
-	//							//
-	//  this allows them to be	//
-	//	deleted by their own	//
-	//	event handling			//
-	//							//
-	//	all the buttons use it	//
-	//							//
-	//////////////////////////////
-
-	rebuild_count = 0;
-	ringState_byName: RingState_byName = {};
-	mouseState_byName: MouseState_byName = {};
 	elementState_byName: {[name: string]: ElementState} = {};
+	mouseState_byName: MouseState_byName = {};
+	ringState_byName: RingState_byName = {};
+	rebuild_count = 0;
+
+	//////////////////////////////////////
+	//									//
+	//	to transient svelte components	//
+	//	preservation of state external	//
+	//									//
+	//  this allows them to be deleted	//
+	//	by their own event handling		//
+	//									//
+	//	all the buttons use it			//
+	//									//
+	//////////////////////////////////////
 
 	elementState_forName(name: string): ElementState { return this.elementState_byName[name]; }
 
@@ -53,7 +51,7 @@ class State {
 	mouseState_forName(name: string): MouseState {
 		let state = this.mouseState_byName[name];
 		if (!state) {
-			state = {clicks: 0, hit: false};
+			state = MouseState.empty();
 			this.mouseState_byName[name] = state;
 		}
 		return state;

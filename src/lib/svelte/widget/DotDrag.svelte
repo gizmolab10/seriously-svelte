@@ -92,9 +92,13 @@
 	}
 
 	function updateColorsForHover(isOut) {
-		const cursor = !ancestry.isGrabbed && ancestry.hasChildRelationships ? 'pointer' : k.cursor_default;
+		const usePointer = (!ancestry.isGrabbed || s_layout_asClusters) && ancestry.hasChildRelationships ;
+		const cursor = usePointer ? 'pointer' : k.cursor_default;
+		if (isOut) {
+			console.log(cursor);
+		}
 		elementState.set_forHovering(thing.color, cursor);
-		elementState.setIsOut(isOut);
+		elementState.isOut = isOut;
 		redraws += 1;
 	}
 
@@ -115,7 +119,7 @@
 		}
 	}
 
-	// <Tooltip color={strokeColor} bind:this={tooltip}>This is a drag dot</Tooltip>
+	// <Tooltip color={elementState.stroke} bind:this={tooltip}>This is a drag dot</Tooltip>
 	// on:contextmenu={handle_context_menu}
 
 </script>
@@ -128,7 +132,7 @@
 		center={center}
 		closure={closure}
 		border_thickness=0
-		dynamic_background={false}
+		colors_are_dynamic={false}
 		elementState={elementState}>
 		{#key redraws}
 			<div id={'inner-div-for-' + name}

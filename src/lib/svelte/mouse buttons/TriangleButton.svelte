@@ -4,8 +4,8 @@
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import Button from './Button.svelte';
 	export let mouse_closure = (mouseState) => {};
+	export let hover_closure = (isHovering) => {};
 	export let elementState = ElementState.none;
-	export let hover_closure = null;
 	export let extraPath = null;
 	export let name = k.empty;
 	export let strokeColor;
