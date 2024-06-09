@@ -19,43 +19,39 @@
 
 	//////////////////////////////////////
 	//									//
-	//	  contains a MouseResponder		//
+	//	adds: border_thickness & style	//
 	//									//
-	//	adds: color, background_color,	//
-	//	style, & border_thickness		//
+	//	container owns ElementState:	//
+	//	  (stroke, fill & cursor)		//
+	//	  calls closure to update it	//
+	//									//
+	//	owns a MouseResponder: state	//
+	//	  is passed to the container	//
 	//									//
 	//////////////////////////////////////
 
 	onMount(() => { update(); })
 	$: { update(); }
 	
-	function updateStyle() {
+	function update() {
+		if (colors_are_dynamic) {
+			color = elementState.stroke;
+			background_color = elementState.fill;
+		}
 		if (style.length == 0) {
 			border = border_thickness == 0 ? 'none' : `solid ${border_thickness}px`;
 			currentStyle=`
 				color:${color};
-				cursor:pointer;
 				border:${border};
 				width:${width}px;
 				z-index:${zindex};
 				height:${height}px;
 				position:${position};
+				cursor:${elementState.cursor};
 				border-radius:${height / 2}px;
 				background-color:${background_color};
 			`.removeWhiteSpace()
 		}
-	}
-
-	function update_fromState() {
-		if (colors_are_dynamic) {
-			color = elementState.stroke;
-			background_color = elementState.fill;
-		}
-	}
-	
-	function update() {
-		update_fromState();
-		updateStyle();
 	}
 
 	function button_closure(mouseState) {

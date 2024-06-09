@@ -112,7 +112,7 @@ class PersistLocal {
 		const ancestries: Array<Ancestry> = [];
 		const reversed = ids.reverse();
 		reversed.forEach((id: string, index: number) => {
-			const predicateID = Ancestry.idPredicate_for(id);
+			const predicateID = h.idPredicate_for(id);
 			const ancestry = h.ancestry_remember_createUnique(id, predicateID);
 			if (!ancestry) {
 				ids.slice(1, length - index);

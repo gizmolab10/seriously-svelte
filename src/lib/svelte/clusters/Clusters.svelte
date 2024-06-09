@@ -50,7 +50,7 @@
 
 	function cursor_closure() {
 		if (!!clusters) {
-			clusters.style.cursor = `${ringState.cursor} !important`;
+			clusters.style.cursor = `${s.ringState.cursor} !important`;
 		}
 	}
 

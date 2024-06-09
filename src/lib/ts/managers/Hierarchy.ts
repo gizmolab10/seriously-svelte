@@ -508,7 +508,6 @@ export class Hierarchy {
 		let relationship = this.relationship_forPredicate_parent_child(idPredicate, idParent, idChild);
 		relationship?.order_setTo_remoteMaybe(order);
 		if (!relationship) {
-			// this.relationshipReversed_remember_runtimeCreate_maybe(baseID, idPredicate, idParent, idChild);
 			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, creationOptions != CreationOptions.none);
 			this.relationship_remember(relationship);
 		}
@@ -879,6 +878,12 @@ export class Hierarchy {
 
 	predicate_forKind(kind: string | null): Predicate | null { return (!kind) ? null : this.predicate_byKind[kind]; }
 	predicate_forID(idPredicate: string = idDefault): Predicate | null { return (!idPredicate) ? null : this.predicate_byHID[idPredicate.hash()]; }
+
+	idPredicate_for(id: string): string {
+		const hid = id.split(k.genericSeparator)[0].hash();			// grab first relationship's hid
+		const relationship = this.relationship_forHID(hid);			// locate corresponding relationship
+		return relationship?.idPredicate ?? '';						// grab its predicate id
+	}
 
 	predicate_remember(predicate: Predicate) {
 		this.predicate_byHID[predicate.idHashed] = predicate;

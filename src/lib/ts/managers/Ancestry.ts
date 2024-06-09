@@ -9,6 +9,7 @@ import { h } from '../db/DBDispatch';
 export default class Ancestry extends Identifiable {
 	wrappers: { [type: string]: SvelteWrapper } = {};
 	_thing: Thing | null = null;
+	isBidirectional = false;
 	idPredicate: string;
 	unsubscribe: any;
 
@@ -45,12 +46,6 @@ export default class Ancestry extends Identifiable {
 			title_unsubscribe();
 			grab_unsubscribe();
 		}
-	}
-
-	static idPredicate_for(id: string): string {
-		const hid = id.split(k.genericSeparator)[0].hash();	// grab first relationship's hid
-		const relationship = h.relationship_forHID(hid);			// locate corresponding relationship
-		return relationship?.idPredicate ?? '';						// grab its predicate id
 	}
 	
 	static readonly $_PROPERTIES_$: unique symbol;

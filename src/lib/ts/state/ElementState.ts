@@ -7,24 +7,22 @@ export default class ElementState {
 	hoverColor = 'transparent';
 	type = ElementType.tool;
 	auxiliary = k.empty;
+	name = k.empty;
 	isOut = true;
 
 	//////////////////////////////////////////////////
 	//												//
-	// data about html elements that has to persist	//
-	//		while the element using it is replaced	//
+	//	isOut state of html elements persists		//
+	//		while the element itself is replaced	//
+	//		thus preserving its colors				//
 	//												//
-	//	this allows them to cause the context		//
-	//		around them to be rebuilt				//
-	//		without losing their appearance			//
-	//												//
-	//	used by buttons and widgets, where			//
-	//		isOut is often changed when				//
-	//		MouseState.isHover is true				//
+	//	used by buttons and widgets					//
+	//		some crumbs use the normal cursor		//
 	//												//
 	//////////////////////////////////////////////////
 
-	constructor(identifiable: Identifiable, type: ElementType, auxiliary: IDTool) {
+	constructor(identifiable: Identifiable, type: ElementType, auxiliary: string) {
+		this.name = ElementState.elementName_from(identifiable, type, auxiliary);
 		this.identifiable = identifiable;
 		this.auxiliary = auxiliary;
 		this.type = type;
@@ -41,5 +39,9 @@ export default class ElementState {
 	get fill(): string { return this.isOut ? k.color_background : this.hoverColor; }
 	get border(): string { return k.empty; }
 	static none() { return {}; }
+
+	static elementName_from(identifiable: Identifiable, type: ElementType, auxiliary: string): string {
+		return `${type}-${auxiliary}-${identifiable.id}`;
+	}
 
 }

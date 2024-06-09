@@ -59,8 +59,9 @@
 			} else {						// if this element's hover shape is not its bounding rect
 				isHit = detectHit_closure();	// let container component decide
 			}
-			if (mouseState.hit != isHit) {
-				mouseState.hit = isHit;
+			if (mouseState.isHover != isHit) {
+				mouseState.isHover = isHit;
+				mouseState.isOut = !isHit;
 				closure(MouseState.hover(null, mouse_button, isHit));	// pass a null event
 			}
 		}

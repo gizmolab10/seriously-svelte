@@ -1,11 +1,11 @@
 <script>
-	import { u, Size, Point, ZIndex, svgPaths } from '../../ts/common/GlobalImports';
+	import { k, u, Size, Point, ZIndex, svgPaths } from '../../ts/common/GlobalImports';
     import { s_id_popupView } from '../../ts/state/ReactiveState';
 	import MouseResponder from './MouseResponder.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
     export let name = 'generic close';
     export let size = 20;
-	let fill = 'white';
+	let fill = k.color_background;
 	let stroke = 'black';
     const cross = svgPaths.x_cross(size, size / 6);
     const circle = svgPaths.circle_atOffset(size, size - 2);
@@ -13,8 +13,8 @@
 	function closure(mouseState) {
 		if (mouseState.isHover) {
 			const isHovering = !mouseState.isOut;
-			fill = isHovering ? 'black' : 'white';
-			stroke = isHovering ? 'white' : 'black';
+			fill = isHovering ? 'black' : k.color_background;
+			stroke = isHovering ? k.color_background : 'black';
 		} else if (mouseState.isUp) {
 			$s_id_popupView = null;
 		}
