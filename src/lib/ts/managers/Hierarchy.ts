@@ -2,7 +2,7 @@ import { k, u, get, User, Thing, Grabs, debug, MouseState, Access, IDTool, IDTra
 import { Predicate, SvelteWrapper, Relationship, CreationOptions, AlterationType, AlterationState } from '../common/GlobalImports';
 import { s_ancestries_grabbed, s_things_arrived, s_ancestry_editingTools } from '../state/ReactiveState';
 import { s_isBusy, s_altering, s_ancestry_focus, s_title_editing } from '../state/ReactiveState';
-import { idDefault } from "../data/Identifiable";
+import { idDefault } from '../data/Identifiable';
 import DBInterface from '../db/DBInterface';
 
 type Relationships_ByHID = { [hid: number]: Array<Relationship> }

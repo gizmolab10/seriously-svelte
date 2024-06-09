@@ -1,7 +1,7 @@
 import { Angle, Quadrant, IDBrowser } from './Enumerations';
 import { s_thing_fontFamily } from '../state/ReactiveState';
 import { Rect, Point } from '../geometry/Geometry';
-import Identifiable from "../data/Identifiable";
+import Identifiable from '../data/Identifiable';
 import Ancestry from '../managers/Ancestry';
 import { get } from 'svelte/store';
 import { k } from './Constants';

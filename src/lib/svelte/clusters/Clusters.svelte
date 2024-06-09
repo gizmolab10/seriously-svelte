@@ -11,11 +11,9 @@
 	//	handle keys
 	//	lines: selection & hover
 	//	edit titles (keydown terminates edit)
-	const necklace_name = 'necklace-ring';
 	const toolsOffset = new Point(40, -3);
 	const thing = $s_ancestry_focus?.thing;
 	const color = thing?.color ?? k.color_default;
-	const ringState = s.ringState_forName(necklace_name);
 	let mouse_up_count = $s_mouse_up_count;
 	let titleCenter = Point.zero;
 	let center = Point.zero;
@@ -36,7 +34,7 @@
 	$: {
 		if (mouse_up_count != $s_mouse_up_count) {
 			mouse_up_count = $s_mouse_up_count;
-			ringState.reset();
+			s.ringState.reset();
 			ring_rebuilds += 1;
 		}
 	}
@@ -78,8 +76,8 @@
 						thing={thing}
 						center={center}
 						ring_width={30}
-						name={necklace_name}
 						zindex={ZIndex.lines}
+						name={'necklace-ring'}
 						radius={$s_cluster_arc_radius}
 						cursor_closure={cursor_closure}/>
 					<EditingTools offset={toolsOffset}/>

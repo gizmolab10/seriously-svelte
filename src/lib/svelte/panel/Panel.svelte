@@ -3,7 +3,7 @@
 	import { IDButton, Hierarchy, IDPersistant, dbDispatch, debugReact, setContext, persistLocal } from '../../ts/common/GlobalImports';
 	import { s_isBusy, s_db_type, s_graphRect, s_id_popupView, s_title_editing, s_show_details } from '../../ts/state/ReactiveState';
 	import { s_things_arrived, s_ancestry_focus, s_user_graphOffset, s_layout_asClusters } from '../../ts/state/ReactiveState';
-	import MouseButton from '../mouse buttons/MouseButton.svelte';
+	import MouseResponder from '../mouse buttons/MouseResponder.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import Breadcrumbs from '../panel/Breadcrumbs.svelte';
 	import Clusters from '../clusters/Clusters.svelte';

@@ -1,5 +1,5 @@
 import { k, IDTool, Ancestry, ElementType } from '../common/GlobalImports';
-import Identifiable from "../data/Identifiable";
+import Identifiable from '../data/Identifiable';
 
 export default class ElementState {
 	hoverCursor = k.cursor_default;

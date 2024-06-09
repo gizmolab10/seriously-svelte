@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, s, u, Point, ZIndex, onMount, ElementState } from '../../ts/common/GlobalImports';
-	import MouseButton from './MouseButton.svelte';
+	import MouseResponder from './MouseResponder.svelte';
 	export let background_color = k.color_background;
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;
@@ -19,7 +19,7 @@
 
 	//////////////////////////////////////
 	//									//
-	//	  container for MouseButton		//
+	//	  contains a MouseResponder		//
 	//									//
 	//	adds: color, background_color,	//
 	//	style, & border_thickness		//
@@ -67,7 +67,7 @@
 
 </script>
 
-<MouseButton
+<MouseResponder
 	name={name}
 	width={width}
 	height={height}
@@ -76,4 +76,4 @@
 	<button class='button' id={'button-for-' + name} style={currentStyle}>
 		<slot></slot>
 	</button>
-</MouseButton>
+</MouseResponder>

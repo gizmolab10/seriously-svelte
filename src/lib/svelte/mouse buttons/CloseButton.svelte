@@ -1,7 +1,7 @@
 <script>
 	import { u, Size, Point, ZIndex, svgPaths } from '../../ts/common/GlobalImports';
     import { s_id_popupView } from '../../ts/state/ReactiveState';
-	import MouseButton from './MouseButton.svelte';
+	import MouseResponder from './MouseResponder.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
     export let name = 'generic close';
     export let size = 20;
@@ -22,7 +22,7 @@
 
 </script>
 
-<MouseButton
+<MouseResponder
 	name={name}
 	width={size}
 	height={size}
@@ -43,4 +43,4 @@
 		stroke={stroke}
 		svg_path={cross}
 	/>
-</MouseButton>
+</MouseResponder>

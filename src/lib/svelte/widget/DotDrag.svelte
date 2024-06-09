@@ -1,7 +1,7 @@
 <script>
 	import { s_thing_changed, s_layout_asClusters, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/ReactiveState';
 	import { k, s, u, Rect, Size, Point, Thing, debug, ZIndex, IDTool, onMount } from '../../ts/common/GlobalImports';
-	import { signals, svgPaths, Direction, ElementType, MouseState, dbDispatch } from '../../ts/common/GlobalImports';
+	import { signals, svgPaths, Direction, ElementType, dbDispatch } from '../../ts/common/GlobalImports';
 	import { createPopper, SvelteWrapper, AlterationType } from '../../ts/common/GlobalImports';
 	import Button from '../mouse buttons/Button.svelte';
 	import Tooltip from '../kit/Tooltip.svelte';

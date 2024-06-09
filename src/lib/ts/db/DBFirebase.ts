@@ -4,7 +4,7 @@ import { k, u, get, Thing, debug, signals, IDTrait, DebugFlag, Hierarchy } from 
 import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
 import { DBType, DatumType } from '../db/DBInterface';
-import { initializeApp } from "firebase/app";
+import { initializeApp } from 'firebase/app';
 import DBInterface from './DBInterface';
 import { h } from '../db/DBDispatch';
 

@@ -2,7 +2,7 @@
 	import { s_show_details, s_id_popupView, s_resize_count, s_layout_asClusters, s_graph_relations } from '../../ts/state/ReactiveState';
 	import { g, k, s, u, Point, ZIndex, onMount, signals, svgPaths, IDButton, IDPersistant } from '../../ts/common/GlobalImports';
 	import { ElementType, ElementState, persistLocal, GraphRelations } from '../../ts/common/GlobalImports';
-	import Identifiable from "../../ts/data/Identifiable";
+	import Identifiable from '../../ts/data/Identifiable';
 	import Button from '../mouse buttons/Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	const details_top = k.dot_size / 2;

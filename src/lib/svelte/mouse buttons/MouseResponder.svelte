@@ -15,7 +15,7 @@
 	export let cursor = 'pointer';
 	export let align_left = true;
 	export let name = 'generic';
-	const mouseState = s.mouseState_forName(name);
+	const mouseState = s.mouseState_forName(name);	// persist across destroy/recreate
 	let mouse_doubleClick_timer;
 	let mouse_longClick_timer;
 	let style = k.empty;

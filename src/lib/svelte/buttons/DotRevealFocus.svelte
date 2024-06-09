@@ -1,5 +1,5 @@
 <script>
-	import { k, Point, debug, Direction, dbDispatch } from "../../ts/common/GlobalImports";
+	import { k, Point, debug, Direction, dbDispatch } from '../../ts/common/GlobalImports';
 	import TriangleButton from '../mouse buttons/TriangleButton.svelte';
 	export let center = Point.zero;
     export let ancestry;

@@ -1,5 +1,5 @@
 export default class MouseState {
-	element: HTMLElement | null;	// null means mouse button (not really a button)
+	element: HTMLElement | null;	// null means mouse responder
 	event: Event | null;			// null means mouse movement from global state
 	isDouble: boolean;
 	isHover: boolean;

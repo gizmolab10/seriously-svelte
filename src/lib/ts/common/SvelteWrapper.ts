@@ -1,5 +1,5 @@
 import { Ancestry, SvelteComponentType } from './GlobalImports';
-import Identifiable from "../data/Identifiable";
+import Identifiable from '../data/Identifiable';
 
 // Ancestry sometimes needs to access and or alter an associated svelte component
 

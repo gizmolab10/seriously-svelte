@@ -1,5 +1,5 @@
 import { k, Thing, debug, DebugFlag, dbDispatch, Predicate } from '../common/GlobalImports';
-import { idDefault } from "./Identifiable";
+import { idDefault } from '../data/Identifiable';
 import { h } from '../db/DBDispatch';
 import Airtable from 'airtable';
 import Datum from './Datum';

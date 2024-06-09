@@ -1,4 +1,4 @@
-import { get, Thing, Ancestry } from "../common/GlobalImports";
+import { get, Thing, Ancestry } from '../common/GlobalImports';
 import { s_ancestries_grabbed } from '../state/ReactiveState';
 import { h } from '../db/DBDispatch';
 

@@ -1,6 +1,6 @@
+import { idDefault } from '../data/Identifiable';
+import Identifiable from '../data/Identifiable';
 import { DBType } from '../db/DBInterface';
-import { idDefault } from "../data/Identifiable";
-import Identifiable from "../data/Identifiable";
 
 export default class RemoteIdentifiable extends Identifiable {
 	awaitingCreation: boolean;

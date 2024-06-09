@@ -1,5 +1,5 @@
 import { dbDispatch, PredicateKind } from '../common/GlobalImports';
-import RemoteIdentifiable from "./RemoteIdentifiable";
+import RemoteIdentifiable from './RemoteIdentifiable';
 import { h } from '../../ts/db/DBDispatch';
 
 export default class Predicate extends RemoteIdentifiable {
