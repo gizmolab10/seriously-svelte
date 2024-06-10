@@ -24,11 +24,11 @@ class State {
 
 	elementState_forName(name: string): ElementState { return this.elementState_byName[name]; }
 
-	elementState_for(identifiable: Identifiable, type: ElementType, auxiliary: string): ElementState {
-		const name = ElementState.elementName_from(identifiable, type, auxiliary);
+	elementState_for(identifiable: Identifiable, type: ElementType, subtype: string): ElementState {
+		const name = ElementState.elementName_from(identifiable, type, subtype);
 		let elementState = this.elementState_forName(name);
 		if (!elementState) {
-			elementState = new ElementState(identifiable, type, auxiliary);
+			elementState = new ElementState(identifiable, type, subtype);
 			this.elementState_byName[name] = elementState;
 		}
 		return elementState;

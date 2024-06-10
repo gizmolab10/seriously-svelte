@@ -9,7 +9,6 @@ import { h } from '../db/DBDispatch';
 export default class Ancestry extends Identifiable {
 	wrappers: { [type: string]: SvelteWrapper } = {};
 	_thing: Thing | null = null;
-	isBidirectional = false;
 	idPredicate: string;
 	unsubscribe: any;
 
@@ -213,7 +212,7 @@ export default class Ancestry extends Identifiable {
 	
 	relationships_for_isChildOf(idPredicate: string, isChildOf: boolean) {
 		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
-		if (id && ![k.empty, 'k.unknown'].includes(id)) {
+		if (id && ![k.empty, k.unknown].includes(id)) {
 			return h.relationships_forPredicateThingIsChild(idPredicate, id, isChildOf);
 		}
 		return [];

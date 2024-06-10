@@ -6,7 +6,7 @@ export default class ElementState {
 	identifiable!: Identifiable;
 	hoverColor = 'transparent';
 	type = ElementType.tool;
-	auxiliary = k.empty;
+	subtype = k.empty;
 	name = k.empty;
 	isOut = true;
 
@@ -21,10 +21,10 @@ export default class ElementState {
 	//												//
 	//////////////////////////////////////////////////
 
-	constructor(identifiable: Identifiable, type: ElementType, auxiliary: string) {
-		this.name = ElementState.elementName_from(identifiable, type, auxiliary);
+	constructor(identifiable: Identifiable, type: ElementType, subtype: string) {
+		this.name = ElementState.elementName_from(identifiable, type, subtype);
 		this.identifiable = identifiable;
-		this.auxiliary = auxiliary;
+		this.subtype = subtype;
 		this.type = type;
 	}
 
@@ -40,8 +40,8 @@ export default class ElementState {
 	get border(): string { return k.empty; }
 	static none() { return {}; }
 
-	static elementName_from(identifiable: Identifiable, type: ElementType, auxiliary: string): string {
-		return `${type}-${auxiliary}-${identifiable.id}`;
+	static elementName_from(identifiable: Identifiable, type: ElementType, subtype: string): string {
+		return `${type}-${subtype}-${identifiable.id}`;
 	}
 
 }

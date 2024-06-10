@@ -8,12 +8,12 @@
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import Box from '../kit/Box.svelte';
 	export let center = Point.zero;
-	export let name = 'k.empty';
+	export let subtype = k.empty;
+	export let name = k.empty;
     export let ancestry;
 	const radius = k.dot_size;
 	const diameter = radius * 2;
-	const auxilliary = ancestry.isBidirectional ? 'bi' : 'uni';	// get from child map's predicate
-	const elementState = s.elementState_for(ancestry, ElementType.drag, auxilliary);	// survives onDestroy
+	const elementState = s.elementState_for(ancestry, ElementType.drag, subtype);	// survives onDestroy
 	let isAltering = false;
 	let isGrabbed = false;
 	let isHovering = true;
@@ -140,7 +140,7 @@
 						height={size}
 						svg_path={dragDotSVGPath}
 						fill={elementState.fill}
-						stroke={elementState.stroke}
+						stroke={thing?.color}
 					/>
 					{#if tinyDotsSVGPath}
 						<SVGD3 name={'svg-dot-inside-' + name}
@@ -157,7 +157,7 @@
 							height={size}
 							svg_path={isRelatedSVGPath}
 							fill={k.color_background}
-							stroke={$s_layout_asClusters ? thing.color : elementState.stroke}
+							stroke={thing?.color}
 						/>
 					{/if}
 				</div>

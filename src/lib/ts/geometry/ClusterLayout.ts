@@ -64,7 +64,7 @@ export default class ClusterLayout {
 				const ancestry = this.ancestries[index];
 				const childAngle = this.angle_ofChild_for(index, count, radius);
 				const childOrigin = center.offsetBy(radial.rotate_by(childAngle));
-				const map = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, ancestry, this.cluster_ancestry, childAngle);
+				const map = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, ancestry, this.cluster_ancestry, childAngle, this.predicate.kind);
 				array.push(map);
 				index += 1;
 			}

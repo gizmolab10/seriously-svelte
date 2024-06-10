@@ -8,6 +8,7 @@
 	import DotReveal from './DotReveal.svelte';
 	import DotDrag from './DotDrag.svelte';
 	export let origin = new Point(160, 5);
+	export let subtype = k.empty;
     export let angle = 0;
     export let ancestry;
 	const hasExtraAtLeft = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
@@ -183,6 +184,7 @@
 			name={dragName}
 			ancestry={ancestry}
 			center={dragCenter}
+			subtype={subtype}
 		/>
 		<TitleEditor
 			forward={forward}
