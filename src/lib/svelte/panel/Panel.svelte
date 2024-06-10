@@ -1,4 +1,4 @@
-<script>
+<script lang='ts'>
 	import { g, k, s, u, get, Rect, Size, Point, Thing, debug, ZIndex, signals, onMount, Ancestry } from '../../ts/common/GlobalImports';
 	import { IDButton, Hierarchy, IDPersistant, dbDispatch, debugReact, setContext, persistLocal } from '../../ts/common/GlobalImports';
 	import { s_isBusy, s_db_type, s_graphRect, s_id_popupView, s_title_editing, s_show_details } from '../../ts/state/ReactiveState';

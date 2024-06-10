@@ -1,4 +1,4 @@
-<script>
+<script lang='ts'>
 	import { k, u, ZIndex, dbDispatch, Hierarchy, IDPersistant, persistLocal } from '../../ts/common/GlobalImports';
 	import RadioButtons from '../buttons/RadioButtons.svelte';
 	import { s_db_type } from '../../ts/state/ReactiveState';

@@ -1,4 +1,4 @@
-<script>
+<script lang='ts'>
 	import { s_graphRect, s_db_loadTime } from '../../ts/state/ReactiveState';
 	import { k, u, ZIndex } from '../../ts/common/GlobalImports';
 	import Color from './Color.svelte';

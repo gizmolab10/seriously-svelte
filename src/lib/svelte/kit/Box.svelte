@@ -1,4 +1,4 @@
-<script>
+<script lang='ts'>
     import { Rect } from '../../ts/common/GlobalImports'
     export let half = false;
     export let color;

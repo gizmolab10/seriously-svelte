@@ -1,4 +1,4 @@
-<script>
+<script lang='ts'>
 	import { s_thing_changed, s_ancestries_grabbed } from '../../ts/state/ReactiveState';
 	import { g, k, s, u, ZIndex, onMount, signals } from '../../ts/common/GlobalImports';
 	import ColorPicker from 'svelte-awesome-color-picker';

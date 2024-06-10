@@ -1,4 +1,4 @@
-<script>
+<script lang='ts'>
 	import { k, u, Size, Point, ZIndex, svgPaths } from '../../ts/common/GlobalImports';
     import { s_id_popupView } from '../../ts/state/ReactiveState';
 	import MouseResponder from './MouseResponder.svelte';

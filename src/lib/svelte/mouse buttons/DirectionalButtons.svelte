@@ -1,4 +1,4 @@
-<script>
+<script lang='ts'>
     import { k, Point, Direction } from '../../ts/common/GlobalImports';
     import TriangleButton from './TriangleButton.svelte'
     export let display;

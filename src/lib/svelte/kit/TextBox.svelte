@@ -1,4 +1,4 @@
-<script>
+<script lang='ts'>
 	export let text = 'If you can read this, your TextBox needs its text set.';
 </script>
 

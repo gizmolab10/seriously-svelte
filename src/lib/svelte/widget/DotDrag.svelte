@@ -1,4 +1,4 @@
-<script>
+<script lang='ts'>
 	import { s_thing_changed, s_layout_asClusters, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/ReactiveState';
 	import { k, s, u, Rect, Size, Point, Thing, debug, ZIndex, IDTool, onMount } from '../../ts/common/GlobalImports';
 	import { signals, svgPaths, Direction, ElementType, dbDispatch } from '../../ts/common/GlobalImports';
@@ -8,12 +8,11 @@
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import Box from '../kit/Box.svelte';
 	export let center = Point.zero;
-	export let subtype = k.empty;
 	export let name = k.empty;
     export let ancestry;
 	const radius = k.dot_size;
 	const diameter = radius * 2;
-	const elementState = s.elementState_for(ancestry, ElementType.drag, subtype);	// survives onDestroy
+	const elementState = s.elementState_forName(name);	// survives onDestroy
 	let isAltering = false;
 	let isGrabbed = false;
 	let isHovering = true;
@@ -36,6 +35,9 @@
     onMount(() => {
 		if (!!ancestry) {
 			thing = ancestry.thing;
+		}
+		if (!elementState) {
+			console.log(ancestry.id)
 		}
 		updateSVGPaths();
 		updateColors_forHovering(false);
@@ -89,8 +91,10 @@
 	function updateColors_forHovering(isHovering) {
 		const usePointer = (!ancestry.isGrabbed || s_layout_asClusters) && ancestry.hasChildRelationships ;
 		const cursor = usePointer ? 'pointer' : k.cursor_default;
-		elementState.set_forHovering(thing.color, cursor);
-		elementState.isOut = !isHovering;
+		if (elementState) {
+			elementState.set_forHovering(thing.color, cursor);
+			elementState.isOut = !isHovering;
+		}
 		redraws += 1;
 	}
 
@@ -108,60 +112,62 @@
 </script>
 
 {#key rebuilds}
-	<MouseResponder
-		width={size}
-		height={size}
-		center={center}
-		closure={closure}
-		name={elementState.name}>
-		<button class='button'
-			id={'button-for-' + name}
-			style='
-				border:none;
-				cursor:pointer;
-				width:{size}px;
-				height:{size}px;
-				color:transparent;
-				position:absolute;
-				z-index:{ZIndex.dots};
-				background-color:transparent;'>
-			{#key redraws}
-				<div id={'inner-div-for-' + name}
-					style='
-						top:0px;
-						left:0px;
-						width:{size}px;
-						height:{size}px;
-						color:transparent;
-						position:absolute;
-						z-index:{ZIndex.dots};'>
-					<SVGD3 name={'svg-drag-' + name}
-						width={size}
-						height={size}
-						svg_path={dragDotSVGPath}
-						fill={elementState.fill}
-						stroke={thing?.color}
-					/>
-					{#if tinyDotsSVGPath}
-						<SVGD3 name={'svg-dot-inside-' + name}
+	{#if elementState}
+		<MouseResponder
+			width={size}
+			height={size}
+			center={center}
+			closure={closure}
+			name={elementState.name}>
+			<button class='button'
+				id={'button-for-' + name}
+				style='
+					border:none;
+					cursor:pointer;
+					width:{size}px;
+					height:{size}px;
+					color:transparent;
+					position:absolute;
+					z-index:{ZIndex.dots};
+					background-color:transparent;'>
+				{#key redraws}
+					<div id={'inner-div-for-' + name}
+						style='
+							top:0px;
+							left:0px;
+							width:{size}px;
+							height:{size}px;
+							color:transparent;
+							position:absolute;
+							z-index:{ZIndex.dots};'>
+						<SVGD3 name={'svg-drag-' + name}
 							width={size}
 							height={size}
-							svg_path={tinyDotsSVGPath}
-							fill={elementState.stroke}
-							stroke={elementState.stroke}
-						/>
-					{/if}
-					{#if isRelatedSVGPath}
-						<SVGD3 name={'svg-dot-related-' + name}
-							width={size}
-							height={size}
-							svg_path={isRelatedSVGPath}
-							fill={k.color_background}
+							svg_path={dragDotSVGPath}
+							fill={elementState.fill}
 							stroke={thing?.color}
 						/>
-					{/if}
-				</div>
-			{/key}
-		</button>
-	</MouseResponder>
+						{#if tinyDotsSVGPath}
+							<SVGD3 name={'svg-dot-inside-' + name}
+								width={size}
+								height={size}
+								svg_path={tinyDotsSVGPath}
+								fill={elementState.stroke}
+								stroke={elementState.stroke}
+							/>
+						{/if}
+						{#if isRelatedSVGPath}
+							<SVGD3 name={'svg-dot-related-' + name}
+								width={size}
+								height={size}
+								svg_path={isRelatedSVGPath}
+								fill={k.color_background}
+								stroke={thing?.color}
+							/>
+						{/if}
+					</div>
+				{/key}
+			</button>
+		</MouseResponder>
+	{/if}
 {/key}

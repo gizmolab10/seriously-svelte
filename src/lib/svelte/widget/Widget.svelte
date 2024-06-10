@@ -1,8 +1,8 @@
 <script lang='ts'>
+	import { k, s, u, Thing, Point, Angle, debug, ZIndex, onMount, signals, debugReact } from '../../ts/common/GlobalImports';
 	import { s_thing_changed, s_title_editing, s_ancestry_focus, s_ancestries_grabbed } from '../../ts/state/ReactiveState';
 	import { s_layout_asClusters, s_thing_fontFamily, s_ancestry_editingTools } from '../../ts/state/ReactiveState';
-	import { k, u, Thing, Point, Angle, debug, ZIndex, SvelteWrapper } from '../../ts/common/GlobalImports';
-	import { signals, onMount, debugReact, SvelteComponentType } from '../../ts/common/GlobalImports';
+	import { ElementType, ElementState, SvelteWrapper, SvelteComponentType } from '../../ts/common/GlobalImports';
 	import EditingTools from './EditingTools.svelte';
 	import TitleEditor from './TitleEditor.svelte';
 	import DotReveal from './DotReveal.svelte';
@@ -13,6 +13,7 @@
     export let ancestry;
 	const hasExtraAtLeft = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
 	const rightPadding = $s_layout_asClusters ? 0 : hasExtraAtLeft ? 22.5 : 19;
+	const dragState = s.elementState_for(ancestry, ElementType.drag, subtype);
 	const forward = angle <= Angle.quarter || angle >= Angle.threeQuarters;
 	const leftPadding = forward ? 1 : 14;
 	const priorRowHeight = k.row_height;
@@ -28,7 +29,6 @@
 	let revealName = k.empty;
 	let widgetData = k.empty;
 	let revealData = k.empty;
-	let dragName = k.empty;
 	let dragData = k.empty;
 	let isGrabbed = false;
 	let isEditing = false;
@@ -73,7 +73,6 @@
 		const title = thing?.title ?? thing?.id ?? k.unknown;
 		widgetName = `widget ${title}`;
 		revealName = `reveal ${title}`;
-		dragName = `drag ${title}`;
 		if (!ancestry || !thing) {
 			console.log('bad ancestry or thing');
 		}
@@ -181,10 +180,9 @@
 			z-index: {ZIndex.widgets};
 		'>
 		<DotDrag
-			name={dragName}
 			ancestry={ancestry}
 			center={dragCenter}
-			subtype={subtype}
+			name={dragState.name}
 		/>
 		<TitleEditor
 			forward={forward}

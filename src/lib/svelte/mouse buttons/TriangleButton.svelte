@@ -1,4 +1,4 @@
-<script>
+<script lang='ts'>
 	import { k, u, Size, Thing, Point, ZIndex, svgPaths, ElementState, Direction, dbDispatch } from '../../ts/common/GlobalImports';
 	import { s_ancestries_grabbed } from '../../ts/state/ReactiveState';
 	import SVGD3 from '../kit/SVGD3.svelte';

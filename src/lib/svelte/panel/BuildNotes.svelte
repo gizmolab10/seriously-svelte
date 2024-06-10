@@ -1,4 +1,4 @@
-<script>
+<script lang='ts'>
 	import { k, builds, onMount, ZIndex } from '../../ts/common/GlobalImports';
 	import DirectionalButtons from '../mouse buttons/DirectionalButtons.svelte'
 	import { s_id_popupView } from '../../ts/state/ReactiveState';

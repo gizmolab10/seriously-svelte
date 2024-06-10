@@ -1,4 +1,4 @@
-<script>
+<script lang='ts'>
 	import { k, u, onMount } from '../../ts/common/GlobalImports';
 	export let idSelected = null;
 	export let fitWithin = 100;

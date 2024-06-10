@@ -1,4 +1,4 @@
-<script>
+<script lang='ts'>
   import { createPopperActions } from 'svelte-popperjs';
   const [popperRef, popperContent] = createPopperActions({
     placement: 'right',

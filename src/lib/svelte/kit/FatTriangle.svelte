@@ -1,4 +1,4 @@
-<script>
+<script lang='ts'>
 	import { k, Size, Point, ZIndex, svgPaths, Direction } from '../../ts/common/GlobalImports';
 	import SVGD3 from './SVGD3.svelte';
 	export let extraColor = k.color_background;

@@ -45,8 +45,8 @@
 
 	function layout(ancestries: Array<Ancestry>, predicate: Predicate | null, points_out: boolean) {
 		const clusterLayout = new ClusterLayout(ancestry, ancestries, predicate, points_out);
-		childMapRects = u.concatenateArrays(childMapRects, clusterLayout.childMapRects(center));
-		clusterLayouts.push(clusterLayout);
+		childMapRects = u.concatenateArrays(childMapRects, clusterLayout.childMapRects(center));	// for necklace of widgets
+		clusterLayouts.push(clusterLayout);		// for lines and arcs
 	}
 
 </script>

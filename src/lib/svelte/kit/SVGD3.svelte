@@ -1,4 +1,4 @@
-<script>
+<script lang='ts'>
     import { k, Point, ZIndex, onMount, onDestroy } from '../../ts/common/GlobalImports';
     import * as d3 from 'd3';
     export let position = 'absolute';
