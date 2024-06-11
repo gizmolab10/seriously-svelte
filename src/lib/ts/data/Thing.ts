@@ -195,9 +195,7 @@ export default class Thing extends Datum {
 			for (const relationship of relationships) {
 				if (predicate.isBidirectional) {
 					const child = relationship.child;
-					if (child && child.id == this.id) {
-						console.log(`${this.title} ${relationship.id} ${predicate.id}`);
-					} else {
+					if (child && child.id != this.id) {
 						addAncestry(h.ancestry_remember_createUnique(relationship.id, predicate.id));
 					}
 				} else {

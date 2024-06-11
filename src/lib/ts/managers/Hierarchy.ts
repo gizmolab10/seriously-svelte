@@ -368,11 +368,6 @@ export class Hierarchy {
 		const dict = isChildOf ? this.relationships_byChildHID : this.relationships_byParentHID;
 		const hid = idThing.hash();
 		const matches = dict[hid] as Array<Relationship>; // filter out bad values (dunno what this does)
-		if (idPredicate == Predicate.idIsRelated && idThing == get(s_ancestry_focus)?.thing?.id) {
-			if (!isChildOf) {
-				console.log(`related ${isChildOf ? 'parents' : 'children'} of ${idThing} is ${matches.map(r => r.id)}`);
-			}
-		}
 		const array: Array<Relationship> = [];
 		if (Array.isArray(matches)) {
 			for (const relationship of matches) {
