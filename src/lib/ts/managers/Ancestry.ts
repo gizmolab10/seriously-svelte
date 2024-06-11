@@ -1,6 +1,6 @@
-import { k, u, get, Rect, Size, Thing, debug, signals, TitleState, Predicate, Relationship } from '../common/GlobalImports';
+import { k, u, get, Rect, Size, Thing, debug, signals, Predicate, TitleState, ElementType } from '../common/GlobalImports';
+import { Relationship, PredicateKind, AlterationType, SvelteWrapper, SvelteComponentType } from '../common/GlobalImports';
 import { s_ancestry_focus, s_ancestries_grabbed, s_title_editing, s_layout_asClusters } from '../state/ReactiveState';
-import { PredicateKind, AlterationType, SvelteWrapper, SvelteComponentType } from '../common/GlobalImports';
 import { s_ancestries_expanded, s_ancestry_editingTools, s_altering } from '../state/ReactiveState';
 import Identifiable from '../data/Identifiable';
 import { Writable } from 'svelte/store';
@@ -62,7 +62,6 @@ export default class Ancestry extends Identifiable {
 	get ids_hashed(): Array<number> { return this.ids.map(i => i.hash()); }
 	get relationship(): Relationship | null { return this.relationshipAt(); }
 	get idBridging(): string | null { return this.thing?.idBridging ?? null; }
-	get isHoverInverted(): boolean { return this.isGrabbed || this.isEditing; }
 	get titleRect(): Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
 	get predicate(): Predicate | null { return h.predicate_forID(this.idPredicate) }
 	get toolsGrabbed(): boolean { return this.matchesStore(s_ancestry_editingTools); }
@@ -128,8 +127,8 @@ export default class Ancestry extends Identifiable {
 		const asClusters = get(s_layout_asClusters);
 		const incorporates = this.incorporates(focus);
 		const expanded = this.isAllExpandedFrom(focus);
-		const isRelatedTo_orContains = this.isRelatedTo_orContains(focus);
-		return (incorporates && expanded) || (asClusters && isRelatedTo_orContains);
+		const isRelatedTo_orContains_itself = this.isRelatedTo_orContains_itself(focus);
+		return (incorporates && expanded) || (asClusters && isRelatedTo_orContains_itself);
 	}
 
 	get hasGrandChildren(): boolean {
@@ -194,21 +193,11 @@ export default class Ancestry extends Identifiable {
 	matchesAncestry(ancestry: Ancestry): boolean { return this.idHashed == ancestry.idHashed; }
 	includesPredicateID(idPredicate: string): boolean { return this.thing?.hasParentsFor(idPredicate) ?? false; }
 	matchesStore(store: Writable<Ancestry | null>): boolean { return get(store)?.matchesAncestry(this) ?? false; }
-	includedInStore_ofAncestries(store: Writable<Array<Ancestry>>): boolean { return this.includedInAncestries(get(store)); }
 	relationshipAt(back: number = 1): Relationship | null { return h.relationship_forHID(this.idAt(back).hash()) ?? null; }
+	includedInStore_ofAncestries(store: Writable<Array<Ancestry>>): boolean { return this.includedInAncestries(get(store)); }
 	sharesAnID(ancestry: Ancestry | null): boolean { return !ancestry ? false : this.ids.some(id => ancestry.ids.includes(id)); }
 	showsClusterFor(predicate: Predicate): boolean { return this.includesPredicateID(predicate.id) && this.hasThings(predicate); }
 	rect_ofWrapper(wrapper: SvelteWrapper | null): Rect | null { return Rect.createFromDOMRect(wrapper?.component.getBoundingClientRect()); }
-
-	isRelatedTo_orContains(ancestry: Ancestry): boolean {
-		// if ancestry.thing's parents (of all predicate kinds) include this.thing
-		const id = this.thing?.id;
-		const parents = ancestry.thing?.parents_ofAllKinds;
-		if (id && parents) {
-			return parents.filter(t => t.id == id).length > 0;
-		}
-		return false;
-	}
 	
 	relationships_for_isChildOf(idPredicate: string, isChildOf: boolean) {
 		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
@@ -216,6 +205,16 @@ export default class Ancestry extends Identifiable {
 			return h.relationships_forPredicateThingIsChild(idPredicate, id, isChildOf);
 		}
 		return [];
+	}
+
+	isRelatedTo_orContains_itself(ancestry: Ancestry): boolean {
+		// detect cycles: if ancestry.thing's parents (of all predicate kinds) include this.thing
+		const id = this.thing?.id;
+		const parents = ancestry.thing?.parents_ofAllKinds;
+		if (id && parents) {
+			return parents.filter(t => t.id == id).length > 0;
+		}
+		return false;
 	}
 
 	ancestry_isAProgenyOf(ancestry: Ancestry): boolean {
@@ -323,6 +322,14 @@ export default class Ancestry extends Identifiable {
 			return k.empty;
 		}
 		return ids.slice(-(Math.max(1, back)))[0];
+	}
+
+	isHoverInverted(type: string): boolean {
+		const shouldInvert = this.isGrabbed || this.isEditing;
+		switch (type) {
+			case ElementType.reveal: return this.isExpanded == shouldInvert;
+			default: return shouldInvert;
+		}
 	}
 
 	dotColor(isInverted: boolean): string {

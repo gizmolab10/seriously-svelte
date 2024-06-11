@@ -11,7 +11,7 @@ export default class Identifiable {
 		this.id = id;
 	}
 
-	get isHoverInverted(): boolean { return false; }
+	isHoverInverted(type: string): boolean { return false; }
 	static newID(prefix: string = 'NEW'): string { return prefix + u.removeAll('-', uuid()).slice(10, 24); } // use last, most-unique bytes of uuid
 
 	setID(id: string = idDefault) {

@@ -1,4 +1,4 @@
-import { k, IDTool, Ancestry, ElementType } from '../common/GlobalImports';
+import { k, ElementType } from '../common/GlobalImports';
 import Identifiable from '../data/Identifiable';
 
 export default class ElementState {
@@ -33,13 +33,12 @@ export default class ElementState {
 		this.hoverColor = hoverColor;
 	}
 
-	get ancestry(): Ancestry | null { return this.identifiable as Ancestry ?? null; }
-	get isHovering(): boolean { return this.isOut == this.identifiable.isHoverInverted }
+	static none() { return {}; }
+	get border(): string { return k.empty; }
 	get fill(): string { return this.isHovering ? this.hoverColor : k.color_background; }
 	get cursor(): string { return this.isHovering ? this.hoverCursor : k.cursor_default; }
 	get stroke(): string { return this.isHovering ? k.color_background : this.hoverColor; }
-	get border(): string { return k.empty; }
-	static none() { return {}; }
+	get isHovering(): boolean { return this.isOut == this.identifiable.isHoverInverted(this.type) }
 
 	static elementName_from(identifiable: Identifiable, type: ElementType, subtype: string): string {
 		return `${type}-${subtype}-${identifiable.id}`;

@@ -14,9 +14,6 @@
 	let tinyDotsOffset = size * -0.4 + 0.01;
 	let childrenCount = ancestry.childRelationships.length;
 	let insidePath = svgPaths.circle_atOffset(16, 6);
-	let insideFillColor = k.color_background;
-	let strokeColor = ancestry.thing.color;
-	let fillColor = k.color_background;
 	let revealWrapper = SvelteWrapper;
 	let revealDotPath = k.empty;
 	let hasInsidePath = false;
@@ -25,8 +22,13 @@
 	let dotReveal = null;
 	let rebuilds = 0;
 	
-	onMount(() => { setIsHovering_updateColors(false); updateScalablePaths(); });
 	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
+
+	onMount(() => {
+		elementState.set_forHovering(ancestry.thing.color, 'pointer');
+		updateScalablePaths();
+		set_isHovering(false);
+	});
 
 	$: {
 		if (dotReveal && !($s_ancestry_editingTools?.matchesAncestry(ancestry) ?? false)) {
@@ -40,32 +42,17 @@
 	}
 
 	$: {
-		if (strokeColor != ancestry.thing.color) {
-			strokeColor = ancestry.thing.color
-			updateColors();
-		}
-	}
-
-	$: {
 		if (!!$s_ancestries_grabbed || !!ancestry.thing) {
-			updateColors();
 			updateScalablePaths();
 		}
 	}
 
-	function setIsHovering_updateColors(hovering) {
+	function set_isHovering(hovering) {
 		if (isHovering != hovering) {
 			isHovering = hovering;
-			updateColors();
+			elementState.isOut = !hovering;
 			rebuilds += 1;
 		}
-	}
-
-	function updateColors() {
-		ancestry.thing.updateColorAttributes(ancestry);
-		const collapsedOrGrabbed = !ancestry.isExpanded || ancestry.isGrabbed;
-		fillColor = ancestry.dotColor(collapsedOrGrabbed != isHovering, ancestry);
-		insideFillColor = ancestry.dotColor(collapsedOrGrabbed == isHovering, ancestry);
 	}
 
 	function updateScalablePaths() {
@@ -86,22 +73,17 @@
 		}
 	}
 
-	function handle_singleClick(event) {
-		setIsHovering_updateColors(false);
-		if (ancestry.toolsGrabbed) {
-			$s_altering = null;
-			$s_ancestry_editingTools = null;
-			signals.signal_relayoutWidgets_fromFocus();
-		} else if (ancestry.hasChildRelationships || ancestry.thing.isBulkAlias) {
-			h.ancestry_rebuild_remoteMoveRight(ancestry, !ancestry.isExpanded, true, false);
-		}
-	}
-
 	function closure(mouseState) {
 		if (mouseState.isHover) {
-			setIsHovering_updateColors(!mouseState.isOut);
+			set_isHovering(!mouseState.isOut);
 		} else if (mouseState.isUp) {
-			handle_singleClick(mouseState.event);
+			if (ancestry.toolsGrabbed) {
+				$s_altering = null;
+				$s_ancestry_editingTools = null;
+				signals.signal_relayoutWidgets_fromFocus();
+			} else if (ancestry.hasChildRelationships || ancestry.thing.isBulkAlias) {
+				h.ancestry_rebuild_remoteMoveRight(ancestry, !ancestry.isExpanded, true, false);
+			}
 		}
 	}
 
@@ -133,9 +115,9 @@
 				'>
 				{#key revealDotPath}
 					<SVGD3 name='svg-reveal'
-						fill={debug.lines ? 'transparent' : fillColor}
+						fill={debug.lines ? 'transparent' : elementState.fill}
+						stroke={ancestry.thing.color}
 						svg_path={revealDotPath}
-						stroke={strokeColor}
 						height={size}
 						width={size}
 					/>
@@ -148,8 +130,8 @@
 						height:{size}px;
 						width:{size}px;'>
 						<SVGD3 name='svg-inside'
-							stroke={insideFillColor}
-							fill={insideFillColor}
+							stroke={elementState.stroke}
+							fill={elementState.stroke}
 							svg_path={insidePath}
 							height={size}
 							width={size}
@@ -165,10 +147,10 @@
 						position:absolute;'>
 						<SVGD3 name='svg-tiny-dots'
 							svg_path={svgPaths.tinyDots_circular(tinyDotsDiameter, childrenCount)}
+							stroke={elementState.stroke}
+							fill={elementState.stroke}
 							height={tinyDotsDiameter}
 							width={tinyDotsDiameter}
-							stroke={strokeColor}
-							fill={strokeColor}
 						/>
 					</div>
 				{/if}
