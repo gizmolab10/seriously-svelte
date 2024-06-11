@@ -62,6 +62,7 @@ export default class Ancestry extends Identifiable {
 	get ids_hashed(): Array<number> { return this.ids.map(i => i.hash()); }
 	get relationship(): Relationship | null { return this.relationshipAt(); }
 	get idBridging(): string | null { return this.thing?.idBridging ?? null; }
+	get isHoverInverted(): boolean { return this.isGrabbed || this.isEditing; }
 	get titleRect(): Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
 	get predicate(): Predicate | null { return h.predicate_forID(this.idPredicate) }
 	get toolsGrabbed(): boolean { return this.matchesStore(s_ancestry_editingTools); }
@@ -86,7 +87,6 @@ export default class Ancestry extends Identifiable {
 	get titles(): Array<string> { return this.ancestors?.map(t => ` \"${t ? t.title : 'null'}\"`) ?? []; }
 	get isStoppingEdit(): boolean { return get(s_title_editing)?.stopping?.matchesAncestry(this) ?? false; }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore_ofAncestries(s_ancestries_expanded); }
-	get relatedThings(): Array<Thing> { return this.thing?.things_bidirectional_for(Predicate.idIsRelated) ?? []; }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	get childRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, false); }
 	get parentRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, true); }
@@ -528,19 +528,23 @@ export default class Ancestry extends Identifiable {
 	}
 
 	handle_singleClick_onDragDot(shiftKey: boolean) {
-		s_title_editing?.set(null);
-		if (get(s_layout_asClusters)) {
-			this.becomeFocus();
+		if (this.predicate?.isBidirectional ?? false) {
+			this.thing?.oneAncestry.handle_singleClick_onDragDot(shiftKey);
 		} else {
-			if (get(s_altering)) {
-				h.ancestry_alterMaybe(this);
-			} else if (shiftKey || this.isGrabbed) {
-				this.toggleGrab();
+			s_title_editing?.set(null);
+			if (get(s_layout_asClusters)) {
+				this.becomeFocus();
 			} else {
-				this.grabOnly();
+				if (get(s_altering)) {
+					h.ancestry_alterMaybe(this);
+				} else if (shiftKey || this.isGrabbed) {
+					this.toggleGrab();
+				} else {
+					this.grabOnly();
+				}
 			}
+			signals.signal_rebuildGraph_fromFocus();
 		}
-		signals.signal_rebuildGraph_fromFocus();
 	}
 
 	grab() {

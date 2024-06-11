@@ -33,10 +33,11 @@ export default class ElementState {
 		this.hoverColor = hoverColor;
 	}
 
-	get stroke(): string { return this.isOut ? this.hoverColor : k.color_background; }
-	get cursor(): string { return this.isOut ? k.cursor_default : this.hoverCursor; }
 	get ancestry(): Ancestry | null { return this.identifiable as Ancestry ?? null; }
-	get fill(): string { return this.isOut ? k.color_background : this.hoverColor; }
+	get isHovering(): boolean { return this.isOut == this.identifiable.isHoverInverted }
+	get fill(): string { return this.isHovering ? this.hoverColor : k.color_background; }
+	get cursor(): string { return this.isHovering ? this.hoverCursor : k.cursor_default; }
+	get stroke(): string { return this.isHovering ? k.color_background : this.hoverColor; }
 	get border(): string { return k.empty; }
 	static none() { return {}; }
 

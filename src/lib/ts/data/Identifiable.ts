@@ -11,12 +11,13 @@ export default class Identifiable {
 		this.id = id;
 	}
 
+	get isHoverInverted(): boolean { return false; }
+	static newID(prefix: string = 'NEW'): string { return prefix + u.removeAll('-', uuid()).slice(10, 24); } // use last, most-unique bytes of uuid
+
 	setID(id: string = idDefault) {
 		this.idHashed = id.hash();
 		this.id = id;
 	}
-	
-	static newID(prefix: string = 'NEW'): string { return prefix + u.removeAll('-', uuid()).slice(10, 24); } // use last, most-unique bytes of uuid
 	
 }
 

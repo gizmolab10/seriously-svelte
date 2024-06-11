@@ -36,8 +36,8 @@ export default class Thing extends Datum {
 	get titleWidth():				 number { return u.getWidthOf(this.title); }
 	get isRoot():					boolean { return this.trait == IDTrait.root; }
 	get isBulkAlias():				boolean { return this.trait == IDTrait.bulk; }
-	get hasMultipleParents():		boolean { return this.parentAncestries.length > 1; }
 	get isAcrossBulk():				boolean { return this.baseID != h.db.baseID; }
+	get hasMultipleParents():		boolean { return this.parentAncestries.length > 1; }
 	get hasParents():				boolean { return this.hasParentsFor(Predicate.idContains); }
 	get isFocus():					boolean { return (get(s_ancestry_focus).thing?.id ?? k.empty) == this.id; }
 	get hasRelated():				boolean { return this.relationships_bidirectional_for(Predicate.idIsRelated).length > 0; }
@@ -79,11 +79,8 @@ export default class Thing extends Datum {
 	}
 	
 	debugLog(message: string) { this.log(DebugFlag.things, message); }
+	hasParentsFor(idPredicate: string): boolean { return this.parents_forID(idPredicate).length > 0; }
 	log(option: DebugFlag, message: string) { debug.log_maybe(option, message + k.space + this.description); }
-
-	hasParentsFor(idPredicate: string): boolean {
-		return this.parents_forID(idPredicate).length > 0;
-	}
 
 	override isInDifferentBulkThan(other: Thing): boolean {
 		return super.isInDifferentBulkThan(other) || (other.isBulkAlias && !this.isBulkAlias && this.baseID != other.title);
@@ -97,34 +94,6 @@ export default class Thing extends Datum {
 				await dbDispatch.db.thing_remember_remoteCreate(this);
 			}
 		}
-	}
-
-	relationships_grandParentsFor(idPredicate: string): Array<Relationship> {
-		const relationships = this.relationships_for_isChildOf(idPredicate, true);
-		let grandParents: Array<Relationship> = [];
-		for (const relationship of relationships) {
-			const more = relationship.parent?.relationships_for_isChildOf(idPredicate, true);
-			if (more) {
-				grandParents = u.uniquely_concatenateArrays(grandParents, more);
-			}
-		}
-		return grandParents;
-	}
-
-	things_bidirectional_for(idPredicate: string): Array<Thing> {
-		const parents = this.relationships_for_isChildOf(idPredicate, true).map(r => r.parent);
-		const children = this.relationships_for_isChildOf(idPredicate, false).map(r => r.child);
-		return u.uniquely_concatenateArrays(parents, children);
-	}
-
-	relationships_bidirectional_for(idPredicate: string): Array<Relationship> {
-		const children = this.relationships_for_isChildOf(idPredicate, true);
-		const parents = this.relationships_for_isChildOf(idPredicate, false);
-		return u.uniquely_concatenateArrays(parents, children);
-	}
-
-	relationships_for_isChildOf(idPredicate: string, isChildOf: boolean): Array<Relationship> {
-		return h.relationships_forPredicateThingIsChild(idPredicate, this.id, isChildOf);
 	}
 
 	updateColorAttributes(ancestry: Ancestry) {
@@ -172,37 +141,65 @@ export default class Thing extends Datum {
 		}
 	}
 
-	oneAncestries_for(predicate: Predicate): Array<Ancestry> {
-		if (predicate) {
-			const id = predicate.id;
-			if (predicate.isBidirectional) {
-				return this.things_bidirectional_for(id).map(t => t.oneAncestry);
-			} else {;
-				return this.uniqueParentAncestries_for(predicate);
+	relationships_grandParentsFor(idPredicate: string): Array<Relationship> {
+		const relationships = this.relationships_for_isChildOf(idPredicate, true);
+		let grandParents: Array<Relationship> = [];
+		for (const relationship of relationships) {
+			const more = relationship.parent?.relationships_for_isChildOf(idPredicate, true);
+			if (more) {
+				grandParents = u.uniquely_concatenateArrays(grandParents, more);
 			}
 		}
-		return [];
+		return grandParents;
 	}
 
-	uniqueParentAncestries_for(predicate: Predicate): Array<Ancestry> {
-		let parentAncestries: Array<Ancestry> = [];
-		const parents = this.parents_forID(predicate.id) ?? [];
-		for (const parent of parents) {
-			const moreAncestries = parent.isRoot ? [h.rootAncestry] : parent.parentAncestries_for(predicate);
-			parentAncestries = u.concatenateArrays(parentAncestries, moreAncestries);
+	relationships_bidirectional_for(idPredicate: string): Array<Relationship> {
+		const children = this.relationships_for_isChildOf(idPredicate, true);
+		const parents = this.relationships_for_isChildOf(idPredicate, false);
+		return u.uniquely_concatenateArrays(parents, children);
+	}
+
+	relationships_for_isChildOf(idPredicate: string, isChildOf: boolean): Array<Relationship> {
+		return h.relationships_forPredicateThingIsChild(idPredicate, this.id, isChildOf);
+	}
+
+	uniqueAncestries_for(predicate: Predicate): Array<Ancestry> {
+		let ancestries: Array<Ancestry> = [];
+		if (predicate.isBidirectional) {
+			ancestries = this.parentAncestries_for(predicate);
+		} else {
+			let parents = this.parents_forID(predicate.id) ?? [];
+			for (const parent of parents) {
+				const parentAncestries = parent.isRoot ? [h.rootAncestry] : parent.parentAncestries_for(predicate);
+				ancestries = u.concatenateArrays(ancestries, parentAncestries);
+			}
 		}
-		return u.strip_thingDuplicates(u.strip_falsies(parentAncestries));
+		return u.strip_thingDuplicates_from(u.strip_falsies(ancestries));
+	}
+
+	relationships_for(predicate: Predicate): Array<Relationship> {
+		let relationships: Array<Relationship> = [] 
+		if (predicate.isBidirectional) {
+			relationships = this.relationships_bidirectional_for(predicate.id);
+		} else {
+			relationships = this.relationships_for_isChildOf(predicate.id, true);
+		}
+		return relationships;
 	}
 
 	parentAncestries_for(predicate: Predicate | null, visited: Array<string> = []): Array<Ancestry> {
 		// the ancestry of each parent [of this thing]
 		let ancestries: Array<Ancestry> = [];
 		if (!this.isRoot && predicate) {
-			const isBidirectional = predicate.isBidirectional;
-			const relationships = this.relationships_for_isChildOf(predicate.id, true);
+			const relationships = this.relationships_for(predicate);
 			for (const relationship of relationships) {
-				if (isBidirectional) {
-					addAncestry(relationship.child?.oneAncestry ?? null);
+				if (predicate.isBidirectional) {
+					const child = relationship.child;
+					if (child && child.id == this.id) {
+						console.log(`${this.title} ${relationship.id} ${predicate.id}`);
+					} else {
+						addAncestry(h.ancestry_remember_createUnique(relationship.id, predicate.id));
+					}
 				} else {
 					const parent = relationship.parent;
 					if (parent && !visited.includes(parent.id)) {

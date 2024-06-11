@@ -1,8 +1,9 @@
 import { k, u, get, User, Thing, Grabs, debug, MouseState, Access, IDTool, IDTrait, signals, Ancestry } from '../common/GlobalImports';
 import { Predicate, SvelteWrapper, Relationship, CreationOptions, AlterationType, AlterationState } from '../common/GlobalImports';
-import { s_ancestries_grabbed, s_things_arrived, s_ancestry_editingTools } from '../state/ReactiveState';
+import { s_things_arrived, s_ancestries_grabbed, s_ancestry_editingTools } from '../state/ReactiveState';
 import { s_isBusy, s_altering, s_ancestry_focus, s_title_editing } from '../state/ReactiveState';
 import { idDefault } from '../data/Identifiable';
+import Identifiable from '../data/Identifiable';
 import DBInterface from '../db/DBInterface';
 
 type Relationships_ByHID = { [hid: number]: Array<Relationship> }
@@ -367,6 +368,11 @@ export class Hierarchy {
 		const dict = isChildOf ? this.relationships_byChildHID : this.relationships_byParentHID;
 		const hid = idThing.hash();
 		const matches = dict[hid] as Array<Relationship>; // filter out bad values (dunno what this does)
+		if (idPredicate == Predicate.idIsRelated && idThing == get(s_ancestry_focus)?.thing?.id) {
+			if (!isChildOf) {
+				console.log(`related ${isChildOf ? 'parents' : 'children'} of ${idThing} is ${matches.map(r => r.id)}`);
+			}
+		}
 		const array: Array<Relationship> = [];
 		if (Array.isArray(matches)) {
 			for (const relationship of matches) {
@@ -493,23 +499,24 @@ export class Hierarchy {
 			return relationship;
 		}
 		return null;
-	}
-
-	relationshipReversed_remember_runtimeCreate_maybe(baseID: string, idPredicate: string, idParent: string, idChild: string) {
-		const predicate = this.predicate_forID(idPredicate);
-		if (predicate && predicate.isBidirectional) {		// create reverse relationship because related are two directional, but not stored remotely
-			const relationship = new Relationship(baseID, `R${idChild}${idParent}`, idPredicate, idChild, idParent);
-			this.relationship_remember(relationship);
-		}
 	} 
 
 	relationship_remember_runtimeCreateUnique(baseID: string, idRelationship: string, idPredicate: string, idParent: string,
 		idChild: string, order: number, creationOptions: CreationOptions = CreationOptions.none) {
+		let reversed = this.relationship_forPredicate_parent_child(idPredicate, idChild, idParent);
 		let relationship = this.relationship_forPredicate_parent_child(idPredicate, idParent, idChild);
+		const isBidirectional = this.predicate_forID(idPredicate)?.isBidirectional ?? false;
+		const isRemotelyStored = creationOptions != CreationOptions.none;
 		relationship?.order_setTo_remoteMaybe(order);
 		if (!relationship) {
-			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, creationOptions != CreationOptions.none);
+			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, isRemotelyStored);
 			this.relationship_remember(relationship);
+		}
+		if (isBidirectional) {
+			if (!reversed) {
+				reversed = new Relationship(baseID, Identifiable.newID(), idPredicate, idChild, idParent, order, isRemotelyStored);
+				this.relationship_remember(reversed);
+			}
 		}
 		return relationship;
 	}
@@ -520,7 +527,6 @@ export class Hierarchy {
 		if (relationship) {
 			relationship.order_setTo_remoteMaybe(order, true);
 		} else {
-			this.relationshipReversed_remember_runtimeCreate_maybe(baseID, idPredicate, idParent, idChild);
 			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, creationOptions != CreationOptions.none);
 			await this.db.relationship_remember_remoteCreate(relationship);
 			this.relationship_remember(relationship);
@@ -572,7 +578,7 @@ export class Hierarchy {
 		}
 	}
 
-	ancestry_remember_createUnique(id: string = k.empty, idPredicate: string = Predicate.idContains): Ancestry | null {
+	ancestry_remember_createUnique(id: string = k.empty, idPredicate: string = Predicate.idContains): Ancestry {
 		const idHashed = id.hash();
 		let dict = this.ancestry_byKind_andHash[idPredicate] ?? {};
 		let ancestry = dict[idHashed];

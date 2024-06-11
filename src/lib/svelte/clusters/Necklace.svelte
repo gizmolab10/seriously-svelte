@@ -15,11 +15,14 @@
 	let rebuilds = 0;
 	
 	onMount(() => {
+		const thing = ancestry.thing;
 		let childAncestries = ancestry.childAncestries;
 		layout(childAncestries, Predicate.contains, true);
-		for (const predicate of h.predicates) {
-			let oneAncestries = ancestry.thing?.oneAncestries_for(predicate) ?? [];
-			layout(oneAncestries, predicate, false);
+		if (!!thing) {
+			for (const predicate of h.predicates) {
+				let ancestries = ancestry.thing?.uniqueAncestries_for(predicate) ?? [];
+				layout(ancestries, predicate, false);
+			}
 		}
 		rebuilds += 1;
 		const handleAny = signals.handle_anySignal((signal_ancestry) => {

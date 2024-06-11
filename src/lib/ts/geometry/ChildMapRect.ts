@@ -19,10 +19,7 @@ export default class ChildMapRect extends Rect {
 		this.ancestry = ancestry;
 		this.subtype = subtype;
 		if (!this.child) {
-			console.log('Geometry ChildMapRect ... has no child');
-		}
-		if (subtype.length == 0) {
-			console.log('squack')
+			console.log('geometry ChildMapRect ... has no child');
 		}
 	}
 

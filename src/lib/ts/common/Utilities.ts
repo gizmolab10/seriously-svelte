@@ -147,7 +147,7 @@ class Utilities {
 		return uniqueIdentifiables;
 	}
 
-	strip_thingDuplicates(ancestries: Array<Ancestry>) {
+	strip_thingDuplicates_from(ancestries: Array<Ancestry>) {
 		let ancestriesByHID: {[hash: number]: Ancestry} = {};
 		for (const ancestry of ancestries) {
 			const hid = ancestry.thing?.id.hash();

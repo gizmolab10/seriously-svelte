@@ -12,7 +12,7 @@
     export let ancestry;
 	const radius = k.dot_size;
 	const diameter = radius * 2;
-	const elementState = s.elementState_forName(name);	// survives onDestroy
+	const elementState = s.elementState_forName(name);		// survives onDestroy, created by widget
 	let isAltering = false;
 	let isGrabbed = false;
 	let isHovering = true;
@@ -35,9 +35,6 @@
     onMount(() => {
 		if (!!ancestry) {
 			thing = ancestry.thing;
-		}
-		if (!elementState) {
-			console.log(ancestry.id)
 		}
 		updateSVGPaths();
 		updateColors_forHovering(false);
