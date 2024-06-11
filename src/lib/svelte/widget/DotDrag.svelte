@@ -37,7 +37,7 @@
 			thing = ancestry.thing;
 		}
 		updateSVGPaths();
-		updateColors_forHovering(false);
+		updateColors_forHovering(true);
 		popper = createPopper(button, tooltip, { placement: 'bottom' });
         const handleAltering = signals.handle_altering((state) => {
 			const applyFlag = $s_ancestry_editingTools && !!ancestry && ancestry.things_canAlter_asParentOf_toolsAncestry;
@@ -51,15 +51,16 @@
 
 	$: {
 		if (thing?.id == $s_thing_changed.split(k.genericSeparator)[0]) {
-			updateColors_forHovering(false);
-			rebuilds += 1;
+			updateColors_forHovering(true);
 		}
 	}
 
 	$: {
-		const grabbed = ancestry?.isGrabbed;
+		const _ = $s_ancestries_grabbed;
+		const grabbed = ancestry.isGrabbed;
 		if (isGrabbed != grabbed) {
 			isGrabbed = grabbed;
+			updateColors_forHovering(!isHovering);
 		}
 	}
 
@@ -85,19 +86,20 @@
 		}
 	}
 
-	function updateColors_forHovering(isHovering) {
+	function updateColors_forHovering(isOut) {
+		isHovering = !isOut;
 		const usePointer = (!ancestry.isGrabbed || s_layout_asClusters) && ancestry.hasChildRelationships ;
 		const cursor = usePointer ? 'pointer' : k.cursor_default;
-		if (elementState) {
+		if (!!elementState && !!thing) {
 			elementState.set_forHovering(thing.color, cursor);
-			elementState.isOut = !isHovering;
+			elementState.isOut = isOut;
 		}
 		redraws += 1;
 	}
 
 	function closure(mouseState) {
 		if (mouseState.isHover) {
-			updateColors_forHovering(!mouseState.isOut);
+			updateColors_forHovering(mouseState.isOut);
 		} else if (mouseState.isUp) {
 			ancestry?.handle_singleClick_onDragDot(mouseState.event.shiftKey);
 		}
