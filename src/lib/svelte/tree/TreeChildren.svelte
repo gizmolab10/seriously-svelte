@@ -8,7 +8,7 @@
 	import TreeLine from './TreeLine.svelte';
 	export let origin = Point.zero;
     export let ancestry;
-	const widgetOffset = new Point(12, (k.dot_size / -15) - 11.5);
+	const widgetOffset = new Point(12, (k.dot_size / -15) - 10.5);
 	const lineOffset = new Point(-122.5, -1);
 	let childMapRects: Array<ChildMapRect> = [];
 	let priorTime = new Date().getTime();

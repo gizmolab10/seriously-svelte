@@ -507,11 +507,9 @@ export class Hierarchy {
 			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, isRemotelyStored);
 			this.relationship_remember(relationship);
 		}
-		if (isBidirectional) {
-			if (!reversed) {
-				reversed = new Relationship(baseID, Identifiable.newID(), idPredicate, idChild, idParent, order, isRemotelyStored);
-				this.relationship_remember(reversed);
-			}
+		if (isBidirectional && !reversed) {
+			reversed = new Relationship(baseID, Identifiable.newID(), idPredicate, idChild, idParent, order, isRemotelyStored);
+			this.relationship_remember(reversed);
 		}
 		return relationship;
 	}

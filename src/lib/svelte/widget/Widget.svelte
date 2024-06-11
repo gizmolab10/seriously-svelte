@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, s, u, Thing, Point, Angle, debug, ZIndex, onMount, signals, debugReact } from '../../ts/common/GlobalImports';
 	import { s_thing_changed, s_title_editing, s_ancestry_focus, s_ancestries_grabbed } from '../../ts/state/ReactiveState';
-	import { s_layout_asClusters, s_thing_fontFamily, s_ancestry_editingTools } from '../../ts/state/ReactiveState';
+	import { s_thing_fontFamily, s_layout_asClusters, s_ancestry_editingTools } from '../../ts/state/ReactiveState';
 	import { ElementType, ElementState, SvelteWrapper, SvelteComponentType } from '../../ts/common/GlobalImports';
 	import EditingTools from './EditingTools.svelte';
 	import TitleEditor from './TitleEditor.svelte';
@@ -12,6 +12,7 @@
     export let angle = 0;
     export let ancestry;
 	const hasExtraAtLeft = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
+	const revealState = s.elementState_for(ancestry, ElementType.reveal, subtype);
 	const rightPadding = $s_layout_asClusters ? 0 : hasExtraAtLeft ? 22.5 : 19;
 	const dragState = s.elementState_for(ancestry, ElementType.drag, subtype);
 	const forward = angle <= Angle.quarter || angle >= Angle.threeQuarters;
@@ -142,13 +143,14 @@
 
 	function updateLayout() {
 		const dragX = 5.5;
-		const titleWidth = thing?.titleWidth ?? 0;
 		const delta = showingBorder ? 1.5 : 2;
 		const leftForward = delta - dragX;
+		const titleWidth = thing?.titleWidth ?? 0;
 		const dotCenter = Point.square(k.dot_size / 2)
-		const x = forward ? dragX : titleWidth + delta + 15;
+		const dragOffsetY = $s_layout_asClusters ? 2 : 2.3;
+		const dragOffsetX = forward ? dragX - 2 : titleWidth + delta + 15;
 		const leftBackward = -(titleWidth + 19 + ((ancestry?.isGrabbed ?? false) ? 1 : 0));		
-		dragCenter = Point.square(k.dot_size / 2).offsetByXY(x - 2, 2.6);
+		dragCenter = Point.square(k.dot_size / 2).offsetByXY(dragOffsetX, dragOffsetY);
 		left = origin.x + delta + (forward ? leftForward : leftBackward);
 		padding = `0px ${rightPadding}px 0px  ${leftPadding}px`;
 		width = titleWidth + extraWidth();
@@ -156,8 +158,8 @@
 		radius = k.row_height / 2;
 		top = origin.y + (showingBorder ? 0 : 1);
 		if (ancestry?.showsReveal) {
-			const revealY = k.dot_size / 2 - 3.8;
-			const revealX = k.dot_size + titleWidth + (hasExtraAtLeft ? 9 : 6);
+			const revealY = k.dot_size - 4.5;
+			const revealX = k.dot_size + titleWidth + 15;
 			revealCenter = new Point(revealX, revealY);
 		}
 	}
@@ -194,6 +196,7 @@
 			<DotReveal
 				ancestry={ancestry}
 				center={revealCenter}
+				name={revealState.name}
 			/>
 		{/if}
 	</div>

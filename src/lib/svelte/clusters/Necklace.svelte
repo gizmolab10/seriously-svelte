@@ -8,7 +8,7 @@
 	import { h } from '../../ts/db/DBDispatch';
 	export let center = Point.zero;
     const ancestry = $s_ancestry_focus;
-	const childOffset = new Point(k.dot_size / -3, k.cluster_offsetY);
+	const childOffset = new Point(k.dot_size / -2, k.cluster_offsetY);
 	let color = ancestry.thing?.color ?? k.color_default;
 	let clusterLayouts: Array<ClusterLayout> = [];
 	let childMapRects: Array<ChildMapRect> = [];
