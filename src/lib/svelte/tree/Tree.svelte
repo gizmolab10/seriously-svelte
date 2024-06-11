@@ -1,9 +1,9 @@
 <script lang='ts'>
-	import { g, k, u, Rect, Size, Point, Thing, ZIndex, debug, signals, Ancestry } from '../../ts/common/GlobalImports';
+	import { g, k, s, u, Rect, Size, Point, Thing, ZIndex, debug, signals, Ancestry } from '../../ts/common/GlobalImports';
 	import { s_id_popupView, s_ancestry_editingTools, s_user_graphOffset } from '../../ts/state/ReactiveState';
 	import { IDButton, onMount, debugReact, dbDispatch, Predicate } from '../../ts/common/GlobalImports';
+	import { IDSignal, IDPersistant, ElementType, persistLocal } from '../../ts/common/GlobalImports';
 	import { s_ancestry_focus, s_graphRect, s_show_details } from '../../ts/state/ReactiveState';
-	import { IDPersistant, IDSignal, persistLocal } from '../../ts/common/GlobalImports';
 	import DotRevealFocus from '../buttons/DotRevealFocus.svelte';
 	import EditingTools from '../widget/EditingTools.svelte';
 	import TreeChildren from './TreeChildren.svelte';
@@ -11,6 +11,7 @@
 	import { h } from '../../ts/db/DBDispatch';
 	import Circle from '../kit/Circle.svelte';
 	import Box from '../kit/Box.svelte';
+	const focusState = s.elementState_for($s_ancestry_focus, ElementType.widget, k.empty);
 	let origin_ofFirstReveal = Point.zero;
 	let origin_ofChildren = Point.zero;
 	let childrenSize = Point.zero;
@@ -94,7 +95,7 @@
 				<Box rect={greenRect} color=green half={true}/>
 			{/if}
 			{#if !k.show_titleAtTop}
-				<Widget ancestry={$s_ancestry_focus} origin={origin_ofFirstReveal.offsetByXY(-23 - offsetX_ofFirstReveal, -6)}/>
+				<Widget name={focusState.name} ancestry={$s_ancestry_focus} origin={origin_ofFirstReveal.offsetByXY(-23 - offsetX_ofFirstReveal, -6)}/>
 			{:else}
 				{#if $s_ancestry_focus.isGrabbed}
 					<Circle radius=10 center={origin_ofFirstReveal.offsetByXY(-1, 1)} color={focus.color} thickness=1/>

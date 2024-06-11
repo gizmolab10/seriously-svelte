@@ -17,7 +17,6 @@
 	let revealWrapper = SvelteWrapper;
 	let revealDotPath = k.empty;
 	let hasInsidePath = false;
-	let isHovering = false;
 	let insideOffset = 0;
 	let dotReveal = null;
 	let rebuilds = 0;
@@ -48,8 +47,7 @@
 	}
 
 	function set_isHovering(hovering) {
-		if (isHovering != hovering) {
-			isHovering = hovering;
+		if (elementState.isOut == hovering) {
 			elementState.isOut = !hovering;
 			rebuilds += 1;
 		}

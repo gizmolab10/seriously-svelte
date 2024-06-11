@@ -1,4 +1,4 @@
-import { k, IDTool, MouseState, ElementType, ElementState } from '../common/GlobalImports';
+import { MouseState, ElementType, ElementState } from '../common/GlobalImports';
 import Identifiable from '../data/Identifiable';
 import RingState from '../state/RingState';
 
@@ -24,11 +24,12 @@ class State {
 
 	elementState_forName(name: string): ElementState { return this.elementState_byName[name]; }
 
-	elementState_for(identifiable: Identifiable, type: ElementType, subtype: string): ElementState {
-		const name = ElementState.elementName_from(identifiable, type, subtype);
+	elementState_for(identifiable: Identifiable | null, type: ElementType, subtype: string): ElementState {
+		const realIdentifiable = identifiable ?? new Identifiable(Identifiable.newID())
+		const name = ElementState.elementName_from(realIdentifiable, type, subtype);
 		let elementState = this.elementState_forName(name);
 		if (!elementState) {
-			elementState = new ElementState(identifiable, type, subtype);
+			elementState = new ElementState(realIdentifiable, type, subtype);
 			this.elementState_byName[name] = elementState;
 		}
 		return elementState;

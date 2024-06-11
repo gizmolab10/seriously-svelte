@@ -57,7 +57,7 @@
 {#key rebuilds}
 	<div class='necklace-widgets'>
 		{#each childMapRects as map}
-			<Widget ancestry={map.childAncestry} angle={map.childAngle} subtype={map.subtype} origin={map.childOrigin.offsetBy(childOffset)}/>
+			<Widget name={map.elementState.name} ancestry={map.childAncestry} angle={map.childAngle} subtype={map.subtype} origin={map.childOrigin.offsetBy(childOffset)}/>
 		{/each}
 	</div>
 	<div class='lines-and-arcs'>

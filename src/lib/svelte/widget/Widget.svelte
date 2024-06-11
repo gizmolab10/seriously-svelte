@@ -9,6 +9,7 @@
 	import DotDrag from './DotDrag.svelte';
 	export let origin = new Point(160, 5);
 	export let subtype = k.empty;
+    export let name = k.empty;
     export let angle = 0;
     export let ancestry;
 	const hasExtraAtLeft = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
@@ -19,6 +20,7 @@
 	const leftPadding = forward ? 1 : 14;
 	const priorRowHeight = k.row_height;
 	let widgetWrapper: SvelteWrapper;
+	let elementState!: ElementState;
 	let revealCenter = Point.zero;
 	let dragCenter = Point.zero;
 	let radius = k.dot_size / 2;
@@ -48,6 +50,7 @@
 		update_fromAncestry();
 		updateBorderStyle();
 		updateLayout();
+		elementState = s.elementState_forName(name);		// survives onDestroy, created by {tree, cluster} children
 		debugReact.log_mount(`WIDGET ${thing?.description} ${ancestry?.isGrabbed}`);
 		const handleAny = signals.handle_anySignal((kinds, id) => {
 			for (const kind of kinds) {
@@ -103,7 +106,13 @@
 
 	$: {
 		const _ = $s_title_editing + $s_ancestries_grabbed + $s_ancestry_editingTools;
-		fullUpdate();
+		updateBorder_fromState();
+	}
+
+	function updateBorder_fromState() {
+		if (!!widget) {
+			widget.style.border = elementState.border;
+		}
 	}
 
 	function fullUpdate() {
@@ -167,37 +176,39 @@
 </script>
 
 {#key rebuilds}
-	<div class='widget' id='{widgetName}'
-		bind:this={widget}
-		style='
-			{border};
-			{background};
-			top: {top}px;
-			left: {left}px;
-			width: {width}px;
-			height: {height}px;
-			position: absolute;
-			padding: {padding};
-			border-radius: {radius}px;
-			z-index: {ZIndex.widgets};
-		'>
-		<DotDrag
-			ancestry={ancestry}
-			center={dragCenter}
-			name={dragState.name}
-		/>
-		<TitleEditor
-			forward={forward}
-			ancestry={ancestry}
-			fontSize={k.thing_fontSize}px
-			fontFamily={$s_thing_fontFamily}
-		/>
-		{#if ancestry?.showsReveal}
-			<DotReveal
+	{#if elementState}
+		<div class='widget' id='{widgetName}'
+			bind:this={widget}
+			style='
+				{background};
+				top: {top}px;
+				left: {left}px;
+				width: {width}px;
+				height: {height}px;
+				position: absolute;
+				padding: {padding};
+				border-radius: {radius}px;
+				z-index: {ZIndex.widgets};
+				border: {elementState.border};
+			'>
+			<DotDrag
 				ancestry={ancestry}
-				center={revealCenter}
-				name={revealState.name}
+				center={dragCenter}
+				name={dragState.name}
 			/>
-		{/if}
-	</div>
+			<TitleEditor
+				forward={forward}
+				ancestry={ancestry}
+				fontSize={k.thing_fontSize}px
+				fontFamily={$s_thing_fontFamily}
+			/>
+			{#if ancestry?.showsReveal}
+				<DotReveal
+					ancestry={ancestry}
+					center={revealCenter}
+					name={revealState.name}
+				/>
+			{/if}
+		</div>
+	{/if}
 {/key}

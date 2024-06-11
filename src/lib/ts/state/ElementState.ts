@@ -1,4 +1,4 @@
-import { k, ElementType } from '../common/GlobalImports';
+import { k, Ancestry, ElementType } from '../common/GlobalImports';
 import Identifiable from '../data/Identifiable';
 
 export default class ElementState {
@@ -14,10 +14,10 @@ export default class ElementState {
 	//												//
 	//	isOut state of html elements persists		//
 	//		while the element itself is replaced	//
-	//		thus preserving its colors				//
+	//		thus preserving:						//
+	//			stroke, fill, cursor & border		//
 	//												//
-	//	used by buttons and widgets					//
-	//		some crumbs use the normal cursor		//
+	//		used by buttons & widgets				//
 	//												//
 	//////////////////////////////////////////////////
 
@@ -28,20 +28,30 @@ export default class ElementState {
 		this.type = type;
 	}
 
+	static none() { return {}; }
+	get ancestry(): Ancestry { return this.identifiable as Ancestry; }
+	get fill(): string { return this.isHovering ? this.hoverColor : k.color_background; }
+	get cursor(): string { return this.isHovering ? this.hoverCursor : k.cursor_default; }
+	get stroke(): string { return this.isHovering ? k.color_background : this.hoverColor; }
+	get isHovering(): boolean { return this.isOut == this.identifiable.isHoverInverted(this.type); }
+
+	static elementName_from(identifiable: Identifiable, type: ElementType, subtype: string): string {
+		return `${type}-${subtype}-${identifiable.id}`;
+	}
+
 	set_forHovering(hoverColor: string, hoverCursor: string) {
 		this.hoverCursor = hoverCursor;
 		this.hoverColor = hoverColor;
 	}
-
-	static none() { return {}; }
-	get border(): string { return k.empty; }
-	get fill(): string { return this.isHovering ? this.hoverColor : k.color_background; }
-	get cursor(): string { return this.isHovering ? this.hoverCursor : k.cursor_default; }
-	get stroke(): string { return this.isHovering ? k.color_background : this.hoverColor; }
-	get isHovering(): boolean { return this.isOut == this.identifiable.isHoverInverted(this.type) }
-
-	static elementName_from(identifiable: Identifiable, type: ElementType, subtype: string): string {
-		return `${type}-${subtype}-${identifiable.id}`;
+	
+	get border(): string {
+		if (this.ancestry.isEditing) {
+			return `dashed ${this.ancestry.thing?.color} 1px`;
+		} else if (this.ancestry.isGrabbed) {
+			return `solid ${this.ancestry.thing?.color} 1px`;
+		} else {
+			return 'none';
+		}
 	}
 
 }
