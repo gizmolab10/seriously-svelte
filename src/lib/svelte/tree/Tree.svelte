@@ -94,7 +94,7 @@
 				<Box rect={greenRect} color=green half={true}/>
 			{/if}
 			{#if !k.show_titleAtTop}
-				<Widget ancestry={$s_ancestry_focus} origin={origin_ofFirstReveal.offsetByXY(-23 - offsetX_ofFirstReveal, -9)}/>
+				<Widget ancestry={$s_ancestry_focus} origin={origin_ofFirstReveal.offsetByXY(-23 - offsetX_ofFirstReveal, -6)}/>
 			{:else}
 				{#if $s_ancestry_focus.isGrabbed}
 					<Circle radius=10 center={origin_ofFirstReveal.offsetByXY(-1, 1)} color={focus.color} thickness=1/>

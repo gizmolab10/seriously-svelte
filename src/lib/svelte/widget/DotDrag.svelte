@@ -100,6 +100,8 @@
 	function closure(mouseState) {
 		if (mouseState.isHover) {
 			updateColors_forHovering(mouseState.isOut);
+		} else if (mouseState.isLong) {
+			ancestry?.becomeFocus();
 		} else if (mouseState.isUp) {
 			ancestry?.handle_singleClick_onDragDot(mouseState.event.shiftKey);
 		}

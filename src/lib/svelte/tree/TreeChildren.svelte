@@ -8,8 +8,8 @@
 	import TreeLine from './TreeLine.svelte';
 	export let origin = Point.zero;
     export let ancestry;
-	const widgetOffset = new Point(12, (k.dot_size / -15) - 10.5);
-	const lineOffset = new Point(-122.5, -1);
+	const widgetOffset = new Point(12, (k.dot_size / -15) - 7);
+	const lineOffset = new Point(-122.5, 2.5);
 	let childMapRects: Array<ChildMapRect> = [];
 	let priorTime = new Date().getTime();
 	let center = Point.zero;
@@ -50,7 +50,7 @@
 				childMapRects = u.concatenateArrays(childMapRects, tree_layout.childMapRects);
 				sum += tree_layout.childHeight;
 			}
-			center = childrenOrigin.offsetByXY(17.9, -2.4);
+			center = childrenOrigin.offsetByXY(17.9, -1.4);
 		} else {
 			console.log(`not expanded, cannot layout ${ancestry.description}`);
 		}

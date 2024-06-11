@@ -147,8 +147,8 @@
 						position:absolute;'>
 						<SVGD3 name='svg-tiny-dots'
 							svg_path={svgPaths.tinyDots_circular(tinyDotsDiameter, childrenCount)}
-							stroke={elementState.stroke}
-							fill={elementState.stroke}
+							stroke={ancestry.thing.color}
+							fill={ancestry.thing.color}
 							height={tinyDotsDiameter}
 							width={tinyDotsDiameter}
 						/>

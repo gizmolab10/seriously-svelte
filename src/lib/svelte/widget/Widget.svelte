@@ -13,7 +13,7 @@
     export let ancestry;
 	const hasExtraAtLeft = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
 	const revealState = s.elementState_for(ancestry, ElementType.reveal, subtype);
-	const rightPadding = $s_layout_asClusters ? 0 : hasExtraAtLeft ? 22.5 : 19;
+	const rightPadding = $s_layout_asClusters ? 0 : hasExtraAtLeft ? 22.5 : 20;
 	const dragState = s.elementState_for(ancestry, ElementType.drag, subtype);
 	const forward = angle <= Angle.quarter || angle >= Angle.threeQuarters;
 	const leftPadding = forward ? 1 : 14;
@@ -158,7 +158,7 @@
 		radius = k.row_height / 2;
 		top = origin.y + (showingBorder ? 0 : 1);
 		if (ancestry?.showsReveal) {
-			const revealY = k.dot_size - 4.5;
+			const revealY = k.dot_size - 3.9;
 			const revealX = k.dot_size + titleWidth + 15;
 			revealCenter = new Point(revealX, revealY);
 		}
