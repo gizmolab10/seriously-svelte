@@ -9,6 +9,7 @@
     export let ancestry;
 	export let name = k.empty;
     export let zindex = ZIndex.dots;
+    export let hover_isReversed = false;
 	const elementState = s.elementState_forName(name);		// survives onDestroy, created by widget
 	let size = k.dot_size;
 	let tinyDotsDiameter = size * 1.8;
@@ -48,8 +49,9 @@
 	}
 
 	function set_isHovering(hovering) {
-		if (!!elementState && elementState.isOut == hovering) {
-			elementState.isOut = !hovering;
+		const corrected = hover_isReversed ? !hovering : hovering;
+		if (!!elementState && elementState.isOut == corrected) {
+			elementState.isOut = !corrected;
 			rebuilds += 1;
 		}
 	}

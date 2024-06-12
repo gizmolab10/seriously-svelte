@@ -56,10 +56,11 @@
 		if (!!ancestry) {
 			const ids = [IDTool.delete_cancel, IDTool.delete_confirm, IDTool.dismiss, IDTool.more];
 			for (const id of ids) {
+				const isDismiss = id == IDTool.dismiss;
 				const elementState = s.elementState_for(ancestry, ElementType.tool, id);
+				elementState.color_background = isDismiss ? k.color_background : 'transparent';
 				elementState.set_forHovering(color, 'pointer');
-				elementState.color_background = 'transparent';
-				elementState.hoverIgnore = true;
+				elementState.hoverIgnore = !isDismiss;
 				elementStates_byID[id] = elementState;
 			}		
 		}
@@ -293,7 +294,7 @@
 						<path d={svgPaths.ellipses(7, 1)}/>
 					</svg>
 				</Button>
-				<DotReveal name={elementStates_byID[IDTool.dismiss].name} zindex={ZIndex.tool_buttons} ancestry={$s_ancestry_editingTools} center={getC(IDTool.dismiss)}/>
+				<DotReveal name={elementStates_byID[IDTool.dismiss].name} hover_isReversed=true zindex={ZIndex.tool_buttons} ancestry={$s_ancestry_editingTools} center={getC(IDTool.dismiss)}/>
 				<TriangleButton
 					strokeColor={isDisabledFor(IDTool.next) ? k.color_disabled : parentSensitiveColor}
 					hover_closure={(isHovering) => { return fillColorsFor(IDTool.next, isHovering) }}
