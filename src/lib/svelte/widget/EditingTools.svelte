@@ -192,7 +192,7 @@
 					<svg class='delete-confirm' style='
 							left:{getC(IDTool.confirmation).x}px;
 							top:{getC(IDTool.confirmation).y}px;
-							z-index:{ZIndex.tool_buttons};'
+							z-index:{ZIndex.dots};'
 						height={k.editingTools_diameter}
 						width={k.editingTools_diameter}
 						viewBox={half_circleViewBox}
@@ -205,7 +205,7 @@
 					<svg class='delete-cancel' style='
 							left:{getC(IDTool.confirmation).x}px;
 							top:{getC(IDTool.confirmation).y}px;
-							z-index:{ZIndex.tool_buttons};'
+							z-index:{ZIndex.dots};'
 						height={k.editingTools_diameter}
 						width={k.editingTools_diameter}
 						viewBox={half_circleViewBox}
@@ -221,7 +221,7 @@
 					height={k.editingTools_diameter / 2}
 					width={k.editingTools_diameter}
 					background_color='transparent'
-					zindex={ZIndex.frontmost}
+					zindex={ZIndex.dots}
 					color='transparent'
 					border_thickness=0
 					name='delete'>
@@ -230,6 +230,7 @@
 							top: 11px;
 							left: 13px;
 							position: absolute;
+							z-index: {ZIndex.frontmost};
 							color: {isHovering_byID[IDTool.delete_confirm] ? 'white' : thing.color};'>
 							delete
 						</div>
@@ -242,7 +243,7 @@
 					center={getC(IDTool.delete_cancel)}
 					width={k.editingTools_diameter}
 					background_color='transparent'
-					zindex={ZIndex.frontmost}
+					zindex={ZIndex.dots}
 					color='transparent'
 					border_thickness=0
 					name='cancel'>
@@ -251,6 +252,7 @@
 							top: 4px;
 							left: 13px;
 							position: absolute;
+							z-index: {ZIndex.frontmost};
 							color: {isHovering_byID[IDTool.delete_cancel] ? 'white' : thing.color};'>
 							cancel
 						</div>
@@ -261,7 +263,7 @@
 						left: {getC(IDTool.editingTools).x - editingToolsRadius}px;
 						top: {getC(IDTool.editingTools).y + 0.5}px;
 						width: {k.editingTools_diameter + 1}px;
-						z-index: {ZIndex.frontmost};
+						z-index: {ZIndex.tool_buttons};
 						background-color: {color};
 						position: absolute;
 						height: 1px;'>
