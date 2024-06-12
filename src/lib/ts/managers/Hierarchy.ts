@@ -60,7 +60,7 @@ export class Hierarchy {
 	async handle_tool_clicked(idButton: string, mouseState: MouseState) {
 		const event: MouseEvent | null = mouseState.event as MouseEvent;
         const ancestry = get(s_ancestry_editingTools);
-		if (!!ancestry && !mouseState.isUp) {
+		if (!!ancestry) {
 			switch (idButton) {
 				case IDTool.more: console.log('needs more'); break;
 				case IDTool.create: await this.ancestry_edit_remoteCreateChildOf(ancestry); break;

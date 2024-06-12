@@ -24,7 +24,6 @@
 	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
 
 	onMount(() => {
-		elementState.set_forHovering(ancestry.thing.color, 'pointer');
 		updateScalablePaths();
 		set_isHovering(false);
 	});
@@ -32,6 +31,7 @@
 	$: {
 		if (dotReveal && !($s_ancestry_editingTools?.matchesAncestry(ancestry) ?? false)) {
 			revealWrapper = new SvelteWrapper(dotReveal, ancestry, SvelteComponentType.reveal);
+			elementState.set_forHovering(ancestry.thing.color, 'pointer');
 		}
 	}
 
@@ -47,7 +47,7 @@
 	}
 
 	function set_isHovering(hovering) {
-		if (elementState.isOut == hovering) {
+		if (!!elementState && elementState.isOut == hovering) {
 			elementState.isOut = !hovering;
 			rebuilds += 1;
 		}

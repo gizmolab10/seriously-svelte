@@ -2,10 +2,12 @@ import { k, Ancestry, ElementType } from '../common/GlobalImports';
 import Identifiable from '../data/Identifiable';
 
 export default class ElementState {
+	color_background = k.color_background;
 	hoverCursor = k.cursor_default;
 	identifiable!: Identifiable;
 	hoverColor = 'transparent';
 	type = ElementType.tool;
+	hoverIgnore = false;
 	subtype = k.empty;
 	name = k.empty;
 	isOut = true;
@@ -30,10 +32,10 @@ export default class ElementState {
 
 	static none() { return {}; }
 	get ancestry(): Ancestry { return this.identifiable as Ancestry; }
-	get fill(): string { return this.isHovering ? this.hoverColor : k.color_background; }
 	get cursor(): string { return this.isHovering ? this.hoverCursor : k.cursor_default; }
-	get stroke(): string { return this.isHovering ? k.color_background : this.hoverColor; }
-	get isHovering(): boolean { return this.isOut == this.identifiable.isHoverInverted(this.type); }
+	get fill(): string { return this.isHovering ? this.hoverColor : this.color_background; }
+	get stroke(): string { return this.isHovering ? this.color_background : this.hoverColor; }
+	get isHovering(): boolean { return this.hoverIgnore ? false : this.isOut == this.identifiable.isHoverInverted(this.type); }
 
 	static elementName_from(identifiable: Identifiable, type: ElementType, subtype: string): string {
 		return `${type}-${subtype}-${identifiable.id}`;

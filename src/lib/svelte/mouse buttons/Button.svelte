@@ -6,7 +6,6 @@
 	export let width = k.default_buttonSize;
 	export let closure = (mouseState) => {};
 	export let elementState: ElementState;
-	export let colors_are_dynamic = true;
 	export let position = 'absolute';
 	export let border_thickness = 1;
 	export let zindex = ZIndex.dots;
@@ -34,10 +33,8 @@
 	$: { update(); }
 	
 	function update() {
-		if (colors_are_dynamic) {
-			color = elementState.stroke;
-			background_color = elementState.fill;
-		}
+		color = elementState.stroke;
+		background_color = elementState.fill;
 		if (style.length == 0) {
 			border = border_thickness == 0 ? 'none' : `solid ${border_thickness}px`;
 			currentStyle=`

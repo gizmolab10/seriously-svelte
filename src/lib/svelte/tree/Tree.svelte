@@ -11,7 +11,8 @@
 	import { h } from '../../ts/db/DBDispatch';
 	import Circle from '../kit/Circle.svelte';
 	import Box from '../kit/Box.svelte';
-	const focusState = s.elementState_for($s_ancestry_focus, ElementType.widget, k.empty);
+	const revealState = s.elementState_for($s_ancestry_focus, ElementType.reveal, k.empty);
+	const focusState = s.elementState_for($s_ancestry_focus, ElementType.focus, k.empty);
 	let origin_ofFirstReveal = Point.zero;
 	let origin_ofChildren = Point.zero;
 	let childrenSize = Point.zero;
@@ -95,15 +96,15 @@
 				<Box rect={greenRect} color=green half={true}/>
 			{/if}
 			{#if !k.show_titleAtTop}
-				<Widget name={focusState.name} ancestry={$s_ancestry_focus} origin={origin_ofFirstReveal.offsetByXY(-23 - offsetX_ofFirstReveal, -6)}/>
+				<Widget name={focusState.name} ancestry={focusState.ancestry} origin={origin_ofFirstReveal.offsetByXY(-23 - offsetX_ofFirstReveal, -6)}/>
 			{:else}
 				{#if $s_ancestry_focus.isGrabbed}
 					<Circle radius=10 center={origin_ofFirstReveal.offsetByXY(-1, 1)} color={focus.color} thickness=1/>
 				{/if}
-				<DotRevealFocus ancestry={$s_ancestry_focus} center={origin_ofFirstReveal.offsetByXY(-3, 0)}/>
+				<DotRevealFocus name={revealState.name} ancestry={revealState.ancestry} center={origin_ofFirstReveal.offsetByXY(-3, 0)}/>
 			{/if}
 			{#if $s_ancestry_focus.isExpanded}
-				<TreeChildren ancestry={$s_ancestry_focus} origin={origin_ofChildren}/>
+				<TreeChildren ancestry={focusState.ancestry} origin={origin_ofChildren}/>
 			{/if}
 		</div>
 		<EditingTools/>

@@ -19,6 +19,7 @@
 		for (const id of ids) {
 			const elementState = s.elementState_for(new Identifiable(id), ElementType.control, id);
 			elementState.set_forHovering('black', 'pointer');
+			elementState.hoverIgnore = id == IDButton.details;
 			elementStates_byID[id] = elementState;
 		}
 	})
@@ -66,7 +67,6 @@
 			<Button name='details'
 				color='transparent'
 				border_thickness=0
-				colors_are_dynamic={false}
 				center={new Point(lefts[0], details_top)}
 				elementState={elementStates_byID[IDButton.details]}
 				closure={(mouseState) => button_closure_forID(mouseState, IDButton.details)}>

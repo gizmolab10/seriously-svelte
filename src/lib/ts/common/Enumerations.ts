@@ -70,6 +70,7 @@ export enum ElementType {
 	control	= 'control',
 	widget	= 'widget',
 	reveal	= 'reveal',
+	focus	= 'focus',
 	crumb	= 'crumb',
 	tool	= 'tool',
 	drag	= 'drag',

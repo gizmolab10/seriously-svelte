@@ -3,8 +3,9 @@
 	import { ElementType, ElementState, AlterationState, AlterationType, SvelteWrapper, transparentize } from '../../ts/common/GlobalImports';
 	import { s_ancestry_editingTools, s_layout_asClusters } from '../../ts/state/ReactiveState';
 	import { s_altering, s_graphRect, s_show_details } from '../../ts/state/ReactiveState';
-	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
+	import MouseResponder from '../mouse buttons/MouseResponder.svelte';
 	import TriangleButton from '../mouse buttons/TriangleButton.svelte';
+	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
 	import Button from '../mouse buttons/Button.svelte';
 	import DotReveal from '../widget/DotReveal.svelte';
 	import { h } from '../../ts/db/DBDispatch';
@@ -57,6 +58,8 @@
 			for (const id of ids) {
 				const elementState = s.elementState_for(ancestry, ElementType.tool, id);
 				elementState.set_forHovering(color, 'pointer');
+				elementState.color_background = 'transparent';
+				elementState.hoverIgnore = true;
 				elementStates_byID[id] = elementState;
 			}		
 		}
@@ -193,8 +196,8 @@
 						height={k.editingTools_diameter}
 						width={k.editingTools_diameter}
 						viewBox={half_circleViewBox}
-						stroke=transparent
-						fill={color}>
+						stroke='transparent'
+						fill={thing.color}>
 						<path d={svgPaths.half_circle(k.editingTools_diameter, Direction.up)}/>
 					</svg>
 				{/if}
@@ -204,43 +207,54 @@
 							top:{getC(IDTool.confirmation).y}px;
 							z-index:{ZIndex.tool_buttons};'
 						height={k.editingTools_diameter}
-						viewBox={half_circleViewBox}
 						width={k.editingTools_diameter}
-						fill={color}>
+						viewBox={half_circleViewBox}
+						stroke='transparent'
+						fill={thing.color}>
 						<path d={svgPaths.half_circle(k.editingTools_diameter, Direction.down)}/>
 					</svg>
 				{/if}
 				<Button
 					closure={(mouseState) => handle_mouse_data(mouseState, IDTool.delete_confirm)}
-					color={isHovering_byID[IDTool.delete_confirm] ? k.color_background : color}
 					elementState={elementStates_byID[IDTool.delete_confirm]}
 					center={getC(IDTool.delete_confirm)}
 					height={k.editingTools_diameter / 2}
 					width={k.editingTools_diameter}
+					background_color='transparent'
 					zindex={ZIndex.frontmost}
+					color='transparent'
+					border_thickness=0
 					name='delete'>
-					<div style='
-						top: 11px;
-						left: 13px;
-						position: absolute;'>
-						delete
-					</div>
+					{#key isHovering_byID[IDTool.delete_confirm]}
+						<div style='
+							top: 11px;
+							left: 13px;
+							position: absolute;
+							color: {isHovering_byID[IDTool.delete_confirm] ? 'white' : thing.color};'>
+							delete
+						</div>
+					{/key}
 				</Button>
 				<Button
 					closure={(mouseState) => handle_mouse_data(mouseState, IDTool.delete_cancel, )}
-					color={isHovering_byID[IDTool.delete_cancel] ? k.color_background : color}
 					elementState={elementStates_byID[IDTool.delete_cancel]}
-					center={getC(IDTool.delete_cancel)}
 					height={k.editingTools_diameter / 2}
+					center={getC(IDTool.delete_cancel)}
 					width={k.editingTools_diameter}
+					background_color='transparent'
 					zindex={ZIndex.frontmost}
+					color='transparent'
+					border_thickness=0
 					name='cancel'>
-					<div style='
-						top: 4px;
-						left: 13px;
-						position: absolute;'>
-						cancel
-					</div>
+					{#key isHovering_byID[IDTool.delete_cancel]}
+						<div style='
+							top: 4px;
+							left: 13px;
+							position: absolute;
+							color: {isHovering_byID[IDTool.delete_cancel] ? 'white' : thing.color};'>
+							cancel
+						</div>
+					{/key}
 				</Button>
 				<div class='horizontal-line'
 					style='
