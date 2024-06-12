@@ -8,6 +8,7 @@
 	export let center;
     export let ancestry;
 	export let name = k.empty;
+    export let zindex = ZIndex.dots;
 	const elementState = s.elementState_forName(name);		// survives onDestroy, created by widget
 	let size = k.dot_size;
 	let tinyDotsDiameter = size * 1.8;
@@ -110,6 +111,7 @@
 				style='
 					width: {size}px;
 					height: {size}px;
+					z-index: {zindex};
 				'>
 				{#key revealDotPath}
 					<SVGD3 name='svg-reveal'

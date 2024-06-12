@@ -54,7 +54,7 @@
 
 	function setupElementStates() {
 		if (!!ancestry) {
-			const ids = [IDTool.delete_cancel, IDTool.delete_confirm, IDTool.more];
+			const ids = [IDTool.delete_cancel, IDTool.delete_confirm, IDTool.dismiss, IDTool.more];
 			for (const id of ids) {
 				const elementState = s.elementState_for(ancestry, ElementType.tool, id);
 				elementState.set_forHovering(color, 'pointer');
@@ -132,10 +132,10 @@
 	function update(): boolean {
 		const rect = ancestry?.titleRect;
 		if (rect && $s_ancestry_editingTools && rect.size.width != 0) {
-			const offsetX = 8.5 + titleWidth - ($s_show_details ? k.width_details : 0) - ($s_layout_asClusters ? 38 : 0);
-			const offsetY = (k.show_titleAtTop ? -45 : 0) + ($s_layout_asClusters ? 3 : 0) - k.editingTools_diameter - 5.8;
+			const offsetX = 16.3 + titleWidth - ($s_show_details ? k.width_details : 0) - ($s_layout_asClusters ? 38 : 0);
+			const offsetY = (k.show_titleAtTop ? -45 : 0) + ($s_layout_asClusters ? 3 : 0) - k.editingTools_diameter - 5.6;
 			const center = rect.centerLeft.offsetBy(offset).offsetByXY(offsetX, offsetY);
-			const offsetReveal = Point.square(-5.5);
+			const offsetReveal = Point.square(1);
 			const x = center.x;
 			const y = center.y;
 			left = x - toolDiameter;
@@ -291,7 +291,7 @@
 						<path d={svgPaths.ellipses(7, 1)}/>
 					</svg>
 				</Button>
-				<DotReveal ancestry={$s_ancestry_editingTools} center={getC(IDTool.dismiss)}/>
+				<DotReveal name={elementStates_byID[IDTool.dismiss].name} zindex={ZIndex.tool_buttons} ancestry={$s_ancestry_editingTools} center={getC(IDTool.dismiss)}/>
 				<TriangleButton
 					strokeColor={isDisabledFor(IDTool.next) ? k.color_disabled : parentSensitiveColor}
 					hover_closure={(isHovering) => { return fillColorsFor(IDTool.next, isHovering) }}
@@ -337,7 +337,7 @@
 					style='
 						left: {getC(IDTool.delete).x}px;
 						top: {getC(IDTool.delete).y}px;
-						z-index: {ZIndex.tools};
+						z-index: {ZIndex.dots};
 						background: none;
 						cursor: pointer;
 						border: none;'>

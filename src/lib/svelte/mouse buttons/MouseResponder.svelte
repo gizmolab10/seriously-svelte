@@ -111,7 +111,7 @@
 	}
 
 	function setupStyle() {
-		style = `cursor: ${cursor}; width: ${width}px; height: ${height}px; position: ${position};`;
+		style = `cursor: ${cursor}; width: ${width}px; height: ${height}px; position: ${position}; z-index: ${zindex};`;
 		if (!!center) {
 			const x = center.x - width / 2;
 			const horizontal = align_left ? `left: ${x}` : `right: ${-x}`;

@@ -11,7 +11,7 @@
 	//	handle keys
 	//	lines: selection & hover
 	//	edit titles (keydown terminates edit)
-	const toolsOffset = new Point(40, -3);
+	const toolsOffset = new Point(28, 32);
 	const thing = $s_ancestry_focus?.thing;
 	const color = thing?.color ?? k.color_default;
 	let mouse_up_count = $s_mouse_up_count;
@@ -80,8 +80,8 @@
 						name={'necklace-ring'}
 						radius={$s_cluster_arc_radius}
 						cursor_closure={cursor_closure}/>
-					<EditingTools offset={toolsOffset}/>
 				{/key}
+				<EditingTools offset={toolsOffset}/>
 			{/key}
 		</div>
 	{/key}
