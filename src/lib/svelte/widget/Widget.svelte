@@ -48,7 +48,6 @@
 
 	onMount(() => {
 		update_fromAncestry();
-		updateBorderStyle();
 		updateLayout();
 		elementState = s.elementState_forName(name);		// survives onDestroy, created by {tree, cluster} children
 		debugReact.log_mount(`WIDGET ${thing?.description} ${ancestry?.isGrabbed}`);
@@ -85,7 +84,6 @@
 
 	$: {
 		if (thing?.id == $s_thing_changed.split(k.genericSeparator)[0]) {
-			updateBorderStyle();
 			rebuilds += 1;
 		}
 	}
@@ -128,20 +126,8 @@
 				showingCluster = shallShowCluster;
 				isGrabbed = shallGrab;
 				isEditing = shallEdit;
-				updateBorderStyle();
 				updateLayout();
 			}
-		}
-	}
-
-	function updateBorderStyle() {
-		background = (showingBorder || $s_layout_asClusters) ? `background-color: ${k.color_background}` : k.empty;
-		thing = ancestry?.thing;
-		if (!thing) {
-			console.log(`bad thing`);
-		} else {			
-			thing.updateColorAttributes(ancestry);
-			border = showingBorder ? `border: ${thing.grabAttributes}` : k.empty;
 		}
 	}
 

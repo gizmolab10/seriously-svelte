@@ -134,7 +134,7 @@
 		const rect = ancestry?.titleRect;
 		if (rect && $s_ancestry_editingTools && rect.size.width != 0) {
 			const offsetX = 16.3 + titleWidth - ($s_show_details ? k.width_details : 0) - ($s_layout_asClusters ? 38 : 0);
-			const offsetY = (k.show_titleAtTop ? -45 : 0) + ($s_layout_asClusters ? 3 : 0) - k.editingTools_diameter - 5.6;
+			const offsetY = (k.show_titleAtTop ? -45 : 0) + ($s_layout_asClusters ? 3 : 0) - k.editingTools_diameter - 6.5;
 			const center = rect.centerLeft.offsetBy(offset).offsetByXY(offsetX, offsetY);
 			const offsetReveal = Point.square(1);
 			const x = center.x;

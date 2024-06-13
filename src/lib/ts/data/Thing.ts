@@ -8,9 +8,6 @@ import Airtable from 'airtable';
 export default class Thing extends Datum {
 	selectionRange = new SeriouslyRange(0, 0);
 	bulkRootID: string = k.empty;
-	hoverAttributes = k.empty;
-	borderAttribute = k.empty;
-	grabAttributes = k.empty;
 	oneAncestry!: Ancestry;
 	needsBulkFetch = false;
 	isEditing = false;
@@ -94,15 +91,6 @@ export default class Thing extends Datum {
 				await dbDispatch.db.thing_remember_remoteCreate(this);
 			}
 		}
-	}
-
-	updateColorAttributes(ancestry: Ancestry) {
-		const border = (ancestry.isEditing ? 'dashed' : 'solid') + ' 1px ';
-		const hover = border + ancestry.dotColor(true);
-		const grab = border + ancestry.dotColor(false);
-		this.borderAttribute = border;
-		this.hoverAttributes = hover;
-		this.grabAttributes = grab;
 	}
 
 	crumbWidth(numberOfParents: number): number {

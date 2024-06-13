@@ -20,9 +20,6 @@ export default class Ancestry extends Identifiable {
 	constructor(ancestryString: string = k.empty, idPredicate: string = Predicate.idContains) {
 		super(ancestryString);
 		this.idPredicate = idPredicate;
-		if (h?.isAssembled) {
-			this.unsubscribe = this.subscriptions_setup();			// not needed during hierarchy assembly
-		}
 	}
 
 	destroy() {
@@ -36,15 +33,6 @@ export default class Ancestry extends Identifiable {
 	wrapper_add(wrapper: SvelteWrapper) {
 		this.wrappers[wrapper.type] = wrapper;
         h.wrapper_add(wrapper);
-	}
-
-	subscriptions_setup() {
-		const title_unsubscribe = s_title_editing.subscribe(() => { this._thing?.updateColorAttributes(this); });
-		const grab_unsubscribe = s_ancestries_grabbed.subscribe(() => { this._thing?.updateColorAttributes(this); });
-		return () => {
-			title_unsubscribe();
-			grab_unsubscribe();
-		}
 	}
 	
 	static readonly $_PROPERTIES_$: unique symbol;
