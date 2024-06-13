@@ -7,7 +7,7 @@
     export let ancestry;
 	export let rect = new Rect();
 	export let curveType: string = IDLine.up;
-	const debugOffset = new Point(140.5, -1.2);
+	const debugOffset = new Point(131, -0.5);
 	let lineWrapper: SvelteWrapper;
 	let origin = rect.origin;
 	let extent = rect.extent;
@@ -45,18 +45,18 @@
 					extent = origin.offsetBy(rect.size.asPoint).offsetByY(0.5);
 					break;
 				case IDLine.flat:
-					origin = rect.centerLeft.offsetByY(-0.5);
-					extent = rect.centerRight.offsetByXY(0.5, -0.5);
+					rect = rect.offsetByY(-1.5);
+					origin = rect.centerLeft;
+					extent = rect.centerRight;
 					linePath = svgPaths.line(origin.distanceTo(extent));
 					break;
 			}
 			const vector = origin.distanceTo(extent);
 			size = vector.abs.asSize;
 			if (curveType != IDLine.flat) {
-				const noHeight = vector.y == 0;
 				const flag = (curveType == IDLine.down) ? 0 : 1;
-				const originY = curveType == IDLine.down ? 1 : size.height;
-				const extentY = curveType == IDLine.up   ? 1 : size.height;
+				const originY = curveType == IDLine.down ? 0 : size.height;
+				const extentY = curveType == IDLine.up   ? 0 : size.height;
 				linePath = `M0 ${originY} A ${size.description} 0 0 ${flag} ${size.width} ${extentY}`;
 			}
 			const boxSize = new Size(size.width, Math.max(2, size.height));
@@ -75,7 +75,7 @@
 		viewBox={viewBox.verbose}
 		height={Math.max(2, size.height)}px
 		style='z-index: {ZIndex.lines};
-			top: {origin.y - size.height}px;
+			top: {origin.y - size.height + 0.5}px;
 			left: {origin.x + 142}px;
 			position: absolute;
 			stroke-width:1px;'>

@@ -4,7 +4,7 @@ export default class Constants {
 	dot_size = 13;
 	width_max = 200;
 	necklace_gap = 12;
-	line_stretch = 25;
+	line_stretch = 22;
 	height_banner = 35;
 	halfIncrement = 0.5;
 	thing_fontSize = 14;

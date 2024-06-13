@@ -18,9 +18,6 @@
 	let childrenSize = Point.zero;
 	let offsetX_ofFirstReveal = 0;
 	let graphRect: Rect;
-	let greenRect: Rect;
-	let blueRect: Rect;
-	let redRect: Rect;
 	let rebuilds = 0;
 	let height = 0;
 	let width = 0;
@@ -71,12 +68,9 @@
 			if (g.device_isMobile) {
 				origin_ofFirstReveal.x = 25;
 			}
-			const toChildren = new Point(-41.2 + k.line_stretch - (k.dot_size / 2) + offsetX_ofFirstReveal, (k.dot_size / 2) -(childrenSize.height / 2) - 4);
+			const toChildren = new Point(-42.2 + k.line_stretch - (k.dot_size / 2) + offsetX_ofFirstReveal, (k.dot_size / 2) -(childrenSize.height / 2) - 4.5);
 			origin_ofChildren = origin_ofFirstReveal.offsetBy(toChildren);
 			debugReact.log_origins(origin_ofChildren.x + ' updateOrigins');
-			blueRect = graphRect.dividedInHalf;
-			redRect = rectTo_firstReveal();
-			greenRect = rectOfChildren();
 		}
 	}
 
@@ -90,13 +84,8 @@
 			on:keydown={u.ignore}
 			on:keypress={u.ignore}
 			on:click={() => { $s_id_popupView = null; }}>
-			{#if debug.colors}
-				<Box rect={redRect} color=red/>
-				<Box rect={blueRect} color={k.color_default}/>
-				<Box rect={greenRect} color=green half={true}/>
-			{/if}
 			{#if !k.show_titleAtTop}
-				<Widget name={focusState.name} ancestry={focusState.ancestry} origin={origin_ofFirstReveal.offsetByXY(-23 - offsetX_ofFirstReveal, -6)}/>
+				<Widget name={focusState.name} ancestry={focusState.ancestry} origin={origin_ofFirstReveal.offsetByXY(-21.5 - offsetX_ofFirstReveal, -5)}/>
 			{:else}
 				{#if $s_ancestry_focus.isGrabbed}
 					<Circle radius=10 center={origin_ofFirstReveal.offsetByXY(-1, 1)} color={focus.color} thickness=1/>

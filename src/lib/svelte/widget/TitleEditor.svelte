@@ -253,7 +253,7 @@
 		on:mousedown={handle_longClick}
 		on:dblclick={handle_doubleClick}
 		style='
-			top: 0.5px;
+			top: 1.5px;
 			border: none;
 			{cursorStyle};
 			outline: none;

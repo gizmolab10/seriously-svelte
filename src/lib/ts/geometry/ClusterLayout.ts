@@ -78,7 +78,7 @@ export default class ClusterLayout {
 		const angle_ofLine = this.angle_ofLine;			// points at middle widget
 		const rotated = radial.rotate_by(angle_ofLine);
 		const startY = rotated.y;						// height of angle_ofLine
-		let y = startY + (row * (k.row_height - 2));	// height of row
+		let y = startY + (row * (k.row_height - 1.5));	// height of row
 		let unfit = false;
 		if (Math.abs(y) > radius) {
 			unfit = true;

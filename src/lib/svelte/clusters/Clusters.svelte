@@ -11,7 +11,7 @@
 	//	handle keys
 	//	lines: selection & hover
 	//	edit titles (keydown terminates edit)
-	const toolsOffset = new Point(28, 32);
+	const toolsOffset = new Point(32, -3);
 	const thing = $s_ancestry_focus?.thing;
 	const color = thing?.color ?? k.color_default;
 	let mouse_up_count = $s_mouse_up_count;

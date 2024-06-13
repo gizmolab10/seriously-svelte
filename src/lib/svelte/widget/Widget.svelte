@@ -52,6 +52,7 @@
 		updateLayout();
 		elementState = s.elementState_forName(name);		// survives onDestroy, created by {tree, cluster} children
 		debugReact.log_mount(`WIDGET ${thing?.description} ${ancestry?.isGrabbed}`);
+		fullUpdate();
 		const handleAny = signals.handle_anySignal((kinds, id) => {
 			for (const kind of kinds) {
 				switch (kind) {
@@ -146,19 +147,18 @@
 
 	function extraWidth() {
 		const multiplier = ancestry?.showsReveal ? 2 : 1.35;
-		const clustersAdjustment = $s_layout_asClusters ? forward ? 16 : 0 : -10;
+		const clustersAdjustment = $s_layout_asClusters ? (forward ? 16 : 0) : -10;
 		return (k.dot_size * multiplier) + clustersAdjustment;
 	}
 
 	function updateLayout() {
 		const dragX = 5.5;
-		const delta = showingBorder ? 1.5 : 2;
+		const delta = showingBorder ? 0 : 0.5;
 		const leftForward = delta - dragX;
 		const titleWidth = thing?.titleWidth ?? 0;
-		const dotCenter = Point.square(k.dot_size / 2)
-		const dragOffsetY = $s_layout_asClusters ? 2 : 2.3;
-		const dragOffsetX = forward ? dragX - 2 : titleWidth + delta + 15;
-		const leftBackward = -(titleWidth + 19 + ((ancestry?.isGrabbed ?? false) ? 1 : 0));		
+		const dragOffsetY = $s_layout_asClusters ? 2.8 : 2.3;
+		const dragOffsetX = forward ? (dragX - 2) : (titleWidth + delta + 15);
+		const leftBackward = -(titleWidth + 19 + ((ancestry?.isGrabbed ?? false) ? 0 : 0));		
 		dragCenter = Point.square(k.dot_size / 2).offsetByXY(dragOffsetX, dragOffsetY);
 		left = origin.x + delta + (forward ? leftForward : leftBackward);
 		padding = `0px ${rightPadding}px 0px  ${leftPadding}px`;
@@ -167,7 +167,7 @@
 		radius = k.row_height / 2;
 		top = origin.y + (showingBorder ? 0 : 1);
 		if (ancestry?.showsReveal) {
-			const revealY = k.dot_size - 3.9;
+			const revealY = k.dot_size - 4.2;
 			const revealX = k.dot_size + titleWidth + 15;
 			revealCenter = new Point(revealX, revealY);
 		}
