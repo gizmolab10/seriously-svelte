@@ -9,6 +9,7 @@ export default class ClusterLayout {
 	cluster_ancestry: Ancestry | null;
 	ancestries: Array<Ancestry> = [];
 	predicate: Predicate | null;
+	index = 0;	// for Advance
 	necklace_center: Point;
 	angle_ofLine: number;
 	fork_backoff: number;

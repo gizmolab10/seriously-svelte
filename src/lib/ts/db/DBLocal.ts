@@ -49,7 +49,22 @@ export default class DBLocal implements DBInterface {
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Rbd', idPr, idTb, idTd, 2);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Rac', idPr, idTa, idTc, 2);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Rce', idPr, idTc, idTe, 2);
+		this.makeMore(11, idPc, idTr);
 	};
+
+	makeMore(count: number, idPc: string, idTr: string) {
+		for (let i = 0; i < count; i++) {
+			const code = 70 + i;
+			const upperCase = String.fromCharCode(code);
+			const lowerCase = String.fromCharCode(code + 32);
+			const trait = lowerCase;
+			const title = upperCase;
+			const thingID = upperCase;
+			const relationshipID = 'Cr' + lowerCase;
+			h.thing_remember_runtimeCreateUnique(this.baseID, thingID, title, 'red', trait, false);
+			h.relationship_remember_runtimeCreateUnique(this.baseID, relationshipID, idPc, idTr, thingID, 1);
+		}
+	}
 
 	queryStrings_apply() {}
 	async fetch_allFrom(baseID: string) {}

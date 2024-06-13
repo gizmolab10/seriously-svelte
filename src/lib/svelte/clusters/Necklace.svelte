@@ -6,6 +6,7 @@
 	import ClusterArc from './ClusterArc.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import { h } from '../../ts/db/DBDispatch';
+	import Advance from './Advance.svelte';
 	export let center = Point.zero;
     const ancestry = $s_ancestry_focus;
 	const childOffset = new Point(k.dot_size / -2, k.cluster_offsetY);

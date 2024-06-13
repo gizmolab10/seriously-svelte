@@ -6,6 +6,7 @@ export const s_title_editing		 = writable<TitleState | null>();
 export const s_ancestry_editingTools = writable<Ancestry | null>();
 export const s_ancestries_expanded	 = writable<Array<Ancestry>>();
 export const s_ancestries_grabbed	 = writable<Array<Ancestry>>();
+export const s_cluster_indices		 = writable<Array<number>>();
 export const s_db_loadTime 			 = writable<string | null>();
 export const s_id_popupView			 = writable<string | null>();
 export const s_ancestry_focus		 = writable<Ancestry>();
