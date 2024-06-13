@@ -49,7 +49,7 @@ export default class DBLocal implements DBInterface {
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Rbd', idPr, idTb, idTd, 2);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Rac', idPr, idTa, idTc, 2);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Rce', idPr, idTc, idTe, 2);
-		this.makeMore(11, idPc, idTr);
+		this.makeMore(11, idPc, idTr);	// eleven more contained by root
 	};
 
 	makeMore(count: number, idPc: string, idTr: string) {

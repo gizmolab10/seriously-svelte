@@ -1,7 +1,8 @@
 <script lang='ts'>
-	import { g, k, s, u, Point, ZIndex, signals, onMount, onDestroy, Predicate } from '../../ts/common/GlobalImports';
+	import { g, k, s, u, get, Point, ZIndex, signals, onMount, onDestroy, Predicate } from '../../ts/common/GlobalImports';
+	import { s_cluster_indices, s_reverse_indices, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { debugReact, ChildMapRect, ClusterLayout, transparentize } from '../../ts/common/GlobalImports';
-	import { s_thing_changed, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
+	import { s_thing_changed, s_ancestry_focus } from '../../ts/state/ReactiveState';
 	import ClusterLine from './ClusterLine.svelte';
 	import ClusterArc from './ClusterArc.svelte';
 	import Widget from '../widget/Widget.svelte';
@@ -47,8 +48,16 @@
 		}
 	}
 
+	function onePage_from(ancestries: Array<Ancestry>, predicate: Predicate, points_out: boolean): Array<Ancestry> {
+		const indices = points_out ? get(s_cluster_indices) : get(s_reverse_indices);
+		const predicateIndex = predicate.stateIndex;
+		const pageIndex = indices[predicateIndex];	// make sure it exists: hierarchy
+		return ancestries;
+	}
+
 	function layout(ancestries: Array<Ancestry>, predicate: Predicate | null, points_out: boolean) {
-		const clusterLayout = new ClusterLayout(ancestry, ancestries, predicate, points_out);
+		const onePage = onePage_from(ancestries, predicate, points_out);
+		const clusterLayout = new ClusterLayout(ancestries, ancestries, predicate, points_out);
 		childMapRects = u.concatenateArrays(childMapRects, clusterLayout.childMapRects(center));	// for necklace of widgets
 		clusterLayouts.push(clusterLayout);		// for lines and arcs
 	}

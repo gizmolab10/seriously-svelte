@@ -11,6 +11,7 @@ type Relationships_ByHID = { [hid: number]: Array<Relationship> }
 export class Hierarchy {
 	private wrappers_byType_andHID: { [type: string]: { [hid: number]: SvelteWrapper } } = {};
 	private ancestry_byKind_andHash:{ [kind: string]: { [hash: number]: Ancestry } } = {};
+	private predicate_byDirection: { [direction: number]: Array<Predicate> } = {};
 	private relationship_byHID: { [hid: number]: Relationship } = {};
 	private things_byTrait: { [trait: string]: Array<Thing> } = {};
 	private relationships_byPredicateHID: Relationships_ByHID = {};
@@ -875,6 +876,7 @@ export class Hierarchy {
 
 	static readonly $_ANCILLARY_$: unique symbol;
 
+	predicates_byDirection(isBidirectional: boolean) { return this.predicate_byDirection[isBidirectional ? 1 : 0]; }
 	predicate_forKind(kind: string | null): Predicate | null { return (!kind) ? null : this.predicate_byKind[kind]; }
 	predicate_forID(idPredicate: string = idDefault): Predicate | null { return (!idPredicate) ? null : this.predicate_byHID[idPredicate.hash()]; }
 
@@ -888,6 +890,11 @@ export class Hierarchy {
 		this.predicate_byHID[predicate.idHashed] = predicate;
 		this.predicate_byKind[predicate.kind] = predicate;
 		this.predicates.push(predicate);
+		const predicates = this.predicates_byDirection(predicate.isBidirectional) ?? [];
+		if (!predicates.includes(predicate)) {
+			predicates.push(predicate);
+			this.predicate_byDirection[predicate.isBidirectional ? 1 : 0] = predicates;
+		}
 	}
 
 	predicate_remember_runtimeCreateUnique(id: string, kind: string, isBidirectional: boolean, isRemotelyStored: boolean = true) {
@@ -923,6 +930,8 @@ export class Hierarchy {
 	}
 
 	hierarchy_markAsCompleted() {
+		s_ancestry_editingTools.set(null);
+		s_title_editing.set(null);
 		this.db.setHasData(true);
 		s_things_arrived.set(true);
 		s_isBusy.set(false);

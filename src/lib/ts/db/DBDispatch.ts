@@ -46,8 +46,6 @@ export default class DBDispatch {
 		this.queryStrings_apply();
 		await this.hierarchy_fetch_andBuild(type);
 		persistLocal.ancestries_restore(true);
-		s_ancestry_editingTools.set(null);
-		s_title_editing.set(null);
 		h.hierarchy_markAsCompleted();
 		signals.signal_rebuildGraph_fromFocus();
 		debug.log_beat('db_setupData_forType before timeout');

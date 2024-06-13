@@ -4,11 +4,14 @@ import { h } from '../../ts/db/DBDispatch';
 
 export default class Predicate extends RemoteIdentifiable {
 	isBidirectional: boolean;
+	stateIndex: number;
 	kind: string;
 
 	constructor(id: string, kind: string, isBidirectional: boolean, isRemotelyStored: boolean = true) {
 		super(dbDispatch.db.dbType, id, isRemotelyStored);
 		this.isBidirectional = isBidirectional;
+		this.stateIndex = Predicate.nextIndex;
+		Predicate.nextIndex += 1;
 		this.kind = kind;
 	}
 
@@ -19,5 +22,6 @@ export default class Predicate extends RemoteIdentifiable {
 	static get idIsRelated(): string { return this.id_forKind(PredicateKind.isRelated); }
 	static get idContains(): string { return this.id_forKind(PredicateKind.contains); }
 	get description(): string { return this.kind; }
+	static nextIndex = 0;
 
 }
