@@ -2,7 +2,7 @@ import { g, k, get, Point, signals, Ancestry, dbDispatch, GraphRelations } from 
 import { s_ring_angle, s_cluster_arc_radius, s_layout_asClusters } from '../state/ReactiveState';
 import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/ReactiveState';
 import { s_ancestries_grabbed, s_ancestries_expanded } from '../state/ReactiveState';
-import { s_indices_cluster, s_indices_reverse } from '../../ts/state/ReactiveState';
+import { s_indices_cluster, s_indices_reversed } from '../../ts/state/ReactiveState';
 import { s_thing_fontFamily, s_graph_relations } from '../state/ReactiveState';
 import { h } from '../db/DBDispatch';
 
@@ -165,9 +165,9 @@ class PersistLocal {
 	ancestries_restore(force: boolean = false) {
 		if (!this.ancestriesRestored || force) {
 			this.ancestriesRestored = true;
-			this.focus_restore();
-			this.indicies_restore(true);
 			this.indicies_restore(false);
+			this.indicies_restore(true);
+			this.focus_restore();
 			s_ancestries_grabbed.set(this.dbKey_ancestries(IDPersistant.grabbed));
 			s_ancestries_expanded.set(this.dbKey_ancestries(IDPersistant.expanded));
 	
@@ -182,15 +182,15 @@ class PersistLocal {
 	}
 
 	indicies_restore(flag: boolean) {
-		let predicates = h.predicates_byDirection(flag);
+		const count = h.predicates_byDirection(flag).length;
 		let indices: Array<number> = [];
-		for (const predicate of predicates) {
-			indices[predicate.stateIndex] = 0;
-		};
+		for (let index = 0; index <= count; index += 1) {
+			indices[index] = 0;
+		}
 		if (flag) {
 			s_indices_cluster.set(indices);
 		} else {
-			s_indices_reverse.set(indices);
+			s_indices_reversed.set(indices);
 		}
 	}
 

@@ -503,7 +503,6 @@ export class Hierarchy {
 		let relationship = this.relationship_forPredicate_parent_child(idPredicate, idParent, idChild);
 		const isBidirectional = this.predicate_forID(idPredicate)?.isBidirectional ?? false;
 		const isRemotelyStored = creationOptions != CreationOptions.none;
-		relationship?.order_setTo_remoteMaybe(order);
 		if (!relationship) {
 			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, isRemotelyStored);
 			this.relationship_remember(relationship);
@@ -512,6 +511,8 @@ export class Hierarchy {
 			reversed = new Relationship(baseID, Identifiable.newID(), idPredicate, idChild, idParent, order, isRemotelyStored);
 			this.relationship_remember(reversed);
 		}
+		relationship?.order_setTo_remoteMaybe(order);
+		reversed?.order_setTo_remoteMaybe(order);
 		return relationship;
 	}
 

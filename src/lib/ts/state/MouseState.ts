@@ -7,6 +7,7 @@ export default class MouseState {
 	isDown: boolean;
 	isOut: boolean;
 	isUp: boolean;
+	clicks = 0;
 
 	//////////////////////////////////////////////////
 	//	encapsulate relevant event properties		//

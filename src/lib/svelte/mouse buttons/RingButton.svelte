@@ -35,7 +35,7 @@
 		const from_center = distance_fromCenter_of($s_mouse_location);	// use store, to react
 		if (!!from_center) {
 			let sendSignal = false;
-			s.ringState.isHovering = determine_isHovering();
+			s.ringState.isHovering = determine_isHovering();	// show highlight around ring
 			cursor_closure();
 			if (s.ringState.radiusOffset != null) {				// resize
 				const distance = Math.max(k.cluster_inside_radius * 4, from_center.magnitude);
@@ -46,12 +46,13 @@
 				}
 			}
 			if (s.ringState.priorAngle != null) {					// rotate
-				const mouseAngle = from_center.angle;
+				let mouseAngle = from_center.angle;
 				const delta = mouseAngle.add_angle_normalized(-s.ringState.priorAngle);
 				if (Math.abs(delta) >= Math.PI / 90) {			// minimum two degree changes
 					sendSignal = true;
 					s.ringState.priorAngle = mouseAngle;
 					$s_ring_angle = mouseAngle.add_angle_normalized(-s.ringState.startAngle);
+					console.log(`move ${$s_ring_angle}`);
 				}
 			}
 			if (sendSignal) {
@@ -67,13 +68,13 @@
 		// setup or teardown state //
 		/////////////////////////////
 
-		s.ringState.isHovering = determine_isHovering();
 		if (!mouseState.isHover) {
+			console.log(`mouse ${mouseState.isDown}`);
 			const from_center = distance_fromCenter_of($s_mouse_location);
 			if (mouseState.isDouble) {
 
 				// begin resize
-
+				
 				s.ringState.radiusOffset = from_center.magnitude - $s_cluster_arc_radius;
 				rebuilds += 1;
 			} else if (mouseState.isUp) {
@@ -82,8 +83,9 @@
 
 				s.ringState.reset();
 				rebuilds += 1;
-			} else if (s.ringState.isHovering) {
+			} else if (mouseState.isDown) {
 				const mouseAngle = from_center.angle;
+				console.log(`down ${mouseAngle}`);
 
 				// begin rotate
 
@@ -94,6 +96,7 @@
 			}
 			cursor_closure();
 		} else if (!s.ringState.startAngle && !s.ringState.radiusOffset) {
+			s.ringState.isHovering = true;	// show highlight around ring
 
 			// hover
 

@@ -151,6 +151,16 @@ export default class Thing extends Datum {
 		return h.relationships_forPredicateThingIsChild(idPredicate, this.id, isChildOf);
 	}
 
+	parentRelationships_for(predicate: Predicate): Array<Relationship> {
+		let relationships: Array<Relationship> = [] 
+		if (predicate.isBidirectional) {
+			relationships = this.relationships_bidirectional_for(predicate.id);
+		} else {
+			relationships = this.relationships_for_isChildOf(predicate.id, true);
+		}
+		return relationships;
+	}
+
 	uniqueAncestries_for(predicate: Predicate): Array<Ancestry> {
 		let ancestries: Array<Ancestry> = [];
 		if (predicate.isBidirectional) {
@@ -165,21 +175,11 @@ export default class Thing extends Datum {
 		return u.strip_thingDuplicates_from(u.strip_falsies(ancestries));
 	}
 
-	relationships_for(predicate: Predicate): Array<Relationship> {
-		let relationships: Array<Relationship> = [] 
-		if (predicate.isBidirectional) {
-			relationships = this.relationships_bidirectional_for(predicate.id);
-		} else {
-			relationships = this.relationships_for_isChildOf(predicate.id, true);
-		}
-		return relationships;
-	}
-
 	parentAncestries_for(predicate: Predicate | null, visited: Array<string> = []): Array<Ancestry> {
 		// the ancestry of each parent [of this thing]
 		let ancestries: Array<Ancestry> = [];
 		if (!this.isRoot && predicate) {
-			const relationships = this.relationships_for(predicate);
+			const relationships = this.parentRelationships_for(predicate);
 			for (const relationship of relationships) {
 				if (predicate.isBidirectional) {
 					const child = relationship.child;

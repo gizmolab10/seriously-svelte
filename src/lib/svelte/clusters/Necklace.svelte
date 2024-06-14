@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, s, u, get, Point, ZIndex, signals, onMount, onDestroy, Predicate } from '../../ts/common/GlobalImports';
-	import { s_indices_cluster, s_indices_reverse, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
+	import { s_indices_cluster, s_indices_reversed, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { debugReact, ChildMapRect, ClusterLayout, transparentize } from '../../ts/common/GlobalImports';
 	import { s_thing_changed, s_ancestry_focus } from '../../ts/state/ReactiveState';
 	import ClusterLine from './ClusterLine.svelte';
@@ -49,7 +49,7 @@
 	}
 
 	function onePage_from(ancestries: Array<Ancestry>, predicate: Predicate, points_out: boolean): Array<Ancestry> {
-		const indices = points_out ? get(s_indices_reverse) : get(s_indices_cluster);
+		const indices = points_out ? get(s_indices_cluster) : get(s_indices_reversed);
 		const maxFit = Math.round($s_cluster_arc_radius * 2 / k.row_height) - 2;
 		const predicateIndex = predicate.stateIndex;
 		const pageIndex = indices[predicateIndex];	// make sure it exists: hierarchy

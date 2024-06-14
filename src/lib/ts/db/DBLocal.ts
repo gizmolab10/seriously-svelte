@@ -20,15 +20,17 @@ export default class DBLocal implements DBInterface {
 		const idTc = 'C';
 		const idTd = 'D';
 		const idTe = 'E';
+		const idTf = 'F';
 		const idPr = 'related';
 		const idPc = 'contains';
 		h.predicate_remember_runtimeCreateUnique(idPc, 'contains', false, false);
 		h.predicate_remember_runtimeCreateUnique(idPr, 'isRelated', true, false);
-		h.thing_remember_runtimeCreateUnique(this.baseID, idTa, 'Arkane', 'red', 'a', false);
-		h.thing_remember_runtimeCreateUnique(this.baseID, idTb, 'Biome', 'blue', 'b', false);
-		h.thing_remember_runtimeCreateUnique(this.baseID, idTc, 'Clarity', '#d96726', 'c', false);
-		h.thing_remember_runtimeCreateUnique(this.baseID, idTd, 'Delicious', 'purple', 'f', false);
-		h.thing_remember_runtimeCreateUnique(this.baseID, idTe, 'Essential', 'mediumvioletred', 's', false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTa, 'Anticipate', 'red', 'a', false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTb, 'Beauty', 'blue', 'b', false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTc, 'Comfort', '#d96726', 'c', false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTd, 'Delicious', 'purple', 'd', false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTe, 'Essential', 'mediumvioletred', 'e', false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTf, 'Fancy', 'coral', 'f', false);
 		h.thing_remember_runtimeCreateUnique(this.baseID, idTr, 'Routine', 'limegreen', IDTrait.root, false);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Cra', idPc, idTr, idTa, 0);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Crb', idPc, idTr, idTb, 1);
@@ -42,6 +44,7 @@ export default class DBLocal implements DBInterface {
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Cbc', idPc, idTb, idTc, 0);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Cbd', idPc, idTb, idTd, 1);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Cbe', idPc, idTb, idTe, 2);
+		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Cbf', idPc, idTb, idTf, 2);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Ccd', idPc, idTc, idTd, 0);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Cce', idPc, idTc, idTe, 1);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Cde', idPc, idTd, idTe, 0);
@@ -49,20 +52,22 @@ export default class DBLocal implements DBInterface {
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Rbd', idPr, idTb, idTd, 2);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Rac', idPr, idTa, idTc, 2);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Rce', idPr, idTc, idTe, 2);
-		this.makeMore(10, 'F', idPc, idTb);	// eleven more contained by root
+		this.makeMore(5, 'G', idPc, idTb, true);	// 21 things contained by B
+		this.makeMore(20, 'G', idPc, idTb, false);	// 21 things containing B
 	};
 
-	makeMore(count: number, from: string, idPredicate: string, idParent: string) {
+	makeMore(count: number, first: string, idPredicate: string, idOther: string, asParent: boolean) {
 		for (let i = 0; i < count; i++) {
-			const code = from.charCodeAt(0) + i;
-			const upperCase = String.fromCharCode(code);
-			const lowerCase = String.fromCharCode(code + 32);
-			const trait = lowerCase;
-			const title = upperCase;
-			const thingID = upperCase;
-			const relationshipID = 'Cr' + lowerCase;
-			h.thing_remember_runtimeCreateUnique(this.baseID, thingID, title, 'red', trait, false);
-			h.relationship_remember_runtimeCreateUnique(this.baseID, relationshipID, idPredicate, idParent, thingID, 1);
+			const code = first.charCodeAt(0) + i;
+			const idUpper = String.fromCharCode(code);
+			const trait = String.fromCharCode(code + 32);
+			const idThing = asParent ? idOther + idUpper : idUpper + idOther;
+			const title = asParent ? idUpper : idThing;
+			const relationshipID = 'C' + idThing;
+			const idChild = asParent ? idThing : idOther;
+			const idParent = asParent ? idOther : idThing;
+			h.thing_remember_runtimeCreateUnique(this.baseID, idThing, title, 'red', trait, false);
+			h.relationship_remember_runtimeCreateUnique(this.baseID, relationshipID, idPredicate, idParent, idChild, 1);
 		}
 	}
 
