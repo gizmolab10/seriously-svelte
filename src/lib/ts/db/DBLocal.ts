@@ -49,12 +49,12 @@ export default class DBLocal implements DBInterface {
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Rbd', idPr, idTb, idTd, 2);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Rac', idPr, idTa, idTc, 2);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Rce', idPr, idTc, idTe, 2);
-		this.makeMore(11, idPc, idTr);	// eleven more contained by root
+		this.makeMore(10, 'F', idPc, idTb);	// eleven more contained by root
 	};
 
-	makeMore(count: number, idPc: string, idTr: string) {
+	makeMore(count: number, from: string, idPredicate: string, idParent: string) {
 		for (let i = 0; i < count; i++) {
-			const code = 70 + i;
+			const code = from.charCodeAt(0) + i;
 			const upperCase = String.fromCharCode(code);
 			const lowerCase = String.fromCharCode(code + 32);
 			const trait = lowerCase;
@@ -62,7 +62,7 @@ export default class DBLocal implements DBInterface {
 			const thingID = upperCase;
 			const relationshipID = 'Cr' + lowerCase;
 			h.thing_remember_runtimeCreateUnique(this.baseID, thingID, title, 'red', trait, false);
-			h.relationship_remember_runtimeCreateUnique(this.baseID, relationshipID, idPc, idTr, thingID, 1);
+			h.relationship_remember_runtimeCreateUnique(this.baseID, relationshipID, idPredicate, idParent, thingID, 1);
 		}
 	}
 

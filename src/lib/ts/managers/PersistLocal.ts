@@ -2,7 +2,7 @@ import { g, k, get, Point, signals, Ancestry, dbDispatch, GraphRelations } from 
 import { s_ring_angle, s_cluster_arc_radius, s_layout_asClusters } from '../state/ReactiveState';
 import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/ReactiveState';
 import { s_ancestries_grabbed, s_ancestries_expanded } from '../state/ReactiveState';
-import { s_cluster_indices, s_reverse_indices } from '../../ts/state/ReactiveState';
+import { s_indices_cluster, s_indices_reverse } from '../../ts/state/ReactiveState';
 import { s_thing_fontFamily, s_graph_relations } from '../state/ReactiveState';
 import { h } from '../db/DBDispatch';
 
@@ -188,9 +188,9 @@ class PersistLocal {
 			indices[predicate.stateIndex] = 0;
 		};
 		if (flag) {
-			s_cluster_indices.set(indices);
+			s_indices_cluster.set(indices);
 		} else {
-			s_reverse_indices.set(indices);
+			s_indices_reverse.set(indices);
 		}
 	}
 
