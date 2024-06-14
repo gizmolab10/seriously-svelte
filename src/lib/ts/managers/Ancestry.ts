@@ -90,7 +90,7 @@ export default class Ancestry extends Identifiable {
 			thing = this.thingAt(1) ?? null;	// always recompute, cache is for debugging
 			this._thing = thing;
 		}
-		if (!!thing && !thing.oneAncestry) {
+		if (!!thing && !thing.oneAncestry && !!this.predicate && !this.predicate.isBidirectional) {
 			thing.oneAncestry = this;
 		}
 		return this._thing;
@@ -524,7 +524,7 @@ export default class Ancestry extends Identifiable {
 
 	handle_singleClick_onDragDot(shiftKey: boolean) {
 		if (this.predicate?.isBidirectional ?? false) {
-			this.thing?.oneAncestry.handle_singleClick_onDragDot(shiftKey);
+			this.thing?.oneAncestry?.handle_singleClick_onDragDot(shiftKey);
 		} else {
 			s_title_editing?.set(null);
 			if (get(s_layout_asClusters)) {

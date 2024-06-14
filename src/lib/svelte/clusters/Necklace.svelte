@@ -50,7 +50,7 @@
 
 	function onePage_from(ancestries: Array<Ancestry>, predicate: Predicate, points_out: boolean): Array<Ancestry> {
 		const indices = points_out ? get(s_indices_cluster) : get(s_indices_reversed);
-		const maxFit = Math.round($s_cluster_arc_radius * 2 / k.row_height) - 2;
+		const maxFit = Math.round($s_cluster_arc_radius * 2 / k.row_height);
 		const predicateIndex = predicate.stateIndex;
 		const pageIndex = indices[predicateIndex];	// make sure it exists: hierarchy
 		return ancestries.slice(pageIndex, pageIndex + maxFit);

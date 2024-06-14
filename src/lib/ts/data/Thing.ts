@@ -119,7 +119,8 @@ export default class Thing extends Datum {
 	oneAncestries_rebuildForSubtree() {		// set oneAncestry for this and all its progeny
 		const oneAncestry = this.oneAncestry_derived;
 		if (oneAncestry) {
-			if (this.oneAncestry != oneAncestry) {
+			const predicate = oneAncestry.predicate;
+			if (!!predicate && !predicate.isBidirectional && this.oneAncestry != oneAncestry) {
 				h.ancestry_forget(this.oneAncestry);
 				this.oneAncestry = oneAncestry;
 			}

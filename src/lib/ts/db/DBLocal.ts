@@ -1,4 +1,4 @@
-import { k, Thing, IDTrait, Hierarchy, Relationship } from '../common/GlobalImports';
+import { k, Thing, IDTrait, Hierarchy, Predicate, Relationship } from '../common/GlobalImports';
 import DBInterface from './DBInterface';
 import { DBType } from './DBInterface';
 import { h } from '../db/DBDispatch';
@@ -52,22 +52,30 @@ export default class DBLocal implements DBInterface {
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Rbd', idPr, idTb, idTd, 2);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Rac', idPr, idTa, idTc, 2);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Rce', idPr, idTc, idTe, 2);
-		this.makeMore(5, 'G', idPc, idTb, true);	// 21 things contained by B
-		this.makeMore(20, 'G', idPc, idTb, false);	// 21 things containing B
+		this.makeMore(15, 'G', idPc, idTb, true);	// contained by B
+		this.makeMore(5, 'G', idPr, idTb, false);	// related to B
+		this.makeMore(5, 'G', idPc, idTb, false);	// containing B
 	};
 
-	makeMore(count: number, first: string, idPredicate: string, idOther: string, asParent: boolean) {
+	makeMore(count: number, first: string, idPredicate: string, idOther: string, asChild: boolean) {
 		for (let i = 0; i < count; i++) {
 			const code = first.charCodeAt(0) + i;
 			const idUpper = String.fromCharCode(code);
 			const trait = String.fromCharCode(code + 32);
-			const idThing = asParent ? idOther + idUpper : idUpper + idOther;
-			const title = asParent ? idUpper : idThing;
-			const relationshipID = 'C' + idThing;
-			const idChild = asParent ? idThing : idOther;
-			const idParent = asParent ? idOther : idThing;
+			const predicate = h.predicate_forID(idPredicate);
+			const isBidirectional = predicate?.isBidirectional ?? false;
+			const idThing = asChild ? idOther + idUpper : idUpper + idOther;
+			const title = asChild ? idUpper : idThing;
+			const prefix = isBidirectional ? 'R' : 'C';
+			const idRelationahip = prefix + idThing;
+			const idChild = asChild ? idThing : idOther;
+			const idParent = asChild ? idOther : idThing;
 			h.thing_remember_runtimeCreateUnique(this.baseID, idThing, title, 'red', trait, false);
-			h.relationship_remember_runtimeCreateUnique(this.baseID, relationshipID, idPredicate, idParent, idChild, 1);
+			h.relationship_remember_runtimeCreateUnique(this.baseID, idRelationahip, idPredicate, idParent, idChild, 1);
+			if (asChild || isBidirectional) {	// needs to be child of root
+				const idParentRelationship = 'CR' + idUpper;
+				h.relationship_remember_runtimeCreateUnique(this.baseID, idParentRelationship, Predicate.idContains, h.root.id, idThing, 1);
+			}
 		}
 	}
 

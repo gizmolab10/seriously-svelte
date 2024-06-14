@@ -10,7 +10,7 @@ class Builds {
 
 	constructor() {
 		this.notes = {
-			101 : ['June 13, 2024', 'completely replace dotColor logic with MouseResponder'],
+			101 : ['June 13, 2024', 'limit the number of things within each cluster'],
 			100 : ['June 6, 2024', 'significantly reduce stutter during necklace rotation'],
 			99 : ['June 4, 2024', 'expand help content and move to help-webseriously.netlify.app'],
 			98 : ['May 23, 2024', 'double-click drag to alter ring button radius'],
