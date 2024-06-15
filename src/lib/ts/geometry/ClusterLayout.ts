@@ -1,4 +1,5 @@
-import { g, k, u, get, Angle, IDLine, svgPaths, Ancestry, Predicate, ChildMapRect } from '../common/GlobalImports';
+import { g, k, u, get, Angle, IDLine, svgPaths, Ancestry, } from '../common/GlobalImports';
+import { Predicate, ChildMapRect, AdvanceMapRect } from '../common/GlobalImports';
 import { s_ring_angle, s_cluster_arc_radius } from '../state/ReactiveState';
 import { Rect, Point } from '../geometry/Geometry';
 import { ArcKind } from '../common/Enumerations';
@@ -12,11 +13,11 @@ import { ArcKind } from '../common/Enumerations';
 // and ChildMapRect for each child
 
 export default class ClusterLayout {
-	cluster_ancestry: Ancestry | null;
 	ancestries: Array<Ancestry> = [];
-	predicate: Predicate | null;
+	cluster_ancestry!: Ancestry;
 	index = 0;	// for Advance
 	necklace_center: Point;
+	predicate: Predicate;
 	angle_ofLine: number;
 	fork_backoff: number;
 	fork_radius: number;
@@ -28,7 +29,7 @@ export default class ClusterLayout {
 	arc_radius = 0;
 	count: number;
 
-	constructor(cluster_ancestry: Ancestry, ancestries: Array<Ancestry>, predicate: Predicate | null, points_out: boolean) {
+	constructor(cluster_ancestry: Ancestry, ancestries: Array<Ancestry>, predicate: Predicate, points_out: boolean) {
 		const arc_radius = get(s_cluster_arc_radius);
 		const center = Point.square(arc_radius);
 		const tiny_radius = k.necklace_gap / 2;
@@ -55,10 +56,16 @@ export default class ClusterLayout {
 
 	destructor() {
 		this.ancestries = [];
-		this.cluster_ancestry = null;
 	}
 	
 	static readonly $_ANGLES_$: unique symbol;
+
+	get advanceMapRects(): Array<AdvanceMapRect> {
+		let array: Array<AdvanceMapRect> = [];
+		array.push(new AdvanceMapRect(this.cluster_ancestry, this.predicate, this.points_out, false));
+		array.push(new AdvanceMapRect(this.cluster_ancestry, this.predicate, this.points_out, true));
+		return array;
+	}
 
 	childMapRects(center: Point): Array<ChildMapRect>  {
 		let array: Array<ChildMapRect> = [];
@@ -116,19 +123,16 @@ export default class ClusterLayout {
 		return child_angle;
 	}
 
-	lineAngle_for(predicate: Predicate | null, points_out: boolean): number | null {
+	lineAngle_for(predicate: Predicate, points_out: boolean): number | null {
 		// returns one of three angles: 1) necklace_angle 2) opposite+ 3) opposite-tweak
-		if (!!predicate) {
-			const tweak = Math.PI / 4;		// 45 degrees: added or subtracted -> opposite
-			const necklace_angle = get(s_ring_angle);
-			const opposite = necklace_angle + Angle.half;
-			const raw = predicate.isBidirectional ?
-				opposite - tweak :
-				points_out ? necklace_angle :	// one directional, use global
-				opposite + tweak;
-			return u.normalized_angle(raw);
-		}
-		return null;
+		const tweak = Math.PI / 4;		// 45 degrees: added or subtracted -> opposite
+		const necklace_angle = get(s_ring_angle);
+		const opposite = necklace_angle + Angle.half;
+		const raw = predicate.isBidirectional ?
+			opposite - tweak :
+			points_out ? necklace_angle :	// one directional, use global
+			opposite + tweak;
+		return u.normalized_angle(raw);
 	}
 	
 	static readonly $_SVGS_$: unique symbol;

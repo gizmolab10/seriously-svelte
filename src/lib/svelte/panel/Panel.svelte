@@ -4,15 +4,15 @@
 	import { s_isBusy, s_db_type, s_graphRect, s_id_popupView, s_title_editing, s_show_details } from '../../ts/state/ReactiveState';
 	import { s_things_arrived, s_ancestry_focus, s_user_graphOffset, s_layout_asClusters } from '../../ts/state/ReactiveState';
 	import MouseResponder from '../mouse buttons/MouseResponder.svelte';
+	import ClusterGraph from '../clusters/ClusterGraph.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import Breadcrumbs from '../panel/Breadcrumbs.svelte';
-	import Clusters from '../clusters/Clusters.svelte';
+	import TreeGraph from '../tree/TreeGraph.svelte';
 	import { DBType } from '../../ts/db/DBInterface';
 	import Details from '../details/Details.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import Controls from './Controls.svelte';
-	import Tree from '../tree/Tree.svelte';
 	let chain = ['Panel'];
 	let rebuilds = 0;
 	
@@ -156,9 +156,9 @@
 							height: {$s_graphRect.size.height}px;
 							z-index: {ZIndex.panel};'>
 						{#if $s_layout_asClusters}
-							<Clusters/>
+							<ClusterGraph/>
 						{:else}
-							<Tree/>
+							<TreeGraph/>
 						{/if}
 					</div>
 				{/key}

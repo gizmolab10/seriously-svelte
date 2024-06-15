@@ -20,9 +20,10 @@ import { builds } from './Builds';
 import { u } from './Utilities';
 import { k } from './Constants';
 
+import ClustersGeometry from '../geometry/ClustersGeometry';
+import AdvanceMapRect from '../geometry/AdvanceMapRect';
 import AlterationState from '../state/AlterationState';
 import ClusterLayout from '../geometry/ClusterLayout';
-import ClusterLayouts from '../geometry/ClusterLayouts';
 import ChildMapRect from '../geometry/ChildMapRect';
 import ElementState from '../state/ElementState';
 import TreeLayout from '../geometry/TreeLayout';
@@ -43,17 +44,17 @@ import muuri from 'muuri';
 import './Extensions';
 
 export {
-	g, k, s, u, builds,
+	TreeLayout, ChildMapRect,
 	Rect, Size, Point, svgPaths, Direction,
-	RingState, TitleState, AlterationState,
+	g, k, s, u, builds, signals, SeriouslyRange,
 	muuri, interact, createPopper, transparentize,
 	get, onMount, onDestroy, setContext, getContext,
-	signals, MouseState, ElementState, SeriouslyRange,
 	User, Datum, Thing, Access, Predicate, Relationship,
-	Grabs, dbDispatch, Ancestry, Hierarchy, persistLocal,
+	Grabs, Ancestry, Hierarchy, dbDispatch, persistLocal,
 	ZIndex, PredicateKind, GraphRelations, CreationOptions,
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactKind,
 	ElementType, AlterationType, SvelteWrapper, SvelteComponentType,
+	MouseState, ElementState, RingState, TitleState, AlterationState,
+	Angle, Quadrant, ClusterLayout, AdvanceMapRect, ClustersGeometry,
 	IDLine, IDTool, IDTrait, IDSignal, IDButton, IDBrowser, IDPersistant,
-	Angle, Quadrant, TreeLayout, ChildMapRect, ClusterLayouts, ClusterLayout,
 };

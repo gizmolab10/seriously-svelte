@@ -2,7 +2,7 @@ import { s_indices_cluster, s_ancestry_focus, s_indices_reversed, s_cluster_arc_
 import { k, u, get, Point, Ancestry, Predicate, ChildMapRect, ClusterLayout } from '../common/GlobalImports';
 import { h } from '../db/DBDispatch';
 
-export default class ClusterLayouts {
+export default class ClustersGeometry {
 	childMapRects: Array<ChildMapRect> = [];
 	layouts: Array<ClusterLayout> = [];
 	angularSpreads: Array<number> = [];
@@ -31,7 +31,7 @@ export default class ClusterLayouts {
 
 	onePage_from(ancestries: Array<Ancestry>, predicate: Predicate, points_out: boolean): Array<Ancestry> {
 		const indices = points_out ? get(s_indices_cluster) : get(s_indices_reversed);
-		const maxFit = Math.round(get(s_cluster_arc_radius) * 2 / k.row_height);
+		const maxFit = Math.round(get(s_cluster_arc_radius) * 2 / k.row_height) - 6;
 		const predicateIndex = predicate.stateIndex;
 		const pageIndex = indices[predicateIndex];	// make sure it exists: hierarchy
 		return ancestries.slice(pageIndex, pageIndex + maxFit);

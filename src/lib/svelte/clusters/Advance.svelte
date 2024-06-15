@@ -1,25 +1,31 @@
 <script lang='ts'>
 	import { s_indices_cluster, s_indices_reversed, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
-	import { g, k, Direction, ClusterLayout } from '../../ts/common/GlobalImports';
-    import TriangleButton from './TriangleButton.svelte'
+	import { g, k, s, Point, onMount, Direction, ElementState, ClusterLayout, AdvanceMapRect } from '../../ts/common/GlobalImports';
+    import TriangleButton from '../mouse buttons/TriangleButton.svelte'
 	export let layout: ClusterLayout;
 	export let center = Point.zero;
-	export let name = k.empty;
-	export let color = 'red';
-	const elementState = s.elementState_forName(name);		// survives onDestroy, created by widget
+	export let isForward = false;
 	const size = 13;
+	let map!: AdvanceMapRect;
+	let state!: ElementState;
 
-	function hover_closure(isFilled) {}
+	onMount(() => {
+		map = layout.advanceMapRects[isForward ? 1 : 0];
+		state = map.elementState;		// DOES this survive onDestroy? created by ClusterLayout
+	})
+
+	function hover_closure(isFilled) { return [k.empty, k.empty]; }
 	function mouse_closure(mouseState) {}
 
 </script>
 
-<TriangleButton
-	strokeColor={elementState.stroke}
-	hover_closure={hover_closure}
-	id={ancestry.thing.title}
-	closure={mouse_closure}
-	angle={Direction.right}
-	center={center}
-    size={size}
-/>
+{#if state}
+	<TriangleButton
+		hover_closure={hover_closure}
+		mouse_closure={mouse_closure}
+		strokeColor={state.stroke}
+		angle={Direction.right}
+		center={center}
+		size={size}
+	/>
+{/if}

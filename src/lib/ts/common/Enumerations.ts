@@ -67,6 +67,7 @@ export enum Angle {
 
 export enum ElementType {
 	generic	= 'generic',
+	advance	= 'advance',
 	control	= 'control',
 	widget	= 'widget',
 	reveal	= 'reveal',
