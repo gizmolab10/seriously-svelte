@@ -24,8 +24,8 @@
 	let revealCenter = Point.zero;
 	let dragCenter = Point.zero;
 	let radius = k.dot_size / 2;
-	let showingCluster = false;
 	let showingBorder = false;
+	let showingTools = false;
 	let priorOrigin = origin;
 	let background = k.empty;
 	let widgetName = k.empty;
@@ -111,6 +111,7 @@
 	function updateBorder_fromState() {
 		if (!!widget) {
 			widget.style.border = elementState.border;
+			// widget.style.background-color = k.color_background;
 		}
 	}
 
@@ -119,11 +120,13 @@
 		if (!!ancestry && thing) {
 			const shallEdit = ancestry.isEditing;
 			const shallGrab = ancestry.isGrabbed;
-			const shallShowCluster = ancestry.toolsGrabbed && !ancestry.isFocus;
-			const change = (isEditing != shallEdit || isGrabbed != shallGrab || showingCluster != shallShowCluster);
+			const shallShowTools = ancestry.toolsGrabbed && !ancestry.isFocus;
+			const change = (isEditing != shallEdit || isGrabbed != shallGrab || showingTools != shallShowTools);
 			if (change) {
+				const showBackground = shallGrab || $s_layout_asClusters;
+				background = showBackground ? `background-color: ${k.color_background};` : k.empty
 				showingBorder = shallEdit || shallGrab;
-				showingCluster = shallShowCluster;
+				showingTools = shallShowTools;
 				isGrabbed = shallGrab;
 				isEditing = shallEdit;
 				updateLayout();

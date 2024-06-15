@@ -1,10 +1,10 @@
-import { k, u, Point } from '../common/GlobalImports';
+import { k, u, Point, Angle } from '../common/GlobalImports';
 
 export enum Direction {
-	up = Math.PI * 3 / 2,
-	down = Math.PI / 2,
-	right = Math.PI,
-	left = 0,
+	up = Angle.threeQuarters,
+	down = Angle.quarter,
+	right = Angle.half,
+	left = Angle.zero,
 }
 
 export default class SVGPaths {
@@ -137,7 +137,7 @@ export default class SVGPaths {
 	}
 
 	// TODO: this only works for the default number of vertices (3)
-	fat_polygon(size: number, direction: number, vertices: number = 3): string {
+	fat_polygon(size: number, angle: number, vertices: number = 3): string {
 		const width = size;
 		const height = size;
 		const insetRatio = 0.35;
@@ -150,14 +150,14 @@ export default class SVGPaths {
 		let data = [];
 		let i = 0;
 		while (i++ < vertices) {
-			const angle = direction + i * segmentAngle * 2; // multiples of one third of a circle
-			const halfWay = angle - segmentAngle;
+			const final = angle + i * segmentAngle * 2; // multiples of one third of a circle
+			const halfWay = final - segmentAngle;
 			const preceder = halfWay - tweak;
 			const follower = halfWay + tweak;
 			data.push({
 				controlOne: outer.rotate_by(preceder).offsetBy(offset),
 				controlTwo: outer.rotate_by(follower).offsetBy(offset),
-				end:		inner.rotate_by(   angle).offsetBy(offset),
+				end:		inner.rotate_by(   final).offsetBy(offset),
 			});
 		}
 		const start = data[vertices - 1].end;

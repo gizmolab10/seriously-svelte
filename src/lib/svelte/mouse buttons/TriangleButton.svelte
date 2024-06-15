@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, Size, Thing, Point, ZIndex, svgPaths, ElementState, Direction, dbDispatch } from '../../ts/common/GlobalImports';
+	import { k, u, Size, Thing, Point, ZIndex, svgPaths, ElementState, dbDispatch } from '../../ts/common/GlobalImports';
 	import { s_ancestries_grabbed } from '../../ts/state/ReactiveState';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import Button from './Button.svelte';
@@ -9,15 +9,15 @@
 	export let extraPath = null;
 	export let name = k.empty;
 	export let strokeColor;
-	export let direction;
 	export let center;
+	export let angle;
 	export let size;
 	let fillColor = k.color_background;
 	let extraColor = k.color_background;
-	let trianglePath = svgPaths.fat_polygon(size, direction);
+	let trianglePath = svgPaths.fat_polygon(size, angle);
 	
 	$: {
-		trianglePath = svgPaths.fat_polygon(size, direction);
+		trianglePath = svgPaths.fat_polygon(size, angle);
 		setFillColor(false);
 	}
 

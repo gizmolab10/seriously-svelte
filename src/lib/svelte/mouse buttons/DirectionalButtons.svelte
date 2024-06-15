@@ -38,8 +38,8 @@
                 center={origin.offsetByY(-offsetY)}
                 mouse_closure={mouse_closure}
                 hover_closure={hover_closure}
-                direction={Direction.up}
                 strokeColor={'black'}
+                angle={Direction.up}
                 size={buttonSize}
                 name='up'
             />
@@ -49,7 +49,7 @@
                 center={origin.offsetByY(offsetY)}
                 mouse_closure={mouse_closure}
                 hover_closure={hover_closure}
-                direction={Direction.down}
+                angle={Direction.down}
                 strokeColor={'black'}
                 size={buttonSize}
                 name='down'

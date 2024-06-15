@@ -301,7 +301,7 @@
 					mouse_closure={(mouseState) => handle_mouse_data(mouseState, IDTool.next)}
 					extraPath={svgPaths.circle_atOffset(toolDiameter, 4)}
 					center={getC(IDTool.next)}
-					direction={Direction.up}
+					angle={Direction.up}
 					size={toolDiameter}
 					name='next'/>
 				<TriangleButton
@@ -310,7 +310,7 @@
 					mouse_closure={(mouseState) => handle_mouse_data(mouseState, IDTool.delete_parent)}
 					extraPath={svgPaths.dash(toolDiameter, 4)}
 					center={getC(IDTool.delete_parent)}
-					direction={Direction.left}
+					angle={Direction.left}
 					name='delete_parent'
 					size={toolDiameter}/>
 				<TriangleButton
@@ -319,7 +319,7 @@
 					strokeColor={isDisabledFor(IDTool.add_parent) ? k.color_disabled : color}
 					extraPath={svgPaths.t_cross(toolDiameter, 3)}
 					center={getC(IDTool.add_parent)}
-					direction={Direction.left}
+					angle={Direction.left}
 					size={toolDiameter}
 					name='add_parent'/>
 				<TriangleButton
@@ -327,7 +327,7 @@
 					mouse_closure={(mouseState) => handle_mouse_data(mouseState, IDTool.create)}
 					extraPath={svgPaths.t_cross(toolDiameter, 3)}
 					center={getC(IDTool.create)}
-					direction={Direction.right}
+					angle={Direction.right}
 					strokeColor={color}
 					size={toolDiameter}
 					name='add'/>

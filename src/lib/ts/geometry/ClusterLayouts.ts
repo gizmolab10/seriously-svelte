@@ -3,8 +3,8 @@ import { k, u, get, Point, Ancestry, Predicate, ChildMapRect, ClusterLayout } fr
 import { h } from '../db/DBDispatch';
 
 export default class ClusterLayouts {
-	clusterLayouts: Array<ClusterLayout> = [];
 	childMapRects: Array<ChildMapRect> = [];
+	layouts: Array<ClusterLayout> = [];
 	angularSpreads: Array<number> = [];
 	ancestries: Array<Ancestry> = [];
     ancestry = get(s_ancestry_focus);
@@ -24,8 +24,8 @@ export default class ClusterLayouts {
 	}
 
 	destructor() {
-		this.clusterLayouts.forEach(l => l.destructor());
-		this.clusterLayouts = [];
+		this.layouts.forEach(l => l.destructor());
+		this.layouts = [];
 		this.childMapRects = [];
 	}
 
@@ -40,9 +40,9 @@ export default class ClusterLayouts {
 	layout(ancestries: Array<Ancestry>, predicate: Predicate | null, points_out: boolean) {
 		if (!!predicate) {
 			const onePage = this.onePage_from(ancestries, predicate, points_out);
-			const clusterLayout = new ClusterLayout(this.ancestry, onePage, predicate, points_out);
-			this.childMapRects = u.concatenateArrays(this.childMapRects, clusterLayout.childMapRects(this.center));	// for necklace of widgets
-			this.clusterLayouts.push(clusterLayout);		// for lines and arcs
+			const layout = new ClusterLayout(this.ancestry, onePage, predicate, points_out);
+			this.childMapRects = u.concatenateArrays(this.childMapRects, layout.childMapRects(this.center));	// for necklace of widgets
+			this.layouts.push(layout);		// for lines and arcs
 		}
 	}
 
