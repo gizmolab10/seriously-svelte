@@ -3,7 +3,13 @@ import { s_ring_angle, s_cluster_arc_radius } from '../state/ReactiveState';
 import { Rect, Point } from '../geometry/Geometry';
 import { ArcKind } from '../common/Enumerations';
 
-// for a cluster, compute svg paths and positions for line and children
+// for one cluster (there are three)
+//
+// assumes ancestries are already reduced to fit
+//
+// computes: angle and vector for line,
+// svg paths and positions for the arc pieces,
+// and ChildMapRect for each child
 
 export default class ClusterLayout {
 	cluster_ancestry: Ancestry | null;
@@ -47,7 +53,7 @@ export default class ClusterLayout {
 		this.predicate = predicate;
 	}
 
-	destroy() {
+	destructor() {
 		this.ancestries = [];
 		this.cluster_ancestry = null;
 	}
@@ -101,10 +107,10 @@ export default class ClusterLayout {
 				this.angle_atStart = child_angle;
 			}
 		} else if (index == count - 1) {
-			if (startY < 0) {
-				this.angle_atStart = child_angle;
-			} else {
+			if (startY > 0) {
 				this.angle_atEnd = child_angle;
+			} else {
+				this.angle_atStart = child_angle;
 			}
 		}
 		return child_angle;

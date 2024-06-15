@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_graphRect, s_ancestry_focus, s_mouse_up_count, s_user_graphOffset, s_thing_fontFamily, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
+	import { s_graphRect, s_ancestry_focus, s_user_graphOffset, s_thing_fontFamily, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { k, s, u, Rect, Size, Point, ZIndex, onMount, signals, transparentize } from '../../ts/common/GlobalImports';
 	import RingButton from '../mouse buttons/RingButton.svelte';
 	import EditingTools from '../widget/EditingTools.svelte';
@@ -11,13 +11,12 @@
 	//	handle keys
 	//	lines: selection & hover
 	//	edit titles (keydown terminates edit)
+    const ancestry = $s_ancestry_focus;
+	const thing = ancestry?.thing;
 	const toolsOffset = new Point(32, -3);
-	const thing = $s_ancestry_focus?.thing;
 	const color = thing?.color ?? k.color_default;
-	let mouse_up_count = $s_mouse_up_count;
 	let titleCenter = Point.zero;
 	let center = Point.zero;
-	let ring_rebuilds = 0;
 	let size = Size.zero;
 	let titleWidth = 0;
 	let rebuilds = 0;
@@ -30,14 +29,6 @@
 		const handler = signals.handle_relayoutWidgets(0, (ancestry) => { rebuilds += 1; });
 		return () => { handler.disconnect() };
 	});
-
-	$: {
-		if (mouse_up_count != $s_mouse_up_count) {
-			mouse_up_count = $s_mouse_up_count;
-			s.ringState.reset();
-			ring_rebuilds += 1;
-		}
-	}
 
 	$: {
 		size = $s_graphRect.size;
@@ -70,17 +61,15 @@
 					<TitleEditor ancestry={$s_ancestry_focus} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 				</div>
 				<Necklace center={center}/>
-				{#key ring_rebuilds}
-					<RingButton
-						color={color}
-						thing={thing}
-						center={center}
-						ring_width={30}
-						zindex={ZIndex.lines}
-						name={'necklace-ring'}
-						radius={$s_cluster_arc_radius}
-						cursor_closure={cursor_closure}/>
-				{/key}
+				<RingButton
+					color={color}
+					thing={thing}
+					center={center}
+					ring_width={30}
+					zindex={ZIndex.lines}
+					name={'necklace-ring'}
+					radius={$s_cluster_arc_radius}
+					cursor_closure={cursor_closure}/>
 				<EditingTools offset={toolsOffset}/>
 			{/key}
 		</div>

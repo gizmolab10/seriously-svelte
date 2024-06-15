@@ -17,11 +17,20 @@
 	const ringOrigin = center.distanceFrom(Point.square(outer_radius));
 	const viewBox = `${-ring_width}, ${-ring_width}, ${diameter}, ${diameter}`;
 	const svg_ringPath = svgPaths.ring(Point.square(radius), outer_radius, ring_width);
+	let mouse_up_count = $s_mouse_up_count;
 	let rebuilds = 0
 	let ringButton;
 
 	$: {
 		if ($s_ancestry_focus.thing.id == $s_thing_changed.split(k.genericSeparator)[0]) {
+			rebuilds += 1;
+		}
+	}
+
+	$: {
+		if (mouse_up_count != $s_mouse_up_count) {
+			mouse_up_count = $s_mouse_up_count;
+			s.ringState.reset();
 			rebuilds += 1;
 		}
 	}
@@ -52,7 +61,6 @@
 					sendSignal = true;
 					s.ringState.priorAngle = mouseAngle;
 					$s_ring_angle = mouseAngle.add_angle_normalized(-s.ringState.startAngle);
-					console.log(`move ${$s_ring_angle}`);
 				}
 			}
 			if (sendSignal) {
@@ -69,7 +77,6 @@
 		/////////////////////////////
 
 		if (!mouseState.isHover) {
-			console.log(`mouse ${mouseState.isDown}`);
 			const from_center = distance_fromCenter_of($s_mouse_location);
 			if (mouseState.isDouble) {
 
@@ -85,7 +92,6 @@
 				rebuilds += 1;
 			} else if (mouseState.isDown) {
 				const mouseAngle = from_center.angle;
-				console.log(`down ${mouseAngle}`);
 
 				// begin rotate
 

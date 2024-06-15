@@ -22,6 +22,7 @@ import { k } from './Constants';
 
 import AlterationState from '../state/AlterationState';
 import ClusterLayout from '../geometry/ClusterLayout';
+import ClusterLayouts from '../geometry/ClusterLayouts';
 import ChildMapRect from '../geometry/ChildMapRect';
 import ElementState from '../state/ElementState';
 import TreeLayout from '../geometry/TreeLayout';
@@ -51,8 +52,8 @@ export {
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Grabs, dbDispatch, Ancestry, Hierarchy, persistLocal,
 	ZIndex, PredicateKind, GraphRelations, CreationOptions,
-	Angle, Quadrant, TreeLayout, ChildMapRect, ClusterLayout,
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactKind,
 	ElementType, AlterationType, SvelteWrapper, SvelteComponentType,
 	IDLine, IDTool, IDTrait, IDSignal, IDButton, IDBrowser, IDPersistant,
+	Angle, Quadrant, TreeLayout, ChildMapRect, ClusterLayouts, ClusterLayout,
 };

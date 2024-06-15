@@ -91,6 +91,7 @@ export default class Ancestry extends Identifiable {
 			this._thing = thing;
 		}
 		if (!!thing && !thing.oneAncestry && !!this.predicate && !this.predicate.isBidirectional) {
+			// console.log(`oneAncestry ${this.titles}`);
 			thing.oneAncestry = this;
 		}
 		return this._thing;
