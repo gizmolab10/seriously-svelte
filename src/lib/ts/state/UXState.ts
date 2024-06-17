@@ -46,4 +46,4 @@ class State {
 
 }
 
-export let s = new State();
+export const s = new State();

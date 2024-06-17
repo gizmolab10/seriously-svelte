@@ -5,7 +5,7 @@
 	import EditingTools from '../widget/EditingTools.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import Circle from '../kit/Circle.svelte';
-	import Necklace from './Necklace.svelte';
+	import Clusters from './Clusters.svelte';
 	// needs:
 	//	arrowheads
 	//	handle keys
@@ -60,7 +60,7 @@
 						left: {titleCenter.x}px;'>
 					<TitleEditor ancestry={$s_ancestry_focus} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 				</div>
-				<Necklace center={center}/>
+				<Clusters/>
 				<RingButton
 					color={color}
 					thing={thing}

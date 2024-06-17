@@ -1,7 +1,7 @@
+import { s_graphRect, s_ring_angle, s_ancestry_focus, s_cluster_arc_radius } from '../state/ReactiveState';
 import { g, k, u, get, Angle, IDLine, svgPaths, Ancestry, } from '../common/GlobalImports';
-import { Predicate, ChildMapRect, AdvanceMapRect } from '../common/GlobalImports';
-import { s_ring_angle, s_cluster_arc_radius } from '../state/ReactiveState';
-import { Rect, Point } from '../geometry/Geometry';
+import { Predicate, WidgetMapRect, AdvanceMapRect } from '../common/GlobalImports';
+import { Rect, Point } from './Geometry';
 import { ArcKind } from '../common/Enumerations';
 
 // for one cluster (there are three)
@@ -10,9 +10,11 @@ import { ArcKind } from '../common/Enumerations';
 //
 // computes: angle and vector for line,
 // svg paths and positions for the arc pieces,
-// and ChildMapRect for each child
+// and WidgetMapRect for each child
 
-export default class ClusterLayout {
+export default class ClusterMap {
+	advanceMaps: Array<AdvanceMapRect> = [];
+	widget_maps: Array<WidgetMapRect> = [];
 	ancestries: Array<Ancestry> = [];
 	cluster_ancestry!: Ancestry;
 	index = 0;	// for Advance
@@ -22,14 +24,16 @@ export default class ClusterLayout {
 	fork_backoff: number;
 	fork_radius: number;
 	points_out: boolean;
+	center = Point.zero;
 	fork_center: Point;
 	angle_atStart = 0;
 	angle_atEnd = 0;
 	line_tip: Point;
 	arc_radius = 0;
 	count: number;
+	total: number;
 
-	constructor(cluster_ancestry: Ancestry, ancestries: Array<Ancestry>, predicate: Predicate, points_out: boolean) {
+	constructor(total: number, ancestries: Array<Ancestry>, predicate: Predicate, points_out: boolean) {
 		const arc_radius = get(s_cluster_arc_radius);
 		const center = Point.square(arc_radius);
 		const tiny_radius = k.necklace_gap / 2;
@@ -41,7 +45,7 @@ export default class ClusterLayout {
 		const line_radius = arc_radius - k.cluster_inside_radius - fork_radius;
 
 		this.line_tip = Point.fromPolar(line_radius, line_angle);
-		this.cluster_ancestry = cluster_ancestry;
+		this.cluster_ancestry = get(s_ancestry_focus);
 		this.fork_backoff = fork_backoff;
 		this.fork_radius = fork_radius;
 		this.fork_center = fork_center;
@@ -52,39 +56,38 @@ export default class ClusterLayout {
 		this.arc_radius = arc_radius;
 		this.points_out = points_out;
 		this.predicate = predicate;
+		this.total = total;
+		this.setup()
 	}
 
 	destructor() {
 		this.ancestries = [];
 	}
-	
-	static readonly $_ANGLES_$: unique symbol;
 
-	get advanceMapRects(): Array<AdvanceMapRect> {
-		let array: Array<AdvanceMapRect> = [];
-		array.push(new AdvanceMapRect(this.cluster_ancestry, this.predicate, this.points_out, false));
-		array.push(new AdvanceMapRect(this.cluster_ancestry, this.predicate, this.points_out, true));
-		return array;
-	}
-
-	childMapRects(center: Point): Array<ChildMapRect>  {
-		let array: Array<ChildMapRect> = [];
+	setup() {
+		const radius = this.arc_radius;
 		const count = this.ancestries.length;
+		const radial = new Point(radius + k.necklace_gap, 0);
+
+		this.advanceMaps = [];
+		this.widget_maps = [];
+		this.center = get(s_graphRect).size.dividedInHalf.asPoint;
+		this.advanceMaps.push(new AdvanceMapRect(this.cluster_ancestry, count, this.predicate, this.points_out, false));
+		this.advanceMaps.push(new AdvanceMapRect(this.cluster_ancestry, count, this.predicate, this.points_out, true));
 		if (count > 0 && !!this.predicate) {
 			let index = 0;
-			const radius = this.arc_radius;
-			const radial = new Point(radius + k.necklace_gap, 0);
 			while (index < count) {
 				const ancestry = this.ancestries[index];
 				const childAngle = this.angle_ofChild_for(index, count, radius);
-				const childOrigin = center.offsetBy(radial.rotate_by(childAngle));
-				const map = new ChildMapRect(IDLine.flat, new Rect(), childOrigin, ancestry, this.cluster_ancestry, childAngle); //, this.predicate.kind);
-				array.push(map);
+				const childOrigin = this.center.offsetBy(radial.rotate_by(childAngle));
+				const map = new WidgetMapRect(IDLine.flat, new Rect(), childOrigin, ancestry, this.cluster_ancestry, childAngle); //, this.predicate.kind);
+				this.widget_maps.push(map);
 				index += 1;
 			}
 		}
-		return array;
 	}
+	
+	static readonly $_ANGLES_$: unique symbol;
 
 	angle_ofChild_for(index: number, count: number, radius: number): number {
 		const row = index - ((count - 1) / 2);			// row centered around zero

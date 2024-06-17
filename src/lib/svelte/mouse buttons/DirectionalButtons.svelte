@@ -8,8 +8,8 @@
     const offsetY = buttonSize / 2 - 1;
 	let rebuilds = 0;
 
-	function hover_closure(isFilled) {
-        return [isFilled ? 'black' : k.color_background, k.empty];
+	function hover_closure(isHovering) {
+        return [isHovering ? 'black' : k.color_background, k.empty];
     }
 
 	function mouse_closure(mouseState) {

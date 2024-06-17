@@ -1,6 +1,6 @@
 import { k, s, Rect, Thing, Point, Ancestry, ElementType, ElementState } from '../common/GlobalImports'
 
-export default class ChildMapRect extends Rect {
+export default class WidgetMapRect extends Rect {
 	childAncestry: Ancestry | null;
 	elementState: ElementState;
 	childAngle: number | null;
@@ -22,7 +22,7 @@ export default class ChildMapRect extends Rect {
 		this.ancestry = ancestry;
 		this.subtype = subtype;
 		if (!this.child) {
-			console.log('geometry ChildMapRect ... has no child');
+			console.log('geometry WidgetMapRect ... has no child');
 		}
 	}
 

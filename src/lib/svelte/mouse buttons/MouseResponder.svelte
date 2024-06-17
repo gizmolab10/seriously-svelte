@@ -67,15 +67,21 @@
 		}
 	}
 
+	function reset() {
+		clearTimeout(mouse_doubleClick_timer);
+		clearTimeout(mouse_longClick_timer);
+		mouse_doubleClick_timer = null;
+		mouse_longClick_timer = null;
+		mouseState.clicks = 0;
+	}
+
 	function handle_pointerUp(event) {
 		if (detect_mouseUp) {
 
-			// teardown timers and call closure
+			// teardown long timer and call closure
 		
 			closure(MouseState.up(event, mouse_button));
-			clearTimeout(mouse_doubleClick_timer);
 			clearTimeout(mouse_longClick_timer);
-			mouse_doubleClick_timer = null;
 			mouse_longClick_timer = null;
 		}
 	}
@@ -94,8 +100,7 @@
 
 			mouse_longClick_timer = setTimeout(() => {
 				closure(MouseState.long(event, mouse_button));
-				mouse_longClick_timer = null;
-				mouseState.clicks = 0;
+				reset();
 			}, k.threshold_longClick);
 		}
 		if (detect_doubleClick && !mouse_doubleClick_timer) {
@@ -104,8 +109,7 @@
 
 			mouse_doubleClick_timer = setTimeout(() => {
 				closure(MouseState.clicks(event, mouse_button, mouseState.clicks));
-				mouse_doubleClick_timer = null;
-				mouseState.clicks = 0;
+				reset();
 			}, k.threshold_doubleClick);
 		}
 	}

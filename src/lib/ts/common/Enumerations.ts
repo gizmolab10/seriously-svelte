@@ -75,6 +75,7 @@ export enum ElementType {
 	crumb	= 'crumb',
 	tool	= 'tool',
 	drag	= 'drag',
+	none	= 'none',
 }
 
 export enum IDButton {

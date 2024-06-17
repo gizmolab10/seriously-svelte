@@ -47,9 +47,9 @@
 	border_thickness=0
 	closure={closure}
 	center={center}
-	name={name}
-	height='20'
-	width='20'>
+	height={size}
+	width={size}
+	name={name}>
 	<SVGD3 name='triangle'
 		svg_path={trianglePath}
 		stroke={strokeColor}
@@ -66,4 +66,5 @@
 			width={size}
 		/>
 	{/if}
+	<slot></slot>
 </Button>

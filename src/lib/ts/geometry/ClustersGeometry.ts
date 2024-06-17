@@ -1,17 +1,15 @@
 import { s_indices_cluster, s_ancestry_focus, s_indices_reversed, s_cluster_arc_radius } from '../state/ReactiveState';
-import { k, u, get, Point, Ancestry, Predicate, ChildMapRect, ClusterLayout } from '../common/GlobalImports';
+import { k, u, get, Point, Ancestry, Predicate, WidgetMapRect, ClusterMap } from '../common/GlobalImports';
 import { h } from '../db/DBDispatch';
 
 export default class ClustersGeometry {
-	childMapRects: Array<ChildMapRect> = [];
-	layouts: Array<ClusterLayout> = [];
+	widget_maps: Array<WidgetMapRect> = [];
+	cluster_maps: Array<ClusterMap> = [];
 	angularSpreads: Array<number> = [];
 	ancestries: Array<Ancestry> = [];
     ancestry = get(s_ancestry_focus);
-	center: Point;
 
-	constructor(center: Point) {
-		this.center = center;
+	constructor() {
 		const thing = this.ancestry.thing;
 		let childAncestries = this.ancestry.childAncestries;
 		this.layout(childAncestries, Predicate.contains, true);
@@ -24,9 +22,9 @@ export default class ClustersGeometry {
 	}
 
 	destructor() {
-		this.layouts.forEach(l => l.destructor());
-		this.layouts = [];
-		this.childMapRects = [];
+		this.cluster_maps.forEach(l => l.destructor());
+		this.cluster_maps = [];
+		this.widget_maps = [];
 	}
 
 	onePage_from(ancestries: Array<Ancestry>, predicate: Predicate, points_out: boolean): Array<Ancestry> {
@@ -40,9 +38,9 @@ export default class ClustersGeometry {
 	layout(ancestries: Array<Ancestry>, predicate: Predicate | null, points_out: boolean) {
 		if (!!predicate) {
 			const onePage = this.onePage_from(ancestries, predicate, points_out);
-			const layout = new ClusterLayout(this.ancestry, onePage, predicate, points_out);
-			this.childMapRects = u.concatenateArrays(this.childMapRects, layout.childMapRects(this.center));	// for necklace of widgets
-			this.layouts.push(layout);		// for lines and arcs
+			const layout = new ClusterMap(ancestries.length, onePage, predicate, points_out);
+			this.widget_maps = u.concatenateArrays(this.widget_maps, layout.widget_maps);	// for necklace of widgets
+			this.cluster_maps.push(layout);		// for lines and arcs
 		}
 	}
 

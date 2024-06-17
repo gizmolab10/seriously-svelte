@@ -2,6 +2,7 @@ import { builds } from './Builds';
 
 export default class Constants {
 	dot_size = 13;
+	debug_size = 20;
 	width_max = 200;
 	necklace_gap = 12;
 	line_stretch = 22;
@@ -77,4 +78,4 @@ export default class Constants {
 
 }
 
-export let k = new Constants();
+export const k = new Constants();

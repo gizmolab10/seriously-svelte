@@ -30,7 +30,6 @@
 	$: {
 		if (mouse_up_count != $s_mouse_up_count) {
 			mouse_up_count = $s_mouse_up_count;
-			s.ringState.reset();
 			rebuilds += 1;
 		}
 	}
@@ -61,6 +60,7 @@
 					sendSignal = true;
 					s.ringState.priorAngle = mouseAngle;
 					$s_ring_angle = mouseAngle.add_angle_normalized(-s.ringState.startAngle);
+					console.log(mouseAngle)
 				}
 			}
 			if (sendSignal) {

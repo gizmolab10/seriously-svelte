@@ -7,10 +7,12 @@ export default class RingState {
 	radiusOffset: number | null = null;		// distance from arc radius to location of mouse DOWN
 	base64_rotateSVG = btoa(encodeURIComponent(k.rotateSVG));
 
-	reset() { this.priorAngle = this.startAngle = this.radiusOffset = null; }
+	reset() { this.startAngle = this.priorAngle = this.radiusOffset = null; }
 	get isHighlighted(): boolean { return this.isHovering || this.isActive; }
 	get stroke_transparency(): number { return this.isHighlighted ? 0.8 : 1; }
 	get fill_transparency(): number { return this.isHighlighted ? 0.97 : 0.98; }
 	get isActive(): boolean { return !!this.startAngle || !!this.radiusOffset; }
 	get cursor(): string { return this.isActive ? 'move' : this.isHovering ? 'pointer' : k.cursor_default; }
+
+
 }

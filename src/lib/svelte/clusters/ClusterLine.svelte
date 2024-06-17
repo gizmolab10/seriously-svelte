@@ -1,12 +1,12 @@
 <script lang='ts'>
-	import { IDLine, Quadrant, SvelteWrapper, SvelteComponentType, ClusterLayout } from '../../ts/common/GlobalImports';
+	import { IDLine, Quadrant, SvelteWrapper, SvelteComponentType, ClusterMap } from '../../ts/common/GlobalImports';
 	import { k, u, Rect, Size, Point, Angle, ZIndex, svgPaths } from '../../ts/common/GlobalImports';
 	import ArrowHead from '../kit/ArrowHead.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import Box from '../kit/Box.svelte';
 	export let center = Point.zero;
 	export let color = k.color_default;
-    export let layout: ClusterLayout;
+    export let layout: ClusterMap;
 	const show_arrowheads = k.show_arrowheads;
 	const predicate = layout?.predicate;
 	const idDiv = `${layout?.points_out ? 'child' : 'parent'} ${predicate?.kind}`;

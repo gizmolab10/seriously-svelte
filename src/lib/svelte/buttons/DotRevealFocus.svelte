@@ -10,7 +10,7 @@
 		elementState.set_forHovering(ancestry.thing.color, 'pointer');
 	})
 
-	function hover_closure(isFilled) {
+	function hover_closure(isHovering) {
 		return [debug.lines ? 'transparent' : elementState.stroke, k.empty];
 	}
 

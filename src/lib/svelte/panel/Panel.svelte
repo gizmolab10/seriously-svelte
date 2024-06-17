@@ -4,7 +4,7 @@
 	import { s_isBusy, s_db_type, s_graphRect, s_id_popupView, s_title_editing, s_show_details } from '../../ts/state/ReactiveState';
 	import { s_things_arrived, s_ancestry_focus, s_user_graphOffset, s_layout_asClusters } from '../../ts/state/ReactiveState';
 	import MouseResponder from '../mouse buttons/MouseResponder.svelte';
-	import ClusterGraph from '../clusters/ClusterGraph.svelte';
+	import ClustersGraph from '../clusters/ClustersGraph.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import Breadcrumbs from '../panel/Breadcrumbs.svelte';
 	import TreeGraph from '../tree/TreeGraph.svelte';
@@ -156,7 +156,7 @@
 							height: {$s_graphRect.size.height}px;
 							z-index: {ZIndex.panel};'>
 						{#if $s_layout_asClusters}
-							<ClusterGraph/>
+							<ClustersGraph/>
 						{:else}
 							<TreeGraph/>
 						{/if}
