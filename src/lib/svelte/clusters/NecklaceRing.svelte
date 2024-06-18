@@ -2,7 +2,7 @@
 	import { k, s, u, Thing, Point, ZIndex, signals, svgPaths, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
 	import { s_thing_changed, s_ancestry_focus, s_ring_angle, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/ReactiveState';
-	import MouseResponder from './MouseResponder.svelte';
+	import MouseResponder from '../mouse buttons/MouseResponder.svelte';
 	export let radius = 0;
 	export let thing: Thing;
 	export let ring_width = 0;
@@ -19,7 +19,7 @@
 	const svg_ringPath = svgPaths.ring(Point.square(radius), outer_radius, ring_width);
 	let mouse_up_count = $s_mouse_up_count;
 	let rebuilds = 0
-	let ringButton;
+	let NecklaceRing;
 
 	$: {
 		if ($s_ancestry_focus.thing.id == $s_thing_changed.split(k.genericSeparator)[0]) {
@@ -60,7 +60,6 @@
 					sendSignal = true;
 					s.ringState.priorAngle = mouseAngle;
 					$s_ring_angle = mouseAngle.add_angle_normalized(-s.ringState.startAngle);
-					console.log(mouseAngle)
 				}
 			}
 			if (sendSignal) {
@@ -130,7 +129,7 @@
 </script>
 
 {#key rebuilds}
-	<div class='ring-button' bind:this={ringButton}>
+	<div class='ring-button' bind:this={NecklaceRing}>
 		<MouseResponder
 			name={name}
 			center={center}

@@ -38,9 +38,9 @@ export default class ClustersGeometry {
 	layout(ancestries: Array<Ancestry>, predicate: Predicate | null, points_out: boolean) {
 		if (!!predicate) {
 			const onePage = this.onePage_from(ancestries, predicate, points_out);
-			const layout = new ClusterMap(ancestries.length, onePage, predicate, points_out);
-			this.widget_maps = u.concatenateArrays(this.widget_maps, layout.widget_maps);	// for necklace of widgets
-			this.cluster_maps.push(layout);		// for lines and arcs
+			const cluster_map = new ClusterMap(ancestries.length, onePage, predicate, points_out);
+			this.widget_maps = u.concatenateArrays(this.widget_maps, cluster_map.widget_maps);	// for necklace of widgets
+			this.cluster_maps.push(cluster_map);		// for lines and arcs
 		}
 	}
 

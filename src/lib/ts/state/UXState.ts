@@ -17,7 +17,7 @@ class State {
 	//  this allows them to be deleted	//
 	//		by their own event handling	//
 	//									//
-	//	used by: Button, RingButton &	//
+	//	used by: Button, NecklaceRing &	//
 	//		CloseButton					//
 	//									//
 	//////////////////////////////////////

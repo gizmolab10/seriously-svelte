@@ -20,7 +20,7 @@ export default class AdvanceMapRect extends Rect {
 		this.subtype = this.compute_subtype();
 		this.elementState = this.compute_elementState();
 		this.origin.x = (this.subtype.length + 16) * k.debug_size - 600;
-		this.title = this.predicate.isBidirectional ? 'r' : this.points_out ? 'p' : 'c';
+		this.title = this.predicate.isBidirectional ? 'r' : this.points_out ? 'c' : 'p';
 	}
 
 	compute_subtype() {

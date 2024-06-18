@@ -13,7 +13,7 @@ import { ArcKind } from '../common/Enumerations';
 // and WidgetMapRect for each child
 
 export default class ClusterMap {
-	advanceMaps: Array<AdvanceMapRect> = [];
+	advance_maps: Array<AdvanceMapRect> = [];
 	widget_maps: Array<WidgetMapRect> = [];
 	ancestries: Array<Ancestry> = [];
 	cluster_ancestry!: Ancestry;
@@ -69,11 +69,11 @@ export default class ClusterMap {
 		const count = this.ancestries.length;
 		const radial = new Point(radius + k.necklace_gap, 0);
 
-		this.advanceMaps = [];
+		this.advance_maps = [];
 		this.widget_maps = [];
 		this.center = get(s_graphRect).size.dividedInHalf.asPoint;
-		this.advanceMaps.push(new AdvanceMapRect(this.cluster_ancestry, count, this.predicate, this.points_out, false));
-		this.advanceMaps.push(new AdvanceMapRect(this.cluster_ancestry, count, this.predicate, this.points_out, true));
+		this.advance_maps.push(new AdvanceMapRect(this.cluster_ancestry, this.total, this.predicate, this.points_out, false));
+		this.advance_maps.push(new AdvanceMapRect(this.cluster_ancestry, this.total, this.predicate, this.points_out, true));
 		if (count > 0 && !!this.predicate) {
 			let index = 0;
 			while (index < count) {

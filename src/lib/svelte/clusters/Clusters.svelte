@@ -16,7 +16,6 @@
 
 	onMount(() => {
 		geometry = new ClustersGeometry();
-		console.log(geometry)
 		const handleAny = signals.handle_anySignal((signal_ancestry) => {
 			rebuilds += 1;
 		});
@@ -37,24 +36,24 @@
 {#key rebuilds}
 	{#if geometry}
 		<div class='necklace-widgets'>
-			{#each geometry.widget_maps as map}
+			{#each geometry.widget_maps as widget_map}
 				<Widget
-					subtype={map.subtype}
-					angle={map.childAngle}
-					name={map.elementState.name}
-					ancestry={map.childAncestry}
-					origin={map.childOrigin.offsetBy(childOffset)}/>
+					subtype={widget_map.subtype}
+					angle={widget_map.childAngle}
+					name={widget_map.elementState.name}
+					ancestry={widget_map.childAncestry}
+					origin={widget_map.childOrigin.offsetBy(childOffset)}/>
 			{/each}
 		</div>
 		<div class='lines-and-arcs'>
-			{#each geometry.cluster_maps as map}
-				{#if map.count > 0}
-					<Advance layout={map} isForward={false}/>
-					<ClusterLine layout={map} center={center} color={color}/>
-					{#if map.count > 1}
-						<ClusterArc layout={map} center={center} color={color}/>
+			{#each geometry.cluster_maps as cluster_map}
+				{#if cluster_map.count > 0}
+					<Advance cluster_map={cluster_map} isForward={false}/>
+					<ClusterLine cluster_map={cluster_map} center={center} color={color}/>
+					{#if cluster_map.count > 1}
+						<ClusterArc cluster_map={cluster_map} center={center} color={color}/>
 					{/if}
-					<Advance layout={map} isForward={true}/>
+					<Advance cluster_map={cluster_map} isForward={true}/>
 				{/if}
 			{/each}
 		</div>

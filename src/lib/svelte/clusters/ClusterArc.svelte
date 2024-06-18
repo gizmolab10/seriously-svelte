@@ -2,12 +2,12 @@
 	import { g, k, Point, ZIndex, onMount, ClusterMap } from '../../ts/common/GlobalImports';
 	import { s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { ArcKind } from '../../ts/common/Enumerations';
-	export let layout: ClusterMap;
+	export let cluster_map: ClusterMap;
 	export let center = Point.zero;
 	export let color = 'red';
 	const offset = k.necklace_gap;
 	let radius = $s_cluster_arc_radius + offset;
-	const arc_keyed_svgPaths = layout.arc_keyed_svgPaths;
+	const arc_keyed_svgPaths = cluster_map.arc_keyed_svgPaths;
 	const breadth = radius * 2;
 
 </script>

@@ -6,10 +6,10 @@
 	import Box from '../kit/Box.svelte';
 	export let center = Point.zero;
 	export let color = k.color_default;
-    export let layout: ClusterMap;
+    export let cluster_map: ClusterMap;
 	const show_arrowheads = k.show_arrowheads;
-	const predicate = layout?.predicate;
-	const idDiv = `${layout?.points_out ? 'child' : 'parent'} ${predicate?.kind}`;
+	const predicate = cluster_map?.predicate;
+	const idDiv = `${cluster_map?.points_out ? 'child' : 'parent'} ${predicate?.kind}`;
 	let style = `position: absolute; z-index: ${ZIndex.lines};`;
 	let title_origin = Point.zero;
 	let line_origin = Point.zero;
@@ -29,10 +29,10 @@
 		if (line && !lineWrapper) {
 			lineWrapper = new SvelteWrapper(line, h.rootAncestry, SvelteComponentType.line);
 		}
-		angle = layout?.angle_ofLine;
+		angle = cluster_map?.angle_ofLine;
 		const inside_radius = k.cluster_inside_radius + (show_arrowheads ? 8 : 0);
 		const inside_tip = Point.fromPolar(inside_radius, angle);
-		const line_tip = layout?.line_tip;
+		const line_tip = cluster_map?.line_tip;
 		size = line_tip.abs.asSize;
 		const rect = new Rect(Point.zero, size);
 		linePath = svgPaths.line(line_tip);
@@ -54,7 +54,7 @@
 			}
 		}
 		const title_y = k.dot_size * multiplier;
-		const title_x = u.getWidthOf(layout?.line_title) / -3;
+		const title_x = u.getWidthOf(cluster_map?.line_title) / -3;
 		const title_offset = new Point(title_x, title_y);
 		return rect.center.offsetBy(title_offset);
 	}
@@ -94,13 +94,13 @@
 			font-family: Arial;
 			font-size: 0.5em;
 			color: {color};'>
-		{layout?.line_title}
+		{cluster_map?.line_title}
 	</div>
 	{#if show_arrowheads}
 		{#if predicate?.isBidirectional}
 			<ArrowHead idDiv='child'  angle={angle} color={color} color_background={color} radius={thickness} center={arrow_end}/>
 			<ArrowHead idDiv='parent' angle={angle + Angle.half} color={color} color_background={color} radius={thickness} center={arrow_start}/>
-		{:else if layout?.points_out}
+		{:else if cluster_map?.points_out}
 			<ArrowHead idDiv='child'  angle={angle} color={color} color_background={color} radius={thickness} center={arrow_end}/>
 		{:else}
 			<ArrowHead idDiv='parent' angle={angle + Angle.half} color={color} color_background={color} radius={thickness} center={arrow_start}/>

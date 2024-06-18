@@ -3,15 +3,15 @@
 	import { ElementState, ClusterMap, AdvanceMapRect } from '../../ts/common/GlobalImports';
 	import { g, k, s, Point, onMount, Direction } from '../../ts/common/GlobalImports';
     import TriangleButton from '../mouse buttons/TriangleButton.svelte'
-	export let layout: ClusterMap;
+	export let cluster_map: ClusterMap;
 	export let isForward = false;
 	const size = k.debug_size;
 	let state!: ElementState;
-	let map!: AdvanceMapRect;
+	let advance_map!: AdvanceMapRect;
 
 	onMount(() => {
-		map = layout.advanceMaps[isForward ? 1 : 0];
-		state = map.elementState;		// DOES this survive onDestroy? created by ClusterMap
+		advance_map = cluster_map.advance_maps[isForward ? 1 : 0];
+		state = advance_map.elementState;		// DOES this survive onDestroy? created by ClusterMap
 	})
 
 	function hover_closure(isHovering) {
@@ -20,7 +20,7 @@
 
 	function mouse_closure(mouseState) {
 		if (mouseState.isDown) {
-			console.log(map.title + ' BANG! ' + map.total);
+			console.log(advance_map.title + ' BANG! ' + advance_map.total);
 		}
 	}
 
@@ -31,11 +31,11 @@
 		angle={isForward ? Direction.right : Direction.left}
 		hover_closure={hover_closure}
 		mouse_closure={mouse_closure}
+		center={advance_map.center}
 		strokeColor={state.stroke}
 		elementState={state}
-		center={map.center}
 		name={state.name}
 		size={size}>
-		{map.title}
+		{advance_map.title}
 	</TriangleButton>
 {/if}

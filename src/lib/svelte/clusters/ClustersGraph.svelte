@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { s_graphRect, s_ancestry_focus, s_user_graphOffset, s_thing_fontFamily, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { k, s, u, Rect, Size, Point, ZIndex, onMount, signals, transparentize } from '../../ts/common/GlobalImports';
-	import RingButton from '../mouse buttons/RingButton.svelte';
 	import EditingTools from '../widget/EditingTools.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
+	import NecklaceRing from './NecklaceRing.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Clusters from './Clusters.svelte';
 	// needs:
@@ -61,7 +61,7 @@
 					<TitleEditor ancestry={$s_ancestry_focus} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 				</div>
 				<Clusters/>
-				<RingButton
+				<NecklaceRing
 					color={color}
 					thing={thing}
 					center={center}
