@@ -13,11 +13,10 @@ import { ArcPart } from '../common/Enumerations';
 // and WidgetMapRect for each child
 
 export default class ClusterMap {
-	advance_maps: Array<AdvanceMapRect> = [];
-	widget_maps: Array<WidgetMapRect> = [];
-	ancestries: Array<Ancestry> = [];
+	advance_maps: Array<AdvanceMapRect> = [];	// always only two (forward and backward)
+	widget_maps: Array<WidgetMapRect> = [];		// maximum a page's worth
+	ancestries: Array<Ancestry> = [];			// ditto
 	cluster_ancestry!: Ancestry;
-	index = 0;	// for Advance
 	necklace_center: Point;
 	predicate: Predicate;
 	angle_ofLine: number;
@@ -60,25 +59,34 @@ export default class ClusterMap {
 		this.setup()
 	}
 
-	destructor() {
-		this.ancestries = [];
-	}
+	destructor() { this.ancestries = []; }
+	get_advanceMap_for(isForward: boolean) { return this.advance_maps[isForward ? 1 : 0]; }
+	get cluster_index(): number { return get(s_clusters).index_for(this.points_out, this.predicate); }
 
 	advance(isForward: boolean) {
-		const max = this.total - 1;
 		const state = get(s_clusters);
 		const sign = isForward ? 1 : -1;
 		const showing = this.ancestries.length;
 		let index = state.index_for(this.points_out, this.predicate);
-		index = index.increment_by_assuring(showing * sign, max);
+		index = index.increment_by_assuring(showing * sign, this.total);
 		state.setIndex_for(index, this.points_out, this.predicate);
-		const atEnd = index == max - showing;
-		const atStart = index == 0;
-		console.log(`index ${index}`);
+		this.adjust_advanceMaps_for(index);
 		s_clusters.set(state);		// UX will respond
 	}
 
-	get_advanceMap_for(isForward: boolean) { return this.advance_maps[isForward ? 1 : 0]; }
+	adjust_advanceMaps_for(index: number) {
+		const backward_map = this.get_advanceMap_for(false);
+		const forward_map = this.get_advanceMap_for(true);
+		backward_map.isVisible = true;
+		forward_map.isVisible = true;
+		const showing = this.ancestries.length;
+		if (index == this.total - showing) {
+			forward_map.isVisible = false;
+		}
+		if (index == 0) {
+			backward_map.isVisible = false;
+		}
+	}
 
 	setup() {
 		const radius = this.arc_radius;
@@ -177,11 +185,12 @@ export default class ClusterMap {
 
 	get line_title(): string {
 		let shortened = this.predicate?.kind.unCamelCase().lastWord() ?? k.empty;
+		const quantity = `${this.total}`;
 		if (!this.predicate?.isBidirectional) {
 			shortened = this.points_out ? shortened : 'is contained by';
-			return `${shortened} ${this.count}`;
+			return `${shortened} ${quantity}`;
 		}
-		return `${this.count} ${shortened}`;
+		return `${quantity} ${shortened}`;
 	}
 
 	big_svgPath(angle_tiltsUp: boolean) {
