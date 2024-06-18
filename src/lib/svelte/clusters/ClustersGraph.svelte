@@ -4,6 +4,7 @@
 	import EditingTools from '../widget/EditingTools.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import NecklaceRing from './NecklaceRing.svelte';
+	import ScrollRing from './ScrollRing.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Clusters from './Clusters.svelte';
 	// needs:
@@ -70,6 +71,14 @@
 					name={'necklace-ring'}
 					radius={$s_cluster_arc_radius}
 					cursor_closure={cursor_closure}/>
+				<ScrollRing
+					color={color}
+					thing={thing}
+					center={center}
+					ring_width={30}
+					zindex={ZIndex.lines}
+					name={'scroll-ring'}
+					radius={$s_cluster_arc_radius - 30}/>
 				<EditingTools offset={toolsOffset}/>
 			{/key}
 		</div>

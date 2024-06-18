@@ -12,7 +12,7 @@ import { ArcPart } from '../common/Enumerations';
 // svg paths and positions for the arc pieces,
 // and WidgetMapRect for each child
 
-export default class ClusterMap {
+export default class ClusterLayout  {
 	advance_maps: Array<AdvanceMapRect> = [];	// always only two (forward and backward)
 	widget_maps: Array<WidgetMapRect> = [];		// maximum a page's worth
 	ancestries: Array<Ancestry> = [];			// ditto

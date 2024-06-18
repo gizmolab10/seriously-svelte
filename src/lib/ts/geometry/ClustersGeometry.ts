@@ -1,10 +1,10 @@
-import { k, u, get, Ancestry, Predicate, ClusterMap, WidgetMapRect, ClusterStates } from '../common/GlobalImports';
+import { k, u, get, Ancestry, Predicate, ClusterLayout, WidgetMapRect, ClusterStates } from '../common/GlobalImports';
 import { s_clusters, s_ancestry_focus, s_cluster_arc_radius } from '../state/ReactiveState';
 import { h } from '../db/DBDispatch';
 
 export default class ClustersGeometry {
 	widget_maps: Array<WidgetMapRect> = [];
-	cluster_maps: Array<ClusterMap> = [];
+	cluster_layouts: Array<ClusterLayout> = [];
 	angularSpreads: Array<number> = [];
 	ancestries: Array<Ancestry> = [];
     ancestry = get(s_ancestry_focus);
@@ -12,8 +12,8 @@ export default class ClustersGeometry {
 	constructor() { this.setup(); }
 
 	destructor() {
-		this.cluster_maps.forEach(l => l.destructor());
-		this.cluster_maps = [];
+		this.cluster_layouts.forEach(l => l.destructor());
+		this.cluster_layouts = [];
 		this.widget_maps = [];
 	}
 
@@ -39,9 +39,9 @@ export default class ClustersGeometry {
 	layout(ancestries: Array<Ancestry>, predicate: Predicate | null, points_out: boolean) {
 		if (!!predicate) {
 			const onePage = this.onePage_from(ancestries, predicate, points_out);
-			const cluster_map = new ClusterMap(ancestries.length, onePage, predicate, points_out);
-			this.widget_maps = u.concatenateArrays(this.widget_maps, cluster_map.widget_maps);	// for necklace of widgets
-			this.cluster_maps.push(cluster_map);		// for lines and arcs
+			const cluster_layout = new ClusterLayout(ancestries.length, onePage, predicate, points_out);
+			this.widget_maps = u.concatenateArrays(this.widget_maps, cluster_layout.widget_maps);	// for necklace of widgets
+			this.cluster_layouts.push(cluster_layout);		// for lines and arcs
 		}
 	}
 

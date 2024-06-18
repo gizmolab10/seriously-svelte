@@ -28,7 +28,7 @@ import TreeGeometry from '../geometry/TreeGeometry';
 import ClusterStates from '../state/ClusterStates';
 import ClusterState from '../state/ClusterState';
 import ElementState from '../state/ElementState';
-import ClusterMap from '../geometry/ClusterMap';
+import ClusterLayout from '../geometry/ClusterLayout';
 import Relationship from '../data/Relationship';
 import TitleState from '../state/TitleState';
 import MouseState from '../state/MouseState';
@@ -57,7 +57,7 @@ export {
 	ZIndex, PredicateKind, GraphRelations, CreationOptions,
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactKind,
 	ElementState, ClusterState, ClusterStates, AlterationState,
-	Angle, Quadrant, ClusterMap, AdvanceMapRect, ClustersGeometry,
+	Angle, Quadrant, ClusterLayout, AdvanceMapRect, ClustersGeometry,
 	ElementType, AlterationType, SvelteWrapper, SvelteComponentType,
 	IDLine, IDTool, IDTrait, IDSignal, IDButton, IDBrowser, IDPersistant,
 };

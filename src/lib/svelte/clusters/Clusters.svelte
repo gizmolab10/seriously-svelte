@@ -54,14 +54,14 @@
 			{/each}
 		</div>
 		<div class='lines-and-arcs'>
-			{#each geometry.cluster_maps as cluster_map}
-				{#if cluster_map.count > 0}
-					<Advance cluster_map={cluster_map} isForward={false}/>
-					<ClusterLine cluster_map={cluster_map} center={center} color={color}/>
-					{#if cluster_map.count > 1}
-						<ClusterArc cluster_map={cluster_map} center={center} color={color}/>
+			{#each geometry.cluster_layouts as cluster_layout}
+				{#if cluster_layout.count > 0}
+					<Advance cluster_layout={cluster_layout} isForward={false}/>
+					<ClusterLine cluster_layout={cluster_layout} center={center} color={color}/>
+					{#if cluster_layout.count > 1}
+						<ClusterArc cluster_layout={cluster_layout} center={center} color={color}/>
 					{/if}
-					<Advance cluster_map={cluster_map} isForward={true}/>
+					<Advance cluster_layout={cluster_layout} isForward={true}/>
 				{/if}
 			{/each}
 		</div>
