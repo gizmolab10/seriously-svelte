@@ -10,6 +10,7 @@ class Builds {
 
 	constructor() {
 		this.notes = {
+			102 : ['June 18, 2024', 'visibility logic for advance buttons'],
 			101 : ['June 13, 2024', 'limit the number of things within each cluster'],
 			100 : ['June 6, 2024', 'significantly reduce stutter during necklace rotation'],
 			99 : ['June 4, 2024', 'expand help content and move to help-webseriously.netlify.app'],

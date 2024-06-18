@@ -2,17 +2,18 @@
 	import { ElementState, ClusterMap, AdvanceMapRect } from '../../ts/common/GlobalImports';
 	import { k, get, onMount, Direction } from '../../ts/common/GlobalImports';
     import TriangleButton from '../mouse buttons/TriangleButton.svelte'
-	import { s_clusters } from '../../ts/state/ReactiveState';
 	export let cluster_map: ClusterMap;
 	export let isForward = false;
 	const size = k.debug_size;
 	let rebuilds = 0;
-	let state!: ElementState;
+	let isVisible = true;
+	let element_state!: ElementState;
 	let advance_map!: AdvanceMapRect;
 
 	onMount(() => {
 		advance_map = cluster_map.get_advanceMap_for(isForward);
-		state = advance_map.elementState;		// DOES this survive onDestroy? created by ClusterMap
+		element_state = advance_map.elementState;		// DOES this survive onDestroy? created by ClusterMap
+		isVisible = advance_map.isVisible;
 	})
 
 	function hover_closure(isHovering) {
@@ -21,9 +22,8 @@
 
 	function mouse_closure(mouseState) {
 		if (mouseState.isDown) {
-			cluster_map.advance(isForward);
-			advance_map = cluster_map.get_advanceMap_for(isForward);		// UX will respond
-			console.log(`${cluster_map.cluster_index} ${advance_map.isVisible}`)
+			advance_map = cluster_map.advance(isForward);		// UX will respond
+			isVisible = advance_map.isVisible;
 			rebuilds += 1;
 		}
 	}
@@ -31,15 +31,15 @@
 </script>
 
 {#key rebuilds}
-	{#if state && advance_map.isVisible}
+	{#if element_state && isVisible}
 		<TriangleButton
 			angle={isForward ? Direction.right : Direction.left}
+			strokeColor={element_state.stroke}
 			hover_closure={hover_closure}
 			mouse_closure={mouse_closure}
+			elementState={element_state}
 			center={advance_map.center}
-			strokeColor={state.stroke}
-			elementState={state}
-			name={state.name}
+			name={element_state.name}
 			size={size}>
 			{advance_map.title}
 		</TriangleButton>

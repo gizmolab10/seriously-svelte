@@ -62,42 +62,19 @@ export default class ClusterMap {
 	destructor() { this.ancestries = []; }
 	get_advanceMap_for(isForward: boolean) { return this.advance_maps[isForward ? 1 : 0]; }
 	get cluster_index(): number { return get(s_clusters).index_for(this.points_out, this.predicate); }
-
-	advance(isForward: boolean) {
-		const state = get(s_clusters);
-		const sign = isForward ? 1 : -1;
-		const showing = this.ancestries.length;
-		let index = state.index_for(this.points_out, this.predicate);
-		index = index.increment_by_assuring(showing * sign, this.total);
-		state.setIndex_for(index, this.points_out, this.predicate);
-		this.adjust_advanceMaps_for(index);
-		s_clusters.set(state);		// UX will respond
-	}
-
-	adjust_advanceMaps_for(index: number) {
-		const backward_map = this.get_advanceMap_for(false);
-		const forward_map = this.get_advanceMap_for(true);
-		backward_map.isVisible = true;
-		forward_map.isVisible = true;
-		const showing = this.ancestries.length;
-		if (index == this.total - showing) {
-			forward_map.isVisible = false;
-		}
-		if (index == 0) {
-			backward_map.isVisible = false;
-		}
-	}
+	set_cluster_index(index: number) { s_clusters.set(get(s_clusters).setIndex_for(index, this.points_out, this.predicate)); }
 
 	setup() {
 		const radius = this.arc_radius;
 		const count = this.ancestries.length;
+		const upper_limit = this.total - count;
 		const radial = new Point(radius + k.necklace_gap, 0);
 
 		this.widget_maps = [];
 		this.advance_maps = [];
 		this.center = get(s_graphRect).size.dividedInHalf.asPoint;
-		this.advance_maps.push(new AdvanceMapRect(this.cluster_ancestry, this.predicate, this.points_out, false));
-		this.advance_maps.push(new AdvanceMapRect(this.cluster_ancestry, this.predicate, this.points_out, true));
+		this.advance_maps.push(new AdvanceMapRect(this.cluster_ancestry, this.predicate, upper_limit, this.points_out, false));
+		this.advance_maps.push(new AdvanceMapRect(this.cluster_ancestry, this.predicate, upper_limit, this.points_out, true));
 		if (count > 0 && !!this.predicate) {
 			let index = 0;
 			while (index < count) {
@@ -109,6 +86,16 @@ export default class ClusterMap {
 				index += 1;
 			}
 		}
+	}
+
+	advance(isForward: boolean) {
+		const sign = isForward ? 1 : -1;
+		const showing = this.ancestries.length;
+		const index = this.cluster_index.increment_by_assuring(showing * sign, this.total);
+		this.get_advanceMap_for(false).update_isVisible();
+		this.get_advanceMap_for(true).update_isVisible();
+		this.set_cluster_index(index);
+		return this.get_advanceMap_for(isForward);
 	}
 	
 	static readonly $_ANGLES_$: unique symbol;

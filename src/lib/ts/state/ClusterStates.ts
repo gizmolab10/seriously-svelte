@@ -13,15 +13,18 @@ export default class ClusterStates {
 		this.outward_states = [];
 	}
 
-	index_for(points_out: boolean, predicate: Predicate) {
+	index_for(points_out: boolean, predicate: Predicate): number {
 		return this.states_for(points_out)[predicate.stateIndex].index;
 	}
 
 	setIndex_for(index: number, points_out: boolean, predicate: Predicate) {
-		this.states_for(points_out)[predicate.stateIndex].index = index;
+		const states = this.states_for(points_out);
+		states[predicate.stateIndex].index = index;
+		this.setStates_for(states, points_out);
+		return this;
 	}
 
-	states_for(points_out: boolean) {
+	states_for(points_out: boolean): Array<ClusterState> {
 		return points_out ? this.outward_states : this.inward_states;
 	}
 
@@ -32,4 +35,5 @@ export default class ClusterStates {
 			this.inward_states = states;
 		}
 	}
+
 }
