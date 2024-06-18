@@ -1,9 +1,10 @@
-import { g, k, get, Point, signals, Ancestry, dbDispatch, GraphRelations } from '../common/GlobalImports'
 import { s_ring_angle, s_cluster_arc_radius, s_layout_asClusters } from '../state/ReactiveState';
 import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/ReactiveState';
+import { g, k, get, Point, signals, Ancestry, dbDispatch } from '../common/GlobalImports';
+import { ClusterState, ClusterStates, GraphRelations } from '../common/GlobalImports';
 import { s_ancestries_grabbed, s_ancestries_expanded } from '../state/ReactiveState';
-import { s_indices_cluster, s_indices_reversed } from '../../ts/state/ReactiveState';
 import { s_thing_fontFamily, s_graph_relations } from '../state/ReactiveState';
+import { s_clusters } from '../../ts/state/ReactiveState';
 import { h } from '../db/DBDispatch';
 
 export enum IDPersistant {
@@ -165,9 +166,6 @@ class PersistLocal {
 	ancestries_restore(force: boolean = false) {
 		if (!this.ancestriesRestored || force) {
 			this.ancestriesRestored = true;
-			this.indicies_restore(false);
-			this.indicies_restore(true);
-			this.focus_restore();
 			s_ancestries_grabbed.set(this.dbKey_ancestries(IDPersistant.grabbed));
 			s_ancestries_expanded.set(this.dbKey_ancestries(IDPersistant.expanded));
 	
@@ -181,17 +179,18 @@ class PersistLocal {
 		}
 	}
 
-	indicies_restore(flag: boolean) {
-		const count = h.predicates_byDirection(flag).length;
-		let indices: Array<number> = [];
+	indicies_restore(points_out: boolean) {
+		const count = h.predicates_byDirection(points_out).length;
+		let states: Array<ClusterState> = [];
 		for (let index = 0; index <= count; index += 1) {
-			indices[index] = 0;
+			states[index] = new ClusterState();
 		}
-		if (flag) {
-			s_indices_cluster.set(indices);
-		} else {
-			s_indices_reversed.set(indices);
+		let clusters_state = get(s_clusters);
+		if (!clusters_state) {
+			clusters_state = new ClusterStates();
 		}
+		clusters_state.setStates_for(states, points_out);
+		s_clusters.set(clusters_state);
 	}
 
 	focus_restore() {

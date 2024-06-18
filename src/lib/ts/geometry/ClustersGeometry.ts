@@ -1,5 +1,5 @@
-import { s_indices_cluster, s_ancestry_focus, s_indices_reversed, s_cluster_arc_radius } from '../state/ReactiveState';
-import { k, u, get, Point, Ancestry, Predicate, WidgetMapRect, ClusterMap } from '../common/GlobalImports';
+import { k, u, get, Ancestry, Predicate, ClusterMap, WidgetMapRect, ClusterStates } from '../common/GlobalImports';
+import { s_clusters, s_ancestry_focus, s_cluster_arc_radius } from '../state/ReactiveState';
 import { h } from '../db/DBDispatch';
 
 export default class ClustersGeometry {
@@ -9,7 +9,16 @@ export default class ClustersGeometry {
 	ancestries: Array<Ancestry> = [];
     ancestry = get(s_ancestry_focus);
 
-	constructor() {
+	constructor() { this.setup(); }
+
+	destructor() {
+		this.cluster_maps.forEach(l => l.destructor());
+		this.cluster_maps = [];
+		this.widget_maps = [];
+	}
+
+	setup() {
+		this.destructor();
 		const thing = this.ancestry.thing;
 		let childAncestries = this.ancestry.childAncestries;
 		this.layout(childAncestries, Predicate.contains, true);
@@ -21,17 +30,9 @@ export default class ClustersGeometry {
 		}
 	}
 
-	destructor() {
-		this.cluster_maps.forEach(l => l.destructor());
-		this.cluster_maps = [];
-		this.widget_maps = [];
-	}
-
 	onePage_from(ancestries: Array<Ancestry>, predicate: Predicate, points_out: boolean): Array<Ancestry> {
-		const indices = points_out ? get(s_indices_cluster) : get(s_indices_reversed);
 		const maxFit = Math.round(get(s_cluster_arc_radius) * 2 / k.row_height) - 6;
-		const predicateIndex = predicate.stateIndex;
-		const pageIndex = indices[predicateIndex];	// make sure it exists: hierarchy
+		const pageIndex = get(s_clusters).index_for(points_out, predicate);
 		return ancestries.slice(pageIndex, pageIndex + maxFit);
 	}
 

@@ -2,7 +2,9 @@ declare global {
 	interface Number {
 		normalize(value: number): number;
 		add_angle_normalized(angle: number): number;
-		increment(increment: boolean, length: number): number;
+		increment_by(delta: number, total: number): number;
+		increment(increment: boolean, total: number): number;
+		increment_by_assuring(delta: number, total: number): number;
 		isBetween(a: number, b: number, inclusive: boolean): boolean;
 		isClocklyBetween(a: number, b: number, limit: number): boolean;
 	}
@@ -56,7 +58,6 @@ Object.defineProperty(String.prototype, 'injectElipsisAt', {
 	configurable: false
 });
 
-// Sync hash function (note: this is not truly synchronous)
 Object.defineProperty(String.prototype, 'hash', {
 	value: function() {
 		var hash = 0,
@@ -72,18 +73,58 @@ Object.defineProperty(String.prototype, 'hash', {
 		return hash;
 	},
 	writable: true,
+	enumerable: true,
 	configurable: true
 });
 
-Object.defineProperty(Number.prototype, 'increment', {
-	value: function(increase: boolean, length: number): number {
-		var result = this.valueOf() + (increase ? 1 : -1);
-		const max = length - 1;
-		if (result > max) {
-			result = 0;
-		} else if (result < 0) {
-			result = max;
+Object.defineProperty(Number.prototype, 'normalize', {
+
+	// converts this using clock arithmetic
+	// force between 0 and value, including 0
+
+	value: function(value: number): number {
+		let result = value;
+		while (result < 0) {
+			result += this;
 		}
+		while (result > this) {
+			result -= this;
+		}
+		return result;
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(Number.prototype, 'increment', {
+	value: function(increase: boolean, total: number): number {
+		return this.increment_by(increase ? 1 : -1, total);
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(Number.prototype, 'increment_by', {
+	value: function(delta: number, total: number): number {
+		var result = this.valueOf() + delta;
+		return total.normalize(result);
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(Number.prototype, 'increment_by_assuring', {
+	value: function(delta: number, total: number): number {
+		var assure = Math.abs(delta);
+		var value = this.valueOf();
+		if (value < assure && assure != delta) {
+			return 0;
+		}
+		var result = value + delta;
+		result = Math.min(total - assure, result);
 		return result;
 	},
 	writable: false,
@@ -118,22 +159,6 @@ Object.defineProperty(Number.prototype, 'isClocklyBetween', {
 		var min = Math.min(a, b),
 			max = Math.max(a, b);
 		return this.isBetween(min, max, true) || cycled.isBetween(min, max, true);
-	},
-	writable: false,
-	enumerable: false,
-	configurable: false
-});
-
-Object.defineProperty(Number.prototype, 'normalize', {
-	value: function(value: number): number {
-		let result = value;
-		while (result < 0) {
-			result += this;
-		}
-		while (result > this) {
-			result -= this;
-		}
-		return result;
 	},
 	writable: false,
 	enumerable: false,

@@ -7,20 +7,19 @@ export default class AdvanceMapRect extends Rect {
 	isForward: boolean;
 	ancestry: Ancestry;
 	subtype = k.empty;
-	total: number;
+	isVisible = true;
 	title = 'r';
 
-	constructor(ancestry: Ancestry, total: number, predicate: Predicate, points_out: boolean, isForward: boolean) {
+	constructor(ancestry: Ancestry, predicate: Predicate, points_out: boolean, isForward: boolean) {
 		super(Point.zero, new Size(0, 200));
 		this.points_out = points_out;
 		this.predicate = predicate;
 		this.isForward = isForward;
 		this.ancestry = ancestry;
-		this.total = total;
 		this.subtype = this.compute_subtype();
 		this.elementState = this.compute_elementState();
-		this.origin.x = (this.subtype.length + 16) * k.debug_size - 600;
 		this.title = this.predicate.isBidirectional ? 'r' : this.points_out ? 'c' : 'p';
+		this.origin.x = (this.subtype.length + 16) * k.debug_size - 600;	// move rect (this)
 	}
 
 	compute_subtype() {

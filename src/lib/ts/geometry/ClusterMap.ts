@@ -1,8 +1,8 @@
-import { s_graphRect, s_ring_angle, s_ancestry_focus, s_cluster_arc_radius } from '../state/ReactiveState';
-import { g, k, u, get, Angle, IDLine, svgPaths, Ancestry, } from '../common/GlobalImports';
+import { s_clusters, s_graphRect, s_ring_angle, s_ancestry_focus, s_cluster_arc_radius } from '../state/ReactiveState';
+import { k, u, get, Angle, IDLine, svgPaths, Ancestry, } from '../common/GlobalImports';
 import { Predicate, WidgetMapRect, AdvanceMapRect } from '../common/GlobalImports';
 import { Rect, Point } from './Geometry';
-import { ArcKind } from '../common/Enumerations';
+import { ArcPart } from '../common/Enumerations';
 
 // for one cluster (there are three)
 //
@@ -64,16 +64,32 @@ export default class ClusterMap {
 		this.ancestries = [];
 	}
 
+	advance(isForward: boolean) {
+		const max = this.total - 1;
+		const state = get(s_clusters);
+		const sign = isForward ? 1 : -1;
+		const showing = this.ancestries.length;
+		let index = state.index_for(this.points_out, this.predicate);
+		index = index.increment_by_assuring(showing * sign, max);
+		state.setIndex_for(index, this.points_out, this.predicate);
+		const atEnd = index == max - showing;
+		const atStart = index == 0;
+		console.log(`index ${index}`);
+		s_clusters.set(state);		// UX will respond
+	}
+
+	get_advanceMap_for(isForward: boolean) { return this.advance_maps[isForward ? 1 : 0]; }
+
 	setup() {
 		const radius = this.arc_radius;
 		const count = this.ancestries.length;
 		const radial = new Point(radius + k.necklace_gap, 0);
 
-		this.advance_maps = [];
 		this.widget_maps = [];
+		this.advance_maps = [];
 		this.center = get(s_graphRect).size.dividedInHalf.asPoint;
-		this.advance_maps.push(new AdvanceMapRect(this.cluster_ancestry, this.total, this.predicate, this.points_out, false));
-		this.advance_maps.push(new AdvanceMapRect(this.cluster_ancestry, this.total, this.predicate, this.points_out, true));
+		this.advance_maps.push(new AdvanceMapRect(this.cluster_ancestry, this.predicate, this.points_out, false));
+		this.advance_maps.push(new AdvanceMapRect(this.cluster_ancestry, this.predicate, this.points_out, true));
 		if (count > 0 && !!this.predicate) {
 			let index = 0;
 			while (index < count) {
@@ -143,11 +159,11 @@ export default class ClusterMap {
 	get gap_svgPath() { return svgPaths.circle(this.fork_center, this.fork_radius - 0.5); }
 	get fork_svgPaths() { return [this.fork_svgPath(false), this.fork_svgPath(true)]; }
 
-	get arc_keyed_svgPaths(): { [key: string]: Array<string>} {
-		let dict: { [key: string]: Array<string>} = {};
-		dict[ArcKind.main] = this.main_svgPaths;
-		dict[ArcKind.fork] = this.fork_svgPaths;
-		dict[ArcKind.gap] = [this.gap_svgPath];
+	get arc_parts_svgPaths(): { [arc_part: string]: Array<string>} {
+		let dict: { [arc_part: string]: Array<string>} = {};
+		dict[ArcPart.main] = this.main_svgPaths;
+		dict[ArcPart.fork] = this.fork_svgPaths;
+		dict[ArcPart.gap] = [this.gap_svgPath];
 		return dict;
 	}
 

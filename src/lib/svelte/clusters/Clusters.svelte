@@ -1,6 +1,6 @@
 <script lang='ts'>
+	import { s_clusters, s_graphRect, s_thing_changed, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { g, k, s, u, get, Point, ZIndex, signals, onMount, Predicate, onDestroy } from '../../ts/common/GlobalImports';
-	import { s_graphRect, s_thing_changed, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { WidgetMapRect, ClustersGeometry, transparentize } from '../../ts/common/GlobalImports';
 	import ClusterLine from './ClusterLine.svelte';
 	import ClusterArc from './ClusterArc.svelte';
@@ -27,6 +27,14 @@
 	$: {
 		if (ancestry.thing.id == $s_thing_changed.split(k.genericSeparator)[0]) {
 			color = ancestry.thing?.color ?? k.color_default;
+			rebuilds += 1;
+		}
+	}
+
+	$: {
+		const state = $s_clusters;
+		if (!!state && !!geometry) {		// ignore null at startup
+			geometry.setup();
 			rebuilds += 1;
 		}
 	}

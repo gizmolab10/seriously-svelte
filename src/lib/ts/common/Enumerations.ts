@@ -13,7 +13,7 @@ export enum PredicateKind {
 	contains  = 'contains',
 }
 
-export enum ArcKind {
+export enum ArcPart {
 	main = 'main',
 	fork = 'fork',
 	gap	 = 'gap',

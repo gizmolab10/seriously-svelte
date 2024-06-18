@@ -1,4 +1,4 @@
-import { Rect, Point, Ancestry, TitleState, AlterationState } from '../common/GlobalImports';
+import { Rect, Point, Ancestry, TitleState, ClusterStates, AlterationState } from '../common/GlobalImports';
 import { writable } from 'svelte/store';
 
 export const s_altering				 = writable<AlterationState | null>();
@@ -7,9 +7,9 @@ export const s_ancestry_editingTools = writable<Ancestry | null>();
 export const s_ancestries_expanded	 = writable<Array<Ancestry>>();
 export const s_ancestries_grabbed	 = writable<Array<Ancestry>>();
 export const s_indices_reversed		 = writable<Array<number>>();
-export const s_indices_cluster		 = writable<Array<number>>();
 export const s_db_loadTime 			 = writable<string | null>();
 export const s_id_popupView			 = writable<string | null>();
+export const s_clusters				 = writable<ClusterStates>();
 export const s_ancestry_focus		 = writable<Ancestry>();
 export const s_layout_asClusters	 = writable<boolean>();
 export const s_things_arrived		 = writable<boolean>();

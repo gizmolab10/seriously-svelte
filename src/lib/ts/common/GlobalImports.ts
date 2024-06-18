@@ -25,6 +25,8 @@ import AdvanceMapRect from '../geometry/AdvanceMapRect';
 import AlterationState from '../state/AlterationState';
 import WidgetMapRect from '../geometry/WidgetMapRect';
 import TreeGeometry from '../geometry/TreeGeometry';
+import ClusterStates from '../state/ClusterStates';
+import ClusterState from '../state/ClusterState';
 import ElementState from '../state/ElementState';
 import ClusterMap from '../geometry/ClusterMap';
 import Relationship from '../data/Relationship';
@@ -45,6 +47,7 @@ import './Extensions';
 
 export {
 	TreeGeometry, WidgetMapRect,
+	RingState, TitleState, MouseState,
 	Rect, Size, Point, svgPaths, Direction,
 	g, k, s, u, builds, signals, SeriouslyRange,
 	muuri, interact, createPopper, transparentize,
@@ -53,8 +56,8 @@ export {
 	Grabs, Ancestry, Hierarchy, dbDispatch, persistLocal,
 	ZIndex, PredicateKind, GraphRelations, CreationOptions,
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactKind,
+	ElementState, ClusterState, ClusterStates, AlterationState,
 	Angle, Quadrant, ClusterMap, AdvanceMapRect, ClustersGeometry,
 	ElementType, AlterationType, SvelteWrapper, SvelteComponentType,
-	MouseState, ElementState, RingState, TitleState, AlterationState,
 	IDLine, IDTool, IDTrait, IDSignal, IDButton, IDBrowser, IDPersistant,
 };

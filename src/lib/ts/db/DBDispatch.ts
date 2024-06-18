@@ -46,10 +46,13 @@ export default class DBDispatch {
 		this.queryStrings_apply();
 		await this.hierarchy_fetch_andBuild(type);
 		persistLocal.ancestries_restore(true);
-		h.hierarchy_markAsCompleted();
-		signals.signal_rebuildGraph_fromFocus();
 		debug.log_beat('db_setupData_forType before timeout');
 		setTimeout(() => {
+			persistLocal.indicies_restore(false);
+			persistLocal.indicies_restore(true);
+			persistLocal.focus_restore();
+			h.hierarchy_markAsCompleted();
+			signals.signal_rebuildGraph_fromFocus();
 			debug.log_beat('db_setupData_forType after timeout');
 		}, 1);
 	}
