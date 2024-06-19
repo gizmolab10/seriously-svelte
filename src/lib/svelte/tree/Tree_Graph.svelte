@@ -6,7 +6,7 @@
 	import { s_ancestry_focus, s_graphRect, s_show_details } from '../../ts/state/ReactiveState';
 	import DotRevealFocus from '../buttons/DotRevealFocus.svelte';
 	import EditingTools from '../widget/EditingTools.svelte';
-	import TreeChildren from './TreeChildren.svelte';
+	import Tree_Children from './Tree_Children.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import Circle from '../kit/Circle.svelte';
@@ -93,7 +93,7 @@
 				<DotRevealFocus name={revealState.name} ancestry={revealState.ancestry} center={origin_ofFirstReveal.offsetByXY(-3, 0)}/>
 			{/if}
 			{#if $s_ancestry_focus.isExpanded}
-				<TreeChildren ancestry={focusState.ancestry} origin={origin_ofChildren}/>
+				<Tree_Children ancestry={focusState.ancestry} origin={origin_ofChildren}/>
 			{/if}
 		</div>
 		<EditingTools/>

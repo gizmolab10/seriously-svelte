@@ -25,8 +25,8 @@
 	let top = 0;
 	let line;
 
-	// is given angle and rect (computed in )
-	// draw a line and its label
+	// given angle & rect (computed in )
+	// draw a line & its label
 
 	$: {
 		if (line && !lineWrapper) {

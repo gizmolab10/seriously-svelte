@@ -4,10 +4,10 @@
 	import { s_isBusy, s_db_type, s_graphRect, s_id_popupView, s_title_editing, s_show_details } from '../../ts/state/ReactiveState';
 	import { s_things_arrived, s_ancestry_focus, s_user_graphOffset, s_layout_asClusters } from '../../ts/state/ReactiveState';
 	import MouseResponder from '../mouse buttons/MouseResponder.svelte';
-	import ClustersGraph from '../clusters/ClustersGraph.svelte';
+	import Clusters_Graph from '../clusters/Clusters_Graph.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import Breadcrumbs from '../panel/Breadcrumbs.svelte';
-	import TreeGraph from '../tree/TreeGraph.svelte';
+	import Tree_Graph from '../tree/Tree_Graph.svelte';
 	import { DBType } from '../../ts/db/DBInterface';
 	import Details from '../details/Details.svelte';
 	import BuildNotes from './BuildNotes.svelte';
@@ -156,9 +156,9 @@
 							height: {$s_graphRect.size.height}px;
 							z-index: {ZIndex.panel};'>
 						{#if $s_layout_asClusters}
-							<ClustersGraph/>
+							<Clusters_Graph/>
 						{:else}
-							<TreeGraph/>
+							<Tree_Graph/>
 						{/if}
 					</div>
 				{/key}

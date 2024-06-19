@@ -2,8 +2,8 @@
 	import { s_clusters, s_graphRect, s_thing_changed, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { g, k, s, u, get, Point, ZIndex, signals, onMount, Predicate, onDestroy } from '../../ts/common/GlobalImports';
 	import { Widget_MapRect, Clusters_Geometry, transparentize } from '../../ts/common/GlobalImports';
-	import ClusterLine from './ClusterLine.svelte';
-	import ClusterArc from './ClusterArc.svelte';
+	import Cluster_Line from './Cluster_Line.svelte';
+	import Cluster_Arc from './Cluster_Arc.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import Advance from './Advance.svelte';
@@ -59,9 +59,9 @@
 			{#each geometry.cluster_layouts as cluster_layout}
 				{#if cluster_layout.count > 0}
 					<Advance cluster_layout={cluster_layout} isForward={false}/>
-					<ClusterLine cluster_layout={cluster_layout} center={center} color={color}/>
+					<Cluster_Line cluster_layout={cluster_layout} center={center} color={color}/>
 					{#if cluster_layout.count > 1}
-						<ClusterArc cluster_layout={cluster_layout} center={center} color={color}/>
+						<Cluster_Arc cluster_layout={cluster_layout} center={center} color={color}/>
 					{/if}
 					<Advance cluster_layout={cluster_layout} isForward={true}/>
 				{/if}

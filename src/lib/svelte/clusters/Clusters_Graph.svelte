@@ -4,15 +4,10 @@
 	import { necklace_ringState } from '../../ts/state/Expand_State';
 	import EditingTools from '../widget/EditingTools.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
-	import NecklaceRing from './NecklaceRing.svelte';
-	import ScrollRing from './ScrollRing.svelte';
+	import Necklace_Ring from './Necklace_Ring.svelte';
+	import Scrolling_Ring from './Scrolling_Ring.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Clusters from './Clusters.svelte';
-	// needs:
-	//	arrowheads
-	//	handle keys
-	//	lines: selection & hover
-	//	edit titles (keydown terminates edit)
 	const toolsOffset = new Point(32, -3);
     const ancestry = $s_ancestry_focus;
 	const thing = ancestry?.thing;
@@ -27,6 +22,12 @@
 
 	// draw center title, rings and clusters
 
+	// needs:
+	//	arrowheads
+	//	handle keys
+	//	lines: selection & hover
+	//	edit titles (keydown terminates edit)
+	
 	$: { cursor_closure(); }
 	
 	onMount(() => {
@@ -65,7 +66,7 @@
 					<TitleEditor ancestry={$s_ancestry_focus} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 				</div>
 				<Clusters/>
-				<NecklaceRing
+				<Necklace_Ring
 					color={color}
 					thing={thing}
 					center={center}
@@ -74,7 +75,7 @@
 					ring_width={k.ring_thickness}
 					radius={$s_cluster_arc_radius}
 					cursor_closure={cursor_closure}/>
-				<ScrollRing
+				<Scrolling_Ring
 					color={color}
 					thing={thing}
 					center={center}

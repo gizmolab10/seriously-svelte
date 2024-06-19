@@ -2,10 +2,10 @@
 	import { k, u, Rect, Size, Point, Thing, debug, IDLine, onMount } from '../../ts/common/GlobalImports';
 	import { signals, onDestroy, DebugFlag, debugReact, Tree_Geometry } from '../../ts/common/GlobalImports';
 	import { s_graphRect } from '../../ts/state/ReactiveState';
-	import TreeChildren from './TreeChildren.svelte';
+	import Tree_Children from './Tree_Children.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
-	import TreeLine from './TreeLine.svelte';
+	import Tree_Line from './Tree_Line.svelte';
 	export let origin = Point.zero;
     export let ancestry;
 	const widgetOffset = new Point(17, (k.dot_size / -15) - 7);
@@ -64,9 +64,9 @@
 	<div class='tree-children'>
 		{#each widgetMapRects as map}
 			<Widget name={map.elementState.name} ancestry={map.childAncestry} origin={map.extent.offsetBy(widgetOffset)}/>
-			<TreeLine ancestry={map.childAncestry} curveType={map.curveType} rect={map.offsetBy(lineOffset)}/>
+			<Tree_Line ancestry={map.childAncestry} curveType={map.curveType} rect={map.offsetBy(lineOffset)}/>
 			{#if map.childAncestry.showsChildRelationships}
-				<TreeChildren ancestry={map.childAncestry} origin={map.childOrigin}/>
+				<Tree_Children ancestry={map.childAncestry} origin={map.childOrigin}/>
 			{/if}
 		{/each}
 	</div>

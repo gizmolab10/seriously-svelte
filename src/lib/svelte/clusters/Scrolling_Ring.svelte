@@ -20,7 +20,7 @@
 	const svg_ringPath = svgPaths.ring(Point.square(radius), outer_radius, ring_width);
 	let mouse_up_count = $s_mouse_up_count;
 	let rebuilds = 0
-	let NecklaceRing;
+	let Necklace_Ring;
 
 	$: {
 		if ($s_ancestry_focus.thing.id == $s_thing_changed.split(k.genericSeparator)[0]) {
@@ -104,7 +104,7 @@
 </script>
 
 {#key rebuilds}
-	<div class='ring-button' bind:this={NecklaceRing}>
+	<div class='ring-button' bind:this={Necklace_Ring}>
 		<MouseResponder
 			name={name}
 			center={center}
