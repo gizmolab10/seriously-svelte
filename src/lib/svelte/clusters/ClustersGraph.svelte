@@ -67,9 +67,9 @@
 					color={color}
 					thing={thing}
 					center={center}
-					ring_width={30}
 					zindex={ZIndex.lines}
 					name={'necklace-ring'}
+					ring_width={k.ring_thickness}
 					radius={$s_cluster_arc_radius}
 					cursor_closure={cursor_closure}/>
 				<ScrollRing
@@ -79,7 +79,7 @@
 					ring_width={30}
 					zindex={ZIndex.lines}
 					name={'scroll-ring'}
-					radius={$s_cluster_arc_radius - 30}/>
+					radius={$s_cluster_arc_radius - k.ring_thickness}/>
 				<EditingTools offset={toolsOffset}/>
 			{/key}
 		</div>

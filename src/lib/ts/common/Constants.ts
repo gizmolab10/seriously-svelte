@@ -7,6 +7,7 @@ export default class Constants {
 	necklace_gap = 12;
 	line_stretch = 22;
 	height_banner = 35;
+	ring_thickness = 30;
 	halfIncrement = 0.5;
 	thing_fontSize = 14;
 	width_details = 200;

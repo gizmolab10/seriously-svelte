@@ -1,11 +1,11 @@
-import { k, u, get, Ancestry, Predicate, ClusterLayout, WidgetMapRect, ClusterStates } from '../common/GlobalImports';
+import { k, u, get, Angle, Ancestry, Predicate, ClusterLayout, WidgetMapRect, ClusterStates } from '../common/GlobalImports';
 import { s_clusters, s_ancestry_focus, s_cluster_arc_radius } from '../state/ReactiveState';
 import { h } from '../db/DBDispatch';
 
 export default class ClustersGeometry {
-	widget_maps: Array<WidgetMapRect> = [];
 	cluster_layouts: Array<ClusterLayout> = [];
-	angularSpreads: Array<number> = [];
+	widget_maps: Array<WidgetMapRect> = [];
+	divider_angles: Array<number> = [];
 	ancestries: Array<Ancestry> = [];
     ancestry = get(s_ancestry_focus);
 
@@ -28,6 +28,31 @@ export default class ClustersGeometry {
 				this.layout(ancestries, predicate, false);
 			}
 		}
+		this.compute_divider_angles();
+	}
+
+	compute_divider_angles() {
+		this.divider_angles = [];
+		let first_angle!: number;
+		let prior_end_angle!: number;
+		for (const cluster_ayout of this.cluster_layouts) {
+			const angle_atStart = cluster_ayout.angle_atStart
+			const angle_atEnd = cluster_ayout.angle_atEnd
+			if (!first_angle) {
+				first_angle = angle_atStart;
+			}
+			if (prior_end_angle) {
+				this.add_divider_angle(prior_end_angle, angle_atStart);
+			}
+			prior_end_angle = angle_atEnd;
+		}
+		this.add_divider_angle(first_angle, prior_end_angle);
+	}
+
+	add_divider_angle(start: number, end: number) {
+		const delta = end - start;
+		const divider_angle = Angle.full.normalize(delta);
+		this.divider_angles.push(divider_angle);
 	}
 
 	onePage_from(ancestries: Array<Ancestry>, predicate: Predicate, points_out: boolean): Array<Ancestry> {
