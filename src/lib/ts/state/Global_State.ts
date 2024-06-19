@@ -1,9 +1,9 @@
 import { s_graphRect, s_altering, s_show_details, s_scale_factor, s_thing_changed } from './ReactiveState';
 import { s_resize_count, s_rebuild_count, s_mouse_up_count, s_mouse_location } from './ReactiveState';
 import { k, u, get, Rect, Size, Point, debug, signals, debugReact } from '../common/GlobalImports';
-import { dbDispatch, persistLocal, IDPersistant, AlterationState } from '../common/GlobalImports';
+import { dbDispatch, persistLocal, IDPersistant, Alteration_State } from '../common/GlobalImports';
 
-class GlobalState {
+class Global_State {
 
 	open_tabFor(url: string) { window.open(url, 'help-webseriously')?.focus(); }
 
@@ -74,7 +74,7 @@ class GlobalState {
 	subscribeTo_alterationState() {
 		let interval: NodeJS.Timeout | null = null;
 
-		s_altering.subscribe((state: AlterationState | null) => {
+		s_altering.subscribe((state: Alteration_State | null) => {
 			if (interval) {
 				clearInterval(interval);
 				interval = null;
@@ -121,4 +121,4 @@ class GlobalState {
 
 }
 
-export let g = new GlobalState();
+export let g = new Global_State();

@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { s_clusters, s_graphRect, s_thing_changed, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { g, k, s, u, get, Point, ZIndex, signals, onMount, Predicate, onDestroy } from '../../ts/common/GlobalImports';
-	import { WidgetMapRect, ClustersGeometry, transparentize } from '../../ts/common/GlobalImports';
+	import { Widget_MapRect, Clusters_Geometry, transparentize } from '../../ts/common/GlobalImports';
 	import ClusterLine from './ClusterLine.svelte';
 	import ClusterArc from './ClusterArc.svelte';
 	import Widget from '../widget/Widget.svelte';
@@ -11,11 +11,13 @@
 	const center = $s_graphRect.size.dividedInHalf.asPoint;
 	const childOffset = new Point(k.dot_size / -2, k.cluster_offsetY);
 	let color = ancestry.thing?.color ?? k.color_default;
-	let geometry!: ClustersGeometry;
+	let geometry!: Clusters_Geometry;
 	let rebuilds = 0;
 
+	// draw widgets, lines and arcs
+
 	onMount(() => {
-		geometry = new ClustersGeometry();
+		geometry = new Clusters_Geometry();
 		const handleAny = signals.handle_anySignal((signal_ancestry) => {
 			rebuilds += 1;
 		});

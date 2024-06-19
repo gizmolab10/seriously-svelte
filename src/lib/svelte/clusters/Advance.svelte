@@ -1,18 +1,18 @@
 <script lang='ts'>
-	import { ElementState, ClusterLayout, AdvanceMapRect } from '../../ts/common/GlobalImports';
+	import { ElementState, Cluster_Layout, Advance_MapRect } from '../../ts/common/GlobalImports';
 	import { k, get, onMount, Direction } from '../../ts/common/GlobalImports';
     import TriangleButton from '../mouse buttons/TriangleButton.svelte'
-	export let cluster_layout: ClusterLayout;
+	export let cluster_layout: Cluster_Layout;
 	export let isForward = false;
 	const size = k.debug_size;
 	let rebuilds = 0;
 	let isVisible = true;
 	let element_state!: ElementState;
-	let advance_map!: AdvanceMapRect;
+	let advance_map!: Advance_MapRect;
 
 	onMount(() => {
 		advance_map = cluster_layout.get_advanceMap_for(isForward);
-		element_state = advance_map.elementState;		// DOES this survive onDestroy? created by ClusterLayout
+		element_state = advance_map.elementState;		// DOES this survive onDestroy? created by Cluster_Layout
 		isVisible = advance_map.isVisible;
 	})
 

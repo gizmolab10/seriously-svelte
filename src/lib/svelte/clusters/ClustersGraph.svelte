@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { s_graphRect, s_ancestry_focus, s_user_graphOffset, s_thing_fontFamily, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { k, s, u, Rect, Size, Point, ZIndex, onMount, signals, transparentize } from '../../ts/common/GlobalImports';
-	import { necklace_ringState } from '../../ts/state/NecklaceRingState';
+	import { necklace_ringState } from '../../ts/state/Expand_State';
 	import EditingTools from '../widget/EditingTools.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import NecklaceRing from './NecklaceRing.svelte';
@@ -24,6 +24,8 @@
 	let rebuilds = 0;
 	let offsetX = 0;
 	let clusters;
+
+	// draw center title, rings and clusters
 
 	$: { cursor_closure(); }
 	

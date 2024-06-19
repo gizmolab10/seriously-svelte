@@ -1,6 +1,6 @@
 import Ancestry from '../managers/Ancestry';
 
-export default class TitleState {
+export default class Title_State {
 	stopping!: Ancestry;
 	editing!: Ancestry;
 

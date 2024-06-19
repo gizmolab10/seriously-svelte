@@ -1,5 +1,5 @@
-import { k, u, get, User, Thing, Grabs, debug, MouseState, Access, IDTool, IDTrait, signals, Ancestry } from '../common/GlobalImports';
-import { Predicate, SvelteWrapper, Relationship, CreationOptions, AlterationType, AlterationState } from '../common/GlobalImports';
+import { k, u, get, User, Thing, Grabs, debug, Mouse_State, Access, IDTool, IDTrait, signals, Ancestry } from '../common/GlobalImports';
+import { Predicate, SvelteWrapper, Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/GlobalImports';
 import { s_things_arrived, s_ancestries_grabbed, s_ancestry_editingTools } from '../state/ReactiveState';
 import { s_isBusy, s_altering, s_ancestry_focus, s_title_editing } from '../state/ReactiveState';
 import { idDefault } from '../data/Identifiable';
@@ -58,7 +58,7 @@ export class Hierarchy {
 
 	static readonly $_EVENTS_$: unique symbol;
 
-	async handle_tool_clicked(idButton: string, mouseState: MouseState) {
+	async handle_tool_clicked(idButton: string, mouseState: Mouse_State) {
 		const event: MouseEvent | null = mouseState.event as MouseEvent;
         const ancestry = get(s_ancestry_editingTools);
 		if (!!ancestry) {
@@ -98,7 +98,7 @@ export class Hierarchy {
 							case 'd':		await this.thing_edit_remoteDuplicate(ancestryGrab); break;
 							case k.space:	await this.ancestry_edit_remoteCreateChildOf(ancestryGrab); break;
 							case '-':		if (!COMMAND) { await this.thing_edit_remoteAddLine(ancestryGrab); } break;
-							case 'tab':		await this.ancestry_edit_remoteCreateChildOf(ancestryGrab.parentAncestry); break; // TitleState editor also makes this call
+							case 'tab':		await this.ancestry_edit_remoteCreateChildOf(ancestryGrab.parentAncestry); break; // Title_State editor also makes this call
 							case 'enter':	ancestryGrab.startEdit(); break;
 						}
 					}
@@ -947,7 +947,7 @@ export class Hierarchy {
 	toggleAlteration(alteration: AlterationType, isRelated: boolean) {
 		const altering = get(s_altering)?.alteration;
 		const predicate = isRelated ? Predicate.isRelated : Predicate.contains;
-		const became = alteration == altering ? null : new AlterationState(alteration, predicate);
+		const became = alteration == altering ? null : new Alteration_State(alteration, predicate);
 		s_altering.set(became);
 	}
 

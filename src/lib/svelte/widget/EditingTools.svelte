@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { k, s, u, Rect, Size, Point, MouseState, IDTool, ZIndex, onMount, signals, svgPaths, Direction, dbDispatch } from '../../ts/common/GlobalImports';
-	import { ElementType, ElementState, AlterationState, AlterationType, SvelteWrapper, transparentize } from '../../ts/common/GlobalImports';
+	import { k, s, u, Rect, Size, Point, Mouse_State, IDTool, ZIndex, onMount, signals, svgPaths, Direction, dbDispatch } from '../../ts/common/GlobalImports';
+	import { ElementType, ElementState, Alteration_State, AlterationType, SvelteWrapper, transparentize } from '../../ts/common/GlobalImports';
 	import { s_ancestry_editingTools, s_layout_asClusters } from '../../ts/state/ReactiveState';
 	import { s_altering, s_graphRect, s_show_details } from '../../ts/state/ReactiveState';
 	import MouseResponder from '../mouse buttons/MouseResponder.svelte';
@@ -111,7 +111,7 @@
 		}
 	}
 
-	async function handle_mouse_data(mouseState: MouseState, id: string) {
+	async function handle_mouse_data(mouseState: Mouse_State, id: string) {
 		if (mouseState.isHover) {
 			const elementState = elementStates_byID[id];
 			const isOut = mouseState.isOut;

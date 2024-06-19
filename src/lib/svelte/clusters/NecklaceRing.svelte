@@ -2,7 +2,7 @@
 	import { k, s, u, Thing, Point, ZIndex, signals, svgPaths, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
 	import { s_thing_changed, s_ancestry_focus, s_ring_angle, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/ReactiveState';
-	import { necklace_ringState } from '../../ts/state/NecklaceRingState';
+	import { necklace_ringState } from '../../ts/state/Expand_State';
 	import MouseResponder from '../mouse buttons/MouseResponder.svelte';
 	export let radius = 0;
 	export let thing: Thing;

@@ -1,7 +1,7 @@
 import { k, s, get, Rect, Size, Point, Ancestry, Predicate, ElementType, ElementState } from '../common/GlobalImports'
 	import { s_clusters } from '../state/ReactiveState';
 
-export default class AdvanceMapRect extends Rect {
+export default class Advance_MapRect extends Rect {
 	elementState: ElementState;
 	predicate: Predicate;
 	points_out: boolean;

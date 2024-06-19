@@ -7,7 +7,7 @@ export enum Direction {
 	left = Angle.zero,
 }
 
-export default class SVGPaths {
+export default class SVG_Paths {
 
 	ring(center: Point, radius: number, thickness: number): string {
 		return `${this.circle(center, radius, true)} ${this.circle(center.offsetByX(center.x * 2), radius - thickness, false)}`;
@@ -167,4 +167,4 @@ export default class SVGPaths {
 
 }
 
-export const svgPaths = new SVGPaths();
+export const svgPaths = new SVG_Paths();

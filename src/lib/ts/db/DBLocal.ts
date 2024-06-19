@@ -25,13 +25,13 @@ export default class DBLocal implements DBInterface {
 		const idPc = 'contains';
 		h.predicate_remember_runtimeCreateUnique(idPc, 'contains', false, false);
 		h.predicate_remember_runtimeCreateUnique(idPr, 'isRelated', true, false);
-		h.thing_remember_runtimeCreateUnique(this.baseID, idTa, 'Anticipate', 'red', 'a', false);
-		h.thing_remember_runtimeCreateUnique(this.baseID, idTb, 'Beauty', 'blue', 'b', false);
-		h.thing_remember_runtimeCreateUnique(this.baseID, idTc, 'Comfort', '#d96726', 'c', false);
-		h.thing_remember_runtimeCreateUnique(this.baseID, idTd, 'Delicious', 'purple', 'd', false);
-		h.thing_remember_runtimeCreateUnique(this.baseID, idTe, 'Essential', 'mediumvioletred', 'e', false);
-		h.thing_remember_runtimeCreateUnique(this.baseID, idTf, 'Fancy', 'coral', 'f', false);
-		h.thing_remember_runtimeCreateUnique(this.baseID, idTr, 'Routine', 'limegreen', IDTrait.root, false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTa, 'Active', 'red', 'a', false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTb, 'Maintain', 'blue', 'b', false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTc, 'Curiosity', '#d96726', 'c', false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTd, 'Autonomy', 'purple', 'd', false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTe, 'Aesthetics', 'mediumvioletred', 'e', false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTf, 'Connections', 'coral', 'f', false);
+		h.thing_remember_runtimeCreateUnique(this.baseID, idTr, 'Life', 'limegreen', IDTrait.root, false);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Cra', idPc, idTr, idTa, 0);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Crb', idPc, idTr, idTb, 1);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Crc', idPc, idTr, idTc, 2);
@@ -52,9 +52,9 @@ export default class DBLocal implements DBInterface {
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Rbd', idPr, idTb, idTd, 2);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Rac', idPr, idTa, idTc, 2);
 		h.relationship_remember_runtimeCreateUnique(this.baseID, 'Rce', idPr, idTc, idTe, 2);
-		this.makeMore(20, 'G', idPc, idTb, true);	// contained by B
-		this.makeMore(5, 'G', idPc, idTb, false);	// containing B
-		this.makeMore(5, 'G', idPr, idTb, false);	// related to B
+		// this.makeMore(20, 'G', idPc, idTb, true);	// contained by B
+		// this.makeMore(5, 'G', idPc, idTb, false);	// containing B
+		// this.makeMore(5, 'G', idPr, idTb, false);	// related to B
 	};
 
 	makeMore(count: number, first: string, idPredicate: string, idOther: string, asChild: boolean) {

@@ -1,10 +1,10 @@
-import { MouseState, ElementType, ElementState } from '../common/GlobalImports';
+import { Mouse_State, ElementType, ElementState } from '../common/GlobalImports';
 import Identifiable from '../data/Identifiable';
 
 class State {
 
 	elementState_byName: {[name: string]: ElementState} = {};
-	mouseState_byName: { [name: string]: MouseState } = {};
+	mouseState_byName: { [name: string]: Mouse_State } = {};
 	rebuild_count = 0;
 
 	//////////////////////////////////////
@@ -33,10 +33,10 @@ class State {
 		return elementState;
 	}
 
-	mouseState_forName(name: string): MouseState {
+	mouseState_forName(name: string): Mouse_State {
 		let state = this.mouseState_byName[name];
 		if (!state) {
-			state = MouseState.empty();
+			state = Mouse_State.empty();
 			this.mouseState_byName[name] = state;
 		}
 		return state;

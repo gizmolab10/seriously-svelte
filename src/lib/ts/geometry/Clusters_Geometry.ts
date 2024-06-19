@@ -1,13 +1,18 @@
-import { k, u, get, Angle, Ancestry, Predicate, ClusterLayout, WidgetMapRect, ClusterStates } from '../common/GlobalImports';
+import { k, u, get, Angle, Ancestry, Predicate, Cluster_Layout, Widget_MapRect, Page_Indices } from '../common/GlobalImports';
 import { s_clusters, s_ancestry_focus, s_cluster_arc_radius } from '../state/ReactiveState';
 import { h } from '../db/DBDispatch';
 
-export default class ClustersGeometry {
-	cluster_layouts: Array<ClusterLayout> = [];
-	widget_maps: Array<WidgetMapRect> = [];
+export default class Clusters_Geometry {
+	cluster_layouts: Array<Cluster_Layout> = [];
+    ancestry_focus = get(s_ancestry_focus);
+	widget_maps: Array<Widget_MapRect> = [];
 	divider_angles: Array<number> = [];
 	ancestries: Array<Ancestry> = [];
-    ancestry = get(s_ancestry_focus);
+
+	// responsible for 
+	// grabbing the things and their ancestries
+	// layout of all the clusters' lines, arcs
+	// positions of all the widgets
 
 	constructor() { this.setup(); }
 
@@ -19,12 +24,12 @@ export default class ClustersGeometry {
 
 	setup() {
 		this.destructor();
-		const thing = this.ancestry.thing;
-		let childAncestries = this.ancestry.childAncestries;
+		const focus = this.ancestry_focus.thing;
+		let childAncestries = this.ancestry_focus.childAncestries;
 		this.layout(childAncestries, Predicate.contains, true);
-		if (!!thing) {
+		if (!!focus) {
 			for (const predicate of h.predicates) {
-				let ancestries = thing.uniqueAncestries_for(predicate) ?? [];
+				let ancestries = focus.uniqueAncestries_for(predicate) ?? [];
 				this.layout(ancestries, predicate, false);
 			}
 		}
@@ -64,7 +69,7 @@ export default class ClustersGeometry {
 	layout(ancestries: Array<Ancestry>, predicate: Predicate | null, points_out: boolean) {
 		if (!!predicate) {
 			const onePage = this.onePage_from(ancestries, predicate, points_out);
-			const cluster_layout = new ClusterLayout(ancestries.length, onePage, predicate, points_out);
+			const cluster_layout = new Cluster_Layout(ancestries.length, onePage, predicate, points_out);
 			this.widget_maps = u.concatenateArrays(this.widget_maps, cluster_layout.widget_maps);	// for necklace of widgets
 			this.cluster_layouts.push(cluster_layout);		// for lines and arcs
 		}

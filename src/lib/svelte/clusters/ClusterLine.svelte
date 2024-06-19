@@ -1,21 +1,21 @@
 <script lang='ts'>
-	import { IDLine, Quadrant, SvelteWrapper, SvelteComponentType, ClusterLayout } from '../../ts/common/GlobalImports';
+	import { IDLine, Quadrant, SvelteWrapper, SvelteComponentType, Cluster_Layout } from '../../ts/common/GlobalImports';
 	import { k, u, Rect, Size, Point, Angle, ZIndex, svgPaths } from '../../ts/common/GlobalImports';
 	import ArrowHead from '../kit/ArrowHead.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import Box from '../kit/Box.svelte';
 	export let center = Point.zero;
 	export let color = k.color_default;
-    export let cluster_layout: ClusterLayout;
+    export let cluster_layout: Cluster_Layout;
 	const show_arrowheads = k.show_arrowheads;
 	const predicate = cluster_layout?.predicate;
 	const idDiv = `${cluster_layout?.points_out ? 'child' : 'parent'} ${predicate?.kind}`;
 	let style = `position: absolute; z-index: ${ZIndex.lines};`;
+	let lineWrapper: SvelteWrapper;
 	let title_origin = Point.zero;
 	let line_origin = Point.zero;
 	let arrow_start = Point.zero;
 	let arrow_end = Point.zero;
-	let lineWrapper: SvelteWrapper;
 	let linePath = k.empty;
 	let viewBox = k.empty;
 	let size = Size.zero;
@@ -24,6 +24,9 @@
 	let left = 0;
 	let top = 0;
 	let line;
+
+	// is given angle and rect (computed in )
+	// draw a line and its label
 
 	$: {
 		if (line && !lineWrapper) {

@@ -1,4 +1,4 @@
-import { k, u, get, Rect, Size, Thing, debug, signals, Predicate, TitleState, ElementType } from '../common/GlobalImports';
+import { k, u, get, Rect, Size, Thing, debug, signals, Predicate, Title_State, ElementType } from '../common/GlobalImports';
 import { Relationship, PredicateKind, AlterationType, SvelteWrapper, SvelteComponentType } from '../common/GlobalImports';
 import { s_ancestry_focus, s_ancestries_grabbed, s_title_editing, s_layout_asClusters } from '../state/ReactiveState';
 import { s_ancestries_expanded, s_ancestry_editingTools, s_altering } from '../state/ReactiveState';
@@ -620,7 +620,7 @@ export default class Ancestry extends Identifiable {
 		if (!this.isRoot && k.allow_TitleEditing) {
 			debug.log_edit(`EDIT ${this.description}`)
 			this.grabOnly();
-			s_title_editing.set(new TitleState(this));
+			s_title_editing.set(new Title_State(this));
 		}
 	}
 

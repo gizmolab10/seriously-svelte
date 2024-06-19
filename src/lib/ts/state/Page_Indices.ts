@@ -1,9 +1,16 @@
-import ClusterState from './ClusterState';
 import Predicate from '../data/Predicate';
 
-export default class ClusterStates {
-	inward_states: Array<ClusterState>;
-	outward_states: Array<ClusterState>;
+export default class Page_Indices {
+	inward_states: Array<Page_Index>;
+	outward_states: Array<Page_Index>;
+
+	// two arrays of Page_Index (defined below)
+	// 1) outward: (to) children and relateds (more kinds later?)
+	// 2) inward: (from) parents
+	// each array  has one index for each predicate kind
+	// 
+	// page == a subset of a too-long list
+	// index == first of subset
 
 	constructor() {
 
@@ -24,11 +31,11 @@ export default class ClusterStates {
 		return this;
 	}
 
-	states_for(points_out: boolean): Array<ClusterState> {
+	states_for(points_out: boolean): Array<Page_Index> {
 		return points_out ? this.outward_states : this.inward_states;
 	}
 
-	setStates_for(states: Array<ClusterState>, points_out: boolean) {
+	setStates_for(states: Array<Page_Index>, points_out: boolean) {
 		if (points_out) {
 			this.outward_states = states;
 		} else {
@@ -36,4 +43,14 @@ export default class ClusterStates {
 		}
 	}
 
+}
+
+export class Page_Index {
+
+	// page is a subset of a too-long list
+	// index == first of subset
+
+	atLimit = [false, false];
+	index = 0;
+	total = 0;
 }

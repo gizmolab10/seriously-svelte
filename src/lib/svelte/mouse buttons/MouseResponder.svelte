@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, s, u, Rect, Size, Point, MouseState, ZIndex, onMount } from '../../ts/common/GlobalImports';
+	import { k, s, u, Rect, Size, Point, Mouse_State, ZIndex, onMount } from '../../ts/common/GlobalImports';
 	import { s_mouse_location } from '../../ts/state/ReactiveState';
 	export let detectHit_closure: () => {flag: boolean} | null = null;
 	export let height = k.default_buttonSize;
@@ -29,7 +29,7 @@
 	//		closure & name					//
 	//										//
 	//	mutates three ts state classes:		//
-	//		UXState, MouseState &			//
+	//		UX_State, Mouse_State &			//
 	//		ElementState					//
 	//										//
 	//////////////////////////////////////////
@@ -62,7 +62,7 @@
 			if (mouseState.isHover != isHit) {
 				mouseState.isHover = isHit;
 				mouseState.isOut = !isHit;
-				closure(MouseState.hover(null, mouse_button, isHit));	// pass a null event
+				closure(Mouse_State.hover(null, mouse_button, isHit));	// pass a null event
 			}
 		}
 	}
@@ -80,7 +80,7 @@
 
 			// teardown long timer and call closure
 		
-			closure(MouseState.up(event, mouse_button));
+			closure(Mouse_State.up(event, mouse_button));
 			clearTimeout(mouse_longClick_timer);
 			mouse_longClick_timer = null;
 		}
@@ -91,7 +91,7 @@
 
 			// call down closure
 
-			closure(MouseState.down(event, mouse_button));
+			closure(Mouse_State.down(event, mouse_button));
 		}
 		mouseState.clicks += 1;
 		if (detect_longClick && !mouse_longClick_timer) {
@@ -99,7 +99,7 @@
 			// setup timer to call long-click closure
 
 			mouse_longClick_timer = setTimeout(() => {
-				closure(MouseState.long(event, mouse_button));
+				closure(Mouse_State.long(event, mouse_button));
 				reset();
 			}, k.threshold_longClick);
 		}
@@ -108,7 +108,7 @@
 			// setup timer to call double-click closure
 
 			mouse_doubleClick_timer = setTimeout(() => {
-				closure(MouseState.clicks(event, mouse_button, mouseState.clicks));
+				closure(Mouse_State.clicks(event, mouse_button, mouseState.clicks));
 				reset();
 			}, k.threshold_doubleClick);
 		}

@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { g, k, Point, ZIndex, onMount, ClusterLayout } from '../../ts/common/GlobalImports';
+	import { g, k, Point, ZIndex, onMount, Cluster_Layout } from '../../ts/common/GlobalImports';
 	import { s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { ArcPart } from '../../ts/common/Enumerations';
-	export let cluster_layout: ClusterLayout;
+	export let cluster_layout: Cluster_Layout;
 	export let center = Point.zero;
 	export let color = 'red';
 	const offset = k.necklace_gap;

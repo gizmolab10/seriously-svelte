@@ -1,9 +1,13 @@
 import { k } from '../common/GlobalImports';
 
-export default class ScrollRingState {
-	isHovering = false;
+export default class Rotate_State {
 	startAngle: number | null = null;		// angle at location of mouse DOWN
 	priorAngle: number | null = null;		// angle at location of previous mouse MOVE
+	isHovering = false;
+
+	// track where the user 
+	// a) rotates the thumb button (scrolls the page)
+	// b) rotates the necklace (in subclass: Expand_State)
 	
 	get isActive(): boolean { return false; }
 	get isHighlighted(): boolean { return this.isHovering || this.isActive; }
@@ -13,4 +17,4 @@ export default class ScrollRingState {
 
 }
 
-export const scroll_ringState = new ScrollRingState();
+export const scroll_ringState = new Rotate_State();

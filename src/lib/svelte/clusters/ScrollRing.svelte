@@ -3,7 +3,7 @@
 	import { s_thing_changed, s_ancestry_focus, s_ring_angle, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/ReactiveState';
 	import MouseResponder from '../mouse buttons/MouseResponder.svelte';
-	import { scroll_ringState } from '../../ts/state/ScrollRingState';
+	import { scroll_ringState } from '../../ts/state/Rotate_State';
 	export let radius = 0;
 	export let thing: Thing;
 	export let ring_width = 0;

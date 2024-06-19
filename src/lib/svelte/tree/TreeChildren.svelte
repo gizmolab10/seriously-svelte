@@ -1,6 +1,6 @@
 <script lang=ts>
 	import { k, u, Rect, Size, Point, Thing, debug, IDLine, onMount } from '../../ts/common/GlobalImports';
-	import { signals, onDestroy, DebugFlag, debugReact, TreeGeometry } from '../../ts/common/GlobalImports';
+	import { signals, onDestroy, DebugFlag, debugReact, Tree_Geometry } from '../../ts/common/GlobalImports';
 	import { s_graphRect } from '../../ts/state/ReactiveState';
 	import TreeChildren from './TreeChildren.svelte';
 	import Widget from '../widget/Widget.svelte';
@@ -10,7 +10,7 @@
     export let ancestry;
 	const widgetOffset = new Point(17, (k.dot_size / -15) - 7);
 	const lineOffset = new Point(-122.5, 2.5);
-	let widgetMapRects: Array<WidgetMapRect> = [];
+	let widgetMapRects: Array<Widget_MapRect> = [];
 	let priorTime = new Date().getTime();
 	let center = Point.zero;
 	
@@ -46,7 +46,7 @@
 			const childrenOrigin = origin.offsetByXY(3, height + 1);
 			let sum = -ancestry.visibleProgeny_height() / 2; // start out negative and grow positive
 			for (const childAncestry of childAncestries) {
-				const tree_layout = new TreeGeometry(sum, ancestry, childAncestry, childrenOrigin);
+				const tree_layout = new Tree_Geometry(sum, ancestry, childAncestry, childrenOrigin);
 				widgetMapRects = u.concatenateArrays(widgetMapRects, tree_layout.widgetMapRects);
 				sum += tree_layout.childHeight + 1;
 			}

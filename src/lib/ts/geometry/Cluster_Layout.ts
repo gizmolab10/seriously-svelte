@@ -1,6 +1,6 @@
 import { s_clusters, s_graphRect, s_ring_angle, s_ancestry_focus, s_cluster_arc_radius } from '../state/ReactiveState';
 import { k, u, get, Angle, IDLine, svgPaths, Ancestry, } from '../common/GlobalImports';
-import { Predicate, WidgetMapRect, AdvanceMapRect } from '../common/GlobalImports';
+import { Predicate, Widget_MapRect, Advance_MapRect } from '../common/GlobalImports';
 import { Rect, Point } from './Geometry';
 import { ArcPart } from '../common/Enumerations';
 
@@ -10,11 +10,11 @@ import { ArcPart } from '../common/Enumerations';
 //
 // computes: angle and vector for line,
 // svg paths and positions for the arc pieces,
-// and WidgetMapRect for each child
+// and Widget_MapRect for each child
 
-export default class ClusterLayout  {
-	advance_maps: Array<AdvanceMapRect> = [];	// always only two (forward and backward)
-	widget_maps: Array<WidgetMapRect> = [];		// maximum a page's worth
+export default class Cluster_Layout  {
+	advance_maps: Array<Advance_MapRect> = [];	// always only two (forward and backward)
+	widget_maps: Array<Widget_MapRect> = [];		// maximum a page's worth
 	ancestries: Array<Ancestry> = [];			// ditto
 	cluster_ancestry!: Ancestry;
 	necklace_center: Point;
@@ -73,15 +73,15 @@ export default class ClusterLayout  {
 		this.widget_maps = [];
 		this.advance_maps = [];
 		this.center = get(s_graphRect).size.dividedInHalf.asPoint;
-		this.advance_maps.push(new AdvanceMapRect(this.cluster_ancestry, this.predicate, upper_limit, this.points_out, false));
-		this.advance_maps.push(new AdvanceMapRect(this.cluster_ancestry, this.predicate, upper_limit, this.points_out, true));
+		this.advance_maps.push(new Advance_MapRect(this.cluster_ancestry, this.predicate, upper_limit, this.points_out, false));
+		this.advance_maps.push(new Advance_MapRect(this.cluster_ancestry, this.predicate, upper_limit, this.points_out, true));
 		if (count > 0 && !!this.predicate) {
 			let index = 0;
 			while (index < count) {
 				const ancestry = this.ancestries[index];
 				const childAngle = this.angle_ofChild_for(index, count, radius);
 				const childOrigin = this.center.offsetBy(radial.rotate_by(childAngle));
-				const map = new WidgetMapRect(IDLine.flat, new Rect(), childOrigin, ancestry, this.cluster_ancestry, childAngle); //, this.predicate.kind);
+				const map = new Widget_MapRect(IDLine.flat, new Rect(), childOrigin, ancestry, this.cluster_ancestry, childAngle); //, this.predicate.kind);
 				this.widget_maps.push(map);
 				index += 1;
 			}

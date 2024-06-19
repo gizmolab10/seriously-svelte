@@ -1,8 +1,8 @@
-import { k, Rect, Size, Point, IDLine, Ancestry, WidgetMapRect } from '../common/GlobalImports';
+import { k, Rect, Size, Point, IDLine, Ancestry, Widget_MapRect } from '../common/GlobalImports';
 
-export default class TreeGeometry {
+export default class Tree_Geometry {
 	childHeight = 0;
-	widgetMapRects: Array<WidgetMapRect> = [];
+	widgetMapRects: Array<Widget_MapRect> = [];
 
 	constructor(sum: number, ancestry: Ancestry, childAncestry: Ancestry, origin: Point) {
 		const childHeight = childAncestry.visibleProgeny_height();
@@ -10,7 +10,7 @@ export default class TreeGeometry {
 		const direction = this.getDirection(sizeY);
 		const rect = new Rect(origin, new Size(k.line_stretch, sizeY - 1));
 		const childOrigin = this.originForChildrenOf(childAncestry, origin, rect.extent);
-		const map = new WidgetMapRect(direction, rect, childOrigin, childAncestry, ancestry);
+		const map = new Widget_MapRect(direction, rect, childOrigin, childAncestry, ancestry);
 		this.childHeight = childHeight;
 		this.widgetMapRects.push(map);
 	}
