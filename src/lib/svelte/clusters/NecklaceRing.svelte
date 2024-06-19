@@ -2,6 +2,7 @@
 	import { k, s, u, Thing, Point, ZIndex, signals, svgPaths, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
 	import { s_thing_changed, s_ancestry_focus, s_ring_angle, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/ReactiveState';
+	import { necklace_ringState } from '../../ts/state/NecklaceRingState';
 	import MouseResponder from '../mouse buttons/MouseResponder.svelte';
 	export let radius = 0;
 	export let thing: Thing;
@@ -43,23 +44,23 @@
 		const from_center = distance_fromCenter_of($s_mouse_location);	// use store, to react
 		if (!!from_center) {
 			let sendSignal = false;
-			s.ringState.isHovering = determine_isHovering();	// show highlight around ring
+			necklace_ringState.isHovering = determine_isHovering();	// show highlight around ring
 			cursor_closure();
-			if (s.ringState.radiusOffset != null) {				// resize
+			if (necklace_ringState.radiusOffset != null) {				// resize
 				const distance = Math.max(k.cluster_inside_radius * 4, from_center.magnitude);
-				const movement = distance - $s_cluster_arc_radius - s.ringState.radiusOffset;
+				const movement = distance - $s_cluster_arc_radius - necklace_ringState.radiusOffset;
 				if (Math.abs(movement) > 5) {
 					sendSignal = true;
 					$s_cluster_arc_radius += movement;
 				}
 			}
-			if (s.ringState.priorAngle != null) {					// rotate
+			if (necklace_ringState.priorAngle != null) {					// rotate
 				let mouseAngle = from_center.angle;
-				const delta = mouseAngle.add_angle_normalized(-s.ringState.priorAngle);
+				const delta = mouseAngle.add_angle_normalized(-necklace_ringState.priorAngle);
 				if (Math.abs(delta) >= Math.PI / 90) {			// minimum two degree changes
 					sendSignal = true;
-					s.ringState.priorAngle = mouseAngle;
-					$s_ring_angle = mouseAngle.add_angle_normalized(-s.ringState.startAngle);
+					necklace_ringState.priorAngle = mouseAngle;
+					$s_ring_angle = mouseAngle.add_angle_normalized(-necklace_ringState.startAngle);
 				}
 			}
 			if (sendSignal) {
@@ -81,27 +82,27 @@
 
 				// begin resize
 				
-				s.ringState.radiusOffset = from_center.magnitude - $s_cluster_arc_radius;
+				necklace_ringState.radiusOffset = from_center.magnitude - $s_cluster_arc_radius;
 				rebuilds += 1;
 			} else if (mouseState.isUp) {
 
 				// end rotate and resize
 
-				s.ringState.reset();
+				necklace_ringState.reset();
 				rebuilds += 1;
 			} else if (mouseState.isDown) {
 				const mouseAngle = from_center.angle;
 
 				// begin rotate
 
-				s.ringState.priorAngle = mouseAngle;
-				s.ringState.startAngle = mouseAngle.add_angle_normalized(-$s_ring_angle);
+				necklace_ringState.priorAngle = mouseAngle;
+				necklace_ringState.startAngle = mouseAngle.add_angle_normalized(-$s_ring_angle);
 				rebuilds += 1;
 				
 			}
 			cursor_closure();
-		} else if (!s.ringState.startAngle && !s.ringState.radiusOffset) {
-			s.ringState.isHovering = true;	// show highlight around ring
+		} else if (!necklace_ringState.startAngle && !necklace_ringState.radiusOffset) {
+			necklace_ringState.isHovering = true;	// show highlight around ring
 
 			// hover
 
@@ -138,13 +139,13 @@
 			height={diameter}
 			closure={closure}
 			detect_longClick={false}
-			cursor={s.ringState.cursor}
+			cursor={necklace_ringState.cursor}
 			detectHit_closure={determine_isHovering}>
 			<svg
 				viewBox={viewBox}
 				class= 'svg-ring-button'
-				fill={transparentize(color, s.ringState.fill_transparency)}
-				stroke={transparentize(color, s.ringState.stroke_transparency)}>
+				fill={transparentize(color, necklace_ringState.fill_transparency)}
+				stroke={transparentize(color, necklace_ringState.stroke_transparency)}>
 				<path d={svg_ringPath}>
 			</svg>
 		</MouseResponder>

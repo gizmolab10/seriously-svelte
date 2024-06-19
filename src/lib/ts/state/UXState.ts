@@ -1,13 +1,10 @@
 import { MouseState, ElementType, ElementState } from '../common/GlobalImports';
 import Identifiable from '../data/Identifiable';
-import RingState from '../state/RingState';
 
 class State {
 
 	elementState_byName: {[name: string]: ElementState} = {};
 	mouseState_byName: { [name: string]: MouseState } = {};
-	ringStates: Array<RingState> = [];
-	ringState = new RingState();
 	rebuild_count = 0;
 
 	//////////////////////////////////////

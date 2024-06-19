@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import { s_graphRect, s_ancestry_focus, s_user_graphOffset, s_thing_fontFamily, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { k, s, u, Rect, Size, Point, ZIndex, onMount, signals, transparentize } from '../../ts/common/GlobalImports';
+	import { necklace_ringState } from '../../ts/state/NecklaceRingState';
 	import EditingTools from '../widget/EditingTools.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
 	import NecklaceRing from './NecklaceRing.svelte';
@@ -42,7 +43,7 @@
 
 	function cursor_closure() {
 		if (!!clusters) {
-			clusters.style.cursor = `${s.ringState.cursor} !important`;
+			clusters.style.cursor = `${necklace_ringState.cursor} !important`;
 		}
 	}
 

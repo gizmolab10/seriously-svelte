@@ -34,7 +34,7 @@ import TitleState from '../state/TitleState';
 import MouseState from '../state/MouseState';
 import SvelteWrapper from './SvelteWrapper';
 import Ancestry from '../managers/Ancestry';
-import RingState from '../state/RingState';
+import NecklaceRingState from '../state/NecklaceRingState';
 import Predicate from '../data/Predicate';
 import Grabs from '../managers/Grabs';
 import Access from '../data/Access';
@@ -47,7 +47,7 @@ import './Extensions';
 
 export {
 	TreeGeometry, WidgetMapRect,
-	RingState, TitleState, MouseState,
+	NecklaceRingState, TitleState, MouseState,
 	Rect, Size, Point, svgPaths, Direction,
 	g, k, s, u, builds, signals, SeriouslyRange,
 	muuri, interact, createPopper, transparentize,

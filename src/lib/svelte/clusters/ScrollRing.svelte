@@ -3,6 +3,7 @@
 	import { s_thing_changed, s_ancestry_focus, s_ring_angle, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/ReactiveState';
 	import MouseResponder from '../mouse buttons/MouseResponder.svelte';
+	import { scroll_ringState } from '../../ts/state/ScrollRingState';
 	export let radius = 0;
 	export let thing: Thing;
 	export let ring_width = 0;
@@ -43,25 +44,8 @@
 		const from_center = distance_fromCenter_of($s_mouse_location);	// use store, to react
 		if (!!from_center) {
 			let sendSignal = false;
-			s.ringState.isHovering = determine_isHovering();	// show highlight around ring
+			scroll_ringState.isHovering = determine_isHovering();	// show highlight around ring
 			cursor_closure();
-			if (s.ringState.radiusOffset != null) {				// resize
-				const distance = Math.max(k.cluster_inside_radius * 4, from_center.magnitude);
-				const movement = distance - $s_cluster_arc_radius - s.ringState.radiusOffset;
-				if (Math.abs(movement) > 5) {
-					sendSignal = true;
-					$s_cluster_arc_radius += movement;
-				}
-			}
-			if (s.ringState.priorAngle != null) {					// rotate
-				let mouseAngle = from_center.angle;
-				const delta = mouseAngle.add_angle_normalized(-s.ringState.priorAngle);
-				if (Math.abs(delta) >= Math.PI / 90) {			// minimum two degree changes
-					sendSignal = true;
-					s.ringState.priorAngle = mouseAngle;
-					$s_ring_angle = mouseAngle.add_angle_normalized(-s.ringState.startAngle);
-				}
-			}
 			if (sendSignal) {
 				rebuilds += 1;
 				signals.signal_relayoutWidgets_fromFocus();		// destroys this component (variables wiped)
@@ -77,31 +61,22 @@
 
 		if (!mouseState.isHover) {
 			const from_center = distance_fromCenter_of($s_mouse_location);
-			if (mouseState.isDouble) {
+			if (mouseState.isUp) {
 
-				// begin resize
-				
-				s.ringState.radiusOffset = from_center.magnitude - $s_cluster_arc_radius;
-				rebuilds += 1;
-			} else if (mouseState.isUp) {
+				// end rotate
 
-				// end rotate and resize
-
-				s.ringState.reset();
 				rebuilds += 1;
 			} else if (mouseState.isDown) {
 				const mouseAngle = from_center.angle;
 
 				// begin rotate
 
-				s.ringState.priorAngle = mouseAngle;
-				s.ringState.startAngle = mouseAngle.add_angle_normalized(-$s_ring_angle);
 				rebuilds += 1;
 				
 			}
 			cursor_closure();
-		} else if (!s.ringState.startAngle && !s.ringState.radiusOffset) {
-			s.ringState.isHovering = true;	// show highlight around ring
+		} else if (!scroll_ringState.startAngle && !scroll_ringState.radiusOffset) {
+			scroll_ringState.isHovering = true;	// show highlight around ring
 
 			// hover
 
@@ -138,13 +113,13 @@
 			height={diameter}
 			closure={closure}
 			detect_longClick={false}
-			cursor={s.ringState.cursor}
+			cursor={scroll_ringState.cursor}
 			detectHit_closure={determine_isHovering}>
 			<svg
 				viewBox={viewBox}
 				class= 'svg-ring-button'
-				fill={transparentize(color, s.ringState.fill_transparency)}
-				stroke={transparentize(color, s.ringState.stroke_transparency)}>
+				fill={transparentize(color, scroll_ringState.fill_transparency)}
+				stroke={transparentize(color, scroll_ringState.stroke_transparency)}>
 				<path d={svg_ringPath}>
 			</svg>
 		</MouseResponder>
