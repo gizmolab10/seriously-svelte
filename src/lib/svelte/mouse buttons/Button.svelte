@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, s, u, Point, ZIndex, onMount, ElementState } from '../../ts/common/GlobalImports';
-	import MouseResponder from './MouseResponder.svelte';
+	import Mouse_Responder from './Mouse_Responder.svelte';
 	export let background_color = k.color_background;
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;
@@ -24,7 +24,7 @@
 	//	  (stroke, fill & cursor)		//
 	//	  calls closure to update it	//
 	//									//
-	//	owns a MouseResponder: state	//
+	//	owns a Mouse_Responder: state	//
 	//	  is passed to the container	//
 	//									//
 	//////////////////////////////////////
@@ -60,7 +60,7 @@
 
 </script>
 
-<MouseResponder
+<Mouse_Responder
 	name={name}
 	width={width}
 	height={height}
@@ -69,4 +69,4 @@
 	<button class='button' id={'button-for-' + name} style={currentStyle}>
 		<slot></slot>
 	</button>
-</MouseResponder>
+</Mouse_Responder>

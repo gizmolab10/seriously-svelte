@@ -2,7 +2,7 @@
 	import { s_ancestries_expanded, s_altering, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/ReactiveState';
 	import { Direction, onDestroy, dbDispatch, Predicate, SvelteWrapper, SvelteComponentType } from '../../ts/common/GlobalImports';
 	import { k, s, u, Size, Thing, Point, debug, ZIndex, onMount, signals, svgPaths } from '../../ts/common/GlobalImports';
-	import MouseResponder from '../mouse buttons/MouseResponder.svelte';
+	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	export let center;
@@ -101,7 +101,7 @@
 
 {#key rebuilds}
 	{#if elementState}
-		<MouseResponder
+		<Mouse_Responder
 			width={size}
 			height={size}
 			center={center}
@@ -157,6 +157,6 @@
 					</div>
 				{/if}
 			</button>
-		</MouseResponder>
+		</Mouse_Responder>
 	{/if}
 {/key}

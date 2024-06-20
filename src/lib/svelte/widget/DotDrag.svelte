@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { s_thing_changed, s_layout_asClusters, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/ReactiveState';
 	import { k, s, u, Rect, Size, Point, Thing, debug, ZIndex, IDTool, onMount } from '../../ts/common/GlobalImports';
+	import { createPopper, SvelteWrapper, AlterationType, SvelteComponentType } from '../../ts/common/GlobalImports';
 	import { signals, svgPaths, Direction, ElementType, dbDispatch } from '../../ts/common/GlobalImports';
-	import { createPopper, SvelteWrapper, AlterationType } from '../../ts/common/GlobalImports';
-	import MouseResponder from '../mouse buttons/MouseResponder.svelte';
+	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Tooltip from '../kit/Tooltip.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import Box from '../kit/Box.svelte';
@@ -13,6 +13,7 @@
 	const radius = k.dot_size;
 	const diameter = radius * 2;
 	const elementState = s.elementState_forName(name);		// survives onDestroy, created by widget
+	let dragWrapper = SvelteWrapper;
 	let isAltering = false;
 	let isGrabbed = false;
 	let isHovering = true;
@@ -25,9 +26,9 @@
 	let redraws = 0;
 	let left = 0;
 	let top = 0;
+	let dotDrag;
 	let tooltip;
 	let popper;
-	let button;
     let thing;
 
 	function handle_context_menu(event) { event.preventDefault(); }		// no default context menu on right-click
@@ -38,7 +39,7 @@
 		}
 		updateSVGPaths();
 		updateColors_forHovering(true);
-		popper = createPopper(button, tooltip, { placement: 'bottom' });
+		popper = createPopper(dotDrag, tooltip, { placement: 'bottom' });
         const handleAltering = signals.handle_altering((state) => {
 			const applyFlag = $s_ancestry_editingTools && !!ancestry && ancestry.things_canAlter_asParentOf_toolsAncestry;
 			isAltering = applyFlag ? !!state : false;
@@ -48,6 +49,13 @@
 			handleAltering.disconnect();
 		};
 	});
+
+	$: {
+		if (!!dotDrag) {
+			dragWrapper = new SvelteWrapper(dotDrag, ancestry, SvelteComponentType.drag);
+			elementState.set_forHovering(ancestry.thing.color, 'pointer');
+		}
+	}
 
 	$: {
 		if (thing?.id == $s_thing_changed.split(k.genericSeparator)[0]) {
@@ -114,13 +122,14 @@
 
 {#key rebuilds}
 	{#if elementState}
-		<MouseResponder
+		<Mouse_Responder
 			width={size}
 			height={size}
 			center={center}
 			closure={closure}
 			name={elementState.name}>
-			<button class='button'
+			<button class='dot'
+				bind:this={dotDrag}
 				id={'button-for-' + name}
 				style='
 					border:none;
@@ -169,6 +178,6 @@
 					</div>
 				{/key}
 			</button>
-		</MouseResponder>
+		</Mouse_Responder>
 	{/if}
 {/key}

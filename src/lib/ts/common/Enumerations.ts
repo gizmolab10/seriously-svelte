@@ -47,7 +47,9 @@ export enum SvelteComponentType {
 	widget	= 'widget',
 	reveal	= 'reveal',
 	title	= 'title',
+	drag	= 'drag',
 	line	= 'line',
+	ring	= 'ring',
 }
 
 export enum Quadrant {

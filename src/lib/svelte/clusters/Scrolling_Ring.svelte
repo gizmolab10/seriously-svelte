@@ -2,7 +2,7 @@
 	import { k, s, u, Thing, Point, ZIndex, signals, svgPaths, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
 	import { s_thing_changed, s_ancestry_focus, s_ring_angle, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/ReactiveState';
-	import MouseResponder from '../mouse buttons/MouseResponder.svelte';
+	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { necklace_ringState } from '../../ts/state/Expand_State';
 	import { scrolling_state } from '../../ts/state/Rotate_State';
 	export let radius = 0;
@@ -104,7 +104,7 @@
 
 {#key rebuilds}
 	<div class='ring-button' bind:this={scrolling_ring}>
-		<MouseResponder
+		<Mouse_Responder
 			name={name}
 			center={center}
 			zindex={zindex}
@@ -121,6 +121,6 @@
 				stroke={transparentize(color, scrolling_state.stroke_transparency)}>
 				<path d={svg_ringPath}>
 			</svg>
-		</MouseResponder>
+		</Mouse_Responder>
 	</div>
 {/key}

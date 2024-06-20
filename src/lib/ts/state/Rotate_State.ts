@@ -10,6 +10,7 @@ export default class Rotate_State {
 	// a) rotates the thumb button (scrolls the page)
 	// b) rotates the necklace (in subclass: Expand_State)
 	
+	reset() { this.startAngle = this.priorAngle = null; }
 	get isActive(): boolean { return !!this.startAngle; }
 	get stroke_transparency(): number { return this.isHighlighted ? 0.8 : 1; }
 	get fill_transparency(): number { return this.isHighlighted ? 0.97 : 0.98; }

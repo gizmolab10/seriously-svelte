@@ -31,7 +31,6 @@
 	$: { cursor_closure(); }
 	
 	onMount(() => {
-		console.log('clusters graph mount')
 		const handler = signals.handle_relayoutWidgets(0, (ancestry) => { rebuilds += 1; });
 		return () => { handler.disconnect() };
 	});
@@ -67,6 +66,14 @@
 					<TitleEditor ancestry={$s_ancestry_focus} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 				</div>
 				<Clusters/>
+				<Scrolling_Ring
+					color={color}
+					thing={thing}
+					center={center}
+					ring_width={30}
+					zindex={ZIndex.lines}
+					name={'scroll-ring'}
+					radius={$s_cluster_arc_radius - k.ring_thickness}/>
 				<Necklace_Ring
 					color={color}
 					thing={thing}
@@ -76,14 +83,6 @@
 					ring_width={k.ring_thickness}
 					radius={$s_cluster_arc_radius}
 					cursor_closure={cursor_closure}/>
-				<Scrolling_Ring
-					color={color}
-					thing={thing}
-					center={center}
-					ring_width={30}
-					zindex={ZIndex.lines}
-					name={'scroll-ring'}
-					radius={$s_cluster_arc_radius - k.ring_thickness}/>
 				<EditingTools offset={toolsOffset}/>
 			{/key}
 		</div>

@@ -2,7 +2,7 @@
 	import { k, s, u, Thing, Point, ZIndex, signals, svgPaths, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
 	import { s_thing_changed, s_ancestry_focus, s_ring_angle, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/ReactiveState';
-	import MouseResponder from '../mouse buttons/MouseResponder.svelte';
+	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { necklace_ringState } from '../../ts/state/Expand_State';
 	export let radius = 0;
 	export let thing: Thing;
@@ -45,7 +45,7 @@
 		const from_center = distance_fromCenter_of($s_mouse_location);	// use store, to react
 		if (!!from_center) {
 			let sendSignal = false;
-			necklace_ringState.isHovering = determine_isHovering();	// show highlight around ring
+			necklace_ringState.isHovering = isHit();	// show highlight around ring
 			cursor_closure();
 			if (necklace_ringState.radiusOffset != null) {				// resize
 				const distance = Math.max(k.cluster_inside_radius * 4, from_center.magnitude);
@@ -119,7 +119,7 @@
 		return null
 	}
  
-	function determine_isHovering(): boolean {
+	function isHit(): boolean {
 		const vector = distance_fromCenter_of($s_mouse_location);
 		const distance = vector.magnitude;
 		if (!!distance && distance.isBetween(radius, outer_radius)) {
@@ -132,7 +132,7 @@
 
 {#key rebuilds}
 	<div class='ring-button' bind:this={NecklaceRing}>
-		<MouseResponder
+		<Mouse_Responder
 			name={name}
 			center={center}
 			zindex={zindex}
@@ -140,8 +140,8 @@
 			height={diameter}
 			closure={closure}
 			detect_longClick={false}
-			cursor={necklace_ringState.cursor}
-			detectHit_closure={determine_isHovering}>
+			detectHit_closure={isHit}
+			cursor={necklace_ringState.cursor}>
 			<svg
 				viewBox={viewBox}
 				class= 'svg-ring-button'
@@ -149,6 +149,6 @@
 				stroke={transparentize(color, necklace_ringState.stroke_transparency)}>
 				<path d={svg_ringPath}>
 			</svg>
-		</MouseResponder>
+		</Mouse_Responder>
 	</div>
 {/key}

@@ -3,7 +3,7 @@
 	import { ElementType, ElementState, Alteration_State, AlterationType, SvelteWrapper, transparentize } from '../../ts/common/GlobalImports';
 	import { s_ancestry_editingTools, s_layout_asClusters } from '../../ts/state/ReactiveState';
 	import { s_altering, s_graphRect, s_show_details } from '../../ts/state/ReactiveState';
-	import MouseResponder from '../mouse buttons/MouseResponder.svelte';
+	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import TriangleButton from '../mouse buttons/TriangleButton.svelte';
 	import TransparencyCircle from '../kit/TransparencyCircle.svelte';
 	import Button from '../mouse buttons/Button.svelte';
