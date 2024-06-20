@@ -31,6 +31,7 @@
 	$: { cursor_closure(); }
 	
 	onMount(() => {
+		console.log('clusters graph mount')
 		const handler = signals.handle_relayoutWidgets(0, (ancestry) => { rebuilds += 1; });
 		return () => { handler.disconnect() };
 	});

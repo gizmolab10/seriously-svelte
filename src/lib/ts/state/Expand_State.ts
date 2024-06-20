@@ -9,6 +9,7 @@ export default class Expand_State extends Rotate_State {
 	// moves with respect to the center (grows the necklace)
 
 	reset() { this.startAngle = this.priorAngle = this.radiusOffset = null; }
+	get isHighlighted(): boolean { return this.isHovering || this.isActive; }
 	get isActive(): boolean { return !!this.startAngle || !!this.radiusOffset; }
 
 }

@@ -1,10 +1,20 @@
 import Predicate from '../data/Predicate';
 
+export class Page_Index {
+
+	// a page is a subset of a too-long list of things
+	// index == first of subset
+
+	atLimit = [false, false];
+	index = 0;
+	total = 0;
+}
+
 export default class Page_Indices {
 	inward_states: Array<Page_Index>;
 	outward_states: Array<Page_Index>;
 
-	// two arrays of Page_Index (defined below)
+	// two arrays of Page_Index (defined above)
 	// 1) outward: (to) children and relateds (more kinds later?)
 	// 2) inward: (from) parents
 	// each array  has one index for each predicate kind
@@ -43,14 +53,4 @@ export default class Page_Indices {
 		}
 	}
 
-}
-
-export class Page_Index {
-
-	// page is a subset of a too-long list
-	// index == first of subset
-
-	atLimit = [false, false];
-	index = 0;
-	total = 0;
 }

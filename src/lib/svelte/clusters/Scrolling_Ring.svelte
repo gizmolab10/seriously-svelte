@@ -3,7 +3,8 @@
 	import { s_thing_changed, s_ancestry_focus, s_ring_angle, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/ReactiveState';
 	import MouseResponder from '../mouse buttons/MouseResponder.svelte';
-	import { scroll_ringState } from '../../ts/state/Rotate_State';
+	import { necklace_ringState } from '../../ts/state/Expand_State';
+	import { scrolling_state } from '../../ts/state/Rotate_State';
 	export let radius = 0;
 	export let thing: Thing;
 	export let ring_width = 0;
@@ -19,8 +20,8 @@
 	const viewBox = `${-ring_width}, ${-ring_width}, ${diameter}, ${diameter}`;
 	const svg_ringPath = svgPaths.ring(Point.square(radius), outer_radius, ring_width);
 	let mouse_up_count = $s_mouse_up_count;
+	let scrolling_ring;
 	let rebuilds = 0
-	let Necklace_Ring;
 
 	$: {
 		if ($s_ancestry_focus.thing.id == $s_thing_changed.split(k.genericSeparator)[0]) {
@@ -31,6 +32,7 @@
 	$: {
 		if (mouse_up_count != $s_mouse_up_count) {
 			mouse_up_count = $s_mouse_up_count;
+			scrolling_state.reset();
 			rebuilds += 1;
 		}
 	}
@@ -43,13 +45,9 @@
 
 		const from_center = distance_fromCenter_of($s_mouse_location);	// use store, to react
 		if (!!from_center) {
-			let sendSignal = false;
-			scroll_ringState.isHovering = determine_isHovering();	// show highlight around ring
+			scrolling_state.isHovering = determine_isHovering();	// show highlight around ring
 			cursor_closure();
-			if (sendSignal) {
-				rebuilds += 1;
-				signals.signal_relayoutWidgets_fromFocus();		// destroys this component (variables wiped)
-			}
+			rebuilds += 1;
 		}
 	}
 
@@ -75,8 +73,9 @@
 				
 			}
 			cursor_closure();
-		} else if (!scroll_ringState.startAngle && !scroll_ringState.radiusOffset) {
-			scroll_ringState.isHovering = true;	// show highlight around ring
+		} else {
+			const okayToHover = !!scrolling_state.startAngle || !!scrolling_state.radiusOffset || !!necklace_ringState.startAngle || !!necklace_ringState.radiusOffset;
+			scrolling_state.isHovering = okayToHover && !mouseState.isOut;	// show highlight around ring
 
 			// hover
 
@@ -104,7 +103,7 @@
 </script>
 
 {#key rebuilds}
-	<div class='ring-button' bind:this={Necklace_Ring}>
+	<div class='ring-button' bind:this={scrolling_ring}>
 		<MouseResponder
 			name={name}
 			center={center}
@@ -113,13 +112,13 @@
 			height={diameter}
 			closure={closure}
 			detect_longClick={false}
-			cursor={scroll_ringState.cursor}
+			cursor={scrolling_state.cursor}
 			detectHit_closure={determine_isHovering}>
 			<svg
 				viewBox={viewBox}
 				class= 'svg-ring-button'
-				fill={transparentize(color, scroll_ringState.fill_transparency)}
-				stroke={transparentize(color, scroll_ringState.stroke_transparency)}>
+				fill={transparentize(color, scrolling_state.fill_transparency)}
+				stroke={transparentize(color, scrolling_state.stroke_transparency)}>
 				<path d={svg_ringPath}>
 			</svg>
 		</MouseResponder>

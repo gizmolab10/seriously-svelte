@@ -11,8 +11,8 @@
 	import { h } from '../../ts/db/DBDispatch';
 	import Circle from '../kit/Circle.svelte';
 	import Box from '../kit/Box.svelte';
-	const revealState = s.elementState_for($s_ancestry_focus, ElementType.reveal, k.empty);
-	const focusState = s.elementState_for($s_ancestry_focus, ElementType.focus, k.empty);
+	const revealState = s.elementState_for($s_ancestry_focus, ElementType.reveal, 'tree');
+	const focusState = s.elementState_for($s_ancestry_focus, ElementType.focus, 'tree');
 	let origin_ofFirstReveal = Point.zero;
 	let origin_ofChildren = Point.zero;
 	let childrenSize = Point.zero;

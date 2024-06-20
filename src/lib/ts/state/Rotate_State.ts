@@ -1,3 +1,4 @@
+import { necklace_ringState } from './Expand_State';
 import { k } from '../common/GlobalImports';
 
 export default class Rotate_State {
@@ -9,12 +10,12 @@ export default class Rotate_State {
 	// a) rotates the thumb button (scrolls the page)
 	// b) rotates the necklace (in subclass: Expand_State)
 	
-	get isActive(): boolean { return false; }
-	get isHighlighted(): boolean { return this.isHovering || this.isActive; }
+	get isActive(): boolean { return !!this.startAngle; }
 	get stroke_transparency(): number { return this.isHighlighted ? 0.8 : 1; }
 	get fill_transparency(): number { return this.isHighlighted ? 0.97 : 0.98; }
 	get cursor(): string { return this.isActive ? 'move' : this.isHovering ? 'pointer' : k.cursor_default; }
+	get isHighlighted(): boolean { return (this.isHovering || this.isActive) && !necklace_ringState.isActive; }
 
 }
 
-export const scroll_ringState = new Rotate_State();
+export const scrolling_state = new Rotate_State();
