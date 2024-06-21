@@ -54,6 +54,7 @@
 		if (!!dotDrag) {
 			dragWrapper = new SvelteWrapper(dotDrag, ancestry, SvelteComponentType.drag);
 			elementState.set_forHovering(ancestry.thing.color, 'pointer');
+			dotDrag.handle_mouseData = handle_mouseData;
 		}
 	}
 
@@ -113,6 +114,10 @@
 		} else if (mouseState.isUp) {
 			ancestry?.handle_singleClick_onDragDot(mouseState.event.shiftKey);
 		}
+	}
+
+	function handle_mouseData(mouseData: Mouse_State): boolean {
+		return true;
 	}
 
 	// <Tooltip color={elementState.stroke} bind:this={tooltip}>This is a drag dot</Tooltip>

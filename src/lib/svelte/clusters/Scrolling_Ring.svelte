@@ -45,7 +45,7 @@
 
 		const from_center = distance_fromCenter_of($s_mouse_location);	// use store, to react
 		if (!!from_center) {
-			scrolling_state.isHovering = determine_isHovering();	// show highlight around ring
+			scrolling_state.isHovering = isHit();	// show highlight around ring
 			cursor_closure();
 			rebuilds += 1;
 		}
@@ -91,13 +91,17 @@
 		return null
 	}
  
-	function determine_isHovering(): boolean {
+	function isHit(): boolean {
 		const vector = distance_fromCenter_of($s_mouse_location);
 		const distance = vector.magnitude;
 		if (!!distance && distance.isBetween(radius, outer_radius)) {
 			return true;
 		}
 		return false;
+	}
+
+	function handle_mouseData(mouseData: Mouse_State) {
+		return isHit();
 	}
 
 </script>
@@ -113,7 +117,7 @@
 			closure={closure}
 			detect_longClick={false}
 			cursor={scrolling_state.cursor}
-			detectHit_closure={determine_isHovering}>
+			detectHit_closure={isHit}>
 			<svg
 				viewBox={viewBox}
 				class= 'svg-ring-button'

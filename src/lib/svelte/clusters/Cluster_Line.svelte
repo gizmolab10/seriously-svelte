@@ -31,6 +31,7 @@
 	$: {
 		if (line && !lineWrapper) {
 			lineWrapper = new SvelteWrapper(line, h.rootAncestry, SvelteComponentType.line);
+			line.handle_mouseData = handle_mouseData;
 		}
 		angle = cluster_layout?.angle_ofLine;
 		const inside_radius = k.cluster_inside_radius + (show_arrowheads ? 8 : 0);
@@ -71,6 +72,10 @@
 			case Quadrant.upperLeft:  fromCenter = end.offsetBy(start); break;
 		}
 		return center.offsetBy(fromCenter);
+	}
+
+	function handle_mouseData(mouseData: Mouse_State): boolean {
+		return true;
 	}
 
 </script>

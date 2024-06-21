@@ -72,6 +72,10 @@
 		};
 	});
 
+	function handle_mouseData(mouseData: Mouse_State): boolean {
+		return true;
+	}
+
 	function update_fromAncestry() {
 		thing = ancestry?.thing;
 		const title = thing?.title ?? thing?.id ?? k.unknown;
@@ -91,6 +95,7 @@
 	$: {
 		if (widget) {
 			widgetWrapper = new SvelteWrapper(widget, ancestry, SvelteComponentType.widget);
+			widget.handle_mouseData = handle_mouseData;
 		}
 	}
 	

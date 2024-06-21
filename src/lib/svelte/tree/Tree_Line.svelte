@@ -20,6 +20,7 @@
 	$: {
 		if (line) {
 			lineWrapper = new SvelteWrapper(line, ancestry, SvelteComponentType.line);
+			line.handle_mouseData = handle_mouseData;
 		}
 	}
 
@@ -62,6 +63,10 @@
 			const boxSize = new Size(size.width, Math.max(2, size.height));
 			viewBox = new Rect(origin, boxSize);
 		}
+	}
+
+	function handle_mouseData(mouseData: Mouse_State): boolean {
+		return true;
 	}
 
 </script>

@@ -1,7 +1,8 @@
 <script lang='ts'>
-	import { k, s, u, Thing, Point, ZIndex, signals, svgPaths, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
 	import { s_thing_changed, s_ancestry_focus, s_ring_angle, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/ReactiveState';
+	import { k, s, u, Thing, Point, ZIndex, signals, svgPaths, dbDispatch } from '../../ts/common/GlobalImports';
+	import { transparentize, SvelteWrapper, SvelteComponentType } from '../../ts/common/GlobalImports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { necklace_ringState } from '../../ts/state/Expand_State';
 	export let radius = 0;
@@ -19,12 +20,20 @@
 	const viewBox = `${-ring_width}, ${-ring_width}, ${diameter}, ${diameter}`;
 	const svg_ringPath = svgPaths.ring(Point.square(radius), outer_radius, ring_width);
 	let mouse_up_count = $s_mouse_up_count;
+	let neckaceWrapper = SvelteWrapper;
+	let necklaceRing;
 	let rebuilds = 0
-	let NecklaceRing;
 
 	$: {
 		if ($s_ancestry_focus.thing.id == $s_thing_changed.split(k.genericSeparator)[0]) {
 			rebuilds += 1;
+		}
+	}
+
+	$: {
+		if (!!necklaceRing) {
+			neckaceWrapper = new SvelteWrapper(necklaceRing, $s_ancestry_focus, SvelteComponentType.ring);
+			necklaceRing.handle_mouseData = handle_mouseData;
 		}
 	}
 
@@ -128,10 +137,14 @@
 		return false;
 	}
 
+	function handle_mouseData(mouseData: Mouse_State): boolean {
+		return isHit();
+	}
+
 </script>
 
 {#key rebuilds}
-	<div class='ring-button' bind:this={NecklaceRing}>
+	<div class='ring-button' bind:this={necklaceRing}>
 		<Mouse_Responder
 			name={name}
 			center={center}
