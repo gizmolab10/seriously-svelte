@@ -7,17 +7,16 @@
 	import Widget from '../widget/Widget.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import Advance from './Advance.svelte';
+	export let geometry!: Clusters_Geometry;
     const ancestry = $s_ancestry_focus;
 	const center = $s_graphRect.size.dividedInHalf.asPoint;
 	const childOffset = new Point(k.dot_size / -2, k.cluster_offsetY);
 	let color = ancestry.thing?.color ?? k.color_default;
-	let geometry!: Clusters_Geometry;
 	let rebuilds = 0;
 
 	// draw widgets, lines and arcs
 
 	onMount(() => {
-		geometry = new Clusters_Geometry();
 		const handleAny = signals.handle_anySignal((signal_ancestry) => {
 			rebuilds += 1;
 		});

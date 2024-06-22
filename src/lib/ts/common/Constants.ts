@@ -15,7 +15,7 @@ export default class Constants {
 	default_buttonSize = 16;
 	height_breadcrumbs = 33;
 	threshold_longClick = 800;
-	cluster_inside_radius = 30;
+	cluster_inside_radius = 90;
 	editingTools_diameter = 64;
 	threshold_doubleClick = 300;
 	hid_unknown = 1000000000000;

@@ -1,16 +1,17 @@
 <script lang='ts'>
 	import { s_graphRect, s_ancestry_focus, s_user_graphOffset, s_thing_fontFamily, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
-	import { k, s, u, Rect, Size, Point, ZIndex, onMount, signals, transparentize } from '../../ts/common/GlobalImports';
+	import { k, s, u, Rect, Size, Point, ZIndex, onMount, signals, Clusters_Geometry, transparentize } from '../../ts/common/GlobalImports';
 	import { necklace_ringState } from '../../ts/state/Expand_State';
 	import EditingTools from '../widget/EditingTools.svelte';
 	import TitleEditor from '../widget/TitleEditor.svelte';
-	import Necklace_Ring from './Necklace_Ring.svelte';
 	import Scrolling_Ring from './Scrolling_Ring.svelte';
+	import Necklace_Ring from './Necklace_Ring.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Clusters from './Clusters.svelte';
 	const toolsOffset = new Point(32, -3);
     const ancestry = $s_ancestry_focus;
 	const thing = ancestry?.thing;
+	const geometry = new Clusters_Geometry();
 	const color = thing?.color ?? k.color_default;
 	let titleCenter = Point.zero;
 	let center = Point.zero;
@@ -65,12 +66,13 @@
 						left: {titleCenter.x}px;'>
 					<TitleEditor ancestry={$s_ancestry_focus} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 				</div>
-				<Clusters/>
+				<Clusters geometry={geometry}/>
 				<Scrolling_Ring
 					color={color}
 					thing={thing}
 					center={center}
 					ring_width={30}
+					geometry={geometry}
 					name={'scroll-ring'}
 					zindex={ZIndex.lines}
 					radius={$s_cluster_arc_radius - k.ring_thickness}/>

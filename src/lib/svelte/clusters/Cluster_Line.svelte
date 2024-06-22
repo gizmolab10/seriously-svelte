@@ -38,26 +38,27 @@
 		const line_tip = cluster_layout?.line_tip;
 		size = line_tip.abs.asSize;
 		const rect = new Rect(Point.zero, size);
+		const titleRect = new Rect(center.offsetBy(inside_tip.multipliedBy(.7)), size.multipliedBy(1/2));
 		linePath = svgPaths.line(line_tip);
 		viewBox = `0, 0, ${size.width}, ${size.height}`;
 		line_origin = line_origin_using(inside_tip, line_tip);
-		title_origin = title_origin_for(angle, rect);
+		title_origin = title_origin_for(angle, titleRect);
 		[arrow_start, arrow_end] = rect.cornersForAngle(angle);
 	}
 
 	function title_origin_for(angle: number, rect: Rect): Point {
 		const quadrant = u.quadrant_ofNotNormalized_angle(angle);
+		const title = cluster_layout?.line_title;
 		let multiplier = -1.5;
 		if (u.isAlmost_horizontal(angle)) {
 			switch (quadrant) {
-				case Quadrant.lowerRight: multiplier = -1.5; break;
-				case Quadrant.upperRight: multiplier = 0.5; break;
-				case Quadrant.lowerLeft: multiplier = -1.5; break;
+				case Quadrant.lowerLeft: multiplier = -0.5; break;
 				case Quadrant.upperLeft: multiplier = 0.5; break;
+				case Quadrant.upperRight: multiplier = 0.5; break;
 			}
 		}
 		const title_y = k.dot_size * multiplier;
-		const title_x = u.getWidthOf(cluster_layout?.line_title) / -3;
+		const title_x = u.getWidthOf(title) / -3;
 		const title_offset = new Point(title_x, title_y);
 		return rect.center.offsetBy(title_offset);
 	}
@@ -83,6 +84,18 @@
 
 </script>
 
+<div class='cluster-line-label'
+	style='
+		background-color: {k.color_background};
+		left: {title_origin.x}px;
+		top: {title_origin.y}px;
+		white-space: nowrap;
+		position: absolute;
+		font-family: Arial;
+		font-size: 0.5em;
+		color: {color};'>
+	{cluster_layout?.line_title}
+</div>
 <div class='cluster-line' id={idDiv}
 	style='z-index: {ZIndex.lines};
 		left: {line_origin.x}px;
@@ -95,18 +108,6 @@
 		bind:this={line}>
 		<path d={linePath} stroke={color} fill='none'/>
 	</svg>
-	<div class='cluster-line-label'
-		style='
-			background-color: {k.color_background};
-			left: {title_origin.x}px;
-			top: {title_origin.y}px;
-			white-space: nowrap;
-			position: absolute;
-			font-family: Arial;
-			font-size: 0.5em;
-			color: {color};'>
-		{cluster_layout?.line_title}
-	</div>
 	{#if show_arrowheads}
 		{#if predicate?.isBidirectional}
 			<ArrowHead idDiv='child'  angle={angle} color={color} color_background={color} radius={thickness} center={arrow_end}/>

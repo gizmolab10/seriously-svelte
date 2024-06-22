@@ -1,10 +1,11 @@
 <script lang='ts'>
-	import { k, s, u, Thing, Point, ZIndex, signals, svgPaths, dbDispatch, transparentize } from '../../ts/common/GlobalImports';
+	import { k, s, u, Thing, Point, ZIndex, signals, svgPaths, dbDispatch, Clusters_Geometry, transparentize } from '../../ts/common/GlobalImports';
 	import { s_thing_changed, s_ancestry_focus, s_ring_angle, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/ReactiveState';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { necklace_ringState } from '../../ts/state/Expand_State';
 	import { scrolling_state } from '../../ts/state/Rotate_State';
+	import Identifiable from '../../ts/data/Identifiable';
 	export let radius = 0;
 	export let thing: Thing;
 	export let ring_width = 0;
@@ -13,19 +14,27 @@
 	export let center = Point.zero;
 	export let zindex = ZIndex.panel;
 	export let cursor_closure = () => {};
+	export let geometry!: Clusters_Geometry;
 	const outer_radius = radius + ring_width;
 	const diameter = outer_radius * 2;
 	const borderStyle = '1px solid';
 	const ringOrigin = center.distanceFrom(Point.square(outer_radius));
 	const viewBox = `${-ring_width}, ${-ring_width}, ${diameter}, ${diameter}`;
+	const divider_lines: Array<{origin: Point, viewBox: string, path: string}> = [];
 	const svg_ringPath = svgPaths.ring(Point.square(radius), outer_radius, ring_width);
 	let mouse_up_count = $s_mouse_up_count;
-	let scrolling_ring;
+	let scrollingRing;
 	let rebuilds = 0
 
 	$: {
 		if ($s_ancestry_focus.thing.id == $s_thing_changed.split(k.genericSeparator)[0]) {
 			rebuilds += 1;
+		}
+	}
+
+	$: {
+		if (!!scrollingRing) {
+			neckaceWrapper = new SvelteWrapper(scrollingRing, handle_mouseData, Identifiable.newID(), SvelteComponentType.ring);
 		}
 	}
 
@@ -51,6 +60,17 @@
 		}
 	}
 
+	function setup_divider_lines() {
+		geometry.divider_angles.forEach((angle, index) => {
+			const origin = Point.fromPolar(radius, angle);
+			const radial = Point.fromPolar(k.ring_thickness, angle);
+			const size = radial.abs.asSize;
+			const viewBox = `${origin.x} ${origin.y} ${size.width} ${size.height}`;
+			const path = svgPaths.line(radial);
+			divider_lines.push({origin, viewBox, path});
+		});
+	}
+
 	function closure(mouseState) {
 
 		/////////////////////////////
@@ -61,6 +81,7 @@
 		if (mouseState.isHover) {
 			const okayToHover = !!scrolling_state.startAngle || !!scrolling_state.radiusOffset || !!necklace_ringState.startAngle || !!necklace_ringState.radiusOffset;
 			scrolling_state.isHovering = okayToHover && !mouseState.isOut;	// show highlight around ring
+			setup_divider_lines();
 
 			// hover
 
@@ -110,24 +131,31 @@
 </script>
 
 {#key rebuilds}
-	<div class='ring-button' bind:this={scrolling_ring}>
-		<Mouse_Responder
-			name={name}
-			center={center}
-			zindex={zindex}
-			width={diameter}
-			height={diameter}
-			closure={closure}
-			detect_longClick={false}
-			cursor={scrolling_state.cursor}
-			detectHit_closure={isHit}>
-			<svg
-				viewBox={viewBox}
-				class= 'svg-ring-button'
-				fill={transparentize(color, scrolling_state.fill_transparency)}
-				stroke={transparentize(color, scrolling_state.stroke_transparency)}>
-				<path d={svg_ringPath}>
-			</svg>
-		</Mouse_Responder>
-	</div>
+	<Mouse_Responder
+		name={name}
+		center={center}
+		zindex={zindex}
+		width={diameter}
+		height={diameter}
+		closure={closure}
+		detect_longClick={false}
+		detectHit_closure={isHit}
+		cursor={scrolling_state.cursor}>
+		<svg
+			viewBox={viewBox}
+			class= 'svg-ring-button'
+			fill={transparentize(color, scrolling_state.fill_transparency)}
+			stroke={transparentize(color, scrolling_state.stroke_transparency)}>
+			<path d={svg_ringPath}>
+		</svg>
+			{#each divider_lines as {origin, lineBox, path}}
+				<svg
+					viewBox={lineBox}
+					top={origin.y}
+					left={origin.x}
+					stroke={transparentize(color, scrolling_state.stroke_transparency)}>
+					<path d={path}>
+				</svg>
+			{/each}
+	</Mouse_Responder>
 {/key}

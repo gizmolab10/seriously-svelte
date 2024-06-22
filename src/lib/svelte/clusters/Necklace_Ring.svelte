@@ -5,6 +5,7 @@
 	import { transparentize, SvelteWrapper, SvelteComponentType } from '../../ts/common/GlobalImports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { necklace_ringState } from '../../ts/state/Expand_State';
+	import Identifiable from '../../ts/data/Identifiable';
 	export let radius = 0;
 	export let thing: Thing;
 	export let ring_width = 0;
@@ -32,7 +33,7 @@
 
 	$: {
 		if (!!necklaceRing) {
-			neckaceWrapper = new SvelteWrapper(necklaceRing, handle_mouseData, $s_ancestry_focus.idHashed, SvelteComponentType.ring);
+			neckaceWrapper = new SvelteWrapper(necklaceRing, handle_mouseData, Identifiable.newID(), SvelteComponentType.ring);
 		}
 	}
 
@@ -147,7 +148,7 @@
 </script>
 
 {#key rebuilds}
-	<div class='ring-button' bind:this={necklaceRing}>
+	<div class='neckace-ring' bind:this={necklaceRing}>
 		<Mouse_Responder
 			name={name}
 			center={center}
@@ -160,7 +161,7 @@
 			cursor={necklace_ringState.cursor}>
 			<svg
 				viewBox={viewBox}
-				class= 'svg-ring-button'
+				class= 'svg-neckace-ring'
 				fill={transparentize(color, necklace_ringState.fill_transparency)}
 				stroke={transparentize(color, necklace_ringState.stroke_transparency)}>
 				<path d={svg_ringPath}>
