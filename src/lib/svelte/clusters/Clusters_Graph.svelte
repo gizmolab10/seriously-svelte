@@ -71,8 +71,8 @@
 					thing={thing}
 					center={center}
 					ring_width={30}
-					zindex={ZIndex.lines}
 					name={'scroll-ring'}
+					zindex={ZIndex.lines}
 					radius={$s_cluster_arc_radius - k.ring_thickness}/>
 				<Necklace_Ring
 					color={color}

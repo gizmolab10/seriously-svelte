@@ -57,7 +57,15 @@
 		// setup or teardown state //
 		/////////////////////////////
 
-		if (!mouseState.isHover) {
+
+		if (mouseState.isHover) {
+			const okayToHover = !!scrolling_state.startAngle || !!scrolling_state.radiusOffset || !!necklace_ringState.startAngle || !!necklace_ringState.radiusOffset;
+			scrolling_state.isHovering = okayToHover && !mouseState.isOut;	// show highlight around ring
+
+			// hover
+
+			rebuilds += 1;
+		} else if (isHit()) {
 			const from_center = distance_fromCenter_of($s_mouse_location);
 			if (mouseState.isUp) {
 
@@ -73,13 +81,6 @@
 				
 			}
 			cursor_closure();
-		} else {
-			const okayToHover = !!scrolling_state.startAngle || !!scrolling_state.radiusOffset || !!necklace_ringState.startAngle || !!necklace_ringState.radiusOffset;
-			scrolling_state.isHovering = okayToHover && !mouseState.isOut;	// show highlight around ring
-
-			// hover
-
-			rebuilds += 1;
 		}
 	}
 

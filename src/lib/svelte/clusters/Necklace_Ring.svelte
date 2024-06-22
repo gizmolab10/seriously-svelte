@@ -85,7 +85,15 @@
 		// setup or teardown state //
 		/////////////////////////////
 
-		if (!mouseState.isHover) {
+		if (mouseState.isHover) {
+			if (!necklace_ringState.startAngle && !necklace_ringState.radiusOffset) {
+				necklace_ringState.isHovering = true;	// show highlight around ring
+	
+				// hover
+	
+				rebuilds += 1;
+			}
+		} else if (isHit()) {
 			const from_center = distance_fromCenter_of($s_mouse_location);
 			if (mouseState.isDouble) {
 
@@ -110,12 +118,6 @@
 				
 			}
 			cursor_closure();
-		} else if (!necklace_ringState.startAngle && !necklace_ringState.radiusOffset) {
-			necklace_ringState.isHovering = true;	// show highlight around ring
-
-			// hover
-
-			rebuilds += 1;
 		}
 	}
 
