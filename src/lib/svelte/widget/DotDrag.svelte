@@ -52,9 +52,8 @@
 
 	$: {
 		if (!!dotDrag) {
-			dragWrapper = new SvelteWrapper(dotDrag, ancestry, SvelteComponentType.drag);
+			dragWrapper = new SvelteWrapper(dotDrag, handle_mouseData, ancestry.idHashed, SvelteComponentType.drag);
 			elementState.set_forHovering(ancestry.thing.color, 'pointer');
-			dotDrag.handle_mouseData = handle_mouseData;
 		}
 	}
 
@@ -117,7 +116,7 @@
 	}
 
 	function handle_mouseData(mouseData: Mouse_State): boolean {
-		return true;
+		return false;
 	}
 
 	// <Tooltip color={elementState.stroke} bind:this={tooltip}>This is a drag dot</Tooltip>

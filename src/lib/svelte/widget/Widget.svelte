@@ -71,9 +71,13 @@
 			handleAny.disconnect();
 		};
 	});
+ 
+	function isHit(): boolean {
+		return false
+	}
 
 	function handle_mouseData(mouseData: Mouse_State): boolean {
-		return true;
+		return false;
 	}
 
 	function update_fromAncestry() {
@@ -94,8 +98,7 @@
 
 	$: {
 		if (widget) {
-			widgetWrapper = new SvelteWrapper(widget, ancestry, SvelteComponentType.widget);
-			widget.handle_mouseData = handle_mouseData;
+			widgetWrapper = new SvelteWrapper(widget, handle_mouseData, ancestry.idHashed, SvelteComponentType.widget);
 		}
 	}
 	

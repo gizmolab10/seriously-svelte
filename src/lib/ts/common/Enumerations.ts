@@ -45,6 +45,7 @@ export enum IDTrait {
 
 export enum SvelteComponentType {
 	widget	= 'widget',
+	button	= 'button',
 	reveal	= 'reveal',
 	title	= 'title',
 	drag	= 'drag',

@@ -1,30 +1,29 @@
-import { e, Ancestry, SvelteComponent, Create_Mouse_State, SvelteComponentType } from './GlobalImports';
+import { Handle_Mouse_State, Create_Mouse_State } from './GlobalImports';
+import { Rect, SvelteComponentType } from './GlobalImports';
 import Identifiable from '../data/Identifiable';
+import { h } from '../../ts/db/DBDispatch';
 
 // Ancestry sometimes needs to access and or alter an associated svelte component
 
 export default class SvelteWrapper extends Identifiable {
-    component: SvelteComponent;
+    mouse_closure: Handle_Mouse_State;
     type: SvelteComponentType;
-    ancestry: Ancestry;
+    element: HTMLElement;
+    idHashed: number;
 
-    constructor(component: SvelteComponent, ancestry: Ancestry, type: SvelteComponentType) {
+    constructor(element: HTMLElement, mouse_closure: Handle_Mouse_State, idHashed: number, type: SvelteComponentType) {
 		super();
         this.type = type;
-        this.ancestry = ancestry;
-        this.component = component;
-    	ancestry?.wrapper_add(this);
-        e.subscribeTo_mouseData(this);
+        this.element = element;
+        this.idHashed = idHashed;
+        this.mouse_closure = mouse_closure;
+    	h.wrapper_add(this);
     }
 
-    handle_closure(closure: Create_Mouse_State): boolean {
-        const component = this.component;
-        if (component && typeof component.handle_mouseData === 'function') {
-            const mouseData = closure(null, this.component);
-            this.component.handle_mouseData(mouseData);
-            console.log(`BANG! ${mouseData.isUp}`);
-        }
-        return true;
+    get boundingRect(): Rect { return Rect.boundingRectFor(this.element) ?? Rect.zero; }
+
+    handle_event_closure(event: MouseEvent, event_closure: Create_Mouse_State): boolean {
+        return this.mouse_closure(event_closure(event, this.element));
     }
 
 }

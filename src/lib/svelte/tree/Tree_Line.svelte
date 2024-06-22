@@ -19,8 +19,7 @@
 
 	$: {
 		if (line) {
-			lineWrapper = new SvelteWrapper(line, ancestry, SvelteComponentType.line);
-			line.handle_mouseData = handle_mouseData;
+			lineWrapper = new SvelteWrapper(line, handle_mouseData, ancestry.idHashed, SvelteComponentType.line);
 		}
 	}
 
@@ -64,9 +63,13 @@
 			viewBox = new Rect(origin, boxSize);
 		}
 	}
+ 
+	function isHit(): boolean {
+		return false
+	}
 
 	function handle_mouseData(mouseData: Mouse_State): boolean {
-		return true;
+		return false;
 	}
 
 </script>

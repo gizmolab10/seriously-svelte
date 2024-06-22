@@ -1,4 +1,5 @@
 import { Quadrant } from '../common/Enumerations';
+import type { SvelteComponent } from 'svelte';
 import { u } from '../common/Utilities';
 
 export class Point {
@@ -13,6 +14,7 @@ export class Point {
 	get angle():					  number { return Math.atan2(this.x, this.y); }
 	get magnitude():				  number { return Math.sqrt(this.x * this.x + this.y * this.y); }
 	get toPolar():	{r: number, phi: number} { return {r: this.magnitude, phi: this.angle}; }
+	get isZero():					 boolean { return this.x == 0 && this.y == 0; }
 	get pixelVerbose():				  string { return `${this.x}px ${this.y}px`; }
 	get verbose():					  string { return `(${this.x}, ${this.y})`; }
 	get description():				  string { return `${this.x} ${this.y}`; }
@@ -35,6 +37,7 @@ export class Point {
 	offsetBySize(size: Size):		   Point { return new Point(this.x + size.width, this.y + size.height); }
 	almostZero(almost: number):		 boolean { return Math.abs(this.x) <= almost && Math.abs(this.y) <= almost; }
 	static fromPolar(r: number, phi: number) { return new Point(r, 0).rotate_by(phi); }
+	static fromDOMRect(rect: DOMRect): Point { return new Point(rect.left, rect.top); }
 	static square(length: number):	   Point { return new Point(length, length); }
 	static get zero():				   Point { return new Point();}
 
@@ -46,6 +49,17 @@ export class Point {
 			this.y * cos - this.x * sin
 		);
 	}
+
+	static origin_inWindowCoordinates_for(element: HTMLElement): Point {
+		let e: HTMLElement | null = element;
+		let point = Point.zero;
+		while (e) {
+			point = point.offsetByXY(e.offsetLeft, e.offsetTop);
+			e = e.offsetParent as HTMLElement;
+		}
+		return point;
+	}
+	
 }
 
 export class Size {
@@ -57,24 +71,27 @@ export class Size {
 		this.width = width;
 	}
 
-	get proportion():				number { return this.width / this.height; }
-	get description():				string { return `${this.width} ${this.height}`; }
-	get verbose():					string { return `(${this.width}, ${this.height})`; }
-	get pixelVerbose():				string { return `${this.width}px ${this.height}px`; }
-	get asPoint():			   		 Point { return new Point(this.width, this.height); }
-	get dividedInHalf():			  Size { return this.multipliedBy(1/2); }
-	get negated():					  Size { return this.multipliedBy(-1); }
-	get copy():						  Size { return new Size(this.width, this.height); }
-	get swap():						  Size { return new Size(this.height, this.width); }
-	expandedByX(width: number):		  Size { return new Size(this.width + width, this.height); }
-	expandedByY(height: number):	  Size { return new Size(this.width, this.height + height); }
-	expandedBy(delta: Point):		  Size { return new Size(this.width + delta.x, this.height + delta.y); }
-	multipliedBy(multiplier: number): Size { return new Size(this.width * multiplier, this.height * multiplier); }
-	unionWith(size: Size):			  Size { return new Size(Math.max(this.width, size.width), Math.max(this.height, size.height)); }
-	subtracting(size: Size):		 Point { return new Point(this.width - size.width, this.height - size.height); }
-	reducedBy(delta: Point):		  Size { return this.expandedBy(delta.negated); }
-	static square(length: number):	  Size { return new Size(length, length); }
-	static get zero():				  Size { return new Size(); }
+	get isZero():					boolean { return this.width == 0 && this.height == 0; }
+	get proportion():				 number { return this.width / this.height; }
+	get description():				 string { return `${this.width} ${this.height}`; }
+	get verbose():					 string { return `(${this.width}, ${this.height})`; }
+	get pixelVerbose():				 string { return `${this.width}px ${this.height}px`; }
+	get asPoint():			   		  Point { return new Point(this.width, this.height); }
+	get dividedInHalf():			   Size { return this.multipliedBy(1/2); }
+	get negated():					   Size { return this.multipliedBy(-1); }
+	get copy():						   Size { return new Size(this.width, this.height); }
+	get swap():						   Size { return new Size(this.height, this.width); }
+	reducedBy(delta: Point):		   Size { return this.expandedBy(delta.negated); }
+	expandedByX(width: number):		   Size { return new Size(this.width + width, this.height); }
+	expandedByY(height: number):	   Size { return new Size(this.width, this.height + height); }
+	expandedBy(delta: Point):		   Size { return new Size(this.width + delta.x, this.height + delta.y); }
+	multipliedBy(multiplier: number):  Size { return new Size(this.width * multiplier, this.height * multiplier); }
+	unionWith(size: Size):			   Size { return new Size(Math.max(this.width, size.width), Math.max(this.height, size.height)); }
+	subtracting(size: Size):		  Point { return new Point(this.width - size.width, this.height - size.height); }
+	static fromDOMRect(rect: DOMRect): Size { return new Size(rect.width, rect.height); }
+	static square(length: number):	   Size { return new Size(length, length); }
+	static get zero():				   Size { return new Size(); }
+
 }
 
 export class Rect {
@@ -86,6 +103,7 @@ export class Rect {
 		this.size = size;
 	}
 
+	get isZero():			boolean { return this.origin.isZero && this.size.isZero; }
 	get description():		 string { return `${this.origin.verbose}, ${this.size.verbose}`; }
 	get pixelVerbose():		 string { return `${this.origin.pixelVerbose} ${this.size.pixelVerbose}`; }
 	get rangeDescription():	 string { return `(${this.origin.x} ... ${this.extent.x}), (${this.origin.y} ... ${this.extent.y})`; }
@@ -102,6 +120,7 @@ export class Rect {
 	offsetBy(delta: Point):	   Rect { return new Rect(this.origin.offsetBy(delta), this.size); }
 	offsetByY(y: number):	   Rect { return new Rect(this.origin.offsetByY(y), this.size); }
 	offsetByX(x: number):	   Rect { return new Rect(this.origin.offsetByX(x), this.size); }
+	static get zero():		   Rect { return new Rect(Point.zero, Size.zero); }
 
 	expandedBy(expansion: Point): Rect {
 		const size = this.size.expandedBy(expansion);
@@ -137,8 +156,54 @@ export class Rect {
 		return new Rect(rightCenter.offsetByY(size.height / -2), size);
 	}
 
+	static rect_forElement_contains(element: HTMLElement | null, point: Point): boolean {
+		const rect = Rect.boundingRectFor(element);
+		return rect?.contains(point) ?? false;
+	}
+
+	static rect_forElement_containsEvent(element: HTMLElement | null, event: MouseEvent): boolean {
+		const point = u.pointFor_mouseEvent(event);
+		const rect = Rect.boundingRectFor(element);
+		return rect?.contains(point) ?? false;
+	}
+
 	static createFromDOMRect(domRect: DOMRect | null) {
-		return !domRect ? null : new Rect(new Point(domRect.x, domRect.y), new Size(domRect.width, domRect.height));
+		if (domRect) {
+			const origin = new Point(domRect.x, domRect.y).offsetByXY(window.scrollX, window.scrollY);
+			return new Rect(origin, new Size(domRect.width, domRect.height));
+		}
+		return null;
+	}
+
+	static boundingRectFor(element: HTMLElement | null): Rect | null {
+		if (element) {
+			const domRect = element.getBoundingClientRect();
+			// const origin = Point.origin_inWindowCoordinates_for(element);
+			const origin = Point.fromDOMRect(domRect);
+			const size = Size.fromDOMRect(domRect);
+			return new Rect(origin, size);
+		}
+		return null;
+	}
+
+	static rect_forComponent_contains(component: SvelteComponent, event: MouseEvent): boolean {
+		const rect = Rect.rect_forComponent(component);
+		const point = u.pointFor_mouseEvent(event);
+		if (rect.isZero) {
+			return false;
+		}
+		return rect.contains(point);
+	}
+
+	static rect_forComponent(c: SvelteComponent): Rect {
+		const top = c['offsetTop'];
+		const left = c['offsetLeft'];
+		const width = c['offsetWidth'];
+		const height = c['offsetHeight'];
+		if (top && left && width && height) {
+			return new Rect(new Point(left, top), new Size(width, height));
+		}
+		return Rect.zero;
 	}
 
 }

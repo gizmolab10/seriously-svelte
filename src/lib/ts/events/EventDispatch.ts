@@ -1,10 +1,9 @@
 import { s_altering, s_resize_count, s_rebuild_count, s_mouse_up_count, s_mouse_location } from '../state/ReactiveState';
-import { g, u, get, Point, signals, Mouse_State, Create_Mouse_State } from '../common/GlobalImports';
-import { SvelteWrapper, Alteration_State, SvelteComponentType } from '../common/GlobalImports';
+import { g, get, Point, signals, Mouse_State, Create_Mouse_State } from '../common/GlobalImports';
+import { Alteration_State, SvelteComponentType } from '../common/GlobalImports';
+import { h } from '../../ts/db/DBDispatch';
 
 export class EventDispatch {
-	subscribersTo_mouseData: {[type: string]: Array<SvelteWrapper>} = {};
-
 	// assure delivery of events
 	// to a svelt component
 	// with a higher ZIndex
@@ -19,38 +18,24 @@ export class EventDispatch {
 		this.subscribeTo_alterationState();
 	}
 
-	subscribeTo_mouseData(wrapper: SvelteWrapper) {
-		const type = wrapper.type;
-		const wrappers = this.subscribersTo_mouseData[type] ?? [];
-		wrappers.push(wrapper);
-		this.subscribersTo_mouseData[type] = wrappers;
-	}
-
-	unsubscribeTo_mouseData(wrapper: SvelteWrapper) {
-		const type = wrapper.type;
-		const wrappers = this.subscribersTo_mouseData[type];
-		if (!!wrappers) {
-			u.remove(wrappers, wrapper);
-		}
-		this.subscribersTo_mouseData[type] = wrappers;
-	}
-
-	respondTo_closure(closure: Create_Mouse_State) {
-		const types = [SvelteComponentType.ring];
-		// const types = [SvelteComponentType.title, SvelteComponentType.drag, SvelteComponentType.reveal, SvelteComponentType.widget, SvelteComponentType.ring];
+	respondTo_closure(event: MouseEvent, closure: Create_Mouse_State) {
+		// in order of priority by wrapper type
+		// ask each wrapper to
+		// construct & handle the mouse state
+		// stop if handled
+		// else ask the next wrapper
+		const types = [SvelteComponentType.title, SvelteComponentType.drag, SvelteComponentType.reveal, SvelteComponentType.widget, SvelteComponentType.button, SvelteComponentType.ring];
 		for (const type of types) {
-			const wrappers = this.subscribersTo_mouseData[type] ?? [];
-			for (const wrapper of wrappers) {
-				if (wrapper.handle_closure(closure)) {
-					return;
+			const wrappers_byHID = h.wrappers_byHID_forType(type);
+			if (!!wrappers_byHID) {
+				const wrappers = Object.values(wrappers_byHID) ?? [];
+				for (const wrapper of wrappers) {
+					if (wrapper.handle_event_closure(event, closure)) {
+						return;
+					}
 				}
 			}
 		}
-		// in order of priority by wrapper type
-		// ask each wrapper if isHit is true
-		// if yes, stop and call its mouse up handler
-		// else keep going
-
 	}
 
 	subscribeTo_events() {
@@ -60,12 +45,17 @@ export class EventDispatch {
 		});
 		window.addEventListener('mouseup', (event: MouseEvent) => {
 			event.stopPropagation();
-			e.respondTo_closure(Mouse_State.up);
-			// s_mouse_up_count.set(get(s_mouse_up_count) + 1);
+			s_mouse_up_count.set(get(s_mouse_up_count) + 1);
+			// this.respondTo_closure(event, Mouse_State.up);
 		});
+		// window.addEventListener('mousedown', (event: MouseEvent) => {
+		// 	event.stopPropagation();
+		// 	this.respondTo_closure(event, Mouse_State.down);
+		// });
 		window.addEventListener('mousemove', (event: MouseEvent) => {
 			event.stopPropagation();
 			s_mouse_location.set(new Point(event.clientX, event.clientY));
+			// this.respondTo_closure(event, Mouse_State.move);
 		});
 	}
 

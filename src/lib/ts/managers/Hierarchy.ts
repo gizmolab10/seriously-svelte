@@ -36,6 +36,7 @@ export class Hierarchy {
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): string | null { return this.root?.id ?? null; };
 	ancestries_rebuildAll() { this.root.oneAncestries_rebuildForSubtree(); }
+	wrappers_byHID_forType(type: string) { return this.wrappers_byType_andHID[type]; }
 	thing_forAncestry(ancestry: Ancestry | null): Thing | null { return ancestry?.thing ?? null; }
 	thing_forHID(hid: number | null): Thing | null { return (!hid) ? null : this.thing_byHID[hid]; }
 
@@ -921,11 +922,19 @@ export class Hierarchy {
 
 	static readonly $_OTHER_$: unique symbol;
 
+	wrapper_forHID_andType(hid: number, type: string) {
+		const wrappers_byHID = this.wrappers_byHID_forType(type);
+		if (!!wrappers_byHID) {
+			return wrappers_byHID[hid];
+		}
+		return null;
+	}
+
 	wrapper_add(wrapper: SvelteWrapper) {
 		const type = wrapper.type;
 		const array = this.wrappers_byType_andHID;
 		const dict = array[type] ?? {};
-		const hash = wrapper.ancestry.idHashed;
+		const hash = wrapper.idHashed;
 		dict[hash] = wrapper;
 		array[type] = dict;
 	}

@@ -32,8 +32,7 @@
 
 	$: {
 		if (!!necklaceRing) {
-			neckaceWrapper = new SvelteWrapper(necklaceRing, $s_ancestry_focus, SvelteComponentType.ring);
-			necklaceRing.handle_mouseData = handle_mouseData;
+			neckaceWrapper = new SvelteWrapper(necklaceRing, handle_mouseData, $s_ancestry_focus.idHashed, SvelteComponentType.ring);
 		}
 	}
 
@@ -138,7 +137,9 @@
 	}
 
 	function handle_mouseData(mouseData: Mouse_State): boolean {
-		return isHit();
+		if (!mouseData.isMove && isHit()) {
+			closure(mouseData);
+		}
 	}
 
 </script>

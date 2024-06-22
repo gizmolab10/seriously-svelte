@@ -1,4 +1,11 @@
 declare global {
+	interface String {
+		hash(): number;
+		lastWord(): string;
+		unCamelCase(): string;
+		removeWhiteSpace(): string;
+		injectElipsisAt(at: number): string;
+	}
 	interface Number {
 		normalize(value: number): number;
 		add_angle_normalized(angle: number): number;
@@ -7,13 +14,6 @@ declare global {
 		increment_by_assuring(delta: number, total: number): number;
 		isBetween(a: number, b: number, inclusive: boolean): boolean;
 		isClocklyBetween(a: number, b: number, limit: number): boolean;
-	}
-	interface String {
-		injectElipsisAt(at: number): string;
-		removeWhiteSpace(): string;
-		unCamelCase(): string;
-		lastWord(): string;
-		hash(): number;
 	}
 }
 

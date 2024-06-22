@@ -101,7 +101,9 @@
 	}
 
 	function handle_mouseData(mouseData: Mouse_State) {
-		return isHit();
+		if (isHit()) {
+			closure(mouseData);
+		}
 	}
 
 </script>

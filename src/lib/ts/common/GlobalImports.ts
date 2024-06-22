@@ -1,6 +1,7 @@
 import { PredicateKind, GraphRelations, AlterationType, SvelteComponentType } from './Enumerations';
 import { Angle, IDTrait, ZIndex, Quadrant, IDButton, IDBrowser, ElementType } from './Enumerations';
 import { debugReact, DebugReact, ReactKind } from '../debug/DebugReact';
+import type { Handle_Mouse_State, Create_Mouse_State } from './Types';
 import { IDPersistant, persistLocal } from '../managers/PersistLocal';
 import { onMount, onDestroy, setContext, getContext } from 'svelte';
 import { CreationOptions, IDLine, IDTool } from './Enumerations';
@@ -48,11 +49,12 @@ import muuri from 'muuri';
 import './Extensions';
 
 export {
+	Expand_State, Title_State,
 	Tree_Geometry, Widget_MapRect,
-	Expand_State, Title_State, Mouse_State,
 	Rect, Size, Point, svgPaths, Direction,
 	muuri, interact, createPopper, transparentize,
 	e, g, k, s, u, builds, signals, SeriouslyRange,
+	Mouse_State, Handle_Mouse_State, Create_Mouse_State,
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Grabs, Ancestry, Hierarchy, dbDispatch, persistLocal,
 	ZIndex, PredicateKind, GraphRelations, CreationOptions,
@@ -63,5 +65,3 @@ export {
 	Angle, Quadrant, Cluster_Layout, Advance_MapRect, Clusters_Geometry,
 	IDLine, IDTool, IDTrait, IDSignal, IDButton, IDBrowser, IDPersistant,
 };
-
-export type Create_Mouse_State = (event: Event | null, component: SvelteComponent) => Mouse_State;

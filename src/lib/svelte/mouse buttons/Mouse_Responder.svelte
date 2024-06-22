@@ -55,7 +55,7 @@
 		if (!!mouse_button && !!$s_mouse_location) {
 			let isHit = false;
 			if (!detectHit_closure) {			// is mouse inside this element's bounding rect
-				isHit = u.rect_forElement_contains(mouse_button, $s_mouse_location);
+				isHit = Rect.rect_forElement_contains(mouse_button, $s_mouse_location);
 			} else {						// if this element's hover shape is not its bounding rect
 				isHit = detectHit_closure();	// let container component decide
 			}

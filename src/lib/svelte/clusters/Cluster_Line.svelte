@@ -30,8 +30,7 @@
 
 	$: {
 		if (line && !lineWrapper) {
-			lineWrapper = new SvelteWrapper(line, h.rootAncestry, SvelteComponentType.line);
-			line.handle_mouseData = handle_mouseData;
+			lineWrapper = new SvelteWrapper(line, handle_mouseData, 0, SvelteComponentType.line);
 		}
 		angle = cluster_layout?.angle_ofLine;
 		const inside_radius = k.cluster_inside_radius + (show_arrowheads ? 8 : 0);
@@ -73,9 +72,13 @@
 		}
 		return center.offsetBy(fromCenter);
 	}
+ 
+	function isHit(): boolean {
+		return false
+	}
 
 	function handle_mouseData(mouseData: Mouse_State): boolean {
-		return true;
+		return false;
 	}
 
 </script>

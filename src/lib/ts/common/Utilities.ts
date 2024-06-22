@@ -1,7 +1,8 @@
 import { Angle, Quadrant, IDBrowser } from './Enumerations';
 import { s_thing_fontFamily } from '../state/ReactiveState';
-import { Rect, Point } from '../geometry/Geometry';
+import { Rect, Size, Point } from '../geometry/Geometry';
 import Identifiable from '../data/Identifiable';
+import type { SvelteComponent } from 'svelte';
 import Ancestry from '../managers/Ancestry';
 import { get } from 'svelte/store';
 import { k } from './Constants';
@@ -11,14 +12,14 @@ class Utilities {
 	ignore(event: Event) {}
 	roundToEven(n: number): number{ return Math.round(n / 2) * 2; }
 	normalized_angle(angle: number) { return Angle.full.normalize(angle); }
+	pointFor_mouseEvent(e: MouseEvent) { return new Point(e.clientX, e.clientY); }
 	concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return [...a, ...b]; }
 	location_ofMouseEvent(event: MouseEvent) { return new Point(event.clientX, event.clientY); }
 	strip_invalid(array: Array<any>): Array<any> { return this.strip_identifiableDuplicates(this.strip_falsies(array)); }
 	sort_byOrder(array: Array<Ancestry>) { return array.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
 	quadrant_startAngle(angle: number): number { return this.startAngle_ofQuadrant(this.quadrant_ofNotNormalized_angle(angle)); }
 	uniquely_concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return this.strip_invalid(this.concatenateArrays(a, b)); }
-	boundingRectFor(element: HTMLElement | null): Rect | null { return !element ? null : Rect.createFromDOMRect(element.getBoundingClientRect()); }
-	
+		
 	degrees_of(angle: number) {
 		const degrees = this.normalized_angle(angle) * 180 / Angle.half;
 		return this.formatter_toFixed(1).format(degrees);
@@ -27,11 +28,6 @@ class Utilities {
 	angle_tiltsUp(rawAngle: number): boolean {
 		const angle = this.quadrant_ofNotNormalized_angle(rawAngle);
 		return [Quadrant.upperRight, Quadrant.lowerLeft].includes(angle);
-	}
-
-	rect_forElement_contains(element: HTMLElement | null, point: Point): boolean {
-		const rect = this.boundingRectFor(element);
-		return rect?.contains(point) ?? false;
 	}
 
 	apply(startStop: (flag: boolean) => void, callback: () => void): void {

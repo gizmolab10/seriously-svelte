@@ -32,9 +32,8 @@
 
 	$: {
 		if (dotReveal && !($s_ancestry_editingTools?.matchesAncestry(ancestry) ?? false)) {
-			revealWrapper = new SvelteWrapper(dotReveal, ancestry, SvelteComponentType.reveal);
+			revealWrapper = new SvelteWrapper(dotReveal, handle_mouseData, ancestry.idHashed, SvelteComponentType.reveal);
 			elementState.set_forHovering(ancestry.thing.color, 'pointer');
-			dotReveal.handle_mouseData = handle_mouseData;
 		}
 	}
 
@@ -88,9 +87,13 @@
 			}
 		}
 	}
+ 
+	function isHit(): boolean {
+		return false
+	}
 
 	function handle_mouseData(mouseData: Mouse_State): boolean {
-		return true;
+		return false;
 	}
 
 </script>

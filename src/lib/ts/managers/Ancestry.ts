@@ -7,7 +7,6 @@ import { Writable } from 'svelte/store';
 import { h } from '../db/DBDispatch';
 
 export default class Ancestry extends Identifiable {
-	wrappers: { [type: string]: SvelteWrapper } = {};
 	_thing: Thing | null = null;
 	idPredicate: string;
 	unsubscribe: any;
@@ -29,11 +28,6 @@ export default class Ancestry extends Identifiable {
 
 	signal_rebuildGraph()  { signals.signal_rebuildGraph(this); }
 	signal_relayoutWidgets() { signals.signal_relayoutWidgets(this); }
-
-	wrapper_add(wrapper: SvelteWrapper) {
-		this.wrappers[wrapper.type] = wrapper;
-        h.wrapper_add(wrapper);
-	}
 	
 	static readonly $_PROPERTIES_$: unique symbol;
 	
@@ -60,13 +54,9 @@ export default class Ancestry extends Identifiable {
 	get hasParentRelationships(): boolean { return this.parentRelationships.length > 0; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get idPredicates(): Array<string> { return this.relationships.map(r => r.idPredicate); }
-	get lineWrapper(): SvelteWrapper | null { return this.wrappers[SvelteComponentType.line]; }
 	get isGrabbed(): boolean { return this.includedInStore_ofAncestries(s_ancestries_grabbed); }
 	get isInvalid(): boolean { return this.containsReciprocals || this.containsMixedPredicates; }
 	get childAncestries(): Array<Ancestry> { return this.childAncestries_for(this.idPredicate); }
-	get titleWrapper(): SvelteWrapper | null { return this.wrappers[SvelteComponentType.title]; }
-	get revealWrapper(): SvelteWrapper | null { return this.wrappers[SvelteComponentType.reveal]; }
-	get widgetWrapper(): SvelteWrapper | null { return this.wrappers[SvelteComponentType.widget]; }
 	get siblingAncestries(): Array<Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
 	get showsChildRelationships(): boolean { return this.isExpanded && this.hasChildRelationships; }
 	get isEditing(): boolean { return get(s_title_editing)?.editing?.matchesAncestry(this) ?? false; }
@@ -77,6 +67,7 @@ export default class Ancestry extends Identifiable {
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	get childRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, false); }
 	get parentRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, true); }
+	get titleWrapper(): SvelteWrapper | null { return h.wrapper_forHID_andType(this.idHashed, SvelteComponentType.title); }
 	get showsReveal(): boolean { return !get(s_layout_asClusters) && (this.hasChildRelationships || (this.thing?.isBulkAlias ?? false)); }
 
 	get relationships(): Array<Relationship> {
@@ -180,13 +171,13 @@ export default class Ancestry extends Identifiable {
 	}
 
 	matchesAncestry(ancestry: Ancestry): boolean { return this.idHashed == ancestry.idHashed; }
+	rect_ofWrapper(wrapper: SvelteWrapper | null): Rect | null { return wrapper?.boundingRect ?? null; }
 	includesPredicateID(idPredicate: string): boolean { return this.thing?.hasParentsFor(idPredicate) ?? false; }
 	matchesStore(store: Writable<Ancestry | null>): boolean { return get(store)?.matchesAncestry(this) ?? false; }
 	relationshipAt(back: number = 1): Relationship | null { return h.relationship_forHID(this.idAt(back).hash()) ?? null; }
 	includedInStore_ofAncestries(store: Writable<Array<Ancestry>>): boolean { return this.includedInAncestries(get(store)); }
 	sharesAnID(ancestry: Ancestry | null): boolean { return !ancestry ? false : this.ids.some(id => ancestry.ids.includes(id)); }
 	showsClusterFor(predicate: Predicate): boolean { return this.includesPredicateID(predicate.id) && this.hasThings(predicate); }
-	rect_ofWrapper(wrapper: SvelteWrapper | null): Rect | null { return Rect.createFromDOMRect(wrapper?.component.getBoundingClientRect()); }
 	
 	relationships_for_isChildOf(idPredicate: string, isChildOf: boolean) {
 		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias

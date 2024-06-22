@@ -1,6 +1,9 @@
 <script lang='ts'>
-	import { g, k, s, u, Point, ZIndex, onMount, ElementState } from '../../ts/common/GlobalImports';
+	import { g, k, s, u, Rect, Point, ZIndex, onMount, ElementState } from '../../ts/common/GlobalImports';
+	import { SvelteWrapper, SvelteComponentType } from '../../ts/common/GlobalImports';
 	import Mouse_Responder from './Mouse_Responder.svelte';
+	import Identifiable from '../../ts/data/Identifiable';
+	import type { SvelteComponent } from 'svelte';
 	export let background_color = k.color_background;
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;
@@ -13,6 +16,8 @@
 	export let color = 'black';
 	export let style = k.empty;
 	export let name = k.empty;
+	let buttonWrapper: SvelteWrapper;
+	let element: HTMLElement;
 	let currentStyle = style;
 	let border = k.empty;
 
@@ -29,8 +34,8 @@
 	//									//
 	//////////////////////////////////////
 
-	onMount(() => { update(); })
 	$: { update(); }
+	onMount(() => { update(); })
 	
 	function update() {
 		color = elementState.stroke;
@@ -51,7 +56,7 @@
 		}
 	}
 
-	function button_closure(mouseState) {
+	function button_closure(mouseState: Mouse_State) {
 		closure(mouseState);
 		if (mouseState.isHover) {	// NOT the same as isHovering
 			update();

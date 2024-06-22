@@ -58,8 +58,7 @@
 
 	$: {
 		if (input && !titleWrapper) {
-			titleWrapper = new SvelteWrapper(input, ancestry, SvelteComponentType.title);
-			input.handle_mouseData = handle_mouseData;
+			titleWrapper = new SvelteWrapper(input, handle_mouseData, ancestry.idHashed, SvelteComponentType.title);
 		}
 	}
 
@@ -68,9 +67,13 @@
 			color = thing?.color;
 		}
 	}
+ 
+	function isHit(): boolean {
+		return false
+	}
 
 	function handle_mouseData(mouseData: Mouse_State): boolean {
-		return true;
+		return false;
 	}
 
 	function updateInputWidth() {
