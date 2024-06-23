@@ -31,7 +31,7 @@
                 .attr('d', svg_path)
                 .attr('stroke', stroke)
                 .attr('stroke-width', 1)
-                .attr('shape-rendering', 'geometricPrecision') // anti-alias
+                .attr('shape-rendering', 'geometricPrecision'); // anti-alias
             svg = svg;
         }
     }

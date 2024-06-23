@@ -24,6 +24,7 @@ import { builds } from './Builds';
 import { u } from './Utilities';
 import { k } from './Constants';
 
+import Scrolling_Divider_MapRect from '../geometry/Scrolling_Divider_MapRect';
 import Clusters_Geometry from '../geometry/Clusters_Geometry';
 import Advance_MapRect from '../geometry/Advance_MapRect';
 import Alteration_State from '../state/Alteration_State';
@@ -50,6 +51,7 @@ import './Extensions';
 
 export {
 	Expand_State, Title_State,
+	Scrolling_Divider_MapRect,
 	Tree_Geometry, Widget_MapRect,
 	Rect, Size, Point, svgPaths, Direction,
 	muuri, interact, createPopper, transparentize,

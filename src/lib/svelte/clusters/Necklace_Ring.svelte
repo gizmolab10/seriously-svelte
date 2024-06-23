@@ -57,7 +57,10 @@
 			necklace_ringState.isHovering = isHit();	// show highlight around ring
 			cursor_closure();
 			if (necklace_ringState.radiusOffset != null) {				// resize
-				const distance = Math.max(k.cluster_inside_radius * 4, from_center.magnitude);
+				const magnitude = from_center.magnitude
+				const largest = k.cluster_inside_radius * 4;
+				const smallest = k.cluster_inside_radius * 1.5;
+				const distance = magnitude.force_between(smallest, largest);
 				const movement = distance - $s_cluster_arc_radius - necklace_ringState.radiusOffset;
 				if (Math.abs(movement) > 5) {
 					sendSignal = true;

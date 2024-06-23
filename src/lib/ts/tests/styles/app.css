@@ -1,0 +1,13 @@
+svg { display: block; }		/* override inline to eliminate unwanted vertical displacements */
+
+.root {
+	background-color: white;
+	color: white;
+}
+
+button, svg {
+	&:focus {
+		outline: none;
+		shape-rendering:geometricPrecision;
+	}
+}

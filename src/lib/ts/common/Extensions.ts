@@ -11,6 +11,7 @@ declare global {
 		add_angle_normalized(angle: number): number;
 		increment_by(delta: number, total: number): number;
 		increment(increment: boolean, total: number): number;
+		force_between(smallest: number, largest: number): number;
 		increment_by_assuring(delta: number, total: number): number;
 		isBetween(a: number, b: number, inclusive: boolean): boolean;
 		isClocklyBetween(a: number, b: number, limit: number): boolean;
@@ -75,6 +76,15 @@ Object.defineProperty(String.prototype, 'hash', {
 	writable: true,
 	enumerable: true,
 	configurable: true
+});
+
+Object.defineProperty(Number.prototype, 'force_between', {
+	value: function(smallest: number, largest: number): number {
+		return Math.max(smallest, Math.min(largest, this));
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
 });
 
 Object.defineProperty(Number.prototype, 'normalize', {

@@ -1,7 +1,8 @@
 <script lang='ts'>
-	import { k, s, u, Thing, Point, ZIndex, signals, svgPaths, dbDispatch, Clusters_Geometry, transparentize } from '../../ts/common/GlobalImports';
+	import { SvelteWrapper, Clusters_Geometry, transparentize, SvelteComponentType } from '../../ts/common/GlobalImports';
 	import { s_thing_changed, s_ancestry_focus, s_ring_angle, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
-	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/ReactiveState';
+	import { k, s, u, Rect, Thing, Point, ZIndex, signals, svgPaths, dbDispatch } from '../../ts/common/GlobalImports';
+	import { s_graphRect, s_mouse_location, s_mouse_up_count, s_user_graphOffset } from '../../ts/state/ReactiveState';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { necklace_ringState } from '../../ts/state/Expand_State';
 	import { scrolling_state } from '../../ts/state/Rotate_State';
@@ -18,11 +19,12 @@
 	const outer_radius = radius + ring_width;
 	const diameter = outer_radius * 2;
 	const borderStyle = '1px solid';
+	const dividerColor = transparentize(color, 0.8);
 	const ringOrigin = center.distanceFrom(Point.square(outer_radius));
 	const viewBox = `${-ring_width}, ${-ring_width}, ${diameter}, ${diameter}`;
-	const divider_lines: Array<{origin: Point, viewBox: string, path: string}> = [];
 	const svg_ringPath = svgPaths.ring(Point.square(radius), outer_radius, ring_width);
 	let mouse_up_count = $s_mouse_up_count;
+	let scrollingWrapper: SvelteWrapper;
 	let scrollingRing;
 	let rebuilds = 0
 
@@ -34,7 +36,7 @@
 
 	$: {
 		if (!!scrollingRing) {
-			neckaceWrapper = new SvelteWrapper(scrollingRing, handle_mouseData, Identifiable.newID(), SvelteComponentType.ring);
+			scrollingWrapper = new SvelteWrapper(scrollingRing, handle_mouseData, Identifiable.newID(), SvelteComponentType.ring);
 		}
 	}
 
@@ -60,28 +62,15 @@
 		}
 	}
 
-	function setup_divider_lines() {
-		geometry.divider_angles.forEach((angle, index) => {
-			const origin = Point.fromPolar(radius, angle);
-			const radial = Point.fromPolar(k.ring_thickness, angle);
-			const size = radial.abs.asSize;
-			const viewBox = `${origin.x} ${origin.y} ${size.width} ${size.height}`;
-			const path = svgPaths.line(radial);
-			divider_lines.push({origin, viewBox, path});
-		});
-	}
-
 	function closure(mouseState) {
 
 		/////////////////////////////
 		// setup or teardown state //
 		/////////////////////////////
 
-
 		if (mouseState.isHover) {
 			const okayToHover = !!scrolling_state.startAngle || !!scrolling_state.radiusOffset || !!necklace_ringState.startAngle || !!necklace_ringState.radiusOffset;
 			scrolling_state.isHovering = okayToHover && !mouseState.isOut;	// show highlight around ring
-			setup_divider_lines();
 
 			// hover
 
@@ -131,31 +120,39 @@
 </script>
 
 {#key rebuilds}
-	<Mouse_Responder
-		name={name}
-		center={center}
-		zindex={zindex}
-		width={diameter}
-		height={diameter}
-		closure={closure}
-		detect_longClick={false}
-		detectHit_closure={isHit}
-		cursor={scrolling_state.cursor}>
-		<svg
-			viewBox={viewBox}
-			class= 'svg-ring-button'
-			fill={transparentize(color, scrolling_state.fill_transparency)}
-			stroke={transparentize(color, scrolling_state.stroke_transparency)}>
-			<path d={svg_ringPath}>
-		</svg>
-			{#each divider_lines as {origin, lineBox, path}}
-				<svg
-					viewBox={lineBox}
-					top={origin.y}
-					left={origin.x}
-					stroke={transparentize(color, scrolling_state.stroke_transparency)}>
-					<path d={path}>
-				</svg>
-			{/each}
-	</Mouse_Responder>
+	<div class='scrolling-ring' bind:this={scrollingRing}>
+		<Mouse_Responder
+			name={name}
+			center={center}
+			zindex={zindex}
+			width={diameter}
+			height={diameter}
+			closure={closure}
+			detect_longClick={false}
+			detectHit_closure={isHit}
+			cursor={scrolling_state.cursor}>
+			<svg
+				viewBox={viewBox}
+				class='svg-scrolling-ring'
+				fill={transparentize(color, scrolling_state.fill_transparency)}
+				stroke={transparentize(color, scrolling_state.stroke_transparency)}>
+				<path d={svg_ringPath}/>
+			</svg>
+				{#each geometry.divider_maps as map}
+					<svg style='
+						position:absolute;
+						top:{map.origin.y}px;
+						left:{map.origin.x}px;
+						width:{map.size.width}px;
+						height:{map.size.height}px;'
+						class='svg-divider-line'
+						id={'line-at-' + map.index}
+						viewBox={map.dividerBox}>
+						<path
+							d={map.dividerPath}
+							stroke={dividerColor}/>
+					</svg>
+				{/each}
+		</Mouse_Responder>
+	</div>
 {/key}

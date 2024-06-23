@@ -5,9 +5,9 @@ export default class Widget_MapRect extends Rect {
 	elementState: ElementState;
 	childAngle: number | null;
 	ancestry: Ancestry | null;
-	subtype = k.empty;
 	child: Thing | null;
 	childOrigin: Point;
+	subtype = k.empty;
 	curveType: string;
 
 	constructor(curveType: string, rect: Rect, childOrigin: Point, childAncestry: Ancestry | null,

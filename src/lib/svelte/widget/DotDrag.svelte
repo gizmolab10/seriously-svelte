@@ -154,7 +154,7 @@
 							color:transparent;
 							position:absolute;
 							z-index:{ZIndex.dots};'>
-						<SVGD3 name={'svg-drag-' + name}
+						<SVGD3 name={'svg-dot-' + name}
 							width={size}
 							height={size}
 							svg_path={dragDotSVGPath}

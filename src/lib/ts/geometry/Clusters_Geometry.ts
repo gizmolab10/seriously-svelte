@@ -1,12 +1,12 @@
-import { k, u, get, Angle, Ancestry, Predicate, Cluster_Layout, Widget_MapRect, Page_Indices } from '../common/GlobalImports';
+import { k, u, get, Angle, Ancestry, Predicate, Cluster_Layout, Widget_MapRect, Scrolling_Divider_MapRect } from '../common/GlobalImports';
 import { s_clusters, s_ancestry_focus, s_cluster_arc_radius } from '../state/ReactiveState';
 import { h } from '../db/DBDispatch';
 
 export default class Clusters_Geometry {
+	divider_maps: Array<Scrolling_Divider_MapRect> = [];
 	cluster_layouts: Array<Cluster_Layout> = [];
     ancestry_focus = get(s_ancestry_focus);
 	widget_maps: Array<Widget_MapRect> = [];
-	divider_angles: Array<number> = [];
 	ancestries: Array<Ancestry> = [];
 
 	// responsible for 
@@ -33,13 +33,18 @@ export default class Clusters_Geometry {
 				this.layout(ancestries, predicate, false);
 			}
 		}
-		this.compute_divider_angles();
+		this.setup_divider_maps();
 	}
 
-	compute_divider_angles() {
-		this.divider_angles = [];
+	setup_divider_maps() {
 		let first_angle!: number;
 		let prior_end_angle!: number;
+		let divider_angles: Array<number> = [];
+		function add_divider_angle(start: number, end: number) {
+			const delta = end - start;
+			const divider_angle = Angle.full.normalize(delta);
+			divider_angles.push(divider_angle);
+		}
 		for (const cluster_ayout of this.cluster_layouts) {
 			const angle_atStart = cluster_ayout.angle_atStart
 			const angle_atEnd = cluster_ayout.angle_atEnd
@@ -47,17 +52,15 @@ export default class Clusters_Geometry {
 				first_angle = angle_atStart;
 			}
 			if (prior_end_angle) {
-				this.add_divider_angle(prior_end_angle, angle_atStart);
+				add_divider_angle(prior_end_angle, angle_atStart);
 			}
 			prior_end_angle = angle_atEnd;
 		}
-		this.add_divider_angle(first_angle, prior_end_angle);
-	}
-
-	add_divider_angle(start: number, end: number) {
-		const delta = end - start;
-		const divider_angle = Angle.full.normalize(delta);
-		this.divider_angles.push(divider_angle);
+		add_divider_angle(first_angle, prior_end_angle);
+		divider_angles.forEach((angle, index) => {
+			const divider_map = new Scrolling_Divider_MapRect(angle, index);
+			this.divider_maps.push(divider_map);
+		});
 	}
 
 	onePage_from(ancestries: Array<Ancestry>, predicate: Predicate, points_out: boolean): Array<Ancestry> {
