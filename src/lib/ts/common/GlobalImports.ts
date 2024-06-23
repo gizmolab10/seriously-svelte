@@ -29,7 +29,7 @@ import Clusters_Geometry from '../geometry/Clusters_Geometry';
 import Advance_MapRect from '../geometry/Advance_MapRect';
 import Alteration_State from '../state/Alteration_State';
 import Widget_MapRect from '../geometry/Widget_MapRect';
-import Cluster_Layout from '../geometry/Cluster_Layout';
+import Cluster_Maps from '../geometry/Cluster_Maps';
 import Tree_Geometry from '../geometry/Tree_Geometry';
 import Expand_State from '../state/Expand_State';
 import Page_Indices from '../state/Page_Indices';
@@ -64,6 +64,6 @@ export {
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactKind,
 	ElementType, AlterationType, SvelteWrapper, SvelteComponentType,
 	get, onMount, onDestroy, setContext, getContext, SvelteComponent,
-	Angle, Quadrant, Cluster_Layout, Advance_MapRect, Clusters_Geometry,
+	Angle, Quadrant, Cluster_Maps, Advance_MapRect, Clusters_Geometry,
 	IDLine, IDTool, IDTrait, IDSignal, IDButton, IDBrowser, IDPersistant,
 };

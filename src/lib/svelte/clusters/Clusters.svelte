@@ -35,7 +35,7 @@
 	$: {
 		const state = $s_clusters;
 		if (!!state && !!geometry) {		// ignore null at startup
-			geometry.setup();
+			geometry.layout();
 			rebuilds += 1;
 		}
 	}
@@ -55,14 +55,14 @@
 			{/each}
 		</div>
 		<div class='lines-and-arcs'>
-			{#each geometry.cluster_layouts as cluster_layout}
-				{#if cluster_layout.count > 0}
-					<Advance cluster_layout={cluster_layout} isForward={false}/>
-					<Cluster_Line cluster_layout={cluster_layout} center={center} color={color}/>
-					{#if cluster_layout.count > 1}
-						<Cluster_Arc cluster_layout={cluster_layout} center={center} color={color}/>
+			{#each geometry.cluster_maps as cluster_maps}
+				{#if cluster_maps.count > 0}
+					<Advance cluster_maps={cluster_maps} isForward={false}/>
+					<Cluster_Line cluster_maps={cluster_maps} center={center} color={color}/>
+					{#if cluster_maps.count > 1}
+						<Cluster_Arc cluster_maps={cluster_maps} center={center} color={color}/>
 					{/if}
-					<Advance cluster_layout={cluster_layout} isForward={true}/>
+					<Advance cluster_maps={cluster_maps} isForward={true}/>
 				{/if}
 			{/each}
 		</div>

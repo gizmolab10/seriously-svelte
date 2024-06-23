@@ -1,13 +1,13 @@
 <script lang='ts'>
-	import { g, k, Point, ZIndex, onMount, Cluster_Layout } from '../../ts/common/GlobalImports';
+	import { g, k, Point, ZIndex, onMount, Cluster_Maps } from '../../ts/common/GlobalImports';
 	import { s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { ArcPart } from '../../ts/common/Enumerations';
-	export let cluster_layout: Cluster_Layout;
+	export let cluster_maps: Cluster_Maps;
 	export let center = Point.zero;
 	export let color = 'red';
 	const offset = k.necklace_gap;
 	let radius = $s_cluster_arc_radius + offset;
-	const arc_parts_svgPaths = cluster_layout.arc_parts_svgPaths;
+	const arc_parts_svgPaths = cluster_maps.arc_parts_svgPaths;
 	const breadth = radius * 2;
 
 </script>

@@ -1,45 +1,45 @@
-import { k, u, get, Angle, Ancestry, Predicate, Cluster_Layout, Widget_MapRect, Scrolling_Divider_MapRect } from '../common/GlobalImports';
+import { k, u, get, Angle, Ancestry, Predicate, Cluster_Maps, Widget_MapRect, Scrolling_Divider_MapRect } from '../common/GlobalImports';
 import { s_clusters, s_ancestry_focus, s_cluster_arc_radius } from '../state/ReactiveState';
 import { h } from '../db/DBDispatch';
 
 export default class Clusters_Geometry {
 	divider_maps: Array<Scrolling_Divider_MapRect> = [];
-	cluster_layouts: Array<Cluster_Layout> = [];
+	cluster_maps: Array<Cluster_Maps> = [];
 	widget_maps: Array<Widget_MapRect> = [];
 	ancestries: Array<Ancestry> = [];
 
-	// layout all the widgets, lines, arcs,
+	// layout_necklace_andLines all the widgets, lines, arcs,
 	// and scrolling ring dividers
 
-	constructor() { this.setup(); }
+	constructor() { this.layout(); }
 
 	destructor() {
-		this.cluster_layouts.forEach(l => l.destructor());
-		this.cluster_layouts = [];
+		this.cluster_maps.forEach(l => l.destructor());
+		this.cluster_maps = [];
 		this.widget_maps = [];
 	}
 
-	setup() {
+	layout() {
 		this.destructor();
 		const ancestry_focus = get(s_ancestry_focus);
 		const focus = ancestry_focus.thing;
 		let childAncestries = ancestry_focus.childAncestries;
-		this.layout(childAncestries, Predicate.contains, true);
+		this.layout_necklace_andLines(childAncestries, Predicate.contains, true);
 		if (!!focus) {
 			for (const predicate of h.predicates) {
 				let ancestries = focus.uniqueAncestries_for(predicate) ?? [];
-				this.layout(ancestries, predicate, false);
+				this.layout_necklace_andLines(ancestries, predicate, false);
 			}
 		}
-		this.setup_divider_maps();
+		this.layout_divider_maps();
 	}
 
-	setup_divider_maps() {
+	layout_divider_maps() {
 		this.divider_maps = [];
 		let first_angle!: number;
 		let prior_end_angle!: number;
 		let divider_angles: Array<number> = [];
-		for (const cluster_ayout of this.cluster_layouts) {
+		for (const cluster_ayout of this.cluster_maps) {
 			const angle_atEnd = cluster_ayout.angle_atEnd;
 			const angle_atStart = cluster_ayout.angle_atStart;
 			if (prior_end_angle) {
@@ -62,12 +62,12 @@ export default class Clusters_Geometry {
 		return ancestries.slice(pageIndex, pageIndex + maxFit);
 	}
 
-	layout(ancestries: Array<Ancestry>, predicate: Predicate | null, points_out: boolean) {
+	layout_necklace_andLines(ancestries: Array<Ancestry>, predicate: Predicate | null, points_out: boolean) {
 		if (!!predicate) {
 			const onePage = this.onePage_from(ancestries, predicate, points_out);
-			const cluster_layout = new Cluster_Layout(ancestries.length, onePage, predicate, points_out);
-			this.widget_maps = u.concatenateArrays(this.widget_maps, cluster_layout.widget_maps);	// for necklace of widgets
-			this.cluster_layouts.push(cluster_layout);		// for lines and arcs
+			const cluster_maps = new Cluster_Maps(ancestries.length, onePage, predicate, points_out);
+			this.widget_maps = u.concatenateArrays(this.widget_maps, cluster_maps.widget_maps);	// for necklace of widgets
+			this.cluster_maps.push(cluster_maps);		// for lines and arcs
 		}
 	}
 

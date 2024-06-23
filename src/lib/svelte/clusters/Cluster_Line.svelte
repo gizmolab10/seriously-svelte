@@ -1,15 +1,15 @@
 <script lang='ts'>
-	import { IDLine, Quadrant, SvelteWrapper, SvelteComponentType, Cluster_Layout } from '../../ts/common/GlobalImports';
+	import { IDLine, Quadrant, SvelteWrapper, SvelteComponentType, Cluster_Maps } from '../../ts/common/GlobalImports';
 	import { k, u, Rect, Size, Point, Angle, ZIndex, svgPaths } from '../../ts/common/GlobalImports';
 	import ArrowHead from '../kit/ArrowHead.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import Box from '../kit/Box.svelte';
 	export let center = Point.zero;
 	export let color = k.color_default;
-    export let cluster_layout: Cluster_Layout;
+    export let cluster_maps: Cluster_Maps;
 	const show_arrowheads = k.show_arrowheads;
-	const predicate = cluster_layout?.predicate;
-	const idDiv = `${cluster_layout?.points_out ? 'child' : 'parent'} ${predicate?.kind}`;
+	const predicate = cluster_maps?.predicate;
+	const idDiv = `${cluster_maps?.points_out ? 'child' : 'parent'} ${predicate?.kind}`;
 	let style = `position: absolute; z-index: ${ZIndex.lines};`;
 	let lineWrapper: SvelteWrapper;
 	let title_origin = Point.zero;
@@ -32,10 +32,10 @@
 		if (line && !lineWrapper) {
 			lineWrapper = new SvelteWrapper(line, handle_mouseData, 0, SvelteComponentType.line);
 		}
-		angle = cluster_layout?.angle_ofLine;
+		angle = cluster_maps?.angle_ofLine;
 		const inside_radius = k.cluster_inside_radius + (show_arrowheads ? 8 : 0);
 		const inside_tip = Point.fromPolar(inside_radius, angle);
-		const line_tip = cluster_layout?.line_tip;
+		const line_tip = cluster_maps?.line_tip;
 		size = line_tip.abs.asSize;
 		const rect = new Rect(Point.zero, size);
 		const titleRect = new Rect(center.offsetBy(inside_tip.multipliedBy(.7)), size.multipliedBy(1/2));
@@ -48,7 +48,7 @@
 
 	function title_origin_for(angle: number, rect: Rect): Point {
 		const quadrant = u.quadrant_ofAngle(angle);
-		const title = cluster_layout?.line_title;
+		const title = cluster_maps?.line_title;
 		let multiplier = -1.5;
 		if (u.isAlmost_horizontal(angle)) {
 			switch (quadrant) {
@@ -94,7 +94,7 @@
 		font-family: Arial;
 		font-size: 0.5em;
 		color: {color};'>
-	{cluster_layout?.line_title}
+	{cluster_maps?.line_title}
 </div>
 <div class='cluster-line' id={idDiv}
 	style='z-index: {ZIndex.lines};
@@ -112,7 +112,7 @@
 		{#if predicate?.isBidirectional}
 			<ArrowHead idDiv='child'  angle={angle} color={color} color_background={color} radius={thickness} center={arrow_end}/>
 			<ArrowHead idDiv='parent' angle={angle + Angle.half} color={color} color_background={color} radius={thickness} center={arrow_start}/>
-		{:else if cluster_layout?.points_out}
+		{:else if cluster_maps?.points_out}
 			<ArrowHead idDiv='child'  angle={angle} color={color} color_background={color} radius={thickness} center={arrow_end}/>
 		{:else}
 			<ArrowHead idDiv='parent' angle={angle + Angle.half} color={color} color_background={color} radius={thickness} center={arrow_start}/>
