@@ -42,6 +42,14 @@ export class Point {
 	static get zero():				   Point { return new Point();}
 
 	rotate_by(angle: number): Point {
+
+		// rotate clockwise
+		// angle of zero is on the x-axis pointing right
+		// angle of one-half pi is on the y-axis pointing down
+		//
+		// N.B., this is NOT mathematically standard:
+		// cartesian would rotate counter-clockwise
+
 		const cos = Math.cos(angle);
 		const sin = Math.sin(angle);
 		return new Point(
@@ -135,8 +143,8 @@ export class Rect {
 			   point.y.isBetween(origin.y, extent.y, true);
 	}
 
-	cornersForAngle(angle: number): [Point, Point] {
-		switch (u.quadrant_ofNotNormalized_angle(angle)) {
+	corners_forAngle(angle: number): [Point, Point] {
+		switch (u.quadrant_ofAngle(angle)) {
 			case Quadrant.upperRight: return [this.bottomLeft, this.topRight];
 			case Quadrant.lowerLeft:  return [this.topRight, this.bottomLeft];
 			case Quadrant.upperLeft:  return [this.extent, this.origin];

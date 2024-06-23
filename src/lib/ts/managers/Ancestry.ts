@@ -180,11 +180,7 @@ export default class Ancestry extends Identifiable {
 	showsClusterFor(predicate: Predicate): boolean { return this.includesPredicateID(predicate.id) && this.hasThings(predicate); }
 	
 	relationships_for_isChildOf(idPredicate: string, isChildOf: boolean) {
-		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
-		if (id && ![k.empty, k.unknown].includes(id)) {
-			return h.relationships_forPredicateThingIsChild(idPredicate, id, isChildOf);
-		}
-		return [];
+		return this.thing?.relationships_for_isChildOf(idPredicate, isChildOf) ?? [];
 	}
 
 	isRelatedTo_orContains_itself(ancestry: Ancestry): boolean {

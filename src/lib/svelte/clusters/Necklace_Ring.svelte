@@ -73,7 +73,7 @@
 				if (Math.abs(delta) >= Math.PI / 90) {			// minimum two degree changes
 					sendSignal = true;
 					necklace_ringState.priorAngle = mouseAngle;
-					$s_ring_angle = mouseAngle.add_angle_normalized(-necklace_ringState.startAngle);
+					$s_ring_angle = mouseAngle.add_angle_normalized(necklace_ringState.startAngle);
 				}
 			}
 			if (sendSignal) {

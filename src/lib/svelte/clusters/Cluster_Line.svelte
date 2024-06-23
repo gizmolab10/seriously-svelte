@@ -43,11 +43,11 @@
 		viewBox = `0, 0, ${size.width}, ${size.height}`;
 		line_origin = line_origin_using(inside_tip, line_tip);
 		title_origin = title_origin_for(angle, titleRect);
-		[arrow_start, arrow_end] = rect.cornersForAngle(angle);
+		[arrow_start, arrow_end] = rect.corners_forAngle(angle);
 	}
 
 	function title_origin_for(angle: number, rect: Rect): Point {
-		const quadrant = u.quadrant_ofNotNormalized_angle(angle);
+		const quadrant = u.quadrant_ofAngle(angle);
 		const title = cluster_layout?.line_title;
 		let multiplier = -1.5;
 		if (u.isAlmost_horizontal(angle)) {

@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { SvelteWrapper, Clusters_Geometry, transparentize, SvelteComponentType } from '../../ts/common/GlobalImports';
-	import { s_thing_changed, s_ancestry_focus, s_ring_angle, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
+	import { s_thing_changed, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { k, s, u, Rect, Thing, Point, ZIndex, signals, svgPaths, dbDispatch } from '../../ts/common/GlobalImports';
 	import { s_graphRect, s_mouse_location, s_mouse_up_count, s_user_graphOffset } from '../../ts/state/ReactiveState';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
@@ -138,21 +138,21 @@
 				stroke={transparentize(color, scrolling_state.stroke_transparency)}>
 				<path d={svg_ringPath}/>
 			</svg>
-				{#each geometry.divider_maps as map}
-					<svg style='
-						position:absolute;
-						top:{map.origin.y}px;
-						left:{map.origin.x}px;
-						width:{map.size.width}px;
-						height:{map.size.height}px;'
-						class='svg-divider-line'
-						id={'line-at-' + map.index}
-						viewBox={map.dividerBox}>
-						<path
-							d={map.dividerPath}
-							stroke={dividerColor}/>
-					</svg>
-				{/each}
 		</Mouse_Responder>
+		{#each geometry.divider_maps as map}
+			<svg style='
+				position:absolute;
+				top:{map.origin.y}px;
+				left:{map.origin.x}px;
+				width:{map.size.width}px;
+				height:{map.size.height}px;'
+				class='svg-divider-line'
+				id={'line-at-' + map.index}
+				viewBox={map.dividerBox}>
+				<path
+					d={map.dividerPath}
+					stroke={dividerColor}/>
+			</svg>
+		{/each}
 	</div>
 {/key}

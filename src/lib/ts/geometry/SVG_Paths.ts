@@ -69,13 +69,13 @@ export default class SVG_Paths {
 		}
     }
 
-	line(vector: Point): string {
-		const x = vector.x;
-		const y = vector.y;
-		if (x >= 0 && y >= 0)		{ return `M 0 0 L ${x} ${y}`;
-		} else if (x >= 0 && y < 0)	{ return `M 0 ${-y} L ${x} 0`;
-		} else if (x < 0 && y >= 0)	{ return `M ${-x} 0 L 0 ${y}`;
-		} else						{ return `M ${-x} ${-y} L 0 0`;
+	line(vector: Point, offset: Point = Point.zero): string {
+		const x = vector.x + offset.x;
+		const y = vector.y + offset.y;
+		if (x >= 0 && y >= 0)		{ return `M ${offset.x} ${offset.y} L ${x} ${y}`;
+		} else if (x >= 0 && y < 0)	{ return `M ${offset.x} ${-y} L ${x} ${offset.y}`;
+		} else if (x < 0 && y >= 0)	{ return `M ${-x} ${offset.y} L ${offset.x} ${y}`;
+		} else						{ return `M ${-x} ${-y} L ${offset.x} ${offset.y}`;
 		}
 	}
 

@@ -149,7 +149,11 @@ export default class Thing extends Datum {
 	}
 
 	relationships_for_isChildOf(idPredicate: string, isChildOf: boolean): Array<Relationship> {
-		return h.relationships_forPredicateThingIsChild(idPredicate, this.id, isChildOf);
+		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
+		if (id && ![k.empty, k.unknown].includes(id)) {
+			return h.relationships_forPredicateThingIsChild(idPredicate, id, isChildOf);
+		}
+		return [];
 	}
 
 	parentRelationships_for(predicate: Predicate): Array<Relationship> {

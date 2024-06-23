@@ -101,12 +101,13 @@ export default class Cluster_Layout  {
 	static readonly $_ANGLES_$: unique symbol;
 
 	angle_ofChild_for(index: number, count: number, radius: number): number {
-		const row = index - ((count - 1) / 2);			// row centered around zero
+		const max = count - 1;
+		const row = index - (max / 2);					// row centered around zero
 		const radial = new Point(radius, 0);
 		const angle_ofLine = this.angle_ofLine;			// points at middle widget
-		const rotated = radial.rotate_by(angle_ofLine);
+		const rotated = radial.rotate_by(-angle_ofLine);
 		const startY = rotated.y;						// height of angle_ofLine
-		let y = startY + (row * (k.row_height - 1.5));	// height of row
+		let y = startY + (row * k.row_height);			// height of row
 		let unfit = false;
 		if (Math.abs(y) > radius) {
 			unfit = true;
@@ -116,7 +117,7 @@ export default class Cluster_Layout  {
 				y = (-y % radius) - radius;				// swing around top
 			}
 		}
-		let child_angle = -Math.asin(y / radius);		// negate arc sign for clockwise
+		let child_angle = Math.asin(y / radius);		// negate arc sign for clockwise
 		if (unfit != rotated.x < 0) {
 			child_angle = Angle.half - child_angle		// compensate for arc sin limitations
 		}
@@ -127,7 +128,7 @@ export default class Cluster_Layout  {
 			} else {
 				this.angle_atStart = child_angle;
 			}
-		} else if (index == count - 1) {
+		} else if (index == max) {
 			if (startY > 0) {
 				this.angle_atEnd = child_angle;
 			} else {
@@ -182,8 +183,8 @@ export default class Cluster_Layout  {
 
 	big_svgPath(angle_tiltsUp: boolean) {
 		return svgPaths.arc(this.necklace_center, this.arc_radius, 1, 
-			angle_tiltsUp ? this.angle_atStart : this.angle_atEnd,
-			angle_tiltsUp ? this.angle_atEnd : this.angle_atStart);
+			angle_tiltsUp ? this.angle_atEnd : this.angle_atStart,
+			angle_tiltsUp ? this.angle_atStart : this.angle_atEnd);
 	}
 
 	fork_adjustment(fork_radius: number, arc_radius: number): number {
@@ -206,7 +207,7 @@ export default class Cluster_Layout  {
 	small_svgPath(arc_angle: number, x_isPositive: boolean, advance: boolean) {
 		const arc_small_radius = k.necklace_gap;
 		const center = Point.square(this.arc_radius);
-		const ratio = (x_isPositive == advance) ? -1 : Math.sqrt(2);
+		const ratio = (x_isPositive != advance) ? -1 : Math.sqrt(2);
 		const angle_start = u.normalized_angle(arc_angle + (Math.PI * ratio));
 		const angle_end = u.normalized_angle(arc_angle + (Math.PI * (ratio - .4)));
 		const distanceTo_arc_small_center = this.arc_radius + arc_small_radius;

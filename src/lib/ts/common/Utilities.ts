@@ -16,7 +16,7 @@ class Utilities {
 	location_ofMouseEvent(event: MouseEvent) { return new Point(event.clientX, event.clientY); }
 	strip_invalid(array: Array<any>): Array<any> { return this.strip_identifiableDuplicates(this.strip_falsies(array)); }
 	sort_byOrder(array: Array<Ancestry>) { return array.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
-	quadrant_startAngle(angle: number): number { return this.startAngle_ofQuadrant(this.quadrant_ofNotNormalized_angle(angle)); }
+	quadrant_startAngle(angle: number): number { return this.startAngle_ofQuadrant(this.quadrant_ofAngle(angle)); }
 	uniquely_concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return this.strip_invalid(this.concatenateArrays(a, b)); }
 		
 	degrees_of(angle: number) {
@@ -25,7 +25,7 @@ class Utilities {
 	}
 
 	angle_tiltsUp(rawAngle: number): boolean {
-		const angle = this.quadrant_ofNotNormalized_angle(rawAngle);
+		const angle = this.quadrant_ofAngle(rawAngle);
 		return [Quadrant.upperRight, Quadrant.lowerLeft].includes(angle);
 	}
 
@@ -81,19 +81,22 @@ class Utilities {
 	}
 
 	angle_hasPositiveX(angle: number): boolean {
-		switch(this.quadrant_ofNotNormalized_angle(angle)) {
+		switch(this.quadrant_ofAngle(angle)) {
 			case Quadrant.upperRight: return true;
 			case Quadrant.lowerRight: return true;
 			default: return false;
 		}
 	}
 
-	quadrant_ofNotNormalized_angle(angle: number): Quadrant {
+	quadrant_ofAngle(angle: number): Quadrant {
+	
+		// angles begin at 3 o'clock & rotate up (counter-clockwise)
+	
 		const normalized = this.normalized_angle(angle);
-		let quadrant = Quadrant.upperRight;
-		if (normalized.isBetween(0,				Angle.quarter,		 true)) { quadrant = Quadrant.lowerRight; }
-		if (normalized.isBetween(Angle.quarter, Angle.half,			 true)) { quadrant = Quadrant.lowerLeft; }
-		if (normalized.isBetween(Angle.half,	Angle.threeQuarters, true)) { quadrant = Quadrant.upperLeft; }
+		let quadrant = Quadrant.lowerRight;
+		if (normalized.isBetween(0,				Angle.quarter,		 true)) { quadrant = Quadrant.upperRight; }
+		if (normalized.isBetween(Angle.quarter, Angle.half,			 true)) { quadrant = Quadrant.upperLeft; }
+		if (normalized.isBetween(Angle.half,	Angle.threeQuarters, true)) { quadrant = Quadrant.lowerLeft; }
 		return quadrant;
 	}
 	
