@@ -105,7 +105,7 @@ export default class Cluster_Layout  {
 		const row = index - (max / 2);					// row centered around zero
 		const radial = new Point(radius, 0);
 		const angle_ofLine = this.angle_ofLine;			// points at middle widget
-		const rotated = radial.rotate_by(-angle_ofLine);
+		const rotated = radial.rotate_by(angle_ofLine);
 		const startY = rotated.y;						// height of angle_ofLine
 		let y = startY + (row * k.row_height);			// height of row
 		let unfit = false;
@@ -147,7 +147,7 @@ export default class Cluster_Layout  {
 			opposite - tweak :
 			points_out ? necklace_angle :	// one directional, use global
 			opposite + tweak;
-		return u.normalized_angle(raw);
+		return u.normalized_angle(-raw);
 	}
 	
 	static readonly $_SVGS_$: unique symbol;
@@ -182,7 +182,7 @@ export default class Cluster_Layout  {
 	}
 
 	big_svgPath(angle_tiltsUp: boolean) {
-		return svgPaths.arc(this.necklace_center, this.arc_radius, 1, 
+		return svgPaths.arc(this.necklace_center, this.arc_radius, 0, 
 			angle_tiltsUp ? this.angle_atEnd : this.angle_atStart,
 			angle_tiltsUp ? this.angle_atStart : this.angle_atEnd);
 	}
@@ -199,9 +199,9 @@ export default class Cluster_Layout  {
 		const y = radius * (forwards ? -1 : 1);
 		const x = this.arc_radius - radius - this.fork_backoff;
 		const origin = new Point(x, y).rotate_by(this.angle_ofLine);
-		return svgPaths.arc(origin.offsetBy(this.necklace_center), radius, 1,
-			this.angle_ofLine + (forwards ? 0 : Angle.quarter),
-			this.angle_ofLine - (forwards ? Angle.quarter : 0));
+		return svgPaths.arc(origin.offsetBy(this.necklace_center), radius, 0,
+			this.angle_ofLine + (forwards ? Angle.quarter : 0),
+			this.angle_ofLine - (forwards ? 0 : Angle.quarter));
 	}
 
 	small_svgPath(arc_angle: number, x_isPositive: boolean, advance: boolean) {
@@ -212,7 +212,7 @@ export default class Cluster_Layout  {
 		const angle_end = u.normalized_angle(arc_angle + (Math.PI * (ratio - .4)));
 		const distanceTo_arc_small_center = this.arc_radius + arc_small_radius;
 		const center_small = center.offsetBy(Point.fromPolar(distanceTo_arc_small_center, arc_angle));
-		return svgPaths.arc(center_small, arc_small_radius, 1, angle_start, angle_end);
+		return svgPaths.arc(center_small, arc_small_radius, 0, angle_start, angle_end);
 	}
 
 }

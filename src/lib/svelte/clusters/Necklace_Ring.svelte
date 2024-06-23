@@ -117,7 +117,7 @@
 				// begin rotate
 
 				necklace_ringState.priorAngle = mouseAngle;
-				necklace_ringState.startAngle = mouseAngle.add_angle_normalized(-$s_ring_angle);
+				necklace_ringState.startAngle = mouseAngle.add_angle_normalized($s_ring_angle);
 				rebuilds += 1;
 				
 			}

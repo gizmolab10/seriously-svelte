@@ -43,18 +43,15 @@ export class Point {
 
 	rotate_by(angle: number): Point {
 
-		// rotate clockwise
+		// rotate counter-clockwise
 		// angle of zero is on the x-axis pointing right
-		// angle of one-half pi is on the y-axis pointing down
-		//
-		// N.B., this is NOT mathematically standard:
-		// cartesian would rotate counter-clockwise
+		// angle of one-half pi is on the y-axis pointing up
 
 		const cos = Math.cos(angle);
 		const sin = Math.sin(angle);
 		return new Point(
-			this.x * cos + this.y * sin,
-			this.y * cos - this.x * sin
+			this.x * cos - this.y * sin,
+			this.y * cos + this.x * sin
 		);
 	}
 
