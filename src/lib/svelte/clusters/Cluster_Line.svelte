@@ -37,13 +37,9 @@
 		const inside_tip = Point.fromPolar(inside_radius, -angle);
 		const line_tip = cluster_maps?.line_tip;
 		size = line_tip.abs.asSize;
-		const rect = new Rect(Point.zero, size);
-		const titleRect = new Rect(center.offsetBy(inside_tip.multipliedBy(.7)), size.multipliedBy(1/2));
-		linePath = svgPaths.line(line_tip);
+		const titleRect = new Rect(center.offsetBy(inside_tip.multipliedBy(1.3)), size.multipliedBy(1/2));
 		viewBox = `0, 0, ${size.width}, ${size.height}`;
-		line_origin = line_origin_using(inside_tip, line_tip);
 		title_origin = title_origin_for(angle, titleRect);
-		[arrow_start, arrow_end] = rect.corners_forAngle(angle);
 	}
 
 	function title_origin_for(angle: number, rect: Rect): Point {
@@ -95,27 +91,4 @@
 		font-size: 0.5em;
 		color: {color};'>
 	{cluster_maps?.line_title}
-</div>
-<div class='cluster-line' id={name}
-	style='z-index: {ZIndex.lines};
-		left: {line_origin.x}px;
-		top: {line_origin.y}px;
-		position: absolute;'>
-	<svg class='svg-cluster-line'
-		height={size.height}px
-		width={size.width}px
-		viewBox={viewBox}
-		bind:this={line}>
-		<path d={linePath} stroke={color} fill='none'/>
-	</svg>
-	{#if show_arrowheads}
-		{#if predicate?.isBidirectional}
-			<ArrowHead name='child'  angle={angle} color={color} color_background={color} radius={thickness} center={arrow_end}/>
-			<ArrowHead name='parent' angle={angle + Angle.half} color={color} color_background={color} radius={thickness} center={arrow_start}/>
-		{:else if cluster_maps?.points_out}
-			<ArrowHead name='child'  angle={angle} color={color} color_background={color} radius={thickness} center={arrow_end}/>
-		{:else}
-			<ArrowHead name='parent' angle={angle + Angle.half} color={color} color_background={color} radius={thickness} center={arrow_start}/>
-		{/if}
-	{/if}
 </div>

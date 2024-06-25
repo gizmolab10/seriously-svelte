@@ -3,7 +3,6 @@ import { s_clusters, s_ancestry_focus, s_cluster_arc_radius } from '../state/Rea
 import { h } from '../db/DBDispatch';
 
 export default class Clusters_Geometry {
-	divider_maps: Array<Divider_MapRect> = [];
 	widget_maps: Array<Widget_MapRect> = [];
 	cluster_maps: Array<Cluster_Maps> = [];
 	ancestries: Array<Ancestry> = [];
@@ -31,29 +30,6 @@ export default class Clusters_Geometry {
 				this.layout_necklace_andLines(ancestries, predicate, false);
 			}
 		}
-		this.layout_divider_maps();
-	}
-
-	layout_divider_maps() {
-		this.divider_maps = [];
-		let first_angle!: number;
-		let prior_end_angle!: number;
-		let divider_angles: Array<number> = [];
-		for (const cluster_ayout of this.cluster_maps) {
-			const angle_atEnd = cluster_ayout.angle_atEnd;
-			const angle_atStart = cluster_ayout.angle_atStart;
-			if (prior_end_angle) {
-				divider_angles.push((angle_atStart + prior_end_angle) / 2);
-			}
-			prior_end_angle = angle_atEnd;
-			if (!first_angle) {
-				first_angle = angle_atStart;
-			}
-		}
-		divider_angles.push((first_angle + prior_end_angle) / 2);
-		divider_angles.forEach((angle, index) => {
-			this.divider_maps[index] = new Divider_MapRect(index, angle);
-		});
 	}
 
 	onePage_from(ancestries: Array<Ancestry>, predicate: Predicate, points_out: boolean): Array<Ancestry> {

@@ -133,9 +133,5 @@
 				<path d={svg_ringPath}/>
 			</svg>
 		</Mouse_Responder>
-		{#each geometry.divider_maps as map}
-			<Divider_line divider_map={map} center={center}
-				color={transparentize(color, scrolling_state.stroke_transparency)}/>
-		{/each}
 	</div>
 {/key}

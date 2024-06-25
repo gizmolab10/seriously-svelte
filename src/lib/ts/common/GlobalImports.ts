@@ -25,7 +25,6 @@ import { u } from './Utilities';
 import { k } from './Constants';
 
 import Clusters_Geometry from '../geometry/Clusters_Geometry';
-import Divider_MapRect from '../geometry/Divider_MapRect';
 import Alteration_State from '../state/Alteration_State';
 import Widget_MapRect from '../geometry/Widget_MapRect';
 import Cluster_Maps from '../geometry/Cluster_Maps';
@@ -54,6 +53,7 @@ export {
 	Rect, Size, Point, svgPaths, Direction,
 	muuri, interact, createPopper, transparentize,
 	e, g, k, s, u, builds, signals, SeriouslyRange,
+	Angle, Quadrant, Cluster_Maps, Clusters_Geometry,
 	Mouse_State, Handle_Mouse_State, Create_Mouse_State,
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Grabs, Ancestry, Hierarchy, dbDispatch, persistLocal,
@@ -62,6 +62,5 @@ export {
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactKind,
 	ElementType, AlterationType, SvelteWrapper, SvelteComponentType,
 	get, onMount, onDestroy, setContext, getContext, SvelteComponent,
-	Angle, Quadrant, Cluster_Maps, Divider_MapRect, Clusters_Geometry,
 	IDLine, IDTool, IDTrait, IDSignal, IDButton, IDBrowser, IDPersistant,
 };
