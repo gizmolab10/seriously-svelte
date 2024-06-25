@@ -1,3 +1,4 @@
+
 import { Quadrant } from '../common/Enumerations';
 import type { SvelteComponent } from 'svelte';
 import { u } from '../common/Utilities';
@@ -11,7 +12,6 @@ export class Point {
 	}
 
 	get asSize():					    Size { return new Size(this.x, this.y); }
-	get angle():					  number { return Math.atan2(this.x, this.y); }
 	get magnitude():				  number { return Math.sqrt(this.x * this.x + this.y * this.y); }
 	get toPolar():	{r: number, phi: number} { return {r: this.magnitude, phi: this.angle}; }
 	get isZero():					 boolean { return this.x == 0 && this.y == 0; }
@@ -41,17 +41,23 @@ export class Point {
 	static square(length: number):	   Point { return new Point(length, length); }
 	static get zero():				   Point { return new Point();}
 
+	get angle(): number {						// in math y increases going up
+		return Math.atan2(-this.y, this.x);		// it must be reversed for browsers
+	}
+
 	rotate_by(angle: number): Point {
 
 		// rotate counter-clockwise
 		// angle of zero is on the x-axis pointing right
 		// angle of one-half pi is on the y-axis pointing up
+		// in math y increases going up,
+		// so it must be reversed for browsers
 
 		const cos = Math.cos(angle);
 		const sin = Math.sin(angle);
 		return new Point(
-			this.x * cos - this.y * sin,
-			this.y * cos + this.x * sin
+			  this.x * cos - this.y * sin,
+			-(this.y * cos + this.x * sin)	// reverse y
 		);
 	}
 

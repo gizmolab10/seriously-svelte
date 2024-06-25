@@ -1,4 +1,4 @@
-import { u } from '../common/GlobalImports';
+import { Rect } from '../common/GlobalImports';
 
 export default class Mouse_State {
 	element: HTMLElement | null;	// null means mouse responder
@@ -32,7 +32,7 @@ export default class Mouse_State {
 
 	get isHit(): boolean {
 		return !!this.event && !!this.element &&
-			u.rect_forElement_containsEvent(this.element, this.event);
+			Rect.rect_forElement_containsEvent(this.element, this.event);
 	}
 
 	static empty() { return new Mouse_State(null, null, false, false, false, true, false, false, false); }

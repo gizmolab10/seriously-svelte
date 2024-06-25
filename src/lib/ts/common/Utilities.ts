@@ -1,3 +1,4 @@
+import { s_graphRect, s_mouse_location, s_user_graphOffset } from '../state/ReactiveState';
 import { Angle, Quadrant, IDBrowser } from './Enumerations';
 import { s_thing_fontFamily } from '../state/ReactiveState';
 import Identifiable from '../data/Identifiable';
@@ -71,11 +72,21 @@ class Utilities {
 		});
 	}
 
+	distance_ofOffset_fromGraphCenter_toMouseLocation(offset: Point): Point | null {
+		const location = get(s_mouse_location);
+		if (!!location) {
+			const graphCenter = get(s_graphRect).origin.offsetBy(get(s_user_graphOffset));
+			const distance = graphCenter.offsetBy(offset).distanceTo(location);
+			return distance;
+		}
+		return null
+	}
+
 	startAngle_ofQuadrant(quadrant: Quadrant): number {
 		switch (quadrant) {
-			case Quadrant.upperRight: return Angle.threeQuarters;
-			case Quadrant.lowerLeft:  return Angle.quarter;
-			case Quadrant.upperLeft:  return Angle.half;
+			case Quadrant.lowerRight: return Angle.threeQuarters;
+			case Quadrant.upperLeft:  return Angle.quarter;
+			case Quadrant.lowerLeft:  return Angle.half;
 			default:				  return 0;
 		}
 	}

@@ -1,12 +1,13 @@
 <script lang='ts'>
 	import { SvelteWrapper, Clusters_Geometry, transparentize, SvelteComponentType } from '../../ts/common/GlobalImports';
-	import { s_thing_changed, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { k, s, u, Rect, Thing, Point, ZIndex, signals, svgPaths, dbDispatch } from '../../ts/common/GlobalImports';
 	import { s_graphRect, s_mouse_location, s_mouse_up_count, s_user_graphOffset } from '../../ts/state/ReactiveState';
+	import { s_thing_changed, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { necklace_ringState } from '../../ts/state/Expand_State';
 	import { scrolling_state } from '../../ts/state/Rotate_State';
 	import Identifiable from '../../ts/data/Identifiable';
+	import Divider_line from './Divider_line.svelte';
 	export let radius = 0;
 	export let thing: Thing;
 	export let ring_width = 0;
@@ -54,7 +55,8 @@
 		// detect movement & adjust state //
 		////////////////////////////////////
 
-		const from_center = distance_fromCenter_of($s_mouse_location);	// use store, to react
+		const _ = $s_mouse_location;
+		const from_center = u.distance_ofOffset_fromGraphCenter_toMouseLocation(center);	// use store, to react
 		if (!!from_center) {
 			scrolling_state.isHovering = isHit();	// show highlight around ring
 			cursor_closure();
@@ -69,14 +71,14 @@
 		/////////////////////////////
 
 		if (mouseState.isHover) {
-			const okayToHover = !!scrolling_state.startAngle || !!scrolling_state.radiusOffset || !!necklace_ringState.startAngle || !!necklace_ringState.radiusOffset;
+			const okayToHover = !!scrolling_state.startAngle || !!necklace_ringState.startAngle || !!necklace_ringState.radiusOffset;
 			scrolling_state.isHovering = okayToHover && !mouseState.isOut;	// show highlight around ring
 
 			// hover
 
 			rebuilds += 1;
 		} else if (isHit()) {
-			const from_center = distance_fromCenter_of($s_mouse_location);
+			const from_center = u.distance_ofOffset_fromGraphCenter_toMouseLocation(center);
 			if (mouseState.isUp) {
 
 				// end rotate
@@ -93,17 +95,9 @@
 			cursor_closure();
 		}
 	}
-
-	function distance_fromCenter_of(location?: Point): Point | null {
-		if (!!location) {
-			const mainOffset = $s_graphRect.origin.offsetBy($s_user_graphOffset);
-			return mainOffset.offsetBy(center).distanceTo(location);
-		}
-		return null
-	}
  
 	function isHit(): boolean {
-		const vector = distance_fromCenter_of($s_mouse_location);
+		const vector = u.distance_ofOffset_fromGraphCenter_toMouseLocation(center);
 		const distance = vector.magnitude;
 		if (!!distance && distance.isBetween(radius, outer_radius)) {
 			return true;
@@ -140,19 +134,8 @@
 			</svg>
 		</Mouse_Responder>
 		{#each geometry.divider_maps as map}
-			<svg style='
-				position:absolute;
-				top:{map.origin.y}px;
-				left:{map.origin.x}px;
-				width:{map.size.width}px;
-				height:{map.size.height}px;'
-				class='svg-divider-line'
-				id={'line-at-' + map.index}
-				viewBox={map.dividerBox}>
-				<path
-					d={map.dividerPath}
-					stroke={dividerColor}/>
-			</svg>
+			<Divider_line divider_map={map} center={center}
+				color={transparentize(color, scrolling_state.stroke_transparency)}/>
 		{/each}
 	</div>
 {/key}

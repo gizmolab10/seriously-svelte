@@ -8,9 +8,9 @@ describe('Point', () => {
 	});
 
 	it('vector from polar', () => {
-		const point = Point.fromPolar(Math.sqrt(2), -Math.PI / 4);
+		const point = Point.fromPolar(Math.sqrt(2), Math.PI / 4);
 		expect(point.x).toBeCloseTo(1);
-		expect(point.y).toBeCloseTo(1);
+		expect(point.y).toBeCloseTo(-1);	// in browser coordinates, negative y is above x axis
 	});
 	
 	it('negate a vector', () => {
@@ -35,7 +35,7 @@ describe('Point', () => {
 	});
 
 	it('vector angle', () => {
-		const point = new Point(2, 2);
+		const point = new Point(2, -2);	// in browser coordinates, negative y is above x axis
 		const angle = point.angle;
 		expect(angle).toBe(Math.PI / 4);
 	});

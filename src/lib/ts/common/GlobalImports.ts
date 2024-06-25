@@ -24,9 +24,8 @@ import { builds } from './Builds';
 import { u } from './Utilities';
 import { k } from './Constants';
 
-import Scrolling_Divider_MapRect from '../geometry/Scrolling_Divider_MapRect';
 import Clusters_Geometry from '../geometry/Clusters_Geometry';
-import Advance_MapRect from '../geometry/Advance_MapRect';
+import Divider_MapRect from '../geometry/Divider_MapRect';
 import Alteration_State from '../state/Alteration_State';
 import Widget_MapRect from '../geometry/Widget_MapRect';
 import Cluster_Maps from '../geometry/Cluster_Maps';
@@ -51,7 +50,6 @@ import './Extensions';
 
 export {
 	Expand_State, Title_State,
-	Scrolling_Divider_MapRect,
 	Tree_Geometry, Widget_MapRect,
 	Rect, Size, Point, svgPaths, Direction,
 	muuri, interact, createPopper, transparentize,
@@ -64,6 +62,6 @@ export {
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactKind,
 	ElementType, AlterationType, SvelteWrapper, SvelteComponentType,
 	get, onMount, onDestroy, setContext, getContext, SvelteComponent,
-	Angle, Quadrant, Cluster_Maps, Advance_MapRect, Clusters_Geometry,
+	Angle, Quadrant, Cluster_Maps, Divider_MapRect, Clusters_Geometry,
 	IDLine, IDTool, IDTrait, IDSignal, IDButton, IDBrowser, IDPersistant,
 };

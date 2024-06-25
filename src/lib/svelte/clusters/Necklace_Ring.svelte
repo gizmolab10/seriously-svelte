@@ -51,11 +51,21 @@
 		// detect movement & adjust state //
 		////////////////////////////////////
 
-		const from_center = distance_fromCenter_of($s_mouse_location);	// use store, to react
+		const _ = $s_mouse_location;
+		const from_center = u.distance_ofOffset_fromGraphCenter_toMouseLocation(center);	// use store, to react
 		if (!!from_center) {
 			let sendSignal = false;
 			necklace_ringState.isHovering = isHit();	// show highlight around ring
 			cursor_closure();
+			if (necklace_ringState.priorAngle != null) {				// rotate
+				const mouseAngle = from_center.angle;
+				const delta = mouseAngle.add_angle_normalized(-necklace_ringState.priorAngle);	// subtract to find difference
+				if (Math.abs(delta) >= Math.PI / 90) {			// minimum two degree changes
+					sendSignal = true;
+					necklace_ringState.priorAngle = mouseAngle;
+					$s_ring_angle = mouseAngle.add_angle_normalized(-necklace_ringState.startAngle);
+				}
+			}
 			if (necklace_ringState.radiusOffset != null) {				// resize
 				const magnitude = from_center.magnitude
 				const largest = k.cluster_inside_radius * 4;
@@ -65,15 +75,6 @@
 				if (Math.abs(movement) > 5) {
 					sendSignal = true;
 					$s_cluster_arc_radius += movement;
-				}
-			}
-			if (necklace_ringState.priorAngle != null) {					// rotate
-				let mouseAngle = from_center.angle;
-				const delta = mouseAngle.add_angle_normalized(-necklace_ringState.priorAngle);
-				if (Math.abs(delta) >= Math.PI / 90) {			// minimum two degree changes
-					sendSignal = true;
-					necklace_ringState.priorAngle = mouseAngle;
-					$s_ring_angle = mouseAngle.add_angle_normalized(necklace_ringState.startAngle);
 				}
 			}
 			if (sendSignal) {
@@ -98,7 +99,7 @@
 				rebuilds += 1;
 			}
 		} else if (isHit()) {
-			const from_center = distance_fromCenter_of($s_mouse_location);
+			const from_center = u.distance_ofOffset_fromGraphCenter_toMouseLocation(center);
 			if (mouseState.isDouble) {
 
 				// begin resize
@@ -117,25 +118,17 @@
 				// begin rotate
 
 				necklace_ringState.priorAngle = mouseAngle;
-				necklace_ringState.startAngle = mouseAngle.add_angle_normalized($s_ring_angle);
+				necklace_ringState.startAngle = mouseAngle.add_angle_normalized(-$s_ring_angle);
 				rebuilds += 1;
 				
 			}
 			cursor_closure();
 		}
 	}
-
-	function distance_fromCenter_of(location?: Point): Point | null {
-		if (!!location) {
-			const mainOffset = $s_graphRect.origin.offsetBy($s_user_graphOffset);
-			return mainOffset.offsetBy(center).distanceTo(location);
-		}
-		return null
-	}
  
 	function isHit(): boolean {
-		const vector = distance_fromCenter_of($s_mouse_location);
-		const distance = vector.magnitude;
+		const vector = u.distance_ofOffset_fromGraphCenter_toMouseLocation(center);
+		const distance = vector?.magnitude;
 		if (!!distance && distance.isBetween(radius, outer_radius)) {
 			return true;
 		}

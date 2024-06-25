@@ -1,15 +1,15 @@
 <script lang='ts'>
-	import { IDLine, Quadrant, SvelteWrapper, SvelteComponentType, Cluster_Maps } from '../../ts/common/GlobalImports';
-	import { k, u, Rect, Size, Point, Angle, ZIndex, svgPaths } from '../../ts/common/GlobalImports';
+	import { Quadrant, Cluster_Maps, SvelteWrapper, SvelteComponentType } from '../../ts/common/GlobalImports';
+	import { k, u, Rect, Size, Point, Angle, ZIndex, IDLine, svgPaths } from '../../ts/common/GlobalImports';
+	import Identifiable from '../../ts/data/Identifiable';
 	import ArrowHead from '../kit/ArrowHead.svelte';
 	import { h } from '../../ts/db/DBDispatch';
-	import Box from '../kit/Box.svelte';
 	export let center = Point.zero;
 	export let color = k.color_default;
     export let cluster_maps: Cluster_Maps;
 	const show_arrowheads = k.show_arrowheads;
 	const predicate = cluster_maps?.predicate;
-	const idDiv = `${cluster_maps?.points_out ? 'child' : 'parent'} ${predicate?.kind}`;
+	const name = `${cluster_maps?.points_out ? 'child' : 'parent'} ${predicate?.kind}`;
 	let style = `position: absolute; z-index: ${ZIndex.lines};`;
 	let lineWrapper: SvelteWrapper;
 	let title_origin = Point.zero;
@@ -30,11 +30,11 @@
 
 	$: {
 		if (line && !lineWrapper) {
-			lineWrapper = new SvelteWrapper(line, handle_mouseData, 0, SvelteComponentType.line);
+			lineWrapper = new SvelteWrapper(line, handle_mouseData, Identifiable.newID(), SvelteComponentType.line);
 		}
 		angle = cluster_maps?.angle_ofLine;
 		const inside_radius = k.cluster_inside_radius + (show_arrowheads ? 8 : 0);
-		const inside_tip = Point.fromPolar(inside_radius, angle);
+		const inside_tip = Point.fromPolar(inside_radius, -angle);
 		const line_tip = cluster_maps?.line_tip;
 		size = line_tip.abs.asSize;
 		const rect = new Rect(Point.zero, size);
@@ -96,7 +96,7 @@
 		color: {color};'>
 	{cluster_maps?.line_title}
 </div>
-<div class='cluster-line' id={idDiv}
+<div class='cluster-line' id={name}
 	style='z-index: {ZIndex.lines};
 		left: {line_origin.x}px;
 		top: {line_origin.y}px;
@@ -110,12 +110,12 @@
 	</svg>
 	{#if show_arrowheads}
 		{#if predicate?.isBidirectional}
-			<ArrowHead idDiv='child'  angle={angle} color={color} color_background={color} radius={thickness} center={arrow_end}/>
-			<ArrowHead idDiv='parent' angle={angle + Angle.half} color={color} color_background={color} radius={thickness} center={arrow_start}/>
+			<ArrowHead name='child'  angle={angle} color={color} color_background={color} radius={thickness} center={arrow_end}/>
+			<ArrowHead name='parent' angle={angle + Angle.half} color={color} color_background={color} radius={thickness} center={arrow_start}/>
 		{:else if cluster_maps?.points_out}
-			<ArrowHead idDiv='child'  angle={angle} color={color} color_background={color} radius={thickness} center={arrow_end}/>
+			<ArrowHead name='child'  angle={angle} color={color} color_background={color} radius={thickness} center={arrow_end}/>
 		{:else}
-			<ArrowHead idDiv='parent' angle={angle + Angle.half} color={color} color_background={color} radius={thickness} center={arrow_start}/>
+			<ArrowHead name='parent' angle={angle + Angle.half} color={color} color_background={color} radius={thickness} center={arrow_start}/>
 		{/if}
 	{/if}
 </div>

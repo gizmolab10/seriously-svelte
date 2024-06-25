@@ -6,7 +6,6 @@
 	import Cluster_Arc from './Cluster_Arc.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import { h } from '../../ts/db/DBDispatch';
-	import Advance from './Advance.svelte';
 	export let geometry!: Clusters_Geometry;
     const ancestry = $s_ancestry_focus;
 	const center = $s_graphRect.size.dividedInHalf.asPoint;
@@ -57,12 +56,10 @@
 		<div class='lines-and-arcs'>
 			{#each geometry.cluster_maps as cluster_maps}
 				{#if cluster_maps.count > 0}
-					<Advance cluster_maps={cluster_maps} isForward={false}/>
 					<Cluster_Line cluster_maps={cluster_maps} center={center} color={color}/>
 					{#if cluster_maps.count > 1}
 						<Cluster_Arc cluster_maps={cluster_maps} center={center} color={color}/>
 					{/if}
-					<Advance cluster_maps={cluster_maps} isForward={true}/>
 				{/if}
 			{/each}
 		</div>

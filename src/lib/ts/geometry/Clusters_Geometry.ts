@@ -1,11 +1,11 @@
-import { k, u, get, Angle, Ancestry, Predicate, Cluster_Maps, Widget_MapRect, Scrolling_Divider_MapRect } from '../common/GlobalImports';
+import { k, u, get, Ancestry, Predicate, Cluster_Maps, Widget_MapRect, Divider_MapRect } from '../common/GlobalImports';
 import { s_clusters, s_ancestry_focus, s_cluster_arc_radius } from '../state/ReactiveState';
 import { h } from '../db/DBDispatch';
 
 export default class Clusters_Geometry {
-	divider_maps: Array<Scrolling_Divider_MapRect> = [];
-	cluster_maps: Array<Cluster_Maps> = [];
+	divider_maps: Array<Divider_MapRect> = [];
 	widget_maps: Array<Widget_MapRect> = [];
+	cluster_maps: Array<Cluster_Maps> = [];
 	ancestries: Array<Ancestry> = [];
 
 	// layout_necklace_andLines all the widgets, lines, arcs,
@@ -52,7 +52,7 @@ export default class Clusters_Geometry {
 		}
 		divider_angles.push((first_angle + prior_end_angle) / 2);
 		divider_angles.forEach((angle, index) => {
-			this.divider_maps[index] = new Scrolling_Divider_MapRect(index, angle);
+			this.divider_maps[index] = new Divider_MapRect(index, angle);
 		});
 	}
 

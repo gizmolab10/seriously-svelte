@@ -3,7 +3,7 @@
 	export let color_background = debug.lines ? 'transparent' : k.color_background;
 	export let zindex = ZIndex.dots;
 	export let center = Point.zero;
-	export let idDiv = k.empty;
+	export let name = k.empty;
 	export let radius = 5;
 	export let angle = 0;
 	export let color;
@@ -19,7 +19,7 @@
 </script>
 
 <div
-	class= 'arrowhead' id={idDiv} style='
+	class= 'arrowhead' id={name} style='
 		position: absolute;
 		top: {center.y - radius}px;
 		left: {center.x - radius}px;

@@ -1,7 +1,6 @@
 import { s_clusters, s_graphRect, s_ring_angle, s_ancestry_focus, s_cluster_arc_radius } from '../state/ReactiveState';
-import { k, u, get, Angle, IDLine, svgPaths, Ancestry, } from '../common/GlobalImports';
-import { Predicate, Widget_MapRect, Advance_MapRect } from '../common/GlobalImports';
-import { Rect, Point } from './Geometry';
+import { k, u, get, Rect, Point, Angle, IDLine, svgPaths } from '../common/GlobalImports';
+import { Ancestry, Predicate, Widget_MapRect } from '../common/GlobalImports';
 import { ArcPart } from '../common/Enumerations';
 
 // for one cluster (there are three)
@@ -13,11 +12,11 @@ import { ArcPart } from '../common/Enumerations';
 // and Widget_MapRect for each child
 
 export default class Cluster_Maps  {
-	advance_maps: Array<Advance_MapRect> = [];	// always only two (forward and backward)
-	widget_maps: Array<Widget_MapRect> = [];		// maximum a page's worth
+	widget_maps: Array<Widget_MapRect> = [];	// maximum a page's worth, will be combined into geometry.widget_maps
+	predicates: Array<Predicate> = [];			// ditto
 	ancestries: Array<Ancestry> = [];			// ditto
 	cluster_ancestry!: Ancestry;
-	necklace_center: Point;
+	clusters_center: Point;
 	predicate: Predicate;
 	angle_ofLine: number;
 	fork_backoff: number;
@@ -38,19 +37,19 @@ export default class Cluster_Maps  {
 		const tiny_radius = k.necklace_gap / 2;
 		const line_angle = this.lineAngle_for(predicate, points_out) ?? 0;
 		const fork_backoff = this.fork_adjustment(tiny_radius, arc_radius);
-		const fork_fromCenter = Point.fromPolar(arc_radius, line_angle);
+		const fork_fromCenter = Point.fromPolar(arc_radius, -line_angle);
 		const fork_center = center.offsetBy(fork_fromCenter);
 		const fork_radius = tiny_radius - fork_backoff;
 		const line_radius = arc_radius - k.cluster_inside_radius - fork_radius;
 
-		this.line_tip = Point.fromPolar(line_radius, line_angle);
+		this.line_tip = Point.fromPolar(line_radius, -line_angle);
 		this.cluster_ancestry = get(s_ancestry_focus);
 		this.fork_backoff = fork_backoff;
 		this.fork_radius = fork_radius;
 		this.fork_center = fork_center;
 		this.angle_ofLine = line_angle;
 		this.count = ancestries.length;
-		this.necklace_center = center;
+		this.clusters_center = center;
 		this.ancestries = ancestries;
 		this.arc_radius = arc_radius;
 		this.points_out = points_out;
@@ -60,21 +59,16 @@ export default class Cluster_Maps  {
 	}
 
 	destructor() { this.ancestries = []; }
-	get_advanceMap_for(isForward: boolean) { return this.advance_maps[isForward ? 1 : 0]; }
 	get cluster_index(): number { return get(s_clusters).index_for(this.points_out, this.predicate); }
 	set_cluster_index(index: number) { s_clusters.set(get(s_clusters).setIndex_for(index, this.points_out, this.predicate)); }
 
 	setup() {
 		const radius = this.arc_radius;
 		const count = this.ancestries.length;
-		const upper_limit = this.total - count;
 		const radial = new Point(radius + k.necklace_gap, 0);
 
 		this.widget_maps = [];
-		this.advance_maps = [];
 		this.center = get(s_graphRect).size.dividedInHalf.asPoint;
-		this.advance_maps.push(new Advance_MapRect(this.cluster_ancestry, this.predicate, upper_limit, this.points_out, false));
-		this.advance_maps.push(new Advance_MapRect(this.cluster_ancestry, this.predicate, upper_limit, this.points_out, true));
 		if (count > 0 && !!this.predicate) {
 			let index = 0;
 			while (index < count) {
@@ -92,17 +86,14 @@ export default class Cluster_Maps  {
 		const sign = isForward ? 1 : -1;
 		const showing = this.ancestries.length;
 		const index = this.cluster_index.increment_by_assuring(showing * sign, this.total);
-		this.get_advanceMap_for(false).update_isVisible();
-		this.get_advanceMap_for(true).update_isVisible();
 		this.set_cluster_index(index);
-		return this.get_advanceMap_for(isForward);
 	}
 	
 	static readonly $_ANGLES_$: unique symbol;
 
 	angle_ofChild_for(index: number, count: number, radius: number): number {
 		const max = count - 1;
-		const row = index - (max / 2);					// row centered around zero
+		const row = (max / 2) - index;					// row centered around zero
 		const radial = new Point(radius, 0);
 		const angle_ofLine = this.angle_ofLine;			// points at middle widget
 		const rotated = radial.rotate_by(angle_ofLine);
@@ -182,7 +173,7 @@ export default class Cluster_Maps  {
 	}
 
 	big_svgPath(angle_tiltsUp: boolean) {
-		return svgPaths.arc(this.necklace_center, this.arc_radius, 0, 
+		return svgPaths.arc(this.clusters_center, this.arc_radius, 1, 
 			angle_tiltsUp ? this.angle_atEnd : this.angle_atStart,
 			angle_tiltsUp ? this.angle_atStart : this.angle_atEnd);
 	}
@@ -196,12 +187,13 @@ export default class Cluster_Maps  {
 
 	fork_svgPath(forwards: boolean) {
 		const radius = this.fork_radius;
+		const angle = -this.angle_ofLine;
 		const y = radius * (forwards ? -1 : 1);
 		const x = this.arc_radius - radius - this.fork_backoff;
-		const origin = new Point(x, y).rotate_by(this.angle_ofLine);
-		return svgPaths.arc(origin.offsetBy(this.necklace_center), radius, 0,
-			this.angle_ofLine + (forwards ? Angle.quarter : 0),
-			this.angle_ofLine - (forwards ? 0 : Angle.quarter));
+		const origin = new Point(x, y).rotate_by(angle);
+		return svgPaths.arc(origin.offsetBy(this.clusters_center), radius, 1,
+			angle + (forwards ? Angle.quarter : 0),
+			angle - (forwards ? 0 : Angle.quarter));
 	}
 
 	small_svgPath(arc_angle: number, x_isPositive: boolean, advance: boolean) {
@@ -212,7 +204,7 @@ export default class Cluster_Maps  {
 		const angle_end = u.normalized_angle(arc_angle + (Math.PI * (ratio - .4)));
 		const distanceTo_arc_small_center = this.arc_radius + arc_small_radius;
 		const center_small = center.offsetBy(Point.fromPolar(distanceTo_arc_small_center, arc_angle));
-		return svgPaths.arc(center_small, arc_small_radius, 0, angle_start, angle_end);
+		return svgPaths.arc(center_small, arc_small_radius, 1, angle_start, angle_end);
 	}
 
 }
