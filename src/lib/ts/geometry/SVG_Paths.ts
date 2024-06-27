@@ -49,11 +49,11 @@ export default class SVG_Paths {
         return `M${radius - width} ${radius}a${width} ${height} 0 1,0 ${doubleWidth} 0a${width} ${height} 0 1,0 ${-doubleWidth} 0`;
     }
 
-	arc(center: Point, radius: number, sweepFlag: number, startAngle: number, endAngle: number): string {
+	arc(center: Point, radius: number, sweepFlag: number, referenceAngle: number, endAngle: number): string {
 		const radial = new Point(radius, 0);
 		const end = center.offsetBy(radial.rotate_by(endAngle));
-		const start = center.offsetBy(radial.rotate_by(startAngle));
-		const largeArcFlag = (u.normalized_angle(startAngle - endAngle) > Math.PI) ? 1 : 0;
+		const start = center.offsetBy(radial.rotate_by(referenceAngle));
+		const largeArcFlag = (u.normalized_angle(referenceAngle - endAngle) > Math.PI) ? 1 : 0;
 		return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${end.x} ${end.y}`;
 	}
 

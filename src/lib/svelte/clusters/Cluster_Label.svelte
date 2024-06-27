@@ -1,15 +1,15 @@
 <script lang='ts'>
-	import { Quadrant, Cluster_Maps, SvelteWrapper, SvelteComponentType } from '../../ts/common/GlobalImports';
+	import { Quadrant, Cluster_Map, SvelteWrapper, SvelteComponentType } from '../../ts/common/GlobalImports';
 	import { k, u, Rect, Size, Point, Angle, ZIndex, IDLine, svgPaths } from '../../ts/common/GlobalImports';
 	import Identifiable from '../../ts/data/Identifiable';
 	import ArrowHead from '../kit/ArrowHead.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	export let center = Point.zero;
 	export let color = k.color_default;
-    export let cluster_maps: Cluster_Maps;
+    export let cluster_map: Cluster_Map;
 	const show_arrowheads = k.show_arrowheads;
-	const predicate = cluster_maps?.predicate;
-	const name = `${cluster_maps?.points_out ? 'child' : 'parent'} ${predicate?.kind}`;
+	const predicate = cluster_map?.predicate;
+	const name = `${cluster_map?.points_out ? 'child' : 'parent'} ${predicate?.kind}`;
 	let style = `position: absolute; z-index: ${ZIndex.lines};`;
 	let lineWrapper: SvelteWrapper;
 	let title_origin = Point.zero;
@@ -32,19 +32,19 @@
 		if (line && !lineWrapper) {
 			lineWrapper = new SvelteWrapper(line, handle_mouseData, Identifiable.newID(), SvelteComponentType.line);
 		}
-		angle = cluster_maps?.angle_ofLine;
+		angle = cluster_map?.angle_ofLine;
 		const inside_radius = k.cluster_inside_radius + (show_arrowheads ? 8 : 0);
 		const inside_tip = Point.fromPolar(inside_radius, -angle);
-		const line_tip = cluster_maps?.line_tip;
+		const line_tip = cluster_map?.line_tip;
 		size = line_tip.abs.asSize;
-		const titleRect = new Rect(center.offsetBy(inside_tip.multipliedBy(1.3)), size.multipliedBy(1/2));
+		const titleRect = new Rect(center.offsetBy(inside_tip.multipliedBy(1.6)), size.multipliedBy(1/2));
 		viewBox = `0, 0, ${size.width}, ${size.height}`;
 		title_origin = title_origin_for(angle, titleRect);
 	}
 
 	function title_origin_for(angle: number, rect: Rect): Point {
 		const quadrant = u.quadrant_ofAngle(angle);
-		const title = cluster_maps?.line_title;
+		const title = cluster_map?.line_title;
 		let multiplier = -1.5;
 		if (u.isAlmost_horizontal(angle)) {
 			switch (quadrant) {
@@ -54,7 +54,7 @@
 			}
 		}
 		const title_y = k.dot_size * multiplier;
-		const title_x = u.getWidthOf(title) / -3;
+		const title_x = u.getWidthOf(title) / -2;
 		const title_offset = new Point(title_x, title_y);
 		return rect.center.offsetBy(title_offset);
 	}
@@ -90,5 +90,5 @@
 		font-family: Arial;
 		font-size: 0.5em;
 		color: {color};'>
-	{cluster_maps?.line_title}
+	{cluster_map?.line_title}
 </div>

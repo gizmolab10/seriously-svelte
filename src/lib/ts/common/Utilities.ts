@@ -17,7 +17,7 @@ class Utilities {
 	location_ofMouseEvent(event: MouseEvent) { return new Point(event.clientX, event.clientY); }
 	strip_invalid(array: Array<any>): Array<any> { return this.strip_identifiableDuplicates(this.strip_falsies(array)); }
 	sort_byOrder(array: Array<Ancestry>) { return array.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
-	quadrant_startAngle(angle: number): number { return this.startAngle_ofQuadrant(this.quadrant_ofAngle(angle)); }
+	quadrant_referenceAngle(angle: number): number { return this.referenceAngle_ofQuadrant(this.quadrant_ofAngle(angle)); }
 	uniquely_concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return this.strip_invalid(this.concatenateArrays(a, b)); }
 		
 	degrees_of(angle: number) {
@@ -82,7 +82,7 @@ class Utilities {
 		return null
 	}
 
-	startAngle_ofQuadrant(quadrant: Quadrant): number {
+	referenceAngle_ofQuadrant(quadrant: Quadrant): number {
 		switch (quadrant) {
 			case Quadrant.lowerRight: return Angle.threeQuarters;
 			case Quadrant.upperLeft:  return Angle.quarter;

@@ -1,10 +1,10 @@
-import { k, u, get, Ancestry, Predicate, Cluster_Maps, Widget_MapRect, Divider_MapRect } from '../common/GlobalImports';
-import { s_clusters, s_ancestry_focus, s_cluster_arc_radius } from '../state/ReactiveState';
+import { k, u, get, Ancestry, Predicate, Cluster_Map, Widget_MapRect } from '../common/GlobalImports';
+import { s_clusters_page_indices, s_ancestry_focus, s_cluster_arc_radius } from '../state/ReactiveState';
 import { h } from '../db/DBDispatch';
 
 export default class Clusters_Geometry {
 	widget_maps: Array<Widget_MapRect> = [];
-	cluster_maps: Array<Cluster_Maps> = [];
+	cluster_map: Array<Cluster_Map> = [];
 	ancestries: Array<Ancestry> = [];
 
 	// layout_necklace_andLines all the widgets, lines, arcs,
@@ -13,8 +13,8 @@ export default class Clusters_Geometry {
 	constructor() { this.layout(); }
 
 	destructor() {
-		this.cluster_maps.forEach(l => l.destructor());
-		this.cluster_maps = [];
+		this.cluster_map.forEach(l => l.destructor());
+		this.cluster_map = [];
 		this.widget_maps = [];
 	}
 
@@ -34,16 +34,16 @@ export default class Clusters_Geometry {
 
 	onePage_from(ancestries: Array<Ancestry>, predicate: Predicate, points_out: boolean): Array<Ancestry> {
 		const maxFit = Math.round(get(s_cluster_arc_radius) * 2 / k.row_height) - 6;
-		const pageIndex = get(s_clusters).index_for(points_out, predicate);
+		const pageIndex = get(s_clusters_page_indices).index_for(points_out, predicate);
 		return ancestries.slice(pageIndex, pageIndex + maxFit);
 	}
 
 	layout_necklace_andLines(ancestries: Array<Ancestry>, predicate: Predicate | null, points_out: boolean) {
 		if (!!predicate) {
 			const onePage = this.onePage_from(ancestries, predicate, points_out);
-			const cluster_maps = new Cluster_Maps(ancestries.length, onePage, predicate, points_out);
-			this.widget_maps = u.concatenateArrays(this.widget_maps, cluster_maps.widget_maps);	// for necklace of widgets
-			this.cluster_maps.push(cluster_maps);		// for lines and arcs
+			const cluster_map = new Cluster_Map(ancestries.length, onePage, predicate, points_out);
+			this.widget_maps = u.concatenateArrays(this.widget_maps, cluster_map.widget_maps);	// for necklace of widgets
+			this.cluster_map.push(cluster_map);		// for lines and arcs
 		}
 	}
 

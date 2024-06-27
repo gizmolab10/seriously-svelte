@@ -63,7 +63,7 @@
 				if (Math.abs(delta) >= Math.PI / 90) {			// minimum two degree changes
 					sendSignal = true;
 					necklace_ringState.priorAngle = mouseAngle;
-					$s_ring_angle = mouseAngle.add_angle_normalized(-necklace_ringState.startAngle);
+					$s_ring_angle = mouseAngle.add_angle_normalized(-necklace_ringState.referenceAngle);
 				}
 			}
 			if (necklace_ringState.radiusOffset != null) {				// resize
@@ -91,7 +91,7 @@
 		/////////////////////////////
 
 		if (mouseState.isHover) {
-			if (!necklace_ringState.startAngle && !necklace_ringState.radiusOffset) {
+			if (!necklace_ringState.referenceAngle && !necklace_ringState.radiusOffset) {
 				necklace_ringState.isHovering = true;	// show highlight around ring
 	
 				// hover
@@ -118,7 +118,7 @@
 				// begin rotate
 
 				necklace_ringState.priorAngle = mouseAngle;
-				necklace_ringState.startAngle = mouseAngle.add_angle_normalized(-$s_ring_angle);
+				necklace_ringState.referenceAngle = mouseAngle.add_angle_normalized(-$s_ring_angle);
 				rebuilds += 1;
 				
 			}

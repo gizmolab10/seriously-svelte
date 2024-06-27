@@ -27,7 +27,7 @@ import { k } from './Constants';
 import Clusters_Geometry from '../geometry/Clusters_Geometry';
 import Alteration_State from '../state/Alteration_State';
 import Widget_MapRect from '../geometry/Widget_MapRect';
-import Cluster_Maps from '../geometry/Cluster_Maps';
+import Cluster_Map from '../geometry/Cluster_Map';
 import Tree_Geometry from '../geometry/Tree_Geometry';
 import Expand_State from '../state/Expand_State';
 import Page_Indices from '../state/Page_Indices';
@@ -53,7 +53,7 @@ export {
 	Rect, Size, Point, svgPaths, Direction,
 	muuri, interact, createPopper, transparentize,
 	e, g, k, s, u, builds, signals, SeriouslyRange,
-	Angle, Quadrant, Cluster_Maps, Clusters_Geometry,
+	Angle, Quadrant, Cluster_Map, Clusters_Geometry,
 	Mouse_State, Handle_Mouse_State, Create_Mouse_State,
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Grabs, Ancestry, Hierarchy, dbDispatch, persistLocal,

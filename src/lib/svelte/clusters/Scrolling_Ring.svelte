@@ -4,9 +4,11 @@
 	import { s_graphRect, s_mouse_location, s_mouse_up_count, s_user_graphOffset } from '../../ts/state/ReactiveState';
 	import { s_thing_changed, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
+	import { scrolling_ringState } from '../../ts/state/Rotate_State';
 	import { necklace_ringState } from '../../ts/state/Expand_State';
-	import { scrolling_state } from '../../ts/state/Rotate_State';
+	import Cluster_ScrollArc from './Cluster_ScrollArc.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
+	import Cluster_Label from './Cluster_Label.svelte';
 	import Divider_line from './Divider_line.svelte';
 	export let radius = 0;
 	export let thing: Thing;
@@ -29,6 +31,9 @@
 	let scrollingRing;
 	let rebuilds = 0
 
+	// draw the scrolling ring, cluster labels and scroll bars
+	// uses two ringState's for configuring angles and hover
+
 	$: {
 		if ($s_ancestry_focus.thing.id == $s_thing_changed.split(k.genericSeparator)[0]) {
 			rebuilds += 1;
@@ -44,7 +49,7 @@
 	$: {
 		if (mouse_up_count != $s_mouse_up_count) {
 			mouse_up_count = $s_mouse_up_count;
-			scrolling_state.reset();
+			scrolling_ringState.reset();
 			rebuilds += 1;
 		}
 	}
@@ -58,7 +63,7 @@
 		const _ = $s_mouse_location;
 		const from_center = u.distance_ofOffset_fromGraphCenter_toMouseLocation(center);	// use store, to react
 		if (!!from_center) {
-			scrolling_state.isHovering = isHit();	// show highlight around ring
+			scrolling_ringState.isHovering = isHit();	// show highlight around ring
 			cursor_closure();
 			rebuilds += 1;
 		}
@@ -71,8 +76,8 @@
 		/////////////////////////////
 
 		if (mouseState.isHover) {
-			const okayToHover = !!scrolling_state.startAngle || !!necklace_ringState.startAngle || !!necklace_ringState.radiusOffset;
-			scrolling_state.isHovering = okayToHover && !mouseState.isOut;	// show highlight around ring
+			const okayToHover = !!scrolling_ringState.referenceAngle || !!necklace_ringState.referenceAngle || !!necklace_ringState.radiusOffset;
+			scrolling_ringState.isHovering = okayToHover && !mouseState.isOut;	// show highlight around ring
 
 			// hover
 
@@ -111,6 +116,14 @@
 		}
 	}
 
+			// <svg
+			// 	viewBox={viewBox}
+			// 	class='svg-scrolling-ring'
+			// 	fill={transparentize(color, scrolling_ringState.fill_transparency)}
+			// 	stroke={transparentize(color, 0.98)}>
+			// 	<path d={svg_ringPath}/>
+			// </svg>
+
 </script>
 
 {#key rebuilds}
@@ -124,14 +137,20 @@
 			closure={closure}
 			detect_longClick={false}
 			detectHit_closure={isHit}
-			cursor={scrolling_state.cursor}>
-			<svg
-				viewBox={viewBox}
-				class='svg-scrolling-ring'
-				fill={transparentize(color, scrolling_state.fill_transparency)}
-				stroke={transparentize(color, scrolling_state.stroke_transparency)}>
-				<path d={svg_ringPath}/>
-			</svg>
+			cursor={scrolling_ringState.cursor}>
 		</Mouse_Responder>
+		<div class='lines-and-arcs'>
+			{#each geometry.cluster_map as cluster_map}
+				{#if cluster_map.count > 0}
+					<Cluster_Label cluster_map={cluster_map} center={center} color={color}/>
+					{#if cluster_map.count > 1}
+						<Cluster_ScrollArc
+							center={center}
+							cluster_map={cluster_map}
+							color={transparentize(color, scrolling_ringState.stroke_transparency * 0.7)}/>
+					{/if}
+				{/if}
+			{/each}
+		</div>
 	</div>
 {/key}

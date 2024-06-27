@@ -14,9 +14,10 @@ export enum PredicateKind {
 }
 
 export enum ArcPart {
-	main = 'main',
-	fork = 'fork',
-	gap	 = 'gap',
+	outer = 'outer',
+	main  = 'main',
+	fork  = 'fork',
+	gap	  = 'gap',
 }
 
 export enum GraphRelations {

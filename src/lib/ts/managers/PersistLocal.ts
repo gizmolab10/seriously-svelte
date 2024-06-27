@@ -4,7 +4,7 @@ import { g, k, get, Point, signals, Ancestry, dbDispatch } from '../common/Globa
 import { Page_Index, Page_Indices, GraphRelations } from '../common/GlobalImports';
 import { s_ancestries_grabbed, s_ancestries_expanded } from '../state/ReactiveState';
 import { s_thing_fontFamily, s_graph_relations } from '../state/ReactiveState';
-import { s_clusters } from '../../ts/state/ReactiveState';
+import { s_clusters_page_indices } from '../../ts/state/ReactiveState';
 import { h } from '../db/DBDispatch';
 
 export enum IDPersistant {
@@ -181,16 +181,16 @@ class PersistLocal {
 
 	indicies_restore(points_out: boolean) {
 		const count = h.predicates_byDirection(points_out).length;
-		let states: Array<Page_Index> = [];
+		let page_indices: Array<Page_Index> = [];
 		for (let index = 0; index <= count; index += 1) {
-			states[index] = new Page_Index();
+			page_indices[index] = new Page_Index();
 		}
-		let clusters_state = get(s_clusters);
-		if (!clusters_state) {
-			clusters_state = new Page_Indices();
+		let clusters_page_indices = get(s_clusters_page_indices);
+		if (!clusters_page_indices) {
+			clusters_page_indices = new Page_Indices();
 		}
-		clusters_state.setStates_for(states, points_out);
-		s_clusters.set(clusters_state);
+		clusters_page_indices.set_indices_for(page_indices, points_out);
+		s_clusters_page_indices.set(clusters_page_indices);
 	}
 
 	focus_restore() {

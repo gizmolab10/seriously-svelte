@@ -4,7 +4,7 @@ export default class Constants {
 	dot_size = 13;
 	debug_size = 20;
 	width_max = 200;
-	necklace_gap = 15;
+	necklace_widget_padding = 15;
 	line_stretch = 22;
 	height_banner = 35;
 	ring_thickness = 30;

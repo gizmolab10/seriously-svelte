@@ -85,7 +85,7 @@
 	}
 
 	function canAlterTitle(event) {
-		var canAlter = (event instanceof KeyboardEvent) && !event.altKey && !event.shiftKey && !event.code.startsWith("Cluster_Line");
+		var canAlter = (event instanceof KeyboardEvent) && !event.altKey && !event.shiftKey && !event.code.startsWith("Cluster_Label");
 		if (canAlter && event.metaKey) {
 			canAlter = false;
 		}
