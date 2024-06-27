@@ -17,12 +17,12 @@ export default class Cluster_Map  {
 	ancestries: Array<Ancestry> = [];			// ditto
 	outside_scrollArc_radius = 0;
 	inside_scrollArc_radius = 0;
-	cluster_ancestry!: Ancestry;
+	focus_ancestry!: Ancestry;
 	outside_ring_radius = 0;
 	inside_ring_radius = 0;
 	clusters_center: Point;
 	predicate: Predicate;
-	angle_ofLine: number;
+	fork_angle: number;
 	fork_backoff: number;
 	fork_radius: number;
 	points_out: boolean;
@@ -30,36 +30,40 @@ export default class Cluster_Map  {
 	fork_center: Point;
 	angle_ofThumb = 0;
 	angle_atStart = 0;
+	label_tip: Point;
 	angle_atEnd = 0;
-	line_tip: Point;
+	fork_tip: Point;
 	count: number;
 	total: number;
 
 	constructor(total: number, ancestries: Array<Ancestry>, predicate: Predicate, points_out: boolean) {
 		const outside_ring_radius = get(s_cluster_arc_radius)
-		const scroll_ring_thickness = k.ring_thickness / 3;
-		const inside_scrollArc_radius = outside_ring_radius - scroll_ring_thickness * 2;
+		const scroll_arc_thickness = k.ring_thickness / 3;
 		const center = Point.square(outside_ring_radius);
+		const inside_scrollArc_radius = outside_ring_radius - scroll_arc_thickness * 2;
 		const fork_raw_radius = k.ring_thickness * this.fork_radius_multiplier(ancestries.length);
-		const line_angle = this.lineAngle_for(predicate, points_out) ?? 0;
 		const fork_backoff = this.fork_adjustment(fork_raw_radius, inside_scrollArc_radius);
-		const fork_fromCenter = Point.fromPolar(inside_scrollArc_radius, -line_angle);
+		const fork_angle = this.lineAngle_for(predicate, points_out) ?? 0;
+		const fork_fromCenter = Point.fromPolar(inside_scrollArc_radius, -fork_angle);
 		const fork_center = center.offsetBy(fork_fromCenter);
 		const fork_radius = fork_raw_radius - fork_backoff;
-		const line_radius = inside_scrollArc_radius - scroll_ring_thickness - fork_radius;
+		const semi_minor = inside_scrollArc_radius / 2;
+		const semi_major = inside_scrollArc_radius - fork_radius - k.dot_size / 2;
+		const ellipse_axes = new Point(semi_minor, semi_major);
 
-		this.outside_scrollArc_radius = inside_scrollArc_radius + scroll_ring_thickness;
+		this.fork_tip = Point.fromPolar(inside_scrollArc_radius - fork_radius, -fork_angle);
+		this.outside_scrollArc_radius = inside_scrollArc_radius + scroll_arc_thickness;
+		this.label_tip = ellipse_axes.ellipse_coordiates_forAngle(fork_angle);
 		this.center = get(s_graphRect).size.dividedInHalf.asPoint;
-		this.line_tip = Point.fromPolar(line_radius, -line_angle);
 		this.inside_scrollArc_radius = inside_scrollArc_radius;
 		this.outside_ring_radius = outside_ring_radius;
-		this.cluster_ancestry = get(s_ancestry_focus);
+		this.focus_ancestry = get(s_ancestry_focus);
 		this.fork_backoff = fork_backoff;
 		this.fork_radius = fork_radius;
 		this.fork_center = fork_center;
-		this.angle_ofLine = line_angle;
 		this.count = ancestries.length;
 		this.clusters_center = center;
+		this.fork_angle = fork_angle;
 		this.ancestries = ancestries;
 		this.points_out = points_out;
 		this.predicate = predicate;
@@ -84,7 +88,7 @@ export default class Cluster_Map  {
 				const ancestry = this.ancestries[index];
 				const childAngle = this.angle_ofChild_for(index, count, radius);
 				const childOrigin = center.offsetBy(radial.rotate_by(childAngle));
-				const map = new Widget_MapRect(IDLine.flat, new Rect(), childOrigin, ancestry, this.cluster_ancestry, childAngle); //, this.predicate.kind);
+				const map = new Widget_MapRect(IDLine.flat, new Rect(), childOrigin, ancestry, this.focus_ancestry, childAngle); //, this.predicate.kind);
 				this.widget_maps.push(map);
 				index += 1;
 			}
@@ -102,26 +106,25 @@ export default class Cluster_Map  {
 
 	angle_ofChild_for(index: number, count: number, radius: number): number {
 		const max = count - 1;
-		const row = (max / 2) - index;					// row centered around zero
+		const row = (max / 2) - index;						// row centered around zero
 		const radial = new Point(radius, 0);
-		const angle_ofLine = this.angle_ofLine;			// points at middle widget
-		const rotated = radial.rotate_by(angle_ofLine);
-		const startY = rotated.y;						// height of angle_ofLine
-		let y = startY + (row * k.row_height);			// height of row
+		const rotated = radial.rotate_by(this.fork_angle);	// points at middle widget
+		const startY = rotated.y;							// height of fork_angle
+		let y = startY + (row * k.row_height);				// height of row
 		let unfit = false;
 		if (Math.abs(y) > radius) {
 			unfit = true;
 			if (y > 0) {
-				y = radius - (y % radius);				// swing around bottom
+				y = radius - (y % radius);					// swing around bottom
 			} else {
-				y = (-y % radius) - radius;				// swing around top
+				y = (-y % radius) - radius;					// swing around top
 			}
 		}
-		let child_angle = Math.asin(y / radius);		// negate arc sign for clockwise
+		let child_angle = Math.asin(y / radius);			// negate arc sign for clockwise
 		if (unfit != rotated.x < 0) {
-			child_angle = Angle.half - child_angle		// compensate for arc sin limitations
+			child_angle = Angle.half - child_angle			// compensate for arc sin limitations
 		}
-		child_angle = u.normalized_angle(child_angle);
+		child_angle = new Angle(child_angle).normalized_angle;
 		if (index == 0) {
 			if (startY < 0) {
 				this.angle_atEnd = child_angle;
@@ -141,14 +144,14 @@ export default class Cluster_Map  {
 
 	lineAngle_for(predicate: Predicate, points_out: boolean): number | null {
 		// returns one of three angles: 1) necklace_angle 2) opposite+ 3) opposite-tweak
-		const tweak = Math.PI / 4;		// 45 degrees: added or subtracted -> opposite
+		const tweak = Math.PI / 4;			// 45 degrees: added or subtracted -> opposite
 		const necklace_angle = get(s_ring_angle);
 		const opposite = necklace_angle + Angle.half;
 		const raw = predicate.isBidirectional ?
 			opposite - tweak :
 			points_out ? necklace_angle :	// one directional, use global
 			opposite + tweak;
-		return u.normalized_angle(-raw);
+		return new Angle(-raw).normalized_angle;
 	}
 	
 	static readonly $_SVGS_$: unique symbol;
@@ -167,13 +170,13 @@ export default class Cluster_Map  {
 	}
 
 	get main_svgPaths(): Array<string> {
-		const angle_tiltsUp = u.angle_tiltsUp(this.angle_ofLine);
+		const angle_tiltsUp = new Angle(this.fork_angle).angle_tiltsUp;
 		const big_inner_svgPath = this.big_svgPath(this.inside_scrollArc_radius, angle_tiltsUp);
 		return [big_inner_svgPath];
 	}
 
 	get outer_svgPaths(): Array<string> {
-		const angle_tiltsUp = u.angle_tiltsUp(this.angle_ofLine);
+		const angle_tiltsUp = new Angle(this.fork_angle).angle_tiltsUp;
 		const big_outer_svgPath = this.big_svgPath(this.outside_scrollArc_radius, angle_tiltsUp);
 		const end_small_svgPath = this.small_svgPath(this.angle_atEnd, angle_tiltsUp, false);
 		const start_small_svgPath = this.small_svgPath(this.angle_atStart, angle_tiltsUp, true);
@@ -205,7 +208,7 @@ export default class Cluster_Map  {
 
 	fork_svgPath(forwards: boolean) {
 		const fork_radius = this.fork_radius;
-		const angle = -this.angle_ofLine;
+		const angle = -this.fork_angle;
 		const y = fork_radius * (forwards ? -1 : 1);
 		const x = this.inside_scrollArc_radius - fork_radius - this.fork_backoff;
 		const origin = new Point(x, y).rotate_by(angle);
@@ -214,13 +217,13 @@ export default class Cluster_Map  {
 			angle - (forwards ? 0 : Angle.quarter));
 	}
 
-	small_svgPath(arc_angle: number, x_isPositive: boolean, advance: boolean) {
+	small_svgPath(arc_angle: number, tiltsUp: boolean, advance: boolean) {
 		const center = Point.square(this.outside_ring_radius);
 		const arc_small_radius = k.ring_thickness / 6;
-		const clockwise = x_isPositive == advance;
+		const clockwise = tiltsUp == advance;
 		const ratio = clockwise ? -1 : 1;
-		const angle_start = u.normalized_angle(arc_angle + (Math.PI * ratio));
-		const angle_end = u.normalized_angle(arc_angle + (Math.PI * (ratio - 1)));
+		const angle_start = new Angle(arc_angle + (Math.PI * ratio)).normalized_angle;
+		const angle_end = new Angle(arc_angle + (Math.PI * (ratio - 1))).normalized_angle;
 		const distanceTo_arc_small_center = this.inside_scrollArc_radius + arc_small_radius;
 		const center_small = center.offsetBy(Point.fromPolar(distanceTo_arc_small_center, arc_angle));
 		return svgPaths.arc(center_small, arc_small_radius, clockwise ? 0 : 1, angle_start, angle_end);

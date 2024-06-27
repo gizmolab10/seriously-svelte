@@ -1,11 +1,12 @@
 import { PredicateKind, GraphRelations, AlterationType, SvelteComponentType } from './Enumerations';
-import { Angle, IDTrait, ZIndex, Quadrant, IDButton, IDBrowser, ElementType } from './Enumerations';
+import { IDTrait, ZIndex, IDButton, IDBrowser, ElementType } from './Enumerations';
 import { debugReact, DebugReact, ReactKind } from '../debug/DebugReact';
 import type { Handle_Mouse_State, Create_Mouse_State } from './Types';
 import { IDPersistant, persistLocal } from '../managers/PersistLocal';
 import { onMount, onDestroy, setContext, getContext } from 'svelte';
 import { CreationOptions, IDLine, IDTool } from './Enumerations';
 import { Direction, svgPaths } from '../geometry/SVG_Paths';
+import { Quadrant, Orientation } from '../geometry/Angle';
 import { debug, Debug, DebugFlag } from '../debug/Debug';
 import { Rect, Size, Point } from '../geometry/Geometry';
 import { signals, IDSignal } from '../events/Signals';
@@ -27,8 +28,8 @@ import { k } from './Constants';
 import Clusters_Geometry from '../geometry/Clusters_Geometry';
 import Alteration_State from '../state/Alteration_State';
 import Widget_MapRect from '../geometry/Widget_MapRect';
-import Cluster_Map from '../geometry/Cluster_Map';
 import Tree_Geometry from '../geometry/Tree_Geometry';
+import Cluster_Map from '../geometry/Cluster_Map';
 import Expand_State from '../state/Expand_State';
 import Page_Indices from '../state/Page_Indices';
 import ElementState from '../state/ElementState';
@@ -39,6 +40,7 @@ import SvelteWrapper from './SvelteWrapper';
 import Ancestry from '../managers/Ancestry';
 import Predicate from '../data/Predicate';
 import Grabs from '../managers/Grabs';
+import Angle from '../geometry/Angle';
 import Access from '../data/Access';
 import interact from 'interactjs';
 import Thing from '../data/Thing';
@@ -49,11 +51,12 @@ import './Extensions';
 
 export {
 	Expand_State, Title_State,
+	Angle, Quadrant, Orientation,
 	Tree_Geometry, Widget_MapRect,
+	Cluster_Map, Clusters_Geometry,
 	Rect, Size, Point, svgPaths, Direction,
 	muuri, interact, createPopper, transparentize,
 	e, g, k, s, u, builds, signals, SeriouslyRange,
-	Angle, Quadrant, Cluster_Map, Clusters_Geometry,
 	Mouse_State, Handle_Mouse_State, Create_Mouse_State,
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Grabs, Ancestry, Hierarchy, dbDispatch, persistLocal,

@@ -1,7 +1,8 @@
 
-import { Quadrant } from '../common/Enumerations';
+import { Quadrant, Orientation } from '../geometry/Angle';
 import type { SvelteComponent } from 'svelte';
 import { u } from '../common/Utilities';
+import Angle from '../geometry/Angle';
 
 export class Point {
 	x: number;
@@ -61,6 +62,26 @@ export class Point {
 		);
 	}
 
+	ellipse_coordiates_forAngle(angle: number): Point {
+		// this.x is distance from center to ellipse along the positive x-axis
+		// this.y				same				 along the positive y-axis
+		const cos = Math.cos(angle);
+		const sin = Math.sin(angle);
+		return new Point(
+			Math.abs(this.x) * cos,
+			Math.abs(this.y) * sin);
+	}
+
+	get quadrant_ofPoint(): Quadrant {
+		const x = this.x;
+		const y = this.y;
+		if		  (x >= 0 && y <  0) { return Quadrant.upperRight;
+		} else if (x >= 0 && y >= 0) { return Quadrant.lowerRight;
+		} else if (x <  0 && y <  0) { return Quadrant.upperLeft;
+		} else						 { return Quadrant.lowerLeft;
+		}
+	}
+
 	static origin_inWindowCoordinates_for(element: HTMLElement): Point {
 		let e: HTMLElement | null = element;
 		let point = Point.zero;
@@ -69,6 +90,17 @@ export class Point {
 			e = e.offsetParent as HTMLElement;
 		}
 		return point;
+	}
+
+	get orientation_ofVector(): Orientation {
+		let quadrant = new Angle(this.angle).quadrant_ofAngle;
+		const isFirstEighth = Angle.quarter.normalize(this.angle) < (Math.PI / 4);
+		switch (quadrant) {
+			case Quadrant.upperRight: return isFirstEighth ? Orientation.right : Orientation.up;
+			case Quadrant.upperLeft:  return isFirstEighth ? Orientation.up    : Orientation.left;
+			case Quadrant.lowerLeft:  return isFirstEighth ? Orientation.left  : Orientation.down;
+			default:				  return isFirstEighth ? Orientation.down  : Orientation.right;
+		}
 	}
 	
 }
@@ -147,7 +179,7 @@ export class Rect {
 	}
 
 	corners_forAngle(angle: number): [Point, Point] {
-		switch (u.quadrant_ofAngle(angle)) {
+		switch (new Angle(angle).quadrant_ofAngle) {
 			case Quadrant.upperRight: return [this.bottomLeft, this.topRight];
 			case Quadrant.lowerLeft:  return [this.topRight, this.bottomLeft];
 			case Quadrant.upperLeft:  return [this.extent, this.origin];

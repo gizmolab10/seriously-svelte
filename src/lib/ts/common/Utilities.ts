@@ -1,9 +1,11 @@
 import { s_graphRect, s_mouse_location, s_user_graphOffset } from '../state/ReactiveState';
-import { Angle, Quadrant, IDBrowser } from './Enumerations';
 import { s_thing_fontFamily } from '../state/ReactiveState';
 import Identifiable from '../data/Identifiable';
+import { Quadrant } from '../geometry/Angle';
 import { Point } from '../geometry/Geometry';
 import Ancestry from '../managers/Ancestry';
+import { IDBrowser } from './Enumerations';
+import Angle from '../geometry/Angle';
 import { get } from 'svelte/store';
 import { k } from './Constants';
 
@@ -11,24 +13,12 @@ class Utilities {
 	noop() {}
 	ignore(event: Event) {}
 	roundToEven(n: number): number{ return Math.round(n / 2) * 2; }
-	normalized_angle(angle: number) { return Angle.full.normalize(angle); }
 	pointFor_mouseEvent(e: MouseEvent) { return new Point(e.clientX, e.clientY); }
 	concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return [...a, ...b]; }
 	location_ofMouseEvent(event: MouseEvent) { return new Point(event.clientX, event.clientY); }
 	strip_invalid(array: Array<any>): Array<any> { return this.strip_identifiableDuplicates(this.strip_falsies(array)); }
 	sort_byOrder(array: Array<Ancestry>) { return array.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
-	quadrant_referenceAngle(angle: number): number { return this.referenceAngle_ofQuadrant(this.quadrant_ofAngle(angle)); }
 	uniquely_concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return this.strip_invalid(this.concatenateArrays(a, b)); }
-		
-	degrees_of(angle: number) {
-		const degrees = this.normalized_angle(angle) * 180 / Angle.half;
-		return this.formatter_toFixed(1).format(degrees);
-	}
-
-	angle_tiltsUp(rawAngle: number): boolean {
-		const angle = this.quadrant_ofAngle(rawAngle);
-		return [Quadrant.upperRight, Quadrant.lowerLeft].includes(angle);
-	}
 
 	apply(startStop: (flag: boolean) => void, callback: () => void): void {
 		startStop(true);
@@ -82,45 +72,6 @@ class Utilities {
 		return null
 	}
 
-	referenceAngle_ofQuadrant(quadrant: Quadrant): number {
-		switch (quadrant) {
-			case Quadrant.lowerRight: return Angle.threeQuarters;
-			case Quadrant.upperLeft:  return Angle.quarter;
-			case Quadrant.lowerLeft:  return Angle.half;
-			default:				  return 0;
-		}
-	}
-
-	angle_hasPositiveX(angle: number): boolean {
-		switch(this.quadrant_ofAngle(angle)) {
-			case Quadrant.upperRight: return true;
-			case Quadrant.lowerRight: return true;
-			default: return false;
-		}
-	}
-
-	quadrant_ofAngle(angle: number): Quadrant {
-	
-		// angles begin at 3 o'clock & rotate up (counter-clockwise)
-	
-		const normalized = this.normalized_angle(angle);
-		let quadrant = Quadrant.lowerRight;
-		if (normalized.isBetween(0,				Angle.quarter,		 true)) { quadrant = Quadrant.upperRight; }
-		if (normalized.isBetween(Angle.quarter, Angle.half,			 true)) { quadrant = Quadrant.upperLeft; }
-		if (normalized.isBetween(Angle.half,	Angle.threeQuarters, true)) { quadrant = Quadrant.lowerLeft; }
-		return quadrant;
-	}
-	
-	isAlmost_horizontal(angle: number, almost: number = (Angle.half / 10)): boolean {
-		for (const horizontal of [Angle.half, Angle.full]) {
-			const delta = this.normalized_angle(angle - horizontal);
-			if (delta.isClocklyBetween(-almost, almost, Angle.full)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	strip_hidDuplicates(ancestries: Array<Ancestry>) {
 		let ancestriesByHID: {[hash: number]: Ancestry} = {};
 		for (const ancestry of ancestries) {
@@ -167,13 +118,12 @@ class Utilities {
 		return Object.values(ancestriesByHID);
 	}
 
-	quadrant_ofPoint(point: Point): Quadrant {
-		const x = point.x;
-		const y = point.y;
-		if		  (x >= 0 && y <  0) { return Quadrant.upperRight;
-		} else if (x >= 0 && y >= 0) { return Quadrant.lowerRight;
-		} else if (x <  0 && y <  0) { return Quadrant.upperLeft;
-		} else						 { return Quadrant.lowerLeft;
+	referenceAngle_ofQuadrant(quadrant: Quadrant): number {
+		switch (quadrant) {
+			case Quadrant.lowerRight: return Angle.threeQuarters;
+			case Quadrant.upperLeft:  return Angle.quarter;
+			case Quadrant.lowerLeft:  return Angle.half;
+			default:				  return 0;
 		}
 	}
 

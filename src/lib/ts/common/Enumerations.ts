@@ -54,21 +54,6 @@ export enum SvelteComponentType {
 	ring	= 'ring',
 }
 
-export enum Quadrant {
-	upperRight = 'ur',	// threeQuarters
-	lowerLeft  = 'll',	// quarter
-	upperLeft  = 'ul',	// half
-	lowerRight = 'lr'	// 0
-}
-
-export enum Angle {						// angles begin at 3 o'clock & rotate up (counter-clockwise)
-	zero = 0,							// far right (3 o'clock)
-	full = Math.PI * 2,					// same as (normalizes to) zero
-	quarter = Math.PI / 2,				// zenith (12 o'clock)
-	half = Math.PI,						// far left (9 o'clock)
-	threeQuarters = Math.PI * 3 / 2,	// nadir (6 o'clock)
-}
-
 export enum ElementType {
 	generic	= 'generic',
 	advance	= 'advance',
