@@ -16,6 +16,8 @@
 	// drawn by scrolling ring, which is drawn by clusters graph
 	// CHANGE: drawn by clusters (which is drawn by clusters graph)?
 
+	//  && scrolling_ringState.isHovering
+
 </script>
 
 <svg class='cluster-scroll-arc' 
@@ -41,7 +43,7 @@
 				<path stroke={color} fill=transparent d={forkPath}/>
 			{/each}
 		{/if}
-		{#if (cluster_map.shown < cluster_map.total) && scrolling_ringState.isHovering}
+		{#if (cluster_map.shown < cluster_map.total)}
 			<path stroke={color} fill={k.color_background} d={cluster_map.thumb_svgPath}/>
 		{/if}
 </svg>

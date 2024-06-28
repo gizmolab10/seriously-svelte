@@ -28,7 +28,6 @@ export default class Cluster_Map  {
 	fork_angle: number;
 	label_tip: Point;
 	fork_tip: Point;
-	thumb_angle = 0;
 	start_angle = 0;
 	end_angle = 0;
 	shown: number;
@@ -69,8 +68,8 @@ export default class Cluster_Map  {
 	destructor() { this.ancestries = []; }
 	get scroll_arc_thickness(): number { return k.ring_thickness / 3; };
 	get thumb_radius(): number { return this.scroll_arc_thickness * 0.9; };
-	get fork_center(): Point { return this.center_at(this.inside_arc_radius); }
-	get thumb_center(): Point { return this.center_at(this.thumb_arc_radius); }
+	get fork_center(): Point { return this.center_at(this.inside_arc_radius, -this.fork_angle); }
+	get thumb_center(): Point { return this.center_at(this.thumb_arc_radius, this.thumb_angle); }
 	get thumb_arc_radius(): number { return this.inside_arc_radius + this.scroll_arc_thickness / 2.5; };
 	get page_index(): number { return get(s_clusters_page_indices).index_for(this.points_out, this.predicate); }
 	set_page_index(index: number) { s_clusters_page_indices.set(get(s_clusters_page_indices).setIndex_for(index, this.points_out, this.predicate)); }
@@ -104,6 +103,10 @@ export default class Cluster_Map  {
 	}
 	
 	static readonly $_ANGLES_$: unique symbol;
+
+	get thumb_angle(): number {
+		return this.start_angle + (this.end_angle - this.start_angle) / this.shown * this.page_index;
+	}
 
 	angle_ofChild_for(index: number, radius: number): number {
 		const max = this.shown - 1;
@@ -139,7 +142,6 @@ export default class Cluster_Map  {
 				this.start_angle = child_angle;
 			}
 		}
-		this.thumb_angle = (this.start_angle + this.end_angle) / 2;
 		return child_angle;
 	}
 
@@ -155,8 +157,8 @@ export default class Cluster_Map  {
 		return new Angle(-raw).normalized_angle;
 	}
 
-	center_at(radius: number): Point {
-		return Point.square(this.outside_ring_radius).offsetBy(Point.fromPolar(radius, -this.fork_angle));
+	center_at(radius: number, angle: number): Point {
+		return Point.square(this.outside_ring_radius).offsetBy(Point.fromPolar(radius, angle));
 	}
 	
 	static readonly $_SVGS_$: unique symbol;
