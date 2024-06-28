@@ -141,9 +141,9 @@
 		</Mouse_Responder>
 		<div class='lines-and-arcs'>
 			{#each geometry.cluster_map as cluster_map}
-				{#if cluster_map.count > 0}
+				{#if cluster_map.shown > 0}
 					<Cluster_Label cluster_map={cluster_map} center={center} color={color}/>
-					{#if cluster_map.count > 1}
+					{#if cluster_map.shown > 1}
 						<Cluster_ScrollArc
 							center={center}
 							cluster_map={cluster_map}

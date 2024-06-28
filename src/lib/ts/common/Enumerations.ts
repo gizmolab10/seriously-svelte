@@ -13,13 +13,6 @@ export enum PredicateKind {
 	contains  = 'contains',
 }
 
-export enum ArcPart {
-	outer = 'outer',
-	main  = 'main',
-	fork  = 'fork',
-	gap	  = 'gap',
-}
-
 export enum GraphRelations {
 	children = 'children',
 	parents	 = 'parents',
