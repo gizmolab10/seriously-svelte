@@ -1,4 +1,4 @@
-import { Predicate, AlterationType } from '../common/GlobalImports';
+import { Predicate, AlterationType } from '../common/Global_Imports';
 
 export default class Alteration_State {
 	alteration: AlterationType;

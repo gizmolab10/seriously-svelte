@@ -1,4 +1,4 @@
-export class SeriouslyRange {
+export class Seriously_Range {
   start: number;
   end: number;
 

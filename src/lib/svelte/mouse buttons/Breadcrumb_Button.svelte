@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { k, s, u, Point, Thing, IDTool, onMount, signals, dbDispatch, ElementType, ElementState, transparentize } from '../../ts/common/GlobalImports';
-	import { s_thing_changed, s_ancestry_focus } from '../../ts/state/ReactiveState';
+	import { k, s, u, Point, Thing, IDTool, onMount, signals, dbDispatch, ElementType, Element_State, transparentize } from '../../ts/common/Global_Imports';
+	import { s_thing_changed, s_ancestry_focus } from '../../ts/state/Reactive_State';
 	import Button from './Button.svelte';
 	export let left = 0;
     export let ancestry;
@@ -12,7 +12,7 @@
 	let height = k.default_buttonSize;
 	let thing: Thing = ancestry.thing;
 	let title: string = thing.title;
-	let elementState: ElementState;
+	let element_state: Element_State;
 	let colorStyles = k.empty;
 	let style = k.empty;
 	let name = k.empty;
@@ -27,7 +27,7 @@
 		width = thing.titleWidth;
 		name = `crumb (for ${title ?? 'unknown'})`
 		center = new Point(left + width / 2, height - 1);
-		elementState = s.elementState_for(ancestry, elementType, IDTool.none);
+		element_state = s.elementState_for(ancestry, elementType, IDTool.none);
 		updateColors();
 	}
 
@@ -56,7 +56,7 @@
 			${colorStyles};
 			border:${border};
 			border-radius: 1em;
-			cursor:{elementState.cursor};
+			cursor:{element_state.cursor};
 		`.removeWhiteSpace();
 	}
 
@@ -69,8 +69,8 @@
 					border = `${borderStyle} ${thing.color}`;
 				}
 				const cursor = !ancestry.isGrabbed && ancestry.hasChildRelationships ? 'pointer' : k.cursor_default;
-				elementState.set_forHovering(thing.color, cursor);
-				elementState.isOut = mouseState.isOut;
+				element_state.set_forHovering(thing.color, cursor);
+				element_state.isOut = mouseState.isOut;
 				updateStyle();
 				rebuilds += 1;
 			} else if (mouseState.isUp) {
@@ -92,8 +92,8 @@
 		center={center}
 		closure={closure}
 		position='absolute'
-		elementState={elementState}>
-		<div style='padding:1px 0px 0px 0px; cursor:{elementState.cursor};'>
+		element_state={element_state}>
+		<div style='padding:1px 0px 0px 0px; cursor:{element_state.cursor};'>
 			{title.injectElipsisAt()}
 		</div>
 	</Button>

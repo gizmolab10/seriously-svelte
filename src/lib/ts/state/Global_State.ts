@@ -1,9 +1,9 @@
-import { e, k, u, get, Rect, Size, Point, debug, debugReact, dbDispatch } from '../common/GlobalImports';
-import { s_graphRect, s_show_details, s_scale_factor, s_thing_changed } from './ReactiveState';
-import { persistLocal, IDPersistant, SvelteWrapper } from '../common/GlobalImports';
+import { e, k, u, get, Rect, Size, Point, debug, debugReact, dbDispatch } from '../common/Global_Imports';
+import { s_graphRect, s_show_details, s_scale_factor, s_thing_changed } from './Reactive_State';
+import { persistLocal, IDPersistant, Svelte_Wrapper } from '../common/Global_Imports';
 
 class Global_State {
-	mouseUp_subscribers: {[type: string]: Array<SvelteWrapper>} = {};
+	mouseUp_subscribers: {[type: string]: Array<Svelte_Wrapper>} = {};
 
 	setup() {
 		persistLocal.restore();

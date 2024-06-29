@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, onMount } from '../../ts/common/GlobalImports';
+	import { k, u, onMount } from '../../ts/common/Global_Imports';
 	export let idSelected = null;
 	export let fitWithin = 100;
 	export let menuItems;

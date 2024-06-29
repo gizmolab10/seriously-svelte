@@ -1,4 +1,4 @@
-import { Rect } from '../common/GlobalImports';
+import { Rect } from '../common/Global_Imports';
 
 export default class Mouse_State {
 	element: HTMLElement | null;	// null means mouse responder
@@ -15,7 +15,7 @@ export default class Mouse_State {
 	//////////////////////////////////////////////////
 	//	encapsulate relevant event properties		//
 	//	that buttons and widgets pay attention to	//
-	//	isOut is also reflected in ElementState		//
+	//	isOut is also reflected in Element_State		//
 	//////////////////////////////////////////////////
 
 	constructor(event: MouseEvent | null, element: HTMLElement | null, isHover: boolean, isOut: boolean, isDown: boolean, isUp: boolean, isDouble: boolean, isLong: boolean, isMove: boolean) {

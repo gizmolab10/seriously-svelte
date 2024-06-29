@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import { Rect } from '../../ts/common/GlobalImports'
+    import { Rect } from '../../ts/common/Global_Imports'
     export let half = false;
     export let color;
     export let rect;

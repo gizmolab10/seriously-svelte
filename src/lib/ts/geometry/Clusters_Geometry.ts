@@ -1,5 +1,5 @@
-import { k, u, get, Ancestry, Predicate, Cluster_Map, Widget_MapRect } from '../common/GlobalImports';
-import { s_clusters_page_indices, s_ancestry_focus, s_cluster_arc_radius } from '../state/ReactiveState';
+import { k, u, get, Ancestry, Predicate, Cluster_Map, Widget_MapRect } from '../common/Global_Imports';
+import { s_clusters_page_indices, s_ancestry_focus, s_cluster_arc_radius } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
 
 export default class Clusters_Geometry {

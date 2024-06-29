@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { s_thing_changed, s_layout_asClusters, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/ReactiveState';
-	import { k, s, u, Rect, Size, Point, Thing, debug, ZIndex, IDTool, onMount } from '../../ts/common/GlobalImports';
-	import { createPopper, SvelteWrapper, AlterationType, SvelteComponentType } from '../../ts/common/GlobalImports';
-	import { signals, svgPaths, Direction, ElementType, dbDispatch } from '../../ts/common/GlobalImports';
+	import { s_thing_changed, s_layout_asClusters, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/Reactive_State';
+	import { k, s, u, Rect, Size, Point, Thing, debug, ZIndex, IDTool, onMount } from '../../ts/common/Global_Imports';
+	import { createPopper, Svelte_Wrapper, AlterationType, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { signals, svgPaths, Direction, ElementType, dbDispatch } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Tooltip from '../kit/Tooltip.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -12,8 +12,8 @@
     export let ancestry;
 	const radius = k.dot_size;
 	const diameter = radius * 2;
-	const elementState = s.elementState_forName(name);		// survives onDestroy, created by widget
-	let dragWrapper = SvelteWrapper;
+	const element_state = s.elementState_forName(name);		// survives onDestroy, created by widget
+	let dragWrapper = Svelte_Wrapper;
 	let isAltering = false;
 	let isGrabbed = false;
 	let isHovering = true;
@@ -52,8 +52,8 @@
 
 	$: {
 		if (!!dotDrag) {
-			dragWrapper = new SvelteWrapper(dotDrag, handle_mouseData, ancestry.idHashed, SvelteComponentType.drag);
-			elementState.set_forHovering(ancestry.thing.color, 'pointer');
+			dragWrapper = new Svelte_Wrapper(dotDrag, handle_mouseData, ancestry.idHashed, SvelteComponentType.drag);
+			element_state.set_forHovering(ancestry.thing.color, 'pointer');
 		}
 	}
 
@@ -98,9 +98,9 @@
 		isHovering = !isOut;
 		const usePointer = (!ancestry.isGrabbed || s_layout_asClusters) && ancestry.hasChildRelationships ;
 		const cursor = usePointer ? 'pointer' : k.cursor_default;
-		if (!!elementState && !!thing) {
-			elementState.set_forHovering(thing.color, cursor);
-			elementState.isOut = isOut;
+		if (!!element_state && !!thing) {
+			element_state.set_forHovering(thing.color, cursor);
+			element_state.isOut = isOut;
 		}
 		redraws += 1;
 	}
@@ -119,19 +119,19 @@
 		return false;
 	}
 
-	// <Tooltip color={elementState.stroke} bind:this={tooltip}>This is a drag dot</Tooltip>
+	// <Tooltip color={element_state.stroke} bind:this={tooltip}>This is a drag dot</Tooltip>
 	// on:contextmenu={handle_context_menu}
 
 </script>
 
 {#key rebuilds}
-	{#if elementState}
+	{#if element_state}
 		<Mouse_Responder
 			width={size}
 			height={size}
 			center={center}
 			closure={closure}
-			name={elementState.name}>
+			name={element_state.name}>
 			<button class='dot'
 				bind:this={dotDrag}
 				id={'button-for-' + name}
@@ -158,7 +158,7 @@
 							width={size}
 							height={size}
 							svg_path={dragDotSVGPath}
-							fill={elementState.fill}
+							fill={element_state.fill}
 							stroke={thing?.color}
 						/>
 						{#if tinyDotsSVGPath}
@@ -166,8 +166,8 @@
 								width={size}
 								height={size}
 								svg_path={tinyDotsSVGPath}
-								fill={elementState.stroke}
-								stroke={elementState.stroke}
+								fill={element_state.stroke}
+								stroke={element_state.stroke}
 							/>
 						{/if}
 						{#if isRelatedSVGPath}

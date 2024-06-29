@@ -1,11 +1,11 @@
 <script lang='ts'>
-	import { g, k, s, u, get, Rect, Size, Point, Thing, debug, ZIndex, signals, onMount, Ancestry } from '../../ts/common/GlobalImports';
-	import { IDButton, Hierarchy, IDPersistant, dbDispatch, debugReact, setContext, persistLocal } from '../../ts/common/GlobalImports';
-	import { s_isBusy, s_db_type, s_graphRect, s_id_popupView, s_title_editing, s_show_details } from '../../ts/state/ReactiveState';
-	import { s_things_arrived, s_ancestry_focus, s_user_graphOffset, s_layout_asClusters } from '../../ts/state/ReactiveState';
+	import { g, k, s, u, get, Rect, Size, Point, Thing, debug, ZIndex, signals, onMount, Ancestry } from '../../ts/common/Global_Imports';
+	import { IDButton, Hierarchy, IDPersistant, dbDispatch, debugReact, setContext, persistLocal } from '../../ts/common/Global_Imports';
+	import { s_isBusy, s_db_type, s_graphRect, s_id_popupView, s_title_editing, s_show_details } from '../../ts/state/Reactive_State';
+	import { s_things_arrived, s_ancestry_focus, s_user_graphOffset, s_layout_asClusters } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Clusters_Graph from '../clusters/Clusters_Graph.svelte';
-	import TitleEditor from '../widget/TitleEditor.svelte';
+	import Title_Editor from '../widget/Title_Editor.svelte';
 	import Breadcrumbs from '../panel/Breadcrumbs.svelte';
 	import Tree_Graph from '../tree/Tree_Graph.svelte';
 	import { DBType } from '../../ts/db/DBInterface';

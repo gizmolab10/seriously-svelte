@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { dbDispatch, SeriouslyRange, SvelteWrapper, SvelteComponentType } from '../../ts/common/GlobalImports';
-	import { k, u, Point, Thing, debug, Angle, ZIndex, onMount, signals } from '../../ts/common/GlobalImports';
-	import { s_thing_changed, s_title_editing, s_ancestries_grabbed } from '../../ts/state/ReactiveState';
-	import { s_layout_asClusters, s_ancestry_editingTools } from '../../ts/state/ReactiveState';
+	import { dbDispatch, Seriously_Range, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { k, u, Point, Thing, debug, Angle, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
+	import { s_thing_changed, s_title_editing, s_ancestries_grabbed } from '../../ts/state/Reactive_State';
+	import { s_layout_asClusters, s_ancestry_editingTools } from '../../ts/state/Reactive_State';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
 	export let forward = true;
@@ -10,7 +10,7 @@
 	let padding = `0px 0px 0px 8.5px`;	// 8.5 over to make room for drag dot
 	let thingTitle = ancestry?.thing?.title ?? k.empty;
     let color = ancestry.thing?.color;
-	let titleWrapper: SvelteWrapper;
+	let titleWrapper: Svelte_Wrapper;
 	let originalTitle = k.empty;
 	let cursorStyle = k.empty;
 	let mouse_click_timer;
@@ -58,7 +58,7 @@
 
 	$: {
 		if (input && !titleWrapper) {
-			titleWrapper = new SvelteWrapper(input, handle_mouseData, ancestry.idHashed, SvelteComponentType.title);
+			titleWrapper = new Svelte_Wrapper(input, handle_mouseData, ancestry.idHashed, SvelteComponentType.title);
 		}
 	}
 
@@ -214,7 +214,7 @@
 		if (input && !!ancestry) {
 			const end = input.selectionEnd;
 			const start = input.selectionStart;
-			ancestry.selectionRange = new SeriouslyRange(start, end);
+			ancestry.selectionRange = new Seriously_Range(start, end);
 		}
 	}
 

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, Point, debug, ZIndex, svgPaths } from '../../ts/common/GlobalImports'
+	import { k, u, Point, debug, ZIndex, svgPaths } from '../../ts/common/Global_Imports'
 	export let color_background = debug.lines ? 'transparent' : k.color_background;
 	export let zindex = ZIndex.dots;
 	export let center = Point.zero;

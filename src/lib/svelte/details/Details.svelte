@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { s_graphRect, s_db_loadTime } from '../../ts/state/ReactiveState';
-	import { k, u, ZIndex } from '../../ts/common/GlobalImports';
+	import { s_graphRect, s_db_loadTime } from '../../ts/state/Reactive_State';
+	import { k, u, ZIndex } from '../../ts/common/Global_Imports';
 	import Color from './Color.svelte';
 	import Data from './Data.svelte';
 </script>

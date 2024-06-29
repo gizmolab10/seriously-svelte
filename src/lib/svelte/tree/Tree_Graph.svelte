@@ -1,11 +1,11 @@
 <script lang='ts'>
-	import { g, k, s, u, Rect, Size, Point, Thing, ZIndex, debug, signals, Ancestry } from '../../ts/common/GlobalImports';
-	import { s_id_popupView, s_ancestry_editingTools, s_user_graphOffset } from '../../ts/state/ReactiveState';
-	import { IDButton, onMount, debugReact, dbDispatch, Predicate } from '../../ts/common/GlobalImports';
-	import { IDSignal, IDPersistant, ElementType, persistLocal } from '../../ts/common/GlobalImports';
-	import { s_ancestry_focus, s_graphRect, s_show_details } from '../../ts/state/ReactiveState';
-	import DotRevealFocus from '../buttons/DotRevealFocus.svelte';
-	import EditingTools from '../widget/EditingTools.svelte';
+	import { g, k, s, u, Rect, Size, Point, Thing, ZIndex, debug, signals, Ancestry } from '../../ts/common/Global_Imports';
+	import { s_id_popupView, s_ancestry_editingTools, s_user_graphOffset } from '../../ts/state/Reactive_State';
+	import { IDButton, onMount, debugReact, dbDispatch, Predicate } from '../../ts/common/Global_Imports';
+	import { IDSignal, IDPersistant, ElementType, persistLocal } from '../../ts/common/Global_Imports';
+	import { s_ancestry_focus, s_graphRect, s_show_details } from '../../ts/state/Reactive_State';
+	import Dot_RevealFocus from '../buttons/Dot_RevealFocus.svelte';
+	import Editing_Tools from '../widget/Editing_Tools.svelte';
 	import Tree_Children from './Tree_Children.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import { h } from '../../ts/db/DBDispatch';
@@ -90,12 +90,12 @@
 				{#if $s_ancestry_focus.isGrabbed}
 					<Circle radius=10 center={origin_ofFirstReveal.offsetByXY(-1, 1)} color={focus.color} thickness=1/>
 				{/if}
-				<DotRevealFocus name={revealState.name} ancestry={revealState.ancestry} center={origin_ofFirstReveal.offsetByXY(-3, 0)}/>
+				<Dot_RevealFocus name={revealState.name} ancestry={revealState.ancestry} center={origin_ofFirstReveal.offsetByXY(-3, 0)}/>
 			{/if}
 			{#if $s_ancestry_focus.isExpanded}
 				<Tree_Children ancestry={focusState.ancestry} origin={origin_ofChildren}/>
 			{/if}
 		</div>
-		<EditingTools/>
+		<Editing_Tools/>
 	{/key}
 {/if}

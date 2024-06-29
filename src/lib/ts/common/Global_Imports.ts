@@ -1,8 +1,8 @@
 import { PredicateKind, GraphRelations, AlterationType, SvelteComponentType } from './Enumerations';
-import { IDTrait, ZIndex, IDButton, IDBrowser, ElementType } from './Enumerations';
 import { debugReact, DebugReact, ReactKind } from '../debug/DebugReact';
+import { IDPersistant, persistLocal } from '../managers/Persist_Local';
+import { IDTrait, ZIndex, IDButton, IDBrowser } from './Enumerations';
 import type { Handle_Mouse_State, Create_Mouse_State } from './Types';
-import { IDPersistant, persistLocal } from '../managers/PersistLocal';
 import { onMount, onDestroy, setContext, getContext } from 'svelte';
 import { CreationOptions, IDLine, IDTool } from './Enumerations';
 import { Direction, svgPaths } from '../geometry/SVG_Paths';
@@ -11,12 +11,13 @@ import { debug, Debug, DebugFlag } from '../debug/Debug';
 import { Rect, Size, Point } from '../geometry/Geometry';
 import { signals, IDSignal } from '../events/Signals';
 import { Page_Index } from '../state/Page_Indices';
-import { SeriouslyRange } from './SeriouslyRange';
+import { Seriously_Range } from './Seriously_Range';
 import { Hierarchy } from '../managers/Hierarchy';
+import { ElementType } from '../state/UX_State';
 import type { SvelteComponent } from 'svelte';
 import { createPopper } from '@popperjs/core';
 import { dbDispatch } from '../db/DBDispatch';
-import { e } from '../events/EventDispatch';
+import { e } from '../events/Event_Dispatch';
 import { g } from '../state/Global_State';
 import { transparentize } from 'color2k';
 import { s } from '../state/UX_State';
@@ -28,15 +29,16 @@ import { k } from './Constants';
 import Clusters_Geometry from '../geometry/Clusters_Geometry';
 import Alteration_State from '../state/Alteration_State';
 import Widget_MapRect from '../geometry/Widget_MapRect';
+import Expansion_State from '../state/Expansion_State';
 import Tree_Geometry from '../geometry/Tree_Geometry';
+import Rotation_State from '../state/Rotation_State';
+import Element_State from '../state/Element_State';
 import Cluster_Map from '../geometry/Cluster_Map';
-import Expand_State from '../state/Expand_State';
 import Page_Indices from '../state/Page_Indices';
-import ElementState from '../state/ElementState';
 import Relationship from '../data/Relationship';
 import Title_State from '../state/Title_State';
 import Mouse_State from '../state/Mouse_State';
-import SvelteWrapper from './SvelteWrapper';
+import Svelte_Wrapper from './Svelte_Wrapper';
 import Ancestry from '../managers/Ancestry';
 import Predicate from '../data/Predicate';
 import Grabs from '../managers/Grabs';
@@ -50,20 +52,20 @@ import muuri from 'muuri';
 import './Extensions';
 
 export {
-	Expand_State, Title_State,
 	Angle, Quadrant, Orientation,
 	Tree_Geometry, Widget_MapRect,
 	Cluster_Map, Clusters_Geometry,
 	Rect, Size, Point, svgPaths, Direction,
+	Title_State, Rotation_State, Expansion_State,
 	muuri, interact, createPopper, transparentize,
-	e, g, k, s, u, builds, signals, SeriouslyRange,
+	e, g, k, s, u, builds, signals, Seriously_Range,
 	Mouse_State, Handle_Mouse_State, Create_Mouse_State,
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Grabs, Ancestry, Hierarchy, dbDispatch, persistLocal,
 	ZIndex, PredicateKind, GraphRelations, CreationOptions,
-	ElementState, Page_Index, Page_Indices, Alteration_State,
+	Element_State, Page_Index, Page_Indices, Alteration_State,
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactKind,
-	ElementType, AlterationType, SvelteWrapper, SvelteComponentType,
+	ElementType, AlterationType, Svelte_Wrapper, SvelteComponentType,
 	get, onMount, onDestroy, setContext, getContext, SvelteComponent,
 	IDLine, IDTool, IDTrait, IDSignal, IDButton, IDBrowser, IDPersistant,
 };

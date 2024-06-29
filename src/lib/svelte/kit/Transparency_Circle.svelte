@@ -1,5 +1,5 @@
 <script lang='ts'>
-  import { k, Point, debug, ZIndex, transparentize } from '../../ts/common/GlobalImports'
+  import { k, Point, debug, ZIndex, transparentize } from '../../ts/common/Global_Imports'
   export let color_background = debug.lines ? 'transparent' : k.color_background;
   export let zindex = ZIndex.dots;
   export let opacity = 1;

@@ -1,4 +1,4 @@
-import { Thing, Hierarchy, Relationship } from '../common/GlobalImports';
+import { Thing, Hierarchy, Relationship } from '../common/Global_Imports';
 
 export enum DBType {
 	postgres = 'postgres',

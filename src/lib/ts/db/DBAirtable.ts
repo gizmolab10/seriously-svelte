@@ -1,5 +1,5 @@
-import { k, u, debug, Thing, DebugFlag, Hierarchy, Relationship, CreationOptions } from '../common/GlobalImports';
-import { s_things_arrived } from '../state/ReactiveState';
+import { k, u, debug, Thing, DebugFlag, Hierarchy, Relationship, CreationOptions } from '../common/Global_Imports';
+import { s_things_arrived } from '../state/Reactive_State';
 import { DBType, DatumType } from '../db/DBInterface';
 import DBInterface from './DBInterface';
 import { h } from '../db/DBDispatch';

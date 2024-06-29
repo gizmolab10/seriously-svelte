@@ -1,12 +1,12 @@
-import { k, u, get, Datum, debug, IDTrait, Ancestry, Predicate } from '../common/GlobalImports';
-import { DebugFlag, dbDispatch, Relationship, SeriouslyRange } from '../common/GlobalImports';
-import { s_ancestry_focus, s_ancestries_expanded } from '../state/ReactiveState';
+import { k, u, get, Datum, debug, IDTrait, Ancestry, Predicate } from '../common/Global_Imports';
+import { DebugFlag, dbDispatch, Relationship, Seriously_Range } from '../common/Global_Imports';
+import { s_ancestry_focus, s_ancestries_expanded } from '../state/Reactive_State';
 import { idDefault } from '../data/Identifiable';
 import { h } from '../db/DBDispatch';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
-	selectionRange = new SeriouslyRange(0, 0);
+	selectionRange = new Seriously_Range(0, 0);
 	bulkRootID: string = k.empty;
 	oneAncestry!: Ancestry;
 	needsBulkFetch = false;
@@ -18,7 +18,7 @@ export default class Thing extends Datum {
 
 	constructor(baseID: string, id: string = idDefault, title = k.title_default, color = k.color_default, trait = 's', isRemotelyStored: boolean) {
 		super(dbDispatch.db.dbType, baseID, id, isRemotelyStored);
-		this.selectionRange = new SeriouslyRange(0, title.length);
+		this.selectionRange = new Seriously_Range(0, title.length);
 		this.title = title;
 		this.color = color;
 		this.trait = trait;

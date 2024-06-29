@@ -1,5 +1,5 @@
-import { s_graphRect, s_mouse_location, s_user_graphOffset } from '../state/ReactiveState';
-import { s_thing_fontFamily } from '../state/ReactiveState';
+import { s_graphRect, s_mouse_location, s_user_graphOffset } from '../state/Reactive_State';
+import { s_thing_fontFamily } from '../state/Reactive_State';
 import Identifiable from '../data/Identifiable';
 import { Quadrant } from '../geometry/Angle';
 import { Point } from '../geometry/Geometry';
@@ -62,7 +62,7 @@ class Utilities {
 		});
 	}
 
-	distance_ofOffset_fromGraphCenter_toMouseLocation(offset: Point): Point | null {
+	vector_ofOffset_fromGraphCenter_toMouseLocation(offset: Point): Point | null {
 		const location = get(s_mouse_location);
 		if (!!location) {
 			const graphCenter = get(s_graphRect).origin.offsetBy(get(s_user_graphOffset));

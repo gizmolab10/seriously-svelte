@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { k, u, Rect, Size, Point, Angle } from '../../ts/common/GlobalImports';
-	import { Cluster_Map, Orientation } from '../../ts/common/GlobalImports';
+	import { k, u, Rect, Size, Point, Angle } from '../../ts/common/Global_Imports';
+	import { Cluster_Map, Orientation } from '../../ts/common/Global_Imports';
     export let cluster_map: Cluster_Map;
 	export let color = k.color_default;
 	export let center = Point.zero;

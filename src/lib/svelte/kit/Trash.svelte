@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k } from '../../ts/common/GlobalImports';
+	import { k } from '../../ts/common/Global_Imports';
     export let fill = k.color_background;
 	export let invert = false;
 	export let color = black;

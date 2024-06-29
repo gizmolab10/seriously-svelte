@@ -1,7 +1,7 @@
-import { k, Ancestry, ElementType } from '../common/GlobalImports';
+import { k, s, Ancestry, ElementType } from '../common/Global_Imports';
 import Identifiable from '../data/Identifiable';
 
-export default class ElementState {
+export default class Element_State {
 	color_background = k.color_background;
 	responder: HTMLElement | null = null;
 	defaultCursor = k.cursor_default;
@@ -26,7 +26,7 @@ export default class ElementState {
 	//////////////////////////////////////////////////
 
 	constructor(identifiable: Identifiable, type: ElementType, subtype: string) {
-		this.name = ElementState.elementName_from(identifiable, type, subtype);
+		this.name = s.name_from(identifiable, type, subtype);
 		this.identifiable = identifiable;
 		this.subtype = subtype;
 		this.type = type;
@@ -39,10 +39,6 @@ export default class ElementState {
 	get stroke(): string { return this.isHovering ? this.color_background : this.hoverColor; }
 	get isHovering(): boolean { return this.hoverIgnore ? false : this.isOut == this.identifiable.isHoverInverted(this.type); }
 	
-	static elementName_from(identifiable: Identifiable, type: ElementType, subtype: string): string {
-		return `${type}-${subtype}-${identifiable.id}`;
-	}
-
 	set_forHovering(hoverColor: string, hoverCursor: string) {
 		this.hoverCursor = hoverCursor;
 		this.hoverColor = hoverColor;

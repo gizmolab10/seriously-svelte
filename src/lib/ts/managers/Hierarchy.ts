@@ -1,7 +1,7 @@
-import { k, u, get, User, Thing, Grabs, debug, Mouse_State, Access, IDTool, IDTrait, signals, Ancestry } from '../common/GlobalImports';
-import { Predicate, SvelteWrapper, Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/GlobalImports';
-import { s_things_arrived, s_ancestries_grabbed, s_ancestry_editingTools } from '../state/ReactiveState';
-import { s_isBusy, s_altering, s_ancestry_focus, s_title_editing } from '../state/ReactiveState';
+import { k, u, get, User, Thing, Grabs, debug, Mouse_State, Access, IDTool, IDTrait, signals, Ancestry } from '../common/Global_Imports';
+import { Predicate, Svelte_Wrapper, Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
+import { s_things_arrived, s_ancestries_grabbed, s_ancestry_editingTools } from '../state/Reactive_State';
+import { s_isBusy, s_altering, s_ancestry_focus, s_title_editing } from '../state/Reactive_State';
 import { idDefault } from '../data/Identifiable';
 import Identifiable from '../data/Identifiable';
 import DBInterface from '../db/DBInterface';
@@ -9,7 +9,7 @@ import DBInterface from '../db/DBInterface';
 type Relationships_ByHID = { [hid: number]: Array<Relationship> }
 
 export class Hierarchy {
-	private wrappers_byType_andHID: { [type: string]: { [hid: number]: SvelteWrapper } } = {};
+	private wrappers_byType_andHID: { [type: string]: { [hid: number]: Svelte_Wrapper } } = {};
 	private ancestry_byKind_andHash:{ [kind: string]: { [hash: number]: Ancestry } } = {};
 	private predicate_byDirection: { [direction: number]: Array<Predicate> } = {};
 	private relationship_byHID: { [hid: number]: Relationship } = {};
@@ -117,7 +117,7 @@ export class Hierarchy {
 				}
 				switch (key) {
 					case '!':				needsRebuild = this.rootAncestry?.becomeFocus(); break;
-					case '`':               event.preventDefault(); this.latestAncestryGrabbed_toggleEditingTools(); break;
+					case '`':               event.preventDefault(); this.latestAncestryGrabbed_toggleEditing_Tools(); break;
 					case 'arrowup':			await this.latestAncestryGrabbed_rebuild_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
 					case 'arrowdown':		await this.latestAncestryGrabbed_rebuild_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
 				}
@@ -137,7 +137,7 @@ export class Hierarchy {
 		}
 	}
 
-	latestAncestryGrabbed_toggleEditingTools(up: boolean = true) {
+	latestAncestryGrabbed_toggleEditing_Tools(up: boolean = true) {
 		const ancestry = this.grabs.latestAncestryGrabbed(up);
 		if (!!ancestry && !ancestry.isRoot) {
 			s_ancestry_editingTools.set(ancestry.toolsGrabbed ? null : ancestry);
@@ -930,7 +930,7 @@ export class Hierarchy {
 		return null;
 	}
 
-	wrapper_add(wrapper: SvelteWrapper) {
+	wrapper_add(wrapper: Svelte_Wrapper) {
 		const type = wrapper.type;
 		const array = this.wrappers_byType_andHID;
 		const dict = array[type] ?? {};

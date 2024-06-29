@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { s_thing_changed, s_ancestries_grabbed } from '../../ts/state/ReactiveState';
-	import { g, k, s, u, ZIndex, onMount, signals } from '../../ts/common/GlobalImports';
+	import { s_thing_changed, s_ancestries_grabbed } from '../../ts/state/Reactive_State';
+	import { g, k, s, u, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
 	import ColorPicker from 'svelte-awesome-color-picker';
 	const selectorSize = k.dot_size;
 	const pickerSize = 100;

@@ -1,9 +1,9 @@
 <script lang='ts'>
-	import { s_graphRect, s_ancestry_focus, s_user_graphOffset, s_thing_fontFamily, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
-	import { k, s, u, Rect, Size, Point, ZIndex, onMount, signals, Clusters_Geometry, transparentize } from '../../ts/common/GlobalImports';
-	import { necklace_ringState } from '../../ts/state/Expand_State';
-	import EditingTools from '../widget/EditingTools.svelte';
-	import TitleEditor from '../widget/TitleEditor.svelte';
+	import { s_graphRect, s_ancestry_focus, s_user_graphOffset, s_thing_fontFamily, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
+	import { k, s, u, Rect, Size, Point, ZIndex, onMount, signals, Clusters_Geometry, transparentize } from '../../ts/common/Global_Imports';
+	import { necklace_ringState } from '../../ts/state/Expansion_State';
+	import Editing_Tools from '../widget/Editing_Tools.svelte';
+	import Title_Editor from '../widget/Title_Editor.svelte';
 	import Scrolling_Ring from './Scrolling_Ring.svelte';
 	import Necklace_Ring from './Necklace_Ring.svelte';
 	import Circle from '../kit/Circle.svelte';
@@ -64,7 +64,7 @@
 						position: absolute;
 						top:{titleCenter.y}px;
 						left: {titleCenter.x}px;'>
-					<TitleEditor ancestry={$s_ancestry_focus} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
+					<Title_Editor ancestry={$s_ancestry_focus} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 				</div>
 				<Clusters geometry={geometry}/>
 				<Scrolling_Ring
@@ -85,7 +85,7 @@
 					ring_width={k.ring_thickness}
 					radius={$s_cluster_arc_radius}
 					cursor_closure={cursor_closure}/>
-				<EditingTools offset={toolsOffset}/>
+				<Editing_Tools offset={toolsOffset}/>
 			{/key}
 		</div>
 	{/key}

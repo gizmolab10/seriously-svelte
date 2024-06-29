@@ -1,4 +1,4 @@
-import { k, Thing, IDTrait, Hierarchy, Predicate, Relationship } from '../common/GlobalImports';
+import { k, Thing, IDTrait, Hierarchy, Predicate, Relationship } from '../common/Global_Imports';
 import DBInterface from './DBInterface';
 import { DBType } from './DBInterface';
 import { h } from '../db/DBDispatch';

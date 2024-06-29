@@ -1,11 +1,11 @@
-import { Handle_Mouse_State, Create_Mouse_State } from './GlobalImports';
-import { Rect, SvelteComponentType } from './GlobalImports';
+import { Handle_Mouse_State, Create_Mouse_State } from './Global_Imports';
+import { Rect, SvelteComponentType } from './Global_Imports';
 import Identifiable from '../data/Identifiable';
-import { h } from '../../ts/db/DBDispatch';
+import { h } from '../db/DBDispatch';
 
 // Ancestry sometimes needs to access and or alter an associated svelte component
 
-export default class SvelteWrapper extends Identifiable {
+export default class Svelte_Wrapper extends Identifiable {
     mouse_closure: Handle_Mouse_State;
     type: SvelteComponentType;
     element: HTMLElement;

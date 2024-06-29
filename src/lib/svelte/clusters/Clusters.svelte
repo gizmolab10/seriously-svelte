@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { s_clusters_page_indices, s_graphRect, s_thing_changed, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
-	import { g, k, s, u, get, Point, ZIndex, signals, onMount, Predicate, onDestroy } from '../../ts/common/GlobalImports';
-	import { Widget_MapRect, Clusters_Geometry, transparentize } from '../../ts/common/GlobalImports';
+	import { s_clusters_page_indices, s_graphRect, s_thing_changed, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
+	import { g, k, s, u, get, Point, ZIndex, signals, onMount, Predicate, onDestroy } from '../../ts/common/Global_Imports';
+	import { Widget_MapRect, Clusters_Geometry, transparentize } from '../../ts/common/Global_Imports';
 	import Widget from '../widget/Widget.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	export let geometry!: Clusters_Geometry;
@@ -45,7 +45,7 @@
 				<Widget
 					subtype={widget_map.subtype}
 					angle={widget_map.childAngle}
-					name={widget_map.elementState.name}
+					name={widget_map.element_state.name}
 					ancestry={widget_map.childAncestry}
 					origin={widget_map.childOrigin.offsetBy(childOffset)}/>
 			{/each}

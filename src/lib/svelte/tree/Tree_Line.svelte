@@ -1,14 +1,14 @@
 <script lang='ts'>
-	import { SvelteWrapper, Ancestry, debugReact, SvelteComponentType, IDLine } from '../../ts/common/GlobalImports';
-	import { k, Rect, Size, Point, debug, ZIndex, signals, svgPaths } from '../../ts/common/GlobalImports';
-	import { s_thing_changed } from '../../ts/state/ReactiveState';
+	import { Svelte_Wrapper, Ancestry, debugReact, SvelteComponentType, IDLine } from '../../ts/common/Global_Imports';
+	import { k, Rect, Size, Point, debug, ZIndex, signals, svgPaths } from '../../ts/common/Global_Imports';
+	import { s_thing_changed } from '../../ts/state/Reactive_State';
 	import Circle from '../kit/Circle.svelte';
 	import Box from '../kit/Box.svelte';
     export let ancestry;
 	export let rect = new Rect();
 	export let curveType: string = IDLine.up;
 	const debugOffset = new Point(131, -0.5);
-	let lineWrapper: SvelteWrapper;
+	let lineWrapper: Svelte_Wrapper;
 	let origin = rect.origin;
 	let extent = rect.extent;
 	let viewBox = new Rect();
@@ -19,7 +19,7 @@
 
 	$: {
 		if (line) {
-			lineWrapper = new SvelteWrapper(line, handle_mouseData, ancestry.idHashed, SvelteComponentType.line);
+			lineWrapper = new Svelte_Wrapper(line, handle_mouseData, ancestry.idHashed, SvelteComponentType.line);
 		}
 	}
 

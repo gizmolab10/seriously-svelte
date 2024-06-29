@@ -47,19 +47,6 @@ export enum SvelteComponentType {
 	ring	= 'ring',
 }
 
-export enum ElementType {
-	generic	= 'generic',
-	advance	= 'advance',
-	control	= 'control',
-	widget	= 'widget',
-	reveal	= 'reveal',
-	focus	= 'focus',
-	crumb	= 'crumb',
-	tool	= 'tool',
-	drag	= 'drag',
-	none	= 'none',
-}
-
 export enum IDButton {
 	details		= 'show details view',
 	builds		= 'show build notes',

@@ -1,4 +1,4 @@
-import { dbDispatch, PredicateKind } from '../common/GlobalImports';
+import { dbDispatch, PredicateKind } from '../common/Global_Imports';
 import RemoteIdentifiable from './RemoteIdentifiable';
 import { h } from '../../ts/db/DBDispatch';
 

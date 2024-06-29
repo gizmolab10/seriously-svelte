@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { s_ancestries_expanded, s_altering, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/ReactiveState';
-	import { Direction, onDestroy, dbDispatch, Predicate, SvelteWrapper, SvelteComponentType } from '../../ts/common/GlobalImports';
-	import { k, s, u, Size, Thing, Point, debug, ZIndex, onMount, signals, svgPaths } from '../../ts/common/GlobalImports';
+	import { s_ancestries_expanded, s_altering, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/Reactive_State';
+	import { Direction, onDestroy, dbDispatch, Predicate, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { k, s, u, Size, Thing, Point, debug, ZIndex, onMount, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -10,13 +10,13 @@
 	export let name = k.empty;
     export let zindex = ZIndex.dots;
     export let hover_isReversed = false;
-	const elementState = s.elementState_forName(name);		// survives onDestroy, created by widget
+	const element_state = s.elementState_forName(name);		// survives onDestroy, created by widget
 	let size = k.dot_size;
 	let tinyDotsDiameter = size * 1.8;
 	let tinyDotsOffset = size * -0.4 + 0.01;
 	let childrenCount = ancestry.childRelationships.length;
 	let insidePath = svgPaths.circle_atOffset(16, 6);
-	let revealWrapper = SvelteWrapper;
+	let revealWrapper = Svelte_Wrapper;
 	let revealDotPath = k.empty;
 	let hasInsidePath = false;
 	let insideOffset = 0;
@@ -32,8 +32,8 @@
 
 	$: {
 		if (dotReveal && !($s_ancestry_editingTools?.matchesAncestry(ancestry) ?? false)) {
-			revealWrapper = new SvelteWrapper(dotReveal, handle_mouseData, ancestry.idHashed, SvelteComponentType.reveal);
-			elementState.set_forHovering(ancestry.thing.color, 'pointer');
+			revealWrapper = new Svelte_Wrapper(dotReveal, handle_mouseData, ancestry.idHashed, SvelteComponentType.reveal);
+			element_state.set_forHovering(ancestry.thing.color, 'pointer');
 		}
 	}
 
@@ -50,8 +50,8 @@
 
 	function set_isHovering(hovering) {
 		const corrected = hover_isReversed ? !hovering : hovering;
-		if (!!elementState && elementState.isOut == corrected) {
-			elementState.isOut = !corrected;
+		if (!!element_state && element_state.isOut == corrected) {
+			element_state.isOut = !corrected;
 			rebuilds += 1;
 		}
 	}
@@ -108,13 +108,13 @@
 </style>
 
 {#key rebuilds}
-	{#if elementState}
+	{#if element_state}
 		<Mouse_Responder
 			width={size}
 			height={size}
 			center={center}
 			closure={closure}
-			name={elementState.name}>
+			name={element_state.name}>
 			<button class='dot'
 				bind:this={dotReveal}
 				on:contextmenu={handle_context_menu}
@@ -125,7 +125,7 @@
 				'>
 				{#key revealDotPath}
 					<SVGD3 name='svg-reveal'
-						fill={debug.lines ? 'transparent' : elementState.fill}
+						fill={debug.lines ? 'transparent' : element_state.fill}
 						stroke={ancestry.thing.color}
 						svg_path={revealDotPath}
 						height={size}
@@ -140,8 +140,8 @@
 						height:{size}px;
 						width:{size}px;'>
 						<SVGD3 name='svg-inside'
-							stroke={elementState.stroke}
-							fill={elementState.stroke}
+							stroke={element_state.stroke}
+							fill={element_state.stroke}
 							svg_path={insidePath}
 							height={size}
 							width={size}

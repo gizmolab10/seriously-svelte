@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { k, s, u, Rect, Size, Point, Mouse_State, ZIndex, onMount } from '../../ts/common/GlobalImports';
-	import { s_mouse_location } from '../../ts/state/ReactiveState';
+	import { k, s, u, Rect, Size, Point, Mouse_State, ZIndex, onMount } from '../../ts/common/Global_Imports';
+	import { s_mouse_location } from '../../ts/state/Reactive_State';
 	export let detectHit_closure: () => {flag: boolean} | null = null;
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;
@@ -30,7 +30,7 @@
 	//										//
 	//	mutates three ts state classes:		//
 	//		UX_State, Mouse_State &			//
-	//		ElementState					//
+	//		Element_State					//
 	//										//
 	//////////////////////////////////////////
 

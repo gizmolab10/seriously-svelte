@@ -1,7 +1,7 @@
-import { k, u, get, Rect, Size, Thing, debug, signals, Predicate, Title_State, ElementType } from '../common/GlobalImports';
-import { Relationship, PredicateKind, AlterationType, SvelteWrapper, SvelteComponentType } from '../common/GlobalImports';
-import { s_ancestry_focus, s_ancestries_grabbed, s_title_editing, s_layout_asClusters } from '../state/ReactiveState';
-import { s_ancestries_expanded, s_ancestry_editingTools, s_altering } from '../state/ReactiveState';
+import { k, u, get, Rect, Size, Thing, debug, signals, Predicate, Title_State, ElementType } from '../common/Global_Imports';
+import { Relationship, PredicateKind, AlterationType, Svelte_Wrapper, SvelteComponentType } from '../common/Global_Imports';
+import { s_ancestry_focus, s_ancestries_grabbed, s_title_editing, s_layout_asClusters } from '../state/Reactive_State';
+import { s_ancestries_expanded, s_ancestry_editingTools, s_altering } from '../state/Reactive_State';
 import Identifiable from '../data/Identifiable';
 import { Writable } from 'svelte/store';
 import { h } from '../db/DBDispatch';
@@ -67,7 +67,7 @@ export default class Ancestry extends Identifiable {
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	get childRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, false); }
 	get parentRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, true); }
-	get titleWrapper(): SvelteWrapper | null { return h.wrapper_forHID_andType(this.idHashed, SvelteComponentType.title); }
+	get titleWrapper(): Svelte_Wrapper | null { return h.wrapper_forHID_andType(this.idHashed, SvelteComponentType.title); }
 	get showsReveal(): boolean { return !get(s_layout_asClusters) && (this.hasChildRelationships || (this.thing?.isBulkAlias ?? false)); }
 
 	get relationships(): Array<Relationship> {
@@ -171,7 +171,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	matchesAncestry(ancestry: Ancestry): boolean { return this.idHashed == ancestry.idHashed; }
-	rect_ofWrapper(wrapper: SvelteWrapper | null): Rect | null { return wrapper?.boundingRect ?? null; }
+	rect_ofWrapper(wrapper: Svelte_Wrapper | null): Rect | null { return wrapper?.boundingRect ?? null; }
 	includesPredicateID(idPredicate: string): boolean { return this.thing?.hasParentsFor(idPredicate) ?? false; }
 	matchesStore(store: Writable<Ancestry | null>): boolean { return get(store)?.matchesAncestry(this) ?? false; }
 	relationshipAt(back: number = 1): Relationship | null { return h.relationship_forHID(this.idAt(back).hash()) ?? null; }

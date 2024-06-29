@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { s_show_details, s_id_popupView, s_resize_count, s_layout_asClusters, s_graph_relations } from '../../ts/state/ReactiveState';
-	import { g, k, s, u, Point, ZIndex, onMount, signals, svgPaths, IDButton, IDPersistant } from '../../ts/common/GlobalImports';
-	import { ElementType, ElementState, persistLocal, GraphRelations } from '../../ts/common/GlobalImports';
+	import { s_show_details, s_id_popupView, s_resize_count, s_layout_asClusters, s_graph_relations } from '../../ts/state/Reactive_State';
+	import { g, k, s, u, Point, ZIndex, onMount, signals, svgPaths, IDButton, IDPersistant } from '../../ts/common/Global_Imports';
+	import { ElementType, Element_State, persistLocal, GraphRelations } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Button from '../mouse buttons/Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -10,17 +10,17 @@
 	const lefts = [10, 65, 137];
 	let size = k.default_buttonSize;
 	let width = g.windowSize.width - 20;
-	let elementStates_byID: { [id: string]: ElementState } = {};
+	let elementStates_byID: { [id: string]: Element_State } = {};
 
 	function togglePopupID(id) { $s_id_popupView = ($s_id_popupView == id) ? null : id; }
 	
 	onMount(() => {
 		const ids = [IDButton.details, IDButton.relations, IDButton.layout, IDButton.smaller, IDButton.bigger, IDButton.builds, IDButton.help];
 		for (const id of ids) {
-			const elementState = s.elementState_for(new Identifiable(id), ElementType.control, id);
-			elementState.set_forHovering('black', 'pointer');
-			elementState.hoverIgnore = id == IDButton.details;
-			elementStates_byID[id] = elementState;
+			const element_state = s.elementState_for(new Identifiable(id), ElementType.control, id);
+			element_state.set_forHovering('black', 'pointer');
+			element_state.hoverIgnore = id == IDButton.details;
+			elementStates_byID[id] = element_state;
 		}
 	})
 
@@ -68,7 +68,7 @@
 				color='transparent'
 				border_thickness=0
 				center={new Point(lefts[0], details_top)}
-				elementState={elementStates_byID[IDButton.details]}
+				element_state={elementStates_byID[IDButton.details]}
 				closure={(mouseState) => button_closure_forID(mouseState, IDButton.details)}>
 				<img src='settings.svg' alt='circular button' width={size}px height={size}px/>
 			</Button>
@@ -77,7 +77,7 @@
 					width=65
 					height={size + 4}
 					center={new Point(lefts[1], top)}
-					elementState={elementStates_byID[IDButton.relations]}
+					element_state={elementStates_byID[IDButton.relations]}
 					closure={(mouseState) => button_closure_forID(mouseState, IDButton.relations)}>
 					{$s_graph_relations}
 				</Button>
@@ -85,7 +85,7 @@
 					width=65
 					height={size + 4}
 					center={new Point(lefts[2], top)}
-					elementState={elementStates_byID[IDButton.layout]}
+					element_state={elementStates_byID[IDButton.layout]}
 					closure={(mouseState) => button_closure_forID(mouseState, IDButton.layout)}>
 					{#if $s_layout_asClusters}tree{:else}clusters{/if}
 				</Button>
@@ -93,7 +93,7 @@
 		{/if}
 		{#if g.device_isMobile}
 			<Button name={IDButton.smaller}
-				elementState={elementStates_byID[IDButton.smaller]}
+				element_state={elementStates_byID[IDButton.smaller]}
 				center={new Point(width - 130, top)}
 				closure={(mouseState) => button_closure_forID(mouseState. IDButton.smaller)}>
 				<SVGD3 name='smaller'
@@ -104,7 +104,7 @@
 			</Button>
 			<Button name={IDButton.bigger}
 			center={new Point(width - 105, top)}
-			elementState={elementStates_byID[IDButton.bigger]}
+			element_state={elementStates_byID[IDButton.bigger]}
 				closure={(mouseState) => button_closure_forID(mouseState, IDButton.bigger)}>
 				<SVGD3 name='bigger'
 					width={size}
@@ -117,7 +117,7 @@
 			width=75
 			height={size + 4}
 			center={new Point(width - 55, top)}
-			elementState={elementStates_byID[IDButton.builds]}
+			element_state={elementStates_byID[IDButton.builds]}
 			closure={(mouseState) => button_closure_forID(mouseState, IDButton.builds)}>
 			{'build ' + k.build_number}
 		</Button>
@@ -125,7 +125,7 @@
 			width={size + 4}
 			height={size + 4}
 			center={new Point(width, top)}
-			elementState={elementStates_byID[IDButton.help]}
+			element_state={elementStates_byID[IDButton.help]}
 			closure={(mouseState) => button_closure_forID(mouseState, IDButton.help)}>
 			<span
 				style='top:2px;

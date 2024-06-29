@@ -1,6 +1,6 @@
 <script lang='ts'>
-    import { k, Point, Direction } from '../../ts/common/GlobalImports';
-    import TriangleButton from './TriangleButton.svelte'
+    import { k, Point, Direction } from '../../ts/common/Global_Imports';
+    import Triangle_Button from './Triangle_Button.svelte'
     export let display;
     export let hit;
     const buttonSize = 20;
@@ -34,7 +34,7 @@
 {#key rebuilds}
     <div class='directionals'>
         {#if display(true)}
-            <TriangleButton
+            <Triangle_Button
                 center={origin.offsetByY(-offsetY)}
                 mouse_closure={mouse_closure}
                 hover_closure={hover_closure}
@@ -45,7 +45,7 @@
             />
         {/if}
         {#if display(false)}
-            <TriangleButton
+            <Triangle_Button
                 center={origin.offsetByY(offsetY)}
                 mouse_closure={mouse_closure}
                 hover_closure={hover_closure}

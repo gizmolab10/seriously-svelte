@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { g, k, s, u, Rect, Point, ZIndex, onMount, ElementState } from '../../ts/common/GlobalImports';
-	import { SvelteWrapper, SvelteComponentType } from '../../ts/common/GlobalImports';
+	import { g, k, s, u, Rect, Point, ZIndex, onMount, Element_State } from '../../ts/common/Global_Imports';
+	import { Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from './Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
 	import type { SvelteComponent } from 'svelte';
@@ -8,7 +8,7 @@
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;
 	export let closure = (mouseState) => {};
-	export let elementState: ElementState;
+	export let element_state: Element_State;
 	export let position = 'absolute';
 	export let border_thickness = 1;
 	export let zindex = ZIndex.dots;
@@ -16,7 +16,7 @@
 	export let color = 'black';
 	export let style = k.empty;
 	export let name = k.empty;
-	let buttonWrapper: SvelteWrapper;
+	let buttonWrapper: Svelte_Wrapper;
 	let element: HTMLElement;
 	let currentStyle = style;
 	let border = k.empty;
@@ -25,21 +25,22 @@
 	//									//
 	//	adds: border_thickness & style	//
 	//									//
-	//	container owns ElementState:	//
+	//	container owns Element_State:	//
 	//	  (stroke, fill & cursor)		//
-	//	  calls closure to update it	//
+	//	  calls closure to update_currentStyle it	//
 	//									//
 	//	owns a Mouse_Responder: state	//
-	//	  is passed to the container	//
+	//	  is passed up to the container	//
+	//	  through a closure				//
 	//									//
 	//////////////////////////////////////
 
-	$: { update(); }
-	onMount(() => { update(); })
+	onMount(() => { update_currentStyle(); })
+	$: { update_currentStyle(); }
 	
-	function update() {
-		color = elementState.stroke;
-		background_color = elementState.fill;
+	function update_currentStyle() {
+		color = element_state.stroke;
+		background_color = element_state.fill;
 		if (style.length == 0) {
 			border = border_thickness == 0 ? 'none' : `solid ${border_thickness}px`;
 			currentStyle=`
@@ -49,7 +50,7 @@
 				z-index:${zindex};
 				height:${height}px;
 				position:${position};
-				cursor:${elementState.cursor};
+				cursor:${element_state.cursor};
 				border-radius:${height / 2}px;
 				background-color:${background_color};
 			`.removeWhiteSpace()
@@ -57,9 +58,9 @@
 	}
 
 	function button_closure(mouseState: Mouse_State) {
-		closure(mouseState);
+		closure(mouseState);		// so container can behave or look differently
 		if (mouseState.isHover) {	// NOT the same as isHovering
-			update();
+			update_currentStyle();
 		}
 	}
 

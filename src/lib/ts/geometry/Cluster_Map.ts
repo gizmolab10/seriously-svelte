@@ -1,6 +1,6 @@
-import { s_clusters_page_indices, s_graphRect, s_ring_angle, s_ancestry_focus, s_cluster_arc_radius } from '../state/ReactiveState';
-import { k, s, get, Rect, Point, Angle, IDLine, svgPaths, Ancestry } from '../common/GlobalImports';
-import { Predicate, ElementType, ElementState, Widget_MapRect } from '../common/GlobalImports';
+import { s_clusters_page_indices, s_graphRect, s_ring_angle, s_ancestry_focus, s_cluster_arc_radius } from '../state/Reactive_State';
+import { k, s, get, Rect, Point, Angle, IDLine, svgPaths, Ancestry } from '../common/Global_Imports';
+import { Predicate, ElementType, Element_State, Widget_MapRect } from '../common/Global_Imports';
 
 // for one cluster (there are three)
 //
@@ -15,7 +15,7 @@ export default class Cluster_Map  {
 	widget_maps: Array<Widget_MapRect> = [];	// maximum a page's worth, will be combined into geometry.widget_maps
 	predicates: Array<Predicate> = [];
 	ancestries: Array<Ancestry> = [];
-	thumbState: ElementState;
+	thumb_state: Element_State;
 	outside_ring_radius = 0;
 	inside_ring_radius = 0;
 	clusters_center: Point;
@@ -48,7 +48,7 @@ export default class Cluster_Map  {
 		const semi_major = inside_arc_radius - fork_radius - k.dot_size / 2;
 		const ellipse_axes = new Point(semi_minor, semi_major);
 
-		this.thumbState = s.elementState_for(this.focus_ancestry, ElementType.advance, this.cluster_title);
+		this.thumb_state = s.elementState_for(this.focus_ancestry, ElementType.advance, this.cluster_title);
 		this.fork_tip = Point.fromPolar(inside_arc_radius - fork_radius, -fork_angle);
 		this.outside_arc_radius = inside_arc_radius + this.scroll_arc_thickness;
 		this.label_tip = ellipse_axes.ellipse_coordiates_forAngle(fork_angle);
@@ -87,7 +87,7 @@ export default class Cluster_Map  {
 		const radius = this.outside_ring_radius;
 		const center = this.center.offsetByXY(2, -1.5);	// tweak so that drag dots are centered within the necklace ring
 		const radial = new Point(radius + k.necklace_widget_padding, 0);
-
+		this.thumb_state.set_forHovering('black', 'pointer');
 		this.widget_maps = [];
 		if (shown > 0 && !!this.predicate) {
 			let index = 0;

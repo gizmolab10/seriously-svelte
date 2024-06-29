@@ -1,12 +1,11 @@
 <script lang='ts'>
-	import { k, s, u, Rect, Thing, Point, ZIndex, signals, svgPaths, dbDispatch, ElementType } from '../../ts/common/GlobalImports';
-	import { SvelteWrapper, Clusters_Geometry, transparentize, SvelteComponentType } from '../../ts/common/GlobalImports';
-	import { s_graphRect, s_mouse_location, s_mouse_up_count, s_user_graphOffset } from '../../ts/state/ReactiveState';
-	import { s_thing_changed, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
+	import { Svelte_Wrapper, Clusters_Geometry, transparentize, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { k, s, u, Rect, Thing, Point, ZIndex, signals, svgPaths, dbDispatch } from '../../ts/common/Global_Imports';
+	import { s_graphRect, s_mouse_location, s_mouse_up_count, s_user_graphOffset } from '../../ts/state/Reactive_State';
+	import { s_thing_changed, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
-	import { scrolling_ringState } from '../../ts/state/Rotate_State';
-	import { necklace_ringState } from '../../ts/state/Expand_State';
-	import Cluster_ScrollArc from './Cluster_ScrollArc.svelte';
+	import { necklace_ringState } from '../../ts/state/Expansion_State';
+	import ClusterScroll_Arc from './ClusterScroll_Arc.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Cluster_Label from './Cluster_Label.svelte';
 	import Divider_line from './Divider_line.svelte';
@@ -23,11 +22,12 @@
 	const diameter = outer_radius * 2;
 	const borderStyle = '1px solid';
 	const dividerColor = transparentize(color, 0.8);
+	const scrolling_ring_state = s.rotationState_forName(name);
 	const ringOrigin = center.distanceFrom(Point.square(outer_radius));
 	const viewBox = `${-ring_width}, ${-ring_width}, ${diameter}, ${diameter}`;
 	const svg_ringPath = svgPaths.ring(Point.square(radius), outer_radius, ring_width);
 	let mouse_up_count = $s_mouse_up_count;
-	let scrollingWrapper: SvelteWrapper;
+	let scrollingWrapper: Svelte_Wrapper;
 	let scrollingRing;
 	let rebuilds = 0
 
@@ -42,30 +42,7 @@
 
 	$: {
 		if (!!scrollingRing) {
-			scrollingWrapper = new SvelteWrapper(scrollingRing, handle_mouseData, Identifiable.newID(), SvelteComponentType.ring);
-		}
-	}
-
-	$: {
-		if (mouse_up_count != $s_mouse_up_count) {
-			mouse_up_count = $s_mouse_up_count;
-			scrolling_ringState.reset();
-			rebuilds += 1;
-		}
-	}
-
-	$: {
-
-		////////////////////////////////////
-		// detect movement & adjust state //
-		////////////////////////////////////
-
-		const _ = $s_mouse_location;
-		const from_center = u.distance_ofOffset_fromGraphCenter_toMouseLocation(center);	// use store, to react
-		if (!!from_center) {
-			scrolling_ringState.isHovering = isHit();	// show highlight around ring
-			cursor_closure();
-			rebuilds += 1;
+			scrollingWrapper = new Svelte_Wrapper(scrollingRing, handle_mouseData, Identifiable.newID(), SvelteComponentType.ring);
 		}
 	}
 
@@ -76,35 +53,20 @@
 		/////////////////////////////
 
 		if (mouseState.isHover) {
-			const okayToHover = !!scrolling_ringState.referenceAngle || !!necklace_ringState.referenceAngle || !!necklace_ringState.radiusOffset;
-			scrolling_ringState.isHovering = okayToHover && !mouseState.isOut;	// show highlight around ring
+			const okayToHover = !necklace_ringState.referenceAngle && !necklace_ringState.radiusOffset;
+			scrolling_ring_state.isHovering = okayToHover && !mouseState.isOut;	// show highlight around ring
 
 			// hover
 
 			rebuilds += 1;
-		} else if (isHit()) {
-			const from_center = u.distance_ofOffset_fromGraphCenter_toMouseLocation(center);
-			if (mouseState.isUp) {
-
-				// end rotate
-
-				rebuilds += 1;
-			} else if (mouseState.isDown) {
-				const mouseAngle = from_center.angle;
-
-				// begin rotate
-
-				rebuilds += 1;
-				
-			}
 			cursor_closure();
 		}
 	}
  
 	function isHit(): boolean {
-		const vector = u.distance_ofOffset_fromGraphCenter_toMouseLocation(center);
+		const vector = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);
 		const distance = vector.magnitude;
-		if (!!distance && distance.isBetween(radius, outer_radius)) {
+		if (!!distance && distance.isBetween(0, outer_radius)) {
 			return true;
 		}
 		return false;
@@ -119,7 +81,7 @@
 			// <svg
 			// 	viewBox={viewBox}
 			// 	class='svg-scrolling-ring'
-			// 	fill={transparentize(color, scrolling_ringState.fill_transparency)}
+			// 	fill={transparentize(color, scrolling_ring_state.fill_transparency)}
 			// 	stroke={transparentize(color, 0.98)}>
 			// 	<path d={svg_ringPath}/>
 			// </svg>
@@ -137,16 +99,17 @@
 			closure={closure}
 			detect_longClick={false}
 			detectHit_closure={isHit}
-			cursor={scrolling_ringState.cursor}>
+			cursor={k.cursor_default}>
 		</Mouse_Responder>
 		<div class='scroll-arcs'>
 			{#each geometry.cluster_map as cluster_map}
 				{#if cluster_map.shown > 0}
 					<Cluster_Label cluster_map={cluster_map} center={center} color={color}/>
-					<Cluster_ScrollArc
+					<ClusterScroll_Arc
 						center={center}
 						cluster_map={cluster_map}
-						color={transparentize(color, scrolling_ringState.stroke_transparency * 0.7)}/>
+						scrolling_ring_name={name}
+						color={transparentize(color, scrolling_ring_state.stroke_transparency * 0.7)}/>
 				{/if}
 			{/each}
 		</div>

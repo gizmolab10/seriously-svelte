@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import { k, Point, ZIndex, onMount, onDestroy } from '../../ts/common/GlobalImports';
+    import { k, Point, ZIndex, onMount, onDestroy } from '../../ts/common/Global_Imports';
     import * as d3 from 'd3';
     export let position = 'absolute';
     export let zIndex = ZIndex.dots;

@@ -1,10 +1,10 @@
 <script lang='ts'>
-	import { s_thing_changed, s_ancestry_focus, s_ring_angle, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
-	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/ReactiveState';
-	import { k, s, u, Thing, Point, ZIndex, signals, svgPaths, dbDispatch } from '../../ts/common/GlobalImports';
-	import { transparentize, SvelteWrapper, SvelteComponentType } from '../../ts/common/GlobalImports';
+	import { s_thing_changed, s_ancestry_focus, s_ring_angle, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
+	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/Reactive_State';
+	import { k, s, u, Thing, Point, ZIndex, signals, svgPaths, dbDispatch } from '../../ts/common/Global_Imports';
+	import { transparentize, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
-	import { necklace_ringState } from '../../ts/state/Expand_State';
+	import { necklace_ringState } from '../../ts/state/Expansion_State';
 	import Identifiable from '../../ts/data/Identifiable';
 	export let radius = 0;
 	export let thing: Thing;
@@ -21,7 +21,7 @@
 	const viewBox = `${-ring_width}, ${-ring_width}, ${diameter}, ${diameter}`;
 	const svg_ringPath = svgPaths.ring(Point.square(radius), outer_radius, ring_width);
 	let mouse_up_count = $s_mouse_up_count;
-	let neckaceWrapper = SvelteWrapper;
+	let neckaceWrapper = Svelte_Wrapper;
 	let necklaceRing;
 	let rebuilds = 0
 
@@ -33,7 +33,7 @@
 
 	$: {
 		if (!!necklaceRing) {
-			neckaceWrapper = new SvelteWrapper(necklaceRing, handle_mouseData, Identifiable.newID(), SvelteComponentType.ring);
+			neckaceWrapper = new Svelte_Wrapper(necklaceRing, handle_mouseData, Identifiable.newID(), SvelteComponentType.ring);
 		}
 	}
 
@@ -52,7 +52,7 @@
 		////////////////////////////////////
 
 		const _ = $s_mouse_location;
-		const from_center = u.distance_ofOffset_fromGraphCenter_toMouseLocation(center);	// use store, to react
+		const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);	// use store, to react
 		if (!!from_center) {
 			let sendSignal = false;
 			necklace_ringState.isHovering = isHit();	// show highlight around ring
@@ -99,7 +99,7 @@
 				rebuilds += 1;
 			}
 		} else if (isHit()) {
-			const from_center = u.distance_ofOffset_fromGraphCenter_toMouseLocation(center);
+			const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);
 			if (mouseState.isDouble) {
 
 				// begin resize
@@ -127,7 +127,7 @@
 	}
  
 	function isHit(): boolean {
-		const vector = u.distance_ofOffset_fromGraphCenter_toMouseLocation(center);
+		const vector = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);
 		const distance = vector?.magnitude;
 		if (!!distance && distance.isBetween(radius, outer_radius)) {
 			return true;

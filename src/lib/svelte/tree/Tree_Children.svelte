@@ -1,7 +1,7 @@
 <script lang=ts>
-	import { k, u, Rect, Size, Point, Thing, debug, IDLine, onMount } from '../../ts/common/GlobalImports';
-	import { signals, onDestroy, DebugFlag, debugReact, Tree_Geometry } from '../../ts/common/GlobalImports';
-	import { s_graphRect } from '../../ts/state/ReactiveState';
+	import { k, u, Rect, Size, Point, Thing, debug, IDLine, onMount } from '../../ts/common/Global_Imports';
+	import { signals, onDestroy, DebugFlag, debugReact, Tree_Geometry } from '../../ts/common/Global_Imports';
+	import { s_graphRect } from '../../ts/state/Reactive_State';
 	import Tree_Children from './Tree_Children.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
@@ -63,7 +63,7 @@
 {#if ancestry.isExpanded}
 	<div class='tree-children'>
 		{#each widgetMapRects as map}
-			<Widget name={map.elementState.name} ancestry={map.childAncestry} origin={map.extent.offsetBy(widgetOffset)}/>
+			<Widget name={map.element_state.name} ancestry={map.childAncestry} origin={map.extent.offsetBy(widgetOffset)}/>
 			<Tree_Line ancestry={map.childAncestry} curveType={map.curveType} rect={map.offsetBy(lineOffset)}/>
 			{#if map.childAncestry.showsChildRelationships}
 				<Tree_Children ancestry={map.childAncestry} origin={map.childOrigin}/>

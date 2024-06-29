@@ -1,9 +1,9 @@
-import { s_altering, s_resize_count, s_rebuild_count, s_mouse_up_count, s_mouse_location } from '../state/ReactiveState';
-import { g, get, Point, signals, Mouse_State, Create_Mouse_State } from '../common/GlobalImports';
-import { Alteration_State, SvelteComponentType } from '../common/GlobalImports';
-import { h } from '../../ts/db/DBDispatch';
+import { s_altering, s_resize_count, s_rebuild_count, s_mouse_up_count, s_mouse_location } from '../state/Reactive_State';
+import { g, get, Point, signals, Mouse_State, Create_Mouse_State } from '../common/Global_Imports';
+import { Alteration_State, SvelteComponentType } from '../common/Global_Imports';
+import { h } from '../db/DBDispatch';
 
-export class EventDispatch {
+export class Event_Dispatch {
 	// assure delivery of events
 	// to a svelt component
 	// with a higher ZIndex
@@ -81,4 +81,4 @@ export class EventDispatch {
 
 }
 
-export const e = new EventDispatch();
+export const e = new Event_Dispatch();

@@ -1,10 +1,10 @@
-import { s_ring_angle, s_cluster_arc_radius, s_layout_asClusters } from '../state/ReactiveState';
-import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/ReactiveState';
-import { g, k, get, Point, signals, Ancestry, dbDispatch } from '../common/GlobalImports';
-import { Page_Index, Page_Indices, GraphRelations } from '../common/GlobalImports';
-import { s_ancestries_grabbed, s_ancestries_expanded } from '../state/ReactiveState';
-import { s_thing_fontFamily, s_graph_relations } from '../state/ReactiveState';
-import { s_clusters_page_indices } from '../../ts/state/ReactiveState';
+import { s_ring_angle, s_cluster_arc_radius, s_layout_asClusters } from '../state/Reactive_State';
+import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/Reactive_State';
+import { g, k, get, Point, signals, Ancestry, dbDispatch } from '../common/Global_Imports';
+import { Page_Index, Page_Indices, GraphRelations } from '../common/Global_Imports';
+import { s_ancestries_grabbed, s_ancestries_expanded } from '../state/Reactive_State';
+import { s_thing_fontFamily, s_graph_relations } from '../state/Reactive_State';
+import { s_clusters_page_indices } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
 
 export enum IDPersistant {
@@ -28,7 +28,7 @@ export enum IDPersistant {
 	db			  = 'db',
 }
 
-class PersistLocal {
+class Persist_Local {
 	// for backwards compatibility with {focus, grabbed, expanded} which were stored as relationship ids (not as ancestry strings)
 	usesRelationships = localStorage[IDPersistant.relationships];
 	ignoreAncestries = !this.usesRelationships || this.usesRelationships == 'undefined';
@@ -258,4 +258,4 @@ class PersistLocal {
 
 }
 
-export const persistLocal = new PersistLocal();
+export const persistLocal = new Persist_Local();

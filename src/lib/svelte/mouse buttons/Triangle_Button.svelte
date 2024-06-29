@@ -1,11 +1,11 @@
 <script lang='ts'>
-	import { k, u, Size, Thing, Point, ZIndex, svgPaths, ElementState, dbDispatch } from '../../ts/common/GlobalImports';
-	import { s_ancestries_grabbed } from '../../ts/state/ReactiveState';
+	import { k, u, Size, Thing, Point, ZIndex, svgPaths, Element_State, dbDispatch } from '../../ts/common/Global_Imports';
+	import { s_ancestries_grabbed } from '../../ts/state/Reactive_State';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import Button from './Button.svelte';
 	export let mouse_closure = (mouseState) => {};
 	export let hover_closure = (isHovering) => {};
-	export let elementState = ElementState.none;
+	export let element_state = Element_State.none;
 	export let extraPath = null;
 	export let name = k.empty;
 	export let strokeColor;
@@ -43,7 +43,7 @@
 </script>
 
 <Button
-	elementState={elementState}
+	element_state={element_state}
 	border_thickness=0
 	closure={closure}
 	center={center}

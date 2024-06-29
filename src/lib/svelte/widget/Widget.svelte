@@ -1,12 +1,12 @@
 <script lang='ts'>
-	import { k, s, u, Thing, Point, Angle, debug, ZIndex, onMount, signals, debugReact } from '../../ts/common/GlobalImports';
-	import { s_thing_changed, s_title_editing, s_ancestry_focus, s_ancestries_grabbed } from '../../ts/state/ReactiveState';
-	import { s_thing_fontFamily, s_layout_asClusters, s_ancestry_editingTools } from '../../ts/state/ReactiveState';
-	import { ElementType, ElementState, SvelteWrapper, SvelteComponentType } from '../../ts/common/GlobalImports';
-	import EditingTools from './EditingTools.svelte';
-	import TitleEditor from './TitleEditor.svelte';
-	import DotReveal from './DotReveal.svelte';
-	import DotDrag from './DotDrag.svelte';
+	import { k, s, u, Thing, Point, Angle, debug, ZIndex, onMount, signals, debugReact } from '../../ts/common/Global_Imports';
+	import { s_thing_changed, s_title_editing, s_ancestry_focus, s_ancestries_grabbed } from '../../ts/state/Reactive_State';
+	import { s_thing_fontFamily, s_layout_asClusters, s_ancestry_editingTools } from '../../ts/state/Reactive_State';
+	import { ElementType, Element_State, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import Editing_Tools from './Editing_Tools.svelte';
+	import Title_Editor from './Title_Editor.svelte';
+	import Dot_Reveal from './Dot_Reveal.svelte';
+	import Dot_Drag from './Dot_Drag.svelte';
 	export let origin = new Point(160, 5);
 	export let subtype = k.empty;
     export let name = k.empty;
@@ -19,8 +19,8 @@
 	const forward = angle <= Angle.quarter || angle >= Angle.threeQuarters;
 	const leftPadding = forward ? 1 : 14;
 	const priorRowHeight = k.row_height;
-	let widgetWrapper: SvelteWrapper;
-	let elementState!: ElementState;
+	let widgetWrapper: Svelte_Wrapper;
+	let element_state!: Element_State;
 	let revealCenter = Point.zero;
 	let dragCenter = Point.zero;
 	let radius = k.dot_size / 2;
@@ -49,7 +49,7 @@
 	onMount(() => {
 		update_fromAncestry();
 		updateLayout();
-		elementState = s.elementState_forName(name);		// survives onDestroy, created by {tree, cluster} children
+		element_state = s.elementState_forName(name);		// survives onDestroy, created by {tree, cluster} children
 		debugReact.log_mount(`WIDGET ${thing?.description} ${ancestry?.isGrabbed}`);
 		fullUpdate();
 		const handleAny = signals.handle_anySignal((kinds, id) => {
@@ -98,7 +98,7 @@
 
 	$: {
 		if (widget) {
-			widgetWrapper = new SvelteWrapper(widget, handle_mouseData, ancestry.idHashed, SvelteComponentType.widget);
+			widgetWrapper = new Svelte_Wrapper(widget, handle_mouseData, ancestry.idHashed, SvelteComponentType.widget);
 		}
 	}
 	
@@ -118,7 +118,7 @@
 
 	function updateBorder_fromState() {
 		if (!!widget) {
-			widget.style.border = elementState.border;
+			widget.style.border = element_state.border;
 			// widget.style.background-color = k.color_background;
 		}
 	}
@@ -173,7 +173,7 @@
 </script>
 
 {#key rebuilds}
-	{#if elementState}
+	{#if element_state}
 		<div class='widget' id='{widgetName}'
 			bind:this={widget}
 			style='
@@ -186,21 +186,21 @@
 				padding: {padding};
 				border-radius: {radius}px;
 				z-index: {ZIndex.widgets};
-				border: {elementState.border};
+				border: {element_state.border};
 			'>
-			<DotDrag
+			<Dot_Drag
 				ancestry={ancestry}
 				center={dragCenter}
 				name={dragState.name}
 			/>
-			<TitleEditor
+			<Title_Editor
 				forward={forward}
 				ancestry={ancestry}
 				fontSize={k.thing_fontSize}px
 				fontFamily={$s_thing_fontFamily}
 			/>
 			{#if ancestry?.showsReveal}
-				<DotReveal
+				<Dot_Reveal
 					ancestry={ancestry}
 					center={revealCenter}
 					name={revealState.name}

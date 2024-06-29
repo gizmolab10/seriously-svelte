@@ -1,4 +1,4 @@
-import { k, u, Point, Angle } from '../common/GlobalImports';
+import { k, u, Point, Angle } from '../common/Global_Imports';
 
 export enum Direction {
 	up = Angle.threeQuarters,

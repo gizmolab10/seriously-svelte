@@ -1,6 +1,6 @@
 import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
-import { Predicate, dbDispatch, Relationship, persistLocal, CreationOptions } from '../common/GlobalImports';
-import { k, u, get, Thing, debug, signals, IDTrait, DebugFlag, Hierarchy } from '../common/GlobalImports';
+import { Predicate, dbDispatch, Relationship, persistLocal, CreationOptions } from '../common/Global_Imports';
+import { k, u, get, Thing, debug, signals, IDTrait, DebugFlag, Hierarchy } from '../common/Global_Imports';
 import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
 import { DBType, DatumType } from '../db/DBInterface';

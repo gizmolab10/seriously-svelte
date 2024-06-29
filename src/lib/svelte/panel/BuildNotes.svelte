@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { k, builds, onMount, ZIndex } from '../../ts/common/GlobalImports';
-	import DirectionalButtons from '../mouse buttons/DirectionalButtons.svelte'
-	import { s_id_popupView } from '../../ts/state/ReactiveState';
-	import CloseButton from '../mouse buttons/CloseButton.svelte';
+	import { k, builds, onMount, ZIndex } from '../../ts/common/Global_Imports';
+	import Directional_Buttons from '../mouse buttons/Directional_Buttons.svelte'
+	import { s_id_popupView } from '../../ts/state/Reactive_State';
+	import Close_Button from '../mouse buttons/Close_Button.svelte';
 	const notesIndexed = Object.entries(builds.notes).reverse();
 	const notesLimit = notesIndexed.length - 1;
 	let title = k.empty;
@@ -92,10 +92,10 @@
 	<div class='notes-modal-content'>
 		<div class='top-bar'>
 			{#key notes}
-				<DirectionalButtons hit={directional_hit_handler} display={display}/>
+				<Directional_Buttons hit={directional_hit_handler} display={display}/>
 			{/key}
 			<div class='title'>{title}</div>
-			<CloseButton name='builds close' size={k.dot_size * 1.5}/>
+			<Close_Button name='builds close' size={k.dot_size * 1.5}/>
 		</div>
 		<br>
 		<table>
