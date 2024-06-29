@@ -1,20 +1,21 @@
 import { s_clusters_page_indices, s_graphRect, s_ring_angle, s_ancestry_focus, s_cluster_arc_radius } from '../state/ReactiveState';
-import { k, u, get, Rect, Point, Angle, IDLine, svgPaths } from '../common/GlobalImports';
-import { Ancestry, Predicate, Widget_MapRect } from '../common/GlobalImports';
+import { k, s, get, Rect, Point, Angle, IDLine, svgPaths, Ancestry } from '../common/GlobalImports';
+import { Predicate, ElementType, ElementState, Widget_MapRect } from '../common/GlobalImports';
 
 // for one cluster (there are three)
 //
-// assumes ancestries are already reduced to fit
+// assumes ancestries are already paged to fit
 //
-// computes: angle and vector for line,
-// svg paths and positions for the arc pieces,
+// computes: angle and vector for fork and thumb,
+// svg paths and positions for the arc pieces and thumb,
 // and Widget_MapRect for each child
 
 export default class Cluster_Map  {
+	focus_ancestry: Ancestry = get(s_ancestry_focus);
 	widget_maps: Array<Widget_MapRect> = [];	// maximum a page's worth, will be combined into geometry.widget_maps
-	predicates: Array<Predicate> = [];			// ditto
-	ancestries: Array<Ancestry> = [];			// ditto
-	focus_ancestry!: Ancestry;
+	predicates: Array<Predicate> = [];
+	ancestries: Array<Ancestry> = [];
+	thumbState: ElementState;
 	outside_ring_radius = 0;
 	inside_ring_radius = 0;
 	clusters_center: Point;
@@ -24,6 +25,7 @@ export default class Cluster_Map  {
 	fork_backoff: number;
 	fork_radius: number;
 	points_out: boolean;
+	origin = Point.zero;
 	center = Point.zero;
 	fork_angle: number;
 	label_tip: Point;
@@ -46,12 +48,13 @@ export default class Cluster_Map  {
 		const semi_major = inside_arc_radius - fork_radius - k.dot_size / 2;
 		const ellipse_axes = new Point(semi_minor, semi_major);
 
+		this.thumbState = s.elementState_for(this.focus_ancestry, ElementType.advance, this.cluster_title);
 		this.fork_tip = Point.fromPolar(inside_arc_radius - fork_radius, -fork_angle);
 		this.outside_arc_radius = inside_arc_radius + this.scroll_arc_thickness;
 		this.label_tip = ellipse_axes.ellipse_coordiates_forAngle(fork_angle);
 		this.center = get(s_graphRect).size.dividedInHalf.asPoint;
+		this.origin = center.negated.offsetBy(this.center)
 		this.outside_ring_radius = outside_ring_radius;
-		this.focus_ancestry = get(s_ancestry_focus);
 		this.inside_arc_radius = inside_arc_radius;
 		this.fork_backoff = fork_backoff;
 		this.fork_radius = fork_radius;
@@ -69,16 +72,20 @@ export default class Cluster_Map  {
 	get scroll_arc_thickness(): number { return k.ring_thickness / 3; };
 	get thumb_radius(): number { return this.scroll_arc_thickness * 0.9; };
 	get fork_center(): Point { return this.center_at(this.inside_arc_radius, -this.fork_angle); }
-	get thumb_center(): Point { return this.center_at(this.thumb_arc_radius, this.thumb_angle); }
-	get thumb_arc_radius(): number { return this.inside_arc_radius + this.scroll_arc_thickness / 2.5; };
+	get thumb_arc_radius(): number { return this.inside_arc_radius + this.scroll_arc_thickness / 2; };
 	get page_index(): number { return get(s_clusters_page_indices).index_for(this.points_out, this.predicate); }
+	get thumb_center(): Point { return this.center_at(this.thumb_arc_radius, this.thumb_angle).offsetByXY(15, 15); }
 	set_page_index(index: number) { s_clusters_page_indices.set(get(s_clusters_page_indices).setIndex_for(index, this.points_out, this.predicate)); }
 	fork_radius_multiplier(shown: number): number { return (shown > 3) ? 0.6 : (shown > 1) ? 0.3 : 0.15; }
+	get single_svgPath(): string { return svgPaths.circle(this.fork_center, this.fork_radius - 0.5); };
+	get thumb_svgPath(): string { return svgPaths.circle(this.thumb_center, this.thumb_radius); };
+	get gap_svgPath() { return svgPaths.circle(this.fork_center, this.fork_radius - 0.5); }
+	get fork_svgPaths() { return [this.fork_svgPath(false), this.fork_svgPath(true)]; }
 
 	setup() {
 		const shown = this.shown;
 		const radius = this.outside_ring_radius;
-		const center = this.center.offsetByXY(2, -1.5);
+		const center = this.center.offsetByXY(2, -1.5);	// tweak so that drag dots are centered within the necklace ring
 		const radial = new Point(radius + k.necklace_widget_padding, 0);
 
 		this.widget_maps = [];
@@ -105,7 +112,9 @@ export default class Cluster_Map  {
 	static readonly $_ANGLES_$: unique symbol;
 
 	get thumb_angle(): number {
-		return this.start_angle + (this.end_angle - this.start_angle) / this.shown * this.page_index;
+		const ratio = this.page_index / this.shown;
+		const delta = this.end_angle - this.start_angle
+		return this.start_angle + (delta * ratio);
 	}
 
 	angle_ofChild_for(index: number, radius: number): number {
@@ -163,11 +172,6 @@ export default class Cluster_Map  {
 	
 	static readonly $_SVGS_$: unique symbol;
 
-	get fork_svgPaths() { return [this.fork_svgPath(false), this.fork_svgPath(true)]; }
-	get gap_svgPath() { return svgPaths.circle(this.fork_center, this.fork_radius - 0.5); }
-	get thumb_svgPath(): string { return svgPaths.circle(this.thumb_center, this.thumb_radius); };
-	get single_svgPath(): string { return svgPaths.circle(this.fork_center, this.fork_radius - 0.5); };
-
 	get main_svgPaths(): Array<string> {
 		const angle_tiltsUp = new Angle(this.fork_angle).angle_tiltsUp;
 		const big_inner_svgPath = this.big_svgPath(this.inside_arc_radius, angle_tiltsUp);
@@ -182,7 +186,7 @@ export default class Cluster_Map  {
 		return [start_small_svgPath, big_outer_svgPath, end_small_svgPath];
 	}
 
-	get line_title(): string {
+	get cluster_title(): string {
 		let shortened = this.predicate?.kind.unCamelCase().lastWord() ?? k.empty;
 		const quantity = `${this.total}`;
 		if (!this.predicate?.isBidirectional) {

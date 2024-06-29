@@ -1,6 +1,6 @@
 <script lang='ts'>
+	import { k, s, u, Rect, Thing, Point, ZIndex, signals, svgPaths, dbDispatch, ElementType } from '../../ts/common/GlobalImports';
 	import { SvelteWrapper, Clusters_Geometry, transparentize, SvelteComponentType } from '../../ts/common/GlobalImports';
-	import { k, s, u, Rect, Thing, Point, ZIndex, signals, svgPaths, dbDispatch } from '../../ts/common/GlobalImports';
 	import { s_graphRect, s_mouse_location, s_mouse_up_count, s_user_graphOffset } from '../../ts/state/ReactiveState';
 	import { s_thing_changed, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
@@ -139,16 +139,14 @@
 			detectHit_closure={isHit}
 			cursor={scrolling_ringState.cursor}>
 		</Mouse_Responder>
-		<div class='lines-and-arcs'>
+		<div class='scroll-arcs'>
 			{#each geometry.cluster_map as cluster_map}
 				{#if cluster_map.shown > 0}
 					<Cluster_Label cluster_map={cluster_map} center={center} color={color}/>
-					{#if cluster_map.shown > 1}
-						<Cluster_ScrollArc
-							center={center}
-							cluster_map={cluster_map}
-							color={transparentize(color, scrolling_ringState.stroke_transparency * 0.7)}/>
-					{/if}
+					<Cluster_ScrollArc
+						center={center}
+						cluster_map={cluster_map}
+						color={transparentize(color, scrolling_ringState.stroke_transparency * 0.7)}/>
 				{/if}
 			{/each}
 		</div>

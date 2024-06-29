@@ -20,7 +20,7 @@
 	function title_origin_for(rect: Rect): Point {
 		const m = multiplier();
 		const y = k.dot_size * m.y;
-		const title = cluster_map?.line_title;
+		const title = cluster_map?.cluster_title;
 		const x = u.getWidthOf(title) * m.x;
 		return rect.center.offsetByXY(x, y);
 	}
@@ -39,7 +39,7 @@
 
 </script>
 
-<div class='cluster-line-label'
+<div class='cluster-label'
 	style='
 		background-color: {k.color_background};
 		left: {title_origin.x}px;
@@ -49,5 +49,5 @@
 		font-family: Arial;
 		font-size: 0.5em;
 		color: {color};'>
-	{cluster_map?.line_title}
+	{cluster_map?.cluster_title}
 </div>

@@ -1,14 +1,22 @@
 <script lang='ts'>
-	import { g, k, Point, ZIndex, onMount, Cluster_Map } from '../../ts/common/GlobalImports';
+	import { g, k, s, Point, ZIndex, onMount, Cluster_Map } from '../../ts/common/GlobalImports';
 	import { s_cluster_arc_radius } from '../../ts/state/ReactiveState';
 	import { scrolling_ringState } from '../../ts/state/Rotate_State';
 	import { ArcPart } from '../../ts/common/Enumerations';
+	import Button from '../mouse buttons/Button.svelte';
 	export let cluster_map: Cluster_Map;
 	export let center = Point.zero;
 	export let color = 'red';
+	const name = cluster_map.cluster_title;
+	const elementState = cluster_map.thumbState;
+	const thumb_size = cluster_map.thumb_radius * 2;
 	const offset = k.necklace_widget_padding;
 	let radius = $s_cluster_arc_radius + offset;
 	const breadth = radius * 2;
+
+	onMount(() => {
+		elementState.color_background = color;
+	})
 
 	// draws the "talking" scroll bar
 	// uses cluster map for svg, which also has total and shown
@@ -16,19 +24,20 @@
 	// drawn by scrolling ring, which is drawn by clusters graph
 	// CHANGE: drawn by clusters (which is drawn by clusters graph)?
 
-	//  && scrolling_ringState.isHovering
+	function closure(mouseState) {
+	}
 
 </script>
 
-<svg class='cluster-scroll-arc' 
-	viewBox='{-offset} {-offset} {breadth} {breadth}'
-	style='
-		position: absolute;
-		width: {breadth}px;
-		height: {breadth}px;
-		zindex: {ZIndex.frontmost};
-		top: {center.y - radius}px;
-		left: {center.x - radius}px;'>
+<div name={name} style='
+	position: absolute;
+	width: {breadth}px;
+	height: {breadth}px;
+	zindex: {ZIndex.frontmost};
+	top: {center.y - radius}px;
+	left: {center.x - radius}px;'>
+	<svg class='svg-scroll-arc' 
+		viewBox='{-offset} {-offset} {breadth} {breadth}'>
 		{#if cluster_map.shown < 2}
 			<path stroke={color} fill=transparent d={cluster_map.single_svgPath}/>
 		{:else}
@@ -43,7 +52,18 @@
 				<path stroke={color} fill=transparent d={forkPath}/>
 			{/each}
 		{/if}
-		{#if (cluster_map.shown < cluster_map.total)}
-			<path stroke={color} fill={k.color_background} d={cluster_map.thumb_svgPath}/>
-		{/if}
-</svg>
+	</svg>
+	{#if (cluster_map.shown < cluster_map.total) && scrolling_ringState.isHovering}
+		<Button name='thumb-responder'
+			center={cluster_map.thumb_center}
+			elementState={elementState}
+			height={thumb_size}
+			width={thumb_size}
+			closure={closure}>
+			<svg class='svg-thumb' style='position:absolute; top=0px; left=0px;'
+				viewBox='0 0 {thumb_size} {thumb_size}'>
+				<path stroke={color} fill={k.color_background} d={cluster_map.thumb_svgPath}/>
+			</svg>
+		</Button>
+	{/if}
+</div>

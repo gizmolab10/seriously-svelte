@@ -74,7 +74,7 @@
 					ring_width={30}
 					geometry={geometry}
 					name={'scroll-ring'}
-					zindex={ZIndex.lines}
+					zindex={ZIndex.text}
 					radius={$s_cluster_arc_radius - k.ring_thickness}/>
 				<Necklace_Ring
 					color={color}

@@ -125,7 +125,7 @@
 
 </script>
 
-<div id={name}
+<div class='mouse-responder' id={name}
 	style={style}
 	bind:this={mouse_button}>
 	<slot></slot>
