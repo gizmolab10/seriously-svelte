@@ -5,7 +5,7 @@
 	import { s_thing_changed, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { necklace_ringState } from '../../ts/state/Expansion_State';
-	import ClusterScroll_Arc from './ClusterScroll_Arc.svelte';
+	import Scrolling_Arc from './Scrolling_Arc.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Cluster_Label from './Cluster_Label.svelte';
 	import Divider_line from './Divider_line.svelte';
@@ -105,7 +105,7 @@
 			{#each geometry.cluster_map as cluster_map}
 				{#if cluster_map.shown > 0}
 					<Cluster_Label cluster_map={cluster_map} center={center} color={color}/>
-					<ClusterScroll_Arc
+					<Scrolling_Arc
 						center={center}
 						cluster_map={cluster_map}
 						scrolling_ring_name={name}
