@@ -4,7 +4,7 @@ import { h } from '../db/DBDispatch';
 
 export default class Clusters_Geometry {
 	widget_maps: Array<Widget_MapRect> = [];
-	cluster_map: Array<Cluster_Map> = [];
+	cluster_maps: Array<Cluster_Map> = [];
 	ancestries: Array<Ancestry> = [];
 
 	// layout_necklace_andLines all the widgets, lines, arcs,
@@ -13,8 +13,8 @@ export default class Clusters_Geometry {
 	constructor() { this.layout(); }
 
 	destructor() {
-		this.cluster_map.forEach(l => l.destructor());
-		this.cluster_map = [];
+		this.cluster_maps.forEach(l => l.destructor());
+		this.cluster_maps = [];
 		this.widget_maps = [];
 	}
 
@@ -43,7 +43,7 @@ export default class Clusters_Geometry {
 			const onePage = this.onePage_from(ancestries, predicate, points_out);
 			const cluster_map = new Cluster_Map(ancestries.length, onePage, predicate, points_out);
 			this.widget_maps = u.concatenateArrays(this.widget_maps, cluster_map.widget_maps);	// for necklace of widgets
-			this.cluster_map.push(cluster_map);		// for lines and arcs
+			this.cluster_maps.push(cluster_map);		// for lines and arcs
 		}
 	}
 

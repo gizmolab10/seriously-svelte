@@ -102,7 +102,7 @@
 			cursor={k.cursor_default}>
 		</Mouse_Responder>
 		<div class='scroll-arcs'>
-			{#each geometry.cluster_map as cluster_map}
+			{#each geometry.cluster_maps as cluster_map}
 				{#if cluster_map.shown > 0}
 					<Cluster_Label cluster_map={cluster_map} center={center} color={color}/>
 					<Scrolling_Arc
