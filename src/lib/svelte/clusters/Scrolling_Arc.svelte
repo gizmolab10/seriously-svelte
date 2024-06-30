@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_ring_angle, s_mouse_location, s_mouse_up_count, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
+	import { s_mouse_location, s_mouse_up_count, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
 	import { g, k, s, u, Point, ZIndex, onMount, Cluster_Map } from '../../ts/common/Global_Imports';
 	import { ArcPart } from '../../ts/common/Enumerations';
 	import Button from '../mouse buttons/Button.svelte';
@@ -53,7 +53,8 @@
 				const delta = mouseAngle.add_angle_normalized(-rotation_state.priorAngle);	// subtract to find difference
 				if (Math.abs(delta) >= Math.PI / 90) {			// minimum two degree changes
 					rotation_state.priorAngle = mouseAngle;
-					$s_ring_angle = mouseAngle.add_angle_normalized(-rotation_state.referenceAngle);
+					const angle = mouseAngle.add_angle_normalized(-rotation_state.referenceAngle);
+					adjustIndex_forAngle(angle);
 					rebuilds += 1;
 				}
 			}
@@ -84,11 +85,16 @@
 
 				// begin rotate
 
+				rotation_state.priorAngle = mouseAngle;
 				rotation_state.referenceAngle = mouseAngle;
 				rebuilds += 1;
 			}
 			cursor_closure();
 		}
+	}
+
+	function adjustIndex_forAngle(angle) {
+
 	}
 
 </script>

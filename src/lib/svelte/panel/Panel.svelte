@@ -7,7 +7,7 @@
 	import Clusters_View from '../clusters/Clusters_View.svelte';
 	import Title_Editor from '../widget/Title_Editor.svelte';
 	import Breadcrumbs from '../panel/Breadcrumbs.svelte';
-	import Tree_View from '../tree/Tree_View.svelte';
+	import Tree_Graph from '../tree/Tree_Graph.svelte';
 	import { DBType } from '../../ts/db/DBInterface';
 	import Details from '../details/Details.svelte';
 	import BuildNotes from './BuildNotes.svelte';
@@ -158,7 +158,7 @@
 						{#if $s_layout_asClusters}
 							<Clusters_View/>
 						{:else}
-							<Tree_View/>
+							<Tree_Graph/>
 						{/if}
 					</div>
 				{/key}
