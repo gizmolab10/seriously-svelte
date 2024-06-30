@@ -89,7 +89,6 @@ export default class Cluster_Map  {
 		const center = this.center.offsetByXY(2, -1.5);	// tweak so that drag dots are centered within the necklace ring
 		const radial = new Point(radius + k.necklace_widget_padding, 0);
 		this.thumb_state.set_forHovering('black', 'pointer');
-		this.setup_thumb_angle();
 		this.widget_maps = [];
 		if (shown > 0 && !!this.predicate) {
 			let index = 0;
@@ -102,19 +101,29 @@ export default class Cluster_Map  {
 				index += 1;
 			}
 		}
+		setTimeout(() => {	// delay until page indices are set up
+			this.setup_thumb_angle();
+		}, 1);
 	}
 
 	normalize_andSet_thumb_angle(angle: number) {
-		// const normalized = angle.force_between(this.start_angle, this.end_angle);
 		this.thumb_angle = angle;
 	}
 
 	setup_thumb_angle() {
-		setTimeout(() => {	// delay until page indices are set up
-			const fraction = this.page_index / this.shown;
-			const angular_spread = this.end_angle - this.start_angle
-			this.thumb_angle = this.start_angle + (angular_spread * fraction);
-		}, 1);
+		const max = this.total - this.shown;
+		const fraction = this.page_index / max;
+		const spread = this.end_angle - this.start_angle;
+		this.thumb_angle = this.start_angle + (spread * fraction);
+	}
+
+	adjust_index_forThumb_angle(angle: number) {
+		const max = this.total - this.shown;
+		const delta = angle - this.start_angle;
+		const spread = this.end_angle - this.start_angle;
+		const index = max.normalize(Math.round(max * delta / spread));
+		this.set_page_index(index);
+		this.setup_thumb_angle();
 	}
 
 	advance(isForward: boolean) {

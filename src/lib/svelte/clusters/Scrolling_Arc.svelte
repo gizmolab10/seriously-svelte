@@ -23,15 +23,6 @@
 		thumb_state.color_background = color;
 	})
 
-	function update_thumbPath_forAngle(angle) {
-		// cluster_map.normalize_andSet_thumb_angle(angle);
-		cluster_map.thumb_angle = angle;
-	}
-
-	function adjustIndex_forAngle(angle) {
-		update_thumbPath_forAngle(angle);
-	}
-
 	// draws the "talking" scroll bar
 	// uses cluster map for svg, which also has total and shown
 	//
@@ -63,7 +54,7 @@
 				if (Math.abs(delta) >= Math.PI / 90) {			// minimum two degree changes
 					rotation_state.priorAngle = mouseAngle;
 					const angle = mouseAngle;
-					adjustIndex_forAngle(angle);
+					cluster_map.adjust_index_forThumb_angle(angle);
 					rebuilds += 1;
 				}
 			}
@@ -85,6 +76,7 @@
 		} else {
 			const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);
 			if (mouseState.isUp) {
+				cluster_map.setup_thumb_angle();
 
 				// end rotate
 
