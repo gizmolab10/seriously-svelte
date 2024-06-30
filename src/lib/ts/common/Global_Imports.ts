@@ -5,12 +5,12 @@ import { IDTrait, ZIndex, IDButton, IDBrowser } from './Enumerations';
 import type { Handle_Mouse_State, Create_Mouse_State } from './Types';
 import { onMount, onDestroy, setContext, getContext } from 'svelte';
 import { CreationOptions, IDLine, IDTool } from './Enumerations';
+import { Page_State, Page_States } from '../state/Page_States';
 import { Direction, svgPaths } from '../geometry/SVG_Paths';
 import { Quadrant, Orientation } from '../geometry/Angle';
 import { debug, Debug, DebugFlag } from '../debug/Debug';
 import { Rect, Size, Point } from '../geometry/Geometry';
 import { signals, IDSignal } from '../events/Signals';
-import { Page_Index } from '../state/Page_Indices';
 import { Seriously_Range } from './Seriously_Range';
 import { Hierarchy } from '../managers/Hierarchy';
 import { ElementType } from '../state/UX_State';
@@ -34,8 +34,8 @@ import Tree_Geometry from '../geometry/Tree_Geometry';
 import Rotation_State from '../state/Rotation_State';
 import Element_State from '../state/Element_State';
 import Cluster_Map from '../geometry/Cluster_Map';
-import Page_Indices from '../state/Page_Indices';
 import Relationship from '../data/Relationship';
+import Thumb_State from '../state/Thumb_State';
 import Title_State from '../state/Title_State';
 import Mouse_State from '../state/Mouse_State';
 import Svelte_Wrapper from './Svelte_Wrapper';
@@ -63,9 +63,9 @@ export {
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Grabs, Ancestry, Hierarchy, dbDispatch, persistLocal,
 	ZIndex, PredicateKind, GraphRelations, CreationOptions,
-	Element_State, Page_Index, Page_Indices, Alteration_State,
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactKind,
 	ElementType, AlterationType, Svelte_Wrapper, SvelteComponentType,
 	get, onMount, onDestroy, setContext, getContext, SvelteComponent,
 	IDLine, IDTool, IDTrait, IDSignal, IDButton, IDBrowser, IDPersistant,
+	Element_State, Page_State, Page_States, Thumb_State, Alteration_State,
 };

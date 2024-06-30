@@ -1,17 +1,21 @@
 import Predicate from '../data/Predicate';
+import Thumb_State from './Thumb_State';
 
-export class Page_Index {
+export class Page_State {
 
 	// a page is a subset of a too-long list of things
 	// index == first of subset
 
+	thumb_state!: Thumb_State;
 	atLimit = [false, false];
 	show_thumb = false;
 	index = 0;
 	shown = 0;
 	total = 0;
 
-	constructor() {}
+	constructor() {
+		this.thumb_state = new Thumb_State(this);
+	}
 
 	set_index_to(index: number) {
 		// at limit contains two elements: at start and at end
@@ -28,11 +32,11 @@ export class Page_Index {
 	}
 }
 
-export default class Page_Indices {
-	inward_indices: Array<Page_Index>;
-	outward_indices: Array<Page_Index>;
+export class Page_States {
+	inward_page_states: Array<Page_State>;
+	outward_page_states: Array<Page_State>;
 
-	// two arrays of Page_Index (defined above)
+	// two arrays of Page_State (defined above)
 	// 1) outward: (to) children and relateds (more kinds later?)
 	// 2) inward: (from) parents
 	// each array  has one index for each predicate kind
@@ -44,44 +48,44 @@ export default class Page_Indices {
 
 		// keep track of paging through cluster of things
 
-		this.inward_indices = [];
-		this.outward_indices = [];
+		this.inward_page_states = [];
+		this.outward_page_states = [];
 	}
 
 	show_thumb_for(points_out: boolean, predicate: Predicate): boolean {
-		return this.pageIndex_for(points_out, predicate).show_thumb;
+		return this.page_state_for(points_out, predicate).show_thumb;
 	}
 
 	atLimit_for(atStart: boolean, points_out: boolean, predicate: Predicate): boolean {
-		const pageIndex = this.pageIndex_for(points_out, predicate);
-		return pageIndex.atLimit[atStart ? 0 : 1];
+		const page_state = this.page_state_for(points_out, predicate);
+		return page_state.atLimit[atStart ? 0 : 1];
 	}
 
-	pageIndex_for(points_out: boolean, predicate: Predicate): Page_Index {
-		return this.indices_for(points_out)[predicate.stateIndex];
+	page_state_for(points_out: boolean, predicate: Predicate): Page_State {
+		return this.page_states_for(points_out)[predicate.stateIndex];
 	}
 
 	index_for(points_out: boolean, predicate: Predicate): number {
-		return this.pageIndex_for(points_out, predicate).index;
+		return this.page_state_for(points_out, predicate).index;
 	}
 
 	setIndex_for(index: number, points_out: boolean, predicate: Predicate) {
-		const indices = this.indices_for(points_out);
-		const pageIndex = indices[predicate.stateIndex];
-		pageIndex.set_index_to(index);
-		this.set_indices_for(indices, points_out);
+		const page_states = this.page_states_for(points_out);
+		const page_state = page_states[predicate.stateIndex];
+		page_state.set_index_to(index);
+		this.set_page_states_for(page_states, points_out);
 		return this;
 	}
 
-	indices_for(points_out: boolean): Array<Page_Index> {
-		return points_out ? this.outward_indices : this.inward_indices;
+	page_states_for(points_out: boolean): Array<Page_State> {
+		return points_out ? this.outward_page_states : this.inward_page_states;
 	}
 
-	set_indices_for(indices: Array<Page_Index>, points_out: boolean) {
+	set_page_states_for(page_states: Array<Page_State>, points_out: boolean) {
 		if (points_out) {
-			this.outward_indices = indices;
+			this.outward_page_states = page_states;
 		} else {
-			this.inward_indices = indices;
+			this.inward_page_states = page_states;
 		}
 	}
 

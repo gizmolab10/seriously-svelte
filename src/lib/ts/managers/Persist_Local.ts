@@ -1,10 +1,10 @@
 import { s_ring_angle, s_cluster_arc_radius, s_layout_asClusters } from '../state/Reactive_State';
 import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/Reactive_State';
 import { g, k, get, Point, signals, Ancestry, dbDispatch } from '../common/Global_Imports';
-import { Page_Index, Page_Indices, GraphRelations } from '../common/Global_Imports';
+import { Page_State, Page_States, GraphRelations } from '../common/Global_Imports';
 import { s_ancestries_grabbed, s_ancestries_expanded } from '../state/Reactive_State';
 import { s_thing_fontFamily, s_graph_relations } from '../state/Reactive_State';
-import { s_clusters_page_indices } from '../state/Reactive_State';
+import { s_clusters_page_states } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
 
 export enum IDPersistant {
@@ -181,16 +181,16 @@ class Persist_Local {
 
 	indicies_restore(points_out: boolean) {
 		const count = h.predicates_byDirection(points_out).length;
-		let page_indices: Array<Page_Index> = [];
+		let page_states: Array<Page_State> = [];
 		for (let index = 0; index <= count; index += 1) {
-			page_indices[index] = new Page_Index();
+			page_states[index] = new Page_State();
 		}
-		let clusters_page_indices = get(s_clusters_page_indices);
-		if (!clusters_page_indices) {
-			clusters_page_indices = new Page_Indices();
+		let clusters_page_states = get(s_clusters_page_states);
+		if (!clusters_page_states) {
+			clusters_page_states = new Page_States();
 		}
-		clusters_page_indices.set_indices_for(page_indices, points_out);
-		s_clusters_page_indices.set(clusters_page_indices);
+		clusters_page_states.set_page_states_for(page_states, points_out);
+		s_clusters_page_states.set(clusters_page_states);
 	}
 
 	focus_restore() {

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_clusters_page_indices, s_graphRect, s_thing_changed, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
+	import { s_clusters_page_states, s_graphRect, s_thing_changed, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
 	import { g, k, s, u, get, Point, ZIndex, signals, onMount, Predicate, onDestroy } from '../../ts/common/Global_Imports';
 	import { Widget_MapRect, Clusters_Geometry, transparentize } from '../../ts/common/Global_Imports';
 	import Widget from '../widget/Widget.svelte';
@@ -30,7 +30,7 @@
 	}
 
 	$: {
-		if (!!$s_clusters_page_indices && !!geometry) {		// ignore null at startup
+		if (!!$s_clusters_page_states && !!geometry) {		// ignore null at startup
 			geometry.layout();
 			rebuilds += 1;
 		}
