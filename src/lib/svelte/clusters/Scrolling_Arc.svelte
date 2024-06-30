@@ -23,6 +23,15 @@
 		thumb_state.color_background = color;
 	})
 
+	function update_thumbPath_forAngle(angle) {
+		// cluster_map.normalize_andSet_thumb_angle(angle);
+		cluster_map.thumb_angle = angle;
+	}
+
+	function adjustIndex_forAngle(angle) {
+		update_thumbPath_forAngle(angle);
+	}
+
 	// draws the "talking" scroll bar
 	// uses cluster map for svg, which also has total and shown
 	//
@@ -53,7 +62,7 @@
 				const delta = mouseAngle.add_angle_normalized(-rotation_state.priorAngle);	// subtract to find difference
 				if (Math.abs(delta) >= Math.PI / 90) {			// minimum two degree changes
 					rotation_state.priorAngle = mouseAngle;
-					const angle = mouseAngle.add_angle_normalized(-rotation_state.referenceAngle);
+					const angle = mouseAngle;
 					adjustIndex_forAngle(angle);
 					rebuilds += 1;
 				}
@@ -91,10 +100,6 @@
 			}
 			cursor_closure();
 		}
-	}
-
-	function adjustIndex_forAngle(angle) {
-
 	}
 
 </script>

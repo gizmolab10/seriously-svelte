@@ -30,6 +30,7 @@ export default class Cluster_Map  {
 	fork_angle: number;
 	label_tip: Point;
 	fork_tip: Point;
+	thumb_angle = 0;
 	start_angle = 0;
 	end_angle = 0;
 	shown: number;
@@ -88,6 +89,7 @@ export default class Cluster_Map  {
 		const center = this.center.offsetByXY(2, -1.5);	// tweak so that drag dots are centered within the necklace ring
 		const radial = new Point(radius + k.necklace_widget_padding, 0);
 		this.thumb_state.set_forHovering('black', 'pointer');
+		this.setup_thumb_angle();
 		this.widget_maps = [];
 		if (shown > 0 && !!this.predicate) {
 			let index = 0;
@@ -102,6 +104,19 @@ export default class Cluster_Map  {
 		}
 	}
 
+	normalize_andSet_thumb_angle(angle: number) {
+		// const normalized = angle.force_between(this.start_angle, this.end_angle);
+		this.thumb_angle = angle;
+	}
+
+	setup_thumb_angle() {
+		setTimeout(() => {	// delay until page indices are set up
+			const fraction = this.page_index / this.shown;
+			const angular_spread = this.end_angle - this.start_angle
+			this.thumb_angle = this.start_angle + (angular_spread * fraction);
+		}, 1);
+	}
+
 	advance(isForward: boolean) {
 		const sign = isForward ? 1 : -1;
 		const showing = this.shown;
@@ -110,12 +125,6 @@ export default class Cluster_Map  {
 	}
 	
 	static readonly $_ANGLES_$: unique symbol;
-
-	get thumb_angle(): number {
-		const ratio = this.page_index / this.shown;
-		const delta = this.end_angle - this.start_angle
-		return this.start_angle + (delta * ratio);
-	}
 
 	angle_ofChild_for(index: number, radius: number): number {
 		const max = this.shown - 1;
