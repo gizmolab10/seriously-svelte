@@ -78,6 +78,9 @@ export default class Cluster_Map  {
 				index += 1;
 			}
 		}
+		setTimeout(() => {	// delay until page indices are set up
+			this.setup_thumb_angle();
+		}, 1);
 	}
 
 	destructor() { this.ancestries = []; }
@@ -94,6 +97,7 @@ export default class Cluster_Map  {
 	get fork_svgPaths() { return [this.fork_svgPath(false), this.fork_svgPath(true)]; }
 
 	normalize_andSet_thumb_angle(angle: number) {
+<<<<<<< HEAD
 		const normalized = angle.force_between(this.start_angle, this.end_angle);
 		this.thumb_angle = normalized;
 	}
@@ -104,6 +108,25 @@ export default class Cluster_Map  {
 			const angular_spread = this.end_angle - this.start_angle
 			this.thumb_angle = this.start_angle + (angular_spread * fraction);
 		}, 1);
+=======
+		this.thumb_angle = angle;
+	}
+
+	setup_thumb_angle() {
+		const max = this.total - this.shown;
+		const fraction = this.page_index / max;
+		const spread = this.end_angle - this.start_angle;
+		this.thumb_angle = this.start_angle + (spread * fraction);
+	}
+
+	adjust_index_forThumb_angle(angle: number) {
+		const max = this.total - this.shown;
+		const delta = angle - this.start_angle;
+		const spread = this.end_angle - this.start_angle;
+		const index = max.normalize(Math.round(max * delta / spread));
+		this.set_page_index(index);
+		this.setup_thumb_angle();
+>>>>>>> temporary
 	}
 
 	advance(isForward: boolean) {
