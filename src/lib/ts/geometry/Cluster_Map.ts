@@ -42,7 +42,7 @@ export default class Cluster_Map  {
 		this.predicate = predicate;
 		this.total = total;
 		this.setup();
-		this.setup_thumb_angle();
+		this.compute_thumb_angle();
 	}
 
 	setup() {
@@ -79,7 +79,7 @@ export default class Cluster_Map  {
 			}
 		}
 		setTimeout(() => {	// delay until page indices are set up
-			this.setup_thumb_angle();
+			this.compute_thumb_angle();
 		}, 1);
 	}
 
@@ -96,23 +96,7 @@ export default class Cluster_Map  {
 	get gap_svgPath() { return svgPaths.circle(this.fork_center, this.fork_radius - 0.5); }
 	get fork_svgPaths() { return [this.fork_svgPath(false), this.fork_svgPath(true)]; }
 
-	normalize_andSet_thumb_angle(angle: number) {
-<<<<<<< HEAD
-		const normalized = angle.force_between(this.start_angle, this.end_angle);
-		this.thumb_angle = normalized;
-	}
-
-	setup_thumb_angle() {
-		setTimeout(() => {	// delay until page page_states are set up
-			const fraction = this.page_index / this.shown;
-			const angular_spread = this.end_angle - this.start_angle
-			this.thumb_angle = this.start_angle + (angular_spread * fraction);
-		}, 1);
-=======
-		this.thumb_angle = angle;
-	}
-
-	setup_thumb_angle() {
+	compute_thumb_angle() {
 		const max = this.total - this.shown;
 		const fraction = this.page_index / max;
 		const spread = this.end_angle - this.start_angle;
@@ -123,10 +107,9 @@ export default class Cluster_Map  {
 		const max = this.total - this.shown;
 		const delta = angle - this.start_angle;
 		const spread = this.end_angle - this.start_angle;
-		const index = max.normalize(Math.round(max * delta / spread));
+		const index = Math.round(max * delta / spread).force_between(0, max);
 		this.set_page_index(index);
-		this.setup_thumb_angle();
->>>>>>> temporary
+		this.thumb_angle = angle;
 	}
 
 	advance(isForward: boolean) {

@@ -1,21 +1,17 @@
 import Predicate from '../data/Predicate';
-import Thumb_State from './Thumb_State';
 
 export class Page_State {
 
 	// a page is a subset of a too-long list of things
 	// index == first of subset
 
-	thumb_state!: Thumb_State;
 	atLimit = [false, false];
 	show_thumb = false;
 	index = 0;
 	shown = 0;
 	total = 0;
 
-	constructor() {
-		this.thumb_state = new Thumb_State(this);
-	}
+	constructor() {}
 
 	set_index_to(index: number) {
 		// at limit contains two elements: at start and at end

@@ -14,14 +14,20 @@
 	const thumb_size = cluster_map.thumb_radius * 2;
 	const rotation_state = s.rotationState_forName(name);
 	const scrolling_ring_state = s.rotationState_forName(scrolling_ring_name);
+	let thumb_svgPath = cluster_map.thumb_svgPath;
+	let thumb_center = cluster_map.thumb_center;
 	let radius = $s_cluster_arc_radius + offset;
 	const breadth = radius * 2;
 	let mouse_up_count = 0;
-	let rebuilds = 0
 
 	onMount(() => {
 		thumb_state.color_background = color;
 	})
+
+	function update_thumb() {
+		thumb_svgPath = cluster_map.thumb_svgPath;
+		thumb_center = cluster_map.thumb_center;
+	}
 
 	// draws the "talking" scroll bar
 	// uses cluster map for svg, which also has total and shown
@@ -33,7 +39,7 @@
 		if (mouse_up_count != $s_mouse_up_count) {
 			mouse_up_count = $s_mouse_up_count;
 			rotation_state.reset();
-			rebuilds += 1;
+			update_thumb();
 		}
 	}
 
@@ -43,19 +49,18 @@
 		// detect movement & adjust state //
 		////////////////////////////////////
 
-		const _ = $s_mouse_location;
-		const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);	// use store, to react
+		const _ = $s_mouse_location;							// use store, to react
+		const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);
 		if (!!from_center) {
-			// rotation_state.isHovering = isHit();	// show highlight around ring
 			cursor_closure();
-			if (rotation_state.priorAngle != null) {				// rotate
+			if (!!rotation_state.priorAngle) {					// rotate
 				const mouseAngle = from_center.angle;
 				const delta = mouseAngle.add_angle_normalized(-rotation_state.priorAngle);	// subtract to find difference
 				if (Math.abs(delta) >= Math.PI / 90) {			// minimum two degree changes
 					rotation_state.priorAngle = mouseAngle;
 					const angle = mouseAngle;
 					cluster_map.adjust_index_forThumb_angle(angle);
-					rebuilds += 1;
+					update_thumb();
 				}
 			}
 		}
@@ -72,15 +77,15 @@
 
 			// hover
 
-			rebuilds += 1;
+			update_thumb();
 		} else {
 			const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);
 			if (mouseState.isUp) {
-				cluster_map.setup_thumb_angle();
+				cluster_map.compute_thumb_angle();
 
 				// end rotate
 
-				rebuilds += 1;
+				update_thumb();
 			} else if (mouseState.isDown) {
 				const mouseAngle = from_center.angle;
 
@@ -88,7 +93,7 @@
 
 				rotation_state.priorAngle = mouseAngle;
 				rotation_state.referenceAngle = mouseAngle;
-				rebuilds += 1;
+				update_thumb();
 			}
 			cursor_closure();
 		}
@@ -96,6 +101,8 @@
 
 </script>
 
+{#key rebuilds}
+{/key}
 <div name={name} style='
 	position: absolute;
 	width: {breadth}px;
@@ -122,14 +129,14 @@
 	</svg>
 	{#if (cluster_map.shown < cluster_map.total) && scrolling_ring_state.isHovering}
 		<Button name='thumb-responder'
-			center={cluster_map.thumb_center}
 			element_state={thumb_state}
+			center={thumb_center}
 			height={thumb_size}
 			width={thumb_size}
 			closure={closure}>
 			<svg class='svg-thumb' style='position:absolute; top=0px; left=0px;'
 				viewBox='0 0 {thumb_size} {thumb_size}'>
-				<path stroke={color} fill={k.color_background} d={cluster_map.thumb_svgPath}/>
+				<path stroke={color} fill={k.color_background} d={thumb_svgPath}/>
 			</svg>
 		</Button>
 	{/if}

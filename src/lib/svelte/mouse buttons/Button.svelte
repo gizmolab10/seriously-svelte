@@ -1,9 +1,8 @@
 <script lang='ts'>
-	import { g, k, s, u, Rect, Point, ZIndex, onMount, Element_State } from '../../ts/common/Global_Imports';
-	import { Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { Element_State, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { g, k, s, u, Rect, Point, ZIndex, onMount } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from './Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
-	import type { SvelteComponent } from 'svelte';
 	export let background_color = k.color_background;
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;
@@ -16,10 +15,10 @@
 	export let color = 'black';
 	export let style = k.empty;
 	export let name = k.empty;
-	let buttonWrapper: Svelte_Wrapper;
+	let border = k.empty;
 	let element: HTMLElement;
 	let currentStyle = style;
-	let border = k.empty;
+	let buttonWrapper: Svelte_Wrapper;
 
 	//////////////////////////////////////
 	//									//
@@ -27,7 +26,7 @@
 	//									//
 	//	container owns Element_State:	//
 	//	  (stroke, fill & cursor)		//
-	//	  calls closure to update_currentStyle it	//
+	//	  calls closure to update it	//
 	//									//
 	//	owns a Mouse_Responder: state	//
 	//	  is passed up to the container	//
@@ -36,7 +35,6 @@
 	//////////////////////////////////////
 
 	onMount(() => { update_currentStyle(); })
-	$: { update_currentStyle(); }
 	
 	function update_currentStyle() {
 		color = element_state.stroke;

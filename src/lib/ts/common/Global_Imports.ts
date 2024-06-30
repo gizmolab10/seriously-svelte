@@ -35,7 +35,6 @@ import Rotation_State from '../state/Rotation_State';
 import Element_State from '../state/Element_State';
 import Cluster_Map from '../geometry/Cluster_Map';
 import Relationship from '../data/Relationship';
-import Thumb_State from '../state/Thumb_State';
 import Title_State from '../state/Title_State';
 import Mouse_State from '../state/Mouse_State';
 import Svelte_Wrapper from './Svelte_Wrapper';
@@ -63,9 +62,9 @@ export {
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Grabs, Ancestry, Hierarchy, dbDispatch, persistLocal,
 	ZIndex, PredicateKind, GraphRelations, CreationOptions,
+	Element_State, Page_State, Page_States, Alteration_State,
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactKind,
 	ElementType, AlterationType, Svelte_Wrapper, SvelteComponentType,
 	get, onMount, onDestroy, setContext, getContext, SvelteComponent,
 	IDLine, IDTool, IDTrait, IDSignal, IDButton, IDBrowser, IDPersistant,
-	Element_State, Page_State, Page_States, Thumb_State, Alteration_State,
 };
