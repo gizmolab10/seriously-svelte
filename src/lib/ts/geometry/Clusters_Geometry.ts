@@ -1,5 +1,5 @@
 import { k, u, get, Ancestry, Predicate, Cluster_Map, Widget_MapRect } from '../common/Global_Imports';
-import { s_clusters_page_states, s_ancestry_focus, s_cluster_arc_radius } from '../state/Reactive_State';
+import { s_page_states, s_ancestry_focus, s_cluster_arc_radius } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
 
 export default class Clusters_Geometry {
@@ -34,7 +34,7 @@ export default class Clusters_Geometry {
 
 	onePage_from(ancestries: Array<Ancestry>, predicate: Predicate, points_out: boolean): Array<Ancestry> {
 		const maxFit = Math.round(get(s_cluster_arc_radius) * 2 / k.row_height) - 6;
-		const page_state = get(s_clusters_page_states).index_for(points_out, predicate);
+		const page_state = get(s_page_states).index_for(points_out, predicate);
 		return ancestries.slice(page_state, page_state + maxFit);
 	}
 

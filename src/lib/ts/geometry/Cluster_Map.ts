@@ -1,4 +1,4 @@
-import { s_clusters_page_states, s_graphRect, s_ring_angle, s_ancestry_focus, s_cluster_arc_radius } from '../state/Reactive_State';
+import { s_page_states, s_graphRect, s_ring_angle, s_ancestry_focus, s_cluster_arc_radius } from '../state/Reactive_State';
 import { k, s, get, Rect, Point, Angle, IDLine, svgPaths, Ancestry } from '../common/Global_Imports';
 import { Predicate, ElementType, Element_State, Widget_MapRect } from '../common/Global_Imports';
 
@@ -84,9 +84,9 @@ export default class Cluster_Map  {
 	get thumb_radius(): number { return k.scroll_arc_thickness * 0.9; };
 	get fork_center(): Point { return this.center_at(this.inside_arc_radius, -this.fork_angle); }
 	get thumb_arc_radius(): number { return this.inside_arc_radius + k.scroll_arc_thickness / 2; };
-	get page_state(): number { return get(s_clusters_page_states).index_for(this.points_out, this.predicate); }
+	get page_index(): number { return get(s_page_states).index_for(this.points_out, this.predicate); }
 	get thumb_center(): Point { return this.center_at(this.thumb_arc_radius, this.thumb_angle).offsetByXY(15, 15); }
-	set_page_state(index: number) { s_clusters_page_states.set(get(s_clusters_page_states).setIndex_for(index, this.points_out, this.predicate)); }
+	set_page_index(index: number) { s_page_states.set(get(s_page_states).setIndex_for(index, this.points_out, this.predicate)); }
 	fork_radius_multiplier(shown: number): number { return (shown > 3) ? 0.6 : (shown > 1) ? 0.3 : 0.15; }
 	get single_svgPath(): string { return svgPaths.circle(this.fork_center, this.fork_radius - 0.5); };
 	get thumb_svgPath(): string { return svgPaths.circle(this.thumb_center, this.thumb_radius); };
@@ -100,7 +100,7 @@ export default class Cluster_Map  {
 
 	setup_thumb_angle() {
 		setTimeout(() => {	// delay until page page_states are set up
-			const fraction = this.page_state / this.shown;
+			const fraction = this.page_index / this.shown;
 			const angular_spread = this.end_angle - this.start_angle
 			this.thumb_angle = this.start_angle + (angular_spread * fraction);
 		}, 1);
@@ -109,8 +109,8 @@ export default class Cluster_Map  {
 	advance(isForward: boolean) {
 		const sign = isForward ? 1 : -1;
 		const showing = this.shown;
-		const index = this.page_state.increment_by_assuring(showing * sign, this.total);
-		this.set_page_state(index);
+		const index = this.page_index.increment_by_assuring(showing * sign, this.total);
+		this.set_page_index(index);
 	}
 	
 	static readonly $_ANGLES_$: unique symbol;

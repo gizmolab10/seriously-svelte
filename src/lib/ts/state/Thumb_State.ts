@@ -24,7 +24,7 @@ export default class Thumb_State {
 	}
 
 	setup_thumb_angle(shown: number, start_angle: number, end_angle: number) {
-		const fraction = this.page_state / shown;
+		const fraction = this.page_state.index / shown;
 		const angular_spread = end_angle - start_angle
 		this.thumb_angle = start_angle + (angular_spread * fraction);
 	}
