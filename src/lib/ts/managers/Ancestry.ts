@@ -92,7 +92,7 @@ export default class Ancestry extends Identifiable {
 		if (this.isRoot) {
 			return [];
 		}
-		return this.id.split(k.genericSeparator);
+		return this.id.split(k.generic_separator);
 	}
 
 	get idThing(): string {
@@ -263,7 +263,7 @@ export default class Ancestry extends Identifiable {
 	uniquelyAppendID(id: string): Ancestry | null {
 		let ids = this.ids;
 		ids.push(id);
-		const ancestry = h.ancestry_remember_createUnique(ids.join(k.genericSeparator));
+		const ancestry = h.ancestry_remember_createUnique(ids.join(k.generic_separator));
 		if (ancestry) {
 			if (ancestry.containsMixedPredicates) {
 				h.ancestry_forget(ancestry);
@@ -339,7 +339,7 @@ export default class Ancestry extends Identifiable {
 		if (ids.length < 1) {
 			return h.rootAncestry;
 		}
-		return h.ancestry_remember_createUnique(ids.join(k.genericSeparator));
+		return h.ancestry_remember_createUnique(ids.join(k.generic_separator));
 	}
 
 	appendChild(child: Thing | null): Ancestry | null {

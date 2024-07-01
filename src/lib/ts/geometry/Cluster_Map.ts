@@ -1,6 +1,6 @@
 import { s_page_states, s_graphRect, s_ring_angle, s_ancestry_focus, s_cluster_arc_radius } from '../state/Reactive_State';
-import { k, s, get, Rect, Point, Angle, IDLine, svgPaths, Ancestry } from '../common/Global_Imports';
-import { Predicate, ElementType, Element_State, Widget_MapRect } from '../common/Global_Imports';
+import { k, s, get, Rect, Point, Angle, IDLine, svgPaths, Ancestry, Predicate } from '../common/Global_Imports';
+import { ElementType, Element_State, transparentize, Widget_MapRect } from '../common/Global_Imports';
 
 // for one cluster (there are three)
 //
@@ -16,6 +16,7 @@ export default class Cluster_Map  {
 	predicates: Array<Predicate> = [];
 	ancestries: Array<Ancestry> = [];
 	thumb_state!: Element_State;
+	color = k.color_default;
 	clusters_center!: Point;
 	outside_ring_radius = 0;
 	inside_ring_radius = 0;
@@ -50,6 +51,7 @@ export default class Cluster_Map  {
 		this.outside_ring_radius = get(s_cluster_arc_radius);
 		this.clusters_center = Point.square(this.outside_ring_radius);
 		this.inside_arc_radius = this.outside_ring_radius - k.scroll_arc_thickness * 2;
+		this.color = transparentize(this.focus_ancestry.thing?.color ?? this.color, 0.5);
 		const fork_raw_radius = k.ring_thickness * this.fork_radius_multiplier(this.shown);
 		this.fork_backoff = this.fork_adjustment(fork_raw_radius, this.inside_arc_radius);
 		this.fork_radius = fork_raw_radius - this.fork_backoff;
@@ -64,7 +66,7 @@ export default class Cluster_Map  {
 		this.label_tip = ellipse_axes.ellipse_coordiates_forAngle(this.fork_angle);
 		this.center = get(s_graphRect).size.dividedInHalf.asPoint;
 		this.origin = this.clusters_center.negated.offsetBy(this.center)
-		this.thumb_state.set_forHovering('black', 'pointer');
+		this.thumb_state.set_forHovering(this.color, 'pointer');
 		this.widget_maps = [];
 		if (this.shown > 0 && !!this.predicate) {
 			const tweak = this.center.offsetByXY(2, -1.5);	// tweak so that drag dots are centered within the necklace ring
@@ -84,32 +86,33 @@ export default class Cluster_Map  {
 	}
 
 	destructor() { this.ancestries = []; }
-	get thumb_radius(): number { return k.scroll_arc_thickness * 0.9; };
+	get thumb_radius(): number { return k.scroll_arc_thickness * 0.9; }
+	get maximum_page_index(): number { return this.total - this.shown; }
+	get spread_angle(): number { return (this.end_angle - this.start_angle); }
 	get fork_center(): Point { return this.center_at(this.inside_arc_radius, -this.fork_angle); }
-	get thumb_arc_radius(): number { return this.inside_arc_radius + k.scroll_arc_thickness / 2; };
+	get thumb_arc_radius(): number { return this.inside_arc_radius + k.scroll_arc_thickness / 2; }
 	get page_index(): number { return get(s_page_states).index_for(this.points_out, this.predicate); }
 	get thumb_center(): Point { return this.center_at(this.thumb_arc_radius, this.thumb_angle).offsetByXY(15, 15); }
 	set_page_index(index: number) { s_page_states.set(get(s_page_states).setIndex_for(index, this.points_out, this.predicate)); }
 	fork_radius_multiplier(shown: number): number { return (shown > 3) ? 0.6 : (shown > 1) ? 0.3 : 0.15; }
-	get single_svgPath(): string { return svgPaths.circle(this.fork_center, this.fork_radius - 0.5); };
-	get thumb_svgPath(): string { return svgPaths.circle(this.thumb_center, this.thumb_radius); };
-	get gap_svgPath() { return svgPaths.circle(this.fork_center, this.fork_radius - 0.5); }
-	get fork_svgPaths() { return [this.fork_svgPath(false), this.fork_svgPath(true)]; }
-
+	get single_svgPath(): string { return svgPaths.circle(this.fork_center, this.fork_radius - 0.5); }
+	get gap_svgPath(): string { return svgPaths.circle(this.fork_center, this.fork_radius - 0.5); }
+	get fork_svgPaths(): string[] { return [this.fork_svgPath(false), this.fork_svgPath(true)]; }
+	get thumb_svgPath(): string { return svgPaths.circle(this.thumb_center, this.thumb_radius); }
+	
 	compute_thumb_angle() {
-		const max = this.total - this.shown;
-		const fraction = this.page_index / max;
-		const spread = this.end_angle - this.start_angle;
-		this.thumb_angle = this.start_angle + (spread * fraction);
+		const fraction = this.page_index / this.maximum_page_index;
+		this.thumb_angle = Angle.full.normalize(this.start_angle + (this.spread_angle * fraction));
 	}
 
 	adjust_index_forThumb_angle(angle: number) {
-		const max = this.total - this.shown;
-		const delta = angle - this.start_angle;
-		const spread = this.end_angle - this.start_angle;
-		const index = Math.round(max * delta / spread).force_between(0, max);
+		const max_index = this.maximum_page_index;
+		const movement_angle = angle - this.start_angle;
+		const angle_perIndex = this.spread_angle / max_index;
+		const raw_index = movement_angle / angle_perIndex;
+		const index = raw_index.force_between(0, max_index);
 		this.set_page_index(index);
-		this.thumb_angle = angle;
+		this.compute_thumb_angle();
 	}
 
 	advance(isForward: boolean) {

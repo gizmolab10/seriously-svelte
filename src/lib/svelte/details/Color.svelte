@@ -25,7 +25,7 @@
 		event.preventDefault();
 		s.rebuild_count += 1;
 		thing.color = event.detail.hex;
-		$s_thing_changed = `${thing.id}${k.genericSeparator}${s.rebuild_count}`;
+		$s_thing_changed = `${thing.id}${k.generic_separator}${s.rebuild_count}`;
 		if (!!persistenceTimer) {
 			clearTimeout(persistenceTimer);		// each color change discards and restarts the timer
 			persistenceTimer = null;

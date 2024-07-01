@@ -883,7 +883,7 @@ export class Hierarchy {
 	predicate_forID(idPredicate: string = idDefault): Predicate | null { return (!idPredicate) ? null : this.predicate_byHID[idPredicate.hash()]; }
 
 	idPredicate_for(id: string): string {
-		const hid = id.split(k.genericSeparator)[0].hash();			// grab first relationship's hid
+		const hid = id.split(k.generic_separator)[0].hash();			// grab first relationship's hid
 		const relationship = this.relationship_forHID(hid);			// locate corresponding relationship
 		return relationship?.idPredicate ?? '';						// grab its predicate id
 	}

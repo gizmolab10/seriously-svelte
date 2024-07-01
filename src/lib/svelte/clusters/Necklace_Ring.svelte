@@ -26,7 +26,7 @@
 	let rebuilds = 0
 
 	$: {
-		if ($s_ancestry_focus.thing.id == $s_thing_changed.split(k.genericSeparator)[0]) {
+		if ($s_ancestry_focus.thing.id == $s_thing_changed.split(k.generic_separator)[0]) {
 			rebuilds += 1;
 		}
 	}
@@ -91,13 +91,16 @@
 		/////////////////////////////
 
 		if (mouseState.isHover) {
-			if (!necklace_ringState.referenceAngle && !necklace_ringState.radiusOffset) {
-				necklace_ringState.isHovering = true;	// show highlight around ring
-	
-				// hover
-	
-				rebuilds += 1;
+			if (mouseState.isOut) {
+				necklace_ringState.isHovering = false;
+			} else {
+				const okayToHover = !s.isAnyRotation_active;
+				necklace_ringState.isHovering = okayToHover;	// show highlight around ring
 			}
+
+			// hover
+
+			rebuilds += 1;
 		} else if (isHit()) {
 			const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);
 			if (mouseState.isDouble) {

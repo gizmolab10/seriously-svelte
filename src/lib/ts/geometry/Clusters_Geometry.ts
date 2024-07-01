@@ -34,8 +34,8 @@ export default class Clusters_Geometry {
 
 	onePage_from(ancestries: Array<Ancestry>, predicate: Predicate, points_out: boolean): Array<Ancestry> {
 		const maxFit = Math.round(get(s_cluster_arc_radius) * 2 / k.row_height) - 6;
-		const page_state = get(s_page_states).index_for(points_out, predicate);
-		return ancestries.slice(page_state, page_state + maxFit);
+		const index = get(s_page_states).index_for(points_out, predicate) ?? 0;
+		return ancestries.slice(index, index + maxFit);
 	}
 
 	layout_necklace_andLines(ancestries: Array<Ancestry>, predicate: Predicate | null, points_out: boolean) {

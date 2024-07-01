@@ -5,13 +5,22 @@ export class Page_State {
 	// a page is a subset of a too-long list of things
 	// index == first of subset
 
-	atLimit = [false, false];
+	atLimit = [true, true];
 	show_thumb = false;
 	index = 0;
 	shown = 0;
 	total = 0;
 
-	constructor() {}
+	static get empty(): Page_State { return new Page_State(0, 0, 0); }
+	get max_index(): number { return this.total - this.shown; }
+
+	constructor(index: number, shown: number, total: number) {
+		this.shown = shown;
+		this.total = total;
+		const max = this.max_index;
+		this.index = index.force_between(0, max);
+		this.atLimit = [this.index < 1, (max - 1) < this.index];
+	}
 
 	set_index_to(index: number) {
 		// at limit contains two elements: at start and at end
@@ -58,11 +67,20 @@ export class Page_States {
 	}
 
 	page_state_for(points_out: boolean, predicate: Predicate): Page_State {
-		return this.page_states_for(points_out)[predicate.stateIndex];
+		const index = predicate.stateIndex;
+		let states = this.page_states_for(points_out) ?? []
+		if (!states[index]) {
+			states[index] = Page_State.empty;
+		}
+		return states[index];
+	}
+
+	set_page_state_for(page_state: Page_State, points_out: boolean, predicate: Predicate) {
+		this.page_states_for(points_out)[predicate.stateIndex] = page_state;
 	}
 
 	index_for(points_out: boolean, predicate: Predicate): number {
-		return this.page_state_for(points_out, predicate).index;
+		return this.page_state_for(points_out, predicate)?.index;
 	}
 
 	setIndex_for(index: number, points_out: boolean, predicate: Predicate) {

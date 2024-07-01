@@ -14,7 +14,7 @@ export enum ElementType {
 	none	= 'none',
 }
 
-export default class UX_State {
+export default class StateOf_UX {
 
 	rotationState_byName: {[name: string]: Rotation_State} = {};
 	elementState_byName: {[name: string]: Element_State} = {};
@@ -69,6 +69,16 @@ export default class UX_State {
 		return state;
 	}
 
+	get isAnyRotation_active(): boolean {
+		const states = Object.values(this.rotationState_byName);
+		for (const state of states) {
+			if (state.isActive) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }
 
-export const s = new UX_State();
+export const s = new StateOf_UX();

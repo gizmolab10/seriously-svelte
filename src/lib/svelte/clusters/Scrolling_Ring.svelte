@@ -35,7 +35,7 @@
 	// uses two ringState's for configuring angles and hover
 
 	$: {
-		if ($s_ancestry_focus.thing.id == $s_thing_changed.split(k.genericSeparator)[0]) {
+		if ($s_ancestry_focus.thing.id == $s_thing_changed.split(k.generic_separator)[0]) {
 			rebuilds += 1;
 		}
 	}

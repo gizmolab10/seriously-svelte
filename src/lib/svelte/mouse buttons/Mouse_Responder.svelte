@@ -29,7 +29,7 @@
 	//		closure & name					//
 	//										//
 	//	mutates three ts state classes:		//
-	//		UX_State, Mouse_State &			//
+	//		StateOf_UX, Mouse_State &			//
 	//		Element_State					//
 	//										//
 	//////////////////////////////////////////

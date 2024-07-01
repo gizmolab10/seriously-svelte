@@ -24,7 +24,7 @@
 	}
 
 	$: {
-		if (ancestry.thing.id == $s_thing_changed.split(k.genericSeparator)[0]) {
+		if (ancestry.thing.id == $s_thing_changed.split(k.generic_separator)[0]) {
 			rebuilds += 1;
 		}
 	}

@@ -30,7 +30,7 @@ export default class Constants {
 	baseID_local = 'handcrafted';
 	color_background = 'white';
 	cursor_default = 'default';
-	genericSeparator = '::';
+	generic_separator = '::';
     color_default = 'blue';
 	unknown = 'unknown';
 	newLine = '\n';
@@ -48,7 +48,7 @@ export default class Constants {
 	cluster_offsetY: number;
 	build_number: string;
 	row_height: number;
-	
+
 	rotateSVG = `
 		<svg width="48px" height="48px" viewBox="0 0 48 48">
 			<circle cx="24" cy="24" r="20" stroke="black" stroke-width="2" fill="none" />

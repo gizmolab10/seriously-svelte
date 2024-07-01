@@ -42,8 +42,8 @@ export class Point {
 	static square(length: number):	   Point { return new Point(length, length); }
 	static get zero():				   Point { return new Point();}
 
-	get angle(): number {						// in math y increases going up
-		return Math.atan2(-this.y, this.x);		// it must be reversed for browsers
+	get angle(): number {											// in math y increases going up
+		return Angle.full.normalize(Math.atan2(-this.y, this.x));	// in browsers, y increases going down, so reverse it here
 	}
 
 	rotate_by(angle: number): Point {

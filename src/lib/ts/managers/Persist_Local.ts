@@ -1,8 +1,8 @@
 import { s_ring_angle, s_cluster_arc_radius, s_layout_asClusters } from '../state/Reactive_State';
 import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/Reactive_State';
 import { g, k, get, Point, signals, Ancestry, dbDispatch } from '../common/Global_Imports';
-import { Page_State, Page_States, GraphRelations } from '../common/Global_Imports';
 import { s_ancestries_grabbed, s_ancestries_expanded } from '../state/Reactive_State';
+import { Page_State, Page_States, GraphRelations } from '../common/Global_Imports';
 import { s_thing_fontFamily, s_graph_relations } from '../state/Reactive_State';
 import { s_page_states } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
@@ -19,6 +19,7 @@ export enum IDPersistant {
 	grabbed		  = 'grabbed',
 	details		  = 'details',
 	cluster		  = 'cluster',
+	indices		  = 'indices',
 	layout		  = 'layout',
 	origin		  = 'origin',
 	scale		  = 'scale',
@@ -79,6 +80,7 @@ class Persist_Local {
 
 	get dbType(): string { return dbDispatch.db.dbType; }
 	key_write(key: string, value: any) { localStorage[key] = JSON.stringify(value); }
+	indices_key_for(kind: string, points_out: boolean) { return `${IDPersistant.indices}-${kind}-${points_out}`; }
 	dbKey_ancestries(key: string): Array<Ancestry> { return this.key_ancestries(key + this.dbType); }
 	dbKey_write(key: string, value: any) { this.key_write(key + this.dbType, value); }
 	dbKey_read(key: string): any | null { return this.key_read(key + this.dbType); }
@@ -139,6 +141,42 @@ class Persist_Local {
 		return ancestries;
 	}
 
+	reactivity_subscribe() {
+		s_graph_relations.subscribe((relations: string) => {
+			this.key_write(IDPersistant.relations, relations);
+		});
+		s_cluster_arc_radius.subscribe((radius: number) => {
+			this.key_write(IDPersistant.cluster_arc, radius);
+		});
+		s_layout_asClusters.subscribe((flag: boolean) => {
+			this.key_write(IDPersistant.layout, flag);
+		});
+		s_ring_angle.subscribe((angle: number) => {
+			this.key_write(IDPersistant.angle, angle);
+		});
+		s_page_states.subscribe((page_states: Page_States) => {
+			if (!!page_states && !!h) {
+				this.indices_persist(page_states, false);
+				this.indices_persist(page_states, true);
+			}
+		});
+		s_show_details.subscribe((flag: boolean) => {
+			this.key_write(IDPersistant.details, flag);
+			g.graphRect_update();
+			signals.signal_relayoutWidgets_fromFocus();
+		});
+	}
+
+	indices_persist(page_states: Page_States, points_out: boolean) {
+		const predicates = h.predicates_byDirection(points_out);
+		for (const predicate of predicates) {
+			const key = this.indices_key_for(predicate.kind, points_out);
+			const page_state = page_states.page_state_for(points_out, predicate) ?? Page_State.empty;
+			const persisting = `${page_state.index}${k.generic_separator}${page_state.shown}${k.generic_separator}${page_state.total}`;
+			this.key_write(key, persisting);
+		}
+	}
+
 	restore() {
 		// localStorage.clear();
 		// const isLocal = g.isServerLocal;
@@ -179,17 +217,23 @@ class Persist_Local {
 		}
 	}
 
-	indicies_restore(points_out: boolean) {
-		const count = h.predicates_byDirection(points_out).length;
-		let states: Array<Page_State> = [];
-		for (let index = 0; index <= count; index += 1) {
-			states[index] = new Page_State();
+	indices_restoreAll() {
+		this.indices_restore(false);
+		this.indices_restore(true);
+	}
+
+	indices_restore(points_out: boolean) {
+		const page_states = get(s_page_states) ?? new Page_States();
+		const predicates = h.predicates_byDirection(points_out);
+		for (const predicate of predicates) {
+			const key = this.indices_key_for(predicate.kind, points_out);
+			const persisted = this.key_read(key);
+			const strings = persisted?.split(k.generic_separator);
+			const values = strings?.map(s => Number(s)) ?? [0, 0, 0];
+			const page_state = new Page_State(values[0], values[1], values[2]);
+			// const page_state = Page_State.empty;
+			page_states.set_page_state_for(page_state, points_out, predicate);
 		}
-		let page_states = get(s_page_states);
-		if (!page_states) {
-			page_states = new Page_States();
-		}
-		page_states.set_page_states_for(states, points_out);
 		s_page_states.set(page_states);
 	}
 
@@ -216,26 +260,6 @@ class Persist_Local {
 		s_ancestry_focus.subscribe((ancestry: Ancestry) => {
 			this.dbKey_write(IDPersistant.focus, !ancestry ? null : ancestry.id);
 		});
-	}
-
-	reactivity_subscribe() {
-		s_graph_relations.subscribe((relations: string) => {
-			this.key_write(IDPersistant.relations, relations);
-		})
-		s_cluster_arc_radius.subscribe((radius: number) => {
-			this.key_write(IDPersistant.cluster_arc, radius);
-		})
-		s_layout_asClusters.subscribe((flag: boolean) => {
-			this.key_write(IDPersistant.layout, flag);
-		})
-		s_show_details.subscribe((flag: boolean) => {
-			this.key_write(IDPersistant.details, flag);
-			g.graphRect_update();
-			signals.signal_relayoutWidgets_fromFocus();
-		});
-		s_ring_angle.subscribe((angle: number) => {
-			this.key_write(IDPersistant.angle, angle);
-		})
 	}
 
 	graphOffset_restore() {
