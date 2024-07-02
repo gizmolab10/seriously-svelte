@@ -93,7 +93,6 @@ export default class Cluster_Map  {
 	get thumb_arc_radius(): number { return this.inside_arc_radius + k.scroll_arc_thickness / 2; }
 	get page_index(): number { return get(s_page_states).index_for(this.points_out, this.predicate); }
 	get thumb_center(): Point { return this.center_at(this.thumb_arc_radius, this.thumb_angle).offsetByXY(15, 15); }
-	set_page_index(index: number) { s_page_states.set(get(s_page_states).setIndex_for(index, this.points_out, this.predicate)); }
 	fork_radius_multiplier(shown: number): number { return (shown > 3) ? 0.6 : (shown > 1) ? 0.3 : 0.15; }
 	get single_svgPath(): string { return svgPaths.circle(this.fork_center, this.fork_radius - 0.5); }
 	get gap_svgPath(): string { return svgPaths.circle(this.fork_center, this.fork_radius - 0.5); }
@@ -105,6 +104,16 @@ export default class Cluster_Map  {
 		this.thumb_angle = Angle.full.normalize(this.start_angle + (this.spread_angle * fraction));
 	}
 
+	set_page_index(index: number) {
+		let states = get(s_page_states);
+		const state = states.page_state_for(this.points_out, this.predicate);
+		state.total = this.total;
+		state.shown = this.shown;
+		state.index = index;
+		states.set_page_state_for(state, this.points_out, this.predicate);
+		s_page_states.set(states);
+	}
+	
 	adjust_index_forThumb_angle(angle: number) {
 		const max_index = this.maximum_page_index;
 		const movement_angle = angle - this.start_angle;

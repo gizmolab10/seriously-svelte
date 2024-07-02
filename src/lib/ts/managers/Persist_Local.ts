@@ -168,7 +168,7 @@ class Persist_Local {
 	}
 
 	indices_persist(page_states: Page_States, points_out: boolean) {
-		const predicates = h.predicates_byDirection(points_out);
+		const predicates = h.predicates_byDirection(!points_out);
 		for (const predicate of predicates) {
 			const key = this.indices_key_for(predicate.kind, points_out);
 			const page_state = page_states.page_state_for(points_out, predicate) ?? Page_State.empty;
@@ -218,23 +218,22 @@ class Persist_Local {
 	}
 
 	indices_restoreAll() {
-		this.indices_restore(false);
-		this.indices_restore(true);
+		const page_states = get(s_page_states) ?? new Page_States();
+		this.indices_restore(page_states, false);
+		this.indices_restore(page_states, true);
+		s_page_states.set(page_states);
 	}
 
-	indices_restore(points_out: boolean) {
-		const page_states = get(s_page_states) ?? new Page_States();
-		const predicates = h.predicates_byDirection(points_out);
+	indices_restore(page_states: Page_States, points_out: boolean) {
+		const predicates = h.predicates_byDirection(!points_out);
 		for (const predicate of predicates) {
 			const key = this.indices_key_for(predicate.kind, points_out);
 			const persisted = this.key_read(key);
 			const strings = persisted?.split(k.generic_separator);
 			const values = strings?.map(s => Number(s)) ?? [0, 0, 0];
 			const page_state = new Page_State(values[0], values[1], values[2]);
-			// const page_state = Page_State.empty;
 			page_states.set_page_state_for(page_state, points_out, predicate);
 		}
-		s_page_states.set(page_states);
 	}
 
 	focus_restore() {

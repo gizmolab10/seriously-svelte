@@ -6,6 +6,8 @@ export class Page_State {
 	// index == first of subset
 
 	atLimit = [true, true];
+	predicate!: Predicate;
+	points_out = false;
 	show_thumb = false;
 	index = 0;
 	shown = 0;
@@ -86,6 +88,8 @@ export class Page_States {
 	setIndex_for(index: number, points_out: boolean, predicate: Predicate) {
 		const page_states = this.page_states_for(points_out);
 		const page_state = page_states[predicate.stateIndex];
+		page_state.points_out = points_out;
+		page_state.predicate = predicate;
 		page_state.set_index_to(index);
 		this.set_page_states_for(page_states, points_out);
 		return this;

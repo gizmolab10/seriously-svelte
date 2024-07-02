@@ -892,7 +892,7 @@ export class Hierarchy {
 		this.predicate_byHID[predicate.idHashed] = predicate;
 		this.predicate_byKind[predicate.kind] = predicate;
 		this.predicates.push(predicate);
-		const predicates = this.predicates_byDirection(predicate.isBidirectional) ?? [];
+		let predicates = this.predicates_byDirection(predicate.isBidirectional) ?? [];
 		if (!predicates.includes(predicate)) {
 			predicates.push(predicate);
 			this.predicate_byDirection[predicate.isBidirectional ? 1 : 0] = predicates;
