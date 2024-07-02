@@ -48,7 +48,7 @@ export default class DBDispatch {
 		persistLocal.restore_ancestries(true);
 		debug.log_beat('db_setupData_forType before timeout');
 		setTimeout(() => {
-			persistLocal.restoreAll_pageStates();
+			persistLocal.restore_pageStates();
 			persistLocal.restore_focus();
 			h.hierarchy_markAsCompleted();
 			signals.signal_rebuildGraph_fromFocus();

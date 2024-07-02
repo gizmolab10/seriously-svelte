@@ -54,7 +54,7 @@
 
 		if (mouseState.isHover) {
 			const okayToHover = !necklace_ringState.referenceAngle && !necklace_ringState.radiusOffset;
-			scrolling_ring_state.isHovering = okayToHover && !mouseState.isOut;	// show highlight around ring
+			scrolling_ring_state.isHovering = okayToHover;	// show highlight around ring
 
 			// hover
 

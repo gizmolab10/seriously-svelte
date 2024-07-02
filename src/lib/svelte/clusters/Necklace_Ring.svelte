@@ -55,7 +55,8 @@
 		const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);	// use store, to react
 		if (!!from_center) {
 			let sendSignal = false;
-			necklace_ringState.isHovering = isHit();	// show highlight around ring
+			const okayToHover = !s.isAnyRotation_active;
+			necklace_ringState.isHovering = isHit() && okayToHover;	// show highlight around ring
 			cursor_closure();
 			if (necklace_ringState.priorAngle != null) {				// rotate
 				const mouseAngle = from_center.angle;

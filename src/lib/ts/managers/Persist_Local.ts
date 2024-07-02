@@ -84,11 +84,11 @@ class Persist_Local {
     }
 
 	get dbType(): string { return dbDispatch.db.dbType; }
-	write_key(key: string, value: any) { localStorage[key] = JSON.stringify(value); }
-	indices_key_for(kind: string, points_out: boolean) { return `${IDPersistant.indices}-${kind}-${points_out}`; }
-	readDB_ancestries_forKey(key: string): Array<Ancestry> { return this.ancestries_forKey(key + this.dbType); }
-	writeDB_key(key: string, value: any) { this.write_key(key + this.dbType, value); }
 	readDB_key(key: string): any | null { return this.read_key(key + this.dbType); }
+	write_key(key: string, value: any) { localStorage[key] = JSON.stringify(value); }
+	writeDB_key(key: string, value: any) { this.write_key(key + this.dbType, value); }
+	readDB_ancestries_forKey(key: string): Array<Ancestry> { return this.ancestries_forKey(key + this.dbType); }
+	restore_pageStates() { s_page_states.set(Page_States.create_fromDescription(this.read_key(IDPersistant.indices))); }
 
 	read_key(key: string): any | null {
 		const storedValue = localStorage[key];
@@ -160,9 +160,8 @@ class Persist_Local {
 			this.write_key(IDPersistant.angle, angle);
 		});
 		s_page_states.subscribe((page_states: Page_States) => {
-			if (!!page_states && !!h) {
-				this.persist_indices(page_states, false);
-				this.persist_indices(page_states, true);
+			if (!!page_states) {
+				this.write_key(IDPersistant.indices, page_states.description);
 			}
 		});
 		s_show_details.subscribe((flag: boolean) => {
@@ -170,16 +169,6 @@ class Persist_Local {
 			g.graphRect_update();
 			signals.signal_relayoutWidgets_fromFocus();
 		});
-	}
-
-	persist_indices(page_states: Page_States, points_out: boolean) {
-		const predicates = h.predicates_byDirection(!points_out);
-		for (const predicate of predicates) {
-			const key = this.indices_key_for(predicate.kind, points_out);
-			const page_state = page_states.page_state_for(points_out, predicate) ?? Page_State.empty;
-			const persisting = `${page_state.index}${k.generic_separator}${page_state.shown}${k.generic_separator}${page_state.total}`;
-			this.write_key(key, persisting);
-		}
 	}
 
 	restore_constants() {
@@ -220,25 +209,6 @@ class Persist_Local {
 			s_ancestries_expanded.subscribe((ancestries: Array<Ancestry>) => {
 				this.writeDB_key(IDPersistant.expanded, !ancestries ? null : ancestries.map(p => p.id));
 			});
-		}
-	}
-
-	restoreAll_pageStates() {
-		const page_states = get(s_page_states) ?? new Page_States();
-		this.restore_pageStates_forPointsOut(page_states, false);
-		this.restore_pageStates_forPointsOut(page_states, true);
-		s_page_states.set(page_states);
-	}
-
-	restore_pageStates_forPointsOut(page_states: Page_States, points_out: boolean) {
-		const predicates = h.predicates_byDirection(!points_out);
-		for (const predicate of predicates) {
-			const key = this.indices_key_for(predicate.kind, points_out);
-			const persisted = this.read_key(key) ?? '0::0::0';
-			const strings: Array<string> = persisted.split(k.generic_separator);
-			const numbers: Array<number> = strings.map(s => Number(s));
-			const page_state = new Page_State(numbers[0], numbers[1], numbers[2]);
-			page_states.set_page_state_for(page_state, points_out, predicate);
 		}
 	}
 
