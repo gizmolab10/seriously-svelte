@@ -161,23 +161,25 @@
 							fill={element_state.fill}
 							stroke={thing?.color}
 						/>
-						{#if tinyDotsSVGPath}
-							<SVGD3 name={'svg-dot-inside-' + name}
-								width={size}
-								height={size}
-								svg_path={tinyDotsSVGPath}
-								fill={element_state.stroke}
-								stroke={element_state.stroke}
-							/>
-						{/if}
-						{#if isRelatedSVGPath}
-							<SVGD3 name={'svg-dot-related-' + name}
-								width={size}
-								height={size}
-								svg_path={isRelatedSVGPath}
-								fill={k.color_background}
-								stroke={thing?.color}
-							/>
+						{#if k.show_tinyDots}
+							{#if tinyDotsSVGPath}
+								<SVGD3 name={'svg-dot-inside-' + name}
+									width={size}
+									height={size}
+									svg_path={tinyDotsSVGPath}
+									fill={element_state.stroke}
+									stroke={element_state.stroke}
+								/>
+							{/if}
+							{#if isRelatedSVGPath}
+								<SVGD3 name={'svg-dot-related-' + name}
+									width={size}
+									height={size}
+									svg_path={isRelatedSVGPath}
+									fill={k.color_background}
+									stroke={thing?.color}
+								/>
+							{/if}
 						{/if}
 					</div>
 				{/key}

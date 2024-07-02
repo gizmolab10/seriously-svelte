@@ -132,37 +132,39 @@
 						width={size}
 					/>
 				{/key}
-				{#if hasInsidePath}
-					<div class='reveal-inside' style='
-						left:{insideOffset}px;
-						top:{insideOffset}px;
-						position:absolute;
-						height:{size}px;
-						width:{size}px;'>
-						<SVGD3 name='svg-inside'
-							stroke={element_state.stroke}
-							fill={element_state.stroke}
-							svg_path={insidePath}
-							height={size}
-							width={size}
-						/>
-					</div>
-				{/if}
-				{#if !ancestry.isExpanded && ancestry.hasChildRelationships}
-					<div class='outside-tiny-dots' style='
-						left:{tinyDotsOffset + 0.65}px;
-						top:{tinyDotsOffset - 0.28}px;
-						height:{tinyDotsDiameter}px;
-						width:{tinyDotsDiameter}px;
-						position:absolute;'>
-						<SVGD3 name='svg-tiny-dots'
-							svg_path={svgPaths.tinyDots_circular(tinyDotsDiameter, childrenCount)}
-							stroke={ancestry.thing.color}
-							fill={ancestry.thing.color}
-							height={tinyDotsDiameter}
-							width={tinyDotsDiameter}
-						/>
-					</div>
+				{#if k.show_tinyDots}
+					{#if hasInsidePath}
+						<div class='reveal-inside' style='
+							left:{insideOffset}px;
+							top:{insideOffset}px;
+							position:absolute;
+							height:{size}px;
+							width:{size}px;'>
+							<SVGD3 name='svg-inside'
+								stroke={element_state.stroke}
+								fill={element_state.stroke}
+								svg_path={insidePath}
+								height={size}
+								width={size}
+							/>
+						</div>
+					{/if}
+					{#if !ancestry.isExpanded && ancestry.hasChildRelationships}
+						<div class='outside-tiny-dots' style='
+							left:{tinyDotsOffset + 0.65}px;
+							top:{tinyDotsOffset - 0.28}px;
+							height:{tinyDotsDiameter}px;
+							width:{tinyDotsDiameter}px;
+							position:absolute;'>
+							<SVGD3 name='svg-tiny-dots'
+								svg_path={svgPaths.tinyDots_circular(tinyDotsDiameter, childrenCount)}
+								stroke={ancestry.thing.color}
+								fill={ancestry.thing.color}
+								height={tinyDotsDiameter}
+								width={tinyDotsDiameter}
+							/>
+						</div>
+					{/if}
 				{/if}
 			</button>
 		</Mouse_Responder>

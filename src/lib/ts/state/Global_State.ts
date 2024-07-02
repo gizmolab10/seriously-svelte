@@ -6,7 +6,7 @@ class Global_State {
 	mouseUp_subscribers: {[type: string]: Array<Svelte_Wrapper>} = {};
 
 	setup() {
-		persistLocal.restore();
+		persistLocal.restore_constants();
 		k.queryStrings_apply();
 		s_thing_changed.set(k.empty);
 		persistLocal.queryStrings_apply();
@@ -56,7 +56,7 @@ class Global_State {
 		const zoomContainer = document.documentElement;
 		const currentScale = parseFloat(getComputedStyle(zoomContainer).getPropertyValue('zoom')) || 1;
 		const scale = currentScale * factor;
-		persistLocal.key_write(IDPersistant.scale, scale);
+		persistLocal.write_key(IDPersistant.scale, scale);
 		this.applyScale(scale);
 		return this.windowSize.width;
 	}

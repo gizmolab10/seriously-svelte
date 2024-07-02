@@ -16,6 +16,7 @@ export enum IDPersistant {
 	relations	  = 'relations',
 	expanded	  = 'expanded',
 	controls	  = 'controls',
+	tinyDots	  = 'tinyDots',
 	grabbed		  = 'grabbed',
 	details		  = 'details',
 	cluster		  = 'cluster',
@@ -43,7 +44,7 @@ class Persist_Local {
 		const shown = Object.fromEntries(shownNames.map(s => [s, true]) ?? {});
 		const hidden = Object.fromEntries(hiddenNames.map(s => [s, false]) ?? {});
 		const keyedFlags: { [key: string]: boolean } = {...shown, ...hidden};
-		this.key_apply(IDPersistant.layout, 'clusters', (flag) => s_layout_asClusters.set(flag));
+		this.applyFor_key_name(IDPersistant.layout, 'clusters', (flag) => s_layout_asClusters.set(flag));
 		for (const [name, flag] of Object.entries(keyedFlags)) {
 			switch (name) {
 				case 'details':
@@ -51,15 +52,19 @@ class Persist_Local {
 					break;
 				case 'controls':
 					k.show_controls = flag;
-					this.key_write(IDPersistant.controls, flag);
+					this.write_key(IDPersistant.controls, flag);
+					break;
+				case 'tinyDots':
+					k.show_tinyDots = flag;
+					this.write_key(IDPersistant.tinyDots, flag);
 					break;
 				case 'arrowheads':
 					k.show_arrowheads = flag;
-					this.key_write(IDPersistant.arrowheads, flag);
+					this.write_key(IDPersistant.arrowheads, flag);
 					break;
 				case 'titleAtTop':
 					k.show_titleAtTop = flag;
-					this.key_write(IDPersistant.title_atTop, flag);
+					this.write_key(IDPersistant.title_atTop, flag);
 					break;
 			}
 		}
@@ -79,13 +84,13 @@ class Persist_Local {
     }
 
 	get dbType(): string { return dbDispatch.db.dbType; }
-	key_write(key: string, value: any) { localStorage[key] = JSON.stringify(value); }
+	write_key(key: string, value: any) { localStorage[key] = JSON.stringify(value); }
 	indices_key_for(kind: string, points_out: boolean) { return `${IDPersistant.indices}-${kind}-${points_out}`; }
-	dbKey_ancestries(key: string): Array<Ancestry> { return this.key_ancestries(key + this.dbType); }
-	dbKey_write(key: string, value: any) { this.key_write(key + this.dbType, value); }
-	dbKey_read(key: string): any | null { return this.key_read(key + this.dbType); }
+	readDB_ancestries_forKey(key: string): Array<Ancestry> { return this.ancestries_forKey(key + this.dbType); }
+	writeDB_key(key: string, value: any) { this.write_key(key + this.dbType, value); }
+	readDB_key(key: string): any | null { return this.read_key(key + this.dbType); }
 
-	key_read(key: string): any | null {
+	read_key(key: string): any | null {
 		const storedValue = localStorage[key];
 		if (!storedValue || storedValue == 'undefined') {
 			return null;
@@ -94,20 +99,20 @@ class Persist_Local {
 		} 
 	}
 
-	key_apply(key: string, matching: string, apply: (flag: boolean) => void, persist: boolean = true) {
+	applyFor_key_name(key: string, matching: string, apply: (flag: boolean) => void, persist: boolean = true) {
 		const queryStrings = k.queryStrings;
         const value = queryStrings.get(key);
 		if (value) {
 			const flag = (value === matching);
 			apply(flag);
 			if (persist) {
-				this.key_write(key, flag);
+				this.write_key(key, flag);
 			}
 		}
 	}
 
-	key_ancestries(key: string): Array<Ancestry> {
-		const ids = this.key_read(key);
+	ancestries_forKey(key: string): Array<Ancestry> {
+		const ids = this.read_key(key);
 		const length = ids?.length ?? 0;
 		if (this.ignoreAncestries || !ids || length == 0) {
 			return [];
@@ -136,111 +141,112 @@ class Persist_Local {
 			}
 		});
 		if (needsRewrite) {
-			this.key_write(key, ids);
+			this.write_key(key, ids);
 		}
 		return ancestries;
 	}
 
 	reactivity_subscribe() {
 		s_graph_relations.subscribe((relations: string) => {
-			this.key_write(IDPersistant.relations, relations);
+			this.write_key(IDPersistant.relations, relations);
 		});
 		s_cluster_arc_radius.subscribe((radius: number) => {
-			this.key_write(IDPersistant.cluster_arc, radius);
+			this.write_key(IDPersistant.cluster_arc, radius);
 		});
 		s_layout_asClusters.subscribe((flag: boolean) => {
-			this.key_write(IDPersistant.layout, flag);
+			this.write_key(IDPersistant.layout, flag);
 		});
 		s_ring_angle.subscribe((angle: number) => {
-			this.key_write(IDPersistant.angle, angle);
+			this.write_key(IDPersistant.angle, angle);
 		});
 		s_page_states.subscribe((page_states: Page_States) => {
 			if (!!page_states && !!h) {
-				this.indices_persist(page_states, false);
-				this.indices_persist(page_states, true);
+				this.persist_indices(page_states, false);
+				this.persist_indices(page_states, true);
 			}
 		});
 		s_show_details.subscribe((flag: boolean) => {
-			this.key_write(IDPersistant.details, flag);
+			this.write_key(IDPersistant.details, flag);
 			g.graphRect_update();
 			signals.signal_relayoutWidgets_fromFocus();
 		});
 	}
 
-	indices_persist(page_states: Page_States, points_out: boolean) {
+	persist_indices(page_states: Page_States, points_out: boolean) {
 		const predicates = h.predicates_byDirection(!points_out);
 		for (const predicate of predicates) {
 			const key = this.indices_key_for(predicate.kind, points_out);
 			const page_state = page_states.page_state_for(points_out, predicate) ?? Page_State.empty;
 			const persisting = `${page_state.index}${k.generic_separator}${page_state.shown}${k.generic_separator}${page_state.total}`;
-			this.key_write(key, persisting);
+			this.write_key(key, persisting);
 		}
 	}
 
-	restore() {
+	restore_constants() {
 		// localStorage.clear();
 		// const isLocal = g.isServerLocal;
-		// this.key_write(IDPersistant.row_height, 20);
-		// this.key_write(IDPersistant.dot_size, 13);
+		// this.write_key(IDPersistant.row_height, 20);
+		// this.write_key(IDPersistant.dot_size, 13);
 
 		if (this.ignoreAncestries) {
-			this.key_write(IDPersistant.relationships, true);
+			this.write_key(IDPersistant.relationships, true);
 		}
-		this.key_write(IDPersistant.title_atTop, false);
-		k.show_controls = this.key_read(IDPersistant.controls) ?? true;
-		k.show_arrowheads = this.key_read(IDPersistant.arrowheads) ?? false;
-		k.show_titleAtTop = this.key_read(IDPersistant.title_atTop) ?? false;
-		g.applyScale(!g.device_isMobile ? 1 : this.key_read(IDPersistant.scale) ?? 1);
-		s_ring_angle.set(this.key_read(IDPersistant.angle) ?? 0);
-		s_show_details.set(this.key_read(IDPersistant.details) ?? false);
-		s_thing_fontFamily.set(this.key_read(IDPersistant.font) ?? 'Arial');
-		s_layout_asClusters.set(this.key_read(IDPersistant.layout) ?? false);
-		s_cluster_arc_radius.set(this.key_read(IDPersistant.cluster_arc) ?? 130);
-		s_graph_relations.set(this.key_read(IDPersistant.relations) ?? GraphRelations.children);
-		this.graphOffset_restore();
+		this.write_key(IDPersistant.title_atTop, false);
+		k.show_controls = this.read_key(IDPersistant.controls) ?? true;
+		k.show_tinyDots = this.read_key(IDPersistant.tinyDots) ?? true;
+		k.show_arrowheads = this.read_key(IDPersistant.arrowheads) ?? false;
+		k.show_titleAtTop = this.read_key(IDPersistant.title_atTop) ?? false;
+		g.applyScale(!g.device_isMobile ? 1 : this.read_key(IDPersistant.scale) ?? 1);
+		s_ring_angle.set(this.read_key(IDPersistant.angle) ?? 0);
+		s_show_details.set(this.read_key(IDPersistant.details) ?? false);
+		s_thing_fontFamily.set(this.read_key(IDPersistant.font) ?? 'Arial');
+		s_layout_asClusters.set(this.read_key(IDPersistant.layout) ?? false);
+		s_cluster_arc_radius.set(this.read_key(IDPersistant.cluster_arc) ?? 130);
+		s_graph_relations.set(this.read_key(IDPersistant.relations) ?? GraphRelations.children);
+		this.restore_graphOffset();
 		this.reactivity_subscribe()
 	}
 
-	ancestries_restore(force: boolean = false) {
+	restore_ancestries(force: boolean = false) {
 		if (!this.ancestriesRestored || force) {
 			this.ancestriesRestored = true;
-			s_ancestries_grabbed.set(this.dbKey_ancestries(IDPersistant.grabbed));
-			s_ancestries_expanded.set(this.dbKey_ancestries(IDPersistant.expanded));
+			s_ancestries_grabbed.set(this.readDB_ancestries_forKey(IDPersistant.grabbed));
+			s_ancestries_expanded.set(this.readDB_ancestries_forKey(IDPersistant.expanded));
 	
 			s_ancestries_grabbed.subscribe((ancestries: Array<Ancestry>) => {
-				this.dbKey_write(IDPersistant.grabbed, !ancestries ? null : ancestries.map(p => p.id));
+				this.writeDB_key(IDPersistant.grabbed, !ancestries ? null : ancestries.map(p => p.id));
 			});
 	
 			s_ancestries_expanded.subscribe((ancestries: Array<Ancestry>) => {
-				this.dbKey_write(IDPersistant.expanded, !ancestries ? null : ancestries.map(p => p.id));
+				this.writeDB_key(IDPersistant.expanded, !ancestries ? null : ancestries.map(p => p.id));
 			});
 		}
 	}
 
-	indices_restoreAll() {
+	restoreAll_pageStates() {
 		const page_states = get(s_page_states) ?? new Page_States();
-		this.indices_restore(page_states, false);
-		this.indices_restore(page_states, true);
+		this.restore_pageStates_forPointsOut(page_states, false);
+		this.restore_pageStates_forPointsOut(page_states, true);
 		s_page_states.set(page_states);
 	}
 
-	indices_restore(page_states: Page_States, points_out: boolean) {
+	restore_pageStates_forPointsOut(page_states: Page_States, points_out: boolean) {
 		const predicates = h.predicates_byDirection(!points_out);
 		for (const predicate of predicates) {
 			const key = this.indices_key_for(predicate.kind, points_out);
-			const persisted = this.key_read(key);
-			const strings = persisted?.split(k.generic_separator);
-			const values = strings?.map(s => Number(s)) ?? [0, 0, 0];
-			const page_state = new Page_State(values[0], values[1], values[2]);
+			const persisted = this.read_key(key) ?? '0::0::0';
+			const strings: Array<string> = persisted.split(k.generic_separator);
+			const numbers: Array<number> = strings.map(s => Number(s));
+			const page_state = new Page_State(numbers[0], numbers[1], numbers[2]);
 			page_states.set_page_state_for(page_state, points_out, predicate);
 		}
 	}
 
-	focus_restore() {
+	restore_focus() {
 		h.rootAncestry_setup();
 		let ancestryToFocus = h.rootAncestry;
 		if (!this.ignoreAncestries) {
-			const focusid = this.dbKey_read(IDPersistant.focus);
+			const focusid = this.readDB_key(IDPersistant.focus);
 			if (focusid) {
 				const focusAncestry = h.ancestry_remember_createUnique(focusid);
 				if (focusAncestry) {
@@ -257,13 +263,13 @@ class Persist_Local {
 		}
 		ancestryToFocus.becomeFocus();
 		s_ancestry_focus.subscribe((ancestry: Ancestry) => {
-			this.dbKey_write(IDPersistant.focus, !ancestry ? null : ancestry.id);
+			this.writeDB_key(IDPersistant.focus, !ancestry ? null : ancestry.id);
 		});
 	}
 
-	graphOffset_restore() {
+	restore_graphOffset() {
 		let offset = Point.zero;
-		const stored = this.key_read(IDPersistant.origin);
+		const stored = this.read_key(IDPersistant.origin);
 		if (!!stored) {
 			offset = new Point(stored.x, stored.y);
 		}
@@ -272,7 +278,7 @@ class Persist_Local {
 
 	graphOffset_setTo(origin: Point): boolean {
 		if (get(s_user_graphOffset) != origin) {
-			persistLocal.key_write(IDPersistant.origin, origin);
+			persistLocal.write_key(IDPersistant.origin, origin);
 			s_user_graphOffset.set(origin);
 			return true;
 		}

@@ -20,7 +20,7 @@ export default class DBDispatch {
 
 	queryStrings_apply() {
 		const queryStrings = k.queryStrings;
-		const type = queryStrings.get('db') ?? persistLocal.key_read(IDPersistant.db) ?? DBType.firebase;
+		const type = queryStrings.get('db') ?? persistLocal.read_key(IDPersistant.db) ?? DBType.firebase;
 		this.db_changeTypeTo_for(type);
 		this.db.queryStrings_apply();
 		s_db_type.set(type);
@@ -45,11 +45,11 @@ export default class DBDispatch {
 		this.db_changeTypeTo_for(type);
 		this.queryStrings_apply();
 		await this.hierarchy_fetch_andBuild(type);
-		persistLocal.ancestries_restore(true);
+		persistLocal.restore_ancestries(true);
 		debug.log_beat('db_setupData_forType before timeout');
 		setTimeout(() => {
-			persistLocal.indices_restoreAll();
-			persistLocal.focus_restore();
+			persistLocal.restoreAll_pageStates();
+			persistLocal.restore_focus();
 			h.hierarchy_markAsCompleted();
 			signals.signal_rebuildGraph_fromFocus();
 			debug.log_beat('db_setupData_forType after timeout');
@@ -90,7 +90,7 @@ export default class DBDispatch {
 
 	db_change_toType(newDBType: DBType) {
 		const db = this.db_forType(newDBType);
-		persistLocal.key_write(IDPersistant.db, newDBType);
+		persistLocal.write_key(IDPersistant.db, newDBType);
 		s_db_type.set(newDBType);		// tell components to render the [possibly previously] fetched data
 		setTimeout(() => {
 			if (newDBType != DBType.local && !db.hasData) {

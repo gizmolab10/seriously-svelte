@@ -37,6 +37,7 @@ export default class Constants {
 	comma = ',';
 	space = ' ';
 	empty = '';
+	show_tinyDots = true;
 	show_controls = false;
 	show_titleAtTop = false;
 	show_arrowheads = false;
