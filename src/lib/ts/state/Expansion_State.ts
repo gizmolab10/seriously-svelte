@@ -11,9 +11,6 @@ export default class Expansion_State extends Rotation_State {
 	// moves with respect to the center (grows the necklace)
 
 	reset() { super.reset(); this.radiusOffset = null; }
-	get isHighlighted(): boolean { return this.isHovering || this.isActive; }
 	get isActive(): boolean { return !!this.referenceAngle || !!this.radiusOffset; }
 
 }
-
-export const necklace_ringState = new Expansion_State();

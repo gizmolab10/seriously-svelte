@@ -51,7 +51,7 @@ export default class Cluster_Map  {
 		this.outside_ring_radius = get(s_cluster_arc_radius);
 		this.clusters_center = Point.square(this.outside_ring_radius);
 		this.inside_arc_radius = this.outside_ring_radius - k.scroll_arc_thickness * 2;
-		this.color = transparentize(this.focus_ancestry.thing?.color ?? this.color, 0.5);
+		this.color = transparentize(this.focus_ancestry.thing?.color ?? this.color, 0.8);
 		const fork_raw_radius = k.ring_thickness * this.fork_radius_multiplier(this.shown);
 		this.fork_backoff = this.fork_adjustment(fork_raw_radius, this.inside_arc_radius);
 		this.fork_radius = fork_raw_radius - this.fork_backoff;

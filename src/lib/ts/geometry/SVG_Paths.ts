@@ -38,7 +38,7 @@ export default class SVG_Paths {
     circle(center: Point, radius: number, clockwise: boolean = true): string {
 		const direction = clockwise ? 0 : 1;
 		const diameter = radius * 2 * (clockwise ? 1 : -1);
-        return `M${center.x - radius} ${center.y} a${radius} ${radius} 0 0 ${direction} ${ diameter} 0 a${radius} ${radius} 0 0 ${direction} ${-diameter} 0`;
+        return `M${center.x - radius} ${center.y} a${radius} ${radius} 0 0 ${direction} ${diameter} 0 a${radius} ${radius} 0 0 ${direction} ${-diameter} 0`;
     }
 
     oval(diameter: number, horizontal: boolean = true, eccentricity: number = 2.3): string {

@@ -31,8 +31,8 @@
 		switch (orientation) {
 			case Orientation.up:	return new Point(common, -1.5);
 			case Orientation.left:	return new Point(-0.75, common);
-			case Orientation.down:	return new Point(common, -3.5);
-			default:				return new Point(common, common);
+			case Orientation.down:	return new Point(common, -1.5);
+			default:				return new Point(-0.25, common);
 		}
 		
 	}

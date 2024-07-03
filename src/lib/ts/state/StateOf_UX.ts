@@ -1,4 +1,4 @@
-import { Mouse_State, Element_State, Rotation_State } from '../common/Global_Imports';
+import { Mouse_State, Element_State, Rotation_State, Expansion_State } from '../common/Global_Imports';
 import Identifiable from '../data/Identifiable';
 
 export enum ElementType {
@@ -19,6 +19,8 @@ export default class StateOf_UX {
 	rotationState_byName: {[name: string]: Rotation_State} = {};
 	elementState_byName: {[name: string]: Element_State} = {};
 	mouseState_byName: { [name: string]: Mouse_State } = {};
+	scrolling_ring_state!: Rotation_State;
+	necklace_ringState!: Expansion_State;
 	rebuild_count = 0;
 
 	//////////////////////////////////////
@@ -33,6 +35,13 @@ export default class StateOf_UX {
 	//		& Close_Button				//
 	//									//
 	//////////////////////////////////////
+
+	constructor() {
+		setTimeout(() => {
+			this.scrolling_ring_state = new Rotation_State();
+			this.necklace_ringState = new Expansion_State();
+		}, 1);
+	}
 
 	name_from(identifiable: Identifiable, type: ElementType, subtype: string): string {
 		return `${type}-${subtype}-${identifiable.id}`;

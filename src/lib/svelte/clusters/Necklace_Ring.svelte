@@ -4,7 +4,6 @@
 	import { k, s, u, Thing, Point, ZIndex, signals, svgPaths, dbDispatch } from '../../ts/common/Global_Imports';
 	import { transparentize, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
-	import { necklace_ringState } from '../../ts/state/Expansion_State';
 	import Identifiable from '../../ts/data/Identifiable';
 	export let radius = 0;
 	export let thing: Thing;
@@ -40,7 +39,7 @@
 	$: {
 		if (mouse_up_count != $s_mouse_up_count) {
 			mouse_up_count = $s_mouse_up_count;
-			necklace_ringState.reset();
+			s.necklace_ringState.reset();
 			rebuilds += 1;
 		}
 	}
@@ -55,28 +54,28 @@
 		const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);	// use store, to react
 		if (!!from_center) {
 			let sendSignal = false;
-			const okayToHover = !s.isAnyRotation_active;
-			necklace_ringState.isHovering = isHit() && okayToHover;	// show highlight around ring
-			cursor_closure();
-			if (necklace_ringState.priorAngle != null) {				// rotate
+			if (!!s.necklace_ringState.priorAngle) {				// rotate
 				const mouseAngle = from_center.angle;
-				const delta = mouseAngle.add_angle_normalized(-necklace_ringState.priorAngle);	// subtract to find difference
+				const delta = mouseAngle.add_angle_normalized(-s.necklace_ringState.priorAngle);	// subtract to find difference
 				if (Math.abs(delta) >= Math.PI / 90) {			// minimum two degree changes
 					sendSignal = true;
-					necklace_ringState.priorAngle = mouseAngle;
-					$s_ring_angle = mouseAngle.add_angle_normalized(-necklace_ringState.referenceAngle);
+					s.necklace_ringState.priorAngle = mouseAngle;
+					$s_ring_angle = mouseAngle.add_angle_normalized(-s.necklace_ringState.referenceAngle);
 				}
-			}
-			if (necklace_ringState.radiusOffset != null) {				// resize
+			} else if (!!s.necklace_ringState.radiusOffset) {				// resize
 				const magnitude = from_center.magnitude
 				const largest = k.cluster_inside_radius * 4;
 				const smallest = k.cluster_inside_radius * 1.5;
 				const distance = magnitude.force_between(smallest, largest);
-				const movement = distance - $s_cluster_arc_radius - necklace_ringState.radiusOffset;
+				const movement = distance - $s_cluster_arc_radius - s.necklace_ringState.radiusOffset;
 				if (Math.abs(movement) > 5) {
 					sendSignal = true;
 					$s_cluster_arc_radius += movement;
 				}
+			} else if (!s.isAnyRotation_active) {
+				s.necklace_ringState.isHovering = isHit();	// show highlight around ring
+				console.log(isHit())
+				cursor_closure();
 			}
 			if (sendSignal) {
 				rebuilds += 1;
@@ -93,10 +92,10 @@
 
 		if (mouseState.isHover) {
 			if (mouseState.isOut) {
-				necklace_ringState.isHovering = false;
+				s.necklace_ringState.isHovering = false;
 			} else {
 				const okayToHover = !s.isAnyRotation_active;
-				necklace_ringState.isHovering = okayToHover;	// show highlight around ring
+				s.necklace_ringState.isHovering = okayToHover;	// show highlight around ring
 			}
 
 			// hover
@@ -108,21 +107,21 @@
 
 				// begin resize
 				
-				necklace_ringState.radiusOffset = from_center.magnitude - $s_cluster_arc_radius;
+				s.necklace_ringState.radiusOffset = from_center.magnitude - $s_cluster_arc_radius;
 				rebuilds += 1;
 			} else if (mouseState.isUp) {
 
 				// end rotate and resize
 
-				necklace_ringState.reset();
+				s.necklace_ringState.reset();
 				rebuilds += 1;
 			} else if (mouseState.isDown) {
 				const mouseAngle = from_center.angle;
 
 				// begin rotate
 
-				necklace_ringState.priorAngle = mouseAngle;
-				necklace_ringState.referenceAngle = mouseAngle.add_angle_normalized(-$s_ring_angle);
+				s.necklace_ringState.priorAngle = mouseAngle;
+				s.necklace_ringState.referenceAngle = mouseAngle.add_angle_normalized(-$s_ring_angle);
 				rebuilds += 1;
 				
 			}
@@ -158,12 +157,12 @@
 			closure={closure}
 			detect_longClick={false}
 			detectHit_closure={isHit}
-			cursor={necklace_ringState.cursor}>
+			cursor={s.necklace_ringState.cursor}>
 			<svg
 				viewBox={viewBox}
 				class= 'svg-neckace-ring'
-				fill={transparentize(color, necklace_ringState.fill_transparency)}
-				stroke={transparentize(color, necklace_ringState.stroke_transparency)}>
+				fill={transparentize(color, s.necklace_ringState.fill_transparency)}
+				stroke={transparentize(color, s.necklace_ringState.stroke_transparency)}>
 				<path d={svg_ringPath}>
 			</svg>
 		</Mouse_Responder>

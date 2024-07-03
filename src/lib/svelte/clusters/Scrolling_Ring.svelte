@@ -4,7 +4,6 @@
 	import { k, s, u, Rect, Thing, Point, ZIndex, signals, svgPaths, dbDispatch } from '../../ts/common/Global_Imports';
 	import { s_thing_changed, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
-	import { necklace_ringState } from '../../ts/state/Expansion_State';
 	import Scrolling_Arc from './Scrolling_Arc.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Cluster_Label from './Cluster_Label.svelte';
@@ -21,8 +20,6 @@
 	const outer_radius = radius + ring_width;
 	const diameter = outer_radius * 2;
 	const borderStyle = '1px solid';
-	const dividerColor = transparentize(color, 0.8);
-	const scrolling_ring_state = s.rotationState_forName(name);
 	const ringOrigin = center.distanceFrom(Point.square(outer_radius));
 	const viewBox = `${-ring_width}, ${-ring_width}, ${diameter}, ${diameter}`;
 	const svg_ringPath = svgPaths.ring(Point.square(radius), outer_radius, ring_width);
@@ -53,8 +50,7 @@
 		/////////////////////////////
 
 		if (mouseState.isHover) {
-			const okayToHover = !necklace_ringState.referenceAngle && !necklace_ringState.radiusOffset;
-			scrolling_ring_state.isHovering = okayToHover;	// show highlight around ring
+			s.scrolling_ring_state.isHovering = !mouseState.isOut;	// show thumb
 
 			// hover
 
@@ -78,14 +74,6 @@
 		}
 	}
 
-			// <svg
-			// 	viewBox={viewBox}
-			// 	class='svg-scrolling-ring'
-			// 	fill={transparentize(color, scrolling_ring_state.fill_transparency)}
-			// 	stroke={transparentize(color, 0.98)}>
-			// 	<path d={svg_ringPath}/>
-			// </svg>
-
 </script>
 
 {#key rebuilds}
@@ -108,8 +96,7 @@
 					<Scrolling_Arc
 						center={center}
 						cluster_map={cluster_map}
-						scrolling_ring_name={name}
-						color={transparentize(color, scrolling_ring_state.stroke_transparency * 0.7)}/>
+						color={transparentize(color, s.scrolling_ring_state.stroke_transparency * 0.9)}/>
 				{/if}
 			{/each}
 		</div>

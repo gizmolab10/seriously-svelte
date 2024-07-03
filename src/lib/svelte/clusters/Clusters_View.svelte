@@ -1,7 +1,6 @@
 <script lang='ts'>
 	import { s_graphRect, s_ancestry_focus, s_user_graphOffset, s_thing_fontFamily, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
-	import { k, s, u, Rect, Size, Point, ZIndex, onMount, signals, Clusters_Geometry, transparentize } from '../../ts/common/Global_Imports';
-	import { necklace_ringState } from '../../ts/state/Expansion_State';
+	import { k, s, u, Rect, Size, Point, ZIndex, onMount, signals, Clusters_Geometry } from '../../ts/common/Global_Imports';
 	import Editing_Tools from '../widget/Editing_Tools.svelte';
 	import Title_Editor from '../widget/Title_Editor.svelte';
 	import Scrolling_Ring from './Scrolling_Ring.svelte';
@@ -47,7 +46,7 @@
 
 	function cursor_closure() {
 		if (!!clusters) {
-			clusters.style.cursor = `${necklace_ringState.cursor} !important`;
+			clusters.style.cursor = `${s.necklace_ringState.cursor} !important`;
 		}
 	}
 

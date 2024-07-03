@@ -28,13 +28,15 @@ export class Page_State {
 	}
 
 	get description(): string {
-		const s = k.generic_separator;
-		return `${this.points_out}` + s +
-		`${this.kind}` + s +
-		`${this.thing_id}` + s +
-		`${this.index}` + s +
-		`${this.shown}` + s +
-		`${this.total}`; }
+		const strings = [
+			`${this.points_out}`,
+			`${this.kind}`,
+			`${this.thing_id}`,
+			`${this.index}`,
+			`${this.shown}`,
+			`${this.total}`];
+		return strings.join(k.generic_separator);
+	}
 
 	static create_fromDescription(description: string): Page_State {
 		let strings = description.split(k.generic_separator);
@@ -63,6 +65,8 @@ export class Page_State {
 }
 
 export class Page_States {
+	big_separator = '::::';
+	small_separator = ':::';
 	inward_page_states: Array<Page_State>;
 	outward_page_states: Array<Page_State>;
 
@@ -83,7 +87,7 @@ export class Page_States {
 	}
 
 	get description(): string {
-		return this.description_for(true) + '::::' +
+		return this.description_for(true) + this.big_separator +
 		this.description_for(false);
 	}
 
@@ -94,20 +98,22 @@ export class Page_States {
 		for (const state of states) {
 			const description = state.description;
 			result = result + separator + description;
-			separator = ':::';
+			separator = this.small_separator;
 		}
 		return result;
 	}
 
-	static create_fromDescription(description: string): Page_States {
-		let state_descriptions = description.split(':::');
+	static create_fromDescription(description: string | null): Page_States {
 		let page_states = new Page_States();
-		for (const state_description of state_descriptions) {
-			const state = Page_State.create_fromDescription(state_description);
-			if (!!state) {
-				const points_out = state.points_out;
-				let states = page_states.page_states_for(points_out) ?? [];
-				states.push(state);
+		if (!!description) {
+			let state_descriptions = description.split(page_states.big_separator);
+			for (const state_description of state_descriptions) {
+				const state = Page_State.create_fromDescription(state_description);
+				if (!!state) {
+					const points_out = state.points_out;
+					let states = page_states.page_states_for(points_out) ?? [];
+					states.push(state);
+				}
 			}
 		}
 		return page_states;

@@ -3,7 +3,6 @@
 	import { g, k, s, u, Point, ZIndex, onMount, Cluster_Map } from '../../ts/common/Global_Imports';
 	import { ArcPart } from '../../ts/common/Enumerations';
 	import Button from '../mouse buttons/Button.svelte';
-	export let scrolling_ring_name = k.empty;
 	export let cursor_closure = () => {};
 	export let cluster_map: Cluster_Map;
 	export let center = Point.zero;
@@ -13,7 +12,6 @@
 	const thumb_state = cluster_map.thumb_state;
 	const thumb_size = cluster_map.thumb_radius * 2;
 	const rotation_state = s.rotationState_forName(name);
-	const scrolling_ring_state = s.rotationState_forName(scrolling_ring_name);
 	let thumb_svgPath = cluster_map.thumb_svgPath;
 	let thumb_center = cluster_map.thumb_center;
 	let radius = $s_cluster_arc_radius + offset;
@@ -73,7 +71,7 @@
 		/////////////////////////////
 
 		if (mouseState.isHover) {
-			rotation_state.isHovering = !!scrolling_ring_state.isHovering;	// show highlight around ring
+			rotation_state.isHovering = !!s.scrolling_ring_state.isHovering;	// show highlight around ring
 
 			// hover
 
@@ -118,16 +116,12 @@
 			{#each cluster_map.main_svgPaths as mainPath}
 				<path stroke={color} fill=transparent d={mainPath}/>
 			{/each}
-			<path stroke={k.color_background} fill={k.color_background} d={cluster_map.gap_svgPath}/>
 			{#each cluster_map.outer_svgPaths as outerPath}
 				<path stroke={color} fill=transparent d={outerPath}/>
 			{/each}
-			{#each cluster_map.fork_svgPaths as forkPath}
-				<path stroke={color} fill=transparent d={forkPath}/>
-			{/each}
 		{/if}
 	</svg>
-	{#if (cluster_map.shown < cluster_map.total) && scrolling_ring_state.isHovering}
+	{#if (cluster_map.shown < cluster_map.total) && (s.scrolling_ring_state.isHovering || rotation_state.isActive)}
 		<Button name='thumb-responder'
 			element_state={thumb_state}
 			center={thumb_center}
