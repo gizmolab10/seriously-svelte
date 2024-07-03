@@ -103,17 +103,15 @@ export class Page_States {
 		return result;
 	}
 
-	static create_fromDescription(description: string | null): Page_States {
+	static create_fromDescription(description: string): Page_States {
 		let page_states = new Page_States();
-		if (!!description) {
-			let state_descriptions = description.split(page_states.big_separator);
-			for (const state_description of state_descriptions) {
-				const state = Page_State.create_fromDescription(state_description);
-				if (!!state) {
-					const points_out = state.points_out;
-					let states = page_states.page_states_for(points_out) ?? [];
-					states.push(state);
-				}
+		let state_descriptions = description.split(page_states.big_separator);
+		for (const state_description of state_descriptions) {
+			const state = Page_State.create_fromDescription(state_description);
+			if (!!state) {
+				const points_out = state.points_out;
+				let states = page_states.page_states_for(points_out) ?? [];
+				states.push(state);
 			}
 		}
 		return page_states;

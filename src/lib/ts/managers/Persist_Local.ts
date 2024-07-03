@@ -88,7 +88,7 @@ class Persist_Local {
 	write_key(key: string, value: any) { localStorage[key] = JSON.stringify(value); }
 	writeDB_key(key: string, value: any) { this.write_key(key + this.dbType, value); }
 	readDB_ancestries_forKey(key: string): Array<Ancestry> { return this.ancestries_forKey(key + this.dbType); }
-	restore_pageStates() { s_page_states.set(Page_States.create_fromDescription(this.read_key(IDPersistant.indices))); }
+	restore_pageStates() { s_page_states.set(Page_States.create_fromDescription(this.read_key(IDPersistant.indices) ?? k.empty)); }
 
 	read_key(key: string): any | null {
 		const storedValue = localStorage[key];
