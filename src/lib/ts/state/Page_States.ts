@@ -38,15 +38,18 @@ export class Page_State {
 		return strings.join(k.generic_separator);
 	}
 
-	static create_fromDescription(description: string): Page_State {
+	static create_fromDescription(description: string): Page_State | null {
 		let strings = description.split(k.generic_separator);
-		const [out, kind, ...remaining] = strings;
-		const points_out = out == 'true';
-		const v: Array<number> = remaining.map(r => Number(r));
-		let state = new Page_State(v[0], v[1], v[2], v[3]);
-		state.points_out = points_out;
-		state.kind = kind;
-		return state;
+		if (strings.length > 5) {
+			const [out, kind, ...remaining] = strings;
+			const points_out = out == 'true';
+			const v: Array<number> = remaining.map(r => Number(r));
+			let state = new Page_State(v[0], v[1], v[2], v[3]);
+			state.points_out = points_out;
+			state.kind = kind;
+			return state;
+		}
+		return null;
 	}
 
 	set_index_to(index: number) {
