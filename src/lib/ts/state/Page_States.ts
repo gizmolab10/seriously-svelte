@@ -1,5 +1,4 @@
-import Predicate from '../data/Predicate';
-import { k } from '../common/Constants';
+import { k, Ancestry, Predicate } from '../common/Global_Imports';
 
 export class Page_State {
 
@@ -10,7 +9,7 @@ export class Page_State {
 	points_out = false;
 	show_thumb = false;
 	kind = k.empty;
-	thing_id = 0;
+	thing_hid = 0;
 	index = 0;
 	shown = 0;
 	total = 0;
@@ -18,10 +17,10 @@ export class Page_State {
 	static get empty(): Page_State { return new Page_State(0, 0, 0, 0); }
 	get max_index(): number { return this.total - this.shown; }
 
-	constructor(thing_id: number, index: number, shown: number, total: number) {
+	constructor(thing_hid: number, index: number, shown: number, total: number) {
 		this.shown = shown;
 		this.total = total;
-		this.thing_id = thing_id;
+		this.thing_hid = thing_hid;
 		const max = this.max_index;
 		this.index = index.force_between(0, max);
 		this.atLimit = [this.index < 1, (max - 1) < this.index];
@@ -31,7 +30,7 @@ export class Page_State {
 		const strings = [
 			`${this.points_out}`,
 			`${this.kind}`,
-			`${this.thing_id}`,
+			`${this.thing_hid}`,
 			`${this.index}`,
 			`${this.shown}`,
 			`${this.total}`];
@@ -92,7 +91,7 @@ export class Page_States {
 	inward_page_states: Array<Page_State> = [];
 	small_separator = ':::';
 	big_separator = '::::';
-	ancestry_hid = 0;
+	ancestry!: Ancestry;
 
 	// two arrays of Page_State (defined above)
 	// 1) outward: (to) children and relateds (more kinds later?)

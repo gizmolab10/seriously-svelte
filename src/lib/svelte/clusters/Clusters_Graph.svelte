@@ -31,7 +31,7 @@
 
 	$: {
 		const state = $s_page_state;
-		if (!!state && !!ancestry.thing && ancestry.thing.id == state.thing_id) {
+		if (!!state && !!ancestry.thing && ancestry.thing.idHashed == state.thing_hid) {
 			rebuilds += 1;
 		}
 	}

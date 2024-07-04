@@ -105,8 +105,11 @@ export default class Cluster_Map  {
 	}
 
 	set_page_index(index: number) {
-		let states = this.focus_ancestry.page_states;
+		const focus = this.focus_ancestry;
+		let states = focus.page_states;
+		states.ancestry = focus;
 		const state = states.page_state_for(this.points_out, this.predicate);
+		state.thing_hid = focus.thing?.idHashed ?? 0;
 		state.total = this.total;
 		state.shown = this.shown;
 		state.index = index;
