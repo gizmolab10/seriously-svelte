@@ -55,7 +55,7 @@ export default class DBFirebase implements DBInterface {
 		}
 		await this.fetch_documentsOf(DatumType.predicates);
 		await this.fetch_allFrom(baseID);
-		persistLocal.restore_ancestries(); // can ancestries restore happen focus?
+		persistLocal.restore_grabbed_andExpanded(); // can ancestries restore happen focus?
 		await this.fetch_bulkAliases();		// TODO: assumes all ancestries created
 	}
 

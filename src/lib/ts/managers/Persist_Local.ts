@@ -3,7 +3,7 @@ import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/R
 import { g, k, get, Point, signals, Ancestry, dbDispatch } from '../common/Global_Imports';
 import { s_ancestries_grabbed, s_ancestries_expanded } from '../state/Reactive_State';
 import { Page_State, Page_States, GraphRelations } from '../common/Global_Imports';
-import { s_thing_fontFamily, s_graph_relations } from '../state/Reactive_State';
+import { s_thing_fontFamily, s_shown_relations } from '../state/Reactive_State';
 import { s_page_states } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
 
@@ -12,6 +12,7 @@ export enum IDPersistant {
 	show_children = 'show_children',
 	title_atTop   = 'title_atTop',
 	cluster_arc	  = 'cluster_arc',
+	ring_angle    = 'ring_angle',
 	arrowheads	  = 'arrowheads',
 	relations	  = 'relations',
 	expanded	  = 'expanded',
@@ -25,7 +26,6 @@ export enum IDPersistant {
 	origin		  = 'origin',
 	scale		  = 'scale',
 	focus		  = 'focus',
-	angle		  = 'angle',
 	font		  = 'font',
 	db			  = 'db',
 }
@@ -111,7 +111,7 @@ class Persist_Local {
 		}
 	}
 
-	ancestries_forKey(key: string): Array<Ancestry> {
+	ancestries_forKey(key: string): Array<Ancestry> {		// two keys: grabbed, expanded
 		const ids = this.read_key(key);
 		const length = ids?.length ?? 0;
 		if (this.ignoreAncestries || !ids || length == 0) {
@@ -147,7 +147,7 @@ class Persist_Local {
 	}
 
 	reactivity_subscribe() {
-		s_graph_relations.subscribe((relations: string) => {
+		s_shown_relations.subscribe((relations: string) => {
 			this.write_key(IDPersistant.relations, relations);
 		});
 		s_cluster_arc_radius.subscribe((radius: number) => {
@@ -157,7 +157,7 @@ class Persist_Local {
 			this.write_key(IDPersistant.layout, flag);
 		});
 		s_ring_angle.subscribe((angle: number) => {
-			this.write_key(IDPersistant.angle, angle);
+			this.write_key(IDPersistant.ring_angle, angle);
 		});
 		s_page_states.subscribe((page_states: Page_States) => {
 			if (!!page_states) {
@@ -186,17 +186,17 @@ class Persist_Local {
 		k.show_arrowheads = this.read_key(IDPersistant.arrowheads) ?? false;
 		k.show_titleAtTop = this.read_key(IDPersistant.title_atTop) ?? false;
 		g.applyScale(!g.device_isMobile ? 1 : this.read_key(IDPersistant.scale) ?? 1);
-		s_ring_angle.set(this.read_key(IDPersistant.angle) ?? 0);
+		s_ring_angle.set(this.read_key(IDPersistant.ring_angle) ?? 0);
 		s_show_details.set(this.read_key(IDPersistant.details) ?? false);
 		s_thing_fontFamily.set(this.read_key(IDPersistant.font) ?? 'Arial');
 		s_layout_asClusters.set(this.read_key(IDPersistant.layout) ?? false);
 		s_cluster_arc_radius.set(this.read_key(IDPersistant.cluster_arc) ?? 130);
-		s_graph_relations.set(this.read_key(IDPersistant.relations) ?? GraphRelations.children);
+		s_shown_relations.set(this.read_key(IDPersistant.relations) ?? GraphRelations.children);
 		this.restore_graphOffset();
 		this.reactivity_subscribe()
 	}
 
-	restore_ancestries(force: boolean = false) {
+	restore_grabbed_andExpanded(force: boolean = false) {
 		if (!this.ancestriesRestored || force) {
 			this.ancestriesRestored = true;
 			s_ancestries_grabbed.set(this.readDB_ancestries_forKey(IDPersistant.grabbed));

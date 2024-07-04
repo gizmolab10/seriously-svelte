@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_show_details, s_id_popupView, s_resize_count, s_layout_asClusters, s_graph_relations } from '../../ts/state/Reactive_State';
+	import { s_show_details, s_id_popupView, s_resize_count, s_layout_asClusters, s_shown_relations } from '../../ts/state/Reactive_State';
 	import { g, k, s, u, Point, ZIndex, onMount, signals, svgPaths, IDButton, IDPersistant } from '../../ts/common/Global_Imports';
 	import { ElementType, Element_State, persistLocal, GraphRelations } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/data/Identifiable';
@@ -30,7 +30,7 @@
 	}
 
 	function next_graph_relations() {
-		switch ($s_graph_relations) {
+		switch ($s_shown_relations) {
 			case GraphRelations.children: return GraphRelations.parents;
 			case GraphRelations.parents:  return GraphRelations.related;
 			default:					  return GraphRelations.children;
@@ -47,7 +47,7 @@
 				case IDButton.smaller: width = g.zoomBy(0.9) - 20; break;
 				case IDButton.details: $s_show_details = !$s_show_details; break;
 				case IDButton.layout: $s_layout_asClusters = !$s_layout_asClusters; break;
-				case IDButton.relations: $s_graph_relations = next_graph_relations(); break;
+				case IDButton.relations: $s_shown_relations = next_graph_relations(); break;
 				default: togglePopupID(id); break;
 			}
 		}
@@ -79,7 +79,7 @@
 					center={new Point(lefts[1], top)}
 					element_state={elementStates_byID[IDButton.relations]}
 					closure={(mouseState) => button_closure_forID(mouseState, IDButton.relations)}>
-					{$s_graph_relations}
+					{$s_shown_relations}
 				</Button>
 				<Button name={IDButton.layout}
 					width=65

@@ -67,11 +67,32 @@ export class Page_State {
 	}
 }
 
+// this belongs inside singleton instance of Persist_Local
+
+export class Page_StatesBy_Ancestry_HID {
+	statesBy_ancestryHID: {[ancestry_hid: number]: Page_States} = {}
+	separator = ':-:';
+
+	get description(): string { return ''; }
+
+	static create_fromDescription(description: string): Page_StatesBy_Ancestry_HID {
+		const dict = new Page_StatesBy_Ancestry_HID();
+		return dict;
+	}
+
+	distribute_toAncestries() {}
+
+	collect_fromAncestries(): string { return ''; }
+
+}
+
+
 export class Page_States {
-	big_separator = '::::';
-	small_separator = ':::';
-	inward_page_states: Array<Page_State>;
 	outward_page_states: Array<Page_State>;
+	inward_page_states: Array<Page_State>;
+	small_separator = ':::';
+	big_separator = '::::';
+	ancestry_hid = 0;
 
 	// two arrays of Page_State (defined above)
 	// 1) outward: (to) children and relateds (more kinds later?)

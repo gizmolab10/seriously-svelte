@@ -45,7 +45,7 @@ export default class DBDispatch {
 		this.db_changeTypeTo_for(type);
 		this.queryStrings_apply();
 		await this.hierarchy_fetch_andBuild(type);
-		persistLocal.restore_ancestries(true);
+		persistLocal.restore_grabbed_andExpanded(true);
 		debug.log_beat('db_setupData_forType before timeout');
 		setTimeout(() => {
 			persistLocal.restore_pageStates();
