@@ -1,10 +1,9 @@
 import { s_ring_angle, s_cluster_arc_radius, s_layout_asClusters } from '../state/Reactive_State';
 import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/Reactive_State';
+import { s_page_state, s_thing_fontFamily, s_shown_relations } from '../state/Reactive_State';
 import { g, k, get, Point, signals, Ancestry, dbDispatch } from '../common/Global_Imports';
 import { s_ancestries_grabbed, s_ancestries_expanded } from '../state/Reactive_State';
-import { Page_State, Page_States, GraphRelations } from '../common/Global_Imports';
-import { s_thing_fontFamily, s_shown_relations } from '../state/Reactive_State';
-import { s_page_states } from '../state/Reactive_State';
+import { Page_State, GraphRelations } from '../common/Global_Imports';
 import { h } from '../db/DBDispatch';
 
 export enum IDPersistant {
@@ -83,12 +82,12 @@ class Persist_Local {
 		}
     }
 
+	restore_pageStates() {}
 	get dbType(): string { return dbDispatch.db.dbType; }
 	readDB_key(key: string): any | null { return this.read_key(key + this.dbType); }
 	write_key(key: string, value: any) { localStorage[key] = JSON.stringify(value); }
 	writeDB_key(key: string, value: any) { this.write_key(key + this.dbType, value); }
 	readDB_ancestries_forKey(key: string): Array<Ancestry> { return this.ancestries_forKey(key + this.dbType); }
-	restore_pageStates() { s_page_states.set(Page_States.create_fromDescription(this.read_key(IDPersistant.indices) ?? k.empty)); }
 
 	read_key(key: string): any | null {
 		const storedValue = localStorage[key];
@@ -159,16 +158,14 @@ class Persist_Local {
 		s_ring_angle.subscribe((angle: number) => {
 			this.write_key(IDPersistant.ring_angle, angle);
 		});
-		s_page_states.subscribe((page_states: Page_States) => {
-			if (!!page_states) {
-				this.write_key(IDPersistant.indices, page_states.description);
-			}
-		});
 		s_show_details.subscribe((flag: boolean) => {
 			this.write_key(IDPersistant.details, flag);
 			g.graphRect_update();
 			signals.signal_relayoutWidgets_fromFocus();
 		});
+		s_page_state.subscribe((page_state: Page_State) => {
+			
+		})
 	}
 
 	restore_constants() {

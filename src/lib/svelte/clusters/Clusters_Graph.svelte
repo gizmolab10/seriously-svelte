@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { s_page_states, s_graphRect, s_thing_changed, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
 	import { g, k, s, u, get, Point, ZIndex, signals, onMount, Predicate, onDestroy } from '../../ts/common/Global_Imports';
+	import { s_graphRect, s_page_state, s_thing_changed, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
 	import { Widget_MapRect, Clusters_Geometry } from '../../ts/common/Global_Imports';
 	import Widget from '../widget/Widget.svelte';
 	import { h } from '../../ts/db/DBDispatch';
@@ -30,7 +30,14 @@
 	}
 
 	$: {
-		if (!!$s_page_states && !!geometry) {		// ignore null at startup
+		const state = $s_page_state;
+		if (!!state && !!ancestry.thing && ancestry.thing.id == state.thing_id) {
+			rebuilds += 1;
+		}
+	}
+
+	$: {
+		if (!!geometry) {		// ignore null at startup
 			geometry.layout();
 			rebuilds += 1;
 		}

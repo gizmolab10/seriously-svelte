@@ -7,8 +7,8 @@ import { Writable } from 'svelte/store';
 import { h } from '../db/DBDispatch';
 
 export default class Ancestry extends Identifiable {
+	page_states = new Page_States();
 	_thing: Thing | null = null;
-	page_states!: Page_States;
 	idPredicate: string;
 	unsubscribe: any;
 

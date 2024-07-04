@@ -67,14 +67,13 @@
 				const largest = k.cluster_inside_radius * 4;
 				const smallest = k.cluster_inside_radius * 1.5;
 				const distance = magnitude.force_between(smallest, largest);
-				const movement = distance - $s_cluster_arc_radius - s.necklace_ringState.radiusOffset;
-				if (Math.abs(movement) > 5) {
+				const pixels = distance - $s_cluster_arc_radius - s.necklace_ringState.radiusOffset;
+				if (Math.abs(pixels) > 5) {
 					sendSignal = true;
-					$s_cluster_arc_radius += movement;
+					$s_cluster_arc_radius += pixels;
 				}
 			} else if (!s.isAnyRotation_active) {
 				s.necklace_ringState.isHovering = isHit();	// show highlight around ring
-				console.log(isHit())
 				cursor_closure();
 			}
 			if (sendSignal) {

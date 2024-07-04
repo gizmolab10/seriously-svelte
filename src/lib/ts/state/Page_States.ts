@@ -88,8 +88,8 @@ export class Page_StatesBy_Ancestry_HID {
 
 
 export class Page_States {
-	outward_page_states: Array<Page_State>;
-	inward_page_states: Array<Page_State>;
+	outward_page_states: Array<Page_State> = [];
+	inward_page_states: Array<Page_State> = [];
 	small_separator = ':::';
 	big_separator = '::::';
 	ancestry_hid = 0;
@@ -101,14 +101,6 @@ export class Page_States {
 	// 
 	// page == a subset of a too-long list
 	// index == first of subset
-
-	constructor() {
-
-		// keep track of paging through cluster of things
-
-		this.inward_page_states = [];
-		this.outward_page_states = [];
-	}
 
 	get description(): string {
 		return this.description_for(true) + this.big_separator +
