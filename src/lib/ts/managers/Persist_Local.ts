@@ -3,7 +3,7 @@ import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/R
 import { s_page_state, s_thing_fontFamily, s_shown_relations } from '../state/Reactive_State';
 import { g, k, get, Point, signals, Ancestry, dbDispatch } from '../common/Global_Imports';
 import { s_ancestries_grabbed, s_ancestries_expanded } from '../state/Reactive_State';
-import { Page_State, GraphRelations } from '../common/Global_Imports';
+import { Page_State, Page_States, GraphRelations } from '../common/Global_Imports';
 import { h } from '../db/DBDispatch';
 
 export enum IDPersistant {
@@ -11,6 +11,7 @@ export enum IDPersistant {
 	show_children = 'show_children',
 	title_atTop   = 'title_atTop',
 	cluster_arc	  = 'cluster_arc',
+	page_states   = 'page_states',
 	ring_angle    = 'ring_angle',
 	arrowheads	  = 'arrowheads',
 	relations	  = 'relations',
@@ -20,7 +21,6 @@ export enum IDPersistant {
 	grabbed		  = 'grabbed',
 	details		  = 'details',
 	cluster		  = 'cluster',
-	indices		  = 'indices',
 	layout		  = 'layout',
 	origin		  = 'origin',
 	scale		  = 'scale',
@@ -82,20 +82,41 @@ class Persist_Local {
 		}
     }
 
-	restore_pageStates() {}
 	get dbType(): string { return dbDispatch.db.dbType; }
+	read_key(key: string): any | null { return this.parse(localStorage[key]); }
 	readDB_key(key: string): any | null { return this.read_key(key + this.dbType); }
 	write_key(key: string, value: any) { localStorage[key] = JSON.stringify(value); }
 	writeDB_key(key: string, value: any) { this.write_key(key + this.dbType, value); }
+	keyPair_for(key: string, sub_key: string): string { return `${key}${k.generic_separator}${sub_key}`; }
 	readDB_ancestries_forKey(key: string): Array<Ancestry> { return this.ancestries_forKey(key + this.dbType); }
+	read_keyPair<T>(key: string, sub_key: string): T | null { return this.read_key(this.keyPair_for(key, sub_key)); }
 
-	read_key(key: string): any | null {
-		const storedValue = localStorage[key];
+	parse(storedValue: string | null): any | null {
 		if (!storedValue || storedValue == 'undefined') {
 			return null;
-		} else {
-			return JSON.parse(storedValue);
-		} 
+		}		
+		return JSON.parse(storedValue);
+	}
+
+	write_keyPair<T>(key: string, sub_key: string, value: T): void {
+		const keys = this.read_key(key) ?? new Set();
+		this.write_key(this.keyPair_for(key, sub_key), value);
+		if (!keys.includes(sub_key)) {
+			keys.push(sub_key);
+			this.write_key(key, Array.from(keys));
+		}
+	}
+
+	read_allSubkeys_forKey(key: string): Array<any> {
+		let values: Array<any> = [];
+		const subkeys = this.read_key(key) ?? new Set();
+		for (const subkey of subkeys) {
+			const value = this.read_keyPair(key, subkey);
+			if (!!value) {
+				values.push(value);
+			}
+		}
+		return values;
 	}
 
 	applyFor_key_name(key: string, matching: string, apply: (flag: boolean) => void, persist: boolean = true) {
@@ -164,7 +185,9 @@ class Persist_Local {
 			signals.signal_relayoutWidgets_fromFocus();
 		});
 		s_page_state.subscribe((page_state: Page_State) => {
-			
+			if (!!page_state) {
+				this.write_keyPair(IDPersistant.page_states, page_state.sub_key, page_state.description);
+			}
 		})
 	}
 
@@ -191,6 +214,34 @@ class Persist_Local {
 		s_shown_relations.set(this.read_key(IDPersistant.relations) ?? GraphRelations.children);
 		this.restore_graphOffset();
 		this.reactivity_subscribe()
+	}
+
+	restoreAll_pageStates() {
+		let thing_id = k.empty;
+		let page_states: Array<Page_State> = [];
+		const descriptions = this.read_allSubkeys_forKey(IDPersistant.page_states) ?? k.empty;
+		for (const description of descriptions) {
+			const page_state = Page_State.create_fromDescription(description);
+			const id = page_state?.thing_id;
+			if (!!page_state && !!id) {
+				if (thing_id != id) {
+					this.assign_page_states_to(page_states, thing_id);
+					page_states = [];
+					thing_id = id;
+				}
+				page_states.push(page_state);	// VITAL: do this after assignment above
+			}
+		}
+		this.assign_page_states_to(page_states, thing_id);
+	}
+
+	assign_page_states_to(page_states: Array<Page_State>, thing_id: string) {
+		if (thing_id != k.empty && page_states.length > 0) {		
+			const thing = h.thing_forHID(thing_id.hash());
+			if (!!thing) {
+				thing.page_states = new Page_States(thing_id, page_states);
+			}
+		}
 	}
 
 	restore_grabbed_andExpanded(force: boolean = false) {

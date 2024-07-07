@@ -1,13 +1,13 @@
-import { k, u, get, Datum, debug, IDTrait, Ancestry, Predicate } from '../common/Global_Imports';
+import { k, u, get, Datum, debug, IDTrait, Ancestry, Predicate, Page_States } from '../common/Global_Imports';
 import { DebugFlag, dbDispatch, Relationship, Seriously_Range } from '../common/Global_Imports';
 import { s_ancestry_focus, s_ancestries_expanded } from '../state/Reactive_State';
-import { idDefault } from '../data/Identifiable';
 import { h } from '../db/DBDispatch';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {
 	selectionRange = new Seriously_Range(0, 0);
 	bulkRootID: string = k.empty;
+	page_states!: Page_States;
 	oneAncestry!: Ancestry;
 	needsBulkFetch = false;
 	isEditing = false;
@@ -16,9 +16,10 @@ export default class Thing extends Datum {
 	color: string;
 	trait: string;
 
-	constructor(baseID: string, id: string = idDefault, title = k.title_default, color = k.color_default, trait = 's', isRemotelyStored: boolean) {
+	constructor(baseID: string, id: string, title = k.title_default, color = k.color_default, trait = 's', isRemotelyStored: boolean) {
 		super(dbDispatch.db.dbType, baseID, id, isRemotelyStored);
 		this.selectionRange = new Seriously_Range(0, title.length);
+		this.page_states = new Page_States(this.id, []);
 		this.title = title;
 		this.color = color;
 		this.trait = trait;
@@ -37,7 +38,7 @@ export default class Thing extends Datum {
 	get hasMultipleParents():		boolean { return this.parentAncestries.length > 1; }
 	get hasParents():				boolean { return this.hasParentsFor(Predicate.idContains); }
 	get isFocus():					boolean { return (get(s_ancestry_focus).thing?.id ?? k.empty) == this.id; }
-	get hasRelated():				boolean { return this.relationships_bidirectional_for(Predicate.idIsRelated).length > 0; }
+	get hasRelated():				boolean { return this.relationships_inBothDirections_for(Predicate.idIsRelated).length > 0; }
 
 	get parents_ofAllKinds(): Array<Thing> {
 		let parents: Array<Thing> = [];
@@ -142,7 +143,7 @@ export default class Thing extends Datum {
 		return grandParents;
 	}
 
-	relationships_bidirectional_for(idPredicate: string): Array<Relationship> {
+	relationships_inBothDirections_for(idPredicate: string): Array<Relationship> {
 		const children = this.relationships_for_isChildOf(idPredicate, true);
 		const parents = this.relationships_for_isChildOf(idPredicate, false);
 		return u.uniquely_concatenateArrays(parents, children);
@@ -159,7 +160,7 @@ export default class Thing extends Datum {
 	parentRelationships_for(predicate: Predicate): Array<Relationship> {
 		let relationships: Array<Relationship> = [] 
 		if (predicate.isBidirectional) {
-			relationships = this.relationships_bidirectional_for(predicate.id);
+			relationships = this.relationships_inBothDirections_for(predicate.id);
 		} else {
 			relationships = this.relationships_for_isChildOf(predicate.id, true);
 		}

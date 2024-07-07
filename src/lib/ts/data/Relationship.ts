@@ -1,5 +1,4 @@
 import { k, Thing, debug, DebugFlag, dbDispatch, Predicate } from '../common/Global_Imports';
-import { idDefault } from '../data/Identifiable';
 import { h } from '../db/DBDispatch';
 import Airtable from 'airtable';
 import Datum from './Datum';
@@ -10,7 +9,7 @@ export default class Relationship extends Datum {
 	idChild: string;
 	order: number; 
 
-	constructor(baseID: string, id: string = idDefault, idPredicate: string, idParent: string, idChild: string, order = 0, isRemotelyStored: boolean = false) {
+	constructor(baseID: string, id: string, idPredicate: string, idParent: string, idChild: string, order = 0, isRemotelyStored: boolean = false) {
 		super(dbDispatch.db.dbType, baseID, id, isRemotelyStored);
 		this.idPredicate = idPredicate;
 		this.idParent = idParent;

@@ -53,7 +53,7 @@ export default class SVG_Paths {
 		const radial = new Point(radius, 0);
 		const end = center.offsetBy(radial.rotate_by(endAngle));
 		const start = center.offsetBy(radial.rotate_by(referenceAngle));
-		const largeArcFlag = (new Angle(referenceAngle - endAngle).normalized_angle > Math.PI) ? 1 : 0;
+		const largeArcFlag = (Angle.full.normalize(referenceAngle - endAngle) > Math.PI) ? 1 : 0;
 		return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${end.x} ${end.y}`;
 	}
 

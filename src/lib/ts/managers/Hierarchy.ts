@@ -2,7 +2,6 @@ import { k, u, get, User, Thing, Grabs, debug, Mouse_State, Access, IDTool, IDTr
 import { Predicate, Svelte_Wrapper, Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
 import { s_things_arrived, s_ancestries_grabbed, s_ancestry_editingTools } from '../state/Reactive_State';
 import { s_isBusy, s_altering, s_ancestry_focus, s_title_editing } from '../state/Reactive_State';
-import { idDefault } from '../data/Identifiable';
 import Identifiable from '../data/Identifiable';
 import DBInterface from '../db/DBInterface';
 
@@ -218,12 +217,12 @@ export class Hierarchy {
 		const thing = ancestry.thing;
 		if (!!thing && parent && parentAncestry) {
 			const order = ancestry.order + (below ? 0.5 : -0.5);
-			const child = this.thing_runtimeCreate(thing.baseID, idDefault, k.title_line, parent.color, k.empty, false);
+			const child = this.thing_runtimeCreate(thing.baseID, Identifiable.newID(), k.title_line, parent.color, k.empty, false);
 			await this.ancestry_edit_remoteAddAsChild(parentAncestry, child, order, false);
 		}
 	}
 
-	thing_remember_runtimeCreateUnique(baseID: string, id: string = idDefault, title: string, color: string, trait: string,
+	thing_remember_runtimeCreateUnique(baseID: string, id: string, title: string, color: string, trait: string,
 		isRemotelyStored: boolean): Thing {
 		let thing = this.thing_forHID(id?.hash() ?? null);
 		if (!thing) {
@@ -232,7 +231,7 @@ export class Hierarchy {
 		return thing;
 	}
 
-	thing_remember_runtimeCreate(baseID: string, id: string = idDefault, title: string, color: string, trait: string,
+	thing_remember_runtimeCreate(baseID: string, id: string, title: string, color: string, trait: string,
 		isRemotelyStored: boolean): Thing {
 		const thing = this.thing_runtimeCreate(baseID, id, title, color, trait, isRemotelyStored);
 		this.thing_remember(thing);
@@ -240,7 +239,7 @@ export class Hierarchy {
 	}
 
 	async thing_remember_runtimeCopy(baseID: string, parent: Thing) {
-		const newThing = new Thing(baseID, idDefault, parent.title, parent.color, parent.trait, false);
+		const newThing = new Thing(baseID, Identifiable.newID(), parent.title, parent.color, parent.trait, false);
 		const prohibitedTraits: Array<string> = [IDTrait.roots, IDTrait.root, IDTrait.bulk];
 		if (prohibitedTraits.includes(parent.trait)) {
 			newThing.trait = k.empty;
@@ -273,7 +272,7 @@ export class Hierarchy {
 		}
 	}
 
-	thing_runtimeCreate(baseID: string, id: string = idDefault, title: string, color: string, trait: string,
+	thing_runtimeCreate(baseID: string, id: string, title: string, color: string, trait: string,
 		isRemotelyStored: boolean): Thing {
 		let thing: Thing | null = null;
 		if (id && trait == IDTrait.root && baseID != this.db.baseID) {		// other bulks have their own root & id
@@ -393,7 +392,7 @@ export class Hierarchy {
 		return null;
 	}
 
-	async relationships_remoteCreateMissing(idParent: string = idDefault, baseID: string) {
+	async relationships_remoteCreateMissing(idParent: string, baseID: string) {
 		const startingID = idParent ?? this.idRoot;
 		if (startingID) {
 			for (const thing of this.things) {
@@ -402,7 +401,7 @@ export class Hierarchy {
 					let relationship = this.relationship_whereID_isChild(idThing);
 					if (!relationship) {
 						const idPredicateContains = Predicate.idContains;
-						await this.relationship_remember_remoteCreateUnique(baseID, idDefault, idPredicateContains,
+						await this.relationship_remember_remoteCreateUnique(baseID, Identifiable.newID(), idPredicateContains,
 							startingID, idThing, 0, CreationOptions.getRemoteID)
 					}
 				}
@@ -517,7 +516,7 @@ export class Hierarchy {
 		return relationship;
 	}
 
-	async relationship_remember_remoteCreateUnique(baseID: string, idRelationship: string = idDefault, idPredicate: string, idParent: string,
+	async relationship_remember_remoteCreateUnique(baseID: string, idRelationship: string, idPredicate: string, idParent: string,
 		idChild: string, order: number, creationOptions: CreationOptions = CreationOptions.isFromRemote): Promise<any> {
 		let relationship = this.relationship_forPredicate_parent_child(idPredicate, idParent, idChild);
 		if (relationship) {
@@ -594,7 +593,7 @@ export class Hierarchy {
 				return rootAncestry.appendChild(rootsMaybe) ?? null;
 			}
 		}
-		const roots = this.thing_runtimeCreate(this.db.baseID, idDefault, 'roots', 'red', IDTrait.roots, false);
+		const roots = this.thing_runtimeCreate(this.db.baseID, Identifiable.newID(), 'roots', 'red', IDTrait.roots, false);
 		await this.ancestry_remember_remoteAddAsChild(rootAncestry, roots).then((ancestry) => { rootsAncestry = ancestry; });
 		return rootsAncestry;
 	}
@@ -698,7 +697,7 @@ export class Hierarchy {
 			if (!child.isRemotelyStored) {
 				await this.db.thing_remember_remoteCreate(child);					// for everything below, need to await child.id fetched from dbDispatch
 			}
-			const relationship = await this.relationship_remember_remoteCreateUnique(baseID, idDefault, idPredicate, parent.idBridging, child.id, 0, CreationOptions.getRemoteID);
+			const relationship = await this.relationship_remember_remoteCreateUnique(baseID, Identifiable.newID(), idPredicate, parent.idBridging, child.id, 0, CreationOptions.getRemoteID);
 			const childAncestry = parentAncestry.uniquelyAppendID(relationship.id);
 			await u.ancestries_orders_normalize_remoteMaybe(parentAncestry.childAncestries);		// write new order values for relationships
 			return childAncestry;
@@ -878,9 +877,9 @@ export class Hierarchy {
 
 	static readonly $_ANCILLARY_$: unique symbol;
 
+	predicate_forKind(kind: string | null): Predicate | null { return !kind ? null : this.predicate_byKind[kind]; }
 	predicates_byDirection(isBidirectional: boolean) { return this.predicate_byDirection[isBidirectional ? 1 : 0]; }
-	predicate_forKind(kind: string | null): Predicate | null { return (!kind) ? null : this.predicate_byKind[kind]; }
-	predicate_forID(idPredicate: string = idDefault): Predicate | null { return (!idPredicate) ? null : this.predicate_byHID[idPredicate.hash()]; }
+	predicate_forID(idPredicate: string): Predicate | null { return !idPredicate ? null : this.predicate_byHID[idPredicate.hash()]; }
 
 	idPredicate_for(id: string): string {
 		const hid = id.split(k.generic_separator)[0].hash();			// grab first relationship's hid
@@ -948,7 +947,7 @@ export class Hierarchy {
 		this.isAssembled = true;
 	}
 
-	async add_missing_removeNulls(idParent: string = idDefault, baseID: string) {
+	async add_missing_removeNulls(idParent: string, baseID: string) {
 		await this.relationships_remoteCreateMissing(idParent, baseID);
 		await this.relationships_removeHavingNullReferences();
 	}

@@ -1,4 +1,4 @@
-import { k, u, get, Rect, Size, Thing, debug, signals, Predicate, Title_State, Page_States, ElementType } from '../common/Global_Imports';
+import { k, u, get, Rect, Size, Thing, debug, signals, Predicate, Title_State, ElementType } from '../common/Global_Imports';
 import { Relationship, PredicateKind, AlterationType, Svelte_Wrapper, SvelteComponentType } from '../common/Global_Imports';
 import { s_ancestry_focus, s_ancestries_grabbed, s_title_editing, s_layout_asClusters } from '../state/Reactive_State';
 import { s_ancestries_expanded, s_ancestry_editingTools, s_altering } from '../state/Reactive_State';
@@ -7,7 +7,6 @@ import { Writable } from 'svelte/store';
 import { h } from '../db/DBDispatch';
 
 export default class Ancestry extends Identifiable {
-	page_states = new Page_States();
 	_thing: Thing | null = null;
 	idPredicate: string;
 	unsubscribe: any;

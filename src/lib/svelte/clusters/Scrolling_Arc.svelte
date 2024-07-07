@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_mouse_location, s_mouse_up_count, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
+	import { s_ring_angle, s_mouse_up_count, s_mouse_location, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
 	import { g, k, s, u, Point, ZIndex, onMount, Cluster_Map } from '../../ts/common/Global_Imports';
 	import { ArcPart } from '../../ts/common/Enumerations';
 	import Button from '../mouse buttons/Button.svelte';
@@ -47,21 +47,23 @@
 		// detect movement & adjust state //
 		////////////////////////////////////
 
-		const _ = $s_mouse_location;							// use store, to react
-		const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);
-		if (!!from_center) {
+		const _ = k.empty + $s_ring_angle + ($s_mouse_location?.description ?? k.empty);		// use store, to react
+		if (!!rotation_state.priorAngle) {										// rotate
 			cursor_closure();
-			if (!!rotation_state.priorAngle) {					// rotate
-				const mouseAngle = from_center.angle;
-				const delta = mouseAngle.add_angle_normalized(-rotation_state.priorAngle);	// subtract to find difference
-				if (Math.abs(delta) >= Math.PI / 90) {			// minimum two degree changes
+			const mouseAngle = computed_mouseAngle();
+			if (!!mouseAngle) {
+				const delta = Math.abs(mouseAngle - rotation_state.priorAngle);	// subtract to find difference
+				if (delta >= (Math.PI / 90)) {									// minimum two degree changes
 					rotation_state.priorAngle = mouseAngle;
-					const angle = mouseAngle;
-					cluster_map.adjust_index_forThumb_angle(angle);
-					update_thumb();
+					cluster_map.adjust_index_forThumb_angle(mouseAngle);
 				}
 			}
 		}
+		update_thumb();
+	}
+
+	function computed_mouseAngle(): number | null {
+		return u.vector_ofOffset_fromGraphCenter_toMouseLocation(center)?.angle ?? null
 	}
 
 	function closure(mouseState) {
@@ -77,30 +79,30 @@
 
 			update_thumb();
 		} else {
-			const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);
 			if (mouseState.isUp) {
-				cluster_map.compute_thumb_angle();
 
 				// end rotate
 
 				update_thumb();
 			} else if (mouseState.isDown) {
-				const mouseAngle = from_center.angle;
+				const mouseAngle = computed_mouseAngle();
 
 				// begin rotate
 
-				rotation_state.priorAngle = mouseAngle;
-				rotation_state.referenceAngle = mouseAngle;
-				update_thumb();
+				if (!!mouseAngle) {
+					rotation_state.priorAngle = mouseAngle;
+					rotation_state.referenceAngle = mouseAngle;
+					update_thumb();
+				}
 			}
 			cursor_closure();
 		}
 	}
 
+	// && (s.scrolling_ring_state.isHovering || rotation_state.isActive)
+
 </script>
 
-{#key rebuilds}
-{/key}
 <div name={name} style='
 	position: absolute;
 	width: {breadth}px;
@@ -121,7 +123,7 @@
 			{/each}
 		{/if}
 	</svg>
-	{#if (cluster_map.shown < cluster_map.total) && (s.scrolling_ring_state.isHovering || rotation_state.isActive)}
+	{#if (cluster_map.shown < cluster_map.total)}
 		<Button name='thumb-responder'
 			element_state={thumb_state}
 			center={thumb_center}

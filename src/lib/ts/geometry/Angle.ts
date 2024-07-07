@@ -16,7 +16,7 @@ export enum Orientation {
 }
 
 export default class Angle {
-	angle: number;		// angles begin at 3 o'clock & rotate up (counter-clockwise)
+	angle: number;								// angles begin at 3 o'clock & rotate up (counter-clockwise)
 
 	constructor(angle: number) {
 		this.angle = angle;
@@ -29,10 +29,10 @@ export default class Angle {
 	static threeQuarters = Math.PI * 3 / 2;		// nadir (6 o'clock)
 
 	get quadrant_referenceAngle(): number { return u.referenceAngle_ofQuadrant(this.quadrant_ofAngle); }
-	get normalized_angle() { return Angle.full.normalize(this.angle); }
+	get normalized() { return Angle.full.normalize(this.angle); }
 		
 	get degrees_of(): string {
-		const degrees = this.normalized_angle * 180 / Angle.half;
+		const degrees = this.normalized * 180 / Angle.half;
 		return u.formatter_toFixed(1).format(degrees);
 	}
 
@@ -64,7 +64,7 @@ export default class Angle {
 	
 		// angles begin at 3 o'clock & rotate up (counter-clockwise)
 	
-		const normalized = this.normalized_angle;
+		const normalized = this.normalized;
 		let quadrant = Quadrant.lowerRight;
 		if (normalized.isBetween(0,				Angle.quarter,		 true)) { quadrant = Quadrant.upperRight; }
 		if (normalized.isBetween(Angle.quarter, Angle.half,			 true)) { quadrant = Quadrant.upperLeft; }
@@ -74,7 +74,7 @@ export default class Angle {
 	
 	isAlmost_horizontal(angle: number, almost: number = (Angle.half / 10)): boolean {
 		for (const horizontal of [Angle.half, Angle.full]) {
-			const delta = new Angle(this.angle - horizontal).normalized_angle;
+			const delta = new Angle(this.angle - horizontal).normalized;
 			if (delta.isClocklyBetween(-almost, almost, Angle.full)) {
 				return true;
 			}

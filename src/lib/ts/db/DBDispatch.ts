@@ -1,7 +1,6 @@
 import { g, k, debug, signals, Hierarchy, IDPersistant, persistLocal } from '../common/Global_Imports';
-import { s_isBusy, s_db_type, s_db_loadTime, s_title_editing } from '../state/Reactive_State';
-import { s_things_arrived, s_ancestry_editingTools } from '../state/Reactive_State';
-import { idDefault } from '../data/Identifiable';
+import { s_isBusy, s_db_type, s_db_loadTime, s_things_arrived } from '../state/Reactive_State';
+import Identifiable from '../data/Identifiable';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
@@ -48,7 +47,7 @@ export default class DBDispatch {
 		persistLocal.restore_grabbed_andExpanded(true);
 		debug.log_beat('db_setupData_forType before timeout');
 		setTimeout(() => {
-			persistLocal.restore_pageStates();
+			persistLocal.restoreAll_pageStates();
 			persistLocal.restore_focus();
 			h.hierarchy_markAsCompleted();
 			signals.signal_rebuildGraph_fromFocus();
@@ -68,7 +67,7 @@ export default class DBDispatch {
 			}
 			h = this.db.hierarchy = new Hierarchy(this.db);		// create Hierarchy to fetch into
 			await this.db.fetch_all();
-			await h.add_missing_removeNulls(idDefault, this.db.baseID);
+			await h.add_missing_removeNulls(Identifiable.newID(), this.db.baseID);
 			h.rootAncestry_setup();
 			h.ancestries_rebuildAll();
 			if (this.db.isRemote) {

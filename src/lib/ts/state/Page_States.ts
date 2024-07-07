@@ -1,126 +1,94 @@
-import { k, Ancestry, Predicate } from '../common/Global_Imports';
+import { k, get, Predicate, Ancestry, Cluster_Map } from '../common/Global_Imports';
+import { s_page_state, s_cluster_arc_radius } from '../state/Reactive_State';
 
 export class Page_State {
 
 	// a page is a subset of a too-long list of things
+	// shown == length of subset
 	// index == first of subset
 
-	atLimit = [true, true];
 	points_out = false;
-	show_thumb = false;
+	thing_id = k.empty;
 	kind = k.empty;
-	thing_hid = 0;
 	index = 0;
 	shown = 0;
 	total = 0;
 
-	static get empty(): Page_State { return new Page_State(0, 0, 0, 0); }
-	get max_index(): number { return this.total - this.shown; }
+	get sub_key(): string { return `${this.thing_id}${k.generic_separator}${this.kind}${k.generic_separator}${this.points_out}`; }
+	static get empty(): Page_State { return new Page_State(); }
 
-	constructor(thing_hid: number, index: number, shown: number, total: number) {
+	constructor(index: number = 0, shown: number = 0, total: number = 0) {
+		this.index = index.force_between(0, total - shown);
 		this.shown = shown;
 		this.total = total;
-		this.thing_hid = thing_hid;
-		const max = this.max_index;
-		this.index = index.force_between(0, max);
-		this.atLimit = [this.index < 1, (max - 1) < this.index];
-	}
-
-	get description(): string {
-		const strings = [
-			`${this.points_out}`,
-			`${this.kind}`,
-			`${this.thing_hid}`,
-			`${this.index}`,
-			`${this.shown}`,
-			`${this.total}`];
-		return strings.join(k.generic_separator);
 	}
 
 	static create_fromDescription(description: string): Page_State | null {
 		let strings = description.split(k.generic_separator);
 		if (strings.length > 5) {
-			const [out, kind, ...remaining] = strings;
-			const points_out = out == 'true';
+			const [out, kind, id, ...remaining] = strings;
 			const v: Array<number> = remaining.map(r => Number(r));
-			let state = new Page_State(v[0], v[1], v[2], v[3]);
-			state.points_out = points_out;
+			const state = new Page_State(v[0], v[1], v[2]);
+			state.points_out = out == 'true';
+			state.thing_id = id;
 			state.kind = kind;
 			return state;
 		}
 		return null;
 	}
 
-	set_index_to(index: number) {
-		// at limit contains two elements: at start and at end
-		// both true means do not show thumb
-		this.index = index;
-		this.atLimit = [false, false];
-		if (index == 0) {
-			this.atLimit[0] = true;
-		}
-		if (index + this.shown >= this.total) {
-			this.atLimit[1] = true;
-		}
-		this.show_thumb = !this.atLimit[0] || !this.atLimit[1];
-	}
-}
-
-// this belongs inside singleton instance of Persist_Local
-
-export class Page_StatesBy_Ancestry_HID {
-	statesBy_ancestryHID: {[ancestry_hid: number]: Page_States} = {}
-	separator = ':-:';
-
-	get description(): string { return ''; }
-
-	static create_fromDescription(description: string): Page_StatesBy_Ancestry_HID {
-		const dict = new Page_StatesBy_Ancestry_HID();
-		return dict;
+	get description(): string {
+		const strings = [
+			`${this.points_out}`,
+			`${this.kind}`,
+			`${this.thing_id}`,
+			`${this.index}`,
+			`${this.shown}`,
+			`${this.total}`];
+		return strings.join(k.generic_separator);
 	}
 
-	distribute_toAncestries() {}
-
-	collect_fromAncestries(): string { return ''; }
+	onePage_from(ancestries: Array<Ancestry>): Array<Ancestry> {
+		const canShow = Math.round(get(s_cluster_arc_radius) * 2 / k.row_height) - 6;
+		const index = Math.round(this.index);
+		this.total = ancestries.length;
+		this.shown = Math.min(canShow, this.total);
+		const max = index + this.shown;
+		if (max <= this.total) {
+			return ancestries.slice(index, max);
+		}
+		console.log('ack, too much')
+		return ancestries;
+	}
 
 }
-
 
 export class Page_States {
 	outward_page_states: Array<Page_State> = [];
 	inward_page_states: Array<Page_State> = [];
-	small_separator = ':::';
-	big_separator = '::::';
-	ancestry!: Ancestry;
+	thing_id = k.empty;
+
+	static get empty(): Page_States { return new Page_States(); }
 
 	// two arrays of Page_State (defined above)
 	// 1) outward: (to) children and relateds (more kinds later?)
 	// 2) inward: (from) parents
-	// each array  has one index for each predicate kind
+	// each array has one index for each predicate kind
 	// 
 	// page == a subset of a too-long list
 	// index == first of subset
 
-	get description(): string {
-		return this.description_for(true) + this.big_separator +
-		this.description_for(false);
-	}
-
-	description_for(points_out: boolean): string {
-		const states = this.page_states_for(points_out);
-		let separator = k.empty;
-		let result = k.empty;
+	constructor(thing_id: string = k.empty, states: Array<Page_State> = []) {
+		this.thing_id = thing_id;
 		for (const state of states) {
-			const description = state.description;
-			result = result + separator + description;
-			separator = this.small_separator;
+			this.page_states_for(state.points_out).push(state);
 		}
-		return result;
 	}
 
 	static create_fromDescription(description: string): Page_States {
-		let page_states = new Page_States();
-		let state_descriptions = description.split(page_states.big_separator);
+		const big_separator = '::::';
+		let page_states = Page_States.empty;
+		let state_descriptions = description.split(big_separator);
 		for (const state_description of state_descriptions) {
 			const state = Page_State.create_fromDescription(state_description);
 			if (!!state) {
@@ -132,55 +100,53 @@ export class Page_States {
 		return page_states;
 	}
 
-	show_thumb_for(points_out: boolean, predicate: Predicate): boolean {
-		return this.page_state_for(points_out, predicate).show_thumb;
-	}
-
-	atLimit_for(atStart: boolean, points_out: boolean, predicate: Predicate): boolean {
-		const page_state = this.page_state_for(points_out, predicate);
-		return page_state.atLimit[atStart ? 0 : 1];
-	}
-
-	page_state_for(points_out: boolean, predicate: Predicate): Page_State {
-		let states = this.page_states_for(points_out) ?? []
-		const index = predicate.stateIndex;
-		if (!states[index]) {
-			let state = Page_State.empty;
-			state.points_out = points_out;
-			state.kind = predicate.kind;
-			states[index] = state;
-		}
-		return states[index];
-	}
-
-	set_page_state_for(page_state: Page_State, points_out: boolean, predicate: Predicate) {
-		this.page_states_for(points_out)[predicate.stateIndex] = page_state;
+	get description(): string {
+		const big_separator = '::::';
+		return this.description_for(true) + big_separator +
+		this.description_for(false);
 	}
 
 	index_for(points_out: boolean, predicate: Predicate): number {
-		return this.page_state_for(points_out, predicate)?.index;
-	}
-
-	setIndex_for(index: number, points_out: boolean, predicate: Predicate) {
-		const page_states = this.page_states_for(points_out);
-		const page_state = page_states[predicate.stateIndex];
-		page_state.points_out = points_out;
-		page_state.kind = predicate.kind;
-		page_state.set_index_to(index);
-		this.set_page_states_for(page_states, points_out);
-		return this;
+		return this.page_state_for(points_out, predicate).index;
 	}
 
 	page_states_for(points_out: boolean): Array<Page_State> {
 		return points_out ? this.outward_page_states : this.inward_page_states;
 	}
 
-	set_page_states_for(page_states: Array<Page_State>, points_out: boolean) {
-		if (points_out) {
-			this.outward_page_states = page_states;
-		} else {
-			this.inward_page_states = page_states;
+	description_for(points_out: boolean): string {
+		const states = this.page_states_for(points_out);
+		const small_separator = ':::';
+		let separator = k.empty;
+		let result = k.empty;
+		for (const state of states) {
+			const description = state.description;
+			result = result + separator + description;
+			separator = small_separator;
 		}
+		return result;
+	}
+
+	set_page_index_for(index: number, map: Cluster_Map) {
+		const state = this.page_state_for(map.points_out, map.predicate);
+		state.total = map.total;
+		state.shown = map.shown;
+		state.index = index;
+		s_page_state.set(state);
+	}
+
+	page_state_for(points_out: boolean, predicate: Predicate): Page_State {
+		let states = this.page_states_for(points_out);
+		const index = predicate.stateIndex;
+		let state = states[index]
+		if (!state) {
+			state = Page_State.empty;
+			state.thing_id = this.thing_id;
+			state.points_out = points_out;
+			state.kind = predicate.kind;
+			states[index] = state;
+		}
+		return state;
 	}
 
 }

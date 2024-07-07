@@ -59,16 +59,10 @@ export default class Clusters_Geometry {
 		}
 	}
 
-	onePage_from(ancestries: Array<Ancestry>, predicate: Predicate, points_out: boolean): Array<Ancestry> {
-		const ancestry = get(s_ancestry_focus);
-		const maxFit = Math.round(get(s_cluster_arc_radius) * 2 / k.row_height) - 6;
-		const index = ancestry.page_states.index_for(points_out, predicate) ?? 0;
-		return ancestries.slice(index, index + maxFit);
-	}
-
 	layout_necklace_andLines(ancestries: Array<Ancestry>, predicate: Predicate | null, points_out: boolean) {
 		if (!!predicate) {
-			const onePage = this.onePage_from(ancestries, predicate, points_out);
+			const page_state = get(s_ancestry_focus)?.thing?.page_states?.page_state_for(points_out, predicate);
+			const onePage = page_state?.onePage_from(ancestries) ?? [];
 			const cluster_map = new Cluster_Map(ancestries.length, onePage, predicate, points_out);
 			this.set_cluster_map_for(cluster_map, points_out, predicate);
 		}

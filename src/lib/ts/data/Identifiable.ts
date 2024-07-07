@@ -6,19 +6,17 @@ export default class Identifiable {
 	idHashed: number;
 	id: string;
 
-	constructor(id: string = idDefault) {
+	constructor(id: string = Identifiable.newID()) {
 		this.idHashed = id.hash();
 		this.id = id;
 	}
 
-	isHoverInverted(type: string): boolean { return false; }
 	static newID(prefix: string = 'NEW'): string { return prefix + u.removeAll('-', uuid()).slice(10, 24); } // use last, most-unique bytes of uuid
+	isHoverInverted(type: string): boolean { return false; }
 
-	setID(id: string = idDefault) {
+	setID(id: string = Identifiable.newID()) {
 		this.idHashed = id.hash();
 		this.id = id;
 	}
 	
 }
-
-export const idDefault = Identifiable.newID();
