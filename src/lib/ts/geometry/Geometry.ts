@@ -36,14 +36,13 @@ export class Point {
 	distanceFrom(point: Point):		   Point { return new Point(this.x - point.x, this.y - point.y); }
 	multipliedBy(multiplier: number):  Point { return new Point(this.x * multiplier, this.y * multiplier) }
 	offsetBySize(size: Size):		   Point { return new Point(this.x + size.width, this.y + size.height); }
-	almostZero(almost: number):		 boolean { return Math.abs(this.x) <= almost && Math.abs(this.y) <= almost; }
 	static fromPolar(r: number, phi: number) { return new Point(r, 0).rotate_by(phi); }
 	static fromDOMRect(rect: DOMRect): Point { return new Point(rect.left, rect.top); }
 	static square(length: number):	   Point { return new Point(length, length); }
 	static get zero():				   Point { return new Point();}
 
-	get angle(): number {											// in math y increases going up
-		return Angle.full.normalize(Math.atan2(-this.y, this.x));	// in browsers, y increases going down, so reverse it here
+	get angle(): number {		// in this (as in math), y increases going up and angles increase counter-clockwise
+		return (Math.atan2(-this.y, this.x)).normalized_angle();	// in browsers, both are the opposite, so reverse them here
 	}
 
 	rotate_by(angle: number): Point {
@@ -94,7 +93,7 @@ export class Point {
 
 	get orientation_ofVector(): Orientation {
 		let quadrant = new Angle(this.angle).quadrant_ofAngle;
-		const isFirstEighth = Angle.quarter.normalize(this.angle) < (Math.PI / 4);
+		const isFirstEighth = (this.angle).normalize_between_zeroAnd(Angle.quarter) < (Math.PI / 4);
 		switch (quadrant) {
 			case Quadrant.upperRight: return isFirstEighth ? Orientation.right : Orientation.up;
 			case Quadrant.upperLeft:  return isFirstEighth ? Orientation.up    : Orientation.left;

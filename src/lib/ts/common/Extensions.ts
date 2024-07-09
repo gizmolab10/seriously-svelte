@@ -7,8 +7,10 @@ declare global {
 		injectElipsisAt(at: number): string;
 	}
 	interface Number {
-		normalize(value: number): number;
+		degrees_of(): string;
+		normalized_angle(): number;
 		add_angle_normalized(angle: number): number;
+		normalize_between_zeroAnd(value: number): number;
 		increment_by(delta: number, total: number): number;
 		increment(increment: boolean, total: number): number;
 		force_between(smallest: number, largest: number): number;
@@ -87,18 +89,19 @@ Object.defineProperty(Number.prototype, 'force_between', {
 	configurable: false
 });
 
-Object.defineProperty(Number.prototype, 'normalize', {
+Object.defineProperty(Number.prototype, 'normalize_between_zeroAnd', {
 
 	// converts this using clock arithmetic
-	// force between 0 and value, including 0
+	// force between 0 and value
+	// or 0 or value
 
 	value: function(value: number): number {
-		let result = value;
+		let result = this;
 		while (result < 0) {
-			result += this;
+			result += value;
 		}
-		while (result > this) {
-			result -= this;
+		while (result > value) {
+			result -= value;
 		}
 		return result;
 	},
@@ -119,7 +122,7 @@ Object.defineProperty(Number.prototype, 'increment', {
 Object.defineProperty(Number.prototype, 'increment_by', {
 	value: function(delta: number, total: number): number {
 		var result = this.valueOf() + delta;
-		return total.normalize(result);
+		return result.normalize_between_zeroAnd(total);
 	},
 	writable: false,
 	enumerable: false,
@@ -144,7 +147,7 @@ Object.defineProperty(Number.prototype, 'increment_by_assuring', {
 
 Object.defineProperty(Number.prototype, 'add_angle_normalized', {
 	value: function(angle: number): number {
-		return (Math.PI * 2).normalize(this + angle);
+		return (this + angle).normalized_angle();
 	},
 	writable: false,
 	enumerable: false,
@@ -164,11 +167,35 @@ Object.defineProperty(Number.prototype, 'isBetween', {
 
 Object.defineProperty(Number.prototype, 'isClocklyBetween', {
 	value: function(a: number, b: number, limit: number): boolean {
-		const value = limit.normalize(this)
+		const value = this.normalize_between_zeroAnd(limit);
 		const cycled: number = value - limit;
 		var min = Math.min(a, b),
 			max = Math.max(a, b);
 		return this.isBetween(min, max, true) || cycled.isBetween(min, max, true);
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(Number.prototype, 'normalized_angle', {
+	value: function(): number {
+		return this.normalize_between_zeroAnd(Math.PI * 2);
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(Number.prototype, 'degrees_of', {
+	value: function(): string {
+		const formatter = new Intl.NumberFormat('en-US', {
+			style: 'decimal',
+			maximumFractionDigits: 1,
+			minimumFractionDigits: 1
+		});
+		const degrees = this.normalized_angle * 180 / Math.PI;
+		return formatter.format(degrees);
 	},
 	writable: false,
 	enumerable: false,
