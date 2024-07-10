@@ -46,14 +46,6 @@ class Utilities {
 		}
 	}
 
-	formatter_toFixed(precision: number) {
-		return new Intl.NumberFormat('en-US', {
-			style: 'decimal',
-			maximumFractionDigits: precision,
-			minimumFractionDigits: precision
-		});
-	}
-
 	sort_byTitleTop(ancestries: Array<Ancestry>) {
 		return ancestries.sort( (a: Ancestry, b: Ancestry) => {
 			const aTop = a.titleRect?.origin.y;

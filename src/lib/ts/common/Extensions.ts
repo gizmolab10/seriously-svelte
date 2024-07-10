@@ -9,6 +9,7 @@ declare global {
 	interface Number {
 		degrees_of(): string;
 		normalized_angle(): number;
+		toFixed(precision: number): string;
 		add_angle_normalized(angle: number): number;
 		normalize_between_zeroAnd(value: number): number;
 		increment_by(delta: number, total: number): number;
@@ -189,13 +190,22 @@ Object.defineProperty(Number.prototype, 'normalized_angle', {
 
 Object.defineProperty(Number.prototype, 'degrees_of', {
 	value: function(): string {
+		const degrees = this.normalized_angle() * 180 / Math.PI;
+		return degrees.toFixed(1);
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(Number.prototype, 'toFixed', {
+	value: function(precision: number): string {
 		const formatter = new Intl.NumberFormat('en-US', {
 			style: 'decimal',
-			maximumFractionDigits: 1,
-			minimumFractionDigits: 1
+			maximumFractionDigits: precision,
+			minimumFractionDigits: precision
 		});
-		const degrees = this.normalized_angle * 180 / Math.PI;
-		return formatter.format(degrees);
+		return formatter.format(this);
 	},
 	writable: false,
 	enumerable: false,

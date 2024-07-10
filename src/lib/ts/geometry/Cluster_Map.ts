@@ -94,6 +94,7 @@ export default class Cluster_Map  {
 	destructor() { this.ancestries = []; }
 	get thumb_radius(): number { return k.scroll_arc_thickness * 0.8; }
 	get maximum_page_index(): number { return this.total - this.shown; }
+	get titles(): string { return this.ancestries.map(a => a.title).join('; '); }
 	get fork_center(): Point { return this.center_at(this.inside_arc_radius, -this.fork_angle); }
 	get spread_angle(): number { return (this.end_angle - this.start_angle).normalized_angle(); }
 	get thumb_arc_radius(): number { return this.inside_arc_radius + k.scroll_arc_thickness / 2; }
@@ -109,18 +110,19 @@ export default class Cluster_Map  {
 	get thumb_angle(): number {
 		const fraction = this.page_index / this.maximum_page_index;
 		if (fraction > 1) {
-			return 0
+			return this.end_angle;
 		} else {
-			return (this.start_angle + (this.spread_angle * fraction)).normalized_angle();
+			return (this.end_angle - (this.spread_angle * fraction)).normalized_angle();
 		}
 	}
 	
 	adjust_index_forThumb_angle(angle: number) {
 		const max_index = this.maximum_page_index;
-		const movement_angle = (angle - this.start_angle).normalized_angle();
+		const movement_angle = (this.end_angle - angle).normalized_angle();
 		const fraction = movement_angle / this.spread_angle;
 		const index = fraction.normalize_between_zeroAnd(1) * max_index;
 		this.set_page_index(index);
+		console.log(`${Math.round(fraction * 100)}%, (${index.toFixed(1)} / ${max_index}), ${movement_angle.degrees_of()}°`);
 	}
 
 	advance(isForward: boolean) {
@@ -159,7 +161,7 @@ export default class Cluster_Map  {
 		if (y_isOutside == (rotated.x > 0)) {				// counter-clockwise for (x > 0) and (-radius < y < radius)
 			child_angle = Angle.half - child_angle			// otherwise it's clockwise, so invert it
 		}
-		child_angle = (child_angle).normalized_angle();	// sanitize the angle
+		child_angle = child_angle.normalized_angle();
 		this.detect_grab_start_end(index, fork_y, max, child_angle);
 		return child_angle;									// angle at index
 	}

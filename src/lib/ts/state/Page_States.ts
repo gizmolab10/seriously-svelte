@@ -57,7 +57,6 @@ export class Page_State {
 		if (max <= this.total) {
 			return ancestries.slice(index, max);
 		}
-		console.log('ack, too much')
 		return ancestries;
 	}
 
