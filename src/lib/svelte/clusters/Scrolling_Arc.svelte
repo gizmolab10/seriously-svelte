@@ -9,7 +9,7 @@
 	export let color = 'red';
 	const name = cluster_map.cluster_title;
 	const offset = k.necklace_widget_padding;
-	const thumb_state = cluster_map.thumb_state;
+	const thumb_element_state = cluster_map.thumb_element_state;
 	const thumb_size = cluster_map.thumb_radius * 2;
 	const rotation_state = s.rotationState_forName(name);
 	let thumb_svgPath = cluster_map.thumb_svgPath;
@@ -19,7 +19,7 @@
 	let mouse_up_count = 0;
 
 	onMount(() => {
-		thumb_state.color_background = color;
+		thumb_element_state.color_background = color;
 	})
 
 	function update_thumb() {
@@ -123,9 +123,9 @@
 			{/each}
 		{/if}
 	</svg>
-	{#if (cluster_map.shown < cluster_map.total)}
+	{#if (cluster_map.isPaging)}
 		<Button name='thumb-responder'
-			element_state={thumb_state}
+			element_state={thumb_element_state}
 			center={thumb_center}
 			height={thumb_size}
 			width={thumb_size}

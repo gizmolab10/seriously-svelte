@@ -6,19 +6,6 @@ declare global {
 		removeWhiteSpace(): string;
 		injectElipsisAt(at: number): string;
 	}
-	interface Number {
-		degrees_of(): string;
-		normalized_angle(): number;
-		toFixed(precision: number): string;
-		add_angle_normalized(angle: number): number;
-		normalize_between_zeroAnd(value: number): number;
-		increment_by(delta: number, total: number): number;
-		increment(increment: boolean, total: number): number;
-		force_between(smallest: number, largest: number): number;
-		increment_by_assuring(delta: number, total: number): number;
-		isBetween(a: number, b: number, inclusive: boolean): boolean;
-		isClocklyBetween(a: number, b: number, limit: number): boolean;
-	}
 }
 
 Object.defineProperty(String.prototype, 'unCamelCase', {
@@ -81,30 +68,37 @@ Object.defineProperty(String.prototype, 'hash', {
 	configurable: true
 });
 
-Object.defineProperty(Number.prototype, 'force_between', {
-	value: function(smallest: number, largest: number): number {
-		return Math.max(smallest, Math.min(largest, this));
+declare global {
+	interface Number {
+		degrees_of(): string;
+		roundToEven(): number;
+		normalized_angle(): number;
+		toFixed(precision: number): string;
+		add_angle_normalized(angle: number): number;
+		normalize_between_zeroAnd(value: number): number;
+		isAlmost(target: number, within: number): boolean;
+		increment_by(delta: number, total: number): number;
+		increment(increment: boolean, total: number): number;
+		force_between(smallest: number, largest: number): number;
+		increment_by_assuring(delta: number, total: number): number;
+		isBetween(a: number, b: number, inclusive: boolean): boolean;
+		isClocklyBetween(a: number, b: number, limit: number): boolean;
+		bump_towards(smallest: number, largest: number, within: number): number;
+	}
+}
+
+Object.defineProperty(Number.prototype, 'isAlmost', {
+	value: function(target: number, within: number): boolean {
+		return Math.abs(this - target) < within;
 	},
 	writable: false,
 	enumerable: false,
 	configurable: false
 });
 
-Object.defineProperty(Number.prototype, 'normalize_between_zeroAnd', {
-
-	// converts this using clock arithmetic
-	// force between 0 and value
-	// or 0 or value
-
-	value: function(value: number): number {
-		let result = this;
-		while (result < 0) {
-			result += value;
-		}
-		while (result > value) {
-			result -= value;
-		}
-		return result;
+Object.defineProperty(Number.prototype, 'force_between', {
+	value: function(smallest: number, largest: number): number {
+		return Math.max(smallest, Math.min(largest, this));
 	},
 	writable: false,
 	enumerable: false,
@@ -130,25 +124,18 @@ Object.defineProperty(Number.prototype, 'increment_by', {
 	configurable: false
 });
 
-Object.defineProperty(Number.prototype, 'increment_by_assuring', {
-	value: function(delta: number, total: number): number {
-		var assure = Math.abs(delta);
-		var value = this.valueOf();
-		if (value < assure && assure != delta) {
-			return 0;
-		}
-		var result = value + delta;
-		result = Math.min(total - assure, result);
-		return result;
+Object.defineProperty(Number.prototype, 'add_angle_normalized', {
+	value: function(angle: number): number {
+		return (this + angle).normalized_angle();
 	},
 	writable: false,
 	enumerable: false,
 	configurable: false
 });
 
-Object.defineProperty(Number.prototype, 'add_angle_normalized', {
-	value: function(angle: number): number {
-		return (this + angle).normalized_angle();
+Object.defineProperty(Number.prototype, 'normalized_angle', {
+	value: function(): number {
+		return this.normalize_between_zeroAnd(Math.PI * 2);
 	},
 	writable: false,
 	enumerable: false,
@@ -160,6 +147,25 @@ Object.defineProperty(Number.prototype, 'isBetween', {
 		const min = Math.min(a, b),
 			  max = Math.max(a, b);
 		return inclusive ? (this >= min && this <= max) : (this > min && this < max);
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(Number.prototype, 'roundToEven', {
+	value: function(): number {
+		return Math.round(this / 2) * 2;
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(Number.prototype, 'degrees_of', {
+	value: function(): string {
+		const degrees = this.normalized_angle() * 180 / Math.PI;
+		return degrees.toFixed(1);
 	},
 	writable: false,
 	enumerable: false,
@@ -179,25 +185,6 @@ Object.defineProperty(Number.prototype, 'isClocklyBetween', {
 	configurable: false
 });
 
-Object.defineProperty(Number.prototype, 'normalized_angle', {
-	value: function(): number {
-		return this.normalize_between_zeroAnd(Math.PI * 2);
-	},
-	writable: false,
-	enumerable: false,
-	configurable: false
-});
-
-Object.defineProperty(Number.prototype, 'degrees_of', {
-	value: function(): string {
-		const degrees = this.normalized_angle() * 180 / Math.PI;
-		return degrees.toFixed(1);
-	},
-	writable: false,
-	enumerable: false,
-	configurable: false
-});
-
 Object.defineProperty(Number.prototype, 'toFixed', {
 	value: function(precision: number): string {
 		const formatter = new Intl.NumberFormat('en-US', {
@@ -206,6 +193,58 @@ Object.defineProperty(Number.prototype, 'toFixed', {
 			minimumFractionDigits: precision
 		});
 		return formatter.format(this);
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(Number.prototype, 'bump_towards', {
+	value: function(smallest: number, largest: number, within: number): number {
+		if (this < smallest || this.isAlmost(smallest, within)) {
+			return smallest;
+		}
+		if (this > largest || this.isAlmost(largest, within)) {
+			return largest;
+		}
+		return this;
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(Number.prototype, 'increment_by_assuring', {
+	value: function(delta: number, total: number): number {
+		var assure = Math.abs(delta);
+		var value = this.valueOf();
+		if (value < assure && assure != delta) {
+			return 0;
+		}
+		var result = value + delta;
+		result = Math.min(total - assure, result);
+		return result;
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(Number.prototype, 'normalize_between_zeroAnd', {
+
+	// converts this using clock arithmetic
+	// force between 0 and value
+	// or 0 or value
+
+	value: function(value: number): number {
+		let result = this;
+		while (result < 0) {
+			result += value;
+		}
+		while (result > value) {
+			result -= value;
+		}
+		return result;
 	},
 	writable: false,
 	enumerable: false,

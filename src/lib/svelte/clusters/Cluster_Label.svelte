@@ -21,7 +21,8 @@
 		const m = multiplier();
 		const y = k.dot_size * m.y;
 		const title = cluster_map?.cluster_title;
-		const x = u.getWidthOf(title) * m.x;
+		const lines = title.split('<br>');
+		const x = u.getWidthOf(lines[0]) * m.x;
 		return rect.center.offsetByXY(x, y);
 	}
 
@@ -45,9 +46,10 @@
 		left: {title_origin.x}px;
 		top: {title_origin.y}px;
 		white-space: nowrap;
+		text-align: center;
 		position: absolute;
 		font-family: Arial;
 		font-size: 0.5em;
 		color: {color};'>
-	{cluster_map?.cluster_title}
+	{@html cluster_map?.cluster_title}
 </div>

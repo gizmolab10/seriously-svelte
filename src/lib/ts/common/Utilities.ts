@@ -12,7 +12,6 @@ import { k } from './Constants';
 class Utilities {
 	noop() {}
 	ignore(event: Event) {}
-	roundToEven(n: number): number{ return Math.round(n / 2) * 2; }
 	pointFor_mouseEvent(e: MouseEvent) { return new Point(e.clientX, e.clientY); }
 	concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return [...a, ...b]; }
 	location_ofMouseEvent(event: MouseEvent) { return new Point(event.clientX, event.clientY); }
