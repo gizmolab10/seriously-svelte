@@ -3,14 +3,14 @@
 	import { k, s, u, Rect, Size, Point, ZIndex, onMount, signals, Clusters_Geometry } from '../../ts/common/Global_Imports';
 	import Editing_Tools from '../widget/Editing_Tools.svelte';
 	import Title_Editor from '../widget/Title_Editor.svelte';
+	import Clusters_Graph from './Clusters_Graph.svelte';
 	import Scrolling_Ring from './Scrolling_Ring.svelte';
 	import Necklace_Ring from './Necklace_Ring.svelte';
 	import Circle from '../kit/Circle.svelte';
-	import Clusters_Graph from './Clusters_Graph.svelte';
+	const geometry = new Clusters_Geometry();
 	const toolsOffset = new Point(32, -3);
     const ancestry = $s_ancestry_focus;
 	const thing = ancestry?.thing;
-	const geometry = new Clusters_Geometry();
 	const color = thing?.color ?? k.color_default;
 	let titleCenter = Point.zero;
 	let center = Point.zero;

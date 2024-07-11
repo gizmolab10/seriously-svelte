@@ -1,12 +1,11 @@
 <script lang='ts'>
-	import { Svelte_Wrapper, Clusters_Geometry, transparentize, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { s_graphRect, s_mouse_location, s_mouse_up_count, s_user_graphOffset } from '../../ts/state/Reactive_State';
 	import { k, s, u, Rect, Thing, Point, ZIndex, signals, svgPaths, dbDispatch } from '../../ts/common/Global_Imports';
+	import { Svelte_Wrapper, Clusters_Geometry, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { s_thing_changed, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
-	import Scrolling_Arc from './Scrolling_Arc.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
-	import Cluster_Label from './Cluster_Label.svelte';
+	import Scrolling_Arc from './Scrolling_Arc.svelte';
 	import Divider_line from './Divider_line.svelte';
 	export let radius = 0;
 	export let thing: Thing;
@@ -92,11 +91,10 @@
 		<div class='scroll-arcs'>
 			{#each geometry.cluster_maps as cluster_map}
 				{#if cluster_map.shown > 0}
-					<Cluster_Label cluster_map={cluster_map} center={center} color={color}/>
 					<Scrolling_Arc
+						color={color}
 						center={center}
-						cluster_map={cluster_map}
-						color={transparentize(color, s.scrolling_ring_state.stroke_transparency * 0.9)}/>
+						cluster_map={cluster_map}/>
 				{/if}
 			{/each}
 		</div>

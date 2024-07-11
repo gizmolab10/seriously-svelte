@@ -5,23 +5,21 @@
 	export let color = k.color_default;
 	export let center = Point.zero;
 	let title_origin = Point.zero;
-	let size = Size.zero;
-	let angle = 0;
+	let label_title = k.empty;
 
-	// given angle & center, draw a label
+	// given label_angle & center, draw a label
 
 	$: {
-		angle = cluster_map?.fork_angle;
 		size = cluster_map?.label_tip.abs.asSize;
 		const titleRect = new Rect(center.offsetBy(cluster_map?.label_tip), size.multipliedBy(1/2));
 		title_origin = title_origin_for(titleRect);
 	}
 
 	function title_origin_for(rect: Rect): Point {
+		label_title = cluster_map?.cluster_title;
+		const lines = label_title.split('<br>');
 		const m = multiplier();
 		const y = k.dot_size * m.y;
-		const title = cluster_map?.cluster_title;
-		const lines = title.split('<br>');
 		const x = u.getWidthOf(lines[0]) * m.x;
 		return rect.center.offsetByXY(x, y);
 	}
@@ -51,5 +49,5 @@
 		font-family: Arial;
 		font-size: 0.5em;
 		color: {color};'>
-	{@html cluster_map?.cluster_title}
+	{@html label_title}
 </div>

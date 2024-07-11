@@ -17,6 +17,7 @@ export default class Cluster_Map  {
 	predicates: Array<Predicate> = [];
 	ancestries: Array<Ancestry> = [];
 	index_isReversed = false;
+	cluster_title = k.empty;
 	color = k.color_default;
 	clusters_center!: Point;
 	outside_ring_radius = 0;
@@ -91,6 +92,7 @@ export default class Cluster_Map  {
 				index += 1;
 			}
 		}
+		this.setup_cluster_title();
 	}
 
 	destructor() { this.ancestries = []; }
@@ -101,7 +103,6 @@ export default class Cluster_Map  {
 	get thumb_arc_radius(): number { return this.inside_arc_radius + k.scroll_arc_thickness / 2; }
 	get page_index(): number { return this.focus_ancestry.thing?.page_states?.index_for(this.points_out, this.predicate) ?? 0; }
 	get thumb_center(): Point { return this.center_at(this.thumb_arc_radius, this.thumb_angle).offsetByXY(15, 15); }
-	set_page_index(index: number) { this.focus_ancestry.thing?.page_states.set_page_index_for(index, this); }
 	fork_radius_multiplier(shown: number): number { return (shown > 3) ? 0.6 : (shown > 1) ? 0.3 : 0.15; }
 	get single_svgPath(): string { return svgPaths.circle(this.fork_center, this.fork_radius - 0.5); }
 	get gap_svgPath(): string { return svgPaths.circle(this.fork_center, this.fork_radius - 0.5); }
@@ -214,7 +215,12 @@ export default class Cluster_Map  {
 		return [start_small_svgPath, big_outer_svgPath, end_small_svgPath];
 	}
 
-	get cluster_title(): string {
+	set_page_index(index: number) {
+		this.focus_ancestry.thing?.page_states.set_page_index_for(index, this);
+		this.setup_cluster_title();
+	}
+
+	setup_cluster_title() {
 		let separator = k.space;
 		let quantity = `${this.total}`;
 		const index = Math.round(this.page_index);
@@ -225,9 +231,9 @@ export default class Cluster_Map  {
 		}
 		if (!this.predicate?.isBidirectional) {
 			shortened = this.points_out ? shortened : 'contained by';
-			return `${shortened}${separator}${quantity}`;
+			this.cluster_title = `${shortened}${separator}${quantity}`;
 		}
-		return `${quantity}${separator}${shortened}`;
+		this.cluster_title = `${quantity}${separator}${shortened}`;
 	}
 
 	big_svgPath(radius: number, angle_tiltsUp: boolean) {
