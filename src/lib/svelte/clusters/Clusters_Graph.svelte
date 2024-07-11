@@ -4,8 +4,8 @@
 	import { Widget_MapRect, Clusters_Geometry } from '../../ts/common/Global_Imports';
 	import Widget from '../widget/Widget.svelte';
 	import { h } from '../../ts/db/DBDispatch';
-	export let geometry!: Clusters_Geometry;
     const ancestry = $s_ancestry_focus;
+	const geometry = s.clusters_geometry;
 	const center = $s_graphRect.size.dividedInHalf.asPoint;
 	const childOffset = new Point(k.dot_size / -2, k.cluster_offsetY);
 	let color = ancestry.thing?.color ?? k.color_default;

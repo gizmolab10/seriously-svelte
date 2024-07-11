@@ -6,7 +6,6 @@
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Scrolling_Arc from './Scrolling_Arc.svelte';
-	import Divider_line from './Divider_line.svelte';
 	export let radius = 0;
 	export let thing: Thing;
 	export let ring_width = 0;
@@ -15,15 +14,15 @@
 	export let center = Point.zero;
 	export let zindex = ZIndex.panel;
 	export let cursor_closure = () => {};
-	export let geometry!: Clusters_Geometry;
 	const outer_radius = radius + ring_width;
 	const diameter = outer_radius * 2;
 	const borderStyle = '1px solid';
+	const geometry = s.clusters_geometry;
 	const ringOrigin = center.distanceFrom(Point.square(outer_radius));
 	const viewBox = `${-ring_width}, ${-ring_width}, ${diameter}, ${diameter}`;
 	const svg_ringPath = svgPaths.ring(Point.square(radius), outer_radius, ring_width);
 	let mouse_up_count = $s_mouse_up_count;
-	let scrollingWrapper: Svelte_Wrapper;
+	let scrollingWrapper!: Svelte_Wrapper;
 	let scrollingRing;
 	let rebuilds = 0
 

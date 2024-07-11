@@ -5,11 +5,9 @@ import { h } from '../db/DBDispatch';
 export default class Clusters_Geometry {
 	outward_cluster_maps: Array<Cluster_Map> = [];
 	inward_cluster_maps: Array<Cluster_Map> = [];
-	ancestries: Array<Ancestry> = [];
 	ancestry_focus!: Ancestry;
 
-	// layout_necklace_andLines all the widgets, lines, arcs,
-	// and scrolling ring dividers
+	// layout all the widgets, rings and arcs
 
 	constructor() {
 		this.layout();

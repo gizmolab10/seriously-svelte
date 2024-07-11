@@ -1,4 +1,4 @@
-import { Mouse_State, Element_State, Rotation_State, Expansion_State } from '../common/Global_Imports';
+import { Mouse_State, Element_State, Rotation_State, Expansion_State, Clusters_Geometry } from '../common/Global_Imports';
 import Identifiable from '../data/Identifiable';
 
 export enum ElementType {
@@ -19,6 +19,7 @@ export default class StateOf_UX {
 	rotationState_byName: {[name: string]: Rotation_State} = {};
 	elementState_byName: {[name: string]: Element_State} = {};
 	mouseState_byName: { [name: string]: Mouse_State } = {};
+	clusters_geometry!: Clusters_Geometry;
 	scrolling_ring_state!: Rotation_State;
 	necklace_ringState!: Expansion_State;
 	rebuild_count = 0;
@@ -47,6 +48,7 @@ export default class StateOf_UX {
 		return `${type}-${subtype}-${identifiable.id}`;
 	}
 
+	get new_clusters_geometry() { return this.clusters_geometry = new Clusters_Geometry(); }
 	elementState_forName(name: string): Element_State { return this.elementState_byName[name]; }
 
 	elementState_for(identifiable: Identifiable | null, type: ElementType, subtype: string): Element_State {
