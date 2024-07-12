@@ -1,6 +1,6 @@
 import { Predicate, ElementType, Element_State, transparentize, Widget_MapRect } from '../common/Global_Imports';
+import { k, s, get, Rect, Point, Angle, IDLine, svgPaths, Ancestry, Quadrant } from '../common/Global_Imports';
 import { s_graphRect, s_ring_angle, s_ancestry_focus, s_cluster_arc_radius } from '../state/Reactive_State';
-import { k, s, get, Rect, Point, Angle, IDLine, svgPaths, Ancestry } from '../common/Global_Imports';
 
 // for one cluster (there are three)
 //
@@ -18,8 +18,8 @@ export default class Cluster_Map  {
 	thumb_element_state!: Element_State;
 	predicates: Array<Predicate> = [];
 	ancestries: Array<Ancestry> = [];
+	fork_angle_pointsRight = false;
 	thumb_center = Point.zero;
-	index_isReversed = false;
 	cluster_title = k.empty;
 	color = k.color_default;
 	clusters_center!: Point;
@@ -75,8 +75,8 @@ export default class Cluster_Map  {
 		this.thumb_element_state = s.elementState_for(this.focus_ancestry, ElementType.advance, this.cluster_title);
 		this.fork_tip = Point.fromPolar(this.inside_arc_radius - this.fork_radius, -this.fork_angle);
 		this.label_tip = ellipse_axes.ellipse_coordiates_forAngle(this.fork_angle);
+		this.fork_angle_pointsRight = new Angle(this.fork_angle).angle_pointsRight;
 		this.outside_arc_radius = this.inside_arc_radius + k.scroll_arc_thickness;
-		this.index_isReversed = new Angle(this.fork_angle).angle_pointsRight;
 		this.origin = this.clusters_center.negated.offsetBy(this.center)
 		this.thumb_element_state.set_forHovering(this.color, 'pointer');
 		this.widget_maps = [];
@@ -87,7 +87,7 @@ export default class Cluster_Map  {
 			const max = this.shown - 1;
 			let index = 0;
 			while (index < this.shown) {
-				const child_index = this.index_isReversed ? index : max - index;
+				const child_index = this.fork_angle_pointsRight ? index : max - index;
 				const ancestry = this.ancestries[child_index];
 				const childAngle = this.angle_at_index(index, radius);
 				const childOrigin = tweak.offsetBy(rotated.rotate_by(childAngle));
@@ -124,11 +124,11 @@ export default class Cluster_Map  {
 	}
 	
 	adjust_indexFor_mouse_angle(mouse_angle: number) {
-		const isReversed = this.index_isReversed;
-		const movement_angle = (isReversed ? this.start_angle : this.end_angle) - mouse_angle;
+		const pointsRight = this.fork_angle_pointsRight;
+		const movement_angle = (pointsRight ? this.start_angle : this.end_angle) - mouse_angle;
 		const fraction = movement_angle / this.spread_angle;
 		const index = fraction.bump_towards(0, 1, 0.01) * this.maximum_page_index;
-		console.log(`${index.toFixed(1)}  ${isReversed ? 'backward' : 'normal'}  ${Math.round(fraction * 100)}%  ${movement_angle.degrees_of()}°`);
+		// console.log(`${index.toFixed(1)}  ${pointsRight ? 'backward' : 'normal'}  ${Math.round(fraction * 100)}%  ${movement_angle.degrees_of()}°`);
 		this.set_page_index(index);
 	}
 
@@ -171,8 +171,8 @@ export default class Cluster_Map  {
 				angle = this.end_angle;
 			} else {
 				const adjusted = this.spread_angle * fraction;
-				const pointsDown = new Angle(this.fork_angle).angle_pointsDown;
-				if (this.index_isReversed == pointsDown) {
+				const fork_angle_pointsDown = new Angle(this.fork_angle).angle_pointsDown;
+				if (this.fork_angle_pointsRight == fork_angle_pointsDown) {
 					angle = (this.start_angle + adjusted).normalized_angle();
 					// console.log(`${this.page_index}  ${adjusted.degrees_of()}°  ${angle.degrees_of()}°  ${this.description}`);
 				} else {

@@ -74,10 +74,10 @@ export class Point {
 	get quadrant_ofPoint(): Quadrant {
 		const x = this.x;
 		const y = this.y;
-		if		  (x >= 0 && y <  0) { return Quadrant.upperRight;
-		} else if (x >= 0 && y >= 0) { return Quadrant.lowerRight;
-		} else if (x <  0 && y <  0) { return Quadrant.upperLeft;
-		} else						 { return Quadrant.lowerLeft;
+		if		  (x >= 0 && y <  0) { return Quadrant.lowerRight;
+		} else if (x >= 0 && y >= 0) { return Quadrant.upperRight;
+		} else if (x <  0 && y <  0) { return Quadrant.lowerLeft;
+		} else						 { return Quadrant.upperLeft;
 		}
 	}
 
@@ -95,9 +95,9 @@ export class Point {
 		let quadrant = new Angle(this.angle).quadrant_ofAngle;
 		const isFirstEighth = (this.angle).normalize_between_zeroAnd(Angle.quarter) < (Math.PI / 4);
 		switch (quadrant) {
-			case Quadrant.upperRight: return isFirstEighth ? Orientation.right : Orientation.up;
-			case Quadrant.upperLeft:  return isFirstEighth ? Orientation.up    : Orientation.left;
-			case Quadrant.lowerLeft:  return isFirstEighth ? Orientation.left  : Orientation.down;
+			case Quadrant.lowerRight: return isFirstEighth ? Orientation.right : Orientation.up;
+			case Quadrant.lowerLeft:  return isFirstEighth ? Orientation.up    : Orientation.left;
+			case Quadrant.upperLeft:  return isFirstEighth ? Orientation.left  : Orientation.down;
 			default:				  return isFirstEighth ? Orientation.down  : Orientation.right;
 		}
 	}
@@ -179,9 +179,9 @@ export class Rect {
 
 	corners_forAngle(angle: number): [Point, Point] {
 		switch (new Angle(angle).quadrant_ofAngle) {
-			case Quadrant.upperRight: return [this.bottomLeft, this.topRight];
-			case Quadrant.lowerLeft:  return [this.topRight, this.bottomLeft];
-			case Quadrant.upperLeft:  return [this.extent, this.origin];
+			case Quadrant.lowerRight: return [this.bottomLeft, this.topRight];
+			case Quadrant.upperLeft:  return [this.topRight, this.bottomLeft];
+			case Quadrant.lowerLeft:  return [this.extent, this.origin];
 			default:				  return [this.origin, this.extent];
 		}
 	}

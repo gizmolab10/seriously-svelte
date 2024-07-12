@@ -4,8 +4,8 @@ import '../common/Extensions';
 export enum Quadrant {
 	upperRight = 'ur',	// 			   0 ... quarter
 	upperLeft  = 'ul',	//		 quarter ... half
-	lowerRight = 'lr',	//			half ... threeQuarters
-	lowerLeft  = 'll',	// threeQuarters ... full
+	lowerLeft  = 'll',	//			half ... threeQuarters
+	lowerRight = 'lr',	// threeQuarters ... full
 }
 
 export enum Orientation {
@@ -32,21 +32,21 @@ export default class Angle {
 
 	get angle_tiltsUp(): boolean {
 		const quadrant = this.quadrant_ofAngle;
-		return [Quadrant.upperRight, Quadrant.lowerLeft].includes(quadrant);
+		return [Quadrant.lowerRight, Quadrant.upperLeft].includes(quadrant);
 	}
 
 	get angle_pointsRight(): boolean {
 		switch(this.quadrant_ofAngle) {
-			case Quadrant.upperRight: return true;
 			case Quadrant.lowerRight: return true;
+			case Quadrant.upperRight: return true;
 			default: return false;
 		}
 	}
 
 	get angle_pointsDown(): boolean {
 		switch(this.quadrant_ofAngle) {
-			case Quadrant.lowerRight: return true;
-			case Quadrant.lowerLeft: return true;
+			case Quadrant.upperRight: return true;
+			case Quadrant.upperLeft: return true;
 			default: return false;
 		}
 	}
@@ -55,9 +55,9 @@ export default class Angle {
 		let quadrant = this.quadrant_ofAngle;
 		const isFirstEighth = this.angle.normalize_between_zeroAnd(Angle.quarter) < (Math.PI / 4);
 		switch (quadrant) {
-			case Quadrant.upperRight: return isFirstEighth ? Orientation.right : Orientation.up;
-			case Quadrant.upperLeft:  return isFirstEighth ? Orientation.up    : Orientation.left;
-			case Quadrant.lowerLeft:  return isFirstEighth ? Orientation.left  : Orientation.down;
+			case Quadrant.lowerRight: return isFirstEighth ? Orientation.right : Orientation.up;
+			case Quadrant.lowerLeft:  return isFirstEighth ? Orientation.up    : Orientation.left;
+			case Quadrant.upperLeft:  return isFirstEighth ? Orientation.left  : Orientation.down;
 			default:				  return isFirstEighth ? Orientation.down  : Orientation.right;
 		}
 	}
@@ -67,10 +67,10 @@ export default class Angle {
 		// angles begin at 3 o'clock & rotate up (counter-clockwise)
 	
 		const normalized = this.angle.normalized_angle();
-		let quadrant = Quadrant.lowerRight;
-		if (normalized.isBetween(0,				Angle.quarter,		 true)) { quadrant = Quadrant.upperRight; }
-		if (normalized.isBetween(Angle.quarter, Angle.half,			 true)) { quadrant = Quadrant.upperLeft; }
-		if (normalized.isBetween(Angle.half,	Angle.threeQuarters, true)) { quadrant = Quadrant.lowerLeft; }
+		let quadrant = Quadrant.upperRight;
+		if (normalized.isBetween(0,				Angle.quarter,		 true)) { quadrant = Quadrant.lowerRight; }
+		if (normalized.isBetween(Angle.quarter, Angle.half,			 true)) { quadrant = Quadrant.lowerLeft; }
+		if (normalized.isBetween(Angle.half,	Angle.threeQuarters, true)) { quadrant = Quadrant.upperLeft; }
 		return quadrant;
 	}
 

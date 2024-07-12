@@ -47,7 +47,7 @@ describe('Angle', () => {
 	});
 
 	it('quadrant', () => {
-		expect(new Angle(Math.PI / 3).quadrant_ofAngle).toBe(Quadrant.upperRight);
+		expect(new Angle(Math.PI / 3).quadrant_ofAngle).toBe(Quadrant.lowerRight);
 	});
 
 	it('orientation', () => {
