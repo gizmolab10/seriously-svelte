@@ -35,10 +35,18 @@ export default class Angle {
 		return [Quadrant.upperRight, Quadrant.lowerLeft].includes(quadrant);
 	}
 
-	get angle_hasPositiveX(): boolean {
+	get angle_pointsRight(): boolean {
 		switch(this.quadrant_ofAngle) {
 			case Quadrant.upperRight: return true;
 			case Quadrant.lowerRight: return true;
+			default: return false;
+		}
+	}
+
+	get angle_pointsDown(): boolean {
+		switch(this.quadrant_ofAngle) {
+			case Quadrant.lowerRight: return true;
+			case Quadrant.lowerLeft: return true;
 			default: return false;
 		}
 	}

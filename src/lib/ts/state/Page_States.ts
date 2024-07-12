@@ -49,7 +49,7 @@ export class Page_State {
 	}
 
 	onePage_from(ancestries: Array<Ancestry>): Array<Ancestry> {
-		const canShow = Math.round(get(s_cluster_arc_radius) * 2 / k.row_height) - 6;
+		const canShow = Math.round(get(s_cluster_arc_radius) * 2 / k.row_height) - 5;
 		const index = Math.round(this.index);
 		this.total = ancestries.length;
 		this.shown = Math.min(canShow, this.total);

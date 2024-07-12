@@ -66,7 +66,7 @@
 				const delta = Math.abs(mouseAngle - rotation_state.priorAngle);	// subtract to find difference
 				if (delta >= (Math.PI / 90)) {									// minimum two degree changes
 					rotation_state.priorAngle = mouseAngle;
-					cluster_map.adjust_index_forThumb_angle(mouseAngle);
+					cluster_map.adjust_indexFor_mouse_angle(mouseAngle);
 				}
 			}
 		}

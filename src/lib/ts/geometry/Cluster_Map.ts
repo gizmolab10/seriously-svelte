@@ -18,6 +18,7 @@ export default class Cluster_Map  {
 	thumb_element_state!: Element_State;
 	predicates: Array<Predicate> = [];
 	ancestries: Array<Ancestry> = [];
+	thumb_center = Point.zero;
 	index_isReversed = false;
 	cluster_title = k.empty;
 	color = k.color_default;
@@ -35,6 +36,7 @@ export default class Cluster_Map  {
 	isPaging = false;
 	fork_backoff = 0;
 	fork_radius = 0;
+	thumb_angle = 0;
 	start_angle = 0;
 	fork_angle = 0;
 	end_angle = 0;
@@ -74,7 +76,7 @@ export default class Cluster_Map  {
 		this.fork_tip = Point.fromPolar(this.inside_arc_radius - this.fork_radius, -this.fork_angle);
 		this.label_tip = ellipse_axes.ellipse_coordiates_forAngle(this.fork_angle);
 		this.outside_arc_radius = this.inside_arc_radius + k.scroll_arc_thickness;
-		this.index_isReversed = new Angle(this.fork_angle).angle_hasPositiveX;
+		this.index_isReversed = new Angle(this.fork_angle).angle_pointsRight;
 		this.origin = this.clusters_center.negated.offsetBy(this.center)
 		this.thumb_element_state.set_forHovering(this.color, 'pointer');
 		this.widget_maps = [];
@@ -94,7 +96,8 @@ export default class Cluster_Map  {
 				index += 1;
 			}
 		}
-		this.setup_cluster_title();
+		this.update_thumb_angle_andCenter();
+		this.setup_cluster_title_forIndex();
 	}
 
 	destructor() { this.ancestries = []; }
@@ -106,27 +109,26 @@ export default class Cluster_Map  {
 	get spread_angle(): number { return (this.end_angle - this.start_angle).normalized_angle(); }
 	get thumb_arc_radius(): number { return this.inside_arc_radius + k.scroll_arc_thickness / 2; }
 	get page_index(): number { return this.focus_ancestry.thing?.page_states?.index_for(this.points_out, this.predicate) ?? 0; }
-	get thumb_center(): Point { return this.center_at(this.thumb_arc_radius, this.thumb_angle).offsetByXY(15, 15); }
-	fork_radius_multiplier(shown: number): number { return (shown > 3) ? 0.6 : (shown > 1) ? 0.3 : 0.15; }
 	get single_svgPath(): string { return svgPaths.circle(this.fork_center, this.fork_radius - 0.5); }
 	get gap_svgPath(): string { return svgPaths.circle(this.fork_center, this.fork_radius - 0.5); }
 	get fork_svgPaths(): string[] { return [this.fork_svgPath(false), this.fork_svgPath(true)]; }
 	get thumb_svgPath(): string { return svgPaths.circle(this.thumb_center, this.thumb_radius); }
 
-	
-	get thumb_angle(): number {
-		const fraction = this.page_index / this.maximum_page_index;
-		if (fraction > 1) {
-			return this.end_angle;
-		} else {
-			return (this.end_angle - (this.spread_angle * fraction)).normalized_angle();
-		}
+	center_at(radius: number, angle: number): Point { return Point.square(this.outside_ring_radius).offsetBy(Point.fromPolar(radius, angle)); }
+	fork_radius_multiplier(shown: number): number { return (shown > 3) ? 0.6 : (shown > 1) ? 0.3 : 0.15; }
+
+	set_page_index(index: number) {
+		this.focus_ancestry.thing?.page_states.set_page_index_for(index, this);
+		this.setup_cluster_title_forIndex();
+		this.update_thumb_angle_andCenter();
 	}
 	
-	adjust_index_forThumb_angle(angle: number) {
-		const movement_angle = (this.end_angle - angle);
+	adjust_indexFor_mouse_angle(mouse_angle: number) {
+		const isReversed = this.index_isReversed;
+		const movement_angle = (isReversed ? this.start_angle : this.end_angle) - mouse_angle;
 		const fraction = movement_angle / this.spread_angle;
-		const index = fraction.bump_towards(0, 1, 0.1) * this.maximum_page_index;
+		const index = fraction.bump_towards(0, 1, 0.01) * this.maximum_page_index;
+		console.log(`${index.toFixed(1)}  ${isReversed ? 'backward' : 'normal'}  ${Math.round(fraction * 100)}%  ${movement_angle.degrees_of()}°`);
 		this.set_page_index(index);
 	}
 
@@ -136,8 +138,79 @@ export default class Cluster_Map  {
 		const index = this.page_index.increment_by_assuring(showing * sign, this.total);
 		this.set_page_index(index);
 	}
+
+	setup_cluster_title_forIndex() {
+		let separator = k.space;
+		let quantity = `${this.total}`;
+		const index = Math.round(this.page_index);
+		let shortened = this.predicate?.kind.unCamelCase().lastWord() ?? k.empty;
+		if (this.isPaging) {
+			separator = '<br>';
+			quantity = `${index + 1} - ${index + this.shown} (of ${quantity})`;
+		}
+		if (!this.predicate?.isBidirectional) {
+			shortened = this.points_out ? shortened : 'contained by';
+			this.cluster_title = `${shortened}${separator}${quantity}`;
+		} else {
+			this.cluster_title = `${quantity}${separator}${shortened}`;
+		}
+	}
 	
 	static readonly $_ANGLES_$: unique symbol;
+
+	update_thumb_angle_andCenter() {
+		this.thumb_angle = this.updated_thumb_angle;
+		this.thumb_center = this.center_at(this.thumb_arc_radius, this.thumb_angle).offsetByXY(15, 15);
+	}
+
+	get updated_thumb_angle(): number {
+		let angle = (this.start_angle + this.end_angle) / 2;
+		if (this.maximum_page_index != 0) {
+			const fraction = this.page_index / this.maximum_page_index;
+			if (fraction > 1) {
+				angle = this.end_angle;
+			} else {
+				const adjusted = this.spread_angle * fraction;
+				const pointsDown = new Angle(this.fork_angle).angle_pointsDown;
+				if (this.index_isReversed == pointsDown) {
+					angle = (this.start_angle + adjusted).normalized_angle();
+					// console.log(`${this.page_index}  ${adjusted.degrees_of()}°  ${angle.degrees_of()}°  ${this.description}`);
+				} else {
+					angle = (this.end_angle - adjusted).normalized_angle();
+				}
+			}
+		}
+		return angle;
+	}
+
+	detect_grab_start_end(index: number, fork_y: number, max: number, child_angle: number) {
+		// detect and grab start and end
+		if (index == 0) {
+			if (fork_y > 0) {
+				this.start_angle = child_angle;
+			} else {
+				this.end_angle = child_angle;
+			}
+		} else if (index == max) {
+			if (fork_y < 0) {
+				this.start_angle = child_angle;
+			} else {
+				this.end_angle = child_angle;
+			}
+		}
+	}
+
+	forkAngle_for(predicate: Predicate, points_out: boolean): number | null {
+		// returns one of three angles: 1) necklace_angle 2) opposite+ 3) opposite-tweak
+		const tweak = Math.PI / 10 * 3;			// 54 degrees: added or subtracted -> opposite
+		const necklace_angle = get(s_ring_angle);
+		const opposite = necklace_angle + Angle.half;
+		const raw = predicate.isBidirectional ?
+			opposite - tweak :
+			points_out ? necklace_angle :	// one directional, use global
+			opposite + tweak;
+		return (-raw).normalized_angle();
+	}
 
 	angle_at_index(index: number, radius: number): number {
 
@@ -170,39 +243,6 @@ export default class Cluster_Map  {
 		this.detect_grab_start_end(index, fork_y, max, child_angle);
 		return child_angle;									// angle at index
 	}
-
-	detect_grab_start_end(index: number, fork_y: number, max: number, child_angle: number) {
-		// detect and grab start and end
-		if (index == 0) {
-			if (fork_y > 0) {
-				this.start_angle = child_angle;
-			} else {
-				this.end_angle = child_angle;
-			}
-		} else if (index == max) {
-			if (fork_y < 0) {
-				this.start_angle = child_angle;
-			} else {
-				this.end_angle = child_angle;
-			}
-		}
-	}
-
-	forkAngle_for(predicate: Predicate, points_out: boolean): number | null {
-		// returns one of three angles: 1) necklace_angle 2) opposite+ 3) opposite-tweak
-		const tweak = Math.PI / 4;			// 45 degrees: added or subtracted -> opposite
-		const necklace_angle = get(s_ring_angle);
-		const opposite = necklace_angle + Angle.half;
-		const raw = predicate.isBidirectional ?
-			opposite - tweak :
-			points_out ? necklace_angle :	// one directional, use global
-			opposite + tweak;
-		return (-raw).normalized_angle();
-	}
-
-	center_at(radius: number, angle: number): Point {
-		return Point.square(this.outside_ring_radius).offsetBy(Point.fromPolar(radius, angle));
-	}
 	
 	static readonly $_SVGS_$: unique symbol;
 
@@ -218,27 +258,6 @@ export default class Cluster_Map  {
 		const end_small_svgPath = this.small_svgPath(this.end_angle, angle_tiltsUp, false);
 		const start_small_svgPath = this.small_svgPath(this.start_angle, angle_tiltsUp, true);
 		return [start_small_svgPath, big_outer_svgPath, end_small_svgPath];
-	}
-
-	set_page_index(index: number) {
-		this.focus_ancestry.thing?.page_states.set_page_index_for(index, this);
-		this.setup_cluster_title();
-	}
-
-	setup_cluster_title() {
-		let separator = k.space;
-		let quantity = `${this.total}`;
-		const index = Math.round(this.page_index);
-		let shortened = this.predicate?.kind.unCamelCase().lastWord() ?? k.empty;
-		if (this.isPaging) {
-			separator = '<br>';
-			quantity = `${index + 1} - ${index + this.shown} (of ${quantity})`;
-		}
-		if (!this.predicate?.isBidirectional) {
-			shortened = this.points_out ? shortened : 'contained by';
-			this.cluster_title = `${shortened}${separator}${quantity}`;
-		}
-		this.cluster_title = `${quantity}${separator}${shortened}`;
 	}
 
 	big_svgPath(radius: number, angle_tiltsUp: boolean) {
