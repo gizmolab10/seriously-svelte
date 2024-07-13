@@ -16,7 +16,7 @@ export default class Cluster_Map  {
 	focus_ancestry: Ancestry = get(s_ancestry_focus);
 	widget_maps: Array<Widget_MapRect> = [];	// maximum a page's worth, will be combined into geometry.widget_maps
 	thumb_element_state!: Element_State;
-	predicates: Array<Predicate> = [];
+	straddles_positive_x_axis = false;
 	ancestries: Array<Ancestry> = [];
 	fork_angle_leansForward = false;
 	fork_angle_pointsRight = false;
@@ -98,6 +98,7 @@ export default class Cluster_Map  {
 				index += 1;
 			}
 		}
+		this.straddles_positive_x_axis = this.start_angle.straddles_positive_x_axis(this.end_angle);
 		this.update_thumb_angle_andCenter();
 		this.setup_cluster_title_forIndex();
 	}
@@ -105,10 +106,10 @@ export default class Cluster_Map  {
 	destructor() { this.ancestries = []; }
 	get thumb_radius(): number { return k.scroll_arc_thickness * 0.8; }
 	get maximum_page_index(): number { return this.total - this.shown; }
+	get spread_angle(): number { return this.end_angle - this.start_angle; }
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
 	get description(): string { return `${this.predicate.kind}  ${this.titles}`; }
 	get fork_center(): Point { return this.center_at(this.inside_arc_radius, -this.fork_angle); }
-	get spread_angle(): number { return (this.end_angle - this.start_angle).normalized_angle(); }
 	get thumb_arc_radius(): number { return this.inside_arc_radius + k.scroll_arc_thickness / 2; }
 	get page_index(): number { return this.focus_ancestry.thing?.page_states?.index_for(this.points_out, this.predicate) ?? 0; }
 	get single_svgPath(): string { return svgPaths.circle(this.fork_center, this.fork_radius - 0.5); }
@@ -129,16 +130,30 @@ export default class Cluster_Map  {
 		const fork_Angle = new Angle(this.fork_angle);
 		const quadrant = fork_Angle.quadrant_ofAngle;
 		let movement_angle = this.start_angle - mouse_angle;
-		let spread_angle = this.end_angle - this.start_angle;
-		switch (quadrant) {
-			case Quadrant.lowerRight:
-			case Quadrant.upperLeft: movement_angle = this.end_angle - mouse_angle; break;
-			case Quadrant.upperRight: movement_angle = mouse_angle - this.start_angle; break;
-			case Quadrant.lowerLeft: spread_angle = this.start_angle - this.end_angle; break;
+		let spread_angle = this.spread_angle;
+		if (this.straddles_positive_x_axis) {
+			movement_angle = movement_angle.normalized_angle();
+			spread_angle = (this.start_angle - this.end_angle).normalized_angle();
+		} else {
+			switch (quadrant) {
+				case Quadrant.lowerRight:
+				case Quadrant.upperLeft: movement_angle = this.end_angle - mouse_angle; break;
+				case Quadrant.upperRight: movement_angle = mouse_angle - this.start_angle; break;
+				case Quadrant.lowerLeft: spread_angle = this.start_angle - this.end_angle; break;
+			}
 		}
-		const fraction = movement_angle / spread_angle;
-		const index = fraction.bump_towards(0, 1, 0.01) * this.maximum_page_index;
-		this.set_page_index(index);
+		let fraction = movement_angle / spread_angle;
+		if (this.straddles_positive_x_axis) {
+			if (fraction > 6) {
+				fraction = 0;
+			} else if (fraction > 1) {
+				fraction = 1;
+			}
+		}
+		if (fraction < 1) {
+			const index = fraction.bump_towards(0, 1, 0.01) * this.maximum_page_index;
+			this.set_page_index(index);
+		}
 	}
 
 	get updated_thumb_angle(): number {
@@ -150,12 +165,16 @@ export default class Cluster_Map  {
 			if (fraction > 1) {
 				angle = this.end_angle;
 			} else {
-				let spread_angle = this.end_angle - this.start_angle;
-				let adjusted = spread_angle * fraction;
-				angle = this.start_angle + adjusted;
-				switch (quadrant) {
-					case Quadrant.upperLeft:
-					case Quadrant.lowerRight: angle = this.end_angle - adjusted; break;
+				if (this.straddles_positive_x_axis) {
+					let spread_angle = (this.start_angle - this.end_angle).normalized_angle();
+					angle = angle = this.start_angle - (spread_angle * fraction);
+				} else {
+					let adjusted = this.spread_angle * fraction;
+					angle = this.start_angle + adjusted;
+					switch (quadrant) {
+						case Quadrant.upperLeft:
+						case Quadrant.lowerRight: angle = this.end_angle - adjusted; break;
+					}
 				}
 				angle = angle.normalized_angle();
 			}

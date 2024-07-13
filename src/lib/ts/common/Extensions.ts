@@ -76,6 +76,7 @@ declare global {
 		toFixed(precision: number): string;
 		add_angle_normalized(angle: number): number;
 		normalize_between_zeroAnd(value: number): number;
+		straddles_positive_x_axis(other: number): boolean;
 		isAlmost(target: number, within: number): boolean;
 		increment_by(delta: number, total: number): number;
 		increment(increment: boolean, total: number): number;
@@ -127,6 +128,20 @@ Object.defineProperty(Number.prototype, 'increment_by', {
 Object.defineProperty(Number.prototype, 'add_angle_normalized', {
 	value: function(angle: number): number {
 		return (this + angle).normalized_angle();
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(Number.prototype, 'straddles_positive_x_axis', {
+	value: function(other: number): boolean {
+		const a = this.normalized_angle();
+		const b = other.normalized_angle();
+		const c = (Math.PI * 2) - Math.max(a, b);
+		const d = Math.min(a, b);
+		const e = Math.PI / 2;
+		return (c < e) && (d < e);
 	},
 	writable: false,
 	enumerable: false,
