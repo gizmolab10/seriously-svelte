@@ -18,6 +18,7 @@ export default class Cluster_Map  {
 	thumb_element_state!: Element_State;
 	predicates: Array<Predicate> = [];
 	ancestries: Array<Ancestry> = [];
+	fork_angle_leansForward = false;
 	fork_angle_pointsRight = false;
 	thumb_center = Point.zero;
 	cluster_title = k.empty;
@@ -74,8 +75,9 @@ export default class Cluster_Map  {
 		this.fork_angle = this.forkAngle_for(this.predicate, this.points_out) ?? 0;
 		this.thumb_element_state = s.elementState_for(this.focus_ancestry, ElementType.advance, this.cluster_title);
 		this.fork_tip = Point.fromPolar(this.inside_arc_radius - this.fork_radius, -this.fork_angle);
-		this.label_tip = ellipse_axes.ellipse_coordiates_forAngle(this.fork_angle);
+		this.fork_angle_leansForward = new Angle(this.fork_angle).angle_leansForward;
 		this.fork_angle_pointsRight = new Angle(this.fork_angle).angle_pointsRight;
+		this.label_tip = ellipse_axes.ellipse_coordiates_forAngle(this.fork_angle);
 		this.outside_arc_radius = this.inside_arc_radius + k.scroll_arc_thickness;
 		this.origin = this.clusters_center.negated.offsetBy(this.center)
 		this.thumb_element_state.set_forHovering(this.color, 'pointer');
@@ -124,12 +126,41 @@ export default class Cluster_Map  {
 	}
 	
 	adjust_indexFor_mouse_angle(mouse_angle: number) {
-		const pointsRight = this.fork_angle_pointsRight;
-		const movement_angle = (pointsRight ? this.start_angle : this.end_angle) - mouse_angle;
-		const fraction = movement_angle / this.spread_angle;
+		const fork_Angle = new Angle(this.fork_angle);
+		const quadrant = fork_Angle.quadrant_ofAngle;
+		let movement_angle = this.start_angle - mouse_angle;
+		let spread_angle = this.end_angle - this.start_angle;
+		switch (quadrant) {
+			case Quadrant.lowerRight:
+			case Quadrant.upperLeft: movement_angle = this.end_angle - mouse_angle; break;
+			case Quadrant.upperRight: movement_angle = mouse_angle - this.start_angle; break;
+			case Quadrant.lowerLeft: spread_angle = this.start_angle - this.end_angle; break;
+		}
+		const fraction = movement_angle / spread_angle;
 		const index = fraction.bump_towards(0, 1, 0.01) * this.maximum_page_index;
-		// console.log(`${index.toFixed(1)}  ${pointsRight ? 'backward' : 'normal'}  ${Math.round(fraction * 100)}%  ${movement_angle.degrees_of()}°`);
 		this.set_page_index(index);
+	}
+
+	get updated_thumb_angle(): number {
+		const fork_Angle = new Angle(this.fork_angle);
+		const quadrant = fork_Angle.quadrant_ofAngle;
+		let angle = (this.start_angle + this.end_angle) / 2;
+		if (this.maximum_page_index > 0) {
+			const fraction = this.page_index / this.maximum_page_index;
+			if (fraction > 1) {
+				angle = this.end_angle;
+			} else {
+				let spread_angle = this.end_angle - this.start_angle;
+				let adjusted = spread_angle * fraction;
+				angle = this.start_angle + adjusted;
+				switch (quadrant) {
+					case Quadrant.upperLeft:
+					case Quadrant.lowerRight: angle = this.end_angle - adjusted; break;
+				}
+				angle = angle.normalized_angle();
+			}
+		}
+		return angle;
 	}
 
 	advance(isForward: boolean) {
@@ -161,26 +192,6 @@ export default class Cluster_Map  {
 	update_thumb_angle_andCenter() {
 		this.thumb_angle = this.updated_thumb_angle;
 		this.thumb_center = this.center_at(this.thumb_arc_radius, this.thumb_angle).offsetByXY(15, 15);
-	}
-
-	get updated_thumb_angle(): number {
-		let angle = (this.start_angle + this.end_angle) / 2;
-		if (this.maximum_page_index != 0) {
-			const fraction = this.page_index / this.maximum_page_index;
-			if (fraction > 1) {
-				angle = this.end_angle;
-			} else {
-				const adjusted = this.spread_angle * fraction;
-				const fork_angle_pointsDown = new Angle(this.fork_angle).angle_pointsDown;
-				if (this.fork_angle_pointsRight == fork_angle_pointsDown) {
-					angle = (this.start_angle + adjusted).normalized_angle();
-					// console.log(`${this.page_index}  ${adjusted.degrees_of()}°  ${angle.degrees_of()}°  ${this.description}`);
-				} else {
-					angle = (this.end_angle - adjusted).normalized_angle();
-				}
-			}
-		}
-		return angle;
 	}
 
 	detect_grab_start_end(index: number, fork_y: number, max: number, child_angle: number) {
@@ -247,23 +258,23 @@ export default class Cluster_Map  {
 	static readonly $_SVGS_$: unique symbol;
 
 	get main_svgPaths(): Array<string> {
-		const angle_tiltsUp = new Angle(this.fork_angle).angle_tiltsUp;
-		const big_inner_svgPath = this.big_svgPath(this.inside_arc_radius, angle_tiltsUp);
+		const angle_leansForward = new Angle(this.fork_angle).angle_leansForward;
+		const big_inner_svgPath = this.big_svgPath(this.inside_arc_radius, angle_leansForward);
 		return [big_inner_svgPath];
 	}
 
 	get outer_svgPaths(): Array<string> {
-		const angle_tiltsUp = new Angle(this.fork_angle).angle_tiltsUp;
-		const big_outer_svgPath = this.big_svgPath(this.outside_arc_radius, angle_tiltsUp);
-		const end_small_svgPath = this.small_svgPath(this.end_angle, angle_tiltsUp, false);
-		const start_small_svgPath = this.small_svgPath(this.start_angle, angle_tiltsUp, true);
+		const angle_leansForward = new Angle(this.fork_angle).angle_leansForward;
+		const big_outer_svgPath = this.big_svgPath(this.outside_arc_radius, angle_leansForward);
+		const end_small_svgPath = this.small_svgPath(this.end_angle, angle_leansForward, false);
+		const start_small_svgPath = this.small_svgPath(this.start_angle, angle_leansForward, true);
 		return [start_small_svgPath, big_outer_svgPath, end_small_svgPath];
 	}
 
-	big_svgPath(radius: number, angle_tiltsUp: boolean) {
+	big_svgPath(radius: number, angle_leansForward: boolean) {
 		return svgPaths.arc(this.clusters_center, radius, 1, 
-			angle_tiltsUp ? this.end_angle : this.start_angle,
-			angle_tiltsUp ? this.start_angle : this.end_angle);
+			angle_leansForward ? this.end_angle : this.start_angle,
+			angle_leansForward ? this.start_angle : this.end_angle);
 	}
 
 	fork_adjustment(fork_radius: number, inside_arc_radius: number): number {

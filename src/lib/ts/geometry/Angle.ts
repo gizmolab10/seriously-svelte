@@ -30,7 +30,7 @@ export default class Angle {
 
 	get quadrant_referenceAngle(): number { return u.referenceAngle_ofQuadrant(this.quadrant_ofAngle); }
 
-	get angle_tiltsUp(): boolean {
+	get angle_leansForward(): boolean {
 		const quadrant = this.quadrant_ofAngle;
 		return [Quadrant.lowerRight, Quadrant.upperLeft].includes(quadrant);
 	}
@@ -55,10 +55,10 @@ export default class Angle {
 		let quadrant = this.quadrant_ofAngle;
 		const isFirstEighth = this.angle.normalize_between_zeroAnd(Angle.quarter) < (Math.PI / 4);
 		switch (quadrant) {
-			case Quadrant.lowerRight: return isFirstEighth ? Orientation.right : Orientation.up;
-			case Quadrant.lowerLeft:  return isFirstEighth ? Orientation.up    : Orientation.left;
-			case Quadrant.upperLeft:  return isFirstEighth ? Orientation.left  : Orientation.down;
-			default:				  return isFirstEighth ? Orientation.down  : Orientation.right;
+			case Quadrant.lowerRight: return isFirstEighth ? Orientation.right : Orientation.down;
+			case Quadrant.lowerLeft:  return isFirstEighth ? Orientation.down  : Orientation.left;
+			case Quadrant.upperLeft:  return isFirstEighth ? Orientation.left  : Orientation.up;
+			default:				  return isFirstEighth ? Orientation.up    : Orientation.right;
 		}
 	}
 
