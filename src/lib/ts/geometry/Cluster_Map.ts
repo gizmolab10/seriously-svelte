@@ -16,7 +16,6 @@ export default class Cluster_Map  {
 	focus_ancestry: Ancestry = get(s_ancestry_focus);
 	widget_maps: Array<Widget_MapRect> = [];	// maximum a page's worth, will be combined into geometry.widget_maps
 	thumb_element_state!: Element_State;
-	straddles_positive_x_axis = false;
 	ancestries: Array<Ancestry> = [];
 	fork_angle_leansForward = false;
 	fork_angle_pointsRight = false;
@@ -27,6 +26,7 @@ export default class Cluster_Map  {
 	outside_ring_radius = 0;
 	inside_ring_radius = 0;
 	outside_arc_radius = 0;
+	straddles_zero = false;
 	inside_arc_radius = 0;
 	predicate: Predicate;
 	points_out: boolean;
@@ -98,7 +98,7 @@ export default class Cluster_Map  {
 				index += 1;
 			}
 		}
-		this.straddles_positive_x_axis = this.start_angle.straddles_positive_x_axis(this.end_angle);
+		this.straddles_zero = this.start_angle.straddles_zero(this.end_angle);
 		this.update_thumb_angle_andCenter();
 		this.setup_cluster_title_forIndex();
 	}
@@ -131,28 +131,39 @@ export default class Cluster_Map  {
 		const quadrant = fork_Angle.quadrant_ofAngle;
 		let movement_angle = this.start_angle - mouse_angle;
 		let spread_angle = this.spread_angle;
-		if (this.straddles_positive_x_axis) {
-			movement_angle = movement_angle.normalized_angle();
-			spread_angle = (this.start_angle - this.end_angle).normalized_angle();
+		if (this.straddles_zero) {
+			if (quadrant == Quadrant.upperRight) {
+				movement_angle = movement_angle.normalized_angle();
+				spread_angle = (-spread_angle).normalized_angle();
+			} else {
+				movement_angle = mouse_angle - this.end_angle;
+			}
 		} else {
 			switch (quadrant) {
 				case Quadrant.lowerRight:
 				case Quadrant.upperLeft: movement_angle = this.end_angle - mouse_angle; break;
-				case Quadrant.upperRight: movement_angle = mouse_angle - this.start_angle; break;
-				case Quadrant.lowerLeft: spread_angle = this.start_angle - this.end_angle; break;
+				case Quadrant.upperRight: movement_angle = -movement_angle; break;
+				case Quadrant.lowerLeft: spread_angle = -spread_angle; break;
 			}
 		}
-		let fraction = movement_angle / spread_angle;
-		if (this.straddles_positive_x_axis) {
-			if (fraction > 6) {
-				fraction = 0;
-			} else if (fraction > 1) {
-				fraction = 1;
+		const fraction = this.adjust_fraction(movement_angle / spread_angle);
+		const index = fraction * this.maximum_page_index;
+		this.set_page_index(index);
+	}
+
+	adjust_fraction(fraction: number): number {
+		if (this.straddles_zero && fraction > 3) {
+			return 0;
+		} else if (fraction >= 1) {
+			return 1;
+		} else if (fraction <= 0) {
+			if (fraction < -3) {
+				return 1;
 			}
-		}
-		if (fraction < 1) {
-			const index = fraction.bump_towards(0, 1, 0.01) * this.maximum_page_index;
-			this.set_page_index(index);
+			return 0;
+		} else {
+			const near = 1 / (this.total * 2);				// within half an increment
+			return fraction.bump_towards(0, 1, near);	// if near 0 make it 0, same with 1
 		}
 	}
 
@@ -165,7 +176,7 @@ export default class Cluster_Map  {
 			if (fraction > 1) {
 				angle = this.end_angle;
 			} else {
-				if (this.straddles_positive_x_axis) {
+				if (this.straddles_zero) {
 					let spread_angle = (this.start_angle - this.end_angle).normalized_angle();
 					angle = angle = this.start_angle - (spread_angle * fraction);
 				} else {

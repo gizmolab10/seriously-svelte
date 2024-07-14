@@ -74,9 +74,9 @@ declare global {
 		roundToEven(): number;
 		normalized_angle(): number;
 		toFixed(precision: number): string;
+		straddles_zero(other: number): boolean;
 		add_angle_normalized(angle: number): number;
 		normalize_between_zeroAnd(value: number): number;
-		straddles_positive_x_axis(other: number): boolean;
 		isAlmost(target: number, within: number): boolean;
 		increment_by(delta: number, total: number): number;
 		increment(increment: boolean, total: number): number;
@@ -134,7 +134,7 @@ Object.defineProperty(Number.prototype, 'add_angle_normalized', {
 	configurable: false
 });
 
-Object.defineProperty(Number.prototype, 'straddles_positive_x_axis', {
+Object.defineProperty(Number.prototype, 'straddles_zero', {
 	value: function(other: number): boolean {
 		const a = this.normalized_angle();
 		const b = other.normalized_angle();
