@@ -1,5 +1,5 @@
+import { k, s, get, Rect, Point, Angle, IDLine, svgPaths, Ancestry, Quadrant, Arc_Path } from '../common/Global_Imports';
 import { Predicate, ElementType, Element_State, transparentize, Widget_MapRect } from '../common/Global_Imports';
-import { k, s, get, Rect, Point, Angle, IDLine, svgPaths, Ancestry, Quadrant } from '../common/Global_Imports';
 import { s_graphRect, s_ring_angle, s_ancestry_focus, s_cluster_arc_radius } from '../state/Reactive_State';
 
 // for one cluster (there are three)
@@ -24,14 +24,12 @@ export default class Cluster_Map  {
 	color = k.color_default;
 	clusters_center!: Point;
 	outside_ring_radius = 0;
-	inside_ring_radius = 0;
-	outside_arc_radius = 0;
 	straddles_zero = false;
-	inside_arc_radius = 0;
 	predicate: Predicate;
 	points_out: boolean;
 	origin = Point.zero;
 	center = Point.zero;
+	arc_path!: Arc_Path;
 	label_tip!: Point;
 	fork_tip!: Point;
 	isPaging = false;
@@ -63,22 +61,13 @@ export default class Cluster_Map  {
 		this.isPaging = this.shown != this.total;
 		this.outside_ring_radius = get(s_cluster_arc_radius);
 		this.clusters_center = Point.square(this.outside_ring_radius);
-		this.inside_arc_radius = this.outside_ring_radius - k.scroll_arc_thickness * 2;
 		this.color = transparentize(this.focus_ancestry.thing?.color ?? this.color, 0.8);
 		const fork_raw_radius = k.ring_thickness * this.fork_radius_multiplier(this.shown);
-		this.fork_backoff = this.fork_adjustment(fork_raw_radius, this.inside_arc_radius);
-		this.fork_radius = fork_raw_radius - this.fork_backoff;
-		const semi_minor = this.inside_arc_radius / 2;
-		const semi_major = this.inside_arc_radius - this.fork_radius - k.dot_size / 2;
-		const ellipse_axes = new Point(semi_minor, semi_major);
 		this.center = get(s_graphRect).size.dividedInHalf.asPoint;
 		this.fork_angle = this.forkAngle_for(this.predicate, this.points_out) ?? 0;
 		this.thumb_element_state = s.elementState_for(this.focus_ancestry, ElementType.advance, this.cluster_title);
-		this.fork_tip = Point.fromPolar(this.inside_arc_radius - this.fork_radius, -this.fork_angle);
 		this.fork_angle_leansForward = new Angle(this.fork_angle).angle_leansForward;
 		this.fork_angle_pointsRight = new Angle(this.fork_angle).angle_pointsRight;
-		this.label_tip = ellipse_axes.ellipse_coordiates_forAngle(this.fork_angle);
-		this.outside_arc_radius = this.inside_arc_radius + k.scroll_arc_thickness;
 		this.origin = this.clusters_center.negated.offsetBy(this.center)
 		this.thumb_element_state.set_forHovering(this.color, 'pointer');
 		this.widget_maps = [];
@@ -98,8 +87,15 @@ export default class Cluster_Map  {
 				index += 1;
 			}
 		}
+		this.arc_path = new Arc_Path(this.shown, this.start_angle, this.end_angle, this.fork_angle);
+		this.fork_backoff = this.arc_path.fork_adjustment(fork_raw_radius, this.arc_path.inside_arc_radius);
+		const semi_major = this.arc_path.inside_arc_radius - this.fork_radius - k.dot_size / 2;
+		const semi_minor = this.arc_path.inside_arc_radius / 2;
+		const ellipse_axes = new Point(semi_minor, semi_major);
+		this.label_tip = ellipse_axes.ellipse_coordiates_forAngle(this.fork_angle);
+		this.fork_radius = fork_raw_radius - this.fork_backoff;
+		this.fork_tip = Point.fromPolar(this.arc_path.inside_arc_radius - this.fork_radius, -this.fork_angle);
 		this.straddles_zero = this.start_angle.straddles_zero(this.end_angle);
-		this.update_thumb_angle_andCenter();
 		this.setup_cluster_title_forIndex();
 	}
 
@@ -109,15 +105,9 @@ export default class Cluster_Map  {
 	get spread_angle(): number { return this.end_angle - this.start_angle; }
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
 	get description(): string { return `${this.predicate.kind}  ${this.titles}`; }
-	get fork_center(): Point { return this.center_at(this.inside_arc_radius, -this.fork_angle); }
-	get thumb_arc_radius(): number { return this.inside_arc_radius + k.scroll_arc_thickness / 2; }
+	get thumb_arc_radius(): number { return this.arc_path.inside_arc_radius + k.scroll_arc_thickness / 2; }
 	get page_index(): number { return this.focus_ancestry.thing?.page_states?.index_for(this.points_out, this.predicate) ?? 0; }
-	get single_svgPath(): string { return svgPaths.circle(this.fork_center, this.fork_radius - 0.5); }
-	get gap_svgPath(): string { return svgPaths.circle(this.fork_center, this.fork_radius - 0.5); }
-	get fork_svgPaths(): string[] { return [this.fork_svgPath(false), this.fork_svgPath(true)]; }
-	get thumb_svgPath(): string { return svgPaths.circle(this.thumb_center, this.thumb_radius); }
 
-	center_at(radius: number, angle: number): Point { return Point.square(this.outside_ring_radius).offsetBy(Point.fromPolar(radius, angle)); }
 	fork_radius_multiplier(shown: number): number { return (shown > 3) ? 0.6 : (shown > 1) ? 0.3 : 0.15; }
 
 	set_page_index(index: number) {
@@ -221,7 +211,7 @@ export default class Cluster_Map  {
 
 	update_thumb_angle_andCenter() {
 		this.thumb_angle = this.updated_thumb_angle;
-		this.thumb_center = this.center_at(this.thumb_arc_radius, this.thumb_angle).offsetByXY(15, 15);
+		this.thumb_center = this.arc_path.center_at(this.thumb_arc_radius, this.thumb_angle).offsetByXY(15, 15);
 	}
 
 	detect_grab_start_end(index: number, fork_y: number, max: number, child_angle: number) {
@@ -283,58 +273,6 @@ export default class Cluster_Map  {
 		child_angle = child_angle.normalized_angle();
 		this.detect_grab_start_end(index, fork_y, max, child_angle);
 		return child_angle;									// angle at index
-	}
-	
-	static readonly $_SVGS_$: unique symbol;
-
-	get main_svgPaths(): Array<string> {
-		const angle_leansForward = new Angle(this.fork_angle).angle_leansForward;
-		const big_inner_svgPath = this.big_svgPath(this.inside_arc_radius, angle_leansForward);
-		return [big_inner_svgPath];
-	}
-
-	get outer_svgPaths(): Array<string> {
-		const angle_leansForward = new Angle(this.fork_angle).angle_leansForward;
-		const big_outer_svgPath = this.big_svgPath(this.outside_arc_radius, angle_leansForward);
-		const end_small_svgPath = this.small_svgPath(this.end_angle, angle_leansForward, false);
-		const start_small_svgPath = this.small_svgPath(this.start_angle, angle_leansForward, true);
-		return [start_small_svgPath, big_outer_svgPath, end_small_svgPath];
-	}
-
-	big_svgPath(radius: number, angle_leansForward: boolean) {
-		return svgPaths.arc(this.clusters_center, radius, 1, 
-			angle_leansForward ? this.end_angle : this.start_angle,
-			angle_leansForward ? this.start_angle : this.end_angle);
-	}
-
-	fork_adjustment(fork_radius: number, inside_arc_radius: number): number {
-		const ratio = fork_radius / inside_arc_radius / 2;
-		const fork_angle = Math.asin(ratio) * 2;
-		const delta = inside_arc_radius * (1 - Math.cos(fork_angle));
-		return delta / Math.sqrt(1.5);
-	}
-
-	fork_svgPath(forwards: boolean) {
-		const fork_radius = this.fork_radius;
-		const angle = -this.fork_angle;
-		const y = fork_radius * (forwards ? -1 : 1);
-		const x = this.inside_arc_radius - fork_radius - this.fork_backoff;
-		const origin = new Point(x, y).rotate_by(angle);
-		return svgPaths.arc(origin.offsetBy(this.clusters_center), fork_radius, 1,
-			angle + (forwards ? Angle.quarter : 0),
-			angle - (forwards ? 0 : Angle.quarter));
-	}
-
-	small_svgPath(arc_angle: number, tiltsUp: boolean, advance: boolean) {
-		const center = Point.square(this.outside_ring_radius);
-		const small_arc_radius = k.ring_thickness / 6;
-		const clockwise = tiltsUp == advance;
-		const ratio = clockwise ? -1 : 1;
-		const distanceTo_small_arc_center = this.inside_arc_radius + small_arc_radius;
-		const small_arc_angle_start = (arc_angle + (Math.PI * ratio)).normalized_angle();
-		const small_arc_angle_end = (arc_angle + (Math.PI * (ratio - 1))).normalized_angle();
-		const small_arc_center = center.offsetBy(Point.fromPolar(distanceTo_small_arc_center, arc_angle));
-		return svgPaths.arc(small_arc_center, small_arc_radius, clockwise ? 0 : 1, small_arc_angle_start, small_arc_angle_end);
 	}
 
 }

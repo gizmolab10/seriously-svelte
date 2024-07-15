@@ -37,6 +37,7 @@ import Relationship from '../data/Relationship';
 import Title_State from '../state/Title_State';
 import Mouse_State from '../state/Mouse_State';
 import Svelte_Wrapper from './Svelte_Wrapper';
+import Arc_Path from '../geometry/Arc_Path';
 import Ancestry from '../managers/Ancestry';
 import Predicate from '../data/Predicate';
 import Grabs from '../managers/Grabs';
@@ -52,8 +53,8 @@ import './Extensions';
 export {
 	Angle, Quadrant, Orientation,
 	Tree_Geometry, Widget_MapRect,
-	Cluster_Map, Clusters_Geometry,
 	Rect, Size, Point, svgPaths, Direction,
+	Arc_Path, Cluster_Map, Clusters_Geometry,
 	Title_State, Rotation_State, Expansion_State,
 	muuri, interact, createPopper, transparentize,
 	e, g, k, s, u, builds, signals, Seriously_Range,

@@ -144,12 +144,12 @@
 	<svg class='svg-scroll-arc' 
 		viewBox='{-offset} {-offset} {breadth} {breadth}'>
 		{#if cluster_map.shown < 2}
-			<path stroke={ring_color} fill=transparent d={cluster_map.single_svgPath}/>
+			<path stroke={ring_color} fill=transparent d={cluster_map.arc_path.single_svgPath}/>
 		{:else}
-			{#each cluster_map.main_svgPaths as mainPath}
+			{#each cluster_map.arc_path.main_svgPaths as mainPath}
 				<path stroke={ring_color} fill=transparent d={mainPath}/>
 			{/each}
-			{#each cluster_map.outer_svgPaths as outerPath}
+			{#each cluster_map.arc_path.outer_svgPaths as outerPath}
 				<path stroke={ring_color} fill=transparent d={outerPath}/>
 			{/each}
 		{/if}

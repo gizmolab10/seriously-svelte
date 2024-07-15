@@ -19,15 +19,20 @@ export default class Arc_Path {
 		this.fork_angle = fork_angle;
 		this.start_angle = start_angle;
 		const fork_raw_radius = k.ring_thickness * this.fork_radius_multiplier(this.shown);
-		this.fork_backoff = this.fork_adjustment(fork_raw_radius, this.inside_arc_radius);
-		this.fork_radius = fork_raw_radius - this.fork_backoff;
 		this.outside_ring_radius = get(s_cluster_arc_radius);
 		this.clusters_center = Point.square(this.outside_ring_radius);
 		this.inside_arc_radius = this.outside_ring_radius - k.scroll_arc_thickness * 2;
 		this.outside_arc_radius = this.inside_arc_radius + k.scroll_arc_thickness;
+		this.fork_backoff = this.fork_adjustment(fork_raw_radius, this.inside_arc_radius);
+		this.fork_radius = fork_raw_radius - this.fork_backoff;
 	}
 
+	center_at(radius: number, angle: number): Point { return Point.square(this.outside_ring_radius).offsetBy(Point.fromPolar(radius, angle)); }
 	fork_radius_multiplier(shown: number): number { return (shown > 3) ? 0.6 : (shown > 1) ? 0.3 : 0.15; }
+	get fork_center(): Point { return this.center_at(this.inside_arc_radius, -this.fork_angle); }
+	get single_svgPath(): string { return svgPaths.circle(this.fork_center, this.fork_radius - 0.5); }
+	get gap_svgPath(): string { return svgPaths.circle(this.fork_center, this.fork_radius - 0.5); }
+	get fork_svgPaths(): string[] { return [this.fork_svgPath(false), this.fork_svgPath(true)]; }
 
 	get main_svgPaths(): Array<string> {
 		const angle_leansForward = new Angle(this.fork_angle).angle_leansForward;
