@@ -60,7 +60,7 @@ export default class Cluster_Map  {
 		this.thumb_element_state = s.elementState_for(this.focus_ancestry, ElementType.thumb, this.cluster_title);
 		this.fork_angle_leansForward = new Angle(this.fork_angle).angle_leansForward;
 		this.fork_angle_pointsRight = new Angle(this.fork_angle).angle_pointsRight;
-		this.thumb_element_state.set_forHovering(this.color, 'pointer');
+		this.thumb_element_state.set_forHovering('transparent', 'pointer');
 		this.arc_element_state.set_forHovering('transparent', 'move');
 		this.widget_maps = [];
 		if (this.shown > 0 && !!this.predicate) {
@@ -79,13 +79,9 @@ export default class Cluster_Map  {
 				index += 1;
 			}
 		}
-		this.arc_map.fork_angle = this.fork_angle;
-		this.arc_map.update_fork_forShown(this.shown);
-		const semi_major = this.arc_map.inside_arc_radius - this.arc_map.fork_radius - k.dot_size / 2;
-		const semi_minor = this.arc_map.inside_arc_radius / 2;
-		const ellipse_axes = new Point(semi_minor, semi_major);
-		this.label_tip = ellipse_axes.ellipse_coordiates_forAngle(this.fork_angle);
-		this.straddles_zero = this.arc_map.start_angle.straddles_zero(this.arc_map.end_angle);
+		this.arc_map.setup(this.fork_angle, this.shown);
+		this.label_tip = this.arc_map.ellipse_axes.ellipse_coordiates_forAngle(this.fork_angle);
+		this.straddles_zero = this.arc_map.straddles_zero;
 		this.setup_cluster_title_forIndex();
 	}
 

@@ -8,10 +8,10 @@
 	export let cluster_map: Cluster_Map;
 	export let center = Point.zero;
 	export let color = 'red';
-	const name = cluster_map.cluster_title;
 	const offset = k.necklace_widget_padding;
 	const radius = $s_cluster_arc_radius + offset / 2;
 	const breadth = radius * 2;
+	const name = cluster_map.cluster_title;
 	const thumb_size = cluster_map.thumb_radius * 2;
 	const rotation_state = s.rotationState_forName(name);
 	const viewBox=`${-offset} ${-offset} ${breadth} ${breadth}`;
@@ -149,17 +149,13 @@
 		arc_map={cluster_map.arc_map}
 		element_state={cluster_map.arc_element_state}/>
 	{#if (cluster_map.isPaging)}
-		<Button name='thumb-responder'
-			element_state={cluster_map.thumb_element_state}
-			center={thumb_center}
-			height={thumb_size}
-			width={thumb_size}
-			closure={closure}>
-			<svg class='svg-thumb' style='position:absolute; top=0px; left=0px;'
-				viewBox='0 0 {thumb_size} {thumb_size}'>
-				<path stroke={ring_color} fill={k.color_background} d={thumb_svgPath}/>
-			</svg>
-		</Button>
+		<Arc_Button
+			size={breadth}
+			viewBox={viewBox}
+			closure={closure}
+			color={ring_color}
+			arc_map={cluster_map.thumb_map}
+			element_state={cluster_map.thumb_element_state}/>
 	{/if}
 </div>
 <div class='cluster-label'
