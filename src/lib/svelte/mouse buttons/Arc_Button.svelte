@@ -1,22 +1,25 @@
 <script lang='ts'>
-	import { Arc_Path } from '../../ts/common/Global_Imports';
-	export let arc_path: Arc_Path;
-	export let color='red';
-	export let breadth=0;
-	export let offset=0;
+	import { Arc_Map } from '../../ts/common/Global_Imports';
+	import Button from '../mouse buttons/Button.svelte';
+	export let element_state: Element_State;
+	export let viewBox = k.empty;
+	export let arc_map: Arc_Map;
+	export let color = 'red';
+	export let size = 20;
 
 </script>
 
-<svg class='svg-scroll-arc' 
-	viewBox='{-offset} {-offset} {breadth} {breadth}'>
-	{#if arc_path.shown < 2}
-		<path stroke={color} fill=transparent d={arc_path.single_svgPath}/>
-	{:else}
-		{#each arc_path.main_svgPaths as mainPath}
-			<path stroke={color} fill=transparent d={mainPath}/>
-		{/each}
-		{#each arc_path.outer_svgPaths as outerPath}
-			<path stroke={color} fill=transparent d={outerPath}/>
-		{/each}
-	{/if}
-</svg>
+<Button
+	width={size}
+	height={size}
+	name={element_state.name}
+	element_state={element_state}
+	center={arc_map.clusters_center}>
+	<svg class='svg-scroll-arc' viewBox={viewBox}>
+		{#if arc_map.shown < 2}
+			<path stroke={color} fill=transparent d={arc_map.single_svgPath}/>
+		{:else}
+			<path stroke={color} fill=transparent d={arc_map.arc_svgPath}/>
+		{/if}
+	</svg>
+</Button>
