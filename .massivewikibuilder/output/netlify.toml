@@ -2,10 +2,3 @@
   for = "/*"
   [headers.values]
     connect-src = "https://api.airtable.com"
-  [build]
-    ignore = "/bin/false"
-    base = ".massivewikibuilder/massivewikibuilder"
-    publish = "../output"
-    command = "./mwb.py -c ../mwb.yaml -w ../.. -o ../output -t ../this-wiki-themes/elegant --lunr"
-  [build.environment]
-    PYTHON_VERSION = "3.8"
