@@ -1,4 +1,4 @@
-import { k, s, get, Rect, Point, Angle, IDLine, svgPaths, Ancestry, Quadrant, Arc_Path } from '../common/Global_Imports';
+import { k, s, get, Rect, Point, Angle, IDLine, svgPaths, Ancestry, Quadrant, Arc_Map } from '../common/Global_Imports';
 import { Predicate, ElementType, Element_State, transparentize, Widget_MapRect } from '../common/Global_Imports';
 import { s_graphRect, s_ring_angle, s_ancestry_focus, s_cluster_arc_radius } from '../state/Reactive_State';
 
@@ -16,29 +16,23 @@ export default class Cluster_Map  {
 	focus_ancestry: Ancestry = get(s_ancestry_focus);
 	widget_maps: Array<Widget_MapRect> = [];	// maximum a page's worth, will be combined into geometry.widget_maps
 	thumb_element_state!: Element_State;
+	arc_element_state!: Element_State;
 	ancestries: Array<Ancestry> = [];
 	fork_angle_leansForward = false;
 	fork_angle_pointsRight = false;
 	thumb_center = Point.zero;
+	thumb_map = new Arc_Map();
+	arc_map = new Arc_Map();
 	cluster_title = k.empty;
 	color = k.color_default;
-	clusters_center!: Point;
-	outside_ring_radius = 0;
 	straddles_zero = false;
+	label_tip = Point.zero;
 	predicate: Predicate;
 	points_out: boolean;
-	origin = Point.zero;
 	center = Point.zero;
-	arc_path!: Arc_Path;
-	label_tip!: Point;
-	fork_tip!: Point;
 	isPaging = false;
-	fork_backoff = 0;
-	fork_radius = 0;
 	thumb_angle = 0;
-	start_angle = 0;
 	fork_angle = 0;
-	end_angle = 0;
 	shown = 0;
 	total = 0;
 
@@ -49,7 +43,7 @@ export default class Cluster_Map  {
 		this.total = total;
 		this.setup();
 		s_cluster_arc_radius.subscribe((radius: number) => {
-			if (this.outside_ring_radius != radius) {
+			if (this.arc_map.outside_ring_radius != radius) {
 				this.setup();
 				this.set_page_index(0);		// reset page state
 			}
@@ -59,20 +53,18 @@ export default class Cluster_Map  {
 	setup() {
 		this.shown = this.ancestries.length;
 		this.isPaging = this.shown != this.total;
-		this.outside_ring_radius = get(s_cluster_arc_radius);
-		this.clusters_center = Point.square(this.outside_ring_radius);
 		this.color = transparentize(this.focus_ancestry.thing?.color ?? this.color, 0.8);
-		const fork_raw_radius = k.ring_thickness * this.fork_radius_multiplier(this.shown);
 		this.center = get(s_graphRect).size.dividedInHalf.asPoint;
 		this.fork_angle = this.forkAngle_for(this.predicate, this.points_out) ?? 0;
-		this.thumb_element_state = s.elementState_for(this.focus_ancestry, ElementType.advance, this.cluster_title);
+		this.arc_element_state = s.elementState_for(this.focus_ancestry, ElementType.arc, this.cluster_title);
+		this.thumb_element_state = s.elementState_for(this.focus_ancestry, ElementType.thumb, this.cluster_title);
 		this.fork_angle_leansForward = new Angle(this.fork_angle).angle_leansForward;
 		this.fork_angle_pointsRight = new Angle(this.fork_angle).angle_pointsRight;
-		this.origin = this.clusters_center.negated.offsetBy(this.center)
 		this.thumb_element_state.set_forHovering(this.color, 'pointer');
+		this.arc_element_state.set_forHovering('transparent', 'move');
 		this.widget_maps = [];
 		if (this.shown > 0 && !!this.predicate) {
-			const radius = this.outside_ring_radius;
+			const radius = this.arc_map.outside_ring_radius;
 			const rotated = new Point(radius + k.necklace_widget_padding, 0);
 			const tweak = this.center.offsetByXY(2, -1.5);	// tweak so that drag dots are centered within the necklace ring
 			const max = this.shown - 1;
@@ -87,25 +79,22 @@ export default class Cluster_Map  {
 				index += 1;
 			}
 		}
-		this.arc_path = new Arc_Path(this.shown, this.start_angle, this.end_angle, this.fork_angle);
-		this.fork_backoff = this.arc_path.fork_adjustment(fork_raw_radius, this.arc_path.inside_arc_radius);
-		const semi_major = this.arc_path.inside_arc_radius - this.fork_radius - k.dot_size / 2;
-		const semi_minor = this.arc_path.inside_arc_radius / 2;
+		this.arc_map.fork_angle = this.fork_angle;
+		this.arc_map.update_fork_forShown(this.shown);
+		const semi_major = this.arc_map.inside_arc_radius - this.arc_map.fork_radius - k.dot_size / 2;
+		const semi_minor = this.arc_map.inside_arc_radius / 2;
 		const ellipse_axes = new Point(semi_minor, semi_major);
 		this.label_tip = ellipse_axes.ellipse_coordiates_forAngle(this.fork_angle);
-		this.fork_radius = fork_raw_radius - this.fork_backoff;
-		this.fork_tip = Point.fromPolar(this.arc_path.inside_arc_radius - this.fork_radius, -this.fork_angle);
-		this.straddles_zero = this.start_angle.straddles_zero(this.end_angle);
+		this.straddles_zero = this.arc_map.start_angle.straddles_zero(this.arc_map.end_angle);
 		this.setup_cluster_title_forIndex();
 	}
 
 	destructor() { this.ancestries = []; }
 	get thumb_radius(): number { return k.scroll_arc_thickness * 0.8; }
 	get maximum_page_index(): number { return this.total - this.shown; }
-	get spread_angle(): number { return this.end_angle - this.start_angle; }
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
 	get description(): string { return `${this.predicate.kind}  ${this.titles}`; }
-	get thumb_arc_radius(): number { return this.arc_path.inside_arc_radius + k.scroll_arc_thickness / 2; }
+	get thumb_arc_radius(): number { return this.arc_map.inside_arc_radius + k.scroll_arc_thickness / 2; }
 	get page_index(): number { return this.focus_ancestry.thing?.page_states?.index_for(this.points_out, this.predicate) ?? 0; }
 
 	fork_radius_multiplier(shown: number): number { return (shown > 3) ? 0.6 : (shown > 1) ? 0.3 : 0.15; }
@@ -119,19 +108,19 @@ export default class Cluster_Map  {
 	adjust_indexFor_mouse_angle(mouse_angle: number) {
 		const fork_Angle = new Angle(this.fork_angle);
 		const quadrant = fork_Angle.quadrant_ofAngle;
-		let movement_angle = this.start_angle - mouse_angle;
-		let spread_angle = this.spread_angle;
+		let movement_angle = this.arc_map.start_angle - mouse_angle;
+		let spread_angle = this.arc_map.spread_angle;
 		if (this.straddles_zero) {
 			if (quadrant == Quadrant.upperRight) {
 				movement_angle = movement_angle.normalized_angle();
 				spread_angle = (-spread_angle).normalized_angle();
 			} else {
-				movement_angle = mouse_angle - this.end_angle;
+				movement_angle = mouse_angle - this.arc_map.end_angle;
 			}
 		} else {
 			switch (quadrant) {
 				case Quadrant.lowerRight:
-				case Quadrant.upperLeft: movement_angle = this.end_angle - mouse_angle; break;
+				case Quadrant.upperLeft: movement_angle = this.arc_map.end_angle - mouse_angle; break;
 				case Quadrant.upperRight: movement_angle = -movement_angle; break;
 				case Quadrant.lowerLeft: spread_angle = -spread_angle; break;
 			}
@@ -160,21 +149,21 @@ export default class Cluster_Map  {
 	get updated_thumb_angle(): number {
 		const fork_Angle = new Angle(this.fork_angle);
 		const quadrant = fork_Angle.quadrant_ofAngle;
-		let angle = (this.start_angle + this.end_angle) / 2;
+		let angle = (this.arc_map.start_angle + this.arc_map.end_angle) / 2;
 		if (this.maximum_page_index > 0) {
 			const fraction = this.page_index / this.maximum_page_index;
 			if (fraction > 1) {
-				angle = this.end_angle;
+				angle = this.arc_map.end_angle;
 			} else {
 				if (this.straddles_zero) {
-					let spread_angle = (this.start_angle - this.end_angle).normalized_angle();
-					angle = angle = this.start_angle - (spread_angle * fraction);
+					let spread_angle = (this.arc_map.start_angle - this.arc_map.end_angle).normalized_angle();
+					angle = angle = this.arc_map.start_angle - (spread_angle * fraction);
 				} else {
-					let adjusted = this.spread_angle * fraction;
-					angle = this.start_angle + adjusted;
+					let adjusted = this.arc_map.spread_angle * fraction;
+					angle = this.arc_map.start_angle + adjusted;
 					switch (quadrant) {
 						case Quadrant.upperLeft:
-						case Quadrant.lowerRight: angle = this.end_angle - adjusted; break;
+						case Quadrant.lowerRight: angle = this.arc_map.end_angle - adjusted; break;
 					}
 				}
 				angle = angle.normalized_angle();
@@ -211,22 +200,22 @@ export default class Cluster_Map  {
 
 	update_thumb_angle_andCenter() {
 		this.thumb_angle = this.updated_thumb_angle;
-		this.thumb_center = this.arc_path.center_at(this.thumb_arc_radius, this.thumb_angle).offsetByXY(15, 15);
+		this.thumb_center = this.arc_map.center_at(this.thumb_arc_radius, this.thumb_angle).offsetByXY(15, 15);
 	}
 
 	detect_grab_start_end(index: number, fork_y: number, max: number, child_angle: number) {
 		// detect and grab start and end
 		if (index == 0) {
 			if (fork_y > 0) {
-				this.start_angle = child_angle;
+				this.arc_map.start_angle = child_angle;
 			} else {
-				this.end_angle = child_angle;
+				this.arc_map.end_angle = child_angle;
 			}
 		} else if (index == max) {
 			if (fork_y < 0) {
-				this.start_angle = child_angle;
+				this.arc_map.start_angle = child_angle;
 			} else {
-				this.end_angle = child_angle;
+				this.arc_map.end_angle = child_angle;
 			}
 		}
 	}

@@ -11,8 +11,12 @@
             "id": "b96ce36b21ad98e3",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {}
+              "type": "markdown",
+              "state": {
+                "file": "README.md",
+                "mode": "source",
+                "source": false
+              }
             }
           }
         ]
@@ -81,6 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "README.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -97,6 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "README.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -118,7 +124,9 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {}
+              "state": {
+                "file": "README.md"
+              }
             }
           },
           {
@@ -149,6 +157,7 @@
   },
   "active": "b96ce36b21ad98e3",
   "lastOpenFiles": [
+    "src/lib/ts/geometry/Arc_Map.ts",
     "README.md",
     "src/lib/svelte/mouse buttons/MouseResponder.svelte",
     "src/lib/ts/common/Types.ts",

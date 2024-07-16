@@ -146,7 +146,7 @@
 		offset={offset}
 		breadth={breadth}
 		color={ring_color}
-		arc_path={cluster_map.arc_path}/>
+		arc_map={cluster_map.arc_map}/>
 	{#if (cluster_map.isPaging)}
 		<Button name='thumb-responder'
 			element_state={thumb_element_state}
