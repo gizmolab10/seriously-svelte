@@ -152,6 +152,7 @@ declare module '$env/static/private' {
 	export const npm_package_scripts_test_unit: string;
 	export const npm_package_files_4: string;
 	export const npm_config_version_tag_prefix: string;
+	export const npm_config__wx_registry: string;
 }
 
 /**
@@ -307,6 +308,7 @@ declare module '$env/dynamic/private' {
 		npm_package_scripts_test_unit: string;
 		npm_package_files_4: string;
 		npm_config_version_tag_prefix: string;
+		npm_config__wx_registry: string;
 		[key: `PUBLIC_${string}`]: undefined;
 		[key: `${string}`]: string | undefined;
 	}

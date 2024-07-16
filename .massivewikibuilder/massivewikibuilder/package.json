@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "lunr": "^2.3.9",
-    "python": "^0.0.4"
-  }
-}
