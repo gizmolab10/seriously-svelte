@@ -3,15 +3,16 @@ import Identifiable from '../data/Identifiable';
 
 export enum ElementType {
 	generic	= 'generic',
-	advance	= 'advance',
 	control	= 'control',
 	widget	= 'widget',
 	reveal	= 'reveal',
 	focus	= 'focus',
 	crumb	= 'crumb',
+	thumb	= 'thumb',
 	tool	= 'tool',
 	drag	= 'drag',
 	none	= 'none',
+	arc		= 'arc',
 }
 
 export default class StateOf_UX {

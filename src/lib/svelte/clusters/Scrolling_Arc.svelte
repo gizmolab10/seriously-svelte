@@ -1,16 +1,16 @@
 <script lang='ts'>
 	import { g, k, s, u, Rect, Point, ZIndex, onMount, Cluster_Map, Orientation, transparentize } from '../../ts/common/Global_Imports';
 	import { s_ring_angle, s_mouse_up_count, s_mouse_location, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
-	import Arc_Button from '../mouse buttons/Arc_Button.svelte';
 	import { ArcPart } from '../../ts/common/Enumerations';
 	import Button from '../mouse buttons/Button.svelte';
+	import Arc from '../kit/Arc.svelte';
 	export let cursor_closure = () => {};
 	export let cluster_map: Cluster_Map;
 	export let center = Point.zero;
 	export let color = 'red';
 	const name = cluster_map.cluster_title;
 	const offset = k.necklace_widget_padding;
-	const radius = $s_cluster_arc_radius + offset / 2;
+	const radius = $s_cluster_arc_radius + offset;
 	const breadth = radius * 2;
 	const thumb_element_state = cluster_map.thumb_element_state;
 	const thumb_size = cluster_map.thumb_radius * 2;
@@ -143,12 +143,10 @@
 	zindex: {ZIndex.frontmost};
 	top: {center.y - radius}px;
 	left: {center.x - radius}px;'>
-	<Arc_Button
-		size={breadth}
+	<Arc
 		viewBox={viewBox}
 		color={ring_color}
-		arc_map={cluster_map.arc_map}
-		element_state={cluster_map.arc_element_state}/>
+		arc_map={cluster_map.arc_map}/>
 	{#if (cluster_map.isPaging)}
 		<Button name='thumb-responder'
 			element_state={thumb_element_state}

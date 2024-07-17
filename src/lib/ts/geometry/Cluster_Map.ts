@@ -60,8 +60,8 @@ export default class Cluster_Map  {
 		this.thumb_element_state = s.elementState_for(this.focus_ancestry, ElementType.thumb, this.cluster_title);
 		this.fork_angle_leansForward = new Angle(this.fork_angle).angle_leansForward;
 		this.fork_angle_pointsRight = new Angle(this.fork_angle).angle_pointsRight;
-		this.thumb_element_state.set_forHovering(this.color, 'pointer');
-		this.arc_element_state.set_forHovering('transparent', 'move');
+		// this.thumb_element_state.set_forHovering(this.color, 'pointer');
+		this.arc_element_state.set_forHovering('transparent', 'pointer');
 		this.widget_maps = [];
 		if (this.shown > 0 && !!this.predicate) {
 			const radius = this.arc_map.outside_ring_radius;
