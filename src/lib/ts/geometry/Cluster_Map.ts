@@ -200,9 +200,11 @@ export default class Cluster_Map  {
 
 	update_thumb_angle_andCenter() {
 		this.thumb_angle = this.updated_thumb_angle;
-		this.thumb_center = this.arc_map.center_at(this.thumb_arc_radius, this.thumb_angle).offsetByXY(15, 15);
+		const clusters_center = Point.square(get(s_cluster_arc_radius));
+		const thumb_radial = Point.fromPolar(this.thumb_arc_radius, this.thumb_angle);
+		this.thumb_center = clusters_center.offsetBy(thumb_radial).offsetEquallyBy(15);
 	}
-
+	
 	update_thumb_start_andEnd() {
 		const index = Math.floor(this.page_index);
 		const arc_start = Math.min(this.arc_map.start_angle, this.arc_map.end_angle);
