@@ -157,6 +157,8 @@
   },
   "active": "b96ce36b21ad98e3",
   "lastOpenFiles": [
+    "aside/2024/July/Arc.svelte",
+    "aside/Arc.svelte",
     "src/lib/svelte/kit/Arc.svelte",
     "src/lib/svelte/clusters/Arc.svelte",
     "src/lib/svelte/mouse buttons/Arc.svelte",
@@ -167,8 +169,6 @@
     "src/lib/ts/state/ElementState.ts",
     "build.sh",
     "src/lib/ts/state/ButtonState.ts",
-    "src/lib/ts/state/MouseState.ts",
-    "src/lib/ts/state/MuoseState.ts",
     "help/actions/dots.md",
     "help/looks/top/breadcrumbs.md",
     "help/looks/graph/graph.md",

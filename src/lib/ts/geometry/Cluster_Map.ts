@@ -79,8 +79,7 @@ export default class Cluster_Map  {
 				index += 1;
 			}
 		}
-		this.arc_map.fork_angle = this.fork_angle;
-		this.arc_map.update_fork_forShown(this.shown);
+		this.arc_map.setup(this.fork_angle, this.shown);
 		const semi_major = this.arc_map.inside_arc_radius - this.arc_map.fork_radius - k.dot_size / 2;
 		const semi_minor = this.arc_map.inside_arc_radius / 2;
 		const ellipse_axes = new Point(semi_minor, semi_major);
@@ -103,6 +102,7 @@ export default class Cluster_Map  {
 		this.focus_ancestry.thing?.page_states.set_page_index_for(index, this);
 		this.setup_cluster_title_forIndex();
 		this.update_thumb_angle_andCenter();
+		this.update_thumb_start_andEnd();
 	}
 	
 	adjust_indexFor_mouse_angle(mouse_angle: number) {
@@ -201,6 +201,16 @@ export default class Cluster_Map  {
 	update_thumb_angle_andCenter() {
 		this.thumb_angle = this.updated_thumb_angle;
 		this.thumb_center = this.arc_map.center_at(this.thumb_arc_radius, this.thumb_angle).offsetByXY(15, 15);
+	}
+
+	update_thumb_start_andEnd() {
+		const index = Math.floor(this.page_index);
+		const arc_start = Math.min(this.arc_map.start_angle, this.arc_map.end_angle);
+		const increment = Math.abs(this.arc_map.spread_angle) / this.shown;
+		const start = arc_start + increment * index;
+		const end = start + increment;
+		this.thumb_map.end_angle = end;
+		this.thumb_map.start_angle = start;
 	}
 
 	detect_grab_start_end(index: number, fork_y: number, max: number, child_angle: number) {

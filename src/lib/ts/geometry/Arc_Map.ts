@@ -20,20 +20,18 @@ export default class Arc_Map {
 		this.outside_arc_radius = this.inside_arc_radius + k.scroll_arc_thickness;
 	}
 
-	update_fork_forShown(shown: number) {
-		const fork_raw_radius = k.ring_thickness * this.fork_radius_multiplier(shown);
+	setup(fork_angle: number, shown: number) {
+		const multiplier = (shown > 3) ? 0.6 : (shown > 1) ? 0.3 : 0.15;
+		const fork_raw_radius = k.ring_thickness * multiplier;
 		this.fork_backoff = this.fork_adjustment(fork_raw_radius, this.inside_arc_radius);
 		this.fork_radius = fork_raw_radius - this.fork_backoff;
+		this.fork_angle = fork_angle;
 		this.shown = shown;
 	}
 
 	center_at(radius: number, angle: number): Point { return Point.square(this.outside_ring_radius).offsetBy(Point.fromPolar(radius, angle)); }
-	fork_radius_multiplier(shown: number): number { return (shown > 3) ? 0.6 : (shown > 1) ? 0.3 : 0.15; }
-	get fork_center(): Point { return this.center_at(this.inside_arc_radius, -this.fork_angle); }
-	get single_svgPath(): string { return svgPaths.circle(this.fork_center, this.fork_radius - 0.5); }
-	get gap_svgPath(): string { return svgPaths.circle(this.fork_center, this.fork_radius - 0.5); }
-	get fork_svgPaths(): string[] { return [this.fork_svgPath(false), this.fork_svgPath(true)]; }
 	get spread_angle(): number { return this.end_angle - this.start_angle; }
+	get straddles_zero(): boolean { return this.start_angle.straddles_zero(this.end_angle); }
 
 	get arc_svgPath(): string {
 		let paths: Array<string> = u.concatenateArrays(this.main_svgPaths, this.outer_svgPaths);
