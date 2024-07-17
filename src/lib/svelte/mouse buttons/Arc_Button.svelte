@@ -12,11 +12,6 @@
 	{#if arc_map.shown < 2}
 		<path stroke={color} fill=transparent d={arc_map.single_svgPath}/>
 	{:else}
-		{#each arc_map.main_svgPaths as mainPath}
-			<path stroke={color} fill=transparent d={mainPath}/>
-		{/each}
-		{#each arc_map.outer_svgPaths as outerPath}
-			<path stroke={color} fill=transparent d={outerPath}/>
-		{/each}
+		<path stroke={color} fill=transparent d={arc_map.arc_svgPath}/>
 	{/if}
 </svg>
