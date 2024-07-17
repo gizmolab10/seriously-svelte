@@ -10,15 +10,16 @@
 	export let color = 'red';
 	const name = cluster_map.cluster_title;
 	const offset = k.necklace_widget_padding;
+	const radius = $s_cluster_arc_radius + offset / 2;
+	const breadth = radius * 2;
 	const thumb_element_state = cluster_map.thumb_element_state;
 	const thumb_size = cluster_map.thumb_radius * 2;
 	const rotation_state = s.rotationState_forName(name);
+	const viewBox=`${-offset} ${-offset} ${breadth} ${breadth}`;
 	let ring_color = transparentize(color, s.scrolling_ring_state.stroke_transparency * 0.9);
 	let thumb_svgPath = cluster_map.thumb_svgPath;
 	let thumb_center = cluster_map.thumb_center;
-	let radius = $s_cluster_arc_radius + offset;
 	let title_origin = Point.zero;
-	const breadth = radius * 2;
 	let label_title = k.empty;
 	let mouse_up_count = 0;
 
@@ -143,10 +144,11 @@
 	top: {center.y - radius}px;
 	left: {center.x - radius}px;'>
 	<Arc_Button
-		offset={offset}
-		breadth={breadth}
+		size={breadth}
+		viewBox={viewBox}
 		color={ring_color}
-		arc_map={cluster_map.arc_map}/>
+		arc_map={cluster_map.arc_map}
+		element_state={cluster_map.arc_element_state}/>
 	{#if (cluster_map.isPaging)}
 		<Button name='thumb-responder'
 			element_state={thumb_element_state}
