@@ -15,8 +15,6 @@ import { s_graphRect, s_ring_angle, s_ancestry_focus, s_cluster_arc_radius } fro
 export default class Cluster_Map  {
 	focus_ancestry: Ancestry = get(s_ancestry_focus);
 	widget_maps: Array<Widget_MapRect> = [];	// maximum a page's worth, will be combined into geometry.widget_maps
-	thumb_element_state!: Element_State;
-	arc_element_state!: Element_State;
 	ancestries: Array<Ancestry> = [];
 	fork_angle_leansForward = false;
 	fork_angle_pointsRight = false;
@@ -56,12 +54,8 @@ export default class Cluster_Map  {
 		this.color = transparentize(this.focus_ancestry.thing?.color ?? this.color, 0.8);
 		this.center = get(s_graphRect).size.dividedInHalf.asPoint;
 		this.fork_angle = this.forkAngle_for(this.predicate, this.points_out) ?? 0;
-		this.arc_element_state = s.elementState_for(this.focus_ancestry, ElementType.arc, this.cluster_title);
-		this.thumb_element_state = s.elementState_for(this.focus_ancestry, ElementType.thumb, this.cluster_title);
 		this.fork_angle_leansForward = new Angle(this.fork_angle).angle_leansForward;
 		this.fork_angle_pointsRight = new Angle(this.fork_angle).angle_pointsRight;
-		// this.thumb_element_state.set_forHovering(this.color, 'pointer');
-		this.arc_element_state.set_forHovering('transparent', 'pointer');
 		this.widget_maps = [];
 		if (this.shown > 0 && !!this.predicate) {
 			const radius = this.svg_arc.outside_ring_radius;

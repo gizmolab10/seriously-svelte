@@ -41,11 +41,12 @@ export default class SVG_Arc {
 	get spread_angle(): number { return this.end_angle - this.start_angle; }
 
 	get arc_svgPath(): string {
-		const paths = [
+		const paths = [//'M ',
+			// this.startOf_svgPath(this.outside_arc_radius),
 			this.big_svgPath(this.outside_arc_radius),
 			this.small_svgPath(this.end_angle, false),
-			this.big_svgPath(this.inside_arc_radius),
-			this.small_svgPath(this.start_angle, true)];
+			this.small_svgPath(this.start_angle, true),
+			this.big_svgPath(this.inside_arc_radius)];
 		return paths.join(k.space);
 	}
 
@@ -54,7 +55,7 @@ export default class SVG_Arc {
 		const forward = this.adjust_for_leaningForward;
 		const referenceAngle = forward ? this.end_angle : this.start_angle
 		const start = this.clusters_center.offsetBy(radial.rotate_by(referenceAngle));
-		return `M ${start.x} ${start.y}`;
+		return `${start.x} ${start.y}`;
 	}
 
 	big_svgPath(radius: number) {

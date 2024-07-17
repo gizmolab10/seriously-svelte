@@ -12,7 +12,6 @@
 	const offset = k.necklace_widget_padding;
 	const radius = $s_cluster_arc_radius + offset;
 	const breadth = radius * 2;
-	const thumb_element_state = cluster_map.thumb_element_state;
 	const thumb_size = cluster_map.thumb_radius * 2;
 	const rotation_state = s.rotationState_forName(name);
 	const viewBox=`${-offset} ${-offset} ${breadth} ${breadth}`;
@@ -23,21 +22,17 @@
 	let label_title = k.empty;
 	let mouse_up_count = 0;
 
-	onMount(() => {
-		thumb_element_state.color_background = ring_color;
-	})
+	// draws the "talking" scroll bar
+	// uses cluster map for svg, which also has total and shown
+	//
+	// drawn by scrolling ring, which is drawn by clusters graph
+	// CHANGE: drawn by clusters (which is drawn by clusters graph)?
 
 	function update_thumb() {
 		thumb_svgPath = cluster_map.thumb_svgPath;
 		thumb_center = cluster_map.thumb_center;
 		layout_title();
 	}
-
-	// draws the "talking" scroll bar
-	// uses cluster map for svg, which also has total and shown
-	//
-	// drawn by scrolling ring, which is drawn by clusters graph
-	// CHANGE: drawn by clusters (which is drawn by clusters graph)?
 
 	$: {
 		if (mouse_up_count != $s_mouse_up_count) {
@@ -132,8 +127,6 @@
 		}
 	}
 
-	// && (s.scrolling_ring_state.isHovering || rotation_state.isActive)
-
 </script>
 
 <div name={name} style='
@@ -148,7 +141,6 @@
 	</svg>
 	{#if (cluster_map.isPaging)}
 		<Mouse_Responder name='thumb-responder'
-			element_state={thumb_element_state}
 			center={thumb_center}
 			height={thumb_size}
 			width={thumb_size}
