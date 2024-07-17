@@ -1,4 +1,4 @@
-import { k, s, get, Rect, Point, Angle, IDLine, svgPaths, Ancestry, Quadrant, Arc_Map } from '../common/Global_Imports';
+import { k, s, get, Rect, Point, Angle, IDLine, svgPaths, Ancestry, Quadrant, SVG_Arc } from '../common/Global_Imports';
 import { Predicate, ElementType, Element_State, transparentize, Widget_MapRect } from '../common/Global_Imports';
 import { s_graphRect, s_ring_angle, s_ancestry_focus, s_cluster_arc_radius } from '../state/Reactive_State';
 
@@ -21,8 +21,8 @@ export default class Cluster_Map  {
 	fork_angle_leansForward = false;
 	fork_angle_pointsRight = false;
 	thumb_center = Point.zero;
-	thumb_map = new Arc_Map();
-	arc_map = new Arc_Map();
+	svg_thumb = new SVG_Arc();
+	svg_arc = new SVG_Arc();
 	cluster_title = k.empty;
 	color = k.color_default;
 	straddles_zero = false;
@@ -43,7 +43,7 @@ export default class Cluster_Map  {
 		this.total = total;
 		this.setup();
 		s_cluster_arc_radius.subscribe((radius: number) => {
-			if (this.arc_map.outside_ring_radius != radius) {
+			if (this.svg_arc.outside_ring_radius != radius) {
 				this.setup();
 				this.set_page_index(0);		// reset page state
 			}
@@ -64,7 +64,7 @@ export default class Cluster_Map  {
 		this.arc_element_state.set_forHovering('transparent', 'pointer');
 		this.widget_maps = [];
 		if (this.shown > 0 && !!this.predicate) {
-			const radius = this.arc_map.outside_ring_radius;
+			const radius = this.svg_arc.outside_ring_radius;
 			const rotated = new Point(radius + k.necklace_widget_padding, 0);
 			const tweak = this.center.offsetByXY(2, -1.5);	// tweak so that drag dots are centered within the necklace ring
 			const max = this.shown - 1;
@@ -79,12 +79,12 @@ export default class Cluster_Map  {
 				index += 1;
 			}
 		}
-		this.arc_map.setup(this.fork_angle, this.shown);
-		const semi_major = this.arc_map.inside_arc_radius - this.arc_map.fork_radius - k.dot_size / 2;
-		const semi_minor = this.arc_map.inside_arc_radius / 2;
+		this.svg_arc.setup(this.fork_angle, this.shown);
+		const semi_major = this.svg_arc.inside_arc_radius - this.svg_arc.fork_radius - k.dot_size / 2;
+		const semi_minor = this.svg_arc.inside_arc_radius / 2;
 		const ellipse_axes = new Point(semi_minor, semi_major);
 		this.label_tip = ellipse_axes.ellipse_coordiates_forAngle(this.fork_angle);
-		this.straddles_zero = this.arc_map.start_angle.straddles_zero(this.arc_map.end_angle);
+		this.straddles_zero = this.svg_arc.start_angle.straddles_zero(this.svg_arc.end_angle);
 		this.setup_cluster_title_forIndex();
 	}
 
@@ -93,7 +93,7 @@ export default class Cluster_Map  {
 	get maximum_page_index(): number { return this.total - this.shown; }
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
 	get description(): string { return `${this.predicate.kind}  ${this.titles}`; }
-	get thumb_arc_radius(): number { return this.arc_map.inside_arc_radius + k.scroll_arc_thickness / 2; }
+	get thumb_arc_radius(): number { return this.svg_arc.inside_arc_radius + k.scroll_arc_thickness / 2; }
 	get page_index(): number { return this.focus_ancestry.thing?.page_states?.index_for(this.points_out, this.predicate) ?? 0; }
 
 	fork_radius_multiplier(shown: number): number { return (shown > 3) ? 0.6 : (shown > 1) ? 0.3 : 0.15; }
@@ -108,19 +108,19 @@ export default class Cluster_Map  {
 	adjust_indexFor_mouse_angle(mouse_angle: number) {
 		const fork_Angle = new Angle(this.fork_angle);
 		const quadrant = fork_Angle.quadrant_ofAngle;
-		let movement_angle = this.arc_map.start_angle - mouse_angle;
-		let spread_angle = this.arc_map.spread_angle;
+		let movement_angle = this.svg_arc.start_angle - mouse_angle;
+		let spread_angle = this.svg_arc.spread_angle;
 		if (this.straddles_zero) {
 			if (quadrant == Quadrant.upperRight) {
 				movement_angle = movement_angle.normalized_angle();
 				spread_angle = (-spread_angle).normalized_angle();
 			} else {
-				movement_angle = mouse_angle - this.arc_map.end_angle;
+				movement_angle = mouse_angle - this.svg_arc.end_angle;
 			}
 		} else {
 			switch (quadrant) {
 				case Quadrant.lowerRight:
-				case Quadrant.upperLeft: movement_angle = this.arc_map.end_angle - mouse_angle; break;
+				case Quadrant.upperLeft: movement_angle = this.svg_arc.end_angle - mouse_angle; break;
 				case Quadrant.upperRight: movement_angle = -movement_angle; break;
 				case Quadrant.lowerLeft: spread_angle = -spread_angle; break;
 			}
@@ -149,21 +149,21 @@ export default class Cluster_Map  {
 	get updated_thumb_angle(): number {
 		const fork_Angle = new Angle(this.fork_angle);
 		const quadrant = fork_Angle.quadrant_ofAngle;
-		let angle = (this.arc_map.start_angle + this.arc_map.end_angle) / 2;
+		let angle = (this.svg_arc.start_angle + this.svg_arc.end_angle) / 2;
 		if (this.maximum_page_index > 0) {
 			const fraction = this.page_index / this.maximum_page_index;
 			if (fraction > 1) {
-				angle = this.arc_map.end_angle;
+				angle = this.svg_arc.end_angle;
 			} else {
 				if (this.straddles_zero) {
-					let spread_angle = (this.arc_map.start_angle - this.arc_map.end_angle).normalized_angle();
-					angle = angle = this.arc_map.start_angle - (spread_angle * fraction);
+					let spread_angle = (this.svg_arc.start_angle - this.svg_arc.end_angle).normalized_angle();
+					angle = angle = this.svg_arc.start_angle - (spread_angle * fraction);
 				} else {
-					let adjusted = this.arc_map.spread_angle * fraction;
-					angle = this.arc_map.start_angle + adjusted;
+					let adjusted = this.svg_arc.spread_angle * fraction;
+					angle = this.svg_arc.start_angle + adjusted;
 					switch (quadrant) {
 						case Quadrant.upperLeft:
-						case Quadrant.lowerRight: angle = this.arc_map.end_angle - adjusted; break;
+						case Quadrant.lowerRight: angle = this.svg_arc.end_angle - adjusted; break;
 					}
 				}
 				angle = angle.normalized_angle();
@@ -203,31 +203,32 @@ export default class Cluster_Map  {
 		const clusters_center = Point.square(get(s_cluster_arc_radius));
 		const thumb_radial = Point.fromPolar(this.thumb_arc_radius, this.thumb_angle);
 		this.thumb_center = clusters_center.offsetBy(thumb_radial).offsetEquallyBy(15);
+		this.svg_thumb.setup(this.thumb_angle, 1);
 	}
 	
 	update_thumb_start_andEnd() {
 		const index = Math.floor(this.page_index);
-		const arc_start = Math.min(this.arc_map.start_angle, this.arc_map.end_angle);
-		const increment = Math.abs(this.arc_map.spread_angle) / this.shown;
+		const arc_start = Math.min(this.svg_arc.start_angle, this.svg_arc.end_angle);
+		const increment = Math.abs(this.svg_arc.spread_angle) / this.shown;
 		const start = arc_start + increment * index;
 		const end = start + increment;
-		this.thumb_map.end_angle = end;
-		this.thumb_map.start_angle = start;
+		this.svg_thumb.end_angle = end;
+		this.svg_thumb.start_angle = start;
 	}
 
 	detect_grab_start_end(index: number, fork_y: number, max: number, child_angle: number) {
 		// detect and grab start and end
 		if (index == 0) {
 			if (fork_y > 0) {
-				this.arc_map.start_angle = child_angle;
+				this.svg_arc.start_angle = child_angle;
 			} else {
-				this.arc_map.end_angle = child_angle;
+				this.svg_arc.end_angle = child_angle;
 			}
 		} else if (index == max) {
 			if (fork_y < 0) {
-				this.arc_map.start_angle = child_angle;
+				this.svg_arc.start_angle = child_angle;
 			} else {
-				this.arc_map.end_angle = child_angle;
+				this.svg_arc.end_angle = child_angle;
 			}
 		}
 	}

@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { g, k, s, u, Rect, Point, ZIndex, onMount, Cluster_Map, Orientation, transparentize } from '../../ts/common/Global_Imports';
 	import { s_ring_angle, s_mouse_up_count, s_mouse_location, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
+	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { ArcPart } from '../../ts/common/Enumerations';
-	import Button from '../mouse buttons/Button.svelte';
 	import Arc from '../kit/Arc.svelte';
 	export let cursor_closure = () => {};
 	export let cluster_map: Cluster_Map;
@@ -144,19 +144,19 @@
 	top: {center.y - radius}px;
 	left: {center.x - radius}px;'>
 	<svg class='svg-scroll-arc' viewBox={viewBox}>
-		<path stroke={ring_color} fill=transparent d={cluster_map.arc_map.arc_svgPath}/>
+		<path stroke={ring_color} fill=transparent d={cluster_map.svg_arc.arc_svgPath}/>
 	</svg>
 	{#if (cluster_map.isPaging)}
-		<Button name='thumb-responder'
+		<Mouse_Responder name='thumb-responder'
 			element_state={thumb_element_state}
 			center={thumb_center}
 			height={thumb_size}
 			width={thumb_size}
 			closure={closure}>
 			<svg class='svg-thumb-arc' viewBox={viewBox}>
-				<path stroke={ring_color} fill=transparent d={cluster_map.thumb_map.arc_svgPath}/>
+				<path stroke={ring_color} fill=transparent d={cluster_map.svg_thumb.arc_svgPath}/>
 			</svg>
-		</Button>
+		</Mouse_Responder>
 	{/if}
 </div>
 <div class='cluster-label'

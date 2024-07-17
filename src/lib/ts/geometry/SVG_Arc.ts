@@ -8,7 +8,7 @@ import { s_cluster_arc_radius } from '../state/Reactive_State';
 //	s_cluster_arc_radius
 //	number shown
 
-export default class Arc_Map {
+export default class SVG_Arc {
 	clusters_center = Point.zero;
 	outside_ring_radius = 0;
 	outside_arc_radius = 0;
@@ -47,6 +47,14 @@ export default class Arc_Map {
 			this.big_svgPath(this.inside_arc_radius),
 			this.small_svgPath(this.start_angle, true)];
 		return paths.join(k.space);
+	}
+
+	startOf_svgPath(radius: number) {
+		const radial = new Point(radius, 0);
+		const forward = this.adjust_for_leaningForward;
+		const referenceAngle = forward ? this.end_angle : this.start_angle
+		const start = this.clusters_center.offsetBy(radial.rotate_by(referenceAngle));
+		return `M ${start.x} ${start.y}`;
 	}
 
 	big_svgPath(radius: number) {

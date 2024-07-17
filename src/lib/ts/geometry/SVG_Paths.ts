@@ -49,6 +49,13 @@ export default class SVG_Paths {
         return `M${radius - width} ${radius}a${width} ${height} 0 1,0 ${doubleWidth} 0a${width} ${height} 0 1,0 ${-doubleWidth} 0`;
     }
 
+	arc_partial(center: Point, radius: number, sweepFlag: number, referenceAngle: number, endAngle: number): string {
+		const radial = new Point(radius, 0);
+		const end = center.offsetBy(radial.rotate_by(endAngle));
+		const largeArcFlag = ((referenceAngle - endAngle).normalized_angle() > Math.PI) ? 1 : 0;
+		return `A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${end.x} ${end.y}`;
+	}
+
 	arc(center: Point, radius: number, sweepFlag: number, referenceAngle: number, endAngle: number): string {
 		const radial = new Point(radius, 0);
 		const end = center.offsetBy(radial.rotate_by(endAngle));
