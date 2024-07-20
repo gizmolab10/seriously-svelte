@@ -57,6 +57,8 @@ export default class Cluster_Map  {
 		this.fork_angle = this.forkAngle_for(this.predicate, this.points_out) ?? 0;
 		this.arc_element_state = s.elementState_for(this.focus_ancestry, ElementType.arc, this.cluster_title);
 		this.thumb_element_state = s.elementState_for(this.focus_ancestry, ElementType.thumb, this.cluster_title);
+		this.arc_element_state = s.elementState_for(this.focus_ancestry, ElementType.arc, this.cluster_title);
+		this.thumb_element_state = s.elementState_for(this.focus_ancestry, ElementType.thumb, this.cluster_title);
 		this.fork_angle_leansForward = new Angle(this.fork_angle).angle_leansForward;
 		this.fork_angle_pointsRight = new Angle(this.fork_angle).angle_pointsRight;
 		// this.thumb_element_state.set_forHovering(this.color, 'pointer');
@@ -115,10 +117,12 @@ export default class Cluster_Map  {
 				spread_angle = (-spread_angle).normalized_angle();
 			} else {
 				movement_angle = mouse_angle - this.arc_map.end_angle;
+				movement_angle = mouse_angle - this.arc_map.end_angle;
 			}
 		} else {
 			switch (quadrant) {
 				case Quadrant.lowerRight:
+				case Quadrant.upperLeft: movement_angle = this.arc_map.end_angle - mouse_angle; break;
 				case Quadrant.upperLeft: movement_angle = this.arc_map.end_angle - mouse_angle; break;
 				case Quadrant.upperRight: movement_angle = -movement_angle; break;
 				case Quadrant.lowerLeft: spread_angle = -spread_angle; break;
@@ -153,6 +157,7 @@ export default class Cluster_Map  {
 			const fraction = this.page_index / this.maximum_page_index;
 			if (fraction > 1) {
 				angle = this.arc_map.end_angle;
+				angle = this.arc_map.end_angle;
 			} else {
 				if (this.straddles_zero) {
 					let spread_angle = (this.arc_map.start_angle - this.arc_map.end_angle).normalized_angle();
@@ -162,6 +167,7 @@ export default class Cluster_Map  {
 					angle = this.arc_map.start_angle + adjusted;
 					switch (quadrant) {
 						case Quadrant.upperLeft:
+						case Quadrant.lowerRight: angle = this.arc_map.end_angle - adjusted; break;
 						case Quadrant.lowerRight: angle = this.arc_map.end_angle - adjusted; break;
 					}
 				}
@@ -219,13 +225,17 @@ export default class Cluster_Map  {
 		if (index == 0) {
 			if (fork_y > 0) {
 				this.arc_map.start_angle = child_angle;
+				this.arc_map.start_angle = child_angle;
 			} else {
+				this.arc_map.end_angle = child_angle;
 				this.arc_map.end_angle = child_angle;
 			}
 		} else if (index == max) {
 			if (fork_y < 0) {
 				this.arc_map.start_angle = child_angle;
+				this.arc_map.start_angle = child_angle;
 			} else {
+				this.arc_map.end_angle = child_angle;
 				this.arc_map.end_angle = child_angle;
 			}
 		}

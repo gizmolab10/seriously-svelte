@@ -7,7 +7,6 @@
 	export let cluster_map: Cluster_Map;
 	export let center = Point.zero;
 	export let color = 'red';
-	const name = cluster_map.cluster_title;
 	const offset = k.necklace_widget_padding;
 	const radius = $s_cluster_arc_radius + offset;
 	const breadth = radius * 2;
@@ -23,7 +22,7 @@
 	let mouse_up_count = 0;
 
 	onMount(() => {
-		thumb_element_state.color_background = ring_color;
+		cluster_map.thumb_element_state.color_background = ring_color;
 	})
 
 	function update_thumb() {
