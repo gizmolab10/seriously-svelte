@@ -44,8 +44,7 @@ export default class Cluster_Map  {
 		this.setup();
 		s_cluster_arc_radius.subscribe((radius: number) => {
 			if (this.arc_map.outside_ring_radius != radius) {
-				this.setup();
-				this.set_page_index(0);		// reset page state
+				this.setup();		// do not set_page_index (causes hang)
 			}
 		})
 	}

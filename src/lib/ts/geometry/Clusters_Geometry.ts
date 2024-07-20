@@ -1,5 +1,5 @@
-import { k, u, get, Ancestry, Page_State, Predicate, Cluster_Map, Widget_MapRect } from '../common/Global_Imports';
-import { s_page_state, s_ancestry_focus, s_cluster_arc_radius } from '../state/Reactive_State';
+import { get, Ancestry, Page_State, Predicate, Cluster_Map, Widget_MapRect } from '../common/Global_Imports';
+import { s_page_state, s_ancestry_focus } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
 
 export default class Clusters_Geometry {
@@ -66,13 +66,6 @@ export default class Clusters_Geometry {
 			const cluster_map = new Cluster_Map(ancestries.length, onePage, predicate, points_out);
 			this.set_cluster_map_for(cluster_map, points_out, predicate);
 		}
-	}
-
-	apportionAncestries() {}
-
-	// determine angular stretch for predicate + line angle + fit length
-	stretch_forPredicate_angle_length(predicate: Predicate, angle: number, fitTo: number): number {
-		return 0;
 	}
 
 }
