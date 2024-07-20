@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { g, k, s, u, Rect, Point, ZIndex, onMount, Cluster_Map, Orientation, transparentize } from '../../ts/common/Global_Imports';
 	import { s_ring_angle, s_mouse_up_count, s_mouse_location, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
+	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { ArcPart } from '../../ts/common/Enumerations';
-	import Button from '../mouse buttons/Button.svelte';
 	export let cursor_closure = () => {};
 	export let cluster_map: Cluster_Map;
 	export let center = Point.zero;
@@ -10,10 +10,10 @@
 	const offset = k.necklace_widget_padding;
 	const radius = $s_cluster_arc_radius + offset;
 	const breadth = radius * 2;
-	const thumb_element_state = cluster_map.thumb_element_state;
 	const thumb_size = cluster_map.thumb_radius * 2;
 	const rotation_state = s.rotationState_forName(name);
 	const viewBox=`${-offset} ${-offset} ${breadth} ${breadth}`;
+	const thumb_element_state = cluster_map.thumb_element_state;
 	let ring_color = transparentize(color, s.scrolling_ring_state.stroke_transparency * 0.9);
 	let thumb_svgPath = cluster_map.thumb_svgPath;
 	let thumb_center = cluster_map.thumb_center;
@@ -22,7 +22,7 @@
 	let mouse_up_count = 0;
 
 	onMount(() => {
-		cluster_map.thumb_element_state.color_background = ring_color;
+		thumb_element_state.color_background = ring_color;
 	})
 
 	function update_thumb() {
@@ -145,16 +145,14 @@
 		<path stroke={ring_color} fill=transparent d={cluster_map.arc_map.arc_svgPath}/>
 	</svg>
 	{#if (cluster_map.isPaging)}
-		<Button name='thumb-responder'
-			element_state={thumb_element_state}
+		<Mouse_Responder name='thumb-responder'
 			center={thumb_center}
 			height={thumb_size}
-			width={thumb_size}
-			closure={closure}>
+			width={thumb_size}>
 			<svg class='svg-thumb-arc' viewBox={viewBox}>
 				<path stroke={ring_color} fill=transparent d={cluster_map.thumb_map.arc_svgPath}/>
 			</svg>
-		</Button>
+		</Mouse_Responder>
 	{/if}
 </div>
 <div class='cluster-label'

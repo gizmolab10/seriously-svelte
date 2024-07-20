@@ -86,7 +86,7 @@ export default class Cluster_Map  {
 		const ellipse_axes = new Point(semi_minor, semi_major);
 		this.label_tip = ellipse_axes.ellipse_coordiates_forAngle(this.fork_angle);
 		this.straddles_zero = this.arc_map.start_angle.straddles_zero(this.arc_map.end_angle);
-		this.setup_cluster_title_forIndex();
+		this.update_forThumb();
 	}
 
 	destructor() { this.ancestries = []; }
@@ -101,6 +101,10 @@ export default class Cluster_Map  {
 
 	set_page_index(index: number) {
 		this.focus_ancestry.thing?.page_states.set_page_index_for(index, this);
+		this.update_forThumb();
+	}
+
+	update_forThumb() {
 		this.setup_cluster_title_forIndex();
 		this.update_thumb_angle_andCenter();
 		this.update_thumb_start_andEnd();
