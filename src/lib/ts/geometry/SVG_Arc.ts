@@ -43,6 +43,7 @@ export default class SVG_Arc {
 	get arc_svgPath(): string {
 		const paths = [//'M ',
 			// this.startOf_svgPath(this.outside_arc_radius),
+			this.tinyDot_svgPath(this.outside_arc_radius, this.start_angle),
 			this.big_svgPath(this.outside_arc_radius),
 			this.small_svgPath(this.end_angle, false),
 			this.small_svgPath(this.start_angle, true),
@@ -56,6 +57,12 @@ export default class SVG_Arc {
 		const referenceAngle = forward ? this.end_angle : this.start_angle
 		const start = this.clusters_center.offsetBy(radial.rotate_by(referenceAngle));
 		return `${start.x} ${start.y}`;
+	}
+
+	tinyDot_svgPath(radius: number, referenceAngle: number) {
+		const radial = new Point(radius, 0);
+		const start = this.clusters_center.offsetBy(radial.rotate_by(referenceAngle));
+		return svgPaths.circle(start, 2);
 	}
 
 	big_svgPath(radius: number) {
