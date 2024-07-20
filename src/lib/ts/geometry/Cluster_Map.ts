@@ -1,4 +1,4 @@
-import { k, s, get, Rect, Point, Angle, IDLine, svgPaths, Ancestry, Quadrant, Arc_Map } from '../common/Global_Imports';
+import { k, s, get, Rect, Point, Angle, IDLine, svgPaths, Ancestry, Quadrant, SVG_Arc } from '../common/Global_Imports';
 import { Predicate, ElementType, Element_State, transparentize, Widget_MapRect } from '../common/Global_Imports';
 import { s_graphRect, s_ring_angle, s_ancestry_focus, s_cluster_arc_radius } from '../state/Reactive_State';
 
@@ -21,8 +21,8 @@ export default class Cluster_Map  {
 	fork_angle_leansForward = false;
 	fork_angle_pointsRight = false;
 	thumb_center = Point.zero;
-	thumb_map = new Arc_Map();
-	arc_map = new Arc_Map();
+	thumb_map = new SVG_Arc();
+	arc_map = new SVG_Arc();
 	cluster_title = k.empty;
 	color = k.color_default;
 	straddles_zero = false;

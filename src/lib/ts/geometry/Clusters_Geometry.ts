@@ -11,7 +11,9 @@ export default class Clusters_Geometry {
 
 	constructor() {
 		this.layout();
-		s_page_state.subscribe((state: Page_State) => { this.update_forPage_state(state)});
+		s_page_state.subscribe((state: Page_State) => {
+			this.update_forPage_state(state);
+		});
 	}
 
 	update_forPage_state(page_state: Page_State) {

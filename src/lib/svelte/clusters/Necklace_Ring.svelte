@@ -73,7 +73,9 @@
 					$s_cluster_arc_radius += pixels;
 				}
 			} else if (!s.isAnyRotation_active) {
-				s.necklace_ringState.isHovering = isHit();	// show highlight around ring
+				if (s.necklace_ringState.isHovering != isHit()) {
+					s.necklace_ringState.isHovering = isHit();	// show highlight around ring
+				}
 				cursor_closure();
 			}
 			if (sendSignal) {

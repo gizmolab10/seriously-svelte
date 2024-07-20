@@ -8,7 +8,7 @@ import { s_cluster_arc_radius } from '../state/Reactive_State';
 //	s_cluster_arc_radius
 //	number shown
 
-export default class Arc_Map {
+export default class SVG_Arc {
 	clusters_center = Point.zero;
 	outside_ring_radius = 0;
 	outside_arc_radius = 0;
