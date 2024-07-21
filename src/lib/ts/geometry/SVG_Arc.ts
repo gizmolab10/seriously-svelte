@@ -27,7 +27,7 @@ export default class SVG_Arc {
 		this.outside_arc_radius = this.inside_arc_radius + k.scroll_arc_thickness;
 	}
 
-	setup(fork_angle: number, shown: number) {
+	update(fork_angle: number, shown: number) {
 		const multiplier = (shown > 3) ? 0.6 : (shown > 1) ? 0.3 : 0.15;
 		const fork_raw_radius = k.ring_thickness * multiplier;
 		this.fork_backoff = this.fork_adjustment(fork_raw_radius, this.inside_arc_radius);
