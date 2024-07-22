@@ -42,11 +42,27 @@ export default class SVG_Arc {
 
 	get arc_svgPath(): string {
 		const paths = [
+			// this.tinyDot_svgPath(this.inside_arc_radius, this.end_angle),
 			this.big_svgPath(this.outside_arc_radius),
 			this.small_svgPath(this.end_angle, false),
 			this.big_svgPath(this.inside_arc_radius),
-			this.small_svgPath(this.start_angle, true)];
+			this.small_svgPath(this.start_angle, true)
+		];
 		return paths.join(k.space);
+	}
+
+	tinyDot_svgPath(radius: number, referenceAngle: number) {
+		const radial = new Point(radius, 0);
+		const start = this.clusters_center.offsetBy(radial.rotate_by(referenceAngle));
+		return svgPaths.circle(start, 20);
+	}
+
+	startOf_svgPath(radius: number) {
+		const radial = new Point(radius, 0);
+		const forward = this.adjust_for_leaningForward;
+		const referenceAngle = forward ? this.end_angle : this.start_angle
+		const start = this.clusters_center.offsetBy(radial.rotate_by(referenceAngle));
+		return `${start.x} ${start.y}`;
 	}
 
 	big_svgPath(radius: number) {

@@ -81,16 +81,6 @@ export class Point {
 		}
 	}
 
-	static origin_inWindowCoordinates_for(element: HTMLElement): Point {
-		let e: HTMLElement | null = element;
-		let point = Point.zero;
-		while (e) {
-			point = point.offsetByXY(e.offsetLeft, e.offsetTop);
-			e = e.offsetParent as HTMLElement;
-		}
-		return point;
-	}
-
 	get orientation_ofVector(): Orientation {
 		let quadrant = new Angle(this.angle).quadrant_ofAngle;
 		const isFirstEighth = (this.angle).normalize_between_zeroAnd(Angle.quarter) < (Math.PI / 4);
@@ -100,6 +90,16 @@ export class Point {
 			case Quadrant.upperLeft:  return isFirstEighth ? Orientation.left  : Orientation.down;
 			default:				  return isFirstEighth ? Orientation.down  : Orientation.right;
 		}
+	}
+
+	static origin_inWindowCoordinates_for(element: HTMLElement): Point {
+		let e: HTMLElement | null = element;
+		let point = Point.zero;
+		while (e) {
+			point = point.offsetByXY(e.offsetLeft, e.offsetTop);
+			e = e.offsetParent as HTMLElement;
+		}
+		return point;
 	}
 	
 }

@@ -68,6 +68,15 @@ Object.defineProperty(String.prototype, 'hash', {
 	configurable: true
 });
 
+Object.defineProperty(String.prototype, 'sizeOf_svgPath', {
+	value: function(): string {
+		return this.split(' ').slice(-1)[0];
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
 declare global {
 	interface Number {
 		degrees_of(): string;

@@ -1,31 +1,26 @@
 <script lang='ts'>
-	import { g, k, s, u, Rect, Point, ZIndex, onMount, Cluster_Map, Orientation, transparentize } from '../../ts/common/Global_Imports';
-	import { s_ring_angle, s_mouse_up_count, s_mouse_location, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
+	import { g, k, s, u, Rect, Size, Point, ZIndex, onMount, Cluster_Map, Orientation, ElementType, transparentize } from '../../ts/common/Global_Imports';
+	import { s_ring_angle, s_mouse_up_count, s_mouse_location, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { ArcPart } from '../../ts/common/Enumerations';
 	export let cursor_closure = () => {};
 	export let cluster_map: Cluster_Map;
 	export let center = Point.zero;
 	export let color = 'red';
+	const name = s.name_from($s_ancestry_focus, ElementType.arc, cluster_map.cluster_title);
+	const rotation_state = s.rotationState_forName(name);
+	const thumb_size = cluster_map.thumb_radius * 2;
+	const thumb_name = `thumb-${name}`;
 	const offset = k.necklace_widget_padding;
 	const radius = $s_cluster_arc_radius + offset;
-	const thumb_size = cluster_map.thumb_radius * 2;
-	const name = cluster_map.arc_element_state.name;
-	const thumb_name = `thumb-${name}`;
 	const breadth = radius * 2;
-	const rotation_state = s.rotationState_forName(name);
 	const viewBox=`${-offset} ${-offset} ${breadth} ${breadth}`;
-	const thumb_element_state = cluster_map.thumb_element_state;
+	let thumb_color = transparentize(color, s.scrolling_ring_state.stroke_transparency * 0.8);
 	let ring_color = transparentize(color, s.scrolling_ring_state.stroke_transparency * 0.9);
 	let thumb_svgPath = cluster_map.svg_thumb.arc_svgPath;
-	let thumb_center = cluster_map.thumb_center;
 	let title_origin = Point.zero;
 	let label_title = k.empty;
 	let mouse_up_count = 0;
-
-	onMount(() => {
-		thumb_element_state.color_background = ring_color;
-	})
 
 	// draws the "talking" scroll bar
 	// uses cluster map for svg, which also has total and shown
@@ -68,7 +63,8 @@
 
 	function update_thumb_andTitle() {
 		thumb_svgPath = cluster_map.svg_thumb.arc_svgPath;
-		thumb_center = cluster_map.thumb_center;
+		const size = u.sizeFrom_svgPath(thumb_svgPath);
+		console.log(size.description);
 		layout_title();
 	}
 
@@ -132,8 +128,6 @@
 		}
 	}
 
-	// && (s.scrolling_ring_state.isHovering || rotation_state.isActive)
-
 </script>
 
 <div class='scroll-arc-and-thumb' id={name} style='
@@ -145,17 +139,10 @@
 	left: {center.x - radius}px;'>
 	<svg class='svg-scroll-arc' viewBox={viewBox}>
 		<path stroke={ring_color} fill=transparent d={cluster_map.svg_arc.arc_svgPath}/>
+		{#if (cluster_map.isPaging)}
+			<path stroke={thumb_color} fill=transparent d={thumb_svgPath}/>
+		{/if}
 	</svg>
-	{#if (cluster_map.isPaging)}
-		<Mouse_Responder name={thumb_name}
-			center={thumb_center}
-			height={thumb_size}
-			width={thumb_size}>
-			<svg class='svg-thumb-arc' viewBox={viewBox}>
-				<path stroke={ring_color} fill=transparent d={cluster_map.svg_thumb.arc_svgPath}/>
-			</svg>
-		</Mouse_Responder>
-	{/if}
 </div>
 <div class='cluster-label'
 	style='

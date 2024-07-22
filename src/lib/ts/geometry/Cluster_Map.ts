@@ -1,6 +1,6 @@
-import { k, s, u, get, Rect, Point, Angle, IDLine, Ancestry, Quadrant, SVG_Arc } from '../common/Global_Imports';
-import { Predicate, ElementType, Element_State, transparentize, Widget_MapRect } from '../common/Global_Imports';
 import { s_graphRect, s_ring_angle, s_ancestry_focus, s_cluster_arc_radius } from '../state/Reactive_State';
+import { k, u, get, Rect, Point, Angle, IDLine, SVG_Arc, Quadrant } from '../common/Global_Imports';
+import { Ancestry, Predicate, transparentize, Widget_MapRect } from '../common/Global_Imports';
 
 // for one cluster (there are three)
 //
@@ -15,8 +15,6 @@ import { s_graphRect, s_ring_angle, s_ancestry_focus, s_cluster_arc_radius } fro
 export default class Cluster_Map  {
 	focus_ancestry: Ancestry = get(s_ancestry_focus);
 	widget_maps: Array<Widget_MapRect> = [];	// maximum a page's worth, will be combined into geometry.widget_maps
-	thumb_element_state!: Element_State;
-	arc_element_state!: Element_State;
 	ancestries: Array<Ancestry> = [];
 	fork_angle_leansForward = false;
 	fork_angle_pointsRight = false;
@@ -76,12 +74,12 @@ export default class Cluster_Map  {
 	fork_radius_multiplier(shown: number): number { return (shown > 3) ? 0.6 : (shown > 1) ? 0.3 : 0.15; }
 
 	update_arc() {
-		const angle = this.forkAngle_for(this.predicate, this.points_out) ?? 0;
+		const fork_angle = this.forkAngle_for(this.predicate, this.points_out) ?? 0;
 		this.center = get(s_graphRect).size.dividedInHalf.asPoint;
-		this.fork_angle = angle;
-		this.fork_angle_leansForward = new Angle(angle).angle_leansForward;
-		this.fork_angle_pointsRight = new Angle(angle).angle_pointsRight;
-		this.svg_arc.update(angle, this.shown);
+		this.fork_angle = fork_angle;
+		this.fork_angle_leansForward = new Angle(fork_angle).angle_leansForward;
+		this.fork_angle_pointsRight = new Angle(fork_angle).angle_pointsRight;
+		this.svg_arc.update(fork_angle, this.shown);
 		this.straddles_zero = this.svg_arc.start_angle.straddles_zero(this.svg_arc.end_angle);
 	}
 
@@ -176,13 +174,13 @@ export default class Cluster_Map  {
 	}
 	
 	update_thumb_start_andEnd() {
-		const index = Math.floor(this.page_indexOf_focus);
 		const arc_start = Math.min(this.svg_arc.start_angle, this.svg_arc.end_angle);
-		const increment = Math.abs(this.svg_arc.spread_angle) / this.shown;
+		const increment = Math.abs(this.svg_arc.spread_angle) / this.total;
+		const index = Math.floor(this.page_indexOf_focus);
 		const start = arc_start + increment * index;
-		const end = start + increment;
-		this.svg_thumb.end_angle = end;
+		const end = start + increment * this.shown;
 		this.svg_thumb.start_angle = start;
+		this.svg_thumb.end_angle = end;
 	}
 
 	get compute_thumb_angle(): number {
@@ -225,10 +223,6 @@ export default class Cluster_Map  {
 		} else {
 			this.cluster_title = `${quantity}${separator}${shortened}`;
 		}
-		this.arc_element_state = s.elementState_for(this.focus_ancestry, ElementType.arc, this.cluster_title);
-		this.thumb_element_state = s.elementState_for(this.focus_ancestry, ElementType.thumb, this.cluster_title);
-		// this.thumb_element_state.set_forHovering(this.color, 'pointer');
-		this.arc_element_state.set_forHovering('transparent', 'pointer');
 	}
 	
 	static readonly $_ANGLES_$: unique symbol;

@@ -1,8 +1,8 @@
-import { s_graphRect, s_mouse_location, s_user_graphOffset } from '../state/Reactive_State';
-import { s_thing_fontFamily } from '../state/Reactive_State';
+import { s_thing_fontFamily, s_user_graphOffset } from '../state/Reactive_State';
+import { s_graphRect, s_mouse_location } from '../state/Reactive_State';
+import { Size, Point } from '../geometry/Geometry';
 import Identifiable from '../data/Identifiable';
 import { Quadrant } from '../geometry/Angle';
-import { Point } from '../geometry/Geometry';
 import Ancestry from '../managers/Ancestry';
 import { IDBrowser } from './Enumerations';
 import Angle from '../geometry/Angle';
@@ -221,6 +221,62 @@ class Utilities {
 		}
 
 		return hexColor;
+	}
+
+	sizeFrom_svgPath(svgPath: string): Size {
+		let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+		const commands = svgPath.match(/[a-zA-Z][^a-zA-Z]*/g) || [];
+		let x = 0, y = 0;
+		for (const command of commands) {
+			const type = command[0];
+			const args = command.slice(1).trim().split(/[\s,]+/).map(Number);
+			switch (type) {
+				case 'M':
+				case 'L': [x, y] = args; break;
+				case 'a':
+				case 'A': handleArcCommand(args); break;
+				case 'H': x = args[0]; break;
+				case 'V': y = args[0]; break;
+				case 'Z': break; // Close path, no coordinates to update
+				default: throw new Error(`Unsupported command: ${type}`);
+			}
+			minX = Math.min(minX, x);
+			minY = Math.min(minY, y);
+			maxX = Math.max(maxX, x);
+			maxY = Math.max(maxY, y);
+		}
+
+		function handleArcCommand(args: number[]) {
+			const startX = x;
+			const startY = y;
+			let [rx, ry, xAxisRotation, largeArcFlag, sweepFlag, endX, endY] = args;
+			x = endX;
+			y = endY;
+			const xAxisRotationRad = (xAxisRotation * Math.PI) / 180;					// Convert rotation to radians
+			const dx2 = (startX - endX) / 2.0;											// Compute the half distance between the current and the end point
+			const dy2 = (startY - endY) / 2.0;
+			const x1 = Math.cos(xAxisRotationRad) * dx2 + Math.sin(xAxisRotationRad) * dy2;			// Compute (x1, y1)
+			const y1 = -Math.sin(xAxisRotationRad) * dx2 + Math.cos(xAxisRotationRad) * dy2;
+			const radiiCheck = (x1 * x1) / (rx * rx) + (y1 * y1) / (ry * ry);						// Ensure radii are large enough
+			if (radiiCheck > 1) {
+				rx *= Math.sqrt(radiiCheck);
+				ry *= Math.sqrt(radiiCheck);
+			}
+			const sign = largeArcFlag === sweepFlag ? -1 : 1;							// Compute (cx1, cy1)
+			const sq = ((rx * rx) * (ry * ry) - (rx * rx) * (y1 * y1) - (ry * ry) * (x1 * x1)) / ((rx * rx) * (y1 * y1) + (ry * ry) * (x1 * x1));
+			const coef = sign * Math.sqrt(Math.max(sq, 0));
+			const cx1 = coef * ((rx * y1) / ry);
+			const cy1 = coef * -((ry * x1) / rx);
+			const cx = (startX + endX) / 2.0 + Math.cos(xAxisRotationRad) * cx1 - Math.sin(xAxisRotationRad) * cy1;
+			const cy = (startY + endY) / 2.0 + Math.sin(xAxisRotationRad) * cx1 + Math.cos(xAxisRotationRad) * cy1;
+			minX = Math.min(minX, startX, endX, cx - rx, cx + rx);						// Calculate bounding box
+			minY = Math.min(minY, startY, endY, cy - ry, cy + ry);
+			maxX = Math.max(maxX, startX, endX, cx - rx, cx + rx);
+			maxY = Math.max(maxY, startY, endY, cy - ry, cy + ry);
+		}
+
+		const size = new Size(maxX - minX, maxY - minY);
+		return size;
 	}
 
 }
