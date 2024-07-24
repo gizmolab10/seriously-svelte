@@ -157,6 +157,8 @@
   },
   "active": "b96ce36b21ad98e3",
   "lastOpenFiles": [
+    "node_modules/import-local/index.d.ts",
+    "src/lib/ts/geometry/foo",
     "node_modules/ts-node/node_modules",
     "node_modules/ts-jest/node_modules",
     "node_modules/make-dir/node_modules",
@@ -166,8 +168,6 @@
     "node_modules/postcss/node_modules",
     "node_modules/escodegen/node_modules",
     "node_modules/acorn-walk/node_modules",
-    "node_modules/acorn-globals/node_modules",
-    "node_modules/@babel/traverse/node_modules",
     "node_modules/rxdb/node_modules/firebase/README.md",
     "node_modules/safevalues/README.md",
     "node_modules/rxdb/node_modules/@firebase/analytics-compat/README.md",

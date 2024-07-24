@@ -16,8 +16,6 @@ export default class Cluster_Map  {
 	focus_ancestry: Ancestry = get(s_ancestry_focus);
 	widget_maps: Array<Widget_MapRect> = [];	// maximum a page's worth, will be combined into geometry.widget_maps
 	ancestries: Array<Ancestry> = [];
-	fork_angle_leansForward = false;
-	fork_angle_pointsRight = false;
 	thumb_center = Point.zero;
 	svg_thumb = new SVG_Arc();
 	svg_arc = new SVG_Arc();
@@ -77,9 +75,7 @@ export default class Cluster_Map  {
 		const fork_angle = this.forkAngle_for(this.predicate, this.points_out) ?? 0;
 		this.center = get(s_graphRect).size.dividedInHalf.asPoint;
 		this.fork_angle = fork_angle;
-		this.fork_angle_leansForward = new Angle(fork_angle).angle_leansForward;
-		this.fork_angle_pointsRight = new Angle(fork_angle).angle_pointsRight;
-		this.svg_arc.update(fork_angle, this.shown);
+		this.svg_arc.update(fork_angle);
 		this.straddles_zero = this.svg_arc.start_angle.straddles_zero(this.svg_arc.end_angle);
 	}
 
@@ -88,11 +84,12 @@ export default class Cluster_Map  {
 		if (this.shown > 0 && !!this.predicate) {
 			const radius = this.svg_arc.outside_ring_radius;
 			const rotated = new Point(radius + k.necklace_widget_padding, 0);
+			const fork_angle_pointsRight = new Angle(this.fork_angle).angle_pointsRight;
 			const tweak = this.center.offsetByXY(2, -1.5);	// tweak so that drag dots are centered within the necklace ring
 			const max = this.shown - 1;
 			let index = 0;
 			while (index < this.shown) {
-				const child_index = this.fork_angle_pointsRight ? index : max - index;
+				const child_index = fork_angle_pointsRight ? index : max - index;
 				const ancestry = this.ancestries[child_index];
 				const childAngle = this.angle_at_index(index, radius);
 				const childOrigin = tweak.offsetBy(rotated.rotate_by(childAngle));
@@ -167,14 +164,18 @@ export default class Cluster_Map  {
 
 	update_thumb_angle_andCenter() {
 		const thumb_angle = this.compute_thumb_angle;
-		this.svg_thumb.update(thumb_angle, 1);
+		this.svg_thumb.update(thumb_angle);
 		const clusters_center = Point.square(get(s_cluster_arc_radius));
 		const thumb_radial = Point.fromPolar(this.thumb_arc_radius, thumb_angle);
 		this.thumb_center = clusters_center.offsetBy(thumb_radial).offsetEquallyBy(15);
 	}
+
+	get isVisible(): boolean {
+		return this.isPaging && this.points_out;// && !this.predicate.isBidirectional;
+	}
 	
 	update_thumb_start_andEnd() {
-		const arc_start = Math.min(this.svg_arc.start_angle, this.svg_arc.end_angle);
+		const arc_start = this.svg_arc.start_angle;
 		const increment = Math.abs(this.svg_arc.spread_angle) / this.total;
 		const index = Math.floor(this.page_indexOf_focus);
 		const start = arc_start + increment * index;
@@ -239,20 +240,12 @@ export default class Cluster_Map  {
 		return (-raw).normalized_angle();
 	}
 
-	update_arc_start_andEnd(index: number, fork_y: number, max: number, child_angle: number) {
+	update_arc_start_andEnd(index: number, max: number, child_angle: number) {
 		// detect and grab start and end
 		if (index == 0) {
-			if (fork_y > 0) {
-				this.svg_arc.start_angle = child_angle;
-			} else {
-				this.svg_arc.end_angle = child_angle;
-			}
+			this.svg_arc.start_angle = child_angle;
 		} else if (index == max) {
-			if (fork_y < 0) {
-				this.svg_arc.start_angle = child_angle;
-			} else {
-				this.svg_arc.end_angle = child_angle;
-			}
+			this.svg_arc.end_angle = child_angle;
 		}
 	}
 
@@ -284,7 +277,7 @@ export default class Cluster_Map  {
 			child_angle = Angle.half - child_angle			// otherwise it's clockwise, so invert it
 		}
 		child_angle = child_angle.normalized_angle();
-		this.update_arc_start_andEnd(index, fork_y, max, child_angle);
+		this.update_arc_start_andEnd(index, max, child_angle);
 		return child_angle;									// angle at index
 	}
 

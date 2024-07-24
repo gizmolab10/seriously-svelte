@@ -30,7 +30,7 @@ export default class Angle {
 
 	get quadrant_referenceAngle(): number { return u.referenceAngle_ofQuadrant(this.quadrant_ofAngle); }
 
-	get angle_leansForward(): boolean {
+	get angle_slantsForward(): boolean {
 		const quadrant = this.quadrant_ofAngle;
 		return [Quadrant.lowerRight, Quadrant.upperLeft].includes(quadrant);
 	}

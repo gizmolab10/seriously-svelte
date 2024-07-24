@@ -22,8 +22,8 @@
 	let label_title = k.empty;
 	let mouse_up_count = 0;
 
-	// draws the "talking" scroll bar
-	// uses cluster map for svg, which also has total and shown
+	// draws the [scrolling] arc and thumb slider
+	// uses svg_arc for svg, which also has total and shown
 	//
 	// drawn by scrolling ring, which is drawn by clusters graph
 	// CHANGE: drawn by clusters (which is drawn by clusters graph)?
@@ -63,8 +63,6 @@
 
 	function update_thumb_andTitle() {
 		thumb_svgPath = cluster_map.svg_thumb.arc_svgPath;
-		const size = u.sizeFrom_svgPath(thumb_svgPath);
-		console.log(size.description);
 		layout_title();
 	}
 
@@ -127,6 +125,9 @@
 			cursor_closure();
 		}
 	}
+		// {#if (cluster_map.isPaging)}
+		// 	<path stroke={thumb_color} fill=transparent d={thumb_svgPath}/>
+		// {/if}
 
 </script>
 
@@ -139,9 +140,6 @@
 	left: {center.x - radius}px;'>
 	<svg class='svg-scroll-arc' viewBox={viewBox}>
 		<path stroke={ring_color} fill=transparent d={cluster_map.svg_arc.arc_svgPath}/>
-		{#if (cluster_map.isPaging)}
-			<path stroke={thumb_color} fill=transparent d={thumb_svgPath}/>
-		{/if}
 	</svg>
 </div>
 <div class='cluster-label'

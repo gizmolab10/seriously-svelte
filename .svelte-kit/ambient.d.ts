@@ -28,7 +28,6 @@
 declare module '$env/static/private' {
 	export const NVM_INC: string;
 	export const npm_package_exports___node_polyfills_types: string;
-	export const COREPACK_ROOT: string;
 	export const npm_package_scripts_test_cross_platform_build: string;
 	export const TERM_PROGRAM: string;
 	export const npm_package_exports___vite_import: string;
@@ -40,8 +39,8 @@ declare module '$env/static/private' {
 	export const npm_package_devDependencies_typescript: string;
 	export const npm_package_homepage: string;
 	export const npm_config_version_git_tag: string;
-	export const SHELL: string;
 	export const TERM: string;
+	export const SHELL: string;
 	export const npm_package_devDependencies_vite: string;
 	export const npm_package_dependencies_devalue: string;
 	export const TMPDIR: string;
@@ -55,15 +54,15 @@ declare module '$env/static/private' {
 	export const npm_config_registry: string;
 	export const npm_package_repository_url: string;
 	export const npm_package_readmeFilename: string;
-	export const USER: string;
 	export const NVM_DIR: string;
+	export const USER: string;
 	export const npm_package_exports___node_import: string;
 	export const npm_package_description: string;
 	export const npm_package_exports___package_json: string;
 	export const npm_package_dependencies_esm_env: string;
 	export const npm_package_license: string;
-	export const COMMAND_MODE: string;
 	export const PELICAN_THEMES_PATH: string;
+	export const COMMAND_MODE: string;
 	export const npm_package_exports___import: string;
 	export const npm_package_repository_directory: string;
 	export const SSH_AUTH_SOCK: string;
@@ -78,9 +77,9 @@ declare module '$env/static/private' {
 	export const npm_package_scripts_postinstall: string;
 	export const npm_package_devDependencies_rollup: string;
 	export const npm_package_dependencies_magic_string: string;
-	export const LaunchInstanceID: string;
-	export const PELICAN_PLUGINS_PATH: string;
 	export const _: string;
+	export const PELICAN_PLUGINS_PATH: string;
+	export const LaunchInstanceID: string;
 	export const __CFBundleIdentifier: string;
 	export const PWD: string;
 	export const npm_lifecycle_event: string;
@@ -104,9 +103,9 @@ declare module '$env/static/private' {
 	export const npm_package_dependencies_sirv: string;
 	export const XPC_SERVICE_NAME: string;
 	export const npm_package_version: string;
-	export const COLORFGBG: string;
-	export const HOME: string;
 	export const SHLVL: string;
+	export const HOME: string;
+	export const COLORFGBG: string;
 	export const npm_package_dependencies_undici: string;
 	export const npm_package_type: string;
 	export const npm_package_scripts_generate_version: string;
@@ -184,7 +183,6 @@ declare module '$env/dynamic/private' {
 	export const env: {
 		NVM_INC: string;
 		npm_package_exports___node_polyfills_types: string;
-		COREPACK_ROOT: string;
 		npm_package_scripts_test_cross_platform_build: string;
 		TERM_PROGRAM: string;
 		npm_package_exports___vite_import: string;
@@ -196,8 +194,8 @@ declare module '$env/dynamic/private' {
 		npm_package_devDependencies_typescript: string;
 		npm_package_homepage: string;
 		npm_config_version_git_tag: string;
-		SHELL: string;
 		TERM: string;
+		SHELL: string;
 		npm_package_devDependencies_vite: string;
 		npm_package_dependencies_devalue: string;
 		TMPDIR: string;
@@ -211,15 +209,15 @@ declare module '$env/dynamic/private' {
 		npm_config_registry: string;
 		npm_package_repository_url: string;
 		npm_package_readmeFilename: string;
-		USER: string;
 		NVM_DIR: string;
+		USER: string;
 		npm_package_exports___node_import: string;
 		npm_package_description: string;
 		npm_package_exports___package_json: string;
 		npm_package_dependencies_esm_env: string;
 		npm_package_license: string;
-		COMMAND_MODE: string;
 		PELICAN_THEMES_PATH: string;
+		COMMAND_MODE: string;
 		npm_package_exports___import: string;
 		npm_package_repository_directory: string;
 		SSH_AUTH_SOCK: string;
@@ -234,9 +232,9 @@ declare module '$env/dynamic/private' {
 		npm_package_scripts_postinstall: string;
 		npm_package_devDependencies_rollup: string;
 		npm_package_dependencies_magic_string: string;
-		LaunchInstanceID: string;
-		PELICAN_PLUGINS_PATH: string;
 		_: string;
+		PELICAN_PLUGINS_PATH: string;
+		LaunchInstanceID: string;
 		__CFBundleIdentifier: string;
 		PWD: string;
 		npm_lifecycle_event: string;
@@ -260,9 +258,9 @@ declare module '$env/dynamic/private' {
 		npm_package_dependencies_sirv: string;
 		XPC_SERVICE_NAME: string;
 		npm_package_version: string;
-		COLORFGBG: string;
-		HOME: string;
 		SHLVL: string;
+		HOME: string;
+		COLORFGBG: string;
 		npm_package_dependencies_undici: string;
 		npm_package_type: string;
 		npm_package_scripts_generate_version: string;
