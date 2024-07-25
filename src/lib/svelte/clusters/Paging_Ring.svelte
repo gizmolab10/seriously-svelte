@@ -5,7 +5,7 @@
 	import { s_thing_changed, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
-	import Scrolling_Arc from './Scrolling_Arc.svelte';
+	import Paging_Arc from './Paging_Arc.svelte';
 	export let radius = 0;
 	export let thing: Thing;
 	export let ring_width = 0;
@@ -22,11 +22,11 @@
 	const viewBox = `${-ring_width}, ${-ring_width}, ${diameter}, ${diameter}`;
 	const svg_ringPath = svgPaths.ring(Point.square(radius), outer_radius, ring_width);
 	let mouse_up_count = $s_mouse_up_count;
-	let scrollingWrapper!: Svelte_Wrapper;
-	let scrollingRing;
+	let pagingWrapper!: Svelte_Wrapper;
+	let pagingRing;
 	let rebuilds = 0
 
-	// draw the scrolling ring, cluster labels and scroll bars
+	// draw the paging ring, cluster labels and scroll bars
 	// uses two ringState's for configuring angles and hover
 
 	$: {
@@ -36,8 +36,8 @@
 	}
 
 	$: {
-		if (!!scrollingRing) {
-			scrollingWrapper = new Svelte_Wrapper(scrollingRing, handle_mouseData, Identifiable.newID(), SvelteComponentType.ring);
+		if (!!pagingRing) {
+			pagingWrapper = new Svelte_Wrapper(pagingRing, handle_mouseData, Identifiable.newID(), SvelteComponentType.ring);
 		}
 	}
 
@@ -48,7 +48,8 @@
 		/////////////////////////////
 
 		if (mouseState.isHover) {
-			s.scrolling_ring_state.isHovering = !mouseState.isOut;	// show thumb
+			console.log('paging ring hover')
+			s.paging_ring_state.isHovering = !mouseState.isOut;	// show thumb
 
 			// hover
 
@@ -75,7 +76,7 @@
 </script>
 
 {#key rebuilds}
-	<div class='scrolling-ring' bind:this={scrollingRing}>
+	<div class='paging-ring' bind:this={pagingRing}>
 		<Mouse_Responder
 			name={name}
 			center={center}
@@ -90,7 +91,7 @@
 		<div class='scroll-arcs'>
 			{#each geometry.cluster_maps as cluster_map}
 				{#if cluster_map.shown > 0}
-					<Scrolling_Arc
+					<Paging_Arc
 						color={color}
 						center={center}
 						cluster_map={cluster_map}/>

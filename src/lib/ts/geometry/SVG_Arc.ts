@@ -20,7 +20,7 @@ export default class SVG_Arc {
 
 	constructor() {
 		const radius = get(s_cluster_arc_radius);
-		const thickness = k.scroll_arc_thickness;
+		const thickness = k.paging_arc_thickness;
 		this.inside_arc_radius = radius - thickness * 2;
 		this.outside_arc_radius = radius - thickness;
 		this.clusters_center = Point.square(radius);

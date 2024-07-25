@@ -60,6 +60,7 @@
 				if (Math.abs(delta) >= Math.PI / 90) {			// minimum two degree changes
 					sendSignal = true;
 					s.necklace_ringState.priorAngle = mouseAngle;
+					console.log('necklace rotate')
 					$s_ring_angle = mouseAngle.add_angle_normalized(-s.necklace_ringState.referenceAngle);
 				}
 			} else if (!!s.necklace_ringState.radiusOffset) {				// resize

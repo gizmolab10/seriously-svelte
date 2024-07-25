@@ -4,7 +4,7 @@
 	import Editing_Tools from '../widget/Editing_Tools.svelte';
 	import Title_Editor from '../widget/Title_Editor.svelte';
 	import Clusters_Graph from './Clusters_Graph.svelte';
-	import Scrolling_Ring from './Scrolling_Ring.svelte';
+	import Paging_Ring from './Paging_Ring.svelte';
 	import Necklace_Ring from './Necklace_Ring.svelte';
 	import Circle from '../kit/Circle.svelte';
 	const geometry = s.new_clusters_geometry;
@@ -66,7 +66,7 @@
 					<Title_Editor ancestry={$s_ancestry_focus} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
 				</div>
 				<Clusters_Graph/>
-				<Scrolling_Ring
+				<Paging_Ring
 					color={color}
 					thing={thing}
 					center={center}

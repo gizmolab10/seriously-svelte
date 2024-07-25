@@ -17595,7 +17595,7 @@ class SC_MainSettingsTab extends obsidian.PluginSettingTab {
         super(app, plugin);
         this.setting_groups = {};
         this.last_position = {
-            scroll_position: 0,
+            paging_position: 0,
             tab_name: "main-shell-commands",
         };
         this.plugin = plugin;
@@ -18107,7 +18107,7 @@ class SC_MainSettingsTab extends obsidian.PluginSettingTab {
         this.tab_structure.buttons[last_position.tab_name].click();
         // window.setTimeout(() => { // Need to delay the scrolling a bit. Without this, something else would override scrolling and scroll back to 0.
         container_element.scrollTo({
-            top: this.last_position.scroll_position,
+            top: this.last_position.paging_position,
             behavior: "auto",
         });
         // }, 0); // 'timeout' can be 0 ms, no need to wait any longer.
@@ -18115,7 +18115,7 @@ class SC_MainSettingsTab extends obsidian.PluginSettingTab {
         // TODO: Remove the commented code after a while.
         // Listen to changes
         container_element.addEventListener("scroll", (event) => {
-            this.last_position.scroll_position = container_element.scrollTop;
+            this.last_position.paging_position = container_element.scrollTop;
         });
         for (const tab_name in this.tab_structure.buttons) {
             const button = this.tab_structure.buttons[tab_name];

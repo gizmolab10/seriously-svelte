@@ -45,7 +45,7 @@ export default class Constants {
 	allow_TitleEditing = true;
 	allow_HorizontalScrolling = true;
 	queryStrings: URLSearchParams;
-	scroll_arc_thickness: number;
+	paging_arc_thickness: number;
 	cluster_offsetY: number;
 	build_number: string;
 	row_height: number;
@@ -75,7 +75,7 @@ export default class Constants {
 		this.build_number = builds.latest;
 		this.row_height = this.dot_size + 7;
 		this.cluster_offsetY = 4 - this.dot_size;
-		this.scroll_arc_thickness = this.ring_thickness / 3;
+		this.paging_arc_thickness = this.ring_thickness / 3;
 		this.queryStrings = new URLSearchParams(window.location.search);
 	}
 

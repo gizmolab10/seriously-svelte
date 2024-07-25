@@ -21,7 +21,7 @@ export default class StateOf_UX {
 	elementState_byName: {[name: string]: Element_State} = {};
 	mouseState_byName: { [name: string]: Mouse_State } = {};
 	clusters_geometry!: Clusters_Geometry;
-	scrolling_ring_state!: Rotation_State;
+	paging_ring_state!: Rotation_State;
 	necklace_ringState!: Expansion_State;
 	rebuild_count = 0;
 
@@ -40,7 +40,7 @@ export default class StateOf_UX {
 
 	constructor() {
 		setTimeout(() => {
-			this.scrolling_ring_state = new Rotation_State();
+			this.paging_ring_state = new Rotation_State();
 			this.necklace_ringState = new Expansion_State();
 		}, 1);
 	}

@@ -45,32 +45,6 @@ export class Point {
 		return (Math.atan2(-this.y, this.x)).normalized_angle();	// in browsers, both are the opposite, so reverse them here
 	}
 
-	rotate_by(angle: number): Point {
-
-		// rotate counter-clockwise
-		// angle of zero is on the x-axis pointing right
-		// angle of one-half pi is on the y-axis pointing up
-		// in math y increases going up,
-		// so it must be reversed for browsers
-
-		const cos = Math.cos(angle);
-		const sin = Math.sin(angle);
-		return new Point(
-			  this.x * cos - this.y * sin,
-			-(this.y * cos + this.x * sin)	// reverse y
-		);
-	}
-
-	ellipse_coordiates_forAngle(angle: number): Point {
-		// this.x is distance from center to ellipse along the positive x-axis
-		// this.y				same				 along the positive y-axis
-		const cos = Math.cos(angle);
-		const sin = Math.sin(angle);
-		return new Point(
-			Math.abs(this.x) * cos,
-			Math.abs(this.y) * sin);
-	}
-
 	get quadrant_ofPoint(): Quadrant {
 		const x = this.x;
 		const y = this.y;
@@ -92,6 +66,43 @@ export class Point {
 		}
 	}
 
+	ellipse_coordiates_forAngle(angle: number): Point {
+		// this.x is distance from center to ellipse along the positive x-axis
+		// this.y				"    "				 along the positive y-axis
+		const cos = Math.cos(angle);
+		const sin = Math.sin(angle);
+		return new Point(
+			Math.abs(this.x) * cos,
+			Math.abs(this.y) * sin);
+	}
+
+	rotate_by(angle: number): Point {
+		// rotate counter-clockwise
+		// angle of zero is on the x-axis pointing right
+		// angle of one-half pi is on the y-axis pointing up
+		// in math y increases going up,
+		// so it must be reversed for browsers
+		const cos = Math.cos(angle);
+		const sin = Math.sin(angle);
+		return new Point(
+			  this.x * cos - this.y * sin,
+			-(this.y * cos + this.x * sin)	// reverse y
+		);
+	}
+	
+	isContainedBy_path(path: string): boolean {
+		const canvas = document.createElement('canvas');		// Create a temporary canvas element
+		const context = canvas.getContext('2d');
+		if (!context) {
+			throw new Error('Failed to get 2D context');
+		}
+		canvas.width = window.innerWidth;		// Set canvas dimensions (arbitrary large values to ensure it covers the path)
+		canvas.height = window.innerHeight;
+		const path2D = new Path2D(path);		// Create a new Path2D object from the SVG path
+		const isInside = context.isPointInPath(path2D, this.x, this.y);		// Check if the point is inside the path
+		return isInside;
+	}
+
 	static origin_inWindowCoordinates_for(element: HTMLElement): Point {
 		let e: HTMLElement | null = element;
 		let point = Point.zero;
@@ -101,7 +112,7 @@ export class Point {
 		}
 		return point;
 	}
-	
+
 }
 
 export class Size {
@@ -217,6 +228,15 @@ export class Rect {
 		return null;
 	}
 
+	static rect_forComponent_contains(component: SvelteComponent, event: MouseEvent): boolean {
+		const rect = Rect.rect_forComponent(component);
+		const point = u.pointFor_mouseEvent(event);
+		if (rect.isZero) {
+			return false;
+		}
+		return rect.contains(point);
+	}
+
 	static boundingRectFor(element: HTMLElement | null): Rect | null {
 		if (element) {
 			const domRect = element.getBoundingClientRect();
@@ -226,15 +246,6 @@ export class Rect {
 			return new Rect(origin, size);
 		}
 		return null;
-	}
-
-	static rect_forComponent_contains(component: SvelteComponent, event: MouseEvent): boolean {
-		const rect = Rect.rect_forComponent(component);
-		const point = u.pointFor_mouseEvent(event);
-		if (rect.isZero) {
-			return false;
-		}
-		return rect.contains(point);
 	}
 
 	static rect_forComponent(c: SvelteComponent): Rect {

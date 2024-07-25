@@ -1,6 +1,6 @@
 import { k } from '../common/Global_Imports';
 
-// for managing the scrolling ring
+// for managing the paging ring
 
 export default class Rotation_State {
 	referenceAngle: number | null = null;		// angle at location of mouse DOWN

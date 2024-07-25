@@ -62,11 +62,11 @@ export default class Cluster_Map  {
 	}
 
 	destructor() { this.ancestries = []; }
-	get thumb_radius(): number { return k.scroll_arc_thickness * 0.8; }
+	get thumb_radius(): number { return k.paging_arc_thickness * 0.8; }
 	get maximum_page_index(): number { return this.total - this.shown; }
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
 	get description(): string { return `${this.predicate.kind}  ${this.titles}`; }
-	get thumb_arc_radius(): number { return this.svg_arc.inside_arc_radius + k.scroll_arc_thickness / 2; }
+	get thumb_arc_radius(): number { return this.svg_arc.inside_arc_radius + k.paging_arc_thickness / 2; }
 	get page_indexOf_focus(): number { return this.focus_ancestry.thing?.page_states?.index_for(this.points_out, this.predicate) ?? 0; }
 
 	fork_radius_multiplier(shown: number): number { return (shown > 3) ? 0.6 : (shown > 1) ? 0.3 : 0.15; }
@@ -114,7 +114,7 @@ export default class Cluster_Map  {
 		this.set_page_index(index);
 	}
 	
-	adjust_indexFor_mouse_angle(mouse_angle: number) {
+	adjust_pagingIndex_forMouse_angle(mouse_angle: number) {
 		const quadrant_ofFork_angle = u.quadrant_ofAngle(this.fork_angle);
 		let movement_angle = this.svg_arc.start_angle - mouse_angle;
 		let spread_angle = this.svg_arc.spread_angle;
