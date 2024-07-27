@@ -18,13 +18,14 @@
 	const diameter = outer_radius * 2;
 	const borderStyle = '1px solid';
 	const geometry = s.clusters_geometry;
+	const cluster_map = geometry.cluster_maps[0];
 	const ringOrigin = center.distanceFrom(Point.square(outer_radius));
 	const viewBox = `${-ring_width}, ${-ring_width}, ${diameter}, ${diameter}`;
 	const svg_ringPath = svgPaths.ring(Point.square(radius), outer_radius, ring_width);
 	let mouse_up_count = $s_mouse_up_count;
 	let pagingWrapper!: Svelte_Wrapper;
-	let pagingRing;
 	let rebuilds = 0
+	let pagingRing;
 
 	// draw the paging ring, cluster labels and scroll bars
 	// uses two ringState's for configuring angles and hover
@@ -48,7 +49,6 @@
 		/////////////////////////////
 
 		if (mouseState.isHover) {
-			console.log('paging ring hover')
 			s.paging_ring_state.isHovering = !mouseState.isOut;	// show thumb
 
 			// hover
@@ -88,9 +88,9 @@
 			detectHit_closure={isHit}
 			cursor={k.cursor_default}>
 		</Mouse_Responder>
-		<div class='scroll-arcs'>
+		<div class='paging-arcs'>
 			{#each geometry.cluster_maps as cluster_map}
-				{#if cluster_map.shown > 0}
+				{#if cluster_map.isVisible}
 					<Paging_Arc
 						color={color}
 						center={center}

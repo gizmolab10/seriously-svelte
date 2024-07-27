@@ -57,13 +57,12 @@
 			if (!!s.necklace_ringState.priorAngle) {				// rotate
 				const mouseAngle = from_center.angle;
 				const delta = mouseAngle.add_angle_normalized(-s.necklace_ringState.priorAngle);	// subtract to find difference
-				if (Math.abs(delta) >= Math.PI / 90) {			// minimum two degree changes
+				if (Math.abs(delta) >= Math.PI / 90) {				// minimum two degree changes
 					sendSignal = true;
 					s.necklace_ringState.priorAngle = mouseAngle;
-					console.log('necklace rotate')
 					$s_ring_angle = mouseAngle.add_angle_normalized(-s.necklace_ringState.referenceAngle);
 				}
-			} else if (!!s.necklace_ringState.radiusOffset) {				// resize
+			} else if (!!s.necklace_ringState.radiusOffset) {		// resize
 				const magnitude = from_center.magnitude
 				const largest = k.cluster_inside_radius * 4;
 				const smallest = k.cluster_inside_radius * 1.5;

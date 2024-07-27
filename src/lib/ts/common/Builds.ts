@@ -10,8 +10,8 @@ class Builds {
 
 	constructor() {
 		this.notes = {
-			104 : ['July 2, 2024', 'save and restore scroll position'],
-			103 : ['June 30, 2024', 'scroll button works'],
+			104 : ['July 2, 2024', 'save and restore paging thumb position'],
+			103 : ['June 30, 2024', 'paging thumb button works'],
 			102 : ['June 18, 2024', 'visibility logic for advance buttons'],
 			101 : ['June 13, 2024', 'limit the number of things within each cluster'],
 			100 : ['June 6, 2024', 'significantly reduce stutter during necklace rotation'],

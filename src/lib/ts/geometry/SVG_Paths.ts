@@ -50,22 +50,19 @@ export default class SVG_Paths {
     }
 
 	arc(center: Point, radius: number, sweepFlag: number, referenceAngle: number, endAngle: number): string {
-		const radial = new Point(radius, 0);
-		const end = center.offsetBy(radial.rotate_by(endAngle));
-		const start = center.offsetBy(radial.rotate_by(referenceAngle));
+		const end = center.offsetBy(Point.fromPolar(radius, endAngle));
+		const start = center.offsetBy(Point.fromPolar(radius, referenceAngle));
 		const largeArcFlag = ((referenceAngle - endAngle).normalized_angle() > Math.PI) ? 1 : 0;
 		return `\nM ${start.x} ${start.y} \nA ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} \n${end.x} ${end.y}`;
 	}
 
 	arc_partial(center: Point, radius: number, largeArcFlag: number, sweepFlag: number, endAngle: number): string {
-		const radial = new Point(radius, 0);
-		const end = center.offsetBy(radial.rotate_by(endAngle));
+		const end = center.offsetBy(Point.fromPolar(radius, endAngle));
 		return `\nA ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} \n${end.x} ${end.y}`;
 	}
 
 	startOutAt(center: Point, radius: number, referenceAngle: number) {
-		const radial = new Point(radius, 0);
-		const start = center.offsetBy(radial.rotate_by(referenceAngle));
+		const start = center.offsetBy(Point.fromPolar(radius, referenceAngle));
 		return `\nM ${start.x} ${start.y}`;
 	}
 

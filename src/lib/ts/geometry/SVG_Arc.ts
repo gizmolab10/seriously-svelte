@@ -72,8 +72,7 @@ export default class SVG_Arc {
 	}
 
 	tinyDot_svgPath(radius: number, referenceAngle: number) {
-		const radial = new Point(radius, 0);
-		const start = this.clusters_center.offsetBy(radial.rotate_by(referenceAngle));
+		const start = this.clusters_center.offsetBy(Point.fromPolar(radius, referenceAngle));
 		return svgPaths.circle(start, 20);
 	}
 

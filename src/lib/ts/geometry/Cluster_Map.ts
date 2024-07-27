@@ -16,7 +16,6 @@ export default class Cluster_Map  {
 	focus_ancestry: Ancestry = get(s_ancestry_focus);
 	widget_maps: Array<Widget_MapRect> = [];	// maximum a page's worth, will be combined into geometry.widget_maps
 	ancestries: Array<Ancestry> = [];
-	thumb_center = Point.zero;
 	svg_thumb = new SVG_Arc();
 	svg_arc = new SVG_Arc();
 	cluster_title = k.empty;
@@ -39,7 +38,7 @@ export default class Cluster_Map  {
 		this.update();
 		s_cluster_arc_radius.subscribe((radius: number) => {
 			if (this.svg_arc.outside_ring_radius != radius) {
-				this.update();		// do not set_page_index (causes hang)
+				this.update();		// do not set_page_index (else expand will hang)
 			}
 		})
 	}
@@ -62,43 +61,12 @@ export default class Cluster_Map  {
 	}
 
 	destructor() { this.ancestries = []; }
-	get thumb_radius(): number { return k.paging_arc_thickness * 0.8; }
+	get paging_radius(): number { return k.paging_arc_thickness * 0.8; }
 	get maximum_page_index(): number { return this.total - this.shown; }
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
 	get description(): string { return `${this.predicate.kind}  ${this.titles}`; }
-	get thumb_arc_radius(): number { return this.svg_arc.inside_arc_radius + k.paging_arc_thickness / 2; }
-	get page_indexOf_focus(): number { return this.focus_ancestry.thing?.page_states?.index_for(this.points_out, this.predicate) ?? 0; }
-
 	fork_radius_multiplier(shown: number): number { return (shown > 3) ? 0.6 : (shown > 1) ? 0.3 : 0.15; }
-
-	update_arc() {
-		const fork_angle = this.forkAngle_for(this.predicate, this.points_out) ?? 0;
-		this.center = get(s_graphRect).size.dividedInHalf.asPoint;
-		this.fork_angle = fork_angle;
-		this.svg_arc.update(fork_angle);
-		this.straddles_zero = this.svg_arc.start_angle.straddles_zero(this.svg_arc.end_angle);
-	}
-
-	update_widgets() {
-		this.widget_maps = [];
-		if (this.shown > 0 && !!this.predicate) {
-			const radius = this.svg_arc.outside_ring_radius;
-			const rotated = new Point(radius + k.necklace_widget_padding, 0);
-			const fork_angle_pointsRight = new Angle(this.fork_angle).angle_pointsRight;
-			const tweak = this.center.offsetByXY(2, -1.5);	// tweak so that drag dots are centered within the necklace ring
-			const max = this.shown - 1;
-			let index = 0;
-			while (index < this.shown) {
-				const child_index = fork_angle_pointsRight ? index : max - index;
-				const ancestry = this.ancestries[child_index];
-				const childAngle = this.angle_at_index(index, radius);
-				const childOrigin = tweak.offsetBy(rotated.rotate_by(childAngle));
-				const map = new Widget_MapRect(IDLine.flat, new Rect(), childOrigin, ancestry, this.focus_ancestry, childAngle); //, this.predicate.kind);
-				this.widget_maps.push(map);
-				index += 1;
-			}
-		}
-	}
+	get page_indexOf_focus(): number { return this.focus_ancestry.thing?.page_states?.index_for(this.points_out, this.predicate) ?? 0; }
 	
 	static readonly $_INDEX_$: unique symbol;
 
@@ -149,64 +117,16 @@ export default class Cluster_Map  {
 			}
 			return 0;
 		} else {
-			const near = 1 / (this.total * 2);				// within half an increment
+			const near = 1 / (this.total * 2);			// within half an increment
 			return fraction.bump_towards(0, 1, near);	// if near 0 make it 0, same with 1
 		}
 	}
 	
-	static readonly $_THUMB_$: unique symbol;
+	static readonly $_TITLE_$: unique symbol;
 
 	update_thumb_andTitle() {
 		this.update_cluster_title_forIndex();
-		this.update_thumb_angle_andCenter();
-		this.update_thumb_start_andEnd();
-	}
-
-	update_thumb_angle_andCenter() {
-		const thumb_angle = this.compute_thumb_angle;
-		this.svg_thumb.update(thumb_angle);
-		const clusters_center = Point.square(get(s_cluster_arc_radius));
-		const thumb_radial = Point.fromPolar(this.thumb_arc_radius, thumb_angle);
-		this.thumb_center = clusters_center.offsetBy(thumb_radial).offsetEquallyBy(15);
-	}
-
-	get isVisible(): boolean {
-		return this.isPaging && this.points_out;// && !this.predicate.isBidirectional;
-	}
-	
-	update_thumb_start_andEnd() {
-		const arc_start = this.svg_arc.start_angle;
-		const increment = Math.abs(this.svg_arc.spread_angle) / this.total;
-		const index = Math.floor(this.page_indexOf_focus);
-		const start = arc_start + increment * index;
-		const end = start + increment * this.shown;
-		this.svg_thumb.start_angle = start;
-		this.svg_thumb.end_angle = end;
-	}
-
-	get compute_thumb_angle(): number {
-		let thumb_angle = (this.svg_arc.start_angle + this.svg_arc.end_angle) / 2;
-		if (this.maximum_page_index > 0) {
-			const fraction = this.page_indexOf_focus / this.maximum_page_index;
-			if (fraction > 1) {
-				thumb_angle = this.svg_arc.end_angle;
-			} else {
-				if (this.straddles_zero) {
-					let spread_angle = (this.svg_arc.start_angle - this.svg_arc.end_angle).normalized_angle();
-					thumb_angle = this.svg_arc.start_angle - (spread_angle * fraction);
-				} else {
-					const quadrant_ofFork_angle = u.quadrant_ofAngle(this.fork_angle);
-					let adjusted = this.svg_arc.spread_angle * fraction;
-					thumb_angle = this.svg_arc.start_angle + adjusted;
-					switch (quadrant_ofFork_angle) {
-						case Quadrant.upperLeft:
-						case Quadrant.lowerRight: thumb_angle = this.svg_arc.end_angle - adjusted; break;
-					}
-				}
-				thumb_angle = thumb_angle.normalized_angle();
-			}
-		}
-		return thumb_angle;
+		this.update_thumb_angles();
 	}
 
 	update_cluster_title_forIndex() {
@@ -229,23 +149,43 @@ export default class Cluster_Map  {
 	static readonly $_ANGLES_$: unique symbol;
 
 	forkAngle_for(predicate: Predicate, points_out: boolean): number | null {
-		// returns one of three angles: 1) necklace_angle 2) opposite+ 3) opposite-tweak
+		// returns one of three angles: 1) necklace_angle 2) opposite+tweak 3) opposite-tweak
 		const tweak = Math.PI * 5 / 18;			// 50 degrees: added or subtracted -> opposite
 		const necklace_angle = get(s_ring_angle);
 		const opposite = necklace_angle + Angle.half;
 		const raw = predicate.isBidirectional ?
 			opposite - tweak :
-			points_out ? necklace_angle :	// one directional, use global
+			points_out ? necklace_angle :		// one directional, use global
 			opposite + tweak;
 		return (-raw).normalized_angle();
 	}
 
-	update_arc_start_andEnd(index: number, max: number, child_angle: number) {
-		// detect and grab start and end
-		if (index == 0) {
-			this.svg_arc.start_angle = child_angle;
-		} else if (index == max) {
-			this.svg_arc.end_angle = child_angle;
+	update_arc() {
+		const fork_angle = this.forkAngle_for(this.predicate, this.points_out) ?? 0;
+		this.center = get(s_graphRect).size.dividedInHalf.asPoint;
+		this.fork_angle = fork_angle;
+		this.svg_arc.update(fork_angle);
+		this.straddles_zero = this.svg_arc.start_angle.straddles_zero(this.svg_arc.end_angle);
+	}
+
+	update_widgets() {
+		this.widget_maps = [];
+		if (this.shown > 0 && !!this.predicate) {
+			const radius = get(s_cluster_arc_radius);
+			const radial = new Point(radius + k.necklace_widget_padding, 0);
+			const fork_angle_pointsRight = new Angle(this.fork_angle).angle_pointsRight;
+			const tweak = this.center.offsetByXY(2, -1.5);	// tweak so that drag dots are centered within the necklace ring
+			const max = this.shown - 1;
+			let index = 0;
+			while (index < this.shown) {
+				const child_index = fork_angle_pointsRight ? index : max - index;
+				const ancestry = this.ancestries[child_index];
+				const childAngle = this.angle_at_index(index, radius);
+				const childOrigin = tweak.offsetBy(radial.rotate_by(childAngle));
+				const map = new Widget_MapRect(IDLine.flat, new Rect(), childOrigin, ancestry, this.focus_ancestry, childAngle); //, this.predicate.kind);
+				this.widget_maps.push(map);
+				index += 1;
+			}
 		}
 	}
 
@@ -258,27 +198,62 @@ export default class Cluster_Map  {
 		// angle:
 		//	avoids zenith and nadir
 		//	increases counter-clockwise
-		//	equally distributed around fork-angle
+		//	widgets half-and-half around fork-angle
 
 		const max = this.shown - 1;
 		const row = (max / 2) - index;						// row centered around zero
-		const radial = new Point(radius, 0);
-		const rotated = radial.rotate_by(this.fork_angle);	// points at middle widget
-		const fork_y = rotated.y;							// height of fork_angle, relative to center of clusters
-		let y = fork_y + (row * k.row_height);				// distribute y around fork_y
+		const radial = Point.fromPolar(radius, this.fork_angle);	// points at middle widget
+		const fork_y = radial.y;							// height of fork_angle, relative to center of clusters
+		let y = fork_y + (row * k.row_height);				// distribute y equally around fork_y
 		let y_isOutside = false;
 		const absY = Math.abs(y);
 		if (absY > radius) {
 			y_isOutside = true;								// y is outside necklace
-			y = -(y % radius) + radius * y / absY;			// swing around bottom / top --> back inside necklace
+			y = radius * (y / absY) - (y % radius);			// swing around (bottom | top) --> back inside necklace
 		}
 		let child_angle = Math.asin(y / radius);			// arc-sin only defined (-90 to 90)
-		if (y_isOutside == (rotated.x > 0)) {				// counter-clockwise for (x > 0) and (-radius < y < radius)
+		if (y_isOutside == (radial.x > 0)) {				// counter-clockwise for (x > 0) and (-radius < y < radius)
 			child_angle = Angle.half - child_angle			// otherwise it's clockwise, so invert it
 		}
-		child_angle = child_angle.normalized_angle();
-		this.update_arc_start_andEnd(index, max, child_angle);
-		return child_angle;									// angle at index
+		this.update_arc_angles(index, max, child_angle);
+		return child_angle									// angle at index
 	}
+
+	update_arc_angles(index: number, max: number, child_angle: number) {
+		// index increases & angle decreases clockwise
+		if (index == 0) {
+			this.svg_arc.start_angle = child_angle;
+		} else if (index == max) {
+			this.svg_arc.end_angle = child_angle;
+			this.debug_angles();
+		}
+	}
+
+	debug_angles() {
+		const end = this.svg_arc.end_angle;
+		const start = this.svg_arc.start_angle;
+		const spread = end - start;
+		if (this.isVisible) {
+			console.log(`ARC ${start.degrees_of(0)} [${(spread / this.total).degrees_of(1)}] ${end.degrees_of(0)}`)
+		}
+	}
+
+	update_thumb_angles() {
+		const index = Math.round(this.page_indexOf_focus);
+		const increment = this.svg_arc.spread_angle / this.total;
+		const start = this.svg_arc.start_angle + increment * index;
+		const spread = increment * this.shown;
+		const end = start + spread;
+		this.svg_thumb.update((start + end) / 2);	// halfway from start to end
+		this.svg_thumb.start_angle = start;
+		this.svg_thumb.end_angle = end;
+		// if (this.isVisible) {
+		// 	const log = `THUMB ${start.degrees_of(0)} [${spread.degrees_of(1)}] ${end.degrees_of(0)}`;
+		// 	console.log(log);
+		// }
+	}
+
+	get isVisible(): boolean { return this.isPaging && this.points_out && !this.predicate.isBidirectional; }
+
 
 }

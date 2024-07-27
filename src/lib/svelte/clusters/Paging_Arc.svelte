@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, s, u, Rect, Size, Point, ZIndex, onMount, Cluster_Map, Orientation, ElementType, transparentize } from '../../ts/common/Global_Imports';
-	import { s_mouse_up_count, s_mouse_location, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
+	import { s_ring_angle, s_mouse_location, s_mouse_up_count, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
 	import { ArcPart } from '../../ts/common/Enumerations';
 	export let cursor_closure = () => {};
 	export let cluster_map: Cluster_Map;
@@ -12,13 +12,12 @@
 	const viewBox=`${-offset} ${-offset} ${breadth} ${breadth}`;
 	const name = s.name_from($s_ancestry_focus, ElementType.arc, cluster_map.cluster_title);
 	const paging_arc_state = s.rotationState_forName(name);
-	const thumb_size = cluster_map.thumb_radius * 2;
+	const thumb_size = cluster_map.paging_radius * 2;
 	const thumb_name = `thumb-${name}`;
-	let mouse_up_count = 0;
 	let label_title = k.empty;
 	let title_origin = Point.zero;
+	let mouse_up_count = $s_mouse_up_count;
 	let ring_color = transparentize(color, 0.93);
-	let thumb_svgPath = cluster_map.svg_thumb.arc_svgPath;
 	let thumb_color = transparentize(color, s.paging_ring_state.stroke_transparency * 0.8);
 
 	// draws the [paging] arc and thumb slider
@@ -31,7 +30,7 @@
 		if (mouse_up_count != $s_mouse_up_count) {
 			mouse_up_count = $s_mouse_up_count;
 			paging_arc_state.reset();
-			update_thumb_andTitle();
+			layout_title();
 		}
 	}
 
@@ -41,29 +40,23 @@
 		// detect movement & adjust state //
 		////////////////////////////////////
 
-		const _ = k.empty + ($s_mouse_location?.description ?? k.empty);		// use store, to react
+		const _ = k.empty + ($s_mouse_location?.description ?? k.empty);			// use store, to react
 		if (!!paging_arc_state.priorAngle) {										// rotate
 			cursor_closure();
 			const mouseAngle = computed_mouseAngle();
 			if (!!mouseAngle) {
 				const delta = Math.abs(mouseAngle - paging_arc_state.priorAngle);	// subtract to find difference
-				if (delta >= (Math.PI / 90)) {									// minimum two degree changes
+				if (delta >= (Math.PI / 90)) {										// minimum two degree changes
 					paging_arc_state.priorAngle = mouseAngle;
-					console.log('paging arc rotate')
 					cluster_map.adjust_pagingIndex_forMouse_angle(mouseAngle);
 				}
 			}
 		}
-		update_thumb_andTitle();
+		layout_title();
 	}
 
 	function computed_mouseAngle(): number | null {
 		return u.vector_ofOffset_fromGraphCenter_toMouseLocation(center)?.angle ?? null
-	}
-
-	function update_thumb_andTitle() {
-		thumb_svgPath = cluster_map.svg_thumb.arc_svgPath;
-		layout_title();
 	}
 
 	function layout_title() {
@@ -103,13 +96,13 @@
 
 			// hover
 
-			update_thumb_andTitle();
+			layout_title();
 		} else {
 			if (mouseState.isUp) {
 
 				// end rotate
 
-				update_thumb_andTitle();
+				layout_title();
 			} else if (mouseState.isDown) {
 				const mouseAngle = computed_mouseAngle();
 
@@ -118,7 +111,7 @@
 				if (!!mouseAngle) {
 					paging_arc_state.priorAngle = mouseAngle;
 					paging_arc_state.referenceAngle = mouseAngle;
-					update_thumb_andTitle();
+					layout_title();
 				}
 			}
 			cursor_closure();
@@ -135,9 +128,9 @@
 	top: {center.y - radius}px;
 	left: {center.x - radius}px;'>
 	<svg class='svg-scroll-arc' viewBox={viewBox}>
-		<path stroke={ring_color} fill=transparent d={cluster_map.svg_arc.arc_svgPath}/>
 		{#if (cluster_map.isPaging)}
-			<path fill={thumb_color} d={thumb_svgPath}/>
+			<path stroke='orange' fill=transparent d={cluster_map.svg_arc.arc_svgPath}/>
+			<path fill={thumb_color} d={cluster_map.svg_thumb.arc_svgPath}/>
 		{/if}
 	</svg>
 </div>

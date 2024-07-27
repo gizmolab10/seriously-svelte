@@ -146,7 +146,7 @@ class Utilities {
 		let angle = offset;
 		let index = count;
 		do {
-			points.push(radial.rotate_by(angle));
+			points.push(Point.fromPolar(radius, angle));
 			angle += increment;
 			index--;
 		} while (index > 0)

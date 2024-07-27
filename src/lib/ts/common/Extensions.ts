@@ -79,10 +79,10 @@ Object.defineProperty(String.prototype, 'sizeOf_svgPath', {
 
 declare global {
 	interface Number {
-		degrees_of(): string;
 		roundToEven(): number;
 		normalized_angle(): number;
 		toFixed(precision: number): string;
+		degrees_of(precision: number): string;
 		straddles_zero(other: number): boolean;
 		add_angle_normalized(angle: number): number;
 		normalize_between_zeroAnd(value: number): number;
@@ -187,9 +187,9 @@ Object.defineProperty(Number.prototype, 'roundToEven', {
 });
 
 Object.defineProperty(Number.prototype, 'degrees_of', {
-	value: function(): string {
-		const degrees = this.normalized_angle() * 180 / Math.PI;
-		return degrees.toFixed(1);
+	value: function(precision: number): string {
+		const degrees = this * 180 / Math.PI;
+		return degrees.toFixed(precision);
 	},
 	writable: false,
 	enumerable: false,
