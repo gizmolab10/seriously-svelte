@@ -49,13 +49,6 @@
 			clusters.style.cursor = `${s.rotation_ringState.cursor} !important`;
 		}
 	}
-				// <div class='cluster-focus'
-				// 	style='
-				// 		position: absolute;
-				// 		top:{titleCenter.y}px;
-				// 		left: {titleCenter.x}px;'>
-				// 	<Title_Editor ancestry={$s_ancestry_focus} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
-				// </div>
 
 </script>
 
@@ -68,7 +61,6 @@
 				<Clusters_Graph/>
 				<Paging_Ring
 					color={color}
-					thing={thing}
 					center={center}
 					ring_width={30}
 					name={'scroll-ring'}
@@ -76,7 +68,6 @@
 					radius={$s_cluster_arc_radius - k.ring_thickness}/>
 				<Rotation_Ring
 					color={color}
-					thing={thing}
 					center={center}
 					zindex={ZIndex.lines}
 					name={'necklace-ring'}
@@ -84,6 +75,13 @@
 					radius={$s_cluster_arc_radius}
 					cursor_closure={cursor_closure}/>
 				<Editing_Tools offset={toolsOffset}/>
+				<div class='cluster-focus'
+					style='
+						position: absolute;
+						top:{titleCenter.y}px;
+						left: {titleCenter.x}px;'>
+					<Title_Editor ancestry={$s_ancestry_focus} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
+				</div>
 			{/key}
 		</div>
 	{/key}

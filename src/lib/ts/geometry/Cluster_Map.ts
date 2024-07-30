@@ -149,7 +149,7 @@ export default class Cluster_Map  {
 	
 	static readonly $_ANGLES_$: unique symbol;
 
-	forkAngle_for(predicate: Predicate, points_out: boolean): number | null {
+	fork_angleFor(predicate: Predicate, points_out: boolean): number | null {
 		// returns one of three angles: 1) necklace_angle 2) opposite+tweak 3) opposite-tweak
 		const tweak = Math.PI * 5 / 18;			// 50 degrees: added or subtracted -> opposite
 		const necklace_angle = get(s_ring_angle);
@@ -158,11 +158,11 @@ export default class Cluster_Map  {
 			opposite - tweak :
 			points_out ? necklace_angle :		// one directional, use global
 			opposite + tweak;
-		return (-raw).normalized_angle();
+		return raw.normalized_angle();
 	}
 
 	update_arc() {
-		const fork_angle = this.forkAngle_for(this.predicate, this.points_out) ?? 0;
+		const fork_angle = this.fork_angleFor(this.predicate, this.points_out) ?? 0;
 		this.center = get(s_graphRect).size.dividedInHalf.asPoint;
 		this.fork_angle = fork_angle;
 		this.svg_arc.update(fork_angle);
@@ -174,12 +174,12 @@ export default class Cluster_Map  {
 		if (this.shown > 0 && !!this.predicate) {
 			const radius = get(s_cluster_arc_radius);
 			const radial = new Point(radius + k.necklace_widget_padding, 0);
-			const fork_angle_pointsRight = new Angle(this.fork_angle).angle_pointsRight;
+			const pointsRight = new Angle(this.fork_angle).angle_pointsRight;
 			const tweak = this.center.offsetByXY(2, -1.5);	// tweak so that drag dots are centered within the necklace ring
 			const max = this.shown - 1;
 			let index = 0;
 			while (index < this.shown) {
-				const child_index = fork_angle_pointsRight ? index : max - index;
+				const child_index = !pointsRight ? index : max - index;
 				const ancestry = this.ancestries[child_index];
 				const childAngle = this.angle_at_index(index);
 				const childOrigin = tweak.offsetBy(radial.rotate_by(childAngle));

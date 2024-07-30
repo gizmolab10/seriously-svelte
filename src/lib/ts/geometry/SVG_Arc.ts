@@ -52,7 +52,7 @@ export default class SVG_Arc {
 
 	get debug_svgPath(): string {
 		const paths = [
-			// svgPaths.t_cross(this.outside_ring_radius * 2, 0),
+			svgPaths.t_cross(this.outside_ring_radius * 2, 0),
 			// this.tinyDot_svgPath(this.outside_arc_radius, this.start_angle),
 			svgPaths.line_atAngle(this.clusters_center, this.inside_arc_radius, -this.fork_angle),
 		];

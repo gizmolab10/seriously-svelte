@@ -7,7 +7,6 @@
 	import Identifiable from '../../ts/data/Identifiable';
 	import Paging_Arc from './Paging_Arc.svelte';
 	export let radius = 0;
-	export let thing: Thing;
 	export let ring_width = 0;
 	export let name = k.empty;
 	export let color = k.empty;

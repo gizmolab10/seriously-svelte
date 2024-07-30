@@ -41,17 +41,16 @@ export class Point {
 	static square(length: number):	   Point { return new Point(length, length); }
 	static get zero():				   Point { return new Point();}
 
-	get angle(): number {		// in this (as in math), y increases going up and angles increase counter-clockwise
-		return (Math.atan2(-this.y, this.x));	// in browsers, y is the opposite, so reverse it here
-	}
+	// in this (as in math), y increases going up and angles increase counter-clockwise
+	get angle(): number { return (Math.atan2(-this.y, this.x)); }	// in browsers, y is the opposite, so reverse it here
 
 	get quadrant_ofPoint(): Quadrant {
 		const x = this.x;
 		const y = this.y;
-		if		  (x >= 0 && y <  0) { return Quadrant.lowerRight;
-		} else if (x >= 0 && y >= 0) { return Quadrant.upperRight;
+		if		  (x >= 0 && y >= 0) { return Quadrant.upperRight;
+		} else if (x <  0 && y >= 0) { return Quadrant.upperLeft;
 		} else if (x <  0 && y <  0) { return Quadrant.lowerLeft;
-		} else						 { return Quadrant.upperLeft;
+		} else						 { return Quadrant.lowerRight;
 		}
 	}
 
@@ -59,10 +58,10 @@ export class Point {
 		let quadrant = new Angle(this.angle).quadrant_ofAngle;
 		const isFirstEighth = (this.angle).normalize_between_zeroAnd(Angle.quarter) < (Math.PI / 4);
 		switch (quadrant) {
-			case Quadrant.lowerRight: return isFirstEighth ? Orientation.right : Orientation.up;
-			case Quadrant.lowerLeft:  return isFirstEighth ? Orientation.up    : Orientation.left;
-			case Quadrant.upperLeft:  return isFirstEighth ? Orientation.left  : Orientation.down;
-			default:				  return isFirstEighth ? Orientation.down  : Orientation.right;
+			case Quadrant.upperRight: return isFirstEighth ? Orientation.right : Orientation.up;
+			case Quadrant.upperLeft:  return isFirstEighth ? Orientation.up	   : Orientation.left;
+			case Quadrant.lowerLeft:  return isFirstEighth ? Orientation.left  : Orientation.down;
+			case Quadrant.lowerRight: return isFirstEighth ? Orientation.down  : Orientation.right;
 		}
 	}
 
@@ -86,7 +85,7 @@ export class Point {
 		const sin = Math.sin(angle);
 		return new Point(
 			  this.x * cos - this.y * sin,
-			-(this.y * cos + this.x * sin)	// reverse y
+			-(this.y * cos + this.x * sin)	// reverse y for browsers
 		);
 	}
 	

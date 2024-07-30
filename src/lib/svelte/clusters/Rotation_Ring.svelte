@@ -6,7 +6,6 @@
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
 	export let radius = 0;
-	export let thing: Thing;
 	export let ring_width = 0;
 	export let name = k.empty;
 	export let color = k.empty;
@@ -55,7 +54,7 @@
 		if (!!from_center) {
 			let sendSignal = false;
 			if (!!s.rotation_ringState.priorAngle) {				// rotate
-				const mouseAngle = from_center.angle;
+				const mouseAngle = -from_center.angle;
 				const delta = mouseAngle.add_angle_normalized(-s.rotation_ringState.priorAngle);	// subtract to find difference
 				if (Math.abs(delta) >= Math.PI / 90) {				// minimum two degree changes
 					sendSignal = true;
@@ -117,7 +116,7 @@
 				s.rotation_ringState.reset();
 				rebuilds += 1;
 			} else if (mouseState.isDown) {
-				const mouseAngle = from_center.angle;
+				const mouseAngle = -from_center.angle;
 
 				// begin rotate
 
