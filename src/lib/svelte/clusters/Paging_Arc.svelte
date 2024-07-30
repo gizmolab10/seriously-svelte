@@ -117,19 +117,6 @@
 			cursor_closure();
 		}
 	}
-			// <div class='cluster-label'
-			// 	style='
-			// 		background-color: {k.color_background};
-			// 		left: {title_origin.x}px;
-			// 		top: {title_origin.y}px;
-			// 		white-space: nowrap;
-			// 		font-family: Arial;
-			// 		text-align: center;
-			// 		position: absolute;
-			// 		font-size: 0.5em;
-			// 		color: {color};'>
-			// 	{@html label_title}
-			// </div>
 
 </script>
 
@@ -147,4 +134,17 @@
 			<path stroke='orange' fill=transparent d={cluster_map.svg_arc.arc_svgPath}/>
 		{/if}
 	</svg>
+</div>
+<div class='cluster-label'
+	style='
+		background-color: {k.color_background};
+		left: {title_origin.x}px;
+		top: {title_origin.y}px;
+		white-space: nowrap;
+		font-family: Arial;
+		text-align: center;
+		position: absolute;
+		font-size: 0.5em;
+		color: {color};'>
+	{@html label_title}
 </div>

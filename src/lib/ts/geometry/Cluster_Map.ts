@@ -232,17 +232,23 @@ export default class Cluster_Map  {
 	}
 
 	update_thumb_angles() {
-		const arc_start = this.svg_arc.start_angle;
-		const wrong_order = arc_start < this.svg_arc.end_angle;
+		const orientsDown = new Angle(this.fork_angle).angle_orientsDown;
+		const spread_angle = this.svg_arc.spread_angle;
+		const inverter = (spread_angle < 0) ? 1 : -1;
+		const otherInverter = !orientsDown ? 1 : -1;
+		const arc_start = this.svg_arc.start_angle * inverter * otherInverter;
+		const increment = spread_angle / this.total * inverter;
 		const index = Math.round(this.page_indexOf_focus);
-		const increment = this.svg_arc.spread_angle / this.total * (wrong_order ? -1 : 1);
-		const start = arc_start + increment * index;
+		let start = arc_start + increment * index;
 		const spread = increment * this.shown;
-		const end = start + spread;
+		let end = start + spread;
 		const thumb_angle = (start + end) / 2;		// halfway from start to end
 		this.svg_thumb.update(thumb_angle);
 		this.svg_thumb.start_angle = start;
 		this.svg_thumb.end_angle = end;
+		if (orientsDown) {
+			console.log('DOWN')
+		}
 	}
 
 	get isVisible(): boolean { return this.isPaging && !this.predicate.isBidirectional && this.points_out; }
