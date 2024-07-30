@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, s, u, Rect, Size, Point, ZIndex, onMount, Cluster_Map, Orientation, ElementType, transparentize } from '../../ts/common/Global_Imports';
-	import { s_ring_angle, s_mouse_location, s_mouse_up_count, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
+	import { s_mouse_location, s_mouse_up_count, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
 	import { ArcPart } from '../../ts/common/Enumerations';
 	export let cursor_closure = () => {};
 	export let cluster_map: Cluster_Map;
@@ -117,6 +117,20 @@
 			cursor_closure();
 		}
 	}
+			// <path fill={thumb_color} d={cluster_map.svg_thumb.arc_svgPath}/>
+			// <div class='cluster-label'
+			// 	style='
+			// 		background-color: {k.color_background};
+			// 		left: {title_origin.x}px;
+			// 		top: {title_origin.y}px;
+			// 		white-space: nowrap;
+			// 		font-family: Arial;
+			// 		text-align: center;
+			// 		position: absolute;
+			// 		font-size: 0.5em;
+			// 		color: {color};'>
+			// 	{@html label_title}
+			// </div>
 
 </script>
 
@@ -129,21 +143,8 @@
 	left: {center.x - radius}px;'>
 	<svg class='svg-scroll-arc' viewBox={viewBox}>
 		{#if (cluster_map.isPaging)}
+			<path stroke='green' fill=transparent d={cluster_map.svg_arc.debug_svgPath}/>
 			<path stroke='orange' fill=transparent d={cluster_map.svg_arc.arc_svgPath}/>
-			<path fill={thumb_color} d={cluster_map.svg_thumb.arc_svgPath}/>
 		{/if}
 	</svg>
-</div>
-<div class='cluster-label'
-	style='
-		background-color: {k.color_background};
-		left: {title_origin.x}px;
-		top: {title_origin.y}px;
-		white-space: nowrap;
-		text-align: center;
-		position: absolute;
-		font-family: Arial;
-		font-size: 0.5em;
-		color: {color};'>
-	{@html label_title}
 </div>

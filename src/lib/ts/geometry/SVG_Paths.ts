@@ -9,6 +9,12 @@ export enum Direction {
 
 export default class SVG_Paths {
 
+	line_connecting(start: Point, end: Point) { return `M ${start.x} ${start.y} L ${end.x} ${end.y}`; }
+
+	line_atAngle(start: Point, radius: number, angle: number) {
+		return this.line_connecting(start, Point.fromPolar(radius, angle).offsetBy(start))
+	}
+
 	ring(center: Point, radius: number, thickness: number): string {
 		return `${this.circle(center, radius, true)} ${this.circle(center.offsetByX(center.x * 2), radius - thickness, false)}`;
 	}

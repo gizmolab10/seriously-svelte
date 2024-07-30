@@ -49,6 +49,13 @@
 			clusters.style.cursor = `${s.necklace_ringState.cursor} !important`;
 		}
 	}
+				// <div class='cluster-focus'
+				// 	style='
+				// 		position: absolute;
+				// 		top:{titleCenter.y}px;
+				// 		left: {titleCenter.x}px;'>
+				// 	<Title_Editor ancestry={$s_ancestry_focus} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
+				// </div>
 
 </script>
 
@@ -58,13 +65,6 @@
 			bind:this={clusters}
 			style='transform:translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px);'>
 			{#key $s_ancestry_focus.hashedAncestry}
-				<div class='cluster-focus'
-					style='
-						position: absolute;
-						top:{titleCenter.y}px;
-						left: {titleCenter.x}px;'>
-					<Title_Editor ancestry={$s_ancestry_focus} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
-				</div>
 				<Clusters_Graph/>
 				<Paging_Ring
 					color={color}

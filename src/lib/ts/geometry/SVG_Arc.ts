@@ -27,11 +27,6 @@ export default class SVG_Arc {
 		this.outside_ring_radius = radius;
 	}
 
-	get adjust_for_slantingForward(): boolean { return new Angle(this.fork_angle).angle_slantsForward; }
-	get adjust_for_pointsRight(): boolean { return new Angle(this.fork_angle).angle_pointsRight; }
-	get straddles_zero(): boolean { return this.start_angle.straddles_zero(this.end_angle); }
-	get spread_angle(): number { return this.end_angle - this.start_angle; }
-
 	update(fork_angle: number) {
 		const fork_raw_radius = k.ring_thickness * 0.6;
 		this.fork_backoff = this.fork_adjustment(fork_raw_radius, this.inside_arc_radius);
@@ -39,41 +34,67 @@ export default class SVG_Arc {
 		this.fork_angle = fork_angle;
 	}
 
-	get arc_svgPath(): string {
+	put_angles_inOrder() {
+		if (!this.fork_pointsRight) {
+			const saved = this.start_angle;
+			this.start_angle = this.end_angle;
+			this.end_angle = saved;
+		}
+	}
+
+	get fork_slantsForward(): boolean { return new Angle(this.fork_angle).angle_slantsForward; }
+	get straddles_zero(): boolean { return this.start_angle.straddles_zero(this.end_angle); }
+	get fork_orientsDown(): boolean { return new Angle(this.fork_angle).angle_orientsDown; }
+	get fork_pointsRight(): boolean { return new Angle(this.fork_angle).angle_pointsRight; }
+	get angles(): [number, number] { return [this.start_angle, this.end_angle]; }
+	get spread_angle(): number { return this.end_angle - this.start_angle; }
+
+
+	get debug_svgPath(): string {
 		const paths = [
-			this.startOf_svgPath(this.outside_arc_radius),
-			this.big_svgPath(this.outside_arc_radius, false),
-			this.small_svgPath(this.end_angle, true),
-			this.big_svgPath(this.inside_arc_radius, true),
-			this.small_svgPath(this.start_angle, false),
+			svgPaths.t_cross(this.outside_ring_radius * 2, 0),
+			// this.tinyDot_svgPath(this.outside_arc_radius, this.start_angle),
+			svgPaths.line_atAngle(this.clusters_center, this.inside_arc_radius, -this.fork_angle),
 		];
 		return paths.join(k.space);
 	}
 
-	startOf_svgPath(radius: number) {
-		return svgPaths.startOutAt(this.clusters_center, radius, this.start_angle);
+	get arc_svgPath(): string {
+		const [start, end] = this.angles;
+		const paths = [
+			this.startOf_svgPath(start, this.outside_arc_radius),
+			this.big_svgPath(end, this.outside_arc_radius, false),
+			this.small_svgPath(end, false),
+			this.big_svgPath(start, this.inside_arc_radius, true),
+			this.small_svgPath(start, true),
+		];
+		return paths.join(k.space);
 	}
 
-	big_svgPath(radius: number, backwards: boolean) {
-		const sweep_flag = backwards != this.adjust_for_pointsRight ? 1 : 0;
-		return svgPaths.arc_partial(this.clusters_center, radius, 0, sweep_flag, 
-			backwards ? this.start_angle : this.end_angle);
+	startOf_svgPath(start_angle: number, radius: number) {
+		return svgPaths.startOutAt(this.clusters_center, radius, start_angle);
 	}
 
-	small_svgPath(arc_angle: number, advance: boolean) {
-		const forward = this.adjust_for_pointsRight;
-		const delta = advance ? Math.PI : 0;
-		const sweep_flag = forward ? 1 : 0;
+	big_svgPath(end_angle: number, radius: number, clockwise: boolean) {
+		const sweep_flag = clockwise != this.fork_pointsRight ? 1 : 0;
+		return svgPaths.arc_partial(this.clusters_center, radius, 0, sweep_flag, end_angle);
+	}
+
+	small_svgPath(arc_angle: number, clockwise: boolean) {
+		const delta = clockwise ? 0 : Math.PI;
 		const tiny_radius = k.ring_thickness / 6;
 		const end = (arc_angle + delta).normalized_angle();
-		const centerTo_middleOfScrollArc = Point.fromPolar(this.inside_arc_radius + tiny_radius, arc_angle);
-		const center = this.clusters_center.offsetBy(centerTo_middleOfScrollArc);
+		const sweep_flag = this.fork_pointsRight ? 1 : 0;
+		const middle_radius = this.inside_arc_radius + tiny_radius;
+		const vectorTo_middleOf_arc = Point.fromPolar(middle_radius, arc_angle);
+		const center = this.clusters_center.offsetBy(vectorTo_middleOf_arc);
 		return svgPaths.arc_partial(center, tiny_radius, 0, sweep_flag, end);
+	
 	}
 
 	tinyDot_svgPath(radius: number, referenceAngle: number) {
 		const start = this.clusters_center.offsetBy(Point.fromPolar(radius, referenceAngle));
-		return svgPaths.circle(start, 20);
+		return svgPaths.circle(start, 5);
 	}
 
 	fork_adjustment(fork_radius: number, inside_arc_radius: number): number {
@@ -84,7 +105,7 @@ export default class SVG_Arc {
 	}
 
 	fork_svgPath() {
-		const forward = this.adjust_for_slantingForward;
+		const forward = this.fork_slantsForward;
 		const fork_radius = this.fork_radius;
 		const angle = -this.fork_angle;
 		const y = fork_radius * (forward ? -1 : 1);

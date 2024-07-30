@@ -29,6 +29,7 @@ export default class Angle {
 	static threeQuarters = Math.PI * 3 / 2;		// nadir (6 o'clock)
 
 	get quadrant_referenceAngle(): number { return u.referenceAngle_ofQuadrant(this.quadrant_ofAngle); }
+	get angle_orientsDown(): boolean { return this.orientation_ofAngle == Orientation.down; }
 
 	get angle_slantsForward(): boolean {
 		const quadrant = this.quadrant_ofAngle;
@@ -43,34 +44,27 @@ export default class Angle {
 		}
 	}
 
-	get angle_pointsDown(): boolean {
-		switch(this.quadrant_ofAngle) {
-			case Quadrant.upperRight: return true;
-			case Quadrant.upperLeft: return true;
-			default: return false;
-		}
-	}
-
 	get orientation_ofAngle(): Orientation {
 		let quadrant = this.quadrant_ofAngle;
-		const isFirstEighth = this.angle.normalize_between_zeroAnd(Angle.quarter) < (Math.PI / 4);
-		switch (quadrant) {
-			case Quadrant.lowerRight: return isFirstEighth ? Orientation.right : Orientation.down;
-			case Quadrant.lowerLeft:  return isFirstEighth ? Orientation.down  : Orientation.left;
-			case Quadrant.upperLeft:  return isFirstEighth ? Orientation.left  : Orientation.up;
-			default:				  return isFirstEighth ? Orientation.up    : Orientation.right;
+		const isFirstEighth = this.angle.normalize_between_zeroAnd(Angle.quarter) < (Angle.quarter / 2);
+		switch (quadrant) {		// going counter-clockwise
+			case Quadrant.upperRight: return isFirstEighth ? Orientation.left  : Orientation.down;
+			case Quadrant.upperLeft:  return isFirstEighth ? Orientation.up    : Orientation.left;
+			case Quadrant.lowerLeft:  return isFirstEighth ? Orientation.right : Orientation.up;
+			case Quadrant.lowerRight: return isFirstEighth ? Orientation.down  : Orientation.right;
 		}
 	}
 
 	get quadrant_ofAngle(): Quadrant {
 	
 		// angles begin at 3 o'clock & rotate up (counter-clockwise)
+		// ending in lowerRight quadrant
 	
 		const normalized = this.angle.normalized_angle();
-		let quadrant = Quadrant.upperRight;
-		if (normalized.isBetween(0,				Angle.quarter,		 true)) { quadrant = Quadrant.lowerRight; }
-		if (normalized.isBetween(Angle.quarter, Angle.half,			 true)) { quadrant = Quadrant.lowerLeft; }
-		if (normalized.isBetween(Angle.half,	Angle.threeQuarters, true)) { quadrant = Quadrant.upperLeft; }
+		let quadrant = Quadrant.lowerRight;
+		if (normalized.isBetween(0,				Angle.quarter,		 true)) { quadrant = Quadrant.upperRight; }
+		if (normalized.isBetween(Angle.quarter, Angle.half,			 true)) { quadrant = Quadrant.upperLeft; }
+		if (normalized.isBetween(Angle.half,	Angle.threeQuarters, true)) { quadrant = Quadrant.lowerLeft; }
 		return quadrant;
 	}
 

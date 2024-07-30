@@ -42,7 +42,7 @@ export class Point {
 	static get zero():				   Point { return new Point();}
 
 	get angle(): number {		// in this (as in math), y increases going up and angles increase counter-clockwise
-		return (Math.atan2(-this.y, this.x)).normalized_angle();	// in browsers, both are the opposite, so reverse them here
+		return (Math.atan2(-this.y, this.x));	// in browsers, y is the opposite, so reverse it here
 	}
 
 	get quadrant_ofPoint(): Quadrant {

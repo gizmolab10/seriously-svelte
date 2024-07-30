@@ -65,6 +65,7 @@ export default class Cluster_Map  {
 	get maximum_page_index(): number { return this.total - this.shown; }
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
 	get description(): string { return `${this.predicate.kind}  ${this.titles}`; }
+	get fork_radial(): Point { return Point.fromPolar(get(s_cluster_arc_radius), this.fork_angle); }
 	fork_radius_multiplier(shown: number): number { return (shown > 3) ? 0.6 : (shown > 1) ? 0.3 : 0.15; }
 	get page_indexOf_focus(): number { return this.focus_ancestry.thing?.page_states?.index_for(this.points_out, this.predicate) ?? 0; }
 	
@@ -180,16 +181,17 @@ export default class Cluster_Map  {
 			while (index < this.shown) {
 				const child_index = fork_angle_pointsRight ? index : max - index;
 				const ancestry = this.ancestries[child_index];
-				const childAngle = this.angle_at_index(index, radius);
+				const childAngle = this.angle_at_index(index);
 				const childOrigin = tweak.offsetBy(radial.rotate_by(childAngle));
 				const map = new Widget_MapRect(IDLine.flat, new Rect(), childOrigin, ancestry, this.focus_ancestry, childAngle); //, this.predicate.kind);
 				this.widget_maps.push(map);
 				index += 1;
 			}
+			this.svg_arc.put_angles_inOrder();
 		}
 	}
 
-	angle_at_index(index: number, radius: number): number {
+	angle_at_index(index: number): number {
 
 		// index:
 		//	increases clockwise
@@ -201,22 +203,23 @@ export default class Cluster_Map  {
 		//	widgets half-and-half around fork-angle
 
 		const max = this.shown - 1;
-		const row = (max / 2) - index;						// row centered around zero
-		const radial = Point.fromPolar(radius, this.fork_angle);	// points at middle widget
-		const fork_y = radial.y;							// height of fork_angle, relative to center of clusters
-		let y = fork_y + (row * k.row_height);				// distribute y equally around fork_y
+		const row = (max / 2) - index;					// row centered around zero
+		const radius = get(s_cluster_arc_radius);
+		const radial = this.fork_radial;				// points at middle widget
+		const fork_y = radial.y;						// height of fork_angle, relative to center of clusters
+		let y = fork_y + (row * k.row_height);			// distribute y equally around fork_y
 		let y_isOutside = false;
 		const absY = Math.abs(y);
 		if (absY > radius) {
-			y_isOutside = true;								// y is outside necklace
-			y = radius * (y / absY) - (y % radius);			// swing around (bottom | top) --> back inside necklace
+			y_isOutside = true;							// y is outside necklace
+			y = radius * (y / absY) - (y % radius);		// swing around (bottom | top) --> back inside necklace
 		}
-		let child_angle = Math.asin(y / radius);			// arc-sin only defined (-90 to 90)
-		if (y_isOutside == (radial.x > 0)) {				// counter-clockwise for (x > 0) and (-radius < y < radius)
-			child_angle = Angle.half - child_angle			// otherwise it's clockwise, so invert it
+		let child_angle = Math.asin(y / radius);		// arc-sin only defined (-90 to 90)
+		if (y_isOutside == (radial.x > 0)) {			// counter-clockwise if (positive x AND y is outside) OR (negative x AND y is inside)
+			child_angle = Angle.half - child_angle		// otherwise it's clockwise, so invert it
 		}
 		this.update_arc_angles(index, max, child_angle);
-		return child_angle									// angle at index
+		return child_angle								// angle at index
 	}
 
 	update_arc_angles(index: number, max: number, child_angle: number) {
@@ -225,35 +228,58 @@ export default class Cluster_Map  {
 			this.svg_arc.start_angle = child_angle;
 		} else if (index == max) {
 			this.svg_arc.end_angle = child_angle;
-			this.debug_angles();
 		}
 	}
 
-	debug_angles() {
-		const end = this.svg_arc.end_angle;
-		const start = this.svg_arc.start_angle;
-		const spread = end - start;
-		if (this.isVisible) {
-			console.log(`ARC ${start.degrees_of(0)} [${(spread / this.total).degrees_of(1)}] ${end.degrees_of(0)}`)
-		}
+	get fork_isNear_nadirOr_zenith(): boolean {
+		const radius = get(s_cluster_arc_radius);
+		const angle = this.fork_angle;
+		const divisor = (radius * 0.035) - 1;
+		const threshold = Angle.quarter / divisor;
+		return Math.abs(angle - Angle.quarter) < threshold || Math.abs(angle - Angle.threeQuarters) < threshold;
+	}
+
+	get invert_thumb_angles(): boolean {
+		const fork_x_isPositive = this.fork_radial.x > 0;
+		return fork_x_isPositive != this.fork_isNear_nadirOr_zenith;
 	}
 
 	update_thumb_angles() {
 		const index = Math.round(this.page_indexOf_focus);
-		const increment = this.svg_arc.spread_angle / this.total;
+		const fork_orientedDown = new Angle(this.fork_angle).angle_orientsDown;
+		const increment = this.svg_arc.spread_angle / this.total * (fork_orientedDown ? -1 : 1);
 		const start = this.svg_arc.start_angle + increment * index;
 		const spread = increment * this.shown;
 		const end = start + spread;
-		this.svg_thumb.update((start + end) / 2);	// halfway from start to end
-		this.svg_thumb.start_angle = start;
-		this.svg_thumb.end_angle = end;
-		// if (this.isVisible) {
-		// 	const log = `THUMB ${start.degrees_of(0)} [${spread.degrees_of(1)}] ${end.degrees_of(0)}`;
-		// 	console.log(log);
-		// }
+		const thumb_angle = (start + end) / 2;		// halfway from start to end
+		const end_isLessThan_start = end < start;
+		const backwards = end_isLessThan_start != this.invert_thumb_angles;
+		this.svg_thumb.update(thumb_angle);
+		this.svg_thumb.start_angle = backwards ? end : start;
+		this.svg_thumb.end_angle = backwards ? start : end;
+		// this.debug(thumb_angle, increment);
 	}
 
-	get isVisible(): boolean { return this.isPaging && this.points_out && !this.predicate.isBidirectional; }
+	get isVisible(): boolean { return this.isPaging && !this.predicate.isBidirectional && this.points_out; }
+
+	debug(thumb_angle: number, increment: number) {
+		if (this.isVisible) {
+			const delta = this.fork_angle - thumb_angle;
+			const strings = [
+				// 'THUMB',
+				// thumb_angle.degrees_of(1),
+				'FORK',
+				this.fork_angle.degrees_of(1),
+				'DELTA',
+				delta.degrees_of(1),
+				'%',
+				(delta / Angle.half).toFixed(2),
+				// 'INCREMENT',
+				// increment.degrees_of(1),
+			]
+			console.log(strings.join('  '));
+		}
+	}
 
 
 }
