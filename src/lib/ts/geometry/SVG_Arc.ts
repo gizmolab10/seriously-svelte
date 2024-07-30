@@ -76,7 +76,7 @@ export default class SVG_Arc {
 	}
 
 	big_svgPath(end_angle: number, radius: number, clockwise: boolean) {
-		const sweep_flag = clockwise != this.fork_pointsRight ? 1 : 0;
+		const sweep_flag = clockwise ? 0 : 1;
 		return svgPaths.arc_partial(this.clusters_center, radius, 0, sweep_flag, end_angle);
 	}
 
@@ -84,11 +84,10 @@ export default class SVG_Arc {
 		const delta = clockwise ? 0 : Math.PI;
 		const tiny_radius = k.ring_thickness / 6;
 		const end = (arc_angle + delta).normalized_angle();
-		const sweep_flag = this.fork_pointsRight ? 1 : 0;
 		const middle_radius = this.inside_arc_radius + tiny_radius;
 		const vectorTo_middleOf_arc = Point.fromPolar(middle_radius, arc_angle);
 		const center = this.clusters_center.offsetBy(vectorTo_middleOf_arc);
-		return svgPaths.arc_partial(center, tiny_radius, 0, sweep_flag, end);
+		return svgPaths.arc_partial(center, tiny_radius, 0, 1, end);
 	
 	}
 

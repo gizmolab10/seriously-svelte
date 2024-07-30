@@ -231,55 +231,20 @@ export default class Cluster_Map  {
 		}
 	}
 
-	get fork_isNear_nadirOr_zenith(): boolean {
-		const radius = get(s_cluster_arc_radius);
-		const angle = this.fork_angle;
-		const divisor = (radius * 0.035) - 1;
-		const threshold = Angle.quarter / divisor;
-		return Math.abs(angle - Angle.quarter) < threshold || Math.abs(angle - Angle.threeQuarters) < threshold;
-	}
-
-	get invert_thumb_angles(): boolean {
-		const fork_x_isPositive = this.fork_radial.x > 0;
-		return fork_x_isPositive != this.fork_isNear_nadirOr_zenith;
-	}
-
 	update_thumb_angles() {
+		const arc_start = this.svg_arc.start_angle;
+		const wrong_order = arc_start < this.svg_arc.end_angle;
 		const index = Math.round(this.page_indexOf_focus);
-		const fork_orientedDown = new Angle(this.fork_angle).angle_orientsDown;
-		const increment = this.svg_arc.spread_angle / this.total * (fork_orientedDown ? -1 : 1);
-		const start = this.svg_arc.start_angle + increment * index;
+		const increment = this.svg_arc.spread_angle / this.total * (wrong_order ? -1 : 1);
+		const start = arc_start + increment * index;
 		const spread = increment * this.shown;
 		const end = start + spread;
 		const thumb_angle = (start + end) / 2;		// halfway from start to end
-		const end_isLessThan_start = end < start;
-		const backwards = end_isLessThan_start != this.invert_thumb_angles;
 		this.svg_thumb.update(thumb_angle);
-		this.svg_thumb.start_angle = backwards ? end : start;
-		this.svg_thumb.end_angle = backwards ? start : end;
-		// this.debug(thumb_angle, increment);
+		this.svg_thumb.start_angle = start;
+		this.svg_thumb.end_angle = end;
 	}
 
 	get isVisible(): boolean { return this.isPaging && !this.predicate.isBidirectional && this.points_out; }
-
-	debug(thumb_angle: number, increment: number) {
-		if (this.isVisible) {
-			const delta = this.fork_angle - thumb_angle;
-			const strings = [
-				// 'THUMB',
-				// thumb_angle.degrees_of(1),
-				'FORK',
-				this.fork_angle.degrees_of(1),
-				'DELTA',
-				delta.degrees_of(1),
-				'%',
-				(delta / Angle.half).toFixed(2),
-				// 'INCREMENT',
-				// increment.degrees_of(1),
-			]
-			console.log(strings.join('  '));
-		}
-	}
-
 
 }

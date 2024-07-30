@@ -10,6 +10,7 @@ class Builds {
 
 	constructor() {
 		this.notes = {
+			105 : ['July 30, 2024', 'corrected thumb position and shape of arc and thumb'],
 			104 : ['July 2, 2024', 'save and restore paging thumb position'],
 			103 : ['June 30, 2024', 'paging thumb button works'],
 			102 : ['June 18, 2024', 'visibility logic for advance buttons'],
