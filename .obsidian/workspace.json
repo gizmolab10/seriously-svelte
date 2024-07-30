@@ -157,6 +157,7 @@
   },
   "active": "b96ce36b21ad98e3",
   "lastOpenFiles": [
+    "src/lib/svelte/clusters/Rotation_Ring.svelte",
     "node_modules/@babel/helpers/lib/helpers/superPropSet.js",
     "node_modules/@babel/helpers/lib/helpers/superPropSet.js.map",
     "node_modules/@babel/helpers/lib/helpers/superPropGet.js.map",
@@ -167,7 +168,6 @@
     "node_modules/@babel/types/lib/retrievers/getAssignmentIdentifiers.js",
     "src/lib/svelte/clusters/Paging_Ring.svelte",
     "src/lib/svelte/clusters/Paging_Arc.svelte",
-    "src/lib/svelte/clusters/Scrolling_Ring.svelte",
     "node_modules/rxdb/node_modules/firebase/README.md",
     "node_modules/safevalues/README.md",
     "node_modules/rxdb/node_modules/@firebase/analytics-compat/README.md",

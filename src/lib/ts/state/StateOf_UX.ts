@@ -21,8 +21,8 @@ export default class StateOf_UX {
 	elementState_byName: {[name: string]: Element_State} = {};
 	mouseState_byName: { [name: string]: Mouse_State } = {};
 	clusters_geometry!: Clusters_Geometry;
+	rotation_ringState!: Expansion_State;
 	paging_ring_state!: Rotation_State;
-	necklace_ringState!: Expansion_State;
 	rebuild_count = 0;
 
 	//////////////////////////////////////
@@ -33,7 +33,7 @@ export default class StateOf_UX {
 	//  this allows them to be deleted	//
 	//		by their own event handling	//
 	//									//
-	//	used by: Button, Necklace_Ring	//
+	//	used by: Button, Rotation_Ring	//
 	//		& Close_Button				//
 	//									//
 	//////////////////////////////////////
@@ -41,26 +41,25 @@ export default class StateOf_UX {
 	constructor() {
 		setTimeout(() => {
 			this.paging_ring_state = new Rotation_State();
-			this.necklace_ringState = new Expansion_State();
+			this.rotation_ringState = new Expansion_State();
 		}, 1);
-	}
-
-	name_from(identifiable: Identifiable, type: ElementType, subtype: string): string {
-		return `${type}-${subtype}-${identifiable.id}`;
 	}
 
 	get new_clusters_geometry() { return this.clusters_geometry = new Clusters_Geometry(); }
 	elementState_forName(name: string): Element_State { return this.elementState_byName[name]; }
 
-	elementState_for(identifiable: Identifiable | null, type: ElementType, subtype: string): Element_State {
-		const realIdentifiable = identifiable ?? new Identifiable(Identifiable.newID())
-		const name = this.name_from(realIdentifiable, type, subtype);
-		let element_state = this.elementState_forName(name);
-		if (!element_state) {
-			element_state = new Element_State(realIdentifiable, type, subtype);
-			this.elementState_byName[name] = element_state;
+	name_from(identifiable: Identifiable, type: ElementType, subtype: string): string {
+		return `${type}-${subtype}-${identifiable.id}`;
+	}
+
+	get isAnyRotation_active(): boolean {
+		const states = Object.values(this.rotationState_byName);
+		for (const state of states) {
+			if (state.isActive) {
+				return true;
+			}
 		}
-		return element_state;
+		return false;
 	}
 
 	rotationState_forName(name: string): Rotation_State {
@@ -81,14 +80,15 @@ export default class StateOf_UX {
 		return state;
 	}
 
-	get isAnyRotation_active(): boolean {
-		const states = Object.values(this.rotationState_byName);
-		for (const state of states) {
-			if (state.isActive) {
-				return true;
-			}
+	elementState_for(identifiable: Identifiable | null, type: ElementType, subtype: string): Element_State {
+		const realIdentifiable = identifiable ?? new Identifiable(Identifiable.newID())
+		const name = this.name_from(realIdentifiable, type, subtype);
+		let element_state = this.elementState_forName(name);
+		if (!element_state) {
+			element_state = new Element_State(realIdentifiable, type, subtype);
+			this.elementState_byName[name] = element_state;
 		}
-		return false;
+		return element_state;
 	}
 
 }
