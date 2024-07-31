@@ -1,5 +1,5 @@
 import { k, get, Predicate, Ancestry, Cluster_Map } from '../common/Global_Imports';
-import { s_page_state, s_cluster_arc_radius } from '../state/Reactive_State';
+import { s_page_state, s_rotation_ring_radius } from '../state/Reactive_State';
 
 export class Page_State {
 
@@ -49,7 +49,7 @@ export class Page_State {
 	}
 
 	onePage_from(ancestries: Array<Ancestry>): Array<Ancestry> {
-		const canShow = Math.round(get(s_cluster_arc_radius) * 2 / k.row_height) - 5;
+		const canShow = Math.round(get(s_rotation_ring_radius) * 2 / k.row_height) - 5;
 		const index = Math.round(this.index);
 		this.total = ancestries.length;
 		this.shown = Math.min(canShow, this.total);

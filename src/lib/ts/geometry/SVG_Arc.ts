@@ -1,11 +1,11 @@
-import { k, u, get, Point, Angle, svgPaths } from '../common/Global_Imports';
-import { s_cluster_arc_radius } from '../state/Reactive_State';
+import { k, get, Point, Angle, svgPaths } from '../common/Global_Imports';
+import { s_rotation_ring_radius } from '../state/Reactive_State';
 
 // create svg paths for generic arcs
 //
 // given:
 //	start, end & fork angles
-//	s_cluster_arc_radius
+//	s_rotation_ring_radius
 
 export default class SVG_Arc {
 	clusters_center = Point.zero;
@@ -19,7 +19,7 @@ export default class SVG_Arc {
 	end_angle = 0;
 
 	constructor() {
-		const radius = get(s_cluster_arc_radius);
+		const radius = get(s_rotation_ring_radius);
 		const thickness = k.paging_arc_thickness;
 		this.inside_arc_radius = radius - thickness * 2;
 		this.outside_arc_radius = radius - thickness;
@@ -50,10 +50,12 @@ export default class SVG_Arc {
 	get spread_angle(): number { return this.end_angle - this.start_angle; }
 
 	get debug_svgPath(): string {
+		const small = this.outside_ring_radius;
+		const big = small + k.ring_thickness;
 		const paths = [
-			svgPaths.t_cross(this.outside_ring_radius * 2, 0),
+			svgPaths.t_cross(small * 2, 0),
 			// this.tinyDot_svgPath(this.outside_arc_radius, this.start_angle),
-			svgPaths.line_atAngle(this.clusters_center, this.inside_arc_radius, this.fork_angle),
+			svgPaths.line_atAngle(this.clusters_center, big, this.fork_angle),
 		];
 		return paths.join(k.space);
 	}
@@ -90,8 +92,8 @@ export default class SVG_Arc {
 	
 	}
 
-	tinyDot_svgPath(radius: number, referenceAngle: number) {
-		const start = this.clusters_center.offsetBy(Point.fromPolar(radius, referenceAngle));
+	tinyDot_svgPath(radius: number, basis_angle: number) {
+		const start = this.clusters_center.offsetBy(Point.fromPolar(radius, basis_angle));
 		return svgPaths.circle(start, 5);
 	}
 

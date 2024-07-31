@@ -55,10 +55,10 @@ export default class SVG_Paths {
         return `M${radius - width} ${radius}a${width} ${height} 0 1,0 ${doubleWidth} 0a${width} ${height} 0 1,0 ${-doubleWidth} 0`;
     }
 
-	arc(center: Point, radius: number, sweepFlag: number, referenceAngle: number, endAngle: number): string {
+	arc(center: Point, radius: number, sweepFlag: number, basis_angle: number, endAngle: number): string {
 		const end = center.offsetBy(Point.fromPolar(radius, endAngle));
-		const start = center.offsetBy(Point.fromPolar(radius, referenceAngle));
-		const largeArcFlag = ((referenceAngle - endAngle).normalized_angle() > Math.PI) ? 1 : 0;
+		const start = center.offsetBy(Point.fromPolar(radius, basis_angle));
+		const largeArcFlag = ((basis_angle - endAngle).normalized_angle() > Math.PI) ? 1 : 0;
 		return `\nM ${start.x} ${start.y} \nA ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} \n${end.x} ${end.y}`;
 	}
 
@@ -67,8 +67,8 @@ export default class SVG_Paths {
 		return `\nA ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} \n${end.x} ${end.y}`;
 	}
 
-	startOutAt(center: Point, radius: number, referenceAngle: number) {
-		const start = center.offsetBy(Point.fromPolar(radius, referenceAngle));
+	startOutAt(center: Point, radius: number, basis_angle: number) {
+		const start = center.offsetBy(Point.fromPolar(radius, basis_angle));
 		return `\nM ${start.x} ${start.y}`;
 	}
 

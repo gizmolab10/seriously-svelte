@@ -28,7 +28,7 @@ export default class Angle {
 	static half = Math.PI;						// far left (9 o'clock)
 	static threeQuarters = Math.PI * 3 / 2;		// nadir (6 o'clock)
 
-	get quadrant_referenceAngle(): number { return u.referenceAngle_ofQuadrant(this.quadrant_ofAngle); }
+	get quadrant_basis_angle(): number { return u.basis_angle_ofQuadrant(this.quadrant_ofAngle); }
 	get angle_orientsDown(): boolean { return this.orientation_ofAngle == Orientation.down; }
 
 	get angle_slantsForward(): boolean {

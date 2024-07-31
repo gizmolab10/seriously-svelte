@@ -110,7 +110,7 @@ class Utilities {
 		return Object.values(ancestriesByHID);
 	}
 
-	referenceAngle_ofQuadrant(quadrant: Quadrant): number {
+	basis_angle_ofQuadrant(quadrant: Quadrant): number {
 		switch (quadrant) {
 			case Quadrant.upperRight: return Angle.threeQuarters;
 			case Quadrant.lowerLeft:  return Angle.quarter;

@@ -1,13 +1,13 @@
 <script lang='ts'>
 	import { g, k, s, u, Rect, Size, Point, ZIndex, onMount, Cluster_Map, Orientation, ElementType, transparentize } from '../../ts/common/Global_Imports';
-	import { s_mouse_location, s_mouse_up_count, s_ancestry_focus, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
+	import { s_mouse_location, s_mouse_up_count, s_ancestry_focus, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import { ArcPart } from '../../ts/common/Enumerations';
 	export let cursor_closure = () => {};
 	export let cluster_map: Cluster_Map;
 	export let center = Point.zero;
 	export let color = 'red';
 	const offset = k.necklace_widget_padding;
-	const radius = $s_cluster_arc_radius + offset;
+	const radius = $s_rotation_ring_radius + offset;
 	const breadth = radius * 2;
 	const viewBox=`${-offset} ${-offset} ${breadth} ${breadth}`;
 	const name = s.name_from($s_ancestry_focus, ElementType.arc, cluster_map.cluster_title);
@@ -41,13 +41,13 @@
 		////////////////////////////////////
 
 		const _ = k.empty + ($s_mouse_location?.description ?? k.empty);			// use store, to react
-		if (!!paging_arc_state.priorAngle) {										// rotate
+		if (!!paging_arc_state.lastRotated_angle) {										// rotate
 			cursor_closure();
 			const mouseAngle = computed_mouseAngle();
 			if (!!mouseAngle) {
-				const delta = Math.abs(mouseAngle - paging_arc_state.priorAngle);	// subtract to find difference
+				const delta = Math.abs(mouseAngle - paging_arc_state.lastRotated_angle);	// subtract to find difference
 				if (delta >= (Math.PI / 90)) {										// minimum two degree changes
-					paging_arc_state.priorAngle = mouseAngle;
+					paging_arc_state.lastRotated_angle = mouseAngle;
 					cluster_map.adjust_pagingIndex_forMouse_angle(mouseAngle);
 				}
 			}
@@ -109,8 +109,8 @@
 				// begin rotate
 
 				if (!!mouseAngle) {
-					paging_arc_state.priorAngle = mouseAngle;
-					paging_arc_state.referenceAngle = mouseAngle;
+					paging_arc_state.lastRotated_angle = mouseAngle;
+					paging_arc_state.basis_angle = mouseAngle;
 					layout_title();
 				}
 			}

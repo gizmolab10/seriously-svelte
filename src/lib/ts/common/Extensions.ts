@@ -94,6 +94,7 @@ declare global {
 		isBetween(a: number, b: number, inclusive: boolean): boolean;
 		isClocklyBetween(a: number, b: number, limit: number): boolean;
 		bump_towards(smallest: number, largest: number, within: number): number;
+		isClocklyAlmost(target: number, within: number, clock: number): boolean;
 	}
 }
 
@@ -197,12 +198,22 @@ Object.defineProperty(Number.prototype, 'degrees_of', {
 });
 
 Object.defineProperty(Number.prototype, 'isClocklyBetween', {
-	value: function(a: number, b: number, limit: number): boolean {
-		const value = this.normalize_between_zeroAnd(limit);
-		const cycled: number = value - limit;
+	value: function(a: number, b: number, normalizeTo: number): boolean {
+		const value = this.normalize_between_zeroAnd(normalizeTo);
+		const cycled: number = value - normalizeTo;
 		var min = Math.min(a, b),
 			max = Math.max(a, b);
 		return this.isBetween(min, max, true) || cycled.isBetween(min, max, true);
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(Number.prototype, 'isClocklyAlmost', {
+	// after normalizing to normalizeTo, is this almost target (+/- within)?
+	value: function(target: number, within: number, normalizeTo: number): boolean {
+		return this.isClocklyBetween(target - within, target + within, normalizeTo);
 	},
 	writable: false,
 	enumerable: false,

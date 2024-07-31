@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_thing_changed, s_ancestry_focus, s_ring_angle, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
+	import { s_thing_changed, s_ancestry_focus, s_rotation_ring_angle, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/Reactive_State';
 	import { k, s, u, Thing, Point, ZIndex, signals, svgPaths, dbDispatch } from '../../ts/common/Global_Imports';
 	import { transparentize, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
@@ -53,23 +53,24 @@
 		const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);	// use store, to react
 		if (!!from_center) {
 			let sendSignal = false;
-			if (!!s.rotation_ringState.priorAngle) {				// rotate
+			if (!!s.rotation_ringState.lastRotated_angle) {				// rotate
 				const mouseAngle = from_center.angle;
-				const delta = mouseAngle.add_angle_normalized(-s.rotation_ringState.priorAngle);	// subtract to find difference
-				if (Math.abs(delta) >= Math.PI / 90) {				// minimum two degree changes
+				const isAlmost = mouseAngle.isClocklyAlmost(s.rotation_ringState.lastRotated_angle, Math.PI / 180, Math.PI * 2);	// detect >= 1° change
+				if (!isAlmost) {
 					sendSignal = true;
-					s.rotation_ringState.priorAngle = mouseAngle;
-					$s_ring_angle = mouseAngle.add_angle_normalized(-s.rotation_ringState.referenceAngle);
+					s.rotation_ringState.lastRotated_angle = mouseAngle;
+					const ring_angle = mouseAngle.add_angle_normalized(-s.rotation_ringState.basis_angle);
+					$s_rotation_ring_angle = ring_angle;
 				}
-			} else if (!!s.rotation_ringState.radiusOffset) {		// resize
+			} else if (!!s.rotation_ringState.radiusOffset) {			// resize
 				const magnitude = from_center.magnitude
 				const largest = k.cluster_inside_radius * 4;
 				const smallest = k.cluster_inside_radius * 1.5;
 				const distance = magnitude.force_between(smallest, largest);
-				const pixels = distance - $s_cluster_arc_radius - s.rotation_ringState.radiusOffset;
+				const pixels = distance - $s_rotation_ring_radius - s.rotation_ringState.radiusOffset;
 				if (Math.abs(pixels) > 5) {
 					sendSignal = true;
-					$s_cluster_arc_radius += pixels;
+					$s_rotation_ring_radius += pixels;
 				}
 			} else if (!s.isAnyRotation_active) {
 				if (s.rotation_ringState.isHovering != isHit()) {
@@ -107,7 +108,7 @@
 
 				// begin resize
 				
-				s.rotation_ringState.radiusOffset = from_center.magnitude - $s_cluster_arc_radius;
+				s.rotation_ringState.radiusOffset = from_center.magnitude - $s_rotation_ring_radius;
 				rebuilds += 1;
 			} else if (mouseState.isUp) {
 
@@ -116,13 +117,14 @@
 				s.rotation_ringState.reset();
 				rebuilds += 1;
 			} else if (mouseState.isDown) {
-				const mouseAngle = -from_center.angle;
+				const ring_angle = $s_rotation_ring_angle;
+				const mouse_wentDown_angle = from_center.angle;
+				const basis_angle = mouse_wentDown_angle.add_angle_normalized(-ring_angle);
 
 				// begin rotate
 
-				s.rotation_ringState.priorAngle = mouseAngle;
-				s.rotation_ringState.referenceAngle = $s_ring_angle.add_angle_normalized(mouseAngle);
-				console.log(`REFERENCE ${s.rotation_ringState.referenceAngle.degrees_of(0)}`)
+				s.rotation_ringState.basis_angle = basis_angle;
+				s.rotation_ringState.lastRotated_angle = mouse_wentDown_angle;
 				rebuilds += 1;
 				
 			}

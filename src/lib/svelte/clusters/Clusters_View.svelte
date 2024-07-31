@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_graphRect, s_ancestry_focus, s_user_graphOffset, s_thing_fontFamily, s_cluster_arc_radius } from '../../ts/state/Reactive_State';
+	import { s_graphRect, s_ancestry_focus, s_user_graphOffset, s_thing_fontFamily, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import { k, s, u, Rect, Size, Point, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
 	import Editing_Tools from '../widget/Editing_Tools.svelte';
 	import Title_Editor from '../widget/Title_Editor.svelte';
@@ -65,14 +65,14 @@
 					ring_width={30}
 					name={'scroll-ring'}
 					zindex={ZIndex.text}
-					radius={$s_cluster_arc_radius - k.ring_thickness}/>
+					radius={$s_rotation_ring_radius - k.ring_thickness}/>
 				<Rotation_Ring
 					color={color}
 					center={center}
 					zindex={ZIndex.lines}
 					name={'necklace-ring'}
 					ring_width={k.ring_thickness}
-					radius={$s_cluster_arc_radius}
+					radius={$s_rotation_ring_radius}
 					cursor_closure={cursor_closure}/>
 				<Editing_Tools offset={toolsOffset}/>
 				<div class='cluster-focus'

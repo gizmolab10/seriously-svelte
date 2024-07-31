@@ -1,4 +1,4 @@
-import { s_ring_angle, s_cluster_arc_radius, s_layout_asClusters } from '../state/Reactive_State';
+import { s_rotation_ring_angle, s_rotation_ring_radius, s_layout_asClusters } from '../state/Reactive_State';
 import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/Reactive_State';
 import { s_page_state, s_thing_fontFamily, s_shown_relations } from '../state/Reactive_State';
 import { g, k, get, Point, signals, Ancestry, dbDispatch } from '../common/Global_Imports';
@@ -170,13 +170,13 @@ class Persist_Local {
 		s_shown_relations.subscribe((relations: string) => {
 			this.write_key(IDPersistant.relations, relations);
 		});
-		s_cluster_arc_radius.subscribe((radius: number) => {
+		s_rotation_ring_radius.subscribe((radius: number) => {
 			this.write_key(IDPersistant.cluster_arc, radius);
 		});
 		s_layout_asClusters.subscribe((flag: boolean) => {
 			this.write_key(IDPersistant.layout, flag);
 		});
-		s_ring_angle.subscribe((angle: number) => {
+		s_rotation_ring_angle.subscribe((angle: number) => {
 			this.write_key(IDPersistant.ring_angle, angle);
 		});
 		s_show_details.subscribe((flag: boolean) => {
@@ -206,11 +206,11 @@ class Persist_Local {
 		k.show_arrowheads = this.read_key(IDPersistant.arrowheads) ?? false;
 		k.show_titleAtTop = this.read_key(IDPersistant.title_atTop) ?? false;
 		g.applyScale(!g.device_isMobile ? 1 : this.read_key(IDPersistant.scale) ?? 1);
-		s_ring_angle.set(this.read_key(IDPersistant.ring_angle) ?? 0);
+		s_rotation_ring_angle.set(this.read_key(IDPersistant.ring_angle) ?? 0);
 		s_show_details.set(this.read_key(IDPersistant.details) ?? false);
 		s_thing_fontFamily.set(this.read_key(IDPersistant.font) ?? 'Arial');
 		s_layout_asClusters.set(this.read_key(IDPersistant.layout) ?? false);
-		s_cluster_arc_radius.set(this.read_key(IDPersistant.cluster_arc) ?? 130);
+		s_rotation_ring_radius.set(this.read_key(IDPersistant.cluster_arc) ?? 130);
 		s_shown_relations.set(this.read_key(IDPersistant.relations) ?? GraphRelations.children);
 		this.restore_graphOffset();
 		this.reactivity_subscribe()
