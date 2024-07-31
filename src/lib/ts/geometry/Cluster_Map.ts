@@ -152,7 +152,7 @@ export default class Cluster_Map  {
 	fork_angleFor(predicate: Predicate, points_out: boolean): number | null {
 		// returns one of three angles: 1) necklace_angle 2) opposite+tweak 3) opposite-tweak
 		const tweak = Math.PI * 5 / 18;			// 50 degrees: added or subtracted -> opposite
-		const necklace_angle = get(s_ring_angle);
+		const necklace_angle = -get(s_ring_angle);
 		const opposite = necklace_angle + Angle.half;
 		const raw = predicate.isBidirectional ?
 			opposite - tweak :
@@ -167,6 +167,9 @@ export default class Cluster_Map  {
 		this.fork_angle = fork_angle;
 		this.svg_arc.update(fork_angle);
 		this.straddles_zero = this.svg_arc.start_angle.straddles_zero(this.svg_arc.end_angle);
+		if (this.isVisible) {
+			console.log(`FORK ${fork_angle.degrees_of(0)}`)
+		}
 	}
 
 	update_widgets() {
@@ -246,9 +249,9 @@ export default class Cluster_Map  {
 		this.svg_thumb.update(thumb_angle);
 		this.svg_thumb.start_angle = start;
 		this.svg_thumb.end_angle = end;
-		if (orientsDown) {
-			console.log('DOWN')
-		}
+		// if (orientsDown) {
+		// 	console.log('DOWN')
+		// }
 	}
 
 	get isVisible(): boolean { return this.isPaging && !this.predicate.isBidirectional && this.points_out; }

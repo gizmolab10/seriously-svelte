@@ -47,14 +47,14 @@ describe('Angle', () => {
 	});
 
 	it('quadrant', () => {
-		expect(new Angle(Math.PI / 3).quadrant_ofAngle).toBe(Quadrant.lowerRight);
+		expect(new Angle(Math.PI / 3).quadrant_ofAngle).toBe(Quadrant.upperRight);		// 60° is in upper right quadrant
 	});
 
 	it('orientation', () => {
-		expect(new Angle(Math.PI / 3).orientation_ofAngle).toBe(Orientation.up);
-		expect(new Angle(Math.PI / 2).orientation_ofAngle).toBe(Orientation.left);
-		expect(new Angle(Math.PI / 6).orientation_ofAngle).toBe(Orientation.right);
-		expect(new Angle(Math.PI * 1.3).orientation_ofAngle).toBe(Orientation.down);
+		expect(new Angle(Math.PI / 3).orientation_ofAngle).toBe(Orientation.up);		//	60° orients up
+		expect(new Angle(Math.PI / 2).orientation_ofAngle).toBe(Orientation.left);		//	90° orients up
+		expect(new Angle(Math.PI / 6).orientation_ofAngle).toBe(Orientation.right);		//	30° orients right
+		expect(new Angle(Math.PI * 1.25).orientation_ofAngle).toBe(Orientation.down);	// 205° orients down
 	});
 
 });

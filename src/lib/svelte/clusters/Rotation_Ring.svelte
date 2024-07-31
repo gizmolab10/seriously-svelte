@@ -54,7 +54,7 @@
 		if (!!from_center) {
 			let sendSignal = false;
 			if (!!s.rotation_ringState.priorAngle) {				// rotate
-				const mouseAngle = -from_center.angle;
+				const mouseAngle = from_center.angle;
 				const delta = mouseAngle.add_angle_normalized(-s.rotation_ringState.priorAngle);	// subtract to find difference
 				if (Math.abs(delta) >= Math.PI / 90) {				// minimum two degree changes
 					sendSignal = true;
@@ -121,7 +121,8 @@
 				// begin rotate
 
 				s.rotation_ringState.priorAngle = mouseAngle;
-				s.rotation_ringState.referenceAngle = mouseAngle.add_angle_normalized(-$s_ring_angle);
+				s.rotation_ringState.referenceAngle = $s_ring_angle.add_angle_normalized(mouseAngle);
+				console.log(`REFERENCE ${s.rotation_ringState.referenceAngle.degrees_of(0)}`)
 				rebuilds += 1;
 				
 			}

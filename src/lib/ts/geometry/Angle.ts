@@ -46,11 +46,12 @@ export default class Angle {
 
 	get orientation_ofAngle(): Orientation {
 		let quadrant = this.quadrant_ofAngle;
+		// isFirstEighth first of two half quadrants, counting counter-clockwise
 		const isFirstEighth = this.angle.normalize_between_zeroAnd(Angle.quarter) < (Angle.quarter / 2);
 		switch (quadrant) {		// going counter-clockwise
-			case Quadrant.upperRight: return isFirstEighth ? Orientation.left  : Orientation.down;
+			case Quadrant.upperRight: return isFirstEighth ? Orientation.right : Orientation.up;
 			case Quadrant.upperLeft:  return isFirstEighth ? Orientation.up    : Orientation.left;
-			case Quadrant.lowerLeft:  return isFirstEighth ? Orientation.right : Orientation.up;
+			case Quadrant.lowerLeft:  return isFirstEighth ? Orientation.left  : Orientation.down;
 			case Quadrant.lowerRight: return isFirstEighth ? Orientation.down  : Orientation.right;
 		}
 	}
