@@ -221,6 +221,7 @@ class Persist_Local {
 		let page_states: Array<Page_State> = [];
 		const descriptions = this.read_allSubkeys_forKey(IDPersistant.page_states) ?? k.empty;
 		for (const description of descriptions) {
+			console.log(description);
 			const page_state = Page_State.create_fromDescription(description);
 			const id = page_state?.thing_id;
 			if (!!page_state && !!id) {

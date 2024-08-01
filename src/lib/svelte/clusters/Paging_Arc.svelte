@@ -46,12 +46,14 @@
 		const _ = k.empty + ($s_mouse_location?.description ?? k.empty);			// use store, to react
 		if (!!paging_arc_state.lastRotated_angle) {										// rotate
 			cursor_closure();
-			const mouseAngle = computed_mouseAngle();
-			if (!!mouseAngle) {
-				const delta = Math.abs(mouseAngle - paging_arc_state.lastRotated_angle);	// subtract to find difference
-				if (delta >= (Math.PI / 90)) {										// minimum two degree changes
-					paging_arc_state.lastRotated_angle = mouseAngle;
-					cluster_map?.adjust_pagingIndex_forMouse_angle(mouseAngle);
+			if (!!cluster_map) {
+				const mouseAngle = computed_mouseAngle();
+				if (!!mouseAngle) {
+					const delta = Math.abs(mouseAngle - paging_arc_state.lastRotated_angle);	// subtract to find difference
+					if (delta >= (Math.PI / 90)) {										// minimum two degree changes
+						paging_arc_state.lastRotated_angle = mouseAngle;
+						cluster_map.adjust_pagingIndex_forMouse_angle(mouseAngle);
+					}
 				}
 			}
 		}
