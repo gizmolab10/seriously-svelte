@@ -99,11 +99,13 @@ class Persist_Local {
 	}
 
 	write_keyPair<T>(key: string, sub_key: string, value: T): void {
-		const keys = this.read_key(key) ?? new Set();
-		this.write_key(this.keyPair_for(key, sub_key), value);
-		if (!keys.includes(sub_key)) {
-			keys.push(sub_key);
-			this.write_key(key, Array.from(keys));
+		if (!!sub_key) {
+			const keys = this.read_key(key) ?? new Set();
+			this.write_key(this.keyPair_for(key, sub_key), value);
+			if (!!keys && !keys.includes(sub_key)) {
+				keys.push(sub_key);
+				this.write_key(key, Array.from(keys));
+			}
 		}
 	}
 
