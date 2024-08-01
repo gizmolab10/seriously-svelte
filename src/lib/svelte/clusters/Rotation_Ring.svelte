@@ -20,7 +20,7 @@
 	const svg_ringPath = svgPaths.ring(Point.square(radius), outer_radius, ring_width);
 	let mouse_up_count = $s_mouse_up_count;
 	let neckaceWrapper = Svelte_Wrapper;
-	let necklaceRing;
+	let rotationRing;
 	let rebuilds = 0
 
 	$: {
@@ -30,8 +30,8 @@
 	}
 
 	$: {
-		if (!!necklaceRing) {
-			neckaceWrapper = new Svelte_Wrapper(necklaceRing, handle_mouseData, Identifiable.newID(), SvelteComponentType.ring);
+		if (!!rotationRing) {
+			neckaceWrapper = new Svelte_Wrapper(rotationRing, handle_mouseData, Identifiable.newID(), SvelteComponentType.ring);
 		}
 	}
 
@@ -150,7 +150,7 @@
 </script>
 
 {#key rebuilds}
-	<div class='neckace-ring' bind:this={necklaceRing}>
+	<div class='neckace-ring' bind:this={rotationRing}>
 		<Mouse_Responder
 			name={name}
 			center={center}

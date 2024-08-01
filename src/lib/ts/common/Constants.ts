@@ -18,7 +18,7 @@ export default class Constants {
 	editingTools_diameter = 64;
 	threshold_doubleClick = 300;
 	hid_unknown = 1000000000000;
-	necklace_widget_padding = 15;
+	rotation_ring_widget_padding = 15;
 	local_help_url = 'http://localhost:8000/README.html';
 	remote_help_url = 'https://help-webseriously.netlify.app/README.html';
 	prevent_selection_style = '-webkit-user-select: none; user-select: none; -moz-user-select: none;';

@@ -9,7 +9,7 @@ export default class Rotation_State {
 
 	// track where the user 
 	// a) rotates the thumb button (scrolls the page)
-	// b) rotates the necklace (in subclass: Expansion_State)
+	// b) rotates the rotation_ring (in subclass: Expansion_State)
 	
 	reset() { this.basis_angle = this.lastRotated_angle = null; }
 	get isActive(): boolean { return !!this.basis_angle; }

@@ -1,12 +1,13 @@
 <script lang='ts'>
 	import { g, k, s, u, Rect, Size, Point, ZIndex, onMount, Cluster_Map, Orientation, ElementType, transparentize } from '../../ts/common/Global_Imports';
 	import { s_mouse_location, s_mouse_up_count, s_ancestry_focus, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
+	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { ArcPart } from '../../ts/common/Enumerations';
 	export let cursor_closure = () => {};
 	export let cluster_map: Cluster_Map;
 	export let center = Point.zero;
 	export let color = 'red';
-	const offset = k.necklace_widget_padding;
+	const offset = k.rotation_ring_widget_padding;
 	const radius = $s_rotation_ring_radius + offset;
 	const breadth = radius * 2;
 	const viewBox=`${-offset} ${-offset} ${breadth} ${breadth}`;
@@ -18,7 +19,9 @@
 	let title_origin = Point.zero;
 	let mouse_up_count = $s_mouse_up_count;
 	let ring_color = transparentize(color, 0.93);
-	let thumb_color = transparentize(color, s.paging_ring_state.stroke_transparency * 0.8);
+	let origin = center.offsetBy(Point.square(-radius));
+	let thumb_color = transparentize(color, paging_arc_state.stroke_transparency * 0.8);
+	let arc_color = transparentize(color, s.paging_ring_state.stroke_transparency * 0.8);
 
 	// draws the [paging] arc and thumb slider
 	// uses svg_arc for svg, which also has total and shown
@@ -54,6 +57,11 @@
 		}
 		layout_title();
 	}
+ 
+	function isHit(): boolean {
+		const vector = u.vector_ofOffset_fromGraphCenter_toMouseLocation(origin);
+		return vector.isContainedBy_path(cluster_map.svg_thumb.arc_svgPath);
+	}
 
 	function computed_mouseAngle(): number | null {
 		return u.vector_ofOffset_fromGraphCenter_toMouseLocation(center)?.angle ?? null
@@ -85,6 +93,10 @@
 		}	
 	}
 
+	function update_thumb_color() {
+		thumb_color = transparentize(color, paging_arc_state.stroke_transparency * 0.8);
+	}
+
 	function closure(mouseState) {
 
 		/////////////////////////////
@@ -92,17 +104,17 @@
 		/////////////////////////////
 
 		if (mouseState.isHover) {
-			rotation_state.isHovering = !!s.scrolling_ring_state.isHovering;	// show highlight around ring
+			paging_arc_state.isHovering = isHit();	// show highlight around ring
 
 			// hover
 
-			layout_title();
+			update_thumb_color();
 		} else {
 			if (mouseState.isUp) {
 
 				// end rotate
 
-				layout_title();
+				update_thumb_color();
 			} else if (mouseState.isDown) {
 				const mouseAngle = computed_mouseAngle();
 
@@ -111,7 +123,7 @@
 				if (!!mouseAngle) {
 					paging_arc_state.lastRotated_angle = mouseAngle;
 					paging_arc_state.basis_angle = mouseAngle;
-					layout_title();
+					update_thumb_color();
 				}
 			}
 			cursor_closure();
@@ -120,20 +132,23 @@
 
 </script>
 
-<div class='scroll-arc-and-thumb' id={name} style='
-	position: absolute;
-	width: {breadth}px;
-	height: {breadth}px;
-	zindex: {ZIndex.frontmost};
-	top: {center.y - radius}px;
-	left: {center.x - radius}px;'>
-	<svg class='svg-scroll-arc' viewBox={viewBox}>
+<Mouse_Responder
+	name={name}
+	center={center}
+	zindex={ZIndex.frontmost}
+	width={breadth}
+	height={breadth}
+	closure={closure}
+	detect_longClick={false}
+	detectHit_closure={isHit}
+	cursor={k.cursor_default}>
+	<svg class='svg-paging-arc' viewBox={viewBox}>
+		<path stroke={arc_color} fill=transparent d={cluster_map.svg_arc.arc_svgPath}/>
 		{#if (cluster_map.isPaging)}
 			<path fill={thumb_color} d={cluster_map.svg_thumb.arc_svgPath}/>
-			<path stroke='orange' fill=transparent d={cluster_map.svg_arc.arc_svgPath}/>
 		{/if}
 	</svg>
-</div>
+</Mouse_Responder>
 <div class='cluster-label'
 	style='
 		background-color: {k.color_background};

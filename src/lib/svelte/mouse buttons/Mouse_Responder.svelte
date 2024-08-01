@@ -56,8 +56,8 @@
 			let isHit = false;
 			if (!detectHit_closure) {			// is mouse inside this element's bounding rect
 				isHit = Rect.rect_forElement_contains(mouse_button, $s_mouse_location);
-			} else {						// if this element's hover shape is not its bounding rect
-				isHit = detectHit_closure();	// let container component decide
+			} else {							// if this element's hover shape is not its bounding rect
+				isHit = detectHit_closure();	// use hover shape
 			}
 			if (mouseState.isHover != isHit) {
 				mouseState.isHover = isHit;
@@ -65,6 +65,7 @@
 				closure(Mouse_State.hover(null, mouse_button, isHit));	// pass a null event
 			}
 		}
+		console.log(name)
 	}
 
 	function reset() {

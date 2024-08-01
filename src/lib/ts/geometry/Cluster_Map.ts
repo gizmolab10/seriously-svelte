@@ -150,13 +150,13 @@ export default class Cluster_Map  {
 	static readonly $_ANGLES_$: unique symbol;
 
 	fork_angleFor(predicate: Predicate, points_out: boolean): number | null {
-		// returns one of three angles: 1) necklace_angle 2) opposite+tweak 3) opposite-tweak
+		// returns one of three angles: 1) rotation_angle 2) opposite+tweak 3) opposite-tweak
 		const tweak = Math.PI * 5 / 18;			// 50 degrees: added or subtracted -> opposite
-		const necklace_angle = get(s_rotation_ring_angle);
-		const opposite = necklace_angle + Angle.half;
+		const rotation_angle = get(s_rotation_ring_angle);
+		const opposite = rotation_angle + Angle.half;
 		const raw = predicate.isBidirectional ?
 			opposite - tweak :
-			points_out ? necklace_angle :		// one directional, use global
+			points_out ? rotation_angle :		// one directional, use global
 			opposite + tweak;
 		return raw.normalized_angle();
 	}
@@ -173,9 +173,9 @@ export default class Cluster_Map  {
 		this.widget_maps = [];
 		if (this.shown > 0 && !!this.predicate) {
 			const radius = get(s_rotation_ring_radius);
-			const radial = new Point(radius + k.necklace_widget_padding, 0);
+			const radial = new Point(radius + k.rotation_ring_widget_padding, 0);
 			const fork_pointsRight = new Angle(this.fork_angle).angle_pointsRight;
-			const tweak = this.center.offsetByXY(2, -1.5);	// tweak so that drag dots are centered within the necklace ring
+			const tweak = this.center.offsetByXY(2, -1.5);	// tweak so that drag dots are centered within the rotation ring
 			const max = this.shown - 1;
 			let index = 0;
 			while (index < this.shown) {
@@ -211,8 +211,8 @@ export default class Cluster_Map  {
 		let y_isOutside = false;
 		const absY = Math.abs(y);
 		if (absY > radius) {
-			y_isOutside = true;								// y is outside necklace
-			y = radius * (y / absY) - (y % radius);			// swing around (bottom | top) --> back inside necklace
+			y_isOutside = true;								// y is outside rotation ring
+			y = radius * (y / absY) - (y % radius);			// swing around (bottom | top) --> back inside rotation
 			if (y > 0) {
 				this.arc_straddles_nadir = true;
 			}

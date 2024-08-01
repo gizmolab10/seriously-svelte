@@ -47,7 +47,7 @@
 
 {#key rebuilds}
 	{#if geometry}
-		<div class='necklace-widgets'>
+		<div class='rotation-ring-widgets'>
 			{#each geometry.widget_maps as widget_map}
 				<Widget
 					subtype={widget_map.subtype}

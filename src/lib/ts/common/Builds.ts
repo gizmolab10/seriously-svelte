@@ -15,7 +15,7 @@ class Builds {
 			103 : ['June 30, 2024', 'paging thumb button works'],
 			102 : ['June 18, 2024', 'visibility logic for advance buttons'],
 			101 : ['June 13, 2024', 'limit the number of things within each cluster'],
-			100 : ['June 6, 2024', 'significantly reduce stutter during necklace rotation'],
+			100 : ['June 6, 2024', 'significantly reduce stutter during rotation_ring rotation'],
 			99 : ['June 4, 2024', 'expand help content and move to help-webseriously.netlify.app'],
 			98 : ['May 23, 2024', 'double-click drag to alter ring button radius'],
 			97 : ['May 20, 2024', 'cluster rotation perfected, improved memory usage'],
