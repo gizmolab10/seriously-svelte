@@ -13,7 +13,7 @@
 	const viewBox=`${-offset} ${-offset} ${breadth} ${breadth}`;
 	const name = s.name_from($s_ancestry_focus, ElementType.arc, cluster_map?.cluster_title ?? 'not mapped');
 	const paging_arc_state = s.rotationState_forName(name);
-	const thumb_size = cluster_map?.paging_radius * 2;
+	const thumb_size = (cluster_map?.paging_radius ?? 0) * 2;
 	const thumb_name = `thumb-${name}`;
 	let label_title = k.empty;
 	let title_origin = Point.zero;
@@ -59,8 +59,11 @@
 	}
  
 	function isHit(): boolean {
-		const vector = u.vector_ofOffset_fromGraphCenter_toMouseLocation(origin);
-		return vector.isContainedBy_path(cluster_map?.svg_thumb.arc_svgPath);
+		if (!!cluster_map) {
+			const vector = u.vector_ofOffset_fromGraphCenter_toMouseLocation(origin);
+			return vector.isContainedBy_path(cluster_map.svg_thumb.arc_svgPath);
+		}
+		return false;
 	}
 
 	function computed_mouseAngle(): number | null {
@@ -68,10 +71,12 @@
 	}
 
 	function layout_title() {
-		label_title = cluster_map?.cluster_title;
-		const size = cluster_map?.label_tip.abs.asSize;
-		const titleRect = new Rect(center.offsetBy(cluster_map?.label_tip), size.multipliedBy(1/2));
-		title_origin = title_origin_for(titleRect);
+		if (!!cluster_map) {
+			label_title = cluster_map.cluster_title;
+			const size = cluster_map.label_tip.abs.asSize;
+			const titleRect = new Rect(center.offsetBy(cluster_map.label_tip), size.multipliedBy(1/2));
+			title_origin = title_origin_for(titleRect);
+		}
 	}
 
 	function title_origin_for(rect: Rect): Point {
@@ -83,14 +88,17 @@
 	}
 
 	function multiplier(): Point {
-		const orientation = cluster_map?.label_tip.orientation_ofVector;
-		const common = -0.5;
-		switch (orientation) {
-			case Orientation.up:	return new Point(common, -1.5);
-			case Orientation.left:	return new Point(-0.75, common);
-			case Orientation.down:	return new Point(common, -1.5);
-			default:				return new Point(-0.25, common);
-		}	
+		if (!!cluster_map) {
+			const orientation = cluster_map.label_tip.orientation_ofVector;
+			const common = -0.5;
+			switch (orientation) {
+				case Orientation.up:	return new Point(common, -1.5);
+				case Orientation.left:	return new Point(-0.75, common);
+				case Orientation.down:	return new Point(common, -1.5);
+				default:				return new Point(-0.25, common);
+			}
+		}
+		return Point.zero;
 	}
 
 	function update_thumb_color() {
@@ -132,23 +140,25 @@
 
 </script>
 
-<Mouse_Responder
-	name={name}
-	center={center}
-	zindex={ZIndex.frontmost}
-	width={breadth}
-	height={breadth}
-	closure={closure}
-	detect_longClick={false}
-	detectHit_closure={isHit}
-	cursor={k.cursor_default}>
-	<svg class='svg-paging-arc' viewBox={viewBox}>
-		<path stroke={arc_color} fill=transparent d={cluster_map?.svg_arc.arc_svgPath}/>
-		{#if (cluster_map?.isPaging ?? false)}
-			<path fill={thumb_color} d={cluster_map?.svg_thumb.arc_svgPath}/>
-		{/if}
-	</svg>
-</Mouse_Responder>
+{#if cluster_map}
+	<Mouse_Responder
+		name={name}
+		center={center}
+		zindex={ZIndex.frontmost}
+		width={breadth}
+		height={breadth}
+		closure={closure}
+		detect_longClick={false}
+		detectHit_closure={isHit}
+		cursor={k.cursor_default}>
+		<svg class='svg-paging-arc' viewBox={viewBox}>
+			<path stroke={arc_color} fill=transparent d={cluster_map.svg_arc.arc_svgPath}/>
+			{#if (cluster_map.isPaging ?? false)}
+				<path fill={thumb_color} d={cluster_map.svg_thumb.arc_svgPath}/>
+			{/if}
+		</svg>
+	</Mouse_Responder>
+{/if}
 <div class='cluster-label'
 	style='
 		background-color: {k.color_background};
