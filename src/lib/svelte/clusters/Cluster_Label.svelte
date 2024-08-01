@@ -16,7 +16,7 @@
 	}
 
 	function title_origin_for(rect: Rect): Point {
-		label_title = cluster_map?.cluster_title;
+		label_title = cluster_map?.cluster_title ?? 'not named';
 		const lines = label_title.split('<br>');
 		const m = multiplier();
 		const y = k.dot_size * m.y;

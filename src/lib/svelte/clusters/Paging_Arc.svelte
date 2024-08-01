@@ -11,9 +11,9 @@
 	const radius = $s_rotation_ring_radius + offset;
 	const breadth = radius * 2;
 	const viewBox=`${-offset} ${-offset} ${breadth} ${breadth}`;
-	const name = s.name_from($s_ancestry_focus, ElementType.arc, cluster_map.cluster_title);
+	const name = s.name_from($s_ancestry_focus, ElementType.arc, cluster_map?.cluster_title ?? 'not mapped');
 	const paging_arc_state = s.rotationState_forName(name);
-	const thumb_size = cluster_map.paging_radius * 2;
+	const thumb_size = cluster_map?.paging_radius * 2;
 	const thumb_name = `thumb-${name}`;
 	let label_title = k.empty;
 	let title_origin = Point.zero;
@@ -51,7 +51,7 @@
 				const delta = Math.abs(mouseAngle - paging_arc_state.lastRotated_angle);	// subtract to find difference
 				if (delta >= (Math.PI / 90)) {										// minimum two degree changes
 					paging_arc_state.lastRotated_angle = mouseAngle;
-					cluster_map.adjust_pagingIndex_forMouse_angle(mouseAngle);
+					cluster_map?.adjust_pagingIndex_forMouse_angle(mouseAngle);
 				}
 			}
 		}
@@ -60,7 +60,7 @@
  
 	function isHit(): boolean {
 		const vector = u.vector_ofOffset_fromGraphCenter_toMouseLocation(origin);
-		return vector.isContainedBy_path(cluster_map.svg_thumb.arc_svgPath);
+		return vector.isContainedBy_path(cluster_map?.svg_thumb.arc_svgPath);
 	}
 
 	function computed_mouseAngle(): number | null {
@@ -143,9 +143,9 @@
 	detectHit_closure={isHit}
 	cursor={k.cursor_default}>
 	<svg class='svg-paging-arc' viewBox={viewBox}>
-		<path stroke={arc_color} fill=transparent d={cluster_map.svg_arc.arc_svgPath}/>
-		{#if (cluster_map.isPaging)}
-			<path fill={thumb_color} d={cluster_map.svg_thumb.arc_svgPath}/>
+		<path stroke={arc_color} fill=transparent d={cluster_map?.svg_arc.arc_svgPath}/>
+		{#if (cluster_map?.isPaging ?? false)}
+			<path fill={thumb_color} d={cluster_map?.svg_thumb.arc_svgPath}/>
 		{/if}
 	</svg>
 </Mouse_Responder>

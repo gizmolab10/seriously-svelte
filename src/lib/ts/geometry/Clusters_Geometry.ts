@@ -1,4 +1,4 @@
-import { get, Ancestry, Page_State, Predicate, Cluster_Map, Widget_MapRect } from '../common/Global_Imports';
+import { u, get, Ancestry, Page_State, Predicate, Cluster_Map, Widget_MapRect } from '../common/Global_Imports';
 import { s_page_state, s_ancestry_focus } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
 
@@ -34,7 +34,7 @@ export default class Clusters_Geometry {
 		}	
 	}
 
-	get cluster_maps(): Array<Cluster_Map> { return [...this.outward_cluster_maps, ...this.inward_cluster_maps]; }		// for lines and arcs
+	get cluster_maps(): Array<Cluster_Map> { return u.concatenateArrays(this.inward_cluster_maps, this.outward_cluster_maps); }		// for lines and arcs
 	cluster_maps_for(points_out: boolean): Array<Cluster_Map> { return points_out ? this.outward_cluster_maps : this.inward_cluster_maps; }
 	cluster_map_for(points_out: boolean, predicate: Predicate): Cluster_Map { return this.cluster_maps_for(points_out)[predicate.stateIndex]; }
 	
@@ -42,7 +42,7 @@ export default class Clusters_Geometry {
 		let widget_maps: Array<Widget_MapRect> = [];
 		for (const cluster_map of this.cluster_maps) {
 			if (!!cluster_map) {
-				widget_maps = [...widget_maps, ...cluster_map.widget_maps];
+				widget_maps = u.concatenateArrays(widget_maps, cluster_map.widget_maps);
 			}
 		}
 		return widget_maps;		
