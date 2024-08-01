@@ -49,17 +49,6 @@ export default class SVG_Arc {
 	get angles(): [number, number] { return [this.start_angle, this.end_angle]; }
 	get spread_angle(): number { return this.end_angle - this.start_angle; }
 
-	get debug_svgPath(): string {
-		const small = this.outside_ring_radius;
-		const big = small + k.ring_thickness;
-		const paths = [
-			svgPaths.t_cross(small * 2, 0),
-			// this.tinyDot_svgPath(this.outside_arc_radius, this.start_angle),
-			svgPaths.line_atAngle(this.clusters_center, big, this.fork_angle),
-		];
-		return paths.join(k.space);
-	}
-
 	get arc_svgPath(): string {
 		const [start, end] = this.angles;
 		const paths = [

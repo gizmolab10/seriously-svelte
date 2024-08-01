@@ -130,7 +130,6 @@
 	<svg class='svg-scroll-arc' viewBox={viewBox}>
 		{#if (cluster_map.isPaging)}
 			<path fill={thumb_color} d={cluster_map.svg_thumb.arc_svgPath}/>
-			<path stroke='green' fill=transparent d={cluster_map.svg_arc.debug_svgPath}/>
 			<path stroke='orange' fill=transparent d={cluster_map.svg_arc.arc_svgPath}/>
 		{/if}
 	</svg>

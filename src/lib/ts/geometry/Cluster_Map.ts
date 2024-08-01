@@ -16,6 +16,7 @@ export default class Cluster_Map  {
 	focus_ancestry: Ancestry = get(s_ancestry_focus);
 	widget_maps: Array<Widget_MapRect> = [];	// maximum a page's worth, will be combined into geometry.widget_maps
 	ancestries: Array<Ancestry> = [];
+	arc_straddles_nadir = false;
 	svg_thumb = new SVG_Arc();
 	svg_arc = new SVG_Arc();
 	cluster_title = k.empty;
@@ -35,15 +36,15 @@ export default class Cluster_Map  {
 		this.points_out = points_out;
 		this.predicate = predicate;
 		this.total = total;
-		this.update();
+		this.update_all();
 		s_rotation_ring_radius.subscribe((radius: number) => {
 			if (this.svg_arc.outside_ring_radius != radius) {
-				this.update();		// do not set_page_index (else expand will hang)
+				this.update_all();		// do not set_page_index (else expand will hang)
 			}
 		})
 	}
 
-	update() {
+	update_all() {
 		this.shown = this.ancestries.length;
 		this.isPaging = this.shown != this.total;
 		this.color = transparentize(this.focus_ancestry.thing?.color ?? this.color, 0.8);
@@ -66,7 +67,6 @@ export default class Cluster_Map  {
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
 	get description(): string { return `${this.predicate.kind}  ${this.titles}`; }
 	get fork_radial(): Point { return Point.fromPolar(get(s_rotation_ring_radius), this.fork_angle); }
-	fork_radius_multiplier(shown: number): number { return (shown > 3) ? 0.6 : (shown > 1) ? 0.3 : 0.15; }
 	get page_indexOf_focus(): number { return this.focus_ancestry.thing?.page_states?.index_for(this.points_out, this.predicate) ?? 0; }
 	
 	static readonly $_INDEX_$: unique symbol;
@@ -179,7 +179,7 @@ export default class Cluster_Map  {
 			const max = this.shown - 1;
 			let index = 0;
 			while (index < this.shown) {
-				const child_index = fork_pointsRight ? index : max - index;
+				const child_index = !fork_pointsRight ? index : max - index;
 				const ancestry = this.ancestries[child_index];
 				const childAngle = this.angle_at_index(index);
 				const childOrigin = tweak.offsetBy(radial.rotate_by(childAngle));
@@ -213,6 +213,9 @@ export default class Cluster_Map  {
 		if (absY > radius) {
 			y_isOutside = true;								// y is outside necklace
 			y = radius * (y / absY) - (y % radius);			// swing around (bottom | top) --> back inside necklace
+			if (y > 0) {
+				this.arc_straddles_nadir = true;
+			}
 		}
 		let child_angle = -Math.asin(y / radius);			// arc-sin only defined (-90 to 90) [ALSO: negate angles so things advance clockwise]
 		if (y_isOutside == (radial.x > 0)) {				// counter-clockwise if (positive x AND y is outside) OR (negative x AND y is inside)
@@ -232,22 +235,26 @@ export default class Cluster_Map  {
 	}
 
 	update_thumb_angles() {
-		const orientsDown = new Angle(this.fork_angle).angle_orientsDown;
+
+		// very complex, because:
+		// 1. start & end are sometimes reversed (hasNegative_spread)
+		// 2. arc straddles nadir when fork y is outside of ring (arc_straddles_nadir)
+
 		const spread_angle = this.svg_arc.spread_angle;
-		const inverter = (spread_angle < 0) ? 1 : -1;
-		const otherInverter = !orientsDown ? 1 : -1;
-		const arc_start = this.svg_arc.start_angle * inverter * otherInverter;
-		const increment = spread_angle / this.total * inverter;
+		const hasNegative_spread = spread_angle < 0
+		const inverter = hasNegative_spread ? 1 : -1;
+		const arc_spread = this.arc_straddles_nadir ? (-spread_angle).normalized_angle() : spread_angle;
+		const otherInverter = (hasNegative_spread == this.arc_straddles_nadir) ? -1 : 1;
+		const arc_start = this.svg_arc.start_angle * otherInverter;
+		const increment = arc_spread / this.total * inverter;
 		const index = Math.round(this.page_indexOf_focus);
 		let start = arc_start + increment * index;
 		const spread = increment * this.shown;
 		let end = start + spread;
-		const thumb_angle = (start + end) / 2;		// halfway from start to end
+		const thumb_angle = (start + end) / 2;
 		this.svg_thumb.update(thumb_angle);
 		this.svg_thumb.start_angle = start;
 		this.svg_thumb.end_angle = end;
 	}
-
-	get isVisible(): boolean { return this.isPaging && !this.predicate.isBidirectional && this.points_out; }
 
 }

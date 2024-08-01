@@ -89,12 +89,10 @@
 		</Mouse_Responder>
 		<div class='paging-arcs'>
 			{#each geometry.cluster_maps as cluster_map}
-				{#if cluster_map.isVisible}
-					<Paging_Arc
-						color={color}
-						center={center}
-						cluster_map={cluster_map}/>
-				{/if}
+				<Paging_Arc
+					color={color}
+					center={center}
+					cluster_map={cluster_map}/>
 			{/each}
 		</div>
 	</div>
