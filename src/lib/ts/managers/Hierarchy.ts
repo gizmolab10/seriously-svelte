@@ -930,10 +930,10 @@ export class Hierarchy {
 	}
 
 	wrapper_add(wrapper: Svelte_Wrapper) {
-		const type = wrapper.type;
 		const array = this.wrappers_byType_andHID;
-		const dict = array[type] ?? {};
+		const dict = array[wrapper.type] ?? {};
 		const hash = wrapper.idHashed;
+		const type = wrapper.type;
 		dict[hash] = wrapper;
 		array[type] = dict;
 	}

@@ -1,4 +1,4 @@
-import { Rect, Point, Ancestry, Title_State, Page_State, Alteration_State } from '../common/Global_Imports';
+import { Rect, Point, Ancestry, Page_State, Title_State, Alteration_State } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
 export const s_altering				 = writable<Alteration_State | null>();

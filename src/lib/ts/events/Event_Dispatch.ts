@@ -1,7 +1,6 @@
 import { s_altering, s_resize_count, s_rebuild_count, s_mouse_up_count, s_mouse_location } from '../state/Reactive_State';
-import { g, get, Point, signals, Mouse_State, Create_Mouse_State } from '../common/Global_Imports';
-import { Alteration_State, SvelteComponentType } from '../common/Global_Imports';
-import { h } from '../db/DBDispatch';
+// import { Mouse_State, Create_Mouse_State, SvelteComponentType } from '../common/Global_Imports';
+import { g, get, Point, signals, Alteration_State } from '../common/Global_Imports';
 
 export class Event_Dispatch {
 	// assure delivery of events
@@ -18,25 +17,25 @@ export class Event_Dispatch {
 		this.subscribeTo_alterationState();
 	}
 
-	respondTo_closure(event: MouseEvent, closure: Create_Mouse_State) {
-		// in order of priority by wrapper type
-		// ask each wrapper to
-		// construct & handle the mouse state
-		// stop if handled
-		// else ask the next wrapper
-		const types = [SvelteComponentType.title, SvelteComponentType.drag, SvelteComponentType.reveal, SvelteComponentType.widget, SvelteComponentType.button, SvelteComponentType.ring];
-		for (const type of types) {
-			const wrappers_byHID = h.wrappers_byHID_forType(type);
-			if (!!wrappers_byHID) {
-				const wrappers = Object.values(wrappers_byHID) ?? [];
-				for (const wrapper of wrappers) {
-					if (wrapper.handle_event_closure(event, closure)) {
-						return;
-					}
-				}
-			}
-		}
-	}
+	// respondTo_closure(event: MouseEvent, closure: Create_Mouse_State) {
+	// 	// in order of priority by wrapper type
+	// 	// ask each wrapper to
+	// 	// construct & handle the mouse state
+	// 	// stop if handled
+	// 	// else ask the next wrapper
+	// 	const types = [SvelteComponentType.title, SvelteComponentType.drag, SvelteComponentType.reveal, SvelteComponentType.widget, SvelteComponentType.button, SvelteComponentType.ring];
+	// 	for (const type of types) {
+	// 		const wrappers_byHID = h.wrappers_byHID_forType(type);
+	// 		if (!!wrappers_byHID) {
+	// 			const wrappers = Object.values(wrappers_byHID) ?? [];
+	// 			for (const wrapper of wrappers) {
+	// 				if (wrapper.handle_event_closure(event, closure)) {
+	// 					return;
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	subscribeTo_events() {
 		window.addEventListener('resize', (event) => {

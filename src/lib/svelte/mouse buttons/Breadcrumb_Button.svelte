@@ -23,9 +23,9 @@
 
 	$: {
 		thing = ancestry.thing;
-		title = thing.title;
-		width = thing.titleWidth;
+		title = thing.title.injectEllipsisAt();
 		name = `crumb (for ${title ?? 'unknown'})`
+		width = u.getWidthOf(title) + 10;
 		center = new Point(left + width / 2, height - 1);
 		element_state = s.elementState_for(ancestry, elementType, IDTool.none);
 		updateColors();
@@ -94,7 +94,7 @@
 		position='absolute'
 		element_state={element_state}>
 		<div style='padding:1px 0px 0px 0px; cursor:{element_state.cursor};'>
-			{title.injectElipsisAt()}
+			{title}
 		</div>
 	</Button>
 {/key}

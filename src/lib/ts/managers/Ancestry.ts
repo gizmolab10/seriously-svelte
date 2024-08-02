@@ -516,6 +516,7 @@ export default class Ancestry extends Identifiable {
 		} else {
 			s_title_editing?.set(null);
 			if (get(s_layout_asClusters)) {
+				console.log(this.title)
 				this.becomeFocus();
 			} else {
 				if (get(s_altering)) {

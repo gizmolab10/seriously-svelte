@@ -38,13 +38,17 @@ export enum IDTrait {
 }
 
 export enum SvelteComponentType {
-	widget	= 'widget',
-	button	= 'button',
-	reveal	= 'reveal',
-	title	= 'title',
-	drag	= 'drag',
-	line	= 'line',
-	ring	= 'ring',
+	necklace = 'necklace',	// *
+	banners	 = 'banners',	// *
+	paging	 = 'paging',	// *
+	widget	 = 'widget',
+	button	 = 'button',
+	reveal	 = 'reveal',
+	thumb	 = 'thumb',		// *
+	title	 = 'title',
+	drag	 = 'drag',
+	line	 = 'line',
+	ring	 = 'ring',		// **
 }
 
 export enum IDButton {

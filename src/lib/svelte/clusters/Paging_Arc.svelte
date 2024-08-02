@@ -15,6 +15,7 @@
 	const paging_arc_state = s.rotationState_forName(name);
 	const thumb_size = (cluster_map?.paging_radius ?? 0) * 2;
 	const thumb_name = `thumb-${name}`;
+	let rebuilds = 0;
 	let label_title = k.empty;
 	let title_origin = Point.zero;
 	let mouse_up_count = $s_mouse_up_count;
@@ -53,6 +54,7 @@
 					if (delta >= (Math.PI / 90)) {										// minimum two degree changes
 						paging_arc_state.lastRotated_angle = mouseAngle;
 						cluster_map.adjust_pagingIndex_forMouse_angle(mouseAngle);
+						rebuilds += 1;
 					}
 				}
 			}
@@ -156,7 +158,9 @@
 		<svg class='svg-paging-arc' viewBox={viewBox}>
 			<path stroke={arc_color} fill=transparent d={cluster_map.svg_arc.arc_svgPath}/>
 			{#if (cluster_map.isPaging)}
-				<path fill={thumb_color} d={cluster_map.svg_thumb.arc_svgPath}/>
+				{#key rebuilds}
+					<path fill={thumb_color} d={cluster_map.svg_thumb.arc_svgPath}/>
+				{/key}
 			{/if}
 		</svg>
 	</Mouse_Responder>

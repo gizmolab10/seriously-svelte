@@ -4,7 +4,7 @@ declare global {
 		lastWord(): string;
 		unCamelCase(): string;
 		removeWhiteSpace(): string;
-		injectElipsisAt(at: number): string;
+		injectEllipsisAt(at: number): string;
 	}
 }
 
@@ -35,11 +35,11 @@ Object.defineProperty(String.prototype, 'lastWord', {
 	configurable: false
 });
 
-Object.defineProperty(String.prototype, 'injectElipsisAt', {
-	value: function(at: number = 7): string {
+Object.defineProperty(String.prototype, 'injectEllipsisAt', {
+	value: function(at: number = 6): string {
 		let injected = this;
 		const length = injected.length;
-		if (length > (at * 2) + 3) {
+		if (length > (at * 2) + 1) {
 			injected = injected.slice(0, at) + ' ... ' + injected.slice(length - at, length);
 		}
 		return injected;

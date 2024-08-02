@@ -85,19 +85,19 @@ export default class Cluster_Map  {
 	
 	adjust_pagingIndex_forMouse_angle(mouse_angle: number) {
 		const quadrant_ofFork_angle = u.quadrant_ofAngle(this.fork_angle);
-		let movement_angle = this.svg_arc.start_angle - mouse_angle;
+		let movement_angle = mouse_angle - this.svg_arc.start_angle;
 		let spread_angle = this.svg_arc.spread_angle;
 		if (this.straddles_zero) {
 			if (quadrant_ofFork_angle == Quadrant.upperRight) {
-				movement_angle = movement_angle.normalized_angle();
 				spread_angle = (-spread_angle).normalized_angle();
+				movement_angle = movement_angle.normalized_angle();
 			} else {
 				movement_angle = mouse_angle - this.svg_arc.end_angle;
 			}
 		} else {
 			switch (quadrant_ofFork_angle) {
 				case Quadrant.lowerRight:
-				case Quadrant.upperLeft: movement_angle = this.svg_arc.end_angle - mouse_angle; break;
+				case Quadrant.upperLeft: movement_angle = mouse_angle - this.svg_arc.end_angle; break;
 				case Quadrant.upperRight: movement_angle = -movement_angle; break;
 				case Quadrant.lowerLeft: spread_angle = -spread_angle; break;
 			}
