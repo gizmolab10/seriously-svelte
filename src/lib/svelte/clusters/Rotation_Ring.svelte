@@ -31,7 +31,7 @@
 
 	$: {
 		if (!!rotationRing) {
-			neckaceWrapper = new Svelte_Wrapper(rotationRing, handle_mouseData, Identifiable.newID(), SvelteComponentType.ring);
+			neckaceWrapper = new Svelte_Wrapper(rotationRing, handle_mouseData, Identifiable.newID(), SvelteComponentType.rotation);
 		}
 	}
 

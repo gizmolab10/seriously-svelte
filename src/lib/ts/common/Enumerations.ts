@@ -38,7 +38,7 @@ export enum IDTrait {
 }
 
 export enum SvelteComponentType {
-	necklace = 'necklace',	// *
+	rotation = 'rotation',	// *
 	banners	 = 'banners',	// *
 	paging	 = 'paging',	// *
 	widget	 = 'widget',
@@ -48,7 +48,6 @@ export enum SvelteComponentType {
 	title	 = 'title',
 	drag	 = 'drag',
 	line	 = 'line',
-	ring	 = 'ring',		// **
 }
 
 export enum IDButton {

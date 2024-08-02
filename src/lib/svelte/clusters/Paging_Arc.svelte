@@ -1,8 +1,10 @@
 <script lang='ts'>
-	import { g, k, s, u, Rect, Size, Point, ZIndex, onMount, Cluster_Map, Orientation, ElementType, transparentize } from '../../ts/common/Global_Imports';
 	import { s_mouse_location, s_mouse_up_count, s_ancestry_focus, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
+	import { g, k, s, u, Rect, Size, Point, ZIndex, onMount, Cluster_Map, Orientation } from '../../ts/common/Global_Imports';
+	import { ElementType, Svelte_Wrapper, transparentize, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { ArcPart } from '../../ts/common/Enumerations';
+	import Identifiable from '../../ts/data/Identifiable';
 	export let cursor_closure = () => {};
 	export let cluster_map: Cluster_Map;
 	export let center = Point.zero;
@@ -12,14 +14,15 @@
 	const breadth = radius * 2;
 	const viewBox=`${-offset} ${-offset} ${breadth} ${breadth}`;
 	const name = s.name_from($s_ancestry_focus, ElementType.arc, cluster_map?.cluster_title ?? 'not mapped');
-	const paging_arc_state = s.rotationState_forName(name);
 	const thumb_size = (cluster_map?.paging_radius ?? 0) * 2;
+	const paging_arc_state = s.rotationState_forName(name);
 	const thumb_name = `thumb-${name}`;
+	let pagingArc;
 	let rebuilds = 0;
 	let label_title = k.empty;
 	let title_origin = Point.zero;
+	let pagingArcWrapper!: Svelte_Wrapper;
 	let mouse_up_count = $s_mouse_up_count;
-	let ring_color = transparentize(color, 0.93);
 	let origin = center.offsetBy(Point.square(-radius));
 	let thumb_color = transparentize(color, paging_arc_state.stroke_transparency * 0.8);
 	let arc_color = transparentize(color, s.paging_ring_state.stroke_transparency * 0.8);
@@ -29,6 +32,12 @@
 	//
 	// drawn by paging ring, which is drawn by clusters graph
 	// CHANGE: drawn by clusters (which is drawn by clusters graph)?
+
+	$: {
+		if (!!pagingArc) {
+			pagingArcWrapper = new Svelte_Wrapper(pagingArc, handle_mouseData, Identifiable.newID(), SvelteComponentType.paging);
+		}
+	}
 
 	$: {
 		if (mouse_up_count != $s_mouse_up_count) {
@@ -61,6 +70,12 @@
 		}
 		layout_title();
 	}
+
+	function handle_mouseData(mouseData: Mouse_State) {}
+
+	function computed_mouseAngle(): number | null {
+		return u.vector_ofOffset_fromGraphCenter_toMouseLocation(center)?.angle ?? null
+	}
  
 	function isHit(): boolean {
 		if (!!cluster_map) {
@@ -68,10 +83,6 @@
 			return vector.isContainedBy_path(cluster_map.svg_thumb.arc_svgPath);
 		}
 		return false;
-	}
-
-	function computed_mouseAngle(): number | null {
-		return u.vector_ofOffset_fromGraphCenter_toMouseLocation(center)?.angle ?? null
 	}
 
 	function layout_title() {
@@ -145,25 +156,27 @@
 </script>
 
 {#if !!cluster_map && cluster_map.shown > 1}
-	<Mouse_Responder
-		name={name}
-		center={center}
-		zindex={ZIndex.frontmost}
-		width={breadth}
-		height={breadth}
-		closure={closure}
-		detect_longClick={false}
-		detectHit_closure={isHit}
-		cursor={k.cursor_default}>
-		<svg class='svg-paging-arc' viewBox={viewBox}>
-			<path stroke={arc_color} fill=transparent d={cluster_map.svg_arc.arc_svgPath}/>
-			{#if (cluster_map.isPaging)}
-				{#key rebuilds}
-					<path fill={thumb_color} d={cluster_map.svg_thumb.arc_svgPath}/>
-				{/key}
-			{/if}
-		</svg>
-	</Mouse_Responder>
+	<div class='paging-arc' bind:this={pagingArc}>
+		<Mouse_Responder
+			name={name}
+			center={center}
+			width={breadth}
+			height={breadth}
+			closure={closure}
+			detect_longClick={false}
+			zindex={ZIndex.frontmost}
+			cursor={k.cursor_default}
+			detectHit_closure={isHit}>
+			<svg class='svg-paging-arc' viewBox={viewBox}>
+				<path stroke={arc_color} fill=transparent d={cluster_map.svg_arc.arc_svgPath}/>
+				{#if (cluster_map.isPaging)}
+					{#key rebuilds}
+						<path fill={thumb_color} d={cluster_map.svg_thumb.arc_svgPath}/>
+					{/key}
+				{/if}
+			</svg>
+		</Mouse_Responder>
+	</div>
 {/if}
 <div class='cluster-label'
 	style='
