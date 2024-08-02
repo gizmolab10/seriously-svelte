@@ -65,7 +65,6 @@
 				closure(Mouse_State.hover(null, mouse_button, isHit));	// pass a null event
 			}
 		}
-		console.log(name)
 	}
 
 	function reset() {
