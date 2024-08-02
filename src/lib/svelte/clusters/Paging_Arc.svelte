@@ -142,7 +142,7 @@
 
 </script>
 
-{#if cluster_map}
+{#if !!cluster_map && cluster_map.shown > 1}
 	<Mouse_Responder
 		name={name}
 		center={center}
@@ -155,7 +155,7 @@
 		cursor={k.cursor_default}>
 		<svg class='svg-paging-arc' viewBox={viewBox}>
 			<path stroke={arc_color} fill=transparent d={cluster_map.svg_arc.arc_svgPath}/>
-			{#if (cluster_map.isPaging ?? false)}
+			{#if (cluster_map.isPaging)}
 				<path fill={thumb_color} d={cluster_map.svg_thumb.arc_svgPath}/>
 			{/if}
 		</svg>
