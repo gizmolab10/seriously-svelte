@@ -1,5 +1,5 @@
 import { k, u, get, User, Thing, Grabs, debug, Mouse_State, Access, IDTool, IDTrait, signals, Ancestry } from '../common/Global_Imports';
-import { Predicate, Svelte_Wrapper, Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
+import { Predicate, Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
 import { s_things_arrived, s_ancestries_grabbed, s_ancestry_editingTools } from '../state/Reactive_State';
 import { s_isBusy, s_altering, s_ancestry_focus, s_title_editing } from '../state/Reactive_State';
 import Identifiable from '../data/Identifiable';
@@ -8,7 +8,6 @@ import DBInterface from '../db/DBInterface';
 type Relationships_ByHID = { [hid: number]: Array<Relationship> }
 
 export class Hierarchy {
-	private wrappers_byType_andHID: { [type: string]: { [hid: number]: Svelte_Wrapper } } = {};
 	private ancestry_byKind_andHash:{ [kind: string]: { [hash: number]: Ancestry } } = {};
 	private predicate_byDirection: { [direction: number]: Array<Predicate> } = {};
 	private relationship_byHID: { [hid: number]: Relationship } = {};
@@ -35,7 +34,6 @@ export class Hierarchy {
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): string | null { return this.root?.id ?? null; };
 	ancestries_rebuildAll() { this.root.oneAncestries_rebuildForSubtree(); }
-	wrappers_byHID_forType(type: string) { return this.wrappers_byType_andHID[type]; }
 	thing_forAncestry(ancestry: Ancestry | null): Thing | null { return ancestry?.thing ?? null; }
 	thing_forHID(hid: number | null): Thing | null { return (!hid) ? null : this.thing_byHID[hid]; }
 
@@ -920,23 +918,6 @@ export class Hierarchy {
 	}
 
 	static readonly $_OTHER_$: unique symbol;
-
-	wrapper_forHID_andType(hid: number, type: string) {
-		const wrappers_byHID = this.wrappers_byHID_forType(type);
-		if (!!wrappers_byHID) {
-			return wrappers_byHID[hid];
-		}
-		return null;
-	}
-
-	wrapper_add(wrapper: Svelte_Wrapper) {
-		const array = this.wrappers_byType_andHID;
-		const dict = array[wrapper.type] ?? {};
-		const hash = wrapper.idHashed;
-		const type = wrapper.type;
-		dict[hash] = wrapper;
-		array[type] = dict;
-	}
 
 	hierarchy_markAsCompleted() {
 		s_ancestry_editingTools.set(null);

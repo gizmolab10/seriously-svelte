@@ -1,4 +1,4 @@
-import { g, k, debug, signals, Hierarchy, IDPersistant, persistLocal } from '../common/Global_Imports';
+import { k, debug, signals, Hierarchy, IDPersistant, persistLocal } from '../common/Global_Imports';
 import { s_isBusy, s_db_type, s_db_loadTime, s_things_arrived } from '../state/Reactive_State';
 import Identifiable from '../data/Identifiable';
 import { dbFirebase } from './DBFirebase';

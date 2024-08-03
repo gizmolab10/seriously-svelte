@@ -298,7 +298,7 @@
 				<Triangle_Button
 					strokeColor={isDisabledFor(IDTool.next) ? k.color_disabled : parentSensitiveColor}
 					hover_closure={(isHovering) => { return fillColorsFor(IDTool.next, isHovering) }}
-					mouse_closure={(mouseState) => handle_mouse_data(mouseState, IDTool.next)}
+					handle_mouse_state={(mouseState) => handle_mouse_data(mouseState, IDTool.next)}
 					extraPath={svgPaths.circle_atOffset(toolDiameter, 4)}
 					center={getC(IDTool.next)}
 					angle={Direction.up}
@@ -307,7 +307,7 @@
 				<Triangle_Button
 					strokeColor={isDisabledFor(IDTool.delete_parent) ? k.color_disabled : parentSensitiveColor}
 					hover_closure={(isHovering) => { return fillColorsFor(IDTool.delete_parent, isHovering) }}
-					mouse_closure={(mouseState) => handle_mouse_data(mouseState, IDTool.delete_parent)}
+					handle_mouse_state={(mouseState) => handle_mouse_data(mouseState, IDTool.delete_parent)}
 					extraPath={svgPaths.dash(toolDiameter, 4)}
 					center={getC(IDTool.delete_parent)}
 					angle={Direction.left}
@@ -315,7 +315,7 @@
 					size={toolDiameter}/>
 				<Triangle_Button
 					hover_closure={(isHovering) => { return fillColorsFor(IDTool.add_parent, isHovering) }}
-					mouse_closure={(mouseState) => handle_mouse_data(mouseState, IDTool.add_parent)}
+					handle_mouse_state={(mouseState) => handle_mouse_data(mouseState, IDTool.add_parent)}
 					strokeColor={isDisabledFor(IDTool.add_parent) ? k.color_disabled : color}
 					extraPath={svgPaths.t_cross(toolDiameter, 3)}
 					center={getC(IDTool.add_parent)}
@@ -324,7 +324,7 @@
 					name='add_parent'/>
 				<Triangle_Button
 					hover_closure={(isHovering) => { return fillColorsFor(IDTool.create, isHovering) }}
-					mouse_closure={(mouseState) => handle_mouse_data(mouseState, IDTool.create)}
+					handle_mouse_state={(mouseState) => handle_mouse_data(mouseState, IDTool.create)}
 					extraPath={svgPaths.t_cross(toolDiameter, 3)}
 					center={getC(IDTool.create)}
 					angle={Direction.right}

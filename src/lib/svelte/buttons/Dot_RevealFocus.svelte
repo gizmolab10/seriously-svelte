@@ -14,7 +14,7 @@
 		return [debug.lines ? 'transparent' : element_state.stroke, k.empty];
 	}
 
-	function mouse_closure(mouseState) {
+	function handle_mouse_state(mouseState) {
 		if (mouseState.isHover) {
 			element_state.isOut = mouseState.isOut;
 		} else {
@@ -32,7 +32,7 @@
 	strokeColor={element_state.stroke}
 	hover_closure={hover_closure}
 	id={ancestry.thing.title}
-	closure={mouse_closure}
+	closure={handle_mouse_state}
 	angle={Direction.right}
 	center={center}
     size={size}

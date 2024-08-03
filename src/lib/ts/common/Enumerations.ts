@@ -37,19 +37,6 @@ export enum IDTrait {
 	bulk  = '~',
 }
 
-export enum SvelteComponentType {
-	rotation = 'rotation',	// *
-	banners	 = 'banners',	// *
-	paging	 = 'paging',	// *
-	widget	 = 'widget',
-	button	 = 'button',
-	reveal	 = 'reveal',
-	thumb	 = 'thumb',		// *
-	title	 = 'title',
-	drag	 = 'drag',
-	line	 = 'line',
-}
-
 export enum IDButton {
 	details		= 'show details view',
 	builds		= 'show build notes',
@@ -70,7 +57,7 @@ export enum IDBrowser  {
 	orion	 = 'orion',
 }
 
-export enum ZIndex {
+export enum ZIndex {	// do not change the order
 	common,
 	panel,
 	lines,
@@ -83,16 +70,33 @@ export enum ZIndex {
 }
 
 export enum IDTool {
-	delete_confirm	= 'delete_confirm',
-	delete_cancel	= 'delete_cancel',
-	delete_parent	= 'delete_parent',
-	confirmation	= 'confirmation',
-	add_parent		= 'add_parent',
-	dismiss			= 'dismiss',
-	cluster			= 'cluster',
-	delete			= 'delete',
-	create    		= 'create',
+	none			= 'none',
 	next			= 'next',
 	more			= 'more',
-	none			= 'none',
+	delete			= 'delete',
+	create    		= 'create',
+	dismiss			= 'dismiss',
+	cluster			= 'cluster',
+	add_parent		= 'add_parent',
+	confirmation	= 'confirmation',
+	delete_cancel	= 'delete_cancel',
+	delete_parent	= 'delete_parent',
+	delete_confirm	= 'delete_confirm',
+}
+
+export enum SvelteComponentType {
+	rotation = 'rotation',
+	banners	 = 'banners',
+	details	 = 'details',
+	paging	 = 'paging',
+	widget	 = 'widget',	// *
+	button	 = 'button',	// *
+	reveal	 = 'reveal',
+	graph	 = 'graph',
+	thumb	 = 'thumb',
+	tools	 = 'tools',
+	title	 = 'title',		// *
+	drag	 = 'drag',
+	line	 = 'line',
+	app		 = 'app',
 }

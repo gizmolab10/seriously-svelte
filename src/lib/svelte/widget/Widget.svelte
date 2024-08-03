@@ -98,7 +98,8 @@
 
 	$: {
 		if (widget) {
-			widgetWrapper = new Svelte_Wrapper(widget, handle_mouseData, ancestry.idHashed, SvelteComponentType.widget);
+			const parentTypes = [SvelteComponentType.graph, SvelteComponentType.rotation]
+			widgetWrapper = new Svelte_Wrapper(widget, handle_mouseData, ancestry.idHashed, SvelteComponentType.widget, parentTypes);
 		}
 	}
 	

@@ -2,7 +2,7 @@ import { Rect } from '../common/Global_Imports';
 
 export default class Mouse_State {
 	element: HTMLElement | null;	// null means mouse responder
-	event: MouseEvent | null;			// null means mouse movement from global state
+	event: MouseEvent | null;		// null means mouse movement from global state
 	isDouble: boolean;
 	isHover: boolean;
 	isMove: boolean;

@@ -12,7 +12,7 @@
         return [isHovering ? 'black' : k.color_background, k.empty];
     }
 
-	function mouse_closure(mouseState) {
+	function handle_mouse_state(mouseState) {
         const target = mouseState.element;
         if (!mouseState.isHover && !!target && (mouseState.isUp || mouseState.isLong)) {
             const pointsUp = target.id == 'up';
@@ -35,8 +35,8 @@
     <div class='directionals'>
         {#if display(true)}
             <Triangle_Button
+                handle_mouse_state={handle_mouse_state}
                 center={origin.offsetByY(-offsetY)}
-                mouse_closure={mouse_closure}
                 hover_closure={hover_closure}
                 strokeColor={'black'}
                 angle={Direction.up}
@@ -46,8 +46,8 @@
         {/if}
         {#if display(false)}
             <Triangle_Button
+                handle_mouse_state={handle_mouse_state}
                 center={origin.offsetByY(offsetY)}
-                mouse_closure={mouse_closure}
                 hover_closure={hover_closure}
                 angle={Direction.down}
                 strokeColor={'black'}

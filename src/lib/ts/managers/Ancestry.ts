@@ -1,4 +1,4 @@
-import { k, u, get, Rect, Size, Thing, debug, signals, Predicate, Title_State, ElementType } from '../common/Global_Imports';
+import { e, k, u, get, Rect, Size, Thing, debug, signals, Predicate, Title_State, ElementType } from '../common/Global_Imports';
 import { Relationship, PredicateKind, AlterationType, Svelte_Wrapper, SvelteComponentType } from '../common/Global_Imports';
 import { s_ancestry_focus, s_ancestries_grabbed, s_title_editing, s_layout_asClusters } from '../state/Reactive_State';
 import { s_ancestries_expanded, s_ancestry_editingTools, s_altering } from '../state/Reactive_State';
@@ -67,7 +67,7 @@ export default class Ancestry extends Identifiable {
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	get childRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, false); }
 	get parentRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, true); }
-	get titleWrapper(): Svelte_Wrapper | null { return h.wrapper_forHID_andType(this.idHashed, SvelteComponentType.title); }
+	get titleWrapper(): Svelte_Wrapper | null { return e.wrapper_forHID_andType(this.idHashed, SvelteComponentType.title); }
 	get showsReveal(): boolean { return !get(s_layout_asClusters) && (this.hasChildRelationships || (this.thing?.isBulkAlias ?? false)); }
 
 	get relationships(): Array<Relationship> {
