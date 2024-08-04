@@ -78,17 +78,6 @@
 
 {#key rebuilds}
 	<div class='paging-ring' bind:this={pagingRing}>
-		<Mouse_Responder
-			name={name}
-			center={center}
-			zindex={zindex}
-			width={diameter}
-			height={diameter}
-			closure={closure}
-			detect_longClick={false}
-			detectHit_closure={isHit}
-			cursor={k.cursor_default}>
-		</Mouse_Responder>
 		<div class='paging-arcs'>
 			{#each geometry.cluster_maps as cluster_map}
 				{#if !!cluster_map && (cluster_map.shown > 0)}

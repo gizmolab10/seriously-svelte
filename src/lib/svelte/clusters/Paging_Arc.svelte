@@ -71,15 +71,16 @@
 		layout_title();
 	}
 
-	function handle_mouse_state(mouse_state: Mouse_State): boolean { return isHit(); }
+	function handle_mouse_state(mouse_state: Mouse_State): boolean { return thumb_isHit(); }
 
 	function computed_mouseAngle(): number | null {
 		return u.vector_ofOffset_fromGraphCenter_toMouseLocation(center)?.angle ?? null
 	}
  
-	function isHit(): boolean {
+	function thumb_isHit(): boolean {
 		if (!!cluster_map) {
-			const vector = u.vector_ofOffset_fromGraphCenter_toMouseLocation(origin);
+			const ring_origin = center.offsetBy(Point.square(-$s_rotation_ring_radius));
+			const vector = u.vector_ofOffset_fromGraphCenter_toMouseLocation(ring_origin);
 			return vector.isContainedBy_path(cluster_map.svg_thumb.arc_svgPath);
 		}
 		return false;
@@ -127,10 +128,11 @@
 		/////////////////////////////
 
 		if (mouse_state.isHover) {
-			paging_arc_state.isHovering = isHit();	// show highlight around ring
+			paging_arc_state.isHovering = thumb_isHit();	// show highlight around ring
 
 			// hover
 
+			// console.log(`thumb hover`);// ${mouse_state.isDown}`);
 			update_thumb_color();
 		} else {
 			if (mouse_state.isUp) {
@@ -156,7 +158,7 @@
 </script>
 
 {#if !!cluster_map && cluster_map.shown > 1}
-	<div class='paging-arc' bind:this={pagingArc}>
+	<div class='paging-arc' bind:this={pagingArc} style='z-index:{ZIndex.panel};'>
 		<Mouse_Responder
 			name={name}
 			center={center}
@@ -166,7 +168,7 @@
 			zindex={ZIndex.panel}
 			detect_longClick={false}
 			cursor={k.cursor_default}
-			detectHit_closure={isHit}>
+			detectHit_closure={thumb_isHit}>
 			<svg class='svg-paging-arc' viewBox={viewBox}>
 				<path stroke={arc_color} fill=transparent d={cluster_map.svg_arc.arc_svgPath}/>
 				{#if (cluster_map.isPaging)}
