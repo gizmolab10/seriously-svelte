@@ -17,6 +17,7 @@ export class Hierarchy {
 	private relationships_byParentHID: Relationships_ByHID = {};
 	private relationships_byChildHID: Relationships_ByHID = {};
 	private predicate_byHID: { [hid: number]: Predicate } = {};
+	private ancestry_byHID:{ [hash: number]: Ancestry } = {};
 	private access_byKind: { [kind: string]: Access } = {};
 	private access_byHID: { [hid: number]: Access } = {};
 	private thing_byHID: { [hid: number]: Thing } = {};
@@ -56,17 +57,17 @@ export class Hierarchy {
 
 	static readonly $_EVENTS_$: unique symbol;
 
-	async handle_tool_clicked(idButton: string, mouseState: Mouse_State) {
-		const event: MouseEvent | null = mouseState.event as MouseEvent;
+	async handle_tool_clicked(idButton: string, mouse_state: Mouse_State) {
+		const event: MouseEvent | null = mouse_state.event as MouseEvent;
         const ancestry = get(s_ancestry_editingTools);
 		if (!!ancestry) {
 			switch (idButton) {
 				case IDTool.more: console.log('needs more'); break;
 				case IDTool.create: await this.ancestry_edit_remoteCreateChildOf(ancestry); break;
 				case IDTool.next: this.ancestry_relayout_toolCluster_nextParent(event.altKey); return;
-				case IDTool.add_parent: this.toggleAlteration(AlterationType.adding, mouseState.isLong); return;
+				case IDTool.add_parent: this.toggleAlteration(AlterationType.adding, mouse_state.isLong); return;
 				case IDTool.delete_confirm: await this.ancestries_rebuild_traverse_remoteDelete([ancestry]); break;
-				case IDTool.delete_parent: this.toggleAlteration(AlterationType.deleting, mouseState.isLong); return;
+				case IDTool.delete_parent: this.toggleAlteration(AlterationType.deleting, mouse_state.isLong); return;
 				default: break;
 			}
 			s_ancestry_editingTools.set(null);
@@ -563,10 +564,16 @@ export class Hierarchy {
 
 	static readonly $_ANCESTRY_$: unique symbol;
 
+	ancestry_forHID(idHashed: number): Ancestry | null {
+		return this.ancestry_byHID[idHashed] ?? null;
+	}
+
 	ancestry_forget(ancestry: Ancestry | null) {
 		if (!!ancestry) {
+			const idHashed = ancestry.idHashed;
 			let dict = this.ancestry_byKind_andHash[ancestry.idPredicate] ?? {};
-			delete dict[ancestry.idHashed];
+			delete this.ancestry_byHID[idHashed];
+			delete dict[idHashed];
 			this.ancestry_byKind_andHash[ancestry.idPredicate] = dict;
 		}
 	}
@@ -577,6 +584,7 @@ export class Hierarchy {
 		let ancestry = dict[idHashed];
 		if (!ancestry) {
 			ancestry = new Ancestry(id, idPredicate);
+			this.ancestry_byHID[idHashed] = ancestry;
 			dict[idHashed] = ancestry;
 			this.ancestry_byKind_andHash[idPredicate] = dict;
 		}

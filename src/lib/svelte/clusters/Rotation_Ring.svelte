@@ -31,7 +31,7 @@
 
 	$: {
 		if (!!rotationRing) {
-			neckaceWrapper = new Svelte_Wrapper(rotationRing, handle_mouseData, Identifiable.newID(), SvelteComponentType.rotation);
+			neckaceWrapper = new Svelte_Wrapper(rotationRing, handle_mouse_state, Identifiable.newID(), SvelteComponentType.rotation);
 		}
 	}
 
@@ -85,14 +85,14 @@
 		}
 	}
 
-	function closure(mouseState) {
+	function closure(mouse_state) {
 
 		/////////////////////////////
 		// setup or teardown state //
 		/////////////////////////////
 
-		if (mouseState.isHover) {
-			if (mouseState.isOut) {
+		if (mouse_state.isHover) {
+			if (mouse_state.isOut) {
 				s.rotation_ringState.isHovering = false;
 			} else {
 				const okayToHover = !s.isAnyRotation_active;
@@ -104,19 +104,19 @@
 			rebuilds += 1;
 		} else if (isHit()) {
 			const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);
-			if (mouseState.isDouble) {
+			if (mouse_state.isDouble) {
 
 				// begin resize
 				
 				s.rotation_ringState.radiusOffset = from_center.magnitude - $s_rotation_ring_radius;
 				rebuilds += 1;
-			} else if (mouseState.isUp) {
+			} else if (mouse_state.isUp) {
 
 				// end rotate and resize
 
 				s.rotation_ringState.reset();
 				rebuilds += 1;
-			} else if (mouseState.isDown) {
+			} else if (mouse_state.isDown) {
 				const ring_angle = $s_rotation_ring_angle;
 				const mouse_wentDown_angle = from_center.angle;
 				const basis_angle = mouse_wentDown_angle.add_angle_normalized(-ring_angle);
@@ -141,10 +141,14 @@
 		return false;
 	}
 
-	function handle_mouseData(mouseData: Mouse_State): boolean {
-		if (!mouseData.isMove && isHit()) {
-			closure(mouseData);
+	function handle_mouse_state(mouse_state: Mouse_State): boolean {
+		const hit = isHit();
+		if (mouse_state.hit) {
+			return hit;
+		} else if (!mouse_state.isMove && hit) {
+			closure(mouse_state);
 		}
+		return true;	// WRONG?
 	}
 
 </script>

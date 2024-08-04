@@ -6,7 +6,7 @@
 	export let background_color = k.color_background;
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;
-	export let closure = (mouseState) => {};
+	export let closure = (mouse_state) => {};
 	export let element_state: Element_State;
 	export let position = 'absolute';
 	export let border_thickness = 1;
@@ -55,9 +55,9 @@
 		}
 	}
 
-	function button_closure(mouseState: Mouse_State) {
-		closure(mouseState);		// so container can behave or look differently
-		if (mouseState.isHover) {	// NOT the same as isHovering
+	function button_closure(mouse_state: Mouse_State) {
+		closure(mouse_state);		// so container can behave or look differently
+		if (mouse_state.isHover) {	// NOT the same as isHovering
 			update_currentStyle();
 		}
 	}

@@ -52,7 +52,7 @@
 
 	$: {
 		if (!!dotDrag) {
-			dragWrapper = new Svelte_Wrapper(dotDrag, handle_mouseData, ancestry.idHashed, SvelteComponentType.drag);
+			dragWrapper = new Svelte_Wrapper(dotDrag, handle_mouse_state, ancestry.idHashed, SvelteComponentType.drag);
 			element_state.set_forHovering(ancestry.thing.color, 'pointer');
 		}
 	}
@@ -105,17 +105,17 @@
 		redraws += 1;
 	}
 
-	function closure(mouseState) {
-		if (mouseState.isHover) {
-			updateColors_forHovering(mouseState.isOut);
-		} else if (mouseState.isLong) {
+	function closure(mouse_state) {
+		if (mouse_state.isHover) {
+			updateColors_forHovering(mouse_state.isOut);
+		} else if (mouse_state.isLong) {
 			ancestry?.becomeFocus();
-		} else if (mouseState.isUp) {
-			ancestry?.handle_singleClick_onDragDot(mouseState.event.shiftKey);
+		} else if (mouse_state.isUp) {
+			ancestry?.handle_singleClick_onDragDot(mouse_state.event.shiftKey);
 		}
 	}
 
-	function handle_mouseData(mouseData: Mouse_State): boolean {
+	function handle_mouse_state(mouse_state: Mouse_State): boolean {
 		return false;
 	}
 

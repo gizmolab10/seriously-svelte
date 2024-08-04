@@ -1,10 +1,11 @@
-import { s_altering, s_resize_count, s_rebuild_count, s_mouse_up_count, s_mouse_location } from '../state/Reactive_State';
-import { g, get, Point, signals, Svelte_Wrapper, Alteration_State, SvelteComponentType } from '../common/Global_Imports';
-import { Mouse_State, Create_Mouse_State } from '../common/Global_Imports';
+import { s_altering, s_resize_count, s_rebuild_count, s_mouse_location, s_mouse_up_count } from '../state/Reactive_State';
+import { g, u, get, Point, signals, Svelte_Wrapper, Alteration_State } from '../common/Global_Imports';
+import { Mouse_State, Create_Mouse_State, SvelteComponentType } from '../common/Global_Imports';
+import { h } from '../../ts/db/DBDispatch';
 
 export class Event_Dispatch {
 	private wrappers_byType_andHID: { [type: string]: { [hid: number]: Svelte_Wrapper } } = {};
-	private hitHierarchy: {[type: string]: Array<string>} = {};
+	private child_wrapperTypes_byType: {[type: string]: Array<string>} = {};
 	
 	// assure delivery of events
 	// to a svelt component
@@ -74,44 +75,41 @@ export class Event_Dispatch {
 	}
 
 	addTypeTo_parent(type: string, parentType: string) {
-		let childrenTypes = this.hitHierarchy[parentType] ?? [];
+		let childrenTypes = this.child_wrapperTypes_byType[parentType] ?? [];
 		if (!childrenTypes.includes(type)) {
 			childrenTypes.push(type);
-			this.hitHierarchy[parentType] = childrenTypes;
+			this.child_wrapperTypes_byType[parentType] = childrenTypes;
+		}
+	}
+
+	addTypeTo_hitHierarchy(type: string) {
+		for (const parentType of Svelte_Wrapper.parentTypes_for(type)) {
+			this.addTypeTo_parent(type, parentType);
+			this.addTypeTo_hitHierarchy(parentType);	// recurse
 		}
 	}
 
 	addTo_hitHierarchy(wrapper: Svelte_Wrapper) {
 		for (const parentType of wrapper.parentTypes) {
 			this.addTypeTo_parent(wrapper.type, parentType);
+			this.addTypeTo_hitHierarchy(parentType);
 		}
 	}
 
-	childTypes_for(type: string): Array<string> {
-		return []
+	wrapper_add(wrapper: Svelte_Wrapper) {
+		const array = this.wrappers_byType_andHID;
+		const dict = array[wrapper.type] ?? {};
+		const hash = wrapper.idHashed;
+		const type = wrapper.type;
+		dict[hash] = wrapper;
+		array[type] = dict;
+		this.addTo_hitHierarchy(wrapper);
 	}
 
-	hitsFor(event: MouseEvent, type: string): Array<Svelte_Wrapper> {
-
-		// descend type hierarchy until both:
-		// (1) type is hit and (2) its children are not hit
-		// return all wrappers for that type
-
-		const childrenTypes = this.hitHierarchy[type];
-		for (const childType of childrenTypes) {
-			const wrappers_byHID = this.wrappers_byHID_forType(childType);
-			const wrappers = Object.values(wrappers_byHID)
-			for (const wrapper of wrappers) {
-				if (wrapper.isHit(event)) {
-					const recurse = this.hitsFor(event, childType);
-					if (recurse.length == 0) {
-						return wrappers;
-					}
-				}
-			}
-		}
-		return [];
-	}
+	//////////////////////////////////////
+	//	 ABANDON remaining functions	//
+	// WHY? negligible performance gain	//
+	//////////////////////////////////////
 
 	respondTo_closure(event: MouseEvent, closure: Create_Mouse_State) {
 		// gather all wrappers whose type generates a hit
@@ -128,14 +126,46 @@ export class Event_Dispatch {
 		}
 	}
 
-	wrapper_add(wrapper: Svelte_Wrapper) {
-		const array = this.wrappers_byType_andHID;
-		const dict = array[wrapper.type] ?? {};
-		const hash = wrapper.idHashed;
-		const type = wrapper.type;
-		dict[hash] = wrapper;
-		array[type] = dict;
-		this.addTo_hitHierarchy(wrapper);
+	hitsFor(event: MouseEvent, type: string): Array<Svelte_Wrapper> {
+		const wrappers_byHID = this.wrappers_byHID_forType(type);
+		if (!wrappers_byHID) {
+			return this.hitsForChildTypesOf(event, type);
+		} else {
+			const wrappers = Object.values(wrappers_byHID);
+			for (const wrapper of wrappers) {
+				const idHashed = wrapper.idHashed;
+				const ancestry = h.ancestry_forHID(idHashed)
+				const title = ancestry?.title ?? wrapper.idHashed;
+				console.log(`hitsFor ${type} ${title}`);
+				if (wrapper.isHit(event)) {
+					const recurse = this.hitsForChildTypesOf(event, type);
+					if (recurse.length == 0) {
+						return wrappers;
+					}
+					break;
+				}
+			}
+		}
+		return [];	// URGENT: return app or something
+	}
+
+	hitsForChildTypesOf(event: MouseEvent, type: string): Array<Svelte_Wrapper> {
+
+		// return all wrappers for type, if both:
+		//  (1) type is hit and
+		//  (2) its children are NOT hit
+		//    
+		// if a child is hit,
+		//  recursively descend type hierarchy
+
+		console.log(`hitsForChildTypesOf ${type}`);
+		let hits: Array<Svelte_Wrapper> = [];
+		const child_wrapperTypes = this.child_wrapperTypes_byType[type] ?? [];
+		for (const child_wrapperType of child_wrapperTypes) {
+			hits = u.concatenateArrays(hits, this.hitsFor(event, child_wrapperType));
+		
+		}
+		return hits;
 	}
 
 }

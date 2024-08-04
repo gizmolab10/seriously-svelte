@@ -48,7 +48,7 @@
 
 	onMount(() => {
 		update_fromAncestry();
-		updateLayout();
+		layout_widget();
 		element_state = s.elementState_forName(name);		// survives onDestroy, created by {tree, cluster} children
 		debugReact.log_mount(`WIDGET ${thing?.description} ${ancestry?.isGrabbed}`);
 		fullUpdate();
@@ -58,7 +58,7 @@
 					case kinds.relayout:
 						if (id == thing?.id) {
 							debugReact.log_layout(`WIDGET signal ${thing?.description}`);
-							updateLayout()
+							layout_widget()
 						}
 						break;
 					default:
@@ -76,7 +76,7 @@
 		return false
 	}
 
-	function handle_mouseData(mouseData: Mouse_State): boolean {
+	function handle_mouse_state(mouse_state: Mouse_State): boolean {
 		return false;
 	}
 
@@ -98,8 +98,7 @@
 
 	$: {
 		if (widget) {
-			const parentTypes = [SvelteComponentType.graph, SvelteComponentType.rotation]
-			widgetWrapper = new Svelte_Wrapper(widget, handle_mouseData, ancestry.idHashed, SvelteComponentType.widget, parentTypes);
+			widgetWrapper = new Svelte_Wrapper(widget, handle_mouse_state, ancestry.idHashed, SvelteComponentType.widget);
 		}
 	}
 	
@@ -107,7 +106,7 @@
 		if (priorOrigin != origin) {
 			priorOrigin = origin;
 			setTimeout(() => {
-				updateLayout()
+				layout_widget()
 			}, 1);
 		}
 	}
@@ -138,7 +137,7 @@
 				showingTools = shallShowTools;
 				isGrabbed = shallGrab;
 				isEditing = shallEdit;
-				updateLayout();
+				layout_widget();
 			}
 		}
 	}
@@ -149,7 +148,7 @@
 		return (k.dot_size * multiplier) + clustersAdjustment;
 	}
 
-	function updateLayout() {
+	function layout_widget() {
 		const dragX = 5.5;
 		const delta = showingBorder ? 0 : 0.5;
 		const leftForward = delta - dragX;

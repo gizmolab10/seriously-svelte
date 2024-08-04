@@ -37,10 +37,10 @@
 		}
 	}
 
-	function button_closure_forID(mouseState, id) {
-		if (mouseState.isHover) {
-			elementStates_byID[id].isOut = mouseState.isOut;
-		} else if (mouseState.isUp) {
+	function button_closure_forID(mouse_state, id) {
+		if (mouse_state.isHover) {
+			elementStates_byID[id].isOut = mouse_state.isOut;
+		} else if (mouse_state.isUp) {
 			switch (id) {
 				case IDButton.help: g.showHelp(); break;
 				case IDButton.bigger: width = g.zoomBy(1.1) - 20; break;
@@ -69,7 +69,7 @@
 				border_thickness=0
 				center={new Point(lefts[0], details_top)}
 				element_state={elementStates_byID[IDButton.details]}
-				closure={(mouseState) => button_closure_forID(mouseState, IDButton.details)}>
+				closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.details)}>
 				<img src='settings.svg' alt='circular button' width={size}px height={size}px/>
 			</Button>
 			{#if k.show_controls}
@@ -78,7 +78,7 @@
 					height={size + 4}
 					center={new Point(lefts[1], top)}
 					element_state={elementStates_byID[IDButton.relations]}
-					closure={(mouseState) => button_closure_forID(mouseState, IDButton.relations)}>
+					closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.relations)}>
 					{$s_shown_relations}
 				</Button>
 				<Button name={IDButton.layout}
@@ -86,7 +86,7 @@
 					height={size + 4}
 					center={new Point(lefts[2], top)}
 					element_state={elementStates_byID[IDButton.layout]}
-					closure={(mouseState) => button_closure_forID(mouseState, IDButton.layout)}>
+					closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.layout)}>
 					{#if $s_layout_asClusters}tree{:else}clusters{/if}
 				</Button>
 			{/if}
@@ -95,7 +95,7 @@
 			<Button name={IDButton.smaller}
 				element_state={elementStates_byID[IDButton.smaller]}
 				center={new Point(width - 130, top)}
-				closure={(mouseState) => button_closure_forID(mouseState. IDButton.smaller)}>
+				closure={(mouse_state) => button_closure_forID(mouse_state. IDButton.smaller)}>
 				<SVGD3 name='smaller'
 					width={size}
 					height={size}
@@ -105,7 +105,7 @@
 			<Button name={IDButton.bigger}
 			center={new Point(width - 105, top)}
 			element_state={elementStates_byID[IDButton.bigger]}
-				closure={(mouseState) => button_closure_forID(mouseState, IDButton.bigger)}>
+				closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.bigger)}>
 				<SVGD3 name='bigger'
 					width={size}
 					height={size}
@@ -118,7 +118,7 @@
 			height={size + 4}
 			center={new Point(width - 55, top)}
 			element_state={elementStates_byID[IDButton.builds]}
-			closure={(mouseState) => button_closure_forID(mouseState, IDButton.builds)}>
+			closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.builds)}>
 			{'build ' + k.build_number}
 		</Button>
 		<Button name={IDButton.help}
@@ -126,7 +126,7 @@
 			height={size + 4}
 			center={new Point(width, top)}
 			element_state={elementStates_byID[IDButton.help]}
-			closure={(mouseState) => button_closure_forID(mouseState, IDButton.help)}>
+			closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.help)}>
 			<span
 				style='top:2px;
 					left:5.5px;

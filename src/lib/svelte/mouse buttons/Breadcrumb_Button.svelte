@@ -60,20 +60,20 @@
 		`.removeWhiteSpace();
 	}
 
-	function closure(mouseState) {
+	function closure(mouse_state) {
 		if (dbDispatch.db.hasData) {
-			if (mouseState.isHover) {
-				if (mouseState.isOut) {
+			if (mouse_state.isHover) {
+				if (mouse_state.isOut) {
 					border = `${borderStyle} ${borderColor}`;
 				} else {
 					border = `${borderStyle} ${thing.color}`;
 				}
 				const cursor = !ancestry.isGrabbed && ancestry.hasChildRelationships ? 'pointer' : k.cursor_default;
 				element_state.set_forHovering(thing.color, cursor);
-				element_state.isOut = mouseState.isOut;
+				element_state.isOut = mouse_state.isOut;
 				updateStyle();
 				rebuilds += 1;
-			} else if (mouseState.isUp) {
+			} else if (mouse_state.isUp) {
 				ancestry.grabOnly();
 				if (ancestry.becomeFocus()) {
 					signals.signal_rebuildGraph_fromFocus();

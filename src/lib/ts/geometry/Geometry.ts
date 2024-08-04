@@ -239,7 +239,6 @@ export class Rect {
 	static boundingRectFor(element: HTMLElement | null): Rect | null {
 		if (element) {
 			const domRect = element.getBoundingClientRect();
-			// const origin = Point.origin_inWindowCoordinates_for(element);
 			const origin = Point.fromDOMRect(domRect);
 			const size = Size.fromDOMRect(domRect);
 			return new Rect(origin, size);

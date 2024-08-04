@@ -17,7 +17,7 @@
 	onDestroy(() => { widgetMapRects = []; });
 
 	onMount(() => {
-		layout();
+		layoutAll_children();
 		const handler = signals.handle_relayoutWidgets(1, (signal_ancestry) => {
 			const now = new Date().getTime();
 			if (ancestry.isExpanded &&
@@ -25,7 +25,7 @@
 				(!signal_ancestry || signal_ancestry.matchesAncestry(ancestry))) {
 				priorTime = now;
 				debugReact.log_origins(origin.x + ' before timeout');
-				layout();
+				layoutAll_children();
 			}
 		});
 		return () => { handler.disconnect() };
@@ -33,11 +33,11 @@
 	
 	$: {
 		if ($s_graphRect) {
-			layout()
+			layoutAll_children()
 		}
 	}
 	
-	function layout() {
+	function layoutAll_children() {
 		widgetMapRects = [];
 		if (ancestry.isExpanded) {
 			debugReact.log_origins(origin.x + ' children layout');

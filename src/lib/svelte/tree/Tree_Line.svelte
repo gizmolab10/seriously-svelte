@@ -19,7 +19,7 @@
 
 	$: {
 		if (line) {
-			lineWrapper = new Svelte_Wrapper(line, handle_mouseData, ancestry.idHashed, SvelteComponentType.line);
+			lineWrapper = new Svelte_Wrapper(line, handle_mouse_state, ancestry.idHashed, SvelteComponentType.line);
 		}
 	}
 
@@ -68,7 +68,7 @@
 		return false
 	}
 
-	function handle_mouseData(mouseData: Mouse_State): boolean {
+	function handle_mouse_state(mouse_state: Mouse_State): boolean {
 		return false;
 	}
 

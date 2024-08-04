@@ -10,12 +10,12 @@
     const cross = svgPaths.x_cross(size, size / 6);
     const circle = svgPaths.circle_atOffset(size, size - 2);
 
-	function closure(mouseState) {
-		if (mouseState.isHover) {
-			const isHovering = !mouseState.isOut;
+	function closure(mouse_state) {
+		if (mouse_state.isHover) {
+			const isHovering = !mouse_state.isOut;
 			fill = isHovering ? 'black' : k.color_background;
 			stroke = isHovering ? k.color_background : 'black';
-		} else if (mouseState.isUp) {
+		} else if (mouse_state.isUp) {
 			$s_id_popupView = null;
 		}
 	}

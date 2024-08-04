@@ -1,12 +1,11 @@
 import { Handle_Mouse_State, Create_Mouse_State } from './Global_Imports';
-import { e, Rect, SvelteComponentType } from './Global_Imports';
+import { e, Rect, Mouse_State, SvelteComponentType } from './Global_Imports';
 import Identifiable from '../data/Identifiable';
-import { h } from '../db/DBDispatch';
 
 // Ancestry sometimes needs to access and or alter an associated svelte component
 
 export default class Svelte_Wrapper extends Identifiable {
-    _parentTypes: Array<SvelteComponentType> = [];
+    _parentTypes: Array<SvelteComponentType> = [];  // ABANDON
     handle_mouse_state: Handle_Mouse_State;
     type: SvelteComponentType;
     element: HTMLElement;
@@ -17,36 +16,51 @@ export default class Svelte_Wrapper extends Identifiable {
         this.type = type;
         this.element = element;
         this.idHashed = idHashed;
-        this.set_parentTypes(parentTypes);
+        this.set_parentTypes(parentTypes);  // ABANDON
         this.handle_mouse_state = handle_mouse_state;
     	e.wrapper_add(this);
     }
+
+    get boundingRect(): Rect { return Rect.boundingRectFor(this.element) ?? Rect.zero; }
 
     handle_event(event: MouseEvent, create_mouse_state: Create_Mouse_State): boolean {
         const state = create_mouse_state(event, this.element);
         return this.handle_mouse_state(state);
     }
 
+	//////////////////////////////////////
+	//	 ABANDON remaining functions	//
+	// WHY? negligible performance gain	//
+	//////////////////////////////////////
+
     set_parentTypes(types: Array<SvelteComponentType>) {
         this._parentTypes = types;
 	}
 
     isHit(event: MouseEvent): boolean {
-        return false;
+        const state = Mouse_State.hit(event);   // create a 'hit' mouse state
+        return this.handle_mouse_state(state);
     }
 
-    get boundingRect(): Rect { return Rect.boundingRectFor(this.element) ?? Rect.zero; }
-
     get parentTypes(): Array<SvelteComponentType> {
-        if (!!this._parentTypes) {
-            return this._parentTypes;
+        const types = this._parentTypes;
+        if (!!types && types.length > 0) {
+            return types;
         }
-        switch (this.type) {
+        return Svelte_Wrapper.parentTypes_for(this.type);
+    }
+
+    static parentTypes_for(type: string): Array<SvelteComponentType> {
+        switch (type) {
+            case SvelteComponentType.thumb:     return [SvelteComponentType.paging];
+            case SvelteComponentType.widget:
+            case SvelteComponentType.app:       return [];
             case SvelteComponentType.tools:
+            case SvelteComponentType.title:
             case SvelteComponentType.rotation:  return [SvelteComponentType.graph];
+            case SvelteComponentType.drag:
             case SvelteComponentType.paging:
             case SvelteComponentType.reveal:    return [SvelteComponentType.rotation];
-            case SvelteComponentType.thumb:     return [SvelteComponentType.paging];
             case SvelteComponentType.graph:
             case SvelteComponentType.details:
             case SvelteComponentType.banners:   return [SvelteComponentType.app];

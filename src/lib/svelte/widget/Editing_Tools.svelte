@@ -111,10 +111,10 @@
 		}
 	}
 
-	async function handle_mouse_data(mouseState: Mouse_State, id: string) {
-		if (mouseState.isHover) {
+	async function handle_mouse_data(mouse_state: Mouse_State, id: string) {
+		if (mouse_state.isHover) {
 			const element_state = elementStates_byID[id];
-			const isOut = mouseState.isOut;
+			const isOut = mouse_state.isOut;
 			isHovering_byID[id] = !isOut;
 			element_state.isOut = isOut;
 		} else {
@@ -122,7 +122,7 @@
 				case IDTool.delete_cancel: confirmingDelete = false; break;
 				default:
 					if (!isDisabledFor(id)) {
-						await h.handle_tool_clicked(id, mouseState);
+						await h.handle_tool_clicked(id, mouse_state);
 					}
 					break;
 			}
@@ -216,7 +216,7 @@
 					</svg>
 				{/if}
 				<Button
-					closure={(mouseState) => handle_mouse_data(mouseState, IDTool.delete_confirm)}
+					closure={(mouse_state) => handle_mouse_data(mouse_state, IDTool.delete_confirm)}
 					element_state={elementStates_byID[IDTool.delete_confirm]}
 					center={getC(IDTool.delete_confirm)}
 					height={k.editingTools_diameter / 2}
@@ -238,7 +238,7 @@
 					{/key}
 				</Button>
 				<Button
-					closure={(mouseState) => handle_mouse_data(mouseState, IDTool.delete_cancel, )}
+					closure={(mouse_state) => handle_mouse_data(mouse_state, IDTool.delete_cancel, )}
 					element_state={elementStates_byID[IDTool.delete_cancel]}
 					height={k.editingTools_diameter / 2}
 					center={getC(IDTool.delete_cancel)}
@@ -271,7 +271,7 @@
 				</div>
 			{:else}
 				<Button
-					closure={(mouseState) => handle_mouse_data(mouseState, IDTool.more)}
+					closure={(mouse_state) => handle_mouse_data(mouse_state, IDTool.more)}
 					color={isHovering_byID[IDTool.more] ? k.color_background : color}
 					element_state={elementStates_byID[IDTool.more]}
 					height={k.default_buttonSize}
@@ -298,7 +298,7 @@
 				<Triangle_Button
 					strokeColor={isDisabledFor(IDTool.next) ? k.color_disabled : parentSensitiveColor}
 					hover_closure={(isHovering) => { return fillColorsFor(IDTool.next, isHovering) }}
-					handle_mouse_state={(mouseState) => handle_mouse_data(mouseState, IDTool.next)}
+					handle_mouse_state={(mouse_state) => handle_mouse_data(mouse_state, IDTool.next)}
 					extraPath={svgPaths.circle_atOffset(toolDiameter, 4)}
 					center={getC(IDTool.next)}
 					angle={Direction.up}
@@ -307,7 +307,7 @@
 				<Triangle_Button
 					strokeColor={isDisabledFor(IDTool.delete_parent) ? k.color_disabled : parentSensitiveColor}
 					hover_closure={(isHovering) => { return fillColorsFor(IDTool.delete_parent, isHovering) }}
-					handle_mouse_state={(mouseState) => handle_mouse_data(mouseState, IDTool.delete_parent)}
+					handle_mouse_state={(mouse_state) => handle_mouse_data(mouse_state, IDTool.delete_parent)}
 					extraPath={svgPaths.dash(toolDiameter, 4)}
 					center={getC(IDTool.delete_parent)}
 					angle={Direction.left}
@@ -315,7 +315,7 @@
 					size={toolDiameter}/>
 				<Triangle_Button
 					hover_closure={(isHovering) => { return fillColorsFor(IDTool.add_parent, isHovering) }}
-					handle_mouse_state={(mouseState) => handle_mouse_data(mouseState, IDTool.add_parent)}
+					handle_mouse_state={(mouse_state) => handle_mouse_data(mouse_state, IDTool.add_parent)}
 					strokeColor={isDisabledFor(IDTool.add_parent) ? k.color_disabled : color}
 					extraPath={svgPaths.t_cross(toolDiameter, 3)}
 					center={getC(IDTool.add_parent)}
@@ -324,7 +324,7 @@
 					name='add_parent'/>
 				<Triangle_Button
 					hover_closure={(isHovering) => { return fillColorsFor(IDTool.create, isHovering) }}
-					handle_mouse_state={(mouseState) => handle_mouse_data(mouseState, IDTool.create)}
+					handle_mouse_state={(mouse_state) => handle_mouse_data(mouse_state, IDTool.create)}
 					extraPath={svgPaths.t_cross(toolDiameter, 3)}
 					center={getC(IDTool.create)}
 					angle={Direction.right}

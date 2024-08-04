@@ -54,8 +54,9 @@ export default class Cluster_Map  {
 	}
 
 	update_forLabels() {
-		const semi_major = this.svg_arc.inside_arc_radius - this.svg_arc.fork_radius - k.dot_size / 2;
-		const semi_minor = this.svg_arc.inside_arc_radius / 2;
+		const radius = get(s_rotation_ring_radius) - k.ring_thickness;
+		const semi_major = radius;
+		const semi_minor = radius / 3;
 		const ellipse_axes = new Point(semi_minor, semi_major);
 		this.label_tip = ellipse_axes.ellipse_coordiates_forAngle(-this.fork_angle);
 		this.update_thumb_andTitle();
@@ -131,13 +132,12 @@ export default class Cluster_Map  {
 	}
 
 	update_cluster_title_forIndex() {
-		let separator = k.space;
+		const separator = '<br>';
 		let quantity = `${this.total}`;
 		const index = Math.round(this.page_indexOf_focus);
 		let shortened = this.predicate?.kind.unCamelCase().lastWord() ?? k.empty;
 		if (this.isPaging) {
-			separator = '<br>';
-			quantity = `${index + 1} - ${index + this.shown} (of ${quantity})`;
+			quantity = `(${index + 1} - ${index + this.shown} of) ${quantity}`;
 		}
 		if (!this.predicate?.isBidirectional) {
 			shortened = this.points_out ? shortened : 'contained by';

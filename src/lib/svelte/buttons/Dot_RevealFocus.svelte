@@ -14,9 +14,9 @@
 		return [debug.lines ? 'transparent' : element_state.stroke, k.empty];
 	}
 
-	function handle_mouse_state(mouseState) {
-		if (mouseState.isHover) {
-			element_state.isOut = mouseState.isOut;
+	function handle_mouse_state(mouse_state: Mouse_State): boolean {
+		if (mouse_state.isHover) {
+			element_state.isOut = mouse_state.isOut;
 		} else {
 			if (h.grabs.latestAncestryGrabbed(true)?.isFocus) {
 				h.ancestry_rebuild_remoteMoveRight(ancestry, false, false);

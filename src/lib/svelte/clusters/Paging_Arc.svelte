@@ -35,7 +35,7 @@
 
 	$: {
 		if (!!pagingArc) {
-			pagingArcWrapper = new Svelte_Wrapper(pagingArc, handle_mouseData, Identifiable.newID(), SvelteComponentType.paging);
+			pagingArcWrapper = new Svelte_Wrapper(pagingArc, handle_mouse_state, Identifiable.newID(), SvelteComponentType.paging);
 		}
 	}
 
@@ -71,7 +71,7 @@
 		layout_title();
 	}
 
-	function handle_mouseData(mouseData: Mouse_State) {}
+	function handle_mouse_state(mouse_state: Mouse_State): boolean { return isHit(); }
 
 	function computed_mouseAngle(): number | null {
 		return u.vector_ofOffset_fromGraphCenter_toMouseLocation(center)?.angle ?? null
@@ -120,25 +120,25 @@
 		thumb_color = transparentize(color, paging_arc_state.stroke_transparency * 0.8);
 	}
 
-	function closure(mouseState) {
+	function closure(mouse_state) {
 
 		/////////////////////////////
 		// setup or teardown state //
 		/////////////////////////////
 
-		if (mouseState.isHover) {
+		if (mouse_state.isHover) {
 			paging_arc_state.isHovering = isHit();	// show highlight around ring
 
 			// hover
 
 			update_thumb_color();
 		} else {
-			if (mouseState.isUp) {
+			if (mouse_state.isUp) {
 
 				// end rotate
 
 				update_thumb_color();
-			} else if (mouseState.isDown) {
+			} else if (mouse_state.isDown) {
 				const mouseAngle = computed_mouseAngle();
 
 				// begin rotate

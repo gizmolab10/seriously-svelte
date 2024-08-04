@@ -19,7 +19,7 @@ export default class StateOf_UX {
 
 	rotationState_byName: {[name: string]: Rotation_State} = {};
 	elementState_byName: {[name: string]: Element_State} = {};
-	mouseState_byName: { [name: string]: Mouse_State } = {};
+	mouse_state_byName: { [name: string]: Mouse_State } = {};
 	clusters_geometry!: Clusters_Geometry;
 	rotation_ringState!: Expansion_State;
 	paging_ring_state!: Rotation_State;
@@ -71,11 +71,11 @@ export default class StateOf_UX {
 		return rotation_state;
 	}
 
-	mouseState_forName(name: string): Mouse_State {
-		let state = this.mouseState_byName[name];
+	mouse_state_forName(name: string): Mouse_State {
+		let state = this.mouse_state_byName[name];
 		if (!state) {
 			state = Mouse_State.empty();
-			this.mouseState_byName[name] = state;
+			this.mouse_state_byName[name] = state;
 		}
 		return state;
 	}

@@ -38,7 +38,7 @@
 
 	$: {
 		if (!!geometry) {		// ignore null at startup
-			geometry.layout();
+			geometry.layoutAll_clusters();
 			rebuilds += 1;
 		}
 	}

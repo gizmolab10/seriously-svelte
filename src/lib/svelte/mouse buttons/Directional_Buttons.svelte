@@ -12,11 +12,11 @@
         return [isHovering ? 'black' : k.color_background, k.empty];
     }
 
-	function handle_mouse_state(mouseState) {
-        const target = mouseState.element;
-        if (!mouseState.isHover && !!target && (mouseState.isUp || mouseState.isLong)) {
+	function handle_mouse_state(mouse_state: Mouse_State): boolean {
+        const target = mouse_state.element;
+        if (!mouse_state.isHover && !!target && (mouse_state.isUp || mouse_state.isLong)) {
             const pointsUp = target.id == 'up';
-            hit(pointsUp, mouseState.isLong);
+            hit(pointsUp, mouse_state.isLong);
             rebuilds += 1;
         }
 	}

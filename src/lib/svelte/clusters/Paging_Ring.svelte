@@ -37,18 +37,18 @@
 
 	$: {
 		if (!!pagingRing) {
-			pagingWrapper = new Svelte_Wrapper(pagingRing, handle_mouseData, Identifiable.newID(), SvelteComponentType.paging);
+			pagingWrapper = new Svelte_Wrapper(pagingRing, handle_mouse_state, Identifiable.newID(), SvelteComponentType.paging);
 		}
 	}
 
-	function closure(mouseState) {
+	function closure(mouse_state) {
 
 		/////////////////////////////
 		// setup or teardown state //
 		/////////////////////////////
 
-		if (mouseState.isHover) {
-			s.paging_ring_state.isHovering = !mouseState.isOut;	// show thumb
+		if (mouse_state.isHover) {
+			s.paging_ring_state.isHovering = !mouse_state.isOut;	// show thumb
 
 			// hover
 
@@ -66,10 +66,12 @@
 		return false;
 	}
 
-	function handle_mouseData(mouseData: Mouse_State) {
-		if (isHit()) {
-			closure(mouseData);
+	function handle_mouse_state(mouse_state: Mouse_State): boolean {
+		const hit = isHit();
+		if (hit) {
+			closure(mouse_state);
 		}
+		return hit;
 	}
 
 </script>

@@ -32,7 +32,7 @@
 
 	$: {
 		if (dotReveal && !($s_ancestry_editingTools?.matchesAncestry(ancestry) ?? false)) {
-			revealWrapper = new Svelte_Wrapper(dotReveal, handle_mouseData, ancestry.idHashed, SvelteComponentType.reveal);
+			revealWrapper = new Svelte_Wrapper(dotReveal, handle_mouse_state, ancestry.idHashed, SvelteComponentType.reveal);
 			element_state.set_forHovering(ancestry.thing.color, 'pointer');
 		}
 	}
@@ -74,10 +74,10 @@
 		}
 	}
 
-	function closure(mouseState) {
-		if (mouseState.isHover) {
-			set_isHovering(!mouseState.isOut);
-		} else if (mouseState.isUp) {
+	function closure(mouse_state) {
+		if (mouse_state.isHover) {
+			set_isHovering(!mouse_state.isOut);
+		} else if (mouse_state.isUp) {
 			if (ancestry.toolsGrabbed) {
 				$s_altering = null;
 				$s_ancestry_editingTools = null;
@@ -92,7 +92,7 @@
 		return false
 	}
 
-	function handle_mouseData(mouseData: Mouse_State): boolean {
+	function handle_mouse_state(mouse_state: Mouse_State): boolean {
 		return false;
 	}
 

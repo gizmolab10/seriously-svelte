@@ -21,8 +21,8 @@ export default class SVG_Arc {
 	constructor() {
 		const radius = get(s_rotation_ring_radius);
 		const thickness = k.paging_arc_thickness;
-		this.inside_arc_radius = radius - thickness * 2;
-		this.outside_arc_radius = radius - thickness;
+		this.inside_arc_radius = radius - thickness;
+		this.outside_arc_radius = radius;
 		this.clusters_center = Point.square(radius);
 		this.outside_ring_radius = radius;
 	}

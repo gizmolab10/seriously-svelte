@@ -4,7 +4,7 @@
 	export let detectHit_closure: () => {flag: boolean} | null = null;
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;
-	export let closure = (mouseState) => {};
+	export let closure = (mouse_state) => {};
 	export let detect_doubleClick = true;
 	export let detect_longClick = true;
 	export let detect_mouseDown = true;
@@ -15,7 +15,7 @@
 	export let cursor = 'pointer';
 	export let align_left = true;
 	export let name = 'generic';
-	const mouseState = s.mouseState_forName(name);	// persist across destroy/recreate
+	const mouse_state = s.mouse_state_forName(name);	// persist across destroy/recreate
 	let mouse_doubleClick_timer;
 	let mouse_longClick_timer;
 	let style = k.empty;
@@ -59,9 +59,9 @@
 			} else {							// if this element's hover shape is not its bounding rect
 				isHit = detectHit_closure();	// use hover shape
 			}
-			if (mouseState.isHover != isHit) {
-				mouseState.isHover = isHit;
-				mouseState.isOut = !isHit;
+			if (mouse_state.isHover != isHit) {
+				mouse_state.isHover = isHit;
+				mouse_state.isOut = !isHit;
 				closure(Mouse_State.hover(null, mouse_button, isHit));	// pass a null event
 			}
 		}
@@ -72,7 +72,7 @@
 		clearTimeout(mouse_longClick_timer);
 		mouse_doubleClick_timer = null;
 		mouse_longClick_timer = null;
-		mouseState.clicks = 0;
+		mouse_state.clicks = 0;
 	}
 
 	function handle_pointerUp(event) {
@@ -87,13 +87,13 @@
 	}
 	
 	function handle_pointerDown(event) {
-		if (detect_mouseDown && mouseState.clicks == 0) {
+		if (detect_mouseDown && mouse_state.clicks == 0) {
 
 			// call down closure
 
 			closure(Mouse_State.down(event, mouse_button));
 		}
-		mouseState.clicks += 1;
+		mouse_state.clicks += 1;
 		if (detect_longClick && !mouse_longClick_timer) {
 
 			// setup timer to call long-click closure
@@ -108,7 +108,7 @@
 			// setup timer to call double-click closure
 
 			mouse_doubleClick_timer = setTimeout(() => {
-				closure(Mouse_State.clicks(event, mouse_button, mouseState.clicks));
+				closure(Mouse_State.clicks(event, mouse_button, mouse_state.clicks));
 				reset();
 			}, k.threshold_doubleClick);
 		}
