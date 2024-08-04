@@ -79,7 +79,7 @@
 		if (detect_mouseUp) {
 
 			// teardown long timer and call closure
-		
+			
 			closure(Mouse_State.up(event, mouse_button));
 			clearTimeout(mouse_longClick_timer);
 			mouse_longClick_timer = null;

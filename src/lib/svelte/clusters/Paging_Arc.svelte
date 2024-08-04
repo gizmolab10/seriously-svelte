@@ -163,8 +163,8 @@
 			width={breadth}
 			height={breadth}
 			closure={closure}
+			zindex={ZIndex.panel}
 			detect_longClick={false}
-			zindex={ZIndex.frontmost}
 			cursor={k.cursor_default}
 			detectHit_closure={isHit}>
 			<svg class='svg-paging-arc' viewBox={viewBox}>

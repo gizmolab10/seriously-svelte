@@ -47,7 +47,7 @@
 
 {#key rebuilds}
 	{#if geometry}
-		<div class='rotation-ring-widgets'>
+		<div class='rotation-ring-widgets' style='z-index:{ZIndex.panel};'>
 			{#each geometry.widget_maps as widget_map}
 				<Widget
 					subtype={widget_map.subtype}
