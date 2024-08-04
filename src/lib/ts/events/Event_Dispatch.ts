@@ -74,6 +74,21 @@ export class Event_Dispatch {
 		return null;
 	}
 
+	wrapper_add(wrapper: Svelte_Wrapper) {
+		const array = this.wrappers_byType_andHID;
+		const dict = array[wrapper.type] ?? {};
+		const hash = wrapper.idHashed;
+		const type = wrapper.type;
+		dict[hash] = wrapper;
+		array[type] = dict;
+		// this.addTo_hitHierarchy(wrapper);
+	}
+
+	//////////////////////////////////////
+	//	 ABANDON remaining functions	//
+	// WHY? negligible performance gain	//
+	//////////////////////////////////////
+
 	addTypeTo_parent(type: string, parentType: string) {
 		let childrenTypes = this.child_wrapperTypes_byType[parentType] ?? [];
 		if (!childrenTypes.includes(type)) {
@@ -95,21 +110,6 @@ export class Event_Dispatch {
 			this.addTypeTo_hitHierarchy(parentType);
 		}
 	}
-
-	wrapper_add(wrapper: Svelte_Wrapper) {
-		const array = this.wrappers_byType_andHID;
-		const dict = array[wrapper.type] ?? {};
-		const hash = wrapper.idHashed;
-		const type = wrapper.type;
-		dict[hash] = wrapper;
-		array[type] = dict;
-		this.addTo_hitHierarchy(wrapper);
-	}
-
-	//////////////////////////////////////
-	//	 ABANDON remaining functions	//
-	// WHY? negligible performance gain	//
-	//////////////////////////////////////
 
 	respondTo_closure(event: MouseEvent, closure: Create_Mouse_State) {
 		// gather all wrappers whose type generates a hit
