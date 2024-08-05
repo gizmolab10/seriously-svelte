@@ -48,30 +48,15 @@
 	}
 
 	$: {
-
-		////////////////////////////////////
-		// detect movement & adjust state //
-		////////////////////////////////////
-
 		const _ = k.empty + ($s_mouse_location?.description ?? k.empty);			// use store, to react
-		if (!!paging_arc_state.lastRotated_angle) {										// rotate
-			cursor_closure();
-			if (!!cluster_map) {
-				const mouseAngle = computed_mouseAngle();
-				if (!!mouseAngle) {
-					const delta = Math.abs(mouseAngle - paging_arc_state.lastRotated_angle);	// subtract to find difference
-					if (delta >= (Math.PI / 90)) {										// minimum two degree changes
-						paging_arc_state.lastRotated_angle = mouseAngle;
-						cluster_map.adjust_pagingIndex_forMouse_angle(mouseAngle);
-						rebuilds += 1;
-					}
-				}
-			}
-		}
-		layout_title();
+		handle_mouse_moved();
 	}
 
 	function handle_mouse_state(mouse_state: Mouse_State): boolean { return thumb_isHit(); }
+
+	function update_thumb_color() {
+		thumb_color = transparentize(color, paging_arc_state.stroke_transparency * 0.8);
+	}
 
 	function computed_mouseAngle(): number | null {
 		return u.vector_ofOffset_fromGraphCenter_toMouseLocation(center)?.angle ?? null
@@ -117,57 +102,77 @@
 		return Point.zero;
 	}
 
-	function update_thumb_color() {
-		thumb_color = transparentize(color, paging_arc_state.stroke_transparency * 0.8);
-	}
-
-	function closure(mouse_state) {
+	function mouse_state_closure(mouse_state) {
 
 		/////////////////////////////
 		// setup or teardown state //
 		/////////////////////////////
 
-		if (mouse_state.isHover) {
-			paging_arc_state.isHovering = thumb_isHit();	// show highlight around ring
-
-			// hover
-
-			// console.log(`thumb hover`);// ${mouse_state.isDown}`);
-			update_thumb_color();
-		} else {
-			if (mouse_state.isUp) {
-
+		if (cluster_map.isPaging) {
+			if (mouse_state.isHover) {
+	
+				// hover
+	
+				paging_arc_state.isHovering = thumb_isHit();	// show highlight around ring
+				update_thumb_color();
+			} else if (mouse_state.isUp) {
+	
 				// end rotate
-
+	
 				update_thumb_color();
 			} else if (mouse_state.isDown) {
-				const mouseAngle = computed_mouseAngle();
-
+	
 				// begin rotate
-
+	
+				const mouseAngle = computed_mouseAngle();
 				if (!!mouseAngle) {
+					console.log(`down ${mouseAngle.degrees_of(0)}`);
 					paging_arc_state.lastRotated_angle = mouseAngle;
 					paging_arc_state.basis_angle = mouseAngle;
 					update_thumb_color();
-				}
+				}			
 			}
 			cursor_closure();
 		}
 	}
 
+	function handle_mouse_moved() {
+
+		////////////////////////////////////
+		// detect movement & adjust state //
+		////////////////////////////////////
+
+		if (!!paging_arc_state.lastRotated_angle) {									// rotate
+			cursor_closure();
+			if (!!cluster_map) {
+				const mouseAngle = computed_mouseAngle();
+				if (!!mouseAngle) {
+					const delta = Math.abs(mouseAngle - paging_arc_state.lastRotated_angle);	// subtract to find difference
+					if (delta >= (Math.PI / 90)) {									// minimum two degree changes
+						console.log(`move ${mouseAngle.degrees_of(0)}`);
+						paging_arc_state.lastRotated_angle = mouseAngle;
+						cluster_map.adjust_pagingIndex_forMouse_angle(mouseAngle);
+						rebuilds += 1;
+					}
+				}
+			}
+		}
+		layout_title();
+	}
+
 </script>
 
 {#if !!cluster_map && cluster_map.shown > 1}
-	<div class='paging-arc' bind:this={pagingArc} style='z-index:{ZIndex.panel};'>
+	<div class='paging-arc' bind:this={pagingArc} style='z-index:{ZIndex.paging};'>
 		<Mouse_Responder
 			name={name}
 			center={center}
 			width={breadth}
 			height={breadth}
-			closure={closure}
 			zindex={ZIndex.panel}
 			detect_longClick={false}
 			cursor={k.cursor_default}
+			closure={mouse_state_closure}
 			detectHit_closure={thumb_isHit}>
 			<svg class='svg-paging-arc' viewBox={viewBox}>
 				<path stroke={arc_color} fill=transparent d={cluster_map.svg_arc.arc_svgPath}/>

@@ -1,4 +1,4 @@
-import { k, get, Point, Angle, svgPaths } from '../common/Global_Imports';
+import { k, get, Rect, Point, Angle, svgPaths } from '../common/Global_Imports';
 import { s_rotation_ring_radius } from '../state/Reactive_State';
 
 // create svg paths for generic arcs
@@ -12,19 +12,22 @@ export default class SVG_Arc {
 	outside_ring_radius = 0;		// need for ring expansion
 	outside_arc_radius = 0;
 	inside_arc_radius = 0;
+	arc_rect = Rect.zero;
 	fork_backoff = 0;
+	tiny_radius = 0;
 	fork_radius = 0;
 	start_angle = 0;
 	fork_angle = 0;
 	end_angle = 0;
 
 	constructor() {
-		const radius = get(s_rotation_ring_radius);
 		const thickness = k.paging_arc_thickness;
-		this.inside_arc_radius = radius - thickness;
-		this.outside_arc_radius = radius;
+		const radius = get(s_rotation_ring_radius);
 		this.clusters_center = Point.square(radius);
+		this.inside_arc_radius = radius - thickness;
+		this.tiny_radius = k.ring_thickness / 6;
 		this.outside_ring_radius = radius;
+		this.outside_arc_radius = radius;
 	}
 
 	update(fork_angle: number) {
@@ -34,12 +37,15 @@ export default class SVG_Arc {
 		this.fork_angle = fork_angle;
 	}
 
+	static readonly $_PRIMITIVES_$: unique symbol;
+
 	put_angles_inOrder() {
 		if (!this.fork_pointsRight) {
 			const saved = this.start_angle;
 			this.start_angle = this.end_angle;
 			this.end_angle = saved;
 		}
+		this.arc_rect = this.computed_arc_rect;
 	}
 
 	get fork_slantsForward(): boolean { return new Angle(this.fork_angle).angle_slantsForward; }
@@ -48,36 +54,56 @@ export default class SVG_Arc {
 	get fork_pointsRight(): boolean { return new Angle(this.fork_angle).angle_pointsRight; }
 	get angles(): [number, number] { return [this.start_angle, this.end_angle]; }
 	get spread_angle(): number { return this.end_angle - this.start_angle; }
+	get arc_origin(): Point { return this.arc_rect.origin; }
+	get arc_center(): Point { return this.arc_rect.center; }
+
+	static readonly $_SVG_PATHS_$: unique symbol;
 
 	get arc_svgPath(): string {
 		const [start, end] = this.angles;
 		const paths = [
 			this.startOf_svgPath(start, this.outside_arc_radius),
-			this.big_svgPath(end, this.outside_arc_radius, false),
-			this.small_svgPath(end, false),
-			this.big_svgPath(start, this.inside_arc_radius, true),
-			this.small_svgPath(start, true),
+			this.swing_svgPath(end, this.outside_arc_radius, false),
+			this.cap_svgPath(end, false),
+			this.swing_svgPath(start, this.inside_arc_radius, true),
+			this.cap_svgPath(start, true),
 		];
 		return paths.join(k.space);
+	}
+
+	get computed_arc_rect(): Rect {
+		let origin = Point.zero;
+		let extent = Point.zero;
+		const end_radial = this.radial_forAngle(this.end_angle);								// for each of start and end radials,
+		const start_radial = this.radial_forAngle(this.start_angle);
+		const start_x_isSmaller = start_radial.x < end_radial.x;								// for x and then for y
+		const start_y_isSmaller = start_radial.y < end_radial.y;
+		origin.x = (start_x_isSmaller ? start_radial.x : end_radial.x) - this.tiny_radius;		// which radial's coordinate is smaller?
+		origin.y = (start_y_isSmaller ? start_radial.y : end_radial.y) - this.tiny_radius;		// subtract tiny_radius
+		extent.x = (start_x_isSmaller ? end_radial.x : start_radial.x) + this.tiny_radius;		// vice-versa for larger
+		extent.y = (start_y_isSmaller ? end_radial.y : start_radial.y) + this.tiny_radius;
+		return Rect.createExtentRect(origin, extent);
+	}
+
+	radial_forAngle(angle: number): Point {
+		const middle_radius = this.inside_arc_radius + this.tiny_radius;
+		return Point.fromPolar(middle_radius, angle);
 	}
 
 	startOf_svgPath(start_angle: number, radius: number) {
 		return svgPaths.startOutAt(this.clusters_center, radius, start_angle);
 	}
 
-	big_svgPath(end_angle: number, radius: number, clockwise: boolean) {
+	swing_svgPath(end_angle: number, radius: number, clockwise: boolean) {
 		const sweep_flag = clockwise ? 0 : 1;
 		return svgPaths.arc_partial(this.clusters_center, radius, 0, sweep_flag, end_angle);
 	}
 
-	small_svgPath(arc_angle: number, clockwise: boolean) {
-		const delta = clockwise ? 0 : Math.PI;
-		const tiny_radius = k.ring_thickness / 6;
-		const end = (arc_angle + delta).normalized_angle();
-		const middle_radius = this.inside_arc_radius + tiny_radius;
-		const vectorTo_middleOf_arc = Point.fromPolar(middle_radius, arc_angle);
-		const center = this.clusters_center.offsetBy(vectorTo_middleOf_arc);
-		return svgPaths.arc_partial(center, tiny_radius, 0, 1, end);
+	cap_svgPath(arc_angle: number, clockwise: boolean) {
+		const radial = this.radial_forAngle(arc_angle);
+		const center = this.clusters_center.offsetBy(radial);
+		const end_angle = clockwise ? arc_angle : (arc_angle + Math.PI).normalized_angle();
+		return svgPaths.arc_partial(center, this.tiny_radius, 0, 1, end_angle);
 	
 	}
 

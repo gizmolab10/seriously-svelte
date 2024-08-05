@@ -10,7 +10,7 @@
 	export let name = k.empty;
 	export let color = k.empty;
 	export let center = Point.zero;
-	export let zindex = ZIndex.panel;
+	export let zindex = ZIndex.rotation;
 	export let cursor_closure = () => {};
 	const outer_radius = radius + ring_width;
 	const diameter = outer_radius * 2;
@@ -19,7 +19,7 @@
 	const viewBox = `${-ring_width}, ${-ring_width}, ${diameter}, ${diameter}`;
 	const svg_ringPath = svgPaths.ring(Point.square(radius), outer_radius, ring_width);
 	let mouse_up_count = $s_mouse_up_count;
-	let neckaceWrapper = Svelte_Wrapper;
+	let rotationWrapper = Svelte_Wrapper;
 	let rotationRing;
 	let rebuilds = 0
 
@@ -31,7 +31,7 @@
 
 	$: {
 		if (!!rotationRing) {
-			neckaceWrapper = new Svelte_Wrapper(rotationRing, handle_mouse_state, Identifiable.newID(), SvelteComponentType.rotation);
+			rotationWrapper = new Svelte_Wrapper(rotationRing, handle_mouse_state, Identifiable.newID(), SvelteComponentType.rotation);
 		}
 	}
 
@@ -154,7 +154,7 @@
 </script>
 
 {#key rebuilds}
-	<div class='neckace-ring' bind:this={rotationRing}>
+	<div class='rotation-ring' bind:this={rotationRing} style='z-index:{ZIndex.rotation};'>
 		<Mouse_Responder
 			name={name}
 			center={center}
@@ -167,7 +167,7 @@
 			cursor={s.rotation_ringState.cursor}>
 			<svg
 				viewBox={viewBox}
-				class= 'svg-neckace-ring'
+				class= 'svg-rotation-ring'
 				fill={transparentize(color, s.rotation_ringState.fill_transparency)}
 				stroke={transparentize(color, s.rotation_ringState.stroke_transparency)}>
 				<path d={svg_ringPath}>

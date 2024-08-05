@@ -60,6 +60,8 @@ export enum IDBrowser  {
 export enum ZIndex {	// do not change the order
 	common,
 	panel,
+	paging,
+	rotation,
 	lines,
 	text,
 	dots,

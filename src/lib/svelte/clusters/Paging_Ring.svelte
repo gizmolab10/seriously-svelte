@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { k, s, u, Rect, Thing, Point, ZIndex, signals, svgPaths, dbDispatch } from '../../ts/common/Global_Imports';
-	import { s_graphRect, s_mouse_location, s_mouse_up_count, s_user_graphOffset } from '../../ts/state/Reactive_State';
 	import { s_thing_changed, s_ancestry_focus, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import { Svelte_Wrapper, Clusters_Geometry, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { s_graphRect, s_mouse_location, s_user_graphOffset } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Paging_Arc from './Paging_Arc.svelte';
@@ -11,23 +11,14 @@
 	export let name = k.empty;
 	export let color = k.empty;
 	export let center = Point.zero;
-	export let zindex = ZIndex.panel;
 	export let cursor_closure = () => {};
 	const outer_radius = radius + ring_width;
-	const diameter = outer_radius * 2;
-	const borderStyle = '1px solid';
 	const geometry = s.clusters_geometry;
-	const cluster_map = geometry.cluster_maps[0];
-	const ringOrigin = center.distanceFrom(Point.square(outer_radius));
-	const viewBox = `${-ring_width}, ${-ring_width}, ${diameter}, ${diameter}`;
-	const svg_ringPath = svgPaths.ring(Point.square(radius), outer_radius, ring_width);
-	let mouse_up_count = $s_mouse_up_count;
 	let pagingWrapper!: Svelte_Wrapper;
 	let rebuilds = 0
 	let pagingRing;
 
 	// draw the paging ring, cluster labels and scroll bars
-	// uses two ringState's for configuring angles and hover
 
 	$: {
 		if ($s_ancestry_focus.thing.id == $s_thing_changed.split(k.generic_separator)[0]) {
@@ -77,16 +68,14 @@
 </script>
 
 {#key rebuilds}
-	<div class='paging-ring' bind:this={pagingRing}>
-		<div class='paging-arcs'>
-			{#each geometry.cluster_maps as cluster_map}
-				{#if !!cluster_map && (cluster_map.shown > 0)}
-					<Paging_Arc
-						color={color}
-						center={center}
-						cluster_map={cluster_map}/>
-				{/if}
-			{/each}
-		</div>
+	<div class='paging-ring' bind:this={pagingRing} style='z-index:{ZIndex.paging};'>
+		{#each geometry.cluster_maps as cluster_map}
+			{#if !!cluster_map && (cluster_map.shown > 0)}
+				<Paging_Arc
+					color={color}
+					center={center}
+					cluster_map={cluster_map}/>
+			{/if}
+		{/each}
 	</div>
 {/key}

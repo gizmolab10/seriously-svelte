@@ -58,21 +58,20 @@
 			bind:this={clusters}
 			style='transform:translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px); z-index:{ZIndex.panel};'>
 			{#key $s_ancestry_focus.hashedAncestry}
+				<Rotation_Ring
+					color={color}
+					center={center}
+					zindex={ZIndex.panel}
+					name={'rotation-ring'}
+					ring_width={k.ring_thickness}
+					radius={$s_rotation_ring_radius}
+					cursor_closure={cursor_closure}/>
 				<Paging_Ring
 					color={color}
 					center={center}
 					ring_width={30}
 					name={'paging-ring'}
-					zindex={ZIndex.text}
 					radius={$s_rotation_ring_radius - k.ring_thickness}/>
-				<Rotation_Ring
-					color={color}
-					center={center}
-					zindex={ZIndex.lines}
-					name={'rotation-ring'}
-					ring_width={k.ring_thickness}
-					radius={$s_rotation_ring_radius}
-					cursor_closure={cursor_closure}/>
 				<Clusters_Graph/>
 				<Editing_Tools offset={toolsOffset}/>
 				<div class='cluster-focus'
