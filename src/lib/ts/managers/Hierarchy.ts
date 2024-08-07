@@ -85,11 +85,11 @@ export class Hierarchy {
 			const EXTREME = SHIFT && OPTION;
 			const key = event.key.toLowerCase();
 			const modifiers = ['alt', 'meta', 'shift', 'control']
-			let needsRebuild = false;
+			let graph_needsRebuild = false;
 			if (!modifiers.includes(key)) {		// ignore modifier-key-only events
 				if (!ancestryGrab) {
 					ancestryGrab = rootAncestry;
-					needsRebuild = rootAncestry.becomeFocus();
+					graph_needsRebuild = rootAncestry.becomeFocus();
 				}
 				if (k.allow_GraphEditing) {
 					if (!!ancestryGrab && k.allow_TitleEditing) {
@@ -108,18 +108,18 @@ export class Hierarchy {
 				}
 				if (!!ancestryGrab) {
 					switch (key) {
-						case '/':			needsRebuild = ancestryGrab.becomeFocus(); break;
+						case '/':			graph_needsRebuild = ancestryGrab.becomeFocus(); break;
 						case 'arrowright':	event.preventDefault(); await this.ancestry_rebuild_remoteMoveRight(ancestryGrab, true, SHIFT, OPTION, EXTREME); break;
 						case 'arrowleft':	event.preventDefault(); await this.ancestry_rebuild_remoteMoveRight(ancestryGrab, false, SHIFT, OPTION, EXTREME); break;
 					}
 				}
 				switch (key) {
-					case '!':				needsRebuild = this.rootAncestry?.becomeFocus(); break;
+					case '!':				graph_needsRebuild = this.rootAncestry?.becomeFocus(); break;
 					case '`':               event.preventDefault(); this.latestAncestryGrabbed_toggleEditing_Tools(); break;
 					case 'arrowup':			await this.latestAncestryGrabbed_rebuild_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
 					case 'arrowdown':		await this.latestAncestryGrabbed_rebuild_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
 				}
-				if (needsRebuild) {
+				if (graph_needsRebuild) {
 					signals.signal_rebuildGraph_fromFocus();
 				}
 			}
@@ -326,7 +326,7 @@ export class Hierarchy {
 		if (!!thing && newParent) {
 			const baseID = newParent.isBulkAlias ? newParent.title : newParent.baseID;
 			const newThing = await this.thing_remember_runtimeCopy(baseID, thing);
-			newThingAncestry = newParentAncestry.appendChild(newThing);
+			newThingAncestry = newParentAncestry.extend_withChild(newThing);
 			if (newThingAncestry) {
 				await this.ancestry_remember_remoteAddAsChild(newParentAncestry, newThing);
 				for (const childAncestry of ancestry.childAncestries) {
@@ -531,7 +531,7 @@ export class Hierarchy {
 	static readonly $_ANCESTRIES_$: unique symbol;
 
 	async ancestries_rebuild_traverse_remoteDelete(ancestries: Array<Ancestry>) {
-		let needsRebuild = false;
+		let graph_needsRebuild = false;
 		if (get(s_ancestry_focus)) {
 			for (const ancestry of ancestries) {
 				const thing = ancestry.thing;
@@ -544,9 +544,9 @@ export class Hierarchy {
 						siblings.splice(index, 1);
 						parentAncestry.grabOnly();
 						if (siblings.length == 0) {
-							needsRebuild = parentAncestry.collapse();
+							graph_needsRebuild = parentAncestry.collapse();
 							if (!grandParentAncestry.isVisible) {
-								needsRebuild = grandParentAncestry.becomeFocus();	// call become focus before applying
+								graph_needsRebuild = grandParentAncestry.becomeFocus();	// call become focus before applying
 							}
 						}
 						await ancestry.traverse_async(async (progenyAncestry: Ancestry): Promise<boolean> => {
@@ -556,7 +556,7 @@ export class Hierarchy {
 					}
 				}
 			}
-			if (needsRebuild) {
+			if (graph_needsRebuild) {
 				signals.signal_rebuildGraph_fromFocus();
 			}
 		}
@@ -596,7 +596,7 @@ export class Hierarchy {
 		const rootAncestry = this.rootAncestry;
 		for (const rootsMaybe of this.things_byTrait[IDTrait.roots]) {	// should only be one
 			if  (rootsMaybe.title == 'roots') {	// special case TODO: convert to a query string
-				return rootAncestry.appendChild(rootsMaybe) ?? null;
+				return rootAncestry.extend_withChild(rootsMaybe) ?? null;
 			}
 		}
 		const roots = this.thing_runtimeCreate(this.db.baseID, Identifiable.newID(), 'roots', 'red', IDTrait.roots, false);
@@ -731,7 +731,7 @@ export class Hierarchy {
 	async ancestry_rebuild_remoteMoveUp(ancestry: Ancestry, up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const parentAncestry = ancestry.parentAncestry;
 		if (parentAncestry) {
-			let needsRebuild = false;
+			let graph_needsRebuild = false;
 			const siblings = parentAncestry.children;
 			const thing = this.thing_forAncestry(ancestry);
 			if (!siblings || siblings.length == 0) {
@@ -739,11 +739,11 @@ export class Hierarchy {
 			} else if (!!thing) {
 				const index = siblings.indexOf(thing);
 				const newIndex = index.increment(!up, siblings.length);
-				if (parentAncestry && !OPTION) {
-					const grabAncestry = parentAncestry.appendChild(siblings[newIndex]);
-					if (grabAncestry) {
+				if (!!parentAncestry && !OPTION) {
+					const grabAncestry = parentAncestry.extend_withChild(siblings[newIndex]);
+					if (!!grabAncestry) {
 						if (!grabAncestry.isVisible) {
-							needsRebuild = parentAncestry.becomeFocus();
+							graph_needsRebuild = parentAncestry.becomeFocus();
 						}
 						if (SHIFT) {
 							grabAncestry.toggleGrab();
@@ -753,7 +753,7 @@ export class Hierarchy {
 						signals.signal_relayoutWidgets_fromFocus();
 					}
 				} else if (k.allow_GraphEditing && OPTION) {
-					needsRebuild = true;
+					graph_needsRebuild = true;
 					await u.ancestries_orders_normalize_remoteMaybe(parentAncestry.childAncestries, false);
 					const wrapped = up ? (index == 0) : (index == siblings.length - 1);
 					const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
@@ -761,7 +761,7 @@ export class Hierarchy {
 					ancestry.relationship?.order_setTo_remoteMaybe(newOrder);
 					await u.ancestries_orders_normalize_remoteMaybe(parentAncestry.childAncestries);
 				}
-				if (needsRebuild) {
+				if (graph_needsRebuild) {
 					signals.signal_rebuildGraph_fromFocus();
 				}
 			}
@@ -783,7 +783,7 @@ export class Hierarchy {
 					await relationship.order_setTo_remoteMaybe(order + 0.5, true);
 				}
 				this.relationships_refreshKnowns();
-				newParentAncestry.appendChild(thing)?.grabOnly();
+				newParentAncestry.extend_withChild(thing)?.grabOnly();
 				this.rootAncestry.order_normalizeRecursive_remoteMaybe(true);
 				if (!newParentAncestry.isExpanded) {
 					newParentAncestry.expand();
@@ -797,9 +797,9 @@ export class Hierarchy {
 	}
 
 	ancestry_rebuild_runtimeBrowseRight(ancestry: Ancestry, RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, fromReveal: boolean = false) {
-		let needsRebuild = false;
+		let graph_needsRebuild = false;
 		const newParentAncestry = ancestry.parentAncestry;
-		const childAncestry = ancestry.appendChild(ancestry.firstChild);
+		const childAncestry = ancestry.extend_withChild(ancestry.firstChild);
 		let newGrabAncestry: Ancestry | null = RIGHT ? childAncestry : newParentAncestry;
 		const newGrabIsNotFocus = !newGrabAncestry?.isFocus;
 		const newFocusAncestry = newParentAncestry;
@@ -808,31 +808,31 @@ export class Hierarchy {
 				if (SHIFT) {
 					newGrabAncestry = null;
 				}
-				needsRebuild = ancestry.expand();
+				graph_needsRebuild = ancestry.expand();
 			} else {
 				return;
 			}
 		} else {
 			const rootAncestry = this.rootAncestry;
 			if (EXTREME) {
-				needsRebuild = rootAncestry?.becomeFocus();	// tells graph to update line rects
+				graph_needsRebuild = rootAncestry?.becomeFocus();	// tells graph to update line rects
 			} else {
 				if (!SHIFT) {
 					if (fromReveal) {
 						if (!ancestry.isExpanded) {
-							needsRebuild = ancestry.expand();
+							graph_needsRebuild = ancestry.expand();
 						}
 					} else {
 						if (newGrabIsNotFocus && newGrabAncestry && !newGrabAncestry.isExpanded) {
-							needsRebuild = newGrabAncestry.expand();
+							graph_needsRebuild = newGrabAncestry.expand();
 						}
 					}
 				} else if (newGrabAncestry) { 
 					if (ancestry.isExpanded) {
-						needsRebuild = ancestry.collapse();
+						graph_needsRebuild = ancestry.collapse();
 						newGrabAncestry = this.grabs.areInvisible ? ancestry : null;
 					} else if (newGrabAncestry.isExpanded || (!!rootAncestry && !rootAncestry.matchesAncestry(newGrabAncestry))) {
-						needsRebuild = newGrabAncestry.collapse();
+						graph_needsRebuild = newGrabAncestry.collapse();
 					}
 				}
 			}
@@ -846,11 +846,11 @@ export class Hierarchy {
 				const shouldBecomeFocus = newFocusAncestry.isRoot || !newFocusAncestry.isVisible;
 				const becomeFocus = canBecomeFocus && shouldBecomeFocus;
 				if (becomeFocus && newFocusAncestry.becomeFocus()) {
-					needsRebuild = true;
+					graph_needsRebuild = true;
 				}
 			}
 		}
-		if (needsRebuild) {
+		if (graph_needsRebuild) {
 			signals.signal_rebuildGraph_fromFocus();
 		} else {
 			signals.signal_relayoutWidgets_fromFocus();

@@ -2,7 +2,7 @@
 	import { dbDispatch, Seriously_Range, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { k, u, Point, Thing, debug, Angle, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
 	import { s_thing_changed, s_title_editing, s_ancestries_grabbed } from '../../ts/state/Reactive_State';
-	import { s_layout_asClusters, s_ancestry_editingTools } from '../../ts/state/Reactive_State';
+	import { s_cluster_mode, s_ancestry_editingTools } from '../../ts/state/Reactive_State';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
 	export let forward = true;
@@ -276,6 +276,6 @@
 			font-family: {fontFamily};
 			{k.prevent_selection_style};
 			outline-color: {k.color_background};
-			left: {$s_layout_asClusters ? (forward ? 14 : 4) : 10}px;
+			left: {$s_cluster_mode ? (forward ? 14 : 4) : 10}px;
 		'/>
 {/key}

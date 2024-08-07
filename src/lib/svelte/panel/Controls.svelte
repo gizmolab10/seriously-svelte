@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_show_details, s_id_popupView, s_resize_count, s_layout_asClusters, s_shown_relations } from '../../ts/state/Reactive_State';
+	import { s_show_details, s_id_popupView, s_resize_count, s_cluster_mode, s_shown_relations } from '../../ts/state/Reactive_State';
 	import { g, k, s, u, Point, ZIndex, onMount, signals, svgPaths, IDButton, IDPersistant } from '../../ts/common/Global_Imports';
 	import { ElementType, Element_State, persistLocal, GraphRelations } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/data/Identifiable';
@@ -46,7 +46,7 @@
 				case IDButton.bigger: width = g.zoomBy(1.1) - 20; break;
 				case IDButton.smaller: width = g.zoomBy(0.9) - 20; break;
 				case IDButton.details: $s_show_details = !$s_show_details; break;
-				case IDButton.layout: $s_layout_asClusters = !$s_layout_asClusters; break;
+				case IDButton.layout: $s_cluster_mode = !$s_cluster_mode; break;
 				case IDButton.relations: $s_shown_relations = next_graph_relations(); break;
 				default: togglePopupID(id); break;
 			}
@@ -87,7 +87,7 @@
 					center={new Point(lefts[2], top)}
 					element_state={elementStates_byID[IDButton.layout]}
 					closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.layout)}>
-					{#if $s_layout_asClusters}tree{:else}clusters{/if}
+					{#if $s_cluster_mode}tree{:else}clusters{/if}
 				</Button>
 			{/if}
 		{/if}

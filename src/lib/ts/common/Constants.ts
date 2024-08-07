@@ -31,6 +31,8 @@ export default class Constants {
 	color_background = 'white';
 	cursor_default = 'default';
 	generic_separator = '::';
+	small_separator = ':::';
+	big_separator = '::::';
     color_default = 'blue';
 	unknown = 'unknown';
 	newLine = '\n';

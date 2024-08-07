@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_thing_changed, s_layout_asClusters, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/Reactive_State';
+	import { s_thing_changed, s_cluster_mode, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/Reactive_State';
 	import { k, s, u, Rect, Size, Point, Thing, debug, ZIndex, IDTool, onMount } from '../../ts/common/Global_Imports';
 	import { createPopper, Svelte_Wrapper, AlterationType, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { signals, svgPaths, Direction, ElementType, dbDispatch } from '../../ts/common/Global_Imports';
@@ -73,7 +73,7 @@
 	}
 
 	function updateSVGPaths() {
-		if ($s_layout_asClusters) {
+		if ($s_cluster_mode) {
 			dragDotSVGPath = svgPaths.circle_atOffset(size, size - 1);
 		} else {
 			dragDotSVGPath = svgPaths.oval(size, false);
@@ -96,7 +96,7 @@
 
 	function updateColors_forHovering(isOut) {
 		isHovering = !isOut;
-		const usePointer = (!ancestry.isGrabbed || s_layout_asClusters) && ancestry.hasChildRelationships ;
+		const usePointer = (!ancestry.isGrabbed || s_cluster_mode) && ancestry.hasChildRelationships ;
 		const cursor = usePointer ? 'pointer' : k.cursor_default;
 		if (!!element_state && !!thing) {
 			element_state.set_forHovering(thing.color, cursor);

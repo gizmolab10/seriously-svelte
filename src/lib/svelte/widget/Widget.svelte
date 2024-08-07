@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, s, u, Thing, Point, Angle, debug, ZIndex, onMount, signals, debugReact } from '../../ts/common/Global_Imports';
 	import { s_thing_changed, s_title_editing, s_ancestry_focus, s_ancestries_grabbed } from '../../ts/state/Reactive_State';
-	import { s_thing_fontFamily, s_layout_asClusters, s_ancestry_editingTools } from '../../ts/state/Reactive_State';
+	import { s_thing_fontFamily, s_cluster_mode, s_ancestry_editingTools } from '../../ts/state/Reactive_State';
 	import { ElementType, Element_State, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import Editing_Tools from './Editing_Tools.svelte';
 	import Title_Editor from './Title_Editor.svelte';
@@ -14,7 +14,7 @@
     export let ancestry;
 	const hasExtraAtLeft = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
 	const revealState = s.elementState_for(ancestry, ElementType.reveal, subtype);
-	const rightPadding = $s_layout_asClusters ? 0 : hasExtraAtLeft ? 22.5 : 20;
+	const rightPadding = $s_cluster_mode ? 0 : hasExtraAtLeft ? 22.5 : 20;
 	const dragState = s.elementState_for(ancestry, ElementType.drag, subtype);
 	const forward = angle <= Angle.quarter || angle >= Angle.threeQuarters;
 	const leftPadding = forward ? 1 : 14;
@@ -131,7 +131,7 @@
 			const shallShowTools = ancestry.toolsGrabbed && !ancestry.isFocus;
 			const change = (isEditing != shallEdit || isGrabbed != shallGrab || showingTools != shallShowTools);
 			if (change) {
-				const showBackground = shallGrab || $s_layout_asClusters;
+				const showBackground = shallGrab || $s_cluster_mode;
 				background = showBackground ? `background-color: ${k.color_background};` : k.empty
 				showingBorder = shallEdit || shallGrab;
 				showingTools = shallShowTools;
@@ -144,7 +144,7 @@
 
 	function extraWidth() {
 		const multiplier = ancestry?.showsReveal ? 2 : 1.35;
-		const clustersAdjustment = $s_layout_asClusters ? (forward ? 16 : 0) : -10;
+		const clustersAdjustment = $s_cluster_mode ? (forward ? 16 : 0) : -10;
 		return (k.dot_size * multiplier) + clustersAdjustment;
 	}
 
@@ -153,7 +153,7 @@
 		const delta = showingBorder ? 0 : 0.5;
 		const leftForward = delta - dragX;
 		const titleWidth = thing?.titleWidth ?? 0;
-		const dragOffsetY = $s_layout_asClusters ? 2.8 : 2.3;
+		const dragOffsetY = $s_cluster_mode ? 2.8 : 2.3;
 		const dragOffsetX = forward ? (dragX - 2) : (titleWidth + delta + 15);
 		const leftBackward = -(titleWidth + 19 + ((ancestry?.isGrabbed ?? false) ? 0 : 0));		
 		dragCenter = Point.square(k.dot_size / 2).offsetByXY(dragOffsetX, dragOffsetY);

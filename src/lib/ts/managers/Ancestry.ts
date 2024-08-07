@@ -1,6 +1,6 @@
 import { e, k, u, get, Rect, Size, Thing, debug, signals, Predicate, Title_State, ElementType } from '../common/Global_Imports';
 import { Relationship, PredicateKind, AlterationType, Svelte_Wrapper, SvelteComponentType } from '../common/Global_Imports';
-import { s_ancestry_focus, s_ancestries_grabbed, s_title_editing, s_layout_asClusters } from '../state/Reactive_State';
+import { s_ancestry_focus, s_ancestries_grabbed, s_title_editing, s_cluster_mode } from '../state/Reactive_State';
 import { s_ancestries_expanded, s_ancestry_editingTools, s_altering } from '../state/Reactive_State';
 import Identifiable from '../data/Identifiable';
 import { Writable } from 'svelte/store';
@@ -9,6 +9,7 @@ import { h } from '../db/DBDispatch';
 export default class Ancestry extends Identifiable {
 	_thing: Thing | null = null;
 	idPredicate: string;
+	points_out = true;
 	unsubscribe: any;
 
 	// id => ancestry string 
@@ -16,8 +17,9 @@ export default class Ancestry extends Identifiable {
 	// NOTE: first relationship's parent is always the root
 	//   "   idPredicate is from the last relationship
 
-	constructor(ancestryString: string = k.empty, idPredicate: string = Predicate.idContains) {
-		super(ancestryString);
+	constructor(ancestryString: string = k.empty, idPredicate: string = Predicate.idContains, points_out: boolean = true) {
+		super((points_out ? 'out' : 'in') + k.generic_separator + ancestryString);
+		this.points_out = points_out;
 		this.idPredicate = idPredicate;
 	}
 
@@ -68,7 +70,7 @@ export default class Ancestry extends Identifiable {
 	get childRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, false); }
 	get parentRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, true); }
 	get titleWrapper(): Svelte_Wrapper | null { return e.wrapper_forHID_andType(this.idHashed, SvelteComponentType.title); }
-	get showsReveal(): boolean { return !get(s_layout_asClusters) && (this.hasChildRelationships || (this.thing?.isBulkAlias ?? false)); }
+	get showsReveal(): boolean { return !get(s_cluster_mode) && (this.hasChildRelationships || (this.thing?.isBulkAlias ?? false)); }
 
 	get relationships(): Array<Relationship> {
 		const relationships = this.ids_hashed.map(hid => h.relationship_forHID(hid)) ?? [];
@@ -104,11 +106,23 @@ export default class Ancestry extends Identifiable {
 
 	get isVisible(): boolean {
 		const focus = get(s_ancestry_focus);
-		const asClusters = get(s_layout_asClusters);
+		const asClusters = get(s_cluster_mode);
 		const incorporates = this.incorporates(focus);
 		const expanded = this.isAllExpandedFrom(focus);
-		const isRelatedTo_orContains_itself = this.isRelatedTo_orContains_itself(focus);
-		return (incorporates && expanded) || (asClusters && isRelatedTo_orContains_itself);
+		
+		if (asClusters) {
+			// top most predicate
+			// points out (??? HOW? ???)
+			// --> cluster map
+			// --> is paging, index in page range
+			if (this.isRelatedTo_orContains_itself(focus)) {
+				const isPaging = false; // get cluster map
+				return true;
+			}
+			return false;
+		} else {
+			return (incorporates && expanded);
+		}
 	}
 
 	get hasGrandChildren(): boolean {
@@ -342,7 +356,7 @@ export default class Ancestry extends Identifiable {
 		return h.ancestry_remember_createUnique(ids.join(k.generic_separator));
 	}
 
-	appendChild(child: Thing | null): Ancestry | null {
+	extend_withChild(child: Thing | null): Ancestry | null {
 		const idParent = this.thing?.idBridging;
 		if (child && idParent) {
 			const relationship = h.relationship_forPredicate_parent_child(Predicate.idContains, idParent, child.id);
@@ -515,7 +529,7 @@ export default class Ancestry extends Identifiable {
 			this.thing?.oneAncestry?.handle_singleClick_onDragDot(shiftKey);
 		} else {
 			s_title_editing?.set(null);
-			if (get(s_layout_asClusters)) {
+			if (get(s_cluster_mode)) {
 				this.becomeFocus();
 			} else {
 				if (get(s_altering)) {

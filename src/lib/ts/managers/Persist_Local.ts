@@ -1,4 +1,4 @@
-import { s_rotation_ring_angle, s_rotation_ring_radius, s_layout_asClusters } from '../state/Reactive_State';
+import { s_rotation_ring_angle, s_rotation_ring_radius, s_cluster_mode } from '../state/Reactive_State';
 import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/Reactive_State';
 import { s_page_state, s_thing_fontFamily, s_shown_relations } from '../state/Reactive_State';
 import { g, k, get, Point, signals, Ancestry, dbDispatch } from '../common/Global_Imports';
@@ -43,7 +43,7 @@ class Persist_Local {
 		const shown = Object.fromEntries(shownNames.map(s => [s, true]) ?? {});
 		const hidden = Object.fromEntries(hiddenNames.map(s => [s, false]) ?? {});
 		const keyedFlags: { [key: string]: boolean } = {...shown, ...hidden};
-		this.applyFor_key_name(IDPersistant.layout, 'clusters', (flag) => s_layout_asClusters.set(flag));
+		this.applyFor_key_name(IDPersistant.layout, 'clusters', (flag) => s_cluster_mode.set(flag));
 		for (const [name, flag] of Object.entries(keyedFlags)) {
 			switch (name) {
 				case 'details':
@@ -175,7 +175,7 @@ class Persist_Local {
 		s_rotation_ring_radius.subscribe((radius: number) => {
 			this.write_key(IDPersistant.cluster_arc, radius);
 		});
-		s_layout_asClusters.subscribe((flag: boolean) => {
+		s_cluster_mode.subscribe((flag: boolean) => {
 			this.write_key(IDPersistant.layout, flag);
 		});
 		s_rotation_ring_angle.subscribe((angle: number) => {
@@ -211,7 +211,7 @@ class Persist_Local {
 		s_rotation_ring_angle.set(this.read_key(IDPersistant.ring_angle) ?? 0);
 		s_show_details.set(this.read_key(IDPersistant.details) ?? false);
 		s_thing_fontFamily.set(this.read_key(IDPersistant.font) ?? 'Arial');
-		s_layout_asClusters.set(this.read_key(IDPersistant.layout) ?? false);
+		s_cluster_mode.set(this.read_key(IDPersistant.layout) ?? false);
 		s_rotation_ring_radius.set(this.read_key(IDPersistant.cluster_arc) ?? 130);
 		s_shown_relations.set(this.read_key(IDPersistant.relations) ?? GraphRelations.children);
 		this.restore_graphOffset();

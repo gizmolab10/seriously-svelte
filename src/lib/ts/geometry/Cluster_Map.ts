@@ -55,8 +55,8 @@ export default class Cluster_Map  {
 
 	update_forLabels() {
 		const radius = get(s_rotation_ring_radius) - k.ring_thickness;
-		const semi_major = radius;
-		const semi_minor = radius / 3;
+		const semi_major = radius * 0.75;
+		const semi_minor = radius * 0.5;
 		const ellipse_axes = new Point(semi_minor, semi_major);
 		this.label_tip = ellipse_axes.ellipse_coordiates_forAngle(-this.fork_angle);
 		this.update_thumb_andTitle();

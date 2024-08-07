@@ -85,9 +85,8 @@ export class Page_States {
 	}
 
 	static create_fromDescription(description: string): Page_States {
-		const big_separator = '::::';
 		let page_states = Page_States.empty;
-		let state_descriptions = description.split(big_separator);
+		let state_descriptions = description.split(k.big_separator);
 		for (const state_description of state_descriptions) {
 			const state = Page_State.create_fromDescription(state_description);
 			if (!!state) {
@@ -100,8 +99,7 @@ export class Page_States {
 	}
 
 	get description(): string {
-		const big_separator = '::::';
-		return this.description_for(true) + big_separator +
+		return this.description_for(true) + k.big_separator +
 		this.description_for(false);
 	}
 
@@ -115,13 +113,10 @@ export class Page_States {
 
 	description_for(points_out: boolean): string {
 		const states = this.page_states_for(points_out);
-		const small_separator = ':::';
-		let separator = k.empty;
-		let result = k.empty;
+		let separator, result = k.empty;
 		for (const state of states) {
-			const description = state.description;
-			result = result + separator + description;
-			separator = small_separator;
+			result = result + separator + state.description;
+			separator = k.small_separator;
 		}
 		return result;
 	}
