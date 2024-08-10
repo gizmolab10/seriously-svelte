@@ -16,6 +16,7 @@
 	const name = s.name_from($s_ancestry_focus, ElementType.arc, cluster_map?.cluster_title ?? 'not mapped');
 	const thumb_size = (cluster_map?.paging_radius ?? 0) * 2;
 	const paging_arc_state = s.rotationState_forName(name);
+	const paging_ring_state = s.paging_ring_state;
 	const thumb_name = `thumb-${name}`;
 	let pagingArc;
 	let rebuilds = 0;
@@ -25,7 +26,7 @@
 	let mouse_up_count = $s_mouse_up_count;
 	let origin = center.offsetBy(Point.square(-radius));
 	let thumb_color = transparentize(color, paging_arc_state.stroke_transparency * 0.8);
-	let arc_color = transparentize(color, s.paging_ring_state.stroke_transparency * 0.8);
+	let arc_color = transparentize(color, paging_ring_state.stroke_transparency * 0.8);
 
 	// draws the [paging] arc and thumb slider
 	// uses svg_arc for svg, which also has total and shown
@@ -58,7 +59,7 @@
 		thumb_color = transparentize(color, paging_arc_state.stroke_transparency * 0.8);
 	}
 
-	function computed_mouseAngle(): number | null {
+	function computed_mouse_angle(): number | null {
 		return u.vector_ofOffset_fromGraphCenter_toMouseLocation(center)?.angle ?? null
 	}
  
@@ -124,11 +125,11 @@
 	
 				// begin rotate
 	
-				const mouseAngle = computed_mouseAngle();
-				if (!!mouseAngle) {
-					console.log(`down ${mouseAngle.degrees_of(0)}`);
-					paging_arc_state.lastRotated_angle = mouseAngle;
-					paging_arc_state.basis_angle = mouseAngle;
+				const mouse_angle = computed_mouse_angle();
+				if (!!mouse_angle) {
+					console.log(`down ${mouse_angle.degrees_of(0)}`);
+					paging_arc_state.lastRotated_angle = mouse_angle;
+					paging_arc_state.basis_angle = mouse_angle;
 					update_thumb_color();
 				}			
 			}
@@ -143,15 +144,17 @@
 		////////////////////////////////////
 
 		if (!!paging_arc_state.lastRotated_angle) {									// rotate
+			console.log(`paging`);
 			cursor_closure();
 			if (!!cluster_map) {
-				const mouseAngle = computed_mouseAngle();
-				if (!!mouseAngle) {
-					const delta = Math.abs(mouseAngle - paging_arc_state.lastRotated_angle);	// subtract to find difference
+				const mouse_angle = computed_mouse_angle();
+				if (!!mouse_angle) {
+					const delta = Math.abs(mouse_angle - paging_arc_state.lastRotated_angle);	// subtract to find difference
 					if (delta >= (Math.PI / 90)) {									// minimum two degree changes
-						console.log(`move ${mouseAngle.degrees_of(0)}`);
-						paging_arc_state.lastRotated_angle = mouseAngle;
-						cluster_map.adjust_pagingIndex_forMouse_angle(mouseAngle);
+						console.log(`move ${mouse_angle.degrees_of(0)}`);
+						paging_arc_state.lastRotated_angle = mouse_angle;
+						cluster_map.adjust_pagingIndex_forMouse_angle(mouse_angle);
+						console.log(`paging ${mouse_angle.degrees_of(0)}`)
 						rebuilds += 1;
 					}
 				}

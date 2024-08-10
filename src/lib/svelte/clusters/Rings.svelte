@@ -41,7 +41,7 @@
 	$: {
 		if (mouse_up_count != $s_mouse_up_count) {
 			mouse_up_count = $s_mouse_up_count;
-			s.rotation_ringState.reset();
+			s.rotation_ring_state.reset();
 			rebuilds += 1;
 		}
 	}
@@ -56,36 +56,54 @@
 		const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);	// use store, to react
 		if (!!from_center) {
 			let sendSignal = false;
-			if (!!s.rotation_ringState.lastRotated_angle) {				// rotate
-				const mouseAngle = from_center.angle;
-				const isAlmost = mouseAngle.isClocklyAlmost(s.rotation_ringState.lastRotated_angle, Math.PI / 180, Math.PI * 2);	// detect >= 1° change
-				if (!isAlmost) {
+			const mouse_angle = from_center.angle;
+			const paging_state = s.paging_ring_state;
+			const rotation_state = s.rotation_ring_state;
+			if (!!paging_state.lastRotated_angle) {				// rotate paging thumb
+				const paging_angle = convert_angle(paging_state, mouse_angle);
+				if (!!paging_angle) {
+					adjustIndex_forAngle(paging_angle);					// send into paging arc to change index
 					sendSignal = true;
-					s.rotation_ringState.lastRotated_angle = mouseAngle;
-					const ring_angle = mouseAngle.add_angle_normalized(-s.rotation_ringState.basis_angle);
-					$s_rotation_ring_angle = ring_angle;
 				}
-			} else if (!!s.rotation_ringState.radiusOffset) {			// resize
+			} else if (!!rotation_state.lastRotated_angle) {		// rotate clusters
+				const rotation_angle = convert_angle(rotation_state, mouse_angle);
+				if (!!rotation_angle) {
+					$s_rotation_ring_angle = rotation_angle;
+					sendSignal = true;
+				}
+			} else if (!!rotation_state.radiusOffset) {			// resize
 				const magnitude = from_center.magnitude
 				const largest = k.cluster_inside_radius * 4;
 				const smallest = k.cluster_inside_radius * 1.5;
 				const distance = magnitude.force_between(smallest, largest);
-				const pixels = distance - $s_rotation_ring_radius - s.rotation_ringState.radiusOffset;
+				const pixels = distance - $s_rotation_ring_radius - rotation_state.radiusOffset;
 				if (Math.abs(pixels) > 5) {
 					sendSignal = true;
 					$s_rotation_ring_radius += pixels;
 				}
-			} else if (!s.isAnyRotation_active) {
-				if (s.rotation_ringState.isHovering != isHit()) {
-					s.rotation_ringState.isHovering = isHit();	// show highlight around ring
+			} else if (!s.isAny_paging_arc_active) {
+				if (rotation_state.isHovering != isHit()) {
+					rotation_state.isHovering = isHit()		;	// show highlight around ring
 				}
 				cursor_closure();
 			}
 			if (sendSignal) {
 				rebuilds += 1;
-				signals.signal_relayoutWidgets_fromFocus();		// destroys this component (variables wiped)
+				signals.signal_relayoutWidgets_fromFocus();				// destroys this component (variables wiped)
 			}
 		}
+	}
+
+	function convert_angle(state: Rotation_State, mouse_angle: number): number | null {
+		if (!mouse_angle.isClocklyAlmost(state.lastRotated_angle, Math.PI / 180, Math.PI * 2)) {		// detect >= 1° change
+			state.lastRotated_angle = mouse_angle;
+			return mouse_angle.add_angle_normalized(-state.basis_angle);
+		}
+		return null;
+	}
+
+	function adjustIndex_forAngle(angle: number) {
+		console.log(`rings ${angle.degrees_of(0)}`)
 	}
 
 	function closure(mouse_state) {
@@ -95,11 +113,12 @@
 		/////////////////////////////
 
 		if (mouse_state.isHover) {
+			const rotation_state = s.rotation_ring_state;
 			if (mouse_state.isOut) {
-				s.rotation_ringState.isHovering = false;
+				rotation_state.isHovering = false;
 			} else {
-				const okayToHover = !s.isAnyRotation_active;
-				s.rotation_ringState.isHovering = okayToHover;	// show highlight around ring
+				const okayToHover = !s.isAny_paging_arc_active;
+				rotation_state.isHovering = okayToHover;	// show highlight around ring
 			}
 
 			// hover
@@ -108,38 +127,42 @@
 		} else {
 			const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);
 			const mouse_wentDown_angle = from_center.angle;
-			const ring_angle = $s_rotation_ring_angle;
-			const basis_angle = mouse_wentDown_angle.add_angle_normalized(-ring_angle);
 			if (isInterior()) {
+				const paging_state = s.paging_ring_state;
+				if (mouse_state.isDown) {
 
-				// pass to paging ring
+					// begin paging
 
-				if (mouse_state.isUp) {
-					s.paging_ring_state.reset();
-				} else if (mouse_state.isDown) {
-					s.paging_ring_state.basis_angle = basis_angle;
-					console.log(`${basis_angle.degrees_of(0)}`);
-					// eventually calls paging ring's closure
+					paging_state.basis_angle = mouse_wentDown_angle;
+					paging_state.lastRotated_angle = mouse_wentDown_angle;
+				} else if (mouse_state.isUp) {
+
+					// end paging
+
+					paging_state.reset();
 				}
 			} else if (isHit()) {
+				const ring_angle = $s_rotation_ring_angle;
+				const rotation_state = s.rotation_ring_state;
+				const basis_angle = mouse_wentDown_angle.add_angle_normalized(-ring_angle);
 				if (mouse_state.isDouble) {
 	
 					// begin resize
 					
-					s.rotation_ringState.radiusOffset = from_center.magnitude - $s_rotation_ring_radius;
-					rebuilds += 1;
-				} else if (mouse_state.isUp) {
-	
-					// end rotate and resize
-	
-					s.rotation_ringState.reset();
+					rotation_state.radiusOffset = from_center.magnitude - $s_rotation_ring_radius;
 					rebuilds += 1;
 				} else if (mouse_state.isDown) {
 
 					// begin rotate
 	
-					s.rotation_ringState.basis_angle = basis_angle;
-					s.rotation_ringState.lastRotated_angle = mouse_wentDown_angle;
+					rotation_state.basis_angle = basis_angle;
+					rotation_state.lastRotated_angle = mouse_wentDown_angle;
+					rebuilds += 1;
+				} else if (mouse_state.isUp) {
+	
+					// end rotate and resize
+	
+					rotation_state.reset();
 					rebuilds += 1;
 				}
 			}
@@ -195,12 +218,12 @@
 			closure={closure}
 			detect_longClick={false}
 			detectHit_closure={isHit}
-			cursor={s.rotation_ringState.cursor}>
+			cursor={s.rotation_ring_state.cursor}>
 			<svg
 				viewBox={viewBox}
 				class= 'svg-rotation-ring'
-				fill={transparentize(color, s.rotation_ringState.fill_transparency)}
-				stroke={transparentize(color, s.rotation_ringState.stroke_transparency)}>
+				fill={transparentize(color, s.rotation_ring_state.fill_transparency)}
+				stroke={transparentize(color, s.rotation_ring_state.stroke_transparency)}>
 				<path d={svg_ringPath}>
 			</svg>
 		</Mouse_Responder>

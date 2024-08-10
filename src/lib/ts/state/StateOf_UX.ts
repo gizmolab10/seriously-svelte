@@ -7,7 +7,7 @@ export default class StateOf_UX {
 	elementState_byName: {[name: string]: Element_State} = {};
 	mouse_state_byName: { [name: string]: Mouse_State } = {};
 	clusters_geometry!: Clusters_Geometry;
-	rotation_ringState!: Expansion_State;
+	rotation_ring_state!: Expansion_State;
 	paging_ring_state!: Rotation_State;
 	rebuild_count = 0;
 
@@ -27,7 +27,7 @@ export default class StateOf_UX {
 	constructor() {
 		setTimeout(() => {
 			this.paging_ring_state = new Rotation_State();
-			this.rotation_ringState = new Expansion_State();
+			this.rotation_ring_state = new Expansion_State();
 		}, 1);
 	}
 
@@ -38,7 +38,7 @@ export default class StateOf_UX {
 		return `${type}-${subtype}-${identifiable.id}`;
 	}
 
-	get isAnyRotation_active(): boolean {
+	get isAny_paging_arc_active(): boolean {
 		const states = Object.values(this.rotationState_byName);
 		for (const state of states) {
 			if (state.isActive) {

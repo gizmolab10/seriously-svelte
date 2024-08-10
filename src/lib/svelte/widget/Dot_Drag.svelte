@@ -106,13 +106,15 @@
 	}
 
 	function closure(mouse_state) {
-		if (mouse_state.isHover) {
-			updateColors_forHovering(mouse_state.isOut);
-		} else if (mouse_state.isLong) {
-			ancestry?.becomeFocus();
-		} else if (mouse_state.isUp) {
-			const shiftKey = mouse_state.event?.shiftKey ?? false
-			ancestry?.handle_singleClick_onDragDot(shiftKey);
+		if (!s.isAny_paging_arc_active || s.paging_ring_state.isActive || s.rotation_ring_state.isActive) {
+			if (mouse_state.isHover) {
+				updateColors_forHovering(mouse_state.isOut);
+			} else if (mouse_state.isLong) {
+				ancestry?.becomeFocus();
+			} else if (mouse_state.isUp) {
+				const shiftKey = mouse_state.event?.shiftKey ?? false
+				ancestry?.handle_singleClick_onDragDot(shiftKey);
+			}
 		}
 	}
 
