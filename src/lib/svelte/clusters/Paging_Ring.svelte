@@ -28,7 +28,7 @@
 
 	$: {
 		if (!!pagingRing) {
-			pagingWrapper = new Svelte_Wrapper(pagingRing, handle_mouse_state, Identifiable.newID(), SvelteComponentType.paging);
+			pagingWrapper = new Svelte_Wrapper(pagingRing, handle_mouse_state, -1, SvelteComponentType.paging);
 		}
 	}
 
@@ -45,6 +45,9 @@
 
 			rebuilds += 1;
 			cursor_closure();
+		} else if (mouse_state.isDown) {
+			const angle = s.paging_ring_state.basis_angle.degrees_of(0);
+			console.log(`${angle}`);
 		}
 	}
  

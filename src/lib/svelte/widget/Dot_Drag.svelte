@@ -111,7 +111,8 @@
 		} else if (mouse_state.isLong) {
 			ancestry?.becomeFocus();
 		} else if (mouse_state.isUp) {
-			ancestry?.handle_singleClick_onDragDot(mouse_state.event.shiftKey);
+			const shiftKey = mouse_state.event?.shiftKey ?? false
+			ancestry?.handle_singleClick_onDragDot(shiftKey);
 		}
 	}
 

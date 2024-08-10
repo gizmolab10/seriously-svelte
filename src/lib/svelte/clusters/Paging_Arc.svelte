@@ -35,7 +35,7 @@
 
 	$: {
 		if (!!pagingArc) {
-			pagingArcWrapper = new Svelte_Wrapper(pagingArc, handle_mouse_state, Identifiable.newID(), SvelteComponentType.paging);
+			pagingArcWrapper = new Svelte_Wrapper(pagingArc, handle_mouse_state, -1, SvelteComponentType.thumb);
 		}
 	}
 

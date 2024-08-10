@@ -77,7 +77,7 @@
 	}
 
 	function updateInputWidth() {
-		if (input && ghost) { // ghost only exists to provide its width (in pixels)
+		if (!!input && !!ghost) { // ghost only exists to provide its width (in pixels)
 			titleWidth = ghost.scrollWidth - 5;
 			input.style.width = `${titleWidth}px`;	// apply its width to the input element
 			// debug.log_edit(`WIDTH: ${titleWidth} ${thingTitle}`);
@@ -102,7 +102,7 @@
 		event.preventDefault();
 		clearClicks();
 		ancestry?.startEdit();
-		input.focus();
+		input?.focus();
     }
 
 	function handle_singleClick(event) {
@@ -111,14 +111,18 @@
 			if (clickCount === 1 && !!ancestry && !ancestry.isEditing) {
 				event.preventDefault();
 				if (!ancestry.isGrabbed) {
-					ancestry.grabOnly();
+					if (event.shiftKey) {
+						ancestry.grab();
+					} else {
+						ancestry.grabOnly();
+					}
 				} else if (k.allow_TitleEditing && !ancestry.isRoot && !!thing && !thing.isBulkAlias) {
 					ancestry.startEdit();
-					input.focus();
+					input?.focus();
 					return;
 				}
 				$s_title_editing = null;
-				input.blur();
+				input?.blur();
 				clearClicks();
 			}
 		}, k.threshold_doubleClick);
@@ -211,7 +215,7 @@
 	}
 
 	function extractRange() {
-		if (input && !!ancestry) {
+		if (!!input && !!ancestry) {
 			const end = input.selectionEnd;
 			const start = input.selectionStart;
 			ancestry.selectionRange = new Seriously_Range(start, end);
@@ -220,7 +224,7 @@
 
 	function applyRange() {
 		const range = ancestry?.selectionRange;
-		if (range && input) {
+		if (!!range && !!input) {
 			input.setSelectionRange(range.start, range.end);
 		}
 	}

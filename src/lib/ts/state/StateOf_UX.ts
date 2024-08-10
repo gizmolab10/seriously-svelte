@@ -81,7 +81,7 @@ export default class StateOf_UX {
 	}
 
 	elementState_for(identifiable: Identifiable | null, type: ElementType, subtype: string): Element_State {
-		const realIdentifiable = identifiable ?? new Identifiable(Identifiable.newID())
+		const realIdentifiable = identifiable ?? new Identifiable()
 		const name = this.name_from(realIdentifiable, type, subtype);
 		let element_state = this.elementState_forName(name);
 		if (!element_state) {

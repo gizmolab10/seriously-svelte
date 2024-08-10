@@ -18,7 +18,7 @@ export default class Ancestry extends Identifiable {
 	//   "   idPredicate is from the last relationship
 
 	constructor(ancestryString: string = k.empty, idPredicate: string = Predicate.idContains, points_out: boolean = true) {
-		super((points_out ? 'out' : 'in') + k.generic_separator + ancestryString);
+		super(ancestryString);
 		this.points_out = points_out;
 		this.idPredicate = idPredicate;
 	}

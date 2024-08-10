@@ -1,6 +1,6 @@
 import { s_altering, s_resize_count, s_rebuild_count, s_mouse_location, s_mouse_up_count } from '../state/Reactive_State';
 import { g, u, get, Point, signals, Svelte_Wrapper, Alteration_State } from '../common/Global_Imports';
-import { Mouse_State, Create_Mouse_State, SvelteComponentType } from '../common/Global_Imports';
+import { Create_Mouse_State, SvelteComponentType } from '../common/Global_Imports';
 import { h } from '../../ts/db/DBDispatch';
 
 export class Event_Dispatch {

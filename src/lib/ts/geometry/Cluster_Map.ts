@@ -44,19 +44,10 @@ export default class Cluster_Map  {
 		})
 	}
 
-	update_all() {
-		this.shown = this.ancestries.length;
-		this.isPaging = this.shown != this.total;
-		this.color = transparentize(this.focus_ancestry.thing?.color ?? this.color, 0.8);
-		this.update_arc();
-		this.update_children_angles();
-		this.update_forLabels();
-	}
-
 	update_forLabels() {
 		const radius = get(s_rotation_ring_radius) - k.ring_thickness;
-		const semi_major = radius * 0.75;
-		const semi_minor = radius * 0.5;
+		const semi_major = radius * 0.8;
+		const semi_minor = radius * 0.6;
 		const ellipse_axes = new Point(semi_minor, semi_major);
 		this.label_tip = ellipse_axes.ellipse_coordiates_forAngle(-this.fork_angle);
 		this.update_thumb_andTitle();
@@ -75,13 +66,6 @@ export default class Cluster_Map  {
 	set_page_index(index: number) {
 		this.focus_ancestry.thing?.page_states.set_page_index_for(index, this);
 		this.update_thumb_andTitle();
-	}
-
-	advance(isForward: boolean) {
-		const sign = isForward ? 1 : -1;
-		const showing = this.shown;
-		const index = this.page_indexOf_focus.increment_by_assuring(showing * sign, this.total);
-		this.set_page_index(index);
 	}
 	
 	adjust_pagingIndex_forMouse_angle(mouse_angle: number) {
@@ -161,12 +145,30 @@ export default class Cluster_Map  {
 		return raw.normalized_angle();
 	}
 
-	update_arc() {
+	update_all() {
+		this.shown = this.ancestries.length;
+		this.isPaging = this.shown != this.total;
+		this.color = transparentize(this.focus_ancestry.thing?.color ?? this.color, 0.8);
+		this.update_fork();
+		this.update_children_angles();
+		this.update_forLabels();
+	}
+
+	update_fork() {
 		const fork_angle = this.fork_angleFor(this.predicate, this.points_out) ?? 0;
 		this.center = get(s_graphRect).size.dividedInHalf.asPoint;
 		this.fork_angle = fork_angle;
 		this.svg_arc.update(fork_angle);
 		this.straddles_zero = this.svg_arc.start_angle.straddles_zero(this.svg_arc.end_angle);
+	}
+
+	update_arc_angles(index: number, max: number, child_angle: number) {
+		// index increases & angle decreases clockwise
+		if (index == max) {
+			this.svg_arc.start_angle = child_angle;
+		} else if (index == 0) {
+			this.svg_arc.end_angle = child_angle;
+		}
 	}
 
 	update_children_angles() {
@@ -223,15 +225,6 @@ export default class Cluster_Map  {
 		}
 		this.update_arc_angles(index, max, child_angle);
 		return child_angle									// angle at index
-	}
-
-	update_arc_angles(index: number, max: number, child_angle: number) {
-		// index increases & angle decreases clockwise
-		if (index == max) {
-			this.svg_arc.start_angle = child_angle;
-		} else if (index == 0) {
-			this.svg_arc.end_angle = child_angle;
-		}
 	}
 
 	update_thumb_angles() {

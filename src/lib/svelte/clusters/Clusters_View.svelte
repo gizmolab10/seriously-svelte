@@ -4,7 +4,6 @@
 	import Editing_Tools from '../widget/Editing_Tools.svelte';
 	import Title_Editor from '../widget/Title_Editor.svelte';
 	import Clusters_Graph from './Clusters_Graph.svelte';
-	import Paging_Ring from './Paging_Ring.svelte';
 	import Rotation_Ring from './Rotation_Ring.svelte';
 	import Circle from '../kit/Circle.svelte';
 	const geometry = s.new_clusters_geometry;
@@ -58,12 +57,6 @@
 			bind:this={clusters}
 			style='transform:translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px); z-index:{ZIndex.panel};'>
 			{#key $s_ancestry_focus.hashedAncestry}
-				<Paging_Ring
-					color={color}
-					center={center}
-					ring_width={30}
-					name={'paging-ring'}
-					radius={$s_rotation_ring_radius - k.ring_thickness}/>
 				<Rotation_Ring
 					color={color}
 					center={center}

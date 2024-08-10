@@ -181,6 +181,12 @@ class Persist_Local {
 		s_rotation_ring_angle.subscribe((angle: number) => {
 			this.write_key(IDPersistant.ring_angle, angle);
 		});
+		s_ancestries_grabbed.subscribe((ancestries: Array<Ancestry>) => {
+			this.writeDB_key(IDPersistant.grabbed, !ancestries ? null : ancestries.map(a => a.id));		// ancestral paths
+		});
+		s_ancestries_expanded.subscribe((ancestries: Array<Ancestry>) => {
+			this.writeDB_key(IDPersistant.expanded, !ancestries ? null : ancestries.map(a => a.id));	// ancestral paths
+		});
 		s_show_details.subscribe((flag: boolean) => {
 			this.write_key(IDPersistant.details, flag);
 			g.graphRect_update();
@@ -251,14 +257,6 @@ class Persist_Local {
 			this.ancestriesRestored = true;
 			s_ancestries_grabbed.set(this.readDB_ancestries_forKey(IDPersistant.grabbed));
 			s_ancestries_expanded.set(this.readDB_ancestries_forKey(IDPersistant.expanded));
-	
-			s_ancestries_grabbed.subscribe((ancestries: Array<Ancestry>) => {
-				this.writeDB_key(IDPersistant.grabbed, !ancestries ? null : ancestries.map(p => p.id));
-			});
-	
-			s_ancestries_expanded.subscribe((ancestries: Array<Ancestry>) => {
-				this.writeDB_key(IDPersistant.expanded, !ancestries ? null : ancestries.map(p => p.id));
-			});
 		}
 	}
 

@@ -1,10 +1,11 @@
 <script lang='ts'>
 	import { s_thing_changed, s_ancestry_focus, s_rotation_ring_angle, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/Reactive_State';
-	import { k, s, u, Thing, Point, ZIndex, signals, svgPaths, dbDispatch } from '../../ts/common/Global_Imports';
+	import { e, k, s, u, Thing, Point, ZIndex, signals, svgPaths, dbDispatch } from '../../ts/common/Global_Imports';
 	import { transparentize, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
+	import Paging_Ring from './Paging_Ring.svelte';
 	export let radius = 0;
 	export let ring_width = 0;
 	export let name = k.empty;
@@ -31,7 +32,7 @@
 
 	$: {
 		if (!!rotationRing) {
-			rotationWrapper = new Svelte_Wrapper(rotationRing, handle_mouse_state, Identifiable.newID(), SvelteComponentType.rotation);
+			rotationWrapper = new Svelte_Wrapper(rotationRing, handle_mouse_state, -1, SvelteComponentType.rotation);
 		}
 	}
 
@@ -102,43 +103,59 @@
 			// hover
 
 			rebuilds += 1;
-		} else if (isHit()) {
+		} else {
 			const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);
-			if (mouse_state.isDouble) {
+			const mouse_wentDown_angle = from_center.angle;
+			const ring_angle = $s_rotation_ring_angle;
+			const basis_angle = mouse_wentDown_angle.add_angle_normalized(-ring_angle);
+			if (isInterior()) {
 
-				// begin resize
-				
-				s.rotation_ringState.radiusOffset = from_center.magnitude - $s_rotation_ring_radius;
-				rebuilds += 1;
-			} else if (mouse_state.isUp) {
+				// pass to paging ring
 
-				// end rotate and resize
+				const wrappers_byHID = e.wrappers_byHID_forType(SvelteComponentType.paging);
+				const wrappers = Object.values(wrappers_byHID);
+				const paging = wrappers.slice(0, 1)[0];	// last added
+				s.paging_ring_state.basis_angle = basis_angle;
+				paging.handle_mouse_state(mouse_state);	// eventually calls paging ring's closure
+			} else if (isHit()) {
+				if (mouse_state.isDouble) {
+	
+					// begin resize
+					
+					s.rotation_ringState.radiusOffset = from_center.magnitude - $s_rotation_ring_radius;
+					rebuilds += 1;
+				} else if (mouse_state.isUp) {
+	
+					// end rotate and resize
+	
+					s.rotation_ringState.reset();
+					rebuilds += 1;
+				} else if (mouse_state.isDown) {
 
-				s.rotation_ringState.reset();
-				rebuilds += 1;
-			} else if (mouse_state.isDown) {
-				const ring_angle = $s_rotation_ring_angle;
-				const mouse_wentDown_angle = from_center.angle;
-				const basis_angle = mouse_wentDown_angle.add_angle_normalized(-ring_angle);
-
-				// begin rotate
-
-				s.rotation_ringState.basis_angle = basis_angle;
-				s.rotation_ringState.lastRotated_angle = mouse_wentDown_angle;
-				rebuilds += 1;
-				
+					// begin rotate
+	
+					s.rotation_ringState.basis_angle = basis_angle;
+					s.rotation_ringState.lastRotated_angle = mouse_wentDown_angle;
+					rebuilds += 1;
+				}
 			}
 			cursor_closure();
 		}
 	}
+
+	function distance_fromCenter(): number | null {
+		const vector = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);
+		return vector?.magnitude ?? null;
+	}
+
+	function isInterior(): boolean {
+		const distance = distance_fromCenter();
+		return !!distance && distance < radius;
+	}
  
 	function isHit(): boolean {
-		const vector = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);
-		const distance = vector?.magnitude;
-		if (!!distance && distance.isBetween(radius, outer_radius)) {
-			return true;
-		}
-		return false;
+		const distance = distance_fromCenter();
+		return !!distance && distance.isBetween(radius, outer_radius);
 	}
 
 	function handle_mouse_state(mouse_state: Mouse_State): boolean {
@@ -155,6 +172,12 @@
 
 {#key rebuilds}
 	<div class='rotation-ring' bind:this={rotationRing} style='z-index:{ZIndex.rotation};'>
+		<Paging_Ring
+			color={color}
+			center={center}
+			ring_width={30}
+			name={'paging-ring'}
+			radius={$s_rotation_ring_radius - k.ring_thickness}/>
 		<Mouse_Responder
 			name={name}
 			center={center}

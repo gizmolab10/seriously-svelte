@@ -3,8 +3,8 @@ import { k } from '../common/Global_Imports';
 // for managing the paging ring
 
 export default class Rotation_State {
-	basis_angle: number | null = null;		// angle at location of mouse DOWN
-	lastRotated_angle: number | null = null;			// angle at location of previous mouse MOVE
+	basis_angle: number | null = null;			// angle at location of mouse DOWN
+	lastRotated_angle: number | null = null;	// angle at location of previous mouse MOVE
 	isHovering = false;
 
 	// track where the user 

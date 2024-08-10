@@ -19,7 +19,7 @@
 	const forward = angle <= Angle.quarter || angle >= Angle.threeQuarters;
 	const leftPadding = forward ? 1 : 14;
 	const priorRowHeight = k.row_height;
-	let widgetWrapper: Svelte_Wrapper;
+	let widgetWrapper!: Svelte_Wrapper;
 	let element_state!: Element_State;
 	let revealCenter = Point.zero;
 	let dragCenter = Point.zero;
