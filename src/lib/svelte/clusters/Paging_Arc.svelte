@@ -25,8 +25,9 @@
 	let pagingArcWrapper!: Svelte_Wrapper;
 	let mouse_up_count = $s_mouse_up_count;
 	let origin = center.offsetBy(Point.square(-radius));
-	let thumb_color = transparentize(color, paging_arc_state.stroke_transparency * 0.8);
-	let arc_color = transparentize(color, paging_ring_state.stroke_transparency * 0.8);
+	let transparency_multiplier = (s.rotation_ring_state.isHighlighted ? 0.9 : 0.8);	// dim arcs when hovering on or rotating rotation ring
+	let arc_color = transparentize(color, paging_ring_state.stroke_transparency * transparency_multiplier);
+	let thumb_color = transparentize(color, paging_arc_state.stroke_transparency * transparency_multiplier);
 
 	// draws the [paging] arc and thumb slider
 	// uses svg_arc for svg, which also has total and shown

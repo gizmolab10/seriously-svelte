@@ -14,12 +14,11 @@
 	export let zindex = ZIndex.rotation;
 	export let cursor_closure = () => {};
 	const outer_radius = radius + ring_width;
+	const geometry = s.clusters_geometry;
 	const diameter = outer_radius * 2;
 	const borderStyle = '1px solid';
-	const geometry = s.clusters_geometry;
-	const ringOrigin = center.distanceFrom(Point.square(outer_radius));
-	const viewBox = `${-ring_width}, ${-ring_width}, ${diameter}, ${diameter}`;
 	const svg_ringPath = svgPaths.ring(Point.square(radius), outer_radius, ring_width);
+	const rotation_viewBox = `${-ring_width}, ${-ring_width}, ${diameter}, ${diameter}`;
 	let mouse_up_count = $s_mouse_up_count;
 	let rotationWrapper = Svelte_Wrapper;
 	let rotationRing;
@@ -220,8 +219,8 @@
 			detectHit_closure={isHit}
 			cursor={s.rotation_ring_state.cursor}>
 			<svg
-				viewBox={viewBox}
 				class= 'svg-rotation-ring'
+				viewBox={rotation_viewBox}
 				fill={transparentize(color, s.rotation_ring_state.fill_transparency)}
 				stroke={transparentize(color, s.rotation_ring_state.stroke_transparency)}>
 				<path d={svg_ringPath}>

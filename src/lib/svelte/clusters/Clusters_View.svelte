@@ -3,14 +3,13 @@
 	import { k, s, u, Rect, Size, Point, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
 	import Editing_Tools from '../widget/Editing_Tools.svelte';
 	import Title_Editor from '../widget/Title_Editor.svelte';
+	import Circle from '../kit/Circle.svelte';
 	import Necklace from './Necklace.svelte';
 	import Rings from './Rings.svelte';
-	import Circle from '../kit/Circle.svelte';
 	const geometry = s.new_clusters_geometry;
 	const toolsOffset = new Point(32, -3);
     const ancestry = $s_ancestry_focus;
 	const thing = ancestry?.thing;
-	const color = thing?.color ?? k.color_default;
 	let titleCenter = Point.zero;
 	let center = Point.zero;
 	let size = Size.zero;
@@ -19,13 +18,13 @@
 	let offsetX = 0;
 	let clusters;
 
-	// draw center title, rings and clusters
+	// draw center title, rings and widget necklace
+	//	arcs & rings: selection & hover
 
 	// needs:
 	//	arrowheads
 	//	handle keys
-	//	lines: selection & hover
-	//	edit titles (keydown terminates edit)
+	//	edit titles (keydown terminates edit) BROKEN
 	
 	$: { cursor_closure(); }
 	
@@ -58,13 +57,13 @@
 			style='transform:translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px); z-index:{ZIndex.panel};'>
 			{#key $s_ancestry_focus.hashedAncestry}
 				<Rings
-					color={color}
 					center={center}
 					zindex={ZIndex.panel}
 					name={'rotation-ring'}
 					ring_width={k.ring_thickness}
+					cursor_closure={cursor_closure}
 					radius={$s_rotation_ring_radius}
-					cursor_closure={cursor_closure}/>
+					color={thing?.color ?? k.color_default}/>
 				<Necklace/>
 				<Editing_Tools offset={toolsOffset}/>
 				<div class='cluster-focus'

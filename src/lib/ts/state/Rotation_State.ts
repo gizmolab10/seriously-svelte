@@ -11,8 +11,8 @@ export default class Rotation_State {
 	// a) rotates the thumb button (scrolls the page)
 	// b) rotates the rotation_ring (in subclass: Expansion_State)
 	
-	reset() { this.basis_angle = this.lastRotated_angle = null; }
 	get isActive(): boolean { return !!this.basis_angle; }
+	reset() { this.basis_angle = this.lastRotated_angle = null; }
 	get stroke_transparency(): number { return this.isHighlighted ? 0.8 : 1; }
 	get isHighlighted(): boolean { return (this.isHovering || this.isActive); }
 	get fill_transparency(): number { return this.isHighlighted ? 0.97 : 0.98; }
