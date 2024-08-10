@@ -1,4 +1,4 @@
-import { e, k, u, get, Rect, Size, Point, debug, debugReact, dbDispatch } from '../common/Global_Imports';
+import { k, u, w, get, Rect, Size, Point, debug, debugReact, dbDispatch } from '../common/Global_Imports';
 import { s_graphRect, s_show_details, s_scale_factor, s_thing_changed } from './Reactive_State';
 import { persistLocal, IDPersistant, Svelte_Wrapper } from '../common/Global_Imports';
 
@@ -12,7 +12,7 @@ class Global_State {
 		persistLocal.queryStrings_apply();
 		debug.queryStrings_apply();
 		debugReact.queryStrings_apply();
-		e.setup();
+		w.setup();
 	}
 
 	get windowSize(): Size {

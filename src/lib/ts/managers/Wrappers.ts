@@ -1,11 +1,11 @@
 import { s_altering, s_resize_count, s_rebuild_count, s_mouse_location, s_mouse_up_count } from '../state/Reactive_State';
 import { g, u, get, Point, signals, Svelte_Wrapper, Alteration_State } from '../common/Global_Imports';
 import { Create_Mouse_State, SvelteComponentType } from '../common/Global_Imports';
-import { h } from '../../ts/db/DBDispatch';
+import { h } from '../db/DBDispatch';
 
-export class Event_Dispatch {
-	private wrappers_byType_andHID: { [type: string]: { [hid: number]: Svelte_Wrapper } } = {};
+export class Wrappers {
 	private child_wrapperTypes_byType: {[type: string]: Array<string>} = {};
+	private wrappers_byType_andHID: { [type: string]: { [hid: number]: Svelte_Wrapper } } = {};
 	
 	// assure delivery of events
 	// to a svelt component
@@ -170,4 +170,4 @@ export class Event_Dispatch {
 
 }
 
-export const e = new Event_Dispatch();
+export const w = new Wrappers();

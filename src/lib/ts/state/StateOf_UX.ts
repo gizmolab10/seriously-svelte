@@ -1,19 +1,5 @@
-import { Mouse_State, Element_State, Rotation_State, Expansion_State, Clusters_Geometry } from '../common/Global_Imports';
+import { Mouse_State, ElementType, Element_State, Rotation_State, Expansion_State, Clusters_Geometry } from '../common/Global_Imports';
 import Identifiable from '../data/Identifiable';
-
-export enum ElementType {
-	generic	= 'generic',
-	control	= 'control',
-	widget	= 'widget',
-	reveal	= 'reveal',
-	focus	= 'focus',
-	crumb	= 'crumb',
-	thumb	= 'thumb',
-	tool	= 'tool',
-	drag	= 'drag',
-	none	= 'none',
-	arc		= 'arc',
-}
 
 export default class StateOf_UX {
 
@@ -33,7 +19,7 @@ export default class StateOf_UX {
 	//  this allows them to be deleted	//
 	//		by their own event handling	//
 	//									//
-	//	used by: Button, Rotation_Ring	//
+	//	used by: Button, Rings	//
 	//		& Close_Button				//
 	//									//
 	//////////////////////////////////////

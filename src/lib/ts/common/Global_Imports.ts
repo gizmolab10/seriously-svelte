@@ -1,29 +1,32 @@
-import { PredicateKind, GraphRelations, AlterationType, SvelteComponentType } from './Enumerations';
+import type { Handle_Mouse_State, Create_Mouse_State } from './Types';
+import type { SvelteComponent } from 'svelte';
+
+import { g } from '../state/Global_State';
+import { w } from '../managers/Wrappers';
+import { s } from '../state/StateOf_UX';
+import { u } from './Utilities';
+import { k } from './Constants';
+import './Extensions';
+
+import { IDLine, IDTool, IDTrait, ZIndex, IDButton, IDBrowser } from './Enumerations';
+import { ElementType, AlterationType, SvelteComponentType } from './Enumerations';
+import { PredicateKind, GraphRelations, CreationOptions } from './Enumerations';
 import { debugReact, DebugReact, ReactKind } from '../debug/DebugReact';
 import { IDPersistant, persistLocal } from '../managers/Persist_Local';
-import { IDTrait, ZIndex, IDButton, IDBrowser } from './Enumerations';
-import type { Handle_Mouse_State, Create_Mouse_State } from './Types';
 import { onMount, onDestroy, setContext, getContext } from 'svelte';
-import { CreationOptions, IDLine, IDTool } from './Enumerations';
 import { Page_State, Page_States } from '../state/Page_States';
 import { Direction, svgPaths } from '../geometry/SVG_Paths';
 import { Quadrant, Orientation } from '../geometry/Angle';
 import { debug, Debug, DebugFlag } from '../debug/Debug';
 import { Rect, Size, Point } from '../geometry/Geometry';
-import { signals, IDSignal } from '../events/Signals';
-import { s, ElementType } from '../state/StateOf_UX';
 import { Seriously_Range } from './Seriously_Range';
 import { Hierarchy } from '../managers/Hierarchy';
-import type { SvelteComponent } from 'svelte';
+import { signals, IDSignal } from './Signals';
 import { createPopper } from '@popperjs/core';
 import { dbDispatch } from '../db/DBDispatch';
-import { e } from '../events/Event_Dispatch';
-import { g } from '../state/Global_State';
 import { transparentize } from 'color2k';
 import { get } from 'svelte/store';
 import { builds } from './Builds';
-import { u } from './Utilities';
-import { k } from './Constants';
 
 import Clusters_Geometry from '../geometry/Clusters_Geometry';
 import Alteration_State from '../state/Alteration_State';
@@ -48,7 +51,6 @@ import Thing from '../data/Thing';
 import Datum from '../data/Datum';
 import User from '../data/User';
 import muuri from 'muuri';
-import './Extensions';
 
 export {
 	Angle, Quadrant, Orientation,
@@ -57,7 +59,7 @@ export {
 	SVG_Arc, Cluster_Map, Clusters_Geometry,
 	Title_State, Rotation_State, Expansion_State,
 	muuri, interact, createPopper, transparentize,
-	e, g, k, s, u, builds, signals, Seriously_Range,
+	g, k, s, u, w, builds, signals, Seriously_Range,
 	Mouse_State, Handle_Mouse_State, Create_Mouse_State,
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Grabs, Ancestry, Hierarchy, dbDispatch, persistLocal,

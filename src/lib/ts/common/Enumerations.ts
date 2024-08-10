@@ -57,6 +57,20 @@ export enum IDBrowser  {
 	orion	 = 'orion',
 }
 
+export enum ElementType {
+	generic	= 'generic',
+	control	= 'control',
+	widget	= 'widget',
+	reveal	= 'reveal',
+	focus	= 'focus',
+	crumb	= 'crumb',
+	thumb	= 'thumb',
+	tool	= 'tool',
+	drag	= 'drag',
+	none	= 'none',
+	arc		= 'arc',
+}
+
 export enum ZIndex {	// do not change the order
 	common,
 	panel,

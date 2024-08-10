@@ -3,8 +3,8 @@
 	import { k, s, u, Rect, Size, Point, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
 	import Editing_Tools from '../widget/Editing_Tools.svelte';
 	import Title_Editor from '../widget/Title_Editor.svelte';
-	import Clusters_Graph from './Clusters_Graph.svelte';
-	import Rotation_Ring from './Rotation_Ring.svelte';
+	import Necklace from './Necklace.svelte';
+	import Rings from './Rings.svelte';
 	import Circle from '../kit/Circle.svelte';
 	const geometry = s.new_clusters_geometry;
 	const toolsOffset = new Point(32, -3);
@@ -57,7 +57,7 @@
 			bind:this={clusters}
 			style='transform:translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px); z-index:{ZIndex.panel};'>
 			{#key $s_ancestry_focus.hashedAncestry}
-				<Rotation_Ring
+				<Rings
 					color={color}
 					center={center}
 					zindex={ZIndex.panel}
@@ -65,7 +65,7 @@
 					ring_width={k.ring_thickness}
 					radius={$s_rotation_ring_radius}
 					cursor_closure={cursor_closure}/>
-				<Clusters_Graph/>
+				<Necklace/>
 				<Editing_Tools offset={toolsOffset}/>
 				<div class='cluster-focus'
 					style='
