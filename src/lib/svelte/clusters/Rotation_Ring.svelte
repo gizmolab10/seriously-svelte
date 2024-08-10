@@ -5,7 +5,7 @@
 	import { transparentize, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
-	import Paging_Ring from './Paging_Ring.svelte';
+	import Paging_Arc from './Paging_Arc.svelte';
 	export let radius = 0;
 	export let ring_width = 0;
 	export let name = k.empty;
@@ -16,6 +16,7 @@
 	const outer_radius = radius + ring_width;
 	const diameter = outer_radius * 2;
 	const borderStyle = '1px solid';
+	const geometry = s.clusters_geometry;
 	const ringOrigin = center.distanceFrom(Point.square(outer_radius));
 	const viewBox = `${-ring_width}, ${-ring_width}, ${diameter}, ${diameter}`;
 	const svg_ringPath = svgPaths.ring(Point.square(radius), outer_radius, ring_width);
@@ -23,6 +24,7 @@
 	let rotationWrapper = Svelte_Wrapper;
 	let rotationRing;
 	let rebuilds = 0
+	let pagingRing;
 
 	$: {
 		if ($s_ancestry_focus.thing.id == $s_thing_changed.split(k.generic_separator)[0]) {
@@ -112,11 +114,13 @@
 
 				// pass to paging ring
 
-				const wrappers_byHID = e.wrappers_byHID_forType(SvelteComponentType.paging);
-				const wrappers = Object.values(wrappers_byHID);
-				const paging = wrappers.slice(0, 1)[0];	// last added
-				s.paging_ring_state.basis_angle = basis_angle;
-				paging.handle_mouse_state(mouse_state);	// eventually calls paging ring's closure
+				if (mouse_state.isUp) {
+					s.paging_ring_state.reset();
+				} else if (mouse_state.isDown) {
+					s.paging_ring_state.basis_angle = basis_angle;
+					console.log(`${basis_angle.degrees_of(0)}`);
+					// eventually calls paging ring's closure
+				}
 			} else if (isHit()) {
 				if (mouse_state.isDouble) {
 	
@@ -171,13 +175,17 @@
 </script>
 
 {#key rebuilds}
+	<div class='paging-ring' bind:this={pagingRing} style='z-index:{ZIndex.paging};'>
+		{#each geometry.cluster_maps as cluster_map}
+			{#if !!cluster_map && (cluster_map.shown > 0)}
+				<Paging_Arc
+					color={color}
+					center={center}
+					cluster_map={cluster_map}/>
+			{/if}
+		{/each}
+	</div>
 	<div class='rotation-ring' bind:this={rotationRing} style='z-index:{ZIndex.rotation};'>
-		<Paging_Ring
-			color={color}
-			center={center}
-			ring_width={30}
-			name={'paging-ring'}
-			radius={$s_rotation_ring_radius - k.ring_thickness}/>
 		<Mouse_Responder
 			name={name}
 			center={center}
