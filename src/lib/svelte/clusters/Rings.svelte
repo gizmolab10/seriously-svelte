@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { s_thing_changed, s_ancestry_focus, s_rotation_ring_angle, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/Reactive_State';
-	import { k, x, u, w, Thing, Point, ZIndex, signals, svgPaths, dbDispatch } from '../../ts/common/Global_Imports';
+	import { k, u, ux, w, Thing, Point, ZIndex, signals, svgPaths, dbDispatch } from '../../ts/common/Global_Imports';
 	import { transparentize, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
@@ -58,13 +58,13 @@
 			const mouse_angle = from_center.angle;
 			const paging_state = ux.paging_ring_state;
 			const rotation_state = ux.rotation_ring_state;
-			if (!!paging_state.lastRotated_angle) {				// rotate paging thumb
+			if (!!paging_state.lastRotated_angle) {				// rotate_expand paging thumb
 				const paging_angle = convert_angle(paging_state, mouse_angle);
 				if (!!paging_angle) {
 					adjustIndex_forAngle(mouse_angle);					// send into paging arc to change index
 					sendSignal = true;
 				}
-			} else if (!!rotation_state.lastRotated_angle) {		// rotate clusters
+			} else if (!!rotation_state.lastRotated_angle) {		// rotate_expand clusters
 				const rotation_angle = convert_angle(rotation_state, mouse_angle);
 				if (!!rotation_angle) {
 					$s_rotation_ring_angle = rotation_angle;
@@ -111,13 +111,13 @@
 		// setup or teardown state //
 		/////////////////////////////
 
-			const rotate = ux.rotation_ring_state;
+		const rotate_expand = ux.rotation_ring_state;
 		if (mouse_state.isHover) {
 			if (mouse_state.isOut) {
-				rotate.isHovering = false;
+				rotate_expand.isHovering = false;
 			} else {
 				const okayToHover = !ux.isAny_paging_arc_active;
-				rotate.isHovering = okayToHover;	// show highlight around ring
+				rotate_expand.isHovering = okayToHover;	// show highlight around ring
 			}
 
 			// hover
@@ -147,20 +147,20 @@
 	
 					// begin resize
 					
-					rotate.radiusOffset = from_center.magnitude - $s_rotation_ring_radius;
+					rotate_expand.radiusOffset = from_center.magnitude - $s_rotation_ring_radius;
 					rebuilds += 1;
 				} else if (mouse_state.isDown) {
 
-					// begin rotate
+					// begin rotate_expand
 	
-					rotate.basis_angle = basis_angle;
-					rotate.lastRotated_angle = mouse_wentDown_angle;
+					rotate_expand.basis_angle = basis_angle;
+					rotate_expand.lastRotated_angle = mouse_wentDown_angle;
 					rebuilds += 1;
 				} else if (mouse_state.isUp) {
 	
-					// end rotate and resize
+					// end rotate_expand and resize
 	
-					rotate.reset();
+					rotate_expand.reset();
 					rebuilds += 1;
 				}
 			}

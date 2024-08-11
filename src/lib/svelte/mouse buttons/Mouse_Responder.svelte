@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, x, u, Rect, Size, Point, Mouse_State, ZIndex, onMount } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Rect, Size, Point, Mouse_State, ZIndex, onMount } from '../../ts/common/Global_Imports';
 	import { s_mouse_location } from '../../ts/state/Reactive_State';
 	export let detectHit_closure: () => {flag: boolean} | null = null;
 	export let height = k.default_buttonSize;

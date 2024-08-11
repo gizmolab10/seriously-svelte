@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, x, u, Point, Thing, IDTool, onMount, signals, dbDispatch, ElementType, Element_State, transparentize } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Point, Thing, IDTool, onMount, signals, dbDispatch, ElementType, Element_State, transparentize } from '../../ts/common/Global_Imports';
 	import { s_thing_changed, s_ancestry_focus } from '../../ts/state/Reactive_State';
 	import Button from './Button.svelte';
 	export let left = 0;

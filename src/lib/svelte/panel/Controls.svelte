@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { s_show_details, s_id_popupView, s_resize_count, s_cluster_mode, s_shown_relations } from '../../ts/state/Reactive_State';
-	import { g, k, x, u, Point, ZIndex, onMount, signals, svgPaths, IDButton, IDPersistant } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, Point, ZIndex, onMount, signals, svgPaths, IDButton, IDPersistant } from '../../ts/common/Global_Imports';
 	import { ElementType, Element_State, persistLocal, GraphRelations } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Button from '../mouse buttons/Button.svelte';

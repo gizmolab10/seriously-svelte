@@ -1,4 +1,4 @@
-import { k, x, Rect, Thing, Point, Ancestry, ElementType, Element_State } from '../common/Global_Imports'
+import { k, ux, Rect, Thing, Point, Ancestry, ElementType, Element_State } from '../common/Global_Imports'
 
 export default class Widget_MapRect extends Rect {
 	childAncestry: Ancestry | null;

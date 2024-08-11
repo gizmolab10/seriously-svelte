@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, x, u, Rect, Size, Point, Thing, ZIndex, debug, signals, Ancestry } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, Rect, Size, Point, Thing, ZIndex, debug, signals, Ancestry } from '../../ts/common/Global_Imports';
 	import { s_id_popupView, s_ancestry_editingTools, s_user_graphOffset } from '../../ts/state/Reactive_State';
 	import { IDButton, onMount, debugReact, dbDispatch, Predicate } from '../../ts/common/Global_Imports';
 	import { IDSignal, IDPersistant, ElementType, persistLocal } from '../../ts/common/Global_Imports';
