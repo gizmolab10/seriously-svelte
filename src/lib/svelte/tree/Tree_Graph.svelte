@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, s, u, Rect, Size, Point, Thing, ZIndex, debug, signals, Ancestry } from '../../ts/common/Global_Imports';
+	import { g, k, x, u, Rect, Size, Point, Thing, ZIndex, debug, signals, Ancestry } from '../../ts/common/Global_Imports';
 	import { s_id_popupView, s_ancestry_editingTools, s_user_graphOffset } from '../../ts/state/Reactive_State';
 	import { IDButton, onMount, debugReact, dbDispatch, Predicate } from '../../ts/common/Global_Imports';
 	import { IDSignal, IDPersistant, ElementType, persistLocal } from '../../ts/common/Global_Imports';
@@ -11,8 +11,8 @@
 	import { h } from '../../ts/db/DBDispatch';
 	import Circle from '../kit/Circle.svelte';
 	import Box from '../kit/Box.svelte';
-	const revealState = s.elementState_for($s_ancestry_focus, ElementType.reveal, 'tree');
-	const focusState = s.elementState_for($s_ancestry_focus, ElementType.focus, 'tree');
+	const revealState = ux.elementState_for($s_ancestry_focus, ElementType.reveal, 'tree');
+	const focusState = ux.elementState_for($s_ancestry_focus, ElementType.focus, 'tree');
 	let origin_ofFirstReveal = Point.zero;
 	let origin_ofChildren = Point.zero;
 	let childrenSize = Point.zero;

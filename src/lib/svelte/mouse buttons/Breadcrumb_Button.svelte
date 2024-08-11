@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, s, u, Point, Thing, IDTool, onMount, signals, dbDispatch, ElementType, Element_State, transparentize } from '../../ts/common/Global_Imports';
+	import { k, x, u, Point, Thing, IDTool, onMount, signals, dbDispatch, ElementType, Element_State, transparentize } from '../../ts/common/Global_Imports';
 	import { s_thing_changed, s_ancestry_focus } from '../../ts/state/Reactive_State';
 	import Button from './Button.svelte';
 	export let left = 0;
@@ -27,7 +27,7 @@
 		name = `crumb (for ${title ?? 'unknown'})`
 		width = u.getWidthOf(title) + 10;
 		center = new Point(left + width / 2, height - 1);
-		element_state = s.elementState_for(ancestry, elementType, IDTool.none);
+		element_state = ux.elementState_for(ancestry, elementType, IDTool.none);
 		updateColors();
 	}
 

@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { s_thing_changed, s_cluster_mode, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/Reactive_State';
-	import { k, s, u, Rect, Size, Point, Thing, debug, ZIndex, IDTool, onMount } from '../../ts/common/Global_Imports';
+	import { k, x, u, Rect, Size, Point, Thing, debug, ZIndex, IDTool, onMount } from '../../ts/common/Global_Imports';
 	import { createPopper, Svelte_Wrapper, AlterationType, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { signals, svgPaths, Direction, ElementType, dbDispatch } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
@@ -12,7 +12,7 @@
     export let ancestry;
 	const radius = k.dot_size;
 	const diameter = radius * 2;
-	const element_state = s.elementState_forName(name);		// survives onDestroy, created by widget
+	const element_state = ux.elementState_forName(name);		// survives onDestroy, created by widget
 	let dragWrapper = Svelte_Wrapper;
 	let isAltering = false;
 	let isGrabbed = false;
@@ -95,18 +95,20 @@
 	}
 
 	function updateColors_forHovering(isOut) {
-		isHovering = !isOut;
-		const usePointer = (!ancestry.isGrabbed || s_cluster_mode) && ancestry.hasChildRelationships ;
-		const cursor = usePointer ? 'pointer' : k.cursor_default;
-		if (!!element_state && !!thing) {
-			element_state.set_forHovering(thing.color, cursor);
-			element_state.isOut = isOut;
+		if (!ux.isAny_rotation_active) {
+			isHovering = !isOut;
+			const usePointer = (!ancestry.isGrabbed || s_cluster_mode) && ancestry.hasChildRelationships && !ux.isAny_rotation_active;
+			const cursor = usePointer ? 'pointer' : 'normal';
+			if (!!element_state && !!thing) {
+				element_state.set_forHovering(thing.color, cursor);
+				element_state.isOut = isOut;
+			}
+			redraws += 1;
 		}
-		redraws += 1;
 	}
 
 	function closure(mouse_state) {
-		if (!s.isAny_paging_arc_active || s.paging_ring_state.isActive || s.rotation_ring_state.isActive) {
+		if (!ux.isAny_rotation_active) {
 			if (mouse_state.isHover) {
 				updateColors_forHovering(mouse_state.isOut);
 			} else if (mouse_state.isLong) {

@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { s_show_details, s_id_popupView, s_resize_count, s_cluster_mode, s_shown_relations } from '../../ts/state/Reactive_State';
-	import { g, k, s, u, Point, ZIndex, onMount, signals, svgPaths, IDButton, IDPersistant } from '../../ts/common/Global_Imports';
+	import { g, k, x, u, Point, ZIndex, onMount, signals, svgPaths, IDButton, IDPersistant } from '../../ts/common/Global_Imports';
 	import { ElementType, Element_State, persistLocal, GraphRelations } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Button from '../mouse buttons/Button.svelte';
@@ -17,7 +17,7 @@
 	onMount(() => {
 		const ids = [IDButton.details, IDButton.relations, IDButton.layout, IDButton.smaller, IDButton.bigger, IDButton.builds, IDButton.help];
 		for (const id of ids) {
-			const element_state = s.elementState_for(new Identifiable(id), ElementType.control, id);
+			const element_state = ux.elementState_for(new Identifiable(id), ElementType.control, id);
 			element_state.set_forHovering('black', 'pointer');
 			element_state.hoverIgnore = id == IDButton.details;
 			elementStates_byID[id] = element_state;

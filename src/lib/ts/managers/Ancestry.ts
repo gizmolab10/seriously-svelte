@@ -600,7 +600,7 @@ export default class Ancestry extends Identifiable {
 		if (!this.isRoot) {
 			s_ancestries_expanded.update((array) => {
 				if (array) {
-					const index = array.map(s => s.id).indexOf(this.id);
+					const index = array.map(a => a.id).indexOf(this.id);
 					const found = index != -1;
 					if (expand && !found) {		// only add if not already added
 						array.push(this);

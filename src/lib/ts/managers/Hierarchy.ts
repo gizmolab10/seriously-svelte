@@ -297,7 +297,7 @@ export class Hierarchy {
 		const thing = this.thing_bulkAlias_forTitle(baseID);
 		if (!!thing) {
 			// id is of the root thing from bulk fetch all
-			// i.s., it is the root id from another baseID
+			// i.ux., it is the root id from another baseID
 			// need a second thing lookup by this id
 			// so children relationships will work
 			this.thing_byHID[id.hash()] = thing;

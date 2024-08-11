@@ -1,11 +1,11 @@
 <script lang='ts'>
-	import { g, k, s, u, get, Point, ZIndex, signals, onMount, Predicate, onDestroy } from '../../ts/common/Global_Imports';
+	import { g, k, x, u, get, Point, ZIndex, signals, onMount, Predicate, onDestroy } from '../../ts/common/Global_Imports';
 	import { s_graphRect, s_page_state, s_thing_changed, s_ancestry_focus, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import { Widget_MapRect, Clusters_Geometry } from '../../ts/common/Global_Imports';
 	import Widget from '../widget/Widget.svelte';
 	import { h } from '../../ts/db/DBDispatch';
     const ancestry = $s_ancestry_focus;
-	const geometry = s.clusters_geometry;
+	const geometry = ux.clusters_geometry;
 	const center = $s_graphRect.size.dividedInHalf.asPoint;
 	const childOffset = new Point(k.dot_size / -2, k.cluster_offsetY);
 	let color = ancestry.thing?.color ?? k.color_default;

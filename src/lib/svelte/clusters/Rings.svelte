@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { s_thing_changed, s_ancestry_focus, s_rotation_ring_angle, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/Reactive_State';
-	import { k, s, u, w, Thing, Point, ZIndex, signals, svgPaths, dbDispatch } from '../../ts/common/Global_Imports';
+	import { k, x, u, w, Thing, Point, ZIndex, signals, svgPaths, dbDispatch } from '../../ts/common/Global_Imports';
 	import { transparentize, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
@@ -14,7 +14,7 @@
 	export let zindex = ZIndex.rotation;
 	export let cursor_closure = () => {};
 	const outer_radius = radius + ring_width;
-	const geometry = s.clusters_geometry;
+	const geometry = ux.clusters_geometry;
 	const diameter = outer_radius * 2;
 	const borderStyle = '1px solid';
 	const svg_ringPath = svgPaths.ring(Point.square(radius), outer_radius, ring_width);
@@ -40,7 +40,7 @@
 	$: {
 		if (mouse_up_count != $s_mouse_up_count) {
 			mouse_up_count = $s_mouse_up_count;
-			s.rotation_ring_state.reset();
+			ux.rotation_ring_state.reset();
 			rebuilds += 1;
 		}
 	}
@@ -56,12 +56,12 @@
 		if (!!from_center) {
 			let sendSignal = false;
 			const mouse_angle = from_center.angle;
-			const paging_state = s.paging_ring_state;
-			const rotation_state = s.rotation_ring_state;
+			const paging_state = ux.paging_ring_state;
+			const rotation_state = ux.rotation_ring_state;
 			if (!!paging_state.lastRotated_angle) {				// rotate paging thumb
 				const paging_angle = convert_angle(paging_state, mouse_angle);
 				if (!!paging_angle) {
-					adjustIndex_forAngle(paging_angle);					// send into paging arc to change index
+					adjustIndex_forAngle(mouse_angle);					// send into paging arc to change index
 					sendSignal = true;
 				}
 			} else if (!!rotation_state.lastRotated_angle) {		// rotate clusters
@@ -80,7 +80,7 @@
 					sendSignal = true;
 					$s_rotation_ring_radius += pixels;
 				}
-			} else if (!s.isAny_paging_arc_active) {
+			} else if (!ux.isAny_paging_arc_active) {
 				if (rotation_state.isHovering != isHit()) {
 					rotation_state.isHovering = isHit()		;	// show highlight around ring
 				}
@@ -102,7 +102,7 @@
 	}
 
 	function adjustIndex_forAngle(angle: number) {
-		console.log(`rings ${angle.degrees_of(0)}`)
+		console.log(`rings index ${angle.degrees_of(0)}`)
 	}
 
 	function closure(mouse_state) {
@@ -111,13 +111,13 @@
 		// setup or teardown state //
 		/////////////////////////////
 
+			const rotate = ux.rotation_ring_state;
 		if (mouse_state.isHover) {
-			const rotation_state = s.rotation_ring_state;
 			if (mouse_state.isOut) {
-				rotation_state.isHovering = false;
+				rotate.isHovering = false;
 			} else {
-				const okayToHover = !s.isAny_paging_arc_active;
-				rotation_state.isHovering = okayToHover;	// show highlight around ring
+				const okayToHover = !ux.isAny_paging_arc_active;
+				rotate.isHovering = okayToHover;	// show highlight around ring
 			}
 
 			// hover
@@ -127,41 +127,40 @@
 			const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);
 			const mouse_wentDown_angle = from_center.angle;
 			if (isInterior()) {
-				const paging_state = s.paging_ring_state;
+				const paging = ux.paging_ring_state;
 				if (mouse_state.isDown) {
 
 					// begin paging
 
-					paging_state.basis_angle = mouse_wentDown_angle;
-					paging_state.lastRotated_angle = mouse_wentDown_angle;
+					paging.basis_angle = mouse_wentDown_angle;
+					paging.lastRotated_angle = mouse_wentDown_angle;
 				} else if (mouse_state.isUp) {
 
 					// end paging
 
-					paging_state.reset();
+					paging.reset();
 				}
 			} else if (isHit()) {
 				const ring_angle = $s_rotation_ring_angle;
-				const rotation_state = s.rotation_ring_state;
 				const basis_angle = mouse_wentDown_angle.add_angle_normalized(-ring_angle);
 				if (mouse_state.isDouble) {
 	
 					// begin resize
 					
-					rotation_state.radiusOffset = from_center.magnitude - $s_rotation_ring_radius;
+					rotate.radiusOffset = from_center.magnitude - $s_rotation_ring_radius;
 					rebuilds += 1;
 				} else if (mouse_state.isDown) {
 
 					// begin rotate
 	
-					rotation_state.basis_angle = basis_angle;
-					rotation_state.lastRotated_angle = mouse_wentDown_angle;
+					rotate.basis_angle = basis_angle;
+					rotate.lastRotated_angle = mouse_wentDown_angle;
 					rebuilds += 1;
 				} else if (mouse_state.isUp) {
 	
 					// end rotate and resize
 	
-					rotation_state.reset();
+					rotate.reset();
 					rebuilds += 1;
 				}
 			}
@@ -217,12 +216,12 @@
 			closure={closure}
 			detect_longClick={false}
 			detectHit_closure={isHit}
-			cursor={s.rotation_ring_state.cursor}>
+			cursor={ux.rotation_ring_state.cursor}>
 			<svg
 				class= 'svg-rotation-ring'
 				viewBox={rotation_viewBox}
-				fill={transparentize(color, s.rotation_ring_state.fill_transparency)}
-				stroke={transparentize(color, s.rotation_ring_state.stroke_transparency)}>
+				fill={transparentize(color, ux.rotation_ring_state.fill_transparency)}
+				stroke={transparentize(color, ux.rotation_ring_state.stroke_transparency)}>
 				<path d={svg_ringPath}>
 			</svg>
 		</Mouse_Responder>

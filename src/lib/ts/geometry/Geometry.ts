@@ -183,7 +183,7 @@ export class Rect {
 	contains(point: Point): boolean {
 		const origin = this.origin;
 		const extent = this.extent;
-		return point.x.isBetween(origin.x, extent.x, true) && 
+		return point.ux.isBetween(origin.x, extent.x, true) && 
 			   point.y.isBetween(origin.y, extent.y, true);
 	}
 

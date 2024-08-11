@@ -3,7 +3,7 @@
 	import Triangle_Button from '../mouse buttons/Triangle_Button.svelte';
 	export let center = Point.zero;
     export let ancestry;
-	const element_state = s.elementState_forName(name);		// survives onDestroy, created by widget
+	const element_state = ux.elementState_forName(name);		// survives onDestroy, created by widget
 	let size = k.dot_size;
 
 	onMount(() => {

@@ -7658,7 +7658,7 @@ var require_ms = __commonJS({
         return plural(ms, msAbs, m, "minute");
       }
       if (msAbs >= s) {
-        return plural(ms, msAbs, s, "second");
+        return plural(ms, msAbs, x, "second");
       }
       return ms + " ms";
     }
@@ -8529,7 +8529,7 @@ var require_lib3 = __commonJS({
       }();
       return [h * 60, s * 100, l * 100];
     }
-    function hslToRgb(h, s, l) {
+    function hslToRgb(h, x, l) {
       var hprim = h / 60;
       var sprim = s / 100;
       var lprim = l / 100;
@@ -8595,7 +8595,7 @@ var require_lib3 = __commonJS({
         value: function toHslaArray() {
           var _this$values3 = _slicedToArray(this.values, 4), r = _this$values3[0], g = _this$values3[1], b = _this$values3[2], a = _this$values3[3];
           var _rgbToHsl = rgbToHsl(r, g, b), _rgbToHsl2 = _slicedToArray(_rgbToHsl, 3), h = _rgbToHsl2[0], s = _rgbToHsl2[1], l = _rgbToHsl2[2];
-          return [h, s, l, a];
+          return [h, x, l, a];
         }
       }]);
       return Color2;
@@ -8610,12 +8610,12 @@ var require_lib3 = __commonJS({
     }
     function fromHsla(_ref9) {
       var _ref10 = _slicedToArray(_ref9, 4), h = _ref10[0], s = _ref10[1], l = _ref10[2], a = _ref10[3];
-      var _hslToRgb = hslToRgb(h, s, l), _hslToRgb2 = _slicedToArray(_hslToRgb, 3), r = _hslToRgb2[0], g = _hslToRgb2[1], b = _hslToRgb2[2];
+      var _hslToRgb = hslToRgb(h, x, l), _hslToRgb2 = _slicedToArray(_hslToRgb, 3), r = _hslToRgb2[0], g = _hslToRgb2[1], b = _hslToRgb2[2];
       return fromRgba([r, g, b, a]);
     }
     function fromHsl(_ref11) {
       var _ref12 = _slicedToArray(_ref11, 3), h = _ref12[0], s = _ref12[1], l = _ref12[2];
-      return fromHsla([h, s, l, 1]);
+      return fromHsla([h, x, l, 1]);
     }
     function fromHexString(str) {
       var _ref13 = hex.exec(str) || shortHex.exec(str), _ref14 = _slicedToArray(_ref13, 5), r = _ref14[1], g = _ref14[2], b = _ref14[3], a = _ref14[4];
@@ -8640,7 +8640,7 @@ var require_lib3 = __commonJS({
       s = parseFloat(s);
       l = parseFloat(l);
       a = a === void 0 ? 1 : parseFloat(a) / (contains2(a, "%") ? 100 : 1);
-      return fromHsla([h, s, l, a]);
+      return fromHsla([h, x, l, a]);
     }
     function fromString2(str) {
       if (_colorName["default"][str]) {

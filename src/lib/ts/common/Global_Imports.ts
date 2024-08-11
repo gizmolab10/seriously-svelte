@@ -3,7 +3,7 @@ import type { SvelteComponent } from 'svelte';
 
 import { g } from '../state/Global_State';
 import { w } from '../managers/Wrappers';
-import { s } from '../state/StateOf_UX';
+import { ux } from '../state/UX_State';
 import { u } from './Utilities';
 import { k } from './Constants';
 import './Extensions';
@@ -59,7 +59,7 @@ export {
 	SVG_Arc, Cluster_Map, Clusters_Geometry,
 	Title_State, Rotation_State, Expansion_State,
 	muuri, interact, createPopper, transparentize,
-	g, k, s, u, w, builds, signals, Seriously_Range,
+	g, k, u, ux, w, builds, signals, Seriously_Range,
 	Mouse_State, Handle_Mouse_State, Create_Mouse_State,
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Grabs, Ancestry, Hierarchy, dbDispatch, persistLocal,

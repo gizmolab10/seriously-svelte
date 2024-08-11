@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, s, u, Rect, Size, Point, Mouse_State, IDTool, ZIndex, onMount, signals, svgPaths, Direction, dbDispatch } from '../../ts/common/Global_Imports';
+	import { k, x, u, Rect, Size, Point, Mouse_State, IDTool, ZIndex, onMount, signals, svgPaths, Direction, dbDispatch } from '../../ts/common/Global_Imports';
 	import { ElementType, Element_State, Alteration_State, AlterationType, Svelte_Wrapper, transparentize } from '../../ts/common/Global_Imports';
 	import { s_ancestry_editingTools, s_cluster_mode } from '../../ts/state/Reactive_State';
 	import { s_altering, s_graphRect, s_show_details } from '../../ts/state/Reactive_State';
@@ -57,7 +57,7 @@
 			const ids = [IDTool.delete_cancel, IDTool.delete_confirm, IDTool.dismiss, IDTool.more];
 			for (const id of ids) {
 				const isDismiss = id == IDTool.dismiss;
-				const element_state = s.elementState_for(ancestry, ElementType.tool, id);
+				const element_state = ux.elementState_for(ancestry, ElementType.tool, id);
 				element_state.color_background = isDismiss ? k.color_background : 'transparent';
 				element_state.set_forHovering(color, 'pointer');
 				element_state.hoverIgnore = !isDismiss;

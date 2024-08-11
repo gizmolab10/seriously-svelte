@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { s_ancestries_expanded, s_altering, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/Reactive_State';
 	import { Direction, onDestroy, dbDispatch, Predicate, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
-	import { k, s, u, Size, Thing, Point, debug, ZIndex, onMount, signals, svgPaths } from '../../ts/common/Global_Imports';
+	import { k, x, u, Size, Thing, Point, debug, ZIndex, onMount, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -10,7 +10,7 @@
 	export let name = k.empty;
     export let zindex = ZIndex.dots;
     export let hover_isReversed = false;
-	const element_state = s.elementState_forName(name);		// survives onDestroy, created by widget
+	const element_state = ux.elementState_forName(name);		// survives onDestroy, created by widget
 	let size = k.dot_size;
 	let tinyDotsDiameter = size * 1.8;
 	let tinyDotsOffset = size * -0.4 + 0.01;

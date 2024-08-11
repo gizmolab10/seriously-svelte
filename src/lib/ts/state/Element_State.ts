@@ -1,4 +1,4 @@
-import { k, s, Ancestry, ElementType } from '../common/Global_Imports';
+import { k, x, Ancestry, ElementType, transparentize } from '../common/Global_Imports';
 import Identifiable from '../data/Identifiable';
 
 export default class Element_State {
@@ -26,7 +26,7 @@ export default class Element_State {
 	//////////////////////////////////////////////////
 
 	constructor(identifiable: Identifiable, type: ElementType, subtype: string) {
-		this.name = s.name_from(identifiable, type, subtype);
+		this.name = ux.name_from(identifiable, type, subtype);
 		this.identifiable = identifiable;
 		this.subtype = subtype;
 		this.type = type;
@@ -45,13 +45,19 @@ export default class Element_State {
 	}
 	
 	get border(): string {
-		if (this.ancestry.isEditing) {
-			return `dashed ${this.ancestry.thing?.color} 1px`;
-		} else if (this.ancestry.isGrabbed) {
-			return `solid ${this.ancestry.thing?.color} 1px`;
-		} else {
-			return 'none';
+		let color = this.ancestry.thing?.color;
+		if (color) {
+			if (ux.isAny_rotation_active) {
+				color = transparentize(color, 0.8);
+			}
+			if (this.ancestry.isEditing) {
+				return `dashed ${color} 1px`;
+			}
+			if (this.ancestry.isGrabbed) {
+				return `solid ${color} 1px`;
+			}
 		}
+		return 'none';
 	}
 
 }

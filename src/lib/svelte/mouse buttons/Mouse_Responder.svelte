@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, s, u, Rect, Size, Point, Mouse_State, ZIndex, onMount } from '../../ts/common/Global_Imports';
+	import { k, x, u, Rect, Size, Point, Mouse_State, ZIndex, onMount } from '../../ts/common/Global_Imports';
 	import { s_mouse_location } from '../../ts/state/Reactive_State';
 	export let detectHit_closure: () => {flag: boolean} | null = null;
 	export let height = k.default_buttonSize;
@@ -15,7 +15,7 @@
 	export let cursor = 'pointer';
 	export let align_left = true;
 	export let name = 'generic';
-	const mouse_state = s.mouse_state_forName(name);	// persist across destroy/recreate
+	const mouse_state = ux.mouse_state_forName(name);	// persist across destroy/recreate
 	let mouse_doubleClick_timer;
 	let mouse_longClick_timer;
 	let style = k.empty;
@@ -29,7 +29,7 @@
 	//		closure & name					//
 	//										//
 	//	mutates three ts state classes:		//
-	//		StateOf_UX, Mouse_State &			//
+	//		UX_State, Mouse_State &			//
 	//		Element_State					//
 	//										//
 	//////////////////////////////////////////
@@ -61,7 +61,7 @@
 			}
 			if (mouse_state.isHover != isHit) {
 				mouse_state.isHover = isHit;
-				mouse_state.isOut = !isHit;
+				mouse_state.isOut = !isHit;		// called far too often
 				closure(Mouse_State.hover(null, mouse_button, isHit));	// pass a null event
 			}
 		}
@@ -143,7 +143,7 @@
 </script>
 
 <div class='mouse-responder' id={name}
-	style={style}
-	bind:this={mouse_button}>
+	bind:this={mouse_button}
+	style={style}>
 	<slot></slot>
 </div>

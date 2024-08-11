@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { s_mouse_location, s_mouse_up_count, s_ancestry_focus, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
-	import { g, k, s, u, Rect, Size, Point, ZIndex, onMount, Cluster_Map, Orientation } from '../../ts/common/Global_Imports';
+	import { g, k, x, u, Rect, Size, Point, ZIndex, onMount, Cluster_Map, Orientation } from '../../ts/common/Global_Imports';
 	import { ElementType, Svelte_Wrapper, transparentize, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { ArcPart } from '../../ts/common/Enumerations';
@@ -13,10 +13,10 @@
 	const radius = $s_rotation_ring_radius + offset;
 	const breadth = radius * 2;
 	const viewBox=`${-offset} ${-offset} ${breadth} ${breadth}`;
-	const name = s.name_from($s_ancestry_focus, ElementType.arc, cluster_map?.cluster_title ?? 'not mapped');
+	const name = ux.name_from($s_ancestry_focus, ElementType.arc, cluster_map?.cluster_title ?? 'not mapped');
 	const thumb_size = (cluster_map?.paging_radius ?? 0) * 2;
-	const paging_arc_state = s.rotationState_forName(name);
-	const paging_ring_state = s.paging_ring_state;
+	const paging_arc_state = ux.rotationState_forName(name);
+	const paging_ring_state = ux.paging_ring_state;
 	const thumb_name = `thumb-${name}`;
 	let pagingArc;
 	let rebuilds = 0;
@@ -25,7 +25,7 @@
 	let pagingArcWrapper!: Svelte_Wrapper;
 	let mouse_up_count = $s_mouse_up_count;
 	let origin = center.offsetBy(Point.square(-radius));
-	let transparency_multiplier = (s.rotation_ring_state.isHighlighted ? 0.9 : 0.8);	// dim arcs when hovering on or rotating rotation ring
+	let transparency_multiplier = (ux.rotation_ring_state.isHighlighted ? 0.9 : 0.8);	// dim arcs when rotation ring highlighted: hover/rotate/expand
 	let arc_color = transparentize(color, paging_ring_state.stroke_transparency * transparency_multiplier);
 	let thumb_color = transparentize(color, paging_arc_state.stroke_transparency * transparency_multiplier);
 
@@ -111,10 +111,11 @@
 		/////////////////////////////
 
 		if (cluster_map.isPaging) {
+			console.log(`thumb !!!`);
 			if (mouse_state.isHover) {
 	
 				// hover
-	
+
 				paging_arc_state.isHovering = thumb_isHit();	// show highlight around ring
 				update_thumb_color();
 			} else if (mouse_state.isUp) {

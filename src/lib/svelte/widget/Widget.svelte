@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, s, u, Thing, Point, Angle, debug, ZIndex, onMount, signals, debugReact } from '../../ts/common/Global_Imports';
+	import { k, x, u, Thing, Point, Angle, debug, ZIndex, onMount, signals, debugReact } from '../../ts/common/Global_Imports';
 	import { s_thing_changed, s_title_editing, s_ancestry_focus, s_ancestries_grabbed } from '../../ts/state/Reactive_State';
 	import { s_thing_fontFamily, s_cluster_mode, s_ancestry_editingTools } from '../../ts/state/Reactive_State';
 	import { ElementType, Element_State, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
@@ -13,9 +13,9 @@
     export let angle = 0;
     export let ancestry;
 	const hasExtraAtLeft = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
-	const revealState = s.elementState_for(ancestry, ElementType.reveal, subtype);
+	const revealState = ux.elementState_for(ancestry, ElementType.reveal, subtype);
 	const rightPadding = $s_cluster_mode ? 0 : hasExtraAtLeft ? 22.5 : 20;
-	const dragState = s.elementState_for(ancestry, ElementType.drag, subtype);
+	const dragState = ux.elementState_for(ancestry, ElementType.drag, subtype);
 	const forward = angle <= Angle.quarter || angle >= Angle.threeQuarters;
 	const leftPadding = forward ? 1 : 14;
 	const priorRowHeight = k.row_height;
@@ -49,7 +49,7 @@
 	onMount(() => {
 		update_fromAncestry();
 		layout_widget();
-		element_state = s.elementState_forName(name);		// survives onDestroy, created by {tree, cluster} children
+		element_state = ux.elementState_forName(name);		// survives onDestroy, created by {tree, cluster} children
 		debugReact.log_mount(`WIDGET ${thing?.description} ${ancestry?.isGrabbed}`);
 		fullUpdate();
 		const handleAny = signals.handle_anySignal((kinds, id) => {
@@ -172,7 +172,7 @@
 
 </script>
 
-{#key rebuilds}
+{#key rebuilds, element_state}
 	{#if element_state}
 		<div class='widget' id='{widgetName}'
 			bind:this={widget}

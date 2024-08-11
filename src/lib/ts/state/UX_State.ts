@@ -1,7 +1,7 @@
 import { Mouse_State, ElementType, Element_State, Rotation_State, Expansion_State, Clusters_Geometry } from '../common/Global_Imports';
 import Identifiable from '../data/Identifiable';
 
-export default class StateOf_UX {
+export default class UX_State {
 
 	rotationState_byName: {[name: string]: Rotation_State} = {};
 	elementState_byName: {[name: string]: Element_State} = {};
@@ -36,6 +36,10 @@ export default class StateOf_UX {
 
 	name_from(identifiable: Identifiable, type: ElementType, subtype: string): string {
 		return `${type}-${subtype}-${identifiable.id}`;
+	}
+
+	get isAny_rotation_active(): boolean {
+		return ux.isAny_paging_arc_active || ux.paging_ring_state.isActive || ux.rotation_ring_state.isActive
 	}
 
 	get isAny_paging_arc_active(): boolean {
@@ -79,4 +83,4 @@ export default class StateOf_UX {
 
 }
 
-export const s = new StateOf_UX();
+export const ux = new UX_State();
