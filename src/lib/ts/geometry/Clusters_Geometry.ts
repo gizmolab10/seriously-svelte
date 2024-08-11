@@ -1,4 +1,4 @@
-import { u, get, Ancestry, Page_State, Predicate, Cluster_Map, Widget_MapRect } from '../common/Global_Imports';
+import { u, get, Angle, Ancestry, Page_State, Predicate, Cluster_Map, Widget_MapRect } from '../common/Global_Imports';
 import { s_page_state, s_ancestry_focus } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
 
@@ -27,12 +27,24 @@ export default class Clusters_Geometry {
 	
 	get widget_maps(): Array<Widget_MapRect> {
 		let widget_maps: Array<Widget_MapRect> = [];
-		for (const cluster_map of this.cluster_maps) {
-			if (!!cluster_map) {
-				widget_maps = u.concatenateArrays(widget_maps, cluster_map.widget_maps);
+		for (const map of this.cluster_maps) {
+			if (!!map) {
+				widget_maps = u.concatenateArrays(widget_maps, map.widget_maps);
 			}
 		}
 		return widget_maps;		
+	}
+
+	cluster_mapFor(angle: number) {
+		for (const cluster of this.cluster_maps) {
+			if (!!cluster) {
+				const thumb = cluster.thumb_map;
+				if (angle.isClocklyBetween(thumb.start_angle, thumb.end_angle, Angle.full)) {
+					return cluster;
+				}
+			}
+		}
+		return null;
 	}
 
 	layout_clusterFor(ancestries: Array<Ancestry>, predicate: Predicate | null, points_out: boolean) {

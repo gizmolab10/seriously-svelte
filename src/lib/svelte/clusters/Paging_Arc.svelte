@@ -30,7 +30,7 @@
 	let thumb_color = transparentize(color, paging_arc_state.stroke_transparency * transparency_multiplier);
 
 	// draws the [paging] arc and thumb slider
-	// uses svg_arc for svg, which also has total and shown
+	// uses paging_map for svg, which also has total and shown
 	//
 	// drawn by paging ring, which is drawn by clusters graph
 	// CHANGE: drawn by clusters (which is drawn by clusters graph)?
@@ -68,7 +68,7 @@
 		if (!!cluster_map) {
 			const ring_origin = center.offsetBy(Point.square(-$s_rotation_ring_radius));
 			const vector = u.vector_ofOffset_fromGraphCenter_toMouseLocation(ring_origin);
-			return vector.isContainedBy_path(cluster_map.svg_thumb.arc_svgPath);
+			return vector.isContainedBy_path(cluster_map.thumb_map.arc_svgPath);
 		}
 		return false;
 	}
@@ -111,7 +111,6 @@
 		/////////////////////////////
 
 		if (cluster_map.isPaging) {
-			console.log(`thumb !!!`);
 			if (mouse_state.isHover) {
 	
 				// hover
@@ -180,10 +179,10 @@
 			closure={mouse_state_closure}
 			detectHit_closure={thumb_isHit}>
 			<svg class='svg-paging-arc' viewBox={viewBox}>
-				<path stroke={arc_color} fill=transparent d={cluster_map.svg_arc.arc_svgPath}/>
+				<path stroke={arc_color} fill=transparent d={cluster_map.paging_map.arc_svgPath}/>
 				{#if (cluster_map.isPaging)}
 					{#key rebuilds}
-						<path fill={thumb_color} d={cluster_map.svg_thumb.arc_svgPath}/>
+						<path fill={thumb_color} d={cluster_map.thumb_map.arc_svgPath}/>
 					{/key}
 				{/if}
 			</svg>

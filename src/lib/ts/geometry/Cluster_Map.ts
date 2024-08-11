@@ -1,5 +1,5 @@
 import { s_graphRect, s_rotation_ring_angle, s_ancestry_focus, s_rotation_ring_radius } from '../state/Reactive_State';
-import { k, u, get, Rect, Point, Angle, IDLine, SVG_Arc, Quadrant } from '../common/Global_Imports';
+import { k, u, get, Rect, Point, Angle, IDLine, Arc_Map, Quadrant } from '../common/Global_Imports';
 import { Ancestry, Predicate, transparentize, Widget_MapRect } from '../common/Global_Imports';
 
 // for one cluster (there are three)
@@ -14,11 +14,11 @@ import { Ancestry, Predicate, transparentize, Widget_MapRect } from '../common/G
 
 export default class Cluster_Map  {
 	focus_ancestry: Ancestry = get(s_ancestry_focus);
-	widget_maps: Array<Widget_MapRect> = [];	// maximum a page's worth, will be combined into geometry.widget_maps
+	widget_maps: Array<Widget_MapRect> = [];	// one page of widgets, will be combined into geometry.widget_maps
 	ancestries: Array<Ancestry> = [];
 	arc_straddles_nadir = false;
-	svg_thumb = new SVG_Arc();
-	svg_arc = new SVG_Arc();
+	paging_map = new Arc_Map();
+	thumb_map = new Arc_Map();
 	cluster_title = k.empty;
 	color = k.color_default;
 	straddles_zero = false;
@@ -38,7 +38,7 @@ export default class Cluster_Map  {
 		this.total = total;
 		this.update_all();
 		s_rotation_ring_radius.subscribe((radius: number) => {
-			if (this.svg_arc.outside_ring_radius != radius) {
+			if (this.paging_map.outside_ring_radius != radius) {
 				this.update_all();		// do not set_page_index (else expand will hang)
 			}
 		})
@@ -70,19 +70,19 @@ export default class Cluster_Map  {
 	
 	adjust_pagingIndex_forMouse_angle(mouse_angle: number) {
 		const quadrant_ofFork_angle = u.quadrant_ofAngle(this.fork_angle);
-		let movement_angle = mouse_angle - this.svg_arc.start_angle;
-		let spread_angle = this.svg_arc.spread_angle;
+		let movement_angle = mouse_angle - this.paging_map.start_angle;
+		let spread_angle = this.paging_map.spread_angle;
 		if (this.straddles_zero) {
 			if (quadrant_ofFork_angle == Quadrant.upperRight) {
 				spread_angle = (-spread_angle).normalized_angle();
 				movement_angle = movement_angle.normalized_angle();
 			} else {
-				movement_angle = mouse_angle - this.svg_arc.end_angle;
+				movement_angle = mouse_angle - this.paging_map.end_angle;
 			}
 		} else {
 			switch (quadrant_ofFork_angle) {
 				case Quadrant.lowerRight:
-				case Quadrant.upperLeft: movement_angle = mouse_angle - this.svg_arc.end_angle; break;
+				case Quadrant.upperLeft: movement_angle = mouse_angle - this.paging_map.end_angle; break;
 				case Quadrant.upperRight: movement_angle = -movement_angle; break;
 				case Quadrant.lowerLeft: spread_angle = -spread_angle; break;
 			}
@@ -158,16 +158,16 @@ export default class Cluster_Map  {
 		const fork_angle = this.fork_angleFor(this.predicate, this.points_out) ?? 0;
 		this.center = get(s_graphRect).size.dividedInHalf.asPoint;
 		this.fork_angle = fork_angle;
-		this.svg_arc.update(fork_angle);
-		this.straddles_zero = this.svg_arc.start_angle.straddles_zero(this.svg_arc.end_angle);
+		this.paging_map.update(fork_angle);
+		this.straddles_zero = this.paging_map.start_angle.straddles_zero(this.paging_map.end_angle);
 	}
 
 	update_arc_angles(index: number, max: number, child_angle: number) {
 		// index increases & angle decreases clockwise
 		if (index == max) {
-			this.svg_arc.start_angle = child_angle;
+			this.paging_map.start_angle = child_angle;
 		} else if (index == 0) {
-			this.svg_arc.end_angle = child_angle;
+			this.paging_map.end_angle = child_angle;
 		}
 	}
 
@@ -189,7 +189,7 @@ export default class Cluster_Map  {
 				this.widget_maps.push(map);
 				index += 1;
 			}
-			this.svg_arc.put_angles_inOrder();
+			this.paging_map.put_angles_inOrder();
 		}
 	}
 
@@ -233,21 +233,21 @@ export default class Cluster_Map  {
 		// 1. start & end are sometimes reversed (hasNegative_spread)
 		// 2. arc straddles nadir when fork y is outside of ring (arc_straddles_nadir)
 
-		const spread_angle = this.svg_arc.spread_angle;
+		const spread_angle = this.paging_map.spread_angle;
 		const hasNegative_spread = spread_angle < 0
 		const inverter = hasNegative_spread ? 1 : -1;
 		const arc_spread = this.arc_straddles_nadir ? (-spread_angle).normalized_angle() : spread_angle;
 		const otherInverter = (hasNegative_spread == this.arc_straddles_nadir) ? -1 : 1;
-		const arc_start = this.svg_arc.start_angle * otherInverter;
+		const arc_start = this.paging_map.start_angle * otherInverter;
 		const increment = arc_spread / this.total * inverter;
 		const index = Math.round(this.page_indexOf_focus);
 		let start = arc_start + increment * index;
 		const spread = increment * this.shown;
 		let end = start + spread;
 		const thumb_angle = (start + end) / 2;
-		this.svg_thumb.update(thumb_angle);
-		this.svg_thumb.start_angle = start;
-		this.svg_thumb.end_angle = end;
+		this.thumb_map.update(thumb_angle);
+		this.thumb_map.start_angle = start;
+		this.thumb_map.end_angle = end;
 	}
 
 }

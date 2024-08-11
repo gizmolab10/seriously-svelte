@@ -56,33 +56,33 @@
 		if (!!from_center) {
 			let sendSignal = false;
 			const mouse_angle = from_center.angle;
-			const paging_state = ux.paging_ring_state;
-			const rotation_state = ux.rotation_ring_state;
-			if (!!paging_state.lastRotated_angle) {				// rotate_expand paging thumb
-				const paging_angle = convert_angle(paging_state, mouse_angle);
+			const paging = ux.paging_ring_state;
+			const rotate_expand = ux.rotation_ring_state;
+			if (!!paging.lastRotated_angle) {				// rotate_expand paging thumb
+				const paging_angle = convert_angle(paging, mouse_angle);
 				if (!!paging_angle) {
 					adjustIndex_forAngle(mouse_angle);					// send into paging arc to change index
 					sendSignal = true;
 				}
-			} else if (!!rotation_state.lastRotated_angle) {		// rotate_expand clusters
-				const rotation_angle = convert_angle(rotation_state, mouse_angle);
+			} else if (!!rotate_expand.lastRotated_angle) {		// rotate_expand clusters
+				const rotation_angle = convert_angle(rotate_expand, mouse_angle);
 				if (!!rotation_angle) {
 					$s_rotation_ring_angle = rotation_angle;
 					sendSignal = true;
 				}
-			} else if (!!rotation_state.radiusOffset) {			// resize
+			} else if (!!rotate_expand.radiusOffset) {			// resize
 				const magnitude = from_center.magnitude
 				const largest = k.cluster_inside_radius * 4;
 				const smallest = k.cluster_inside_radius * 1.5;
 				const distance = magnitude.force_between(smallest, largest);
-				const pixels = distance - $s_rotation_ring_radius - rotation_state.radiusOffset;
+				const pixels = distance - $s_rotation_ring_radius - rotate_expand.radiusOffset;
 				if (Math.abs(pixels) > 5) {
 					sendSignal = true;
 					$s_rotation_ring_radius += pixels;
 				}
 			} else if (!ux.isAny_paging_arc_active) {
-				if (rotation_state.isHovering != isHit()) {
-					rotation_state.isHovering = isHit()		;	// show highlight around ring
+				if (rotate_expand.isHovering != isHit()) {
+					rotate_expand.isHovering = isHit()		;	// show highlight around ring
 				}
 				cursor_closure();
 			}
@@ -102,7 +102,10 @@
 	}
 
 	function adjustIndex_forAngle(angle: number) {
-		console.log(`rings index ${angle.degrees_of(0)}`)
+		const f = geometry.cluster_mapFor(angle);
+		if (!!f) {
+			console.log(`rings thumb ${f}`)
+		}
 	}
 
 	function closure(mouse_state) {

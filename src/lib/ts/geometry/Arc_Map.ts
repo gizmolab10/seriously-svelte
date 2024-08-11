@@ -7,7 +7,7 @@ import { s_rotation_ring_radius } from '../state/Reactive_State';
 //	start, end & fork angles
 //	s_rotation_ring_radius
 
-export default class SVG_Arc {
+export default class Arc_Map {
 	clusters_center = Point.zero;
 	outside_ring_radius = 0;		// need for ring expansion
 	outside_arc_radius = 0;

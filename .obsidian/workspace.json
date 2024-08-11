@@ -157,6 +157,7 @@
   },
   "active": "b96ce36b21ad98e3",
   "lastOpenFiles": [
+    "src/lib/ts/geometry/Arc_Map.ts",
     "src/lib/ts/state/UX_State.ts",
     "src/lib/ts/common/Signals.ts",
     "src/lib/ts/managers/Wrappers.ts",
@@ -167,7 +168,6 @@
     "aside/2024/untitled folder",
     "src/lib/svelte/clusters/Rings.svelte",
     "node_modules/@firebase/firestore/dist/lite/packages/firestore/test/integration/api/snapshot_listener_source.test.d.ts",
-    "node_modules/@firebase/firestore/dist/lite/packages/firestore/test/unit/local/test_globals_cache.d.ts",
     "node_modules/rxdb/node_modules/firebase/README.md",
     "node_modules/safevalues/README.md",
     "node_modules/rxdb/node_modules/@firebase/analytics-compat/README.md",

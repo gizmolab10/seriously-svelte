@@ -42,7 +42,7 @@ import Mouse_State from '../state/Mouse_State';
 import Svelte_Wrapper from './Svelte_Wrapper';
 import Ancestry from '../managers/Ancestry';
 import Predicate from '../data/Predicate';
-import SVG_Arc from '../geometry/SVG_Arc';
+import Arc_Map from '../geometry/Arc_Map';
 import Grabs from '../managers/Grabs';
 import Angle from '../geometry/Angle';
 import Access from '../data/Access';
@@ -56,7 +56,7 @@ export {
 	Angle, Quadrant, Orientation,
 	Tree_Geometry, Widget_MapRect,
 	Rect, Size, Point, svgPaths, Direction,
-	SVG_Arc, Cluster_Map, Clusters_Geometry,
+	Arc_Map, Cluster_Map, Clusters_Geometry,
 	Title_State, Rotation_State, Expansion_State,
 	muuri, interact, createPopper, transparentize,
 	g, k, u, ux, w, builds, signals, Seriously_Range,
