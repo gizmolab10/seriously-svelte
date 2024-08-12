@@ -10,6 +10,7 @@ class Builds {
 
 	constructor() {
 		this.notes = {
+			107 : ['August 12, 2024', 'thumb works (funky)'],
 			106 : ['August 1, 2024', 'fixed netlify cluster mode'],
 			105 : ['July 30, 2024', 'corrected thumb position and shape of arc and thumb'],
 			104 : ['July 2, 2024', 'save and restore paging thumb position'],

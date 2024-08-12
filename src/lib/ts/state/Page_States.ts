@@ -48,6 +48,13 @@ export class Page_State {
 		return strings.join(k.generic_separator);
 	}
 
+	set_page_index_for(index: number, map: Cluster_Map) {
+		this.total = map.total;
+		this.shown = map.shown;
+		this.index = index;
+		s_page_state.set(this);
+	}
+
 	onePage_from(ancestries: Array<Ancestry>): Array<Ancestry> {
 		const canShow = Math.round(get(s_rotation_ring_radius) * 2 / k.row_height) - 5;
 		const index = Math.round(this.index);
@@ -103,8 +110,8 @@ export class Page_States {
 		this.description_for(false);
 	}
 
-	index_for(points_out: boolean, predicate: Predicate): number {
-		return this.page_state_for(points_out, predicate).index;
+	page_state_for(map: Cluster_Map) {
+		return this.page_state_forPointsOut(map.points_out, map.predicate);
 	}
 
 	page_states_for(points_out: boolean): Array<Page_State> {
@@ -121,23 +128,15 @@ export class Page_States {
 		return result;
 	}
 
-	set_page_index_for(index: number, map: Cluster_Map) {
-		const state = this.page_state_for(map.points_out, map.predicate);
-		state.total = map.total;
-		state.shown = map.shown;
-		state.index = index;
-		s_page_state.set(state);
-	}
-
-	page_state_for(points_out: boolean, predicate: Predicate): Page_State {
+	page_state_forPointsOut(points_out: boolean, predicate: Predicate) {
 		let states = this.page_states_for(points_out);
 		const index = predicate.stateIndex;
 		let state = states[index]
 		if (!state) {
 			state = Page_State.empty;
-			state.thing_id = this.thing_id;
 			state.points_out = points_out;
 			state.kind = predicate.kind;
+			state.thing_id = this.thing_id;
 			states[index] = state;
 		}
 		return state;

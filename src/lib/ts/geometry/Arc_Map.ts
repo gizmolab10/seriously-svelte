@@ -49,7 +49,7 @@ export default class Arc_Map {
 	}
 
 	get fork_slantsForward(): boolean { return new Angle(this.fork_angle).angle_slantsForward; }
-	get straddles_zero(): boolean { return this.start_angle.straddles_zero(this.end_angle); }
+	get straddles_zero(): boolean { return this.end_angle.straddles_zero(this.start_angle); }
 	get fork_orientsDown(): boolean { return new Angle(this.fork_angle).angle_orientsDown; }
 	get fork_pointsRight(): boolean { return new Angle(this.fork_angle).angle_pointsRight; }
 	get angles(): [number, number] { return [this.start_angle, this.end_angle]; }

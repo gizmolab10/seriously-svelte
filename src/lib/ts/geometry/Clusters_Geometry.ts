@@ -50,7 +50,7 @@ export default class Clusters_Geometry {
 	layout_clusterFor(ancestries: Array<Ancestry>, predicate: Predicate | null, points_out: boolean) {
 		if (!!predicate) {
 			const cluster_maps = this.cluster_maps_for(points_out);
-			const page_state = get(s_ancestry_focus)?.thing?.page_states?.page_state_for(points_out, predicate);
+			const page_state = get(s_ancestry_focus)?.thing?.page_states?.page_state_forPointsOut(points_out, predicate);
 			const onePage = page_state?.onePage_from(ancestries) ?? [];
 			const cluster_map = new Cluster_Map(ancestries.length, onePage, predicate, points_out);
 			cluster_maps[predicate.stateIndex] = cluster_map;

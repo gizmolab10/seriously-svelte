@@ -1,4 +1,5 @@
-import { Mouse_State, ElementType, Element_State, Rotation_State, Expansion_State, Clusters_Geometry } from '../common/Global_Imports';
+import { Mouse_State, Cluster_Map, ElementType, Element_State } from '../common/Global_Imports';
+import { Rotation_State, Expansion_State, Clusters_Geometry } from '../common/Global_Imports';
 import Identifiable from '../data/Identifiable';
 
 export default class UX_State {
@@ -9,6 +10,7 @@ export default class UX_State {
 	clusters_geometry!: Clusters_Geometry;
 	rotation_ring_state!: Expansion_State;
 	paging_ring_state!: Rotation_State;
+	active_thumb_cluster!: Cluster_Map;
 	rebuild_count = 0;
 
 	//////////////////////////////////////

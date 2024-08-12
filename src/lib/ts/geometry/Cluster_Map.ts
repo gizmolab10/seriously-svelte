@@ -1,6 +1,6 @@
 import { s_graphRect, s_rotation_ring_angle, s_ancestry_focus, s_rotation_ring_radius } from '../state/Reactive_State';
-import { k, u, get, Rect, Point, Angle, IDLine, Arc_Map, Quadrant } from '../common/Global_Imports';
-import { Ancestry, Predicate, transparentize, Widget_MapRect } from '../common/Global_Imports';
+import { k, u, get, Rect, Point, Angle, IDLine, Arc_Map, Quadrant, Ancestry } from '../common/Global_Imports';
+import { Predicate, Page_State, transparentize, Widget_MapRect } from '../common/Global_Imports';
 
 // for one cluster (there are three)
 //
@@ -21,7 +21,6 @@ export default class Cluster_Map  {
 	thumb_map = new Arc_Map();
 	cluster_title = k.empty;
 	color = k.color_default;
-	straddles_zero = false;
 	label_tip = Point.zero;
 	predicate: Predicate;
 	points_out: boolean;
@@ -58,21 +57,30 @@ export default class Cluster_Map  {
 	get maximum_page_index(): number { return this.total - this.shown; }
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
 	get description(): string { return `${this.predicate.kind}  ${this.titles}`; }
+	get page_indexOf_focus(): number { return this.page_stateOf_focus?.index ?? 0; }
 	get fork_radial(): Point { return Point.fromPolar(get(s_rotation_ring_radius), this.fork_angle); }
-	get page_indexOf_focus(): number { return this.focus_ancestry.thing?.page_states?.index_for(this.points_out, this.predicate) ?? 0; }
+	get page_stateOf_focus(): Page_State | null { return this.focus_ancestry.thing?.page_states?.page_state_for(this) ?? null; }
 	
 	static readonly $_INDEX_$: unique symbol;
-
-	set_page_index(index: number) {
-		this.focus_ancestry.thing?.page_states.set_page_index_for(index, this);
-		this.update_thumb_andTitle();
-	}
 	
 	adjust_pagingIndex_forMouse_angle(mouse_angle: number) {
+		const page_state = this.page_stateOf_focus;
+		if (!!page_state) {
+			const index = this.compute_pagingIndex(mouse_angle);
+			if (page_state.index != index) {
+				page_state.set_page_index_for(index, this);
+				this.update_thumb_andTitle();
+				return true;
+			}
+		}
+		return false;
+	}
+
+	compute_pagingIndex(mouse_angle: number) {
 		const quadrant_ofFork_angle = u.quadrant_ofAngle(this.fork_angle);
-		let movement_angle = mouse_angle - this.paging_map.start_angle;
+		let movement_angle = this.paging_map.start_angle - mouse_angle;
 		let spread_angle = this.paging_map.spread_angle;
-		if (this.straddles_zero) {
+		if (this.paging_map.straddles_zero) {
 			if (quadrant_ofFork_angle == Quadrant.upperRight) {
 				spread_angle = (-spread_angle).normalized_angle();
 				movement_angle = movement_angle.normalized_angle();
@@ -87,13 +95,15 @@ export default class Cluster_Map  {
 				case Quadrant.lowerLeft: spread_angle = -spread_angle; break;
 			}
 		}
+		const guess = movement_angle / spread_angle * this.maximum_page_index;
 		const fraction = this.adjust_fraction(movement_angle / spread_angle);
 		const index = fraction * this.maximum_page_index;
-		this.set_page_index(index);
+		// console.log(`${guess.toFixed(1)} ${index.toFixed(1)}`);
+		return index;
 	}
 
 	adjust_fraction(fraction: number): number {
-		if (this.straddles_zero && fraction > 3) {
+		if (this.paging_map.straddles_zero && fraction > 3) {
 			return 0;
 		} else if (fraction >= 1) {
 			return 1;
@@ -159,7 +169,6 @@ export default class Cluster_Map  {
 		this.center = get(s_graphRect).size.dividedInHalf.asPoint;
 		this.fork_angle = fork_angle;
 		this.paging_map.update(fork_angle);
-		this.straddles_zero = this.paging_map.start_angle.straddles_zero(this.paging_map.end_angle);
 	}
 
 	update_arc_angles(index: number, max: number, child_angle: number) {

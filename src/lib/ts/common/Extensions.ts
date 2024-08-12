@@ -146,12 +146,7 @@ Object.defineProperty(Number.prototype, 'add_angle_normalized', {
 
 Object.defineProperty(Number.prototype, 'straddles_zero', {
 	value: function(other: number): boolean {
-		const a = this.normalized_angle();
-		const b = other.normalized_angle();
-		const c = (Math.PI * 2) - Math.max(a, b);
-		const d = Math.min(a, b);
-		const e = Math.PI / 2;
-		return (c < e) && (d < e);
+		return this.normalized_angle() > other.normalized_angle();
 	},
 	writable: false,
 	enumerable: false,

@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { s_thing_changed, s_ancestry_focus, s_rotation_ring_angle, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/Reactive_State';
-	import { k, u, ux, w, Thing, Point, ZIndex, signals, svgPaths, dbDispatch } from '../../ts/common/Global_Imports';
-	import { transparentize, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { dbDispatch, transparentize, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { k, u, ux, w, Thing, Point, Angle, ZIndex, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Paging_Arc from './Paging_Arc.svelte';
@@ -56,12 +56,11 @@
 		if (!!from_center) {
 			let sendSignal = false;
 			const mouse_angle = from_center.angle;
-			const paging = ux.paging_ring_state;
 			const rotate_expand = ux.rotation_ring_state;
-			if (!!paging.lastRotated_angle) {				// rotate_expand paging thumb
-				const paging_angle = convert_angle(paging, mouse_angle);
-				if (!!paging_angle) {
-					adjustIndex_forAngle(mouse_angle);					// send into paging arc to change index
+			if (!!ux.active_thumb_cluster) {						// send into paging arc to change index
+				const two_degrees = Math.PI / 180;
+				if (!mouse_angle.isClocklyAlmost(ux.paging_ring_state.basis_angle, two_degrees, Angle.full) &&
+					ux.active_thumb_cluster.adjust_pagingIndex_forMouse_angle(mouse_angle)) {
 					sendSignal = true;
 				}
 			} else if (!!rotate_expand.lastRotated_angle) {		// rotate_expand clusters
@@ -101,13 +100,6 @@
 		return null;
 	}
 
-	function adjustIndex_forAngle(angle: number) {
-		const f = geometry.cluster_mapFor(angle);
-		if (!!f) {
-			console.log(`rings thumb ${f}`)
-		}
-	}
-
 	function closure(mouse_state) {
 
 		/////////////////////////////
@@ -130,18 +122,22 @@
 			const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);
 			const mouse_wentDown_angle = from_center.angle;
 			if (isInterior()) {
-				const paging = ux.paging_ring_state;
-				if (mouse_state.isDown) {
+				const map = geometry.cluster_mapFor(mouse_wentDown_angle);
+				if (!!map) {
+					const paging = ux.paging_ring_state;
+					if (mouse_state.isDown) {
+	
+						// begin paging
+	
+						ux.active_thumb_cluster = map;
+						paging.basis_angle = mouse_wentDown_angle;
+					} else if (mouse_state.isUp) {
+	
+						// end paging
 
-					// begin paging
-
-					paging.basis_angle = mouse_wentDown_angle;
-					paging.lastRotated_angle = mouse_wentDown_angle;
-				} else if (mouse_state.isUp) {
-
-					// end paging
-
-					paging.reset();
+						paging.reset();
+						ux.active_thumb_cluster = null;
+					}
 				}
 			} else if (isHit()) {
 				const ring_angle = $s_rotation_ring_angle;
