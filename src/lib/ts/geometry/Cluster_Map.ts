@@ -63,10 +63,10 @@ export default class Cluster_Map  {
 	
 	static readonly $_INDEX_$: unique symbol;
 	
-	adjust_pagingIndex_forMouse_angle(mouse_angle: number) {
+	adjust_paging_index_forMouse_angle(mouse_angle: number) {
 		const page_state = this.page_stateOf_focus;
 		if (!!page_state) {
-			const index = this.compute_pagingIndex(mouse_angle);
+			const index = this.compute_paging_index(mouse_angle);
 			if (page_state.index != index) {
 				page_state.set_page_index_for(index, this);
 				this.update_thumb_andTitle();
@@ -76,10 +76,11 @@ export default class Cluster_Map  {
 		return false;
 	}
 
-	compute_pagingIndex(mouse_angle: number) {
+	compute_paging_index(mouse_angle: number) {
 		const quadrant_ofFork_angle = u.quadrant_ofAngle(this.fork_angle);
 		let movement_angle = this.paging_map.start_angle - mouse_angle;
 		let spread_angle = this.paging_map.spread_angle;
+		// const guess = movement_angle / spread_angle * this.maximum_page_index;
 		if (this.paging_map.straddles_zero) {
 			if (quadrant_ofFork_angle == Quadrant.upperRight) {
 				spread_angle = (-spread_angle).normalized_angle();
@@ -95,7 +96,6 @@ export default class Cluster_Map  {
 				case Quadrant.lowerLeft: spread_angle = -spread_angle; break;
 			}
 		}
-		const guess = movement_angle / spread_angle * this.maximum_page_index;
 		const fraction = this.adjust_fraction(movement_angle / spread_angle);
 		const index = fraction * this.maximum_page_index;
 		// console.log(`${guess.toFixed(1)} ${index.toFixed(1)}`);

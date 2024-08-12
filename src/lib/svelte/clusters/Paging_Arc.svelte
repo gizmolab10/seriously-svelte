@@ -154,7 +154,7 @@
 					if (delta >= (Math.PI / 90)) {									// minimum two degree changes
 						console.log(`move ${mouse_angle.degrees_of(0)}`);
 						paging_arc_state.lastRotated_angle = mouse_angle;
-						cluster_map.adjust_pagingIndex_forMouse_angle(mouse_angle);
+						cluster_map.adjust_paging_index_forMouse_angle(mouse_angle);
 						console.log(`paging ${mouse_angle.degrees_of(0)}`)
 						rebuilds += 1;
 					}

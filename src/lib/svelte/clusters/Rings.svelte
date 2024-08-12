@@ -60,7 +60,7 @@
 			if (!!ux.active_thumb_cluster) {						// send into paging arc to change index
 				const two_degrees = Math.PI / 180;
 				if (!mouse_angle.isClocklyAlmost(ux.paging_ring_state.basis_angle, two_degrees, Angle.full) &&
-					ux.active_thumb_cluster.adjust_pagingIndex_forMouse_angle(mouse_angle)) {
+					ux.active_thumb_cluster.adjust_paging_index_forMouse_angle(mouse_angle)) {
 					sendSignal = true;
 				}
 			} else if (!!rotate_expand.lastRotated_angle) {		// rotate_expand clusters
