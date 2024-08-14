@@ -1,7 +1,8 @@
-import { Rect, Point, Ancestry, Page_State, Title_State, Alteration_State } from '../common/Global_Imports';
+import { Rect, Point, Ancestry, Page_State, Title_State, Svelte_Wrapper, Alteration_State } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
 export const s_altering				 = writable<Alteration_State | null>();
+export const s_active_wrapper		 = writable<Svelte_Wrapper | null>();
 export const s_title_editing		 = writable<Title_State | null>();
 export const s_ancestry_editingTools = writable<Ancestry | null>();
 export const s_ancestries_expanded	 = writable<Array<Ancestry>>();

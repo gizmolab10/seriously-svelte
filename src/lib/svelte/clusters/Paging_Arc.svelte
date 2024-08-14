@@ -186,9 +186,10 @@
 			detectHit_closure={thumb_isHit}>
 			<svg class='svg-paging-arc' viewBox={viewBox}>
 				<path stroke={arc_color} fill=transparent d={cluster_map.paging_map.arc_svgPath}/>
-				{#key rebuilds}
+				<path stroke='green' fill=transparent d={cluster_map.paging_map.debug_svgPath}/>
+				{#if cluster_map.isPaging}
 					<path fill={thumb_color} d={cluster_map.thumb_map.arc_svgPath}/>
-				{/key}
+				{/if}
 			</svg>
 		</Mouse_Responder>
 	</div>

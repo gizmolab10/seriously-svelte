@@ -79,9 +79,8 @@ export default class Cluster_Map  {
 	compute_paging_index(mouse_angle: number): number {
 		let movement_angle = (this.paging_map.start_angle - mouse_angle).normalized_angle();
 		let spread_angle = (-this.paging_map.spread_angle).normalized_angle();
-		const fraction = movement_angle / spread_angle;
-		console.log(`${Math.round(fraction * 100)} %`)
-		return fraction < 0 ? 0 : fraction > 1 ? 1 : fraction * this.maximum_page_index;
+		const fraction = (movement_angle / spread_angle).force_between(0, 1);
+		return fraction * this.maximum_page_index;
 	}
 	
 	static readonly $_TITLE_$: unique symbol;
