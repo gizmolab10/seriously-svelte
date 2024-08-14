@@ -1,8 +1,8 @@
 <script lang='ts'>
-  import { k, Point, debug, ZIndex, transparentize } from '../../ts/common/Global_Imports'
+  import { k, Point, debug, ZIndex, opacitize } from '../../ts/common/Global_Imports'
   export let color_background = debug.lines ? 'transparent' : k.color_background;
   export let zindex = ZIndex.dots;
-  export let opacity = 1;
+  export let opacity = 0;
   export let thickness;
   export let radius;
   export let center;
@@ -12,7 +12,7 @@
 
   $: {
     diameter = radius * 2;
-    transparentColor = transparentize(color_background, opacity);
+    transparentColor = u.opacitize(color_background, opacity);
   }
 
 </script>

@@ -9,8 +9,8 @@ export default class UX_State {
 	mouse_state_byName: { [name: string]: Mouse_State } = {};
 	clusters_geometry!: Clusters_Geometry;
 	rotation_ring_state!: Expansion_State;
-	paging_ring_state!: Rotation_State;
 	active_thumb_cluster!: Cluster_Map;
+	paging_ring_state!: Rotation_State;
 	rebuild_count = 0;
 
 	//////////////////////////////////////

@@ -8,7 +8,7 @@
 	export let forward = true;
 	export let ancestry;
 	let padding = `0px 0px 0px 8.5px`;	// 8.5 over to make room for drag dot
-	let thingTitle = ancestry?.thing?.title ?? k.empty;
+	let bound_title = ancestry?.thing?.title ?? k.empty;
     let color = ancestry.thing?.color;
 	let titleWrapper: Svelte_Wrapper;
 	let originalTitle = k.empty;
@@ -17,16 +17,18 @@
 	let isEditing = false;
 	let titleWidth = 0;
 	let clickCount = 0;
+    let thing!: Thing;
 	let ghost = null;
 	let input = null;
-    let thing;
 
-	var hasChanges = () => { return originalTitle != thingTitle; };
+	var hasChanges = () => { return originalTitle != bound_title; };
 	function handle_mouse_up() { clearTimeout(mouse_click_timer); }
 
 	function handle_input(event) {
-		thing?.title = event.target.value;
-		thingTitle = thing?.title ?? k.empty;
+		const title = event.target.value;
+		if (!!thing && !!title) {
+			thing.title = bound_title = title;
+		}
 	};
 	
 	onMount(() => {
@@ -80,7 +82,7 @@
 		if (!!input && !!ghost) { // ghost only exists to provide its width (in pixels)
 			titleWidth = ghost.scrollWidth - 5;
 			input.style.width = `${titleWidth}px`;	// apply its width to the input element
-			// debug.log_edit(`WIDTH: ${titleWidth} ${thingTitle}`);
+			// debug.log_edit(`WIDTH: ${titleWidth} ${bound_title}`);
 		}
 	}
 
@@ -94,7 +96,7 @@
 
 	function handleBlur(event) {
 		stopAndClearEditing();
-		debug.log_edit(`BLUR ${thingTitle}`);
+		debug.log_edit(`BLUR ${bound_title}`);
 		updateInputWidth();
 	}
 
@@ -164,17 +166,17 @@
 		const titleState_isEditing = !!ancestry && !!titleState && titleState.editing && ancestry.matchesAncestry(titleState.editing);
 		const isBulkAlias = !!thing && thing.isBulkAlias;
 		if (k.allow_TitleEditing && !isBulkAlias) {
-			if (!!ancestry && ancestry.isStoppingEdit ?? false) {
-				debug.log_edit(`STOPPING ${thingTitle}`);
+			if (!!ancestry && (ancestry.isStoppingEdit ?? false)) {
+				debug.log_edit(`STOPPING ${bound_title}`);
 				$s_title_editing = null;
 				input?.blur();
 			} else if (isEditing != titleState_isEditing) {
 				if (!isEditing) {
 					input?.focus();
-					debug.log_edit(`RANGE ${thingTitle}`);
+					debug.log_edit(`RANGE ${bound_title}`);
 					applyRange();
 				} else {
-					debug.log_edit(`STOP ${thingTitle}`);
+					debug.log_edit(`STOP ${bound_title}`);
 					input?.blur();
 				}
 				isEditing = !isEditing;
@@ -247,7 +249,7 @@
 			font-family: {fontFamily};
 			white-space: pre; /* Preserve whitespace to accurately measure the width */
 	'>
-		{thingTitle}
+		{bound_title}
 	</span>
 	<input
 		type='text'
@@ -256,7 +258,7 @@
 		bind:this={input}
 		on:blur={handleBlur}
 		on:input={handle_input}
-		bind:value={thingTitle}
+		bind:value={bound_title}
 		on:cut={handle_cut_paste}
 		on:mouseup={handle_mouse_up}
 		on:keydown={handle_key_down}

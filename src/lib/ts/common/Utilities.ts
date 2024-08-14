@@ -5,6 +5,7 @@ import Identifiable from '../data/Identifiable';
 import { Quadrant } from '../geometry/Angle';
 import Ancestry from '../managers/Ancestry';
 import { IDBrowser } from './Enumerations';
+import { transparentize } from 'color2k';
 import Angle from '../geometry/Angle';
 import { get } from 'svelte/store';
 import { k } from './Constants';
@@ -15,6 +16,7 @@ class Utilities {
 	pointFor_mouseEvent(e: MouseEvent) { return new Point(e.clientX, e.clientY); }
 	concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return [...a, ...b]; }
 	quadrant_ofAngle(angle: number): Quadrant { return new Angle(angle).quadrant_ofAngle; }
+	opacitize(color: string, amount: number): string { return transparentize(color, 1 - amount); }
 	location_ofMouseEvent(event: MouseEvent) { return new Point(event.clientX, event.clientY); }
 	strip_invalid(array: Array<any>): Array<any> { return this.strip_identifiableDuplicates(this.strip_falsies(array)); }
 	sort_byOrder(array: Array<Ancestry>) { return array.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }

@@ -11,6 +11,6 @@ export default class Expansion_State extends Rotation_State {
 	// moves with respect to the center (grows the rotation)
 
 	reset() { super.reset(); this.radiusOffset = null; }
-	get isActive(): boolean { return !!this.basis_angle || !!this.radiusOffset; }
+	get isActive(): boolean { return !!super.isActive || !!this.radiusOffset; }
 
 }

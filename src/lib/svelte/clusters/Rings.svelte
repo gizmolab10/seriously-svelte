@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { s_thing_changed, s_ancestry_focus, s_rotation_ring_angle, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import { s_graphRect, s_user_graphOffset, s_mouse_location, s_mouse_up_count } from '../../ts/state/Reactive_State';
-	import { dbDispatch, transparentize, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { dbDispatch, opacitize, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { k, u, ux, w, Thing, Point, Angle, ZIndex, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
@@ -219,8 +219,8 @@
 			<svg
 				class= 'svg-rotation-ring'
 				viewBox={rotation_viewBox}
-				fill={transparentize(color, ux.rotation_ring_state.fill_transparency)}
-				stroke={transparentize(color, ux.rotation_ring_state.stroke_transparency)}>
+				fill={u.opacitize(color, ux.rotation_ring_state.fill_opacity)}
+				stroke={u.opacitize(color, ux.rotation_ring_state.stroke_opacity)}>
 				<path d={svg_ringPath}>
 			</svg>
 		</Mouse_Responder>

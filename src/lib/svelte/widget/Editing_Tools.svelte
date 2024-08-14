@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, ux, Rect, Size, Point, Mouse_State, IDTool, ZIndex, onMount, signals, svgPaths, Direction, dbDispatch } from '../../ts/common/Global_Imports';
-	import { ElementType, Element_State, Alteration_State, AlterationType, Svelte_Wrapper, transparentize } from '../../ts/common/Global_Imports';
+	import { ElementType, Element_State, Alteration_State, AlterationType, Svelte_Wrapper, opacitize } from '../../ts/common/Global_Imports';
 	import { s_ancestry_editingTools, s_cluster_mode } from '../../ts/state/Reactive_State';
 	import { s_altering, s_graphRect, s_show_details } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
@@ -182,12 +182,12 @@
 			z-index: {ZIndex.tools}'>
 			<Transparency_Circle
 				thickness=1
-				opacity=0.15
+				opacity=0.85
 				color={color}
 				zindex={ZIndex.dots}
 				radius={editingToolsRadius}
 				center={getC(IDTool.editingTools)}
-				color_background={transparentize(k.color_background, 0.05)}/>
+				color_background={u.opacitize(k.color_background, 0.95)}/>
 			{#if confirmingDelete}
 				{#if isHovering_byID[IDTool.delete_confirm]}
 					<svg class='delete-confirm' style='

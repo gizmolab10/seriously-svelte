@@ -1,4 +1,4 @@
-import { k, ux, Ancestry, ElementType, transparentize } from '../common/Global_Imports';
+import { k, u, ux, Ancestry, ElementType } from '../common/Global_Imports';
 import Identifiable from '../data/Identifiable';
 
 export default class Element_State {
@@ -48,7 +48,7 @@ export default class Element_State {
 		let color = this.ancestry.thing?.color;
 		if (color) {
 			if (ux.isAny_rotation_active) {
-				color = transparentize(color, 0.8);
+				color = u.opacitize(color, 0.2);
 			}
 			if (this.ancestry.isEditing) {
 				return `dashed ${color} 1px`;

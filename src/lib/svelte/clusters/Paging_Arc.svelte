@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { s_mouse_location, s_mouse_up_count, s_ancestry_focus, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import { g, k, u, ux, Rect, Size, Point, ZIndex, onMount, Cluster_Map, Orientation } from '../../ts/common/Global_Imports';
-	import { ElementType, Svelte_Wrapper, transparentize, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { ElementType, Svelte_Wrapper, opacitize, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { ArcPart } from '../../ts/common/Enumerations';
 	import Identifiable from '../../ts/data/Identifiable';
@@ -20,20 +20,23 @@
 	const thumb_name = `thumb-${name}`;
 	let pagingArc;
 	let rebuilds = 0;
+	let arc_color = color;
+	let thumb_color = color;
 	let label_title = k.empty;
 	let title_origin = Point.zero;
 	let pagingArcWrapper!: Svelte_Wrapper;
 	let mouse_up_count = $s_mouse_up_count;
 	let origin = center.offsetBy(Point.square(-radius));
-	let transparency_multiplier = (ux.rotation_ring_state.isHighlighted ? 0.9 : 0.8);	// dim arcs when rotation ring highlighted: hover/rotate/expand
-	let arc_color = transparentize(color, paging_ring_state.stroke_transparency * transparency_multiplier);
-	let thumb_color = transparentize(color, paging_arc_state.stroke_transparency * transparency_multiplier);
 
 	// draws the [paging] arc and thumb slider
 	// uses paging_map for svg, which also has total and shown
 	//
 	// drawn by paging ring, which is drawn by clusters graph
 	// CHANGE: drawn by clusters (which is drawn by clusters graph)?
+
+	onMount(() => {
+		update_colors();
+	})
 
 	$: {
 		if (!!pagingArc) {
@@ -56,8 +59,9 @@
 
 	function handle_mouse_state(mouse_state: Mouse_State): boolean { return thumb_isHit(); }
 
-	function update_thumb_color() {
-		thumb_color = transparentize(color, paging_arc_state.stroke_transparency * 0.8);
+	function update_colors() {
+		thumb_color = u.opacitize(color, paging_arc_state.stroke_opacity);
+		arc_color = u.opacitize(color, paging_ring_state.stroke_opacity * (ux.rotation_ring_state.isActive ? 0.6 : 1));
 	}
 
 	function computed_mouse_angle(): number | null {
@@ -116,12 +120,12 @@
 				// hover
 
 				paging_arc_state.isHovering = thumb_isHit();	// show highlight around ring
-				update_thumb_color();
+				update_colors();
 			} else if (mouse_state.isUp) {
 	
 				// end rotate
 	
-				update_thumb_color();
+				update_colors();
 			} else if (mouse_state.isDown) {
 	
 				// begin rotate
@@ -131,7 +135,7 @@
 					console.log(`down ${mouse_angle.degrees_of(0)}`);
 					paging_arc_state.lastRotated_angle = mouse_angle;
 					paging_arc_state.basis_angle = mouse_angle;
-					update_thumb_color();
+					update_colors();
 				}			
 			}
 			cursor_closure();
@@ -180,11 +184,9 @@
 			detectHit_closure={thumb_isHit}>
 			<svg class='svg-paging-arc' viewBox={viewBox}>
 				<path stroke={arc_color} fill=transparent d={cluster_map.paging_map.arc_svgPath}/>
-				{#if (cluster_map.isPaging)}
-					{#key rebuilds}
-						<path fill={thumb_color} d={cluster_map.thumb_map.arc_svgPath}/>
-					{/key}
-				{/if}
+				{#key rebuilds}
+					<path fill={thumb_color} d={cluster_map.thumb_map.arc_svgPath}/>
+				{/key}
 			</svg>
 		</Mouse_Responder>
 	</div>

@@ -1,6 +1,6 @@
 import { s_graphRect, s_rotation_ring_angle, s_ancestry_focus, s_rotation_ring_radius } from '../state/Reactive_State';
 import { k, u, get, Rect, Point, Angle, IDLine, Arc_Map, Quadrant, Ancestry } from '../common/Global_Imports';
-import { Predicate, Page_State, transparentize, Widget_MapRect } from '../common/Global_Imports';
+import { Predicate, Page_State, opacitize, Widget_MapRect } from '../common/Global_Imports';
 
 // for one cluster (there are three)
 //
@@ -80,7 +80,7 @@ export default class Cluster_Map  {
 		const quadrant_ofFork_angle = u.quadrant_ofAngle(this.fork_angle);
 		let movement_angle = this.paging_map.start_angle - mouse_angle;
 		let spread_angle = this.paging_map.spread_angle;
-		// const guess = movement_angle / spread_angle * this.maximum_page_index;
+		const guess = movement_angle / spread_angle * this.maximum_page_index;
 		if (this.paging_map.straddles_zero) {
 			if (quadrant_ofFork_angle == Quadrant.upperRight) {
 				spread_angle = (-spread_angle).normalized_angle();
@@ -98,7 +98,7 @@ export default class Cluster_Map  {
 		}
 		const fraction = this.adjust_fraction(movement_angle / spread_angle);
 		const index = fraction * this.maximum_page_index;
-		// console.log(`${guess.toFixed(1)} ${index.toFixed(1)}`);
+		console.log(`${mouse_angle.degrees_of(0)} ${movement_angle.degrees_of(0)} ${guess.toFixed(1)} ${index.toFixed(1)}`);
 		return index;
 	}
 
@@ -131,7 +131,7 @@ export default class Cluster_Map  {
 		const index = Math.round(this.page_indexOf_focus);
 		let shortened = this.predicate?.kind.unCamelCase().lastWord() ?? k.empty;
 		if (this.isPaging) {
-			quantity = `(${index + 1} - ${index + this.shown} of) ${quantity}`;
+			quantity = `${index + 1}-${index + this.shown} of ${quantity}`;
 		}
 		if (!this.predicate?.isBidirectional) {
 			shortened = this.points_out ? shortened : 'contained by';
@@ -158,7 +158,7 @@ export default class Cluster_Map  {
 	update_all() {
 		this.shown = this.ancestries.length;
 		this.isPaging = this.shown != this.total;
-		this.color = transparentize(this.focus_ancestry.thing?.color ?? this.color, 0.8);
+		this.color = u.opacitize(this.focus_ancestry.thing?.color ?? this.color, 0.2);
 		this.update_fork();
 		this.update_children_angles();
 		this.update_forLabels();

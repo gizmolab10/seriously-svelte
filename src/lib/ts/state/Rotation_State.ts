@@ -9,13 +9,13 @@ export default class Rotation_State {
 
 	// track where the user 
 	// a) rotates the thumb button (scrolls the page)
-	// b) rotates the rotation_ring (in subclass: Expansion_State)
+	// b) rotates the rotation_ring (via subclass: Expansion_State)
 	
 	get isActive(): boolean { return !!this.basis_angle; }
 	reset() { this.basis_angle = this.lastRotated_angle = null; }
-	get stroke_transparency(): number { return this.isHighlighted ? 0.8 : 1; }
+	get stroke_opacity(): number { return this.isHighlighted ? 0.2 : 0.1; }
+	get fill_opacity(): number { return this.isHighlighted ? 0.03 : 0.02; }
 	get isHighlighted(): boolean { return (this.isHovering || this.isActive); }
-	get fill_transparency(): number { return this.isHighlighted ? 0.97 : 0.98; }
 	get cursor(): string { return this.isActive ? 'move' : this.isHovering ? 'pointer' : k.cursor_default; }
 
 }
