@@ -1,6 +1,6 @@
 <script lang='ts'>
+	import { k, u, ux, w, Thing, Point, Angle, debug, ZIndex, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import { s_graphRect, s_mouse_location, s_active_wrapper, s_mouse_up_count } from '../../ts/state/Reactive_State';
-	import { k, u, ux, w, Thing, Point, Angle, ZIndex, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import { dbDispatch, opacitize, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { s_thing_changed, s_ancestry_focus, s_user_graphOffset } from '../../ts/state/Reactive_State';
 	import { s_rotation_ring_angle, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
@@ -217,10 +217,13 @@
 			cursor={ux.rotation_ring_state.cursor}>
 			<svg
 				class= 'svg-rotation-ring'
-				viewBox={rotation_viewBox}
-				fill={u.opacitize(color, ux.rotation_ring_state.fill_opacity)}
-				stroke={u.opacitize(color, ux.rotation_ring_state.stroke_opacity)}>
-				<path d={svg_ringPath}>
+				viewBox={rotation_viewBox}>
+				{#if debug.reticule}
+					<path stroke='green' fill=transparent d={svgPaths.t_cross($s_rotation_ring_radius * 2, 0)}/>
+				{/if}
+				<path d={svg_ringPath}
+					fill={u.opacitize(color, ux.rotation_ring_state.fill_opacity)}
+					stroke={u.opacitize(color, ux.rotation_ring_state.stroke_opacity)}/>
 			</svg>
 		</Mouse_Responder>
 	</div>

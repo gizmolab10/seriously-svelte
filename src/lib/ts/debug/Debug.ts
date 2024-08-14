@@ -1,15 +1,16 @@
 import { k } from '../../ts/common/Constants';
 
 export enum DebugFlag {
-	remote = 'remote',  // interactions with remote
-	things = 'things',  // enable Things.debugLog
-	colors = 'colors',  // indicate some coordinates
-	graph  = 'graph',   // log size of graph area
-	order  = 'order',   // observe relocating
-	error  = 'error',   // async errors
-	lines  = 'lines',   // alignment dots for lines and widgets
-	edit   = 'edit',	// editing state machine
-	beat   = 'beat',	// heartbeat
+	reticule = 'reticule',	// show reticule in clusters
+	remote	 = 'remote',	// interactions with remote
+	things	 = 'things',	// enable Things.debugLog
+	colors	 = 'colors',	// indicate some coordinates
+	graph	 = 'graph',		// log size of graph area
+	order	 = 'order',		// observe relocating
+	error	 = 'error',		// async errors
+	lines	 = 'lines',		// alignment dots for lines and widgets
+	edit	 = 'edit',		// editing state machine
+	beat	 = 'beat',		// heartbeat
 }
 
 export class Debug {
@@ -22,6 +23,7 @@ export class Debug {
 	log_remote(message: string) { this.log_maybe(DebugFlag.remote, message) }
 	log_maybe(option: DebugFlag, message: string) { if (this.hasOption(option)) { console.log(option.toUpperCase(), message); }}
 	log_target(target: any, key: string) { console.log(`Method \'${key}\' is called on class \'${target.constructor.name}\'`); }
+	get reticule(): boolean { return this.hasOption(DebugFlag.reticule); }
 	get colors(): boolean { return this.hasOption(DebugFlag.colors); }
 	get lines(): boolean { return this.hasOption(DebugFlag.lines); }
 
@@ -32,6 +34,7 @@ export class Debug {
 			const flags = debug.split(',');
 			for (const option of flags) {
 				switch (option) {
+					case 'reticule': this.flags.push(DebugFlag.reticule); break;
 					case 'remote': this.flags.push(DebugFlag.remote); break;
 					case 'things': this.flags.push(DebugFlag.things); break;
 					case 'colors': this.flags.push(DebugFlag.colors); break;

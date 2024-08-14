@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { s_mouse_location, s_mouse_up_count, s_ancestry_focus, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
-	import { g, k, u, ux, Rect, Size, Point, ZIndex, onMount, Cluster_Map, Orientation } from '../../ts/common/Global_Imports';
-	import { ElementType, Svelte_Wrapper, opacitize, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { opacitize, ElementType, Orientation, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, Rect, Size, Point, debug, ZIndex, onMount, Cluster_Map } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { ArcPart } from '../../ts/common/Enumerations';
 	import Identifiable from '../../ts/data/Identifiable';
@@ -186,7 +186,9 @@
 			detectHit_closure={thumb_isHit}>
 			<svg class='svg-paging-arc' viewBox={viewBox}>
 				<path stroke={arc_color} fill=transparent d={cluster_map.paging_map.arc_svgPath}/>
-				<path stroke='green' fill=transparent d={cluster_map.paging_map.debug_svgPath}/>
+				{#if debug.reticule}
+					<path stroke='green' fill=transparent d={cluster_map.paging_map.debug_svgPath}/>
+				{/if}
 				{#if cluster_map.isPaging}
 					<path fill={thumb_color} d={cluster_map.thumb_map.arc_svgPath}/>
 				{/if}

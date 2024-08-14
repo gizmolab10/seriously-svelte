@@ -113,7 +113,6 @@ export default class Arc_Map {
 		const small = this.outside_ring_radius;
 		const big = small + k.ring_thickness;
 		const paths = [
-			svgPaths.t_cross(small * 2, 0),
 			// this.tinyDot_svgPath(this.outside_arc_radius, this.start_angle),
 			svgPaths.line_atAngle(this.clusters_center, big, this.fork_angle),
 		];
