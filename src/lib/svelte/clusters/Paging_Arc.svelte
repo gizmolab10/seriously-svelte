@@ -14,9 +14,8 @@
 	const breadth = radius * 2;
 	const viewBox=`${-offset} ${-offset} ${breadth} ${breadth}`;
 	const name = ux.name_from($s_ancestry_focus, ElementType.arc, cluster_map?.cluster_title ?? 'not mapped');
+	const paging_rotation_state = ux.rotationState_forName(name);
 	const thumb_size = (cluster_map?.paging_radius ?? 0) * 2;
-	const paging_arc_state = ux.rotationState_forName(name);
-	const paging_ring_state = ux.paging_ring_state;
 	const thumb_name = `thumb-${name}`;
 	let pagingArc;
 	let rebuilds = 0;
@@ -47,7 +46,7 @@
 	$: {
 		if (mouse_up_count != $s_mouse_up_count) {
 			mouse_up_count = $s_mouse_up_count;
-			paging_arc_state.reset();
+			paging_rotation_state.reset();
 			layout_title();
 		}
 	}
@@ -60,8 +59,11 @@
 	function handle_mouse_state(mouse_state: Mouse_State): boolean { return thumb_isHit(); }
 
 	function update_colors() {
-		thumb_color = u.opacitize(color, paging_arc_state.stroke_opacity);
-		arc_color = u.opacitize(color, paging_ring_state.stroke_opacity * (ux.rotation_ring_state.isActive ? 0.6 : 1));
+		const p = paging_rotation_state;
+		const multiplier = ux.rotation_ring_state.isActive ? 0.6 : 1;
+		const arc_opacity = p.isActive ? 0.5 : p.isHovering ? 0.4 : 0.2;
+		thumb_color = u.opacitize(color, arc_opacity * multiplier);
+		arc_color = u.opacitize(color, ux.paging_ring_state.stroke_opacity * multiplier);
 	}
 
 	function computed_mouse_angle(): number | null {
@@ -119,7 +121,7 @@
 	
 				// hover
 
-				paging_arc_state.isHovering = thumb_isHit();	// show highlight around ring
+				paging_rotation_state.isHovering = thumb_isHit();	// show highlight around ring
 				update_colors();
 			} else if (mouse_state.isUp) {
 	
@@ -133,8 +135,8 @@
 				const mouse_angle = computed_mouse_angle();
 				if (!!mouse_angle) {
 					console.log(`down ${mouse_angle.degrees_of(0)}`);
-					paging_arc_state.lastRotated_angle = mouse_angle;
-					paging_arc_state.basis_angle = mouse_angle;
+					paging_rotation_state.lastRotated_angle = mouse_angle;
+					paging_rotation_state.basis_angle = mouse_angle;
 					update_colors();
 				}			
 			}
@@ -148,16 +150,16 @@
 		// detect movement & adjust state //
 		////////////////////////////////////
 
-		if (!!paging_arc_state.lastRotated_angle) {									// rotate
+		if (!!paging_rotation_state.lastRotated_angle) {									// rotate
 			console.log(`paging`);
 			cursor_closure();
 			if (!!cluster_map) {
 				const mouse_angle = computed_mouse_angle();
 				if (!!mouse_angle) {
-					const delta = Math.abs(mouse_angle - paging_arc_state.lastRotated_angle);	// subtract to find difference
+					const delta = Math.abs(mouse_angle - paging_rotation_state.lastRotated_angle);	// subtract to find difference
 					if (delta >= (Math.PI / 90)) {									// minimum two degree changes
 						console.log(`move ${mouse_angle.degrees_of(0)}`);
-						paging_arc_state.lastRotated_angle = mouse_angle;
+						paging_rotation_state.lastRotated_angle = mouse_angle;
 						cluster_map.adjust_paging_index_forMouse_angle(mouse_angle);
 						console.log(`paging ${mouse_angle.degrees_of(0)}`)
 						rebuilds += 1;

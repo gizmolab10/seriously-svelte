@@ -57,10 +57,8 @@
 			let sendSignal = false;
 			const mouse_angle = from_center.angle;
 			const rotate_expand = ux.rotation_ring_state;
-			if (!!ux.active_thumb_cluster) {						// send into paging arc to change index
-				const two_degrees = Math.PI / 180;
-				if (!mouse_angle.isClocklyAlmost(ux.paging_ring_state.basis_angle, two_degrees, Angle.full) &&
-					ux.active_thumb_cluster.adjust_paging_index_forMouse_angle(mouse_angle)) {
+			if (!!ux.active_thumb_cluster) {					// send into paging arc to change index
+				if (ux.active_thumb_cluster.adjust_paging_index_forMouse_angle(mouse_angle)) {
 					sendSignal = true;
 				}
 			} else if (!!rotate_expand.lastRotated_angle) {		// rotate_expand clusters
@@ -87,7 +85,7 @@
 			}
 			if (sendSignal) {
 				rebuilds += 1;
-				signals.signal_relayoutWidgets_fromFocus();				// destroys this component (variables wiped)
+				signals.signal_relayoutWidgets_fromFocus();		// destroys this component (properties are in ux: rotation_ring_state && active_thumb_cluster)
 			}
 		}
 	}
@@ -124,19 +122,18 @@
 			if (isInterior()) {
 				const map = geometry.cluster_mapFor(mouse_wentDown_angle);
 				if (!!map) {
-					const paging = ux.paging_ring_state;
 					if (mouse_state.isDown) {
 	
 						// begin paging
 	
 						ux.active_thumb_cluster = map;
-						paging.basis_angle = mouse_wentDown_angle;
+						ux.paging_ring_state.basis_angle = mouse_wentDown_angle;
 					} else if (mouse_state.isUp) {
 	
 						// end paging
 
-						paging.reset();
 						ux.active_thumb_cluster = null;
+						ux.paging_ring_state.reset();
 					}
 				}
 			} else if (isHit()) {

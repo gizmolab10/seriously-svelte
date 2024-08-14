@@ -1,6 +1,6 @@
 import { s_graphRect, s_rotation_ring_angle, s_ancestry_focus, s_rotation_ring_radius } from '../state/Reactive_State';
-import { k, u, get, Rect, Point, Angle, IDLine, Arc_Map, Quadrant, Ancestry } from '../common/Global_Imports';
-import { Predicate, Page_State, opacitize, Widget_MapRect } from '../common/Global_Imports';
+import { k, u, get, Rect, Point, Angle, IDLine, Arc_Map, Quadrant } from '../common/Global_Imports';
+import { Ancestry, Predicate, Page_State, Widget_MapRect } from '../common/Global_Imports';
 
 // for one cluster (there are three)
 //
@@ -45,8 +45,8 @@ export default class Cluster_Map  {
 
 	update_forLabels() {
 		const radius = get(s_rotation_ring_radius) - k.ring_thickness;
-		const semi_major = radius * 0.8;
-		const semi_minor = radius * 0.6;
+		const semi_major = radius * 0.95;
+		const semi_minor = radius * 0.7;
 		const ellipse_axes = new Point(semi_minor, semi_major);
 		this.label_tip = ellipse_axes.ellipse_coordiates_forAngle(-this.fork_angle);
 		this.update_thumb_andTitle();
@@ -67,7 +67,7 @@ export default class Cluster_Map  {
 		const page_state = this.page_stateOf_focus;
 		if (!!page_state) {
 			const index = this.compute_paging_index(mouse_angle);
-			if (page_state.index != index) {
+			if (!!index && index != page_state.index) {
 				page_state.set_page_index_for(index, this);
 				this.update_thumb_andTitle();
 				return true;
@@ -76,46 +76,12 @@ export default class Cluster_Map  {
 		return false;
 	}
 
-	compute_paging_index(mouse_angle: number) {
-		const quadrant_ofFork_angle = u.quadrant_ofAngle(this.fork_angle);
-		let movement_angle = this.paging_map.start_angle - mouse_angle;
-		let spread_angle = this.paging_map.spread_angle;
-		const guess = movement_angle / spread_angle * this.maximum_page_index;
-		if (this.paging_map.straddles_zero) {
-			if (quadrant_ofFork_angle == Quadrant.upperRight) {
-				spread_angle = (-spread_angle).normalized_angle();
-				movement_angle = movement_angle.normalized_angle();
-			} else {
-				movement_angle = mouse_angle - this.paging_map.end_angle;
-			}
-		} else {
-			switch (quadrant_ofFork_angle) {
-				case Quadrant.lowerRight:
-				case Quadrant.upperLeft: movement_angle = mouse_angle - this.paging_map.end_angle; break;
-				case Quadrant.upperRight: movement_angle = -movement_angle; break;
-				case Quadrant.lowerLeft: spread_angle = -spread_angle; break;
-			}
-		}
-		const fraction = this.adjust_fraction(movement_angle / spread_angle);
-		const index = fraction * this.maximum_page_index;
-		console.log(`${mouse_angle.degrees_of(0)} ${movement_angle.degrees_of(0)} ${guess.toFixed(1)} ${index.toFixed(1)}`);
-		return index;
-	}
-
-	adjust_fraction(fraction: number): number {
-		if (this.paging_map.straddles_zero && fraction > 3) {
-			return 0;
-		} else if (fraction >= 1) {
-			return 1;
-		} else if (fraction <= 0) {
-			if (fraction < -3) {
-				return 1;
-			}
-			return 0;
-		} else {
-			const near = 1 / (this.total * 2);			// within half an increment
-			return fraction.bump_towards(0, 1, near);	// if near 0 make it 0, same with 1
-		}
+	compute_paging_index(mouse_angle: number): number {
+		let movement_angle = (this.paging_map.start_angle - mouse_angle).normalized_angle();
+		let spread_angle = (-this.paging_map.spread_angle).normalized_angle();
+		const fraction = movement_angle / spread_angle;
+		console.log(`${Math.round(fraction * 100)} %`)
+		return fraction < 0 ? 0 : fraction > 1 ? 1 : fraction * this.maximum_page_index;
 	}
 	
 	static readonly $_TITLE_$: unique symbol;
