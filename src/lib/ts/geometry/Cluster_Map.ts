@@ -77,7 +77,7 @@ export default class Cluster_Map  {
 	}
 
 	compute_paging_index(mouse_angle: number): number {
-		let movement_angle = (this.paging_map.start_angle - mouse_angle).normalized_angle();
+		let movement_angle = (this.paging_map.start_angle - mouse_angle);
 		let spread_angle = (-this.paging_map.spread_angle).normalized_angle();
 		const fraction = (movement_angle / spread_angle).force_between(0, 1);
 		return fraction * this.maximum_page_index;
@@ -214,7 +214,7 @@ export default class Cluster_Map  {
 		const otherInverter = (hasNegative_spread == this.arc_straddles_nadir) ? -1 : 1;
 		const arc_start = this.paging_map.start_angle * otherInverter;
 		const increment = arc_spread / this.total * inverter;
-		const index = Math.round(this.page_indexOf_focus);
+		const index = this.page_indexOf_focus;
 		let start = arc_start + increment * index;
 		const spread = increment * this.shown;
 		let end = start + spread;
