@@ -1,4 +1,4 @@
-import { k, get, Predicate, Ancestry, Cluster_Map } from '../common/Global_Imports';
+import { k, get, Predicate, Ancestry, Cluster_Map, persistLocal } from '../common/Global_Imports';
 import { s_page_state, s_rotation_ring_radius } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
 
@@ -114,7 +114,9 @@ export class Page_States {
 	static assign_page_states_toThing(thing_id: string, page_states: Array<Page_State>) {
 		if (thing_id != k.empty && page_states.length > 0) {		
 			const thing = h.thing_forHID(thing_id.hash());
-			if (!!thing) {
+			if (!thing) {
+				persistLocal.delete_page_states(page_states);	// remove from persistence
+			} else {
 				thing.page_states = new Page_States(thing_id, page_states);
 			}
 		}

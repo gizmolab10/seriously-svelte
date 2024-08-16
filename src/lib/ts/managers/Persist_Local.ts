@@ -224,11 +224,6 @@ class Persist_Local {
 		this.reactivity_subscribe()
 	}
 
-	restoreAll_pageStates() {
-		const descriptions = persistLocal.read_allSubkeys_forKey(IDPersistant.page_states) ?? k.empty;
-		Page_States.restoreAll_pageStates_from(descriptions);
-	}
-
 	restore_grabbed_andExpanded(force: boolean = false) {
 		if (!this.ancestriesRestored || force) {
 			this.ancestriesRestored = true;
@@ -260,6 +255,17 @@ class Persist_Local {
 		s_ancestry_focus.subscribe((ancestry: Ancestry) => {
 			this.writeDB_key(IDPersistant.focus, !ancestry ? null : ancestry.id);
 		});
+	}
+
+	restoreAll_pageStates() {
+		const descriptions = this.read_allSubkeys_forKey(IDPersistant.page_states) ?? k.empty;
+		Page_States.restoreAll_pageStates_from(descriptions);
+	}
+
+	delete_page_states(page_states: Array<Page_State>) {
+		for (const page_state of page_states) {
+			this.write_keyPair(IDPersistant.page_states, page_state.sub_key, null)
+		}
 	}
 
 	restore_graphOffset() {
