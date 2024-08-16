@@ -1,5 +1,6 @@
 import { k, get, Predicate, Ancestry, Cluster_Map } from '../common/Global_Imports';
 import { s_page_state, s_rotation_ring_radius } from '../state/Reactive_State';
+import { h } from '../db/DBDispatch';
 
 export class Page_State {
 
@@ -14,28 +15,30 @@ export class Page_State {
 	shown = 0;
 	total = 0;
 
-	get sub_key(): string { return `${this.thing_id}${k.generic_separator}${this.kind}${k.generic_separator}${this.points_out}`; }
-	static get empty(): Page_State { return new Page_State(); }
-
 	constructor(index: number = 0, shown: number = 0, total: number = 0) {
 		this.index = index.force_between(0, total - shown);
 		this.shown = shown;
 		this.total = total;
 	}
 
-	static create_fromDescription(description: string): Page_State | null {
+	static create_page_state_fromDescription(description: string): Page_State | null {
 		let strings = description.split(k.generic_separator);
-		if (strings.length > 5) {
-			const [out, kind, id, ...remaining] = strings;
+		const [out, kind, id, ...remaining] = strings;
+		if (remaining.length > 2) {
 			const v: Array<number> = remaining.map(r => Number(r));
-			const state = new Page_State(v[0], v[1], v[2]);
-			state.points_out = out == 'true';
-			state.thing_id = id;
-			state.kind = kind;
-			return state;
+			const page_state = new Page_State(v[0], v[1], v[2]);
+			page_state.points_out = out == 'true';
+			page_state.thing_id = id;
+			page_state.kind = kind;
+			return page_state;
 		}
 		return null;
 	}
+
+	static get empty(): Page_State { return new Page_State(); }
+	get stateIndex(): number { return this.predicate?.stateIndex ?? -1; }
+	get predicate(): Predicate | null { return h.predicate_forKind(this.kind) ?? null }
+	get sub_key(): string { return `${this.thing_id}${k.generic_separator}${this.kind}${k.generic_separator}${this.points_out}`; }
 
 	get description(): string {
 		const strings = [
@@ -74,8 +77,6 @@ export class Page_States {
 	inward_page_states: Array<Page_State> = [];
 	thing_id = k.empty;
 
-	static get empty(): Page_States { return new Page_States(); }
-
 	// two arrays of Page_State (defined above)
 	// 1) outward: (to) children and relateds (more kinds later?)
 	// 2) inward: (from) parents
@@ -87,22 +88,36 @@ export class Page_States {
 	constructor(thing_id: string = k.empty, states: Array<Page_State> = []) {
 		this.thing_id = thing_id;
 		for (const state of states) {
-			this.page_states_for(state.points_out).push(state);
+			this.page_states_for(state.points_out)[state.stateIndex] = state;
 		}
 	}
 
-	static create_fromDescription(description: string): Page_States {
-		let page_states = Page_States.empty;
-		let state_descriptions = description.split(k.big_separator);
-		for (const state_description of state_descriptions) {
-			const state = Page_State.create_fromDescription(state_description);
-			if (!!state) {
-				const points_out = state.points_out;
-				let states = page_states.page_states_for(points_out) ?? [];
-				states.push(state);
+	static restoreAll_pageStates_from(descriptions: Array<string>) {
+		let prior_thing_id = k.empty;
+		let page_states: Array<Page_State> = [];
+		for (const description of descriptions) {
+			// this assumes that multiple descriptions for each thing are consecutive
+			const page_state = Page_State.create_page_state_fromDescription(description);
+			const thing_id = page_state?.thing_id;
+			if (!!page_state && !!thing_id) {
+				if (prior_thing_id != thing_id) {									// each time a new thing's state is encountered
+					this.assign_page_states_toThing(prior_thing_id, page_states);	// save the already accumulated states for prior thing
+					page_states = [];
+					prior_thing_id = thing_id;
+				}
+				page_states[page_state.stateIndex] = page_state;					// VITAL: do this AFTER if clause above
 			}
 		}
-		return page_states;
+		this.assign_page_states_toThing(prior_thing_id, page_states);				// save the last thing's state
+	}
+
+	static assign_page_states_toThing(thing_id: string, page_states: Array<Page_State>) {
+		if (thing_id != k.empty && page_states.length > 0) {		
+			const thing = h.thing_forHID(thing_id.hash());
+			if (!!thing) {
+				thing.page_states = new Page_States(thing_id, page_states);
+			}
+		}
 	}
 
 	get description(): string {
@@ -134,8 +149,8 @@ export class Page_States {
 		let state = states[index]
 		if (!state) {
 			state = Page_State.empty;
-			state.points_out = points_out;
 			state.kind = predicate.kind;
+			state.points_out = points_out;
 			state.thing_id = this.thing_id;
 			states[index] = state;
 		}

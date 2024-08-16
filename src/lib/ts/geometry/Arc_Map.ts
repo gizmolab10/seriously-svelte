@@ -81,6 +81,7 @@ export default class Arc_Map {
 			this.end_angle = saved;
 		}
 		this.arc_rect = this.computed_arc_rect;
+		this.fork_angle = (this.start_angle + this.end_angle) / 2;
 	}
 
 	static readonly $_SVG_PATHS_$: unique symbol;

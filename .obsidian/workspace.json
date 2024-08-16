@@ -157,6 +157,7 @@
   },
   "active": "b96ce36b21ad98e3",
   "lastOpenFiles": [
+    "vite.config.js.timestamp-1723845093072-1fc54fe82e2e2.mjs",
     "vite.config.js.timestamp-1723500003088-bb0ebbb13fab4.mjs",
     "vite.config.js.timestamp-1723499873524-375a523379762.mjs",
     "vite.config.js.timestamp-1723499749237-559a9df0313bc.mjs",
@@ -167,7 +168,6 @@
     "src/lib/ts/events/Wrappers.ts",
     "src/lib/svelte/clusters/Necklace.svelte",
     "aside/2024/August/Paging_Ring.svelte",
-    "aside/2024/August",
     "node_modules/rxdb/node_modules/firebase/README.md",
     "node_modules/safevalues/README.md",
     "node_modules/rxdb/node_modules/@firebase/analytics-compat/README.md",

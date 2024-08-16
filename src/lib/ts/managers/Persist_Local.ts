@@ -225,31 +225,8 @@ class Persist_Local {
 	}
 
 	restoreAll_pageStates() {
-		let thing_id = k.empty;
-		let page_states: Array<Page_State> = [];
-		const descriptions = this.read_allSubkeys_forKey(IDPersistant.page_states) ?? k.empty;
-		for (const description of descriptions) {
-			const page_state = Page_State.create_fromDescription(description);
-			const id = page_state?.thing_id;
-			if (!!page_state && !!id) {
-				if (thing_id != id) {
-					this.assign_page_states_to(page_states, thing_id);
-					page_states = [];
-					thing_id = id;
-				}
-				page_states.push(page_state);	// VITAL: do this after assignment above
-			}
-		}
-		this.assign_page_states_to(page_states, thing_id);
-	}
-
-	assign_page_states_to(page_states: Array<Page_State>, thing_id: string) {
-		if (thing_id != k.empty && page_states.length > 0) {		
-			const thing = h.thing_forHID(thing_id.hash());
-			if (!!thing) {
-				thing.page_states = new Page_States(thing_id, page_states);
-			}
-		}
+		const descriptions = persistLocal.read_allSubkeys_forKey(IDPersistant.page_states) ?? k.empty;
+		Page_States.restoreAll_pageStates_from(descriptions);
 	}
 
 	restore_grabbed_andExpanded(force: boolean = false) {

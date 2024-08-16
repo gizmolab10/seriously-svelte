@@ -83,7 +83,7 @@
 		if (!!cluster_map) {
 			label_title = cluster_map.cluster_title;
 			const size = cluster_map.label_tip.abs.asSize;
-			const titleRect = new Rect(center.offsetBy(cluster_map.label_tip), size.multipliedBy(1/2));
+			const titleRect = new Rect(center.offsetBy(cluster_map.label_tip), size.dividedInHalf);
 			title_origin = title_origin_for(titleRect);
 		}
 	}

@@ -12,7 +12,7 @@
 	$: {
 		if (!!cluster_map) {
 			size = cluster_map.label_tip.abs.asSize;
-			const titleRect = new Rect(center.offsetBy(cluster_map.label_tip), size.multipliedBy(1/2));
+			const titleRect = new Rect(center.offsetBy(cluster_map.label_tip), size.dividedInHalf);
 			title_origin = title_origin_for(titleRect);
 		}
 	}
@@ -22,26 +22,11 @@
 		if (!!cluster_map) {
 			label_title = cluster_map.cluster_title ?? 'not named';
 			const lines = label_title.split('<br>');
-			const m = multiplier();
-			const y = k.dot_size * m.y;
-			const x = u.getWidthOf(lines[0]) * m.x;
+			const y = k.dot_size * -1.5;
+			const x = u.getWidthOf(lines[0]) * -0.5;
 			origin = rect.center.offsetByXY(x, y);
 		}
 		return origin;
-	}
-
-	function multiplier(): Point {
-		if (!!cluster_map) {
-			const orientation = cluster_map.label_tip.orientation_ofVector;
-			const common = -0.5;
-			switch (orientation) {
-				case Orientation.up:	return new Point(common, -1.5);
-				case Orientation.left:	return new Point(-0.75, common);
-				case Orientation.down:	return new Point(common, -1.5);
-				default:				return new Point(-0.25, common);
-			}
-		}
-		return Point.zero;
 	}
 
 </script>

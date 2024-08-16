@@ -1,6 +1,6 @@
 import { s_graphRect, s_rotation_ring_angle, s_ancestry_focus, s_rotation_ring_radius } from '../state/Reactive_State';
-import { k, u, get, Rect, Point, Angle, IDLine, Arc_Map, Quadrant } from '../common/Global_Imports';
 import { Ancestry, Predicate, Page_State, Widget_MapRect } from '../common/Global_Imports';
+import { k, u, get, Rect, Point, Angle, IDLine, Arc_Map } from '../common/Global_Imports';
 
 // for one cluster (there are three)
 //
@@ -43,13 +43,13 @@ export default class Cluster_Map  {
 		})
 	}
 
-	update_forLabels() {
-		const radius = get(s_rotation_ring_radius) - k.ring_thickness;
-		const semi_major = radius * 0.95;
-		const semi_minor = radius * 0.7;
-		const ellipse_axes = new Point(semi_minor, semi_major);
-		this.label_tip = ellipse_axes.ellipse_coordiates_forAngle(-this.fork_angle);
-		this.update_thumb_andTitle();
+	update_all() {
+		this.shown = this.ancestries.length;
+		this.isPaging = this.shown < this.total;
+		this.color = u.opacitize(this.focus_ancestry.thing?.color ?? this.color, 0.2);
+		this.update_fork_angle();
+		this.update_children_angles();
+		this.update_label();
 	}
 
 	destructor() { this.ancestries = []; }
@@ -57,24 +57,11 @@ export default class Cluster_Map  {
 	get maximum_page_index(): number { return this.total - this.shown; }
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
 	get description(): string { return `${this.predicate.kind}  ${this.titles}`; }
-	get page_indexOf_focus(): number { return this.page_stateOf_focus?.index ?? 0; }
+	get page_index_ofFocus(): number { return this.page_state_ofFocus?.index ?? 0; }
 	get fork_radial(): Point { return Point.fromPolar(get(s_rotation_ring_radius), this.fork_angle); }
-	get page_stateOf_focus(): Page_State | null { return this.focus_ancestry.thing?.page_states?.page_state_for(this) ?? null; }
+	get page_state_ofFocus(): Page_State | null { return this.focus_ancestry.thing?.page_states?.page_state_for(this) ?? null; }
 	
 	static readonly $_INDEX_$: unique symbol;
-	
-	adjust_paging_index_forMouse_angle(mouse_angle: number) {
-		const page_state = this.page_stateOf_focus;
-		if (!!page_state) {
-			const index = this.compute_paging_index(mouse_angle);
-			if (!!index && index != page_state.index) {
-				page_state.set_page_index_for(index, this);
-				this.update_thumb_andTitle();
-				return true;
-			}
-		}
-		return false;
-	}
 
 	compute_paging_index(mouse_angle: number): number {
 		let movement_angle = (this.paging_map.start_angle - mouse_angle);
@@ -83,17 +70,37 @@ export default class Cluster_Map  {
 		return fraction * this.maximum_page_index;
 	}
 	
-	static readonly $_TITLE_$: unique symbol;
+	adjust_paging_index_forMouse_angle(mouse_angle: number) {
+		const page_state = this.page_state_ofFocus;
+		if (!!page_state) {
+			const index = this.compute_paging_index(mouse_angle);
+			if (!!index && index != page_state.index) {
+				page_state.set_page_index_for(index, this);
+				this.update_label_forIndex();
+				this.update_thumb_angles();
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	static readonly $_LABEL_$: unique symbol;
 
-	update_thumb_andTitle() {
-		this.update_cluster_title_forIndex();
+	update_label() {
+		const radius = get(s_rotation_ring_radius) - k.ring_thickness;
+		const semi_major = radius * 0.95;
+		const semi_minor = radius * 0.6;
+		const label_angle = -this.fork_angle;
+		const ellipse_axes = new Point(semi_minor, semi_major);
+		this.label_tip = ellipse_axes.ellipse_coordiates_forAngle(label_angle);
+		this.update_label_forIndex();
 		this.update_thumb_angles();
 	}
 
-	update_cluster_title_forIndex() {
+	update_label_forIndex() {
 		const separator = '<br>';
 		let quantity = `${this.total}`;
-		const index = Math.round(this.page_indexOf_focus);
+		const index = Math.round(this.page_index_ofFocus);
 		let shortened = this.predicate?.kind.unCamelCase().lastWord() ?? k.empty;
 		if (this.isPaging) {
 			quantity = `${index + 1}-${index + this.shown} of ${quantity}`;
@@ -120,16 +127,7 @@ export default class Cluster_Map  {
 		return raw.normalized_angle();
 	}
 
-	update_all() {
-		this.shown = this.ancestries.length;
-		this.isPaging = this.shown != this.total;
-		this.color = u.opacitize(this.focus_ancestry.thing?.color ?? this.color, 0.2);
-		this.update_fork();
-		this.update_children_angles();
-		this.update_forLabels();
-	}
-
-	update_fork() {
+	update_fork_angle() {
 		const fork_angle = this.fork_angleFor(this.predicate, this.points_out) ?? 0;
 		this.center = get(s_graphRect).size.dividedInHalf.asPoint;
 		this.fork_angle = fork_angle;
@@ -171,12 +169,12 @@ export default class Cluster_Map  {
 
 		// index:
 		//	increases clockwise
-		//	maximum is shown - 1
 		//	constant vertical distribution
+		//	maximum is 1 subtracted from shown
 		// angle:
 		//	avoids zenith and nadir
 		//	increases counter-clockwise
-		//	widgets half-and-half around fork-angle
+		//	widgets distributed half-and-half around fork-angle
 
 		const max = this.shown - 1;
 		const row = (max / 2) - index;						// row centered around zero
@@ -210,16 +208,13 @@ export default class Cluster_Map  {
 		const spread_angle = this.paging_map.spread_angle;
 		const hasNegative_spread = spread_angle < 0
 		const inverter = hasNegative_spread ? 1 : -1;
-		const arc_spread = this.arc_straddles_nadir ? (-spread_angle).normalized_angle() : spread_angle;
 		const otherInverter = (hasNegative_spread == this.arc_straddles_nadir) ? -1 : 1;
+		const arc_spread = this.arc_straddles_nadir ? (-spread_angle).normalized_angle() : spread_angle;
 		const arc_start = this.paging_map.start_angle * otherInverter;
 		const increment = arc_spread / this.total * inverter;
-		const index = this.page_indexOf_focus;
-		let start = arc_start + increment * index;
-		const spread = increment * this.shown;
-		let end = start + spread;
-		const thumb_angle = (start + end) / 2;
-		this.thumb_map.update(thumb_angle);
+		const start = arc_start + (increment * this.page_index_ofFocus);
+		const end = start + (increment * this.shown);
+		this.thumb_map.update((start + end) / 2);
 		this.thumb_map.start_angle = start;
 		this.thumb_map.end_angle = end;
 	}
