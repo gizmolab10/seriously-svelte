@@ -14,7 +14,7 @@ import { PredicateKind, GraphRelations, CreationOptions } from './Enumerations';
 import { debugReact, DebugReact, ReactKind } from '../debug/DebugReact';
 import { IDPersistant, persistLocal } from '../managers/Persist_Local';
 import { onMount, onDestroy, setContext, getContext } from 'svelte';
-import { Page_State, Page_States } from '../state/Page_States';
+import { Paging_State, Page_States } from '../state/Page_States';
 import { Direction, svgPaths } from '../geometry/SVG_Paths';
 import { Quadrant, Orientation } from '../geometry/Angle';
 import { debug, Debug, DebugFlag } from '../debug/Debug';
@@ -64,7 +64,7 @@ export {
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Grabs, Ancestry, Hierarchy, dbDispatch, persistLocal,
 	ZIndex, PredicateKind, GraphRelations, CreationOptions,
-	Element_State, Page_State, Page_States, Alteration_State,
+	Element_State, Paging_State, Page_States, Alteration_State,
 	debug, Debug, DebugFlag, debugReact, DebugReact, ReactKind,
 	ElementType, AlterationType, Svelte_Wrapper, SvelteComponentType,
 	get, onMount, onDestroy, setContext, getContext, SvelteComponent,

@@ -1,9 +1,9 @@
 import { s_rotation_ring_angle, s_rotation_ring_radius, s_cluster_mode } from '../state/Reactive_State';
 import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/Reactive_State';
-import { s_page_state, s_thing_fontFamily, s_shown_relations } from '../state/Reactive_State';
+import { s_paging_state, s_thing_fontFamily, s_shown_relations } from '../state/Reactive_State';
 import { g, k, get, Point, signals, Ancestry, dbDispatch } from '../common/Global_Imports';
 import { s_ancestries_grabbed, s_ancestries_expanded } from '../state/Reactive_State';
-import { Page_State, Page_States, GraphRelations } from '../common/Global_Imports';
+import { Paging_State, Page_States, GraphRelations } from '../common/Global_Imports';
 import { h } from '../db/DBDispatch';
 
 export enum IDPersistant {
@@ -192,9 +192,9 @@ class Persist_Local {
 			g.graphRect_update();
 			signals.signal_relayoutWidgets_fromFocus();
 		});
-		s_page_state.subscribe((page_state: Page_State) => {
-			if (!!page_state) {
-				this.write_keyPair(IDPersistant.page_states, page_state.sub_key, page_state.description);
+		s_paging_state.subscribe((paging_state: Paging_State) => {
+			if (!!paging_state) {
+				this.write_keyPair(IDPersistant.page_states, paging_state.sub_key, paging_state.description);
 			}
 		})
 	}
@@ -262,9 +262,9 @@ class Persist_Local {
 		Page_States.restoreAll_pageStates_from(descriptions);
 	}
 
-	delete_page_states(page_states: Array<Page_State>) {
-		for (const page_state of page_states) {
-			this.write_keyPair(IDPersistant.page_states, page_state.sub_key, null)
+	delete_paging_states(page_states: Array<Paging_State>) {
+		for (const paging_state of page_states) {
+			this.write_keyPair(IDPersistant.page_states, paging_state.sub_key, null)
 		}
 	}
 

@@ -157,6 +157,8 @@
   },
   "active": "b96ce36b21ad98e3",
   "lastOpenFiles": [
+    "src/lib/ts/state/Page_States.ts",
+    "src/lib/ts/state/Paging_States.ts",
     "aside/2024/August/Cluster_Label.svelte",
     "aside/Cluster_Label.svelte",
     "src/lib/Cluster_Label.svelte",
@@ -166,8 +168,6 @@
     "vite.config.js.timestamp-1723499749237-559a9df0313bc.mjs",
     "src/lib/ts/geometry/Arc_Map.ts",
     "src/lib/ts/state/UX_State.ts",
-    "src/lib/ts/common/Signals.ts",
-    "src/lib/ts/managers/Wrappers.ts",
     "node_modules/rxdb/node_modules/firebase/README.md",
     "node_modules/safevalues/README.md",
     "node_modules/rxdb/node_modules/@firebase/analytics-compat/README.md",

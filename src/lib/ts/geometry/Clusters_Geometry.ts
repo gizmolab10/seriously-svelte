@@ -1,5 +1,5 @@
-import { u, get, Angle, Ancestry, Page_State, Predicate, Cluster_Map, Widget_MapRect } from '../common/Global_Imports';
-import { s_page_state, s_ancestry_focus } from '../state/Reactive_State';
+import { u, get, Angle, Ancestry, Paging_State, Predicate, Cluster_Map, Widget_MapRect } from '../common/Global_Imports';
+import { s_paging_state, s_ancestry_focus } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
 
 export default class Clusters_Geometry {
@@ -11,8 +11,8 @@ export default class Clusters_Geometry {
 
 	constructor() {
 		this.layoutAll_clusters();
-		s_page_state.subscribe((state: Page_State) => {
-			this.update_forPage_state(state);
+		s_paging_state.subscribe((state: Paging_State) => {
+			this.update_forPaging_state(state);
 		});
 	}
 
@@ -50,8 +50,8 @@ export default class Clusters_Geometry {
 	layout_clusterFor(ancestries: Array<Ancestry>, predicate: Predicate | null, points_out: boolean) {
 		if (!!predicate) {
 			const cluster_maps = this.cluster_maps_for(points_out);
-			const page_state = get(s_ancestry_focus)?.thing?.page_states?.page_state_forPointsOut(points_out, predicate);
-			const onePage = page_state?.onePage_from(ancestries) ?? [];
+			const paging_state = get(s_ancestry_focus)?.thing?.page_states?.paging_state_forPointsOut(points_out, predicate);
+			const onePage = paging_state?.onePaging_from(ancestries) ?? [];
 			const cluster_map = new Cluster_Map(ancestries.length, onePage, predicate, points_out);
 			cluster_maps[predicate.stateIndex] = cluster_map;
 		}
@@ -71,10 +71,10 @@ export default class Clusters_Geometry {
 		}
 	}
 
-	update_forPage_state(page_state: Page_State) {
+	update_forPaging_state(paging_state: Paging_State) {
 		const ancestry = get(s_ancestry_focus);
-		if (!!page_state && !!ancestry) {
-			if (page_state.points_out) {
+		if (!!paging_state && !!ancestry) {
+			if (paging_state.points_out) {
 				let childAncestries = ancestry.childAncestries;
 				this.layout_clusterFor(childAncestries, Predicate.contains, true);
 			} else {

@@ -1,4 +1,4 @@
-import { Rect, Point, Ancestry, Page_State, Title_State, Svelte_Wrapper, Alteration_State } from '../common/Global_Imports';
+import { Rect, Point, Ancestry, Paging_State, Title_State, Svelte_Wrapper, Alteration_State } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
 export const s_altering				 = writable<Alteration_State | null>();
@@ -9,7 +9,7 @@ export const s_ancestries_expanded	 = writable<Array<Ancestry>>();
 export const s_ancestries_grabbed	 = writable<Array<Ancestry>>();
 export const s_db_loadTime 			 = writable<string | null>();
 export const s_id_popupView			 = writable<string | null>();
-export const s_page_state			 = writable<Page_State>();
+export const s_paging_state			 = writable<Paging_State>();
 export const s_ancestry_focus		 = writable<Ancestry>();
 export const s_things_arrived		 = writable<boolean>();
 export const s_show_details			 = writable<boolean>();

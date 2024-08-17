@@ -1,6 +1,6 @@
 import { s_graphRect, s_rotation_ring_angle, s_ancestry_focus, s_rotation_ring_radius } from '../state/Reactive_State';
 import { k, u, get, Rect, Point, Angle, IDLine, Arc_Map, Quadrant } from '../common/Global_Imports';
-import { Ancestry, Predicate, Page_State, Widget_MapRect } from '../common/Global_Imports';
+import { Ancestry, Predicate, Paging_State, Widget_MapRect } from '../common/Global_Imports';
 
 // for one cluster (there are three)
 //
@@ -59,9 +59,9 @@ export default class Cluster_Map  {
 	get paging_radius(): number { return k.paging_arc_thickness * 0.8; }
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
 	get description(): string { return `${this.predicate.kind}  ${this.titles}`; }
-	get paging_index_ofFocus(): number { return this.page_state_ofFocus?.index ?? 0; }
+	get paging_index_ofFocus(): number { return this.paging_state_ofFocus?.index ?? 0; }
 	get fork_radial(): Point { return Point.fromPolar(get(s_rotation_ring_radius), this.fork_angle); }
-	get page_state_ofFocus(): Page_State | null { return this.focus_ancestry.thing?.page_states?.page_state_for(this) ?? null; }
+	get paging_state_ofFocus(): Paging_State | null { return this.focus_ancestry.thing?.page_states?.paging_state_for(this) ?? null; }
 	
 	static readonly $_LABEL_$: unique symbol;
 
@@ -97,7 +97,7 @@ export default class Cluster_Map  {
 	adjust_paging_index_forMouse_angle(mouse_angle: number) {
 		const fraction = this.compute_paging_fraction(mouse_angle);
 		const index = fraction * this.maximum_paging_index;
-		const adjust = this.page_state_ofFocus?.set_paging_index_for(index, this) ?? false;
+		const adjust = this.paging_state_ofFocus?.set_paging_index_for(index, this) ?? false;
 		if (adjust) {
 			this.update_label_forIndex();
 			this.update_thumb_angles();
