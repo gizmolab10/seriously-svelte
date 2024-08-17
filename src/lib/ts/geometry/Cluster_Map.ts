@@ -1,6 +1,6 @@
 import { s_graphRect, s_rotation_ring_angle, s_ancestry_focus, s_rotation_ring_radius } from '../state/Reactive_State';
+import { k, u, get, Rect, Point, Angle, IDLine, Arc_Map, Quadrant } from '../common/Global_Imports';
 import { Ancestry, Predicate, Page_State, Widget_MapRect } from '../common/Global_Imports';
-import { k, u, get, Rect, Point, Angle, IDLine, Arc_Map } from '../common/Global_Imports';
 
 // for one cluster (there are three)
 //
@@ -17,8 +17,10 @@ export default class Cluster_Map  {
 	widget_maps: Array<Widget_MapRect> = [];	// one page of widgets, will be combined into geometry.widget_maps
 	ancestries: Array<Ancestry> = [];
 	arc_straddles_nadir = false;
+	arc_straddles_zero = false;
 	paging_map = new Arc_Map();
 	thumb_map = new Arc_Map();
+	arc_in_lower_half = false;
 	cluster_title = k.empty;
 	color = k.color_default;
 	label_tip = Point.zero;
@@ -30,6 +32,7 @@ export default class Cluster_Map  {
 	shown = 0;
 	total = 0;
 
+	destructor() { this.ancestries = []; }
 	constructor(total: number, ancestries: Array<Ancestry>, predicate: Predicate, points_out: boolean) {
 		this.ancestries = ancestries;
 		this.points_out = points_out;
@@ -52,37 +55,13 @@ export default class Cluster_Map  {
 		this.update_label();
 	}
 
-	destructor() { this.ancestries = []; }
-	get paging_radius(): number { return k.paging_arc_thickness * 0.8; }
 	get maximum_page_index(): number { return this.total - this.shown; }
+	get paging_radius(): number { return k.paging_arc_thickness * 0.8; }
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
 	get description(): string { return `${this.predicate.kind}  ${this.titles}`; }
 	get page_index_ofFocus(): number { return this.page_state_ofFocus?.index ?? 0; }
 	get fork_radial(): Point { return Point.fromPolar(get(s_rotation_ring_radius), this.fork_angle); }
 	get page_state_ofFocus(): Page_State | null { return this.focus_ancestry.thing?.page_states?.page_state_for(this) ?? null; }
-	
-	static readonly $_INDEX_$: unique symbol;
-
-	compute_paging_index(mouse_angle: number): number {
-		let movement_angle = (this.paging_map.start_angle - mouse_angle);
-		let spread_angle = (-this.paging_map.spread_angle).normalized_angle();
-		const fraction = (movement_angle / spread_angle).force_between(0, 1);
-		return fraction * this.maximum_page_index;
-	}
-	
-	adjust_paging_index_forMouse_angle(mouse_angle: number) {
-		const page_state = this.page_state_ofFocus;
-		if (!!page_state) {
-			const index = this.compute_paging_index(mouse_angle);
-			if (!!index && index != page_state.index) {
-				page_state.set_page_index_for(index, this);
-				this.update_label_forIndex();
-				this.update_thumb_angles();
-				return true;
-			}
-		}
-		return false;
-	}
 	
 	static readonly $_LABEL_$: unique symbol;
 
@@ -113,26 +92,50 @@ export default class Cluster_Map  {
 		}
 	}
 	
+	static readonly $_INDEX_$: unique symbol;
+	
+	adjust_paging_index_forMouse_angle(mouse_angle: number) {
+		const fraction = this.compute_paging_fraction(mouse_angle);
+		const index = fraction * this.maximum_page_index;
+		// console.log(`${this.focus_ancestry.thing?.title} ${mouse_angle.degrees_of(0)} ${this.paging_map.start_angle.degrees_of(0)} ${this.paging_map.end_angle.degrees_of(0)} ${(fraction).toFixed(2)}`);
+		const page_state = this.page_state_ofFocus;
+		if (!!page_state && !!index && index != page_state.index) {
+			page_state.set_page_index_for(index, this);
+			this.update_label_forIndex();
+			this.update_thumb_angles();
+			return true;
+		}
+		return false;
+	}
+	
+	compute_paging_fraction(mouse_angle: number): number {
+		let angle = mouse_angle.normalized_angle();
+		let end = this.paging_map.end_angle.normalized_angle();
+		let start = this.paging_map.start_angle.normalized_angle();
+		const quadrant = u.quadrant_ofAngle(end);
+		if (quadrant != Quadrant.upperRight) {
+			let delta = u.basis_angle_ofQuadrant(quadrant) + Angle.quarter;
+
+			// angles increase counter-clockwise
+			// however, if end angle is not in upper right
+			// rotate all angles so end is in upper right
+
+			end = end.add_angle_normalized(-delta);
+			start = start.add_angle_normalized(-delta);
+			angle = angle.add_angle_normalized(-delta);
+		}
+		if (angle >= start) {
+			return 0;
+		} else if (angle <= end) {
+			return 1;
+		} else {
+			const moved_angle = (start - angle).normalized_angle();
+			const spread_angle = (-this.paging_map.spread_angle).normalized_angle();
+			return (moved_angle.normalized_angle() / spread_angle).force_between(0, 1);
+		}
+	}
+
 	static readonly $_ANGLES_$: unique symbol;
-
-	fork_angleFor(predicate: Predicate, points_out: boolean): number | null {
-		// returns one of three angles: 1) rotation_angle 2) opposite+tweak 3) opposite-tweak
-		const tweak = Math.PI * 5 / 18;			// 50 degrees: added or subtracted -> opposite
-		const rotation_angle = get(s_rotation_ring_angle);
-		const opposite = rotation_angle + Angle.half;
-		const raw = predicate.isBidirectional ?
-			opposite - tweak :
-			points_out ? rotation_angle :		// one directional, use global
-			opposite + tweak;
-		return raw.normalized_angle();
-	}
-
-	update_fork_angle() {
-		const fork_angle = this.fork_angleFor(this.predicate, this.points_out) ?? 0;
-		this.center = get(s_graphRect).size.dividedInHalf.asPoint;
-		this.fork_angle = fork_angle;
-		this.paging_map.update(fork_angle);
-	}
 
 	update_arc_angles(index: number, max: number, child_angle: number) {
 		// index increases & angle decreases clockwise
@@ -161,7 +164,9 @@ export default class Cluster_Map  {
 				this.widget_maps.push(map);
 				index += 1;
 			}
-			this.paging_map.put_angles_inOrder();
+			this.paging_map.finalize_angles();
+			this.arc_straddles_zero = (this.paging_map.start_angle > 0 && this.paging_map.end_angle < 0);
+
 		}
 	}
 
@@ -203,7 +208,7 @@ export default class Cluster_Map  {
 
 		// very complex, because:
 		// 1. start & end are sometimes reversed (hasNegative_spread)
-		// 2. arc straddles nadir when fork y is outside of ring (arc_straddles_nadir)
+		// 2. arc can straddle nadir when fork y is outside of ring
 
 		const spread_angle = this.paging_map.spread_angle;
 		const hasNegative_spread = spread_angle < 0
@@ -217,6 +222,25 @@ export default class Cluster_Map  {
 		this.thumb_map.update((start + end) / 2);
 		this.thumb_map.start_angle = start;
 		this.thumb_map.end_angle = end;
+	}
+	
+	fork_angleFor(predicate: Predicate, points_out: boolean): number | null {
+		// returns one of three angles: 1) rotation_angle 2) opposite+tweak 3) opposite-tweak
+		const tweak = Math.PI * 5 / 18;			// 50 degrees: added or subtracted -> opposite
+		const rotation_angle = get(s_rotation_ring_angle);
+		const opposite = rotation_angle + Angle.half;
+		const raw = predicate.isBidirectional ?
+			opposite - tweak :
+			points_out ? rotation_angle :		// one directional, use global
+			opposite + tweak;
+		return raw.normalized_angle();
+	}
+
+	update_fork_angle() {
+		const fork_angle = this.fork_angleFor(this.predicate, this.points_out) ?? 0;
+		this.center = get(s_graphRect).size.dividedInHalf.asPoint;
+		this.fork_angle = fork_angle;
+		this.paging_map.update(fork_angle);
 	}
 
 }

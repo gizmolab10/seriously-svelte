@@ -74,7 +74,7 @@ export default class Arc_Map {
 		return delta / Math.sqrt(1.5);
 	}
 
-	put_angles_inOrder() {
+	finalize_angles() {
 		if (!this.fork_pointsRight) {
 			const saved = this.start_angle;
 			this.start_angle = this.end_angle;

@@ -132,13 +132,14 @@
 			const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);
 			const mouse_wentDown_angle = from_center.angle;
 			if (isInterior()) {
-				const map = geometry.cluster_mapFor(mouse_wentDown_angle);
+				const basis_angle = mouse_wentDown_angle.normalized_angle();
+				const map = geometry.cluster_mapFor(basis_angle);
 				if (!!map) {
 					if (mouse_state.isDown) {
 	
 						// begin paging
 	
-						ux.paging_ring_state.basis_angle = mouse_wentDown_angle;
+						ux.paging_ring_state.basis_angle = basis_angle;
 						$s_active_wrapper = pagingWrapper;
 						ux.active_thumb_cluster = map;
 					}
