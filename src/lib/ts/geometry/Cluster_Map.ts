@@ -41,7 +41,7 @@ export default class Cluster_Map  {
 		this.update_all();
 		s_rotation_ring_radius.subscribe((radius: number) => {
 			if (this.paging_map.outside_ring_radius != radius) {
-				this.update_all();		// do not set_page_index (else expand will hang)
+				this.update_all();		// do not set_paging_index (else expand will hang)
 			}
 		})
 	}
@@ -55,11 +55,11 @@ export default class Cluster_Map  {
 		this.update_label();
 	}
 
-	get maximum_page_index(): number { return this.total - this.shown; }
+	get maximum_paging_index(): number { return this.total - this.shown; }
 	get paging_radius(): number { return k.paging_arc_thickness * 0.8; }
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
 	get description(): string { return `${this.predicate.kind}  ${this.titles}`; }
-	get page_index_ofFocus(): number { return this.page_state_ofFocus?.index ?? 0; }
+	get paging_index_ofFocus(): number { return this.page_state_ofFocus?.index ?? 0; }
 	get fork_radial(): Point { return Point.fromPolar(get(s_rotation_ring_radius), this.fork_angle); }
 	get page_state_ofFocus(): Page_State | null { return this.focus_ancestry.thing?.page_states?.page_state_for(this) ?? null; }
 	
@@ -79,7 +79,7 @@ export default class Cluster_Map  {
 	update_label_forIndex() {
 		const separator = '<br>';
 		let quantity = `${this.total}`;
-		const index = Math.round(this.page_index_ofFocus);
+		const index = Math.round(this.paging_index_ofFocus);
 		let shortened = this.predicate?.kind.unCamelCase().lastWord() ?? k.empty;
 		if (this.isPaging) {
 			quantity = `${index + 1}-${index + this.shown} of ${quantity}`;
@@ -96,16 +96,13 @@ export default class Cluster_Map  {
 	
 	adjust_paging_index_forMouse_angle(mouse_angle: number) {
 		const fraction = this.compute_paging_fraction(mouse_angle);
-		const index = fraction * this.maximum_page_index;
-		// console.log(`${this.focus_ancestry.thing?.title} ${mouse_angle.degrees_of(0)} ${this.paging_map.start_angle.degrees_of(0)} ${this.paging_map.end_angle.degrees_of(0)} ${(fraction).toFixed(2)}`);
-		const page_state = this.page_state_ofFocus;
-		if (!!page_state && !!index && index != page_state.index) {
-			page_state.set_page_index_for(index, this);
+		const index = fraction * this.maximum_paging_index;
+		const adjust = this.page_state_ofFocus?.set_paging_index_for(index, this) ?? false;
+		if (adjust) {
 			this.update_label_forIndex();
 			this.update_thumb_angles();
-			return true;
 		}
-		return false;
+		return adjust;
 	}
 	
 	compute_paging_fraction(mouse_angle: number): number {
@@ -116,17 +113,19 @@ export default class Cluster_Map  {
 		if (quadrant != Quadrant.upperRight) {
 			let delta = u.basis_angle_ofQuadrant(quadrant) + Angle.quarter;
 
-			// angles increase counter-clockwise
+			// prevent peculiar thumb-flip-to-end when mouse.y > 0
+			// HOW? angles increase counter-clockwise
 			// however, if end angle is not in upper right
+			// normalized angles do not order correctly
 			// rotate all angles so end is in upper right
 
-			end = end.add_angle_normalized(-delta);
-			start = start.add_angle_normalized(-delta);
 			angle = angle.add_angle_normalized(-delta);
+			start = start.add_angle_normalized(-delta);
+			end = end.add_angle_normalized(-delta);
 		}
-		if (angle >= start) {
+		if (start < angle) {
 			return 0;
-		} else if (angle <= end) {
+		} else if (end > angle) {
 			return 1;
 		} else {
 			const moved_angle = (start - angle).normalized_angle();
@@ -217,7 +216,7 @@ export default class Cluster_Map  {
 		const arc_spread = this.arc_straddles_nadir ? (-spread_angle).normalized_angle() : spread_angle;
 		const arc_start = this.paging_map.start_angle * otherInverter;
 		const increment = arc_spread / this.total * inverter;
-		const start = arc_start + (increment * this.page_index_ofFocus);
+		const start = arc_start + (increment * this.paging_index_ofFocus);
 		const end = start + (increment * this.shown);
 		this.thumb_map.update((start + end) / 2);
 		this.thumb_map.start_angle = start;

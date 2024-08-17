@@ -22,7 +22,7 @@
 	let arc_color = color;
 	let thumb_color = color;
 	let label_title = k.empty;
-	let title_origin = Point.zero;
+	let label_origin = Point.zero;
 	let pagingArcWrapper!: Svelte_Wrapper;
 	let mouse_up_count = $s_mouse_up_count;
 	let origin = center.offsetBy(Point.square(-radius));
@@ -83,12 +83,12 @@
 		if (!!cluster_map) {
 			label_title = cluster_map.cluster_title;
 			const size = cluster_map.label_tip.abs.asSize;
-			const titleRect = new Rect(center.offsetBy(cluster_map.label_tip), size.dividedInHalf);
-			title_origin = title_origin_for(titleRect);
+			const label_rect = new Rect(center.offsetBy(cluster_map.label_tip), size.dividedInHalf);
+			label_origin = label_origin_for(label_rect);
 		}
 	}
 
-	function title_origin_for(rect: Rect): Point {
+	function label_origin_for(rect: Rect): Point {
 		const lines = label_title.split('<br>');
 		const m = multiplier();
 		const y = k.dot_size * m.y;
@@ -101,9 +101,9 @@
 			const orientation = cluster_map.label_tip.orientation_ofVector;
 			const common = -0.5;
 			switch (orientation) {
-				case Orientation.up:	return new Point(common, -1.5);
+				case Orientation.up:	return new Point(common, -3.5);
 				case Orientation.left:	return new Point(-0.75, common);
-				case Orientation.down:	return new Point(common, -1.5);
+				case Orientation.down:	return new Point(common, -3.5);
 				default:				return new Point(-0.25, common);
 			}
 		}
@@ -199,8 +199,8 @@
 <div class='cluster-label'
 	style='
 		background-color: {k.color_background};
-		left: {title_origin.x}px;
-		top: {title_origin.y}px;
+		left: {label_origin.x}px;
+		top: {label_origin.y}px;
 		white-space: nowrap;
 		font-family: Arial;
 		text-align: center;

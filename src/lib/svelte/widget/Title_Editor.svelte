@@ -82,7 +82,6 @@
 		if (!!input && !!ghost) { // ghost only exists to provide its width (in pixels)
 			titleWidth = ghost.scrollWidth - 5;
 			input.style.width = `${titleWidth}px`;	// apply its width to the input element
-			// debug.log_edit(`WIDTH: ${titleWidth} ${bound_title}`);
 		}
 	}
 

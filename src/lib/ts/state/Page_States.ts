@@ -51,11 +51,15 @@ export class Page_State {
 		return strings.join(k.generic_separator);
 	}
 
-	set_page_index_for(index: number, map: Cluster_Map) {
-		this.total = map.total;
-		this.shown = map.shown;
-		this.index = index;
-		s_page_state.set(this);
+	set_paging_index_for(index: number | null, map: Cluster_Map): boolean {
+		if (!!index && this.index != index) {
+			this.total = map.total;
+			this.shown = map.shown;
+			this.index = index;
+			s_page_state.set(this);
+			return true;
+		}
+		return false;
 	}
 
 	onePage_from(ancestries: Array<Ancestry>): Array<Ancestry> {
