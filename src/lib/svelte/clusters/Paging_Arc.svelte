@@ -17,13 +17,13 @@
 	const paging_rotation_state = ux.rotationState_forName(name);
 	const thumb_size = (cluster_map?.paging_radius ?? 0) * 2;
 	const thumb_name = `thumb-${name}`;
-	let pagingArc;
+	let paging_arc;
 	let rebuilds = 0;
 	let arc_color = color;
 	let thumb_color = color;
 	let label_title = k.empty;
 	let label_origin = Point.zero;
-	let pagingArcWrapper!: Svelte_Wrapper;
+	let paging_arc_wrapper!: Svelte_Wrapper;
 	let mouse_up_count = $s_mouse_up_count;
 	let origin = center.offsetBy(Point.square(-radius));
 
@@ -38,8 +38,8 @@
 	})
 
 	$: {
-		if (!!pagingArc) {
-			pagingArcWrapper = new Svelte_Wrapper(pagingArc, handle_mouse_state, -1, SvelteComponentType.thumb);
+		if (!!paging_arc) {
+			paging_arc_wrapper = new Svelte_Wrapper(paging_arc, handle_mouse_state, -1, SvelteComponentType.thumb);
 		}
 	}
 
@@ -60,9 +60,9 @@
 
 	function update_colors() {
 		const p = paging_rotation_state;
-		const multiplier = ux.rotation_ring_state.isActive ? 0.6 : 1;
-		const arc_opacity = p.isActive ? 0.5 : p.isHovering ? 0.4 : 0.2;
-		thumb_color = u.opacitize(color, arc_opacity * multiplier);
+		const multiplier = ux.rotation_ring_state.isActive ? 1 : 0.6;
+		const thumb_opacity = p.isActive ? 0.5 : p.isHovering ? 0.4 : 0.2;
+		thumb_color = u.opacitize(color, thumb_opacity * multiplier);
 		arc_color = u.opacitize(color, ux.paging_ring_state.stroke_opacity * multiplier);
 	}
 
@@ -173,7 +173,7 @@
 </script>
 
 {#if !!cluster_map && cluster_map.shown > 1}
-	<div class='paging-arc' bind:this={pagingArc} style='z-index:{ZIndex.paging};'>
+	<div class='paging-arc' bind:this={paging_arc} style='z-index:{ZIndex.paging};'>
 		<Mouse_Responder
 			name={name}
 			center={center}

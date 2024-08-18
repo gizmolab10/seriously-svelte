@@ -1,4 +1,4 @@
-import { k, get, Predicate, Ancestry, Cluster_Map, persistLocal } from '../common/Global_Imports';
+import { k, get, Thing, Predicate, Ancestry, Cluster_Map, persistLocal } from '../common/Global_Imports';
 import { s_paging_state, s_rotation_ring_radius } from './Reactive_State';
 import { h } from '../db/DBDispatch';
 
@@ -89,40 +89,46 @@ export class Page_States {
 	// page == a subset of a too-long list
 	// index == first of subset
 
-	constructor(thing_id: string = k.empty, states: Array<Paging_State> = []) {
+	constructor(thing_id: string = k.empty, paging_states: Array<Paging_State> = []) {
 		this.thing_id = thing_id;
-		for (const state of states) {
-			this.paging_states_for(state.points_out)[state.stateIndex] = state;
+		for (const paging_state of paging_states) {
+			if (!!paging_state) {
+				this.paging_states_for(paging_state.points_out)[paging_state.stateIndex] = paging_state;
+			}
 		}
 	}
 
-	static restoreAll_pageStates_from(descriptions: Array<string>) {
-		let prior_thing_id = k.empty;
+	static restore_page_states_from(descriptions: Array<string>) {
+		let thing!: Thing;
 		let paging_states: Array<Paging_State> = [];
 		for (const description of descriptions) {
-			// this assumes that multiple descriptions for each thing are consecutive
 			const paging_state = Paging_State.create_paging_state_fromDescription(description);
 			const thing_id = paging_state?.thing_id;
 			if (!!paging_state && !!thing_id) {
-				if (prior_thing_id != thing_id) {									// each time a new thing's state is encountered
-					this.assign_paging_states_toThing(prior_thing_id, paging_states);	// save the already accumulated states for prior thing
-					paging_states = [];
-					prior_thing_id = thing_id;
+				const next_thing = h.thing_forHID(thing_id.hash());
+				if (!next_thing) {													// if no thing => delete all paging states
+					persistLocal.delete_paging_state_for(paging_state.sub_key);
+				} else {															// accumulate paging states
+					paging_states[paging_state.stateIndex] = paging_state;			// using index (not push)
+					if (!thing) {
+						thing = next_thing;
+					} else if (thing.id != thing_id) {								// each time a new thing's state is encountered
+																					// assume for each thing that
+																					// multiple descriptions are consecutive
+						this.assign_paging_states_toThing(thing, paging_states);	// save accumulated states for thing
+						thing = next_thing;
+						paging_states = [];
+					}
 				}
-				paging_states[paging_state.stateIndex] = paging_state;					// VITAL: do this AFTER if clause above
 			}
 		}
-		this.assign_paging_states_toThing(prior_thing_id, paging_states);				// save the last thing's state
+		this.assign_paging_states_toThing(thing, paging_states);					// save the last thing's states
 	}
 
-	static assign_paging_states_toThing(thing_id: string, paging_states: Array<Paging_State>) {
-		if (thing_id != k.empty && paging_states.length > 0) {		
-			const thing = h.thing_forHID(thing_id.hash());
-			if (!thing) {
-				persistLocal.delete_paging_states(paging_states);	// remove from persistence
-			} else {
-				thing.page_states = new Page_States(thing_id, paging_states);
-			}
+	static assign_paging_states_toThing(thing: Thing, paging_states: Array<Paging_State>) {
+		// use paging states => create new Page States => store in thing
+		if (paging_states.length > 0) {		
+			thing.page_states = new Page_States(thing.id, paging_states);
 		}
 	}
 

@@ -31,9 +31,20 @@ export enum IDPersistant {
 
 class Persist_Local {
 	// for backwards compatibility with {focus, grabbed, expanded} which were stored as relationship ids (not as ancestry strings)
-	usesRelationships = localStorage[IDPersistant.relationships];
-	ignoreAncestries = !this.usesRelationships || this.usesRelationships == 'undefined';
-	ancestriesRestored = false;
+	usesRelationships	= localStorage[IDPersistant.relationships];
+	ignoreAncestries	= !this.usesRelationships || this.usesRelationships == 'undefined';
+	ancestriesRestored	= false;
+
+	dbKey_for				(key: string): string { return key + dbDispatch.db.dbType; }
+	read_key				(key: string): any | null { return this.parse(localStorage[key]); }
+	write_key<T>			(key: string, value: T) { localStorage[key] = JSON.stringify(value); }
+	readDB_key				(key: string): any | null { return this.read_key(this.dbKey_for(key)); }
+	writeDB_key<T>			(key: string, value: T) { this.write_key(key + this.dbKey_for(key), value); }
+	keyPair_for				(key: string, sub_key: string): string { return `${key}${k.generic_separator}${sub_key}`; }
+	read_allSubkeys_forDBKey(key: string): Array<any> { return this.read_allSubkeys_forKey(this.dbKey_for(key)); }
+	readDB_ancestries_forKey(key: string): Array<Ancestry> { return this.ancestries_forKey(this.dbKey_for(key)); }
+	read_keyPair<T>			(key: string, sub_key: string): T | null { return this.read_key(this.keyPair_for(key, sub_key)); }
+	writeDB_keyPair<T>		(key: string, sub_key: string, value: T) { this.write_keyPair(this.dbKey_for(key), sub_key, value); }
 
 	queryStrings_apply() {
 		const queryStrings = k.queryStrings;
@@ -82,15 +93,6 @@ class Persist_Local {
 		}
     }
 
-	get dbType(): string { return dbDispatch.db.dbType; }
-	read_key(key: string): any | null { return this.parse(localStorage[key]); }
-	readDB_key(key: string): any | null { return this.read_key(key + this.dbType); }
-	write_key(key: string, value: any) { localStorage[key] = JSON.stringify(value); }
-	writeDB_key(key: string, value: any) { this.write_key(key + this.dbType, value); }
-	keyPair_for(key: string, sub_key: string): string { return `${key}${k.generic_separator}${sub_key}`; }
-	readDB_ancestries_forKey(key: string): Array<Ancestry> { return this.ancestries_forKey(key + this.dbType); }
-	read_keyPair<T>(key: string, sub_key: string): T | null { return this.read_key(this.keyPair_for(key, sub_key)); }
-
 	parse(storedValue: string | null): any | null {
 		if (!storedValue || storedValue == 'undefined') {
 			return null;
@@ -98,23 +100,21 @@ class Persist_Local {
 		return JSON.parse(storedValue);
 	}
 
-	write_keyPair<T>(key: string, sub_key: string, value: T): void {
-		if (!!sub_key) {
-			const keys = this.read_key(key) ?? new Set();
-			this.write_key(this.keyPair_for(key, sub_key), value);
-			if (!!keys && !keys.includes(sub_key)) {
-				keys.push(sub_key);
-				this.write_key(key, Array.from(keys));
-			}
+	write_keyPair<T>(key: string, sub_key: string, value: T): void {	// pair => key, sub_key
+		const sub_keys: Array<string> = this.read_key(key) ?? [];
+		this.write_key(this.keyPair_for(key, sub_key), value);			// first store the value by key pair
+		if (sub_keys.length == 0 || !sub_keys.includes(sub_key)) {
+			sub_keys.push(sub_key);
+			this.write_key(key, sub_keys);								// then store they sub key by key
 		}
 	}
 
 	read_allSubkeys_forKey(key: string): Array<any> {
 		let values: Array<any> = [];
-		const subkeys = this.read_key(key) ?? new Set();
+		const subkeys: Array<string> = this.read_key(key) ?? [];
 		for (const subkey of subkeys) {
 			const value = this.read_keyPair(key, subkey);
-			if (!!value) {
+			if (!!value) {												// ignore undefined or null
 				values.push(value);
 			}
 		}
@@ -133,7 +133,7 @@ class Persist_Local {
 		}
 	}
 
-	ancestries_forKey(key: string): Array<Ancestry> {		// two keys: grabbed, expanded
+	ancestries_forKey(key: string): Array<Ancestry> {		// 2 keys supported so far: grabbed, expanded
 		const ids = this.read_key(key);
 		const length = ids?.length ?? 0;
 		if (this.ignoreAncestries || !ids || length == 0) {
@@ -194,7 +194,7 @@ class Persist_Local {
 		});
 		s_paging_state.subscribe((paging_state: Paging_State) => {
 			if (!!paging_state) {
-				this.write_keyPair(IDPersistant.page_states, paging_state.sub_key, paging_state.description);
+				this.writeDB_keyPair(IDPersistant.page_states, paging_state.sub_key, paging_state.description);
 			}
 		})
 	}
@@ -257,17 +257,6 @@ class Persist_Local {
 		});
 	}
 
-	restoreAll_pageStates() {
-		const descriptions = this.read_allSubkeys_forKey(IDPersistant.page_states) ?? k.empty;
-		Page_States.restoreAll_pageStates_from(descriptions);
-	}
-
-	delete_paging_states(page_states: Array<Paging_State>) {
-		for (const paging_state of page_states) {
-			this.write_keyPair(IDPersistant.page_states, paging_state.sub_key, null)
-		}
-	}
-
 	restore_graphOffset() {
 		let offset = Point.zero;
 		const stored = this.read_key(IDPersistant.origin);
@@ -284,6 +273,15 @@ class Persist_Local {
 			return true;
 		}
 		return false;
+	}
+
+	restore_page_states() {
+		const descriptions = this.read_allSubkeys_forDBKey(IDPersistant.page_states) ?? k.empty;
+		Page_States.restore_page_states_from(descriptions);
+	}
+
+	delete_paging_state_for(sub_key: string) {
+		this.writeDB_keyPair(IDPersistant.page_states, sub_key, null); // use null to delete
 	}
 
 }
