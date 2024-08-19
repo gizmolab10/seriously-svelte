@@ -114,7 +114,7 @@ export class Page_States {
 		return result;
 	}
 
-	paging_state_forPointsOut(points_out: boolean, predicate: Predicate) {
+	paging_state_forPointsOut(points_out: boolean, predicate: Predicate): Paging_State {
 		let paging_states = this.paging_states_for(points_out);
 		const stateIndex = predicate.stateIndex;
 		let paging_state = paging_states[stateIndex]
@@ -126,21 +126,6 @@ export class Page_States {
 			paging_states[stateIndex] = paging_state;
 		}
 		return paging_state;
-	}
-
-	static restore_page_states_from(descriptions: Array<string>) {
-		for (const description of descriptions) {
-			const paging_state = Paging_State.create_paging_state_from(description);
-			if (!!paging_state) {
-				const thing = paging_state?.thing;
-				if (!thing) {														// if no thing => delete paging state
-					console.log(`delete ${paging_state.sub_key}`)
-					persistLocal.delete_paging_state_for(paging_state.sub_key);
-				} else {															// accumulate paging states
-					thing.page_states.add_paging_state(paging_state);
-				}
-			}
-		}
 	}
 
 }

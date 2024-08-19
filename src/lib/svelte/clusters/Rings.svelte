@@ -33,8 +33,8 @@
 		}
 	}
 
-	$: {		// setup wrappers
-
+	$: {
+		// setup wrappers
 		if (!!rotationRing && !rotationWrapper) {
 			rotationWrapper = new Svelte_Wrapper(rotationRing, handle_mouse_state, -1, SvelteComponentType.rotation);
 		}
@@ -43,9 +43,8 @@
 		}
 	}
 
-	$: {		// mouse up ...
-				// end rotate, resize. paging
-
+	$: {
+		// mouse up ... end all (rotate, resize, paging)
 		if (mouse_up_count != $s_mouse_up_count) {
 			mouse_up_count = $s_mouse_up_count;
 			ux.active_thumb_cluster = null;
@@ -138,7 +137,7 @@
 					if (mouse_state.isDown) {
 	
 						// begin paging
-	
+
 						ux.paging_ring_state.basis_angle = basis_angle;
 						$s_active_wrapper = pagingWrapper;
 						ux.active_thumb_cluster = map;

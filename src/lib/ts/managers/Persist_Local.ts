@@ -201,11 +201,6 @@ class Persist_Local {
 		})
 	}
 
-	restore_page_states() {
-		const descriptions = this.read_sub_keys_forKey(this.dbKey_for(IDPersistant.page_states)) ?? k.empty;
-		Page_States.restore_page_states_from(descriptions);
-	}
-
 	restore_graphOffset() {
 		let offset = Point.zero;
 		const stored = this.read_key(IDPersistant.origin);
@@ -226,6 +221,21 @@ class Persist_Local {
 			s_ancestries_expanded.subscribe((ancestries: Array<Ancestry>) => {
 				this.writeDB_key(IDPersistant.expanded, !ancestries ? null : ancestries.map(a => a.id));	// ancestral paths
 			});
+		}
+	}
+
+	restore_page_states() {
+		const descriptions = this.read_sub_keys_forKey(this.dbKey_for(IDPersistant.page_states)) ?? k.empty;
+		for (const description of descriptions) {
+			const paging_state = Paging_State.create_paging_state_from(description);
+			if (!!paging_state) {
+				const thing = paging_state?.thing;
+				if (!!thing) {
+					thing.page_states.add_paging_state(paging_state);
+				} else {															// if no thing => delete paging state
+					persistLocal.delete_paging_state_for(paging_state.sub_key);
+				}
+			}
 		}
 	}
 
