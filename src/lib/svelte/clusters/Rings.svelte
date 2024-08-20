@@ -56,12 +56,6 @@
 	}
 
 	$: {
-		if (ux.isAny_paging_arc_hovering) {
-			console.log('BANG')
-		}
-	}
-
-	$: {
 
 		////////////////////////////////////
 		// detect movement & adjust state //

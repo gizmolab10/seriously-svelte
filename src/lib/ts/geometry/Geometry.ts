@@ -65,16 +65,6 @@ export class Point {
 		}
 	}
 
-	ellipse_coordiates_forAngle(angle: number): Point {
-		// this.x is distance from center to ellipse along the positive x-axis
-		// this.y				"    "				 along the positive y-axis
-		const cos = Math.cos(angle);
-		const sin = Math.sin(angle);
-		return new Point(
-			Math.abs(this.x) * cos,
-			Math.abs(this.y) * sin);
-	}
-
 	rotate_by(angle: number): Point {
 		// rotate counter-clockwise
 		// angle of zero is on the x-axis pointing right

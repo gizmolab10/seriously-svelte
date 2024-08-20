@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { s_mouse_location, s_mouse_up_count, s_ancestry_focus, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
-	import { g, k, u, ux, Rect, Size, Point, debug, Angle, ZIndex, onMount, opacitize } from '../../ts/common/Global_Imports';
-	import { Cluster_Map, Orientation, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, Rect, Size, Point, debug, Angle, ZIndex, onMount } from '../../ts/common/Global_Imports';
+	import { opacitize, Cluster_Map, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { ArcPart } from '../../ts/common/Enumerations';
 	import Identifiable from '../../ts/data/Identifiable';
@@ -61,9 +61,6 @@
 		const thumb_opacity = paging_state.isActive ? 0.7 : paging_state.isHovering ? 0.3 : 0.08;
 		arc_color = u.opacitize(color, ux.paging_ring_state.stroke_opacity);
 		thumb_color = u.opacitize(color, thumb_opacity);
-		// if (paging_state.isActive) {
-		// 	console.log(`thumb ${thumb_opacity * 10} "${name}"`);
-		// }
 	}
 
 	function computed_mouse_angle(): number | null {
@@ -82,32 +79,8 @@
 	function layout_title() {
 		if (!!cluster_map) {
 			label_title = cluster_map.cluster_title;
-			const size = cluster_map.label_tip.abs.asSize;
-			const label_rect = new Rect(center.offsetBy(cluster_map.label_tip), size.dividedInHalf);
-			label_origin = label_origin_for(label_rect);
+			label_origin = cluster_map.label_origin;
 		}
-	}
-
-	function label_origin_for(rect: Rect): Point {
-		const lines = label_title.split('<br>');
-		const m = multiplier();
-		const y = k.dot_size * m.y;
-		const x = u.getWidthOf(lines[0]) * m.x;
-		return rect.center.offsetByXY(x, y);
-	}
-
-	function multiplier(): Point {
-		if (!!cluster_map) {
-			const orientation = cluster_map.label_tip.orientation_ofVector;
-			const common = -0.5;
-			switch (orientation) {
-				case Orientation.up:	return new Point(common, -3.5);
-				case Orientation.left:	return new Point(-0.75, common);
-				case Orientation.down:	return new Point(common, -3.5);
-				default:				return new Point(-0.25, common);
-			}
-		}
-		return Point.zero;
 	}
 
 	function mouse_state_closure(mouse_state) {

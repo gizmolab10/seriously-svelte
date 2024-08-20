@@ -1,6 +1,6 @@
+import { k, u, ux, get, Rect, Point, Angle, IDLine, Arc_Map, Quadrant, Ancestry, Predicate } from '../common/Global_Imports';
 import { s_graphRect, s_rotation_ring_angle, s_ancestry_focus, s_rotation_ring_radius } from '../state/Reactive_State';
-import { k, u, ux, get, Rect, Point, Angle, IDLine, Arc_Map, Quadrant, Ancestry } from '../common/Global_Imports';
-import { Predicate, ElementType, Paging_State, Widget_MapRect, Rotation_State } from '../common/Global_Imports';
+import { Orientation, ElementType, Paging_State, Widget_MapRect, Rotation_State } from '../common/Global_Imports';
 
 // for one cluster (there are three)
 //
@@ -21,9 +21,9 @@ export default class Cluster_Map  {
 	paging_map = new Arc_Map();
 	thumb_map = new Arc_Map();
 	arc_in_lower_half = false;
+	label_origin = Point.zero;
 	cluster_title = k.empty;
 	color = k.color_default;
-	label_tip = Point.zero;
 	predicate: Predicate;
 	points_out: boolean;
 	center = Point.zero;
@@ -68,18 +68,50 @@ export default class Cluster_Map  {
 	static readonly $_LABEL_$: unique symbol;
 
 	update_label() {
-		const radius = get(s_rotation_ring_radius) - k.ring_thickness;
-		const semi_major = radius * 0.95;
-		const semi_minor = radius * 0.6;
-		const label_angle = -this.fork_angle;
-		const ellipse_axes = new Point(semi_minor, semi_major);
-		this.label_tip = ellipse_axes.ellipse_coordiates_forAngle(label_angle);
+		this.update_label_origin();
 		this.update_label_forIndex();
 		this.update_thumb_angles();
 	}
 
+	update_label_origin() {
+		// depending on the fork angle,
+		// place label either centered in hemisphere
+		// or at both sides
+		const label_angle = -this.fork_angle;
+		const radius = get(s_rotation_ring_radius) - (k.ring_thickness * 2);
+		const label_tip = this.ellipse_coordiates_forAngle(label_angle, radius * 0.6, radius * 0.95);
+		const orientation = label_tip.orientation_ofVector;
+		const size = label_tip.abs.asSize;
+		const center = get(s_graphRect).size.dividedInHalf.asPoint;
+		const rect = new Rect(center.offsetBy(label_tip), size.dividedInHalf);
+		const lines = this.cluster_title.split('<br>');
+		const m = this.multiplier(orientation);
+		const y = k.dot_size * m.y;
+		const x = u.getWidthOf(lines[0]) * m.x;
+		this.label_origin = rect.center.offsetByXY(x, y);
+	}
+
+	ellipse_coordiates_forAngle(angle: number, x: number, y: number): Point {
+		// x is distance from center to ellipse along the positive x-axis
+		// y				"    "				along the positive y-axis
+		const cos = Math.cos(angle);
+		const sin = Math.sin(angle);
+		return new Point(
+			Math.abs(x) * cos,
+			Math.abs(y) * sin);
+	}
+
+	multiplier(orientation: Orientation): Point {
+		const common = -0.5;
+		switch (orientation) {
+			case Orientation.up:	return new Point(common, -3.5);
+			case Orientation.left:	return new Point(-0.75, common);
+			case Orientation.down:	return new Point(common, -3.5);
+			default:				return new Point(-0.25, common);
+		}
+	}
+
 	update_label_forIndex() {
-		const separator = '<br>';
 		let quantity = `${this.total}`;
 		const index = Math.round(this.paging_index_ofFocus);
 		let shortened = this.predicate?.kind.unCamelCase().lastWord() ?? k.empty;
@@ -88,9 +120,9 @@ export default class Cluster_Map  {
 		}
 		if (!this.predicate?.isBidirectional) {
 			shortened = this.points_out ? shortened : 'contained by';
-			this.cluster_title = `${shortened}${separator}${quantity}`;
+			this.cluster_title = `${shortened}<br>${quantity}`;
 		} else {
-			this.cluster_title = `${quantity}${separator}${shortened}`;
+			this.cluster_title = `${quantity}<br>${shortened}`;
 		}
 	}
 	
