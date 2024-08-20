@@ -13,18 +13,17 @@
 	const name = cluster_map?.name;
 	const breadth = radius * 2;
 	const thumb_name = `thumb-${name}`;
-	const paging_state = cluster_map?.paging_rotation_state;
-	const thumb_size = (cluster_map?.paging_radius ?? 0) * 2;
 	const viewBox=`${-offset} ${-offset} ${breadth} ${breadth}`;
+	const paging_rotation_state = cluster_map?.paging_rotation_state;
 	let origin = center.offsetBy(Point.square(-radius));
-	let paging_arc_wrapper!: Svelte_Wrapper;
+	let arc_wrapper!: Svelte_Wrapper;
 	let mouse_up_count = $s_mouse_up_count;
 	let label_origin = Point.zero;
 	let label_title = k.empty;
 	let thumb_color = color;
 	let arc_color = color;
 	let rebuilds = 0;
-	let paging_arc;
+	let arc;
 
 	// draws the [paging] arc and thumb slider
 	// uses paging_map for svg, which also has total and shown
@@ -37,15 +36,15 @@
 	})
 
 	$: {
-		if (!!paging_arc) {
-			paging_arc_wrapper = new Svelte_Wrapper(paging_arc, handle_mouse_state, -1, SvelteComponentType.thumb);
+		if (!!arc) {
+			arc_wrapper = new Svelte_Wrapper(arc, handle_mouse_state, -1, SvelteComponentType.thumb);
 		}
 	}
 
 	$: {
 		if (mouse_up_count != $s_mouse_up_count) {
 			mouse_up_count = $s_mouse_up_count;
-			paging_state.reset();
+			paging_rotation_state.reset();
 			layout_title();
 		}
 	}
@@ -58,9 +57,8 @@
 	function handle_mouse_state(mouse_state: Mouse_State): boolean { return thumb_isHit(); }
 
 	function update_colors() {
-		const thumb_opacity = paging_state.isActive ? 0.7 : paging_state.isHovering ? 0.3 : 0.08;
+		thumb_color = u.opacitize(color, paging_rotation_state.thumb_opacity);
 		arc_color = u.opacitize(color, ux.paging_ring_state.stroke_opacity);
-		thumb_color = u.opacitize(color, thumb_opacity);
 	}
 
 	function computed_mouse_angle(): number | null {
@@ -86,7 +84,7 @@
 	function mouse_state_closure(mouse_state) {
 		if (cluster_map.isPaging) {
 			if (mouse_state.isHover) {
-				paging_state.isHovering = thumb_isHit();	// show highlight around ring
+				paging_rotation_state.isHovering = thumb_isHit();	// show highlight around ring
 				update_colors();
 			}
 		}
@@ -94,12 +92,12 @@
 
 	function handle_mouse_moved() {
 		// const mouse_angle = computed_mouse_angle();
-		// if (!!paging_state.active_angle && !!cluster_map && !!mouse_angle) {		// page
-		// 	const delta = Math.abs(mouse_angle - paging_state.active_angle);		// subtract to find difference
-		// 	if (delta >= (Angle.half / 90)) {											// minimum two degree changes
+		// if (!!paging_rotation_state.active_angle && !!cluster_map && !!mouse_angle) {	// page
+		// 	const delta = Math.abs(mouse_angle - paging_rotation_state.active_angle);		// subtract to find difference
+		// 	if (delta >= (Angle.half / 90)) {												// minimum two degree changes
 		// 		cluster_map.adjust_paging_index_forMouse_angle(mouse_angle);
 		// 		console.log(`paging ${mouse_angle.degrees_of(0)}`)
-		// 		paging_state.active_angle = mouse_angle;
+		// 		paging_rotation_state.active_angle = mouse_angle;
 		// 		rebuilds += 1;
 		// 	}
 		// }
@@ -109,7 +107,7 @@
 </script>
 
 {#if !!cluster_map && cluster_map.shown > 1}
-	<div class='paging-arc' bind:this={paging_arc} style='z-index:{ZIndex.paging};'>
+	<div class='paging-arc' bind:this={arc} style='z-index:{ZIndex.paging};'>
 		<Mouse_Responder
 			name={name}
 			center={center}

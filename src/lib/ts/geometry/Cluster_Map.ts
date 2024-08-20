@@ -52,7 +52,9 @@ export default class Cluster_Map  {
 		this.color = u.opacitize(this.focus_ancestry.thing?.color ?? this.color, 0.2);
 		this.update_fork_angle();
 		this.update_children_angles();
-		this.update_label();
+		this.update_label_origin();
+		this.update_label_forIndex();
+		this.update_thumb_angles();
 	}
 
 	get paging_radius(): number { return k.paging_arc_thickness * 0.8; }
@@ -66,12 +68,6 @@ export default class Cluster_Map  {
 	get paging_state_ofFocus(): Paging_State | null { return this.focus_ancestry.thing?.page_states?.paging_state_for(this) ?? null; }
 	
 	static readonly $_LABEL_$: unique symbol;
-
-	update_label() {
-		this.update_label_origin();
-		this.update_label_forIndex();
-		this.update_thumb_angles();
-	}
 
 	update_label_origin() {
 		// depending on the fork angle,
