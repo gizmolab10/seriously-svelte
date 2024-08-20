@@ -1,6 +1,6 @@
 import { s_graphRect, s_rotation_ring_angle, s_ancestry_focus, s_rotation_ring_radius } from '../state/Reactive_State';
-import { k, u, get, Rect, Point, Angle, IDLine, Arc_Map, Quadrant } from '../common/Global_Imports';
-import { Ancestry, Predicate, Paging_State, Widget_MapRect } from '../common/Global_Imports';
+import { k, u, ux, get, Rect, Point, Angle, IDLine, Arc_Map, Quadrant, Ancestry } from '../common/Global_Imports';
+import { Predicate, ElementType, Paging_State, Widget_MapRect, Rotation_State } from '../common/Global_Imports';
 
 // for one cluster (there are three)
 //
@@ -55,12 +55,14 @@ export default class Cluster_Map  {
 		this.update_label();
 	}
 
-	get maximum_paging_index(): number { return this.total - this.shown; }
 	get paging_radius(): number { return k.paging_arc_thickness * 0.8; }
+	get maximum_paging_index(): number { return this.total - this.shown; }
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
 	get description(): string { return `${this.predicate.kind}  ${this.titles}`; }
 	get paging_index_ofFocus(): number { return this.paging_state_ofFocus?.index ?? 0; }
+	get paging_rotation_state(): Rotation_State { return ux.rotationState_forName(this.name); }
 	get fork_radial(): Point { return Point.fromPolar(get(s_rotation_ring_radius), this.fork_angle); }
+	get name(): string { return `${ElementType.arc}-${this.predicate.kind}-${this.points_out ? 'out' : 'in'}-${this.focus_ancestry.title}`; }
 	get paging_state_ofFocus(): Paging_State | null { return this.focus_ancestry.thing?.page_states?.paging_state_for(this) ?? null; }
 	
 	static readonly $_LABEL_$: unique symbol;

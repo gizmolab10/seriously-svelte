@@ -75,7 +75,7 @@ class Global_State {
 		const top = k.show_titleAtTop ? 114 : 69;						// height of content above the graph
 		const left = get(s_show_details) ? k.width_details : 0;			// width of details
 		const originOfGraph = new Point(left, top);
-		const sizeOfGraph = this.windowSize.reducedBy(originOfGraph);		// account for origin
+		const sizeOfGraph = this.windowSize.reducedBy(originOfGraph);	// account for origin
 		const rect = new Rect(originOfGraph, sizeOfGraph);
 		s_graphRect.set(rect);											// used by Panel and Graph_Tree
 	}

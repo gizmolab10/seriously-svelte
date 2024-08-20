@@ -15,11 +15,10 @@
 	export let zindex = ZIndex.rotation;
 	export let cursor_closure = () => {};
 	const outer_radius = radius + ring_width;
-	const geometry = ux.clusters_geometry;
 	const diameter = outer_radius * 2;
 	const borderStyle = '1px solid';
-	const svg_ringPath = svgPaths.ring(Point.square(radius), outer_radius, ring_width);
 	const rotation_viewBox = `${-ring_width}, ${-ring_width}, ${diameter}, ${diameter}`;
+	const svg_ringPath = svgPaths.ring(Point.square(radius), outer_radius, ring_width);
 	let mouse_up_count = $s_mouse_up_count;
 	let rotationWrapper = Svelte_Wrapper;
 	let pagingWrapper = Svelte_Wrapper;
@@ -47,12 +46,18 @@
 		// mouse up ... end all (rotate, resize, paging)
 		if (mouse_up_count != $s_mouse_up_count) {
 			mouse_up_count = $s_mouse_up_count;
-			ux.active_thumb_cluster = null;
 			ux.rotation_ring_state.reset();
-			ux.paging_ring_state.reset();
+			ux.active_cluster_map = null;
 			$s_active_wrapper = null;
+			ux.reset_paging();
 			cursor_closure();
 			rebuilds += 1;
+		}
+	}
+
+	$: {
+		if (ux.isAny_paging_arc_hovering) {
+			console.log('BANG')
 		}
 	}
 
@@ -66,16 +71,25 @@
 		const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);	// use store, to react
 		if (!!from_center) {
 			let sendSignal = false;
+			const inPaging = isInterior();
 			const mouse_angle = from_center.angle;
 			const rotate_resize = ux.rotation_ring_state;
-			if (!!ux.active_thumb_cluster) {					// send into paging arc to change index
-				if (ux.active_thumb_cluster.adjust_paging_index_forMouse_angle(mouse_angle)) {
-					sendSignal = true;
-				}
-			} else if (!!rotate_resize.lastRotated_angle) {		// rotate_resize clusters
-				const rotation_angle = convert_angle(rotate_resize, mouse_angle);
-				if (!!rotation_angle) {
-					$s_rotation_ring_angle = rotation_angle;
+			const isHovering = isHit() && !inPaging && !ux.isAny_paging_arc_active;
+			if (rotate_resize.isHovering != isHovering) {
+				rotate_resize.isHovering = isHovering;
+				sendSignal = true;
+			}
+			if (ux.paging_ring_state.isHovering != inPaging) {
+				ux.paging_ring_state.isHovering = inPaging;		// adjust hover highlight for all arcs  (paging arc handles thumb hover)
+				sendSignal = true;
+			}
+			if (ux.active_cluster_map?.adjust_paging_index_forMouse_angle(mouse_angle) ?? false) {
+				ux.active_cluster_map.paging_rotation_state.active_angle = mouse_angle;
+				sendSignal = true;
+			} else if (!!rotate_resize.active_angle) {		// rotate_resize clusters
+				if (!mouse_angle.isClocklyAlmost(rotate_resize.active_angle, Angle.half / 180, Angle.full)) {		// detect >= 1° change
+					$s_rotation_ring_angle = mouse_angle.add_angle_normalized(-rotate_resize.basis_angle);
+					rotate_resize.active_angle = mouse_angle;
 					sendSignal = true;
 				}
 			} else if (!!rotate_resize.radiusOffset) {			// resize
@@ -83,30 +97,18 @@
 				const largest = k.cluster_inside_radius * 4;
 				const smallest = k.cluster_inside_radius * 1.5;
 				const distance = magnitude.force_between(smallest, largest);
-				const pixels = distance - $s_rotation_ring_radius - rotate_resize.radiusOffset;
-				if (Math.abs(pixels) > 5) {
+				const delta = distance - $s_rotation_ring_radius - rotate_resize.radiusOffset;
+				if (Math.abs(delta) > 5) {
+					$s_rotation_ring_radius += delta;
 					sendSignal = true;
-					$s_rotation_ring_radius += pixels;
 				}
-			} else if (!ux.isAny_paging_arc_active) {
-				if (rotate_resize.isHovering != isHit()) {
-					rotate_resize.isHovering = isHit()		;	// show highlight around ring
-				}
-				cursor_closure();
 			}
+			cursor_closure();
 			if (sendSignal) {
 				rebuilds += 1;
-				signals.signal_relayoutWidgets_fromFocus();		// destroys this component (properties are in ux: rotation_ring_state && active_thumb_cluster)
+				signals.signal_relayoutWidgets_fromFocus();		// destroys this component (properties are in ux: rotation_ring_state && active_cluster_map)
 			}
 		}
-	}
-
-	function convert_angle(state: Rotation_State, mouse_angle: number): number | null {
-		if (!mouse_angle.isClocklyAlmost(state.lastRotated_angle, Math.PI / 180, Math.PI * 2)) {		// detect >= 1° change
-			state.lastRotated_angle = mouse_angle;
-			return mouse_angle.add_angle_normalized(-state.basis_angle);
-		}
-		return null;
 	}
 
 	function closure(mouse_state) {
@@ -116,32 +118,21 @@
 		/////////////////////////////
 
 		const rotate_resize = ux.rotation_ring_state;
-		if (mouse_state.isHover) {
-
-			// adjust hover highlight
-
-			if (mouse_state.isOut) {
-				rotate_resize.isHovering = false;
-			} else {
-				const okayToHover = !ux.paging_ring_state.isActive;
-				rotate_resize.isHovering = okayToHover;	// show highlight around ring
-			}
-			rebuilds += 1;
-		} else {
 			const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);
 			const mouse_wentDown_angle = from_center.angle;
 			if (isInterior()) {
 				const basis_angle = mouse_wentDown_angle.normalized_angle();
-				const map = geometry.cluster_mapFor(basis_angle);
-				if (!!map) {
-					if (mouse_state.isDown) {
-	
-						// begin paging
+				const map = ux.clusters_geometry.cluster_mapFor(basis_angle);
+				if (!!map && mouse_state.isDown) {
+						
+					// begin paging
 
-						ux.paging_ring_state.basis_angle = basis_angle;
-						$s_active_wrapper = pagingWrapper;
-						ux.active_thumb_cluster = map;
-					}
+					const paging_state = map.paging_rotation_state;
+					paging_state.active_angle = basis_angle;
+					paging_state.basis_angle = basis_angle;
+					$s_active_wrapper = pagingWrapper;
+					ux.active_cluster_map = map;
+					rebuilds += 1;
 				}
 			} else if (isHit()) {
 				if (mouse_state.isDouble) {
@@ -156,14 +147,13 @@
 					// begin rotate
 	
 					const basis_angle = mouse_wentDown_angle.add_angle_normalized(-$s_rotation_ring_angle);
-					rotate_resize.lastRotated_angle = mouse_wentDown_angle;
+					rotate_resize.active_angle = mouse_wentDown_angle;
 					rotate_resize.basis_angle = basis_angle;
 					$s_active_wrapper = rotationWrapper;
 					rebuilds += 1;
 				}
 			}
 			cursor_closure();
-		}
 	}
 
 	function distance_fromCenter(): number | null {
@@ -195,7 +185,7 @@
 
 {#key rebuilds}
 	<div class='paging-ring' bind:this={pagingRing} style='z-index:{ZIndex.paging};'>
-		{#each geometry.cluster_maps as cluster_map}
+		{#each ux.clusters_geometry.cluster_maps as cluster_map}
 			{#if !!cluster_map && (cluster_map.shown > 0)}
 				<Paging_Arc
 					color={color}

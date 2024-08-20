@@ -95,8 +95,8 @@ export class Page_States {
 	}
 
 	get thing(): Thing | null { return h.thing_forHID(this.thing_id.hash()) ?? null; }
-	paging_state_for(map: Cluster_Map) { return this.paging_state_forPointsOut(map.points_out, map.predicate); }
 	get description(): string { return this.description_for(true) + k.big_separator + this.description_for(false); }
+	paging_state_for(map: Cluster_Map): Paging_State { return this.paging_state_forPointsOut(map.points_out, map.predicate); }
 	paging_states_for(points_out: boolean): Array<Paging_State> { return points_out ? this.outward_paging_states : this.inward_paging_states; }
 
 	add_paging_state(paging_state: Paging_State) {
