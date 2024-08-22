@@ -16,7 +16,7 @@
 	const revealState = ux.elementState_for(ancestry, ElementType.reveal, subtype);
 	const rightPadding = $s_cluster_mode ? 0 : hasExtraAtLeft ? 22.5 : 20;
 	const dragState = ux.elementState_for(ancestry, ElementType.drag, subtype);
-	const forward = angle <= Angle.quarter || angle >= Angle.threeQuarters;
+	const forward = angle <= Angle.quarter || angle >= Angle.three_quarters;
 	const leftPadding = forward ? 1 : 14;
 	const priorRowHeight = k.row_height;
 	let widgetWrapper!: Svelte_Wrapper;

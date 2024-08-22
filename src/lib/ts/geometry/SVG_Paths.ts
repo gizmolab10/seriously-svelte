@@ -1,7 +1,7 @@
 import { k, u, Point, Angle } from '../common/Global_Imports';
 
 export enum Direction {
-	up = Angle.threeQuarters,
+	up = Angle.three_quarters,
 	down = Angle.quarter,
 	right = Angle.half,
 	left = Angle.zero,

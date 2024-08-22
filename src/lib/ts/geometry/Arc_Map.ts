@@ -36,6 +36,7 @@ export default class Arc_Map {
 	get straddles_zero(): boolean { return this.end_angle.straddles_zero(this.start_angle); }
 	get fork_orientsDown(): boolean { return new Angle(this.fork_angle).angle_orientsDown; }
 	get fork_pointsRight(): boolean { return new Angle(this.fork_angle).angle_pointsRight; }
+	get center_angle(): number { return (this.end_angle + this.start_angle) / 2; }
 	get angles(): [number, number] { return [this.start_angle, this.end_angle]; }
 	get spread_angle(): number { return this.end_angle - this.start_angle; }
 	get arc_origin(): Point { return this.arc_rect.origin; }
@@ -54,6 +55,8 @@ export default class Arc_Map {
 		extent.y = (start_y_isSmaller ? end_radial.y : start_radial.y) + this.tiny_radius;
 		return Rect.createExtentRect(origin, extent);
 	}
+
+	arc_straddles(angle: number): boolean { return (this.start_angle.normalized_angle() > angle && this.end_angle.normalized_angle() < angle); }
 
 	radial_forAngle(angle: number): Point {
 		const middle_radius = this.inside_arc_radius + this.tiny_radius;
@@ -81,7 +84,7 @@ export default class Arc_Map {
 			this.end_angle = saved;
 		}
 		this.arc_rect = this.computed_arc_rect;
-		this.fork_angle = (this.start_angle + this.end_angle) / 2;
+		this.fork_angle = this.center_angle;
 	}
 
 	static readonly $_SVG_PATHS_$: unique symbol;

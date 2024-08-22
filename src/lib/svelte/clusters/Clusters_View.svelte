@@ -57,9 +57,9 @@
 			style='transform:translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px); z-index:{ZIndex.panel};'>
 			{#key $s_ancestry_focus.hashedAncestry}
 				<Rings
+					name={'rings'}
 					center={center}
 					zindex={ZIndex.panel}
-					name={'rotation-ring'}
 					ring_width={k.ring_thickness}
 					cursor_closure={cursor_closure}
 					radius={$s_rotation_ring_radius}

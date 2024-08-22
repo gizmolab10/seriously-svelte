@@ -4,8 +4,8 @@ import '../common/Extensions';
 export enum Quadrant {
 	upperRight = 'ur',	// 			   0 ... quarter
 	upperLeft  = 'ul',	//		 quarter ... half
-	lowerLeft  = 'll',	//			half ... threeQuarters
-	lowerRight = 'lr',	// threeQuarters ... full
+	lowerLeft  = 'll',	//			half ... three_quarters
+	lowerRight = 'lr',	// three_quarters ... full
 }
 
 export enum Orientation {
@@ -26,7 +26,7 @@ export default class Angle {
 	static full = Math.PI * 2;					// same as (normalizes to) zero
 	static quarter = Math.PI / 2;				// zenith (12 o'clock)
 	static half = Math.PI;						// far left (9 o'clock)
-	static threeQuarters = Math.PI * 3 / 2;		// nadir (6 o'clock)
+	static three_quarters = Math.PI * 3 / 2;		// nadir (6 o'clock)
 
 	get quadrant_basis_angle(): number { return u.basis_angle_ofQuadrant(this.quadrant_ofAngle); }
 	get angle_orientsDown(): boolean { return this.orientation_ofAngle == Orientation.down; }
@@ -65,7 +65,7 @@ export default class Angle {
 		let quadrant = Quadrant.lowerRight;
 		if (normalized.isBetween(0,				Angle.quarter,		 true)) { quadrant = Quadrant.upperRight; }
 		if (normalized.isBetween(Angle.quarter, Angle.half,			 true)) { quadrant = Quadrant.upperLeft; }
-		if (normalized.isBetween(Angle.half,	Angle.threeQuarters, true)) { quadrant = Quadrant.lowerLeft; }
+		if (normalized.isBetween(Angle.half,	Angle.three_quarters, true)) { quadrant = Quadrant.lowerLeft; }
 		return quadrant;
 	}
 

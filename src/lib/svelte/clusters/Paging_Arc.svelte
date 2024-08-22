@@ -1,10 +1,11 @@
 <script lang='ts'>
-	import { s_mouse_location, s_mouse_up_count, s_ancestry_focus, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
+	import { s_mouse_location, s_mouse_up_count, s_ancestry_focus, s_thing_fontFamily, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import { g, k, u, ux, Rect, Size, Point, debug, Angle, ZIndex, onMount } from '../../ts/common/Global_Imports';
 	import { opacitize, Cluster_Map, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { ArcPart } from '../../ts/common/Enumerations';
 	import Identifiable from '../../ts/data/Identifiable';
+	import Angled_Text from '../kit/Angled_Text.svelte';
 	export let color = 'red';
 	export let center = Point.zero;
 	export let cluster_map!: Cluster_Map;
@@ -16,20 +17,18 @@
 	const viewBox=`${-offset} ${-offset} ${breadth} ${breadth}`;
 	const paging_rotation_state = cluster_map?.paging_rotation_state;
 	let origin = center.offsetBy(Point.square(-radius));
-	let arc_wrapper!: Svelte_Wrapper;
 	let mouse_up_count = $s_mouse_up_count;
-	let label_origin = Point.zero;
-	let label_title = k.empty;
+	let arc_wrapper!: Svelte_Wrapper;
 	let thumb_color = color;
 	let arc_color = color;
 	let rebuilds = 0;
 	let arc;
 
-	// draws the [paging] arc and thumb slider
-	// uses paging_map for svg, which also has total and shown
+	// draws the arc, thumb and label
+	// uses arc_map for svg
+	// and cluster map for geometry and text
 	//
-	// drawn by paging ring, which is drawn by clusters graph
-	// CHANGE: drawn by clusters (which is drawn by clusters graph)?
+	// contained by rings, which is contained by clusters view
 
 	onMount(() => {
 		update_colors();
@@ -45,7 +44,6 @@
 		if (mouse_up_count != $s_mouse_up_count) {
 			mouse_up_count = $s_mouse_up_count;
 			paging_rotation_state.reset();
-			layout_title();
 		}
 	}
 
@@ -74,13 +72,6 @@
 		return false;
 	}
 
-	function layout_title() {
-		if (!!cluster_map) {
-			label_title = cluster_map.cluster_title;
-			label_origin = cluster_map.label_origin;
-		}
-	}
-
 	function mouse_state_closure(mouse_state) {
 		if (cluster_map.isPaging) {
 			if (mouse_state.isHover) {
@@ -101,45 +92,40 @@
 		// 		rebuilds += 1;
 		// 	}
 		// }
-		layout_title();
 	}
 
 </script>
 
-{#if !!cluster_map && cluster_map.shown > 1}
-	<div class='paging-arc' bind:this={arc} style='z-index:{ZIndex.paging};'>
-		<Mouse_Responder
-			name={name}
-			center={center}
-			width={breadth}
-			height={breadth}
-			zindex={ZIndex.panel}
-			detect_longClick={false}
-			cursor={k.cursor_default}
-			closure={mouse_state_closure}
-			detectHit_closure={thumb_isHit}>
-			<svg class='svg-paging-arc' viewBox={viewBox}>
-				<path stroke={arc_color} fill=transparent d={cluster_map.paging_map.arc_svgPath}/>
-				{#if debug.reticule}
-					<path stroke='green' fill=transparent d={cluster_map.paging_map.debug_svgPath}/>
-				{/if}
-				{#if cluster_map.isPaging}
-					<path fill={thumb_color} d={cluster_map.thumb_map.arc_svgPath}/>
-				{/if}
-			</svg>
-		</Mouse_Responder>
-	</div>
+{#if !!cluster_map}
+	{#if cluster_map.shown > 1}
+		<div class='arc' bind:this={arc} style='z-index:{ZIndex.paging};'>
+			<Mouse_Responder
+				name={name}
+				center={center}
+				width={breadth}
+				height={breadth}
+				zindex={ZIndex.panel}
+				detect_longClick={false}
+				cursor={k.cursor_default}
+				closure={mouse_state_closure}
+				detectHit_closure={thumb_isHit}>
+				<svg class='svg-arc' viewBox={viewBox}>
+					<path stroke={arc_color} fill=transparent d={cluster_map.arc_map.arc_svgPath}/>
+					{#if debug.reticule}
+						<path stroke='green' fill=transparent d={cluster_map.arc_map.debug_svgPath}/>
+					{/if}
+					{#if cluster_map.isPaging}
+						<path fill={thumb_color} d={cluster_map.thumb_map.arc_svgPath}/>
+					{/if}
+				</svg>
+			</Mouse_Responder>
+		</div>
+	{/if}
+	<Angled_Text
+		text={cluster_map.cluster_title}
+		center={cluster_map.label_center}
+		font_family={$s_thing_fontFamily}
+		font_size={k.thing_fontSize * 0.6}
+		angle={cluster_map.label_transform_angle}
+		color={s_ancestry_focus.thing?.color ?? k.color_default}/>
 {/if}
-<div class='cluster-label'
-	style='
-		background-color: {k.color_background};
-		left: {label_origin.x}px;
-		top: {label_origin.y}px;
-		white-space: nowrap;
-		font-family: Arial;
-		text-align: center;
-		position: absolute;
-		font-size: 0.5em;
-		color: {color};'>
-	{@html label_title}
-</div>

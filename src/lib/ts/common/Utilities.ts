@@ -114,7 +114,7 @@ class Utilities {
 
 	basis_angle_ofQuadrant(quadrant: Quadrant): number {
 		switch (quadrant) {
-			case Quadrant.upperRight: return Angle.threeQuarters;
+			case Quadrant.upperRight: return Angle.three_quarters;
 			case Quadrant.lowerLeft:  return Angle.quarter;
 			case Quadrant.upperLeft:  return Angle.half;
 			default:				  return 0;

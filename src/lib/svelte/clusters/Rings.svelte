@@ -178,37 +178,39 @@
 </script>
 
 {#key rebuilds}
-	<div class='paging-ring' bind:this={pagingRing} style='z-index:{ZIndex.paging};'>
-		{#each ux.clusters_geometry.cluster_maps as cluster_map}
-			{#if !!cluster_map && (cluster_map.shown > 0)}
-				<Paging_Arc
-					color={color}
-					center={center}
-					cluster_map={cluster_map}/>
-			{/if}
-		{/each}
-	</div>
-	<div class='rotation-ring' bind:this={rotationRing} style='z-index:{ZIndex.rotation};'>
-		<Mouse_Responder
-			name={name}
-			center={center}
-			zindex={zindex}
-			width={diameter}
-			height={diameter}
-			closure={closure}
-			detect_longClick={false}
-			detectHit_closure={isHit}
-			cursor={ux.rotation_ring_state.cursor}>
-			<svg
-				class= 'svg-rotation-ring'
-				viewBox={rotation_viewBox}>
-				{#if debug.reticule}
-					<path stroke='green' fill=transparent d={svgPaths.t_cross($s_rotation_ring_radius * 2, 0)}/>
+	<div class='rings'>
+		<div class='arcs' bind:this={pagingRing} style='z-index:{ZIndex.paging};'>
+			{#each ux.clusters_geometry.cluster_maps as cluster_map}
+				{#if !!cluster_map && (cluster_map.shown > 0)}
+					<Paging_Arc
+						color={color}
+						center={center}
+						cluster_map={cluster_map}/>
 				{/if}
-				<path d={svg_ringPath}
-					fill={u.opacitize(color, ux.rotation_ring_state.fill_opacity)}
-					stroke={u.opacitize(color, ux.rotation_ring_state.stroke_opacity)}/>
-			</svg>
-		</Mouse_Responder>
+			{/each}
+		</div>
+		<div class='rotates' bind:this={rotationRing} style='z-index:{ZIndex.rotation};'>
+			<Mouse_Responder
+				name={name}
+				center={center}
+				zindex={zindex}
+				width={diameter}
+				height={diameter}
+				closure={closure}
+				detect_longClick={false}
+				detectHit_closure={isHit}
+				cursor={ux.rotation_ring_state.cursor}>
+				<svg
+					class= 'svg-rotates'
+					viewBox={rotation_viewBox}>
+					{#if debug.reticule}
+						<path stroke='green' fill=transparent d={svgPaths.t_cross($s_rotation_ring_radius * 2, 0)}/>
+					{/if}
+					<path d={svg_ringPath}
+						fill={u.opacitize(color, ux.rotation_ring_state.fill_opacity)}
+						stroke={u.opacitize(color, ux.rotation_ring_state.stroke_opacity)}/>
+				</svg>
+			</Mouse_Responder>
+		</div>
 	</div>
 {/key}

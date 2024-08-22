@@ -10,6 +10,7 @@ class Builds {
 
 	constructor() {
 		this.notes = {
+			109 : ['August 22, 2024', 'rotate cluster label tangent to arc'],
 			108 : ['August 18, 2024', 'paging persists for multiple things and dbs'],
 			107 : ['August 12, 2024', 'thumb works (funky)'],
 			106 : ['August 1, 2024', 'fixed netlify cluster mode'],
