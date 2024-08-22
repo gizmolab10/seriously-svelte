@@ -1,11 +1,13 @@
 <script lang='ts'>
-	import { s_mouse_location, s_mouse_up_count, s_ancestry_focus, s_thing_fontFamily, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import { g, k, u, ux, Rect, Size, Point, debug, Angle, ZIndex, onMount } from '../../ts/common/Global_Imports';
 	import { opacitize, Cluster_Map, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { s_mouse_location, s_mouse_up_count, s_ancestry_focus } from '../../ts/state/Reactive_State';
+	import { s_thing_fontFamily, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { ArcPart } from '../../ts/common/Enumerations';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Angled_Text from '../kit/Angled_Text.svelte';
+	import Circle from '../kit/Circle.svelte';
 	export let color = 'red';
 	export let center = Point.zero;
 	export let cluster_map!: Cluster_Map;
@@ -93,6 +95,8 @@
 		// 	}
 		// }
 	}
+	// <Circle radius=4 center={center} color=green thickness=1/>
+	// <Circle radius=2 center={cluster_map.label_center} color=red thickness=1/>
 
 </script>
 
@@ -126,6 +130,6 @@
 		center={cluster_map.label_center}
 		font_family={$s_thing_fontFamily}
 		font_size={k.thing_fontSize * 0.6}
-		angle={cluster_map.label_transform_angle}
+		angle={cluster_map.label_text_angle}
 		color={s_ancestry_focus.thing?.color ?? k.color_default}/>
 {/if}

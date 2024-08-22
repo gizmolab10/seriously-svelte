@@ -946,6 +946,11 @@
     protobufjs "^7.2.5"
     yargs "^17.7.2"
 
+"@ibm/telemetry-js@^1.5.0":
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/@ibm/telemetry-js/-/telemetry-js-1.6.1.tgz#960da386c96876bda0cb59a25e12d6a711674cb9"
+  integrity sha512-ds45f2bz4qVvJPK84VcSMJTvTZI+qXu6wVlBcy9/hAlmzOcxeX6rh8W0De4H133HPONsZWvs0lV/H2aUcznCxw==
+
 "@interactjs/types@1.10.27":
   version "1.10.27"
   resolved "https://registry.yarnpkg.com/@interactjs/types/-/types-1.10.27.tgz#10afd71cef2498e2b5192cf0d46f937d8ceb767f"
@@ -2148,6 +2153,14 @@ caniuse-lite@^1.0.30001646:
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001651.tgz#52de59529e8b02b1aedcaaf5c05d9e23c0c28138"
   integrity sha512-9Cf+Xv1jJNe1xPZLGuUXLNkE1BoDkqRqYyFJ9TDYSqhduqA4hu4oR9HluGoWYQC/aj8WHjsGVV+bwkh0+tegRg==
 
+carbon-components-svelte@^0.85.2:
+  version "0.85.2"
+  resolved "https://registry.yarnpkg.com/carbon-components-svelte/-/carbon-components-svelte-0.85.2.tgz#a137d56124c6e75eda1a5c955ce7e04145d638c5"
+  integrity sha512-+ta2wP9jugeDoDDHdzqbSomyEwtOaVyqVeCy5Z/q8WxdnahKOMDeIgPBi/QnsmsDIgS3+79svGG0BcBMBbCfYw==
+  dependencies:
+    "@ibm/telemetry-js" "^1.5.0"
+    flatpickr "4.6.9"
+
 chalk@^2.4.2:
   version "2.4.2"
   resolved "https://registry.yarnpkg.com/chalk/-/chalk-2.4.2.tgz#cd42541677a54333cf541a49108c1432b44c9424"
@@ -3105,6 +3118,11 @@ firebase@^10.1.0:
     "@firebase/storage-compat" "0.3.10"
     "@firebase/util" "1.9.7"
     "@firebase/vertexai-preview" "0.0.3"
+
+flatpickr@4.6.9:
+  version "4.6.9"
+  resolved "https://registry.yarnpkg.com/flatpickr/-/flatpickr-4.6.9.tgz#9a13383e8a6814bda5d232eae3fcdccb97dc1499"
+  integrity sha512-F0azNNi8foVWKSF+8X+ZJzz8r9sE1G4hl06RyceIaLvyltKvDl6vqk9Lm/6AUUCi5HWaIjiUbk7UpeE/fOXOpw==
 
 for-each@^0.3.3:
   version "0.3.3"

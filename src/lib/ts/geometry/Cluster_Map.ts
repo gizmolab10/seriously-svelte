@@ -21,7 +21,7 @@ export default class Cluster_Map  {
 	arc_in_lower_half = false;
 	label_center = Point.zero;
 	thumb_map = new Arc_Map();
-	label_transform_angle = 0;
+	label_text_angle = 0;
 	arc_map = new Arc_Map();
 	cluster_title = k.empty;
 	color = k.color_default;
@@ -29,7 +29,7 @@ export default class Cluster_Map  {
 	points_out: boolean;
 	center = Point.zero;
 	isPaging = false;
-	label_angle = 0;
+	label_position_angle = 0;
 	fork_angle = 0;
 	shown = 0;
 	total = 0;
@@ -58,28 +58,31 @@ export default class Cluster_Map  {
 		this.update_label_geometry();
 		this.update_label_forIndex();
 		this.update_thumb_angles();
+		console.log(`${this.label_position_angle.degrees_of(0)} ${this.description}`);
 	}
 
+	get direction(): string { return this.points_out ? 'out' : 'in'; }
 	get paging_radius(): number { return k.paging_arc_thickness * 0.8; }
 	get maximum_paging_index(): number { return this.total - this.shown; }
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
-	get description(): string { return `${this.predicate.kind}  ${this.titles}`; }
+	get description(): string { return `(${this.cluster_title}) ${this.titles}`; }
 	get paging_index_ofFocus(): number { return this.paging_state_ofFocus?.index ?? 0; }
 	get paging_rotation_state(): Rotation_State { return ux.rotationState_forName(this.name); }
 	get fork_radial(): Point { return Point.fromPolar(get(s_rotation_ring_radius), this.fork_angle); }
-	get name(): string { return `${ElementType.arc}-${this.predicate.kind}-${this.points_out ? 'out' : 'in'}-${this.focus_ancestry.title}`; }
+	get name(): string { return `${ElementType.arc}-${this.predicate.kind}-${this.direction}-${this.focus_ancestry.title}`; }
 	get paging_state_ofFocus(): Paging_State | null { return this.focus_ancestry.thing?.page_states?.paging_state_for(this) ?? null; }
 	
 	static readonly $_LABEL_$: unique symbol;
 
 	update_label_geometry() {		// rotate text tangent to arc, at center of arc
-		const nadir_adjustment = (this.arc_straddles_nadir && !this.arc_straddles_zero) ? Angle.half : 0;
-		this.label_angle = this.arc_map.center_angle - nadir_adjustment;
+		const nadir_offset = (this.arc_straddles_nadir && !this.arc_straddles_zero) ? Angle.half : 0;
 		const radius = get(s_rotation_ring_radius) - k.ring_thickness + (this.arc_in_lower_half ? 5 : 0);
-		const radial = new Point(radius, 0).rotate_by(this.label_angle);
-		const angle_adjustment = this.arc_in_lower_half ? Angle.quarter : Angle.three_quarters;
+		const ortho = this.arc_in_lower_half ? Angle.quarter : Angle.three_quarters;
+		const angle = this.arc_map.center_angle - nadir_offset;
+		const radial = Point.fromPolar(radius, angle);
 		this.label_center = this.center.offsetBy(radial);
-		this.label_transform_angle = angle_adjustment - this.label_angle;
+		this.label_text_angle = ortho - angle;
+		this.label_position_angle = angle;
 	}
 
 	update_label_forIndex() {
@@ -145,7 +148,8 @@ export default class Cluster_Map  {
 		// index increases & angle decreases clockwise
 		if (index == max) {
 			this.arc_map.start_angle = child_angle;
-		} else if (index == 0) {
+		}
+		if (index == 0) {
 			this.arc_map.end_angle = child_angle;
 		}
 	}
@@ -199,7 +203,7 @@ export default class Cluster_Map  {
 			y = radius * (y / absY) - (y % radius);			// swing around (bottom | top) --> back inside rotation
 		}
 		let child_angle = -Math.asin(y / radius);			// arc-sin only defined (-90 to 90) [ALSO: negate angles so things advance clockwise]
-		if (y_isOutside == (radial.x > 0)) {				// counter-clockwise if (positive x AND y is outside) OR (negative x AND y is inside)
+		if (y_isOutside == (radial.x > 0)) {				// counter-clockwise if (x is positive AND y is outside) OR (x is negative AND y is inside)
 			child_angle = Angle.half - child_angle			// otherwise it's clockwise, so invert it
 		}
 		this.update_arc_angles(index, max, child_angle);

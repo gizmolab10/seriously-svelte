@@ -3,6 +3,7 @@
 	import { s_thing_changed, s_title_editing, s_ancestry_focus, s_ancestries_grabbed } from '../../ts/state/Reactive_State';
 	import { s_thing_fontFamily, s_cluster_mode, s_ancestry_editingTools } from '../../ts/state/Reactive_State';
 	import { ElementType, Element_State, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { Tooltip } from 'carbon-components-svelte';
 	import Editing_Tools from './Editing_Tools.svelte';
 	import Title_Editor from './Title_Editor.svelte';
 	import Dot_Reveal from './Dot_Reveal.svelte';
@@ -14,9 +15,9 @@
     export let ancestry;
 	const hasExtraAtLeft = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
 	const revealState = ux.elementState_for(ancestry, ElementType.reveal, subtype);
-	const rightPadding = $s_cluster_mode ? 0 : hasExtraAtLeft ? 22.5 : 20;
 	const dragState = ux.elementState_for(ancestry, ElementType.drag, subtype);
 	const forward = angle <= Angle.quarter || angle >= Angle.three_quarters;
+	const rightPadding = $s_cluster_mode ? 0 : hasExtraAtLeft ? 22.5 : 20;
 	const leftPadding = forward ? 1 : 14;
 	const priorRowHeight = k.row_height;
 	let widgetWrapper!: Svelte_Wrapper;
@@ -169,6 +170,14 @@
 			revealCenter = new Point(revealX, revealY);
 		}
 	}
+		// <Tooltip
+		// 	style='
+		// 		display: flex;
+		// 		align-items: center;
+		// 		justify-content: center;'
+		// 	align='center'
+		// 	content='This is helpful information'>
+		// </Tooltip>
 
 </script>
 
