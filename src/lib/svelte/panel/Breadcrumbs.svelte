@@ -13,8 +13,9 @@
 	let left = 0;
 
 	$: {
-		const _ = $s_thing_changed;
-		rebuilds += 1;
+		if (!!$s_thing_changed && !!$s_thing_changed) {
+			rebuilds += 1;
+		}
 	}
 
 	$: {

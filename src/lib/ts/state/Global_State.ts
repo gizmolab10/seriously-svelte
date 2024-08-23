@@ -8,7 +8,7 @@ class Global_State {
 	setup() {
 		persistLocal.restore_constants();
 		k.queryStrings_apply();
-		s_thing_changed.set(k.empty);
+		s_thing_changed.set(null);
 		persistLocal.queryStrings_apply();
 		debug.queryStrings_apply();
 		debugReact.queryStrings_apply();

@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { s_graphRect, s_ancestry_focus, s_user_graphOffset, s_thing_fontFamily, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
-	import { k, u, ux, Rect, Size, Point, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Rect, Size, Point, ZIndex, onMount, signals, debugReact } from '../../ts/common/Global_Imports';
 	import Editing_Tools from '../widget/Editing_Tools.svelte';
 	import Title_Editor from '../widget/Title_Editor.svelte';
 	import Circle from '../kit/Circle.svelte';
@@ -29,6 +29,7 @@
 	$: { cursor_closure(); }
 	
 	onMount(() => {
+		debugReact.log_mount(`CLUSTERS ${rebuilds} rebuilds`);
 		const handler = signals.handle_relayoutWidgets(0, (ancestry) => { rebuilds += 1; });
 		return () => { handler.disconnect() };
 	});

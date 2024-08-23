@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { k, u, ux, w, Thing, Point, Angle, debug, ZIndex, signals, svgPaths } from '../../ts/common/Global_Imports';
+	import { k, u, ux, w, Thing, Point, Angle, debug, ZIndex, onMount, signals, svgPaths } from '../../ts/common/Global_Imports';
+	import { debugReact, dbDispatch, opacitize, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { s_graphRect, s_mouse_location, s_active_wrapper, s_mouse_up_count } from '../../ts/state/Reactive_State';
-	import { dbDispatch, opacitize, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { s_thing_changed, s_ancestry_focus, s_user_graphOffset } from '../../ts/state/Reactive_State';
 	import { s_rotation_ring_angle, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
@@ -26,8 +26,12 @@
 	let rebuilds = 0
 	let pagingRing;
 
+	onMount(() => {
+		debugReact.log_mount(`RINGS ${rebuilds} rebuilds`);
+	});
+
 	$: {
-		if ($s_ancestry_focus.thing.id == $s_thing_changed.split(k.generic_separator)[0]) {
+		if (!!$s_thing_changed && $s_ancestry_focus.thing.id == $s_thing_changed.split(k.generic_separator)[0]) {
 			rebuilds += 1;
 		}
 	}
@@ -67,31 +71,28 @@
 			let sendSignal = false;
 			const inPaging = isInterior();
 			const mouse_angle = from_center.angle;
-			const rotate_resize = ux.rotation_ring_state;
 			const isHovering = isHit() && !inPaging && !ux.isAny_paging_arc_active;
-			if (rotate_resize.isHovering != isHovering) {
-				rotate_resize.isHovering = isHovering;
-				sendSignal = true;
+			if (ux.rotation_ring_state.isHovering != isHovering) {
+				ux.rotation_ring_state.isHovering = isHovering;
 			}
 			if (ux.paging_ring_state.isHovering != inPaging) {
 				ux.paging_ring_state.isHovering = inPaging;		// adjust hover highlight for all arcs  (paging arc handles thumb hover)
-				sendSignal = true;
 			}
 			if (ux.active_cluster_map?.adjust_paging_index_forMouse_angle(mouse_angle) ?? false) {
 				ux.active_cluster_map.paging_rotation_state.active_angle = mouse_angle;
 				sendSignal = true;
-			} else if (!!rotate_resize.active_angle) {		// rotate_resize clusters
-				if (!mouse_angle.isClocklyAlmost(rotate_resize.active_angle, Angle.half / 180, Angle.full)) {		// detect >= 1° change
-					$s_rotation_ring_angle = mouse_angle.add_angle_normalized(-rotate_resize.basis_angle);
-					rotate_resize.active_angle = mouse_angle;
+			} else if (!!ux.rotation_ring_state.active_angle) {		// rotate_resize clusters
+				if (!mouse_angle.isClocklyAlmost(ux.rotation_ring_state.active_angle, Angle.half / 180, Angle.full)) {		// detect >= 1° change
+					$s_rotation_ring_angle = mouse_angle.add_angle_normalized(-ux.rotation_ring_state.basis_angle);
+					ux.rotation_ring_state.active_angle = mouse_angle;
 					sendSignal = true;
 				}
-			} else if (!!rotate_resize.radiusOffset) {			// resize
+			} else if (!!ux.rotation_ring_state.radiusOffset) {			// resize
 				const magnitude = from_center.magnitude
 				const largest = k.cluster_inside_radius * 4;
 				const smallest = k.cluster_inside_radius * 1.5;
 				const distance = magnitude.force_between(smallest, largest);
-				const delta = distance - $s_rotation_ring_radius - rotate_resize.radiusOffset;
+				const delta = distance - $s_rotation_ring_radius - ux.rotation_ring_state.radiusOffset;
 				if (Math.abs(delta) > 5) {
 					$s_rotation_ring_radius += delta;
 					sendSignal = true;
@@ -111,43 +112,42 @@
 		// setup or teardown state //
 		/////////////////////////////
 
-		const rotate_resize = ux.rotation_ring_state;
-			const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);
-			const mouse_wentDown_angle = from_center.angle;
-			if (isInterior()) {
-				const basis_angle = mouse_wentDown_angle.normalized_angle();
-				const map = ux.clusters_geometry.cluster_mapFor(basis_angle);
-				if (!!map && mouse_state.isDown) {
-						
-					// begin paging
-
-					const paging_state = map.paging_rotation_state;
-					paging_state.active_angle = basis_angle;
-					paging_state.basis_angle = basis_angle;
-					$s_active_wrapper = pagingWrapper;
-					ux.active_cluster_map = map;
-					rebuilds += 1;
-				}
-			} else if (isHit()) {
-				if (mouse_state.isDouble) {
-	
-					// begin resize
+		const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);
+		const mouse_wentDown_angle = from_center.angle;
+		if (isInterior()) {
+			const basis_angle = mouse_wentDown_angle.normalized_angle();
+			const map = ux.clusters_geometry.cluster_mapFor(basis_angle);
+			if (!!map && mouse_state.isDown) {
 					
-					rotate_resize.radiusOffset = from_center.magnitude - $s_rotation_ring_radius;
-					$s_active_wrapper = rotationWrapper;
-					rebuilds += 1;
-				} else if (mouse_state.isDown) {
+				// begin paging
 
-					// begin rotate
-	
-					const basis_angle = mouse_wentDown_angle.add_angle_normalized(-$s_rotation_ring_angle);
-					rotate_resize.active_angle = mouse_wentDown_angle;
-					rotate_resize.basis_angle = basis_angle;
-					$s_active_wrapper = rotationWrapper;
-					rebuilds += 1;
-				}
+				const paging_state = map.paging_rotation_state;
+				paging_state.active_angle = basis_angle;
+				paging_state.basis_angle = basis_angle;
+				$s_active_wrapper = pagingWrapper;
+				ux.active_cluster_map = map;
+				rebuilds += 1;
 			}
-			cursor_closure();
+		} else if (isHit()) {
+			if (mouse_state.isDouble) {
+
+				// begin resize
+				
+				ux.rotation_ring_state.radiusOffset = from_center.magnitude - $s_rotation_ring_radius;
+				$s_active_wrapper = rotationWrapper;
+				rebuilds += 1;
+			} else if (mouse_state.isDown) {
+
+				// begin rotate
+
+				const basis_angle = mouse_wentDown_angle.add_angle_normalized(-$s_rotation_ring_angle);
+				ux.rotation_ring_state.active_angle = mouse_wentDown_angle;
+				ux.rotation_ring_state.basis_angle = basis_angle;
+				$s_active_wrapper = rotationWrapper;
+				rebuilds += 1;
+			}
+		}
+		cursor_closure();
 	}
 
 	function distance_fromCenter(): number | null {

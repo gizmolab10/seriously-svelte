@@ -32,6 +32,7 @@
 		}
 		persistenceTimer = setTimeout(() => {
 			(async () => {
+				$s_thing_changed = null;
 				await thing.remoteWrite();
 			})();
 		}, 100);		// tenth second delay

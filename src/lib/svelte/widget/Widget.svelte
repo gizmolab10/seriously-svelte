@@ -51,14 +51,14 @@
 		update_fromAncestry();
 		layout_widget();
 		element_state = ux.elementState_forName(name);		// survives onDestroy, created by {tree, cluster} children
-		debugReact.log_mount(`WIDGET ${thing?.description} ${ancestry?.isGrabbed}`);
+		// debugReact.log_mount(`WIDGET ${thing?.description} ${ancestry?.isGrabbed}`);
 		fullUpdate();
 		const handleAny = signals.handle_anySignal((kinds, id) => {
 			for (const kind of kinds) {
 				switch (kind) {
 					case kinds.relayout:
 						if (id == thing?.id) {
-							debugReact.log_layout(`WIDGET signal ${thing?.description}`);
+							// debugReact.log_layout(`WIDGET signal ${thing?.description}`);
 							layout_widget()
 						}
 						break;
@@ -92,7 +92,7 @@
 	}
 
 	$: {
-		if (thing?.id == $s_thing_changed.split(k.generic_separator)[0]) {
+		if (!!$s_thing_changed && thing?.id == $s_thing_changed.split(k.generic_separator)[0]) {
 			rebuilds += 1;
 		}
 	}

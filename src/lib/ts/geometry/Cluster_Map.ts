@@ -58,7 +58,6 @@ export default class Cluster_Map  {
 		this.update_label_geometry();
 		this.update_label_forIndex();
 		this.update_thumb_angles();
-		console.log(`${this.label_position_angle.degrees_of(0)} ${this.description}`);
 	}
 
 	get direction(): string { return this.points_out ? 'out' : 'in'; }
