@@ -33,7 +33,7 @@
 	// contained by rings, which is contained by clusters view
 
 	onMount(() => {
-		debugReact.log_mount(`PAGING ARC "${name}" ${rebuilds} rebuilds`);
+		// debugReact.log_mount(`PAGING ARC "${name}" ${rebuilds} rebuilds`);
 		update_colors();
 	})
 

@@ -81,7 +81,7 @@
 			if (ux.active_cluster_map?.adjust_paging_index_forMouse_angle(mouse_angle) ?? false) {
 				ux.active_cluster_map.paging_rotation_state.active_angle = mouse_angle;
 				sendSignal = true;
-			} else if (!!ux.rotation_ring_state.active_angle) {		// rotate_resize clusters
+			} else if (!!ux.rotation_ring_state.active_angle || ux.rotation_ring_state.active_angle == 0) {		// rotate_resize clusters
 				if (!mouse_angle.isClocklyAlmost(ux.rotation_ring_state.active_angle, Angle.half / 180, Angle.full)) {		// detect >= 1° change
 					$s_rotation_ring_angle = mouse_angle.add_angle_normalized(-ux.rotation_ring_state.basis_angle);
 					ux.rotation_ring_state.active_angle = mouse_angle;
