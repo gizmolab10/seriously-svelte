@@ -1,6 +1,6 @@
 import { s_graphRect, s_rotation_ring_angle, s_ancestry_focus, s_rotation_ring_radius } from '../state/Reactive_State';
 import { k, u, ux, get, Rect, Point, Angle, IDLine, Arc_Map, Quadrant, Ancestry } from '../common/Global_Imports';
-import { Predicate, ElementType, Paging_State, Widget_MapRect, Rotation_State } from '../common/Global_Imports';
+import { debugReact, Predicate, Paging_State, Widget_MapRect, Rotation_State } from '../common/Global_Imports';
 
 // for one cluster (there are three)
 //
@@ -58,6 +58,7 @@ export default class Cluster_Map  {
 		this.update_label_geometry();
 		this.update_label_forIndex();
 		this.update_thumb_angles();
+		debugReact.log_layout(`map ${this.focus_ancestry.thing?.title}`)
 	}
 
 	get paging_radius(): number { return k.paging_arc_thickness * 0.8; }
@@ -66,7 +67,7 @@ export default class Cluster_Map  {
 	get description(): string { return `(${this.cluster_title}) ${this.titles}`; }
 	get paging_state(): Rotation_State { return ux.rotationState_forName(this.name); }
 	get paging_index_ofFocus(): number { return this.paging_state_ofFocus?.index ?? 0; }
-	get direction_kind(): string { return this.points_out ? this.kind : 'contained-by'; }
+	get direction_kind(): string { return this.points_out ? 'contained-by' : this.kind; }
 	get kind(): string { return this.predicate?.kind.unCamelCase().lastWord() ?? k.empty; }
 	get name(): string { return `${this.focus_ancestry.title}-cluster-${this.direction_kind}`; }
 	get fork_radial(): Point { return Point.fromPolar(get(s_rotation_ring_radius), this.fork_angle); }

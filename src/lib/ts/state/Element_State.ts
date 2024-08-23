@@ -1,4 +1,4 @@
-import { k, u, ux, Ancestry, ElementType } from '../common/Global_Imports';
+import { g, k, u, ux, Ancestry, ElementType } from '../common/Global_Imports';
 import Identifiable from '../data/Identifiable';
 
 export default class Element_State {
@@ -47,7 +47,7 @@ export default class Element_State {
 	get border(): string {
 		let color = this.ancestry.thing?.color;
 		if (color) {
-			if (ux.isAny_rotation_active) {
+			if (g.isAny_rotation_active) {
 				color = u.opacitize(color, 0.2);
 			}
 			if (this.ancestry.isEditing) {

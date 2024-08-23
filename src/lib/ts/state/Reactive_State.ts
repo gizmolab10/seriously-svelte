@@ -1,4 +1,5 @@
-import { Rect, Point, Ancestry, Paging_State, Title_State, Svelte_Wrapper, Alteration_State } from '../common/Global_Imports';
+import { Rect, Point, Ancestry, Title_State, Paging_State, Svelte_Wrapper } from '../common/Global_Imports';
+import { Rotation_State, Expansion_State, Alteration_State } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
 export const s_altering				 = writable<Alteration_State | null>();
@@ -7,6 +8,8 @@ export const s_title_editing		 = writable<Title_State | null>();
 export const s_ancestry_editingTools = writable<Ancestry | null>();
 export const s_ancestries_expanded	 = writable<Array<Ancestry>>();
 export const s_ancestries_grabbed	 = writable<Array<Ancestry>>();
+export const s_rotation_ring_state	 = writable<Expansion_State>();
+export const s_paging_ring_state	 = writable<Rotation_State>();
 export const s_thing_changed		 = writable<string | null>();
 export const s_id_popupView			 = writable<string | null>();
 export const s_db_loadTime 			 = writable<string | null>();

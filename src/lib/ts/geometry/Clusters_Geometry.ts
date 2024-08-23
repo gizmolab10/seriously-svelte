@@ -1,4 +1,5 @@
-import { u, get, Angle, Ancestry, Paging_State, Predicate, Cluster_Map, Widget_MapRect } from '../common/Global_Imports';
+import { u, get, Angle, Ancestry, Predicate, debugReact } from '../common/Global_Imports';
+import { Cluster_Map, Paging_State, Widget_MapRect } from '../common/Global_Imports';
 import { s_paging_state, s_ancestry_focus } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
 
@@ -14,6 +15,7 @@ export default class Clusters_Geometry {
 		s_paging_state.subscribe((state: Paging_State) => {
 			this.update_forPaging_state(state);
 		});
+		debugReact.log_layout(`clusters ${get(s_ancestry_focus)?.thing?.title}`)
 	}
 
 	destructor() {

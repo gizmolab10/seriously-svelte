@@ -3,17 +3,18 @@ import { k } from '../../ts/common/Constants';
 export enum ReactKind {
 	mount	= 'mount',
 	layout	= 'layout',
+	action  = 'action',
 	origins = 'origins',
 	rebuild = 'rebuild',
 }
 
 export class DebugReact {
 	kinds: Array<ReactKind>;
-	get mount(): boolean { return this.hasKind(ReactKind.mount); }
-	get layout(): boolean { return this.hasKind(ReactKind.layout); }
+
 	constructor(kinds: Array<ReactKind>) { this.kinds = kinds; }
 	hasKind(kind: ReactKind) { return this.kinds.includes(kind); }
 	log_mount(message: string) { this.log_maybe(ReactKind.mount, message) }
+	log_action(message: string) { this.log_maybe(ReactKind.action, message) }
 	log_layout(message: string) { this.log_maybe(ReactKind.layout, message) }
 	log_origins(message: string) { this.log_maybe(ReactKind.origins, message) }
 	log_rebuild(message: string) { this.log_maybe(ReactKind.rebuild, message) }
@@ -27,6 +28,7 @@ export class DebugReact {
 			for (const kind of kinds) {
 				switch (kind) {
 					case 'mount': this.kinds.push(ReactKind.mount); break;
+					case 'action': this.kinds.push(ReactKind.action); break;
 					case 'layout': this.kinds.push(ReactKind.layout); break;
 					case 'origins': this.kinds.push(ReactKind.origins); break;
 					case 'rebuild': this.kinds.push(ReactKind.rebuild); break;

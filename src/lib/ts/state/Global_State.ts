@@ -1,11 +1,14 @@
-import { k, u, w, get, Rect, Size, Point, debug, debugReact, dbDispatch } from '../common/Global_Imports';
+import { k, u, ux, w, get, Rect, Size, Point, debug, debugReact, dbDispatch, Svelte_Wrapper } from '../common/Global_Imports';
+import { persistLocal, IDPersistant, Rotation_State, Expansion_State } from '../common/Global_Imports';
 import { s_graphRect, s_show_details, s_scale_factor, s_thing_changed } from './Reactive_State';
-import { persistLocal, IDPersistant, Svelte_Wrapper } from '../common/Global_Imports';
+import { s_paging_ring_state, s_rotation_ring_state } from './Reactive_State';
 
 class Global_State {
 	mouseUp_subscribers: {[type: string]: Array<Svelte_Wrapper>} = {};
 
 	setup() {
+		s_rotation_ring_state.set(new Expansion_State())
+		s_paging_ring_state.set(new Rotation_State())
 		persistLocal.restore_constants();
 		k.queryStrings_apply();
 		s_thing_changed.set(null);
@@ -13,6 +16,10 @@ class Global_State {
 		debug.queryStrings_apply();
 		debugReact.queryStrings_apply();
 		w.setup();
+	}
+
+	get isAny_rotation_active(): boolean {
+		return ux.isAny_paging_arc_active || get(s_paging_ring_state).isActive || get(s_rotation_ring_state).isActive;
 	}
 
 	get windowSize(): Size {

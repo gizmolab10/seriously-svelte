@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { g, k, u, ux, Rect, Size, Point, debug, Angle, ZIndex, onMount, debugReact } from '../../ts/common/Global_Imports';
+	import { s_thing_fontFamily, s_paging_ring_state, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import { opacitize, Cluster_Map, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { s_mouse_location, s_mouse_up_count, s_ancestry_focus } from '../../ts/state/Reactive_State';
-	import { s_thing_fontFamily, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { ArcPart } from '../../ts/common/Enumerations';
 	import Identifiable from '../../ts/data/Identifiable';
@@ -13,10 +13,8 @@
 	export let cluster_map!: Cluster_Map;
 	const offset = k.rotation_ring_widget_padding;
 	const radius = $s_rotation_ring_radius + offset;
-	const name = cluster_map?.name;
 	const breadth = radius * 2;
-	const thumb_name = `thumb-${name}`;
-	const paging_state = cluster_map?.paging_state;
+	const thumb_name = `thumb-${cluster_map?.name}`;
 	const viewBox=`${-offset} ${-offset} ${breadth} ${breadth}`;
 	let origin = center.offsetBy(Point.square(-radius));
 	let mouse_up_count = $s_mouse_up_count;
@@ -32,9 +30,19 @@
 	// contained by rings, which is contained by clusters view
 
 	onMount(() => {
-		debugReact.log_mount(`PAGING ARC "${name}"`);
+		debugReact.log_mount(`PAGING ARC "${cluster_map?.name}"`);
 		update_colors();
 	})
+
+	$: {
+		const _ = k.empty + ($s_mouse_location?.description ?? k.empty);			// use store, to react
+		handle_mouse_moved();
+	}
+
+	$: {
+		const _ = $s_paging_ring_state.stroke_opacity;
+		update_colors();
+	}
 
 	$: {
 		if (!!arc) {
@@ -45,20 +53,16 @@
 	$: {
 		if (mouse_up_count != $s_mouse_up_count) {
 			mouse_up_count = $s_mouse_up_count;
-			paging_state.reset();
+			cluster_map?.paging_state.reset();
 		}
-	}
-
-	$: {
-		const _ = k.empty + ($s_mouse_location?.description ?? k.empty);			// use store, to react
-		handle_mouse_moved();
 	}
 
 	function handle_mouse_state(mouse_state: Mouse_State): boolean { return thumb_isHit(); }
 
 	function update_colors() {
-		thumb_color = u.opacitize(color, paging_state.thumb_opacity);
-		arc_color = u.opacitize(color, ux.paging_ring_state.stroke_opacity);
+		arc_color = u.opacitize(color, $s_paging_ring_state.stroke_opacity);
+		thumb_color = u.opacitize(color, cluster_map?.paging_state.three_level_opacity);
+		debugReact.log_action(`colors ${$s_paging_ring_state.stroke_opacity}`);
 	}
 
 	function computed_mouse_angle(): number | null {
@@ -66,10 +70,14 @@
 	}
  
 	function thumb_isHit(): boolean {
-		if (!!cluster_map) {
+		if (!!cluster_map && cluster_map.isPaging) {
 			const ring_origin = center.offsetBy(Point.square(-$s_rotation_ring_radius));
 			const vector = u.vector_ofOffset_fromGraphCenter_toMouseLocation(ring_origin);
-			return vector.isContainedBy_path(cluster_map.thumb_map.arc_svgPath);
+			const hit = vector.isContainedBy_path(cluster_map.thumb_map.arc_svgPath);
+			if (hit) {
+				debugReact.log_action(`thumb hovering for ${cluster_map?.name}`);
+			}
+			return hit;
 		}
 		return false;
 	}
@@ -77,7 +85,7 @@
 	function mouse_state_closure(mouse_state) {
 		if (cluster_map.isPaging) {
 			if (mouse_state.isHover) {
-				paging_state.isHovering = thumb_isHit();	// show highlight around ring
+				cluster_map?.paging_state.isHovering = thumb_isHit();	// show highlight around ring
 				update_colors();
 			}
 		}
@@ -101,28 +109,30 @@
 
 {#if !!cluster_map}
 	{#if cluster_map.shown > 1}
-		<div class='arc' bind:this={arc} style='z-index:{ZIndex.paging};'>
-			<Mouse_Responder
-				name={name}
-				center={center}
-				width={breadth}
-				height={breadth}
-				zindex={ZIndex.panel}
-				detect_longClick={false}
-				cursor={k.cursor_default}
-				closure={mouse_state_closure}
-				detectHit_closure={thumb_isHit}>
-				<svg class='svg-arc' viewBox={viewBox}>
-					<path stroke={arc_color} fill=transparent d={cluster_map.arc_map.arc_svgPath}/>
-					{#if debug.reticule}
-						<path stroke='green' fill=transparent d={cluster_map.arc_map.debug_svgPath}/>
-					{/if}
-					{#if cluster_map.isPaging}
-						<path fill={thumb_color} d={cluster_map.thumb_map.arc_svgPath}/>
-					{/if}
-				</svg>
-			</Mouse_Responder>
-		</div>
+		{#key arc_color}
+			<div class='arc' bind:this={arc} style='z-index:{ZIndex.paging};'>
+				<Mouse_Responder
+					center={center}
+					width={breadth}
+					height={breadth}
+					zindex={ZIndex.panel}
+					detect_longClick={false}
+					name={cluster_map?.name}
+					cursor={k.cursor_default}
+					closure={mouse_state_closure}
+					detectHit_closure={thumb_isHit}>
+					<svg class='svg-arc' viewBox={viewBox}>
+						<path stroke={arc_color} fill=transparent d={cluster_map.arc_map.arc_svgPath}/>
+						{#if debug.reticule}
+							<path stroke='green' fill=transparent d={cluster_map.arc_map.debug_svgPath}/>
+						{/if}
+						{#if cluster_map.isPaging}
+							<path fill={thumb_color} d={cluster_map.thumb_map.arc_svgPath}/>
+						{/if}
+					</svg>
+				</Mouse_Responder>
+			</div>
+		{/key}
 	{/if}
 	<Angled_Text
 		text={cluster_map.cluster_title}

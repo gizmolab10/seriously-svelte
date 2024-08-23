@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, ux, Rect, Size, Point, Thing, debug, ZIndex, IDTool, onMount } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, Rect, Size, Point, Thing, debug, ZIndex, IDTool, onMount } from '../../ts/common/Global_Imports';
 	import { s_cluster_mode, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/Reactive_State';
 	import { signals, svgPaths, Direction, ElementType, dbDispatch } from '../../ts/common/Global_Imports';
 	import { Svelte_Wrapper, AlterationType, SvelteComponentType } from '../../ts/common/Global_Imports';
@@ -92,9 +92,9 @@
 	}
 
 	function updateColors_forHovering(isOut) {
-		if (!ux.isAny_rotation_active) {
+		if (!g.isAny_rotation_active) {
 			isHovering = !isOut;
-			const usePointer = (!ancestry.isGrabbed || s_cluster_mode) && ancestry.hasChildRelationships && !ux.isAny_rotation_active;
+			const usePointer = (!ancestry.isGrabbed || s_cluster_mode) && ancestry.hasChildRelationships && !g.isAny_rotation_active;
 			const cursor = usePointer ? 'pointer' : 'normal';
 			if (!!element_state && !!thing) {
 				element_state.set_forHovering(thing.color, cursor);
@@ -105,7 +105,7 @@
 	}
 
 	function closure(mouse_state) {
-		if (!ux.isAny_rotation_active) {
+		if (!g.isAny_rotation_active) {
 			if (mouse_state.isHover) {
 				updateColors_forHovering(mouse_state.isOut);
 			} else if (mouse_state.isLong) {

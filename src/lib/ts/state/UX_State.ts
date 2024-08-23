@@ -8,9 +8,7 @@ export default class UX_State {
 	elementState_byName: {[name: string]: Element_State} = {};
 	mouse_state_byName: { [name: string]: Mouse_State } = {};
 	clusters_geometry!: Clusters_Geometry;
-	rotation_ring_state!: Expansion_State;
 	active_cluster_map!: Cluster_Map;
-	paging_ring_state!: Rotation_State;
 	rebuild_count = 0;
 
 	//////////////////////////////////////
@@ -26,13 +24,6 @@ export default class UX_State {
 	//									//
 	//////////////////////////////////////
 
-	constructor() {
-		setTimeout(() => {
-			this.paging_ring_state = new Rotation_State();
-			this.rotation_ring_state = new Expansion_State();
-		}, 1);
-	}
-
 	reset_paging() { this.rotation_states.map(s => s.reset()); }
 	get new_clusters_geometry() { return this.clusters_geometry = new Clusters_Geometry(); }
 	elementState_forName(name: string): Element_State { return this.elementState_byName[name]; }
@@ -42,10 +33,6 @@ export default class UX_State {
 
 	name_from(identifiable: Identifiable, type: ElementType, subtype: string): string {
 		return `${type}-${subtype}-${identifiable.id}`;
-	}
-
-	get isAny_rotation_active(): boolean {
-		return ux.isAny_paging_arc_active || ux.paging_ring_state.isActive || ux.rotation_ring_state.isActive;
 	}
 
 	rotationState_forName(name: string): Rotation_State {

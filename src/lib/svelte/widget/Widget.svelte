@@ -58,7 +58,7 @@
 				switch (kind) {
 					case kinds.relayout:
 						if (id == thing?.id) {
-							// debugReact.log_layout(`WIDGET signal ${thing?.description}`);
+							debugReact.log_layout(`WIDGET signal ${thing?.description}`);
 							layout_widget()
 						}
 						break;
