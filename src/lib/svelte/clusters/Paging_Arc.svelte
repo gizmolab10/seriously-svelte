@@ -7,7 +7,7 @@
 	import { ArcPart } from '../../ts/common/Enumerations';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Angled_Text from '../kit/Angled_Text.svelte';
-	import Circle from '../kit/Circle.svelte';
+	// import Circle from '../kit/Circle.svelte';
 	export let color = 'red';
 	export let center = Point.zero;
 	export let cluster_map!: Cluster_Map;
@@ -16,14 +16,13 @@
 	const name = cluster_map?.name;
 	const breadth = radius * 2;
 	const thumb_name = `thumb-${name}`;
+	const paging_state = cluster_map?.paging_state;
 	const viewBox=`${-offset} ${-offset} ${breadth} ${breadth}`;
-	const paging_rotation_state = cluster_map?.paging_rotation_state;
 	let origin = center.offsetBy(Point.square(-radius));
 	let mouse_up_count = $s_mouse_up_count;
 	let arc_wrapper!: Svelte_Wrapper;
 	let thumb_color = color;
 	let arc_color = color;
-	let rebuilds = 0;
 	let arc;
 
 	// draws the arc, thumb and label
@@ -33,7 +32,7 @@
 	// contained by rings, which is contained by clusters view
 
 	onMount(() => {
-		// debugReact.log_mount(`PAGING ARC "${name}" ${rebuilds} rebuilds`);
+		debugReact.log_mount(`PAGING ARC "${name}"`);
 		update_colors();
 	})
 
@@ -46,7 +45,7 @@
 	$: {
 		if (mouse_up_count != $s_mouse_up_count) {
 			mouse_up_count = $s_mouse_up_count;
-			paging_rotation_state.reset();
+			paging_state.reset();
 		}
 	}
 
@@ -58,7 +57,7 @@
 	function handle_mouse_state(mouse_state: Mouse_State): boolean { return thumb_isHit(); }
 
 	function update_colors() {
-		thumb_color = u.opacitize(color, paging_rotation_state.thumb_opacity);
+		thumb_color = u.opacitize(color, paging_state.thumb_opacity);
 		arc_color = u.opacitize(color, ux.paging_ring_state.stroke_opacity);
 	}
 
@@ -78,7 +77,7 @@
 	function mouse_state_closure(mouse_state) {
 		if (cluster_map.isPaging) {
 			if (mouse_state.isHover) {
-				paging_rotation_state.isHovering = thumb_isHit();	// show highlight around ring
+				paging_state.isHovering = thumb_isHit();	// show highlight around ring
 				update_colors();
 			}
 		}
@@ -86,13 +85,12 @@
 
 	function handle_mouse_moved() {
 		// const mouse_angle = computed_mouse_angle();
-		// if (!!paging_rotation_state.active_angle && !!cluster_map && !!mouse_angle) {	// page
-		// 	const delta = Math.abs(mouse_angle - paging_rotation_state.active_angle);		// subtract to find difference
+		// if (!!paging_state.active_angle && !!cluster_map && !!mouse_angle) {	// page
+		// 	const delta = Math.abs(mouse_angle - paging_state.active_angle);		// subtract to find difference
 		// 	if (delta >= (Angle.half / 90)) {												// minimum two degree changes
 		// 		cluster_map.adjust_paging_index_forMouse_angle(mouse_angle);
 		// 		console.log(`paging ${mouse_angle.degrees_of(0)}`)
-		// 		paging_rotation_state.active_angle = mouse_angle;
-		// 		rebuilds += 1;
+		// 		paging_state.active_angle = mouse_angle;
 		// 	}
 		// }
 	}

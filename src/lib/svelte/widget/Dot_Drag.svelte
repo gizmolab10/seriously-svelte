@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { s_thing_changed, s_cluster_mode, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/Reactive_State';
 	import { k, u, ux, Rect, Size, Point, Thing, debug, ZIndex, IDTool, onMount } from '../../ts/common/Global_Imports';
-	import { createPopper, Svelte_Wrapper, AlterationType, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { s_cluster_mode, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/Reactive_State';
 	import { signals, svgPaths, Direction, ElementType, dbDispatch } from '../../ts/common/Global_Imports';
+	import { Svelte_Wrapper, AlterationType, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Tooltip from '../kit/Tooltip.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -13,23 +13,21 @@
 	const radius = k.dot_size;
 	const diameter = radius * 2;
 	const element_state = ux.elementState_forName(name);		// survives onDestroy, created by widget
-	let dragWrapper = Svelte_Wrapper;
+	let dragWrapper!: Svelte_Wrapper;
+	let isRelatedSVGPath = k.empty;
+	let tinyDotsSVGPath = k.empty;
+	let dragDotSVGPath = k.empty;
 	let isAltering = false;
 	let isGrabbed = false;
 	let isHovering = true;
 	let size = k.dot_size;
 	let mouse_click_timer;
-	let isRelatedSVGPath;
-	let tinyDotsSVGPath;
-	let dragDotSVGPath;
+    let thing!: Thing;
 	let rebuilds = 0;
 	let redraws = 0;
 	let left = 0;
 	let top = 0;
 	let dotDrag;
-	let tooltip;
-	let popper;
-    let thing;
 
 	function handle_context_menu(event) { event.preventDefault(); }		// no default context menu on right-click
 
@@ -39,7 +37,6 @@
 		}
 		updateSVGPaths();
 		updateColors_forHovering(true);
-		popper = createPopper(dotDrag, tooltip, { placement: 'bottom' });
         const handleAltering = signals.handle_altering((state) => {
 			const applyFlag = $s_ancestry_editingTools && !!ancestry && ancestry.things_canAlter_asParentOf_toolsAncestry;
 			isAltering = applyFlag ? !!state : false;
@@ -58,7 +55,7 @@
 	}
 
 	$: {
-		if (!!$s_thing_changed && thing?.id == $s_thing_changed.split(k.generic_separator)[0]) {
+		if (thing?.changed_state ?? false) {
 			updateColors_forHovering(true);
 		}
 	}
@@ -123,9 +120,6 @@
 	function handle_mouse_state(mouse_state: Mouse_State): boolean {
 		return false;
 	}
-
-	// <Tooltip color={element_state.stroke} bind:this={tooltip}>This is a drag dot</Tooltip>
-	// on:contextmenu={handle_context_menu}
 
 </script>
 

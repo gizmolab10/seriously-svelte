@@ -26,10 +26,11 @@ export default class Angle {
 	static full = Math.PI * 2;					// same as (normalizes to) zero
 	static quarter = Math.PI / 2;				// zenith (12 o'clock)
 	static half = Math.PI;						// far left (9 o'clock)
-	static three_quarters = Math.PI * 3 / 2;		// nadir (6 o'clock)
+	static three_quarters = Math.PI * 3 / 2;	// nadir (6 o'clock)
 
-	get quadrant_basis_angle(): number { return u.basis_angle_ofQuadrant(this.quadrant_ofAngle); }
+	static radians_from_degrees(degrees: number): number { return Math.PI / 180 * degrees; }
 	get angle_orientsDown(): boolean { return this.orientation_ofAngle == Orientation.down; }
+	get quadrant_basis_angle(): number { return u.basis_angle_ofQuadrant(this.quadrant_ofAngle); }
 
 	get angle_slantsForward(): boolean {
 		const quadrant = this.quadrant_ofAngle;

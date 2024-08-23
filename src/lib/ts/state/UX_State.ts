@@ -33,9 +33,12 @@ export default class UX_State {
 		}, 1);
 	}
 
+	reset_paging() { this.rotation_states.map(s => s.reset()); }
 	get new_clusters_geometry() { return this.clusters_geometry = new Clusters_Geometry(); }
 	elementState_forName(name: string): Element_State { return this.elementState_byName[name]; }
 	get rotation_states(): Array<Rotation_State> { return Object.values(this.rotationState_byName); }
+	get isAny_paging_arc_active(): boolean { return this.rotation_states.filter(s => s.isActive).length > 0; }
+	get isAny_paging_arc_hovering(): boolean { return this.rotation_states.filter(s => s.isHovering).length > 0; }
 
 	name_from(identifiable: Identifiable, type: ElementType, subtype: string): string {
 		return `${type}-${subtype}-${identifiable.id}`;
@@ -43,30 +46,6 @@ export default class UX_State {
 
 	get isAny_rotation_active(): boolean {
 		return ux.isAny_paging_arc_active || ux.paging_ring_state.isActive || ux.rotation_ring_state.isActive;
-	}
-
-	reset_paging() {
-		for (const rotation_state of this.rotation_states) {
-			rotation_state.reset();
-		}
-	}
-
-	get isAny_paging_arc_hovering(): boolean {
-		for (const rotation_state of this.rotation_states) {
-			if (rotation_state.isHovering) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	get isAny_paging_arc_active(): boolean {
-		for (const rotation_state of this.rotation_states) {
-			if (rotation_state.isActive) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	rotationState_forName(name: string): Rotation_State {

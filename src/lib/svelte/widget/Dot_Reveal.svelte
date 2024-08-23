@@ -16,7 +16,7 @@
 	let tinyDotsOffset = size * -0.4 + 0.01;
 	let childrenCount = ancestry.childRelationships.length;
 	let insidePath = svgPaths.circle_atOffset(16, 6);
-	let revealWrapper = Svelte_Wrapper;
+	let revealWrapper!: Svelte_Wrapper;
 	let revealDotPath = k.empty;
 	let hasInsidePath = false;
 	let insideOffset = 0;

@@ -2,8 +2,8 @@
 	import { k, u, ux, w, Thing, Point, Angle, debug, ZIndex, onMount, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import { debugReact, dbDispatch, opacitize, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { s_graphRect, s_mouse_location, s_active_wrapper, s_mouse_up_count } from '../../ts/state/Reactive_State';
-	import { s_thing_changed, s_ancestry_focus, s_user_graphOffset } from '../../ts/state/Reactive_State';
 	import { s_rotation_ring_angle, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
+	import { s_ancestry_focus, s_user_graphOffset } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Paging_Arc from './Paging_Arc.svelte';
@@ -20,18 +20,18 @@
 	const rotation_viewBox = `${-ring_width}, ${-ring_width}, ${diameter}, ${diameter}`;
 	const svg_ringPath = svgPaths.ring(Point.square(radius), outer_radius, ring_width);
 	let mouse_up_count = $s_mouse_up_count;
-	let rotationWrapper = Svelte_Wrapper;
-	let pagingWrapper = Svelte_Wrapper;
+	let rotationWrapper!: Svelte_Wrapper;
+	let pagingWrapper!: Svelte_Wrapper;
+	let rebuilds = 0;
 	let rotationRing;
-	let rebuilds = 0
-	let pagingRing;
+	let pagingArcs;
 
 	onMount(() => {
-		debugReact.log_mount(`RINGS ${rebuilds} rebuilds`);
+		debugReact.log_mount(`RINGS`);
 	});
 
 	$: {
-		if (!!$s_thing_changed && $s_ancestry_focus.thing.id == $s_thing_changed.split(k.generic_separator)[0]) {
+		if ($s_ancestry_focus.thing?.changed_state ?? false) {
 			rebuilds += 1;
 		}
 	}
@@ -41,8 +41,8 @@
 		if (!!rotationRing && !rotationWrapper) {
 			rotationWrapper = new Svelte_Wrapper(rotationRing, handle_mouse_state, -1, SvelteComponentType.rotation);
 		}
-		if (!!pagingRing && !pagingWrapper) {
-			pagingWrapper = new Svelte_Wrapper(pagingRing, handle_mouse_state, -1, SvelteComponentType.rotation);
+		if (!!pagingArcs && !pagingWrapper) {
+			pagingWrapper = new Svelte_Wrapper(pagingArcs, handle_mouse_state, -1, SvelteComponentType.rotation);
 		}
 	}
 
@@ -78,11 +78,13 @@
 			if (ux.paging_ring_state.isHovering != inPaging) {
 				ux.paging_ring_state.isHovering = inPaging;		// adjust hover highlight for all arcs  (paging arc handles thumb hover)
 			}
-			if (ux.active_cluster_map?.adjust_paging_index_forMouse_angle(mouse_angle) ?? false) {
-				ux.active_cluster_map.paging_rotation_state.active_angle = mouse_angle;
-				sendSignal = true;
+			if (!!ux.active_cluster_map) {
+				if (ux.active_cluster_map.adjust_paging_index_forMouse_angle(mouse_angle)) {
+					ux.active_cluster_map.paging_state.active_angle = mouse_angle;
+					sendSignal = true;
+				}
 			} else if (!!ux.rotation_ring_state.active_angle || ux.rotation_ring_state.active_angle == 0) {		// rotate_resize clusters
-				if (!mouse_angle.isClocklyAlmost(ux.rotation_ring_state.active_angle, Angle.half / 180, Angle.full)) {		// detect >= 1° change
+				if (!signals.signal_isInFlight && !mouse_angle.isClocklyAlmost(ux.rotation_ring_state.active_angle, Angle.radians_from_degrees(4), Angle.full)) {		// detect >= 4° change
 					$s_rotation_ring_angle = mouse_angle.add_angle_normalized(-ux.rotation_ring_state.basis_angle);
 					ux.rotation_ring_state.active_angle = mouse_angle;
 					sendSignal = true;
@@ -100,8 +102,10 @@
 			}
 			cursor_closure();
 			if (sendSignal) {
-				rebuilds += 1;
 				signals.signal_relayoutWidgets_fromFocus();		// destroys this component (properties are in ux: rotation_ring_state && active_cluster_map)
+				setTimeout(() => {
+					rebuilds += 1;
+				}, 10)
 			}
 		}
 	}
@@ -121,9 +125,8 @@
 					
 				// begin paging
 
-				const paging_state = map.paging_rotation_state;
-				paging_state.active_angle = basis_angle;
-				paging_state.basis_angle = basis_angle;
+				map.paging_state.active_angle = basis_angle;
+				map.paging_state.basis_angle = basis_angle;
 				$s_active_wrapper = pagingWrapper;
 				ux.active_cluster_map = map;
 				rebuilds += 1;
@@ -179,7 +182,7 @@
 
 {#key rebuilds}
 	<div class='rings'>
-		<div class='arcs' bind:this={pagingRing} style='z-index:{ZIndex.paging};'>
+		<div class='paging-arcs' bind:this={pagingArcs} style='z-index:{ZIndex.paging};'>
 			{#each ux.clusters_geometry.cluster_maps as cluster_map}
 				{#if !!cluster_map && (cluster_map.shown > 0)}
 					<Paging_Arc
@@ -189,7 +192,7 @@
 				{/if}
 			{/each}
 		</div>
-		<div class='rotates' bind:this={rotationRing} style='z-index:{ZIndex.rotation};'>
+		<div class='rotates-expands' bind:this={rotationRing} style='z-index:{ZIndex.rotation};'>
 			<Mouse_Responder
 				name={name}
 				center={center}

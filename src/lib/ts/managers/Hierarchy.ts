@@ -351,9 +351,7 @@ export class Hierarchy {
 	relationships_refreshKnowns() {
 		const saved = this.relationships;
 		this.relationships_clearKnowns();
-		for (const relationship of saved) {
-			this.relationship_remember(relationship);
-		}
+		saved.map(r => this.relationship_remember(r));
 	}
 
 	relationships_clearKnowns() {
@@ -675,9 +673,7 @@ export class Hierarchy {
 	async ancestry_forget_remoteUpdate(ancestry: Ancestry) {
 		const thing = ancestry.thing;
 		const childAncestries = ancestry.childAncestries;
-		for (const childAncestry of childAncestries) {
-			this.ancestry_forget_remoteUpdate(childAncestry);
-		}
+		childAncestries.map(c => this.ancestry_forget_remoteUpdate(c));
 		this.ancestry_forget(ancestry);
 		if (!!thing) {
 			const array = this.relationships_byChildHID[thing.idHashed];

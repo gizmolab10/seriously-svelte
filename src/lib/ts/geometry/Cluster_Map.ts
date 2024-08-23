@@ -21,15 +21,15 @@ export default class Cluster_Map  {
 	arc_in_lower_half = false;
 	label_center = Point.zero;
 	thumb_map = new Arc_Map();
-	label_text_angle = 0;
+	label_position_angle = 0;
 	arc_map = new Arc_Map();
 	cluster_title = k.empty;
 	color = k.color_default;
+	label_text_angle = 0;
 	predicate: Predicate;
 	points_out: boolean;
 	center = Point.zero;
 	isPaging = false;
-	label_position_angle = 0;
 	fork_angle = 0;
 	shown = 0;
 	total = 0;
@@ -60,15 +60,16 @@ export default class Cluster_Map  {
 		this.update_thumb_angles();
 	}
 
-	get direction(): string { return this.points_out ? 'out' : 'in'; }
 	get paging_radius(): number { return k.paging_arc_thickness * 0.8; }
 	get maximum_paging_index(): number { return this.total - this.shown; }
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
 	get description(): string { return `(${this.cluster_title}) ${this.titles}`; }
+	get paging_state(): Rotation_State { return ux.rotationState_forName(this.name); }
 	get paging_index_ofFocus(): number { return this.paging_state_ofFocus?.index ?? 0; }
-	get paging_rotation_state(): Rotation_State { return ux.rotationState_forName(this.name); }
+	get direction_kind(): string { return this.points_out ? this.kind : 'contained-by'; }
+	get kind(): string { return this.predicate?.kind.unCamelCase().lastWord() ?? k.empty; }
+	get name(): string { return `${this.focus_ancestry.title}-cluster-${this.direction_kind}`; }
 	get fork_radial(): Point { return Point.fromPolar(get(s_rotation_ring_radius), this.fork_angle); }
-	get name(): string { return `${ElementType.arc}-${this.predicate.kind}-${this.direction}-${this.focus_ancestry.title}`; }
 	get paging_state_ofFocus(): Paging_State | null { return this.focus_ancestry.thing?.page_states?.paging_state_for(this) ?? null; }
 	
 	static readonly $_LABEL_$: unique symbol;

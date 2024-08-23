@@ -237,7 +237,7 @@ export default class Ancestry extends Identifiable {
 		const isContains = idPredicate == Predicate.idContains;
 		const childRelationships = this.relationships_for_isChildOf(idPredicate, false);
 		if (childRelationships.length > 0) {
-			for (const childRelationship of childRelationships) {		// loop through all child relationships
+			for (const childRelationship of childRelationships) {					// loop through all child relationships
 				if (childRelationship.idPredicate == idPredicate) {
 					let ancestry: Ancestry | null;
 					if (isContains) {
@@ -246,11 +246,11 @@ export default class Ancestry extends Identifiable {
 						ancestry = h.ancestry_remember_createUnique(childRelationship.id, idPredicate);
 					}
 					if (!!ancestry) {
-						ancestries.push(ancestry);								// and push onto the ancestries
+						ancestries.push(ancestry);									// and push onto the ancestries
 					}
 				}
 			}
-			if (isContains) {											// normalize order of children only
+			if (isContains) {														// normalize order of children only
 				u.ancestries_orders_normalize_remoteMaybe(ancestries);
 			}
 		}
