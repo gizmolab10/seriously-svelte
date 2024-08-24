@@ -26,13 +26,11 @@
 	//	handle keys
 	//	edit titles (keydown terminates edit) BROKEN
 	
-	$: {
-		$s_clusters_geometry = new Clusters_Geometry();
-		cursor_closure();
-	}
-	
+	$s_clusters_geometry = new Clusters_Geometry();
+	debugReact.log_mount(`(i) CLUSTERS`);
+	cursor_closure();
+
 	onMount(() => {
-		debugReact.log_mount(`CLUSTERS ${rebuilds} rebuilds`);
 		const handler = signals.handle_relayoutWidgets(0, (ancestry) => { rebuilds += 1; });
 		return () => { handler.disconnect() };
 	});

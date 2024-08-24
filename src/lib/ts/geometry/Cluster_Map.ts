@@ -22,8 +22,8 @@ export default class Cluster_Map  {
 	label_center = Point.zero;
 	thumb_map = new Arc_Map();
 	label_position_angle = 0;
-	arc_map = new Arc_Map();
 	cluster_title = k.empty;
+	arc_map = new Arc_Map();
 	color = k.color_default;
 	label_text_angle = 0;
 	predicate: Predicate;
@@ -49,6 +49,7 @@ export default class Cluster_Map  {
 	}
 
 	update_all() {
+		debugReact.log_layout(`C MAP  ${this.direction_kind}`);
 		this.shown = this.ancestries.length;
 		this.isPaging = this.shown < this.total;
 		this.center = get(s_graphRect).size.dividedInHalf.asPoint;
@@ -58,7 +59,6 @@ export default class Cluster_Map  {
 		this.update_label_geometry();
 		this.update_label_forIndex();
 		this.update_thumb_angles();
-		debugReact.log_layout(`cluster map ${this.direction_kind}`)
 	}
 
 	get paging_radius(): number { return k.paging_arc_thickness * 0.8; }

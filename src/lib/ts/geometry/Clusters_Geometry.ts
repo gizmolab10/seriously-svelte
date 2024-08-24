@@ -11,11 +11,11 @@ export default class Clusters_Geometry {
 	// layout all the widgets, rings and arcs
 
 	constructor() {
+		debugReact.log_layout(`GEOMETRY  ${get(s_ancestry_focus)?.thing?.title}`);
 		this.layoutAll_clusters();
 		s_paging_state.subscribe((state: Paging_State) => {
 			this.update_forPaging_state(state);
 		});
-		debugReact.log_layout(`geometry ${get(s_ancestry_focus)?.thing?.title}`)
 	}
 
 	destructor() {

@@ -26,9 +26,7 @@
 	let rotationRing;
 	let pagingArcs;
 
-	onMount(() => {
-		debugReact.log_mount(`RINGS`);
-	});
+	debugReact.log_mount(`(i) RINGS`);
 
 	$: {
 		if ($s_ancestry_focus.thing?.changed_state ?? false) {
@@ -81,6 +79,9 @@
 			if (!!$s_active_cluster_map) {
 				if ($s_active_cluster_map.adjust_paging_index_forMouse_angle(mouse_angle)) {
 					$s_active_cluster_map.paging_state.active_angle = mouse_angle;
+					setTimeout(() => {
+						$s_active_cluster_map.update_all();
+					}, 10);
 					sendSignal = true;
 				}
 			} else if (!!$s_rotation_ring_state.active_angle || $s_rotation_ring_state.active_angle == 0) {		// rotate_resize clusters

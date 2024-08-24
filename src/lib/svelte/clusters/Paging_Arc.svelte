@@ -7,15 +7,13 @@
 	import { ArcPart } from '../../ts/common/Enumerations';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Angled_Text from '../kit/Angled_Text.svelte';
-	// import Circle from '../kit/Circle.svelte';
 	export let color = 'red';
 	export let center = Point.zero;
 	export let cluster_map!: Cluster_Map;
 	const offset = k.rotation_ring_widget_padding;
 	const radius = $s_rotation_ring_radius + offset;
-	const breadth = radius * 2;
 	const thumb_name = `thumb-${cluster_map?.name}`;
-	const viewBox=`${-offset} ${-offset} ${breadth} ${breadth}`;
+	const viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;
 	let origin = center.offsetBy(Point.square(-radius));
 	let mouse_up_count = $s_mouse_up_count;
 	let arc_wrapper!: Svelte_Wrapper;
@@ -29,10 +27,9 @@
 	//
 	// contained by rings, which is contained by clusters view
 
-	onMount(() => {
-		debugReact.log_mount(`PAGING ARC "${cluster_map?.name}"`);
-		update_colors();
-	})
+	debugReact.log_mount(`(i) P ARC  ${cluster_map?.name}`);
+	cluster_map?.update_all();
+	update_colors();
 
 	$: {
 		const _ = k.empty + ($s_mouse_location?.description ?? k.empty);			// use store, to react
@@ -52,8 +49,8 @@
 
 	$: {
 		if (mouse_up_count != $s_mouse_up_count) {
-			mouse_up_count = $s_mouse_up_count;
-			cluster_map?.paging_state.reset();
+			mouse_up_count = $s_mouse_up_count;		// NEVER gets executed, because mouse_up_count
+			cluster_map?.paging_state.reset();		// is always reset to s_mouse_up_count by rebuild
 		}
 	}
 
@@ -97,8 +94,6 @@
 		// 	}
 		// }
 	}
-	// <Circle radius=4 center={center} color=green thickness=1/>
-	// <Circle radius=2 center={cluster_map.label_center} color=red thickness=1/>
 
 </script>
 
@@ -108,8 +103,8 @@
 			<div class='arc' bind:this={arc} style='z-index:{ZIndex.paging};'>
 				<Mouse_Responder
 					center={center}
-					width={breadth}
-					height={breadth}
+					width={radius * 2}
+					height={radius * 2}
 					zindex={ZIndex.panel}
 					detect_longClick={false}
 					name={cluster_map?.name}

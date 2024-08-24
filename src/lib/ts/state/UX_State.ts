@@ -7,7 +7,6 @@ export default class UX_State {
 	rotationState_byName: {[name: string]: Rotation_State} = {};
 	elementState_byName: {[name: string]: Element_State} = {};
 	mouse_state_byName: { [name: string]: Mouse_State } = {};
-	rebuild_count = 0;
 
 	//////////////////////////////////////
 	//									//

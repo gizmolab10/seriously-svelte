@@ -18,7 +18,7 @@ export class DebugReact {
 	log_layout(message: string) { this.log_maybe(ReactKind.layout, message) }
 	log_origins(message: string) { this.log_maybe(ReactKind.origins, message) }
 	log_rebuild(message: string) { this.log_maybe(ReactKind.rebuild, message) }
-	log_maybe(kind: ReactKind, message: string) { if (this.hasKind(kind)) { console.log(kind + ' ' + message); }}
+	log_maybe(kind: ReactKind, message: string) { if (this.hasKind(kind)) { console.log(`${kind.toUpperCase()}  ${message}`); }}
 
 	queryStrings_apply() {
 		const queryStrings = k.queryStrings;
