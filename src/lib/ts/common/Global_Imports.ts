@@ -22,7 +22,6 @@ import { Rect, Size, Point } from '../geometry/Geometry';
 import { Seriously_Range } from './Seriously_Range';
 import { Hierarchy } from '../managers/Hierarchy';
 import { signals, IDSignal } from './Signals';
-import { createPopper } from '@popperjs/core';
 import { dbDispatch } from '../db/DBDispatch';
 import { transparentize } from 'color2k';
 import { get } from 'svelte/store';
@@ -55,10 +54,10 @@ import muuri from 'muuri';
 export {
 	Angle, Quadrant, Orientation,
 	Tree_Geometry, Widget_MapRect,
+	muuri, interact, transparentize,
 	Rect, Size, Point, svgPaths, Direction,
 	Arc_Map, Cluster_Map, Clusters_Geometry,
 	Title_State, Rotation_State, Expansion_State,
-	muuri, interact, createPopper, transparentize,
 	g, k, u, ux, w, builds, signals, Seriously_Range,
 	Mouse_State, Handle_Mouse_State, Create_Mouse_State,
 	User, Datum, Thing, Access, Predicate, Relationship,

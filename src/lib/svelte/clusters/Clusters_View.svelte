@@ -1,13 +1,12 @@
 <script lang='ts'>
+	import { k, u, ux, Rect, Size, Point, ZIndex, onMount, signals, debugReact, Clusters_Geometry } from '../../ts/common/Global_Imports';
 	import { s_graphRect, s_ancestry_focus, s_user_graphOffset, s_thing_fontFamily } from '../../ts/state/Reactive_State';
-	import { k, u, ux, Rect, Size, Point, ZIndex, onMount, signals, debugReact } from '../../ts/common/Global_Imports';
-	import { s_rotation_ring_state, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
+	import { s_clusters_geometry, s_rotation_ring_state, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import Editing_Tools from '../widget/Editing_Tools.svelte';
 	import Title_Editor from '../widget/Title_Editor.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Necklace from './Necklace.svelte';
 	import Rings from './Rings.svelte';
-	const geometry = ux.new_clusters_geometry;
 	const toolsOffset = new Point(32, -3);
     const ancestry = $s_ancestry_focus;
 	const thing = ancestry?.thing;
@@ -27,7 +26,10 @@
 	//	handle keys
 	//	edit titles (keydown terminates edit) BROKEN
 	
-	$: { cursor_closure(); }
+	$: {
+		$s_clusters_geometry = new Clusters_Geometry();
+		cursor_closure();
+	}
 	
 	onMount(() => {
 		debugReact.log_mount(`CLUSTERS ${rebuilds} rebuilds`);

@@ -58,7 +58,7 @@ export default class Cluster_Map  {
 		this.update_label_geometry();
 		this.update_label_forIndex();
 		this.update_thumb_angles();
-		debugReact.log_layout(`map ${this.focus_ancestry.thing?.title}`)
+		debugReact.log_layout(`cluster map ${this.direction_kind}`)
 	}
 
 	get paging_radius(): number { return k.paging_arc_thickness * 0.8; }

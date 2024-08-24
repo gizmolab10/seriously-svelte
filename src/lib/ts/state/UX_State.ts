@@ -1,5 +1,5 @@
-import { Mouse_State, Cluster_Map, ElementType, Element_State } from '../common/Global_Imports';
-import { Rotation_State, Expansion_State, Clusters_Geometry } from '../common/Global_Imports';
+import { Mouse_State, ElementType } from '../common/Global_Imports';
+import { Element_State, Rotation_State } from '../common/Global_Imports';
 import Identifiable from '../data/Identifiable';
 
 export default class UX_State {
@@ -7,8 +7,6 @@ export default class UX_State {
 	rotationState_byName: {[name: string]: Rotation_State} = {};
 	elementState_byName: {[name: string]: Element_State} = {};
 	mouse_state_byName: { [name: string]: Mouse_State } = {};
-	clusters_geometry!: Clusters_Geometry;
-	active_cluster_map!: Cluster_Map;
 	rebuild_count = 0;
 
 	//////////////////////////////////////
@@ -25,7 +23,6 @@ export default class UX_State {
 	//////////////////////////////////////
 
 	reset_paging() { this.rotation_states.map(s => s.reset()); }
-	get new_clusters_geometry() { return this.clusters_geometry = new Clusters_Geometry(); }
 	elementState_forName(name: string): Element_State { return this.elementState_byName[name]; }
 	get rotation_states(): Array<Rotation_State> { return Object.values(this.rotationState_byName); }
 	get isAny_paging_arc_active(): boolean { return this.rotation_states.filter(s => s.isActive).length > 0; }

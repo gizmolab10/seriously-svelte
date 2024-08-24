@@ -1,9 +1,9 @@
 <script lang='ts'>
+	import { s_graphRect, s_mouse_location, s_active_wrapper, s_mouse_up_count, s_ancestry_focus } from '../../ts/state/Reactive_State';
+	import { s_user_graphOffset, s_clusters_geometry, s_active_cluster_map, s_paging_ring_state } from '../../ts/state/Reactive_State';
 	import { k, u, ux, w, Thing, Point, Angle, debug, ZIndex, onMount, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import { debugReact, dbDispatch, opacitize, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { s_rotation_ring_state, s_rotation_ring_angle, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
-	import { s_graphRect, s_mouse_location, s_active_wrapper, s_mouse_up_count } from '../../ts/state/Reactive_State';
-	import { s_ancestry_focus, s_user_graphOffset, s_paging_ring_state } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Paging_Arc from './Paging_Arc.svelte';
@@ -51,7 +51,7 @@
 		if (mouse_up_count != $s_mouse_up_count) {
 			mouse_up_count = $s_mouse_up_count;
 			$s_rotation_ring_state.reset();
-			ux.active_cluster_map = null;
+			$s_active_cluster_map = null;
 			$s_active_wrapper = null;
 			ux.reset_paging();
 			cursor_closure();
@@ -77,11 +77,10 @@
 			}
 			if ($s_paging_ring_state.isHovering != inPaging) {
 				$s_paging_ring_state.isHovering = inPaging;		// adjust hover highlight for all arcs  (paging arc handles thumb hover)
-				debugReact.log_action(`arcs ${(inPaging ? '' : 'not ')+'hovering'}`);
 			}
-			if (!!ux.active_cluster_map) {
-				if (ux.active_cluster_map.adjust_paging_index_forMouse_angle(mouse_angle)) {
-					ux.active_cluster_map.paging_state.active_angle = mouse_angle;
+			if (!!$s_active_cluster_map) {
+				if ($s_active_cluster_map.adjust_paging_index_forMouse_angle(mouse_angle)) {
+					$s_active_cluster_map.paging_state.active_angle = mouse_angle;
 					sendSignal = true;
 				}
 			} else if (!!$s_rotation_ring_state.active_angle || $s_rotation_ring_state.active_angle == 0) {		// rotate_resize clusters
@@ -121,7 +120,7 @@
 		const mouse_wentDown_angle = from_center.angle;
 		if (isInterior()) {
 			const basis_angle = mouse_wentDown_angle.normalized_angle();
-			const map = ux.clusters_geometry.cluster_mapFor(basis_angle);
+			const map = $s_clusters_geometry.cluster_mapFor(basis_angle);
 			if (!!map && mouse_state.isDown) {
 					
 				// begin paging
@@ -129,7 +128,7 @@
 				map.paging_state.active_angle = basis_angle;
 				map.paging_state.basis_angle = basis_angle;
 				$s_active_wrapper = pagingWrapper;
-				ux.active_cluster_map = map;
+				$s_active_cluster_map = map;
 				rebuilds += 1;
 			}
 		} else if (isHit()) {
@@ -184,7 +183,7 @@
 {#key rebuilds}
 	<div class='rings'>
 		<div class='paging-arcs' bind:this={pagingArcs} style='z-index:{ZIndex.paging};'>
-			{#each ux.clusters_geometry.cluster_maps as cluster_map}
+			{#each $s_clusters_geometry.cluster_maps as cluster_map}
 				{#if !!cluster_map && (cluster_map.shown > 0)}
 					<Paging_Arc
 						color={color}

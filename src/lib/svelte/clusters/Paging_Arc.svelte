@@ -62,7 +62,6 @@
 	function update_colors() {
 		arc_color = u.opacitize(color, $s_paging_ring_state.stroke_opacity);
 		thumb_color = u.opacitize(color, cluster_map?.paging_state.three_level_opacity);
-		debugReact.log_action(`colors ${$s_paging_ring_state.stroke_opacity}`);
 	}
 
 	function computed_mouse_angle(): number | null {
@@ -73,11 +72,7 @@
 		if (!!cluster_map && cluster_map.isPaging) {
 			const ring_origin = center.offsetBy(Point.square(-$s_rotation_ring_radius));
 			const vector = u.vector_ofOffset_fromGraphCenter_toMouseLocation(ring_origin);
-			const hit = vector.isContainedBy_path(cluster_map.thumb_map.arc_svgPath);
-			if (hit) {
-				debugReact.log_action(`thumb hovering for ${cluster_map?.name}`);
-			}
-			return hit;
+			return vector.isContainedBy_path(cluster_map.thumb_map.arc_svgPath);
 		}
 		return false;
 	}

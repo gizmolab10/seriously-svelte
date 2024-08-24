@@ -1,9 +1,11 @@
-import { Rect, Point, Ancestry, Title_State, Paging_State, Svelte_Wrapper } from '../common/Global_Imports';
-import { Rotation_State, Expansion_State, Alteration_State } from '../common/Global_Imports';
+import { Rect, Point, Ancestry, Title_State, Paging_State, Cluster_Map, Svelte_Wrapper } from '../common/Global_Imports';
+import { Clusters_Geometry, Rotation_State, Expansion_State, Alteration_State } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
+export const s_clusters_geometry	 = writable<Clusters_Geometry | null>();
 export const s_altering				 = writable<Alteration_State | null>();
 export const s_active_wrapper		 = writable<Svelte_Wrapper | null>();
+export const s_active_cluster_map	 = writable<Cluster_Map | null>();
 export const s_title_editing		 = writable<Title_State | null>();
 export const s_ancestry_editingTools = writable<Ancestry | null>();
 export const s_ancestries_expanded	 = writable<Array<Ancestry>>();
