@@ -56,7 +56,7 @@ export default class Cluster_Map  {
 		this.center = get(s_graphRect).size.dividedInHalf.asPoint;
 		this.color = u.opacitize(this.focus_ancestry.thing?.color ?? this.color, 0.2);
 		this.update_fork_angle();
-		this.update_children_angles();
+		this.update_widget_angles();
 		this.update_label_geometry();
 		this.update_label_forIndex();
 		this.update_thumb_angles();
@@ -158,7 +158,7 @@ export default class Cluster_Map  {
 		}
 	}
 
-	update_children_angles() {
+	update_widget_angles() {
 		this.widget_maps = [];
 		if (this.shown > 0 && !!this.predicate) {
 			const radius = get(s_rotation_ring_radius);
