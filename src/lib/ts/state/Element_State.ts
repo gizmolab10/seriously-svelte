@@ -47,9 +47,6 @@ export default class Element_State {
 	get border(): string {
 		let color = this.ancestry.thing?.color;
 		if (color) {
-			if (g.isAny_rotation_active) {
-				color = u.opacitize(color, 0.2);
-			}
 			if (this.ancestry.isEditing) {
 				return `dashed ${color} 1px`;
 			}
