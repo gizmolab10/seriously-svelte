@@ -40,6 +40,7 @@ export default class Cluster_Map  {
 		this.points_out = points_out;
 		this.predicate = predicate;
 		this.total = total;
+		debugReact.log_build(` C MAP (ts)  ${total}  ${this.direction_kind}`);
 		this.update_all();
 		s_rotation_ring_radius.subscribe((radius: number) => {
 			if (this.arc_map.outside_ring_radius != radius) {
@@ -49,7 +50,7 @@ export default class Cluster_Map  {
 	}
 
 	update_all() {
-		debugReact.log_layout(`C MAP  ${this.direction_kind}`);
+		// debugReact.log_layout(`C MAP (ts)  ${this.direction_kind}`);
 		this.shown = this.ancestries.length;
 		this.isPaging = this.shown < this.total;
 		this.center = get(s_graphRect).size.dividedInHalf.asPoint;
@@ -67,8 +68,9 @@ export default class Cluster_Map  {
 	get description(): string { return `(${this.cluster_title}) ${this.titles}`; }
 	get paging_state(): Rotation_State { return ux.rotationState_forName(this.name); }
 	get paging_index_ofFocus(): number { return this.paging_state_ofFocus?.index ?? 0; }
-	get direction_kind(): string { return this.points_out ? 'contained-by' : this.kind; }
+	get direction_kind(): string { return this.isParental ? 'contained by' : this.kind; }
 	get kind(): string { return this.predicate?.kind.unCamelCase().lastWord() ?? k.empty; }
+	get isParental(): boolean { return !this.points_out && !this.predicate?.isBidirectional; }
 	get name(): string { return `${this.focus_ancestry.title}-cluster-${this.direction_kind}`; }
 	get fork_radial(): Point { return Point.fromPolar(get(s_rotation_ring_radius), this.fork_angle); }
 	get paging_state_ofFocus(): Paging_State | null { return this.focus_ancestry.thing?.page_states?.paging_state_for(this) ?? null; }
@@ -87,17 +89,18 @@ export default class Cluster_Map  {
 	}
 
 	update_label_forIndex() {
-		let quantity = `${this.total}`;
+		let showing = k.empty;
+		const total = `${this.total}`;
+		const kind = this.direction_kind;
 		const index = Math.round(this.paging_index_ofFocus);
-		let shortened = this.predicate?.kind.unCamelCase().lastWord() ?? k.empty;
 		if (this.isPaging) {
-			quantity = `${index + 1}-${index + this.shown} of ${quantity}`;
+			const middle = (this.shown < 2) ? k.empty : `-${index + this.shown}`;
+			showing = ` (${index + 1}${middle})`;
 		}
 		if (!this.predicate?.isBidirectional) {
-			shortened = this.points_out ? shortened : 'contained by';
-			this.cluster_title = `${shortened} ${quantity}`;
+			this.cluster_title = `${kind} ${total}${showing}`;
 		} else {
-			this.cluster_title = `${quantity} ${shortened}`;
+			this.cluster_title = `${total} ${kind}${showing}`;
 		}
 	}
 	
@@ -159,7 +162,7 @@ export default class Cluster_Map  {
 		this.widget_maps = [];
 		if (this.shown > 0 && !!this.predicate) {
 			const radius = get(s_rotation_ring_radius);
-			const radial = new Point(radius + k.rotation_ring_widget_padding, 0);
+			const radial = new Point(radius + k.ring_widget_padding, 0);
 			const fork_pointsRight = new Angle(this.fork_angle).angle_pointsRight;
 			const tweak = this.center.offsetByXY(2, -1.5);	// tweak so that drag dots are centered within the rotation ring
 			const max = this.shown - 1;
@@ -169,7 +172,7 @@ export default class Cluster_Map  {
 				const ancestry = this.ancestries[child_index];
 				const childAngle = this.angle_at_index(index);
 				const childOrigin = tweak.offsetBy(radial.rotate_by(childAngle));
-				const map = new Widget_MapRect(IDLine.flat, new Rect(), childOrigin, ancestry, this.focus_ancestry, childAngle); //, this.predicate.kind);
+				const map = new Widget_MapRect(IDLine.flat, new Rect(), childOrigin, ancestry, this.focus_ancestry, childAngle);
 				this.widget_maps.push(map);
 				index += 1;
 			}
@@ -196,7 +199,7 @@ export default class Cluster_Map  {
 		const radius = get(s_rotation_ring_radius);
 		const radial = this.fork_radial;					// points at middle widget
 		const fork_y = radial.y;							// height of fork_angle, relative to center of clusters
-		let y = fork_y + (row * k.row_height);				// distribute y equally around fork_y
+		let y = fork_y + (row * (k.row_height - 2));		// distribute y equally around fork_y
 		let y_isOutside = false;
 		const absY = Math.abs(y);
 		if (absY > radius) {

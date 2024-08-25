@@ -20,7 +20,7 @@
 		g.setup();
 		$s_isBusy = true;
 		const handler = signals.handle_rebuildGraph(1, (ancestry) => {
-			debugReact.log_mount(`PANEL`);
+			debugReact.log_mount(` PANEL`);
 			rebuilds += 1;
 		});
 		return () => { handler.disconnect() };

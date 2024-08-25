@@ -6,9 +6,7 @@
 	const element_state = ux.elementState_forName(name);		// survives onDestroy, created by widget
 	let size = k.dot_size;
 
-	onMount(() => {
-		element_state.set_forHovering(ancestry.thing.color, 'pointer');
-	})
+	element_state.set_forHovering(ancestry.thing.color, 'pointer');
 
 	function hover_closure(isHovering) {
 		return [debug.lines ? 'transparent' : element_state.stroke, k.empty];

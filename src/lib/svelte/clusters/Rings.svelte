@@ -26,7 +26,8 @@
 	let rotationRing;
 	let pagingArcs;
 
-	debugReact.log_mount(`(i) RINGS`);
+	debugReact.log_build(` RINGS (svelte)`);
+	$s_clusters_geometry.layoutAll_clusters();
 
 	$: {
 		if ($s_ancestry_focus.thing?.changed_state ?? false) {
@@ -48,6 +49,7 @@
 		// mouse up ... end all (rotate, resize, paging)
 		if (mouse_up_count != $s_mouse_up_count) {
 			mouse_up_count = $s_mouse_up_count;
+			debugReact.log_action(`RINGS  mouse up`);
 			$s_rotation_ring_state.reset();
 			$s_active_cluster_map = null;
 			$s_active_wrapper = null;
@@ -63,8 +65,8 @@
 		// detect movement & adjust state //
 		////////////////////////////////////
 
-		const _ = $s_mouse_location;
-		const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);	// use store, to react
+		const _ = $s_mouse_location;								// use store, to invoke this code
+		const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);
 		if (!!from_center) {
 			let sendSignal = false;
 			const inPaging = isInterior();
@@ -74,14 +76,11 @@
 				$s_rotation_ring_state.isHovering = isHovering;
 			}
 			if ($s_paging_ring_state.isHovering != inPaging) {
-				$s_paging_ring_state.isHovering = inPaging;		// adjust hover highlight for all arcs  (paging arc handles thumb hover)
+				$s_paging_ring_state.isHovering = inPaging;			// adjust hover highlight for all arcs  (paging arc handles thumb hover)
 			}
 			if (!!$s_active_cluster_map) {
 				if ($s_active_cluster_map.adjust_paging_index_forMouse_angle(mouse_angle)) {
 					$s_active_cluster_map.paging_state.active_angle = mouse_angle;
-					setTimeout(() => {
-						$s_active_cluster_map.update_all();
-					}, 10);
 					sendSignal = true;
 				}
 			} else if (!!$s_rotation_ring_state.active_angle || $s_rotation_ring_state.active_angle == 0) {		// rotate_resize clusters
@@ -90,23 +89,23 @@
 					$s_rotation_ring_state.active_angle = mouse_angle;
 					sendSignal = true;
 				}
-			} else if (!!$s_rotation_ring_state.radiusOffset) {			// resize
+			} else if (!!$s_rotation_ring_state.radiusOffset) {		// resize
 				const magnitude = from_center.magnitude
-				const largest = k.cluster_inside_radius * 4;
-				const smallest = k.cluster_inside_radius * 1.5;
+				const smallest = k.ring_smallest_radius;
+				const largest = k.ring_smallest_radius * 3;
 				const distance = magnitude.force_between(smallest, largest);
 				const delta = distance - $s_rotation_ring_radius - $s_rotation_ring_state.radiusOffset;
-				if (Math.abs(delta) > 5) {
-					$s_rotation_ring_radius += delta;
+				if (Math.abs(delta) > 1) {							// granularity of 1 pixel
+					const radius = $s_rotation_ring_radius + delta;
+					debugReact.log_action(`RINGS  ${radius.toFixed(0)}`);
+					$s_rotation_ring_radius = radius;
 					sendSignal = true;
 				}
 			}
 			cursor_closure();
 			if (sendSignal) {
-				signals.signal_relayoutWidgets_fromFocus();		// destroys this component (properties are in ux: rotation_ring_state && active_cluster_map)
-				setTimeout(() => {
-					rebuilds += 1;
-				}, 10)
+				signals.signal_relayoutWidgets_fromFocus();			// destroys this component (properties are in s_rotation_ring_state && s_active_cluster_map)
+				rebuilds += 1;
 			}
 		}
 	}
@@ -137,7 +136,9 @@
 
 				// begin resize
 				
-				$s_rotation_ring_state.radiusOffset = from_center.magnitude - $s_rotation_ring_radius;
+				const radius = from_center.magnitude - $s_rotation_ring_radius;
+				debugReact.log_action(`RINGS  ${radius.toFixed(0)}`);
+				$s_rotation_ring_state.radiusOffset = radius;
 				$s_active_wrapper = rotationWrapper;
 				rebuilds += 1;
 			} else if (mouse_state.isDown) {

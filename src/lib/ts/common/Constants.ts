@@ -14,11 +14,10 @@ export default class Constants {
 	default_buttonSize = 16;
 	height_breadcrumbs = 33;
 	threshold_longClick = 800;
-	cluster_inside_radius = 70;
+	ring_smallest_radius = 80;
 	editingTools_diameter = 64;
 	threshold_doubleClick = 300;
 	hid_unknown = 1000000000000;
-	rotation_ring_widget_padding = 15;
 	local_help_url = 'http://localhost:8000/README.html';
 	remote_help_url = 'https://help-webseriously.netlify.app/README.html';
 	prevent_selection_style = '-webkit-user-select: none; user-select: none; -moz-user-select: none;';
@@ -46,8 +45,10 @@ export default class Constants {
 	allow_GraphEditing = true;
 	allow_TitleEditing = true;
 	allow_HorizontalScrolling = true;
+
 	queryStrings: URLSearchParams;
 	paging_arc_thickness: number;
+	ring_widget_padding: number;
 	cluster_offsetY: number;
 	build_number: string;
 	row_height: number;
@@ -78,6 +79,7 @@ export default class Constants {
 		this.row_height = this.dot_size + 7;
 		this.cluster_offsetY = 4 - this.dot_size;
 		this.paging_arc_thickness = this.ring_thickness / 3;
+		this.ring_widget_padding = (this.ring_thickness - 1) / 2;
 		this.queryStrings = new URLSearchParams(window.location.search);
 	}
 

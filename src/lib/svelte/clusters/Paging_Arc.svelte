@@ -1,8 +1,9 @@
 <script lang='ts'>
 	import { g, k, u, ux, Rect, Size, Point, debug, Angle, ZIndex, onMount, debugReact } from '../../ts/common/Global_Imports';
-	import { s_thing_fontFamily, s_paging_ring_state, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import { opacitize, Cluster_Map, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { s_mouse_location, s_mouse_up_count, s_ancestry_focus } from '../../ts/state/Reactive_State';
+	import { s_rotation_ring_state, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
+	import { s_thing_fontFamily, s_paging_ring_state } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { ArcPart } from '../../ts/common/Enumerations';
 	import Identifiable from '../../ts/data/Identifiable';
@@ -10,7 +11,7 @@
 	export let color = 'red';
 	export let center = Point.zero;
 	export let cluster_map!: Cluster_Map;
-	const offset = k.rotation_ring_widget_padding;
+	const offset = k.ring_widget_padding;
 	const radius = $s_rotation_ring_radius + offset;
 	const thumb_name = `thumb-${cluster_map?.name}`;
 	const viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;
@@ -27,7 +28,7 @@
 	//
 	// contained by rings, which is contained by clusters view
 
-	debugReact.log_mount(`(i) P ARC  ${cluster_map?.name}`);
+	debugReact.log_build(` P ARC (svelte)  ${cluster_map?.name}`);
 	cluster_map?.update_all();
 	update_colors();
 
@@ -130,5 +131,5 @@
 		font_family={$s_thing_fontFamily}
 		font_size={k.thing_fontSize * 0.6}
 		angle={cluster_map.label_text_angle}
-		color={s_ancestry_focus.thing?.color ?? k.color_default}/>
+		color={$s_ancestry_focus.thing?.color ?? k.color_default}/>
 {/if}

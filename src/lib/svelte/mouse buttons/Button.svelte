@@ -34,7 +34,7 @@
 	//									//
 	//////////////////////////////////////
 
-	onMount(() => { update_currentStyle(); })
+	update_currentStyle();
 	
 	function update_currentStyle() {
 		color = element_state.stroke;

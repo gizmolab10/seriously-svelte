@@ -8,8 +8,6 @@
 	import Necklace from './Necklace.svelte';
 	import Rings from './Rings.svelte';
 	const toolsOffset = new Point(32, -3);
-    const ancestry = $s_ancestry_focus;
-	const thing = ancestry?.thing;
 	let titleCenter = Point.zero;
 	let center = Point.zero;
 	let size = Size.zero;
@@ -27,18 +25,18 @@
 	//	edit titles (keydown terminates edit) BROKEN
 	
 	$s_clusters_geometry = new Clusters_Geometry();
-	debugReact.log_mount(`(i) CLUSTERS`);
+	debugReact.log_build(` CLUSTERS (svelte)`);
 	cursor_closure();
 
 	onMount(() => {
-		const handler = signals.handle_relayoutWidgets(0, (ancestry) => { rebuilds += 1; });
+		const handler = signals.handle_relayoutWidgets(0, ($s_ancestry_focus) => { rebuilds += 1; });
 		return () => { handler.disconnect() };
 	});
 
 	$: {
 		size = $s_graphRect.size;
 		center = size.dividedInHalf.asPoint;
-		titleWidth = thing?.titleWidth ?? 0;
+		titleWidth = $s_ancestry_focus?.thing?.titleWidth ?? 0;
 		offsetX = -9 - k.thing_fontSize - (titleWidth / 2);
 		titleCenter = center.offsetByXY(offsetX, k.cluster_offsetY);
 		rebuilds += 1;
@@ -65,7 +63,7 @@
 					ring_width={k.ring_thickness}
 					cursor_closure={cursor_closure}
 					radius={$s_rotation_ring_radius}
-					color={thing?.color ?? k.color_default}/>
+					color={$s_ancestry_focus?.thing?.color ?? k.color_default}/>
 				<Necklace/>
 				<Editing_Tools offset={toolsOffset}/>
 				<div class='cluster-focus'

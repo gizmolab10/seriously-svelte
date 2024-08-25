@@ -9,7 +9,7 @@
 	let notesIndex = 0;
 	let notes = [];
 	
-	onMount(() => { updateNotes(); })
+	updateNotes();
     function display(pointsUp) { return shouldEnable(pointsUp) ? 'block' : 'none'; }
 
 	function updateNotes() {

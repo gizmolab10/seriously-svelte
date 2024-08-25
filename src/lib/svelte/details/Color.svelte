@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { s_thing_changed, s_rebuild_count, s_ancestries_grabbed } from '../../ts/state/Reactive_State';
-	import { g, k, u, ux, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, get, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
 	import ColorPicker from 'svelte-awesome-color-picker';
 	const selectorSize = k.dot_size;
 	const pickerSize = 100;
@@ -8,8 +8,8 @@
 	let persistenceTimer;
 	let thing;
 
+	updateFor($s_ancestries_grabbed);
 	$: { updateFor($s_ancestries_grabbed); }
-	onMount(() => { updateFor($s_ancestries_grabbed); })
 
 	function updateFor(grabs) {
 		if (grabs.length > 0) {

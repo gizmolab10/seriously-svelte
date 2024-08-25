@@ -1,7 +1,7 @@
 import { k, u, ux, w, get, Rect, Size, Point, debug, debugReact, dbDispatch, Svelte_Wrapper } from '../common/Global_Imports';
 import { persistLocal, IDPersistant, Rotation_State, Expansion_State } from '../common/Global_Imports';
 import { s_graphRect, s_show_details, s_scale_factor, s_thing_changed } from './Reactive_State';
-import { s_clusters_geometry, s_paging_ring_state, s_rotation_ring_state } from './Reactive_State';
+import { s_paging_ring_state, s_rotation_ring_state } from './Reactive_State';
 
 class Global_State {
 	mouseUp_subscribers: {[type: string]: Array<Svelte_Wrapper>} = {};

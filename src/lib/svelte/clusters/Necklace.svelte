@@ -36,13 +36,6 @@
 		}
 	}
 
-	$: {
-		if (!!$s_clusters_geometry) {		// ignore null at startup
-			$s_clusters_geometry.layoutAll_clusters();
-			rebuilds += 1;
-		}
-	}
-
 </script>
 
 {#key rebuilds}

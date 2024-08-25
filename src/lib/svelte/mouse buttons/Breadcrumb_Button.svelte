@@ -20,7 +20,7 @@
 	let rebuilds = 0;
 	let width = 0;
 
-	onMount(() => { updateColors(); });
+	updateColors();
 
 	$: {
 		thing = ancestry.thing;
