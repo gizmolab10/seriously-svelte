@@ -129,6 +129,7 @@
 				map.paging_state.basis_angle = basis_angle;
 				$s_active_wrapper = pagingWrapper;
 				$s_active_cluster_map = map;
+				console.log('PAGING')
 				rebuilds += 1;
 			}
 		} else if (isHit()) {

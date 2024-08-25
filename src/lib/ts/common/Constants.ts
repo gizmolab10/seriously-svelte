@@ -16,7 +16,7 @@ export default class Constants {
 	threshold_longClick = 800;
 	ring_smallest_radius = 80;
 	editingTools_diameter = 64;
-	threshold_doubleClick = 300;
+	threshold_doubleClick = 700;
 	hid_unknown = 1000000000000;
 	local_help_url = 'http://localhost:8000/README.html';
 	remote_help_url = 'https://help-webseriously.netlify.app/README.html';
