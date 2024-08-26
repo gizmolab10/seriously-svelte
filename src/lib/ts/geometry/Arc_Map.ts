@@ -54,18 +54,6 @@ export default class Arc_Map {
 		return Rect.createExtentRect(origin, extent);
 	}
 
-	get adjusted_angles(): [number, number] {
-		const midArc_radius = this.inside_arc_radius + (k.paging_arc_thickness / 2);
-		const extra = Math.asin(this.cap_radius / midArc_radius);
-		const start = this.start_angle;
-		const end = this.end_angle;
-		if (start < end) {
-			return [start.add_angle_normalized(-extra), end.add_angle_normalized(extra)];
-		} else {
-			return [end.add_angle_normalized(-extra), start.add_angle_normalized(extra)];
-		}
-	}
-
 	arc_straddles(angle: number): boolean { return (this.start_angle.normalized_angle() > angle && this.end_angle.normalized_angle() < angle); }
 
 	radial_forAngle(angle: number): Point {

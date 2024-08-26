@@ -37,13 +37,10 @@ export default class Clusters_Geometry {
 		return widget_maps;		
 	}
 
-	cluster_mapFor(angle: number) {
-		for (const cluster of this.cluster_maps) {
-			if (!!cluster) {
-				const [a, b] = cluster.thumb_map.adjusted_angles;
-				if (angle.isClocklyBetween(a, b, Angle.full)) {
-					return cluster;
-				}
+	get cluster_mapFor_mouseLocation(): Cluster_Map | null {
+		for (const cluster_map of this.cluster_maps) {
+			if (!!cluster_map && cluster_map.thumb_isHit) {
+				return cluster_map;
 			}
 		}
 		return null;

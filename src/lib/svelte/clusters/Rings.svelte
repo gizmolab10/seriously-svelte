@@ -119,7 +119,7 @@
 		const mouse_wentDown_angle = from_center.angle;
 		if (isInterior()) {
 			const basis_angle = mouse_wentDown_angle.normalized_angle();
-			const map = $s_clusters_geometry.cluster_mapFor(basis_angle);
+			const map = $s_clusters_geometry.cluster_mapFor_mouseLocation;
 			if (!!map && mouse_state.isDown) {
 					
 				// begin paging
