@@ -43,7 +43,7 @@ export default class Cluster_Map  {
 		debugReact.log_build(` C MAP (ts)  ${total}  ${this.direction_kind}`);
 		this.update_all();
 		s_rotation_ring_radius.subscribe((radius: number) => {
-			if (this.arc_map.outside_ring_radius != radius) {
+			if (this.arc_map.outside_arc_radius != radius) {
 				this.update_all();		// do not set_paging_index (else expand will hang)
 			}
 		})

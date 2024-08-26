@@ -78,8 +78,9 @@
 				$s_paging_ring_state.isHovering = inPaging;			// adjust hover highlight for all arcs  (paging arc handles thumb hover)
 			}
 			if (!!$s_active_cluster_map) {
-				if ($s_active_cluster_map.adjust_paging_index_forMouse_angle(mouse_angle)) {
-					$s_active_cluster_map.paging_state.active_angle = mouse_angle;
+				const needs_update = $s_active_cluster_map.paging_state.needs_update;
+				$s_active_cluster_map.paging_state.active_angle = mouse_angle;
+				if (needs_update && $s_active_cluster_map.adjust_paging_index_forMouse_angle(mouse_angle)) {
 					sendSignal = true;
 				}
 			} else if (!!$s_rotation_ring_state.active_angle || $s_rotation_ring_state.active_angle == 0) {		// rotate_resize clusters
