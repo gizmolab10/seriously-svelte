@@ -18,6 +18,10 @@ class Global_State {
 		w.setup();
 	}
 
+	get graph_center(): Point {
+		return get(s_graphRect).size.dividedInHalf.asPoint;
+	}
+
 	get isAny_rotation_active(): boolean {
 		return ux.isAny_paging_arc_active || get(s_paging_ring_state).isActive || get(s_rotation_ring_state).isActive;
 	}

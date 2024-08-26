@@ -1,5 +1,5 @@
 import { s_graphRect, s_rotation_ring_angle, s_ancestry_focus, s_rotation_ring_radius } from '../state/Reactive_State';
-import { k, u, ux, get, Rect, Point, Angle, IDLine, Arc_Map, Quadrant, Ancestry } from '../common/Global_Imports';
+import { g, k, u, ux, get, Rect, Point, Angle, IDLine, Arc_Map, Quadrant, Ancestry } from '../common/Global_Imports';
 import { debugReact, Predicate, Paging_State, Widget_MapRect, Rotation_State } from '../common/Global_Imports';
 
 // for one cluster (there are three)
@@ -74,7 +74,15 @@ export default class Cluster_Map  {
 	get name(): string { return `${this.focus_ancestry.title}-cluster-${this.direction_kind}`; }
 	get fork_radial(): Point { return Point.fromPolar(get(s_rotation_ring_radius), this.fork_angle); }
 	get paging_state_ofFocus(): Paging_State | null { return this.focus_ancestry.thing?.page_states?.paging_state_for(this) ?? null; }
-	
+
+	get thumb_isHit(): boolean {
+		if (this.isPaging) {
+			const ring_origin = g.graph_center.offsetBy(Point.square(-get(s_rotation_ring_radius)));
+			const vector = u.vector_ofOffset_fromGraphCenter_toMouseLocation(ring_origin);
+			return vector?.isContainedBy_path(this.thumb_map.arc_svgPath) ?? false;
+		}
+		return false;
+	}
 	static readonly $_LABEL_$: unique symbol;
 
 	update_label_geometry() {		// rotate text tangent to arc, at center of arc

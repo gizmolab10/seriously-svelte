@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, ux, Rect, Size, Point, ZIndex, onMount, signals, debugReact, Clusters_Geometry } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, Rect, Size, Point, ZIndex, onMount, signals, debugReact, Clusters_Geometry } from '../../ts/common/Global_Imports';
 	import { s_graphRect, s_ancestry_focus, s_user_graphOffset, s_thing_fontFamily } from '../../ts/state/Reactive_State';
 	import { s_clusters_geometry, s_rotation_ring_state, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import Editing_Tools from '../widget/Editing_Tools.svelte';
@@ -9,7 +9,6 @@
 	import Rings from './Rings.svelte';
 	const toolsOffset = new Point(32, -3);
 	let titleCenter = Point.zero;
-	let center = Point.zero;
 	let size = Size.zero;
 	let titleWidth = 0;
 	let rebuilds = 0;
@@ -34,11 +33,9 @@
 	});
 
 	$: {
-		size = $s_graphRect.size;
-		center = size.dividedInHalf.asPoint;
 		titleWidth = $s_ancestry_focus?.thing?.titleWidth ?? 0;
 		offsetX = -9 - k.thing_fontSize - (titleWidth / 2);
-		titleCenter = center.offsetByXY(offsetX, k.cluster_offsetY);
+		titleCenter = g.graph_center.offsetByXY(offsetX, k.cluster_offsetY);
 		rebuilds += 1;
 	}
 
@@ -58,7 +55,6 @@
 			{#key $s_ancestry_focus.hashedAncestry}
 				<Rings
 					name={'rings'}
-					center={center}
 					zindex={ZIndex.panel}
 					ring_width={k.ring_thickness}
 					cursor_closure={cursor_closure}

@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { s_graphRect, s_mouse_location, s_active_wrapper, s_mouse_up_count, s_ancestry_focus } from '../../ts/state/Reactive_State';
 	import { s_user_graphOffset, s_clusters_geometry, s_active_cluster_map, s_paging_ring_state } from '../../ts/state/Reactive_State';
-	import { k, u, ux, w, Thing, Point, Angle, debug, ZIndex, onMount, signals, svgPaths } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, w, Thing, Point, Angle, debug, ZIndex, onMount, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import { debugReact, dbDispatch, opacitize, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { s_rotation_ring_state, s_rotation_ring_angle, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
@@ -11,7 +11,6 @@
 	export let ring_width = 0;
 	export let name = k.empty;
 	export let color = k.empty;
-	export let center = Point.zero;
 	export let zindex = ZIndex.rotation;
 	export let cursor_closure = () => {};
 	const outer_radius = radius + ring_width;
@@ -66,7 +65,7 @@
 		////////////////////////////////////
 
 		const _ = $s_mouse_location;								// use store, to invoke this code
-		const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);
+		const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(g.graph_center);
 		if (!!from_center) {
 			let sendSignal = false;
 			const inPaging = isInterior();
@@ -116,7 +115,7 @@
 		// setup or teardown state //
 		/////////////////////////////
 
-		const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);
+		const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(g.graph_center);
 		const mouse_wentDown_angle = from_center.angle;
 		if (isInterior()) {
 			const basis_angle = mouse_wentDown_angle.normalized_angle();
@@ -157,7 +156,7 @@
 	}
 
 	function distance_fromCenter(): number | null {
-		const vector = u.vector_ofOffset_fromGraphCenter_toMouseLocation(center);
+		const vector = u.vector_ofOffset_fromGraphCenter_toMouseLocation(g.graph_center);
 		return vector?.magnitude ?? null;
 	}
 
@@ -190,7 +189,6 @@
 				{#if !!cluster_map && (cluster_map.shown > 0)}
 					<Paging_Arc
 						color={color}
-						center={center}
 						cluster_map={cluster_map}/>
 				{/if}
 			{/each}
@@ -198,11 +196,11 @@
 		<div class='rotates-expands' bind:this={rotationRing} style='z-index:{ZIndex.rotation};'>
 			<Mouse_Responder
 				name={name}
-				center={center}
 				zindex={zindex}
 				width={diameter}
 				height={diameter}
 				closure={closure}
+				center={g.graph_center}
 				detect_longClick={false}
 				detectHit_closure={isHit}
 				cursor={$s_rotation_ring_state.cursor}>

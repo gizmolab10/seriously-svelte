@@ -9,13 +9,12 @@
 	import Identifiable from '../../ts/data/Identifiable';
 	import Angled_Text from '../kit/Angled_Text.svelte';
 	export let color = 'red';
-	export let center = Point.zero;
 	export let cluster_map!: Cluster_Map;
 	const offset = k.ring_widget_padding;
 	const radius = $s_rotation_ring_radius + offset;
 	const thumb_name = `thumb-${cluster_map?.name}`;
 	const viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;
-	let origin = center.offsetBy(Point.square(-radius));
+	let origin = g.graph_center.offsetBy(Point.square(-radius));
 	let mouse_up_count = $s_mouse_up_count;
 	let arc_wrapper!: Svelte_Wrapper;
 	let thumb_color = color;
@@ -31,11 +30,6 @@
 	debugReact.log_build(` P ARC (svelte)  ${cluster_map?.name}`);
 	cluster_map?.update_all();
 	update_colors();
-
-	$: {
-		const _ = k.empty + ($s_mouse_location?.description ?? k.empty);			// use store, to react
-		handle_mouse_moved();
-	}
 
 	$: {
 		const _ = $s_paging_ring_state.stroke_opacity;
@@ -55,7 +49,7 @@
 		}
 	}
 
-	function handle_mouse_state(mouse_state: Mouse_State): boolean { return thumb_isHit(); }
+	function handle_mouse_state(mouse_state: Mouse_State): boolean { return cluster_map.thumb_isHit; }
 
 	function update_colors() {
 		arc_color = u.opacitize(color, $s_paging_ring_state.stroke_opacity);
@@ -63,37 +57,16 @@
 	}
 
 	function computed_mouse_angle(): number | null {
-		return u.vector_ofOffset_fromGraphCenter_toMouseLocation(center)?.angle ?? null
-	}
- 
-	function thumb_isHit(): boolean {
-		if (!!cluster_map && cluster_map.isPaging) {
-			const ring_origin = center.offsetBy(Point.square(-$s_rotation_ring_radius));
-			const vector = u.vector_ofOffset_fromGraphCenter_toMouseLocation(ring_origin);
-			return vector.isContainedBy_path(cluster_map.thumb_map.arc_svgPath);
-		}
-		return false;
+		return u.vector_ofOffset_fromGraphCenter_toMouseLocation(g.graph_center)?.angle ?? null
 	}
 
 	function mouse_state_closure(mouse_state) {
 		if (cluster_map.isPaging) {
 			if (mouse_state.isHover) {
-				cluster_map?.paging_state.isHovering = thumb_isHit();	// show highlight around ring
+				cluster_map?.paging_state.isHovering = cluster_map.thumb_isHit;	// show highlight around ring
 				update_colors();
 			}
 		}
-	}
-
-	function handle_mouse_moved() {
-		// const mouse_angle = computed_mouse_angle();
-		// if (!!paging_state.active_angle && !!cluster_map && !!mouse_angle) {	// page
-		// 	const delta = Math.abs(mouse_angle - paging_state.active_angle);		// subtract to find difference
-		// 	if (delta >= (Angle.half / 90)) {												// minimum two degree changes
-		// 		cluster_map.adjust_paging_index_forMouse_angle(mouse_angle);
-		// 		console.log(`paging ${mouse_angle.degrees_of(0)}`)
-		// 		paging_state.active_angle = mouse_angle;
-		// 	}
-		// }
 	}
 
 </script>
@@ -102,21 +75,21 @@
 	{#key arc_color}
 		<div class='arc' bind:this={arc} style='z-index:{ZIndex.paging};'>
 			<Mouse_Responder
-				center={center}
 				width={radius * 2}
 				height={radius * 2}
 				zindex={ZIndex.panel}
+				center={g.graph_center}
 				detect_longClick={false}
 				name={cluster_map?.name}
 				cursor={k.cursor_default}
 				closure={mouse_state_closure}
-				detectHit_closure={thumb_isHit}>
+				detectHit_closure={() => cluster_map.thumb_isHit}>
 				<svg class='svg-arc' viewBox={viewBox}>
 					<path stroke={arc_color} fill=transparent d={cluster_map.arc_map.arc_svgPath}/>
 					{#if debug.reticule}
 						<path stroke='green' fill=transparent d={cluster_map.arc_map.debug_svgPath}/>
 					{/if}
-					{#if cluster_map.isPaging}
+					{#if cluster_map.isPaging && cluster_map.shown > 1}
 						<path fill={thumb_color} d={cluster_map.thumb_map.arc_svgPath}/>
 					{/if}
 				</svg>

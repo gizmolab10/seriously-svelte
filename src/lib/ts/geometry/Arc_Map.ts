@@ -9,15 +9,14 @@ import { s_rotation_ring_radius } from '../state/Reactive_State';
 
 export default class Arc_Map {
 	clusters_center = Point.zero;
-	outside_ring_radius = 0;		// need for ring expansion
 	outside_arc_radius = 0;
 	inside_arc_radius = 0;
 	arc_rect = Rect.zero;
 	fork_backoff = 0;
-	tiny_radius = 0;
 	fork_radius = 0;
 	start_angle = 0;
 	fork_angle = 0;
+	cap_radius = 0;
 	end_angle = 0;
 
 	constructor() {
@@ -25,8 +24,7 @@ export default class Arc_Map {
 		const radius = get(s_rotation_ring_radius);
 		this.clusters_center = Point.square(radius);
 		this.inside_arc_radius = radius - thickness;
-		this.tiny_radius = k.ring_thickness / 6;
-		this.outside_ring_radius = radius;
+		this.cap_radius = k.ring_thickness / 6;
 		this.outside_arc_radius = radius;
 	}
 
@@ -49,17 +47,29 @@ export default class Arc_Map {
 		const start_radial = this.radial_forAngle(this.start_angle);
 		const start_x_isSmaller = start_radial.x < end_radial.x;								// for x and then for y
 		const start_y_isSmaller = start_radial.y < end_radial.y;
-		origin.x = (start_x_isSmaller ? start_radial.x : end_radial.x) - this.tiny_radius;		// which radial's coordinate is smaller?
-		origin.y = (start_y_isSmaller ? start_radial.y : end_radial.y) - this.tiny_radius;		// subtract tiny_radius
-		extent.x = (start_x_isSmaller ? end_radial.x : start_radial.x) + this.tiny_radius;		// vice-versa for larger
-		extent.y = (start_y_isSmaller ? end_radial.y : start_radial.y) + this.tiny_radius;
+		origin.x = (start_x_isSmaller ? start_radial.x : end_radial.x) - this.cap_radius;		// which radial's coordinate is smaller?
+		origin.y = (start_y_isSmaller ? start_radial.y : end_radial.y) - this.cap_radius;		// subtract cap_radius
+		extent.x = (start_x_isSmaller ? end_radial.x : start_radial.x) + this.cap_radius;		// vice-versa for larger
+		extent.y = (start_y_isSmaller ? end_radial.y : start_radial.y) + this.cap_radius;
 		return Rect.createExtentRect(origin, extent);
+	}
+
+	get adjusted_angles(): [number, number] {
+		const midArc_radius = this.inside_arc_radius + (k.paging_arc_thickness / 2);
+		const extra = Math.asin(this.cap_radius / midArc_radius);
+		const start = this.start_angle;
+		const end = this.end_angle;
+		if (start < end) {
+			return [start.add_angle_normalized(-extra), end.add_angle_normalized(extra)];
+		} else {
+			return [end.add_angle_normalized(-extra), start.add_angle_normalized(extra)];
+		}
 	}
 
 	arc_straddles(angle: number): boolean { return (this.start_angle.normalized_angle() > angle && this.end_angle.normalized_angle() < angle); }
 
 	radial_forAngle(angle: number): Point {
-		const middle_radius = this.inside_arc_radius + this.tiny_radius;
+		const middle_radius = this.inside_arc_radius + this.cap_radius;
 		return Point.fromPolar(middle_radius, angle);
 	}
 
@@ -114,7 +124,7 @@ export default class Arc_Map {
 	}
 
 	get debug_svgPath(): string {
-		const small = this.outside_ring_radius;
+		const small = this.outside_arc_radius;
 		const big = small + k.ring_thickness;
 		const paths = [
 			// this.tinyDot_svgPath(this.outside_arc_radius, this.start_angle),
@@ -136,7 +146,7 @@ export default class Arc_Map {
 		const radial = this.radial_forAngle(arc_angle);
 		const center = this.clusters_center.offsetBy(radial);
 		const end_angle = clockwise ? arc_angle : (arc_angle + Math.PI).normalized_angle();
-		return svgPaths.arc_partial(center, this.tiny_radius, 0, 1, end_angle);
+		return svgPaths.arc_partial(center, this.cap_radius, 0, 1, end_angle);
 	
 	}
 
