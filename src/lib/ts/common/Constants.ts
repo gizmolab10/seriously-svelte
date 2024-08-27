@@ -78,7 +78,7 @@ export default class Constants {
 		this.build_number = builds.latest;
 		this.row_height = this.dot_size + 7;
 		this.cluster_offsetY = 4 - this.dot_size;
-		this.paging_arc_thickness = this.ring_thickness / 1.5;
+		this.paging_arc_thickness = this.ring_thickness / 3;
 		this.ring_widget_padding = (this.ring_thickness - 1) / 2;
 		this.queryStrings = new URLSearchParams(window.location.search);
 	}
