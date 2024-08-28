@@ -47,7 +47,7 @@ export default class DBDispatch {
 		persistLocal.restore_grabbed_andExpanded(true);
 		debug.log_beat('db_setupData_forType before timeout');
 		setTimeout(() => {
-			persistLocal.restore_page_states();
+			// persistLocal.restoreAll_pageStates();
 			persistLocal.restore_focus();
 			h.hierarchy_markAsCompleted();
 			signals.signal_rebuildGraph_fromFocus();
@@ -67,7 +67,7 @@ export default class DBDispatch {
 			}
 			h = this.db.hierarchy = new Hierarchy(this.db);		// create Hierarchy to fetch into
 			await this.db.fetch_all();
-			await h.add_missing_removeNulls(Identifiable.newID(), this.db.baseID);
+			await h.add_missing_removeNulls(this.db.baseID);
 			h.rootAncestry_setup();
 			h.ancestries_rebuildAll();
 			if (this.db.isRemote) {

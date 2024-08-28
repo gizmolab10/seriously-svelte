@@ -25,9 +25,9 @@ export class Hierarchy {
 	private things: Array<Thing> = [];
 	relationships: Array<Relationship> = [];
 	predicates: Array<Predicate> = [];
-	isAssembled = false;
 	rootsAncestry!: Ancestry;
 	rootAncestry!: Ancestry;
+	isAssembled = false;
 	db: DBInterface;
 	grabs: Grabs;
 	root!: Thing;
@@ -389,17 +389,17 @@ export class Hierarchy {
 		return null;
 	}
 
-	async relationships_remoteCreateMissing(idParent: string, baseID: string) {
-		const startingID = idParent ?? this.idRoot;
-		if (startingID) {
+	async relationships_remoteCreateMissing(baseID: string) {
+		const idRoot = this.idRoot;
+		if (idRoot){
 			for (const thing of this.things) {
 				const idThing = thing.id;
-				if (idThing != startingID && thing.trait != IDTrait.root && thing.baseID == baseID) {
+				if (thing.trait != IDTrait.root && thing.baseID == baseID) {
 					let relationship = this.relationship_whereID_isChild(idThing);
 					if (!relationship) {
 						const idPredicateContains = Predicate.idContains;
 						await this.relationship_remember_remoteCreateUnique(baseID, Identifiable.newID(), idPredicateContains,
-							startingID, idThing, 0, CreationOptions.getRemoteID)
+							idRoot, idThing, 0, CreationOptions.getRemoteID)
 					}
 				}
 			}
@@ -932,8 +932,8 @@ export class Hierarchy {
 		this.isAssembled = true;
 	}
 
-	async add_missing_removeNulls(idParent: string, baseID: string) {
-		await this.relationships_remoteCreateMissing(idParent, baseID);
+	async add_missing_removeNulls(baseID: string) {
+		await this.relationships_remoteCreateMissing(baseID);
 		await this.relationships_removeHavingNullReferences();
 	}
 
