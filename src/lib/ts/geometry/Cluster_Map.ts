@@ -124,7 +124,6 @@ export default class Cluster_Map  {
 			const adjusted = paging.addTo_paging_index_for(delta_index, this) ?? false;			// add index delta to index
 			this.update_thumb_angles();
 			if (adjusted) {
-				console.log(`(${delta_angle.degrees_of(0)} / ${spread_angle.degrees_of(0)} = ${Math.round(delta_fraction * 100)}%) -> (${delta_index.toFixed(2)} of ${this.total})`)
 				this.update_label_forIndex();
 			}
 			return adjusted || delta_index != 0;
