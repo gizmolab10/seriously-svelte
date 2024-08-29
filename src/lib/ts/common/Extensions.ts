@@ -80,8 +80,9 @@ Object.defineProperty(String.prototype, 'sizeOf_svgPath', {
 declare global {
 	interface Number {
 		roundToEven(): number;
-		normalized_angle(): number;
+		angle_normalized(): number;
 		toFixed(precision: number): string;
+		angle_normalized_aroundZero(): number;
 		degrees_of(precision: number): string;
 		straddles_zero(other: number): boolean;
 		add_angle_normalized(angle: number): number;
@@ -137,7 +138,7 @@ Object.defineProperty(Number.prototype, 'increment_by', {
 
 Object.defineProperty(Number.prototype, 'add_angle_normalized', {
 	value: function(angle: number): number {
-		return (this + angle).normalized_angle();
+		return (this + angle).angle_normalized();
 	},
 	writable: false,
 	enumerable: false,
@@ -146,16 +147,25 @@ Object.defineProperty(Number.prototype, 'add_angle_normalized', {
 
 Object.defineProperty(Number.prototype, 'straddles_zero', {
 	value: function(other: number): boolean {
-		return this.normalized_angle() > other.normalized_angle();
+		return this.angle_normalized() > other.angle_normalized();
 	},
 	writable: false,
 	enumerable: false,
 	configurable: false
 });
 
-Object.defineProperty(Number.prototype, 'normalized_angle', {
+Object.defineProperty(Number.prototype, 'angle_normalized', {
 	value: function(): number {
 		return this.normalize_between_zeroAnd(Math.PI * 2);
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(Number.prototype, 'angle_normalized_aroundZero', {
+	value: function(): number {
+		return (this + Math.PI).angle_normalized() - Math.PI;
 	},
 	writable: false,
 	enumerable: false,

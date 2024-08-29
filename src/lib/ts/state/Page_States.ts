@@ -52,22 +52,25 @@ export class Paging_State {
 		return null;
 	}
 
-	set_paging_index_for(index: number | null, map: Cluster_Map): boolean {
-		if (!!index && this.index != index) {
+	addTo_paging_index_for(delta: number, map: Cluster_Map): boolean {
+		if (delta != 0) {
+			const prior_index = this.index;
+			this.index = (this.index + delta).force_between(0, map.total - map.shown);
 			this.total = map.total;
 			this.shown = map.shown;
-			this.index = index;
+			const integrally_changed = Math.round(prior_index) != Math.round(this.index);
 			s_paging_state.set(this);
-			return true;
+			return integrally_changed;
 		}
 		return false;
 	}
 
+	get canShow(): number { return Math.round(get(s_rotation_ring_radius) * 2 / k.row_height) - 5; }
+
 	onePaging_from(ancestries: Array<Ancestry>): Array<Ancestry> {
-		const canShow = Math.round(get(s_rotation_ring_radius) * 2 / k.row_height) - 5;
 		const index = Math.round(this.index);
 		this.total = ancestries.length;
-		this.shown = Math.min(canShow, this.total);
+		this.shown = Math.min(this.canShow, this.total);
 		const max = index + this.shown;
 		if (max <= this.total) {
 			return ancestries.slice(index, max);

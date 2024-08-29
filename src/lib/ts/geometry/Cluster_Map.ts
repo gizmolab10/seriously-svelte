@@ -66,8 +66,8 @@ export default class Cluster_Map  {
 	get maximum_paging_index(): number { return this.total - this.shown; }
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
 	get description(): string { return `(${this.cluster_title}) ${this.titles}`; }
-	get paging_state(): Rotation_State { return ux.rotationState_forName(this.name); }
 	get paging_index_ofFocus(): number { return this.paging_state_ofFocus?.index ?? 0; }
+	get paging_rotation(): Rotation_State { return ux.rotationState_forName(this.name); }
 	get direction_kind(): string { return this.isParental ? 'contained by' : this.kind; }
 	get kind(): string { return this.predicate?.kind.unCamelCase().lastWord() ?? k.empty; }
 	get isParental(): boolean { return !this.points_out && !this.predicate?.isBidirectional; }
@@ -114,21 +114,28 @@ export default class Cluster_Map  {
 	
 	static readonly $_INDEX_$: unique symbol;
 	
-	adjust_paging_index_forMouse_angle(mouse_angle: number) {
-		const fraction = this.compute_paging_fraction(mouse_angle);
-		const index = fraction * this.maximum_paging_index;
-		const adjust = this.paging_state_ofFocus?.set_paging_index_for(index, this) ?? false;
-		if (adjust) {
-			this.update_label_forIndex();
+	adjust_paging_index_byAdding_angle(delta_angle: number) {
+		const paging = this.paging_state_ofFocus;
+		if (!!paging) {
+			// const inverter = (delta_angle > 0) ? 1 : -1;
+			const spread_angle = (-this.arc_map.spread_angle).angle_normalized();
+			const delta_fraction = (delta_angle / spread_angle);
+			const delta_index = delta_fraction * this.maximum_paging_index;		// convert rotation delta to index delta
+			const adjusted = paging.addTo_paging_index_for(delta_index, this) ?? false;			// add index delta to index
 			this.update_thumb_angles();
+			if (adjusted) {
+				console.log(`(${delta_angle.degrees_of(0)} / ${spread_angle.degrees_of(0)} = ${Math.round(delta_fraction * 100)}%) -> (${delta_index.toFixed(2)} of ${this.total})`)
+				this.update_label_forIndex();
+			}
+			return adjusted || delta_index != 0;
 		}
-		return adjust;
+		return false;
 	}
 	
-	compute_paging_fraction(mouse_angle: number): number {
-		let angle = mouse_angle.normalized_angle();
-		let end = this.arc_map.end_angle.normalized_angle();
-		let start = this.arc_map.start_angle.normalized_angle();
+	compute_paging_fraction(delta_angle: number): number {
+		let angle = delta_angle.angle_normalized();
+		let end = this.arc_map.end_angle.angle_normalized();
+		let start = this.arc_map.start_angle.angle_normalized();
 		const quadrant = u.quadrant_ofAngle(end);
 		if (quadrant != Quadrant.upperRight) {
 			let delta = u.basis_angle_ofQuadrant(quadrant) + Angle.quarter;
@@ -148,9 +155,9 @@ export default class Cluster_Map  {
 		} else if (end > angle) {
 			return 1;
 		} else {
-			const moved_angle = (start - angle).normalized_angle();
-			const spread_angle = (-this.arc_map.spread_angle).normalized_angle();
-			return (moved_angle.normalized_angle() / spread_angle).force_between(0, 1);
+			const moved_angle = (start - angle).angle_normalized();
+			const spread_angle = (-this.arc_map.spread_angle).angle_normalized();
+			return (moved_angle / spread_angle).force_between(0, 1);
 		}
 	}
 
@@ -232,7 +239,7 @@ export default class Cluster_Map  {
 		const hasNegative_spread = spread_angle < 0
 		const inverter = hasNegative_spread ? 1 : -1;
 		const otherInverter = (hasNegative_spread == this.arc_straddles_nadir) ? -1 : 1;
-		const arc_spread = this.arc_straddles_nadir ? (-spread_angle).normalized_angle() : spread_angle;
+		const arc_spread = this.arc_straddles_nadir ? (-spread_angle).angle_normalized() : spread_angle;
 		const increment = arc_spread / this.total * inverter;
 		const arc_start = this.arc_map.start_angle * otherInverter;
 		const start = arc_start + (increment * this.paging_index_ofFocus);
@@ -251,7 +258,7 @@ export default class Cluster_Map  {
 			opposite - tweak :
 			points_out ? rotation_angle :		// one directional, use global
 			opposite + tweak;
-		return raw.normalized_angle();
+		return raw.angle_normalized();
 	}
 
 	update_fork_angle() {

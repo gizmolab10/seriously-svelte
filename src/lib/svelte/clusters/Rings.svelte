@@ -70,31 +70,37 @@
 			let sendSignal = false;
 			const inPaging = isInterior();
 			const mouse_angle = from_center.angle;
+			const page_state = $s_paging_ring_state;
+			const cluster_map = $s_active_cluster_map;
+			const rotate_state = $s_rotation_ring_state;
 			const isHovering = isHit() && !inPaging && !ux.isAny_paging_arc_active;
-			if ($s_rotation_ring_state.isHovering != isHovering) {
-				$s_rotation_ring_state.isHovering = isHovering;
+			if (rotate_state.isHovering != isHovering) {
+				rotate_state.isHovering = isHovering;
 			}
-			if ($s_paging_ring_state.isHovering != inPaging) {
-				$s_paging_ring_state.isHovering = inPaging;			// adjust hover highlight for all arcs  (paging arc handles thumb hover)
+			if (page_state.isHovering != inPaging) {
+				page_state.isHovering = inPaging;			// adjust hover highlight for all arcs  (paging arc handles thumb hover)
 			}
-			if (!!$s_active_cluster_map) {
-				const needs_update = $s_active_cluster_map.paging_state.needs_update;
-				$s_active_cluster_map.paging_state.active_angle = mouse_angle;
-				if (needs_update && $s_active_cluster_map.adjust_paging_index_forMouse_angle(mouse_angle)) {
+			if (!!rotate_state.active_angle || rotate_state.active_angle == 0) {		// rotate_resize clusters
+				if (!signals.signal_isInFlight && !mouse_angle.isClocklyAlmost(rotate_state.active_angle, Angle.radians_from_degrees(4), Angle.full)) {		// detect >= 4° change
+					$s_rotation_ring_angle = mouse_angle.add_angle_normalized(-rotate_state.basis_angle);
+					rotate_state.active_angle = mouse_angle;
 					sendSignal = true;
 				}
-			} else if (!!$s_rotation_ring_state.active_angle || $s_rotation_ring_state.active_angle == 0) {		// rotate_resize clusters
-				if (!signals.signal_isInFlight && !mouse_angle.isClocklyAlmost($s_rotation_ring_state.active_angle, Angle.radians_from_degrees(4), Angle.full)) {		// detect >= 4° change
-					$s_rotation_ring_angle = mouse_angle.add_angle_normalized(-$s_rotation_ring_state.basis_angle);
-					$s_rotation_ring_state.active_angle = mouse_angle;
+			} else if (!!cluster_map) {
+				const paging_rotation = cluster_map.paging_rotation;
+				const basis_angle = paging_rotation.basis_angle;
+				const active_angle = paging_rotation.active_angle;
+				const delta_angle = (active_angle - mouse_angle).angle_normalized_aroundZero();
+				paging_rotation.active_angle = mouse_angle;
+				if (!!basis_angle && !!active_angle && basis_angle != active_angle && cluster_map.adjust_paging_index_byAdding_angle(delta_angle)) {
 					sendSignal = true;
 				}
-			} else if (!!$s_rotation_ring_state.radiusOffset) {		// resize
+			} else if (!!rotate_state.radiusOffset) {		// resize
 				const magnitude = from_center.magnitude
 				const smallest = k.ring_smallest_radius;
 				const largest = k.ring_smallest_radius * 3;
 				const distance = magnitude.force_between(smallest, largest);
-				const delta = distance - $s_rotation_ring_radius - $s_rotation_ring_state.radiusOffset;
+				const delta = distance - $s_rotation_ring_radius - rotate_state.radiusOffset;
 				if (Math.abs(delta) > 1) {							// granularity of 1 pixel
 					const radius = $s_rotation_ring_radius + delta;
 					debugReact.log_action(`RINGS  ${radius.toFixed(0)}`);
@@ -119,17 +125,16 @@
 		const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(g.graph_center);
 		const mouse_wentDown_angle = from_center.angle;
 		if (isInterior()) {
-			const basis_angle = mouse_wentDown_angle.normalized_angle();
+			const basis_angle = mouse_wentDown_angle.angle_normalized();
 			const map = $s_clusters_geometry.cluster_mapFor_mouseLocation;
 			if (!!map && mouse_state.isDown) {
 					
 				// begin paging
 
-				map.paging_state.active_angle = basis_angle;
-				map.paging_state.basis_angle = basis_angle;
+				map.paging_rotation.active_angle = basis_angle;
+				map.paging_rotation.basis_angle = basis_angle;
 				$s_active_wrapper = pagingWrapper;
 				$s_active_cluster_map = map;
-				console.log('PAGING')
 				rebuilds += 1;
 			}
 		} else if (isHit()) {

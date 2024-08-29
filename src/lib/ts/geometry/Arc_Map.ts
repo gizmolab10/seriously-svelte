@@ -54,7 +54,7 @@ export default class Arc_Map {
 		return Rect.createExtentRect(origin, extent);
 	}
 
-	arc_straddles(angle: number): boolean { return (this.start_angle.normalized_angle() > angle && this.end_angle.normalized_angle() < angle); }
+	arc_straddles(angle: number): boolean { return (this.start_angle.angle_normalized() > angle && this.end_angle.angle_normalized() < angle); }
 
 	radial_forAngle(angle: number): Point {
 		const middle_radius = this.inside_arc_radius + this.cap_radius;
@@ -133,7 +133,7 @@ export default class Arc_Map {
 	cap_svgPath(arc_angle: number, clockwise: boolean) {
 		const radial = this.radial_forAngle(arc_angle);
 		const center = this.clusters_center.offsetBy(radial);
-		const end_angle = clockwise ? arc_angle : (arc_angle + Math.PI).normalized_angle();
+		const end_angle = clockwise ? arc_angle : (arc_angle + Math.PI).angle_normalized();
 		return svgPaths.arc_partial(center, this.cap_radius, 0, 1, end_angle);
 	
 	}

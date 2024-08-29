@@ -58,7 +58,7 @@ export default class SVG_Paths {
 	arc(center: Point, radius: number, sweepFlag: number, basis_angle: number, endAngle: number): string {
 		const end = center.offsetBy(Point.fromPolar(radius, endAngle));
 		const start = center.offsetBy(Point.fromPolar(radius, basis_angle));
-		const largeArcFlag = ((basis_angle - endAngle).normalized_angle() > Math.PI) ? 1 : 0;
+		const largeArcFlag = ((basis_angle - endAngle).angle_normalized() > Math.PI) ? 1 : 0;
 		return `\nM ${start.x} ${start.y} \nA ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} \n${end.x} ${end.y}`;
 	}
 

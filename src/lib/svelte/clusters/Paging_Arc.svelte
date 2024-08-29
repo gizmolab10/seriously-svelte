@@ -45,7 +45,7 @@
 	$: {
 		if (mouse_up_count != $s_mouse_up_count) {
 			mouse_up_count = $s_mouse_up_count;		// NEVER gets executed, because mouse_up_count
-			cluster_map?.paging_state.reset();		// is always reset to s_mouse_up_count by rebuild
+			cluster_map?.paging_rotation.reset();		// is always reset to s_mouse_up_count by rebuild
 		}
 	}
 
@@ -53,7 +53,7 @@
 
 	function update_colors() {
 		arc_color = u.opacitize(color, $s_paging_ring_state.stroke_opacity);
-		thumb_color = u.opacitize(color, cluster_map?.paging_state.three_level_opacity);
+		thumb_color = u.opacitize(color, cluster_map?.paging_rotation.three_level_opacity);
 	}
 
 	function computed_mouse_angle(): number | null {
@@ -63,7 +63,7 @@
 	function mouse_state_closure(mouse_state) {
 		if (cluster_map.isPaging) {
 			if (mouse_state.isHover) {
-				cluster_map?.paging_state.isHovering = cluster_map.thumb_isHit;	// show highlight around ring
+				cluster_map?.paging_rotation.isHovering = cluster_map.thumb_isHit;	// show highlight around ring
 				update_colors();
 			}
 		}

@@ -62,7 +62,7 @@ export default class Angle {
 		// angles begin at 3 o'clock & rotate up (counter-clockwise)
 		// ending in lowerRight quadrant
 	
-		const normalized = this.angle.normalized_angle();
+		const normalized = this.angle.angle_normalized();
 		let quadrant = Quadrant.lowerRight;
 		if (normalized.isBetween(0,				Angle.quarter,		 true)) { quadrant = Quadrant.upperRight; }
 		if (normalized.isBetween(Angle.quarter, Angle.half,			 true)) { quadrant = Quadrant.upperLeft; }
