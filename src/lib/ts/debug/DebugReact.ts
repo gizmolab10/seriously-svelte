@@ -1,4 +1,4 @@
-import { k } from '../../ts/common/Constants';
+import { g } from '../../ts/state/Global_State';
 
 export enum ReactKind {
 	build	= 'build',
@@ -23,7 +23,7 @@ export class DebugReact {
 	log_maybe(kind: ReactKind, message: string) { if (this.hasKind(kind)) { console.log(`${kind.toUpperCase()}  ${message}`); }}
 
 	queryStrings_apply() {
-		const queryStrings = k.queryStrings;
+		const queryStrings = g.queryStrings;
 		const debug = queryStrings.get('react');
 		if (debug) {
 			const kinds = debug.split(',');

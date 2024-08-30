@@ -40,7 +40,7 @@
 		}
 		if (focus == null || focus.id != $s_ancestry_focus) {
 			focus = !$s_ancestry_focus ? h.root : h.thing_forAncestry($s_ancestry_focus);
-			offsetX_ofFirstReveal = k.show_titleAtTop ? 0 : 3 + focus?.titleWidth / 2;
+			offsetX_ofFirstReveal = g.show_titleAtTop ? 0 : 3 + focus?.titleWidth / 2;
 			updateOrigins();
 			rebuilds += 1;
 		}
@@ -84,7 +84,7 @@
 			on:keydown={u.ignore}
 			on:keypress={u.ignore}
 			on:click={() => { $s_id_popupView = null; }}>
-			{#if !k.show_titleAtTop}
+			{#if !g.show_titleAtTop}
 				<Widget name={focusState.name} ancestry={focusState.ancestry} origin={origin_ofFirstReveal.offsetByXY(-21.5 - offsetX_ofFirstReveal, -5)}/>
 			{:else}
 				{#if $s_ancestry_focus.isGrabbed}

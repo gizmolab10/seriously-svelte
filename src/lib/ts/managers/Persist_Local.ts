@@ -3,7 +3,7 @@ import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/R
 import { s_paging_state, s_thing_fontFamily, s_shown_relations } from '../state/Reactive_State';
 import { g, k, get, Point, signals, Ancestry, dbDispatch } from '../common/Global_Imports';
 import { s_ancestries_grabbed, s_ancestries_expanded } from '../state/Reactive_State';
-import { Paging_State, Page_States, GraphRelations } from '../common/Global_Imports';
+import { Paging_State, GraphRelations } from '../common/Global_Imports';
 import { h } from '../db/DBDispatch';
 
 export enum IDPersistant {
@@ -50,53 +50,6 @@ class Persist_Local {
 		return JSON.parse(key);
 	}
 
-	queryStrings_apply() {
-		const queryStrings = k.queryStrings;
-		const shownNames = queryStrings.get('show')?.split(k.comma) ?? [];
-		const hiddenNames = queryStrings.get('hide')?.split(k.comma) ?? [];
-        const eraseOptions = queryStrings.get('erase')?.split(k.comma) ?? [];
-		const shown = Object.fromEntries(shownNames.map(s => [s, true]) ?? {});
-		const hidden = Object.fromEntries(hiddenNames.map(s => [s, false]) ?? {});
-		const keyedFlags: { [key: string]: boolean } = {...shown, ...hidden};
-		this.applyFor_key_name(IDPersistant.layout, 'clusters', (flag) => s_cluster_mode.set(flag));
-		for (const [name, flag] of Object.entries(keyedFlags)) {
-			switch (name) {
-				case 'details':
-					s_show_details.set(flag);
-					break;
-				case 'controls':
-					k.show_controls = flag;
-					this.write_key(IDPersistant.controls, flag);
-					break;
-				case 'tinyDots':
-					k.show_tinyDots = flag;
-					this.write_key(IDPersistant.tinyDots, flag);
-					break;
-				case 'arrowheads':
-					k.show_arrowheads = flag;
-					this.write_key(IDPersistant.arrowheads, flag);
-					break;
-				case 'titleAtTop':
-					k.show_titleAtTop = flag;
-					this.write_key(IDPersistant.title_atTop, flag);
-					break;
-			}
-		}
-		for (const option of eraseOptions) {
-			switch (option) {
-				case 'data':
-					dbDispatch.eraseDB = true;
-					break;
-				case 'settings': 
-					localStorage.clear();
-					s_ancestries_expanded.set([]);
-					s_ancestry_focus.set(h.rootAncestry);
-					s_ancestries_grabbed.set([h.rootAncestry]);
-					break;
-			}
-		}
-    }
-
 	write_keyPair<T>(key: string, sub_key: string, value: T): void {	// pair => key, sub_key
 		const sub_keys: Array<string> = this.read_key(key) ?? [];
 		const pair = this.keyPair_for(key, sub_key);
@@ -129,7 +82,7 @@ class Persist_Local {
 	}
 
 	applyFor_key_name(key: string, matching: string, apply: (flag: boolean) => void, persist: boolean = true) {
-		const queryStrings = k.queryStrings;
+		const queryStrings = g.queryStrings;
         const value = queryStrings.get(key);
 		if (value) {
 			const flag = (value === matching);
@@ -264,7 +217,7 @@ class Persist_Local {
 		});
 	}
 
-	restore_constants() {
+	restore_state() {
 		// localStorage.clear();
 		// const isLocal = g.isServerLocal;
 		// this.write_key(IDPersistant.row_height, 20);
@@ -274,10 +227,10 @@ class Persist_Local {
 			this.write_key(IDPersistant.relationships, true);
 		}
 		this.write_key(IDPersistant.title_atTop, false);
-		k.show_controls = this.read_key(IDPersistant.controls) ?? true;
-		k.show_tinyDots = this.read_key(IDPersistant.tinyDots) ?? true;
-		k.show_arrowheads = this.read_key(IDPersistant.arrowheads) ?? false;
-		k.show_titleAtTop = this.read_key(IDPersistant.title_atTop) ?? false;
+		g.show_controls = this.read_key(IDPersistant.controls) ?? true;
+		g.show_tinyDots = this.read_key(IDPersistant.tinyDots) ?? true;
+		g.show_arrowheads = this.read_key(IDPersistant.arrowheads) ?? false;
+		g.show_titleAtTop = this.read_key(IDPersistant.title_atTop) ?? false;
 		g.applyScale(!g.device_isMobile ? 1 : this.read_key(IDPersistant.scale) ?? 1);
 		s_rotation_ring_angle.set(this.read_key(IDPersistant.ring_angle) ?? 0);
 		s_show_details.set(this.read_key(IDPersistant.details) ?? false);

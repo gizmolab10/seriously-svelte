@@ -1,7 +1,7 @@
 import { Predicate, dbDispatch, Relationship, persistLocal, CreationOptions } from '../common/Global_Imports';
 import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
-import { k, u, Thing, debug, signals, IDTrait, DebugFlag, Hierarchy } from '../common/Global_Imports';
+import { g, k, u, Thing, debug, signals, IDTrait, DebugFlag, Hierarchy } from '../common/Global_Imports';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
 import { DBType, DatumType } from '../db/DBInterface';
 import Identifiable from '../data/Identifiable';
@@ -42,8 +42,7 @@ export default class DBFirebase implements DBInterface {
 	reportError(error: any) { console.log(error); }
 
 	queryStrings_apply() {
-		const queryStrings = k.queryStrings;
-		this.baseID = queryStrings.get('name') ?? queryStrings.get('dbid') ?? 'Public';
+		this.baseID = g.queryStrings.get('name') ?? g.queryStrings.get('dbid') ?? 'Public';
 	}
 
 	static readonly $_FETCH_$: unique symbol;
@@ -483,7 +482,7 @@ export default class DBFirebase implements DBInterface {
 	async recordLoginIP() {
 		await this.getUserIPAddress().then((ipAddress) => {
 			if (!!ipAddress && ipAddress != '69.181.235.85') {
-				const queryStrings = k.queryStrings.toString() ?? 'empty';
+				const queryStrings = g.queryStrings.toString() ?? 'empty';
 				const logRef = collection(this.firestore, 'access_logs');
 				const item = {
 					queries: queryStrings,

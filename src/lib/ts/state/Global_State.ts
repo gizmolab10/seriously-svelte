@@ -1,22 +1,92 @@
-import { k, u, ux, w, get, Rect, Size, Point, debug, debugReact, dbDispatch, Svelte_Wrapper } from '../common/Global_Imports';
+import { k, u, ux, w, get, Rect, Size, Point, debug, debugReact, dbDispatch } from '../common/Global_Imports';
+import { s_ancestry_focus, s_ancestries_grabbed, s_ancestries_expanded } from '../state/Reactive_State';
 import { persistLocal, IDPersistant, Rotation_State, Expansion_State } from '../common/Global_Imports';
 import { s_graphRect, s_show_details, s_scale_factor, s_thing_changed } from './Reactive_State';
-import { s_paging_ring_state, s_rotation_ring_state } from './Reactive_State';
+import { s_cluster_mode, s_paging_ring_state, s_rotation_ring_state } from './Reactive_State';
+import { h } from '../db/DBDispatch';
 
 class Global_State {
-	mouseUp_subscribers: {[type: string]: Array<Svelte_Wrapper>} = {};
+	show_tinyDots = true;
+	show_controls = false;
+	show_titleAtTop = false;
+	show_arrowheads = false;
+	allow_GraphEditing = true;
+	allow_TitleEditing = true;
+	queryStrings: URLSearchParams;
+	allow_HorizontalScrolling = true;
+
+	constructor() {
+		this.queryStrings = new URLSearchParams(window.location.search);
+	}
 
 	setup() {
 		s_rotation_ring_state.set(new Expansion_State());
 		s_paging_ring_state.set(new Rotation_State());
-		persistLocal.restore_constants();
-		k.queryStrings_apply();
+		persistLocal.restore_state();
 		s_thing_changed.set(null);
-		persistLocal.queryStrings_apply();
+		this.queryStrings_apply();
 		debug.queryStrings_apply();
 		debugReact.queryStrings_apply();
 		w.setup();
 	}
+
+	queryStrings_apply() {
+		const queryStrings = this.queryStrings;
+        const deny = queryStrings.get('deny');
+		const shownNames = queryStrings.get('show')?.split(k.comma) ?? [];
+		const hiddenNames = queryStrings.get('hide')?.split(k.comma) ?? [];
+        const eraseOptions = queryStrings.get('erase')?.split(k.comma) ?? [];
+		const shown = Object.fromEntries(shownNames.map(s => [s, true]) ?? {});
+		const hidden = Object.fromEntries(hiddenNames.map(s => [s, false]) ?? {});
+		const keyedFlags: { [key: string]: boolean } = {...shown, ...hidden};
+		persistLocal.applyFor_key_name(IDPersistant.layout, 'clusters', (flag) => s_cluster_mode.set(flag));
+        if (deny) {
+            const flags = deny.split(',');
+            for (const option of flags) {
+                switch (option) {
+                    case 'editGraph': this.allow_GraphEditing = false; break;
+                    case 'editTitles': this.allow_TitleEditing = false; break;
+                    case 'horizontalScrolling': this.allow_HorizontalScrolling = false; break;
+                }
+            }
+        }
+		for (const [name, flag] of Object.entries(keyedFlags)) {
+			switch (name) {
+				case 'details':
+					s_show_details.set(flag);
+					break;
+				case 'controls':
+					this.show_controls = flag;
+					persistLocal.write_key(IDPersistant.controls, flag);
+					break;
+				case 'tinyDots':
+					this.show_tinyDots = flag;
+					persistLocal.write_key(IDPersistant.tinyDots, flag);
+					break;
+				case 'arrowheads':
+					this.show_arrowheads = flag;
+					persistLocal.write_key(IDPersistant.arrowheads, flag);
+					break;
+				case 'titleAtTop':
+					this.show_titleAtTop = flag;
+					persistLocal.write_key(IDPersistant.title_atTop, flag);
+					break;
+			}
+		}
+		for (const option of eraseOptions) {
+			switch (option) {
+				case 'data':
+					dbDispatch.eraseDB = true;
+					break;
+				case 'settings': 
+					localStorage.clear();
+					s_ancestries_expanded.set([]);
+					s_ancestry_focus.set(h.rootAncestry);
+					s_ancestries_grabbed.set([h.rootAncestry]);
+					break;
+			}
+		}
+    }
 
 	get graph_center(): Point {
 		return get(s_graphRect).size.dividedInHalf.asPoint;
@@ -83,7 +153,7 @@ class Global_State {
 	}
 
 	graphRect_update() {
-		const top = k.show_titleAtTop ? 114 : 69;						// height of content above the graph
+		const top = this.show_titleAtTop ? 114 : 69;						// height of content above the graph
 		const left = get(s_show_details) ? k.width_details : 0;			// width of details
 		const originOfGraph = new Point(left, top);
 		const sizeOfGraph = this.windowSize.reducedBy(originOfGraph);	// account for origin

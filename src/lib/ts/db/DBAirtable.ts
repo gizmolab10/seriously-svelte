@@ -1,4 +1,4 @@
-import { k, u, debug, Thing, DebugFlag, Hierarchy, Relationship, CreationOptions } from '../common/Global_Imports';
+import { g, k, u, debug, Thing, DebugFlag, Hierarchy, Relationship, CreationOptions } from '../common/Global_Imports';
 import { s_things_arrived } from '../state/Reactive_State';
 import { DBType, DatumType } from '../db/DBInterface';
 import DBInterface from './DBInterface';
@@ -36,7 +36,23 @@ export default class DBAirtable implements DBInterface {
 	setHasData(flag: boolean) { this.hasData = flag; }
 	things_errorMessage = 'Error in Things:';
 	async fetch_allFrom(baseID: string) {}
-	queryStrings_apply() {}
+
+	queryStrings_apply() {
+		const string = g.queryStrings.get('name') ?? g.queryStrings.get('dbid');
+		if (!!string) {
+			const names = string.split(k.comma);
+			if (names.length > 1) {
+				const tableID = names[0]
+				this.personalAccessToken = names[1];
+				this.base = new Airtable({ apiKey: this.personalAccessToken }).base(tableID);
+				this.relationships_table = this.base(DatumType.relationships);
+				this.predicates_table = this.base(DatumType.predicates);
+				this.things_table = this.base(DatumType.things);
+				this.access_table = this.base(DatumType.access);
+				this.users_table = this.base(DatumType.users);
+			}
+		}
+	}
 
 	async fetch_all() {
 		await this.things_readAll()

@@ -160,7 +160,7 @@
 							fill={element_state.fill}
 							stroke={thing?.color}
 						/>
-						{#if k.show_tinyDots}
+						{#if g.show_tinyDots}
 							{#if tinyDotsSVGPath}
 								<SVGD3 name={'svg-dot-inside-' + name}
 									width={size}

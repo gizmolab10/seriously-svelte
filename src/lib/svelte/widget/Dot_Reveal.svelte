@@ -132,7 +132,7 @@
 						width={size}
 					/>
 				{/key}
-				{#if k.show_tinyDots}
+				{#if g.show_tinyDots}
 					{#if hasInsidePath}
 						<div class='reveal-inside' style='
 							left:{insideOffset}px;

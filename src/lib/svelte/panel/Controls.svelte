@@ -72,7 +72,7 @@
 				closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.details)}>
 				<img src='settings.svg' alt='circular button' width={size}px height={size}px/>
 			</Button>
-			{#if k.show_controls}
+			{#if g.show_controls}
 				<Button name={IDButton.relations}
 					width=65
 					height={size + 4}

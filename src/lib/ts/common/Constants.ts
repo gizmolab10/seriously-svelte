@@ -38,15 +38,7 @@ export default class Constants {
 	comma = ',';
 	space = ' ';
 	empty = '';
-	show_tinyDots = true;
-	show_controls = false;
-	show_titleAtTop = false;
-	show_arrowheads = false;
-	allow_GraphEditing = true;
-	allow_TitleEditing = true;
-	allow_HorizontalScrolling = true;
 
-	queryStrings: URLSearchParams;
 	paging_arc_thickness: number;
 	ring_widget_padding: number;
 	cluster_offsetY: number;
@@ -60,27 +52,12 @@ export default class Constants {
 			<polygon points="44,24 38,18 38,30" fill="black"/>
 		</svg>`;
 
-	queryStrings_apply() {
-        const deny = this.queryStrings.get('deny');
-        if (deny) {
-            const flags = deny.split(',');
-            for (const option of flags) {
-                switch (option) {
-                    case 'editGraph': this.allow_GraphEditing = false; break;
-                    case 'editTitles': this.allow_TitleEditing = false; break;
-                    case 'horizontalScrolling': this.allow_HorizontalScrolling = false; break;
-                }
-            }
-        }
-	}
-
 	constructor() {
 		this.build_number = builds.latest;
 		this.row_height = this.dot_size + 7;
 		this.cluster_offsetY = 4 - this.dot_size;
 		this.paging_arc_thickness = this.ring_thickness / 3;
 		this.ring_widget_padding = (this.ring_thickness - 1) / 2;
-		this.queryStrings = new URLSearchParams(window.location.search);
 	}
 
 }

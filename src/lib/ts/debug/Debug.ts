@@ -1,4 +1,4 @@
-import { k } from '../../ts/common/Constants';
+import { g } from '../../ts/state/Global_State';
 
 export enum DebugFlag {
 	reticule = 'reticule',	// show reticule in clusters
@@ -28,7 +28,7 @@ export class Debug {
 	get lines(): boolean { return this.hasOption(DebugFlag.lines); }
 
 	queryStrings_apply() {
-		const queryStrings = k.queryStrings;
+		const queryStrings = g.queryStrings;
 		const debug = queryStrings.get('debug');
 		if (debug) {
 			const flags = debug.split(',');

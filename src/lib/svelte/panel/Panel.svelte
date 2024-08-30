@@ -29,7 +29,7 @@
 	function handle_wheel(event) {
 		const userOffset = $s_user_graphOffset;
 		const delta = new Point(-event.deltaX, -event.deltaY);
-		if (!!userOffset && k.allow_HorizontalScrolling && delta.magnitude > 1) {
+		if (!!userOffset && g.allow_HorizontalScrolling && delta.magnitude > 1) {
 			persistLocal.graphOffset_setTo(userOffset.offsetBy(delta));
 			rebuilds += 1;
 		}
@@ -122,7 +122,7 @@
 						z-index: {ZIndex.lines};'>
 				</div>
 			</div>
-			{#if k.show_titleAtTop}
+			{#if g.show_titleAtTop}
 				<div class='top-title'
 					style='
 						top: 70px;

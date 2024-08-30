@@ -451,7 +451,7 @@ export default class Ancestry extends Identifiable {
 		return 0;
 	}
 
-	visibleProgeny_width(special: boolean = k.show_titleAtTop, visited: Array<number> = []): number {
+	visibleProgeny_width(special: boolean = g.show_titleAtTop, visited: Array<number> = []): number {
 		const thing = this.thing;
 		if (!!thing) {
 			const idHashed = this.idHashed;
@@ -619,7 +619,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	startEdit() {
-		if (!this.isRoot && k.allow_TitleEditing) {
+		if (!this.isRoot && g.allow_TitleEditing) {
 			debug.log_edit(`EDIT ${this.description}`)
 			this.grabOnly();
 			s_title_editing.set(new Title_State(this));

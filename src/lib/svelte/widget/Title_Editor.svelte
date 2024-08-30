@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { dbDispatch, Seriously_Range, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
-	import { k, u, Point, Thing, debug, Angle, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
+	import { g, k, u, Point, Thing, debug, Angle, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
 	import { s_cluster_mode, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
 	import { s_title_editing, s_ancestries_grabbed } from '../../ts/state/Reactive_State';
 	export let fontFamily = 'Arial';
@@ -119,7 +119,7 @@
 					} else {
 						ancestry.grabOnly();
 					}
-				} else if (k.allow_TitleEditing && !ancestry.isRoot && !!thing && !thing.isBulkAlias) {
+				} else if (g.allow_TitleEditing && !ancestry.isRoot && !!thing && !thing.isBulkAlias) {
 					ancestry.startEdit();
 					input?.focus();
 					return;
@@ -166,7 +166,7 @@
 		const titleState = $s_title_editing; // needs reactivity to s_title_editing
 		const titleState_isEditing = !!ancestry && !!titleState && titleState.editing && ancestry.matchesAncestry(titleState.editing);
 		const isBulkAlias = !!thing && thing.isBulkAlias;
-		if (k.allow_TitleEditing && !isBulkAlias) {
+		if (g.allow_TitleEditing && !isBulkAlias) {
 			if (!!ancestry && (ancestry.isStoppingEdit ?? false)) {
 				debug.log_edit(`STOPPING ${bound_title}`);
 				$s_title_editing = null;

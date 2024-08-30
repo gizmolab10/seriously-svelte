@@ -91,8 +91,8 @@ export class Hierarchy {
 					ancestryGrab = rootAncestry;
 					graph_needsRebuild = rootAncestry.becomeFocus();
 				}
-				if (k.allow_GraphEditing) {
-					if (!!ancestryGrab && k.allow_TitleEditing) {
+				if (g.allow_GraphEditing) {
+					if (!!ancestryGrab && g.allow_TitleEditing) {
 						switch (key) {
 							case 'd':		await this.thing_edit_remoteDuplicate(ancestryGrab); break;
 							case k.space:	await this.ancestry_edit_remoteCreateChildOf(ancestryGrab); break;
@@ -716,7 +716,7 @@ export class Hierarchy {
 					this.ancestry_rebuild_runtimeBrowseRight(ancestry, RIGHT, SHIFT, EXTREME, fromReveal);
 				}
 			}
-		} else if (k.allow_GraphEditing) {
+		} else if (g.allow_GraphEditing) {
 			const grab = this.grabs.latestAncestryGrabbed(true);
 			if (grab) {
 				await this.ancestry_rebuild_remoteRelocateRight(grab, RIGHT, EXTREME);
@@ -748,7 +748,7 @@ export class Hierarchy {
 						}
 						signals.signal_relayoutWidgets_fromFocus();
 					}
-				} else if (k.allow_GraphEditing && OPTION) {
+				} else if (g.allow_GraphEditing && OPTION) {
 					graph_needsRebuild = true;
 					await u.ancestries_orders_normalize_remoteMaybe(parentAncestry.childAncestries, false);
 					const wrapped = up ? (index == 0) : (index == siblings.length - 1);

@@ -1,6 +1,5 @@
-import { k, debug, signals, Hierarchy, IDPersistant, persistLocal } from '../common/Global_Imports';
+import { g, debug, signals, Hierarchy, IDPersistant, persistLocal } from '../common/Global_Imports';
 import { s_isBusy, s_db_type, s_db_loadTime, s_things_arrived } from '../state/Reactive_State';
-import Identifiable from '../data/Identifiable';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
@@ -18,7 +17,7 @@ export default class DBDispatch {
 	eraseDB = false;
 
 	queryStrings_apply() {
-		const queryStrings = k.queryStrings;
+		const queryStrings = g.queryStrings;
 		const type = queryStrings.get('db') ?? persistLocal.read_key(IDPersistant.db) ?? DBType.firebase;
 		this.db_changeTypeTo_for(type);
 		this.db.queryStrings_apply();
