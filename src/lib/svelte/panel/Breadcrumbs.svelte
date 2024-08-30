@@ -13,7 +13,7 @@
 	let left = 0;
 
 	$: {
-		if (!!$s_thing_changed && !!$s_thing_changed) {
+		if (!!$s_thing_changed) {
 			rebuilds += 1;
 		}
 	}

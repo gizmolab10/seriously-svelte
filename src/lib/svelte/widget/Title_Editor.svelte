@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { dbDispatch, Seriously_Range, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { g, k, u, Point, Thing, debug, Angle, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
-	import { s_cluster_mode, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
-	import { s_title_editing, s_ancestries_grabbed } from '../../ts/state/Reactive_State';
+	import { s_cluster_mode, s_thing_changed, s_title_editing } from '../../ts/state/Reactive_State';
+	import { s_ancestries_grabbed, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
 	export let forward = true;
@@ -67,7 +67,7 @@
 	}
 
 	$: {
-		if (ancestry.thing?.changed_state ?? false) {
+		if (!!ancestry.thing && ancestry.thing.id == $s_thing_changed?.split(k.generic_separator)[0]) {
 			color = thing?.color;
 		}
 	}

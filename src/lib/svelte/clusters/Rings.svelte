@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_graphRect, s_mouse_location, s_active_wrapper, s_mouse_up_count, s_ancestry_focus } from '../../ts/state/Reactive_State';
+	import { s_graphRect, s_thing_changed, s_mouse_location, s_active_wrapper, s_mouse_up_count, s_ancestry_focus } from '../../ts/state/Reactive_State';
 	import { s_user_graphOffset, s_clusters_geometry, s_active_cluster_map, s_paging_ring_state } from '../../ts/state/Reactive_State';
 	import { g, k, u, ux, w, Thing, Point, Angle, debug, ZIndex, onMount, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import { debugReact, dbDispatch, opacitize, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
@@ -29,7 +29,7 @@
 	$s_clusters_geometry.layoutAll_clusters();
 
 	$: {
-		if ($s_ancestry_focus.thing?.changed_state ?? false) {
+		if (!!$s_ancestry_focus.thing && $s_ancestry_focus.thing.id == $s_thing_changed?.split(k.generic_separator)[0]) {
 			rebuilds += 1;
 		}
 	}
@@ -68,17 +68,16 @@
 		const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(g.graph_center);
 		if (!!from_center) {
 			let sendSignal = false;
-			const inPaging = isInterior();
+			const inPaging = inInterior();
 			const mouse_angle = from_center.angle;
-			const page_state = $s_paging_ring_state;
 			const cluster_map = $s_active_cluster_map;
 			const rotate_state = $s_rotation_ring_state;
 			const isHovering = isHit() && !inPaging && !ux.isAny_paging_arc_active;
 			if (rotate_state.isHovering != isHovering) {
 				rotate_state.isHovering = isHovering;
 			}
-			if (page_state.isHovering != inPaging) {
-				page_state.isHovering = inPaging;			// adjust hover highlight for all arcs  (paging arc handles thumb hover)
+			if ($s_paging_ring_state.isHovering != inPaging) {
+				$s_paging_ring_state.isHovering = inPaging;			// adjust hover highlight for all arcs  (paging arc handles thumb hover)
 			}
 			if (!!rotate_state.active_angle || rotate_state.active_angle == 0) {		// rotate_resize clusters
 				if (!signals.signal_isInFlight && !mouse_angle.isClocklyAlmost(rotate_state.active_angle, Angle.radians_from_degrees(4), Angle.full)) {		// detect >= 4° change
@@ -108,6 +107,7 @@
 					sendSignal = true;
 				}
 			}
+			// $s_rotation_ring_state = rotate_state;
 			cursor_closure();
 			if (sendSignal) {
 				signals.signal_relayoutWidgets_fromFocus();			// destroys this component (properties are in s_rotation_ring_state && s_active_cluster_map)
@@ -124,7 +124,7 @@
 
 		const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(g.graph_center);
 		const mouse_wentDown_angle = from_center.angle;
-		if (isInterior()) {
+		if (inInterior()) {
 			const basis_angle = mouse_wentDown_angle.angle_normalized();
 			const map = $s_clusters_geometry.cluster_mapFor_mouseLocation;
 			if (!!map && mouse_state.isDown) {
@@ -166,7 +166,7 @@
 		return vector?.magnitude ?? null;
 	}
 
-	function isInterior(): boolean {
+	function inInterior(): boolean {
 		const distance = distance_fromCenter();
 		return !!distance && distance < radius;
 	}

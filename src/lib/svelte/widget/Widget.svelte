@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { k, u, ux, Thing, Point, Angle, debug, ZIndex, onMount, signals, debugReact } from '../../ts/common/Global_Imports';
+	import { s_thing_changed, s_cluster_mode, s_title_editing, s_ancestry_focus } from '../../ts/state/Reactive_State';
 	import { s_thing_fontFamily, s_ancestries_grabbed, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
 	import { ElementType, Element_State, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
-	import { s_cluster_mode, s_title_editing, s_ancestry_focus } from '../../ts/state/Reactive_State';
 	import { Tooltip } from 'carbon-components-svelte';
 	import Editing_Tools from './Editing_Tools.svelte';
 	import Title_Editor from './Title_Editor.svelte';
@@ -91,7 +91,7 @@
 	}
 
 	$: {
-		if (thing?.changed_state ?? false) {
+		if (!!thing && thing.id == $s_thing_changed?.split(k.generic_separator)[0]) {
 			rebuilds += 1;
 		}
 	}

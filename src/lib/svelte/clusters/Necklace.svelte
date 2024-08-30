@@ -1,6 +1,6 @@
 <script lang='ts'>
+	import { s_graphRect, s_paging_state, s_ancestry_focus, s_thing_changed } from '../../ts/state/Reactive_State';
 	import { g, k, u, get, Point, ZIndex, signals, onMount } from '../../ts/common/Global_Imports';
-	import { s_graphRect, s_paging_state, s_ancestry_focus } from '../../ts/state/Reactive_State';
 	import { s_clusters_geometry, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import { onDestroy, Predicate, Clusters_Geometry } from '../../ts/common/Global_Imports';
 	import Widget from '../widget/Widget.svelte';
@@ -23,7 +23,7 @@
 	});
 
 	$: {
-		if (ancestry.thing?.changed_state ?? false) {
+		if (!!ancestry.thing && ancestry.thing.id == $s_thing_changed?.split(k.generic_separator)[0]) {
 			color = ancestry.thing?.color ?? k.color_default;
 			rebuilds += 1;
 		}

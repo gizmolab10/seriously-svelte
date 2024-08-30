@@ -1,6 +1,6 @@
 import { k, u, get, Datum, debug, IDTrait, Ancestry, Predicate, Page_States } from '../common/Global_Imports';
 import { DebugFlag, dbDispatch, Relationship, Seriously_Range } from '../common/Global_Imports';
-import { s_thing_changed, s_ancestry_focus, s_ancestries_expanded } from '../state/Reactive_State';
+import { s_ancestry_focus, s_ancestries_expanded } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
 import Airtable from 'airtable';
 
@@ -39,11 +39,6 @@ export default class Thing extends Datum {
 	get hasParents():				boolean { return this.hasParentsFor(Predicate.idContains); }
 	get isFocus():					boolean { return (get(s_ancestry_focus).thing?.id ?? k.empty) == this.id; }
 	get hasRelated():				boolean { return this.relationships_inBothDirections_for(Predicate.idIsRelated).length > 0; }
-
-	get changed_state(): boolean {
-		const change = get(s_thing_changed);
-		return !!change && change.split(k.generic_separator)[0] == this.id;
-	}
 
 	get parents_ofAllKinds(): Array<Thing> {
 		let parents: Array<Thing> = [];

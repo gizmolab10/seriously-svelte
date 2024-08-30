@@ -32,7 +32,7 @@
 	update_colors();
 
 	$: {
-		const _ = $s_paging_ring_state.stroke_opacity;
+		const _ = $s_paging_ring_state;
 		update_colors();
 	}
 
@@ -43,9 +43,9 @@
 	}
 
 	$: {
-		if (mouse_up_count != $s_mouse_up_count) {
-			mouse_up_count = $s_mouse_up_count;		// NEVER gets executed, because mouse_up_count
-			cluster_map?.paging_rotation.reset();		// is always reset to s_mouse_up_count by rebuild
+		if (mouse_up_count != $s_mouse_up_count) {		// NEVER gets executed
+			mouse_up_count = $s_mouse_up_count;			// WHY? because mouse_up_count is always
+			cluster_map?.paging_rotation.reset();		// reset to s_mouse_up_count by rebuild
 		}
 	}
 

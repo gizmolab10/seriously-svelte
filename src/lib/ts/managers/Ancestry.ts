@@ -1,5 +1,5 @@
 import { Relationship, PredicateKind, Svelte_Wrapper, Widget_MapRect, AlterationType, SvelteComponentType } from '../common/Global_Imports';
-import { k, u, w, get, Rect, Size, Thing, debug, signals, Predicate, Title_State, ElementType } from '../common/Global_Imports';
+import { g, k, u, w, get, Rect, Size, Thing, debug, signals, Predicate, Title_State, ElementType } from '../common/Global_Imports';
 import { s_ancestries_expanded, s_ancestry_showingTools, s_altering, s_clusters_geometry } from '../state/Reactive_State';
 import { s_ancestry_focus, s_ancestries_grabbed, s_title_editing, s_cluster_mode } from '../state/Reactive_State';
 import Identifiable from '../data/Identifiable';
