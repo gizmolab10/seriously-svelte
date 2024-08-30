@@ -53,7 +53,7 @@
 
 	function update_colors() {
 		arc_color = u.opacitize(color, $s_paging_ring_state.stroke_opacity);
-		thumb_color = u.opacitize(color, cluster_map?.paging_rotation.three_level_opacity);
+		thumb_color = u.opacitize(color, $s_rotation_ring_state.isActive ? 0.15 : cluster_map?.paging_rotation.three_level_opacity);
 	}
 
 	function computed_mouse_angle(): number | null {

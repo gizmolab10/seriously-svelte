@@ -68,30 +68,22 @@
 		const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(g.graph_center);
 		if (!!from_center) {
 			let sendSignal = false;
-			const inPaging = inInterior();
 			const mouse_angle = from_center.angle;
-			const cluster_map = $s_active_cluster_map;
 			const rotate_state = $s_rotation_ring_state;
-			const isHovering = isHit() && !inPaging && !ux.isAny_paging_arc_active;
-			if (rotate_state.isHovering != isHovering) {
-				rotate_state.isHovering = isHovering;
-			}
-			if ($s_paging_ring_state.isHovering != inPaging) {
-				$s_paging_ring_state.isHovering = inPaging;			// adjust hover highlight for all arcs  (paging arc handles thumb hover)
-			}
+			detect_hovering();
 			if (!!rotate_state.active_angle || rotate_state.active_angle == 0) {		// rotate_resize clusters
 				if (!signals.signal_isInFlight && !mouse_angle.isClocklyAlmost(rotate_state.active_angle, Angle.radians_from_degrees(4), Angle.full)) {		// detect >= 4° change
 					$s_rotation_ring_angle = mouse_angle.add_angle_normalized(-rotate_state.basis_angle);
 					rotate_state.active_angle = mouse_angle;
 					sendSignal = true;
 				}
-			} else if (!!cluster_map) {
-				const paging_rotation = cluster_map.paging_rotation;
+			} else if (!!$s_active_cluster_map) {
+				const paging_rotation = $s_active_cluster_map.paging_rotation;
 				const basis_angle = paging_rotation.basis_angle;
 				const active_angle = paging_rotation.active_angle;
 				const delta_angle = (active_angle - mouse_angle).angle_normalized_aroundZero();
 				paging_rotation.active_angle = mouse_angle;
-				if (!!basis_angle && !!active_angle && basis_angle != active_angle && cluster_map.adjust_paging_index_byAdding_angle(delta_angle)) {
+				if (!!basis_angle && !!active_angle && basis_angle != active_angle && $s_active_cluster_map.adjust_paging_index_byAdding_angle(delta_angle)) {
 					sendSignal = true;
 				}
 			} else if (!!rotate_state.radiusOffset) {		// resize
@@ -107,12 +99,22 @@
 					sendSignal = true;
 				}
 			}
-			// $s_rotation_ring_state = rotate_state;
 			cursor_closure();
 			if (sendSignal) {
 				signals.signal_relayoutWidgets_fromFocus();			// destroys this component (properties are in s_rotation_ring_state && s_active_cluster_map)
-				rebuilds += 1;
 			}
+		}
+	}
+
+	function detect_hovering() {
+		const inPaging = inInterior();
+		const ring_isActive = $s_rotation_ring_state.isActive;
+		const inRing = isHit() && !inPaging && !ux.isAny_paging_arc_active;
+		if ($s_paging_ring_state.isHovering != inPaging && !ring_isActive) {
+			$s_paging_ring_state.isHovering = inPaging;			// adjust hover highlight for all arcs  (paging arc handles thumb hover)
+		}
+		if ($s_rotation_ring_state.isHovering != inRing) {
+			$s_rotation_ring_state.isHovering = inRing;
 		}
 	}
 
