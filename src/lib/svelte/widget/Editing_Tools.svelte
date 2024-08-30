@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { k, u, ux, Rect, Size, Point, Mouse_State, IDTool, ZIndex, onMount, signals, svgPaths, Direction, dbDispatch } from '../../ts/common/Global_Imports';
 	import { ElementType, Element_State, Alteration_State, AlterationType, Svelte_Wrapper, opacitize } from '../../ts/common/Global_Imports';
-	import { s_ancestry_editingTools, s_cluster_mode } from '../../ts/state/Reactive_State';
 	import { s_altering, s_graphRect, s_show_details } from '../../ts/state/Reactive_State';
+	import { s_cluster_mode, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Triangle_Button from '../mouse buttons/Triangle_Button.svelte';
 	import Transparency_Circle from '../kit/Transparency_Circle.svelte';
@@ -80,8 +80,8 @@
 	}
 
 	$: {
-		if (!ancestry || (!$s_ancestry_editingTools?.matchesAncestry(ancestry) ?? false)) {
-			ancestry = $s_ancestry_editingTools;
+		if (!ancestry || (!$s_ancestry_showingTools?.matchesAncestry(ancestry) ?? false)) {
+			ancestry = $s_ancestry_showingTools;
 			if (!!ancestry) {
 				thing = ancestry.thing;
 				color = thing?.color ?? k.empty;
@@ -130,10 +130,17 @@
 		}
 	}
 
+	function titleOffset(): number {
+		const tools_ancestry = $s_ancestry_showingTools;
+		const shows_Reveal = tools_ancestry?.showsReveal;
+		const forward = tools_ancestry?.widget_map?.points_right ?? true;
+		return !!tools_ancestry ? $s_cluster_mode ? !forward ? -27.7 : titleWidth - 21.7 : shows_Reveal ? titleWidth + 16.3 : titleWidth + 8.3 : 0;
+	}
+
 	function update(): boolean {
 		const rect = ancestry?.titleRect;
-		if (rect && $s_ancestry_editingTools && rect.size.width != 0) {
-			const offsetX = 16.3 + titleWidth - ($s_show_details ? k.width_details : 0) - ($s_cluster_mode ? 38 : 0);
+		if (rect && $s_ancestry_showingTools && rect.size.width != 0) {
+			const offsetX = titleOffset() - ($s_show_details ? k.width_details : 0);
 			const offsetY = (k.show_titleAtTop ? -45 : 0) + ($s_cluster_mode ? 3 : 0) - k.editingTools_diameter - 6.5;
 			const center = rect.centerLeft.offsetBy(offset).offsetByXY(offsetX, offsetY);
 			const offsetReveal = Point.square(1);
@@ -176,7 +183,7 @@
 </style>
 
 {#key rebuilds}
-	{#if $s_ancestry_editingTools?.isVisible || false}
+	{#if $s_ancestry_showingTools?.isVisible}
 		<div class='editing-tools' style='
 			position:absolute;
 			z-index: {ZIndex.tools}'>
@@ -294,7 +301,7 @@
 						<path d={svgPaths.ellipses(7, 1)}/>
 					</svg>
 				</Button>
-				<Dot_Reveal name={elementStates_byID[IDTool.dismiss].name} hover_isReversed=true zindex={ZIndex.tool_buttons} ancestry={$s_ancestry_editingTools} center={getC(IDTool.dismiss)}/>
+				<Dot_Reveal name={elementStates_byID[IDTool.dismiss].name} hover_isReversed=true zindex={ZIndex.tool_buttons} ancestry={$s_ancestry_showingTools} center={getC(IDTool.dismiss)}/>
 				<Triangle_Button
 					strokeColor={isDisabledFor(IDTool.next) ? k.color_disabled : parentSensitiveColor}
 					hover_closure={(isHovering) => { return fillColorsFor(IDTool.next, isHovering) }}

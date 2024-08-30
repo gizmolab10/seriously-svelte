@@ -1,16 +1,16 @@
 import { k, Rect, Size, Point, IDLine, Ancestry, Widget_MapRect } from '../common/Global_Imports';
 
 export default class Tree_Geometry {
-	childHeight = 0;
 	widgetMapRects: Array<Widget_MapRect> = [];
+	childHeight = 0;
 
-	constructor(sum: number, ancestry: Ancestry, childAncestry: Ancestry, origin: Point) {
-		const childHeight = childAncestry.visibleProgeny_height();
+	constructor(sum: number, parent_ancestry: Ancestry, child_ancestry: Ancestry, origin: Point) {
+		const childHeight = child_ancestry.visibleProgeny_height();
 		const sizeY = sum + childHeight / 2;
 		const direction = this.getDirection(sizeY);
 		const rect = new Rect(origin, new Size(k.line_stretch, sizeY - 1));
-		const childOrigin = this.originForChildrenOf(childAncestry, origin, rect.extent);
-		const map = new Widget_MapRect(direction, rect, childOrigin, childAncestry, ancestry);
+		const childOrigin = this.originForChildrenOf(child_ancestry, origin, rect.extent);
+		const map = new Widget_MapRect(direction, rect, childOrigin, child_ancestry, parent_ancestry);
 		this.childHeight = childHeight;
 		this.widgetMapRects.push(map);
 	}

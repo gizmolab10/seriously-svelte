@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, u, ux, Rect, Size, Point, Thing, debug, ZIndex, IDTool, onMount } from '../../ts/common/Global_Imports';
-	import { s_cluster_mode, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/Reactive_State';
+	import { s_cluster_mode, s_ancestries_grabbed, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
 	import { signals, svgPaths, Direction, ElementType, dbDispatch } from '../../ts/common/Global_Imports';
 	import { Svelte_Wrapper, AlterationType, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
@@ -38,7 +38,7 @@
 		updateSVGPaths();
 		updateColors_forHovering(true);
         const handleAltering = signals.handle_altering((state) => {
-			const applyFlag = $s_ancestry_editingTools && !!ancestry && ancestry.things_canAlter_asParentOf_toolsAncestry;
+			const applyFlag = $s_ancestry_showingTools && !!ancestry && ancestry.things_canAlter_asParentOf_toolsAncestry;
 			isAltering = applyFlag ? !!state : false;
 			updateExtraSVGPaths();
         });

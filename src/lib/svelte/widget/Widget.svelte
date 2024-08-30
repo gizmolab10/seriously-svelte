@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { k, u, ux, Thing, Point, Angle, debug, ZIndex, onMount, signals, debugReact } from '../../ts/common/Global_Imports';
+	import { s_thing_fontFamily, s_ancestries_grabbed, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
 	import { ElementType, Element_State, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
-	import { s_thing_fontFamily, s_cluster_mode, s_ancestry_editingTools } from '../../ts/state/Reactive_State';
-	import { s_title_editing, s_ancestry_focus, s_ancestries_grabbed } from '../../ts/state/Reactive_State';
+	import { s_cluster_mode, s_title_editing, s_ancestry_focus } from '../../ts/state/Reactive_State';
 	import { Tooltip } from 'carbon-components-svelte';
 	import Editing_Tools from './Editing_Tools.svelte';
 	import Title_Editor from './Title_Editor.svelte';
@@ -11,12 +11,11 @@
 	export let origin = new Point(160, 5);
 	export let subtype = k.empty;
     export let name = k.empty;
-    export let angle = 0;
+    export let forward = true;
     export let ancestry;
 	const hasExtraAtLeft = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
 	const revealState = ux.elementState_for(ancestry, ElementType.reveal, subtype);
 	const dragState = ux.elementState_for(ancestry, ElementType.drag, subtype);
-	const forward = angle <= Angle.quarter || angle >= Angle.three_quarters;
 	const rightPadding = $s_cluster_mode ? 0 : hasExtraAtLeft ? 22.5 : 20;
 	const leftPadding = forward ? 1 : 14;
 	const priorRowHeight = k.row_height;
@@ -113,7 +112,7 @@
 	}
 
 	$: {
-		const _ = $s_title_editing + $s_ancestries_grabbed + $s_ancestry_editingTools;
+		const _ = $s_title_editing + $s_ancestries_grabbed + $s_ancestry_showingTools;
 		updateBorder_fromState();
 	}
 

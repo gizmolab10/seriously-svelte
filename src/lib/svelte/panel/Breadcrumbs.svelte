@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { s_graphRect, s_show_details, s_thing_changed, s_ancestry_focus, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/Reactive_State';
 	import { g, k, u, Size, Point, Thing, ZIndex, signals, svgPaths, onMount, Ancestry, debugReact, dbDispatch, Direction } from '../../ts/common/Global_Imports';
+	import { s_graphRect, s_show_details, s_thing_changed, s_ancestry_focus, s_ancestries_grabbed } from '../../ts/state/Reactive_State';
 	import Breadcrumb_Button from '../mouse buttons/Breadcrumb_Button.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import SVGD3 from '../kit/SVGD3.svelte';

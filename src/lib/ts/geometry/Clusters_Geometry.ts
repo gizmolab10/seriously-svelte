@@ -1,5 +1,5 @@
-import { u, get, Angle, Ancestry, Predicate, debugReact } from '../common/Global_Imports';
 import { Cluster_Map, Paging_State, Widget_MapRect } from '../common/Global_Imports';
+import { u, get, Ancestry, Predicate, debugReact } from '../common/Global_Imports';
 import { s_paging_state, s_ancestry_focus } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
 
@@ -26,7 +26,12 @@ export default class Clusters_Geometry {
 	get cluster_maps(): Array<Cluster_Map> { return u.concatenateArrays(this.inward_cluster_maps, this.outward_cluster_maps); }		// for lines and arcs
 	cluster_maps_for(points_out: boolean): Array<Cluster_Map> { return points_out ? this.outward_cluster_maps : this.inward_cluster_maps; }
 	cluster_map_for(points_out: boolean, predicate: Predicate): Cluster_Map { return this.cluster_maps_for(points_out)[predicate.stateIndex]; }
-	
+
+	widget_mapFor(ancestry: Ancestry): Widget_MapRect | null {
+		const maps = this.widget_maps.filter(m => m.childAncestry == ancestry);
+		return maps.length > 0 ? maps[0] : null;
+	}
+
 	get widget_maps(): Array<Widget_MapRect> {
 		let widget_maps: Array<Widget_MapRect> = [];
 		for (const map of this.cluster_maps) {

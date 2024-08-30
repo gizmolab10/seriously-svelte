@@ -1,13 +1,13 @@
 <script lang='ts'>
 	import { dbDispatch, Seriously_Range, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { k, u, Point, Thing, debug, Angle, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
-	import { s_cluster_mode, s_ancestry_editingTools } from '../../ts/state/Reactive_State';
+	import { s_cluster_mode, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
 	import { s_title_editing, s_ancestries_grabbed } from '../../ts/state/Reactive_State';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
 	export let forward = true;
 	export let ancestry;
-	let padding = `0px 0px 0px 8.5px`;	// 8.5 over to make room for drag dot
+	let padding = `0px 0px 0px 8.5px`;	// 8.5 makes room for drag dot
 	let bound_title = ancestry?.thing?.title ?? k.empty;
     let color = ancestry.thing?.color;
 	let titleWrapper: Svelte_Wrapper;
@@ -17,6 +17,7 @@
 	let isEditing = false;
 	let titleWidth = 0;
 	let clickCount = 0;
+	let titleLeft = 0;
     let thing!: Thing;
 	let ghost = null;
 	let input = null;
@@ -33,6 +34,7 @@
 	
 	onMount(() => {
 		titleWidth = ancestry?.thing?.titleWidth + 6;
+		titleLeft = $s_cluster_mode ? (forward ? 14 : 4) : 10;
 		const handler = signals.handle_anySignal((IDSignal, ancestry) => { updateInputWidth(); });
 		setTimeout(() => { updateInputWidth(); }, 100);
 		return () => { handler.disconnect() };
@@ -136,11 +138,11 @@
 			mouse_click_timer = setTimeout(() => {
 				clearClicks();
 				if (!ancestry.isRoot) {
-					if ($s_ancestry_editingTools == ancestry) {
-						$s_ancestry_editingTools = null;
+					if ($s_ancestry_showingTools == ancestry) {
+						$s_ancestry_showingTools = null;
 					} else  {
 						ancestry.grabOnly();
-						$s_ancestry_editingTools = ancestry;
+						$s_ancestry_showingTools = ancestry;
 					}
 					signals.signal_rebuildGraph_fromFocus();
 				}
@@ -259,9 +261,9 @@
 		on:input={handle_input}
 		bind:value={bound_title}
 		on:cut={handle_cut_paste}
+		on:paste={handle_cut_paste}
 		on:mouseup={handle_mouse_up}
 		on:keydown={handle_key_down}
-		on:paste={handle_cut_paste}
 		on:click={handle_singleClick}
 		on:mousedown={handle_longClick}
 		on:dblclick={handle_doubleClick}
@@ -275,12 +277,12 @@
 			position: absolute;
 			padding: {padding};
 			position: absolute;
+			left: {titleLeft}px;
 			width: {titleWidth}px;
 			font-size: {fontSize};
 			z-index: {ZIndex.text};
 			font-family: {fontFamily};
 			{k.prevent_selection_style};
 			outline-color: {k.color_background};
-			left: {$s_cluster_mode ? (forward ? 14 : 4) : 10}px;
 		'/>
 {/key}

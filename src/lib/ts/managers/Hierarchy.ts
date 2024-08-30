@@ -1,6 +1,6 @@
 import { k, u, get, User, Thing, Grabs, debug, Mouse_State, Access, IDTool, IDTrait, signals, Ancestry } from '../common/Global_Imports';
 import { Predicate, Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
-import { s_things_arrived, s_ancestries_grabbed, s_ancestry_editingTools } from '../state/Reactive_State';
+import { s_things_arrived, s_ancestries_grabbed, s_ancestry_showingTools } from '../state/Reactive_State';
 import { s_isBusy, s_altering, s_ancestry_focus, s_title_editing } from '../state/Reactive_State';
 import Identifiable from '../data/Identifiable';
 import DBInterface from '../db/DBInterface';
@@ -59,7 +59,7 @@ export class Hierarchy {
 
 	async handle_tool_clicked(idButton: string, mouse_state: Mouse_State) {
 		const event: MouseEvent | null = mouse_state.event as MouseEvent;
-        const ancestry = get(s_ancestry_editingTools);
+        const ancestry = get(s_ancestry_showingTools);
 		if (!!ancestry) {
 			switch (idButton) {
 				case IDTool.more: console.log('needs more'); break;
@@ -70,7 +70,7 @@ export class Hierarchy {
 				case IDTool.delete_parent: this.toggleAlteration(AlterationType.deleting, mouse_state.isLong); return;
 				default: break;
 			}
-			s_ancestry_editingTools.set(null);
+			s_ancestry_showingTools.set(null);
 			signals.signal_relayoutWidgets_fromFocus();
 		}
 	}
@@ -138,7 +138,7 @@ export class Hierarchy {
 	latestAncestryGrabbed_toggleEditing_Tools(up: boolean = true) {
 		const ancestry = this.grabs.latestAncestryGrabbed(up);
 		if (!!ancestry && !ancestry.isRoot) {
-			s_ancestry_editingTools.set(ancestry.toolsGrabbed ? null : ancestry);
+			s_ancestry_showingTools.set(ancestry.toolsGrabbed ? null : ancestry);
 			signals.signal_rebuildGraph_fromFocus();
 		}
 	}
@@ -603,7 +603,7 @@ export class Hierarchy {
 	}
 
 	async ancestry_relayout_toolCluster_nextParent(force: boolean = false) {
-		const toolsAncestry = get(s_ancestry_editingTools);
+		const toolsAncestry = get(s_ancestry_showingTools);
 		if (toolsAncestry) {
 			let ancestry = toolsAncestry;
 			// do {
@@ -617,7 +617,7 @@ export class Hierarchy {
 			// } while (!ancestry.matchesAncestry(toolsAncestry));
 			ancestry.grabOnly();
 			signals.signal_relayoutWidgets_fromFocus();
-			s_ancestry_editingTools.set(ancestry);
+			s_ancestry_showingTools.set(ancestry);
 		}
 	}
 
@@ -856,11 +856,11 @@ export class Hierarchy {
 	async ancestry_alterMaybe(ancestry: Ancestry) {
 		if (ancestry.things_canAlter_asParentOf_toolsAncestry) {
 			const altering = get(s_altering);
-			const toolsAncestry = get(s_ancestry_editingTools);
+			const toolsAncestry = get(s_ancestry_showingTools);
 			const idPredicate = altering?.predicate?.id;
 			if (altering && toolsAncestry && idPredicate) {
 				s_altering.set(null);
-				s_ancestry_editingTools.set(null);
+				s_ancestry_showingTools.set(null);
 				switch (altering.alteration) {
 					case AlterationType.deleting:
 						await this.relationship_forget_remoteRemove(toolsAncestry, ancestry, idPredicate);
@@ -924,7 +924,7 @@ export class Hierarchy {
 	static readonly $_OTHER_$: unique symbol;
 
 	hierarchy_markAsCompleted() {
-		s_ancestry_editingTools.set(null);
+		s_ancestry_showingTools.set(null);
 		s_title_editing.set(null);
 		this.db.setHasData(true);
 		s_things_arrived.set(true);

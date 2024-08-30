@@ -10,6 +10,7 @@
 	const toolsOffset = new Point(32, -3);
 	let titleCenter = Point.zero;
 	let size = Size.zero;
+	let forward = true;
 	let titleWidth = 0;
 	let rebuilds = 0;
 	let offsetX = 0;

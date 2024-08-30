@@ -183,10 +183,10 @@ export default class Cluster_Map  {
 			let index = 0;
 			while (index < this.shown) {
 				const child_index = !fork_pointsRight ? index : max - index;
-				const ancestry = this.ancestries[child_index];
+				const child_ancestry = this.ancestries[child_index];
 				const childAngle = this.angle_at_index(index);
 				const childOrigin = tweak.offsetBy(radial.rotate_by(childAngle));
-				const map = new Widget_MapRect(IDLine.flat, new Rect(), childOrigin, ancestry, this.focus_ancestry, childAngle);
+				const map = new Widget_MapRect(IDLine.flat, new Rect(), childOrigin, child_ancestry, this.focus_ancestry, childAngle);
 				this.widget_maps.push(map);
 				index += 1;
 			}

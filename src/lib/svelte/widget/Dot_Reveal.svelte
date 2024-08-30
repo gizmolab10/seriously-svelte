@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_ancestries_expanded, s_altering, s_ancestries_grabbed, s_ancestry_editingTools } from '../../ts/state/Reactive_State';
+	import { s_ancestries_expanded, s_altering, s_ancestries_grabbed, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
 	import { Direction, onDestroy, dbDispatch, Predicate, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { k, u, ux, Size, Thing, Point, debug, ZIndex, onMount, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
@@ -31,7 +31,7 @@
 	});
 
 	$: {
-		if (dotReveal && !($s_ancestry_editingTools?.matchesAncestry(ancestry) ?? false)) {
+		if (dotReveal && !($s_ancestry_showingTools?.matchesAncestry(ancestry) ?? false)) {
 			revealWrapper = new Svelte_Wrapper(dotReveal, handle_mouse_state, ancestry.idHashed, SvelteComponentType.reveal);
 			element_state.set_forHovering(ancestry.thing.color, 'pointer');
 		}
@@ -80,7 +80,7 @@
 		} else if (mouse_state.isUp) {
 			if (ancestry.toolsGrabbed) {
 				$s_altering = null;
-				$s_ancestry_editingTools = null;
+				$s_ancestry_showingTools = null;
 				signals.signal_relayoutWidgets_fromFocus();
 			} else if (ancestry.hasChildRelationships || ancestry.thing.isBulkAlias) {
 				h.ancestry_rebuild_remoteMoveRight(ancestry, !ancestry.isExpanded, true, false);

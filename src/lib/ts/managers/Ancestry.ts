@@ -1,7 +1,7 @@
+import { Relationship, PredicateKind, Svelte_Wrapper, Widget_MapRect, AlterationType, SvelteComponentType } from '../common/Global_Imports';
 import { k, u, w, get, Rect, Size, Thing, debug, signals, Predicate, Title_State, ElementType } from '../common/Global_Imports';
-import { Relationship, PredicateKind, AlterationType, Svelte_Wrapper, SvelteComponentType } from '../common/Global_Imports';
+import { s_ancestries_expanded, s_ancestry_showingTools, s_altering, s_clusters_geometry } from '../state/Reactive_State';
 import { s_ancestry_focus, s_ancestries_grabbed, s_title_editing, s_cluster_mode } from '../state/Reactive_State';
-import { s_ancestries_expanded, s_ancestry_editingTools, s_altering } from '../state/Reactive_State';
 import Identifiable from '../data/Identifiable';
 import { Writable } from 'svelte/store';
 import { h } from '../db/DBDispatch';
@@ -48,7 +48,7 @@ export default class Ancestry extends Identifiable {
 	get idBridging(): string | null { return this.thing?.idBridging ?? null; }
 	get titleRect(): Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
 	get predicate(): Predicate | null { return h.predicate_forID(this.idPredicate) }
-	get toolsGrabbed(): boolean { return this.matchesStore(s_ancestry_editingTools); }
+	get toolsGrabbed(): boolean { return this.matchesStore(s_ancestry_showingTools); }
 	get hasChildRelationships(): boolean { return this.childRelationships.length > 0; }
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
 	get description(): string { return `${this.idPredicate} ${this.titles.join(':')}`; }
@@ -65,6 +65,7 @@ export default class Ancestry extends Identifiable {
 	get hasRelationships(): boolean { return this.hasParentRelationships || this.hasChildRelationships; }
 	get titles(): Array<string> { return this.ancestors?.map(t => ` \"${t ? t.title : 'null'}\"`) ?? []; }
 	get isStoppingEdit(): boolean { return get(s_title_editing)?.stopping?.matchesAncestry(this) ?? false; }
+	get widget_map(): Widget_MapRect | null { return get(s_clusters_geometry)?.widget_mapFor(this) ?? null; }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore_ofAncestries(s_ancestries_expanded); }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	get childRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, false); }
@@ -171,7 +172,7 @@ export default class Ancestry extends Identifiable {
 		const altering = get(s_altering);
 		const predicate = altering?.predicate;
 		const isRelated = predicate?.kind == PredicateKind.isRelated ?? false;
-		const toolsAncestry = get(s_ancestry_editingTools);
+		const toolsAncestry = get(s_ancestry_showingTools);
 		const toolThing = toolsAncestry?.thing;
 		const thing = this.thing;
 		if (thing && toolThing && predicate && toolsAncestry && thing != toolThing && !toolsAncestry.matchesAncestry(this)) {
@@ -483,7 +484,7 @@ export default class Ancestry extends Identifiable {
 
 	becomeFocus(): boolean {
 		const changed = !(get(s_ancestry_focus)?.matchesAncestry(this) ?? false);
-		s_ancestry_editingTools.set(null);
+		s_ancestry_showingTools.set(null);
 		if (changed) {
 			const grabbedAncestry = h.grabs.latestAncestryGrabbed(true)
 			s_ancestry_focus.set(this);
@@ -497,12 +498,12 @@ export default class Ancestry extends Identifiable {
 	}
 
 	toggleToolsGrab() {
-		const toolsAncestry = get(s_ancestry_editingTools);
+		const toolsAncestry = get(s_ancestry_showingTools);
 		if (toolsAncestry) { // ignore if editingTools not in use
 			if (this.matchesAncestry(toolsAncestry)) {
-				s_ancestry_editingTools.set(null);
+				s_ancestry_showingTools.set(null);
 			} else if (!this.isRoot) {
-				s_ancestry_editingTools.set(this);
+				s_ancestry_showingTools.set(this);
 			}
 		}
 	}
