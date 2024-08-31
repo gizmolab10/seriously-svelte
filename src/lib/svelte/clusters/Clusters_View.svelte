@@ -7,7 +7,7 @@
 	import Circle from '../kit/Circle.svelte';
 	import Necklace from './Necklace.svelte';
 	import Rings from './Rings.svelte';
-	const toolsOffset = new Point(32, -3);
+	let toolsOffset = new Point(32, -3);
 	let titleCenter = Point.zero;
 	let size = Size.zero;
 	let forward = true;
@@ -37,6 +37,7 @@
 		titleWidth = $s_ancestry_focus?.thing?.titleWidth ?? 0;
 		offsetX = -9 - k.thing_fontSize - (titleWidth / 2);
 		titleCenter = g.graph_center.offsetByXY(offsetX, k.cluster_offsetY);
+		toolsOffset = new Point(31, -23.5).offsetBy($s_user_graphOffset.negated);
 		rebuilds += 1;
 	}
 
@@ -52,7 +53,9 @@
 	{#key rebuilds}
 		<div class='clusters'
 			bind:this={clusters}
-			style='transform:translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px); z-index:{ZIndex.panel};'>
+			style='
+				z-index:{ZIndex.panel};
+				transform:translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px);'>
 			{#key $s_ancestry_focus.hashedAncestry}
 				<Rings
 					name={'rings'}
@@ -68,7 +71,10 @@
 						position: absolute;
 						top:{titleCenter.y}px;
 						left: {titleCenter.x}px;'>
-					<Title_Editor ancestry={$s_ancestry_focus} fontSize={k.thing_fontSize}px fontFamily={$s_thing_fontFamily}/>
+					<Title_Editor
+						ancestry={$s_ancestry_focus}
+						fontSize={k.thing_fontSize}px
+						fontFamily={$s_thing_fontFamily}/>
 				</div>
 			{/key}
 		</div>

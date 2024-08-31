@@ -1,6 +1,7 @@
 <script lang='ts'>
-	import { g, k, u, ux, Rect, Size, Point, Mouse_State, IDTool, ZIndex, onMount, signals, svgPaths, Direction, dbDispatch } from '../../ts/common/Global_Imports';
-	import { ElementType, Element_State, Alteration_State, AlterationType, Svelte_Wrapper, opacitize } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, Rect, Size, Point, Mouse_State, IDTool, ZIndex, onMount } from '../../ts/common/Global_Imports';
+	import { signals, svgPaths, opacitize, Direction, dbDispatch, ElementType } from '../../ts/common/Global_Imports';
+	import { Element_State, Alteration_State, AlterationType, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { s_altering, s_graphRect, s_show_details } from '../../ts/state/Reactive_State';
 	import { s_cluster_mode, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
@@ -34,8 +35,9 @@
 	function setC(id: string, center: Point) { return centers_byID[id] = center; }
 	function alteration_forID(id: string) { return (id == IDTool.add_parent) ? AlterationType.adding : AlterationType.deleting; }
 
+	setTimeout(() => { update_maybeRedraw(); }, 20);
+
 	onMount(() => { 
-		setTimeout(() => { update_maybeRedraw(); }, 20);	
 		const handler = signals.handle_relayoutWidgets(2, (ancestry) => {	// priority of 2 assures layout is finished
 			update();
 			rebuilds += 1;
@@ -52,11 +54,12 @@
 		((countOfVisibleParents < 2) && needsMultipleVisibleParents.includes(id));
 	}
 
-	function setupElementStates() {
+	function resetElementStates() {		// update every time ancestry changes
 		if (!!ancestry) {
-			const ids = [IDTool.delete_cancel, IDTool.delete_confirm, IDTool.dismiss, IDTool.more];
+			elementStates_byID = {};
+			const ids = [IDTool.delete_cancel, IDTool.add_parent, IDTool.delete_parent, IDTool.delete_cancel, IDTool.delete_confirm, IDTool.dismiss, IDTool.create, IDTool.next, IDTool.more];
 			for (const id of ids) {
-				const isDismiss = id == IDTool.dismiss;
+				const isDismiss = (id == IDTool.dismiss);
 				const element_state = ux.elementState_for(ancestry, ElementType.tool, id);
 				element_state.color_background = isDismiss ? k.color_background : 'transparent';
 				element_state.set_forHovering(color, 'pointer');
@@ -89,7 +92,7 @@
 				const hasOneParent = (thing?.parents.length ?? 0) == 1;
 				countOfVisibleParents = ancestry.visibleParentAncestries(0).length;
 				parentSensitiveColor = (hasOneParent || ancestry.isFocus) ? k.color_disabled : color ;
-				setupElementStates();
+				resetElementStates();
 				update_maybeRedraw(true);
 			}
 		}
@@ -130,25 +133,23 @@
 		}
 	}
 
-	function titleOffset(): number {
+	function titleOffsetX(): number {
 		const tools_ancestry = $s_ancestry_showingTools;
 		const shows_Reveal = tools_ancestry?.showsReveal;
 		const forward = tools_ancestry?.widget_map?.points_right ?? true;
-		return !!tools_ancestry ? $s_cluster_mode ? !forward ? -27.7 : titleWidth - 21.7 : shows_Reveal ? titleWidth + 16.3 : titleWidth + 8.3 : 0;
+		return !!tools_ancestry ? $s_cluster_mode ? !forward ? -26 : titleWidth - 21 : shows_Reveal ? titleWidth + 16.3 : titleWidth + 8.3 : 0;
 	}
 
 	function update(): boolean {
-		const rect = ancestry?.titleRect;
-		if (rect && $s_ancestry_showingTools && rect.size.width != 0) {
-			const offsetX = titleOffset() - ($s_show_details ? k.width_details : 0);
-			const offsetY = (g.show_titleAtTop ? -45 : 0) + ($s_cluster_mode ? 3 : 0) - k.editingTools_diameter - 6.5;
+		let rect = ancestry?.titleRect;
+		if (!!rect && !!$s_ancestry_showingTools && rect.size.width != 0) {
+			// rect.origin = Point.zero;
+			const offsetX = titleOffsetX() - ($s_show_details ? k.width_details : 0);
+			const offsetY = (g.show_titleAtTop ? -45 : 20.5) + ($s_cluster_mode ? 3 : 0) - k.editingTools_diameter - 6.5;
 			const center = rect.centerLeft.offsetBy(offset).offsetByXY(offsetX, offsetY);
-			const offsetReveal = Point.square(1);
-			const x = center.x;
-			const y = center.y;
-			left = x - toolDiameter;
+			left = center.x - toolDiameter;
 			setC(IDTool.editingTools,   center);
-			setC(IDTool.dismiss,		center.offsetBy(offsetReveal));
+			setC(IDTool.dismiss,		center.offsetByXY(1, 1));
 			setC(IDTool.confirmation,   center.offsetEquallyBy(1 - editingToolsRadius));
 			setC(IDTool.delete_cancel,  center.offsetByXY(19 - toolDiameter, -1 + toolDiameter));
 			setC(IDTool.delete_confirm, center.offsetByXY(20 - toolDiameter, 3 - toolDiameter));
@@ -188,13 +189,13 @@
 			position:absolute;
 			z-index: {ZIndex.tools}'>
 			<Transparency_Circle
-				thickness=1
-				opacity=0.85
-				color={color}
-				zindex={ZIndex.dots}
-				radius={editingToolsRadius}
+				color_background={u.opacitize(k.color_background, 0.95)}
 				center={getC(IDTool.editingTools)}
-				color_background={u.opacitize(k.color_background, 0.95)}/>
+				radius={editingToolsRadius}
+				zindex={ZIndex.dots}
+				color={color}
+				opacity=0.85
+				thickness=1/>
 			{#if confirmingDelete}
 				{#if isHovering_byID[IDTool.delete_confirm]}
 					<svg class='delete-confirm' style='
@@ -235,11 +236,11 @@
 					name='delete'>
 					{#key isHovering_byID[IDTool.delete_confirm]}
 						<div style='
-							top: 11px;
-							left: 13px;
-							position: absolute;
+							color: {isHovering_byID[IDTool.delete_confirm] ? 'white' : thing.color};
 							z-index: {ZIndex.frontmost};
-							color: {isHovering_byID[IDTool.delete_confirm] ? 'white' : thing.color};'>
+							position: absolute;
+							left: 13px;
+							top: 11px;'>
 							delete
 						</div>
 					{/key}
@@ -279,11 +280,11 @@
 			{:else}
 				<Button
 					closure={(mouse_state) => handle_mouse_data(mouse_state, IDTool.more)}
-					color={isHovering_byID[IDTool.more] ? k.color_background : color}
 					element_state={elementStates_byID[IDTool.more]}
 					height={k.default_buttonSize}
 					zindex={ZIndex.tool_buttons}
 					center={getC(IDTool.more)}
+					color='transparent'
 					border_thickness=0
 					name='more'
 					width=18>
@@ -301,7 +302,12 @@
 						<path d={svgPaths.ellipses(7, 1)}/>
 					</svg>
 				</Button>
-				<Dot_Reveal name={elementStates_byID[IDTool.dismiss].name} hover_isReversed=true zindex={ZIndex.tool_buttons} ancestry={$s_ancestry_showingTools} center={getC(IDTool.dismiss)}/>
+				<Dot_Reveal
+					name={elementStates_byID[IDTool.dismiss].name}
+					ancestry={$s_ancestry_showingTools}
+					center={getC(IDTool.dismiss)}
+					zindex={ZIndex.tool_buttons}
+					hover_isReversed=true/>
 				<Triangle_Button
 					strokeColor={isDisabledFor(IDTool.next) ? k.color_disabled : parentSensitiveColor}
 					hover_closure={(isHovering) => { return fillColorsFor(IDTool.next, isHovering) }}

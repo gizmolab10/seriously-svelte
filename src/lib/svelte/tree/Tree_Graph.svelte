@@ -96,6 +96,6 @@
 				<Tree_Children ancestry={focusState.ancestry} origin={origin_ofChildren}/>
 			{/if}
 		</div>
-		<Editing_Tools/>
+		<Editing_Tools offset={new Point(0, -20.3)}/>
 	{/key}
 {/if}
