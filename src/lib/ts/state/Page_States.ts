@@ -17,15 +17,22 @@ export class Paging_State {
 
 	constructor(index: number = 0, shown: number = 0, total: number = 0) {
 		this.index = index.force_between(0, total - shown);
-		this.shown = shown;
 		this.total = total;
+		this.shown = shown;
 	}
 
-	static get empty(): Paging_State { return new Paging_State(); }
+	get isPaging(): boolean { return this.shown < this.total; }
 	get stateIndex(): number { return this.predicate?.stateIndex ?? -1; }
+	get maximum_paging_index(): number { return this.total - this.shown; }
 	get thing(): Thing | null { return h.thing_forHID(this.thing_id.hash()) ?? null; }
-	get predicate(): Predicate | null { return h.predicate_forKind(this.kind) ?? null }
+	get predicate(): Predicate | null { return h.predicate_forKind(this.kind) ?? null; }
+	get canShow(): number { return Math.round((get(s_rotation_ring_radius) ** 1.5) * Math.PI / 45 / k.row_height) + 1; }
 	get sub_key(): string { return `${this.thing_id}${k.generic_separator}${this.kind}${k.generic_separator}${this.points_out}`; }
+
+	update_index_forShown(shown: number) {
+		this.shown = shown;
+		this.index = Math.min(this.index, this.maximum_paging_index);
+	}
 
 	get description(): string {
 		const strings = [
@@ -52,12 +59,10 @@ export class Paging_State {
 		return null;
 	}
 
-	addTo_paging_index_for(delta: number, map: Cluster_Map): boolean {
+	addTo_paging_index_for(delta: number): boolean {
 		if (delta != 0) {
 			const prior_index = this.index;
-			this.index = (this.index + delta).force_between(0, map.total - map.shown);
-			this.total = map.total;
-			this.shown = map.shown;
+			this.index = (this.index + delta).force_between(0, this.maximum_paging_index);
 			const integrally_changed = Math.round(prior_index) != Math.round(this.index);
 			s_paging_state.set(this);
 			return integrally_changed;
@@ -65,17 +70,12 @@ export class Paging_State {
 		return false;
 	}
 
-	get canShow(): number { return Math.round(get(s_rotation_ring_radius) * 2 / k.row_height) - 5; }
-
-	onePaging_from(ancestries: Array<Ancestry>): Array<Ancestry> {
-		const index = Math.round(this.index);
+	onePage_from(ancestries: Array<Ancestry>): Array<Ancestry> {
 		this.total = ancestries.length;
 		this.shown = Math.min(this.canShow, this.total);
-		const max = index + this.shown;
-		if (max <= this.total) {
-			return ancestries.slice(index, max);
-		}
-		return ancestries;
+		this.index = this.index.force_between(0, this.maximum_paging_index);
+		const index = Math.round(this.index);
+		return ancestries.slice(index, index + this.shown);
 	}
 
 }
@@ -122,7 +122,7 @@ export class Page_States {
 		const stateIndex = predicate.stateIndex;
 		let paging_state = paging_states[stateIndex]
 		if (!paging_state) {
-			paging_state = Paging_State.empty;
+			paging_state = new Paging_State();
 			paging_state.kind = predicate.kind;
 			paging_state.points_out = points_out;
 			paging_state.thing_id = this.thing_id;

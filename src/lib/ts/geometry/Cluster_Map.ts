@@ -172,6 +172,20 @@ export default class Cluster_Map  {
 		}
 	}
 
+	update_fork_angle() {
+		// returns one of three angles: 1) rotation_angle 2) opposite+tweak 3) opposite-tweak
+		const tweak = Math.PI / 3;					// equilateral distribution
+		const rotation_angle = get(s_rotation_ring_angle);
+		const opposite = rotation_angle + Angle.half;
+		const raw = this.predicate.isBidirectional ?
+			opposite - tweak :
+			this.points_out ? rotation_angle :		// one directional, use global
+			opposite + tweak;
+		const fork_angle = raw.angle_normalized() ?? 0;
+		this.fork_angle = fork_angle;
+		this.arc_map.update(fork_angle);
+	}
+
 	update_widget_angles() {
 		this.widget_maps = [];
 		if (this.shown > 0 && !!this.predicate) {
@@ -246,24 +260,6 @@ export default class Cluster_Map  {
 		this.thumb_map.update((start + end) / 2);
 		this.thumb_map.start_angle = start;
 		this.thumb_map.end_angle = end;
-	}
-	
-	fork_angleFor(predicate: Predicate, points_out: boolean): number | null {
-		// returns one of three angles: 1) rotation_angle 2) opposite+tweak 3) opposite-tweak
-		const tweak = Math.PI * 5 / 18;			// 50 degrees: added or subtracted -> opposite
-		const rotation_angle = get(s_rotation_ring_angle);
-		const opposite = rotation_angle + Angle.half;
-		const raw = predicate.isBidirectional ?
-			opposite - tweak :
-			points_out ? rotation_angle :		// one directional, use global
-			opposite + tweak;
-		return raw.angle_normalized();
-	}
-
-	update_fork_angle() {
-		const fork_angle = this.fork_angleFor(this.predicate, this.points_out) ?? 0;
-		this.fork_angle = fork_angle;
-		this.arc_map.update(fork_angle);
 	}
 
 }
