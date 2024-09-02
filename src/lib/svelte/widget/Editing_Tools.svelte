@@ -35,6 +35,7 @@
 	function setC(id: string, center: Point) { return centers_byID[id] = center; }
 	function alteration_forID(id: string) { return (id == IDTool.add_parent) ? AlterationType.adding : AlterationType.deleting; }
 
+	console.log('mount tools')
 	setTimeout(() => { update_maybeRedraw(); }, 20);
 
 	onMount(() => { 
@@ -56,7 +57,7 @@
 
 	function resetElementStates() {		// update every time ancestry changes
 		if (!!ancestry) {
-			elementStates_byID = {};
+			console.log('element states')
 			const ids = [IDTool.delete_cancel, IDTool.add_parent, IDTool.delete_parent, IDTool.delete_cancel, IDTool.delete_confirm, IDTool.dismiss, IDTool.create, IDTool.next, IDTool.more];
 			for (const id of ids) {
 				const isDismiss = (id == IDTool.dismiss);
@@ -120,7 +121,7 @@
 			const isOut = mouse_state.isOut;
 			isHovering_byID[id] = !isOut;
 			element_state.isOut = isOut;
-		} else {
+		} else if (mouse_state.isUp || mouse_state.isLong) {
 			switch (id) {
 				case IDTool.delete_cancel: confirmingDelete = false; break;
 				default:
@@ -143,7 +144,7 @@
 	function update(): boolean {
 		let rect = ancestry?.titleRect;
 		if (!!rect && !!$s_ancestry_showingTools && rect.size.width != 0) {
-			// rect.origin = Point.zero;
+			console.log('setC all tools')
 			const offsetX = titleOffsetX() - ($s_show_details ? k.width_details : 0);
 			const offsetY = (g.show_titleAtTop ? -45 : 20.5) + ($s_cluster_mode ? 3 : 0) - k.editingTools_diameter - 6.5;
 			const center = rect.centerLeft.offsetBy(offset).offsetByXY(offsetX, offsetY);

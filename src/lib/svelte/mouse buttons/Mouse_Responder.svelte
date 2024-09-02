@@ -76,7 +76,7 @@
 	}
 
 	function handle_pointerUp(event) {
-		if (detect_mouseUp) {
+		if (detect_mouseUp && (!!mouse_longClick_timer)) {
 
 			// teardown long timer and call closure
 			
@@ -86,15 +86,15 @@
 		}
 	}
 
-	function downState(isDouble: boolean = false, isLong: boolean = false): Mouse_State {
+	function downState(isDown: boolean, isDouble: boolean = false, isLong: boolean = false): Mouse_State {
 		const state = mouse_state.copy;
+		state.isUp = !isDown && !isDouble && !isLong;
 		state.element = mouse_button;
 		state.isDouble = isDouble;
 		state.isLong = isLong;
 		state.isHover = false;
-		state.isDown = true;
+		state.isDown = isDown;
 		state.event = event;
-		state.isUp = false;
 		return state;
 	}
 	
@@ -103,7 +103,7 @@
 
 			// call down closure
 
-			closure(downState());
+			closure(downState(true));
 		}
 		mouse_state.clicks += 1;
 		if (detect_doubleClick && !mouse_doubleClick_timer) {
@@ -112,9 +112,9 @@
 
 			mouse_doubleClick_timer = setTimeout(() => {
 				if (mouse_state.clicks == 2) {
-					closure(downState(true, false));
+					closure(downState(false, true, false));
+					reset();
 				}
-				reset();
 			}, k.threshold_doubleClick);
 		}
 		if (detect_longClick && !mouse_longClick_timer) {
@@ -122,7 +122,7 @@
 			// setup timer to call long-click closure
 
 			mouse_longClick_timer = setTimeout(() => {
-				closure(downState(false, true));
+				closure(downState(false, false, true));
 				reset();
 			}, k.threshold_longClick);
 		}

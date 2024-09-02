@@ -171,16 +171,22 @@ export default class Ancestry extends Identifiable {
 	get things_canAlter_asParentOf_toolsAncestry(): boolean {
 		const altering = get(s_altering);
 		const predicate = altering?.predicate;
-		const isRelated = predicate?.kind == PredicateKind.isRelated ?? false;
-		const toolsAncestry = get(s_ancestry_showingTools);
-		const toolThing = toolsAncestry?.thing;
-		const thing = this.thing;
-		if (thing && toolThing && predicate && toolsAncestry && thing != toolThing && !toolsAncestry.matchesAncestry(this)) {
-			const toolIsAnAncestor = isRelated ? false : thing.parentIDs.includes(toolThing.id);
-			const isParentOfTool = this.thing_isImmediateParentOf(toolsAncestry, predicate.id);
-			const isDeleting = altering.alteration == AlterationType.deleting;
-			const isProgenyOfTool = this.ancestry_isAProgenyOf(toolsAncestry);
-			return isDeleting ? isParentOfTool : !(isParentOfTool || isProgenyOfTool || toolIsAnAncestor);
+		if (!!altering && !!predicate) {
+			const toolsAncestry = get(s_ancestry_showingTools);
+			const toolThing = toolsAncestry?.thing;
+			const thing = this.thing;
+			if (!!thing && !!toolThing && !!toolsAncestry) {
+				if (thing.idHashed != toolThing.idHashed && !toolsAncestry.matchesAncestry(this)) {
+					const isRelated = predicate.kind == PredicateKind.isRelated;
+					const toolIsAnAncestor = isRelated ? false : thing.parentIDs.includes(toolThing.id);
+					const isParentOfTool = this.thing_isImmediateParentOf(toolsAncestry, predicate.id);
+					const isProgenyOfTool = this.ancestry_isAProgenyOf(toolsAncestry);
+					const isDeleting = altering.alteration == AlterationType.deleting;
+					const doNotAlter_forIsNotDeleting = isParentOfTool || isProgenyOfTool || toolIsAnAncestor;
+					const canAlter = isDeleting ? isParentOfTool : !doNotAlter_forIsNotDeleting;
+					return canAlter
+				}
+			}
 		}
 		return false;
 	}

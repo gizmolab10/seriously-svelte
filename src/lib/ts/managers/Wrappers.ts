@@ -46,11 +46,11 @@ export class Wrappers {
 		let interval: NodeJS.Timeout | null = null;
 
 		s_altering.subscribe((state: Alteration_State | null) => {
-			if (interval) {
+			if (!!interval) {
 				clearInterval(interval);
 				interval = null;
 			}
-			if (state) {
+			if (!!state) {
 				let blink = true;
 				interval = setInterval(() => {
 					signals.signal_altering(blink ? state : null);

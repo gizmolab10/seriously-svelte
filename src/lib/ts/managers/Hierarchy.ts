@@ -64,7 +64,7 @@ export class Hierarchy {
 			switch (idButton) {
 				case IDTool.more: console.log('needs more'); break;
 				case IDTool.create: await this.ancestry_edit_remoteCreateChildOf(ancestry); break;
-				case IDTool.next: this.ancestry_relayout_toolCluster_nextParent(event.altKey); return;
+				case IDTool.next: this.ancestry_relayout_toolCluster_nextParent(event?.altKey ?? false); return;
 				case IDTool.add_parent: this.toggleAlteration(AlterationType.adding, mouse_state.isLong); return;
 				case IDTool.delete_confirm: await this.ancestries_rebuild_traverse_remoteDelete([ancestry]); break;
 				case IDTool.delete_parent: this.toggleAlteration(AlterationType.deleting, mouse_state.isLong); return;
@@ -937,11 +937,16 @@ export class Hierarchy {
 		await this.relationships_removeHavingNullReferences();
 	}
 
-	toggleAlteration(alteration: AlterationType, isRelated: boolean) {
-		const altering = get(s_altering)?.alteration;
+	toggleAlteration(wantsAlteration: AlterationType, isRelated: boolean) {
+		const isAltering = get(s_altering)?.alteration;
 		const predicate = isRelated ? Predicate.isRelated : Predicate.contains;
-		const became = alteration == altering ? null : new Alteration_State(alteration, predicate);
-		s_altering.set(became);
+		const needsAltering = wantsAlteration == isAltering ? null : new Alteration_State(wantsAlteration, predicate);
+		if (needsAltering) {
+			console.log(`needs ${wantsAlteration} ${predicate?.kind} alteration`)
+		} else {
+			console.log(`end ${wantsAlteration} alteration`)
+		}
+		s_altering.set(needsAltering);
 	}
 
 }
