@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { g, k, u, ux, Rect, Size, Point, Thing, ZIndex, debug, signals, Ancestry } from '../../ts/common/Global_Imports';
+	import { s_id_popupView, s_user_graphOffset, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
 	import { IDButton, onMount, debugReact, dbDispatch, Predicate } from '../../ts/common/Global_Imports';
 	import { IDSignal, IDPersistant, ElementType, persistLocal } from '../../ts/common/Global_Imports';
 	import { s_ancestry_focus, s_graphRect, s_show_details } from '../../ts/state/Reactive_State';
-	import { s_id_popupView, s_user_graphOffset } from '../../ts/state/Reactive_State';
 	import Dot_RevealFocus from '../buttons/Dot_RevealFocus.svelte';
 	import Editing_Tools from '../widget/Editing_Tools.svelte';
 	import Tree_Children from './Tree_Children.svelte';
@@ -96,6 +96,8 @@
 				<Tree_Children ancestry={focusState.ancestry} origin={origin_ofChildren}/>
 			{/if}
 		</div>
-		<Editing_Tools offset={new Point(0, -20.3)}/>
+		{#if $s_ancestry_showingTools?.isVisible}
+			<Editing_Tools offset={new Point(0, -20.3)}/>
+		{/if}
 	{/key}
 {/if}

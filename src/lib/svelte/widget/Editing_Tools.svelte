@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { g, k, u, ux, Rect, Size, Point, Mouse_State, IDTool, ZIndex, onMount } from '../../ts/common/Global_Imports';
-	import { signals, svgPaths, opacitize, Direction, dbDispatch, ElementType } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, Rect, Size, Point, debug, IDTool, ZIndex, onMount, svgPaths } from '../../ts/common/Global_Imports';
+	import { signals, opacitize, Direction, dbDispatch, ElementType, Mouse_State } from '../../ts/common/Global_Imports';
 	import { Element_State, Alteration_State, AlterationType, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { s_altering, s_graphRect, s_show_details } from '../../ts/state/Reactive_State';
 	import { s_cluster_mode, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
@@ -35,7 +35,7 @@
 	function setC(id: string, center: Point) { return centers_byID[id] = center; }
 	function alteration_forID(id: string) { return (id == IDTool.add_parent) ? AlterationType.adding : AlterationType.deleting; }
 
-	console.log('mount tools')
+	debug.log_tools('mount tools')
 	setTimeout(() => { update_maybeRedraw(); }, 20);
 
 	onMount(() => { 
@@ -57,7 +57,7 @@
 
 	function resetElementStates() {		// update every time ancestry changes
 		if (!!ancestry) {
-			console.log('element states')
+			debug.log_tools('element states')
 			const ids = [IDTool.delete_cancel, IDTool.add_parent, IDTool.delete_parent, IDTool.delete_cancel, IDTool.delete_confirm, IDTool.dismiss, IDTool.create, IDTool.next, IDTool.more];
 			for (const id of ids) {
 				const isDismiss = (id == IDTool.dismiss);
@@ -144,7 +144,7 @@
 	function update(): boolean {
 		let rect = ancestry?.titleRect;
 		if (!!rect && !!$s_ancestry_showingTools && rect.size.width != 0) {
-			console.log('setC all tools')
+			debug.log_tools('setC all tools')
 			const offsetX = titleOffsetX() - ($s_show_details ? k.width_details : 0);
 			const offsetY = (g.show_titleAtTop ? -45 : 20.5) + ($s_cluster_mode ? 3 : 0) - k.editingTools_diameter - 6.5;
 			const center = rect.centerLeft.offsetBy(offset).offsetByXY(offsetX, offsetY);

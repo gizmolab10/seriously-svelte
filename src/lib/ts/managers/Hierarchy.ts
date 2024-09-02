@@ -62,7 +62,7 @@ export class Hierarchy {
         const ancestry = get(s_ancestry_showingTools);
 		if (!!ancestry) {
 			switch (idButton) {
-				case IDTool.more: console.log('needs more'); break;
+				case IDTool.more: debug.log_tools('needs more'); break;
 				case IDTool.create: await this.ancestry_edit_remoteCreateChildOf(ancestry); break;
 				case IDTool.next: this.ancestry_relayout_toolCluster_nextParent(event?.altKey ?? false); return;
 				case IDTool.add_parent: this.toggleAlteration(AlterationType.adding, mouse_state.isLong); return;
@@ -942,9 +942,9 @@ export class Hierarchy {
 		const predicate = isRelated ? Predicate.isRelated : Predicate.contains;
 		const needsAltering = wantsAlteration == isAltering ? null : new Alteration_State(wantsAlteration, predicate);
 		if (needsAltering) {
-			console.log(`needs ${wantsAlteration} ${predicate?.kind} alteration`)
+			debug.log_tools(`needs ${wantsAlteration} ${predicate?.kind} alteration`)
 		} else {
-			console.log(`end ${wantsAlteration} alteration`)
+			debug.log_tools(`end ${wantsAlteration} alteration`)
 		}
 		s_altering.set(needsAltering);
 	}

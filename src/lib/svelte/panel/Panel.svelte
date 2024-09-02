@@ -147,7 +147,7 @@
 			{#if $s_id_popupView == IDButton.builds}
 				<BuildNotes/>
 			{:else if $s_id_popupView == null}
-				{#key `${$s_ancestry_focus} ${rebuilds}`}
+				{#key s_ancestry_focus, rebuilds}
 					<div class='clipper' on:wheel={handle_wheel}
 						style='
 							top:{$s_graphRect.origin.y}px;
