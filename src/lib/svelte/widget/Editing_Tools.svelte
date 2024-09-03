@@ -1,8 +1,9 @@
 <script lang='ts'>
-	import { g, k, u, ux, Rect, Size, Point, debug, IDTool, ZIndex, onMount, svgPaths } from '../../ts/common/Global_Imports';
-	import { signals, opacitize, Direction, dbDispatch, ElementType, Mouse_State } from '../../ts/common/Global_Imports';
-	import { Element_State, Alteration_State, AlterationType, Svelte_Wrapper } from '../../ts/common/Global_Imports';
-	import { s_altering, s_graphRect, s_show_details } from '../../ts/state/Reactive_State';
+	import { g, k, u, ux, Rect, Size, Point, debug, IDTool, ZIndex } from '../../ts/common/Global_Imports';
+	import { dbDispatch, ElementType, Mouse_State, Element_State } from '../../ts/common/Global_Imports';
+	import { onMount, svgPaths, signals, opacitize, Direction } from '../../ts/common/Global_Imports';
+	import { Alteration_State, AlterationType, Svelte_Wrapper } from '../../ts/common/Global_Imports';
+	import { s_alteration_mode, s_graphRect, s_show_details } from '../../ts/state/Reactive_State';
 	import { s_cluster_mode, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Triangle_Button from '../mouse buttons/Triangle_Button.svelte';
@@ -38,7 +39,7 @@
 	debug.log_tools('mount tools')
 	setTimeout(() => { update_maybeRedraw(); }, 20);
 
-	onMount(() => { 
+	onMount(() => {
 		const handler = signals.handle_relayoutWidgets(2, (ancestry) => {	// priority of 2 assures layout is finished
 			update();
 			rebuilds += 1;
@@ -47,7 +48,7 @@
 	});
 
 	function isInvertedFor(id: string) {
-		return parentAlteringIDs.includes(id) && $s_altering?.alteration == alteration_forID(id);
+		return parentAlteringIDs.includes(id) && $s_alteration_mode?.type == alteration_forID(id);
 	}
 
 	function isDisabledFor(id: string) {

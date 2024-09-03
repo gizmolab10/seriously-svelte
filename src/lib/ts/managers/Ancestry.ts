@@ -1,6 +1,6 @@
 import { Relationship, PredicateKind, Svelte_Wrapper, Widget_MapRect, AlterationType, SvelteComponentType } from '../common/Global_Imports';
 import { g, k, u, w, get, Rect, Size, Thing, debug, signals, Predicate, Title_State, ElementType } from '../common/Global_Imports';
-import { s_ancestries_expanded, s_ancestry_showingTools, s_altering, s_clusters_geometry } from '../state/Reactive_State';
+import { s_ancestries_expanded, s_ancestry_showingTools, s_alteration_mode, s_clusters_geometry } from '../state/Reactive_State';
 import { s_ancestry_focus, s_ancestries_grabbed, s_title_editing, s_cluster_mode } from '../state/Reactive_State';
 import Identifiable from '../data/Identifiable';
 import { Writable } from 'svelte/store';
@@ -169,9 +169,9 @@ export default class Ancestry extends Identifiable {
 	}
 
 	get canConnect_toToolsAncestry(): boolean {
-		const altering = get(s_altering);
-		const predicate = altering?.predicate;
-		if (!!altering && !!predicate) {
+		const alteration = get(s_alteration_mode);
+		const predicate = alteration?.predicate;
+		if (!!alteration && !!predicate) {
 			const toolsAncestry = get(s_ancestry_showingTools);
 			const toolThing = toolsAncestry?.thing;
 			const thing = this.thing;
@@ -181,7 +181,7 @@ export default class Ancestry extends Identifiable {
 					const toolIsAnAncestor = isRelated ? false : thing.parentIDs.includes(toolThing.id);
 					const isParentOfTool = this.thing_isImmediateParentOf(toolsAncestry, predicate.id);
 					const isProgenyOfTool = this.ancestry_isAProgenyOf(toolsAncestry);
-					const isDeleting = altering.alteration == AlterationType.deleting;
+					const isDeleting = alteration.type == AlterationType.deleting;
 					const doNotAlter_forIsNotDeleting = isParentOfTool || isProgenyOfTool || toolIsAnAncestor;
 					const canAlter = isDeleting ? isParentOfTool : !doNotAlter_forIsNotDeleting;
 					return canAlter
@@ -485,14 +485,14 @@ export default class Ancestry extends Identifiable {
 
 	grabOnly() {
 		s_ancestries_grabbed.set([this]);
-		this.toggleToolsGrab();
+		this.toggle_editingTools();
 	}
 
 	becomeFocus(): boolean {
 		const changed = !(get(s_ancestry_focus)?.matchesAncestry(this) ?? false);
-		s_ancestry_showingTools.set(null);
 		if (changed) {
 			const grabbedAncestry = h.grabs.latestAncestryGrabbed(true)
+			s_alteration_mode.set(null);
 			s_ancestry_focus.set(this);
 			this.expand();
 			if (!!grabbedAncestry && !grabbedAncestry.isVisible) {
@@ -501,17 +501,6 @@ export default class Ancestry extends Identifiable {
 			}
 		}
 		return changed;
-	}
-
-	toggleToolsGrab() {
-		const toolsAncestry = get(s_ancestry_showingTools);
-		if (toolsAncestry) { // ignore if editingTools not in use
-			if (this.matchesAncestry(toolsAncestry)) {
-				s_ancestry_showingTools.set(null);
-			} else if (!this.isRoot) {
-				s_ancestry_showingTools.set(this);
-			}
-		}
 	}
 
 	async assureIsVisible() {
@@ -536,16 +525,14 @@ export default class Ancestry extends Identifiable {
 			this.thing?.oneAncestry?.handle_singleClick_onDragDot(shiftKey);
 		} else {
 			s_title_editing?.set(null);
-			if (get(s_cluster_mode)) {
+			if (get(s_alteration_mode)) {
+				this.ancestry_alterMaybe(this);
+			} else if (shiftKey || this.isGrabbed) {
+				this.toggleGrab();
+			} else if (get(s_cluster_mode)) {
 				this.becomeFocus();
 			} else {
-				if (get(s_altering)) {
-					h.ancestry_alterMaybe(this);
-				} else if (shiftKey || this.isGrabbed) {
-					this.toggleGrab();
-				} else {
-					this.grabOnly();
-				}
+				this.grabOnly();
 			}
 			signals.signal_rebuildGraph_fromFocus();
 		}
@@ -566,7 +553,7 @@ export default class Ancestry extends Identifiable {
 			}
 			return array;
 		});
-		this.toggleToolsGrab();
+		this.toggle_editingTools();
 	}
 
 	ungrab() {
@@ -587,7 +574,47 @@ export default class Ancestry extends Identifiable {
 		if (ancestries.length == 0) {
 			rootAncestry.grabOnly();
 		} else {
-			this.toggleToolsGrab(); // do not show tools editingTools for root
+			this.toggle_editingTools(); // do not show editingTools for root
+		}
+	}
+
+	clear_editingTools() {
+		s_alteration_mode.set(null);
+		s_ancestry_showingTools.set(null);
+	}
+
+	toggle_editingTools() {
+		const toolsAncestry = get(s_ancestry_showingTools);
+		if (toolsAncestry) { // ignore if editingTools not in use
+			s_alteration_mode.set(null);
+			if (this.matchesAncestry(toolsAncestry)) {
+				s_ancestry_showingTools.set(null);
+			} else if (!this.isRoot) {
+				s_ancestry_showingTools.set(this);
+			}
+		}
+	}
+
+	async ancestry_alterMaybe(ancestry: Ancestry) {
+		if (ancestry.canConnect_toToolsAncestry) {
+			const alteration = get(s_alteration_mode);
+			const toolsAncestry = get(s_ancestry_showingTools);
+			const idPredicate = alteration?.predicate?.id;
+			if (alteration && toolsAncestry && idPredicate) {
+				this.clear_editingTools();
+				switch (alteration.type) {
+					case AlterationType.deleting:
+						await h.relationship_forget_remoteRemove(toolsAncestry, ancestry, idPredicate);
+						break;
+					case AlterationType.adding:
+						const toolsThing = toolsAncestry.thing;
+						if (toolsThing) {
+							await h.ancestry_remember_remoteAddAsChild(ancestry, toolsThing, idPredicate);
+							signals.signal_rebuildGraph_fromFocus();
+						}
+						break;
+				}
+			}
 		}
 	}
 

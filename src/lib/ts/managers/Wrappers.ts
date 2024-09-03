@@ -1,4 +1,4 @@
-import { s_altering, s_resize_count, s_rebuild_count, s_mouse_location, s_mouse_up_count } from '../state/Reactive_State';
+import { s_alteration_mode, s_resize_count, s_rebuild_count, s_mouse_location, s_mouse_up_count } from '../state/Reactive_State';
 import { g, u, get, Point, signals, Svelte_Wrapper, Alteration_State } from '../common/Global_Imports';
 import { Create_Mouse_State, SvelteComponentType } from '../common/Global_Imports';
 import { h } from '../db/DBDispatch';
@@ -45,7 +45,7 @@ export class Wrappers {
 	subscribeTo_alterationState() {
 		let interval: NodeJS.Timeout | null = null;
 
-		s_altering.subscribe((state: Alteration_State | null) => {
+		s_alteration_mode.subscribe((state: Alteration_State | null) => {
 			if (!!interval) {
 				clearInterval(interval);
 				interval = null;

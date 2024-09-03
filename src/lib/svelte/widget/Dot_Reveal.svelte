@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_ancestries_expanded, s_altering, s_ancestries_grabbed, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
+	import { s_ancestries_expanded, s_alteration_mode, s_ancestries_grabbed, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
 	import { Direction, onDestroy, dbDispatch, Predicate, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { g, k, u, ux, Size, Thing, Point, debug, ZIndex, onMount, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
@@ -79,7 +79,7 @@
 			set_isHovering(!mouse_state.isOut);
 		} else if (mouse_state.isUp) {
 			if (ancestry.toolsGrabbed) {
-				$s_altering = null;
+				$s_alteration_mode = null;
 				$s_ancestry_showingTools = null;
 				signals.signal_relayoutWidgets_fromFocus();
 			} else if (ancestry.hasChildRelationships || ancestry.thing.isBulkAlias) {

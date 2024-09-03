@@ -3,7 +3,7 @@ import { Clusters_Geometry, Rotation_State, Expansion_State, Alteration_State } 
 import { writable } from 'svelte/store';
 
 export const s_clusters_geometry	 = writable<Clusters_Geometry | null>();
-export const s_altering				 = writable<Alteration_State | null>();
+export const s_alteration_mode				 = writable<Alteration_State | null>();
 export const s_active_wrapper		 = writable<Svelte_Wrapper | null>();
 export const s_active_cluster_map	 = writable<Cluster_Map | null>();
 export const s_title_editing		 = writable<Title_State | null>();

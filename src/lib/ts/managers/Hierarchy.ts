@@ -1,7 +1,7 @@
 import { g, k, u, get, User, Thing, Grabs, debug, Mouse_State, Access, IDTool, IDTrait, signals, Ancestry } from '../common/Global_Imports';
 import { Predicate, Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
 import { s_things_arrived, s_ancestries_grabbed, s_ancestry_showingTools } from '../state/Reactive_State';
-import { s_isBusy, s_altering, s_ancestry_focus, s_title_editing } from '../state/Reactive_State';
+import { s_isBusy, s_alteration_mode, s_ancestry_focus, s_title_editing } from '../state/Reactive_State';
 import Identifiable from '../data/Identifiable';
 import DBInterface from '../db/DBInterface';
 
@@ -853,30 +853,6 @@ export class Hierarchy {
 		}
 	}
 
-	async ancestry_alterMaybe(ancestry: Ancestry) {
-		if (ancestry.canConnect_toToolsAncestry) {
-			const altering = get(s_altering);
-			const toolsAncestry = get(s_ancestry_showingTools);
-			const idPredicate = altering?.predicate?.id;
-			if (altering && toolsAncestry && idPredicate) {
-				s_altering.set(null);
-				s_ancestry_showingTools.set(null);
-				switch (altering.alteration) {
-					case AlterationType.deleting:
-						await this.relationship_forget_remoteRemove(toolsAncestry, ancestry, idPredicate);
-						break;
-					case AlterationType.adding:
-						const toolsThing = toolsAncestry.thing;
-						if (toolsThing) {
-							await this.ancestry_remember_remoteAddAsChild(ancestry, toolsThing, idPredicate);
-							signals.signal_rebuildGraph_fromFocus();
-						}
-						break;
-				}
-			}
-		}
-	}
-
 	static readonly $_ANCILLARY_$: unique symbol;
 
 	predicate_forKind(kind: string | null): Predicate | null { return !kind ? null : this.predicate_byKind[kind]; }
@@ -938,15 +914,15 @@ export class Hierarchy {
 	}
 
 	toggleAlteration(wantsAlteration: AlterationType, isRelated: boolean) {
-		const isAltering = get(s_altering)?.alteration;
+		const isAltering = get(s_alteration_mode)?.type;
 		const predicate = isRelated ? Predicate.isRelated : Predicate.contains;
-		const needsAltering = wantsAlteration == isAltering ? null : new Alteration_State(wantsAlteration, predicate);
-		if (needsAltering) {
+		const nextAltering = wantsAlteration == isAltering ? null : new Alteration_State(wantsAlteration, predicate);
+		if (nextAltering) {
 			debug.log_tools(`needs ${wantsAlteration} ${predicate?.kind} alteration`)
 		} else {
 			debug.log_tools(`end ${wantsAlteration} alteration`)
 		}
-		s_altering.set(needsAltering);
+		s_alteration_mode.set(nextAltering);
 	}
 
 }

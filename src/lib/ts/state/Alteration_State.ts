@@ -1,13 +1,13 @@
 import { Predicate, AlterationType } from '../common/Global_Imports';
 
 export default class Alteration_State {
-	alteration: AlterationType;
+	type: AlterationType;
 	predicate: Predicate | null;
 
-	constructor(alteration: AlterationType, predicate: Predicate | null) {
+	constructor(type: AlterationType, predicate: Predicate | null) {
 		this.predicate = predicate ?? Predicate.contains;
-		this.alteration = alteration;
+		this.type = type;
 	}
 
-	get description(): string { return `${this.alteration} ${this.predicate?.description ?? 'unpredicated'}`; }
+	get description(): string { return `${this.type} ${this.predicate?.description ?? 'unpredicated'}`; }
 }
