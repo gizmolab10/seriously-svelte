@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { s_graphRect, s_thing_changed, s_mouse_location, s_active_wrapper, s_mouse_up_count, s_ancestry_focus } from '../../ts/state/Reactive_State';
 	import { s_user_graphOffset, s_clusters_geometry, s_active_cluster_map, s_paging_ring_state } from '../../ts/state/Reactive_State';
-	import { g, k, u, ux, w, Thing, Point, Angle, debug, ZIndex, onMount, signals, svgPaths } from '../../ts/common/Global_Imports';
-	import { debugReact, dbDispatch, opacitize, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, w, Thing, Point, Angle, debug, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
+	import { svgPaths, dbDispatch, opacitize, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { s_rotation_ring_state, s_rotation_ring_angle, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
@@ -25,7 +25,7 @@
 	let rotationRing;
 	let pagingArcs;
 
-	debugReact.log_build(` RINGS (svelte)`);
+	debug.log_build(` RINGS (svelte)`);
 	$s_clusters_geometry.layoutAll_clusters();
 
 	$: {
@@ -48,7 +48,7 @@
 		// mouse up ... end all (rotate, resize, paging)
 		if (mouse_up_count != $s_mouse_up_count) {
 			mouse_up_count = $s_mouse_up_count;
-			debugReact.log_action(`RINGS  mouse up`);
+			debug.log_action(`RINGS  mouse up`);
 			$s_rotation_ring_state.reset();
 			$s_active_cluster_map = null;
 			$s_active_wrapper = null;
@@ -94,7 +94,7 @@
 				const delta = distance - $s_rotation_ring_radius - rotate_state.radiusOffset;
 				if (Math.abs(delta) > 1) {							// granularity of 1 pixel
 					const radius = $s_rotation_ring_radius + delta;
-					debugReact.log_action(`RINGS  ${radius.toFixed(0)}`);
+					debug.log_action(`RINGS  ${radius.toFixed(0)}`);
 					$s_rotation_ring_radius = radius;
 					sendSignal = true;
 				}
@@ -145,7 +145,7 @@
 				// begin resize
 				
 				const radius = from_center.magnitude - $s_rotation_ring_radius;
-				debugReact.log_action(`RINGS  ${radius.toFixed(0)}`);
+				debug.log_action(`RINGS  ${radius.toFixed(0)}`);
 				$s_rotation_ring_state.radiusOffset = radius;
 				$s_active_wrapper = rotationWrapper;
 				rebuilds += 1;

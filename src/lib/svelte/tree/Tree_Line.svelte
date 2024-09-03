@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { Svelte_Wrapper, Ancestry, debugReact, SvelteComponentType, IDLine } from '../../ts/common/Global_Imports';
 	import { k, Rect, Size, Point, debug, ZIndex, signals, svgPaths } from '../../ts/common/Global_Imports';
+	import { Svelte_Wrapper, Ancestry, SvelteComponentType, IDLine } from '../../ts/common/Global_Imports';
 	import { s_thing_changed } from '../../ts/state/Reactive_State';
 	import Circle from '../kit/Circle.svelte';
 	import Box from '../kit/Box.svelte';

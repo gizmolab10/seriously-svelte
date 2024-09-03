@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { k, u, ux, Thing, Point, Angle, debug, ZIndex, onMount, signals, debugReact } from '../../ts/common/Global_Imports';
 	import { s_thing_changed, s_cluster_mode, s_title_editing, s_ancestry_focus } from '../../ts/state/Reactive_State';
 	import { s_thing_fontFamily, s_ancestries_grabbed, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
 	import { ElementType, Element_State, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Thing, Point, Angle, debug, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
 	import { Tooltip } from 'carbon-components-svelte';
 	import Editing_Tools from './Editing_Tools.svelte';
 	import Title_Editor from './Title_Editor.svelte';
@@ -50,14 +50,14 @@
 		update_fromAncestry();
 		layout_widget();
 		element_state = ux.elementState_forName(name);		// survives onDestroy, created by {tree, cluster} children
-		// debugReact.log_mount(`WIDGET ${thing?.description} ${ancestry?.isGrabbed}`);
+		// debug.log_mount(`WIDGET ${thing?.description} ${ancestry?.isGrabbed}`);
 		fullUpdate();
 		const handleAny = signals.handle_anySignal((kinds, id) => {
 			for (const kind of kinds) {
 				switch (kind) {
 					case kinds.relayout:
 						if (id == thing?.id) {
-							debugReact.log_layout(`WIDGET signal ${thing?.description}`);
+							debug.log_layout(`WIDGET signal ${thing?.description}`);
 							layout_widget()
 						}
 						break;

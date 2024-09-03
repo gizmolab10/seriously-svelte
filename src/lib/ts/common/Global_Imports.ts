@@ -11,7 +11,6 @@ import './Extensions';
 import { IDLine, IDTool, IDTrait, ZIndex, IDButton, IDBrowser } from './Enumerations';
 import { ElementType, AlterationType, SvelteComponentType } from './Enumerations';
 import { PredicateKind, GraphRelations, CreationOptions } from './Enumerations';
-import { debugReact, DebugReact, ReactKind } from '../debug/DebugReact';
 import { IDPersistant, persistLocal } from '../managers/Persist_Local';
 import { onMount, onDestroy, setContext, getContext } from 'svelte';
 import { Paging_State, Page_States } from '../state/Page_States';
@@ -52,6 +51,7 @@ import User from '../data/User';
 import muuri from 'muuri';
 
 export {
+	debug, Debug, DebugFlag,
 	Angle, Quadrant, Orientation,
 	Tree_Geometry, Widget_MapRect,
 	muuri, interact, transparentize,
@@ -64,7 +64,6 @@ export {
 	Grabs, Ancestry, Hierarchy, dbDispatch, persistLocal,
 	ZIndex, PredicateKind, GraphRelations, CreationOptions,
 	Element_State, Paging_State, Page_States, Alteration_State,
-	debug, Debug, DebugFlag, debugReact, DebugReact, ReactKind,
 	ElementType, AlterationType, Svelte_Wrapper, SvelteComponentType,
 	get, onMount, onDestroy, setContext, getContext, SvelteComponent,
 	IDLine, IDTool, IDTrait, IDSignal, IDButton, IDBrowser, IDPersistant,

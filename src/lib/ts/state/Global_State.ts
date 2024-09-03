@@ -1,6 +1,6 @@
-import { k, u, ux, w, get, Rect, Size, Point, debug, debugReact, dbDispatch } from '../common/Global_Imports';
 import { s_ancestry_focus, s_ancestries_grabbed, s_ancestries_expanded } from '../state/Reactive_State';
 import { persistLocal, IDPersistant, Rotation_State, Expansion_State } from '../common/Global_Imports';
+import { k, u, ux, w, get, Rect, Size, Point, debug, dbDispatch } from '../common/Global_Imports';
 import { s_graphRect, s_show_details, s_scale_factor, s_thing_changed } from './Reactive_State';
 import { s_cluster_mode, s_paging_ring_state, s_rotation_ring_state } from './Reactive_State';
 import { h } from '../db/DBDispatch';
@@ -26,7 +26,6 @@ class Global_State {
 		s_thing_changed.set(null);
 		this.queryStrings_apply();
 		debug.queryStrings_apply();
-		debugReact.queryStrings_apply();
 		w.setup();
 	}
 

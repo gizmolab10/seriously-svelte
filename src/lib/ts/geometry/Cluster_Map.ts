@@ -1,6 +1,6 @@
 import { s_graphRect, s_rotation_ring_angle, s_ancestry_focus, s_rotation_ring_radius } from '../state/Reactive_State';
-import { g, k, u, ux, get, Rect, Point, Angle, IDLine, Arc_Map, Quadrant, Ancestry } from '../common/Global_Imports';
-import { debugReact, Predicate, Paging_State, Widget_MapRect, Rotation_State } from '../common/Global_Imports';
+import { g, k, u, ux, get, Rect, Point, Angle, debug, IDLine, Arc_Map, Quadrant } from '../common/Global_Imports';
+import { Ancestry, Predicate, Paging_State, Widget_MapRect, Rotation_State } from '../common/Global_Imports';
 
 // for one cluster (there are three)
 //
@@ -40,7 +40,7 @@ export default class Cluster_Map  {
 		this.points_out = points_out;
 		this.predicate = predicate;
 		this.total = total;
-		debugReact.log_build(` C MAP (ts)  ${total}  ${this.direction_kind}`);
+		debug.log_build(` C MAP (ts)  ${total}  ${this.direction_kind}`);
 		this.update_all();
 		s_rotation_ring_radius.subscribe((radius: number) => {
 			if (this.arc_map.outside_arc_radius != radius) {
@@ -50,7 +50,7 @@ export default class Cluster_Map  {
 	}
 
 	update_all() {
-		// debugReact.log_layout(`C MAP (ts)  ${this.direction_kind}`);
+		// debug.log_layout(`C MAP (ts)  ${this.direction_kind}`);
 		this.shown = this.ancestries.length;
 		this.isPaging = this.shown < this.total;
 		this.center = get(s_graphRect).size.dividedInHalf.asPoint;

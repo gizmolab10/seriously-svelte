@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, ux, Rect, Size, Point, debug, Angle, ZIndex, onMount, debugReact } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, Rect, Size, Point, debug, Angle, ZIndex, onMount } from '../../ts/common/Global_Imports';
 	import { opacitize, Cluster_Map, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { s_mouse_location, s_mouse_up_count, s_ancestry_focus } from '../../ts/state/Reactive_State';
 	import { s_rotation_ring_state, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
@@ -27,7 +27,7 @@
 	//
 	// contained by rings, which is contained by clusters view
 
-	debugReact.log_build(` P ARC (svelte)  ${cluster_map?.name}`);
+	debug.log_build(` P ARC (svelte)  ${cluster_map?.name}`);
 	cluster_map?.update_all();
 	update_colors();
 

@@ -1,6 +1,6 @@
 <script lang=ts>
 	import { k, u, Rect, Size, Point, Thing, debug, IDLine, onMount } from '../../ts/common/Global_Imports';
-	import { signals, onDestroy, DebugFlag, debugReact, Tree_Geometry } from '../../ts/common/Global_Imports';
+	import { signals, onDestroy, DebugFlag, Tree_Geometry } from '../../ts/common/Global_Imports';
 	import { s_graphRect } from '../../ts/state/Reactive_State';
 	import Tree_Children from './Tree_Children.svelte';
 	import Widget from '../widget/Widget.svelte';
@@ -24,7 +24,7 @@
 				((now - priorTime) > 100) &&
 				(!signal_ancestry || signal_ancestry.matchesAncestry(ancestry))) {
 				priorTime = now;
-				debugReact.log_origins(origin.x + ' before timeout');
+				debug.log_origins(origin.x + ' before timeout');
 				layoutAll_children();
 			}
 		});
@@ -40,7 +40,7 @@
 	function layoutAll_children() {
 		widgetMapRects = [];
 		if (ancestry.isExpanded) {
-			debugReact.log_origins(origin.x + ' children layout');
+			debug.log_origins(origin.x + ' children layout');
 			const height = ancestry.visibleProgeny_halfHeight;
 			const childAncestries = ancestry.childAncestries;
 			const childrenOrigin = origin.offsetByXY(3, height + 1);

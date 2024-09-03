@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { g, k, u, ux, Rect, Size, Point, Thing, ZIndex, debug, signals, Ancestry } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/Global_Imports';
 	import { s_id_popupView, s_user_graphOffset, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
-	import { IDButton, onMount, debugReact, dbDispatch, Predicate } from '../../ts/common/Global_Imports';
+	import { IDButton, onMount, Ancestry, dbDispatch, Predicate } from '../../ts/common/Global_Imports';
 	import { IDSignal, IDPersistant, ElementType, persistLocal } from '../../ts/common/Global_Imports';
 	import { s_ancestry_focus, s_graphRect, s_show_details } from '../../ts/state/Reactive_State';
 	import Dot_RevealFocus from '../buttons/Dot_RevealFocus.svelte';
@@ -70,7 +70,7 @@
 			}
 			const toChildren = new Point(-42.2 + k.line_stretch - (k.dot_size / 2) + offsetX_ofFirstReveal, (k.dot_size / 2) -(childrenSize.height / 2) - 4.5);
 			origin_ofChildren = origin_ofFirstReveal.offsetBy(toChildren);
-			debugReact.log_origins(origin_ofChildren.x + ' updateOrigins');
+			debug.log_origins(origin_ofChildren.x + ' updateOrigins');
 		}
 	}
 
