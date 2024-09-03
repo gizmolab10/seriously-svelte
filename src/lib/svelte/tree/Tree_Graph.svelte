@@ -79,7 +79,7 @@
 {#if $s_ancestry_focus}
 	{#key rebuilds}
 		<div class='tree'
-			style='transform: translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px);'
+			style='transform: translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y - 14.3}px);'
 			on:keyup={u.ignore}
 			on:keydown={u.ignore}
 			on:keypress={u.ignore}

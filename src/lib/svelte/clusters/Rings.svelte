@@ -21,8 +21,8 @@
 	let mouse_up_count = $s_mouse_up_count;
 	let rotationWrapper!: Svelte_Wrapper;
 	let pagingWrapper!: Svelte_Wrapper;
-	let rebuilds = 0;
 	let rotationRing;
+	let rebuilds = 0;
 	let pagingArcs;
 
 	debug.log_build(` RINGS (svelte)`);
@@ -67,15 +67,16 @@
 		const _ = $s_mouse_location;								// use store, to invoke this code
 		const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(g.graph_center);
 		if (!!from_center) {
-			let sendSignal = false;
 			const mouse_angle = from_center.angle;
 			const rotate_state = $s_rotation_ring_state;
 			detect_hovering();
 			if (!!rotate_state.active_angle || rotate_state.active_angle == 0) {		// rotate_resize clusters
 				if (!signals.signal_isInFlight && !mouse_angle.isClocklyAlmost(rotate_state.active_angle, Angle.radians_from_degrees(4), Angle.full)) {		// detect >= 4° change
 					$s_rotation_ring_angle = mouse_angle.add_angle_normalized(-rotate_state.basis_angle);
+					debug.log_action(`RINGS  rotate  ${$s_rotation_ring_angle.degrees_of(0)}`);
 					rotate_state.active_angle = mouse_angle;
-					sendSignal = true;
+					signals.signal_relayoutWidgets_fromFocus();			// destroys this component (properties are in s_rotation_ring_state && s_active_cluster_map)
+					rebuilds += 1;
 				}
 			} else if (!!$s_active_cluster_map) {
 				const paging_rotation = $s_active_cluster_map.paging_rotation;
@@ -84,7 +85,8 @@
 				const delta_angle = (active_angle - mouse_angle).angle_normalized_aroundZero();
 				paging_rotation.active_angle = mouse_angle;
 				if (!!basis_angle && !!active_angle && basis_angle != active_angle && $s_active_cluster_map.adjust_paging_index_byAdding_angle(delta_angle)) {
-					sendSignal = true;
+					debug.log_action(`RINGS  page  ${delta_angle.degrees_of(0)}`);
+					rebuilds += 1;
 				}
 			} else if (!!rotate_state.radiusOffset) {		// resize
 				const magnitude = from_center.magnitude
@@ -94,27 +96,13 @@
 				const delta = distance - $s_rotation_ring_radius - rotate_state.radiusOffset;
 				if (Math.abs(delta) > 1) {							// granularity of 1 pixel
 					const radius = $s_rotation_ring_radius + delta;
-					debug.log_action(`RINGS  ${radius.toFixed(0)}`);
+					debug.log_action(`RINGS  resize  ${radius.toFixed(0)}`);
 					$s_rotation_ring_radius = radius;
-					sendSignal = true;
+					signals.signal_rebuildGraph_fromFocus();			// destroys this component (properties are in s_rotation_ring_state && s_active_cluster_map)
+					rebuilds += 1;
 				}
 			}
 			cursor_closure();
-			if (sendSignal) {
-				signals.signal_relayoutWidgets_fromFocus();			// destroys this component (properties are in s_rotation_ring_state && s_active_cluster_map)
-			}
-		}
-	}
-
-	function detect_hovering() {
-		const inPaging = inInterior();
-		const ring_isActive = $s_rotation_ring_state.isActive;
-		const inRing = isHit() && !inPaging && !ux.isAny_paging_arc_active;
-		if ($s_paging_ring_state.isHovering != inPaging && !ring_isActive) {
-			$s_paging_ring_state.isHovering = inPaging;			// adjust hover highlight for all arcs  (paging arc handles thumb hover)
-		}
-		if ($s_rotation_ring_state.isHovering != inRing) {
-			$s_rotation_ring_state.isHovering = inRing;
 		}
 	}
 
@@ -129,10 +117,12 @@
 		if (inInterior()) {
 			const basis_angle = mouse_wentDown_angle.angle_normalized();
 			const map = $s_clusters_geometry.cluster_mapFor_mouseLocation;
+			debug.log_action(`RINGS  mouse is ${mouse_state.isDown ? 'down' : 'not down'}`)
 			if (!!map && mouse_state.isDown) {
 					
 				// begin paging
 
+				debug.log_action(`RINGS  begin paging  ${basis_angle.degrees_of(0)}`);
 				map.paging_rotation.active_angle = basis_angle;
 				map.paging_rotation.basis_angle = basis_angle;
 				$s_active_wrapper = pagingWrapper;
@@ -145,7 +135,7 @@
 				// begin resize
 				
 				const radius = from_center.magnitude - $s_rotation_ring_radius;
-				debug.log_action(`RINGS  ${radius.toFixed(0)}`);
+				debug.log_action(`RINGS  begin resize  ${radius.toFixed(0)}`);
 				$s_rotation_ring_state.radiusOffset = radius;
 				$s_active_wrapper = rotationWrapper;
 				rebuilds += 1;
@@ -154,6 +144,7 @@
 				// begin rotate
 
 				const basis_angle = mouse_wentDown_angle.add_angle_normalized(-$s_rotation_ring_angle);
+				debug.log_action(`RINGS  begin rotate  ${basis_angle.degrees_of(0)}`);
 				$s_rotation_ring_state.active_angle = mouse_wentDown_angle;
 				$s_rotation_ring_state.basis_angle = basis_angle;
 				$s_active_wrapper = rotationWrapper;
@@ -186,6 +177,18 @@
 			closure(mouse_state);
 		}
 		return true;	// WRONG?
+	}
+
+	function detect_hovering() {
+		const inPaging = inInterior();
+		const ring_isActive = $s_rotation_ring_state.isActive;
+		const inRing = isHit() && !inPaging && !ux.isAny_paging_arc_active;
+		if ($s_paging_ring_state.isHovering != inPaging && !ring_isActive) {
+			$s_paging_ring_state.isHovering = inPaging;			// adjust hover highlight for all arcs  (paging arc handles thumb hover)
+		}
+		if ($s_rotation_ring_state.isHovering != inRing) {
+			$s_rotation_ring_state.isHovering = inRing;
+		}
 	}
 
 </script>

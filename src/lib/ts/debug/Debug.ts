@@ -38,7 +38,6 @@ export class Debug {
 	log_maybe(option: DebugFlag, message: string) { if (this.hasOption(option)) { console.log(option.toUpperCase(), message); }}
 	log_target(target: any, key: string) { console.log(`Method \'${key}\' is called on class \'${target.constructor.name}\'`); }
 	get reticule(): boolean { return this.hasOption(DebugFlag.reticule); }
-	get colors(): boolean { return this.hasOption(DebugFlag.colors); }
 	get lines(): boolean { return this.hasOption(DebugFlag.lines); }
 
 	queryStrings_apply() {
