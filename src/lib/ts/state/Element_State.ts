@@ -10,6 +10,7 @@ export default class Element_State {
 	hoverColor = 'transparent';
 	type = ElementType.none;
 	hoverIgnore = false;
+	isInverted = false;
 	subtype = k.empty;
 	name = k.empty;
 	isOut = true;
@@ -34,9 +35,10 @@ export default class Element_State {
 
 	static none() { return {}; }
 	get ancestry(): Ancestry { return this.identifiable as Ancestry; }
+	get invertColor(): boolean { return this.isInverted || this.isHovering; }
 	get cursor(): string { return this.isHovering ? this.hoverCursor : this.defaultCursor; }
-	get fill(): string { return this.isHovering ? this.hoverColor : this.color_background; }
-	get stroke(): string { return this.isHovering ? this.color_background : this.hoverColor; }
+	get fill(): string { return this.invertColor ? this.hoverColor : this.color_background; }
+	get stroke(): string { return this.invertColor ? this.color_background : this.hoverColor; }
 	get isHovering(): boolean { return this.hoverIgnore ? false : this.isOut == this.identifiable.isHoverInverted(this.type); }
 	
 	set_forHovering(hoverColor: string, hoverCursor: string) {

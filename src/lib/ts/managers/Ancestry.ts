@@ -168,7 +168,7 @@ export default class Ancestry extends Identifiable {
 		return false;
 	}
 
-	get things_canAlter_asParentOf_toolsAncestry(): boolean {
+	get canConnect_toToolsAncestry(): boolean {
 		const altering = get(s_altering);
 		const predicate = altering?.predicate;
 		if (!!altering && !!predicate) {

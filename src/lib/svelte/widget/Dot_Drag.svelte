@@ -17,7 +17,6 @@
 	let isRelatedSVGPath = k.empty;
 	let tinyDotsSVGPath = k.empty;
 	let dragDotSVGPath = k.empty;
-	let isAltering = false;
 	let isGrabbed = false;
 	let isHovering = true;
 	let size = k.dot_size;
@@ -37,9 +36,9 @@
 		}
 		updateSVGPaths();
 		updateColors_forHovering(true);
-        const handleAltering = signals.handle_altering((state) => {
-			const applyFlag = $s_ancestry_showingTools && !!ancestry && ancestry.things_canAlter_asParentOf_toolsAncestry;
-			isAltering = applyFlag ? !!state : false;
+        const handleAltering = signals.handle_altering((blink_flag) => {
+			const invert_flag = blink_flag && $s_ancestry_showingTools && !!ancestry && ancestry.canConnect_toToolsAncestry;
+			element_state.isInverted = invert_flag;
 			updateExtraSVGPaths();
         });
 		return () => {
@@ -131,9 +130,9 @@
 			center={center}
 			closure={closure}
 			name={element_state.name}>
-			<button class='dot'
+			<button class='drag'
 				bind:this={dotDrag}
-				id={'button-for-' + name}
+				id={'drag-for-' + name}
 				style='
 					border:none;
 					cursor:pointer;
@@ -144,7 +143,7 @@
 					z-index:{ZIndex.dots};
 					background-color:transparent;'>
 				{#key redraws}
-					<div id={'inner-div-for-' + name}
+					<div id={'drag-inner-div-for-' + name}
 						style='
 							top:0px;
 							left:0px;
@@ -153,7 +152,7 @@
 							color:transparent;
 							position:absolute;
 							z-index:{ZIndex.dots};'>
-						<SVGD3 name={'svg-dot-' + name}
+						<SVGD3 name={'svg-drag-' + name}
 							width={size}
 							height={size}
 							svg_path={dragDotSVGPath}
@@ -162,7 +161,7 @@
 						/>
 						{#if g.show_tinyDots}
 							{#if tinyDotsSVGPath}
-								<SVGD3 name={'svg-dot-inside-' + name}
+								<SVGD3 name={'svg-drag-inside-' + name}
 									width={size}
 									height={size}
 									svg_path={tinyDotsSVGPath}
@@ -171,7 +170,7 @@
 								/>
 							{/if}
 							{#if isRelatedSVGPath}
-								<SVGD3 name={'svg-dot-related-' + name}
+								<SVGD3 name={'svg-drag-related-' + name}
 									width={size}
 									height={size}
 									svg_path={isRelatedSVGPath}

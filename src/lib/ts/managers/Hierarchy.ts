@@ -854,7 +854,7 @@ export class Hierarchy {
 	}
 
 	async ancestry_alterMaybe(ancestry: Ancestry) {
-		if (ancestry.things_canAlter_asParentOf_toolsAncestry) {
+		if (ancestry.canConnect_toToolsAncestry) {
 			const altering = get(s_altering);
 			const toolsAncestry = get(s_ancestry_showingTools);
 			const idPredicate = altering?.predicate?.id;
