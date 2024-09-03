@@ -578,11 +578,6 @@ export default class Ancestry extends Identifiable {
 		}
 	}
 
-	clear_editingTools() {
-		s_alteration_mode.set(null);
-		s_ancestry_showingTools.set(null);
-	}
-
 	toggle_editingTools() {
 		const toolsAncestry = get(s_ancestry_showingTools);
 		if (toolsAncestry) { // ignore if editingTools not in use
@@ -601,7 +596,7 @@ export default class Ancestry extends Identifiable {
 			const toolsAncestry = get(s_ancestry_showingTools);
 			const idPredicate = alteration?.predicate?.id;
 			if (alteration && toolsAncestry && idPredicate) {
-				this.clear_editingTools();
+				h.clear_editingTools();
 				switch (alteration.type) {
 					case AlterationType.deleting:
 						await h.relationship_forget_remoteRemove(toolsAncestry, ancestry, idPredicate);

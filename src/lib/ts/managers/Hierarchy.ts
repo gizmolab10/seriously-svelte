@@ -76,6 +76,11 @@ export class Hierarchy {
 	}
 
 	async handle_key_down(event: KeyboardEvent) {
+
+		///////////////////////
+		// main key dispatch //
+		///////////////////////
+
 		let ancestryGrab = this.grabs.latestAncestryGrabbed(true);
 		if (event.type == 'keydown') {
 			const OPTION = event.altKey;
@@ -118,12 +123,18 @@ export class Hierarchy {
 					case '`':               event.preventDefault(); this.latestAncestryGrabbed_toggleEditing_Tools(); break;
 					case 'arrowup':			await this.latestAncestryGrabbed_rebuild_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
 					case 'arrowdown':		await this.latestAncestryGrabbed_rebuild_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
+					case 'escape':			if (!!get(s_ancestry_showingTools)) { this.clear_editingTools(); }
 				}
 				if (graph_needsRebuild) {
 					signals.signal_rebuildGraph_fromFocus();
 				}
 			}
 		}
+	}
+
+	clear_editingTools() {
+		s_alteration_mode.set(null);
+		s_ancestry_showingTools.set(null);
 	}
 
 	static readonly $_GRABS_$: unique symbol;
