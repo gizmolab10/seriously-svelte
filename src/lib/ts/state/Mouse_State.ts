@@ -1,4 +1,4 @@
-import { Rect } from '../common/Global_Imports';
+import { k, Rect } from '../common/Global_Imports';
 
 export default class Mouse_State {
 	element: HTMLElement | null;	// null means mouse responder
@@ -20,13 +20,13 @@ export default class Mouse_State {
 	//////////////////////////////////////////////////
 
 	constructor(event: MouseEvent | null, element: HTMLElement | null, isHover: boolean, isOut: boolean, isDown: boolean, isUp: boolean, isDouble: boolean, isLong: boolean, isMove: boolean, hit: boolean = false) {
-		this.event = event;
-		this.element = element;
 		this.isDouble = isDouble;
+		this.element = element;
 		this.isHover = isHover;
 		this.isMove = isMove;
 		this.isLong = isLong;
 		this.isDown = isDown;
+		this.event = event;
 		this.isOut = isOut;
 		this.isUp = isUp;
 		this.hit = hit;
@@ -38,6 +38,19 @@ export default class Mouse_State {
 	get isElementHit(): boolean {
 		return !!this.event && !!this.element &&
 			Rect.rect_forElement_containsEvent(this.element, this.event);
+	}
+
+	get description():string {
+		let states: Array<string> = [];
+		if (this.isHover) { states.push('hover'); }
+		if (this.isOut) { states.push('out'); }
+		if (this.isDown) { states.push('down'); }
+		if (this.isUp) { states.push('up'); }
+		if (this.isDouble) { states.push('double'); }
+		if (this.isLong) { states.push('long'); }
+		if (this.isMove) { states.push('move'); }
+		if (this.hit) { states.push('hit'); }
+		return `MOUSE ${states.join(', ')}`;
 	}
 
 	static empty(event: MouseEvent | null = null) { return new Mouse_State(event, null, false, false, false, true, false, false, false); }

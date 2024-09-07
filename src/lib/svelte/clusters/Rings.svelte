@@ -1,29 +1,38 @@
 <script lang='ts'>
-	import { s_graphRect, s_thing_changed, s_mouse_location, s_active_wrapper, s_mouse_up_count, s_ancestry_focus } from '../../ts/state/Reactive_State';
-	import { s_user_graphOffset, s_clusters_geometry, s_active_cluster_map, s_paging_ring_state } from '../../ts/state/Reactive_State';
+	import { s_graphRect, s_thing_changed, s_mouse_location, s_active_wrapper, s_mouse_up_count } from '../../ts/state/Reactive_State';
+	import { s_ancestry_focus, s_user_graphOffset, s_clusters_geometry, s_active_cluster_map } from '../../ts/state/Reactive_State';
 	import { g, k, u, ux, w, Thing, Point, Angle, debug, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
 	import { svgPaths, dbDispatch, opacitize, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
-	import { s_rotation_ring_state, s_rotation_ring_angle, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
+	import { s_paging_ring_state, s_resize_ring_state, s_rotation_ring_state } from '../../ts/state/Reactive_State';
+	import { s_rotation_ring_angle, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Paging_Arc from './Paging_Arc.svelte';
-	export let radius = 0;
 	export let ring_width = 0;
 	export let name = k.empty;
 	export let color = k.empty;
 	export let zindex = ZIndex.rotation;
 	export let cursor_closure = () => {};
-	const outer_radius = radius + ring_width;
-	const diameter = outer_radius * 2;
-	const borderStyle = '1px solid';
-	const rotation_viewBox = `${-ring_width}, ${-ring_width}, ${diameter}, ${diameter}`;
-	const svg_ringPath = svgPaths.ring(Point.square(radius), outer_radius, ring_width);
+	const inner_radius = $s_rotation_ring_radius;
+	const outer_radius = inner_radius + ring_width;
+	const resize_radius = outer_radius + ring_width;
+	const outer_diameter = outer_radius * 2;
+	const mouse_timer = ux.mouse_timer_forName(name);	// persist across destroy/recreate
+	const svg_ringPath = svgPaths.ring(Point.square(inner_radius), outer_radius, ring_width);
+	const rotation_viewBox = `${-ring_width}, ${-ring_width}, ${outer_diameter}, ${outer_diameter}`;
 	let mouse_up_count = $s_mouse_up_count;
 	let rotationWrapper!: Svelte_Wrapper;
 	let pagingWrapper!: Svelte_Wrapper;
 	let rotationRing;
 	let rebuilds = 0;
 	let pagingArcs;
+
+	enum Ring_Zone {
+		miss	= 'miss',
+		resize	= 'resize',
+		rotate	= 'rotate',
+		paging	= 'paging',
+	}
 
 	debug.log_build(` RINGS (svelte)`);
 	$s_clusters_geometry.layoutAll_clusters();
@@ -48,13 +57,18 @@
 		// mouse up ... end all (rotate, resize, paging)
 		if (mouse_up_count != $s_mouse_up_count) {
 			mouse_up_count = $s_mouse_up_count;
-			debug.log_action(`RINGS  mouse up`);
-			$s_rotation_ring_state.reset();
-			$s_active_cluster_map = null;
-			$s_active_wrapper = null;
-			ux.reset_paging();
-			cursor_closure();
-			rebuilds += 1;
+			const ring_zone = ringZone_forMouseLocation();
+			if (ring_zone == Ring_Zone.miss) {			// only respond if NOT isHit
+				debug.log_action(`RINGS  mouse up in  '${ring_zone}'`);
+				ux.mouse_timer_forName(name).reset();
+				$s_rotation_ring_state.reset();
+				$s_active_cluster_map = null;
+				$s_active_wrapper = null;
+				mouse_timer.reset();
+				ux.reset_paging();
+				cursor_closure();
+				rebuilds += 1;
+			}
 		}
 	}
 
@@ -112,83 +126,74 @@
 		// setup or teardown state //
 		/////////////////////////////
 
-		const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(g.graph_center);
-		const mouse_wentDown_angle = from_center.angle;
-		if (inInterior()) {
-			const basis_angle = mouse_wentDown_angle.angle_normalized();
-			const map = $s_clusters_geometry.cluster_mapFor_mouseLocation;
-			debug.log_action(`RINGS  mouse is ${mouse_state.isDown ? 'down' : 'not down'}`)
-			if (!!map && mouse_state.isDown) {
-					
-				// begin paging
-
-				debug.log_action(`RINGS  begin paging  ${basis_angle.degrees_of(0)}`);
-				map.paging_rotation.active_angle = basis_angle;
-				map.paging_rotation.basis_angle = basis_angle;
-				$s_active_wrapper = pagingWrapper;
-				$s_active_cluster_map = map;
-				rebuilds += 1;
+		debug.log_hover(mouse_state.description);
+		if (!mouse_state.isHover) {
+			const mouse_wentDown_angle = angle_fromCenter();
+			const ring_zone = ringZone_forMouseLocation();
+			switch (ring_zone) {
+				case Ring_Zone.resize:
+					const resize_radius = distance_fromCenter() - $s_rotation_ring_radius;
+					debug.log_action(`RINGS  begin resize  ${resize_radius.toFixed(0)}`);
+					$s_rotation_ring_state.radiusOffset = resize_radius;
+					$s_active_wrapper = rotationWrapper;
+					rebuilds += 1;
+					break;
+				case Ring_Zone.rotate:
+					const rotation_angle = mouse_wentDown_angle.add_angle_normalized(-$s_rotation_ring_angle);
+					debug.log_action(`RINGS  begin rotate  ${rotation_angle.degrees_of(0)}`);
+					$s_rotation_ring_state.active_angle = mouse_wentDown_angle;
+					$s_rotation_ring_state.basis_angle = rotation_angle;
+					$s_active_wrapper = rotationWrapper;
+					rebuilds += 1;
+					break;
+				case Ring_Zone.paging: 
+					const paging_angle = mouse_wentDown_angle.angle_normalized();
+					const map = $s_clusters_geometry.cluster_mapFor_mouseLocation;
+					debug.log_action(`RINGS  mouse is ${mouse_state.isDown ? 'down' : 'not down'}`)
+					if (!!map && mouse_state.isDown) {
+						debug.log_action(`RINGS  begin paging  ${paging_angle.degrees_of(0)}`);
+						map.paging_rotation.active_angle = paging_angle;
+						map.paging_rotation.basis_angle = paging_angle;
+						$s_active_wrapper = pagingWrapper;
+						$s_active_cluster_map = map;
+						rebuilds += 1;
+					}
+					break;
 			}
-		} else if (isHit()) {
-			if (mouse_state.isDouble) {
-
-				// begin resize
-				
-				const radius = from_center.magnitude - $s_rotation_ring_radius;
-				debug.log_action(`RINGS  begin resize  ${radius.toFixed(0)}`);
-				$s_rotation_ring_state.radiusOffset = radius;
-				$s_active_wrapper = rotationWrapper;
-				rebuilds += 1;
-			} else if (mouse_state.isDown) {
-
-				// begin rotate
-
-				const basis_angle = mouse_wentDown_angle.add_angle_normalized(-$s_rotation_ring_angle);
-				debug.log_action(`RINGS  begin rotate  ${basis_angle.degrees_of(0)}`);
-				$s_rotation_ring_state.active_angle = mouse_wentDown_angle;
-				$s_rotation_ring_state.basis_angle = basis_angle;
-				$s_active_wrapper = rotationWrapper;
-				rebuilds += 1;
-			}
+			cursor_closure();
 		}
-		cursor_closure();
 	}
 
-	function distance_fromCenter(): number | null {
-		const vector = u.vector_ofOffset_fromGraphCenter_toMouseLocation(g.graph_center);
-		return vector?.magnitude ?? null;
-	}
-
-	function inInterior(): boolean {
-		const distance = distance_fromCenter();
-		return !!distance && distance < radius;
-	}
- 
-	function isHit(): boolean {
-		const distance = distance_fromCenter();
-		return !!distance && distance.isBetween(radius, outer_radius);
-	}
-
-	function handle_mouse_state(mouse_state: Mouse_State): boolean {
-		const hit = isHit();
-		if (mouse_state.hit) {
-			return hit;
-		} else if (!mouse_state.isMove && hit) {
-			closure(mouse_state);
-		}
-		return true;	// WRONG?
-	}
+	function vector_fromCenter(): number { return u.vector_ofOffset_fromGraphCenter_toMouseLocation(g.graph_center); }
+	function angle_fromCenter(): number | null { return vector_fromCenter()?.angle ?? null; }
+	function distance_fromCenter(): number { return vector_fromCenter()?.magnitude ?? 0; }
+	function handle_mouse_state(mouse_state: Mouse_State): boolean { return true; }		// only for wrappers
+	function isHit(): boolean { return distance_fromCenter() <= resize_radius; }
 
 	function detect_hovering() {
-		const inPaging = inInterior();
+		const ring_zone = ringZone_forMouseLocation();
 		const ring_isActive = $s_rotation_ring_state.isActive;
-		const inRing = isHit() && !inPaging && !ux.isAny_paging_arc_active;
+		const inPaging = ring_zone == Ring_Zone.paging;
+		const inRing = (ring_zone == Ring_Zone.rotate || ring_zone == Ring_Zone.resize) && !ux.isAny_paging_arc_active;
 		if ($s_paging_ring_state.isHovering != inPaging && !ring_isActive) {
 			$s_paging_ring_state.isHovering = inPaging;			// adjust hover highlight for all arcs  (paging arc handles thumb hover)
 		}
 		if ($s_rotation_ring_state.isHovering != inRing) {
 			$s_rotation_ring_state.isHovering = inRing;
 		}
+	}
+
+	function ringZone_forMouseLocation(): Ring_Zone {
+		const distance = distance_fromCenter();
+		if (!!distance && distance <= resize_radius) {
+			if (distance > outer_radius) {
+				return Ring_Zone.resize;
+			} else if (distance > inner_radius) {
+				return Ring_Zone.rotate;
+			}
+			return Ring_Zone.paging;
+		}
+		return Ring_Zone.miss;
 	}
 
 </script>
@@ -208,12 +213,13 @@
 			<Mouse_Responder
 				name={name}
 				zindex={zindex}
-				width={diameter}
-				height={diameter}
+				width={outer_diameter}
+				height={outer_diameter}
 				closure={closure}
 				center={g.graph_center}
 				detect_longClick={false}
 				detectHit_closure={isHit}
+				detect_doubleClick={false}
 				cursor={$s_rotation_ring_state.cursor}>
 				<svg
 					class= 'svg-rotates'

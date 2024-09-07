@@ -1,8 +1,9 @@
-import { s_ancestry_focus, s_ancestries_grabbed, s_ancestries_expanded } from '../state/Reactive_State';
+import { s_cluster_mode, s_paging_ring_state, s_resize_ring_state, s_rotation_ring_state } from './Reactive_State';
+import { s_rebuild_count, s_ancestry_focus, s_ancestries_grabbed, s_ancestries_expanded } from './Reactive_State';
 import { persistLocal, IDPersistant, Rotation_State, Expansion_State } from '../common/Global_Imports';
-import { k, u, ux, w, get, Rect, Size, Point, debug, dbDispatch } from '../common/Global_Imports';
+import { e, k, u, ux, get, Rect, Size, Point, debug, dbDispatch } from '../common/Global_Imports';
 import { s_graphRect, s_show_details, s_scale_factor, s_thing_changed } from './Reactive_State';
-import { s_cluster_mode, s_paging_ring_state, s_rotation_ring_state } from './Reactive_State';
+import { s_resize_count, s_mouse_up_count } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
 
 class Global_State {
@@ -12,6 +13,7 @@ class Global_State {
 	show_arrowheads = false;
 	allow_GraphEditing = true;
 	allow_TitleEditing = true;
+	mouse_responder_number = 0;
 	queryStrings: URLSearchParams;
 	allow_HorizontalScrolling = true;
 
@@ -20,13 +22,16 @@ class Global_State {
 	}
 
 	setup() {
-		s_rotation_ring_state.set(new Expansion_State());
+		s_resize_count.set(0);
+		s_rebuild_count.set(0);
+		s_mouse_up_count.set(0);
+		s_rotation_ring_state.set(new Rotation_State());
+		s_resize_ring_state.set(new Expansion_State());
 		s_paging_ring_state.set(new Rotation_State());
 		persistLocal.restore_state();
 		s_thing_changed.set(null);
 		this.queryStrings_apply();
 		debug.queryStrings_apply();
-		w.setup();
 	}
 
 	queryStrings_apply() {
@@ -93,6 +98,11 @@ class Global_State {
 
 	get isAny_rotation_active(): boolean {
 		return ux.isAny_paging_arc_active || get(s_paging_ring_state).isActive || get(s_rotation_ring_state).isActive;
+	}
+
+	get next_mouse_responder_number(): number {
+		this.mouse_responder_number += 1;
+		return this.mouse_responder_number;
 	}
 
 	get windowSize(): Size {

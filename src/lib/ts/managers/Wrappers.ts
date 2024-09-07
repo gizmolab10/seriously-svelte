@@ -1,6 +1,4 @@
-import { s_alteration_mode, s_resize_count, s_rebuild_count, s_mouse_location, s_mouse_up_count } from '../state/Reactive_State';
-import { g, u, get, Point, signals, Svelte_Wrapper, Alteration_State } from '../common/Global_Imports';
-import { Create_Mouse_State, SvelteComponentType } from '../common/Global_Imports';
+import { u, debug, Svelte_Wrapper, Create_Mouse_State, SvelteComponentType } from '../common/Global_Imports';
 import { h } from '../db/DBDispatch';
 
 export class Wrappers {
@@ -12,55 +10,6 @@ export class Wrappers {
 	// with a higher ZIndex
 	// than the containing component
 	// when they overlap
-
-	setup() {
-		s_resize_count.set(0);
-		s_rebuild_count.set(0);
-		s_mouse_up_count.set(0);
-		this.subscribeTo_events();
-		this.subscribeTo_alterationState();
-	}
-
-	subscribeTo_events() {
-		window.addEventListener('resize', (event) => {
-			s_resize_count.set(get(s_resize_count) + 1)
-			g.graphRect_update();
-		});
-		window.addEventListener('mouseup', (event: MouseEvent) => {
-			event.stopPropagation();
-			s_mouse_up_count.set(get(s_mouse_up_count) + 1);
-			// this.respondTo_closure(event, Mouse_State.up);
-		});
-		// window.addEventListener('mousedown', (event: MouseEvent) => {
-		// 	event.stopPropagation();
-		// 	this.respondTo_closure(event, Mouse_State.down);
-		// });
-		window.addEventListener('mousemove', (event: MouseEvent) => {
-			event.stopPropagation();
-			s_mouse_location.set(new Point(event.clientX, event.clientY));
-			// this.respondTo_closure(event, Mouse_State.move);
-		});
-	}
-
-	subscribeTo_alterationState() {
-		let interval: NodeJS.Timeout | null = null;
-
-		s_alteration_mode.subscribe((state: Alteration_State | null) => {
-			if (!!interval) {
-				clearInterval(interval);
-				interval = null;
-			}
-			if (!!state) {
-				let blink = true;
-				interval = setInterval(() => {
-					signals.signal_altering(blink ? state : null);
-					blink = !blink;
-				}, 500)
-			} else {
-				signals.signal_altering(null);
-			}
-		})
-	}
 
 	wrappers_byHID_forType(type: string): { [hid: number]: Svelte_Wrapper } {
 		return this.wrappers_byType_andHID[type];
@@ -136,7 +85,7 @@ export class Wrappers {
 				const idHashed = wrapper.idHashed;
 				const ancestry = h.ancestry_forHID(idHashed)
 				const title = ancestry?.title ?? wrapper.idHashed;
-				console.log(`hitsFor ${type} ${title}`);
+				debug.log_action(`hitsFor ${type} ${title}`);
 				if (wrapper.isHit(event)) {
 					const recurse = this.hitsForChildTypesOf(event, type);
 					if (recurse.length == 0) {
@@ -158,7 +107,7 @@ export class Wrappers {
 		// if a child is hit,
 		//  recursively descend type hierarchy
 
-		console.log(`hitsForChildTypesOf ${type}`);
+		debug.log_action(`hitsForChildTypesOf ${type}`);
 		let hits: Array<Svelte_Wrapper> = [];
 		const child_wrapperTypes = this.child_wrapperTypes_byType[type] ?? [];
 		for (const child_wrapperType of child_wrapperTypes) {

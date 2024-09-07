@@ -1,8 +1,11 @@
 <script lang='ts'>
-	import { g, k, u, ux, get, Rect, Size, Point, Thing, debug, ZIndex, signals, onMount, Ancestry } from '../../ts/common/Global_Imports';
-	import { s_isBusy, s_db_type, s_graphRect, s_id_popupView, s_title_editing, s_show_details } from '../../ts/state/Reactive_State';
-	import { IDButton, Hierarchy, IDPersistant, dbDispatch, setContext, persistLocal } from '../../ts/common/Global_Imports';
-	import { s_things_arrived, s_ancestry_focus, s_user_graphOffset, s_cluster_mode } from '../../ts/state/Reactive_State';
+	import { s_things_arrived, s_ancestry_focus, s_user_graphOffset } from '../../ts/state/Reactive_State';
+	import { s_isBusy, s_db_type, s_graphRect, s_id_popupView } from '../../ts/state/Reactive_State';
+	import { s_cluster_mode, s_title_editing, s_show_details } from '../../ts/state/Reactive_State';
+	import { g, k, u, ux, get, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
+	import { debug, ZIndex, signals, onMount, Ancestry } from '../../ts/common/Global_Imports';
+	import { dbDispatch, setContext, persistLocal } from '../../ts/common/Global_Imports';
+	import { IDButton, Hierarchy, IDPersistant } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Clusters_View from '../clusters/Clusters_View.svelte';
 	import Title_Editor from '../widget/Title_Editor.svelte';
@@ -17,7 +20,6 @@
 	let rebuilds = 0;
 	
 	onMount(() => {
-		g.setup();
 		$s_isBusy = true;
 		const handler = signals.handle_rebuildGraph(1, (ancestry) => {
 			debug.log_mount(` PANEL`);

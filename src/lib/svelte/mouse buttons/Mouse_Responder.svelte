@@ -1,5 +1,6 @@
 <script lang='ts'>
-	import { k, u, ux, Rect, Size, Point, Mouse_State, ZIndex, onMount } from '../../ts/common/Global_Imports';
+	import { k, g, u, ux, Rect, Size, Point, debug, ZIndex } from '../../ts/common/Global_Imports';
+	import { onMount, Timer_Type, Mouse_Timer, Mouse_State } from '../../ts/common/Global_Imports';
 	import { s_mouse_location } from '../../ts/state/Reactive_State';
 	export let detectHit_closure: () => {flag: boolean} | null = null;
 	export let height = k.default_buttonSize;
@@ -16,6 +17,8 @@
 	export let align_left = true;
 	export let name = 'generic';
 	const mouse_state = ux.mouse_state_forName(name);	// persist across destroy/recreate
+	const mouse_timer = ux.mouse_timer_forName(name);	// persist across destroy/recreate
+	const mouse_responder_number = g.next_mouse_responder_number;
 	let mouse_doubleClick_timer;
 	let mouse_longClick_timer;
 	let style = k.empty;
@@ -50,8 +53,8 @@
 		const _ = center;
 		setupStyle();
 	}
-
-	$: {	// movement
+	
+	$: {	// hover
 		if (!!mouse_button && !!$s_mouse_location) {
 			let isHit = false;
 			if (!detectHit_closure) {			// is mouse inside this element's bounding rect
@@ -67,23 +70,9 @@
 		}
 	}
 
-	function reset() {
-		clearTimeout(mouse_doubleClick_timer);
-		clearTimeout(mouse_longClick_timer);
-		mouse_doubleClick_timer = null;
-		mouse_longClick_timer = null;
+	function reset() {	// tear down
+		mouse_timer.reset();
 		mouse_state.clicks = 0;
-	}
-
-	function handle_pointerUp(event) {
-		if (detect_mouseUp && (!!mouse_longClick_timer)) {
-
-			// teardown long timer and call closure
-			
-			closure(Mouse_State.up(event, mouse_button));
-			clearTimeout(mouse_longClick_timer);
-			mouse_longClick_timer = null;
-		}
 	}
 
 	function downState(isDown: boolean, isDouble: boolean = false, isLong: boolean = false): Mouse_State {
@@ -97,6 +86,17 @@
 		state.event = event;
 		return state;
 	}
+
+	function handle_pointerUp(event) {
+		if (detect_mouseUp) {// && (!!mouse_timer.mouse_longClick_timer)) {
+
+			// tear down timers and call closure
+
+			reset();
+			closure(Mouse_State.up(event, mouse_button));
+			debug.log_action(`RESPONDER up ${mouse_responder_number}`);
+		}
+	}
 	
 	function handle_pointerDown(event) {
 		if (detect_mouseDown && mouse_state.clicks == 0) {
@@ -106,25 +106,25 @@
 			closure(downState(true));
 		}
 		mouse_state.clicks += 1;
-		if (detect_doubleClick && !mouse_doubleClick_timer) {
+		if (detect_doubleClick) {
 
 			// setup timer to call double-click closure
 
-			mouse_doubleClick_timer = setTimeout(() => {
+			mouse_timer.setTimeout(Timer_Type.double, () => {
 				if (mouse_state.clicks == 2) {
-					closure(downState(false, true, false));
 					reset();
+					closure(downState(false, true, false));
 				}
-			}, k.threshold_doubleClick);
+			});
 		}
-		if (detect_longClick && !mouse_longClick_timer) {
+		if (detect_longClick) {
 
 			// setup timer to call long-click closure
 
-			mouse_longClick_timer = setTimeout(() => {
-				closure(downState(false, false, true));
+			mouse_timer.setTimeout(Timer_Type.long, () => {
 				reset();
-			}, k.threshold_longClick);
+				closure(downState(false, false, true));
+			});
 		}
 	}
 

@@ -61,7 +61,6 @@
 			zindex={ZIndex.panel}
 			ring_width={k.ring_thickness}
 			cursor_closure={cursor_closure}
-			radius={$s_rotation_ring_radius}
 			color={$s_ancestry_focus?.thing?.color ?? k.color_default}/>
 		<Necklace/>
 		{#if $s_ancestry_showingTools?.isVisible}

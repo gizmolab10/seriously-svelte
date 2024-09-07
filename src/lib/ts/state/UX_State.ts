@@ -1,4 +1,4 @@
-import { Mouse_State, ElementType } from '../common/Global_Imports';
+import { Mouse_State, Mouse_Timer, ElementType } from '../common/Global_Imports';
 import { Element_State, Rotation_State } from '../common/Global_Imports';
 import Identifiable from '../data/Identifiable';
 
@@ -7,6 +7,7 @@ export default class UX_State {
 	rotationState_byName: {[name: string]: Rotation_State} = {};
 	elementState_byName: {[name: string]: Element_State} = {};
 	mouse_state_byName: { [name: string]: Mouse_State } = {};
+	mouse_timer_byName: { [name: string]: Mouse_Timer } = {};
 
 	//////////////////////////////////////
 	//									//
@@ -45,6 +46,15 @@ export default class UX_State {
 		if (!state) {
 			state = Mouse_State.empty();
 			this.mouse_state_byName[name] = state;
+		}
+		return state;
+	}
+
+	mouse_timer_forName(name: string): Mouse_Timer {
+		let state = this.mouse_timer_byName[name];
+		if (!state) {
+			state = new Mouse_Timer();
+			this.mouse_timer_byName[name] = state;
 		}
 		return state;
 	}

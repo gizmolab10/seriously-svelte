@@ -14,6 +14,7 @@ export enum DebugFlag {
 	error	 = 'error',		// async errors
 	lines	 = 'lines',		// alignment dots for lines and widgets
 	tools	 = 'tools',		// state logic of add parent tool
+	hover	 = 'hover',
 	build	 = 'build',
 	mount	 = 'mount',
 	edit	 = 'edit',		// editing state machine
@@ -29,6 +30,7 @@ export class Debug {
 	log_error(message: string) { this.log_maybe(DebugFlag.error, message) }
 	log_tools(message: string) { this.log_maybe(DebugFlag.tools, message) }
 	log_build(message: string) { this.log_maybe(DebugFlag.build, message) }
+	log_hover(message: string) { this.log_maybe(DebugFlag.hover, message) }
 	log_mount(message: string) { this.log_maybe(DebugFlag.mount, message) }
 	log_remote(message: string) { this.log_maybe(DebugFlag.remote, message) }
 	log_action(message: string) { this.log_maybe(DebugFlag.action, message) }
@@ -56,6 +58,7 @@ export class Debug {
 					case 'action': this.flags.push(DebugFlag.action); break;
 					case 'layout': this.flags.push(DebugFlag.layout); break;
 					case 'build': this.flags.push(DebugFlag.build); break;
+					case 'hover': this.flags.push(DebugFlag.hover); break;
 					case 'mount': this.flags.push(DebugFlag.mount); break;
 					case 'graph': this.flags.push(DebugFlag.graph); break;
 					case 'order': this.flags.push(DebugFlag.order); break;
