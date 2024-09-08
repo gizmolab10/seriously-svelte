@@ -2,7 +2,7 @@
 	import { g, k, u, ux, Rect, Size, Point, debug, Angle, ZIndex, onMount } from '../../ts/common/Global_Imports';
 	import { opacitize, Cluster_Map, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { s_mouse_location, s_mouse_up_count, s_ancestry_focus } from '../../ts/state/Reactive_State';
-	import { s_rotation_ring_state, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
+	import { s_ring_rotation_state, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import { s_thing_fontFamily, s_paging_ring_state } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { ArcPart } from '../../ts/common/Enumerations';
@@ -53,7 +53,7 @@
 
 	function update_colors() {
 		arc_color = u.opacitize(color, $s_paging_ring_state.stroke_opacity);
-		thumb_color = u.opacitize(color, $s_rotation_ring_state.isActive ? 0.15 : cluster_map?.paging_rotation.three_level_opacity);
+		thumb_color = u.opacitize(color, $s_ring_rotation_state.isActive ? 0.15 : cluster_map?.paging_rotation.three_level_opacity);
 	}
 
 	function computed_mouse_angle(): number | null {
@@ -82,7 +82,7 @@
 				detect_longClick={false}
 				name={cluster_map?.name}
 				cursor={k.cursor_default}
-				closure={mouse_state_closure}
+				mouse_state_closure={mouse_state_closure}
 				detectHit_closure={() => cluster_map.thumb_isHit}>
 				<svg class='svg-arc' viewBox={viewBox}>
 					<path stroke={arc_color} fill=transparent d={cluster_map.arc_map.arc_svgPath}/>

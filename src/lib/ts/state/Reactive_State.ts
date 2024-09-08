@@ -1,18 +1,17 @@
-import { Rect, Point, Ancestry, Title_State, Paging_State, Cluster_Map, Svelte_Wrapper } from '../common/Global_Imports';
 import { Clusters_Geometry, Rotation_State, Expansion_State, Alteration_State } from '../common/Global_Imports';
+import { Rect, Point, Ancestry, Title_State, Paging_State, Cluster_Map } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
 export const s_clusters_geometry	 = writable<Clusters_Geometry | null>();
-export const s_alteration_mode				 = writable<Alteration_State | null>();
-export const s_active_wrapper		 = writable<Svelte_Wrapper | null>();
+export const s_alteration_mode		 = writable<Alteration_State | null>();
 export const s_active_cluster_map	 = writable<Cluster_Map | null>();
 export const s_title_editing		 = writable<Title_State | null>();
 export const s_ancestry_showingTools = writable<Ancestry | null>();
 export const s_ancestries_expanded	 = writable<Array<Ancestry>>();
 export const s_ancestries_grabbed	 = writable<Array<Ancestry>>();
-export const s_resize_ring_state	 = writable<Expansion_State>();
+export const s_ring_resizing_state	 = writable<Expansion_State>();
+export const s_ring_rotation_state	 = writable<Rotation_State>();
 export const s_paging_ring_state	 = writable<Rotation_State>();
-export const s_rotation_ring_state	 = writable<Rotation_State>();
 export const s_thing_changed		 = writable<string | null>();
 export const s_id_popupView			 = writable<string | null>();
 export const s_db_loadTime 			 = writable<string | null>();

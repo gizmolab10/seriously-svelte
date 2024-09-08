@@ -27,9 +27,9 @@
 	width={size}
 	height={size}
 	cursor='pointer'
-	closure={closure}
 	align_left={false}
-	center={new Point(0, size)}>
+	center={new Point(0, size)}
+	mouse_state_closure={closure}>
     <SVGD3 name='close'
 		fill={fill}
 		width={size}

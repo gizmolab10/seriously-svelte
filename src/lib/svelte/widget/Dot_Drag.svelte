@@ -128,8 +128,8 @@
 			width={size}
 			height={size}
 			center={center}
-			closure={closure}
-			name={element_state.name}>
+			name={element_state.name}
+			mouse_state_closure={closure}>
 			<button class='drag'
 				bind:this={dotDrag}
 				id={'drag-for-' + name}

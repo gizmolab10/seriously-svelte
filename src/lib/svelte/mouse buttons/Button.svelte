@@ -69,7 +69,7 @@
 	width={width}
 	height={height}
 	center={center}
-	closure={button_closure}>
+	mouse_state_closure={button_closure}>
 	<button class='button' id={'button-for-' + name} style={currentStyle}>
 		<slot></slot>
 	</button>

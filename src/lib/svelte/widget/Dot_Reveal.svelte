@@ -113,8 +113,8 @@
 			width={size}
 			height={size}
 			center={center}
-			closure={closure}
-			name={element_state.name}>
+			name={element_state.name}
+			mouse_state_closure={closure}>
 			<button class='dot'
 				bind:this={dotReveal}
 				on:contextmenu={handle_context_menu}

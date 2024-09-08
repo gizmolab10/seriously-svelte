@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { s_graphRect, s_ancestry_focus, s_user_graphOffset, s_thing_fontFamily, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
 	import { g, k, u, ux, Rect, Size, Point, ZIndex, onMount, signals, debug, Clusters_Geometry } from '../../ts/common/Global_Imports';
-	import { s_clusters_geometry, s_rotation_ring_state, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
+	import { s_clusters_geometry, s_ring_rotation_state, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import Editing_Tools from '../widget/Editing_Tools.svelte';
 	import Title_Editor from '../widget/Title_Editor.svelte';
 	import Circle from '../kit/Circle.svelte';
@@ -44,7 +44,7 @@
 
 	function cursor_closure() {
 		if (!!clusters) {
-			clusters.style.cursor = `${$s_rotation_ring_state.cursor} !important`;
+			clusters.style.cursor = `${$s_ring_rotation_state.cursor} !important`;
 		}
 	}
 

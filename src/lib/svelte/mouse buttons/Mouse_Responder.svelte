@@ -3,9 +3,9 @@
 	import { onMount, Timer_Type, Mouse_Timer, Mouse_State } from '../../ts/common/Global_Imports';
 	import { s_mouse_location } from '../../ts/state/Reactive_State';
 	export let detectHit_closure: () => {flag: boolean} | null = null;
+	export let mouse_state_closure = (mouse_state) => {};
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;
-	export let closure = (mouse_state) => {};
 	export let detect_doubleClick = true;
 	export let detect_longClick = true;
 	export let detect_mouseDown = true;
@@ -65,7 +65,7 @@
 			if (mouse_state.isHover != isHit) {
 				mouse_state.isHover = isHit;
 				mouse_state.isOut = !isHit;		// called far too often
-				closure(Mouse_State.hover(null, mouse_button, isHit));	// pass a null event
+				mouse_state_closure(Mouse_State.hover(null, mouse_button, isHit));	// pass a null event
 			}
 		}
 	}
@@ -93,7 +93,7 @@
 			// tear down timers and call closure
 
 			reset();
-			closure(Mouse_State.up(event, mouse_button));
+			mouse_state_closure(Mouse_State.up(event, mouse_button));
 			debug.log_action(`RESPONDER up ${mouse_responder_number}`);
 		}
 	}
@@ -103,7 +103,7 @@
 
 			// call down closure
 
-			closure(downState(true));
+			mouse_state_closure(downState(true));
 		}
 		mouse_state.clicks += 1;
 		if (detect_doubleClick) {
@@ -113,7 +113,7 @@
 			mouse_timer.setTimeout(Timer_Type.double, () => {
 				if (mouse_state.clicks == 2) {
 					reset();
-					closure(downState(false, true, false));
+					mouse_state_closure(downState(false, true, false));
 				}
 			});
 		}
@@ -123,7 +123,7 @@
 
 			mouse_timer.setTimeout(Timer_Type.long, () => {
 				reset();
-				closure(downState(false, false, true));
+				mouse_state_closure(downState(false, false, true));
 			});
 		}
 	}
