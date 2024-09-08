@@ -2,7 +2,7 @@
 	import { k, g, u, ux, Rect, Size, Point, debug, ZIndex } from '../../ts/common/Global_Imports';
 	import { onMount, Timer_Type, Mouse_Timer, Mouse_State } from '../../ts/common/Global_Imports';
 	import { s_mouse_location } from '../../ts/state/Reactive_State';
-	export let detectHit_closure: () => {flag: boolean} | null = null;
+	export let isHit_closure: () => {flag: boolean} | null = null;
 	export let mouse_state_closure = (mouse_state) => {};
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;
@@ -57,10 +57,10 @@
 	$: {	// hover
 		if (!!mouse_button && !!$s_mouse_location) {
 			let isHit = false;
-			if (!detectHit_closure) {			// is mouse inside this element's bounding rect
+			if (!isHit_closure) {			// is mouse inside this element's bounding rect
 				isHit = Rect.rect_forElement_contains(mouse_button, $s_mouse_location);
 			} else {							// if this element's hover shape is not its bounding rect
-				isHit = detectHit_closure();	// use hover shape
+				isHit = isHit_closure();	// use hover shape
 			}
 			if (mouse_state.isHover != isHit) {
 				mouse_state.isHover = isHit;

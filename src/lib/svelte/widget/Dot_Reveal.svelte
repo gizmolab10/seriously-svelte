@@ -15,9 +15,9 @@
 	let tinyDotsDiameter = size * 1.8;
 	let tinyDotsOffset = size * -0.4 + 0.01;
 	let childrenCount = ancestry.childRelationships.length;
-	let insidePath = svgPaths.circle_atOffset(16, 6);
+	let svg_reveal_inside_path = svgPaths.circle_atOffset(16, 6);
 	let revealWrapper!: Svelte_Wrapper;
-	let revealDotPath = k.empty;
+	let svg_revealDot_path = k.empty;
 	let hasInsidePath = false;
 	let insideOffset = 0;
 	let dotReveal = null;
@@ -61,16 +61,16 @@
 		hasInsidePath = ancestry.toolsGrabbed || thing.isBulkAlias;
 		insideOffset = hasInsidePath ? 0 : -1;
 		if (!ancestry.showsReveal || ancestry.toolsGrabbed) {
-			revealDotPath = svgPaths.circle_atOffset(size, size - 1);
+			svg_revealDot_path = svgPaths.circle_atOffset(size, size - 1);
 		} else {
 			const goLeft = ancestry.showsChildRelationships;
 			const direction = goLeft ? Direction.left : Direction.right;
-			revealDotPath = svgPaths.fat_polygon(size, direction);
+			svg_revealDot_path = svgPaths.fat_polygon(size, direction);
 		}
 		if (ancestry.toolsGrabbed) {
-			insidePath = svgPaths.x_cross(size, 1.5);
+			svg_reveal_inside_path = svgPaths.x_cross(size, 1.5);
 		} else if (hasInsidePath) {
-			insidePath = svgPaths.circle_atOffset(size, 3);
+			svg_reveal_inside_path = svgPaths.circle_atOffset(size, 3);
 		}
 	}
 
@@ -123,11 +123,11 @@
 					height: {size}px;
 					z-index: {zindex};
 				'>
-				{#key revealDotPath}
+				{#key svg_revealDot_path}
 					<SVGD3 name='svg-reveal'
 						fill={debug.lines ? 'transparent' : element_state.fill}
 						stroke={ancestry.thing.color}
-						svg_path={revealDotPath}
+						svg_path={svg_revealDot_path}
 						height={size}
 						width={size}
 					/>
@@ -143,7 +143,7 @@
 							<SVGD3 name='svg-inside'
 								stroke={element_state.stroke}
 								fill={element_state.stroke}
-								svg_path={insidePath}
+								svg_path={svg_reveal_inside_path}
 								height={size}
 								width={size}
 							/>

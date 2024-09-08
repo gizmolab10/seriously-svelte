@@ -27,9 +27,9 @@ class Global_State {
 		s_rebuild_count.set(0);
 		s_mouse_up_count.set(0);
 		s_thing_changed.set(null);
+		s_paging_ring_state.set(new Rotation_State());
 		s_ring_rotation_state.set(new Rotation_State());
 		s_ring_resizing_state.set(new Expansion_State());
-		s_paging_ring_state.set(new Rotation_State());
 		// persisted states
 		persistLocal.restore_state();
 		// url query string states

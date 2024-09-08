@@ -15,8 +15,10 @@ export default class SVG_Paths {
 		return this.line_connecting(start, Point.fromPolar(radius, angle).offsetBy(start))
 	}
 
-	ring(center: Point, radius: number, thickness: number): string {
-		return `${this.circle(center, radius, true)} ${this.circle(center.offsetByX(center.x * 2), radius - thickness, false)}`;
+	annulus(center: Point, outer_radius: number, thickness: number, offset: Point = Point.zero): string {
+		const offset_center = center.offsetBy(offset);
+		const inner_center = offset_center.offsetByX(center.x * 2);
+		return `${this.circle(offset_center, outer_radius, true)} ${this.circle(inner_center, outer_radius - thickness, false)}`;
 	}
 
     dash(diameter: number, margin: number): string {
@@ -43,8 +45,8 @@ export default class SVG_Paths {
 
     circle(center: Point, radius: number, clockwise: boolean = true): string {
 		const direction = clockwise ? 0 : 1;
-		const diameter = radius * 2 * (clockwise ? 1 : -1);
-        return `M${center.x - radius} ${center.y} a${radius} ${radius} 0 0 ${direction} ${diameter} 0 a${radius} ${radius} 0 0 ${direction} ${-diameter} 0`;
+		const diametric_move = radius * 2 * (clockwise ? 1 : -1);
+        return `M${center.x - radius} ${center.y} a${radius} ${radius} 0 0 ${direction} ${diametric_move} 0 a${radius} ${radius} 0 0 ${direction} ${-diametric_move} 0`;
     }
 
     oval(diameter: number, horizontal: boolean = true, eccentricity: number = 2.3): string {

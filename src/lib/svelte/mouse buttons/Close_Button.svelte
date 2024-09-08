@@ -7,8 +7,8 @@
     export let size = 20;
 	let fill = k.color_background;
 	let stroke = 'black';
-    const cross = svgPaths.x_cross(size, size / 6);
-    const circle = svgPaths.circle_atOffset(size, size - 2);
+    const svg_cross_path = svgPaths.x_cross(size, size / 6);
+    const svg_circle_path = svgPaths.circle_atOffset(size, size - 2);
 
 	function closure(mouse_state) {
 		if (mouse_state.isHover) {
@@ -35,12 +35,12 @@
 		width={size}
 		height={size}
 		stroke='black'
-		svg_path={circle}
+		svg_path={svg_circle_path}
 	/>
     <SVGD3 name='closeInside'
 		width={size}
 		height={size}
 		stroke={stroke}
-		svg_path={cross}
+		svg_path={svg_cross_path}
 	/>
 </Mouse_Responder>

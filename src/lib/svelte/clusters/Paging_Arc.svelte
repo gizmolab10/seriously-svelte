@@ -83,7 +83,7 @@
 				name={cluster_map?.name}
 				cursor={k.cursor_default}
 				mouse_state_closure={mouse_state_closure}
-				detectHit_closure={() => cluster_map.thumb_isHit}>
+				isHit_closure={() => cluster_map.thumb_isHit}>
 				<svg class='svg-arc' viewBox={viewBox}>
 					<path stroke={arc_color} fill=transparent d={cluster_map.arc_map.arc_svgPath}/>
 					{#if debug.reticule}

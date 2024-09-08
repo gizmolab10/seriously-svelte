@@ -14,14 +14,14 @@
 	export let color = k.empty;
 	export let zindex = ZIndex.rotation;
 	export let cursor_closure = () => {};
-	const ring_outer_offset = -ring_width * 2;
+	const ring_outer_offset = -ring_width;
 	const ring_inner_radius = $s_rotation_ring_radius;
 	const ring_middle_radius = ring_inner_radius + ring_width;
 	const ring_outer_radius = ring_middle_radius + ring_width;
 	const ring_outer_diameter = ring_outer_radius * 2;
 	const mouse_timer = ux.mouse_timer_forName(name);	// persist across destroy/recreate
-	const svg_ring_inner_path = svgPaths.ring(Point.square(ring_inner_radius), ring_middle_radius, ring_width);
-	const svg_ring_outer_path = svgPaths.ring(Point.square(ring_middle_radius), ring_outer_radius, ring_width);
+	const svg_ring_rotation_path = svgPaths.annulus(Point.square(ring_inner_radius), ring_middle_radius, ring_width, Point.square(ring_width));
+	const svg_ring_resizing_path = svgPaths.annulus(Point.square(ring_middle_radius), ring_outer_radius, ring_width);
 	const ring_viewBox = `${ring_outer_offset}, ${ring_outer_offset}, ${ring_outer_diameter}, ${ring_outer_diameter}`;
 	let mouse_up_count = $s_mouse_up_count;
 	let rotationRing;
@@ -196,9 +196,6 @@
 		cursor_closure();
 		rebuilds += 1;
 	}
-					// <path d={svg_ring_outer_path}
-					// 	fill={u.opacitize(color, $s_ring_resizing_state.fill_opacity)}
-					// 	stroke={u.opacitize(color, $s_ring_resizing_state.stroke_opacity)}/>
 
 </script>
 
@@ -217,12 +214,12 @@
 			<Mouse_Responder
 				name={name}
 				zindex={zindex}
+				isHit_closure={isHit}
 				center={g.graph_center}
+				detect_longClick={false}
+				detect_doubleClick={false}
 				width={ring_outer_diameter}
 				height={ring_outer_diameter}
-				detect_longClick={false}
-				detectHit_closure={isHit}
-				detect_doubleClick={false}
 				cursor={$s_ring_rotation_state.cursor}
 				mouse_state_closure={mouse_state_closure}>
 				<svg
@@ -231,9 +228,12 @@
 					{#if debug.reticule}
 						<path stroke='green' fill=transparent d={svgPaths.t_cross($s_rotation_ring_radius * 2, 0)}/>
 					{/if}
-					<path d={svg_ring_inner_path}
+					<path d={svg_ring_rotation_path}
 						fill={u.opacitize(color, $s_ring_rotation_state.fill_opacity)}
 						stroke={u.opacitize(color, $s_ring_rotation_state.stroke_opacity)}/>
+					<path d={svg_ring_resizing_path}
+						fill={u.opacitize(color, $s_ring_resizing_state.fill_opacity)}
+						stroke={u.opacitize(color, $s_ring_resizing_state.stroke_opacity)}/>
 				</svg>
 			</Mouse_Responder>
 		</div>

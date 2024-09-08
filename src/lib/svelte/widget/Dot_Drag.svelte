@@ -14,9 +14,9 @@
 	const diameter = radius * 2;
 	const element_state = ux.elementState_forName(name);		// survives onDestroy, created by widget
 	let dragWrapper!: Svelte_Wrapper;
-	let isRelatedSVGPath = k.empty;
+	let svg_isRelated_path = k.empty;
 	let tinyDotsSVGPath = k.empty;
-	let dragDotSVGPath = k.empty;
+	let svg_dragDot_path = k.empty;
 	let isGrabbed = false;
 	let isHovering = true;
 	let size = k.dot_size;
@@ -70,22 +70,22 @@
 
 	function updateSVGPaths() {
 		if ($s_cluster_mode) {
-			dragDotSVGPath = svgPaths.circle_atOffset(size, size - 1);
+			svg_dragDot_path = svgPaths.circle_atOffset(size, size - 1);
 		} else {
-			dragDotSVGPath = svgPaths.oval(size, false);
+			svg_dragDot_path = svgPaths.oval(size, false);
 		}
 		updateExtraSVGPaths();
 	}
 
 	function updateExtraSVGPaths() {
-		isRelatedSVGPath = tinyDotsSVGPath = null;
+		svg_isRelated_path = tinyDotsSVGPath = null;
 		if (!!thing) {
 			const count = thing.parents.length;		
 			if (count > 1) {
 				tinyDotsSVGPath = svgPaths.ellipses(6, 0.5, false, count, size / 2);
 			}
 			if (thing.hasRelated) {
-				isRelatedSVGPath = svgPaths.circle_atOffset(size, 3, new Point(-4.5, 0));
+				svg_isRelated_path = svgPaths.circle_atOffset(size, 3, new Point(-4.5, 0));
 			}
 		}
 	}
@@ -155,7 +155,7 @@
 						<SVGD3 name={'svg-drag-' + name}
 							width={size}
 							height={size}
-							svg_path={dragDotSVGPath}
+							svg_path={svg_dragDot_path}
 							fill={element_state.fill}
 							stroke={thing?.color}
 						/>
@@ -169,11 +169,11 @@
 									stroke={element_state.stroke}
 								/>
 							{/if}
-							{#if isRelatedSVGPath}
+							{#if svg_isRelated_path}
 								<SVGD3 name={'svg-drag-related-' + name}
 									width={size}
 									height={size}
-									svg_path={isRelatedSVGPath}
+									svg_path={svg_isRelated_path}
 									fill={k.color_background}
 									stroke={thing?.color}
 								/>

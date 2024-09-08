@@ -10,6 +10,7 @@ class Builds {
 
 	constructor() {
 		this.notes = {
+			111 : ['September 8, 2024', 'new resize ring'],
 			110 : ['August 30, 2024', 'airtable dbid support'],
 			109 : ['August 22, 2024', 'rotate cluster label tangent to arc'],
 			108 : ['August 18, 2024', 'paging persists for multiple things and dbs'],
