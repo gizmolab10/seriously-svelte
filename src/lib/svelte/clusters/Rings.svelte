@@ -29,10 +29,10 @@
 	let pagingArcs;
 
 	enum Ring_Zone {
-		miss	= 'miss',
-		resize	= 'resize',
-		rotate	= 'rotate',
-		paging	= 'paging',
+		miss	 = 'miss',
+		resizing = 'resizing',
+		rotation = 'rotation',
+		paging	 = 'paging',
 	}
 
 	// debug.log_build(` RINGS (svelte)`);
@@ -45,7 +45,7 @@
 	}
 
 	$: {
-		// mouse up ... end all (rotate, resize, paging)
+		// mouse up ... end all (rotation, resizing, paging)
 		if (mouse_up_count != $s_mouse_up_count) {
 			mouse_up_count = $s_mouse_up_count;
 			const ring_zone = ringZone_forMouseLocation();
@@ -61,18 +61,18 @@
 		// detect movement & adjust state //
 		////////////////////////////////////
 
-		const _ = $s_mouse_location;								// use store, to invoke this code
+		const _ = $s_mouse_location;											// use store, to invoke this code
 		const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(g.graph_center);
 		if (!!from_center) {
 			const mouse_angle = from_center.angle;
-			const rotate_state = $s_ring_rotation_state;
+			const rotation_state = $s_ring_rotation_state;
 			detect_hovering();
-			if (!!rotate_state.active_angle || rotate_state.active_angle == 0) {		// rotate_resize clusters
-				if (!signals.signal_isInFlight && !mouse_angle.isClocklyAlmost(rotate_state.active_angle, Angle.radians_from_degrees(4), Angle.full)) {		// detect >= 4° change
-					$s_rotation_ring_angle = mouse_angle.add_angle_normalized(-rotate_state.basis_angle);
+			if (!!rotation_state.active_angle || rotation_state.active_angle == 0) {		// rotate clusters
+				if (!signals.signal_isInFlight && !mouse_angle.isClocklyAlmost(rotation_state.active_angle, Angle.radians_from_degrees(4), Angle.full)) {		// detect >= 4° change
+					$s_rotation_ring_angle = mouse_angle.add_angle_normalized(-rotation_state.basis_angle);
 					debug.log_action(`RINGS  rotate  ${$s_rotation_ring_angle.degrees_of(0)}`);
-					rotate_state.active_angle = mouse_angle;
-					signals.signal_relayoutWidgets_fromFocus();			// destroys this component (properties are in s_ring_rotation_state && s_active_cluster_map)
+					rotation_state.active_angle = mouse_angle;
+					signals.signal_relayoutWidgets_fromFocus();					// destroys this component (properties are in s_ring_rotation_state)
 					rebuilds += 1;
 				}
 			} else if (!!$s_active_cluster_map) {
@@ -85,17 +85,17 @@
 					debug.log_action(`RINGS  page  ${delta_angle.degrees_of(0)}`);
 					rebuilds += 1;
 				}
-			} else if (!!$s_ring_resizing_state.radiusOffset) {			// resize
+			} else if (!!$s_ring_resizing_state.radiusOffset) {					// resize
 				const magnitude = from_center.magnitude
 				const smallest = k.ring_smallest_radius;
 				const largest = k.ring_smallest_radius * 3;
 				const distance = magnitude.force_between(smallest, largest);
 				const delta = distance - $s_rotation_ring_radius - $s_ring_resizing_state.radiusOffset;
-				if (Math.abs(delta) > 1) {								// granularity of 1 pixel
+				if (Math.abs(delta) > 1) {										// granularity of 1 pixel
 					const radius = $s_rotation_ring_radius + delta;
 					debug.log_action(`RINGS  resize  ${radius.toFixed(0)}`);
 					$s_rotation_ring_radius = radius;
-					signals.signal_rebuildGraph_fromFocus();			// destroys this component (properties are in s_ring_rotation_state && s_active_cluster_map)
+					signals.signal_rebuildGraph_fromFocus();					// destroys this component (properties are in s_ring_resizing_state)
 					rebuilds += 1;
 				}
 			}
@@ -117,13 +117,13 @@
 				reset();
 			} else if (mouse_state.isDown) {
 				switch (ring_zone) {
-					case Ring_Zone.resize:
+					case Ring_Zone.resizing:
 						const ring_outer_radius = distance_fromCenter() - $s_rotation_ring_radius;
 						debug.log_action(`RINGS  begin resize  ${ring_outer_radius.toFixed(0)}`);
 						$s_ring_resizing_state.radiusOffset = ring_outer_radius;
 						rebuilds += 1;
 						break;
-					case Ring_Zone.rotate:
+					case Ring_Zone.rotation:
 						const rotation_angle = mouse_wentDown_angle.add_angle_normalized(-$s_rotation_ring_angle);
 						debug.log_action(`RINGS  begin rotate  ${rotation_angle.degrees_of(0)}`);
 						$s_ring_rotation_state.active_angle = mouse_wentDown_angle;
@@ -157,8 +157,8 @@
 	function detect_hovering() {
 		const ring_zone = ringZone_forMouseLocation();
 		const arc_isActive = ux.isAny_paging_arc_active;
-		const inRotate = ring_zone == Ring_Zone.rotate && !arc_isActive;
-		const inResize = ring_zone == Ring_Zone.resize && !arc_isActive;
+		const inRotate = ring_zone == Ring_Zone.rotation && !arc_isActive && !$s_ring_resizing_state.isActive;
+		const inResize = ring_zone == Ring_Zone.resizing && !arc_isActive && !$s_ring_rotation_state.isActive;
 		const inPaging = ring_zone == Ring_Zone.paging && !$s_ring_rotation_state.isActive && !$s_ring_resizing_state.isActive;
 		if ($s_paging_ring_state.isHovering != inPaging) {
 			$s_paging_ring_state.isHovering = inPaging;			// all arcs and thumbs
@@ -175,9 +175,9 @@
 		const distance = distance_fromCenter();
 		if (!!distance && distance <= ring_outer_radius) {
 			if (distance > ring_middle_radius) {
-				return Ring_Zone.resize;
+				return Ring_Zone.resizing;
 			} else if (distance > ring_inner_radius) {
-				return Ring_Zone.rotate;
+				return Ring_Zone.rotation;
 			}
 			return Ring_Zone.paging;
 		}
@@ -229,8 +229,8 @@
 						<path stroke='green' fill=transparent d={svgPaths.t_cross($s_rotation_ring_radius * 2, 0)}/>
 					{/if}
 					<path d={svg_ring_rotation_path}
-						fill={u.opacitize(color, $s_ring_rotation_state.fill_opacity)}
-						stroke={u.opacitize(color, $s_ring_rotation_state.stroke_opacity)}/>
+						fill={u.opacitize(color, $s_ring_rotation_state.fill_opacity * ($s_ring_resizing_state.isHighlighted ? 0.3 : 1))}
+						stroke={u.opacitize(color, $s_ring_rotation_state.stroke_opacity * ($s_ring_resizing_state.isHighlighted ? 0.7 : 1))}/>
 					<path d={svg_ring_resizing_path}
 						fill={u.opacitize(color, $s_ring_resizing_state.fill_opacity)}
 						stroke={u.opacitize(color, $s_ring_resizing_state.stroke_opacity)}/>
