@@ -45,8 +45,8 @@
 				case IDButton.help: g.showHelp(); break;
 				case IDButton.bigger: width = g.zoomBy(1.1) - 20; break;
 				case IDButton.smaller: width = g.zoomBy(0.9) - 20; break;
-				case IDButton.details: $s_show_details = !$s_show_details; break;
 				case IDButton.layout: $s_cluster_mode = !$s_cluster_mode; break;
+				case IDButton.details: $s_show_details = !$s_show_details; break;
 				case IDButton.relations: $s_shown_relations = next_graph_relations(); break;
 				default: togglePopupID(id); break;
 			}

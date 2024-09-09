@@ -157,6 +157,7 @@
   },
   "active": "b96ce36b21ad98e3",
   "lastOpenFiles": [
+    "src/lib/svelte/clusters/Cluster_Graph.svelte",
     "src/lib/ts/signals/Events.ts",
     "src/lib/ts/signals/Mouse_Timer.ts",
     "src/lib/ts/signals/Signals.ts",
@@ -167,7 +168,6 @@
     "aside/2024/September/Global_Imports.ts",
     "aside/2024/September/UX_State.ts",
     "aside/2024/September/Timer_State.ts",
-    "aside/2024/September/Mouse_Responder.svelte",
     "node_modules/firebase/node_modules/undici/docs/docs/api/api-lifecycle.md",
     "node_modules/firebase/node_modules/undici/docs/docs/api/WebSocket.md",
     "node_modules/firebase/node_modules/undici/docs/docs/api/Util.md",

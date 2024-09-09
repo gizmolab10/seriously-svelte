@@ -121,8 +121,8 @@ export class Hierarchy {
 				switch (key) {
 					case '!':				graph_needsRebuild = this.rootAncestry?.becomeFocus(); break;
 					case '`':               event.preventDefault(); this.latestAncestryGrabbed_toggleEditing_Tools(); break;
-					case 'arrowup':			await this.latestAncestryGrabbed_rebuild_remoteMoveUp(true, SHIFT, OPTION, EXTREME); break;
-					case 'arrowdown':		await this.latestAncestryGrabbed_rebuild_remoteMoveUp(false, SHIFT, OPTION, EXTREME); break;
+					case 'arrowup':			await this.latestAncestryGrabbed_rebuild_remoteRelocateUp_maybe(true, SHIFT, OPTION, EXTREME); break;
+					case 'arrowdown':		await this.latestAncestryGrabbed_rebuild_remoteRelocateUp_maybe(false, SHIFT, OPTION, EXTREME); break;
 					case 'escape':			if (!!get(s_ancestry_showingTools)) { this.clear_editingTools(); }
 				}
 				if (graph_needsRebuild) {
@@ -139,10 +139,10 @@ export class Hierarchy {
 
 	static readonly $_GRABS_$: unique symbol;
 
-	async latestAncestryGrabbed_rebuild_remoteMoveUp(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
+	async latestAncestryGrabbed_rebuild_remoteRelocateUp_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const ancestry = this.grabs.latestAncestryGrabbed(up);
 		if (!!ancestry) {
-			this.ancestry_rebuild_remoteMoveUp(ancestry, up, SHIFT, OPTION, EXTREME);
+			this.ancestry_rebuild_remoteRelocateUp_maybe(ancestry, up, SHIFT, OPTION, EXTREME);
 		}
 	}
 
@@ -735,7 +735,7 @@ export class Hierarchy {
 		}
 	}
 
-	async ancestry_rebuild_remoteMoveUp(ancestry: Ancestry, up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
+	async ancestry_rebuild_remoteRelocateUp_maybe(ancestry: Ancestry, up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const parentAncestry = ancestry.parentAncestry;
 		if (parentAncestry) {
 			let graph_needsRebuild = false;
