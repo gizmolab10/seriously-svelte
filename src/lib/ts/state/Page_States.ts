@@ -1,4 +1,4 @@
-import { k, get, Thing, Predicate, Ancestry, Cluster_Map, persistLocal } from '../common/Global_Imports';
+import { k, get, Thing, Predicate, Ancestry, Cluster_Map } from '../common/Global_Imports';
 import { s_paging_state, s_rotation_ring_radius } from './Reactive_State';
 import { h } from '../db/DBDispatch';
 
@@ -21,30 +21,6 @@ export class Paging_State {
 		this.shown = shown;
 	}
 
-	get isPaging(): boolean { return this.shown < this.total; }
-	get stateIndex(): number { return this.predicate?.stateIndex ?? -1; }
-	get maximum_paging_index(): number { return this.total - this.shown; }
-	get thing(): Thing | null { return h.thing_forHID(this.thing_id.hash()) ?? null; }
-	get predicate(): Predicate | null { return h.predicate_forKind(this.kind) ?? null; }
-	get canShow(): number { return Math.round((get(s_rotation_ring_radius) ** 1.5) * Math.PI / 45 / k.row_height) + 1; }
-	get sub_key(): string { return `${this.thing_id}${k.generic_separator}${this.kind}${k.generic_separator}${this.points_out}`; }
-
-	update_index_forShown(shown: number) {
-		this.shown = shown;
-		this.index = Math.min(this.index, this.maximum_paging_index);
-	}
-
-	get description(): string {
-		const strings = [
-			`${this.points_out}`,
-			`${this.kind}`,
-			`${this.thing_id}`,
-			`${this.index}`,
-			`${this.shown}`,
-			`${this.total}`];
-		return strings.join(k.generic_separator);
-	}
-
 	static create_paging_state_from(description: string): Paging_State | null {
 		let strings = description.split(k.generic_separator);
 		const [out, kind, id, ...remaining] = strings;
@@ -59,21 +35,45 @@ export class Paging_State {
 		return null;
 	}
 
+	get isPaging(): boolean { return this.shown < this.total; }
+	get stateIndex(): number { return this.predicate?.stateIndex ?? -1; }
+	get maximum_paging_index(): number { return this.total - this.shown; }
+	get thing(): Thing | null { return h.thing_forHID(this.thing_id.hash()) ?? null; }
+	get predicate(): Predicate | null { return h.predicate_forKind(this.kind) ?? null; }
+	get canShow(): number { return Math.round((get(s_rotation_ring_radius) ** 1.5) * Math.PI / 45 / k.row_height) + 1; }
+	get sub_key(): string { return `${this.thing_id}${k.generic_separator}${this.kind}${k.generic_separator}${this.points_out}`; }
+
+	get description(): string {
+		const strings = [
+			`${this.points_out}`,
+			`${this.kind}`,
+			`${this.thing_id}`,
+			`${this.index}`,
+			`${this.shown}`,
+			`${this.total}`];
+		return strings.join(k.generic_separator);
+	}
+
+	index_isVisible(index: number): boolean {
+		return index.isBetween(this.index, this.index + this.shown - 1, true);
+	}
+
 	addTo_paging_index_for(delta: number): boolean {
-		if (delta != 0) {
-			const prior_index = this.index;
-			this.index = (this.index + delta).force_between(0, this.maximum_paging_index);
-			const integrally_changed = Math.round(prior_index) != Math.round(this.index);
-			s_paging_state.set(this);
-			return integrally_changed;
-		}
-		return false;
+		return (delta == 0) ? false : this.update_index_toShow(this.index + delta);
+	}
+
+	update_index_toShow(index: number): boolean {
+		const prior = this.index;
+		this.index = index.force_between(0, this.maximum_paging_index);
+		return this.index != prior;
 	}
 
 	onePage_from(ancestries: Array<Ancestry>): Array<Ancestry> {
 		this.total = ancestries.length;
 		this.shown = Math.min(this.canShow, this.total);
-		this.index = this.index.force_between(0, this.maximum_paging_index);
+		if (this.update_index_toShow(this.index)) {
+			s_paging_state.set(this);
+		}
 		const index = Math.round(this.index);
 		return ancestries.slice(index, index + this.shown);
 	}

@@ -119,7 +119,7 @@ Object.defineProperty(Number.prototype, 'force_between', {
 
 Object.defineProperty(Number.prototype, 'increment', {
 	value: function(increase: boolean, total: number): number {
-		return this.increment_by(increase ? 1 : -1, total);
+		return this.increment_by(increase ? 1 : -1, total + (increase ? 0 : 1));
 	},
 	writable: false,
 	enumerable: false,
@@ -282,7 +282,7 @@ Object.defineProperty(Number.prototype, 'normalize_between_zeroAnd', {
 			result += value;
 		}
 		while (result > value) {
-			result -= value;
+			result -= (value + 1);
 		}
 		return result;
 	},

@@ -1,6 +1,7 @@
-import { s_graphRect, s_rotation_ring_angle, s_ancestry_focus, s_rotation_ring_radius } from '../state/Reactive_State';
 import { g, k, u, ux, get, Rect, Point, Angle, debug, IDLine, Arc_Map, Quadrant } from '../common/Global_Imports';
 import { Ancestry, Predicate, Paging_State, Widget_MapRect, Rotation_State } from '../common/Global_Imports';
+import { s_graphRect, s_paging_state, s_ancestry_focus } from '../state/Reactive_State';
+import { s_rotation_ring_angle, s_rotation_ring_radius } from '../state/Reactive_State';
 
 // for one cluster (there are three)
 //
@@ -73,7 +74,7 @@ export default class Cluster_Map  {
 	get isParental(): boolean { return !this.points_out && !this.predicate?.isBidirectional; }
 	get name(): string { return `${this.focus_ancestry.title}-cluster-${this.direction_kind}`; }
 	get fork_radial(): Point { return Point.fromPolar(get(s_rotation_ring_radius), this.fork_angle); }
-	get paging_state_ofFocus(): Paging_State | null { return this.focus_ancestry.thing?.page_states?.paging_state_for(this) ?? null; }
+	get paging_state_ofFocus(): Paging_State | null { return this.paging_state_ofAncestry(this.focus_ancestry); }
 
 	get thumb_isHit(): boolean {
 		if (this.isPaging) {
@@ -114,14 +115,18 @@ export default class Cluster_Map  {
 	
 	static readonly $_INDEX_$: unique symbol;
 	
+	paging_state_ofAncestry(ancestry: Ancestry): Paging_State | null {
+		return ancestry.thing?.page_states?.paging_state_for(this) ?? null;
+	}
+	
 	adjust_paging_index_byAdding_angle(delta_angle: number) {
 		const paging = this.paging_state_ofFocus;
 		if (!!paging) {
 			// const inverter = (delta_angle > 0) ? 1 : -1;
 			const spread_angle = (-this.arc_map.spread_angle).angle_normalized();
 			const delta_fraction = (delta_angle / spread_angle);
-			const delta_index = delta_fraction * this.maximum_paging_index;		// convert rotation delta to index delta
-			const adjusted = paging.addTo_paging_index_for(delta_index, this) ?? false;			// add index delta to index
+			const delta_index = delta_fraction * this.maximum_paging_index;			// convert rotation delta to index delta
+			const adjusted = paging.addTo_paging_index_for(delta_index) ?? false;	// add index delta to index
 			this.update_thumb_angles();
 			if (adjusted) {
 				this.update_label_forIndex();

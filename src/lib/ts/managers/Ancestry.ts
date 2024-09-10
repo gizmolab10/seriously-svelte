@@ -1,5 +1,5 @@
+import { g, k, u, w, get, Rect, Size, Thing, debug, signals, Predicate, Title_State, ElementType, Paging_State } from '../common/Global_Imports';
 import { Relationship, PredicateKind, Svelte_Wrapper, Widget_MapRect, AlterationType, SvelteComponentType } from '../common/Global_Imports';
-import { g, k, u, w, get, Rect, Size, Thing, debug, signals, Predicate, Title_State, ElementType } from '../common/Global_Imports';
 import { s_ancestries_expanded, s_ancestry_showingTools, s_alteration_mode, s_clusters_geometry } from '../state/Reactive_State';
 import { s_ancestry_focus, s_ancestries_grabbed, s_title_editing, s_cluster_mode } from '../state/Reactive_State';
 import Identifiable from '../data/Identifiable';
@@ -58,6 +58,7 @@ export default class Ancestry extends Identifiable {
 	get idPredicates(): Array<string> { return this.relationships.map(r => r.idPredicate); }
 	get isGrabbed(): boolean { return this.includedInStore_ofAncestries(s_ancestries_grabbed); }
 	get isInvalid(): boolean { return this.containsReciprocals || this.containsMixedPredicates; }
+	get siblingIndex(): number { return this.siblingAncestries.map(p => p.id).indexOf(this.id); }
 	get childAncestries(): Array<Ancestry> { return this.childAncestries_for(this.idPredicate); }
 	get siblingAncestries(): Array<Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
 	get showsChildRelationships(): boolean { return this.isExpanded && this.hasChildRelationships; }
@@ -77,19 +78,6 @@ export default class Ancestry extends Identifiable {
 		const relationships = this.ids_hashed.map(hid => h.relationship_forHID(hid)) ?? [];
 		return u.strip_invalid(relationships);
 	}
-	
-	get thing(): Thing | null {
-		let thing = this._thing;
-		if (!thing) {
-			thing = this.thingAt(1) ?? null;	// always recompute, cache is for debugging
-			this._thing = thing;
-		}
-		if (!!thing && !thing.oneAncestry && !!this.predicate && !this.predicate.isBidirectional) {
-			// console.log(`oneAncestry ${this.titles}`);
-			thing.oneAncestry = this;
-		}
-		return this._thing;
-	}
 
 	get ids(): Array<string> {
 		if (this.isRoot) {
@@ -105,23 +93,36 @@ export default class Ancestry extends Identifiable {
 		return this.relationship?.idChild ?? k.unknown;
 	}
 
+	get paging_state(): Paging_State | null {
+		const predicate = this.predicate;
+		const geometry = get(s_clusters_geometry);
+		if (!!predicate && !!geometry) {
+			const map = geometry?.cluster_map_for(this.points_out, predicate)
+			return map.paging_state_ofAncestry(this);
+		}
+		return null;	// either geometry is not setup or predicate id is bogus
+	}
+	
+	get thing(): Thing | null {
+		let thing = this._thing;
+		if (!thing) {
+			thing = this.thingAt(1) ?? null;	// always recompute, cache is for debugging
+			this._thing = thing;
+		}
+		if (!!thing && !thing.oneAncestry && !!this.predicate && !this.predicate.isBidirectional) {
+			// console.log(`oneAncestry ${this.titles}`);
+			thing.oneAncestry = this;
+		}
+		return this._thing;
+	}
+
 	get isVisible(): boolean {
-		const focus = get(s_ancestry_focus);
-		const asClusters = get(s_cluster_mode);
-		const incorporates = this.incorporates(focus);
-		const expanded = this.isAllExpandedFrom(focus);
-		
-		if (asClusters) {
-			// top most predicate
-			// points out (??? HOW? ???)
-			// --> cluster map
-			// --> is paging, index in page range
-			if (this.isRelatedTo_orContains_itself(focus)) {
-				const isPaging = false; // get cluster map
-				return true;
-			}
-			return false;
+		if (get(s_cluster_mode)) {
+			return this.parentAncestry?.paging_state?.index_isVisible(this.siblingIndex) ?? false;
 		} else {
+			const focus = get(s_ancestry_focus);
+			const incorporates = this.incorporates(focus);
+			const expanded = this.isAllExpandedFrom(focus);
 			return (incorporates && expanded);
 		}
 	}
@@ -202,16 +203,6 @@ export default class Ancestry extends Identifiable {
 	
 	relationships_for_isChildOf(idPredicate: string, isChildOf: boolean) {
 		return this.thing?.relationships_for_isChildOf(idPredicate, isChildOf) ?? [];
-	}
-
-	isRelatedTo_orContains_itself(ancestry: Ancestry): boolean {
-		// detect cycles: if ancestry.thing's parents (of all predicate kinds) include this.thing
-		const id = this.thing?.id;
-		const parents = ancestry.thing?.parents_ofAllKinds;
-		if (id && parents) {
-			return parents.filter(t => t.id == id).length > 0;
-		}
-		return false;
 	}
 
 	ancestry_isAProgenyOf(ancestry: Ancestry): boolean {
@@ -483,6 +474,10 @@ export default class Ancestry extends Identifiable {
 	collapse() { return this.expanded_setTo(false); }
 	toggleGrab() { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }
 
+	assureIsVisible_inClusters(): boolean {
+		return this.parentAncestry?.paging_state?.update_index_toShow(this.siblingIndex) ?? false;
+	}
+
 	grabOnly() {
 		s_ancestries_grabbed.set([this]);
 		this.toggle_editingTools();
@@ -503,7 +498,7 @@ export default class Ancestry extends Identifiable {
 		return changed;
 	}
 
-	async assureIsVisible() {
+	assureIsVisible_inTree() {
 		// visit and expand each parent until this
 		let ancestry: Ancestry | null = this;
 		do {

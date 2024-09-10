@@ -83,7 +83,7 @@
 				paging_rotation.active_angle = mouse_angle;
 				if (!!basis_angle && !!active_angle && basis_angle != active_angle && $s_active_cluster_map.adjust_paging_index_byAdding_angle(delta_angle)) {
 					debug.log_action(`RINGS  page  ${delta_angle.degrees_of(0)}`);
-					rebuilds += 1;
+					signals.signal_rebuildGraph_fromFocus();
 				}
 			} else if (!!$s_ring_resizing_state.radiusOffset) {					// resize
 				const magnitude = from_center.magnitude
@@ -96,7 +96,6 @@
 					debug.log_action(`RINGS  resize  ${radius.toFixed(0)}`);
 					$s_rotation_ring_radius = radius;
 					signals.signal_rebuildGraph_fromFocus();					// destroys this component (properties are in s_ring_resizing_state)
-					rebuilds += 1;
 				}
 			}
 			cursor_closure();

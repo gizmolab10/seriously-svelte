@@ -1,7 +1,7 @@
-import { g, k, u, get, User, Thing, Grabs, debug, Mouse_State, Access, IDTool, IDTrait, signals, Ancestry } from '../common/Global_Imports';
-import { Predicate, Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
-import { s_things_arrived, s_ancestries_grabbed, s_ancestry_showingTools } from '../state/Reactive_State';
-import { s_isBusy, s_alteration_mode, s_ancestry_focus, s_title_editing } from '../state/Reactive_State';
+import { g, k, u, get, User, Thing, Grabs, debug, Mouse_State, Access, IDTool, IDTrait, signals } from '../common/Global_Imports';
+import { Ancestry, Predicate, Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
+import { s_alteration_mode, s_things_arrived, s_ancestries_grabbed, s_ancestry_showingTools } from '../state/Reactive_State';
+import { s_isBusy, s_title_editing, s_cluster_mode, s_ancestry_focus } from '../state/Reactive_State';
 import Identifiable from '../data/Identifiable';
 import DBInterface from '../db/DBInterface';
 
@@ -121,8 +121,8 @@ export class Hierarchy {
 				switch (key) {
 					case '!':				graph_needsRebuild = this.rootAncestry?.becomeFocus(); break;
 					case '`':               event.preventDefault(); this.latestAncestryGrabbed_toggleEditing_Tools(); break;
-					case 'arrowup':			await this.latestAncestryGrabbed_rebuild_remoteRelocateUp_maybe(true, SHIFT, OPTION, EXTREME); break;
-					case 'arrowdown':		await this.latestAncestryGrabbed_rebuild_remoteRelocateUp_maybe(false, SHIFT, OPTION, EXTREME); break;
+					case 'arrowup':			await this.latestAncestryGrabbed_rebuild_remoteMoveUp_maybe(true, SHIFT, OPTION, EXTREME); break;
+					case 'arrowdown':		await this.latestAncestryGrabbed_rebuild_remoteMoveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
 					case 'escape':			if (!!get(s_ancestry_showingTools)) { this.clear_editingTools(); }
 				}
 				if (graph_needsRebuild) {
@@ -139,10 +139,10 @@ export class Hierarchy {
 
 	static readonly $_GRABS_$: unique symbol;
 
-	async latestAncestryGrabbed_rebuild_remoteRelocateUp_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
+	async latestAncestryGrabbed_rebuild_remoteMoveUp_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const ancestry = this.grabs.latestAncestryGrabbed(up);
 		if (!!ancestry) {
-			this.ancestry_rebuild_remoteRelocateUp_maybe(ancestry, up, SHIFT, OPTION, EXTREME);
+			this.ancestry_rebuild_remoteMoveUp_maybe(ancestry, up, SHIFT, OPTION, EXTREME);
 		}
 	}
 
@@ -613,7 +613,7 @@ export class Hierarchy {
 		return rootsAncestry;
 	}
 
-	async ancestry_relayout_toolCluster_nextParent(force: boolean = false) {
+	ancestry_relayout_toolCluster_nextParent(force: boolean = false) {
 		const toolsAncestry = get(s_ancestry_showingTools);
 		if (toolsAncestry) {
 			let ancestry = toolsAncestry;
@@ -622,7 +622,7 @@ export class Hierarchy {
 			// 	if (ancestry.isVisible) {
 			// 		break;
 			// 	} else if (force) {
-			// 		await ancestry.assureIsVisible();
+			// 		ancestry.assureIsVisible_inTree();
 			// 		break;
 			// 	}	
 			// } while (!ancestry.matchesAncestry(toolsAncestry));
@@ -735,34 +735,40 @@ export class Hierarchy {
 		}
 	}
 
-	async ancestry_rebuild_remoteRelocateUp_maybe(ancestry: Ancestry, up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
+	async ancestry_rebuild_remoteMoveUp_maybe(ancestry: Ancestry, up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const parentAncestry = ancestry.parentAncestry;
 		if (parentAncestry) {
 			let graph_needsRebuild = false;
 			const siblings = parentAncestry.children;
+			const max = siblings.length - 1;
 			const thing = this.thing_forAncestry(ancestry);
-			if (!siblings || siblings.length == 0) {
+			if (!siblings || siblings.length == 0) {		// friendly for first-time users
 				this.ancestry_rebuild_runtimeBrowseRight(ancestry, true, EXTREME, up);
 			} else if (!!thing) {
 				const index = siblings.indexOf(thing);
-				const newIndex = index.increment(!up, siblings.length);
+				const newIndex = index.increment(!up, max);
 				if (!!parentAncestry && !OPTION) {
 					const grabAncestry = parentAncestry.extend_withChild(siblings[newIndex]);
 					if (!!grabAncestry) {
 						if (!grabAncestry.isVisible) {
-							graph_needsRebuild = parentAncestry.becomeFocus();
+							if (!parentAncestry.isFocus) {
+								graph_needsRebuild = parentAncestry.becomeFocus();
+							} else if (get(s_cluster_mode)) {
+								graph_needsRebuild = grabAncestry.assureIsVisible_inClusters();	// change paging
+							} else {
+								alert('PROGRAMMING ERROR: child of focus is not visible');
+							}
 						}
 						if (SHIFT) {
 							grabAncestry.toggleGrab();
 						} else {
 							grabAncestry.grabOnly();
 						}
-						signals.signal_relayoutWidgets_fromFocus();
 					}
 				} else if (g.allow_GraphEditing && OPTION) {
 					graph_needsRebuild = true;
 					await u.ancestries_orders_normalize_remoteMaybe(parentAncestry.childAncestries, false);
-					const wrapped = up ? (index == 0) : (index == siblings.length - 1);
+					const wrapped = up ? (index == 0) : (index == max);
 					const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
 					const newOrder = newIndex + goose;
 					ancestry.relationship?.order_setTo_remoteMaybe(newOrder);
