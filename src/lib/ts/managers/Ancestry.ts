@@ -522,10 +522,10 @@ export default class Ancestry extends Identifiable {
 			s_title_editing?.set(null);
 			if (get(s_alteration_mode)) {
 				this.ancestry_alterMaybe(this);
+			} else if (!shiftKey && get(s_cluster_mode)) {
+				this.becomeFocus();
 			} else if (shiftKey || this.isGrabbed) {
 				this.toggleGrab();
-			} else if (get(s_cluster_mode)) {
-				this.becomeFocus();
 			} else {
 				this.grabOnly();
 			}
@@ -566,7 +566,7 @@ export default class Ancestry extends Identifiable {
 			return array;
 		});
 		let ancestries = get(s_ancestries_grabbed) ?? [];
-		if (ancestries.length == 0) {
+		if (ancestries.length == 0 && !get(s_cluster_mode)) {
 			rootAncestry.grabOnly();
 		} else {
 			this.toggle_editingTools(); // do not show editingTools for root

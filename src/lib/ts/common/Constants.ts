@@ -6,7 +6,6 @@ export default class Constants {
 	width_max = 200;
 	line_stretch = 22;
 	height_banner = 35;
-	ring_thickness = 30;
 	halfIncrement = 0.5;
 	thing_fontSize = 14;
 	width_details = 200;
@@ -18,6 +17,8 @@ export default class Constants {
 	editingTools_diameter = 64;
 	threshold_doubleClick = 700;
 	hid_unknown = 1000000000000;
+	ring_resizing_thickness = 30;
+	ring_rotation_thickness = 44;
 	local_help_url = 'http://localhost:8000/README.html';
 	remote_help_url = 'https://help-webseriously.netlify.app/README.html';
 	prevent_selection_style = '-webkit-user-select: none; user-select: none; -moz-user-select: none;';
@@ -45,19 +46,12 @@ export default class Constants {
 	build_number: string;
 	row_height: number;
 
-	rotateSVG = `
-		<svg width="48px" height="48px" viewBox="0 0 48 48">
-			<circle cx="24" cy="24" r="20" stroke="black" stroke-width="2" fill="none" />
-			<path d="M 4,24 a 20,20 0 0,1 40,0" fill="none" stroke="black" stroke-width="2"/>
-			<polygon points="44,24 38,18 38,30" fill="black"/>
-		</svg>`;
-
 	constructor() {
 		this.build_number = builds.latest;
 		this.row_height = this.dot_size + 7;
 		this.cluster_offsetY = 4 - this.dot_size;
-		this.paging_arc_thickness = this.ring_thickness / 3;
-		this.ring_widget_padding = (this.ring_thickness - 1) / 2;
+		this.paging_arc_thickness = this.ring_rotation_thickness / 3;
+		this.ring_widget_padding = (this.ring_rotation_thickness - 1) / 2;
 	}
 
 }

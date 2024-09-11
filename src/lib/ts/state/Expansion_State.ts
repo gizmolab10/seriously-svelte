@@ -7,12 +7,12 @@ export default class Expansion_State extends Rotation_State {
 
 	constructor() { super(0.03); }
 
-	// als track where the user (besides rotating)
-	// moves with respect to the center (grows the rotation)
+	// track where the mouse (while down) moves
+	// with respect to the center (e.g., grows/shrinks the ring)
 
 	reset() { super.reset(); this.radiusOffset = null; }
 	get isActive(): boolean { return !!super.isActive || !!this.radiusOffset; }
-	get stroke_opacity(): number { return this.isHighlighted ? this.basis_opacity * 6 : this.basis_opacity; }
-	get fill_opacity(): number { return this.isHighlighted ? this.basis_opacity * 1.2 : this.basis_opacity * 0.15; }
+	get stroke_opacity(): number { return this.isHighlighted ? this.basis_opacity * 5 : this.basis_opacity; }
+	get fill_opacity(): number { return this.isHighlighted ? this.basis_opacity * 0.5 : this.basis_opacity * 0.15; }
 
 }

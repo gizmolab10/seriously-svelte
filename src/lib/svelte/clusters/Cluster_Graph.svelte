@@ -66,7 +66,6 @@
 		<Rings
 			name={'rings'}
 			zindex={ZIndex.panel}
-			ring_width={k.ring_thickness}
 			cursor_closure={cursor_closure}
 			color={$s_ancestry_focus?.thing?.color ?? k.color_default}/>
 		<Necklace/>

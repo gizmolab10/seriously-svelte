@@ -1,9 +1,9 @@
-import { k } from '../common/Global_Imports';
+import { k, svgPaths } from '../common/Global_Imports';
 
 // for managing the paging ring
 
 export default class Rotation_State {
-	base64_rotateSVG = btoa(encodeURIComponent(k.rotateSVG));		// untested
+	base64_rotateSVG = btoa(encodeURIComponent(svgPaths.rotateSVG));		// untested
 	active_angle: number | null = null;		// angle at location of mouse MOVE
 	basis_angle: number | null = null;		// angle at location of mouse DOWN
 	basis_opacity: number;

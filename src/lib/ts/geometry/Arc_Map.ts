@@ -24,7 +24,7 @@ export default class Arc_Map {
 		const radius = get(s_rotation_ring_radius);
 		this.clusters_center = Point.square(radius);
 		this.inside_arc_radius = radius - thickness;
-		this.cap_radius = k.ring_thickness / 6;
+		this.cap_radius = k.ring_rotation_thickness / 6;
 		this.outside_arc_radius = radius;
 	}
 
@@ -62,7 +62,7 @@ export default class Arc_Map {
 	}
 
 	update(fork_angle: number) {
-		const fork_raw_radius = k.ring_thickness * 0.6;
+		const fork_raw_radius = k.ring_rotation_thickness * 0.6;
 		this.fork_backoff = this.fork_adjustment(fork_raw_radius, this.inside_arc_radius);
 		this.fork_radius = fork_raw_radius - this.fork_backoff;
 		this.fork_angle = fork_angle;
@@ -113,7 +113,7 @@ export default class Arc_Map {
 
 	get debug_svgPath(): string {
 		const small = this.outside_arc_radius;
-		const big = small + k.ring_thickness;
+		const big = small + k.ring_rotation_thickness;
 		const paths = [
 			// this.tinyDot_svgPath(this.outside_arc_radius, this.start_angle),
 			svgPaths.line_atAngle(this.clusters_center, big, this.fork_angle),

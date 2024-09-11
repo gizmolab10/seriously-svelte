@@ -38,6 +38,7 @@ export class Paging_State {
 	get isPaging(): boolean { return this.shown < this.total; }
 	get stateIndex(): number { return this.predicate?.stateIndex ?? -1; }
 	get maximum_paging_index(): number { return this.total - this.shown; }
+	get indexOf_followingPage(): number { return this.index + this.shown; }
 	get thing(): Thing | null { return h.thing_forHID(this.thing_id.hash()) ?? null; }
 	get predicate(): Predicate | null { return h.predicate_forKind(this.kind) ?? null; }
 	get canShow(): number { return Math.round((get(s_rotation_ring_radius) ** 1.5) * Math.PI / 45 / k.row_height) + 1; }
@@ -55,7 +56,7 @@ export class Paging_State {
 	}
 
 	index_isVisible(index: number): boolean {
-		return index.isBetween(this.index, this.index + this.shown - 1, true);
+		return index.isBetween(this.index, this.indexOf_followingPage - 1, true);
 	}
 
 	addTo_paging_index_for(delta: number): boolean {
@@ -64,7 +65,11 @@ export class Paging_State {
 
 	update_index_toShow(index: number): boolean {
 		const prior = this.index;
-		this.index = index.force_between(0, this.maximum_paging_index);
+		if (index == this.indexOf_followingPage) {
+			this.index = (this.index + 1).force_between(0, this.maximum_paging_index);		// increment index by 1
+		} else {
+			this.index = index.force_between(0, this.maximum_paging_index);					// force == wrap around
+		}
 		return this.index != prior;
 	}
 

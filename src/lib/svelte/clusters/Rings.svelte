@@ -9,11 +9,11 @@
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Paging_Arc from './Paging_Arc.svelte';
-	export let ring_width = 0;
 	export let name = k.empty;
 	export let color = k.empty;
 	export let zindex = ZIndex.rotation;
 	export let cursor_closure = () => {};
+	const ring_width = k.ring_rotation_thickness;
 	const ring_outer_offset = -ring_width;
 	const ring_inner_radius = $s_rotation_ring_radius;
 	const ring_middle_radius = ring_inner_radius + ring_width;
