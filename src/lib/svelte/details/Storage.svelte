@@ -19,7 +19,7 @@
 	<Radio_Buttons menuItems={menuItems} idSelected={$s_db_type} fitWithin={k.width_details}/>
 	{#if $s_db_loadTime && $s_db_loadTime > 0}
 		<div style='
-			top:31px;
+			top:24px;
 			left:60px;
 			color:#333;
 			font-size:11px;

@@ -21,7 +21,7 @@ export default class Predicate extends RemoteIdentifiable {
 	static get contains(): Predicate | null { return this.predicate_forKind(PredicateKind.contains); }
 	static get idIsRelated(): string { return this.id_forKind(PredicateKind.isRelated); }
 	static get idContains(): string { return this.id_forKind(PredicateKind.contains); }
-	get description(): string { return this.kind; }
+	get description(): string { return this.kind.unCamelCase().lastWord(); }
 	static nextIndex = 0;
 
 }

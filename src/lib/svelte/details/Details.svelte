@@ -2,7 +2,6 @@
 	import { s_graphRect, s_db_loadTime } from '../../ts/state/Reactive_State';
 	import { k, u, ZIndex } from '../../ts/common/Global_Imports';
 	import Storage from './Storage.svelte';
-	import Color from './Color.svelte';
 	import Info from './Info.svelte';
 </script>
 
@@ -39,6 +38,5 @@
 			position:absolute;
 			z-index: {ZIndex.details};'>
 		<Info/>
-		<Color/>
 	</div>
 </div>

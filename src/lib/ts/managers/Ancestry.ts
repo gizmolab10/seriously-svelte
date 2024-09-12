@@ -98,7 +98,7 @@ export default class Ancestry extends Identifiable {
 		const geometry = get(s_clusters_geometry);
 		if (!!predicate && !!geometry) {
 			const map = geometry?.cluster_map_for(this.points_out, predicate)
-			return map.paging_state_ofAncestry(this);
+			return map?.paging_state_ofAncestry(this) ?? null;
 		}
 		return null;	// either geometry is not setup or predicate id is bogus
 	}

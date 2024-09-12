@@ -2,7 +2,7 @@
 	import { s_thing_changed, s_rebuild_count, s_ancestries_grabbed } from '../../ts/state/Reactive_State';
 	import { k, u, ux, get, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
 	import ColorPicker from 'svelte-awesome-color-picker';
-	const selectorSize = k.dot_size;
+	const selectorSize = k.dot_size + 1;
 	const pickerSize = 100;
 	let colorAsHEX = '#F0F';
 	let persistenceTimer;
@@ -43,17 +43,15 @@
 
 {#if !!thing}
 	{#key thing.id}
-		<div style='top:65px; position:absolute;'>
-			<ColorPicker
-				hex={colorAsHEX}
-				on:input={handleColorChange}
-				--input-size='{selectorSize}px'
-				--picker-width='{pickerSize}px'
-				--picker-height='{pickerSize}px'
-				--slider-width='{selectorSize}px'
-				--picker-z-index='{ZIndex.frontmost}'
-				--picker-indicator-size='{selectorSize}px'
-				label='color'/>
-		</div>
+		<ColorPicker
+			hex={colorAsHEX}
+			on:input={handleColorChange}
+			--input-size='{selectorSize}px'
+			--picker-width='{pickerSize}px'
+			--picker-height='{pickerSize}px'
+			--slider-width='{selectorSize}px'
+			--picker-z-index='{ZIndex.frontmost}'
+			--picker-indicator-size='{selectorSize}px'
+			label=''/>
 	{/key}
 {/if}
