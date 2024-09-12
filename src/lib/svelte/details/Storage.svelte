@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, u, ZIndex, dbDispatch, Hierarchy, IDPersistant, persistLocal } from '../../ts/common/Global_Imports';
+	import { s_db_type, s_db_loadTime } from '../../ts/state/Reactive_State';
 	import Radio_Buttons from '../buttons/Radio_Buttons.svelte';
-	import { s_db_type } from '../../ts/state/Reactive_State';
 	import { DBType } from '../../ts/db/DBInterface';
 	import { h } from '../../ts/db/DBDispatch';
 
@@ -15,4 +15,16 @@
 
 </script>
 
-<Radio_Buttons menuItems={menuItems} idSelected={$s_db_type} fitWithin={k.width_details}/>
+<div class='storage-information'>
+	<Radio_Buttons menuItems={menuItems} idSelected={$s_db_type} fitWithin={k.width_details}/>
+	{#if $s_db_loadTime && $s_db_loadTime > 0}
+		<div style='
+			top:31px;
+			left:60px;
+			color:#333;
+			font-size:11px;
+			position:absolute;'>
+			fetch took {$s_db_loadTime} s
+		</div>
+	{/if}
+</div>

@@ -82,6 +82,7 @@ export enum ZIndex {	// do not change the order
 	widgets,
 	tools,
 	tool_buttons,
+	details,
 	frontmost,
 }
 

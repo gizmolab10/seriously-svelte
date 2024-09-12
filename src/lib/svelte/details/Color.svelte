@@ -43,7 +43,7 @@
 
 {#if !!thing}
 	{#key thing.id}
-		<div style='top:55px; left:10.5px; position:absolute;'>
+		<div style='top:65px; position:absolute;'>
 			<ColorPicker
 				hex={colorAsHEX}
 				on:input={handleColorChange}
@@ -53,7 +53,7 @@
 				--slider-width='{selectorSize}px'
 				--picker-z-index='{ZIndex.frontmost}'
 				--picker-indicator-size='{selectorSize}px'
-				label='color of "{thing.title.injectEllipsisAt()}"'/>
+				label='color'/>
 		</div>
 	{/key}
 {/if}

@@ -491,7 +491,7 @@ export default class Ancestry extends Identifiable {
 			s_ancestry_focus.set(this);
 			this.expand();
 			if (!!grabbedAncestry && !grabbedAncestry.isVisible) {
-				grabbedAncestry.ungrab()
+				// grabbedAncestry.ungrab();	// TODO: WHY?
 				this.grab();
 			}
 		}

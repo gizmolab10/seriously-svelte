@@ -79,8 +79,8 @@
 	.horizontal-line {
 		background-color: lightgray;
 		position: fixed;
-		height: 1px;
 		width: 500px;
+		height: 1px;
 	}
 	.title {
 		font-size: 1.5em;

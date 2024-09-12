@@ -1,53 +1,44 @@
 <script lang='ts'>
 	import { s_graphRect, s_db_loadTime } from '../../ts/state/Reactive_State';
 	import { k, u, ZIndex } from '../../ts/common/Global_Imports';
+	import Storage from './Storage.svelte';
 	import Color from './Color.svelte';
-	import Data from './Data.svelte';
+	import Info from './Info.svelte';
 </script>
-
-<style>
-	.details-modal-overlay {
-		left: 0px;
-		position: fixed;
-		justify-content: center;
-	}
-	.details-modal-content {
-		height: 20px;
-		padding: 10px;
-		font-size: 0.8em;
-		position: relative;
-		background-color: #fff;
-	}
-</style>
 
 <div class='details-modal-overlay'
 	style='
-		width: {k.width_details}px;
-		z-index: {ZIndex.frontmost};
-		top: {$s_graphRect.origin.y}px;
-		height: {$s_graphRect.size.height}px;'>
-	<div class='details-modal-content' style='z-index: {ZIndex.frontmost};'>
-		<Data/>
-		{#if $s_db_loadTime && $s_db_loadTime > 0}
-			<div style='
-				top: 31px;
-				left: 60px;
-				color: #333;
-				font-size: 11px;
-				position: absolute;'>
-				fetch took {$s_db_loadTime} s
-			</div>
-		{/if}
-		<div class='horizontal-line'
-			style='
-				background-color: lightgray;
-				z-index: {ZIndex.frontmost};
-				width: {k.width_details}px;
-				position: absolute;
-				height: 1px;
-				top: 50px;
-				left: 0px;'>
-		</div>
+		left:0px;
+		position:fixed;
+		font-size:0.8em;
+		background-color:#fff;
+		z-index:{ZIndex.details};
+		width:{k.width_details}px;
+		top:{$s_graphRect.origin.y}px;
+		height:{$s_graphRect.size.height}px;'>
+	<div class='details-modal-content'
+		style='
+			height:40px;
+			padding:5px;
+			justify-content:center;'>
+		<Storage/>
+	</div>
+	<div class='horizontal-line'
+		style='
+			top:40px;
+			height:1px;
+			position:absolute;
+			width:{k.width_details}px;
+			z-index:{ZIndex.frontmost};
+			background-color:lightgray;'>
+	</div>
+	<div class='information'
+		style ='
+			left:12px;
+			top:45px;
+			position:absolute;
+			z-index: {ZIndex.details};'>
+		<Info/>
 		<Color/>
 	</div>
 </div>

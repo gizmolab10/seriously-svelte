@@ -745,34 +745,38 @@ export class Hierarchy {
 			if (!siblings || siblings.length == 0) {		// friendly for first-time users
 				this.ancestry_rebuild_runtimeBrowseRight(ancestry, true, EXTREME, up);
 			} else if (!!thing) {
-				const index = siblings.indexOf(thing);
-				const newIndex = index.increment(!up, max);
-				if (!!parentAncestry && !OPTION) {
-					const grabAncestry = parentAncestry.extend_withChild(siblings[newIndex]);
-					if (!!grabAncestry) {
-						if (!grabAncestry.isVisible) {
-							if (!parentAncestry.isFocus) {
-								graph_needsRebuild = parentAncestry.becomeFocus();
-							} else if (get(s_cluster_mode)) {
-								graph_needsRebuild = grabAncestry.assureIsVisible_inClusters();	// change paging
+				const is_cluster_mode = get(s_cluster_mode);
+				const isBidirectional = ancestry.predicate?.isBidirectional ?? false;
+				if ((!isBidirectional && ancestry.points_out) || !is_cluster_mode) {
+					const index = siblings.indexOf(thing);
+					const newIndex = index.increment(!up, max);
+					if (!!parentAncestry && !OPTION) {
+						const grabAncestry = parentAncestry.extend_withChild(siblings[newIndex]);
+						if (!!grabAncestry) {
+							if (!grabAncestry.isVisible) {
+								if (!parentAncestry.isFocus) {
+									graph_needsRebuild = parentAncestry.becomeFocus();
+								} else if (is_cluster_mode) {
+									graph_needsRebuild = grabAncestry.assureIsVisible_inClusters();	// change paging
+								} else {
+									alert('PROGRAMMING ERROR: child of focus is not visible');
+								}
+							}
+							if (SHIFT) {
+								grabAncestry.toggleGrab();
 							} else {
-								alert('PROGRAMMING ERROR: child of focus is not visible');
+								grabAncestry.grabOnly();
 							}
 						}
-						if (SHIFT) {
-							grabAncestry.toggleGrab();
-						} else {
-							grabAncestry.grabOnly();
-						}
+					} else if (g.allow_GraphEditing && OPTION) {
+						graph_needsRebuild = true;
+						await u.ancestries_orders_normalize_remoteMaybe(parentAncestry.childAncestries, false);
+						const wrapped = up ? (index == 0) : (index == max);
+						const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
+						const newOrder = newIndex + goose;
+						ancestry.relationship?.order_setTo_remoteMaybe(newOrder);
+						await u.ancestries_orders_normalize_remoteMaybe(parentAncestry.childAncestries);
 					}
-				} else if (g.allow_GraphEditing && OPTION) {
-					graph_needsRebuild = true;
-					await u.ancestries_orders_normalize_remoteMaybe(parentAncestry.childAncestries, false);
-					const wrapped = up ? (index == 0) : (index == max);
-					const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
-					const newOrder = newIndex + goose;
-					ancestry.relationship?.order_setTo_remoteMaybe(newOrder);
-					await u.ancestries_orders_normalize_remoteMaybe(parentAncestry.childAncestries);
 				}
 				if (graph_needsRebuild) {
 					signals.signal_rebuildGraph_fromFocus();
