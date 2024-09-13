@@ -87,7 +87,7 @@
 				<svg class='svg-arc' viewBox={viewBox}>
 					<path stroke={arc_color} fill=transparent d={cluster_map.arc_map.arc_svgPath}/>
 					{#if debug.reticule}
-						<path stroke='green' fill=transparent d={cluster_map.arc_map.debug_svgPath}/>
+						<path stroke='maroon' fill=transparent d={cluster_map.arc_map.debug_svgPath}/>
 					{/if}
 					{#if cluster_map.isPaging && cluster_map.shown > 1}
 						<path fill={thumb_color} d={cluster_map.thumb_map.arc_svgPath}/>

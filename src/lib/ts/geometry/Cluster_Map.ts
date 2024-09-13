@@ -231,8 +231,7 @@ export default class Cluster_Map  {
 		const row = (max / 2) - index;						// row centered around zero
 		const radius = get(s_rotation_ring_radius);
 		const radial = this.fork_radial;					// points at middle widget
-		const fork_y = radial.y;							// height of fork_angle, relative to center of clusters
-		let y = fork_y + (row * (k.row_height - 2));		// distribute y equally around fork_y
+		let y = radial.y + (row * (k.row_height - 2));		// distribute y equally around fork_y
 		let y_isOutside = false;
 		const absY = Math.abs(y);
 		if (absY > radius) {

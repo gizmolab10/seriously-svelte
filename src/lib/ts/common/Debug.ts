@@ -1,5 +1,7 @@
 import { g } from '../../ts/state/Global_State';
 
+// query string: ?debug=reticule,tools
+
 export enum DebugFlag {
 	reticule = 'reticule',	// show reticule in clusters
 	origins  = 'origins',

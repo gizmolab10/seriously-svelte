@@ -2,6 +2,7 @@ import { k, get, Rect, Point, Angle, svgPaths } from '../common/Global_Imports';
 import { s_rotation_ring_radius } from '../state/Reactive_State';
 
 // create svg paths for generic arcs
+// arc radii are smaller than ring radii
 //
 // given:
 //	start, end & fork angles
@@ -113,10 +114,10 @@ export default class Arc_Map {
 
 	get debug_svgPath(): string {
 		const small = this.outside_arc_radius;
-		const big = small + k.ring_rotation_thickness;
+		// const big = small + k.ring_rotation_thickness;
 		const paths = [
-			// this.tinyDot_svgPath(this.outside_arc_radius, this.start_angle),
-			svgPaths.line_atAngle(this.clusters_center, big, this.fork_angle),
+			// this.tinyDot_svgPath(big, this.start_angle),
+			svgPaths.line_atAngle(this.clusters_center, small, this.fork_angle),
 		];
 		return paths.join(k.space);
 	}
