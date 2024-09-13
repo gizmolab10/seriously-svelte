@@ -85,12 +85,12 @@
 				mouse_state_closure={mouse_state_closure}
 				isHit_closure={() => cluster_map.thumb_isHit}>
 				<svg class='svg-arc' viewBox={viewBox}>
-					<path stroke={arc_color} fill=transparent d={cluster_map.arc_map.arc_svgPath}/>
+					<path stroke={arc_color} fill=transparent d={cluster_map.arc_map.svg_arc_path}/>
 					{#if debug.reticule}
-						<path stroke='maroon' fill=transparent d={cluster_map.arc_map.debug_svgPath}/>
+						<path stroke='maroon' fill=transparent d={cluster_map.arc_map.svg_reticule_path}/>
 					{/if}
 					{#if cluster_map.isPaging && cluster_map.shown > 1}
-						<path fill={thumb_color} d={cluster_map.thumb_map.arc_svgPath}/>
+						<path fill={thumb_color} d={cluster_map.thumb_map.svg_arc_path}/>
 					{/if}
 				</svg>
 			</Mouse_Responder>

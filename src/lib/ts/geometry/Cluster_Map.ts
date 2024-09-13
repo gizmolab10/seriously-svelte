@@ -31,7 +31,6 @@ export default class Cluster_Map  {
 	points_out: boolean;
 	center = Point.zero;
 	isPaging = false;
-	fork_angle = 0;
 	shown = 0;
 	total = 0;
 
@@ -73,14 +72,14 @@ export default class Cluster_Map  {
 	get kind(): string { return this.predicate?.kind.unCamelCase().lastWord() ?? k.empty; }
 	get isParental(): boolean { return !this.points_out && !this.predicate?.isBidirectional; }
 	get name(): string { return `${this.focus_ancestry.title}-cluster-${this.direction_kind}`; }
-	get fork_radial(): Point { return Point.fromPolar(get(s_rotation_ring_radius), this.fork_angle); }
+	get fork_radial(): Point { return Point.fromPolar(get(s_rotation_ring_radius), this.arc_map.fork_angle); }
 	get paging_state_ofFocus(): Paging_State | null { return this.paging_state_ofAncestry(this.focus_ancestry); }
 
 	get thumb_isHit(): boolean {
 		if (this.isPaging) {
 			const ring_origin = g.graph_center.offsetBy(Point.square(-get(s_rotation_ring_radius)));
 			const vector = u.vector_ofOffset_fromGraphCenter_toMouseLocation(ring_origin);
-			return vector?.isContainedBy_path(this.thumb_map.arc_svgPath) ?? false;
+			return vector?.isContainedBy_path(this.thumb_map.svg_arc_path) ?? false;
 		}
 		return false;
 	}
@@ -187,7 +186,6 @@ export default class Cluster_Map  {
 			this.points_out ? rotation_angle :		// one directional, use global
 			opposite + tweak;
 		const fork_angle = raw.angle_normalized() ?? 0;
-		this.fork_angle = fork_angle;
 		this.arc_map.update(fork_angle);
 	}
 
@@ -196,7 +194,7 @@ export default class Cluster_Map  {
 		if (this.shown > 0 && !!this.predicate) {
 			const radius = get(s_rotation_ring_radius);
 			const radial = new Point(radius + k.ring_widget_padding, 0);
-			const fork_pointsRight = new Angle(this.fork_angle).angle_pointsRight;
+			const fork_pointsRight = new Angle(this.arc_map.fork_angle).angle_pointsRight;
 			const tweak = this.center.offsetByXY(2, -1.5);	// tweak so that drag dots are centered within the rotation ring
 			const max = this.shown - 1;
 			let index = 0;

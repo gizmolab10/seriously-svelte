@@ -225,7 +225,7 @@
 					class='svg-rotates'
 					viewBox={ring_viewBox}>
 					{#if debug.reticule}
-						<path stroke='green' fill=transparent d={svgPaths.t_cross(ring_middle_radius * 2, 0)}/>
+						<path stroke='green' fill=transparent d={svgPaths.t_cross(ring_middle_radius * 2, -2)}/>
 					{/if}
 					<path d={svg_ring_rotation_path}
 						fill={u.opacitize(color, $s_ring_rotation_state.fill_opacity * ($s_ring_resizing_state.isHighlighted ? 0.3 : 1))}

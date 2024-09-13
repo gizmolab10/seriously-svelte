@@ -83,24 +83,23 @@ export default class Arc_Map {
 			this.end_angle = saved;
 		}
 		this.arc_rect = this.computed_arc_rect;
-		this.fork_angle = this.center_angle;
 	}
 
 	static readonly $_SVG_PATHS_$: unique symbol;
 
-	get arc_svgPath(): string {
+	get svg_arc_path(): string {
 		const [start, end] = this.angles;
 		const paths = [
-			this.startOf_svgPath(start, this.outside_arc_radius),
-			this.swing_svgPath(end, this.outside_arc_radius, false),
-			this.cap_svgPath(end, false),
-			this.swing_svgPath(start, this.inside_arc_radius, true),
-			this.cap_svgPath(start, true),
+			this.svg_startOf_path(start, this.outside_arc_radius),
+			this.svg_arcLine_path(end, this.outside_arc_radius, false),
+			this.svg_cap_path(end, false),
+			this.svg_arcLine_path(start, this.inside_arc_radius, true),
+			this.svg_cap_path(start, true),
 		];
 		return paths.join(k.space);
 	}
 
-	get fork_svgPath(): string {
+	get svg_fork_path(): string {
 		const forward = this.fork_slantsForward;
 		const fork_radius = this.fork_radius;
 		const angle = -this.fork_angle;
@@ -112,26 +111,16 @@ export default class Arc_Map {
 			angle - (forward ? 0 : Angle.quarter));
 	}
 
-	get debug_svgPath(): string {
-		const small = this.outside_arc_radius;
-		// const big = small + k.ring_rotation_thickness;
-		const paths = [
-			// this.tinyDot_svgPath(big, this.start_angle),
-			svgPaths.line_atAngle(this.clusters_center, small, this.fork_angle),
-		];
-		return paths.join(k.space);
-	}
-
-	startOf_svgPath(start_angle: number, radius: number) {
+	svg_startOf_path(start_angle: number, radius: number) {
 		return svgPaths.startOutAt(this.clusters_center, radius, start_angle);
 	}
 
-	swing_svgPath(end_angle: number, radius: number, clockwise: boolean) {
+	svg_arcLine_path(end_angle: number, radius: number, clockwise: boolean) {
 		const sweep_flag = clockwise ? 0 : 1;
 		return svgPaths.arc_partial(this.clusters_center, radius, 0, sweep_flag, end_angle);
 	}
 
-	cap_svgPath(arc_angle: number, clockwise: boolean) {
+	svg_cap_path(arc_angle: number, clockwise: boolean) {
 		const radial = this.radial_forAngle(arc_angle);
 		const center = this.clusters_center.offsetBy(radial);
 		const end_angle = clockwise ? arc_angle : (arc_angle + Math.PI).angle_normalized();
@@ -139,9 +128,19 @@ export default class Arc_Map {
 	
 	}
 
-	tinyDot_svgPath(radius: number, basis_angle: number) {
+	svg_tinyDot_path(radius: number, basis_angle: number) {
 		const start = this.clusters_center.offsetBy(Point.fromPolar(radius, basis_angle));
 		return svgPaths.circle(start, 5);
+	}
+
+	get svg_reticule_path(): string {
+		const small = this.outside_arc_radius;
+		// const big = small + k.ring_rotation_thickness;
+		const paths = [
+			// this.svg_tinyDot_path(big, this.start_angle),
+			svgPaths.line_atAngle(this.clusters_center, small, this.fork_angle),
+		];
+		return paths.join(k.space);
 	}
 
 }
