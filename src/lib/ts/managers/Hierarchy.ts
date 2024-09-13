@@ -740,16 +740,16 @@ export class Hierarchy {
 		if (parentAncestry) {
 			let graph_needsRebuild = false;
 			const siblings = parentAncestry.children;
-			const max = siblings.length - 1;
+			const length = siblings.length;
 			const thing = this.thing_forAncestry(ancestry);
-			if (!siblings || siblings.length == 0) {		// friendly for first-time users
+			if (!siblings || length == 0) {		// friendly for first-time users
 				this.ancestry_rebuild_runtimeBrowseRight(ancestry, true, EXTREME, up);
 			} else if (!!thing) {
 				const is_cluster_mode = get(s_cluster_mode);
 				const isBidirectional = ancestry.predicate?.isBidirectional ?? false;
 				if ((!isBidirectional && ancestry.points_out) || !is_cluster_mode) {
 					const index = siblings.indexOf(thing);
-					const newIndex = index.increment(!up, max);
+					const newIndex = index.increment(!up, length);
 					if (!!parentAncestry && !OPTION) {
 						const grabAncestry = parentAncestry.extend_withChild(siblings[newIndex]);
 						if (!!grabAncestry) {
@@ -771,7 +771,7 @@ export class Hierarchy {
 					} else if (g.allow_GraphEditing && OPTION) {
 						graph_needsRebuild = true;
 						await u.ancestries_orders_normalize_remoteMaybe(parentAncestry.childAncestries, false);
-						const wrapped = up ? (index == 0) : (index == max);
+						const wrapped = up ? (index == 0) : (index + 1 == length);
 						const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
 						const newOrder = newIndex + goose;
 						ancestry.relationship?.order_setTo_remoteMaybe(newOrder);
