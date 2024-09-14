@@ -10,7 +10,7 @@ export enum IDPersistant {
 	relationships = 'relationships',
 	show_children = 'show_children',
 	title_atTop   = 'title_atTop',
-	cluster_arc	  = 'cluster_arc',
+	ring_radius	  = 'ring_radius',
 	page_states   = 'page_states',
 	ring_angle    = 'ring_angle',
 	arrowheads	  = 'arrowheads',
@@ -133,7 +133,7 @@ class Persist_Local {
 			this.write_key(IDPersistant.relations, relations);
 		});
 		s_rotation_ring_radius.subscribe((radius: number) => {
-			this.write_key(IDPersistant.cluster_arc, radius);
+			this.write_key(IDPersistant.ring_radius, radius);
 		});
 		s_cluster_mode.subscribe((flag: boolean) => {
 			this.write_key(IDPersistant.layout, flag);
@@ -236,7 +236,7 @@ class Persist_Local {
 		s_show_details.set(this.read_key(IDPersistant.details) ?? false);
 		s_thing_fontFamily.set(this.read_key(IDPersistant.font) ?? 'Arial');
 		s_cluster_mode.set(this.read_key(IDPersistant.layout) ?? false);
-		s_rotation_ring_radius.set(this.read_key(IDPersistant.cluster_arc) ?? 130);
+		s_rotation_ring_radius.set(Math.max(this.read_key(IDPersistant.ring_radius) ?? 0, k.ring_smallest_radius));
 		s_shown_relations.set(this.read_key(IDPersistant.relations) ?? GraphRelations.children);
 		this.restore_graphOffset();
 		this.reactivity_subscribe()

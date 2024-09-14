@@ -85,15 +85,16 @@
 					debug.log_action(`RINGS  page  ${delta_angle.degrees_of(0)}`);
 					signals.signal_rebuildGraph_fromFocus();
 				}
-			} else if (!!$s_ring_resizing_state.radiusOffset) {					// resize
-				const magnitude = from_center.magnitude
+			} else if (!!$s_ring_resizing_state.basis_offset) {					// resize
 				const smallest = k.ring_smallest_radius;
 				const largest = k.ring_smallest_radius * 3;
+				const magnitude = from_center.magnitude - $s_ring_resizing_state.basis_offset;
 				const distance = magnitude.force_between(smallest, largest);
-				const delta = distance - $s_rotation_ring_radius - $s_ring_resizing_state.radiusOffset;
+				const delta = distance - $s_rotation_ring_radius;
+				const radius = $s_rotation_ring_radius + delta;
+				// if (Math.abs(delta) > 1 && radius >= smallest) {				// granularity of 1 pixel
 				if (Math.abs(delta) > 1) {										// granularity of 1 pixel
-					const radius = $s_rotation_ring_radius + delta;
-					debug.log_action(`RINGS  resize  ${radius.toFixed(0)}`);
+					debug.log_action(`RINGS  resize  D ${distance.toFixed(0)}  R ${radius.toFixed(0)}  + ${delta.toFixed(1)}`);
 					$s_rotation_ring_radius = radius;
 					signals.signal_rebuildGraph_fromFocus();					// destroys this component (properties are in s_ring_resizing_state)
 				}
@@ -117,9 +118,9 @@
 			} else if (mouse_state.isDown) {
 				switch (ring_zone) {
 					case Ring_Zone.resizing:
-						const ring_outer_radius = distance_fromCenter() - $s_rotation_ring_radius;
-						debug.log_action(`RINGS  begin resize  ${ring_outer_radius.toFixed(0)}`);
-						$s_ring_resizing_state.radiusOffset = ring_outer_radius;
+						const radius_offset = distance_fromCenter() - $s_rotation_ring_radius;
+						debug.log_action(`RINGS  begin resize  ${radius_offset.toFixed(0)}`);
+						$s_ring_resizing_state.basis_offset = radius_offset;
 						rebuilds += 1;
 						break;
 					case Ring_Zone.rotation:

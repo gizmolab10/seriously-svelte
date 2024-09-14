@@ -109,7 +109,9 @@ Object.defineProperty(Number.prototype, 'isAlmost', {
 });
 
 Object.defineProperty(Number.prototype, 'force_between', {
-	value: function(smallest: number, largest: number): number {
+	value: function(a: number, b: number): number {
+		const largest = Math.max(a, b);
+		const smallest = Math.min(a, b);
 		return Math.max(smallest, Math.min(largest, this));
 	},
 	writable: false,

@@ -21,19 +21,16 @@ class Global_State {
 		this.queryStrings = new URLSearchParams(window.location.search);
 	}
 
-	setup() {
-		// default states
-		s_resize_count.set(0);
+	setup() {											// from
+		s_resize_count.set(0);							// defaults
 		s_rebuild_count.set(0);
 		s_mouse_up_count.set(0);
 		s_thing_changed.set(null);
 		s_paging_ring_state.set(new Rotation_State());
 		s_ring_rotation_state.set(new Rotation_State());
 		s_ring_resizing_state.set(new Expansion_State());
-		// persisted states
-		persistLocal.restore_state();
-		// url query string states
-		this.queryStrings_apply();
+		persistLocal.restore_state();					// persisted
+		this.queryStrings_apply();						// url query string
 		debug.queryStrings_apply();
 		e.setup();
 	}
