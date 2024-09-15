@@ -7,13 +7,18 @@ export default class Ancestry_Parent extends Ancestry {
 		super(ancestry.id, ancestry.idPredicate, false);
 		this.original = ancestry;
 	}
+
+	becomeFocus(): boolean {
+		return this.original.becomeFocus()
+	}
 	
 	// with isNormal = false, this fixes
 	// paging state & cluster map lookups,
 	// is visible & assureIsVisible_inClusters
+	// needed becomeFocus
 
 	// what about:
-	// relocate, focus
+	// relocate, grab
 	// subscriptions
 	// other mutations
 

@@ -5,18 +5,24 @@
 	let information: { [key: string]: string } = {}
 	let ancestry: Ancestry | null = null;
 	let info;
+
+	function hasGrabs(): boolean {
+		const grabs = $s_ancestries_grabbed;
+		return !!grabs && (grabs.length > 0);
+	}
 	
 	$: {
 		const grabs = $s_ancestries_grabbed;
-		const hasNoGrabs = !grabs || (grabs.length < 1);
-		ancestry = hasNoGrabs ? null : grabs[0];
-		information = {
-			'name' : ancestry.title.injectEllipsisAt(),
-			'relationship' : ancestry.predicate?.description ?? k.empty,
-			'direction' : ancestry.isNormal ? 'normal' : 'inverted',
-			'id' : ancestry.id.injectEllipsisAt(),
-		};
-		info = Object.entries(information)
+		if (hasGrabs()) {
+			ancestry = grabs[0];
+			information = {
+				'name' : ancestry.title.injectEllipsisAt(),
+				'relationship' : ancestry.predicate?.description ?? k.empty,
+				'direction' : ancestry.isNormal ? 'normal' : 'inverted',
+				'id' : ancestry.thing?.id.injectEllipsisAt(),
+			};
+			info = Object.entries(information)
+		}
 	}
 
 </script>
@@ -39,7 +45,7 @@
 		left:0px;
 		position:absolute;
 		z-index: {ZIndex.details};'>
-	{#if !!ancestry}
+	{#if !!ancestry && hasGrabs()}
 		<table style='width: 200px;'>
 			{#key info}
 				{#each info as [key, value]}
