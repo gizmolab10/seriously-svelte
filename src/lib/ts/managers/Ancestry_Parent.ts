@@ -1,4 +1,4 @@
-import { Ancestry } from '../common/Global_Imports';
+import Ancestry from './Ancestry';
 
 export default class Ancestry_Parent extends Ancestry {
 	original!: Ancestry;
@@ -8,7 +8,7 @@ export default class Ancestry_Parent extends Ancestry {
 		this.original = ancestry;
 	}
 	
-	// with points_out = false, this fixes
+	// with isNormal = false, this fixes
 	// paging state & cluster map lookups,
 	// is visible & assureIsVisible_inClusters
 
@@ -16,5 +16,10 @@ export default class Ancestry_Parent extends Ancestry {
 	// relocate, focus
 	// subscriptions
 	// other mutations
+
+	// needs:
+	// invert relationship (swap parent and child)?
+	// change predicate to isContainedBy?
+	// onePage_from predicate and points out
 
 }

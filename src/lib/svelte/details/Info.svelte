@@ -13,7 +13,7 @@
 		information = {
 			'name' : ancestry.title.injectEllipsisAt(),
 			'relationship' : ancestry.predicate?.description ?? k.empty,
-			'points' : ancestry.points_out ? 'out' : 'in',
+			'direction' : ancestry.isNormal ? 'normal' : 'inverted',
 			'id' : ancestry.id.injectEllipsisAt(),
 		};
 		info = Object.entries(information)

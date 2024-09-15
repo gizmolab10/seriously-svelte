@@ -747,7 +747,7 @@ export class Hierarchy {
 			} else if (!!thing) {
 				const is_cluster_mode = get(s_cluster_mode);
 				const isBidirectional = ancestry.predicate?.isBidirectional ?? false;
-				if ((!isBidirectional && ancestry.points_out) || !is_cluster_mode) {
+				if ((!isBidirectional && ancestry.isNormal) || !is_cluster_mode) {
 					const index = siblings.indexOf(thing);
 					const newIndex = index.increment(!up, length);
 					if (!!parentAncestry && !OPTION) {

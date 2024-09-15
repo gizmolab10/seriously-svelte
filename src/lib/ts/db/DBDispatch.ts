@@ -34,7 +34,7 @@ export default class DBDispatch {
 					(async () => {
 						this.db_setupData_forType(type);
 					})();
-				}, 1);
+				}, 10);
 			}
 		});
 	}

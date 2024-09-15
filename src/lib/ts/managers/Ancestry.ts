@@ -9,7 +9,7 @@ import { h } from '../db/DBDispatch';
 export default class Ancestry extends Identifiable {
 	_thing: Thing | null = null;
 	idPredicate: string;
-	points_out = true;
+	isNormal = true;
 	unsubscribe: any;
 
 	// id => ancestry string 
@@ -17,9 +17,9 @@ export default class Ancestry extends Identifiable {
 	// NOTE: first relationship's parent is always the root
 	//   "   idPredicate is from the last relationship
 
-	constructor(ancestryString: string = k.empty, idPredicate: string = Predicate.idContains, points_out: boolean = true) {
+	constructor(ancestryString: string = k.empty, idPredicate: string = Predicate.idContains, isNormal: boolean = true) {
 		super(ancestryString);
-		this.points_out = points_out;
+		this.isNormal = isNormal;
 		this.idPredicate = idPredicate;
 	}
 
@@ -97,7 +97,7 @@ export default class Ancestry extends Identifiable {
 		const predicate = this.predicate;
 		const geometry = get(s_clusters_geometry);
 		if (!!predicate && !!geometry) {
-			const map = geometry?.cluster_map_for(this.points_out, predicate)
+			const map = geometry?.cluster_map_for(this.isNormal, predicate)
 			return map?.paging_state_ofAncestry(this) ?? null;
 		}
 		return null;	// either geometry is not setup or predicate id is bogus
