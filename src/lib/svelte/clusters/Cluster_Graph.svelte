@@ -1,21 +1,15 @@
 <script lang='ts'>
-	import { g, k, u, ux, Rect, Size, Point, ZIndex, onMount, signals, debug, Clusters_Geometry } from '../../ts/common/Global_Imports';
 	import { s_clusters_geometry, s_ring_rotation_state, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import { s_user_graphOffset, s_thing_fontFamily, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
+	import { g, k, u, ux, Rect, Point, debug, ZIndex, IDTool } from '../../ts/common/Global_Imports';
+	import { onMount, signals, ElementType, Clusters_Geometry } from '../../ts/common/Global_Imports';
 	import { s_graphRect, s_show_details, s_ancestry_focus } from '../../ts/state/Reactive_State';
-	import Editing_Tools from '../widget/Editing_Tools.svelte';
-	import Title_Editor from '../widget/Title_Editor.svelte';
+	import Cluster_Focus from './Cluster_Focus.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Necklace from './Necklace.svelte';
 	import Rings from './Rings.svelte';
-	let toolsOffset = new Point(32, -3);
-	let titleCenter = Point.zero;
-	let size = Size.zero;
-	let forward = true;
-	let titleWidth = 0;
+	let clusters_graph;
 	let rebuilds = 0;
-	let offsetX = 0;
-	let clusters;
 
 	// draw center title, rings and widget necklace
 	//	arcs & rings: selection & hover
@@ -41,46 +35,22 @@
 		$s_clusters_geometry = new Clusters_Geometry();
 	}
 
-	$: {
-		titleWidth = $s_ancestry_focus?.thing?.titleWidth ?? 0;
-		offsetX = -9 - k.thing_fontSize - (titleWidth / 2);
-		titleCenter = g.graph_center.offsetByXY(offsetX, k.cluster_offsetY);
-		toolsOffset = new Point(31, -23.5).offsetBy($s_user_graphOffset.negated);
-		rebuilds += 1;
-	}
-
 	function cursor_closure() {
-		if (!!clusters) {
-			clusters.style.cursor = `${$s_ring_rotation_state.cursor} !important`;
+		if (!!clusters_graph) {
+			clusters_graph.style.cursor = `${$s_ring_rotation_state.cursor} !important`;
 		}
 	}
 
 </script>
 
 {#key rebuilds, $s_ancestry_focus.hashedAncestry}
-	<div class='clusters'
-		bind:this={clusters}
+	<div class='clusters-graph'
+		bind:this={clusters_graph}
 		style='
 			z-index:{ZIndex.panel};
 			transform:translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px);'>
-		<Rings
-			name={'rings'}
-			zindex={ZIndex.panel}
-			cursor_closure={cursor_closure}
-			color={$s_ancestry_focus?.thing?.color ?? k.color_default}/>
+		<Cluster_Focus/>
+		<Rings cursor_closure={cursor_closure}/>
 		<Necklace/>
-		{#if $s_ancestry_showingTools?.isVisible}
-			<Editing_Tools offset={toolsOffset}/>
-		{/if}
-		<div class='cluster-focus'
-			style='
-				position: absolute;
-				top:{titleCenter.y}px;
-				left: {titleCenter.x}px;'>
-			<Title_Editor
-				ancestry={$s_ancestry_focus}
-				fontSize={k.thing_fontSize}px
-				fontFamily={$s_thing_fontFamily}/>
-		</div>
 	</div>
 {/key}

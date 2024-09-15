@@ -9,9 +9,7 @@
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Paging_Arc from './Paging_Arc.svelte';
-	export let name = k.empty;
-	export let color = k.empty;
-	export let zindex = ZIndex.rotation;
+	export let zindex = ZIndex.panel;
 	export let cursor_closure = () => {};
 	const ring_width = k.ring_rotation_thickness;
 	const ring_outer_offset = -ring_width;
@@ -19,6 +17,8 @@
 	const ring_middle_radius = ring_inner_radius + ring_width;
 	const ring_outer_radius = ring_middle_radius + ring_width;
 	const ring_outer_diameter = ring_outer_radius * 2;
+	const name = 'rings';
+	const color = $s_ancestry_focus?.thing?.color ?? k.color_default;
 	const mouse_timer = ux.mouse_timer_forName(name);	// persist across destroy/recreate
 	const svg_ring_rotation_path = svgPaths.annulus(Point.square(ring_inner_radius), ring_middle_radius, ring_width, Point.square(ring_width));
 	const svg_ring_resizing_path = svgPaths.annulus(Point.square(ring_middle_radius), ring_outer_radius, ring_width);

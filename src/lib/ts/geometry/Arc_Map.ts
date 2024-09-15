@@ -134,7 +134,7 @@ export default class Arc_Map {
 	}
 
 	get svg_reticule_path(): string {
-		const small = this.outside_arc_radius;
+		const small = this.outside_arc_radius + (k.ring_rotation_thickness - k.dot_size) / 2;
 		// const big = small + k.ring_rotation_thickness;
 		const paths = [
 			// this.svg_tinyDot_path(big, this.start_angle),

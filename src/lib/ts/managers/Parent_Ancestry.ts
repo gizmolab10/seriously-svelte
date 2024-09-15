@@ -1,6 +1,6 @@
 import Ancestry from './Ancestry';
 
-export default class Ancestry_Parent extends Ancestry {
+export default class Parent_Ancestry extends Ancestry {
 	original!: Ancestry;
 
 	constructor(ancestry: Ancestry) {

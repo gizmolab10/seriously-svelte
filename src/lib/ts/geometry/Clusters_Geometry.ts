@@ -1,7 +1,7 @@
 import { u, get, Thing, debug, Ancestry, Predicate } from '../common/Global_Imports';
 import { Cluster_Map, Paging_State, Widget_MapRect } from '../common/Global_Imports';
 import { s_paging_state, s_ancestry_focus } from '../state/Reactive_State';
-import Ancestry_Parent from '../managers/Ancestry_Parent';
+import Parent_Ancestry from '../managers/Parent_Ancestry';
 import { h } from '../db/DBDispatch';
 
 export default class Clusters_Geometry {
@@ -65,7 +65,7 @@ export default class Clusters_Geometry {
 	parent_ancestries_maybeFor(focus: Thing, predicate: Predicate): Array<Ancestry> {
 		let ancestries = focus.uniqueAncestries_for(predicate) ?? [];
 		if (predicate.id == Predicate.idContains) {
-			ancestries = ancestries.map(a => new Ancestry_Parent(a));
+			ancestries = ancestries.map(a => new Parent_Ancestry(a));
 		}
 		return ancestries;
 	}
