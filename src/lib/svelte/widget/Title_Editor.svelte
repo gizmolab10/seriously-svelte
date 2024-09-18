@@ -33,8 +33,10 @@
 	};
 	
 	onMount(() => {
-		titleWidth = ancestry?.thing?.titleWidth + 6;
-		titleLeft = $s_cluster_mode ? (forward ? 14 : 4) : 10;
+		if (!!ancestry?.thing) {
+			titleWidth = ancestry.thing.titleWidth + 6;
+			titleLeft = $s_cluster_mode ? ancestry.isFocus ? -5 : (forward ? 14 : 4) : 10;
+		}
 		const handler = signals.handle_anySignal((IDSignal, ancestry) => { updateInputWidth(); });
 		setTimeout(() => { updateInputWidth(); }, 100);
 		return () => { handler.disconnect() };

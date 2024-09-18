@@ -1,10 +1,10 @@
 <script lang='ts'>
-	import { s_graphRect, s_thing_changed, s_mouse_location } from '../../ts/state/Reactive_State';
-	import { s_mouse_up_count } from '../../ts/state/Reactive_State';
-	import { s_ancestry_focus, s_user_graphOffset, s_clusters_geometry, s_active_cluster_map } from '../../ts/state/Reactive_State';
 	import { g, k, u, ux, w, Thing, Point, Angle, debug, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
 	import { s_paging_ring_state, s_ring_resizing_state, s_ring_rotation_state } from '../../ts/state/Reactive_State';
+	import { s_ancestry_focus, s_clusters_geometry, s_active_cluster_map } from '../../ts/state/Reactive_State';
+	import { s_graphRect, s_thing_changed, s_mouse_location } from '../../ts/state/Reactive_State';
 	import { s_rotation_ring_angle, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
+	import { s_mouse_up_count, s_user_graphOffset } from '../../ts/state/Reactive_State';
 	import { svgPaths, dbDispatch, opacitize } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
@@ -210,32 +210,34 @@
 				{/if}
 			{/each}
 		</div>
-		<div class='rotates-expands' bind:this={rotationRing} style='z-index:{ZIndex.rotation};'>
-			<Mouse_Responder
-				name={name}
-				zindex={zindex}
-				isHit_closure={isHit}
-				center={g.graph_center}
-				detect_longClick={false}
-				detect_doubleClick={false}
-				width={ring_outer_diameter}
-				height={ring_outer_diameter}
-				cursor={$s_ring_rotation_state.cursor}
-				mouse_state_closure={mouse_state_closure}>
-				<svg
-					class='svg-rotates'
-					viewBox={ring_viewBox}>
-					{#if debug.reticule}
-						<path stroke='green' fill=transparent d={svgPaths.t_cross(ring_middle_radius * 2, -2)}/>
-					{/if}
-					<path d={svg_ring_rotation_path}
-						fill={u.opacitize(color, $s_ring_rotation_state.fill_opacity * ($s_ring_resizing_state.isHighlighted ? 0.3 : 1))}
-						stroke={u.opacitize(color, $s_ring_rotation_state.stroke_opacity * ($s_ring_resizing_state.isHighlighted ? 0.7 : 1))}/>
-					<path d={svg_ring_resizing_path}
-						fill={u.opacitize(color, $s_ring_resizing_state.fill_opacity)}
-						stroke={u.opacitize(color, $s_ring_resizing_state.stroke_opacity)}/>
-				</svg>
-			</Mouse_Responder>
-		</div>
+		{#if !debug.noRings}
+			<div class='rotates-expands' bind:this={rotationRing} style='z-index:{ZIndex.rotation};'>
+				<Mouse_Responder
+					name={name}
+					zindex={zindex}
+					isHit_closure={isHit}
+					center={g.graph_center}
+					detect_longClick={false}
+					detect_doubleClick={false}
+					width={ring_outer_diameter}
+					height={ring_outer_diameter}
+					cursor={$s_ring_rotation_state.cursor}
+					mouse_state_closure={mouse_state_closure}>
+					<svg
+						class='svg-rotates'
+						viewBox={ring_viewBox}>
+						{#if debug.reticule}
+							<path stroke='green' fill=transparent d={svgPaths.t_cross(ring_middle_radius * 2, -2)}/>
+						{/if}
+						<path d={svg_ring_rotation_path}
+							fill={u.opacitize(color, $s_ring_rotation_state.fill_opacity * ($s_ring_resizing_state.isHighlighted ? 0.3 : 1))}
+							stroke={u.opacitize(color, $s_ring_rotation_state.stroke_opacity * ($s_ring_resizing_state.isHighlighted ? 0.7 : 1))}/>
+						<path d={svg_ring_resizing_path}
+							fill={u.opacitize(color, $s_ring_resizing_state.fill_opacity)}
+							stroke={u.opacitize(color, $s_ring_resizing_state.stroke_opacity)}/>
+					</svg>
+				</Mouse_Responder>
+			</div>
+		{/if}
 	</div>
 {/key}

@@ -40,7 +40,7 @@ export default class Mouse_State {
 			Rect.rect_forElement_containsEvent(this.element, this.event);
 	}
 
-	get description():string {
+	get description(): string {
 		let states: Array<string> = [];
 		if (this.isHover) { states.push('hover'); }
 		if (this.isOut) { states.push('out'); }

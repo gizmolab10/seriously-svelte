@@ -34,7 +34,7 @@ export class Hierarchy {
 
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): string | null { return this.root?.id ?? null; };
-	ancestries_rebuildAll() { this.root.oneAncestries_rebuildForSubtree(); }
+	ancestries_rebuildAll() { this.root?.oneAncestries_rebuildForSubtree(); }
 	thing_forAncestry(ancestry: Ancestry | null): Thing | null { return ancestry?.thing ?? null; }
 	thing_forHID(hid: number | null): Thing | null { return (!hid) ? null : this.thing_byHID[hid]; }
 
@@ -52,6 +52,10 @@ export class Hierarchy {
 		const ancestry = this.ancestry_remember_createUnique();
 		if (!!ancestry) {
 			this.rootAncestry = ancestry;
+			const root = ancestry.thing;
+			if (!this.root && !!root) {
+				this.root = root;
+			}
 		}
 	}
 

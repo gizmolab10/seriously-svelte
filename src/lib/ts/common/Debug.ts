@@ -4,6 +4,7 @@ import { g } from '../../ts/state/Global_State';
 
 export enum DebugFlag {
 	reticule = 'reticule',	// show reticule in clusters
+	noRings	 = 'noRings',
 	origins  = 'origins',
 	rebuild  = 'rebuild',
 	layout	 = 'layout',
@@ -42,6 +43,7 @@ export class Debug {
 	log_maybe(option: DebugFlag, message: string) { if (this.hasOption(option)) { console.log(option.toUpperCase(), message); }}
 	log_target(target: any, key: string) { console.log(`Method \'${key}\' is called on class \'${target.constructor.name}\'`); }
 	get reticule(): boolean { return this.hasOption(DebugFlag.reticule); }
+	get noRings(): boolean { return this.hasOption(DebugFlag.noRings); }
 	get lines(): boolean { return this.hasOption(DebugFlag.lines); }
 
 	queryStrings_apply() {
@@ -52,6 +54,7 @@ export class Debug {
 			for (const option of flags) {
 				switch (option) {
 					case 'reticule': this.flags.push(DebugFlag.reticule); break;
+					case 'noRings': this.flags.push(DebugFlag.noRings); break;
 					case 'origins': this.flags.push(DebugFlag.origins); break;
 					case 'rebuild': this.flags.push(DebugFlag.rebuild); break;
 					case 'remote': this.flags.push(DebugFlag.remote); break;

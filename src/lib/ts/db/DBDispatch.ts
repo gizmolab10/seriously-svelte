@@ -18,10 +18,12 @@ export default class DBDispatch {
 
 	queryStrings_apply() {
 		const queryStrings = g.queryStrings;
-		const type = queryStrings.get('db') ?? persistLocal.read_key(IDPersistant.db) ?? DBType.firebase;
-		this.db_changeTypeTo_for(type);
-		this.db.queryStrings_apply();
-		s_db_type.set(type);
+		const type = queryStrings.get('db');
+		if (!!type) {
+			this.db_set_accordingToType(type);
+			this.db.queryStrings_apply();
+			s_db_type.set(type);
+		}
 	}
 
 	constructor() {
@@ -32,6 +34,7 @@ export default class DBDispatch {
 				done = true;
 				setTimeout(() => {
 					(async () => {
+						persistLocal.write_key(IDPersistant.db, type);
 						this.db_setupData_forType(type);
 					})();
 				}, 10);
@@ -40,7 +43,7 @@ export default class DBDispatch {
 	}
 
 	async db_setupData_forType(type: string) {
-		this.db_changeTypeTo_for(type);
+		this.db_set_accordingToType(type);
 		this.queryStrings_apply();
 		await this.hierarchy_fetch_andBuild(type);
 		persistLocal.restore_grabbed_andExpanded(true);
@@ -83,7 +86,7 @@ export default class DBDispatch {
 		s_db_loadTime.set(loadTime);
 	}
 
-	db_changeTypeTo_for(type: string) { this.db = this.db_forType(type); }
+	db_set_accordingToType(type: string) { this.db = this.db_forType(type); }
 	db_change_toNext(forward: boolean) { this.db_change_toType(this.db_next_get(forward)); }
 
 	db_change_toType(newDBType: DBType) {

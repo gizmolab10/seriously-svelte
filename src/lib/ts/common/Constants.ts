@@ -42,14 +42,12 @@ export default class Constants {
 
 	paging_arc_thickness: number;
 	ring_widget_padding: number;
-	cluster_offsetY: number;
 	build_number: string;
 	row_height: number;
 
 	constructor() {
 		this.build_number = builds.latest;
 		this.row_height = this.dot_size + 7;
-		this.cluster_offsetY = 4 - this.dot_size;
 		this.paging_arc_thickness = this.ring_rotation_thickness / 3;
 		this.ring_widget_padding = (this.ring_rotation_thickness - 1) / 2;
 	}

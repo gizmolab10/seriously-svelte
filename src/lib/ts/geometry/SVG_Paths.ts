@@ -1,4 +1,4 @@
-import { k, u, Point, Angle } from '../common/Global_Imports';
+import { k, u, Size, Point, Angle } from '../common/Global_Imports';
 
 export enum Direction {
 	up = Angle.three_quarters,
@@ -48,6 +48,14 @@ export default class SVG_Paths {
 		const diametric_move = radius * 2 * (clockwise ? 1 : -1);
         return `M${center.x - radius} ${center.y} a${radius} ${radius} 0 0 ${direction} ${diametric_move} 0 a${radius} ${radius} 0 0 ${direction} ${-diametric_move} 0`;
     }
+
+	oblong(center: Point, size: Size) {
+		const x = center.x;
+		const y = center.y;
+		const halfway = size.width / 2;// L/2
+		const radius = size.height / 2;// W/2
+		return `M ${x - halfway}, ${y + radius} A ${radius}, ${radius} 0 0 1  ${x - halfway}, ${y - radius} H ${x + halfway} A ${radius}, ${radius} 0 0 1 ${x + halfway}, ${y + radius} Z`
+	}
 
     oval(diameter: number, horizontal: boolean = true, eccentricity: number = 2.3): string {
         const radius = diameter / 2;

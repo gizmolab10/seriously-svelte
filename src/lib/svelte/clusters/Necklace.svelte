@@ -7,7 +7,7 @@
 	import { h } from '../../ts/db/DBDispatch';
     const ancestry = $s_ancestry_focus;
 	const center = $s_graphRect.size.dividedInHalf.asPoint;
-	const childOffset = new Point(k.dot_size / -2, k.cluster_offsetY);
+	const childOffset = new Point(k.dot_size / -2, 4 - k.dot_size);
 	let color = ancestry.thing?.color ?? k.color_default;
 	let rebuilds = 0;
 

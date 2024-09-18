@@ -74,26 +74,28 @@
 {#if !!cluster_map}
 	{#key arc_color}
 		<div class='arc' bind:this={arc} style='z-index:{ZIndex.paging};'>
-			<Mouse_Responder
-				width={radius * 2}
-				height={radius * 2}
-				zindex={ZIndex.panel}
-				center={g.graph_center}
-				detect_longClick={false}
-				name={cluster_map?.name}
-				cursor={k.cursor_default}
-				mouse_state_closure={mouse_state_closure}
-				isHit_closure={() => cluster_map.thumb_isHit}>
-				<svg class='svg-arc' viewBox={viewBox}>
-					<path stroke={arc_color} fill=transparent d={cluster_map.arc_map.svg_arc_path}/>
-					{#if debug.reticule}
-						<path stroke='maroon' fill=transparent d={cluster_map.arc_map.svg_reticule_path}/>
-					{/if}
-					{#if cluster_map.isPaging && cluster_map.shown > 1}
-						<path fill={thumb_color} d={cluster_map.thumb_map.svg_arc_path}/>
-					{/if}
-				</svg>
-			</Mouse_Responder>
+			{#if !debug.noRings}
+				<Mouse_Responder
+					width={radius * 2}
+					height={radius * 2}
+					zindex={ZIndex.panel}
+					center={g.graph_center}
+					detect_longClick={false}
+					name={cluster_map?.name}
+					cursor={k.cursor_default}
+					mouse_state_closure={mouse_state_closure}
+					isHit_closure={() => cluster_map.thumb_isHit}>
+					<svg class='svg-arc' viewBox={viewBox}>
+						<path stroke={arc_color} fill=transparent d={cluster_map.arc_map.svg_arc_path}/>
+						{#if debug.reticule}
+							<path stroke='maroon' fill=transparent d={cluster_map.arc_map.svg_reticule_path}/>
+						{/if}
+						{#if cluster_map.isPaging && cluster_map.shown > 1}
+							<path fill={thumb_color} d={cluster_map.thumb_map.svg_arc_path}/>
+						{/if}
+					</svg>
+				</Mouse_Responder>
+			{/if}
 		</div>
 	{/key}
 	<Angled_Text

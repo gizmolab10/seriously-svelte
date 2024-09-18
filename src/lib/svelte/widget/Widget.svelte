@@ -82,10 +82,11 @@
 
 	function update_fromAncestry() {
 		thing = ancestry?.thing;
-		const title = thing?.title ?? thing?.id ?? k.unknown;
-		widgetName = `widget ${title}`;
-		revealName = `reveal ${title}`;
-		if (!ancestry || !thing) {
+		if (!!ancestry && !!thing) {
+			const title = thing.title ?? thing.id ?? k.unknown;
+			widgetName = `widget ${title}`;
+			revealName = `reveal ${title}`;
+		} else {
 			console.log('bad ancestry or thing');
 		}
 	}
