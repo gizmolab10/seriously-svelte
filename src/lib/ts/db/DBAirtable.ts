@@ -1,5 +1,4 @@
 import { g, k, u, debug, Thing, DebugFlag, Hierarchy, Relationship, CreationOptions } from '../common/Global_Imports';
-import { s_things_arrived } from '../state/Reactive_State';
 import { DBType, DatumType } from '../db/DBInterface';
 import DBInterface from './DBInterface';
 import { h } from '../db/DBDispatch';
@@ -77,7 +76,7 @@ export default class DBAirtable implements DBInterface {
 					const id = remoteThing.id;
 					h.thing_remember_runtimeCreate(k.empty, id, remoteThing.fields.title as string, remoteThing.fields.color as string, remoteThing.fields.trait as string, true);
 				}
-				s_things_arrived.set(true);
+				g.things_arrived = true;
 			})
 		} catch (error) {
 			debug.log_error(this.things_errorMessage + ' (things_readAll) ' + error);

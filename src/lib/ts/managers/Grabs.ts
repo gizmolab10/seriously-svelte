@@ -1,5 +1,5 @@
 import { get, Thing, Ancestry } from '../common/Global_Imports';
-import { s_ancestries_grabbed } from '../state/Reactive_State';
+import { s_grabbed_color, s_ancestries_grabbed } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
 
 export default class Grabs {
@@ -7,12 +7,9 @@ export default class Grabs {
 	unsubscribe: any;
 
 	constructor() {
+		this.update_forGrabbed(get(s_ancestries_grabbed));
 		this.unsubscribe = s_ancestries_grabbed.subscribe((ancestries: Array<Ancestry>) => { // executes whenever s_ancestries_grabbed changes
-			if (!!ancestries && ancestries.length > 0 && h.db && h.db.hasData) {
-				this.grabbed = ancestries;
-			} else {
-				this.grabbed = null;
-			}
+			this.update_forGrabbed(ancestries);
 		});
 	};
 
@@ -31,7 +28,7 @@ export default class Grabs {
 
 	get ancestry_lastGrabbed(): Ancestry | null {
 		const ancestries = get(s_ancestries_grabbed);
-		if (!!ancestries && ancestries.length > 0) {
+		if (ancestries.length > 0) {
 			const ancestry = ancestries.slice(-1)[0];	// does not alter ancestries
 			const relationshipHID = ancestry?.relationship?.idHashed;
 			if (relationshipHID && !!h.relationship_forHID(relationshipHID)) {
@@ -43,7 +40,7 @@ export default class Grabs {
 
 	latestAncestryGrabbed(up: boolean): Ancestry | null {	// does not alter array
 		const ancestries = get(s_ancestries_grabbed);
-		if (!!ancestries) {
+		if (ancestries.length > 0) {
 			if (up) {
 				return ancestries[0];
 			} else {
@@ -51,6 +48,16 @@ export default class Grabs {
 			}
 		}
 		return h.rootAncestry;
+	}
+
+	update_forGrabbed(ancestries: Array<Ancestry>) {
+		if (!ancestries || ancestries.length == 0) {
+			this.grabbed = null;
+			s_grabbed_color.set(null);
+		} else {
+			this.grabbed = ancestries;
+			s_grabbed_color.set(ancestries[0].thing?.color ?? null);
+		}
 	}
 
 }

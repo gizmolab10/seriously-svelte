@@ -9,6 +9,7 @@ import { h } from '../db/DBDispatch';
 class Global_State {
 	show_tinyDots = true;
 	show_controls = false;
+	things_arrived = false;
 	show_titleAtTop = false;
 	show_arrowheads = false;
 	allow_GraphEditing = true;

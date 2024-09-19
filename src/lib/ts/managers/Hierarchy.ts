@@ -1,6 +1,6 @@
 import { g, k, u, get, User, Thing, Grabs, debug, Mouse_State, Access, IDTool, IDTrait, signals } from '../common/Global_Imports';
 import { Ancestry, Predicate, Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
-import { s_alteration_mode, s_things_arrived, s_ancestries_grabbed, s_ancestry_showingTools } from '../state/Reactive_State';
+import { s_alteration_mode, s_ancestries_grabbed, s_ancestry_showingTools } from '../state/Reactive_State';
 import { s_isBusy, s_title_editing, s_cluster_mode, s_ancestry_focus } from '../state/Reactive_State';
 import Identifiable from '../data/Identifiable';
 import DBInterface from '../db/DBInterface';
@@ -112,7 +112,7 @@ export class Hierarchy {
 					}
 					switch (key) {
 						case 'delete':
-						case 'backspace':	await this.ancestries_rebuild_traverse_remoteDelete(get(s_ancestries_grabbed)); break;
+						case 'backspace':	await this.ancestries_rebuild_traverse_remoteDelete(get(s_ancestries_grabbed)); s_ancestries_grabbed.set([]); break;
 					}
 				}
 				if (!!ancestryGrab) {
@@ -928,7 +928,7 @@ export class Hierarchy {
 		s_ancestry_showingTools.set(null);
 		s_title_editing.set(null);
 		this.db.setHasData(true);
-		s_things_arrived.set(true);
+		g.things_arrived = true;
 		s_isBusy.set(false);
 		this.isAssembled = true;
 	}

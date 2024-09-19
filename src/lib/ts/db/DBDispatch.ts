@@ -1,5 +1,5 @@
 import { g, debug, signals, Hierarchy, IDPersistant, persistLocal } from '../common/Global_Imports';
-import { s_isBusy, s_db_type, s_db_loadTime, s_things_arrived } from '../state/Reactive_State';
+import { s_isBusy, s_db_type, s_db_loadTime } from '../state/Reactive_State';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
@@ -64,7 +64,7 @@ export default class DBDispatch {
 			const startTime = new Date().getTime();
 			s_db_loadTime.set(null);
 			if (this.db.isRemote) {
-				s_things_arrived.set(false);
+				g.things_arrived = false;
 				s_isBusy.set(true);
 			}
 			h = this.db.hierarchy = new Hierarchy(this.db);		// create Hierarchy to fetch into

@@ -1,10 +1,10 @@
 <script lang='ts'>
-	import { s_things_arrived, s_ancestry_focus, s_user_graphOffset } from '../../ts/state/Reactive_State';
 	import { s_isBusy, s_db_type, s_graphRect, s_id_popupView } from '../../ts/state/Reactive_State';
 	import { s_cluster_mode, s_title_editing, s_show_details } from '../../ts/state/Reactive_State';
 	import { g, k, u, ux, get, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import { debug, ZIndex, signals, onMount, Ancestry } from '../../ts/common/Global_Imports';
 	import { dbDispatch, setContext, persistLocal } from '../../ts/common/Global_Imports';
+	import { s_ancestry_focus, s_user_graphOffset } from '../../ts/state/Reactive_State';
 	import { IDButton, Hierarchy, IDPersistant } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Cluster_Graph from '../clusters/Cluster_Graph.svelte';
@@ -92,7 +92,7 @@
 		{#if $s_db_type != DBType.local}
 			<p>(loading your {$s_db_type} data{$s_db_type == DBType.firebase ? ', from ' + h?.db.baseID : k.empty})</p>
 		{/if}
-	{:else if !$s_things_arrived}
+	{:else if !g.things_arrived}
 		<p>Nothing is available.</p>
 	{:else}
 		<Controls/>

@@ -33,7 +33,6 @@
 	</div>
 	<div class='information'
 		style ='
-			left:12px;
 			top:45px;
 			position:absolute;
 			z-index: {ZIndex.details};'>

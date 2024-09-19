@@ -565,7 +565,7 @@ export default class Ancestry extends Identifiable {
 			}
 			return array;
 		});
-		let ancestries = get(s_ancestries_grabbed) ?? [];
+		let ancestries = get(s_ancestries_grabbed);
 		if (ancestries.length == 0 && !get(s_cluster_mode)) {
 			rootAncestry.grabOnly();
 		} else {
