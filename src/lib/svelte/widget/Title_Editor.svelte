@@ -7,7 +7,7 @@
 	export let fontSize = '1em';
 	export let forward = true;
 	export let ancestry;
-	let padding = `0px 0px 0px 8.5px`;	// 8.5 makes room for drag dot
+	let padding = `0px 0px 0px 6.5px`;	// 8.5 makes room for drag dot
 	let bound_title = ancestry?.thing?.title ?? k.empty;
     let color = ancestry.thing?.color;
 	let titleWrapper: Svelte_Wrapper;
@@ -15,8 +15,8 @@
 	let cursorStyle = k.empty;
 	let mouse_click_timer;
 	let isEditing = false;
-	let titleWidth = 0;
 	let clickCount = 0;
+	let titleWidth = 0;
 	let titleLeft = 0;
     let thing!: Thing;
 	let ghost = null;
@@ -35,7 +35,7 @@
 	onMount(() => {
 		if (!!ancestry?.thing) {
 			titleWidth = ancestry.thing.titleWidth + 6;
-			titleLeft = $s_cluster_mode ? ancestry.isFocus ? -5 : (forward ? 14 : 4) : 10;
+			titleLeft = $s_cluster_mode ? ancestry.isFocus ? -2 : (forward ? 14 : 4) : 10;
 		}
 		const handler = signals.handle_anySignal((IDSignal, ancestry) => { updateInputWidth(); });
 		setTimeout(() => { updateInputWidth(); }, 100);

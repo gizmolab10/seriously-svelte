@@ -81,12 +81,12 @@
 			</Button>
 			{#if g.show_controls}
 				<Button name={IDButton.layout}
-					width=65
+					width=45
 					height={size + 4}
 					center={new Point(lefts[1], top)}
 					element_state={elementStates_byID[IDButton.layout]}
 					closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.layout)}>
-					{#if $s_cluster_mode}tree{:else}clusters{/if}
+					{#if $s_cluster_mode}tree{:else}rings{/if}
 				</Button>
 				{#if !$s_cluster_mode}
 					<Button name={IDButton.relations}

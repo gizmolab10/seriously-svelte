@@ -14,7 +14,7 @@
 	$: {
 		titleWidth = 10 + ($s_ancestry_focus?.thing?.titleWidth ?? 0);
 		const offsetX = -titleWidth / 2;
-		focus_origin = g.graph_center.offsetByXY(offsetX, -k.dot_size);
+		focus_origin = g.graph_center.offsetByXY(offsetX, 1 - k.dot_size);
 		centerOffset = new Point(titleWidth + 25, height).dividedInHalf;
 	}
 
@@ -44,7 +44,7 @@
 			mouse_state_closure={mouse_state_closure}>
 		<svg
 			style='
-				top: -3px;
+				top: -2.7px;
 				left: -13px;
 				height:{height}px;
 				position: absolute;
