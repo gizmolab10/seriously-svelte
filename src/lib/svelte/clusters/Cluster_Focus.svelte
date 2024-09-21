@@ -1,7 +1,7 @@
 <script lang='ts'>
+	import { s_thing_changed, s_ancestry_focus, s_thing_fontFamily } from '../../ts/state/Reactive_State';
 	import { g, k, ux, Size, Point, IDTool, ZIndex, svgPaths, } from '../../ts/common/Global_Imports';
 	import { s_user_graphOffset, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
-	import { s_ancestry_focus, s_thing_fontFamily } from '../../ts/state/Reactive_State';
 	import { ElementType, Clusters_Geometry } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Title_Editor from '../widget/Title_Editor.svelte';
@@ -9,6 +9,7 @@
 	const height = k.row_height + 10;
 	let centerOffset = Point.zero;
 	let focus_origin = Point.zero;
+	let color = k.color_default;
 	let titleWidth = 0;
 
 	$: {
@@ -16,6 +17,11 @@
 		const offsetX = -titleWidth / 2;
 		focus_origin = g.graph_center.offsetByXY(offsetX, 1 - k.dot_size);
 		centerOffset = new Point(titleWidth + 25, height).dividedInHalf;
+	}
+
+	$: {
+		const _ = $s_thing_changed;
+		color = $s_ancestry_focus?.thing?.color;
 	}
 
 	function mouse_state_closure(mouse_state) {
@@ -34,26 +40,28 @@
 		left: {focus_origin.x}px;'>
 		<Mouse_Responder
 			height={height}
-			name=focus-border
 			width={titleWidth}
+			name='focus-border'
 			zindex={ZIndex.panel}
 			detect_longClick={false}
 			cursor={k.cursor_default}
 			isHit_closure={() => false}
 			center={centerOffset.offsetByX(-13)}
 			mouse_state_closure={mouse_state_closure}>
-		<svg
-			style='
-				top: -2.7px;
-				left: -13px;
-				height:{height}px;
-				position: absolute;
-				width:{titleWidth + 40}px;'>
-			<path
-				fill='white'
-				stroke={$s_ancestry_focus?.thing?.color}
-				d={svgPaths.oblong(centerOffset, new Size(titleWidth - 6, k.row_height))}/>
-		</svg>
+			{#key color}
+				<svg
+					style='
+						top: -2.7px;
+						left: -13px;
+						height:{height}px;
+						position: absolute;
+						width:{titleWidth + 40}px;'>
+					<path
+						fill='white'
+						stroke={color}
+						d={svgPaths.oblong(centerOffset, new Size(titleWidth - 6, k.row_height))}/>
+				</svg>
+			{/key}
 		</Mouse_Responder>
 	<div class='cluster-focus-title'
 		style='

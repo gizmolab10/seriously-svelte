@@ -18,11 +18,11 @@
 	const ring_outer_radius = ring_middle_radius + ring_width;
 	const ring_outer_diameter = ring_outer_radius * 2;
 	const name = 'rings';
-	const color = $s_ancestry_focus?.thing?.color ?? k.color_default;
 	const mouse_timer = ux.mouse_timer_forName(name);	// persist across destroy/recreate
 	const svg_ring_rotation_path = svgPaths.annulus(Point.square(ring_inner_radius), ring_middle_radius, ring_width, Point.square(ring_width));
 	const svg_ring_resizing_path = svgPaths.annulus(Point.square(ring_middle_radius), ring_outer_radius, ring_width);
 	const ring_viewBox = `${ring_outer_offset}, ${ring_outer_offset}, ${ring_outer_diameter}, ${ring_outer_diameter}`;
+	let color = $s_ancestry_focus?.thing?.color ?? k.color_default;
 	let mouse_up_count = $s_mouse_up_count;
 	let rotationRing;
 	let rebuilds = 0;
@@ -40,6 +40,7 @@
 
 	$: {
 		if (!!$s_ancestry_focus.thing && $s_ancestry_focus.thing.id == $s_thing_changed?.split(k.generic_separator)[0]) {
+			color = $s_ancestry_focus?.thing?.color ?? k.color_default;
 			rebuilds += 1;
 		}
 	}

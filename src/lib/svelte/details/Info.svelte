@@ -18,6 +18,8 @@
 	
 	$: {
 		const _ = $s_thing_changed;
+		color = ancestry.thing?.color ?? k.color_default;
+		update_info();
 		rebuilds += 1;
 	}
 	

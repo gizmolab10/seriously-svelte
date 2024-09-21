@@ -30,7 +30,7 @@
 				$s_thing_changed = null;
 				await thing.remoteWrite();
 			})();
-		}, 100);		// tenth second delay
+		}, 1000);		// tenth second delay
 	}
 
 </script>
