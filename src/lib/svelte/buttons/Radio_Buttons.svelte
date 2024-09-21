@@ -1,7 +1,8 @@
 <script lang='ts'>
 	import { k, u, onMount } from '../../ts/common/Global_Imports';
+	export let fitWithin = k.width_details;
 	export let idSelected = null;
-	export let fitWithin = 100;
+	export let name = 'menu';
 	export let menuItems;
 	let style = k.empty;
 
@@ -29,10 +30,10 @@
 			totalWidth += width + 25;
 		}
 		if (totalWidth <= fitWithin) {
-			style = `display: flex;
-				flex-direction: row;
-				align-items: center;
-				justify-content: space-around;
+			style = `display:flex;
+				flex-direction:row;
+				align-items:center;
+				justify-content:space-around;
 			`.removeWhiteSpace();
 		}
 	}
@@ -59,10 +60,10 @@
 <div class='radio-buttons'
 	style={style}>
 	{#each menuItems as menuItem}
-		<label class="menu-item"
+		<label class='menu-item' id = {menuItem.label}
 			style='on:keydown={handle_key_down}'>
 			<input class='radio'
-				name='menu'
+				name={name}
 				type='radio'
 				value={menuItem.id}
 				style='outline: none'

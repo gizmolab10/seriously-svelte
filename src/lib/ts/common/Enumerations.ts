@@ -13,6 +13,11 @@ export enum PredicateKind {
 	contains  = 'contains',
 }
 
+export enum Info_Kind {
+	selection = 'selection',
+	focus	  = 'focus',
+}
+
 export enum GraphRelations {
 	children = 'children',
 	parents	 = 'parents',
@@ -57,6 +62,23 @@ export enum IDBrowser  {
 	orion	 = 'orion',
 }
 
+export enum Rebuild_Type {
+	directional = 'directional',
+	clusters = 'clusters',
+	necklace = 'necklace',
+	reveal = 'reveal',
+	widget = 'widget',
+	crumbs = 'crumbs',
+	crumb = 'crumb',
+	tools = 'tools',
+	rings = 'rings',
+	panel = 'panel',
+	info = 'info',
+	tree = 'tree',
+	line = 'line',
+	drag = 'drag',
+}
+
 export enum ElementType {
 	generic	= 'generic',
 	control	= 'control',
@@ -65,6 +87,7 @@ export enum ElementType {
 	focus	= 'focus',
 	crumb	= 'crumb',
 	thumb	= 'thumb',
+	info	= 'info',
 	tool	= 'tool',
 	drag	= 'drag',
 	none	= 'none',

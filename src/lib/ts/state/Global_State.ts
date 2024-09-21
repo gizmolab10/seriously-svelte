@@ -1,7 +1,7 @@
 import { s_cluster_mode, s_paging_ring_state, s_ring_resizing_state, s_ring_rotation_state } from './Reactive_State';
 import { s_rebuild_count, s_ancestry_focus, s_ancestries_grabbed, s_ancestries_expanded } from './Reactive_State';
+import { e, k, u, ux, get, Rect, Size, Point, debug, Info_Kind, dbDispatch } from '../common/Global_Imports';
 import { persistLocal, IDPersistant, Rotation_State, Expansion_State } from '../common/Global_Imports';
-import { e, k, u, ux, get, Rect, Size, Point, debug, dbDispatch } from '../common/Global_Imports';
 import { s_graphRect, s_show_details, s_scale_factor, s_thing_changed } from './Reactive_State';
 import { s_resize_count, s_mouse_up_count } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
@@ -17,6 +17,8 @@ class Global_State {
 	mouse_responder_number = 0;
 	queryStrings: URLSearchParams;
 	allow_HorizontalScrolling = true;
+	shown_info_kind = Info_Kind.selection;
+	rebuild_needed_byType: {[type: string]: boolean} = {};
 
 	constructor() {
 		this.queryStrings = new URLSearchParams(window.location.search);
@@ -139,9 +141,28 @@ class Global_State {
 
 	open_tabFor(url: string) { window.open(url, 'help-webseriously')?.focus(); }
 
+	require_rebuild_forType(type: string) {
+		this.rebuild_needed_byType[type] = true;
+	}
+
+	readOnce_rebuild_needed_forType(type: string) : boolean {
+		const needed = this.rebuild_needed_byType[type];
+		this.rebuild_needed_byType[type] = false;
+		return needed;
+	}
+
 	showHelp() {
 		const url = this.isServerLocal ? k.local_help_url : k.remote_help_url;
 		this.open_tabFor(url);
+	}
+
+	graphRect_update() {
+		const top = this.show_titleAtTop ? 114 : 69;						// height of content above the graph
+		const left = get(s_show_details) ? k.width_details : 0;			// width of details
+		const originOfGraph = new Point(left, top);
+		const sizeOfGraph = this.windowSize.reducedBy(originOfGraph);	// account for origin
+		const rect = new Rect(originOfGraph, sizeOfGraph);
+		s_graphRect.set(rect);											// used by Panel and Graph_Tree
 	}
 
 	zoomBy(factor: number): number {
@@ -161,15 +182,6 @@ class Global_State {
 		zoomContainer.style.height = `${100 / scale}%`;
 		zoomContainer.style.width = `${100 / scale}%`;
 		this.graphRect_update();
-	}
-
-	graphRect_update() {
-		const top = this.show_titleAtTop ? 114 : 69;						// height of content above the graph
-		const left = get(s_show_details) ? k.width_details : 0;			// width of details
-		const originOfGraph = new Point(left, top);
-		const sizeOfGraph = this.windowSize.reducedBy(originOfGraph);	// account for origin
-		const rect = new Rect(originOfGraph, sizeOfGraph);
-		s_graphRect.set(rect);											// used by Panel and Graph_Tree
 	}
 
 }

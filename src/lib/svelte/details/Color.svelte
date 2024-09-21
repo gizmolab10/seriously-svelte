@@ -1,24 +1,17 @@
 <script lang='ts'>
-	import { k, u, ux, get, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
-	import { s_rebuild_count, s_ancestries_grabbed } from '../../ts/state/Reactive_State';
-	import { s_grabbed_color, s_thing_changed } from '../../ts/state/Reactive_State';
+	import { k, u, ux, get, Thing, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
+	import { s_rebuild_count, s_thing_changed } from '../../ts/state/Reactive_State';
 	import ColorPicker from 'svelte-awesome-color-picker';
+	export let thing: Thing;
 	const selectorSize = k.dot_size + 1;
 	const pickerSize = 100;
 	let colorAsHEX = '#F0F';
 	let persistenceTimer;
-	let thing;
 
-	$: { updateFor($s_ancestries_grabbed); }
+	$: { updateFor(thing); }
 
-	function updateFor(grabs) {
-		if (grabs.length > 0) {
-			const grabbed = grabs[0].thing;
-			if (!!grabbed && grabbed != thing) {
-				thing = grabbed;
-				colorAsHEX = u.colorToHex(thing.color);
-			}
-		}
+	function updateFor(thing) {
+		colorAsHEX = u.colorToHex(thing.color);
 	}
 
 	function handleColorChange(event) {
@@ -26,7 +19,6 @@
 		const rebuild_count = get(s_rebuild_count) + 1;
 		const color = event.detail.hex;
 		thing.color = color;
-		s_grabbed_color.set(color);
 		s_rebuild_count.set(rebuild_count);
 		$s_thing_changed = `${thing.id}${k.generic_separator}${rebuild_count}`;
 		if (!!persistenceTimer) {

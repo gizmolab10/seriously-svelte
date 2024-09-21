@@ -9,22 +9,22 @@ import { u } from './Utilities';
 import { k } from './Constants';
 import './Extensions';
 
-import { IDLine, IDTool, IDTrait, ZIndex, IDButton, IDBrowser } from './Enumerations';
-import { ElementType, AlterationType, SvelteComponentType } from './Enumerations';
-import { PredicateKind, GraphRelations, CreationOptions } from './Enumerations';
-import { IDPersistant, persistLocal } from '../managers/Persist_Local';
-import { onMount, onDestroy, setContext, getContext } from 'svelte';
-import { Paging_State, Page_States } from '../state/Page_States';
-import { Direction, svgPaths } from '../geometry/SVG_Paths';
-import { debug, Debug, DebugFlag } from '../common/Debug';
-import { Quadrant, Orientation } from '../geometry/Angle';
-import { Rect, Size, Point } from '../geometry/Geometry';
-import { signals, IDSignal } from '../signals/Signals';
-import { Timer_Type } from '../signals/Mouse_Timer';
-import { Seriously_Range } from './Seriously_Range';
-import { Hierarchy } from '../managers/Hierarchy';
-import { dbDispatch } from '../db/DBDispatch';
 import { builds } from './Builds';
+import { dbDispatch } from '../db/DBDispatch';
+import { Hierarchy } from '../managers/Hierarchy';
+import { Seriously_Range } from './Seriously_Range';
+import { Timer_Type } from '../signals/Mouse_Timer';
+import { signals, IDSignal } from '../signals/Signals';
+import { Rect, Size, Point } from '../geometry/Geometry';
+import { Quadrant, Orientation } from '../geometry/Angle';
+import { debug, Debug, DebugFlag } from '../common/Debug';
+import { Direction, svgPaths } from '../geometry/SVG_Paths';
+import { Paging_State, Page_States } from '../state/Page_States';
+import { onMount, onDestroy, setContext, getContext } from 'svelte';
+import { IDPersistant, persistLocal } from '../managers/Persist_Local';
+import { PredicateKind, GraphRelations, CreationOptions } from './Enumerations';
+import { ElementType, AlterationType, Rebuild_Type, SvelteComponentType } from './Enumerations';
+import { IDLine, IDTool, IDTrait, ZIndex, IDButton, Info_Kind, IDBrowser } from './Enumerations';
 
 import Clusters_Geometry from '../geometry/Clusters_Geometry';
 import Alteration_State from '../state/Alteration_State';
@@ -45,16 +45,17 @@ import Arc_Map from '../geometry/Arc_Map';
 import Grabs from '../managers/Grabs';
 import Angle from '../geometry/Angle';
 import Access from '../data/Access';
-import interact from 'interactjs';
 import Thing from '../data/Thing';
 import Datum from '../data/Datum';
 import User from '../data/User';
 
-import { transparentize } from 'color2k';
-import { get } from 'svelte/store';
 import muuri from 'muuri';
+import interact from 'interactjs';
+import { get } from 'svelte/store';
+import { transparentize } from 'color2k';
 
 export {
+	Info_Kind, Rebuild_Type,
 	debug, Debug, DebugFlag,
 	Timer_Type, Mouse_Timer,
 	Angle, Quadrant, Orientation,

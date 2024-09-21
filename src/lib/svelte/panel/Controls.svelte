@@ -12,10 +12,17 @@
 	let width = g.windowSize.width - 20;
 	let elementStates_byID: { [id: string]: Element_State } = {};
 
+	const ids = [IDButton.details,
+		IDButton.relations,
+		IDButton.smaller,
+		IDButton.layout,
+		IDButton.bigger,
+		IDButton.builds,
+		IDButton.help];
+	
 	function togglePopupID(id) { $s_id_popupView = ($s_id_popupView == id) ? null : id; }
 	
 	onMount(() => {
-		const ids = [IDButton.details, IDButton.relations, IDButton.layout, IDButton.smaller, IDButton.bigger, IDButton.builds, IDButton.help];
 		for (const id of ids) {
 			const element_state = ux.elementState_for(new Identifiable(id), ElementType.control, id);
 			element_state.set_forHovering('black', 'pointer');
@@ -73,22 +80,24 @@
 				<img src='settings.svg' alt='circular button' width={size}px height={size}px/>
 			</Button>
 			{#if g.show_controls}
-				<Button name={IDButton.relations}
-					width=65
-					height={size + 4}
-					center={new Point(lefts[1], top)}
-					element_state={elementStates_byID[IDButton.relations]}
-					closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.relations)}>
-					{$s_shown_relations}
-				</Button>
 				<Button name={IDButton.layout}
 					width=65
 					height={size + 4}
-					center={new Point(lefts[2], top)}
+					center={new Point(lefts[1], top)}
 					element_state={elementStates_byID[IDButton.layout]}
 					closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.layout)}>
 					{#if $s_cluster_mode}tree{:else}clusters{/if}
 				</Button>
+				{#if !$s_cluster_mode}
+					<Button name={IDButton.relations}
+						width=65
+						height={size + 4}
+						center={new Point(lefts[2], top)}
+						element_state={elementStates_byID[IDButton.relations]}
+						closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.relations)}>
+						{$s_shown_relations}
+					</Button>
+				{/if}
 			{/if}
 		{/if}
 		{#if g.device_isMobile}

@@ -1,7 +1,7 @@
 import { s_rotation_ring_angle, s_rotation_ring_radius, s_cluster_mode } from '../state/Reactive_State';
-import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/Reactive_State';
+import { g, k, get, Point, signals, Ancestry, Info_Kind, dbDispatch } from '../common/Global_Imports';
 import { s_paging_state, s_thing_fontFamily, s_shown_relations } from '../state/Reactive_State';
-import { g, k, get, Point, signals, Ancestry, dbDispatch } from '../common/Global_Imports';
+import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/Reactive_State';
 import { s_ancestries_grabbed, s_ancestries_expanded } from '../state/Reactive_State';
 import { Paging_State, GraphRelations } from '../common/Global_Imports';
 import { h } from '../db/DBDispatch';
@@ -13,6 +13,7 @@ export enum IDPersistant {
 	ring_radius	  = 'ring_radius',
 	page_states   = 'page_states',
 	ring_angle    = 'ring_angle',
+	info_kind     = 'info_kind',
 	arrowheads	  = 'arrowheads',
 	relations	  = 'relations',
 	expanded	  = 'expanded',
@@ -231,6 +232,7 @@ class Persist_Local {
 		g.show_tinyDots = this.read_key(IDPersistant.tinyDots) ?? true;
 		g.show_arrowheads = this.read_key(IDPersistant.arrowheads) ?? false;
 		g.show_titleAtTop = this.read_key(IDPersistant.title_atTop) ?? false;
+		g.shown_info_kind = this.read_key(IDPersistant.info_kind) ?? Info_Kind.selection;
 		g.applyScale(!g.device_isMobile ? 1 : this.read_key(IDPersistant.scale) ?? 1);
 		s_rotation_ring_angle.set(this.read_key(IDPersistant.ring_angle) ?? 0);
 		s_show_details.set(this.read_key(IDPersistant.details) ?? false);

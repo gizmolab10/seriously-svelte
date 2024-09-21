@@ -16,7 +16,7 @@
 </script>
 
 <div class='storage-information'>
-	<Radio_Buttons menuItems={menuItems} idSelected={$s_db_type} fitWithin={k.width_details}/>
+	<Radio_Buttons name='storage' menuItems={menuItems} idSelected={$s_db_type}/>
 	{#if $s_db_loadTime && $s_db_loadTime > 0}
 		<div style='
 			top:24px;

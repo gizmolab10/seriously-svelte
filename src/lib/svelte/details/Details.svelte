@@ -17,7 +17,7 @@
 		height:{$s_graphRect.size.height}px;'>
 	<div class='details-modal-content'
 		style='
-			height:40px;
+			height:100%;
 			padding:5px;
 			justify-content:center;'>
 		<Storage/>
@@ -33,7 +33,7 @@
 	</div>
 	<div class='information'
 		style ='
-			top:45px;
+			top:41px;
 			position:absolute;
 			z-index: {ZIndex.details};'>
 		<Info/>
