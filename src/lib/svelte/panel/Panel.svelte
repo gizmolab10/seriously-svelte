@@ -7,7 +7,7 @@
 	import { s_ancestry_focus, s_user_graphOffset } from '../../ts/state/Reactive_State';
 	import { IDButton, Hierarchy, IDPersistant } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
-	import Cluster_Graph from '../clusters/Cluster_Graph.svelte';
+	import Rings_Graph from '../rings/Rings_Graph.svelte';
 	import Title_Editor from '../widget/Title_Editor.svelte';
 	import Breadcrumbs from '../panel/Breadcrumbs.svelte';
 	import Tree_Graph from '../tree/Tree_Graph.svelte';
@@ -158,7 +158,7 @@
 							height: {$s_graphRect.size.height}px;
 							z-index: {ZIndex.panel};'>
 						{#if $s_cluster_mode}
-							<Cluster_Graph/>
+							<Rings_Graph/>
 						{:else}
 							<Tree_Graph/>
 						{/if}

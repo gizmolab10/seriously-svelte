@@ -3,16 +3,10 @@
 	import { s_rebuild_count, s_thing_changed } from '../../ts/state/Reactive_State';
 	import ColorPicker from 'svelte-awesome-color-picker';
 	export let thing: Thing;
+	const colorAsHEX = u.colorToHex(thing.color);
 	const selectorSize = k.dot_size + 1;
 	const pickerSize = 100;
-	let colorAsHEX = '#F0F';
 	let persistenceTimer;
-
-	$: { updateFor(thing); }
-
-	function updateFor(thing) {
-		colorAsHEX = u.colorToHex(thing.color);
-	}
 
 	function handleColorChange(event) {
 		event.preventDefault();

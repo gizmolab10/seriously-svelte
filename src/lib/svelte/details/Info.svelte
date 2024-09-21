@@ -8,13 +8,28 @@
 	import Color from './Color.svelte';
 	const id = 'info';
 	const element_state = ux.elementState_for(new Identifiable(id), ElementType.info, id);
+	let button_title = `show info for ${next_infoKind()}`;
 	let information: { [key: string]: string } = {};
 	let ancestry: Ancestry | null = null;
-	let button_title = next_infoKind();
 	let grabs = $s_ancestries_grabbed;
 	let color = k.color_default;
 	let rebuilds = 0;
 	let info;
+
+	setTimeout(() => {
+		console.log(`invoke ${$s_ancestry_focus.isGrabbed}`)
+		rebuilds += 1;
+	}, 1);
+	
+	$: {
+		const _ = $s_ancestry_focus;
+		update_forKind();
+	}
+	
+	$: {
+		const _ = $s_ancestries_grabbed;
+		update_forKind();
+	}
 	
 	$: {
 		const _ = $s_thing_changed;
@@ -22,19 +37,11 @@
 		update_info();
 		rebuilds += 1;
 	}
-	
-	$: {
-		ancestry = $s_ancestry_focus;
-		update_info();
-	}
-	
-	$: {
-		grabs = $s_ancestries_grabbed;
-		update_forKind();
-	}
 
-	function hasGrabs(): boolean { return !!grabs && (grabs.length > 0); }
-	function show_button(): boolean { return hasGrabs() && !$s_ancestry_focus.isGrabbed; }
+	function hasGrabs(): boolean {
+		grabs = $s_ancestries_grabbed;
+		return !!grabs && (grabs.length > 1 || !$s_ancestry_focus.isGrabbed);
+	}
 
 	function next_infoKind() {
 		switch (g.shown_info_kind) {
@@ -45,24 +52,27 @@
 
 	function update_forKind() {
 		button_title = `show info for ${next_infoKind()}`;
-		if (g.shown_info_kind == Info_Kind.selection && hasGrabs()) {
-			ancestry = grabs[0];
-		} else {
+		if (g.shown_info_kind == Info_Kind.focus || !hasGrabs()) {
 			ancestry = $s_ancestry_focus;
+		} else {
+			grabs = $s_ancestries_grabbed;
+			ancestry = grabs[0];
 		}
 		update_info();
 	}
 
 	function update_info() {
-		color = ancestry.thing?.color ?? k.color_default;
-		element_state.set_forHovering(color, 'pointer');
-		information = {
-			'relationship' : ancestry.predicate?.description ?? k.empty,
-			'direction' : ancestry.isNormal ? 'normal' : 'inverted',
-			'id' : ancestry.thing?.id.injectEllipsisAt(),
-		};
-		info = Object.entries(information)
-		rebuilds += 1;
+		if (!!ancestry) {
+			color = ancestry.thing?.color ?? k.color_default;
+			element_state.set_forHovering(color, 'pointer');
+			information = {
+				'relationship' : ancestry.predicate?.description ?? k.empty,
+				'direction' : ancestry.isNormal ? 'normal' : 'inverted',
+				'id' : ancestry.thing?.id.injectEllipsisAt(),
+			};
+			info = Object.entries(information)
+			rebuilds += 1;
+		}
 	}
 
 	function button_closure_forID(mouse_state) {
@@ -74,6 +84,17 @@
 			update_forKind();
 		}
 	}
+
+	// import { Button, Segmented } from 'framework7-svelte';
+			// <div
+			// 	style='
+			// 		top:86px;'>
+			// 	<Segmented raised round tag="div">
+			// 		<Button round>focus</Button>
+			// 		<Button round active>selected</Button>
+			// 	</Segmented>
+			// </div>
+
 
 </script>
 
@@ -130,7 +151,7 @@
 				</tr>
 			</table>
 		</div>
-		{#if show_button()}
+		{#if hasGrabs()}
 			<Button name={name}
 				width={k.width_details - 20}
 				element_state={element_state}
