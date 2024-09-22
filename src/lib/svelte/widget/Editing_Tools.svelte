@@ -4,7 +4,7 @@
 	import { onMount, svgPaths, signals, opacitize, Direction } from '../../ts/common/Global_Imports';
 	import { Alteration_State, AlterationType, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { s_alteration_mode, s_graphRect, s_show_details } from '../../ts/state/Reactive_State';
-	import { s_cluster_mode, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
+	import { s_rings_mode, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Triangle_Button from '../mouse buttons/Triangle_Button.svelte';
 	import Transparency_Circle from '../kit/Transparency_Circle.svelte';
@@ -139,7 +139,7 @@
 		const tools_ancestry = $s_ancestry_showingTools;
 		const shows_Reveal = tools_ancestry?.showsReveal;
 		const forward = tools_ancestry?.widget_map?.points_right ?? true;
-		return !!tools_ancestry ? $s_cluster_mode ? !forward ? -26 : titleWidth - 21 : shows_Reveal ? titleWidth + 16.3 : titleWidth + 8.3 : 0;
+		return !!tools_ancestry ? $s_rings_mode ? !forward ? -26 : titleWidth - 21 : shows_Reveal ? titleWidth + 16.3 : titleWidth + 8.3 : 0;
 	}
 
 	function update(): boolean {
@@ -147,7 +147,7 @@
 		if (!!rect && !!$s_ancestry_showingTools && rect.size.width != 0) {
 			debug.log_tools('setC all tools')
 			const offsetX = titleOffsetX() - ($s_show_details ? k.width_details : 0);
-			const offsetY = (g.show_titleAtTop ? -45 : 20.5) + ($s_cluster_mode ? 3 : 0) - k.editingTools_diameter - 6.5;
+			const offsetY = (g.show_titleAtTop ? -45 : 20.5) + ($s_rings_mode ? 3 : 0) - k.editingTools_diameter - 6.5;
 			const center = rect.centerLeft.offsetBy(offset).offsetByXY(offsetX, offsetY);
 			left = center.x - toolDiameter;
 			setC(IDTool.editingTools,   center);

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_thing_changed, s_cluster_mode, s_ancestries_grabbed, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
+	import { s_thing_changed, s_rings_mode, s_ancestries_grabbed, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
 	import { g, k, u, ux, Rect, Size, Point, Thing, debug, ZIndex, IDTool, onMount } from '../../ts/common/Global_Imports';
 	import { signals, svgPaths, Direction, ElementType, dbDispatch } from '../../ts/common/Global_Imports';
 	import { Svelte_Wrapper, AlterationType, SvelteComponentType } from '../../ts/common/Global_Imports';
@@ -69,7 +69,7 @@
 	}
 
 	function updateSVGPaths() {
-		if ($s_cluster_mode) {
+		if ($s_rings_mode) {
 			svg_dragDot_path = svgPaths.circle_atOffset(size, size - 1);
 		} else {
 			svg_dragDot_path = svgPaths.oval(size, false);
@@ -93,7 +93,7 @@
 	function updateColors_forHovering(isOut) {
 		if (!g.isAny_rotation_active) {
 			isHovering = !isOut;
-			const usePointer = (!ancestry.isGrabbed || s_cluster_mode) && ancestry.hasChildRelationships && !g.isAny_rotation_active;
+			const usePointer = (!ancestry.isGrabbed || s_rings_mode) && ancestry.hasChildRelationships && !g.isAny_rotation_active;
 			const cursor = usePointer ? 'pointer' : 'normal';
 			if (!!element_state && !!thing) {
 				element_state.set_forHovering(thing.color, cursor);

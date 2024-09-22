@@ -1,4 +1,4 @@
-import { s_cluster_mode, s_paging_ring_state, s_ring_resizing_state, s_ring_rotation_state } from './Reactive_State';
+import { s_rings_mode, s_paging_ring_state, s_ring_resizing_state, s_ring_rotation_state } from './Reactive_State';
 import { s_rebuild_count, s_ancestry_focus, s_ancestries_grabbed, s_ancestries_expanded } from './Reactive_State';
 import { e, k, u, ux, get, Rect, Size, Point, debug, Info_Kind, dbDispatch } from '../common/Global_Imports';
 import { persistLocal, IDPersistant, Rotation_State, Expansion_State } from '../common/Global_Imports';
@@ -47,7 +47,7 @@ class Global_State {
 		const shown = Object.fromEntries(shownNames.map(s => [s, true]) ?? {});
 		const hidden = Object.fromEntries(hiddenNames.map(s => [s, false]) ?? {});
 		const keyedFlags: { [key: string]: boolean } = {...shown, ...hidden};
-		persistLocal.applyFor_key_name(IDPersistant.layout, 'clusters', (flag) => s_cluster_mode.set(flag));
+		persistLocal.applyFor_key_name(IDPersistant.layout, 'clusters', (flag) => s_rings_mode.set(flag));
         if (deny) {
             const flags = deny.split(',');
             for (const option of flags) {

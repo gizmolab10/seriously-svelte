@@ -140,7 +140,7 @@ export default class DBFirebase implements DBInterface {
 						if (baseID != this.baseID) {
 							let thing = h.thing_bulkAlias_forTitle(baseID);
 							if (!thing) {								// create a thing for each bulk
-								thing = h.thing_runtimeCreate(this.baseID, Identifiable.newID(), baseID, 'red', IDTrait.bulk, false);
+								thing = h.thing_runtimeCreate(this.baseID, Identifiable.newID(), baseID, 'red', IDTrait.bulk);
 								await h.ancestry_remember_remoteAddAsChild(rootsAncestry, thing);
 							} else if (thing.thing_isBulk_expanded) {
 								await h.ancestry_redraw_remoteFetchBulk_browseRight(thing);
@@ -242,7 +242,7 @@ export default class DBFirebase implements DBInterface {
 								if (!!thing || remoteThing.isEqualTo(this.addedThing) || remoteThing.trait == IDTrait.root) {
 									return;			// do not invoke signal because nothing has changed
 								}
-								thing = h.thing_remember_runtimeCreate(baseID, id, remoteThing.title, remoteThing.color, remoteThing.trait, true);
+								thing = h.thing_remember_runtimeCreate(baseID, id, remoteThing.title, remoteThing.color, remoteThing.trait, data.details, true);
 								break;
 							case 'removed':
 								if (!!thing) {
@@ -280,7 +280,7 @@ export default class DBFirebase implements DBInterface {
 		if (DBFirebase.data_isValidOfKind(type, data)) {
 			switch (type) {
 				case DatumType.predicates:	  h.predicate_remember_runtimeCreate(id, data.kind, data.isBidirectional); break;
-				case DatumType.things:		  h.thing_remember_runtimeCreate(baseID, id, data.title, data.color, data.trait, true); break;
+				case DatumType.things:		  h.thing_remember_runtimeCreate(baseID, id, data.title, data.color, data.trait, data.details, true); break;
 				case DatumType.relationships: h.relationship_remember_runtimeCreateUnique(baseID, id, data.predicate.id, data.parent.id, data.child.id, data.order, CreationOptions.isFromRemote); break;
 			}
 		}
@@ -323,7 +323,7 @@ export default class DBFirebase implements DBInterface {
 				this.deferSnapshots = true;
 				const ref = await addDoc(thingsCollection, jsThing)
 				thing.awaitingCreation = false;
-				thing.isRemotelyStored = true;
+				thing.isBackedUp_remotely = true;
 				thing.setID(ref.id);			// so relationship will be correct
 				h.thing_remember(thing);
 				this.handle_deferredSnapshots();
@@ -335,11 +335,11 @@ export default class DBFirebase implements DBInterface {
 	}
 
 	async things_remember_firstTime_remoteCreateIn(collectionRef: CollectionReference) {
-		const fields = ['title', 'color', 'trait'];
-		const root = new Thing(this.baseID, Identifiable.newID(), this.baseID, 'coral', IDTrait.root, true);
-		const thing = new Thing(this.baseID, Identifiable.newID(), 'Click this text to edit it', 'purple', k.empty, true);
+		const fields = ['title', 'color', 'trait', 'details'];
+		const root = new Thing(this.baseID, Identifiable.newID(), this.baseID, 'coral', IDTrait.root, k.empty, true);
+		const thing = new Thing(this.baseID, Identifiable.newID(), 'Click this text to edit it', 'purple', k.empty, k.empty, true);
 		h.root = root;
-		const thingRef = await addDoc(collectionRef, u.convertToObject(thing, fields));	// N.B. these will be fetched, shortly
+		const thingRef = await addDoc(collectionRef, u.convertToObject(thing, fields));		// N.B. these will be fetched, shortly
 		const rootRef = await addDoc(collectionRef, u.convertToObject(root, fields));		// no need to remember now
 		thing.setID(thingRef.id);
 		root.setID(rootRef.id);
@@ -398,7 +398,7 @@ export default class DBFirebase implements DBInterface {
 				this.deferSnapshots = true;
 				const ref = await addDoc(relationshipsCollection, jsRelationship); // works!
 				relationship.awaitingCreation = false;
-				relationship.isRemotelyStored = true;
+				relationship.isBackedUp_remotely = true;
 				relationship.setID(ref.id);
 				h.relationship_remember(relationship);
 				this.handle_deferredSnapshots();
@@ -445,7 +445,7 @@ export default class DBFirebase implements DBInterface {
 		if (changed) {
 			relationship.idChild = remote.child.id;
 			relationship.idParent = remote.parent.id;
-			relationship.isRemotelyStored = true;
+			relationship.isBackedUp_remotely = true;
 			relationship.idPredicate = remote.predicate.id;
 			relationship.order_setTo_remoteMaybe(remote.order + k.halfIncrement);
 		}

@@ -1,7 +1,7 @@
 import { g, k, u, get, User, Thing, Grabs, debug, Mouse_State, Access, IDTool, IDTrait, signals } from '../common/Global_Imports';
 import { Ancestry, Predicate, Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
 import { s_alteration_mode, s_ancestries_grabbed, s_ancestry_showingTools } from '../state/Reactive_State';
-import { s_isBusy, s_title_editing, s_cluster_mode, s_ancestry_focus } from '../state/Reactive_State';
+import { s_isBusy, s_title_editing, s_rings_mode, s_ancestry_focus } from '../state/Reactive_State';
 import Identifiable from '../data/Identifiable';
 import DBInterface from '../db/DBInterface';
 
@@ -231,29 +231,29 @@ export class Hierarchy {
 		const thing = ancestry.thing;
 		if (!!thing && parent && parentAncestry) {
 			const order = ancestry.order + (below ? 0.5 : -0.5);
-			const child = this.thing_runtimeCreate(thing.baseID, Identifiable.newID(), k.title_line, parent.color, k.empty, false);
+			const child = this.thing_runtimeCreate(thing.baseID, Identifiable.newID(), k.title_line, parent.color, k.empty);
 			await this.ancestry_edit_remoteAddAsChild(parentAncestry, child, order, false);
 		}
 	}
 
-	thing_remember_runtimeCreateUnique(baseID: string, id: string, title: string, color: string, trait: string,
-		isRemotelyStored: boolean): Thing {
+	thing_remember_runtimeCreateUnique(baseID: string, id: string, title: string, color: string, trait: string, details = k.empty,
+		isBackedUp_remotely: boolean = false): Thing {
 		let thing = this.thing_forHID(id?.hash() ?? null);
 		if (!thing) {
-			thing = this.thing_remember_runtimeCreate(baseID, id, title, color, trait, isRemotelyStored);
+			thing = this.thing_remember_runtimeCreate(baseID, id, title, color, trait, details, isBackedUp_remotely);
 		}
 		return thing;
 	}
 
-	thing_remember_runtimeCreate(baseID: string, id: string, title: string, color: string, trait: string,
-		isRemotelyStored: boolean): Thing {
-		const thing = this.thing_runtimeCreate(baseID, id, title, color, trait, isRemotelyStored);
+	thing_remember_runtimeCreate(baseID: string, id: string, title: string, color: string, trait: string, details = k.empty,
+		isBackedUp_remotely: boolean = false): Thing {
+		const thing = this.thing_runtimeCreate(baseID, id, title, color, trait, details, isBackedUp_remotely);
 		this.thing_remember(thing);
 		return thing;
 	}
 
 	async thing_remember_runtimeCopy(baseID: string, parent: Thing) {
-		const newThing = new Thing(baseID, Identifiable.newID(), parent.title, parent.color, parent.trait, false);
+		const newThing = new Thing(baseID, Identifiable.newID(), parent.title, parent.color, parent.trait);
 		const prohibitedTraits: Array<string> = [IDTrait.roots, IDTrait.root, IDTrait.bulk];
 		if (prohibitedTraits.includes(parent.trait)) {
 			newThing.trait = k.empty;
@@ -286,14 +286,13 @@ export class Hierarchy {
 		}
 	}
 
-	thing_runtimeCreate(baseID: string, id: string, title: string, color: string, trait: string,
-		isRemotelyStored: boolean): Thing {
+	thing_runtimeCreate(baseID: string, id: string, title: string, color: string, trait: string, details = k.empty,
+		isBackedUp_remotely: boolean = false): Thing {
 		let thing: Thing | null = null;
 		if (id && trait == IDTrait.root && baseID != this.db.baseID) {		// other bulks have their own root & id
 			thing = this.thing_remember_bulkRootID(baseID, id, color);		// which our thing needs to adopt
-		}
-		if (!thing) {
-			thing = new Thing(baseID, id, title, color, trait, isRemotelyStored);
+		} else {
+			thing = new Thing(baseID, id, title, color, trait, details, isBackedUp_remotely);
 			if (thing.isBulkAlias) {
 				thing.needsBulkFetch = true;
 				if (title.includes('@')) {
@@ -303,7 +302,7 @@ export class Hierarchy {
 				}
 			}
 		}
-		return thing;
+		return thing!;
 	}
 
 	static readonly $_BULKS_$: unique symbol;
@@ -514,13 +513,13 @@ export class Hierarchy {
 		let reversed = this.relationship_forPredicate_parent_child(idPredicate, idChild, idParent);
 		let relationship = this.relationship_forPredicate_parent_child(idPredicate, idParent, idChild);
 		const isBidirectional = this.predicate_forID(idPredicate)?.isBidirectional ?? false;
-		const isRemotelyStored = creationOptions != CreationOptions.none;
+		const isBackedUp_remotely = creationOptions != CreationOptions.none;
 		if (!relationship) {
-			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, isRemotelyStored);
+			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, isBackedUp_remotely);
 			this.relationship_remember(relationship);
 		}
 		if (isBidirectional && !reversed) {
-			reversed = new Relationship(baseID, Identifiable.newID(), idPredicate, idChild, idParent, order, isRemotelyStored);
+			reversed = new Relationship(baseID, Identifiable.newID(), idPredicate, idChild, idParent, order, isBackedUp_remotely);
 			this.relationship_remember(reversed);
 		}
 		relationship?.order_setTo_remoteMaybe(order);
@@ -612,7 +611,7 @@ export class Hierarchy {
 				return rootAncestry.extend_withChild(rootsMaybe) ?? null;
 			}
 		}
-		const roots = this.thing_runtimeCreate(this.db.baseID, Identifiable.newID(), 'roots', 'red', IDTrait.roots, false);
+		const roots = this.thing_runtimeCreate(this.db.baseID, Identifiable.newID(), 'roots', 'red', IDTrait.roots);
 		await this.ancestry_remember_remoteAddAsChild(rootAncestry, roots).then((ancestry) => { rootsAncestry = ancestry; });
 		return rootsAncestry;
 	}
@@ -711,7 +710,7 @@ export class Hierarchy {
 			if (changingBulk) {
 				console.log('changingBulk');
 			}
-			if (!child.isRemotelyStored) {
+			if (!child.isBackedUp_remotely) {
 				await this.db.thing_remember_remoteCreate(child);					// for everything below, need to await child.id fetched from dbDispatch
 			}
 			const relationship = await this.relationship_remember_remoteCreateUnique(baseID, Identifiable.newID(), idPredicate, parent.idBridging, child.id, 0, CreationOptions.getRemoteID);
@@ -749,9 +748,9 @@ export class Hierarchy {
 			if (!siblings || length == 0) {		// friendly for first-time users
 				this.ancestry_rebuild_runtimeBrowseRight(ancestry, true, EXTREME, up);
 			} else if (!!thing) {
-				const is_cluster_mode = get(s_cluster_mode);
+				const is_rings_mode = get(s_rings_mode);
 				const isBidirectional = ancestry.predicate?.isBidirectional ?? false;
-				if ((!isBidirectional && ancestry.isNormal) || !is_cluster_mode) {
+				if ((!isBidirectional && ancestry.isNormal) || !is_rings_mode) {
 					const index = siblings.indexOf(thing);
 					const newIndex = index.increment(!up, length);
 					if (!!parentAncestry && !OPTION) {
@@ -760,7 +759,7 @@ export class Hierarchy {
 							if (!grabAncestry.isVisible) {
 								if (!parentAncestry.isFocus) {
 									graph_needsRebuild = parentAncestry.becomeFocus();
-								} else if (is_cluster_mode) {
+								} else if (is_rings_mode) {
 									graph_needsRebuild = grabAncestry.assureIsVisible_inClusters();	// change paging
 								} else {
 									alert('PROGRAMMING ERROR: child of focus is not visible');
@@ -901,14 +900,14 @@ export class Hierarchy {
 		}
 	}
 
-	predicate_remember_runtimeCreateUnique(id: string, kind: string, isBidirectional: boolean, isRemotelyStored: boolean = true) {
+	predicate_remember_runtimeCreateUnique(id: string, kind: string, isBidirectional: boolean, isBackedUp_remotely: boolean = true) {
 		if (!this.predicate_forID(id)) {
-			this.predicate_remember_runtimeCreate(id, kind, isBidirectional, isRemotelyStored);
+			this.predicate_remember_runtimeCreate(id, kind, isBidirectional, isBackedUp_remotely);
 		}
 	}
 
-	predicate_remember_runtimeCreate(id: string, kind: string, isBidirectional: boolean, isRemotelyStored: boolean = true) {
-		this.predicate_remember(new Predicate(id, kind, isBidirectional, isRemotelyStored));
+	predicate_remember_runtimeCreate(id: string, kind: string, isBidirectional: boolean, isBackedUp_remotely: boolean = true) {
+		this.predicate_remember(new Predicate(id, kind, isBidirectional, isBackedUp_remotely));
 	}
 
 	access_runtimeCreate(idAccess: string, kind: string) {

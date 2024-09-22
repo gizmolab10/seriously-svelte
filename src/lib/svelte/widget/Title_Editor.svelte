@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { dbDispatch, Seriously_Range, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { g, k, u, Point, Thing, debug, Angle, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
-	import { s_cluster_mode, s_thing_changed, s_title_editing } from '../../ts/state/Reactive_State';
+	import { s_rings_mode, s_thing_changed, s_title_editing } from '../../ts/state/Reactive_State';
 	import { s_ancestries_grabbed, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
@@ -35,7 +35,7 @@
 	onMount(() => {
 		if (!!ancestry?.thing) {
 			titleWidth = ancestry.thing.titleWidth + 6;
-			titleLeft = $s_cluster_mode ? ancestry.isFocus ? -2 : (forward ? 14 : 4) : 10;
+			titleLeft = $s_rings_mode ? ancestry.isFocus ? -2 : (forward ? 14 : 4) : 10;
 		}
 		const handler = signals.handle_anySignal((IDSignal, ancestry) => { updateInputWidth(); });
 		setTimeout(() => { updateInputWidth(); }, 100);

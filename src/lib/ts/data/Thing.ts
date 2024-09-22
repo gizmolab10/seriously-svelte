@@ -12,17 +12,22 @@ export default class Thing extends Datum {
 	needsBulkFetch = false;
 	isEditing = false;
 	isGrabbed = false;
+	details: string;
 	title: string;
 	color: string;
 	trait: string;
 
-	constructor(baseID: string, id: string, title = k.title_default, color = k.color_default, trait = 's', isRemotelyStored: boolean) {
-		super(dbDispatch.db.dbType, baseID, id, isRemotelyStored);
+	constructor(baseID: string, id: string, title = k.title_default, color = k.color_default, trait = 's', details = k.empty, isBackedUp_remotely: boolean = false) {
+		super(dbDispatch.db.dbType, baseID, id, isBackedUp_remotely);
 		this.selectionRange = new Seriously_Range(0, title.length);
 		this.page_states = new Page_States(this.id);
+		this.details = details;
 		this.title = title;
 		this.color = color;
 		this.trait = trait;
+		if (details != k.empty) {
+			console.log(detail)
+		}
 	};
 	
 	get parentIDs():		  Array<string> { return this.parents.map(t => t.id); }
@@ -86,7 +91,7 @@ export default class Thing extends Datum {
 
 	async remoteWrite() {
 		if (!this.awaitingCreation) {
-			if (this.isRemotelyStored) {
+			if (this.isBackedUp_remotely) {
 				await dbDispatch.db.thing_remoteUpdate(this);
 			} else if (dbDispatch.db.isRemote) {
 				await dbDispatch.db.thing_remember_remoteCreate(this);

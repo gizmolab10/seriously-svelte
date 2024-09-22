@@ -1,4 +1,4 @@
-import { s_rotation_ring_angle, s_rotation_ring_radius, s_cluster_mode } from '../state/Reactive_State';
+import { s_rotation_ring_angle, s_rotation_ring_radius, s_rings_mode } from '../state/Reactive_State';
 import { g, k, get, Point, signals, Ancestry, Info_Kind, dbDispatch } from '../common/Global_Imports';
 import { s_paging_state, s_thing_fontFamily, s_shown_relations } from '../state/Reactive_State';
 import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/Reactive_State';
@@ -136,7 +136,7 @@ class Persist_Local {
 		s_rotation_ring_radius.subscribe((radius: number) => {
 			this.write_key(IDPersistant.ring_radius, radius);
 		});
-		s_cluster_mode.subscribe((flag: boolean) => {
+		s_rings_mode.subscribe((flag: boolean) => {
 			this.write_key(IDPersistant.layout, flag);
 		});
 		s_rotation_ring_angle.subscribe((angle: number) => {
@@ -237,7 +237,7 @@ class Persist_Local {
 		s_rotation_ring_angle.set(this.read_key(IDPersistant.ring_angle) ?? 0);
 		s_show_details.set(this.read_key(IDPersistant.details) ?? false);
 		s_thing_fontFamily.set(this.read_key(IDPersistant.font) ?? 'Arial');
-		s_cluster_mode.set(this.read_key(IDPersistant.layout) ?? false);
+		s_rings_mode.set(this.read_key(IDPersistant.layout) ?? false);
 		s_rotation_ring_radius.set(Math.max(this.read_key(IDPersistant.ring_radius) ?? 0, k.ring_smallest_radius));
 		s_shown_relations.set(this.read_key(IDPersistant.relations) ?? GraphRelations.children);
 		this.restore_graphOffset();

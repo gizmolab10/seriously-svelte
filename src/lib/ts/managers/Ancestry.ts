@@ -1,7 +1,7 @@
 import { g, k, u, w, get, Rect, Size, Thing, debug, signals, Predicate, Title_State, ElementType, Paging_State } from '../common/Global_Imports';
 import { Relationship, PredicateKind, Svelte_Wrapper, Widget_MapRect, AlterationType, SvelteComponentType } from '../common/Global_Imports';
 import { s_ancestries_expanded, s_ancestry_showingTools, s_alteration_mode, s_clusters_geometry } from '../state/Reactive_State';
-import { s_ancestry_focus, s_ancestries_grabbed, s_title_editing, s_cluster_mode } from '../state/Reactive_State';
+import { s_ancestry_focus, s_ancestries_grabbed, s_title_editing, s_rings_mode } from '../state/Reactive_State';
 import Identifiable from '../data/Identifiable';
 import { Writable } from 'svelte/store';
 import { h } from '../db/DBDispatch';
@@ -72,7 +72,7 @@ export default class Ancestry extends Identifiable {
 	get childRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, false); }
 	get parentRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, true); }
 	get titleWrapper(): Svelte_Wrapper | null { return w.wrapper_forHID_andType(this.idHashed, SvelteComponentType.title); }
-	get showsReveal(): boolean { return !get(s_cluster_mode) && (this.hasChildRelationships || (this.thing?.isBulkAlias ?? false)); }
+	get showsReveal(): boolean { return !get(s_rings_mode) && (this.hasChildRelationships || (this.thing?.isBulkAlias ?? false)); }
 
 	get relationships(): Array<Relationship> {
 		const relationships = this.ids_hashed.map(hid => h.relationship_forHID(hid)) ?? [];
@@ -117,7 +117,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	get isVisible(): boolean {
-		if (get(s_cluster_mode)) {
+		if (get(s_rings_mode)) {
 			return this.parentAncestry?.paging_state?.index_isVisible(this.siblingIndex) ?? false;
 		} else {
 			const focus = get(s_ancestry_focus);
@@ -522,7 +522,7 @@ export default class Ancestry extends Identifiable {
 			s_title_editing?.set(null);
 			if (get(s_alteration_mode)) {
 				this.ancestry_alterMaybe(this);
-			} else if (!shiftKey && get(s_cluster_mode)) {
+			} else if (!shiftKey && get(s_rings_mode)) {
 				this.becomeFocus();
 			} else if (shiftKey || this.isGrabbed) {
 				this.toggleGrab();
@@ -566,7 +566,7 @@ export default class Ancestry extends Identifiable {
 			return array;
 		});
 		let ancestries = get(s_ancestries_grabbed);
-		if (ancestries.length == 0 && !get(s_cluster_mode)) {
+		if (ancestries.length == 0 && !get(s_rings_mode)) {
 			rootAncestry.grabOnly();
 		} else {
 			this.toggle_editingTools(); // do not show editingTools for root

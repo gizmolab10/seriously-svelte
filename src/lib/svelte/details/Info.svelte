@@ -5,6 +5,7 @@
 	import { s_thing_changed, s_ancestry_focus } from '../../ts/state/Reactive_State';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Button from '../mouse buttons/Button.svelte';
+	import { TextField } from 'svelte-ux';
 	import Color from './Color.svelte';
 	const id = 'info';
 	const element_state = ux.elementState_for(new Identifiable(id), ElementType.info, id);
@@ -15,11 +16,6 @@
 	let color = k.color_default;
 	let rebuilds = 0;
 	let info;
-
-	setTimeout(() => {
-		console.log(`invoke ${$s_ancestry_focus.isGrabbed}`)
-		rebuilds += 1;
-	}, 1);
 	
 	$: {
 		const _ = $s_ancestry_focus;
@@ -66,6 +62,7 @@
 			color = ancestry.thing?.color ?? k.color_default;
 			element_state.set_forHovering(color, 'pointer');
 			information = {
+				'details' : ancestry.thing?.details.injectEllipsisAt(),
 				'relationship' : ancestry.predicate?.description ?? k.empty,
 				'direction' : ancestry.isNormal ? 'normal' : 'inverted',
 				'id' : ancestry.thing?.id.injectEllipsisAt(),
@@ -133,7 +130,7 @@
 		<div class='ancestry-info'
 			style='
 				top:30px;
-				left:15px;
+				left:10px;
 				position:absolute;
 				z-index: {ZIndex.details};'>
 			<table style='width: 200px; left:12px; color:{color};'>
@@ -141,7 +138,11 @@
 					{#each info as [key, value]}
 						<tr>
 							<td class='first_column'>{key}:</td>
-							<td class='second_column'>{value}</td>
+							{#if key == 'details'}
+								<td class='second_column'><TextField value={value}/></td>
+							{:else}
+								<td class='second_column'>{value}</td>
+							{/if}
 						</tr>
 					{/each}
 				{/key}
@@ -156,7 +157,7 @@
 				width={k.width_details - 20}
 				element_state={element_state}
 				height={k.default_buttonSize + 4}
-				center={new Point(k.width_details / 2, 115)}
+				center={new Point(k.width_details / 2, 132)}
 				closure={(mouse_state) => button_closure_forID(mouse_state)}>
 				{button_title}
 			</Button>

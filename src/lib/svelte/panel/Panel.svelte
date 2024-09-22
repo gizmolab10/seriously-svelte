@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { s_isBusy, s_db_type, s_graphRect, s_id_popupView } from '../../ts/state/Reactive_State';
-	import { s_cluster_mode, s_title_editing, s_show_details } from '../../ts/state/Reactive_State';
+	import { s_rings_mode, s_title_editing, s_show_details } from '../../ts/state/Reactive_State';
 	import { g, k, u, ux, get, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import { debug, ZIndex, signals, onMount, Ancestry } from '../../ts/common/Global_Imports';
 	import { dbDispatch, setContext, persistLocal } from '../../ts/common/Global_Imports';
@@ -157,7 +157,7 @@
 							width: {$s_graphRect.size.width}px;
 							height: {$s_graphRect.size.height}px;
 							z-index: {ZIndex.panel};'>
-						{#if $s_cluster_mode}
+						{#if $s_rings_mode}
 							<Rings_Graph/>
 						{:else}
 							<Tree_Graph/>
