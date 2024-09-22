@@ -4,9 +4,9 @@
 	import Mouse_Responder from './Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
 	export let background_color = k.color_background;
+	export let closure = (mouse_state) => {};
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;
-	export let closure = (mouse_state) => {};
 	export let element_state: Element_State;
 	export let position = 'absolute';
 	export let border_thickness = 1;

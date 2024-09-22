@@ -25,9 +25,6 @@ export default class Thing extends Datum {
 		this.title = title;
 		this.color = color;
 		this.trait = trait;
-		if (details != k.empty) {
-			console.log(detail)
-		}
 	};
 	
 	get parentIDs():		  Array<string> { return this.parents.map(t => t.id); }

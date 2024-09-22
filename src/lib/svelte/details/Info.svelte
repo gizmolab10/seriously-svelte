@@ -4,8 +4,8 @@
 	import { s_shown_relations, s_ancestries_grabbed } from '../../ts/state/Reactive_State';
 	import { s_thing_changed, s_ancestry_focus } from '../../ts/state/Reactive_State';
 	import Identifiable from '../../ts/data/Identifiable';
+	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Button from '../mouse buttons/Button.svelte';
-	import { TextField } from 'svelte-ux';
 	import Color from './Color.svelte';
 	const id = 'info';
 	const element_state = ux.elementState_for(new Identifiable(id), ElementType.info, id);
@@ -62,7 +62,6 @@
 			color = ancestry.thing?.color ?? k.color_default;
 			element_state.set_forHovering(color, 'pointer');
 			information = {
-				'details' : ancestry.thing?.details.injectEllipsisAt(),
 				'relationship' : ancestry.predicate?.description ?? k.empty,
 				'direction' : ancestry.isNormal ? 'normal' : 'inverted',
 				'id' : ancestry.thing?.id.injectEllipsisAt(),
@@ -96,13 +95,13 @@
 </script>
 
 <style>
-	.first_column {
+	.first {
 		border-right: 5px solid transparent;
 		text-align: right;
 		line-height:12px;
 		width: 35%;
 	}
-	.second_column {
+	.second {
 		line-height:12px;
 	}
 </style>
@@ -135,21 +134,24 @@
 				z-index: {ZIndex.details};'>
 			<table style='width: 200px; left:12px; color:{color};'>
 				{#key info}
+					<tr>
+						<td class='first'>details:</td>
+						<td class='second'><Text_Editor
+							left=76
+							color={ancestry.thing?.color}
+							original_text={ancestry.thing?.details}/></td>
+					</tr>
 					{#each info as [key, value]}
 						<tr>
-							<td class='first_column'>{key}:</td>
-							{#if key == 'details'}
-								<td class='second_column'><TextField value={value}/></td>
-							{:else}
-								<td class='second_column'>{value}</td>
-							{/if}
+							<td class='first'>{key}:</td>
+							<td class='second'>{value}</td>
 						</tr>
 					{/each}
+					<tr>
+						<td class='first'>color:</td>
+						<td class='second'><Color thing={ancestry.thing}/></td>
+					</tr>
 				{/key}
-				<tr>
-					<td class='first_column'>color:</td>
-					<td class='second_column'><Color thing={ancestry.thing}/></td>
-				</tr>
 			</table>
 		</div>
 		{#if hasGrabs()}

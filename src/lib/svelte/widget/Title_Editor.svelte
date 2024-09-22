@@ -228,7 +228,7 @@
 	}
 
 	function applyRange() {
-		const range = ancestry?.selectionRange;
+		const range = ancestry?.thing?.selectionRange;
 		if (!!range && !!input) {
 			input.setSelectionRange(range.start, range.end);
 		}
