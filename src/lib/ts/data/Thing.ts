@@ -1,6 +1,7 @@
 import { k, u, get, Datum, debug, IDTrait, Ancestry, Predicate, Page_States } from '../common/Global_Imports';
 import { DebugFlag, dbDispatch, Relationship, Seriously_Range } from '../common/Global_Imports';
 import { s_ancestry_focus, s_ancestries_expanded } from '../state/Reactive_State';
+import { s_rebuild_count, s_thing_color } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
 import Airtable from 'airtable';
 
@@ -17,8 +18,8 @@ export default class Thing extends Datum {
 	color: string;
 	trait: string;
 
-	constructor(baseID: string, id: string, title = k.title_default, color = k.color_default, trait = 's', details = k.empty, isBackedUp_remotely: boolean = false) {
-		super(dbDispatch.db.dbType, baseID, id, isBackedUp_remotely);
+	constructor(baseID: string, id: string, title = k.title_default, color = k.color_default, trait = 's', details = k.empty, hasBeen_remotely_saved: boolean = false) {
+		super(dbDispatch.db.dbType, baseID, id, hasBeen_remotely_saved);
 		this.selectionRange = new Seriously_Range(0, title.length);
 		this.page_states = new Page_States(this.id);
 		this.details = details;
@@ -88,12 +89,18 @@ export default class Thing extends Datum {
 
 	async remoteWrite() {
 		if (!this.awaitingCreation) {
-			if (this.isBackedUp_remotely) {
+			if (this.hasBeen_remotely_saved) {
 				await dbDispatch.db.thing_remoteUpdate(this);
 			} else if (dbDispatch.db.isRemote) {
 				await dbDispatch.db.thing_remember_remoteCreate(this);
 			}
 		}
+	}
+
+	signal_thing_changed() {
+		const count = get(s_rebuild_count) + 1;
+		s_rebuild_count.set(count);
+		s_thing_color.set(`${this.id}${k.generic_separator}${count}`);
 	}
 
 	crumbWidth(numberOfParents: number): number {

@@ -323,7 +323,7 @@ export default class DBFirebase implements DBInterface {
 				this.deferSnapshots = true;
 				const ref = await addDoc(thingsCollection, jsThing)
 				thing.awaitingCreation = false;
-				thing.isBackedUp_remotely = true;
+				thing.hasBeen_remotely_saved = true;
 				thing.setID(ref.id);			// so relationship will be correct
 				h.thing_remember(thing);
 				this.handle_deferredSnapshots();
@@ -398,7 +398,7 @@ export default class DBFirebase implements DBInterface {
 				this.deferSnapshots = true;
 				const ref = await addDoc(relationshipsCollection, jsRelationship); // works!
 				relationship.awaitingCreation = false;
-				relationship.isBackedUp_remotely = true;
+				relationship.hasBeen_remotely_saved = true;
 				relationship.setID(ref.id);
 				h.relationship_remember(relationship);
 				this.handle_deferredSnapshots();
@@ -445,7 +445,7 @@ export default class DBFirebase implements DBInterface {
 		if (changed) {
 			relationship.idChild = remote.child.id;
 			relationship.idParent = remote.parent.id;
-			relationship.isBackedUp_remotely = true;
+			relationship.hasBeen_remotely_saved = true;
 			relationship.idPredicate = remote.predicate.id;
 			relationship.order_setTo_remoteMaybe(remote.order + k.halfIncrement);
 		}
@@ -541,6 +541,7 @@ class SnapshotDeferal {
 }
 
 interface RemoteThing {
+	details: string;
 	title: string;
 	color: string;
 	trait: string;
@@ -549,9 +550,10 @@ interface RemoteThing {
 class RemoteThing implements RemoteThing {
 	constructor(data: DocumentData) {
 		const remote = data as RemoteThing;
-		this.title = remote.title;
-		this.trait = remote.trait;
-		this.color = remote.color;
+		this.details = remote.details;
+		this.title	 = remote.title;
+		this.trait	 = remote.trait;
+		this.color	 = remote.color;
 	}
 
 	get virginTitle(): string {
@@ -565,6 +567,7 @@ class RemoteThing implements RemoteThing {
 
 	isEqualTo(thing: Thing | null) {
 		return !!thing &&
+		thing.details == this.details &&
 		thing.title == this.title &&
 		thing.trait == this.trait &&
 		thing.color == this.color;

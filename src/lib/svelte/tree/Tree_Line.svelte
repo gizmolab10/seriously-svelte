@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, Rect, Size, Point, debug, ZIndex, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import { Svelte_Wrapper, Ancestry, SvelteComponentType, IDLine } from '../../ts/common/Global_Imports';
-	import { s_thing_changed } from '../../ts/state/Reactive_State';
+	import { s_thing_color } from '../../ts/state/Reactive_State';
 	import Circle from '../kit/Circle.svelte';
 	import Box from '../kit/Box.svelte';
     export let ancestry;
@@ -24,7 +24,7 @@
 	}
 
 	$: {
-		if (!!ancestry.thing && ancestry.thing.id == $s_thing_changed?.split(k.generic_separator)[0]) {
+		if (!!ancestry.thing && ancestry.thing.id == $s_thing_color?.split(k.generic_separator)[0]) {
 			rebuilds += 1;
 		}
 	}

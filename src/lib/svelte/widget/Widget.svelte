@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_thing_changed, s_rings_mode, s_title_editing, s_ancestry_focus } from '../../ts/state/Reactive_State';
+	import { s_thing_color, s_rings_mode, s_title_editing, s_ancestry_focus } from '../../ts/state/Reactive_State';
 	import { s_thing_fontFamily, s_ancestries_grabbed, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
 	import { ElementType, Element_State, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { k, u, ux, Thing, Point, Angle, debug, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
@@ -92,7 +92,7 @@
 	}
 
 	$: {
-		if (!!thing && thing.id == $s_thing_changed?.split(k.generic_separator)[0]) {
+		if (!!thing && thing.id == $s_thing_color?.split(k.generic_separator)[0]) {
 			rebuilds += 1;
 		}
 	}

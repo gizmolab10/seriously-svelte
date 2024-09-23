@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { dbDispatch, Seriously_Range, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { g, k, u, Point, Thing, debug, Angle, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
-	import { s_rings_mode, s_thing_changed, s_title_editing } from '../../ts/state/Reactive_State';
+	import { s_rings_mode, s_thing_color, s_thing_title, s_title_editing } from '../../ts/state/Reactive_State';
 	import { s_ancestries_grabbed, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
 	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
@@ -29,6 +29,8 @@
 		const title = event.target.value;
 		if (!!thing && !!title) {
 			thing.title = bound_title = title;
+			s_thing_title.set(null);
+			// thing.signal_thing_changed();
 		}
 	};
 	
@@ -47,7 +49,7 @@
 			switch (event.key) {	
 				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); h.ancestry_edit_remoteCreateChildOf(ancestry.parentAncestry); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
-				default:	  signals.signal_relayoutWidgets(); break;
+				default:	  s_thing_title.set(thing.id); break;
 			}
 		}
 	}
@@ -69,7 +71,7 @@
 	}
 
 	$: {
-		if (!!ancestry.thing && ancestry.thing.id == $s_thing_changed?.split(k.generic_separator)[0]) {
+		if (!!ancestry.thing && ancestry.thing.id == $s_thing_color?.split(k.generic_separator)[0]) {
 			color = thing?.color;
 		}
 	}

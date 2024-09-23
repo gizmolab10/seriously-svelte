@@ -4,8 +4,8 @@ import { DebugFlag } from '../common/Debug';
 export default class Datum extends RemoteIdentifiable {
 	baseID: string;
 
-	constructor(dbType: string, baseID: string, id: string, isBackedUp_remotely: boolean = false) {
-		super(dbType, id, isBackedUp_remotely);
+	constructor(dbType: string, baseID: string, id: string, hasBeen_remotely_saved: boolean = false) {
+		super(dbType, id, hasBeen_remotely_saved);
 		this.baseID = baseID;
 	}
 

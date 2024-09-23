@@ -2,7 +2,7 @@
 	import { g, k, u, ux, w, Thing, Point, Angle, debug, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
 	import { s_paging_ring_state, s_ring_resizing_state, s_ring_rotation_state } from '../../ts/state/Reactive_State';
 	import { s_ancestry_focus, s_clusters_geometry, s_active_cluster_map } from '../../ts/state/Reactive_State';
-	import { s_graphRect, s_thing_changed, s_mouse_location } from '../../ts/state/Reactive_State';
+	import { s_graphRect, s_thing_color, s_mouse_location } from '../../ts/state/Reactive_State';
 	import { s_rotation_ring_angle, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import { s_mouse_up_count, s_user_graphOffset } from '../../ts/state/Reactive_State';
 	import { svgPaths, dbDispatch, opacitize } from '../../ts/common/Global_Imports';
@@ -39,7 +39,7 @@
 	$s_clusters_geometry.layoutAll_clusters();
 
 	$: {
-		if (!!$s_ancestry_focus.thing && $s_ancestry_focus.thing.id == $s_thing_changed?.split(k.generic_separator)[0]) {
+		if (!!$s_ancestry_focus.thing && $s_ancestry_focus.thing.id == $s_thing_color?.split(k.generic_separator)[0]) {
 			color = $s_ancestry_focus?.thing?.color ?? k.color_default;
 			rebuilds += 1;
 		}

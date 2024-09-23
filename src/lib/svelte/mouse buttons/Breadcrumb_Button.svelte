@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, u, ux, Point, Thing, IDTool, onMount, signals, opacitize } from '../../ts/common/Global_Imports';
 	import { dbDispatch, ElementType, Element_State } from '../../ts/common/Global_Imports';
-	import { s_thing_changed, s_ancestry_focus } from '../../ts/state/Reactive_State';
+	import { s_thing_color, s_ancestry_focus } from '../../ts/state/Reactive_State';
 	import Button from './Button.svelte';
 	export let left = 0;
     export let ancestry;
@@ -33,7 +33,7 @@
 	}
 
 	$: {
-		if (!!thing && thing.id == $s_thing_changed?.split(k.generic_separator)[0]) {
+		if (!!thing && thing.id == $s_thing_color?.split(k.generic_separator)[0]) {
 			updateColors();
 		}
 	}

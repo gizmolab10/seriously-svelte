@@ -86,7 +86,7 @@ export class Hierarchy {
 		///////////////////////
 
 		let ancestryGrab = this.grabs.latestAncestryGrabbed(true);
-		if (event.type == 'keydown') {
+		if (event.type == 'keydown' && !g.isEditing_text) {
 			const OPTION = event.altKey;
 			const SHIFT = event.shiftKey;
 			const COMMAND = event.metaKey;
@@ -237,17 +237,17 @@ export class Hierarchy {
 	}
 
 	thing_remember_runtimeCreateUnique(baseID: string, id: string, title: string, color: string, trait: string, details = k.empty,
-		isBackedUp_remotely: boolean = false): Thing {
+		hasBeen_remotely_saved: boolean = false): Thing {
 		let thing = this.thing_forHID(id?.hash() ?? null);
 		if (!thing) {
-			thing = this.thing_remember_runtimeCreate(baseID, id, title, color, trait, details, isBackedUp_remotely);
+			thing = this.thing_remember_runtimeCreate(baseID, id, title, color, trait, details, hasBeen_remotely_saved);
 		}
 		return thing;
 	}
 
 	thing_remember_runtimeCreate(baseID: string, id: string, title: string, color: string, trait: string, details = k.empty,
-		isBackedUp_remotely: boolean = false): Thing {
-		const thing = this.thing_runtimeCreate(baseID, id, title, color, trait, details, isBackedUp_remotely);
+		hasBeen_remotely_saved: boolean = false): Thing {
+		const thing = this.thing_runtimeCreate(baseID, id, title, color, trait, details, hasBeen_remotely_saved);
 		this.thing_remember(thing);
 		return thing;
 	}
@@ -287,12 +287,12 @@ export class Hierarchy {
 	}
 
 	thing_runtimeCreate(baseID: string, id: string, title: string, color: string, trait: string, details = k.empty,
-		isBackedUp_remotely: boolean = false): Thing {
+		hasBeen_remotely_saved: boolean = false): Thing {
 		let thing: Thing | null = null;
 		if (id && trait == IDTrait.root && baseID != this.db.baseID) {		// other bulks have their own root & id
 			thing = this.thing_remember_bulkRootID(baseID, id, color);		// which our thing needs to adopt
 		} else {
-			thing = new Thing(baseID, id, title, color, trait, details, isBackedUp_remotely);
+			thing = new Thing(baseID, id, title, color, trait, details, hasBeen_remotely_saved);
 			if (thing.isBulkAlias) {
 				thing.needsBulkFetch = true;
 				if (title.includes('@')) {
@@ -513,13 +513,13 @@ export class Hierarchy {
 		let reversed = this.relationship_forPredicate_parent_child(idPredicate, idChild, idParent);
 		let relationship = this.relationship_forPredicate_parent_child(idPredicate, idParent, idChild);
 		const isBidirectional = this.predicate_forID(idPredicate)?.isBidirectional ?? false;
-		const isBackedUp_remotely = creationOptions != CreationOptions.none;
+		const hasBeen_remotely_saved = creationOptions != CreationOptions.none;
 		if (!relationship) {
-			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, isBackedUp_remotely);
+			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, hasBeen_remotely_saved);
 			this.relationship_remember(relationship);
 		}
 		if (isBidirectional && !reversed) {
-			reversed = new Relationship(baseID, Identifiable.newID(), idPredicate, idChild, idParent, order, isBackedUp_remotely);
+			reversed = new Relationship(baseID, Identifiable.newID(), idPredicate, idChild, idParent, order, hasBeen_remotely_saved);
 			this.relationship_remember(reversed);
 		}
 		relationship?.order_setTo_remoteMaybe(order);
@@ -710,7 +710,7 @@ export class Hierarchy {
 			if (changingBulk) {
 				console.log('changingBulk');
 			}
-			if (!child.isBackedUp_remotely) {
+			if (!child.hasBeen_remotely_saved) {
 				await this.db.thing_remember_remoteCreate(child);					// for everything below, need to await child.id fetched from dbDispatch
 			}
 			const relationship = await this.relationship_remember_remoteCreateUnique(baseID, Identifiable.newID(), idPredicate, parent.idBridging, child.id, 0, CreationOptions.getRemoteID);
@@ -900,14 +900,14 @@ export class Hierarchy {
 		}
 	}
 
-	predicate_remember_runtimeCreateUnique(id: string, kind: string, isBidirectional: boolean, isBackedUp_remotely: boolean = true) {
+	predicate_remember_runtimeCreateUnique(id: string, kind: string, isBidirectional: boolean, hasBeen_remotely_saved: boolean = true) {
 		if (!this.predicate_forID(id)) {
-			this.predicate_remember_runtimeCreate(id, kind, isBidirectional, isBackedUp_remotely);
+			this.predicate_remember_runtimeCreate(id, kind, isBidirectional, hasBeen_remotely_saved);
 		}
 	}
 
-	predicate_remember_runtimeCreate(id: string, kind: string, isBidirectional: boolean, isBackedUp_remotely: boolean = true) {
-		this.predicate_remember(new Predicate(id, kind, isBidirectional, isBackedUp_remotely));
+	predicate_remember_runtimeCreate(id: string, kind: string, isBidirectional: boolean, hasBeen_remotely_saved: boolean = true) {
+		this.predicate_remember(new Predicate(id, kind, isBidirectional, hasBeen_remotely_saved));
 	}
 
 	access_runtimeCreate(idAccess: string, kind: string) {

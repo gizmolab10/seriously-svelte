@@ -2,7 +2,7 @@ import { s_rings_mode, s_paging_ring_state, s_ring_resizing_state, s_ring_rotati
 import { s_rebuild_count, s_ancestry_focus, s_ancestries_grabbed, s_ancestries_expanded } from './Reactive_State';
 import { e, k, u, ux, get, Rect, Size, Point, debug, Info_Kind, dbDispatch } from '../common/Global_Imports';
 import { persistLocal, IDPersistant, Rotation_State, Expansion_State } from '../common/Global_Imports';
-import { s_graphRect, s_show_details, s_scale_factor, s_thing_changed } from './Reactive_State';
+import { s_graphRect, s_show_details, s_scale_factor, s_thing_color } from './Reactive_State';
 import { s_resize_count, s_mouse_up_count } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
 
@@ -10,6 +10,7 @@ class Global_State {
 	show_tinyDots = true;
 	show_controls = false;
 	things_arrived = false;
+	isEditing_text = false;
 	show_titleAtTop = false;
 	show_arrowheads = false;
 	allow_GraphEditing = true;
@@ -28,7 +29,7 @@ class Global_State {
 		s_resize_count.set(0);							// defaults
 		s_rebuild_count.set(0);
 		s_mouse_up_count.set(0);
-		s_thing_changed.set(null);
+		s_thing_color.set(null);
 		s_paging_ring_state.set(new Rotation_State());
 		s_ring_rotation_state.set(new Rotation_State());
 		s_ring_resizing_state.set(new Expansion_State());

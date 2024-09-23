@@ -7,8 +7,8 @@ export default class Predicate extends RemoteIdentifiable {
 	stateIndex: number;
 	kind: string;
 
-	constructor(id: string, kind: string, isBidirectional: boolean, isBackedUp_remotely: boolean = false) {
-		super(dbDispatch.db.dbType, id, isBackedUp_remotely);
+	constructor(id: string, kind: string, isBidirectional: boolean, hasBeen_remotely_saved: boolean = false) {
+		super(dbDispatch.db.dbType, id, hasBeen_remotely_saved);
 		this.isBidirectional = isBidirectional;
 		this.stateIndex = Predicate.nextIndex;		// index in page states inward and outward arrays
 		Predicate.nextIndex += 1;

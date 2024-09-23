@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_thing_changed, s_ancestry_focus, s_thing_fontFamily } from '../../ts/state/Reactive_State';
+	import { s_thing_color, s_ancestry_focus, s_thing_fontFamily } from '../../ts/state/Reactive_State';
 	import { g, k, ux, Size, Point, IDTool, ZIndex, svgPaths, } from '../../ts/common/Global_Imports';
 	import { s_user_graphOffset, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
 	import { ElementType, Clusters_Geometry } from '../../ts/common/Global_Imports';
@@ -20,7 +20,7 @@
 	}
 
 	$: {
-		const _ = $s_thing_changed;
+		const _ = $s_thing_color;
 		color = $s_ancestry_focus?.thing?.color;
 	}
 

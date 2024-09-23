@@ -90,7 +90,7 @@ export default class DBAirtable implements DBInterface {
 			const fields = await this.things_table.create(thing.fields);
 			const id = fields['id']; //	// need for update, delete and things_byHID (to get parent from relationship)
 			thing.setID(id);
-			thing.isBackedUp_remotely = true;
+			thing.hasBeen_remotely_saved = true;
 			h.thing_remember(thing);
 		} catch (error) {
 			thing.log(DebugFlag.remote, this.things_errorMessage + error);
@@ -137,12 +137,12 @@ export default class DBAirtable implements DBInterface {
 	static readonly $_RELATIONSHIP_$: unique symbol;
 
 	async relationship_remember_remoteCreate(relationship: Relationship | null) {
-		if (relationship && !relationship.isBackedUp_remotely) {
+		if (relationship && !relationship.hasBeen_remotely_saved) {
 			try {
 				const fields = await this.relationships_table.create(relationship.fields);	// insert with temporary id
 				const id = fields['id'];																										// grab permanent id
 				relationship.setID(id);
-				relationship.isBackedUp_remotely = true;
+				relationship.hasBeen_remotely_saved = true;
 				h.relationships_refreshKnowns();
 			} catch (error) {
 				relationship.log(DebugFlag.remote, this.relationships_errorMessage + error);

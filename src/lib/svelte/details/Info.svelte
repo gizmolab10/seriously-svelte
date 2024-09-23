@@ -1,8 +1,8 @@
 <script lang='ts'>
+	import { s_thing_color, s_thing_title, s_ancestry_focus } from '../../ts/state/Reactive_State';
 	import { g, k, ux, Point, ZIndex, Ancestry, Info_Kind } from '../../ts/common/Global_Imports';
 	import { persistLocal, ElementType, IDPersistant } from '../../ts/common/Global_Imports';
 	import { s_shown_relations, s_ancestries_grabbed } from '../../ts/state/Reactive_State';
-	import { s_thing_changed, s_ancestry_focus } from '../../ts/state/Reactive_State';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Button from '../mouse buttons/Button.svelte';
@@ -28,10 +28,14 @@
 	}
 	
 	$: {
-		const _ = $s_thing_changed;
+		const _ = $s_thing_color;
 		color = ancestry.thing?.color ?? k.color_default;
 		update_info();
-		rebuilds += 1;
+	}
+	
+	$: {
+		const _ = $s_thing_title;
+		update_forKind();
 	}
 
 	function hasGrabs(): boolean {
@@ -81,16 +85,15 @@
 		}
 	}
 
-	// import { Button, Segmented } from 'framework7-svelte';
-			// <div
-			// 	style='
-			// 		top:86px;'>
-			// 	<Segmented raised round tag="div">
-			// 		<Button round>focus</Button>
-			// 		<Button round active>selected</Button>
-			// 	</Segmented>
-			// </div>
-
+	function handle_textChange (text: string) {
+		const thing = ancestry.thing;
+		if (!!thing) {
+			thing.details = text;
+			(async () => {
+				await thing.remoteWrite();
+			})();
+		}
+	}
 
 </script>
 
@@ -139,6 +142,7 @@
 						<td class='second'><Text_Editor
 							left=76
 							color={ancestry.thing?.color}
+							handle_textChange={handle_textChange}
 							original_text={ancestry.thing?.details}/></td>
 					</tr>
 					{#each info as [key, value]}

@@ -9,8 +9,8 @@ export default class Relationship extends Datum {
 	idChild: string;
 	order: number; 
 
-	constructor(baseID: string, id: string, idPredicate: string, idParent: string, idChild: string, order = 0, isBackedUp_remotely: boolean = false) {
-		super(dbDispatch.db.dbType, baseID, id, isBackedUp_remotely);
+	constructor(baseID: string, id: string, idPredicate: string, idParent: string, idChild: string, order = 0, hasBeen_remotely_saved: boolean = false) {
+		super(dbDispatch.db.dbType, baseID, id, hasBeen_remotely_saved);
 		this.idPredicate = idPredicate;
 		this.idParent = idParent;
 		this.idChild = idChild;
@@ -22,7 +22,7 @@ export default class Relationship extends Datum {
 	get predicate(): Predicate | null { return h.predicate_forID(this.idPredicate) }
 	get isValid(): boolean { return !!(this.idPredicate && this.idParent && this.idChild); }
 	get fields(): Airtable.FieldSet { return { predicate: [this.idPredicate], parent: [this.idParent], child: [this.idChild], order: this.order }; }
-	get description(): string { return `BASE ${this.baseID} STORED ${this.isBackedUp_remotely} ORDER ${this.order} ID ${this.id} PARENT ${this.parent?.description} ${this.predicate?.kind} CHILD ${this.child?.description}`; }
+	get description(): string { return `BASE ${this.baseID} STORED ${this.hasBeen_remotely_saved} ORDER ${this.order} ID ${this.id} PARENT ${this.parent?.description} ${this.predicate?.kind} CHILD ${this.child?.description}`; }
 	log(option: DebugFlag, message: string) { debug.log_maybe(option, message + k.space + this.description); }
 
 	thing(child: boolean): Thing | null {
@@ -41,7 +41,7 @@ export default class Relationship extends Datum {
 
 	async remoteWrite() {
 		if (!this.awaitingCreation) {
-			if (this.isBackedUp_remotely) {
+			if (this.hasBeen_remotely_saved) {
 				await dbDispatch.db.relationship_remoteUpdate(this);
 			} else if (dbDispatch.db.isRemote) {
 				await dbDispatch.db.relationship_remember_remoteCreate(this);

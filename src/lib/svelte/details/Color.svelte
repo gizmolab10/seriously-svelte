@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, ux, get, Thing, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
-	import { s_rebuild_count, s_thing_changed } from '../../ts/state/Reactive_State';
+	import { s_thing_color } from '../../ts/state/Reactive_State';
 	import ColorPicker from 'svelte-awesome-color-picker';
 	export let thing: Thing;
 	const colorAsHEX = u.colorToHex(thing.color);
@@ -10,18 +10,16 @@
 
 	function handleColorChange(event) {
 		event.preventDefault();
-		const rebuild_count = get(s_rebuild_count) + 1;
 		const color = event.detail.hex;
 		thing.color = color;
-		s_rebuild_count.set(rebuild_count);
-		$s_thing_changed = `${thing.id}${k.generic_separator}${rebuild_count}`;
+		thing.signal_thing_changed();
 		if (!!persistenceTimer) {
 			clearTimeout(persistenceTimer);		// each color change discards and restarts the timer
 			persistenceTimer = null;
 		}
 		persistenceTimer = setTimeout(() => {
 			(async () => {
-				$s_thing_changed = null;
+				$s_thing_color = null;
 				await thing.remoteWrite();
 			})();
 		}, 1000);		// tenth second delay

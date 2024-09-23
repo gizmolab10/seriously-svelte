@@ -3,8 +3,8 @@ import RemoteIdentifiable from './RemoteIdentifiable';
 export default class Access extends RemoteIdentifiable {
 	kind: string;
 
-	constructor(dbType: string, id: string, kind: string, isBackedUp_remotely: boolean = false) {
-		super(dbType, id, isBackedUp_remotely);
+	constructor(dbType: string, id: string, kind: string, hasBeen_remotely_saved: boolean = false) {
+		super(dbType, id, hasBeen_remotely_saved);
 		this.kind = kind;
 	}
 }
