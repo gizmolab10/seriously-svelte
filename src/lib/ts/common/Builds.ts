@@ -10,6 +10,7 @@ class Builds {
 
 	constructor() {
 		this.notes = {
+			113 : ['September 24, 2024', 'details textarea'],
 			112 : ['September 12, 2024', 'new info details'],
 			111 : ['September 8, 2024', 'new resize ring'],
 			110 : ['August 30, 2024', 'airtable dbid support'],

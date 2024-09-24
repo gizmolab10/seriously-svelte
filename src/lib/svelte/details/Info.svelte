@@ -102,6 +102,7 @@
 		border-right: 5px solid transparent;
 		text-align: right;
 		line-height:12px;
+		color:black;
 		width: 35%;
 	}
 	.second {
@@ -137,14 +138,6 @@
 				z-index: {ZIndex.details};'>
 			<table style='width: 200px; left:12px; color:{color};'>
 				{#key info}
-					<tr>
-						<td class='first'>details:</td>
-						<td class='second'><Text_Editor
-							left=76
-							color={ancestry.thing?.color}
-							handle_textChange={handle_textChange}
-							original_text={ancestry.thing?.details}/></td>
-					</tr>
 					{#each info as [key, value]}
 						<tr>
 							<td class='first'>{key}:</td>
@@ -163,10 +156,18 @@
 				width={k.width_details - 20}
 				element_state={element_state}
 				height={k.default_buttonSize + 4}
-				center={new Point(k.width_details / 2, 132)}
+				center={new Point(k.width_details / 2, 117)}
 				closure={(mouse_state) => button_closure_forID(mouse_state)}>
 				{button_title}
 			</Button>
 		{/if}
+		<Text_Editor
+			left=10
+			top=135
+			height=200
+			color={color}
+			width={k.width_details - 30}
+			handle_textChange={handle_textChange}
+			original_text={ancestry.thing?.details}/>
 	{/if}
 {/key}
