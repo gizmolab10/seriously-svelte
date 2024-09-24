@@ -20,22 +20,26 @@
 	$: {
 		const _ = $s_ancestry_focus;
 		update_forKind();
+		update_info();
 	}
 	
 	$: {
 		const _ = $s_ancestries_grabbed;
 		update_forKind();
+		update_info();
 	}
 	
 	$: {
 		const _ = $s_thing_color;
-		color = ancestry.thing?.color ?? k.color_default;
-		update_info();
+		update_forKind();
+		color = ancestry?.thing?.color ?? k.color_default;
+		// update_info();
 	}
 	
 	$: {
 		const _ = $s_thing_title;
 		update_forKind();
+		update_info();
 	}
 
 	function hasGrabs(): boolean {
@@ -58,7 +62,6 @@
 			grabs = $s_ancestries_grabbed;
 			ancestry = grabs[0];
 		}
-		update_info();
 	}
 
 	function update_info() {
@@ -82,11 +85,12 @@
 			g.shown_info_kind = next_infoKind();
 			persistLocal.write_key(IDPersistant.info_kind, g.shown_info_kind);
 			update_forKind();
+			update_info();
 		}
 	}
 
 	function handle_textChange (text: string) {
-		const thing = ancestry.thing;
+		const thing = ancestry?.thing;
 		if (!!thing) {
 			thing.details = text;
 			(async () => {
@@ -121,18 +125,27 @@
 				width:{k.width_details}px;'>
 			{ancestry.title.injectEllipsisAt(15)}
 		</div>
-		<div class='horizontal-line'
-			style='
-				top:26px;
-				height:0.5px;
-				position:absolute;
-				background-color:{color};
-				width:{k.width_details}px;
-				z-index:{ZIndex.frontmost};'>
-		</div>
+		{#if hasGrabs()}
+			<Button name={name}
+				width={k.width_details - 20}
+				element_state={element_state}
+				height={k.default_buttonSize + 4}
+				center={new Point(k.width_details / 2, 36)}
+				closure={(mouse_state) => button_closure_forID(mouse_state)}>
+				{button_title}
+			</Button>
+		{/if}
+		<Text_Editor
+			top=56
+			left=10
+			height=200
+			color={color}
+			width={k.width_details - 30}
+			handle_textChange={handle_textChange}
+			original_text={ancestry.thing?.details}/>
 		<div class='ancestry-info'
 			style='
-				top:30px;
+				top:267px;
 				left:10px;
 				position:absolute;
 				z-index: {ZIndex.details};'>
@@ -151,23 +164,5 @@
 				{/key}
 			</table>
 		</div>
-		{#if hasGrabs()}
-			<Button name={name}
-				width={k.width_details - 20}
-				element_state={element_state}
-				height={k.default_buttonSize + 4}
-				center={new Point(k.width_details / 2, 117)}
-				closure={(mouse_state) => button_closure_forID(mouse_state)}>
-				{button_title}
-			</Button>
-		{/if}
-		<Text_Editor
-			left=10
-			top=135
-			height=200
-			color={color}
-			width={k.width_details - 30}
-			handle_textChange={handle_textChange}
-			original_text={ancestry.thing?.details}/>
 	{/if}
 {/key}

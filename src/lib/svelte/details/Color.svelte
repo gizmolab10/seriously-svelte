@@ -8,11 +8,13 @@
 	const pickerSize = 100;
 	let persistenceTimer;
 
+	console.log('mount color')
+
 	function handleColorChange(event) {
 		event.preventDefault();
 		const color = event.detail.hex;
 		thing.color = color;
-		thing.signal_thing_changed();
+		thing.signal_color_change();
 		if (!!persistenceTimer) {
 			clearTimeout(persistenceTimer);		// each color change discards and restarts the timer
 			persistenceTimer = null;

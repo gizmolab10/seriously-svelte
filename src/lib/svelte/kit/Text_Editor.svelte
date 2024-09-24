@@ -58,6 +58,7 @@
 		on:input={handle_input}
 		bind:value={bound_text}
 		on:keydown={handle_key_down}
+		on:focus={handleFocus(true)}
 		on:blur={handleFocus(false)}
 		style='
 			resize: none;

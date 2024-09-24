@@ -97,7 +97,7 @@ export default class Thing extends Datum {
 		}
 	}
 
-	signal_thing_changed() {
+	signal_color_change() {
 		const count = get(s_rebuild_count) + 1;
 		s_rebuild_count.set(count);
 		s_thing_color.set(`${this.id}${k.generic_separator}${count}`);
