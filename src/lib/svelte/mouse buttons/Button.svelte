@@ -8,9 +8,10 @@
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;
 	export let element_state: Element_State;
+	export let border_color = 'black';
 	export let position = 'absolute';
-	export let border_thickness = 1;
 	export let zindex = ZIndex.dots;
+	export let border_thickness = 1;
 	export let center = Point.zero;
 	export let color = 'black';
 	export let style = k.empty;
@@ -34,17 +35,17 @@
 	//									//
 	//////////////////////////////////////
 
-	update_currentStyle();
+	update_currentStyle();	// call during instantiate
 	
 	function update_currentStyle() {
 		color = element_state.stroke;
 		background_color = element_state.fill;
 		if (style.length == 0) {
-			border = border_thickness == 0 ? 'none' : `solid ${border_thickness}px`;
+			border = border_thickness == 0 ? 'none' : `${border_thickness}px solid ${border_color}`;
 			currentStyle=`
 				color:${color};
-				border:${border};
 				width:${width}px;
+				border:${border};
 				z-index:${zindex};
 				height:${height}px;
 				position:${position};

@@ -127,6 +127,7 @@
 		</div>
 		{#if hasGrabs()}
 			<Button name={name}
+				border_thickness=0.5
 				width={k.width_details - 20}
 				element_state={element_state}
 				height={k.default_buttonSize + 4}
