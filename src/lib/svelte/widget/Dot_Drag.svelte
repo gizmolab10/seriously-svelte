@@ -6,7 +6,6 @@
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Tooltip from '../kit/Tooltip.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
-	import Box from '../kit/Box.svelte';
 	export let center = Point.zero;
 	export let name = k.empty;
     export let ancestry;

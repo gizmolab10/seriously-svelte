@@ -3,7 +3,6 @@
 	import { Svelte_Wrapper, Ancestry, SvelteComponentType, IDLine } from '../../ts/common/Global_Imports';
 	import { s_thing_color } from '../../ts/state/Reactive_State';
 	import Circle from '../kit/Circle.svelte';
-	import Box from '../kit/Box.svelte';
     export let ancestry;
 	export let rect = new Rect();
 	export let curveType: string = IDLine.up;

@@ -10,7 +10,6 @@
 	import Widget from '../widget/Widget.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import Circle from '../kit/Circle.svelte';
-	import Box from '../kit/Box.svelte';
 	const revealState = ux.elementState_for($s_ancestry_focus, ElementType.reveal, 'tree');
 	const focusState = ux.elementState_for($s_ancestry_focus, ElementType.focus, 'tree');
 	let origin_ofFirstReveal = Point.zero;

@@ -42,7 +42,7 @@
 		const handler = signals.handle_anySignal((IDSignal, ancestry) => { updateInputWidth(); });
 		setTimeout(() => { updateInputWidth(); }, 100);
 		return () => { handler.disconnect() };
-	});
+	})
 
 	function handle_key_down(event) {
 		if (!!thing && !!ancestry && ancestry.isEditing && canAlterTitle(event)) {

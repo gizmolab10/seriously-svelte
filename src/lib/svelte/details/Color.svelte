@@ -8,8 +8,6 @@
 	const pickerSize = 100;
 	let persistenceTimer;
 
-	console.log('mount color')
-
 	function handleColorChange(event) {
 		event.preventDefault();
 		const color = event.detail.hex;
@@ -17,14 +15,13 @@
 		thing.signal_color_change();
 		if (!!persistenceTimer) {
 			clearTimeout(persistenceTimer);		// each color change discards and restarts the timer
-			persistenceTimer = null;
 		}
 		persistenceTimer = setTimeout(() => {
 			(async () => {
 				$s_thing_color = null;
 				await thing.remoteWrite();
 			})();
-		}, 1000);		// tenth second delay
+		}, 100);		// tenth second delay
 	}
 
 </script>

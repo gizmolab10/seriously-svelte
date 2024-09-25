@@ -3,7 +3,6 @@
 	export let handle_textChange = (text: string) => {};
 	export let original_text = k.empty;
 	export let color = k.color_default;
-	export let border = `1px solid black`;
 	export let width = k.width_details - 30;
 	export let height = 200;
 	export let left = 0;
@@ -12,31 +11,30 @@
 	let cursorStyle = 'cursor: pointer';
 	let padding = `3px 5px 3px 5px`;
 	let bound_text = original_text;
-	let mouse_click_timer;
 	let isEditing = false;
-	let clickCount = 0;
-	let input = null;
-
-	var hasChanges = () => { return original_text != bound_text; }
-	function handle_mouse_up() { clearTimeout(mouse_click_timer); }
+	let textarea = null;
 
 	function handleFocus(flag) { 
 		g.isEditing_text = flag;
-		const style = flag ? 'dashed' : 'solid';
-		border = `1px ${style} black`;
 	}
 
-	function handle_input(event) {
-		const text = event.target.value;
-		if (!!text) {
-			bound_text = text;
-			handle_textChange(text);
-		}
-	};
-
-	function handle_key_down(event) {
-		switch (event.key) {	
-			case 'Enter': input.blur(); break;
+	function handle_keydown(event: KeyboardEvent) {
+		const exit = event.key == 'Enter' && !event.shiftKey;
+		if (exit) {
+			event.preventDefault();
+			textarea.value = bound_text;
+			textarea.blur();
+			setTimeout(() => {
+				handleFocus(false);
+			}, 10);
+		} else {
+			setTimeout(() => {
+				const text = event.target.value;
+				if (!!text) {
+					bound_text = text;
+					handle_textChange(text);
+				}
+			}, 1);
 		}
 	}
 
@@ -53,13 +51,12 @@
 	<textarea
 		type='text'
 		name='text'
+		wrap='soft'
 		class='text'
-		bind:this={input}
-		on:input={handle_input}
+		bind:this={textarea}
 		bind:value={bound_text}
-		on:keydown={handle_key_down}
-		on:focus={handleFocus(true)}
-		on:blur={handleFocus(false)}
+		on:keydown={handle_keydown}
+		on:mousedown={handleFocus(true)}
 		style='
 			resize: none;
 			top: {top}px;
@@ -72,9 +69,13 @@
 			position: absolute;
 			padding: {padding};
 			position: absolute;
+			overflow-x: hidden;
 			vertical-align: top;
+			white-space: normal;
 			z-index: {ZIndex.text};
+			overflow-wrap: break-word;
 			{k.prevent_selection_style};
 			font-family: Times New Roman;
+			border-radius: {k.row_height / 2}px;
 		'/>
 {/key}
