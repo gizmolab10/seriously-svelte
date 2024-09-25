@@ -86,7 +86,7 @@ class Utilities {
 		let identifiablesByHID: {[hash: number]: Identifiable} = {};
 		for (const identifiable of identifiables) {
 			const hid = identifiable.idHashed;
-			if (hid) {
+			if (!!hid) {
 				identifiablesByHID[hid] = identifiable;
 			}
 		}
@@ -97,7 +97,7 @@ class Utilities {
 		let ancestriesByHID: {[hash: number]: Ancestry} = {};
 		for (const ancestry of ancestries) {
 			const hid = ancestry.thing?.id.hash();
-			if (hid) {
+			if (!!hid) {
 				ancestriesByHID[hid] = ancestry;
 			}
 		}

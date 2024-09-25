@@ -26,17 +26,32 @@
 
 </script>
 
+<style>
+	div {
+		position: absolute;
+		left: 72px;
+		top: 45px;
+	}
+
+	div :global(.wrapper) {
+		left: -59px;
+		top: -41px;
+	}
+</style>
+
 {#if !!thing}
 	{#key thing.id}
-		<ColorPicker
-			hex={colorAsHEX}
-			on:input={handleColorChange}
-			--input-size='{selectorSize}px'
-			--picker-width='{pickerSize}px'
-			--picker-height='{pickerSize}px'
-			--slider-width='{selectorSize}px'
-			--picker-z-index='{ZIndex.frontmost}'
-			--picker-indicator-size='{selectorSize}px'
-			label=''/>
+		<div>
+			<ColorPicker
+				hex={colorAsHEX}
+				on:input={handleColorChange}
+				--input-size='{selectorSize}px'
+				--picker-width='{pickerSize}px'
+				--picker-height='{pickerSize}px'
+				--slider-width='{selectorSize}px'
+				--picker-z-index='{ZIndex.frontmost}'
+				--picker-indicator-size='{selectorSize}px'
+				label=''/>
+		</div>
 	{/key}
 {/if}

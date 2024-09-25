@@ -128,7 +128,7 @@ export default class Thing extends Datum {
 
 	oneAncestries_rebuildForSubtree() {		// set oneAncestry for this and all its progeny
 		const oneAncestry = this.oneAncestry_derived;
-		if (oneAncestry) {
+		if (!!oneAncestry) {
 			const predicate = oneAncestry.predicate;
 			if (!!predicate && !predicate.isBidirectional && this.oneAncestry != oneAncestry) {
 				h.ancestry_forget(this.oneAncestry);
@@ -158,7 +158,7 @@ export default class Thing extends Datum {
 
 	relationships_for_isChildOf(idPredicate: string, isChildOf: boolean): Array<Relationship> {
 		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
-		if (id && ![k.empty, k.unknown].includes(id)) {
+		if (!!id && ![k.empty, k.unknown].includes(id)) {
 			return h.relationships_forPredicateThingIsChild(idPredicate, id, isChildOf);
 		}
 		return [];
@@ -196,12 +196,12 @@ export default class Thing extends Datum {
 			for (const relationship of relationships) {
 				if (predicate.isBidirectional) {
 					const child = relationship.child;
-					if (child && child.id != this.id) {
+					if (!!child && child.id != this.id) {
 						addAncestry(h.ancestry_remember_createUnique(relationship.id, predicate.id));
 					}
 				} else {
 					const parent = relationship.parent;
-					if (parent && !visited.includes(parent.id)) {
+					if (!!parent && !visited.includes(parent.id)) {
 						const endID = relationship.id;		// EGADS, this is the wrong relationship; needs the next one
 						const parentAncestries = parent.parentAncestries_for(predicate, u.uniquely_concatenateArrays(visited, [parent.id])) ?? [];
 						if (parentAncestries.length == 0) {

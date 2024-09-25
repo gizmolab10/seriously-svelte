@@ -85,7 +85,7 @@ class Persist_Local {
 	applyFor_key_name(key: string, matching: string, apply: (flag: boolean) => void, persist: boolean = true) {
 		const queryStrings = g.queryStrings;
         const value = queryStrings.get(key);
-		if (value) {
+		if (!!value) {
 			const flag = (value === matching);
 			apply(flag);
 			if (persist) {
@@ -95,7 +95,8 @@ class Persist_Local {
 	}
 
 	ancestries_forKey(key: string): Array<Ancestry> {		// 2 keys supported so far: grabbed, expanded
-		const ids = this.read_key(key);
+		const value = this.read_key(key)[0] as string;
+		const ids = value?.split(k.generic_separator);
 		const length = ids?.length ?? 0;
 		if (this.ignoreAncestries || !ids || length == 0) {
 			return [];
@@ -106,7 +107,7 @@ class Persist_Local {
 		reversed.forEach((id: string, index: number) => {
 			const predicateID = h.idPredicate_for(id);
 			const ancestry = h.ancestry_remember_createUnique(id, predicateID);
-			if (!ancestry) {
+			if (!!!ancestry) {
 				ids.slice(1, length - index);
 				needsRewrite = true;
 			} else {
@@ -169,12 +170,14 @@ class Persist_Local {
 			this.ancestriesRestored = true;
 			s_ancestries_grabbed.set(this.ancestries_forKey(this.dbKey_for(IDPersistant.grabbed)));
 			s_ancestries_expanded.set(this.ancestries_forKey(this.dbKey_for(IDPersistant.expanded)));
-			s_ancestries_grabbed.subscribe((ancestries: Array<Ancestry>) => {
-				this.writeDB_key(IDPersistant.grabbed, !ancestries ? null : ancestries.map(a => a.id));		// ancestral paths
-			});
-			s_ancestries_expanded.subscribe((ancestries: Array<Ancestry>) => {
-				this.writeDB_key(IDPersistant.expanded, !ancestries ? null : ancestries.map(a => a.id));	// ancestral paths
-			});
+			setTimeout(() => {
+				s_ancestries_grabbed.subscribe((ancestries: Array<Ancestry>) => {
+					this.writeDB_key(IDPersistant.grabbed, !ancestries ? null : ancestries.map(a => a.id));		// ancestral paths
+				});
+				s_ancestries_expanded.subscribe((ancestries: Array<Ancestry>) => {
+					this.writeDB_key(IDPersistant.expanded, !ancestries ? null : ancestries.map(a => a.id));	// ancestral paths
+				});
+			}, 10);
 		}
 	}
 

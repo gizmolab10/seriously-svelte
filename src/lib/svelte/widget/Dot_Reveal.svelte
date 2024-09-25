@@ -31,7 +31,7 @@
 	});
 
 	$: {
-		if (dotReveal && !($s_ancestry_showingTools?.matchesAncestry(ancestry) ?? false)) {
+		if (!!dotReveal && !($s_ancestry_showingTools?.matchesAncestry(ancestry) ?? false)) {
 			revealWrapper = new Svelte_Wrapper(dotReveal, handle_mouse_state, ancestry.idHashed, SvelteComponentType.reveal);
 			element_state.set_forHovering(ancestry.thing.color, 'pointer');
 		}

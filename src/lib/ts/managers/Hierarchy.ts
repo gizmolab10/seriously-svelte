@@ -159,9 +159,9 @@ export class Hierarchy {
 	}
 
 	thing_child_forRelationshipHID(hid: number | null): Thing | null {
-		if (hid) {
+		if (!!hid) {
 			const relationship = this.relationship_forHID(hid);
-			if (relationship) {
+			if (!!relationship) {
 				return this.thing_byHID[relationship.idChild.hash()];
 			}
 		}
@@ -177,7 +177,7 @@ export class Hierarchy {
 		if (!isContains || hids.length != 0) {
 			for (const hid of hids) {
 				const relationship = this.relationship_forHID(hid);
-				if (relationship) {
+				if (!!relationship) {
 					if (things.length == 0) {
 						if (!isContains) {
 							things.push(relationship.parent);
@@ -194,7 +194,7 @@ export class Hierarchy {
 		const things = Array<Thing>();
 		for (const ancestry of ancestries) {
 			const thing = this.thing_forAncestry(ancestry);
-			if (!!thing) {
+			if (!!!!thing) {
 				things.push(thing);
 			}
 		}
@@ -211,7 +211,7 @@ export class Hierarchy {
 
 	async thing_remember_remoteRelocateChild(child: Thing, fromParent: Thing, toParent: Thing): Promise<any> {
 		let relationship = this.relationship_whereID_isChild(child.id);
-		if (relationship && relationship.idParent == fromParent.id) {
+		if (!!relationship && relationship.idParent == fromParent.id) {
 			this.relationship_forget(relationship);
 			relationship.idParent = toParent.id;
 			this.relationship_remember(relationship);
@@ -274,7 +274,7 @@ export class Hierarchy {
 	}
 
 	thing_remember(thing: Thing) {
-		if (this.thing_byHID[thing.idHashed] == null) {
+		if (!!this.thing_byHID[thing.idHashed]) {
 			this.thing_byHID[thing.idHashed] = thing;
 			let things = this.things_byTrait[thing.trait] ?? [];
 			things.push(thing);
@@ -323,7 +323,7 @@ export class Hierarchy {
 	}
 
 	thing_bulkAlias_forTitle(title: string | null) {
-		if (title) {
+		if (!!title) {
 			for (const thing of this.things_byTrait[IDTrait.bulk]) {
 				if  (thing.title == title) {		// special case TODO: convert to a query string
 					return thing;
@@ -341,14 +341,14 @@ export class Hierarchy {
 			const baseID = newParent.isBulkAlias ? newParent.title : newParent.baseID;
 			const newThing = await this.thing_remember_runtimeCopy(baseID, thing);
 			newThingAncestry = newParentAncestry.extend_withChild(newThing);
-			if (newThingAncestry) {
+			if (!!newThingAncestry) {
 				await this.ancestry_remember_remoteAddAsChild(newParentAncestry, newThing);
 				for (const childAncestry of ancestry.childAncestries) {
 					this.thing_remember_bulk_recursive_remoteRelocateRight(childAncestry, newThingAncestry);
 				}
 				if (!newThingAncestry.isExpanded) {
 					setTimeout(() => {
-						if (newThingAncestry) {
+						if (!!newThingAncestry) {
 							newThingAncestry.expand();	
 							ancestry.collapse()
 						};
@@ -405,7 +405,7 @@ export class Hierarchy {
 
 	async relationships_remoteCreateMissing(baseID: string) {
 		const idRoot = this.idRoot;
-		if (idRoot){
+		if (!!idRoot){
 			for (const thing of this.things) {
 				const idThing = thing.id;
 				if (thing.trait != IDTrait.root && thing.baseID == baseID) {
@@ -432,7 +432,7 @@ export class Hierarchy {
 		}
 		while (array.length > 0) {
 			const relationship = array.pop();
-			if (relationship) {
+			if (!!relationship) {
 				this.relationship_forget(relationship);
 			}
 		}
@@ -444,7 +444,7 @@ export class Hierarchy {
 	relationships_forPredicateHID(hid: number): Array<Relationship> { return this.relationships_byPredicateHID[hid] ?? []; }
 
 	relationship_rememberByKnown(relationships: Relationships_ByHID, relationship: Relationship, id: string) {
-		if (id) {
+		if (!!id) {
 			const hid = id.hash();
 			let array = relationships[hid] ?? [];
 			array.push(relationship);
@@ -473,7 +473,7 @@ export class Hierarchy {
 		const thing = ancestry.thing;
 		const parentAncestry = ancestry.parentAncestry;
 		const relationship = this.relationship_forPredicate_parent_child(idPredicate, otherAncestry.idThing, ancestry.idThing);
-		if (parentAncestry && relationship && (thing?.hasParents ?? false)) {
+		if (!!parentAncestry && !!relationship && (thing?.hasParents ?? false)) {
 			this.relationship_forget(relationship);
 			if (otherAncestry.hasChildRelationships) {
 				parentAncestry.order_normalizeRecursive_remoteMaybe(true);
@@ -530,7 +530,7 @@ export class Hierarchy {
 	async relationship_remember_remoteCreateUnique(baseID: string, idRelationship: string, idPredicate: string, idParent: string,
 		idChild: string, order: number, creationOptions: CreationOptions = CreationOptions.isFromRemote): Promise<any> {
 		let relationship = this.relationship_forPredicate_parent_child(idPredicate, idParent, idChild);
-		if (relationship) {
+		if (!!relationship) {
 			relationship.order_setTo_remoteMaybe(order, true);
 		} else {
 			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, creationOptions != CreationOptions.none);
@@ -548,9 +548,9 @@ export class Hierarchy {
 			for (const ancestry of ancestries) {
 				const thing = ancestry.thing;
 				const parentAncestry = ancestry.parentAncestry;
-				if (parentAncestry) {
+				if (!!parentAncestry) {
 					const grandParentAncestry = parentAncestry.parentAncestry;
-					if (!!thing && grandParentAncestry && !ancestry.isEditing && !thing.isBulkAlias) {
+					if (!!thing && !!grandParentAncestry && !ancestry.isEditing && !thing.isBulkAlias) {
 						const siblings = parentAncestry.children;
 						let index = siblings.indexOf(thing);
 						siblings.splice(index, 1);
@@ -618,7 +618,7 @@ export class Hierarchy {
 
 	ancestry_relayout_toolCluster_nextParent(force: boolean = false) {
 		const toolsAncestry = get(s_ancestry_showingTools);
-		if (toolsAncestry) {
+		if (!!toolsAncestry) {
 			let ancestry = toolsAncestry;
 			// do {
 			// 	ancestry = ancestry.next_siblingAncestry;
@@ -637,7 +637,7 @@ export class Hierarchy {
 
 	async ancestry_edit_remoteCreateChildOf(parentAncestry: Ancestry | null) {
 		const thing = parentAncestry?.thing;
-		if (!!thing && parentAncestry) {
+		if (!!thing && !!parentAncestry) {
 			const child = await this.thing_remember_runtimeCopy(thing.baseID, thing);
 			child.title = 'idea';
 			parentAncestry.expand();
@@ -658,12 +658,12 @@ export class Hierarchy {
 	}
 
 	async ancestry_redraw_remoteFetchBulk_browseRight(thing: Thing, ancestry: Ancestry | null = null, grab: boolean = false) {
-		if (this.rootsAncestry && thing && thing.title != 'roots') {	// not create roots bulk
+		if (!!this.rootsAncestry && thing && thing.title != 'roots') {	// not create roots bulk
 			await this.db.fetch_allFrom(thing.title)
 			this.relationships_refreshKnowns();
 			const childAncestries = ancestry?.childAncestries;
-			if (childAncestries && childAncestries.length > 0) {
-				if (grab) {
+			if (!!childAncestries && childAncestries.length > 0) {
+				if (!!grab) {
 					childAncestries[0].grabOnly()
 				}
 				ancestry?.expand()
@@ -674,7 +674,7 @@ export class Hierarchy {
 
 	async ancestry_remember_bulk_remoteRelocateRight(ancestry: Ancestry, newParentAncestry: Ancestry) {
 		const newThingAncestry = await this.thing_remember_bulk_recursive_remoteRelocateRight(ancestry, newParentAncestry);
-		if (newThingAncestry) {
+		if (!!newThingAncestry) {
 			newParentAncestry.signal_relayoutWidgets();
 			if (newParentAncestry.isExpanded) {
 				newThingAncestry.grabOnly();
@@ -691,7 +691,7 @@ export class Hierarchy {
 		this.ancestry_forget(ancestry);
 		if (!!thing) {
 			const array = this.relationships_byChildHID[thing.idHashed];
-			if (array) {
+			if (!!array) {
 				for (const relationship of array) {
 					this.relationship_forget(relationship);		// forget so onSnapshot logic will not signal children
 					await this.db.relationship_remoteDelete(relationship);
@@ -704,7 +704,7 @@ export class Hierarchy {
 
 	async ancestry_remember_remoteAddAsChild(parentAncestry: Ancestry, child: Thing, idPredicate: string = Predicate.idContains): Promise<any> {
 		const parent = parentAncestry.thing;
-		if (parent && !child.isBulkAlias) {
+		if (!!parent && !child.isBulkAlias) {
 			const changingBulk = parent.isBulkAlias || child.baseID != this.db.baseID;
 			const baseID = changingBulk ? child.baseID : parent.baseID;
 			if (changingBulk) {
@@ -732,7 +732,7 @@ export class Hierarchy {
 			}
 		} else if (g.allow_GraphEditing) {
 			const grab = this.grabs.latestAncestryGrabbed(true);
-			if (grab) {
+			if (!!grab) {
 				await this.ancestry_rebuild_remoteRelocateRight(grab, RIGHT, EXTREME);
 			}
 		}
@@ -740,7 +740,7 @@ export class Hierarchy {
 
 	async ancestry_rebuild_remoteMoveUp_maybe(ancestry: Ancestry, up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const parentAncestry = ancestry.parentAncestry;
-		if (parentAncestry) {
+		if (!!parentAncestry) {
 			let graph_needsRebuild = false;
 			const siblings = parentAncestry.children;
 			const length = siblings.length;
@@ -797,7 +797,7 @@ export class Hierarchy {
 				this.ancestry_remember_bulk_remoteRelocateRight(ancestry, newParentAncestry);
 			} else {
 				const relationship = ancestry.relationship;
-				if (relationship) {
+				if (!!relationship) {
 					const order = RIGHT ? relationship.order : 0;
 					relationship.idParent = newParent.id;
 					await relationship.order_setTo_remoteMaybe(order + 0.5, true);
@@ -858,9 +858,9 @@ export class Hierarchy {
 			}
 		}
 		s_title_editing.set(null);
-		if (newGrabAncestry) {
+		if (!!newGrabAncestry) {
 			newGrabAncestry.grabOnly();
-			if (!RIGHT && newFocusAncestry) {
+			if (!RIGHT && !!newFocusAncestry) {
 				const newParentIsGrabbed = newParentAncestry && newParentAncestry.matchesAncestry(newGrabAncestry);
 				const canBecomeFocus = (!SHIFT || newParentIsGrabbed) && newGrabIsNotFocus;
 				const shouldBecomeFocus = newFocusAncestry.isRoot || !newFocusAncestry.isVisible;
@@ -941,7 +941,7 @@ export class Hierarchy {
 		const isAltering = get(s_alteration_mode)?.type;
 		const predicate = isRelated ? Predicate.isRelated : Predicate.contains;
 		const nextAltering = wantsAlteration == isAltering ? null : new Alteration_State(wantsAlteration, predicate);
-		if (nextAltering) {
+		if (!!nextAltering) {
 			debug.log_tools(`needs ${wantsAlteration} ${predicate?.kind} alteration`)
 		} else {
 			debug.log_tools(`end ${wantsAlteration} alteration`)

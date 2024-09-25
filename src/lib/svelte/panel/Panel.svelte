@@ -38,7 +38,7 @@
 	}
 
 	async function handle_key_down(event) {
-		if ($s_title_editing)		{ return; } // let Title_State component consume the events
+		if (!!$s_title_editing)		{ return; } // let Title_State component consume the events
 		if (event.key == undefined)	{ alert('no key for ' + event.type); return; }
 		if (event.type == 'keydown') {
 			const key = event.key;

@@ -32,7 +32,7 @@
 	});
 	
 	$: {
-		if ($s_graphRect) {
+		if (!!$s_graphRect) {
 			layoutAll_children()
 		}
 	}

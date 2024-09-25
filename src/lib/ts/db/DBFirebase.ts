@@ -70,7 +70,7 @@ export default class DBFirebase implements DBInterface {
 			let querySnapshot = await getDocs(collectionRef);
 			const bulk = this.bulk_for(baseID);
 
-			if (baseID) {
+			if (!!baseID) {
 				if (querySnapshot.empty) {
 					await this.documents_firstTime_remoteCreate(type, baseID, collectionRef);
 					querySnapshot = await getDocs(collectionRef);
@@ -107,12 +107,12 @@ export default class DBFirebase implements DBInterface {
 	static readonly $_BULKS_$: unique symbol;
 
 	bulk_for(baseID: string | null) {
-		if (baseID) {
+		if (!!baseID) {
 			if (!this.bulks) {
 				this.bulks = [new Bulk(this.baseID)];
 			}
 			const bulks = this.bulks;
-			if (bulks) {
+			if (!!bulks) {
 				for (const bulk of bulks) {
 					if (bulk.baseID == baseID) {
 						return bulk;
@@ -130,7 +130,7 @@ export default class DBFirebase implements DBInterface {
 		const root = h.root;
 		if (this.baseID == k.name_bulkAdmin && root) {
 			const rootsAncestry = await h.ancestry_roots();		// TODO: assumes all ancestries created
-			if (rootsAncestry) {
+			if (!!rootsAncestry) {
 				h.rootsAncestry = rootsAncestry;
 				try {		// add bulk aliases to roots thing
 					const bulk = collection(this.firestore, this.bulksName);	// fetch all bulks (documents)
@@ -166,7 +166,7 @@ export default class DBFirebase implements DBInterface {
 		this.deferSnapshots = false;
 		while (this.deferredSnapshots.length > 0) {
 			const deferral = this.deferredSnapshots.pop();
-			if (deferral) {
+			if (!!deferral) {
 				deferral.snapshot.docChanges().forEach((change) => {	// convert and remember
 					this.handle_docChanges(deferral.baseID, deferral.type, change);
 				});
@@ -202,11 +202,11 @@ export default class DBFirebase implements DBInterface {
 			try {
 				if (type == DatumType.relationships) {
 					const remoteRelationship = new RemoteRelationship(data);
-					if (remoteRelationship) {
+					if (!!remoteRelationship) {
 						let relationship = h.relationship_forHID(id.hash());
 						switch (change.type) {
 							case 'added':
-								if (relationship || remoteRelationship.isEqualTo(this.addedRelationship)) {
+								if (!!relationship || remoteRelationship.isEqualTo(this.addedRelationship)) {
 									return;
 								}
 								relationship = h.relationship_remember_runtimeCreateUnique(baseID, id, remoteRelationship.predicate.id, remoteRelationship.parent.id, remoteRelationship.child.id, remoteRelationship.order, CreationOptions.isFromRemote);
@@ -236,7 +236,7 @@ export default class DBFirebase implements DBInterface {
 				} else if (type == DatumType.things) {
 					const remoteThing = new RemoteThing(data);
 					let thing = h.thing_forHID(id.hash());
-					if (remoteThing) {
+					if (!!remoteThing) {
 						switch (change.type) {
 							case 'added':
 								if (!!thing || remoteThing.isEqualTo(this.addedThing) || remoteThing.trait == IDTrait.root) {
@@ -389,7 +389,7 @@ export default class DBFirebase implements DBInterface {
 
 	async relationship_remember_remoteCreate(relationship: Relationship) {
 		const relationshipsCollection = this.bulk_for(relationship.baseID)?.relationshipsCollection;
-		if (relationshipsCollection) {
+		if (!!relationshipsCollection) {
 			const remoteRelationship = new RemoteRelationship(relationship);
 			const jsRelationship = { ...remoteRelationship };
 			this.addedRelationship = relationship;
@@ -411,7 +411,7 @@ export default class DBFirebase implements DBInterface {
 
 	async relationship_remoteUpdate(relationship: Relationship) {
 		const relationshipsCollection = this.bulk_for(relationship.baseID)?.relationshipsCollection;
-		if (relationshipsCollection) {
+		if (!!relationshipsCollection) {
 			try {
 				const ref = doc(relationshipsCollection, relationship.id) as DocumentReference<RemoteRelationship>;
 				const remoteRelationship = new RemoteRelationship(relationship);
@@ -426,7 +426,7 @@ export default class DBFirebase implements DBInterface {
 
 	async relationship_remoteDelete(relationship: Relationship) {
 		const relationshipsCollection = this.bulk_for(relationship.baseID)?.relationshipsCollection;
-		if (relationshipsCollection) {
+		if (!!relationshipsCollection) {
 			try {
 				const ref = doc(relationshipsCollection, relationship.id) as DocumentReference<RemoteRelationship>;
 				await deleteDoc(ref);

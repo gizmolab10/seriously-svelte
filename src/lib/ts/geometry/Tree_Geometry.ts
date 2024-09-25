@@ -18,7 +18,7 @@ export default class Tree_Geometry {
 	originForChildrenOf(childAncestry: Ancestry, origin: Point, extent: Point): Point {
 		const child = childAncestry.thing;
 		let x, y = 0;
-		if (child) {
+		if (!!child) {
 			y = extent.y - childAncestry.visibleProgeny_halfHeight - 0.5;
 			x = origin.x + child.titleWidth + k.dot_size + k.line_stretch + 4.5;
 		}

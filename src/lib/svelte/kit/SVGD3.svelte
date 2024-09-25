@@ -24,7 +24,7 @@
     })
 
     $: {
-        if (fill) {
+        if (!!fill) {
             d3.select(svg)
                 .select('path')
                 .attr('fill', fill)

@@ -14,8 +14,9 @@
 	let isEditing = false;
 	let textarea = null;
 
-	function handleFocus(flag) { 
-		g.isEditing_text = flag;
+	function handle_mousedown(event: MouseEvent) { 
+		g.isEditing_text = true;
+		console.log((flag ? 'is' : 'is not') + ' editing')
 	}
 
 	function handle_keydown(event: KeyboardEvent) {
@@ -25,7 +26,7 @@
 			textarea.value = bound_text;
 			textarea.blur();
 			setTimeout(() => {
-				handleFocus(false);
+				g.isEditing_text = false;
 			}, 10);
 		} else {
 			setTimeout(() => {
@@ -56,7 +57,7 @@
 		bind:this={textarea}
 		bind:value={bound_text}
 		on:keydown={handle_keydown}
-		on:mousedown={handleFocus(true)}
+		on:mousedown={handle_mousedown}
 		style='
 			resize: none;
 			top: {top}px;

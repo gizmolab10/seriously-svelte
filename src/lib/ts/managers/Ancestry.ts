@@ -117,7 +117,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	get isVisible(): boolean {
-		if (get(s_rings_mode)) {
+		if (!!get(s_rings_mode)) {
 			return this.parentAncestry?.paging_state?.index_isVisible(this.siblingIndex) ?? false;
 		} else {
 			const focus = get(s_ancestry_focus);
@@ -160,7 +160,7 @@ export default class Ancestry extends Identifiable {
 			if (!idPredicate) {
 				idPredicate = relationshipIDPredicate;
 			}
-			if (idPredicate &&
+			if (!!idPredicate &&
 				(idPredicate != this.idPredicate ||
 				![idPredicate, this.idPredicate].includes(relationshipIDPredicate))) {
 				return true;
@@ -276,7 +276,7 @@ export default class Ancestry extends Identifiable {
 		let ids = this.ids;
 		ids.push(id);
 		const ancestry = h.ancestry_remember_createUnique(ids.join(k.generic_separator));
-		if (ancestry) {
+		if (!!ancestry) {
 			if (ancestry.containsMixedPredicates) {
 				h.ancestry_forget(ancestry);
 				return null;
@@ -336,7 +336,7 @@ export default class Ancestry extends Identifiable {
 		const ancestries: Array<Ancestry> = [];
 		for (const parentAncestry of parentAncestries) {
 			const ancestorAncestry = parentAncestry.stripBack(back);
-			if (ancestorAncestry && ancestorAncestry.isVisible) {
+			if (!!ancestorAncestry && ancestorAncestry.isVisible) {
 				ancestries.push(parentAncestry);
 			}
 		}
@@ -356,9 +356,9 @@ export default class Ancestry extends Identifiable {
 
 	extend_withChild(child: Thing | null): Ancestry | null {
 		const idParent = this.thing?.idBridging;
-		if (child && idParent) {
+		if (!!child && !!idParent) {
 			const relationship = h.relationship_forPredicate_parent_child(Predicate.idContains, idParent, child.id);
-			if (relationship) {
+			if (!!relationship) {
 				return this.uniquelyAppendID(relationship.id);
 			}
 		}
@@ -368,7 +368,7 @@ export default class Ancestry extends Identifiable {
 	isAllExpandedFrom(targetAncestry: Ancestry | null): boolean {
 		// visit ancestors until encountering
 		// either this ancestry (???) or an unexpanded parent
-		if (targetAncestry && !this.matchesAncestry(targetAncestry)) {
+		if (!!targetAncestry && !this.matchesAncestry(targetAncestry)) {
 			const ancestry = this.parentAncestry;			// visit parent of ancestry
 			if (!ancestry || (!ancestry.isExpanded && !ancestry.isAllExpandedFrom(targetAncestry))) {
 				return false;	// stop when no ancestor or ancestor is not expanded
@@ -380,7 +380,7 @@ export default class Ancestry extends Identifiable {
 	things_childrenFor(idPredicate: string): Array<Thing> {
 		const relationships = this.thing?.relationships_for_isChildOf(idPredicate, true);
 		let children: Array<Thing> = [];
-		if (!this.isRoot && relationships) {
+		if (!this.isRoot && !!relationships) {
 			for (const relationship of relationships) {
 				const parent = relationship.parent;
 				if (!!parent) {
@@ -520,9 +520,9 @@ export default class Ancestry extends Identifiable {
 			this.thing?.oneAncestry?.handle_singleClick_onDragDot(shiftKey);
 		} else {
 			s_title_editing?.set(null);
-			if (get(s_alteration_mode)) {
+			if (!!get(s_alteration_mode)) {
 				this.ancestry_alterMaybe(this);
-			} else if (!shiftKey && get(s_rings_mode)) {
+			} else if (!shiftKey && !!get(s_rings_mode)) {
 				this.becomeFocus();
 			} else if (shiftKey || this.isGrabbed) {
 				this.toggleGrab();
@@ -575,7 +575,7 @@ export default class Ancestry extends Identifiable {
 
 	toggle_editingTools() {
 		const toolsAncestry = get(s_ancestry_showingTools);
-		if (toolsAncestry) { // ignore if editingTools not in use
+		if (!!toolsAncestry) { // ignore if editingTools not in use
 			s_alteration_mode.set(null);
 			if (this.matchesAncestry(toolsAncestry)) {
 				s_ancestry_showingTools.set(null);
@@ -590,7 +590,7 @@ export default class Ancestry extends Identifiable {
 			const alteration = get(s_alteration_mode);
 			const toolsAncestry = get(s_ancestry_showingTools);
 			const idPredicate = alteration?.predicate?.id;
-			if (alteration && toolsAncestry && idPredicate) {
+			if (!!alteration && !!toolsAncestry && !!idPredicate) {
 				h.clear_editingTools();
 				switch (alteration.type) {
 					case AlterationType.deleting:
@@ -598,7 +598,7 @@ export default class Ancestry extends Identifiable {
 						break;
 					case AlterationType.adding:
 						const toolsThing = toolsAncestry.thing;
-						if (toolsThing) {
+						if (!!toolsThing) {
 							await h.ancestry_remember_remoteAddAsChild(ancestry, toolsThing, idPredicate);
 							signals.signal_rebuildGraph_fromFocus();
 						}
@@ -623,7 +623,7 @@ export default class Ancestry extends Identifiable {
 		let mutated = false;
 		if (!this.isRoot) {
 			s_ancestries_expanded.update((array) => {
-				if (array) {
+				if (!!array) {
 					const index = array.map(a => a.id).indexOf(this.id);
 					const found = index != -1;
 					if (expand && !found) {		// only add if not already added

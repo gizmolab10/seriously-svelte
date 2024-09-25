@@ -98,7 +98,7 @@
 	}
 
 	$: {
-		if (widget) {
+		if (!!widget) {
 			widgetWrapper = new Svelte_Wrapper(widget, handle_mouse_state, ancestry.idHashed, SvelteComponentType.widget);
 		}
 	}
@@ -139,6 +139,7 @@
 				isGrabbed = shallGrab;
 				isEditing = shallEdit;
 				layout_widget();
+				console.log(`${showingBorder} ${thing.title}`)
 			}
 		}
 	}

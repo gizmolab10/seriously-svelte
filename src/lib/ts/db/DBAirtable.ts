@@ -74,7 +74,7 @@ export default class DBAirtable implements DBInterface {
 				const remoteThings = records;
 				for (const remoteThing of remoteThings) {
 					const id = remoteThing.id;
-					h.thing_remember_runtimeCreate(k.empty, id, remoteThing.fields.title as string, remoteThing.fields.color as string, remoteThing.fields.trait as string, true);
+					h.thing_remember_runtimeCreate(k.empty, id, remoteThing.fields.title as string, remoteThing.fields.color as string, remoteThing.fields.trait as string, k.empty, true);
 				}
 				g.things_arrived = true;
 			})
@@ -137,7 +137,7 @@ export default class DBAirtable implements DBInterface {
 	static readonly $_RELATIONSHIP_$: unique symbol;
 
 	async relationship_remember_remoteCreate(relationship: Relationship | null) {
-		if (relationship && !relationship.hasBeen_remotely_saved) {
+		if (!!relationship && !relationship.hasBeen_remotely_saved) {
 			try {
 				const fields = await this.relationships_table.create(relationship.fields);	// insert with temporary id
 				const id = fields['id'];																										// grab permanent id

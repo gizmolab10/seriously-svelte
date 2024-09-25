@@ -210,7 +210,7 @@ export class Rect {
 	}
 
 	static createFromDOMRect(domRect: DOMRect | null) {
-		if (domRect) {
+		if (!!domRect) {
 			const origin = new Point(domRect.x, domRect.y).offsetByXY(window.scrollX, window.scrollY);
 			return new Rect(origin, new Size(domRect.width, domRect.height));
 		}
@@ -227,7 +227,7 @@ export class Rect {
 	}
 
 	static boundingRectFor(element: HTMLElement | null): Rect | null {
-		if (element) {
+		if (!!element) {
 			const domRect = element.getBoundingClientRect();
 			const origin = Point.fromDOMRect(domRect);
 			const size = Size.fromDOMRect(domRect);
@@ -241,7 +241,7 @@ export class Rect {
 		const left = c['offsetLeft'];
 		const width = c['offsetWidth'];
 		const height = c['offsetHeight'];
-		if (top && left && width && height) {
+		if (!!top && !!left && !!width && !!height) {
 			return new Rect(new Point(left, top), new Size(width, height));
 		}
 		return Rect.zero;

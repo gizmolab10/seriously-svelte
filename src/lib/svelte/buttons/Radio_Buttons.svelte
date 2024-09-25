@@ -18,7 +18,7 @@
 	function handle_singleClick(id) {
 		idSelected = id;
 		const selectedMenuItem = menuItems.find(menuItem => menuItem.id === idSelected);
-		if (selectedMenuItem) {
+		if (!!selectedMenuItem) {
 			selectedMenuItem.action();
 		}
 	}

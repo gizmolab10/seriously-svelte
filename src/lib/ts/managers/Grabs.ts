@@ -21,7 +21,7 @@ export default class Grabs {
 		if (ancestries.length > 0) {
 			const ancestry = ancestries.slice(-1)[0];	// does not alter ancestries
 			const relationshipHID = ancestry?.relationship?.idHashed;
-			if (relationshipHID && !!h.relationship_forHID(relationshipHID)) {
+			if (!!relationshipHID && !!h.relationship_forHID(relationshipHID)) {
 				return ancestry;
 			}
 		}

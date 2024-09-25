@@ -37,7 +37,7 @@
 			top = graphRect.origin.y;
 			updateOrigins();
 		}
-		if (focus == null || focus.id != $s_ancestry_focus) {
+		if (!focus || focus.id != $s_ancestry_focus) {
 			focus = !$s_ancestry_focus ? h.root : h.thing_forAncestry($s_ancestry_focus);
 			offsetX_ofFirstReveal = g.show_titleAtTop ? 0 : 3 + focus?.titleWidth / 2;
 			updateOrigins();
@@ -59,7 +59,7 @@
 
 	function updateOrigins() {
 		const focusAncestry = $s_ancestry_focus;
-		if (focusAncestry && graphRect) {
+		if (!!focusAncestry && !!graphRect) {
 			childrenSize = focusAncestry.visibleProgeny_size;
 			const offsetX = 15 + ($s_show_details ? -k.width_details : 0) - (childrenSize.width / 2) - (k.dot_size / 2.5) + offsetX_ofFirstReveal;
 			const offsetY = -1 - graphRect.origin.y;

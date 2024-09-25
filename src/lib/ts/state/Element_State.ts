@@ -48,7 +48,7 @@ export default class Element_State {
 	
 	get border(): string {
 		let color = this.ancestry.thing?.color;
-		if (color) {
+		if (!!color) {
 			if (this.ancestry.isEditing) {
 				return `dashed ${color} 1px`;
 			}
