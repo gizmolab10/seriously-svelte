@@ -110,7 +110,7 @@ export default class Ancestry extends Identifiable {
 			this._thing = thing;
 		}
 		if (!!thing && !thing.oneAncestry && !!this.predicate && !this.predicate.isBidirectional) {
-			// console.log(`oneAncestry ${this.titles}`);
+			console.log(`oneAncestry ${this.titles}`);
 			thing.oneAncestry = this;
 		}
 		return this._thing;
@@ -257,7 +257,7 @@ export default class Ancestry extends Identifiable {
 
 	thingAt(back: number): Thing | null {			// 1 == last
 		const relationship = this.relationshipAt(back);
-		if (this.id != k.empty && relationship) {
+		if (!!relationship && this.id != k.empty) {
 			return relationship.child;
 		}
 		return h.root;	// N.B., h.root is wrong immediately after switching db type

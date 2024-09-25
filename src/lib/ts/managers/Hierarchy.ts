@@ -274,7 +274,7 @@ export class Hierarchy {
 	}
 
 	thing_remember(thing: Thing) {
-		if (!!this.thing_byHID[thing.idHashed]) {
+		if (!this.thing_byHID[thing.idHashed]) {
 			this.thing_byHID[thing.idHashed] = thing;
 			let things = this.things_byTrait[thing.trait] ?? [];
 			things.push(thing);

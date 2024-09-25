@@ -3,10 +3,16 @@
 	import { s_thing_color } from '../../ts/state/Reactive_State';
 	import ColorPicker from 'svelte-awesome-color-picker';
 	export let thing: Thing;
-	const colorAsHEX = u.colorToHex(thing.color);
 	const selectorSize = k.dot_size + 1;
 	const pickerSize = 100;
+	let colorAsHEX = k.empty;
 	let persistenceTimer;
+
+	onMount(() => {
+		if (!!thing) {
+			colorAsHEX = u.colorToHex(thing.color);
+		}
+	})
 
 	function handleColorChange(event) {
 		event.preventDefault();
@@ -36,6 +42,10 @@
 	div :global(.wrapper) {
 		left: -59px;
 		top: -41px;
+	}
+
+	div :global(.picker-indicator) {
+		border-radius: 15%;
 	}
 </style>
 

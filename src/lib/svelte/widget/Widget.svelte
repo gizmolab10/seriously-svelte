@@ -50,7 +50,7 @@
 		update_fromAncestry();
 		layout_widget();
 		element_state = ux.elementState_forName(name);		// survives onDestroy, created by {tree, cluster} children
-		// debug.log_mount(`WIDGET ${thing?.description} ${ancestry?.isGrabbed}`);
+		debug.log_mount(`WIDGET ${thing?.description} ${ancestry?.isGrabbed}`);
 		fullUpdate();
 		const handleAny = signals.handle_anySignal((kinds, id) => {
 			for (const kind of kinds) {
@@ -82,12 +82,12 @@
 
 	function update_fromAncestry() {
 		thing = ancestry?.thing;
-		if (!!ancestry && !!thing) {
+		if (!thing) {
+			console.log('bad ancestry or thing');
+		} else {
 			const title = thing.title ?? thing.id ?? k.unknown;
 			widgetName = `widget ${title}`;
 			revealName = `reveal ${title}`;
-		} else {
-			console.log('bad ancestry or thing');
 		}
 	}
 
@@ -126,7 +126,7 @@
 
 	function fullUpdate() {
 		thing = ancestry?.thing;
-		if (!!ancestry && thing) {
+		if (!!thing) {
 			const shallEdit = ancestry.isEditing;
 			const shallGrab = ancestry.isGrabbed;
 			const shallShowTools = ancestry.toolsGrabbed && !ancestry.isFocus;
