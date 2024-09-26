@@ -16,6 +16,7 @@
 
 	function handleFocus(flag) { 
 		g.isEditing_text = flag;
+			debug.log_edit(`${flag ? 'FOCUS' : 'BLUR'} ${bound_text}`);
 	}
 
 	function handle_keydown(event: KeyboardEvent) {

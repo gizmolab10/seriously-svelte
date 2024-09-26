@@ -1,18 +1,21 @@
 <script lang='ts'>
+	import { Info_Kind, persistLocal, ElementType, IDPersistant } from '../../ts/common/Global_Imports';
+	import { g, k, ux, Point, Thing, debug, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
 	import { s_thing_color, s_thing_title, s_ancestry_focus } from '../../ts/state/Reactive_State';
-	import { g, k, ux, Point, ZIndex, Ancestry, Info_Kind } from '../../ts/common/Global_Imports';
-	import { persistLocal, ElementType, IDPersistant } from '../../ts/common/Global_Imports';
 	import { s_shown_relations, s_ancestries_grabbed } from '../../ts/state/Reactive_State';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Button from '../mouse buttons/Button.svelte';
 	import Color from './Color.svelte';
 	const id = 'info';
+	const margin = 10;
+	const size_details = k.width_details - 30;
 	const element_state = ux.elementState_for(new Identifiable(id), ElementType.info, id);
 	let button_title = `show info for ${next_infoKind()}`;
 	let information: { [key: string]: string } = {};
 	let ancestry: Ancestry | null = null;
 	let grabs = $s_ancestries_grabbed;
+	let thing: Thing | null = null;
 	let color = k.color_default;
 	let rebuilds = 0;
 	let info;
@@ -62,16 +65,17 @@
 			grabs = $s_ancestries_grabbed;
 			ancestry = grabs[0];
 		}
+		thing = ancestry?.thing;
+		debug.log_edit(`INFO ${ancestry?.title}`);
 	}
 
 	function update_info() {
-		if (!!ancestry) {
-			color = ancestry.thing?.color ?? k.color_default;
-			element_state.set_forHovering(color, 'pointer');
+		if (!!thing) {
+			element_state.set_forHovering('black', 'pointer');
 			information = {
 				'relationship' : ancestry.predicate?.description ?? k.empty,
 				'direction' : ancestry.isNormal ? 'normal' : 'inverted',
-				'id' : ancestry.thing?.id.injectEllipsisAt(),
+				'id' : thing?.id.injectEllipsisAt(),
 			};
 			info = Object.entries(information)
 			rebuilds += 1;
@@ -90,7 +94,6 @@
 	}
 
 	function handle_textChange (text: string) {
-		const thing = ancestry?.thing;
 		if (!!thing) {
 			thing.details = text;
 			(async () => {
@@ -115,11 +118,11 @@
 </style>
 
 {#key rebuilds}
-	{#if !!ancestry}
+	{#if !!thing}
 		<div
 			style='
 				top:6px;
-				color:{color};
+				color:black;
 				position:absolute;
 				text-align:center;
 				width:{k.width_details}px;'>
@@ -128,7 +131,7 @@
 		{#if hasGrabs()}
 			<Button name={name}
 				border_thickness=0.5
-				width={k.width_details - 20}
+				width={size_details + margin}
 				element_state={element_state}
 				height={k.default_buttonSize + 4}
 				center={new Point(k.width_details / 2, 36)}
@@ -138,19 +141,19 @@
 		{/if}
 		<Text_Editor
 			top=56
-			left=10
-			height=200
-			color={color}
-			width={k.width_details - 30}
-			handle_textChange={handle_textChange}
-			original_text={ancestry.thing?.details}/>
+			left={margin}
+			color='black'
+			width={size_details}
+			height={size_details + 4}
+			original_text={thing?.details}
+			handle_textChange={handle_textChange}/>
 		<div class='ancestry-info'
 			style='
-				top:267px;
-				left:10px;
+				top:241px;
+				left:{margin}px;
 				position:absolute;
 				z-index: {ZIndex.details};'>
-			<table style='width: 200px; left:12px; color:{color};'>
+			<table style='width: {k.width_details}px; left:12px; color:black;'>
 				{#key info}
 					{#each info as [key, value]}
 						<tr>
@@ -160,7 +163,7 @@
 					{/each}
 					<tr>
 						<td class='first'>color:</td>
-						<td class='second'><Color thing={ancestry.thing}/></td>
+						<td class='second'><Color thing={thing}/></td>
 					</tr>
 				{/key}
 			</table>

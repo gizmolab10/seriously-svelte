@@ -8,7 +8,7 @@
 	export let forward = true;
 	export let ancestry;
 	let padding = `0px 0px 0px 6.5px`;	// 8.5 makes room for drag dot
-	let bound_title = ancestry?.thing?.title ?? k.empty;
+	let bound_title = ancestry?.title ?? k.empty;
     let color = ancestry.thing?.color;
 	let titleWrapper: Svelte_Wrapper;
 	let originalTitle = k.empty;
