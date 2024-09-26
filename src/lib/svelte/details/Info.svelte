@@ -70,8 +70,7 @@
 
 	function update_info() {
 		if (!!thing) {
-			color = thing?.color ?? k.color_default;
-			element_state.set_forHovering(color, 'pointer');
+			element_state.set_forHovering('black', 'pointer');
 			information = {
 				'relationship' : ancestry.predicate?.description ?? k.empty,
 				'direction' : ancestry.isNormal ? 'normal' : 'inverted',
@@ -122,7 +121,7 @@
 		<div
 			style='
 				top:6px;
-				color:{color};
+				color:black;
 				position:absolute;
 				text-align:center;
 				width:{k.width_details}px;'>
@@ -142,18 +141,18 @@
 		<Text_Editor
 			top=56
 			left={margin}
-			color={color}
+			color='black'
 			width={size_details}
 			height={size_details + 4}
 			original_text={thing?.details}
 			handle_textChange={handle_textChange}/>
 		<div class='ancestry-info'
 			style='
-				top:267px;
+				top:241px;
 				left:{margin}px;
 				position:absolute;
 				z-index: {ZIndex.details};'>
-			<table style='width: {k.width_details}px; left:12px; color:{color};'>
+			<table style='width: {k.width_details}px; left:12px; color:black;'>
 				{#key info}
 					{#each info as [key, value]}
 						<tr>
