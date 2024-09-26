@@ -187,7 +187,7 @@
 				isEditing = !isEditing;
 			}
 		}
-		cursorStyle = (!!ancestry && !ancestry.isRoot && !isBulkAlias && (ancestry.isEditing || ancestry.isGrabbed)) ? k.empty : 'cursor: pointer';
+		cursorStyle = (ancestry.isEditing || ancestry.isGrabbed) ? 'cursor: text' : $s_rings_mode ? 'cursor: pointer' : (!!ancestry && !ancestry.isRoot && !isBulkAlias) ? k.empty : 'cursor: text';
 	}
 
 	function stopAndClearEditing() {

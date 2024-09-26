@@ -8,6 +8,8 @@
 	import Button from '../mouse buttons/Button.svelte';
 	import Color from './Color.svelte';
 	const id = 'info';
+	const margin = 10;
+	const size_details = k.width_details - 30;
 	const element_state = ux.elementState_for(new Identifiable(id), ElementType.info, id);
 	let button_title = `show info for ${next_infoKind()}`;
 	let information: { [key: string]: string } = {};
@@ -129,7 +131,7 @@
 		{#if hasGrabs()}
 			<Button name={name}
 				border_thickness=0.5
-				width={k.width_details - 20}
+				width={size_details + margin}
 				element_state={element_state}
 				height={k.default_buttonSize + 4}
 				center={new Point(k.width_details / 2, 36)}
@@ -139,19 +141,19 @@
 		{/if}
 		<Text_Editor
 			top=56
-			left=10
-			height=200
+			left={margin}
 			color={color}
-			width={k.width_details - 30}
-			handle_textChange={handle_textChange}
-			original_text={thing?.details}/>
+			width={size_details}
+			height={size_details + 4}
+			original_text={thing?.details}
+			handle_textChange={handle_textChange}/>
 		<div class='ancestry-info'
 			style='
 				top:267px;
-				left:10px;
+				left:{margin}px;
 				position:absolute;
 				z-index: {ZIndex.details};'>
-			<table style='width: 200px; left:12px; color:{color};'>
+			<table style='width: {k.width_details}px; left:12px; color:{color};'>
 				{#key info}
 					{#each info as [key, value]}
 						<tr>

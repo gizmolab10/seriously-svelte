@@ -8,7 +8,7 @@
 	export let left = 0;
 	export let top = 0;
 	let selectionRange = new Seriously_Range(0, 0);
-	let cursorStyle = 'cursor: pointer';
+	let cursorStyle = 'cursor: text';
 	let padding = `3px 5px 3px 5px`;
 	let bound_text = original_text;
 	let isEditing = false;
@@ -44,7 +44,11 @@
 <style lang='scss'>
 	textarea:focus {
 		outline: none;
-		border: 1px dashed black;
+		border: 0.5px dashed black;
+	}
+	textarea:blur {
+		outline: none;
+		border: 0.5px solid black;
 	}
 </style>
 
@@ -65,11 +69,9 @@
 			left: {left}px;
 			color: {color};
 			width: {width}px;
-			white-space: pre;
 			height: {height}px;
 			position: absolute;
 			padding: {padding};
-			position: absolute;
 			overflow-x: hidden;
 			vertical-align: top;
 			white-space: normal;
