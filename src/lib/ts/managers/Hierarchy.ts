@@ -606,13 +606,15 @@ export class Hierarchy {
 	async ancestry_roots() {		// TODO: assumes all ancestries created
 		let rootsAncestry: Ancestry | null = null;
 		const rootAncestry = this.rootAncestry;
-		for (const rootsMaybe of this.things_byTrait[IDTrait.roots]) {	// should only be one
-			if  (rootsMaybe.title == 'roots') {	// special case TODO: convert to a query string
-				return rootAncestry.extend_withChild(rootsMaybe) ?? null;
+		if (!!rootAncestry) {
+			for (const rootsMaybe of this.things_byTrait[IDTrait.roots]) {	// should only be one
+				if  (rootsMaybe.title == 'roots') {		// special case TODO: convert to a query string
+					return rootAncestry.extend_withChild(rootsMaybe) ?? null;
+				}
 			}
+			const roots = this.thing_runtimeCreate(this.db.baseID, Identifiable.newID(), 'roots', 'red', IDTrait.roots);
+			await this.ancestry_remember_remoteAddAsChild(rootAncestry, roots).then((ancestry) => { rootsAncestry = ancestry; });
 		}
-		const roots = this.thing_runtimeCreate(this.db.baseID, Identifiable.newID(), 'roots', 'red', IDTrait.roots);
-		await this.ancestry_remember_remoteAddAsChild(rootAncestry, roots).then((ancestry) => { rootsAncestry = ancestry; });
 		return rootsAncestry;
 	}
 
