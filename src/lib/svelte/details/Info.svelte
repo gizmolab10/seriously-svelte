@@ -46,7 +46,7 @@
 				left:{margin}px;
 				position:absolute;
 				z-index: {ZIndex.details};
-				top:{show.quests ? 232 : 56}px;'>
+				top:{show.quests ? 232 : 42}px;'>
 			<table style='width: {k.width_details}px; left:12px; color:black;'>
 				{#key information}
 					{#each information as [key, value]}

@@ -1,8 +1,8 @@
-import { Predicate, dbDispatch, Relationship, persistLocal, CreationOptions } from '../common/Global_Imports';
 import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
 import { g, k, u, Thing, debug, signals, IDTrait, DebugFlag, Hierarchy } from '../common/Global_Imports';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
+import { Predicate, dbDispatch, Relationship, CreationOptions } from '../common/Global_Imports';
 import { DBType, DatumType } from '../db/DBInterface';
 import Identifiable from '../data/Identifiable';
 import { initializeApp } from 'firebase/app';
@@ -55,7 +55,6 @@ export default class DBFirebase implements DBInterface {
 		}
 		await this.fetch_documentsOf(DatumType.predicates);
 		await this.fetch_allFrom(baseID);
-		persistLocal.restore_grabbed_andExpanded(); // can ancestries restore happen focus?
 		await this.fetch_bulkAliases();		// TODO: assumes all ancestries created
 	}
 

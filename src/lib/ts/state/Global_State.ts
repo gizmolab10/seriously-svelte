@@ -1,6 +1,6 @@
-import { e, k, u, ux, get, show, Rect, Size, Point, debug, Info_Kind, dbDispatch } from '../common/Global_Imports';
 import { s_rings_mode, s_paging_ring_state, s_ring_resizing_state, s_ring_rotation_state } from './Reactive_State';
 import { s_rebuild_count, s_ancestry_focus, s_ancestries_grabbed, s_ancestries_expanded } from './Reactive_State';
+import { e, k, u, ux, get, show, Rect, Size, Point, debug, dbDispatch } from '../common/Global_Imports';
 import { persistLocal, IDPersistant, Rotation_State, Expansion_State } from '../common/Global_Imports';
 import { s_graphRect, s_show_details, s_scale_factor, s_thing_color } from './Reactive_State';
 import { s_resize_count, s_mouse_up_count } from '../state/Reactive_State';
@@ -15,7 +15,6 @@ class Global_State {
 	isEditing_text = false;
 	mouse_responder_number = 0;
 	queryStrings: URLSearchParams;
-	shown_info_kind = Info_Kind.selection;
 	rebuild_needed_byType: {[type: string]: boolean} = {};
 
 	constructor() {
@@ -40,12 +39,7 @@ class Global_State {
 	queryStrings_apply() {
 		const queryStrings = this.queryStrings;
         const deny = queryStrings.get('deny');
-		const shownNames = queryStrings.get('show')?.split(k.comma) ?? [];
-		const hiddenNames = queryStrings.get('hide')?.split(k.comma) ?? [];
         const eraseOptions = queryStrings.get('erase')?.split(k.comma) ?? [];
-		const shown = Object.fromEntries(shownNames.map(s => [s, true]) ?? {});
-		const hidden = Object.fromEntries(hiddenNames.map(s => [s, false]) ?? {});
-		const keyedFlags: { [key: string]: boolean } = {...shown, ...hidden};
 		persistLocal.applyFor_key_name(IDPersistant.layout, 'clusters', (flag) => s_rings_mode.set(flag));
         if (deny) {
             const flags = deny.split(',');
@@ -57,11 +51,6 @@ class Global_State {
                 }
             }
         }
-		for (const [name, flag] of Object.entries(keyedFlags)) {
-			if (name == 'details') {
-				s_show_details.set(flag);
-			}
-		}
 		for (const option of eraseOptions) {
 			switch (option) {
 				case 'data':
@@ -138,7 +127,7 @@ class Global_State {
 	}
 
 	graphRect_update() {
-		const top = this.show_titleAtTop ? 114 : 69;						// height of content above the graph
+		const top = show.titleAtTop ? 114 : 69;						// height of content above the graph
 		const left = get(s_show_details) ? k.width_details : 0;			// width of details
 		const originOfGraph = new Point(left, top);
 		const sizeOfGraph = this.windowSize.reducedBy(originOfGraph);	// account for origin

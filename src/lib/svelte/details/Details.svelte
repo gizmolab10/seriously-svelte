@@ -38,7 +38,7 @@
 			position:absolute;
 			z-index: {ZIndex.details};'>
 		<Card/>
-		{#if show.debug}
+		{#if show.info}
 			<Info/>
 		{/if}
 	</div>

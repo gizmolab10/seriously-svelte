@@ -26,7 +26,7 @@ export enum IDPersistant {
 	quests		  = 'quests',
 	scale		  = 'scale',
 	focus		  = 'focus',
-	debug		  = 'debug',
+	info		  = 'info',
 	font		  = 'font',
 	db			  = 'db',
 }
@@ -133,9 +133,6 @@ class Persist_Local {
 	}
 
 	reactivity_subscribe() {
-		s_shown_relations.subscribe((relations: string) => {
-			this.write_key(IDPersistant.relations, relations);
-		});
 		s_rotation_ring_radius.subscribe((radius: number) => {
 			this.write_key(IDPersistant.ring_radius, radius);
 		});
@@ -145,17 +142,7 @@ class Persist_Local {
 		s_rotation_ring_angle.subscribe((angle: number) => {
 			this.write_key(IDPersistant.ring_angle, angle);
 		});
-		s_show_details.subscribe((flag: boolean) => {
-			this.write_key(IDPersistant.details, flag);
-			g.graphRect_update();
-			signals.signal_relayoutWidgets_fromFocus();
-		});
-		s_paging_state.subscribe((paging_state: Paging_State) => {
-			if (!!paging_state) {
-				const dbKey = this.dbKey_for(IDPersistant.page_states);
-				this.write_keyPair(dbKey, paging_state.sub_key, paging_state.description);
-			}
-		})
+		show.reactivity_subscribe();
 	}
 
 	restore_graphOffset() {
@@ -165,6 +152,47 @@ class Persist_Local {
 			offset = new Point(stored.x, stored.y);
 		}
 		s_user_graphOffset.set(offset);
+	}
+
+	restore_db_dependent(force: boolean) {
+		this.restore_grabbed_andExpanded(force);
+		this.restore_focus();
+		s_paging_state.subscribe((paging_state: Paging_State) => {
+			if (!!paging_state) {
+				const dbKey = this.dbKey_for(IDPersistant.page_states);
+				this.write_keyPair(dbKey, paging_state.sub_key, paging_state.description);
+			}
+		})
+	}
+
+	restore_state() {
+		if (this.ignoreAncestries) {
+			this.write_key(IDPersistant.relationships, true);
+		}
+		show.restore_state();
+		g.applyScale(!g.device_isMobile ? 1 : this.read_key(IDPersistant.scale) ?? 1);
+		s_rotation_ring_angle.set(this.read_key(IDPersistant.ring_angle) ?? 0);
+		s_thing_fontFamily.set(this.read_key(IDPersistant.font) ?? 'Arial');
+		s_rings_mode.set(this.read_key(IDPersistant.layout) ?? false);
+		s_rotation_ring_radius.set(Math.max(this.read_key(IDPersistant.ring_radius) ?? 0, k.ring_smallest_radius));
+		this.restore_graphOffset();
+		this.reactivity_subscribe()
+	}
+
+	// not used!!!
+	restore_page_states() {
+		const descriptions = this.read_sub_keys_forKey(this.dbKey_for(IDPersistant.page_states)) ?? k.empty;
+		for (const description of descriptions) {
+			const paging_state = Paging_State.create_paging_state_from(description);
+			if (!!paging_state) {
+				const thing = paging_state?.thing;
+				if (!!thing) {
+					thing.page_states.add_paging_state(paging_state);
+				} else {															// if no thing => delete paging state
+					persistLocal.delete_paging_state_for(paging_state.sub_key);
+				}
+			}
+		}
 	}
 
 	restore_grabbed_andExpanded(force: boolean = false) {
@@ -184,21 +212,6 @@ class Persist_Local {
 					this.write_key(this.dbKey_for(IDPersistant.expanded), !ancestries ? null : ancestries.map(a => a.id));	// ancestral paths
 				});
 			}, 100);
-		}
-	}
-
-	restore_page_states() {
-		const descriptions = this.read_sub_keys_forKey(this.dbKey_for(IDPersistant.page_states)) ?? k.empty;
-		for (const description of descriptions) {
-			const paging_state = Paging_State.create_paging_state_from(description);
-			if (!!paging_state) {
-				const thing = paging_state?.thing;
-				if (!!thing) {
-					thing.page_states.add_paging_state(paging_state);
-				} else {															// if no thing => delete paging state
-					persistLocal.delete_paging_state_for(paging_state.sub_key);
-				}
-			}
 		}
 	}
 
@@ -225,33 +238,6 @@ class Persist_Local {
 		s_ancestry_focus.subscribe((ancestry: Ancestry) => {
 			this.writeDB_key(IDPersistant.focus, !ancestry ? null : ancestry.id);
 		});
-	}
-
-	restore_state() {
-		// localStorage.clear();
-		// const isLocal = g.isServerLocal;
-		// this.write_key(IDPersistant.row_height, 20);
-		// this.write_key(IDPersistant.dot_size, 13);
-
-		if (this.ignoreAncestries) {
-			this.write_key(IDPersistant.relationships, true);
-		}
-		this.write_key(IDPersistant.title_atTop, false);
-		show.quests = this.read_key(IDPersistant.quests) ?? true;
-		show.controls = this.read_key(IDPersistant.controls) ?? true;
-		show.tinyDots = this.read_key(IDPersistant.tinyDots) ?? true;
-		show.arrowheads = this.read_key(IDPersistant.arrowheads) ?? false;
-		show.titleAtTop = this.read_key(IDPersistant.title_atTop) ?? false;
-		g.shown_info_kind = this.read_key(IDPersistant.info_kind) ?? Info_Kind.selection;
-		g.applyScale(!g.device_isMobile ? 1 : this.read_key(IDPersistant.scale) ?? 1);
-		s_rotation_ring_angle.set(this.read_key(IDPersistant.ring_angle) ?? 0);
-		s_show_details.set(this.read_key(IDPersistant.details) ?? false);
-		s_thing_fontFamily.set(this.read_key(IDPersistant.font) ?? 'Arial');
-		s_rings_mode.set(this.read_key(IDPersistant.layout) ?? false);
-		s_rotation_ring_radius.set(Math.max(this.read_key(IDPersistant.ring_radius) ?? 0, k.ring_smallest_radius));
-		s_shown_relations.set(this.read_key(IDPersistant.relations) ?? GraphRelations.children);
-		this.restore_graphOffset();
-		this.reactivity_subscribe()
 	}
 
 	graphOffset_setTo(origin: Point): boolean {

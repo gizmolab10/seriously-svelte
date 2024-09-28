@@ -34,30 +34,17 @@ export default class DBDispatch {
 				done = true;
 				setTimeout(() => {
 					(async () => {
-						persistLocal.write_key(IDPersistant.db, type);
-						this.db_setupData_forType(type);
+						this.hierarchy_fetch_andBuild_forDBType(type);
 					})();
 				}, 10);
 			}
 		});
 	}
 
-	async db_setupData_forType(type: string) {
+	async hierarchy_fetch_andBuild_forDBType(type: string) {
+		persistLocal.write_key(IDPersistant.db, type);
 		this.db_set_accordingToType(type);
 		this.queryStrings_apply();
-		await this.hierarchy_fetch_andBuild(type);
-		persistLocal.restore_grabbed_andExpanded(true);
-		debug.log_beat('db_setupData_forType before timeout');
-		setTimeout(() => {
-			// persistLocal.restoreAll_pageStates();
-			persistLocal.restore_focus();
-			h.hierarchy_markAsCompleted();
-			signals.signal_rebuildGraph_fromFocus();
-			debug.log_beat('db_setupData_forType after timeout');
-		}, 1);
-	}
-
-	async hierarchy_fetch_andBuild(type: string) {
 		if (this.db.hasData) {
 			h = this.db.hierarchy;
 		} else {
@@ -76,6 +63,13 @@ export default class DBDispatch {
 				this.set_loadTime(startTime);
 			}
 		}
+		debug.log_beat('hierarchy_fetch_andBuild_forDBType before timeout');
+		setTimeout(() => {
+			persistLocal.restore_db_dependent(true);
+			h.hierarchy_markAsCompleted();
+			signals.signal_rebuildGraph_fromFocus();
+			debug.log_beat('hierarchy_fetch_andBuild_forDBType after timeout');
+		}, 1);
 	}
 
 	set_loadTime(startTime: number) {

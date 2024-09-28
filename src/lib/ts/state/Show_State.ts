@@ -1,7 +1,10 @@
-import { g, k, persistLocal, IDPersistant } from '../common/Global_Imports';
+import { g, k, signals, Info_Kind, persistLocal } from '../common/Global_Imports';
+import { IDPersistant, GraphRelations } from '../common/Global_Imports';
+import { s_show_details, s_shown_relations } from './Reactive_State';
 
 class Show_State {
-	debug		= false;
+	info_kind	= Info_Kind.selection;
+	info		= false;
 	quests		= false;
 	titleAtTop	= false;
 	arrowheads	= false;
@@ -17,9 +20,12 @@ class Show_State {
 		const keyedFlags: { [key: string]: boolean } = {...shown, ...hidden};
         for (const [name, flag] of Object.entries(keyedFlags)) {
 			switch (name) {
-				case 'debug':
-					this.debug = flag;
-					persistLocal.write_key(IDPersistant.debug, flag);
+				case 'details':
+					s_show_details.set(flag);
+					break;
+				case 'info':
+					this.info = flag;
+					persistLocal.write_key(IDPersistant.info, flag);
 					break;
 				case 'quests':
 					this.quests = flag;
@@ -43,6 +49,30 @@ class Show_State {
 					break;
 			}
 		}
+	}
+
+	restore_state() {
+		persistLocal.write_key(IDPersistant.title_atTop, false);
+		this.info = persistLocal.read_key(IDPersistant.info) ?? false;
+		this.quests = persistLocal.read_key(IDPersistant.quests) ?? false;
+		this.controls = persistLocal.read_key(IDPersistant.controls) ?? true;
+		this.tinyDots = persistLocal.read_key(IDPersistant.tinyDots) ?? false;
+		this.arrowheads = persistLocal.read_key(IDPersistant.arrowheads) ?? false;
+		this.titleAtTop = persistLocal.read_key(IDPersistant.title_atTop) ?? false;
+		this.info_kind = persistLocal.read_key(IDPersistant.info_kind) ?? Info_Kind.selection;
+		s_shown_relations.set(persistLocal.read_key(IDPersistant.relations) ?? GraphRelations.children);
+		s_show_details.set(persistLocal.read_key(IDPersistant.details) ?? false);
+	}
+
+	reactivity_subscribe() {
+		s_shown_relations.subscribe((relations: string) => {
+			persistLocal.write_key(IDPersistant.relations, relations);
+		});
+		s_show_details.subscribe((flag: boolean) => {
+			persistLocal.write_key(IDPersistant.details, flag);
+			g.graphRect_update();
+			signals.signal_relayoutWidgets_fromFocus();
+		});
     }
 
 }

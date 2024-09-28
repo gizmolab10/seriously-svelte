@@ -40,7 +40,7 @@
 	}
 
 	function next_infoKind() {
-		switch (g.shown_info_kind) {
+		switch (show.info_kind) {
 			case Info_Kind.focus: return Info_Kind.selection;
 			default:			  return Info_Kind.focus;
 		}
@@ -48,7 +48,7 @@
 
 	function update_forKind() {
 		button_title = `show ${next_infoKind()}`;
-		if (g.shown_info_kind == Info_Kind.focus || !hasGrabs()) {
+		if (show.info_kind == Info_Kind.focus || !hasGrabs()) {
 			ancestry = $s_ancestry_focus;
 		} else {
 			grabs = $s_ancestries_grabbed;
@@ -65,7 +65,7 @@
 		} else if (mouse_state.isUp) {
 			const kind = next_infoKind()
 			persistLocal.write_key(IDPersistant.info_kind, kind);
-			g.shown_info_kind = kind;
+			show.info_kind = kind;
 			update_forKind();
 		}
 	}
@@ -101,12 +101,12 @@
 					width={size_details - 50}
 					element_state={element_state}
 					height={k.default_buttonSize + 4}
-					center={new Point(60, card_top + 11.5)}
+					center={new Point(120, card_top + 11.5)}
 					closure={(mouse_state) => button_closure(mouse_state)}>
 					{button_title}
 				</Button>
 			{/if}
-			<Color thing={thing} top={card_top} left=124/>
+			<Color thing={thing} top={card_top} left=-2/>
 			{#if show.quests}
 				<Text_Editor
 					color='black'
