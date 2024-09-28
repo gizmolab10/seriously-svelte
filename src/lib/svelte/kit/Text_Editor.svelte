@@ -54,12 +54,13 @@
 	}
 </style>
 
-<div
+<div class={label}
 	style='
 		top: {top}px;
 		left: {left}px;
 		position: absolute;'>
 	<textarea
+		id={label}
 		type='text'
 		name='text'
 		wrap='soft'

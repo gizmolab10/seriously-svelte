@@ -43,6 +43,7 @@
 		if (style.length == 0) {
 			border = border_thickness == 0 ? 'none' : `${border_thickness}px solid ${border_color}`;
 			currentStyle=`
+				left:0px;
 				color:${color};
 				width:${width}px;
 				border:${border};

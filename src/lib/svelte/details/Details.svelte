@@ -2,6 +2,7 @@
 	import { s_graphRect, s_db_loadTime } from '../../ts/state/Reactive_State';
 	import { k, u, ZIndex } from '../../ts/common/Global_Imports';
 	import Storage from './Storage.svelte';
+	import Card from './Card.svelte';
 	import Info from './Info.svelte';
 </script>
 
@@ -36,6 +37,7 @@
 			top:41px;
 			position:absolute;
 			z-index: {ZIndex.details};'>
+		<Card/>
 		<Info/>
 	</div>
 </div>

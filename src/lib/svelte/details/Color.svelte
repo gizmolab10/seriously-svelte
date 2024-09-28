@@ -3,8 +3,10 @@
 	import { s_thing_color } from '../../ts/state/Reactive_State';
 	import ColorPicker from 'svelte-awesome-color-picker';
 	export let thing: Thing;
+	export let left = 0;
+	export let top = 0;
+	const pickerSize = 120;
 	const selectorSize = k.dot_size + 1;
-	const pickerSize = 100;
 	let colorAsHEX = k.empty;
 	let persistenceTimer;
 
@@ -35,25 +37,23 @@
 </script>
 
 <style>
-	div {
-		position: absolute;
-		left: 72px;
-		top: 45px;
-	}
-
 	div :global(.wrapper) {
-		left: -59px;
-		top: -41px;
+		left: -134px;
+		top: 28px;
 	}
 
 	div :global(.picker-indicator) {
-		border-radius: 15%;
+		border-radius: 20%;
 	}
 </style>
 
 {#if !!thing}
 	{#key thing.id}
-		<div>
+		<div class='color'
+			style='
+				top: {top}px;
+				left: {left}px;
+				position: absolute;'>
 			<ColorPicker
 				hex={colorAsHEX}
 				on:input={handleColorChange}
@@ -63,7 +63,7 @@
 				--slider-width='{selectorSize}px'
 				--picker-z-index='{ZIndex.frontmost}'
 				--picker-indicator-size='{selectorSize}px'
-				label=''/>
+				label='color'/>
 		</div>
 	{/key}
 {/if}
