@@ -10,6 +10,7 @@ import { k } from './Constants';
 import './Extensions';
 
 import { builds } from './Builds';
+import { show } from '../state/Show_State';
 import { dbDispatch } from '../db/DBDispatch';
 import { Hierarchy } from '../managers/Hierarchy';
 import { Seriously_Range } from './Seriously_Range';
@@ -63,14 +64,15 @@ export {
 	muuri, interact, transparentize,
 	Rect, Size, Point, svgPaths, Direction,
 	Arc_Map, Cluster_Map, Clusters_Geometry,
+	e, g, k, u, ux, w, show, builds, signals,
+	ElementType, AlterationType, Seriously_Range,
 	Title_State, Rotation_State, Expansion_State,
-	e, g, k, u, ux, w, builds, signals, Seriously_Range,
+	get, onMount, onDestroy, setContext, getContext,
 	Mouse_State, Handle_Mouse_State, Create_Mouse_State,
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Grabs, Ancestry, Hierarchy, dbDispatch, persistLocal,
+	Svelte_Wrapper, SvelteComponent, SvelteComponentType,
 	ZIndex, PredicateKind, GraphRelations, CreationOptions,
 	Element_State, Paging_State, Page_States, Alteration_State,
-	ElementType, AlterationType, Svelte_Wrapper, SvelteComponentType,
-	get, onMount, onDestroy, setContext, getContext, SvelteComponent,
 	IDLine, IDTool, IDTrait, IDSignal, IDButton, IDBrowser, IDPersistant,
 };

@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { g, k, u, ux, Rect, Size, Point, Thing, ZIndex, debug, signals } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, show, Rect, Size, Point, Thing, ZIndex, debug } from '../../ts/common/Global_Imports';
 	import { s_id_popupView, s_user_graphOffset, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
-	import { IDButton, onMount, Ancestry, dbDispatch, Predicate } from '../../ts/common/Global_Imports';
-	import { IDSignal, IDPersistant, ElementType, persistLocal } from '../../ts/common/Global_Imports';
+	import { signals, IDSignal, IDButton, onMount, Ancestry, dbDispatch } from '../../ts/common/Global_Imports';
+	import { Predicate, IDPersistant, ElementType, persistLocal } from '../../ts/common/Global_Imports';
 	import { s_ancestry_focus, s_graphRect, s_show_details } from '../../ts/state/Reactive_State';
 	import Dot_RevealFocus from '../buttons/Dot_RevealFocus.svelte';
 	import Editing_Tools from '../widget/Editing_Tools.svelte';
@@ -39,7 +39,7 @@
 		}
 		if (!focus || focus.id != $s_ancestry_focus) {
 			focus = !$s_ancestry_focus ? h.root : h.thing_forAncestry($s_ancestry_focus);
-			offsetX_ofFirstReveal = g.show_titleAtTop ? 0 : 3 + focus?.titleWidth / 2;
+			offsetX_ofFirstReveal = show.titleAtTop ? 0 : 3 + focus?.titleWidth / 2;
 			updateOrigins();
 			rebuilds += 1;
 		}
@@ -83,7 +83,7 @@
 			on:keydown={u.ignore}
 			on:keypress={u.ignore}
 			on:click={() => { $s_id_popupView = null; }}>
-			{#if !g.show_titleAtTop}
+			{#if !show.titleAtTop}
 				<Widget name={focusState.name} ancestry={focusState.ancestry} origin={origin_ofFirstReveal.offsetByXY(-21.5 - offsetX_ofFirstReveal, -5)}/>
 			{:else}
 				{#if $s_ancestry_focus.isGrabbed}

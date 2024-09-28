@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { s_show_details, s_id_popupView, s_resize_count, s_rings_mode, s_shown_relations } from '../../ts/state/Reactive_State';
-	import { g, k, u, ux, Point, ZIndex, onMount, signals, svgPaths, IDButton, IDPersistant } from '../../ts/common/Global_Imports';
-	import { ElementType, Element_State, persistLocal, GraphRelations } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, show, Point, ZIndex, onMount, signals, svgPaths, IDButton } from '../../ts/common/Global_Imports';
+	import { ElementType, Element_State, persistLocal, IDPersistant, GraphRelations } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Button from '../mouse buttons/Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -79,7 +79,7 @@
 				closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.details)}>
 				<img src='settings.svg' alt='circular button' width={size}px height={size}px/>
 			</Button>
-			{#if g.show_controls}
+			{#if show.controls}
 				<Button name={IDButton.layout}
 					width=45
 					height={size + 4}

@@ -1,6 +1,7 @@
-import { g, k, u, w, get, Rect, Size, Thing, debug, signals, Predicate, Title_State, ElementType, Paging_State } from '../common/Global_Imports';
-import { Relationship, PredicateKind, Svelte_Wrapper, Widget_MapRect, AlterationType, SvelteComponentType } from '../common/Global_Imports';
 import { s_ancestries_expanded, s_ancestry_showingTools, s_alteration_mode, s_clusters_geometry } from '../state/Reactive_State';
+import { g, k, u, w, get, show, Rect, Size, Thing, debug, signals, Predicate } from '../common/Global_Imports';
+import { Title_State, ElementType, Paging_State, Relationship, PredicateKind } from '../common/Global_Imports';
+import { Svelte_Wrapper, Widget_MapRect, AlterationType, SvelteComponentType } from '../common/Global_Imports';
 import { s_ancestry_focus, s_ancestries_grabbed, s_title_editing, s_rings_mode } from '../state/Reactive_State';
 import Identifiable from '../data/Identifiable';
 import { Writable } from 'svelte/store';
@@ -447,7 +448,7 @@ export default class Ancestry extends Identifiable {
 		return 0;
 	}
 
-	visibleProgeny_width(special: boolean = g.show_titleAtTop, visited: Array<number> = []): number {
+	visibleProgeny_width(special: boolean = show.titleAtTop, visited: Array<number> = []): number {
 		const thing = this.thing;
 		if (!!thing) {
 			const idHashed = this.idHashed;

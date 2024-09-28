@@ -1,14 +1,15 @@
 <script lang='ts'>
+	import { g, k, ux, show, Size, Point, Thing, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
 	import { Info_Kind, persistLocal, ElementType, IDPersistant } from '../../ts/common/Global_Imports';
-	import { g, k, ux, Size, Point, Thing, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
 	import { s_thing_color, s_thing_title, s_ancestry_focus } from '../../ts/state/Reactive_State';
-	import { s_ancestries_grabbed } from '../../ts/state/Reactive_State';
+	import { s_ancestry_card, s_ancestries_grabbed } from '../../ts/state/Reactive_State';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Button from '../mouse buttons/Button.svelte';
 	import Color from './Color.svelte';
 	const id = 'info';
 	const margin = 10;
+	const card_top = 18;
 	const size_details = k.width_details - 30;
 	const element_state = ux.elementState_for(new Identifiable(id), ElementType.info, id);
 	let information: { [key: string]: string } = {};
@@ -24,9 +25,7 @@
 	element_state.set_forHovering('black', 'pointer');
 	
 	$: {
-		const a = $s_ancestries_grabbed;
-		const b = $s_ancestry_focus;
-		const c = $s_thing_title;
+		const _ = `${$s_ancestries_grabbed} ${$s_ancestry_focus} {$s_thing_title}`;
 		update_forKind();
 	}
 	
@@ -55,15 +54,18 @@
 			grabs = $s_ancestries_grabbed;
 			ancestry = grabs[0];
 		}
+		$s_ancestry_card = ancestry;
 		thing = ancestry?.thing;
+		rebuilds += 1;
 	}
 
 	function button_closure(mouse_state) {
 		if (mouse_state.isHover) {
 			element_state.isOut = mouse_state.isOut;
 		} else if (mouse_state.isUp) {
-			g.shown_info_kind = next_infoKind();
-			persistLocal.write_key(IDPersistant.info_kind, g.shown_info_kind);
+			const kind = next_infoKind()
+			persistLocal.write_key(IDPersistant.info_kind, kind);
+			g.shown_info_kind = kind;
 			update_forKind();
 		}
 	}
@@ -91,31 +93,31 @@
 				left:{margin}px;
 				position:absolute;
 				text-align:center;
-				width:{k.width_details}px;'>
+				width:{k.width_details - margin * 2}px;'>
 			{ancestry.title.injectEllipsisAt(15)}
 			{#if hasGrabs()}
 				<Button name={name}
 					border_thickness=0.5
 					width={size_details - 50}
-					center={new Point(60, 36)}
 					element_state={element_state}
 					height={k.default_buttonSize + 4}
+					center={new Point(60, card_top + 11.5)}
 					closure={(mouse_state) => button_closure(mouse_state)}>
 					{button_title}
 				</Button>
 			{/if}
-			<Color thing={thing} top=24 left=124/>
-			{#if g.show_quests}
+			<Color thing={thing} top={card_top} left=124/>
+			{#if show.quests}
 				<Text_Editor
-					top=57
 					color='black'
 					label='consequence'
+					top={card_top + 29}
 					width={box_size.width}
 					height={box_size.height}
 					original_text={thing?.consequence}
 					handle_textChange={handle_textChange}/>
 				<Text_Editor
-					top=149
+					top={card_top + 119}
 					color='black'
 					label='quest'
 					width={box_size.width}

@@ -1,7 +1,7 @@
 <script lang='ts'>
+	import { g, k, u, ux, get, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import { s_isBusy, s_db_type, s_graphRect, s_id_popupView } from '../../ts/state/Reactive_State';
 	import { s_rings_mode, s_title_editing, s_show_details } from '../../ts/state/Reactive_State';
-	import { g, k, u, ux, get, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import { debug, ZIndex, signals, onMount, Ancestry } from '../../ts/common/Global_Imports';
 	import { dbDispatch, setContext, persistLocal } from '../../ts/common/Global_Imports';
 	import { s_ancestry_focus, s_user_graphOffset } from '../../ts/state/Reactive_State';
@@ -124,7 +124,7 @@
 						z-index: {ZIndex.lines};'>
 				</div>
 			</div>
-			{#if g.show_titleAtTop}
+			{#if show.titleAtTop}
 				<div class='top-title'
 					style='
 						top: 70px;

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, ux, Rect, Size, Point, debug, IDTool, ZIndex } from '../../ts/common/Global_Imports';
+	import { k, u, ux, show, Rect, Size, Point, debug, IDTool, ZIndex } from '../../ts/common/Global_Imports';
 	import { dbDispatch, ElementType, Mouse_State, Element_State } from '../../ts/common/Global_Imports';
 	import { onMount, svgPaths, signals, opacitize, Direction } from '../../ts/common/Global_Imports';
 	import { Alteration_State, AlterationType, Svelte_Wrapper } from '../../ts/common/Global_Imports';
@@ -147,7 +147,7 @@
 		if (!!rect && !!$s_ancestry_showingTools && rect.size.width != 0) {
 			debug.log_tools('setC all tools')
 			const offsetX = titleOffsetX() - ($s_show_details ? k.width_details : 0);
-			const offsetY = (g.show_titleAtTop ? -45 : 20.5) + ($s_rings_mode ? 3 : 0) - k.editingTools_diameter - 6.5;
+			const offsetY = (show.titleAtTop ? -45 : 20.5) + ($s_rings_mode ? 3 : 0) - k.editingTools_diameter - 6.5;
 			const center = rect.centerLeft.offsetBy(offset).offsetByXY(offsetX, offsetY);
 			left = center.x - toolDiameter;
 			setC(IDTool.editingTools,   center);

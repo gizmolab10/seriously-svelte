@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { s_ancestries_expanded, s_alteration_mode, s_ancestries_grabbed, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
 	import { Direction, onDestroy, dbDispatch, Predicate, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
-	import { g, k, u, ux, Size, Thing, Point, debug, ZIndex, onMount, signals, svgPaths } from '../../ts/common/Global_Imports';
+	import { k, u, ux, show, Size, Thing, Point, debug, ZIndex, onMount, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -132,7 +132,7 @@
 						width={size}
 					/>
 				{/key}
-				{#if g.show_tinyDots}
+				{#if show.tinyDots}
 					{#if hasInsidePath}
 						<div class='reveal-inside' style='
 							left:{insideOffset}px;

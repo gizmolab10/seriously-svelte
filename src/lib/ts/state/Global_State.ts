@@ -1,19 +1,12 @@
+import { e, k, u, ux, get, show, Rect, Size, Point, debug, Info_Kind, dbDispatch } from '../common/Global_Imports';
 import { s_rings_mode, s_paging_ring_state, s_ring_resizing_state, s_ring_rotation_state } from './Reactive_State';
 import { s_rebuild_count, s_ancestry_focus, s_ancestries_grabbed, s_ancestries_expanded } from './Reactive_State';
-import { e, k, u, ux, get, Rect, Size, Point, debug, Info_Kind, dbDispatch } from '../common/Global_Imports';
 import { persistLocal, IDPersistant, Rotation_State, Expansion_State } from '../common/Global_Imports';
 import { s_graphRect, s_show_details, s_scale_factor, s_thing_color } from './Reactive_State';
 import { s_resize_count, s_mouse_up_count } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
 
 class Global_State {
-	show_info = false;
-	show_quests = false;
-	show_tinyDots = true;
-	show_controls = false;
-	show_titleAtTop = false;
-	show_arrowheads = false;
-
 	allow_GraphEditing = true;
 	allow_TitleEditing = true;
 	allow_HorizontalScrolling = true;
@@ -39,6 +32,7 @@ class Global_State {
 		s_ring_resizing_state.set(new Expansion_State());
 		persistLocal.restore_state();					// persisted
 		this.queryStrings_apply();						// url query string
+		show.queryStrings_apply();
 		debug.queryStrings_apply();
 		e.setup();
 	}
@@ -64,30 +58,8 @@ class Global_State {
             }
         }
 		for (const [name, flag] of Object.entries(keyedFlags)) {
-			switch (name) {
-				case 'details':
-					s_show_details.set(flag);
-					break;
-				case 'quests':
-					this.show_quests = flag;
-					persistLocal.write_key(IDPersistant.quests, flag);
-					break;
-				case 'controls':
-					this.show_controls = flag;
-					persistLocal.write_key(IDPersistant.controls, flag);
-					break;
-				case 'tinyDots':
-					this.show_tinyDots = flag;
-					persistLocal.write_key(IDPersistant.tinyDots, flag);
-					break;
-				case 'arrowheads':
-					this.show_arrowheads = flag;
-					persistLocal.write_key(IDPersistant.arrowheads, flag);
-					break;
-				case 'titleAtTop':
-					this.show_titleAtTop = flag;
-					persistLocal.write_key(IDPersistant.title_atTop, flag);
-					break;
+			if (name == 'details') {
+				s_show_details.set(flag);
 			}
 		}
 		for (const option of eraseOptions) {

@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { s_thing_color, s_rings_mode, s_ancestries_grabbed, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
-	import { g, k, u, ux, Rect, Size, Point, Thing, debug, ZIndex, IDTool, onMount } from '../../ts/common/Global_Imports';
-	import { signals, svgPaths, Direction, ElementType, dbDispatch } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, show, Rect, Size, Point, Thing, debug, ZIndex, IDTool } from '../../ts/common/Global_Imports';
+	import { onMount, signals, svgPaths, Direction, ElementType, dbDispatch } from '../../ts/common/Global_Imports';
 	import { Svelte_Wrapper, AlterationType, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Tooltip from '../kit/Tooltip.svelte';
@@ -158,7 +158,7 @@
 							fill={element_state.fill}
 							stroke={thing?.color}
 						/>
-						{#if g.show_tinyDots}
+						{#if show.tinyDots}
 							{#if svg_tinyDots_path}
 								<SVGD3 name={'svg-drag-inside-' + name}
 									width={size}

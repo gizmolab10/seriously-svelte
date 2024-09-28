@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { s_graphRect, s_db_loadTime } from '../../ts/state/Reactive_State';
-	import { k, u, ZIndex } from '../../ts/common/Global_Imports';
+	import { k, u, show, ZIndex } from '../../ts/common/Global_Imports';
 	import Storage from './Storage.svelte';
 	import Card from './Card.svelte';
 	import Info from './Info.svelte';
@@ -38,6 +38,8 @@
 			position:absolute;
 			z-index: {ZIndex.details};'>
 		<Card/>
-		<Info/>
+		{#if show.debug}
+			<Info/>
+		{/if}
 	</div>
 </div>

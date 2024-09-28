@@ -1,5 +1,5 @@
+import { g, k, get, show, Point, debug, signals, Ancestry, Info_Kind } from '../common/Global_Imports';
 import { s_rotation_ring_angle, s_rotation_ring_radius, s_rings_mode } from '../state/Reactive_State';
-import { g, k, get, Point, debug, signals, Ancestry, Info_Kind } from '../common/Global_Imports';
 import { s_paging_state, s_thing_fontFamily, s_shown_relations } from '../state/Reactive_State';
 import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/Reactive_State';
 import { s_ancestries_grabbed, s_ancestries_expanded } from '../state/Reactive_State';
@@ -8,7 +8,6 @@ import { h } from '../db/DBDispatch';
 
 export enum IDPersistant {
 	relationships = 'relationships',
-	show_children = 'show_children',
 	title_atTop   = 'title_atTop',
 	ring_radius	  = 'ring_radius',
 	page_states   = 'page_states',
@@ -27,6 +26,7 @@ export enum IDPersistant {
 	quests		  = 'quests',
 	scale		  = 'scale',
 	focus		  = 'focus',
+	debug		  = 'debug',
 	font		  = 'font',
 	db			  = 'db',
 }
@@ -237,11 +237,11 @@ class Persist_Local {
 			this.write_key(IDPersistant.relationships, true);
 		}
 		this.write_key(IDPersistant.title_atTop, false);
-		g.show_quests = this.read_key(IDPersistant.quests) ?? true;
-		g.show_controls = this.read_key(IDPersistant.controls) ?? true;
-		g.show_tinyDots = this.read_key(IDPersistant.tinyDots) ?? true;
-		g.show_arrowheads = this.read_key(IDPersistant.arrowheads) ?? false;
-		g.show_titleAtTop = this.read_key(IDPersistant.title_atTop) ?? false;
+		show.quests = this.read_key(IDPersistant.quests) ?? true;
+		show.controls = this.read_key(IDPersistant.controls) ?? true;
+		show.tinyDots = this.read_key(IDPersistant.tinyDots) ?? true;
+		show.arrowheads = this.read_key(IDPersistant.arrowheads) ?? false;
+		show.titleAtTop = this.read_key(IDPersistant.title_atTop) ?? false;
 		g.shown_info_kind = this.read_key(IDPersistant.info_kind) ?? Info_Kind.selection;
 		g.applyScale(!g.device_isMobile ? 1 : this.read_key(IDPersistant.scale) ?? 1);
 		s_rotation_ring_angle.set(this.read_key(IDPersistant.ring_angle) ?? 0);
