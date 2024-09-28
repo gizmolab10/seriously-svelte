@@ -110,7 +110,6 @@ export default class Ancestry extends Identifiable {
 			this._thing = thing;
 		}
 		if (!!thing && !thing.oneAncestry && !!this.predicate && !this.predicate.isBidirectional) {
-			console.log(`oneAncestry ${this.titles}`);
 			thing.oneAncestry = this;
 		}
 		return this._thing;
@@ -486,14 +485,9 @@ export default class Ancestry extends Identifiable {
 	becomeFocus(): boolean {
 		const changed = !(get(s_ancestry_focus)?.matchesAncestry(this) ?? false);
 		if (changed) {
-			const grabbedAncestry = h.grabs.latestAncestryGrabbed(true)
 			s_alteration_mode.set(null);
 			s_ancestry_focus.set(this);
 			this.expand();
-			if (!!grabbedAncestry && !grabbedAncestry.isVisible) {
-				// grabbedAncestry.ungrab();	// TODO: WHY?
-				this.grab();
-			}
 		}
 		return changed;
 	}

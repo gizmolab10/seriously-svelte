@@ -11,19 +11,21 @@ export default class Thing extends Datum {
 	page_states!: Page_States;
 	oneAncestry!: Ancestry;
 	needsBulkFetch = false;
+	consequence: string;
 	isEditing = false;
 	isGrabbed = false;
-	details: string;
+	quest: string;
 	title: string;
 	color: string;
 	trait: string;
 
-	constructor(baseID: string, id: string, title = k.title_default, color = k.color_default, trait = 's', details = k.empty, hasBeen_remotely_saved: boolean = false) {
+	constructor(baseID: string, id: string, title = k.title_default, color = k.color_default, trait = 's', consequence = k.empty, quest = k.empty, hasBeen_remotely_saved: boolean = false) {
 		super(dbDispatch.db.dbType, baseID, id, hasBeen_remotely_saved);
 		this.selectionRange = new Seriously_Range(0, title.length);
 		this.page_states = new Page_States(this.id);
-		this.details = details;
+		this.consequence = consequence;
 		this.title = title;
+		this.quest = quest;
 		this.color = color;
 		this.trait = trait;
 	};

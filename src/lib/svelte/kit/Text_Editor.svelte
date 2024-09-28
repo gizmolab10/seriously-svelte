@@ -1,22 +1,20 @@
 <script lang='ts'>
-	import { g, k, debug, ZIndex, dbDispatch, Seriously_Range } from '../../ts/common/Global_Imports';
-	export let handle_textChange = (text: string) => {};
-	export let original_text = k.empty;
+	import { g, k, u, ZIndex, dbDispatch } from '../../ts/common/Global_Imports';
+	export let handle_textChange = (label: string, text: string) => {};
+	export let width = k.width_details - 40;
 	export let color = k.color_default;
-	export let width = k.width_details - 30;
+	export let original_text = k.empty;
+	export let label = k.empty;
 	export let height = 200;
 	export let left = 0;
 	export let top = 0;
-	let selectionRange = new Seriously_Range(0, 0);
-	let cursorStyle = 'cursor: text';
-	let padding = `3px 5px 3px 5px`;
-	let bound_text = original_text;
-	let isEditing = false;
 	let textarea = null;
+	let bound_text = original_text;
+	let cursorStyle = 'cursor: text';
+	let label_left = (k.width_details - 28 - u.getWidthOf(label) * 0.7) / 2;
 
 	function handle_mousedown(event: MouseEvent) { 
 		g.isEditing_text = true;
-		console.log((flag ? 'is' : 'is not') + ' editing')
 	}
 
 	function handle_keydown(event: KeyboardEvent) {
@@ -33,7 +31,7 @@
 				const text = event.target.value;
 				if (!!text) {
 					bound_text = text;
-					handle_textChange(text);
+					handle_textChange(label, text);
 				}
 			}, 1);
 		}
@@ -53,32 +51,46 @@
 </style>
 
 {#key original_text}
-	<textarea
-		type='text'
-		name='text'
-		wrap='soft'
-		class='text'
-		bind:this={textarea}
-		bind:value={bound_text}
-		on:keydown={handle_keydown}
-		on:mousedown={handle_mousedown}
+	<div
 		style='
-			resize: none;
 			top: {top}px;
-			{cursorStyle};
 			left: {left}px;
-			color: {color};
-			width: {width}px;
-			height: {height}px;
+			position: absolute;'>
+		<textarea
+			type='text'
+			name='text'
+			wrap='soft'
+			class='text'
+			bind:this={textarea}
+			bind:value={bound_text}
+			on:keydown={handle_keydown}
+			on:mousedown={handle_mousedown}
+			style='
+				resize: none;
+				padding: 8px;
+				{cursorStyle};
+				color: {color};
+				width: {width}px;
+				height: {height}px;
+				overflow-x: hidden;
+				vertical-align: top;
+				white-space: normal;
+				z-index: {ZIndex.text};
+				overflow-wrap: break-word;
+				{k.prevent_selection_style};
+				font-family: Times New Roman;
+				border-radius: {k.row_height / 2}px;
+			'/>
+		<div
+		style='
+			top: -8px;
+			color: gray;
+			font-size: 90%;
+			padding: 0px 3px;
 			position: absolute;
-			padding: {padding};
-			overflow-x: hidden;
-			vertical-align: top;
-			white-space: normal;
-			z-index: {ZIndex.text};
-			overflow-wrap: break-word;
-			{k.prevent_selection_style};
-			font-family: Times New Roman;
-			border-radius: {k.row_height / 2}px;
-		'/>
+			left: {label_left}px;
+			background-color: {k.color_background}'>
+			{label}
+		</div>
+	</div>
 {/key}

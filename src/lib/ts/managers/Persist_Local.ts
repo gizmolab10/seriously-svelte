@@ -1,9 +1,9 @@
 import { s_rotation_ring_angle, s_rotation_ring_radius, s_rings_mode } from '../state/Reactive_State';
-import { g, k, get, Point, signals, Ancestry, Info_Kind, dbDispatch } from '../common/Global_Imports';
+import { g, k, get, Point, debug, signals, Ancestry, Info_Kind } from '../common/Global_Imports';
 import { s_paging_state, s_thing_fontFamily, s_shown_relations } from '../state/Reactive_State';
 import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/Reactive_State';
 import { s_ancestries_grabbed, s_ancestries_expanded } from '../state/Reactive_State';
-import { Paging_State, GraphRelations } from '../common/Global_Imports';
+import { dbDispatch, Paging_State, GraphRelations } from '../common/Global_Imports';
 import { h } from '../db/DBDispatch';
 
 export enum IDPersistant {
@@ -24,6 +24,7 @@ export enum IDPersistant {
 	cluster		  = 'cluster',
 	layout		  = 'layout',
 	origin		  = 'origin',
+	quests		  = 'quests',
 	scale		  = 'scale',
 	focus		  = 'focus',
 	font		  = 'font',
@@ -95,7 +96,8 @@ class Persist_Local {
 	}
 
 	ancestries_forKey(key: string): Array<Ancestry> {		// 2 keys supported so far: grabbed, expanded
-		const value = this.read_key(key)[0] as string;
+		const dbKey = this.dbKey_for(key);
+		const value = this.read_key(dbKey)[0] as string;
 		const ids = value?.split(k.generic_separator);
 		const length = ids?.length ?? 0;
 		if (this.ignoreAncestries || !ids || length == 0) {
@@ -107,7 +109,7 @@ class Persist_Local {
 		reversed.forEach((id: string, index: number) => {
 			const predicateID = h.idPredicate_for(id);
 			const ancestry = h.ancestry_remember_createUnique(id, predicateID);
-			if (!!!ancestry) {
+			if (!ancestry) {
 				ids.slice(1, length - index);
 				needsRewrite = true;
 			} else {
@@ -168,14 +170,18 @@ class Persist_Local {
 	restore_grabbed_andExpanded(force: boolean = false) {
 		if (!this.ancestriesRestored || force) {
 			this.ancestriesRestored = true;
-			s_ancestries_grabbed.set(this.ancestries_forKey(this.dbKey_for(IDPersistant.grabbed)));
-			s_ancestries_expanded.set(this.ancestries_forKey(this.dbKey_for(IDPersistant.expanded)));
+			s_ancestries_grabbed.set(this.ancestries_forKey(IDPersistant.grabbed));
+			debug.log_persist(`WERE GRABBED ${get(s_ancestries_grabbed).map(a => a.title)}`);
+			s_ancestries_expanded.set(this.ancestries_forKey(IDPersistant.grabbed));
+			debug.log_persist(`WERE EXPANDED ${get(s_ancestries_expanded).map(a => a.title)}`);
 			setTimeout(() => {
 				s_ancestries_grabbed.subscribe((ancestries: Array<Ancestry>) => {
-					this.writeDB_key(IDPersistant.grabbed, !ancestries ? null : ancestries.map(a => a.id));		// ancestral paths
+					debug.log_persist(`GRABBED ${ancestries.map(a => a.title)}`);
+					this.write_key(this.dbKey_for(IDPersistant.grabbed), !ancestries ? null : ancestries.map(a => a.id));		// ancestral paths
 				});
 				s_ancestries_expanded.subscribe((ancestries: Array<Ancestry>) => {
-					this.writeDB_key(IDPersistant.expanded, !ancestries ? null : ancestries.map(a => a.id));	// ancestral paths
+					debug.log_persist(`EXPANDED ${ancestries.map(a => a.title)}`);
+					this.write_key(this.dbKey_for(IDPersistant.expanded), !ancestries ? null : ancestries.map(a => a.id));	// ancestral paths
 				});
 			}, 10);
 		}
@@ -231,6 +237,7 @@ class Persist_Local {
 			this.write_key(IDPersistant.relationships, true);
 		}
 		this.write_key(IDPersistant.title_atTop, false);
+		g.show_quests = this.read_key(IDPersistant.quests) ?? true;
 		g.show_controls = this.read_key(IDPersistant.controls) ?? true;
 		g.show_tinyDots = this.read_key(IDPersistant.tinyDots) ?? true;
 		g.show_arrowheads = this.read_key(IDPersistant.arrowheads) ?? false;

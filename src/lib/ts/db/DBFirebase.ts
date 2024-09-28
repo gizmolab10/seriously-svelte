@@ -242,7 +242,7 @@ export default class DBFirebase implements DBInterface {
 								if (!!thing || remoteThing.isEqualTo(this.addedThing) || remoteThing.trait == IDTrait.root) {
 									return;			// do not invoke signal because nothing has changed
 								}
-								thing = h.thing_remember_runtimeCreate(baseID, id, remoteThing.title, remoteThing.color, remoteThing.trait, data.details, true);
+								thing = h.thing_remember_runtimeCreate(baseID, id, remoteThing.title, remoteThing.color, remoteThing.trait, data.consequence, data.quest, true);
 								break;
 							case 'removed':
 								if (!!thing) {
@@ -280,7 +280,7 @@ export default class DBFirebase implements DBInterface {
 		if (DBFirebase.data_isValidOfKind(type, data)) {
 			switch (type) {
 				case DatumType.predicates:	  h.predicate_remember_runtimeCreate(id, data.kind, data.isBidirectional); break;
-				case DatumType.things:		  h.thing_remember_runtimeCreate(baseID, id, data.title, data.color, data.trait, data.details, true); break;
+				case DatumType.things:		  h.thing_remember_runtimeCreate(baseID, id, data.title, data.color, data.trait, data.consequence, data.quest, true); break;
 				case DatumType.relationships: h.relationship_remember_runtimeCreateUnique(baseID, id, data.predicate.id, data.parent.id, data.child.id, data.order, CreationOptions.isFromRemote); break;
 			}
 		}
@@ -335,9 +335,9 @@ export default class DBFirebase implements DBInterface {
 	}
 
 	async things_remember_firstTime_remoteCreateIn(collectionRef: CollectionReference) {
-		const fields = ['title', 'color', 'trait', 'details'];
-		const root = new Thing(this.baseID, Identifiable.newID(), this.baseID, 'coral', IDTrait.root, k.empty, true);
-		const thing = new Thing(this.baseID, Identifiable.newID(), 'Click this text to edit it', 'purple', k.empty, k.empty, true);
+		const fields = ['title', 'color', 'trait', 'consequence'];
+		const root = new Thing(this.baseID, Identifiable.newID(), this.baseID, 'coral', IDTrait.root, k.empty, k.empty, true);
+		const thing = new Thing(this.baseID, Identifiable.newID(), 'Click this text to edit it', 'purple', k.empty, k.empty, k.empty, true);
 		h.root = root;
 		const thingRef = await addDoc(collectionRef, u.convertToObject(thing, fields));		// N.B. these will be fetched, shortly
 		const rootRef = await addDoc(collectionRef, u.convertToObject(root, fields));		// no need to remember now
@@ -541,8 +541,9 @@ class SnapshotDeferal {
 }
 
 interface RemoteThing {
-	details: string;
+	consequence: string;
 	title: string;
+	quest: string;
 	color: string;
 	trait: string;
 }
@@ -550,8 +551,9 @@ interface RemoteThing {
 class RemoteThing implements RemoteThing {
 	constructor(data: DocumentData) {
 		const remote = data as RemoteThing;
-		this.details = remote.details;
+		this.consequence = remote.consequence;
 		this.title	 = remote.title;
+		this.quest	 = remote.quest;
 		this.trait	 = remote.trait;
 		this.color	 = remote.color;
 	}
@@ -567,8 +569,9 @@ class RemoteThing implements RemoteThing {
 
 	isEqualTo(thing: Thing | null) {
 		return !!thing &&
-		thing.details == this.details &&
+		thing.consequence == this.consequence &&
 		thing.title == this.title &&
+		thing.quest == this.quest &&
 		thing.trait == this.trait &&
 		thing.color == this.color;
 	}

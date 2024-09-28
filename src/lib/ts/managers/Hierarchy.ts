@@ -236,18 +236,18 @@ export class Hierarchy {
 		}
 	}
 
-	thing_remember_runtimeCreateUnique(baseID: string, id: string, title: string, color: string, trait: string, details = k.empty,
+	thing_remember_runtimeCreateUnique(baseID: string, id: string, title: string, color: string, trait: string, details = k.empty, quest = k.empty,
 		hasBeen_remotely_saved: boolean = false): Thing {
 		let thing = this.thing_forHID(id?.hash() ?? null);
 		if (!thing) {
-			thing = this.thing_remember_runtimeCreate(baseID, id, title, color, trait, details, hasBeen_remotely_saved);
+			thing = this.thing_remember_runtimeCreate(baseID, id, title, color, trait, details, quest, hasBeen_remotely_saved);
 		}
 		return thing;
 	}
 
-	thing_remember_runtimeCreate(baseID: string, id: string, title: string, color: string, trait: string, details = k.empty,
+	thing_remember_runtimeCreate(baseID: string, id: string, title: string, color: string, trait: string, details = k.empty, quest = k.empty,
 		hasBeen_remotely_saved: boolean = false): Thing {
-		const thing = this.thing_runtimeCreate(baseID, id, title, color, trait, details, hasBeen_remotely_saved);
+		const thing = this.thing_runtimeCreate(baseID, id, title, color, trait, details, quest, hasBeen_remotely_saved);
 		this.thing_remember(thing);
 		return thing;
 	}
@@ -286,13 +286,13 @@ export class Hierarchy {
 		}
 	}
 
-	thing_runtimeCreate(baseID: string, id: string, title: string, color: string, trait: string, details = k.empty,
+	thing_runtimeCreate(baseID: string, id: string, title: string, color: string, trait: string, details = k.empty, quest = k.empty,
 		hasBeen_remotely_saved: boolean = false): Thing {
 		let thing: Thing | null = null;
 		if (id && trait == IDTrait.root && baseID != this.db.baseID) {		// other bulks have their own root & id
 			thing = this.thing_remember_bulkRootID(baseID, id, color);		// which our thing needs to adopt
 		} else {
-			thing = new Thing(baseID, id, title, color, trait, details, hasBeen_remotely_saved);
+			thing = new Thing(baseID, id, title, color, trait, details, quest, hasBeen_remotely_saved);
 			if (thing.isBulkAlias) {
 				thing.needsBulkFetch = true;
 				if (title.includes('@')) {

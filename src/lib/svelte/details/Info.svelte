@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { g, k, ux, Point, Thing, ZIndex, Ancestry, Info_Kind } from '../../ts/common/Global_Imports';
+	import { Info_Kind, persistLocal, ElementType, IDPersistant } from '../../ts/common/Global_Imports';
+	import { g, k, ux, Size, Point, Thing, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
 	import { s_thing_color, s_thing_title, s_ancestry_focus } from '../../ts/state/Reactive_State';
-	import { persistLocal, ElementType, IDPersistant } from '../../ts/common/Global_Imports';
 	import { s_shown_relations, s_ancestries_grabbed } from '../../ts/state/Reactive_State';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
@@ -13,6 +13,7 @@
 	const element_state = ux.elementState_for(new Identifiable(id), ElementType.info, id);
 	let button_title = `show info for ${next_infoKind()}`;
 	let information: { [key: string]: string } = {};
+	let box_size = new Size(size_details - 8, 64);
 	let ancestry: Ancestry | null = null;
 	let grabs = $s_ancestries_grabbed;
 	let thing: Thing | null = null;
@@ -92,9 +93,12 @@
 		}
 	}
 
-	function handle_textChange (text: string) {
+	function handle_textChange (label: string, text: string) {
 		if (!!thing) {
-			thing.details = text;
+			switch (label) {
+				case 'consequence': thing.consequence = text; break;
+				case 'quest': thing.quest = text; break;
+			}
 			(async () => {
 				await thing.remoteWrite();
 			})();
@@ -138,20 +142,32 @@
 				{button_title}
 			</Button>
 		{/if}
+		{#if g.show_quests}
 		<Text_Editor
-			top=56
+			top=57
 			left={margin}
 			color='black'
-			width={size_details}
-			height={size_details + 4}
-			original_text={thing?.details}
+			label='consequence'
+			width={box_size.width}
+			height={box_size.height}
+			original_text={thing?.consequence}
 			handle_textChange={handle_textChange}/>
+		<Text_Editor
+			top=149
+			left={margin}
+			color='black'
+			label='quest'
+			width={box_size.width}
+			height={box_size.height}
+			original_text={thing?.quest}
+			handle_textChange={handle_textChange}/>
+		{/if}
 		<div class='ancestry-info'
 			style='
-				top:241px;
 				left:{margin}px;
 				position:absolute;
-				z-index: {ZIndex.details};'>
+				z-index: {ZIndex.details};
+				top:{g.show_quests ? 235 : 50}px;'>
 			<table style='width: {k.width_details}px; left:12px; color:black;'>
 				{#key info}
 					{#each info as [key, value]}

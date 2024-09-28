@@ -139,7 +139,6 @@
 				isGrabbed = shallGrab;
 				isEditing = shallEdit;
 				layout_widget();
-				console.log(`${showingBorder} ${thing.title}`)
 			}
 		}
 	}

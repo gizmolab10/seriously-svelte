@@ -4,6 +4,7 @@ import { g } from '../../ts/state/Global_State';
 
 export enum DebugFlag {
 	reticule = 'reticule',	// show reticule in clusters
+	persist	 = 'persist',
 	noRings	 = 'noRings',
 	origins  = 'origins',
 	rebuild  = 'rebuild',
@@ -40,6 +41,7 @@ export class Debug {
 	log_layout(message: string) { this.log_maybe(DebugFlag.layout, message) }
 	log_origins(message: string) { this.log_maybe(DebugFlag.origins, message) }
 	log_rebuild(message: string) { this.log_maybe(DebugFlag.rebuild, message) }
+	log_persist(message: string) { this.log_maybe(DebugFlag.persist, message) }
 	log_maybe(option: DebugFlag, message: string) { if (this.hasOption(option)) { console.log(option.toUpperCase(), message); }}
 	log_target(target: any, key: string) { console.log(`Method \'${key}\' is called on class \'${target.constructor.name}\'`); }
 	get reticule(): boolean { return this.hasOption(DebugFlag.reticule); }
@@ -56,6 +58,7 @@ export class Debug {
 					case 'reticule': this.flags.push(DebugFlag.reticule); break;
 					case 'noRings': this.flags.push(DebugFlag.noRings); break;
 					case 'origins': this.flags.push(DebugFlag.origins); break;
+					case 'persist': this.flags.push(DebugFlag.persist); break;
 					case 'rebuild': this.flags.push(DebugFlag.rebuild); break;
 					case 'remote': this.flags.push(DebugFlag.remote); break;
 					case 'things': this.flags.push(DebugFlag.things); break;

@@ -7,6 +7,7 @@ import { s_resize_count, s_mouse_up_count } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
 
 class Global_State {
+	show_quests = false;
 	show_tinyDots = true;
 	show_controls = false;
 	things_arrived = false;
@@ -63,6 +64,10 @@ class Global_State {
 			switch (name) {
 				case 'details':
 					s_show_details.set(flag);
+					break;
+				case 'quests':
+					this.show_quests = flag;
+					persistLocal.write_key(IDPersistant.quests, flag);
 					break;
 				case 'controls':
 					this.show_controls = flag;
