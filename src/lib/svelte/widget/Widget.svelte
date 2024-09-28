@@ -170,18 +170,10 @@
 			revealCenter = new Point(revealX, revealY);
 		}
 	}
-		// <Tooltip
-		// 	style='
-		// 		display: flex;
-		// 		align-items: center;
-		// 		justify-content: center;'
-		// 	align='center'
-		// 	content='This is helpful information'>
-		// </Tooltip>
 
 </script>
 
-{#key rebuilds, element_state}
+{#key rebuilds}
 	{#if element_state}
 		<div class='widget' id='{widgetName}'
 			bind:this={widget}

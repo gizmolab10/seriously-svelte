@@ -171,19 +171,19 @@ class Persist_Local {
 		if (!this.ancestriesRestored || force) {
 			this.ancestriesRestored = true;
 			s_ancestries_grabbed.set(this.ancestries_forKey(IDPersistant.grabbed));
-			debug.log_persist(`WERE GRABBED ${get(s_ancestries_grabbed).map(a => a.title)}`);
+			debug.log_persist(`- GRABBED ${get(s_ancestries_grabbed).map(a => a.title)}`);
 			s_ancestries_expanded.set(this.ancestries_forKey(IDPersistant.grabbed));
-			debug.log_persist(`WERE EXPANDED ${get(s_ancestries_expanded).map(a => a.title)}`);
+			debug.log_persist(`- EXPANDED ${get(s_ancestries_expanded).map(a => a.title)}`);
 			setTimeout(() => {
 				s_ancestries_grabbed.subscribe((ancestries: Array<Ancestry>) => {
-					debug.log_persist(`GRABBED ${ancestries.map(a => a.title)}`);
+					debug.log_persist(`  GRABBED ${ancestries.map(a => a.title)}`);
 					this.write_key(this.dbKey_for(IDPersistant.grabbed), !ancestries ? null : ancestries.map(a => a.id));		// ancestral paths
 				});
 				s_ancestries_expanded.subscribe((ancestries: Array<Ancestry>) => {
-					debug.log_persist(`EXPANDED ${ancestries.map(a => a.title)}`);
+					debug.log_persist(`  EXPANDED ${ancestries.map(a => a.title)}`);
 					this.write_key(this.dbKey_for(IDPersistant.expanded), !ancestries ? null : ancestries.map(a => a.id));	// ancestral paths
 				});
-			}, 10);
+			}, 100);
 		}
 	}
 

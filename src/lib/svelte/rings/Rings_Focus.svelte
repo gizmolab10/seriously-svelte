@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { s_thing_color, s_ancestry_focus, s_thing_fontFamily } from '../../ts/state/Reactive_State';
-	import { g, k, ux, Size, Point, IDTool, ZIndex, svgPaths, } from '../../ts/common/Global_Imports';
+	import { g, k, ux, Size, Point, debug, IDTool, ZIndex, } from '../../ts/common/Global_Imports';
 	import { s_user_graphOffset, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
-	import { ElementType, Clusters_Geometry } from '../../ts/common/Global_Imports';
+	import { svgPaths, ElementType, Clusters_Geometry } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Title_Editor from '../widget/Title_Editor.svelte';
 	const element_state = ux.elementState_for($s_ancestry_focus, ElementType.focus, IDTool.none);
@@ -25,7 +25,7 @@
 	}
 
 	function mouse_state_closure(mouse_state) {
-		console.log(mouse_state.description)
+		debug.log_action(`MOUSE ${mouse_state.description}`);
 	}
 
 </script>

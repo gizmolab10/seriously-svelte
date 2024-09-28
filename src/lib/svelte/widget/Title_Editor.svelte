@@ -30,7 +30,6 @@
 		if (!!thing && !!title) {
 			thing.title = bound_title = title;
 			s_thing_title.set(null);
-			// thing.signal_color_change();
 		}
 	};
 	

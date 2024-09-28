@@ -17,17 +17,19 @@
 	function handleColorChange(event) {
 		event.preventDefault();
 		const color = event.detail.hex;
-		thing.color = color;
-		thing.signal_color_change();
-		if (!!persistenceTimer) {
-			clearTimeout(persistenceTimer);		// each color change discards and restarts the timer
+		if (thing.color != color) {
+			thing.color = color;
+			thing.signal_color_change();
+			if (!!persistenceTimer) {
+				clearTimeout(persistenceTimer);		// each color change discards and restarts the timer
+			}
+			persistenceTimer = setTimeout(() => {
+				(async () => {
+					$s_thing_color = null;
+					await thing.remoteWrite();
+				})();
+			}, 100);		// tenth second delay
 		}
-		persistenceTimer = setTimeout(() => {
-			(async () => {
-				$s_thing_color = null;
-				await thing.remoteWrite();
-			})();
-		}, 100);		// tenth second delay
 	}
 
 </script>

@@ -637,7 +637,7 @@ export default class Ancestry extends Identifiable {
 
 	startEdit() {
 		if (!this.isRoot && g.allow_TitleEditing) {
-			debug.log_edit(`EDIT ${this.description}`)
+			debug.log_edit(`EDIT ${this.title}`)
 			this.grabOnly();
 			s_title_editing.set(new Title_State(this));
 		}

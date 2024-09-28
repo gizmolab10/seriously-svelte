@@ -7,18 +7,21 @@ import { s_resize_count, s_mouse_up_count } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
 
 class Global_State {
+	show_info = false;
 	show_quests = false;
 	show_tinyDots = true;
 	show_controls = false;
-	things_arrived = false;
-	isEditing_text = false;
 	show_titleAtTop = false;
 	show_arrowheads = false;
+
 	allow_GraphEditing = true;
 	allow_TitleEditing = true;
+	allow_HorizontalScrolling = true;
+
+	things_arrived = false;
+	isEditing_text = false;
 	mouse_responder_number = 0;
 	queryStrings: URLSearchParams;
-	allow_HorizontalScrolling = true;
 	shown_info_kind = Info_Kind.selection;
 	rebuild_needed_byType: {[type: string]: boolean} = {};
 
