@@ -72,7 +72,7 @@
 		on:mousedown={handle_mousedown}
 		style='
 			resize: none;
-			padding: 8px;
+			padding: 6px;
 			{cursorStyle};
 			color: {color};
 			width: {width}px;

@@ -8,9 +8,11 @@
 	export let items: Array<Any> = [];
     export let rect = Rect.zero;
 	export let stroke = 'black';
-	let fill = k.color_background;
-	const oblong_center = new Point(rect.origin.x, 10);
 	const size = rect.size;
+	const outer_size = size.expandedEquallyBy(2);
+	const oblong_center = new Point(rect.origin.x -8, 11);
+	let path = svgPaths.oblong(oblong_center, size.expandedByX(-22));
+	let fill = k.color_background;
 
 	function mouse_closure(mouse_state) {
 		if (mouse_state.isHover) {
@@ -27,20 +29,35 @@
 <Mouse_Responder
 	name={name}
 	cursor='pointer'
-	width={size.width}
-	height={size.height}
 	center={rect.center}
-	zindex={ZIndex.frontmost};
+	width={outer_size.width}
+	zindex={ZIndex.frontmost}
+	height={outer_size.height}
 	mouse_state_closure={mouse_closure}>
 	<svg
+		viewBox={rect.expandedBy(4).verbose}
 		style='
 			position: absolute;
-			width:{size.width}px;
-			height:{size.height}px;'>
+			width:{outer_size.width}px;
+			height:{outer_size.height}px;'>
 		<path
-			fill='white'
+			fill=transparent
 			stroke='black'
-			d={svgPaths.oblong(oblong_center, size)}/>
+			d={path}/>
 	</svg>
-	{items[0]}
+	<div class='items' style='top:4px;'>
+		{#each items as item}
+			&nbsp;{item}&nbsp;
+		{/each}
+	</div>
+	<div class='vertical-line'
+		style='
+			top: 2px;
+			width: 1px;
+			position: absolute;
+			background-color: black;
+			left: 50px;
+			z-index: {ZIndex.frontmost};
+			height: {size.height}px;'>
+	</div>
 </Mouse_Responder>

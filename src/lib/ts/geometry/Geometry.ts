@@ -12,7 +12,7 @@ export class Point {
 		this.y = y;
 	}
 
-	get asSize():					    Size { return new Size(this.x, this.y); }
+	get asSize():					  	Size { return new Size(this.x, this.y); }
 	get magnitude():				  number { return Math.sqrt(this.x * this.x + this.y * this.y); }
 	get toPolar():	{r: number, phi: number} { return {r: this.magnitude, phi: this.angle}; }
 	get isZero():					 boolean { return this.x == 0 && this.y == 0; }
@@ -113,26 +113,28 @@ export class Size {
 		this.width = width;
 	}
 
-	get isZero():					boolean { return this.width == 0 && this.height == 0; }
-	get proportion():				 number { return this.width / this.height; }
-	get description():				 string { return `${this.width} ${this.height}`; }
-	get verbose():					 string { return `(${this.width}, ${this.height})`; }
-	get pixelVerbose():				 string { return `${this.width}px ${this.height}px`; }
-	get asPoint():			   		  Point { return new Point(this.width, this.height); }
-	get dividedInHalf():			   Size { return this.multipliedBy(1/2); }
-	get negated():					   Size { return this.multipliedBy(-1); }
-	get copy():						   Size { return new Size(this.width, this.height); }
-	get swap():						   Size { return new Size(this.height, this.width); }
-	reducedBy(delta: Point):		   Size { return this.expandedBy(delta.negated); }
-	expandedByX(width: number):		   Size { return new Size(this.width + width, this.height); }
-	expandedByY(height: number):	   Size { return new Size(this.width, this.height + height); }
-	expandedBy(delta: Point):		   Size { return new Size(this.width + delta.x, this.height + delta.y); }
-	multipliedBy(multiplier: number):  Size { return new Size(this.width * multiplier, this.height * multiplier); }
-	unionWith(size: Size):			   Size { return new Size(Math.max(this.width, size.width), Math.max(this.height, size.height)); }
-	subtracting(size: Size):		  Point { return new Point(this.width - size.width, this.height - size.height); }
-	static fromDOMRect(rect: DOMRect): Size { return new Size(rect.width, rect.height); }
-	static square(length: number):	   Size { return new Size(length, length); }
-	static get zero():				   Size { return new Size(); }
+	get isZero():					 boolean { return this.width == 0 && this.height == 0; }
+	get proportion():				  number { return this.width / this.height; }
+	get description():				  string { return `${this.width} ${this.height}`; }
+	get verbose():					  string { return `(${this.width}, ${this.height})`; }
+	get pixelVerbose():				  string { return `${this.width}px ${this.height}px`; }
+	get asPoint():			   		   Point { return new Point(this.width, this.height); }
+	get dividedInHalf():				Size { return this.multipliedBy(1/2); }
+	get negated():						Size { return this.multipliedBy(-1); }
+	get copy():							Size { return new Size(this.width, this.height); }
+	get swap():							Size { return new Size(this.height, this.width); }
+	reducedBy(delta: Point):			Size { return this.expandedBy(delta.negated); }
+	expandedByX(width: number):			Size { return new Size(this.width + width, this.height); }
+	expandedByY(height: number):		Size { return new Size(this.width, this.height + height); }
+	expandedEquallyBy(delta: number):	Size { return new Size(this.width + delta, this.height + delta); }
+	expandedBy(delta: Point):			Size { return new Size(this.width + delta.x, this.height + delta.y); }
+	expandedByXY(x: number, y: number):	Size { return new Size(this.width + x, this.height + y); }
+	multipliedBy(multiplier: number):	Size { return new Size(this.width * multiplier, this.height * multiplier); }
+	unionWith(size: Size):				Size { return new Size(Math.max(this.width, size.width), Math.max(this.height, size.height)); }
+	subtracting(size: Size):		   Point { return new Point(this.width - size.width, this.height - size.height); }
+	static fromDOMRect(rect: DOMRect):	Size { return new Size(rect.width, rect.height); }
+	static square(length: number):		Size { return new Size(length, length); }
+	static get zero():					Size { return new Size(); }
 
 }
 

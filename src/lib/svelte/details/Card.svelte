@@ -13,8 +13,8 @@
 	const card_top = 4;
 	const text_top = card_top + 52;
 	const size_details = k.width_details - 30;
-	const control_origin = new Point(120, text_top - 20);
-	const control_size = new Size(size_details - 57, k.default_buttonSize + 4);
+	const control_origin = new Point(122, text_top - 20);
+	const control_size = new Size(size_details - 58, k.default_buttonSize + 4);
 	const control_rect = Rect.createCenterRect(control_origin, control_size);
 	const element_state = ux.elementState_for(new Identifiable(id), ElementType.info, id);
 	let text_box_size = new Size(size_details - 8, 64);
@@ -86,9 +86,6 @@
 			})();
 		}
 	}
-			// <Segmented_Control
-			// 	rect={control_rect}
-			// 	items={['focus', 'selection']}/>
 
 </script>
 
@@ -114,10 +111,14 @@
 					background-color:lightgray;'>
 			</div>
 			<Color thing={thing} top={control_rect.origin.y - 1} left=-2/>
-			{#if hasGrabs()}
+			{#if 0}
+				<Segmented_Control
+					name='segmented'
+					rect={control_rect}
+					items={['focus ', 'selection']}/>
+			{:else if hasGrabs()}
 				<Button name={name}
-					border_thickness=0.5
-					zindex={ZIndex.details};
+					zindex={ZIndex.details}
 					center={control_rect.center}
 					element_state={element_state}
 					width={control_rect.size.width}

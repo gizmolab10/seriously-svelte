@@ -29,13 +29,13 @@ export default class SVG_Paths {
     x_cross(diameter: number, margin: number): string {
 		const start = margin + 2;
 		const end = diameter - start;
-        return `M${start} ${start} L${end} ${end} M${start} ${end} L${end} ${start}`;
+        return `M ${start} ${start} L ${end} ${end} M ${start} ${end} L ${end} ${start}`;
     }
 
     t_cross(diameter: number, margin: number): string {
 		const radius = diameter / 2;
 		const length = (radius - margin) * 2;
-        return `M${margin + 2} ${radius} L${length + 1} ${radius} M${radius} ${margin + 2} L${radius} ${diameter - margin - 2}`;
+        return `M ${margin + 2} ${radius} L ${length + 1} ${radius} M ${radius} ${margin + 2} L ${radius} ${diameter - margin - 2}`;
     }
 
     circle_atOffset(width: number, diameter: number, offset: Point = Point.zero): string {
@@ -46,7 +46,7 @@ export default class SVG_Paths {
     circle(center: Point, radius: number, clockwise: boolean = true): string {
 		const direction = clockwise ? 0 : 1;
 		const diametric_move = radius * 2 * (clockwise ? 1 : -1);
-        return `M${center.x - radius} ${center.y} a${radius} ${radius} 0 0 ${direction} ${diametric_move} 0 a${radius} ${radius} 0 0 ${direction} ${-diametric_move} 0`;
+        return `M${center.x - radius} ${center.y} a ${radius} ${radius} 0 0 ${direction} ${diametric_move} 0 a ${radius} ${radius} 0 0 ${direction} ${-diametric_move} 0`;
     }
 
 	oblong(center: Point, size: Size) {
@@ -62,7 +62,7 @@ export default class SVG_Paths {
         const width = radius - (horizontal ? 1 : eccentricity);
         const height = radius - (horizontal ? eccentricity : 1);
         const doubleWidth = width * 2;
-        return `M${radius - width} ${radius}a${width} ${height} 0 1,0 ${doubleWidth} 0a${width} ${height} 0 1,0 ${-doubleWidth} 0`;
+        return `M${radius - width} ${radius} a ${width} ${height} 0 1 0 ${doubleWidth} 0 a ${width} ${height} 0 1 0 ${-doubleWidth} 0`;
     }
 
 	arc(center: Point, radius: number, sweepFlag: number, basis_angle: number, endAngle: number): string {
@@ -154,9 +154,9 @@ export default class SVG_Paths {
 			i++;
 		}
 		if (horizontal) {
-			paths = pairs.map(p => `M ${p[0]},${other} A ${tiny},${tiny} 0 1,1 ${p[1]},${other} A ${tiny},${tiny} 0 1,1 ${p[0]},${other}`);
+			paths = pairs.map(p => `M ${p[0]} ${other} A ${tiny} ${tiny} 0 1 1 ${p[1]} ${other} A ${tiny} ${tiny} 0 1 1 ${p[0]} ${other}`);
 		} else {
-			paths = pairs.map(p => `M ${other},${p[0]} A ${tiny},${tiny} 0 1,1 ${other},${p[1]} A ${tiny},${tiny} 0 1,1 ${other},${p[0]}`);
+			paths = pairs.map(p => `M ${other} ${p[0]} A ${tiny} ${tiny} 0 1 1 ${other} ${p[1]} A ${tiny} ${tiny} 0 1 1 ${other} ${p[0]}`);
 		}
 		return paths.join(k.space);
 	}
@@ -193,15 +193,15 @@ export default class SVG_Paths {
 	get rotateSVG(): string {
 		return `<svg width="48px" height="48px" viewBox="0 0 48 48">
 			<circle cx="24" cy="24" r="20" stroke="black" stroke-width="2" fill="none" />
-			<path d="M 4,24 a 20,20 0 0,1 40,0" fill="none" stroke="black" stroke-width="2"/>
-			<polygon points="44,24 38,18 38,30" fill="black"/>
+			<path d="M 4 24 a 20 20 0 0 1 40 0" fill="none" stroke="black" stroke-width="2"/>
+			<polygon points="44 24 38 18 38 30" fill="black"/>
 		</svg>`;
 	}
 
 	// double arrows
 	// <polygon points="66.08 8.13 46.18 0 50.32 7.13 34.58 7.13 34.58 3.13 32.58 3.13 32.58 7.13 15.76 7.13 19.9 0 0 8.13 19.9 16.26 15.76 9.13 32.58 9.13 32.58 13.13 34.58 13.13 34.58 9.13 50.32 9.13 46.18 16.26 66.08 8.13"/>
 	// rotation icon
-	// <path class="b" d="M13.65,9.12c9.31-1.71,22.64-2.81,37.69,.01"/><polygon points="0 12.74 21.28 15.8 14.72 9.06 17.34 .03 0 12.74"/><polygon points="65 12.74 43.72 15.77 50.28 9.04 47.69 0 65 12.74"/>
+	// <path class="b" d="M13.65 9.12c9.31-1.71 22.64-2.81 37.69 .01"/><polygon points="0 12.74 21.28 15.8 14.72 9.06 17.34 .03 0 12.74"/><polygon points="65 12.74 43.72 15.77 50.28 9.04 47.69 0 65 12.74"/>
 
 }
 

@@ -99,11 +99,12 @@
 		{#if $s_id_popupView == null}
 			{#if $s_show_details}
 				<Details/>
-				<div class='vertical-line' style='
-					left: {k.width_details}px;
-					z-index: {ZIndex.lines};
-					top: {$s_graphRect.origin.y}px;
-					height: {$s_graphRect.size.height}px;'>
+				<div class='vertical-line'
+					style='
+						z-index: {ZIndex.lines};
+						left: {k.width_details}px;
+						top: {$s_graphRect.origin.y}px;
+						height: {$s_graphRect.size.height}px;'>
 				</div>
 			{/if}
 			<div class='horizontal-line' style='
