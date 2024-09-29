@@ -87,7 +87,7 @@ export default class Cluster_Map  {
 
 	update_label_geometry() {		// rotate text tangent to arc, at center of arc
 		const nadir_offset = (this.arc_straddles_nadir && !this.arc_straddles_zero) ? Angle.half : 0;
-		const radius = get(s_rotation_ring_radius) - k.ring_rotation_thickness + (this.arc_in_lower_half ? 5 : 0);
+		const radius = get(s_rotation_ring_radius) - k.ring_rotation_thickness + (this.arc_in_lower_half ? 5 : 0) + 17;
 		const ortho = this.arc_in_lower_half ? Angle.quarter : Angle.three_quarters;
 		const angle = this.arc_map.center_angle - nadir_offset;
 		const radial = Point.fromPolar(radius, angle);

@@ -7,6 +7,7 @@
 	export let fontSize = '1em';
 	export let forward = true;
 	export let ancestry;
+	const titleTop = $s_rings_mode ? 0.5 : 0;
 	let padding = `0px 0px 0px 6.5px`;	// 8.5 makes room for drag dot
 	let bound_title = ancestry?.thing?.title ?? k.empty;
     let color = ancestry.thing?.color;
@@ -271,12 +272,12 @@
 		on:mousedown={handle_longClick}
 		on:dblclick={handle_doubleClick}
 		style='
-			top: 1.5px;
 			border: none;
 			{cursorStyle};
 			outline: none;
 			color: {color};
 			white-space: pre;
+			top: {titleTop}px;
 			position: absolute;
 			padding: {padding};
 			position: absolute;

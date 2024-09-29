@@ -39,7 +39,7 @@
 			z-index: {ZIndex.details};'>
 		<Card/>
 		{#if show.info}
-			<Info/>
+			<Info top={show.quests ? 235 : 53}/>
 		{/if}
 	</div>
 </div>

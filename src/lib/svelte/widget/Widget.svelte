@@ -154,7 +154,7 @@
 		const delta = showingBorder ? 0 : 0.5;
 		const leftForward = delta - dragX;
 		const titleWidth = thing?.titleWidth ?? 0;
-		const dragOffsetY = $s_rings_mode ? 2.8 : 2.3;
+		const dragOffsetY = $s_rings_mode ? 2.8 : 2.7;
 		const dragOffsetX = forward ? (dragX - 2) : (titleWidth + delta + 15);
 		const leftBackward = -(titleWidth + 19 + ((ancestry?.isGrabbed ?? false) ? 0 : 0));		
 		dragCenter = Point.square(k.dot_size / 2).offsetByXY(dragOffsetX, dragOffsetY);
@@ -165,7 +165,7 @@
 		radius = k.row_height / 2;
 		top = origin.y + (showingBorder ? 0 : 1);
 		if (ancestry?.showsReveal) {
-			const revealY = k.dot_size - 4.2;
+			const revealY = k.dot_size - 4;
 			const revealX = k.dot_size + titleWidth + 15;
 			revealCenter = new Point(revealX, revealY);
 		}

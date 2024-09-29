@@ -1,19 +1,24 @@
 <script lang='ts'>
-	import { g, k, ux, show, Size, Point, Thing, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
+	import { g, k, ux, show, Rect, Size, Point, Thing, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
 	import { Info_Kind, persistLocal, ElementType, IDPersistant } from '../../ts/common/Global_Imports';
 	import { s_thing_color, s_thing_title, s_ancestry_focus } from '../../ts/state/Reactive_State';
 	import { s_ancestry_card, s_ancestries_grabbed } from '../../ts/state/Reactive_State';
+	import Segmented_Control from '../mouse buttons/Segmented_Control.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Button from '../mouse buttons/Button.svelte';
 	import Color from './Color.svelte';
 	const id = 'info';
 	const margin = 10;
-	const card_top = 18;
+	const card_top = 4;
+	const text_top = card_top + 52;
 	const size_details = k.width_details - 30;
+	const control_origin = new Point(120, text_top - 20);
+	const control_size = new Size(size_details - 57, k.default_buttonSize + 4);
+	const control_rect = Rect.createCenterRect(control_origin, control_size);
 	const element_state = ux.elementState_for(new Identifiable(id), ElementType.info, id);
+	let text_box_size = new Size(size_details - 8, 64);
 	let information: { [key: string]: string } = {};
-	let box_size = new Size(size_details - 8, 64);
 	let button_title = `show ${next_infoKind()}`;
 	let ancestry: Ancestry | null = null;
 	let grabs = $s_ancestries_grabbed;
@@ -81,6 +86,9 @@
 			})();
 		}
 	}
+			// <Segmented_Control
+			// 	rect={control_rect}
+			// 	items={['focus', 'selection']}/>
 
 </script>
 
@@ -88,40 +96,51 @@
 	{#if !!thing}
 		<div class='card'
 			style='
-				top:6px;
 				color:black;
 				left:{margin}px;
+				top:{card_top}px;
 				position:absolute;
 				text-align:center;
 				width:{k.width_details - margin * 2}px;'>
 			{ancestry.title.injectEllipsisAt(15)}
+			<div class='horizontal-line'
+				style='
+					top:20px;
+					height:1px;
+					left:{-margin}px;
+					position:absolute;
+					width:{k.width_details}px;
+					z-index:{ZIndex.frontmost};
+					background-color:lightgray;'>
+			</div>
+			<Color thing={thing} top={control_rect.origin.y - 1} left=-2/>
 			{#if hasGrabs()}
 				<Button name={name}
 					border_thickness=0.5
-					width={size_details - 50}
+					zindex={ZIndex.details};
+					center={control_rect.center}
 					element_state={element_state}
-					height={k.default_buttonSize + 4}
-					center={new Point(120, card_top + 11.5)}
+					width={control_rect.size.width}
+					height={control_rect.size.height}
 					closure={(mouse_state) => button_closure(mouse_state)}>
 					{button_title}
 				</Button>
 			{/if}
-			<Color thing={thing} top={card_top} left=-2/>
 			{#if show.quests}
 				<Text_Editor
 					color='black'
+					top={text_top}
 					label='consequence'
-					top={card_top + 29}
-					width={box_size.width}
-					height={box_size.height}
+					width={text_box_size.width}
+					height={text_box_size.height}
 					original_text={thing?.consequence}
 					handle_textChange={handle_textChange}/>
 				<Text_Editor
-					top={card_top + 119}
 					color='black'
 					label='quest'
-					width={box_size.width}
-					height={box_size.height}
+					top={text_top + 90}
+					width={text_box_size.width}
+					height={text_box_size.height}
 					original_text={thing?.quest}
 					handle_textChange={handle_textChange}/>
 			{/if}

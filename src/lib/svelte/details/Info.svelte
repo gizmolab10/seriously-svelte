@@ -5,6 +5,7 @@
 	import Identifiable from '../../ts/data/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Button from '../mouse buttons/Button.svelte';
+	export let top = 0;
 	const id = 'info';
 	const margin = 10;
 	let rebuilds = 0;
@@ -43,10 +44,10 @@
 	{#if information}
 		<div class='ancestry-info'
 			style='
+				top:{top}px;
 				left:{margin}px;
 				position:absolute;
-				z-index: {ZIndex.details};
-				top:{show.quests ? 232 : 42}px;'>
+				z-index: {ZIndex.details};'>
 			<table style='width: {k.width_details}px; left:12px; color:black;'>
 				{#key information}
 					{#each information as [key, value]}

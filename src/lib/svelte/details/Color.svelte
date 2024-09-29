@@ -61,7 +61,7 @@
 				--picker-width='{pickerSize}px'
 				--picker-height='{pickerSize}px'
 				--slider-width='{selectorSize}px'
-				--picker-z-index='{ZIndex.frontmost}'
+				--picker-z-index='{ZIndex.details}'
 				--picker-indicator-size='{selectorSize}px'
 				label='color'/>
 		</div>
