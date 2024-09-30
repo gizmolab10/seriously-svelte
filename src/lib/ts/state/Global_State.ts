@@ -1,8 +1,8 @@
-import { s_rings_mode, s_paging_ring_state, s_ring_resizing_state, s_ring_rotation_state } from './Reactive_State';
-import { s_rebuild_count, s_ancestry_focus, s_ancestries_grabbed, s_ancestries_expanded } from './Reactive_State';
-import { e, k, u, ux, get, show, Rect, Size, Point, debug, dbDispatch } from '../common/Global_Imports';
+import { s_graph_as_rings, s_ring_paging_state, s_ring_resizing_state, s_ring_rotation_state } from './Reactive_State';
+import { s_graphRect, s_show_details, s_scale_factor, s_color_thing, s_user_graphOffset } from './Reactive_State';
+import { s_rebuild_count, s_focus_ancestry, s_grabbed_ancestries, s_expanded_ancestries } from './Reactive_State';
+import { k, u, ux, get, show, Rect, Size, Point, debug, events, dbDispatch } from '../common/Global_Imports';
 import { persistLocal, IDPersistant, Rotation_State, Expansion_State } from '../common/Global_Imports';
-import { s_graphRect, s_show_details, s_scale_factor, s_thing_color } from './Reactive_State';
 import { s_resize_count, s_mouse_up_count } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
 
@@ -20,27 +20,33 @@ class Global_State {
 	constructor() {
 		this.queryStrings = new URLSearchParams(window.location.search);
 	}
+	
+	setup() {
+		
+		//////////////////////////////////////////////
+		// this is the first code called by the app //
+		//////////////////////////////////////////////
 
-	setup() {											// from
 		s_resize_count.set(0);							// defaults
 		s_rebuild_count.set(0);
 		s_mouse_up_count.set(0);
-		s_thing_color.set(null);
-		s_paging_ring_state.set(new Rotation_State());
+		s_color_thing.set(null);
+		s_ring_paging_state.set(new Rotation_State());
 		s_ring_rotation_state.set(new Rotation_State());
 		s_ring_resizing_state.set(new Expansion_State());
 		persistLocal.restore_state();					// persisted
+		persistLocal.restore_db();
 		this.queryStrings_apply();						// url query string
 		show.queryStrings_apply();
 		debug.queryStrings_apply();
-		e.setup();
+		events.setup();
 	}
 
 	queryStrings_apply() {
 		const queryStrings = this.queryStrings;
         const deny = queryStrings.get('deny');
         const eraseOptions = queryStrings.get('erase')?.split(k.comma) ?? [];
-		persistLocal.applyFor_key_name(IDPersistant.layout, 'clusters', (flag) => s_rings_mode.set(flag));
+		persistLocal.applyFor_key_name(IDPersistant.layout, 'clusters', (flag) => s_graph_as_rings.set(flag));
         if (deny) {
             const flags = deny.split(',');
             for (const option of flags) {
@@ -58,9 +64,9 @@ class Global_State {
 					break;
 				case 'settings': 
 					localStorage.clear();
-					s_ancestries_expanded.set([]);
-					s_ancestry_focus.set(h.rootAncestry);
-					s_ancestries_grabbed.set([h.rootAncestry]);
+					s_expanded_ancestries.set([]);
+					s_focus_ancestry.set(h.rootAncestry);
+					s_grabbed_ancestries.set([h.rootAncestry]);
 					break;
 			}
 		}
@@ -71,7 +77,7 @@ class Global_State {
 	}
 
 	get isAny_rotation_active(): boolean {
-		return ux.isAny_paging_arc_active || get(s_paging_ring_state).isActive || get(s_ring_rotation_state).isActive;
+		return ux.isAny_paging_arc_active || get(s_ring_paging_state).isActive || get(s_ring_rotation_state).isActive;
 	}
 
 	get next_mouse_responder_number(): number {
@@ -124,6 +130,15 @@ class Global_State {
 	showHelp() {
 		const url = this.isServerLocal ? k.local_help_url : k.remote_help_url;
 		this.open_tabFor(url);
+	}
+
+	graphOffset_setTo(origin: Point): boolean {
+		if (get(s_user_graphOffset) != origin) {
+			persistLocal.write_key(IDPersistant.origin, origin);
+			s_user_graphOffset.set(origin);
+			return true;
+		}
+		return false;
 	}
 
 	graphRect_update() {

@@ -2,16 +2,16 @@ import type { Handle_Mouse_State, Create_Mouse_State } from './Types';
 import type { SvelteComponent } from 'svelte';
 
 import { g } from '../state/Global_State';
-import { w } from '../managers/Wrappers';
 import { ux } from '../state/UX_State';
-import { e } from '../signals/Events';
 import { u } from './Utilities';
 import { k } from './Constants';
 import './Extensions';
 
 import { builds } from './Builds';
 import { show } from '../state/Show_State';
+import { events } from '../signals/Events';
 import { dbDispatch } from '../db/DBDispatch';
+import { wrappers } from '../managers/Wrappers';
 import { Hierarchy } from '../managers/Hierarchy';
 import { Seriously_Range } from './Seriously_Range';
 import { Timer_Type } from '../signals/Mouse_Timer';
@@ -56,6 +56,7 @@ import { get } from 'svelte/store';
 import { transparentize } from 'color2k';
 
 export {
+	g, k, u, ux,
 	Info_Kind, Rebuild_Type,
 	debug, Debug, DebugFlag,
 	Timer_Type, Mouse_Timer,
@@ -64,7 +65,7 @@ export {
 	muuri, interact, transparentize,
 	Rect, Size, Point, svgPaths, Direction,
 	Arc_Map, Cluster_Map, Clusters_Geometry,
-	e, g, k, u, ux, w, show, builds, signals,
+	show, events, builds, signals, wrappers,
 	ElementType, AlterationType, Seriously_Range,
 	Title_State, Rotation_State, Expansion_State,
 	get, onMount, onDestroy, setContext, getContext,

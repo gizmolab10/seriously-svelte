@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { s_user_graphOffset, s_thing_fontFamily, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
+	import { s_user_graphOffset, s_thing_fontFamily, s_showing_tools_ancestry } from '../../ts/state/Reactive_State';
 	import { g, k, u, ux, Rect, Point, debug, IDTool, ZIndex, onMount } from '../../ts/common/Global_Imports';
 	import { signals, ElementType, Rebuild_Type, Clusters_Geometry } from '../../ts/common/Global_Imports';
-	import { s_graphRect, s_show_details, s_ancestry_focus } from '../../ts/state/Reactive_State';
+	import { s_graphRect, s_show_details, s_focus_ancestry } from '../../ts/state/Reactive_State';
 	import { s_clusters_geometry, s_ring_rotation_state } from '../../ts/state/Reactive_State';
 	import Rings_Focus from './Rings_Focus.svelte';
 	import Editing_Tools from '../widget/Editing_Tools.svelte';
@@ -26,7 +26,7 @@
 	cursor_closure();
 
 	onMount(() => {
-		const handler = signals.handle_relayoutWidgets(0, ($s_ancestry_focus) => {
+		const handler = signals.handle_relayoutWidgets(0, ($s_focus_ancestry) => {
 			g.require_rebuild_forType(Rebuild_Type.clusters);
 		});
 		return () => { handler.disconnect() };
@@ -50,7 +50,7 @@
 
 </script>
 
-{#key g.readOnce_rebuild_needed_forType(Rebuild_Type.clusters), $s_ancestry_focus.hashedAncestry}
+{#key g.readOnce_rebuild_needed_forType(Rebuild_Type.clusters), $s_focus_ancestry.hashedAncestry}
 	<div class='clusters-graph'
 		bind:this={clusters_graph}
 		style='
@@ -61,7 +61,7 @@
 		<Rings cursor_closure={cursor_closure}/>
 		<Rings_Focus/>
 		<Necklace/>
-		{#if $s_ancestry_showingTools?.isVisible}
+		{#if $s_showing_tools_ancestry?.isVisible}
 			<Editing_Tools offset={toolsOffset}/>
 		{/if}
 	</div>

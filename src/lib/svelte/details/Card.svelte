@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { g, k, ux, show, Rect, Size, Point, Thing, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
-	import { s_ancestry_card, s_ancestries_grabbed, s_thing_fontFamily } from '../../ts/state/Reactive_State';
+	import { s_card_ancestry, s_grabbed_ancestries, s_thing_fontFamily } from '../../ts/state/Reactive_State';
 	import { Info_Kind, persistLocal, ElementType, IDPersistant } from '../../ts/common/Global_Imports';
-	import { s_thing_color, s_thing_title, s_ancestry_focus } from '../../ts/state/Reactive_State';
+	import { s_color_thing, s_title_thing, s_focus_ancestry } from '../../ts/state/Reactive_State';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Button from '../mouse buttons/Button.svelte';
@@ -17,11 +17,11 @@
 	const control_rect = Rect.createCenterRect(control_origin, control_size);
 	const element_state = ux.elementState_for(new Identifiable(id), ElementType.info, id);
 	let text_box_size = new Size(size_details - 4, 68);
+	let ancestry: Ancestry | null = $s_focus_ancestry;
 	let information: { [key: string]: string } = {};
 	let button_title = `show ${next_infoKind()}`;
-	let ancestry: Ancestry | null = null;
-	let grabs = $s_ancestries_grabbed;
-	let thing: Thing | null = null;
+	let thing: Thing | null = ancestry?.thing;
+	let grabs = $s_grabbed_ancestries;
 	let card_title = thing?.title;
 	let color = k.color_default;
 	let rebuilds = 0;
@@ -30,18 +30,19 @@
 	element_state.set_forHovering('black', 'pointer');
 	
 	$: {
-		const _ = `${$s_ancestries_grabbed} ${$s_ancestry_focus} ${$s_thing_title}`;
+		const _ = `${$s_grabbed_ancestries} ${$s_focus_ancestry} ${$s_title_thing}`;
 		update_forKind();
 	}
 	
 	$: {
-		const _ = $s_thing_color;
-		color = ancestry?.thing?.color ?? k.color_default;
+		if (!!thing && thing.id == $s_color_thing) {
+			color = thing.color;
+		}
 	}
 
 	function hasGrabs(): boolean {
-		grabs = $s_ancestries_grabbed;
-		return !!grabs && (grabs.length > 1 || !$s_ancestry_focus.isGrabbed);
+		grabs = $s_grabbed_ancestries;
+		return !!grabs && (grabs.length > 1 || !$s_focus_ancestry.isGrabbed);
 	}
 
 	function next_infoKind() {
@@ -54,12 +55,12 @@
 	function update_forKind() {
 		button_title = `show ${next_infoKind()}`;
 		if (show.info_kind == Info_Kind.focus || !hasGrabs()) {
-			ancestry = $s_ancestry_focus;
+			ancestry = $s_focus_ancestry;
 		} else {
-			grabs = $s_ancestries_grabbed;
+			grabs = $s_grabbed_ancestries;
 			ancestry = grabs[0];
 		}
-		$s_ancestry_card = ancestry;
+		$s_card_ancestry = ancestry;
 		thing = ancestry?.thing;
 		card_title = thing?.title;
 		rebuilds += 1;

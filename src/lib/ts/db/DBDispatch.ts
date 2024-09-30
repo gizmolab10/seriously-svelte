@@ -30,7 +30,7 @@ export default class DBDispatch {
 		let done = false;
 		this.db = dbFirebase;
 		s_db_type.subscribe((type: string) => {
-			if (!done || (type && this.db.dbType != type)) {
+			if (!!type && (!done || (type && this.db.dbType != type))) {
 				done = true;
 				setTimeout(() => {
 					(async () => {

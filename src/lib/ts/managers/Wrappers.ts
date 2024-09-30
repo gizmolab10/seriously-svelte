@@ -119,4 +119,4 @@ export class Wrappers {
 
 }
 
-export const w = new Wrappers();
+export const wrappers = new Wrappers();

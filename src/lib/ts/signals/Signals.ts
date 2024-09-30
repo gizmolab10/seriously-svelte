@@ -1,4 +1,4 @@
-import { s_ancestry_focus } from '../state/Reactive_State';
+import { s_focus_ancestry } from '../state/Reactive_State';
 import { Signal } from 'typed-signals';
 import { get } from 'svelte/store';
 
@@ -15,10 +15,10 @@ export class Signals {
 	handler = new Signal<(signalKind: Array<IDSignal>, value: any, priority: number) => void>();
 
 	signal_rebuildGraph(value: any = null) { this.signal(IDSignal.rebuild, value); }
-	signal_rebuildGraph_fromFocus() { this.signal_rebuildGraph(get(s_ancestry_focus)); }
+	signal_rebuildGraph_fromFocus() { this.signal_rebuildGraph(get(s_focus_ancestry)); }
 	signal_altering(value: any = null) { this.signal(IDSignal.alterState, value); }
 	signal_relayoutWidgets(value: any = null) { this.signal(IDSignal.relayout, value); }
-	signal_relayoutWidgets_fromFocus() { this.signal_relayoutWidgets(get(s_ancestry_focus)); }
+	signal_relayoutWidgets_fromFocus() { this.signal_relayoutWidgets(get(s_focus_ancestry)); }
 
 	handle_rebuildGraph(priority: number, onSignal: (value: any | null) => any ) {
 		return this.handle_signalOfKind(priority, IDSignal.rebuild, onSignal);

@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, Size, Thing, Point, ZIndex, svgPaths, Element_State, dbDispatch } from '../../ts/common/Global_Imports';
-	import { s_ancestries_grabbed } from '../../ts/state/Reactive_State';
+	import { s_grabbed_ancestries } from '../../ts/state/Reactive_State';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import Button from './Button.svelte';
 	export let handle_mouse_state = (mouse_state) => {};
@@ -22,7 +22,7 @@
 	}
 
 	$: {
-		const _ = $s_ancestries_grabbed;
+		const _ = $s_grabbed_ancestries;
 		setFillColor(false);
 	}
 

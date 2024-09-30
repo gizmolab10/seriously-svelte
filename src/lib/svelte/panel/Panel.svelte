@@ -1,11 +1,11 @@
 <script lang='ts'>
 	import { g, k, u, ux, get, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import { s_isBusy, s_db_type, s_graphRect, s_id_popupView } from '../../ts/state/Reactive_State';
-	import { s_rings_mode, s_title_editing, s_show_details } from '../../ts/state/Reactive_State';
+	import { s_graph_as_rings, s_title_state, s_show_details } from '../../ts/state/Reactive_State';
 	import { debug, ZIndex, signals, onMount, Ancestry } from '../../ts/common/Global_Imports';
-	import { dbDispatch, setContext, persistLocal } from '../../ts/common/Global_Imports';
-	import { s_ancestry_focus, s_user_graphOffset } from '../../ts/state/Reactive_State';
+	import { s_focus_ancestry, s_user_graphOffset } from '../../ts/state/Reactive_State';
 	import { IDButton, Hierarchy, IDPersistant } from '../../ts/common/Global_Imports';
+	import { dbDispatch, setContext } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Rings_Graph from '../rings/Rings_Graph.svelte';
 	import Title_Editor from '../widget/Title_Editor.svelte';
@@ -32,7 +32,7 @@
 		const userOffset = $s_user_graphOffset;
 		const delta = new Point(-event.deltaX, -event.deltaY);
 		if (!!userOffset && g.allow_HorizontalScrolling && delta.magnitude > 1) {
-			persistLocal.graphOffset_setTo(userOffset.offsetBy(delta));
+			g.graphOffset_setTo(userOffset.offsetBy(delta));
 			rebuilds += 1;
 		}
 	}
@@ -42,9 +42,9 @@
 			const key = event.key;
 			if (key == undefined) {
 				alert('no key for ' + event.type);
-			} else if (!$s_title_editing && !g.isEditing_text) {	// let editor component consume the events
+			} else if (!$s_title_state && !g.isEditing_text) {	// let editor component consume the events
 				switch (key) {
-					case 'c': persistLocal.graphOffset_setTo(Point.zero); break;
+					case 'c': g.graphOffset_setTo(Point.zero); break;
 					case '?': g.showHelp(); break;
 					case ']':
 					case '[': dbDispatch.db_change_toNext(key == ']'); break;
@@ -132,9 +132,9 @@
 					style='
 						top: 70px;
 						z-index: {ZIndex.frontmost};
-						color: {$s_ancestry_focus.thing?.color};
+						color: {$s_focus_ancestry.thing?.color};
 						left: 0px;'>
-					{$s_ancestry_focus.title}
+					{$s_focus_ancestry.title}
 				</div>
 				<div class='horizontal-line'
 					style='
@@ -152,7 +152,7 @@
 			{#if $s_id_popupView == IDButton.builds}
 				<BuildNotes/>
 			{:else if $s_id_popupView == null}
-				{#key s_ancestry_focus, rebuilds}
+				{#key s_focus_ancestry, rebuilds}
 					<div class='clipper' on:wheel={handle_wheel}
 						style='
 							top:{$s_graphRect.origin.y}px;
@@ -160,7 +160,7 @@
 							width: {$s_graphRect.size.width}px;
 							height: {$s_graphRect.size.height}px;
 							z-index: {ZIndex.panel};'>
-						{#if $s_rings_mode}
+						{#if $s_graph_as_rings}
 							<Rings_Graph/>
 						{:else}
 							<Tree_Graph/>

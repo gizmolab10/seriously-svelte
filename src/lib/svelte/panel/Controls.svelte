@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { g, k, u, ux, show, Point, ZIndex, onMount, signals, svgPaths, IDButton } from '../../ts/common/Global_Imports';
 	import { ElementType, Element_State, persistLocal, IDPersistant, GraphRelations } from '../../ts/common/Global_Imports';
-	import { s_rings_mode, s_shown_relations, s_thing_fontFamily } from '../../ts/state/Reactive_State';
+	import { s_graph_as_rings, s_tree_mode, s_thing_fontFamily } from '../../ts/state/Reactive_State';
 	import { s_show_details, s_id_popupView, s_resize_count } from '../../ts/state/Reactive_State';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Button from '../mouse buttons/Button.svelte';
@@ -38,7 +38,7 @@
 	}
 
 	function next_graph_relations() {
-		switch ($s_shown_relations) {
+		switch ($s_tree_mode) {
 			case GraphRelations.children: return GraphRelations.parents;
 			case GraphRelations.parents:  return GraphRelations.related;
 			default:					  return GraphRelations.children;
@@ -53,9 +53,9 @@
 				case IDButton.help: g.showHelp(); break;
 				case IDButton.bigger: width = g.zoomBy(1.1) - 20; break;
 				case IDButton.smaller: width = g.zoomBy(0.9) - 20; break;
-				case IDButton.layout: $s_rings_mode = !$s_rings_mode; break;
+				case IDButton.layout: $s_graph_as_rings = !$s_graph_as_rings; break;
 				case IDButton.details: $s_show_details = !$s_show_details; break;
-				case IDButton.relations: $s_shown_relations = next_graph_relations(); break;
+				case IDButton.relations: $s_tree_mode = next_graph_relations(); break;
 				default: togglePopupID(id); break;
 			}
 		}
@@ -88,10 +88,10 @@
 					element_state={elementStates_byID[IDButton.layout]}
 					closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.layout)}>
 					<span style='font-family: {$s_thing_fontFamily};'>
-						{#if $s_rings_mode}tree{:else}rings{/if}
+						{#if $s_graph_as_rings}tree{:else}rings{/if}
 					</span>
 				</Button>
-				{#if !$s_rings_mode}
+				{#if !$s_graph_as_rings}
 					<Button name={IDButton.relations}
 						width=65
 						height={size + 4}
@@ -99,7 +99,7 @@
 						element_state={elementStates_byID[IDButton.relations]}
 						closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.relations)}>
 						<span style='font-family: {$s_thing_fontFamily};'>
-							{$s_shown_relations}
+							{$s_tree_mode}
 						</span>
 					</Button>
 				{/if}

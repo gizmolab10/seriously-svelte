@@ -1,8 +1,8 @@
+import { g, k, u, Thing, debug, signals, IDTrait, DebugFlag, Hierarchy, Predicate } from '../common/Global_Imports';
+import { dbDispatch, persistLocal, IDPersistant, Relationship, CreationOptions } from '../common/Global_Imports';
 import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
-import { g, k, u, Thing, debug, signals, IDTrait, DebugFlag, Hierarchy } from '../common/Global_Imports';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
-import { Predicate, dbDispatch, Relationship, CreationOptions } from '../common/Global_Imports';
 import { DBType, DatumType } from '../db/DBInterface';
 import Identifiable from '../data/Identifiable';
 import { initializeApp } from 'firebase/app';
@@ -42,19 +42,21 @@ export default class DBFirebase implements DBInterface {
 	reportError(error: any) { console.log(error); }
 
 	queryStrings_apply() {
-		this.baseID = g.queryStrings.get('name') ?? g.queryStrings.get('dbid') ?? 'Public';
+		const id = g.queryStrings.get('name') ?? g.queryStrings.get('dbid') ?? 'Public';
+		persistLocal.write_key(IDPersistant.base_id, id);
+		this.baseID = id;
 	}
 
 	static readonly $_FETCH_$: unique symbol;
 
 	async fetch_all() {
-		await this.recordLoginIP();
-		const baseID = this.baseID;
+		this.baseID = persistLocal.read_key(IDPersistant.base_id);
 		if (dbDispatch.eraseDB) {
-			await this.document_remoteDelete(baseID);
+			await this.document_remoteDelete();
 		}
+		await this.recordLoginIP();
 		await this.fetch_documentsOf(DatumType.predicates);
-		await this.fetch_allFrom(baseID);
+		await this.fetch_allFrom(this.baseID);
 		await this.fetch_bulkAliases();		// TODO: assumes all ancestries created
 	}
 
@@ -286,8 +288,8 @@ export default class DBFirebase implements DBInterface {
 		}
 	}
 
-	async document_remoteDelete(name: string) {
-		const documentRef = doc(this.firestore, this.bulksName, name);
+	async document_remoteDelete() {
+		const documentRef = doc(this.firestore, this.bulksName, this.baseID);
 		await this.subcollections_remoteDeleteIn(documentRef);
 
 		try {

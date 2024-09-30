@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, ux, get, Thing, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
-	import { s_thing_color } from '../../ts/state/Reactive_State';
+	import { s_color_thing } from '../../ts/state/Reactive_State';
 	import ColorPicker from 'svelte-awesome-color-picker';
 	export let thing: Thing;
 	export let left = 0;
@@ -27,7 +27,7 @@
 			}
 			persistenceTimer = setTimeout(() => {
 				(async () => {
-					$s_thing_color = null;
+					$s_color_thing = null;
 					await thing.remoteWrite();
 				})();
 			}, 100);		// tenth second delay

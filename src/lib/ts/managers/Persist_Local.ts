@@ -1,9 +1,9 @@
-import { g, k, get, show, Point, debug, signals, Ancestry, Info_Kind } from '../common/Global_Imports';
-import { s_rotation_ring_angle, s_rotation_ring_radius, s_rings_mode } from '../state/Reactive_State';
-import { s_paging_state, s_thing_fontFamily, s_shown_relations } from '../state/Reactive_State';
-import { s_ancestry_focus, s_show_details, s_user_graphOffset } from '../state/Reactive_State';
-import { s_ancestries_grabbed, s_ancestries_expanded } from '../state/Reactive_State';
-import { dbDispatch, Paging_State, GraphRelations } from '../common/Global_Imports';
+import { s_graph_as_rings, s_paging_state, s_thing_fontFamily } from '../state/Reactive_State';
+import { s_rotation_ring_angle, s_rotation_ring_radius } from '../state/Reactive_State';
+import { s_grabbed_ancestries, s_expanded_ancestries } from '../state/Reactive_State';
+import { g, k, get, show, Point, debug, Ancestry } from '../common/Global_Imports';
+import { s_focus_ancestry, s_user_graphOffset } from '../state/Reactive_State';
+import { dbDispatch, Paging_State } from '../common/Global_Imports';
 import { h } from '../db/DBDispatch';
 
 export enum IDPersistant {
@@ -20,7 +20,7 @@ export enum IDPersistant {
 	tinyDots	  = 'tinyDots',
 	grabbed		  = 'grabbed',
 	details		  = 'details',
-	cluster		  = 'cluster',
+	base_id		  = 'base_id',
 	layout		  = 'layout',
 	origin		  = 'origin',
 	quests		  = 'quests',
@@ -136,7 +136,7 @@ class Persist_Local {
 		s_rotation_ring_radius.subscribe((radius: number) => {
 			this.write_key(IDPersistant.ring_radius, radius);
 		});
-		s_rings_mode.subscribe((flag: boolean) => {
+		s_graph_as_rings.subscribe((flag: boolean) => {
 			this.write_key(IDPersistant.layout, flag);
 		});
 		s_rotation_ring_angle.subscribe((angle: number) => {
@@ -152,6 +152,13 @@ class Persist_Local {
 			offset = new Point(stored.x, stored.y);
 		}
 		s_user_graphOffset.set(offset);
+	}
+
+	restore_db() {
+		const type = persistLocal.read_key(IDPersistant.db) ?? 'firebase';
+		(async () => {
+			dbDispatch.hierarchy_fetch_andBuild_forDBType(type);
+		})();
 	}
 
 	restore_db_dependent(force: boolean) {
@@ -173,7 +180,7 @@ class Persist_Local {
 		g.applyScale(!g.device_isMobile ? 1 : this.read_key(IDPersistant.scale) ?? 1);
 		s_rotation_ring_angle.set(this.read_key(IDPersistant.ring_angle) ?? 0);
 		s_thing_fontFamily.set(this.read_key(IDPersistant.font) ?? 'Times New Roman');
-		s_rings_mode.set(this.read_key(IDPersistant.layout) ?? false);
+		s_graph_as_rings.set(this.read_key(IDPersistant.layout) ?? false);
 		s_rotation_ring_radius.set(Math.max(this.read_key(IDPersistant.ring_radius) ?? 0, k.ring_smallest_radius));
 		this.restore_graphOffset();
 		this.reactivity_subscribe()
@@ -198,16 +205,16 @@ class Persist_Local {
 	restore_grabbed_andExpanded(force: boolean = false) {
 		if (!this.ancestriesRestored || force) {
 			this.ancestriesRestored = true;
-			s_ancestries_grabbed.set(this.ancestries_forKey(IDPersistant.grabbed));
-			debug.log_persist(`- GRABBED ${get(s_ancestries_grabbed).map(a => a.title)}`);
-			s_ancestries_expanded.set(this.ancestries_forKey(IDPersistant.grabbed));
-			debug.log_persist(`- EXPANDED ${get(s_ancestries_expanded).map(a => a.title)}`);
+			s_grabbed_ancestries.set(this.ancestries_forKey(IDPersistant.grabbed));
+			debug.log_persist(`- GRABBED ${get(s_grabbed_ancestries).map(a => a.title)}`);
+			s_expanded_ancestries.set(this.ancestries_forKey(IDPersistant.grabbed));
+			debug.log_persist(`- EXPANDED ${get(s_expanded_ancestries).map(a => a.title)}`);
 			setTimeout(() => {
-				s_ancestries_grabbed.subscribe((ancestries: Array<Ancestry>) => {
+				s_grabbed_ancestries.subscribe((ancestries: Array<Ancestry>) => {
 					debug.log_persist(`  GRABBED ${ancestries.map(a => a.title)}`);
 					this.write_key(this.dbKey_for(IDPersistant.grabbed), !ancestries ? null : ancestries.map(a => a.id));		// ancestral paths
 				});
-				s_ancestries_expanded.subscribe((ancestries: Array<Ancestry>) => {
+				s_expanded_ancestries.subscribe((ancestries: Array<Ancestry>) => {
 					debug.log_persist(`  EXPANDED ${ancestries.map(a => a.title)}`);
 					this.write_key(this.dbKey_for(IDPersistant.expanded), !ancestries ? null : ancestries.map(a => a.id));	// ancestral paths
 				});
@@ -235,18 +242,9 @@ class Persist_Local {
 			}
 		}
 		ancestryToFocus.becomeFocus();
-		s_ancestry_focus.subscribe((ancestry: Ancestry) => {
+		s_focus_ancestry.subscribe((ancestry: Ancestry) => {
 			this.writeDB_key(IDPersistant.focus, !ancestry ? null : ancestry.id);
 		});
-	}
-
-	graphOffset_setTo(origin: Point): boolean {
-		if (get(s_user_graphOffset) != origin) {
-			persistLocal.write_key(IDPersistant.origin, origin);
-			s_user_graphOffset.set(origin);
-			return true;
-		}
-		return false;
 	}
 
 }

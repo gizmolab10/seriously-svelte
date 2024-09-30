@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_ancestries_expanded, s_alteration_mode, s_ancestries_grabbed, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
+	import { s_expanded_ancestries, s_alteration_mode, s_grabbed_ancestries, s_showing_tools_ancestry } from '../../ts/state/Reactive_State';
 	import { Direction, onDestroy, dbDispatch, Predicate, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { k, u, ux, show, Size, Thing, Point, debug, ZIndex, onMount, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
@@ -31,19 +31,19 @@
 	});
 
 	$: {
-		if (!!dotReveal && !($s_ancestry_showingTools?.matchesAncestry(ancestry) ?? false)) {
+		if (!!dotReveal && !($s_showing_tools_ancestry?.matchesAncestry(ancestry) ?? false)) {
 			revealWrapper = new Svelte_Wrapper(dotReveal, handle_mouse_state, ancestry.idHashed, SvelteComponentType.reveal);
 			element_state.set_forHovering(ancestry.thing.color, 'pointer');
 		}
 	}
 
 	$: {
-		const _ = $s_ancestries_expanded;
+		const _ = $s_expanded_ancestries;
 		updateScalablePaths();
 	}
 
 	$: {
-		if (!!$s_ancestries_grabbed || !!ancestry.thing) {
+		if (!!$s_grabbed_ancestries || !!ancestry.thing) {
 			updateScalablePaths();
 		}
 	}
@@ -80,7 +80,7 @@
 		} else if (mouse_state.isUp) {
 			if (ancestry.toolsGrabbed) {
 				$s_alteration_mode = null;
-				$s_ancestry_showingTools = null;
+				$s_showing_tools_ancestry = null;
 				signals.signal_relayoutWidgets_fromFocus();
 			} else if (ancestry.hasChildRelationships || ancestry.thing.isBulkAlias) {
 				h.ancestry_rebuild_remoteMoveRight(ancestry, !ancestry.isExpanded, true, false);

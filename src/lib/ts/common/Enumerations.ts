@@ -116,7 +116,6 @@ export enum IDTool {
 	delete			= 'delete',
 	create    		= 'create',
 	dismiss			= 'dismiss',
-	cluster			= 'cluster',
 	add_parent		= 'add_parent',
 	confirmation	= 'confirmation',
 	delete_cancel	= 'delete_cancel',

@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, u, Size, Point, Thing, ZIndex, signals, svgPaths, onMount, Ancestry, dbDispatch, Direction } from '../../ts/common/Global_Imports';
-	import { s_graphRect, s_show_details, s_thing_color, s_ancestry_focus, s_ancestries_grabbed } from '../../ts/state/Reactive_State';
+	import { s_graphRect, s_show_details, s_color_thing, s_focus_ancestry, s_grabbed_ancestries } from '../../ts/state/Reactive_State';
 	import Breadcrumb_Button from '../mouse buttons/Breadcrumb_Button.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -13,13 +13,13 @@
 	let left = 0;
 
 	$: {
-		if (!!$s_thing_color) {
+		if (!!$s_color_thing) {
 			rebuilds += 1;
 		}
 	}
 
 	$: {
-		const needsUpdate = ($s_ancestry_focus?.title ?? k.empty) + $s_graphRect + ($s_ancestries_grabbed?.length ?? 0);
+		const needsUpdate = ($s_focus_ancestry?.title ?? k.empty) + $s_graphRect + ($s_grabbed_ancestries?.length ?? 0);
 		if (!ancestry || needsUpdate || ancestors.length == 0) {
 			ancestry = h.grabs.ancestry_lastGrabbed ?? h.rootAncestry;	// assure we have a ancestry
 			if (!!ancestry) {				

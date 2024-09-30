@@ -1,11 +1,11 @@
 <script lang='ts'>
-	import { s_graphRect, s_paging_state, s_ancestry_focus, s_thing_color } from '../../ts/state/Reactive_State';
+	import { s_graphRect, s_paging_state, s_focus_ancestry, s_color_thing } from '../../ts/state/Reactive_State';
 	import { s_clusters_geometry, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import { k, u, get, Point, ZIndex, signals, onMount } from '../../ts/common/Global_Imports';
 	import { onDestroy, Predicate, Clusters_Geometry } from '../../ts/common/Global_Imports';
 	import Widget from '../widget/Widget.svelte';
 	import { h } from '../../ts/db/DBDispatch';
-    const ancestry = $s_ancestry_focus;
+    const ancestry = $s_focus_ancestry;
 	const center = $s_graphRect.size.dividedInHalf.asPoint;
 	const childOffset = new Point(k.dot_size / -2, 4 - k.dot_size);
 	let color = ancestry.thing?.color ?? k.color_default;
@@ -23,7 +23,7 @@
 	});
 
 	$: {
-		if (!!ancestry.thing && ancestry.thing.id == $s_thing_color?.split(k.generic_separator)[0]) {
+		if (!!ancestry.thing && ancestry.thing.id == $s_color_thing?.split(k.generic_separator)[0]) {
 			color = ancestry.thing?.color ?? k.color_default;
 			rebuilds += 1;
 		}

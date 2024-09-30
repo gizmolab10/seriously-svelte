@@ -1,7 +1,7 @@
 import { k, u, get, Datum, debug, IDTrait, Ancestry, Predicate, Page_States } from '../common/Global_Imports';
 import { DebugFlag, dbDispatch, Relationship, Seriously_Range } from '../common/Global_Imports';
-import { s_ancestry_focus, s_ancestries_expanded } from '../state/Reactive_State';
-import { s_rebuild_count, s_thing_color } from '../state/Reactive_State';
+import { s_focus_ancestry, s_expanded_ancestries } from '../state/Reactive_State';
+import { s_rebuild_count, s_color_thing } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
 import Airtable from 'airtable';
 
@@ -42,7 +42,7 @@ export default class Thing extends Datum {
 	get isAcrossBulk():				boolean { return this.baseID != h.db.baseID; }
 	get hasMultipleParents():		boolean { return this.parentAncestries.length > 1; }
 	get hasParents():				boolean { return this.hasParentsFor(Predicate.idContains); }
-	get isFocus():					boolean { return (get(s_ancestry_focus).thing?.id ?? k.empty) == this.id; }
+	get isFocus():					boolean { return (get(s_focus_ancestry).thing?.id ?? k.empty) == this.id; }
 	get hasRelated():				boolean { return this.relationships_inBothDirections_for(Predicate.idIsRelated).length > 0; }
 
 	get parents_ofAllKinds(): Array<Thing> {
@@ -56,7 +56,7 @@ export default class Thing extends Datum {
 
 	get thing_isBulk_expanded(): boolean {		// cross db ancestries needs special attention
 		if (this.isBulkAlias) {
-			const ancestries = get(s_ancestries_expanded);
+			const ancestries = get(s_expanded_ancestries);
 			for (const ancestry of ancestries) {
 				if (this.id == ancestry.thing?.id) {
 					return true;
@@ -102,7 +102,7 @@ export default class Thing extends Datum {
 	signal_color_change() {
 		const count = get(s_rebuild_count) + 1;
 		s_rebuild_count.set(count);
-		s_thing_color.set(`${this.id}${k.generic_separator}${count}`);
+		s_color_thing.set(`${this.id}${k.generic_separator}${count}`);
 	}
 
 	crumbWidth(numberOfParents: number): number {

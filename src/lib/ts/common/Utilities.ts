@@ -13,7 +13,7 @@ import { k } from './Constants';
 class Utilities {
 	noop() {}
 	ignore(event: Event) {}
-	pointFor_mouseEvent(e: MouseEvent) { return new Point(e.clientX, e.clientY); }
+	pointFor_mouseEvent(event: MouseEvent) { return new Point(event.clientX, event.clientY); }
 	concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return [...a, ...b]; }
 	quadrant_ofAngle(angle: number): Quadrant { return new Angle(angle).quadrant_ofAngle; }
 	opacitize(color: string, amount: number): string { return transparentize(color, 1 - amount); }

@@ -1,5 +1,5 @@
 import { Handle_Mouse_State, Create_Mouse_State } from './Global_Imports';
-import { w, Rect, Mouse_State, SvelteComponentType } from './Global_Imports';
+import { Rect, wrappers, Mouse_State, SvelteComponentType } from './Global_Imports';
 import Identifiable from '../data/Identifiable';
 
 // Ancestry sometimes needs to access and or alter an associated svelte component
@@ -17,7 +17,7 @@ export default class Svelte_Wrapper extends Identifiable {
         this.idHashed = idHashed;
         this.set_parentTypes(parentTypes);  // ABANDON
         this.handle_mouse_state = handle_mouse_state;
-    	w.wrapper_add(this);
+    	wrappers.wrapper_add(this);
     }
 
     get boundingRect(): Rect { return Rect.boundingRectFor(this.element) ?? Rect.zero; }

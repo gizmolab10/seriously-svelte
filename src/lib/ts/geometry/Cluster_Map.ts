@@ -1,6 +1,6 @@
 import { g, k, u, ux, get, Rect, Point, Angle, debug, IDLine, Arc_Map, Quadrant } from '../common/Global_Imports';
 import { Ancestry, Predicate, Paging_State, Widget_MapRect, Rotation_State } from '../common/Global_Imports';
-import { s_graphRect, s_paging_state, s_ancestry_focus } from '../state/Reactive_State';
+import { s_graphRect, s_paging_state, s_focus_ancestry } from '../state/Reactive_State';
 import { s_rotation_ring_angle, s_rotation_ring_radius } from '../state/Reactive_State';
 
 // for one cluster (there are three)
@@ -14,7 +14,7 @@ import { s_rotation_ring_angle, s_rotation_ring_radius } from '../state/Reactive
 //	position of label
 
 export default class Cluster_Map  {
-	focus_ancestry: Ancestry = get(s_ancestry_focus);
+	focus_ancestry: Ancestry = get(s_focus_ancestry);
 	widget_maps: Array<Widget_MapRect> = [];	// one page of widgets, will be combined into geometry.widget_maps
 	ancestries: Array<Ancestry> = [];
 	arc_straddles_nadir = false;

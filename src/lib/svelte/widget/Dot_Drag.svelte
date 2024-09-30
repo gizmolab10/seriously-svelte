@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_thing_color, s_rings_mode, s_ancestries_grabbed, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
+	import { s_color_thing, s_graph_as_rings, s_grabbed_ancestries, s_showing_tools_ancestry } from '../../ts/state/Reactive_State';
 	import { g, k, u, ux, show, Rect, Size, Point, Thing, debug, ZIndex, IDTool } from '../../ts/common/Global_Imports';
 	import { onMount, signals, svgPaths, Direction, ElementType, dbDispatch } from '../../ts/common/Global_Imports';
 	import { Svelte_Wrapper, AlterationType, SvelteComponentType } from '../../ts/common/Global_Imports';
@@ -36,7 +36,7 @@
 		updateSVGPaths();
 		updateColors_forHovering(true);
         const handleAltering = signals.handle_altering((blink_flag) => {
-			const invert_flag = blink_flag && $s_ancestry_showingTools && !!ancestry && ancestry.canConnect_toToolsAncestry;
+			const invert_flag = blink_flag && $s_showing_tools_ancestry && !!ancestry && ancestry.canConnect_toToolsAncestry;
 			element_state.isInverted = invert_flag;
 			updateExtraSVGPaths();
         });
@@ -53,13 +53,13 @@
 	}
 
 	$: {
-		if (!!thing && thing.id == $s_thing_color?.split(k.generic_separator)[0]) {
+		if (!!thing && thing.id == $s_color_thing?.split(k.generic_separator)[0]) {
 			updateColors_forHovering(true);
 		}
 	}
 
 	$: {
-		const _ = $s_ancestries_grabbed;
+		const _ = $s_grabbed_ancestries;
 		const grabbed = ancestry.isGrabbed;
 		if (isGrabbed != grabbed) {
 			isGrabbed = grabbed;
@@ -68,7 +68,7 @@
 	}
 
 	function updateSVGPaths() {
-		if ($s_rings_mode) {
+		if ($s_graph_as_rings) {
 			svg_dragDot_path = svgPaths.circle_atOffset(size, size - 1);
 		} else {
 			svg_dragDot_path = svgPaths.oval(size, false);
@@ -92,7 +92,7 @@
 	function updateColors_forHovering(isOut) {
 		if (!g.isAny_rotation_active) {
 			isHovering = !isOut;
-			const usePointer = (!ancestry.isGrabbed || s_rings_mode) && ancestry.hasChildRelationships && !g.isAny_rotation_active;
+			const usePointer = (!ancestry.isGrabbed || s_graph_as_rings) && ancestry.hasChildRelationships && !g.isAny_rotation_active;
 			const cursor = usePointer ? 'pointer' : 'normal';
 			if (!!element_state && !!thing) {
 				element_state.set_forHovering(thing.color, cursor);

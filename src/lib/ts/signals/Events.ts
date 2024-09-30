@@ -52,4 +52,4 @@ class Events {
 
 }
 
-export let e = new Events();
+export let events = new Events();

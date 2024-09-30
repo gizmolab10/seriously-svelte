@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { g, k, u, ux, w, Thing, Point, Angle, debug, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
-	import { s_paging_ring_state, s_ring_resizing_state, s_ring_rotation_state } from '../../ts/state/Reactive_State';
-	import { s_ancestry_focus, s_clusters_geometry, s_active_cluster_map } from '../../ts/state/Reactive_State';
-	import { s_graphRect, s_thing_color, s_mouse_location } from '../../ts/state/Reactive_State';
+	import { s_ring_paging_state, s_ring_resizing_state, s_ring_rotation_state } from '../../ts/state/Reactive_State';
+	import { s_focus_ancestry, s_clusters_geometry, s_active_cluster_map } from '../../ts/state/Reactive_State';
+	import { s_graphRect, s_color_thing, s_mouse_location } from '../../ts/state/Reactive_State';
 	import { s_rotation_ring_angle, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
 	import { s_mouse_up_count, s_user_graphOffset } from '../../ts/state/Reactive_State';
 	import { svgPaths, dbDispatch, opacitize } from '../../ts/common/Global_Imports';
@@ -22,7 +22,7 @@
 	const svg_ring_rotation_path = svgPaths.annulus(Point.square(ring_inner_radius), ring_middle_radius, ring_width, Point.square(ring_width));
 	const svg_ring_resizing_path = svgPaths.annulus(Point.square(ring_middle_radius), ring_outer_radius, ring_width);
 	const ring_viewBox = `${ring_outer_offset}, ${ring_outer_offset}, ${ring_outer_diameter}, ${ring_outer_diameter}`;
-	let color = $s_ancestry_focus?.thing?.color ?? k.color_default;
+	let color = $s_focus_ancestry?.thing?.color ?? k.color_default;
 	let mouse_up_count = $s_mouse_up_count;
 	let rotationRing;
 	let rebuilds = 0;
@@ -39,8 +39,8 @@
 	$s_clusters_geometry.layoutAll_clusters();
 
 	$: {
-		if (!!$s_ancestry_focus.thing && $s_ancestry_focus.thing.id == $s_thing_color?.split(k.generic_separator)[0]) {
-			color = $s_ancestry_focus?.thing?.color ?? k.color_default;
+		if (!!$s_focus_ancestry.thing && $s_focus_ancestry.thing.id == $s_color_thing?.split(k.generic_separator)[0]) {
+			color = $s_focus_ancestry?.thing?.color ?? k.color_default;
 			rebuilds += 1;
 		}
 	}
@@ -161,8 +161,8 @@
 		const inRotate = ring_zone == Ring_Zone.rotation && !arc_isActive && !$s_ring_resizing_state.isActive;
 		const inResize = ring_zone == Ring_Zone.resizing && !arc_isActive && !$s_ring_rotation_state.isActive;
 		const inPaging = ring_zone == Ring_Zone.paging && !$s_ring_rotation_state.isActive && !$s_ring_resizing_state.isActive;
-		if ($s_paging_ring_state.isHovering != inPaging) {
-			$s_paging_ring_state.isHovering = inPaging;			// all arcs and thumbs
+		if ($s_ring_paging_state.isHovering != inPaging) {
+			$s_ring_paging_state.isHovering = inPaging;			// all arcs and thumbs
 		}
 		if ($s_ring_rotation_state.isHovering != inRotate) {
 			$s_ring_rotation_state.isHovering = inRotate;

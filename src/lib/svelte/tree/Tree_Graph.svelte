@@ -1,17 +1,17 @@
 <script lang='ts'>
 	import { g, k, u, ux, show, Rect, Size, Point, Thing, ZIndex, debug } from '../../ts/common/Global_Imports';
-	import { s_id_popupView, s_user_graphOffset, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
+	import { s_id_popupView, s_user_graphOffset, s_showing_tools_ancestry } from '../../ts/state/Reactive_State';
 	import { signals, IDSignal, IDButton, onMount, Ancestry, dbDispatch } from '../../ts/common/Global_Imports';
 	import { Predicate, IDPersistant, ElementType, persistLocal } from '../../ts/common/Global_Imports';
-	import { s_ancestry_focus, s_graphRect, s_show_details } from '../../ts/state/Reactive_State';
+	import { s_focus_ancestry, s_graphRect, s_show_details } from '../../ts/state/Reactive_State';
 	import Dot_RevealFocus from '../buttons/Dot_RevealFocus.svelte';
 	import Editing_Tools from '../widget/Editing_Tools.svelte';
 	import Tree_Children from './Tree_Children.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import Circle from '../kit/Circle.svelte';
-	const revealState = ux.elementState_for($s_ancestry_focus, ElementType.reveal, 'tree');
-	const focusState = ux.elementState_for($s_ancestry_focus, ElementType.focus, 'tree');
+	const revealState = ux.elementState_for($s_focus_ancestry, ElementType.reveal, 'tree');
+	const focusState = ux.elementState_for($s_focus_ancestry, ElementType.focus, 'tree');
 	let origin_ofFirstReveal = Point.zero;
 	let origin_ofChildren = Point.zero;
 	let childrenSize = Point.zero;
@@ -37,8 +37,8 @@
 			top = graphRect.origin.y;
 			updateOrigins();
 		}
-		if (!focus || focus.id != $s_ancestry_focus) {
-			focus = !$s_ancestry_focus ? h.root : h.thing_forAncestry($s_ancestry_focus);
+		if (!focus || focus.id != $s_focus_ancestry) {
+			focus = !$s_focus_ancestry ? h.root : h.thing_forAncestry($s_focus_ancestry);
 			offsetX_ofFirstReveal = show.titleAtTop ? 0 : 3 + focus?.titleWidth / 2;
 			updateOrigins();
 			rebuilds += 1;
@@ -54,11 +54,11 @@
 	function rectOfChildren(): Rect {
 		const delta = new Point(9, -2);
 		const origin = graphRect.origin.offsetBy(delta).offsetBy(origin_ofChildren);
-		return new Rect(origin, $s_ancestry_focus.visibleProgeny_size.expandedByX(3));
+		return new Rect(origin, $s_focus_ancestry.visibleProgeny_size.expandedByX(3));
 	}
 
 	function updateOrigins() {
-		const focusAncestry = $s_ancestry_focus;
+		const focusAncestry = $s_focus_ancestry;
 		if (!!focusAncestry && !!graphRect) {
 			childrenSize = focusAncestry.visibleProgeny_size;
 			const offsetX = 15 + ($s_show_details ? -k.width_details : 0) - (childrenSize.width / 2) - (k.dot_size / 2.5) + offsetX_ofFirstReveal;
@@ -75,7 +75,7 @@
 
 </script>
 
-{#if $s_ancestry_focus}
+{#if $s_focus_ancestry}
 	{#key rebuilds}
 		<div class='tree'
 			style='transform: translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y - 14.3}px);'
@@ -86,16 +86,16 @@
 			{#if !show.titleAtTop}
 				<Widget name={focusState.name} ancestry={focusState.ancestry} origin={origin_ofFirstReveal.offsetByXY(-21.5 - offsetX_ofFirstReveal, -5)}/>
 			{:else}
-				{#if $s_ancestry_focus.isGrabbed}
+				{#if $s_focus_ancestry.isGrabbed}
 					<Circle radius=10 center={origin_ofFirstReveal.offsetByXY(-1, 1)} color={focus.color} thickness=1/>
 				{/if}
 				<Dot_RevealFocus name={revealState.name} ancestry={revealState.ancestry} center={origin_ofFirstReveal.offsetByXY(-3, 0)}/>
 			{/if}
-			{#if $s_ancestry_focus.isExpanded}
+			{#if $s_focus_ancestry.isExpanded}
 				<Tree_Children ancestry={focusState.ancestry} origin={origin_ofChildren}/>
 			{/if}
 		</div>
-		{#if $s_ancestry_showingTools?.isVisible}
+		{#if $s_showing_tools_ancestry?.isVisible}
 			<Editing_Tools offset={new Point(0, -20.3)}/>
 		{/if}
 	{/key}

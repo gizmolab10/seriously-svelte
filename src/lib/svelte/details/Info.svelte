@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { s_ancestry_focus, s_ancestries_grabbed } from '../../ts/state/Reactive_State';
+	import { s_focus_ancestry, s_grabbed_ancestries } from '../../ts/state/Reactive_State';
 	import { k, show, Thing, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
-	import { s_thing_title, s_ancestry_card } from '../../ts/state/Reactive_State';
+	import { s_title_thing, s_card_ancestry } from '../../ts/state/Reactive_State';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Button from '../mouse buttons/Button.svelte';
@@ -12,7 +12,7 @@
 	let information;
 	
 	$: {
-		const ancestry = $s_ancestry_card;
+		const ancestry = $s_card_ancestry;
 		const thing = ancestry?.thing;
 		if (!!thing) {
 			const dict = {

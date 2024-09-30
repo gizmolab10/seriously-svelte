@@ -1,8 +1,8 @@
-import { s_ancestries_expanded, s_ancestry_showingTools, s_alteration_mode, s_clusters_geometry } from '../state/Reactive_State';
-import { g, k, u, w, get, show, Rect, Size, Thing, debug, signals, Predicate } from '../common/Global_Imports';
+import { s_expanded_ancestries, s_showing_tools_ancestry, s_alteration_mode, s_clusters_geometry } from '../state/Reactive_State';
+import { g, k, u, get, show, Rect, Size, Thing, debug, signals, wrappers, Predicate } from '../common/Global_Imports';
+import { s_focus_ancestry, s_grabbed_ancestries, s_title_state, s_graph_as_rings } from '../state/Reactive_State';
 import { Title_State, ElementType, Paging_State, Relationship, PredicateKind } from '../common/Global_Imports';
 import { Svelte_Wrapper, Widget_MapRect, AlterationType, SvelteComponentType } from '../common/Global_Imports';
-import { s_ancestry_focus, s_ancestries_grabbed, s_title_editing, s_rings_mode } from '../state/Reactive_State';
 import Identifiable from '../data/Identifiable';
 import { Writable } from 'svelte/store';
 import { h } from '../db/DBDispatch';
@@ -43,13 +43,13 @@ export default class Ancestry extends Identifiable {
 	get parentAncestry(): Ancestry | null { return this.stripBack(); }
 	get ancestors(): Array<Thing> { return h.things_forAncestry(this); }
 	get title(): string { return this.thing?.title ?? 'missing title'; }
-	get isFocus(): boolean { return this.matchesStore(s_ancestry_focus); }
+	get isFocus(): boolean { return this.matchesStore(s_focus_ancestry); }
 	get ids_hashed(): Array<number> { return this.ids.map(i => i.hash()); }
 	get relationship(): Relationship | null { return this.relationshipAt(); }
 	get idBridging(): string | null { return this.thing?.idBridging ?? null; }
 	get titleRect(): Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
 	get predicate(): Predicate | null { return h.predicate_forID(this.idPredicate) }
-	get toolsGrabbed(): boolean { return this.matchesStore(s_ancestry_showingTools); }
+	get toolsGrabbed(): boolean { return this.matchesStore(s_showing_tools_ancestry); }
 	get hasChildRelationships(): boolean { return this.childRelationships.length > 0; }
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
 	get description(): string { return `${this.idPredicate} ${this.titles.join(':')}`; }
@@ -57,23 +57,23 @@ export default class Ancestry extends Identifiable {
 	get hasParentRelationships(): boolean { return this.parentRelationships.length > 0; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get idPredicates(): Array<string> { return this.relationships.map(r => r.idPredicate); }
-	get isGrabbed(): boolean { return this.includedInStore_ofAncestries(s_ancestries_grabbed); }
+	get isGrabbed(): boolean { return this.includedInStore_ofAncestries(s_grabbed_ancestries); }
 	get isInvalid(): boolean { return this.containsReciprocals || this.containsMixedPredicates; }
 	get siblingIndex(): number { return this.siblingAncestries.map(p => p.id).indexOf(this.id); }
 	get childAncestries(): Array<Ancestry> { return this.childAncestries_for(this.idPredicate); }
 	get siblingAncestries(): Array<Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
 	get showsChildRelationships(): boolean { return this.isExpanded && this.hasChildRelationships; }
-	get isEditing(): boolean { return get(s_title_editing)?.editing?.matchesAncestry(this) ?? false; }
+	get isEditing(): boolean { return get(s_title_state)?.editing?.matchesAncestry(this) ?? false; }
 	get hasRelationships(): boolean { return this.hasParentRelationships || this.hasChildRelationships; }
 	get titles(): Array<string> { return this.ancestors?.map(t => ` \"${t ? t.title : 'null'}\"`) ?? []; }
-	get isStoppingEdit(): boolean { return get(s_title_editing)?.stopping?.matchesAncestry(this) ?? false; }
+	get isStoppingEdit(): boolean { return get(s_title_state)?.stopping?.matchesAncestry(this) ?? false; }
 	get widget_map(): Widget_MapRect | null { return get(s_clusters_geometry)?.widget_mapFor(this) ?? null; }
-	get isExpanded(): boolean { return this.isRoot || this.includedInStore_ofAncestries(s_ancestries_expanded); }
+	get isExpanded(): boolean { return this.isRoot || this.includedInStore_ofAncestries(s_expanded_ancestries); }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	get childRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, false); }
 	get parentRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, true); }
-	get titleWrapper(): Svelte_Wrapper | null { return w.wrapper_forHID_andType(this.idHashed, SvelteComponentType.title); }
-	get showsReveal(): boolean { return !get(s_rings_mode) && (this.hasChildRelationships || (this.thing?.isBulkAlias ?? false)); }
+	get titleWrapper(): Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.idHashed, SvelteComponentType.title); }
+	get showsReveal(): boolean { return !get(s_graph_as_rings) && (this.hasChildRelationships || (this.thing?.isBulkAlias ?? false)); }
 
 	get relationships(): Array<Relationship> {
 		const relationships = this.ids_hashed.map(hid => h.relationship_forHID(hid)) ?? [];
@@ -117,10 +117,10 @@ export default class Ancestry extends Identifiable {
 	}
 
 	get isVisible(): boolean {
-		if (!!get(s_rings_mode)) {
+		if (!!get(s_graph_as_rings)) {
 			return this.parentAncestry?.paging_state?.index_isVisible(this.siblingIndex) ?? false;
 		} else {
-			const focus = get(s_ancestry_focus);
+			const focus = get(s_focus_ancestry);
 			const incorporates = this.incorporates(focus);
 			const expanded = this.isAllExpandedFrom(focus);
 			return (incorporates && expanded);
@@ -173,7 +173,7 @@ export default class Ancestry extends Identifiable {
 		const alteration = get(s_alteration_mode);
 		const predicate = alteration?.predicate;
 		if (!!alteration && !!predicate) {
-			const toolsAncestry = get(s_ancestry_showingTools);
+			const toolsAncestry = get(s_showing_tools_ancestry);
 			const toolThing = toolsAncestry?.thing;
 			const thing = this.thing;
 			if (!!thing && !!toolThing && !!toolsAncestry) {
@@ -479,15 +479,15 @@ export default class Ancestry extends Identifiable {
 	}
 
 	grabOnly() {
-		s_ancestries_grabbed.set([this]);
+		s_grabbed_ancestries.set([this]);
 		this.toggle_editingTools();
 	}
 
 	becomeFocus(): boolean {
-		const changed = !(get(s_ancestry_focus)?.matchesAncestry(this) ?? false);
+		const changed = !(get(s_focus_ancestry)?.matchesAncestry(this) ?? false);
 		if (changed) {
 			s_alteration_mode.set(null);
-			s_ancestry_focus.set(this);
+			s_focus_ancestry.set(this);
 			this.expand();
 		}
 		return changed;
@@ -514,10 +514,10 @@ export default class Ancestry extends Identifiable {
 		if (this.predicate?.isBidirectional ?? false) {
 			this.thing?.oneAncestry?.handle_singleClick_onDragDot(shiftKey);
 		} else {
-			s_title_editing?.set(null);
+			s_title_state?.set(null);
 			if (!!get(s_alteration_mode)) {
 				this.ancestry_alterMaybe(this);
-			} else if (!shiftKey && !!get(s_rings_mode)) {
+			} else if (!shiftKey && !!get(s_graph_as_rings)) {
 				this.becomeFocus();
 			} else if (shiftKey || this.isGrabbed) {
 				this.toggleGrab();
@@ -529,7 +529,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	grab() {
-		s_ancestries_grabbed.update((array) => {
+		s_grabbed_ancestries.update((array) => {
 			if (!!array) {
 				const index = array.indexOf(this);
 				if (array.length == 0) {
@@ -548,7 +548,7 @@ export default class Ancestry extends Identifiable {
 
 	ungrab() {
 		const rootAncestry = h.rootAncestry;
-		s_ancestries_grabbed.update((array) => {
+		s_grabbed_ancestries.update((array) => {
 			if (!!array) {
 				const index = array.indexOf(this);
 				if (index != -1) {				// only splice array when item is found
@@ -560,8 +560,8 @@ export default class Ancestry extends Identifiable {
 			}
 			return array;
 		});
-		let ancestries = get(s_ancestries_grabbed);
-		if (ancestries.length == 0 && !get(s_rings_mode)) {
+		let ancestries = get(s_grabbed_ancestries);
+		if (ancestries.length == 0 && !get(s_graph_as_rings)) {
 			rootAncestry.grabOnly();
 		} else {
 			this.toggle_editingTools(); // do not show editingTools for root
@@ -569,13 +569,13 @@ export default class Ancestry extends Identifiable {
 	}
 
 	toggle_editingTools() {
-		const toolsAncestry = get(s_ancestry_showingTools);
+		const toolsAncestry = get(s_showing_tools_ancestry);
 		if (!!toolsAncestry) { // ignore if editingTools not in use
 			s_alteration_mode.set(null);
 			if (this.matchesAncestry(toolsAncestry)) {
-				s_ancestry_showingTools.set(null);
+				s_showing_tools_ancestry.set(null);
 			} else if (!this.isRoot) {
-				s_ancestry_showingTools.set(this);
+				s_showing_tools_ancestry.set(this);
 			}
 		}
 	}
@@ -583,7 +583,7 @@ export default class Ancestry extends Identifiable {
 	async ancestry_alterMaybe(ancestry: Ancestry) {
 		if (ancestry.canConnect_toToolsAncestry) {
 			const alteration = get(s_alteration_mode);
-			const toolsAncestry = get(s_ancestry_showingTools);
+			const toolsAncestry = get(s_showing_tools_ancestry);
 			const idPredicate = alteration?.predicate?.id;
 			if (!!alteration && !!toolsAncestry && !!idPredicate) {
 				h.clear_editingTools();
@@ -617,7 +617,7 @@ export default class Ancestry extends Identifiable {
 	expanded_setTo(expand: boolean) {
 		let mutated = false;
 		if (!this.isRoot) {
-			s_ancestries_expanded.update((array) => {
+			s_expanded_ancestries.update((array) => {
 				if (!!array) {
 					const index = array.map(a => a.id).indexOf(this.id);
 					const found = index != -1;
@@ -640,7 +640,7 @@ export default class Ancestry extends Identifiable {
 		if (!this.isRoot && g.allow_TitleEditing) {
 			debug.log_edit(`EDIT ${this.title}`)
 			this.grabOnly();
-			s_title_editing.set(new Title_State(this));
+			s_title_state.set(new Title_State(this));
 		}
 	}
 

@@ -1,12 +1,12 @@
 <script lang='ts'>
 	import { dbDispatch, Seriously_Range, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
-	import { s_thing_fontFamily, s_ancestries_grabbed, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
+	import { s_thing_fontFamily, s_grabbed_ancestries, s_showing_tools_ancestry } from '../../ts/state/Reactive_State';
 	import { g, k, u, Point, Thing, debug, Angle, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
-	import { s_rings_mode, s_thing_color, s_thing_title, s_title_editing } from '../../ts/state/Reactive_State';
+	import { s_graph_as_rings, s_color_thing, s_title_thing, s_title_state } from '../../ts/state/Reactive_State';
 	export let fontSize = '1em';
 	export let forward = true;
 	export let ancestry;
-	const titleTop = $s_rings_mode ? 0.5 : 0;
+	const titleTop = $s_graph_as_rings ? 0.5 : 0;
 	let padding = `0px 0px 0px 6.5px`;	// 8.5 makes room for drag dot
 	let bound_title = ancestry?.thing?.title ?? k.empty;
     let color = ancestry.thing?.color;
@@ -29,14 +29,14 @@
 		const title = event.target.value;
 		if (!!thing && !!title) {
 			thing.title = bound_title = title;
-			s_thing_title.set(null);
+			s_title_thing.set(null);
 		}
 	};
 	
 	onMount(() => {
 		if (!!ancestry?.thing) {
 			titleWidth = ancestry.thing.titleWidth + 6;
-			titleLeft = $s_rings_mode ? ancestry.isFocus ? -2 : (forward ? 14 : 4) : 10;
+			titleLeft = $s_graph_as_rings ? ancestry.isFocus ? -2 : (forward ? 14 : 4) : 10;
 		}
 		const handler = signals.handle_anySignal((IDSignal, ancestry) => { updateInputWidth(); });
 		setTimeout(() => { updateInputWidth(); }, 100);
@@ -48,7 +48,7 @@
 			switch (event.key) {	
 				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); h.ancestry_edit_remoteCreateChildOf(ancestry.parentAncestry); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
-				default:	  s_thing_title.set(thing.id); break;
+				default:	  s_title_thing.set(thing.id); break;
 			}
 		}
 	}
@@ -59,7 +59,7 @@
 	}
 
 	$: {
-		const _ = $s_title_editing;
+		const _ = $s_title_state;
 		updateInputWidth();
 	}
 
@@ -70,7 +70,7 @@
 	}
 
 	$: {
-		if (!!ancestry.thing && ancestry.thing.id == $s_thing_color?.split(k.generic_separator)[0]) {
+		if (!!ancestry.thing && ancestry.thing.id == $s_color_thing?.split(k.generic_separator)[0]) {
 			color = thing?.color;
 		}
 	}
@@ -127,7 +127,7 @@
 					input?.focus();
 					return;
 				}
-				$s_title_editing = null;
+				$s_title_state = null;
 				input?.blur();
 				clearClicks();
 			}
@@ -141,11 +141,11 @@
 			mouse_click_timer = setTimeout(() => {
 				clearClicks();
 				if (!ancestry.isRoot) {
-					if ($s_ancestry_showingTools == ancestry) {
-						$s_ancestry_showingTools = null;
+					if ($s_showing_tools_ancestry == ancestry) {
+						$s_showing_tools_ancestry = null;
 					} else  {
 						ancestry.grabOnly();
-						$s_ancestry_showingTools = ancestry;
+						$s_showing_tools_ancestry = ancestry;
 					}
 					signals.signal_rebuildGraph_fromFocus();
 				}
@@ -165,14 +165,14 @@
 		if (!!ancestry) {
 			thing = ancestry.thing;
 		}
-		const hasGrabbed = $s_ancestries_grabbed.length > 0;
-		const titleState = $s_title_editing; // needs reactivity to s_title_editing
+		const hasGrabbed = $s_grabbed_ancestries.length > 0;
+		const titleState = $s_title_state; // needs reactivity to s_title_state
 		const titleState_isEditing = !!ancestry && !!titleState && titleState.editing && ancestry.matchesAncestry(titleState.editing);
 		const isBulkAlias = !!thing && thing.isBulkAlias;
 		if (g.allow_TitleEditing && !isBulkAlias) {
 			if (!!ancestry && (ancestry.isStoppingEdit ?? false)) {
 				debug.log_edit(`STOPPING ${bound_title}`);
-				$s_title_editing = null;
+				$s_title_state = null;
 				input?.blur();
 			} else if (isEditing != titleState_isEditing) {
 				if (!isEditing) {
@@ -186,14 +186,14 @@
 				isEditing = !isEditing;
 			}
 		}
-		cursorStyle = (ancestry.isEditing || ancestry.isGrabbed) ? 'cursor: text' : $s_rings_mode ? 'cursor: pointer' : (!!ancestry && !ancestry.isRoot && !isBulkAlias) ? k.empty : 'cursor: text';
+		cursorStyle = (ancestry.isEditing || ancestry.isGrabbed) ? 'cursor: text' : $s_graph_as_rings ? 'cursor: pointer' : (!!ancestry && !ancestry.isRoot && !isBulkAlias) ? k.empty : 'cursor: text';
 	}
 
 	function stopAndClearEditing() {
 		invokeBlurNotClearEditing();
 		if (!!ancestry && ancestry.isEditing) {				
 			setTimeout(() => {		// eliminate infinite recursion
-				const state = $s_title_editing;
+				const state = $s_title_state;
 				if (!!state) {
 					state.stop()
 					signals.signal_relayoutWidgets_fromFocus();
