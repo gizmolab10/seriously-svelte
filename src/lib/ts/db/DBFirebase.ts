@@ -1,5 +1,5 @@
 import { g, k, u, Thing, debug, signals, IDTrait, DebugFlag, Hierarchy, Predicate } from '../common/Global_Imports';
-import { dbDispatch, persistLocal, IDPersistant, Relationship, CreationOptions } from '../common/Global_Imports';
+import { dbDispatch, persistLocal, IDPersistent, Relationship, CreationOptions } from '../common/Global_Imports';
 import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
@@ -43,14 +43,14 @@ export default class DBFirebase implements DBInterface {
 
 	queryStrings_apply() {
 		const id = g.queryStrings.get('name') ?? g.queryStrings.get('dbid') ?? 'Public';
-		persistLocal.write_key(IDPersistant.base_id, id);
+		persistLocal.write_key(IDPersistent.base_id, id);
 		this.baseID = id;
 	}
 
 	static readonly $_FETCH_$: unique symbol;
 
 	async fetch_all() {
-		this.baseID = persistLocal.read_key(IDPersistant.base_id);
+		this.baseID = persistLocal.read_key(IDPersistent.base_id);
 		if (dbDispatch.eraseDB) {
 			await this.document_remoteDelete();
 		}

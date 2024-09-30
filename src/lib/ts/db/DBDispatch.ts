@@ -1,4 +1,4 @@
-import { g, debug, signals, Hierarchy, IDPersistant, persistLocal } from '../common/Global_Imports';
+import { g, debug, signals, Hierarchy, IDPersistent, persistLocal } from '../common/Global_Imports';
 import { s_isBusy, s_db_type, s_db_loadTime } from '../state/Reactive_State';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
@@ -42,8 +42,9 @@ export default class DBDispatch {
 	}
 
 	async hierarchy_fetch_andBuild_forDBType(type: string) {
-		persistLocal.write_key(IDPersistant.db, type);
+		persistLocal.write_key(IDPersistent.db, type);
 		this.db_set_accordingToType(type);
+		s_db_type.set(type);
 		this.queryStrings_apply();
 		if (this.db.hasData) {
 			h = this.db.hierarchy;
@@ -85,7 +86,7 @@ export default class DBDispatch {
 
 	db_change_toType(newDBType: DBType) {
 		const db = this.db_forType(newDBType);
-		persistLocal.write_key(IDPersistant.db, newDBType);
+		persistLocal.write_key(IDPersistent.db, newDBType);
 		s_db_type.set(newDBType);		// tell components to render the [possibly previously] fetched data
 		setTimeout(() => {
 			if (newDBType != DBType.local && !db.hasData) {

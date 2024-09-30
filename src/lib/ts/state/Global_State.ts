@@ -2,7 +2,7 @@ import { s_graph_as_rings, s_ring_paging_state, s_ring_resizing_state, s_ring_ro
 import { s_graphRect, s_show_details, s_scale_factor, s_color_thing, s_user_graphOffset } from './Reactive_State';
 import { s_rebuild_count, s_focus_ancestry, s_grabbed_ancestries, s_expanded_ancestries } from './Reactive_State';
 import { k, u, ux, get, show, Rect, Size, Point, debug, events, dbDispatch } from '../common/Global_Imports';
-import { persistLocal, IDPersistant, Rotation_State, Expansion_State } from '../common/Global_Imports';
+import { persistLocal, IDPersistent, Rotation_State, Expansion_State } from '../common/Global_Imports';
 import { s_resize_count, s_mouse_up_count } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
 
@@ -46,7 +46,7 @@ class Global_State {
 		const queryStrings = this.queryStrings;
         const deny = queryStrings.get('deny');
         const eraseOptions = queryStrings.get('erase')?.split(k.comma) ?? [];
-		persistLocal.applyFor_key_name(IDPersistant.layout, 'clusters', (flag) => s_graph_as_rings.set(flag));
+		persistLocal.applyFor_key_name(IDPersistent.layout, 'clusters', (flag) => s_graph_as_rings.set(flag));
         if (deny) {
             const flags = deny.split(',');
             for (const option of flags) {
@@ -134,7 +134,7 @@ class Global_State {
 
 	graphOffset_setTo(origin: Point): boolean {
 		if (get(s_user_graphOffset) != origin) {
-			persistLocal.write_key(IDPersistant.origin, origin);
+			persistLocal.write_key(IDPersistent.origin, origin);
 			s_user_graphOffset.set(origin);
 			return true;
 		}
@@ -154,7 +154,7 @@ class Global_State {
 		const zoomContainer = document.documentElement;
 		const currentScale = parseFloat(getComputedStyle(zoomContainer).getPropertyValue('zoom')) || 1;
 		const scale = currentScale * factor;
-		persistLocal.write_key(IDPersistant.scale, scale);
+		persistLocal.write_key(IDPersistent.scale, scale);
 		this.applyScale(scale);
 		return this.windowSize.width;
 	}

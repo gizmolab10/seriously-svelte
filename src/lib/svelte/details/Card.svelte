@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { g, k, ux, show, Rect, Size, Point, Thing, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
 	import { s_card_ancestry, s_grabbed_ancestries, s_thing_fontFamily } from '../../ts/state/Reactive_State';
-	import { Info_Kind, persistLocal, ElementType, IDPersistant } from '../../ts/common/Global_Imports';
+	import { Info_Kind, persistLocal, ElementType, IDPersistent } from '../../ts/common/Global_Imports';
 	import { s_color_thing, s_title_thing, s_focus_ancestry } from '../../ts/state/Reactive_State';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
@@ -71,7 +71,7 @@
 			element_state.isOut = mouse_state.isOut;
 		} else if (mouse_state.isUp) {
 			const kind = next_infoKind()
-			persistLocal.write_key(IDPersistant.info_kind, kind);
+			persistLocal.write_key(IDPersistent.info_kind, kind);
 			show.info_kind = kind;
 			update_forKind();
 		}

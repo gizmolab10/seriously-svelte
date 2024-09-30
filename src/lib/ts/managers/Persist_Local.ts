@@ -6,7 +6,7 @@ import { s_focus_ancestry, s_user_graphOffset } from '../state/Reactive_State';
 import { dbDispatch, Paging_State } from '../common/Global_Imports';
 import { h } from '../db/DBDispatch';
 
-export enum IDPersistant {
+export enum IDPersistent {
 	relationships = 'relationships',
 	title_atTop   = 'title_atTop',
 	ring_radius	  = 'ring_radius',
@@ -33,7 +33,7 @@ export enum IDPersistant {
 
 class Persist_Local {
 	// for backwards compatibility with {focus, grabbed, expanded} which were stored as relationship ids (not as ancestry strings)
-	usesRelationships	= localStorage[IDPersistant.relationships];
+	usesRelationships	= localStorage[IDPersistent.relationships];
 	ignoreAncestries	= !this.usesRelationships || this.usesRelationships == 'undefined';
 	ancestriesRestored	= false;
 
@@ -42,7 +42,7 @@ class Persist_Local {
 	writeDB_key<T>			(key: string, value: T) { this.write_key(this.dbKey_for(key), value); }
 	readDB_key				(key: string): any | null { return this.read_key(this.dbKey_for(key)); }
 	dbKey_for				(key: string): string { return this.keyPair_for(dbDispatch.db.dbType, key); }
-	delete_paging_state_for (key: string) { this.write_keyPair(this.dbKey_for(IDPersistant.page_states), key, null); }
+	delete_paging_state_for (key: string) { this.write_keyPair(this.dbKey_for(IDPersistent.page_states), key, null); }
 	keyPair_for				(key: string, sub_key: string): string { return `${key}${k.generic_separator}${sub_key}`; }
 
 	parse(key: string | null): any | null {
@@ -97,8 +97,7 @@ class Persist_Local {
 
 	ancestries_forKey(key: string): Array<Ancestry> {		// 2 keys supported so far: grabbed, expanded
 		const dbKey = this.dbKey_for(key);
-		const value = this.read_key(dbKey)[0] as string;
-		const ids = value?.split(k.generic_separator);
+		const ids = this.read_key(dbKey);
 		const length = ids?.length ?? 0;
 		if (this.ignoreAncestries || !ids || length == 0) {
 			return [];
@@ -134,20 +133,20 @@ class Persist_Local {
 
 	reactivity_subscribe() {
 		s_rotation_ring_radius.subscribe((radius: number) => {
-			this.write_key(IDPersistant.ring_radius, radius);
+			this.write_key(IDPersistent.ring_radius, radius);
 		});
 		s_graph_as_rings.subscribe((flag: boolean) => {
-			this.write_key(IDPersistant.layout, flag);
+			this.write_key(IDPersistent.layout, flag);
 		});
 		s_rotation_ring_angle.subscribe((angle: number) => {
-			this.write_key(IDPersistant.ring_angle, angle);
+			this.write_key(IDPersistent.ring_angle, angle);
 		});
 		show.reactivity_subscribe();
 	}
 
 	restore_graphOffset() {
 		let offset = Point.zero;
-		const stored = this.read_key(IDPersistant.origin);
+		const stored = this.read_key(IDPersistent.origin);
 		if (!!stored) {
 			offset = new Point(stored.x, stored.y);
 		}
@@ -155,7 +154,7 @@ class Persist_Local {
 	}
 
 	restore_db() {
-		const type = persistLocal.read_key(IDPersistant.db) ?? 'firebase';
+		const type = persistLocal.read_key(IDPersistent.db) ?? 'firebase';
 		(async () => {
 			dbDispatch.hierarchy_fetch_andBuild_forDBType(type);
 		})();
@@ -166,7 +165,7 @@ class Persist_Local {
 		this.restore_focus();
 		s_paging_state.subscribe((paging_state: Paging_State) => {
 			if (!!paging_state) {
-				const dbKey = this.dbKey_for(IDPersistant.page_states);
+				const dbKey = this.dbKey_for(IDPersistent.page_states);
 				this.write_keyPair(dbKey, paging_state.sub_key, paging_state.description);
 			}
 		})
@@ -174,21 +173,21 @@ class Persist_Local {
 
 	restore_state() {
 		if (this.ignoreAncestries) {
-			this.write_key(IDPersistant.relationships, true);
+			this.write_key(IDPersistent.relationships, true);
 		}
 		show.restore_state();
-		g.applyScale(!g.device_isMobile ? 1 : this.read_key(IDPersistant.scale) ?? 1);
-		s_rotation_ring_angle.set(this.read_key(IDPersistant.ring_angle) ?? 0);
-		s_thing_fontFamily.set(this.read_key(IDPersistant.font) ?? 'Times New Roman');
-		s_graph_as_rings.set(this.read_key(IDPersistant.layout) ?? false);
-		s_rotation_ring_radius.set(Math.max(this.read_key(IDPersistant.ring_radius) ?? 0, k.ring_smallest_radius));
+		g.applyScale(!g.device_isMobile ? 1 : this.read_key(IDPersistent.scale) ?? 1);
+		s_rotation_ring_angle.set(this.read_key(IDPersistent.ring_angle) ?? 0);
+		s_thing_fontFamily.set(this.read_key(IDPersistent.font) ?? 'Times New Roman');
+		s_graph_as_rings.set(this.read_key(IDPersistent.layout) ?? false);
+		s_rotation_ring_radius.set(Math.max(this.read_key(IDPersistent.ring_radius) ?? 0, k.ring_smallest_radius));
 		this.restore_graphOffset();
 		this.reactivity_subscribe()
 	}
 
 	// not used!!!
 	restore_page_states() {
-		const descriptions = this.read_sub_keys_forKey(this.dbKey_for(IDPersistant.page_states)) ?? k.empty;
+		const descriptions = this.read_sub_keys_forKey(this.dbKey_for(IDPersistent.page_states)) ?? k.empty;
 		for (const description of descriptions) {
 			const paging_state = Paging_State.create_paging_state_from(description);
 			if (!!paging_state) {
@@ -205,18 +204,18 @@ class Persist_Local {
 	restore_grabbed_andExpanded(force: boolean = false) {
 		if (!this.ancestriesRestored || force) {
 			this.ancestriesRestored = true;
-			s_grabbed_ancestries.set(this.ancestries_forKey(IDPersistant.grabbed));
+			s_grabbed_ancestries.set(this.ancestries_forKey(IDPersistent.grabbed));
 			debug.log_persist(`- GRABBED ${get(s_grabbed_ancestries).map(a => a.title)}`);
-			s_expanded_ancestries.set(this.ancestries_forKey(IDPersistant.grabbed));
+			s_expanded_ancestries.set(this.ancestries_forKey(IDPersistent.expanded));
 			debug.log_persist(`- EXPANDED ${get(s_expanded_ancestries).map(a => a.title)}`);
 			setTimeout(() => {
 				s_grabbed_ancestries.subscribe((ancestries: Array<Ancestry>) => {
 					debug.log_persist(`  GRABBED ${ancestries.map(a => a.title)}`);
-					this.write_key(this.dbKey_for(IDPersistant.grabbed), !ancestries ? null : ancestries.map(a => a.id));		// ancestral paths
+					this.write_key(this.dbKey_for(IDPersistent.grabbed), !ancestries ? null : ancestries.map(a => a.id));		// ancestral paths
 				});
 				s_expanded_ancestries.subscribe((ancestries: Array<Ancestry>) => {
 					debug.log_persist(`  EXPANDED ${ancestries.map(a => a.title)}`);
-					this.write_key(this.dbKey_for(IDPersistant.expanded), !ancestries ? null : ancestries.map(a => a.id));	// ancestral paths
+					this.write_key(this.dbKey_for(IDPersistent.expanded), !ancestries ? null : ancestries.map(a => a.id));	// ancestral paths
 				});
 			}, 100);
 		}
@@ -226,7 +225,7 @@ class Persist_Local {
 		h.rootAncestry_setup();
 		let ancestryToFocus = h.rootAncestry;
 		if (!this.ignoreAncestries) {
-			const focusid = this.readDB_key(IDPersistant.focus);
+			const focusid = this.readDB_key(IDPersistent.focus);
 			if (focusid) {
 				const focusAncestry = h.ancestry_remember_createUnique(focusid);
 				if (focusAncestry) {
@@ -243,7 +242,7 @@ class Persist_Local {
 		}
 		ancestryToFocus.becomeFocus();
 		s_focus_ancestry.subscribe((ancestry: Ancestry) => {
-			this.writeDB_key(IDPersistant.focus, !ancestry ? null : ancestry.id);
+			this.writeDB_key(IDPersistent.focus, !ancestry ? null : ancestry.id);
 		});
 	}
 

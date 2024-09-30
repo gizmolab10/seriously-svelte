@@ -4,7 +4,7 @@
 	import { s_graph_as_rings, s_title_state, s_show_details } from '../../ts/state/Reactive_State';
 	import { debug, ZIndex, signals, onMount, Ancestry } from '../../ts/common/Global_Imports';
 	import { s_focus_ancestry, s_user_graphOffset } from '../../ts/state/Reactive_State';
-	import { IDButton, Hierarchy, IDPersistant } from '../../ts/common/Global_Imports';
+	import { IDButton, Hierarchy, IDPersistent } from '../../ts/common/Global_Imports';
 	import { dbDispatch, setContext } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Rings_Graph from '../rings/Rings_Graph.svelte';

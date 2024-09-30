@@ -2,7 +2,7 @@
 	import { g, k, u, ux, show, Rect, Size, Point, Thing, ZIndex, debug } from '../../ts/common/Global_Imports';
 	import { s_id_popupView, s_user_graphOffset, s_showing_tools_ancestry } from '../../ts/state/Reactive_State';
 	import { signals, IDSignal, IDButton, onMount, Ancestry, dbDispatch } from '../../ts/common/Global_Imports';
-	import { Predicate, IDPersistant, ElementType, persistLocal } from '../../ts/common/Global_Imports';
+	import { Predicate, IDPersistent, ElementType, persistLocal } from '../../ts/common/Global_Imports';
 	import { s_focus_ancestry, s_graphRect, s_show_details } from '../../ts/state/Reactive_State';
 	import Dot_RevealFocus from '../buttons/Dot_RevealFocus.svelte';
 	import Editing_Tools from '../widget/Editing_Tools.svelte';

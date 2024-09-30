@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, u, ux, show, Point, ZIndex, onMount, signals, svgPaths, IDButton } from '../../ts/common/Global_Imports';
-	import { ElementType, Element_State, persistLocal, IDPersistant, GraphRelations } from '../../ts/common/Global_Imports';
+	import { ElementType, Element_State, persistLocal, IDPersistent, GraphRelations } from '../../ts/common/Global_Imports';
 	import { s_graph_as_rings, s_tree_mode, s_thing_fontFamily } from '../../ts/state/Reactive_State';
 	import { s_show_details, s_id_popupView, s_resize_count } from '../../ts/state/Reactive_State';
 	import Identifiable from '../../ts/data/Identifiable';
