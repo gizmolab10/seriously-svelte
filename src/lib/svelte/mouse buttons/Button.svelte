@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import { Element_State, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { k, u, ux, Rect, Point, ZIndex, onMount } from '../../ts/common/Global_Imports';
+	import { s_thing_fontFamily } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from './Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
 	export let background_color = k.color_background;
@@ -52,6 +53,7 @@
 				position:${position};
 				border-radius:${height / 2}px;
 				cursor:${element_state.cursor};
+				font-family: {$s_thing_fontFamily};
 				background-color:${background_color};
 			`.removeWhiteSpace()
 		}
@@ -73,6 +75,6 @@
 	center={center}
 	mouse_state_closure={button_closure}>
 	<button class='button' id={'button-for-' + name} style={currentStyle}>
-		<slot></slot>
+		<slot style='top:-1px;'></slot>
 	</button>
 </Mouse_Responder>

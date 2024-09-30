@@ -13,7 +13,7 @@
 	
 	$: {
 		const ancestry = $s_ancestry_card;
-		const thing = ancestry.thing;
+		const thing = ancestry?.thing;
 		if (!!thing) {
 			const dict = {
 				'relationship' : ancestry.predicate?.description ?? k.empty,

@@ -1,9 +1,8 @@
 <script lang='ts'>
 	import { g, k, ux, show, Rect, Size, Point, Thing, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
+	import { s_ancestry_card, s_ancestries_grabbed, s_thing_fontFamily } from '../../ts/state/Reactive_State';
 	import { Info_Kind, persistLocal, ElementType, IDPersistant } from '../../ts/common/Global_Imports';
 	import { s_thing_color, s_thing_title, s_ancestry_focus } from '../../ts/state/Reactive_State';
-	import { s_ancestry_card, s_ancestries_grabbed } from '../../ts/state/Reactive_State';
-	import Segmented_Control from '../mouse buttons/Segmented_Control.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Button from '../mouse buttons/Button.svelte';
@@ -17,12 +16,13 @@
 	const control_size = new Size(size_details - 58, k.default_buttonSize + 4);
 	const control_rect = Rect.createCenterRect(control_origin, control_size);
 	const element_state = ux.elementState_for(new Identifiable(id), ElementType.info, id);
-	let text_box_size = new Size(size_details - 8, 64);
+	let text_box_size = new Size(size_details - 4, 68);
 	let information: { [key: string]: string } = {};
 	let button_title = `show ${next_infoKind()}`;
 	let ancestry: Ancestry | null = null;
 	let grabs = $s_ancestries_grabbed;
 	let thing: Thing | null = null;
+	let card_title = thing?.title;
 	let color = k.color_default;
 	let rebuilds = 0;
 	let info;
@@ -30,7 +30,7 @@
 	element_state.set_forHovering('black', 'pointer');
 	
 	$: {
-		const _ = `${$s_ancestries_grabbed} ${$s_ancestry_focus} {$s_thing_title}`;
+		const _ = `${$s_ancestries_grabbed} ${$s_ancestry_focus} ${$s_thing_title}`;
 		update_forKind();
 	}
 	
@@ -61,6 +61,7 @@
 		}
 		$s_ancestry_card = ancestry;
 		thing = ancestry?.thing;
+		card_title = thing?.title;
 		rebuilds += 1;
 	}
 
@@ -99,7 +100,9 @@
 				position:absolute;
 				text-align:center;
 				width:{k.width_details - margin * 2}px;'>
-			{ancestry.title.injectEllipsisAt(15)}
+			{#key card_title}
+				{card_title.injectEllipsisAt(15)}
+			{/key}
 			<div class='horizontal-line'
 				style='
 					top:20px;
@@ -111,12 +114,7 @@
 					background-color:lightgray;'>
 			</div>
 			<Color thing={thing} top={control_rect.origin.y - 1} left=-2/>
-			{#if 0}
-				<Segmented_Control
-					name='segmented'
-					rect={control_rect}
-					items={['focus ', 'selection']}/>
-			{:else if hasGrabs()}
+			{#if hasGrabs()}
 				<Button name={name}
 					zindex={ZIndex.details}
 					center={control_rect.center}
@@ -124,7 +122,9 @@
 					width={control_rect.size.width}
 					height={control_rect.size.height}
 					closure={(mouse_state) => button_closure(mouse_state)}>
-					{button_title}
+					<span style='font-family: {$s_thing_fontFamily};'>
+						{button_title}
+					</span>
 				</Button>
 			{/if}
 			{#if show.quests}

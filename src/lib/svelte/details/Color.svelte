@@ -5,7 +5,7 @@
 	export let thing: Thing;
 	export let left = 0;
 	export let top = 0;
-	const pickerSize = 120;
+	const pickerSize = 122;
 	const selectorSize = k.dot_size + 1;
 	let colorAsHEX = k.empty;
 	let persistenceTimer;
@@ -38,12 +38,12 @@
 
 <style>
 	div :global(.wrapper) {
-		left: -134px;
-		top: 28px;
+		left: -8px;
+		top: 26px;
 	}
 
 	div :global(.picker-indicator) {
-		border-radius: 20%;
+		border-radius: 50%;
 	}
 </style>
 
@@ -53,7 +53,8 @@
 			style='
 				top: {top}px;
 				left: {left}px;
-				position: absolute;'>
+				position: absolute;
+				z-index: {ZIndex.frontmost};'>
 			<ColorPicker
 				hex={colorAsHEX}
 				on:input={handleColorChange}
@@ -61,7 +62,7 @@
 				--picker-width='{pickerSize}px'
 				--picker-height='{pickerSize}px'
 				--slider-width='{selectorSize}px'
-				--picker-z-index='{ZIndex.details}'
+				--picker-z-index='{ZIndex.frontmost}'
 				--picker-indicator-size='{selectorSize}px'
 				label='color'/>
 		</div>

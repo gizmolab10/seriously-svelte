@@ -1,6 +1,7 @@
 <script>
-	import { k, u, Point, debug, ZIndex, onMount } from '../../ts/common/Global_Imports'
-	export let font_family = 'Arial, sans-serif';
+	import { k, u, Point, debug, ZIndex, onMount } from '../../ts/common/Global_Imports';
+	import { s_thing_fontFamily } from '../../ts/state/Reactive_State';
+	export let font_family = $s_thing_fontFamily;
 	export let center = Point.zero;
 	export let font_size = 20;
 	export let text = k.space;

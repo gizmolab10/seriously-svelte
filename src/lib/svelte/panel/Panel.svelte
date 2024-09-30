@@ -38,16 +38,18 @@
 	}
 
 	async function handle_key_down(event) {
-		if (!!$s_title_editing)		{ return; } // let Title_State component consume the events
-		if (event.key == undefined)	{ alert('no key for ' + event.type); return; }
 		if (event.type == 'keydown') {
 			const key = event.key;
-			switch (key) {
-				case 'c': persistLocal.graphOffset_setTo(Point.zero); break;
-				case '?': g.open_tabFor(k.help_url); break;
-				case ']':
-				case '[': dbDispatch.db_change_toNext(key == ']'); break;
-				default:  await h.handle_key_down(event); break;
+			if (key == undefined) {
+				alert('no key for ' + event.type);
+			} else if (!$s_title_editing && !g.isEditing_text) {	// let editor component consume the events
+				switch (key) {
+					case 'c': persistLocal.graphOffset_setTo(Point.zero); break;
+					case '?': g.showHelp(); break;
+					case ']':
+					case '[': dbDispatch.db_change_toNext(key == ']'); break;
+					default:  await h.handle_key_down(event); break;
+				}
 			}
 		}
 	}

@@ -1,9 +1,8 @@
 <script lang='ts'>
 	import { dbDispatch, Seriously_Range, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { s_thing_fontFamily, s_ancestries_grabbed, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
 	import { g, k, u, Point, Thing, debug, Angle, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
 	import { s_rings_mode, s_thing_color, s_thing_title, s_title_editing } from '../../ts/state/Reactive_State';
-	import { s_ancestries_grabbed, s_ancestry_showingTools } from '../../ts/state/Reactive_State';
-	export let fontFamily = 'Arial';
 	export let fontSize = '1em';
 	export let forward = true;
 	export let ancestry;
@@ -251,7 +250,7 @@
 			position: absolute;
 			visibility: hidden;
 			font-size: {fontSize};
-			font-family: {fontFamily};
+			font-family: {$s_thing_fontFamily};
 			white-space: pre; /* Preserve whitespace to accurately measure the width */
 	'>
 		{bound_title}
@@ -285,8 +284,8 @@
 			width: {titleWidth}px;
 			font-size: {fontSize};
 			z-index: {ZIndex.text};
-			font-family: {fontFamily};
 			{k.prevent_selection_style};
+			font-family: {$s_thing_fontFamily};
 			outline-color: {k.color_background};
 		'/>
 {/key}

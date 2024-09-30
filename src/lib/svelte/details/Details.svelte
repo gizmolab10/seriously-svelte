@@ -1,9 +1,16 @@
 <script lang='ts'>
 	import { s_graphRect, s_db_loadTime } from '../../ts/state/Reactive_State';
 	import { k, u, show, ZIndex } from '../../ts/common/Global_Imports';
+	// import Segmented_Control from '../mouse buttons/Segmented_Control.svelte';
 	import Storage from './Storage.svelte';
 	import Card from './Card.svelte';
 	import Info from './Info.svelte';
+
+			// 	<Segmented_Control
+			// 		name='db-choices'
+			// 		rect={control_rect}
+			// 		items={['local ', ' firebase ', ' airtable']}/>
+
 </script>
 
 <div class='details-modal-overlay'

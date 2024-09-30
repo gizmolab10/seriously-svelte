@@ -172,7 +172,7 @@ class Persist_Local {
 		show.restore_state();
 		g.applyScale(!g.device_isMobile ? 1 : this.read_key(IDPersistant.scale) ?? 1);
 		s_rotation_ring_angle.set(this.read_key(IDPersistant.ring_angle) ?? 0);
-		s_thing_fontFamily.set(this.read_key(IDPersistant.font) ?? 'Arial');
+		s_thing_fontFamily.set(this.read_key(IDPersistant.font) ?? 'Times New Roman');
 		s_rings_mode.set(this.read_key(IDPersistant.layout) ?? false);
 		s_rotation_ring_radius.set(Math.max(this.read_key(IDPersistant.ring_radius) ?? 0, k.ring_smallest_radius));
 		this.restore_graphOffset();

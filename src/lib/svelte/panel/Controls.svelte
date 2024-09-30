@@ -1,7 +1,8 @@
 <script lang='ts'>
-	import { s_show_details, s_id_popupView, s_resize_count, s_rings_mode, s_shown_relations } from '../../ts/state/Reactive_State';
 	import { g, k, u, ux, show, Point, ZIndex, onMount, signals, svgPaths, IDButton } from '../../ts/common/Global_Imports';
 	import { ElementType, Element_State, persistLocal, IDPersistant, GraphRelations } from '../../ts/common/Global_Imports';
+	import { s_rings_mode, s_shown_relations, s_thing_fontFamily } from '../../ts/state/Reactive_State';
+	import { s_show_details, s_id_popupView, s_resize_count } from '../../ts/state/Reactive_State';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Button from '../mouse buttons/Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -86,7 +87,9 @@
 					center={new Point(lefts[1], top)}
 					element_state={elementStates_byID[IDButton.layout]}
 					closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.layout)}>
-					{#if $s_rings_mode}tree{:else}rings{/if}
+					<span style='font-family: {$s_thing_fontFamily};'>
+						{#if $s_rings_mode}tree{:else}rings{/if}
+					</span>
 				</Button>
 				{#if !$s_rings_mode}
 					<Button name={IDButton.relations}
@@ -95,7 +98,9 @@
 						center={new Point(lefts[2], top)}
 						element_state={elementStates_byID[IDButton.relations]}
 						closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.relations)}>
-						{$s_shown_relations}
+						<span style='font-family: {$s_thing_fontFamily};'>
+							{$s_shown_relations}
+						</span>
 					</Button>
 				{/if}
 			{/if}
@@ -128,7 +133,9 @@
 			center={new Point(width - 55, top)}
 			element_state={elementStates_byID[IDButton.builds]}
 			closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.builds)}>
-			{'build ' + k.build_number}
+			<span style='font-family: {$s_thing_fontFamily};'>
+				{'build ' + k.build_number}
+			</span>
 		</Button>
 		<Button name={IDButton.help}
 			width={size + 4}

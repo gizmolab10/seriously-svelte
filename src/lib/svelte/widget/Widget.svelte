@@ -198,7 +198,6 @@
 				forward={forward}
 				ancestry={ancestry}
 				fontSize={k.thing_fontSize}px
-				fontFamily={$s_thing_fontFamily}
 			/>
 			{#if ancestry?.showsReveal}
 				<Dot_Reveal
