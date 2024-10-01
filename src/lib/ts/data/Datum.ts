@@ -9,8 +9,8 @@ export default class Datum extends RemoteIdentifiable {
 		this.baseID = baseID;
 	}
 
+	async remoteWrite() {}
 	log(option: DebugFlag, message: string) {}
-
 	isInDifferentBulkThan(other: Datum) { return this.baseID != other.baseID; }
 
 }

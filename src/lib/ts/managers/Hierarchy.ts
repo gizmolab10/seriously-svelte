@@ -4,6 +4,7 @@ import { s_alteration_mode, s_grabbed_ancestries, s_showing_tools_ancestry } fro
 import { s_isBusy, s_title_state, s_graph_as_rings, s_focus_ancestry } from '../state/Reactive_State';
 import Identifiable from '../data/Identifiable';
 import DBInterface from '../db/DBInterface';
+import Datum from '../data/Datum';
 
 type Relationships_ByHID = { [hid: number]: Array<Relationship> }
 
@@ -132,8 +133,25 @@ export class Hierarchy {
 				if (graph_needsRebuild) {
 					signals.signal_rebuildGraph_fromFocus();
 				}
+				setTimeout(() => {
+					this.deferredWriteAll()
+				}, 1)
 			}
 		}
+	}
+
+	async deferredWriteAllData(array: Array<Datum>) {
+		array.forEach(async (datum) => {
+			if (datum.needsWrite) {
+				datum.needsWrite = false;
+				await datum.remoteWrite();
+			}
+		});
+	}
+
+	async deferredWriteAll() {
+		await this.deferredWriteAllData(this.things);
+		await this.deferredWriteAllData(this.relationships);
 	}
 
 	clear_editingTools() {
@@ -456,7 +474,6 @@ export class Hierarchy {
 	}
 	
 	relationship_remember(relationship: Relationship) {
-		// console.log(`RELATIONSHIP ${relationship.parent?.title} => ${relationship.child?.title}`);
 		if (!this.relationship_byHID[relationship.idHashed]) {
 			if (relationship.baseID != this.db.baseID) {
 				debug.log_error(`RELATIONSHIP off base: ${relationship.baseID} ${relationship.parent?.description} => ${relationship.child?.description}`);

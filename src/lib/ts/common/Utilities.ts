@@ -163,15 +163,12 @@ class Utilities {
 
 	async ancestries_orders_normalize_remoteMaybe(array: Array<Ancestry>, remoteWrite: boolean = true) {
 		this.sort_byOrder(array);
-		await (async () => {
-			array.forEach(async (ancestry, index) => {
-				if (ancestry.order != index) {
-					await (async () => {
-						await ancestry.relationship?.order_setTo_remoteMaybe(index, remoteWrite);
-					})();
-				}
-			});
-		})();
+		array.forEach(async (ancestry, index) => {
+			if (ancestry.order != index) {
+				const relationship = ancestry.relationship;
+				relationship?.order_setTo_remoteMaybe(index, remoteWrite);
+			}
+		});
 	}
 
 	getWidthOf(s: string): number {

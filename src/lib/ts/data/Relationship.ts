@@ -30,11 +30,11 @@ export default class Relationship extends Datum {
 		return h.thing_forHID(id.hash()) ?? null
 	}
 
-	async order_setTo_remoteMaybe(newOrder: number, remoteWrite: boolean = false) {
+	order_setTo_remoteMaybe(newOrder: number, remoteWrite: boolean = false) {
 		if (Math.abs(this.order - newOrder) > 0.001) {
 			this.order = newOrder;
 			if (remoteWrite) {
-				await this.remoteWrite();
+				this.needsWrite = true;
 			}
 		}
 	}
