@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { g, k, u, ux, show, Point, ZIndex, onMount, signals, svgPaths, IDButton } from '../../ts/common/Global_Imports';
 	import { ElementType, Element_State, persistLocal, IDPersistent, GraphRelations } from '../../ts/common/Global_Imports';
-	import { s_graph_as_rings, s_tree_mode, s_thing_fontFamily } from '../../ts/state/Reactive_State';
+	import { s_show_rings, s_tree_mode, s_thing_fontFamily } from '../../ts/state/Reactive_State';
 	import { s_show_details, s_id_popupView, s_resize_count } from '../../ts/state/Reactive_State';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Button from '../mouse buttons/Button.svelte';
@@ -53,7 +53,7 @@
 				case IDButton.help: g.showHelp(); break;
 				case IDButton.bigger: width = g.zoomBy(1.1) - 20; break;
 				case IDButton.smaller: width = g.zoomBy(0.9) - 20; break;
-				case IDButton.layout: $s_graph_as_rings = !$s_graph_as_rings; break;
+				case IDButton.layout: $s_show_rings = !$s_show_rings; break;
 				case IDButton.details: $s_show_details = !$s_show_details; break;
 				case IDButton.relations: $s_tree_mode = next_graph_relations(); break;
 				default: togglePopupID(id); break;
@@ -88,10 +88,10 @@
 					element_state={elementStates_byID[IDButton.layout]}
 					closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.layout)}>
 					<span style='font-family: {$s_thing_fontFamily};'>
-						{#if $s_graph_as_rings}tree{:else}rings{/if}
+						{#if $s_show_rings}tree{:else}rings{/if}
 					</span>
 				</Button>
-				{#if !$s_graph_as_rings}
+				{#if !$s_show_rings}
 					<Button name={IDButton.relations}
 						width=65
 						height={size + 4}

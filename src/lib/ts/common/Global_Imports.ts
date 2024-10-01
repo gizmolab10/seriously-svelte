@@ -37,7 +37,7 @@ import Element_State from '../state/Element_State';
 import Cluster_Map from '../geometry/Cluster_Map';
 import Mouse_Timer from '../signals/Mouse_Timer';
 import Relationship from '../data/Relationship';
-import Title_State from '../state/Title_State';
+import Edit_State from '../state/Edit_State';
 import Mouse_State from '../state/Mouse_State';
 import Svelte_Wrapper from './Svelte_Wrapper';
 import Ancestry from '../managers/Ancestry';
@@ -67,7 +67,7 @@ export {
 	Arc_Map, Cluster_Map, Clusters_Geometry,
 	show, events, builds, signals, wrappers,
 	ElementType, AlterationType, Seriously_Range,
-	Title_State, Rotation_State, Expansion_State,
+	Edit_State, Rotation_State, Expansion_State,
 	get, onMount, onDestroy, setContext, getContext,
 	Mouse_State, Handle_Mouse_State, Create_Mouse_State,
 	User, Datum, Thing, Access, Predicate, Relationship,

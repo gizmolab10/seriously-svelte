@@ -23,12 +23,14 @@ export enum DebugFlag {
 	mount	 = 'mount',
 	edit	 = 'edit',		// editing state machine
 	beat	 = 'beat',		// heartbeat
+	key		 = 'key',		// keyboard input
 }
 
 export class Debug {
 	flags: Array<DebugFlag>;
 	constructor(flags: Array<DebugFlag>) { this.flags = flags; }
 	hasOption(option: DebugFlag) { return this.flags.includes(option); }
+	log_key(message: string) { this.log_maybe(DebugFlag.key, message); }
 	log_beat(message: string) { this.log_maybe(DebugFlag.beat, message); }
 	log_edit(message: string) { this.log_maybe(DebugFlag.edit, message); }
 	log_error(message: string) { this.log_maybe(DebugFlag.error, message) }
@@ -73,8 +75,9 @@ export class Debug {
 					case 'error': this.flags.push(DebugFlag.error); break;
 					case 'lines': this.flags.push(DebugFlag.lines); break;
 					case 'tools': this.flags.push(DebugFlag.tools); break;
-					case 'beat': this.flags.push(DebugFlag.beat); break;
 					case 'edit': this.flags.push(DebugFlag.edit); break;
+					case 'beat': this.flags.push(DebugFlag.beat); break;
+					case 'key': this.flags.push(DebugFlag.key); break;
 				}
 			}
 		}

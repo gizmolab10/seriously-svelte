@@ -1,7 +1,7 @@
 import { g, k, u, get, User, Thing, Grabs, debug, Mouse_State, Access, IDTool, IDTrait, signals } from '../common/Global_Imports';
 import { Ancestry, Predicate, Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
 import { s_alteration_mode, s_grabbed_ancestries, s_showing_tools_ancestry } from '../state/Reactive_State';
-import { s_isBusy, s_title_state, s_graph_as_rings, s_focus_ancestry } from '../state/Reactive_State';
+import { s_isBusy, s_edit_state, s_show_rings, s_focus_ancestry } from '../state/Reactive_State';
 import Identifiable from '../data/Identifiable';
 import DBInterface from '../db/DBInterface';
 import Datum from '../data/Datum';
@@ -95,6 +95,7 @@ export class Hierarchy {
 			const EXTREME = SHIFT && OPTION;
 			const key = event.key.toLowerCase();
 			const modifiers = ['alt', 'meta', 'shift', 'control']
+			const time = new Date().getTime();
 			let graph_needsRebuild = false;
 			if (!modifiers.includes(key)) {		// ignore modifier-key-only events
 				if (!ancestryGrab) {
@@ -107,7 +108,7 @@ export class Hierarchy {
 							case 'd':		await this.thing_edit_remoteDuplicate(ancestryGrab); break;
 							case k.space:	await this.ancestry_edit_remoteCreateChildOf(ancestryGrab); break;
 							case '-':		if (!COMMAND) { await this.thing_edit_remoteAddLine(ancestryGrab); } break;
-							case 'tab':		await this.ancestry_edit_remoteCreateChildOf(ancestryGrab.parentAncestry); break; // Title_State editor also makes this call
+							case 'tab':		await this.ancestry_edit_remoteCreateChildOf(ancestryGrab.parentAncestry); break; // Edit_State editor also makes this call
 							case 'enter':	ancestryGrab.startEdit(); break;
 						}
 					}
@@ -133,9 +134,11 @@ export class Hierarchy {
 				if (graph_needsRebuild) {
 					signals.signal_rebuildGraph_fromFocus();
 				}
+				const duration = ((new Date().getTime()) - time).toFixed(1);
+				debug.log_key(`H  (${duration}) ${key}`);
 				setTimeout(() => {
 					this.deferredWriteAll()
-				}, 1)
+				}, 1);
 			}
 		}
 	}
@@ -767,7 +770,7 @@ export class Hierarchy {
 			if (!siblings || length == 0) {		// friendly for first-time users
 				this.ancestry_rebuild_runtimeBrowseRight(ancestry, true, EXTREME, up);
 			} else if (!!thing) {
-				const is_rings_mode = get(s_graph_as_rings);
+				const is_rings_mode = get(s_show_rings);
 				const isBidirectional = ancestry.predicate?.isBidirectional ?? false;
 				if ((!isBidirectional && ancestry.isNormal) || !is_rings_mode) {
 					const index = siblings.indexOf(thing);
@@ -876,7 +879,7 @@ export class Hierarchy {
 				}
 			}
 		}
-		s_title_state.set(null);
+		s_edit_state.set(null);
 		if (!!newGrabAncestry) {
 			newGrabAncestry.grabOnly();
 			if (!RIGHT && !!newFocusAncestry) {
@@ -944,7 +947,7 @@ export class Hierarchy {
 
 	hierarchy_markAsCompleted() {
 		s_showing_tools_ancestry.set(null);
-		s_title_state.set(null);
+		s_edit_state.set(null);
 		this.db.setHasData(true);
 		g.things_arrived = true;
 		s_isBusy.set(false);

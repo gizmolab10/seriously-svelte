@@ -69,7 +69,6 @@
 			position: absolute;'>
 		<Title_Editor
 			ancestry={$s_focus_ancestry}
-			fontSize={k.thing_fontSize}px
-			fontFamily={$s_thing_fontFamily}/>
+			fontSize={k.thing_fontSize}px/>
 	</div>
 </div>

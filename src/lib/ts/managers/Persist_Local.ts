@@ -1,4 +1,4 @@
-import { s_graph_as_rings, s_paging_state, s_thing_fontFamily } from '../state/Reactive_State';
+import { s_show_rings, s_paging_state, s_thing_fontFamily } from '../state/Reactive_State';
 import { s_rotation_ring_angle, s_rotation_ring_radius } from '../state/Reactive_State';
 import { s_grabbed_ancestries, s_expanded_ancestries } from '../state/Reactive_State';
 import { g, k, get, show, Point, debug, Ancestry } from '../common/Global_Imports';
@@ -135,7 +135,7 @@ class Persist_Local {
 		s_rotation_ring_radius.subscribe((radius: number) => {
 			this.write_key(IDPersistent.ring_radius, radius);
 		});
-		s_graph_as_rings.subscribe((flag: boolean) => {
+		s_show_rings.subscribe((flag: boolean) => {
 			this.write_key(IDPersistent.layout, flag);
 		});
 		s_rotation_ring_angle.subscribe((angle: number) => {
@@ -179,7 +179,7 @@ class Persist_Local {
 		g.applyScale(!g.device_isMobile ? 1 : this.read_key(IDPersistent.scale) ?? 1);
 		s_rotation_ring_angle.set(this.read_key(IDPersistent.ring_angle) ?? 0);
 		s_thing_fontFamily.set(this.read_key(IDPersistent.font) ?? 'Times New Roman');
-		s_graph_as_rings.set(this.read_key(IDPersistent.layout) ?? false);
+		s_show_rings.set(this.read_key(IDPersistent.layout) ?? false);
 		s_rotation_ring_radius.set(Math.max(this.read_key(IDPersistent.ring_radius) ?? 0, k.ring_smallest_radius));
 		this.restore_graphOffset();
 		this.reactivity_subscribe()

@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { s_color_thing, s_graph_as_rings, s_title_state, s_focus_ancestry } from '../../ts/state/Reactive_State';
 	import { s_thing_fontFamily, s_grabbed_ancestries, s_showing_tools_ancestry } from '../../ts/state/Reactive_State';
+	import { s_color_thing, s_show_rings, s_edit_state, s_focus_ancestry } from '../../ts/state/Reactive_State';
 	import { ElementType, Element_State, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { k, u, ux, Thing, Point, Angle, debug, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
 	import { Tooltip } from 'carbon-components-svelte';
@@ -16,7 +16,7 @@
 	const hasExtraAtLeft = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
 	const revealState = ux.elementState_for(ancestry, ElementType.reveal, subtype);
 	const dragState = ux.elementState_for(ancestry, ElementType.drag, subtype);
-	const rightPadding = $s_graph_as_rings ? 0 : hasExtraAtLeft ? 22.5 : 20;
+	const rightPadding = $s_show_rings ? 0 : hasExtraAtLeft ? 22.5 : 20;
 	const leftPadding = forward ? 1 : 14;
 	const priorRowHeight = k.row_height;
 	let widgetWrapper!: Svelte_Wrapper;
@@ -71,24 +71,10 @@
 			handleAny.disconnect();
 		};
 	});
- 
-	function isHit(): boolean {
-		return false
-	}
 
-	function handle_mouse_state(mouse_state: Mouse_State): boolean {
-		return false;
-	}
-
-	function update_fromAncestry() {
-		thing = ancestry?.thing;
-		if (!thing) {
-			console.log('bad ancestry or thing');
-		} else {
-			const title = thing.title ?? thing.id ?? k.unknown;
-			widgetName = `widget ${title}`;
-			revealName = `reveal ${title}`;
-		}
+	$: {
+		const _ = $s_edit_state + $s_grabbed_ancestries + $s_showing_tools_ancestry;
+		updateBorder_fromState();
 	}
 
 	$: {
@@ -111,16 +97,30 @@
 			}, 1);
 		}
 	}
-
-	$: {
-		const _ = $s_title_state + $s_grabbed_ancestries + $s_showing_tools_ancestry;
-		updateBorder_fromState();
-	}
+ 
+	function isHit(): boolean { return false; }
+	function handle_mouse_state(mouse_state: Mouse_State): boolean { return false; }
 
 	function updateBorder_fromState() {
 		if (!!widget) {
 			widget.style.border = element_state.border;
-			// widget.style.background-color = k.color_background;
+		}
+	}
+
+	function extraWidth() {
+		const multiplier = ancestry?.showsReveal ? 2 : 1.35;
+		const clustersAdjustment = $s_show_rings ? (forward ? 16 : 0) : -10;
+		return (k.dot_size * multiplier) + clustersAdjustment;
+	}
+
+	function update_fromAncestry() {
+		thing = ancestry?.thing;
+		if (!thing) {
+			console.log('bad ancestry or thing');
+		} else {
+			const title = thing.title ?? thing.id ?? k.unknown;
+			widgetName = `widget ${title}`;
+			revealName = `reveal ${title}`;
 		}
 	}
 
@@ -132,7 +132,7 @@
 			const shallShowTools = ancestry.toolsGrabbed && !ancestry.isFocus;
 			const change = (isEditing != shallEdit || isGrabbed != shallGrab || showingTools != shallShowTools);
 			if (change) {
-				const showBackground = shallGrab || $s_graph_as_rings;
+				const showBackground = shallGrab || $s_show_rings;
 				background = showBackground ? `background-color: ${k.color_background};` : k.empty
 				showingBorder = shallEdit || shallGrab;
 				showingTools = shallShowTools;
@@ -143,18 +143,12 @@
 		}
 	}
 
-	function extraWidth() {
-		const multiplier = ancestry?.showsReveal ? 2 : 1.35;
-		const clustersAdjustment = $s_graph_as_rings ? (forward ? 16 : 0) : -10;
-		return (k.dot_size * multiplier) + clustersAdjustment;
-	}
-
 	function layout_widget() {
 		const dragX = 5.5;
 		const delta = showingBorder ? 0 : 0.5;
 		const leftForward = delta - dragX;
 		const titleWidth = thing?.titleWidth ?? 0;
-		const dragOffsetY = $s_graph_as_rings ? 2.8 : 2.7;
+		const dragOffsetY = $s_show_rings ? 2.8 : 2.7;
 		const dragOffsetX = forward ? (dragX - 2) : (titleWidth + delta + 15);
 		const leftBackward = -(titleWidth + 19 + ((ancestry?.isGrabbed ?? false) ? 0 : 0));		
 		dragCenter = Point.square(k.dot_size / 2).offsetByXY(dragOffsetX, dragOffsetY);

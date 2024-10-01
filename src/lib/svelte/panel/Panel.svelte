@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { g, k, u, ux, get, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import { s_isBusy, s_db_type, s_graphRect, s_id_popupView } from '../../ts/state/Reactive_State';
-	import { s_graph_as_rings, s_title_state, s_show_details } from '../../ts/state/Reactive_State';
+	import { s_show_rings, s_edit_state, s_show_details } from '../../ts/state/Reactive_State';
 	import { debug, ZIndex, signals, onMount, Ancestry } from '../../ts/common/Global_Imports';
 	import { s_focus_ancestry, s_user_graphOffset } from '../../ts/state/Reactive_State';
 	import { IDButton, Hierarchy, IDPersistent } from '../../ts/common/Global_Imports';
@@ -42,14 +42,15 @@
 			const key = event.key;
 			if (key == undefined) {
 				alert('no key for ' + event.type);
-			} else if (!$s_title_state && !g.isEditing_text) {	// let editor component consume the events
+			} else if (!$s_edit_state && !g.isEditing_text) {	// let editor component consume the events
 				switch (key) {
 					case 'c': g.graphOffset_setTo(Point.zero); break;
 					case '?': g.showHelp(); break;
 					case ']':
 					case '[': dbDispatch.db_change_toNext(key == ']'); break;
-					default:  await h.handle_key_down(event); break;
+					default:  await h.handle_key_down(event); return;
 				}
+				debug.log_key(`PANEL  ${key}`);
 			}
 		}
 	}
@@ -160,7 +161,7 @@
 							width: {$s_graphRect.size.width}px;
 							height: {$s_graphRect.size.height}px;
 							z-index: {ZIndex.panel};'>
-						{#if $s_graph_as_rings}
+						{#if $s_show_rings}
 							<Rings_Graph/>
 						{:else}
 							<Tree_Graph/>

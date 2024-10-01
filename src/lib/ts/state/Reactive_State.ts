@@ -1,11 +1,11 @@
 import { Clusters_Geometry, Rotation_State, Expansion_State, Alteration_State } from '../common/Global_Imports';
-import { Rect, Point, Ancestry, Title_State, Paging_State, Cluster_Map } from '../common/Global_Imports';
+import { Rect, Point, Ancestry, Edit_State, Paging_State, Cluster_Map } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
 export const s_clusters_geometry	  = writable<Clusters_Geometry | null>();
 export const s_alteration_mode		  = writable<Alteration_State | null>();
 export const s_active_cluster_map	  = writable<Cluster_Map | null>();
-export const s_title_state			  = writable<Title_State | null>();
+export const s_edit_state			  = writable<Edit_State | null>();
 export const s_showing_tools_ancestry = writable<Ancestry | null>();
 export const s_expanded_ancestries	  = writable<Array<Ancestry>>();
 export const s_grabbed_ancestries	  = writable<Array<Ancestry>>();
@@ -20,7 +20,7 @@ export const s_paging_state			  = writable<Paging_State>();
 export const s_focus_ancestry		  = writable<Ancestry>();
 export const s_card_ancestry		  = writable<Ancestry>();
 export const s_show_details			  = writable<boolean>();
-export const s_graph_as_rings		  = writable<boolean>();
+export const s_show_rings			  = writable<boolean>();
 export const s_isBusy				  = writable<boolean>();
 export const s_db_type				  = writable<string>();
 export const s_tree_mode			  = writable<string>();
