@@ -196,10 +196,10 @@ export default class DBFirebase implements DBInterface {
 		if (DBFirebase.data_isValidOfKind(type, data)) {
 			const id = doc.id;
 
-			////////////////////
-			//	 data IDSignal	  //
+			///////////////////////
+			//	 data IDSignal	 //
 			//	change IDSignal  //
-			////////////////////
+			///////////////////////
 
 			try {
 				if (type == DatumType.relationships) {
@@ -378,11 +378,13 @@ export default class DBFirebase implements DBInterface {
 	}
 
 	thing_extractChangesFromRemote(thing: Thing, from: RemoteThing) {
-		const changed = (thing.title != from.virginTitle || thing.trait != from.trait || thing.color != from.color)
+		const changed = !from.isEqualTo(thing);
 		if (changed) {
-			thing.title = from.virginTitle;
-			thing.trait = from.trait;
-			thing.color = from.color;
+			thing.consequence = from.consequence;
+			thing.title		  = from.virginTitle;
+			thing.quest		  = from.quest;
+			thing.trait		  = from.trait;
+			thing.color		  = from.color;
 		}
 		return changed;
 	}
@@ -460,7 +462,7 @@ export default class DBFirebase implements DBInterface {
 		switch (type) {
 			case DatumType.things:		
 				const thing = data as Thing;	
-				if (!thing.title && thing.title != k.empty || !thing.color && thing.color != k.empty || !thing.trait && thing.trait != k.empty) {
+				if (thing.hasNoData) {
 					return false;
 				}
 				break;

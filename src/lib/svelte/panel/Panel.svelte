@@ -99,20 +99,6 @@
 	{:else}
 		<Controls/>
 		{#if $s_id_popupView == null}
-			{#if $s_show_details}
-				<Details/>
-				<div class='vertical-line'
-					style='
-						z-index: {ZIndex.lines};
-						left: {k.width_details}px;
-						top: {$s_graphRect.origin.y}px;
-						height: {$s_graphRect.size.height}px;'>
-				</div>
-			{/if}
-			<div class='horizontal-line' style='
-				z-index: {ZIndex.lines};
-				top: {k.height_banner}px;'>
-			</div>
 			<div class='breadcrumbs'
 				style='left:0px;
 					position: absolute;
@@ -126,6 +112,10 @@
 						top: {k.height_banner + k.height_breadcrumbs}px;
 						z-index: {ZIndex.lines};'>
 				</div>
+			</div>
+			<div class='horizontal-line' style='
+				z-index: {ZIndex.lines};
+				top: {k.height_banner}px;'>
 			</div>
 			{#if show.titleAtTop}
 				<div class='top-title'
@@ -142,6 +132,16 @@
 						top: {k.height_banner + k.height_titleAtTop}px;'>
 				</div>
 			{/if}
+			{#if $s_show_details}
+				<Details/>
+				<div class='vertical-line'
+					style='
+						z-index: {ZIndex.lines};
+						left: {k.width_details}px;
+						top: {$s_graphRect.origin.y}px;
+						height: {$s_graphRect.size.height}px;'>
+				</div>
+			{/if}
 		{/if}
 		<div class='right-side'
 			style='
@@ -152,7 +152,7 @@
 			{#if $s_id_popupView == IDButton.builds}
 				<BuildNotes/>
 			{:else if $s_id_popupView == null}
-				{#key s_focus_ancestry, rebuilds}
+				{#key $s_focus_ancestry, rebuilds}
 					<div class='clipper' on:wheel={handle_wheel}
 						style='
 							top:{$s_graphRect.origin.y}px;

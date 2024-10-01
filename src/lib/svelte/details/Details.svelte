@@ -1,15 +1,27 @@
 <script lang='ts'>
+	import { k, u, show, debug, ZIndex, signals, onMount } from '../../ts/common/Global_Imports';
 	import { s_graphRect, s_db_loadTime } from '../../ts/state/Reactive_State';
-	import { k, u, show, ZIndex } from '../../ts/common/Global_Imports';
-	// import Segmented_Control from '../mouse buttons/Segmented_Control.svelte';
 	import Storage from './Storage.svelte';
 	import Card from './Card.svelte';
 	import Info from './Info.svelte';
+	let rebuilds = 0;
+	
+	onMount(() => {
+		const handler = signals.handle_rebuildGraph(1, (ancestry) => {
 
-			// 	<Segmented_Control
-			// 		name='db-choices'
-			// 		rect={control_rect}
-			// 		items={['local ', ' firebase ', ' airtable']}/>
+			// react to remote Thing changes
+
+			debug.log_mount(` DETAILS`);
+			rebuilds += 1;
+		});
+		return () => { handler.disconnect() };
+	});
+	
+	// import Segmented_Control from '../mouse buttons/Segmented_Control.svelte';
+	// 	<Segmented_Control
+	// 		name='db-choices'
+	// 		rect={control_rect}
+	// 		items={['local ', ' firebase ', ' airtable']}/>
 
 </script>
 
@@ -39,14 +51,16 @@
 			z-index:{ZIndex.frontmost};
 			background-color:lightgray;'>
 	</div>
-	<div class='information'
-		style ='
-			top:41px;
-			position:absolute;
-			z-index: {ZIndex.details};'>
-		<Card/>
-		{#if show.info}
-			<Info top={show.quests ? 235 : 53}/>
-		{/if}
-	</div>
+	{#key rebuilds}
+		<div class='information'
+			style ='
+				top:41px;
+				position:absolute;
+				z-index: {ZIndex.details};'>
+			<Card/>
+			{#if show.info}
+				<Info top={show.quests ? 235 : 53}/>
+			{/if}
+		</div>
+	{/key}
 </div>

@@ -44,6 +44,7 @@ export default class Thing extends Datum {
 	get hasParents():				boolean { return this.hasParentsFor(Predicate.idContains); }
 	get isFocus():					boolean { return (get(s_focus_ancestry).thing?.id ?? k.empty) == this.id; }
 	get hasRelated():				boolean { return this.relationships_inBothDirections_for(Predicate.idIsRelated).length > 0; }
+	get hasNoData():				boolean { return !this.title && !this.consequence && !this.quest && !this.color && !this.trait; }
 
 	get parents_ofAllKinds(): Array<Thing> {
 		let parents: Array<Thing> = [];

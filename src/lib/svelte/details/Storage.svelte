@@ -5,7 +5,6 @@
 	import { DBType } from '../../ts/db/DBInterface';
 	import { h } from '../../ts/db/DBDispatch';
 
-	console.log($s_db_type)
 	function handle_dbTypeAt(index) { dbDispatch.db_change_toType(menuItems[index].id); }
 
 	const menuItems = [
