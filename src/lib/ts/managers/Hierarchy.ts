@@ -137,7 +137,7 @@ export class Hierarchy {
 				const duration = ((new Date().getTime()) - time).toFixed(1);
 				debug.log_key(`H  (${duration}) ${key}`);
 				setTimeout(() => {
-					this.deferredWriteAll()
+					this.deferredWriteAll();
 				}, 1);
 			}
 		}

@@ -77,15 +77,18 @@
 		}
 	}
 
-	function handle_textChange (label: string, text: string) {
+	function handle_textChange (label: string, text: string | null) {
 		if (!!thing) {
-			switch (label) {
-				case 'consequence': thing.consequence = text; break;
-				case 'quest': thing.quest = text; break;
+			if (!text) {
+				h.deferredWriteAll();
+				g.isEditing_text = false;
+			} else {
+				switch (label) {
+					case 'consequence': thing.consequence = text; break;
+					case 'quest': thing.quest = text; break;
+				}
+				thing.needsWrite = true;
 			}
-			(async () => {
-				await thing.remoteWrite();
-			})();
 		}
 	}
 

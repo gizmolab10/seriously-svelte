@@ -16,7 +16,11 @@
 </script>
 
 {#key $s_db_type}
-	<div class='storage-information'>
+	<div class='storage-information'
+		style='
+			height:40px;
+			padding:5px;
+			justify-content:center;'>
 		<Radio_Buttons name='storage' menuItems={menuItems} idSelected={$s_db_type}/>
 		{#if $s_db_loadTime && $s_db_loadTime > 0}
 			<div style='

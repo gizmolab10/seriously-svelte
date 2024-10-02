@@ -8,7 +8,6 @@
 	const pickerSize = 122;
 	const selectorSize = k.dot_size + 1;
 	let colorAsHEX = k.empty;
-	let persistenceTimer;
 
 	onMount(() => {
 		if (!!thing) {
@@ -22,15 +21,8 @@
 		if (thing.color != color) {
 			thing.color = color;
 			thing.signal_color_change();
-			if (!!persistenceTimer) {
-				clearTimeout(persistenceTimer);		// each color change discards and restarts the timer
-			}
-			persistenceTimer = setTimeout(() => {
-				(async () => {
-					$s_color_thing = null;
-					await thing.remoteWrite();
-				})();
-			}, 100);		// tenth second delay
+			$s_color_thing = null;
+			thing.needsWrite = true;
 		}
 	}
 

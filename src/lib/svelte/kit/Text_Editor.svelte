@@ -28,7 +28,7 @@
 			textarea.value = bound_text;
 			textarea.blur();
 			setTimeout(() => {
-				g.isEditing_text = false;
+				handle_textChange(label, null);
 			}, 10);
 		} else {
 			setTimeout(() => {

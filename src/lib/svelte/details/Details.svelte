@@ -25,7 +25,7 @@
 
 </script>
 
-<div class='details-modal-overlay'
+<div class='details'
 	style='
 		left:0px;
 		position:fixed;
@@ -35,13 +35,7 @@
 		width:{k.width_details}px;
 		top:{$s_graphRect.origin.y}px;
 		height:{$s_graphRect.size.height}px;'>
-	<div class='details-modal-content'
-		style='
-			height:100%;
-			padding:5px;
-			justify-content:center;'>
-		<Storage/>
-	</div>
+	<Storage/>
 	<div class='horizontal-line'
 		style='
 			top:40px;
@@ -52,7 +46,7 @@
 			background-color:lightgray;'>
 	</div>
 	{#key rebuilds}
-		<div class='information'
+		<div class='thing-information'
 			style ='
 				top:41px;
 				position:absolute;
