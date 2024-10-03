@@ -27,7 +27,7 @@
 
 	function handle_input(event) {
 		const title = event.target.value;
-		if (!!thing && !!title) {
+		if (!!thing && (!!title || title == k.empty)) {
 			thing.title = bound_title = title;
 			s_title_thing.set(null);
 		}

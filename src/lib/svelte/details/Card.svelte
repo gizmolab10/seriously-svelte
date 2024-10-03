@@ -6,6 +6,7 @@
 	import Identifiable from '../../ts/data/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Button from '../mouse buttons/Button.svelte';
+	import { h } from '../../ts/db/DBDispatch';
 	import Color from './Color.svelte';
 	const id = 'info';
 	const margin = 10;
@@ -79,9 +80,10 @@
 
 	function handle_textChange (label: string, text: string | null) {
 		if (!!thing) {
-			if (!text) {
-				h.deferredWriteAll();
-				g.isEditing_text = false;
+			if (!text && text != k.empty) {
+				(async () => {
+					await h.deferredWriteAll();
+				})();
 			} else {
 				switch (label) {
 					case 'consequence': thing.consequence = text; break;

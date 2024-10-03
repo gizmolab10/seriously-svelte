@@ -34,7 +34,7 @@ export default class DBDispatch {
 				done = true;
 				setTimeout(() => {
 					(async () => {
-						this.hierarchy_fetch_andBuild_forDBType(type);
+						await this.hierarchy_fetch_andBuild_forDBType(type);
 					})();
 				}, 10);
 			}

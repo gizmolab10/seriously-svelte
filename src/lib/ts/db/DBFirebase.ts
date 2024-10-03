@@ -594,7 +594,7 @@ class RemoteRelationship implements RemoteRelationship {
 		const things = dbFirebase.bulk_for(dbFirebase.baseID)?.thingsCollection;
 		const predicates = dbFirebase.predicatesCollection;
 		this.order = data.order;
-		if (!!things && predicates) {
+		if (!!things && !!predicates) {
 			try {
 				if (data instanceof Relationship) {
 					if (data.isValid) {

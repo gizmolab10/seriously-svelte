@@ -426,7 +426,7 @@ export class Hierarchy {
 
 	async relationships_remoteCreateMissing(baseID: string) {
 		const idRoot = this.idRoot;
-		if (!!idRoot){
+		if (!!idRoot || idRoot == k.empty){
 			for (const thing of this.things) {
 				const idThing = thing.id;
 				if (thing.trait != IDTrait.root && thing.baseID == baseID) {

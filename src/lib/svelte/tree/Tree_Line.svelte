@@ -78,7 +78,7 @@
 		bind:this={line}
 		id={ancestry.title}
 		width={size.width}px
-		class={'svg-tree-line'}
+		class='svg-tree-line'
 		viewBox={viewBox.verbose}
 		height={Math.max(2, size.height)}px
 		style='z-index: {ZIndex.lines};

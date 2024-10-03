@@ -22,6 +22,7 @@
 	
 	onMount(() => {
 		$s_isBusy = true;
+		subscribeTo_scroll();
 		const handler = signals.handle_rebuildGraph(1, (ancestry) => {
 			debug.log_mount(` PANEL`);
 			rebuilds += 1;
@@ -43,16 +44,17 @@
 		}
 	}
 
-	// not needed unless above handler doesn't receive events
-	// function subscribe() {
-	// 	scrollable?.addEventListener('scroll', () => {
-	// 		const delta = g.windowDelta;
-	// 		const userOffset = get(s_user_graphOffset);
-	// 		if (!!userOffset && !!delta && g.allow_HorizontalScrolling) {
-	// 			g.graphOffset_setTo(userOffset.offsetBy(delta));
-	// 		}
-	// 	});
-	// }
+	function subscribeTo_scroll() {
+		if (g.device_isMobile) {
+			scrollable?.addEventListener('scroll', () => {
+				const delta = g.windowDelta;
+				const userOffset = get(s_user_graphOffset);
+				if (!!userOffset && !!delta && g.allow_HorizontalScrolling) {
+					g.graphOffset_setTo(userOffset.offsetBy(delta));
+				}
+			});
+		}
+	}
 
 	async function handle_key_down(event) {
 		if (event.type == 'keydown') {
@@ -116,7 +118,7 @@
 		<p>Nothing is available.</p>
 	{:else}
 		<Controls/>
-		{#if $s_id_popupView == null}
+		{#if !$s_id_popupView}
 			<div class='breadcrumbs'
 				style='left:0px;
 					position: absolute;
@@ -169,7 +171,7 @@
 				left: {$s_show_details ? k.width_details : 0}px;'>
 			{#if $s_id_popupView == IDButton.builds}
 				<BuildNotes/>
-			{:else if $s_id_popupView == null}
+			{:else if !$s_id_popupView}
 				{#key $s_focus_ancestry, rebuilds}
 					<div class='clipper'
 						bind:this={scrollable}

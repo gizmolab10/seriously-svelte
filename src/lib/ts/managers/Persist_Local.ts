@@ -156,7 +156,7 @@ class Persist_Local {
 	restore_db() {
 		const type = persistLocal.read_key(IDPersistent.db) ?? 'firebase';
 		(async () => {
-			dbDispatch.hierarchy_fetch_andBuild_forDBType(type);
+			await dbDispatch.hierarchy_fetch_andBuild_forDBType(type);
 		})();
 	}
 
@@ -227,15 +227,14 @@ class Persist_Local {
 		let ancestryToFocus = h.rootAncestry;
 		if (!this.ignoreAncestries) {
 			const focusid = this.readDB_key(IDPersistent.focus);
-			if (focusid) {
+			if (!!focusid || focusid == k.empty) {
 				const focusAncestry = h.ancestry_remember_createUnique(focusid);
-				if (focusAncestry) {
+				if (!!focusAncestry) {
 					ancestryToFocus = focusAncestry;
 				}
 			}
 		}
-		let focus = h.thing_forAncestry(ancestryToFocus);
-		if (focus == null) {
+		if (!h.thing_forAncestry(ancestryToFocus)) {
 			const lastGrabbedAncestry = h.grabs.ancestry_lastGrabbed?.parentAncestry;
 			if (lastGrabbedAncestry) {
 				ancestryToFocus = lastGrabbedAncestry;

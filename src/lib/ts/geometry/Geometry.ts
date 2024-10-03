@@ -243,7 +243,7 @@ export class Rect {
 		const left = c['offsetLeft'];
 		const width = c['offsetWidth'];
 		const height = c['offsetHeight'];
-		if (!!top && !!left && !!width && !!height) {
+		if ((!!top || top == 0) && (!!left || left == 0) && !!width && !!height) {
 			return new Rect(new Point(left, top), new Size(width, height));
 		}
 		return Rect.zero;

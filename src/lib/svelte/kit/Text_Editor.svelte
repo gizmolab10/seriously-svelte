@@ -25,19 +25,16 @@
 		const exit = event.key == 'Enter' && !event.shiftKey;
 		if (exit) {
 			event.preventDefault();
-			textarea.value = bound_text;
-			textarea.blur();
 			setTimeout(() => {
+				textarea.blur();
 				handle_textChange(label, null);
-			}, 10);
-		} else {
-			setTimeout(() => {
-				const text = event.target.value;
-				if (!!text) {
-					bound_text = text;
-					handle_textChange(label, text);
-				}
+				g.isEditing_text = false;
 			}, 1);
+		}
+		const text = event.target.value;
+		if (!!text || text == k.empty) {
+			bound_text = text;
+			handle_textChange(label, text);
 		}
 	}
 
