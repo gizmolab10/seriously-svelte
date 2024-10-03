@@ -36,8 +36,10 @@
 	}
 	
 	$: {
-		if (!!thing && thing.id == $s_color_thing) {
+		const id = $s_color_thing;
+		if (!!thing && thing.id == id) {
 			color = thing.color;
+			rebuilds += 1;
 		}
 	}
 
@@ -79,18 +81,12 @@
 	}
 
 	function handle_textChange (label: string, text: string | null) {
-		if (!!thing) {
-			if (!text && text != k.empty) {
-				(async () => {
-					await h.deferredWriteAll();
-				})();
-			} else {
-				switch (label) {
-					case 'consequence': thing.consequence = text; break;
-					case 'quest': thing.quest = text; break;
-				}
-				thing.needsWrite = true;
+		if (!!thing && (!!text || text == k.empty)) {
+			switch (label) {
+				case 'consequence': thing.consequence = text; break;
+				case 'quest': thing.quest = text; break;
 			}
+			thing.remoteWrite();
 		}
 	}
 

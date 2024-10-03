@@ -21,7 +21,7 @@
 		g.isEditing_text = true;
 	}
 
-	function handle_keydown(event: KeyboardEvent) {
+	function handle_keyup(event: KeyboardEvent) {
 		const exit = event.key == 'Enter' && !event.shiftKey;
 		if (exit) {
 			event.preventDefault();
@@ -65,7 +65,7 @@
 		bind:this={textarea}
 		on:blur={handle_blur}
 		bind:value={bound_text}
-		on:keydown={handle_keydown}
+		on:keyup={handle_keyup}
 		on:mousedown={handle_mousedown}
 		style='
 			resize: none;

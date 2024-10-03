@@ -183,7 +183,6 @@ export default class DBFirebase implements DBInterface {
 				} else {
 					snapshot.docChanges().forEach((change) => {	// convert and remember
 						this.handle_docChanges(baseID, type, change);
-						signals.signal_rebuildGraph_fromFocus();
 					});
 				}
 			}

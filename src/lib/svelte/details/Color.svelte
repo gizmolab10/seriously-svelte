@@ -2,6 +2,7 @@
 	import { k, u, ux, get, Thing, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
 	import { s_color_thing } from '../../ts/state/Reactive_State';
 	import ColorPicker from 'svelte-awesome-color-picker';
+	import { h } from '../../ts/db/DBDispatch';
 	export let thing: Thing;
 	export let left = 0;
 	export let top = 0;
@@ -9,11 +10,11 @@
 	const selectorSize = k.dot_size + 1;
 	let colorAsHEX = k.empty;
 
-	onMount(() => {
+    onMount(() => {
 		if (!!thing) {
 			colorAsHEX = u.colorToHex(thing.color);
 		}
-	})
+	});
 
 	function handleColorChange(event) {
 		event.preventDefault();
@@ -21,11 +22,10 @@
 		if (thing.color != color) {
 			thing.color = color;
 			thing.signal_color_change();
-			$s_color_thing = null;
-			thing.needsWrite = true;
+			thing.remoteWrite();
 		}
 	}
-
+	
 </script>
 
 <style>
@@ -38,6 +38,7 @@
 		border-radius: 50%;
 	}
 </style>
+
 
 {#if !!thing}
 	{#key thing.id}
