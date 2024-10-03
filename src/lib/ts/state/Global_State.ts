@@ -13,14 +13,11 @@ class Global_State {
 
 	things_arrived = false;
 	isEditing_text = false;
+	scroll = this.windowScroll;
 	mouse_responder_number = 0;
-	queryStrings: URLSearchParams;
 	rebuild_needed_byType: {[type: string]: boolean} = {};
+	queryStrings = new URLSearchParams(window.location.search);
 
-	constructor() {
-		this.queryStrings = new URLSearchParams(window.location.search);
-	}
-	
 	setup() {
 		
 		//////////////////////////////////////////////
@@ -72,9 +69,8 @@ class Global_State {
 		}
     }
 
-	get graph_center(): Point {
-		return get(s_graphRect).size.dividedInHalf.asPoint;
-	}
+	get windowScroll(): Point { return new Point(window.scrollX, window.scrollY); }
+	get graph_center(): Point { return get(s_graphRect).size.dividedInHalf.asPoint; }
 
 	get isAny_rotation_active(): boolean {
 		return ux.isAny_paging_arc_active || get(s_ring_paging_state).isActive || get(s_ring_rotation_state).isActive;
@@ -93,6 +89,16 @@ class Global_State {
 	get isServerLocal(): boolean {
 		const hostname = window.location.hostname;
 		return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "0.0.0.0";
+	}
+
+	get windowDelta(): Point | null {
+		const scroll = this.windowScroll;
+		const delta = scroll.distanceFrom(this.scroll);
+		if (delta.magnitude > 1) {
+			this.scroll = scroll;
+			return delta;
+		}
+		return null
 	}
 
 	get siteTitle(): string {
@@ -132,10 +138,10 @@ class Global_State {
 		this.open_tabFor(url);
 	}
 
-	graphOffset_setTo(origin: Point): boolean {
-		if (get(s_user_graphOffset) != origin) {
-			persistLocal.write_key(IDPersistent.origin, origin);
-			s_user_graphOffset.set(origin);
+	graphOffset_setTo(offset: Point): boolean {
+		if (get(s_user_graphOffset) != offset) {
+			persistLocal.write_key(IDPersistent.user_offset, offset);
+			s_user_graphOffset.set(offset);
 			return true;
 		}
 		return false;

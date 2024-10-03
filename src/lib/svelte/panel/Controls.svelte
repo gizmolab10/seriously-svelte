@@ -30,7 +30,7 @@
 			element_state.hoverIgnore = id == IDButton.details;
 			elementStates_byID[id] = element_state;
 		}
-	})
+	});
 
 	$: {
 		const _ = $s_resize_count;
@@ -51,8 +51,8 @@
 		} else if (mouse_state.isUp) {
 			switch (id) {
 				case IDButton.help: g.showHelp(); break;
-				case IDButton.bigger: width = g.zoomBy(1.1) - 20; break;
-				case IDButton.smaller: width = g.zoomBy(0.9) - 20; break;
+				case IDButton.bigger: width = g.zoomBy(1.1) - 20; break;	// mobile only
+				case IDButton.smaller: width = g.zoomBy(0.9) - 20; break;	//   "     "
 				case IDButton.layout: $s_show_rings = !$s_show_rings; break;
 				case IDButton.details: $s_show_details = !$s_show_details; break;
 				case IDButton.relations: $s_tree_mode = next_graph_relations(); break;
@@ -109,7 +109,7 @@
 			<Button name={IDButton.smaller}
 				element_state={elementStates_byID[IDButton.smaller]}
 				center={new Point(width - 130, top)}
-				closure={(mouse_state) => button_closure_forID(mouse_state. IDButton.smaller)}>
+				closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.smaller)}>
 				<SVGD3 name='smaller'
 					width={size}
 					height={size}

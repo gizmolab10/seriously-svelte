@@ -10,6 +10,7 @@ class Builds {
 
 	constructor() {
 		this.notes = {
+			114 : ['October 2, 2024', 'begin work on mobile)'],
 			113 : ['September 24, 2024', 'add new game feature (consequences & quests)'],
 			112 : ['September 12, 2024', 'new info details'],
 			111 : ['September 8, 2024', 'new resize ring'],

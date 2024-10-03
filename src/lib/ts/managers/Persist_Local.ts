@@ -11,6 +11,7 @@ export enum IDPersistent {
 	title_atTop   = 'title_atTop',
 	ring_radius	  = 'ring_radius',
 	page_states   = 'page_states',
+	user_offset	  = 'user_offset',
 	ring_angle    = 'ring_angle',
 	info_kind     = 'info_kind',
 	arrowheads	  = 'arrowheads',
@@ -22,7 +23,6 @@ export enum IDPersistent {
 	details		  = 'details',
 	base_id		  = 'base_id',
 	layout		  = 'layout',
-	origin		  = 'origin',
 	quests		  = 'quests',
 	scale		  = 'scale',
 	focus		  = 'focus',
@@ -146,7 +146,7 @@ class Persist_Local {
 
 	restore_graphOffset() {
 		let offset = Point.zero;
-		const stored = this.read_key(IDPersistent.origin);
+		const stored = this.read_key(IDPersistent.user_offset);
 		if (!!stored) {
 			offset = new Point(stored.x, stored.y);
 		}
@@ -176,7 +176,8 @@ class Persist_Local {
 			this.write_key(IDPersistent.relationships, true);
 		}
 		show.restore_state();
-		g.applyScale(!g.device_isMobile ? 1 : this.read_key(IDPersistent.scale) ?? 1);
+		g.applyScale(1);
+		// g.applyScale(!g.device_isMobile ? 1 : this.read_key(IDPersistent.scale) ?? 1);
 		s_rotation_ring_angle.set(this.read_key(IDPersistent.ring_angle) ?? 0);
 		s_thing_fontFamily.set(this.read_key(IDPersistent.font) ?? 'Times New Roman');
 		s_show_rings.set(this.read_key(IDPersistent.layout) ?? false);

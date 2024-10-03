@@ -1,9 +1,9 @@
 <script lang='ts'>
+	import { s_resize_count, s_focus_ancestry, s_user_graphOffset } from '../../ts/state/Reactive_State';
 	import { g, k, u, ux, get, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import { s_isBusy, s_db_type, s_graphRect, s_id_popupView } from '../../ts/state/Reactive_State';
 	import { s_show_rings, s_edit_state, s_show_details } from '../../ts/state/Reactive_State';
 	import { debug, ZIndex, signals, onMount, Ancestry } from '../../ts/common/Global_Imports';
-	import { s_focus_ancestry, s_user_graphOffset } from '../../ts/state/Reactive_State';
 	import { IDButton, Hierarchy, IDPersistent } from '../../ts/common/Global_Imports';
 	import { dbDispatch, setContext } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
@@ -18,6 +18,7 @@
 	import Controls from './Controls.svelte';
 	let chain = ['Panel'];
 	let rebuilds = 0;
+	let scrollable;
 	
 	onMount(() => {
 		$s_isBusy = true;
@@ -28,6 +29,11 @@
 		return () => { handler.disconnect() };
 	});
 
+	$: {
+		const _ = $s_resize_count;
+		rebuilds += 1;
+	}
+
 	function handle_wheel(event) {
 		const userOffset = $s_user_graphOffset;
 		const delta = new Point(-event.deltaX, -event.deltaY);
@@ -36,6 +42,17 @@
 			rebuilds += 1;
 		}
 	}
+
+	// not needed unless above handler doesn't receive events
+	// function subscribe() {
+	// 	scrollable?.addEventListener('scroll', () => {
+	// 		const delta = g.windowDelta;
+	// 		const userOffset = get(s_user_graphOffset);
+	// 		if (!!userOffset && !!delta && g.allow_HorizontalScrolling) {
+	// 			g.graphOffset_setTo(userOffset.offsetBy(delta));
+	// 		}
+	// 	});
+	// }
 
 	async function handle_key_down(event) {
 		if (event.type == 'keydown') {
@@ -154,7 +171,9 @@
 				<BuildNotes/>
 			{:else if $s_id_popupView == null}
 				{#key $s_focus_ancestry, rebuilds}
-					<div class='clipper' on:wheel={handle_wheel}
+					<div class='clipper'
+						bind:this={scrollable}
+						on:wheel={handle_wheel}
 						style='
 							top:{$s_graphRect.origin.y}px;
 							left: {$s_graphRect.origin.x}px;
