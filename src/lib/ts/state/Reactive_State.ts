@@ -19,6 +19,7 @@ export const s_db_loadTime 			  = writable<string | null>();
 export const s_paging_state			  = writable<Paging_State>();
 export const s_focus_ancestry		  = writable<Ancestry>();
 export const s_card_ancestry		  = writable<Ancestry>();
+export const s_device_isMobile		  = writable<boolean>();
 export const s_show_details			  = writable<boolean>();
 export const s_show_rings			  = writable<boolean>();
 export const s_isBusy				  = writable<boolean>();

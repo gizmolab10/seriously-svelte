@@ -3,7 +3,7 @@ import { s_graphRect, s_show_details, s_scale_factor, s_color_thing, s_user_grap
 import { s_rebuild_count, s_focus_ancestry, s_grabbed_ancestries, s_expanded_ancestries } from './Reactive_State';
 import { k, u, ux, get, show, Rect, Size, Point, debug, events, dbDispatch } from '../common/Global_Imports';
 import { persistLocal, IDPersistent, Rotation_State, Expansion_State } from '../common/Global_Imports';
-import { s_resize_count, s_mouse_up_count } from '../state/Reactive_State';
+import { s_resize_count, s_device_isMobile, s_mouse_up_count } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
 
 class Global_State {
@@ -28,15 +28,37 @@ class Global_State {
 		s_rebuild_count.set(0);
 		s_mouse_up_count.set(0);
 		s_color_thing.set(null);
+		s_device_isMobile.set(this.device_isMobile);
 		s_ring_paging_state.set(new Rotation_State());
 		s_ring_rotation_state.set(new Rotation_State());
 		s_ring_resizing_state.set(new Expansion_State());
-		persistLocal.restore_state();					// persisted
+		persistLocal.restore_state();					// persist
 		persistLocal.restore_db();
 		this.queryStrings_apply();						// url query string
 		show.queryStrings_apply();
 		debug.queryStrings_apply();
+		this.subscribeTo_resizeEvents();				// watch user
 		events.setup();
+	}
+
+	subscribeTo_resizeEvents() {
+		window.addEventListener('resize', (event) => {
+			setTimeout(() => {
+				const isMobile = this.device_isMobile;
+				debug.log_action(` STATE resize [is${isMobile ? '' : ' not'} mobile]`);
+				s_resize_count.set(get(s_resize_count) + 1);
+				s_device_isMobile.set(isMobile);
+				this.graphRect_update();
+			}, 1);
+		});
+		window.addEventListener('orientationchange', () => {
+			setTimeout(() => {
+				const isMobile = this.device_isMobile;
+				debug.log_action(` STATE orientationchange [is${isMobile ? '' : ' not'} mobile]`);
+				s_device_isMobile.set(isMobile);
+				this.graphRect_update();
+			}, 1);
+		});
 	}
 
 	queryStrings_apply() {

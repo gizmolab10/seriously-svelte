@@ -1,9 +1,9 @@
 <script lang='ts'>
-	import { g, k, u, ux, show, Rect, Size, Point, Thing, ZIndex, debug } from '../../ts/common/Global_Imports';
+	import { s_focus_ancestry, s_graphRect, s_show_details, s_device_isMobile } from '../../ts/state/Reactive_State';
 	import { s_id_popupView, s_user_graphOffset, s_showing_tools_ancestry } from '../../ts/state/Reactive_State';
+	import { g, k, u, ux, show, Rect, Size, Point, Thing, ZIndex, debug } from '../../ts/common/Global_Imports';
 	import { signals, IDSignal, IDButton, onMount, Ancestry, dbDispatch } from '../../ts/common/Global_Imports';
 	import { Predicate, IDPersistent, ElementType, persistLocal } from '../../ts/common/Global_Imports';
-	import { s_focus_ancestry, s_graphRect, s_show_details } from '../../ts/state/Reactive_State';
 	import Dot_RevealFocus from '../buttons/Dot_RevealFocus.svelte';
 	import Editing_Tools from '../widget/Editing_Tools.svelte';
 	import Tree_Children from './Tree_Children.svelte';
@@ -27,6 +27,12 @@
 		const handler = signals.handle_relayoutWidgets(0, (ancestry) => { updateOrigins(); });
 		return () => { handler.disconnect() };
 	});
+
+	$: {
+		const _ = $s_device_isMobile;
+		updateOrigins();
+		rebuilds += 1;
+	}
 	
 	$: {
 		if (graphRect != $s_graphRect) {
@@ -64,7 +70,7 @@
 			const offsetX = 15 + ($s_show_details ? -k.width_details : 0) - (childrenSize.width / 2) - (k.dot_size / 2.5) + offsetX_ofFirstReveal;
 			const offsetY = -1 - graphRect.origin.y;
 			origin_ofFirstReveal = graphRect.center.offsetByXY(offsetX, offsetY);
-			if (g.device_isMobile) {
+			if ($s_device_isMobile) {
 				origin_ofFirstReveal.x = 25;
 			}
 			const toChildren = new Point(-42.2 + k.line_stretch - (k.dot_size / 2) + offsetX_ofFirstReveal, (k.dot_size / 2) -(childrenSize.height / 2) - 4.5);

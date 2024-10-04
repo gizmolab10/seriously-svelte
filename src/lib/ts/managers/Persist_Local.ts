@@ -177,7 +177,6 @@ class Persist_Local {
 		}
 		show.restore_state();
 		g.applyScale(1);
-		// g.applyScale(!g.device_isMobile ? 1 : this.read_key(IDPersistent.scale) ?? 1);
 		s_rotation_ring_angle.set(this.read_key(IDPersistent.ring_angle) ?? 0);
 		s_thing_fontFamily.set(this.read_key(IDPersistent.font) ?? 'Times New Roman');
 		s_show_rings.set(this.read_key(IDPersistent.layout) ?? false);

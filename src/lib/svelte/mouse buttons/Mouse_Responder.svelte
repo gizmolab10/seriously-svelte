@@ -88,6 +88,7 @@
 	}
 
 	function handle_pointerUp(event) {
+		event.preventDefault();
 		if (detect_mouseUp) {// && (!!mouse_timer.mouse_longClick_timer)) {
 
 			// tear down timers and call closure
@@ -99,6 +100,7 @@
 	}
 	
 	function handle_pointerDown(event) {
+		event.preventDefault();
 		if (detect_mouseDown && mouse_state.clicks == 0) {
 
 			// call down closure

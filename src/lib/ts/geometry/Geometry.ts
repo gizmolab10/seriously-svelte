@@ -161,10 +161,13 @@ export class Rect {
 	get centerBottom():		  Point { return new Point(this.center.x, this.extent.y); };
 	get copy():				   Rect { return new Rect(this.origin.copy, this.size.copy); }
 	get dividedInHalf():	   Rect { return new Rect(this.origin, this.size.multipliedBy(-1/2)); }
+	get atZero_forX():		   Rect { return new Rect(new Point(0, this.origin.y), this.size); }
+	get atZero_forY():		   Rect { return new Rect(new Point(this.origin.x, 0), this.size); }
+	get atZero():			   Rect { return new Rect(Point.zero, this.size); }
+	static get zero():		   Rect { return new Rect(Point.zero, Size.zero); }
 	offsetBy(delta: Point):	   Rect { return new Rect(this.origin.offsetBy(delta), this.size); }
 	offsetByY(y: number):	   Rect { return new Rect(this.origin.offsetByY(y), this.size); }
 	offsetByX(x: number):	   Rect { return new Rect(this.origin.offsetByX(x), this.size); }
-	static get zero():		   Rect { return new Rect(Point.zero, Size.zero); }
 
 	expandedBy(expansion: Point): Rect {
 		const size = this.size.expandedBy(expansion);

@@ -2,59 +2,23 @@
 	import { s_resize_count, s_focus_ancestry, s_user_graphOffset } from '../../ts/state/Reactive_State';
 	import { g, k, u, ux, get, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import { s_isBusy, s_db_type, s_graphRect, s_id_popupView } from '../../ts/state/Reactive_State';
-	import { s_show_rings, s_edit_state, s_show_details } from '../../ts/state/Reactive_State';
-	import { debug, ZIndex, signals, onMount, Ancestry } from '../../ts/common/Global_Imports';
+	import { s_edit_state, s_show_details, s_device_isMobile, } from '../../ts/state/Reactive_State';
+	import { debug, ZIndex, onMount, Ancestry } from '../../ts/common/Global_Imports';
 	import { IDButton, Hierarchy, IDPersistent } from '../../ts/common/Global_Imports';
 	import { dbDispatch, setContext } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
-	import Rings_Graph from '../rings/Rings_Graph.svelte';
-	import Title_Editor from '../widget/Title_Editor.svelte';
 	import Breadcrumbs from '../panel/Breadcrumbs.svelte';
-	import Tree_Graph from '../tree/Tree_Graph.svelte';
 	import { DBType } from '../../ts/db/DBInterface';
 	import Details from '../details/Details.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import Controls from './Controls.svelte';
+	import Graph from './Graph.svelte';
 	let chain = ['Panel'];
-	let rebuilds = 0;
-	let scrollable;
 	
 	onMount(() => {
 		$s_isBusy = true;
-		subscribeTo_scroll();
-		const handler = signals.handle_rebuildGraph(1, (ancestry) => {
-			debug.log_mount(` PANEL`);
-			rebuilds += 1;
-		});
-		return () => { handler.disconnect() };
 	});
-
-	$: {
-		const _ = $s_resize_count;
-		rebuilds += 1;
-	}
-
-	function handle_wheel(event) {
-		const userOffset = $s_user_graphOffset;
-		const delta = new Point(-event.deltaX, -event.deltaY);
-		if (!!userOffset && g.allow_HorizontalScrolling && delta.magnitude > 1) {
-			g.graphOffset_setTo(userOffset.offsetBy(delta));
-			rebuilds += 1;
-		}
-	}
-
-	function subscribeTo_scroll() {
-		if (g.device_isMobile) {
-			scrollable?.addEventListener('scroll', () => {
-				const delta = g.windowDelta;
-				const userOffset = get(s_user_graphOffset);
-				if (!!userOffset && !!delta && g.allow_HorizontalScrolling) {
-					g.graphOffset_setTo(userOffset.offsetBy(delta));
-				}
-			});
-		}
-	}
 
 	async function handle_key_down(event) {
 		if (event.type == 'keydown') {
@@ -108,7 +72,11 @@
 </style>
 
 <svelte:document on:keydown={handle_key_down}/>
-<div style='{k.prevent_selection_style};'>
+<div 
+	style='
+		touch-action: none;
+		pointer-events: auto;
+		{k.prevent_selection_style};'>
 	{#if $s_isBusy}
 		<p>Welcome to Seriously</p>
 		{#if $s_db_type != DBType.local}
@@ -172,23 +140,7 @@
 			{#if $s_id_popupView == IDButton.builds}
 				<BuildNotes/>
 			{:else if !$s_id_popupView}
-				{#key $s_focus_ancestry, rebuilds}
-					<div class='clipper'
-						bind:this={scrollable}
-						on:wheel={handle_wheel}
-						style='
-							top:{$s_graphRect.origin.y}px;
-							left: {$s_graphRect.origin.x}px;
-							width: {$s_graphRect.size.width}px;
-							height: {$s_graphRect.size.height}px;
-							z-index: {ZIndex.panel};'>
-						{#if $s_show_rings}
-							<Rings_Graph/>
-						{:else}
-							<Tree_Graph/>
-						{/if}
-					</div>
-				{/key}
+				<Graph/>
 			{/if}
 		</div>
 	{/if}

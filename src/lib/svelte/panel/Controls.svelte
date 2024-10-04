@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { g, k, u, ux, show, Point, ZIndex, onMount, signals, svgPaths, IDButton } from '../../ts/common/Global_Imports';
 	import { ElementType, Element_State, persistLocal, IDPersistent, GraphRelations } from '../../ts/common/Global_Imports';
-	import { s_show_rings, s_tree_mode, s_thing_fontFamily } from '../../ts/state/Reactive_State';
+	import { s_show_rings, s_tree_mode, s_device_isMobile, s_thing_fontFamily } from '../../ts/state/Reactive_State';
 	import { s_show_details, s_id_popupView, s_resize_count } from '../../ts/state/Reactive_State';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Button from '../mouse buttons/Button.svelte';
@@ -12,8 +12,8 @@
 	const size_small = k.default_buttonSize;
 	const size_big = size_small + 4;
 	const resize_viewBox = `0, 0, ${size_big}, ${size_big}`;
-	let width = g.windowSize.width - 20;
 	let elementStates_byID: { [id: string]: Element_State } = {};
+	let width = g.windowSize.width - 20;
 
 	const ids = [IDButton.details,
 		IDButton.relations,
@@ -107,32 +107,34 @@
 				{/if}
 			{/if}
 		{/if}
-		{#if g.device_isMobile}
-			<Button
-				width={size_big}
-				height={size_big}
-				name={IDButton.smaller}
-				element_state={elementStates_byID[IDButton.smaller]}
-				center={new Point(width - 140, top)}
-				closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.smaller)}>
-				<svg
-					class='svg-shrink'>
-					<path stroke='black' fill=transparent d={svgPaths.dash(size_big, 2)}/>
-				</svg>
-			</Button>
-			<Button
-				width={size_big}
-				height={size_big}
-				name={IDButton.bigger}
-				center={new Point(width - 110, top)}
-				element_state={elementStates_byID[IDButton.bigger]}
-				closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.bigger)}>
-				<svg
-					class='svg-enlarge'>
-					<path stroke='black' fill=transparent d={svgPaths.t_cross(size_big, 2)}/>
-				</svg>
-			</Button>
-		{/if}
+		{#key $s_device_isMobile}
+			{#if $s_device_isMobile}
+				<Button
+					width={size_big}
+					height={size_big}
+					name={IDButton.smaller}
+					element_state={elementStates_byID[IDButton.smaller]}
+					center={new Point(width - 140, top)}
+					closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.smaller)}>
+					<svg
+						class='svg-shrink'>
+						<path stroke='black' fill=transparent d={svgPaths.dash(size_big, 2)}/>
+					</svg>
+				</Button>
+				<Button
+					width={size_big}
+					height={size_big}
+					name={IDButton.bigger}
+					center={new Point(width - 110, top)}
+					element_state={elementStates_byID[IDButton.bigger]}
+					closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.bigger)}>
+					<svg
+						class='svg-enlarge'>
+						<path stroke='black' fill=transparent d={svgPaths.t_cross(size_big, 2)}/>
+					</svg>
+				</Button>
+			{/if}
+		{/key}
 		<Button name={IDButton.builds}
 			width=75
 			height={size_big}
