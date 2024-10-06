@@ -6,37 +6,44 @@
 	import Identifiable from '../../ts/data/Identifiable';
 	import Button from '../mouse buttons/Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
+	const size_small = k.default_buttonSize;
 	const details_top = k.dot_size / 2;
 	const top = (k.dot_size + 3) / 2;
 	const lefts = [10, 65, 137];
-	const size_small = k.default_buttonSize;
 	const size_big = size_small + 4;
 	const resize_viewBox = `0, 0, ${size_big}, ${size_big}`;
 	let elementStates_byID: { [id: string]: Element_State } = {};
+	let elementShown_byID: {[key: string]: boolean} = {};
 	let width = g.windowSize.width - 20;
 
-	const ids = [IDButton.details,
-		IDButton.relations,
+	const ids = [	// in order of importance on mobile
+		IDButton.details,
 		IDButton.smaller,
-		IDButton.layout,
 		IDButton.bigger,
+		IDButton.relations,
+		IDButton.help,
 		IDButton.builds,
-		IDButton.help];
-	
+		IDButton.layout,
+	];
+
+	onMount(() => { setup_forIDs(); });
 	function togglePopupID(id) { $s_id_popupView = ($s_id_popupView == id) ? null : id; }
-	
-	onMount(() => {
-		for (const id of ids) {
-			const element_state = ux.elementState_for(new Identifiable(id), ElementType.control, id);
-			element_state.set_forHovering('black', 'pointer');
-			element_state.hoverIgnore = id == IDButton.details;
-			elementStates_byID[id] = element_state;
-		}
-	});
 
 	$: {
 		const _ = $s_resize_count;
 		width = g.windowSize.width - 20;
+	}
+
+	function setup_forIDs() {
+		let total = g.windowSize.width + 50;
+		for (const id of ids) {
+			total -= u.getWidthOf(id);
+			const element_state = ux.elementState_for(new Identifiable(id), ElementType.control, id);
+			element_state.set_forHovering('black', 'pointer');
+			element_state.hoverIgnore = id == IDButton.details;
+			elementStates_byID[id] = element_state;
+			elementShown_byID[id] = total > 0;
+		}
 	}
 
 	function next_graph_relations() {
@@ -82,18 +89,20 @@
 				closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.details)}>
 				<img src='settings.svg' alt='circular button' width={size_small}px height={size_small}px/>
 			</Button>
-			{#if show.controls}
-				<Button name={IDButton.layout}
-					width=45
-					height={size_big}
-					center={new Point(lefts[1], top)}
-					element_state={elementStates_byID[IDButton.layout]}
-					closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.layout)}>
-					<span style='font-family: {$s_thing_fontFamily};'>
-						{#if $s_show_rings}tree{:else}rings{/if}
-					</span>
-				</Button>
-				{#if !$s_show_rings}
+			{#if show.modes}
+				{#if elementShown_byID[IDButton.layout]}
+					<Button name={IDButton.layout}
+						width=45
+						height={size_big}
+						center={new Point(lefts[1], top)}
+						element_state={elementStates_byID[IDButton.layout]}
+						closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.layout)}>
+						<span style='font-family: {$s_thing_fontFamily};'>
+							{#if $s_show_rings}tree{:else}rings{/if}
+						</span>
+					</Button>
+				{/if}
+				{#if !$s_show_rings && elementShown_byID[IDButton.relations]}
 					<Button name={IDButton.relations}
 						width=65
 						height={size_big}
@@ -109,54 +118,62 @@
 		{/if}
 		{#key $s_device_isMobile}
 			{#if $s_device_isMobile}
-				<Button
-					width={size_big}
-					height={size_big}
-					name={IDButton.smaller}
-					element_state={elementStates_byID[IDButton.smaller]}
-					center={new Point(width - 140, top)}
-					closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.smaller)}>
-					<svg
-						class='svg-shrink'>
-						<path stroke='black' fill=transparent d={svgPaths.dash(size_big, 2)}/>
-					</svg>
-				</Button>
-				<Button
-					width={size_big}
-					height={size_big}
-					name={IDButton.bigger}
-					center={new Point(width - 110, top)}
-					element_state={elementStates_byID[IDButton.bigger]}
-					closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.bigger)}>
-					<svg
-						class='svg-enlarge'>
-						<path stroke='black' fill=transparent d={svgPaths.t_cross(size_big, 2)}/>
-					</svg>
-				</Button>
+				{#if elementShown_byID[IDButton.smaller]}
+					<Button
+						width={size_big}
+						height={size_big}
+						name={IDButton.smaller}
+						element_state={elementStates_byID[IDButton.smaller]}
+						center={new Point(width - 140, top)}
+						closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.smaller)}>
+						<svg
+							class='svg-shrink'>
+							<path stroke='black' fill=transparent d={svgPaths.dash(size_big, 2)}/>
+						</svg>
+					</Button>
+				{/if}
+				{#if elementShown_byID[IDButton.bigger]}
+					<Button
+						width={size_big}
+						height={size_big}
+						name={IDButton.bigger}
+						center={new Point(width - 110, top)}
+						element_state={elementStates_byID[IDButton.bigger]}
+						closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.bigger)}>
+						<svg
+							class='svg-enlarge'>
+							<path stroke='black' fill=transparent d={svgPaths.t_cross(size_big, 2)}/>
+						</svg>
+					</Button>
+				{/if}
 			{/if}
 		{/key}
-		<Button name={IDButton.builds}
-			width=75
-			height={size_big}
-			center={new Point(width - 55, top)}
-			element_state={elementStates_byID[IDButton.builds]}
-			closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.builds)}>
-			<span style='font-family: {$s_thing_fontFamily};'>
-				{'build ' + k.build_number}
-			</span>
-		</Button>
-		<Button name={IDButton.help}
-			width={size_big}
-			height={size_big}
-			center={new Point(width, top)}
-			element_state={elementStates_byID[IDButton.help]}
-			closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.help)}>
-			<span
-				style='top:2px;
-					left:5.5px;
-					position:absolute;'>
-				?
-			</span>
-		</Button>
+		{#if elementShown_byID[IDButton.builds]}
+			<Button name={IDButton.builds}
+				width=75
+				height={size_big}
+				center={new Point(width - 55, top)}
+				element_state={elementStates_byID[IDButton.builds]}
+				closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.builds)}>
+				<span style='font-family: {$s_thing_fontFamily};'>
+					{'build ' + k.build_number}
+				</span>
+			</Button>
+		{/if}
+		{#if elementShown_byID[IDButton.help]}
+			<Button name={IDButton.help}
+				width={size_big}
+				height={size_big}
+				center={new Point(width, top)}
+				element_state={elementStates_byID[IDButton.help]}
+				closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.help)}>
+				<span
+					style='top:2px;
+						left:5.5px;
+						position:absolute;'>
+					?
+				</span>
+			</Button>
+		{/if}
 	</div>
 {/if}

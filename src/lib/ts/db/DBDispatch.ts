@@ -21,9 +21,9 @@ export default class DBDispatch {
 		const type = queryStrings.get('db');
 		if (!!type) {
 			this.db_set_accordingToType(type);
-			this.db.queryStrings_apply();
 			s_db_type.set(type);
 		}
+		this.db.queryStrings_apply();
 	}
 
 	constructor() {

@@ -135,7 +135,7 @@
 			style='
 				height: 100%;
 				position: fixed;
-				z-index: {ZIndex.panel};
+				z-index: {ZIndex.backmost};
 				left: {$s_show_details ? k.width_details : 0}px;'>
 			{#if $s_id_popupView == IDButton.builds}
 				<BuildNotes/>

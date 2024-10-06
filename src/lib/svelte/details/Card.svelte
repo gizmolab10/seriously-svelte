@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { g, k, ux, show, Rect, Size, Point, Thing, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
 	import { s_card_ancestry, s_grabbed_ancestries, s_thing_fontFamily } from '../../ts/state/Reactive_State';
-	import { Info_Kind, persistLocal, ElementType, IDPersistent } from '../../ts/common/Global_Imports';
+	import { persistLocal, ElementType, IDPersistent } from '../../ts/common/Global_Imports';
 	import { s_color_thing, s_title_thing, s_focus_ancestry } from '../../ts/state/Reactive_State';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
@@ -48,16 +48,11 @@
 		return !!grabs && (grabs.length > 1 || !$s_focus_ancestry.isGrabbed);
 	}
 
-	function next_infoKind() {
-		switch (show.info_kind) {
-			case Info_Kind.focus: return Info_Kind.selection;
-			default:			  return Info_Kind.focus;
-		}
-	}
+	function next_infoKind() { return !show.focus_info; }
 
 	function update_forKind() {
-		button_title = `show ${next_infoKind()}`;
-		if (show.info_kind == Info_Kind.focus || !hasGrabs()) {
+		button_title = `show ${next_infoKind() ? 'focus' : 'selection'}`;
+		if (show.focus_info || !hasGrabs()) {
 			ancestry = $s_focus_ancestry;
 		} else {
 			grabs = $s_grabbed_ancestries;
@@ -73,9 +68,9 @@
 		if (mouse_state.isHover) {
 			element_state.isOut = mouse_state.isOut;
 		} else if (mouse_state.isUp) {
-			const kind = next_infoKind()
-			persistLocal.write_key(IDPersistent.info_kind, kind);
-			show.info_kind = kind;
+			const focus_info = next_infoKind();
+			persistLocal.write_key(IDPersistent.focus_info, focus_info);
+			show.focus_info = focus_info;
 			update_forKind();
 		}
 	}

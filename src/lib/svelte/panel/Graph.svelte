@@ -6,7 +6,7 @@
 	import Tree_Graph from '../tree/Tree_Graph.svelte';
 	let initialTouch: Point | null = null;
 	let currentTouch: Point | null = null;
-	let draggableRect = $s_graphRect.atZero_forX;
+	let draggableRect: Rect | null = null;
 	let style = k.empty;
 	let rebuilds = 0;
 	let draggable;
@@ -32,8 +32,14 @@
 	}
 
 	function handle_touch_start(event: TouchEvent) {
-		const touch = event.touches[0];
-		initialTouch = { x: touch.clientX, y: touch.clientY };
+		const quantity = event.touches.length;
+		switch (quantity) {
+			case 1: break;
+			case 2:
+				const touch = event.touches[0];
+				initialTouch = { x: touch.clientX, y: touch.clientY };
+				debug.log_action(` GRAPH ${quantity} touches`);
+		}
 	}
 
 	function handle_touch_end(event: TouchEvent) {
@@ -42,14 +48,19 @@
 	}
 
 	function handle_touch_move(event: TouchEvent) {
-		event.preventDefault();
-		if (initialTouch && draggable) {
-			const touch = event.touches[0];
-			currentTouch = { x: touch.clientX, y: touch.clientY };
-			const deltaX = currentTouch.x - initialTouch.x;
-			const deltaY = currentTouch.y - initialTouch.y;
-			draggable.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
-			debug.log_action(` GRAPH touch`);
+		const quantity = event.touches.length;
+		switch (quantity) {
+			case 1: break;
+			case 2:
+				event.preventDefault();
+				if (initialTouch && draggable) {
+					const touch = event.touches[0];
+					currentTouch = { x: touch.clientX, y: touch.clientY };
+					const deltaX = currentTouch.x - initialTouch.x;
+					const deltaY = currentTouch.y - initialTouch.y;
+					draggable.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+					debug.log_action(` GRAPH touch`);
+				}
 		}
 	}
 
@@ -83,10 +94,11 @@
 	function update_style() {
 		style=`
 			left: 0px;
+			verflow: hidden;
 			position: absolute;
 			touch-action: none;
 			pointer-events: auto;
-			z-index: ${ZIndex.panel};
+			z-index: ${ZIndex.backmost};
 			top:${draggableRect.origin.y - 9}px;
 			height: ${draggableRect.size.height}px;
 			width: ${draggableRect.size.width - 13}px;`

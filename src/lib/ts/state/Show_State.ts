@@ -1,15 +1,15 @@
-import { g, k, signals, Info_Kind, persistLocal } from '../common/Global_Imports';
+import { g, k, signals, persistLocal } from '../common/Global_Imports';
 import { IDPersistent, GraphRelations } from '../common/Global_Imports';
 import { s_show_details, s_tree_mode } from './Reactive_State';
 
 class Show_State {
-	info_kind	= Info_Kind.selection;
+	focus_info	= false;
 	info		= false;
 	quests		= false;
 	titleAtTop	= false;
 	arrowheads	= false;
-	controls	= true;
 	tinyDots	= true;
+	modes		= true;
 
 	queryStrings_apply() {
 		const queryStrings = g.queryStrings;
@@ -31,9 +31,9 @@ class Show_State {
 					this.quests = flag;
 					persistLocal.write_key(IDPersistent.quests, flag);
 					break;
-				case 'controls':
-					this.controls = flag;
-					persistLocal.write_key(IDPersistent.controls, flag);
+				case 'modes':
+					this.modes = flag;
+					persistLocal.write_key(IDPersistent.modes, flag);
 					break;
 				case 'tinyDots':
 					this.tinyDots = flag;
@@ -54,12 +54,12 @@ class Show_State {
 	restore_state() {
 		persistLocal.write_key(IDPersistent.title_atTop, false);
 		this.info = persistLocal.read_key(IDPersistent.info) ?? false;
+		this.modes = persistLocal.read_key(IDPersistent.modes) ?? true;
 		this.quests = persistLocal.read_key(IDPersistent.quests) ?? false;
-		this.controls = persistLocal.read_key(IDPersistent.controls) ?? true;
 		this.tinyDots = persistLocal.read_key(IDPersistent.tinyDots) ?? false;
 		this.arrowheads = persistLocal.read_key(IDPersistent.arrowheads) ?? false;
+		this.focus_info = persistLocal.read_key(IDPersistent.focus_info) ?? false;
 		this.titleAtTop = persistLocal.read_key(IDPersistent.title_atTop) ?? false;
-		this.info_kind = persistLocal.read_key(IDPersistent.info_kind) ?? Info_Kind.selection;
 		s_tree_mode.set(persistLocal.read_key(IDPersistent.relations) ?? GraphRelations.children);
 		s_show_details.set(persistLocal.read_key(IDPersistent.details) ?? false);
 	}

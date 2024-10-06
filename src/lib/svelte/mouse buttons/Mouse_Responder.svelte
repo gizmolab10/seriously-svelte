@@ -75,7 +75,7 @@
 		mouse_state.clicks = 0;
 	}
 
-	function downState(isDown: boolean, isDouble: boolean = false, isLong: boolean = false): Mouse_State {
+	function create_state(isDown: boolean, isDouble: boolean = false, isLong: boolean = false): Mouse_State {
 		const state = mouse_state.copy;
 		state.isUp = !isDown && !isDouble && !isLong;
 		state.element = mouse_button;
@@ -88,7 +88,6 @@
 	}
 
 	function handle_pointerUp(event) {
-		event.preventDefault();
 		if (detect_mouseUp) {// && (!!mouse_timer.mouse_longClick_timer)) {
 
 			// tear down timers and call closure
@@ -100,12 +99,11 @@
 	}
 	
 	function handle_pointerDown(event) {
-		event.preventDefault();
 		if (detect_mouseDown && mouse_state.clicks == 0) {
 
 			// call down closure
 
-			mouse_state_closure(downState(true));
+			mouse_state_closure(create_state(true));
 		}
 		mouse_state.clicks += 1;
 		if (detect_doubleClick) {
@@ -115,7 +113,7 @@
 			mouse_timer.setTimeout(Timer_Type.double, () => {
 				if (mouse_state.clicks == 2) {
 					reset();
-					mouse_state_closure(downState(false, true, false));
+					mouse_state_closure(create_state(false, true, false));
 				}
 			});
 		}
@@ -125,7 +123,7 @@
 
 			mouse_timer.setTimeout(Timer_Type.long, () => {
 				reset();
-				mouse_state_closure(downState(false, false, true));
+				mouse_state_closure(create_state(false, false, true));
 			});
 		}
 	}

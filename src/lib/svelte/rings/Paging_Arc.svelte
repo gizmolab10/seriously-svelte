@@ -78,7 +78,7 @@
 				<Mouse_Responder
 					width={radius * 2}
 					height={radius * 2}
-					zindex={ZIndex.panel}
+					zindex={ZIndex.backmost}
 					center={g.graph_center}
 					detect_longClick={false}
 					name={cluster_map?.name}

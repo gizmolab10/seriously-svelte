@@ -54,7 +54,7 @@
 	<div class='clusters-graph'
 		bind:this={clusters_graph}
 		style='
-			z-index:{ZIndex.panel};
+			z-index:{ZIndex.backmost};
 			width:{$s_graphRect.size.width}px;
 			height:{$s_graphRect.size.height}px;
 			transform:translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px);'>

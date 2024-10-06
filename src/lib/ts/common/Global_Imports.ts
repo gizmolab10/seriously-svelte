@@ -24,8 +24,8 @@ import { Paging_State, Page_States } from '../state/Page_States';
 import { onMount, onDestroy, setContext, getContext } from 'svelte';
 import { IDPersistent, persistLocal } from '../managers/Persist_Local';
 import { PredicateKind, GraphRelations, CreationOptions } from './Enumerations';
+import { IDLine, IDTool, IDTrait, ZIndex, IDButton, IDBrowser } from './Enumerations';
 import { ElementType, AlterationType, Rebuild_Type, SvelteComponentType } from './Enumerations';
-import { IDLine, IDTool, IDTrait, ZIndex, IDButton, Info_Kind, IDBrowser } from './Enumerations';
 
 import Clusters_Geometry from '../geometry/Clusters_Geometry';
 import Alteration_State from '../state/Alteration_State';
@@ -57,12 +57,11 @@ import { transparentize } from 'color2k';
 
 export {
 	g, k, u, ux,
-	Info_Kind, Rebuild_Type,
 	debug, Debug, DebugFlag,
-	Timer_Type, Mouse_Timer,
 	Angle, Quadrant, Orientation,
 	Tree_Geometry, Widget_MapRect,
 	muuri, interact, transparentize,
+	Timer_Type, Mouse_Timer, Rebuild_Type,
 	Rect, Size, Point, svgPaths, Direction,
 	Arc_Map, Cluster_Map, Clusters_Geometry,
 	show, events, builds, signals, wrappers,

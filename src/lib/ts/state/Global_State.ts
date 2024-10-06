@@ -1,5 +1,5 @@
 import { s_show_rings, s_ring_paging_state, s_ring_resizing_state, s_ring_rotation_state } from './Reactive_State';
-import { s_graphRect, s_show_details, s_scale_factor, s_color_thing, s_user_graphOffset } from './Reactive_State';
+import { s_graphRect, s_show_details, s_color_thing, s_user_graphOffset } from './Reactive_State';
 import { s_rebuild_count, s_focus_ancestry, s_grabbed_ancestries, s_expanded_ancestries } from './Reactive_State';
 import { k, u, ux, get, show, Rect, Size, Point, debug, events, dbDispatch } from '../common/Global_Imports';
 import { persistLocal, IDPersistent, Rotation_State, Expansion_State } from '../common/Global_Imports';
@@ -11,6 +11,7 @@ class Global_State {
 	allow_TitleEditing = true;
 	allow_HorizontalScrolling = true;
 
+	scale_factor = 1;
 	things_arrived = false;
 	isEditing_text = false;
 	scroll = this.windowScroll;
@@ -24,20 +25,22 @@ class Global_State {
 		// this is the first code called by the app //
 		//////////////////////////////////////////////
 
-		s_resize_count.set(0);							// defaults
+		const isMobile = this.device_isMobile;
+		debug.queryStrings_apply();						// debug even setup code
+		this.applyScale(isMobile ? 2 : 1);				// defaults
+		s_resize_count.set(0);
 		s_rebuild_count.set(0);
 		s_mouse_up_count.set(0);
 		s_color_thing.set(null);
-		s_device_isMobile.set(this.device_isMobile);
+		s_device_isMobile.set(isMobile);
 		s_ring_paging_state.set(new Rotation_State());
 		s_ring_rotation_state.set(new Rotation_State());
 		s_ring_resizing_state.set(new Expansion_State());
-		persistLocal.restore_state();					// persist
+		persistLocal.restore_state();					// local persistance
 		persistLocal.restore_db();
-		this.queryStrings_apply();						// url query string
+		this.queryStrings_apply();						// query strings
 		show.queryStrings_apply();
-		debug.queryStrings_apply();
-		this.subscribeTo_resizeEvents();				// watch user
+		this.subscribeTo_resizeEvents();				// setup to watch user
 		events.setup();
 	}
 
@@ -104,7 +107,7 @@ class Global_State {
 	}
 
 	get windowSize(): Size {
-		const ratio = get(s_scale_factor);
+		const ratio = this.scale_factor;
 		return new Size(window.innerWidth / ratio, window.innerHeight / ratio);
 	}
 
@@ -175,6 +178,7 @@ class Global_State {
 		const originOfGraph = new Point(left, top);
 		const sizeOfGraph = this.windowSize.reducedBy(originOfGraph);	// account for origin
 		const rect = new Rect(originOfGraph, sizeOfGraph);
+		debug.log_action(` STATE graphRect_update ${rect.description}`);
 		s_graphRect.set(rect);											// used by Panel and Graph_Tree
 	}
 
@@ -188,7 +192,7 @@ class Global_State {
 	}
 
 	applyScale(scale: number) {
-		s_scale_factor.set(scale)
+		this.scale_factor = scale;
 		const zoomContainer = document.documentElement;
 		zoomContainer.style.setProperty('zoom', scale.toString());
 		zoomContainer.style.transform = `scale(var(zoom))`;

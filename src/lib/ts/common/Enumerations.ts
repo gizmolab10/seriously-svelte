@@ -13,11 +13,6 @@ export enum PredicateKind {
 	contains  = 'contains',
 }
 
-export enum Info_Kind {
-	selection = 'selection',
-	focus	  = 'focus',
-}
-
 export enum GraphRelations {
 	children = 'children',
 	parents	 = 'parents',
@@ -96,7 +91,7 @@ export enum ElementType {
 
 export enum ZIndex {	// do not change the order
 	common,
-	panel,
+	backmost,
 	paging,
 	rotation,
 	lines,

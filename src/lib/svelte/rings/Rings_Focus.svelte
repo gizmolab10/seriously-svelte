@@ -36,13 +36,13 @@
 		position: absolute;
 		width:{titleWidth}px;
 		top:{focus_origin.y}px;
-		z-index: {ZIndex.panel};
+		z-index: {ZIndex.backmost};
 		left: {focus_origin.x}px;'>
 		<Mouse_Responder
 			height={height}
 			width={titleWidth}
 			name='focus-border'
-			zindex={ZIndex.panel}
+			zindex={ZIndex.backmost}
 			detect_longClick={false}
 			cursor={k.cursor_default}
 			isHit_closure={() => false}

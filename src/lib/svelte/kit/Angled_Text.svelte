@@ -17,7 +17,7 @@
 		top: {center.y}px;
 		left: {center.x}px;
 		position: absolute;
-		z-index: {ZIndex.panel};
+		z-index: {ZIndex.backmost};
 		transform: translate(-50%, -50%) rotate({angleDeg}deg);'>
 	<span class='text'
 		style='

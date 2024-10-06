@@ -29,7 +29,7 @@ export default class UX_State {
 	get isAny_paging_arc_hovering(): boolean { return this.rotation_states.filter(s => s.isHovering).length > 0; }
 
 	name_from(identifiable: Identifiable, type: ElementType, subtype: string): string {
-		return `${type}-${subtype}-${identifiable.id}`;
+		return `${type}-${subtype}-id:${identifiable.id}`;
 	}
 
 	rotationState_forName(name: string): Rotation_State {

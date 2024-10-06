@@ -40,7 +40,7 @@
 
 {#key rebuilds}
 	{#if $s_clusters_geometry}
-		<div class='necklace-widgets' style='z-index:{ZIndex.panel};'>
+		<div class='necklace-widgets' style='z-index:{ZIndex.backmost};'>
 			{#each $s_clusters_geometry.widget_maps as widget_map}
 				<Widget
 					subtype={widget_map.subtype}

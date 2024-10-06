@@ -9,7 +9,7 @@
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/Identifiable';
 	import Paging_Arc from './Paging_Arc.svelte';
-	export let zindex = ZIndex.panel;
+	export let zindex = ZIndex.backmost;
 	export let cursor_closure = () => {};
 	const ring_width = k.ring_rotation_thickness;
 	const ring_outer_offset = -ring_width;

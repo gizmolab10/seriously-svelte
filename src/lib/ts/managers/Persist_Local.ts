@@ -13,17 +13,17 @@ export enum IDPersistent {
 	page_states   = 'page_states',
 	user_offset	  = 'user_offset',
 	ring_angle    = 'ring_angle',
-	info_kind     = 'info_kind',
+	focus_info    = 'focus_info',
 	arrowheads	  = 'arrowheads',
 	relations	  = 'relations',
 	expanded	  = 'expanded',
-	controls	  = 'controls',
 	tinyDots	  = 'tinyDots',
 	grabbed		  = 'grabbed',
 	details		  = 'details',
 	base_id		  = 'base_id',
 	layout		  = 'layout',
 	quests		  = 'quests',
+	modes		  = 'modes',
 	scale		  = 'scale',
 	focus		  = 'focus',
 	info		  = 'info',
@@ -176,7 +176,6 @@ class Persist_Local {
 			this.write_key(IDPersistent.relationships, true);
 		}
 		show.restore_state();
-		g.applyScale(1);
 		s_rotation_ring_angle.set(this.read_key(IDPersistent.ring_angle) ?? 0);
 		s_thing_fontFamily.set(this.read_key(IDPersistent.font) ?? 'Times New Roman');
 		s_show_rings.set(this.read_key(IDPersistent.layout) ?? false);
