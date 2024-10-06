@@ -3,32 +3,32 @@ import { g } from '../../ts/state/Global_State';
 // query string: ?debug=reticule,tools
 
 export enum DebugFlag {
-	reticule = 'reticule',	// show reticule in clusters
-	persist	 = 'persist',
-	noRings	 = 'noRings',
-	origins  = 'origins',
-	rebuild  = 'rebuild',
-	layout	 = 'layout',
-	action   = 'action',
-	remote	 = 'remote',	// interactions with remote
-	things	 = 'things',	// enable Things.debugLog
-	colors	 = 'colors',	// indicate some coordinates
-	graph	 = 'graph',		// log size of graph area
-	order	 = 'order',		// observe relocating
-	error	 = 'error',		// async errors
-	lines	 = 'lines',		// alignment dots for lines and widgets
-	tools	 = 'tools',		// state logic of add parent tool
-	hover	 = 'hover',
-	build	 = 'build',
-	mount	 = 'mount',
-	edit	 = 'edit',		// editing state machine
-	beat	 = 'beat',		// heartbeat
-	key		 = 'key',		// keyboard input
+	hide_rings = 'hide_rings',
+	reticule   = 'reticule',	// show reticule in clusters
+	persist	   = 'persist',
+	origins    = 'origins',
+	rebuild    = 'rebuild',
+	layout	   = 'layout',
+	action     = 'action',
+	remote	   = 'remote',	// interactions with remote
+	things	   = 'things',	// enable Things.debugLog
+	colors	   = 'colors',	// indicate some coordinates
+	graph	   = 'graph',		// log size of graph area
+	order	   = 'order',		// observe relocating
+	error	   = 'error',		// async errors
+	lines	   = 'lines',		// alignment dots for lines and widgets
+	tools	   = 'tools',		// state logic of add parent tool
+	hover	   = 'hover',
+	build	   = 'build',
+	mount	   = 'mount',
+	edit	   = 'edit',		// editing state machine
+	beat	   = 'beat',		// heartbeat
+	key		   = 'key',		// keyboard input
 }
 
 export class Debug {
 	flags: Array<DebugFlag>;
-	constructor(flags: Array<DebugFlag>) { this.flags = flags; }
+	constructor(flags: Array<DebugFlag>) { this.flags   = flags; }
 	hasOption(option: DebugFlag) { return this.flags.includes(option); }
 	log_key(message: string) { this.log_maybe(DebugFlag.key, message); }
 	log_beat(message: string) { this.log_maybe(DebugFlag.beat, message); }
@@ -47,18 +47,18 @@ export class Debug {
 	log_maybe(option: DebugFlag, message: string) { if (this.hasOption(option)) { console.log(option.toUpperCase(), message); }}
 	log_target(target: any, key: string) { console.log(`Method \'${key}\' is called on class \'${target.constructor.name}\'`); }
 	get reticule(): boolean { return this.hasOption(DebugFlag.reticule); }
-	get noRings(): boolean { return this.hasOption(DebugFlag.noRings); }
+	get hide_rings(): boolean { return this.hasOption(DebugFlag.hide_rings); }
 	get lines(): boolean { return this.hasOption(DebugFlag.lines); }
 
 	queryStrings_apply() {
-		const queryStrings = g.queryStrings;
-		const debug = queryStrings.get('debug');
+		const queryStrings   = g.queryStrings;
+		const debug   = queryStrings.get('debug');
 		if (debug) {
-			const flags = debug.split(',');
+			const flags   = debug.split(',');
 			for (const option of flags) {
 				switch (option) {
 					case 'reticule': this.flags.push(DebugFlag.reticule); break;
-					case 'noRings': this.flags.push(DebugFlag.noRings); break;
+					case 'hide_rings': this.flags.push(DebugFlag.hide_rings); break;
 					case 'origins': this.flags.push(DebugFlag.origins); break;
 					case 'persist': this.flags.push(DebugFlag.persist); break;
 					case 'rebuild': this.flags.push(DebugFlag.rebuild); break;
@@ -84,4 +84,4 @@ export class Debug {
 	}
 }
 
-export const debug = new Debug([]);
+export const debug   = new Debug([]);

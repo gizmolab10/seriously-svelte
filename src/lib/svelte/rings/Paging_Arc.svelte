@@ -1,9 +1,8 @@
 <script lang='ts'>
+	import { s_thing_fontFamily, s_ring_paging_state, s_ring_rotation_radius } from '../../ts/state/Reactive_State';
 	import { g, k, u, ux, Rect, Size, Point, debug, Angle, ZIndex, onMount } from '../../ts/common/Global_Imports';
 	import { opacitize, Cluster_Map, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { s_mouse_location, s_mouse_up_count, s_focus_ancestry } from '../../ts/state/Reactive_State';
-	import { s_ring_rotation_state, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
-	import { s_thing_fontFamily, s_ring_paging_state } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { ArcPart } from '../../ts/common/Enumerations';
 	import Identifiable from '../../ts/data/Identifiable';
@@ -11,7 +10,7 @@
 	export let color = 'red';
 	export let cluster_map!: Cluster_Map;
 	const offset = k.ring_widget_padding;
-	const radius = $s_rotation_ring_radius + offset;
+	const radius = $s_ring_rotation_radius + offset;
 	const thumb_name = `thumb-${cluster_map?.name}`;
 	const viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;
 	let origin = g.graph_center.offsetBy(Point.square(-radius));
@@ -53,7 +52,7 @@
 
 	function update_colors() {
 		arc_color = u.opacitize(color, $s_ring_paging_state.stroke_opacity);
-		thumb_color = u.opacitize(color, $s_ring_rotation_state.isActive ? 0.15 : cluster_map?.paging_rotation.three_level_opacity);
+		thumb_color = u.opacitize(color, g.ring_rotation_state.isActive ? 0.15 : cluster_map?.paging_rotation.three_level_opacity);
 	}
 
 	function computed_mouse_angle(): number | null {

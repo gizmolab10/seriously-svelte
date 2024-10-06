@@ -1,8 +1,8 @@
-import { s_show_rings, s_ring_paging_state, s_ring_resizing_state, s_ring_rotation_state } from './Reactive_State';
-import { s_graphRect, s_show_details, s_color_thing, s_user_graphOffset } from './Reactive_State';
+import { s_show_rings, s_ring_paging_state } from './Reactive_State';
 import { s_rebuild_count, s_focus_ancestry, s_grabbed_ancestries, s_expanded_ancestries } from './Reactive_State';
 import { k, u, ux, get, show, Rect, Size, Point, debug, events, dbDispatch } from '../common/Global_Imports';
 import { persistLocal, IDPersistent, Rotation_State, Expansion_State } from '../common/Global_Imports';
+import { s_graphRect, s_show_details, s_color_thing, s_user_graphOffset } from './Reactive_State';
 import { s_resize_count, s_device_isMobile, s_mouse_up_count } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
 
@@ -16,6 +16,8 @@ class Global_State {
 	isEditing_text = false;
 	scroll = this.windowScroll;
 	mouse_responder_number = 0;
+	ring_rotation_state!: Rotation_State;
+	ring_resizing_state!: Expansion_State;
 	rebuild_needed_byType: {[type: string]: boolean} = {};
 	queryStrings = new URLSearchParams(window.location.search);
 
@@ -33,9 +35,9 @@ class Global_State {
 		s_mouse_up_count.set(0);
 		s_color_thing.set(null);
 		s_device_isMobile.set(isMobile);
-		s_ring_paging_state.set(new Rotation_State());
-		s_ring_rotation_state.set(new Rotation_State());
-		s_ring_resizing_state.set(new Expansion_State());
+		s_ring_paging_state.set(new Rotation_State());	// TODO: only needed for paging arc color change
+		this.ring_rotation_state = new Rotation_State();
+		this.ring_resizing_state = new Expansion_State();
 		persistLocal.restore_state();					// local persistance
 		persistLocal.restore_db();
 		this.queryStrings_apply();						// query strings
@@ -98,7 +100,7 @@ class Global_State {
 	get graph_center(): Point { return get(s_graphRect).size.dividedInHalf.asPoint; }
 
 	get isAny_rotation_active(): boolean {
-		return ux.isAny_paging_arc_active || get(s_ring_paging_state).isActive || get(s_ring_rotation_state).isActive;
+		return ux.isAny_paging_arc_active || get(s_ring_paging_state).isActive || this.ring_rotation_state.isActive;
 	}
 
 	get next_mouse_responder_number(): number {

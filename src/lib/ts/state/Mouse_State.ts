@@ -40,7 +40,7 @@ export default class Mouse_State {
 			Rect.rect_forElement_containsEvent(this.element, this.event);
 	}
 
-	get description(): string {
+	descriptionFor(name: string = ''): string {
 		let states: Array<string> = [];
 		if (this.isHover) { states.push('hover'); }
 		if (this.isOut) { states.push('out'); }
@@ -50,7 +50,7 @@ export default class Mouse_State {
 		if (this.isLong) { states.push('long'); }
 		if (this.isMove) { states.push('move'); }
 		if (this.hit) { states.push('hit'); }
-		return `MOUSE ${states.join(', ')}`;
+		return `${name} MOUSE ${states.join(', ')}`;
 	}
 
 	static empty(event: MouseEvent | null = null) { return new Mouse_State(event, null, false, false, false, true, false, false, false); }

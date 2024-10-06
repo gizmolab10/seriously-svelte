@@ -1,3 +1,4 @@
+import { k } from '../common/Global_Imports';
 import Rotation_State from './Rotation_State';
 
 // for managing the rotation ring
@@ -12,6 +13,7 @@ export default class Expansion_State extends Rotation_State {
 
 	reset() { super.reset(); this.basis_offset = null; }
 	get isActive(): boolean { return !!super.isActive || !!this.basis_offset; }
+	get cursor(): string { return this.isHighlighted ? 'alias' : k.cursor_default; }
 	get stroke_opacity(): number { return this.isHighlighted ? this.basis_opacity * 5 : this.basis_opacity; }
 	get fill_opacity(): number { return this.isHighlighted ? this.basis_opacity * 0.5 : this.basis_opacity * 0.15; }
 

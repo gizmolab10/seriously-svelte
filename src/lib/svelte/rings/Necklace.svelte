@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { s_graphRect, s_paging_state, s_focus_ancestry, s_color_thing } from '../../ts/state/Reactive_State';
-	import { s_clusters_geometry, s_rotation_ring_radius } from '../../ts/state/Reactive_State';
+	import { s_clusters_geometry, s_ring_rotation_radius } from '../../ts/state/Reactive_State';
 	import { k, u, get, Point, ZIndex, signals, onMount } from '../../ts/common/Global_Imports';
 	import { onDestroy, Predicate, Clusters_Geometry } from '../../ts/common/Global_Imports';
 	import Widget from '../widget/Widget.svelte';

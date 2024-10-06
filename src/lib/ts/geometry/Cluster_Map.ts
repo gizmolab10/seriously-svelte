@@ -1,7 +1,7 @@
 import { g, k, u, ux, get, Rect, Point, Angle, debug, IDLine, Arc_Map, Quadrant } from '../common/Global_Imports';
 import { Ancestry, Predicate, Paging_State, Widget_MapRect, Rotation_State } from '../common/Global_Imports';
 import { s_graphRect, s_paging_state, s_focus_ancestry } from '../state/Reactive_State';
-import { s_rotation_ring_angle, s_rotation_ring_radius } from '../state/Reactive_State';
+import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/Reactive_State';
 
 // for one cluster (there are three)
 //
@@ -42,7 +42,7 @@ export default class Cluster_Map  {
 		this.total = total;
 		debug.log_build(` C MAP (ts)  ${total}  ${this.direction_kind}`);
 		this.update_all();
-		s_rotation_ring_radius.subscribe((radius: number) => {
+		s_ring_rotation_radius.subscribe((radius: number) => {
 			if (this.arc_map.outside_arc_radius != radius) {
 				this.update_all();		// do not set_paging_index (else expand will hang)
 			}
@@ -72,12 +72,12 @@ export default class Cluster_Map  {
 	get kind(): string { return this.predicate?.kind.unCamelCase().lastWord() ?? k.empty; }
 	get isParental(): boolean { return !this.points_out && !this.predicate?.isBidirectional; }
 	get name(): string { return `${this.focus_ancestry.title}-cluster-${this.direction_kind}`; }
-	get fork_radial(): Point { return Point.fromPolar(get(s_rotation_ring_radius), this.arc_map.fork_angle); }
+	get fork_radial(): Point { return Point.fromPolar(get(s_ring_rotation_radius), this.arc_map.fork_angle); }
 	get paging_state_ofFocus(): Paging_State | null { return this.paging_state_ofAncestry(this.focus_ancestry); }
 
 	get thumb_isHit(): boolean {
 		if (this.isPaging) {
-			const ring_origin = g.graph_center.offsetBy(Point.square(-get(s_rotation_ring_radius)));
+			const ring_origin = g.graph_center.offsetBy(Point.square(-get(s_ring_rotation_radius)));
 			const vector = u.vector_ofOffset_fromGraphCenter_toMouseLocation(ring_origin);
 			return vector?.isContainedBy_path(this.thumb_map.svg_arc_path) ?? false;
 		}
@@ -87,7 +87,7 @@ export default class Cluster_Map  {
 
 	update_label_geometry() {		// rotate text tangent to arc, at center of arc
 		const nadir_offset = (this.arc_straddles_nadir && !this.arc_straddles_zero) ? Angle.half : 0;
-		const radius = get(s_rotation_ring_radius) - k.ring_rotation_thickness + (this.arc_in_lower_half ? 5 : 0) + 15;
+		const radius = get(s_ring_rotation_radius) - k.ring_rotation_thickness + (this.arc_in_lower_half ? 5 : 0) + 15;
 		const ortho = this.arc_in_lower_half ? Angle.quarter : Angle.three_quarters;
 		const angle = this.arc_map.center_angle - nadir_offset;
 		const radial = Point.fromPolar(radius, angle);
@@ -192,7 +192,7 @@ export default class Cluster_Map  {
 	update_widget_angles() {
 		this.widget_maps = [];
 		if (this.shown > 0 && !!this.predicate) {
-			const radius = get(s_rotation_ring_radius);
+			const radius = get(s_ring_rotation_radius);
 			const radial = new Point(radius + k.ring_widget_padding, 0);
 			const fork_pointsRight = new Angle(this.arc_map.fork_angle).angle_pointsRight;
 			const tweak = this.center.offsetByXY(2, -1.5);	// tweak so that drag dots are centered within the rotation ring
@@ -227,7 +227,7 @@ export default class Cluster_Map  {
 
 		const max = this.shown - 1;
 		const row = (max / 2) - index;						// row centered around zero
-		const radius = get(s_rotation_ring_radius);
+		const radius = get(s_ring_rotation_radius);
 		const radial = this.fork_radial;					// points at middle widget
 		let y = radial.y + (row * (k.row_height - 2));		// distribute y equally around fork_y
 		let y_isOutside = false;

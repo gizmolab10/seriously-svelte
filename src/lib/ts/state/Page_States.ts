@@ -1,5 +1,5 @@
 import { k, get, Thing, Predicate, Ancestry, Cluster_Map } from '../common/Global_Imports';
-import { s_paging_state, s_rotation_ring_radius } from './Reactive_State';
+import { s_paging_state, s_ring_rotation_radius } from './Reactive_State';
 import { h } from '../db/DBDispatch';
 
 export class Paging_State {
@@ -41,7 +41,7 @@ export class Paging_State {
 	get indexOf_followingPage(): number { return this.index + this.shown; }
 	get thing(): Thing | null { return h.thing_forHID(this.thing_id.hash()) ?? null; }
 	get predicate(): Predicate | null { return h.predicate_forKind(this.kind) ?? null; }
-	get canShow(): number { return Math.round((get(s_rotation_ring_radius) ** 1.5) * Math.PI / 45 / k.row_height) + 1; }
+	get canShow(): number { return Math.round((get(s_ring_rotation_radius) ** 1.5) * Math.PI / 45 / k.row_height) + 1; }
 	get sub_key(): string { return `${this.thing_id}${k.generic_separator}${this.kind}${k.generic_separator}${this.points_out}`; }
 
 	get description(): string {

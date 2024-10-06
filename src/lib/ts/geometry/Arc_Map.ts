@@ -1,12 +1,12 @@
 import { k, get, Rect, Point, Angle, svgPaths } from '../common/Global_Imports';
-import { s_rotation_ring_radius } from '../state/Reactive_State';
+import { s_ring_rotation_radius } from '../state/Reactive_State';
 
 // create svg paths for generic arcs
 // arc radii are smaller than ring radii
 //
 // given:
 //	start, end & fork angles
-//	s_rotation_ring_radius
+//	s_ring_rotation_radius
 
 export default class Arc_Map {
 	clusters_center = Point.zero;
@@ -22,7 +22,7 @@ export default class Arc_Map {
 
 	constructor() {
 		const thickness = k.paging_arc_thickness;
-		const radius = get(s_rotation_ring_radius);
+		const radius = get(s_ring_rotation_radius);
 		this.clusters_center = Point.square(radius);
 		this.inside_arc_radius = radius - thickness;
 		this.cap_radius = k.ring_rotation_thickness / 6;

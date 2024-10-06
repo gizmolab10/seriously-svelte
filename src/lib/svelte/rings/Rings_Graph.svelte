@@ -3,7 +3,7 @@
 	import { g, k, u, ux, Rect, Point, debug, IDTool, ZIndex, onMount } from '../../ts/common/Global_Imports';
 	import { signals, ElementType, Rebuild_Type, Clusters_Geometry } from '../../ts/common/Global_Imports';
 	import { s_graphRect, s_show_details, s_focus_ancestry } from '../../ts/state/Reactive_State';
-	import { s_clusters_geometry, s_ring_rotation_state } from '../../ts/state/Reactive_State';
+	import { s_clusters_geometry } from '../../ts/state/Reactive_State';
 	import Rings_Focus from './Rings_Focus.svelte';
 	import Editing_Tools from '../widget/Editing_Tools.svelte';
 	import Circle from '../kit/Circle.svelte';
@@ -44,7 +44,7 @@
 
 	function cursor_closure() {
 		if (!!clusters_graph) {
-			clusters_graph.style.cursor = `${$s_ring_rotation_state.cursor} !important`;
+			clusters_graph.style.cursor = `${g.ring_rotation_state.cursor} !important`;
 		}
 	}
 
