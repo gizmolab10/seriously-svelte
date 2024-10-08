@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { g, k, ux, show, Rect, Size, Point, Thing, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
 	import { s_card_ancestry, s_grabbed_ancestries, s_thing_fontFamily } from '../../ts/state/Reactive_State';
-	import { persistLocal, ElementType, IDPersistent } from '../../ts/common/Global_Imports';
 	import { s_color_thing, s_title_thing, s_focus_ancestry } from '../../ts/state/Reactive_State';
-	import Identifiable from '../../ts/data/Identifiable';
+	import { persistLocal, ElementType, IDPersistent } from '../../ts/common/Global_Imports';
+	import Identifiable from '../../ts/basis/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Button from '../mouse buttons/Button.svelte';
 	import { h } from '../../ts/db/DBDispatch';
@@ -114,11 +114,11 @@
 			{#if hasGrabs()}
 				<Button name={name}
 					zindex={ZIndex.details}
+					closure={button_closure}
 					center={control_rect.center}
 					element_state={element_state}
 					width={control_rect.size.width}
-					height={control_rect.size.height}
-					closure={(mouse_state) => button_closure(mouse_state)}>
+					height={control_rect.size.height}>
 					<span style='font-family: {$s_thing_fontFamily};'>
 						{button_title}
 					</span>

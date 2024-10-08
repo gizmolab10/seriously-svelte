@@ -24,8 +24,8 @@
 		color = $s_focus_ancestry?.thing?.color;
 	}
 
-	function mouse_state_closure(mouse_state) {
-		debug.log_action(`MOUSE ${mouse_state.description}`);
+	function debug_closure(mouse_state) {
+		debug.log_action(` ${mouse_state.descriptionFor('RINGS FOCUS')} MOUSE`);
 	}
 
 </script>
@@ -43,11 +43,10 @@
 			width={titleWidth}
 			name='focus-border'
 			zindex={ZIndex.backmost}
-			detect_longClick={false}
 			cursor={k.cursor_default}
 			isHit_closure={() => false}
-			center={centerOffset.offsetByX(-13)}
-			mouse_state_closure={mouse_state_closure}>
+			mouse_state_closure={debug_closure}
+			center={centerOffset.offsetByX(-13)}>
 			{#key color}
 				<svg
 					style='

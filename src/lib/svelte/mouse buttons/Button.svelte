@@ -3,7 +3,7 @@
 	import { k, u, ux, Rect, Point, ZIndex, onMount } from '../../ts/common/Global_Imports';
 	import { s_thing_fontFamily } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from './Mouse_Responder.svelte';
-	import Identifiable from '../../ts/data/Identifiable';
+	import Identifiable from '../../ts/basis/Identifiable';
 	export let background_color = k.color_background;
 	export let closure = (mouse_state) => {};
 	export let height = k.default_buttonSize;
@@ -59,7 +59,7 @@
 		}
 	}
 
-	function button_closure(mouse_state: Mouse_State) {
+	function hover_closure(mouse_state: Mouse_State) {
 		closure(mouse_state);		// so container can behave or look differently
 		if (mouse_state.isHover) {	// NOT the same as isHovering
 			update_currentStyle();
@@ -73,7 +73,7 @@
 	width={width}
 	height={height}
 	center={center}
-	mouse_state_closure={button_closure}>
+	mouse_state_closure={hover_closure}>
 	<button class='button' id={'button-for-' + name} style={currentStyle}>
 		<slot style='top:-1px;'></slot>
 	</button>

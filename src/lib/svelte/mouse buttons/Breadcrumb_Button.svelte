@@ -56,10 +56,10 @@
 	function updateStyle() {
 		style=`
 			${colorStyles};
+			cursor:pointer;
 			border:${border};
 			border-radius: 1em;
 			padding:-2px 0px 0px 0px;
-			cursor:{element_state.cursor};
 			font-family: {$s_thing_fontFamily};
 		`.removeWhiteSpace();
 	}

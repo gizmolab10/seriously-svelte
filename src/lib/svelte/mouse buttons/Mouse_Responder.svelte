@@ -6,14 +6,14 @@
 	export let mouse_state_closure = (mouse_state) => {};
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;
-	export let detect_doubleClick = true;
-	export let detect_longClick = true;
+	export let cursor: string | null = null;
+	export let detect_doubleClick = false;
+	export let detect_longClick = false;
 	export let detect_mouseDown = true;
 	export let detect_mouseUp = true;
 	export let position = 'absolute';
 	export let zindex = ZIndex.dots;
 	export let center: Point | null;
-	export let cursor = 'pointer';
 	export let align_left = true;
 	export let name = 'generic';
 	const mouse_state = ux.mouse_state_forName(name);	// persist across destroy/recreate
@@ -94,7 +94,7 @@
 
 			reset();
 			mouse_state_closure(Mouse_State.up(event, mouse_button));
-			debug.log_action(`RESPONDER up ${mouse_responder_number}`);
+			debug.log_action(` up ${mouse_responder_number} RESPONDER`);
 		}
 	}
 	
@@ -129,7 +129,10 @@
 	}
 
 	function setupStyle() {
-		style = `cursor: ${cursor}; width: ${width}px; height: ${height}px; position: ${position}; z-index: ${zindex};`;
+		style = `width: ${width}px; height: ${height}px; position: ${position}; z-index: ${zindex};`;
+		if (!!cursor) {
+			style = `${style} cursor: ${cursor};`;
+		}
 		if (!!center) {
 			const x = center.x - width / 2;
 			const horizontal = align_left ? `left: ${x}` : `right: ${-x}`;

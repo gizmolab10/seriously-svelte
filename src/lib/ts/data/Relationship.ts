@@ -1,7 +1,7 @@
 import { k, Thing, debug, DebugFlag, dbDispatch, Predicate } from '../common/Global_Imports';
 import { h } from '../db/DBDispatch';
+import Datum from '../basis/Datum';
 import Airtable from 'airtable';
-import Datum from './Datum';
 
 export default class Relationship extends Datum {
 	idPredicate: string;

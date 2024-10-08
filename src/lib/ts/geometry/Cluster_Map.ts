@@ -26,7 +26,6 @@ export default class Cluster_Map  {
 	cluster_title = k.empty;
 	arc_map = new Arc_Map();
 	color = k.color_default;
-	label_text_angle = 0;
 	predicate: Predicate;
 	points_out: boolean;
 	center = Point.zero;
@@ -92,7 +91,7 @@ export default class Cluster_Map  {
 		const angle = this.arc_map.center_angle - nadir_offset;
 		const radial = Point.fromPolar(radius, angle);
 		this.label_center = this.center.offsetBy(radial);
-		this.label_text_angle = ortho - angle;
+		this.arc_map.label_text_angle = ortho - angle;
 		this.label_position_angle = angle;
 	}
 
@@ -186,7 +185,7 @@ export default class Cluster_Map  {
 			this.points_out ? rotation_angle :		// one directional, use global
 			opposite + tweak;
 		const fork_angle = raw.angle_normalized() ?? 0;
-		this.arc_map.update(fork_angle);
+		this.arc_map.update_fork_angle(fork_angle);
 	}
 
 	update_widget_angles() {
@@ -259,7 +258,7 @@ export default class Cluster_Map  {
 		const arc_start = this.arc_map.start_angle * otherInverter;
 		const start = arc_start + (increment * this.paging_index_ofFocus);
 		const end = start + (increment * this.shown);
-		this.thumb_map.update((start + end) / 2);
+		this.thumb_map.update_fork_angle((start + end) / 2);
 		this.thumb_map.start_angle = start;
 		this.thumb_map.end_angle = end;
 	}

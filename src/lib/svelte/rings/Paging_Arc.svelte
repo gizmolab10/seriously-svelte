@@ -1,11 +1,11 @@
 <script lang='ts'>
 	import { s_thing_fontFamily, s_ring_paging_state, s_ring_rotation_radius } from '../../ts/state/Reactive_State';
-	import { g, k, u, ux, Rect, Size, Point, debug, Angle, ZIndex, onMount } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, show, Rect, Size, Point, debug, Angle, ZIndex, onMount } from '../../ts/common/Global_Imports';
 	import { opacitize, Cluster_Map, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { s_mouse_location, s_mouse_up_count, s_focus_ancestry } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { ArcPart } from '../../ts/common/Enumerations';
-	import Identifiable from '../../ts/data/Identifiable';
+	import Identifiable from '../../ts/basis/Identifiable';
 	import Angled_Text from '../kit/Angled_Text.svelte';
 	export let color = 'red';
 	export let cluster_map!: Cluster_Map;
@@ -17,6 +17,7 @@
 	let mouse_up_count = $s_mouse_up_count;
 	let arc_wrapper!: Svelte_Wrapper;
 	let thumb_color = color;
+	let fork_color = color;
 	let arc_color = color;
 	let arc;
 
@@ -51,6 +52,7 @@
 	function handle_mouse_state(mouse_state: Mouse_State): boolean { return cluster_map.thumb_isHit; }
 
 	function update_colors() {
+		fork_color = u.opacitize(color, 0.3);
 		arc_color = u.opacitize(color, $s_ring_paging_state.stroke_opacity);
 		thumb_color = u.opacitize(color, g.ring_rotation_state.isActive ? 0.15 : cluster_map?.paging_rotation.three_level_opacity);
 	}
@@ -59,7 +61,7 @@
 		return u.vector_ofOffset_fromGraphCenter_toMouseLocation(g.graph_center)?.angle ?? null
 	}
 
-	function mouse_state_closure(mouse_state) {
+	function hover_closure(mouse_state) {
 		if (cluster_map.isPaging) {
 			if (mouse_state.isHover) {
 				cluster_map?.paging_rotation.isHovering = cluster_map.thumb_isHit;	// show highlight around ring
@@ -79,15 +81,14 @@
 					height={radius * 2}
 					zindex={ZIndex.backmost}
 					center={g.graph_center}
-					detect_longClick={false}
 					name={cluster_map?.name}
 					cursor={k.cursor_default}
-					mouse_state_closure={mouse_state_closure}
+					mouse_state_closure={hover_closure}
 					isHit_closure={() => cluster_map.thumb_isHit}>
 					<svg class='svg-arc' viewBox={viewBox}>
 						<path stroke={arc_color} fill=transparent d={cluster_map.arc_map.svg_arc_path}/>
-						{#if debug.reticule}
-							<path stroke='maroon' fill=transparent d={cluster_map.arc_map.svg_reticule_path}/>
+						{#if show.forks}
+							<path stroke={fork_color} fill=transparent d={cluster_map.arc_map.svg_fork_radius_path}/>
 						{/if}
 						{#if cluster_map.isPaging && cluster_map.shown > 1}
 							<path fill={thumb_color} d={cluster_map.thumb_map.svg_arc_path}/>
@@ -102,6 +103,6 @@
 		center={cluster_map.label_center}
 		font_family={$s_thing_fontFamily}
 		font_size={k.thing_fontSize * 0.6}
-		angle={cluster_map.label_text_angle}
+		angle={cluster_map.arc_map.label_text_angle}
 		color={$s_focus_ancestry.thing?.color ?? k.color_default}/>
 {/if}

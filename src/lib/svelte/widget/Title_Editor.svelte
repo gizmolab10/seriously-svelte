@@ -106,7 +106,7 @@
 	}
 
 	function handle_doubleClick(event) {
-		debug.log_action(`TITLE  double click '${thing.title}'`);
+		debug.log_action(` double click '${thing.title}' TITLE`);
 		event.preventDefault();
 		startEditMaybe();
 		clearClicks();

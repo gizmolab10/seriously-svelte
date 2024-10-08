@@ -29,8 +29,8 @@
 <Triangle_Button
 	strokeColor={element_state.stroke}
 	hover_closure={hover_closure}
-	id={ancestry.thing.title}
 	closure={handle_mouse_state}
+	id={ancestry.thing.title}
 	angle={Direction.right}
 	center={center}
     size={size}

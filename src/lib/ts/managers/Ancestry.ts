@@ -3,7 +3,7 @@ import { g, k, u, get, show, Rect, Size, Thing, debug, signals, wrappers, Predic
 import { s_focus_ancestry, s_grabbed_ancestries, s_edit_state, s_show_rings } from '../state/Reactive_State';
 import { Edit_State, ElementType, Paging_State, Relationship, PredicateKind } from '../common/Global_Imports';
 import { Svelte_Wrapper, Widget_MapRect, AlterationType, SvelteComponentType } from '../common/Global_Imports';
-import Identifiable from '../data/Identifiable';
+import Identifiable from '../basis/Identifiable';
 import { Writable } from 'svelte/store';
 import { h } from '../db/DBDispatch';
 

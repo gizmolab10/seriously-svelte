@@ -37,6 +37,13 @@ export enum IDTrait {
 	bulk  = '~',
 }
 
+export enum Ring_Zone {
+	miss   = 'miss',
+	resize = 'resize',
+	rotate = 'rotate',
+	paging = 'paging',
+}
+
 export enum IDButton {
 	details		= 'show details view',
 	builds		= 'show build notes',
@@ -91,9 +98,9 @@ export enum ElementType {
 
 export enum ZIndex {	// do not change the order
 	common,
-	backmost,
 	paging,
-	rotation,
+	rings,
+	backmost,
 	lines,
 	text,
 	dots,
@@ -119,7 +126,7 @@ export enum IDTool {
 }
 
 export enum SvelteComponentType {
-	rotation = 'rotation',
+	rotate = 'rotate',
 	banners	 = 'banners',
 	details	 = 'details',
 	paging	 = 'paging',

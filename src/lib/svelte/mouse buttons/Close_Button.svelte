@@ -10,7 +10,7 @@
     const svg_cross_path = svgPaths.x_cross(size, size / 6);
     const svg_circle_path = svgPaths.circle_atOffset(size, size - 2);
 
-	function closure(mouse_state) {
+	function hover_up_closure(mouse_state) {
 		if (mouse_state.isHover) {
 			const isHovering = !mouse_state.isOut;
 			fill = isHovering ? 'black' : k.color_background;
@@ -29,7 +29,7 @@
 	cursor='pointer'
 	align_left={false}
 	center={new Point(0, size)}
-	mouse_state_closure={closure}>
+	mouse_state_closure={hover_up_closure}>
     <SVGD3 name='close'
 		fill={fill}
 		width={size}

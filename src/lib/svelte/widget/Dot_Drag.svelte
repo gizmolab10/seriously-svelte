@@ -102,7 +102,7 @@
 		}
 	}
 
-	function closure(mouse_state) {
+	function hover_long_up_closure(mouse_state) {
 		if (!g.isAny_rotation_active) {
 			if (mouse_state.isHover) {
 				updateColors_forHovering(mouse_state.isOut);
@@ -127,8 +127,9 @@
 			width={size}
 			height={size}
 			center={center}
+			detect_longClick={true}
 			name={element_state.name}
-			mouse_state_closure={closure}>
+			mouse_state_closure={hover_long_up_closure}>
 			<button class='drag'
 				bind:this={dotDrag}
 				id={'drag-for-' + name}

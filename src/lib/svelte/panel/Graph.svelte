@@ -15,7 +15,7 @@
 		subscribeTo_events();
 		update_style();
 		const handler = signals.handle_rebuildGraph(1, (ancestry) => {
-			debug.log_action(` GRAPH rebuild`);
+			debug.log_mount(` rebuild GRAPH`);
 			rebuilds += 1;
 		});
 		return () => { handler.disconnect() };
@@ -38,7 +38,7 @@
 			case 2:
 				const touch = event.touches[0];
 				initialTouch = { x: touch.clientX, y: touch.clientY };
-				debug.log_action(` GRAPH ${quantity} touches`);
+				debug.log_action(` ${quantity} touches GRAPH`);
 		}
 	}
 
@@ -59,7 +59,7 @@
 					const deltaX = currentTouch.x - initialTouch.x;
 					const deltaY = currentTouch.y - initialTouch.y;
 					draggable.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
-					debug.log_action(` GRAPH touch`);
+					debug.log_action(` touch GRAPH`);
 				}
 		}
 	}
@@ -70,7 +70,7 @@
 			const userOffset = $s_user_graphOffset;
 			const delta = new Point(-event.deltaX, -event.deltaY);
 			if (!!userOffset && g.allow_HorizontalScrolling && delta.magnitude > 1) {
-				debug.log_action(` GRAPH wheel`);
+				debug.log_action(` wheel GRAPH`);
 				g.graphOffset_setTo(userOffset.offsetBy(delta));
 				rebuilds += 1;
 			}
@@ -83,7 +83,7 @@
 			draggable.removeEventListener('touchmove', handle_touch_move);
 			draggable.removeEventListener('touchend', handle_touch_end);
 			if (g.device_isMobile) {
-				debug.log_action(` GRAPH mobile subscribe`);
+				debug.log_action(`  mobile subscribeGRAPH`);
 				draggable.addEventListener('touchstart', handle_touch_start, { passive: false });
 				draggable.addEventListener('touchmove', handle_touch_move, { passive: false });
 				draggable.addEventListener('touchend', handle_touch_end, { passive: false });

@@ -74,7 +74,7 @@
 		}
 	}
 
-	function closure(mouse_state) {
+	function hover_up_closure(mouse_state) {
 		if (mouse_state.isHover) {
 			set_isHovering(!mouse_state.isOut);
 		} else if (mouse_state.isUp) {
@@ -114,7 +114,7 @@
 			height={size}
 			center={center}
 			name={element_state.name}
-			mouse_state_closure={closure}>
+			mouse_state_closure={hover_up_closure}>
 			<button class='dot'
 				bind:this={dotReveal}
 				on:contextmenu={handle_context_menu}

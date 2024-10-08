@@ -2,9 +2,9 @@ import { g, k, u, get, User, Thing, Grabs, debug, Mouse_State, Access, IDTool, I
 import { Ancestry, Predicate, Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
 import { s_alteration_mode, s_grabbed_ancestries, s_showing_tools_ancestry } from '../state/Reactive_State';
 import { s_isBusy, s_edit_state, s_show_rings, s_focus_ancestry } from '../state/Reactive_State';
-import Identifiable from '../data/Identifiable';
+import Identifiable from '../basis/Identifiable';
 import DBInterface from '../db/DBInterface';
-import Datum from '../data/Datum';
+import Datum from '../basis/Datum';
 
 type Relationships_ByHID = { [hid: number]: Array<Relationship> }
 

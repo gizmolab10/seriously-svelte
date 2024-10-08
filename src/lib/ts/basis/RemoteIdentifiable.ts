@@ -1,10 +1,10 @@
-import Identifiable from '../data/Identifiable';
+import Identifiable from '../basis/Identifiable';
 import { DBType } from '../db/DBInterface';
 
 export default class RemoteIdentifiable extends Identifiable {
-	awaitingCreation: boolean;
 	hasBeen_remotely_saved: boolean;
 	hasRemoteStorage: boolean;
+	awaitingCreation: boolean;
 	lastWriteDate: Date;
 	needsWrite = false;
 	dbType: string;

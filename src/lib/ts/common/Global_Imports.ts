@@ -23,9 +23,9 @@ import { Direction, svgPaths } from '../geometry/SVG_Paths';
 import { Paging_State, Page_States } from '../state/Page_States';
 import { onMount, onDestroy, setContext, getContext } from 'svelte';
 import { IDPersistent, persistLocal } from '../managers/Persist_Local';
-import { PredicateKind, GraphRelations, CreationOptions } from './Enumerations';
 import { IDLine, IDTool, IDTrait, ZIndex, IDButton, IDBrowser } from './Enumerations';
-import { ElementType, AlterationType, Rebuild_Type, SvelteComponentType } from './Enumerations';
+import { Ring_Zone, ElementType, Rebuild_Type, AlterationType } from './Enumerations';
+import { PredicateKind, GraphRelations, CreationOptions, SvelteComponentType } from './Enumerations';
 
 import Clusters_Geometry from '../geometry/Clusters_Geometry';
 import Alteration_State from '../state/Alteration_State';
@@ -43,11 +43,11 @@ import Svelte_Wrapper from './Svelte_Wrapper';
 import Ancestry from '../managers/Ancestry';
 import Predicate from '../data/Predicate';
 import Arc_Map from '../geometry/Arc_Map';
+import Datum from '../basis/Datum';
 import Grabs from '../managers/Grabs';
 import Angle from '../geometry/Angle';
 import Access from '../data/Access';
 import Thing from '../data/Thing';
-import Datum from '../data/Datum';
 import User from '../data/User';
 
 import muuri from 'muuri';
@@ -65,7 +65,6 @@ export {
 	Rect, Size, Point, svgPaths, Direction,
 	Arc_Map, Cluster_Map, Clusters_Geometry,
 	show, events, builds, signals, wrappers,
-	ElementType, AlterationType, Seriously_Range,
 	Edit_State, Rotation_State, Expansion_State,
 	get, onMount, onDestroy, setContext, getContext,
 	Mouse_State, Handle_Mouse_State, Create_Mouse_State,
@@ -73,6 +72,7 @@ export {
 	Grabs, Ancestry, Hierarchy, dbDispatch, persistLocal,
 	Svelte_Wrapper, SvelteComponent, SvelteComponentType,
 	ZIndex, PredicateKind, GraphRelations, CreationOptions,
+	Ring_Zone, ElementType, AlterationType, Seriously_Range,
 	Element_State, Paging_State, Page_States, Alteration_State,
 	IDLine, IDTool, IDTrait, IDSignal, IDButton, IDBrowser, IDPersistent,
 };

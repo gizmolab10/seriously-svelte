@@ -12,6 +12,7 @@ export default class Arc_Map {
 	clusters_center = Point.zero;
 	outside_arc_radius = 0;
 	inside_arc_radius = 0;
+	label_text_angle = 0;
 	arc_rect = Rect.zero;
 	fork_backoff = 0;
 	fork_radius = 0;
@@ -62,7 +63,7 @@ export default class Arc_Map {
 		return Point.fromPolar(middle_radius, angle);
 	}
 
-	update(fork_angle: number) {
+	update_fork_angle(fork_angle: number) {
 		const fork_raw_radius = k.ring_rotation_thickness * 0.6;
 		this.fork_backoff = this.fork_adjustment(fork_raw_radius, this.inside_arc_radius);
 		this.fork_radius = fork_raw_radius - this.fork_backoff;
@@ -71,8 +72,8 @@ export default class Arc_Map {
 
 	fork_adjustment(fork_radius: number, inside_arc_radius: number): number {
 		const ratio = fork_radius / inside_arc_radius / 2;
-		const fork_angle = Math.asin(ratio) * 2;
-		const delta = inside_arc_radius * (1 - Math.cos(fork_angle));
+		const angle = Math.asin(ratio) * 2;
+		const delta = inside_arc_radius * (1 - Math.cos(angle));
 		return delta / Math.sqrt(1.5);
 	}
 
@@ -133,11 +134,9 @@ export default class Arc_Map {
 		return svgPaths.circle(start, 5);
 	}
 
-	get svg_reticule_path(): string {
-		const small = this.outside_arc_radius + (k.ring_rotation_thickness - k.dot_size) / 2;
-		// const big = small + k.ring_rotation_thickness;
+	get svg_fork_radius_path(): string {
+		const small = this.inside_arc_radius - k.paging_arc_thickness - 4;
 		const paths = [
-			// this.svg_tinyDot_path(big, this.start_angle),
 			svgPaths.line_atAngle(this.clusters_center, small, this.fork_angle),
 		];
 		return paths.join(k.space);

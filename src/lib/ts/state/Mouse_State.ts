@@ -13,11 +13,11 @@ export default class Mouse_State {
 	hit: boolean;
 	clicks = 0;
 
-	//////////////////////////////////////////////////
-	//	encapsulate relevant event properties		//
-	//	that buttons and widgets pay attention to	//
-	//	isOut is also reflected in Element_State	//
-	//////////////////////////////////////////////////
+	//////////////////////////////////////////////
+	//	encapsulate relevant event properties	//
+	//	pass to buttons, widgets, rings & arcs	//
+	//	isOut is mirrored in Element_State		//
+	//////////////////////////////////////////////
 
 	constructor(event: MouseEvent | null, element: HTMLElement | null, isHover: boolean, isOut: boolean, isDown: boolean, isUp: boolean, isDouble: boolean, isLong: boolean, isMove: boolean, hit: boolean = false) {
 		this.isDouble = isDouble;

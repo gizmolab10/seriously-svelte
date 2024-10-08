@@ -14,7 +14,7 @@
 	let path = svgPaths.oblong(oblong_center, size.expandedByX(-22));
 	let fill = k.color_background;
 
-	function mouse_closure(mouse_state) {
+	function hover_up_closure(mouse_state) {
 		if (mouse_state.isHover) {
 			const isHovering = !mouse_state.isOut;
 			fill = isHovering ? 'black' : k.color_background;
@@ -33,7 +33,7 @@
 	width={outer_size.width}
 	zindex={ZIndex.frontmost}
 	height={outer_size.height}
-	mouse_state_closure={mouse_closure}>
+	mouse_state_closure={hover_up_closure}>
 	<svg
 		viewBox={rect.expandedBy(4).verbose}
 		style='

@@ -3,7 +3,7 @@
 	import { ElementType, Element_State, persistLocal, IDPersistent, GraphRelations } from '../../ts/common/Global_Imports';
 	import { s_show_rings, s_tree_mode, s_device_isMobile, s_thing_fontFamily } from '../../ts/state/Reactive_State';
 	import { s_show_details, s_id_popupView, s_resize_count } from '../../ts/state/Reactive_State';
-	import Identifiable from '../../ts/data/Identifiable';
+	import Identifiable from '../../ts/basis/Identifiable';
 	import Button from '../mouse buttons/Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	const size_small = k.default_buttonSize;

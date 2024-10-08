@@ -50,7 +50,7 @@ class Global_State {
 		window.addEventListener('resize', (event) => {
 			setTimeout(() => {
 				const isMobile = this.device_isMobile;
-				debug.log_action(` STATE resize [is${isMobile ? '' : ' not'} mobile]`);
+				debug.log_action(` resize [is${isMobile ? '' : ' not'} mobile] STATE`);
 				s_resize_count.set(get(s_resize_count) + 1);
 				s_device_isMobile.set(isMobile);
 				this.graphRect_update();
@@ -59,7 +59,7 @@ class Global_State {
 		window.addEventListener('orientationchange', () => {
 			setTimeout(() => {
 				const isMobile = this.device_isMobile;
-				debug.log_action(` STATE orientationchange [is${isMobile ? '' : ' not'} mobile]`);
+				debug.log_action(` orientationchange [is${isMobile ? '' : ' not'} mobile] STATE`);
 				s_device_isMobile.set(isMobile);
 				this.graphRect_update();
 			}, 1);
@@ -180,7 +180,7 @@ class Global_State {
 		const originOfGraph = new Point(left, top);
 		const sizeOfGraph = this.windowSize.reducedBy(originOfGraph);	// account for origin
 		const rect = new Rect(originOfGraph, sizeOfGraph);
-		debug.log_action(` STATE graphRect_update ${rect.description}`);
+		debug.log_action(` graphRect_update ${rect.description} STATE`);
 		s_graphRect.set(rect);											// used by Panel and Graph_Tree
 	}
 

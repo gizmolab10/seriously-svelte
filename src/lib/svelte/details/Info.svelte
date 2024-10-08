@@ -2,7 +2,7 @@
 	import { s_focus_ancestry, s_grabbed_ancestries } from '../../ts/state/Reactive_State';
 	import { k, show, Thing, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
 	import { s_title_thing, s_card_ancestry } from '../../ts/state/Reactive_State';
-	import Identifiable from '../../ts/data/Identifiable';
+	import Identifiable from '../../ts/basis/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Button from '../mouse buttons/Button.svelte';
 	export let top = 0;

@@ -1,11 +1,13 @@
+import { s_graphRect, s_mouse_location, s_ring_rotation_radius } from '../state/Reactive_State';
 import { s_thing_fontFamily, s_user_graphOffset } from '../state/Reactive_State';
-import { s_graphRect, s_mouse_location } from '../state/Reactive_State';
+import { IDBrowser, Ring_Zone } from './Enumerations';
+import Identifiable from '../basis/Identifiable';
 import { Size, Point } from '../geometry/Geometry';
-import Identifiable from '../data/Identifiable';
 import { Quadrant } from '../geometry/Angle';
 import Ancestry from '../managers/Ancestry';
-import { IDBrowser } from './Enumerations';
+import { g } from '../state/Global_State';
 import { transparentize } from 'color2k';
+import { debug } from '../common/Debug';
 import Angle from '../geometry/Angle';
 import { get } from 'svelte/store';
 import { k } from './Constants';
@@ -13,12 +15,15 @@ import { k } from './Constants';
 class Utilities {
 	noop() {}
 	ignore(event: Event) {}
-	pointFor_mouseEvent(event: MouseEvent) { return new Point(event.clientX, event.clientY); }
 	concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return [...a, ...b]; }
+	get distance_fromCenter(): number { return this.vector_fromCenter?.magnitude ?? 0; }
+	get angle_fromCenter(): number | null { return this.vector_fromCenter?.angle ?? null; }
 	quadrant_ofAngle(angle: number): Quadrant { return new Angle(angle).quadrant_ofAngle; }
-	opacitize(color: string, amount: number): string { return transparentize(color, 1 - amount); }
+	pointFor_mouseEvent(event: MouseEvent) { return new Point(event.clientX, event.clientY); }
 	location_ofMouseEvent(event: MouseEvent) { return new Point(event.clientX, event.clientY); }
+	opacitize(color: string, amount: number): string { return transparentize(color, 1 - amount); }
 	strip_invalid(array: Array<any>): Array<any> { return this.strip_identifiableDuplicates(this.strip_falsies(array)); }
+	get vector_fromCenter(): Point | null { return this.vector_ofOffset_fromGraphCenter_toMouseLocation(g.graph_center); }
 	sort_byOrder(array: Array<Ancestry>) { return array.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
 	uniquely_concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return this.strip_invalid(this.concatenateArrays(a, b)); }
 
@@ -183,6 +188,32 @@ class Utilities {
 		const width: number = element.scrollWidth;
 		document.body.removeChild(element);
 		return width;
+	}
+
+	get ringZone_forMouseLocation(): Ring_Zone {
+		const distance = u.distance_fromCenter;
+		const thick = k.ring_rotation_thickness;
+		const inner = get(s_ring_rotation_radius);
+		if (!!distance && distance <= inner + thick * 2) {
+			if (distance > inner + thick) {
+				return Ring_Zone.resize;
+			} else if (distance > inner) {
+				return Ring_Zone.rotate;
+			}
+			return Ring_Zone.paging;
+		}
+		return Ring_Zone.miss;
+	}
+
+	get cursor_forMouseLocation(): string {
+		let cursor = k.cursor_default;
+		const ring_zone = u.ringZone_forMouseLocation;
+		switch (ring_zone) {
+			case Ring_Zone.rotate: cursor = g.ring_rotation_state.cursor; break;
+			case Ring_Zone.resize: cursor = g.ring_resizing_state.cursor; break;
+		}
+		debug.log_action(` ${cursor} cursor ${ring_zone} RING ZONE`);
+		return `${cursor} !important`;
 	}
 
 	colorToHex(color: string): string {

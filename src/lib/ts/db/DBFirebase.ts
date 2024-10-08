@@ -4,7 +4,7 @@ import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference 
 import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
 import { DBType, DatumType } from '../db/DBInterface';
-import Identifiable from '../data/Identifiable';
+import Identifiable from '../basis/Identifiable';
 import { initializeApp } from 'firebase/app';
 import DBInterface from './DBInterface';
 import { h } from '../db/DBDispatch';
@@ -32,7 +32,6 @@ export default class DBFirebase implements DBInterface {
 	hierarchy!: Hierarchy;
 	deferSnapshots = false;
 	dbType = DBType.firebase;
-	addedRelationship!: Relationship;
 	app = initializeApp(this.firebaseConfig);
 	firestore = getFirestore(this.app);
 	predicatesCollection!: CollectionReference;
@@ -207,7 +206,7 @@ export default class DBFirebase implements DBInterface {
 						let relationship = h.relationship_forHID(id.hash());
 						switch (change.type) {
 							case 'added':
-								if (!!relationship || remoteRelationship.isEqualTo(this.addedRelationship)) {
+								if (!!relationship) {
 									return;
 								}
 								relationship = h.relationship_remember_runtimeCreateUnique(baseID, id, remoteRelationship.predicate.id, remoteRelationship.parent.id, remoteRelationship.child.id, remoteRelationship.order, CreationOptions.isFromRemote);
@@ -395,7 +394,6 @@ export default class DBFirebase implements DBInterface {
 		if (!!relationshipsCollection) {
 			const remoteRelationship = new RemoteRelationship(relationship);
 			const jsRelationship = { ...remoteRelationship };
-			this.addedRelationship = relationship;
 			relationship.awaitingCreation = true;
 			try {
 				this.deferSnapshots = true;
