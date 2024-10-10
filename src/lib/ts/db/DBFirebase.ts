@@ -41,7 +41,8 @@ export default class DBFirebase implements DBInterface {
 	reportError(error: any) { console.log(error); }
 
 	queryStrings_apply() {
-		const id = g.queryStrings.get('name') ?? g.queryStrings.get('dbid') ?? 'Public';
+		const persistedID = persistLocal.read_key(IDPersistent.base_id);
+		const id = g.queryStrings.get('name') ?? g.queryStrings.get('dbid') ?? persistedID ?? 'Public';
 		persistLocal.write_key(IDPersistent.base_id, id);
 		this.baseID = id;
 	}
@@ -49,17 +50,16 @@ export default class DBFirebase implements DBInterface {
 	static readonly $_FETCH_$: unique symbol;
 
 	async fetch_all() {
-		this.baseID = persistLocal.read_key(IDPersistent.base_id);
 		if (dbDispatch.eraseDB) {
 			await this.document_remoteDelete();
 		}
 		await this.recordLoginIP();
 		await this.fetch_documentsOf(DatumType.predicates);
-		await this.fetch_allFrom(this.baseID);
+		await this.fetch_hierarchy_from(this.baseID);
 		await this.fetch_bulkAliases();		// TODO: assumes all ancestries created
 	}
 
-	async fetch_allFrom(baseID: string) {
+	async fetch_hierarchy_from(baseID: string) {
 		await this.fetch_documentsOf(DatumType.things, baseID);
 		await this.fetch_documentsOf(DatumType.relationships, baseID);
 	}

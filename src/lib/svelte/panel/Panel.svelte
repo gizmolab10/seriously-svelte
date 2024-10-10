@@ -3,8 +3,8 @@
 	import { g, k, u, ux, get, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import { s_isBusy, s_db_type, s_graphRect, s_id_popupView } from '../../ts/state/Reactive_State';
 	import { s_edit_state, s_show_details, s_device_isMobile, } from '../../ts/state/Reactive_State';
-	import { debug, ZIndex, onMount, Ancestry } from '../../ts/common/Global_Imports';
 	import { IDButton, Hierarchy, IDPersistent } from '../../ts/common/Global_Imports';
+	import { debug, ZIndex, onMount, Ancestry } from '../../ts/common/Global_Imports';
 	import { dbDispatch, setContext } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Breadcrumbs from '../panel/Breadcrumbs.svelte';
@@ -16,10 +16,6 @@
 	import Graph from './Graph.svelte';
 	let chain = ['Panel'];
 	
-	onMount(() => {
-		$s_isBusy = true;
-	});
-
 	async function handle_key_down(event) {
 		if (event.type == 'keydown') {
 			const key = event.key;
@@ -80,7 +76,7 @@
 	{#if $s_isBusy}
 		<p>Welcome to Seriously</p>
 		{#if $s_db_type != DBType.local}
-			<p>(loading your {$s_db_type} data{$s_db_type == DBType.firebase ? ', from ' + h?.db.baseID : k.empty})</p>
+			<p>({h?.startupExplanation})</p>
 		{/if}
 	{:else if !g.things_arrived}
 		<p>Nothing is available.</p>

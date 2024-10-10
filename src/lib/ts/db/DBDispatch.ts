@@ -44,18 +44,17 @@ export default class DBDispatch {
 	async hierarchy_fetch_andBuild_forDBType(type: string) {
 		persistLocal.write_key(IDPersistent.db, type);
 		this.db_set_accordingToType(type);
-		s_db_type.set(type);
 		this.queryStrings_apply();
 		if (this.db.hasData) {
 			h = this.db.hierarchy;
 		} else {
 			const startTime = new Date().getTime();
 			s_db_loadTime.set(null);
+			h = this.db.hierarchy = new Hierarchy(this.db);		// create Hierarchy to fetch into
 			if (this.db.isRemote) {
 				g.things_arrived = false;
 				s_isBusy.set(true);
 			}
-			h = this.db.hierarchy = new Hierarchy(this.db);		// create Hierarchy to fetch into
 			await this.db.fetch_all();
 			await h.add_missing_removeNulls(this.db.baseID);
 			h.rootAncestry_setup();
@@ -88,28 +87,15 @@ export default class DBDispatch {
 		const db = this.db_forType(newDBType);
 		persistLocal.write_key(IDPersistent.db, newDBType);
 		s_db_type.set(newDBType);		// tell components to render the [possibly previously] fetched data
-		setTimeout(() => {
-			if (newDBType != DBType.local && !db.hasData) {
-				s_isBusy.set(true);			// set this before changing $s_db_type so panel will show 'loading ...'
-			}
-		}, 2);
 		s_db_loadTime.set(db.loadTime);
 	}
 
 	db_next_get(forward: boolean): DBType {
-		if (forward) {
-			switch (this.db.dbType) {
-				case DBType.airtable: return DBType.local;
-				case DBType.local:	  return DBType.firebase;
-				default:			  return DBType.airtable;
-			}
-		} else {
-			switch (this.db.dbType) {
-				case DBType.airtable: return DBType.firebase;
-				case DBType.local:	  return DBType.airtable;
-				default:			  return DBType.local;
-			}
-		}		
+		switch (this.db.dbType) {
+			case DBType.airtable: return forward ? DBType.local	   : DBType.firebase;
+			case DBType.local:	  return forward ? DBType.firebase : DBType.airtable;
+			default:			  return forward ? DBType.airtable : DBType.local;
+		}
 	}
 
 	db_forType(type: string): DBInterface {

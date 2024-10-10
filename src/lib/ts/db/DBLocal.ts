@@ -83,7 +83,7 @@ export default class DBLocal implements DBInterface {
 	}
 
 	queryStrings_apply() {}
-	async fetch_allFrom(baseID: string) {}
+	async fetch_hierarchy_from(baseID: string) {}
 	async thing_remoteUpdate(thing: Thing) {}
 	async thing_remoteDelete(thing: Thing) {}
 	async thing_remember_remoteCreate(thing: Thing) {}

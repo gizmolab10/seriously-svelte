@@ -1,4 +1,4 @@
-import { s_show_rings, s_paging_state, s_thing_fontFamily } from '../state/Reactive_State';
+import { s_db_type, s_show_rings, s_paging_state, s_thing_fontFamily } from '../state/Reactive_State';
 import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/Reactive_State';
 import { s_grabbed_ancestries, s_expanded_ancestries } from '../state/Reactive_State';
 import { g, k, get, show, Point, debug, Ancestry } from '../common/Global_Imports';
@@ -156,9 +156,7 @@ class Persist_Local {
 
 	restore_db() {
 		const type = persistLocal.read_key(IDPersistent.db) ?? 'firebase';
-		(async () => {
-			await dbDispatch.hierarchy_fetch_andBuild_forDBType(type);
-		})();
+		s_db_type.set(type);
 	}
 
 	restore_db_dependent(force: boolean) {

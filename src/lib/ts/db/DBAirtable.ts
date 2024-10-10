@@ -34,7 +34,7 @@ export default class DBAirtable implements DBInterface {
 	relationships_errorMessage = 'Error in Relationships:';
 	setHasData(flag: boolean) { this.hasData = flag; }
 	things_errorMessage = 'Error in Things:';
-	async fetch_allFrom(baseID: string) {}
+	async fetch_hierarchy_from(baseID: string) {}
 
 	queryStrings_apply() {
 		const string = g.queryStrings.get('name') ?? g.queryStrings.get('dbid');

@@ -2,6 +2,7 @@ import { g, k, u, get, User, Thing, Grabs, debug, Mouse_State, Access, IDTool, I
 import { Ancestry, Predicate, Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
 import { s_alteration_mode, s_grabbed_ancestries, s_showing_tools_ancestry } from '../state/Reactive_State';
 import { s_isBusy, s_edit_state, s_show_rings, s_focus_ancestry } from '../state/Reactive_State';
+import { DBType } from '../../ts/db/DBInterface';
 import Identifiable from '../basis/Identifiable';
 import DBInterface from '../db/DBInterface';
 import Datum from '../basis/Datum';
@@ -35,6 +36,7 @@ export class Hierarchy {
 
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): string | null { return this.root?.id ?? null; };
+	get startupExplanation(): string { return `loading your ${this.db.dbType} data${this.db.dbType == DBType.firebase ? ', from ' + this.db.baseID : k.empty}`; }
 	ancestries_rebuildAll() { this.root?.oneAncestries_rebuildForSubtree(); }
 	thing_forAncestry(ancestry: Ancestry | null): Thing | null { return ancestry?.thing ?? null; }
 	thing_forHID(hid: number | null): Thing | null { return (!hid) ? null : this.thing_byHID[hid]; }
@@ -681,7 +683,7 @@ export class Hierarchy {
 
 	async ancestry_redraw_remoteFetchBulk_browseRight(thing: Thing, ancestry: Ancestry | null = null, grab: boolean = false) {
 		if (!!this.rootsAncestry && thing && thing.title != 'roots') {	// not create roots bulk
-			await this.db.fetch_allFrom(thing.title)
+			await this.db.fetch_hierarchy_from(thing.title)
 			this.relationships_refreshKnowns();
 			const childAncestries = ancestry?.childAncestries;
 			if (!!childAncestries && childAncestries.length > 0) {
