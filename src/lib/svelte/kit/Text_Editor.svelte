@@ -21,20 +21,20 @@
 		g.isEditing_text = true;
 	}
 
-	function handle_keyup(event: KeyboardEvent) {
+	function handle_keydown(event: KeyboardEvent) {
 		const exit = event.key == 'Enter' && !event.shiftKey;
 		if (exit) {
 			event.preventDefault();
-			setTimeout(() => {
-				textarea.blur();
-				handle_textChange(label, null);
-				g.isEditing_text = false;
-			}, 1);
-		}
-		const text = event.target.value;
-		if (!!text || text == k.empty) {
-			bound_text = text;
-			handle_textChange(label, text);
+			textarea.blur();
+			textarea.value = bound_text;
+			g.isEditing_text = false;
+			handle_textChange(label, null);
+		} else {
+			const text = textarea.value;
+			if (!!text || text == k.empty) {
+				bound_text = text;
+				handle_textChange(label, text);
+			}
 		}
 	}
 
@@ -65,7 +65,7 @@
 		bind:this={textarea}
 		on:blur={handle_blur}
 		bind:value={bound_text}
-		on:keyup={handle_keyup}
+		on:keydown={handle_keydown}
 		on:mousedown={handle_mousedown}
 		style='
 			resize: none;

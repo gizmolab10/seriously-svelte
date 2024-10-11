@@ -81,8 +81,8 @@
 				case 'consequence': thing.consequence = text; break;
 				case 'quest': thing.quest = text; break;
 			}
-			thing.remoteWrite();
 		}
+		thing.remoteWrite();
 	}
 
 </script>
