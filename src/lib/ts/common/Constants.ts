@@ -13,7 +13,7 @@ export default class Constants {
 	default_buttonSize = 16;
 	height_breadcrumbs = 33;
 	threshold_longClick = 800;
-	ring_smallest_radius = 75;
+	innermost_ring_radius = 75;
 	editingTools_diameter = 64;
 	threshold_doubleClick = 700;
 	hid_unknown = 1000000000000;

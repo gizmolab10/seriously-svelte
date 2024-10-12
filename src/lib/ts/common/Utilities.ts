@@ -191,7 +191,7 @@ class Utilities {
 	}
 
 	get ringZone_forMouseLocation(): Ring_Zone {
-		const distance = u.distance_fromCenter;
+		const distance = this.distance_fromCenter;
 		const thick = k.ring_rotation_thickness;
 		const inner = get(s_ring_rotation_radius);
 		if (!!distance && distance <= inner + thick * 2) {
@@ -205,9 +205,9 @@ class Utilities {
 		return Ring_Zone.miss;
 	}
 
-	get cursor_forMouseLocation(): string {
+	get ringCursor_forMouseLocation(): string {
 		let cursor = k.cursor_default;
-		const ring_zone = u.ringZone_forMouseLocation;
+		const ring_zone = this.ringZone_forMouseLocation;
 		switch (ring_zone) {
 			case Ring_Zone.rotate: cursor = g.ring_rotation_state.cursor; break;
 			case Ring_Zone.resize: cursor = g.ring_resizing_state.cursor; break;

@@ -17,6 +17,7 @@
 	const control_size = new Size(size_details - 58, k.default_buttonSize + 4);
 	const control_rect = Rect.createCenterRect(control_origin, control_size);
 	const element_state = ux.elementState_for(new Identifiable(id), ElementType.info, id);
+	let color_origin = new Point(show.quests ? -2 : 49, control_rect.origin.y - (show.quests ? 1 : 24));
 	let text_box_size = new Size(size_details - 4, 68);
 	let ancestry: Ancestry | null = $s_focus_ancestry;
 	let information: { [key: string]: string } = {};
@@ -97,34 +98,34 @@
 				position:absolute;
 				text-align:center;
 				width:{k.width_details - margin * 2}px;'>
-			{#key card_title}
-				{card_title.injectEllipsisAt(15)}
-			{/key}
-			<div class='horizontal-line'
-				style='
-					top:20px;
-					height:1px;
-					left:{-margin}px;
-					position:absolute;
-					width:{k.width_details}px;
-					z-index:{ZIndex.frontmost};
-					background-color:lightgray;'>
-			</div>
-			<Color thing={thing} top={control_rect.origin.y - 1} left=-2/>
-			{#if hasGrabs()}
-				<Button name={name}
-					zindex={ZIndex.details}
-					closure={button_closure}
-					center={control_rect.center}
-					element_state={element_state}
-					width={control_rect.size.width}
-					height={control_rect.size.height}>
-					<span style='font-family: {$s_thing_fontFamily};'>
-						{button_title}
-					</span>
-				</Button>
-			{/if}
+			<Color thing={thing} origin={color_origin}/>
 			{#if show.quests}
+				{#key card_title}
+					{card_title.injectEllipsisAt(15)}
+				{/key}
+				<div class='horizontal-line'
+					style='
+						top:20px;
+						height:1px;
+						left:{-margin}px;
+						position:absolute;
+						width:{k.width_details}px;
+						z-index:{ZIndex.frontmost};
+						background-color:lightgray;'>
+				</div>
+				{#if hasGrabs()}
+					<Button name={name}
+						zindex={ZIndex.details}
+						closure={button_closure}
+						center={control_rect.center}
+						element_state={element_state}
+						width={control_rect.size.width}
+						height={control_rect.size.height}>
+						<span style='font-family: {$s_thing_fontFamily};'>
+							{button_title}
+						</span>
+					</Button>
+				{/if}
 				<Text_Editor
 					color='black'
 					top={text_top}

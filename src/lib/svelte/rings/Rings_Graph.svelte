@@ -10,10 +10,9 @@
 	import Necklace from './Necklace.svelte';
 	import Rings from './Rings.svelte';
 	let toolsOffset = new Point(31, -173.5).offsetBy($s_user_graphOffset.negated);
-	let clusters_graph;
 
-	// draw center title, rings and widget necklace
-	//	arcs & rings: selection & hover
+	// draw center title, arcs, rings and widget necklace
+	//	also selection & hover for arcs & rings
 
 	// needs:
 	//	arrowheads
@@ -23,7 +22,6 @@
 	
 	$s_clusters_geometry = new Clusters_Geometry();
 	debug.log_tools(` CLUSTERS (svelte)`);
-	cursor_closure();
 
 	onMount(() => {
 		const handler = signals.handle_relayoutWidgets(0, ($s_focus_ancestry) => {
@@ -42,25 +40,16 @@
 		}, 100);
 	}
 
-	function cursor_closure() {
-		if (!!clusters_graph) {
-			let cursor = u.cursor_forMouseLocation;
-			const ring_zone = u.cursor_forMouseLocation;
-			clusters_graph.style.cursor = `${cursor} !important`;
-		}
-	}
-
 </script>
 
 {#key g.readOnce_rebuild_needed_forType(Rebuild_Type.clusters), $s_focus_ancestry.hashedAncestry}
 	<div class='clusters-graph'
-		bind:this={clusters_graph}
 		style='
 			z-index:{ZIndex.backmost};
 			width:{$s_graphRect.size.width}px;
 			height:{$s_graphRect.size.height}px;
 			transform:translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y}px);'>
-		<Rings cursor_closure={cursor_closure}/>
+		<Rings/>
 		<Rings_Focus/>
 		<Necklace/>
 		{#if $s_showing_tools_ancestry?.isVisible}

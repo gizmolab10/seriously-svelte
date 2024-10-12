@@ -178,7 +178,7 @@ class Persist_Local {
 		s_rotation_ring_angle.set(this.read_key(IDPersistent.ring_angle) ?? 0);
 		s_thing_fontFamily.set(this.read_key(IDPersistent.font) ?? 'Times New Roman');
 		s_show_rings.set(this.read_key(IDPersistent.layout) ?? false);
-		s_ring_rotation_radius.set(Math.max(this.read_key(IDPersistent.ring_radius) ?? 0, k.ring_smallest_radius));
+		s_ring_rotation_radius.set(Math.max(this.read_key(IDPersistent.ring_radius) ?? 0, k.innermost_ring_radius));
 		this.restore_graphOffset();
 		this.reactivity_subscribe()
 	}

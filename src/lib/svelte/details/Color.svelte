@@ -1,11 +1,10 @@
 <script lang='ts'>
-	import { k, u, ux, get, Thing, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
+	import { k, u, ux, get, Point, Thing, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
 	import { s_color_thing } from '../../ts/state/Reactive_State';
 	import ColorPicker from 'svelte-awesome-color-picker';
 	import { h } from '../../ts/db/DBDispatch';
+	export let origin = Point.zero;
 	export let thing: Thing;
-	export let left = 0;
-	export let top = 0;
 	const pickerSize = 122;
 	const selectorSize = k.dot_size + 1;
 	let colorAsHEX = k.empty;
@@ -44,8 +43,8 @@
 	{#key thing.id}
 		<div class='color'
 			style='
-				top: {top}px;
-				left: {left}px;
+				top: {origin.y}px;
+				left: {origin.x}px;
 				position: absolute;
 				z-index: {ZIndex.frontmost};'>
 			<ColorPicker
