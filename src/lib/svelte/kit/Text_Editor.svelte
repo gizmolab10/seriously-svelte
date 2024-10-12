@@ -13,23 +13,23 @@
 	let cursorStyle = 'cursor: text';
 	let label_left = (k.width_details - 28 - u.getWidthOf(label) * 0.7) / 2;
 
-	function handle_blur(event: Event) {
-		debug.log_edit(`BLUR ${label}`);
-	}
+	function handle_blur(event: Event) { g.isEditing_text = false; }
+	function handle_focus(event: Event) { g.isEditing_text = true; }
+	function handle_keyup(event: KeyboardEvent) { handle_key(false, event); }
+	function handle_keydown(event: KeyboardEvent) { handle_key(true, event); }
 
-	function handle_mousedown(event: MouseEvent) { 
-		g.isEditing_text = true;
-	}
+	function handle_key(down: boolean, event: KeyboardEvent) {
 
-	function handle_keydown(event: KeyboardEvent) {
+		// ignore down and !exit because textarea value is not [yet] altered until key up
+		// ignore up and exit so altered text is ignored (result won't include an extraneous RETURN)
+		
 		const exit = event.key == 'Enter' && !event.shiftKey;
-		if (exit) {
+		if (down && exit) {
 			event.preventDefault();
 			textarea.blur();
 			textarea.value = bound_text;
-			g.isEditing_text = false;
 			handle_textChange(label, null);
-		} else {
+		} else if (!down && !exit) {
 			const text = textarea.value;
 			if (!!text || text == k.empty) {
 				bound_text = text;
@@ -65,8 +65,9 @@
 		bind:this={textarea}
 		on:blur={handle_blur}
 		bind:value={bound_text}
+		on:focus={handle_focus}
+		on:keyup={handle_keyup}
 		on:keydown={handle_keydown}
-		on:mousedown={handle_mousedown}
 		style='
 			resize: none;
 			padding: 6px;

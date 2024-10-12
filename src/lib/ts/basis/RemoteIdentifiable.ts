@@ -18,7 +18,7 @@ export default class RemoteIdentifiable extends Identifiable {
 		this.dbType = dbType;
 	}
 
-	updateWriteDate() { this.lastModifyDate = new Date(); }
+	updateModifyDate() { this.lastModifyDate = new Date(); }
 
 	wasModifiedWithinMS(threshold: number): boolean {
 		const duration = new Date().getTime() - this.lastModifyDate.getTime();

@@ -92,6 +92,7 @@ export default class Thing extends Datum {
 
 	async remoteWrite() {
 		if (!this.awaitingCreation) {
+			this.updateModifyDate();
 			if (this.hasBeen_remotely_saved) {
 				await dbDispatch.db.thing_remoteUpdate(this);
 			} else if (dbDispatch.db.isRemote) {
