@@ -27,16 +27,16 @@ export default class Cluster_Map  {
 	arc_map = new Arc_Map();
 	color = k.color_default;
 	predicate: Predicate;
-	points_out: boolean;
+	toChildren: boolean;
 	center = Point.zero;
 	isPaging = false;
 	shown = 0;
 	total = 0;
 
 	destructor() { this.ancestries = []; }
-	constructor(total: number, ancestries: Array<Ancestry>, predicate: Predicate, points_out: boolean) {
+	constructor(total: number, ancestries: Array<Ancestry>, predicate: Predicate, toChildren: boolean) {
 		this.ancestries = ancestries;
-		this.points_out = points_out;
+		this.toChildren = toChildren;
 		this.predicate = predicate;
 		this.total = total;
 		debug.log_build(` C MAP (ts)  ${total}  ${this.direction_kind}`);
@@ -67,9 +67,8 @@ export default class Cluster_Map  {
 	get description(): string { return `(${this.cluster_title}) ${this.titles}`; }
 	get paging_index_ofFocus(): number { return this.paging_state_ofFocus?.index ?? 0; }
 	get paging_rotation(): Rotation_State { return ux.rotationState_forName(this.name); }
-	get direction_kind(): string { return this.isParental ? 'contained by' : this.kind; }
 	get kind(): string { return this.predicate?.kind.unCamelCase().lastWord() ?? k.empty; }
-	get isParental(): boolean { return !this.points_out && !this.predicate?.isBidirectional; }
+	get isParental(): boolean { return !this.toChildren && !this.predicate?.isBidirectional; }
 	get name(): string { return `${this.focus_ancestry.title}-cluster-${this.direction_kind}`; }
 	get fork_radial(): Point { return Point.fromPolar(get(s_ring_rotation_radius), this.arc_map.fork_angle); }
 	get paging_state_ofFocus(): Paging_State | null { return this.paging_state_ofAncestry(this.focus_ancestry); }
@@ -95,20 +94,17 @@ export default class Cluster_Map  {
 		this.label_position_angle = angle;
 	}
 
+	get direction_kind(): string {
+		return this.isParental ? 'parents' : this.toChildren ? 'children' : this.kind; }
+	
 	update_label_forIndex() {
-		let showing = k.empty;
-		const total = `${this.total}`;
-		const kind = this.direction_kind;
-		const index = Math.round(this.paging_index_ofFocus);
+		let cluster_title =  `${this.total} ${this.direction_kind}`;
 		if (this.isPaging) {
+			const index = Math.round(this.paging_index_ofFocus);
 			const middle = (this.shown < 2) ? k.empty : `-${index + this.shown}`;
-			showing = ` (${index + 1}${middle})`;
+			cluster_title += ` (${index + 1}${middle})`
 		}
-		if (!this.predicate?.isBidirectional) {
-			this.cluster_title = `${kind} ${total}${showing}`;
-		} else {
-			this.cluster_title = `${total} ${kind}${showing}`;
-		}
+		this.cluster_title = cluster_title;
 	}
 	
 	static readonly $_INDEX_$: unique symbol;
@@ -176,14 +172,13 @@ export default class Cluster_Map  {
 	}
 
 	update_fork_angle() {
-		// returns one of three angles: 1) rotation_angle 2) opposite+tweak 3) opposite-tweak
-		const tweak = Math.PI / 3;					// equilateral distribution
-		const rotation_angle = get(s_rotation_ring_angle);
-		const opposite = rotation_angle + Angle.half;
+		// returns one of three angles: 1) children_angle 2) opposite+tweak 3) opposite-tweak
+		const tweak = -2 * Math.PI / 3;					// equilateral distribution
+		const children_angle = get(s_rotation_ring_angle);
 		const raw = this.predicate.isBidirectional ?
-			opposite - tweak :
-			this.points_out ? rotation_angle :		// one directional, use global
-			opposite + tweak;
+			children_angle + tweak :
+			this.toChildren ? children_angle :		// one directional, use global
+			children_angle - tweak;
 		const fork_angle = raw.angle_normalized() ?? 0;
 		this.arc_map.update_fork_angle(fork_angle);
 	}

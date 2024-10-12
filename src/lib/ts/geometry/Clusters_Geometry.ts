@@ -25,8 +25,8 @@ export default class Clusters_Geometry {
 	}
 
 	get cluster_maps(): Array<Cluster_Map> { return u.concatenateArrays(this.inward_cluster_maps, this.outward_cluster_maps); }		// for lines and arcs
-	cluster_maps_for(points_out: boolean): Array<Cluster_Map> { return points_out ? this.outward_cluster_maps : this.inward_cluster_maps; }
-	cluster_map_for(points_out: boolean, predicate: Predicate): Cluster_Map { return this.cluster_maps_for(points_out)[predicate.stateIndex]; }
+	cluster_maps_for(toChildren: boolean): Array<Cluster_Map> { return toChildren ? this.outward_cluster_maps : this.inward_cluster_maps; }
+	cluster_map_for(toChildren: boolean, predicate: Predicate): Cluster_Map { return this.cluster_maps_for(toChildren)[predicate.stateIndex]; }
 
 	widget_mapFor(ancestry: Ancestry): Widget_MapRect | null {
 		const maps = this.widget_maps.filter(m => m.childAncestry == ancestry);
@@ -52,12 +52,12 @@ export default class Clusters_Geometry {
 		return null;
 	}
 
-	layout_clusterFor(ancestries: Array<Ancestry>, predicate: Predicate | null, points_out: boolean) {
+	layout_clusterFor(ancestries: Array<Ancestry>, predicate: Predicate | null, toChildren: boolean) {
 		if (!!predicate) {
-			const paging_state = get(s_focus_ancestry)?.thing?.page_states?.paging_state_forPointsOut(points_out, predicate);
+			const paging_state = get(s_focus_ancestry)?.thing?.page_states?.paging_state_forPointsOut(toChildren, predicate);
 			const onePage = paging_state?.onePage_from(ancestries) ?? [];
-			const cluster_map = new Cluster_Map(ancestries.length, onePage, predicate, points_out);
-			const cluster_maps = this.cluster_maps_for(points_out);
+			const cluster_map = new Cluster_Map(ancestries.length, onePage, predicate, toChildren);
+			const cluster_maps = this.cluster_maps_for(toChildren);
 			cluster_maps[predicate.stateIndex] = cluster_map;
 		}
 	}
@@ -87,7 +87,7 @@ export default class Clusters_Geometry {
 	update_forPaging_state(paging_state: Paging_State) {
 		const ancestry = get(s_focus_ancestry);
 		if (!!paging_state && !!ancestry) {
-			if (paging_state.points_out) {
+			if (paging_state.toChildren) {
 				let childAncestries = ancestry.childAncestries;
 				this.layout_clusterFor(childAncestries, Predicate.contains, true);
 			} else {
