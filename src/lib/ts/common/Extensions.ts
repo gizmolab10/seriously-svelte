@@ -2,6 +2,7 @@ declare global {
 	interface String {
 		hash(): number;
 		lastWord(): string;
+		HTML_encode(): string;
 		unCamelCase(): string;
 		removeWhiteSpace(): string;
 		injectEllipsisAt(at: number): string;
@@ -71,6 +72,23 @@ Object.defineProperty(String.prototype, 'hash', {
 Object.defineProperty(String.prototype, 'sizeOf_svgPath', {
 	value: function(): string {
 		return this.split(' ').slice(-1)[0];
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(String.prototype, 'HTML_encode', {
+	value: function(): string {
+		let encoded = this.replace(/\n+/g, '').trim();
+		return encodeURIComponent(encoded)
+			.replace(/%22/g, '\'')	// un-encode for easier reading
+			.replace(/%20/g, ' ')
+			.replace(/%3D/g, '=')
+			.replace(/%3A/g, ':')
+			.replace(/%2F/g, '/')
+			.replace(/%3F/g, '?')
+			.replace(/%23/g, '#');
 	},
 	writable: false,
 	enumerable: false,

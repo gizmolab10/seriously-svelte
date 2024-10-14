@@ -100,18 +100,6 @@ export default class Arc_Map {
 		return paths.join(k.space);
 	}
 
-	get svg_fork_path(): string {
-		const forward = this.fork_slantsForward;
-		const fork_radius = this.fork_radius;
-		const angle = -this.fork_angle;
-		const y = fork_radius * (forward ? -1 : 1);
-		const x = this.inside_arc_radius - fork_radius - this.fork_backoff;
-		const origin = new Point(x, y).rotate_by(angle);
-		return svgPaths.arc(origin.offsetBy(this.clusters_center), fork_radius, 1,
-			angle + (forward ? Angle.quarter : 0),
-			angle - (forward ? 0 : Angle.quarter));
-	}
-
 	svg_startOf_path(start_angle: number, radius: number) {
 		return svgPaths.startOutAt(this.clusters_center, radius, start_angle);
 	}
@@ -134,12 +122,24 @@ export default class Arc_Map {
 		return svgPaths.circle(start, 5);
 	}
 
-	get svg_fork_radius_path(): string {
+	get svg_fork_radial_path(): string {
 		const small = this.inside_arc_radius - k.paging_arc_thickness - 4;
 		const paths = [
 			svgPaths.line_atAngle(this.clusters_center, small, this.fork_angle),
 		];
 		return paths.join(k.space);
+	}
+
+	get svg_fork_arc_path(): string {
+		const forward = this.fork_slantsForward;
+		const fork_radius = this.fork_radius;
+		const angle = -this.fork_angle;
+		const y = fork_radius * (forward ? -1 : 1);
+		const x = this.inside_arc_radius - fork_radius - this.fork_backoff;
+		const origin = new Point(x, y).rotate_by(angle);
+		return svgPaths.arc(origin.offsetBy(this.clusters_center), fork_radius, 1,
+			angle + (forward ? Angle.quarter : 0),
+			angle - (forward ? 0 : Angle.quarter));
 	}
 
 }

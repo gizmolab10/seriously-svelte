@@ -55,7 +55,7 @@
 				cursor:${element_state.cursor};
 				font-family: {$s_thing_fontFamily};
 				background-color:${background_color};
-			`.removeWhiteSpace()
+			`.removeWhiteSpace();
 		}
 	}
 

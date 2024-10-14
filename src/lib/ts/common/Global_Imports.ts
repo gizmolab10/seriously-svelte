@@ -11,6 +11,7 @@ import { builds } from './Builds';
 import { show } from '../state/Show_State';
 import { events } from '../signals/Events';
 import { dbDispatch } from '../db/DBDispatch';
+import { cursors } from '../geometry/Cursors';
 import { wrappers } from '../managers/Wrappers';
 import { Hierarchy } from '../managers/Hierarchy';
 import { Seriously_Range } from './Seriously_Range';
@@ -62,11 +63,11 @@ export {
 	Tree_Geometry, Widget_MapRect,
 	muuri, interact, transparentize,
 	Timer_Type, Mouse_Timer, Rebuild_Type,
-	Rect, Size, Point, svgPaths, Direction,
 	Arc_Map, Cluster_Map, Clusters_Geometry,
 	show, events, builds, signals, wrappers,
 	Edit_State, Rotation_State, Expansion_State,
 	get, onMount, onDestroy, setContext, getContext,
+	Rect, Size, Point, cursors, svgPaths, Direction,
 	Mouse_State, Handle_Mouse_State, Create_Mouse_State,
 	User, Datum, Thing, Access, Predicate, Relationship,
 	Grabs, Ancestry, Hierarchy, dbDispatch, persistLocal,

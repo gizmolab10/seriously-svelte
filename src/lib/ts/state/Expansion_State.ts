@@ -1,4 +1,4 @@
-import { k, debug } from '../common/Global_Imports';
+import { k, debug, Angle } from '../common/Global_Imports';
 import Rotation_State from './Rotation_State';
 
 // for managing the rotation ring
@@ -16,9 +16,4 @@ export default class Expansion_State extends Rotation_State {
 	get stroke_opacity(): number { return this.isHighlighted ? this.basis_opacity * 5 : this.basis_opacity; }
 	get fill_opacity(): number { return this.isHighlighted ? this.basis_opacity * 0.5 : this.basis_opacity * 0.15; }
 
-	get cursor(): string {
-		const cursor = this.isActive ? 'move' : this.isHovering ? 'pointer' : k.cursor_default;
-		debug.log_action(` ${cursor} cursor RESIZE`);
-		return cursor;
-	}
 }

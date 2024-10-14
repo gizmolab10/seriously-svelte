@@ -57,8 +57,22 @@
 		if (!!from_center) {
 			const mouse_angle = from_center.angle;
 			const rotation_state = g.ring_rotation_state;
+			const resizing_state = g.ring_resizing_state;
 			detect_hovering();
-			if (!!rotation_state.active_angle || rotation_state.active_angle == 0) {		// rotate clusters
+			if (!!resizing_state.basis_radius) {					// resize
+				const smallest = k.innermost_ring_radius;
+				const largest = smallest * 3;
+				const magnitude = from_center.magnitude - resizing_state.basis_radius;
+				const distance = magnitude.force_between(smallest, largest);
+				const delta = distance - $s_ring_rotation_radius;
+				const radius = $s_ring_rotation_radius + delta;
+				if (Math.abs(delta) > 1) {										// granularity of 1 pixel
+					debug.log_action(` resize  D ${distance.toFixed(0)}  R ${radius.toFixed(0)}  + ${delta.toFixed(1)}`);
+					$s_ring_rotation_radius = radius;
+					resizing_state.active_angle = mouse_angle + Angle.quarter;
+					signals.signal_rebuildGraph_fromFocus();					// destroys this component (properties are in s_ring_resizing_state)
+				}
+			} else if (!!rotation_state.active_angle || rotation_state.active_angle == 0) {		// rotate clusters
 				if (!signals.signal_isInFlight && !mouse_angle.isClocklyAlmost(rotation_state.active_angle, Angle.radians_from_degrees(4), Angle.full)) {		// detect >= 4° change
 					$s_rotation_ring_angle = mouse_angle.add_angle_normalized(-rotation_state.basis_angle);
 					debug.log_action(` rotate ${$s_rotation_ring_angle.degrees_of(0)}`);
@@ -76,18 +90,6 @@
 					debug.log_action(` page  ${delta_angle.degrees_of(0)}`);
 					signals.signal_rebuildGraph_fromFocus();
 				}
-			} else if (!!g.ring_resizing_state.basis_radius) {					// resize
-				const smallest = k.innermost_ring_radius;
-				const largest = smallest * 3;
-				const magnitude = from_center.magnitude - g.ring_resizing_state.basis_radius;
-				const distance = magnitude.force_between(smallest, largest);
-				const delta = distance - $s_ring_rotation_radius;
-				const radius = $s_ring_rotation_radius + delta;
-				if (Math.abs(delta) > 1) {										// granularity of 1 pixel
-					debug.log_action(` resize  D ${distance.toFixed(0)}  R ${radius.toFixed(0)}  + ${delta.toFixed(1)}`);
-					$s_ring_rotation_radius = radius;
-					signals.signal_rebuildGraph_fromFocus();					// destroys this component (properties are in s_ring_resizing_state)
-				}
 			}
 		}
 	}
@@ -100,6 +102,7 @@
 
 		if (!mouse_state.isHover) {
 			const mouse_wentDown_angle = u.angle_fromCenter;
+			const rotation_angle = mouse_wentDown_angle.add_angle_normalized(-$s_rotation_ring_angle);
 			const ring_zone = u.ringZone_forMouseLocation;
 			let needsRebuild = false;
 			if (mouse_state.isUp) {
@@ -109,11 +112,12 @@
 					case Ring_Zone.resize:
 						const radius_offset = u.distance_fromCenter - $s_ring_rotation_radius;
 						debug.log_action(` begin resize  ${radius_offset.toFixed(0)}`);
+						g.ring_rotation_state.active_angle = mouse_wentDown_angle + Angle.quarter;	// needed for cursor
+						g.ring_rotation_state.basis_angle = rotation_angle + Angle.quarter;
 						g.ring_resizing_state.basis_radius = radius_offset;
 						needsRebuild = true;
 						break;
 					case Ring_Zone.rotate:
-						const rotation_angle = mouse_wentDown_angle.add_angle_normalized(-$s_rotation_ring_angle);
 						debug.log_action(` begin rotate  ${rotation_angle.degrees_of(0)}`);
 						g.ring_rotation_state.active_angle = mouse_wentDown_angle;
 						g.ring_rotation_state.basis_angle = rotation_angle;
@@ -190,9 +194,9 @@
 			{/each}
 		</div>
 		{#if !debug.hide_rings}
-			<div class='resize' style='z-index:{ZIndex.rings};'>
+			<div class='rings' style='z-index:{ZIndex.rings};'>
 				<Mouse_Responder
-					name='resize'
+					name='rings'
 					zindex={zindex}
 					cursor={cursor}
 					isHit_closure={isHit}
@@ -201,7 +205,7 @@
 					height={outer_diameter}
 					mouse_state_closure={up_down_closure}>
 					<svg
-						class='svg-resize'
+						class='svg-rings'
 						viewBox={viewBox}>
 						<path class='path-resize' d={svg_ring_resizing_path}
 							fill={u.opacitize(color, g.ring_resizing_state.fill_opacity)}

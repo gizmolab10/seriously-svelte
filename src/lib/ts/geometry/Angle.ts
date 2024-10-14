@@ -2,9 +2,9 @@ import { u } from '../common/Utilities';
 import '../common/Extensions';
 
 export enum Quadrant {
-	upperRight = 'ur',	// 			   0 ... quarter
-	upperLeft  = 'ul',	//		 quarter ... half
-	lowerLeft  = 'll',	//			half ... three_quarters
+	upperRight = 'ur',	// 				0 ... quarter
+	upperLeft  = 'ul',	//		  quarter ... half
+	lowerLeft  = 'll',	//			 half ... three_quarters
 	lowerRight = 'lr',	// three_quarters ... full
 }
 
@@ -24,9 +24,11 @@ export default class Angle {
 
 	static zero = 0;							// far right (3 o'clock)
 	static full = Math.PI * 2;					// same as (normalizes to) zero
-	static quarter = Math.PI / 2;				// zenith (12 o'clock)
-	static half = Math.PI;						// far left (9 o'clock)
-	static three_quarters = Math.PI * 3 / 2;	// nadir (6 o'clock)
+	static half = Angle.full / 2;				// far left (9 o'clock)
+	static quarter = Angle.full / 4;			// zenith (12 o'clock)
+	static three_quarters = Angle.quarter * 3;	// nadir (6 o'clock)
+	static sixteenth = Angle.full / 16;			// support octants
+	static eighth = Angle.full / 8;
 
 	static radians_from_degrees(degrees: number): number { return Math.PI / 180 * degrees; }
 	get angle_orientsDown(): boolean { return this.orientation_ofAngle == Orientation.down; }
@@ -60,14 +62,39 @@ export default class Angle {
 	get quadrant_ofAngle(): Quadrant {
 	
 		// angles begin at 3 o'clock & rotate up (counter-clockwise)
-		// ending in lowerRight quadrant
+		// ending in lowerRight quadrant (this is also the default)
 	
 		const normalized = this.angle.angle_normalized();
 		let quadrant = Quadrant.lowerRight;
-		if (normalized.isBetween(0,				Angle.quarter,		 true)) { quadrant = Quadrant.upperRight; }
-		if (normalized.isBetween(Angle.quarter, Angle.half,			 true)) { quadrant = Quadrant.upperLeft; }
+		if (normalized.isBetween(0,				Angle.quarter,		  true)) { quadrant = Quadrant.upperRight; }
+		if (normalized.isBetween(Angle.quarter, Angle.half,			  true)) { quadrant = Quadrant.upperLeft; }
 		if (normalized.isBetween(Angle.half,	Angle.three_quarters, true)) { quadrant = Quadrant.lowerLeft; }
 		return quadrant;
+	}
+
+	get octant_ofAngle(): number {
+		const normalized = this.angle.angle_normalized();
+		let test_angle = Angle.sixteenth;
+		for (let i = 0; i < 8; i++) {
+			if (normalized < test_angle) {
+				return i;
+			}
+			test_angle += Angle.eighth;
+		}
+		return 0;
+	}
+
+	get cursor_forAngle(): string {
+		if (!!this.angle) {
+			const octant = this.octant_ofAngle;
+			switch (octant % 4) {
+				case 0: return 'ns-resize';
+				case 1: return 'nwse-resize';
+				case 2: return 'ew-resize';
+				case 3: return 'nesw-resize';
+			}
+		}
+		return '';
 	}
 
 }

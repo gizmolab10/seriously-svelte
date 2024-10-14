@@ -1,7 +1,7 @@
 import { g, k, u, ux, get, Rect, Point, Angle, debug, IDLine, Arc_Map, Quadrant } from '../common/Global_Imports';
 import { Ancestry, Predicate, Paging_State, Widget_MapRect, Rotation_State } from '../common/Global_Imports';
-import { s_graphRect, s_paging_state, s_focus_ancestry } from '../state/Reactive_State';
 import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/Reactive_State';
+import { s_graphRect, s_focus_ancestry } from '../state/Reactive_State';
 
 // for one cluster (there are three)
 //
