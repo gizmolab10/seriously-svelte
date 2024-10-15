@@ -101,7 +101,7 @@
 			const mouse_angle = from_center.angle;
 			const rotation_state = g.ring_rotation_state;
 			const resizing_state = g.ring_resizing_state;
-			if (!!resizing_state.isActive) {									// resize
+			if (!!resizing_state.isActive) {									// resize, check this FIRST (when both states return isActive true, rotation should be ignored)
 				const smallest = k.innermost_ring_radius;
 				const largest = smallest * 3;
 				const magnitude = from_center.magnitude - resizing_state.basis_radius;
@@ -137,7 +137,6 @@
 				cursor = paging_rotation.cursor;
 				if (!!basis_angle && !!active_angle && basis_angle != active_angle && $s_active_cluster_map.adjust_paging_index_byAdding_angle(delta_angle)) {
 					debug.log_action(` page  ${delta_angle.degrees_of(0)}`);
-					console.log(`paging ${cursor}`);
 					signals.signal_rebuildGraph_fromFocus();
 					rebuilds += 1;
 				}

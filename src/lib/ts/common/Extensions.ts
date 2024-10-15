@@ -87,11 +87,11 @@ Object.defineProperty(String.prototype, 'html_encode', {
 			.replace(/%3A/g, ':')
 			.replace(/%3F/g, '?')
 			.replace(/%23/g, '#')
-			// .replace(/%20/g, ' ')
-			// .replace(/%3D/g, '=')
+			.replace(/%2F/g, '/')
+			.replace(/%3D/g, '=')
+			.replace(/%20/g, ' ')
 			// .replace(/%3C/g, '<')
 			// .replace(/%3E/g, '>')
-			// .replace(/%2F/g, '/')
 			;
 	},
 	writable: false,
