@@ -3,11 +3,6 @@ export enum AlterationType {
 	adding	 = 'adding',
 }
 
-export enum LayoutStyle {
-	clusters = 'clusters',
-	tree	= 'tree',
-}
-
 export enum PredicateKind {
 	isRelated = 'isRelated',
 	contains  = 'contains',

@@ -9,7 +9,6 @@ export const s_edit_state			  = writable<Edit_State | null>();
 export const s_showing_tools_ancestry = writable<Ancestry | null>();
 export const s_expanded_ancestries	  = writable<Array<Ancestry>>();
 export const s_grabbed_ancestries	  = writable<Array<Ancestry>>();
-export const s_ring_paging_state	  = writable<Rotation_State>();
 export const s_title_thing			  = writable<string | null>();
 export const s_color_thing			  = writable<string | null>();
 export const s_id_popupView			  = writable<string | null>();

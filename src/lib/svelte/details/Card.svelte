@@ -17,7 +17,7 @@
 	const control_size = new Size(size_details - 58, k.default_buttonSize + 4);
 	const control_rect = Rect.createCenterRect(control_origin, control_size);
 	const element_state = ux.elementState_for(new Identifiable(id), ElementType.info, id);
-	let color_origin = new Point(show.quests ? -2 : 49, control_rect.origin.y - (show.quests ? 1 : 24));
+	let color_origin = new Point(-2, control_rect.origin.y - (show.quests ? 1 : 24));
 	let text_box_size = new Size(size_details - 4, 68);
 	let ancestry: Ancestry | null = $s_focus_ancestry;
 	let information: { [key: string]: string } = {};
@@ -97,7 +97,7 @@
 				top:{card_top}px;
 				position:absolute;
 				text-align:center;
-				width:{k.width_details - margin * 2}px;'>
+				width:{k.width_details - (margin * 2)}px;'>
 			<Color thing={thing} origin={color_origin}/>
 			{#if show.quests}
 				{#key card_title}

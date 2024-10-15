@@ -2,7 +2,7 @@ declare global {
 	interface String {
 		hash(): number;
 		lastWord(): string;
-		HTML_encode(): string;
+		html_encode(): string;
 		unCamelCase(): string;
 		removeWhiteSpace(): string;
 		injectEllipsisAt(at: number): string;
@@ -78,17 +78,21 @@ Object.defineProperty(String.prototype, 'sizeOf_svgPath', {
 	configurable: false
 });
 
-Object.defineProperty(String.prototype, 'HTML_encode', {
+Object.defineProperty(String.prototype, 'html_encode', {
 	value: function(): string {
 		let encoded = this.replace(/\n+/g, '').trim();
 		return encodeURIComponent(encoded)
 			.replace(/%22/g, '\'')	// un-encode for easier reading
-			.replace(/%20/g, ' ')
-			.replace(/%3D/g, '=')
+			.replace(/%2B/g, '+')
 			.replace(/%3A/g, ':')
-			.replace(/%2F/g, '/')
 			.replace(/%3F/g, '?')
-			.replace(/%23/g, '#');
+			.replace(/%23/g, '#')
+			// .replace(/%20/g, ' ')
+			// .replace(/%3D/g, '=')
+			// .replace(/%3C/g, '<')
+			// .replace(/%3E/g, '>')
+			// .replace(/%2F/g, '/')
+			;
 	},
 	writable: false,
 	enumerable: false,
@@ -185,6 +189,7 @@ Object.defineProperty(Number.prototype, 'angle_normalized', {
 
 Object.defineProperty(Number.prototype, 'angle_normalized_aroundZero', {
 	value: function(): number {
+		// range from - to + PI
 		return (this + Math.PI).angle_normalized() - Math.PI;
 	},
 	writable: false,

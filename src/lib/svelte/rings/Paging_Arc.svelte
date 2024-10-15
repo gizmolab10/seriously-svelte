@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { s_thing_fontFamily, s_ring_paging_state, s_ring_rotation_radius } from '../../ts/state/Reactive_State';
 	import { g, k, u, ux, show, Rect, Size, Point, debug, Angle, ZIndex, onMount } from '../../ts/common/Global_Imports';
 	import { opacitize, Cluster_Map, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { s_mouse_location, s_mouse_up_count, s_focus_ancestry } from '../../ts/state/Reactive_State';
+	import { s_thing_fontFamily, s_ring_rotation_radius } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import { ArcPart } from '../../ts/common/Enumerations';
 	import Identifiable from '../../ts/basis/Identifiable';
@@ -25,16 +25,11 @@
 	// uses arc_map for svg
 	// and cluster map for geometry and text
 	//
-	// contained by rings, which is contained by clusters view
+	// contained by rings, which is contained by rings graph
 
 	debug.log_build(` P ARC (svelte)  ${cluster_map?.name}`);
 	cluster_map?.update_all();
 	update_colors();
-
-	$: {
-		const _ = $s_ring_paging_state;
-		update_colors();
-	}
 
 	$: {
 		if (!!arc) {
@@ -53,7 +48,7 @@
 
 	function update_colors() {
 		fork_color = u.opacitize(color, 0.3);
-		arc_color = u.opacitize(color, $s_ring_paging_state.stroke_opacity);
+		arc_color = u.opacitize(color, g.cluster_paging_state.stroke_opacity);
 		thumb_color = u.opacitize(color, g.ring_rotation_state.isActive ? 0.15 : cluster_map?.paging_rotation.three_level_opacity);
 	}
 

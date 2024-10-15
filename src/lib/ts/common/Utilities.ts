@@ -192,15 +192,17 @@ class Utilities {
 
 	get ringZone_forMouseLocation(): Ring_Zone {
 		const distance = this.distance_fromCenter;
-		const thick = k.ring_rotation_thickness;
 		const inner = get(s_ring_rotation_radius);
+		const thick = k.ring_rotation_thickness;
+		const thin = k.paging_arc_thickness;
 		if (!!distance && distance <= inner + thick * 2) {
 			if (distance > inner + thick) {
 				return Ring_Zone.resize;
 			} else if (distance > inner) {
 				return Ring_Zone.rotate;
+			} else if (distance > inner - thin) {
+				return Ring_Zone.paging;
 			}
-			return Ring_Zone.paging;
 		}
 		return Ring_Zone.miss;
 	}

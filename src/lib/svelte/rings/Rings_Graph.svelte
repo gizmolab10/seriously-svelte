@@ -43,7 +43,7 @@
 </script>
 
 {#key g.readOnce_rebuild_needed_forType(Rebuild_Type.clusters), $s_focus_ancestry.hashedAncestry}
-	<div class='clusters-graph'
+	<div class='rings-graph'
 		style='
 			z-index:{ZIndex.backmost};
 			width:{$s_graphRect.size.width}px;
