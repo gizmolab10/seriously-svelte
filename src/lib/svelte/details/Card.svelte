@@ -106,12 +106,10 @@
 				<div class='horizontal-line'
 					style='
 						top:20px;
-						height:1px;
 						left:{-margin}px;
 						position:absolute;
 						width:{k.width_details}px;
-						z-index:{ZIndex.frontmost};
-						background-color:lightgray;'>
+						z-index:{ZIndex.frontmost};'>
 				</div>
 				{#if hasGrabs()}
 					<Button name={name}

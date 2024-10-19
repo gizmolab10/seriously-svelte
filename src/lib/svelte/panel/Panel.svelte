@@ -42,28 +42,10 @@
 		font-size: 3em;
 		width: 100%;
 	}
-	.top-title {
-		text-align: center;
-		position: fixed;
-		font-size: 2em;
-		right: 0px;
-		top: 40px;
-	}
 	.horizontal-line {
-		background-color: lightgray;
 		position: fixed;
-		height: 1px;
 		width: 110%;
 		left: 0px;
-	}
-	.vertical-line {
-		background-color: lightgray;
-		position: absolute;
-		width: 1px;
-	}
-	.clipper {
-		overflow: hidden;
-		position: fixed;
 	}
 </style>
 
@@ -104,10 +86,15 @@
 			{#if show.titleAtTop}
 				<div class='top-title'
 					style='
+						left: 0px;
 						top: 70px;
+						top: 40px;
+						right: 0px;
+						font-size: 2em;
+						position: fixed;
+						text-align: center;
 						z-index: {ZIndex.frontmost};
-						color: {$s_focus_ancestry.thing?.color};
-						left: 0px;'>
+						color: {$s_focus_ancestry.thing?.color};'>
 					{$s_focus_ancestry.title}
 				</div>
 				<div class='horizontal-line'
@@ -120,8 +107,11 @@
 				<Details/>
 				<div class='vertical-line'
 					style='
+						width: 1px;
+						position: absolute;
 						z-index: {ZIndex.lines};
 						left: {k.width_details}px;
+						background-color: lightgray;
 						top: {$s_graphRect.origin.y}px;
 						height: {$s_graphRect.size.height}px;'>
 				</div>

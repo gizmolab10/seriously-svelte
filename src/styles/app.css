@@ -1,12 +1,17 @@
 svg { display: block; }		/* override inline to eliminate unwanted vertical displacements */
 
 .root {
-	background-color: white;
 	color: white;
+	background-color: white;
 }
 
 button, svg {
 	&:focus {
 		outline: none;
 	}
+}
+
+.horizontal-line {
+	background-color: lightgray;
+	height: 1px;
 }

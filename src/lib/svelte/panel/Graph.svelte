@@ -94,7 +94,7 @@
 	function update_style() {
 		style=`
 			left: 0px;
-			verflow: hidden;
+			overflow: hidden;
 			position: absolute;
 			touch-action: none;
 			pointer-events: auto;

@@ -24,7 +24,6 @@ export enum IDPersistent {
 	layout		  = 'layout',
 	quests		  = 'quests',
 	modes		  = 'modes',
-	forks		  = 'forks',
 	scale		  = 'scale',
 	focus		  = 'focus',
 	info		  = 'info',

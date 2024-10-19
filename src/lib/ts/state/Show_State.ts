@@ -5,7 +5,6 @@ import { s_show_details, s_tree_mode } from './Reactive_State';
 class Show_State {
 	focus_info	= false;
 	info		= false;
-	forks		= false;
 	quests		= false;
 	titleAtTop	= false;
 	arrowheads	= false;
@@ -36,10 +35,6 @@ class Show_State {
 					this.modes = flag;
 					persistLocal.write_key(IDPersistent.modes, flag);
 					break;
-				case 'forks':
-					this.forks = flag;
-					persistLocal.write_key(IDPersistent.forks, flag);
-					break;
 				case 'tinyDots':
 					this.tinyDots = flag;
 					persistLocal.write_key(IDPersistent.tinyDots, flag);
@@ -59,7 +54,6 @@ class Show_State {
 	restore_state() {
 		persistLocal.write_key(IDPersistent.title_atTop, false);
 		this.info = persistLocal.read_key(IDPersistent.info) ?? false;
-		this.forks = persistLocal.read_key(IDPersistent.forks) ?? true;
 		this.modes = persistLocal.read_key(IDPersistent.modes) ?? true;
 		this.quests = persistLocal.read_key(IDPersistent.quests) ?? false;
 		this.tinyDots = persistLocal.read_key(IDPersistent.tinyDots) ?? false;

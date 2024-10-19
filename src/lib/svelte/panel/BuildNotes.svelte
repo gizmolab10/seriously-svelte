@@ -77,10 +77,8 @@
         gap: 10px;
     }
 	.horizontal-line {
-		background-color: lightgray;
 		position: fixed;
 		width: 500px;
-		height: 1px;
 	}
 	.title {
 		font-size: 1.5em;
