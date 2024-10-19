@@ -26,7 +26,8 @@ export enum IDLine {
 	up	 = 'up',
 }
 
-export enum IDTrait {
+export enum ThingType {
+	generic  = '',
 	roots = '^',
 	root  = '!',
 	bulk  = '~',

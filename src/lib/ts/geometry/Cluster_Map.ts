@@ -95,7 +95,8 @@ export default class Cluster_Map  {
 	}
 
 	get direction_kind(): string {
-		return this.isParental ? 'parents' : this.toChildren ? 'children' : this.kind; }
+		const isSingular = this.total == 1;
+		return this.isParental ? isSingular ? 'parent' : 'parents' : this.toChildren ? isSingular ? 'child' : 'children' : this.kind; }
 	
 	update_label_forIndex() {
 		let cluster_title =  `${this.total} ${this.direction_kind}`;

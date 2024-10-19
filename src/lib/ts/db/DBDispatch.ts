@@ -66,7 +66,7 @@ export default class DBDispatch {
 		debug.log_beat('hierarchy_fetch_andBuild_forDBType before timeout');
 		setTimeout(() => {
 			persistLocal.restore_db_dependent(true);
-			h.hierarchy_markAsCompleted();
+			h.conclude_fetch();
 			signals.signal_rebuildGraph_fromFocus();
 			debug.log_beat('hierarchy_fetch_andBuild_forDBType after timeout');
 		}, 1);

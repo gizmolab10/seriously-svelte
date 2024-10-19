@@ -18,6 +18,7 @@ export default class RemoteIdentifiable extends Identifiable {
 		this.dbType = dbType;
 	}
 
+	async remoteWrite() {}
 	updateModifyDate() { this.lastModifyDate = new Date(); }
 
 	wasModifiedWithinMS(threshold: number): boolean {

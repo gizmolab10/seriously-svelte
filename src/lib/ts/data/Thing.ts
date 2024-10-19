@@ -1,4 +1,4 @@
-import { k, u, get, Datum, debug, IDTrait, Ancestry, Predicate, Page_States } from '../common/Global_Imports';
+import { k, u, get, Datum, debug, ThingType, Ancestry, Predicate, Page_States } from '../common/Global_Imports';
 import { DebugFlag, dbDispatch, Relationship, Seriously_Range } from '../common/Global_Imports';
 import { s_focus_ancestry, s_expanded_ancestries } from '../state/Reactive_State';
 import { s_rebuild_count, s_color_thing } from '../state/Reactive_State';
@@ -11,40 +11,36 @@ export default class Thing extends Datum {
 	page_states!: Page_States;
 	oneAncestry!: Ancestry;
 	needsBulkFetch = false;
-	consequence: string;
 	isEditing = false;
 	isGrabbed = false;
-	quest: string;
 	title: string;
 	color: string;
-	trait: string;
+	type: string;
 
-	constructor(baseID: string, id: string, title = k.title_default, color = k.color_default, trait = 's', consequence = k.empty, quest = k.empty, hasBeen_remotely_saved: boolean = false) {
+	constructor(baseID: string, id: string, title = k.title_default, color = k.color_default, type = k.empty, hasBeen_remotely_saved: boolean = false) {
 		super(dbDispatch.db.dbType, baseID, id, hasBeen_remotely_saved);
 		this.selectionRange = new Seriously_Range(0, title.length);
 		this.page_states = new Page_States(this.id);
-		this.consequence = consequence;
 		this.title = title;
-		this.quest = quest;
 		this.color = color;
-		this.trait = trait;
+		this.type = type;
 	};
 	
 	get parentIDs():		  Array<string> { return this.parents.map(t => t.id); }
 	get parentAncestries(): Array<Ancestry> { return this.parentAncestries_for(Predicate.contains); }
 	get parents():			   Array<Thing> { return this.parents_forID(Predicate.idContains); }
-	get fields():		  Airtable.FieldSet { return { title: this.title, color: this.color, trait: this.trait }; }
+	get fields():		  Airtable.FieldSet { return { title: this.title, color: this.color, type: this.type }; }
 	get idBridging():				 string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get description():				 string { return this.id + ' \"' + this.title + '\"'; }
 	get titleWidth():				 number { return u.getWidthOf(this.title); }
-	get isRoot():					boolean { return this.trait == IDTrait.root; }
-	get isBulkAlias():				boolean { return this.trait == IDTrait.bulk; }
+	get isRoot():					boolean { return this.type == ThingType.root; }
+	get isBulkAlias():				boolean { return this.type == ThingType.bulk; }
 	get isAcrossBulk():				boolean { return this.baseID != h.db.baseID; }
 	get hasMultipleParents():		boolean { return this.parentAncestries.length > 1; }
 	get hasParents():				boolean { return this.hasParentsFor(Predicate.idContains); }
 	get isFocus():					boolean { return (get(s_focus_ancestry).thing?.id ?? k.empty) == this.id; }
 	get hasRelated():				boolean { return this.relationships_inBothDirections_for(Predicate.idIsRelated).length > 0; }
-	get hasNoData():				boolean { return !this.title && !this.consequence && !this.quest && !this.color && !this.trait; }
+	get hasNoData():				boolean { return !this.title && !this.color && !this.type; }
 
 	get parents_ofAllKinds(): Array<Thing> {
 		let parents: Array<Thing> = [];

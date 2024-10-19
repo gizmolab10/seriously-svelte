@@ -1,4 +1,4 @@
-import { g, k, u, Thing, debug, signals, IDTrait, DebugFlag, Hierarchy, Predicate } from '../common/Global_Imports';
+import { g, k, u, Thing, debug, signals, ThingType, DebugFlag, Hierarchy, Predicate } from '../common/Global_Imports';
 import { dbDispatch, persistLocal, IDPersistent, Relationship, CreationOptions } from '../common/Global_Imports';
 import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
@@ -64,18 +64,18 @@ export default class DBFirebase implements DBInterface {
 		await this.fetch_documentsOf(DatumType.relationships, baseID);
 	}
 		
-	async fetch_documentsOf(type: DatumType, baseID: string | null = null) {
+	async fetch_documentsOf(datum_type: DatumType, baseID: string | null = null) {
 		try {
-			const collectionRef = !baseID ? collection(this.firestore, type) : collection(this.firestore, this.bulksName, baseID, type);
+			const collectionRef = !baseID ? collection(this.firestore, datum_type) : collection(this.firestore, this.bulksName, baseID, datum_type);
 			let querySnapshot = await getDocs(collectionRef);
 			const bulk = this.bulk_for(baseID);
 
 			if (!!baseID) {
 				if (querySnapshot.empty) {
-					await this.documents_firstTime_remoteCreate(type, baseID, collectionRef);
+					await this.documents_firstTime_remoteCreate(datum_type, baseID, collectionRef);
 					querySnapshot = await getDocs(collectionRef);
 				}
-				this.setup_handle_docChanges(baseID, type, collectionRef);
+				this.setup_handle_docChanges(baseID, datum_type, collectionRef);
 			}
 			
 			
@@ -84,20 +84,20 @@ export default class DBFirebase implements DBInterface {
 			///////////////////
 
 			if (bulk) {
-				switch (type) {
+				switch (datum_type) {
 					case DatumType.things:				 bulk.thingsCollection = collectionRef; break;
 					case DatumType.relationships: bulk.relationshipsCollection = collectionRef; break;
 				}
-			} else if (type == DatumType.predicates) {
+			} else if (datum_type == DatumType.predicates) {
 				this.predicatesCollection = collectionRef;
 			}
 
 			const docs = querySnapshot.docs;
-			debug.log_remote('READ ' + docs.length + ' from ' + baseID + ':' + type);
+			debug.log_remote('READ ' + docs.length + ' from ' + baseID + ':' + datum_type);
 			for (const docSnapshot of docs) {
 				const id = docSnapshot.id;
 				const data = docSnapshot.data();
-				await this.document_remember_validated(type, id, data, baseID ?? this.baseID);
+				await this.document_remember_validated(datum_type, id, data, baseID ?? this.baseID);
 			}
 		} catch (error) {
 			this.reportError(error);
@@ -140,7 +140,7 @@ export default class DBFirebase implements DBInterface {
 						if (baseID != this.baseID) {
 							let thing = h.thing_bulkAlias_forTitle(baseID);
 							if (!thing) {								// create a thing for each bulk
-								thing = h.thing_runtimeCreate(this.baseID, Identifiable.newID(), baseID, 'red', IDTrait.bulk);
+								thing = h.thing_runtimeCreate(this.baseID, Identifiable.newID(), baseID, 'red', ThingType.bulk);
 								await h.ancestry_remember_remoteAddAsChild(rootsAncestry, thing);
 							} else if (thing.thing_isBulk_expanded) {
 								await h.ancestry_redraw_remoteFetchBulk_browseRight(thing);
@@ -157,8 +157,8 @@ export default class DBFirebase implements DBInterface {
 
 	static readonly $_REMOTE_$: unique symbol;
 	
-	snapshot_deferOne(baseID: string, type: DatumType, snapshot: QuerySnapshot) {
-		const deferral = new SnapshotDeferal(baseID, type, snapshot);
+	snapshot_deferOne(baseID: string, datum_type: DatumType, snapshot: QuerySnapshot) {
+		const deferral = new SnapshotDeferal(baseID, datum_type, snapshot);
 		this.deferredSnapshots.push(deferral);
 	}
 
@@ -168,30 +168,30 @@ export default class DBFirebase implements DBInterface {
 			const deferral = this.deferredSnapshots.pop();
 			if (!!deferral) {
 				deferral.snapshot.docChanges().forEach((change) => {	// convert and remember
-					this.handle_docChanges(deferral.baseID, deferral.type, change);
+					this.handle_docChanges(deferral.baseID, deferral.datum_type, change);
 				});
 			}
 		}
 	}
 
-	setup_handle_docChanges(baseID: string, type: DatumType, collection: CollectionReference) {
+	setup_handle_docChanges(baseID: string, datum_type: DatumType, collection: CollectionReference) {
 		onSnapshot(collection, (snapshot) => {
 			if (h.isAssembled) {		// u.ignore snapshots caused by data written to server
 				if (this.deferSnapshots) {
-					this.snapshot_deferOne(baseID, type, snapshot);
+					this.snapshot_deferOne(baseID, datum_type, snapshot);
 				} else {
 					snapshot.docChanges().forEach((change) => {	// convert and remember
-						this.handle_docChanges(baseID, type, change);
+						this.handle_docChanges(baseID, datum_type, change);
 					});
 				}
 			}
 		}
 	)};
 
-	async handle_docChanges(baseID: string, type: DatumType, change: DocumentChange) {
+	async handle_docChanges(baseID: string, datum_type: DatumType, change: DocumentChange) {
 		const doc = change.doc;
 		const data = doc.data();
-		if (DBFirebase.data_isValidOfKind(type, data)) {
+		if (DBFirebase.data_isValidOfKind(datum_type, data)) {
 			const id = doc.id;
 
 			///////////////////////
@@ -200,7 +200,7 @@ export default class DBFirebase implements DBInterface {
 			///////////////////////
 
 			try {
-				if (type == DatumType.relationships) {
+				if (datum_type == DatumType.relationships) {
 					const remoteRelationship = new RemoteRelationship(data);
 					if (!!remoteRelationship) {
 						let relationship = h.relationship_forHID(id.hash());
@@ -233,16 +233,16 @@ export default class DBFirebase implements DBInterface {
 							h.rootAncestry.order_normalizeRecursive_remoteMaybe(true);
 						}, 20);
 					}
-				} else if (type == DatumType.things) {
+				} else if (datum_type == DatumType.things) {
 					const remoteThing = new RemoteThing(data);
 					let thing = h.thing_forHID(id.hash());
 					if (!!remoteThing) {
 						switch (change.type) {
 							case 'added':
-								if (!!thing || remoteThing.isEqualTo(this.addedThing) || remoteThing.trait == IDTrait.root) {
+								if (!!thing || remoteThing.isEqualTo(this.addedThing) || remoteThing.type == ThingType.root) {
 									return;			// do not invoke signal because nothing has changed
 								}
-								thing = h.thing_remember_runtimeCreate(baseID, id, remoteThing.title, remoteThing.color, remoteThing.trait, data.consequence, data.quest, true);
+								thing = h.thing_remember_runtimeCreate(baseID, id, remoteThing.title, remoteThing.color, remoteThing.type, true);
 								break;
 							case 'removed':
 								if (!!thing) {
@@ -261,26 +261,26 @@ export default class DBFirebase implements DBInterface {
 			} catch (error) {
 				this.reportError(error);
 			}
-			debug.log_remote('HANDLE ' + baseID + ':' + type + k.space + change.type);
+			debug.log_remote('HANDLE ' + baseID + ':' + datum_type + k.space + change.type);
 		}
 	}
 
 	static readonly $_SUBCOLLECTIONS_$: unique symbol;
 
-	async documents_firstTime_remoteCreate(type: DatumType, baseID: string, collectionRef: CollectionReference) {
+	async documents_firstTime_remoteCreate(datum_type: DatumType, baseID: string, collectionRef: CollectionReference) {
 		const docRef = doc(this.firestore, this.bulksName, baseID);
 		await setDoc(docRef, { isReal: true }, { merge: true });
 		await updateDoc(docRef, { isReal: deleteField() });
-		if (type == DatumType.things) {
+		if (datum_type == DatumType.things) {
 			await this.things_remember_firstTime_remoteCreateIn(collectionRef);
 		}
 	}
 
-	async document_remember_validated(type: DatumType, id: string, data: DocumentData, baseID: string) {
-		if (DBFirebase.data_isValidOfKind(type, data)) {
-			switch (type) {
+	async document_remember_validated(datum_type: DatumType, id: string, data: DocumentData, baseID: string) {
+		if (DBFirebase.data_isValidOfKind(datum_type, data)) {
+			switch (datum_type) {
 				case DatumType.predicates:	  h.predicate_remember_runtimeCreate(id, data.kind, data.isBidirectional); break;
-				case DatumType.things:		  h.thing_remember_runtimeCreate(baseID, id, data.title, data.color, data.trait, data.consequence, data.quest, true); break;
+				case DatumType.things:		  h.thing_remember_runtimeCreate(baseID, id, data.title, data.color, data.type ?? data.trait, true, !data.type); break;
 				case DatumType.relationships: h.relationship_remember_runtimeCreateUnique(baseID, id, data.predicate.id, data.parent.id, data.child.id, data.order, CreationOptions.isFromRemote); break;
 			}
 		}
@@ -335,9 +335,9 @@ export default class DBFirebase implements DBInterface {
 	}
 
 	async things_remember_firstTime_remoteCreateIn(collectionRef: CollectionReference) {
-		const fields = ['title', 'color', 'trait', 'consequence'];
-		const root = new Thing(this.baseID, Identifiable.newID(), this.baseID, 'coral', IDTrait.root, k.empty, k.empty, true);
-		const thing = new Thing(this.baseID, Identifiable.newID(), 'Click this text to edit it', 'purple', k.empty, k.empty, k.empty, true);
+		const fields = ['title', 'color', 'type'];
+		const root = new Thing(this.baseID, Identifiable.newID(), this.baseID, 'coral', ThingType.root, true);
+		const thing = new Thing(this.baseID, Identifiable.newID(), 'Click this text to edit it', 'purple', ThingType.generic, true);
 		h.root = root;
 		const thingRef = await addDoc(collectionRef, u.convertToObject(thing, fields));		// N.B. these will be fetched, shortly
 		const rootRef = await addDoc(collectionRef, u.convertToObject(root, fields));		// no need to remember now
@@ -378,11 +378,9 @@ export default class DBFirebase implements DBInterface {
 	thing_extractChangesFromRemote(thing: Thing, from: RemoteThing) {
 		const changed = !from.isEqualTo(thing);
 		if (changed) {
-			thing.consequence = from.consequence;
 			thing.title		  = from.virginTitle;
-			thing.quest		  = from.quest;
-			thing.trait		  = from.trait;
 			thing.color		  = from.color;
+			thing.type		  = from.type;
 		}
 		return changed;
 	}
@@ -455,8 +453,8 @@ export default class DBFirebase implements DBInterface {
 
 	static readonly $_VALIDATION_$: unique symbol;
 
-	static data_isValidOfKind(type: DatumType, data: DocumentData) {
-		switch (type) {
+	static data_isValidOfKind(datum_type: DatumType, data: DocumentData) {
+		switch (datum_type) {
 			case DatumType.things:		
 				const thing = data as Thing;	
 				if (thing.hasNoData) {
@@ -531,31 +529,27 @@ class Bulk {
 
 class SnapshotDeferal {
 	baseID: string;
-	type: DatumType;
+	datum_type: DatumType;
 	snapshot: QuerySnapshot;
 
-	constructor(baseID: string, type: DatumType, snapshot: QuerySnapshot) {
+	constructor(baseID: string, datum_type: DatumType, snapshot: QuerySnapshot) {
 		this.baseID = baseID;
-		this.type = type;
 		this.snapshot = snapshot;
+		this.datum_type = datum_type;
 	}
 }
 
 interface RemoteThing {
-	consequence: string;
 	title: string;
-	quest: string;
 	color: string;
-	trait: string;
+	type: string;
 }
 
 class RemoteThing implements RemoteThing {
 	constructor(data: DocumentData) {
 		const remote = data as RemoteThing;
-		this.consequence = remote.consequence;
 		this.title	 = remote.title;
-		this.quest	 = remote.quest;
-		this.trait	 = remote.trait;
+		this.type	 = remote.type;
 		this.color	 = remote.color;
 	}
 
@@ -570,10 +564,8 @@ class RemoteThing implements RemoteThing {
 
 	isEqualTo(thing: Thing | null) {
 		return !!thing &&
-		thing.consequence == this.consequence &&
 		thing.title == this.title &&
-		thing.quest == this.quest &&
-		thing.trait == this.trait &&
+		thing.type == this.type &&
 		thing.color == this.color;
 	}
 }

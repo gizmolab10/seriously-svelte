@@ -24,7 +24,7 @@ import { Direction, svgPaths } from '../geometry/SVG_Paths';
 import { Paging_State, Page_States } from '../state/Page_States';
 import { onMount, onDestroy, setContext, getContext } from 'svelte';
 import { IDPersistent, persistLocal } from '../managers/Persist_Local';
-import { IDLine, IDTool, IDTrait, ZIndex, IDButton, IDBrowser } from './Enumerations';
+import { IDLine, IDTool, ThingType, ZIndex, IDButton, IDBrowser } from './Enumerations';
 import { Ring_Zone, ElementType, Rebuild_Type, AlterationType } from './Enumerations';
 import { PredicateKind, GraphRelations, CreationOptions, SvelteComponentType } from './Enumerations';
 
@@ -75,5 +75,5 @@ export {
 	ZIndex, PredicateKind, GraphRelations, CreationOptions,
 	Ring_Zone, ElementType, AlterationType, Seriously_Range,
 	Element_State, Paging_State, Page_States, Alteration_State,
-	IDLine, IDTool, IDTrait, IDSignal, IDButton, IDBrowser, IDPersistent,
+	IDLine, IDTool, ThingType, IDSignal, IDButton, IDBrowser, IDPersistent,
 };
