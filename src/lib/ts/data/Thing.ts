@@ -1,5 +1,5 @@
-import { k, u, get, Datum, debug, ThingType, Ancestry, Predicate, Page_States } from '../common/Global_Imports';
-import { DebugFlag, dbDispatch, Relationship, Seriously_Range } from '../common/Global_Imports';
+import { k, u, get, Datum, debug, Trait, Ancestry, Predicate, Page_States, DebugFlag } from '../common/Global_Imports';
+import { ThingType, TraitType, dbDispatch, Relationship, Seriously_Range } from '../common/Global_Imports';
 import { s_focus_ancestry, s_expanded_ancestries } from '../state/Reactive_State';
 import { s_rebuild_count, s_color_thing } from '../state/Reactive_State';
 import { h } from '../db/DBDispatch';
@@ -26,10 +26,13 @@ export default class Thing extends Datum {
 		this.type = type;
 	};
 	
+	get traits():			   Array<Trait> { return []; }
 	get parentIDs():		  Array<string> { return this.parents.map(t => t.id); }
 	get parentAncestries(): Array<Ancestry> { return this.parentAncestries_for(Predicate.contains); }
 	get parents():			   Array<Thing> { return this.parents_forID(Predicate.idContains); }
 	get fields():		  Airtable.FieldSet { return { title: this.title, color: this.color, type: this.type }; }
+	get quest():			  string | null { return h.trait_forType_ownerHID(TraitType.quest, this.idHashed)?.text ?? null; }
+	get consequence():		  string | null { return h.trait_forType_ownerHID(TraitType.consequence, this.idHashed)?.text ?? null; }
 	get idBridging():				 string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get description():				 string { return this.id + ' \"' + this.title + '\"'; }
 	get titleWidth():				 number { return u.getWidthOf(this.title); }
@@ -80,6 +83,7 @@ export default class Thing extends Datum {
 	
 	debugLog(message: string) { this.log(DebugFlag.things, message); }
 	hasParentsFor(idPredicate: string): boolean { return this.parents_forID(idPredicate).length > 0; }
+	setTraitText_forType(text: string, type: TraitType) { h.setText_forType_ownerHID(text, type, this.id); }
 	log(option: DebugFlag, message: string) { debug.log_maybe(option, message + k.space + this.description); }
 
 	override isInDifferentBulkThan(other: Thing): boolean {

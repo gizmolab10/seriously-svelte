@@ -1,5 +1,5 @@
-import { g, k, u, get, User, Thing, Grabs, debug, Mouse_State, Access, IDTool, ThingType, signals } from '../common/Global_Imports';
-import { Ancestry, Predicate, Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
+import { Ancestry, Predicate, Mouse_State, Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
+import { g, k, u, get, User, Thing, Trait, Grabs, debug, Access, IDTool, signals, ThingType, TraitType } from '../common/Global_Imports';
 import { s_alteration_mode, s_grabbed_ancestries, s_showing_tools_ancestry } from '../state/Reactive_State';
 import { s_isBusy, s_edit_state, s_show_rings, s_focus_ancestry } from '../state/Reactive_State';
 import RemoteIdentifiable from '../basis/RemoteIdentifiable';
@@ -12,10 +12,12 @@ type Relationships_ByHID = { [hid: number]: Array<Relationship> }
 export class Hierarchy {
 	private ancestry_byKind_andHash:{ [kind: string]: { [hash: number]: Ancestry } } = {};
 	private predicate_byDirection: { [direction: number]: Array<Predicate> } = {};
+	private traits_byOwnerHID: { [ownerHID: number]: Array<Trait> } = {};
 	private relationship_byHID: { [hid: number]: Relationship } = {};
-	private things_byTrait: { [type: string]: Array<Thing> } = {};
 	private relationships_byPredicateHID: Relationships_ByHID = {};
 	private predicate_byKind: { [kind: string]: Predicate } = {};
+	private things_byType: { [type: string]: Array<Thing> } = {};
+	private traits_byType: { [type: string]: Array<Trait> } = {};
 	private relationships_byParentHID: Relationships_ByHID = {};
 	private relationships_byChildHID: Relationships_ByHID = {};
 	private predicate_byHID: { [hid: number]: Predicate } = {};
@@ -23,8 +25,10 @@ export class Hierarchy {
 	private access_byKind: { [kind: string]: Access } = {};
 	private access_byHID: { [hid: number]: Access } = {};
 	private thing_byHID: { [hid: number]: Thing } = {};
+	private trait_byHID: { [hid: number]: Trait } = {};
 	private user_byHID: { [hid: number]: User } = {};
 	private things: Array<Thing> = [];
+	private traits: Array<Trait> = [];
 	relationships: Array<Relationship> = [];
 	predicates: Array<Predicate> = [];
 	rootsAncestry!: Ancestry;
@@ -38,8 +42,6 @@ export class Hierarchy {
 	get idRoot(): string | null { return this.root?.id ?? null; };
 	get startupExplanation(): string { return `loading your ${this.db.dbType} data${this.db.dbType == DBType.firebase ? ', from ' + this.db.baseID : k.empty}`; }
 	ancestries_rebuildAll() { this.root?.oneAncestries_rebuildForSubtree(); }
-	thing_forAncestry(ancestry: Ancestry | null): Thing | null { return ancestry?.thing ?? null; }
-	thing_forHID(hid: number | null): Thing | null { return (!hid) ? null : this.thing_byHID[hid]; }
 
 	static readonly $_INIT_$: unique symbol;
 
@@ -156,6 +158,7 @@ export class Hierarchy {
 
 	async deferredWriteAll() {
 		await this.deferredWriteAllData(this.things);
+		await this.deferredWriteAllData(this.traits);
 		await this.deferredWriteAllData(this.relationships);
 	}
 
@@ -185,7 +188,7 @@ export class Hierarchy {
 		if (!!hid) {
 			const relationship = this.relationship_forHID(hid);
 			if (!!relationship) {
-				return this.thing_byHID[relationship.idChild.hash()];
+				return this.thing_forHID(relationship.idChild.hash());
 			}
 		}
 		return this.root;
@@ -227,10 +230,13 @@ export class Hierarchy {
 	things_forgetAll() {
 		this.things = []; // clear
 		this.thing_byHID = {};
-		this.things_byTrait = {};
+		this.things_byType = {};
 	}
 
 	static readonly $_THING_$: unique symbol;
+
+	thing_forAncestry(ancestry: Ancestry | null): Thing | null { return ancestry?.thing ?? null; }
+	thing_forHID(hid: number | null): Thing | null { return !hid ? null : this.thing_byHID[hid]; }
 
 	async thing_remember_remoteRelocateChild(child: Thing, fromParent: Thing, toParent: Thing): Promise<any> {
 		let relationship = this.relationship_whereID_isChild(child.id);
@@ -245,7 +251,7 @@ export class Hierarchy {
 	thing_forget(thing: Thing) {
 		delete this.thing_byHID[thing.idHashed];
 		this.things = u.strip_invalid(this.things);
-		this.things_byTrait[thing.type] = u.strip_invalid(this.things_byTrait[thing.type]);
+		this.things_byType[thing.type] = u.strip_invalid(this.things_byType[thing.type]);
 	}
 
 	async thing_edit_remoteAddLine(ancestry: Ancestry, below: boolean = true) {
@@ -273,7 +279,7 @@ export class Hierarchy {
 		const thing = this.thing_runtimeCreate(baseID, id, title, color, type, hasBeen_remotely_saved);
 		this.thing_remember(thing);
 		if (needs_upgrade) {
-			thing.needsWrite = true;	// also needs trait field removed
+			thing.needsWrite = true;	// add type and remove trait fields
 		}
 		return thing;
 	}
@@ -300,11 +306,11 @@ export class Hierarchy {
 	}
 
 	thing_remember(thing: Thing) {
-		if (!this.thing_byHID[thing.idHashed]) {
+		if (!this.thing_forHID(thing.idHashed)) {
 			this.thing_byHID[thing.idHashed] = thing;
-			let things = this.things_byTrait[thing.type] ?? [];
+			let things = this.things_byType[thing.type] ?? [];
 			things.push(thing);
-			this.things_byTrait[thing.type] = things;
+			this.things_byType[thing.type] = things;
 			this.things.push(thing);
 			if (thing.type == ThingType.root && (thing.baseID == k.empty || thing.baseID == this.db.baseID)) {
 				this.root = thing;
@@ -331,6 +337,52 @@ export class Hierarchy {
 		return thing!;
 	}
 
+	static readonly $_TRAIT_$: unique symbol;
+
+	trait_forHID(hid: number | null): Trait | null { return !hid ? null : this.trait_byHID[hid]; }
+
+	trait_runtimeCreate(baseID: string, id: string, ownerID: string, type: TraitType, text: string, hasBeen_remotely_saved: boolean = false): Trait {
+		return new Trait(baseID, id, ownerID, type, text, hasBeen_remotely_saved);
+	}
+
+	trait_remember_runtimeCreateUnique(baseID: string, id: string, ownerID: string, type: TraitType, text: string, hasBeen_remotely_saved: boolean = false): Trait {
+		return this.trait_forHID(id?.hash()) ?? this.trait_remember_runtimeCreate(baseID, id, ownerID, type, text, hasBeen_remotely_saved);
+	}
+
+	trait_forType_ownerHID(type: TraitType | null, ownerHID: number | null): Trait| null {
+		const traits = this.traits_forOwnerHID(ownerHID)?.filter(t => t.type == type);
+		return !traits ? null : traits[0]
+	}
+
+	traits_forOwnerHID(hid: number | null): Array<Trait> | null {
+		const value = !!hid ? this.traits_byOwnerHID?.[hid] : null;
+		return (value instanceof Array) ? value : null;
+	}
+
+	trait_remember(trait: Trait) {
+		const hid = trait.ownerID.hash();
+		(this.traits_byOwnerHID[hid] = this.traits_byOwnerHID[hid] || []).push(trait);
+		(this.traits_byType[trait.type] = this.traits_byType[trait.type] || []).push(trait);
+		this.traits.push(trait);
+	}
+
+	trait_remember_runtimeCreate(baseID: string, id: string, ownerID: string, type: TraitType, text: string,
+		hasBeen_remotely_saved: boolean = false): Trait {
+		const trait = this.trait_runtimeCreate(baseID, id, ownerID, type, text, hasBeen_remotely_saved);
+		this.trait_remember(trait);
+		return trait;
+	}
+
+	setText_forType_ownerHID(text: string, type: TraitType, ownerID: string) {
+		let trait = this.trait_forType_ownerHID(type, ownerID.hash());
+		if (!trait) {
+			trait = this.trait_remember_runtimeCreate(this.db.baseID, Identifiable.newID(), ownerID, type, text);
+		} else {
+			trait.text = text;
+		}
+		trait.needsWrite = true;
+	}
+
 	static readonly $_BULKS_$: unique symbol;
 
 	thing_remember_bulkRootID(baseID: string, id: string, color: string) {
@@ -350,7 +402,7 @@ export class Hierarchy {
 
 	thing_bulkAlias_forTitle(title: string | null) {
 		if (!!title) {
-			for (const thing of this.things_byTrait[ThingType.bulk]) {
+			for (const thing of this.things_byType[ThingType.bulk]) {
 				if  (thing.title == title) {		// special case TODO: convert to a query string
 					return thing;
 				}
@@ -632,7 +684,7 @@ export class Hierarchy {
 		let rootsAncestry: Ancestry | null = null;
 		const rootAncestry = this.rootAncestry;
 		if (!!rootAncestry) {
-			for (const rootsMaybe of this.things_byTrait[ThingType.roots]) {	// should only be one
+			for (const rootsMaybe of this.things_byType[ThingType.roots]) {	// should only be one
 				if  (rootsMaybe.title == 'roots') {		// special case TODO: convert to a query string
 					return rootAncestry.extend_withChild(rootsMaybe) ?? null;
 				}

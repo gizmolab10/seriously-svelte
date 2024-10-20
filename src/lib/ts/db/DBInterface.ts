@@ -1,4 +1,4 @@
-import { Thing, Hierarchy, Relationship } from '../common/Global_Imports';
+import { Thing, Trait, Hierarchy, Relationship } from '../common/Global_Imports';
 
 export enum DBType {
 	postgres = 'postgres',
@@ -11,6 +11,7 @@ export enum DatumType {
 	relationships = 'Relationships',
 	predicates	  = 'Predicates',
 	things		  = 'Things',
+	traits		  = 'Traits',
 	access		  = 'Access',
 	users		  = 'Users',
 }
@@ -32,4 +33,7 @@ export default interface DBInterface {
 	relationship_remoteUpdate(relationship: Relationship): Promise<void>;
 	relationship_remoteDelete(relationship: Relationship): Promise<void>;
 	relationship_remember_remoteCreate(relationship: Relationship | null): Promise<void>;
+	trait_remoteUpdate(trait: Trait): Promise<void>;
+	trait_remoteDelete(trait: Trait): Promise<void>;
+	trait_remember_remoteCreate(trait: Trait): Promise<void>;
 }

@@ -1,5 +1,5 @@
-import { g, k, u, Thing, debug, signals, ThingType, DebugFlag, Hierarchy, Predicate } from '../common/Global_Imports';
-import { dbDispatch, persistLocal, IDPersistent, Relationship, CreationOptions } from '../common/Global_Imports';
+import { g, k, u, Thing, Trait, debug, signals, DebugFlag, Hierarchy, Predicate, TraitType } from '../common/Global_Imports';
+import { ThingType, dbDispatch, persistLocal, IDPersistent, Relationship, CreationOptions } from '../common/Global_Imports';
 import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
@@ -27,6 +27,7 @@ export default class DBFirebase implements DBInterface {
 	isRemote = true;
 	baseID = 'Public';
 	addedThing!: Thing;
+	addedTrait!: Trait;
 	bulksName = 'Bulks';
 	bulks!: Array<Bulk>;
 	hierarchy!: Hierarchy;
@@ -61,6 +62,7 @@ export default class DBFirebase implements DBInterface {
 
 	async fetch_hierarchy_from(baseID: string) {
 		await this.fetch_documentsOf(DatumType.things, baseID);
+		await this.fetch_documentsOf(DatumType.traits, baseID);
 		await this.fetch_documentsOf(DatumType.relationships, baseID);
 	}
 		
@@ -86,6 +88,7 @@ export default class DBFirebase implements DBInterface {
 			if (bulk) {
 				switch (datum_type) {
 					case DatumType.things:				 bulk.thingsCollection = collectionRef; break;
+					case DatumType.traits:				 bulk.traitsCollection = collectionRef; break;
 					case DatumType.relationships: bulk.relationshipsCollection = collectionRef; break;
 				}
 			} else if (datum_type == DatumType.predicates) {
@@ -280,6 +283,7 @@ export default class DBFirebase implements DBInterface {
 		if (DBFirebase.data_isValidOfKind(datum_type, data)) {
 			switch (datum_type) {
 				case DatumType.predicates:	  h.predicate_remember_runtimeCreate(id, data.kind, data.isBidirectional); break;
+				case DatumType.traits:		  h.trait_remember_runtimeCreate(baseID, id, data.ownerID, data.type, data.text, true); break;
 				case DatumType.things:		  h.thing_remember_runtimeCreate(baseID, id, data.title, data.color, data.type ?? data.trait, true, !data.type); break;
 				case DatumType.relationships: h.relationship_remember_runtimeCreateUnique(baseID, id, data.predicate.id, data.parent.id, data.child.id, data.order, CreationOptions.isFromRemote); break;
 			}
@@ -385,6 +389,68 @@ export default class DBFirebase implements DBInterface {
 		return changed;
 	}
 
+	static readonly $_TRAIT_$: unique symbol;
+
+	async trait_remember_remoteCreate(trait: Trait) {
+		const traitsCollection = this.bulk_for(trait.baseID)?.traitsCollection;
+		if (!!traitsCollection) {
+			const remoteTrait = new RemoteTrait(trait);
+			const jsTrait = { ...remoteTrait };
+			trait.awaitingCreation = true;
+			this.addedTrait = trait;
+			try {
+				this.deferSnapshots = true;
+				const ref = await addDoc(traitsCollection, jsTrait)
+				trait.awaitingCreation = false;
+				trait.hasBeen_remotely_saved = true;
+				trait.setID(ref.id);			// so relationship will be correct
+				h.trait_remember(trait);
+				this.handle_deferredSnapshots();
+				trait.log(DebugFlag.remote, 'CREATE T');
+			} catch (error) {
+				this.reportError(error);
+			}
+		}
+	}
+
+	async trait_remoteUpdate(trait: Trait) {
+		const traitsCollection = this.bulk_for(trait.baseID)?.traitsCollection;
+		if (!!traitsCollection) {
+			const ref = doc(traitsCollection, trait.id) as DocumentReference<Trait>;
+			const remoteTrait = new RemoteTrait(trait);
+			const jsTrait = { ...remoteTrait };
+			try {
+				await setDoc(ref, jsTrait);
+				trait.log(DebugFlag.remote, 'UPDATE T');
+			} catch (error) {
+				this.reportError(error);
+			}
+		}
+	}
+
+	async trait_remoteDelete(trait: Trait) {
+		const traitsCollection = this.bulk_for(trait.baseID)?.traitsCollection;
+		if (!!traitsCollection) {
+			try {
+				const ref = doc(traitsCollection, trait.id) as DocumentReference<Trait>;
+				await deleteDoc(ref);
+				trait.log(DebugFlag.remote, 'DELETE T');
+			} catch (error) {
+				this.reportError(error);
+			}
+		}
+	}
+
+	trait_extractChangesFromRemote(trait: Trait, from: RemoteTrait) {
+		const changed = !from.isEqualTo(trait);
+		if (changed) {
+			trait.ownerID = from.ownerID;
+			trait.type	  = from.type;
+			trait.text	  = from.text;
+		}
+		return changed;
+	}
+
 	static readonly $_RELATIONSHIP_$: unique symbol;
 
 	async relationship_remember_remoteCreate(relationship: Relationship) {
@@ -461,6 +527,12 @@ export default class DBFirebase implements DBInterface {
 					return false;
 				}
 				break;
+			case DatumType.traits:		
+				const trait = data as Trait;	
+				if (trait.hasNoData) {
+					return false;
+				}
+				break;
 			case DatumType.predicates:
 				if (!data.kind) {
 					return false;
@@ -521,6 +593,7 @@ export default class DBFirebase implements DBInterface {
 class Bulk {
 	baseID: string = k.empty;
 	thingsCollection: CollectionReference | null = null;
+	traitsCollection: CollectionReference | null = null;
 	relationshipsCollection: CollectionReference | null = null;
 	constructor(baseID: string) {
 		this.baseID = baseID;
@@ -568,6 +641,35 @@ class RemoteThing implements RemoteThing {
 		thing.type == this.type &&
 		thing.color == this.color;
 	}
+}
+
+interface RemoteTrait {
+	type: TraitType;
+	ownerID: string;
+	text: string;
+}
+
+class RemoteTrait implements RemoteTrait {
+	constructor(data: DocumentData) {
+		const remote = data as RemoteTrait;
+		this.ownerID = remote.ownerID;
+		this.type	 = remote.type;
+		this.text	 = remote.text;
+	}
+
+	isEqualTo(trait: Trait | null) {
+		return !!trait &&
+		trait.ownerID == this.ownerID &&
+		trait.type == this.type &&
+		trait.text == this.text;
+	}
+}
+
+interface RemoteRelationship {
+	order: number;
+	child: DocumentReference<Thing, DocumentData>;
+	parent: DocumentReference<Thing, DocumentData>;
+	predicate: DocumentReference<Predicate, DocumentData>;
 }
 
 interface RemoteRelationship {

@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { g, k, ux, show, Rect, Size, Point, Thing, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
 	import { s_card_ancestry, s_grabbed_ancestries, s_thing_fontFamily } from '../../ts/state/Reactive_State';
+	import { TraitType, persistLocal, ElementType, IDPersistent } from '../../ts/common/Global_Imports';
 	import { s_color_thing, s_title_thing, s_focus_ancestry } from '../../ts/state/Reactive_State';
-	import { persistLocal, ElementType, IDPersistent } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/basis/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Button from '../mouse buttons/Button.svelte';
@@ -23,6 +23,7 @@
 	let information: { [key: string]: string } = {};
 	let button_title = `show ${next_infoKind()}`;
 	let thing: Thing | null = ancestry?.thing;
+	let thingHID: number | null = thing?.idHashed;
 	let grabs = $s_grabbed_ancestries;
 	let card_title = thing?.title;
 	let color = k.color_default;
@@ -61,11 +62,12 @@
 		}
 		$s_card_ancestry = ancestry;
 		thing = ancestry?.thing;
+		thingHID = thing?.idHashed;
 		card_title = thing?.title;
 		rebuilds += 1;
 	}
 
-	function button_closure(mouse_state) {
+	function mouse_state_closure(mouse_state) {
 		if (mouse_state.isHover) {
 			element_state.isOut = mouse_state.isOut;
 		} else if (mouse_state.isUp) {
@@ -79,11 +81,12 @@
 	function handle_textChange (label: string, text: string | null) {
 		if (!!thing && (!!text || text == k.empty)) {
 			switch (label) {
-				case 'consequence': thing.consequence = text; break;
-				case 'quest': thing.quest = text; break;
+				case 'quest':		thing.setTraitText_forType(text, TraitType.quest);		 break;
+				case 'consequence':	thing.setTraitText_forType(text, TraitType.consequence); break;
 			}
+		} else if (!text) {
+			h.deferredWriteAll();
 		}
-		thing.remoteWrite();
 	}
 
 </script>
@@ -114,8 +117,8 @@
 				{#if hasGrabs()}
 					<Button name={name}
 						zindex={ZIndex.details}
-						closure={button_closure}
 						center={control_rect.center}
+						closure={mouse_state_closure}
 						element_state={element_state}
 						width={control_rect.size.width}
 						height={control_rect.size.height}>
@@ -130,15 +133,15 @@
 					label='consequence'
 					width={text_box_size.width}
 					height={text_box_size.height}
-					original_text={thing?.consequence}
+					original_text={thing.consequence}
 					handle_textChange={handle_textChange}/>
 				<Text_Editor
 					color='black'
 					label='quest'
 					top={text_top + 90}
+					original_text={thing.quest}
 					width={text_box_size.width}
 					height={text_box_size.height}
-					original_text={thing?.quest}
 					handle_textChange={handle_textChange}/>
 			{/if}
 		</div>

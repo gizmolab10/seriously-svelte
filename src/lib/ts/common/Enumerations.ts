@@ -33,6 +33,17 @@ export enum ThingType {
 	bulk  = '~',
 }
 
+export enum TraitType {
+	consequence = 'consequence',
+	hyperlink = 'hyperlink',
+	generic = 'generic',
+	phone = 'phone',
+	quest = 'quest',
+	note = 'note',
+	date = 'date',
+	sum = 'sum',
+}
+
 export enum Ring_Zone {
 	miss   = 'miss',
 	resize = 'resize',

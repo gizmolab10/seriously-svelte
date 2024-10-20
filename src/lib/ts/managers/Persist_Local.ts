@@ -33,9 +33,9 @@ export enum IDPersistent {
 
 class Persist_Local {
 	// for backwards compatibility with {focus, grabbed, expanded} which were stored as relationship ids (not as ancestry strings)
-	usesRelationships	= localStorage[IDPersistent.relationships];
-	ignoreAncestries	= !this.usesRelationships || this.usesRelationships == 'undefined';
-	ancestriesRestored	= false;
+	usesRelationships		 = localStorage[IDPersistent.relationships];
+	ignoreAncestries		 = !this.usesRelationships || this.usesRelationships == 'undefined';
+	grabs_expandeds_restored = false;
 
 	read_key				(key: string): any | null { return this.parse(localStorage[key]); }
 	write_key<T>			(key: string, value: T) { localStorage[key] = JSON.stringify(value); }
@@ -95,40 +95,24 @@ class Persist_Local {
 		}
 	}
 
-	ancestries_forKey(key: string): Array<Ancestry> {		// 2 keys supported so far: grabbed, expanded
-		const dbKey = this.dbKey_for(key);
-		const ids = this.read_key(dbKey);
-		const length = ids?.length ?? 0;
-		if (this.ignoreAncestries || !ids || length == 0) {
-			return [];
+	ancestry_forID(aid: string): Ancestry {
+		const rids = aid.split(k.generic_separator);	// ancestor id is multiple relationship ids separated by generic_separator
+		const rid = rids.slice(-1)[0];					// grab last relationship id
+		const predicateID = h.idPredicate_for(rid);		// grab its predicate id
+		return h.ancestry_remember_createUnique(aid, predicateID);
+	}
+
+	ancestries_forKey(key: string): Array<Ancestry> {	// 2 keys supported so far {grabbed, expanded}
+		const aids = this.read_key(key);
+		const length = aids?.length ?? 0;
+		if (!this.ignoreAncestries && length > 0) {
+			let ancestries: Array<Ancestry> = [];
+			for (const aid of aids) {
+				ancestries.push(this.ancestry_forID(aid));
+			};
+			return ancestries;
 		}
-		let needsRewrite = false;
-		const ancestries: Array<Ancestry> = [];
-		const reversed = ids.reverse();
-		reversed.forEach((id: string, index: number) => {
-			const predicateID = h.idPredicate_for(id);
-			const ancestry = h.ancestry_remember_createUnique(id, predicateID);
-			if (!ancestry) {
-				ids.slice(1, length - index);
-				needsRewrite = true;
-			} else {
-				for (const id of ancestry.ids) {
-					const relationship = h.relationship_forHID(id.hash());
-					if (!relationship) {
-						ids.slice(1, length - index);
-						needsRewrite = true;
-						break;
-					}
-				}
-			}
-			if (!needsRewrite && ancestry) {
-				ancestries.push(ancestry);
-			}
-		});
-		if (needsRewrite) {
-			this.write_key(key, ids);
-		}
-		return ancestries;
+		return [];
 	}
 
 	reactivity_subscribe() {
@@ -199,20 +183,22 @@ class Persist_Local {
 	}
 
 	restore_grabbed_andExpanded(force: boolean = false) {
-		if (!this.ancestriesRestored || force) {
-			this.ancestriesRestored = true;
-			s_grabbed_ancestries.set(this.ancestries_forKey(IDPersistent.grabbed));
-			debug.log_persist(`- GRABBED ${get(s_grabbed_ancestries).map(a => a.title)}`);
-			s_expanded_ancestries.set(this.ancestries_forKey(IDPersistent.expanded));
-			debug.log_persist(`- EXPANDED ${get(s_expanded_ancestries).map(a => a.title)}`);
+		if (!this.grabs_expandeds_restored || force) {
+			this.grabs_expandeds_restored = true;
+			const grabbed = this.ancestries_forKey(this.dbKey_for(IDPersistent.grabbed));
+			const expanded = this.ancestries_forKey(this.dbKey_for(IDPersistent.expanded));
+			s_grabbed_ancestries.set(grabbed);
+			debug.log_persist(`^ GRABBED ${grabbed.map(a => a.title)}`);
+			s_expanded_ancestries.set(expanded);
+			debug.log_persist(`^ EXPANDED ${expanded.map(a => a.title)}`);
 			setTimeout(() => {
-				s_grabbed_ancestries.subscribe((ancestries: Array<Ancestry>) => {
-					debug.log_persist(`  GRABBED ${ancestries.map(a => a.title)}`);
-					this.write_key(this.dbKey_for(IDPersistent.grabbed), !ancestries ? null : ancestries.map(a => a.id));		// ancestral paths
+				s_grabbed_ancestries.subscribe((g: Array<Ancestry>) => {
+					debug.log_persist(`  GRABBED ${g.map(a => a.title)}`);
+					this.writeDB_key(IDPersistent.grabbed, !g ? null : g.map(a => a.id));		// ancestral paths
 				});
-				s_expanded_ancestries.subscribe((ancestries: Array<Ancestry>) => {
-					debug.log_persist(`  EXPANDED ${ancestries.map(a => a.title)}`);
-					this.write_key(this.dbKey_for(IDPersistent.expanded), !ancestries ? null : ancestries.map(a => a.id));	// ancestral paths
+				s_expanded_ancestries.subscribe((e: Array<Ancestry>) => {
+					debug.log_persist(`  EXPANDED ${e.map(a => a.title)}`);
+					this.writeDB_key(IDPersistent.expanded, !e ? null : e.map(a => a.id));	// ancestral paths
 				});
 			}, 100);
 		}
