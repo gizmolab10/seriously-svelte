@@ -22,7 +22,7 @@ export enum IDPersistent {
 	details		  = 'details',
 	base_id		  = 'base_id',
 	layout		  = 'layout',
-	quests		  = 'quests',
+	traits		  = 'traits',
 	modes		  = 'modes',
 	scale		  = 'scale',
 	focus		  = 'focus',

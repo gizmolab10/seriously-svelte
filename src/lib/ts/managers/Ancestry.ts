@@ -589,7 +589,7 @@ export default class Ancestry extends Identifiable {
 				h.clear_editingTools();
 				switch (alteration.type) {
 					case AlterationType.deleting:
-						await h.relationship_forget_remoteRemove(toolsAncestry, ancestry, idPredicate);
+						await h.relationship_forget_remoteDelete(toolsAncestry, ancestry, idPredicate);
 						break;
 					case AlterationType.adding:
 						const toolsThing = toolsAncestry.thing;

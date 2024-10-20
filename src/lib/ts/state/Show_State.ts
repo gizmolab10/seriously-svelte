@@ -3,13 +3,13 @@ import { IDPersistent, GraphRelations } from '../common/Global_Imports';
 import { s_show_details, s_tree_mode } from './Reactive_State';
 
 class Show_State {
-	focus_info	= false;
-	info		= false;
-	quests		= false;
-	titleAtTop	= false;
-	arrowheads	= false;
-	tinyDots	= true;
 	modes		= true;
+	tinyDots	= true;
+	titleAtTop	= false;
+	focus_info	= false;
+	arrowheads	= false;
+	traits		= false;
+	info		= false;
 
 	queryStrings_apply() {
 		const queryStrings = g.queryStrings;
@@ -27,9 +27,9 @@ class Show_State {
 					this.info = flag;
 					persistLocal.write_key(IDPersistent.info, flag);
 					break;
-				case 'quests':
-					this.quests = flag;
-					persistLocal.write_key(IDPersistent.quests, flag);
+				case 'traits':
+					this.traits = flag;
+					persistLocal.write_key(IDPersistent.traits, flag);
 					break;
 				case 'modes':
 					this.modes = flag;
@@ -55,7 +55,7 @@ class Show_State {
 		persistLocal.write_key(IDPersistent.title_atTop, false);
 		this.info = persistLocal.read_key(IDPersistent.info) ?? false;
 		this.modes = persistLocal.read_key(IDPersistent.modes) ?? true;
-		this.quests = persistLocal.read_key(IDPersistent.quests) ?? false;
+		this.traits = persistLocal.read_key(IDPersistent.traits) ?? false;
 		this.tinyDots = persistLocal.read_key(IDPersistent.tinyDots) ?? false;
 		this.arrowheads = persistLocal.read_key(IDPersistent.arrowheads) ?? false;
 		this.focus_info = persistLocal.read_key(IDPersistent.focus_info) ?? false;

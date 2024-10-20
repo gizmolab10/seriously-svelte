@@ -26,10 +26,10 @@ export default class Thing extends Datum {
 		this.type = type;
 	};
 	
-	get traits():			   Array<Trait> { return []; }
 	get parentIDs():		  Array<string> { return this.parents.map(t => t.id); }
-	get parentAncestries(): Array<Ancestry> { return this.parentAncestries_for(Predicate.contains); }
 	get parents():			   Array<Thing> { return this.parents_forID(Predicate.idContains); }
+	get traits():			   Array<Trait> { return h.traits_forOwnerHID(this.idHashed) ?? []; }
+	get parentAncestries(): Array<Ancestry> { return this.parentAncestries_for(Predicate.contains); }
 	get fields():		  Airtable.FieldSet { return { title: this.title, color: this.color, type: this.type }; }
 	get quest():			  string | null { return h.trait_forType_ownerHID(TraitType.quest, this.idHashed)?.text ?? null; }
 	get consequence():		  string | null { return h.trait_forType_ownerHID(TraitType.consequence, this.idHashed)?.text ?? null; }
@@ -44,6 +44,13 @@ export default class Thing extends Datum {
 	get isFocus():					boolean { return (get(s_focus_ancestry).thing?.id ?? k.empty) == this.id; }
 	get hasRelated():				boolean { return this.relationships_inBothDirections_for(Predicate.idIsRelated).length > 0; }
 	get hasNoData():				boolean { return !this.title && !this.color && !this.type; }
+
+	get ancestries(): Array<Ancestry> {
+		return u.uniquely_concatenateArrays(
+			this.uniqueAncestries_for(Predicate.contains),
+			this.uniqueAncestries_for(Predicate.isRelated),
+		);
+	}
 
 	get parents_ofAllKinds(): Array<Thing> {
 		let parents: Array<Thing> = [];
@@ -178,18 +185,21 @@ export default class Thing extends Datum {
 		return relationships;
 	}
 
-	uniqueAncestries_for(predicate: Predicate): Array<Ancestry> {
-		let ancestries: Array<Ancestry> = [];
-		if (predicate.isBidirectional) {
-			ancestries = this.parentAncestries_for(predicate);
-		} else {
-			let parents = this.parents_forID(predicate.id) ?? [];
-			for (const parent of parents) {
-				const parentAncestries = parent.isRoot ? [h.rootAncestry] : parent.parentAncestries_for(predicate);
-				ancestries = u.concatenateArrays(ancestries, parentAncestries);
+	uniqueAncestries_for(predicate: Predicate | null): Array<Ancestry> {
+		if (!!predicate){
+			let ancestries: Array<Ancestry> = [];
+			if (predicate.isBidirectional) {
+				ancestries = this.parentAncestries_for(predicate);
+			} else {
+				let parents = this.parents_forID(predicate.id) ?? [];
+				for (const parent of parents) {
+					const parentAncestries = parent.isRoot ? [h.rootAncestry] : parent.parentAncestries_for(predicate);
+					ancestries = u.concatenateArrays(ancestries, parentAncestries);
+				}
 			}
+			return u.strip_thingDuplicates_from(u.strip_falsies(ancestries));
 		}
-		return u.strip_thingDuplicates_from(u.strip_falsies(ancestries));
+		return [];
 	}
 
 	parentAncestries_for(predicate: Predicate | null, visited: Array<string> = []): Array<Ancestry> {

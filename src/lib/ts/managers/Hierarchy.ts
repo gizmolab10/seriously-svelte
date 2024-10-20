@@ -238,6 +238,21 @@ export class Hierarchy {
 	thing_forAncestry(ancestry: Ancestry | null): Thing | null { return ancestry?.thing ?? null; }
 	thing_forHID(hid: number | null): Thing | null { return !hid ? null : this.thing_byHID[hid]; }
 
+	thing_forget(thing: Thing) {
+		delete this.thing_byHID[thing.idHashed];
+		this.things = u.strip_invalid(this.things);
+		this.things_byType[thing.type] = u.strip_invalid(this.things_byType[thing.type]);
+	}
+
+	thing_remember_runtimeCreateUnique(baseID: string, id: string, title: string, color: string, type: string,
+		hasBeen_remotely_saved: boolean = false): Thing {
+		let thing = this.thing_forHID(id?.hash() ?? null);
+		if (!thing) {
+			thing = this.thing_remember_runtimeCreate(baseID, id, title, color, type, hasBeen_remotely_saved);
+		}
+		return thing;
+	}
+
 	async thing_remember_remoteRelocateChild(child: Thing, fromParent: Thing, toParent: Thing): Promise<any> {
 		let relationship = this.relationship_whereID_isChild(child.id);
 		if (!!relationship && relationship.idParent == fromParent.id) {
@@ -246,12 +261,6 @@ export class Hierarchy {
 			this.relationship_remember(relationship);
 			relationship.remoteWrite();
 		}
-	}
-
-	thing_forget(thing: Thing) {
-		delete this.thing_byHID[thing.idHashed];
-		this.things = u.strip_invalid(this.things);
-		this.things_byType[thing.type] = u.strip_invalid(this.things_byType[thing.type]);
 	}
 
 	async thing_edit_remoteAddLine(ancestry: Ancestry, below: boolean = true) {
@@ -263,15 +272,6 @@ export class Hierarchy {
 			const child = this.thing_runtimeCreate(thing.baseID, Identifiable.newID(), k.title_line, parent.color, k.empty);
 			await this.ancestry_edit_remoteAddAsChild(parentAncestry, child, order, false);
 		}
-	}
-
-	thing_remember_runtimeCreateUnique(baseID: string, id: string, title: string, color: string, type: string,
-		hasBeen_remotely_saved: boolean = false): Thing {
-		let thing = this.thing_forHID(id?.hash() ?? null);
-		if (!thing) {
-			thing = this.thing_remember_runtimeCreate(baseID, id, title, color, type, hasBeen_remotely_saved);
-		}
-		return thing;
 	}
 
 	thing_remember_runtimeCreate(baseID: string, id: string, title: string, color: string, type: string,
@@ -337,6 +337,26 @@ export class Hierarchy {
 		return thing!;
 	}
 
+	async thing_forget_remoteDelete(thing: Thing) {
+		const relationships = u.uniquely_concatenateArrays(
+			this.relationships_byChildHID[thing.idHashed] ?? [],
+			this.relationships_byParentHID[thing.idHashed] ?? []
+		)
+		this.thing_forget(thing);				// forget so onSnapshot logic will not signal children, do first so UX updates quickly
+		await this.db.thing_remoteDelete(thing);
+		for (const ancestry of thing.ancestries) {
+			this.ancestry_forget(ancestry);
+		}
+		for (const trait of thing.traits) {
+			this.trait_forget(trait)
+			await this.db.trait_remoteDelete(trait);
+		}
+		for (const relationship of relationships) {
+			this.relationship_forget(relationship);		// forget so onSnapshot logic will not signal children
+			await this.db.relationship_remoteDelete(relationship);
+		}
+	}
+
 	static readonly $_TRAIT_$: unique symbol;
 
 	trait_forHID(hid: number | null): Trait | null { return !hid ? null : this.trait_byHID[hid]; }
@@ -357,6 +377,13 @@ export class Hierarchy {
 	traits_forOwnerHID(hid: number | null): Array<Trait> | null {
 		const value = !!hid ? this.traits_byOwnerHID?.[hid] : null;
 		return (value instanceof Array) ? value : null;
+	}
+
+	trait_forget(trait: Trait) {
+		delete this.trait_byHID[trait.idHashed];
+		delete this.traits_byOwnerHID[trait.ownerID.hash()];
+		this.traits = this.traits.filter(t => t !== trait);
+		this.traits_byType[trait.type] = this.traits_byType[trait.type].filter(t => t !== trait);
 	}
 
 	trait_remember(trait: Trait) {
@@ -546,7 +573,7 @@ export class Hierarchy {
 		}
 	}
 
-	async relationship_forget_remoteRemove(ancestry: Ancestry, otherAncestry: Ancestry, idPredicate: string) {
+	async relationship_forget_remoteDelete(ancestry: Ancestry, otherAncestry: Ancestry, idPredicate: string) {
 		const thing = ancestry.thing;
 		const parentAncestry = ancestry.parentAncestry;
 		const relationship = this.relationship_forPredicate_parent_child(idPredicate, otherAncestry.idThing, ancestry.idThing);
@@ -620,7 +647,6 @@ export class Hierarchy {
 	static readonly $_ANCESTRIES_$: unique symbol;
 
 	async ancestries_rebuild_traverse_remoteDelete(ancestries: Array<Ancestry>) {
-		let graph_needsRebuild = false;
 		if (get(s_focus_ancestry)) {
 			for (const ancestry of ancestries) {
 				const thing = ancestry.thing;
@@ -633,9 +659,9 @@ export class Hierarchy {
 						siblings.splice(index, 1);
 						parentAncestry.grabOnly();
 						if (siblings.length == 0) {
-							graph_needsRebuild = parentAncestry.collapse();
+							parentAncestry.collapse();
 							if (!grandParentAncestry.isVisible) {
-								graph_needsRebuild = grandParentAncestry.becomeFocus();	// call become focus before applying
+								grandParentAncestry.becomeFocus();	// call become focus before applying
 							}
 						}
 						await ancestry.traverse_async(async (progenyAncestry: Ancestry): Promise<boolean> => {
@@ -645,9 +671,7 @@ export class Hierarchy {
 					}
 				}
 			}
-			if (graph_needsRebuild) {
-				signals.signal_rebuildGraph_fromFocus();
-			}
+			signals.signal_rebuildGraph_fromFocus();
 		}
 	}
 
@@ -657,6 +681,15 @@ export class Hierarchy {
 		return this.ancestry_byHID[idHashed] ?? null;
 	}
 
+	async ancestry_forget_remoteUpdate(ancestry: Ancestry) {
+		const thing = ancestry.thing;
+		ancestry.childAncestries.map(c => this.ancestry_forget_remoteUpdate(c));
+		this.ancestry_forget(ancestry);
+		if (!!thing) {
+			await this.thing_forget_remoteDelete(thing);
+		}
+	}
+
 	ancestry_forget(ancestry: Ancestry | null) {
 		if (!!ancestry) {
 			const idHashed = ancestry.idHashed;
@@ -664,6 +697,40 @@ export class Hierarchy {
 			delete this.ancestry_byHID[idHashed];
 			delete dict[idHashed];
 			this.ancestry_byKind_andHash[ancestry.idPredicate] = dict;
+		}
+	}
+
+	async ancestry_edit_remoteCreateChildOf(parentAncestry: Ancestry | null) {
+		const thing = parentAncestry?.thing;
+		if (!!thing && !!parentAncestry) {
+			const child = await this.thing_remember_runtimeCopy(thing.baseID, thing);
+			child.title = 'idea';
+			parentAncestry.expand();
+			await this.ancestry_edit_remoteAddAsChild(parentAncestry, child, 0);
+		}
+	}
+
+	async ancestry_edit_remoteAddAsChild(parentAncestry: Ancestry, child: Thing, order: number, shouldStartEdit: boolean = true) {
+		const childAncestry = await this.ancestry_remember_remoteAddAsChild(parentAncestry, child);
+		childAncestry.grabOnly();
+		childAncestry.relationship?.order_setTo_remoteMaybe(order);
+		signals.signal_rebuildGraph_fromFocus();
+		if (shouldStartEdit) {
+			setTimeout(() => {
+				childAncestry.startEdit();
+			}, 20);
+		}
+	}
+
+	async ancestry_remember_bulk_remoteRelocateRight(ancestry: Ancestry, newParentAncestry: Ancestry) {
+		const newThingAncestry = await this.thing_remember_bulk_recursive_remoteRelocateRight(ancestry, newParentAncestry);
+		if (!!newThingAncestry) {
+			newParentAncestry.signal_relayoutWidgets();
+			if (newParentAncestry.isExpanded) {
+				newThingAncestry.grabOnly();
+			} else {
+				newParentAncestry.grabOnly();
+			}
 		}
 	}
 
@@ -695,6 +762,21 @@ export class Hierarchy {
 		return rootsAncestry;
 	}
 
+	async ancestry_redraw_remoteFetchBulk_browseRight(thing: Thing, ancestry: Ancestry | null = null, grab: boolean = false) {
+		if (!!this.rootsAncestry && thing && thing.title != 'roots') {	// not create roots bulk
+			await this.db.fetch_hierarchy_from(thing.title)
+			this.relationships_refreshKnowns();
+			const childAncestries = ancestry?.childAncestries;
+			if (!!childAncestries && childAncestries.length > 0) {
+				if (!!grab) {
+					childAncestries[0].grabOnly()
+				}
+				ancestry?.expand()
+				signals.signal_rebuildGraph_fromFocus();
+			}
+		}
+	}
+
 	ancestry_relayout_toolCluster_nextParent(force: boolean = false) {
 		const toolsAncestry = get(s_showing_tools_ancestry);
 		if (!!toolsAncestry) {
@@ -711,73 +793,6 @@ export class Hierarchy {
 			ancestry.grabOnly();
 			signals.signal_relayoutWidgets_fromFocus();
 			s_showing_tools_ancestry.set(ancestry);
-		}
-	}
-
-	async ancestry_edit_remoteCreateChildOf(parentAncestry: Ancestry | null) {
-		const thing = parentAncestry?.thing;
-		if (!!thing && !!parentAncestry) {
-			const child = await this.thing_remember_runtimeCopy(thing.baseID, thing);
-			child.title = 'idea';
-			parentAncestry.expand();
-			await this.ancestry_edit_remoteAddAsChild(parentAncestry, child, 0);
-		}
-	}
-
-	async ancestry_edit_remoteAddAsChild(parentAncestry: Ancestry, child: Thing, order: number, shouldStartEdit: boolean = true) {
-		const childAncestry = await this.ancestry_remember_remoteAddAsChild(parentAncestry, child);
-		childAncestry.grabOnly();
-		childAncestry.relationship?.order_setTo_remoteMaybe(order);
-		signals.signal_rebuildGraph_fromFocus();
-		if (shouldStartEdit) {
-			setTimeout(() => {
-				childAncestry.startEdit();
-			}, 20);
-		}
-	}
-
-	async ancestry_redraw_remoteFetchBulk_browseRight(thing: Thing, ancestry: Ancestry | null = null, grab: boolean = false) {
-		if (!!this.rootsAncestry && thing && thing.title != 'roots') {	// not create roots bulk
-			await this.db.fetch_hierarchy_from(thing.title)
-			this.relationships_refreshKnowns();
-			const childAncestries = ancestry?.childAncestries;
-			if (!!childAncestries && childAncestries.length > 0) {
-				if (!!grab) {
-					childAncestries[0].grabOnly()
-				}
-				ancestry?.expand()
-				signals.signal_rebuildGraph_fromFocus();
-			}
-		}
-	}
-
-	async ancestry_remember_bulk_remoteRelocateRight(ancestry: Ancestry, newParentAncestry: Ancestry) {
-		const newThingAncestry = await this.thing_remember_bulk_recursive_remoteRelocateRight(ancestry, newParentAncestry);
-		if (!!newThingAncestry) {
-			newParentAncestry.signal_relayoutWidgets();
-			if (newParentAncestry.isExpanded) {
-				newThingAncestry.grabOnly();
-			} else {
-				newParentAncestry.grabOnly();
-			}
-		}
-	}
-
-	async ancestry_forget_remoteUpdate(ancestry: Ancestry) {
-		const thing = ancestry.thing;
-		const childAncestries = ancestry.childAncestries;
-		childAncestries.map(c => this.ancestry_forget_remoteUpdate(c));
-		this.ancestry_forget(ancestry);
-		if (!!thing) {
-			const array = this.relationships_byChildHID[thing.idHashed];
-			if (!!array) {
-				for (const relationship of array) {
-					this.relationship_forget(relationship);		// forget so onSnapshot logic will not signal children
-					await this.db.relationship_remoteDelete(relationship);
-				}
-			}
-			this.thing_forget(thing);							// forget so onSnapshot logic will not signal children
-			await this.db.thing_remoteDelete(thing);
 		}
 	}
 

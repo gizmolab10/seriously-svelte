@@ -1,4 +1,5 @@
-import { g, k, u, debug, Thing, DebugFlag, Hierarchy, Relationship, CreationOptions } from '../common/Global_Imports';
+import { Hierarchy, Relationship, CreationOptions } from '../common/Global_Imports';
+import { g, k, u, debug, Thing, Trait, DebugFlag } from '../common/Global_Imports';
 import { DBType, DatumType } from '../db/DBInterface';
 import DBInterface from './DBInterface';
 import { h } from '../db/DBDispatch';
@@ -22,6 +23,7 @@ export default class DBAirtable implements DBInterface {
 	relationships_table = this.base(DatumType.relationships);
 	predicates_table = this.base(DatumType.predicates);
 	things_table = this.base(DatumType.things);
+	traits_table = this.base(DatumType.traits);
 	access_table = this.base(DatumType.access);
 	users_table = this.base(DatumType.users);
 	dbType = DBType.airtable;
@@ -33,8 +35,9 @@ export default class DBAirtable implements DBInterface {
 
 	relationships_errorMessage = 'Error in Relationships:';
 	setHasData(flag: boolean) { this.hasData = flag; }
-	things_errorMessage = 'Error in Things:';
 	async fetch_hierarchy_from(baseID: string) {}
+	things_errorMessage = 'Error in Things:';
+	traits_errorMessage = 'Error in Traits:';
 
 	queryStrings_apply() {
 		const string = g.queryStrings.get('name') ?? g.queryStrings.get('dbid');
@@ -108,10 +111,19 @@ export default class DBAirtable implements DBInterface {
 
 	async thing_remoteDelete(thing: Thing) {
 		try {
-			h.thing_forget(thing);		// do first so UX updates quickly
 			await this.things_table.destroy(thing.id);
 		} catch (error) {
 			thing.log(DebugFlag.remote, this.things_errorMessage + error);
+		}
+	}
+
+	static readonly $_TRAIT_$: unique symbol;
+
+	async trait_remoteDelete(trait: Trait) {
+		try {
+			await this.traits_table.destroy(trait.id);
+		} catch (error) {
+			trait.log(DebugFlag.remote, this.traits_errorMessage + error);
 		}
 	}
 
