@@ -203,64 +203,11 @@ export default class DBFirebase implements DBInterface {
 			///////////////////////
 
 			try {
-				if (datum_type == DatumType.relationships) {
-					const remoteRelationship = new RemoteRelationship(data);
-					if (!!remoteRelationship) {
-						let relationship = h.relationship_forHID(id.hash());
-						switch (change.type) {
-							case 'added':
-								if (!!relationship) {
-									return;
-								}
-								relationship = h.relationship_remember_runtimeCreateUnique(baseID, id, remoteRelationship.predicate.id, remoteRelationship.parent.id, remoteRelationship.child.id, remoteRelationship.order, CreationOptions.isFromRemote);
-								break;
-							default:
-								if (!relationship) {
-									return;	// not known so do not signal
-								} else {
-									switch (change.type) {
-										case 'modified':
-											if (relationship.wasModifiedWithinMS(800) || !this.relationship_extractChangesFromRemote(relationship, remoteRelationship)) {
-												return;	// already known and contains no new data, or needs to be 'tamed'
-											}
-											break;
-										case 'removed':
-											h.relationship_forget(relationship);
-											break;
-									}
-								}
-								break;
-						}
-						setTimeout(() => { // wait in case a thing involved in this relationship arrives in the data
-							h.relationships_refreshKnowns();
-							h.rootAncestry.order_normalizeRecursive_remoteMaybe(true);
-						}, 20);
-					}
-				} else if (datum_type == DatumType.things) {
-					const remoteThing = new RemoteThing(data);
-					let thing = h.thing_forHID(id.hash());
-					if (!!remoteThing) {
-						switch (change.type) {
-							case 'added':
-								if (!!thing || remoteThing.isEqualTo(this.addedThing) || remoteThing.type == ThingType.root) {
-									return;			// do not invoke signal because nothing has changed
-								}
-								thing = h.thing_remember_runtimeCreate(baseID, id, remoteThing.title, remoteThing.color, remoteThing.type, true);
-								break;
-							case 'removed':
-								if (!!thing) {
-									h.thing_forget(thing);
-								}
-								break;
-							case 'modified':
-								if (!thing || thing.wasModifiedWithinMS(800) || !this.thing_extractChangesFromRemote(thing, remoteThing)) {
-									return;		// do not invoke signal if nothing changed
-								}
-								break;
-						}
-					}
+				switch (datum_type) {
+					case DatumType.things:		  this.thing_handle_docChanges(baseID, id, change, data); break;
+					case DatumType.traits:		  this.trait_handle_docChanges(baseID, id, change, data); break;
+					case DatumType.relationships: this.relationship_handle_docChanges(baseID, id, change, data); break;
 				}
-				signals.signal_rebuildGraph_fromFocus();
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -389,7 +336,71 @@ export default class DBFirebase implements DBInterface {
 		return changed;
 	}
 
+	thing_handle_docChanges(baseID: string, id: string, change: DocumentChange, data: DocumentData) {
+		const remoteThing = new RemoteThing(data);
+		let thing = h.thing_forHID(id.hash());
+		if (!!remoteThing) {
+			switch (change.type) {
+				case 'added':
+					if (!!thing || remoteThing.isEqualTo(this.addedThing) || remoteThing.type == ThingType.root) {
+						return;			// do not invoke signal because nothing has changed
+					}
+					thing = h.thing_remember_runtimeCreate(baseID, id, remoteThing.title, remoteThing.color, remoteThing.type, true);
+					break;
+				case 'removed':
+					if (!!thing) {
+						h.thing_forget(thing);
+					}
+					break;
+				case 'modified':
+					if (!thing || thing.wasModifiedWithinMS(800) || !this.thing_extractChangesFromRemote(thing, remoteThing)) {
+						return;		// do not invoke signal if nothing changed
+					}
+					break;
+			}
+			signals.signal_rebuildGraph_fromFocus();
+		}
+	}
+
 	static readonly $_TRAIT_$: unique symbol;
+
+	trait_extractChangesFromRemote(trait: Trait, from: RemoteTrait) {
+		const changed = !from.isEqualTo(trait);
+		if (changed) {
+			trait.ownerID = from.ownerID;
+			trait.type	  = from.type;
+			trait.text	  = from.text;
+		}
+		return changed;
+	}
+
+	async trait_remoteDelete(trait: Trait) {
+		const traitsCollection = this.bulk_for(trait.baseID)?.traitsCollection;
+		if (!!traitsCollection) {
+			try {
+				const ref = doc(traitsCollection, trait.id) as DocumentReference<Trait>;
+				await deleteDoc(ref);
+				trait.log(DebugFlag.remote, 'DELETE T');
+			} catch (error) {
+				this.reportError(error);
+			}
+		}
+	}
+
+	async trait_remoteUpdate(trait: Trait) {
+		const traitsCollection = this.bulk_for(trait.baseID)?.traitsCollection;
+		if (!!traitsCollection) {
+			const ref = doc(traitsCollection, trait.id) as DocumentReference<Trait>;
+			const remoteTrait = new RemoteTrait(trait);
+			const jsTrait = { ...remoteTrait };
+			try {
+				await setDoc(ref, jsTrait);
+				trait.log(DebugFlag.remote, 'UPDATE T');
+			} catch (error) {
+				this.reportError(error);
+			}
+		}
+	}
 
 	async trait_remember_remoteCreate(trait: Trait) {
 		const traitsCollection = this.bulk_for(trait.baseID)?.traitsCollection;
@@ -413,45 +424,79 @@ export default class DBFirebase implements DBInterface {
 		}
 	}
 
-	async trait_remoteUpdate(trait: Trait) {
-		const traitsCollection = this.bulk_for(trait.baseID)?.traitsCollection;
-		if (!!traitsCollection) {
-			const ref = doc(traitsCollection, trait.id) as DocumentReference<Trait>;
-			const remoteTrait = new RemoteTrait(trait);
-			const jsTrait = { ...remoteTrait };
-			try {
-				await setDoc(ref, jsTrait);
-				trait.log(DebugFlag.remote, 'UPDATE T');
-			} catch (error) {
-				this.reportError(error);
+	trait_handle_docChanges(baseID: string, id: string, change: DocumentChange, data: DocumentData) {
+		const remoteTrait = new RemoteTrait(data);
+		if (!!remoteTrait) {
+			let trait = h.trait_forHID(id.hash());
+			switch (change.type) {
+				case 'added':
+					if (!!trait || remoteTrait.isEqualTo(this.addedTrait)) {
+						return;		// do not invoke signal because nothing has changed
+					}
+					trait = h.trait_remember_runtimeCreate(baseID, id, remoteTrait.ownerID, remoteTrait.type, remoteTrait.text, true);
+					break;
+				case 'removed':
+					if (!!trait) {
+						h.trait_forget(trait);
+					}
+					break;
+				case 'modified':
+					if (!trait || trait.wasModifiedWithinMS(800) || !this.trait_extractChangesFromRemote(trait, remoteTrait)) {
+						return;		// do not invoke signal because nothing has changed
+					}
+					break;
 			}
+			setTimeout(() => { // wait in case a thing involved in this trait arrives in the data
+				h.traits_refreshKnowns();
+				signals.signal_rebuildGraph_fromFocus();
+			}, 20);
 		}
-	}
-
-	async trait_remoteDelete(trait: Trait) {
-		const traitsCollection = this.bulk_for(trait.baseID)?.traitsCollection;
-		if (!!traitsCollection) {
-			try {
-				const ref = doc(traitsCollection, trait.id) as DocumentReference<Trait>;
-				await deleteDoc(ref);
-				trait.log(DebugFlag.remote, 'DELETE T');
-			} catch (error) {
-				this.reportError(error);
-			}
-		}
-	}
-
-	trait_extractChangesFromRemote(trait: Trait, from: RemoteTrait) {
-		const changed = !from.isEqualTo(trait);
-		if (changed) {
-			trait.ownerID = from.ownerID;
-			trait.type	  = from.type;
-			trait.text	  = from.text;
-		}
-		return changed;
 	}
 
 	static readonly $_RELATIONSHIP_$: unique symbol;
+
+	async relationship_remoteDelete(relationship: Relationship) {
+		const relationshipsCollection = this.bulk_for(relationship.baseID)?.relationshipsCollection;
+		if (!!relationshipsCollection) {
+			try {
+				const ref = doc(relationshipsCollection, relationship.id) as DocumentReference<RemoteRelationship>;
+				await deleteDoc(ref);
+				relationship.log(DebugFlag.remote, 'DELETE R');
+			} catch (error) {
+				this.reportError(error);
+			}
+		}
+	}
+
+	async relationship_remoteUpdate(relationship: Relationship) {
+		const relationshipsCollection = this.bulk_for(relationship.baseID)?.relationshipsCollection;
+		if (!!relationshipsCollection) {
+			try {
+				const ref = doc(relationshipsCollection, relationship.id) as DocumentReference<RemoteRelationship>;
+				const remoteRelationship = new RemoteRelationship(relationship);
+				const jsRelationship = { ...remoteRelationship };
+				await setDoc(ref, jsRelationship);
+				relationship.log(DebugFlag.remote, 'UPDATE R');
+			} catch (error) {
+				this.reportError(error);
+			}
+		}
+	}
+
+	relationship_extractChangesFromRemote(relationship: Relationship, remote: RemoteRelationship) {
+		const changed = (relationship.idPredicate != remote.predicate.id ||
+			relationship.idParent != remote.parent.id ||
+			relationship.idChild != remote.child.id ||
+			relationship.order != remote.order)
+		if (changed) {
+			relationship.idChild = remote.child.id;
+			relationship.idParent = remote.parent.id;
+			relationship.hasBeen_remotely_saved = true;
+			relationship.idPredicate = remote.predicate.id;
+			relationship.order_setTo_remoteMaybe(remote.order + k.halfIncrement);
+		}
+		return changed;
+	}
 
 	async relationship_remember_remoteCreate(relationship: Relationship) {
 		const relationshipsCollection = this.bulk_for(relationship.baseID)?.relationshipsCollection;
@@ -474,47 +519,40 @@ export default class DBFirebase implements DBInterface {
 		}
 	}
 
-	async relationship_remoteUpdate(relationship: Relationship) {
-		const relationshipsCollection = this.bulk_for(relationship.baseID)?.relationshipsCollection;
-		if (!!relationshipsCollection) {
-			try {
-				const ref = doc(relationshipsCollection, relationship.id) as DocumentReference<RemoteRelationship>;
-				const remoteRelationship = new RemoteRelationship(relationship);
-				const jsRelationship = { ...remoteRelationship };
-				await setDoc(ref, jsRelationship);
-				relationship.log(DebugFlag.remote, 'UPDATE R');
-			} catch (error) {
-				this.reportError(error);
+	relationship_handle_docChanges(baseID: string, id: string, change: DocumentChange, data: DocumentData) {
+		const remoteRelationship = new RemoteRelationship(data);
+		if (!!remoteRelationship) {
+			let relationship = h.relationship_forHID(id.hash());
+			switch (change.type) {
+				case 'added':
+					if (!!relationship) {
+						return;
+					}
+					relationship = h.relationship_remember_runtimeCreateUnique(baseID, id, remoteRelationship.predicate.id, remoteRelationship.parent.id, remoteRelationship.child.id, remoteRelationship.order, CreationOptions.isFromRemote);
+					break;
+				default:
+					if (!relationship) {
+						return;	// not known so do not signal
+					} else {
+						switch (change.type) {
+							case 'modified':
+								if (relationship.wasModifiedWithinMS(800) || !this.relationship_extractChangesFromRemote(relationship, remoteRelationship)) {
+									return;	// already known and contains no new data, or needs to be 'tamed'
+								}
+								break;
+							case 'removed':
+								h.relationship_forget(relationship);
+								break;
+						}
+					}
+					break;
 			}
+			setTimeout(() => { // wait in case a thing involved in this relationship arrives in the data
+				h.relationships_refreshKnowns();
+				h.rootAncestry.order_normalizeRecursive_remoteMaybe(true);
+				signals.signal_rebuildGraph_fromFocus();
+			}, 20);
 		}
-	}
-
-	async relationship_remoteDelete(relationship: Relationship) {
-		const relationshipsCollection = this.bulk_for(relationship.baseID)?.relationshipsCollection;
-		if (!!relationshipsCollection) {
-			try {
-				const ref = doc(relationshipsCollection, relationship.id) as DocumentReference<RemoteRelationship>;
-				await deleteDoc(ref);
-				relationship.log(DebugFlag.remote, 'DELETE R');
-			} catch (error) {
-				this.reportError(error);
-			}
-		}
-	}
-
-	relationship_extractChangesFromRemote(relationship: Relationship, remote: RemoteRelationship) {
-		const changed = (relationship.idPredicate != remote.predicate.id ||
-			relationship.idParent != remote.parent.id ||
-			relationship.idChild != remote.child.id ||
-			relationship.order != remote.order)
-		if (changed) {
-			relationship.idChild = remote.child.id;
-			relationship.idParent = remote.parent.id;
-			relationship.hasBeen_remotely_saved = true;
-			relationship.idPredicate = remote.predicate.id;
-			relationship.order_setTo_remoteMaybe(remote.order + k.halfIncrement);
-		}
-		return changed;
 	}
 
 	static readonly $_VALIDATION_$: unique symbol;

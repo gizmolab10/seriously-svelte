@@ -403,6 +403,7 @@ export class Hierarchy {
 
 	trait_remember(trait: Trait) {
 		const hid = trait.ownerID.hash();
+		this.trait_byHID[trait.idHashed] = trait;
 		(this.traits_byOwnerHID[hid] = this.traits_byOwnerHID[hid] || []).push(trait);
 		(this.traits_byType[trait.type] = this.traits_byType[trait.type] || []).push(trait);
 		this.traits.push(trait);
