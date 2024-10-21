@@ -81,7 +81,6 @@ export default class DBAirtable implements DBInterface {
 					const fields = remoteThing.fields;
 					h.thing_remember_runtimeCreate(k.empty, id, fields.title as string, fields.color as string, (fields.type as string) ?? fields.trait as string, true, !fields.type);
 				}
-				g.things_arrived = true;
 			})
 		} catch (error) {
 			debug.log_error(this.things_errorMessage + ' (things_readAll) ' + error);

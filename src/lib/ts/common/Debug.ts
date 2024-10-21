@@ -20,6 +20,7 @@ export enum DebugFlag {
 	tools	   = 'tools',		// state logic of add parent tool
 	build	   = 'build',
 	mount	   = 'mount',
+	info	   = 'info',
 	edit	   = 'edit',		// editing state machine
 	beat	   = 'beat',		// heartbeat
 	key		   = 'key',			// keyboard input
@@ -47,6 +48,7 @@ export class Debug {
 	get hide_rings(): boolean { return this.hasOption(DebugFlag.hide_rings); }
 	get reticule(): boolean { return this.hasOption(DebugFlag.reticule); }
 	get lines(): boolean { return this.hasOption(DebugFlag.lines); }
+	get info(): boolean { return this.hasOption(DebugFlag.info); }
 
 	queryStrings_apply() {
 		const debug = g.queryStrings.get('debug');
@@ -72,6 +74,7 @@ export class Debug {
 					case 'lines': this.flags.push(DebugFlag.lines); break;
 					case 'tools': this.flags.push(DebugFlag.tools); break;
 					case 'edit': this.flags.push(DebugFlag.edit); break;
+					case 'info': this.flags.push(DebugFlag.info); break;
 					case 'beat': this.flags.push(DebugFlag.beat); break;
 					case 'key': this.flags.push(DebugFlag.key); break;
 				}

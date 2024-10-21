@@ -1,5 +1,5 @@
 import { g, debug, signals, Hierarchy, IDPersistent, persistLocal } from '../common/Global_Imports';
-import { s_isBusy, s_db_type, s_db_loadTime } from '../state/Reactive_State';
+import { s_fetch_inProgress, s_db_type, s_db_loadTime } from '../state/Reactive_State';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
@@ -52,8 +52,8 @@ export default class DBDispatch {
 			s_db_loadTime.set(null);
 			h = this.db.hierarchy = new Hierarchy(this.db);		// create Hierarchy to fetch into
 			if (this.db.isRemote) {
-				g.things_arrived = false;
-				s_isBusy.set(true);
+				g.fetch_succeeded = false;
+				s_fetch_inProgress.set(true);
 			}
 			await this.db.fetch_all();
 			await h.add_missing_removeNulls(this.db.baseID);

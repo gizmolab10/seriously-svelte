@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, show, debug, ZIndex, signals, onMount } from '../../ts/common/Global_Imports';
+	import { k, u, debug, ZIndex, signals, onMount } from '../../ts/common/Global_Imports';
 	import { s_graphRect, s_db_loadTime } from '../../ts/state/Reactive_State';
 	import Storage from './Storage.svelte';
 	import Card from './Card.svelte';
@@ -52,7 +52,7 @@
 				position:absolute;
 				z-index: {ZIndex.details};'>
 			<Card/>
-			{#if show.info}
+			{#if debug.info}
 				<Info top={show.traits ? 235 : 25}/>
 			{/if}
 		</div>

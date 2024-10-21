@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { s_resize_count, s_focus_ancestry, s_user_graphOffset } from '../../ts/state/Reactive_State';
 	import { g, k, u, ux, get, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
-	import { s_isBusy, s_db_type, s_graphRect, s_id_popupView } from '../../ts/state/Reactive_State';
+	import { s_fetch_inProgress, s_db_type, s_graphRect, s_id_popupView } from '../../ts/state/Reactive_State';
 	import { s_edit_state, s_show_details, s_device_isMobile, } from '../../ts/state/Reactive_State';
 	import { IDButton, Hierarchy, IDPersistent } from '../../ts/common/Global_Imports';
 	import { debug, ZIndex, onMount, Ancestry } from '../../ts/common/Global_Imports';
@@ -55,12 +55,12 @@
 		touch-action: none;
 		pointer-events: auto;
 		{k.prevent_selection_style};'>
-	{#if $s_isBusy}
+	{#if $s_fetch_inProgress}
 		<p>Welcome to Seriously</p>
 		{#if $s_db_type != DBType.local}
 			<p>({h?.startupExplanation})</p>
 		{/if}
-	{:else if !g.things_arrived}
+	{:else if !g.fetch_succeeded}
 		<p>Nothing is available.</p>
 	{:else}
 		<Controls/>

@@ -9,7 +9,6 @@ class Show_State {
 	focus_info	= false;
 	arrowheads	= false;
 	traits		= false;
-	info		= false;
 
 	queryStrings_apply() {
 		const queryStrings = g.queryStrings;
@@ -22,10 +21,6 @@ class Show_State {
 			switch (name) {
 				case 'details':
 					s_show_details.set(flag);
-					break;
-				case 'info':
-					this.info = flag;
-					persistLocal.write_key(IDPersistent.info, flag);
 					break;
 				case 'traits':
 					this.traits = flag;
@@ -53,7 +48,6 @@ class Show_State {
 
 	restore_state() {
 		persistLocal.write_key(IDPersistent.title_atTop, false);
-		this.info = persistLocal.read_key(IDPersistent.info) ?? false;
 		this.modes = persistLocal.read_key(IDPersistent.modes) ?? true;
 		this.traits = persistLocal.read_key(IDPersistent.traits) ?? false;
 		this.tinyDots = persistLocal.read_key(IDPersistent.tinyDots) ?? false;

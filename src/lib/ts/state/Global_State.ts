@@ -12,7 +12,7 @@ class Global_State {
 	allow_HorizontalScrolling = true;
 
 	scale_factor = 1;
-	things_arrived = false;
+	fetch_succeeded = false;
 	isEditing_text = false;
 	scroll = this.windowScroll;
 	mouse_responder_number = 0;

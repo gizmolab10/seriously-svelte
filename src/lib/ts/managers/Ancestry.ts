@@ -1,7 +1,7 @@
 import { s_expanded_ancestries, s_showing_tools_ancestry, s_alteration_mode, s_clusters_geometry } from '../state/Reactive_State';
 import { g, k, u, get, show, Rect, Size, Thing, debug, signals, wrappers, Predicate } from '../common/Global_Imports';
 import { s_focus_ancestry, s_grabbed_ancestries, s_edit_state, s_show_rings } from '../state/Reactive_State';
-import { Edit_State, ElementType, Paging_State, Relationship, PredicateKind } from '../common/Global_Imports';
+import { Title_State, ElementType, Paging_State, Relationship, PredicateKind } from '../common/Global_Imports';
 import { Svelte_Wrapper, Widget_MapRect, AlterationType, SvelteComponentType } from '../common/Global_Imports';
 import Identifiable from '../basis/Identifiable';
 import { Writable } from 'svelte/store';
@@ -640,7 +640,7 @@ export default class Ancestry extends Identifiable {
 		if (!this.isRoot && g.allow_TitleEditing) {
 			debug.log_edit(`EDIT ${this.title}`)
 			this.grabOnly();
-			s_edit_state.set(new Edit_State(this));
+			s_edit_state.set(new Title_State(this));
 		}
 	}
 

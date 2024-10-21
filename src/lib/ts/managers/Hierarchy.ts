@@ -1,7 +1,7 @@
 import { Ancestry, Predicate, Mouse_State, Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
 import { g, k, u, get, User, Thing, Trait, Grabs, debug, Access, IDTool, signals, ThingType, TraitType } from '../common/Global_Imports';
 import { s_alteration_mode, s_grabbed_ancestries, s_showing_tools_ancestry } from '../state/Reactive_State';
-import { s_isBusy, s_edit_state, s_show_rings, s_focus_ancestry } from '../state/Reactive_State';
+import { s_fetch_inProgress, s_edit_state, s_show_rings, s_focus_ancestry } from '../state/Reactive_State';
 import RemoteIdentifiable from '../basis/RemoteIdentifiable';
 import { DBType } from '../../ts/db/DBInterface';
 import Identifiable from '../basis/Identifiable';
@@ -112,7 +112,7 @@ export class Hierarchy {
 							case 'd':		await this.thing_edit_remoteDuplicate(ancestryGrab); break;
 							case k.space:	await this.ancestry_edit_remoteCreateChildOf(ancestryGrab); break;
 							case '-':		if (!COMMAND) { await this.thing_edit_remoteAddLine(ancestryGrab); } break;
-							case 'tab':		await this.ancestry_edit_remoteCreateChildOf(ancestryGrab.parentAncestry); break; // Edit_State editor also makes this call
+							case 'tab':		await this.ancestry_edit_remoteCreateChildOf(ancestryGrab.parentAncestry); break; // Title_State editor also makes this call
 							case 'enter':	ancestryGrab.startEdit(); break;
 						}
 					}
@@ -1038,8 +1038,8 @@ export class Hierarchy {
 		s_showing_tools_ancestry.set(null);
 		s_edit_state.set(null);
 		this.db.setHasData(true);
-		g.things_arrived = true;
-		s_isBusy.set(false);
+		g.fetch_succeeded = true;
+		s_fetch_inProgress.set(false);
 		this.isAssembled = true;
 	}
 

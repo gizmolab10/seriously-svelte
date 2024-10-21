@@ -21,7 +21,12 @@
 		return () => { handler.disconnect() };
 	});
 
-	$: { draggableRect = $s_device_isMobile ? $s_graphRect : $s_graphRect.atZero_forX; }
+	$: {
+		draggableRect = $s_device_isMobile ? $s_graphRect : $s_graphRect.atZero_forX;
+		debug.log_action(` draggable ${draggableRect.description}`);
+		update_style();
+		rebuilds += 1;
+	}
 
 	$: {
 		const _ = $s_device_isMobile;
@@ -100,8 +105,8 @@
 			pointer-events: auto;
 			z-index: ${ZIndex.backmost};
 			top:${draggableRect.origin.y - 9}px;
-			height: ${draggableRect.size.height}px;
-			width: ${draggableRect.size.width - 13}px;`
+			width: ${draggableRect.size.width}px;
+			height: ${draggableRect.size.height}px;`
 	}
 
 </script>
