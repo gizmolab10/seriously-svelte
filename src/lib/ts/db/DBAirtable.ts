@@ -1,5 +1,5 @@
+import { g, k, u, debug, Thing, Trait, TraitType, DebugFlag } from '../common/Global_Imports';
 import { Hierarchy, Relationship, CreationOptions } from '../common/Global_Imports';
-import { g, k, u, debug, Thing, Trait, DebugFlag } from '../common/Global_Imports';
 import { DBType, DatumType } from '../db/DBInterface';
 import DBInterface from './DBInterface';
 import { h } from '../db/DBDispatch';
@@ -57,7 +57,8 @@ export default class DBAirtable implements DBInterface {
 	}
 
 	async fetch_all() {
-		await this.things_readAll()
+		await this.things_readAll();
+		await this.traits_readAll();
 		await this.predicates_readAll();
 		await this.relationships_readAll();
 		await this.access_readAll();
@@ -119,9 +120,50 @@ export default class DBAirtable implements DBInterface {
 
 	static readonly $_TRAIT_$: unique symbol;
 
+	//////////////////////////////
+	//			TRAITS			//
+	//////////////////////////////
+
+	async traits_readAll() {
+		h.traits_clearKnowns();
+		try {
+			const records = await this.traits_table.select().all()
+
+			for (const record of records) {
+				const id = record.id as string;
+				const text = record.fields.text as string;
+				const type = record.fields.type as TraitType;
+				const ownerIDs = record.fields.ownerID as (Array<string>);
+				h.trait_remember_runtimeCreateUnique(k.empty, id, ownerIDs[0], type, text, true);
+			}
+		} catch (error) {
+			debug.log_error(this.traits_errorMessage + error);
+		}
+	}
+
+	async trait_remoteUpdate(trait: Trait) {
+		try {
+			await this.traits_table.update(trait.id, trait.fields);
+		} catch (error) {
+			trait.log(DebugFlag.remote, this.traits_errorMessage + error);
+		}
+	}
+
 	async trait_remoteDelete(trait: Trait) {
 		try {
 			await this.traits_table.destroy(trait.id);
+		} catch (error) {
+			trait.log(DebugFlag.remote, this.traits_errorMessage + error);
+		}
+	}
+
+	async trait_remember_remoteCreate(trait: Trait) {
+		try {
+			const fields = await this.traits_table.create(trait.fields);
+			const id = fields['id'];	//	// need for update, delete and traits_byHID (to get parent from relationship)
+			trait.setID(id);
+			trait.hasBeen_remotely_saved = true;
+			h.trait_remember(trait);
 		} catch (error) {
 			trait.log(DebugFlag.remote, this.traits_errorMessage + error);
 		}

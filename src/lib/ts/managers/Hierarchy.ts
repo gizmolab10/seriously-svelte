@@ -357,6 +357,26 @@ export class Hierarchy {
 		}
 	}
 
+	static readonly $_TRAITS_$: unique symbol;
+
+	traits_forOwnerHID(hid: number | null): Array<Trait> | null {
+		const value = !!hid ? this.traits_byOwnerHID?.[hid] : null;
+		return (value instanceof Array) ? value : null;
+	}
+
+	traits_refreshKnowns() {
+		const saved = this.traits;
+		this.traits_clearKnowns();
+		saved.map(r => this.trait_remember(r));
+	}
+
+	traits_clearKnowns() {
+		this.traits_byOwnerHID = {};
+		this.traits_byType = {};
+		this.trait_byHID = {};
+		this.traits = [];
+	}
+
 	static readonly $_TRAIT_$: unique symbol;
 
 	trait_forHID(hid: number | null): Trait | null { return !hid ? null : this.trait_byHID[hid]; }
@@ -372,11 +392,6 @@ export class Hierarchy {
 	trait_forType_ownerHID(type: TraitType | null, ownerHID: number | null): Trait| null {
 		const traits = this.traits_forOwnerHID(ownerHID)?.filter(t => t.type == type);
 		return !traits ? null : traits[0]
-	}
-
-	traits_forOwnerHID(hid: number | null): Array<Trait> | null {
-		const value = !!hid ? this.traits_byOwnerHID?.[hid] : null;
-		return (value instanceof Array) ? value : null;
 	}
 
 	trait_forget(trait: Trait) {
