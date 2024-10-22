@@ -68,7 +68,7 @@
 			<div class='breadcrumbs'
 				style='left:0px;
 					position: absolute;
-					top:{k.height_banner}px;
+					top:{k.height_banner - 1}px;
 					z-index: {ZIndex.frontmost};
 					width:{g.windowSize.width}px;
 					height:{k.height_breadcrumbs}px;'>

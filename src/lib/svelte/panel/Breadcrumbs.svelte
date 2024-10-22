@@ -40,7 +40,7 @@
 
 {#key trigger}
 	{#each ancestors as ancestor, index}
-		{#if index < 0}
+		{#if index > 0}
 			<div class='crumb-separator'
 				style='
 					color:transparent;

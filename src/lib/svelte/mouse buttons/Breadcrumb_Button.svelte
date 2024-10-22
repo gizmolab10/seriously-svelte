@@ -27,7 +27,7 @@
 		thing = ancestry.thing;
 		title = thing.title.injectEllipsisAt();
 		name = `crumb (for ${title ?? 'unknown'})`
-		width = u.getWidthOf(title) + 10;
+		width = u.getWidthOf(title) + 15;
 		center = new Point(left + width / 2, height - 1);
 		element_state = ux.elementState_for(ancestry, elementType, IDTool.none);
 		updateColors();
@@ -59,7 +59,7 @@
 			cursor:pointer;
 			border:${border};
 			border-radius: 1em;
-			padding:-2px 0px 0px 0px;
+			padding:0px 6px 2px 6px;
 			font: ${k.thing_fontSize}px ${$s_thing_fontFamily};
 		`.removeWhiteSpace();
 	}

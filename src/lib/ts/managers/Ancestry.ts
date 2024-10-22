@@ -400,7 +400,7 @@ export default class Ancestry extends Identifiable {
 		debug.log_crumbs(`${ancestors.map(a => a.title)}`)
 		for (const thing of ancestors) {
 			if (!!thing) {
-				const width = thing.titleWidth + 14;
+				const width = thing.titleWidth + 29;
 				if ((total + width) > thresholdWidth) {
 					break;
 				}

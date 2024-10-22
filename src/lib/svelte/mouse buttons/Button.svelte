@@ -51,6 +51,7 @@
 				z-index:${zindex};
 				height:${height}px;
 				position:${position};
+				padding:0px 6px 1px 6px;
 				border-radius:${height / 2}px;
 				cursor:${element_state.cursor};
 				font-family: {$s_thing_fontFamily};
@@ -75,6 +76,6 @@
 	center={center}
 	mouse_state_closure={hover_closure}>
 	<button class='button' id={'button-for-' + name} style={currentStyle}>
-		<slot style='top:-1px;'></slot>
+		<slot></slot>
 	</button>
 </Mouse_Responder>

@@ -9,7 +9,7 @@
 	const size_small = k.default_buttonSize;
 	const details_top = k.dot_size / 2;
 	const top = (k.dot_size + 3) / 2;
-	const lefts = [10, 65, 137];
+	const lefts = [10, 55, 117];
 	const size_big = size_small + 4;
 	const resize_viewBox = `0, 0, ${size_big}, ${size_big}`;
 	let elementStates_byID: { [id: string]: Element_State } = {};
@@ -84,7 +84,7 @@
 			<Button name='details'
 				color='transparent'
 				border_thickness=0
-				center={new Point(lefts[0], details_top)}
+				center={new Point(lefts[0], details_top + 1)}
 				element_state={elementStates_byID[IDButton.details]}
 				closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.details)}>
 				<img src='settings.svg' alt='circular button' width={size_small}px height={size_small}px/>
