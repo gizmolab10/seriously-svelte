@@ -204,10 +204,8 @@ export class Hierarchy {
 			for (const hid of hids) {
 				const relationship = this.relationship_forHID(hid);
 				if (!!relationship) {
-					if (things.length == 0) {
-						if (!isContains) {
-							things.push(relationship.parent);
-						}
+					if (things.length == 0 && !isContains) {
+						things.push(relationship.parent);
 					}
 					things.push(relationship.child);
 				}

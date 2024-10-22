@@ -73,8 +73,15 @@ class Utilities {
 
 	strip_hidDuplicates(ancestries: Array<Ancestry>) {
 		let ancestriesByHID: {[hash: number]: Ancestry} = {};
-		ancestries.map(a => ancestriesByHID[a.idHashed] = a);
-		return Object.values(ancestriesByHID);
+		let stripped: Array<Ancestry> = [];
+		for (const ancestry of ancestries) {
+			const hid = ancestry.idHashed;
+			if ((!!hid || hid == 0) && (!ancestriesByHID[hid])) {
+				ancestriesByHID[hid] = ancestry;
+				stripped.push(ancestry);
+			}
+		}
+		return stripped;
 	}
 
 	strip_falsies(array: Array<any>): Array<any> {
@@ -89,24 +96,28 @@ class Utilities {
 
 	strip_identifiableDuplicates(identifiables: Array<Identifiable>): Array<Identifiable> {
 		let identifiablesByHID: {[hash: number]: Identifiable} = {};
+		let stripped: Array<Identifiable> = [];
 		for (const identifiable of identifiables) {
 			const hid = identifiable.idHashed;
-			if (!!hid || hid == 0) {
+			if ((!!hid || hid == 0) && (!identifiablesByHID[hid])) {
 				identifiablesByHID[hid] = identifiable;
+				stripped.push(identifiable);
 			}
 		}
-		return Object.values(identifiablesByHID);
+		return stripped;
 	}
 
 	strip_thingDuplicates_from(ancestries: Array<Ancestry>) {
 		let ancestriesByHID: {[hash: number]: Ancestry} = {};
+		let stripped: Array<Ancestry> = [];
 		for (const ancestry of ancestries) {
 			const hid = ancestry.thing?.id.hash();
-			if (!!hid || hid == 0) {
+			if ((!!hid || hid == 0) && (!ancestriesByHID[hid])) {
 				ancestriesByHID[hid] = ancestry;
+				stripped.push(ancestry);
 			}
 		}
-		return Object.values(ancestriesByHID);
+		return stripped;
 	}
 
 	basis_angle_ofQuadrant(quadrant: Quadrant): number {
@@ -178,7 +189,8 @@ class Utilities {
 
 	getWidthOf(s: string): number {
 		const element: HTMLElement = document.createElement('div');
-		element.style.font = k.thing_fontSize + 'px ' + get(s_thing_fontFamily);
+		element.style.fontFamily = get(s_thing_fontFamily);
+		element.style.fontSize = `${k.thing_fontSize}px`;
 		element.style.left = '-9999px'; // offscreen
 		element.style.padding = '0px 0px 0px 0px';
 		element.style.position = 'absolute';

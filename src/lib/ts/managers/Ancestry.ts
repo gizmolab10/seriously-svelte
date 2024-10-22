@@ -391,30 +391,33 @@ export default class Ancestry extends Identifiable {
 		return children;
 	}
 
-	layout_ancestors_within(thresholdWidth: number): [Array<Thing>, Array<number>, number] {
-		let things = this.ancestors.reverse() ?? [];
-		const ancestors: Array<Thing> = [];
-		let count = 0;
-		let totalWidth = 0;
-		for (const thing of things) {	// things is root last
+	layout_ancestors_within(thresholdWidth: number): [Array<Thing>, Array<number>, Array<number>, number] {
+		const widths: Array<number> = [];
+		const things: Array<Thing> = [];
+		let parent_widths = 0;			// for triggering redraw
+		let total = 0;					// determine how many crumbs will fit
+		const ancestors = this.ancestors ?? [];
+		debug.log_crumbs(`${ancestors.map(a => a.title)}`)
+		for (const thing of ancestors) {
 			if (!!thing) {
-				const crumbWidth = thing.titleWidth;
-				if ((totalWidth + crumbWidth) > thresholdWidth) {
+				const width = thing.titleWidth + 14;
+				if ((total + width) > thresholdWidth) {
 					break;
 				}
-				totalWidth += crumbWidth;
-				ancestors.push(thing);
-				count = count * 10 + thing.parents.length;
+				total += width;
+				widths.push(width);
+				things.push(thing);
+				debug.log_crumbs(`${width} ${thing.title}`)
+				parent_widths = parent_widths * 100 + width;
 			}
 		}
-		const left = (thresholdWidth - totalWidth - 20) / 2;
-		let sum = left;
-		let lefts = [left];
-		for (const thing of things.reverse()) {
-			sum += thing.titleWidth * 0.98 + 26;
+		let sum = (thresholdWidth - total) / 2;
+		let lefts = [sum];				// determine x position of crumbs
+		for (const width of widths) {
+			sum += width;
 			lefts.push(sum);
 		}
-		return [ancestors, lefts, count];
+		return [things, widths, lefts, parent_widths];
 	}
 
 	incorporates(ancestry: Ancestry | null): boolean {

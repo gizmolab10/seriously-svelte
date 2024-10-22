@@ -10,6 +10,7 @@ export enum DebugFlag {
 	rebuild    = 'rebuild',
 	layout	   = 'layout',
 	action     = 'action',
+	crumbs     = 'crumbs',
 	remote	   = 'remote',		// interactions with remote
 	things	   = 'things',		// enable Things.debugLog
 	colors	   = 'colors',		// indicate some coordinates
@@ -39,6 +40,7 @@ export class Debug {
 	log_mount(message: string) { this.log_maybe(DebugFlag.mount, message) }
 	log_remote(message: string) { this.log_maybe(DebugFlag.remote, message) }
 	log_action(message: string) { this.log_maybe(DebugFlag.action, message) }
+	log_crumbs(message: string) { this.log_maybe(DebugFlag.crumbs, message) }
 	log_layout(message: string) { this.log_maybe(DebugFlag.layout, message) }
 	log_origins(message: string) { this.log_maybe(DebugFlag.origins, message) }
 	log_rebuild(message: string) { this.log_maybe(DebugFlag.rebuild, message) }
@@ -65,6 +67,7 @@ export class Debug {
 					case 'things': this.flags.push(DebugFlag.things); break;
 					case 'colors': this.flags.push(DebugFlag.colors); break;
 					case 'action': this.flags.push(DebugFlag.action); break;
+					case 'crumbs': this.flags.push(DebugFlag.crumbs); break;
 					case 'layout': this.flags.push(DebugFlag.layout); break;
 					case 'build': this.flags.push(DebugFlag.build); break;
 					case 'mount': this.flags.push(DebugFlag.mount); break;
