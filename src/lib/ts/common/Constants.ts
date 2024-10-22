@@ -9,7 +9,6 @@ export default class Constants {
 	halfIncrement = 0.5;
 	thing_fontSize = 14;
 	width_details = 200;
-	height_titleAtTop = 50;
 	default_buttonSize = 16;
 	height_breadcrumbs = 33;
 	threshold_longClick = 800;

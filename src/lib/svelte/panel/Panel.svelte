@@ -83,26 +83,6 @@
 				z-index: {ZIndex.lines};
 				top: {k.height_banner}px;'>
 			</div>
-			{#if show.titleAtTop}
-				<div class='top-title'
-					style='
-						left: 0px;
-						top: 70px;
-						top: 40px;
-						right: 0px;
-						font-size: 2em;
-						position: fixed;
-						text-align: center;
-						z-index: {ZIndex.frontmost};
-						color: {$s_focus_ancestry.thing?.color};'>
-					{$s_focus_ancestry.title}
-				</div>
-				<div class='horizontal-line'
-					style='
-						z-index: {ZIndex.lines};
-						top: {k.height_banner + k.height_titleAtTop}px;'>
-				</div>
-			{/if}
 			{#if $s_show_details}
 				<Details/>
 				<div class='vertical-line'

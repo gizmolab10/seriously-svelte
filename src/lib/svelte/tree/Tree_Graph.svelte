@@ -45,7 +45,7 @@
 		}
 		if (!focus || focus.id != $s_focus_ancestry) {
 			focus = !$s_focus_ancestry ? h.root : h.thing_forAncestry($s_focus_ancestry);
-			offsetX_ofFirstReveal = show.titleAtTop ? 0 : 3 + focus?.titleWidth / 2;
+			offsetX_ofFirstReveal = 3 + focus?.titleWidth / 2;
 			updateOrigins();
 			rebuilds += 1;
 		}
@@ -89,14 +89,10 @@
 			on:keydown={u.ignore}
 			on:keypress={u.ignore}
 			on:click={() => { $s_id_popupView = null; }}>
-			{#if !show.titleAtTop}
-				<Widget name={focusState.name} ancestry={focusState.ancestry} origin={origin_ofFirstReveal.offsetByXY(-21.5 - offsetX_ofFirstReveal, -5)}/>
-			{:else}
-				{#if $s_focus_ancestry.isGrabbed}
-					<Circle radius=10 center={origin_ofFirstReveal.offsetByXY(-1, 1)} color={focus.color} thickness=1/>
-				{/if}
-				<Dot_RevealFocus name={revealState.name} ancestry={revealState.ancestry} center={origin_ofFirstReveal.offsetByXY(-3, 0)}/>
+			{#if $s_focus_ancestry.isGrabbed}
+				<Circle radius=10 center={origin_ofFirstReveal.offsetByXY(-1, 1)} color={focus.color} thickness=1/>
 			{/if}
+			<Dot_RevealFocus name={revealState.name} ancestry={revealState.ancestry} center={origin_ofFirstReveal.offsetByXY(-3, 0)}/>
 			{#if $s_focus_ancestry.isExpanded}
 				<Tree_Children ancestry={focusState.ancestry} origin={origin_ofChildren}/>
 			{/if}

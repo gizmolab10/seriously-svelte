@@ -5,7 +5,6 @@ import { s_show_details, s_tree_mode } from './Reactive_State';
 class Show_State {
 	modes		= true;
 	tinyDots	= true;
-	titleAtTop	= false;
 	focus_info	= false;
 	arrowheads	= false;
 	traits		= false;
@@ -38,22 +37,16 @@ class Show_State {
 					this.arrowheads = flag;
 					persistLocal.write_key(IDPersistent.arrowheads, flag);
 					break;
-				case 'titleAtTop':
-					this.titleAtTop = flag;
-					persistLocal.write_key(IDPersistent.title_atTop, flag);
-					break;
 			}
 		}
 	}
 
 	restore_state() {
-		persistLocal.write_key(IDPersistent.title_atTop, false);
 		this.modes = persistLocal.read_key(IDPersistent.modes) ?? true;
 		this.traits = persistLocal.read_key(IDPersistent.traits) ?? false;
 		this.tinyDots = persistLocal.read_key(IDPersistent.tinyDots) ?? false;
 		this.arrowheads = persistLocal.read_key(IDPersistent.arrowheads) ?? false;
 		this.focus_info = persistLocal.read_key(IDPersistent.focus_info) ?? false;
-		this.titleAtTop = persistLocal.read_key(IDPersistent.title_atTop) ?? false;
 		s_tree_mode.set(persistLocal.read_key(IDPersistent.relations) ?? GraphRelations.children);
 		s_show_details.set(persistLocal.read_key(IDPersistent.details) ?? false);
 	}

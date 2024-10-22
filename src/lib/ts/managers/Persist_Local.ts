@@ -8,7 +8,6 @@ import { h } from '../db/DBDispatch';
 
 export enum IDPersistent {
 	relationships = 'relationships',
-	title_atTop   = 'title_atTop',
 	ring_radius	  = 'ring_radius',
 	page_states   = 'page_states',
 	user_offset	  = 'user_offset',

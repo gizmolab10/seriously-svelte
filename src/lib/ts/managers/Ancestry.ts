@@ -451,7 +451,7 @@ export default class Ancestry extends Identifiable {
 		return 0;
 	}
 
-	visibleProgeny_width(special: boolean = show.titleAtTop, visited: Array<number> = []): number {
+	visibleProgeny_width(special: boolean = false, visited: Array<number> = []): number {
 		const thing = this.thing;
 		if (!!thing) {
 			const idHashed = this.idHashed;

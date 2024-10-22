@@ -69,11 +69,11 @@ class Global_State {
 
 	queryStrings_apply() {
 		const queryStrings = this.queryStrings;
-        const deny = queryStrings.get('deny');
+        const disable = queryStrings.get('disable');
         const eraseOptions = queryStrings.get('erase')?.split(k.comma) ?? [];
 		persistLocal.applyFor_key_name(IDPersistent.layout, 'clusters', (flag) => s_show_rings.set(flag));
-        if (deny) {
-            const flags = deny.split(',');
+        if (disable) {
+            const flags = disable.split(',');
             for (const option of flags) {
                 switch (option) {
                     case 'editGraph': this.allow_GraphEditing = false; break;
@@ -176,9 +176,8 @@ class Global_State {
 	}
 
 	graphRect_update() {
-		const top = show.titleAtTop ? 114 : 69;						// height of content above the graph
 		const left = get(s_show_details) ? k.width_details : 0;			// width of details
-		const originOfGraph = new Point(left, top);
+		const originOfGraph = new Point(left, 69);						// 69 = height of content above the graph
 		const sizeOfGraph = this.windowSize.reducedBy(originOfGraph);	// account for origin
 		const rect = new Rect(originOfGraph, sizeOfGraph);
 		debug.log_action(` graphRect_update ${rect.description} STATE`);

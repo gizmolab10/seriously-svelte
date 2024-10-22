@@ -146,8 +146,8 @@
 		let rect = ancestry?.titleRect;
 		if (!!rect && !!$s_showing_tools_ancestry && rect.size.width != 0) {
 			debug.log_tools('setC all tools')
+			const offsetY = 14 + ($s_show_rings ? 3 : 0) - k.editingTools_diameter;
 			const offsetX = titleOffsetX() - ($s_show_details ? k.width_details : 0);
-			const offsetY = (show.titleAtTop ? -45 : 20.5) + ($s_show_rings ? 3 : 0) - k.editingTools_diameter - 6.5;
 			const center = rect.centerLeft.offsetBy(offset).offsetByXY(offsetX, offsetY);
 			left = center.x - toolDiameter;
 			setC(IDTool.editingTools,   center);
