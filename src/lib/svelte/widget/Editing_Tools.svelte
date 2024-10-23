@@ -7,9 +7,9 @@
 	import { s_show_rings, s_showing_tools_ancestry } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
 	import Triangle_Button from '../mouse buttons/Triangle_Button.svelte';
-	import Transparency_Circle from '../kit/Transparency_Circle.svelte';
-	import Button from '../mouse buttons/Button.svelte';
+	import Transparent_Circle from '../kit/Transparent_Circle.svelte';
 	import Dot_Reveal from '../widget/Dot_Reveal.svelte';
+	import Button from '../mouse buttons/Button.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import Trash from '../kit/Trash.svelte';
 	export let offset = Point.zero;
@@ -37,12 +37,11 @@
 	function alteration_forID(id: string) { return (id == IDTool.add_parent) ? AlterationType.adding : AlterationType.deleting; }
 
 	debug.log_tools('mount tools')
-	setTimeout(() => { update_maybeRedraw(); }, 20);
+	setTimeout(() => { update_offsets_maybeRedraw(); }, 20);
 
 	onMount(() => {
 		const handler = signals.handle_relayoutWidgets(2, (ancestry) => {	// priority of 2 assures layout is finished
-			update();
-			rebuilds += 1;
+			update_offsets_maybeRedraw(true);
 		});
 		return () => { handler.disconnect() };
 	});
@@ -71,16 +70,10 @@
 		}
 	}
 
-	function update_maybeRedraw(force: boolean = false) {
-		if (update() || force) {
-			rebuilds += 1;
-		}
-	}
-
 	$: {
 		if (graphRect != $s_graphRect) {
 			graphRect = $s_graphRect;
-			update_maybeRedraw();
+			update_offsets_maybeRedraw();
 		}
 	}
 
@@ -95,9 +88,22 @@
 				countOfVisibleParents = ancestry.visibleParentAncestries(0).length;
 				parentSensitiveColor = (hasOneParent || ancestry.isFocus) ? k.color_disabled : color ;
 				resetElementStates();
-				update_maybeRedraw(true);
+				update_offsets_maybeRedraw(true);
 			}
 		}
+	}
+
+	async function handle_delete_event(event) {
+		if (!isDisabledFor(IDTool.delete)) {
+			confirmingDelete = true;
+		}
+	}
+
+	function titleOffsetX(): number {
+		const tools_ancestry = $s_showing_tools_ancestry;
+		const shows_Reveal = tools_ancestry?.showsReveal;
+		const forward = tools_ancestry?.widget_map?.points_right ?? true;
+		return !!tools_ancestry ? $s_show_rings ? !forward ? -26 : titleWidth - 21 : shows_Reveal ? titleWidth + 16.3 : titleWidth + 8.3 : 0;
 	}
 
 	function fillColorsFor(id: string, isFilled: boolean): [string, string] {
@@ -108,12 +114,6 @@
 			return [k.color_background, extraColor];
 		}
 		return [color, k.color_background];
-	}
-
-	async function handle_delete_event(event) {
-		if (!isDisabledFor(IDTool.delete)) {
-			confirmingDelete = true;
-		}
 	}
 
 	async function handle_mouse_data(mouse_state: Mouse_State, id: string) {
@@ -131,18 +131,11 @@
 					}
 					break;
 			}
-			update_maybeRedraw();
+			update_offsets_maybeRedraw();
 		}
 	}
 
-	function titleOffsetX(): number {
-		const tools_ancestry = $s_showing_tools_ancestry;
-		const shows_Reveal = tools_ancestry?.showsReveal;
-		const forward = tools_ancestry?.widget_map?.points_right ?? true;
-		return !!tools_ancestry ? $s_show_rings ? !forward ? -26 : titleWidth - 21 : shows_Reveal ? titleWidth + 16.3 : titleWidth + 8.3 : 0;
-	}
-
-	function update(): boolean {
+	function update_offsets_maybeRedraw(force: boolean = false) {
 		let rect = ancestry?.titleRect;
 		if (!!rect && !!$s_showing_tools_ancestry && rect.size.width != 0) {
 			debug.log_tools('setC all tools')
@@ -150,20 +143,21 @@
 			const offsetX = titleOffsetX() - ($s_show_details ? k.width_details : 0);
 			const center = rect.centerLeft.offsetBy(offset).offsetByXY(offsetX, offsetY);
 			left = center.x - toolDiameter;
-			setC(IDTool.editingTools,   center);
-			setC(IDTool.dismiss,		center.offsetByXY(1, 1));
 			setC(IDTool.confirmation,   center.offsetEquallyBy(1 - editingToolsRadius));
-			setC(IDTool.delete_cancel,  center.offsetByXY(19 - toolDiameter, -1 + toolDiameter));
+			setC(IDTool.delete_parent,  center.offsetByXY(2 - toolDiameter, toolDiameter - 5));
+			setC(IDTool.delete_cancel,  center.offsetByXY(19 - toolDiameter, toolDiameter - 1));
 			setC(IDTool.delete_confirm, center.offsetByXY(20 - toolDiameter, 3 - toolDiameter));
 			setC(IDTool.create,		 	center.offsetByXY(1 + toolDiameter, 8 - toolDiameter));
-			setC(IDTool.delete_parent,  center.offsetByXY(2 - toolDiameter, toolDiameter - 5));
 			setC(IDTool.add_parent,	 	center.offsetByXY(2 - toolDiameter, 8 - toolDiameter));
 			setC(IDTool.more,			center.offsetByXY(0.9, toolDiameter + 3.5));
 			setC(IDTool.next,			center.offsetByXY(2, -toolDiameter - 2));
 			setC(IDTool.delete,		 	center.offsetByXY(5.5, 3));
-			return true;
+			setC(IDTool.dismiss,		center.offsetByXY(1, 1));
+			setC(IDTool.editingTools,   center);
+			rebuilds += 1;
+		} else if (force) {
+			rebuilds += 1;
 		}
-		return false;
 	}
 
 </script>
@@ -190,7 +184,7 @@
 		<div class='editing-tools' style='
 			position:absolute;
 			z-index: {ZIndex.tools}'>
-			<Transparency_Circle
+			<Transparent_Circle
 				color_background={u.opacitize(k.color_background, 0.95)}
 				center={getC(IDTool.editingTools)}
 				radius={editingToolsRadius}

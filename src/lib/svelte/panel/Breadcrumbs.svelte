@@ -14,6 +14,10 @@
 	let trigger = 0;
 	let left = 0;
 
+	signals.handle_rebuildGraph(0, (ancestry) => {
+		rebuilds += 1;
+	});
+
 	$: {
 		if (!!$s_color_thing) {
 			rebuilds += 1;

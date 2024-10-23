@@ -1,7 +1,7 @@
 <script lang='ts'>
+	import { s_fetch_inProgress, s_db_type, s_graphRect, s_id_popupView } from '../../ts/state/Reactive_State';
 	import { s_resize_count, s_focus_ancestry, s_user_graphOffset } from '../../ts/state/Reactive_State';
 	import { g, k, u, ux, get, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
-	import { s_fetch_inProgress, s_db_type, s_graphRect, s_id_popupView } from '../../ts/state/Reactive_State';
 	import { s_edit_state, s_show_details, s_device_isMobile, } from '../../ts/state/Reactive_State';
 	import { IDButton, Hierarchy, IDPersistent } from '../../ts/common/Global_Imports';
 	import { debug, ZIndex, onMount, Ancestry } from '../../ts/common/Global_Imports';
@@ -13,6 +13,7 @@
 	import BuildNotes from './BuildNotes.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import Controls from './Controls.svelte';
+	import Load from '../local/Load.svelte';
 	import Graph from './Graph.svelte';
 	let chain = ['Panel'];
 	
@@ -24,6 +25,7 @@
 			} else if (!$s_edit_state && !g.isEditing_text) {	// let editor component consume the events
 				switch (key) {
 					case 'c': g.graphOffset_setTo(Point.zero); break;
+					case 'o': $s_id_popupView = IDButton.open; break;
 					case '?': g.showHelp(); break;
 					case ']':
 					case '[': dbDispatch.db_change_toNext(key == ']'); break;
@@ -105,6 +107,8 @@
 				left: {$s_show_details ? k.width_details : 0}px;'>
 			{#if $s_id_popupView == IDButton.builds}
 				<BuildNotes/>
+			{:else if $s_id_popupView == IDButton.open}
+				<Load/>
 			{:else if !$s_id_popupView}
 				<Graph/>
 			{/if}

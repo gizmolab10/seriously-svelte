@@ -58,6 +58,7 @@ export enum IDButton {
 	smaller		= 'smaller',
 	bigger		= 'bigger',
 	layout		= 'layout',
+	open		= 'open',
 	help		= '?',
 }
 

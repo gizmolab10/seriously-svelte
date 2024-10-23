@@ -7,7 +7,7 @@
 	export let forward = true;
 	export let ancestry;
 	const titleTop = $s_show_rings ? 0.5 : 0;
-	let padding = `0px 0px 0px 6.5px`;	// 8.5 makes room for drag dot
+	let padding = `0.5px 0px 0px 6.5px`;	// 8.5 makes room for drag dot
 	let bound_title = ancestry?.thing?.title ?? k.empty;
     let color = ancestry.thing?.color;
 	let titleWrapper: Svelte_Wrapper;

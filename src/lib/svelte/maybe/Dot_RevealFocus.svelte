@@ -1,7 +1,9 @@
 <script lang='ts'>
-	import { k, Point, debug, onMount, Direction, dbDispatch } from '../../ts/common/Global_Imports';
+	import { k, ux, Point, debug, onMount, Direction, dbDispatch } from '../../ts/common/Global_Imports';
 	import Triangle_Button from '../mouse buttons/Triangle_Button.svelte';
+	import { h } from '../../ts/db/DBDispatch';
 	export let center = Point.zero;
+    export let name = k.empty;
     export let ancestry;
 	const element_state = ux.elementState_forName(name);		// survives onDestroy, created by widget
 	let size = k.dot_size;
@@ -27,10 +29,10 @@
 </script>
 
 <Triangle_Button
+	handle_mouse_state={handle_mouse_state}
 	strokeColor={element_state.stroke}
 	hover_closure={hover_closure}
-	closure={handle_mouse_state}
-	id={ancestry.thing.title}
+	name={ancestry.thing.title}
 	angle={Direction.right}
 	center={center}
     size={size}

@@ -18,7 +18,7 @@ export default class Constants {
 	hid_unknown = 1000000000000;
 	ring_resizing_thickness = 30;
 	ring_rotation_thickness = 44;
-	prevent_selection_style = '-webkit-user-select: none; user-select: none; -moz-user-select: none;';
+	prevent_selection_style = '-webkit-user-select: none; user-select: none; -moz-user-select: none';
 	remote_help_url = 'https://help-webseriously.netlify.app/README.html';
 	local_help_url = 'http://localhost:8000/README.html';
 	title_default = 'Please, enter a title';
