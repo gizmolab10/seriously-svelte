@@ -3,7 +3,7 @@
 	import { svgPaths, onMount, Ancestry, dbDispatch, Direction } from '../../ts/common/Global_Imports';
 	import { s_graphRect, s_show_details, s_color_thing } from '../../ts/state/Reactive_State';
 	import { s_focus_ancestry, s_grabbed_ancestries } from '../../ts/state/Reactive_State';
-	import Breadcrumb_Button from '../mouse buttons/Breadcrumb_Button.svelte';
+	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	let ancestors: Array<Thing> = [];

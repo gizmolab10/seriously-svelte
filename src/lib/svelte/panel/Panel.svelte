@@ -6,7 +6,7 @@
 	import { IDButton, Hierarchy, IDPersistent } from '../../ts/common/Global_Imports';
 	import { debug, ZIndex, onMount, Ancestry } from '../../ts/common/Global_Imports';
 	import { dbDispatch, setContext } from '../../ts/common/Global_Imports';
-	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
+	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Breadcrumbs from '../panel/Breadcrumbs.svelte';
 	import { DBType } from '../../ts/db/DBInterface';
 	import Details from '../details/Details.svelte';

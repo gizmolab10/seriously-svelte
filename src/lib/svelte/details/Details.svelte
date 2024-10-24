@@ -17,7 +17,7 @@
 		return () => { handler.disconnect() };
 	});
 	
-	// import Segmented_Control from '../mouse buttons/Segmented_Control.svelte';
+	// import Segmented_Control from '../mouse/Segmented_Control.svelte';
 	// 	<Segmented_Control
 	// 		name='db-choices'
 	// 		rect={control_rect}

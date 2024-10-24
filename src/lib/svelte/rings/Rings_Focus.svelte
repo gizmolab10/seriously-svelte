@@ -3,7 +3,7 @@
 	import { g, k, ux, Size, Point, debug, IDTool, ZIndex, } from '../../ts/common/Global_Imports';
 	import { s_user_graphOffset, s_showing_tools_ancestry } from '../../ts/state/Reactive_State';
 	import { svgPaths, ElementType, Clusters_Geometry } from '../../ts/common/Global_Imports';
-	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
+	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Title_Editor from '../widget/Title_Editor.svelte';
 	const element_state = ux.elementState_for($s_focus_ancestry, ElementType.focus, IDTool.none);
 	const height = k.row_height + 10;

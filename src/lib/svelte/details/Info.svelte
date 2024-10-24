@@ -4,7 +4,7 @@
 	import { s_title_thing, s_card_ancestry } from '../../ts/state/Reactive_State';
 	import Identifiable from '../../ts/basis/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
-	import Button from '../mouse buttons/Button.svelte';
+	import Button from '../mouse/Button.svelte';
 	export let top = 0;
 	const id = 'info';
 	const margin = 10;

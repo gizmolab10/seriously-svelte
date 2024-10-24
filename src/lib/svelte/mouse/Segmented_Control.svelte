@@ -1,26 +1,36 @@
 <script lang='ts'>
-	import { k, Rect, Point, ZIndex, svgPaths } from '../../ts/common/Global_Imports';
-    import { s_id_popupView } from '../../ts/state/Reactive_State';
+	import { k, Rect, Size, Point, ZIndex, svgPaths } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from './Mouse_Responder.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
-	export let control_closure = (id, mouse_state) => {};
+	export let selection_closure = (mouse_state, selectionArray) => {};
+	export let titles: Array<string> = [];
     export let name = 'segmented control';
-	export let items: Array<Any> = [];
-    export let rect = Rect.zero;
+	export let fill = k.color_background;
+	export let height = k.row_height;
+	export let center = Point.zero;
 	export let stroke = 'black';
-	const size = rect.size;
-	const outer_size = size.expandedEquallyBy(2);
-	const oblong_center = new Point(rect.origin.x -8, 11);
-	let path = svgPaths.oblong(oblong_center, size.expandedByX(-22));
-	let fill = k.color_background;
+	export let multiple = false;
+	let selected_indices: Array<Int> = [];
+	let outer_size = Size.zero;
+	let path = k.empty;
 
-	function hover_up_closure(mouse_state) {
+	update_path();
+
+	function update_path() {
+		const width = 200;
+		size = new Size(width, height);
+		outer_size = size.expandedEquallyBy(2);
+		path = svgPaths.oblong(oblong_center, size.expandedByX(-22));
+	}
+
+	function hover_andUp_closure(mouse_state) {
 		if (mouse_state.isHover) {
+			console.log('hover')
 			const isHovering = !mouse_state.isOut;
 			fill = isHovering ? 'black' : k.color_background;
 			stroke = isHovering ? k.color_background : 'black';
 		} else if (mouse_state.isUp) {
-			$s_id_popupView = null;
+			console.log('up')
 		}
 	}
 

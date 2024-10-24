@@ -5,7 +5,7 @@
 	import { s_graphRect, s_color_thing, s_mouse_location } from '../../ts/state/Reactive_State';
 	import { Ring_Zone, svgPaths, dbDispatch, opacitize } from '../../ts/common/Global_Imports';
 	import { s_mouse_up_count, s_user_graphOffset } from '../../ts/state/Reactive_State';
-	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
+	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/basis/Identifiable';
 	import Paging_Arc from './Paging_Arc.svelte';
 	export let zindex = ZIndex.backmost;

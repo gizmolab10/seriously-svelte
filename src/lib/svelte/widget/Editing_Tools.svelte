@@ -5,11 +5,11 @@
 	import { Alteration_State, AlterationType, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { s_alteration_mode, s_graphRect, s_show_details } from '../../ts/state/Reactive_State';
 	import { s_show_rings, s_showing_tools_ancestry } from '../../ts/state/Reactive_State';
-	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
-	import Triangle_Button from '../mouse buttons/Triangle_Button.svelte';
+	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
+	import Triangle_Button from '../mouse/Triangle_Button.svelte';
 	import Transparent_Circle from '../kit/Transparent_Circle.svelte';
 	import Dot_Reveal from '../widget/Dot_Reveal.svelte';
-	import Button from '../mouse buttons/Button.svelte';
+	import Button from '../mouse/Button.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import Trash from '../kit/Trash.svelte';
 	export let offset = Point.zero;

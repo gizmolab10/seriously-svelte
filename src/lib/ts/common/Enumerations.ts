@@ -100,6 +100,7 @@ export enum ElementType {
 	info	= 'info',
 	tool	= 'tool',
 	drag	= 'drag',
+	open	= 'open',
 	none	= 'none',
 	arc		= 'arc',
 }

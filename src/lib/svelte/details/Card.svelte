@@ -5,7 +5,7 @@
 	import { s_color_thing, s_title_thing, s_focus_ancestry } from '../../ts/state/Reactive_State';
 	import Identifiable from '../../ts/basis/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
-	import Button from '../mouse buttons/Button.svelte';
+	import Button from '../mouse/Button.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import Color from './Color.svelte';
 	const id = 'info';

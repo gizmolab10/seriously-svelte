@@ -3,7 +3,7 @@
 	import { opacitize, Cluster_Map, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { s_mouse_location, s_mouse_up_count, s_focus_ancestry } from '../../ts/state/Reactive_State';
 	import { s_thing_fontFamily, s_ring_rotation_radius } from '../../ts/state/Reactive_State';
-	import Mouse_Responder from '../mouse buttons/Mouse_Responder.svelte';
+	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { ArcPart } from '../../ts/common/Enumerations';
 	import Identifiable from '../../ts/basis/Identifiable';
 	import Angled_Text from '../kit/Angled_Text.svelte';

@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, ux, Point, debug, onMount, Direction, dbDispatch } from '../../ts/common/Global_Imports';
-	import Triangle_Button from '../mouse buttons/Triangle_Button.svelte';
+	import Triangle_Button from '../mouse/Triangle_Button.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	export let center = Point.zero;
     export let name = k.empty;
