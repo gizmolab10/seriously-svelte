@@ -149,6 +149,7 @@ export class Rect {
 
 	get isZero():			boolean { return this.origin.isZero && this.size.isZero; }
 	get description():		 string { return `${this.origin.verbose}, ${this.size.verbose}`; }
+	get viewBox():			 string { return `${this.origin.description} ${this.size.description}`; }
 	get pixelVerbose():		 string { return `${this.origin.pixelVerbose} ${this.size.pixelVerbose}`; }
 	get rangeDescription():	 string { return `(${this.origin.x} ... ${this.extent.x}), (${this.origin.y} ... ${this.extent.y})`; }
 	get center():			  Point { return this.origin.offsetBySize(this.size.dividedInHalf); }

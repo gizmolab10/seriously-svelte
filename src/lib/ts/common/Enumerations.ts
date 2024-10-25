@@ -33,6 +33,20 @@ export enum ThingType {
 	bulk  = '~',
 }
 
+export enum Ring_Zone {
+	miss   = 'miss',
+	resize = 'resize',
+	rotate = 'rotate',
+	paging = 'paging',
+}
+
+export enum Oblong_Part {
+	middle = 'middle',
+	right  = 'right',
+	left   = 'left',
+	full   = 'full',
+}
+
 export enum TraitType {
 	consequence = 'consequence',
 	hyperlink = 'hyperlink',
@@ -42,13 +56,6 @@ export enum TraitType {
 	note = 'note',
 	date = 'date',
 	sum = 'sum',
-}
-
-export enum Ring_Zone {
-	miss   = 'miss',
-	resize = 'resize',
-	rotate = 'rotate',
-	paging = 'paging',
 }
 
 export enum IDButton {

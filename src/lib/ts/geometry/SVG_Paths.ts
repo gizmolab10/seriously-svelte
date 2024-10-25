@@ -1,4 +1,4 @@
-import { k, u, Size, Point, Angle } from '../common/Global_Imports';
+import { k, u, Size, Point, Angle, Oblong_Part } from '../common/Global_Imports';
 
 export enum Direction {
 	up = Angle.three_quarters,
@@ -49,12 +49,18 @@ export default class SVG_Paths {
         return `M${center.x - radius} ${center.y} a ${radius} ${radius} 0 0 ${direction} ${diametric_move} 0 a ${radius} ${radius} 0 0 ${direction} ${-diametric_move} 0`;
     }
 
-	oblong(center: Point, size: Size) {
+	oblong(center: Point, size: Size, part: Oblong_Part = Oblong_Part.full) {
 		const x = center.x;
 		const y = center.y;
-		const halfway = size.width / 2;// L/2
-		const radius = size.height / 2;// W/2
-		return `M ${x - halfway}, ${y + radius} A ${radius}, ${radius} 0 0 1  ${x - halfway}, ${y - radius} H ${x + halfway} A ${radius}, ${radius} 0 0 1 ${x + halfway}, ${y + radius} Z`
+		const half = size.width / 2;
+		const radius = size.height / 2;
+		switch(part) {
+			case Oblong_Part.full: return `M ${x - half}, ${y + radius} A ${radius}, ${radius} 0 0 1  ${x - half}, ${y - radius} H ${x + half} A ${radius}, ${radius} 0 0 1 ${x + half}, ${y + radius} Z`;
+			case Oblong_Part.left: return `M ${x - half}, ${y + radius} A ${radius}, ${radius} 0 0 1  ${x - half}, ${y - radius} H ${x + half} ${x + half}, ${y + radius} Z`;
+			case Oblong_Part.right: return `M ${x - half}, ${y + radius} H ${x + half} A ${radius}, ${radius} 0 0 1 ${x + half}, ${y + radius} Z`;
+			case Oblong_Part.middle: return `M ${x - half}, ${y + radius} H ${x + half} ${x + half}, ${y + radius} Z`;
+		}
+		
 	}
 
     oval(diameter: number, horizontal: boolean = true, eccentricity: number = 2.3): string {

@@ -3,7 +3,7 @@
 	import { s_thing_fontFamily } from '../../ts/state/Reactive_State';
 	export let font_family = $s_thing_fontFamily;
 	export let center = Point.zero;
-	export let font_size = 20;
+	export let font_size = '0.7em';
 	export let text = k.space;
 	export let color = 'red';
 	export let angle = 0;
@@ -22,7 +22,7 @@
 	<span class='text'
 		style='
 			font-family: {font_family};
-			font-size: {font_size}px;
+			font-size: {font_size};
 			color: {color};'>
 		{text}
 	</span>

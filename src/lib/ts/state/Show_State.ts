@@ -3,7 +3,6 @@ import { IDPersistent, GraphRelations } from '../common/Global_Imports';
 import { s_show_details, s_tree_mode } from './Reactive_State';
 
 class Show_State {
-	modes		= true;
 	tinyDots	= true;
 	focus_info	= false;
 	arrowheads	= false;
@@ -25,10 +24,6 @@ class Show_State {
 					this.traits = flag;
 					persistLocal.write_key(IDPersistent.traits, flag);
 					break;
-				case 'modes':
-					this.modes = flag;
-					persistLocal.write_key(IDPersistent.modes, flag);
-					break;
 				case 'tinyDots':
 					this.tinyDots = flag;
 					persistLocal.write_key(IDPersistent.tinyDots, flag);
@@ -42,7 +37,6 @@ class Show_State {
 	}
 
 	restore_state() {
-		this.modes = persistLocal.read_key(IDPersistent.modes) ?? true;
 		this.traits = persistLocal.read_key(IDPersistent.traits) ?? false;
 		this.tinyDots = persistLocal.read_key(IDPersistent.tinyDots) ?? false;
 		this.arrowheads = persistLocal.read_key(IDPersistent.arrowheads) ?? false;

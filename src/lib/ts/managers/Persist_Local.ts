@@ -22,7 +22,6 @@ export enum IDPersistent {
 	base_id		  = 'base_id',
 	layout		  = 'layout',
 	traits		  = 'traits',
-	modes		  = 'modes',
 	scale		  = 'scale',
 	focus		  = 'focus',
 	info		  = 'info',

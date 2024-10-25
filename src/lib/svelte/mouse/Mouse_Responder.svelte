@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, g, u, ux, Rect, Size, Point, debug, ZIndex } from '../../ts/common/Global_Imports';
 	import { onMount, Timer_Type, Mouse_Timer, Mouse_State } from '../../ts/common/Global_Imports';
-	import { s_mouse_location } from '../../ts/state/Reactive_State';
+	import { s_mouse_location, s_thing_fontFamily } from '../../ts/state/Reactive_State';
 	export let isHit_closure: () => {flag: boolean} | null = null;
 	export let mouse_state_closure = (mouse_state) => {};
 	export let height = k.default_buttonSize;
@@ -14,6 +14,7 @@
 	export let position = 'absolute';
 	export let zindex = ZIndex.dots;
 	export let center: Point | null;
+	export let font_size = '0.9em';
 	export let align_left = true;
 	export let name = 'generic';
 	const mouse_state = ux.mouse_state_forName(name);	// persist across destroy/recreate
@@ -129,7 +130,14 @@
 	}
 
 	function setupStyle() {
-		style = `width: ${width}px; height: ${height}px; position: ${position}; z-index: ${zindex};`;
+		style = `
+			width: ${width}px;
+			z-index: ${zindex};
+			height: ${height}px;
+			position: ${position};
+			font-size: ${font_size};
+			font-family: {$s_thing_fontFamily};
+			`.removeWhiteSpace();;
 		if (!!cursor) {
 			style = `${style} cursor: ${cursor};`;
 		}

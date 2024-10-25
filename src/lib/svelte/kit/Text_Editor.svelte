@@ -1,5 +1,6 @@
 <script lang='ts'>
 	import { g, k, u, debug, ZIndex, dbDispatch } from '../../ts/common/Global_Imports';
+	import { s_thing_fontFamily } from '../../ts/state/Reactive_State';
 	export let handle_textChange = (label: string, text: string) => {};
 	export let width = k.width_details - 40;
 	export let color = k.color_default;
@@ -84,6 +85,7 @@
 			overflow-wrap: break-word;
 			{k.prevent_selection_style};
 			font-family: Times New Roman;
+			font-family: {$s_thing_fontFamily};
 			border-radius: {k.row_height / 2}px;
 		'/>
 	<div

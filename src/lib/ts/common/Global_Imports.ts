@@ -16,6 +16,7 @@ import { wrappers } from '../managers/Wrappers';
 import { Hierarchy } from '../managers/Hierarchy';
 import { Seriously_Range } from './Seriously_Range';
 import { Timer_Type } from '../signals/Mouse_Timer';
+import { SvelteComponentType } from './Enumerations';
 import { signals, IDSignal } from '../signals/Signals';
 import { Rect, Size, Point } from '../geometry/Geometry';
 import { Quadrant, Orientation } from '../geometry/Angle';
@@ -25,8 +26,8 @@ import { Paging_State, Page_States } from '../state/Page_States';
 import { onMount, onDestroy, setContext, getContext } from 'svelte';
 import { IDPersistent, persistLocal } from '../managers/Persist_Local';
 import { IDLine, IDTool, ZIndex, IDButton, IDBrowser, Ring_Zone } from './Enumerations';
-import { ThingType, TraitType, ElementType, Rebuild_Type, AlterationType } from './Enumerations';
-import { PredicateKind, GraphRelations, CreationOptions, SvelteComponentType } from './Enumerations';
+import { ThingType, TraitType, Oblong_Part, ElementType, Rebuild_Type } from './Enumerations';
+import { PredicateKind, AlterationType, GraphRelations, CreationOptions } from './Enumerations';
 
 import Clusters_Geometry from '../geometry/Clusters_Geometry';
 import Alteration_State from '../state/Alteration_State';
@@ -77,5 +78,5 @@ export {
 	User, Datum, Thing, Trait, Access, Predicate, Relationship,
 	Element_State, Paging_State, Page_States, Alteration_State,
 	IDLine, IDTool, IDSignal, IDButton, IDBrowser, IDPersistent,
-	ThingType, TraitType, Rebuild_Type, ElementType, AlterationType,
+	ThingType, TraitType, Oblong_Part, Rebuild_Type, ElementType, AlterationType,
 };

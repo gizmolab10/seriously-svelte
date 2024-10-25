@@ -92,10 +92,10 @@
 		</div>
 	{/key}
 	<Angled_Text
+		font_size='0.6em'
 		text={cluster_map.cluster_title}
 		center={cluster_map.label_center}
 		font_family={$s_thing_fontFamily}
-		font_size={k.thing_fontSize * 0.6}
 		angle={cluster_map.arc_map.label_text_angle}
 		color={$s_focus_ancestry.thing?.color ?? k.color_default}/>
 {/if}

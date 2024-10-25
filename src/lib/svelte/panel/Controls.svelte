@@ -3,6 +3,7 @@
 	import { ElementType, Element_State, persistLocal, IDPersistent, GraphRelations } from '../../ts/common/Global_Imports';
 	import { s_show_rings, s_tree_mode, s_device_isMobile, s_thing_fontFamily } from '../../ts/state/Reactive_State';
 	import { s_show_details, s_id_popupView, s_resize_count } from '../../ts/state/Reactive_State';
+	import Segmented_Control from '../mouse/Segmented_Control.svelte';
 	import Identifiable from '../../ts/basis/Identifiable';
 	import Button from '../mouse/Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -69,6 +70,8 @@
 			}
 		}
 	}
+				// 
+				// <Segmented_Control origin={new Point(100, 0)} titles={['children', 'related', 'parents']}/>
 
 </script>
 
@@ -89,31 +92,29 @@
 				closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.details)}>
 				<img src='settings.svg' alt='circular button' width={size_small}px height={size_small}px/>
 			</Button>
-			{#if show.modes}
-				{#if elementShown_byID[IDButton.layout]}
-					<Button name={IDButton.layout}
-						width=45
-						height={size_big}
-						center={new Point(lefts[1], top)}
-						element_state={elementStates_byID[IDButton.layout]}
-						closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.layout)}>
-						<span style='font-family: {$s_thing_fontFamily};'>
-							{#if $s_show_rings}tree{:else}rings{/if}
-						</span>
-					</Button>
-				{/if}
-				{#if !$s_show_rings && elementShown_byID[IDButton.relations]}
-					<Button name={IDButton.relations}
-						width=65
-						height={size_big}
-						center={new Point(lefts[2], top)}
-						element_state={elementStates_byID[IDButton.relations]}
-						closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.relations)}>
-						<span style='font-family: {$s_thing_fontFamily};'>
-							{$s_tree_mode}
-						</span>
-					</Button>
-				{/if}
+			{#if elementShown_byID[IDButton.layout]}
+				<Button name={IDButton.layout}
+					width=45
+					height={size_big}
+					center={new Point(lefts[1], top)}
+					element_state={elementStates_byID[IDButton.layout]}
+					closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.layout)}>
+					<span style='font-family: {$s_thing_fontFamily};'>
+						{#if $s_show_rings}tree{:else}rings{/if}
+					</span>
+				</Button>
+			{/if}
+			{#if !$s_show_rings && elementShown_byID[IDButton.relations]}
+				<Button name={IDButton.relations}
+					width=65
+					height={size_big}
+					center={new Point(lefts[2], top)}
+					element_state={elementStates_byID[IDButton.relations]}
+					closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.relations)}>
+					<span style='font-family: {$s_thing_fontFamily};'>
+						{$s_tree_mode}
+					</span>
+				</Button>
 			{/if}
 		{/if}
 		{#key $s_device_isMobile}
