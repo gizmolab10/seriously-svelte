@@ -13,7 +13,7 @@ import { s_graphRect, s_focus_ancestry } from '../state/Reactive_State';
 //	widget map rect for each child
 //	position of label
 
-export default class Cluster_Map  {
+export default class Cluster_Map {
 	focus_ancestry: Ancestry = get(s_focus_ancestry);
 	widget_maps: Array<Widget_MapRect> = [];	// one page of widgets, will be combined into geometry.widget_maps
 	ancestries: Array<Ancestry> = [];

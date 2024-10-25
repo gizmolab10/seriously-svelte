@@ -3,7 +3,7 @@
 	import { ElementType, Element_State, persistLocal, IDPersistent, GraphRelations } from '../../ts/common/Global_Imports';
 	import { s_show_rings, s_tree_mode, s_device_isMobile, s_thing_fontFamily } from '../../ts/state/Reactive_State';
 	import { s_show_details, s_id_popupView, s_resize_count } from '../../ts/state/Reactive_State';
-	import Segmented_Control from '../mouse/Segmented_Control.svelte';
+	import Segments from '../mouse/Segments.svelte';
 	import Identifiable from '../../ts/basis/Identifiable';
 	import Button from '../mouse/Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -71,7 +71,7 @@
 		}
 	}
 				// 
-				// <Segmented_Control origin={new Point(100, 0)} titles={['children', 'related', 'parents']}/>
+				// <Segments origin={new Point(100, 0)} titles={['children', 'related', 'parents']}/>
 
 </script>
 
@@ -103,6 +103,7 @@
 						{#if $s_show_rings}tree{:else}rings{/if}
 					</span>
 				</Button>
+				<Segments origin={new Point(120, 0)} titles={['tree', 'rings']}/>
 			{/if}
 			{#if !$s_show_rings && elementShown_byID[IDButton.relations]}
 				<Button name={IDButton.relations}

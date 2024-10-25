@@ -56,8 +56,8 @@ export default class SVG_Paths {
 		const radius = size.height / 2;
 		switch(part) {
 			case Oblong_Part.full: return `M ${x - half}, ${y + radius} A ${radius}, ${radius} 0 0 1  ${x - half}, ${y - radius} H ${x + half} A ${radius}, ${radius} 0 0 1 ${x + half}, ${y + radius} Z`;
-			case Oblong_Part.left: return `M ${x - half}, ${y + radius} A ${radius}, ${radius} 0 0 1  ${x - half}, ${y - radius} H ${x + half} ${x + half}, ${y + radius} Z`;
-			case Oblong_Part.right: return `M ${x - half}, ${y + radius} H ${x + half} A ${radius}, ${radius} 0 0 1 ${x + half}, ${y + radius} Z`;
+			case Oblong_Part.left: return `M ${x - half}, ${y + radius} H ${x + half} A ${radius}, ${radius} 0 0 1 ${x + half}, ${y + radius} Z`;
+			case Oblong_Part.right: return `M ${x - half}, ${y + radius} A ${radius}, ${radius} 0 0 1  ${x - half}, ${y - radius} H ${x + half} ${x + half}, ${y + radius} Z`;
 			case Oblong_Part.middle: return `M ${x - half}, ${y + radius} H ${x + half} ${x + half}, ${y + radius} Z`;
 		}
 		

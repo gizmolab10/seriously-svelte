@@ -37,6 +37,7 @@ import Tree_Geometry from '../geometry/Tree_Geometry';
 import Rotation_State from '../state/Rotation_State';
 import Element_State from '../state/Element_State';
 import Cluster_Map from '../geometry/Cluster_Map';
+import Segment_Map from '../geometry/Segment_Map';
 import Mouse_Timer from '../signals/Mouse_Timer';
 import Relationship from '../data/Relationship';
 import Title_State from '../state/Title_State';
@@ -59,9 +60,9 @@ import { get } from 'svelte/store';
 import { transparentize } from 'color2k';
 
 export {
-	g, k, u, ux,
 	debug, Debug, DebugFlag,
 	Timer_Type, Mouse_Timer,
+	g, k, u, ux, Segment_Map,
 	Ring_Zone, Seriously_Range,
 	Angle, Quadrant, Orientation,
 	Tree_Geometry, Widget_MapRect,

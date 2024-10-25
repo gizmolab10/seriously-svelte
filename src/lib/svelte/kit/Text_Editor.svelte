@@ -92,7 +92,7 @@
 	style='
 		top: -8px;
 		color: gray;
-		font-size: 90%;
+		font-size: 0.9em;
 		padding: 0px 3px;
 		position: absolute;
 		left: {label_left}px;
