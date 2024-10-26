@@ -8,7 +8,7 @@
     const ancestry = $s_focus_ancestry;
 	const center = $s_graphRect.size.dividedInHalf.asPoint;
 	const childOffset = new Point(k.dot_size / -2, 4 - k.dot_size);
-	let color = ancestry.thing?.color ?? k.color_default;
+	let color = ancestry.thing?.color ?? k.thing_color_default;
 	let rebuilds = 0;
 
 	// draw widgets, lines and arcs
@@ -24,7 +24,7 @@
 
 	$: {
 		if (!!ancestry.thing && ancestry.thing.id == $s_color_thing?.split(k.generic_separator)[0]) {
-			color = ancestry.thing?.color ?? k.color_default;
+			color = ancestry.thing?.color ?? k.thing_color_default;
 			rebuilds += 1;
 		}
 	}

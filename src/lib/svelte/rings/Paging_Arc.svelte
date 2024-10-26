@@ -97,5 +97,5 @@
 		center={cluster_map.label_center}
 		font_family={$s_thing_fontFamily}
 		angle={cluster_map.arc_map.label_text_angle}
-		color={$s_focus_ancestry.thing?.color ?? k.color_default}/>
+		color={$s_focus_ancestry.thing?.color ?? k.thing_color_default}/>
 {/if}

@@ -17,7 +17,7 @@ export default class Thing extends Datum {
 	color: string;
 	type: string;
 
-	constructor(baseID: string, id: string, title = k.title_default, color = k.color_default, type = k.empty, hasBeen_remotely_saved: boolean = false) {
+	constructor(baseID: string, id: string, title = k.title_default, color = k.thing_color_default, type = k.empty, hasBeen_remotely_saved: boolean = false) {
 		super(dbDispatch.db.dbType, baseID, id, hasBeen_remotely_saved);
 		this.selectionRange = new Seriously_Range(0, title.length);
 		this.page_states = new Page_States(this.id);

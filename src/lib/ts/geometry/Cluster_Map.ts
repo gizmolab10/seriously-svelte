@@ -25,7 +25,7 @@ export default class Cluster_Map {
 	label_position_angle = 0;
 	cluster_title = k.empty;
 	arc_map = new Arc_Map();
-	color = k.color_default;
+	color = k.thing_color_default;
 	predicate: Predicate;
 	toChildren: boolean;
 	center = Point.zero;

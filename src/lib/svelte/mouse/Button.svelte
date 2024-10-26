@@ -9,12 +9,12 @@
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;
 	export let element_state: Element_State;
-	export let border_color = 'black';
+	export let border_color = k.color_default;
 	export let position = 'absolute';
 	export let zindex = ZIndex.dots;
 	export let border_thickness = 1;
 	export let center = Point.zero;
-	export let color = 'black';
+	export let color = k.color_default;
 	export let style = k.empty;
 	export let name = k.empty;
 	let border = k.empty;

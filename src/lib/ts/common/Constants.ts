@@ -27,12 +27,13 @@ export default class Constants {
 	color_highlighted = '#9e7daa';
     color_disabled = 'lightGray';
 	baseID_local = 'handcrafted';
+    thing_color_default = 'blue';
 	color_background = 'white';
 	cursor_default = 'default';
 	generic_separator = '::';
+	color_default = 'black';
 	small_separator = ':::';
 	big_separator = '::::';
-    color_default = 'blue';
 	unknown = 'unknown';
 	newLine = '\n';
 	comma = ',';

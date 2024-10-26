@@ -4,7 +4,7 @@
     export let position = 'absolute';
     export let zIndex = ZIndex.dots;
     export let svg_path = k.empty;
-    export let stroke = 'black';
+    export let stroke = k.color_default;
     export let name = 'SVGD3';
     export let fill = 'none';
     export let height = 10;

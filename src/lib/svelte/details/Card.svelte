@@ -26,11 +26,11 @@
 	let thingHID: number | null = thing?.idHashed;
 	let grabs = $s_grabbed_ancestries;
 	let card_title = thing?.title;
-	let color = k.color_default;
+	let color = k.thing_color_default;
 	let rebuilds = 0;
 	let info;
 
-	element_state.set_forHovering('black', 'pointer');
+	element_state.set_forHovering(k.color_default, 'pointer');
 	
 	$: {
 		const _ = `${$s_grabbed_ancestries} ${$s_focus_ancestry} ${$s_title_thing}`;
@@ -128,7 +128,7 @@
 					</Button>
 				{/if}
 				<Text_Editor
-					color='black'
+					color=k.color_default
 					top={text_top}
 					label='consequence'
 					width={text_box_size.width}
@@ -136,7 +136,7 @@
 					original_text={thing.consequence}
 					handle_textChange={handle_textChange}/>
 				<Text_Editor
-					color='black'
+					color=k.color_default
 					label='quest'
 					top={text_top + 90}
 					original_text={thing.quest}

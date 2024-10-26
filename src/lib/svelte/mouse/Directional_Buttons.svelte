@@ -9,7 +9,7 @@
 	let rebuilds = 0;
 
 	function hover_closure(isHovering) {
-        return [isHovering ? 'black' : k.color_background, k.empty];
+        return [isHovering ? k.color_default : k.color_background, k.empty];
     }
 
 	function handle_mouse_state(mouse_state: Mouse_State): boolean {
@@ -38,7 +38,7 @@
                 handle_mouse_state={handle_mouse_state}
                 center={origin.offsetByY(-offsetY)}
                 hover_closure={hover_closure}
-                strokeColor={'black'}
+                strokeColor={k.color_default}
                 angle={Direction.up}
                 size={buttonSize}
                 name='up'
@@ -50,7 +50,7 @@
                 center={origin.offsetByY(offsetY)}
                 hover_closure={hover_closure}
                 angle={Direction.down}
-                strokeColor={'black'}
+                strokeColor={k.color_default}
                 size={buttonSize}
                 name='down'
             />

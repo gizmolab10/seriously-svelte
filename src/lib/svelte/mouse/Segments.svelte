@@ -6,7 +6,7 @@
 	export let fill = k.color_background;
 	export let height = k.row_height - 2;
 	export let origin = Point.zero;
-	export let stroke = 'black';
+	export let stroke = k.color_default;
 	export let multiple = false;
 	let selected_indices: Array<number> = [];
 	let segment_maps: Array<Segment_Map> = [];
@@ -26,9 +26,16 @@
 		}
 	}
 
-	function hit_closure(title: string) {
+	function hit_closure(title: string, shift: boolean) {
+		const index = titles.indexOf(title);
+		const selected = !selected_indices.includes(index);
+		if (selected) {
+			selected_indices.push(index);
+		}else {
+			selected_indices = selected_indices.filter((i) => i != index);
+		}
 		selection_closure(selected_indices);
-		return true;
+		return selected;
 	}
 
 </script>

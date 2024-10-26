@@ -6,15 +6,15 @@
     export let name = 'generic close';
     export let size = 20;
 	let fill = k.color_background;
-	let stroke = 'black';
+	let stroke = k.color_default;
     const svg_cross_path = svgPaths.x_cross(size, size / 6);
     const svg_circle_path = svgPaths.circle_atOffset(size, size - 2);
 
 	function hover_up_closure(mouse_state) {
 		if (mouse_state.isHover) {
 			const isHovering = !mouse_state.isOut;
-			fill = isHovering ? 'black' : k.color_background;
-			stroke = isHovering ? k.color_background : 'black';
+			fill = isHovering ? k.color_default : k.color_background;
+			stroke = isHovering ? k.color_background : k.color_default;
 		} else if (mouse_state.isUp) {
 			$s_id_popupView = null;
 		}
@@ -34,7 +34,7 @@
 		fill={fill}
 		width={size}
 		height={size}
-		stroke='black'
+		stroke=k.color_default
 		svg_path={svg_circle_path}
 	/>
     <SVGD3 name='closeInside'

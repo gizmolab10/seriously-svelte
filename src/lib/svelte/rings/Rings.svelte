@@ -19,7 +19,7 @@
 	const svg_ring_rotation_path = svgPaths.annulus(Point.square($s_ring_rotation_radius), middle_radius, ring_width, Point.square(ring_width));
 	const svg_ring_resizing_path = svgPaths.annulus(Point.square(middle_radius), outer_radius, ring_width);
 	const viewBox = `${-ring_width}, ${-ring_width}, ${outer_diameter}, ${outer_diameter}`;
-	let color = $s_focus_ancestry?.thing?.color ?? k.color_default;
+	let color = $s_focus_ancestry?.thing?.color ?? k.thing_color_default;
 	let mouse_up_count = $s_mouse_up_count;
 	let cursor = k.cursor_default;
 	let rebuilds = 0;
@@ -33,7 +33,7 @@
 
 	$: {
 		if (!!$s_focus_ancestry.thing && $s_focus_ancestry.thing.id == $s_color_thing?.split(k.generic_separator)[0]) {
-			color = $s_focus_ancestry?.thing?.color ?? k.color_default;
+			color = $s_focus_ancestry?.thing?.color ?? k.thing_color_default;
 			rebuilds += 1;
 		}
 	}

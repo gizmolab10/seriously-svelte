@@ -9,7 +9,7 @@
 	const height = k.row_height + 10;
 	let centerOffset = Point.zero;
 	let focus_origin = Point.zero;
-	let color = k.color_default;
+	let color = k.thing_color_default;
 	let titleWidth = 0;
 
 	$: {

@@ -40,7 +40,7 @@
 		for (const id of ids) {
 			total -= u.getWidthOf(id);
 			const element_state = ux.elementState_for(new Identifiable(id), ElementType.control, id);
-			element_state.set_forHovering('black', 'pointer');
+			element_state.set_forHovering(k.color_default, 'pointer');
 			element_state.hoverIgnore = id == IDButton.details;
 			elementStates_byID[id] = element_state;
 			elementShown_byID[id] = total > 0;
@@ -131,7 +131,7 @@
 						<svg
 							class='shrink-svg'>
 							<path
-								stroke='black'
+								stroke=k.color_default
 								fill=transparent
 								class='shrink-path'
 								d={svgPaths.dash(size_big, 2)}/>
@@ -149,7 +149,7 @@
 						<svg
 							class='enlarge-svg'>
 							<path
-								stroke='black'
+								stroke=k.color_default
 								fill=transparent
 								class='enlarge-path'
 								d={svgPaths.t_cross(size_big, 2)}/>

@@ -3,7 +3,7 @@
 	import { s_thing_fontFamily } from '../../ts/state/Reactive_State';
 	export let handle_textChange = (label: string, text: string) => {};
 	export let width = k.width_details - 40;
-	export let color = k.color_default;
+	export let color = k.thing_color_default;
 	export let original_text = k.empty;
 	export let label = k.empty;
 	export let height = 200;
