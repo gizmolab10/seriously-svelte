@@ -7,8 +7,10 @@
 	export let hit_closure = (title) => {};
     export let name = `segment-for-${segment_map.title}`;
 	let size = segment_map.size.expandedEquallyBy(2);
-	let height = segment_map.height;
+	let height = segment_map.height + 2;
 	let center = segment_map.center;
+
+	console.log(segment_map.description)
 
 	function hover_andUp_closure(mouse_state) {
 		if (mouse_state.isHover) {

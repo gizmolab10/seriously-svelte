@@ -136,8 +136,8 @@
 			height: ${height}px;
 			position: ${position};
 			font-size: ${font_size};
-			font-family: {$s_thing_fontFamily};
-			`.removeWhiteSpace();;
+			font-family: ${$s_thing_fontFamily};
+			`.removeWhiteSpace();
 		if (!!cursor) {
 			style = `${style} cursor: ${cursor};`;
 		}

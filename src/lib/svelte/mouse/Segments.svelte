@@ -4,7 +4,7 @@
 	export let selection_closure = (selectionArray) => {};
 	export let titles: Array<string> = [];
 	export let fill = k.color_background;
-	export let height = k.row_height - 1;
+	export let height = k.row_height - 2;
 	export let origin = Point.zero;
 	export let stroke = 'black';
 	export let multiple = false;
@@ -14,14 +14,17 @@
 	update_maps();
 
 	function update_maps() {
+		let part = Oblong_Part.left;
 		segment_maps = [];
 		let index = 0;
 		let left = 0;
 		for (const title of titles) {
-			const map = new Segment_Map(title, index, left, height, Oblong_Part.right);
+			const map = new Segment_Map(title, index, left, height, part);
 			segment_maps.push(map);
 			left += map.width;
 			index += 1;
+			const isMiddle = index < titles.length - 1;
+			part = isMiddle ? Oblong_Part.middle : Oblong_Part.right;
 		}
 	}
 

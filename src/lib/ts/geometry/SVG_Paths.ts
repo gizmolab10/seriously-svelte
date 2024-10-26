@@ -15,12 +15,6 @@ export default class SVG_Paths {
 		return this.line_connecting(start, Point.fromPolar(radius, angle).offsetBy(start))
 	}
 
-	annulus(center: Point, outer_radius: number, thickness: number, offset: Point = Point.zero): string {
-		const offset_center = center.offsetBy(offset);
-		const inner_center = offset_center.offsetByX(center.x * 2);
-		return `${this.circle(offset_center, outer_radius, true)} ${this.circle(inner_center, outer_radius - thickness, false)}`;
-	}
-
     dash(diameter: number, margin: number): string {
 		const y = diameter / 2;
         return `M${margin} ${y} L${diameter - margin} ${y}`;
@@ -49,18 +43,10 @@ export default class SVG_Paths {
         return `M${center.x - radius} ${center.y} a ${radius} ${radius} 0 0 ${direction} ${diametric_move} 0 a ${radius} ${radius} 0 0 ${direction} ${-diametric_move} 0`;
     }
 
-	oblong(center: Point, size: Size, part: Oblong_Part = Oblong_Part.full) {
-		const x = center.x;
-		const y = center.y;
-		const half = size.width / 2;
-		const radius = size.height / 2;
-		switch(part) {
-			case Oblong_Part.full: return `M ${x - half}, ${y + radius} A ${radius}, ${radius} 0 0 1  ${x - half}, ${y - radius} H ${x + half} A ${radius}, ${radius} 0 0 1 ${x + half}, ${y + radius} Z`;
-			case Oblong_Part.left: return `M ${x - half}, ${y + radius} H ${x + half} A ${radius}, ${radius} 0 0 1 ${x + half}, ${y + radius} Z`;
-			case Oblong_Part.right: return `M ${x - half}, ${y + radius} A ${radius}, ${radius} 0 0 1  ${x - half}, ${y - radius} H ${x + half} ${x + half}, ${y + radius} Z`;
-			case Oblong_Part.middle: return `M ${x - half}, ${y + radius} H ${x + half} ${x + half}, ${y + radius} Z`;
-		}
-		
+	annulus(center: Point, outer_radius: number, thickness: number, offset: Point = Point.zero): string {
+		const offset_center = center.offsetBy(offset);
+		const inner_center = offset_center.offsetByX(center.x * 2);
+		return `${this.circle(offset_center, outer_radius, true)} ${this.circle(inner_center, outer_radius - thickness, false)}`;
 	}
 
     oval(diameter: number, horizontal: boolean = true, eccentricity: number = 2.3): string {
@@ -105,10 +91,12 @@ export default class SVG_Paths {
         const radius = diameter / 2;
 		if (vertical) {
 			const up = direction == Direction.up;
-        	return `M ${up ? 0 : diameter} ${radius} A ${radius} ${radius} 0 0 1 ${radius + (up ? radius : -radius)} ${radius}`;
+        	return `M ${up ? 0 : diameter} ${radius}
+				A ${radius} ${radius} 0 0 1 ${radius + (up ? radius : -radius)} ${radius}`;
 		} else {
 			const left = direction == Direction.right;
-        	return `M ${radius} ${left ? 0 : diameter} A ${radius} ${radius} 0 0 1 ${radius} ${left ? (radius * 2) : 0}`;
+        	return `M ${radius} ${left ? 0 : diameter}
+				A ${radius} ${radius} 0 0 1 ${radius} ${left ? (radius * 2) : 0}`;
 		}
     }
 
@@ -153,6 +141,29 @@ export default class SVG_Paths {
 			offset = offset.rotate_by(increment);
 		}
 		return path;
+	}
+
+	oblong(center: Point, size: Size, part: Oblong_Part = Oblong_Part.full) {
+		const radius = size.height / 2;
+		const half = size.width / 2;
+		const x = center.x;
+		const y = center.y;
+		const L = x - half;
+		const R = x + half;
+		const T = y - radius;
+		const B = y + radius;
+		const TL = `${L}, ${T}`;
+		const TR = `${R}, ${T}`;
+		const BR = `${R}, ${B}`;
+		const BL = `${L}, ${B}`;
+		const cap = `${radius}, ${radius} 0 0 1`;
+		switch(part) {
+			case Oblong_Part.left:	 return `M ${BL} A ${cap} ${TR} L ${BR} L ${BL} Z`;
+			case Oblong_Part.right:  return `M ${BL} L ${BR} A ${cap} ${TL} L ${BL} Z`;
+			case Oblong_Part.middle: return `M ${BL} L ${BR} L ${TR} L ${TL} L ${BL} Z`;
+			case Oblong_Part.full:	 return `M ${BL} A ${cap} ${BR} L ${TR} A ${cap} ${BL} Z`;
+		}
+		
 	}
 
 	ellipses(stretch: number, tiny: number, horizontal: boolean = true, count: number = 3, other: number = 6): string {

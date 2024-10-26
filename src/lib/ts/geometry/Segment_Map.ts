@@ -27,6 +27,6 @@ export default class Segment_Map {
 		this.viewBox = new Rect(new Point(this.left, 0), this.size).viewBox;
 	}
 
-	get description(): string { return this.title; }
+	get description(): string { return `${this.title} ${this.part} ${this.path}`; }
 
 }
