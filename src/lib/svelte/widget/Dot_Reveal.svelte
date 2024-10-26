@@ -124,7 +124,7 @@
 					z-index: {zindex};
 				'>
 				{#key svg_revealDot_path}
-					<SVGD3 name='svg-reveal'
+					<SVGD3 name='reveal-svg'
 						fill={debug.lines ? 'transparent' : element_state.fill}
 						stroke={ancestry.thing.color}
 						svg_path={svg_revealDot_path}
@@ -140,7 +140,7 @@
 							position:absolute;
 							height:{size}px;
 							width:{size}px;'>
-							<SVGD3 name='svg-inside'
+							<SVGD3 name='inside-svg'
 								stroke={element_state.stroke}
 								fill={element_state.stroke}
 								svg_path={svg_reveal_inside_path}
@@ -156,7 +156,7 @@
 							height:{tinyDotsDiameter}px;
 							width:{tinyDotsDiameter}px;
 							position:absolute;'>
-							<SVGD3 name='svg-tiny-dots'
+							<SVGD3 name='tiny-dots-svg'
 								svg_path={svgPaths.tinyDots_circular(tinyDotsDiameter, childrenCount)}
 								stroke={ancestry.thing.color}
 								fill={ancestry.thing.color}

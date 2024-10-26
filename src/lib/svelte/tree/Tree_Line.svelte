@@ -78,7 +78,7 @@
 		bind:this={line}
 		id={ancestry.title}
 		width={size.width}px
-		class='svg-tree-line'
+		class='tree-line-svg'
 		viewBox={viewBox.verbose}
 		height={Math.max(2, size.height)}px
 		style='z-index: {ZIndex.lines};
@@ -86,7 +86,7 @@
 			left: {origin.x + 142}px;
 			position: absolute;
 			stroke-width:1px;'>
-		<path d={linePath} stroke={ancestry.thing.color} fill='none'/>
+		<path class='tree-line-path' d={linePath} stroke={ancestry.thing.color} fill='none'/>
 	</svg>
 	{#if debug.lines}
 		<Circle radius=1 center={rect.extent.offsetBy(debugOffset)} color=black thickness=1/>

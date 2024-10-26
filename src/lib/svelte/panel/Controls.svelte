@@ -103,7 +103,7 @@
 						{#if $s_show_rings}tree{:else}rings{/if}
 					</span>
 				</Button>
-				<Segments origin={new Point(120, 0)} titles={['tree', 'rings']}/>
+				<Segments origin={new Point(120, 0)} titles={['children', 'parents', 'related']}/>
 			{/if}
 			{#if !$s_show_rings && elementShown_byID[IDButton.relations]}
 				<Button name={IDButton.relations}
@@ -129,8 +129,12 @@
 						center={new Point(width - 140, top)}
 						closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.smaller)}>
 						<svg
-							class='svg-shrink'>
-							<path stroke='black' fill=transparent d={svgPaths.dash(size_big, 2)}/>
+							class='shrink-svg'>
+							<path
+								stroke='black'
+								fill=transparent
+								class='shrink-path'
+								d={svgPaths.dash(size_big, 2)}/>
 						</svg>
 					</Button>
 				{/if}
@@ -143,8 +147,12 @@
 						element_state={elementStates_byID[IDButton.bigger]}
 						closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.bigger)}>
 						<svg
-							class='svg-enlarge'>
-							<path stroke='black' fill=transparent d={svgPaths.t_cross(size_big, 2)}/>
+							class='enlarge-svg'>
+							<path
+								stroke='black'
+								fill=transparent
+								class='enlarge-path'
+								d={svgPaths.t_cross(size_big, 2)}/>
 						</svg>
 					</Button>
 				{/if}

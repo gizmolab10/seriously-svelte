@@ -203,7 +203,7 @@
 						viewBox={half_circleViewBox}
 						stroke='transparent'
 						fill={thing.color}>
-						<path d={svgPaths.half_circle(k.editingTools_diameter, Direction.up)}/>
+						<path class='delete-confirm-path' d={svgPaths.half_circle(k.editingTools_diameter, Direction.up)}/>
 					</svg>
 				{/if}
 				{#if isHovering_byID[IDTool.delete_cancel]}
@@ -216,7 +216,7 @@
 						viewBox={half_circleViewBox}
 						stroke='transparent'
 						fill={thing.color}>
-						<path d={svgPaths.half_circle(k.editingTools_diameter, Direction.down)}/>
+						<path class='delete-cancel-path' d={svgPaths.half_circle(k.editingTools_diameter, Direction.down)}/>
 					</svg>
 				{/if}
 				<Button
@@ -286,16 +286,18 @@
 					width=18>
 					<svg width=18
 						stroke={color}
+						class='more-svg' 
 						viewBox='0 1 18 16'
 						height={k.default_buttonSize}
 						fill={isHovering_byID[IDTool.more] ? color : 'transparent'}>
-						<path d={svgPaths.oval(18, true)}/>
+						<path class='more-path' d={svgPaths.oval(18, true)}/>
 					</svg>
 					<svg height=10
+						class='ellipses-svg' 
 						viewBox='-0.5 -2 14 10'
 						width={k.default_buttonSize}
 						fill={isHovering_byID[IDTool.more] ? k.color_background : color}>
-						<path d={svgPaths.ellipses(7, 1)}/>
+						<path class='ellipses-path' d={svgPaths.ellipses(7, 1)}/>
 					</svg>
 				</Button>
 				<Dot_Reveal

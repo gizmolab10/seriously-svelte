@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, Rect, Size, Point, Segment_Map, Oblong_Part } from '../../ts/common/Global_Imports';
+	import { k, u, Rect, Size, Point, Segment_Map } from '../../ts/common/Global_Imports';
 	import Segment from './Segment.svelte';
 	export let selection_closure = (selectionArray) => {};
 	export let titles: Array<string> = [];
@@ -10,32 +10,33 @@
 	export let multiple = false;
 	let selected_indices: Array<number> = [];
 	let segment_maps: Array<Segment_Map> = [];
+	let width = 0;
 
 	update_maps();
 
 	function update_maps() {
-		let part = Oblong_Part.left;
+		const max = titles.length - 1;
 		segment_maps = [];
 		let index = 0;
-		let left = 0;
 		for (const title of titles) {
-			const map = new Segment_Map(title, index, left, height, part);
+			const map = new Segment_Map(title, index, max, width, height);
 			segment_maps.push(map);
-			left += map.width;
+			width += map.width;
 			index += 1;
-			const isMiddle = index < titles.length - 1;
-			part = isMiddle ? Oblong_Part.middle : Oblong_Part.right;
 		}
 	}
 
 	function hit_closure(title: string) {
 		selection_closure(selected_indices);
+		return true;
 	}
 
 </script>
 
-<div class='segmented-wrapper'
+<div class='segments'
 	style='
+		width: {width}px;
+		height: {height}px;
 		position: absolute;
 		left: {origin.x}px;
 		top: {origin.y - 1}px;'>

@@ -41,7 +41,7 @@
 		<Mouse_Responder
 			height={height}
 			width={titleWidth}
-			name='focus-border'
+			name='rings-focus-border'
 			zindex={ZIndex.backmost}
 			cursor={k.cursor_default}
 			isHit_closure={() => false}
@@ -49,6 +49,7 @@
 			center={centerOffset.offsetByX(-13)}>
 			{#key color}
 				<svg
+					class='rings-focus-svg'
 					style='
 						top: -2.7px;
 						left: -13px;
@@ -58,6 +59,7 @@
 					<path
 						fill='white'
 						stroke={color}
+						class='rings-focus-path'
 						d={svgPaths.oblong(centerOffset, new Size(titleWidth - 6, k.row_height))}/>
 				</svg>
 			{/key}

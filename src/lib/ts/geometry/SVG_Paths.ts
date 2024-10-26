@@ -158,10 +158,10 @@ export default class SVG_Paths {
 		const BL = `${L}, ${B}`;
 		const cap = `${radius}, ${radius} 0 0 1`;
 		switch(part) {
-			case Oblong_Part.left:	 return `M ${BL} A ${cap} ${TR} L ${BR} L ${BL} Z`;
-			case Oblong_Part.right:  return `M ${BL} L ${BR} A ${cap} ${TL} L ${BL} Z`;
-			case Oblong_Part.middle: return `M ${BL} L ${BR} L ${TR} L ${TL} L ${BL} Z`;
-			case Oblong_Part.full:	 return `M ${BL} A ${cap} ${BR} L ${TR} A ${cap} ${BL} Z`;
+			case Oblong_Part.middle: return `M ${TL} L ${TR} L ${BR} L ${BL} L ${TL} Z`;
+			case Oblong_Part.right:  return `M ${TL} L ${TR} A ${cap} ${BR} L ${BL} L ${TL} Z`;
+			case Oblong_Part.left:	 return `M ${TL} L ${TR} L ${BR} L ${BL} A ${cap} ${TL} Z`;
+			case Oblong_Part.full:	 return `M ${TL} L ${TR} A ${cap} ${BR} L ${BL} A ${cap} ${TL} Z`;
 		}
 		
 	}
@@ -220,9 +220,9 @@ export default class SVG_Paths {
 	}
 
 	get rotateSVG(): string {
-		return `<svg width="48px" height="48px" viewBox="0 0 48 48">
+		return `<svg class='rotate-svg' width="48px" height="48px" viewBox="0 0 48 48">
 			<circle cx="24" cy="24" r="20" stroke="black" stroke-width="2" fill="none" />
-			<path d="M 4 24 a 20 20 0 0 1 40 0" fill="none" stroke="black" stroke-width="2"/>
+			<path class='rotate-path' d="M 4 24 a 20 20 0 0 1 40 0" fill="none" stroke="black" stroke-width="2"/>
 			<polygon points="44 24 38 18 38 30" fill="black"/>
 		</svg>`;
 	}

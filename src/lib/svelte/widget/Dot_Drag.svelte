@@ -152,7 +152,7 @@
 							color:transparent;
 							position:absolute;
 							z-index:{ZIndex.dots};'>
-						<SVGD3 name={'svg-drag-' + name}
+						<SVGD3 name={'drag-' + name + '-svg'}
 							width={size}
 							height={size}
 							svg_path={svg_dragDot_path}
@@ -161,7 +161,7 @@
 						/>
 						{#if show.tinyDots}
 							{#if svg_tinyDots_path}
-								<SVGD3 name={'svg-drag-inside-' + name}
+								<SVGD3 name={'drag-inside-' + name + '-svg'}
 									width={size}
 									height={size}
 									svg_path={svg_tinyDots_path}
@@ -170,7 +170,7 @@
 								/>
 							{/if}
 							{#if svg_isRelated_path}
-								<SVGD3 name={'svg-drag-related-' + name}
+								<SVGD3 name={'drag-related-' + name + '-svg'}
 									width={size}
 									height={size}
 									svg_path={svg_isRelated_path}

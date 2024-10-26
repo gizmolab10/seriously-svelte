@@ -219,15 +219,15 @@
 				center={g.graph_center}
 				mouse_state_closure={mouse_state_closure}>
 				<svg
-					class='svg-rings'
+					class='rings-svg'
 					viewBox={viewBox}>
-					<path class='path-resize' d={svg_ring_resizing_path}
+					<path class='resize-path' d={svg_ring_resizing_path}
 						fill={u.opacitize(color, g.ring_resizing_state.fill_opacity)}
 						stroke={u.opacitize(color, g.ring_resizing_state.stroke_opacity)}/>
 					{#if debug.reticule}
-						<path class='path-reticule' stroke='green' fill=transparent d={svgPaths.t_cross(middle_radius * 2, -2)}/>
+						<path class='reticule-path' stroke='green' fill=transparent d={svgPaths.t_cross(middle_radius * 2, -2)}/>
 					{/if}
-					<path class='path-rotate' d={svg_ring_rotation_path}
+					<path class='rotate-path' d={svg_ring_rotation_path}
 						fill={u.opacitize(color, g.ring_rotation_state.fill_opacity * (g.ring_resizing_state.isHighlighted ? 0.3 : 1))}
 						stroke={u.opacitize(color, g.ring_rotation_state.stroke_opacity * (g.ring_resizing_state.isHighlighted ? 0.7 : 1))}/>
 				</svg>

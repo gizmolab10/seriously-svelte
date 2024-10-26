@@ -80,11 +80,11 @@
 					cursor={k.cursor_default}
 					mouse_state_closure={hover_closure}
 					isHit_closure={() => cluster_map.thumb_isHit}>
-					<svg class='svg-arc' viewBox={viewBox}>
-						<path stroke={arc_color} fill=transparent d={cluster_map.arc_map.svg_arc_path}/>
-						<path stroke={fork_color} fill=transparent d={cluster_map.arc_map.svg_fork_radial_path}/>
+					<svg class='arc-svg' viewBox={viewBox}>
+						<path class='arc-path' stroke={arc_color} fill=transparent d={cluster_map.arc_map.svg_arc_path}/>
+						<path class='fork-path' stroke={fork_color} fill=transparent d={cluster_map.arc_map.svg_fork_radial_path}/>
 						{#if cluster_map.isPaging && cluster_map.shown > 1}
-							<path fill={thumb_color} d={cluster_map.thumb_map.svg_arc_path}/>
+							<path class='thumb-path' fill={thumb_color} d={cluster_map.thumb_map.svg_arc_path}/>
 						{/if}
 					</svg>
 				</Mouse_Responder>
