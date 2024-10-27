@@ -144,14 +144,16 @@ export default class SVG_Paths {
 	}
 
 	oblong(center: Point, size: Size, part: Oblong_Part = Oblong_Part.full) {
+		const bumpRight = [Oblong_Part.full, Oblong_Part.right].includes(part);
+		const bumpLeft = [Oblong_Part.full, Oblong_Part.left].includes(part);
 		const radius = size.height / 2;
 		const half = size.width / 2;
-		const x = center.x;
-		const y = center.y;
-		const L = x - half;
-		const R = x + half;
-		const T = y - radius;
-		const B = y + radius;
+		const cx = center.x;
+		const cy = center.y;
+		const L = cx - half + (bumpLeft ? 0 : radius);
+		const R = cx + half + (bumpRight ? 0 : radius);
+		const T = cy - radius;
+		const B = cy + radius;
 		const TL = `${L}, ${T}`;
 		const TR = `${R}, ${T}`;
 		const BR = `${R}, ${B}`;
@@ -197,10 +199,10 @@ export default class SVG_Paths {
 		const insetRatio = 0.35;
 		const radius = Math.min(width, height) * insetRatio;
 		const offset = new Point(width / 2, height / 2);
-		const outer = new Point(radius * 1.5, 0);
 		const segmentAngle = Math.PI / vertices;
-		const inner = new Point(radius, 0);
+		const outer = Point.x(radius * 1.5);
 		const tweak = segmentAngle / 5;
+		const inner = Point.x(radius);
 		let data = [];
 		let i = 0;
 		while (i++ < vertices) {

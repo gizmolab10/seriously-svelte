@@ -103,7 +103,7 @@
 						{#if $s_show_rings}tree{:else}rings{/if}
 					</span>
 				</Button>
-				<Segments origin={new Point(120, 0)} titles={['children', 'parents', 'related']}/>
+				<Segments origin={new Point(90, 0)} titles={['children', 'parents', 'related']}/>
 			{/if}
 			{#if !$s_show_rings && elementShown_byID[IDButton.relations]}
 				<Button name={IDButton.relations}

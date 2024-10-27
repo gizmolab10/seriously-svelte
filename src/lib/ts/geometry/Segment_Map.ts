@@ -14,17 +14,13 @@ export default class Segment_Map {
 	left = 0;
 
 	constructor(title: string, index: number, max: number, left: number, height: number) {
-		this.left = left;
+		this.width = u.getWidthOf(title) + 10;	// add space around title
+		this.origin = Point.x(left);
+		this.height = height;
 		this.title = title;
 		this.index = index;
-		this.height = height;
-		this.origin = new Point(left, 0);
-		this.width = u.getWidthOf(title) + 15;
-		this.size = new Size(this.width, height);
-		this.part = this.part_forIndex(index, max);
-		this.center = this.origin.offsetByXY(15, height / 2);
-		this.path = svgPaths.oblong(this.center, this.size, this.part);
-		this.viewBox = new Rect(new Point(left, 0), this.size).viewBox;
+		this.left = left;
+		this.finish_map(max);
 	}
 
 	get description(): string { return `${this.title} ${this.part} ${this.path}`; }
@@ -35,6 +31,15 @@ export default class Segment_Map {
 			case max: return Oblong_Part.right;
 			default:  return Oblong_Part.middle;
 		}
+	}
+
+	finish_map(max: number) {
+		const viewBox_size = new Size(this.width, this.height);
+		this.center = this.origin.offsetBy(viewBox_size.dividedInHalf.asPoint);
+		this.part = this.part_forIndex(this.index, max);
+		this.viewBox = new Rect(Point.x(this.left), viewBox_size).viewBox;
+		this.path = svgPaths.oblong(this.center, viewBox_size.expandedByXY(-10, -2), this.part);
+		this.size = viewBox_size.expandedByXY(15, 2)
 	}
 
 }

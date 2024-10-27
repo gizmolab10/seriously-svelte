@@ -151,7 +151,7 @@ class Utilities {
 
 	polygonPoints(radius: number, count: number, offset: number): Array<Point> {
 		const increment = Angle.full / count;
-		const radial = new Point(radius, 0);
+		const radial = Point.x(radius);
 		const points: Point[] = [];
 		let angle = offset;
 		let index = count;

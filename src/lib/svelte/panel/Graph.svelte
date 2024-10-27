@@ -50,7 +50,7 @@
 		if ($s_show_rings) {
 			toolsOffset = new Point(31, -545.3);
 		} else {
-			toolsOffset = new Point(0, -18.3);
+			toolsOffset = Point.y(-18.3);
 		}
 	}
 

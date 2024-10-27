@@ -28,7 +28,7 @@
 	height={size}
 	cursor='pointer'
 	align_left={false}
-	center={new Point(0, size)}
+	center={Point.y(size)}
 	mouse_state_closure={hover_up_closure}>
     <SVGD3 name='close'
 		fill={fill}

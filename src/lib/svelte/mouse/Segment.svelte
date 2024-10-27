@@ -6,10 +6,8 @@
 	export let segment_map!: Segment_Map;
     export let name = segment_map.title;
 	export let stroke = k.color_default;
-	let size = segment_map.size.expandedEquallyBy(2);
-	let height = segment_map.height + 2;
-	let center = segment_map.center;
 	let title_color = k.color_default;
+	let size = segment_map.size;
 	let isHighlighted = false;
 	let isHovering = false;
 
@@ -31,29 +29,31 @@
 
 <Mouse_Responder
 	name={name}
-	center={center}
 	cursor='pointer'
 	width={size.width}
 	height={size.height}
 	zindex={ZIndex.frontmost}
+	center={segment_map.center}
 	mouse_state_closure={hover_andUp_closure}>
 	<svg
-		class={name}
+		class={`${name}-segment-svg`}
 		viewBox={segment_map.viewBox}
 		style='
-			position: absolute;
+			height:{size.height}px;
 			width:{size.width}px;
-			height:{size.height}px;'>
+			position: absolute;
+			left:0px;'>
 		<path
-			fill={fill}
+			class={`${name}-segment-path`}
+			d={segment_map.path}
 			stroke={stroke}
-			class='segment-path'
-			d={segment_map.path}/>
+			fill={fill}/>
 	</svg>
 	<div
 		class='title'
 		style='
 			top:1.5px;
+			left:18px;
 			font-size: 0.95em;
 			position:absolute;
 			color:{title_color};'>

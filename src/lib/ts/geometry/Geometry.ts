@@ -36,9 +36,11 @@ export class Point {
 	distanceFrom(point: Point):		   Point { return new Point(this.x - point.x, this.y - point.y); }
 	multipliedBy(multiplier: number):  Point { return new Point(this.x * multiplier, this.y * multiplier) }
 	offsetBySize(size: Size):		   Point { return new Point(this.x + size.width, this.y + size.height); }
-	static fromPolar(r: number, phi: number) { return new Point(r, 0).rotate_by(phi); }
+	static fromPolar(r: number, phi: number) { return Point.x(r).rotate_by(phi); }
 	static fromDOMRect(rect: DOMRect): Point { return new Point(rect.left, rect.top); }
 	static square(length: number):	   Point { return new Point(length, length); }
+	static x(x: number):			   Point { return new Point(x, 0); }
+	static y(y: number):			   Point { return new Point(0, y); }
 	static get zero():				   Point { return new Point();}
 
 	// in this (as in math), y increases going up and angles increase counter-clockwise
@@ -162,8 +164,8 @@ export class Rect {
 	get centerBottom():		  Point { return new Point(this.center.x, this.extent.y); };
 	get copy():				   Rect { return new Rect(this.origin.copy, this.size.copy); }
 	get dividedInHalf():	   Rect { return new Rect(this.origin, this.size.multipliedBy(-1/2)); }
-	get atZero_forX():		   Rect { return new Rect(new Point(0, this.origin.y), this.size); }
-	get atZero_forY():		   Rect { return new Rect(new Point(this.origin.x, 0), this.size); }
+	get atZero_forX():		   Rect { return new Rect(Point.y(this.origin.y), this.size); }
+	get atZero_forY():		   Rect { return new Rect(Point.x(this.origin.x), this.size); }
 	get atZero():			   Rect { return new Rect(Point.zero, this.size); }
 	static get zero():		   Rect { return new Rect(Point.zero, Size.zero); }
 	offsetBy(delta: Point):	   Rect { return new Rect(this.origin.offsetBy(delta), this.size); }

@@ -143,8 +143,8 @@
 		}
 		if (!!center) {
 			const x = center.x - width / 2;
-			const horizontal = align_left ? `left: ${x}` : `right: ${-x}`;
-			style = `${style} ${horizontal}px; top: ${center.y - height / 2}px;`;
+			const alignment = align_left ? `left: ${x}px` : `right: ${-x}px`;
+			style = `${style} ${alignment}; top: ${center.y - height / 2}px;`;
 		}
 	}
 

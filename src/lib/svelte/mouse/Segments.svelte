@@ -12,12 +12,17 @@
 	let segment_maps: Array<Segment_Map> = [];
 	let width = 0;
 
-	update_maps();
+	update_maps_width();
 
-	function update_maps() {
-		const max = titles.length - 1;
+	function reset_maps_width() {
 		segment_maps = [];
+		width = 0;
+	}
+
+	function update_maps_width() {
+		const max = titles.length - 1;
 		let index = 0;
+		reset_maps_width();
 		for (const title of titles) {
 			const map = new Segment_Map(title, index, max, width, height);
 			segment_maps.push(map);
@@ -43,10 +48,10 @@
 <div class='segments'
 	style='
 		width: {width}px;
-		height: {height}px;
 		position: absolute;
 		left: {origin.x}px;
-		top: {origin.y - 1}px;'>
+		top: {origin.y - 1}px;
+		height: {height + 2}px;'>
 	{#each segment_maps as segment_map}
 		<Segment
 			fill={fill}
