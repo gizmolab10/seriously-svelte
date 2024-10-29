@@ -15,8 +15,8 @@
     export let ancestry;
 	const hasExtraAtLeft = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
 	const rightPadding = $s_graph_type == Graph_Type.rings ? 0 : hasExtraAtLeft ? 22.5 : 20;
-	const revealState = ux.elementState_for(ancestry, ElementType.reveal, subtype);
-	const dragState = ux.elementState_for(ancestry, ElementType.drag, subtype);
+	const revealState = ux.element_state_for(ancestry, ElementType.reveal, subtype);
+	const dragState = ux.element_state_for(ancestry, ElementType.drag, subtype);
 	const leftPadding = forward ? 1 : 14;
 	const priorRowHeight = k.row_height;
 	let widgetWrapper!: Svelte_Wrapper;
@@ -49,7 +49,7 @@
 	onMount(() => {
 		update_fromAncestry();
 		layout_widget();
-		element_state = ux.elementState_forName(name);		// survives onDestroy, created by {tree, rings} children
+		element_state = ux.element_state_forName(name);		// survives onDestroy, created by {tree, rings} children
 		debug.log_mount(`WIDGET ${thing?.description} ${ancestry?.isGrabbed}`);
 		fullUpdate();
 		const handleAny = signals.handle_anySignal((kinds, id) => {

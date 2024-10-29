@@ -11,8 +11,8 @@ class Global_State {
 	allow_HorizontalScrolling = true;
 
 	scale_factor = 1;
-	fetch_succeeded = false;
 	isEditing_text = false;
+	fetch_succeeded = false;
 	scroll = this.windowScroll;
 	mouse_responder_number = 0;
 	ring_rotation_state!: Rotation_State;

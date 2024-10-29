@@ -1,13 +1,14 @@
+import { Segment_Map, Element_State, Rotation_State } from '../common/Global_Imports';
 import { Mouse_State, Mouse_Timer, ElementType } from '../common/Global_Imports';
-import { Element_State, Rotation_State } from '../common/Global_Imports';
 import Identifiable from '../basis/Identifiable';
 
 export default class UX_State {
 
-	rotationState_byName: {[name: string]: Rotation_State} = {};
-	elementState_byName: {[name: string]: Element_State} = {};
+	rotation_state_byName: {[name: string]: Rotation_State} = {};
+	element_state_byName: {[name: string]: Element_State} = {};
 	mouse_state_byName: { [name: string]: Mouse_State } = {};
 	mouse_timer_byName: { [name: string]: Mouse_Timer } = {};
+	segment_map_byName: {[name: string]: Segment_Map} = {};
 
 	//////////////////////////////////////
 	//									//
@@ -23,8 +24,10 @@ export default class UX_State {
 	//////////////////////////////////////
 
 	reset_paging() { this.rotation_states.map(s => s.reset()); }
-	elementState_forName(name: string): Element_State { return this.elementState_byName[name]; }
-	get rotation_states(): Array<Rotation_State> { return Object.values(this.rotationState_byName); }
+	segment_map_forName(name: string): Segment_Map { return this.segment_map_byName[name]; }
+	element_state_forName(name: string): Element_State { return this.element_state_byName[name]; }
+	get rotation_states(): Array<Rotation_State> { return Object.values(this.rotation_state_byName); }
+	set_segment_map_forName(map: Segment_Map, name: string) { return this.segment_map_byName[name] = map; }
 	get isAny_paging_arc_active(): boolean { return this.rotation_states.filter(s => s.isActive).length > 0; }
 	get isAny_paging_arc_hovering(): boolean { return this.rotation_states.filter(s => s.isHovering).length > 0; }
 
@@ -32,11 +35,11 @@ export default class UX_State {
 		return `${type}-${subtype}-id:${identifiable.id}`;
 	}
 
-	rotationState_forName(name: string): Rotation_State {
-		let rotation_state = this.rotationState_byName[name];
+	rotation_state_forName(name: string): Rotation_State {
+		let rotation_state = this.rotation_state_byName[name];
 		if (!rotation_state) {
 			rotation_state = new Rotation_State();
-			this.rotationState_byName[name] = rotation_state;
+			this.rotation_state_byName[name] = rotation_state;
 		}
 		return rotation_state;
 	}
@@ -59,13 +62,13 @@ export default class UX_State {
 		return state;
 	}
 
-	elementState_for(identifiable: Identifiable | null, type: ElementType, subtype: string): Element_State {
+	element_state_for(identifiable: Identifiable | null, type: ElementType, subtype: string): Element_State {
 		const realIdentifiable = identifiable ?? new Identifiable()
 		const name = this.name_from(realIdentifiable, type, subtype);
-		let element_state = this.elementState_forName(name);
+		let element_state = this.element_state_forName(name);
 		if (!element_state) {
 			element_state = new Element_State(realIdentifiable, type, subtype);
-			this.elementState_byName[name] = element_state;
+			this.element_state_byName[name] = element_state;
 		}
 		return element_state;
 	}

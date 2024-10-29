@@ -16,7 +16,7 @@
 	const control_origin = new Point(122, text_top - 20);
 	const control_size = new Size(size_details - 58, k.default_buttonSize + 4);
 	const control_rect = Rect.createCenterRect(control_origin, control_size);
-	const element_state = ux.elementState_for(new Identifiable(id), ElementType.info, id);
+	const element_state = ux.element_state_for(new Identifiable(id), ElementType.info, id);
 	let color_origin = new Point(-2, control_rect.origin.y - (show.traits ? 1 : 24));
 	let text_box_size = new Size(size_details - 4, 68);
 	let ancestry: Ancestry | null = $s_focus_ancestry;

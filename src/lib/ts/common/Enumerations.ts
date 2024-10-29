@@ -32,10 +32,10 @@ export enum IDLine {
 }
 
 export enum ThingType {
-	generic  = '',
-	roots = '^',
-	root  = '!',
-	bulk  = '~',
+	generic = '',
+	roots	= '^',
+	root	= '!',
+	bulk	= '~',
 }
 
 export enum Ring_Zone {
@@ -54,24 +54,22 @@ export enum Oblong_Part {
 
 export enum TraitType {
 	consequence = 'consequence',
-	hyperlink = 'hyperlink',
-	generic = 'generic',
-	phone = 'phone',
-	quest = 'quest',
-	note = 'note',
-	date = 'date',
-	sum = 'sum',
+	hyperlink	= 'hyperlink',
+	generic		= 'generic',
+	phone		= 'phone',
+	quest		= 'quest',
+	note		= 'note',
+	date		= 'date',
+	sum			= 'sum',
 }
 
 export enum IDButton {
-	details		   = 'show details view',
-	builds		   = 'show build notes',
-	tree_type = 'tree_type',
-	graph_type	   = 'graph_type',
-	smaller		   = 'smaller',
-	bigger		   = 'bigger',
-	open		   = 'open',
-	help		   = '?',
+	details	= 'show details view',
+	builds	= 'show build notes',
+	smaller	= 'smaller',
+	bigger	= 'bigger',
+	open	= 'open',
+	help	= '?',
 }
 
 export enum IDBrowser  {
@@ -86,19 +84,19 @@ export enum IDBrowser  {
 
 export enum Rebuild_Type {
 	directional = 'directional',
-	clusters = 'clusters',
-	necklace = 'necklace',
-	reveal = 'reveal',
-	widget = 'widget',
-	crumbs = 'crumbs',
-	crumb = 'crumb',
-	tools = 'tools',
-	rings = 'rings',
-	panel = 'panel',
-	info = 'info',
-	tree = 'tree',
-	line = 'line',
-	drag = 'drag',
+	clusters	= 'clusters',
+	necklace	= 'necklace',
+	reveal		= 'reveal',
+	widget		= 'widget',
+	crumbs		= 'crumbs',
+	crumb		= 'crumb',
+	tools		= 'tools',
+	rings		= 'rings',
+	panel		= 'panel',
+	info		= 'info',
+	tree		= 'tree',
+	line		= 'line',
+	drag		= 'drag',
 }
 
 export enum ElementType {
@@ -117,7 +115,7 @@ export enum ElementType {
 	arc		= 'arc',
 }
 
-export enum ZIndex {	// do not change the order
+export enum ZIndex {	// DO NOT change the order
 	common,
 	paging,
 	rings,
@@ -133,32 +131,32 @@ export enum ZIndex {	// do not change the order
 }
 
 export enum IDTool {
-	none			= 'none',
-	next			= 'next',
-	more			= 'more',
-	delete			= 'delete',
-	create    		= 'create',
-	dismiss			= 'dismiss',
-	add_parent		= 'add_parent',
-	confirmation	= 'confirmation',
-	delete_cancel	= 'delete_cancel',
-	delete_parent	= 'delete_parent',
-	delete_confirm	= 'delete_confirm',
+	delete_confirm = 'delete_confirm',
+	delete_cancel  = 'delete_cancel',
+	delete_parent  = 'delete_parent',
+	confirmation   = 'confirmation',
+	add_parent	   = 'add_parent',
+	dismiss		   = 'dismiss',
+	delete		   = 'delete',
+	create    	   = 'create',
+	next		   = 'next',
+	more		   = 'more',
+	none		   = 'none',
 }
 
 export enum SvelteComponentType {
-	rotate = 'rotate',
-	banners	 = 'banners',
-	details	 = 'details',
-	paging	 = 'paging',
-	widget	 = 'widget',	// *
-	button	 = 'button',	// *
-	reveal	 = 'reveal',
-	graph	 = 'graph',
-	thumb	 = 'thumb',
-	tools	 = 'tools',
-	title	 = 'title',		// *
-	drag	 = 'drag',
-	line	 = 'line',
-	app		 = 'app',
+	banners	= 'banners',
+	details	= 'details',
+	rotate	= 'rotate',
+	paging	= 'paging',
+	widget	= 'widget',	// *
+	button	= 'button',	// *
+	reveal	= 'reveal',
+	graph	= 'graph',
+	thumb	= 'thumb',
+	tools	= 'tools',
+	title	= 'title',		// *
+	drag	= 'drag',
+	line	= 'line',
+	app		= 'app',
 }

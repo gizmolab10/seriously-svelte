@@ -10,7 +10,7 @@
 	export let name = k.empty;
     export let zindex = ZIndex.dots;
     export let hover_isReversed = false;
-	const element_state = ux.elementState_forName(name);		// survives onDestroy, created by widget
+	const element_state = ux.element_state_forName(name);		// survives onDestroy, created by widget
 	let size = k.dot_size;
 	let tinyDotsDiameter = size * 1.8;
 	let tinyDotsOffset = size * -0.4 + 0.01;

@@ -29,7 +29,7 @@
 		name = `crumb (for ${title ?? 'unknown'})`
 		width = u.getWidthOf(title) + 15;
 		center = new Point(left + width / 2, height - 1);
-		element_state = ux.elementState_for(ancestry, elementType, IDTool.none);
+		element_state = ux.element_state_for(ancestry, elementType, IDTool.none);
 		updateColors();
 	}
 

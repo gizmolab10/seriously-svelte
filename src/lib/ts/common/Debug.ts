@@ -62,6 +62,7 @@ export class Debug {
 				switch (option) {
 					case 'hide_rings': this.flags.push(DebugFlag.hide_rings); break;
 					case 'reticule': this.flags.push(DebugFlag.reticule); break;
+					case 'segments': this.flags.push(DebugFlag.segments); break;
 					case 'origins': this.flags.push(DebugFlag.origins); break;
 					case 'persist': this.flags.push(DebugFlag.persist); break;
 					case 'rebuild': this.flags.push(DebugFlag.rebuild); break;

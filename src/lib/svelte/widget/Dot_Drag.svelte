@@ -11,7 +11,7 @@
     export let ancestry;
 	const radius = k.dot_size;
 	const diameter = radius * 2;
-	const element_state = ux.elementState_forName(name);		// survives onDestroy, created by widget
+	const element_state = ux.element_state_forName(name);		// survives onDestroy, created by widget
 	let dragWrapper!: Svelte_Wrapper;
 	let svg_isRelated_path = k.empty;
 	let svg_tinyDots_path = k.empty;

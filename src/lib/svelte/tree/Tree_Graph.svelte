@@ -8,8 +8,8 @@
 	import Widget from '../widget/Widget.svelte';
 	import { h } from '../../ts/db/DBDispatch';
 	import Circle from '../kit/Circle.svelte';
-	const revealState = ux.elementState_for($s_focus_ancestry, ElementType.reveal, 'tree');
-	const focusState = ux.elementState_for($s_focus_ancestry, ElementType.focus, 'tree');
+	const revealState = ux.element_state_for($s_focus_ancestry, ElementType.reveal, 'tree');
+	const focusState = ux.element_state_for($s_focus_ancestry, ElementType.focus, 'tree');
 	let origin_ofFirstReveal = Point.zero;
 	let origin_ofChildren = Point.zero;
 	let childrenSize = Point.zero;

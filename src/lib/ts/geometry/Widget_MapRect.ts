@@ -14,7 +14,7 @@ export default class Widget_MapRect extends Rect {
 	constructor(curveType: string, rect: Rect, childOrigin: Point, childAncestry: Ancestry | null,
 		parentAncestry: Ancestry | null, childAngle: number | null = null, subtype: string = k.empty) {
 		super(rect.origin.copy, rect.size.copy);
-		this.element_state = ux.elementState_for(childAncestry, ElementType.widget, subtype);
+		this.element_state = ux.element_state_for(childAncestry, ElementType.widget, subtype);
 		this.points_right = !childAngle ? true : new Angle(childAngle).angle_pointsRight;
 		this.child = childAncestry?.thing ?? null;
 		this.parentAncestry = parentAncestry;

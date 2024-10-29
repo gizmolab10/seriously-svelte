@@ -5,7 +5,7 @@
 	export let center = Point.zero;
     export let name = k.empty;
     export let ancestry;
-	const element_state = ux.elementState_forName(name);		// survives onDestroy, created by widget
+	const element_state = ux.element_state_forName(name);		// survives onDestroy, created by widget
 	let size = k.dot_size;
 
 	element_state.set_forHovering(ancestry.thing.color, 'pointer');

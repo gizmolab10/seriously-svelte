@@ -11,18 +11,22 @@
 	let size = segment_map.size;
 	let isHovering = false;
 
-	debug.log_segments(segment_map.description);
+	update_colors();
+
+	function update_colors(wasSelected: boolean = false) {
+		title_color = isHovering | segment_map.isSelected ? k.color_background : k.color_default;
+		fill = isHovering && !wasSelected ? k.color_default : segment_map.isSelected ? u.opacitize(k.thing_color_default, 0.6) : k.color_background;
+		debug.log_segments(`${name} ${segment_map.isSelected ? 'selected' : ''} ${fill}`)
+	}
 
 	function hover_andUp_closure(mouse_state) {
-		const wasHighlighted = segment_map.isSelected;
+		const wasSelected = segment_map.isSelected;
 		if (mouse_state.isHover) {
 			isHovering = !mouse_state.isOut;
 		} else if (mouse_state.isDown) {
 			hit_closure(name, mouse_state.event.isShift);
 		}
-		title_color = isHovering | segment_map.isSelected ? k.color_background : k.color_default;
-		fill = isHovering && !wasHighlighted ? 'grey' : segment_map.isSelected ? k.color_default : k.color_background;
-		debug.log_segments(`${title_color} ${isHovering} ${wasHighlighted} ${segment_map.isSelected} ${name}`)
+		update_colors(wasSelected);
 	}
 
 </script>

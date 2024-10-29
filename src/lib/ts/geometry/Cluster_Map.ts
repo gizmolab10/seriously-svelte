@@ -66,7 +66,7 @@ export default class Cluster_Map {
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
 	get description(): string { return `(${this.cluster_title}) ${this.titles}`; }
 	get paging_index_ofFocus(): number { return this.paging_state_ofFocus?.index ?? 0; }
-	get paging_rotation(): Rotation_State { return ux.rotationState_forName(this.name); }
+	get paging_rotation(): Rotation_State { return ux.rotation_state_forName(this.name); }
 	get kind(): string { return this.predicate?.kind.unCamelCase().lastWord() ?? k.empty; }
 	get isParental(): boolean { return !this.toChildren && !this.predicate?.isBidirectional; }
 	get name(): string { return `${this.focus_ancestry.title}-cluster-${this.direction_kind}`; }

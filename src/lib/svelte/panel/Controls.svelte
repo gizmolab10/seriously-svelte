@@ -14,7 +14,7 @@
 	const lefts = [10, 55, 117];
 	const size_big = size_small + 4;
 	const resize_viewBox = `0, 0, ${size_big}, ${size_big}`;
-	let elementStates_byID: { [id: string]: Element_State } = {};
+	let element_states_byID: { [id: string]: Element_State } = {};
 	let elementShown_byID: {[key: string]: boolean} = {};
 	let width = g.windowSize.width - 20;
 
@@ -22,10 +22,8 @@
 		IDButton.details,
 		IDButton.smaller,
 		IDButton.bigger,
-		IDButton.tree_type,
 		IDButton.help,
 		IDButton.builds,
-		IDButton.graph_type,
 	];
 
 	onMount(() => { setup_forIDs(); });
@@ -40,10 +38,10 @@
 		let total = g.windowSize.width + 50;
 		for (const id of ids) {
 			total -= u.getWidthOf(id);
-			const element_state = ux.elementState_for(new Identifiable(id), ElementType.control, id);
+			const element_state = ux.element_state_for(new Identifiable(id), ElementType.control, id);
 			element_state.set_forHovering(k.color_default, 'pointer');
 			element_state.hoverIgnore = id == IDButton.details;
-			elementStates_byID[id] = element_state;
+			element_states_byID[id] = element_state;
 			elementShown_byID[id] = total > 0;
 		}
 	}
@@ -58,7 +56,7 @@
 
 	function button_closure_forID(mouse_state, id) {
 		if (mouse_state.isHover) {
-			elementStates_byID[id].isOut = mouse_state.isOut;
+			element_states_byID[id].isOut = mouse_state.isOut;
 		} else if (mouse_state.isUp) {
 			switch (id) {
 				case IDButton.help: g.showHelp(); break;
@@ -80,7 +78,7 @@
 
 </script>
 
-{#if Object.values(elementStates_byID).length > 0}
+{#if Object.values(element_states_byID).length > 0}
 	<div class='controls'
 		style='
 			top: 9px;
@@ -94,24 +92,28 @@
 				border_thickness=0
 				color='transparent'
 				center={new Point(lefts[0], details_top + 1)}
-				element_state={elementStates_byID[IDButton.details]}
+				element_state={element_states_byID[IDButton.details]}
 				closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.details)}>
 				<img src='settings.svg' alt='circular button' width={size_small}px height={size_small}px/>
 			</Button>
-			{#if elementShown_byID[IDButton.graph_type]}
+			{#key $s_graph_type}
 				<Segmented
-					selected={[$s_graph_type]}
+					name='graph-type'
 					origin={Point.x(40)}
+					selected={[$s_graph_type]}
 					titles={[Graph_Type.rings, Graph_Type.tree]}
 					selection_closure={(titles) => selection_closure('graph', titles)}/>
-				{#if !$s_graph_type == Graph_Type.rings && elementShown_byID[IDButton.tree_type]}
-					<Segmented
-						origin={Point.x(250)}
-						selected={[$s_tree_type]}
-						titles={[Tree_Type.children, Tree_Type.parents, Tree_Type.related]}
-						selection_closure={(titles) => selection_closure('relations', titles)}/>
+				{#if !$s_graph_type == Graph_Type.rings}
+					{#key $s_tree_type}
+						<Segmented
+							name='tree-type'
+							origin={Point.x(250)}
+							selected={[$s_tree_type]}
+							titles={[Tree_Type.children, Tree_Type.parents, Tree_Type.related]}
+							selection_closure={(titles) => selection_closure('relations', titles)}/>
+					{/key}
 				{/if}
-			{/if}
+			{/key}
 		{/if}
 		{#key $s_device_isMobile}
 			{#if $s_device_isMobile}
@@ -120,7 +122,7 @@
 						width={size_big}
 						height={size_big}
 						name={IDButton.smaller}
-						element_state={elementStates_byID[IDButton.smaller]}
+						element_state={element_states_byID[IDButton.smaller]}
 						center={new Point(width - 140, top)}
 						closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.smaller)}>
 						<svg
@@ -139,7 +141,7 @@
 						height={size_big}
 						name={IDButton.bigger}
 						center={new Point(width - 110, top)}
-						element_state={elementStates_byID[IDButton.bigger]}
+						element_state={element_states_byID[IDButton.bigger]}
 						closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.bigger)}>
 						<svg
 							class='enlarge-svg'>
@@ -158,7 +160,7 @@
 				width=75
 				height={size_big}
 				center={new Point(width - 55, top)}
-				element_state={elementStates_byID[IDButton.builds]}
+				element_state={element_states_byID[IDButton.builds]}
 				closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.builds)}>
 				<span style='font-family: {$s_thing_fontFamily};'>
 					{'build ' + k.build_number}
@@ -170,7 +172,7 @@
 				width={size_big}
 				height={size_big}
 				center={new Point(width, top)}
-				element_state={elementStates_byID[IDButton.help]}
+				element_state={element_states_byID[IDButton.help]}
 				closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.help)}>
 				<span
 					style='top:2px;

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, Rect, Size, Point, Segment_Map } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Rect, Size, Point, Segment_Map } from '../../ts/common/Global_Imports';
 	import Segment from './Segment.svelte';
 	export let selection_closure = (titles) => {};
 	export let selected: Array<string> = [];
@@ -9,6 +9,7 @@
 	export let stroke = k.color_default;
 	export let origin = Point.zero;
 	export let multiple = false;
+    export let name = k.empty;
 	let segment_maps: Array<Segment_Map> = [];
 	let width = 0;
 
@@ -25,7 +26,14 @@
 		let index = 0;
 		reset_maps_width();
 		for (const title of titles) {
-			const map = new Segment_Map(title, isSelected(title), index, max, width, height);
+			let map_name = `${title}-${name}-at-${index}`;
+			let map = ux.segment_map_forName(map_name);
+			if (!!map) {
+				map.isSelected = isSelected(title);
+			} else {
+				map = new Segment_Map(title, isSelected(title), index, max, width, height);
+				ux.set_segment_map_forName(map, map_name);
+			}
 			segment_maps.push(map);
 			width += map.width;
 			index += 1;
