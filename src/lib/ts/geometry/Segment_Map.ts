@@ -8,13 +8,14 @@ export default class Segment_Map {
 	viewBox = k.empty;
 	size = Size.zero;
 	title = k.empty;
+	name = k.empty;
 	path = k.empty;
 	height = 0;
 	width = 0;
 	index = 0;
 	left = 0;
 
-	constructor(title: string, isSelected: boolean, index: number, max: number, left: number, height: number) {
+	constructor(name: string, title: string, isSelected: boolean, index: number, max: number, left: number, height: number) {
 		this.width = u.getWidthOf(title) + 10;	// add space around title
 		this.isSelected = isSelected;
 		this.origin = Point.x(left);
@@ -22,6 +23,7 @@ export default class Segment_Map {
 		this.title = title;
 		this.index = index;
 		this.left = left;
+		this.name = name;
 		this.finish_map(max);
 	}
 
@@ -37,11 +39,11 @@ export default class Segment_Map {
 
 	finish_map(max: number) {
 		const viewBox_size = new Size(this.width, this.height);
-		this.center = this.origin.offsetBy(viewBox_size.dividedInHalf.asPoint);
 		this.part = this.part_forIndex(this.index, max);
 		this.viewBox = new Rect(Point.x(this.left), viewBox_size).viewBox;
+		this.center = this.origin.offsetBy(viewBox_size.dividedInHalf.asPoint);
 		this.path = svgPaths.oblong(this.center, viewBox_size.expandedByXY(-10, -2), this.part);
-		this.size = viewBox_size.expandedByXY(15, 2)
+		this.size = viewBox_size.expandedByXY(22, 2)
 	}
 
 }

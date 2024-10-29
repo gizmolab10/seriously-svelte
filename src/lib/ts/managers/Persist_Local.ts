@@ -7,7 +7,6 @@ import { g, k, show, Point, debug, Ancestry } from '../common/Global_Imports';
 import { h } from '../db/DBDispatch';
 
 export enum IDPersistent {
-	tree_type = 'tree_type',
 	relationships  = 'relationships',
 	ring_radius	   = 'ring_radius',
 	page_states    = 'page_states',
@@ -16,6 +15,7 @@ export enum IDPersistent {
 	focus_info     = 'focus_info',
 	ring_angle     = 'ring_angle',
 	arrowheads	   = 'arrowheads',
+	tree_type	   = 'tree_type',
 	expanded	   = 'expanded',
 	tinyDots	   = 'tinyDots',
 	grabbed		   = 'grabbed',
@@ -81,17 +81,6 @@ class Persist_Local {
 		return values;
 	}
 
-	applyFor_key_name(key: string, apply: (type: Graph_Type) => void, persist: boolean = true) {
-		const queryStrings = g.queryStrings;
-        const value = queryStrings.get(key);
-		if (!!value) {
-			apply(value as Graph_Type);
-			if (persist) {
-				this.write_key(key, value);
-			}
-		}
-	}
-
 	ancestry_forID(aid: string): Ancestry {
 		const rids = aid.split(k.generic_separator);	// ancestor id is multiple relationship ids separated by generic_separator
 		const rid = rids.slice(-1)[0];					// grab last relationship id
@@ -115,6 +104,9 @@ class Persist_Local {
 	reactivity_subscribe() {
 		s_ring_rotation_radius.subscribe((radius: number) => {
 			this.write_key(IDPersistent.ring_radius, radius);
+		});
+		s_tree_type.subscribe((value) => {
+			this.write_key(IDPersistent.tree_type, value);
 		});
 		s_graph_type.subscribe((value) => {
 			this.write_key(IDPersistent.graph_type, value);
@@ -157,7 +149,7 @@ class Persist_Local {
 		show.restore_state();
 		s_rotation_ring_angle.set(this.read_key(IDPersistent.ring_angle) ?? 0);
 		s_graph_type.set(this.read_key(IDPersistent.graph_type) ?? Graph_Type.tree);
-		s_tree_type.set(this.read_key(IDPersistent.graph_type) ?? Tree_Type.children);
+		s_tree_type.set(this.read_key(IDPersistent.tree_type) ?? Tree_Type.children);
 		s_thing_fontFamily.set(this.read_key(IDPersistent.font) ?? 'Times New Roman');
 		s_ring_rotation_radius.set(Math.max(this.read_key(IDPersistent.ring_radius) ?? 0, k.innermost_ring_radius));
 		this.restore_graphOffset();

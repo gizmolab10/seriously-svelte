@@ -7,6 +7,7 @@
 	export let segment_map!: Segment_Map;
     export let name = segment_map.title;
 	export let stroke = k.color_default;
+	const segment_name = `${name}-${segment_map.name}-segment`;
 	let title_color = k.color_default;
 	let size = segment_map.size;
 	let isHovering = false;
@@ -32,15 +33,15 @@
 </script>
 
 <Mouse_Responder
-	name={name}
 	cursor='pointer'
 	width={size.width}
+	name={segment_name}
 	height={size.height}
 	zindex={ZIndex.frontmost}
 	center={segment_map.center}
 	mouse_state_closure={hover_andUp_closure}>
 	<svg
-		class={`${name}-segment-svg`}
+		class={`${segment_name}-svg`}
 		viewBox={segment_map.viewBox}
 		style='
 			height:{size.height}px;
@@ -48,7 +49,7 @@
 			position: absolute;
 			left:0px;'>
 		<path
-			class={`${name}-segment-path`}
+			class={`${segment_name}-path`}
 			d={segment_map.path}
 			stroke={stroke}
 			fill={fill}/>

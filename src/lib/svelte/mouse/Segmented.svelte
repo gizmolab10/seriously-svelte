@@ -11,33 +11,34 @@
 	export let multiple = false;
     export let name = k.empty;
 	let segment_maps: Array<Segment_Map> = [];
-	let width = 0;
+	let width = height / 2;
 
 	update_maps_andWidth();
 	function isSelected(title: string) { return selected.includes(title); }
 
-	function reset_maps_width() {
+	function reset_maps_andWidth() {
+		width = height / 2;
 		segment_maps = [];
-		width = 0;
 	}
 
 	function update_maps_andWidth() {
 		const max = titles.length - 1;
 		let index = 0;
-		reset_maps_width();
+		reset_maps_andWidth();
 		for (const title of titles) {
 			let map_name = `${title}-${name}-at-${index}`;
 			let map = ux.segment_map_forName(map_name);
 			if (!!map) {
 				map.isSelected = isSelected(title);
 			} else {
-				map = new Segment_Map(title, isSelected(title), index, max, width, height);
+				map = new Segment_Map(name, title, isSelected(title), index, max, width, height);
 				ux.set_segment_map_forName(map, map_name);
 			}
 			segment_maps.push(map);
 			width += map.width;
 			index += 1;
 		}
+		width += height / 2;
 	}
 
 	function hit_closure(title: string, shift: boolean) {
@@ -54,7 +55,7 @@
 
 </script>
 
-<div class='segments'
+<div class={name + '-segments'}
 	style='
 		width: {width}px;
 		position: absolute;

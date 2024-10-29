@@ -11,8 +11,8 @@
 	const size_small = k.default_buttonSize;
 	const details_top = k.dot_size / 2;
 	const top = (k.dot_size + 3) / 2;
-	const lefts = [10, 55, 117];
 	const size_big = size_small + 4;
+	const lefts = [10, 55, 117];
 	const resize_viewBox = `0, 0, ${size_big}, ${size_big}`;
 	let element_states_byID: { [id: string]: Element_State } = {};
 	let elementShown_byID: {[key: string]: boolean} = {};
@@ -69,10 +69,10 @@
 	}
 
 	function selection_closure(name: string, titles: Array<string>) {
-		const title = titles[0];
+		const title = titles[0];	// only ever has one element
 		switch (name) {
-			case 'graph':	  $s_graph_type = title as Graph_Type; break;
 			case 'relations': $s_tree_type	= title as Tree_Type; break;
+			case 'graph':	  $s_graph_type = title as Graph_Type; break;
 		}
 	}
 
@@ -99,15 +99,15 @@
 			{#key $s_graph_type}
 				<Segmented
 					name='graph-type'
-					origin={Point.x(40)}
+					origin={Point.x(30)}
 					selected={[$s_graph_type]}
-					titles={[Graph_Type.rings, Graph_Type.tree]}
+					titles={[Graph_Type.tree, Graph_Type.rings]}
 					selection_closure={(titles) => selection_closure('graph', titles)}/>
-				{#if !$s_graph_type == Graph_Type.rings}
+				{#if $s_graph_type == Graph_Type.tree}
 					{#key $s_tree_type}
 						<Segmented
 							name='tree-type'
-							origin={Point.x(250)}
+							origin={Point.x(120)}
 							selected={[$s_tree_type]}
 							titles={[Tree_Type.children, Tree_Type.parents, Tree_Type.related]}
 							selection_closure={(titles) => selection_closure('relations', titles)}/>

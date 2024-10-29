@@ -21,6 +21,11 @@ class Global_State {
 	rebuild_needed_byType: {[type: string]: boolean} = {};
 	queryStrings = new URLSearchParams(window.location.search);
 
+	restore_state() {
+		persistLocal.restore_state();					// local persistance
+		persistLocal.restore_db();
+	}
+
 	setup() {
 		
 		//////////////////////////////////////////////
@@ -38,8 +43,7 @@ class Global_State {
 		this.cluster_paging_state = new Rotation_State();
 		this.ring_rotation_state = new Rotation_State();
 		this.ring_resizing_state = new Expansion_State();
-		persistLocal.restore_state();					// local persistance
-		persistLocal.restore_db();
+		this.restore_state();
 		this.queryStrings_apply();						// query strings
 		show.queryStrings_apply();
 		this.subscribeTo_resizeEvents();				// setup to watch user
@@ -70,7 +74,6 @@ class Global_State {
 		const queryStrings = this.queryStrings;
         const disable = queryStrings.get('disable');
         const eraseOptions = queryStrings.get('erase')?.split(k.comma) ?? [];
-		persistLocal.applyFor_key_name(IDPersistent.graph_type, (type: Graph_Type) => s_graph_type.set(type));
         if (disable) {
             const flags = disable.split(',');
             for (const option of flags) {
