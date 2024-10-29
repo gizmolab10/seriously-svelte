@@ -1,10 +1,11 @@
 <script lang='ts'>
-	import { g, k, u, ux, show, Point, ZIndex, onMount, signals, svgPaths, IDButton } from '../../ts/common/Global_Imports';
-	import { ElementType, Element_State, persistLocal, IDPersistent, GraphRelations } from '../../ts/common/Global_Imports';
-	import { s_show_rings, s_tree_mode, s_device_isMobile, s_thing_fontFamily } from '../../ts/state/Reactive_State';
-	import { s_show_details, s_id_popupView, s_resize_count } from '../../ts/state/Reactive_State';
-	import Segments from '../mouse/Segments.svelte';
+	import { g, k, u, ux, show, Point, ZIndex, onMount, signals, svgPaths } from '../../ts/common/Global_Imports';
+	import { s_show_details, s_id_popupView, s_graph_type, s_resize_count } from '../../ts/state/Reactive_State';
+	import { s_tree_type, s_device_isMobile, s_thing_fontFamily } from '../../ts/state/Reactive_State';
+	import { IDButton, Graph_Type, ElementType, Element_State } from '../../ts/common/Global_Imports';
+	import { persistLocal, IDPersistent, Tree_Type } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/basis/Identifiable';
+	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../mouse/Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	const size_small = k.default_buttonSize;
@@ -21,10 +22,10 @@
 		IDButton.details,
 		IDButton.smaller,
 		IDButton.bigger,
-		IDButton.relations,
+		IDButton.tree_type,
 		IDButton.help,
 		IDButton.builds,
-		IDButton.layout,
+		IDButton.graph_type,
 	];
 
 	onMount(() => { setup_forIDs(); });
@@ -48,10 +49,10 @@
 	}
 
 	function next_graph_relations() {
-		switch ($s_tree_mode) {
-			case GraphRelations.children: return GraphRelations.parents;
-			case GraphRelations.parents:  return GraphRelations.related;
-			default:					  return GraphRelations.children;
+		switch ($s_tree_type) {
+			case Tree_Type.children: return Tree_Type.parents;
+			case Tree_Type.parents:  return Tree_Type.related;
+			default:					  return Tree_Type.children;
 		}
 	}
 
@@ -63,15 +64,19 @@
 				case IDButton.help: g.showHelp(); break;
 				case IDButton.bigger: width = g.zoomBy(1.1) - 20; break;	// mobile only
 				case IDButton.smaller: width = g.zoomBy(0.9) - 20; break;	//   "     "
-				case IDButton.layout: $s_show_rings = !$s_show_rings; break;
 				case IDButton.details: $s_show_details = !$s_show_details; break;
-				case IDButton.relations: $s_tree_mode = next_graph_relations(); break;
 				default: togglePopupID(id); break;
 			}
 		}
 	}
-				// 
-				// <Segments origin={new Point(100, 0)} titles={['children', 'related', 'parents']}/>
+
+	function selection_closure(name: string, titles: Array<string>) {
+		const title = titles[0];
+		switch (name) {
+			case 'graph':	  $s_graph_type = title as Graph_Type; break;
+			case 'relations': $s_tree_type	= title as Tree_Type; break;
+		}
+	}
 
 </script>
 
@@ -84,38 +89,28 @@
 			z-index: {ZIndex.frontmost};
 			height: `${k.height_banner - 2}px`;'>
 		{#if !$s_id_popupView}
-			<Button name='details'
-				color='transparent'
+			<Button
+				name='details'
 				border_thickness=0
+				color='transparent'
 				center={new Point(lefts[0], details_top + 1)}
 				element_state={elementStates_byID[IDButton.details]}
 				closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.details)}>
 				<img src='settings.svg' alt='circular button' width={size_small}px height={size_small}px/>
 			</Button>
-			{#if elementShown_byID[IDButton.layout]}
-				<Button name={IDButton.layout}
-					width=45
-					height={size_big}
-					center={new Point(lefts[1], top)}
-					element_state={elementStates_byID[IDButton.layout]}
-					closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.layout)}>
-					<span style='font-family: {$s_thing_fontFamily};'>
-						{#if $s_show_rings}tree{:else}rings{/if}
-					</span>
-				</Button>
-				<Segments origin={new Point(90, 0)} titles={['children', 'parents', 'related']}/>
-			{/if}
-			{#if !$s_show_rings && elementShown_byID[IDButton.relations]}
-				<Button name={IDButton.relations}
-					width=65
-					height={size_big}
-					center={new Point(lefts[2], top)}
-					element_state={elementStates_byID[IDButton.relations]}
-					closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.relations)}>
-					<span style='font-family: {$s_thing_fontFamily};'>
-						{$s_tree_mode}
-					</span>
-				</Button>
+			{#if elementShown_byID[IDButton.graph_type]}
+				<Segmented
+					selected={[$s_graph_type]}
+					origin={Point.x(40)}
+					titles={[Graph_Type.rings, Graph_Type.tree]}
+					selection_closure={(titles) => selection_closure('graph', titles)}/>
+				{#if !$s_graph_type == Graph_Type.rings && elementShown_byID[IDButton.tree_type]}
+					<Segmented
+						origin={Point.x(250)}
+						selected={[$s_tree_type]}
+						titles={[Tree_Type.children, Tree_Type.parents, Tree_Type.related]}
+						selection_closure={(titles) => selection_closure('relations', titles)}/>
+				{/if}
 			{/if}
 		{/if}
 		{#key $s_device_isMobile}

@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { s_color_thing, s_show_rings, s_grabbed_ancestries, s_showing_tools_ancestry } from '../../ts/state/Reactive_State';
+	import { s_color_thing, s_graph_type, s_grabbed_ancestries, s_showing_tools_ancestry } from '../../ts/state/Reactive_State';
 	import { g, k, u, ux, show, Rect, Size, Point, Thing, debug, ZIndex, IDTool } from '../../ts/common/Global_Imports';
-	import { onMount, signals, svgPaths, Direction, ElementType, dbDispatch } from '../../ts/common/Global_Imports';
-	import { Svelte_Wrapper, AlterationType, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { dbDispatch, Svelte_Wrapper, AlterationType, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { onMount, signals, svgPaths, Direction, Graph_Type, ElementType } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Tooltip from '../kit/Tooltip.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -68,7 +68,7 @@
 	}
 
 	function updateSVGPaths() {
-		if ($s_show_rings) {
+		if ($s_graph_type == Graph_Type.rings) {
 			svg_dragDot_path = svgPaths.circle_atOffset(size, size - 1);
 		} else {
 			svg_dragDot_path = svgPaths.oval(size, false);
@@ -92,7 +92,7 @@
 	function updateColors_forHovering(isOut) {
 		if (!g.isAny_rotation_active) {
 			isHovering = !isOut;
-			const usePointer = (!ancestry.isGrabbed || s_show_rings) && ancestry.hasChildRelationships && !g.isAny_rotation_active;
+			const usePointer = (!ancestry.isGrabbed || $s_graph_type == Graph_Type.rings) && ancestry.hasChildRelationships && !g.isAny_rotation_active;
 			const cursor = usePointer ? 'pointer' : 'normal';
 			if (!!element_state && !!thing) {
 				element_state.set_forHovering(thing.color, cursor);

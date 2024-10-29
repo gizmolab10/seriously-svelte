@@ -1,6 +1,6 @@
 import { g, k, signals, persistLocal } from '../common/Global_Imports';
-import { IDPersistent, GraphRelations } from '../common/Global_Imports';
-import { s_show_details, s_tree_mode } from './Reactive_State';
+import { IDPersistent, Tree_Type } from '../common/Global_Imports';
+import { s_show_details, s_tree_type } from './Reactive_State';
 
 class Show_State {
 	tinyDots	= true;
@@ -39,15 +39,15 @@ class Show_State {
 	restore_state() {
 		this.traits = persistLocal.read_key(IDPersistent.traits) ?? false;
 		this.tinyDots = persistLocal.read_key(IDPersistent.tinyDots) ?? false;
+		s_show_details.set(persistLocal.read_key(IDPersistent.details) ?? false);
 		this.arrowheads = persistLocal.read_key(IDPersistent.arrowheads) ?? false;
 		this.focus_info = persistLocal.read_key(IDPersistent.focus_info) ?? false;
-		s_tree_mode.set(persistLocal.read_key(IDPersistent.relations) ?? GraphRelations.children);
-		s_show_details.set(persistLocal.read_key(IDPersistent.details) ?? false);
+		s_tree_type.set(persistLocal.read_key(IDPersistent.tree_type) ?? Tree_Type.children);
 	}
 
 	reactivity_subscribe() {
-		s_tree_mode.subscribe((relations: string) => {
-			persistLocal.write_key(IDPersistent.relations, relations);
+		s_tree_type.subscribe((relations: string) => {
+			persistLocal.write_key(IDPersistent.tree_type, relations);
 		});
 		s_show_details.subscribe((flag: boolean) => {
 			persistLocal.write_key(IDPersistent.details, flag);

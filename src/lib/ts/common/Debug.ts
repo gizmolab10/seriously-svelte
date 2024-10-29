@@ -5,6 +5,7 @@ import { g } from '../../ts/state/Global_State';
 export enum DebugFlag {
 	hide_rings = 'hide_rings',
 	reticule   = 'reticule',	// debug ring layout geometry
+	segments   = 'segments',
 	persist	   = 'persist',
 	origins    = 'origins',
 	rebuild    = 'rebuild',
@@ -45,6 +46,7 @@ export class Debug {
 	log_origins(message: string) { this.log_maybe(DebugFlag.origins, message) }
 	log_rebuild(message: string) { this.log_maybe(DebugFlag.rebuild, message) }
 	log_persist(message: string) { this.log_maybe(DebugFlag.persist, message) }
+	log_segments(message: string) { this.log_maybe(DebugFlag.segments, message) }
 	log_maybe(option: DebugFlag, message: string) { if (this.hasOption(option)) { console.log(option.toUpperCase(), message); }}
 	log_target(target: any, key: string) { console.log(`Method \'${key}\' is called on class \'${target.constructor.name}\'`); }
 	get hide_rings(): boolean { return this.hasOption(DebugFlag.hide_rings); }

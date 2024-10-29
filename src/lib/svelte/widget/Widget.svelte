@@ -1,8 +1,8 @@
 <script lang='ts'>
+	import { Graph_Type, ElementType, Element_State, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Thing, Point, Angle, debug, ZIndex, onMount, signals, Graph_Type } from '../../ts/common/Global_Imports';
 	import { s_thing_fontFamily, s_grabbed_ancestries, s_showing_tools_ancestry } from '../../ts/state/Reactive_State';
-	import { s_color_thing, s_show_rings, s_edit_state, s_focus_ancestry } from '../../ts/state/Reactive_State';
-	import { ElementType, Element_State, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
-	import { k, u, ux, Thing, Point, Angle, debug, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
+	import { s_color_thing, s_graph_type, s_edit_state, s_focus_ancestry } from '../../ts/state/Reactive_State';
 	import { Tooltip } from 'carbon-components-svelte';
 	import Editing_Tools from './Editing_Tools.svelte';
 	import Title_Editor from './Title_Editor.svelte';
@@ -14,9 +14,9 @@
     export let forward = true;
     export let ancestry;
 	const hasExtraAtLeft = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
+	const rightPadding = $s_graph_type == Graph_Type.rings ? 0 : hasExtraAtLeft ? 22.5 : 20;
 	const revealState = ux.elementState_for(ancestry, ElementType.reveal, subtype);
 	const dragState = ux.elementState_for(ancestry, ElementType.drag, subtype);
-	const rightPadding = $s_show_rings ? 0 : hasExtraAtLeft ? 22.5 : 20;
 	const leftPadding = forward ? 1 : 14;
 	const priorRowHeight = k.row_height;
 	let widgetWrapper!: Svelte_Wrapper;
@@ -109,7 +109,7 @@
 
 	function extraWidth() {
 		const multiplier = ancestry?.showsReveal ? 2 : 1.35;
-		const clustersAdjustment = $s_show_rings ? (forward ? 16 : 0) : -10;
+		const clustersAdjustment = $s_graph_type == Graph_Type.rings ? (forward ? 16 : 0) : -10;
 		return (k.dot_size * multiplier) + clustersAdjustment;
 	}
 
@@ -132,7 +132,7 @@
 			const shallShowTools = ancestry.toolsGrabbed && !ancestry.isFocus;
 			const change = (isEditing != shallEdit || isGrabbed != shallGrab || showingTools != shallShowTools);
 			if (change) {
-				const showBackground = shallGrab || $s_show_rings;
+				const showBackground = shallGrab || $s_graph_type == Graph_Type.rings;
 				background = showBackground ? `background-color: ${k.color_background};` : k.empty
 				showingBorder = shallEdit || shallGrab;
 				showingTools = shallShowTools;
@@ -148,7 +148,7 @@
 		const delta = showingBorder ? 0 : 0.5;
 		const leftForward = delta - dragX;
 		const titleWidth = thing?.titleWidth ?? 0;
-		const dragOffsetY = $s_show_rings ? 2.8 : 2.7;
+		const dragOffsetY = $s_graph_type == Graph_Type.rings ? 2.8 : 2.7;
 		const dragOffsetX = forward ? (dragX - 2) : (titleWidth + delta + 15);
 		const leftBackward = -(titleWidth + 19 + ((ancestry?.isGrabbed ?? false) ? 0 : 0));		
 		dragCenter = Point.square(k.dot_size / 2).offsetByXY(dragOffsetX, dragOffsetY);

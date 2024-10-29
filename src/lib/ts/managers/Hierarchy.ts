@@ -1,7 +1,8 @@
-import { Ancestry, Predicate, Mouse_State, Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
-import { g, k, u, get, User, Thing, Trait, Grabs, debug, Access, IDTool, signals, ThingType, TraitType } from '../common/Global_Imports';
+import { g, k, u, get, User, Thing, Trait, Grabs, debug, Access, IDTool, signals } from '../common/Global_Imports';
+import { ThingType, TraitType, Graph_Type, Predicate, Ancestry, Mouse_State } from '../common/Global_Imports';
 import { s_alteration_mode, s_grabbed_ancestries, s_showing_tools_ancestry } from '../state/Reactive_State';
-import { s_fetch_inProgress, s_edit_state, s_show_rings, s_focus_ancestry } from '../state/Reactive_State';
+import { Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
+import { s_fetch_inProgress, s_edit_state, s_graph_type, s_focus_ancestry } from '../state/Reactive_State';
 import RemoteIdentifiable from '../basis/RemoteIdentifiable';
 import { DBType } from '../../ts/db/DBInterface';
 import Identifiable from '../basis/Identifiable';
@@ -856,7 +857,7 @@ export class Hierarchy {
 			if (!siblings || length == 0) {		// friendly for first-time users
 				this.ancestry_rebuild_runtimeBrowseRight(ancestry, true, EXTREME, up);
 			} else if (!!thing) {
-				const is_rings_mode = get(s_show_rings);
+				const is_rings_mode = get(s_graph_type) == Graph_Type.rings;
 				const isBidirectional = ancestry.predicate?.isBidirectional ?? false;
 				if ((!isBidirectional && ancestry.isNormal) || !is_rings_mode) {
 					const index = siblings.indexOf(thing);

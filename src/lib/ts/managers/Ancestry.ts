@@ -1,6 +1,6 @@
 import { s_expanded_ancestries, s_showing_tools_ancestry, s_alteration_mode, s_clusters_geometry } from '../state/Reactive_State';
-import { g, k, u, get, show, Rect, Size, Thing, debug, signals, wrappers, Predicate } from '../common/Global_Imports';
-import { s_focus_ancestry, s_grabbed_ancestries, s_edit_state, s_show_rings } from '../state/Reactive_State';
+import { g, k, u, get, Rect, Size, Thing, debug, signals, wrappers, Graph_Type, Predicate } from '../common/Global_Imports';
+import { s_focus_ancestry, s_grabbed_ancestries, s_edit_state, s_graph_type } from '../state/Reactive_State';
 import { Title_State, ElementType, Paging_State, Relationship, PredicateKind } from '../common/Global_Imports';
 import { Svelte_Wrapper, Widget_MapRect, AlterationType, SvelteComponentType } from '../common/Global_Imports';
 import Identifiable from '../basis/Identifiable';
@@ -73,7 +73,7 @@ export default class Ancestry extends Identifiable {
 	get childRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, false); }
 	get parentRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, true); }
 	get titleWrapper(): Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.idHashed, SvelteComponentType.title); }
-	get showsReveal(): boolean { return !get(s_show_rings) && (this.hasChildRelationships || (this.thing?.isBulkAlias ?? false)); }
+	get showsReveal(): boolean { return !get(s_graph_type) == Graph_Type.rings && (this.hasChildRelationships || (this.thing?.isBulkAlias ?? false)); }
 
 	get relationships(): Array<Relationship> {
 		const relationships = this.ids_hashed.map(hid => h.relationship_forHID(hid)) ?? [];
@@ -117,7 +117,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	get isVisible(): boolean {
-		if (!!get(s_show_rings)) {
+		if (!!get(s_graph_type) == Graph_Type.rings) {
 			return this.parentAncestry?.paging_state?.index_isVisible(this.siblingIndex) ?? false;
 		} else {
 			const focus = get(s_focus_ancestry);
@@ -520,7 +520,7 @@ export default class Ancestry extends Identifiable {
 			s_edit_state?.set(null);
 			if (!!get(s_alteration_mode)) {
 				this.ancestry_alterMaybe(this);
-			} else if (!shiftKey && !!get(s_show_rings)) {
+			} else if (!shiftKey && get(s_graph_type) == Graph_Type.rings) {
 				this.becomeFocus();
 			} else if (shiftKey || this.isGrabbed) {
 				this.toggleGrab();
@@ -564,7 +564,7 @@ export default class Ancestry extends Identifiable {
 			return array;
 		});
 		let ancestries = get(s_grabbed_ancestries);
-		if (ancestries.length == 0 && !get(s_show_rings)) {
+		if (ancestries.length == 0 && !get(s_graph_type) == Graph_Type.rings) {
 			rootAncestry.grabOnly();
 		} else {
 			this.toggle_editingTools(); // do not show editingTools for root

@@ -1,9 +1,8 @@
-import { s_rebuild_count, s_focus_ancestry, s_grabbed_ancestries, s_expanded_ancestries } from './Reactive_State';
+import { Graph_Type, persistLocal, IDPersistent, Rotation_State, Expansion_State } from '../common/Global_Imports';
+import { s_graphRect, s_graph_type, s_show_details, s_color_thing, s_user_graphOffset } from './Reactive_State';
+import { s_resize_count, s_device_isMobile, s_mouse_up_count, s_rebuild_count } from '../state/Reactive_State';
 import { k, u, ux, get, show, Rect, Size, Point, debug, events, dbDispatch } from '../common/Global_Imports';
-import { persistLocal, IDPersistent, Rotation_State, Expansion_State } from '../common/Global_Imports';
-import { s_graphRect, s_show_details, s_color_thing, s_user_graphOffset } from './Reactive_State';
-import { s_resize_count, s_device_isMobile, s_mouse_up_count } from '../state/Reactive_State';
-import { s_show_rings } from './Reactive_State';
+import { s_focus_ancestry, s_grabbed_ancestries, s_expanded_ancestries } from './Reactive_State';
 import { h } from '../db/DBDispatch';
 
 class Global_State {
@@ -16,8 +15,8 @@ class Global_State {
 	isEditing_text = false;
 	scroll = this.windowScroll;
 	mouse_responder_number = 0;
-	cluster_paging_state!: Rotation_State;
 	ring_rotation_state!: Rotation_State;
+	cluster_paging_state!: Rotation_State;
 	ring_resizing_state!: Expansion_State;
 	rebuild_needed_byType: {[type: string]: boolean} = {};
 	queryStrings = new URLSearchParams(window.location.search);
@@ -71,7 +70,7 @@ class Global_State {
 		const queryStrings = this.queryStrings;
         const disable = queryStrings.get('disable');
         const eraseOptions = queryStrings.get('erase')?.split(k.comma) ?? [];
-		persistLocal.applyFor_key_name(IDPersistent.layout, 'clusters', (flag) => s_show_rings.set(flag));
+		persistLocal.applyFor_key_name(IDPersistent.graph_type, (type: Graph_Type) => s_graph_type.set(type));
         if (disable) {
             const flags = disable.split(',');
             for (const option of flags) {

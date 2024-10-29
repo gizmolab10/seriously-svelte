@@ -16,12 +16,6 @@
 		});
 		return () => { handler.disconnect() };
 	});
-	
-	// import Segments from '../mouse/Segments.svelte';
-	// 	<Segments
-	// 		name='db-choices'
-	// 		rect={control_rect}
-	// 		items={['local ', ' firebase ', ' airtable']}/>
 
 </script>
 

@@ -25,18 +25,15 @@
 	let style = k.empty;
 	let mouse_button;
 
-	//////////////////////////////////////////
-	//										//
-	//	handles: click counts, moves & up	//
-	//										//
-	//	requires: center, width, height,	//
-	//		closure & name					//
-	//										//
-	//	mutates three ts state classes:		//
-	//		UX_State, Mouse_State &			//
-	//		Element_State					//
-	//										//
-	//////////////////////////////////////////
+	//////////////////////////////////////////////////////////////
+	//															//
+	//	handles mouse: down, up, double, long & hover			//
+	//	requires: center, width, height, closure & name			//
+	//															//
+	//	isHit_closure: caller can override hit geometry & logic	//
+	//	mouse_state_closure: give caller relevant mouse info	//
+	//															//
+	//////////////////////////////////////////////////////////////
 
 	onMount(() => {
 		setupStyle();

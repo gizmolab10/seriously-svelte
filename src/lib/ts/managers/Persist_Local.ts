@@ -1,32 +1,32 @@
-import { s_db_type, s_show_rings, s_paging_state, s_thing_fontFamily } from '../state/Reactive_State';
+import { s_focus_ancestry, s_thing_fontFamily, s_user_graphOffset } from '../state/Reactive_State';
+import { s_db_type, s_tree_type, s_graph_type, s_paging_state } from '../state/Reactive_State';
 import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/Reactive_State';
 import { s_grabbed_ancestries, s_expanded_ancestries } from '../state/Reactive_State';
-import { g, k, get, show, Point, debug, Ancestry } from '../common/Global_Imports';
-import { s_focus_ancestry, s_user_graphOffset } from '../state/Reactive_State';
-import { dbDispatch, Paging_State } from '../common/Global_Imports';
+import { Tree_Type, Graph_Type, dbDispatch, Paging_State } from '../common/Global_Imports';
+import { g, k, show, Point, debug, Ancestry } from '../common/Global_Imports';
 import { h } from '../db/DBDispatch';
 
 export enum IDPersistent {
-	relationships = 'relationships',
-	ring_radius	  = 'ring_radius',
-	page_states   = 'page_states',
-	user_offset	  = 'user_offset',
-	ring_angle    = 'ring_angle',
-	focus_info    = 'focus_info',
-	arrowheads	  = 'arrowheads',
-	relations	  = 'relations',
-	expanded	  = 'expanded',
-	tinyDots	  = 'tinyDots',
-	grabbed		  = 'grabbed',
-	details		  = 'details',
-	base_id		  = 'base_id',
-	layout		  = 'layout',
-	traits		  = 'traits',
-	scale		  = 'scale',
-	focus		  = 'focus',
-	info		  = 'info',
-	font		  = 'font',
-	db			  = 'db',
+	tree_type = 'tree_type',
+	relationships  = 'relationships',
+	ring_radius	   = 'ring_radius',
+	page_states    = 'page_states',
+	user_offset	   = 'user_offset',
+	graph_type	   = 'graph_type',
+	focus_info     = 'focus_info',
+	ring_angle     = 'ring_angle',
+	arrowheads	   = 'arrowheads',
+	expanded	   = 'expanded',
+	tinyDots	   = 'tinyDots',
+	grabbed		   = 'grabbed',
+	details		   = 'details',
+	base_id		   = 'base_id',
+	traits		   = 'traits',
+	scale		   = 'scale',
+	focus		   = 'focus',
+	info		   = 'info',
+	font		   = 'font',
+	db			   = 'db',
 }
 
 class Persist_Local {
@@ -81,14 +81,13 @@ class Persist_Local {
 		return values;
 	}
 
-	applyFor_key_name(key: string, matching: string, apply: (flag: boolean) => void, persist: boolean = true) {
+	applyFor_key_name(key: string, apply: (type: Graph_Type) => void, persist: boolean = true) {
 		const queryStrings = g.queryStrings;
         const value = queryStrings.get(key);
 		if (!!value) {
-			const flag = (value === matching);
-			apply(flag);
+			apply(value as Graph_Type);
 			if (persist) {
-				this.write_key(key, flag);
+				this.write_key(key, value);
 			}
 		}
 	}
@@ -117,8 +116,8 @@ class Persist_Local {
 		s_ring_rotation_radius.subscribe((radius: number) => {
 			this.write_key(IDPersistent.ring_radius, radius);
 		});
-		s_show_rings.subscribe((flag: boolean) => {
-			this.write_key(IDPersistent.layout, flag);
+		s_graph_type.subscribe((value) => {
+			this.write_key(IDPersistent.graph_type, value);
 		});
 		s_rotation_ring_angle.subscribe((angle: number) => {
 			this.write_key(IDPersistent.ring_angle, angle);
@@ -157,8 +156,9 @@ class Persist_Local {
 		}
 		show.restore_state();
 		s_rotation_ring_angle.set(this.read_key(IDPersistent.ring_angle) ?? 0);
+		s_graph_type.set(this.read_key(IDPersistent.graph_type) ?? Graph_Type.tree);
+		s_tree_type.set(this.read_key(IDPersistent.graph_type) ?? Tree_Type.children);
 		s_thing_fontFamily.set(this.read_key(IDPersistent.font) ?? 'Times New Roman');
-		s_show_rings.set(this.read_key(IDPersistent.layout) ?? false);
 		s_ring_rotation_radius.set(Math.max(this.read_key(IDPersistent.ring_radius) ?? 0, k.innermost_ring_radius));
 		this.restore_graphOffset();
 		this.reactivity_subscribe()

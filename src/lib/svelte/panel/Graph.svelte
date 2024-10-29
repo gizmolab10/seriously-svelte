@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { s_device_isMobile, s_user_graphOffset, s_showing_tools_ancestry } from '../../ts/state/Reactive_State';
-	import { g, k, Rect, Point, debug, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
-	import { s_graphRect, s_show_rings, s_focus_ancestry } from '../../ts/state/Reactive_State';
+	import { g, k, Rect, Point, debug, ZIndex, onMount, signals, Graph_Type } from '../../ts/common/Global_Imports';
+	import { s_graphRect, s_graph_type, s_focus_ancestry } from '../../ts/state/Reactive_State';
 	import Editing_Tools from '../widget/Editing_Tools.svelte';
 	import Rings_Graph from '../rings/Rings_Graph.svelte';
 	import Tree_Graph from '../tree/Tree_Graph.svelte';
@@ -47,7 +47,7 @@
 	}
 
 	function update_toolsOffset() {
-		if ($s_show_rings) {
+		if ($s_graph_type == Graph_Type.rings) {
 			toolsOffset = new Point(31, -545.3);
 		} else {
 			toolsOffset = Point.y(-18.3);
@@ -131,7 +131,7 @@
 		<div class='mobile-draggable'
 			bind:this={draggable}
 			style={style}>
-			{#if $s_show_rings}
+			{#if $s_graph_type == Graph_Type.rings}
 				<Rings_Graph/>
 			{:else}
 				<Tree_Graph/>
@@ -145,7 +145,7 @@
 			on:wheel={handle_wheel}
 			bind:this={draggable}
 			style={style}>
-			{#if $s_show_rings}
+			{#if $s_graph_type == Graph_Type.rings}
 				<Rings_Graph/>
 			{:else}
 				<Tree_Graph/>

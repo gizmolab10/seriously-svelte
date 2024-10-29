@@ -8,7 +8,12 @@ export enum PredicateKind {
 	contains  = 'contains',
 }
 
-export enum GraphRelations {
+export enum Graph_Type {
+	rings = 'rings',
+	tree  = 'tree',
+}
+
+export enum Tree_Type {
 	children = 'children',
 	parents	 = 'parents',
 	related  = 'related',
@@ -59,14 +64,14 @@ export enum TraitType {
 }
 
 export enum IDButton {
-	details		= 'show details view',
-	builds		= 'show build notes',
-	relations	= 'relations',
-	smaller		= 'smaller',
-	bigger		= 'bigger',
-	layout		= 'layout',
-	open		= 'open',
-	help		= '?',
+	details		   = 'show details view',
+	builds		   = 'show build notes',
+	tree_type = 'tree_type',
+	graph_type	   = 'graph_type',
+	smaller		   = 'smaller',
+	bigger		   = 'bigger',
+	open		   = 'open',
+	help		   = '?',
 }
 
 export enum IDBrowser  {

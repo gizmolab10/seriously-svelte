@@ -194,15 +194,11 @@ export default class SVG_Paths {
 
 	// TODO: this only works for the default number of vertices (3)
 	fat_polygon(size: number, angle: number, vertices: number = 3): string {
-		const width = size;
-		const height = size;
-		const insetRatio = 0.35;
-		const radius = Math.min(width, height) * insetRatio;
-		const offset = new Point(width / 2, height / 2);
 		const segmentAngle = Math.PI / vertices;
-		const outer = Point.x(radius * 1.5);
+		const offset = Point.square(size / 2);
+		const inner = Point.x(size / 3);
+		const outer = Point.x(size / 2);
 		const tweak = segmentAngle / 5;
-		const inner = Point.x(radius);
 		let data = [];
 		let i = 0;
 		while (i++ < vertices) {

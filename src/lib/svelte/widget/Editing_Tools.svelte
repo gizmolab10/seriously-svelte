@@ -4,10 +4,10 @@
 	import { onMount, svgPaths, signals, opacitize, Direction } from '../../ts/common/Global_Imports';
 	import { Alteration_State, AlterationType, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { s_alteration_mode, s_graphRect, s_show_details } from '../../ts/state/Reactive_State';
-	import { s_show_rings, s_showing_tools_ancestry } from '../../ts/state/Reactive_State';
+	import { s_graph_type, s_showing_tools_ancestry } from '../../ts/state/Reactive_State';
+	import Transparent_Circle from '../kit/Transparent_Circle.svelte';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Triangle_Button from '../mouse/Triangle_Button.svelte';
-	import Transparent_Circle from '../kit/Transparent_Circle.svelte';
 	import Dot_Reveal from '../widget/Dot_Reveal.svelte';
 	import Button from '../mouse/Button.svelte';
 	import { h } from '../../ts/db/DBDispatch';
@@ -103,7 +103,7 @@
 		const tools_ancestry = $s_showing_tools_ancestry;
 		const shows_Reveal = tools_ancestry?.showsReveal;
 		const forward = tools_ancestry?.widget_map?.points_right ?? true;
-		return !!tools_ancestry ? $s_show_rings ? !forward ? -26 : titleWidth - 21 : shows_Reveal ? titleWidth + 16.3 : titleWidth + 8.3 : 0;
+		return !!tools_ancestry ? $s_graph_type == Graph_Type.rings ? !forward ? -26 : titleWidth - 21 : shows_Reveal ? titleWidth + 16.3 : titleWidth + 8.3 : 0;
 	}
 
 	function fillColorsFor(id: string, isFilled: boolean): [string, string] {
@@ -139,7 +139,7 @@
 		let rect = ancestry?.titleRect;
 		if (!!rect && !!$s_showing_tools_ancestry && rect.size.width != 0) {
 			debug.log_tools('setC all tools')
-			const offsetY = 14 + ($s_show_rings ? 3 : 0) - k.editingTools_diameter;
+			const offsetY = 14 + ($s_graph_type == Graph_Type.rings ? 3 : 0) - k.editingTools_diameter;
 			const offsetX = titleOffsetX() - ($s_show_details ? k.width_details : 0);
 			const center = rect.centerLeft.offsetBy(offset).offsetByXY(offsetX, offsetY);
 			left = center.x - toolDiameter;

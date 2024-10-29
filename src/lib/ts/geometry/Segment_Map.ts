@@ -4,6 +4,7 @@ export default class Segment_Map {
 	part = Oblong_Part.right;
 	origin = Point.zero;
 	center = Point.zero;
+	isSelected = false;
 	viewBox = k.empty;
 	size = Size.zero;
 	title = k.empty;
@@ -13,8 +14,9 @@ export default class Segment_Map {
 	index = 0;
 	left = 0;
 
-	constructor(title: string, index: number, max: number, left: number, height: number) {
+	constructor(title: string, isSelected: boolean, index: number, max: number, left: number, height: number) {
 		this.width = u.getWidthOf(title) + 10;	// add space around title
+		this.isSelected = isSelected;
 		this.origin = Point.x(left);
 		this.height = height;
 		this.title = title;
