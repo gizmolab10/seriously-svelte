@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { Graph_Type, dbDispatch, Seriously_Range, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { s_hierarchy, s_graph_type, s_color_thing, s_title_thing, s_edit_state } from '../../ts/state/Reactive_State';
 	import { s_thing_fontFamily, s_grabbed_ancestries, s_showing_tools_ancestry } from '../../ts/state/Reactive_State';
 	import { g, k, u, Point, Thing, debug, Angle, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
-	import { s_graph_type, s_color_thing, s_title_thing, s_edit_state } from '../../ts/state/Reactive_State';
 	export let fontSize = '1em';
 	export let forward = true;
 	export let ancestry;
@@ -47,7 +47,7 @@
 		if (!!thing && !!ancestry && ancestry.isEditing && canAlterTitle(event)) {
 			debug.log_key(`TITLE  ${event.key}`);
 			switch (event.key) {	
-				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); h.ancestry_edit_remoteCreateChildOf(ancestry.parentAncestry); break;
+				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); $s_hierarchy.ancestry_edit_remoteCreateChildOf(ancestry.parentAncestry); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
 				default:	  s_title_thing.set(thing.id); break;
 			}

@@ -1,12 +1,11 @@
 <script lang='ts'>
 	import { g, k, ux, show, Rect, Size, Point, Thing, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
+	import { s_title_thing, s_hierarchy, s_color_thing, s_focus_ancestry } from '../../ts/state/Reactive_State';
 	import { s_card_ancestry, s_grabbed_ancestries, s_thing_fontFamily } from '../../ts/state/Reactive_State';
 	import { TraitType, persistLocal, ElementType, IDPersistent } from '../../ts/common/Global_Imports';
-	import { s_color_thing, s_title_thing, s_focus_ancestry } from '../../ts/state/Reactive_State';
 	import Identifiable from '../../ts/basis/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Button from '../mouse/Button.svelte';
-	import { h } from '../../ts/db/DBDispatch';
 	import Color from './Color.svelte';
 	const id = 'info';
 	const margin = 10;
@@ -85,7 +84,7 @@
 				case 'consequence':	thing.setTraitText_forType(text, TraitType.consequence); break;
 			}
 		} else if (!text) {
-			h.deferredWriteAll();
+			$s_hierarchy.deferredWriteAll();
 		}
 	}
 

@@ -1,5 +1,4 @@
 import { u, debug, Svelte_Wrapper, Create_Mouse_State, SvelteComponentType } from '../common/Global_Imports';
-import { h } from '../db/DBDispatch';
 
 export class Wrappers {
 	private child_wrapperTypes_byType: {[type: string]: Array<string>} = {};
@@ -83,7 +82,7 @@ export class Wrappers {
 			const wrappers = Object.values(wrappers_byHID);
 			for (const wrapper of wrappers) {
 				const idHashed = wrapper.idHashed;
-				const ancestry = h.ancestry_forHID(idHashed)
+				const ancestry = get(s_hierarchy).ancestry_forHID(idHashed)
 				const title = ancestry?.title ?? wrapper.idHashed;
 				debug.log_action(`hitsFor ${type} ${title}`);
 				if (wrapper.isHit(event)) {

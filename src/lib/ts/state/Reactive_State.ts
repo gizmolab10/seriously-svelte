@@ -1,5 +1,5 @@
-import { Cluster_Map, Tree_Type, Clusters_Geometry, Alteration_State } from '../common/Global_Imports';
-import { Rect, Point, Ancestry, Graph_Type, Title_State, Paging_State, } from '../common/Global_Imports';
+import { Rect, Point, Ancestry, Graph_Type, Title_State, Paging_State, Startup_State } from '../common/Global_Imports';
+import { Tree_Type, Hierarchy, Cluster_Map, Clusters_Geometry, Alteration_State } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
 export const s_clusters_geometry	  = writable<Clusters_Geometry | null>();
@@ -9,6 +9,7 @@ export const s_edit_state			  = writable<Title_State | null>();
 export const s_showing_tools_ancestry = writable<Ancestry | null>();
 export const s_expanded_ancestries	  = writable<Array<Ancestry>>();
 export const s_grabbed_ancestries	  = writable<Array<Ancestry>>();
+export const s_startup_state		  = writable<Startup_State>();
 export const s_title_thing			  = writable<string | null>();
 export const s_color_thing			  = writable<string | null>();
 export const s_id_popupView			  = writable<string | null>();
@@ -16,9 +17,9 @@ export const s_db_loadTime 			  = writable<string | null>();
 export const s_paging_state			  = writable<Paging_State>();
 export const s_graph_type			  = writable<Graph_Type>();
 export const s_tree_type			  = writable<Tree_Type>();
+export const s_hierarchy			  = writable<Hierarchy>();
 export const s_focus_ancestry		  = writable<Ancestry>();
 export const s_card_ancestry		  = writable<Ancestry>();
-export const s_fetch_inProgress		  = writable<boolean>();
 export const s_device_isMobile		  = writable<boolean>();
 export const s_show_details			  = writable<boolean>();
 export const s_db_type				  = writable<string>();			// triggers details storage update

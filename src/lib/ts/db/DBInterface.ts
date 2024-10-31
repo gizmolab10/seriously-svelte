@@ -17,6 +17,7 @@ export enum DatumType {
 }
 
 export default interface DBInterface {
+
 	baseID: string;
 	dbType: string;
 	hasData: boolean;
@@ -26,14 +27,15 @@ export default interface DBInterface {
 	queryStrings_apply(): void;
 	fetch_all(): Promise<void>;
 	setHasData(flag: boolean): void;
-	fetch_hierarchy_from(baseID: string): Promise<void>;
 	thing_remoteUpdate(thing: Thing): Promise<void>;
 	thing_remoteDelete(thing: Thing): Promise<void>;
+	trait_remoteUpdate(trait: Trait): Promise<void>;
+	trait_remoteDelete(trait: Trait): Promise<void>;
+	fetch_hierarchy_from(baseID: string): Promise<void>;
+	trait_remember_remoteCreate(trait: Trait): Promise<void>;
 	thing_remember_remoteCreate(thing: Thing): Promise<void>;
 	relationship_remoteUpdate(relationship: Relationship): Promise<void>;
 	relationship_remoteDelete(relationship: Relationship): Promise<void>;
 	relationship_remember_remoteCreate(relationship: Relationship | null): Promise<void>;
-	trait_remoteUpdate(trait: Trait): Promise<void>;
-	trait_remoteDelete(trait: Trait): Promise<void>;
-	trait_remember_remoteCreate(trait: Trait): Promise<void>;
+
 }

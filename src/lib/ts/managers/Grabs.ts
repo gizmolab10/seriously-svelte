@@ -1,10 +1,9 @@
+import { s_hierarchy, s_grabbed_ancestries } from '../state/Reactive_State';
 import { get, Thing, Ancestry } from '../common/Global_Imports';
-import { s_grabbed_ancestries } from '../state/Reactive_State';
-import { h } from '../db/DBDispatch';
 
 export default class Grabs {
 	
-	get thing_lastGrabbed(): Thing | null { return h.thing_forAncestry(this.ancestry_lastGrabbed); }
+	get thing_lastGrabbed(): Thing | null { return get(s_hierarchy).thing_forAncestry(this.ancestry_lastGrabbed); }
 
 	get areInvisible(): boolean {
 		const ancestries = get(s_grabbed_ancestries);
@@ -21,7 +20,7 @@ export default class Grabs {
 		if (ancestries.length > 0) {
 			const ancestry = ancestries.slice(-1)[0];	// does not alter ancestries
 			const relationshipHID = ancestry?.relationship?.idHashed;
-			if (!!relationshipHID && !!h.relationship_forHID(relationshipHID)) {
+			if (!!relationshipHID && !!get(s_hierarchy).relationship_forHID(relationshipHID)) {
 				return ancestry;
 			}
 		}
@@ -37,7 +36,7 @@ export default class Grabs {
 				return ancestries.slice(-1)[0];
 			}
 		}
-		return h.rootAncestry;
+		return get(s_hierarchy).rootAncestry;
 	}
 
 }

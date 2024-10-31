@@ -1,12 +1,6 @@
 import type { Handle_Mouse_State, Create_Mouse_State } from './Types';
 import type { SvelteComponent } from 'svelte';
 
-import { g } from '../state/Global_State';
-import { ux } from '../state/UX_State';
-import { u } from './Utilities';
-import { k } from './Constants';
-import './Extensions';
-
 import { builds } from './Builds';
 import { show } from '../state/Show_State';
 import { events } from '../signals/Events';
@@ -24,10 +18,11 @@ import { debug, Debug, DebugFlag } from '../common/Debug';
 import { Direction, svgPaths } from '../geometry/SVG_Paths';
 import { Paging_State, Page_States } from '../state/Page_States';
 import { onMount, onDestroy, setContext, getContext } from 'svelte';
+import { Tree_Type, Graph_Type, Startup_State } from './Enumerations';
 import { IDPersistent, persistLocal } from '../managers/Persist_Local';
+import { PredicateKind, AlterationType, CreationOptions } from './Enumerations';
 import { IDLine, IDTool, ZIndex, IDButton, IDBrowser, Ring_Zone } from './Enumerations';
 import { ThingType, TraitType, Oblong_Part, ElementType, Rebuild_Type } from './Enumerations';
-import { PredicateKind, AlterationType, Graph_Type, Tree_Type, CreationOptions } from './Enumerations';
 
 import Clusters_Geometry from '../geometry/Clusters_Geometry';
 import Alteration_State from '../state/Alteration_State';
@@ -54,6 +49,12 @@ import Thing from '../data/Thing';
 import Trait from '../data/Trait';
 import User from '../data/User';
 
+import './Extensions';
+import { u } from './Utilities';
+import { k } from './Constants';
+import { ux } from '../state/UX_State';
+import { g } from '../state/Global_State';
+
 import muuri from 'muuri';
 import interact from 'interactjs';
 import { get } from 'svelte/store';
@@ -74,10 +75,10 @@ export {
 	Rect, Size, Point, cursors, svgPaths, Direction,
 	Mouse_State, Handle_Mouse_State, Create_Mouse_State,
 	Grabs, Ancestry, Hierarchy, dbDispatch, persistLocal,
-	Svelte_Wrapper, SvelteComponent, SvelteComponentType,
 	User, Datum, Thing, Trait, Access, Predicate, Relationship,
 	Element_State, Paging_State, Page_States, Alteration_State,
 	IDLine, IDTool, IDSignal, IDButton, IDBrowser, IDPersistent,
 	ZIndex, PredicateKind, Graph_Type, Tree_Type, CreationOptions,
-	ThingType, TraitType, Oblong_Part, Rebuild_Type, ElementType, AlterationType,
+	ElementType, Svelte_Wrapper, SvelteComponent, SvelteComponentType,
+	ThingType, TraitType, Oblong_Part, Startup_State, Rebuild_Type, AlterationType,
 };

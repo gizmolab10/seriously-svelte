@@ -1,7 +1,6 @@
 <script lang='ts'>
 	import { k, ux, Point, debug, onMount, Direction, dbDispatch } from '../../ts/common/Global_Imports';
 	import Triangle_Button from '../mouse/Triangle_Button.svelte';
-	import { h } from '../../ts/db/DBDispatch';
 	export let center = Point.zero;
     export let name = k.empty;
     export let ancestry;
@@ -18,8 +17,8 @@
 		if (mouse_state.isHover) {
 			element_state.isOut = mouse_state.isOut;
 		} else {
-			if (h.grabs.latestAncestryGrabbed(true)?.isFocus) {
-				h.ancestry_rebuild_remoteMoveRight(ancestry, false, false);
+			if ($s_hierarchygrabs.latestAncestryGrabbed(true)?.isFocus) {
+				$s_hierarchyancestry_rebuild_remoteMoveRight(ancestry, false, false);
 			} else {
 				ancestry.grabOnly();
 			}

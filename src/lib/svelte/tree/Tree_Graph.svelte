@@ -1,12 +1,11 @@
 <script lang='ts'>
-	import { s_focus_ancestry, s_graphRect, s_show_details, s_device_isMobile } from '../../ts/state/Reactive_State';
+	import { s_graphRect, s_hierarchy, s_show_details, s_device_isMobile,  } from '../../ts/state/Reactive_State';
 	import { g, k, u, ux, show, Rect, Size, Point, Thing, ZIndex, debug } from '../../ts/common/Global_Imports';
 	import { signals, IDSignal, IDButton, onMount, Ancestry, dbDispatch } from '../../ts/common/Global_Imports';
+	import { s_id_popupView, s_focus_ancestry, s_user_graphOffset } from '../../ts/state/Reactive_State';
 	import { Predicate, IDPersistent, ElementType, persistLocal } from '../../ts/common/Global_Imports';
-	import { s_id_popupView, s_user_graphOffset } from '../../ts/state/Reactive_State';
 	import Tree_Children from './Tree_Children.svelte';
 	import Widget from '../widget/Widget.svelte';
-	import { h } from '../../ts/db/DBDispatch';
 	import Circle from '../kit/Circle.svelte';
 	const revealState = ux.element_state_for($s_focus_ancestry, ElementType.reveal, 'tree');
 	const focusState = ux.element_state_for($s_focus_ancestry, ElementType.focus, 'tree');
@@ -42,7 +41,7 @@
 			updateOrigins();
 		}
 		if (!focus || focus.id != $s_focus_ancestry) {
-			focus = !$s_focus_ancestry ? h.root : h.thing_forAncestry($s_focus_ancestry);
+			focus = !$s_focus_ancestry ? $s_hierarchy.root : $s_hierarchy.thing_forAncestry($s_focus_ancestry);
 			offsetX_ofFirstReveal = 3 + focus?.titleWidth / 2;
 			updateOrigins();
 			rebuilds += 1;

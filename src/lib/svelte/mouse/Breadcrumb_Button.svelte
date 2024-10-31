@@ -24,8 +24,8 @@
 	updateColors();
 
 	$: {
-		thing = ancestry.thing;
-		title = thing.title.injectEllipsisAt();
+		thing = ancestry?.thing;
+		title = thing?.title.injectEllipsisAt() ?? k.empty;
 		name = `crumb (for ${title ?? 'unknown'})`
 		width = u.getWidthOf(title) + 15;
 		center = new Point(left + width / 2, height - 1);

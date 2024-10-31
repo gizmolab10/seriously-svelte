@@ -31,6 +31,13 @@ export enum IDLine {
 	up	 = 'up',
 }
 
+export enum Startup_State {
+	start = 'start',
+	fetch = 'fetch',
+	empty = 'empty',
+	ready = 'ready',
+}
+
 export enum ThingType {
 	generic = '',
 	roots	= '^',

@@ -23,22 +23,16 @@
 
 	function update_maps_andWidth() {
 		const max = titles.length - 1;
+		let left = height / 2;
 		let index = 0;
 		reset_maps_andWidth();
 		for (const title of titles) {
-			let map_name = `${title}-${name}-at-${index}`;
-			let map = ux.segment_map_forName(map_name);
-			if (!!map) {
-				map.isSelected = isSelected(title);
-			} else {
-				map = new Segment_Map(name, title, isSelected(title), index, max, width, height);
-				ux.set_segment_map_forName(map, map_name);
-			}
+			const map = Segment_Map.grab_segment_map(name, title, isSelected(title), index, max, left, height);
 			segment_maps.push(map);
-			width += map.width;
+			left += map.width;
 			index += 1;
 		}
-		width += height / 2;
+		width = left;
 	}
 
 	function hit_closure(title: string, shift: boolean) {

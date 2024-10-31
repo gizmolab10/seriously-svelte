@@ -1,8 +1,8 @@
-import { g, k, u, debug, Thing, Trait, TraitType, DebugFlag } from '../common/Global_Imports';
-import { Hierarchy, Relationship, CreationOptions } from '../common/Global_Imports';
+import { DebugFlag, Hierarchy, Relationship, CreationOptions } from '../common/Global_Imports';
+import { g, k, u, get, debug, Thing, Trait, TraitType } from '../common/Global_Imports';
 import { DBType, DatumType } from '../db/DBInterface';
+import { s_hierarchy } from '../state/Reactive_State';
 import DBInterface from './DBInterface';
-import { h } from '../db/DBDispatch';
 import Airtable from 'airtable';
 
 //////////////////////////////
@@ -70,7 +70,7 @@ export default class DBAirtable implements DBInterface {
 	//////////////////////////////
 
 	async things_readAll() {
-		h.things_forgetAll(); // clear
+		get(s_hierarchy).things_forgetAll(); // clear
 
 		try {
 			const select = this.things_table.select();
@@ -79,7 +79,7 @@ export default class DBAirtable implements DBInterface {
 				for (const remoteThing of remoteThings) {
 					const id = remoteThing.id;
 					const fields = remoteThing.fields;
-					h.thing_remember_runtimeCreate(k.empty, id, fields.title as string, fields.color as string, (fields.type as string) ?? fields.trait as string, true, !fields.type);
+					get(s_hierarchy).thing_remember_runtimeCreate(k.empty, id, fields.title as string, fields.color as string, (fields.type as string) ?? fields.trait as string, true, !fields.type);
 				}
 			})
 		} catch (error) {
@@ -95,7 +95,7 @@ export default class DBAirtable implements DBInterface {
 			const id = fields['id']; //	// need for update, delete and things_byHID (to get parent from relationship)
 			thing.setID(id);
 			thing.hasBeen_remotely_saved = true;
-			h.thing_remember(thing);
+			get(s_hierarchy).thing_remember(thing);
 		} catch (error) {
 			thing.log(DebugFlag.remote, this.things_errorMessage + error);
 		}
@@ -124,7 +124,7 @@ export default class DBAirtable implements DBInterface {
 	//////////////////////////////
 
 	async traits_readAll() {
-		h.traits_clearKnowns();
+		get(s_hierarchy).traits_clearKnowns();
 		try {
 			const records = await this.traits_table.select().all()
 
@@ -133,7 +133,7 @@ export default class DBAirtable implements DBInterface {
 				const text = record.fields.text as string;
 				const type = record.fields.type as TraitType;
 				const ownerIDs = record.fields.ownerID as (Array<string>);
-				h.trait_remember_runtimeCreateUnique(k.empty, id, ownerIDs[0], type, text, true);
+				get(s_hierarchy).trait_remember_runtimeCreateUnique(k.empty, id, ownerIDs[0], type, text, true);
 			}
 		} catch (error) {
 			debug.log_error(this.traits_errorMessage + error);
@@ -162,7 +162,7 @@ export default class DBAirtable implements DBInterface {
 			const id = fields['id'];	//	// need for update, delete and traits_byHID (to get parent from relationship)
 			trait.setID(id);
 			trait.hasBeen_remotely_saved = true;
-			h.trait_remember(trait);
+			get(s_hierarchy).trait_remember(trait);
 		} catch (error) {
 			trait.log(DebugFlag.remote, this.traits_errorMessage + error);
 		}
@@ -171,7 +171,7 @@ export default class DBAirtable implements DBInterface {
 	static readonly $_RELATIONSHIPS_$: unique symbol;
 
 	async relationships_readAll() {
-		h.relationships_clearKnowns();
+		get(s_hierarchy).relationships_clearKnowns();
 		try {
 			const records = await this.relationships_table.select().all()
 
@@ -181,7 +181,7 @@ export default class DBAirtable implements DBInterface {
 				const parents = record.fields.parent as (Array<string>);
 				const children = record.fields.child as (Array<string>);
 				const predicates = record.fields.predicate as (Array<string>);
-				h.relationship_remember_runtimeCreateUnique(k.empty, id, predicates[0], parents[0], children[0], order, CreationOptions.isFromRemote);
+				get(s_hierarchy).relationship_remember_runtimeCreateUnique(k.empty, id, predicates[0], parents[0], children[0], order, CreationOptions.isFromRemote);
 			}
 		} catch (error) {
 			debug.log_error(this.relationships_errorMessage + error);
@@ -197,7 +197,7 @@ export default class DBAirtable implements DBInterface {
 				const id = fields['id'];																										// grab permanent id
 				relationship.setID(id);
 				relationship.hasBeen_remotely_saved = true;
-				h.relationships_refreshKnowns();
+				get(s_hierarchy).relationships_refreshKnowns();
 			} catch (error) {
 				relationship.log(DebugFlag.remote, this.relationships_errorMessage + error);
 			}
@@ -214,8 +214,8 @@ export default class DBAirtable implements DBInterface {
 
 	async relationship_remoteDelete(relationship: Relationship) {
 		try {
-			h.relationships = u.strip_invalid(h.relationships);
-			h.relationships_refreshKnowns(); // do first so UX updates quickly
+			get(s_hierarchy).relationships = u.strip_invalid(get(s_hierarchy).relationships);
+			get(s_hierarchy).relationships_refreshKnowns(); // do first so UX updates quickly
 			await this.relationships_table.destroy(relationship.id);
 		} catch (error) {
 			relationship.log(DebugFlag.remote, this.relationships_errorMessage + error);
@@ -233,7 +233,7 @@ export default class DBAirtable implements DBInterface {
 				const id = record.id as string; // do not yet need this
 				const kind = fields.kind as string;
 				const isBidirectional = fields.isBidirectional as boolean ?? false;
-				h.predicate_remember_runtimeCreate(id, kind, isBidirectional);
+				get(s_hierarchy).predicate_remember_runtimeCreate(id, kind, isBidirectional);
 			}
 
 		} catch (error) {
@@ -248,7 +248,7 @@ export default class DBAirtable implements DBInterface {
 			for (const record of records) {
 				const id = record.id as string; // do not yet need this
 				const kind = record.fields.kind as string;
-				h.access_runtimeCreate(id, kind);
+				get(s_hierarchy).access_runtimeCreate(id, kind);
 			}
 
 		} catch (error) {
@@ -262,7 +262,7 @@ export default class DBAirtable implements DBInterface {
 
 			for (const record of records) {
 				const id = record.id as string; // do not yet need this
-				h.user_runtimeCreate(id, record.fields.name as string, record.fields.email as string, record.fields.phone as string);
+				get(s_hierarchy).user_runtimeCreate(id, record.fields.name as string, record.fields.email as string, record.fields.phone as string);
 			}
 
 		} catch (error) {

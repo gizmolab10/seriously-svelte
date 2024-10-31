@@ -3,7 +3,6 @@
 	import { Direction, onDestroy, dbDispatch, Predicate, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { k, u, ux, show, Size, Thing, Point, debug, ZIndex, onMount, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import { h } from '../../ts/db/DBDispatch';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	export let center;
     export let ancestry;
@@ -83,7 +82,7 @@
 				$s_showing_tools_ancestry = null;
 				signals.signal_relayoutWidgets_fromFocus();
 			} else if (ancestry.hasChildRelationships || ancestry.thing.isBulkAlias) {
-				h.ancestry_rebuild_remoteMoveRight(ancestry, !ancestry.isExpanded, true, false);
+				$s_hierarchy.ancestry_rebuild_remoteMoveRight(ancestry, !ancestry.isExpanded, true, false);
 			}
 		}
 	}

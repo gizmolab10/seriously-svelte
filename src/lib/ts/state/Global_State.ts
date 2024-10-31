@@ -1,9 +1,9 @@
-import { Graph_Type, persistLocal, IDPersistent, Rotation_State, Expansion_State } from '../common/Global_Imports';
-import { s_graphRect, s_graph_type, s_show_details, s_color_thing, s_user_graphOffset } from './Reactive_State';
-import { s_resize_count, s_device_isMobile, s_mouse_up_count, s_rebuild_count } from '../state/Reactive_State';
+import { s_hierarchy, s_graphRect, s_resize_count, s_mouse_up_count, s_rebuild_count } from '../state/Reactive_State';
+import { s_focus_ancestry, s_device_isMobile, s_grabbed_ancestries, s_expanded_ancestries } from './Reactive_State';
+import { Hierarchy, persistLocal, IDPersistent, Rotation_State, Startup_State, Expansion_State } from '../common/Global_Imports';
 import { k, u, ux, get, show, Rect, Size, Point, debug, events, dbDispatch } from '../common/Global_Imports';
-import { s_focus_ancestry, s_grabbed_ancestries, s_expanded_ancestries } from './Reactive_State';
-import { h } from '../db/DBDispatch';
+import { s_show_details, s_color_thing, s_startup_state, s_user_graphOffset } from './Reactive_State';
+
 
 class Global_State {
 	allow_GraphEditing = true;
@@ -12,7 +12,6 @@ class Global_State {
 
 	scale_factor = 1;
 	isEditing_text = false;
-	fetch_succeeded = false;
 	scroll = this.windowScroll;
 	mouse_responder_number = 0;
 	ring_rotation_state!: Rotation_State;
@@ -21,53 +20,38 @@ class Global_State {
 	rebuild_needed_byType: {[type: string]: boolean} = {};
 	queryStrings = new URLSearchParams(window.location.search);
 
-	restore_state() {
-		persistLocal.restore_state();					// local persistance
+	startup() {
+		
+		//////////////////////////////////////////////////
+		//												//
+		//												//
+		//	 this is the first code called by the app	//
+		//												//
+		//												//
+		//////////////////////////////////////////////////
+
+		debug.queryStrings_apply();						// debug even setup code
+		this.setup_defaults();							// defaults
+		show.restore_state();							// local persistance
+		persistLocal.restore_state();
 		persistLocal.restore_db();
+		this.queryStrings_apply();						// query strings
+		show.queryStrings_apply();
+		events.setup();
 	}
 
-	setup() {
-		
-		//////////////////////////////////////////////
-		// this is the first code called by the app //
-		//////////////////////////////////////////////
-
+	setup_defaults() {
 		const isMobile = this.device_isMobile;
-		debug.queryStrings_apply();						// debug even setup code
-		this.applyScale(isMobile ? 2 : 1);				// defaults
 		s_resize_count.set(0);
 		s_rebuild_count.set(0);
 		s_mouse_up_count.set(0);
 		s_color_thing.set(null);
 		s_device_isMobile.set(isMobile);
+		s_startup_state.set(Startup_State.start);
+		this.applyScale(isMobile ? 2 : 1);
 		this.cluster_paging_state = new Rotation_State();
 		this.ring_rotation_state = new Rotation_State();
 		this.ring_resizing_state = new Expansion_State();
-		this.restore_state();
-		this.queryStrings_apply();						// query strings
-		show.queryStrings_apply();
-		this.subscribeTo_resizeEvents();				// setup to watch user
-		events.setup();
-	}
-
-	subscribeTo_resizeEvents() {
-		window.addEventListener('resize', (event) => {
-			setTimeout(() => {
-				const isMobile = this.device_isMobile;
-				debug.log_action(` resize [is${isMobile ? '' : ' not'} mobile] STATE`);
-				s_resize_count.set(get(s_resize_count) + 1);
-				s_device_isMobile.set(isMobile);
-				this.graphRect_update();
-			}, 1);
-		});
-		window.addEventListener('orientationchange', () => {
-			setTimeout(() => {
-				const isMobile = this.device_isMobile;
-				debug.log_action(` orientationchange [is${isMobile ? '' : ' not'} mobile] STATE`);
-				s_device_isMobile.set(isMobile);
-				this.graphRect_update();
-			}, 1);
-		});
 	}
 
 	queryStrings_apply() {
@@ -92,13 +76,14 @@ class Global_State {
 				case 'settings': 
 					localStorage.clear();
 					s_expanded_ancestries.set([]);
-					s_focus_ancestry.set(h.rootAncestry);
-					s_grabbed_ancestries.set([h.rootAncestry]);
+					s_focus_ancestry.set(this.hierarchy.rootAncestry);
+					s_grabbed_ancestries.set([this.hierarchy.rootAncestry]);
 					break;
 			}
 		}
     }
 
+	get hierarchy(): Hierarchy { return get(s_hierarchy); }
 	get windowScroll(): Point { return new Point(window.scrollX, window.scrollY); }
 	get graph_center(): Point { return get(s_graphRect).size.dividedInHalf.asPoint; }
 

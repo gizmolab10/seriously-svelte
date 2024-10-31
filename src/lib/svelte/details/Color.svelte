@@ -2,7 +2,6 @@
 	import { k, u, ux, get, Point, Thing, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
 	import { s_color_thing } from '../../ts/state/Reactive_State';
 	import ColorPicker from 'svelte-awesome-color-picker';
-	import { h } from '../../ts/db/DBDispatch';
 	export let origin = Point.zero;
 	export let thing: Thing;
 	const pickerSize = 122;

@@ -1,10 +1,9 @@
 <script lang='ts'>
 	import { g, k, u, Size, Point, Thing, debug, ZIndex, signals } from '../../ts/common/Global_Imports';
 	import { svgPaths, onMount, Ancestry, dbDispatch, Direction } from '../../ts/common/Global_Imports';
+	import { s_hierarchy, s_focus_ancestry, s_grabbed_ancestries } from '../../ts/state/Reactive_State';
 	import { s_graphRect, s_show_details, s_color_thing } from '../../ts/state/Reactive_State';
-	import { s_focus_ancestry, s_grabbed_ancestries } from '../../ts/state/Reactive_State';
 	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
-	import { h } from '../../ts/db/DBDispatch';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	let ancestors: Array<Thing> = [];
 	let size = k.default_buttonSize;
@@ -25,6 +24,7 @@
 	}
 
 	$: {
+		const h = $s_hierarchy;
 		const needsUpdate = ($s_focus_ancestry?.title ?? k.empty) + $s_graphRect + ($s_grabbed_ancestries?.length ?? 0);
 		if (!ancestry || needsUpdate || ancestors.length == 0) {
 			ancestry = h.grabs.ancestry_lastGrabbed ?? h.rootAncestry;		// assure we have a ancestry
@@ -61,6 +61,6 @@
 				/>
 			</div>
 		{/if}
-		<Breadcrumb_Button left={lefts[index]} ancestry={ancestry.stripBack(ancestors.length - index - 1)}/>
+		<Breadcrumb_Button left={lefts[index]} ancestry={ancestry?.stripBack(ancestors.length - index - 1)}/>
 	{/each}
 {/key}

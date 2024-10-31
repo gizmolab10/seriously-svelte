@@ -2,9 +2,8 @@ import { g, k, u, get, User, Thing, Trait, Grabs, debug, Access, IDTool, signals
 import { ThingType, TraitType, Graph_Type, Predicate, Ancestry, Mouse_State } from '../common/Global_Imports';
 import { s_alteration_mode, s_grabbed_ancestries, s_showing_tools_ancestry } from '../state/Reactive_State';
 import { Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
-import { s_fetch_inProgress, s_edit_state, s_graph_type, s_focus_ancestry } from '../state/Reactive_State';
+import { s_edit_state, s_graph_type, s_focus_ancestry } from '../state/Reactive_State';
 import RemoteIdentifiable from '../basis/RemoteIdentifiable';
-import { DBType } from '../../ts/db/DBInterface';
 import Identifiable from '../basis/Identifiable';
 import DBInterface from '../db/DBInterface';
 
@@ -41,7 +40,6 @@ export class Hierarchy {
 
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): string | null { return this.root?.id ?? null; };
-	get startupExplanation(): string { return `loading your ${this.db.dbType} data${this.db.dbType == DBType.firebase ? ', from ' + this.db.baseID : k.empty}`; }
 	ancestries_rebuildAll() { this.root?.oneAncestries_rebuildForSubtree(); }
 
 	static readonly $_INIT_$: unique symbol;
@@ -1034,11 +1032,6 @@ export class Hierarchy {
 
 	conclude_fetch() {
 		this.deferredWriteAll();
-		s_showing_tools_ancestry.set(null);
-		s_edit_state.set(null);
-		this.db.setHasData(true);
-		g.fetch_succeeded = true;
-		s_fetch_inProgress.set(false);
 		this.isAssembled = true;
 	}
 

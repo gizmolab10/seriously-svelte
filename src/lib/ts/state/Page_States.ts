@@ -1,6 +1,5 @@
 import { k, get, Thing, Predicate, Ancestry, Cluster_Map } from '../common/Global_Imports';
 import { s_paging_state, s_ring_rotation_radius } from './Reactive_State';
-import { h } from '../db/DBDispatch';
 
 export class Paging_State {
 
@@ -39,8 +38,8 @@ export class Paging_State {
 	get stateIndex(): number { return this.predicate?.stateIndex ?? -1; }
 	get maximum_paging_index(): number { return this.total - this.shown; }
 	get indexOf_followingPage(): number { return this.index + this.shown; }
-	get thing(): Thing | null { return h.thing_forHID(this.thing_id.hash()) ?? null; }
-	get predicate(): Predicate | null { return h.predicate_forKind(this.kind) ?? null; }
+	get thing(): Thing | null { return get(s_hierarchy).thing_forHID(this.thing_id.hash()) ?? null; }
+	get predicate(): Predicate | null { return get(s_hierarchy).predicate_forKind(this.kind) ?? null; }
 	get canShow(): number { return Math.round((get(s_ring_rotation_radius) ** 1.5) * Math.PI / 45 / k.row_height) + 1; }
 	get sub_key(): string { return `${this.thing_id}${k.generic_separator}${this.kind}${k.generic_separator}${this.toChildren}`; }
 
@@ -102,7 +101,7 @@ export class Page_States {
 		this.thing_id = thing_id;
 	}
 
-	get thing(): Thing | null { return h.thing_forHID(this.thing_id.hash()) ?? null; }
+	get thing(): Thing | null { return get(s_hierarchy).thing_forHID(this.thing_id.hash()) ?? null; }
 	get description(): string { return this.description_for(true) + k.big_separator + this.description_for(false); }
 	paging_state_for(map: Cluster_Map): Paging_State { return this.paging_state_forPointsOut(map.toChildren, map.predicate); }
 	paging_states_for(toChildren: boolean): Array<Paging_State> { return toChildren ? this.outward_paging_states : this.inward_paging_states; }

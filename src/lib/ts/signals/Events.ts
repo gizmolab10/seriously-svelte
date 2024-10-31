@@ -1,10 +1,12 @@
 import { s_mouse_location, s_mouse_up_count, s_alteration_mode } from '../state/Reactive_State';
-import { get, Point, signals, Alteration_State } from '../common/Global_Imports';
+import { g, get, Point, debug, signals, Alteration_State } from '../common/Global_Imports';
+import { s_resize_count, s_device_isMobile } from '../state/Reactive_State';
 
 class Events {
 
 	setup() {
 		this.subscribeTo_events();
+		this.subscribeTo_resizeEvents();
 		this.subscribeTo_alterationState();
 	}
 
@@ -43,6 +45,26 @@ class Events {
 				signals.signal_altering(null);
 			}
 		})
+	}
+
+	subscribeTo_resizeEvents() {
+		window.addEventListener('resize', (event) => {
+			setTimeout(() => {
+				const isMobile = g.device_isMobile;
+				debug.log_action(` resize [is${isMobile ? '' : ' not'} mobile] STATE`);
+				s_resize_count.set(get(s_resize_count) + 1);
+				s_device_isMobile.set(isMobile);
+				g.graphRect_update();
+			}, 1);
+		});
+		window.addEventListener('orientationchange', () => {
+			setTimeout(() => {
+				const isMobile = g.device_isMobile;
+				debug.log_action(` orientationchange [is${isMobile ? '' : ' not'} mobile] STATE`);
+				s_device_isMobile.set(isMobile);
+				g.graphRect_update();
+			}, 1);
+		});
 	}
 
 }

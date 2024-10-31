@@ -3,7 +3,6 @@
 	import { s_db_type, s_db_loadTime } from '../../ts/state/Reactive_State';
 	import Radio_Buttons from '../buttons/Radio_Buttons.svelte';
 	import { DBType } from '../../ts/db/DBInterface';
-	import { h } from '../../ts/db/DBDispatch';
 
 	function handle_dbTypeAt(index) { dbDispatch.db_change_toType(menuItems[index].id); }
 

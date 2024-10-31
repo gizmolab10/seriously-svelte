@@ -10,7 +10,6 @@
 	import Triangle_Button from '../mouse/Triangle_Button.svelte';
 	import Dot_Reveal from '../widget/Dot_Reveal.svelte';
 	import Button from '../mouse/Button.svelte';
-	import { h } from '../../ts/db/DBDispatch';
 	import Trash from '../kit/Trash.svelte';
 	export let offset = Point.zero;
 	const toolDiameter = k.dot_size * 1.4;
@@ -127,7 +126,7 @@
 				case IDTool.delete_cancel: confirmingDelete = false; break;
 				default:
 					if (!isDisabledFor(id)) {
-						await h.handle_tool_clicked(id, mouse_state);
+						await $s_hierarchy.handle_tool_clicked(id, mouse_state);
 					}
 					break;
 			}

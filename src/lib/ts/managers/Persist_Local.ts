@@ -1,10 +1,9 @@
+import { s_hierarchy, s_db_type, s_tree_type, s_graph_type, s_paging_state } from '../state/Reactive_State';
 import { s_focus_ancestry, s_thing_fontFamily, s_user_graphOffset } from '../state/Reactive_State';
-import { s_db_type, s_tree_type, s_graph_type, s_paging_state } from '../state/Reactive_State';
+import { Tree_Type, Graph_Type, dbDispatch, Paging_State } from '../common/Global_Imports';
 import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/Reactive_State';
 import { s_grabbed_ancestries, s_expanded_ancestries } from '../state/Reactive_State';
-import { Tree_Type, Graph_Type, dbDispatch, Paging_State } from '../common/Global_Imports';
-import { g, k, show, Point, debug, Ancestry } from '../common/Global_Imports';
-import { h } from '../db/DBDispatch';
+import { k, get, show, Point, debug, Ancestry } from '../common/Global_Imports';
 
 export enum IDPersistent {
 	relationships  = 'relationships',
@@ -84,8 +83,8 @@ class Persist_Local {
 	ancestry_forID(aid: string): Ancestry {
 		const rids = aid.split(k.generic_separator);	// ancestor id is multiple relationship ids separated by generic_separator
 		const rid = rids.slice(-1)[0];					// grab last relationship id
-		const predicateID = h.idPredicate_for(rid);		// grab its predicate id
-		return h.ancestry_remember_createUnique(aid, predicateID);
+		const predicateID = get(s_hierarchy).idPredicate_for(rid);		// grab its predicate id
+		return get(s_hierarchy).ancestry_remember_createUnique(aid, predicateID);
 	}
 
 	ancestries_forKey(key: string): Array<Ancestry> {	// 2 keys supported so far {grabbed, expanded}
@@ -146,7 +145,6 @@ class Persist_Local {
 		if (this.ignoreAncestries) {
 			this.write_key(IDPersistent.relationships, true);
 		}
-		show.restore_state();
 		s_rotation_ring_angle.set(this.read_key(IDPersistent.ring_angle) ?? 0);
 		s_graph_type.set(this.read_key(IDPersistent.graph_type) ?? Graph_Type.tree);
 		s_tree_type.set(this.read_key(IDPersistent.tree_type) ?? Tree_Type.children);
@@ -195,19 +193,19 @@ class Persist_Local {
 	}
 
 	restore_focus() {
-		h.rootAncestry_setup();
-		let ancestryToFocus = h.rootAncestry;
+		get(s_hierarchy).rootAncestry_setup();
+		let ancestryToFocus = get(s_hierarchy).rootAncestry;
 		if (!this.ignoreAncestries) {
 			const focusid = this.readDB_key(IDPersistent.focus);
 			if (!!focusid || focusid == k.empty) {
-				const focusAncestry = h.ancestry_remember_createUnique(focusid);
+				const focusAncestry = get(s_hierarchy).ancestry_remember_createUnique(focusid);
 				if (!!focusAncestry) {
 					ancestryToFocus = focusAncestry;
 				}
 			}
 		}
-		if (!h.thing_forAncestry(ancestryToFocus)) {
-			const lastGrabbedAncestry = h.grabs.ancestry_lastGrabbed?.parentAncestry;
+		if (!get(s_hierarchy).thing_forAncestry(ancestryToFocus)) {
+			const lastGrabbedAncestry = get(s_hierarchy).grabs.ancestry_lastGrabbed?.parentAncestry;
 			if (lastGrabbedAncestry) {
 				ancestryToFocus = lastGrabbedAncestry;
 			}

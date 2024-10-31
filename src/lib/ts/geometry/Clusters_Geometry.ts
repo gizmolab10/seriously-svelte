@@ -1,8 +1,7 @@
+import { s_hierarchy, s_paging_state, s_focus_ancestry } from '../state/Reactive_State';
 import { u, get, Thing, debug, Ancestry, Predicate } from '../common/Global_Imports';
 import { Cluster_Map, Paging_State, Widget_MapRect } from '../common/Global_Imports';
-import { s_paging_state, s_focus_ancestry } from '../state/Reactive_State';
 import Parent_Ancestry from '../managers/Parent_Ancestry';
-import { h } from '../db/DBDispatch';
 
 export default class Clusters_Geometry {
 	outward_cluster_maps: Array<Cluster_Map> = [];
@@ -77,7 +76,7 @@ export default class Clusters_Geometry {
 		let childAncestries = ancestry.childAncestries;
 		this.layout_clusterFor(childAncestries, Predicate.contains, true);
 		if (!!focus) {
-			for (const predicate of h.predicates) {
+			for (const predicate of get(s_hierarchy).predicates) {
 				let ancestries = this.parent_ancestries_maybeFor(focus, predicate);
 				this.layout_clusterFor(ancestries, predicate, false);
 			}
@@ -93,7 +92,7 @@ export default class Clusters_Geometry {
 			} else {
 				const focus = ancestry.thing;
 				if (!!focus) {
-					for (const predicate of h.predicates) {
+					for (const predicate of get(s_hierarchy).predicates) {
 						let ancestries = focus.uniqueAncestries_for(predicate) ?? [];
 						this.layout_clusterFor(ancestries, predicate, false);
 					}

@@ -4,7 +4,6 @@
 	import { k, u, get, Point, ZIndex, signals, onMount } from '../../ts/common/Global_Imports';
 	import { onDestroy, Predicate, Clusters_Geometry } from '../../ts/common/Global_Imports';
 	import Widget from '../widget/Widget.svelte';
-	import { h } from '../../ts/db/DBDispatch';
     const ancestry = $s_focus_ancestry;
 	const center = $s_graphRect.size.dividedInHalf.asPoint;
 	const childOffset = new Point(k.dot_size / -2, 4 - k.dot_size);

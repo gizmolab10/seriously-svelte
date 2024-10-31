@@ -1,13 +1,13 @@
-import { g, k, u, Thing, Trait, debug, signals, DebugFlag, Hierarchy, Predicate, TraitType } from '../common/Global_Imports';
+import { g, k, u, get, Thing, Trait, debug, signals, DebugFlag, Hierarchy, Predicate, TraitType } from '../common/Global_Imports';
 import { ThingType, dbDispatch, persistLocal, IDPersistent, Relationship, CreationOptions } from '../common/Global_Imports';
 import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
+import { s_hierarchy } from '../state/Reactive_State';
 import { DBType, DatumType } from '../db/DBInterface';
 import Identifiable from '../basis/Identifiable';
 import { initializeApp } from 'firebase/app';
 import DBInterface from './DBInterface';
-import { h } from '../db/DBDispatch';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
@@ -130,23 +130,23 @@ export default class DBFirebase implements DBInterface {
 	}
 	
 	async fetch_bulkAliases() {
-		const root = h.root;
+		const root = get(s_hierarchy).root;
 		if (this.baseID == k.name_bulkAdmin && root) {
-			const rootsAncestry = await h.ancestry_roots();		// TODO: assumes all ancestries created
+			const rootsAncestry = await get(s_hierarchy).ancestry_roots();		// TODO: assumes all ancestries created
 			if (!!rootsAncestry) {
-				h.rootsAncestry = rootsAncestry;
+				get(s_hierarchy).rootsAncestry = rootsAncestry;
 				try {		// add bulk aliases to roots thing
 					const bulk = collection(this.firestore, this.bulksName);	// fetch all bulks (documents)
 					let bulkSnapshot = await getDocs(bulk);
 					for (const bulkDoc of bulkSnapshot.docs) {
 						const baseID = bulkDoc.id;
 						if (baseID != this.baseID) {
-							let thing = h.thing_bulkAlias_forTitle(baseID);
+							let thing = get(s_hierarchy).thing_bulkAlias_forTitle(baseID);
 							if (!thing) {								// create a thing for each bulk
-								thing = h.thing_runtimeCreate(this.baseID, Identifiable.newID(), baseID, 'red', ThingType.bulk);
-								await h.ancestry_remember_remoteAddAsChild(rootsAncestry, thing);
+								thing = get(s_hierarchy).thing_runtimeCreate(this.baseID, Identifiable.newID(), baseID, 'red', ThingType.bulk);
+								await get(s_hierarchy).ancestry_remember_remoteAddAsChild(rootsAncestry, thing);
 							} else if (thing.thing_isBulk_expanded) {
-								await h.ancestry_redraw_remoteFetchBulk_browseRight(thing);
+								await get(s_hierarchy).ancestry_redraw_remoteFetchBulk_browseRight(thing);
 							}
 						}
 					}
@@ -179,7 +179,7 @@ export default class DBFirebase implements DBInterface {
 
 	setup_handle_docChanges(baseID: string, datum_type: DatumType, collection: CollectionReference) {
 		onSnapshot(collection, (snapshot) => {
-			if (h.isAssembled) {		// u.ignore snapshots caused by data written to server
+			if (get(s_hierarchy).isAssembled) {		// u.ignore snapshots caused by data written to server
 				if (this.deferSnapshots) {
 					this.snapshot_deferOne(baseID, datum_type, snapshot);
 				} else {
@@ -229,10 +229,10 @@ export default class DBFirebase implements DBInterface {
 	async document_remember_validated(datum_type: DatumType, id: string, data: DocumentData, baseID: string) {
 		if (DBFirebase.data_isValidOfKind(datum_type, data)) {
 			switch (datum_type) {
-				case DatumType.predicates:	  h.predicate_remember_runtimeCreate(id, data.kind, data.isBidirectional); break;
-				case DatumType.traits:		  h.trait_remember_runtimeCreate(baseID, id, data.ownerID, data.type, data.text, true); break;
-				case DatumType.things:		  h.thing_remember_runtimeCreate(baseID, id, data.title, data.color, data.type ?? data.trait, true, !data.type); break;
-				case DatumType.relationships: h.relationship_remember_runtimeCreateUnique(baseID, id, data.predicate.id, data.parent.id, data.child.id, data.order, CreationOptions.isFromRemote); break;
+				case DatumType.predicates:	  get(s_hierarchy).predicate_remember_runtimeCreate(id, data.kind, data.isBidirectional); break;
+				case DatumType.traits:		  get(s_hierarchy).trait_remember_runtimeCreate(baseID, id, data.ownerID, data.type, data.text, true); break;
+				case DatumType.things:		  get(s_hierarchy).thing_remember_runtimeCreate(baseID, id, data.title, data.color, data.type ?? data.trait, true, !data.type); break;
+				case DatumType.relationships: get(s_hierarchy).relationship_remember_runtimeCreateUnique(baseID, id, data.predicate.id, data.parent.id, data.child.id, data.order, CreationOptions.isFromRemote); break;
 			}
 		}
 	}
@@ -276,7 +276,7 @@ export default class DBFirebase implements DBInterface {
 				thing.awaitingCreation = false;
 				thing.hasBeen_remotely_saved = true;
 				thing.setID(ref.id);			// so relationship will be correct
-				h.thing_remember(thing);
+				get(s_hierarchy).thing_remember(thing);
 				this.handle_deferredSnapshots();
 				thing.log(DebugFlag.remote, 'CREATE T');
 			} catch (error) {
@@ -289,7 +289,7 @@ export default class DBFirebase implements DBInterface {
 		const fields = ['title', 'color', 'type'];
 		const root = new Thing(this.baseID, Identifiable.newID(), this.baseID, 'coral', ThingType.root, true);
 		const thing = new Thing(this.baseID, Identifiable.newID(), 'Click this text to edit it', 'purple', ThingType.generic, true);
-		h.root = root;
+		get(s_hierarchy).root = root;
 		const thingRef = await addDoc(collectionRef, u.convertToObject(thing, fields));		// N.B. these will be fetched, shortly
 		const rootRef = await addDoc(collectionRef, u.convertToObject(root, fields));		// no need to remember now
 		thing.setID(thingRef.id);
@@ -338,18 +338,18 @@ export default class DBFirebase implements DBInterface {
 
 	thing_handle_docChanges(baseID: string, id: string, change: DocumentChange, data: DocumentData) {
 		const remoteThing = new RemoteThing(data);
-		let thing = h.thing_forHID(id.hash());
+		let thing = get(s_hierarchy).thing_forHID(id.hash());
 		if (!!remoteThing) {
 			switch (change.type) {
 				case 'added':
 					if (!!thing || remoteThing.isEqualTo(this.addedThing) || remoteThing.type == ThingType.root) {
 						return;			// do not invoke signal because nothing has changed
 					}
-					thing = h.thing_remember_runtimeCreate(baseID, id, remoteThing.title, remoteThing.color, remoteThing.type, true);
+					thing = get(s_hierarchy).thing_remember_runtimeCreate(baseID, id, remoteThing.title, remoteThing.color, remoteThing.type, true);
 					break;
 				case 'removed':
 					if (!!thing) {
-						h.thing_forget(thing);
+						get(s_hierarchy).thing_forget(thing);
 					}
 					break;
 				case 'modified':
@@ -415,7 +415,7 @@ export default class DBFirebase implements DBInterface {
 				trait.awaitingCreation = false;
 				trait.hasBeen_remotely_saved = true;
 				trait.setID(ref.id);			// so relationship will be correct
-				h.trait_remember(trait);
+				get(s_hierarchy).trait_remember(trait);
 				this.handle_deferredSnapshots();
 				trait.log(DebugFlag.remote, 'CREATE T');
 			} catch (error) {
@@ -427,17 +427,17 @@ export default class DBFirebase implements DBInterface {
 	trait_handle_docChanges(baseID: string, id: string, change: DocumentChange, data: DocumentData) {
 		const remoteTrait = new RemoteTrait(data);
 		if (!!remoteTrait) {
-			let trait = h.trait_forHID(id.hash());
+			let trait = get(s_hierarchy).trait_forHID(id.hash());
 			switch (change.type) {
 				case 'added':
 					if (!!trait || remoteTrait.isEqualTo(this.addedTrait)) {
 						return;		// do not invoke signal because nothing has changed
 					}
-					trait = h.trait_remember_runtimeCreate(baseID, id, remoteTrait.ownerID, remoteTrait.type, remoteTrait.text, true);
+					trait = get(s_hierarchy).trait_remember_runtimeCreate(baseID, id, remoteTrait.ownerID, remoteTrait.type, remoteTrait.text, true);
 					break;
 				case 'removed':
 					if (!!trait) {
-						h.trait_forget(trait);
+						get(s_hierarchy).trait_forget(trait);
 					}
 					break;
 				case 'modified':
@@ -447,7 +447,7 @@ export default class DBFirebase implements DBInterface {
 					break;
 			}
 			setTimeout(() => { // wait in case a thing involved in this trait arrives in the data
-				h.traits_refreshKnowns();
+				get(s_hierarchy).traits_refreshKnowns();
 				signals.signal_rebuildGraph_fromFocus();
 			}, 20);
 		}
@@ -510,7 +510,7 @@ export default class DBFirebase implements DBInterface {
 				relationship.awaitingCreation = false;
 				relationship.hasBeen_remotely_saved = true;
 				relationship.setID(ref.id);
-				h.relationship_remember(relationship);
+				get(s_hierarchy).relationship_remember(relationship);
 				this.handle_deferredSnapshots();
 				relationship.log(DebugFlag.remote, 'CREATE R');
 			} catch (error) {
@@ -522,13 +522,13 @@ export default class DBFirebase implements DBInterface {
 	relationship_handle_docChanges(baseID: string, id: string, change: DocumentChange, data: DocumentData) {
 		const remoteRelationship = new RemoteRelationship(data);
 		if (!!remoteRelationship) {
-			let relationship = h.relationship_forHID(id.hash());
+			let relationship = get(s_hierarchy).relationship_forHID(id.hash());
 			switch (change.type) {
 				case 'added':
 					if (!!relationship) {
 						return;
 					}
-					relationship = h.relationship_remember_runtimeCreateUnique(baseID, id, remoteRelationship.predicate.id, remoteRelationship.parent.id, remoteRelationship.child.id, remoteRelationship.order, CreationOptions.isFromRemote);
+					relationship = get(s_hierarchy).relationship_remember_runtimeCreateUnique(baseID, id, remoteRelationship.predicate.id, remoteRelationship.parent.id, remoteRelationship.child.id, remoteRelationship.order, CreationOptions.isFromRemote);
 					break;
 				default:
 					if (!relationship) {
@@ -541,15 +541,15 @@ export default class DBFirebase implements DBInterface {
 								}
 								break;
 							case 'removed':
-								h.relationship_forget(relationship);
+								get(s_hierarchy).relationship_forget(relationship);
 								break;
 						}
 					}
 					break;
 			}
 			setTimeout(() => { // wait in case a thing involved in this relationship arrives in the data
-				h.relationships_refreshKnowns();
-				h.rootAncestry.order_normalizeRecursive_remoteMaybe(true);
+				get(s_hierarchy).relationships_refreshKnowns();
+				get(s_hierarchy).rootAncestry.order_normalizeRecursive_remoteMaybe(true);
 				signals.signal_rebuildGraph_fromFocus();
 			}, 20);
 		}

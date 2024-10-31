@@ -1,5 +1,7 @@
-import { g, debug, signals, Hierarchy, IDPersistent, persistLocal } from '../common/Global_Imports';
-import { s_fetch_inProgress, s_db_type, s_db_loadTime } from '../state/Reactive_State';
+import { s_db_type, s_hierarchy, s_edit_state, s_db_loadTime } from '../state/Reactive_State';
+import { IDPersistent, persistLocal, Startup_State } from '../common/Global_Imports';
+import { s_startup_state, s_showing_tools_ancestry } from '../state/Reactive_State';
+import { g, k, get, debug, signals, Hierarchy } from '../common/Global_Imports';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
@@ -8,9 +10,7 @@ import { dbLocal } from './DBLocal';
 
 // each db has its own hierarchy
 // when switching to another db
-// h is set to its hierarchy
-
-export let h: Hierarchy;
+// s_hierarchy is set to its hierarchy
 
 export default class DBDispatch {
 	db: DBInterface;
@@ -41,32 +41,46 @@ export default class DBDispatch {
 		});
 	}
 
+	get startupExplanation(): string {
+		const type = this.db.dbType;
+		let from = k.empty;
+		switch (type) {
+			case DBType.firebase: from = `, from ${this.db.baseID}`; break;
+			case DBType.local:	  return k.empty;
+		}
+		return `(loading your ${type} data${from})`;
+	}
+
 	async hierarchy_fetch_andBuild_forDBType(type: string) {
 		persistLocal.write_key(IDPersistent.db, type);
 		this.db_set_accordingToType(type);
 		this.queryStrings_apply();
 		if (this.db.hasData) {
-			h = this.db.hierarchy;
+			s_hierarchy.set(this.db.hierarchy);
 		} else {
 			const startTime = new Date().getTime();
 			s_db_loadTime.set(null);
-			h = this.db.hierarchy = new Hierarchy(this.db);		// create Hierarchy to fetch into
+			const h = this.db.hierarchy = new Hierarchy(this.db);
+			s_hierarchy.set(h);
 			if (this.db.isRemote) {
-				g.fetch_succeeded = false;
-				s_fetch_inProgress.set(true);
+				s_startup_state.set(Startup_State.fetch);
 			}
 			await this.db.fetch_all();
-			await h.add_missing_removeNulls(this.db.baseID);
-			h.rootAncestry_setup();
-			h.ancestries_rebuildAll();
+			await get(s_hierarchy).add_missing_removeNulls(this.db.baseID);
+			get(s_hierarchy).rootAncestry_setup();
+			get(s_hierarchy).ancestries_rebuildAll();
 			if (this.db.isRemote) {
 				this.set_loadTime(startTime);
 			}
 		}
 		debug.log_beat('hierarchy_fetch_andBuild_forDBType before timeout');
 		setTimeout(() => {
+			s_edit_state.set(null);
+			s_startup_state.set(Startup_State.ready);
+			s_showing_tools_ancestry.set(null);
 			persistLocal.restore_db_dependent(true);
-			h.conclude_fetch();
+			this.db.setHasData(true);
+			get(s_hierarchy).conclude_fetch();
 			signals.signal_rebuildGraph_fromFocus();
 			debug.log_beat('hierarchy_fetch_andBuild_forDBType after timeout');
 		}, 1);
@@ -100,8 +114,8 @@ export default class DBDispatch {
 
 	db_forType(type: string): DBInterface {
 		switch (type) {
-			case DBType.airtable: return dbAirtable;
 			case DBType.firebase: return dbFirebase;
+			case DBType.airtable: return dbAirtable;
 			default:			  return dbLocal;
 		}
 	}
