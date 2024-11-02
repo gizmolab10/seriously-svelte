@@ -14,20 +14,19 @@
 
 	update_colors();
 
-	function update_colors(wasSelected: boolean = false) {
-		title_color = isHovering | segment_map.isSelected ? k.color_background : k.color_default;
-		fill = isHovering && !wasSelected ? k.color_default : segment_map.isSelected ? u.opacitize(k.thing_color_default, 0.6) : k.color_background;
+	function update_colors() {
+		title_color = isHovering ? k.color_background : k.color_default ;
+		fill = isHovering ? k.color_default : segment_map.isSelected ? u.opacitize('skyblue', 0.6) : k.color_background;
 		debug.log_segments(`${name} ${segment_map.isSelected ? 'selected' : ''} ${fill}`)
 	}
 
 	function hover_andUp_closure(mouse_state) {
-		const wasSelected = segment_map.isSelected;
 		if (mouse_state.isHover) {
 			isHovering = !mouse_state.isOut;
 		} else if (mouse_state.isDown) {
 			hit_closure(name, mouse_state.event.isShift);
 		}
-		update_colors(wasSelected);
+		update_colors();
 	}
 
 </script>
@@ -51,17 +50,18 @@
 		<path
 			class={`${segment_name}-path`}
 			d={segment_map.path}
+			stroke-width=0.3px
 			stroke={stroke}
 			fill={fill}/>
 	</svg>
 	<div
 		class='title'
 		style='
-			top:1.5px;
-			left:18px;
-			font-size: 0.95em;
+			left:{segment_map.title_origin.x}px;
+			top:{segment_map.title_origin.y}px;
+			color:{title_color};
 			position:absolute;
-			color:{title_color};'>
+			font-size:0.95em;'>
 		{segment_map.title}
 	</div>
 </Mouse_Responder>

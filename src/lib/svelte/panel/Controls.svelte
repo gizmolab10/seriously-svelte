@@ -68,11 +68,11 @@
 		}
 	}
 
-	function selection_closure(name: string, titles: Array<string>) {
-		const title = titles[0];	// only ever has one element
+	function selection_closure(name: string, types: Array<string>) {
+		const type = types[0];	// only ever has one element
 		switch (name) {
-			case 'relations': $s_tree_type	= title as Tree_Type; break;
-			case 'graph':	  $s_graph_type = title as Graph_Type; break;
+			case 'relations': $s_tree_type	= type as Tree_Type; break;
+			case 'graph':	  $s_graph_type = type as Graph_Type; break;
 		}
 	}
 
@@ -99,7 +99,8 @@
 			{#key $s_graph_type}
 				<Segmented
 					name='graph-type'
-					origin={Point.x(30)}
+					font_size='0.95em'
+					origin={Point.x(40)}
 					selected={[$s_graph_type]}
 					titles={[Graph_Type.tree, Graph_Type.rings]}
 					selection_closure={(titles) => selection_closure('graph', titles)}/>
@@ -107,7 +108,8 @@
 					{#key $s_tree_type}
 						<Segmented
 							name='tree-type'
-							origin={Point.x(120)}
+							font_size='0.95em'
+							origin={Point.x(140)}
 							selected={[$s_tree_type]}
 							titles={[Tree_Type.children, Tree_Type.parents, Tree_Type.related]}
 							selection_closure={(titles) => selection_closure('relations', titles)}/>

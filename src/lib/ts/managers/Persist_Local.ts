@@ -1,8 +1,8 @@
 import { s_hierarchy, s_db_type, s_tree_type, s_graph_type, s_paging_state } from '../state/Reactive_State';
-import { s_focus_ancestry, s_thing_fontFamily, s_user_graphOffset } from '../state/Reactive_State';
+import { s_user_graphOffset, s_grabbed_ancestries, s_expanded_ancestries } from '../state/Reactive_State';
+import { s_focus_ancestry, s_thing_fontSize, s_thing_fontFamily } from '../state/Reactive_State';
 import { Tree_Type, Graph_Type, dbDispatch, Paging_State } from '../common/Global_Imports';
 import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/Reactive_State';
-import { s_grabbed_ancestries, s_expanded_ancestries } from '../state/Reactive_State';
 import { k, get, show, Point, debug, Ancestry } from '../common/Global_Imports';
 
 export enum IDPersistent {
@@ -15,6 +15,7 @@ export enum IDPersistent {
 	ring_angle     = 'ring_angle',
 	arrowheads	   = 'arrowheads',
 	tree_type	   = 'tree_type',
+	font_size	   = 'font_size',
 	expanded	   = 'expanded',
 	tinyDots	   = 'tinyDots',
 	grabbed		   = 'grabbed',
@@ -145,6 +146,7 @@ class Persist_Local {
 		if (this.ignoreAncestries) {
 			this.write_key(IDPersistent.relationships, true);
 		}
+		s_thing_fontSize.set(this.read_key(IDPersistent.font_size) ?? 14);
 		s_rotation_ring_angle.set(this.read_key(IDPersistent.ring_angle) ?? 0);
 		s_graph_type.set(this.read_key(IDPersistent.graph_type) ?? Graph_Type.tree);
 		s_tree_type.set(this.read_key(IDPersistent.tree_type) ?? Tree_Type.children);

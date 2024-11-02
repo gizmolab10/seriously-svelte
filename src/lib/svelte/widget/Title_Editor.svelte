@@ -247,6 +247,7 @@
 {#key originalTitle}
 	<span class="ghost" bind:this={ghost}
 		style='
+			left:-9999px;
 			padding: {padding};
 			position: absolute;
 			visibility: hidden;

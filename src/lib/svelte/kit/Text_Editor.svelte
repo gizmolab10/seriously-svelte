@@ -84,7 +84,6 @@
 			z-index: {ZIndex.text};
 			overflow-wrap: break-word;
 			{k.prevent_selection_style};
-			font-family: Times New Roman;
 			font-family: {$s_thing_fontFamily};
 			border-radius: {k.row_height / 2}px;
 		'/>

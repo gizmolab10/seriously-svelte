@@ -7,6 +7,7 @@
 	export let height = k.row_height - 2;
 	export let fill = k.color_background;
 	export let stroke = k.color_default;
+	export let font_size = '0.95em';
 	export let origin = Point.zero;
 	export let multiple = false;
     export let name = k.empty;
@@ -23,13 +24,13 @@
 
 	function update_maps_andWidth() {
 		const max = titles.length - 1;
-		let left = height / 2;
 		let index = 0;
+		let left = 0;
 		reset_maps_andWidth();
 		for (const title of titles) {
-			const map = Segment_Map.grab_segment_map(name, title, isSelected(title), index, max, left, height);
+			const map = Segment_Map.grab_segment_map(name, title, font_size, isSelected(title), index, max, left, height);
+			left += map.width + Segment_Map.segment_gap;
 			segment_maps.push(map);
-			left += map.width;
 			index += 1;
 		}
 		width = left;
@@ -51,11 +52,11 @@
 
 <div class={name + '-segments'}
 	style='
-		width: {width}px;
-		position: absolute;
-		left: {origin.x}px;
-		top: {origin.y - 1}px;
-		height: {height + 2}px;'>
+		width:{width}px;
+		position:absolute;
+		left:{origin.x}px;
+		top:{origin.y - 1}px;
+		height:{height + 2}px;'>
 	{#each segment_maps as segment_map}
 		<Segment
 			fill={fill}

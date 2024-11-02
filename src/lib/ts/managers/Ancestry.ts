@@ -72,7 +72,7 @@ export default class Ancestry extends Identifiable {
 	get childRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, false); }
 	get parentRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, true); }
 	get titleWrapper(): Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.idHashed, SvelteComponentType.title); }
-	get showsReveal(): boolean { return !get(s_graph_type) == Graph_Type.rings && (this.hasChildRelationships || (this.thing?.isBulkAlias ?? false)); }
+	get showsReveal(): boolean { return get(s_graph_type) == Graph_Type.tree && (this.hasChildRelationships || (this.thing?.isBulkAlias ?? false)); }
 
 	get relationships(): Array<Relationship> {
 		const relationships = this.ids_hashed.map(hid => get(s_hierarchy).relationship_forHID(hid)) ?? [];
@@ -116,7 +116,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	get isVisible(): boolean {
-		if (!!get(s_graph_type) == Graph_Type.rings) {
+		if (get(s_graph_type) == Graph_Type.rings) {
 			return this.parentAncestry?.paging_state?.index_isVisible(this.siblingIndex) ?? false;
 		} else {
 			const focus = get(s_focus_ancestry);
@@ -289,10 +289,10 @@ export default class Ancestry extends Identifiable {
 	}
 
 	includedInAncestries(ancestries: Array<Ancestry>): boolean {
-		return (ancestries?.filter(p => {
-			const ancestry = p as Ancestry;
-			return ancestry && ancestry.matchesAncestry(this);
-		}).length > 0) ?? false;
+		const included = ancestries?.filter(a => {
+			return a && a.matchesAncestry(this);
+		}) ?? [];
+		return included.length > 0;
 	}
 
 	hasThings(predicate: Predicate): boolean {
@@ -563,7 +563,7 @@ export default class Ancestry extends Identifiable {
 			return array;
 		});
 		let ancestries = get(s_grabbed_ancestries);
-		if (ancestries.length == 0 && !get(s_graph_type) == Graph_Type.rings) {
+		if (ancestries.length == 0 && get(s_graph_type) == Graph_Type.tree) {
 			rootAncestry.grabOnly();
 		} else {
 			this.toggle_editingTools(); // do not show editingTools for root

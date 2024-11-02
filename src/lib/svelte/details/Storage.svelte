@@ -1,16 +1,14 @@
 <script lang='ts'>
-	import { k, u, ZIndex, dbDispatch, Hierarchy, IDPersistent, persistLocal } from '../../ts/common/Global_Imports';
+	import { k, u, Point, ZIndex, dbDispatch, Hierarchy, IDPersistent, persistLocal } from '../../ts/common/Global_Imports';
 	import { s_db_type, s_db_loadTime } from '../../ts/state/Reactive_State';
 	import Radio_Buttons from '../buttons/Radio_Buttons.svelte';
+	import Segmented from '../mouse/Segmented.svelte';
 	import { DBType } from '../../ts/db/DBInterface';
 
-	function handle_dbTypeAt(index) { dbDispatch.db_change_toType(menuItems[index].id); }
-
-	const menuItems = [
-		{ id: DBType.local,	   label: 'local', action: () => { handle_dbTypeAt(0); } },
-		{ id: DBType.firebase, label: 'firebase', action: () => { handle_dbTypeAt(1); } },
-		{ id: DBType.airtable, label: 'airtable', action: () => { handle_dbTypeAt(2); } }
-	];
+	function selection_closure(titles: Array<string>) {
+		const type = titles[0] as DBType;	// only ever contains one title
+		dbDispatch.db_change_toType(type);
+	}
 
 </script>
 
@@ -18,16 +16,23 @@
 	<div class='storage-information'
 		style='
 			height:40px;
-			padding:5px;
-			justify-content:center;'>
-		<Radio_Buttons name='storage' menuItems={menuItems} idSelected={$s_db_type}/>
+			padding:5px;'>
+		<Segmented
+			name='tree-type'
+			font_size='0.8em'
+			selected={[$s_db_type]}
+			height={k.row_height - 4}
+			origin={new Point(22, 8)}
+			selection_closure={selection_closure}
+			titles={[DBType.local, DBType.firebase, DBType.airtable]}/>
 		{#if $s_db_loadTime && $s_db_loadTime > 0}
 			<div style='
-				top:24px;
 				left:60px;
+				top:25.5px;
 				color:#333;
-				font-size:11px;
-				position:absolute;'>
+				font-size:0.8em;
+				position:absolute;
+				justify-content:center;'>
 				fetch took {$s_db_loadTime} s
 			</div>
 		{/if}

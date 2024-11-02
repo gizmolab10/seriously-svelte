@@ -24,6 +24,7 @@ export const s_device_isMobile		  = writable<boolean>();
 export const s_show_details			  = writable<boolean>();
 export const s_db_type				  = writable<string>();			// triggers details storage update
 export const s_thing_fontFamily		  = writable<string>();
+export const s_thing_fontSize		  = writable<number>();
 export const s_ring_rotation_radius	  = writable<number>();
 export const s_rotation_ring_angle	  = writable<number>();
 export const s_mouse_up_count		  = writable<number>();
