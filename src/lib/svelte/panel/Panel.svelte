@@ -17,6 +17,8 @@
 	let chain = ['Panel'];
 	let rebuilds = 0;
 
+	function ignore_wheel(event) { event.preventDefault(); }
+
 	$: {
 		const _ = $s_db_type + $s_startup_state;
 		rebuilds += 1;
@@ -61,7 +63,8 @@
 	<div style='
 		touch-action: none;
 		pointer-events: auto;
-		{k.prevent_selection_style};'>
+		{k.prevent_selection_style};'
+		on:wheel={ignore_wheel}>
 		{#if [Startup_State.start, Startup_State.fetch].includes($s_startup_state) && dbDispatch.db.isRemote}
 			<p>Welcome to Seriously</p>
 			{#if $s_startup_state == Startup_State.fetch}

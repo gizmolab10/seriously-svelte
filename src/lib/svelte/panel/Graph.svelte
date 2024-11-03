@@ -24,6 +24,11 @@
 	});
 
 	$: {
+		const _ = $s_user_graphOffset;
+		rebuilds += 1;
+	}
+
+	$: {
 		draggableRect = $s_device_isMobile ? $s_graphRect : $s_graphRect.atZero_forX;
 		debug.log_action(` draggable ${draggableRect.description}`);
 		update_toolsOffset();
@@ -41,23 +46,9 @@
 
 	function update_toolsOffset() {
 		if ($s_graph_type == Graph_Type.rings) {
-			toolsOffset = new Point(31, -545.3);
+			toolsOffset = new Point(31, -548.8);
 		} else {
 			toolsOffset = Point.y(-18.3);
-		}
-	}
-
-	function desktop_wheel(event) {
-		event.preventDefault();
-		if (!g.device_isMobile) {
-			const userOffset = $s_user_graphOffset;
-			const delta = new Point(-event.deltaX, -event.deltaY);
-			if (!!userOffset && g.allow_HorizontalScrolling && delta.magnitude > 1) {
-				debug.log_action(` wheel GRAPH`);
-				g.graphOffset_setTo(userOffset.offsetBy(delta));
-				update_toolsOffset();
-				rebuilds += 1;
-			}
 		}
 	}
 
@@ -79,7 +70,6 @@
 
 {#key $s_focus_ancestry, rebuilds}
 	<div class='draggable'
-		on:wheel={desktop_wheel}
 		bind:this={draggable}
 		style={style}>
 		{#if $s_graph_type == Graph_Type.rings}
