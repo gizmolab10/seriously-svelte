@@ -41,17 +41,16 @@ class Global_State {
 	}
 
 	setup_defaults() {
-		const isMobile = this.device_isMobile;
 		s_resize_count.set(0);
 		s_rebuild_count.set(0);
 		s_mouse_up_count.set(0);
 		s_color_thing.set(null);
-		s_device_isMobile.set(isMobile);
 		s_startup_state.set(Startup_State.start);
-		this.applyScale(isMobile ? 2 : 1);
+		s_device_isMobile.set(this.device_isMobile);
+		this.applyScale(persistLocal.read_key(IDPersistent.scale) ?? 1);
+		this.ring_resizing_state = new Expansion_State();
 		this.cluster_paging_state = new Rotation_State();
 		this.ring_rotation_state = new Rotation_State();
-		this.ring_resizing_state = new Expansion_State();
 	}
 
 	queryStrings_apply() {

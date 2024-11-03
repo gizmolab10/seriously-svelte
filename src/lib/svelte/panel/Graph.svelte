@@ -25,6 +25,7 @@
 
 	$: {
 		const _ = $s_user_graphOffset;
+		update_toolsOffset();
 		rebuilds += 1;
 	}
 
