@@ -16,34 +16,36 @@
 	let svg_isRelated_path = k.empty;
 	let svg_tinyDots_path = k.empty;
 	let svg_dragDot_path = k.empty;
+    let thing = ancestry.thing;
 	let isGrabbed = false;
 	let isHovering = true;
 	let size = k.dot_size;
 	let mouse_click_timer;
-    let thing!: Thing;
 	let rebuilds = 0;
 	let redraws = 0;
 	let left = 0;
 	let top = 0;
 	let dotDrag;
 
+	updateSVGPaths();
+	updateColors_forHovering(true);
+
 	function handle_context_menu(event) { event.preventDefault(); }		// no default context menu on right-click
 
     onMount(() => {
-		if (!!ancestry) {
-			thing = ancestry.thing;
-		}
-		updateSVGPaths();
-		updateColors_forHovering(true);
         const handleAltering = signals.handle_altering((blink_flag) => {
 			const invert_flag = blink_flag && $s_showing_tools_ancestry && !!ancestry && ancestry.canConnect_toToolsAncestry;
 			element_state.isInverted = invert_flag;
 			updateExtraSVGPaths();
         });
-		return () => {
-			handleAltering.disconnect();
-		};
+		return () => { handleAltering.disconnect(); };
 	});
+
+	$: {
+		if (!!ancestry) {
+			thing = ancestry.thing;
+		}
+	};
 
 	$: {
 		if (!!dotDrag) {
@@ -102,7 +104,7 @@
 		}
 	}
 
-	function hover_long_up_closure(mouse_state) {
+	function up_long_hover_clusure(mouse_state) {
 		if (!g.isAny_rotation_active) {
 			if (mouse_state.isHover) {
 				updateColors_forHovering(mouse_state.isOut);
@@ -129,7 +131,7 @@
 			center={center}
 			detect_longClick={true}
 			name={element_state.name}
-			mouse_state_closure={hover_long_up_closure}>
+			mouse_state_closure={up_long_hover_clusure}>
 			<button class='drag'
 				bind:this={dotDrag}
 				id={'drag-for-' + name}

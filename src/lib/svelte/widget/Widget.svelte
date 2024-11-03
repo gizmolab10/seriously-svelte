@@ -52,10 +52,10 @@
 		element_state = ux.element_state_forName(name);		// survives onDestroy, created by {tree, rings} children
 		debug.log_mount(`WIDGET ${thing?.description} ${ancestry?.isGrabbed}`);
 		fullUpdate();
-		const handleAny = signals.handle_anySignal((kinds, id) => {
-			for (const kind of kinds) {
+		const handleAny = signals.handle_anySignal((ids_signal, id) => {
+			for (const kind of ids_signal) {
 				switch (kind) {
-					case kinds.relayout:
+					case ids_signal.relayout:
 						if (id == thing?.id) {
 							debug.log_layout(`WIDGET signal ${thing?.description}`);
 							layout_widget()
