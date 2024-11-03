@@ -49,7 +49,7 @@
 
 	function desktop_wheel(event) {
 		event.preventDefault();
-		if (!$s_device_isMobile) {
+		if (!g.device_isMobile) {
 			const userOffset = $s_user_graphOffset;
 			const delta = new Point(-event.deltaX, -event.deltaY);
 			if (!!userOffset && g.allow_HorizontalScrolling && delta.magnitude > 1) {

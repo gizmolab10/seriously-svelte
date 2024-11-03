@@ -4,102 +4,88 @@ import { g, get, Point, debug, signals, Alteration_State } from '../common/Globa
 
 class Events {
 	initialTouch: Point | null = null;
+	interval: NodeJS.Timeout | null = null;
 
 	setup() {
-		this.subscribeTo_alteration_state();
-		this.setup_platform();
+		s_alteration_mode.subscribe((state: Alteration_State | null) => { this.handle_alteration_state(state); });
+		this.subscribeTo_events();
 	}
 
-	setup_platform() {
-		this.subscribeTo_platform_events();
+	clear_event_subscriptions() {
+		window.removeEventListener('resize', this.handle_resize);
+		window.removeEventListener('touchend', this.handle_touch_end);
+		window.removeEventListener('touchmove', this.handle_touch_move);
+		window.removeEventListener('mouseup', this.handle_mouseUp_event);
+		window.removeEventListener('touchstart', this.handle_touch_start);
+		window.removeEventListener('mousemove', this.handle_mouseMove_event);
+		window.removeEventListener('orientationchange', this.handle_orientation_change);
+	}
+
+	subscribeTo_events() {
+		this.clear_event_subscriptions();
+		window.addEventListener('resize', this.handle_resize);
+		window.addEventListener('orientationchange', this.handle_orientation_change);
 		if (g.device_isMobile) {
-			this.subscribeTo_touch_events();
+			debug.log_action(`  mobile subscribe GRAPH`);
+			window.addEventListener('touchend', this.handle_touch_end, { passive: false });
+			window.addEventListener('touchmove', this.handle_touch_move, { passive: false });
+			window.addEventListener('touchstart', this.handle_touch_start, { passive: false });
 		} else {
-			this.subscribeTo_mouse_events();
+			window.addEventListener('mouseup', this.handle_mouseUp_event);
+			window.addEventListener('mousemove', this.handle_mouseMove_event);
 		}
 	}
 
-	subscribeTo_alteration_state() {
-		let interval: NodeJS.Timeout | null = null;
-		s_alteration_mode.subscribe((state: Alteration_State | null) => {
-			if (!!interval) {
-				clearInterval(interval);
-				interval = null;
-			}
-			if (!!state) {
-				let blink = true;
-				interval = setInterval(() => {
-					signals.signal_altering(blink ? state : null);
-					blink = !blink;
-				}, 500)
-			} else {
-				signals.signal_altering(null);
-			}
-		})
+	handle_mouseUp_event(event: MouseEvent) {
+		event.stopPropagation();
+		s_mouse_up_count.set(get(s_mouse_up_count) + 1);
+		// this.respondTo_closure(event, Mouse_State.up);
 	}
 
-	subscribeTo_platform_events() {
-		window.removeEventListener('resize', this.platform_resize);
-		window.addEventListener('resize', (event) => { this.platform_resize(event); });
-		window.removeEventListener('orientationchange', this.platform_orientation_change);
-		window.addEventListener('orientationchange', (event) => { this.platform_orientation_change(event); });
+	handle_mouseMove_event(event: MouseEvent) {
+		event.stopPropagation();
+		s_mouse_location.set(new Point(event.clientX, event.clientY));
+		// this.respondTo_closure(event, Mouse_State.move);
 	}
 
-	platform_resize(event: Event) {
+	handle_alteration_state(state: Alteration_State | null) {
+		if (!!this.interval) {
+			clearInterval(this.interval);
+			this.interval = null;
+		}
+		if (!!state) {
+			let blink = true;
+			this.interval = setInterval(() => {
+				signals.signal_altering(blink ? state : null);
+				blink = !blink;
+			}, 500)
+		} else {
+			signals.signal_altering(null);
+		}
+	}
+
+	handle_resize(event: Event) {
 		setTimeout(() => {
 			const isMobile = g.device_isMobile;
 			debug.log_action(` resize [is${isMobile ? '' : ' not'} mobile] STATE`);
 			s_resize_count.set(get(s_resize_count) + 1);
 			s_device_isMobile.set(isMobile);
 			g.graphRect_update();
-			this.setup_platform();
+			this.subscribeTo_events();
 		}, 1);
 	}
 
-	platform_orientation_change(event: Event) {
+	handle_orientation_change(event: Event) {
 		setTimeout(() => {
 			const isMobile = g.device_isMobile;
-			debug.log_action(` orientationchange [is${isMobile ? '' : ' not'} mobile] STATE`);
+			debug.log_action(` orientation change [is${isMobile ? '' : ' not'} mobile] STATE`);
 			s_device_isMobile.set(isMobile);
 			g.graphRect_update();
-			this.setup_platform();
+			this.subscribeTo_events();
 		}, 1);
 	}
 
-	subscribeTo_mouse_events() {
-		window.addEventListener('mouseup', (event: MouseEvent) => {
-			event.stopPropagation();
-			s_mouse_up_count.set(get(s_mouse_up_count) + 1);
-			// this.respondTo_closure(event, Mouse_State.up);
-		});
-		window.addEventListener('mousemove', (event: MouseEvent) => {
-			event.stopPropagation();
-			s_mouse_location.set(new Point(event.clientX, event.clientY));
-			// this.respondTo_closure(event, Mouse_State.move);
-		});
-		// window.addEventListener('mousedown', (event: MouseEvent) => {
-		// 	event.stopPropagation();
-		// 	this.respondTo_closure(event, Mouse_State.down);
-		// });
-	}
-
-	subscribeTo_touch_events() {
-		window.removeEventListener('touchend', this.mobile_touch_end);
-		window.removeEventListener('touchmove', this.mobile_touch_move);
-		window.removeEventListener('touchstart', this.mobile_touch_start);
-		if (g.device_isMobile) {
-			debug.log_action(`  mobile subscribe GRAPH`);
-			window.addEventListener('touchend', this.mobile_touch_end, { passive: false });
-			window.addEventListener('touchmove', this.mobile_touch_move, { passive: false });
-			window.addEventListener('touchstart', this.mobile_touch_start, { passive: false });
-		}
-	}
-
-	mobile_touch_end(event: TouchEvent) {
-		this.initialTouch = null;
-	}
-
-	mobile_touch_start(event: TouchEvent) {
+	handle_touch_start(event: TouchEvent) {
 		if (event.touches.length == 2) {
 			const touch = event.touches[0];
 			this.initialTouch = new Point(touch.clientX, touch.clientY);
@@ -107,7 +93,7 @@ class Events {
 		}
 	}
 
-	mobile_touch_move(event: TouchEvent) {
+	handle_touch_move(event: TouchEvent) {
 		if (event.touches.length == 2) {
 			event.preventDefault();
 			if (this.initialTouch) {
@@ -118,6 +104,10 @@ class Events {
 				debug.log_action(` two-finger touch move GRAPH`);
 			}
 		}
+	}
+
+	handle_touch_end(event: TouchEvent) {
+		this.initialTouch = null;
 	}
 
 }
