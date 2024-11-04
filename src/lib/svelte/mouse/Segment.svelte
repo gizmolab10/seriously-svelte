@@ -20,7 +20,7 @@
 		debug.log_segments(`${name} ${segment_map.isSelected ? 'selected' : ''} ${fill}`)
 	}
 
-	function hover_andUp_closure(mouse_state) {
+	function up_hover_closure(mouse_state) {
 		if (mouse_state.isHover) {
 			isHovering = !mouse_state.isOut;
 		} else if (mouse_state.isDown) {
@@ -38,7 +38,7 @@
 	height={size.height}
 	zindex={ZIndex.frontmost}
 	center={segment_map.center}
-	mouse_state_closure={hover_andUp_closure}>
+	mouse_state_closure={up_hover_closure}>
 	<svg
 		class={`${segment_name}-svg`}
 		viewBox={segment_map.viewBox}

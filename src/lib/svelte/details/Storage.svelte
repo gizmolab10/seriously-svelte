@@ -22,7 +22,7 @@
 			font_size='0.8em'
 			selected={[$s_db_type]}
 			height={k.row_height - 4}
-			origin={new Point(22, 8)}
+			origin={new Point(35, 8)}
 			selection_closure={selection_closure}
 			titles={[DBType.local, DBType.firebase, DBType.airtable]}/>
 		{#if $s_db_loadTime && $s_db_loadTime > 0}

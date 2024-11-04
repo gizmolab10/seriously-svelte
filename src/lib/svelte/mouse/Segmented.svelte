@@ -25,15 +25,16 @@
 	function update_maps_andWidth() {
 		const max = titles.length - 1;
 		let index = 0;
-		let left = 0;
+		let x = 0;
 		reset_maps_andWidth();
 		for (const title of titles) {
-			const map = Segment_Map.grab_segment_map(name, title, font_size, isSelected(title), index, max, left, height);
-			left += map.width + Segment_Map.segment_gap;
+			const gap = index == 0 ? Segment_Map.segment_gap : 0;
+			const map = Segment_Map.grab_segment_map(name, title, font_size, isSelected(title), index, max, x, height);
+			x += map.width + gap;
 			segment_maps.push(map);
 			index += 1;
 		}
-		width = left;
+		width = x;
 	}
 
 	function hit_closure(title: string, shift: boolean) {

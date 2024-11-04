@@ -17,7 +17,18 @@ export default class Segment_Map {
 
 	static segment_gap = 14;
 	get description(): string { return `${this.title} ${this.part} ${this.path}`; }
-	get width(): number { return u.getWidth_ofString_withSize(this.title, this.font_size) + 10; }
+	get width(): number { return u.getWidth_ofString_withSize(this.title, this.font_size) + 8; }
+
+	constructor(name: string, title: string, font_size: string, isSelected: boolean, index: number, max: number, left: number, height: number) {
+		this.isSelected = isSelected;
+		this.font_size = font_size;
+		this.height = height;
+		this.title = title;
+		this.index = index;
+		this.left = left;
+		this.name = name;
+		this.finish_map(max);
+	}
 
 	static grab_segment_map(name: string, title: string, font_size: string, isSelected: boolean, index: number, max: number, left: number, height: number) : Segment_Map {
 		let map_name = `${title}-${name}-at-${index}`;
@@ -31,17 +42,6 @@ export default class Segment_Map {
 		return map;
 	}
 
-	constructor(name: string, title: string, font_size: string, isSelected: boolean, index: number, max: number, left: number, height: number) {
-		this.isSelected = isSelected;
-		this.font_size = font_size;
-		this.height = height;
-		this.title = title;
-		this.index = index;
-		this.left = left;
-		this.name = name;
-		this.finish_map(max);
-	}
-
 	finish_map(max: number) {
 		const raw_size = new Size(this.width, this.height);
 		this.size = raw_size.expandedByXY(Segment_Map.segment_gap, 2);
@@ -51,12 +51,13 @@ export default class Segment_Map {
 
 	setup_path(raw_size: Size) {
 		const isFirst = this.index == 0;
+		const title_top = 4.5 - this.height / 6;
 		const center = raw_size.dividedInHalf.asPoint;
-		const path_center = center.offsetByX(isFirst ? 0 : -11);
-		const size = isFirst ? raw_size.expandedByX(-10) : raw_size;
+		const size = raw_size.expandedByX(isFirst ? -14 : -2);
+		const path_center = center.offsetByX(isFirst ? 0 : -10);
 		this.path = svgPaths.oblong(path_center, size.expandedByY(-2), this.part);
-		this.title_origin = new Point(isFirst ? 13 : 8, 1.3 + this.height / 20);
-		this.viewBox = new Rect(Point.zero, raw_size).viewBox;
+		this.title_origin = new Point(isFirst ? 20 : 10, title_top);
+		this.viewBox = Rect.createSizeRect(size).viewBox;
 		this.center = center.offsetByX(this.left);
 	}
 

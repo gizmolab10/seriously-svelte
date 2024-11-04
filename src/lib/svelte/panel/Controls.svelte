@@ -48,9 +48,9 @@
 
 	function next_graph_relations() {
 		switch ($s_tree_type) {
-			case Tree_Type.children: return Tree_Type.parents;
 			case Tree_Type.parents:  return Tree_Type.related;
-			default:					  return Tree_Type.children;
+			case Tree_Type.children: return Tree_Type.parents;
+			default:				 return Tree_Type.children;
 		}
 	}
 
@@ -100,7 +100,7 @@
 				<Segmented
 					name='graph-type'
 					font_size='0.95em'
-					origin={Point.x(40)}
+					origin={Point.x(36)}
 					selected={[$s_graph_type]}
 					titles={[Graph_Type.tree, Graph_Type.rings]}
 					selection_closure={(titles) => selection_closure('graph', titles)}/>
@@ -109,7 +109,7 @@
 						<Segmented
 							name='tree-type'
 							font_size='0.95em'
-							origin={Point.x(140)}
+							origin={Point.x(132)}
 							selected={[$s_tree_type]}
 							titles={[Tree_Type.children, Tree_Type.parents, Tree_Type.related]}
 							selection_closure={(titles) => selection_closure('relations', titles)}/>
