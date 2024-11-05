@@ -191,7 +191,7 @@
 			<Title_Editor
 				forward={forward}
 				ancestry={ancestry}
-				fontSize={k.thing_fontSize}px
+				fontSize={k.font_size}px
 			/>
 			{#if ancestry?.showsReveal}
 				<Dot_Reveal

@@ -6,6 +6,7 @@ declare global {
 		unCamelCase(): string;
 		removeWhiteSpace(): string;
 		injectEllipsisAt(at: number): string;
+		fontSize_relativeTo(base: number): number;
 	}
 }
 
@@ -30,6 +31,20 @@ Object.defineProperty(String.prototype, 'removeWhiteSpace', {
 Object.defineProperty(String.prototype, 'lastWord', {
 	value: function(): string {
 		return this.split(' ').slice(-1)[0];
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(String.prototype, 'fontSize_relativeTo', {
+	value: function(base: number): number {
+		if (this.includes('em')) {
+			return base * parseFloat(this.split('em')[0]);
+		} else if (this.includes('px')) {
+			return Number(this.split('em')[0]);
+		}
+		return Number(this);
 	},
 	writable: false,
 	enumerable: false,

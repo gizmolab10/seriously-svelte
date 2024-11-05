@@ -7,7 +7,7 @@
 	export let segment_map!: Segment_Map;
     export let name = segment_map.title;
 	export let stroke = k.color_default;
-	const segment_name = `${name}-${segment_map.name}-segment`;
+	const segment_name = `${name}-segment`;
 	let title_color = k.color_default;
 	let size = segment_map.size;
 	let isHovering = false;
@@ -37,10 +37,11 @@
 	name={segment_name}
 	height={size.height}
 	zindex={ZIndex.frontmost}
-	center={segment_map.center}
+	origin={segment_map.origin}
 	mouse_state_closure={up_hover_closure}>
 	<svg
-		class={`${segment_name}-svg`}
+		id={`${name}`}
+		class='segment-svg'
 		viewBox={segment_map.viewBox}
 		style='
 			height:{size.height}px;
@@ -48,10 +49,11 @@
 			position: absolute;
 			left:0px;'>
 		<path
-			class={`${segment_name}-path`}
+			class='segment-path'
 			d={segment_map.path}
 			stroke-width=0.3px
 			stroke={stroke}
+			id={`${name}`}
 			fill={fill}/>
 	</svg>
 	<div

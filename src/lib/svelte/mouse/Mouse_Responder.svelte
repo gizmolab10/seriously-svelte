@@ -7,13 +7,14 @@
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;
 	export let cursor: string | null = null;
+	export let origin: Point | null = null;
+	export let center: Point | null = null;
 	export let detect_doubleClick = false;
 	export let detect_longClick = false;
 	export let detect_mouseDown = true;
 	export let detect_mouseUp = true;
 	export let position = 'absolute';
 	export let zindex = ZIndex.dots;
-	export let center: Point | null;
 	export let font_size = '0.9em';
 	export let align_left = true;
 	export let name = 'generic';
@@ -28,7 +29,8 @@
 	//////////////////////////////////////////////////////////////
 	//															//
 	//	handles mouse: down, up, double, long & hover			//
-	//	requires: center, width, height, closure & name			//
+	//	requires: center or origin (one must remain null),		//
+	//		 width, height, closure & name						//
 	//															//
 	//	isHit_closure: caller can override hit geometry & logic	//
 	//	mouse_state_closure: give caller relevant mouse info	//
@@ -138,10 +140,11 @@
 		if (!!cursor) {
 			style = `${style} cursor: ${cursor};`;
 		}
-		if (!!center) {
-			const x = center.x - width / 2;
-			const alignment = align_left ? `left: ${x}px` : `right: ${-x}px`;
-			style = `${style} ${alignment}; top: ${center.y - height / 2}px;`;
+		if (!!origin || !!center) {
+			const x = origin?.x ?? center?.x - width / 2;
+			const y = origin?.y ?? center?.y - height / 2;
+			const alignment = align_left ? `left: ` : `right: -`;
+			style = `${style} ${alignment}${x}px; top: ${y}px;`;
 		}
 	}
 

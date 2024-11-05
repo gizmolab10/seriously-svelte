@@ -18,7 +18,7 @@
 			height:40px;
 			padding:5px;'>
 		<Segmented
-			name='tree-type'
+			name='db'
 			font_size='0.8em'
 			selected={[$s_db_type]}
 			height={k.row_height - 4}

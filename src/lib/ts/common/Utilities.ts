@@ -22,7 +22,7 @@ class Utilities {
 	pointFor_mouseEvent(event: MouseEvent) { return new Point(event.clientX, event.clientY); }
 	location_ofMouseEvent(event: MouseEvent) { return new Point(event.clientX, event.clientY); }
 	opacitize(color: string, amount: number): string { return transparentize(color, 1 - amount); }
-	getWidthOf(s: string): number { return this.getWidth_ofString_withSize(s, `${k.thing_fontSize}px`); }
+	getWidthOf(s: string): number { return this.getWidth_ofString_withSize(s, `${k.font_size}px`); }
 	strip_invalid(array: Array<any>): Array<any> { return this.strip_identifiableDuplicates(this.strip_falsies(array)); }
 	get vector_fromCenter(): Point | null { return this.vector_ofOffset_fromGraphCenter_toMouseLocation(g.graph_center); }
 	sort_byOrder(array: Array<Ancestry>) { return array.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }

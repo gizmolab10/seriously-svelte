@@ -4,9 +4,9 @@
 	export let selection_closure = (titles) => {};
 	export let selected: Array<string> = [];
 	export let titles: Array<string> = [];
-	export let height = k.row_height - 2;
 	export let fill = k.color_background;
 	export let stroke = k.color_default;
+	export let height = k.row_height;
 	export let font_size = '0.95em';
 	export let origin = Point.zero;
 	export let multiple = false;
@@ -51,13 +51,15 @@
 
 </script>
 
-<div class={name + '-segments'}
+<div
+	class='segmented'
+	id={name}
 	style='
 		width:{width}px;
-		position:absolute;
+		top:{origin.y}px;
 		left:{origin.x}px;
-		top:{origin.y - 1}px;
-		height:{height + 2}px;'>
+		position:absolute;
+		height:{height}px;'>
 	{#each segment_maps as segment_map}
 		<Segment
 			fill={fill}

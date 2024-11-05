@@ -70,6 +70,6 @@
 			position: absolute;'>
 		<Title_Editor
 			ancestry={$s_focus_ancestry}
-			fontSize={k.thing_fontSize}px/>
+			fontSize={k.font_size}px/>
 	</div>
 </div>

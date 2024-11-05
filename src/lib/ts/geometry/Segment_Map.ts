@@ -1,10 +1,11 @@
 import { k, u, ux, Rect, Size, Point, svgPaths, Oblong_Part } from '../../ts/common/Global_Imports';
 
 export default class Segment_Map {
+	relative_font_size = k.font_size;
 	title_origin = Point.x(8);
 	part = Oblong_Part.right;
 	font_size = '0.95em';
-	center = Point.zero;
+	origin = Point.zero;
 	isSelected = false;
 	viewBox = k.empty;
 	size = Size.zero;
@@ -12,14 +13,19 @@ export default class Segment_Map {
 	name = k.empty;
 	path = k.empty;
 	height = 0;
+	width = 0;
 	index = 0;
 	left = 0;
 
 	static segment_gap = 14;
 	get description(): string { return `${this.title} ${this.part} ${this.path}`; }
-	get width(): number { return u.getWidth_ofString_withSize(this.title, this.font_size) + 8; }
 
 	constructor(name: string, title: string, font_size: string, isSelected: boolean, index: number, max: number, left: number, height: number) {
+
+		this.relative_font_size = font_size.fontSize_relativeTo(k.font_size);
+		this.width = u.getWidth_ofString_withSize(title, font_size) + this.relative_font_size - 2;
+		this.part = this.part_forIndex(index, max);
+		this.size = new Size(this.width, height);
 		this.isSelected = isSelected;
 		this.font_size = font_size;
 		this.height = height;
@@ -27,7 +33,7 @@ export default class Segment_Map {
 		this.index = index;
 		this.left = left;
 		this.name = name;
-		this.finish_map(max);
+		this.setup_path();
 	}
 
 	static grab_segment_map(name: string, title: string, font_size: string, isSelected: boolean, index: number, max: number, left: number, height: number) : Segment_Map {
@@ -42,23 +48,17 @@ export default class Segment_Map {
 		return map;
 	}
 
-	finish_map(max: number) {
-		const raw_size = new Size(this.width, this.height);
-		this.size = raw_size.expandedByXY(Segment_Map.segment_gap, 2);
-		this.part = this.part_forIndex(this.index, max);
-		this.setup_path(raw_size);
-	}
-
-	setup_path(raw_size: Size) {
+	setup_path() {
 		const isFirst = this.index == 0;
 		const title_top = 4.5 - this.height / 6;
-		const center = raw_size.dividedInHalf.asPoint;
-		const size = raw_size.expandedByX(isFirst ? -14 : -2);
-		const path_center = center.offsetByX(isFirst ? 0 : -10);
-		this.path = svgPaths.oblong(path_center, size.expandedByY(-2), this.part);
-		this.title_origin = new Point(isFirst ? 20 : 10, title_top);
+		const size = this.size.expandedEquallyBy(-2);
+		const center = this.size.asPoint.dividedInHalf;
+		const path_center = center.offsetByXY(isFirst ? 10 : -10, -1);
+		const title_x = (isFirst ? 2 : 0) + this.relative_font_size / 2;
+		this.path = svgPaths.oblong(path_center, size, this.part);
+		this.title_origin = new Point(title_x, title_top);
 		this.viewBox = Rect.createSizeRect(size).viewBox;
-		this.center = center.offsetByX(this.left);
+		this.origin = Point.x(this.left);
 	}
 
 	part_forIndex(index: number, max: number): Oblong_Part {

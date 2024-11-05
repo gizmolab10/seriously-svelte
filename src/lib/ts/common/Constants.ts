@@ -2,12 +2,12 @@ import { builds } from './Builds';
 
 export default class Constants {
 	dot_size = 13;
+	font_size = 14;
 	debug_size = 20;
 	width_max = 200;
 	line_stretch = 22;
 	height_banner = 35;
 	halfIncrement = 0.5;
-	thing_fontSize = 14;
 	width_details = 200;
 	default_buttonSize = 16;
 	height_breadcrumbs = 33;

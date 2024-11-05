@@ -60,7 +60,7 @@
 			border:${border};
 			border-radius: 1em;
 			padding:0px 6px 2px 6px;
-			font: ${k.thing_fontSize}px ${$s_thing_fontFamily};
+			font: ${k.font_size}px ${$s_thing_fontFamily};
 		`.removeWhiteSpace();
 	}
 

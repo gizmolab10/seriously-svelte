@@ -10,7 +10,7 @@
 	import SVGD3 from '../kit/SVGD3.svelte';
 	const size_small = k.default_buttonSize;
 	const details_top = k.dot_size / 2;
-	const top = (k.dot_size + 3) / 2;
+	const y_center = details_top + 3.5;
 	const size_big = size_small + 4;
 	const lefts = [10, 55, 117];
 	const resize_viewBox = `0, 0, ${size_big}, ${size_big}`;
@@ -79,37 +79,37 @@
 </script>
 
 {#if Object.values(element_states_byID).length > 0}
-	<div class='controls'
+	<div id='controls'
 		style='
-			top: 9px;
+			top: 7px;
 			left: 0px;
 			position: absolute;
 			z-index: {ZIndex.frontmost};
 			height: `${k.height_banner - 2}px`;'>
 		{#if !$s_id_popupView}
 			<Button
-				name='details'
+				name='hamburger'
 				border_thickness=0
 				color='transparent'
-				center={new Point(lefts[0], details_top + 1)}
+				center={new Point(lefts[0], details_top + 3)}
 				element_state={element_states_byID[IDButton.details]}
 				closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.details)}>
 				<img src='settings.svg' alt='circular button' width={size_small}px height={size_small}px/>
 			</Button>
 			{#key $s_graph_type}
 				<Segmented
-					name='graph-type'
+					name='graph'
 					font_size='0.95em'
-					origin={Point.x(36)}
+					origin={Point.x(26)}
 					selected={[$s_graph_type]}
 					titles={[Graph_Type.tree, Graph_Type.rings]}
 					selection_closure={(titles) => selection_closure('graph', titles)}/>
 				{#if $s_graph_type == Graph_Type.tree}
 					{#key $s_tree_type}
 						<Segmented
-							name='tree-type'
+							name='tree'
 							font_size='0.95em'
-							origin={Point.x(132)}
+							origin={Point.x(148)}
 							selected={[$s_tree_type]}
 							titles={[Tree_Type.children, Tree_Type.parents, Tree_Type.related]}
 							selection_closure={(titles) => selection_closure('relations', titles)}/>
@@ -125,14 +125,14 @@
 						height={size_big}
 						name={IDButton.smaller}
 						element_state={element_states_byID[IDButton.smaller]}
-						center={new Point(width - 140, top)}
+						center={new Point(width - 140, y_center)}
 						closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.smaller)}>
 						<svg
-							class='shrink-svg'>
+							id='shrink-svg'>
 							<path
 								stroke=k.color_default
 								fill=transparent
-								class='shrink-path'
+								id='shrink-path'
 								d={svgPaths.dash(size_big, 2)}/>
 						</svg>
 					</Button>
@@ -142,15 +142,15 @@
 						width={size_big}
 						height={size_big}
 						name={IDButton.bigger}
-						center={new Point(width - 110, top)}
+						center={new Point(width - 110, y_center)}
 						element_state={element_states_byID[IDButton.bigger]}
 						closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.bigger)}>
 						<svg
-							class='enlarge-svg'>
+							id='enlarge-svg'>
 							<path
 								stroke=k.color_default
 								fill=transparent
-								class='enlarge-path'
+								id='enlarge-path'
 								d={svgPaths.t_cross(size_big, 2)}/>
 						</svg>
 					</Button>
@@ -161,7 +161,7 @@
 			<Button name={IDButton.builds}
 				width=75
 				height={size_big}
-				center={new Point(width - 55, top)}
+				center={new Point(width - 55, y_center)}
 				element_state={element_states_byID[IDButton.builds]}
 				closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.builds)}>
 				<span style='font-family: {$s_thing_fontFamily};'>
@@ -173,7 +173,7 @@
 			<Button name={IDButton.help}
 				width={size_big}
 				height={size_big}
-				center={new Point(width, top)}
+				center={new Point(width, y_center)}
 				element_state={element_states_byID[IDButton.help]}
 				closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.help)}>
 				<span
