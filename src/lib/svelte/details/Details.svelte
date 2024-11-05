@@ -23,7 +23,7 @@
 	style='
 		left:0px;
 		position:fixed;
-		font-size:0.8em;
+		font-size:0.95em;
 		background-color:#fff;
 		z-index:{ZIndex.details};
 		width:{k.width_details}px;

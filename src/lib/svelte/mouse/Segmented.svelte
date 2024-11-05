@@ -28,10 +28,9 @@
 		let x = 0;
 		reset_maps_andWidth();
 		for (const title of titles) {
-			const gap = index == 0 ? Segment_Map.segment_gap : 0;
 			const map = Segment_Map.grab_segment_map(name, title, font_size, isSelected(title), index, max, x, height);
-			x += map.width + gap;
 			segment_maps.push(map);
+			x += map.width;
 			index += 1;
 		}
 		width = x;

@@ -99,8 +99,7 @@
 			{#key $s_graph_type}
 				<Segmented
 					name='graph'
-					font_size='0.95em'
-					origin={Point.x(26)}
+					origin={Point.x(30)}
 					selected={[$s_graph_type]}
 					titles={[Graph_Type.tree, Graph_Type.rings]}
 					selection_closure={(titles) => selection_closure('graph', titles)}/>
@@ -108,8 +107,7 @@
 					{#key $s_tree_type}
 						<Segmented
 							name='tree'
-							font_size='0.95em'
-							origin={Point.x(148)}
+							origin={Point.x(112)}
 							selected={[$s_tree_type]}
 							titles={[Tree_Type.children, Tree_Type.parents, Tree_Type.related]}
 							selection_closure={(titles) => selection_closure('relations', titles)}/>
