@@ -75,8 +75,8 @@ export default class Cluster_Map {
 
 	get thumb_isHit(): boolean {
 		if (this.isPaging) {
-			const ring_origin = g.graph_center.offsetBy(Point.square(-get(s_ring_rotation_radius)));
-			const vector = u.vector_ofOffset_fromGraphCenter_toMouseLocation(ring_origin);
+			const ring_offset = g.graph_center.offsetBy(Point.square(-get(s_ring_rotation_radius)));
+			const vector = u.mouse_vector_ofOffset_fromGraphCenter(ring_offset);
 			return vector?.isContainedBy_path(this.thumb_map.svg_arc_path) ?? false;
 		}
 		return false;
@@ -84,11 +84,10 @@ export default class Cluster_Map {
 	static readonly $_LABEL_$: unique symbol;
 
 	update_label_geometry() {		// rotate text tangent to arc, at center of arc
-		const radius = get(s_ring_rotation_radius) - k.ring_rotation_thickness + (this.arc_in_lower_half ? 5 : 0) + 15;
-		const ortho = this.arc_in_lower_half ? Angle.quarter : Angle.three_quarters;
 		const angle = this.arc_map.center_angle;
-		const radial = Point.fromPolar(radius, angle);
-		this.label_center = this.center.offsetBy(radial);
+		const ortho = this.arc_in_lower_half ? Angle.quarter : Angle.three_quarters;
+		const radius = get(s_ring_rotation_radius) - k.ring_rotation_thickness + (this.arc_in_lower_half ? 5 : 0) + 15;
+		this.label_center = this.center.offsetBy(Point.fromPolar(radius, angle));
 		this.arc_map.label_text_angle = ortho - angle;
 		this.label_position_angle = angle;
 	}

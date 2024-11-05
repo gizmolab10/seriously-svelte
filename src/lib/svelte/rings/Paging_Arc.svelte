@@ -53,7 +53,7 @@
 	}
 
 	function computed_mouse_angle(): number | null {
-		return u.vector_ofOffset_fromGraphCenter_toMouseLocation(g.graph_center)?.angle ?? null
+		return u.mouse_angle_fromGraphCenter ?? null
 	}
 
 	function hover_closure(mouse_state) {

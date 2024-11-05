@@ -29,7 +29,7 @@ export class Wrappers {
 		const type = wrapper.type;
 		dict[hash] = wrapper;
 		array[type] = dict;
-		// this.addTo_hitHierarchy(wrapper);
+		// this.add_toHitHierarchy(wrapper);
 	}
 
 	//////////////////////////////////////
@@ -37,7 +37,7 @@ export class Wrappers {
 	// WHY? negligible performance gain	//
 	//////////////////////////////////////
 
-	addTypeTo_parent(type: string, parentType: string) {
+	addType_toParent(type: string, parentType: string) {
 		let childrenTypes = this.child_wrapperTypes_byType[parentType] ?? [];
 		if (!childrenTypes.includes(type)) {
 			childrenTypes.push(type);
@@ -45,17 +45,17 @@ export class Wrappers {
 		}
 	}
 
-	addTypeTo_hitHierarchy(type: string) {
+	addType_toHitHierarchy(type: string) {
 		for (const parentType of Svelte_Wrapper.parentTypes_for(type)) {
-			this.addTypeTo_parent(type, parentType);
-			this.addTypeTo_hitHierarchy(parentType);	// recurse
+			this.addType_toParent(type, parentType);
+			this.addType_toHitHierarchy(parentType);	// recurse
 		}
 	}
 
-	addTo_hitHierarchy(wrapper: Svelte_Wrapper) {
+	add_toHitHierarchy(wrapper: Svelte_Wrapper) {
 		for (const parentType of wrapper.parentTypes) {
-			this.addTypeTo_parent(wrapper.type, parentType);
-			this.addTypeTo_hitHierarchy(parentType);
+			this.addType_toParent(wrapper.type, parentType);
+			this.addType_toHitHierarchy(parentType);
 		}
 	}
 

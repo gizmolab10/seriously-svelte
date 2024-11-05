@@ -48,12 +48,6 @@
 		}
 	}
 
-	function rectTo_firstReveal(): Rect {
-		const offset = new Point(101, 85);
-		const extent = origin_ofFirstReveal.offsetBy(offset);
-		return Rect.createExtentRect(graphRect.origin, extent);
-	}
-
 	function rectOfChildren(): Rect {
 		const delta = new Point(9, -2);
 		const origin = graphRect.origin.offsetBy(delta).offsetBy(origin_ofChildren);

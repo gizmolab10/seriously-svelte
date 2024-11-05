@@ -28,8 +28,8 @@
 	update_cursor();
 	debug.log_build(` (svelte)`);
 	$s_clusters_geometry.layoutAll_clusters();
-	function isHit(): boolean { return u.distance_fromCenter <= outer_radius; }
-	function handle_mouse_state(mouse_state: Mouse_State): boolean { return true; }		// only for wrappers
+	function handle_mouse_state(mouse_state: Mouse_State): boolean { return true; }				// only for wrappers
+	function isHit(): boolean { return u.mouse_distance_fromGraphCenter <= outer_radius; }
 
 	$: {
 		if (!!$s_focus_ancestry.thing && $s_focus_ancestry.thing.id == $s_color_thing?.split(k.generic_separator)[0]) {
@@ -42,7 +42,7 @@
 		// mouse up ... end all (rotation, resizing, paging)
 		if (mouse_up_count != $s_mouse_up_count) {
 			mouse_up_count = $s_mouse_up_count;
-			const ring_zone = u.ringZone_forMouseLocation;
+			const ring_zone = ringZone_forMouseLocation();
 			if (ring_zone == Ring_Zone.miss) {			// only respond if NOT isHit
 				reset();
 			}
@@ -50,7 +50,7 @@
 	}
 
 	function update_cursor() {
-		const ring_zone = u.ringZone_forMouseLocation;
+		const ring_zone = ringZone_forMouseLocation();
 		switch (ring_zone) {
 			case Ring_Zone.paging: cursor = g.cluster_paging_state.cursor; break;
 			case Ring_Zone.resize: cursor = g.ring_resizing_state.cursor; break;
@@ -69,8 +69,25 @@
 		rebuilds += 1;
 	}
 
+	function ringZone_forMouseLocation(): Ring_Zone {
+		const distance = u.mouse_distance_fromGraphCenter;
+		const thick = k.ring_rotation_thickness;
+		const inner = $s_ring_rotation_radius;
+		const thin = k.paging_arc_thickness;
+		if (!!distance && distance <= inner + thick * 2) {
+			if (distance > inner + thick) {
+				return Ring_Zone.resize;
+			} else if (distance > inner) {
+				return Ring_Zone.rotate;
+			} else if (distance > inner - thin) {
+				return Ring_Zone.paging;
+			}
+		}
+		return Ring_Zone.miss;
+	}
+
 	function detect_hovering() {
-		const ring_zone = u.ringZone_forMouseLocation;
+		const ring_zone = ringZone_forMouseLocation();
 		const arc_isActive = ux.isAny_paging_arc_active;
 		const inRotate = ring_zone == Ring_Zone.rotate && !arc_isActive && !g.ring_resizing_state.isActive;
 		const inResize = ring_zone == Ring_Zone.resize && !arc_isActive && !g.ring_rotation_state.isActive;
@@ -96,7 +113,7 @@
 		////////////////////////////////////
 
 		const _ = $s_mouse_location;											// use store, to invoke this code
-		const from_center = u.vector_ofOffset_fromGraphCenter_toMouseLocation(g.graph_center);
+		const from_center = u.mouse_vector_fromGraphCenter;
 		if (!!from_center) {
 			const mouse_angle = from_center.angle;
 			const rotation_state = g.ring_rotation_state;
@@ -155,9 +172,9 @@
 		/////////////////////////////
 
 		if (!mouse_state.isHover) {
-			const mouse_wentDown_angle = u.angle_fromCenter;
+			const mouse_wentDown_angle = u.mouse_angle_fromGraphCenter;
 			const rotation_angle = mouse_wentDown_angle.add_angle_normalized(-$s_rotation_ring_angle);
-			const ring_zone = u.ringZone_forMouseLocation;
+			const ring_zone = ringZone_forMouseLocation();
 			if (mouse_state.isUp) {
 				reset();
 				rebuilds += 1;
@@ -170,7 +187,7 @@
 						rebuilds += 1;
 						break;
 					case Ring_Zone.resize:
-						const radius_offset = u.distance_fromCenter - $s_ring_rotation_radius;
+						const radius_offset = u.mouse_distance_fromGraphCenter - $s_ring_rotation_radius;
 						debug.log_action(` begin resize  ${radius_offset.toFixed(0)}`);
 						g.ring_rotation_state.active_angle = mouse_wentDown_angle + Angle.quarter;	// needed for cursor
 						g.ring_rotation_state.basis_angle = rotation_angle + Angle.quarter;

@@ -16,17 +16,17 @@ class Utilities {
 	noop() {}
 	ignore(event: Event) {}
 	concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return [...a, ...b]; }
-	get distance_fromCenter(): number { return this.vector_fromCenter?.magnitude ?? 0; }
-	get angle_fromCenter(): number | null { return this.vector_fromCenter?.angle ?? null; }
 	quadrant_ofAngle(angle: number): Quadrant { return new Angle(angle).quadrant_ofAngle; }
 	pointFor_mouseEvent(event: MouseEvent) { return new Point(event.clientX, event.clientY); }
 	location_ofMouseEvent(event: MouseEvent) { return new Point(event.clientX, event.clientY); }
 	opacitize(color: string, amount: number): string { return transparentize(color, 1 - amount); }
 	getWidthOf(s: string): number { return this.getWidth_ofString_withSize(s, `${k.font_size}px`); }
 	strip_invalid(array: Array<any>): Array<any> { return this.strip_identifiableDuplicates(this.strip_falsies(array)); }
-	get vector_fromCenter(): Point | null { return this.vector_ofOffset_fromGraphCenter_toMouseLocation(g.graph_center); }
 	sort_byOrder(array: Array<Ancestry>) { return array.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
 	uniquely_concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return this.strip_invalid(this.concatenateArrays(a, b)); }
+	get mouse_angle_fromGraphCenter(): number | null { return this.mouse_vector_fromGraphCenter?.angle ?? null; }
+	get mouse_vector_fromGraphCenter(): Point | null { return this.mouse_vector_ofOffset_fromGraphCenter(); }
+	get mouse_distance_fromGraphCenter(): number { return this.mouse_vector_fromGraphCenter?.magnitude ?? 0; }
 
 	apply(startStop: (flag: boolean) => void, callback: () => void): void {
 		startStop(true);
@@ -62,11 +62,12 @@ class Utilities {
 		});
 	}
 
-	vector_ofOffset_fromGraphCenter_toMouseLocation(offset: Point): Point | null {
+	mouse_vector_ofOffset_fromGraphCenter(offset: Point = Point.zero): Point | null {
 		const location = get(s_mouse_location);
 		if (!!location) {
 			const graphCenter = get(s_graphRect).origin.offsetBy(get(s_user_graphOffset));
 			const distance = graphCenter.offsetBy(offset).distanceTo(location);
+			debug.log_rings(`${distance.description} ${offset.description}`);
 			return distance;
 		}
 		return null
@@ -201,34 +202,6 @@ class Utilities {
 		const width: number = element.scrollWidth;
 		document.body.removeChild(element);
 		return width;
-	}
-
-	get ringZone_forMouseLocation(): Ring_Zone {
-		const distance = this.distance_fromCenter;
-		const inner = get(s_ring_rotation_radius);
-		const thick = k.ring_rotation_thickness;
-		const thin = k.paging_arc_thickness;
-		if (!!distance && distance <= inner + thick * 2) {
-			if (distance > inner + thick) {
-				return Ring_Zone.resize;
-			} else if (distance > inner) {
-				return Ring_Zone.rotate;
-			} else if (distance > inner - thin) {
-				return Ring_Zone.paging;
-			}
-		}
-		return Ring_Zone.miss;
-	}
-
-	get ringCursor_forMouseLocation(): string {
-		let cursor = k.cursor_default;
-		const ring_zone = this.ringZone_forMouseLocation;
-		switch (ring_zone) {
-			case Ring_Zone.rotate: cursor = g.ring_rotation_state.cursor; break;
-			case Ring_Zone.resize: cursor = g.ring_resizing_state.cursor; break;
-		}
-		debug.log_action(` ${cursor} cursor ${ring_zone} RING ZONE`);
-		return `${cursor} !important`;
 	}
 
 	colorToHex(color: string): string {
