@@ -41,10 +41,9 @@ export default class DBDispatch {
 		});
 	}
 
-	restore_db() {
-		const type = persistLocal.read_key(IDPersistent.db) ?? 'firebase';
-		s_db_type.set(type);
-	}
+	db_set_accordingToType(type: string) { this.db = this.db_forType(type); }
+	restore_db() { s_db_type.set(persistLocal.read_key(IDPersistent.db) ?? 'firebase'); }
+	db_change_toNext(forward: boolean) { this.db_change_toType(this.db_next_get(forward)); }
 
 	get startupExplanation(): string {
 		const type = this.db.dbType;
@@ -106,9 +105,6 @@ export default class DBDispatch {
 		this.db.loadTime = loadTime;
 		s_db_loadTime.set(loadTime);
 	}
-
-	db_set_accordingToType(type: string) { this.db = this.db_forType(type); }
-	db_change_toNext(forward: boolean) { this.db_change_toType(this.db_next_get(forward)); }
 
 	db_change_toType(newDBType: DBType) {
 		const db = this.db_forType(newDBType);

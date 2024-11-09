@@ -1,4 +1,4 @@
-import { k, get, Thing, ThingType, Hierarchy, Predicate, Relationship } from '../common/Global_Imports';
+import { k, get, Thing, Trait, ThingType, Hierarchy, Predicate, Relationship } from '../common/Global_Imports';
 import { s_hierarchy } from '../state/Reactive_State';
 import DBInterface from './DBInterface';
 import { DBType } from './DBInterface';
@@ -80,13 +80,16 @@ export default class DBLocal implements DBInterface {
 	}
 
 	queryStrings_apply() {}
-	async fetch_hierarchy_from(baseID: string) {}
 	async thing_remoteUpdate(thing: Thing) {}
 	async thing_remoteDelete(thing: Thing) {}
+	async trait_remoteUpdate(trait: Trait) {};
+	async trait_remoteDelete(trait: Trait) {};
+	async fetch_hierarchy_from(baseID: string) {};
+	async trait_remember_remoteCreate(trait: Trait) {};
 	async thing_remember_remoteCreate(thing: Thing) {}
 	async relationship_remoteUpdate(relationship: Relationship) {}
 	async relationship_remoteDelete(relationship: Relationship) {}
-	async relationship_remember_remoteCreate(relationship: Relationship | null) {}
+	async relationship_remember_remoteCreate(relationship: Relationship | null) {};
 }
 
 export const dbLocal = new DBLocal();
