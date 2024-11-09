@@ -61,7 +61,7 @@ class Events {
 			const delta = new Point(-e.deltaX, -e.deltaY);
 			if (!!userOffset && g.allow_HorizontalScrolling && delta.magnitude > 1) {
 				debug.log_action(` wheel GRAPH`);
-				w.graphOffset_setTo(userOffset.offsetBy(delta));
+				w.user_graphOffset_setTo(userOffset.offsetBy(delta));
 			}
 		}
 	}
@@ -113,7 +113,7 @@ class Events {
 				const touch = event.touches[0];
 				const deltaX = touch.clientX - this.initialTouch.x;
 				const deltaY = touch.clientY - this.initialTouch.y;
-				w.graphOffset_setTo(new Point(deltaX, deltaY));
+				w.user_graphOffset_setTo(new Point(deltaX, deltaY));
 				debug.log_action(` two-finger touch move GRAPH`);
 			}
 		}

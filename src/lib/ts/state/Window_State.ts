@@ -8,8 +8,9 @@ class Window_State {
 	get windowScroll(): Point { return new Point(window.scrollX, window.scrollY); }
 	get center_ofGraphRect(): Point { return get(s_graphRect).size.dividedInHalf.asPoint; }
 
-	setup_defaults() {
-		this.applyScale(persistLocal.read_key(IDPersistent.scale) ?? 1);
+	get user_offset(): Point {
+		const point = persistLocal.read_key(IDPersistent.user_offset) ?? {x:0, y:0};
+		return new Point(point.x, point.y);
 	}
 
 	get windowSize(): Size {
@@ -27,12 +28,17 @@ class Window_State {
 		return null
 	}
 
-	graphOffset_setTo(offset: Point): boolean {
-		if (get(s_user_graphOffset) != offset) {
-			persistLocal.write_key(IDPersistent.user_offset, offset);
+	restore_state() {
+		this.applyScale(persistLocal.read_key(IDPersistent.scale) ?? 1);
+		this.user_graphOffset_setTo(this.user_offset);
+	}
+
+	user_graphOffset_setTo(graphOffset: Point): boolean {
+		if (get(s_user_graphOffset) != graphOffset) {
+			persistLocal.write_key(IDPersistent.user_offset, graphOffset);
 			const center = get(s_graphRect).size.dividedInHalf.asPoint;
-			s_offset_graph_center.set(center.offsetBy(offset));
-			s_user_graphOffset.set(offset);
+			s_offset_graph_center.set(center.offsetBy(graphOffset));
+			s_user_graphOffset.set(graphOffset);
 			return true;
 		}
 		return false;

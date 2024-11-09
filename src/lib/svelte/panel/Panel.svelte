@@ -34,7 +34,7 @@
 			} else if (!$s_edit_state && !g.isEditing_text) {	// let editor component consume the events
 				switch (key) {
 					case 'o': $s_id_popupView = IDButton.open; break;
-					case 'c': w.graphOffset_setTo(Point.zero); break;
+					case 'c': w.user_graphOffset_setTo(Point.zero); break;
 					case 'z': w.applyScale(1); rebuilds += 1; break;
 					case '?': g.showHelp(); break;
 					case ']':

@@ -1,10 +1,9 @@
 import { s_hierarchy, s_db_type, s_tree_type, s_graph_type, s_paging_state } from '../state/Reactive_State';
-import { s_graphRect, s_user_graphOffset, s_offset_graph_center } from '../state/Reactive_State';
 import { s_focus_ancestry, s_font_size, s_thing_fontFamily } from '../state/Reactive_State';
 import { Tree_Type, Graph_Type, dbDispatch, Paging_State } from '../common/Global_Imports';
 import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/Reactive_State';
 import { s_grabbed_ancestries, s_expanded_ancestries } from '../state/Reactive_State';
-import { k, get, show, Point, debug, Ancestry } from '../common/Global_Imports';
+import { k, w, get, show, debug, Ancestry } from '../common/Global_Imports';
 
 export enum IDPersistent {
 	relationships  = 'relationships',
@@ -115,37 +114,16 @@ class Persist_Local {
 		s_rotation_ring_angle.subscribe((angle: number) => {
 			this.write_key(IDPersistent.ring_angle, angle);
 		});
-		show.reactivity_subscribe();
-	}
-
-	restore_graphOffset() {
-		let offset = Point.zero;
-		const stored = this.read_key(IDPersistent.user_offset);
-		if (!!stored) {
-			offset = new Point(stored.x, stored.y);
-		}
-		const center = get(s_graphRect).size.dividedInHalf.asPoint;
-		s_offset_graph_center.set(center.offsetBy(offset));
-		s_user_graphOffset.set(offset);
-	}
-
-	restore_db() {
-		const type = persistLocal.read_key(IDPersistent.db) ?? 'firebase';
-		s_db_type.set(type);
-	}
-
-	restore_db_dependent(force: boolean) {
-		this.restore_grabbed_andExpanded(force);
-		this.restore_focus();
 		s_paging_state.subscribe((paging_state: Paging_State) => {
 			if (!!paging_state) {
 				const dbKey = this.dbKey_for(IDPersistent.page_states);
 				this.write_keyPair(dbKey, paging_state.sub_key, paging_state.description);
 			}
 		})
+		show.reactivity_subscribe();
 	}
 
-	restore_state() {
+	restore_defaults() {
 		if (this.ignoreAncestries) {
 			this.write_key(IDPersistent.relationships, true);
 		}
@@ -155,7 +133,6 @@ class Persist_Local {
 		s_tree_type.set(this.read_key(IDPersistent.tree_type) ?? Tree_Type.children);
 		s_thing_fontFamily.set(this.read_key(IDPersistent.font) ?? 'Times New Roman');
 		s_ring_rotation_radius.set(Math.max(this.read_key(IDPersistent.ring_radius) ?? 0, k.innermost_ring_radius));
-		this.restore_graphOffset();
 		this.reactivity_subscribe()
 	}
 

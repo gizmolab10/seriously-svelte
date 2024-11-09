@@ -29,10 +29,10 @@ class Global_State {
 
 		debug.queryStrings_apply();						// debug even setup code
 		this.setup_defaults();							// defaults
-		w.setup_defaults();
+		w.restore_state();
 		show.restore_state();							// local persistance
-		persistLocal.restore_state();
-		persistLocal.restore_db();
+		persistLocal.restore_defaults();
+		dbDispatch.restore_db();
 		this.queryStrings_apply();						// query strings
 		show.queryStrings_apply();
 		e.setup();

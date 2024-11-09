@@ -24,7 +24,6 @@ export enum DebugFlag {
 	order	   = 'order',		// observe relocating
 	rings	   = 'rings',
 	tools	   = 'tools',		// state logic of add parent tool
-	beat	   = 'beat',		// heartbeat
 	edit	   = 'edit',		// editing state machine
 	info	   = 'info',
 	key		   = 'key',			// keyboard input
@@ -35,7 +34,6 @@ export class Debug {
 	constructor(flags: Array<DebugFlag>) { this.flags = flags; }
 	hasOption(option: DebugFlag) { return this.flags.includes(option); }
 	log_key(message: string) { this.log_maybe(DebugFlag.key, message); }
-	log_beat(message: string) { this.log_maybe(DebugFlag.beat, message); }
 	log_edit(message: string) { this.log_maybe(DebugFlag.edit, message); }
 	log_build(message: string) { this.log_maybe(DebugFlag.build, message) }
 	log_error(message: string) { this.log_maybe(DebugFlag.error, message) }
@@ -87,7 +85,6 @@ export class Debug {
 					case 'order': this.flags.push(DebugFlag.order); break;
 					case 'rings': this.flags.push(DebugFlag.rings); break;
 					case 'tools': this.flags.push(DebugFlag.tools); break;
-					case 'beat': this.flags.push(DebugFlag.beat); break;
 					case 'edit': this.flags.push(DebugFlag.edit); break;
 					case 'info': this.flags.push(DebugFlag.info); break;
 					case 'key': this.flags.push(DebugFlag.key); break;

@@ -41,6 +41,11 @@ export default class DBDispatch {
 		});
 	}
 
+	restore_db() {
+		const type = persistLocal.read_key(IDPersistent.db) ?? 'firebase';
+		s_db_type.set(type);
+	}
+
 	get startupExplanation(): string {
 		const type = this.db.dbType;
 		let from = k.empty;
@@ -58,32 +63,40 @@ export default class DBDispatch {
 		if (this.db.hasData) {
 			s_hierarchy.set(this.db.hierarchy);
 		} else {
-			const startTime = new Date().getTime();
-			s_db_loadTime.set(null);
-			const h = this.db.hierarchy = new Hierarchy(this.db);
-			s_hierarchy.set(h);
-			if (this.db.isRemote) {
-				s_startup_state.set(Startup_State.fetch);
-			}
-			await this.db.fetch_all();
-			await get(s_hierarchy).add_missing_removeNulls(this.db.baseID);
-			get(s_hierarchy).rootAncestry_setup();
-			get(s_hierarchy).ancestries_rebuildAll();
-			if (this.db.isRemote) {
-				this.set_loadTime(startTime);
-			}
+			this.hierarchy_fetch_andBuild();
 		}
-		debug.log_beat('hierarchy_fetch_andBuild_forDBType before timeout');
 		setTimeout(() => {
-			s_edit_state.set(null);
-			s_startup_state.set(Startup_State.ready);
-			s_showing_tools_ancestry.set(null);
-			persistLocal.restore_db_dependent(true);
-			this.db.setHasData(true);
-			get(s_hierarchy).conclude_fetch();
+			this.conclude_fetch();
 			signals.signal_rebuildGraph_fromFocus();
-			debug.log_beat('hierarchy_fetch_andBuild_forDBType after timeout');
 		}, 1);
+	}
+
+	async hierarchy_fetch_andBuild() {
+		const startTime = new Date().getTime();
+		s_db_loadTime.set(null);
+		const h = this.db.hierarchy = new Hierarchy(this.db);
+		s_hierarchy.set(h);
+		if (this.db.isRemote) {
+			s_startup_state.set(Startup_State.fetch);
+		}
+		await this.db.fetch_all();
+		await h.add_missing_removeNulls(this.db.baseID);
+		h.rootAncestry_setup();
+		h.ancestries_rebuildAll();
+		if (this.db.isRemote) {
+			this.set_loadTime(startTime);
+		}
+	}
+
+	conclude_fetch() {
+		s_edit_state.set(null);
+		s_startup_state.set(Startup_State.ready);
+		s_showing_tools_ancestry.set(null);
+		persistLocal.restore_grabbed_andExpanded(true);
+		// persistLocal.restore_page_states();
+		persistLocal.restore_focus();
+		this.db.setHasData(true);
+		get(s_hierarchy).conclude_fetch();
 	}
 
 	set_loadTime(startTime: number) {
