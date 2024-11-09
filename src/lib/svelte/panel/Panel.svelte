@@ -1,18 +1,20 @@
 <script lang='ts'>
-	import { s_resize_count, s_user_graphOffset, s_startup_state } from '../../ts/state/Reactive_State';
-	import { g, k, u, ux, get, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
-	import { s_edit_state, s_show_details, s_device_isMobile, } from '../../ts/state/Reactive_State';
+	import { g, k, u, ux, w, get, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import { debug, ZIndex, onMount, Ancestry, Startup_State } from '../../ts/common/Global_Imports';
+	import { s_edit_state, s_show_details, s_device_isMobile, } from '../../ts/state/Reactive_State';
 	import { IDButton, Hierarchy, dbDispatch, IDPersistent } from '../../ts/common/Global_Imports';
 	import { s_db_type, s_graphRect, s_hierarchy } from '../../ts/state/Reactive_State';
 	import { s_id_popupView, s_focus_ancestry } from '../../ts/state/Reactive_State';
+	import { s_resize_count, s_startup_state } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Breadcrumbs from '../panel/Breadcrumbs.svelte';
 	import { DBType } from '../../ts/db/DBInterface';
 	import Details from '../details/Details.svelte';
 	import BuildNotes from './BuildNotes.svelte';
+	import Debug from '../debug/Debug.svelte';
 	import Controls from './Controls.svelte';
 	import Load from '../local/Load.svelte';
+	import Box from '../debug/Box.svelte';
 	import Graph from './Graph.svelte';
 	let chain = ['Panel'];
 	let rebuilds = 0;
@@ -31,8 +33,9 @@
 				alert('no key for ' + event.type);
 			} else if (!$s_edit_state && !g.isEditing_text) {	// let editor component consume the events
 				switch (key) {
-					case 'c': g.graphOffset_setTo(Point.zero); break;
 					case 'o': $s_id_popupView = IDButton.open; break;
+					case 'c': w.graphOffset_setTo(Point.zero); break;
+					case 'z': w.applyScale(1); rebuilds += 1; break;
 					case '?': g.showHelp(); break;
 					case ']':
 					case '[': dbDispatch.db_change_toNext(key == ']'); break;
@@ -60,6 +63,7 @@
 
 <svelte:document on:keydown={handle_key_down}/>
 {#key rebuilds}
+	<Debug size = 16/>
 	<div style='
 		touch-action: none;
 		pointer-events: auto;
@@ -80,7 +84,7 @@
 						position: absolute;
 						top:{k.height_banner - 1}px;
 						z-index: {ZIndex.frontmost};
-						width:{g.windowSize.width}px;
+						width:{w.windowSize.width}px;
 						height:{k.height_breadcrumbs}px;'>
 					<Breadcrumbs/>
 					<div class='horizontal-line'

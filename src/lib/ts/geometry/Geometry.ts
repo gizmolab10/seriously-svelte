@@ -199,12 +199,14 @@ export class Rect {
 		return new Rect(origin, extent.distanceFrom(origin).asSize);
 	}
 
-	static createCenterRect(center: Point, size: Size) {
-		return new Rect(center.distanceFrom(size.asPoint.dividedInHalf), size);
-	}
-
 	static createRightCenterRect(rightCenter: Point, size: Size) {
 		return new Rect(rightCenter.offsetByY(size.height / -2), size);
+	}
+
+	static createCenterRect(center: Point, size: Size) {
+		const offset_fromOrigin = size.asPoint.dividedInHalf;
+		const origin = center.offsetBy(offset_fromOrigin.negated);
+		return new Rect(origin, size);
 	}
 
 	static rect_forElement_contains(element: HTMLElement | null, point: Point): boolean {

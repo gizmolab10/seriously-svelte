@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, ux, show, Rect, Size, Point, debug, Angle, ZIndex, onMount } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, w, show, Rect, Size, Point, debug, Angle, ZIndex, onMount } from '../../ts/common/Global_Imports';
 	import { opacitize, Cluster_Map, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { s_mouse_location, s_mouse_up_count, s_focus_ancestry } from '../../ts/state/Reactive_State';
 	import { s_thing_fontFamily, s_ring_rotation_radius } from '../../ts/state/Reactive_State';
@@ -13,7 +13,7 @@
 	const radius = $s_ring_rotation_radius + offset;
 	const thumb_name = `thumb-${cluster_map?.name}`;
 	const viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;
-	let origin = g.graph_center.offsetBy(Point.square(-radius));
+	let origin = w.center_ofGraphRect.offsetBy(Point.square(-radius));
 	let mouse_up_count = $s_mouse_up_count;
 	let arc_wrapper!: Svelte_Wrapper;
 	let thumb_color = color;
@@ -75,9 +75,9 @@
 					width={radius * 2}
 					height={radius * 2}
 					zindex={ZIndex.backmost}
-					center={g.graph_center}
 					name={cluster_map?.name}
 					cursor={k.cursor_default}
+					center={w.center_ofGraphRect}
 					mouse_state_closure={hover_closure}
 					isHit_closure={() => cluster_map.thumb_isHit}>
 					<svg id='arc' viewBox={viewBox}>

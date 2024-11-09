@@ -1,12 +1,13 @@
-import { g, k, signals, persistLocal } from '../common/Global_Imports';
+import { g, k, w, signals, persistLocal } from '../common/Global_Imports';
 import { IDPersistent, Tree_Type } from '../common/Global_Imports';
 import { s_show_details, s_tree_type } from './Reactive_State';
 
 class Show_State {
-	tinyDots	= true;
-	focus_info	= false;
-	arrowheads	= false;
-	traits		= false;
+	traits		 = false;
+	thing_info	 = false;
+	arrowheads	 = false;
+	debug_cursor = false;
+	tinyDots	 = true;
 
 	queryStrings_apply() {
 		const queryStrings = g.queryStrings;
@@ -28,6 +29,10 @@ class Show_State {
 					this.tinyDots = flag;
 					persistLocal.write_key(IDPersistent.tinyDots, flag);
 					break;
+				case 'info':
+					this.thing_info = flag;
+					persistLocal.write_key(IDPersistent.thing_info, flag);
+					break;
 				case 'arrowheads':
 					this.arrowheads = flag;
 					persistLocal.write_key(IDPersistent.arrowheads, flag);
@@ -41,7 +46,7 @@ class Show_State {
 		this.tinyDots = persistLocal.read_key(IDPersistent.tinyDots) ?? false;
 		s_show_details.set(persistLocal.read_key(IDPersistent.details) ?? false);
 		this.arrowheads = persistLocal.read_key(IDPersistent.arrowheads) ?? false;
-		this.focus_info = persistLocal.read_key(IDPersistent.focus_info) ?? false;
+		this.thing_info = persistLocal.read_key(IDPersistent.thing_info) ?? false;
 		s_tree_type.set(persistLocal.read_key(IDPersistent.tree_type) ?? Tree_Type.children);
 	}
 
@@ -51,7 +56,7 @@ class Show_State {
 		});
 		s_show_details.subscribe((flag: boolean) => {
 			persistLocal.write_key(IDPersistent.details, flag);
-			g.graphRect_update();
+			w.graphRect_update();
 			signals.signal_relayoutWidgets_fromFocus();
 		});
     }

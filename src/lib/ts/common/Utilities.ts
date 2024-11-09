@@ -1,11 +1,10 @@
-import { s_graphRect, s_mouse_location, s_ring_rotation_radius } from '../state/Reactive_State';
-import { s_thing_fontFamily, s_user_graphOffset } from '../state/Reactive_State';
-import { IDBrowser, Ring_Zone } from './Enumerations';
-import Identifiable from '../basis/Identifiable';
+import { s_mouse_location, s_thing_fontFamily, s_offset_graph_center } from '../state/Reactive_State';
 import { Size, Point } from '../geometry/Geometry';
+import Identifiable from '../basis/Identifiable';
 import { Quadrant } from '../geometry/Angle';
 import Ancestry from '../managers/Ancestry';
-import { g } from '../state/Global_State';
+import { IDBrowser } from './Enumerations';
+import { w } from '../state/Window_State';
 import { transparentize } from 'color2k';
 import { debug } from '../common/Debug';
 import Angle from '../geometry/Angle';
@@ -25,8 +24,8 @@ class Utilities {
 	sort_byOrder(array: Array<Ancestry>) { return array.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
 	uniquely_concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return this.strip_invalid(this.concatenateArrays(a, b)); }
 	get mouse_angle_fromGraphCenter(): number | null { return this.mouse_vector_fromGraphCenter?.angle ?? null; }
-	get mouse_vector_fromGraphCenter(): Point | null { return this.mouse_vector_ofOffset_fromGraphCenter(); }
 	get mouse_distance_fromGraphCenter(): number { return this.mouse_vector_fromGraphCenter?.magnitude ?? 0; }
+	get mouse_vector_fromGraphCenter(): Point | null { return this.mouse_vector_ofOffset_fromGraphCenter(); }
 
 	apply(startStop: (flag: boolean) => void, callback: () => void): void {
 		startStop(true);
@@ -63,10 +62,9 @@ class Utilities {
 	}
 
 	mouse_vector_ofOffset_fromGraphCenter(offset: Point = Point.zero): Point | null {
-		const location = get(s_mouse_location);
+		const location = get(s_mouse_location)?.multipliedBy(w.scale_factor);
 		if (!!location) {
-			const graphCenter = get(s_graphRect).origin.offsetBy(get(s_user_graphOffset));
-			const distance = graphCenter.offsetBy(offset).distanceTo(location);
+			const distance = get(s_offset_graph_center).offsetBy(offset).distanceTo(location);
 			debug.log_rings(`${distance.description} ${offset.description}`);
 			return distance;
 		}

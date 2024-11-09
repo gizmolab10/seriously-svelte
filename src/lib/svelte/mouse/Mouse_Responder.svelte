@@ -23,6 +23,7 @@
 	const mouse_responder_number = g.next_mouse_responder_number;
 	let mouse_doubleClick_timer;
 	let mouse_longClick_timer;
+	let mouse_isDown = false;
 	let style = k.empty;
 	let mouse_button;
 
@@ -66,13 +67,15 @@
 				mouse_state.isHover = isHit;
 				mouse_state.isOut = !isHit;		// called far too often
 				mouse_state_closure(Mouse_State.hover(null, mouse_button, isHit));	// pass a null event
+			} else {
+				mouse_state_closure(Mouse_State.move(null, mouse_button, mouse_isDown, isHit));	// pass a null event
 			}
 		}
 	}
 
 	function reset() {	// tear down
-		mouse_timer.reset();
 		mouse_state.clicks = 0;
+		mouse_timer.reset();
 	}
 
 	function create_state(isDown: boolean, isDouble: boolean = false, isLong: boolean = false): Mouse_State {
@@ -83,6 +86,7 @@
 		state.isLong = isLong;
 		state.isHover = false;
 		state.isDown = isDown;
+		mouse_isDown = isDown;
 		state.event = event;
 		return state;
 	}

@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { s_color_thing, s_focus_ancestry, s_thing_fontFamily } from '../../ts/state/Reactive_State';
-	import { g, k, ux, Size, Point, debug, IDTool, ZIndex, } from '../../ts/common/Global_Imports';
-	import { s_user_graphOffset, s_showing_tools_ancestry } from '../../ts/state/Reactive_State';
+	import { g, k, ux, w, Size, Point, debug, IDTool, ZIndex, } from '../../ts/common/Global_Imports';
 	import { svgPaths, ElementType, Clusters_Geometry } from '../../ts/common/Global_Imports';
+	import { s_showing_tools_ancestry } from '../../ts/state/Reactive_State';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Title_Editor from '../widget/Title_Editor.svelte';
 	const element_state = ux.element_state_for($s_focus_ancestry, ElementType.focus, IDTool.none);
@@ -15,7 +15,7 @@
 	$: {
 		titleWidth = 10 + ($s_focus_ancestry?.thing?.titleWidth ?? 0);
 		const offsetX = -titleWidth / 2;
-		focus_origin = g.graph_center.offsetByXY(offsetX, 1 - k.dot_size);
+		focus_origin = w.center_ofGraphRect.offsetByXY(offsetX, 1 - k.dot_size);
 		centerOffset = new Point(titleWidth + 25, height).dividedInHalf;
 	}
 
@@ -25,7 +25,7 @@
 	}
 
 	function debug_closure(mouse_state) {
-		debug.log_action(` ${mouse_state.descriptionFor('RINGS FOCUS')} MOUSE`);
+		debug.log_rings(` ${mouse_state.descriptionFor('RINGS FOCUS')} MOUSE`);
 	}
 
 </script>

@@ -1,8 +1,9 @@
 import { s_hierarchy, s_db_type, s_tree_type, s_graph_type, s_paging_state } from '../state/Reactive_State';
-import { s_user_graphOffset, s_grabbed_ancestries, s_expanded_ancestries } from '../state/Reactive_State';
+import { s_graphRect, s_user_graphOffset, s_offset_graph_center } from '../state/Reactive_State';
 import { s_focus_ancestry, s_font_size, s_thing_fontFamily } from '../state/Reactive_State';
 import { Tree_Type, Graph_Type, dbDispatch, Paging_State } from '../common/Global_Imports';
 import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/Reactive_State';
+import { s_grabbed_ancestries, s_expanded_ancestries } from '../state/Reactive_State';
 import { k, get, show, Point, debug, Ancestry } from '../common/Global_Imports';
 
 export enum IDPersistent {
@@ -11,7 +12,7 @@ export enum IDPersistent {
 	page_states    = 'page_states',
 	user_offset	   = 'user_offset',
 	graph_type	   = 'graph_type',
-	focus_info     = 'focus_info',
+	thing_info     = 'thing_info',
 	ring_angle     = 'ring_angle',
 	arrowheads	   = 'arrowheads',
 	tree_type	   = 'tree_type',
@@ -123,6 +124,8 @@ class Persist_Local {
 		if (!!stored) {
 			offset = new Point(stored.x, stored.y);
 		}
+		const center = get(s_graphRect).size.dividedInHalf.asPoint;
+		s_offset_graph_center.set(center.offsetBy(offset));
 		s_user_graphOffset.set(offset);
 	}
 

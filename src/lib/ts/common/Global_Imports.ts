@@ -2,8 +2,8 @@ import type { Handle_Mouse_State, Create_Mouse_State } from './Types';
 import type { SvelteComponent } from 'svelte';
 
 import { builds } from './Builds';
+import { e } from '../signals/Events';
 import { show } from '../state/Show_State';
-import { events } from '../signals/Events';
 import { dbDispatch } from '../db/DBDispatch';
 import { cursors } from '../geometry/Cursors';
 import { wrappers } from '../managers/Wrappers';
@@ -54,6 +54,7 @@ import { u } from './Utilities';
 import { k } from './Constants';
 import { ux } from '../state/UX_State';
 import { g } from '../state/Global_State';
+import { w } from '../state/Window_State';
 
 import muuri from 'muuri';
 import interact from 'interactjs';
@@ -61,19 +62,19 @@ import { get } from 'svelte/store';
 import { transparentize } from 'color2k';
 
 export {
+	e, g, k, u, ux, w,
 	debug, Debug, DebugFlag,
 	Timer_Type, Mouse_Timer,
-	g, k, u, ux, Segment_Map,
 	Ring_Zone, Seriously_Range,
 	Angle, Quadrant, Orientation,
 	Tree_Geometry, Widget_MapRect,
 	muuri, interact, transparentize,
-	Arc_Map, Cluster_Map, Clusters_Geometry,
-	show, events, builds, signals, wrappers,
+	show, builds, signals, wrappers,
 	Title_State, Rotation_State, Expansion_State,
 	get, onMount, onDestroy, setContext, getContext,
 	Rect, Size, Point, cursors, svgPaths, Direction,
 	Mouse_State, Handle_Mouse_State, Create_Mouse_State,
+	Arc_Map, Segment_Map, Cluster_Map, Clusters_Geometry,
 	Grabs, Ancestry, Hierarchy, dbDispatch, persistLocal,
 	User, Datum, Thing, Trait, Access, Predicate, Relationship,
 	Element_State, Paging_State, Page_States, Alteration_State,

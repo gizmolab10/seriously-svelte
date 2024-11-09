@@ -9,8 +9,8 @@ export default class Mouse_State {
 	isLong: boolean;
 	isDown: boolean;
 	isOut: boolean;
+	isHit: boolean;
 	isUp: boolean;
-	hit: boolean;
 	clicks = 0;
 
 	//////////////////////////////////////////////
@@ -19,7 +19,7 @@ export default class Mouse_State {
 	//	isOut is mirrored in Element_State		//
 	//////////////////////////////////////////////
 
-	constructor(event: MouseEvent | null, element: HTMLElement | null, isHover: boolean, isOut: boolean, isDown: boolean, isUp: boolean, isDouble: boolean, isLong: boolean, isMove: boolean, hit: boolean = false) {
+	constructor(event: MouseEvent | null, element: HTMLElement | null, isHover: boolean, isOut: boolean, isDown: boolean, isUp: boolean, isDouble: boolean, isLong: boolean, isMove: boolean, isHit: boolean = false) {
 		this.isDouble = isDouble;
 		this.element = element;
 		this.isHover = isHover;
@@ -28,12 +28,12 @@ export default class Mouse_State {
 		this.isDown = isDown;
 		this.event = event;
 		this.isOut = isOut;
+		this.isHit = isHit;
 		this.isUp = isUp;
-		this.hit = hit;
 	}
 
 	get isShapeHit(): boolean { return false; }
-	get copy(): Mouse_State { return new Mouse_State(this.event, this.element, this.isHover, this.isOut, this.isDown, this.isUp, this.isDouble, this.isLong, this.isMove, this.hit); }
+	get copy(): Mouse_State { return new Mouse_State(this.event, this.element, this.isHover, this.isOut, this.isDown, this.isUp, this.isDouble, this.isLong, this.isMove, this.isHit); }
 
 	get isElementHit(): boolean {
 		return !!this.event && !!this.element &&
@@ -49,7 +49,7 @@ export default class Mouse_State {
 		if (this.isDouble) { states.push('double'); }
 		if (this.isLong) { states.push('long'); }
 		if (this.isMove) { states.push('move'); }
-		if (this.hit) { states.push('hit'); }
+		if (this.isHit) { states.push('hit'); }
 		return `${name} MOUSE ${states.join(', ')}`;
 	}
 
@@ -58,8 +58,8 @@ export default class Mouse_State {
 	static up(event: MouseEvent | null, element: HTMLElement) { return new Mouse_State(event, element, false, false, false, true, false, false, false); }
 	static down(event: MouseEvent | null, element: HTMLElement) { return new Mouse_State(event, element, false, false, true, false, false, false, false); }
 	static long(event: MouseEvent | null, element: HTMLElement) { return new Mouse_State(event, element, false, false, false, false, false, true, false); }
-	static move(event: MouseEvent | null, element: HTMLElement, isDown: boolean) { return new Mouse_State(event, element, false, false, isDown, false, false, false, true); }
 	static hover(event: MouseEvent | null, element: HTMLElement, isHovering: boolean) { return new Mouse_State(event, element, true, !isHovering, false, false, false, false, false); }
 	static clicks(event: MouseEvent | null, element: HTMLElement, clickCount: number) { return new Mouse_State(event, element, false, false, false, false, clickCount > 1, false, false); }
+	static move(event: MouseEvent | null, element: HTMLElement, isDown: boolean, isHit: boolean) { return new Mouse_State(event, element, false, false, isDown, false, false, false, isHit); }
 
 }

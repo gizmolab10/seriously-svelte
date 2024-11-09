@@ -6,32 +6,33 @@ export enum DebugFlag {
 	hide_rings = 'hide_rings',
 	reticule   = 'reticule',	// debug ring layout geometry
 	segments   = 'segments',
-	persist	   = 'persist',
 	origins    = 'origins',
+	persist	   = 'persist',
 	rebuild    = 'rebuild',
-	layout	   = 'layout',
 	action     = 'action',
+	colors	   = 'colors',		// indicate some coordinates
+	cursor	   = 'cursor',
 	crumbs     = 'crumbs',
+	layout	   = 'layout',
 	remote	   = 'remote',		// interactions with remote
 	things	   = 'things',		// enable Things.debugLog
-	colors	   = 'colors',		// indicate some coordinates
-	graph	   = 'graph',		// log size of graph area
-	order	   = 'order',		// observe relocating
-	error	   = 'error',		// async errors
-	lines	   = 'lines',		// alignment dots for lines and widgets
-	tools	   = 'tools',		// state logic of add parent tool
 	build	   = 'build',
+	error	   = 'error',		// async errors
+	graph	   = 'graph',		// log size of graph area
+	lines	   = 'lines',		// alignment dots for lines and widgets
 	mount	   = 'mount',
+	order	   = 'order',		// observe relocating
 	rings	   = 'rings',
-	info	   = 'info',
-	edit	   = 'edit',		// editing state machine
+	tools	   = 'tools',		// state logic of add parent tool
 	beat	   = 'beat',		// heartbeat
+	edit	   = 'edit',		// editing state machine
+	info	   = 'info',
 	key		   = 'key',			// keyboard input
 }
 
 export class Debug {
 	flags: Array<DebugFlag>;
-	constructor(flags: Array<DebugFlag>) { this.flags   = flags; }
+	constructor(flags: Array<DebugFlag>) { this.flags = flags; }
 	hasOption(option: DebugFlag) { return this.flags.includes(option); }
 	log_key(message: string) { this.log_maybe(DebugFlag.key, message); }
 	log_beat(message: string) { this.log_maybe(DebugFlag.beat, message); }
@@ -42,6 +43,7 @@ export class Debug {
 	log_mount(message: string) { this.log_maybe(DebugFlag.mount, message) }
 	log_rings(message: string) { this.log_maybe(DebugFlag.rings, message) }
 	log_action(message: string) { this.log_maybe(DebugFlag.action, message) }
+	log_cursor(message: string) { this.log_maybe(DebugFlag.cursor, message) }
 	log_crumbs(message: string) { this.log_maybe(DebugFlag.crumbs, message) }
 	log_layout(message: string) { this.log_maybe(DebugFlag.layout, message) }
 	log_remote(message: string) { this.log_maybe(DebugFlag.remote, message) }
@@ -53,7 +55,9 @@ export class Debug {
 	log_target(target: any, key: string) { console.log(`Method \'${key}\' is called on class \'${target.constructor.name}\'`); }
 	get hide_rings(): boolean { return this.hasOption(DebugFlag.hide_rings); }
 	get reticule(): boolean { return this.hasOption(DebugFlag.reticule); }
+	get cursor(): boolean { return this.hasOption(DebugFlag.cursor); }
 	get lines(): boolean { return this.hasOption(DebugFlag.lines); }
+	get rings(): boolean { return this.hasOption(DebugFlag.rings); }
 	get info(): boolean { return this.hasOption(DebugFlag.info); }
 
 	queryStrings_apply() {
@@ -71,6 +75,7 @@ export class Debug {
 					case 'action': this.flags.push(DebugFlag.action); break;
 					case 'colors': this.flags.push(DebugFlag.colors); break;
 					case 'crumbs': this.flags.push(DebugFlag.crumbs); break;
+					case 'cursor': this.flags.push(DebugFlag.cursor); break;
 					case 'layout': this.flags.push(DebugFlag.layout); break;
 					case 'remote': this.flags.push(DebugFlag.remote); break;
 					case 'things': this.flags.push(DebugFlag.things); break;

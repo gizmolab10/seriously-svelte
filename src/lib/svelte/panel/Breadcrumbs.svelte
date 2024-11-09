@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, Size, Point, Thing, debug, ZIndex, signals } from '../../ts/common/Global_Imports';
+	import { g, k, u, w, Size, Point, Thing, debug, ZIndex, signals } from '../../ts/common/Global_Imports';
 	import { svgPaths, onMount, Ancestry, dbDispatch, Direction } from '../../ts/common/Global_Imports';
 	import { s_hierarchy, s_focus_ancestry, s_grabbed_ancestries } from '../../ts/state/Reactive_State';
 	import { s_graphRect, s_show_details, s_color_thing } from '../../ts/state/Reactive_State';
@@ -30,7 +30,7 @@
 			ancestry = h.grabs.ancestry_lastGrabbed ?? h.rootAncestry;		// assure we have a ancestry
 			if (!!ancestry) {				
 				let widths: Array<number> = [];
-				const windowWidth = g.windowSize.width;
+				const windowWidth = w.windowSize.width;
 				let fingerprint = 0;	// encoded as one parent count per digit (base 10)
 				[ancestors, widths, lefts, fingerprint] = ancestry.layout_ancestors_within(windowWidth);
 				left = lefts[0];

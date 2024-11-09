@@ -1,18 +1,15 @@
-import { s_hierarchy, s_graphRect, s_resize_count, s_mouse_up_count, s_rebuild_count } from '../state/Reactive_State';
-import { s_focus_ancestry, s_device_isMobile, s_grabbed_ancestries, s_expanded_ancestries } from './Reactive_State';
-import { Hierarchy, persistLocal, IDPersistent, Rotation_State, Startup_State, Expansion_State } from '../common/Global_Imports';
-import { k, u, ux, get, show, Rect, Size, Point, debug, events, dbDispatch } from '../common/Global_Imports';
-import { s_show_details, s_color_thing, s_startup_state, s_user_graphOffset } from './Reactive_State';
-
+import { Hierarchy, persistLocal, Rotation_State, Startup_State, Expansion_State } from '../common/Global_Imports';
+import { s_hierarchy, s_resize_count, s_mouse_up_count, s_rebuild_count } from '../state/Reactive_State';
+import { s_focus_ancestry, s_grabbed_ancestries, s_expanded_ancestries } from './Reactive_State';
+import { e, k, u, ux, w, get, show, debug, dbDispatch } from '../common/Global_Imports';
+import { s_color_thing, s_startup_state, s_device_isMobile } from './Reactive_State';
 
 class Global_State {
 	allow_GraphEditing = true;
 	allow_TitleEditing = true;
 	allow_HorizontalScrolling = true;
 
-	scale_factor = 1;
 	isEditing_text = false;
-	scroll = this.windowScroll;
 	mouse_responder_number = 0;
 	ring_rotation_state!: Rotation_State;
 	cluster_paging_state!: Rotation_State;
@@ -32,12 +29,13 @@ class Global_State {
 
 		debug.queryStrings_apply();						// debug even setup code
 		this.setup_defaults();							// defaults
+		w.setup_defaults();
 		show.restore_state();							// local persistance
 		persistLocal.restore_state();
 		persistLocal.restore_db();
 		this.queryStrings_apply();						// query strings
 		show.queryStrings_apply();
-		events.setup();
+		e.setup();
 	}
 
 	setup_defaults() {
@@ -47,10 +45,9 @@ class Global_State {
 		s_color_thing.set(null);
 		s_startup_state.set(Startup_State.start);
 		s_device_isMobile.set(this.device_isMobile);
-		this.applyScale(persistLocal.read_key(IDPersistent.scale) ?? 1);
 		this.ring_resizing_state = new Expansion_State();
+		this.ring_rotation_state  = new Rotation_State();
 		this.cluster_paging_state = new Rotation_State();
-		this.ring_rotation_state = new Rotation_State();
 	}
 
 	queryStrings_apply() {
@@ -83,8 +80,6 @@ class Global_State {
     }
 
 	get hierarchy(): Hierarchy { return get(s_hierarchy); }
-	get windowScroll(): Point { return new Point(window.scrollX, window.scrollY); }
-	get graph_center(): Point { return get(s_graphRect).size.dividedInHalf.asPoint; }
 
 	get isAny_rotation_active(): boolean {
 		return ux.isAny_paging_arc_active || this.cluster_paging_state.isActive || this.ring_rotation_state.isActive;
@@ -95,24 +90,9 @@ class Global_State {
 		return this.mouse_responder_number;
 	}
 
-	get windowSize(): Size {
-		const ratio = this.scale_factor;
-		return new Size(window.innerWidth / ratio, window.innerHeight / ratio);
-	}
-
 	get isServerLocal(): boolean {
 		const hostname = window.location.hostname;
 		return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "0.0.0.0";
-	}
-
-	get windowDelta(): Point | null {
-		const scroll = this.windowScroll;
-		const delta = scroll.distanceFrom(this.scroll);
-		if (delta.magnitude > 1) {
-			this.scroll = scroll;
-			return delta;
-		}
-		return null
 	}
 
 	get siteTitle(): string {
@@ -150,43 +130,6 @@ class Global_State {
 	showHelp() {
 		const url = this.isServerLocal ? k.local_help_url : k.remote_help_url;
 		this.open_tabFor(url);
-	}
-
-	graphOffset_setTo(offset: Point): boolean {
-		if (get(s_user_graphOffset) != offset) {
-			persistLocal.write_key(IDPersistent.user_offset, offset);
-			s_user_graphOffset.set(offset);
-			return true;
-		}
-		return false;
-	}
-
-	graphRect_update() {
-		const left = get(s_show_details) ? k.width_details : 0;			// width of details
-		const originOfGraph = new Point(left, 69);						// 69 = height of content above the graph
-		const sizeOfGraph = this.windowSize.reducedBy(originOfGraph);	// account for origin
-		const rect = new Rect(originOfGraph, sizeOfGraph);
-		debug.log_action(` graphRect_update ${rect.description} STATE`);
-		s_graphRect.set(rect);											// used by Panel and Graph_Tree
-	}
-
-	zoomBy(factor: number): number {
-		const zoomContainer = document.documentElement;
-		const currentScale = parseFloat(getComputedStyle(zoomContainer).getPropertyValue('zoom')) || 1;
-		const scale = currentScale * factor;
-		persistLocal.write_key(IDPersistent.scale, scale);
-		this.applyScale(scale);
-		return this.windowSize.width;
-	}
-
-	applyScale(scale: number) {
-		this.scale_factor = scale;
-		const zoomContainer = document.documentElement;
-		zoomContainer.style.setProperty('zoom', scale.toString());
-		zoomContainer.style.transform = `scale(var(zoom))`;
-		zoomContainer.style.height = `${100 / scale}%`;
-		zoomContainer.style.width = `${100 / scale}%`;
-		this.graphRect_update();
 	}
 
 }

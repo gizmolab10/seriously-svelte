@@ -1,4 +1,4 @@
-import { g, k, u, ux, get, Rect, Point, Angle, debug, IDLine, Arc_Map, Quadrant } from '../common/Global_Imports';
+import { g, k, u, ux, w, get, Rect, Point, Angle, debug, IDLine, Arc_Map, Quadrant } from '../common/Global_Imports';
 import { Ancestry, Predicate, Paging_State, Widget_MapRect, Rotation_State } from '../common/Global_Imports';
 import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/Reactive_State';
 import { s_graphRect, s_focus_ancestry } from '../state/Reactive_State';
@@ -75,7 +75,7 @@ export default class Cluster_Map {
 
 	get thumb_isHit(): boolean {
 		if (this.isPaging) {
-			const ring_offset = g.graph_center.offsetBy(Point.square(-get(s_ring_rotation_radius)));
+			const ring_offset = w.center_ofGraphRect.offsetBy(Point.square(-get(s_ring_rotation_radius)));
 			const vector = u.mouse_vector_ofOffset_fromGraphCenter(ring_offset);
 			return vector?.isContainedBy_path(this.thumb_map.svg_arc_path) ?? false;
 		}

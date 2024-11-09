@@ -1,6 +1,6 @@
 import { s_mouse_location, s_mouse_up_count, s_alteration_mode } from '../state/Reactive_State';
 import { s_resize_count, s_device_isMobile, s_user_graphOffset } from '../state/Reactive_State';
-import { g, get, Point, debug, signals, Alteration_State } from '../common/Global_Imports';
+import { g, w, get, Point, debug, signals, Alteration_State } from '../common/Global_Imports';
 
 class Events {
 	initialTouch: Point | null = null;
@@ -61,7 +61,7 @@ class Events {
 			const delta = new Point(-e.deltaX, -e.deltaY);
 			if (!!userOffset && g.allow_HorizontalScrolling && delta.magnitude > 1) {
 				debug.log_action(` wheel GRAPH`);
-				g.graphOffset_setTo(userOffset.offsetBy(delta));
+				w.graphOffset_setTo(userOffset.offsetBy(delta));
 			}
 		}
 	}
@@ -88,14 +88,14 @@ class Events {
 		debug.log_action(` resize [is${isMobile ? '' : ' not'} mobile] STATE`);
 		s_resize_count.set(get(s_resize_count) + 1);
 		s_device_isMobile.set(isMobile);
-		g.graphRect_update();
+		w.graphRect_update();
 	}
 
 	handle_orientation_change(event: Event) {
 		const isMobile = g.device_isMobile;
 		debug.log_action(` orientation change [is${isMobile ? '' : ' not'} mobile] STATE`);
 		s_device_isMobile.set(isMobile);
-		g.graphRect_update();
+		w.graphRect_update();
 	}
 
 	handle_touch_start(event: TouchEvent) {
@@ -113,7 +113,7 @@ class Events {
 				const touch = event.touches[0];
 				const deltaX = touch.clientX - this.initialTouch.x;
 				const deltaY = touch.clientY - this.initialTouch.y;
-				s_user_graphOffset.set(new Point(deltaX, deltaY));
+				w.graphOffset_setTo(new Point(deltaX, deltaY));
 				debug.log_action(` two-finger touch move GRAPH`);
 			}
 		}
@@ -125,4 +125,4 @@ class Events {
 
 }
 
-export let events = new Events();
+export let e = new Events();

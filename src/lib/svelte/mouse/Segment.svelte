@@ -24,7 +24,7 @@
 		if (mouse_state.isHover) {
 			isHovering = !mouse_state.isOut;
 		} else if (mouse_state.isDown) {
-			hit_closure(name, mouse_state.event.isShift);
+			hit_closure(name, mouse_state.event?.isShift ?? false);
 		}
 		update_colors();
 	}

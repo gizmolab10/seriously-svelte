@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, ux, show, Point, ZIndex, onMount, signals, svgPaths } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, w, show, Point, ZIndex, onMount, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import { s_show_details, s_id_popupView, s_graph_type, s_resize_count } from '../../ts/state/Reactive_State';
 	import { s_tree_type, s_device_isMobile, s_thing_fontFamily } from '../../ts/state/Reactive_State';
 	import { IDButton, Graph_Type, ElementType, Element_State } from '../../ts/common/Global_Imports';
@@ -16,7 +16,7 @@
 	const resize_viewBox = `0, 0, ${size_big}, ${size_big}`;
 	let element_states_byID: { [id: string]: Element_State } = {};
 	let elementShown_byID: {[key: string]: boolean} = {};
-	let width = g.windowSize.width - 20;
+	let width = w.windowSize.width - 20;
 
 	const ids = [	// in order of importance on mobile
 		IDButton.details,
@@ -31,11 +31,11 @@
 
 	$: {
 		const _ = $s_resize_count;
-		width = g.windowSize.width - 20;
+		width = w.windowSize.width - 20;
 	}
 
 	function setup_forIDs() {
-		let total = g.windowSize.width + 50;
+		let total = w.windowSize.width + 50;
 		for (const id of ids) {
 			total -= u.getWidthOf(id);
 			const element_state = ux.element_state_for(new Identifiable(id), ElementType.control, id);
