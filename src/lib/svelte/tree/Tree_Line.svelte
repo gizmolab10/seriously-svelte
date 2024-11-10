@@ -47,10 +47,10 @@
 					rect = rect.offsetByY(-1.5);
 					origin = rect.centerLeft;
 					extent = rect.centerRight;
-					linePath = svgPaths.line(origin.distanceTo(extent));
+					linePath = svgPaths.line(origin.vector_to(extent));
 					break;
 			}
-			const vector = origin.distanceTo(extent);
+			const vector = origin.vector_to(extent);
 			size = vector.abs.asSize;
 			if (curveType != IDLine.flat) {
 				const flag = (curveType == IDLine.down) ? 0 : 1;

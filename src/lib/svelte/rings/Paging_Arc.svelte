@@ -13,7 +13,7 @@
 	const radius = $s_ring_rotation_radius + offset;
 	const thumb_name = `thumb-${cluster_map?.name}`;
 	const viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;
-	let origin = w.center_ofGraphRect.offsetBy(Point.square(-radius));
+	let origin = w.center_ofGraphSize.offsetBy(Point.square(-radius));
 	let mouse_up_count = $s_mouse_up_count;
 	let arc_wrapper!: Svelte_Wrapper;
 	let thumb_color = color;
@@ -53,7 +53,7 @@
 	}
 
 	function computed_mouse_angle(): number | null {
-		return u.mouse_angle_fromGraphCenter ?? null
+		return w.mouse_angle_fromGraphCenter ?? null
 	}
 
 	function hover_closure(mouse_state) {
@@ -77,7 +77,7 @@
 					zindex={ZIndex.backmost}
 					name={cluster_map?.name}
 					cursor={k.cursor_default}
-					center={w.center_ofGraphRect}
+					center={w.center_ofGraphSize}
 					mouse_state_closure={hover_closure}
 					isHit_closure={() => cluster_map.thumb_isHit}>
 					<svg id='arc' viewBox={viewBox}>

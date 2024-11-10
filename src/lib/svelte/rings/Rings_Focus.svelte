@@ -15,7 +15,7 @@
 	$: {
 		titleWidth = 10 + ($s_focus_ancestry?.thing?.titleWidth ?? 0);
 		const offsetX = -titleWidth / 2;
-		focus_origin = w.center_ofGraphRect.offsetByXY(offsetX, 1 - k.dot_size);
+		focus_origin = w.center_ofGraphSize.offsetByXY(offsetX, 1 - k.dot_size);
 		centerOffset = new Point(titleWidth + 25, height).dividedInHalf;
 	}
 

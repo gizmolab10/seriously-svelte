@@ -32,8 +32,8 @@ export class Point {
 	offsetByXY(x: number, y: number):  Point { return new Point(this.x + x, this.y + y); }
 	offsetEquallyBy(offset: number):   Point { return new Point(this.x + offset, this.y + offset); }
 	offsetBy(point: Point):			   Point { return new Point(this.x + point.x, this.y + point.y); }
-	distanceTo(point: Point):		   Point { return new Point(point.x - this.x, point.y - this.y); }
-	distanceFrom(point: Point):		   Point { return new Point(this.x - point.x, this.y - point.y); }
+	vector_to(point: Point):		   Point { return new Point(point.x - this.x, point.y - this.y); }
+	vector_from(point: Point):		   Point { return new Point(this.x - point.x, this.y - point.y); }
 	multipliedBy(multiplier: number):  Point { return new Point(this.x * multiplier, this.y * multiplier) }
 	offsetBySize(size: Size):		   Point { return new Point(this.x + size.width, this.y + size.height); }
 	static fromPolar(r: number, phi: number) { return Point.x(r).rotate_by(phi); }
@@ -175,7 +175,7 @@ export class Rect {
 
 	expandedBy(expansion: Point): Rect {
 		const size = this.size.expandedBy(expansion);
-		const origin = this.origin.distanceFrom(expansion);
+		const origin = this.origin.vector_from(expansion);
 		return new Rect(origin, size)
 	}
 
@@ -196,7 +196,7 @@ export class Rect {
 	}
 
 	static createExtentRect(origin: Point, extent: Point) {
-		return new Rect(origin, extent.distanceFrom(origin).asSize);
+		return new Rect(origin, extent.vector_from(origin).asSize);
 	}
 
 	static createRightCenterRect(rightCenter: Point, size: Size) {

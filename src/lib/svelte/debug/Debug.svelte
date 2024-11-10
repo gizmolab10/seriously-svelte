@@ -3,14 +3,13 @@
 	import { g, u, w, Rect, Size, Point, debug, ZIndex } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Box from './Box.svelte';
-	export let size = 8;
+	export let size = 16;
 	const multiplier = 0.6;
 	let mouse_rect = Rect.zero;
-	let base = new Point(-124, -87);
-	let debug_origin = $s_offset_graph_center.offsetBy(base);
+	let debug_origin = $s_offset_graph_center;
 
 	$: {
-		debug_origin = $s_offset_graph_center.offsetBy(base);
+		debug_origin = $s_offset_graph_center;
 	}
 
 	$: {
@@ -26,7 +25,7 @@
 
 	function hover_closure(mouse_state) {
 		if (mouse_state.isMove) {
-			const distance = u.mouse_distance_fromGraphCenter;
+			const distance = w.mouse_distance_fromGraphCenter;
 			// debug.log_cursor(distance.toFixed(2));
 			// mouse location
 			// measure distance to debug_origin
@@ -37,7 +36,14 @@
 	}
 
 </script>
-
+{#if debug.graph}
+	<Box
+		color = 'green'
+		cross = {true}
+		name = 'graph'
+		zindex = {ZIndex.frontmost}
+		rect = {$s_graphRect}/>
+{/if}
 {#if debug.cursor}
 	<Mouse_Responder
 		name='debug-cursor'

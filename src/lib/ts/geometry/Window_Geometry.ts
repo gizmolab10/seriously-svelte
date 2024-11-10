@@ -1,14 +1,18 @@
-import { s_show_details, s_graphRect, s_user_graphOffset, s_offset_graph_center } from './Reactive_State';
 import { k, get, Rect, Size, Point, debug, persistLocal, IDPersistent } from '../common/Global_Imports';
+import { s_show_details, s_graphRect, s_mouse_location } from '../state/Reactive_State';
+import { s_user_graphOffset, s_offset_graph_center } from '../state/Reactive_State';
 
-class Window_State {
+class Window_Geometry {
 	scale_factor = 1;
 	scroll = this.windowScroll;
 	
 	get windowScroll(): Point { return new Point(window.scrollX, window.scrollY); }
-	get center_ofGraphRect(): Point { return get(s_graphRect).size.dividedInHalf.asPoint; }
+	get center_ofGraphSize(): Point { return get(s_graphRect).size.dividedInHalf.asPoint; }
+	get mouse_vector_fromGraphCenter(): Point | null { return this.mouse_vector_ofOffset_fromGraphCenter(); }
+	get mouse_distance_fromGraphCenter(): number { return this.mouse_vector_fromGraphCenter?.magnitude ?? 0; }
+	get mouse_angle_fromGraphCenter(): number | null { return this.mouse_vector_fromGraphCenter?.angle ?? null; }
 
-	get user_offset(): Point {
+	get persisted_user_offset(): Point {
 		const point = persistLocal.read_key(IDPersistent.user_offset) ?? {x:0, y:0};
 		return new Point(point.x, point.y);
 	}
@@ -18,27 +22,28 @@ class Window_State {
 		return new Size(window.innerWidth / ratio, window.innerHeight / ratio);
 	}
 
-	get windowDelta(): Point | null {
-		const scroll = this.windowScroll;
-		const delta = scroll.distanceFrom(this.scroll);
-		if (delta.magnitude > 1) {
-			this.scroll = scroll;
-			return delta;
+	restore_state() {
+		this.graphRect_update();
+		this.user_graphOffset_setTo(this.persisted_user_offset);
+		this.applyScale(persistLocal.read_key(IDPersistent.scale) ?? 1);
+	}
+
+	mouse_vector_ofOffset_fromGraphCenter(offset: Point = Point.zero): Point | null {
+		const mouse_location = get(s_mouse_location)?.multipliedBy(w.scale_factor);
+		if (!!mouse_location) {
+			const mouse_vector = mouse_location.vector_from(get(s_offset_graph_center).offsetBy(offset));
+			debug.log_rings(`${mouse_vector.description} ${offset.description}`);
+			return mouse_vector;
 		}
 		return null
 	}
 
-	restore_state() {
-		this.applyScale(persistLocal.read_key(IDPersistent.scale) ?? 1);
-		this.user_graphOffset_setTo(this.user_offset);
-	}
-
-	user_graphOffset_setTo(graphOffset: Point): boolean {
-		if (get(s_user_graphOffset) != graphOffset) {
-			persistLocal.write_key(IDPersistent.user_offset, graphOffset);
-			const center = get(s_graphRect).size.dividedInHalf.asPoint;
-			s_offset_graph_center.set(center.offsetBy(graphOffset));
-			s_user_graphOffset.set(graphOffset);
+	user_graphOffset_setTo(user_offset: Point): boolean {
+		if (get(s_user_graphOffset) != user_offset) {
+			const center = get(s_graphRect)?.center;
+			s_user_graphOffset.set(user_offset);
+			persistLocal.write_key(IDPersistent.user_offset, user_offset);
+			s_offset_graph_center.set(center.offsetBy(user_offset));
 			return true;
 		}
 		return false;
@@ -74,4 +79,4 @@ class Window_State {
 
 }
 
-export let w = new Window_State();
+export let w = new Window_Geometry();

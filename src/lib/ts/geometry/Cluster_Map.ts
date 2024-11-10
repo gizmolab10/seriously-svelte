@@ -75,8 +75,8 @@ export default class Cluster_Map {
 
 	get thumb_isHit(): boolean {
 		if (this.isPaging) {
-			const ring_offset = w.center_ofGraphRect.offsetBy(Point.square(-get(s_ring_rotation_radius)));
-			const vector = u.mouse_vector_ofOffset_fromGraphCenter(ring_offset);
+			const ring_offset = w.center_ofGraphSize.offsetBy(Point.square(-get(s_ring_rotation_radius)));
+			const vector = w.mouse_vector_ofOffset_fromGraphCenter(ring_offset);
 			return vector?.isContainedBy_path(this.thumb_map.svg_arc_path) ?? false;
 		}
 		return false;

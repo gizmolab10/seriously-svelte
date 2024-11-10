@@ -4,8 +4,8 @@ import type { SvelteComponent } from 'svelte';
 import { builds } from './Builds';
 import { e } from '../signals/Events';
 import { show } from '../state/Show_State';
+import { cursors } from '../maybe/Cursors';
 import { dbDispatch } from '../db/DBDispatch';
-import { cursors } from '../geometry/Cursors';
 import { wrappers } from '../managers/Wrappers';
 import { Hierarchy } from '../managers/Hierarchy';
 import { Seriously_Range } from './Seriously_Range';
@@ -54,7 +54,7 @@ import { u } from './Utilities';
 import { k } from './Constants';
 import { ux } from '../state/UX_State';
 import { g } from '../state/Global_State';
-import { w } from '../state/Window_State';
+import { w } from '../geometry/Window_Geometry';
 
 import muuri from 'muuri';
 import interact from 'interactjs';

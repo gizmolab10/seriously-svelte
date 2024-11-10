@@ -63,7 +63,7 @@
 
 <svelte:document on:keydown={handle_key_down}/>
 {#key rebuilds}
-	<Debug size = 16/>
+	<Debug/>
 	<div style='
 		touch-action: none;
 		pointer-events: auto;

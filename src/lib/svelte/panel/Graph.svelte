@@ -64,6 +64,7 @@
 			top:${draggableRect.origin.y - 9}px;
 			width: ${draggableRect.size.width}px;
 			height: ${draggableRect.size.height}px;
+			transform: translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y - 14.3}px);
 		`.removeWhiteSpace();
 	}
 

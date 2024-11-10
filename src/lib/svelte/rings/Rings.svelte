@@ -29,7 +29,7 @@
 	debug.log_build(` (svelte)`);
 	$s_clusters_geometry.layoutAll_clusters();
 	function handle_mouse_state(mouse_state: Mouse_State): boolean { return true; }				// only for wrappers
-	function isHit(): boolean { return u.mouse_distance_fromGraphCenter <= outer_radius; }
+	function isHit(): boolean { return w.mouse_distance_fromGraphCenter <= outer_radius; }
 
 	$: {
 		if (!!$s_focus_ancestry.thing && $s_focus_ancestry.thing.id == $s_color_thing?.split(k.generic_separator)[0]) {
@@ -68,7 +68,7 @@
 	}
 
 	function ringZone_forMouseLocation(): Ring_Zone {
-		const distance = u.mouse_distance_fromGraphCenter;
+		const distance = w.mouse_distance_fromGraphCenter;
 		const thick = k.ring_rotation_thickness;
 		const inner = $s_ring_rotation_radius;
 		const thin = k.paging_arc_thickness;
@@ -116,7 +116,7 @@
 		////////////////////////////////////
 
 		const _ = $s_mouse_location;											// use store, to invoke this code
-		const from_center = u.mouse_vector_fromGraphCenter;
+		const from_center = w.mouse_vector_fromGraphCenter;
 		if (!!from_center) {
 			const mouse_angle = from_center.angle;
 			const rotation_state = g.ring_rotation_state;
@@ -175,7 +175,7 @@
 		/////////////////////////////
 
 		if (!mouse_state.isHover) {
-			const mouse_wentDown_angle = u.mouse_angle_fromGraphCenter;
+			const mouse_wentDown_angle = w.mouse_angle_fromGraphCenter;
 			const rotation_angle = mouse_wentDown_angle.add_angle_normalized(-$s_rotation_ring_angle);
 			if (mouse_state.isUp) {
 				reset();
@@ -189,7 +189,7 @@
 						rebuilds += 1;
 						break;
 					case Ring_Zone.resize:
-						const radius_offset = u.mouse_distance_fromGraphCenter - $s_ring_rotation_radius;
+						const radius_offset = w.mouse_distance_fromGraphCenter - $s_ring_rotation_radius;
 						debug.log_rings(` begin resize  ${radius_offset.toFixed(0)}`);
 						g.ring_rotation_state.active_angle = mouse_wentDown_angle + Angle.quarter;	// needed for cursor
 						g.ring_rotation_state.basis_angle = rotation_angle + Angle.quarter;
@@ -235,7 +235,7 @@
 				isHit_closure={isHit}
 				width={outer_diameter}
 				height={outer_diameter}
-				center={w.center_ofGraphRect}
+				center={w.center_ofGraphSize}
 				mouse_state_closure={mouse_state_closure}>
 				<svg
 					class='rings-svg'

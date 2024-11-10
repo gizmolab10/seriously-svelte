@@ -4,7 +4,7 @@ import Identifiable from '../basis/Identifiable';
 import { Quadrant } from '../geometry/Angle';
 import Ancestry from '../managers/Ancestry';
 import { IDBrowser } from './Enumerations';
-import { w } from '../state/Window_State';
+import { w } from '../geometry/Window_Geometry';
 import { transparentize } from 'color2k';
 import { debug } from '../common/Debug';
 import Angle from '../geometry/Angle';
@@ -23,9 +23,6 @@ class Utilities {
 	strip_invalid(array: Array<any>): Array<any> { return this.strip_identifiableDuplicates(this.strip_falsies(array)); }
 	sort_byOrder(array: Array<Ancestry>) { return array.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
 	uniquely_concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return this.strip_invalid(this.concatenateArrays(a, b)); }
-	get mouse_angle_fromGraphCenter(): number | null { return this.mouse_vector_fromGraphCenter?.angle ?? null; }
-	get mouse_distance_fromGraphCenter(): number { return this.mouse_vector_fromGraphCenter?.magnitude ?? 0; }
-	get mouse_vector_fromGraphCenter(): Point | null { return this.mouse_vector_ofOffset_fromGraphCenter(); }
 
 	apply(startStop: (flag: boolean) => void, callback: () => void): void {
 		startStop(true);
@@ -59,16 +56,6 @@ class Utilities {
 			const bTop = b.titleRect?.origin.y;
 			return (!aTop || !bTop) ? 0 : aTop - bTop;
 		});
-	}
-
-	mouse_vector_ofOffset_fromGraphCenter(offset: Point = Point.zero): Point | null {
-		const location = get(s_mouse_location)?.multipliedBy(w.scale_factor);
-		if (!!location) {
-			const distance = get(s_offset_graph_center).offsetBy(offset).distanceTo(location);
-			debug.log_rings(`${distance.description} ${offset.description}`);
-			return distance;
-		}
-		return null
 	}
 
 	strip_hidDuplicates(ancestries: Array<Ancestry>) {

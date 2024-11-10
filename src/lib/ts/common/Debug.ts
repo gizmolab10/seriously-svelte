@@ -54,6 +54,7 @@ export class Debug {
 	get hide_rings(): boolean { return this.hasOption(DebugFlag.hide_rings); }
 	get reticule(): boolean { return this.hasOption(DebugFlag.reticule); }
 	get cursor(): boolean { return this.hasOption(DebugFlag.cursor); }
+	get graph(): boolean { return this.hasOption(DebugFlag.graph); }
 	get lines(): boolean { return this.hasOption(DebugFlag.lines); }
 	get rings(): boolean { return this.hasOption(DebugFlag.rings); }
 	get info(): boolean { return this.hasOption(DebugFlag.info); }

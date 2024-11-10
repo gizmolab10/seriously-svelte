@@ -14,7 +14,7 @@ class Events {
 
 	update_event_listener(name: string, handler: EventListenerOrEventListenerObject) {
 		window.removeEventListener(name, handler);
-		window.addEventListener(name, handler);
+		window.addEventListener(name, handler, { passive: false });
 	}
 
 	clear_event_subscriptions() {
@@ -36,25 +36,28 @@ class Events {
 			window.addEventListener('touchmove', this.handle_touch_move, { passive: false });
 			window.addEventListener('touchstart', this.handle_touch_start, { passive: false });
 		} else {
-			window.addEventListener('mouseup', this.handle_mouse_up);
-			window.addEventListener('mousemove', this.handle_mouse_move);
+			window.addEventListener('mouseup', this.handle_mouse_up, { passive: false });
+			window.addEventListener('mousemove', this.handle_mouse_move, { passive: false });
 		}
 	}
 
 	handle_mouse_up(event: MouseEvent) {
 		event.preventDefault();
+		event.stopPropagation();
 		s_mouse_up_count.set(get(s_mouse_up_count) + 1);
 		// this.respondTo_closure(event, Mouse_State.up);
 	}
 
 	handle_mouse_move(event: MouseEvent) {
 		event.preventDefault();
+		event.stopPropagation();
 		s_mouse_location.set(new Point(event.clientX, event.clientY));
 		// this.respondTo_closure(event, Mouse_State.move);
 	}
 
 	handle_wheel(event: Event) {
 		event.preventDefault();
+		event.stopPropagation();
 		if (!g.device_isMobile) {
 			const e = event as WheelEvent;
 			const userOffset = get(s_user_graphOffset);
@@ -109,6 +112,7 @@ class Events {
 	handle_touch_move(event: TouchEvent) {
 		if (event.touches.length == 2) {
 			event.preventDefault();
+			event.stopPropagation();
 			if (this.initialTouch) {
 				const touch = event.touches[0];
 				const deltaX = touch.clientX - this.initialTouch.x;
