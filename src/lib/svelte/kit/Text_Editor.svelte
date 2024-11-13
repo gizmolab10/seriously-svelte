@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, u, debug, ZIndex, dbDispatch } from '../../ts/common/Global_Imports';
-	import { s_thing_fontFamily } from '../../ts/state/Reactive_State';
+	import { s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
 	export let handle_textChange = (label: string, text: string) => {};
 	export let width = k.width_details - 40;
 	export let color = k.thing_color_default;

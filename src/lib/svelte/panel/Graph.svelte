@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { s_device_isMobile, s_user_graphOffset, s_showing_tools_ancestry } from '../../ts/state/Reactive_State';
+	import { s_device_isMobile, s_user_graphOffset, s_showing_tools_ancestry } from '../../ts/state/Svelte_Stores';
 	import { g, k, Rect, Point, debug, ZIndex, onMount, signals, Graph_Type } from '../../ts/common/Global_Imports';
-	import { s_graphRect, s_graph_type, s_focus_ancestry } from '../../ts/state/Reactive_State';
+	import { s_graphRect, s_graph_type, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
 	import Editing_Tools from '../widget/Editing_Tools.svelte';
 	import Rings_Graph from '../rings/Rings_Graph.svelte';
 	import Tree_Graph from '../tree/Tree_Graph.svelte';
@@ -30,7 +30,7 @@
 	}
 
 	$: {
-		draggableRect = $s_device_isMobile ? $s_graphRect : $s_graphRect.atZero_forX;
+		draggableRect = $s_graphRect.offsetByY(-9);
 		debug.log_action(` draggable ${draggableRect.description}`);
 		update_toolsOffset();
 		update_style();
@@ -61,7 +61,7 @@
 			touch-action: none;
 			pointer-events: auto;
 			z-index: ${ZIndex.backmost};
-			top:${draggableRect.origin.y - 9}px;
+			top:${draggableRect.origin.y}px;
 			width: ${draggableRect.size.width}px;
 			height: ${draggableRect.size.height}px;
 			transform: translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y - 14.3}px);

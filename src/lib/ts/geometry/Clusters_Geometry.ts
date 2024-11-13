@@ -1,4 +1,4 @@
-import { s_hierarchy, s_paging_state, s_focus_ancestry } from '../state/Reactive_State';
+import { s_hierarchy, s_paging_state, s_focus_ancestry } from '../state/Svelte_Stores';
 import { u, get, Thing, debug, Ancestry, Predicate } from '../common/Global_Imports';
 import { Cluster_Map, Paging_State, Widget_MapRect } from '../common/Global_Imports';
 import Parent_Ancestry from '../managers/Parent_Ancestry';

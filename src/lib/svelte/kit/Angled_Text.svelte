@@ -1,6 +1,6 @@
 <script>
 	import { k, u, Point, debug, ZIndex, onMount } from '../../ts/common/Global_Imports';
-	import { s_thing_fontFamily } from '../../ts/state/Reactive_State';
+	import { s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
 	export let font_family = $s_thing_fontFamily;
 	export let center = Point.zero;
 	export let font_size = '0.7em';

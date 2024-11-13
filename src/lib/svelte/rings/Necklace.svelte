@@ -1,11 +1,11 @@
 <script lang='ts'>
-	import { s_graphRect, s_paging_state, s_focus_ancestry, s_color_thing } from '../../ts/state/Reactive_State';
-	import { s_clusters_geometry, s_ring_rotation_radius } from '../../ts/state/Reactive_State';
+	import { s_graphRect, s_paging_state, s_focus_ancestry, s_color_thing } from '../../ts/state/Svelte_Stores';
+	import { s_clusters_geometry, s_ring_rotation_radius } from '../../ts/state/Svelte_Stores';
 	import { k, u, get, Point, ZIndex, signals, onMount } from '../../ts/common/Global_Imports';
 	import { onDestroy, Predicate, Clusters_Geometry } from '../../ts/common/Global_Imports';
 	import Widget from '../widget/Widget.svelte';
     const ancestry = $s_focus_ancestry;
-	const center = $s_graphRect.size.dividedInHalf.asPoint;
+	const center = $s_graphRect.size.asPoint.dividedInHalf;
 	const childOffset = new Point(k.dot_size / -2, 4 - k.dot_size);
 	let color = ancestry.thing?.color ?? k.thing_color_default;
 	let rebuilds = 0;

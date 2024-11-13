@@ -1,4 +1,4 @@
-import { s_mouse_location, s_thing_fontFamily, s_offset_graph_center } from '../state/Reactive_State';
+import { s_mouse_location, s_thing_fontFamily, s_offset_graph_center } from '../state/Svelte_Stores';
 import { Size, Point } from '../geometry/Geometry';
 import Identifiable from '../basis/Identifiable';
 import { Quadrant } from '../geometry/Angle';

@@ -1,6 +1,6 @@
 import { get, dbDispatch, PredicateKind } from '../common/Global_Imports';
 import RemoteIdentifiable from '../basis/RemoteIdentifiable';
-import { s_hierarchy } from '../../ts/state/Reactive_State';
+import { s_hierarchy } from '../../ts/state/Svelte_Stores';
 
 export default class Predicate extends RemoteIdentifiable {
 	isBidirectional: boolean;

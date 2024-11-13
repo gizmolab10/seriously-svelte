@@ -1,5 +1,5 @@
 import { k, get, Rect, Point, Angle, svgPaths } from '../common/Global_Imports';
-import { s_ring_rotation_radius } from '../state/Reactive_State';
+import { s_ring_rotation_radius } from '../state/Svelte_Stores';
 
 // create svg paths for generic arcs
 // arc radii are smaller than ring radii

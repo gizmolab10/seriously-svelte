@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { Graph_Type, dbDispatch, Seriously_Range, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
-	import { s_hierarchy, s_graph_type, s_color_thing, s_title_thing, s_edit_state } from '../../ts/state/Reactive_State';
-	import { s_thing_fontFamily, s_grabbed_ancestries, s_showing_tools_ancestry } from '../../ts/state/Reactive_State';
+	import { s_hierarchy, s_graph_type, s_color_thing, s_title_thing, s_edit_state } from '../../ts/state/Svelte_Stores';
+	import { s_thing_fontFamily, s_grabbed_ancestries, s_showing_tools_ancestry } from '../../ts/state/Svelte_Stores';
 	import { g, k, u, Point, Thing, debug, Angle, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
 	export let fontSize = '1em';
 	export let forward = true;

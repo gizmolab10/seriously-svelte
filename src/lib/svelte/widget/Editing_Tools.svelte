@@ -2,9 +2,9 @@
 	import { onMount, svgPaths, signals, opacitize, Direction, Graph_Type } from '../../ts/common/Global_Imports';
 	import { k, u, ux, show, Rect, Size, Point, debug, IDTool, ZIndex } from '../../ts/common/Global_Imports';
 	import { dbDispatch, ElementType, Mouse_State, Element_State } from '../../ts/common/Global_Imports';
-	import { s_hierarchy, s_graph_type, s_showing_tools_ancestry } from '../../ts/state/Reactive_State';
+	import { s_hierarchy, s_graph_type, s_showing_tools_ancestry } from '../../ts/state/Svelte_Stores';
 	import { Alteration_State, AlterationType, Svelte_Wrapper } from '../../ts/common/Global_Imports';
-	import { s_alteration_mode, s_graphRect, s_show_details } from '../../ts/state/Reactive_State';
+	import { s_alteration_mode, s_graphRect, s_show_details } from '../../ts/state/Svelte_Stores';
 	import Transparent_Circle from '../kit/Transparent_Circle.svelte';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Triangle_Button from '../mouse/Triangle_Button.svelte';

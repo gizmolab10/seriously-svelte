@@ -1,14 +1,20 @@
-svg { display: block; }		/* override inline to eliminate unwanted vertical displacements */
+html, body {
+	overflow: hidden;
+}
 
-.root {
-	color: white;
-	background-color: white;
+svg {
+	display: block;		/* override inline to eliminate unwanted vertical displacements */
 }
 
 button, svg {
 	&:focus {
 		outline: none;
 	}
+}
+
+.root {
+	color: white;
+	background-color: white;
 }
 
 .horizontal-line {

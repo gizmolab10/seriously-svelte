@@ -1,5 +1,5 @@
-import { s_mouse_location, s_mouse_up_count, s_alteration_mode } from '../state/Reactive_State';
-import { s_resize_count, s_device_isMobile, s_user_graphOffset } from '../state/Reactive_State';
+import { s_mouse_location, s_mouse_up_count, s_alteration_mode } from '../state/Svelte_Stores';
+import { s_resize_count, s_device_isMobile, s_user_graphOffset } from '../state/Svelte_Stores';
 import { g, w, get, Point, debug, signals, Alteration_State } from '../common/Global_Imports';
 
 class Events {

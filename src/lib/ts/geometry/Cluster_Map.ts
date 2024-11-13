@@ -1,22 +1,28 @@
 import { g, k, u, ux, w, get, Rect, Point, Angle, debug, IDLine, Arc_Map, Quadrant } from '../common/Global_Imports';
 import { Ancestry, Predicate, Paging_State, Widget_MapRect, Rotation_State } from '../common/Global_Imports';
-import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/Reactive_State';
-import { s_graphRect, s_focus_ancestry } from '../state/Reactive_State';
+import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/Svelte_Stores';
+import { s_graphRect, s_focus_ancestry } from '../state/Svelte_Stores';
 
-// for one cluster (there are three)
-//
-// assumes ancestries are already paged to fit
-//
-// computes:
-//	svg paths & positions for arc pieces & thumb
-//	angle & vector for fork & thumb
-//	widget map rect for each child
-//	position of label
+//////////////////////////////////////////
+//										//
+//	for ONE cluster (there are three)	//
+//										//
+//	assumes ancestries are				//
+//		already paged to fit			//
+//										//
+//	computes:							//
+//		positions of arc, thumb & label	//
+//		widget map rect for each child	//
+//		svg paths for arc & thumb		//
+//		angle for fork & label			//
+//										//
+//////////////////////////////////////////
 
 export default class Cluster_Map {
-	focus_ancestry: Ancestry = get(s_focus_ancestry);
 	widget_maps: Array<Widget_MapRect> = [];	// one page of widgets, will be combined into geometry.widget_maps
+	focus_ancestry: Ancestry = get(s_focus_ancestry);
 	ancestries: Array<Ancestry> = [];
+	color = k.thing_color_default;
 	arc_straddles_nadir = false;
 	arc_straddles_zero = false;
 	arc_in_lower_half = false;
@@ -25,7 +31,6 @@ export default class Cluster_Map {
 	label_position_angle = 0;
 	cluster_title = k.empty;
 	arc_map = new Arc_Map();
-	color = k.thing_color_default;
 	predicate: Predicate;
 	toChildren: boolean;
 	center = Point.zero;
@@ -49,10 +54,9 @@ export default class Cluster_Map {
 	}
 
 	update_all() {
-		// debug.log_layout(`C MAP (ts)  ${this.direction_kind}`);
 		this.shown = this.ancestries.length;
 		this.isPaging = this.shown < this.total;
-		this.center = get(s_graphRect).size.dividedInHalf.asPoint;
+		this.center = get(s_graphRect).size.asPoint.dividedInHalf;
 		this.color = u.opacitize(this.focus_ancestry.thing?.color ?? this.color, 0.2);
 		this.update_fork_angle();
 		this.update_widget_angles();
@@ -72,15 +76,13 @@ export default class Cluster_Map {
 	get name(): string { return `${this.focus_ancestry.title}-cluster-${this.direction_kind}`; }
 	get fork_radial(): Point { return Point.fromPolar(get(s_ring_rotation_radius), this.arc_map.fork_angle); }
 	get paging_state_ofFocus(): Paging_State | null { return this.paging_state_ofAncestry(this.focus_ancestry); }
+	get thumb_isHit(): boolean { return this.isPaging && (w.mouse_vector_ofOffset_fromGraphCenter()?.isContainedBy_path(this.thumb_map.svg_arc_path) ?? false); }
 
-	get thumb_isHit(): boolean {
-		if (this.isPaging) {
-			const ring_offset = w.center_ofGraphSize.offsetBy(Point.square(-get(s_ring_rotation_radius)));
-			const vector = w.mouse_vector_ofOffset_fromGraphCenter(ring_offset);
-			return vector?.isContainedBy_path(this.thumb_map.svg_arc_path) ?? false;
-		}
-		return false;
+	get direction_kind(): string {
+		const isSingular = this.total == 1;
+		return this.isParental ? isSingular ? 'parent' : 'parents' : this.toChildren ? isSingular ? 'child' : 'children' : this.kind;
 	}
+
 	static readonly $_LABEL_$: unique symbol;
 
 	update_label_geometry() {		// rotate text tangent to arc, at center of arc
@@ -91,10 +93,6 @@ export default class Cluster_Map {
 		this.arc_map.label_text_angle = ortho - angle;
 		this.label_position_angle = angle;
 	}
-
-	get direction_kind(): string {
-		const isSingular = this.total == 1;
-		return this.isParental ? isSingular ? 'parent' : 'parents' : this.toChildren ? isSingular ? 'child' : 'children' : this.kind; }
 	
 	update_label_forIndex() {
 		let cluster_title =  `${this.total} ${this.direction_kind}`;
@@ -106,7 +104,7 @@ export default class Cluster_Map {
 		this.cluster_title = cluster_title;
 	}
 	
-	static readonly $_INDEX_$: unique symbol;
+	static readonly $_PAGING_$: unique symbol;
 	
 	paging_state_ofAncestry(ancestry: Ancestry): Paging_State | null {
 		return ancestry.thing?.page_states?.paging_state_for(this) ?? null;
@@ -115,7 +113,6 @@ export default class Cluster_Map {
 	adjust_paging_index_byAdding_angle(delta_angle: number) {
 		const paging = this.paging_state_ofFocus;
 		if (!!paging) {
-			// const inverter = (delta_angle > 0) ? 1 : -1;
 			const spread_angle = (-this.arc_map.spread_angle).angle_normalized();
 			const delta_fraction = (delta_angle / spread_angle);
 			const delta_index = delta_fraction * this.maximum_paging_index;			// convert rotation delta to index delta

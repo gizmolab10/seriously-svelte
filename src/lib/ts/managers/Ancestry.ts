@@ -1,6 +1,6 @@
-import { s_expanded_ancestries, s_showing_tools_ancestry, s_alteration_mode, s_clusters_geometry } from '../state/Reactive_State';
+import { s_expanded_ancestries, s_showing_tools_ancestry, s_alteration_mode, s_clusters_geometry } from '../state/Svelte_Stores';
 import { g, k, u, get, Rect, Size, Thing, debug, signals, wrappers, Graph_Type, Predicate } from '../common/Global_Imports';
-import { s_hierarchy, s_focus_ancestry, s_grabbed_ancestries, s_edit_state, s_graph_type } from '../state/Reactive_State';
+import { s_hierarchy, s_focus_ancestry, s_grabbed_ancestries, s_edit_state, s_graph_type } from '../state/Svelte_Stores';
 import { Title_State, ElementType, Paging_State, Relationship, PredicateKind } from '../common/Global_Imports';
 import { Svelte_Wrapper, Widget_MapRect, AlterationType, SvelteComponentType } from '../common/Global_Imports';
 import Identifiable from '../basis/Identifiable';

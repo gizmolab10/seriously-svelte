@@ -1,8 +1,8 @@
-import { s_hierarchy, s_db_type, s_tree_type, s_graph_type, s_paging_state } from '../state/Reactive_State';
-import { s_focus_ancestry, s_font_size, s_thing_fontFamily } from '../state/Reactive_State';
+import { s_hierarchy, s_db_type, s_tree_type, s_graph_type, s_paging_state } from '../state/Svelte_Stores';
+import { s_focus_ancestry, s_font_size, s_thing_fontFamily } from '../state/Svelte_Stores';
 import { Tree_Type, Graph_Type, dbDispatch, Paging_State } from '../common/Global_Imports';
-import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/Reactive_State';
-import { s_grabbed_ancestries, s_expanded_ancestries } from '../state/Reactive_State';
+import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/Svelte_Stores';
+import { s_grabbed_ancestries, s_expanded_ancestries } from '../state/Svelte_Stores';
 import { k, w, get, show, debug, Ancestry } from '../common/Global_Imports';
 
 export enum IDPersistent {

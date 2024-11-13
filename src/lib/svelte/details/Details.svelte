@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, debug, ZIndex, signals, onMount } from '../../ts/common/Global_Imports';
-	import { s_graphRect, s_db_loadTime } from '../../ts/state/Reactive_State';
+	import { s_graphRect, s_db_loadTime } from '../../ts/state/Svelte_Stores';
 	import Storage from './Storage.svelte';
 	import Card from './Card.svelte';
 	import Info from './Info.svelte';

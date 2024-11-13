@@ -1,6 +1,6 @@
 import { g, k, w, signals, persistLocal } from '../common/Global_Imports';
 import { IDPersistent, Tree_Type } from '../common/Global_Imports';
-import { s_show_details, s_tree_type } from './Reactive_State';
+import { s_show_details, s_tree_type } from './Svelte_Stores';
 
 class Show_State {
 	traits		 = false;

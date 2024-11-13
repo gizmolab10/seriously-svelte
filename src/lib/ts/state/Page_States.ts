@@ -1,5 +1,5 @@
 import { k, get, Thing, Predicate, Ancestry, Cluster_Map } from '../common/Global_Imports';
-import { s_paging_state, s_ring_rotation_radius } from './Reactive_State';
+import { s_paging_state, s_ring_rotation_radius } from './Svelte_Stores';
 
 export class Paging_State {
 

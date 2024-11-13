@@ -1,8 +1,8 @@
 import { Hierarchy, persistLocal, Rotation_State, Startup_State, Expansion_State } from '../common/Global_Imports';
-import { s_hierarchy, s_resize_count, s_mouse_up_count, s_rebuild_count } from '../state/Reactive_State';
-import { s_focus_ancestry, s_grabbed_ancestries, s_expanded_ancestries } from './Reactive_State';
+import { s_hierarchy, s_resize_count, s_mouse_up_count, s_rebuild_count } from '../state/Svelte_Stores';
+import { s_focus_ancestry, s_grabbed_ancestries, s_expanded_ancestries } from './Svelte_Stores';
 import { e, k, u, ux, w, get, show, debug, dbDispatch } from '../common/Global_Imports';
-import { s_color_thing, s_startup_state, s_device_isMobile } from './Reactive_State';
+import { s_color_thing, s_startup_state, s_device_isMobile } from './Svelte_Stores';
 
 class Global_State {
 	allow_GraphEditing = true;

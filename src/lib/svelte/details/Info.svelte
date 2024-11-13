@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { s_focus_ancestry, s_grabbed_ancestries } from '../../ts/state/Reactive_State';
+	import { s_focus_ancestry, s_grabbed_ancestries } from '../../ts/state/Svelte_Stores';
 	import { k, show, Thing, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
-	import { s_title_thing, s_card_ancestry } from '../../ts/state/Reactive_State';
+	import { s_title_thing, s_card_ancestry } from '../../ts/state/Svelte_Stores';
 	import Identifiable from '../../ts/basis/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Button from '../mouse/Button.svelte';

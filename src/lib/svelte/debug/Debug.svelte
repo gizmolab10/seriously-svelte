@@ -1,15 +1,16 @@
 <script lang='ts'>
-	import { s_graphRect, s_mouse_location, s_offset_graph_center } from '../../ts/state/Reactive_State';
+	import { s_graphRect, s_mouse_location, s_offset_graph_center } from '../../ts/state/Svelte_Stores';
 	import { g, u, w, Rect, Size, Point, debug, ZIndex } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Box from './Box.svelte';
 	export let size = 16;
 	const multiplier = 0.6;
 	let mouse_rect = Rect.zero;
-	let debug_origin = $s_offset_graph_center;
+	let base = new Point(-39, -28);
+	let debug_origin = $s_offset_graph_center.offsetBy(base);
 
 	$: {
-		debug_origin = $s_offset_graph_center;
+		debug_origin = $s_offset_graph_center.offsetBy(base);
 	}
 
 	$: {
@@ -17,15 +18,14 @@
 		const point = $s_mouse_location?.multipliedBy(1 / w.scale_factor);
 		if (!!point) {
 			const square = Size.square(size);
-			const from_center = square.negated.dividedInHalf;
-			const origin = point.offsetBySize(from_center);
+			const origin = point.offsetBy(square.asPoint.negatedInHalf);
 			mouse_rect = new Rect(origin, square);
 		}
 	}
 
 	function hover_closure(mouse_state) {
 		if (mouse_state.isMove) {
-			const distance = w.mouse_distance_fromGraphCenter;
+			const distance = u.mouse_distance_fromGraphCenter;
 			// debug.log_cursor(distance.toFixed(2));
 			// mouse location
 			// measure distance to debug_origin
@@ -36,18 +36,20 @@
 	}
 
 </script>
+
 {#if debug.graph}
 	<Box
 		color = 'green'
 		cross = {true}
 		name = 'graph'
-		zindex = {ZIndex.frontmost}
+		zindex = {ZIndex.common}
 		rect = {$s_graphRect}/>
 {/if}
 {#if debug.cursor}
 	<Mouse_Responder
 		name='debug-cursor'
 		origin={Point.zero}
+		zindex = {ZIndex.common}
 		width={w.windowSize.width}
 		height={w.windowSize.height}
 		mouse_state_closure={hover_closure}>
@@ -56,12 +58,14 @@
 			cross = {true}
 			name = 'cursor'
 			rect = {mouse_rect}
-			zindex = {ZIndex.frontmost}/>
-		<Box
-			color = 'blue'
-			cross = {true}
-			name = 'cursor'
-			zindex = {ZIndex.frontmost}
-			rect = {new Rect(debug_origin, Size.square(18))}/>
+			zindex = {ZIndex.common}/>
+		{#if false}
+			<Box
+				color = 'blue'
+				cross = {true}
+				name = 'cursor'
+				zindex = {ZIndex.common}
+				rect = {new Rect(debug_origin, Size.square(18))}/>
+		{/if}
 	</Mouse_Responder>
 {/if}

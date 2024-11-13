@@ -1,10 +1,10 @@
 <script lang='ts'>
 	import { g, k, u, ux, w, Thing, Point, Angle, debug, ZIndex, onMount } from '../../ts/common/Global_Imports';
 	import { signals, svgPaths, Ring_Zone, dbDispatch, opacitize } from '../../ts/common/Global_Imports';
-	import { s_rotation_ring_angle, s_ring_rotation_radius } from '../../ts/state/Reactive_State';
-	import { s_graphRect, s_color_thing, s_mouse_location } from '../../ts/state/Reactive_State';
-	import { s_mouse_up_count, s_active_cluster_map } from '../../ts/state/Reactive_State';
-	import { s_focus_ancestry, s_clusters_geometry } from '../../ts/state/Reactive_State';
+	import { s_rotation_ring_angle, s_ring_rotation_radius } from '../../ts/state/Svelte_Stores';
+	import { s_graphRect, s_color_thing, s_mouse_location } from '../../ts/state/Svelte_Stores';
+	import { s_mouse_up_count, s_active_cluster_map } from '../../ts/state/Svelte_Stores';
+	import { s_focus_ancestry, s_clusters_geometry } from '../../ts/state/Svelte_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/basis/Identifiable';
 	import Paging_Arc from './Paging_Arc.svelte';
@@ -68,24 +68,27 @@
 	}
 
 	function ringZone_forMouseLocation(): Ring_Zone {
-		const distance = w.mouse_distance_fromGraphCenter;
-		const thick = k.ring_rotation_thickness;
-		const inner = $s_ring_rotation_radius;
-		const thin = k.paging_arc_thickness;
-		const resize = inner + thick * 2;
-		const rotate = inner + thick;
-		const thumb = inner - thin;
 		let zone = Ring_Zone.miss;
-		if (!!distance && distance <= resize) {
-			if (distance > rotate) {
-				zone = Ring_Zone.resize;
-			} else if (distance > inner) {
-				zone = Ring_Zone.rotate;
-			} else if (distance > thumb) {
-				zone = Ring_Zone.paging;
+		const mouse_vector = w.mouse_vector_ofOffset_fromGraphCenter();
+		if (!!mouse_vector) {
+			const distance = mouse_vector.magnitude;
+			const thick = k.ring_rotation_thickness;
+			const inner = $s_ring_rotation_radius;
+			const thin = k.paging_arc_thickness;
+			const resize = inner + thick * 2;
+			const rotate = inner + thick;
+			const thumb = inner - thin;
+			if (!!distance && distance <= resize) {
+				if (distance > rotate) {
+					zone = Ring_Zone.resize;
+				} else if (distance > inner) {
+					zone = Ring_Zone.rotate;
+				} else if (distance > thumb) {
+					zone = Ring_Zone.paging;
+				}
 			}
+			debug.log_cursor(`${mouse_vector.description} ${zone}`);
 		}
-		debug.log_cursor(`${distance.toFixed(2)} ${zone}`);
 		return zone;
 	}
 
@@ -116,15 +119,15 @@
 		////////////////////////////////////
 
 		const _ = $s_mouse_location;											// use store, to invoke this code
-		const from_center = w.mouse_vector_fromGraphCenter;
-		if (!!from_center) {
-			const mouse_angle = from_center.angle;
+		const mouse_vector = w.mouse_vector_ofOffset_fromGraphCenter();
+		if (!!mouse_vector) {
+			const mouse_angle = mouse_vector.angle;
 			const rotation_state = g.ring_rotation_state;
 			const resizing_state = g.ring_resizing_state;
 			if (!!resizing_state.isActive) {									// resize, check this FIRST (when both states return isActive true, rotation should be ignored)
 				const smallest = k.innermost_ring_radius;
 				const largest = smallest * 3;
-				const magnitude = from_center.magnitude - resizing_state.basis_radius;
+				const magnitude = mouse_vector.magnitude - resizing_state.basis_radius;
 				const distance = magnitude.force_between(smallest, largest);
 				const delta = distance - $s_ring_rotation_radius;
 				const radius = $s_ring_rotation_radius + delta;
@@ -168,19 +171,21 @@
 		}
 	}
 
-	function mouse_state_closure(mouse_state) {
+	function mouse_down_up_closure(mouse_state) {
 
 		/////////////////////////////
 		// setup or teardown state //
 		/////////////////////////////
 
 		if (!mouse_state.isHover) {
-			const mouse_wentDown_angle = w.mouse_angle_fromGraphCenter;
-			const rotation_angle = mouse_wentDown_angle.add_angle_normalized(-$s_rotation_ring_angle);
 			if (mouse_state.isUp) {
+				debug.log_rings(`UP`);
 				reset();
 				rebuilds += 1;
 			} else if (mouse_state.isDown) {
+				debug.log_rings(`DOWN`);
+				const mouse_wentDown_angle = w.mouse_angle_fromGraphCenter;
+				const rotation_angle = mouse_wentDown_angle.add_angle_normalized(-$s_rotation_ring_angle);
 				switch (ringZone_forMouseLocation()) {
 					case Ring_Zone.rotate:
 						debug.log_rings(` begin rotate  ${rotation_angle.degrees_of(0)}`);
@@ -236,7 +241,7 @@
 				width={outer_diameter}
 				height={outer_diameter}
 				center={w.center_ofGraphSize}
-				mouse_state_closure={mouse_state_closure}>
+				mouse_state_closure={mouse_down_up_closure}>
 				<svg
 					class='rings-svg'
 					viewBox={viewBox}>

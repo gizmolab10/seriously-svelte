@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_id_popupView } from '../../ts/state/Reactive_State';
+	import { s_id_popupView } from '../../ts/state/Svelte_Stores';
 	import Open from './Open.svelte';
 	let selectedFiles: FileList | null = null;
 

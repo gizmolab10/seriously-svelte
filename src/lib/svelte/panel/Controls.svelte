@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { g, k, u, ux, w, show, Point, ZIndex, onMount, signals, svgPaths } from '../../ts/common/Global_Imports';
-	import { s_show_details, s_id_popupView, s_graph_type, s_resize_count } from '../../ts/state/Reactive_State';
-	import { s_tree_type, s_device_isMobile, s_thing_fontFamily } from '../../ts/state/Reactive_State';
+	import { s_show_details, s_id_popupView, s_graph_type, s_resize_count } from '../../ts/state/Svelte_Stores';
+	import { s_tree_type, s_device_isMobile, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
 	import { IDButton, Graph_Type, ElementType, Element_State } from '../../ts/common/Global_Imports';
 	import { persistLocal, IDPersistent, Tree_Type } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/basis/Identifiable';

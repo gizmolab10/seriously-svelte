@@ -16,26 +16,26 @@ export class Point {
 	get magnitude():				  number { return Math.sqrt(this.x * this.x + this.y * this.y); }
 	get toPolar():	{r: number, phi: number} { return {r: this.magnitude, phi: this.angle}; }
 	get isZero():					 boolean { return this.x == 0 && this.y == 0; }
-	get pixelVerbose():				  string { return `${this.x}px ${this.y}px`; }
-	get verbose():					  string { return `(${this.x}, ${this.y})`; }
-	get description():				  string { return `${this.x} ${this.y}`; }
+	get pixelVerbose():				  string { return `${this.x.toFixed(2)}px ${this.y.toFixed(2)}px`; }
+	get verbose():					  string { return `(${this.x.toFixed(2)}, ${this.y.toFixed(2)})`; }
+	get description():				  string { return `${this.x.toFixed(2)} ${this.y.toFixed(2)}`; }
 	get doubled():					   Point { return this.multipliedBy(2); }
 	get negated():					   Point { return this.multipliedBy(-1); }
 	get dividedInHalf():			   Point { return this.multipliedBy(1/2); }
+	get negatedInHalf():			   Point { return this.multipliedBy(-1/2); }
 	get copy():						   Point { return new Point(this.x, this.y); }
 	get swap():						   Point { return new Point(this.y, this.x); }
 	get negateY():					   Point { return new Point(this.x, -this.y); }
 	get negateX():					   Point { return new Point(-this.x, this.y); }
 	get abs():						   Point { return new Point(Math.abs(this.x), Math.abs(this.y)); }
-	offsetByX(x: number):			   Point { return new Point(this.x + x, this.y); }
-	offsetByY(y: number):			   Point { return new Point(this.x, this.y + y); }
+	offsetByX(x: number):			   Point { return this.offsetByXY(x, 0); }
+	offsetByY(y: number):			   Point { return this.offsetByXY(0, y); }
 	offsetByXY(x: number, y: number):  Point { return new Point(this.x + x, this.y + y); }
-	offsetEquallyBy(offset: number):   Point { return new Point(this.x + offset, this.y + offset); }
+	offsetEquallyBy(offset: number):   Point { return this.offsetByXY(offset, offset); }
 	offsetBy(point: Point):			   Point { return new Point(this.x + point.x, this.y + point.y); }
-	vector_to(point: Point):		   Point { return new Point(point.x - this.x, point.y - this.y); }
-	vector_from(point: Point):		   Point { return new Point(this.x - point.x, this.y - point.y); }
+	vector_to(point: Point):		   Point { return point.offsetBy(this.negated); }
+	vector_from(point: Point):		   Point { return point.vector_to(this); }
 	multipliedBy(multiplier: number):  Point { return new Point(this.x * multiplier, this.y * multiplier) }
-	offsetBySize(size: Size):		   Point { return new Point(this.x + size.width, this.y + size.height); }
 	static fromPolar(r: number, phi: number) { return Point.x(r).rotate_by(phi); }
 	static fromDOMRect(rect: DOMRect): Point { return new Point(rect.left, rect.top); }
 	static square(length: number):	   Point { return new Point(length, length); }
@@ -117,9 +117,9 @@ export class Size {
 
 	get isZero():					 boolean { return this.width == 0 && this.height == 0; }
 	get proportion():				  number { return this.width / this.height; }
-	get description():				  string { return `${this.width} ${this.height}`; }
-	get verbose():					  string { return `(${this.width}, ${this.height})`; }
-	get pixelVerbose():				  string { return `${this.width}px ${this.height}px`; }
+	get description():				  string { return `${this.width.toFixed(2)} ${this.height.toFixed(2)}`; }
+	get verbose():					  string { return `(${this.width.toFixed(2)}, ${this.height.toFixed(2)})`; }
+	get pixelVerbose():				  string { return `${this.width.toFixed(2)}px ${this.height.toFixed(2)}px`; }
 	get asPoint():			   		   Point { return new Point(this.width, this.height); }
 	get dividedInHalf():				Size { return this.multipliedBy(1/2); }
 	get negated():						Size { return this.multipliedBy(-1); }
@@ -153,9 +153,9 @@ export class Rect {
 	get description():		   string { return `${this.origin.verbose}, ${this.size.verbose}`; }
 	get viewBox():			   string { return `${this.origin.description} ${this.size.description}`; }
 	get pixelVerbose():		   string { return `${this.origin.pixelVerbose} ${this.size.pixelVerbose}`; }
-	get rangeDescription():	   string { return `(${this.origin.x} ... ${this.extent.x}), (${this.origin.y} ... ${this.extent.y})`; }
-	get center():				Point { return this.origin.offsetBySize(this.size.dividedInHalf); }
-	get extent():				Point { return this.origin.offsetBySize(this.size); }		// bottom right
+	get rangeDescription():	   string { return `(${this.origin.x.toFixed(2)} ... ${this.extent.x.toFixed(2)}), (${this.origin.y.toFixed(2)} ... ${this.extent.y.toFixed(2)})`; }
+	get center():				Point { return this.origin.offsetBy(this.size.asPoint.dividedInHalf); }
+	get extent():				Point { return this.origin.offsetBy(this.size.asPoint); }		// bottom right
 	get topRight():				Point { return new Point(this.extent.x, this.origin.y); };
 	get centerTop():			Point { return new Point(this.center.x, this.origin.y); };
 	get bottomLeft():			Point { return new Point(this.origin.x, this.extent.y); };

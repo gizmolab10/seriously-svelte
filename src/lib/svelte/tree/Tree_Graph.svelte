@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { s_graphRect, s_hierarchy, s_show_details, s_device_isMobile,  } from '../../ts/state/Reactive_State';
+	import { s_graphRect, s_hierarchy, s_show_details, s_device_isMobile,  } from '../../ts/state/Svelte_Stores';
 	import { g, k, u, ux, show, Rect, Size, Point, Thing, ZIndex, debug } from '../../ts/common/Global_Imports';
 	import { signals, IDSignal, IDButton, onMount, Ancestry, dbDispatch } from '../../ts/common/Global_Imports';
-	import { s_id_popupView, s_focus_ancestry, s_user_graphOffset } from '../../ts/state/Reactive_State';
+	import { s_id_popupView, s_focus_ancestry, s_user_graphOffset } from '../../ts/state/Svelte_Stores';
 	import { Predicate, IDPersistent, ElementType, persistLocal } from '../../ts/common/Global_Imports';
 	import Tree_Children from './Tree_Children.svelte';
 	import Widget from '../widget/Widget.svelte';

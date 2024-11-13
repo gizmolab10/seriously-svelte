@@ -3,7 +3,7 @@ import { ThingType, dbDispatch, persistLocal, IDPersistent, Relationship, Creati
 import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
-import { s_hierarchy } from '../state/Reactive_State';
+import { s_hierarchy } from '../state/Svelte_Stores';
 import { DBType, DatumType } from '../db/DBInterface';
 import Identifiable from '../basis/Identifiable';
 import { initializeApp } from 'firebase/app';
