@@ -28,6 +28,7 @@ class Events {
 	subscribeTo_events() {
 		this.clear_event_subscriptions();
 		this.update_event_listener('wheel', this.handle_wheel);
+		this.update_event_listener('keydown', this.handle_zoom);
 		this.update_event_listener('resize', this.handle_resize);
 		this.update_event_listener('orientationchange', this.handle_orientation_change);
 		if (g.device_isMobile) {
@@ -41,6 +42,22 @@ class Events {
 		}
 	}
 
+	handle_zoom(e: Event) {
+		const event = e as KeyboardEvent;
+		const key = event.key;
+		if (event.metaKey && ['+', '=', '-', '0'].includes(key)) {
+			event.preventDefault();
+			event.stopPropagation();
+			switch (key) {
+				case '0': w.applyScale(1); break;
+				case '-': w.zoomBy(0.9); break;
+				default: w.zoomBy(1.1); break;
+			}
+			w.renormalize_user_graph_offset();
+			signals.signal_rebuildGraph_fromFocus();
+		}
+	}
+
 	handle_mouse_up(event: MouseEvent) {
 		event.preventDefault();
 		event.stopPropagation();
@@ -51,7 +68,8 @@ class Events {
 	handle_mouse_move(event: MouseEvent) {
 		event.preventDefault();
 		event.stopPropagation();
-		s_mouse_location.set(new Point(event.clientX, event.clientY));
+		const location = new Point(event.clientX, event.clientY);
+		s_mouse_location.set(location.multipliedBy(1 / w.scale_factor));
 		// this.respondTo_closure(event, Mouse_State.move);
 	}
 

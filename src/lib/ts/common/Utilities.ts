@@ -1,12 +1,10 @@
-import { s_mouse_location, s_thing_fontFamily, s_offset_graph_center } from '../state/Svelte_Stores';
+import { s_thing_fontFamily } from '../state/Svelte_Stores';
 import { Size, Point } from '../geometry/Geometry';
 import Identifiable from '../basis/Identifiable';
 import { Quadrant } from '../geometry/Angle';
 import Ancestry from '../managers/Ancestry';
 import { IDBrowser } from './Enumerations';
-import { w } from '../geometry/Window_Geometry';
 import { transparentize } from 'color2k';
-import { debug } from '../common/Debug';
 import Angle from '../geometry/Angle';
 import { get } from 'svelte/store';
 import { k } from './Constants';

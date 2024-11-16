@@ -1,6 +1,6 @@
-import { k, get, Rect, Size, Point, debug, persistLocal, IDPersistent } from '../common/Global_Imports';
-import { s_show_details, s_mouse_location, s_ring_rotation_radius } from '../state/Svelte_Stores';
+import { k, get, Rect, Size, Point, debug, signals, persistLocal, IDPersistent } from '../common/Global_Imports';
 import { s_graphRect, s_user_graphOffset, s_offset_graph_center } from '../state/Svelte_Stores';
+import { s_show_details, s_mouse_location } from '../state/Svelte_Stores';
 
 class Window_Geometry {
 	scale_factor = 1;
@@ -8,6 +8,7 @@ class Window_Geometry {
 	
 	get windowScroll(): Point { return new Point(window.scrollX, window.scrollY); }
 	get center_ofGraphSize(): Point { return get(s_graphRect).size.asPoint.dividedInHalf; }
+	renormalize_user_graph_offset() { this.user_graphOffset_setTo(this.persisted_user_offset); }
 	get mouse_distance_fromGraphCenter(): number { return this.mouse_vector_ofOffset_fromGraphCenter()?.magnitude ?? 0; }
 	get mouse_angle_fromGraphCenter(): number | null { return this.mouse_vector_ofOffset_fromGraphCenter()?.angle ?? null; }
 
@@ -23,7 +24,7 @@ class Window_Geometry {
 
 	restore_state() {
 		this.graphRect_update();	// needed for applyScale
-		this.user_graphOffset_setTo(this.persisted_user_offset);
+		this.renormalize_user_graph_offset();
 		this.applyScale(persistLocal.read_key(IDPersistent.scale) ?? 1);
 	}
 
