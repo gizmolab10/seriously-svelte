@@ -124,6 +124,9 @@
 			const mouse_angle = mouse_vector.angle;
 			const rotation_state = g.ring_rotation_state;
 			const resizing_state = g.ring_resizing_state;
+
+			// check if already dragging in one of the three ring zones
+
 			if (!!resizing_state.isActive) {									// resize, check this FIRST (when both states return isActive true, rotation should be ignored)
 				const smallest = k.innermost_ring_radius;
 				const largest = smallest * 3;
@@ -163,7 +166,7 @@
 					signals.signal_rebuildGraph_fromFocus();
 					rebuilds += 1;
 				}
-			} else {
+			} else {				// not dragging
 				detect_hovering();
 				update_cursor();
 				rebuilds += 1;
@@ -179,11 +182,11 @@
 
 		if (!mouse_state.isHover) {
 			if (mouse_state.isUp) {
-				debug.log_rings(`UP`);
+				// debug.log_rings(`UP`);
 				reset();
 				rebuilds += 1;
 			} else if (mouse_state.isDown) {
-				debug.log_rings(`DOWN`);
+				// debug.log_rings(`DOWN`);
 				const mouse_wentDown_angle = w.mouse_angle_fromGraphCenter;
 				const rotation_angle = mouse_wentDown_angle.add_angle_normalized(-$s_rotation_ring_angle);
 				switch (ringZone_forMouseLocation()) {
@@ -224,7 +227,7 @@
 {#key rebuilds}
 	<div class='paging-arcs' bind:this={pagingArcs} style='z-index:{ZIndex.paging};'>
 		{#each $s_clusters_geometry.cluster_maps as cluster_map}
-			{#if !!cluster_map && (cluster_map.shown > 0)}
+			{#if !!cluster_map && (cluster_map.widgets_shown > 0)}
 				<Paging_Arc
 					color={color}
 					cluster_map={cluster_map}/>

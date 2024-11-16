@@ -1,23 +1,23 @@
 import { k, get, Thing, Predicate, Ancestry, Cluster_Map } from '../common/Global_Imports';
-import { s_paging_state, s_ring_rotation_radius } from './Svelte_Stores';
+import { s_hierarchy, s_paging_state, s_ring_rotation_radius } from './Svelte_Stores';
 
 export class Paging_State {
 
 	// a page is a subset of a too-long list of things
-	// shown == length of subset
+	// widgets_shown == length of subset
 	// index == first of subset
 
 	toChildren = false;
 	thing_id = k.empty;
+	widgets_shown = 0;
+	total_widgets = 0;
 	kind = k.empty;
 	index = 0;
-	shown = 0;
-	total = 0;
 
-	constructor(index: number = 0, shown: number = 0, total: number = 0) {
-		this.index = index.force_between(0, total - shown);
-		this.total = total;
-		this.shown = shown;
+	constructor(index: number = 0, widgets_shown: number = 0, total_widgets: number = 0) {
+		this.index = index.force_between(0, total_widgets - widgets_shown);
+		this.total_widgets = total_widgets;
+		this.widgets_shown = widgets_shown;
 	}
 
 	static create_paging_state_from(description: string): Paging_State | null {
@@ -34,10 +34,10 @@ export class Paging_State {
 		return null;
 	}
 
-	get isPaging(): boolean { return this.shown < this.total; }
 	get stateIndex(): number { return this.predicate?.stateIndex ?? -1; }
-	get maximum_paging_index(): number { return this.total - this.shown; }
-	get indexOf_followingPage(): number { return this.index + this.shown; }
+	get isPaging(): boolean { return this.widgets_shown < this.total_widgets; }
+	get indexOf_followingPage(): number { return this.index + this.widgets_shown; }
+	get maximum_paging_index(): number { return this.total_widgets - this.widgets_shown; }
 	get thing(): Thing | null { return get(s_hierarchy).thing_forHID(this.thing_id.hash()) ?? null; }
 	get predicate(): Predicate | null { return get(s_hierarchy).predicate_forKind(this.kind) ?? null; }
 	get canShow(): number { return Math.round((get(s_ring_rotation_radius) ** 1.5) * Math.PI / 45 / k.row_height) + 1; }
@@ -49,8 +49,8 @@ export class Paging_State {
 			`${this.kind}`,
 			`${this.thing_id}`,
 			`${this.index}`,
-			`${this.shown}`,
-			`${this.total}`];
+			`${this.widgets_shown}`,
+			`${this.total_widgets}`];
 		return strings.join(k.generic_separator);
 	}
 
@@ -73,13 +73,13 @@ export class Paging_State {
 	}
 
 	onePage_from(ancestries: Array<Ancestry>): Array<Ancestry> {
-		this.total = ancestries.length;
-		this.shown = Math.min(this.canShow, this.total);
+		this.total_widgets = ancestries.length;
+		this.widgets_shown = Math.min(this.canShow, this.total_widgets);
 		if (this.update_index_toShow(this.index)) {
 			s_paging_state.set(this);
 		}
 		const index = Math.round(this.index);
-		return ancestries.slice(index, index + this.shown);
+		return ancestries.slice(index, index + this.widgets_shown);
 	}
 
 }

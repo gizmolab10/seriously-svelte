@@ -34,17 +34,17 @@ export default class Cluster_Map {
 	predicate: Predicate;
 	toChildren: boolean;
 	center = Point.zero;
+	widgets_shown = 0;
+	total_widgets = 0;
 	isPaging = false;
-	shown = 0;
-	total = 0;
 
 	destructor() { this.ancestries = []; }
-	constructor(total: number, ancestries: Array<Ancestry>, predicate: Predicate, toChildren: boolean) {
+	constructor(total_widgets: number, ancestries: Array<Ancestry>, predicate: Predicate, toChildren: boolean) {
+		this.total_widgets = total_widgets;
 		this.ancestries = ancestries;
 		this.toChildren = toChildren;
 		this.predicate = predicate;
-		this.total = total;
-		debug.log_build(` C MAP (ts)  ${total}  ${this.direction_kind}`);
+		debug.log_build(` C MAP (ts)  ${total_widgets}  ${this.direction_kind}`);
 		this.update_all();
 		s_ring_rotation_radius.subscribe((radius: number) => {
 			if (this.arc_map.outside_arc_radius != radius) {
@@ -54,8 +54,8 @@ export default class Cluster_Map {
 	}
 
 	update_all() {
-		this.shown = this.ancestries.length;
-		this.isPaging = this.shown < this.total;
+		this.widgets_shown = this.ancestries.length;
+		this.isPaging = this.widgets_shown < this.total_widgets;
 		this.center = get(s_graphRect).size.asPoint.dividedInHalf;
 		this.color = u.opacitize(this.focus_ancestry.thing?.color ?? this.color, 0.2);
 		this.update_fork_angle();
@@ -66,7 +66,7 @@ export default class Cluster_Map {
 	}
 
 	get paging_radius(): number { return k.paging_arc_thickness * 0.8; }
-	get maximum_paging_index(): number { return this.total - this.shown; }
+	get maximum_paging_index(): number { return this.total_widgets - this.widgets_shown; }
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
 	get description(): string { return `(${this.cluster_title}) ${this.titles}`; }
 	get paging_index_ofFocus(): number { return this.paging_state_ofFocus?.index ?? 0; }
@@ -76,10 +76,15 @@ export default class Cluster_Map {
 	get name(): string { return `${this.focus_ancestry.title}-cluster-${this.direction_kind}`; }
 	get fork_radial(): Point { return Point.fromPolar(get(s_ring_rotation_radius), this.arc_map.fork_angle); }
 	get paging_state_ofFocus(): Paging_State | null { return this.paging_state_ofAncestry(this.focus_ancestry); }
-	get thumb_isHit(): boolean { return this.isPaging && (w.mouse_vector_ofOffset_fromGraphCenter()?.isContainedBy_path(this.thumb_map.svg_arc_path) ?? false); }
+
+	get thumb_isHit(): boolean {
+		const offset = Point.square(-get(s_ring_rotation_radius));
+		const mouse_vector = w.mouse_vector_ofOffset_fromGraphCenter(offset);
+		return this.isPaging && !!mouse_vector && mouse_vector.isContainedBy_path(this.thumb_map.svg_arc_path);
+	}
 
 	get direction_kind(): string {
-		const isSingular = this.total == 1;
+		const isSingular = this.total_widgets == 1;
 		return this.isParental ? isSingular ? 'parent' : 'parents' : this.toChildren ? isSingular ? 'child' : 'children' : this.kind;
 	}
 
@@ -95,10 +100,10 @@ export default class Cluster_Map {
 	}
 	
 	update_label_forIndex() {
-		let cluster_title =  `${this.total} ${this.direction_kind}`;
+		let cluster_title =  `${this.total_widgets} ${this.direction_kind}`;
 		if (this.isPaging) {
 			const index = Math.round(this.paging_index_ofFocus);
-			const middle = (this.shown < 2) ? k.empty : `-${index + this.shown}`;
+			const middle = (this.widgets_shown < 2) ? k.empty : `-${index + this.widgets_shown}`;
 			cluster_title += ` (${index + 1}${middle})`
 		}
 		this.cluster_title = cluster_title;
@@ -181,14 +186,14 @@ export default class Cluster_Map {
 
 	update_widget_angles() {
 		this.widget_maps = [];
-		if (this.shown > 0 && !!this.predicate) {
+		if (this.widgets_shown > 0 && !!this.predicate) {
 			const radius = get(s_ring_rotation_radius);
 			const radial = new Point(radius + k.ring_widget_padding, 0);
 			const fork_pointsRight = new Angle(this.arc_map.fork_angle).angle_pointsRight;
 			const tweak = this.center.offsetByXY(2, -1.5);	// tweak so that drag dots are centered within the rotation ring
-			const max = this.shown - 1;
+			const max = this.widgets_shown - 1;
 			let index = 0;
-			while (index < this.shown) {
+			while (index < this.widgets_shown) {
 				const child_index = !fork_pointsRight ? index : max - index;
 				const child_ancestry = this.ancestries[child_index];
 				const childAngle = this.angle_at_index(index);
@@ -215,7 +220,7 @@ export default class Cluster_Map {
 		//	increases counter-clockwise
 		//	widgets distributed half-and-half around fork-angle
 
-		const max = this.shown - 1;
+		const max = this.widgets_shown - 1;
 		const row = (max / 2) - index;						// row centered around zero
 		const radius = get(s_ring_rotation_radius);
 		const radial = this.fork_radial;					// points at middle widget
@@ -245,10 +250,10 @@ export default class Cluster_Map {
 		const inverter = hasNegative_spread ? 1 : -1;
 		const otherInverter = (hasNegative_spread == this.arc_straddles_nadir) ? -1 : 1;
 		const arc_spread = this.arc_straddles_nadir ? (-spread_angle).angle_normalized() : spread_angle;
-		const increment = arc_spread / this.total * inverter;
+		const increment = arc_spread / this.total_widgets * inverter;
 		const arc_start = this.arc_map.start_angle * otherInverter;
 		const start = arc_start + (increment * this.paging_index_ofFocus);
-		const end = start + (increment * this.shown);
+		const end = start + (increment * this.widgets_shown);
 		this.thumb_map.update_fork_angle((start + end) / 2);
 		this.thumb_map.start_angle = start;
 		this.thumb_map.end_angle = end;

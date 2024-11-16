@@ -30,8 +30,8 @@ export class Point {
 	get abs():						   Point { return new Point(Math.abs(this.x), Math.abs(this.y)); }
 	offsetByX(x: number):			   Point { return this.offsetByXY(x, 0); }
 	offsetByY(y: number):			   Point { return this.offsetByXY(0, y); }
-	offsetByXY(x: number, y: number):  Point { return new Point(this.x + x, this.y + y); }
 	offsetEquallyBy(offset: number):   Point { return this.offsetByXY(offset, offset); }
+	offsetByXY(x: number, y: number):  Point { return new Point(this.x + x, this.y + y); }
 	offsetBy(point: Point):			   Point { return new Point(this.x + point.x, this.y + point.y); }
 	vector_to(point: Point):		   Point { return point.offsetBy(this.negated); }
 	vector_from(point: Point):		   Point { return point.vector_to(this); }

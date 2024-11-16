@@ -33,6 +33,7 @@ class Window_Geometry {
 		if (!!mouse_location) {
 			const center = get(s_offset_graph_center).offsetBy(offset);
 			const mouse_vector = center.vector_to(mouse_location);
+			debug.log_cursor(`offset ${mouse_vector.description}`);
 			return mouse_vector;
 		}
 		return null

@@ -11,11 +11,11 @@ class Show_State {
 
 	queryStrings_apply() {
 		const queryStrings = g.queryStrings;
-		const shownNames = queryStrings.get('show')?.split(k.comma) ?? [];
 		const hiddenNames = queryStrings.get('hide')?.split(k.comma) ?? [];
-		const shown = Object.fromEntries(shownNames.map(s => [s, true]) ?? {});
+		const visibleNames = queryStrings.get('show')?.split(k.comma) ?? [];
 		const hidden = Object.fromEntries(hiddenNames.map(s => [s, false]) ?? {});
-		const keyedFlags: { [key: string]: boolean } = {...shown, ...hidden};
+		const visible = Object.fromEntries(visibleNames.map(s => [s, true]) ?? {});
+		const keyedFlags: { [key: string]: boolean } = {...visible, ...hidden};
         for (const [name, flag] of Object.entries(keyedFlags)) {
 			switch (name) {
 				case 'details':

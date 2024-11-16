@@ -50,7 +50,7 @@ export default class Mouse_State {
 		if (this.isLong) { states.push('long'); }
 		if (this.isMove) { states.push('move'); }
 		if (this.isHit) { states.push('hit'); }
-		return `${name} MOUSE ${states.join(', ')}`;
+		return states.length == 0 ? 'empty mouse state' : `${name} states: ${states.join(', ')}`;
 	}
 
 	static empty(event: MouseEvent | null = null) { return new Mouse_State(event, null, false, false, false, true, false, false, false); }

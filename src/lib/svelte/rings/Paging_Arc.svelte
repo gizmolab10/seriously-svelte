@@ -33,7 +33,7 @@
 
 	$: {
 		if (!!arc) {
-			arc_wrapper = new Svelte_Wrapper(arc, handle_mouse_state, -1, SvelteComponentType.thumb);
+			arc_wrapper = new Svelte_Wrapper(arc, isHit_closure, -1, SvelteComponentType.thumb);
 		}
 	}
 
@@ -44,16 +44,14 @@
 		}
 	}
 
-	function handle_mouse_state(mouse_state: Mouse_State): boolean { return cluster_map.thumb_isHit; }
+	function computed_mouse_angle(): number | null {
+		return w.mouse_angle_fromGraphCenter ?? null
+	}
 
 	function update_colors() {
 		fork_color = u.opacitize(color, 0.3);
 		arc_color = u.opacitize(color, g.cluster_paging_state.stroke_opacity);
 		thumb_color = u.opacitize(color, g.ring_rotation_state.isActive ? 0.15 : cluster_map?.paging_rotation.three_level_opacity);
-	}
-
-	function computed_mouse_angle(): number | null {
-		return w.mouse_angle_fromGraphCenter ?? null
 	}
 
 	function hover_closure(mouse_state) {
@@ -63,6 +61,10 @@
 				update_colors();
 			}
 		}
+	}
+
+	function isHit_closure(mouse_state: Mouse_State): boolean {
+		return cluster_map.thumb_isHit;
 	}
 
 </script>
@@ -78,12 +80,12 @@
 					name={cluster_map?.name}
 					cursor={k.cursor_default}
 					center={w.center_ofGraphSize}
-					mouse_state_closure={hover_closure}
-					isHit_closure={() => cluster_map.thumb_isHit}>
+					isHit_closure={isHit_closure}
+					mouse_state_closure={hover_closure}>
 					<svg id='arc' viewBox={viewBox}>
 						<path id='arc' stroke={arc_color} fill=transparent d={cluster_map.arc_map.svg_arc_path}/>
 						<path id='fork' stroke={fork_color} fill=transparent d={cluster_map.arc_map.svg_fork_radial_path}/>
-						{#if cluster_map.isPaging && cluster_map.shown > 1}
+						{#if cluster_map.isPaging && cluster_map.widgets_shown > 1}
 							<path id='thumb' fill={thumb_color} d={cluster_map.thumb_map.svg_arc_path}/>
 						{/if}
 					</svg>
