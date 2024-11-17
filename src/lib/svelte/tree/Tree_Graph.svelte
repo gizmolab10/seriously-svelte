@@ -2,7 +2,7 @@
 	import { s_graphRect, s_hierarchy, s_show_details, s_device_isMobile,  } from '../../ts/state/Svelte_Stores';
 	import { g, k, u, ux, show, Rect, Size, Point, Thing, ZIndex, debug } from '../../ts/common/Global_Imports';
 	import { signals, IDSignal, IDButton, onMount, Ancestry, dbDispatch } from '../../ts/common/Global_Imports';
-	import { s_id_popupView, s_focus_ancestry, s_user_graphOffset } from '../../ts/state/Svelte_Stores';
+	import { s_id_popupView, s_focus_ancestry, s_user_graph_offset } from '../../ts/state/Svelte_Stores';
 	import { Predicate, IDPersistent, ElementType, persistLocal } from '../../ts/common/Global_Imports';
 	import Tree_Children from './Tree_Children.svelte';
 	import Widget from '../widget/Widget.svelte';
@@ -78,7 +78,8 @@
 			on:keyup={u.ignore}
 			on:keydown={u.ignore}
 			on:keypress={u.ignore}
-			on:click={() => { $s_id_popupView = null; }}>
+			on:click={() => { $s_id_popupView = null; }}
+			style='transform:translate({$s_user_graph_offset.x}px, {$s_user_graph_offset.y}px);'>
 			<Widget name={focusState.name} ancestry={focusState.ancestry} origin={origin_ofFirstReveal.offsetByXY(-21.5 - offsetX_ofFirstReveal, -5)}/>
 			{#if $s_focus_ancestry.isExpanded}
 				<Tree_Children ancestry={focusState.ancestry} origin={origin_ofChildren}/>

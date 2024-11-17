@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { onMount, svgPaths, signals, opacitize, Direction, Graph_Type } from '../../ts/common/Global_Imports';
-	import { k, u, ux, show, Rect, Size, Point, debug, IDTool, ZIndex } from '../../ts/common/Global_Imports';
+	import { k, u, ux, w, show, Rect, Size, Point, debug, IDTool, ZIndex } from '../../ts/common/Global_Imports';
 	import { dbDispatch, ElementType, Mouse_State, Element_State } from '../../ts/common/Global_Imports';
 	import { s_hierarchy, s_graph_type, s_showing_tools_ancestry } from '../../ts/state/Svelte_Stores';
 	import { Alteration_State, AlterationType, Svelte_Wrapper } from '../../ts/common/Global_Imports';

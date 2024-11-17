@@ -1,5 +1,5 @@
+import { w, Rect, wrappers, Mouse_State, SvelteComponentType } from './Global_Imports';
 import { Handle_Mouse_State, Create_Mouse_State } from './Global_Imports';
-import { Rect, wrappers, Mouse_State, SvelteComponentType } from './Global_Imports';
 import Identifiable from '../basis/Identifiable';
 
 // Ancestry sometimes needs to access and or alter an associated svelte component
@@ -20,7 +20,10 @@ export default class Svelte_Wrapper extends Identifiable {
     	wrappers.wrapper_add(this);
     }
 
-    get boundingRect(): Rect { return Rect.boundingRectFor(this.element) ?? Rect.zero; }
+    get boundingRect(): Rect {
+        const rect = Rect.boundingRectFor(this.element);
+        return rect?.originMultipliedBy(1 / w.scale_factor) ?? Rect.zero;
+    }
 
     handle_event(event: MouseEvent, create_mouse_state: Create_Mouse_State): boolean {
         const state = create_mouse_state(event, this.element);
@@ -51,18 +54,18 @@ export default class Svelte_Wrapper extends Identifiable {
 
     static parentTypes_for(type: string): Array<SvelteComponentType> {
         switch (type) {
-            case SvelteComponentType.thumb:     return [SvelteComponentType.paging];
+            case SvelteComponentType.thumb:   return [SvelteComponentType.paging];
             case SvelteComponentType.widget:
-            case SvelteComponentType.app:       return [];
+            case SvelteComponentType.app:     return [];
             case SvelteComponentType.tools:
             case SvelteComponentType.title:
-            case SvelteComponentType.rotation:  return [SvelteComponentType.graph];
+            case SvelteComponentType.rotate:  return [SvelteComponentType.graph];
             case SvelteComponentType.drag:
             case SvelteComponentType.paging:
-            case SvelteComponentType.reveal:    return [SvelteComponentType.rotation];
+            case SvelteComponentType.reveal:  return [SvelteComponentType.rotate];
             case SvelteComponentType.graph:
             case SvelteComponentType.details:
-            case SvelteComponentType.banners:   return [SvelteComponentType.app];
+            case SvelteComponentType.banners: return [SvelteComponentType.app];
         }
         return [SvelteComponentType.banners];
     }

@@ -60,9 +60,9 @@
 		} else if (mouse_state.isUp) {
 			switch (id) {
 				case IDButton.help: g.showHelp(); break;
-				case IDButton.bigger: width = w.zoomBy(1.1) - 20; break;	// mobile only
-				case IDButton.smaller: width = w.zoomBy(0.9) - 20; break;	//   "     "
 				case IDButton.details: $s_show_details = !$s_show_details; break;
+				case IDButton.bigger: width = w.zoomBy(k.zoom_in_ratio) - 20; break;	// mobile only
+				case IDButton.smaller: width = w.zoomBy(k.zoom_out_ratio) - 20; break;	//   "     "
 				default: togglePopupID(id); break;
 			}
 		}

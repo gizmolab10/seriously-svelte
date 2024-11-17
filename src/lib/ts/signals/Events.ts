@@ -1,6 +1,6 @@
-import { s_mouse_location, s_mouse_up_count, s_alteration_mode } from '../state/Svelte_Stores';
-import { s_resize_count, s_device_isMobile, s_user_graphOffset } from '../state/Svelte_Stores';
-import { g, w, get, Point, debug, signals, Alteration_State } from '../common/Global_Imports';
+import { s_mouse_location, s_scaled_mouse_location, s_mouse_up_count, s_alteration_mode } from '../state/Svelte_Stores';
+import { s_resize_count, s_device_isMobile, s_user_graph_offset } from '../state/Svelte_Stores';
+import { g, k, w, get, Point, debug, signals, Alteration_State } from '../common/Global_Imports';
 
 class Events {
 	initialTouch: Point | null = null;
@@ -50,8 +50,8 @@ class Events {
 			event.stopPropagation();
 			switch (key) {
 				case '0': w.applyScale(1); break;
-				case '-': w.zoomBy(0.9); break;
-				default: w.zoomBy(1.1); break;
+				case '-': w.zoomBy(k.zoom_out_ratio); break;
+				default: w.zoomBy(k.zoom_in_ratio); break;
 			}
 			w.renormalize_user_graph_offset();
 			signals.signal_rebuildGraph_fromFocus();
@@ -69,7 +69,8 @@ class Events {
 		event.preventDefault();
 		event.stopPropagation();
 		const location = new Point(event.clientX, event.clientY);
-		s_mouse_location.set(location.multipliedBy(1 / w.scale_factor));
+		s_mouse_location.set(location);
+		s_scaled_mouse_location.set(location.multipliedBy(1 / w.scale_factor));
 		// this.respondTo_closure(event, Mouse_State.move);
 	}
 
@@ -78,11 +79,11 @@ class Events {
 		event.stopPropagation();
 		if (!g.device_isMobile) {
 			const e = event as WheelEvent;
-			const userOffset = get(s_user_graphOffset);
+			const userOffset = get(s_user_graph_offset);
 			const delta = new Point(-e.deltaX, -e.deltaY);
 			if (!!userOffset && g.allow_HorizontalScrolling && delta.magnitude > 1) {
 				debug.log_action(` wheel GRAPH`);
-				w.user_graphOffset_setTo(userOffset.offsetBy(delta));
+				w.user_graph_offset_setTo(userOffset.offsetBy(delta));
 			}
 		}
 	}
@@ -135,7 +136,7 @@ class Events {
 				const touch = event.touches[0];
 				const deltaX = touch.clientX - this.initialTouch.x;
 				const deltaY = touch.clientY - this.initialTouch.y;
-				w.user_graphOffset_setTo(new Point(deltaX, deltaY));
+				w.user_graph_offset_setTo(new Point(deltaX, deltaY));
 				debug.log_action(` two-finger touch move GRAPH`);
 			}
 		}

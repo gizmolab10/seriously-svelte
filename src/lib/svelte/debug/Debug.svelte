@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_graphRect, s_mouse_location, s_offset_graph_center } from '../../ts/state/Svelte_Stores';
+	import { s_graphRect, s_mouse_location, s_user_graph_center } from '../../ts/state/Svelte_Stores';
 	import { g, u, w, Rect, Size, Point, debug, ZIndex } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Box from './Box.svelte';
@@ -7,10 +7,10 @@
 	const multiplier = 0.6;
 	let mouse_rect = Rect.zero;
 	let base = new Point(-39, -28);
-	let debug_origin = $s_offset_graph_center.offsetBy(base);
+	let debug_origin = $s_user_graph_center.offsetBy(base);
 
 	$: {
-		debug_origin = $s_offset_graph_center.offsetBy(base);
+		debug_origin = $s_user_graph_center.offsetBy(base);
 	}
 
 	$: {
@@ -61,9 +61,9 @@
 			zindex = {ZIndex.common}/>
 		{#if false}
 			<Box
-				color = 'blue'
 				cross = {true}
-				name = 'cursor'
+				color = 'blue'
+				name = 'origin'
 				zindex = {ZIndex.common}
 				rect = {new Rect(debug_origin, Size.square(18))}/>
 		{/if}

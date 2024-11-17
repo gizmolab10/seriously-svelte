@@ -2,7 +2,7 @@
 	import { g, k, u, ux, w, Thing, Point, Angle, debug, ZIndex, onMount } from '../../ts/common/Global_Imports';
 	import { signals, svgPaths, Ring_Zone, dbDispatch, opacitize } from '../../ts/common/Global_Imports';
 	import { s_rotation_ring_angle, s_ring_rotation_radius } from '../../ts/state/Svelte_Stores';
-	import { s_graphRect, s_color_thing, s_mouse_location } from '../../ts/state/Svelte_Stores';
+	import { s_graphRect, s_color_thing, s_scaled_mouse_location } from '../../ts/state/Svelte_Stores';
 	import { s_mouse_up_count, s_active_cluster_map } from '../../ts/state/Svelte_Stores';
 	import { s_focus_ancestry, s_clusters_geometry } from '../../ts/state/Svelte_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
@@ -118,7 +118,7 @@
 		// detect movement & adjust state //
 		////////////////////////////////////
 
-		const _ = $s_mouse_location;											// use store, to invoke this code
+		const _ = $s_scaled_mouse_location;											// use store, to invoke this code
 		const mouse_vector = w.mouse_vector_ofOffset_fromGraphCenter();
 		if (!!mouse_vector) {
 			const mouse_angle = mouse_vector.angle;

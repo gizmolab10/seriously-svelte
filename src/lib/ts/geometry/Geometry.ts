@@ -169,9 +169,10 @@ export class Rect {
 	get atZero():				 Rect { return new Rect(Point.zero, this.size); }
 	static get zero():			 Rect { return new Rect(Point.zero, Size.zero); }
 	static createSizeRect(size: Size) { return new Rect(Point.zero, size); }
-	offsetBy(delta: Point):		 Rect { return new Rect(this.origin.offsetBy(delta), this.size); }
-	offsetByY(y: number):		 Rect { return new Rect(this.origin.offsetByY(y), this.size); }
 	offsetByX(x: number):		 Rect { return new Rect(this.origin.offsetByX(x), this.size); }
+	offsetByY(y: number):		 Rect { return new Rect(this.origin.offsetByY(y), this.size); }
+	offsetBy(delta: Point):		 Rect { return new Rect(this.origin.offsetBy(delta), this.size); }
+	originMultipliedBy(ratio: number) { return new Rect(this.origin.multipliedBy(ratio), this.size); }
 
 	expandedBy(expansion: Point): Rect {
 		const size = this.size.expandedBy(expansion);
@@ -209,14 +210,14 @@ export class Rect {
 		return new Rect(origin, size);
 	}
 
-	static rect_forElement_contains(element: HTMLElement | null, point: Point): boolean {
+	static rect_forElement_containsPoint(element: HTMLElement | null, point: Point): boolean {
 		const rect = Rect.boundingRectFor(element);
 		return rect?.contains(point) ?? false;
 	}
 
 	static rect_forElement_containsEvent(element: HTMLElement | null, event: MouseEvent): boolean {
-		const point = u.pointFor_mouseEvent(event);
 		const rect = Rect.boundingRectFor(element);
+		const point = u.pointFor_mouseEvent(event);
 		return rect?.contains(point) ?? false;
 	}
 

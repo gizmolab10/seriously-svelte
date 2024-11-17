@@ -33,7 +33,7 @@
 				alert('no key for ' + event.type);
 			} else if (!$s_edit_state && !g.isEditing_text) {	// let editor component consume the events
 				switch (key) {
-					case 'c': w.user_graphOffset_setTo(Point.zero); break;
+					case 'c': w.user_graph_offset_setTo(Point.zero); break;
 					case 'o': $s_id_popupView = IDButton.open; break;
 					case '?': g.showHelp(); break;
 					default:  await $s_hierarchy.handle_key_down(event); return;

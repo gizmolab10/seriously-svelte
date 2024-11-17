@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_device_isMobile, s_user_graphOffset, s_showing_tools_ancestry } from '../../ts/state/Svelte_Stores';
+	import { s_device_isMobile, s_user_graph_offset, s_showing_tools_ancestry } from '../../ts/state/Svelte_Stores';
 	import { g, k, Rect, Point, debug, ZIndex, onMount, signals, Graph_Type } from '../../ts/common/Global_Imports';
 	import { s_graphRect, s_graph_type, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
 	import Editing_Tools from '../widget/Editing_Tools.svelte';
@@ -24,7 +24,7 @@
 	});
 
 	$: {
-		const _ = $s_user_graphOffset;
+		const _ = $s_user_graph_offset;
 		update_toolsOffset();
 		rebuilds += 1;
 	}
@@ -47,7 +47,7 @@
 
 	function update_toolsOffset() {
 		if ($s_graph_type == Graph_Type.rings) {
-			toolsOffset = new Point(31, -548.8);
+			toolsOffset = new Point(31, -641);
 		} else {
 			toolsOffset = Point.y(-18.3);
 		}
@@ -64,7 +64,6 @@
 			top:${draggableRect.origin.y}px;
 			width: ${draggableRect.size.width}px;
 			height: ${draggableRect.size.height}px;
-			transform: translate({$s_user_graphOffset.x}px, {$s_user_graphOffset.y - 14.3}px);
 		`.removeWhiteSpace();
 	}
 

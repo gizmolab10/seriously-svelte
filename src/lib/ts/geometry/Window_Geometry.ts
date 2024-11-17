@@ -1,6 +1,6 @@
 import { k, get, Rect, Size, Point, debug, signals, persistLocal, IDPersistent } from '../common/Global_Imports';
-import { s_graphRect, s_user_graphOffset, s_offset_graph_center } from '../state/Svelte_Stores';
-import { s_show_details, s_mouse_location } from '../state/Svelte_Stores';
+import { s_graphRect, s_user_graph_offset, s_user_graph_center } from '../state/Svelte_Stores';
+import { s_show_details, s_scaled_mouse_location } from '../state/Svelte_Stores';
 
 class Window_Geometry {
 	scale_factor = 1;
@@ -8,7 +8,7 @@ class Window_Geometry {
 	
 	get windowScroll(): Point { return new Point(window.scrollX, window.scrollY); }
 	get center_ofGraphSize(): Point { return get(s_graphRect).size.asPoint.dividedInHalf; }
-	renormalize_user_graph_offset() { this.user_graphOffset_setTo(this.persisted_user_offset); }
+	renormalize_user_graph_offset() { this.user_graph_offset_setTo(this.persisted_user_offset); }
 	get mouse_distance_fromGraphCenter(): number { return this.mouse_vector_ofOffset_fromGraphCenter()?.magnitude ?? 0; }
 	get mouse_angle_fromGraphCenter(): number | null { return this.mouse_vector_ofOffset_fromGraphCenter()?.angle ?? null; }
 
@@ -24,27 +24,27 @@ class Window_Geometry {
 
 	restore_state() {
 		this.graphRect_update();	// needed for applyScale
-		this.renormalize_user_graph_offset();
 		this.applyScale(persistLocal.read_key(IDPersistent.scale) ?? 1);
+		this.renormalize_user_graph_offset();	// must be called after apply scale (which fubars offset)
 	}
 
 	mouse_vector_ofOffset_fromGraphCenter(offset: Point = Point.zero): Point | null {
-		const mouse_location = get(s_mouse_location);
+		const mouse_location = get(s_scaled_mouse_location);
 		if (!!mouse_location) {
-			const center = get(s_offset_graph_center).offsetBy(offset);
-			const mouse_vector = center.vector_to(mouse_location);
-			debug.log_cursor(`offset ${mouse_vector.description}`);
+			const center_offset = get(s_user_graph_center).offsetBy(offset);
+			const mouse_vector = center_offset.vector_to(mouse_location);
+			debug.log_cursor(`${mouse_vector.description} offset`);
 			return mouse_vector;
 		}
 		return null
 	}
 
-	user_graphOffset_setTo(user_offset: Point): boolean {
-		if (get(s_user_graphOffset) != user_offset) {
-			const center = get(s_graphRect).center;
-			s_user_graphOffset.set(user_offset);
+	user_graph_offset_setTo(user_offset: Point): boolean {
+		if (get(s_user_graph_offset) != user_offset) {
+			const center_offset = get(s_graphRect).center.offsetBy(user_offset);
 			persistLocal.write_key(IDPersistent.user_offset, user_offset);
-			s_offset_graph_center.set(center.offsetBy(user_offset));
+			s_user_graph_center.set(center_offset);
+			s_user_graph_offset.set(user_offset);
 			return true;
 		}
 		return false;
