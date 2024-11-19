@@ -40,12 +40,11 @@
 		if (!multiple) {
 			selected = [title];
 		} else if (isSelected(title)) {
-			selected.push(title);
-		} else {
 			selected = selected.filter(t => t != title);
+		} else {
+			selected.push(title);
 		}
 		selection_closure(selected);
-		update_maps_andWidth();
 	}
 
 </script>

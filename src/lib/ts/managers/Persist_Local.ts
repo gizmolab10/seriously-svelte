@@ -136,7 +136,7 @@ class Persist_Local {
 		s_graph_type.set(this.read_key(IDPersistent.graph_type) ?? Graph_Type.tree);
 		s_tree_type.set(this.read_key(IDPersistent.tree_type) ?? Tree_Type.children);
 		s_thing_fontFamily.set(this.read_key(IDPersistent.font) ?? 'Times New Roman');
-		s_details_type.set(this.read_key(IDPersistent.details_type) ?? Details_Type.storage);
+		s_details_type.set(this.read_key(IDPersistent.details_type) ?? [Details_Type.storage]);
 		s_ring_rotation_radius.set(Math.max(this.read_key(IDPersistent.ring_radius) ?? 0, k.innermost_ring_radius));
 		this.reactivity_subscribe()
 	}

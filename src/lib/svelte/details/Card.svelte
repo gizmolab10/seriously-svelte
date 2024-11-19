@@ -1,23 +1,23 @@
 <script lang='ts'>
-	import { g, k, ux, show, Rect, Size, Point, Thing, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
+	import { g, k, ux, show, Rect, Size, Point, Thing, ZIndex, onMount, Ancestry } from '../../ts/common/Global_Imports';
+	import { signals, TraitType, persistLocal, ElementType, IDPersistent } from '../../ts/common/Global_Imports';
 	import { s_title_thing, s_hierarchy, s_thing_color, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
 	import { s_card_ancestry, s_grabbed_ancestries, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
-	import { TraitType, persistLocal, ElementType, IDPersistent } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/basis/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Button from '../mouse/Button.svelte';
 	import Color from './Color.svelte';
+	export let top = 71;
 	const id = 'info';
 	const margin = 10;
-	const card_top = 4;
-	const text_top = card_top + 52;
-	const size_details = k.width_details - 30;
-	const control_origin = new Point(122, text_top - 20);
-	const control_size = new Size(size_details - 58, k.default_buttonSize + 4);
-	const control_rect = Rect.createCenterRect(control_origin, control_size);
+	const text_top = top + 52;
+	const details_size = k.width_details - 30;
+	const card_center = new Point(122, text_top - 20);
+	const card_size = new Size(details_size - 58, k.default_buttonSize + 4);
+	const card_rect = Rect.createCenterRect(card_center, card_size);
 	const element_state = ux.element_state_for(new Identifiable(id), ElementType.info, id);
-	let color_origin = new Point(-2, control_rect.origin.y - (show.traits ? 1 : 24));
-	let text_box_size = new Size(size_details - 4, 68);
+	let color_origin = new Point(-2, card_rect.origin.y - (show.traits ? 1 : 24));
+	let text_box_size = new Size(details_size - 4, 68);
 	let ancestry: Ancestry | null = $s_focus_ancestry;
 	let information: { [key: string]: string } = {};
 	let button_title = `show ${next_infoKind()}`;
@@ -30,6 +30,13 @@
 	let info;
 
 	element_state.set_forHovering(k.color_default, 'pointer');
+	
+	onMount(() => {
+		const handler = signals.handle_rebuildGraph(1, (ancestry) => {
+			rebuilds += 1;
+		});
+		return () => { handler.disconnect() };
+	});
 	
 	$: {
 		const _ = `${$s_grabbed_ancestries} ${$s_focus_ancestry} ${$s_title_thing}`;
@@ -95,8 +102,8 @@
 		<div class='card'
 			style='
 				color:black;
+				top:{top}px;
 				left:{margin}px;
-				top:{card_top}px;
 				position:absolute;
 				text-align:center;
 				width:{k.width_details - (margin * 2)}px;'>
@@ -116,11 +123,11 @@
 				{#if hasGrabs()}
 					<Button name={name}
 						zindex={ZIndex.details}
-						center={control_rect.center}
+						center={card_rect.center}
 						closure={mouse_state_closure}
 						element_state={element_state}
-						width={control_rect.size.width}
-						height={control_rect.size.height}>
+						width={card_rect.size.width}
+						height={card_rect.size.height}>
 						<span style='font-family: {$s_thing_fontFamily};'>
 							{button_title}
 						</span>

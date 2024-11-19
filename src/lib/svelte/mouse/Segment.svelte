@@ -23,7 +23,7 @@
 	function up_hover_closure(mouse_state) {
 		if (mouse_state.isHover) {
 			isHovering = !mouse_state.isOut;
-		} else if (mouse_state.isDown) {
+		} else if (mouse_state.isUp) {
 			hit_closure(name, mouse_state.event?.isShift ?? false);
 		}
 		update_colors();

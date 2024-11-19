@@ -32,10 +32,10 @@ export enum IDLine {
 }
 
 export enum Details_Type {
-	recents	= 'recents',
-	storage	= 'storage',
-	tools	= 'tools',
-	info	= 'info',
+	storage,
+	info,
+	tools,
+	recents,
 }
 
 export enum Startup_State {
@@ -163,8 +163,8 @@ export enum SvelteComponentType {
 	details	= 'details',
 	rotate	= 'rotate',
 	paging	= 'paging',
-	widget	= 'widget',	// *
-	button	= 'button',	// *
+	widget	= 'widget',		// *
+	button	= 'button',		// *
 	reveal	= 'reveal',
 	graph	= 'graph',
 	thumb	= 'thumb',
