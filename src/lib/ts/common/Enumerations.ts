@@ -31,7 +31,7 @@ export enum IDLine {
 	up	 = 'up',
 }
 
-export enum Details_Type {
+export enum Details_Type {	// do not change the order
 	storage,
 	info,
 	tools,

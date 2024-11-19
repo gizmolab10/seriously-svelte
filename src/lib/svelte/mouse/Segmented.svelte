@@ -23,12 +23,12 @@
 	}
 
 	function update_maps_andWidth() {
-		const max = titles.length - 1;
+		const max_index = titles.length - 1;
 		let index = 0;
 		let x = 0;
 		reset_maps_andWidth();
 		for (const title of titles) {
-			const map = Segment_Map.grab_segment_map(name, title, font_size, isSelected(title), index, max, x, height);
+			const map = Segment_Map.grab_segment_map(name, title, font_size, isSelected(title), index, max_index, x, height);
 			segment_maps.push(map);
 			x += map.width;
 			index += 1;

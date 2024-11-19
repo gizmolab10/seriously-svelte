@@ -20,11 +20,10 @@ export default class Segment_Map {
 	static segment_gap = 14;
 	get description(): string { return `${this.title} ${this.part} ${this.path}`; }
 
-	constructor(name: string, title: string, font_size: string, isSelected: boolean, index: number, max: number, left: number, height: number) {
-
+	constructor(name: string, title: string, font_size: string, isSelected: boolean, index: number, max_index: number, left: number, height: number) {
 		this.relative_font_size = font_size.fontSize_relativeTo(k.font_size);
 		this.width = u.getWidth_ofString_withSize(title, font_size) + this.relative_font_size - 2;
-		this.part = this.part_forIndex(index, max);
+		this.part = this.part_forIndex(index, max_index);
 		this.size = new Size(this.width, height);
 		this.isSelected = isSelected;
 		this.font_size = font_size;
@@ -36,13 +35,13 @@ export default class Segment_Map {
 		this.setup_path();
 	}
 
-	static grab_segment_map(name: string, title: string, font_size: string, isSelected: boolean, index: number, max: number, left: number, height: number) : Segment_Map {
+	static grab_segment_map(name: string, title: string, font_size: string, isSelected: boolean, index: number, max_index: number, left: number, height: number) : Segment_Map {
 		let map_name = `${title}-${name}-at-${index}`;
 		let map = ux.segment_map_forName(map_name);
 		if (!!map) {
 			map.isSelected = isSelected;
 		} else {
-			map = new Segment_Map(name, title, font_size, isSelected, index, max, left, height);
+			map = new Segment_Map(name, title, font_size, isSelected, index, max_index, left, height);
 			ux.set_segment_map_forName(map, map_name);
 		}
 		return map;
@@ -61,11 +60,11 @@ export default class Segment_Map {
 		this.origin = Point.x(this.left);
 	}
 
-	part_forIndex(index: number, max: number): Oblong_Part {
+	part_forIndex(index: number, max_index: number): Oblong_Part {
 		switch (index) {
-			case 0:	  return Oblong_Part.left;
-			case max: return Oblong_Part.right;
-			default:  return Oblong_Part.middle;
+			case 0:			return Oblong_Part.left;
+			case max_index: return Oblong_Part.right;
+			default:		return Oblong_Part.middle;
 		}
 	}
 
