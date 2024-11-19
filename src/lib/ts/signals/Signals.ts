@@ -1,4 +1,4 @@
-import { s_focus_ancestry } from '../state/Svelte_Stores';
+import { s_focus_ancestry, s_rebuild_isInProgress } from '../state/Svelte_Stores';
 import { Signal } from 'typed-signals';
 import { get } from 'svelte/store';
 
@@ -11,7 +11,6 @@ export enum IDSignal {
 
 export class Signals {
 	signal_isInFlight = false;
-	rebuild_isInProgress = false;
 	highestPriorities: { [id_signal: string]: number } = {}
 	handler = new Signal<(ids_signal: Array<IDSignal>, value: any, priority: number) => void>();
 
@@ -53,7 +52,7 @@ export class Signals {
 	signal(id_signal: IDSignal, value: any = null) {
 		if (this.signal_isInFlight) {
 			console.log(`signal ${id_signal} in flight`);
-		} else if (!this.rebuild_isInProgress ||		// if rebuild is in progress
+		} else if (!get(s_rebuild_isInProgress) ||		// if rebuild is in progress
 			id_signal != IDSignal.relayout) {			// disable relayout
 			this.signal_isInFlight = true;
 			const highestPriority = this.highestPriorities[id_signal] ?? 0;
@@ -65,9 +64,9 @@ export class Signals {
 	}
 
 	signal_rebuildGraph(value: any = null) {
-		this.rebuild_isInProgress = true;
+		s_rebuild_isInProgress.set(true);
 		this.signal(IDSignal.rebuild, value);
-		this.rebuild_isInProgress = false;
+		s_rebuild_isInProgress.set(false);				// N.B., widget whatches this to reveal tools
 	}
 
 }

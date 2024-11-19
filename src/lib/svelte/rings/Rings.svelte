@@ -1,10 +1,10 @@
 <script lang='ts'>
 	import { g, k, u, ux, w, Thing, Point, Angle, debug, ZIndex, onMount } from '../../ts/common/Global_Imports';
 	import { signals, svgPaths, Ring_Zone, dbDispatch, opacitize } from '../../ts/common/Global_Imports';
+	import { s_thing_color, s_focus_ancestry, s_clusters_geometry } from '../../ts/state/Svelte_Stores';
 	import { s_rotation_ring_angle, s_ring_rotation_radius } from '../../ts/state/Svelte_Stores';
-	import { s_graphRect, s_color_thing, s_scaled_mouse_location } from '../../ts/state/Svelte_Stores';
 	import { s_mouse_up_count, s_active_cluster_map } from '../../ts/state/Svelte_Stores';
-	import { s_focus_ancestry, s_clusters_geometry } from '../../ts/state/Svelte_Stores';
+	import { s_graphRect, s_scaled_mouse_location } from '../../ts/state/Svelte_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/basis/Identifiable';
 	import Paging_Arc from './Paging_Arc.svelte';
@@ -32,7 +32,7 @@
 	function isHit(): boolean { return w.mouse_distance_fromGraphCenter <= outer_radius; }
 
 	$: {
-		if (!!$s_focus_ancestry.thing && $s_focus_ancestry.thing.id == $s_color_thing?.split(k.generic_separator)[0]) {
+		if (!!$s_focus_ancestry.thing && $s_focus_ancestry.thing.id == $s_thing_color?.split(k.generic_separator)[0]) {
 			color = $s_focus_ancestry?.thing?.color ?? k.thing_color_default;
 			rebuilds += 1;
 		}

@@ -19,10 +19,10 @@ export class Point {
 	get pixelVerbose():				  string { return `${this.x.toFixed(2)}px ${this.y.toFixed(2)}px`; }
 	get verbose():					  string { return `(${this.x.toFixed(2)}, ${this.y.toFixed(2)})`; }
 	get description():				  string { return `${this.x.toFixed(2)} ${this.y.toFixed(2)}`; }
-	get doubled():					   Point { return this.multipliedBy(2); }
 	get negated():					   Point { return this.multipliedBy(-1); }
-	get dividedInHalf():			   Point { return this.multipliedBy(1/2); }
-	get negatedInHalf():			   Point { return this.multipliedBy(-1/2); }
+	get doubled():					   Point { return this.multipliedBy(2); }
+	get negatedInHalf():			   Point { return this.dividedBy(-2); }
+	get dividedInHalf():			   Point { return this.dividedBy(2); }
 	get copy():						   Point { return new Point(this.x, this.y); }
 	get swap():						   Point { return new Point(this.y, this.x); }
 	get negateY():					   Point { return new Point(this.x, -this.y); }
@@ -35,6 +35,9 @@ export class Point {
 	offsetBy(point: Point):			   Point { return new Point(this.x + point.x, this.y + point.y); }
 	vector_to(point: Point):		   Point { return point.offsetBy(this.negated); }
 	vector_from(point: Point):		   Point { return point.vector_to(this); }
+	xMultipliedBy(multiplier: number): Point { return new Point(this.x * multiplier, this.y) }
+	yMultipliedBy(multiplier: number): Point { return new Point(this.x, this.y * multiplier) }
+	dividedBy(divisor: number):		   Point { return new Point(this.x / divisor, this.y / divisor) }
 	multipliedBy(multiplier: number):  Point { return new Point(this.x * multiplier, this.y * multiplier) }
 	static fromPolar(r: number, phi: number) { return Point.x(r).rotate_by(phi); }
 	static fromDOMRect(rect: DOMRect): Point { return new Point(rect.left, rect.top); }
@@ -121,16 +124,17 @@ export class Size {
 	get verbose():					  string { return `(${this.width.toFixed(2)}, ${this.height.toFixed(2)})`; }
 	get pixelVerbose():				  string { return `${this.width.toFixed(2)}px ${this.height.toFixed(2)}px`; }
 	get asPoint():			   		   Point { return new Point(this.width, this.height); }
-	get dividedInHalf():				Size { return this.multipliedBy(1/2); }
-	get negated():						Size { return this.multipliedBy(-1); }
 	get copy():							Size { return new Size(this.width, this.height); }
 	get swap():							Size { return new Size(this.height, this.width); }
+	get negated():						Size { return this.multipliedBy(-1); }
+	get dividedInHalf():				Size { return this.dividedBy(2); }
 	reducedBy(delta: Point):			Size { return this.expandedBy(delta.negated); }
-	expandedByX(width: number):			Size { return new Size(this.width + width, this.height); }
-	expandedByY(height: number):		Size { return new Size(this.width, this.height + height); }
+	expandedByX(x: number):				Size { return new Size(this.width + x, this.height); }
+	expandedByY(y: number):				Size { return new Size(this.width, this.height + y); }
+	expandedByXY(x: number, y: number):	Size { return new Size(this.width + x, this.height + y); }
 	expandedEquallyBy(delta: number):	Size { return new Size(this.width + delta, this.height + delta); }
 	expandedBy(delta: Point):			Size { return new Size(this.width + delta.x, this.height + delta.y); }
-	expandedByXY(x: number, y: number):	Size { return new Size(this.width + x, this.height + y); }
+	dividedBy(divisor: number):			Size { return new Size(this.width / divisor, this.height / divisor); }
 	multipliedBy(multiplier: number):	Size { return new Size(this.width * multiplier, this.height * multiplier); }
 	unionWith(size: Size):				Size { return new Size(Math.max(this.width, size.width), Math.max(this.height, size.height)); }
 	subtracting(size: Size):		   Point { return new Point(this.width - size.width, this.height - size.height); }
@@ -173,6 +177,8 @@ export class Rect {
 	offsetByY(y: number):		 Rect { return new Rect(this.origin.offsetByY(y), this.size); }
 	offsetBy(delta: Point):		 Rect { return new Rect(this.origin.offsetBy(delta), this.size); }
 	originMultipliedBy(ratio: number) { return new Rect(this.origin.multipliedBy(ratio), this.size); }
+	xMultipliedBy(ratio: number)	  { return new Rect(this.origin.xMultipliedBy(ratio), this.size); }
+	yMultipliedBy(ratio: number)	  { return new Rect(this.origin.yMultipliedBy(ratio), this.size); }
 
 	expandedBy(expansion: Point): Rect {
 		const size = this.size.expandedBy(expansion);

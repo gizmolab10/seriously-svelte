@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, ux, show, Rect, Size, Point, Thing, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
-	import { s_title_thing, s_hierarchy, s_color_thing, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
+	import { s_title_thing, s_hierarchy, s_thing_color, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
 	import { s_card_ancestry, s_grabbed_ancestries, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
 	import { TraitType, persistLocal, ElementType, IDPersistent } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/basis/Identifiable';
@@ -37,7 +37,7 @@
 	}
 	
 	$: {
-		const id = $s_color_thing;
+		const id = $s_thing_color;
 		if (!!thing && thing.id == id) {
 			color = thing.color;
 			rebuilds += 1;

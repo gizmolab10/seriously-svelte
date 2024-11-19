@@ -1,12 +1,12 @@
 <script lang='ts'>
 	import { Graph_Type, dbDispatch, Seriously_Range, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
-	import { s_hierarchy, s_graph_type, s_color_thing, s_title_thing, s_edit_state } from '../../ts/state/Svelte_Stores';
-	import { s_thing_fontFamily, s_grabbed_ancestries, s_showing_tools_ancestry } from '../../ts/state/Svelte_Stores';
+	import { s_hierarchy, s_graph_type, s_thing_color, s_title_thing, s_edit_state } from '../../ts/state/Svelte_Stores';
+	import { s_thing_fontFamily, s_grabbed_ancestries, s_ancestry_showing_tools } from '../../ts/state/Svelte_Stores';
 	import { g, k, u, Point, Thing, debug, Angle, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
 	export let fontSize = '1em';
 	export let forward = true;
 	export let ancestry;
-	const titleTop = $s_graph_type == Graph_Type.rings ? 0.5 : 0;
+	const titleTop = g.showing_rings ? 0.5 : 0;
 	let padding = `0.5px 0px 0px 6.5px`;	// 8.5 makes room for drag dot
 	let bound_title = ancestry?.thing?.title ?? k.empty;
     let color = ancestry.thing?.color;
@@ -36,7 +36,7 @@
 	onMount(() => {
 		if (!!ancestry?.thing) {
 			titleWidth = ancestry.thing.titleWidth + 6;
-			titleLeft = $s_graph_type == Graph_Type.rings ? ancestry.isFocus ? -2 : (forward ? 14 : 4) : 10;
+			titleLeft = g.showing_rings ? ancestry.isFocus ? -2 : (forward ? 14 : 4) : 10;
 		}
 		const handler = signals.handle_anySignal((IDSignal, ancestry) => { updateInputWidth(); });
 		setTimeout(() => { updateInputWidth(); }, 100);
@@ -71,7 +71,7 @@
 	}
 
 	$: {
-		if (!!ancestry.thing && ancestry.thing.id == $s_color_thing?.split(k.generic_separator)[0]) {
+		if (!!ancestry.thing && ancestry.thing.id == $s_thing_color?.split(k.generic_separator)[0]) {
 			color = thing?.color;
 		}
 	}
@@ -142,11 +142,11 @@
 			mouse_click_timer = setTimeout(() => {
 				clearClicks();
 				if (!ancestry.isRoot) {
-					if ($s_showing_tools_ancestry == ancestry) {
-						$s_showing_tools_ancestry = null;
+					if ($s_ancestry_showing_tools == ancestry) {
+						$s_ancestry_showing_tools = null;
 					} else  {
 						ancestry.grabOnly();
-						$s_showing_tools_ancestry = ancestry;
+						$s_ancestry_showing_tools = ancestry;
 					}
 					signals.signal_rebuildGraph_fromFocus();
 				}
@@ -187,7 +187,7 @@
 				isEditing = !isEditing;
 			}
 		}
-		cursorStyle = (ancestry.isEditing || ancestry.isGrabbed) ? 'cursor: text' : $s_graph_type == Graph_Type.rings ? 'cursor: pointer' : (!!ancestry && !ancestry.isRoot && !isBulkAlias) ? k.empty : 'cursor: text';
+		cursorStyle = (ancestry.isEditing || ancestry.isGrabbed) ? 'cursor: text' : g.showing_rings ? 'cursor: pointer' : (!!ancestry && !ancestry.isRoot && !isBulkAlias) ? k.empty : 'cursor: text';
 	}
 
 	function stopAndClearEditing() {

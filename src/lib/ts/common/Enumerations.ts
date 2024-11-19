@@ -31,6 +31,13 @@ export enum IDLine {
 	up	 = 'up',
 }
 
+export enum Details_Type {
+	recents	= 'recents',
+	storage	= 'storage',
+	tools	= 'tools',
+	info	= 'info',
+}
+
 export enum Startup_State {
 	start = 'start',
 	fetch = 'fetch',

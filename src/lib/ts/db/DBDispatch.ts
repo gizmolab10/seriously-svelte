@@ -1,6 +1,6 @@
 import { s_db_type, s_hierarchy, s_edit_state, s_db_loadTime } from '../state/Svelte_Stores';
 import { IDPersistent, persistLocal, Startup_State } from '../common/Global_Imports';
-import { s_startup_state, s_showing_tools_ancestry } from '../state/Svelte_Stores';
+import { s_startup_state, s_ancestry_showing_tools } from '../state/Svelte_Stores';
 import { g, k, get, debug, signals, Hierarchy } from '../common/Global_Imports';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
@@ -90,7 +90,7 @@ export default class DBDispatch {
 	conclude_fetch() {
 		s_edit_state.set(null);
 		s_startup_state.set(Startup_State.ready);
-		s_showing_tools_ancestry.set(null);
+		s_ancestry_showing_tools.set(null);
 		persistLocal.restore_grabbed_andExpanded(true);
 		// persistLocal.restore_page_states();
 		persistLocal.restore_focus();

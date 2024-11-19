@@ -70,7 +70,7 @@ class Events {
 		event.stopPropagation();
 		const location = new Point(event.clientX, event.clientY);
 		s_mouse_location.set(location);
-		s_scaled_mouse_location.set(location.multipliedBy(1 / w.scale_factor));
+		s_scaled_mouse_location.set(location.dividedBy(w.scale_factor));
 		// this.respondTo_closure(event, Mouse_State.move);
 	}
 

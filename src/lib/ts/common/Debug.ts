@@ -57,6 +57,7 @@ export class Debug {
 	get graph(): boolean { return this.hasOption(DebugFlag.graph); }
 	get lines(): boolean { return this.hasOption(DebugFlag.lines); }
 	get rings(): boolean { return this.hasOption(DebugFlag.rings); }
+	get tools(): boolean { return this.hasOption(DebugFlag.tools); }
 	get info(): boolean { return this.hasOption(DebugFlag.info); }
 
 	queryStrings_apply() {

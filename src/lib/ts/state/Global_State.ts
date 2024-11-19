@@ -1,8 +1,10 @@
-import { Hierarchy, persistLocal, Rotation_State, Startup_State, Expansion_State } from '../common/Global_Imports';
-import { s_hierarchy, s_resize_count, s_mouse_up_count, s_rebuild_count } from '../state/Svelte_Stores';
-import { s_focus_ancestry, s_grabbed_ancestries, s_expanded_ancestries } from './Svelte_Stores';
+import { s_graph_type, s_thing_color, s_startup_state, s_device_isMobile } from './Svelte_Stores';
+import { s_hierarchy, s_resize_count, s_mouse_up_count, s_rebuild_count } from './Svelte_Stores';
+import { Rotation_State, Startup_State, Expansion_State } from '../common/Global_Imports';
 import { e, k, u, ux, w, get, show, debug, dbDispatch } from '../common/Global_Imports';
-import { s_color_thing, s_startup_state, s_device_isMobile } from './Svelte_Stores';
+import { Hierarchy, Graph_Type, persistLocal } from '../common/Global_Imports';
+import { s_grabbed_ancestries, s_expanded_ancestries } from './Svelte_Stores';
+import { s_focus_ancestry } from './Svelte_Stores';
 
 class Global_State {
 	allow_GraphEditing = true;
@@ -42,7 +44,7 @@ class Global_State {
 		s_resize_count.set(0);
 		s_rebuild_count.set(0);
 		s_mouse_up_count.set(0);
-		s_color_thing.set(null);
+		s_thing_color.set(null);
 		s_startup_state.set(Startup_State.start);
 		s_device_isMobile.set(this.device_isMobile);
 		this.ring_resizing_state = new Expansion_State();
@@ -79,6 +81,7 @@ class Global_State {
 		}
     }
 
+	get showing_rings(): boolean { return get(s_graph_type) == Graph_Type.rings; }
 	get hierarchy(): Hierarchy { return get(s_hierarchy); }
 
 	get isAny_rotation_active(): boolean {

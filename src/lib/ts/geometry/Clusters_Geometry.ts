@@ -1,9 +1,11 @@
-import { s_hierarchy, s_paging_state, s_focus_ancestry } from '../state/Svelte_Stores';
 import { u, get, Thing, debug, Ancestry, Predicate } from '../common/Global_Imports';
 import { Cluster_Map, Paging_State, Widget_MapRect } from '../common/Global_Imports';
+import { s_focus_ancestry, s_ancestry_showing_tools } from '../state/Svelte_Stores';
+import { s_hierarchy, s_paging_state } from '../state/Svelte_Stores';
 import Parent_Ancestry from '../managers/Parent_Ancestry';
 
 export default class Clusters_Geometry {
+	tools_widget_map: Widget_MapRect | null = null;
 	outward_cluster_maps: Array<Cluster_Map> = [];
 	inward_cluster_maps: Array<Cluster_Map> = [];
 	ancestry_focus!: Ancestry;
@@ -28,15 +30,24 @@ export default class Clusters_Geometry {
 	cluster_map_for(toChildren: boolean, predicate: Predicate): Cluster_Map { return this.cluster_maps_for(toChildren)[predicate.stateIndex]; }
 
 	widget_mapFor(ancestry: Ancestry): Widget_MapRect | null {
-		const maps = this.widget_maps.filter(m => m.childAncestry == ancestry);
+		const maps = this.widget_maps.filter(m => m.widget_ancestry == ancestry);
 		return maps.length > 0 ? maps[0] : null;
 	}
 
 	get widget_maps(): Array<Widget_MapRect> {
+		const tools_ancestry = get(s_ancestry_showing_tools);
 		let widget_maps: Array<Widget_MapRect> = [];
-		for (const map of this.cluster_maps) {
-			if (!!map) {
-				widget_maps = u.concatenateArrays(widget_maps, map.widget_maps);
+		this.tools_widget_map = null;
+		for (const cluster_map of this.cluster_maps) {
+			if (!!cluster_map) {
+				for (const widget_map of cluster_map.widget_maps) {
+					// set aside tools_ancestry map, it's widget needs to be drawn last
+					if (widget_map.widget_ancestry == tools_ancestry) {
+						this.tools_widget_map = widget_map;
+					} else {
+						widget_maps.push(widget_map);
+					}
+				}
 			}
 		}
 		return widget_maps;		

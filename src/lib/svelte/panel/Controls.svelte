@@ -1,9 +1,9 @@
 <script lang='ts'>
+	import { s_show_details, s_id_popupView, s_resize_count, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
 	import { g, k, u, ux, w, show, Point, ZIndex, onMount, signals, svgPaths } from '../../ts/common/Global_Imports';
-	import { s_show_details, s_id_popupView, s_graph_type, s_resize_count } from '../../ts/state/Svelte_Stores';
-	import { s_tree_type, s_device_isMobile, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
-	import { IDButton, Graph_Type, ElementType, Element_State } from '../../ts/common/Global_Imports';
-	import { persistLocal, IDPersistent, Tree_Type } from '../../ts/common/Global_Imports';
+	import { IDButton, persistLocal, Element_State, IDPersistent } from '../../ts/common/Global_Imports';
+	import { Tree_Type, Graph_Type, Details_Type, ElementType } from '../../ts/common/Global_Imports';
+	import { s_graph_type, s_tree_type, s_device_isMobile } from '../../ts/state/Svelte_Stores';
 	import Identifiable from '../../ts/basis/Identifiable';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../mouse/Button.svelte';
@@ -71,8 +71,8 @@
 	function selection_closure(name: string, types: Array<string>) {
 		const type = types[0];	// only ever has one element
 		switch (name) {
-			case 'relations': $s_tree_type	= type as Tree_Type; break;
-			case 'graph':	  $s_graph_type = type as Graph_Type; break;
+			case 'graph':	  $s_graph_type	  = type as Graph_Type;	  break;
+			case 'relations': $s_tree_type	  = type as Tree_Type;	  break;
 		}
 	}
 
@@ -103,11 +103,11 @@
 					selected={[$s_graph_type]}
 					titles={[Graph_Type.tree, Graph_Type.rings]}
 					selection_closure={(titles) => selection_closure('graph', titles)}/>
-				{#if $s_graph_type == Graph_Type.tree}
+				{#if !g.showing_rings}
 					{#key $s_tree_type}
 						<Segmented
 							name='tree'
-							origin={Point.x(112)}
+							origin={Point.x(114)}
 							selected={[$s_tree_type]}
 							titles={[Tree_Type.children, Tree_Type.parents, Tree_Type.related]}
 							selection_closure={(titles) => selection_closure('relations', titles)}/>

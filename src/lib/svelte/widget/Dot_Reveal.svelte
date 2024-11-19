@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { Direction, onDestroy, dbDispatch, Predicate, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { k, u, ux, show, Size, Thing, Point, debug, ZIndex, onMount, signals, svgPaths } from '../../ts/common/Global_Imports';
-	import { s_hierarchy, s_alteration_mode, s_showing_tools_ancestry } from '../../ts/state/Svelte_Stores';
+	import { s_hierarchy, s_alteration_mode, s_ancestry_showing_tools } from '../../ts/state/Svelte_Stores';
 	import { s_expanded_ancestries, s_grabbed_ancestries } from '../../ts/state/Svelte_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -31,7 +31,7 @@
 	});
 
 	$: {
-		if (!!dotReveal && !($s_showing_tools_ancestry?.matchesAncestry(ancestry) ?? false)) {
+		if (!!dotReveal && !($s_ancestry_showing_tools?.matchesAncestry(ancestry) ?? false)) {
 			revealWrapper = new Svelte_Wrapper(dotReveal, handle_mouse_state, ancestry.idHashed, SvelteComponentType.reveal);
 			element_state.set_forHovering(ancestry.thing.color, 'pointer');
 		}
@@ -80,7 +80,7 @@
 		} else if (mouse_state.isUp) {
 			if (ancestry.toolsGrabbed) {
 				$s_alteration_mode = null;
-				$s_showing_tools_ancestry = null;
+				$s_ancestry_showing_tools = null;
 				signals.signal_relayoutWidgets_fromFocus();
 			} else if (ancestry.hasChildRelationships || ancestry.thing.isBulkAlias) {
 				$s_hierarchy.ancestry_rebuild_remoteMoveRight(ancestry, !ancestry.isExpanded, true, false);

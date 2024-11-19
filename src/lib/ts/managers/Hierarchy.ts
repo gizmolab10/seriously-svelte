@@ -1,6 +1,6 @@
 import { g, k, u, get, User, Thing, Trait, Grabs, debug, Access, IDTool, signals } from '../common/Global_Imports';
 import { ThingType, TraitType, Graph_Type, Predicate, Ancestry, Mouse_State } from '../common/Global_Imports';
-import { s_alteration_mode, s_grabbed_ancestries, s_showing_tools_ancestry } from '../state/Svelte_Stores';
+import { s_alteration_mode, s_grabbed_ancestries, s_ancestry_showing_tools } from '../state/Svelte_Stores';
 import { Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
 import { s_edit_state, s_graph_type, s_focus_ancestry } from '../state/Svelte_Stores';
 import RemoteIdentifiable from '../basis/RemoteIdentifiable';
@@ -67,7 +67,7 @@ export class Hierarchy {
 
 	async handle_tool_clicked(idButton: string, mouse_state: Mouse_State) {
 		const event: MouseEvent | null = mouse_state.event as MouseEvent;
-        const ancestry = get(s_showing_tools_ancestry);
+        const ancestry = get(s_ancestry_showing_tools);
 		if (!!ancestry) {
 			switch (idButton) {
 				case IDTool.more: debug.log_tools('needs more'); break;
@@ -78,7 +78,7 @@ export class Hierarchy {
 				case IDTool.delete_parent: this.toggleAlteration(AlterationType.deleting, mouse_state.isLong); return;
 				default: break;
 			}
-			s_showing_tools_ancestry.set(null);
+			s_ancestry_showing_tools.set(null);
 			signals.signal_relayoutWidgets_fromFocus();
 		}
 	}
@@ -132,7 +132,7 @@ export class Hierarchy {
 					case '`':               event.preventDefault(); this.latestAncestryGrabbed_toggleEditing_Tools(); break;
 					case 'arrowup':			await this.latestAncestryGrabbed_rebuild_remoteMoveUp_maybe(true, SHIFT, OPTION, EXTREME); break;
 					case 'arrowdown':		await this.latestAncestryGrabbed_rebuild_remoteMoveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
-					case 'escape':			if (!!get(s_showing_tools_ancestry)) { this.clear_editingTools(); }
+					case 'escape':			if (!!get(s_ancestry_showing_tools)) { this.clear_editingTools(); }
 				}
 				if (graph_needsRebuild) {
 					signals.signal_rebuildGraph_fromFocus();
@@ -163,7 +163,7 @@ export class Hierarchy {
 
 	clear_editingTools() {
 		s_alteration_mode.set(null);
-		s_showing_tools_ancestry.set(null);
+		s_ancestry_showing_tools.set(null);
 	}
 
 	static readonly $_GRABS_$: unique symbol;
@@ -178,7 +178,7 @@ export class Hierarchy {
 	latestAncestryGrabbed_toggleEditing_Tools(up: boolean = true) {
 		const ancestry = this.grabs.latestAncestryGrabbed(up);
 		if (!!ancestry && !ancestry.isRoot) {
-			s_showing_tools_ancestry.set(ancestry.toolsGrabbed ? null : ancestry);
+			s_ancestry_showing_tools.set(ancestry.toolsGrabbed ? null : ancestry);
 			signals.signal_rebuildGraph_fromFocus();
 		}
 	}
@@ -791,7 +791,7 @@ export class Hierarchy {
 	}
 
 	ancestry_relayout_toolCluster_nextParent(force: boolean = false) {
-		const toolsAncestry = get(s_showing_tools_ancestry);
+		const toolsAncestry = get(s_ancestry_showing_tools);
 		if (!!toolsAncestry) {
 			let ancestry = toolsAncestry;
 			// do {
@@ -805,7 +805,7 @@ export class Hierarchy {
 			// } while (!ancestry.matchesAncestry(toolsAncestry));
 			ancestry.grabOnly();
 			signals.signal_relayoutWidgets_fromFocus();
-			s_showing_tools_ancestry.set(ancestry);
+			s_ancestry_showing_tools.set(ancestry);
 		}
 	}
 
@@ -855,7 +855,7 @@ export class Hierarchy {
 			if (!siblings || length == 0) {		// friendly for first-time users
 				this.ancestry_rebuild_runtimeBrowseRight(ancestry, true, EXTREME, up);
 			} else if (!!thing) {
-				const is_rings_mode = get(s_graph_type) == Graph_Type.rings;
+				const is_rings_mode = g.showing_rings;
 				const isBidirectional = ancestry.predicate?.isBidirectional ?? false;
 				if ((!isBidirectional && ancestry.isNormal) || !is_rings_mode) {
 					const index = siblings.indexOf(thing);

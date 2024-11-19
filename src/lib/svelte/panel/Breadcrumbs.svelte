@@ -2,7 +2,7 @@
 	import { g, k, u, w, Size, Point, Thing, debug, ZIndex, signals } from '../../ts/common/Global_Imports';
 	import { svgPaths, onMount, Ancestry, dbDispatch, Direction } from '../../ts/common/Global_Imports';
 	import { s_hierarchy, s_focus_ancestry, s_grabbed_ancestries } from '../../ts/state/Svelte_Stores';
-	import { s_graphRect, s_show_details, s_color_thing } from '../../ts/state/Svelte_Stores';
+	import { s_graphRect, s_show_details, s_thing_color } from '../../ts/state/Svelte_Stores';
 	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	let ancestors: Array<Thing> = [];
@@ -18,7 +18,7 @@
 	});
 
 	$: {
-		if (!!$s_color_thing) {
+		if (!!$s_thing_color) {
 			rebuilds += 1;
 		}
 	}

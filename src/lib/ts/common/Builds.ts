@@ -10,6 +10,7 @@ class Builds {
 
 	constructor() {
 		this.notes = {
+			117 : ['November 19, 2024', 'new details mode segmented'],
 			116 : ['November 1, 2024', 'adopt segmented controls'],
 			115 : ['October 6, 2024', 'graph, touch, controls on mobile'],
 			114 : ['October 2, 2024', 'begin work on mobile)'],

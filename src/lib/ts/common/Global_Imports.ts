@@ -21,8 +21,8 @@ import { onMount, onDestroy, setContext, getContext } from 'svelte';
 import { Tree_Type, Graph_Type, Startup_State } from './Enumerations';
 import { IDPersistent, persistLocal } from '../managers/Persist_Local';
 import { PredicateKind, AlterationType, CreationOptions } from './Enumerations';
-import { IDLine, IDTool, ZIndex, IDButton, IDBrowser, Ring_Zone } from './Enumerations';
-import { ThingType, TraitType, Oblong_Part, ElementType, Rebuild_Type } from './Enumerations';
+import { ThingType, TraitType, ElementType, Details_Type, Rebuild_Type } from './Enumerations';
+import { IDLine, IDTool, ZIndex, IDButton, IDBrowser, Ring_Zone, Oblong_Part } from './Enumerations';
 
 import Clusters_Geometry from '../geometry/Clusters_Geometry';
 import Alteration_State from '../state/Alteration_State';
@@ -66,11 +66,12 @@ export {
 	debug, Debug, DebugFlag,
 	Timer_Type, Mouse_Timer,
 	Ring_Zone, Seriously_Range,
+	Oblong_Part, AlterationType,
 	Angle, Quadrant, Orientation,
 	Tree_Geometry, Widget_MapRect,
 	muuri, interact, transparentize,
 	show, builds, signals, wrappers,
-	Title_State, Rotation_State, Expansion_State,
+	ZIndex, PredicateKind, CreationOptions,
 	get, onMount, onDestroy, setContext, getContext,
 	Rect, Size, Point, cursors, svgPaths, Direction,
 	Mouse_State, Handle_Mouse_State, Create_Mouse_State,
@@ -79,7 +80,7 @@ export {
 	User, Datum, Thing, Trait, Access, Predicate, Relationship,
 	Element_State, Paging_State, Page_States, Alteration_State,
 	IDLine, IDTool, IDSignal, IDButton, IDBrowser, IDPersistent,
-	ZIndex, PredicateKind, Graph_Type, Tree_Type, CreationOptions,
+	Title_State, Rotation_State, Expansion_State, Startup_State,
 	ElementType, Svelte_Wrapper, SvelteComponent, SvelteComponentType,
-	ThingType, TraitType, Oblong_Part, Startup_State, Rebuild_Type, AlterationType,
+	ThingType, TraitType, Graph_Type, Tree_Type, Details_Type, Rebuild_Type,
 };

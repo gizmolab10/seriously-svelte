@@ -1,22 +1,17 @@
 <script lang='ts'>
-	import { s_device_isMobile, s_user_graph_offset, s_showing_tools_ancestry } from '../../ts/state/Svelte_Stores';
-	import { g, k, Rect, Point, debug, ZIndex, onMount, signals, Graph_Type } from '../../ts/common/Global_Imports';
+	import { g, k, w, Rect, Point, debug, ZIndex, onMount, signals, Graph_Type } from '../../ts/common/Global_Imports';
+	import { s_device_isMobile, s_user_graph_offset, s_ancestry_showing_tools } from '../../ts/state/Svelte_Stores';
 	import { s_graphRect, s_graph_type, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
-	import Editing_Tools from '../widget/Editing_Tools.svelte';
 	import Rings_Graph from '../rings/Rings_Graph.svelte';
 	import Tree_Graph from '../tree/Tree_Graph.svelte';
 	let draggableRect: Rect | null = null;
-	let toolsOffset = Point.zero;
 	let style = k.empty;
 	let rebuilds = 0;
 	let draggable;
-
-	update_toolsOffset();
 	
 	onMount(() => {
 		update_style();
 		const handler = signals.handle_rebuildGraph(1, (ancestry) => {
-			update_toolsOffset();
 			debug.log_mount(` rebuild GRAPH`);
 			rebuilds += 1;
 		});
@@ -25,14 +20,12 @@
 
 	$: {
 		const _ = $s_user_graph_offset;
-		update_toolsOffset();
 		rebuilds += 1;
 	}
 
 	$: {
 		draggableRect = $s_graphRect.offsetByY(-9);
 		debug.log_action(` draggable ${draggableRect.description}`);
-		update_toolsOffset();
 		update_style();
 		rebuilds += 1;
 	}
@@ -40,19 +33,10 @@
 	$: {
 		const _ = $s_device_isMobile;
 		setTimeout(() => {
-			update_toolsOffset();
 			update_style();
 		}, 1);
 	}
-
-	function update_toolsOffset() {
-		if ($s_graph_type == Graph_Type.rings) {
-			toolsOffset = new Point(31, -641);
-		} else {
-			toolsOffset = Point.y(-18.3);
-		}
-	}
-
+	
 	function update_style() {
 		style=`
 			left: 0px;
@@ -77,9 +61,6 @@
 			<Rings_Graph/>
 		{:else}
 			<Tree_Graph/>
-		{/if}
-		{#if $s_showing_tools_ancestry?.isVisible}
-			<Editing_Tools offset={toolsOffset}/>
 		{/if}
 	</div>
 {/key}

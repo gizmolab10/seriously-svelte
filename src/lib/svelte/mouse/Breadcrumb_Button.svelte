@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, u, ux, Point, Thing, IDTool, onMount, signals, opacitize } from '../../ts/common/Global_Imports';
 	import { dbDispatch, ElementType, Element_State } from '../../ts/common/Global_Imports';
-	import { s_color_thing, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
+	import { s_thing_color, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
 	import { s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
 	import Button from './Button.svelte';
 	export let left = 0;
@@ -34,7 +34,7 @@
 	}
 
 	$: {
-		if (!!thing && thing.id == $s_color_thing?.split(k.generic_separator)[0]) {
+		if (!!thing && thing.id == $s_thing_color?.split(k.generic_separator)[0]) {
 			updateColors();
 		}
 	}

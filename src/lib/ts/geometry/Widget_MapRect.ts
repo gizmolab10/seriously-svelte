@@ -1,8 +1,8 @@
 import { k, ux, Rect, Thing, Point, Angle, Ancestry, ElementType, Element_State } from '../common/Global_Imports'
 
 export default class Widget_MapRect extends Rect {
-	parentAncestry: Ancestry | null;
-	childAncestry: Ancestry | null;
+	parent_ancestry: Ancestry | null;
+	widget_ancestry: Ancestry | null;
 	element_state: Element_State;
 	childAngle: number | null;
 	points_right = true;
@@ -11,14 +11,14 @@ export default class Widget_MapRect extends Rect {
 	subtype = k.empty;
 	curveType: string;
 
-	constructor(curveType: string, rect: Rect, childOrigin: Point, childAncestry: Ancestry | null,
-		parentAncestry: Ancestry | null, childAngle: number | null = null, subtype: string = k.empty) {
+	constructor(curveType: string, rect: Rect, childOrigin: Point, widget_ancestry: Ancestry | null,
+		parent_ancestry: Ancestry | null, childAngle: number | null = null, subtype: string = k.empty) {
 		super(rect.origin.copy, rect.size.copy);
-		this.element_state = ux.element_state_for(childAncestry, ElementType.widget, subtype);
+		this.element_state = ux.element_state_for(widget_ancestry, ElementType.widget, subtype);
 		this.points_right = !childAngle ? true : new Angle(childAngle).angle_pointsRight;
-		this.child = childAncestry?.thing ?? null;
-		this.parentAncestry = parentAncestry;
-		this.childAncestry = childAncestry;
+		this.child = widget_ancestry?.thing ?? null;
+		this.parent_ancestry = parent_ancestry;
+		this.widget_ancestry = widget_ancestry;
 		this.childOrigin = childOrigin;
 		this.childAngle = childAngle;
 		this.curveType = curveType;
@@ -29,7 +29,10 @@ export default class Widget_MapRect extends Rect {
 	}
 
 	destroy() {
-		this.parentAncestry = null;
-		this.childAncestry = null;
+		this.parent_ancestry = null;
+		this.widget_ancestry = null;
 	}
+
+	get responder(): HTMLElement | null { return this.element_state.responder; }
+
 }

@@ -63,10 +63,10 @@
 {#if ancestry.isExpanded}
 	<div class='tree-children'>
 		{#each widgetMapRects as map}
-			<Widget name={map.element_state.name} ancestry={map.childAncestry} origin={map.extent.offsetBy(widgetOffset)}/>
-			<Tree_Line ancestry={map.childAncestry} curveType={map.curveType} rect={map.offsetBy(lineOffset)}/>
-			{#if map.childAncestry.showsChildRelationships}
-				<Tree_Children ancestry={map.childAncestry} origin={map.childOrigin}/>
+			<Widget name={map.element_state.name} ancestry={map.widget_ancestry} origin={map.extent.offsetBy(widgetOffset)}/>
+			<Tree_Line ancestry={map.widget_ancestry} curveType={map.curveType} rect={map.offsetBy(lineOffset)}/>
+			{#if map.widget_ancestry.showsChildRelationships}
+				<Tree_Children ancestry={map.widget_ancestry} origin={map.childOrigin}/>
 			{/if}
 		{/each}
 	</div>

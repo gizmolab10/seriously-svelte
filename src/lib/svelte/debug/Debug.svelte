@@ -1,6 +1,7 @@
 <script lang='ts'>
-	import { s_graphRect, s_mouse_location, s_user_graph_center } from '../../ts/state/Svelte_Stores';
+	import { s_user_graph_center, s_ancestry_showing_tools } from '../../ts/state/Svelte_Stores';
 	import { g, u, w, Rect, Size, Point, debug, ZIndex } from '../../ts/common/Global_Imports';
+	import { s_graphRect, s_scaled_mouse_location } from '../../ts/state/Svelte_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Box from './Box.svelte';
 	export let size = 16;
@@ -14,8 +15,7 @@
 	}
 
 	$: {
-		// N.B.: is scale factor involved?
-		const point = $s_mouse_location?.multipliedBy(1 / w.scale_factor);
+		const point = $s_scaled_mouse_location;
 		if (!!point) {
 			const square = Size.square(size);
 			const origin = point.offsetBy(square.asPoint.negatedInHalf);
@@ -39,11 +39,18 @@
 
 {#if debug.graph}
 	<Box
-		color = 'green'
 		cross = {true}
 		name = 'graph'
+		color = 'green'
 		zindex = {ZIndex.common}
 		rect = {$s_graphRect}/>
+{/if}
+{#if debug.tools && !!$s_ancestry_showing_tools}
+	<Box
+		name = 'tools'
+		color = 'purple'
+		zindex = {ZIndex.frontmost}
+		rect = {$s_ancestry_showing_tools.titleRect}/>
 {/if}
 {#if debug.cursor}
 	<Mouse_Responder

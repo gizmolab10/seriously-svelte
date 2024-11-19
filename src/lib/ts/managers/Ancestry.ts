@@ -1,16 +1,16 @@
-import { s_expanded_ancestries, s_showing_tools_ancestry, s_alteration_mode, s_clusters_geometry } from '../state/Svelte_Stores';
-import { g, k, u, get, Rect, Size, Thing, debug, signals, wrappers, Graph_Type, Predicate } from '../common/Global_Imports';
-import { s_hierarchy, s_focus_ancestry, s_grabbed_ancestries, s_edit_state, s_graph_type } from '../state/Svelte_Stores';
+import { s_expanded_ancestries, s_ancestry_showing_tools, s_alteration_mode, s_clusters_geometry } from '../state/Svelte_Stores';
+import { g, k, u, get, Rect, Size, Thing, debug, signals, wrappers, Predicate } from '../common/Global_Imports';
 import { Title_State, ElementType, Paging_State, Relationship, PredicateKind } from '../common/Global_Imports';
 import { Svelte_Wrapper, Widget_MapRect, AlterationType, SvelteComponentType } from '../common/Global_Imports';
+import { s_hierarchy, s_focus_ancestry, s_grabbed_ancestries, s_edit_state } from '../state/Svelte_Stores';
 import Identifiable from '../basis/Identifiable';
 import { Writable } from 'svelte/store';
 
 export default class Ancestry extends Identifiable {
 	_thing: Thing | null = null;
 	idPredicate: string;
-	isNormal = true;
 	unsubscribe: any;
+	isNormal = true;
 
 	// id => ancestry string 
 	//	composed of ids of each relationship
@@ -40,19 +40,17 @@ export default class Ancestry extends Identifiable {
 	get lastChild(): Thing { return this.children.slice(-1)[0]; }
 	get order(): number { return this.relationship?.order ?? -1; }
 	get parentAncestry(): Ancestry | null { return this.stripBack(); }
-	get ancestors(): Array<Thing> { return get(s_hierarchy).things_forAncestry(this); }
 	get title(): string { return this.thing?.title ?? 'missing title'; }
 	get isFocus(): boolean { return this.matchesStore(s_focus_ancestry); }
 	get ids_hashed(): Array<number> { return this.ids.map(i => i.hash()); }
 	get relationship(): Relationship | null { return this.relationshipAt(); }
 	get idBridging(): string | null { return this.thing?.idBridging ?? null; }
 	get titleRect(): Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
-	get predicate(): Predicate | null { return get(s_hierarchy).predicate_forID(this.idPredicate) }
-	get toolsGrabbed(): boolean { return this.matchesStore(s_showing_tools_ancestry); }
+	get ancestors(): Array<Thing> { return get(s_hierarchy).things_forAncestry(this); }
+	get toolsGrabbed(): boolean { return this.matchesStore(s_ancestry_showing_tools); }
 	get hasChildRelationships(): boolean { return this.childRelationships.length > 0; }
 	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
 	get description(): string { return `${this.idPredicate} ${this.titles.join(':')}`; }
-	get children(): Array<Thing> { return get(s_hierarchy).things_forAncestries(this.childAncestries); }
 	get hasParentRelationships(): boolean { return this.parentRelationships.length > 0; }
 	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
 	get idPredicates(): Array<string> { return this.relationships.map(r => r.idPredicate); }
@@ -60,19 +58,21 @@ export default class Ancestry extends Identifiable {
 	get isInvalid(): boolean { return this.containsReciprocals || this.containsMixedPredicates; }
 	get siblingIndex(): number { return this.siblingAncestries.map(p => p.id).indexOf(this.id); }
 	get childAncestries(): Array<Ancestry> { return this.childAncestries_for(this.idPredicate); }
+	get predicate(): Predicate | null { return get(s_hierarchy).predicate_forID(this.idPredicate) }
 	get siblingAncestries(): Array<Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
-	get showsChildRelationships(): boolean { return this.isExpanded && this.hasChildRelationships; }
 	get isEditing(): boolean { return get(s_edit_state)?.editing?.matchesAncestry(this) ?? false; }
+	get showsChildRelationships(): boolean { return this.isExpanded && this.hasChildRelationships; }
+	get children(): Array<Thing> { return get(s_hierarchy).things_forAncestries(this.childAncestries); }
 	get hasRelationships(): boolean { return this.hasParentRelationships || this.hasChildRelationships; }
-	get titles(): Array<string> { return this.ancestors?.map(t => ` \"${t ? t.title : 'null'}\"`) ?? []; }
 	get isStoppingEdit(): boolean { return get(s_edit_state)?.stopping?.matchesAncestry(this) ?? false; }
+	get titles(): Array<string> { return this.ancestors?.map(t => ` \"${t ? t.title : 'null'}\"`) ?? []; }
 	get widget_map(): Widget_MapRect | null { return get(s_clusters_geometry)?.widget_mapFor(this) ?? null; }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore_ofAncestries(s_expanded_ancestries); }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	get childRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, false); }
 	get parentRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, true); }
+	get showsReveal(): boolean { return !g.showing_rings && (this.hasChildRelationships || (this.thing?.isBulkAlias ?? false)); }
 	get titleWrapper(): Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.idHashed, SvelteComponentType.title); }
-	get showsReveal(): boolean { return get(s_graph_type) == Graph_Type.tree && (this.hasChildRelationships || (this.thing?.isBulkAlias ?? false)); }
 
 	get relationships(): Array<Relationship> {
 		const relationships = this.ids_hashed.map(hid => get(s_hierarchy).relationship_forHID(hid)) ?? [];
@@ -116,7 +116,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	get isVisible(): boolean {
-		if (get(s_graph_type) == Graph_Type.rings) {
+		if (g.showing_rings) {
 			return this.parentAncestry?.paging_state?.index_isVisible(this.siblingIndex) ?? false;
 		} else {
 			const focus = get(s_focus_ancestry);
@@ -172,7 +172,7 @@ export default class Ancestry extends Identifiable {
 		const alteration = get(s_alteration_mode);
 		const predicate = alteration?.predicate;
 		if (!!alteration && !!predicate) {
-			const toolsAncestry = get(s_showing_tools_ancestry);
+			const toolsAncestry = get(s_ancestry_showing_tools);
 			const toolThing = toolsAncestry?.thing;
 			const thing = this.thing;
 			if (!!thing && !!toolThing && !!toolsAncestry) {
@@ -519,7 +519,7 @@ export default class Ancestry extends Identifiable {
 			s_edit_state?.set(null);
 			if (!!get(s_alteration_mode)) {
 				this.ancestry_alterMaybe(this);
-			} else if (!shiftKey && get(s_graph_type) == Graph_Type.rings) {
+			} else if (!shiftKey && g.showing_rings) {
 				this.becomeFocus();
 			} else if (shiftKey || this.isGrabbed) {
 				this.toggleGrab();
@@ -563,7 +563,7 @@ export default class Ancestry extends Identifiable {
 			return array;
 		});
 		let ancestries = get(s_grabbed_ancestries);
-		if (ancestries.length == 0 && get(s_graph_type) == Graph_Type.tree) {
+		if (ancestries.length == 0 && !g.showing_rings) {
 			rootAncestry.grabOnly();
 		} else {
 			this.toggle_editingTools(); // do not show editingTools for root
@@ -571,13 +571,13 @@ export default class Ancestry extends Identifiable {
 	}
 
 	toggle_editingTools() {
-		const toolsAncestry = get(s_showing_tools_ancestry);
+		const toolsAncestry = get(s_ancestry_showing_tools);
 		if (!!toolsAncestry) { // ignore if editingTools not in use
 			s_alteration_mode.set(null);
 			if (this.matchesAncestry(toolsAncestry)) {
-				s_showing_tools_ancestry.set(null);
+				s_ancestry_showing_tools.set(null);
 			} else if (!this.isRoot) {
-				s_showing_tools_ancestry.set(this);
+				s_ancestry_showing_tools.set(this);
 			}
 		}
 	}
@@ -585,7 +585,7 @@ export default class Ancestry extends Identifiable {
 	async ancestry_alterMaybe(ancestry: Ancestry) {
 		if (ancestry.canConnect_toToolsAncestry) {
 			const alteration = get(s_alteration_mode);
-			const toolsAncestry = get(s_showing_tools_ancestry);
+			const toolsAncestry = get(s_ancestry_showing_tools);
 			const idPredicate = alteration?.predicate?.id;
 			if (!!alteration && !!toolsAncestry && !!idPredicate) {
 				get(s_hierarchy).clear_editingTools();

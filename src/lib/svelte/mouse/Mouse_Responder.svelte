@@ -56,16 +56,17 @@
 	}
 	
 	$: {	// hover
-		if (!!mouse_button && !!$s_mouse_location) {
+		const mouse_location = $s_mouse_location;
+		if (!!mouse_button && !!mouse_location) {
 			let isHit = false;
-			if (!isHit_closure) {			// is mouse inside this element's bounding rect
-				isHit = Rect.rect_forElement_containsPoint(mouse_button, $s_mouse_location);
+			if (!isHit_closure) {				// is mouse inside this element's bounding rect
+				isHit = Rect.rect_forElement_containsPoint(mouse_button, mouse_location);
 			} else {							// if this element's hover shape is not its bounding rect
-				isHit = isHit_closure();	// use hover shape
+				isHit = isHit_closure();		// use hover shape
 			}
 			if (mouse_state.isHover != isHit) {
 				mouse_state.isHover = isHit;
-				mouse_state.isOut = !isHit;		// called far too often
+				mouse_state.isOut = !isHit;		// TODO: called far too often
 				mouse_state_closure(Mouse_State.hover(null, mouse_button, isHit));	// pass a null event
 			} else {
 				mouse_state_closure(Mouse_State.move(null, mouse_button, mouse_isDown, isHit));	// pass a null event
