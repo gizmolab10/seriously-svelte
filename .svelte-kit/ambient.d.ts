@@ -79,7 +79,6 @@ declare module '$env/static/private' {
 	export const npm_package_dependencies_magic_string: string;
 	export const _: string;
 	export const PELICAN_PLUGINS_PATH: string;
-	export const LaunchInstanceID: string;
 	export const __CFBundleIdentifier: string;
 	export const PWD: string;
 	export const npm_lifecycle_event: string;
@@ -141,7 +140,6 @@ declare module '$env/static/private' {
 	export const npm_package_dependencies_kleur: string;
 	export const npm_config_init_version: string;
 	export const npm_config_ignore_optional: string;
-	export const SECURITYSESSIONID: string;
 	export const npm_package_exports___node_types: string;
 	export const npm_package_files_6: string;
 	export const npm_package_scripts_check: string;
@@ -234,7 +232,6 @@ declare module '$env/dynamic/private' {
 		npm_package_dependencies_magic_string: string;
 		_: string;
 		PELICAN_PLUGINS_PATH: string;
-		LaunchInstanceID: string;
 		__CFBundleIdentifier: string;
 		PWD: string;
 		npm_lifecycle_event: string;
@@ -296,7 +293,6 @@ declare module '$env/dynamic/private' {
 		npm_package_dependencies_kleur: string;
 		npm_config_init_version: string;
 		npm_config_ignore_optional: string;
-		SECURITYSESSIONID: string;
 		npm_package_exports___node_types: string;
 		npm_package_files_6: string;
 		npm_package_scripts_check: string;

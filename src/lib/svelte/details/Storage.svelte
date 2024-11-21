@@ -29,7 +29,7 @@
 				left:60px;
 				color:#333;
 				font-size:0.8em;
-				top:{top + 20}px;
+				top:{top + 22}px;
 				position:absolute;
 				justify-content:center;'>
 				fetch took {$s_db_loadTime} s

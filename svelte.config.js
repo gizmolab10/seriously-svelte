@@ -1,13 +1,11 @@
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import sveltePreprocess from 'svelte-preprocess'
 
-const config = {
+export default {
   preprocess: vitePreprocess(),
   preprocess: sveltePreprocess({
     scss: {
       prependData: ''
-    }
-  })
-}
-
-export default config;
+    },
+  }),
+};

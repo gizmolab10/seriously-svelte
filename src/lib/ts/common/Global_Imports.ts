@@ -56,7 +56,6 @@ import { ux } from '../state/UX_State';
 import { g } from '../state/Global_State';
 import { w } from '../geometry/Window_Geometry';
 
-import muuri from 'muuri';
 import interact from 'interactjs';
 import { get } from 'svelte/store';
 import { transparentize } from 'color2k';
@@ -65,11 +64,11 @@ export {
 	e, g, k, u, ux, w,
 	debug, Debug, DebugFlag,
 	Timer_Type, Mouse_Timer,
+	interact, transparentize,
 	Ring_Zone, Seriously_Range,
 	Oblong_Part, AlterationType,
 	Angle, Quadrant, Orientation,
 	Tree_Geometry, Widget_MapRect,
-	muuri, interact, transparentize,
 	show, builds, signals, wrappers,
 	ZIndex, PredicateKind, CreationOptions,
 	get, onMount, onDestroy, setContext, getContext,

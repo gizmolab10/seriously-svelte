@@ -6,16 +6,17 @@
 	export let titles: Array<string> = [];
 	export let fill = k.color_background;
 	export let stroke = k.color_default;
+	export let allow_multiple = false;
 	export let height = k.row_height;
 	export let font_size = '0.95em';
 	export let origin = Point.zero;
-	export let multiple = false;
     export let name = k.empty;
 	let segment_maps: Array<Segment_Map> = [];
 	let width = height / 2;
 
 	update_maps_andWidth();
 	function isSelected(title: string) { return selected.includes(title); }
+	function nextAfter(title: string): string { return titles[titles.indexOf(title).increment(true, titles.length)]; }		// next one after title
 
 	function reset_maps_andWidth() {
 		width = height / 2;
@@ -37,12 +38,14 @@
 	}
 
 	function hit_closure(title: string, shift: boolean) {
-		if (!multiple) {
-			selected = [title];
-		} else if (isSelected(title)) {
-			selected = selected.filter(t => t != title);
-		} else {
+		// if allow_multiple, merely toggle title, including none selected
+		const notSelected = !isSelected(title)
+		if (!allow_multiple) {
+			selected = notSelected ? [title] : [nextAfter(title)];
+		} else if (notSelected) {
 			selected.push(title);
+		} else {
+			selected = selected.filter(t => t != title);
 		}
 		selection_closure(selected);
 	}
