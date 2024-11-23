@@ -1,4 +1,4 @@
-import { g, k, u, get, Thing, Trait, debug, signals, DebugFlag, Hierarchy, Predicate, TraitType } from '../common/Global_Imports';
+import { g, k, u, Thing, Trait, debug, signals, DebugFlag, Hierarchy, Predicate, TraitType } from '../common/Global_Imports';
 import { ThingType, dbDispatch, persistLocal, IDPersistent, Relationship, CreationOptions } from '../common/Global_Imports';
 import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
@@ -8,6 +8,7 @@ import { DBType, DatumType } from '../db/DBInterface';
 import Identifiable from '../basis/Identifiable';
 import { initializeApp } from 'firebase/app';
 import DBInterface from './DBInterface';
+import { get } from 'svelte/store';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 

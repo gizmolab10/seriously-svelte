@@ -2,8 +2,9 @@ import { s_paging_state, s_grabbed_ancestries, s_expanded_ancestries } from '../
 import { s_hierarchy, s_tree_type, s_graph_type, s_details_type } from '../state/Svelte_Stores';
 import { Tree_Type, Graph_Type, Details_Type, Paging_State } from '../common/Global_Imports';
 import { s_focus_ancestry, s_font_size, s_thing_fontFamily } from '../state/Svelte_Stores';
-import { k, w, get, show, debug, Ancestry, dbDispatch } from '../common/Global_Imports';
 import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/Svelte_Stores';
+import { k, show, debug, Ancestry, dbDispatch } from '../common/Global_Imports';
+import { get } from 'svelte/store';
 
 export enum IDPersistent {
 	relationships  = 'relationships',

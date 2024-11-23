@@ -1,12 +1,13 @@
 import { s_db_type, s_hierarchy, s_edit_state, s_db_loadTime } from '../state/Svelte_Stores';
 import { IDPersistent, persistLocal, Startup_State } from '../common/Global_Imports';
 import { s_startup_state, s_ancestry_showing_tools } from '../state/Svelte_Stores';
-import { g, k, get, debug, signals, Hierarchy } from '../common/Global_Imports';
+import { g, k, debug, signals, Hierarchy } from '../common/Global_Imports';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
 import { DBType } from './DBInterface';
 import { dbLocal } from './DBLocal';
+import { get } from 'svelte/store';
 
 // each db has its own hierarchy
 // when switching to another db

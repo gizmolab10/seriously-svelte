@@ -1,5 +1,6 @@
 import { s_hierarchy, s_grabbed_ancestries } from '../state/Svelte_Stores';
-import { get, Thing, Ancestry } from '../common/Global_Imports';
+import { Thing, Ancestry } from '../common/Global_Imports';
+import { get } from 'svelte/store';
 
 export default class Grabs {
 	

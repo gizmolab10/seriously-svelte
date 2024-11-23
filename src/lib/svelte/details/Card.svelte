@@ -1,12 +1,13 @@
 <script lang='ts'>
-	import { g, k, ux, show, Rect, Size, Point, Thing, ZIndex, onMount, Ancestry } from '../../ts/common/Global_Imports';
 	import { signals, TraitType, persistLocal, ElementType, IDPersistent } from '../../ts/common/Global_Imports';
+	import { g, k, ux, show, Rect, Size, Point, Thing, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
 	import { s_title_thing, s_hierarchy, s_thing_color, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
 	import { s_card_ancestry, s_grabbed_ancestries, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
 	import Identifiable from '../../ts/basis/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Button from '../mouse/Button.svelte';
 	import Color from './Color.svelte';
+	import { onMount } from 'svelte';
 	export let top = 71;
 	const id = 'info';
 	const margin = 10;

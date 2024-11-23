@@ -1,6 +1,7 @@
-import { k, get, Rect, Size, Point, debug, signals, persistLocal, IDPersistent } from '../common/Global_Imports';
+import { k, Rect, Size, Point, debug, signals, persistLocal, IDPersistent } from '../common/Global_Imports';
 import { s_graphRect, s_user_graph_offset, s_user_graph_center } from '../state/Svelte_Stores';
 import { s_show_details, s_scaled_mouse_location } from '../state/Svelte_Stores';
+import { get } from 'svelte/store';
 
 class Window_Geometry {
 	scale_factor = 1;

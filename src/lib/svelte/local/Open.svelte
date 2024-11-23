@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { k, ux, Point, onMount } from '../../ts/common/Global_Imports';
-	import { createEventDispatcher } from 'svelte';
+	import { k, ux, Point } from '../../ts/common/Global_Imports';
+	import { onMount, createEventDispatcher } from 'svelte';
 	export let multiple: boolean = false;
 	export let accept: string = k.empty;
 	const dispatch = createEventDispatcher();

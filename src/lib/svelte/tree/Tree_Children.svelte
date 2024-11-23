@@ -1,9 +1,10 @@
 <script lang=ts>
-	import { k, u, Rect, Size, Point, Thing, debug, IDLine, onMount } from '../../ts/common/Global_Imports';
-	import { signals, onDestroy, DebugFlag, Tree_Geometry } from '../../ts/common/Global_Imports';
+	import { k, u, Rect, Size, Point, Thing, debug, IDLine } from '../../ts/common/Global_Imports';
+	import { signals, DebugFlag, Tree_Geometry } from '../../ts/common/Global_Imports';
 	import { s_graphRect } from '../../ts/state/Svelte_Stores';
 	import Tree_Children from './Tree_Children.svelte';
 	import Widget from '../widget/Widget.svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import Tree_Line from './Tree_Line.svelte';
 	import Circle from '../kit/Circle.svelte';
 	export let origin = Point.zero;

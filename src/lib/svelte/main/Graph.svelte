@@ -1,9 +1,10 @@
 <script lang='ts'>
-	import { g, k, w, Rect, Point, debug, ZIndex, onMount, signals, Graph_Type } from '../../ts/common/Global_Imports';
 	import { s_device_isMobile, s_user_graph_offset, s_ancestry_showing_tools } from '../../ts/state/Svelte_Stores';
+	import { g, k, w, Rect, Point, debug, ZIndex, signals, Graph_Type } from '../../ts/common/Global_Imports';
 	import { s_graphRect, s_graph_type, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
 	import Rings_Graph from '../rings/Rings_Graph.svelte';
 	import Tree_Graph from '../tree/Tree_Graph.svelte';
+	import { onMount } from 'svelte';
 	let draggableRect: Rect | null = null;
 	let style = k.empty;
 	let rebuilds = 0;

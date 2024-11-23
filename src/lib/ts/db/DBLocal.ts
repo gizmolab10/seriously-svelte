@@ -1,7 +1,8 @@
-import { k, get, Thing, Trait, ThingType, Hierarchy, Predicate, Relationship } from '../common/Global_Imports';
+import { k, Thing, Trait, ThingType, Hierarchy, Predicate, Relationship } from '../common/Global_Imports';
 import { s_hierarchy } from '../state/Svelte_Stores';
 import DBInterface from './DBInterface';
 import { DBType } from './DBInterface';
+import { get } from 'svelte/store';
 
 export default class DBLocal implements DBInterface {
 	baseID = k.baseID_local;

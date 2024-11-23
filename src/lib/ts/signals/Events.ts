@@ -1,6 +1,7 @@
 import { s_mouse_location, s_scaled_mouse_location, s_mouse_up_count, s_alteration_mode } from '../state/Svelte_Stores';
 import { s_resize_count, s_device_isMobile, s_user_graph_offset } from '../state/Svelte_Stores';
-import { g, k, w, get, Point, debug, signals, Alteration_State } from '../common/Global_Imports';
+import { g, k, w, Point, debug, signals, Alteration_State } from '../common/Global_Imports';
+import { get } from 'svelte/store';
 
 class Events {
 	initialTouch: Point | null = null;

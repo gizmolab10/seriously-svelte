@@ -1,0 +1,1 @@
+export {default as SeriouslyApp} from './SeriouslyApp.svelte';

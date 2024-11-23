@@ -1,9 +1,10 @@
 <script lang='ts'>
 	import { s_clusters_geometry, s_ring_rotation_radius, s_ancestry_showing_tools } from '../../ts/state/Svelte_Stores';
 	import { s_graphRect, s_paging_state, s_focus_ancestry, s_thing_color } from '../../ts/state/Svelte_Stores';
-	import { onDestroy, Predicate, Widget_MapRect, Clusters_Geometry } from '../../ts/common/Global_Imports';
-	import { k, u, get, Point, ZIndex, signals, onMount } from '../../ts/common/Global_Imports';
+	import { Predicate, Widget_MapRect, Clusters_Geometry } from '../../ts/common/Global_Imports';
+	import { k, u, Point, ZIndex, signals } from '../../ts/common/Global_Imports';
 	import Widget from '../widget/Widget.svelte';
+	import { onMount } from 'svelte';
     const ancestry = $s_focus_ancestry;
 	const center = $s_graphRect.size.asPoint.dividedInHalf;
 	const childOffset = new Point(k.dot_size / -2, 4 - k.dot_size);

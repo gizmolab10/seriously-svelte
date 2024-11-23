@@ -1,4 +1,4 @@
-import { g, k, u, get, User, Thing, Trait, Grabs, debug, Access, IDTool, signals } from '../common/Global_Imports';
+import { g, k, u, User, Thing, Trait, Grabs, debug, Access, IDTool, signals } from '../common/Global_Imports';
 import { ThingType, TraitType, Graph_Type, Predicate, Ancestry, Mouse_State } from '../common/Global_Imports';
 import { s_alteration_mode, s_grabbed_ancestries, s_ancestry_showing_tools } from '../state/Svelte_Stores';
 import { Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
@@ -6,6 +6,7 @@ import { s_edit_state, s_graph_type, s_focus_ancestry } from '../state/Svelte_St
 import RemoteIdentifiable from '../basis/RemoteIdentifiable';
 import Identifiable from '../basis/Identifiable';
 import DBInterface from '../db/DBInterface';
+import { get } from 'svelte/store';
 
 type Relationships_ByHID = { [hid: number]: Array<Relationship> }
 

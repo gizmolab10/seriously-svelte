@@ -1,5 +1,5 @@
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
-import sveltePreprocess from 'svelte-preprocess'
+import sveltePreprocess from 'svelte-preprocess';
 
 export default {
   preprocess: vitePreprocess(),
@@ -8,4 +8,13 @@ export default {
       prependData: ''
     },
   }),
-};
+  kit: {
+    package: {
+      dir: 'package',
+      emitTypes: true, // Generate TypeScript declarations
+      exports: (file) => {
+        return ['index.js', 'SeriouslyApp.svelte'].includes(file);
+      },
+    },
+  },
+}

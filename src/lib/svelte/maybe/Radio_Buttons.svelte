@@ -1,5 +1,6 @@
 <script lang='ts'>
-	import { k, u, onMount } from '../../ts/common/Global_Imports';
+	import { k, u } from '../../ts/common/Global_Imports';
+	import { onMount } from 'svelte';
 	export let fitWithin = k.width_details;
 	export let idSelected = null;
 	export let name = 'menu';

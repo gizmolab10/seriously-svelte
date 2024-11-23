@@ -1,5 +1,6 @@
-import { k, get, Thing, debug, DebugFlag, dbDispatch, Predicate } from '../common/Global_Imports';
+import { k, Thing, debug, DebugFlag, dbDispatch, Predicate } from '../common/Global_Imports';
 import { s_hierarchy } from '../state/Svelte_Stores';
+import { get } from 'svelte/store';
 import Datum from '../basis/Datum';
 import Airtable from 'airtable';
 

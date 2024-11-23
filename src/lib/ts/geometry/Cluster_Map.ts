@@ -1,7 +1,8 @@
-import { g, k, u, ux, w, get, Rect, Point, Angle, debug, IDLine, Arc_Map, Quadrant } from '../common/Global_Imports';
+import { g, k, u, ux, w, Rect, Point, Angle, debug, IDLine, Arc_Map, Quadrant } from '../common/Global_Imports';
 import { Ancestry, Predicate, Paging_State, Widget_MapRect, Rotation_State } from '../common/Global_Imports';
 import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/Svelte_Stores';
 import { s_graphRect, s_focus_ancestry } from '../state/Svelte_Stores';
+import { get } from 'svelte/store';
 
 //////////////////////////////////////////
 //										//

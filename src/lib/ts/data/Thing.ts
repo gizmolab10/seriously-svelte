@@ -1,7 +1,8 @@
-import { k, u, get, Datum, debug, Trait, Ancestry, Predicate, Page_States, DebugFlag } from '../common/Global_Imports';
+import { k, u, Datum, debug, Trait, Ancestry, Predicate, Page_States, DebugFlag } from '../common/Global_Imports';
 import { ThingType, TraitType, dbDispatch, Relationship, Seriously_Range } from '../common/Global_Imports';
 import { s_hierarchy, s_thing_color, s_rebuild_count } from '../state/Svelte_Stores';
 import { s_focus_ancestry, s_expanded_ancestries } from '../state/Svelte_Stores';
+import { get } from 'svelte/store';
 import Airtable from 'airtable';
 
 export default class Thing extends Datum {

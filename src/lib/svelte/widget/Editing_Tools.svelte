@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, u, ux, w, show, Rect, Size, Point, debug, IDTool, ZIndex } from '../../ts/common/Global_Imports';
-	import { onMount, svgPaths, signals, opacitize, Direction, Graph_Type } from '../../ts/common/Global_Imports';
+	import { svgPaths, signals, opacitize, Direction, Graph_Type } from '../../ts/common/Global_Imports';
 	import { s_graphRect, s_hierarchy, s_graph_type, s_show_details } from '../../ts/state/Svelte_Stores';
 	import { dbDispatch, ElementType, Mouse_State, Element_State } from '../../ts/common/Global_Imports';
 	import { Alteration_State, AlterationType, Svelte_Wrapper } from '../../ts/common/Global_Imports';
@@ -11,6 +11,7 @@
 	import Dot_Reveal from '../widget/Dot_Reveal.svelte';
 	import Button from '../mouse/Button.svelte';
 	import Trash from '../kit/Trash.svelte';
+	import { onMount } from 'svelte';
 	const toolDiameter = k.dot_size * 1.4;
 	const editingToolsRadius = k.editingTools_diameter / 2;
 	const parentAlteringIDs = [IDTool.add_parent, IDTool.delete_parent];

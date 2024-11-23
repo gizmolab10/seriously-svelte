@@ -1,13 +1,14 @@
 <script lang='ts'>
-	import { s_show_details, s_id_popupView, s_resize_count, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
-	import { g, k, u, ux, w, show, Point, ZIndex, onMount, signals } from '../../ts/common/Global_Imports';
+	import { s_graph_type, s_tree_type, s_resize_count, s_device_isMobile } from '../../ts/state/Svelte_Stores';
 	import { IDButton, persistLocal, Element_State, IDPersistent } from '../../ts/common/Global_Imports';
+	import { s_show_details, s_id_popupView, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
+	import { g, k, u, ux, w, show, Point, ZIndex, signals } from '../../ts/common/Global_Imports';
 	import { svgPaths, Tree_Type, Graph_Type, ElementType } from '../../ts/common/Global_Imports';
-	import { s_graph_type, s_tree_type, s_device_isMobile } from '../../ts/state/Svelte_Stores';
 	import Identifiable from '../../ts/basis/Identifiable';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../mouse/Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
+	import { onMount } from 'svelte';
 	const size_small = k.default_buttonSize;
 	const details_top = k.dot_size / 2;
 	const y_center = details_top + 3.5;

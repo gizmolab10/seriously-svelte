@@ -1,8 +1,9 @@
 import { DebugFlag, Hierarchy, Relationship, CreationOptions } from '../common/Global_Imports';
-import { g, k, u, get, debug, Thing, Trait, TraitType } from '../common/Global_Imports';
+import { g, k, u, debug, Thing, Trait, TraitType } from '../common/Global_Imports';
 import { DBType, DatumType } from '../db/DBInterface';
 import { s_hierarchy } from '../state/Svelte_Stores';
 import DBInterface from './DBInterface';
+import { get } from 'svelte/store';
 import Airtable from 'airtable';
 
 //////////////////////////////

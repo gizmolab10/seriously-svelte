@@ -1,10 +1,11 @@
 import { s_expanded_ancestries, s_ancestry_showing_tools, s_alteration_mode, s_clusters_geometry } from '../state/Svelte_Stores';
-import { g, k, u, get, Rect, Size, Thing, debug, signals, wrappers, Predicate } from '../common/Global_Imports';
+import { g, k, u, Rect, Size, Thing, debug, signals, wrappers, Predicate } from '../common/Global_Imports';
 import { Title_State, ElementType, Paging_State, Relationship, PredicateKind } from '../common/Global_Imports';
 import { Svelte_Wrapper, Widget_MapRect, AlterationType, SvelteComponentType } from '../common/Global_Imports';
 import { s_hierarchy, s_focus_ancestry, s_grabbed_ancestries, s_edit_state } from '../state/Svelte_Stores';
 import Identifiable from '../basis/Identifiable';
 import { Writable } from 'svelte/store';
+import { get } from 'svelte/store';
 
 export default class Ancestry extends Identifiable {
 	_thing: Thing | null = null;

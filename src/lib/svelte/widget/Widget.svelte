@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { g, k, u, ux, Thing, Point, Angle, debug, ZIndex, onMount, signals, Graph_Type } from '../../ts/common/Global_Imports';
 	import { Graph_Type, ElementType, Element_State, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, Thing, Point, Angle, debug, ZIndex, signals, Graph_Type } from '../../ts/common/Global_Imports';
 	import { s_thing_fontFamily, s_grabbed_ancestries, s_ancestry_showing_tools } from '../../ts/state/Svelte_Stores';
 	import { s_edit_state, s_show_tools, s_thing_color, s_graph_type } from '../../ts/state/Svelte_Stores';
 	import { s_focus_ancestry } from '../../ts/state/Svelte_Stores';
@@ -9,6 +9,7 @@
 	import Title_Editor from './Title_Editor.svelte';
 	import Dot_Reveal from './Dot_Reveal.svelte';
 	import Dot_Drag from './Dot_Drag.svelte';
+	import { onMount } from 'svelte';
 	export let origin = new Point(160, 5);
 	export let subtype = k.empty;
     export let name = k.empty;

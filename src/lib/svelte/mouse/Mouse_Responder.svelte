@@ -1,7 +1,8 @@
 <script lang='ts'>
 	import { k, g, u, ux, Rect, Size, Point, debug, ZIndex } from '../../ts/common/Global_Imports';
-	import { onMount, Timer_Type, Mouse_Timer, Mouse_State } from '../../ts/common/Global_Imports';
+	import { Timer_Type, Mouse_Timer, Mouse_State } from '../../ts/common/Global_Imports';
 	import { s_mouse_location, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
+	import { onMount } from 'svelte';
 	export let isHit_closure: () => {flag: boolean} | null = null;
 	export let mouse_state_closure = (mouse_state) => {};
 	export let height = k.default_buttonSize;

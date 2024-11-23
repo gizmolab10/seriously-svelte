@@ -1,8 +1,9 @@
 <script lang='ts'>
-	import { k, builds, onMount, ZIndex } from '../../ts/common/Global_Imports';
 	import Directional_Buttons from '../mouse/Directional_Buttons.svelte'
+	import { k, builds, ZIndex } from '../../ts/common/Global_Imports';
 	import { s_id_popupView } from '../../ts/state/Svelte_Stores';
 	import Close_Button from '../mouse/Close_Button.svelte';
+	import { onMount } from 'svelte';
 	const notesIndexed = Object.entries(builds.notes).reverse();
 	const notesLimit = notesIndexed.length - 1;
 	let title = k.empty;

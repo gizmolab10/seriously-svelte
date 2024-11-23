@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { signals, Ring_Zone, ElementType, Rebuild_Type, Clusters_Geometry } from '../../ts/common/Global_Imports';
-	import { g, k, u, ux, Rect, Point, debug, IDTool, ZIndex, onMount } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, Rect, Point, debug, IDTool, ZIndex } from '../../ts/common/Global_Imports';
 	import { s_graphRect, s_show_details, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
 	import { s_user_graph_offset, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
 	import { s_clusters_geometry } from '../../ts/state/Svelte_Stores';
@@ -8,6 +8,7 @@
 	import Circle from '../kit/Circle.svelte';
 	import Necklace from './Necklace.svelte';
 	import Rings from './Rings.svelte';
+	import { onMount } from 'svelte';
 	let toolsOffset = new Point(31, -173.5).offsetBy($s_user_graph_offset.negated);
 
 	// draw center title, arcs, rings and widget necklace

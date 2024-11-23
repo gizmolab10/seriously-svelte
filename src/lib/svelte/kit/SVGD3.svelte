@@ -1,5 +1,6 @@
 <script lang='ts'>
-    import { k, Point, ZIndex, onMount } from '../../ts/common/Global_Imports';
+    import { k, Point, ZIndex } from '../../ts/common/Global_Imports';
+	import { onMount } from 'svelte';
     import * as d3 from 'd3';
     export let position = 'absolute';
     export let zIndex = ZIndex.dots;

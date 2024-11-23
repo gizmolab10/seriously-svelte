@@ -1,21 +1,22 @@
 <script lang='ts'>
-	import { g, k, u, ux, w, get, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
-	import { debug, ZIndex, onMount, Ancestry, Startup_State } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, w, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import { s_edit_state, s_show_details, s_device_isMobile, } from '../../ts/state/Svelte_Stores';
 	import { IDButton, Hierarchy, dbDispatch, IDPersistent } from '../../ts/common/Global_Imports';
+	import { debug, ZIndex, Ancestry, Startup_State } from '../../ts/common/Global_Imports';
 	import { s_db_type, s_graphRect, s_hierarchy } from '../../ts/state/Svelte_Stores';
 	import { s_id_popupView, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
 	import { s_resize_count, s_startup_state } from '../../ts/state/Svelte_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import Breadcrumbs from '../panel/Breadcrumbs.svelte';
 	import { DBType } from '../../ts/db/DBInterface';
 	import Details from '../details/Details.svelte';
+	import Breadcrumbs from './Breadcrumbs.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import Debug from '../debug/Debug.svelte';
 	import Controls from './Controls.svelte';
 	import Load from '../local/Load.svelte';
 	import Box from '../debug/Box.svelte';
 	import Graph from './Graph.svelte';
+	import { onMount } from 'svelte';
 	let chain = ['Panel'];
 	let rebuilds = 0;
 

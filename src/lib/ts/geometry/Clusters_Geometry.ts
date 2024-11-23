@@ -1,8 +1,9 @@
-import { u, get, Thing, debug, Ancestry, Predicate } from '../common/Global_Imports';
+import { u, Thing, debug, Ancestry, Predicate } from '../common/Global_Imports';
 import { Cluster_Map, Paging_State, Widget_MapRect } from '../common/Global_Imports';
 import { s_focus_ancestry, s_ancestry_showing_tools } from '../state/Svelte_Stores';
 import { s_hierarchy, s_paging_state } from '../state/Svelte_Stores';
 import Parent_Ancestry from '../managers/Parent_Ancestry';
+import { get } from 'svelte/store';
 
 export default class Clusters_Geometry {
 	tools_widget_map: Widget_MapRect | null = null;

@@ -1,6 +1,7 @@
 <script>
-	import { k, u, Point, debug, ZIndex, onMount } from '../../ts/common/Global_Imports';
+	import { k, u, Point, debug, ZIndex } from '../../ts/common/Global_Imports';
 	import { s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
+	import { onMount } from 'svelte';
 	export let font_family = $s_thing_fontFamily;
 	export let center = Point.zero;
 	export let font_size = '0.7em';

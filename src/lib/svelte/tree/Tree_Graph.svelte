@@ -1,12 +1,13 @@
 <script lang='ts'>
 	import { s_graphRect, s_hierarchy, s_show_details, s_device_isMobile,  } from '../../ts/state/Svelte_Stores';
 	import { g, k, u, ux, show, Rect, Size, Point, Thing, ZIndex, debug } from '../../ts/common/Global_Imports';
-	import { signals, IDSignal, IDButton, onMount, Ancestry, dbDispatch } from '../../ts/common/Global_Imports';
+	import { signals, IDSignal, IDButton, Ancestry, dbDispatch } from '../../ts/common/Global_Imports';
 	import { s_id_popupView, s_focus_ancestry, s_user_graph_offset } from '../../ts/state/Svelte_Stores';
 	import { Predicate, IDPersistent, ElementType, persistLocal } from '../../ts/common/Global_Imports';
 	import Tree_Children from './Tree_Children.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
+	import { onMount } from 'svelte';
 	const revealState = ux.element_state_for($s_focus_ancestry, ElementType.reveal, 'tree');
 	const focusState = ux.element_state_for($s_focus_ancestry, ElementType.focus, 'tree');
 	let origin_ofFirstReveal = Point.zero;
@@ -75,10 +76,6 @@
 {#if $s_focus_ancestry}
 	{#key rebuilds}
 		<div class='tree'
-			on:keyup={u.ignore}
-			on:keydown={u.ignore}
-			on:keypress={u.ignore}
-			on:click={() => { $s_id_popupView = null; }}
 			style='transform:translate({$s_user_graph_offset.x}px, {$s_user_graph_offset.y}px);'>
 			<Widget name={focusState.name} ancestry={focusState.ancestry} origin={origin_ofFirstReveal.offsetByXY(-21.5 - offsetX_ofFirstReveal, -5)}/>
 			{#if $s_focus_ancestry.isExpanded}

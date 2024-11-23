@@ -1,10 +1,11 @@
 import { s_graph_type, s_thing_color, s_startup_state, s_device_isMobile } from './Svelte_Stores';
 import { s_hierarchy, s_resize_count, s_mouse_up_count, s_rebuild_count } from './Svelte_Stores';
 import { Rotation_State, Startup_State, Expansion_State } from '../common/Global_Imports';
-import { e, k, u, ux, w, get, show, debug, dbDispatch } from '../common/Global_Imports';
+import { e, k, u, ux, w, show, debug, dbDispatch } from '../common/Global_Imports';
 import { Hierarchy, Graph_Type, persistLocal } from '../common/Global_Imports';
 import { s_grabbed_ancestries, s_expanded_ancestries } from './Svelte_Stores';
 import { s_focus_ancestry } from './Svelte_Stores';
+import { get } from 'svelte/store';
 
 class Global_State {
 	allow_GraphEditing = true;

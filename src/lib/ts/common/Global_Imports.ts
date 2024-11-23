@@ -17,7 +17,6 @@ import { Quadrant, Orientation } from '../geometry/Angle';
 import { debug, Debug, DebugFlag } from '../common/Debug';
 import { Direction, svgPaths } from '../geometry/SVG_Paths';
 import { Paging_State, Page_States } from '../state/Page_States';
-import { onMount, onDestroy, setContext, getContext } from 'svelte';
 import { Tree_Type, Graph_Type, Startup_State } from './Enumerations';
 import { IDPersistent, persistLocal } from '../managers/Persist_Local';
 import { PredicateKind, AlterationType, CreationOptions } from './Enumerations';
@@ -56,9 +55,8 @@ import { ux } from '../state/UX_State';
 import { g } from '../state/Global_State';
 import { w } from '../geometry/Window_Geometry';
 
-import interact from 'interactjs';
-import { get } from 'svelte/store';
 import { transparentize } from 'color2k';
+import interact from 'interactjs';
 
 export {
 	e, g, k, u, ux, w,
@@ -71,7 +69,6 @@ export {
 	Tree_Geometry, Widget_MapRect,
 	show, builds, signals, wrappers,
 	ZIndex, PredicateKind, CreationOptions,
-	get, onMount, onDestroy, setContext, getContext,
 	Rect, Size, Point, cursors, svgPaths, Direction,
 	Mouse_State, Handle_Mouse_State, Create_Mouse_State,
 	Arc_Map, Segment_Map, Cluster_Map, Clusters_Geometry,
