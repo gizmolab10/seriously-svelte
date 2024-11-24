@@ -8,7 +8,6 @@ npm-debug.log*
 logs
 
 # Build files
-.massivewikibuilder
 node_modules
 .svelte-kit
 dist-ssr
