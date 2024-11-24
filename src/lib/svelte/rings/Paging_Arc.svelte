@@ -11,7 +11,7 @@
 	export let cluster_map!: Cluster_Map;
 	const offset = k.ring_widget_padding;
 	const radius = $s_ring_rotation_radius + offset;
-	const thumb_name = `thumb-${cluster_map?.name}`;
+	const thumb_name = `thumb-${cluster_map.name}`;
 	const viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;
 	let origin = w.center_ofGraphSize.offsetBy(Point.square(-radius));
 	let mouse_up_count = $s_mouse_up_count;
@@ -27,8 +27,8 @@
 	//
 	// contained by rings, which is contained by rings graph
 
-	debug.log_build(` P ARC (svelte)  ${cluster_map?.name}`);
-	cluster_map?.update_all();
+	debug.log_build(` P ARC (svelte)  ${cluster_map.name}`);
+	cluster_map.update_all();
 	update_colors();
 
 	$: {
@@ -40,7 +40,7 @@
 	$: {
 		if (mouse_up_count != $s_mouse_up_count) {		// NEVER gets executed
 			mouse_up_count = $s_mouse_up_count;			// WHY? because mouse_up_count is always
-			cluster_map?.paging_rotation.reset();		// reset to s_mouse_up_count by rebuild
+			cluster_map.paging_rotation.reset();		// reset to s_mouse_up_count by rebuild
 		}
 	}
 
@@ -51,13 +51,13 @@
 	function update_colors() {
 		fork_color = u.opacitize(color, 0.3);
 		arc_color = u.opacitize(color, g.cluster_paging_state.stroke_opacity);
-		thumb_color = u.opacitize(color, g.ring_rotation_state.isActive ? 0.15 : cluster_map?.paging_rotation.three_level_opacity);
+		thumb_color = u.opacitize(color, g.ring_rotation_state.isActive ? 0.15 : cluster_map.paging_rotation.three_level_opacity);
 	}
 
 	function hover_closure(mouse_state) {
 		if (cluster_map.isPaging) {
 			if (mouse_state.isHover) {
-				cluster_map?.paging_rotation.isHovering = cluster_map.thumb_isHit;	// show highlight around ring
+				cluster_map.paging_rotation.isHovering = cluster_map.thumb_isHit;	// show highlight around ring
 				update_colors();
 			}
 		}
@@ -77,7 +77,7 @@
 					width={radius * 2}
 					height={radius * 2}
 					zindex={ZIndex.backmost}
-					name={cluster_map?.name}
+					name={cluster_map.name}
 					cursor={k.cursor_default}
 					center={w.center_ofGraphSize}
 					isHit_closure={isHit_closure}

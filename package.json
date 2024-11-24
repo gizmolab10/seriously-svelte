@@ -1,7 +1,7 @@
 {
-  "name": "svelteapp",
+  "name": "webseriously",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -66,5 +66,10 @@
     "typescript": "^5.4.5",
     "undici": "^5.26.2",
     "uuid": "^9.0.0"
-  }
+  },
+  "description": "web based thinking app",
+  "main": "src/main.js",
+  "repository": "https://github.com/gizmolab10/seriously-svelte.git",
+  "author": "jonathan sand <sand@gizmolab.com>",
+  "license": "MIT"
 }
