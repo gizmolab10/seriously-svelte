@@ -11,15 +11,15 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "rollup": "rollup -c",
     "test": "jest --bail=0",
     "preview": "vite preview",
-    "package": "rm -rf package; svelte-package -o package"
-  },
-  "exports": {
-    ".": {
-      "types": "./package/index.d.ts",
-      "svelte": "./package/index.js"
-    }
+    "serve": "parcel ./index.html",
+    "swc": "swc src -d swc.package",
+    "esbuild": "node config/esbuild.config.cjs",
+    "parcel": "parcel build ./index.html",
+    "package": "rm -rf package; svelte-package -o package",
+    "eesbuild": "esbuild src/lib/js/index.ts --bundle --outfile=esbuild/webseriously.bundle.js --watch"
   },
   "devDependencies": {
     "@smui/button": "^7.0.0",
@@ -29,6 +29,7 @@
     "@types/airtable": "^0.10.1",
     "@types/color-convert": "^2.0.0",
     "@types/jest": "^29.5.12",
+    "@types/node": "^22.9.3",
     "@types/uuid": "^9.0.2",
     "autoprefixer": "^10.4.20",
     "carbon-components-svelte": "^0.85.2",
@@ -61,6 +62,7 @@
     "interactjs": "^1.10.27",
     "pg": "^8.11.3",
     "pg-promise": "^11.5.4",
+    "pg-query-stream": "4.7.0",
     "postcss": "^8.4.31",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
