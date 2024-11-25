@@ -19,8 +19,8 @@ export default class Constants {
 	ring_resizing_thickness = 30;
 	ring_rotation_thickness = 44;
 	prevent_selection_style = '-webkit-user-select: none; user-select: none; -moz-user-select: none';
-	remote_help_url = 'https://help-webseriously.netlify.app/README.html';
 	local_help_url = 'http://localhost:8000/README.html';
+	remote_help_url = 'https://help.webseriously.org';
 	title_default = 'Please, enter a title';
 	title_line = '------------------------';
 	name_bulkAdmin = 'Jonathan Sand';
