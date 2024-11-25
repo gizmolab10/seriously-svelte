@@ -4,7 +4,6 @@
 	import { dbDispatch, Svelte_Wrapper, AlterationType, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { signals, svgPaths, Direction, Graph_Type, ElementType } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import Tooltip from '../kit/Tooltip.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import { onMount } from 'svelte';
 	export let center = Point.zero;

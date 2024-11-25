@@ -1,10 +1,8 @@
 <script lang='ts'>
-	import { Graph_Type, ElementType, Element_State, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { g, k, u, ux, Thing, Point, Angle, debug, ZIndex, signals, Graph_Type } from '../../ts/common/Global_Imports';
 	import { s_thing_fontFamily, s_grabbed_ancestries, s_ancestry_showing_tools } from '../../ts/state/Svelte_Stores';
-	import { s_edit_state, s_show_tools, s_thing_color, s_graph_type } from '../../ts/state/Svelte_Stores';
-	import { s_focus_ancestry } from '../../ts/state/Svelte_Stores';
-	import { Tooltip } from 'carbon-components-svelte';
+	import { ElementType, Element_State, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { s_edit_state, s_thing_color, s_graph_type, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
 	import Editing_Tools from './Editing_Tools.svelte';
 	import Title_Editor from './Title_Editor.svelte';
 	import Dot_Reveal from './Dot_Reveal.svelte';

@@ -98,21 +98,22 @@
 		</div>
 		<br>
 		<table>
-			<tr>
-				<th>Build</th>
-				<th>Date</th>
-				<th>Note</th>
-			</tr>
-			<div class='horizontal-line' style='z-index: {ZIndex.frontmost};'></div>
-			{#key notes}
-				{#each notes as [key, value]}
-					<tr>
-						<td>{key}</td>
-						<td>{value[0]}</td>
-						<td>&nbsp; {value[1]}</td>
-					</tr>
-				{/each}
-			{/key}
+			<tbody>
+				<tr style='border-bottom: 2px solid black;'>
+					<th>Build</th>
+					<th>Date</th>
+					<th>Note</th>
+				</tr>
+				{#key notes}
+					{#each notes as [key, value]}
+						<tr>
+							<td>{key}</td>
+							<td>{value[0]}</td>
+							<td>&nbsp; {value[1]}</td>
+						</tr>
+					{/each}
+				{/key}
+			</tbody>
 		</table>
 	</div>
 </div>

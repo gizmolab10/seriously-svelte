@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { g, k, u, ux, w, Thing, Point, Angle, debug, ZIndex } from '../../ts/common/Global_Imports';
-	import { signals, svgPaths, Ring_Zone, dbDispatch, opacitize } from '../../ts/common/Global_Imports';
 	import { s_thing_color, s_focus_ancestry, s_clusters_geometry } from '../../ts/state/Svelte_Stores';
 	import { s_rotation_ring_angle, s_ring_rotation_radius } from '../../ts/state/Svelte_Stores';
+	import { signals, svgPaths, Ring_Zone, dbDispatch } from '../../ts/common/Global_Imports';
 	import { s_mouse_up_count, s_active_cluster_map } from '../../ts/state/Svelte_Stores';
 	import { s_graphRect, s_scaled_mouse_location } from '../../ts/state/Svelte_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';

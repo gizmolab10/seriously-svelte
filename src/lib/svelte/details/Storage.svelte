@@ -1,7 +1,6 @@
 <script lang='ts'>
 	import { k, u, Point, ZIndex, dbDispatch, Hierarchy, IDPersistent, persistLocal } from '../../ts/common/Global_Imports';
 	import { s_db_type, s_db_loadTime } from '../../ts/state/Svelte_Stores';
-	import Radio_Buttons from '../buttons/Radio_Buttons.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
 	import { DBType } from '../../ts/db/DBInterface';
 	export let top = 34;
