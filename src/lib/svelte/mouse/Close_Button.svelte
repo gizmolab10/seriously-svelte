@@ -5,10 +5,8 @@
 	import SVGD3 from '../kit/SVGD3.svelte';
     export let name = 'generic close';
     export let size = 20;
-	let fill = k.color_background;
 	let stroke = k.color_default;
-    const svg_cross_path = svgPaths.x_cross(size, size / 6);
-    const svg_circle_path = svgPaths.circle_atOffset(size, size - 2);
+	let fill = k.color_background;
 
 	function hover_up_closure(mouse_state) {
 		if (mouse_state.isHover) {
@@ -26,21 +24,20 @@
 	name={name}
 	width={size}
 	height={size}
-	cursor='pointer'
 	align_left={false}
-	center={Point.y(size)}
+	origin={new Point(8, size / 2)}
 	mouse_state_closure={hover_up_closure}>
     <SVGD3 name='close'
 		fill={fill}
 		width={size}
 		height={size}
-		stroke=k.color_default
-		svg_path={svg_circle_path}
+		stroke={k.color_default}
+		svg_path={svgPaths.circle_atOffset(size, size - 2)}
 	/>
     <SVGD3 name='closeInside'
 		width={size}
 		height={size}
 		stroke={stroke}
-		svg_path={svg_cross_path}
+		svg_path={svgPaths.x_cross(size, size / 6)}
 	/>
 </Mouse_Responder>

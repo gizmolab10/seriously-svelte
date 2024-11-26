@@ -10,6 +10,7 @@ logs
 # Build files
 node_modules
 .svelte-kit
+yarn.lock
 dist-ssr
 esbuild
 *.local

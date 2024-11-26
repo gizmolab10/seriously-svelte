@@ -77,10 +77,6 @@
         display: flex;
         gap: 10px;
     }
-	.horizontal-line {
-		position: fixed;
-		width: 500px;
-	}
 	.title {
 		font-size: 1.5em;
 	}
@@ -94,15 +90,15 @@
 				<Directional_Buttons hit={directional_hit_handler} display={display}/>
 			{/key}
 			<div class='title'>{title}</div>
-			<Close_Button name='builds close' size={k.dot_size * 1.5}/>
 		</div>
+		<Close_Button name='builds-close' size={k.dot_size * 1.5}/>
 		<br>
-		<table>
+		<table style='width:100%'>
 			<tbody>
-				<tr style='border-bottom: 2px solid black;'>
-					<th>Build</th>
-					<th>Date</th>
-					<th>Note</th>
+				<tr>
+					<th style='border-bottom: 1px solid black;'>Build</th>
+					<th style='border-bottom: 1px solid black;'>Date</th>
+					<th style='border-bottom: 1px solid black;'>Note</th>
 				</tr>
 				{#key notes}
 					{#each notes as [key, value]}

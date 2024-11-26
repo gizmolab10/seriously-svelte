@@ -7,7 +7,6 @@
 	export let mouse_state_closure = (mouse_state) => {};
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;
-	export let cursor: string | null = null;
 	export let origin: Point | null = null;
 	export let center: Point | null = null;
 	export let detect_doubleClick = false;
@@ -17,6 +16,7 @@
 	export let position = 'absolute';
 	export let zindex = ZIndex.dots;
 	export let font_size = '0.9em';
+	export let cursor = 'pointer';
 	export let align_left = true;
 	export let name = 'generic';
 	const mouse_state = ux.mouse_state_forName(name);	// persist across destroy/recreate
@@ -149,7 +149,7 @@
 		if (!!origin || !!center) {
 			const x = origin?.x ?? center?.x - width / 2;
 			const y = origin?.y ?? center?.y - height / 2;
-			const alignment = align_left ? `left: ` : `right: -`;
+			const alignment = align_left ? `left: ` : `right: `;
 			style = `${style} ${alignment}${x}px; top: ${y}px;`;
 		}
 	}
