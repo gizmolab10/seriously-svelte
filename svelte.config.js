@@ -6,9 +6,4 @@ export default {
       prependData: ''
     },
   }),
-  compilerOptions: {
-    compatibility: {
-      componentApi: 4, // Enable Svelte 4-style component API
-    },
-  },
 }
