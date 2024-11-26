@@ -80,6 +80,9 @@
 	.title {
 		font-size: 1.5em;
 	}
+	th {
+		border-bottom: 1px solid black;
+	}
 </style>
 
 <svelte:document on:keydown={handle_key_down} />
@@ -96,9 +99,9 @@
 		<table style='width:100%'>
 			<tbody>
 				<tr>
-					<th style='border-bottom: 1px solid black;'>Build</th>
-					<th style='border-bottom: 1px solid black;'>Date</th>
-					<th style='border-bottom: 1px solid black;'>Note</th>
+					<th>Build</th>
+					<th>Date</th>
+					<th>Note</th>
 				</tr>
 				{#key notes}
 					{#each notes as [key, value]}
