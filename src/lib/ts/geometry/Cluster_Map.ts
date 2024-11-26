@@ -81,7 +81,7 @@ export default class Cluster_Map {
 	get thumb_isHit(): boolean {
 		const offset = Point.square(-get(s_ring_rotation_radius));
 		const mouse_vector = w.mouse_vector_ofOffset_fromGraphCenter(offset);
-		return this.isPaging && !!mouse_vector && mouse_vector.isContainedBy_path(this.thumb_map.svg_arc_path);
+		return this.isPaging && !!mouse_vector && mouse_vector.isContainedBy_path(this.thumb_map.svgPathFor_arc);
 	}
 
 	get direction_kind(): string {

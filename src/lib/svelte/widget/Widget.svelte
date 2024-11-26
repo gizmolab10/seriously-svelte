@@ -159,8 +159,8 @@
 		radius = k.row_height / 2;
 		top = origin.y + (showingBorder ? 0 : 1);
 		if (ancestry?.showsReveal) {
-			const revealY = k.dot_size - 4;
-			const revealX = k.dot_size + titleWidth + 15;
+			const revealY = k.dot_size - 3.5;
+			const revealX = forward ? (k.dot_size + titleWidth + 15) : 0;
 			revealCenter = new Point(revealX, revealY);
 		}
 	}

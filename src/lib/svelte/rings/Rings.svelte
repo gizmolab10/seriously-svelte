@@ -17,8 +17,8 @@
 	const outer_diameter = outer_radius * 2;
 	const name = 'rings';
 	const mouse_timer = ux.mouse_timer_forName(name);	// persist across destroy/recreate
-	const svg_ring_rotation_path = svgPaths.annulus(Point.square($s_ring_rotation_radius), middle_radius, ring_width, Point.square(ring_width));
-	const svg_ring_resizing_path = svgPaths.annulus(Point.square(middle_radius), outer_radius, ring_width);
+	const svgPathFor_rotationRing = svgPaths.annulus(Point.square($s_ring_rotation_radius), middle_radius, ring_width, Point.square(ring_width));
+	const svgPathFor_resizingRing = svgPaths.annulus(Point.square(middle_radius), outer_radius, ring_width);
 	const viewBox = `${-ring_width}, ${-ring_width}, ${outer_diameter}, ${outer_diameter}`;
 	let color = $s_focus_ancestry?.thing?.color ?? k.thing_color_default;
 	let mouse_up_count = $s_mouse_up_count;
@@ -249,13 +249,13 @@
 				<svg
 					class='rings-svg'
 					viewBox={viewBox}>
-					<path class='resize-path' d={svg_ring_resizing_path}
+					<path class='resize-path' d={svgPathFor_resizingRing}
 						fill={u.opacitize(color, g.ring_resizing_state.fill_opacity)}
 						stroke={u.opacitize(color, g.ring_resizing_state.stroke_opacity)}/>
 					{#if debug.reticule}
 						<path class='reticule-path' stroke='green' fill=transparent d={svgPaths.t_cross(middle_radius * 2, -2)}/>
 					{/if}
-					<path class='rotate-path' d={svg_ring_rotation_path}
+					<path class='rotate-path' d={svgPathFor_rotationRing}
 						fill={u.opacitize(color, g.ring_rotation_state.fill_opacity * (g.ring_resizing_state.isHighlighted ? 0.3 : 1))}
 						stroke={u.opacitize(color, g.ring_rotation_state.stroke_opacity * (g.ring_resizing_state.isHighlighted ? 0.7 : 1))}/>
 				</svg>

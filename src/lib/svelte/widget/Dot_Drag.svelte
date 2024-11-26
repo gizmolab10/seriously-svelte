@@ -13,9 +13,9 @@
 	const diameter = radius * 2;
 	const element_state = ux.element_state_forName(name);		// survives onDestroy, created by widget
 	let dragWrapper!: Svelte_Wrapper;
-	let svg_isRelated_path = k.empty;
-	let svg_tinyDots_path = k.empty;
-	let svg_dragDot_path = k.empty;
+	let svgPathFor_related = k.empty;
+	let svgPathFor_tinyDots = k.empty;
+	let svgPathFor_dragDot = k.empty;
     let thing = ancestry.thing;
 	let isGrabbed = false;
 	let isHovering = true;
@@ -71,22 +71,22 @@
 
 	function updateSVGPaths() {
 		if (g.showing_rings) {
-			svg_dragDot_path = svgPaths.circle_atOffset(size, size - 1);
+			svgPathFor_dragDot = svgPaths.circle_atOffset(size, size - 1);
 		} else {
-			svg_dragDot_path = svgPaths.oval(size, false);
+			svgPathFor_dragDot = svgPaths.oval(size, false);
 		}
 		updateExtraSVGPaths();
 	}
 
 	function updateExtraSVGPaths() {
-		svg_isRelated_path = svg_tinyDots_path = null;
+		svgPathFor_related = svgPathFor_tinyDots = null;
 		if (!!thing) {
 			const count = thing.parents.length;		
 			if (count > 1) {
-				svg_tinyDots_path = svgPaths.ellipses(6, 0.5, false, count, size / 2);
+				svgPathFor_tinyDots = svgPaths.ellipses(6, 0.5, false, count, size / 2);
 			}
 			if (thing.hasRelated) {
-				svg_isRelated_path = svgPaths.circle_atOffset(size, 3, new Point(-4.5, 0));
+				svgPathFor_related = svgPaths.circle_atOffset(size, 3, new Point(-4.5, 0));
 			}
 		}
 	}
@@ -157,25 +157,25 @@
 						<SVGD3 name={'drag-' + name + '-svg'}
 							width={size}
 							height={size}
-							svg_path={svg_dragDot_path}
+							svgPath={svgPathFor_dragDot}
 							fill={element_state.fill}
 							stroke={thing?.color}
 						/>
 						{#if show.tinyDots}
-							{#if svg_tinyDots_path}
+							{#if svgPathFor_tinyDots}
 								<SVGD3 name={'drag-inside-' + name + '-svg'}
 									width={size}
 									height={size}
-									svg_path={svg_tinyDots_path}
+									svgPath={svgPathFor_tinyDots}
 									fill={element_state.stroke}
 									stroke={element_state.stroke}
 								/>
 							{/if}
-							{#if svg_isRelated_path}
+							{#if svgPathFor_related}
 								<SVGD3 name={'drag-related-' + name + '-svg'}
 									width={size}
 									height={size}
-									svg_path={svg_isRelated_path}
+									svgPath={svgPathFor_related}
 									fill={k.color_background}
 									stroke={thing?.color}
 								/>

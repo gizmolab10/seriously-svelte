@@ -4,7 +4,7 @@
     import * as d3 from 'd3';
     export let position = 'absolute';
     export let zIndex = ZIndex.dots;
-    export let svg_path = k.empty;
+    export let svgPath = k.empty;
     export let stroke = k.color_default;
     export let name = 'SVGD3';
     export let fill = 'none';
@@ -18,7 +18,7 @@
         d3.select(svg)
             .append('path')
             .attr('fill', fill)
-            .attr('d', svg_path)
+            .attr('d', svgPath)
             .attr('stroke', stroke)
             .attr('stroke-width', 1)
             .attr('shape-rendering', 'geometricPrecision'); // anti-alias;
@@ -29,7 +29,7 @@
             d3.select(svg)
                 .select('path')
                 .attr('fill', fill)
-                .attr('d', svg_path)
+                .attr('d', svgPath)
                 .attr('stroke', stroke)
                 .attr('stroke-width', 1)
                 .attr('shape-rendering', 'geometricPrecision'); // anti-alias

@@ -82,10 +82,10 @@
 					isHit_closure={isHit_closure}
 					mouse_state_closure={hover_closure}>
 					<svg id='arc' viewBox={viewBox}>
-						<path id='arc' stroke={arc_color} fill=transparent d={cluster_map.arc_map.svg_arc_path}/>
-						<path id='fork' stroke={fork_color} fill=transparent d={cluster_map.arc_map.svg_fork_radial_path}/>
+						<path id='arc' stroke={arc_color} fill=transparent d={cluster_map.arc_map.svgPathFor_arc}/>
+						<path id='fork' stroke={fork_color} fill=transparent d={cluster_map.arc_map.svgPathFor_forkRadial}/>
 						{#if cluster_map.isPaging && cluster_map.widgets_shown > 1}
-							<path id='thumb' fill={thumb_color} d={cluster_map.thumb_map.svg_arc_path}/>
+							<path id='thumb' fill={thumb_color} d={cluster_map.thumb_map.svgPathFor_arc}/>
 						{/if}
 					</svg>
 				</Mouse_Responder>

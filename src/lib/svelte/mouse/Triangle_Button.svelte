@@ -51,7 +51,7 @@
 	width={size}
 	name={name}>
 	<SVGD3 name='triangle'
-		svg_path={trianglePath}
+		svgPath={trianglePath}
 		stroke={strokeColor}
 		fill={fillColor}
 		height={size}
@@ -59,7 +59,7 @@
 	/>
 	{#if extraPath}
 		<SVGD3 name='triangleInside'
-			svg_path={extraPath}
+			svgPath={extraPath}
 			stroke={extraColor}
 			fill={extraColor}
 			height={size}

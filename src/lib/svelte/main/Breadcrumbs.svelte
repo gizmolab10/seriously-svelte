@@ -58,7 +58,7 @@
 					height={size}
 					position='absolute'
 					stroke={ancestor.color}
-					svg_path={svgPaths.dash(size, 0)}
+					svgPath={svgPaths.dash(size, 0)}
 				/>
 			</div>
 		{/if}

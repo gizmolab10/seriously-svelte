@@ -1,5 +1,5 @@
 import { s_expanded_ancestries, s_ancestry_showing_tools, s_alteration_mode, s_clusters_geometry } from '../state/Svelte_Stores';
-import { g, k, u, Rect, Size, Thing, debug, signals, wrappers, Predicate } from '../common/Global_Imports';
+import { g, k, u, Rect, Size, Thing, debug, signals, wrappers, Direction, Predicate } from '../common/Global_Imports';
 import { Title_State, ElementType, Paging_State, Relationship, PredicateKind } from '../common/Global_Imports';
 import { Svelte_Wrapper, Widget_MapRect, AlterationType, SvelteComponentType } from '../common/Global_Imports';
 import { s_hierarchy, s_focus_ancestry, s_grabbed_ancestries, s_edit_state } from '../state/Svelte_Stores';
@@ -72,12 +72,18 @@ export default class Ancestry extends Identifiable {
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	get childRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, false); }
 	get parentRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, true); }
-	get showsReveal(): boolean { return !g.showing_rings && (this.hasChildRelationships || (this.thing?.isBulkAlias ?? false)); }
+	get svgAngleOf_reveal(): number { return (this.widget_map?.points_right ?? true) ? Direction.right : Direction.left; }
 	get titleWrapper(): Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.idHashed, SvelteComponentType.title); }
 
 	get relationships(): Array<Relationship> {
 		const relationships = this.ids_hashed.map(hid => get(s_hierarchy).relationship_forHID(hid)) ?? [];
 		return u.strip_invalid(relationships);
+	}
+
+	get showsReveal(): boolean {
+		const isBidirectional = this.predicate?.isBidirectional ?? false;
+		const isVisible = this.hasChildRelationships || (this.thing?.isBulkAlias ?? false);
+		return !isBidirectional && isVisible;
 	}
 
 	get ids(): Array<string> {

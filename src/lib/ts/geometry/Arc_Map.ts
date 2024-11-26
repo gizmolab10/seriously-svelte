@@ -92,28 +92,28 @@ export default class Arc_Map {
 
 	static readonly $_SVG_PATHS_$: unique symbol;
 
-	get svg_arc_path(): string {
+	get svgPathFor_arc(): string {
 		const [start, end] = this.angles;
 		const paths = [
-			this.svg_startOf_path(start, this.outside_arc_radius),
-			this.svg_arcLine_path(end, this.outside_arc_radius, false),
-			this.svg_cap_path(end, false),
-			this.svg_arcLine_path(start, this.inside_arc_radius, true),
-			this.svg_cap_path(start, true),
+			this.svgPathFor_start(start, this.outside_arc_radius),
+			this.svgPathFor_arcEdge(end, this.outside_arc_radius, false),
+			this.svgPathFor_cap(end, false),
+			this.svgPathFor_arcEdge(start, this.inside_arc_radius, true),
+			this.svgPathFor_cap(start, true),
 		];
 		return paths.join(k.space);
 	}
 
-	svg_startOf_path(start_angle: number, radius: number) {
+	svgPathFor_start(start_angle: number, radius: number) {
 		return svgPaths.startOutAt(this.clusters_center, radius, start_angle);
 	}
 
-	svg_arcLine_path(end_angle: number, radius: number, clockwise: boolean) {
+	svgPathFor_arcEdge(end_angle: number, radius: number, clockwise: boolean) {
 		const sweep_flag = clockwise ? 0 : 1;
 		return svgPaths.arc_partial(this.clusters_center, radius, 0, sweep_flag, end_angle);
 	}
 
-	svg_cap_path(arc_angle: number, clockwise: boolean) {
+	svgPathFor_cap(arc_angle: number, clockwise: boolean) {
 		const radial = this.radial_forAngle(arc_angle);
 		const center = this.clusters_center.offsetBy(radial);
 		const end_angle = clockwise ? arc_angle : (arc_angle + Math.PI).angle_normalized();
@@ -121,17 +121,19 @@ export default class Arc_Map {
 	
 	}
 
-	svg_tinyDot_path(radius: number, basis_angle: number) {
+	svgPathFor_tinyDot(radius: number, basis_angle: number) {
 		const start = this.clusters_center.offsetBy(Point.fromPolar(radius, basis_angle));
 		return svgPaths.circle(start, 5);
 	}
 
-	get svg_fork_radial_path(): string {
+	get svgPathFor_forkRadial(): string {
 		const small = this.inside_arc_radius - k.paging_arc_thickness - 4;
 		return svgPaths.line_atAngle(this.clusters_center, small, this.center_angle);
 	}
 
-	get svg_fork_arc_path(): string {
+	// not used yet
+
+	get svgPathFor_forkArc(): string {
 		const angle = -this.fork_angle;
 		const fork_radius = this.fork_radius;
 		const forward = this.fork_slantsForward;

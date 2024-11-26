@@ -32,12 +32,12 @@
 		width={size}
 		height={size}
 		stroke={k.color_default}
-		svg_path={svgPaths.circle_atOffset(size, size - 2)}
+		svgPath={svgPaths.circle_atOffset(size, size - 2)}
 	/>
     <SVGD3 name='closeInside'
 		width={size}
 		height={size}
 		stroke={stroke}
-		svg_path={svgPaths.x_cross(size, size / 6)}
+		svgPath={svgPaths.x_cross(size, size / 6)}
 	/>
 </Mouse_Responder>

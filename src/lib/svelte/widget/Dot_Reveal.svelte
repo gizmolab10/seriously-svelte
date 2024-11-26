@@ -16,9 +16,9 @@
 	let tinyDotsDiameter = size * 1.8;
 	let tinyDotsOffset = size * -0.4 + 0.01;
 	let childrenCount = ancestry.childRelationships.length;
-	let svg_reveal_inside_path = svgPaths.circle_atOffset(16, 6);
+	let svgPathFor_insideReveal = svgPaths.circle_atOffset(16, 6);
 	let revealWrapper!: Svelte_Wrapper;
-	let svg_revealDot_path = k.empty;
+	let svgPathFor_revealDot = k.empty;
 	let hasInsidePath = false;
 	let insideOffset = 0;
 	let dotReveal = null;
@@ -27,7 +27,7 @@
 	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
 
 	onMount(() => {
-		updateScalablePaths();
+		svgPath_update();
 		set_isHovering(false);
 	});
 
@@ -40,12 +40,12 @@
 
 	$: {
 		const _ = $s_expanded_ancestries;
-		updateScalablePaths();
+		svgPath_update();
 	}
 
 	$: {
 		if (!!$s_grabbed_ancestries || !!ancestry.thing) {
-			updateScalablePaths();
+			svgPath_update();
 		}
 	}
 
@@ -57,21 +57,19 @@
 		}
 	}
 
-	function updateScalablePaths() {
+	function svgPath_update() {
 		const thing = ancestry.thing;
 		hasInsidePath = ancestry.toolsGrabbed || thing.isBulkAlias;
 		insideOffset = hasInsidePath ? 0 : -1;
 		if (!ancestry.showsReveal || ancestry.toolsGrabbed) {
-			svg_revealDot_path = svgPaths.circle_atOffset(size, size - 1);
+			svgPathFor_revealDot = svgPaths.circle_atOffset(size, size - 1);
 		} else {
-			const goLeft = ancestry.showsChildRelationships;
-			const direction = goLeft ? Direction.left : Direction.right;
-			svg_revealDot_path = svgPaths.fat_polygon(size, direction);
+			svgPathFor_revealDot = svgPaths.fat_polygon(size, ancestry.svgAngleOf_reveal);
 		}
 		if (ancestry.toolsGrabbed) {
-			svg_reveal_inside_path = svgPaths.x_cross(size, 1.5);
+			svgPathFor_insideReveal = svgPaths.x_cross(size, 1.5);
 		} else if (hasInsidePath) {
-			svg_reveal_inside_path = svgPaths.circle_atOffset(size, 3);
+			svgPathFor_insideReveal = svgPaths.circle_atOffset(size, 3);
 		}
 	}
 
@@ -124,11 +122,11 @@
 					height: {size}px;
 					z-index: {zindex};
 				'>
-				{#key svg_revealDot_path}
+				{#key svgPathFor_revealDot}
 					<SVGD3 name='reveal-svg'
 						fill={debug.lines ? 'transparent' : element_state.fill}
 						stroke={ancestry.thing.color}
-						svg_path={svg_revealDot_path}
+						svgPath={svgPathFor_revealDot}
 						height={size}
 						width={size}
 					/>
@@ -144,7 +142,7 @@
 							<SVGD3 name='inside-svg'
 								stroke={element_state.stroke}
 								fill={element_state.stroke}
-								svg_path={svg_reveal_inside_path}
+								svgPath={svgPathFor_insideReveal}
 								height={size}
 								width={size}
 							/>
@@ -158,7 +156,7 @@
 							width:{tinyDotsDiameter}px;
 							position:absolute;'>
 							<SVGD3 name='tiny-dots-svg'
-								svg_path={svgPaths.tinyDots_circular(tinyDotsDiameter, childrenCount)}
+								svgPath={svgPaths.tinyDots_circular(tinyDotsDiameter, childrenCount)}
 								stroke={ancestry.thing.color}
 								fill={ancestry.thing.color}
 								height={tinyDotsDiameter}
