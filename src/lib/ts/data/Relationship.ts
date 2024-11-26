@@ -20,11 +20,11 @@ export default class Relationship extends Datum {
 
 	get child(): Thing | null { return this.thing(true); }
 	get parent(): Thing | null { return this.thing(false); }
-	get predicate(): Predicate | null { return get(s_hierarchy).predicate_forID(this.idPredicate) }
 	get isValid(): boolean { return !!(this.idPredicate && this.idParent && this.idChild); }
+	get predicate(): Predicate | null { return get(s_hierarchy).predicate_forID(this.idPredicate) }
+	log(option: DebugFlag, message: string) { debug.log_maybe(option, message + k.space + this.description); }
 	get fields(): Airtable.FieldSet { return { predicate: [this.idPredicate], parent: [this.idParent], child: [this.idChild], order: this.order }; }
 	get description(): string { return `BASE ${this.baseID} STORED ${this.hasBeen_remotely_saved} ORDER ${this.order} ID ${this.id} PARENT ${this.parent?.description} ${this.predicate?.kind} CHILD ${this.child?.description}`; }
-	log(option: DebugFlag, message: string) { debug.log_maybe(option, message + k.space + this.description); }
 
 	thing(child: boolean): Thing | null {
 		const id = child ? this.idChild : this.idParent;

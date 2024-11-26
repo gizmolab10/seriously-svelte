@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { g, k, u, ux, w, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import { s_edit_state, s_show_details, s_device_isMobile, } from '../../ts/state/Svelte_Stores';
-	import { IDButton, Hierarchy, dbDispatch, IDPersistent } from '../../ts/common/Global_Imports';
+	import { IDControl, Hierarchy, dbDispatch, IDPersistent } from '../../ts/common/Global_Imports';
 	import { debug, ZIndex, Ancestry, Startup_State } from '../../ts/common/Global_Imports';
 	import { s_db_type, s_graphRect, s_hierarchy } from '../../ts/state/Svelte_Stores';
 	import { s_id_popupView, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
@@ -35,7 +35,7 @@
 			} else if (!$s_edit_state && !g.isEditing_text) {	// let editor component consume the events
 				switch (key) {
 					case 'c': w.user_graph_offset_setTo(Point.zero); break;
-					case 'o': $s_id_popupView = IDButton.open; break;
+					case 'o': $s_id_popupView = IDControl.open; break;
 					case '?': g.showHelp(); break;
 					default:  await $s_hierarchy.handle_key_down(event); return;
 				}
@@ -115,9 +115,9 @@
 					position: fixed;
 					z-index: {ZIndex.backmost};
 					left: {$s_show_details ? k.width_details : 0}px;'>
-				{#if $s_id_popupView == IDButton.builds}
+				{#if $s_id_popupView == IDControl.builds}
 					<BuildNotes/>
-				{:else if $s_id_popupView == IDButton.open}
+				{:else if $s_id_popupView == IDControl.open}
 					<Load/>
 				{:else if !$s_id_popupView}
 					<Graph/>

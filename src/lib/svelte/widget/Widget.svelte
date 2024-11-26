@@ -35,7 +35,6 @@
 	let dragData = k.empty;
 	let isGrabbed = false;
 	let isEditing = false;
-	let backwards = false;
 	let padding = k.empty;
 	let border = k.empty;
 	let rebuilds = 0;

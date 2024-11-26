@@ -11,16 +11,16 @@ export default class Ancestry extends Identifiable {
 	_thing: Thing | null = null;
 	idPredicate: string;
 	unsubscribe: any;
-	isNormal = true;
+	isParental = true;
 
 	// id => ancestry string 
 	//	composed of ids of each relationship
 	// NOTE: first relationship's parent is always the root
 	//   "   idPredicate is from the last relationship
 
-	constructor(ancestryString: string = k.empty, idPredicate: string = Predicate.idContains, isNormal: boolean = true) {
+	constructor(ancestryString: string = k.empty, idPredicate: string = Predicate.idContains, isParental: boolean = true) {
 		super(ancestryString);
-		this.isNormal = isNormal;
+		this.isParental = isParental;
 		this.idPredicate = idPredicate;
 	}
 
@@ -72,14 +72,18 @@ export default class Ancestry extends Identifiable {
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
 	get childRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, false); }
 	get parentRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, true); }
-	get svgAngleOf_reveal(): number { return (this.widget_map?.points_right ?? true) ? Direction.right : Direction.left; }
 	get titleWrapper(): Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.idHashed, SvelteComponentType.title); }
-
+	
 	get relationships(): Array<Relationship> {
 		const relationships = this.ids_hashed.map(hid => get(s_hierarchy).relationship_forHID(hid)) ?? [];
 		return u.strip_invalid(relationships);
 	}
 
+	get svgAngleOf_reveal(): number {
+		const right = this.widget_map?.points_right ?? true;
+		return (right == this.hasChildRelationships) ? Direction.right : Direction.left;
+	}
+	
 	get showsReveal(): boolean {
 		const isBidirectional = this.predicate?.isBidirectional ?? false;
 		const isVisible = this.hasChildRelationships || (this.thing?.isBulkAlias ?? false);
@@ -104,7 +108,7 @@ export default class Ancestry extends Identifiable {
 		const predicate = this.predicate;
 		const geometry = get(s_clusters_geometry);
 		if (!!predicate && !!geometry) {
-			const map = geometry?.cluster_map_for(this.isNormal, predicate)
+			const map = geometry?.cluster_map_for(this.isParental, predicate)
 			return map?.paging_state_ofAncestry(this) ?? null;
 		}
 		return null;	// either geometry is not setup or predicate id is bogus

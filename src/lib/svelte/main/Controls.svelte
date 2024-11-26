@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { s_graph_type, s_tree_type, s_resize_count, s_device_isMobile } from '../../ts/state/Svelte_Stores';
-	import { IDButton, persistLocal, Element_State, IDPersistent } from '../../ts/common/Global_Imports';
+	import { IDControl, persistLocal, Element_State, IDPersistent } from '../../ts/common/Global_Imports';
 	import { s_show_details, s_id_popupView, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
 	import { g, k, u, ux, w, show, Point, ZIndex, signals } from '../../ts/common/Global_Imports';
 	import { svgPaths, Tree_Type, Graph_Type, ElementType } from '../../ts/common/Global_Imports';
@@ -20,11 +20,12 @@
 	let width = w.windowSize.width - 20;
 
 	const ids = [	// in order of importance on mobile
-		IDButton.details,
-		IDButton.smaller,
-		IDButton.bigger,
-		IDButton.help,
-		IDButton.builds,
+		IDControl.details,
+		IDControl.debugger,
+		IDControl.smaller,
+		IDControl.bigger,
+		IDControl.help,
+		IDControl.builds,
 	];
 
 	onMount(() => { setup_forIDs(); });
@@ -41,7 +42,7 @@
 			total -= u.getWidthOf(id);
 			const element_state = ux.element_state_for(new Identifiable(id), ElementType.control, id);
 			element_state.set_forHovering(k.color_default, 'pointer');
-			element_state.hoverIgnore = id == IDButton.details;
+			element_state.hoverIgnore = id == IDControl.details;
 			element_states_byID[id] = element_state;
 			elementShown_byID[id] = total > 0;
 		}
@@ -55,16 +56,16 @@
 		}
 	}
 
-	function button_closure_forID(mouse_state, id) {
+	function button_closure_forID(mouse_state, idControl) {
 		if (mouse_state.isHover) {
-			element_states_byID[id].isOut = mouse_state.isOut;
+			element_states_byID[idControl].isOut = mouse_state.isOut;
 		} else if (mouse_state.isUp) {
-			switch (id) {
-				case IDButton.help: g.showHelp(); break;
-				case IDButton.details: $s_show_details = !$s_show_details; break;
-				case IDButton.bigger: width = w.zoomBy(k.zoom_in_ratio) - 20; break;	// mobile only
-				case IDButton.smaller: width = w.zoomBy(k.zoom_out_ratio) - 20; break;	//   "     "
-				default: togglePopupID(id); break;
+			switch (idControl) {
+				case IDControl.help: g.showHelp(); break;
+				case IDControl.details: $s_show_details = !$s_show_details; break;
+				case IDControl.bigger: width = w.zoomBy(k.zoom_in_ratio) - 20; break;	// mobile only
+				case IDControl.smaller: width = w.zoomBy(k.zoom_out_ratio) - 20; break;	//   "     "
+				default: togglePopupID(idControl); break;
 			}
 		}
 	}
@@ -93,8 +94,8 @@
 				border_thickness=0
 				color='transparent'
 				center={new Point(lefts[0], details_top + 3)}
-				element_state={element_states_byID[IDButton.details]}
-				closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.details)}>
+				element_state={element_states_byID[IDControl.details]}
+				closure={(mouse_state) => button_closure_forID(mouse_state, IDControl.details)}>
 				<img src='settings.svg' alt='circular button' width={size_small}px height={size_small}px/>
 			</Button>
 			{#key $s_graph_type}
@@ -118,14 +119,14 @@
 		{/if}
 		{#key $s_device_isMobile}
 			{#if $s_device_isMobile}
-				{#if elementShown_byID[IDButton.smaller]}
+				{#if elementShown_byID[IDControl.smaller]}
 					<Button
 						width={size_big}
 						height={size_big}
-						name={IDButton.smaller}
-						element_state={element_states_byID[IDButton.smaller]}
-						center={new Point(width - 140, y_center)}
-						closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.smaller)}>
+						name={IDControl.smaller}
+						center={new Point(width - 110, y_center)}
+						element_state={element_states_byID[IDControl.smaller]}
+						closure={(mouse_state) => button_closure_forID(mouse_state, IDControl.smaller)}>
 						<svg
 							id='shrink-svg'>
 							<path
@@ -136,14 +137,14 @@
 						</svg>
 					</Button>
 				{/if}
-				{#if elementShown_byID[IDButton.bigger]}
+				{#if elementShown_byID[IDControl.bigger]}
 					<Button
 						width={size_big}
 						height={size_big}
-						name={IDButton.bigger}
-						center={new Point(width - 110, y_center)}
-						element_state={element_states_byID[IDButton.bigger]}
-						closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.bigger)}>
+						name={IDControl.bigger}
+						center={new Point(width - 140, y_center)}
+						element_state={element_states_byID[IDControl.bigger]}
+						closure={(mouse_state) => button_closure_forID(mouse_state, IDControl.bigger)}>
 						<svg
 							id='enlarge-svg'>
 							<path
@@ -156,25 +157,25 @@
 				{/if}
 			{/if}
 		{/key}
-		{#if elementShown_byID[IDButton.builds]}
-			<Button name={IDButton.builds}
+		{#if elementShown_byID[IDControl.builds]}
+			<Button name={IDControl.builds}
 				width=75
 				height={size_big}
 				center={new Point(width - 55, y_center)}
-				element_state={element_states_byID[IDButton.builds]}
-				closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.builds)}>
+				element_state={element_states_byID[IDControl.builds]}
+				closure={(mouse_state) => button_closure_forID(mouse_state, IDControl.builds)}>
 				<span style='font-family: {$s_thing_fontFamily};'>
 					{'build ' + k.build_number}
 				</span>
 			</Button>
 		{/if}
-		{#if elementShown_byID[IDButton.help]}
-			<Button name={IDButton.help}
+		{#if elementShown_byID[IDControl.help]}
+			<Button name={IDControl.help}
 				width={size_big}
 				height={size_big}
 				center={new Point(width, y_center)}
-				element_state={element_states_byID[IDButton.help]}
-				closure={(mouse_state) => button_closure_forID(mouse_state, IDButton.help)}>
+				element_state={element_states_byID[IDControl.help]}
+				closure={(mouse_state) => button_closure_forID(mouse_state, IDControl.help)}>
 				<span
 					style='top:2px;
 						left:5.5px;

@@ -77,13 +77,13 @@ export enum TraitType {
 	sum			= 'sum',
 }
 
-export enum IDButton {
-	details	= 'show details view',
-	builds	= 'show build notes',
-	smaller	= 'smaller',
-	bigger	= 'bigger',
-	open	= 'open',
-	help	= '?',
+export enum IDControl {
+	details	 = 'show details view',
+	builds	 = 'show build notes',
+	smaller	 = 'smaller',
+	bigger	 = 'bigger',
+	open	 = 'open',
+	help	 = '?',
 }
 
 export enum IDBrowser  {

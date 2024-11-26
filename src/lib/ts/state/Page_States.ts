@@ -23,11 +23,11 @@ export class Paging_State {
 
 	static create_paging_state_from(description: string): Paging_State | null {
 		let strings = description.split(k.generic_separator);
-		const [out, kind, id, ...remaining] = strings;
+		const [toChildren, kind, id, ...remaining] = strings;
 		if (remaining.length > 2) {
 			const v: Array<number> = remaining.map(r => Number(r));
 			const paging_state = new Paging_State(v[0], v[1], v[2]);
-			paging_state.toChildren = out == 'true';
+			paging_state.toChildren = toChildren == 'true';
 			paging_state.thing_id = id;
 			paging_state.kind = kind;
 			return paging_state;

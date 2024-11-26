@@ -73,7 +73,7 @@
 		}
 	}
 
-	function hover_up_closure(mouse_state) {
+	function up_hover_closure(mouse_state) {
 		if (mouse_state.isHover) {
 			set_isHovering(!mouse_state.isOut);
 		} else if (mouse_state.isUp) {
@@ -82,7 +82,7 @@
 				$s_ancestry_showing_tools = null;
 				signals.signal_relayoutWidgets_fromFocus();
 			} else if (ancestry.hasChildRelationships || ancestry.thing.isBulkAlias) {
-				$s_hierarchy.ancestry_rebuild_remoteMoveRight(ancestry, !ancestry.isExpanded, true, false);
+				$s_hierarchy.ancestry_rebuild_remoteMoveRight(ancestry, ancestry.isParental != ancestry.isExpanded, false, false, false, false);
 			}
 		}
 	}
@@ -113,7 +113,7 @@
 			height={size}
 			center={center}
 			name={element_state.name}
-			mouse_state_closure={hover_up_closure}>
+			mouse_state_closure={up_hover_closure}>
 			<button class='dot'
 				bind:this={dotReveal}
 				on:contextmenu={handle_context_menu}
@@ -125,8 +125,8 @@
 				{#key svgPathFor_revealDot}
 					<SVGD3 name='reveal-svg'
 						fill={debug.lines ? 'transparent' : element_state.fill}
-						stroke={ancestry.thing.color}
 						svgPath={svgPathFor_revealDot}
+						stroke={ancestry.thing.color}
 						height={size}
 						width={size}
 					/>

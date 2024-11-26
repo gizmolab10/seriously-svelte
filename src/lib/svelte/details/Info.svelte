@@ -6,7 +6,6 @@
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Button from '../mouse/Button.svelte';
 	export let top = 0;
-	const id = 'info';
 	const margin = 10;
 	let rebuilds = 0;
 	let information;
@@ -17,7 +16,7 @@
 		if (!!thing) {
 			const dict = {
 				'relationship' : ancestry.predicate?.description ?? k.empty,
-				'direction' : ancestry.isNormal ? 'normal' : 'inverted',
+				'direction' : ancestry.isParental ? 'to child' : 'to parent',
 				'id' : thing?.id.injectEllipsisAt(),
 			};
 			information = Object.entries(dict)

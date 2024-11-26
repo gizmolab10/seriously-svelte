@@ -5,7 +5,7 @@
 	import Storage from './Storage.svelte';
 	import Card from './Card.svelte';
 	import Info from './Info.svelte';
-	const titles = [Details_Type[Details_Type.storage], Details_Type[Details_Type.info]];//, Details_Type[Details_Type.tools], Details_Type[Details_Type.recents]];
+	const titles = [Details_Type[Details_Type.storage], Details_Type[Details_Type.info], Details_Type[Details_Type.tools]];//, Details_Type[Details_Type.recents]];
 	const heights = [20, 100, 0, 0];
 	let tops = [0, 0, 0, 0];
 	let rebuilds = 0;
@@ -48,7 +48,7 @@
 			name='details'
 			titles={titles}
 			allow_multiple={true}
-			origin={new Point(55, 7)}
+			origin={new Point(33, 7)}
 			selected={$s_details_type}
 			selection_closure={selection_closure}/>
 		<div class='horizontal-line'

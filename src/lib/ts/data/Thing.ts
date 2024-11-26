@@ -90,8 +90,8 @@ export default class Thing extends Datum {
 	
 	debugLog(message: string) { this.log(DebugFlag.things, message); }
 	hasParentsFor(idPredicate: string): boolean { return this.parents_forID(idPredicate).length > 0; }
-	setTraitText_forType(text: string, type: TraitType) { get(s_hierarchy).setText_forType_ownerHID(text, type, this.id); }
 	log(option: DebugFlag, message: string) { debug.log_maybe(option, message + k.space + this.description); }
+	setTraitText_forType(text: string, type: TraitType) { get(s_hierarchy).setText_forType_ownerHID(text, type, this.id); }
 
 	override isInDifferentBulkThan(other: Thing): boolean {
 		return super.isInDifferentBulkThan(other) || (other.isBulkAlias && !this.isBulkAlias && this.baseID != other.title);

@@ -1,8 +1,8 @@
 import { g, k, u, User, Thing, Trait, Grabs, debug, Access, IDTool, signals } from '../common/Global_Imports';
-import { ThingType, TraitType, Graph_Type, Predicate, Ancestry, Mouse_State } from '../common/Global_Imports';
 import { s_alteration_mode, s_grabbed_ancestries, s_ancestry_showing_tools } from '../state/Svelte_Stores';
 import { Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
-import { s_edit_state, s_graph_type, s_focus_ancestry } from '../state/Svelte_Stores';
+import { ThingType, TraitType, Predicate, Ancestry, Mouse_State } from '../common/Global_Imports';
+import { s_edit_state, s_focus_ancestry } from '../state/Svelte_Stores';
 import RemoteIdentifiable from '../basis/RemoteIdentifiable';
 import Identifiable from '../basis/Identifiable';
 import DBInterface from '../db/DBInterface';
@@ -66,11 +66,11 @@ export class Hierarchy {
 
 	static readonly $_EVENTS_$: unique symbol;
 
-	async handle_tool_clicked(idButton: string, mouse_state: Mouse_State) {
+	async handle_tool_clicked(idControl: string, mouse_state: Mouse_State) {
 		const event: MouseEvent | null = mouse_state.event as MouseEvent;
         const ancestry = get(s_ancestry_showing_tools);
 		if (!!ancestry) {
-			switch (idButton) {
+			switch (idControl) {
 				case IDTool.more: debug.log_tools('needs more'); break;
 				case IDTool.create: await this.ancestry_edit_remoteCreateChildOf(ancestry); break;
 				case IDTool.next: this.ancestry_relayout_toolCluster_nextParent(event?.altKey ?? false); return;
@@ -124,8 +124,8 @@ export class Hierarchy {
 				if (!!ancestryGrab) {
 					switch (key) {
 						case '/':			graph_needsRebuild = ancestryGrab.becomeFocus(); break;
-						case 'arrowright':	event.preventDefault(); await this.ancestry_rebuild_remoteMoveRight(ancestryGrab, true, SHIFT, OPTION, EXTREME); break;
-						case 'arrowleft':	event.preventDefault(); await this.ancestry_rebuild_remoteMoveRight(ancestryGrab, false, SHIFT, OPTION, EXTREME); break;
+						case 'arrowright':	event.preventDefault(); await this.ancestry_rebuild_remoteMoveRight(ancestryGrab,  ancestryGrab.isParental, SHIFT, OPTION, EXTREME); break;
+						case 'arrowleft':	event.preventDefault(); await this.ancestry_rebuild_remoteMoveRight(ancestryGrab, !ancestryGrab.isParental, SHIFT, OPTION, EXTREME); break;
 					}
 				}
 				switch (key) {
@@ -626,9 +626,9 @@ export class Hierarchy {
 		return null;
 	} 
 
-	relationship_remember_runtimeCreateUnique(baseID: string, idRelationship: string, idPredicate: string, idParent: string,
-		idChild: string, order: number, creationOptions: CreationOptions = CreationOptions.none) {
-		let reversed = this.relationship_forPredicate_parent_child(idPredicate, idChild, idParent);
+	relationship_remember_runtimeCreateUnique(baseID: string, idRelationship: string, idPredicate: string, idParent: string, idChild: string,
+		order: number, creationOptions: CreationOptions = CreationOptions.none) {
+		let reversedRelationship = this.relationship_forPredicate_parent_child(idPredicate, idChild, idParent);
 		let relationship = this.relationship_forPredicate_parent_child(idPredicate, idParent, idChild);
 		const isBidirectional = this.predicate_forID(idPredicate)?.isBidirectional ?? false;
 		const hasBeen_remotely_saved = creationOptions != CreationOptions.none;
@@ -636,17 +636,17 @@ export class Hierarchy {
 			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, hasBeen_remotely_saved);
 			this.relationship_remember(relationship);
 		}
-		if (isBidirectional && !reversed) {
-			reversed = new Relationship(baseID, Identifiable.newID(), idPredicate, idChild, idParent, order, hasBeen_remotely_saved);
-			this.relationship_remember(reversed);
+		if (isBidirectional && !reversedRelationship) {
+			reversedRelationship = new Relationship(baseID, Identifiable.newID(), idPredicate, idChild, idParent, order, hasBeen_remotely_saved);
+			this.relationship_remember(reversedRelationship);
 		}
 		relationship?.order_setTo_remoteMaybe(order);
-		reversed?.order_setTo_remoteMaybe(order);
+		reversedRelationship?.order_setTo_remoteMaybe(order);
 		return relationship;
 	}
 
-	async relationship_remember_remoteCreateUnique(baseID: string, idRelationship: string, idPredicate: string, idParent: string,
-		idChild: string, order: number, creationOptions: CreationOptions = CreationOptions.isFromRemote): Promise<any> {
+	async relationship_remember_remoteCreateUnique(baseID: string, idRelationship: string, idPredicate: string, idParent: string, idChild: string,
+		order: number, creationOptions: CreationOptions = CreationOptions.isFromRemote): Promise<any> {
 		let relationship = this.relationship_forPredicate_parent_child(idPredicate, idParent, idChild);
 		if (!!relationship) {
 			relationship.order_setTo_remoteMaybe(order, true);
@@ -858,7 +858,7 @@ export class Hierarchy {
 			} else if (!!thing) {
 				const is_rings_mode = g.showing_rings;
 				const isBidirectional = ancestry.predicate?.isBidirectional ?? false;
-				if ((!isBidirectional && ancestry.isNormal) || !is_rings_mode) {
+				if ((!isBidirectional && ancestry.isParental) || !is_rings_mode) {
 					const index = siblings.indexOf(thing);
 					const newIndex = index.increment(!up, length);
 					if (!!parentAncestry && !OPTION) {
@@ -925,12 +925,11 @@ export class Hierarchy {
 	}
 
 	ancestry_rebuild_runtimeBrowseRight(ancestry: Ancestry, RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, fromReveal: boolean = false) {
-		let graph_needsRebuild = false;
-		const newParentAncestry = ancestry.parentAncestry;
+		const newFocusAncestry = ancestry.parentAncestry;
 		const childAncestry = ancestry.extend_withChild(ancestry.firstChild);
-		let newGrabAncestry: Ancestry | null = RIGHT ? childAncestry : newParentAncestry;
+		let newGrabAncestry: Ancestry | null = RIGHT ? childAncestry : newFocusAncestry;
 		const newGrabIsNotFocus = !newGrabAncestry?.isFocus;
-		const newFocusAncestry = newParentAncestry;
+		let graph_needsRebuild = false;
 		if (RIGHT) {
 			if (ancestry.hasChildRelationships) {
 				if (SHIFT) {
@@ -969,8 +968,8 @@ export class Hierarchy {
 		if (!!newGrabAncestry) {
 			newGrabAncestry.grabOnly();
 			if (!RIGHT && !!newFocusAncestry) {
-				const newParentIsGrabbed = newParentAncestry && newParentAncestry.matchesAncestry(newGrabAncestry);
-				const canBecomeFocus = (!SHIFT || newParentIsGrabbed) && newGrabIsNotFocus;
+				const newFocusIsGrabbed = newFocusAncestry && newFocusAncestry.matchesAncestry(newGrabAncestry);
+				const canBecomeFocus = (!SHIFT || newFocusIsGrabbed) && newGrabIsNotFocus;
 				const shouldBecomeFocus = newFocusAncestry.isRoot || !newFocusAncestry.isVisible;
 				const becomeFocus = canBecomeFocus && shouldBecomeFocus;
 				if (becomeFocus && newFocusAncestry.becomeFocus()) {

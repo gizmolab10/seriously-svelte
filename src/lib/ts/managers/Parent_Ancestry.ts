@@ -4,7 +4,7 @@ export default class Parent_Ancestry extends Ancestry {
 	original!: Ancestry;
 
 	constructor(ancestry: Ancestry) {
-		super(ancestry.id, ancestry.idPredicate, false);
+		super(ancestry.id, ancestry.idPredicate, false);	// isParental = false
 		this.original = ancestry;
 	}
 
@@ -12,7 +12,7 @@ export default class Parent_Ancestry extends Ancestry {
 		return this.original.becomeFocus()
 	}
 	
-	// with isNormal = false, this fixes
+	// with isParental = false, this fixes
 	// paging state & cluster map lookups,
 	// is visible & assureIsVisible_inClusters
 	// needed becomeFocus
