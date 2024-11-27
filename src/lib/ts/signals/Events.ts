@@ -111,14 +111,14 @@ class Events {
 		debug.log_action(` resize [is${isMobile ? '' : ' not'} mobile] STATE`);
 		s_resize_count.set(get(s_resize_count) + 1);
 		s_device_isMobile.set(isMobile);
-		w.graphRect_update();
+		w.restore_state();
 	}
 
 	handle_orientation_change(event: Event) {
 		const isMobile = g.device_isMobile;
 		debug.log_action(` orientation change [is${isMobile ? '' : ' not'} mobile] STATE`);
 		s_device_isMobile.set(isMobile);
-		w.graphRect_update();
+		w.restore_state();
 	}
 
 	handle_touch_start(event: TouchEvent) {

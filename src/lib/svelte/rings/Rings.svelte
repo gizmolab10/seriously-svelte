@@ -69,7 +69,7 @@
 	}
 
 	function ringZone_forMouseLocation(): Ring_Zone {
-		let zone = Ring_Zone.miss;
+		let ring_zone = Ring_Zone.miss;
 		const mouse_vector = w.mouse_vector_ofOffset_fromGraphCenter();
 		if (!!mouse_vector) {
 			const distance = mouse_vector.magnitude;
@@ -81,16 +81,17 @@
 			const thumb = inner - thin;
 			if (!!distance && distance <= resize) {
 				if (distance > rotate) {
-					zone = Ring_Zone.resize;
+					ring_zone = Ring_Zone.resize;
 				} else if (distance > inner) {
-					zone = Ring_Zone.rotate;
+					ring_zone = Ring_Zone.rotate;
 				} else if (distance > thumb) {
-					zone = Ring_Zone.paging;
+					ring_zone = Ring_Zone.paging;
 				}
 			}
-			debug.log_cursor(`${mouse_vector.description} ${zone}`);
+			debug.log_hover(` ring zone ${ring_zone} ${distance.toFixed(0)}`);
+			debug.log_cursor(` ring zone ${ring_zone} ${mouse_vector.description}`);
 		}
-		return zone;
+		return ring_zone;
 	}
 
 	function detect_hovering() {
@@ -101,14 +102,17 @@
 		const inPaging = ring_zone == Ring_Zone.paging && !g.ring_rotation_state.isActive && !g.ring_resizing_state.isActive;
 		if (g.cluster_paging_state.isHovering != inPaging) {
 			g.cluster_paging_state.isHovering  = inPaging;
+			debug.log_hover(` hover paging  ${inPaging}`);
 			rebuilds += 1;
 		}
 		if (g.ring_rotation_state.isHovering != inRotate) {
 			g.ring_rotation_state.isHovering  = inRotate;
+			debug.log_hover(` hover rotate  ${inRotate}`);
 			rebuilds += 1;
 		}
 		if (g.ring_resizing_state.isHovering != inResize) {
 			g.ring_resizing_state.isHovering  = inResize;
+			debug.log_hover(` hover resize  ${inResize}`);
 			rebuilds += 1;
 		}
 	}
@@ -175,7 +179,7 @@
 		}
 	}
 
-	function mouse_down_up_closure(mouse_state) {
+	function down_up_closure(mouse_state) {
 
 		/////////////////////////////
 		// setup or teardown state //
@@ -245,7 +249,7 @@
 				width={outer_diameter}
 				height={outer_diameter}
 				center={w.center_ofGraphSize}
-				mouse_state_closure={mouse_down_up_closure}>
+				mouse_state_closure={down_up_closure}>
 				<svg
 					class='rings-svg'
 					viewBox={viewBox}>

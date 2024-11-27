@@ -56,7 +56,7 @@ class Show_State {
 		});
 		s_show_details.subscribe((flag: boolean) => {
 			persistLocal.write_key(IDPersistent.details, flag);
-			w.graphRect_update();
+			w.restore_state();
 			signals.signal_relayoutWidgets_fromFocus();
 		});
     }

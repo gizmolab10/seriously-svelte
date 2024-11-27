@@ -34,21 +34,24 @@ class Window_Geometry {
 		if (!!mouse_location) {
 			const center_offset = get(s_user_graph_center).offsetBy(offset);
 			const mouse_vector = center_offset.vector_to(mouse_location);
-			debug.log_cursor(`${mouse_vector.description} offset`);
+			debug.log_hover(`offset  ${get(s_user_graph_offset).description}  ${mouse_vector.description}`);
 			return mouse_vector;
 		}
 		return null
 	}
 
 	user_graph_offset_setTo(user_offset: Point): boolean {
-		if (get(s_user_graph_offset) != user_offset) {
-			const center_offset = get(s_graphRect).center.offsetBy(user_offset);
+		let changed = false;
+		const current_offset = get(s_user_graph_offset);
+		if (!!current_offset && current_offset.vector_to(user_offset).magnitude > .001) {
 			persistLocal.write_key(IDPersistent.user_offset, user_offset);
-			s_user_graph_center.set(center_offset);
-			s_user_graph_offset.set(user_offset);
-			return true;
+			changed = true;
 		}
-		return false;
+		const center_offset = get(s_graphRect).center.offsetBy(user_offset);
+		s_user_graph_center.set(center_offset);
+		s_user_graph_offset.set(user_offset);
+		debug.log_mouse(`USER ====> ${user_offset.description}  ${center_offset.description}`);
+		return changed;
 	}
 
 	graphRect_update() {
@@ -56,7 +59,7 @@ class Window_Geometry {
 		const originOfGraph = new Point(left, 69);						// 69 = height of content above the graph
 		const sizeOfGraph = this.windowSize.reducedBy(originOfGraph);	// account for origin
 		const rect = new Rect(originOfGraph, sizeOfGraph);
-		debug.log_action(` graphRect_update ${rect.description} GEOMETRY`);
+		debug.log_mouse(`GRAPH ====> ${rect.description}`);
 		s_graphRect.set(rect);											// used by Panel and Graph_Tree
 	}
 
