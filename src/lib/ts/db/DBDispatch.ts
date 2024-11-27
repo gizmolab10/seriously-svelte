@@ -63,11 +63,13 @@ export default class DBDispatch {
 		if (this.db.hasData) {
 			s_hierarchy.set(this.db.hierarchy);
 		} else {
-			this.hierarchy_fetch_andBuild();
+			await this.hierarchy_fetch_andBuild();
 		}
 		setTimeout(() => {
-			this.conclude_fetch();
-			signals.signal_rebuildGraph_fromFocus();
+			(async () => {
+				await this.conclude_fetch();
+				signals.signal_rebuildGraph_fromFocus();
+			})();
 		}, 1);
 	}
 
@@ -88,7 +90,7 @@ export default class DBDispatch {
 		}
 	}
 
-	conclude_fetch() {
+	async conclude_fetch() {
 		s_edit_state.set(null);
 		s_startup_state.set(Startup_State.ready);
 		s_ancestry_showing_tools.set(null);
@@ -96,7 +98,7 @@ export default class DBDispatch {
 		// persistLocal.restore_page_states();
 		persistLocal.restore_focus();
 		this.db.setHasData(true);
-		get(s_hierarchy).conclude_fetch();
+		await get(s_hierarchy).conclude_fetch();
 	}
 
 	set_loadTime(startTime: number) {

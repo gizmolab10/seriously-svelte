@@ -141,7 +141,9 @@ export class Hierarchy {
 				const duration = ((new Date().getTime()) - time).toFixed(1);
 				debug.log_key(`H  (${duration}) ${key}`);
 				setTimeout(() => {
-					this.deferredWriteAll();
+					(async () => {
+						await this.deferredWriteAll();
+					})();
 				}, 1);
 			}
 		}
@@ -931,7 +933,7 @@ export class Hierarchy {
 		const newGrabIsNotFocus = !newGrabAncestry?.isFocus;
 		let graph_needsRebuild = false;
 		if (RIGHT) {
-			if (ancestry.hasChildRelationships) {
+			if (ancestry.hasRelevantRelationships) {
 				if (SHIFT) {
 					newGrabAncestry = null;
 				}
@@ -1030,8 +1032,8 @@ export class Hierarchy {
 
 	static readonly $_OTHER_$: unique symbol;
 
-	conclude_fetch() {
-		this.deferredWriteAll();
+	async conclude_fetch() {
+		await this.deferredWriteAll();
 		this.isAssembled = true;
 	}
 
