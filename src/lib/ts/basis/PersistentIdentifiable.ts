@@ -1,24 +1,24 @@
-import Identifiable from '../basis/Identifiable';
+import Identifiable from './Identifiable';
 import { DBType } from '../db/DBInterface';
 
-export default class RemoteIdentifiable extends Identifiable {
-	hasBeen_remotely_saved: boolean;
-	hasRemoteStorage: boolean;
+export default class PersistentIdentifiable extends Identifiable {
+	hasPersistentStorage: boolean;
 	awaitingCreation: boolean;
+	hasBeen_saved: boolean;
 	lastModifyDate: Date;
 	needsWrite = false;
 	dbType: string;
 
-	constructor(dbType: string, id: string, hasBeen_remotely_saved: boolean = false) {
+	constructor(dbType: string, id: string, hasBeen_saved: boolean = false) {
 		super(id);
-		this.hasBeen_remotely_saved = hasBeen_remotely_saved;
-		this.hasRemoteStorage = dbType != DBType.local;
+		this.hasPersistentStorage = dbType != DBType.test;
+		this.hasBeen_saved = hasBeen_saved;
 		this.lastModifyDate = new Date();
 		this.awaitingCreation = false;
 		this.dbType = dbType;
 	}
 
-	async remoteWrite() {}
+	async persist() {}
 	updateModifyDate() { this.lastModifyDate = new Date(); }
 
 	wasModifiedWithinMS(threshold: number): boolean {

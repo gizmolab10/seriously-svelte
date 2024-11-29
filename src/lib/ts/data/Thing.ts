@@ -17,8 +17,8 @@ export default class Thing extends Datum {
 	color: string;
 	type: string;
 
-	constructor(baseID: string, id: string, title = k.title_default, color = k.thing_color_default, type = k.empty, hasBeen_remotely_saved: boolean = false) {
-		super(dbDispatch.db.dbType, baseID, id, hasBeen_remotely_saved);
+	constructor(baseID: string, id: string, title = k.title_default, color = k.thing_color_default, type = k.empty, hasBeen_saved: boolean = false) {
+		super(dbDispatch.db.dbType, baseID, id, hasBeen_saved);
 		this.selectionRange = new Seriously_Range(0, title.length);
 		this.page_states = new Page_States(this.id);
 		this.title = title;
@@ -97,13 +97,13 @@ export default class Thing extends Datum {
 		return super.isInDifferentBulkThan(other) || (other.isBulkAlias && !this.isBulkAlias && this.baseID != other.title);
 	}
 
-	async remoteWrite() {
+	async persist() {
 		if (!this.awaitingCreation) {
 			this.updateModifyDate();
-			if (this.hasBeen_remotely_saved) {
-				await dbDispatch.db.thing_remoteUpdate(this);
-			} else if (dbDispatch.db.isRemote) {
-				await dbDispatch.db.thing_remember_remoteCreate(this);
+			if (this.hasBeen_saved) {
+				await dbDispatch.db.thing_persistentUpdate(this);
+			} else if (dbDispatch.db.isPersistent) {
+				await dbDispatch.db.thing_remember_persistentCreate(this);
 			}
 		}
 	}

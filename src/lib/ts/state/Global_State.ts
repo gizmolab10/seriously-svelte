@@ -1,9 +1,9 @@
 import { s_graph_type, s_thing_color, s_startup_state, s_device_isMobile } from './Svelte_Stores';
 import { s_hierarchy, s_resize_count, s_mouse_up_count, s_rebuild_count } from './Svelte_Stores';
+import { Hierarchy, Graph_Type, Details_Type, persistLocal } from '../common/Global_Imports';
 import { Rotation_State, Startup_State, Expansion_State } from '../common/Global_Imports';
 import { e, k, u, ux, w, show, debug, dbDispatch } from '../common/Global_Imports';
-import { Hierarchy, Graph_Type, persistLocal } from '../common/Global_Imports';
-import { s_grabbed_ancestries, s_expanded_ancestries } from './Svelte_Stores';
+import { s_detail_types, s_grabbed_ancestries, s_expanded_ancestries } from './Svelte_Stores';
 import { s_focus_ancestry } from './Svelte_Stores';
 import { get } from 'svelte/store';
 
@@ -120,20 +120,14 @@ class Global_State {
 	}
 
 	open_tabFor(url: string) { window.open(url, 'help-webseriously')?.focus(); }
-
-	require_rebuild_forType(type: string) {
-		this.rebuild_needed_byType[type] = true;
-	}
+	require_rebuild_forType(type: string) { this.rebuild_needed_byType[type] = true; }
+	showHelp() { this.open_tabFor(this.isServerLocal ? k.local_help_url : k.remote_help_url); }
+	details_type_isVisible(type: Details_Type): boolean { return get(s_detail_types).includes(Details_Type[type]); }
 
 	readOnce_rebuild_needed_forType(type: string) : boolean {
 		const needed = this.rebuild_needed_byType[type];
 		this.rebuild_needed_byType[type] = false;
 		return needed;
-	}
-
-	showHelp() {
-		const url = this.isServerLocal ? k.local_help_url : k.remote_help_url;
-		this.open_tabFor(url);
 	}
 
 }

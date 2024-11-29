@@ -4,7 +4,7 @@ import { writable } from 'svelte/store';
 
 export const s_clusters_geometry	  = writable<Clusters_Geometry | null>();
 export const s_alteration_mode		  = writable<Alteration_State | null>();
-export const s_details_type			  = writable<Array<Details_Type>>();
+export const s_detail_types			  = writable<Array<Details_Type>>();
 export const s_active_cluster_map	  = writable<Cluster_Map | null>();
 export const s_edit_state			  = writable<Title_State | null>();
 export const s_ancestry_showing_tools = writable<Ancestry | null>();

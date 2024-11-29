@@ -18,7 +18,7 @@
 			element_state.isOut = mouse_state.isOut;
 		} else {
 			if ($s_hierarchygrabs.latestAncestryGrabbed(true)?.isFocus) {
-				$s_hierarchyancestry_rebuild_remoteMoveRight(ancestry, false, false);
+				$s_hierarchyancestry_rebuild_persistentMoveRight(ancestry, false, false);
 			} else {
 				ancestry.grabOnly();
 			}

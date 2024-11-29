@@ -3,7 +3,6 @@
 	import { s_thing_fontFamily, s_grabbed_ancestries, s_ancestry_showing_tools } from '../../ts/state/Svelte_Stores';
 	import { ElementType, Element_State, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
 	import { s_edit_state, s_thing_color, s_graph_type, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
-	import Editing_Tools from './Editing_Tools.svelte';
 	import Title_Editor from './Title_Editor.svelte';
 	import Dot_Reveal from './Dot_Reveal.svelte';
 	import Dot_Drag from './Dot_Drag.svelte';
@@ -198,9 +197,6 @@
 					center={revealCenter}
 					name={revealState.name}
 				/>
-			{/if}
-			{#if ancestry == $s_ancestry_showing_tools && ancestry.isVisible}
-				<Editing_Tools/>
 			{/if}
 		</div>
 	{/if}

@@ -13,7 +13,7 @@
 	import BuildNotes from './BuildNotes.svelte';
 	import Debug from '../debug/Debug.svelte';
 	import Controls from './Controls.svelte';
-	import Load from '../local/Load.svelte';
+	import Load from '../file/Load.svelte';
 	import Box from '../debug/Box.svelte';
 	import Graph from './Graph.svelte';
 	import { onMount } from 'svelte';
@@ -67,7 +67,7 @@
 		pointer-events: auto;
 		{k.prevent_selection_style};'
 		on:wheel={ignore_wheel}>
-		{#if [Startup_State.start, Startup_State.fetch].includes($s_startup_state) && dbDispatch.db.isRemote}
+		{#if [Startup_State.start, Startup_State.fetch].includes($s_startup_state) && dbDispatch.db.isPersistent}
 			<p>Welcome to Seriously</p>
 			{#if $s_startup_state == Startup_State.fetch}
 				<p>{dbDispatch.startupExplanation}</p>

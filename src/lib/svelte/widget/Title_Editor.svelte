@@ -48,7 +48,7 @@
 		if (!!thing && !!ancestry && ancestry.isEditing && canAlterTitle(event)) {
 			debug.log_key(`TITLE  ${event.key}`);
 			switch (event.key) {	
-				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); $s_hierarchy.ancestry_edit_remoteCreateChildOf(ancestry.parentAncestry); break;
+				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); $s_hierarchy.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
 				default:	  s_title_thing.set(thing.id); break;
 			}
@@ -210,7 +210,7 @@
 			extractRange();
 			input?.blur();
 			if (hasChanges()) {
-				dbDispatch.db.thing_remoteUpdate(thing);
+				dbDispatch.db.thing_persistentUpdate(thing);
 				originalTitle = thing?.title;		// so hasChanges will be correct
 				ancestry.signal_relayoutWidgets();
 			}

@@ -30,7 +30,7 @@ export default class DBAirtable implements DBInterface {
 	dbType = DBType.airtable;
 	hierarchy!: Hierarchy;
 	baseID = k.empty;
-	isRemote = true;
+	isPersistent = true;
 	hasData = false;
 	loadTime = null;
 
@@ -90,19 +90,19 @@ export default class DBAirtable implements DBInterface {
 
 	static readonly $_THING_$: unique symbol;
 	
-	async thing_remember_remoteCreate(thing: Thing) {
+	async thing_remember_persistentCreate(thing: Thing) {
 		try {
 			const fields = await this.things_table.create(thing.fields);
-			const id = fields['id']; //	// need for update, delete and things_byHID (to get parent from relationship)
+			const id = fields['id'];		// need id for update, delete and things_byHID (to get parent from relationship)
 			thing.setID(id);
-			thing.hasBeen_remotely_saved = true;
+			thing.hasBeen_saved = true;		// was saved by create, above
 			get(s_hierarchy).thing_remember(thing);
 		} catch (error) {
 			thing.log(DebugFlag.remote, this.things_errorMessage + error);
 		}
 	}
 
-	async thing_remoteUpdate(thing: Thing) {
+	async thing_persistentUpdate(thing: Thing) {
 		try {
 			await this.things_table.update(thing.id, thing.fields);
 		} catch (error) {
@@ -110,7 +110,7 @@ export default class DBAirtable implements DBInterface {
 		}
 	}
 
-	async thing_remoteDelete(thing: Thing) {
+	async thing_persistentDelete(thing: Thing) {
 		try {
 			await this.things_table.destroy(thing.id);
 		} catch (error) {
@@ -141,7 +141,7 @@ export default class DBAirtable implements DBInterface {
 		}
 	}
 
-	async trait_remoteUpdate(trait: Trait) {
+	async trait_persistentUpdate(trait: Trait) {
 		try {
 			await this.traits_table.update(trait.id, trait.fields);
 		} catch (error) {
@@ -149,7 +149,7 @@ export default class DBAirtable implements DBInterface {
 		}
 	}
 
-	async trait_remoteDelete(trait: Trait) {
+	async trait_persistentDelete(trait: Trait) {
 		try {
 			await this.traits_table.destroy(trait.id);
 		} catch (error) {
@@ -157,12 +157,12 @@ export default class DBAirtable implements DBInterface {
 		}
 	}
 
-	async trait_remember_remoteCreate(trait: Trait) {
+	async trait_remember_persistentCreate(trait: Trait) {
 		try {
 			const fields = await this.traits_table.create(trait.fields);
 			const id = fields['id'];	//	// need for update, delete and traits_byHID (to get parent from relationship)
 			trait.setID(id);
-			trait.hasBeen_remotely_saved = true;
+			trait.hasBeen_saved = true;
 			get(s_hierarchy).trait_remember(trait);
 		} catch (error) {
 			trait.log(DebugFlag.remote, this.traits_errorMessage + error);
@@ -182,7 +182,7 @@ export default class DBAirtable implements DBInterface {
 				const parents = record.fields.parent as (Array<string>);
 				const children = record.fields.child as (Array<string>);
 				const predicates = record.fields.predicate as (Array<string>);
-				get(s_hierarchy).relationship_remember_runtimeCreateUnique(k.empty, id, predicates[0], parents[0], children[0], order, CreationOptions.isFromRemote);
+				get(s_hierarchy).relationship_remember_runtimeCreateUnique(k.empty, id, predicates[0], parents[0], children[0], order, CreationOptions.isFromPersistent);
 			}
 		} catch (error) {
 			debug.log_error(this.relationships_errorMessage + error);
@@ -191,13 +191,13 @@ export default class DBAirtable implements DBInterface {
 
 	static readonly $_RELATIONSHIP_$: unique symbol;
 
-	async relationship_remember_remoteCreate(relationship: Relationship | null) {
-		if (!!relationship && !relationship.hasBeen_remotely_saved) {
+	async relationship_remember_persistentCreate(relationship: Relationship | null) {
+		if (!!relationship && !relationship.hasBeen_saved) {
 			try {
 				const fields = await this.relationships_table.create(relationship.fields);	// insert with temporary id
 				const id = fields['id'];																										// grab permanent id
 				relationship.setID(id);
-				relationship.hasBeen_remotely_saved = true;
+				relationship.hasBeen_saved = true;
 				get(s_hierarchy).relationships_refreshKnowns();
 			} catch (error) {
 				relationship.log(DebugFlag.remote, this.relationships_errorMessage + error);
@@ -205,15 +205,11 @@ export default class DBAirtable implements DBInterface {
 		}
 	}
 
-	async relationship_remoteUpdate(relationship: Relationship) {
-		try {
-			this.relationships_table.update(relationship.id, relationship.fields);
-		} catch (error) {
-			relationship.log(DebugFlag.remote, this.relationships_errorMessage + error);
-		}
+	async relationship_persistentUpdate(relationship: Relationship) {
+		this.relationships_table.update(relationship.id, relationship.fields);
 	}
 
-	async relationship_remoteDelete(relationship: Relationship) {
+	async relationship_persistentDelete(relationship: Relationship) {
 		try {
 			get(s_hierarchy).relationships = u.strip_invalid(get(s_hierarchy).relationships);
 			get(s_hierarchy).relationships_refreshKnowns(); // do first so UX updates quickly

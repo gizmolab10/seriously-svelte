@@ -20,9 +20,9 @@ export enum Tree_Type {
 }
 
 export enum CreationOptions {
-	isFromRemote = 'isFrom',
-	getRemoteID	 = 'getID',
-	none		 = '',
+	isFromPersistent = 'isFrom',
+	getPersistentID	 = 'getID',
+	none			 = '',
 }
 
 export enum IDLine {
@@ -33,10 +33,16 @@ export enum IDLine {
 
 export enum Details_Type {	// do not change the order
 	storage,
-	info,
 	tools,
+	info,
 	recents,
 }
+
+export const all_detail_types = [
+	Details_Type[Details_Type.storage],
+	Details_Type[Details_Type.tools],
+	Details_Type[Details_Type.info],
+	Details_Type[Details_Type.recents]];
 
 export enum Startup_State {
 	start = 'start',

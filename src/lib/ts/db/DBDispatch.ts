@@ -1,17 +1,27 @@
 import { s_db_type, s_hierarchy, s_edit_state, s_db_loadTime } from '../state/Svelte_Stores';
-import { IDPersistent, persistLocal, Startup_State } from '../common/Global_Imports';
 import { s_startup_state, s_ancestry_showing_tools } from '../state/Svelte_Stores';
-import { g, k, debug, signals, Hierarchy } from '../common/Global_Imports';
+import { g, k, signals, Hierarchy, Startup_State } from '../common/Global_Imports';
+import { IDPersistent, persistLocal } from '../common/Global_Imports';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
 import { DBType } from './DBInterface';
-import { dbLocal } from './DBLocal';
+import { dbTest } from './DBTest';
 import { get } from 'svelte/store';
+import { dbFile } from './DBFile';
 
 // each db has its own hierarchy
 // when switching to another db
 // s_hierarchy is set to its hierarchy
+
+export function db_forType(dbType: DBType): DBInterface {
+	switch (dbType) {
+		case DBType.firebase: return dbFirebase;
+		case DBType.airtable: return dbAirtable;
+		case DBType.test:	  return dbTest;
+		default:			  return dbFile;
+	}
+}
 
 export default class DBDispatch {
 	db: DBInterface;
@@ -42,16 +52,21 @@ export default class DBDispatch {
 		});
 	}
 
-	db_set_accordingToType(type: string) { this.db = this.db_forType(type); }
-	restore_db() { s_db_type.set(persistLocal.read_key(IDPersistent.db) ?? 'firebase'); }
+	db_set_accordingToType(type: DBType) { this.db = db_forType(type); }
 	db_change_toNext(forward: boolean) { this.db_change_toType(this.db_next_get(forward)); }
+
+	restore_db() {
+		let type = persistLocal.read_key(IDPersistent.db) ?? 'firebase';
+		if (type == 'local') { type = 'test'; }
+		s_db_type.set(type);
+	}
 
 	get startupExplanation(): string {
 		const type = this.db.dbType;
 		let from = k.empty;
 		switch (type) {
 			case DBType.firebase: from = `, from ${this.db.baseID}`; break;
-			case DBType.local:	  return k.empty;
+			case DBType.test:	  return k.empty;
 		}
 		return `(loading your ${type} data${from})`;
 	}
@@ -78,14 +93,14 @@ export default class DBDispatch {
 		s_db_loadTime.set(null);
 		const h = this.db.hierarchy = new Hierarchy(this.db);
 		s_hierarchy.set(h);
-		if (this.db.isRemote) {
+		if (this.db.isPersistent) {
 			s_startup_state.set(Startup_State.fetch);
 		}
 		await this.db.fetch_all();
 		await h.add_missing_removeNulls(this.db.baseID);
 		h.rootAncestry_setup();
 		h.ancestries_rebuildAll();
-		if (this.db.isRemote) {
+		if (this.db.isPersistent) {
 			this.set_loadTime(startTime);
 		}
 	}
@@ -110,7 +125,7 @@ export default class DBDispatch {
 	}
 
 	db_change_toType(newDBType: DBType) {
-		const db = this.db_forType(newDBType);
+		const db = db_forType(newDBType);
 		persistLocal.write_key(IDPersistent.db, newDBType);
 		s_db_type.set(newDBType);		// tell components to render the [possibly previously] fetched data
 		s_db_loadTime.set(db.loadTime);
@@ -118,17 +133,9 @@ export default class DBDispatch {
 
 	db_next_get(forward: boolean): DBType {
 		switch (this.db.dbType) {
-			case DBType.airtable: return forward ? DBType.local	   : DBType.firebase;
-			case DBType.local:	  return forward ? DBType.firebase : DBType.airtable;
-			default:			  return forward ? DBType.airtable : DBType.local;
-		}
-	}
-
-	db_forType(type: string): DBInterface {
-		switch (type) {
-			case DBType.firebase: return dbFirebase;
-			case DBType.airtable: return dbAirtable;
-			default:			  return dbLocal;
+			case DBType.airtable: return forward ? DBType.test	   : DBType.firebase;
+			case DBType.test:	  return forward ? DBType.firebase : DBType.airtable;
+			default:			  return forward ? DBType.airtable : DBType.test;
 		}
 	}
 

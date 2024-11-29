@@ -6,7 +6,6 @@
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Button from '../mouse/Button.svelte';
 	export let top = 0;
-	const margin = 10;
 	let rebuilds = 0;
 	let information;
 	
@@ -43,8 +42,8 @@
 	{#if information}
 		<div class='ancestry-info'
 			style='
+				left:10px;
 				top:{top}px;
-				left:{margin}px;
 				position:absolute;
 				z-index: {ZIndex.details};'>
 			<table style='width: {k.width_details}px; left:12px; color:black;'>

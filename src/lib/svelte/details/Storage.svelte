@@ -20,9 +20,9 @@
 		<Segmented
 			name='db'
 			selected={[$s_db_type]}
-			origin={new Point(20, top)}
+			origin={new Point(10, top)}
 			selection_closure={selection_closure}
-			titles={[DBType.local, DBType.firebase, DBType.airtable]}/>
+			titles={[DBType.test, DBType.firebase, DBType.airtable, DBType.file]}/>
 		{#if $s_db_loadTime && $s_db_loadTime > 0}
 			<div style='
 				left:60px;

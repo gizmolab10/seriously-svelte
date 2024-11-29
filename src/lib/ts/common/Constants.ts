@@ -26,10 +26,11 @@ export default class Constants {
 	name_bulkAdmin = 'Jonathan Sand';
 	color_highlighted = '#9e7daa';
     color_disabled = 'lightGray';
-	baseID_local = 'handcrafted';
     thing_color_default = 'blue';
+	baseID_test = 'handcrafted';
 	color_background = 'white';
 	cursor_default = 'default';
+	baseID_file = 'filesystem';
 	generic_separator = '::';
 	color_default = 'black';
 	small_separator = ':::';

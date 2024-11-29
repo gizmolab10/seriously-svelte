@@ -1,5 +1,5 @@
 import { s_paging_state, s_grabbed_ancestries, s_expanded_ancestries } from '../state/Svelte_Stores';
-import { s_hierarchy, s_tree_type, s_graph_type, s_details_type } from '../state/Svelte_Stores';
+import { s_hierarchy, s_tree_type, s_graph_type, s_detail_types } from '../state/Svelte_Stores';
 import { Tree_Type, Graph_Type, Details_Type, Paging_State } from '../common/Global_Imports';
 import { s_focus_ancestry, s_font_size, s_thing_fontFamily } from '../state/Svelte_Stores';
 import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/Svelte_Stores';
@@ -113,7 +113,7 @@ class Persist_Local {
 		s_graph_type.subscribe((value) => {
 			this.write_key(IDPersistent.graph_type, value);
 		});
-		s_details_type.subscribe((value) => {
+		s_detail_types.subscribe((value) => {
 			this.write_key(IDPersistent.details_type, value);
 		});
 		s_rotation_ring_angle.subscribe((angle: number) => {
@@ -137,7 +137,7 @@ class Persist_Local {
 		s_graph_type.set(this.read_key(IDPersistent.graph_type) ?? Graph_Type.tree);
 		s_tree_type.set(this.read_key(IDPersistent.tree_type) ?? Tree_Type.children);
 		s_thing_fontFamily.set(this.read_key(IDPersistent.font) ?? 'Times New Roman');
-		s_details_type.set(this.read_key(IDPersistent.details_type) ?? [Details_Type.storage]);
+		s_detail_types.set(this.read_key(IDPersistent.details_type) ?? [Details_Type.storage]);
 		s_ring_rotation_radius.set(Math.max(this.read_key(IDPersistent.ring_radius) ?? 0, k.innermost_ring_radius));
 		this.reactivity_subscribe()
 	}

@@ -1,11 +1,11 @@
-import RemoteIdentifiable from './RemoteIdentifiable';
+import PersistentIdentifiable from './PersistentIdentifiable';
 import { DebugFlag } from '../common/Debug';
 
-export default class Datum extends RemoteIdentifiable {
+export default class Datum extends PersistentIdentifiable {
 	baseID: string;
 
-	constructor(dbType: string, baseID: string, id: string, hasBeen_remotely_saved: boolean = false) {
-		super(dbType, id, hasBeen_remotely_saved);
+	constructor(dbType: string, baseID: string, id: string, hasBeen_saved: boolean = false) {
+		super(dbType, id, hasBeen_saved);
 		this.baseID = baseID;
 	}
 

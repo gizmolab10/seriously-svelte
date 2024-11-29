@@ -22,7 +22,7 @@
 		if (thing.color != color) {
 			thing.color = color;
 			thing.signal_color_change();
-			thing.remoteWrite();
+			thing.persist();
 		}
 	}
 	

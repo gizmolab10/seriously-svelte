@@ -1,15 +1,15 @@
 import { dbDispatch, PredicateKind } from '../common/Global_Imports';
-import RemoteIdentifiable from '../basis/RemoteIdentifiable';
+import PersistentIdentifiable from '../basis/PersistentIdentifiable';
 import { s_hierarchy } from '../../ts/state/Svelte_Stores';
 import { get } from 'svelte/store';
 
-export default class Predicate extends RemoteIdentifiable {
+export default class Predicate extends PersistentIdentifiable {
 	isBidirectional: boolean;
 	stateIndex: number;
 	kind: string;
 
-	constructor(id: string, kind: string, isBidirectional: boolean, hasBeen_remotely_saved: boolean = false) {
-		super(dbDispatch.db.dbType, id, hasBeen_remotely_saved);
+	constructor(id: string, kind: string, isBidirectional: boolean, hasBeen_saved: boolean = false) {
+		super(dbDispatch.db.dbType, id, hasBeen_saved);
 		this.isBidirectional = isBidirectional;
 		this.stateIndex = Predicate.nextIndex;		// index in page states inward and outward arrays
 		Predicate.nextIndex += 1;

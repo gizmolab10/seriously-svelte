@@ -48,7 +48,7 @@ export class Debug {
 	log_crumbs(message: string) { this.log_maybe(DebugFlag.crumbs, message) }
 	log_cursor(message: string) { this.log_maybe(DebugFlag.cursor, message) }
 	log_layout(message: string) { this.log_maybe(DebugFlag.layout, message) }
-	log_remote(message: string) { this.log_maybe(DebugFlag.remote, message) }
+	log_persistent(message: string) { this.log_maybe(DebugFlag.remote, message) }
 	log_origins(message: string) { this.log_maybe(DebugFlag.origins, message) }
 	log_persist(message: string) { this.log_maybe(DebugFlag.persist, message) }
 	log_rebuild(message: string) { this.log_maybe(DebugFlag.rebuild, message) }

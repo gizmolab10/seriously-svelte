@@ -260,8 +260,8 @@ export default class Ancestry extends Identifiable {
 					}
 				}
 			}
-			if (isContains && this.hierarchy.db.isRemote) {														// normalize order of children only
-				u.ancestries_orders_normalize_remoteMaybe(ancestries);
+			if (isContains && this.hierarchy.db.isPersistent) {														// normalize order of children only
+				u.ancestries_orders_normalize_persistentMaybe(ancestries);
 			}
 		}
 		return ancestries;
@@ -604,12 +604,12 @@ export default class Ancestry extends Identifiable {
 				this.hierarchy.clear_editingTools();
 				switch (alteration.type) {
 					case AlterationType.deleting:
-						await this.hierarchy.relationship_forget_remoteDelete(toolsAncestry, ancestry, idPredicate);
+						await this.hierarchy.relationship_forget_persistentDelete(toolsAncestry, ancestry, idPredicate);
 						break;
 					case AlterationType.adding:
 						const toolsThing = toolsAncestry.thing;
 						if (!!toolsThing) {
-							await this.hierarchy.ancestry_remember_remoteAddAsChild(ancestry, toolsThing, idPredicate);
+							await this.hierarchy.ancestry_remember_persistentAddAsChild(ancestry, toolsThing, idPredicate);
 							signals.signal_rebuildGraph_fromFocus();
 						}
 						break;
@@ -618,13 +618,13 @@ export default class Ancestry extends Identifiable {
 		}
 	}
 
-	async order_normalizeRecursive_remoteMaybe(remoteWrite: boolean, visited: Array<number> = []) {
+	async order_normalizeRecursive_persistentMaybe(persist: boolean, visited: Array<number> = []) {
 		const hid = this.idHashed;
 		const childAncestries = this.childAncestries;
 		if (!visited.includes(hid) && childAncestries && childAncestries.length > 1) {
-			await u.ancestries_orders_normalize_remoteMaybe(childAncestries, remoteWrite);
+			await u.ancestries_orders_normalize_persistentMaybe(childAncestries, persist);
 			for (const childAncestry of childAncestries) {
-				childAncestry.order_normalizeRecursive_remoteMaybe(remoteWrite, [...visited, hid]);
+				childAncestry.order_normalizeRecursive_persistentMaybe(persist, [...visited, hid]);
 			}
 		}
 	}

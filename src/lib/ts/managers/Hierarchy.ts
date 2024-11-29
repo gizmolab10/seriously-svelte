@@ -3,7 +3,7 @@ import { s_alteration_mode, s_grabbed_ancestries, s_ancestry_showing_tools } fro
 import { Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
 import { ThingType, TraitType, Predicate, Ancestry, Mouse_State } from '../common/Global_Imports';
 import { s_edit_state, s_focus_ancestry } from '../state/Svelte_Stores';
-import RemoteIdentifiable from '../basis/RemoteIdentifiable';
+import PersistentIdentifiable from '../basis/PersistentIdentifiable';
 import Identifiable from '../basis/Identifiable';
 import DBInterface from '../db/DBInterface';
 import { get } from 'svelte/store';
@@ -72,10 +72,10 @@ export class Hierarchy {
 		if (!!ancestry) {
 			switch (idControl) {
 				case IDTool.more: debug.log_tools('needs more'); break;
-				case IDTool.create: await this.ancestry_edit_remoteCreateChildOf(ancestry); break;
+				case IDTool.create: await this.ancestry_edit_persistentCreateChildOf(ancestry); break;
 				case IDTool.next: this.ancestry_relayout_toolCluster_nextParent(event?.altKey ?? false); return;
 				case IDTool.add_parent: this.toggleAlteration(AlterationType.adding, mouse_state.isLong); return;
-				case IDTool.delete_confirm: await this.ancestries_rebuild_traverse_remoteDelete([ancestry]); break;
+				case IDTool.delete_confirm: await this.ancestries_rebuild_traverse_persistentDelete([ancestry]); break;
 				case IDTool.delete_parent: this.toggleAlteration(AlterationType.deleting, mouse_state.isLong); return;
 				default: break;
 			}
@@ -109,30 +109,30 @@ export class Hierarchy {
 				if (g.allow_GraphEditing) {
 					if (!!ancestryGrab && g.allow_TitleEditing) {
 						switch (key) {
-							case 'd':		await this.thing_edit_remoteDuplicate(ancestryGrab); break;
-							case k.space:	await this.ancestry_edit_remoteCreateChildOf(ancestryGrab); break;
-							case '-':		if (!COMMAND) { await this.thing_edit_remoteAddLine(ancestryGrab); } break;
-							case 'tab':		await this.ancestry_edit_remoteCreateChildOf(ancestryGrab.parentAncestry); break; // Title_State editor also makes this call
+							case 'd':		await this.thing_edit_persistentDuplicate(ancestryGrab); break;
+							case k.space:	await this.ancestry_edit_persistentCreateChildOf(ancestryGrab); break;
+							case '-':		if (!COMMAND) { await this.thing_edit_persistentAddLine(ancestryGrab); } break;
+							case 'tab':		await this.ancestry_edit_persistentCreateChildOf(ancestryGrab.parentAncestry); break; // Title_State editor also makes this call
 							case 'enter':	ancestryGrab.startEdit(); break;
 						}
 					}
 					switch (key) {
 						case 'delete':
-						case 'backspace':	await this.ancestries_rebuild_traverse_remoteDelete(get(s_grabbed_ancestries)); s_grabbed_ancestries.set([]); break;
+						case 'backspace':	await this.ancestries_rebuild_traverse_persistentDelete(get(s_grabbed_ancestries)); s_grabbed_ancestries.set([]); break;
 					}
 				}
 				if (!!ancestryGrab) {
 					switch (key) {
 						case '/':			graph_needsRebuild = ancestryGrab.becomeFocus(); break;
-						case 'arrowright':	event.preventDefault(); await this.ancestry_rebuild_remoteMoveRight(ancestryGrab,  ancestryGrab.isParental, SHIFT, OPTION, EXTREME); break;
-						case 'arrowleft':	event.preventDefault(); await this.ancestry_rebuild_remoteMoveRight(ancestryGrab, !ancestryGrab.isParental, SHIFT, OPTION, EXTREME); break;
+						case 'arrowright':	event.preventDefault(); await this.ancestry_rebuild_persistentMoveRight(ancestryGrab,  ancestryGrab.isParental, SHIFT, OPTION, EXTREME); break;
+						case 'arrowleft':	event.preventDefault(); await this.ancestry_rebuild_persistentMoveRight(ancestryGrab, !ancestryGrab.isParental, SHIFT, OPTION, EXTREME); break;
 					}
 				}
 				switch (key) {
 					case '!':				graph_needsRebuild = this.rootAncestry?.becomeFocus(); break;
 					case '`':               event.preventDefault(); this.latestAncestryGrabbed_toggleEditing_Tools(); break;
-					case 'arrowup':			await this.latestAncestryGrabbed_rebuild_remoteMoveUp_maybe(true, SHIFT, OPTION, EXTREME); break;
-					case 'arrowdown':		await this.latestAncestryGrabbed_rebuild_remoteMoveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
+					case 'arrowup':			await this.latestAncestryGrabbed_rebuild_persistentMoveUp_maybe(true, SHIFT, OPTION, EXTREME); break;
+					case 'arrowdown':		await this.latestAncestryGrabbed_rebuild_persistentMoveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
 					case 'escape':			if (!!get(s_ancestry_showing_tools)) { this.clear_editingTools(); }
 				}
 				if (graph_needsRebuild) {
@@ -149,11 +149,11 @@ export class Hierarchy {
 		}
 	}
 
-	async deferredWriteAllData(array: Array<RemoteIdentifiable>) {
+	async deferredWriteAllData(array: Array<PersistentIdentifiable>) {
 		array.forEach(async (identifiable) => {
 			if (identifiable.needsWrite) {
 				identifiable.needsWrite = false;
-				await identifiable.remoteWrite();
+				await identifiable.persist();
 			}
 		});
 	}
@@ -171,10 +171,10 @@ export class Hierarchy {
 
 	static readonly $_GRABS_$: unique symbol;
 
-	async latestAncestryGrabbed_rebuild_remoteMoveUp_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
+	async latestAncestryGrabbed_rebuild_persistentMoveUp_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const ancestry = this.grabs.latestAncestryGrabbed(up);
 		if (!!ancestry) {
-			this.ancestry_rebuild_remoteMoveUp_maybe(ancestry, up, SHIFT, OPTION, EXTREME);
+			this.ancestry_rebuild_persistentMoveUp_maybe(ancestry, up, SHIFT, OPTION, EXTREME);
 		}
 	}
 
@@ -245,38 +245,38 @@ export class Hierarchy {
 	}
 
 	thing_remember_runtimeCreateUnique(baseID: string, id: string, title: string, color: string, type: string,
-		hasBeen_remotely_saved: boolean = false): Thing {
+		hasBeen_saved: boolean = false): Thing {
 		let thing = this.thing_forHID(id?.hash() ?? null);
 		if (!thing) {
-			thing = this.thing_remember_runtimeCreate(baseID, id, title, color, type, hasBeen_remotely_saved);
+			thing = this.thing_remember_runtimeCreate(baseID, id, title, color, type, hasBeen_saved);
 		}
 		return thing;
 	}
 
-	async thing_remember_remoteRelocateChild(child: Thing, fromParent: Thing, toParent: Thing): Promise<any> {
+	async thing_remember_persistentRelocateChild(child: Thing, fromParent: Thing, toParent: Thing): Promise<any> {
 		let relationship = this.relationship_whereID_isChild(child.id);
 		if (!!relationship && relationship.idParent == fromParent.id) {
 			this.relationship_forget(relationship);
 			relationship.idParent = toParent.id;
 			this.relationship_remember(relationship);
-			relationship.remoteWrite();
+			relationship.persist();
 		}
 	}
 
-	async thing_edit_remoteAddLine(ancestry: Ancestry, below: boolean = true) {
+	async thing_edit_persistentAddLine(ancestry: Ancestry, below: boolean = true) {
 		const parentAncestry = ancestry.parentAncestry;
 		const parent = parentAncestry?.thing;
 		const thing = ancestry.thing;
 		if (!!thing && parent && parentAncestry) {
 			const order = ancestry.order + (below ? 0.5 : -0.5);
 			const child = this.thing_runtimeCreate(thing.baseID, Identifiable.newID(), k.title_line, parent.color, k.empty);
-			await this.ancestry_edit_remoteAddAsChild(parentAncestry, child, order, false);
+			await this.ancestry_edit_persistentAddAsChild(parentAncestry, child, order, false);
 		}
 	}
 
 	thing_remember_runtimeCreate(baseID: string, id: string, title: string, color: string, type: string,
-		hasBeen_remotely_saved: boolean = false, needs_upgrade: boolean = false): Thing {
-		const thing = this.thing_runtimeCreate(baseID, id, title, color, type, hasBeen_remotely_saved);
+		hasBeen_saved: boolean = false, needs_upgrade: boolean = false): Thing {
+		const thing = this.thing_runtimeCreate(baseID, id, title, color, type, hasBeen_saved);
 		this.thing_remember(thing);
 		if (needs_upgrade) {
 			thing.needsWrite = true;	// add type and remove trait fields
@@ -294,14 +294,14 @@ export class Hierarchy {
 		return newThing;
 	}
 
-	async thing_edit_remoteDuplicate(ancestry: Ancestry) {
+	async thing_edit_persistentDuplicate(ancestry: Ancestry) {
 		const thing = ancestry.thing;
 		const id = thing?.id;
 		const parentAncestry = ancestry.parentAncestry;
 		if (!!thing && id && parentAncestry) {
 			const sibling = await this.thing_remember_runtimeCopy(id, thing);
 			sibling.title = 'idea';
-			await this.ancestry_edit_remoteAddAsChild(parentAncestry, sibling, ancestry.order + 0.5);
+			await this.ancestry_edit_persistentAddAsChild(parentAncestry, sibling, ancestry.order + 0.5);
 		}
 	}
 
@@ -319,12 +319,12 @@ export class Hierarchy {
 	}
 
 	thing_runtimeCreate(baseID: string, id: string, title: string, color: string, type: string,
-		hasBeen_remotely_saved: boolean = false): Thing {
+		hasBeen_saved: boolean = false): Thing {
 		let thing: Thing | null = null;
 		if (id && type == ThingType.root && baseID != this.db.baseID) {		// other bulks have their own root & id
 			thing = this.thing_remember_bulkRootID(baseID, id, color);		// which our thing needs to adopt
 		} else {
-			thing = new Thing(baseID, id, title, color, type, hasBeen_remotely_saved);
+			thing = new Thing(baseID, id, title, color, type, hasBeen_saved);
 			if (thing.isBulkAlias) {
 				thing.needsBulkFetch = true;
 				if (title.includes('@')) {
@@ -337,23 +337,23 @@ export class Hierarchy {
 		return thing!;
 	}
 
-	async thing_forget_remoteDelete(thing: Thing) {
+	async thing_forget_persistentDelete(thing: Thing) {
 		const relationships = u.uniquely_concatenateArrays(
 			this.relationships_byChildHID[thing.idHashed] ?? [],
 			this.relationships_byParentHID[thing.idHashed] ?? []
 		)
 		this.thing_forget(thing);				// forget so onSnapshot logic will not signal children, do first so UX updates quickly
-		await this.db.thing_remoteDelete(thing);
+		await this.db.thing_persistentDelete(thing);
 		for (const ancestry of thing.ancestries) {
 			this.ancestry_forget(ancestry);
 		}
 		for (const trait of thing.traits) {
 			this.trait_forget(trait)
-			await this.db.trait_remoteDelete(trait);
+			await this.db.trait_persistentDelete(trait);
 		}
 		for (const relationship of relationships) {
 			this.relationship_forget(relationship);		// forget so onSnapshot logic will not signal children
-			await this.db.relationship_remoteDelete(relationship);
+			await this.db.relationship_persistentDelete(relationship);
 		}
 	}
 
@@ -381,12 +381,12 @@ export class Hierarchy {
 
 	trait_forHID(hid: number | null): Trait | null { return !hid ? null : this.trait_byHID[hid]; }
 
-	trait_runtimeCreate(baseID: string, id: string, ownerID: string, type: TraitType, text: string, hasBeen_remotely_saved: boolean = false): Trait {
-		return new Trait(baseID, id, ownerID, type, text, hasBeen_remotely_saved);
+	trait_runtimeCreate(baseID: string, id: string, ownerID: string, type: TraitType, text: string, hasBeen_saved: boolean = false): Trait {
+		return new Trait(baseID, id, ownerID, type, text, hasBeen_saved);
 	}
 
-	trait_remember_runtimeCreateUnique(baseID: string, id: string, ownerID: string, type: TraitType, text: string, hasBeen_remotely_saved: boolean = false): Trait {
-		return this.trait_forHID(id?.hash()) ?? this.trait_remember_runtimeCreate(baseID, id, ownerID, type, text, hasBeen_remotely_saved);
+	trait_remember_runtimeCreateUnique(baseID: string, id: string, ownerID: string, type: TraitType, text: string, hasBeen_saved: boolean = false): Trait {
+		return this.trait_forHID(id?.hash()) ?? this.trait_remember_runtimeCreate(baseID, id, ownerID, type, text, hasBeen_saved);
 	}
 
 	trait_forType_ownerHID(type: TraitType | null, ownerHID: number | null): Trait| null {
@@ -410,8 +410,8 @@ export class Hierarchy {
 	}
 
 	trait_remember_runtimeCreate(baseID: string, id: string, ownerID: string, type: TraitType, text: string,
-		hasBeen_remotely_saved: boolean = false): Trait {
-		const trait = this.trait_runtimeCreate(baseID, id, ownerID, type, text, hasBeen_remotely_saved);
+		hasBeen_saved: boolean = false): Trait {
+		const trait = this.trait_runtimeCreate(baseID, id, ownerID, type, text, hasBeen_saved);
 		this.trait_remember(trait);
 		return trait;
 	}
@@ -454,7 +454,7 @@ export class Hierarchy {
 		return null;
 	}
 
-	async thing_remember_bulk_recursive_remoteRelocateRight(ancestry: Ancestry, newParentAncestry: Ancestry) {
+	async thing_remember_bulk_recursive_persistentRelocateRight(ancestry: Ancestry, newParentAncestry: Ancestry) {
 		const newParent = newParentAncestry.thing;
 		let newThingAncestry: Ancestry | null = null;
 		const thing = ancestry.thing;
@@ -463,9 +463,9 @@ export class Hierarchy {
 			const newThing = await this.thing_remember_runtimeCopy(baseID, thing);
 			newThingAncestry = newParentAncestry.extend_withChild(newThing);
 			if (!!newThingAncestry) {
-				await this.ancestry_remember_remoteAddAsChild(newParentAncestry, newThing);
+				await this.ancestry_remember_persistentAddAsChild(newParentAncestry, newThing);
 				for (const childAncestry of ancestry.childAncestries) {
-					this.thing_remember_bulk_recursive_remoteRelocateRight(childAncestry, newThingAncestry);
+					this.thing_remember_bulk_recursive_persistentRelocateRight(childAncestry, newThingAncestry);
 				}
 				if (!newThingAncestry.isExpanded) {
 					setTimeout(() => {
@@ -475,7 +475,7 @@ export class Hierarchy {
 						};
 					}, 2);
 				}
-				await this.ancestry_forget_remoteUpdate(ancestry);
+				await this.ancestry_forget_persistentUpdate(ancestry);
 			}
 		}
 		return newThingAncestry;
@@ -524,7 +524,7 @@ export class Hierarchy {
 		return null;
 	}
 
-	async relationships_remoteCreateMissing(baseID: string) {
+	async relationships_persistentCreateMissing(baseID: string) {
 		const idRoot = this.idRoot;
 		if (!!idRoot || idRoot == k.empty){
 			for (const thing of this.things) {
@@ -533,8 +533,8 @@ export class Hierarchy {
 					let relationship = this.relationship_whereID_isChild(idThing);
 					if (!relationship) {
 						const idPredicateContains = Predicate.idContains;
-						await this.relationship_remember_remoteCreateUnique(baseID, Identifiable.newID(), idPredicateContains,
-							idRoot, idThing, 0, CreationOptions.getRemoteID)
+						await this.relationship_remember_persistentCreateUnique(baseID, Identifiable.newID(), idPredicateContains,
+							idRoot, idThing, 0, CreationOptions.getPersistentID)
 					}
 				}
 			}
@@ -548,7 +548,7 @@ export class Hierarchy {
 			const thingFrom = relationship.parent;
 			if (!thingTo || !thingFrom) {
 				array.push(relationship);
-				await this.db.relationship_remoteDelete(relationship);
+				await this.db.relationship_persistentDelete(relationship);
 			}
 		}
 		while (array.length > 0) {
@@ -581,6 +581,9 @@ export class Hierarchy {
 			if (relationship.baseID != this.db.baseID) {
 				debug.log_error(`RELATIONSHIP off base: ${relationship.baseID} ${relationship.parent?.description} => ${relationship.child?.description}`);
 			}
+			if (relationship.hasBeen_saved && relationship.id.includes('NEW')) {
+				console.log(`was saved ${relationship.id}`)
+			}
 			this.relationships.push(relationship);
 			this.relationship_byHID[relationship.idHashed] = relationship;
 			this.relationship_rememberByKnown(this.relationships_byChildHID, relationship, relationship.idChild);
@@ -589,18 +592,18 @@ export class Hierarchy {
 		}
 	}
 
-	async relationship_forget_remoteDelete(ancestry: Ancestry, otherAncestry: Ancestry, idPredicate: string) {
+	async relationship_forget_persistentDelete(ancestry: Ancestry, otherAncestry: Ancestry, idPredicate: string) {
 		const thing = ancestry.thing;
 		const parentAncestry = ancestry.parentAncestry;
 		const relationship = this.relationship_forPredicate_parent_child(idPredicate, otherAncestry.idThing, ancestry.idThing);
 		if (!!parentAncestry && !!relationship && (thing?.hasParents ?? false)) {
 			this.relationship_forget(relationship);
 			if (otherAncestry.hasChildRelationships) {
-				parentAncestry.order_normalizeRecursive_remoteMaybe(true);
+				parentAncestry.order_normalizeRecursive_persistentMaybe(true);
 			} else {
 				otherAncestry.collapse();
 			}
-			await this.db.relationship_remoteDelete(relationship);
+			await this.db.relationship_persistentDelete(relationship);
 		}
 	}
 
@@ -633,28 +636,28 @@ export class Hierarchy {
 		let reversedRelationship = this.relationship_forPredicate_parent_child(idPredicate, idChild, idParent);
 		let relationship = this.relationship_forPredicate_parent_child(idPredicate, idParent, idChild);
 		const isBidirectional = this.predicate_forID(idPredicate)?.isBidirectional ?? false;
-		const hasBeen_remotely_saved = creationOptions != CreationOptions.none;
+		const hasBeen_saved = creationOptions == CreationOptions.isFromPersistent;
 		if (!relationship) {
-			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, hasBeen_remotely_saved);
+			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, hasBeen_saved);
 			this.relationship_remember(relationship);
 		}
 		if (isBidirectional && !reversedRelationship) {
-			reversedRelationship = new Relationship(baseID, Identifiable.newID(), idPredicate, idChild, idParent, order, hasBeen_remotely_saved);
+			reversedRelationship = new Relationship(baseID, Identifiable.newID(), idPredicate, idChild, idParent, order, hasBeen_saved);
 			this.relationship_remember(reversedRelationship);
 		}
-		relationship?.order_setTo_remoteMaybe(order);
-		reversedRelationship?.order_setTo_remoteMaybe(order);
+		relationship?.order_setTo_persistentMaybe(order);
+		reversedRelationship?.order_setTo_persistentMaybe(order);
 		return relationship;
 	}
 
-	async relationship_remember_remoteCreateUnique(baseID: string, idRelationship: string, idPredicate: string, idParent: string, idChild: string,
-		order: number, creationOptions: CreationOptions = CreationOptions.isFromRemote): Promise<any> {
+	async relationship_remember_persistentCreateUnique(baseID: string, idRelationship: string, idPredicate: string, idParent: string, idChild: string,
+		order: number, creationOptions: CreationOptions = CreationOptions.isFromPersistent): Promise<any> {
 		let relationship = this.relationship_forPredicate_parent_child(idPredicate, idParent, idChild);
 		if (!!relationship) {
-			relationship.order_setTo_remoteMaybe(order, true);
+			relationship.order_setTo_persistentMaybe(order, true);
 		} else {
-			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, creationOptions != CreationOptions.none);
-			await this.db.relationship_remember_remoteCreate(relationship);
+			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, creationOptions == CreationOptions.isFromPersistent);
+			await this.db.relationship_remember_persistentCreate(relationship);
 			this.relationship_remember(relationship);
 		}
 		return relationship;
@@ -662,7 +665,7 @@ export class Hierarchy {
 
 	static readonly $_ANCESTRIES_$: unique symbol;
 
-	async ancestries_rebuild_traverse_remoteDelete(ancestries: Array<Ancestry>) {
+	async ancestries_rebuild_traverse_persistentDelete(ancestries: Array<Ancestry>) {
 		if (get(s_focus_ancestry)) {
 			for (const ancestry of ancestries) {
 				const thing = ancestry.thing;
@@ -681,7 +684,7 @@ export class Hierarchy {
 							}
 						}
 						await ancestry.traverse_async(async (progenyAncestry: Ancestry): Promise<boolean> => {
-							await this.ancestry_forget_remoteUpdate(progenyAncestry);
+							await this.ancestry_forget_persistentUpdate(progenyAncestry);
 							return false; // continue the traversal
 						});
 					}
@@ -697,12 +700,12 @@ export class Hierarchy {
 		return this.ancestry_byHID[idHashed] ?? null;
 	}
 
-	async ancestry_forget_remoteUpdate(ancestry: Ancestry) {
+	async ancestry_forget_persistentUpdate(ancestry: Ancestry) {
 		const thing = ancestry.thing;
-		ancestry.childAncestries.map(c => this.ancestry_forget_remoteUpdate(c));
+		ancestry.childAncestries.map(c => this.ancestry_forget_persistentUpdate(c));
 		this.ancestry_forget(ancestry);
 		if (!!thing) {
-			await this.thing_forget_remoteDelete(thing);
+			await this.thing_forget_persistentDelete(thing);
 		}
 	}
 
@@ -716,20 +719,20 @@ export class Hierarchy {
 		}
 	}
 
-	async ancestry_edit_remoteCreateChildOf(parentAncestry: Ancestry | null) {
+	async ancestry_edit_persistentCreateChildOf(parentAncestry: Ancestry | null) {
 		const thing = parentAncestry?.thing;
 		if (!!thing && !!parentAncestry) {
 			const child = await this.thing_remember_runtimeCopy(thing.baseID, thing);
 			child.title = 'idea';
 			parentAncestry.expand();
-			await this.ancestry_edit_remoteAddAsChild(parentAncestry, child, 0);
+			await this.ancestry_edit_persistentAddAsChild(parentAncestry, child, 0);
 		}
 	}
 
-	async ancestry_edit_remoteAddAsChild(parentAncestry: Ancestry, child: Thing, order: number, shouldStartEdit: boolean = true) {
-		const childAncestry = await this.ancestry_remember_remoteAddAsChild(parentAncestry, child);
+	async ancestry_edit_persistentAddAsChild(parentAncestry: Ancestry, child: Thing, order: number, shouldStartEdit: boolean = true) {
+		const childAncestry = await this.ancestry_remember_persistentAddAsChild(parentAncestry, child);
 		childAncestry.grabOnly();
-		childAncestry.relationship?.order_setTo_remoteMaybe(order);
+		childAncestry.relationship?.order_setTo_persistentMaybe(order);
 		signals.signal_rebuildGraph_fromFocus();
 		if (shouldStartEdit) {
 			setTimeout(() => {
@@ -738,8 +741,8 @@ export class Hierarchy {
 		}
 	}
 
-	async ancestry_remember_bulk_remoteRelocateRight(ancestry: Ancestry, newParentAncestry: Ancestry) {
-		const newThingAncestry = await this.thing_remember_bulk_recursive_remoteRelocateRight(ancestry, newParentAncestry);
+	async ancestry_remember_bulk_persistentRelocateRight(ancestry: Ancestry, newParentAncestry: Ancestry) {
+		const newThingAncestry = await this.thing_remember_bulk_recursive_persistentRelocateRight(ancestry, newParentAncestry);
 		if (!!newThingAncestry) {
 			newParentAncestry.signal_relayoutWidgets();
 			if (newParentAncestry.isExpanded) {
@@ -773,12 +776,12 @@ export class Hierarchy {
 				}
 			}
 			const roots = this.thing_runtimeCreate(this.db.baseID, Identifiable.newID(), 'roots', 'red', ThingType.roots);
-			await this.ancestry_remember_remoteAddAsChild(rootAncestry, roots).then((ancestry) => { rootsAncestry = ancestry; });
+			await this.ancestry_remember_persistentAddAsChild(rootAncestry, roots).then((ancestry) => { rootsAncestry = ancestry; });
 		}
 		return rootsAncestry;
 	}
 
-	async ancestry_redraw_remoteFetchBulk_browseRight(thing: Thing, ancestry: Ancestry | null = null, grab: boolean = false) {
+	async ancestry_redraw_persistentFetchBulk_browseRight(thing: Thing, ancestry: Ancestry | null = null, grab: boolean = false) {
 		if (!!this.rootsAncestry && thing && thing.title != 'roots') {	// not create roots bulk
 			await this.db.fetch_hierarchy_from(thing.title)
 			this.relationships_refreshKnowns();
@@ -812,7 +815,7 @@ export class Hierarchy {
 		}
 	}
 
-	async ancestry_remember_remoteAddAsChild(parentAncestry: Ancestry, child: Thing, idPredicate: string = Predicate.idContains): Promise<any> {
+	async ancestry_remember_persistentAddAsChild(parentAncestry: Ancestry, child: Thing, idPredicate: string = Predicate.idContains): Promise<any> {
 		const parent = parentAncestry.thing;
 		if (!!parent && !child.isBulkAlias) {
 			const changingBulk = parent.isBulkAlias || child.baseID != this.db.baseID;
@@ -820,22 +823,22 @@ export class Hierarchy {
 			if (changingBulk) {
 				console.log('changingBulk');
 			}
-			if (!child.hasBeen_remotely_saved) {
-				await this.db.thing_remember_remoteCreate(child);					// for everything below, need to await child.id fetched from dbDispatch
+			if (!child.hasBeen_saved) {
+				await this.db.thing_remember_persistentCreate(child);					// for everything below, need to await child.id fetched from dbDispatch
 			}
-			const relationship = await this.relationship_remember_remoteCreateUnique(baseID, Identifiable.newID(), idPredicate, parent.idBridging, child.id, 0, CreationOptions.getRemoteID);
+			const relationship = await this.relationship_remember_persistentCreateUnique(baseID, Identifiable.newID(), idPredicate, parent.idBridging, child.id, 0, CreationOptions.getPersistentID);
 			const childAncestry = parentAncestry.uniquelyAppendID(relationship.id);
-			await u.ancestries_orders_normalize_remoteMaybe(parentAncestry.childAncestries);		// write new order values for relationships
+			await u.ancestries_orders_normalize_persistentMaybe(parentAncestry.childAncestries);		// write new order values for relationships
 			return childAncestry;
 		}
 	}
 
-	async ancestry_rebuild_remoteMoveRight(ancestry: Ancestry, RIGHT: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean, fromReveal: boolean = false) {
+	async ancestry_rebuild_persistentMoveRight(ancestry: Ancestry, RIGHT: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean, fromReveal: boolean = false) {
 		if (!OPTION) {
 			const thing = ancestry.thing;
 			if (!!thing) {
 				if (RIGHT && thing.needsBulkFetch) {
-					await this.ancestry_redraw_remoteFetchBulk_browseRight(thing, ancestry, true);
+					await this.ancestry_redraw_persistentFetchBulk_browseRight(thing, ancestry, true);
 				} else {
 					this.ancestry_rebuild_runtimeBrowseRight(ancestry, RIGHT, SHIFT, EXTREME, fromReveal);
 				}
@@ -843,12 +846,12 @@ export class Hierarchy {
 		} else if (g.allow_GraphEditing) {
 			const grab = this.grabs.latestAncestryGrabbed(true);
 			if (!!grab) {
-				await this.ancestry_rebuild_remoteRelocateRight(grab, RIGHT, EXTREME);
+				await this.ancestry_rebuild_persistentRelocateRight(grab, RIGHT, EXTREME);
 			}
 		}
 	}
 
-	async ancestry_rebuild_remoteMoveUp_maybe(ancestry: Ancestry, up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
+	async ancestry_rebuild_persistentMoveUp_maybe(ancestry: Ancestry, up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const parentAncestry = ancestry.parentAncestry;
 		if (!!parentAncestry) {
 			let graph_needsRebuild = false;
@@ -883,12 +886,12 @@ export class Hierarchy {
 						}
 					} else if (g.allow_GraphEditing && OPTION) {
 						graph_needsRebuild = true;
-						await u.ancestries_orders_normalize_remoteMaybe(parentAncestry.childAncestries, false);
+						await u.ancestries_orders_normalize_persistentMaybe(parentAncestry.childAncestries, false);
 						const wrapped = up ? (index == 0) : (index + 1 == length);
 						const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
 						const newOrder = newIndex + goose;
-						ancestry.relationship?.order_setTo_remoteMaybe(newOrder);
-						await u.ancestries_orders_normalize_remoteMaybe(parentAncestry.childAncestries);
+						ancestry.relationship?.order_setTo_persistentMaybe(newOrder);
+						await u.ancestries_orders_normalize_persistentMaybe(parentAncestry.childAncestries);
 					}
 				}
 				if (graph_needsRebuild) {
@@ -898,23 +901,23 @@ export class Hierarchy {
 		}
 	}
 
-	async ancestry_rebuild_remoteRelocateRight(ancestry: Ancestry, RIGHT: boolean, EXTREME: boolean) {
+	async ancestry_rebuild_persistentRelocateRight(ancestry: Ancestry, RIGHT: boolean, EXTREME: boolean) {
 		const thing = ancestry.thing;
 		const newParentAncestry = RIGHT ? ancestry.ancestry_ofNextSibling(false) : ancestry.stripBack(2);
 		const newParent = newParentAncestry?.thing;
 		if (!!thing && newParent && newParentAncestry) {
 			if (thing.isInDifferentBulkThan(newParent)) {		// should move across bulks
-				this.ancestry_remember_bulk_remoteRelocateRight(ancestry, newParentAncestry);
+				this.ancestry_remember_bulk_persistentRelocateRight(ancestry, newParentAncestry);
 			} else {
 				const relationship = ancestry.relationship;
 				if (!!relationship) {
 					const order = RIGHT ? relationship.order : 0;
 					relationship.idParent = newParent.id;
-					await relationship.order_setTo_remoteMaybe(order + 0.5, true);
+					await relationship.order_setTo_persistentMaybe(order + 0.5, true);
 				}
 				this.relationships_refreshKnowns();
 				newParentAncestry.extend_withChild(thing)?.grabOnly();
-				this.rootAncestry.order_normalizeRecursive_remoteMaybe(true);
+				this.rootAncestry.order_normalizeRecursive_persistentMaybe(true);
 				if (!newParentAncestry.isExpanded) {
 					newParentAncestry.expand();
 				}
@@ -1009,14 +1012,14 @@ export class Hierarchy {
 		}
 	}
 
-	predicate_remember_runtimeCreateUnique(id: string, kind: string, isBidirectional: boolean, hasBeen_remotely_saved: boolean = true) {
+	predicate_remember_runtimeCreateUnique(id: string, kind: string, isBidirectional: boolean, hasBeen_saved: boolean = true) {
 		if (!this.predicate_forID(id)) {
-			this.predicate_remember_runtimeCreate(id, kind, isBidirectional, hasBeen_remotely_saved);
+			this.predicate_remember_runtimeCreate(id, kind, isBidirectional, hasBeen_saved);
 		}
 	}
 
-	predicate_remember_runtimeCreate(id: string, kind: string, isBidirectional: boolean, hasBeen_remotely_saved: boolean = true) {
-		this.predicate_remember(new Predicate(id, kind, isBidirectional, hasBeen_remotely_saved));
+	predicate_remember_runtimeCreate(id: string, kind: string, isBidirectional: boolean, hasBeen_saved: boolean = true) {
+		this.predicate_remember(new Predicate(id, kind, isBidirectional, hasBeen_saved));
 	}
 
 	access_runtimeCreate(idAccess: string, kind: string) {
@@ -1038,7 +1041,7 @@ export class Hierarchy {
 	}
 
 	async add_missing_removeNulls(baseID: string) {
-		await this.relationships_remoteCreateMissing(baseID);
+		await this.relationships_persistentCreateMissing(baseID);
 		await this.relationships_removeHavingNullReferences();
 	}
 

@@ -4,11 +4,11 @@ import DBInterface from './DBInterface';
 import { DBType } from './DBInterface';
 import { get } from 'svelte/store';
 
-export default class DBLocal implements DBInterface {
-	baseID = k.baseID_local;
-	dbType = DBType.local;
+export default class DBTest implements DBInterface {
+	baseID = k.baseID_test;
 	hierarchy!: Hierarchy;
-	isRemote = false;
+	isPersistent = false;
+	dbType = DBType.test;
 	hasData = false;
 	loadTime = null;
 
@@ -81,16 +81,16 @@ export default class DBLocal implements DBInterface {
 	}
 
 	queryStrings_apply() {}
-	async thing_remoteUpdate(thing: Thing) {}
-	async thing_remoteDelete(thing: Thing) {}
-	async trait_remoteUpdate(trait: Trait) {};
-	async trait_remoteDelete(trait: Trait) {};
-	async fetch_hierarchy_from(baseID: string) {};
-	async trait_remember_remoteCreate(trait: Trait) {};
-	async thing_remember_remoteCreate(thing: Thing) {}
-	async relationship_remoteUpdate(relationship: Relationship) {}
-	async relationship_remoteDelete(relationship: Relationship) {}
-	async relationship_remember_remoteCreate(relationship: Relationship | null) {};
+	async thing_persistentUpdate(thing: Thing) {}
+	async thing_persistentDelete(thing: Thing) {}
+	async trait_persistentUpdate(trait: Trait) {}
+	async trait_persistentDelete(trait: Trait) {}
+	async fetch_hierarchy_from(baseID: string) {}
+	async trait_remember_persistentCreate(trait: Trait) {}
+	async thing_remember_persistentCreate(thing: Thing) {}
+	async relationship_persistentUpdate(relationship: Relationship) {}
+	async relationship_persistentDelete(relationship: Relationship) {}
+	async relationship_remember_persistentCreate(relationship: Relationship | null) {};
 }
 
-export const dbLocal = new DBLocal();
+export const dbTest = new DBTest();

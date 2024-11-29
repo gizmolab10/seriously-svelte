@@ -161,12 +161,12 @@ class Utilities {
 		}
 	}
 
-	async ancestries_orders_normalize_remoteMaybe(array: Array<Ancestry>, remoteWrite: boolean = true) {
+	async ancestries_orders_normalize_persistentMaybe(array: Array<Ancestry>, persist: boolean = true) {
 		this.sort_byOrder(array);
 		array.forEach(async (ancestry, index) => {
 			if (ancestry.order != index) {
 				const relationship = ancestry.relationship;
-				relationship?.order_setTo_remoteMaybe(index, remoteWrite);
+				relationship?.order_setTo_persistentMaybe(index, persist);
 			}
 		});
 	}
