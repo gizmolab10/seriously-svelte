@@ -2,19 +2,19 @@ import { s_db_type, s_hierarchy, s_edit_state, s_db_loadTime } from '../state/Sv
 import { s_startup_state, s_ancestry_showing_tools } from '../state/Svelte_Stores';
 import { g, k, signals, Hierarchy, Startup_State } from '../common/Global_Imports';
 import { IDPersistent, persistLocal } from '../common/Global_Imports';
+import { DBType } from '../basis/PersistentIdentifiable';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import DBInterface from './DBInterface';
-import { DBType } from './DBInterface';
-import { dbTest } from './DBTest';
 import { get } from 'svelte/store';
+import { dbTest } from './DBTest';
 import { dbFile } from './DBFile';
 
 // each db has its own hierarchy
 // when switching to another db
 // s_hierarchy is set to its hierarchy
 
-export function db_forType(dbType: DBType): DBInterface {
+export function db_forType(dbType: string): DBInterface {
 	switch (dbType) {
 		case DBType.firebase: return dbFirebase;
 		case DBType.airtable: return dbAirtable;
@@ -52,7 +52,7 @@ export default class DBDispatch {
 		});
 	}
 
-	db_set_accordingToType(type: DBType) { this.db = db_forType(type); }
+	db_set_accordingToType(type: string) { this.db = db_forType(type); }
 	db_change_toNext(forward: boolean) { this.db_change_toType(this.db_next_get(forward)); }
 
 	restore_db() {

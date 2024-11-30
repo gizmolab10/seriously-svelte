@@ -8,8 +8,8 @@ export default class Trait extends Datum {
 	ownerID: string = k.empty;
 	text: string = k.empty;
 
-	constructor(baseID: string, id: string, ownerID: string, type: TraitType, text: string = k.empty, hasBeen_saved: boolean = false) {
-		super(dbDispatch.db.dbType, baseID, id, hasBeen_saved);
+	constructor(baseID: string, id: string, ownerID: string, type: TraitType, text: string = k.empty, already_saved: boolean = false) {
+		super(dbDispatch.db.dbType, baseID, id, already_saved);
 		this.ownerID = ownerID;
 		this.type = type;
 		this.text = text;
@@ -19,10 +19,15 @@ export default class Trait extends Datum {
 	get hasNoData():		boolean { return !this.ownerID && !this.type && !this.type; }
 	get fields(): Airtable.FieldSet { return { type: this.type, ownerID: [this.ownerID], text: this.text }; }
 
+    static trait_fromJSON(json: string): Trait {
+        const parsed = JSON.parse(json);
+        return new Trait(parsed.baseID, parsed.id, parsed.ownerID, parsed.type, parsed.text, true);
+    }
+
 	async persist() {
 		if (!this.awaitingCreation) {
 			this.updateModifyDate();
-			if (this.hasBeen_saved) {
+			if (this.already_saved) {
 				await dbDispatch.db.trait_persistentUpdate(this);
 			} else if (dbDispatch.db.isPersistent) {
 				await dbDispatch.db.trait_remember_persistentCreate(this);

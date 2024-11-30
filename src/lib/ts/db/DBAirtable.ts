@@ -1,6 +1,6 @@
 import { DebugFlag, Hierarchy, Relationship, CreationOptions } from '../common/Global_Imports';
 import { g, k, u, debug, Thing, Trait, TraitType } from '../common/Global_Imports';
-import { DBType, DatumType } from '../db/DBInterface';
+import { DBType, DatumType } from '../basis/PersistentIdentifiable';
 import { s_hierarchy } from '../state/Svelte_Stores';
 import DBInterface from './DBInterface';
 import { get } from 'svelte/store';
@@ -66,6 +66,10 @@ export default class DBAirtable implements DBInterface {
 		await this.users_readAll();
 	}
 
+	async crud_onThing(crud: string, thing: Thing) {};
+	async crud_onTrait(crud: string, trait: Trait) {};
+	async crud_onRelationship(crud: string, relationship: Relationship) {};
+
 	//////////////////////////////
 	//			THINGS			//
 	//////////////////////////////
@@ -95,7 +99,7 @@ export default class DBAirtable implements DBInterface {
 			const fields = await this.things_table.create(thing.fields);
 			const id = fields['id'];		// need id for update, delete and things_byHID (to get parent from relationship)
 			thing.setID(id);
-			thing.hasBeen_saved = true;		// was saved by create, above
+			thing.already_saved = true;		// was saved by create, above
 			get(s_hierarchy).thing_remember(thing);
 		} catch (error) {
 			thing.log(DebugFlag.remote, this.things_errorMessage + error);
@@ -162,7 +166,7 @@ export default class DBAirtable implements DBInterface {
 			const fields = await this.traits_table.create(trait.fields);
 			const id = fields['id'];	//	// need for update, delete and traits_byHID (to get parent from relationship)
 			trait.setID(id);
-			trait.hasBeen_saved = true;
+			trait.already_saved = true;
 			get(s_hierarchy).trait_remember(trait);
 		} catch (error) {
 			trait.log(DebugFlag.remote, this.traits_errorMessage + error);
@@ -192,12 +196,12 @@ export default class DBAirtable implements DBInterface {
 	static readonly $_RELATIONSHIP_$: unique symbol;
 
 	async relationship_remember_persistentCreate(relationship: Relationship | null) {
-		if (!!relationship && !relationship.hasBeen_saved) {
+		if (!!relationship && !relationship.already_saved) {
 			try {
 				const fields = await this.relationships_table.create(relationship.fields);	// insert with temporary id
 				const id = fields['id'];																										// grab permanent id
 				relationship.setID(id);
-				relationship.hasBeen_saved = true;
+				relationship.already_saved = true;
 				get(s_hierarchy).relationships_refreshKnowns();
 			} catch (error) {
 				relationship.log(DebugFlag.remote, this.relationships_errorMessage + error);

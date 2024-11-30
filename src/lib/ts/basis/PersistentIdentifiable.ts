@@ -1,25 +1,47 @@
 import Identifiable from './Identifiable';
-import { DBType } from '../db/DBInterface';
+
+export enum DBType {
+	postgres = 'postgres',
+	airtable = 'airtable',
+	firebase = 'firebase',
+	file	 = 'file',
+	test	 = 'test',
+}
+
+export enum DatumType {
+	relationships = 'Relationships',
+	predicates	  = 'Predicates',
+	things		  = 'Things',
+	traits		  = 'Traits',
+	access		  = 'Access',
+	users		  = 'Users',
+}
 
 export default class PersistentIdentifiable extends Identifiable {
 	hasPersistentStorage: boolean;
 	awaitingCreation: boolean;
-	hasBeen_saved: boolean;
+	already_saved: boolean;
 	lastModifyDate: Date;
 	needsWrite = false;
 	dbType: string;
 
-	constructor(dbType: string, id: string, hasBeen_saved: boolean = false) {
+	constructor(dbType: string, id: string, already_saved: boolean = false) {
 		super(id);
 		this.hasPersistentStorage = dbType != DBType.test;
-		this.hasBeen_saved = hasBeen_saved;
+		this.already_saved = already_saved;
 		this.lastModifyDate = new Date();
 		this.awaitingCreation = false;
 		this.dbType = dbType;
 	}
 
 	async persist() {}
+    toJSON(): string { return JSON.stringify(this); }
 	updateModifyDate() { this.lastModifyDate = new Date(); }
+
+    static persistent_fromJSON(json: string): PersistentIdentifiable {
+        const parsed = JSON.parse(json);
+        return new PersistentIdentifiable(parsed.dbType, parsed.id, true);
+    }
 
 	wasModifiedWithinMS(threshold: number): boolean {
 		const duration = new Date().getTime() - this.lastModifyDate.getTime();

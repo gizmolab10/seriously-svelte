@@ -30,11 +30,11 @@ export default class Constants {
 	baseID_test = 'handcrafted';
 	color_background = 'white';
 	cursor_default = 'default';
-	baseID_file = 'filesystem';
 	generic_separator = '::';
 	color_default = 'black';
 	small_separator = ':::';
 	big_separator = '::::';
+	baseID_file = 'data';
 	unknown = 'unknown';
 	newLine = '\n';
 	comma = ',';

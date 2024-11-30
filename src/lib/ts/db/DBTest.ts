@@ -1,7 +1,7 @@
 import { k, Thing, Trait, ThingType, Hierarchy, Predicate, Relationship } from '../common/Global_Imports';
+import { DBType } from '../basis/PersistentIdentifiable';
 import { s_hierarchy } from '../state/Svelte_Stores';
 import DBInterface from './DBInterface';
-import { DBType } from './DBInterface';
 import { get } from 'svelte/store';
 
 export default class DBTest implements DBInterface {
@@ -91,6 +91,9 @@ export default class DBTest implements DBInterface {
 	async relationship_persistentUpdate(relationship: Relationship) {}
 	async relationship_persistentDelete(relationship: Relationship) {}
 	async relationship_remember_persistentCreate(relationship: Relationship | null) {};
+	async crud_onThing(crud: string, thing: Thing) {};
+	async crud_onTrait(crud: string, trait: Trait) {};
+	async crud_onRelationship(crud: string, relationship: Relationship) {};
 }
 
 export const dbTest = new DBTest();

@@ -17,8 +17,8 @@ export default class Thing extends Datum {
 	color: string;
 	type: string;
 
-	constructor(baseID: string, id: string, title = k.title_default, color = k.thing_color_default, type = k.empty, hasBeen_saved: boolean = false) {
-		super(dbDispatch.db.dbType, baseID, id, hasBeen_saved);
+	constructor(baseID: string, id: string, title = k.title_default, color = k.thing_color_default, type = k.empty, already_saved: boolean = false) {
+		super(dbDispatch.db.dbType, baseID, id, already_saved);
 		this.selectionRange = new Seriously_Range(0, title.length);
 		this.page_states = new Page_States(this.id);
 		this.title = title;
@@ -44,6 +44,11 @@ export default class Thing extends Datum {
 	get isFocus():					boolean { return (get(s_focus_ancestry).thing?.id ?? k.empty) == this.id; }
 	get hasRelated():				boolean { return this.relationships_inBothDirections_for(Predicate.idIsRelated).length > 0; }
 	get hasNoData():				boolean { return !this.title && !this.color && !this.type; }
+
+    static thing_fromJSON(json: string): Thing {
+        const parsed = JSON.parse(json);
+        return new Thing(parsed.baseID, parsed.id, parsed.title, parsed.color, parsed.type, true);
+    }
 
 	get ancestries(): Array<Ancestry> {
 		return u.uniquely_concatenateArrays(
@@ -100,7 +105,7 @@ export default class Thing extends Datum {
 	async persist() {
 		if (!this.awaitingCreation) {
 			this.updateModifyDate();
-			if (this.hasBeen_saved) {
+			if (this.already_saved) {
 				await dbDispatch.db.thing_persistentUpdate(this);
 			} else if (dbDispatch.db.isPersistent) {
 				await dbDispatch.db.thing_remember_persistentCreate(this);

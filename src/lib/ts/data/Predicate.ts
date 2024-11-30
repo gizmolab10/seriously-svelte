@@ -8,8 +8,8 @@ export default class Predicate extends PersistentIdentifiable {
 	stateIndex: number;
 	kind: string;
 
-	constructor(id: string, kind: string, isBidirectional: boolean, hasBeen_saved: boolean = false) {
-		super(dbDispatch.db.dbType, id, hasBeen_saved);
+	constructor(id: string, kind: string, isBidirectional: boolean, already_saved: boolean = false) {
+		super(dbDispatch.db.dbType, id, already_saved);
 		this.isBidirectional = isBidirectional;
 		this.stateIndex = Predicate.nextIndex;		// index in page states inward and outward arrays
 		Predicate.nextIndex += 1;
@@ -24,5 +24,10 @@ export default class Predicate extends PersistentIdentifiable {
 	static get idContains(): string { return this.id_forKind(PredicateKind.contains); }
 	get description(): string { return this.kind.unCamelCase().lastWord(); }
 	static nextIndex = 0;
+
+    static predicate_fromJSON(json: string): Predicate {
+        const parsed = JSON.parse(json);
+        return new Predicate(parsed.id, parsed.kind, parsed.isBidirectional, true);
+    }
 
 }

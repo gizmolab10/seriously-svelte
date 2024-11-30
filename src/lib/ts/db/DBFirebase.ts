@@ -3,8 +3,8 @@ import { ThingType, dbDispatch, persistLocal, IDPersistent, Relationship, Creati
 import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
+import { DBType, DatumType } from '../basis/PersistentIdentifiable';
 import { s_hierarchy } from '../state/Svelte_Stores';
-import { DBType, DatumType } from '../db/DBInterface';
 import Identifiable from '../basis/Identifiable';
 import { initializeApp } from 'firebase/app';
 import DBInterface from './DBInterface';
@@ -48,6 +48,10 @@ export default class DBFirebase implements DBInterface {
 		persistLocal.write_key(IDPersistent.base_id, id);
 		this.baseID = id;
 	}
+
+	async crud_onThing(crud: string, thing: Thing) {};
+	async crud_onTrait(crud: string, trait: Trait) {};
+	async crud_onRelationship(crud: string, relationship: Relationship) {};
 
 	static readonly $_FETCH_$: unique symbol;
 
@@ -275,7 +279,7 @@ export default class DBFirebase implements DBInterface {
 				this.deferSnapshots = true;
 				const ref = await addDoc(thingsCollection, jsThing)
 				thing.awaitingCreation = false;
-				thing.hasBeen_saved = true;
+				thing.already_saved = true;
 				thing.setID(ref.id);			// so relationship will be correct
 				get(s_hierarchy).thing_remember(thing);
 				this.handle_deferredSnapshots();
@@ -414,7 +418,7 @@ export default class DBFirebase implements DBInterface {
 				this.deferSnapshots = true;
 				const ref = await addDoc(traitsCollection, jsTrait)
 				trait.awaitingCreation = false;
-				trait.hasBeen_saved = true;
+				trait.already_saved = true;
 				trait.setID(ref.id);			// so relationship will be correct
 				get(s_hierarchy).trait_remember(trait);
 				this.handle_deferredSnapshots();
@@ -492,7 +496,7 @@ export default class DBFirebase implements DBInterface {
 		if (changed) {
 			relationship.idChild = remote.child.id;
 			relationship.idParent = remote.parent.id;
-			relationship.hasBeen_saved = true;
+			relationship.already_saved = true;
 			relationship.idPredicate = remote.predicate.id;
 			relationship.order_setTo_persistentMaybe(remote.order + k.halfIncrement);
 		}
@@ -509,7 +513,7 @@ export default class DBFirebase implements DBInterface {
 				this.deferSnapshots = true;
 				const ref = await addDoc(relationshipsCollection, jsRelationship); // works!
 				relationship.awaitingCreation = false;
-				relationship.hasBeen_saved = true;
+				relationship.already_saved = true;
 				relationship.setID(ref.id);
 				get(s_hierarchy).relationship_remember(relationship);
 				this.handle_deferredSnapshots();

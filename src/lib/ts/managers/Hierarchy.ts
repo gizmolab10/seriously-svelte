@@ -245,10 +245,10 @@ export class Hierarchy {
 	}
 
 	thing_remember_runtimeCreateUnique(baseID: string, id: string, title: string, color: string, type: string,
-		hasBeen_saved: boolean = false): Thing {
+		already_saved: boolean = false): Thing {
 		let thing = this.thing_forHID(id?.hash() ?? null);
 		if (!thing) {
-			thing = this.thing_remember_runtimeCreate(baseID, id, title, color, type, hasBeen_saved);
+			thing = this.thing_remember_runtimeCreate(baseID, id, title, color, type, already_saved);
 		}
 		return thing;
 	}
@@ -275,8 +275,8 @@ export class Hierarchy {
 	}
 
 	thing_remember_runtimeCreate(baseID: string, id: string, title: string, color: string, type: string,
-		hasBeen_saved: boolean = false, needs_upgrade: boolean = false): Thing {
-		const thing = this.thing_runtimeCreate(baseID, id, title, color, type, hasBeen_saved);
+		already_saved: boolean = false, needs_upgrade: boolean = false): Thing {
+		const thing = this.thing_runtimeCreate(baseID, id, title, color, type, already_saved);
 		this.thing_remember(thing);
 		if (needs_upgrade) {
 			thing.needsWrite = true;	// add type and remove trait fields
@@ -319,12 +319,12 @@ export class Hierarchy {
 	}
 
 	thing_runtimeCreate(baseID: string, id: string, title: string, color: string, type: string,
-		hasBeen_saved: boolean = false): Thing {
+		already_saved: boolean = false): Thing {
 		let thing: Thing | null = null;
 		if (id && type == ThingType.root && baseID != this.db.baseID) {		// other bulks have their own root & id
 			thing = this.thing_remember_bulkRootID(baseID, id, color);		// which our thing needs to adopt
 		} else {
-			thing = new Thing(baseID, id, title, color, type, hasBeen_saved);
+			thing = new Thing(baseID, id, title, color, type, already_saved);
 			if (thing.isBulkAlias) {
 				thing.needsBulkFetch = true;
 				if (title.includes('@')) {
@@ -381,12 +381,12 @@ export class Hierarchy {
 
 	trait_forHID(hid: number | null): Trait | null { return !hid ? null : this.trait_byHID[hid]; }
 
-	trait_runtimeCreate(baseID: string, id: string, ownerID: string, type: TraitType, text: string, hasBeen_saved: boolean = false): Trait {
-		return new Trait(baseID, id, ownerID, type, text, hasBeen_saved);
+	trait_runtimeCreate(baseID: string, id: string, ownerID: string, type: TraitType, text: string, already_saved: boolean = false): Trait {
+		return new Trait(baseID, id, ownerID, type, text, already_saved);
 	}
 
-	trait_remember_runtimeCreateUnique(baseID: string, id: string, ownerID: string, type: TraitType, text: string, hasBeen_saved: boolean = false): Trait {
-		return this.trait_forHID(id?.hash()) ?? this.trait_remember_runtimeCreate(baseID, id, ownerID, type, text, hasBeen_saved);
+	trait_remember_runtimeCreateUnique(baseID: string, id: string, ownerID: string, type: TraitType, text: string, already_saved: boolean = false): Trait {
+		return this.trait_forHID(id?.hash()) ?? this.trait_remember_runtimeCreate(baseID, id, ownerID, type, text, already_saved);
 	}
 
 	trait_forType_ownerHID(type: TraitType | null, ownerHID: number | null): Trait| null {
@@ -410,8 +410,8 @@ export class Hierarchy {
 	}
 
 	trait_remember_runtimeCreate(baseID: string, id: string, ownerID: string, type: TraitType, text: string,
-		hasBeen_saved: boolean = false): Trait {
-		const trait = this.trait_runtimeCreate(baseID, id, ownerID, type, text, hasBeen_saved);
+		already_saved: boolean = false): Trait {
+		const trait = this.trait_runtimeCreate(baseID, id, ownerID, type, text, already_saved);
 		this.trait_remember(trait);
 		return trait;
 	}
@@ -581,7 +581,7 @@ export class Hierarchy {
 			if (relationship.baseID != this.db.baseID) {
 				debug.log_error(`RELATIONSHIP off base: ${relationship.baseID} ${relationship.parent?.description} => ${relationship.child?.description}`);
 			}
-			if (relationship.hasBeen_saved && relationship.id.includes('NEW')) {
+			if (relationship.already_saved && relationship.id.includes('NEW')) {
 				console.log(`was saved ${relationship.id}`)
 			}
 			this.relationships.push(relationship);
@@ -636,13 +636,13 @@ export class Hierarchy {
 		let reversedRelationship = this.relationship_forPredicate_parent_child(idPredicate, idChild, idParent);
 		let relationship = this.relationship_forPredicate_parent_child(idPredicate, idParent, idChild);
 		const isBidirectional = this.predicate_forID(idPredicate)?.isBidirectional ?? false;
-		const hasBeen_saved = creationOptions == CreationOptions.isFromPersistent;
+		const already_saved = creationOptions == CreationOptions.isFromPersistent;
 		if (!relationship) {
-			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, hasBeen_saved);
+			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, already_saved);
 			this.relationship_remember(relationship);
 		}
 		if (isBidirectional && !reversedRelationship) {
-			reversedRelationship = new Relationship(baseID, Identifiable.newID(), idPredicate, idChild, idParent, order, hasBeen_saved);
+			reversedRelationship = new Relationship(baseID, Identifiable.newID(), idPredicate, idChild, idParent, order, already_saved);
 			this.relationship_remember(reversedRelationship);
 		}
 		relationship?.order_setTo_persistentMaybe(order);
@@ -823,7 +823,7 @@ export class Hierarchy {
 			if (changingBulk) {
 				console.log('changingBulk');
 			}
-			if (!child.hasBeen_saved) {
+			if (!child.already_saved) {
 				await this.db.thing_remember_persistentCreate(child);					// for everything below, need to await child.id fetched from dbDispatch
 			}
 			const relationship = await this.relationship_remember_persistentCreateUnique(baseID, Identifiable.newID(), idPredicate, parent.idBridging, child.id, 0, CreationOptions.getPersistentID);
@@ -1012,14 +1012,14 @@ export class Hierarchy {
 		}
 	}
 
-	predicate_remember_runtimeCreateUnique(id: string, kind: string, isBidirectional: boolean, hasBeen_saved: boolean = true) {
+	predicate_remember_runtimeCreateUnique(id: string, kind: string, isBidirectional: boolean, already_saved: boolean = true) {
 		if (!this.predicate_forID(id)) {
-			this.predicate_remember_runtimeCreate(id, kind, isBidirectional, hasBeen_saved);
+			this.predicate_remember_runtimeCreate(id, kind, isBidirectional, already_saved);
 		}
 	}
 
-	predicate_remember_runtimeCreate(id: string, kind: string, isBidirectional: boolean, hasBeen_saved: boolean = true) {
-		this.predicate_remember(new Predicate(id, kind, isBidirectional, hasBeen_saved));
+	predicate_remember_runtimeCreate(id: string, kind: string, isBidirectional: boolean, already_saved: boolean = true) {
+		this.predicate_remember(new Predicate(id, kind, isBidirectional, already_saved));
 	}
 
 	access_runtimeCreate(idAccess: string, kind: string) {
