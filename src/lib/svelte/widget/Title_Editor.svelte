@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { Graph_Type, dbDispatch, Seriously_Range, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
-	import { s_hierarchy, s_graph_type, s_thing_color, s_title_thing, s_edit_state } from '../../ts/state/Svelte_Stores';
+	import { s_hierarchy, s_graph_type, s_thing_color, s_thing_title, s_edit_state } from '../../ts/state/Svelte_Stores';
 	import { s_thing_fontFamily, s_grabbed_ancestries, s_ancestry_showing_tools } from '../../ts/state/Svelte_Stores';
 	import { g, k, u, Point, Thing, debug, Angle, ZIndex, signals } from '../../ts/common/Global_Imports';
 	import { onMount } from 'svelte';
@@ -30,7 +30,7 @@
 		const title = event.target.value;
 		if (!!thing && (!!title || title == k.empty)) {
 			thing.title = bound_title = title;
-			s_title_thing.set(null);
+			s_thing_title.set(null);
 		}
 	};
 	
@@ -50,7 +50,7 @@
 			switch (event.key) {	
 				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); $s_hierarchy.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
-				default:	  s_title_thing.set(thing.id); break;
+				default:	  s_thing_title.set(thing.id); break;
 			}
 		}
 	}

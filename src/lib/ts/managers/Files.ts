@@ -1,3 +1,5 @@
+import { debug } from '../common/Debug';
+
 export default class Files {
 	static ignorables = [
 		'dbType',
@@ -14,6 +16,13 @@ export default class Files {
 		'awaitingCreation',
 		'hasPersistentStorage'
 	];
+	
+	removeIgnorables(key: string, value: any) {
+		if (Files.ignorables.includes(key)) {
+			return undefined;
+		}
+		return value;
+	}
 
 	write_object_toFile(object: Object, fileName: string): void {
 		const content = JSON.stringify(object, this.removeIgnorables, 2)
@@ -25,13 +34,28 @@ export default class Files {
 		URL.revokeObjectURL(link.href);
 	}
 	
-	removeIgnorables(key: string, value: any) {
-		if (Files.ignorables.includes(key)) {
-			return undefined;
-		}
-		return value;
+	fetch_object_fromFile(fileName: string): Object {
+		const file = new File([], fileName, {});
+		const reader = new FileReader();
+		let content = new Object();
+		reader.onload = function (e) {
+            try {
+				const result = (e.target?.result as string) ?? '';
+				console.log(`${fileName} "${result}"`);
+				content = JSON.parse(result);
+				console.log(content);
+            } catch (error) {
+                console.error('Error parsing JSON:', error);
+            }
+		};
+		reader.onerror = function () {
+			console.log('bad file')
+			debug.log_error('Error reading file.');
+		};
+		reader.readAsText(file);
+		return content;
 	}
 	
 }
 
-export let f = new Files();
+export let files = new Files();

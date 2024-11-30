@@ -1,16 +1,11 @@
 <script lang='ts'>
-	import { s_focus_ancestry, s_grabbed_ancestries } from '../../ts/state/Svelte_Stores';
-	import { k, show, Thing, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
-	import { s_title_thing, s_card_ancestry } from '../../ts/state/Svelte_Stores';
-	import Identifiable from '../../ts/basis/Identifiable';
-	import Text_Editor from '../kit/Text_Editor.svelte';
-	import Button from '../mouse/Button.svelte';
+	import { k, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
+	export let ancestry: Ancestry;
 	export let top = 0;
 	let rebuilds = 0;
 	let information;
 	
 	$: {
-		const ancestry = $s_card_ancestry;
 		const thing = ancestry?.thing;
 		if (!!thing) {
 			const dict = {

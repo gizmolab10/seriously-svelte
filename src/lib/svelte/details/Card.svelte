@@ -1,12 +1,13 @@
 <script lang='ts'>
 	import { signals, TraitType, persistLocal, ElementType, IDPersistent } from '../../ts/common/Global_Imports';
 	import { g, k, ux, show, Rect, Size, Point, Thing, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
-	import { s_title_thing, s_hierarchy, s_thing_color, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
-	import { s_card_ancestry, s_grabbed_ancestries, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
+	import { s_focus_ancestry, s_grabbed_ancestries, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
+	import { s_hierarchy, s_thing_color, s_thing_title } from '../../ts/state/Svelte_Stores';
 	import Identifiable from '../../ts/basis/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Button from '../mouse/Button.svelte';
 	import Color from './Color.svelte';
+	import Info from './Info.svelte';
 	import { onMount } from 'svelte';
 	export let top = 71;
 	const id = 'info';
@@ -40,7 +41,7 @@
 	});
 	
 	$: {
-		const _ = `${$s_grabbed_ancestries} ${$s_focus_ancestry} ${$s_title_thing}`;
+		const _ = `${$s_grabbed_ancestries} ${$s_focus_ancestry} ${$s_thing_title}`;
 		update_forKind();
 	}
 	
@@ -67,7 +68,6 @@
 			grabs = $s_grabbed_ancestries;
 			ancestry = grabs[0];
 		}
-		$s_card_ancestry = ancestry;
 		thing = ancestry?.thing;
 		thingHID = thing?.idHashed;
 		card_title = thing?.title;
@@ -152,5 +152,8 @@
 					handle_textChange={handle_textChange}/>
 			{/if}
 		</div>
+		{#if show.thing_info}
+			<Info top={top + 10} ancestry={ancestry}/>
+		{/if}
 	{/if}
 {/key}

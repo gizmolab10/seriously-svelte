@@ -1,8 +1,8 @@
-import { g, k, u, User, Thing, Trait, Grabs, debug, Access, IDTool, signals } from '../common/Global_Imports';
-import { s_alteration_mode, s_grabbed_ancestries, s_ancestry_showing_tools } from '../state/Svelte_Stores';
+import { g, k, u, User, Thing, Trait, Grabs, debug, files, Access, IDTool } from '../common/Global_Imports';
+import { signals, ThingType, TraitType, Predicate, Ancestry, Mouse_State } from '../common/Global_Imports';
 import { Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
-import { ThingType, TraitType, Predicate, Ancestry, Mouse_State } from '../common/Global_Imports';
-import { s_edit_state, s_focus_ancestry } from '../state/Svelte_Stores';
+import { s_edit_state, s_focus_ancestry, s_alteration_mode } from '../state/Svelte_Stores';
+import { s_grabbed_ancestries, s_ancestry_showing_tools } from '../state/Svelte_Stores';
 import PersistentIdentifiable from '../basis/PersistentIdentifiable';
 import { DBType } from '../../ts/basis/PersistentIdentifiable';
 import Identifiable from '../basis/Identifiable';
@@ -1048,6 +1048,12 @@ export class Hierarchy {
 	}
 
 	static readonly $_OTHER_$: unique symbol;
+
+	save_toFile() {
+		console.log('save_toFile');
+		files.write_object_toFile(this.all_data, 'data.json');		// until Ancestry does traversal, just use the root
+		// if has a grabbed use the top one, else use the focus, if focus is root, use above
+	}
 
 	async conclude_fetch() {
 		await this.deferredWriteAll();

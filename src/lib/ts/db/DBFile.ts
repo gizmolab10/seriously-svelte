@@ -1,4 +1,4 @@
-import { f, k, Thing, Trait, ThingType, Hierarchy, Relationship } from '../common/Global_Imports';
+import { k, files, Thing, Trait, ThingType, Hierarchy, Relationship } from '../common/Global_Imports';
 import { DBType, DatumType } from '../basis/PersistentIdentifiable';
 import { s_hierarchy } from '../state/Svelte_Stores';
 import DBInterface from './DBInterface';
@@ -15,7 +15,7 @@ export default class DBFile implements DBInterface {
 	setHasData(flag: boolean) { this.hasData = flag; }
 	json_fileName_for(datum_type: string): string { return `${this.baseID}.${datum_type.toLowerCase()}.json`; }
 
-	persist() { f.write_object_toFile(get(s_hierarchy).all_data, 'data.json'); }
+	persist() { files.write_object_toFile(get(s_hierarchy).all_data, 'data.json'); }
 
 	async fetch_all() {
 		const h = get(s_hierarchy);

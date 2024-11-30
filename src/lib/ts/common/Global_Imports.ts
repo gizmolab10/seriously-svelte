@@ -2,7 +2,7 @@ import type { Handle_Mouse_State, Create_Mouse_State } from './Types';
 import type { SvelteComponent } from 'svelte';
 
 import { builds } from './Builds';
-import { e } from '../signals/Events';
+import { files } from '../managers/Files';
 import { show } from '../state/Show_State';
 import { cursors } from '../maybe/Cursors';
 import { dbDispatch } from '../db/DBDispatch';
@@ -51,7 +51,7 @@ import User from '../data/User';
 import './Extensions';
 import { u } from './Utilities';
 import { k } from './Constants';
-import { f } from '../managers/Files';
+import { e } from '../signals/Events';
 import { ux } from '../state/UX_State';
 import { g } from '../state/Global_State';
 import { w } from '../geometry/Window_Geometry';
@@ -60,7 +60,7 @@ import { transparentize } from 'color2k';
 import interact from 'interactjs';
 
 export {
-	e, f, g, k, u, ux, w,
+	e, g, k, u, ux, w,
 	debug, Debug, DebugFlag,
 	Timer_Type, Mouse_Timer,
 	interact, transparentize,
@@ -68,7 +68,7 @@ export {
 	Oblong_Part, AlterationType,
 	Angle, Quadrant, Orientation,
 	Tree_Geometry, Widget_MapRect,
-	show, builds, signals, wrappers,
+	show, files, builds, signals, wrappers,
 	ZIndex, PredicateKind, CreationOptions,
 	Rect, Size, Point, cursors, svgPaths, Direction,
 	Mouse_State, Handle_Mouse_State, Create_Mouse_State,

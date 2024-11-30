@@ -6,7 +6,6 @@
 	import Storage from './Storage.svelte';
 	import Tools from './Tools.svelte';
 	import Card from './Card.svelte';
-	import Info from './Info.svelte';
 	const titles = [Details_Type[Details_Type.storage], Details_Type[Details_Type.info], Details_Type[Details_Type.tools], Details_Type[Details_Type.recents]];
 	const heights = [30, 100, 40, 0];
 	let tops = [0, 0, 0, 0];
@@ -71,9 +70,6 @@
 		{/if}
 		{#if g.details_type_isVisible(Details_Type.info)}
 			<Card top={tops[Details_Type.info]}/>
-			{#if show.thing_info}
-				<Info top={tops[Details_Type.info] + 10}/>
-			{/if}
 		{/if}
 		{#if g.details_type_isVisible(Details_Type.tools)}
 			<Tools top={tops[Details_Type.tools]}/>
