@@ -29,10 +29,10 @@ export class Hierarchy {
 	private thing_byHID: { [hid: number]: Thing } = {};
 	private trait_byHID: { [hid: number]: Trait } = {};
 	private user_byHID: { [hid: number]: User } = {};
+	private things: Array<Thing> = [];
+	private traits: Array<Trait> = [];
 	relationships: Array<Relationship> = [];
 	predicates: Array<Predicate> = [];
-	things: Array<Thing> = [];
-	traits: Array<Trait> = [];
 	rootsAncestry!: Ancestry;
 	rootAncestry!: Ancestry;
 	isAssembled = false;
@@ -43,6 +43,15 @@ export class Hierarchy {
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): string | null { return this.root?.id ?? null; };
 	ancestries_rebuildAll() { this.root?.oneAncestries_rebuildForSubtree(); }
+
+	get all_data(): Object {
+		return {
+			'things' : this.things,
+			'traits' : this.traits,
+			'predicates' : this.predicates,
+			'relationships' : this.relationships,
+		}
+	}
 
 	static readonly $_INIT_$: unique symbol;
 

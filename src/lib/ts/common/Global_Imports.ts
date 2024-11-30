@@ -40,8 +40,8 @@ import Svelte_Wrapper from './Svelte_Wrapper';
 import Ancestry from '../managers/Ancestry';
 import Predicate from '../data/Predicate';
 import Arc_Map from '../geometry/Arc_Map';
-import Grabs from '../managers/Grabs';
 import Angle from '../geometry/Angle';
+import Grabs from '../managers/Grabs';
 import Access from '../data/Access';
 import Datum from '../basis/Datum';
 import Thing from '../data/Thing';
@@ -51,6 +51,7 @@ import User from '../data/User';
 import './Extensions';
 import { u } from './Utilities';
 import { k } from './Constants';
+import { f } from '../managers/Files';
 import { ux } from '../state/UX_State';
 import { g } from '../state/Global_State';
 import { w } from '../geometry/Window_Geometry';
@@ -59,7 +60,7 @@ import { transparentize } from 'color2k';
 import interact from 'interactjs';
 
 export {
-	e, g, k, u, ux, w,
+	e, f, g, k, u, ux, w,
 	debug, Debug, DebugFlag,
 	Timer_Type, Mouse_Timer,
 	interact, transparentize,
@@ -71,8 +72,8 @@ export {
 	ZIndex, PredicateKind, CreationOptions,
 	Rect, Size, Point, cursors, svgPaths, Direction,
 	Mouse_State, Handle_Mouse_State, Create_Mouse_State,
-	Arc_Map, Segment_Map, Cluster_Map, Clusters_Geometry,
 	Grabs, Ancestry, Hierarchy, dbDispatch, persistLocal,
+	Arc_Map, Segment_Map, Cluster_Map, Clusters_Geometry,
 	User, Datum, Thing, Trait, Access, Predicate, Relationship,
 	Element_State, Paging_State, Page_States, Alteration_State,
 	IDLine, IDTool, IDSignal, IDControl, IDBrowser, IDPersistent,

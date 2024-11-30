@@ -1,5 +1,4 @@
-import { k, Thing, Trait, ThingType, Hierarchy, Relationship } from '../common/Global_Imports';
-import PersistentIdentifiable from '../basis/PersistentIdentifiable';
+import { f, k, Thing, Trait, ThingType, Hierarchy, Relationship } from '../common/Global_Imports';
 import { DBType, DatumType } from '../basis/PersistentIdentifiable';
 import { s_hierarchy } from '../state/Svelte_Stores';
 import DBInterface from './DBInterface';
@@ -16,44 +15,7 @@ export default class DBFile implements DBInterface {
 	setHasData(flag: boolean) { this.hasData = flag; }
 	json_fileName_for(datum_type: string): string { return `${this.baseID}.${datum_type.toLowerCase()}.json`; }
 
-	persist() {
-		const h = get(s_hierarchy);
-		this.write_toFile(h.relationships, DatumType.relationships);
-		this.write_toFile(h.predicates, DatumType.predicates);
-		this.write_toFile(h.things, DatumType.things);
-		this.write_toFile(h.traits, DatumType.traits);
-	}
-
-	removeCircularReferences(key: string, value: any) {
-		const ignorables = [
-			'dbType',
-			'baseID',
-			'idHashed',
-			'isEditing',
-			'isGrabbed',
-			'needsWrite',
-			'oneAncestry',
-			'page_states',
-			'already_saved',
-			'selectionRange',
-			'awaitingCreation',
-			'hasPersistentStorage'];
-		if (ignorables.includes(key)) {
-			return undefined; // Exclude the self-referencing property
-		}
-		return value;
-	}
-
-	write_toFile(data: Array<PersistentIdentifiable>, datum_type: string): void {
-		const fileName = this.json_fileName_for(datum_type);
-		const content = JSON.stringify(data, this.removeCircularReferences, 2)
-		const blob = new Blob([content], { type: 'application/json' });
-		const link = document.createElement('a');
-		link.href = URL.createObjectURL(blob);
-		link.download = fileName;
-		link.click();
-		URL.revokeObjectURL(link.href);
-	}
+	persist() { f.write_object_toFile(get(s_hierarchy).all_data, 'data.json'); }
 
 	async fetch_all() {
 		const h = get(s_hierarchy);
