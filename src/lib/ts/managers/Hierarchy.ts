@@ -4,6 +4,7 @@ import { Relationship, CreationOptions, AlterationType, Alteration_State } from 
 import { ThingType, TraitType, Predicate, Ancestry, Mouse_State } from '../common/Global_Imports';
 import { s_edit_state, s_focus_ancestry } from '../state/Svelte_Stores';
 import PersistentIdentifiable from '../basis/PersistentIdentifiable';
+import { DBType } from '../../ts/basis/PersistentIdentifiable';
 import Identifiable from '../basis/Identifiable';
 import DBInterface from '../db/DBInterface';
 import { get } from 'svelte/store';
@@ -28,10 +29,10 @@ export class Hierarchy {
 	private thing_byHID: { [hid: number]: Thing } = {};
 	private trait_byHID: { [hid: number]: Trait } = {};
 	private user_byHID: { [hid: number]: User } = {};
-	private things: Array<Thing> = [];
-	private traits: Array<Trait> = [];
 	relationships: Array<Relationship> = [];
 	predicates: Array<Predicate> = [];
+	things: Array<Thing> = [];
+	traits: Array<Trait> = [];
 	rootsAncestry!: Ancestry;
 	rootAncestry!: Ancestry;
 	isAssembled = false;
@@ -159,9 +160,13 @@ export class Hierarchy {
 	}
 
 	async deferredWriteAll() {
-		await this.deferredWriteAllData(this.things);
-		await this.deferredWriteAllData(this.traits);
-		await this.deferredWriteAllData(this.relationships);
+		if (this.db.dbType == DBType.file) {
+			this.db.persist();
+		} else {
+			await this.deferredWriteAllData(this.things);
+			await this.deferredWriteAllData(this.traits);
+			await this.deferredWriteAllData(this.relationships);
+		}
 	}
 
 	clear_editingTools() {
@@ -328,9 +333,9 @@ export class Hierarchy {
 			if (thing.isBulkAlias) {
 				thing.needsBulkFetch = true;
 				if (title.includes('@')) {
-					const dual = title.split('@');
-					thing.title = dual[0];
-					thing.bulkRootID = dual[1];
+					const parts = title.split('@');
+					thing.title = parts[0];
+					thing.bulkRootID = parts[1];
 				}
 			}
 		}

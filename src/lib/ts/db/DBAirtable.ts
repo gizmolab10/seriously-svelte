@@ -66,6 +66,7 @@ export default class DBAirtable implements DBInterface {
 		await this.users_readAll();
 	}
 
+	persist() {}
 	async crud_onThing(crud: string, thing: Thing) {};
 	async crud_onTrait(crud: string, trait: Trait) {};
 	async crud_onRelationship(crud: string, relationship: Relationship) {};

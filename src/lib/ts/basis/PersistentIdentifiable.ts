@@ -34,8 +34,6 @@ export default class PersistentIdentifiable extends Identifiable {
 		this.dbType = dbType;
 	}
 
-	async persist() {}
-    toJSON(): string { return JSON.stringify(this); }
 	updateModifyDate() { this.lastModifyDate = new Date(); }
 
     static persistent_fromJSON(json: string): PersistentIdentifiable {

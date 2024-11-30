@@ -9,9 +9,10 @@ export enum CRUD {
 export default interface DBInterface {
 	baseID: string;
 	dbType: string;
+	persist(): void;
 	hasData: boolean;
-	isPersistent: boolean;
 	hierarchy: Hierarchy;
+	isPersistent: boolean;
 	loadTime: string | null;
 	queryStrings_apply(): void;
 	fetch_all(): Promise<void>;

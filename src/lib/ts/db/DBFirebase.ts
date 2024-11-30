@@ -41,6 +41,7 @@ export default class DBFirebase implements DBInterface {
 
 	setHasData(flag: boolean) { this.hasData = flag; }
 	reportError(error: any) { console.log(error); }
+	persist() {}
 
 	queryStrings_apply() {
 		const persistedID = persistLocal.read_key(IDPersistent.base_id);
