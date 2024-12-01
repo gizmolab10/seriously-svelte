@@ -1,24 +1,23 @@
 <script lang='ts'>
 	import { s_id_popupView } from '../../ts/state/Svelte_Stores';
+	import { files } from '../../ts/managers/Files';
 	import Open from './Open.svelte';
-	let selectedFiles: FileList | null = null;
 
-	function handleFilesSelected(event: CustomEvent<FileList>) {
-		selectedFiles = event.detail;
-		console.log('Selected files:', selectedFiles);
-		$s_id_popupView = null;
-	}
-
-	function handleCancel() {
-		selectedFiles = null;
+	function handle_cancel() {
 		console.log('File selection was canceled.');
 		$s_id_popupView = null;
 	}
+
+	function handle_files_selected(event: CustomEvent<FileList>) {
+		const json = files.extract_json_object_from(event.detail[0]);
+		console.log('Extracted:', json);
+		$s_id_popupView = null;
+	}
+
 </script>
 
 <Open
-	multiple={false}
-	accept='.seriously'
-	on:cancel={handleCancel}
-	on:filesSelected={handleFilesSelected}
+	accept='.json'
+	on:cancel={handle_cancel}
+	on:files_selected={handle_files_selected}
 />

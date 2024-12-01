@@ -1051,7 +1051,7 @@ export class Hierarchy {
 
 	save_toFile() {
 		console.log('save_toFile');
-		files.write_object_toFile(this.all_data, 'data.json');		// until Ancestry does traversal, just use the root
+		files.download_json_object_toFile(this.all_data, 'root.json');		// until Ancestry does traversal, just use the root
 		// if has a grabbed use the top one, else use the focus, if focus is root, use above
 	}
 

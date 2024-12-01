@@ -146,6 +146,39 @@ class Events {
 	handle_touch_end(event: TouchEvent) {
 		this.initialTouch = null;
 	}
+	// // Attach drag-and-drop event listeners to the window
+	// window.addEventListener('dragover', (event) => {
+	//     event.preventDefault(); // Prevent default behavior to allow drop
+	//     console.log('File being dragged over the window.');
+	// });
+
+	// window.addEventListener('drop', (event) => {
+	//     event.preventDefault(); // Prevent default behavior (e.g., opening the file in the browser)
+
+	//     // Access the dropped files
+	//     const files = event.dataTransfer?.files;
+	//     if (files && files.length > 0) {
+	//         console.log(`File(s) dropped: ${files.length}`);
+			
+	//         // Process the first file
+	//         const file = files[0];
+	//         console.log(`File name: ${file.name}`);
+	//         console.log(`File size: ${file.size} bytes`);
+	//         console.log(`File type: ${file.type}`);
+
+	//         // Example: Reading the file content
+	//         const reader = new FileReader();
+	//         reader.onload = (e) => {
+	//             console.log('File content:', e.target?.result);
+	//         };
+	//         reader.onerror = () => {
+	//             console.error('Error reading the file.');
+	//         };
+	//         reader.readAsText(file); // Reads file as text (adjust based on your needs)
+	//     } else {
+	//         console.log('No files dropped.');
+	//     }
+	// });
 
 }
 

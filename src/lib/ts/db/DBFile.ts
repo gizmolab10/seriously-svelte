@@ -15,7 +15,7 @@ export default class DBFile implements DBInterface {
 	setHasData(flag: boolean) { this.hasData = flag; }
 	json_fileName_for(datum_type: string): string { return `${this.baseID}.${datum_type.toLowerCase()}.json`; }
 
-	persist() { files.write_object_toFile(get(s_hierarchy).all_data, 'data.json'); }
+	persist() { files.download_json_object_toFile(get(s_hierarchy).all_data, 'data.json'); }
 
 	async fetch_all() {
 		const h = get(s_hierarchy);

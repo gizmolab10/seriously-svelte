@@ -36,7 +36,7 @@
 				switch (key) {
 					case 'c': w.user_graph_offset_setTo(Point.zero); break;
 					case 'o': $s_id_popupView = IDControl.open; break;
-					case 's': $s_hierarchy.save_toFile();
+					case 's': $s_hierarchy.save_toFile(); break;
 					case '?': g.showHelp(); break;
 					default:  await $s_hierarchy.handle_key_down(event); return;
 				}
