@@ -16,7 +16,7 @@ import Airtable from 'airtable';
 //							//
 //////////////////////////////
 
-export default class DBAirtable implements DBInterface {
+export default class DBAirtable extends DBInterface {
 	personalAccessToken = 'patGTiWbebGZTw0fh.dd17a194aea98f9e4e918d333babde7bcd39903b4179b139ac8866a5f3cfe5b6';
 	baseCatalist = new Airtable({ apiKey: this.personalAccessToken }).base('apphGUCbYIEJLvRrR');
 	basePublic = new Airtable({ apiKey: this.personalAccessToken }).base('appq1IjzmiRdlZi3H');
@@ -66,7 +66,6 @@ export default class DBAirtable implements DBInterface {
 		await this.users_readAll();
 	}
 
-	persist() {}
 	async crud_onThing(crud: string, thing: Thing) {};
 	async crud_onTrait(crud: string, trait: Trait) {};
 	async crud_onRelationship(crud: string, relationship: Relationship) {};

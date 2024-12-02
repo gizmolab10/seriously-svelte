@@ -31,10 +31,10 @@ export class Hierarchy {
 	private thing_byHID: { [hid: number]: Thing } = {};
 	private trait_byHID: { [hid: number]: Trait } = {};
 	private user_byHID: { [hid: number]: User } = {};
-	private things: Array<Thing> = [];
-	private traits: Array<Trait> = [];
 	relationships: Array<Relationship> = [];
 	predicates: Array<Predicate> = [];
+	things: Array<Thing> = [];
+	traits: Array<Trait> = [];
 	rootsAncestry!: Ancestry;
 	rootAncestry!: Ancestry;
 	isAssembled = false;
@@ -158,29 +158,10 @@ export class Hierarchy {
 				debug.log_key(`H  (${duration}) ${key}`);
 				setTimeout(() => {
 					(async () => {
-						await this.deferred_persistAll();
+						await this.db.deferred_persistAll();
 					})();
 				}, 1);
 			}
-		}
-	}
-
-	async deferred_persistAll_data(array: Array<PersistentIdentifiable>) {
-		array.forEach(async (identifiable) => {
-			if (identifiable.needs_persisting_again) {
-				identifiable.needs_persisting_again = false;
-				await identifiable.persist();
-			}
-		});
-	}
-
-	async deferred_persistAll() {
-		if (this.db.dbType == DBType.file) {
-			this.db.persist();
-		} else {
-			await this.deferred_persistAll_data(this.things);
-			await this.deferred_persistAll_data(this.traits);
-			await this.deferred_persistAll_data(this.relationships);
 		}
 	}
 
@@ -1131,14 +1112,14 @@ export class Hierarchy {
 		}
 	}
 
-	rebuild_hierarchy_with(dict: Dictionary | null) {
+	async rebuild_hierarchy_with(dict: Dictionary | null) {
 		if (!!dict) {
 			this.hierarchy_forgetAll();
 			for (const type of this.all_dataTypes) {
 				this.extractObjects_fromArray_ofType(dict[type], type);
 			}
 			this.setup_hierarchy_after_fetch();
-			this.deferred_persistAll();
+			await this.db.deferred_persistAll();
 		}
 	}
 
@@ -1169,7 +1150,7 @@ export class Hierarchy {
 	}
 
 	async conclude_fetch() {
-		await this.deferred_persistAll();
+		await this.db.deferred_persistAll();
 		this.isAssembled = true;
 	}
 

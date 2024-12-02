@@ -1,10 +1,10 @@
 import { k, Thing, Trait, ThingType, Hierarchy, Relationship } from '../common/Global_Imports';
-import { DBType, DatumType } from '../basis/PersistentIdentifiable';
+import PersistentIdentifiable, { DBType, DatumType } from '../basis/PersistentIdentifiable';
 import { s_hierarchy } from '../state/Svelte_Stores';
 import DBInterface from './DBInterface';
 import { get } from 'svelte/store';
 
-export default class DBFile implements DBInterface {
+export default class DBFile extends DBInterface {
 	baseID = k.baseID_file;
 	hierarchy!: Hierarchy;
 	dbType = DBType.file;
@@ -12,8 +12,8 @@ export default class DBFile implements DBInterface {
 	hasData = false;
 	loadTime = null;
 
-	persist() { get(s_hierarchy).save_toFile(); }
 	setHasData(flag: boolean) { this.hasData = flag; }
+	async deferred_persistAll() { get(s_hierarchy).save_toFile(); }
 
 	async fetch_all() {
 		const h = get(s_hierarchy);

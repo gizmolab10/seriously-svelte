@@ -76,7 +76,10 @@ export default class DBDispatch {
 		this.db_set_accordingToType(type);
 		this.queryStrings_apply();
 		if (this.db.hasData) {
-			s_hierarchy.set(this.db.hierarchy);
+			const h = this.db.hierarchy;
+			if (!!h) {
+				s_hierarchy.set(h);
+			}
 		} else {
 			await this.hierarchy_fetch_andBuild();
 		}

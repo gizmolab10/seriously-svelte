@@ -93,7 +93,9 @@
 				case 'consequence':	thing.setTraitText_forType(text, TraitType.consequence); break;
 			}
 		} else if (!text) {
-			$s_hierarchy.deferred_persistAll();
+			(async () => {
+				await $s_hierarchy.db.deferred_persistAll();
+			})();
 		}
 	}
 

@@ -4,7 +4,7 @@ import { s_hierarchy } from '../state/Svelte_Stores';
 import DBInterface from './DBInterface';
 import { get } from 'svelte/store';
 
-export default class DBTest implements DBInterface {
+export default class DBTest extends DBInterface {
 	baseID = k.baseID_test;
 	hierarchy!: Hierarchy;
 	isPersistent = false;
@@ -82,7 +82,6 @@ export default class DBTest implements DBInterface {
 		}
 	}
 
-	persist() {}
 	queryStrings_apply() {}
 	async thing_persistentUpdate(thing: Thing) {}
 	async thing_persistentDelete(thing: Thing) {}

@@ -38,7 +38,7 @@ export default class PersistentIdentifiable extends Identifiable {
 	}
 
 	updateModifyDate() { this.lastModifyDate = new Date(); }
-	persist() {}
+	async persist() {}
 
     static persistent_fromJSON(json: string): PersistentIdentifiable {
         const parsed = JSON.parse(json);

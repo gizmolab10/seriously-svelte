@@ -12,7 +12,7 @@ import { get } from 'svelte/store';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
-export default class DBFirebase implements DBInterface {
+export default class DBFirebase extends DBInterface {
 	firebaseConfig = {
 		appId: "1:224721814373:web:0c60f394c056ef3decd78c",
 		apiKey: "AIzaSyAFy4H3Ej5zfI46fvCJpBfUxmyQco-dx9U",
@@ -41,7 +41,6 @@ export default class DBFirebase implements DBInterface {
 
 	setHasData(flag: boolean) { this.hasData = flag; }
 	reportError(error: any) { console.log(error); }
-	persist() {}
 
 	queryStrings_apply() {
 		const persistedID = persistLocal.read_key(IDPersistent.base_id);
