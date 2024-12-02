@@ -20,17 +20,18 @@ export enum DatumType {
 }
 
 export default class PersistentIdentifiable extends Identifiable {
+	needs_persisting_again = false;
 	hasPersistentStorage: boolean;
 	awaitingCreation: boolean;
-	already_saved: boolean;
+	already_persisted: boolean;
 	lastModifyDate: Date;
-	needsWrite = false;
 	dbType: string;
 
-	constructor(dbType: string, id: string, already_saved: boolean = false) {
+	constructor(dbType: string, id: string, already_persisted: boolean = false) {
 		super(id);
 		this.hasPersistentStorage = dbType != DBType.test;
-		this.already_saved = already_saved;
+		this.needs_persisting_again = this.hasPersistentStorage && !already_persisted;
+		this.already_persisted = already_persisted;
 		this.lastModifyDate = new Date();
 		this.awaitingCreation = false;
 		this.dbType = dbType;

@@ -280,7 +280,7 @@ export default class DBFirebase implements DBInterface {
 				this.deferSnapshots = true;
 				const ref = await addDoc(thingsCollection, jsThing)
 				thing.awaitingCreation = false;
-				thing.already_saved = true;
+				thing.already_persisted = true;
 				thing.setID(ref.id);			// so relationship will be correct
 				get(s_hierarchy).thing_remember(thing);
 				this.handle_deferredSnapshots();
@@ -419,7 +419,7 @@ export default class DBFirebase implements DBInterface {
 				this.deferSnapshots = true;
 				const ref = await addDoc(traitsCollection, jsTrait)
 				trait.awaitingCreation = false;
-				trait.already_saved = true;
+				trait.already_persisted = true;
 				trait.setID(ref.id);			// so relationship will be correct
 				get(s_hierarchy).trait_remember(trait);
 				this.handle_deferredSnapshots();
@@ -497,7 +497,7 @@ export default class DBFirebase implements DBInterface {
 		if (changed) {
 			relationship.idChild = remote.child.id;
 			relationship.idParent = remote.parent.id;
-			relationship.already_saved = true;
+			relationship.already_persisted = true;
 			relationship.idPredicate = remote.predicate.id;
 			relationship.order_setTo_persistentMaybe(remote.order + k.halfIncrement);
 		}
@@ -514,7 +514,7 @@ export default class DBFirebase implements DBInterface {
 				this.deferSnapshots = true;
 				const ref = await addDoc(relationshipsCollection, jsRelationship); // works!
 				relationship.awaitingCreation = false;
-				relationship.already_saved = true;
+				relationship.already_persisted = true;
 				relationship.setID(ref.id);
 				get(s_hierarchy).relationship_remember(relationship);
 				this.handle_deferredSnapshots();

@@ -4,8 +4,8 @@ import { DebugFlag } from '../common/Debug';
 export default class Datum extends PersistentIdentifiable {
 	baseID: string;
 
-	constructor(dbType: string, baseID: string, id: string, already_saved: boolean = false) {
-		super(dbType, id, already_saved);
+	constructor(dbType: string, baseID: string, id: string, already_persisted: boolean = false) {
+		super(dbType, id, already_persisted);
 		this.baseID = baseID;
 	}
 

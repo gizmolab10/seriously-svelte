@@ -13,6 +13,7 @@ import { get } from 'svelte/store';
 type Relationships_ByHID = { [hid: number]: Array<Relationship> }
 
 export class Hierarchy {
+	all_dataTypes = [DatumType.things, DatumType.traits, DatumType.predicates, DatumType.relationships];
 	private ancestry_byKind_andHash:{ [kind: string]: { [hash: number]: Ancestry } } = {};
 	private predicate_byDirection: { [direction: number]: Array<Predicate> } = {};
 	private traits_byOwnerHID: { [ownerHID: number]: Array<Trait> } = {};
@@ -64,6 +65,19 @@ export class Hierarchy {
 				this.root = root;
 			}
 		}
+	}
+
+	get all_data(): Object {
+		let data: Dictionary = {'type' : DatumType.hierarchy};
+		for (const type of this.all_dataTypes) {
+			switch(type) {
+				case DatumType.things:		  data[type] = this.things; break;
+				case DatumType.traits:		  data[type] = this.traits; break;
+				case DatumType.predicates:	  data[type] = this.predicates; break;
+				case DatumType.relationships: data[type] = this.relationships; break;
+			}
+		}
+		return data;
 	}
 
 	static readonly $_EVENTS_$: unique symbol;
@@ -144,29 +158,29 @@ export class Hierarchy {
 				debug.log_key(`H  (${duration}) ${key}`);
 				setTimeout(() => {
 					(async () => {
-						await this.deferredWriteAll();
+						await this.deferred_persistAll();
 					})();
 				}, 1);
 			}
 		}
 	}
 
-	async deferredWriteAllData(array: Array<PersistentIdentifiable>) {
+	async deferred_persistAll_data(array: Array<PersistentIdentifiable>) {
 		array.forEach(async (identifiable) => {
-			if (identifiable.needsWrite) {
-				identifiable.needsWrite = false;
+			if (identifiable.needs_persisting_again) {
+				identifiable.needs_persisting_again = false;
 				await identifiable.persist();
 			}
 		});
 	}
 
-	async deferredWriteAll() {
+	async deferred_persistAll() {
 		if (this.db.dbType == DBType.file) {
-			// this.db.persist();
+			this.db.persist();
 		} else {
-			await this.deferredWriteAllData(this.things);
-			await this.deferredWriteAllData(this.traits);
-			await this.deferredWriteAllData(this.relationships);
+			await this.deferred_persistAll_data(this.things);
+			await this.deferred_persistAll_data(this.traits);
+			await this.deferred_persistAll_data(this.relationships);
 		}
 	}
 
@@ -204,6 +218,31 @@ export class Hierarchy {
 	
 	static readonly $_THINGS_$: unique symbol;
 
+	thing_build_fromDict(dict: Dictionary) {
+		const thing = this.thing_remember_runtimeCreateUnique(dict.baseID, dict.id, dict.title, dict.color, dict.type);
+		thing.lastModifyDate = dict.lastModifyDate;
+		thing.needsBulkFetch = dict.needsBulkFetch;
+		thing.bulkRootID = dict.bulkRootID;
+		console.log(thing.description);
+	}
+
+	things_forgetAll() {
+		this.things = []; // clear
+		this.thing_byHID = {};
+		this.things_byType = {};
+	}
+
+	things_forAncestries(ancestries: Array<Ancestry>): Array<Thing> {
+		const things = Array<Thing>();
+		for (const ancestry of ancestries) {
+			const thing = this.thing_forAncestry(ancestry);
+			if (!!!!thing) {
+				things.push(thing);
+			}
+		}
+		return things;
+	}
+
 	things_forAncestry(ancestry: Ancestry): Array<Thing> {
 		const isContains = ancestry.idPredicate == Predicate.idContains;
 		let things: Array<Thing | null> = isContains ? [this.root] : [];
@@ -222,23 +261,6 @@ export class Hierarchy {
 		return u.strip_invalid(things);
 	}
 
-	things_forAncestries(ancestries: Array<Ancestry>): Array<Thing> {
-		const things = Array<Thing>();
-		for (const ancestry of ancestries) {
-			const thing = this.thing_forAncestry(ancestry);
-			if (!!!!thing) {
-				things.push(thing);
-			}
-		}
-		return things;
-	}
-
-	things_forgetAll() {
-		this.things = []; // clear
-		this.thing_byHID = {};
-		this.things_byType = {};
-	}
-
 	static readonly $_THING_$: unique symbol;
 
 	thing_forAncestry(ancestry: Ancestry | null): Thing | null { return ancestry?.thing ?? null; }
@@ -251,10 +273,10 @@ export class Hierarchy {
 	}
 
 	thing_remember_runtimeCreateUnique(baseID: string, id: string, title: string, color: string, type: string,
-		already_saved: boolean = false): Thing {
+		already_persisted: boolean = false): Thing {
 		let thing = this.thing_forHID(id?.hash() ?? null);
 		if (!thing) {
-			thing = this.thing_remember_runtimeCreate(baseID, id, title, color, type, already_saved);
+			thing = this.thing_remember_runtimeCreate(baseID, id, title, color, type, already_persisted);
 		}
 		return thing;
 	}
@@ -281,11 +303,11 @@ export class Hierarchy {
 	}
 
 	thing_remember_runtimeCreate(baseID: string, id: string, title: string, color: string, type: string,
-		already_saved: boolean = false, needs_upgrade: boolean = false): Thing {
-		const thing = this.thing_runtimeCreate(baseID, id, title, color, type, already_saved);
+		already_persisted: boolean = false, needs_upgrade: boolean = false): Thing {
+		const thing = this.thing_runtimeCreate(baseID, id, title, color, type, already_persisted);
 		this.thing_remember(thing);
 		if (needs_upgrade) {
-			thing.needsWrite = true;	// add type and remove trait fields
+			thing.needs_persisting_again = true;	// add type and remove trait fields
 		}
 		return thing;
 	}
@@ -325,12 +347,12 @@ export class Hierarchy {
 	}
 
 	thing_runtimeCreate(baseID: string, id: string, title: string, color: string, type: string,
-		already_saved: boolean = false): Thing {
+		already_persisted: boolean = false): Thing {
 		let thing: Thing | null = null;
 		if (id && type == ThingType.root && baseID != this.db.baseID) {		// other bulks have their own root & id
 			thing = this.thing_remember_bulkRootID(baseID, id, color);		// which our thing needs to adopt
 		} else {
-			thing = new Thing(baseID, id, title, color, type, already_saved);
+			thing = new Thing(baseID, id, title, color, type, already_persisted);
 			if (thing.isBulkAlias) {
 				thing.needsBulkFetch = true;
 				if (title.includes('@')) {
@@ -387,17 +409,22 @@ export class Hierarchy {
 
 	trait_forHID(hid: number | null): Trait | null { return !hid ? null : this.trait_byHID[hid]; }
 
-	trait_runtimeCreate(baseID: string, id: string, ownerID: string, type: TraitType, text: string, already_saved: boolean = false): Trait {
-		return new Trait(baseID, id, ownerID, type, text, already_saved);
+	trait_runtimeCreate(baseID: string, id: string, ownerID: string, type: TraitType, text: string, already_persisted: boolean = false): Trait {
+		return new Trait(baseID, id, ownerID, type, text, already_persisted);
 	}
 
-	trait_remember_runtimeCreateUnique(baseID: string, id: string, ownerID: string, type: TraitType, text: string, already_saved: boolean = false): Trait {
-		return this.trait_forHID(id?.hash()) ?? this.trait_remember_runtimeCreate(baseID, id, ownerID, type, text, already_saved);
+	trait_remember_runtimeCreateUnique(baseID: string, id: string, ownerID: string, type: TraitType, text: string, already_persisted: boolean = false): Trait {
+		return this.trait_forHID(id?.hash()) ?? this.trait_remember_runtimeCreate(baseID, id, ownerID, type, text, already_persisted);
 	}
 
 	trait_forType_ownerHID(type: TraitType | null, ownerHID: number | null): Trait| null {
 		const traits = this.traits_forOwnerHID(ownerHID)?.filter(t => t.type == type);
 		return !traits ? null : traits[0]
+	}
+
+	trait_build_fromDict(dict: Dictionary) {
+		const trait = this.trait_remember_runtimeCreateUnique(dict.baseID, dict.id, dict.ownerID, dict.type, dict.text);
+		trait.lastModifyDate = dict.lastModifyDate;
 	}
 
 	trait_forget(trait: Trait) {
@@ -416,8 +443,8 @@ export class Hierarchy {
 	}
 
 	trait_remember_runtimeCreate(baseID: string, id: string, ownerID: string, type: TraitType, text: string,
-		already_saved: boolean = false): Trait {
-		const trait = this.trait_runtimeCreate(baseID, id, ownerID, type, text, already_saved);
+		already_persisted: boolean = false): Trait {
+		const trait = this.trait_runtimeCreate(baseID, id, ownerID, type, text, already_persisted);
 		this.trait_remember(trait);
 		return trait;
 	}
@@ -429,7 +456,7 @@ export class Hierarchy {
 		} else {
 			trait.text = text;
 		}
-		trait.needsWrite = true;
+		trait.needs_persisting_again = true;
 	}
 
 	static readonly $_BULKS_$: unique symbol;
@@ -587,7 +614,7 @@ export class Hierarchy {
 			if (relationship.baseID != this.db.baseID) {
 				debug.log_error(`RELATIONSHIP off base: ${relationship.baseID} ${relationship.parent?.description} => ${relationship.child?.description}`);
 			}
-			if (relationship.already_saved && relationship.id.includes('NEW')) {
+			if (relationship.already_persisted && relationship.id.includes('NEW')) {
 				console.log(`was saved ${relationship.id}`)
 			}
 			this.relationships.push(relationship);
@@ -637,18 +664,24 @@ export class Hierarchy {
 		return null;
 	} 
 
+	relationship_build_fromDict(dict: Dictionary) {
+		const relationship = this.relationship_remember_runtimeCreateUnique(dict.baseID, dict.id, dict.idPredicate, dict.idParent, dict.idChild, dict.order);
+		relationship.lastModifyDate = dict.lastModifyDate;
+		console.log(relationship.description);
+	}
+
 	relationship_remember_runtimeCreateUnique(baseID: string, idRelationship: string, idPredicate: string, idParent: string, idChild: string,
 		order: number, creationOptions: CreationOptions = CreationOptions.none) {
 		let reversedRelationship = this.relationship_forPredicate_parent_child(idPredicate, idChild, idParent);
 		let relationship = this.relationship_forPredicate_parent_child(idPredicate, idParent, idChild);
 		const isBidirectional = this.predicate_forID(idPredicate)?.isBidirectional ?? false;
-		const already_saved = creationOptions == CreationOptions.isFromPersistent;
+		const already_persisted = creationOptions == CreationOptions.isFromPersistent;
 		if (!relationship) {
-			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, already_saved);
+			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, already_persisted);
 			this.relationship_remember(relationship);
 		}
 		if (isBidirectional && !reversedRelationship) {
-			reversedRelationship = new Relationship(baseID, Identifiable.newID(), idPredicate, idChild, idParent, order, already_saved);
+			reversedRelationship = new Relationship(baseID, Identifiable.newID(), idPredicate, idChild, idParent, order, already_persisted);
 			this.relationship_remember(reversedRelationship);
 		}
 		relationship?.order_setTo_persistentMaybe(order);
@@ -711,6 +744,10 @@ export class Hierarchy {
 
 	ancestry_forHID(idHashed: number): Ancestry | null {
 		return this.ancestry_byHID[idHashed] ?? null;
+	}
+
+	data_forAncestry(ancestry: Ancestry) {
+
 	}
 
 	async ancestry_forget_persistentUpdate(ancestry: Ancestry) {
@@ -836,7 +873,7 @@ export class Hierarchy {
 			if (changingBulk) {
 				console.log('changingBulk');
 			}
-			if (!child.already_saved) {
+			if (!child.already_persisted) {
 				await this.db.thing_remember_persistentCreate(child);					// for everything below, need to await child.id fetched from dbDispatch
 			}
 			const relationship = await this.relationship_remember_persistentCreateUnique(baseID, Identifiable.newID(), idPredicate, parent.idBridging, child.id, 0, CreationOptions.getPersistentID);
@@ -1013,10 +1050,19 @@ export class Hierarchy {
 		this.predicates = [];
 	}
 
+	static readonly $_PREDICATE_$: unique symbol;
+
 	idPredicate_for(id: string): string {
 		const hid = id.split(k.generic_separator)[0].hash();			// grab first relationship's hid
 		const relationship = this.relationship_forHID(hid);			// locate corresponding relationship
 		return relationship?.idPredicate ?? '';						// grab its predicate id
+	}
+
+	predicate_build_fromDict(dict: Dictionary) {
+		const predicate = this.predicate_remember_runtimeCreateUnique(dict.id, dict.kind, dict.isBidirectional, false);
+		predicate.lastModifyDate = dict.lastModifyDate;
+		predicate.stateIndex = dict.stateIndex;		
+		console.log(predicate.description);
 	}
 
 	predicate_remember(predicate: Predicate) {
@@ -1030,18 +1076,21 @@ export class Hierarchy {
 		}
 	}
 
-	predicate_remember_runtimeCreateUnique(id: string, kind: string, isBidirectional: boolean, already_saved: boolean = true) {
-		if (!this.predicate_forID(id)) {
-			this.predicate_remember_runtimeCreate(id, kind, isBidirectional, already_saved);
+	predicate_remember_runtimeCreateUnique(id: string, kind: string, isBidirectional: boolean, already_persisted: boolean = true) {
+		let predicate = this.predicate_forID(id);
+		if (!predicate) {
+			predicate = this.predicate_remember_runtimeCreate(id, kind, isBidirectional, already_persisted);
 		}
+		return predicate;
 	}
 
-	predicate_remember_runtimeCreate(id: string, kind: string, isBidirectional: boolean, already_saved: boolean = true) {
-		this.predicate_remember(new Predicate(id, kind, isBidirectional, already_saved));
+	predicate_remember_runtimeCreate(id: string, kind: string, isBidirectional: boolean, already_persisted: boolean = true) {
+		let predicate = new Predicate(id, kind, isBidirectional, already_persisted);
+		this.predicate_remember(predicate);
+		return predicate;
 	}
 
 	static readonly $_ANCILLARY_$: unique symbol;
-
 
 	access_runtimeCreate(idAccess: string, kind: string) {
 		const access = new Access(this.db.dbType, idAccess, kind);
@@ -1056,40 +1105,53 @@ export class Hierarchy {
 
 	static readonly $_FILES_$: unique symbol;
 
-	get all_data(): Object {
-		return {
-			'things' : this.things,
-			'traits' : this.traits,
-			'type' : DatumType.hierarchy,
-			'predicates' : this.predicates,
-			'relationships' : this.relationships,
-		}
-	}
-
 	save_toFile() {
 		console.log('save_toFile');
-		// TODO: use ...
-		// grab			 (if not root)
-		// focus		 (if neither root nor null)
-		// this.all_data (otherwise)
+		// TODO: use this.data_forAncestry from ...
+		// grab	 (if not root)
+		// focus (if neither root nor null)
+		//
+		// (otherwise) this.all_data and root.title
 		const filename = `${this.root.title.toLowerCase()}.json`;
 		files.persist_json_object_toFile(this.all_data, filename);		// until Ancestry does traversal, just use the root
 	}
 
 	async fetch_fromFile(file: File) {
 		await files.extract_json_object_from(file, (result) => {
-			if (!!result) {
-				const dict = result as Dictionary;
-				switch (dict['type']) {
-					case DatumType.hierarchy: this.rebuild_hierarchy_with(dict); break;
-					default: break;
-				}
-				
-			}
+			this.extract_hierarchy_from(result as Dictionary);
 		});
 	}
 
-	static readonly $_OTHER_$: unique symbol;
+	static readonly $_BUILD_$: unique symbol;
+
+	extract_hierarchy_from(dict: Dictionary) {
+		switch (dict['type']) {
+			case DatumType.hierarchy: this.rebuild_hierarchy_with(dict); break;
+			default: break;
+		}
+	}
+
+	rebuild_hierarchy_with(dict: Dictionary | null) {
+		if (!!dict) {
+			this.hierarchy_forgetAll();
+			for (const type of this.all_dataTypes) {
+				this.extractObjects_fromArray_ofType(dict[type], type);
+			}
+			this.setup_hierarchy_after_fetch();
+			this.deferred_persistAll();
+		}
+	}
+
+	extractObjects_fromArray_ofType(array: Array<Dictionary>, type: string) {
+		for (const dict of array) {
+			switch(type) {
+				case DatumType.things:		  this.thing_build_fromDict(dict); break;
+				case DatumType.traits:		  this.trait_build_fromDict(dict); break;
+				case DatumType.predicates:	  this.predicate_build_fromDict(dict); break;
+				case DatumType.relationships: this.relationship_build_fromDict(dict); break;
+			}
+		}
+	}
 
 	hierarchy_forgetAll() {
 		this.things_forgetAll();
@@ -1099,27 +1161,19 @@ export class Hierarchy {
 		this.relationships_forgetAll();
 	}
 
-	rebuild_hierarchy_with(dict: Dictionary) {
-		this.hierarchy_forgetAll();		// discard and then extract:
-		// things, predicates and relationships
-		this.setup_hierarchy_after_fetch()
-	}
-
 	async setup_hierarchy_after_fetch() {
-		await this.add_missing_removeNulls(this.db.baseID);
+		await this.relationships_persistentCreateMissing(this.db.baseID);
+		await this.relationships_removeHavingNullReferences();
 		this.rootAncestry_setup();
 		this.ancestries_rebuildAll();
 	}
 
 	async conclude_fetch() {
-		await this.deferredWriteAll();
+		await this.deferred_persistAll();
 		this.isAssembled = true;
 	}
 
-	async add_missing_removeNulls(baseID: string) {
-		await this.relationships_persistentCreateMissing(baseID);
-		await this.relationships_removeHavingNullReferences();
-	}
+	static readonly $_OTHER_$: unique symbol;
 
 	toggleAlteration(wantsAlteration: AlterationType, isRelated: boolean) {
 		const isAltering = get(s_alteration_mode)?.type;

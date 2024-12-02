@@ -7,11 +7,10 @@ export default class Files {
 		'idHashed',
 		'isEditing',
 		'isGrabbed',
-		'stateIndex',
-		'needsWrite',
+		'needs_persisting_again',
 		'oneAncestry',
 		'page_states',
-		'already_saved',
+		'already_persisted',
 		'selectionRange',
 		'awaitingCreation',
 		'hasPersistentStorage'

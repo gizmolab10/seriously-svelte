@@ -8,8 +8,8 @@ export default class Predicate extends PersistentIdentifiable {
 	stateIndex: number;
 	kind: string;
 
-	constructor(id: string, kind: string, isBidirectional: boolean, already_saved: boolean = false) {
-		super(dbDispatch.db.dbType, id, already_saved);
+	constructor(id: string, kind: string, isBidirectional: boolean, already_persisted: boolean = false) {
+		super(dbDispatch.db.dbType, id, already_persisted);
 		this.isBidirectional = isBidirectional;
 		this.stateIndex = Predicate.nextIndex;		// index in page states inward and outward arrays
 		Predicate.nextIndex += 1;

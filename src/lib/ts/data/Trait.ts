@@ -8,8 +8,8 @@ export default class Trait extends Datum {
 	ownerID: string = k.empty;
 	text: string = k.empty;
 
-	constructor(baseID: string, id: string, ownerID: string, type: TraitType, text: string = k.empty, already_saved: boolean = false) {
-		super(dbDispatch.db.dbType, baseID, id, already_saved);
+	constructor(baseID: string, id: string, ownerID: string, type: TraitType, text: string = k.empty, already_persisted: boolean = false) {
+		super(dbDispatch.db.dbType, baseID, id, already_persisted);
 		this.ownerID = ownerID;
 		this.type = type;
 		this.text = text;
@@ -27,7 +27,7 @@ export default class Trait extends Datum {
 	async persist() {
 		if (!this.awaitingCreation) {
 			this.updateModifyDate();
-			if (this.already_saved) {
+			if (this.already_persisted) {
 				await dbDispatch.db.trait_persistentUpdate(this);
 			} else if (dbDispatch.db.isPersistent) {
 				await dbDispatch.db.trait_remember_persistentCreate(this);

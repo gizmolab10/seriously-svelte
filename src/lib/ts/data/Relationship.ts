@@ -10,8 +10,8 @@ export default class Relationship extends Datum {
 	idChild: string;
 	order: number; 
 
-	constructor(baseID: string, id: string, idPredicate: string, idParent: string, idChild: string, order = 0, already_saved: boolean = false) {
-		super(dbDispatch.db.dbType, baseID, id, already_saved);
+	constructor(baseID: string, id: string, idPredicate: string, idParent: string, idChild: string, order = 0, already_persisted: boolean = false) {
+		super(dbDispatch.db.dbType, baseID, id, already_persisted);
 		this.idPredicate = idPredicate;
 		this.idParent = idParent;
 		this.idChild = idChild;
@@ -24,7 +24,7 @@ export default class Relationship extends Datum {
 	get predicate(): Predicate | null { return get(s_hierarchy).predicate_forID(this.idPredicate); }
 	log(flag: DebugFlag, message: string) { debug.log_maybe(flag, `${message} ${this.description}`); }
 	get fields(): Airtable.FieldSet { return { predicate: [this.idPredicate], parent: [this.idParent], child: [this.idChild], order: this.order }; }
-	get description(): string { return `BASE ${this.baseID} STORED ${this.already_saved} ORDER ${this.order} ID ${this.id} PARENT ${this.parent?.description} ${this.predicate?.kind} CHILD ${this.child?.description}`; }
+	get description(): string { return `BASE ${this.baseID} STORED ${this.already_persisted} ORDER ${this.order} ID ${this.id} PARENT ${this.parent?.description} ${this.predicate?.kind} CHILD ${this.child?.description}`; }
 
     static relationship_fromJSON(json: string): Relationship {
         const parsed = JSON.parse(json);
@@ -40,7 +40,7 @@ export default class Relationship extends Datum {
 		if (Math.abs(this.order - newOrder) > 0.001) {
 			this.order = newOrder;
 			if (persist) {
-				this.needsWrite = true;
+				this.needs_persisting_again = true;
 			}
 		}
 	}
@@ -48,7 +48,7 @@ export default class Relationship extends Datum {
 	async persist() {
 		if (!this.awaitingCreation) {
 			this.updateModifyDate();
-			if (this.already_saved) {
+			if (this.already_persisted) {
 				await dbDispatch.db.relationship_persistentUpdate(this);
 			} else if (dbDispatch.db.isPersistent) {
 				await dbDispatch.db.relationship_remember_persistentCreate(this);

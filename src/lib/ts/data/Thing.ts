@@ -17,8 +17,8 @@ export default class Thing extends Datum {
 	color: string;
 	type: string;
 
-	constructor(baseID: string, id: string, title = k.title_default, color = k.thing_color_default, type = k.empty, already_saved: boolean = false) {
-		super(dbDispatch.db.dbType, baseID, id, already_saved);
+	constructor(baseID: string, id: string, title = k.title_default, color = k.thing_color_default, type = k.empty, already_persisted: boolean = false) {
+		super(dbDispatch.db.dbType, baseID, id, already_persisted);
 		this.selectionRange = new Seriously_Range(0, title.length);
 		this.page_states = new Page_States(this.id);
 		this.title = title;
@@ -105,7 +105,7 @@ export default class Thing extends Datum {
 	async persist() {
 		if (!this.awaitingCreation) {
 			this.updateModifyDate();
-			if (this.already_saved) {
+			if (this.already_persisted) {
 				await dbDispatch.db.thing_persistentUpdate(this);
 			} else if (dbDispatch.db.isPersistent) {
 				await dbDispatch.db.thing_remember_persistentCreate(this);

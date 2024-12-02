@@ -93,7 +93,7 @@
 				case 'consequence':	thing.setTraitText_forType(text, TraitType.consequence); break;
 			}
 		} else if (!text) {
-			$s_hierarchy.deferredWriteAll();
+			$s_hierarchy.deferred_persistAll();
 		}
 	}
 

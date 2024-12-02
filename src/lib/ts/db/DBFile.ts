@@ -17,10 +17,9 @@ export default class DBFile implements DBInterface {
 
 	async fetch_all() {
 		const h = get(s_hierarchy);
-		await this.fetch_documentsOf(DatumType.predicates);
-		await this.fetch_documentsOf(DatumType.things);
-		await this.fetch_documentsOf(DatumType.traits);
-		await this.fetch_documentsOf(DatumType.relationships);
+		for (const type of h.all_dataTypes) {
+			await this.fetch_documentsOf(type);
+		}
 		h.predicate_remember_runtimeCreateUnique('contains', 'contains', false, false);
 		h.thing_remember_runtimeCreateUnique(this.baseID, 'R', 'JSON', 'limegreen', ThingType.root);
 	}
